@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-02-14T00:08:40.917Z",
+  "status": "passed",
+  "daysElapsed": 1000,
+  "seed": 42,
+  "metrics": {
+    "finalLevel": 1,
+    "finalXp": 28340,
+    "finalBalance": 1000000
+  },
+  "logs": []
+}

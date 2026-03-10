@@ -1,0 +1,6 @@
+@echo off
+echo [PRIMERA] Running Intelligence Sentinel...
+node scripts/primera/sentinel.mjs
+echo [PRIMERA] Opening Intelligence Hub...
+start notepad PRIMERA_INTELLIGENCE.md
+pause

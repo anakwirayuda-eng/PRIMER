@@ -1,0 +1,52 @@
+{
+  "app": {
+    "title": "PRIMER: Primary Care Simulator",
+    "start_game": "Start Residency",
+    "settings": "Settings",
+    "save_game": "Save Game",
+    "logout": "Logout",
+    "confirm": "Confirm"
+  },
+  "roles": {
+    "intern": "Internship",
+    "ptt": "Rural Service (PTT)",
+    "head": "Clinic Manager"
+  },
+  "dashboard": {
+    "waiting": "Waiting",
+    "energy": "Doctor Energy",
+    "rest": "Rest",
+    "finance": "Finances",
+    "performance": "Performance",
+    "reputation": "Reputation",
+    "tips": "Tips: Keep Inappropriate Referrals low (<5%) to avoid penalties!",
+    "open_kpi": "Open KPI Dashboard",
+    "close_kpi": "Close Dashboard",
+    "closed_title": "Clinic Service Closed",
+    "closed_description": "All clinic services have ended for today.",
+    "closed_footer": "Simulation Ends at 17:00"
+  },
+  "emr": {
+    "header_waiting": "Select a patient from queue to start examination",
+    "anamnesis": "Anamnesis",
+    "physical_exam": "Physical Exam",
+    "labs": "Labs & Imaging",
+    "treatment": "Treatment",
+    "education": "Education",
+    "billing": "Billing",
+    "diagnosis_placeholder": "Select diagnosis...",
+    "validate": "Validate",
+    "maia_helper": "Use Validation button to check your clinical decisions before discharging.",
+    "refer_hospital": "Refer to Hospital",
+    "refer": "Refer",
+    "discharge": "Discharge Patient",
+    "raise_rns": "Inc. Unsatisfied Ref.",
+    "finish_case": "Finish Case",
+    "enroll_prolanis": "Enroll Prolanis"
+  },
+  "queue": {
+    "empty": "No patients waiting.",
+    "relax": "Relax for a bit...",
+    "delegate": "Delegate to Dr. MAIA (-3 Reputation)"
+  }
+}

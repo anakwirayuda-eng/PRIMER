@@ -1,0 +1,52 @@
+{
+    "app": {
+        "title": "PRIMER: Simulasi Puskesmas",
+        "start_game": "Mulai Tugas",
+        "settings": "Pengaturan",
+        "save_game": "Simpan Game",
+        "logout": "Keluar",
+        "confirm": "Yakin"
+    },
+    "roles": {
+        "intern": "Internsip",
+        "ptt": "Dokter PTT (Terpencil)",
+        "head": "Kepala Puskesmas"
+    },
+    "dashboard": {
+        "waiting": "Antrian",
+        "energy": "Energi Dokter",
+        "rest": "Istirahat",
+        "finance": "Keuangan",
+        "performance": "Kinerja",
+        "reputation": "Reputasi",
+        "tips": "Tips: Jaga RNS tetap rendah (<5%) untuk menghindari penalti finansial!",
+        "open_kpi": "Buka Dashboard KPI",
+        "close_kpi": "Tutup Dashboard",
+        "closed_title": "Layanan Poli Tutup",
+        "closed_description": "Seluruh layanan poli telah berakhir untuk hari ini.",
+        "closed_footer": "Simulasi Berakhir Pukul 17:00"
+    },
+    "emr": {
+        "header_waiting": "Pilih pasien antrian untuk mulai pemeriksaan",
+        "anamnesis": "Anamnesis",
+        "physical_exam": "Pemeriksaan Fisik",
+        "labs": "Penunjang",
+        "treatment": "Terapi",
+        "education": "Edukasi",
+        "billing": "Rekap Biaya",
+        "diagnosis_placeholder": "Cari diagnosis...",
+        "validate": "Validasi",
+        "maia_helper": "Gunakan tombol Validasi untuk mengecek keputusan klinis Anda sebelum memulangkan pasien.",
+        "refer_hospital": "Rujuk RS",
+        "refer": "Rujuk",
+        "discharge": "Rawat Jalan",
+        "raise_rns": "Naikkan RNS",
+        "finish_case": "Selesaikan Kasus",
+        "enroll_prolanis": "Daftar Prolanis"
+    },
+    "queue": {
+        "empty": "Tidak ada antrian.",
+        "relax": "Santai dulu...",
+        "delegate": "Oper ke Dr. MAIA (-3 Reputasi)"
+    }
+}

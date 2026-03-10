@@ -1,0 +1,3872 @@
+[
+  {
+    "No": 737,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 1,
+    "Keterangan": "Pemeriksaan indra penciuman",
+    "Level": "4A"
+  },
+  {
+    "No": 738,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 2,
+    "Keterangan": "Inspeksi lebar celah palpebra",
+    "Level": "4A"
+  },
+  {
+    "No": 739,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 3,
+    "Keterangan": "Inspeksi pupil (ukuran dan bentuk)",
+    "Level": "4A"
+  },
+  {
+    "No": 740,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 4,
+    "Keterangan": "Reaksi pupil terhadap cahaya",
+    "Level": "4A"
+  },
+  {
+    "No": 741,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 5,
+    "Keterangan": "Reaksi pupil terhadap obyek dekat",
+    "Level": "4A"
+  },
+  {
+    "No": 742,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 6,
+    "Keterangan": "Penilaian gerakan bola mata",
+    "Level": "4A"
+  },
+  {
+    "No": 743,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 7,
+    "Keterangan": "Penilaian diplopia",
+    "Level": "4A"
+  },
+  {
+    "No": 744,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 8,
+    "Keterangan": "Penilaian nistagmus",
+    "Level": "4A"
+  },
+  {
+    "No": 745,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 9,
+    "Keterangan": "Refleks kornea",
+    "Level": "4A"
+  },
+  {
+    "No": 746,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 10,
+    "Keterangan": "Pemeriksaan funduskopi",
+    "Level": "4A"
+  },
+  {
+    "No": 747,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 11,
+    "Keterangan": "Penilaian kesimetrisan wajah",
+    "Level": "4A"
+  },
+  {
+    "No": 748,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 12,
+    "Keterangan": "Penilaian kekuatan otot temporal dan masseter",
+    "Level": "4A"
+  },
+  {
+    "No": 749,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 13,
+    "Keterangan": "Penilaian sensasi wajah",
+    "Level": "4A"
+  },
+  {
+    "No": 750,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 14,
+    "Keterangan": "Penilaian pergerakan wajah",
+    "Level": "4A"
+  },
+  {
+    "No": 751,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 15,
+    "Keterangan": "Penilaian indra pengecapan",
+    "Level": "4A"
+  },
+  {
+    "No": 752,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 16,
+    "Keterangan": "Penilaian indra pendengaran (lateralisasi, konduksi udara dan tulang)",
+    "Level": "4A"
+  },
+  {
+    "No": 753,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 17,
+    "Keterangan": "Penilaian kemampuan menelan",
+    "Level": "4A"
+  },
+  {
+    "No": 754,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 18,
+    "Keterangan": "Inspeksi palatum",
+    "Level": "4A"
+  },
+  {
+    "No": 756,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 20,
+    "Keterangan": "Penilaian otot sternomastoid dan trapezius",
+    "Level": "4A"
+  },
+  {
+    "No": 757,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 21,
+    "Keterangan": "Lidah, inspeksi saat istirahat",
+    "Level": "4A"
+  },
+  {
+    "No": 758,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Saraf Kranial",
+    "No-sub": 22,
+    "Keterangan": "Lidah, inspeksi dan penilaian sistem motorik (misalnya\r\ndengan dijulurkan keluar)",
+    "Level": "4A"
+  },
+  {
+    "No": 759,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Sistem Motorik",
+    "No-sub": 23,
+    "Keterangan": "Inspeksi: postur, habitus, gerakan involunter",
+    "Level": "4A"
+  },
+  {
+    "No": 760,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Sistem Motorik",
+    "No-sub": 24,
+    "Keterangan": "Penilaian tonus otot",
+    "Level": "4A"
+  },
+  {
+    "No": 761,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Sistem Motorik",
+    "No-sub": 25,
+    "Keterangan": "Penilaian kekuatan otot",
+    "Level": "4A"
+  },
+  {
+    "No": 762,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Koordinasi",
+    "No-sub": 26,
+    "Keterangan": "Inspeksi cara berjalan (gait)",
+    "Level": "4A"
+  },
+  {
+    "No": 763,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Koordinasi",
+    "No-sub": 27,
+    "Keterangan": "Shallow knee bend",
+    "Level": "4A"
+  },
+  {
+    "No": 764,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Koordinasi",
+    "No-sub": 28,
+    "Keterangan": "Tes Romberg",
+    "Level": "4A"
+  },
+  {
+    "No": 765,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Koordinasi",
+    "No-sub": 29,
+    "Keterangan": "Tes Romberg dipertajam",
+    "Level": "4A"
+  },
+  {
+    "No": 766,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Koordinasi",
+    "No-sub": 30,
+    "Keterangan": "Tes telunjuk hidung",
+    "Level": "4A"
+  },
+  {
+    "No": 767,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Koordinasi",
+    "No-sub": 31,
+    "Keterangan": "Tes tumit lutut",
+    "Level": "4A"
+  },
+  {
+    "No": 768,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Koordinasi",
+    "No-sub": 32,
+    "Keterangan": "Tes untuk disdiadokinesis",
+    "Level": "4A"
+  },
+  {
+    "No": 769,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Sistem Sensorik",
+    "No-sub": 33,
+    "Keterangan": "Penilaian sensasi nyeri",
+    "Level": "4A"
+  },
+  {
+    "No": 770,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Sistem Sensorik",
+    "No-sub": 34,
+    "Keterangan": "Penilaian sensasi suhu",
+    "Level": "4A"
+  },
+  {
+    "No": 771,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Sistem Sensorik",
+    "No-sub": 35,
+    "Keterangan": "Penilaian sensasi raba halus",
+    "Level": "4A"
+  },
+  {
+    "No": 772,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Sistem Sensorik",
+    "No-sub": 36,
+    "Keterangan": "Penilaian rasa posisi (proprioseptif)",
+    "Level": "4A"
+  },
+  {
+    "No": 773,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Sistem Sensorik",
+    "No-sub": 37,
+    "Keterangan": "Penilaian sensasi diskriminatif (misal stereognosis)",
+    "Level": "4A"
+  },
+  {
+    "No": 774,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Luhur",
+    "No-sub": 38,
+    "Keterangan": "Penilaian tingkat kesadaran dengan skala koma\r\nGlasgow (GCS)",
+    "Level": "4A"
+  },
+  {
+    "No": 775,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Luhur",
+    "No-sub": 39,
+    "Keterangan": "Penilaian orientasi",
+    "Level": "4A"
+  },
+  {
+    "No": 776,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Luhur",
+    "No-sub": 40,
+    "Keterangan": "Penilaian kemampuan berbicara dan berbahasa, termasuk penilaian afasia",
+    "Level": "4A"
+  },
+  {
+    "No": 780,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Luhur",
+    "No-sub": 44,
+    "Keterangan": "Penilaian daya ingat/memori",
+    "Level": "4A"
+  },
+  {
+    "No": 781,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Fungsi Luhur",
+    "No-sub": 45,
+    "Keterangan": "Penilaian konsentrasi",
+    "Level": "4A"
+  },
+  {
+    "No": 782,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 46,
+    "Keterangan": "Refleks tendon (bisep, trisep, pergelangan, platela,\r\ntumit)",
+    "Level": "4A"
+  },
+  {
+    "No": 783,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 47,
+    "Keterangan": "Refleks abdominal",
+    "Level": "4A"
+  },
+  {
+    "No": 784,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 48,
+    "Keterangan": "Refleks kremaster",
+    "Level": "4A"
+  },
+  {
+    "No": 785,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 49,
+    "Keterangan": "Refleks anal",
+    "Level": "4A"
+  },
+  {
+    "No": 786,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 50,
+    "Keterangan": "Tanda Hoffmann-Tromner",
+    "Level": "4A"
+  },
+  {
+    "No": 787,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 51,
+    "Keterangan": "Respon plantar (termasuk grup Babinski)",
+    "Level": "4A"
+  },
+  {
+    "No": 788,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 52,
+    "Keterangan": "Snout reflex",
+    "Level": "4A"
+  },
+  {
+    "No": 789,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 53,
+    "Keterangan": "Refleks menghisap/rooting reflex menggengam palmar/ grasp reflex glabela palmomental",
+    "Level": "4A"
+  },
+  {
+    "No": 790,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 54,
+    "Keterangan": "Refleks menggengam palmar/grasp reflex",
+    "Level": "4A"
+  },
+  {
+    "No": 791,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 55,
+    "Keterangan": "Refleks glabela",
+    "Level": "4A"
+  },
+  {
+    "No": 792,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Refleks Fisiologis, Patologis, dan Primitif",
+    "No-sub": 56,
+    "Keterangan": "Refleks palmomental",
+    "Level": "4A"
+  },
+  {
+    "No": 793,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Tulang Belakang",
+    "No-sub": 57,
+    "Keterangan": "Inspeksi tulang belakang saat istirahat",
+    "Level": "4A"
+  },
+  {
+    "No": 794,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Tulang Belakang",
+    "No-sub": 58,
+    "Keterangan": "Inspeksi tulang belakang saat bergerak",
+    "Level": "4A"
+  },
+  {
+    "No": 795,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Tulang Belakang",
+    "No-sub": 59,
+    "Keterangan": "Perkusi tulang belakang",
+    "Level": "4A"
+  },
+  {
+    "No": 796,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Tulang Belakang",
+    "No-sub": 60,
+    "Keterangan": "Palpasi tulang belakang",
+    "Level": "4A"
+  },
+  {
+    "No": 797,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Tulang Belakang",
+    "No-sub": 61,
+    "Keterangan": "Mendeteksi nyeri diakibatkan tekanan vertikal",
+    "Level": "4A"
+  },
+  {
+    "No": 798,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Tulang Belakang",
+    "No-sub": 62,
+    "Keterangan": "Penilaian fleksi lumbal",
+    "Level": "4A"
+  },
+  {
+    "No": 799,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Pemeriksaan Fisik Lainnya",
+    "No-sub": 63,
+    "Keterangan": "Deteksi kaku kuduk",
+    "Level": "4A"
+  },
+  {
+    "No": 800,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Pemeriksaan Fisik Lainnya",
+    "No-sub": 64,
+    "Keterangan": "Penilaian fontanel",
+    "Level": "4A"
+  },
+  {
+    "No": 801,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Pemeriksaan Fisik Lainnya",
+    "No-sub": 65,
+    "Keterangan": "Tanda Patrick dan kontra-Patrick",
+    "Level": "4A"
+  },
+  {
+    "No": 802,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Pemeriksaan Fisik Lainnya",
+    "No-sub": 66,
+    "Keterangan": "Tanda Chvostek",
+    "Level": "4A"
+  },
+  {
+    "No": 803,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Pemeriksaan Fisik Lainnya",
+    "No-sub": 67,
+    "Keterangan": "Tanda Lasegue",
+    "Level": "4A"
+  },
+  {
+    "No": 804,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 68,
+    "Keterangan": "Interpretasi X-Ray tengkorak",
+    "Level": "4A"
+  },
+  {
+    "No": 805,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 69,
+    "Keterangan": "Interpretasi X-Ray tulang belakang",
+    "Level": "4A"
+  },
+  {
+    "No": 816,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Anamnesis",
+    "No-sub": 1,
+    "Keterangan": "Autoanamnesis dengan pasien",
+    "Level": "4A"
+  },
+  {
+    "No": 817,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Anamnesis",
+    "No-sub": 2,
+    "Keterangan": "Alloanamnesis dengan anggota keluarga/orang lain\r\nyang bermakna",
+    "Level": "4A"
+  },
+  {
+    "No": 818,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Anamnesis",
+    "No-sub": 3,
+    "Keterangan": "Memperoleh data mengenai keluhan/masalah utama",
+    "Level": "4A"
+  },
+  {
+    "No": 819,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Anamnesis",
+    "No-sub": 4,
+    "Keterangan": "Menelusuri riwayat perjalanan penyakit sekarang/dahulu",
+    "Level": "4A"
+  },
+  {
+    "No": 820,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Anamnesis",
+    "No-sub": 5,
+    "Keterangan": "Memperoleh data bermakna mengenai riwayat\r\nperkembangan, pendidikan, pekerjaan, perkawinan, kehidupan keluarga",
+    "Level": "4A"
+  },
+  {
+    "No": 821,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 6,
+    "Keterangan": "Penilaian status mental",
+    "Level": "4A"
+  },
+  {
+    "No": 822,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 7,
+    "Keterangan": "Penilaian kesadaran",
+    "Level": "4A"
+  },
+  {
+    "No": 823,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 8,
+    "Keterangan": "Penilaian persepsi orientasi intelegensi secara klinis",
+    "Level": "4A"
+  },
+  {
+    "No": 824,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 9,
+    "Keterangan": "Penilaian orientasi",
+    "Level": "4A"
+  },
+  {
+    "No": 825,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 10,
+    "Keterangan": "Penilaian intelegensi secara klinis",
+    "Level": "4A"
+  },
+  {
+    "No": 826,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 11,
+    "Keterangan": "Penilaian bentuk dan isi pikir",
+    "Level": "4A"
+  },
+  {
+    "No": 827,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 12,
+    "Keterangan": "Penilaian mood dan afek",
+    "Level": "4A"
+  },
+  {
+    "No": 828,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 13,
+    "Keterangan": "Penilaian motorik",
+    "Level": "4A"
+  },
+  {
+    "No": 829,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 14,
+    "Keterangan": "Penilaian pengendalian impuls",
+    "Level": "4A"
+  },
+  {
+    "No": 830,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 15,
+    "Keterangan": "Penilaian kemampuan menilai realitas (judgement)",
+    "Level": "4A"
+  },
+  {
+    "No": 831,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 16,
+    "Keterangan": "Penilaian kemampuan tilikan (insight)",
+    "Level": "4A"
+  },
+  {
+    "No": 832,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Psikiatri",
+    "No-sub": 17,
+    "Keterangan": "Penilaian kemampuan fungsional (general\r\nassessment of functioning)",
+    "Level": "4A"
+  },
+  {
+    "No": 834,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Diagnosis & Identifikasi Masalah",
+    "No-sub": 19,
+    "Keterangan": "Menegakkan diagnosis kerja berdasarkan kriteria\r\ndiagnosis multiaksial",
+    "Level": "4A"
+  },
+  {
+    "No": 835,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Diagnosis & Identifikasi Masalah",
+    "No-sub": 20,
+    "Keterangan": "Membuat diagnosis banding (diagnosis differensial)",
+    "Level": "4A"
+  },
+  {
+    "No": 836,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Diagnosis & Identifikasi Masalah",
+    "No-sub": 21,
+    "Keterangan": "Identifikasi kedaruratan psikiatrik",
+    "Level": "4A"
+  },
+  {
+    "No": 837,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Diagnosis & Identifikasi Masalah",
+    "No-sub": 22,
+    "Keterangan": "Identifikasi masalah di bidang fisik, psikologis, sosial",
+    "Level": "4A"
+  },
+  {
+    "No": 838,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Diagnosis & Identifikasi Masalah",
+    "No-sub": 23,
+    "Keterangan": "Mempertimbangan  prognosis",
+    "Level": "4A"
+  },
+  {
+    "No": 839,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Diagnosis & Identifikasi Masalah",
+    "No-sub": 24,
+    "Keterangan": "Menentukan indikasi rujuk",
+    "Level": "4A"
+  },
+  {
+    "No": 840,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Tambahan",
+    "No-sub": 25,
+    "Keterangan": "Melakukan Mini Mental State Examination",
+    "Level": "4A"
+  },
+  {
+    "No": 841,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Tambahan",
+    "No-sub": 26,
+    "Keterangan": "Melakukan kunjungan rumah apabila diperlukan",
+    "Level": "4A"
+  },
+  {
+    "No": 842,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Pemeriksaan Tambahan",
+    "No-sub": 27,
+    "Keterangan": "Melakukan kerja sama konsultatif dengan teman sejawat lainnya",
+    "Level": "4A"
+  },
+  {
+    "No": 852,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Penglihatan",
+    "No-sub": 1,
+    "Keterangan": "Penilaian penglihatan bayi, anak, dan dewasa",
+    "Level": "4A"
+  },
+  {
+    "No": 853,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Refraksi",
+    "No-sub": 2,
+    "Keterangan": "Penilaian refraksi, subjektif",
+    "Level": "4A"
+  },
+  {
+    "No": 855,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Lapang Pandang",
+    "No-sub": 4,
+    "Keterangan": "Lapang pandang, Donders confrontation test",
+    "Level": "4A"
+  },
+  {
+    "No": 856,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Lapang Pandang",
+    "No-sub": 5,
+    "Keterangan": "Lapang pandang, Amsler panes",
+    "Level": "4A"
+  },
+  {
+    "No": 857,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Penilaian Eksternal",
+    "No-sub": 6,
+    "Keterangan": "Inspeksi kelopak mata",
+    "Level": "4A"
+  },
+  {
+    "No": 858,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Penilaian Eksternal",
+    "No-sub": 7,
+    "Keterangan": "Inspeksi kelopak mata dengan eversi kelopak atas",
+    "Level": "4A"
+  },
+  {
+    "No": 859,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Penilaian Eksternal",
+    "No-sub": 8,
+    "Keterangan": "Inspeksi bulu mata",
+    "Level": "4A"
+  },
+  {
+    "No": 860,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Penilaian Eksternal",
+    "No-sub": 9,
+    "Keterangan": "Inspeksi konjungtiva, termasuk forniks",
+    "Level": "4A"
+  },
+  {
+    "No": 861,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Penilaian Eksternal",
+    "No-sub": 10,
+    "Keterangan": "Inspeksi sklera",
+    "Level": "4A"
+  },
+  {
+    "No": 862,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Penilaian Eksternal",
+    "No-sub": 11,
+    "Keterangan": "Inspeksi orifisium duktus lakrimalis",
+    "Level": "4A"
+  },
+  {
+    "No": 863,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Penilaian Eksternal",
+    "No-sub": 12,
+    "Keterangan": "Palpasi limfonodus pre-aurikular",
+    "Level": "4A"
+  },
+  {
+    "No": 864,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Posisi Mata",
+    "No-sub": 13,
+    "Keterangan": "Penilaian posisi dengan corneal reflex images",
+    "Level": "4A"
+  },
+  {
+    "No": 865,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Posisi Mata",
+    "No-sub": 14,
+    "Keterangan": "Penilaian posisi dengan cover uncover test",
+    "Level": "4A"
+  },
+  {
+    "No": 866,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Posisi Mata",
+    "No-sub": 15,
+    "Keterangan": "Pemeriksaan gerakan bola mata",
+    "Level": "4A"
+  },
+  {
+    "No": 867,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Posisi Mata",
+    "No-sub": 16,
+    "Keterangan": "Penilaian penglihatan binokular",
+    "Level": "4A"
+  },
+  {
+    "No": 868,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Pupil",
+    "No-sub": 17,
+    "Keterangan": "Inspeksi pupil",
+    "Level": "4A"
+  },
+  {
+    "No": 869,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Pupil",
+    "No-sub": 18,
+    "Keterangan": "Penilaian pupil dengan reaksi langsung terhadap cahaya dan konvergensi",
+    "Level": "4A"
+  },
+  {
+    "No": 870,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Media",
+    "No-sub": 19,
+    "Keterangan": "Inspeksi media refraksi dengan transilluminasi (pen\r\nlight)",
+    "Level": "4A"
+  },
+  {
+    "No": 871,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Media",
+    "No-sub": 20,
+    "Keterangan": "Inspeksi kornea",
+    "Level": "4A"
+  },
+  {
+    "No": 873,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Media",
+    "No-sub": 22,
+    "Keterangan": "Tes sensivitas kornea",
+    "Level": "4A"
+  },
+  {
+    "No": 874,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Media",
+    "No-sub": 23,
+    "Keterangan": "Inspeksi bilik mata depan",
+    "Level": "4A"
+  },
+  {
+    "No": 875,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Media",
+    "No-sub": 24,
+    "Keterangan": "Inspeksi iris",
+    "Level": "4A"
+  },
+  {
+    "No": 876,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Media",
+    "No-sub": 25,
+    "Keterangan": "Inspeksi lensa",
+    "Level": "4A"
+  },
+  {
+    "No": 878,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Fundus",
+    "No-sub": 27,
+    "Keterangan": "Fundoscopy untuk melihat fundus reflex",
+    "Level": "4A"
+  },
+  {
+    "No": 879,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Fundus",
+    "No-sub": 28,
+    "Keterangan": "Fundoscopy untuk melihat pembuluh darah, papil,\r\nmakula",
+    "Level": "4A"
+  },
+  {
+    "No": 880,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Tekanan Intraokular",
+    "No-sub": 29,
+    "Keterangan": "Tekanan intraokular, estimasi dengan palpasi",
+    "Level": "4A"
+  },
+  {
+    "No": 881,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Tekanan Intraokular",
+    "No-sub": 30,
+    "Keterangan": "Tekanan intraokular, pengukuran dengan indentasi tonometer (Schiötz)",
+    "Level": "4A"
+  },
+  {
+    "No": 891,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra Penglihatan",
+    "Subkategori": "Pemeriksaan Oftamologi Lainnya",
+    "No-sub": 40,
+    "Keterangan": "Tes penglihatan warna (dengan buku Ishihara 12 plate)",
+    "Level": "4A"
+  },
+  {
+    "No": 897,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pendengaran dan Keseimbangan",
+    "No-sub": 46,
+    "Keterangan": "Inspeksi aurikula, posisi telinga, dan mastoid",
+    "Level": "4A"
+  },
+  {
+    "No": 898,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pendengaran dan Keseimbangan",
+    "No-sub": 47,
+    "Keterangan": "Pemeriksaan meatus auditorius externus dengan otoskop",
+    "Level": "4A"
+  },
+  {
+    "No": 899,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pendengaran dan Keseimbangan",
+    "No-sub": 48,
+    "Keterangan": "Pemeriksaan membran timpani dengan otoskop",
+    "Level": "4A"
+  },
+  {
+    "No": 900,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pendengaran dan Keseimbangan",
+    "No-sub": 49,
+    "Keterangan": "Menggunakan cermin kepala",
+    "Level": "4A"
+  },
+  {
+    "No": 901,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pendengaran dan Keseimbangan",
+    "No-sub": 50,
+    "Keterangan": "Menggunakan lampu kepala",
+    "Level": "4A"
+  },
+  {
+    "No": 902,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pendengaran dan Keseimbangan",
+    "No-sub": 51,
+    "Keterangan": "Tes pendengaran, pemeriksaan garpu  tala (Weber,\r\nRinne, Schwabach)",
+    "Level": "4A"
+  },
+  {
+    "No": 903,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pendengaran dan Keseimbangan",
+    "No-sub": 52,
+    "Keterangan": "Tes pendengaran, tes berbisik",
+    "Level": "4A"
+  },
+  {
+    "No": 905,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pendengaran dan Keseimbangan",
+    "No-sub": 54,
+    "Keterangan": "Pemeriksaan pendengaran pada anak-anak",
+    "Level": "4A"
+  },
+  {
+    "No": 910,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Penciuman",
+    "No-sub": 59,
+    "Keterangan": "Inspeksi bentuk hidung dan lubang hidung",
+    "Level": "4A"
+  },
+  {
+    "No": 911,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Penciuman",
+    "No-sub": 60,
+    "Keterangan": "Penilaian obstruksi hidung",
+    "Level": "4A"
+  },
+  {
+    "No": 912,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Penciuman",
+    "No-sub": 61,
+    "Keterangan": "Uji penciuman",
+    "Level": "4A"
+  },
+  {
+    "No": 913,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Penciuman",
+    "No-sub": 62,
+    "Keterangan": "Rinoskopi anterior",
+    "Level": "4A"
+  },
+  {
+    "No": 914,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Penciuman",
+    "No-sub": 63,
+    "Keterangan": "Transluminasi sinus frontalis & maksila",
+    "Level": "4A"
+  },
+  {
+    "No": 919,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Indra Pengecap",
+    "No-sub": 68,
+    "Keterangan": "Penilaian pengecapan",
+    "Level": "4A"
+  },
+  {
+    "No": 920,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Keterampilan Terapeutik",
+    "No-sub": 69,
+    "Keterangan": "Peresepan kacamata pada kelainan refraksi ringan (sampai dengan 5D tanpa silindris) untuk mencapai visus 6/6",
+    "Level": "4A"
+  },
+  {
+    "No": 921,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Keterampilan Terapeutik",
+    "No-sub": 70,
+    "Keterangan": "Peresepan  kacamata  baca  pada  penderita  dengan visus jauh normal atau dapat dikoreksi menjadi 6/6",
+    "Level": "4A"
+  },
+  {
+    "No": 922,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Keterampilan Terapeutik",
+    "No-sub": 71,
+    "Keterangan": "Pemberian obat tetes mata",
+    "Level": "4A"
+  },
+  {
+    "No": 923,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Keterampilan Terapeutik",
+    "No-sub": 72,
+    "Keterangan": "Aplikasi salep mata",
+    "Level": "4A"
+  },
+  {
+    "No": 926,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Keterampilan Terapeutik",
+    "No-sub": 75,
+    "Keterangan": "To apply eyes dressing",
+    "Level": "4A"
+  },
+  {
+    "No": 928,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Keterampilan Terapeutik",
+    "No-sub": 77,
+    "Keterangan": "Melepaskan protesa mata",
+    "Level": "4A"
+  },
+  {
+    "No": 929,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Keterampilan Terapeutik",
+    "No-sub": 78,
+    "Keterangan": "Mencabut bulu mata",
+    "Level": "4A"
+  },
+  {
+    "No": 930,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "Keterampilan Terapeutik",
+    "No-sub": 79,
+    "Keterangan": "Membersihkan benda asing dan debris di konjungtiva",
+    "Level": "4A"
+  },
+  {
+    "No": 942,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "THT",
+    "No-sub": 91,
+    "Keterangan": "Manuver Valsalva",
+    "Level": "4A"
+  },
+  {
+    "No": 943,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "THT",
+    "No-sub": 92,
+    "Keterangan": "Pembersihan meatus auditorius eksternus dengan usapan",
+    "Level": "4A"
+  },
+  {
+    "No": 944,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "THT",
+    "No-sub": 93,
+    "Keterangan": "Pengambilan serumen menggunakan kait atau kuret",
+    "Level": "4A"
+  },
+  {
+    "No": 945,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "THT",
+    "No-sub": 94,
+    "Keterangan": "Pengambilan benda asing di telinga",
+    "Level": "4A"
+  },
+  {
+    "No": 949,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "THT",
+    "No-sub": 98,
+    "Keterangan": "Menghentikan perdarahan hidung",
+    "Level": "4A"
+  },
+  {
+    "No": 950,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Indra",
+    "Subkategori": "THT",
+    "No-sub": 99,
+    "Keterangan": "Pengambilan benda asing dari hidung",
+    "Level": "4A"
+  },
+  {
+    "No": 955,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 1,
+    "Keterangan": "Inspeksi leher",
+    "Level": "4A"
+  },
+  {
+    "No": 956,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 2,
+    "Keterangan": "Palpasi kelenjar ludah (submandibular, parotid)",
+    "Level": "4A"
+  },
+  {
+    "No": 957,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 3,
+    "Keterangan": "Palpasi nodus limfatikus brakialis",
+    "Level": "4A"
+  },
+  {
+    "No": 958,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 4,
+    "Keterangan": "Palpasi kelenjar tiroid",
+    "Level": "4A"
+  },
+  {
+    "No": 962,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 8,
+    "Keterangan": "Usap tenggorokan (throat swab)",
+    "Level": "4A"
+  },
+  {
+    "No": 964,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 10,
+    "Keterangan": "Penilaian respirasi",
+    "Level": "4A"
+  },
+  {
+    "No": 965,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 11,
+    "Keterangan": "Inspeksi dada",
+    "Level": "4A"
+  },
+  {
+    "No": 966,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 12,
+    "Keterangan": "Palpasi dada",
+    "Level": "4A"
+  },
+  {
+    "No": 967,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 13,
+    "Keterangan": "Perkusi dada",
+    "Level": "4A"
+  },
+  {
+    "No": 968,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 14,
+    "Keterangan": "Auskultasi dada",
+    "Level": "4A"
+  },
+  {
+    "No": 969,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 15,
+    "Keterangan": "Persiapan, pemeriksaan sputum, dan interpretasinya\r\n(Gram dan Ziehl Nielsen [BTA])",
+    "Level": "4A"
+  },
+  {
+    "No": 971,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 17,
+    "Keterangan": "Uji fungsi paru/spirometri dasar",
+    "Level": "4A"
+  },
+  {
+    "No": 973,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 19,
+    "Keterangan": "Interpretasi Rontgen/foto toraks",
+    "Level": "4A"
+  },
+  {
+    "No": 978,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Terapeutik",
+    "No-sub": 24,
+    "Keterangan": "Dekompresi jarum",
+    "Level": "4A"
+  },
+  {
+    "No": 981,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Terapeutik",
+    "No-sub": 27,
+    "Keterangan": "Perawatan WSD",
+    "Level": "4A"
+  },
+  {
+    "No": 983,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Terapeutik",
+    "No-sub": 29,
+    "Keterangan": "Terapi inhalasi/nebulisasi",
+    "Level": "4A"
+  },
+  {
+    "No": 984,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Terapeutik",
+    "No-sub": 30,
+    "Keterangan": "Terapi oksigen",
+    "Level": "4A"
+  },
+  {
+    "No": 985,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Terapeutik",
+    "No-sub": 31,
+    "Keterangan": "Edukasi berhenti merokok",
+    "Level": "4A"
+  },
+  {
+    "No": 986,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 1,
+    "Keterangan": "Inspeksi dada",
+    "Level": "4A"
+  },
+  {
+    "No": 987,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 2,
+    "Keterangan": "Palpasi denyut apeks jantung",
+    "Level": "4A"
+  },
+  {
+    "No": 988,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 3,
+    "Keterangan": "Palpasi arteri karotis",
+    "Level": "4A"
+  },
+  {
+    "No": 989,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 4,
+    "Keterangan": "Perkusi ukuran jantung",
+    "Level": "4A"
+  },
+  {
+    "No": 990,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 5,
+    "Keterangan": "Auskultasi jantung",
+    "Level": "4A"
+  },
+  {
+    "No": 991,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 6,
+    "Keterangan": "Pengukuran tekanan darah",
+    "Level": "4A"
+  },
+  {
+    "No": 992,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 7,
+    "Keterangan": "Pengukuran tekanan vena jugularis (JVP)",
+    "Level": "4A"
+  },
+  {
+    "No": 993,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 8,
+    "Keterangan": "Palpasi denyut arteri ekstremitas",
+    "Level": "4A"
+  },
+  {
+    "No": 994,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 9,
+    "Keterangan": "Penilaian denyut kapiler",
+    "Level": "4A"
+  },
+  {
+    "No": 995,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 10,
+    "Keterangan": "Penilaian pengisian ulang kapiler (capillary refill)",
+    "Level": "4A"
+  },
+  {
+    "No": 996,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 11,
+    "Keterangan": "Deteksi bruits",
+    "Level": "4A"
+  },
+  {
+    "No": 997,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik Diagnostik",
+    "No-sub": 12,
+    "Keterangan": "Tes (Brodie) Trendelenburg",
+    "Level": "4A"
+  },
+  {
+    "No": 1004,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 19,
+    "Keterangan": "Elektrokardiografi (EKG): pemasangan dan inter-\r\npretasi hasil EKG sederhana (VES, AMI, VT, AF)",
+    "Level": "4A"
+  },
+  {
+    "No": 1008,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Resusitasi",
+    "No-sub": 23,
+    "Keterangan": "Pijat jantung luar",
+    "Level": "4A"
+  },
+  {
+    "No": 1009,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Resusitasi",
+    "No-sub": 24,
+    "Keterangan": "Resusitasi cairan",
+    "Level": "4A"
+  },
+  {
+    "No": 1010,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 1,
+    "Keterangan": "Inspeksi bibir dan kavitas oral",
+    "Level": "4A"
+  },
+  {
+    "No": 1011,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 2,
+    "Keterangan": "Inspeksi tonsil",
+    "Level": "4A"
+  },
+  {
+    "No": 1012,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 3,
+    "Keterangan": "Penilaian pergerakan otot-otot hipoglosus",
+    "Level": "4A"
+  },
+  {
+    "No": 1013,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 4,
+    "Keterangan": "Inspeksi abdomen",
+    "Level": "4A"
+  },
+  {
+    "No": 1014,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 5,
+    "Keterangan": "Inspeksi lipat paha/inguinal pada saat tekanan\r\nabdomen meningkat",
+    "Level": "4A"
+  },
+  {
+    "No": 1015,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 6,
+    "Keterangan": "Palpasi (dinding perut, kolon, hepar, lien, aorta, rigiditas dinding perut)",
+    "Level": "4A"
+  },
+  {
+    "No": 1016,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 7,
+    "Keterangan": "Palpasi hernia",
+    "Level": "4A"
+  },
+  {
+    "No": 1017,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 8,
+    "Keterangan": "Pemeriksaan nyeri tekan dan nyeri lepas (Blumberg\r\ntest)",
+    "Level": "4A"
+  },
+  {
+    "No": 1018,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 9,
+    "Keterangan": "Pemeriksaan psoas sign",
+    "Level": "4A"
+  },
+  {
+    "No": 1019,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 10,
+    "Keterangan": "Pemeriksaan obturator sign",
+    "Level": "4A"
+  },
+  {
+    "No": 1020,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 11,
+    "Keterangan": "Perkusi (pekak hati dan area traube)",
+    "Level": "4A"
+  },
+  {
+    "No": 1021,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 12,
+    "Keterangan": "Pemeriksaan pekak beralih (shifting dullness)",
+    "Level": "4A"
+  },
+  {
+    "No": 1022,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 13,
+    "Keterangan": "Pemeriksaan undulasi (fluid thrill)",
+    "Level": "4A"
+  },
+  {
+    "No": 1023,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 14,
+    "Keterangan": "Pemeriksaan colok dubur (digital rectal examination)",
+    "Level": "4A"
+  },
+  {
+    "No": 1024,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 15,
+    "Keterangan": "Palpasi sacrum",
+    "Level": "4A"
+  },
+  {
+    "No": 1025,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 16,
+    "Keterangan": "Inspeksi sarung tangan pascacolok-dubur",
+    "Level": "4A"
+  },
+  {
+    "No": 1026,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 17,
+    "Keterangan": "Persiapan dan pemeriksaan tinja",
+    "Level": "4A"
+  },
+  {
+    "No": 1027,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 18,
+    "Keterangan": "Pemasangan pipa nasogastrik (NGT)",
+    "Level": "4A"
+  },
+  {
+    "No": 1029,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 20,
+    "Keterangan": "Nasogastric suction",
+    "Level": "4A"
+  },
+  {
+    "No": 1030,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 21,
+    "Keterangan": "Mengganti kantong pada kolostomi",
+    "Level": "4A"
+  },
+  {
+    "No": 1031,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 22,
+    "Keterangan": "Enema",
+    "Level": "4A"
+  },
+  {
+    "No": 1032,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 23,
+    "Keterangan": "Anal swab",
+    "Level": "4A"
+  },
+  {
+    "No": 1033,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 24,
+    "Keterangan": "Identifikasi parasit",
+    "Level": "4A"
+  },
+  {
+    "No": 1034,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem GI, HP, & Pankreas",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 25,
+    "Keterangan": "Pemeriksaan feses (termasuk darah samar, protozoa, parasit, cacing)",
+    "Level": "4A"
+  },
+  {
+    "No": 1039,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 1,
+    "Keterangan": "Pemeriksaan bimanual ginjal",
+    "Level": "4A"
+  },
+  {
+    "No": 1040,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 2,
+    "Keterangan": "Pemeriksaan nyeri ketok ginjal",
+    "Level": "4A"
+  },
+  {
+    "No": 1041,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 3,
+    "Keterangan": "Perkusi kandung kemih",
+    "Level": "4A"
+  },
+  {
+    "No": 1042,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 4,
+    "Keterangan": "Palpasi prostat",
+    "Level": "4A"
+  },
+  {
+    "No": 1044,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Prosedur Diagnostik",
+    "No-sub": 6,
+    "Keterangan": "Swab uretra",
+    "Level": "4A"
+  },
+  {
+    "No": 1045,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Prosedur Diagnostik",
+    "No-sub": 7,
+    "Keterangan": "Persiapan dan pemeriksaan sedimen urine (menyiapkan slide dan uji mikroskopis urine)",
+    "Level": "4A"
+  },
+  {
+    "No": 1050,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Prosedur Diagnostik",
+    "No-sub": 12,
+    "Keterangan": "Permintaan pemeriksaan BNO IVP",
+    "Level": "4A"
+  },
+  {
+    "No": 1052,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Terapeutik",
+    "No-sub": 14,
+    "Keterangan": "Pemasangan kateter uretra",
+    "Level": "4A"
+  },
+  {
+    "No": 1054,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Terapeutik",
+    "No-sub": 16,
+    "Keterangan": "Sirkumsisi",
+    "Level": "4A"
+  },
+  {
+    "No": 1057,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi Pria",
+    "Subkategori": "Sistem Reproduksi Pria",
+    "No-sub": 1,
+    "Keterangan": "Inspeksi penis",
+    "Level": "4A"
+  },
+  {
+    "No": 1058,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi Pria",
+    "Subkategori": "Sistem Reproduksi Pria",
+    "No-sub": 2,
+    "Keterangan": "Inspeksi skrotum",
+    "Level": "4A"
+  },
+  {
+    "No": 1059,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi Pria",
+    "Subkategori": "Sistem Reproduksi Pria",
+    "No-sub": 3,
+    "Keterangan": "Palpasi penis, testis, duktus spermatik epididimis",
+    "Level": "4A"
+  },
+  {
+    "No": 1060,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi Pria",
+    "Subkategori": "Sistem Reproduksi Pria",
+    "No-sub": 4,
+    "Keterangan": "Transluminasi skrotum",
+    "Level": "4A"
+  },
+  {
+    "No": 1061,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 5,
+    "Keterangan": "Pemeriksaan fisik umum termasuk pemeriksaan payudara (inspeksi dan palpasi)",
+    "Level": "4A"
+  },
+  {
+    "No": 1062,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 6,
+    "Keterangan": "Inspeksi dan palpasi genitalia eksterna",
+    "Level": "4A"
+  },
+  {
+    "No": 1063,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 7,
+    "Keterangan": "Pemeriksaan spekulum: inspeksi vagina dan serviks",
+    "Level": "4A"
+  },
+  {
+    "No": 1064,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 8,
+    "Keterangan": "Pemeriksaan bimanual: palpasi vagina, serviks, korpus uteri, dan ovarium",
+    "Level": "4A"
+  },
+  {
+    "No": 1067,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 11,
+    "Keterangan": "Melakukan swab vagina",
+    "Level": "4A"
+  },
+  {
+    "No": 1068,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 12,
+    "Keterangan": "Duh (discharge) genital: bau, pH, pemeriksaan dengan\r\npewarnaan Gram, salin, dan KOH",
+    "Level": "4A"
+  },
+  {
+    "No": 1069,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 13,
+    "Keterangan": "Melakukan Pap’s smear",
+    "Level": "4A"
+  },
+  {
+    "No": 1070,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Diagnostik",
+    "No-sub": 14,
+    "Keterangan": "Pemeriksaan IVA",
+    "Level": "4A"
+  },
+  {
+    "No": 1075,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Tambahan Fertilitas",
+    "No-sub": 19,
+    "Keterangan": "Penilaian hasil pemeriksaan semen",
+    "Level": "4A"
+  },
+  {
+    "No": 1076,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Tambahan Fertilitas",
+    "No-sub": 20,
+    "Keterangan": "Kurva temperatur basal, instruksi, penilaian hasil",
+    "Level": "4A"
+  },
+  {
+    "No": 1077,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Pemeriksaan Tambahan Fertilitas",
+    "No-sub": 21,
+    "Keterangan": "Pemeriksaan mukus serviks, Tes fern",
+    "Level": "4A"
+  },
+  {
+    "No": 1082,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Terapi dan Prevensi",
+    "No-sub": 26,
+    "Keterangan": "Melatih pemeriksaan payudara sendiri",
+    "Level": "4A"
+  },
+  {
+    "No": 1086,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Terapi dan Prevensi",
+    "No-sub": 30,
+    "Keterangan": "Insisi abses Bartholini",
+    "Level": "4A"
+  },
+  {
+    "No": 1088,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Konseling",
+    "No-sub": 32,
+    "Keterangan": "Konseling kontrasepsi",
+    "Level": "4A"
+  },
+  {
+    "No": 1089,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Konseling",
+    "No-sub": 33,
+    "Keterangan": "Insersi dan ekstraksi IUD",
+    "Level": "4A"
+  },
+  {
+    "No": 1092,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Konseling",
+    "No-sub": 36,
+    "Keterangan": "Kontrasepsi injeksi",
+    "Level": "4A"
+  },
+  {
+    "No": 1093,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Ginekologi",
+    "Subkategori": "Konseling",
+    "No-sub": 37,
+    "Keterangan": "Penanganan komplikasi KB (IUD, pil, suntik, implant)",
+    "Level": "4A"
+  },
+  {
+    "No": 1094,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 38,
+    "Keterangan": "Identifikasi kehamilan risiko tinggi",
+    "Level": "4A"
+  },
+  {
+    "No": 1095,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 39,
+    "Keterangan": "Konseling prakonsepsi",
+    "Level": "4A"
+  },
+  {
+    "No": 1096,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 40,
+    "Keterangan": "Pelayanan perawatan antenatal",
+    "Level": "4A"
+  },
+  {
+    "No": 1097,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 41,
+    "Keterangan": "Inspeksi abdomen wanita hamil",
+    "Level": "4A"
+  },
+  {
+    "No": 1098,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 42,
+    "Keterangan": "Palpasi: tinggi fundus, manuver Leopold, penilaian posisi dari luar",
+    "Level": "4A"
+  },
+  {
+    "No": 1099,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 43,
+    "Keterangan": "Mengukur denyut jantung janin",
+    "Level": "4A"
+  },
+  {
+    "No": 1100,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 44,
+    "Keterangan": "Pemeriksaan dalam pada kehamilan muda",
+    "Level": "4A"
+  },
+  {
+    "No": 1101,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 45,
+    "Keterangan": "Pemeriksaan pelvimetri klinis",
+    "Level": "4A"
+  },
+  {
+    "No": 1102,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 46,
+    "Keterangan": "Tes kehamilan",
+    "Level": "4A"
+  },
+  {
+    "No": 1104,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 48,
+    "Keterangan": "Permintaan pemeriksaan USG obsgin",
+    "Level": "4A"
+  },
+  {
+    "No": 1105,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Kehamilan",
+    "No-sub": 49,
+    "Keterangan": "Pemeriksaan USG obsgin (skrining obstetri)",
+    "Level": "4A"
+  },
+  {
+    "No": 1108,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 51,
+    "Keterangan": "Pemeriksaan obstetri (penilaian serviks, dilatasi,\r\nmembran, presentasi janin dan penurunan)",
+    "Level": "4A"
+  },
+  {
+    "No": 1109,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 53,
+    "Keterangan": "Menolong persalinan fisiologis sesuai Asuhan Persalinan Normal (APN)",
+    "Level": "4A"
+  },
+  {
+    "No": 1110,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 54,
+    "Keterangan": "Pemecahan membran ketuban sesaat sebelum melahirkan",
+    "Level": "4A"
+  },
+  {
+    "No": 1112,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 56,
+    "Keterangan": "Anestesi lokal di perineum",
+    "Level": "4A"
+  },
+  {
+    "No": 1115,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 59,
+    "Keterangan": "Episiotomi",
+    "Level": "4A"
+  },
+  {
+    "No": 1116,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 60,
+    "Keterangan": "Resusitasi bayi baru lahir",
+    "Level": "4A"
+  },
+  {
+    "No": 1117,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 61,
+    "Keterangan": "Menilai skor Apgar",
+    "Level": "4A"
+  },
+  {
+    "No": 1118,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 62,
+    "Keterangan": "Pemeriksaan fisik bayi baru lahir",
+    "Level": "4A"
+  },
+  {
+    "No": 1119,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 63,
+    "Keterangan": "Postpartum: pemeriksaan tinggi fundus, plasenta: lepas/tersisa",
+    "Level": "4A"
+  },
+  {
+    "No": 1120,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 64,
+    "Keterangan": "Memperkirakan/mengukur kehilangan darah sesudah\r\nmelahirkan",
+    "Level": "4A"
+  },
+  {
+    "No": 1121,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 65,
+    "Keterangan": "Menjahit luka episiotomi serta laserasi derajat 1 dan 2",
+    "Level": "4A"
+  },
+  {
+    "No": 1124,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 68,
+    "Keterangan": "Insiasi menyusui dini (IMD)",
+    "Level": "4A"
+  },
+  {
+    "No": 1132,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Proses Melahirkan Normal",
+    "No-sub": 76,
+    "Keterangan": "Kompresi bimanual (eksterna, interna, aorta)",
+    "Level": "4A"
+  },
+  {
+    "No": 1133,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Perawatan Masa Nifas",
+    "No-sub": 77,
+    "Keterangan": "Menilai lochia",
+    "Level": "4A"
+  },
+  {
+    "No": 1134,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Perawatan Masa Nifas",
+    "No-sub": 78,
+    "Keterangan": "Palpasi posisi fundus",
+    "Level": "4A"
+  },
+  {
+    "No": 1135,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Perawatan Masa Nifas",
+    "No-sub": 79,
+    "Keterangan": "Payudara: inspeksi, manajemen laktasi, masase",
+    "Level": "4A"
+  },
+  {
+    "No": 1136,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Perawatan Masa Nifas",
+    "No-sub": 80,
+    "Keterangan": "Mengajarkan hygiene",
+    "Level": "4A"
+  },
+  {
+    "No": 1137,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Perawatan Masa Nifas",
+    "No-sub": 81,
+    "Keterangan": "Konseling kontrasepsi/ KB pascasalin",
+    "Level": "4A"
+  },
+  {
+    "No": 1138,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Perawatan Masa Nifas",
+    "No-sub": 82,
+    "Keterangan": "Perawatan luka episiotomi",
+    "Level": "4A"
+  },
+  {
+    "No": 1139,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Reproduksi - Obstetri",
+    "Subkategori": "Perawatan Masa Nifas",
+    "No-sub": 83,
+    "Keterangan": "Perawatan luka operasi caesar",
+    "Level": "4A"
+  },
+  {
+    "No": 1140,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "Subkategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "No-sub": 1,
+    "Keterangan": "Penilaian status gizi (termasuk pemeriksaan antropometri)",
+    "Level": "4A"
+  },
+  {
+    "No": 1141,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "Subkategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "No-sub": 2,
+    "Keterangan": "Penilaian kelenjar tiroid: hipertiroid dan hipotiroid",
+    "Level": "4A"
+  },
+  {
+    "No": 1142,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "Subkategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "No-sub": 3,
+    "Keterangan": "Pengaturan diet",
+    "Level": "4A"
+  },
+  {
+    "No": 1143,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "Subkategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "No-sub": 4,
+    "Keterangan": "Penatalaksanaan diabetes melitus tanpa komplikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1144,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "Subkategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "No-sub": 5,
+    "Keterangan": "Pemberian insulin pada diabetes melitus tanpa komplikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1145,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "Subkategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "No-sub": 6,
+    "Keterangan": "Pemeriksaan gula darah (dengan Point of Care Test\r\n[POCT])",
+    "Level": "4A"
+  },
+  {
+    "No": 1146,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "Subkategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "No-sub": 7,
+    "Keterangan": "Pemeriksaan glukosa urine (Benedict)",
+    "Level": "4A"
+  },
+  {
+    "No": 1147,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "Subkategori": "Sistem Endokrin, Metabolisme, & Nutrisi",
+    "No-sub": 8,
+    "Keterangan": "Anamnesis dan konseling kasus gangguan metabolisme dan endokrin",
+    "Level": "4A"
+  },
+  {
+    "No": 1148,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 1,
+    "Keterangan": "Palpasi kelenjar limfe",
+    "Level": "4A"
+  },
+  {
+    "No": 1149,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 2,
+    "Keterangan": "Persiapan dan pemeriksaan hitung jenis leukosit",
+    "Level": "4A"
+  },
+  {
+    "No": 1150,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 3,
+    "Keterangan": "Pemeriksaan darah rutin (Hb, Ht, Leukosit, Trombosit)",
+    "Level": "4A"
+  },
+  {
+    "No": 1151,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 4,
+    "Keterangan": "Pemeriksaan profil pembekuan (bleeding time, clotting time)",
+    "Level": "4A"
+  },
+  {
+    "No": 1152,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 5,
+    "Keterangan": "Pemeriksaan Laju endap darah/kecepatan endap darah (LED/KED)",
+    "Level": "4A"
+  },
+  {
+    "No": 1153,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 6,
+    "Keterangan": "Permintaan pemeriksaan hematologi berdasarkan indikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1154,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 7,
+    "Keterangan": "Permintaan pemeriksaan imunologi berdasarkan indikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1155,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 8,
+    "Keterangan": "Skin test sebelum pemberiaan obat injeksi",
+    "Level": "4A"
+  },
+  {
+    "No": 1156,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 9,
+    "Keterangan": "Pemeriksaan golongan darah dan inkompatibilitas",
+    "Level": "4A"
+  },
+  {
+    "No": 1157,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 10,
+    "Keterangan": "Anamnesis dan konseling anemia defisiensi besi, thalasemia, dan HIV",
+    "Level": "4A"
+  },
+  {
+    "No": 1158,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Sistem Hematologi & Imunologi",
+    "No-sub": 11,
+    "Keterangan": "Penentuan indikasi dan jenis transfusi",
+    "Level": "4A"
+  },
+  {
+    "No": 1159,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 1,
+    "Keterangan": "Inspeksi gait",
+    "Level": "4A"
+  },
+  {
+    "No": 1160,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 2,
+    "Keterangan": "Inspeksi tulang belakang saat berbaring",
+    "Level": "4A"
+  },
+  {
+    "No": 1161,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 3,
+    "Keterangan": "Inspeksi tulang belakang saat bergerak",
+    "Level": "4A"
+  },
+  {
+    "No": 1162,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 4,
+    "Keterangan": "Inspeksi tonus otot ekstremitas",
+    "Level": "4A"
+  },
+  {
+    "No": 1163,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 5,
+    "Keterangan": "Inspeksi sendi ekstremitas",
+    "Level": "4A"
+  },
+  {
+    "No": 1164,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 6,
+    "Keterangan": "Inspeksi postur tulang belakang dan pelvis",
+    "Level": "4A"
+  },
+  {
+    "No": 1165,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 7,
+    "Keterangan": "Inspeksi posisi skapula",
+    "Level": "4A"
+  },
+  {
+    "No": 1166,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 8,
+    "Keterangan": "Inspeksi fleksi dan ekstensi punggung",
+    "Level": "4A"
+  },
+  {
+    "No": 1167,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 9,
+    "Keterangan": "Penilaian fleksi lumbal",
+    "Level": "4A"
+  },
+  {
+    "No": 1168,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 10,
+    "Keterangan": "Panggul: penilaian fleksi dan ekstensi, adduksi, abduksi dan rotasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1169,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 11,
+    "Keterangan": "Menilai atrofi otot",
+    "Level": "4A"
+  },
+  {
+    "No": 1170,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 12,
+    "Keterangan": "Lutut: menilai ligamen krusiatus dan kolateral",
+    "Level": "4A"
+  },
+  {
+    "No": 1171,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 13,
+    "Keterangan": "Penilaian meniskus",
+    "Level": "4A"
+  },
+  {
+    "No": 1172,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 14,
+    "Keterangan": "Kaki: inspeksi postur dan bentuk",
+    "Level": "4A"
+  },
+  {
+    "No": 1173,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 15,
+    "Keterangan": "Kaki: penilaian fleksi dorsal/plantar, inversi dan eversi",
+    "Level": "4A"
+  },
+  {
+    "No": 1174,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 16,
+    "Keterangan": "Palpation for tenderness",
+    "Level": "4A"
+  },
+  {
+    "No": 1175,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 17,
+    "Keterangan": "Palpasi untuk mendeteksi nyeri diakibatkan tekanan vertikal",
+    "Level": "4A"
+  },
+  {
+    "No": 1176,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 18,
+    "Keterangan": "Palpasi tendon dan sendi",
+    "Level": "4A"
+  },
+  {
+    "No": 1177,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 19,
+    "Keterangan": "Palpasi tulang belakang, sendi sakro-iliaka dan otot- otot punggung",
+    "Level": "4A"
+  },
+  {
+    "No": 1178,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 20,
+    "Keterangan": "Percussion for tenderness",
+    "Level": "4A"
+  },
+  {
+    "No": 1179,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 21,
+    "Keterangan": "Penilaian range of motion (ROM) sendi",
+    "Level": "4A"
+  },
+  {
+    "No": 1180,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 22,
+    "Keterangan": "Menetapkan ROM kepala",
+    "Level": "4A"
+  },
+  {
+    "No": 1181,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 23,
+    "Keterangan": "Tes fungsi otot dan sendi bahu",
+    "Level": "4A"
+  },
+  {
+    "No": 1182,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 24,
+    "Keterangan": "Tes fungsi sendi pergelangan tangan, metacarpal, dan\r\njari-jari tangan",
+    "Level": "4A"
+  },
+  {
+    "No": 1183,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 25,
+    "Keterangan": "Pengukuran panjang ekstremitas bawah",
+    "Level": "4A"
+  },
+  {
+    "No": 1185,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Terapeutik",
+    "No-sub": 27,
+    "Keterangan": "Stabilisasi fraktur (tanpa gips)",
+    "Level": "4A"
+  },
+  {
+    "No": 1187,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Terapeutik",
+    "No-sub": 29,
+    "Keterangan": "Melakukan dressing (sling, bandage)",
+    "Level": "4A"
+  },
+  {
+    "No": 1190,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Terapeutik",
+    "No-sub": 32,
+    "Keterangan": "Mengobati ulkus tungkai",
+    "Level": "4A"
+  },
+  {
+    "No": 1192,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 1,
+    "Keterangan": "Inspeksi kulit",
+    "Level": "4A"
+  },
+  {
+    "No": 1193,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 2,
+    "Keterangan": "Inspeksi membran mukosa",
+    "Level": "4A"
+  },
+  {
+    "No": 1194,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 3,
+    "Keterangan": "Inspeksi daerah perianal",
+    "Level": "4A"
+  },
+  {
+    "No": 1195,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 4,
+    "Keterangan": "Inspeksi  kuku",
+    "Level": "4A"
+  },
+  {
+    "No": 1196,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 5,
+    "Keterangan": "Inspeksi rambut dan skalp",
+    "Level": "4A"
+  },
+  {
+    "No": 1197,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 6,
+    "Keterangan": "Palpasi kulit",
+    "Level": "4A"
+  },
+  {
+    "No": 1198,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 7,
+    "Keterangan": "Deskripsi lesi kulit dengan perubahan primer dan sekunder, misal ukuran, distribusi, penyebaran,\r\nkonfigurasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1199,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 8,
+    "Keterangan": "Deskripsi lesi kulit dengan perubahan primer dan\r\nsekunder, seperti uku distribusi, penyebaran dan konfigurasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1200,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Tambahan",
+    "No-sub": 9,
+    "Keterangan": "Pemeriksaan dermografisme",
+    "Level": "4A"
+  },
+  {
+    "No": 1201,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Tambahan",
+    "No-sub": 10,
+    "Keterangan": "Penyiapan dan penilaian sediaan kalium hidroksida",
+    "Level": "4A"
+  },
+  {
+    "No": 1202,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Tambahan",
+    "No-sub": 11,
+    "Keterangan": "Penyiapan dan penilaian sediaan metilen biru",
+    "Level": "4A"
+  },
+  {
+    "No": 1203,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Tambahan",
+    "No-sub": 12,
+    "Keterangan": "Penyiapan dan penilaian sediaan Gram",
+    "Level": "4A"
+  },
+  {
+    "No": 1207,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pemeriksaan Tambahan",
+    "No-sub": 16,
+    "Keterangan": "Pemeriksaan dengan sinar UVA (lampu Wood)",
+    "Level": "4A"
+  },
+  {
+    "No": 1208,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Terapeutik",
+    "No-sub": 17,
+    "Keterangan": "Pemilihan obat topikal",
+    "Level": "4A"
+  },
+  {
+    "No": 1209,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Terapeutik",
+    "No-sub": 18,
+    "Keterangan": "Insisi dan drainase abses",
+    "Level": "4A"
+  },
+  {
+    "No": 1210,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Terapeutik",
+    "No-sub": 19,
+    "Keterangan": "Eksisi tumor jinak kulit",
+    "Level": "4A"
+  },
+  {
+    "No": 1211,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Terapeutik",
+    "No-sub": 20,
+    "Keterangan": "Ekstraksi komedo",
+    "Level": "4A"
+  },
+  {
+    "No": 1212,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Terapeutik",
+    "No-sub": 21,
+    "Keterangan": "Perawatan luka",
+    "Level": "4A"
+  },
+  {
+    "No": 1213,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Terapeutik",
+    "No-sub": 22,
+    "Keterangan": "Kompres",
+    "Level": "4A"
+  },
+  {
+    "No": 1214,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Terapeutik",
+    "No-sub": 23,
+    "Keterangan": "Bebat kompresi pada vena varikosum",
+    "Level": "4A"
+  },
+  {
+    "No": 1215,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Terapeutik",
+    "No-sub": 24,
+    "Keterangan": "Rozerplasty kuku",
+    "Level": "4A"
+  },
+  {
+    "No": 1216,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Pencegahan",
+    "No-sub": 25,
+    "Keterangan": "Pencarian kontak (case finding)",
+    "Level": "4A"
+  },
+  {
+    "No": 1217,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Anamnesis",
+    "No-sub": 1,
+    "Keterangan": "Anamnesis dari pihak ketiga",
+    "Level": "4A"
+  },
+  {
+    "No": 1218,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Anamnesis",
+    "No-sub": 2,
+    "Keterangan": "Menelusuri riwayat makan",
+    "Level": "4A"
+  },
+  {
+    "No": 1219,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Anamnesis",
+    "No-sub": 3,
+    "Keterangan": "Anamnesis anak yang lebih tua",
+    "Level": "4A"
+  },
+  {
+    "No": 1220,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Anamnesis",
+    "No-sub": 4,
+    "Keterangan": "Berbicara dengan orang tua yang cemas dan/atau\r\norang tua dengan anak yang sakit berat",
+    "Level": "4A"
+  },
+  {
+    "No": 1221,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 5,
+    "Keterangan": "Pemeriksaan fisik umum dengan perhatian khusus\r\nusia pasien",
+    "Level": "4A"
+  },
+  {
+    "No": 1222,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 6,
+    "Keterangan": "Penilaian keadaan umum, gerakan, perilaku, tangisan",
+    "Level": "4A"
+  },
+  {
+    "No": 1223,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 7,
+    "Keterangan": "Pengamatan malformasi kongenital",
+    "Level": "4A"
+  },
+  {
+    "No": 1224,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 8,
+    "Keterangan": "Palpasi fontanella",
+    "Level": "4A"
+  },
+  {
+    "No": 1225,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 9,
+    "Keterangan": "Respons moro",
+    "Level": "4A"
+  },
+  {
+    "No": 1226,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 10,
+    "Keterangan": "Refleks menggenggam palmar",
+    "Level": "4A"
+  },
+  {
+    "No": 1227,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 11,
+    "Keterangan": "Refleks mengisap",
+    "Level": "4A"
+  },
+  {
+    "No": 1228,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 12,
+    "Keterangan": "Refleks melangkah/menendang",
+    "Level": "4A"
+  },
+  {
+    "No": 1231,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 15,
+    "Keterangan": "Refleks anus",
+    "Level": "4A"
+  },
+  {
+    "No": 1233,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 17,
+    "Keterangan": "Penilaian pertumbuhan dan perkembangan anak (termasuk\r\npenilaian motorik halus dan kasar, psikososial, bahasa)",
+    "Level": "4A"
+  },
+  {
+    "No": 1234,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 18,
+    "Keterangan": "Pengukuran antropometri",
+    "Level": "4A"
+  },
+  {
+    "No": 1235,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 19,
+    "Keterangan": "Pengukuran suhu",
+    "Level": "4A"
+  },
+  {
+    "No": 1240,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 24,
+    "Keterangan": "Tes Rumple Leed",
+    "Level": "4A"
+  },
+  {
+    "No": 1241,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Terapeutik",
+    "No-sub": 25,
+    "Keterangan": "Tatalaksana BBLR (KMC incubator)",
+    "Level": "4A"
+  },
+  {
+    "No": 1243,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Terapeutik",
+    "No-sub": 27,
+    "Keterangan": "Peresepan makanan untuk bayi yang mudah\r\ndipahami ibu",
+    "Level": "4A"
+  },
+  {
+    "No": 1244,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Terapeutik",
+    "No-sub": 28,
+    "Keterangan": "Tatalaksana gizi buruk",
+    "Level": "4A"
+  },
+  {
+    "No": 1245,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Terapeutik",
+    "No-sub": 29,
+    "Keterangan": "Pungsi vena pada anak",
+    "Level": "4A"
+  },
+  {
+    "No": 1246,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Terapeutik",
+    "No-sub": 30,
+    "Keterangan": "Insersi kanula (vena perifer) pada anak",
+    "Level": "4A"
+  },
+  {
+    "No": 1259,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Anak",
+    "Subkategori": "Resusitasi",
+    "No-sub": 43,
+    "Keterangan": "Tatalaksana dehidrasi berat pada kegawatdaruratan setelah penatalaksanaan syok",
+    "Level": "4A"
+  },
+  {
+    "No": 1260,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 44,
+    "Keterangan": "Penilaian keadaan umum",
+    "Level": "4A"
+  },
+  {
+    "No": 1261,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 45,
+    "Keterangan": "Penilaian antropologi (habitus dan postur)",
+    "Level": "4A"
+  },
+  {
+    "No": 1262,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Pemeriksaan Fisik",
+    "No-sub": 46,
+    "Keterangan": "Penilaian kesadaran",
+    "Level": "4A"
+  },
+  {
+    "No": 1263,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Penunjang",
+    "No-sub": 47,
+    "Keterangan": "Punksi vena",
+    "Level": "4A"
+  },
+  {
+    "No": 1265,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Penunjang",
+    "No-sub": 49,
+    "Keterangan": "Finger prick",
+    "Level": "4A"
+  },
+  {
+    "No": 1266,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Penunjang",
+    "No-sub": 50,
+    "Keterangan": "Permintaan dan interpretasi pemeriksaan X-ray: foto polos",
+    "Level": "4A"
+  },
+  {
+    "No": 1274,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 58,
+    "Keterangan": "Menasehati pasien tentang gaya hidup",
+    "Level": "4A"
+  },
+  {
+    "No": 1275,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 59,
+    "Keterangan": "Peresepan rasional, lengkap, dan dapat dibaca",
+    "Level": "4A"
+  },
+  {
+    "No": 1276,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 60,
+    "Keterangan": "Injeksi (intrakutan, intravena, subkutan, intramuskular)",
+    "Level": "4A"
+  },
+  {
+    "No": 1277,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 61,
+    "Keterangan": "Menyiapkan pre-operasi lapangan operasi untuk bedah minor, asepsis, antisepsis, anestesi lokal",
+    "Level": "4A"
+  },
+  {
+    "No": 1278,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 62,
+    "Keterangan": "Persiapan untuk melihat atau menjadi asisten di kamar operasi (cuci tangan, menggunakan baju operasi,\r\nmenggunakan sarung tangan steril, dll)",
+    "Level": "4A"
+  },
+  {
+    "No": 1279,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 63,
+    "Keterangan": "Anestesi infiltrasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1280,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 64,
+    "Keterangan": "Blok saraf lokal",
+    "Level": "4A"
+  },
+  {
+    "No": 1281,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 65,
+    "Keterangan": "Jahit luka",
+    "Level": "4A"
+  },
+  {
+    "No": 1282,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 66,
+    "Keterangan": "Pengambilan benang jahitan",
+    "Level": "4A"
+  },
+  {
+    "No": 1283,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 67,
+    "Keterangan": "Menggunakan anestesi topikal (tetes, semprot)",
+    "Level": "4A"
+  },
+  {
+    "No": 1284,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain - Dewasa",
+    "Subkategori": "Terapeutik",
+    "No-sub": 68,
+    "Keterangan": "Pemberian analgesik",
+    "Level": "4A"
+  },
+  {
+    "No": 1286,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kegawatdaruratan",
+    "No-sub": 70,
+    "Keterangan": "Bantuan hidup dasar",
+    "Level": "4A"
+  },
+  {
+    "No": 1287,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kegawatdaruratan",
+    "No-sub": 71,
+    "Keterangan": "Ventilasi masker",
+    "Level": "4A"
+  },
+  {
+    "No": 1289,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kegawatdaruratan",
+    "No-sub": 73,
+    "Keterangan": "Transpor pasien (transport of casualty)",
+    "Level": "4A"
+  },
+  {
+    "No": 1290,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kegawatdaruratan",
+    "No-sub": 74,
+    "Keterangan": "Manuver Heimlich",
+    "Level": "4A"
+  },
+  {
+    "No": 1291,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kegawatdaruratan",
+    "No-sub": 75,
+    "Keterangan": "Resusitasi cairan",
+    "Level": "4A"
+  },
+  {
+    "No": 1292,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kegawatdaruratan",
+    "No-sub": 76,
+    "Keterangan": "Pemeriksaan turgor kulit untuk menilai dehidrasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1293,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Komunikasi",
+    "No-sub": 77,
+    "Keterangan": "Menyelenggarakan komunikasi lisan maupun tulisan",
+    "Level": "4A"
+  },
+  {
+    "No": 1294,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Komunikasi",
+    "No-sub": 78,
+    "Keterangan": "Edukasi, nasihat dan melatih individu dan kelompok mengenai kesehatan",
+    "Level": "4A"
+  },
+  {
+    "No": 1295,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Komunikasi",
+    "No-sub": 79,
+    "Keterangan": "Menyusun rencana manajemen kesehatan",
+    "Level": "4A"
+  },
+  {
+    "No": 1296,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Komunikasi",
+    "No-sub": 80,
+    "Keterangan": "Konsultasi terapi",
+    "Level": "4A"
+  },
+  {
+    "No": 1297,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Komunikasi",
+    "No-sub": 81,
+    "Keterangan": "Komunikasi lisan dan tulisan kepadateman sejawat atau petugas kesehatan lainnya (rujukan dan konsultasi)",
+    "Level": "4A"
+  },
+  {
+    "No": 1298,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Komunikasi",
+    "No-sub": 82,
+    "Keterangan": "Menulis rekam medik dan membuat pelaporan",
+    "Level": "4A"
+  },
+  {
+    "No": 1299,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Komunikasi",
+    "No-sub": 83,
+    "Keterangan": "Menyusun tulisan ilmiah dan mengirimkan untuk\r\npublikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 1300,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 84,
+    "Keterangan": "Perencanaan dan pelaksanaan, monitoring dan\r\nevaluasi upaya pencegahan dalam berbagai tingkat pelayanan",
+    "Level": "4A"
+  },
+  {
+    "No": 1301,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 85,
+    "Keterangan": "Mengenali perilaku dan gayahidup yang membahayakan",
+    "Level": "4A"
+  },
+  {
+    "No": 1302,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 86,
+    "Keterangan": "Memperlihatkan kemampuan pemeriksaan medis di komunitas",
+    "Level": "4A"
+  },
+  {
+    "No": 1303,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 87,
+    "Keterangan": "Penilaian terhadap risiko masalah kesehatan",
+    "Level": "4A"
+  },
+  {
+    "No": 1304,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 88,
+    "Keterangan": "Memperlihatkan kemampuan penelitian yang berkaitan\r\ndengan lingkungan",
+    "Level": "4A"
+  },
+  {
+    "No": 1305,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 89,
+    "Keterangan": "Memperlihatkan kemampuan perencanaaan, pelaksanaan, monitoring, dan evaluasi suatu intervensi pencegahan kesehatan primer, sekunder, dan tersier",
+    "Level": "4A"
+  },
+  {
+    "No": 1306,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 90,
+    "Keterangan": "Melaksanakan  kegiatan  pencegahan  spesifik  seperti vaksinasi, pemeriksaan medis berkala dan   dukungan\r\nsosial",
+    "Level": "4A"
+  },
+  {
+    "No": 1307,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 91,
+    "Keterangan": "Melakukan pencegahan dan penatalaksanaan kecelakaan kerja serta merancang  program untuk individu, lingkungan, dan institusi kerja",
+    "Level": "4A"
+  },
+  {
+    "No": 1308,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 92,
+    "Keterangan": "Menerapkan 7 langkah keselamatan pasien",
+    "Level": "4A"
+  },
+  {
+    "No": 1309,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 93,
+    "Keterangan": "Melakukan langkah-langkah diagnosis penyakit akibat\r\nkerja dan penanganan pertama di tempat kerja, serta melakukan pelaporan PAK",
+    "Level": "4A"
+  },
+  {
+    "No": 1310,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 94,
+    "Keterangan": "Merencanakan program untuk meningkatkan kesehatan masyarakat termasuk kesehatan lingkungan",
+    "Level": "4A"
+  },
+  {
+    "No": 1311,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 95,
+    "Keterangan": "Melaksanakan 6 program dasar Puskesmas: 1) promosi kesehatan, 2) Kesehatan Lingkungan, 3) KIA termasuk KB, 4) Perbaikan gizi masyarakat, 5) Penanggulangan penyakit: imunisasi, ISPA, Diare, TB,\r\nMalaria 6) Pengobatan dan penanganan kegawatdaruratan",
+    "Level": "4A"
+  },
+  {
+    "No": 1312,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 96,
+    "Keterangan": "Pembinaan kesehatan usia lanjut",
+    "Level": "4A"
+  },
+  {
+    "No": 1313,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 97,
+    "Keterangan": "Menegakkan diagnosis holistik pasien individu dan\r\nkeluarga, dan melakukan terapi dasar secara holistik",
+    "Level": "4A"
+  },
+  {
+    "No": 1314,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 98,
+    "Keterangan": "Melakukan rehabilitasi medik dasar",
+    "Level": "4A"
+  },
+  {
+    "No": 1315,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 99,
+    "Keterangan": "Melakukan rehabilitasi sosial pada individu, keluarga, dan masyarakat",
+    "Level": "4A"
+  },
+  {
+    "No": 1316,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kesehatan Masyarakat/ Kedokteran Pencegahan/ Kedokteran Komunitas",
+    "No-sub": 100,
+    "Keterangan": "Melakukan penatalaksanaan komprehensif pasien,\r\nkeluarga,  dan masyarakat",
+    "Level": "4A"
+  },
+  {
+    "No": 1317,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Supervisi",
+    "No-sub": 101,
+    "Keterangan": "Mengetahui   penyakit-penyakit   yang   dapat   dicegah\r\ndengan imunisasi dan pengendaliannya",
+    "Level": "4A"
+  },
+  {
+    "No": 1318,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Supervisi",
+    "No-sub": 102,
+    "Keterangan": "Mengetahui jenis vaksin beserta\r\n• cara penyimpanan\r\n• cara distribusi\r\n• cara skrining dan konseling pada sasaran\r\n• cara pemberian\r\n• kontraindikasi efek samping yang mungkin terjadi dan upaya penanggulangannya",
+    "Level": "4A\r\n4A\r\n4A\r\n4A\r\n4A\r\n4A"
+  },
+  {
+    "No": 1319,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Supervisi",
+    "No-sub": 103,
+    "Keterangan": "Menjelaskan mekanisme pencatatan dan pelaporan",
+    "Level": "4A"
+  },
+  {
+    "No": 1320,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Supervisi",
+    "No-sub": 104,
+    "Keterangan": "Merencanakan, mengelola, monitoring, dan evaluasi asuransi pelayanan kesehatan misalnya BPJS, jamkesmas, jampersal, askes, dll",
+    "Level": "4A"
+  },
+  {
+    "No": 1321,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kedokteran Forensik & Medikolegal",
+    "No-sub": 105,
+    "Keterangan": "Prosedur medikolegal",
+    "Level": "4A"
+  },
+  {
+    "No": 1322,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kedokteran Forensik & Medikolegal",
+    "No-sub": 106,
+    "Keterangan": "Pembuatan Visum et Repertum",
+    "Level": "4A"
+  },
+  {
+    "No": 1323,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kedokteran Forensik & Medikolegal",
+    "No-sub": 107,
+    "Keterangan": "Pembuatan surat keterangan medis",
+    "Level": "4A"
+  },
+  {
+    "No": 1324,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Kedokteran Forensik & Medikolegal",
+    "No-sub": 108,
+    "Keterangan": "Penerbitan Sertifikat Kematian",
+    "Level": "4A"
+  },
+  {
+    "No": 1326,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Forensik Klinik",
+    "No-sub": 110,
+    "Keterangan": "Pemeriksaan anus",
+    "Level": "4A"
+  },
+  {
+    "No": 1327,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Forensik Klinik",
+    "No-sub": 111,
+    "Keterangan": "Deskripsi luka",
+    "Level": "4A"
+  },
+  {
+    "No": 1328,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Forensik Klinik",
+    "No-sub": 112,
+    "Keterangan": "Pemeriksaan derajat luka",
+    "Level": "4A"
+  },
+  {
+    "No": 1329,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 113,
+    "Keterangan": "Pemeriksaan label mayat",
+    "Level": "4A"
+  },
+  {
+    "No": 1330,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 114,
+    "Keterangan": "Pemeriksaan baju mayat",
+    "Level": "4A"
+  },
+  {
+    "No": 1331,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 115,
+    "Keterangan": "Pemeriksaan lebam mayat",
+    "Level": "4A"
+  },
+  {
+    "No": 1332,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 116,
+    "Keterangan": "Pemeriksaan kaku mayat",
+    "Level": "4A"
+  },
+  {
+    "No": 1333,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 117,
+    "Keterangan": "Pemeriksaan tanda-tanda asfiksia",
+    "Level": "4A"
+  },
+  {
+    "No": 1334,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 118,
+    "Keterangan": "Pemeriksaan gigi mayat",
+    "Level": "4A"
+  },
+  {
+    "No": 1335,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 119,
+    "Keterangan": "Pemeriksaan lubang-lubang pada tubuh",
+    "Level": "4A"
+  },
+  {
+    "No": 1336,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 120,
+    "Keterangan": "Pemeriksaan korban trauma dan deskripsi luka",
+    "Level": "4A"
+  },
+  {
+    "No": 1337,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 121,
+    "Keterangan": "Pemeriksaan patah tulang",
+    "Level": "4A"
+  },
+  {
+    "No": 1338,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Korban Mati",
+    "No-sub": 122,
+    "Keterangan": "Pemeriksaan tanda tenggelam",
+    "Level": "4A"
+  },
+  {
+    "No": 1346,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Teknik Pengambilan Sampel",
+    "No-sub": 130,
+    "Keterangan": "Vaginal swab",
+    "Level": "4A"
+  },
+  {
+    "No": 1347,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Teknik Pengambilan Sampel",
+    "No-sub": 131,
+    "Keterangan": "Buccal swab",
+    "Level": "4A"
+  },
+  {
+    "No": 1348,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Teknik Pengambilan Sampel",
+    "No-sub": 132,
+    "Keterangan": "Pengambilan darah",
+    "Level": "4A"
+  },
+  {
+    "No": 1349,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Teknik Pengambilan Sampel",
+    "No-sub": 133,
+    "Keterangan": "Pengambilan urine",
+    "Level": "4A"
+  },
+  {
+    "No": 1350,
+    "Jenis": "Daftar Ketrampilan Klinis",
+    "Kategori": "Lain-lain",
+    "Subkategori": "Teknik Pengambilan Sampel",
+    "No-sub": 134,
+    "Keterangan": "Pengambilan muntahan atau isi lambung",
+    "Level": "4A"
+  }
+]

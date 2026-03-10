@@ -1,0 +1,147 @@
+/**
+ * @reflection
+ * [IDENTITY]: Lab Reagents Registry
+ * [PURPOSE]: Registry for Laboratory Reagents and Diagnostic Kits.
+ * [STATE]: Stable
+ */
+
+import { MEDICATION_CATEGORIES } from '../utils.js';
+
+export const LAB_REAGENT_MEDS = [
+    {
+        id: 'reagen_hiv',
+        name: 'Rapid Test HIV (3 Metode)',
+        category: MEDICATION_CATEGORIES.LAB_REAGENT,
+        type: 'test',
+        form: 'kit',
+        fornas: true,
+        unitPrice: 32500,
+        sellPrice: 50000,
+        igdPrice: null,
+        minStock: 20,
+        maxStock: 100,
+        supplier: 'dinkes',
+        leadTime: 7,
+        indication: ['screening_hiv'],
+        description: 'Reagen Rapid Test HIV'
+    },
+    {
+        id: 'reagen_syphilis',
+        name: 'Rapid Test Sifilis (TP Rapid)',
+        category: MEDICATION_CATEGORIES.LAB_REAGENT,
+        type: 'test',
+        form: 'kit',
+        fornas: true,
+        unitPrice: 19500,
+        sellPrice: 30000,
+        igdPrice: null,
+        minStock: 20,
+        maxStock: 100,
+        supplier: 'dinkes',
+        leadTime: 7,
+        indication: ['screening_sifilis'],
+        description: 'Reagen Rapid Test Sifilis'
+    },
+    {
+        id: 'reagen_hbsag',
+        name: 'Rapid Test HBsAg',
+        category: MEDICATION_CATEGORIES.LAB_REAGENT,
+        type: 'test',
+        form: 'kit',
+        fornas: true,
+        unitPrice: 16250,
+        sellPrice: 25000,
+        igdPrice: null,
+        minStock: 20,
+        maxStock: 100,
+        supplier: 'dinkes',
+        leadTime: 7,
+        indication: ['screening_hepatitis_b'],
+        description: 'Reagen Rapid Test HBsAg'
+    },
+    {
+        id: 'stik_gds',
+        name: 'Stik Gula Darah (GDS)',
+        category: MEDICATION_CATEGORIES.LAB_REAGENT,
+        type: 'tablet',
+        form: 'test_strip',
+        fornas: true,
+        unitPrice: 3250,
+        sellPrice: 5000,
+        igdPrice: 7500,
+        minStock: 50,
+        maxStock: 500,
+        supplier: 'dinkes',
+        leadTime: 5,
+        indication: ['cek_gds', 'diabetes'],
+        description: 'Stik strip untuk cek gula darah sewaktu'
+    },
+    {
+        id: 'stik_au',
+        name: 'Stik Asam Urat (AU)',
+        category: MEDICATION_CATEGORIES.LAB_REAGENT,
+        type: 'tablet',
+        form: 'test_strip',
+        fornas: true,
+        unitPrice: 4550,
+        sellPrice: 7000,
+        igdPrice: 10000,
+        minStock: 50,
+        maxStock: 500,
+        supplier: 'dinkes',
+        leadTime: 5,
+        indication: ['cek_asam_urat', 'gout'],
+        description: 'Stik strip untuk cek asam urat'
+    },
+    {
+        id: 'stik_cholesterol',
+        name: 'Stik Kolesterol Total',
+        category: MEDICATION_CATEGORIES.LAB_REAGENT,
+        type: 'tablet',
+        form: 'test_strip',
+        fornas: true,
+        unitPrice: 16250,
+        sellPrice: 25000,
+        igdPrice: 35000,
+        minStock: 20,
+        maxStock: 100,
+        supplier: 'dinkes',
+        leadTime: 5,
+        indication: ['cek_kolesterol', 'dislipidemia'],
+        description: 'Stik strip untuk cek kolesterol total'
+    },
+    {
+        id: 'rapid_antigen',
+        name: 'Rapid Test Antigen COVID-19',
+        category: MEDICATION_CATEGORIES.LAB_REAGENT,
+        type: 'test',
+        form: 'kit',
+        fornas: true,
+        unitPrice: 32500,
+        sellPrice: 50000,
+        igdPrice: null,
+        minStock: 20,
+        maxStock: 200,
+        supplier: 'dinkes',
+        leadTime: 3,
+        indication: ['screening_covid'],
+        description: 'Rapid Test Antigen COVID-19'
+    },
+    {
+        id: 'reagen_goldar',
+        name: 'Reagen Golongan Darah (Set)',
+        category: MEDICATION_CATEGORIES.LAB_REAGENT,
+        type: 'set',
+        form: 'solution',
+        fornas: true,
+        unitPrice: 97500,
+        sellPrice: 0,
+        igdPrice: 15000,
+        minStock: 2,
+        maxStock: 10,
+        supplier: 'vendor_swasta',
+        leadTime: 7,
+        indication: ['cek_golongan_darah'],
+        description: 'Set reagen Anti-A, Anti-B, Anti-AB, Anti-D'
+    }
+];

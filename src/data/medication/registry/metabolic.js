@@ -1,0 +1,147 @@
+/**
+ * @reflection
+ * [IDENTITY]: Metabolic & Gout Registry
+    * [PURPOSE]: Registry for Metabolic and Gout medications.
+ * [STATE]: Stable
+ */
+
+import { MEDICATION_CATEGORIES } from '../utils.js';
+
+export const METABOLIC_MEDS = [
+    {
+        id: 'sodium_bicarbonate_500',
+        name: 'Sodium Bicarbonate 500mg',
+        category: MEDICATION_CATEGORIES.METABOLIC,
+        type: 'tablet',
+        form: 'tablet',
+        fornas: true,
+        unitPrice: 200,
+        sellPrice: 500,
+        igdPrice: 1000,
+        minStock: 100,
+        maxStock: 1000,
+        supplier: 'dinkes',
+        leadTime: 5,
+        indication: ['acidosis', 'hiperurisemia', 'alkalinisasi_urin'],
+        description: 'Sodium Bicarbonate untuk alkalinisasi urin pada gout'
+    },
+    {
+        id: 'simvastatin_20',
+        name: 'Simvastatin 20mg',
+        category: MEDICATION_CATEGORIES.METABOLIC,
+        type: 'tablet',
+        form: 'tablet',
+        fornas: true,
+        unitPrice: 325,
+        sellPrice: 500,
+        igdPrice: null,
+        minStock: 100,
+        maxStock: 1000,
+        supplier: 'dinkes',
+        leadTime: 5,
+        indication: ['dislipidemia', 'hiperkolesterolemia'],
+        description: 'Statin untuk menurunkan kolesterol'
+    },
+    {
+        id: 'gemfibrozil_300',
+        name: 'Gemfibrozil 300mg',
+        category: MEDICATION_CATEGORIES.METABOLIC,
+        type: 'kapsul',
+        form: 'capsule',
+        fornas: true,
+        unitPrice: 650,
+        sellPrice: 1000,
+        igdPrice: null,
+        minStock: 100,
+        maxStock: 1000,
+        supplier: 'dinkes',
+        leadTime: 5,
+        indication: ['hipertrigliseridemia'],
+        description: 'Fibrat untuk menurunkan trigliserida'
+    },
+    {
+        id: 'dextrose_oral',
+        name: 'Dextrose Oral (Gula Murni/Dextrose Powder)',
+        category: MEDICATION_CATEGORIES.METABOLIC,
+        type: 'sachet',
+        form: 'powder',
+        fornas: true,
+        unitPrice: 1000,
+        sellPrice: 2000,
+        igdPrice: null,
+        minStock: 50,
+        maxStock: 500,
+        supplier: 'dinkes',
+        leadTime: 3,
+        indication: ['hipoglikemia_ringan'],
+        description: 'Gula cepat serap untuk hipoglikemia'
+    },
+    {
+        id: 'd40_iv',
+        name: 'Dextrose 40% (D40) Infus',
+        category: MEDICATION_CATEGORIES.METABOLIC,
+        type: 'flash',
+        form: 'injection',
+        fornas: true,
+        unitPrice: 15000,
+        sellPrice: 20000,
+        igdPrice: 35000,
+        minStock: 20,
+        maxStock: 100,
+        supplier: 'dinkes',
+        leadTime: 3,
+        indication: ['hipoglikemia_berat'],
+        description: 'Larutan dekstrosa konsentrasi tinggi untuk emergensi'
+    },
+    {
+        id: 'colchicine_0_5',
+        name: 'Colchicine 0.5mg',
+        category: MEDICATION_CATEGORIES.METABOLIC,
+        type: 'tablet',
+        form: 'tablet',
+        fornas: true,
+        unitPrice: 1300,
+        sellPrice: 2000,
+        igdPrice: null,
+        minStock: 50,
+        maxStock: 500,
+        supplier: 'dinkes',
+        leadTime: 5,
+        indication: ['gout_akut'],
+        description: 'Terapi spesifik untuk serangan gout akut'
+    },
+    {
+        id: 'calcium',
+        name: 'Calcium (Generic/Kalk)',
+        category: MEDICATION_CATEGORIES.METABOLIC,
+        type: 'tablet',
+        form: 'tablet',
+        fornas: true,
+        unitPrice: 195,
+        sellPrice: 300,
+        igdPrice: null,
+        minStock: 100,
+        maxStock: 1000,
+        supplier: 'dinkes',
+        leadTime: 3,
+        indication: ['defisiensi_mineral'],
+        description: 'Suplemen Kalsium (Alias)'
+    },
+    {
+        id: 'zinc_tab',
+        name: 'Zinc 20mg',
+        category: MEDICATION_CATEGORIES.METABOLIC,
+        type: 'tablet',
+        form: 'tablet',
+        fornas: true,
+        unitPrice: 325,
+        sellPrice: 500,
+        igdPrice: null,
+        minStock: 100,
+        maxStock: 1000,
+        supplier: 'dinkes',
+        leadTime: 3,
+        indication: ['diare_anak', 'defisiensi_zinc'],
+        description: 'Suplemen Zinc'
+    }
+];

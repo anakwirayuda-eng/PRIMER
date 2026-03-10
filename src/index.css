@@ -1,0 +1,769 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* Default Theme (Medika Blue) */
+  :root {
+    --color-bg-main: #f1f5f9;
+    /* slate-100 */
+    --color-bg-panel: #ffffff;
+    /* white */
+    --color-text-main: #1e293b;
+    /* slate-800 */
+    --color-text-muted: #64748b;
+    /* slate-500 */
+    --color-primary: #059669;
+    /* emerald-600 */
+    --color-primary-dark: #047857;
+    /* emerald-700 */
+    --color-accent: #2563eb;
+    /* blue-600 */
+    --bg-pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23cbd5e1' fill-opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* Default Theme Dark Mode Overrides */
+  :root.dark {
+    --color-bg-main: #0f172a;
+    /* slate-900 */
+    --color-bg-panel: #1e293b;
+    /* slate-800 */
+    --color-text-main: #f8fafc;
+    /* slate-50 */
+    --color-text-muted: #94a3b8;
+    /* slate-400 */
+    --bg-pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%231e293b' fill-opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* Emerald Chat Theme (WhatsApp-ish) */
+  :root.theme-emerald {
+    --color-bg-main: #e5ddd5;
+    /* Warm beige like WhatsApp */
+    --color-bg-panel: #ffffff;
+    --color-text-main: #111827;
+    /* gray-900 */
+    --color-text-muted: #4b5563;
+    /* gray-600 */
+    --color-primary: #008069;
+    /* whatsapp green */
+    --color-primary-dark: #015c4b;
+    --color-accent: #075e54;
+    /* whatsapp dark */
+    --bg-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23008069' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Midnight Dispatch Theme (Neon Dark) */
+  :root.theme-midnight {
+    --color-bg-main: #0f172a;
+    /* slate-900 */
+    --color-bg-panel: #1e293b;
+    /* slate-800 */
+    --color-text-main: #f8fafc;
+    /* slate-50 */
+    --color-text-muted: #94a3b8;
+    /* slate-400 */
+    --color-primary: #f59e0b;
+    /* amber-500 */
+    --color-primary-dark: #d97706;
+    /* amber-600 */
+    --color-accent: #8b5cf6;
+    /* violet-500 */
+    --bg-pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%238b5cf6' fill-opacity='0.08' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Military Tactical Theme (Rugged) */
+  :root.theme-military {
+    --color-bg-main: #2b2f21;
+    /* Charcoal Olive */
+    --color-bg-panel: #3a4030;
+    /* Dark Forest */
+    --color-text-main: #f1f5f1;
+    /* Fog */
+    --color-text-muted: #94a37e;
+    /* Sage */
+    --color-primary: #738c4b;
+    /* Army Green */
+    --color-primary-dark: #5a6e3a;
+    /* Deep Olive */
+    --color-accent: #c2b280;
+    /* Sand / Khaki */
+    --bg-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h10v10H0zM20 20h10v10H20zM40 40h10v10H40z' fill='%23738c4b' fill-opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  /* Premium Glass Theme (Modern Luxury) */
+  :root.theme-premium {
+    --color-bg-main: #020617;
+    /* Darkest Slate */
+    --color-bg-panel: rgba(30, 41, 59, 0.7);
+    /* Frosted Slate */
+    --color-text-main: #f0f9ff;
+    /* Clear Blue-White */
+    --color-text-muted: #94a3b8;
+    /* Slate 400 */
+    --color-primary: #38bdf8;
+    /* Sky 400 */
+    --color-primary-dark: #0ea5e9;
+    /* Sky 500 */
+    --color-accent: #f0abfc;
+    /* Pink 400 */
+    --bg-pattern: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
+  }
+
+  body {
+    background-color: var(--color-bg-main);
+    background-image: var(--bg-pattern);
+    color: var(--color-text-main);
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .dark body,
+  :root.dark body,
+  :root.theme-midnight body,
+  :root.theme-military body,
+  :root.theme-premium body {
+    @apply bg-slate-900 text-slate-100;
+  }
+
+  /* FF8 Custom Cursor — disabled when user prefers reduced motion
+     or when a screen reader is likely active (respects prefers-reduced-motion) */
+  @media (prefers-reduced-motion: no-preference) {
+
+    body,
+    button,
+    a,
+    [role="button"],
+    input,
+    select,
+    textarea {
+      cursor: url('/assets/cursor_ff8.png'), auto;
+    }
+
+    /* Pointer states */
+    button:hover,
+    a:hover,
+    [role="button"]:hover,
+    .cursor-pointer {
+      cursor: url('/assets/cursor_ff8.png'), pointer;
+    }
+  }
+}
+
+/* ───────────────────────────────────────────────────────
+   Dark mode overrides
+   These handle components that still use light-mode Tailwind
+   classes (bg-white, bg-slate-50, text-slate-800, etc.).
+   Grouped and reduced from ~420 lines of individual rules
+   to a compact set of essential overrides.
+   ─────────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Panel / Card backgrounds ── */
+  .dark .bg-white,
+  :root.theme-midnight .bg-white,
+  :root.theme-military .bg-white,
+  :root.theme-premium .bg-white {
+    background-color: theme('colors.slate.800') !important;
+    color: theme('colors.slate.100') !important;
+  }
+
+  .dark .bg-slate-50,
+  :root.theme-midnight .bg-slate-50,
+  :root.theme-military .bg-slate-50,
+  :root.theme-premium .bg-slate-50 {
+    background-color: theme('colors.slate.900') !important;
+  }
+
+  /* ── Neutral gray backgrounds ── */
+  .dark .bg-slate-100 {
+    background-color: theme('colors.slate.800') !important;
+  }
+
+  .dark .bg-slate-200 {
+    background-color: theme('colors.slate.700') !important;
+  }
+
+  .dark .bg-slate-300 {
+    background-color: theme('colors.slate.600') !important;
+  }
+
+  /* ── Opacity whites (glassmorphism safe) ── */
+  .dark .bg-white\/5,
+  .dark .bg-white\/10,
+  .dark .bg-white\/20,
+  .dark .bg-white\/30,
+  .dark .bg-white\/40,
+  .dark .bg-white\/50,
+  .dark .bg-white\/60,
+  .dark .bg-white\/80 {
+    background-color: theme('colors.slate.900 / 0.3') !important;
+  }
+
+  .dark .bg-slate-50\/5,
+  .dark .bg-slate-50\/10,
+  .dark .bg-slate-50\/20,
+  .dark .bg-slate-50\/30,
+  .dark .bg-slate-50\/40,
+  .dark .bg-slate-50\/50,
+  .dark .bg-slate-50\/60,
+  .dark .bg-slate-50\/80 {
+    background-color: theme('colors.slate.950 / 0.5') !important;
+  }
+
+  /* ── Colored -50 backgrounds (keep but darken) ── */
+  .dark .bg-emerald-50,
+  .dark .bg-green-50 {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+  }
+
+  .dark .bg-blue-50,
+  .dark .bg-sky-50 {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+  }
+
+  .dark .bg-indigo-50 {
+    background-color: rgba(99, 102, 241, 0.1) !important;
+  }
+
+  .dark .bg-amber-50,
+  .dark .bg-yellow-50 {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+  }
+
+  .dark .bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+  }
+
+  .dark .bg-pink-50 {
+    background-color: rgba(236, 72, 153, 0.1) !important;
+  }
+
+  .dark .bg-orange-50 {
+    @apply !bg-orange-900/30;
+  }
+
+  .dark .bg-purple-50 {
+    @apply !bg-purple-900/30;
+  }
+
+  .dark .bg-teal-50 {
+    @apply !bg-teal-900/30;
+  }
+
+  /* ── Colored -100 backgrounds ── */
+  .dark .bg-emerald-100 {
+    background-color: rgba(6, 78, 59, 0.5) !important;
+  }
+
+  .dark .bg-blue-100 {
+    background-color: rgba(30, 58, 138, 0.5) !important;
+  }
+
+  .dark .bg-amber-100 {
+    background-color: rgba(120, 53, 15, 0.5) !important;
+  }
+
+  .dark .bg-red-100 {
+    background-color: rgba(127, 29, 29, 0.5) !important;
+  }
+
+  .dark .bg-indigo-100 {
+    background-color: rgba(49, 46, 129, 0.5) !important;
+  }
+
+  .dark .bg-pink-100 {
+    background-color: rgba(131, 24, 67, 0.5) !important;
+  }
+
+  .dark .bg-green-100 {
+    @apply !bg-green-800/50;
+  }
+
+  /* ── Borders ── */
+  .dark .border-slate-200 {
+    border-color: theme('colors.slate.700') !important;
+  }
+
+  .dark .border-slate-300 {
+    border-color: theme('colors.slate.600') !important;
+  }
+
+  /* ── Text: slate neutrals (for readability in dark mode) ── */
+  .dark .text-slate-900,
+  :root.theme-midnight .text-slate-900,
+  :root.theme-military .text-slate-900,
+  :root.theme-premium .text-slate-900 {
+    color: theme('colors.slate.100') !important;
+  }
+
+  .dark .text-slate-800,
+  :root.theme-midnight .text-slate-800,
+  :root.theme-military .text-slate-800,
+  :root.theme-premium .text-slate-800 {
+    color: theme('colors.slate.200') !important;
+  }
+
+  .dark .text-slate-700,
+  :root.theme-midnight .text-slate-700,
+  :root.theme-military .text-slate-700,
+  :root.theme-premium .text-slate-700 {
+    color: theme('colors.slate.300') !important;
+  }
+
+  .dark .text-slate-600,
+  :root.theme-midnight .text-slate-600,
+  :root.theme-military .text-slate-600,
+  :root.theme-premium .text-slate-600 {
+    color: theme('colors.slate.400') !important;
+  }
+
+  .dark .text-slate-500,
+  :root.theme-midnight .text-slate-500,
+  :root.theme-military .text-slate-500,
+  :root.theme-premium .text-slate-500 {
+    color: theme('colors.slate.400') !important;
+  }
+
+  .dark .text-slate-400,
+  :root.theme-midnight .text-slate-400,
+  :root.theme-military .text-slate-400,
+  :root.theme-premium .text-slate-400 {
+    color: theme('colors.slate.300') !important;
+  }
+
+  /* ── Text: colored visibility (prevent dark-on-dark) ──
+       700 → 300, 800 → 200, 900 → 100, 600 → 300 */
+  .dark .text-emerald-700 {
+    color: theme('colors.emerald.300') !important;
+  }
+
+  .dark .text-emerald-800 {
+    color: theme('colors.emerald.200') !important;
+  }
+
+  .dark .text-emerald-900 {
+    color: theme('colors.emerald.100') !important;
+  }
+
+  .dark .text-emerald-600 {
+    color: theme('colors.emerald.300') !important;
+  }
+
+  .dark .text-blue-700 {
+    color: theme('colors.blue.300') !important;
+  }
+
+  .dark .text-blue-800 {
+    color: theme('colors.blue.300') !important;
+  }
+
+  .dark .text-blue-900 {
+    color: theme('colors.blue.200') !important;
+  }
+
+  .dark .text-blue-600 {
+    color: theme('colors.blue.300') !important;
+  }
+
+  .dark .text-indigo-700 {
+    color: theme('colors.indigo.300') !important;
+  }
+
+  .dark .text-indigo-800 {
+    color: theme('colors.indigo.200') !important;
+  }
+
+  .dark .text-indigo-900 {
+    color: theme('colors.indigo.100') !important;
+  }
+
+  .dark .text-indigo-600 {
+    color: theme('colors.indigo.300') !important;
+  }
+
+  .dark .text-indigo-500 {
+    color: theme('colors.indigo.400') !important;
+  }
+
+  .dark .text-amber-700 {
+    color: theme('colors.amber.300') !important;
+  }
+
+  .dark .text-amber-800 {
+    color: theme('colors.amber.200') !important;
+  }
+
+  .dark .text-amber-900 {
+    color: theme('colors.amber.100') !important;
+  }
+
+  .dark .text-red-700 {
+    color: theme('colors.red.300') !important;
+  }
+
+  .dark .text-red-800 {
+    color: theme('colors.red.200') !important;
+  }
+
+  .dark .text-red-900 {
+    color: theme('colors.red.100') !important;
+  }
+
+  .dark .text-red-600 {
+    color: theme('colors.red.300') !important;
+  }
+
+  .dark .text-green-700 {
+    color: theme('colors.green.300') !important;
+  }
+
+  .dark .text-green-800 {
+    color: theme('colors.green.200') !important;
+  }
+
+  .dark .text-green-900 {
+    color: theme('colors.green.100') !important;
+  }
+
+  .dark .text-green-600 {
+    color: theme('colors.green.300') !important;
+  }
+
+  .dark .text-yellow-700 {
+    color: theme('colors.yellow.300') !important;
+  }
+
+  .dark .text-yellow-600 {
+    color: theme('colors.yellow.300') !important;
+  }
+
+  .dark .text-purple-700 {
+    color: theme('colors.purple.300') !important;
+  }
+
+  .dark .text-purple-800 {
+    color: theme('colors.purple.200') !important;
+  }
+
+  .dark .text-purple-900 {
+    color: theme('colors.purple.100') !important;
+  }
+
+  .dark .text-pink-700 {
+    color: theme('colors.pink.300') !important;
+  }
+
+  .dark .text-pink-800 {
+    color: theme('colors.pink.200') !important;
+  }
+
+  .dark .text-pink-900 {
+    color: theme('colors.pink.100') !important;
+  }
+
+  .dark .text-teal-700 {
+    color: theme('colors.teal.300') !important;
+  }
+
+  .dark .text-teal-800 {
+    color: theme('colors.teal.200') !important;
+  }
+
+  .dark .text-teal-900 {
+    color: theme('colors.teal.100') !important;
+  }
+
+  .dark .text-orange-700 {
+    color: theme('colors.orange.300') !important;
+  }
+
+  .dark .text-orange-800 {
+    color: theme('colors.orange.200') !important;
+  }
+
+  .dark .text-orange-900 {
+    color: theme('colors.orange.100') !important;
+  }
+
+  /* ── Input fields ── */
+  .dark input,
+  .dark textarea,
+  .dark select {
+    @apply bg-slate-700 border-slate-600 text-slate-100 placeholder-slate-400;
+  }
+
+  /* ── Hover states ── */
+  .dark .hover\:bg-slate-50:hover {
+    @apply !bg-slate-700;
+  }
+
+  .dark .hover\:bg-slate-100:hover {
+    @apply !bg-slate-700;
+  }
+
+  /* ── Gradients ── */
+  .dark .bg-gradient-to-r.from-emerald-600.to-teal-600 {
+    @apply from-emerald-700 to-teal-700;
+  }
+
+  .dark .bg-gradient-to-br.from-emerald-50.to-teal-50 {
+    @apply !from-emerald-900/30 !to-teal-900/30;
+  }
+
+  .dark .bg-gradient-to-br.from-indigo-50.to-purple-50 {
+    @apply !from-indigo-900/30 !to-purple-900/30;
+  }
+
+  .dark .bg-gradient-to-br.from-amber-50.to-orange-50 {
+    @apply !from-amber-900/30 !to-orange-900/30;
+  }
+
+  /* ── Shadows ── */
+  .dark .shadow-sm,
+  .dark .shadow,
+  .dark .shadow-md,
+  .dark .shadow-lg,
+  .dark .shadow-xl {
+    --tw-shadow-color: rgba(0, 0, 0, 0.5);
+  }
+
+  /* ── Theme-specific overrides ── */
+  :root.theme-premium .bg-white,
+  :root.theme-premium .bg-slate-50 {
+    background: rgba(30, 41, 59, 0.6) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  :root.theme-military .bg-emerald-50,
+  :root.theme-military .bg-green-50 {
+    background: rgba(115, 140, 75, 0.1) !important;
+  }
+}
+
+/* Smooth transition for theme changes */
+* {
+  transition-property: background-color, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Scrollbar customization */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.slate.400') transparent;
+  overflow-x: hidden !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 0px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: theme('colors.slate.500');
+  border-radius: 20px;
+  border: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-horizontal {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* ── Thin scrollbar (from SaveSlotSelector) ── */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* ── Pre-game cinematic keyframes (from OpeningScreen) ── */
+@keyframes cinematic-float {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.15;
+  }
+
+  25% {
+    transform: translateY(-30px) translateX(15px);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translateY(-50px) translateX(-10px);
+    opacity: 0.25;
+  }
+
+  75% {
+    transform: translateY(-25px) translateX(20px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes beam-sweep {
+  0% {
+    left: -5%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 105%;
+    opacity: 0;
+  }
+}
+
+@keyframes bloom-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes particle-scatter {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes burst-ring {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+
+  100% {
+    width: 600px;
+    height: 600px;
+    opacity: 0;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes skip-pulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ── Save slot float (from SaveSlotSelector) ── */
+@keyframes slot-float {
+  0% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.15;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translateY(-30px) translateX(15px);
+    opacity: 0.1;
+  }
+}
+
+/* ── Dollhouse Dive flash (from WilayahPage) ── */
+@keyframes diveFlash {
+  0% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.95;
+  }
+}
+
+/* ── Quest Map Markers (Living World) ── */
+@keyframes questBob {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* ── Shimmer effect for scanning animations ── */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ── Accessibility: prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

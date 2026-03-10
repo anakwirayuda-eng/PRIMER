@@ -1,0 +1,229 @@
+{
+    "VERSION": 1,
+    "ASSETS": {
+        "VILLAGE_MAP": {
+            "file": "village_map.jpg",
+            "type": "image"
+        },
+        "VILLAGE_MAP_SATELLITE": {
+            "file": "village_map_satellite.png",
+            "type": "image"
+        },
+        "VILLAGE_PROFILE_HERO": {
+            "file": "village_profile_hero.png",
+            "type": "image"
+        },
+        "MCK_FACILITY": {
+            "file": "mck_facility.png",
+            "type": "image"
+        },
+        "CURSOR_FF8": {
+            "file": "cursor_ff8.png",
+            "type": "image"
+        },
+        "FACILITY_TILESET": {
+            "file": "facility_tileset.png",
+            "type": "image"
+        },
+        "WILAYAH_TILESET": {
+            "file": "wilayah_tileset.png",
+            "type": "image"
+        },
+        "FKK_LOGO": {
+            "file": "fkk_logo.png",
+            "type": "image"
+        },
+        "ITS_LOGO": {
+            "file": "its_logo.png",
+            "type": "image"
+        },
+        "BUILDING_ALUN_ALUN": {
+            "file": "buildings/alun_alun.png",
+            "type": "image"
+        },
+        "BUILDING_BALAI_DESA": {
+            "file": "buildings/balai_desa.png",
+            "type": "image"
+        },
+        "BUILDING_BANK_SAMPAH": {
+            "file": "buildings/bank_sampah.png",
+            "type": "image"
+        },
+        "BUILDING_DASHAT": {
+            "file": "buildings/dashat.png",
+            "type": "image"
+        },
+        "BUILDING_HOUSE": {
+            "file": "buildings/house.png",
+            "type": "image"
+        },
+        "BUILDING_IKS_SCOREBOARD": {
+            "file": "buildings/iks_scoreboard.png",
+            "type": "image"
+        },
+        "BUILDING_KANTOR_DESA": {
+            "file": "buildings/kantor_desa.png",
+            "type": "image"
+        },
+        "BUILDING_MARKET": {
+            "file": "buildings/market.png",
+            "type": "image"
+        },
+        "BUILDING_MCK": {
+            "file": "buildings/mck.png",
+            "type": "image"
+        },
+        "BUILDING_MOSQUE": {
+            "file": "buildings/mosque.png",
+            "type": "image"
+        },
+        "BUILDING_PAMSIMAS": {
+            "file": "buildings/pamsimas.png",
+            "type": "image"
+        },
+        "BUILDING_POLINDES": {
+            "file": "buildings/polindes.png",
+            "type": "image"
+        },
+        "BUILDING_POS_GIZI": {
+            "file": "buildings/pos_gizi.png",
+            "type": "image"
+        },
+        "BUILDING_POS_UKK": {
+            "file": "buildings/pos_ukk.png",
+            "type": "image"
+        },
+        "BUILDING_POSYANDU": {
+            "file": "buildings/posyandu.png",
+            "type": "image"
+        },
+        "BUILDING_PUSKESMAS": {
+            "file": "buildings/puskesmas.png",
+            "type": "image"
+        },
+        "BUILDING_PUSTU": {
+            "file": "buildings/pustu.png",
+            "type": "image"
+        },
+        "BUILDING_RTK": {
+            "file": "buildings/rtk.png",
+            "type": "image"
+        },
+        "BUILDING_RUMAH_DINAS": {
+            "file": "buildings/rumah_dinas.png",
+            "type": "image"
+        },
+        "BUILDING_SCHOOL": {
+            "file": "buildings/school.png",
+            "type": "image"
+        },
+        "BUILDING_TK": {
+            "file": "buildings/tk.png",
+            "type": "image"
+        },
+        "BUILDING_TOGA": {
+            "file": "buildings/toga.png",
+            "type": "image"
+        },
+        "BUILDING_TPU": {
+            "file": "buildings/tpu.png",
+            "type": "image"
+        },
+        "BUILDING_WELL": {
+            "file": "buildings/well.png",
+            "type": "image"
+        },
+        "BUILDING_HOUSE_BLUE": {
+            "file": "buildings/house_blue.png",
+            "type": "image"
+        },
+        "BUILDING_HOUSE_MODERN": {
+            "file": "buildings/house_modern.png",
+            "type": "image"
+        },
+        "BUILDING_HOUSE_TRAD": {
+            "file": "buildings/house_trad.png",
+            "type": "image"
+        },
+        "BUILDING_HOUSE_CLASSIC": {
+            "file": "buildings/house_classic.png",
+            "type": "image"
+        },
+        "BUILDING_HOUSE_RED": {
+            "file": "buildings/house_red.png",
+            "type": "image"
+        },
+        "BUILDING_HOUSE_HUT": {
+            "file": "buildings/house_hut.png",
+            "type": "image"
+        },
+        "BUILDING_HUTAN_LINDUNG": {
+            "file": "buildings/hutan_lindung.png",
+            "type": "image"
+        },
+        "BUILDING_SUNGAI_CIKAPAS": {
+            "file": "buildings/sungai_cikapas.png",
+            "type": "image"
+        },
+        "BUILDING_PLAYGROUND": {
+            "file": "buildings/playground.png",
+            "type": "image"
+        },
+        "BUILDING_LAPANGAN": {
+            "file": "buildings/lapangan.png",
+            "type": "image"
+        },
+        "BUILDING_TOKO_KELONTONG": {
+            "file": "buildings/toko_kelontong.png",
+            "type": "image"
+        },
+        "BUILDING_WARUNG": {
+            "file": "buildings/warung.png",
+            "type": "image"
+        },
+        "ROOM_BEDROOM": {
+            "file": "rooms/bedroom.png",
+            "type": "image"
+        },
+        "ROOM_GARAGE": {
+            "file": "rooms/garage.png",
+            "type": "image"
+        },
+        "ROOM_GUEST_ROOM": {
+            "file": "rooms/guest_room.png",
+            "type": "image"
+        },
+        "ROOM_GYM": {
+            "file": "rooms/gym.png",
+            "type": "image"
+        },
+        "ROOM_KITCHEN": {
+            "file": "rooms/kitchen.png",
+            "type": "image"
+        },
+        "ROOM_LIVING_ROOM": {
+            "file": "rooms/living_room.png",
+            "type": "image"
+        },
+        "ROOM_WORKSPACE": {
+            "file": "rooms/workspace.png",
+            "type": "image"
+        },
+        "ROAD_ASPHALT_H": {
+            "file": "road_asphalt_h.png",
+            "type": "image"
+        },
+        "ROAD_ASPHALT_V": {
+            "file": "road_asphalt_v.png",
+            "type": "image"
+        },
+        "ROAD_DIRT_H": {
+            "file": "road_dirt_h.png",
+            "type": "image"
+        },
+        "ROAD_DIRT_V": {
+            "file": "road_dirt_v.png",
+            "type": "image"
+        }
+    }
+}

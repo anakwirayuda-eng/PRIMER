@@ -1,0 +1,23 @@
+{
+  "gate": "ASSET_HYGIENE",
+  "score": 100,
+  "counts": {
+    "total_files": 44,
+    "manifest_keys": 44,
+    "missing": 0,
+    "orphan": 0,
+    "missing_meta": 0,
+    "bad_key": 0,
+    "dup_path": 0,
+    "bad_ext": 0
+  },
+  "issues": {
+    "manifest_missing": [],
+    "manifest_bad_key": [],
+    "manifest_duplicate_path": [],
+    "manifest_orphaned_asset_files": [],
+    "generated_missing_meta": [],
+    "unsupported_extensions": []
+  },
+  "generatedAt": "2026-02-14T04:25:57.614Z"
+}

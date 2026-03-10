@@ -1,0 +1,1346 @@
+[
+  {
+    "No": 4,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Gangguan Neurologik Paediatrik",
+    "No-sub": 4,
+    "Keterangan": "Kejang demam",
+    "Level": "4A",
+    "Neuro": "Y"
+  },
+  {
+    "No": 9,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Infeksi",
+    "No-sub": 9,
+    "Keterangan": "Tetanus",
+    "Level": "4A",
+    "Neuro": "Y"
+  },
+  {
+    "No": 13,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Infeksi",
+    "No-sub": 13,
+    "Keterangan": "HIV AIDS tanpa komplikasi",
+    "Level": "4A",
+    "Neuro": "Y"
+  },
+  {
+    "No": 24,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Nyeri Kepala",
+    "No-sub": 24,
+    "Keterangan": "Tension headache",
+    "Level": "4A",
+    "Neuro": "Y"
+  },
+  {
+    "No": 25,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Nyeri Kepala",
+    "No-sub": 25,
+    "Keterangan": "Migren",
+    "Level": "4A",
+    "Neuro": "Y"
+  },
+  {
+    "No": 34,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Lesi Kranial dan Batang Otak",
+    "No-sub": 34,
+    "Keterangan": "Bells’ palsy",
+    "Level": "4A",
+    "Neuro": "Y"
+  },
+  {
+    "No": 37,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Saraf",
+    "Subkategori": "Gangguan Sistem Vaskular",
+    "No-sub": 37,
+    "Keterangan": "Vertigo (Benign paroxysmal positional vertigo)",
+    "Level": "4A",
+    "Neuro": "Y"
+  },
+  {
+    "No": 99,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Gangguan Cemas Lainnya",
+    "No-sub": 26,
+    "Keterangan": "Gangguan somatoform",
+    "Level": "4A"
+  },
+  {
+    "No": 121,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Psikiatri",
+    "Subkategori": "Gangguan Tidur",
+    "No-sub": 48,
+    "Keterangan": "Insomnia",
+    "Level": "4A"
+  },
+  {
+    "No": 126,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Konjunctiva",
+    "No-sub": 1,
+    "Keterangan": "Benda asing di konjungtiva",
+    "Level": "4A"
+  },
+  {
+    "No": 127,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Konjunctiva",
+    "No-sub": 2,
+    "Keterangan": "Konjungtivitis",
+    "Level": "4A"
+  },
+  {
+    "No": 129,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Konjunctiva",
+    "No-sub": 4,
+    "Keterangan": "Perdarahan subkonjungtiva",
+    "Level": "4A"
+  },
+  {
+    "No": 130,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Konjunctiva",
+    "No-sub": 5,
+    "Keterangan": "Mata kering",
+    "Level": "4A"
+  },
+  {
+    "No": 131,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Kelopak Mata",
+    "No-sub": 6,
+    "Keterangan": "Blefaritis",
+    "Level": "4A"
+  },
+  {
+    "No": 132,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Kelopak Mata",
+    "No-sub": 7,
+    "Keterangan": "Hordeolum",
+    "Level": "4A"
+  },
+  {
+    "No": 136,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Kelopak Mata",
+    "No-sub": 11,
+    "Keterangan": "Trikiasis",
+    "Level": "4A"
+  },
+  {
+    "No": 147,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Sklera",
+    "No-sub": 22,
+    "Keterangan": "Episkleritis",
+    "Level": "4A"
+  },
+  {
+    "No": 166,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Akomodasi dan Refraksi",
+    "No-sub": 41,
+    "Keterangan": "Hipermetropia ringan",
+    "Level": "4A"
+  },
+  {
+    "No": 167,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Akomodasi dan Refraksi",
+    "No-sub": 42,
+    "Keterangan": "Miopia ringan",
+    "Level": "4A"
+  },
+  {
+    "No": 168,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Akomodasi dan Refraksi",
+    "No-sub": 43,
+    "Keterangan": "Astigmatism ringan",
+    "Level": "4A"
+  },
+  {
+    "No": 169,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Akomodasi dan Refraksi",
+    "No-sub": 44,
+    "Keterangan": "Presbiopia",
+    "Level": "4A"
+  },
+  {
+    "No": 174,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Mata",
+    "Subkategori": "Akomodasi dan Refraksi",
+    "No-sub": 49,
+    "Keterangan": "Buta senja",
+    "Level": "4A"
+  },
+  {
+    "No": 195,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Telinga",
+    "Subkategori": "Telinga, Pendengaran, dan Keseimbangan",
+    "No-sub": 70,
+    "Keterangan": "Otitis eksterna",
+    "Level": "4A"
+  },
+  {
+    "No": 196,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Telinga",
+    "Subkategori": "Telinga, Pendengaran, dan Keseimbangan",
+    "No-sub": 71,
+    "Keterangan": "Otitis media akut",
+    "Level": "4A"
+  },
+  {
+    "No": 207,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Telinga",
+    "Subkategori": "Telinga, Pendengaran, dan Keseimbangan",
+    "No-sub": 82,
+    "Keterangan": "Serumen prop",
+    "Level": "4A"
+  },
+  {
+    "No": 208,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Telinga",
+    "Subkategori": "Telinga, Pendengaran, dan Keseimbangan",
+    "No-sub": 83,
+    "Keterangan": "Mabuk perjalanan",
+    "Level": "4A"
+  },
+  {
+    "No": 212,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Hidung",
+    "Subkategori": "Hidung dan Sinus Hidung",
+    "No-sub": 87,
+    "Keterangan": "Furunkel pada hidung",
+    "Level": "4A"
+  },
+  {
+    "No": 213,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Hidung",
+    "Subkategori": "Hidung dan Sinus Hidung",
+    "No-sub": 88,
+    "Keterangan": "Rhinitis akut",
+    "Level": "4A"
+  },
+  {
+    "No": 214,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Hidung",
+    "Subkategori": "Hidung dan Sinus Hidung",
+    "No-sub": 89,
+    "Keterangan": "Rhinitis vasomotor",
+    "Level": "4A"
+  },
+  {
+    "No": 215,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Hidung",
+    "Subkategori": "Hidung dan Sinus Hidung",
+    "No-sub": 90,
+    "Keterangan": "Rhinitis alergika",
+    "Level": "4A"
+  },
+  {
+    "No": 222,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Hidung",
+    "Subkategori": "Hidung dan Sinus Hidung",
+    "No-sub": 97,
+    "Keterangan": "Benda asing",
+    "Level": "4A"
+  },
+  {
+    "No": 223,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Indra - Hidung",
+    "Subkategori": "Hidung dan Sinus Hidung",
+    "No-sub": 98,
+    "Keterangan": "Epistaksis",
+    "Level": "4A"
+  },
+  {
+    "No": 230,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "General",
+    "No-sub": 1,
+    "Keterangan": "Influenza",
+    "Level": "4A"
+  },
+  {
+    "No": 231,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "General",
+    "No-sub": 2,
+    "Keterangan": "Pertusis",
+    "Level": "4A"
+  },
+  {
+    "2024": 56,
+    "2025": 0,
+    "No": 235,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Laring dan Faring",
+    "No-sub": 6,
+    "Keterangan": "Faringitis",
+    "Level": "4A"
+  },
+  {
+    "2024": 32,
+    "2025": 1,
+    "No": 236,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Laring dan Faring",
+    "No-sub": 7,
+    "Keterangan": "Tonsilitis",
+    "Level": "4A"
+  },
+  {
+    "2024": 16,
+    "2025": 0,
+    "No": 237,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Laring dan Faring",
+    "No-sub": 8,
+    "Keterangan": "Laringitis",
+    "Level": "4A"
+  },
+  {
+    "2024": 1251,
+    "2025": 585,
+    "No": 247,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Paru",
+    "No-sub": 18,
+    "Keterangan": "Asma bronkial",
+    "Level": "4A"
+  },
+  {
+    "2024": 55,
+    "2025": 276,
+    "No": 249,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Paru",
+    "No-sub": 20,
+    "Keterangan": "Bronkitis akut",
+    "Level": "4A"
+  },
+  {
+    "2024": 351,
+    "2025": 210,
+    "No": 254,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Paru",
+    "No-sub": 25,
+    "Keterangan": "Pneumonia, bronkopneumonia",
+    "Level": "4A"
+  },
+  {
+    "2024": 533,
+    "2025": 123,
+    "No": 256,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Respirasi",
+    "Subkategori": "Paru",
+    "No-sub": 27,
+    "Keterangan": "Tuberkulosis paru tanpa komplikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 295,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Kardiovaskular",
+    "Subkategori": "Gangguan Aorta dan Arteri",
+    "No-sub": 20,
+    "Keterangan": "Hipertensi esensial",
+    "Level": "4A"
+  },
+  {
+    "No": 319,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Mulut",
+    "No-sub": 3,
+    "Keterangan": "Kandidiasis mulut",
+    "Level": "4A"
+  },
+  {
+    "No": 320,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Mulut",
+    "No-sub": 4,
+    "Keterangan": "Ulkus mulut (aptosa, herpes)",
+    "Level": "4A"
+  },
+  {
+    "No": 324,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Mulut",
+    "No-sub": 8,
+    "Keterangan": "Parotitis",
+    "Level": "4A"
+  },
+  {
+    "No": 339,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Dinding, Rongga Abdomen, dan Hernia",
+    "No-sub": 23,
+    "Keterangan": "Infeksi pada umbilikus",
+    "Level": "4A"
+  },
+  {
+    "2024": 0,
+    "2025": 149,
+    "No": 341,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Lambung, Duodenum, Jejunum, Ileum",
+    "No-sub": 25,
+    "Keterangan": "Gastritis",
+    "Level": "4A"
+  },
+  {
+    "2024": 0,
+    "2025": 19,
+    "No": 342,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Lambung, Duodenum, Jejunum, Ileum",
+    "No-sub": 26,
+    "Keterangan": "Gastroenteritis (termasuk kolera, giardiasis)",
+    "Level": "4A"
+  },
+  {
+    "2024": 0,
+    "2025": 37,
+    "No": 343,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Lambung, Duodenum, Jejunum, Ileum",
+    "No-sub": 27,
+    "Keterangan": "Refluks gastroesofagus",
+    "Level": "4A"
+  },
+  {
+    "2024": 43,
+    "No": 351,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Lambung, Duodenum, Jejunum, Ileum",
+    "No-sub": 35,
+    "Keterangan": "Demam tifoid",
+    "Level": "4A"
+  },
+  {
+    "No": 355,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Lambung, Duodenum, Jejunum, Ileum",
+    "No-sub": 39,
+    "Keterangan": "Intoleransi makanan",
+    "Level": "4A"
+  },
+  {
+    "No": 356,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Lambung, Duodenum, Jejunum, Ileum",
+    "No-sub": 40,
+    "Keterangan": "Alergi makanan",
+    "Level": "4A"
+  },
+  {
+    "No": 357,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Lambung, Duodenum, Jejunum, Ileum",
+    "No-sub": 41,
+    "Keterangan": "Keracunan makanan",
+    "Level": "4A"
+  },
+  {
+    "No": 359,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Infestasi Cacing dan Lainnya",
+    "No-sub": 43,
+    "Keterangan": "Penyakit cacing tambang",
+    "Level": "4A"
+  },
+  {
+    "No": 360,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Infestasi Cacing dan Lainnya",
+    "No-sub": 44,
+    "Keterangan": "Strongiloidiasis",
+    "Level": "4A"
+  },
+  {
+    "No": 361,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Infestasi Cacing dan Lainnya",
+    "No-sub": 45,
+    "Keterangan": "Askariasis",
+    "Level": "4A"
+  },
+  {
+    "No": 362,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Infestasi Cacing dan Lainnya",
+    "No-sub": 46,
+    "Keterangan": "Skistosomiasis",
+    "Level": "4A"
+  },
+  {
+    "No": 363,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Infestasi Cacing dan Lainnya",
+    "No-sub": 47,
+    "Keterangan": "Taeniasis",
+    "Level": "4A"
+  },
+  {
+    "No": 365,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Hepar",
+    "No-sub": 49,
+    "Keterangan": "Hepatitis A",
+    "Level": "4A"
+  },
+  {
+    "No": 381,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Kolon",
+    "No-sub": 65,
+    "Keterangan": "Disentri basiler, disentri amuba",
+    "Level": "4A"
+  },
+  {
+    "2024": 107,
+    "2025": 56,
+    "No": 393,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem GI, HB, & Pankreas",
+    "Subkategori": "Kolon",
+    "No-sub": 77,
+    "Keterangan": "Hemoroid grade 1-2",
+    "Level": "4A"
+  },
+  {
+    "No": 400,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "General",
+    "No-sub": 1,
+    "Keterangan": "Infeksi saluran kemih",
+    "Level": "4A"
+  },
+  {
+    "No": 403,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "General",
+    "No-sub": 4,
+    "Keterangan": "Gonore",
+    "Level": "4A"
+  },
+  {
+    "No": 413,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "General",
+    "No-sub": 14,
+    "Keterangan": "Pielonefritis tanpa komplikasi",
+    "Level": "4A"
+  },
+  {
+    "2024": 3,
+    "2025": 6,
+    "No": 421,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Alat Kelamin Pria",
+    "No-sub": 22,
+    "Keterangan": "Fimosis",
+    "Level": "4A"
+  },
+  {
+    "2024": 3,
+    "2025": 6,
+    "No": 422,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Ginjal & Saluran Kemih",
+    "Subkategori": "Alat Kelamin Pria",
+    "No-sub": 23,
+    "Keterangan": "Parafimosis",
+    "Level": "4A"
+  },
+  {
+    "No": 440,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Infeksi",
+    "No-sub": 3,
+    "Keterangan": "Sindrom duh (discharge) genital (gonore dan\r\nnongonore)",
+    "Level": "4A"
+  },
+  {
+    "No": 442,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Infeksi",
+    "No-sub": 5,
+    "Keterangan": "Infeksi saluran kemih bagian bawah",
+    "Level": "4A"
+  },
+  {
+    "No": 443,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Infeksi",
+    "No-sub": 6,
+    "Keterangan": "Vulvitis",
+    "Level": "4A"
+  },
+  {
+    "No": 445,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Infeksi",
+    "No-sub": 8,
+    "Keterangan": "Vaginitis",
+    "Level": "4A"
+  },
+  {
+    "No": 446,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Infeksi",
+    "No-sub": 9,
+    "Keterangan": "Vaginosis bakterialis",
+    "Level": "4A"
+  },
+  {
+    "No": 448,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Infeksi",
+    "No-sub": 11,
+    "Keterangan": "Salpingitis",
+    "Level": "4A"
+  },
+  {
+    "No": 451,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Kehamilan",
+    "No-sub": 14,
+    "Keterangan": "Kehamilan normal",
+    "Level": "4A"
+  },
+  {
+    "No": 456,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Gangguan pada Kehamilan",
+    "No-sub": 19,
+    "Keterangan": "Aborsi spontan komplit",
+    "Level": "4A"
+  },
+  {
+    "No": 476,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Gangguan pada Kehamilan",
+    "No-sub": 39,
+    "Keterangan": "Anemia defisiensi besi pada kehamilan",
+    "Level": "4A"
+  },
+  {
+    "No": 488,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Persalinan dan Nifas",
+    "No-sub": 51,
+    "Keterangan": "Ruptur perineum tingkat 1-2",
+    "Level": "4A"
+  },
+  {
+    "No": 501,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Kelainan Organ Genital",
+    "No-sub": 64,
+    "Keterangan": "Abses folikel rambut atau kelenjar sebasea",
+    "Level": "4A"
+  },
+  {
+    "2024": 2,
+    "2025": 0,
+    "No": 527,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Payudara",
+    "No-sub": 90,
+    "Keterangan": "Mastitis",
+    "Level": "4A"
+  },
+  {
+    "No": 528,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Payudara",
+    "No-sub": 91,
+    "Keterangan": "Cracked nipple",
+    "Level": "4A"
+  },
+  {
+    "No": 529,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Reproduksi",
+    "Subkategori": "Payudara",
+    "No-sub": 92,
+    "Keterangan": "Inverted nipple",
+    "Level": "4A"
+  },
+  {
+    "No": 539,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Kelenjar Endokrin",
+    "No-sub": 1,
+    "Keterangan": "Diabetes melitus tipe 1",
+    "Level": "4A"
+  },
+  {
+    "No": 540,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Kelenjar Endokrin",
+    "No-sub": 2,
+    "Keterangan": "Diabetes melitus tipe 2",
+    "Level": "4A"
+  },
+  {
+    "No": 544,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Kelenjar Endokrin",
+    "No-sub": 6,
+    "Keterangan": "Hipoglikemia ringan",
+    "Level": "4A"
+  },
+  {
+    "No": 564,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Gizi dan Metabollisme",
+    "No-sub": 26,
+    "Keterangan": "Malnutrisi energi-protein",
+    "Level": "4A"
+  },
+  {
+    "No": 565,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Gizi dan Metabollisme",
+    "No-sub": 27,
+    "Keterangan": "Defisiensi vitamin",
+    "Level": "4A"
+  },
+  {
+    "No": 566,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Gizi dan Metabollisme",
+    "No-sub": 28,
+    "Keterangan": "Defisiensi mineral",
+    "Level": "4A"
+  },
+  {
+    "No": 567,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Gizi dan Metabollisme",
+    "No-sub": 29,
+    "Keterangan": "Dislipidemia",
+    "Level": "4A"
+  },
+  {
+    "No": 569,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Gizi dan Metabollisme",
+    "No-sub": 31,
+    "Keterangan": "Hiperurisemia",
+    "Level": "4A"
+  },
+  {
+    "No": 570,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Endokrin, Metabolik, & Nutrisi",
+    "Subkategori": "Gizi dan Metabollisme",
+    "No-sub": 32,
+    "Keterangan": "Obesitas",
+    "Level": "4A"
+  },
+  {
+    "2024": 24,
+    "2025": 18,
+    "No": 573,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "General",
+    "No-sub": 2,
+    "Keterangan": "Anemia defisiensi besi",
+    "Level": "4A"
+  },
+  {
+    "2024": 8,
+    "2025": 3,
+    "No": 588,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Kelenjar Limfe dan Darah",
+    "No-sub": 17,
+    "Keterangan": "Limfadenitis",
+    "Level": "4A"
+  },
+  {
+    "2024": 185,
+    "2025": 15,
+    "No": 590,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Infeksi",
+    "No-sub": 19,
+    "Keterangan": "Demam dengue, DHF",
+    "Level": "4A"
+  },
+  {
+    "No": 592,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Infeksi",
+    "No-sub": 21,
+    "Keterangan": "Malaria",
+    "Level": "4A"
+  },
+  {
+    "No": 595,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Infeksi",
+    "No-sub": 24,
+    "Keterangan": "Leptospirosis (tanpa komplikasi)",
+    "Level": "4A"
+  },
+  {
+    "No": 600,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Hematologi & Imunologi",
+    "Subkategori": "Penyakit Autoimun",
+    "No-sub": 29,
+    "Keterangan": "Reaksi anafilaktik",
+    "Level": "4A"
+  },
+  {
+    "2024": 15,
+    "2025": 1,
+    "No": 639,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Otot dan Jaringan Lunak",
+    "No-sub": 33,
+    "Keterangan": "Ulkus pada tungkai",
+    "Level": "4A"
+  },
+  {
+    "2024": 3,
+    "2025": 2,
+    "No": 643,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Muskuloskeletal",
+    "Subkategori": "Otot dan Jaringan Lunak",
+    "No-sub": 37,
+    "Keterangan": "Lipoma",
+    "Level": "4A"
+  },
+  {
+    "No": 645,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Virus",
+    "No-sub": 1,
+    "Keterangan": "Veruka vulgaris",
+    "Level": "4A"
+  },
+  {
+    "No": 647,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Virus",
+    "No-sub": 3,
+    "Keterangan": "Moluskum kontagiosum",
+    "Level": "4A"
+  },
+  {
+    "No": 648,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Virus",
+    "No-sub": 4,
+    "Keterangan": "Herpes zoster tanpa komplikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 649,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Virus",
+    "No-sub": 5,
+    "Keterangan": "Morbili tanpa komplikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 650,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Virus",
+    "No-sub": 6,
+    "Keterangan": "Varisela tanpa komplikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 651,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Virus",
+    "No-sub": 7,
+    "Keterangan": "Herpes simpleks tanpa komplikasi",
+    "Level": "4A"
+  },
+  {
+    "No": 652,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 8,
+    "Keterangan": "Impetigo",
+    "Level": "4A"
+  },
+  {
+    "No": 653,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 9,
+    "Keterangan": "Impetigo ulseratif (ektima)",
+    "Level": "4A"
+  },
+  {
+    "No": 654,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 10,
+    "Keterangan": "Folikulitis superfisialis",
+    "Level": "4A"
+  },
+  {
+    "No": 655,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 11,
+    "Keterangan": "Furunkel, karbunkel",
+    "Level": "4A"
+  },
+  {
+    "No": 656,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 12,
+    "Keterangan": "Eritrasma",
+    "Level": "4A"
+  },
+  {
+    "No": 657,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 13,
+    "Keterangan": "Erisipelas",
+    "Level": "4A"
+  },
+  {
+    "No": 658,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 14,
+    "Keterangan": "Skrofuloderma",
+    "Level": "4A"
+  },
+  {
+    "No": 659,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 15,
+    "Keterangan": "Lepra",
+    "Level": "4A"
+  },
+  {
+    "No": 661,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Bakteri",
+    "No-sub": 17,
+    "Keterangan": "Sifilis stadium 1 dan 2",
+    "Level": "4A"
+  },
+  {
+    "No": 662,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 18,
+    "Keterangan": "Tinea kapitis",
+    "Level": "4A"
+  },
+  {
+    "No": 663,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 19,
+    "Keterangan": "Tinea barbe",
+    "Level": "4A"
+  },
+  {
+    "No": 664,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 20,
+    "Keterangan": "Tinea fasialis",
+    "Level": "4A"
+  },
+  {
+    "No": 665,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 21,
+    "Keterangan": "Tinea korporis",
+    "Level": "4A"
+  },
+  {
+    "No": 666,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 22,
+    "Keterangan": "Tinea manus",
+    "Level": "4A"
+  },
+  {
+    "No": 667,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 23,
+    "Keterangan": "Tinea unguium",
+    "Level": "4A"
+  },
+  {
+    "No": 668,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 24,
+    "Keterangan": "Tinea kruris",
+    "Level": "4A"
+  },
+  {
+    "No": 669,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 25,
+    "Keterangan": "Tinea pedis",
+    "Level": "4A"
+  },
+  {
+    "No": 670,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 26,
+    "Keterangan": "Pitiriasis  vesikolor",
+    "Level": "4A"
+  },
+  {
+    "No": 671,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Infeksi Jamur",
+    "No-sub": 27,
+    "Keterangan": "Kandidosis mukokutan ringan",
+    "Level": "4A"
+  },
+  {
+    "No": 672,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Gigitan Serangga dan Infestasi Parasit",
+    "No-sub": 28,
+    "Keterangan": "Cutaneus larva migran",
+    "Level": "4A"
+  },
+  {
+    "No": 673,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Gigitan Serangga dan Infestasi Parasit",
+    "No-sub": 29,
+    "Keterangan": "Filariasis",
+    "Level": "4A"
+  },
+  {
+    "No": 674,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Gigitan Serangga dan Infestasi Parasit",
+    "No-sub": 30,
+    "Keterangan": "Pedikulosis kapitis",
+    "Level": "4A"
+  },
+  {
+    "No": 675,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Gigitan Serangga dan Infestasi Parasit",
+    "No-sub": 31,
+    "Keterangan": "Pedikulosis pubis",
+    "Level": "4A"
+  },
+  {
+    "No": 676,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Gigitan Serangga dan Infestasi Parasit",
+    "No-sub": 32,
+    "Keterangan": "Skabies",
+    "Level": "4A"
+  },
+  {
+    "No": 677,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Gigitan Serangga dan Infestasi Parasit",
+    "No-sub": 33,
+    "Keterangan": "Reaksi gigitan serangga",
+    "Level": "4A"
+  },
+  {
+    "No": 678,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Dermatitis Eksim",
+    "No-sub": 34,
+    "Keterangan": "Dermatitis kontak iritan",
+    "Level": "4A"
+  },
+  {
+    "No": 680,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Dermatitis Eksim",
+    "No-sub": 36,
+    "Keterangan": "Dermatitis atopik (kecuali recalcitrant)",
+    "Level": "4A"
+  },
+  {
+    "No": 681,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Dermatitis Eksim",
+    "No-sub": 37,
+    "Keterangan": "Dermatitis numularis",
+    "Level": "4A"
+  },
+  {
+    "No": 683,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Dermatitis Eksim",
+    "No-sub": 39,
+    "Keterangan": "Napkin eczema",
+    "Level": "4A"
+  },
+  {
+    "No": 685,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Lesi Eritro-Squamosa",
+    "No-sub": 41,
+    "Keterangan": "Dermatitis seboroik",
+    "Level": "4A"
+  },
+  {
+    "No": 686,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Lesi Eritro-Squamosa",
+    "No-sub": 42,
+    "Keterangan": "Pitiriasis rosea",
+    "Level": "4A"
+  },
+  {
+    "No": 687,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Kelainan Kelenjar Sebasea dan Ekrin",
+    "No-sub": 43,
+    "Keterangan": "Akne vulgaris ringan",
+    "Level": "4A"
+  },
+  {
+    "No": 689,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Kelainan Kelenjar Sebasea dan Ekrin",
+    "No-sub": 45,
+    "Keterangan": "Hidradenitis supuratif",
+    "Level": "4A"
+  },
+  {
+    "No": 690,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Kelainan Kelenjar Sebasea dan Ekrin",
+    "No-sub": 46,
+    "Keterangan": "Dermatitis perioral",
+    "Level": "4A"
+  },
+  {
+    "No": 691,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Kelainan Kelenjar Sebasea dan Ekrin",
+    "No-sub": 47,
+    "Keterangan": "Miliaria",
+    "Level": "4A"
+  },
+  {
+    "No": 694,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Penyakit Kulit Alergi",
+    "No-sub": 50,
+    "Keterangan": "Urtikaria akut",
+    "Level": "4A"
+  },
+  {
+    "No": 699,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Reaksi Obat",
+    "No-sub": 55,
+    "Keterangan": "Exanthematous drug eruption, fixed drug eruption",
+    "Level": "4A"
+  },
+  {
+    "No": 718,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Trauma",
+    "No-sub": 74,
+    "Keterangan": "Vulnus laseratum, punctum",
+    "Level": "4A"
+  },
+  {
+    "2024": 31,
+    "2025": 30,
+    "No": 720,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Sistem Integumen",
+    "Subkategori": "Trauma",
+    "No-sub": 76,
+    "Keterangan": "Luka bakar derajat 1 dan 2",
+    "Level": "4A"
+  },
+  {
+    "No": 724,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Ilmu Kedokteran Forensik & Medikolegal",
+    "Subkategori": "General",
+    "No-sub": 1,
+    "Keterangan": "Kekerasan tumpul",
+    "Level": "4A"
+  },
+  {
+    "No": 725,
+    "Jenis": "Daftar Penyakit",
+    "Kategori": "Ilmu Kedokteran Forensik & Medikolegal",
+    "Subkategori": "General",
+    "No-sub": 2,
+    "Keterangan": "Kekerasan tajam",
+    "Level": "4A"
+  }
+]

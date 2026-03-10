@@ -1,0 +1,16 @@
+dist/
+build/
+coverage/
+megalog/
+diagnostics/
+node_modules/
+public/
+_backups/
+
+# kalau ada output AI / generator
+generated/
+.tmp/
+.cache/
+*.json
+*.bat
+*.ps1

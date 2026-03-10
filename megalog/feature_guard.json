@@ -1,0 +1,25 @@
+{
+  "gate": "GAMEPLAY_FEATURE_GUARD",
+  "score": 100,
+  "total": 4,
+  "failed": 0,
+  "results": [
+    {
+      "name": "WILAYAH_IKS_BOARD",
+      "ok": true
+    },
+    {
+      "name": "DASHBOARD_STATS",
+      "ok": true
+    },
+    {
+      "name": "MAIA_CODEX_ENTRY",
+      "ok": true
+    },
+    {
+      "name": "CLINICAL_EMR_SIDEBAR",
+      "ok": true
+    }
+  ],
+  "generatedAt": "2026-02-15T01:28:02.868Z"
+}
