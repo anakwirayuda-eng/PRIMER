@@ -7,6 +7,7 @@
  */
 
 import { STORY_TEMPLATES } from './StoryDatabase.js';
+import { randomIdFromSeed, seedKey, shuffleDeterministic } from '../utils/deterministicRandom.js';
 
 export const QUEST_TEMPLATES = [
     // Daily Quests
@@ -133,9 +134,12 @@ export function evaluateStoryTriggers(state, activeStories = []) {
         }
 
         return false;
-    }).map(template => ({
+    }).map((template, index) => ({
         templateId: template.id,
-        instanceId: `${template.id}_${Date.now()}`,
+        instanceId: randomIdFromSeed(
+            'story',
+            seedKey('story-trigger', template.id, state.day || 1, index, activeIds)
+        ),
         currentNodeId: 'start',
         progress: 0,
         completed: false,
@@ -223,14 +227,14 @@ export function claimQuestReward(quests, questId) {
 // Utility Helpers
 export function generateDailyQuests(day) {
     const dailies = QUEST_TEMPLATES.filter(q => q.type === 'daily');
-    return dailies.sort(() => Math.random() - 0.5).slice(0, 3).map(q => ({
+    return shuffleDeterministic(dailies, seedKey('daily-quests', day)).slice(0, 3).map(q => ({
         ...q, assignedDay: day, progress: 0, completed: false, claimed: false
     }));
 }
 
 export function generateWeeklyQuests(week) {
     const weeklies = QUEST_TEMPLATES.filter(q => q.type === 'weekly');
-    return weeklies.sort(() => Math.random() - 0.5).slice(0, 2).map(q => ({
+    return shuffleDeterministic(weeklies, seedKey('weekly-quests', week)).slice(0, 2).map(q => ({
         ...q, assignedWeek: week, progress: 0, completed: false, claimed: false
     }));
 }

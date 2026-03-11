@@ -20,6 +20,7 @@ import {
 import { getSeasonForDay } from './IKMEventEngine.js';
 import { evaluateEmergingTriggers } from './EmergingEventTriggers.js';
 import { getFamilySDOH } from '../domains/village/VillageRegistry.js';
+import { chanceFromSeed, pickDeterministic, seedKey, seededInt } from '../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -384,13 +385,20 @@ export function resolveOutcome(caseInstance) {
     let ukpDelay = null;
     if (scenario.ukpBridge) {
         const { min, max } = scenario.ukpBridge.delayDays;
+        const outcomeSeed = seedKey(
+            'bc-outcome',
+            caseInstance.instanceId || caseInstance.scenarioId,
+            outcomeTier,
+            overallScore,
+            caseInstance.readinessStart
+        );
         if (outcomeTier === 'fail') {
             // FATAL: Bomb goes off FAST. No escape.
             ukpDelay = min;
         } else if (outcomeTier === 'partial') {
             // Partial: still some probability of escalation
-            if (Math.random() <= (scenario.ukpBridge.failProbability || 0.5)) {
-                ukpDelay = min + Math.floor(Math.random() * (max - min + 1));
+            if (chanceFromSeed(seedKey(outcomeSeed, 'bridge'), scenario.ukpBridge.failProbability || 0.5)) {
+                ukpDelay = min + seededInt(seedKey(outcomeSeed, 'delay'), max - min + 1);
             }
         }
     }
@@ -457,6 +465,7 @@ function calculateReadinessChange(currentStageId, outcomeTier) {
 export function selectDailyCases(state) {
     const { day = 1, villageData = {}, completedCases = [], activeCases = [] } = state;
     const season = getSeasonForDay(day);
+    const selectionSeed = seedKey('bc-daily', day, completedCases.map(c => c.scenarioId || c), activeCases.map(c => c.scenarioId || c));
 
     // Skip if already at max
     if (activeCases.length >= MAX_ACTIVE_CASES) {
@@ -489,7 +498,7 @@ export function selectDailyCases(state) {
                 if (!hasMatch) return false;
             }
         }
-        return Math.random() < (tc.probability || 0.1);
+        return chanceFromSeed(seedKey(selectionSeed, s.id, 'eligible'), tc.probability || 0.1);
     });
 
     // Pick 1-2 daily scenarios (1 Quick + optional 1 Deep)
@@ -500,17 +509,17 @@ export function selectDailyCases(state) {
 
     // Always try to get a Tier 1 case first
     if (tier1.length > 0) {
-        coreCases.push(tier1[Math.floor(Math.random() * tier1.length)]);
+        coreCases.push(pickDeterministic(tier1, seedKey(selectionSeed, 'tier1')));
     }
 
     // Occasionally add a Tier 2 case (after day 14)
-    if (day >= 14 && tier2.length > 0 && Math.random() < 0.3) {
-        coreCases.push(tier2[Math.floor(Math.random() * tier2.length)]);
+    if (day >= 14 && tier2.length > 0 && chanceFromSeed(seedKey(selectionSeed, 'tier2-roll'), 0.3)) {
+        coreCases.push(pickDeterministic(tier2, seedKey(selectionSeed, 'tier2')));
     }
 
     // Environmental background risk modifier
-    if (tier4.length > 0 && Math.random() < 0.15) {
-        coreCases.push(tier4[Math.floor(Math.random() * tier4.length)]);
+    if (tier4.length > 0 && chanceFromSeed(seedKey(selectionSeed, 'tier4-roll'), 0.15)) {
+        coreCases.push(pickDeterministic(tier4, seedKey(selectionSeed, 'tier4')));
     }
 
     // Check for emerging event (separate from core) — uses full engine

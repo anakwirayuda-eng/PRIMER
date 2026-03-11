@@ -5,6 +5,8 @@
  * [STATE]: Stable
  */
 
+import { createDeterministicSequence, seedKey } from '../utils/deterministicRandom.js';
+
 export const INITIAL_PLAYER_STATE = {
     name: 'Dr. Anonim',
     avatar: 'default',
@@ -103,9 +105,19 @@ export const calculateSleepRecovery = (currentTime, targetHour, currentEnergy, c
     };
 };
 
-export const calculateDailyStaffDecay = (hiredStaff, rng = Math.random) => {
+export const calculateDailyStaffDecay = (hiredStaff, rngOrSeed = 'default') => {
+    const next = typeof rngOrSeed === 'function'
+        ? rngOrSeed
+        : createDeterministicSequence(
+            seedKey(
+                'staff-decay',
+                rngOrSeed,
+                hiredStaff.map(st => st.id || st.name || st.role || 'staff')
+            )
+        ).nextFloat;
+
     return hiredStaff.map(st => ({
         ...st,
-        morale: Math.max(0, (st.morale || 70) - (rng() * 5 + 2))
+        morale: Math.max(0, (st.morale || 70) - (next() * 5 + 2))
     }));
 };

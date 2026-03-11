@@ -8,6 +8,8 @@
  * [LAST_UPDATE]: 2026-02-18
  */
 
+import { createDeterministicSequence, seedKey } from '../../utils/deterministicRandom.js';
+
 // ═══════════════════════════════════════════════════════════════
 // TOOTH MAP CONSTANTS
 // ═══════════════════════════════════════════════════════════════
@@ -85,9 +87,12 @@ export function generateDentalExam(patient) {
     const age = patient.age || 25;
     const isChild = age < 12;
     const teeth = isChild ? DECIDUOUS_TEETH : PERMANENT_TEETH;
+    const examRng = createDeterministicSequence(
+        seedKey('dental-exam', patient.seedHint || patient.id || patient.name, age, patient.gender, patient.hygiene)
+    );
 
     // Hygiene factor: poor → more problems
-    const hygiene = patient.hygiene || (Math.random() < 0.3 ? 'poor' : Math.random() < 0.6 ? 'fair' : 'good');
+    const hygiene = patient.hygiene || (examRng.chance(0.3) ? 'poor' : examRng.chance(0.6) ? 'fair' : 'good');
 
     const hygieneMultiplier = { poor: 1.8, fair: 1.0, good: 0.4 };
     const problemRate = hygieneMultiplier[hygiene] || 1.0;
@@ -97,7 +102,7 @@ export function generateDentalExam(patient) {
     let decayedCount = 0, missingCount = 0, filledCount = 0;
 
     for (const toothNum of teeth) {
-        const roll = Math.random();
+        const roll = examRng.nextFloat();
         const threshold = isChild ? 0.15 : 0.12;
 
         let condition;
@@ -105,7 +110,7 @@ export function generateDentalExam(patient) {
             // Decayed
             condition = 'decayed';
             decayedCount++;
-            const severity = Math.random();
+            const severity = examRng.nextFloat();
             const diagnosis = severity < 0.4 ? 'karies_email' : severity < 0.75 ? 'karies_dentin' : 'karies_pulpa';
             findings.push({ tooth: toothNum, condition, diagnosis, name: DENTAL_DIAGNOSES[diagnosis].name });
         } else if (roll < (threshold + 0.04) * problemRate && !isChild) {
@@ -133,10 +138,10 @@ export function generateDentalExam(patient) {
     }
 
     // Add soft tissue findings
-    if (Math.random() < 0.2 * problemRate) {
+    if (examRng.chance(0.2 * problemRate)) {
         findings.push({ tooth: null, condition: 'soft_tissue', diagnosis: 'gingivitis', name: 'Gingivitis' });
     }
-    if (Math.random() < 0.08 * problemRate) {
+    if (examRng.chance(0.08 * problemRate)) {
         findings.push({ tooth: null, condition: 'soft_tissue', diagnosis: 'stomatitis', name: 'Stomatitis aftosa' });
     }
 
@@ -260,6 +265,9 @@ export function evaluateDiagnosis(playerDiagnosis, actualCondition) {
  */
 export function generateUKGSBatch(schoolChildren = []) {
     const batch = [];
+    const batchRng = createDeterministicSequence(
+        seedKey('ukgs-batch', schoolChildren.map(child => child.id || child.name || child.age))
+    );
 
     // Generate 5-15 children for screening
     const count = Math.min(schoolChildren.length || 10, 15);
@@ -268,15 +276,20 @@ export function generateUKGSBatch(schoolChildren = []) {
         : Array.from({ length: count }, (_, i) => ({
             id: `ukgs_child_${i}`,
             name: `Anak ${i + 1}`,
-            age: 6 + Math.floor(Math.random() * 6), // 6-12 years
-            gender: Math.random() < 0.5 ? 'L' : 'P'
+            age: 6 + batchRng.int(6), // 6-12 years
+            gender: batchRng.chance(0.5) ? 'L' : 'P'
         }));
 
     let totalDMFT = 0;
     let needReferral = 0;
 
-    for (const child of children) {
-        const exam = generateDentalExam({ ...child, hygiene: Math.random() < 0.4 ? 'poor' : 'fair' });
+    for (let index = 0; index < children.length; index++) {
+        const child = children[index];
+        const exam = generateDentalExam({
+            ...child,
+            hygiene: batchRng.chance(0.4) ? 'poor' : 'fair',
+            seedHint: seedKey('ukgs-child', child.id || child.name, index)
+        });
         totalDMFT += exam.dmftScore.total;
         const needsRef = exam.diagnoses.some(d => d.severity === 'berat');
         if (needsRef) needReferral++;

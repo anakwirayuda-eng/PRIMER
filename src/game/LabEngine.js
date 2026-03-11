@@ -9,6 +9,7 @@
  */
 
 import { getMedicationById } from '../data/MedicationDatabase.js';
+import { pickDeterministic, seedKey, seededBetween, shuffleDeterministic } from '../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // LAB REFERENCE RANGES (Puskesmas-level capabilities)
@@ -152,6 +153,14 @@ export function processLabOrder(orderedLabs, patient, inventory = {}) {
     let totalCost = 0;
     const reagentUsage = [];
     const unavailable = [];
+    const orderSeed = seedKey(
+        'lab-order',
+        orderedLabs,
+        patient?.id || patient?.name,
+        patient?.hidden?.diseaseId,
+        patient?.age,
+        patient?.gender
+    );
 
     for (const labId of orderedLabs) {
         const labDef = LAB_CATALOG[labId];
@@ -168,7 +177,7 @@ export function processLabOrder(orderedLabs, patient, inventory = {}) {
         }
 
         // Generate results based on patient case
-        results[labId] = generateLabResults(labDef, patient);
+        results[labId] = generateLabResults(labDef, patient, seedKey(orderSeed, labId));
         maxProcessingTime = Math.max(maxProcessingTime, labDef.processingTime);
         totalCost += labDef.cost;
         reagentUsage.push({ reagentId: labDef.reagentId, labName: labDef.name });
@@ -183,7 +192,7 @@ export function processLabOrder(orderedLabs, patient, inventory = {}) {
  * @param {Object} patient - Patient with hidden.diseaseId
  * @returns {{ labName, parameters: { [key]: { name, value, unit, status, normal } } }}
  */
-function generateLabResults(labDef, patient) {
+function generateLabResults(labDef, patient, seedHint = 'default') {
     const diseaseId = patient?.hidden?.diseaseId || '';
     const age = patient?.age || 30;
     const gender = patient?.gender || 'L';
@@ -201,10 +210,10 @@ function generateLabResults(labDef, patient) {
 
         // Qualitative params (e.g., BTA, protein urin)
         if (Array.isArray(normalRange) && typeof normalRange[0] === 'string') {
-            value = generateQualitativeResult(key, diseaseId, normalRange);
+            value = generateQualitativeResult(key, diseaseId, normalRange, seedKey(seedHint, key));
         } else {
             // Quantitative params
-            value = generateQuantitativeResult(key, diseaseId, normalRange, gender, age);
+            value = generateQuantitativeResult(key, diseaseId, normalRange, gender, age, seedKey(seedHint, key));
         }
 
         // Determine status
@@ -230,50 +239,51 @@ function generateLabResults(labDef, patient) {
 /**
  * Generate a quantitative lab value based on disease context
  */
-function generateQuantitativeResult(param, diseaseId, normalRange, gender, age) {
+function generateQuantitativeResult(param, diseaseId, normalRange, gender, age, seedHint = 'default') {
     const [low, high] = normalRange;
     const mid = (low + high) / 2;
     const spread = (high - low) / 2;
+    const rangeSeed = seedKey('lab-quantitative', seedHint, param, diseaseId, gender, age);
 
     // Disease-specific abnormal values
     const abnormalMap = {
         hb: {
-            'anemia_deficiency': () => low * randomRange(0.55, 0.85), // Low Hb
-            'dengue_fever': () => randomRange(low, high), // Usually normal in dengue
-            'polycythemia': () => high * randomRange(1.1, 1.3),
+            'anemia_deficiency': () => low * randomRange(0.55, 0.85, seedKey(rangeSeed, 'hb-anemia')), // Low Hb
+            'dengue_fever': () => randomRange(low, high, seedKey(rangeSeed, 'hb-dengue')), // Usually normal in dengue
+            'polycythemia': () => high * randomRange(1.1, 1.3, seedKey(rangeSeed, 'hb-polycythemia')),
         },
         leukosit: {
-            'pneumonia_community': () => randomRange(12000, 20000), // Leukocytosis
-            'typhoid_fever': () => randomRange(2500, 4500), // Leukopenia
-            'dengue_fever': () => randomRange(2000, 4000),
-            'tb_pulmonary': () => randomRange(8000, 15000),
+            'pneumonia_community': () => randomRange(12000, 20000, seedKey(rangeSeed, 'leukosit-pneumonia')), // Leukocytosis
+            'typhoid_fever': () => randomRange(2500, 4500, seedKey(rangeSeed, 'leukosit-typhoid')), // Leukopenia
+            'dengue_fever': () => randomRange(2000, 4000, seedKey(rangeSeed, 'leukosit-dengue')),
+            'tb_pulmonary': () => randomRange(8000, 15000, seedKey(rangeSeed, 'leukosit-tb')),
         },
         trombosit: {
-            'dengue_fever': () => randomRange(30000, 90000), // Thrombocytopenia
-            'dengue_df': () => randomRange(20000, 80000),
+            'dengue_fever': () => randomRange(30000, 90000, seedKey(rangeSeed, 'trombosit-dengue')), // Thrombocytopenia
+            'dengue_df': () => randomRange(20000, 80000, seedKey(rangeSeed, 'trombosit-df')),
         },
         gds: {
-            'dm_type2': () => randomRange(200, 400),
-            'dm_complicated': () => randomRange(250, 500),
-            'hypoglycemia_severe': () => randomRange(30, 55),
+            'dm_type2': () => randomRange(200, 400, seedKey(rangeSeed, 'gds-dm')),
+            'dm_complicated': () => randomRange(250, 500, seedKey(rangeSeed, 'gds-complicated')),
+            'hypoglycemia_severe': () => randomRange(30, 55, seedKey(rangeSeed, 'gds-hypo')),
         },
         gdp: {
-            'dm_type2': () => randomRange(126, 250),
+            'dm_type2': () => randomRange(126, 250, seedKey(rangeSeed, 'gdp-dm')),
         },
         asam_urat: {
-            'gout_arthritis': () => randomRange(8, 12),
+            'gout_arthritis': () => randomRange(8, 12, seedKey(rangeSeed, 'asam-urat-gout')),
         },
         kolesterol: {
-            'obesity': () => randomRange(220, 300),
-            'dm_type2': () => randomRange(200, 280),
+            'obesity': () => randomRange(220, 300, seedKey(rangeSeed, 'kolesterol-obesity')),
+            'dm_type2': () => randomRange(200, 280, seedKey(rangeSeed, 'kolesterol-dm')),
         },
         hba1c: {
-            'dm_type2': () => randomRange(7.0, 12.0),
-            'dm_complicated': () => randomRange(9.0, 14.0),
+            'dm_type2': () => randomRange(7.0, 12.0, seedKey(rangeSeed, 'hba1c-dm')),
+            'dm_complicated': () => randomRange(9.0, 14.0, seedKey(rangeSeed, 'hba1c-complicated')),
         },
         led: {
-            'tb_pulmonary': () => randomRange(30, 80),
-            'pneumonia_community': () => randomRange(25, 60),
+            'tb_pulmonary': () => randomRange(30, 80, seedKey(rangeSeed, 'led-tb')),
+            'pneumonia_community': () => randomRange(25, 60, seedKey(rangeSeed, 'led-pneumonia')),
         }
     };
 
@@ -284,14 +294,14 @@ function generateQuantitativeResult(param, diseaseId, normalRange, gender, age) 
     }
 
     // Default: normal value with slight random variation
-    const value = mid + (Math.random() - 0.5) * spread * 1.2;
+    const value = mid + (seededBetween(seedKey(rangeSeed, 'default'), -0.5, 0.5) * spread * 1.2);
     return Math.round(Math.max(0, value) * 10) / 10;
 }
 
 /**
  * Generate a qualitative lab result based on disease context
  */
-function generateQualitativeResult(param, diseaseId, normalValues) {
+function generateQualitativeResult(param, diseaseId, normalValues, seedHint = 'default') {
     const abnormalMap = {
         bta: { 'tb_pulmonary': '+1 (Scanty)' },
         protein: {
@@ -317,7 +327,7 @@ function generateQualitativeResult(param, diseaseId, normalValues) {
     // Default: normal
     if (param === 'goldar') {
         const groups = ['A', 'B', 'AB', 'O'];
-        return groups[Math.floor(Math.random() * groups.length)];
+        return pickDeterministic(groups, seedKey('goldar', seedHint));
     }
     return normalValues[0] || 'normal';
 }
@@ -356,16 +366,16 @@ export function generateLabCase(caseData, difficulty = 1) {
     const { results } = processLabOrder(labsToUse, {
         hidden: { diseaseId },
         age: caseData.age || 30,
-        gender: caseData.gender || 'L'
+        gender: caseData.gender || 'L',
+        id: caseData.id || caseData.name || diseaseId
     });
 
     // Generate question and choices
     const question = `Pasien ${caseData.diagnosis || diseaseId}, dengan hasil lab berikut. Apa interpretasi yang paling tepat?`;
 
     const correctAnswer = getInterpretation(diseaseId, results);
-    const distractors = generateDistractors(diseaseId, difficulty);
-
-    const choices = [correctAnswer, ...distractors].sort(() => Math.random() - 0.5);
+    const distractors = generateDistractors(diseaseId, difficulty, seedKey('lab-case', caseData.id || caseData.name, difficulty));
+    const choices = shuffleDeterministic([correctAnswer, ...distractors], seedKey('lab-case-choices', caseData.id || caseData.name, difficulty));
 
     return {
         labResults: results,
@@ -470,8 +480,8 @@ export function scoreMastery(history) {
 // HELPERS
 // ═══════════════════════════════════════════════════════════════
 
-function randomRange(min, max) {
-    return min + Math.random() * (max - min);
+function randomRange(min, max, seed = 'lab-range') {
+    return seededBetween(seed, min, max);
 }
 
 function getInterpretation(diseaseId, _results) {
@@ -488,7 +498,7 @@ function getInterpretation(diseaseId, _results) {
     return map[diseaseId] || 'Hasil lab dalam batas normal, tidak ada kelainan bermakna';
 }
 
-function generateDistractors(diseaseId, difficulty) {
+function generateDistractors(diseaseId, difficulty, seedHint = 'default') {
     const allInterpretations = [
         'Hasil lab dalam batas normal — tidak perlu tindakan',
         'Leukositosis — kemungkinan infeksi bakteri',
@@ -501,9 +511,10 @@ function generateDistractors(diseaseId, difficulty) {
     ];
 
     const correctInterpretation = getInterpretation(diseaseId);
-    const distractors = allInterpretations
-        .filter(d => d !== correctInterpretation)
-        .sort(() => Math.random() - 0.5);
+    const distractors = shuffleDeterministic(
+        allInterpretations.filter(d => d !== correctInterpretation),
+        seedKey('lab-distractors', seedHint, diseaseId, difficulty)
+    );
 
     return distractors.slice(0, Math.min(difficulty + 1, 3));
 }

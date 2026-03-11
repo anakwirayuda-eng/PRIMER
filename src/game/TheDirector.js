@@ -9,6 +9,8 @@
  * [DEPENDS_ON]: useGameStore (reads player/clinical/publicHealth state)
  */
 
+import { createDeterministicSequence, pickDeterministic, seedKey } from '../utils/deterministicRandom.js';
+
 // ═══════════════════════════════════════════════════════════════
 // TENSION THRESHOLDS
 // ═══════════════════════════════════════════════════════════════
@@ -127,10 +129,22 @@ export function selectPacingProfile(stressScore) {
 export function evaluateDirectorState(gameState) {
     const stress = calculateStress(gameState);
     const profile = selectPacingProfile(stress);
+    const rng = createDeterministicSequence(
+        seedKey(
+            'director-state',
+            gameState.day || 1,
+            gameState.queueLength,
+            gameState.emergencyQueueLength,
+            gameState.energy,
+            gameState.reputation,
+            gameState.activeOutbreakCount,
+            gameState.casesToday
+        )
+    );
 
     // Roll dice for event and gift
-    const eventRoll = Math.random();
-    const giftRoll = Math.random();
+    const eventRoll = rng.nextFloat();
+    const giftRoll = rng.nextFloat();
 
     return {
         stress,
@@ -148,14 +162,14 @@ export function evaluateDirectorState(gameState) {
  * 
  * @returns {Object} Gift description
  */
-export function generateDirectorGift() {
+export function generateDirectorGift(seedHint = 'default') {
     const gifts = [
         { type: 'supplies', message: 'Kiriman bantuan obat dari Dinas Kesehatan Kabupaten!', impact: { balance: 500000 } },
         { type: 'volunteer', message: 'Seorang relawan mahasiswa FK datang membantu hari ini.', impact: { energy: 20 } },
         { type: 'morale', message: 'Surat ucapan terima kasih dari warga RT 03 meningkatkan semangat!', impact: { spirit: 25, reputation: 3 } },
         { type: 'donation', message: 'Sumbangan dari pengusaha lokal untuk operasional Puskesmas.', impact: { balance: 300000 } },
     ];
-    return gifts[Math.floor(Math.random() * gifts.length)];
+    return pickDeterministic(gifts, seedKey('director-gift', seedHint));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -179,7 +193,8 @@ export function generateDirectorGift() {
 export function processUKPBridge(completedCases, currentDay) {
     const events = [];
 
-    for (const caseData of completedCases) {
+    for (let index = 0; index < completedCases.length; index++) {
+        const caseData = completedCases[index];
         // Only failed/partial outcomes trigger the bridge
         if (caseData.outcome !== 'failed' && caseData.outcome !== 'partial') continue;
 
@@ -199,8 +214,16 @@ export function processUKPBridge(completedCases, currentDay) {
         // Probability roll — increases linearly as we approach maxDelay
         const progressInWindow = (elapsed - minDelay) / (maxDelay - minDelay);
         const adjustedProbability = (bridge.failProbability || 0.5) * (0.5 + progressInWindow * 0.5);
+        const bridgeSeed = seedKey(
+            'ukp-bridge',
+            caseData.scenarioId,
+            currentDay,
+            caseData.completedOnDay,
+            caseData.outcome,
+            index
+        );
 
-        if (Math.random() > adjustedProbability) continue;
+        if (createDeterministicSequence(seedKey(bridgeSeed, 'roll')).nextFloat() > adjustedProbability) continue;
 
         // Failed outcomes map to severity
         const severityMap = {
@@ -210,7 +233,7 @@ export function processUKPBridge(completedCases, currentDay) {
 
         // Pick a random fail outcome from the bridge
         const outcomes = bridge.failOutcomes || [];
-        const pickedOutcome = outcomes[Math.floor(Math.random() * outcomes.length)] || 'unknown_complication';
+        const pickedOutcome = pickDeterministic(outcomes, seedKey(bridgeSeed, 'outcome')) || 'unknown_complication';
 
         // Generate the UKP emergency event
         events.push({

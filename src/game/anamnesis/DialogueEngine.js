@@ -10,10 +10,9 @@ import { getInformantMode } from './InformantSystem.js';
 import { getPrefix, adaptTextForGender } from './TextAdapter.js';
 import { calculateVaguenessScore, applyPersonaAdaptation, pickFromPool } from './EmotionEngine.js';
 import { PersistenceService } from '../../services/PersistenceService.js';
+import { chanceFromSeed, pickDeterministic, seedKey } from '../../utils/deterministicRandom.js';
 
-
-
-
+const pickDialogueVariant = (items, ...parts) => pickDeterministic(items, seedKey(...parts));
 
 export async function getAsyncVariation(caseId, questionId, baseResponse, patient) {
     const persona = pickPersona(patient);
@@ -53,11 +52,11 @@ export function generateGreeting(patient, doctorName, time, context) {
         const parentName = info.informantName || '';
         const parentStr = parentName ? (parentLabel + ' ' + parentName) : parentLabel;
 
-        const greetingVar = [
+        const greetingVar = pickDialogueVariant([
             isFollowUp ? `${greeting} lagi ${parentStr}. Ada yang terlewat untuk ${childName}?` : `${greeting}, saya dr. ${drName} yang bertugas. Ini ${childName} ya, ${parentStr}?`,
             isFollowUp ? `${parentStr}, ada keluhan lain tentang ${childName}?` : `${greeting}, ${parentStr}. Saya dr. ${drName}. Ada keluhan apa dengan ${childName} hari ini?`,
             isFollowUp ? `Halo ${childName}, ada lagi yang sakit?` : `Halo ${childName}, halo ${parentStr}. Saya dr. ${drName}. Apa yang bisa saya bantu untuk anaknya?`
-        ][Math.floor(Math.random() * 3)];
+        ], 'greeting', patient?.id || patient?.name, doctorName, time, parentStr, isFollowUp, 'pediatric');
 
         doctorText = greetingVar;
         patientResponse = `${greeting} Dokter. Iya dok, ini anak saya ${childName}.`;
@@ -73,11 +72,11 @@ export function generateGreeting(patient, doctorName, time, context) {
         demeanor = '(pasien tampak bingung, pendamping yang menjawab)';
     } else {
         const prefix = getPrefix(patient, info, 'auto');
-        const greetingVar = [
+        const greetingVar = pickDialogueVariant([
             isFollowUp ? `${greeting} lagi, ${prefix}. Ada lagi yang bisa saya bantu?` : `${greeting}, saya dr. ${drName}. Apa kabar ${prefix} hari ini?`,
             isFollowUp ? `${prefix}, ada keluhan lain yang ingin disampaikan?` : `${greeting}, saya dr. ${drName} yang bertugas. Ada yang bisa saya bantu, ${prefix}?`,
             isFollowUp ? `${greeting} ${prefix}. Ada yang terlupa?` : `${greeting} ${prefix}. Saya dr. ${drName}. Ada keluhan apa saat ini?`
-        ][Math.floor(Math.random() * 3)];
+        ], 'greeting', patient?.id || patient?.name, doctorName, time, prefix, isFollowUp, info.reason || 'default');
 
         doctorText = greetingVar;
         patientResponse = `${greeting}, Dokter.`;
@@ -99,6 +98,7 @@ export function getGenericDemeanor(patient) {
     const complaint = (patient && patient.complaint ? patient.complaint : '').toLowerCase();
     const social = (patient && patient.social) ? patient.social : {};
     const age = patient ? patient.age || 0 : 0;
+    const demeanorSeed = seedKey('demeanor', patient?.id || patient?.name, complaint, age, social.trustLevel, social.healthBelief);
 
     // Complaint-specific pools (2-3 options each for variety)
     const painPool = ['(tampak menahan rasa sakit)', '(meringis pelan)', '(memegang bagian yang sakit)', '(tampak kesakitan)'];
@@ -107,28 +107,28 @@ export function getGenericDemeanor(patient) {
     const feverPool = ['(tampak tidak nyaman dan berkeringat)', '(wajah memerah)', '(tampak demam)', '(keringat di dahi)'];
     const anxPool = ['(tampak gelisah dan cemas)', '(tangan gemetar)', '(mata gelisah)', '(kaki bergoyang cemas)'];
 
-    if (complaint.includes('nyeri') || complaint.includes('sakit')) return painPool[Math.floor(Math.random() * painPool.length)];
-    if (complaint.includes('pusing') || complaint.includes('lemas')) return dizzyPool[Math.floor(Math.random() * dizzyPool.length)];
-    if (complaint.includes('sesak') || complaint.includes('nafas')) return breathPool[Math.floor(Math.random() * breathPool.length)];
-    if (complaint.includes('demam') || complaint.includes('panas')) return feverPool[Math.floor(Math.random() * feverPool.length)];
-    if (complaint.includes('cemas') || complaint.includes('gelisah')) return anxPool[Math.floor(Math.random() * anxPool.length)];
+    if (complaint.includes('nyeri') || complaint.includes('sakit')) return pickDialogueVariant(painPool, demeanorSeed, 'pain');
+    if (complaint.includes('pusing') || complaint.includes('lemas')) return pickDialogueVariant(dizzyPool, demeanorSeed, 'dizzy');
+    if (complaint.includes('sesak') || complaint.includes('nafas')) return pickDialogueVariant(breathPool, demeanorSeed, 'breath');
+    if (complaint.includes('demam') || complaint.includes('panas')) return pickDialogueVariant(feverPool, demeanorSeed, 'fever');
+    if (complaint.includes('cemas') || complaint.includes('gelisah')) return pickDialogueVariant(anxPool, demeanorSeed, 'anxious');
 
     if (social.trustLevel === 'skeptical') {
         const skeptPool = ['(ekspresi agak ragu)', '(melirik curiga)', '(tampak tidak yakin)', '(bersedekap tangan)'];
-        return skeptPool[Math.floor(Math.random() * skeptPool.length)];
+        return pickDialogueVariant(skeptPool, demeanorSeed, 'skeptical');
     }
     if (social.healthBelief === 'Tradisionalis') {
         const tradPool = ['(tampak sedikit canggung)', '(memandang sekitar ruangan)', '(agak gugup)', '(tampak tidak terbiasa)'];
-        return tradPool[Math.floor(Math.random() * tradPool.length)];
+        return pickDialogueVariant(tradPool, demeanorSeed, 'traditional');
     }
 
     if (age < 15) {
         const childPool = ['(tampak malu-malu)', '(bersembunyi di balik orangtua)', '(memegang tangan orangtua)', '(menunduk malu)'];
-        return childPool[Math.floor(Math.random() * childPool.length)];
+        return pickDialogueVariant(childPool, demeanorSeed, 'child');
     }
     if (age > 70) {
         const elderPool = ['(berjalan dengan hati-hati)', '(duduk pelan-pelan)', '(tampak kelelahan)', '(bicara pelan)'];
-        return elderPool[Math.floor(Math.random() * elderPool.length)];
+        return pickDialogueVariant(elderPool, demeanorSeed, 'elder');
     }
 
     const neutralPool = [
@@ -136,7 +136,7 @@ export function getGenericDemeanor(patient) {
         '(tampak sabar menunggu)', '(memandang dokter)', '(tersenyum sopan)',
         '(menyapa dengan ramah)', '(tampak kooperatif)', '(duduk tegak)'
     ];
-    return neutralPool[Math.floor(Math.random() * neutralPool.length)];
+    return pickDialogueVariant(neutralPool, demeanorSeed, 'neutral');
 }
 
 /**
@@ -252,7 +252,7 @@ export async function getAdaptiveResponse(question, patient, caseId, context) {
 
     // Vagueness check — preserve original clinical info for follow-up re-ask
     const vagueness = calculateVaguenessScore(response);
-    if (vagueness > 0.7 && Math.random() < 0.05) {
+    if (vagueness > 0.7 && chanceFromSeed(seedKey('vagueness', patient?.id || patient?.name, question.id, rawClinical), 0.05)) {
         const prefix = getPrefix(patient, info, 'auto');
         const opts = {
             vagueAlreadyApplied: true,

@@ -14,7 +14,8 @@
  * Core game logic for Prolanis (Chronic Disease Management)
  */
 
-import { PROLANIS_DISEASES, PROLANIS_EVENTS, rollRandomEvent, getParameterStatus } from '../data/ProlanisDB.js';
+import { PROLANIS_DISEASES, PROLANIS_EVENTS, getParameterStatus } from '../data/ProlanisDB.js';
+import { seedKey, seededBetween, seededFloat } from '../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // PARAMETER SIMULATION
@@ -23,20 +24,21 @@ import { PROLANIS_DISEASES, PROLANIS_EVENTS, rollRandomEvent, getParameterStatus
 /**
  * Generate initial parameters for a new Prolanis patient
  */
-export function generateInitialParameters(diseaseType) {
+export function generateInitialParameters(diseaseType, seedHint = 'default') {
     const disease = PROLANIS_DISEASES[diseaseType];
     if (!disease) return {};
 
     const params = {};
+    const baseSeed = seedKey('prolanis-init', diseaseType, seedHint);
 
     if (diseaseType === 'dm_type2') {
         // Uncontrolled at start (that's why they need Prolanis!)
-        params.hba1c = randomRange(7.5, 10);
-        params.gds = randomRange(180, 280);
-        params.gdp = randomRange(130, 180);
+        params.hba1c = randomRange(7.5, 10, baseSeed, 0);
+        params.gds = randomRange(180, 280, baseSeed, 1);
+        params.gdp = randomRange(130, 180, baseSeed, 2);
     } else if (diseaseType === 'hypertension') {
-        params.systolic = randomRange(150, 180);
-        params.diastolic = randomRange(95, 110);
+        params.systolic = randomRange(150, 180, baseSeed, 0);
+        params.diastolic = randomRange(95, 110, baseSeed, 1);
     }
 
     return params;
@@ -50,11 +52,13 @@ export function generateInitialParameters(diseaseType) {
  * @param {string} diseaseType - 'dm_type2' or 'hypertension'
  * @returns {Object} New parameters after simulation
  */
-export function simulateParameterChange(currentParams, intervention, event, diseaseType) {
+export function simulateParameterChange(currentParams, intervention, event, diseaseType, seedHint = 'default') {
     const newParams = { ...currentParams };
+    const changeSeed = seedKey('prolanis-change', diseaseType, seedHint, currentParams);
+    let driftOffset = 0;
 
     // Base drift (slight random variation)
-    const baseDrift = () => randomRange(-5, 5);
+    const baseDrift = () => randomRange(-5, 5, changeSeed, driftOffset++);
 
     // Apply intervention effects
     if (intervention) {
@@ -171,7 +175,7 @@ export function calculateComplicationRisk(patient) {
  * Check if a complication should trigger
  * Returns the complication object if triggered, null otherwise
  */
-export function checkForComplication(patient) {
+export function checkForComplication(patient, seedHint = 'default') {
     const risk = calculateComplicationRisk(patient);
     const diseaseType = patient.prolanisData?.diseaseType;
     const disease = PROLANIS_DISEASES[diseaseType];
@@ -182,7 +186,9 @@ export function checkForComplication(patient) {
     const sortedComplications = [...disease.complications].sort((a, b) => a.riskThreshold - b.riskThreshold);
 
     // Roll for complication based on risk
-    const roll = Math.random() * 100;
+    const roll = seededFloat(
+        seedKey('prolanis-complication', patient.id || patient.name, seedHint, diseaseType, risk, patient.prolanisData?.history?.length || 0)
+    ) * 100;
 
     for (const complication of sortedComplications) {
         if (risk >= complication.riskThreshold && roll < (risk - complication.riskThreshold + 10)) {
@@ -200,15 +206,22 @@ export function checkForComplication(patient) {
 /**
  * Determine the outcome of a monthly Prolanis visit
  */
-export function determineMonthlyOutcome(patient, doctorDecisions) {
+export function determineMonthlyOutcome(patient, doctorDecisions, seedHint = 'default') {
     const diseaseType = patient.prolanisData?.diseaseType;
     const currentParams = patient.prolanisData?.parameters;
+    const monthSeed = seedKey(
+        'prolanis-month',
+        patient.id || patient.name,
+        seedHint,
+        diseaseType,
+        patient.prolanisData?.history?.length || 0
+    );
 
     // Roll for random event
-    const event = rollRandomEvent();
+    const event = rollDeterministicEvent(monthSeed);
 
     // Simulate new parameters
-    const newParams = simulateParameterChange(currentParams, doctorDecisions, event, diseaseType);
+    const newParams = simulateParameterChange(currentParams, doctorDecisions, event, diseaseType, monthSeed);
 
     // Check if controlled after intervention
     const wasControlled = checkIfControlled(newParams, diseaseType);
@@ -225,7 +238,7 @@ export function determineMonthlyOutcome(patient, doctorDecisions) {
     const newRisk = calculateComplicationRisk(tempPatient);
 
     // Check for complication
-    const complication = checkForComplication(tempPatient);
+    const complication = checkForComplication(tempPatient, seedKey(monthSeed, 'complication'));
 
     // Calculate XP reward
     let xp = 20; // Base XP for visit
@@ -291,8 +304,22 @@ export function getPatientsDueToday(prolanisRoster, currentDay) {
 // UTILITY FUNCTIONS
 // ═══════════════════════════════════════════════════════════════
 
-function randomRange(min, max) {
-    return Math.random() * (max - min) + min;
+function randomRange(min, max, seed = 'prolanis-range', offset = 0) {
+    return seededBetween(`${seed}:${offset}`, min, max);
+}
+
+function rollDeterministicEvent(seedHint) {
+    const roll = seededFloat(seedKey(seedHint, 'event-roll'));
+    let cumulative = 0;
+
+    for (const event of PROLANIS_EVENTS) {
+        cumulative += event.probability;
+        if (roll < cumulative) {
+            return event;
+        }
+    }
+
+    return null;
 }
 
 function clamp(value, min, max) {

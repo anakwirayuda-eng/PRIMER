@@ -15,6 +15,8 @@
  * Includes: Penimbangan, KMS, Imunisasi, Penyuluhan Gizi
  */
 
+import { chanceFromSeed, seedKey, seededBetween } from '../utils/deterministicRandom.js';
+
 // Posyandu activity types
 export const POSYANDU_ACTIVITIES = {
     penimbangan: {
@@ -190,7 +192,12 @@ export function calculateAttendance(eligibleParticipants, options = {}) {
     attendanceRate = Math.min(0.95, attendanceRate);
 
     // Filter based on probability
-    return eligibleParticipants.filter(() => Math.random() < attendanceRate);
+    return eligibleParticipants.filter((participant, index) =>
+        chanceFromSeed(
+            seedKey('posyandu-attendance', participant.id || participant.name, attendanceRate, reminderSent, reputation, iksScore, index),
+            attendanceRate
+        )
+    );
 }
 
 /**
@@ -213,7 +220,11 @@ export function processActivityResult(activity, participant, _playerInput = {}) 
 
     // Penimbangan specific logic
     if (activity.id === 'penimbangan') {
-        const currentWeight = participant.weight || 10 + Math.random() * 5;
+        const currentWeight = participant.weight || seededBetween(
+            seedKey('posyandu-weight', participant.id || participant.name, activity.id, participant.age),
+            10,
+            15
+        );
         const expectedWeight = getExpectedWeight(participant.age);
         const weightStatus = currentWeight >= expectedWeight * 0.9 ? 'normal' :
             currentWeight >= expectedWeight * 0.7 ? 'underweight' : 'severely_underweight';

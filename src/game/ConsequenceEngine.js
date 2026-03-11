@@ -10,6 +10,8 @@
  * [LAST_UPDATE]: 2026-02-17
  */
 
+import { randomIdFromSeed, seedKey, seededInt } from '../utils/deterministicRandom.js';
+
 // ═══════════════════════════════════════════════════════════════
 // CONSEQUENCE RULES
 // Maps missed/incorrect actions to delayed outcomes
@@ -141,10 +143,21 @@ export function evaluateConsequences(caseData, decisions, currentDay) {
             if (rule.match(caseData, decisions)) {
                 const { outcome } = rule;
                 const [minDelay, maxDelay] = outcome.delayDays;
-                const delay = minDelay + Math.floor(Math.random() * (maxDelay - minDelay + 1));
+                const delaySeed = seedKey(
+                    'consequence-delay',
+                    rule.id,
+                    currentDay,
+                    caseData.patientName || caseData.name,
+                    decisions.diagnosis,
+                    decisions.action
+                );
+                const delay = minDelay + seededInt(delaySeed, maxDelay - minDelay + 1);
 
                 return {
-                    id: `consequence_${rule.id}_${currentDay}_${Date.now()}`,
+                    id: randomIdFromSeed(
+                        'consequence',
+                        seedKey('consequence', rule.id, currentDay, caseData.patientName || caseData.name, delay)
+                    ),
                     ruleId: rule.id,
                     returnDay: currentDay + delay,
                     originalCase: {

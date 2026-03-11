@@ -10,6 +10,7 @@
  */
 
 import { IKM_SCENARIOS, getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
+import { chanceFromSeed, seedKey } from '../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -106,7 +107,11 @@ export function evaluateIKMTriggers(state) {
         if (day - lastTrigger < EVENT_COOLDOWN_DAYS) continue;
 
         // Evaluate trigger conditions
-        if (shouldTrigger(scenario.triggerConditions, { day, season, villageData })) {
+        if (shouldTrigger(
+            scenario.triggerConditions,
+            { day, season, villageData },
+            seedKey('ikm-trigger', scenario.id, day, season, activeIds, completedIKMEvents)
+        )) {
             triggered.push(createEventInstance(scenario, day));
 
             // Stop if we'd exceed max
@@ -120,7 +125,7 @@ export function evaluateIKMTriggers(state) {
 /**
  * Check if trigger conditions are met for a scenario
  */
-function shouldTrigger(conditions, context) {
+function shouldTrigger(conditions, context, seedHint = 'default') {
     const { day, season, villageData } = context;
 
     // Check minimum day
@@ -142,7 +147,7 @@ function shouldTrigger(conditions, context) {
 
     // Probability roll
     const probability = conditions.probability || 0.1;
-    return Math.random() < probability;
+    return chanceFromSeed(seedKey('ikm-conditions', seedHint), probability);
 }
 
 /**

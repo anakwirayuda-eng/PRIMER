@@ -8,11 +8,12 @@
  * [KNOWN_ISSUES]: None
  * [LAST_UPDATE]: 2026-02-12
  */
-import { getRandomCase, getCaseByCondition } from '../content/cases/CaseLibrary.js';
+import { CASE_LIBRARY, getCaseByCondition } from '../content/cases/CaseLibrary.js';
 import { getRandomEmergencyCase } from './EmergencyCases.js';
 import { generateSocialDeterminants } from '../utils/SocialDeterminants.js';
 import { calculateRiskFactors, INDIVIDUAL_PROFILES, FAMILY_MEDICAL_HISTORY } from '../domains/village/VillageRegistry.js';
 import { getDateFromDay } from '../data/CalendarEventDB.js';
+import { createDeterministicSequence, pickDeterministic, randomIdFromSeed, seedKey } from '../utils/deterministicRandom.js';
 
 // Anchor family IDs - these have curated profiles and should appear more often
 const ANCHOR_FAMILY_IDS = ['kk_02', 'kk_04', 'kk_08', 'kk_15', 'kk_22', 'kk_23', 'kk_24', 'kk_25'];
@@ -129,36 +130,37 @@ function getBMICategory(bmi, age) {
 /**
  * Generate realistic anthropometric data based on age and gender
  */
-function generateAnthropometrics(age, gender) {
+function generateAnthropometrics(age, gender, seedHint = 'default') {
+    const rng = createDeterministicSequence(seedKey('anthropometrics', seedHint, age, gender));
     let height, weight;
 
     if (age < 5) {
         // Toddler: height 75-110cm
-        height = 75 + (age * 7) + Math.floor(Math.random() * 10);
-        weight = 10 + (age * 2) + Math.floor(Math.random() * 4);
+        height = 75 + (age * 7) + rng.int(10);
+        weight = 10 + (age * 2) + rng.int(4);
     } else if (age < 12) {
         // Child: height 100-150cm
-        height = 100 + ((age - 5) * 5) + Math.floor(Math.random() * 15);
-        weight = 18 + ((age - 5) * 3) + Math.floor(Math.random() * 8);
+        height = 100 + ((age - 5) * 5) + rng.int(15);
+        weight = 18 + ((age - 5) * 3) + rng.int(8);
     } else if (age < 18) {
         // Adolescent
         if (gender === 'L') {
-            height = 145 + ((age - 12) * 5) + Math.floor(Math.random() * 15);
-            weight = 40 + ((age - 12) * 4) + Math.floor(Math.random() * 15);
+            height = 145 + ((age - 12) * 5) + rng.int(15);
+            weight = 40 + ((age - 12) * 4) + rng.int(15);
         } else {
-            height = 140 + ((age - 12) * 3) + Math.floor(Math.random() * 12);
-            weight = 38 + ((age - 12) * 3) + Math.floor(Math.random() * 12);
+            height = 140 + ((age - 12) * 3) + rng.int(12);
+            weight = 38 + ((age - 12) * 3) + rng.int(12);
         }
     } else {
         // Adult
         if (gender === 'L') {
-            height = 155 + Math.floor(Math.random() * 25); // 155-180cm
+            height = 155 + rng.int(25); // 155-180cm
             // Weight with realistic distribution including obesity
-            const bmiTarget = 18 + Math.random() * 15; // BMI 18-33
+            const bmiTarget = 18 + (rng.nextFloat() * 15); // BMI 18-33
             weight = Math.round(bmiTarget * ((height / 100) ** 2));
         } else {
-            height = 145 + Math.floor(Math.random() * 20); // 145-165cm
-            const bmiTarget = 17 + Math.random() * 14; // BMI 17-31
+            height = 145 + rng.int(20); // 145-165cm
+            const bmiTarget = 17 + (rng.nextFloat() * 14); // BMI 17-31
             weight = Math.round(bmiTarget * ((height / 100) ** 2));
         }
     }
@@ -188,7 +190,7 @@ function generateAnthropometrics(age, gender) {
     };
 }
 
-function generateComplaintText(disease) {
+function generateComplaintText(disease, seedHint = 'default') {
     // Safety check - if disease is null/undefined, return generic complaint
     if (!disease) {
         return "Tidak enak badan dok...";
@@ -198,7 +200,7 @@ function generateComplaintText(disease) {
     // Do NOT append random greeting or duration fragments
     const anamnesis = disease.anamnesis || [];
     if (anamnesis.length > 0) {
-        return anamnesis[Math.floor(Math.random() * anamnesis.length)];
+        return pickDeterministic(anamnesis, seedKey('complaint-text', disease.id, seedHint));
     }
 
     // Fallback: use first symptom as a complaint
@@ -215,26 +217,30 @@ function generateComplaintText(disease) {
  * @param {object} facilities - Active facilities levels
  * @param {object} skills - Unlocked player skills
  */
-export function generatePatient(currentTime, population, gameDay = 1, facilities = {}, _skills = {}) {
+export function generatePatient(currentTime, population, gameDay = 1, facilities = {}, _skills = {}, seedHint = 'default') {
+    const patientSeed = seedKey(
+        'patient',
+        seedHint,
+        currentTime,
+        gameDay,
+        population?.villagers?.length || 0,
+        Object.entries(facilities || {}).sort(([a], [b]) => a.localeCompare(b))
+    );
+    const rng = createDeterministicSequence(patientSeed);
     let isResident = false;
     let resident = null;
     let residentFamily = null;
     let residentProfile = null;
     let familyMedHistory = null;
 
-    // 70% chance to pick a resident if population is available
-    if (population && population.villagers && population.villagers.length > 0 && Math.random() < 0.7) {
+    if (population && population.villagers && population.villagers.length > 0 && rng.chance(0.7)) {
         const living = population.villagers.filter(v => v.status === 'alive');
 
         if (living.length > 0) {
-            // 40% of resident cases: prioritize anchor family members with profiles
             const anchorMembers = living.filter(v => ANCHOR_FAMILY_IDS.includes(v.familyId));
-
-            if (anchorMembers.length > 0 && Math.random() < 0.4) {
-                resident = anchorMembers[Math.floor(Math.random() * anchorMembers.length)];
-            } else {
-                resident = living[Math.floor(Math.random() * living.length)];
-            }
+            resident = (anchorMembers.length > 0 && rng.chance(0.4))
+                ? pickDeterministic(anchorMembers, seedKey(patientSeed, 'anchor-member'))
+                : pickDeterministic(living, seedKey(patientSeed, 'resident-member'));
 
             residentFamily = population.families?.find(f => f.id === resident.familyId);
             residentProfile = INDIVIDUAL_PROFILES[resident.id] || null;
@@ -243,20 +249,14 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         }
     }
 
-    // Determine disease based on profile OR risk factors
-    let disease;
+    const availableCases = CASE_LIBRARY.filter(c => {
+        const requiredFacility = CATEGORY_FACILITY_MAP[c.category] || 'poli_umum';
+        return (facilities[requiredFacility] || 0) > 0;
+    });
 
-    // Helper to get a random case filtered by active facilities
-    const getRandomFilteredCase = () => {
-        let attempts = 0;
-        let c;
-        while (attempts < 20) {
-            c = getRandomCase();
-            const requiredFacility = CATEGORY_FACILITY_MAP[c.category] || 'poli_umum';
-            if ((facilities[requiredFacility] || 0) > 0) return c;
-            attempts++;
-        }
-        return getRandomCase(); // Fallback if no matching facility found in 20 tries
+    const getRandomFilteredCase = (localSeed = 'default') => {
+        const source = availableCases.length > 0 ? availableCases : CASE_LIBRARY;
+        return pickDeterministic(source, seedKey(patientSeed, 'case', localSeed));
     };
 
     const getFilteredCaseByCondition = (caseId) => {
@@ -264,64 +264,48 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         if (!c) return null;
         const requiredFacility = CATEGORY_FACILITY_MAP[c.category] || 'poli_umum';
         if ((facilities[requiredFacility] || 0) > 0) return c;
-        return null; // Don't generate if facility not built
+        return null;
     };
 
-    // Recalculate risks using fresh data if available
     if (isResident && residentFamily && residentFamily.indicators) {
         resident.riskFactors = calculateRiskFactors(residentFamily.indicators, resident, resident.sdoh || {}, residentProfile);
     }
 
-    // === IKS-BASED DISEASE PREVENTION ===
-    // Healthier families (high IKS) are more likely to come for checkups vs acute illness
     const familyIKS = residentFamily?.iksScore || 0.5;
 
-    // Calculate jentik/PSN coverage for dengue prevention
-    let jentikCoverage = 0.5; // Default
+    let jentikCoverage = 0.5;
     if (population && population.families) {
         const jentikCount = population.families.filter(f => f.indicators?.jentik === true).length;
         jentikCoverage = jentikCount / population.families.length;
     }
 
-    // PRIORITY 0: Storyline-based disease selection (Harvest Moon style)
-    // If a resident has a specific story event, prioritize it.
-    if (residentProfile && residentProfile.storyline && residentProfile.storyline.triggerEvent) {
-        // 40% chance to trigger their specific story event if it's their "day" to be sick
-        if (Math.random() < 0.4) {
-            const storyCase = getFilteredCaseByCondition(residentProfile.storyline.triggerEvent);
-            if (storyCase) {
-                disease = storyCase;
-                // Append story background to the complaint for more context
-                disease = {
-                    ...disease,
-                    anamnesis: [
-                        `(${residentProfile.storyline.background}) ${disease.anamnesis[0]}`
-                    ]
-                };
-            }
+    let disease = null;
+
+    if (residentProfile?.storyline?.triggerEvent && rng.chance(0.4)) {
+        const storyCase = getFilteredCaseByCondition(residentProfile.storyline.triggerEvent);
+        if (storyCase) {
+            disease = {
+                ...storyCase,
+                anamnesis: [
+                    `(${residentProfile.storyline.background}) ${storyCase.anamnesis?.[0] || ''}`.trim()
+                ]
+            };
         }
     }
 
-    // PRIORITY 1: Profile-based disease selection (60% chance for profiled residents)
-    if (!disease && residentProfile && residentProfile.conditions && residentProfile.conditions.length > 0 && Math.random() < 0.6) {
-        // Pick a random condition from their profile
-        const condition = residentProfile.conditions[Math.floor(Math.random() * residentProfile.conditions.length)];
+    if (!disease && residentProfile?.conditions?.length > 0 && rng.chance(0.6)) {
+        const condition = pickDeterministic(residentProfile.conditions, seedKey(patientSeed, 'condition'));
         const possibleCases = CONDITION_CASE_MAPPING[condition] || [];
 
         if (possibleCases.length > 0) {
-            const caseId = possibleCases[Math.floor(Math.random() * possibleCases.length)];
+            const caseId = pickDeterministic(possibleCases, seedKey(patientSeed, 'condition-case', condition));
             disease = getFilteredCaseByCondition(caseId);
         }
 
-        // Fallback if no matching or allowed case found
         if (!disease) {
-            disease = getRandomFilteredCase();
+            disease = getRandomFilteredCase('profile-fallback');
         }
-    }
-    // PRIORITY 2: Risk factor-based selection
-    else if (isResident && resident.riskFactors && resident.riskFactors.length > 0) {
-        const risks = resident.riskFactors;
-
+    } else if (isResident && resident?.riskFactors?.length > 0) {
         const riskDiseaseMappings = {
             'poor_sanitation': ['acute_gastroenteritis', 'typhoid_fever', 'ascariasis'],
             'unsafe_water': ['acute_gastroenteritis', 'hepatitis_a'],
@@ -338,108 +322,89 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             'uninsured': null
         };
 
-        let preferredDiseases = [];
-        risks.forEach(r => {
-            if (riskDiseaseMappings[r]) {
-                preferredDiseases.push(...riskDiseaseMappings[r]);
+        const preferredDiseases = resident.riskFactors.reduce((acc, risk) => {
+            if (riskDiseaseMappings[risk]) {
+                acc.push(...riskDiseaseMappings[risk]);
             }
-        });
+            return acc;
+        }, []);
 
-        // 50% chance to match risk-based disease
-        if (preferredDiseases.length > 0 && Math.random() < 0.5) {
-            const caseId = preferredDiseases[Math.floor(Math.random() * preferredDiseases.length)];
+        if (preferredDiseases.length > 0 && rng.chance(0.5)) {
+            const caseId = pickDeterministic(preferredDiseases, seedKey(patientSeed, 'risk-case'));
             disease = getFilteredCaseByCondition(caseId);
         }
 
         if (!disease) {
-            disease = getRandomFilteredCase();
+            disease = getRandomFilteredCase('risk-fallback');
         }
     } else {
-        disease = getRandomFilteredCase();
+        disease = getRandomFilteredCase('default');
     }
 
-    // === APPLY SEASONAL MULTIPLIERS TO DISEASE PROBABILITY ===
-    // If the current disease is NOT a seasonal one, there's a chance to swap it
-    // FOR a seasonal disease (proportional to the multiplier). This correctly
-    // increases the frequency of seasonal diseases during their peak months.
     const date = getDateFromDay(gameDay);
-    const month = date.getMonth(); // 0-11 for Jan-Dec
+    const month = date.getMonth();
+    const seasonalRng = createDeterministicSequence(seedKey(patientSeed, 'seasonal', month));
 
     Object.values(SEASONAL_MULTIPLIERS).forEach(season => {
-        if (season.months.includes(month)) {
-            Object.entries(season.diseases).forEach(([seasonalDiseaseId, multiplier]) => {
-                if (disease?.id === seasonalDiseaseId) {
-                    // Disease already matches a seasonal one — always keep it
-                    return;
-                }
+        if (!season.months.includes(month)) return;
 
-                // Chance to swap current disease for a seasonal one
-                // multiplier 3.0 → 40% swap chance, 1.5 → 10%, 1.2 → 4%
-                const swapChance = (multiplier - 1) * 0.2;
-                if (Math.random() < swapChance) {
-                    const seasonalCase = getFilteredCaseByCondition(seasonalDiseaseId);
-                    if (seasonalCase) disease = seasonalCase;
+        Object.entries(season.diseases).forEach(([seasonalDiseaseId, multiplier]) => {
+            if (disease?.id === seasonalDiseaseId) {
+                return;
+            }
+
+            const swapChance = (multiplier - 1) * 0.2;
+            if (seasonalRng.chance(swapChance)) {
+                const seasonalCase = getFilteredCaseByCondition(seasonalDiseaseId);
+                if (seasonalCase) {
+                    disease = seasonalCase;
                 }
-            });
-        }
+            }
+        });
     });
 
-    // Ensure disease is always set after all logic
     if (!disease) {
-        disease = getRandomFilteredCase();
+        disease = getRandomFilteredCase('safety-fallback');
     }
 
-    // === DISEASE PREVENTION FROM INTERVENTIONS ===
-
-    // HIGH IKS FAMILIES: 25% chance to come for routine checkup instead of acute illness
-    if (isResident && familyIKS >= 0.8 && Math.random() < 0.25) {
-        // Try to get a general checkup case, fallback to current disease
+    if (isResident && familyIKS >= 0.8 && rng.chance(0.25)) {
         const checkupCase = getCaseByCondition('general_checkup');
         if (checkupCase) {
             disease = checkupCase;
         }
     }
 
-    // PSN/JENTIK COVERAGE: Reduce dengue probability
-    // If jentik coverage > 70% and disease is dengue, 50% chance to reroll
-    if (disease?.id === 'dengue_fever' && jentikCoverage > 0.7) {
-        if (Math.random() < 0.5) {
-            // Dengue prevented! Reroll to different disease
-            disease = getRandomFilteredCase();
-            // Ensure we don't get dengue again
-            while (disease?.id === 'dengue_fever') {
-                disease = getRandomFilteredCase();
-            }
+    if (disease?.id === 'dengue_fever' && jentikCoverage > 0.7 && rng.chance(0.5)) {
+        let redraw = 0;
+        disease = getRandomFilteredCase(seedKey('dengue-reroll', redraw));
+        while (disease?.id === 'dengue_fever' && redraw < 10) {
+            redraw += 1;
+            disease = getRandomFilteredCase(seedKey('dengue-reroll', redraw));
         }
     }
 
-    // Use resident info or generate random
-    const gender = isResident ? resident.gender : (Math.random() > 0.5 ? 'L' : 'P');
-    const name = isResident
-        ? resident.fullName
-        : `${(gender === 'L' ? NAMES_MALE : NAMES_FEMALE)[Math.floor(Math.random() * NAMES_MALE.length)]} ${SURNAMES[Math.floor(Math.random() * SURNAMES.length)]}`;
+    const gender = isResident ? resident.gender : (rng.chance(0.5) ? 'L' : 'P');
+    const firstNamePool = gender === 'L' ? NAMES_MALE : NAMES_FEMALE;
+    const firstName = pickDeterministic(firstNamePool, seedKey(patientSeed, 'first-name', gender));
+    const surname = pickDeterministic(SURNAMES, seedKey(patientSeed, 'surname'));
+    const name = isResident ? resident.fullName : `${firstName} ${surname}`;
 
-    // Age: use resident's age, or generate weighted random
     let age;
     if (isResident) {
         age = resident.age;
     } else {
-        const ageRoll = Math.random();
-        if (ageRoll < 0.15) age = Math.floor(Math.random() * 12) + 3;
-        else if (ageRoll < 0.6) age = Math.floor(Math.random() * 30) + 20;
-        else if (ageRoll < 0.85) age = Math.floor(Math.random() * 20) + 50;
-        else age = Math.floor(Math.random() * 20) + 70;
+        const ageRoll = rng.nextFloat();
+        if (ageRoll < 0.15) age = rng.int(12) + 3;
+        else if (ageRoll < 0.6) age = rng.int(30) + 20;
+        else if (ageRoll < 0.85) age = rng.int(20) + 50;
+        else age = rng.int(20) + 70;
     }
 
-    // Generate anthropometrics 
-    const anthropometrics = generateAnthropometrics(age, gender);
+    const anthropometrics = generateAnthropometrics(age, gender, seedKey(patientSeed, 'anthropometrics'));
 
-    // Generate social determinants — residents use registry data directly
     let sdoh;
     if (isResident) {
         const regSdoh = resident.sdoh || {};
-
-        // Build SDOH directly from resident registry data
         const eduMap = {
             'No School': 'Tidak Sekolah',
             'Elementary': 'SD',
@@ -483,10 +448,9 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
     } else {
         sdoh = generateSocialDeterminants(age);
         sdoh.isResident = false;
-        sdoh.patientType = Math.random() > 0.5 ? 'tourist' : 'worker';
+        sdoh.patientType = rng.chance(0.5) ? 'tourist' : 'worker';
     }
 
-    // Add BMI risk factors
     if (anthropometrics.bmiRiskFactors.length > 0) {
         sdoh.riskFactorsSummary = [
             ...(sdoh.riskFactorsSummary || []),
@@ -494,18 +458,14 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         ];
     }
 
-    const complaintText = generateComplaintText(disease);
+    const complaintText = generateComplaintText(disease, seedKey(patientSeed, 'complaint'));
 
-    // === INFORMANT DATA FOR PEDIATRIC PATIENTS ===
     let informant = null;
     if (age <= 7) {
-        // Child needs a parent/guardian as informant
         if (isResident && population && population.villagers) {
-            // Find a parent in the same family
             const familyMembers = population.villagers.filter(v =>
                 v.familyId === resident.familyId && v.status === 'alive' && v.id !== resident.id && v.age >= 18
             );
-            // Prefer female parent (Ibu) first, then any adult
             const mother = familyMembers.find(m => m.gender === 'P');
             const father = familyMembers.find(m => m.gender === 'L');
             const parentMember = mother || father || familyMembers[0];
@@ -520,38 +480,39 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             }
         }
 
-        // Fallback for non-residents or if no parent found
         if (!informant) {
-            const parentGender = Math.random() > 0.3 ? 'P' : 'L'; // 70% chance mother
-            const parentName = parentGender === 'P'
-                ? `${NAMES_FEMALE[Math.floor(Math.random() * NAMES_FEMALE.length)]} ${name.split(' ').pop()}`
-                : `${NAMES_MALE[Math.floor(Math.random() * NAMES_MALE.length)]} ${name.split(' ').pop()}`;
+            const parentGender = rng.chance(0.7) ? 'P' : 'L';
+            const parentFirstName = pickDeterministic(
+                parentGender === 'P' ? NAMES_FEMALE : NAMES_MALE,
+                seedKey(patientSeed, 'informant-name', parentGender)
+            );
             informant = {
-                name: parentName,
+                name: `${parentFirstName} ${name.split(' ').pop()}`,
                 relation: parentGender === 'P' ? 'Ibu' : 'Ayah',
-                age: 25 + Math.floor(Math.random() * 15) // 25-40
+                age: 25 + rng.int(15)
             };
         }
     }
 
-    // === SPRINT 1: PERSONA DATA ===
     const commStyles = ['verbose', 'concise', 'vague'];
     const demeanors = ['Stoic', 'Anxious', 'Dramatic', 'Normal'];
-    const communicationStyle = isResident && resident.communicationStyle ? resident.communicationStyle : commStyles[Math.floor(Math.random() * 3)];
-    const demeanor = demeanors[Math.floor(Math.random() * 4)];
+    const communicationStyle = isResident && resident.communicationStyle
+        ? resident.communicationStyle
+        : pickDeterministic(commStyles, seedKey(patientSeed, 'communication-style'));
+    const demeanor = pickDeterministic(demeanors, seedKey(patientSeed, 'demeanor'));
 
     return {
-        id: Math.random().toString(36).substr(2, 9),
-        name: name,
-        age: age,
-        gender: gender,
-        anthropometrics: anthropometrics,
+        id: randomIdFromSeed('patient', seedKey(patientSeed, 'id'), 9),
+        name,
+        age,
+        gender,
+        anthropometrics,
         complaint: complaintText,
-        communicationStyle: communicationStyle,
-        demeanor: demeanor,
+        communicationStyle,
+        demeanor,
         isEmergency: false,
         triageLevel: null,
-        informant: informant,
+        informant,
         medicalData: {
             symptoms: disease?.symptoms || [],
             vitals: disease?.vitals || {},
@@ -565,7 +526,6 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             anamnesis: disease?.anamnesis || [],
             nonReferrable: disease?.nonReferrable || false,
             referralExceptions: disease?.referralExceptions || [],
-            // Validation Data moved from hidden for ValidationEngine parity
             correctTreatment: disease?.correctTreatment || [],
             correctProcedures: disease?.correctProcedures || [],
             requiredEducation: disease?.requiredEducation || [],
@@ -582,16 +542,14 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             risk: disease?.risk || 'low',
             differentials: disease?.differentialDiagnosis || [],
             clue: disease?.clue || '',
-            // MAIA Suggestion Data — must be in hidden for UI to render suggestions
             correctTreatment: disease?.correctTreatment || [],
             correctProcedures: disease?.correctProcedures || [],
             requiredEducation: disease?.requiredEducation || [],
             relevantLabs: disease?.relevantLabs || [],
-            isResident: isResident,
+            isResident,
             villagerId: isResident ? resident.id : null,
             familyId: isResident ? resident.familyId : null,
             houseId: isResident ? resident.houseId : null,
-            // Profile-based data for treatment validation
             allergies: residentProfile?.allergies || [],
             currentMedications: residentProfile?.medications || [],
             conditions: residentProfile?.conditions || [],
@@ -606,29 +564,36 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
  * @param {object} facilities - Active facilities levels
  * @param {object} population - Optional VillageRegistry population data
  */
-export function generateEmergencyPatient(currentTime, facilities = {}, population = null) {
-    // If IGD level 0, don't generate (or generate very basic ones? IGD usually level 1 min)
+export function generateEmergencyPatient(currentTime, facilities = {}, population = null, seedHint = 'default') {
     if (facilities.igd === 0) return null;
 
-    const disease = getRandomEmergencyCase();
+    const emergencySeed = seedKey(
+        'emergency-patient',
+        seedHint,
+        currentTime,
+        population?.villagers?.length || 0,
+        facilities.igd || 0
+    );
+    const rng = createDeterministicSequence(emergencySeed);
+    const disease = getRandomEmergencyCase(seedKey(emergencySeed, 'case'));
 
-    // 50% chance to use a village resident if population is available
     let isResident = false;
     let resident = null;
     let residentFamily = null;
-    let gender, name, age;
+    let gender;
+    let name;
+    let age;
 
-    if (population && population.villagers && population.villagers.length > 0 && Math.random() < 0.5) {
+    if (population && population.villagers && population.villagers.length > 0 && rng.chance(0.5)) {
         const living = population.villagers.filter(v => v.status === 'alive');
         if (living.length > 0) {
-            // For pediatric cases, try to find a child
             if (disease.category === 'Pediatrics') {
                 const children = living.filter(v => v.age <= 5);
                 resident = children.length > 0
-                    ? children[Math.floor(Math.random() * children.length)]
-                    : living[Math.floor(Math.random() * living.length)];
+                    ? pickDeterministic(children, seedKey(emergencySeed, 'child-resident'))
+                    : pickDeterministic(living, seedKey(emergencySeed, 'fallback-resident'));
             } else {
-                resident = living[Math.floor(Math.random() * living.length)];
+                resident = pickDeterministic(living, seedKey(emergencySeed, 'resident'));
             }
             residentFamily = population.families?.find(f => f.id === resident.familyId);
             isResident = true;
@@ -639,29 +604,25 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
     }
 
     if (!isResident) {
-        gender = Math.random() > 0.5 ? 'L' : 'P';
+        gender = rng.chance(0.5) ? 'L' : 'P';
         const names = gender === 'L' ? NAMES_MALE : NAMES_FEMALE;
-        name = `${names[Math.floor(Math.random() * names.length)]} ${SURNAMES[Math.floor(Math.random() * SURNAMES.length)]}`;
+        name = `${pickDeterministic(names, seedKey(emergencySeed, 'first-name'))} ${pickDeterministic(SURNAMES, seedKey(emergencySeed, 'surname'))}`;
 
-        // Emergency patients: wider age range but weighted towards adults
-        const ageRoll = Math.random();
+        const ageRoll = rng.nextFloat();
         if (disease.category === 'Pediatrics') {
-            age = Math.floor(Math.random() * 4) + 1; // 1-5 years for pediatric cases
+            age = rng.int(4) + 1;
         } else if (ageRoll < 0.1) {
-            age = Math.floor(Math.random() * 10) + 5; // Child 5-14
+            age = rng.int(10) + 5;
         } else if (ageRoll < 0.5) {
-            age = Math.floor(Math.random() * 25) + 25; // Adult 25-49
+            age = rng.int(25) + 25;
         } else if (ageRoll < 0.8) {
-            age = Math.floor(Math.random() * 20) + 50; // Middle 50-69
+            age = rng.int(20) + 50;
         } else {
-            age = Math.floor(Math.random() * 20) + 70; // Elderly 70-89
+            age = rng.int(20) + 70;
         }
     }
 
-    // Generate anthropometrics
-    const anthropometrics = generateAnthropometrics(age, gender);
-
-    // Generate social determinants
+    const anthropometrics = generateAnthropometrics(age, gender, seedKey(emergencySeed, 'anthropometrics'));
     const sdoh = generateSocialDeterminants(age);
     if (isResident) {
         sdoh.isResident = true;
@@ -670,20 +631,20 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
         sdoh.familyName = residentFamily?.surname || 'Unknown';
     }
 
-    const complaintText = disease.anamnesis[Math.floor(Math.random() * disease.anamnesis.length)];
+    const complaintText = pickDeterministic(disease.anamnesis || [], seedKey(emergencySeed, 'complaint')) || disease.diagnosis;
 
     return {
-        id: 'igd_' + Math.random().toString(36).substr(2, 9),
-        name: name,
-        age: age,
-        gender: gender,
-        anthropometrics: anthropometrics,
+        id: randomIdFromSeed('igd', seedKey(emergencySeed, 'id'), 9),
+        name,
+        age,
+        gender,
+        anthropometrics,
         complaint: complaintText,
         isEmergency: true,
         triageLevel: disease.triageLevel,
         esiLevel: disease.esiLevel,
-        triageAssigned: null, // Player's triage assignment
-        deterioration: 0, // Tracks how much condition has worsened
+        triageAssigned: null,
+        deterioration: 0,
         deteriorationRate: disease.deteriorationRate || 0,
         arrivalTime: currentTime || 480,
         medicalData: {
@@ -703,9 +664,9 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
         patience: 100,
         hidden: {
             diseaseId: disease.id,
-            diagnosis: disease.diagnosis, // Fix: Add diagnosis for UI
-            icd10: disease.icd10, // Fix: Add icd10 for UI
-            differentialDiagnosis: disease.differentialDiagnosis || [], // Fix: Add differentials
+            diagnosis: disease.diagnosis,
+            icd10: disease.icd10,
+            differentialDiagnosis: disease.differentialDiagnosis || [],
             requiredAction: disease.referralRequired ? 'refer' : 'stabilize',
             skdi: disease.skdi,
             risk: disease.risk,
@@ -717,7 +678,7 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
             clue: disease.clue,
             relevantLabs: disease.relevantLabs || [],
             referralRequired: disease.referralRequired,
-            isResident: isResident,
+            isResident,
             villagerId: isResident ? resident.id : null,
             familyId: isResident ? resident.familyId : null,
             houseId: isResident ? resident.houseId : null
@@ -728,10 +689,13 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
 /**
  * Generate a patient object for a scheduled Prolanis visit
  */
-export function generateProlanisVisitPatient(rosterMember, currentDay) {
+export function generateProlanisVisitPatient(rosterMember, currentDay, seedHint = 'default') {
     const isDM = rosterMember.prolanisData.diseaseType === 'dm_type2';
     // Use last known parameters
     const params = rosterMember.prolanisData.parameters;
+    const rng = createDeterministicSequence(
+        seedKey('prolanis-visit-patient', rosterMember.id || rosterMember.name, currentDay, seedHint)
+    );
 
     // Construct vitals string based on disease type + random noise
     const sys = isDM ? 120 : (params.systolic || 140);
@@ -743,7 +707,7 @@ export function generateProlanisVisitPatient(rosterMember, currentDay) {
         originalId: rosterMember.id,
         isProlanis: true,
         status: 'waiting',
-        joinedAt: 480 + Math.floor(Math.random() * 60), // 08:00 - 09:00
+        joinedAt: 480 + rng.int(60), // 08:00 - 09:00
         complaint: "Kontrol rutin Prolanis bulan ini.",
         medicalData: {
             diagnosisName: isDM ? 'Diabetes Mellitus Tipe 2' : 'Hipertensi',
@@ -752,9 +716,9 @@ export function generateProlanisVisitPatient(rosterMember, currentDay) {
             symptoms: ["Pasien datang untuk kontrol rutin penyakit kronis"],
             vitals: {
                 bp: `${Math.round(sys)}/${Math.round(dia)}`,
-                hr: 60 + Math.floor(Math.random() * 40),
+                hr: 60 + rng.int(40),
                 temp: 36.5,
-                rr: 16 + Math.floor(Math.random() * 4)
+                rr: 16 + rng.int(4)
             },
             trueDiagnosisCode: isDM ? 'E11' : 'I10',
             nonReferrable: true // Prolanis cases should be managed at FKTP
@@ -777,9 +741,10 @@ export function generateProlanisVisitPatient(rosterMember, currentDay) {
  * @param {number} currentTime - Current time in minutes
  * @returns {Object} Patient object ready for the game queue
  */
-export function generateFollowupPatient(consequence, currentTime) {
+export function generateFollowupPatient(consequence, currentTime, seedHint = 'default') {
     const { originalCase, condition, severity, narrative, newSymptoms = [], guidelineRef } = consequence;
     const { patientName, age, gender, originalDiagnosis, category } = originalCase;
+    const followupSeed = seedKey('followup-patient', consequence.id, currentTime, seedHint, patientName, severity, category);
 
     // Build symptoms based on condition
     const symptoms = condition === 'improved'
@@ -806,11 +771,11 @@ export function generateFollowupPatient(consequence, currentTime) {
         : `Dok, saya ${patientName}. ${narrative}.`;
 
     return {
-        id: `followup_${consequence.id}_${Date.now()}`,
+        id: randomIdFromSeed('followup', followupSeed),
         name: patientName,
         age: age,
         gender: gender,
-        anthropometrics: generateAnthropometrics(age, gender),
+        anthropometrics: generateAnthropometrics(age, gender, seedKey(followupSeed, 'anthropometrics')),
         complaint,
         isEmergency: false,
         isFollowup: true,
@@ -884,9 +849,10 @@ export function generateFollowupPatient(consequence, currentTime) {
  * @param {Array} population - Village families array from VillageRegistry
  * @returns {Object|null} Patient object ready for queue, or null if data missing
  */
-export function generateUKPBridgePatient(bridgeData, currentTime = 480, population = []) {
+export function generateUKPBridgePatient(bridgeData, currentTime = 480, population = [], seedHint = 'default') {
     const { ukpDiseaseId, familyId, scenarioId } = bridgeData;
     if (!ukpDiseaseId || !familyId) return null;
+    const bridgeSeed = seedKey('ukp-bridge-patient', seedHint, ukpDiseaseId, familyId, scenarioId, currentTime);
 
     // Find a family member from the village
     const family = population.find(f => f.id === familyId);
@@ -895,7 +861,7 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
     // Pick a random adult member (not a child if possible)
     const adults = family.members.filter(m => (m.age || 0) >= 15);
     const member = adults.length > 0
-        ? adults[Math.floor(Math.random() * adults.length)]
+        ? pickDeterministic(adults, seedKey(bridgeSeed, 'adult'))
         : family.members[0];
 
     // Get the clinical case from CaseLibrary
@@ -908,7 +874,7 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
     const facility = CATEGORY_FACILITY_MAP[disease.category] || 'poli_umum';
 
     return {
-        id: `patient_bcbridge_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        id: randomIdFromSeed('patient_bcbridge', bridgeSeed),
         name: fullName,
         age: member.age || 35,
         gender,
@@ -958,26 +924,34 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
  * Generate a cohort of generic patients for a specific disease.
  * Useful for outbreaks or failed IKM interventions to flood the UKP queue.
  */
-export function generateGenericPatients(diseaseId, amount, targetClinic, currentTime = 480) {
+export function generateGenericPatients(diseaseId, amount, targetClinic, currentTime = 480, seedHint = 'default') {
     const patients = [];
-    const disease = getCaseByCondition(diseaseId) || getRandomCase('Respiratory'); // fallback
+    const genericSeed = seedKey('generic-patients', seedHint, diseaseId, amount, targetClinic, currentTime);
+    const disease = getCaseByCondition(diseaseId)
+        || pickDeterministic(
+            CASE_LIBRARY.filter(caseItem => caseItem.category === 'Respiratory'),
+            seedKey(genericSeed, 'fallback-case')
+        )
+        || pickDeterministic(CASE_LIBRARY, seedKey(genericSeed, 'fallback-any'));
     if (!disease) return patients;
 
     for (let i = 0; i < amount; i++) {
-        const isMale = Math.random() > 0.5;
+        const patientSeed = seedKey(genericSeed, i);
+        const rng = createDeterministicSequence(patientSeed);
+        const isMale = rng.chance(0.5);
         const gender = isMale ? 'L' : 'P';
-        const age = 5 + Math.floor(Math.random() * 60);
+        const age = 5 + rng.int(60);
         const nameList = isMale ? NAMES_MALE : NAMES_FEMALE;
-        const fullName = `${nameList[Math.floor(Math.random() * nameList.length)]} ${SURNAMES[Math.floor(Math.random() * SURNAMES.length)]}`;
+        const fullName = `${pickDeterministic(nameList, seedKey(patientSeed, 'first-name'))} ${pickDeterministic(SURNAMES, seedKey(patientSeed, 'surname'))}`;
 
         const facility = targetClinic || CATEGORY_FACILITY_MAP[disease.category] || 'poli_umum';
 
         patients.push({
-            id: `patient_generic_${Date.now()}_${Math.random().toString(36).slice(2, 6)}_${i}`,
+            id: randomIdFromSeed(`patient_generic_${i}`, patientSeed),
             name: fullName,
             age,
             gender,
-            anthropometrics: generateAnthropometrics(age, gender),
+            anthropometrics: generateAnthropometrics(age, gender, seedKey(patientSeed, 'anthropometrics')),
             complaint: disease.chiefComplaint || disease.complaint || 'Keluhan tidak spesifik',
             narrative: `(Warga ini datang karena kejadian komunitas) ${disease.narrative || ''}`,
             facility,

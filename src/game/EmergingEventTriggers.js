@@ -11,6 +11,7 @@
 
 import { getSeasonForDay } from './IKMEventEngine.js';
 import { NATIONAL_HOLIDAYS_2026 } from '../data/CalendarEventDB.js';
+import { chanceFromSeed, seedKey } from '../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // TRIGGER CONDITIONS
@@ -210,7 +211,7 @@ export function evaluateEmergingTriggers(state) {
             probability *= 1.5; // 50% more likely in unhealthy villages
         }
 
-        if (Math.random() < probability) {
+        if (chanceFromSeed(seedKey('emerging-trigger', trigger.scenarioId, day, season, villageData?.avgPHBS), probability)) {
             return {
                 scenarioId: trigger.scenarioId,
                 triggerDay: day,

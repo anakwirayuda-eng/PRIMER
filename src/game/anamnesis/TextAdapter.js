@@ -6,6 +6,7 @@
  */
 
 import { getInformantMode } from './InformantSystem.js';
+import { pickDeterministic, seedKey } from '../../utils/deterministicRandom.js';
 
 /**
  * Get appropriate prefix for addressing the patient or informant.
@@ -116,7 +117,10 @@ export function getDoctorAcknowledgment(complaint, patient, informantMode) {
         `Oke ${label}. Mari kita telusuri lebih dalam.`,
         `Baik, ${label}. Saya perlu beberapa informasi tambahan.`
     ];
-    return { text: acknowledgments[Math.floor(Math.random() * acknowledgments.length)], response: null };
+    return {
+        text: pickDeterministic(acknowledgments, seedKey('doctor-ack', patient?.id || patient?.name, complaint, label)),
+        response: null
+    };
 }
 
 /**
@@ -158,7 +162,7 @@ export function getInitialComplaintResponse(patient, complaint) {
             `Iya, Dokter. ${capitalize(cLower)}.`
         ];
         return {
-            response: informantResponses[Math.floor(Math.random() * informantResponses.length)],
+            response: pickDeterministic(informantResponses, seedKey('initial-complaint', patient?.id || patient?.name, cLower, 'informant')),
             speaker: info.informantLabel || prefix
         };
     }
@@ -175,7 +179,7 @@ export function getInitialComplaintResponse(patient, complaint) {
         `${capitalize(cLower)}, Dokter.`
     ];
     return {
-        response: directResponses[Math.floor(Math.random() * directResponses.length)],
+        response: pickDeterministic(directResponses, seedKey('initial-complaint', patient?.id || patient?.name, cLower, 'direct')),
         speaker: patient?.name || prefix
     };
 }

@@ -18,6 +18,7 @@
  */
 
 import { synthesizeAnamnesis } from './AnamnesisEngine.js';
+import { randomIdFromSeed, seedKey } from '../utils/deterministicRandom.js';
 
 /**
  * Build a complete CPPT record from discharge data.
@@ -78,7 +79,7 @@ export function buildCPPTRecord(patient, decision, day, time, options = {}) {
     }
 
     return {
-        id: generateCPPTId(),
+        id: generateCPPTId(patient, day, time, outcomeStatus),
         timestamp: {
             day,
             time,
@@ -151,7 +152,7 @@ export function buildMaiaCPPTRecord(patient, day, time, outcomeStatus, isEmergen
     const caseData = patient.medicalData || patient.hidden?.caseData || {};
 
     return {
-        id: generateCPPTId(),
+        id: generateCPPTId(patient, day, time, outcomeStatus),
         timestamp: {
             day,
             time,
@@ -202,8 +203,11 @@ export function buildMaiaCPPTRecord(patient, day, time, outcomeStatus, isEmergen
 /**
  * Generate a unique-enough CPPT ID without crypto.
  */
-function generateCPPTId() {
-    return `cppt_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+function generateCPPTId(patient, day, time, outcomeStatus = 'unknown') {
+    return randomIdFromSeed(
+        'cppt',
+        seedKey('cppt', patient?.id || patient?.name, day, time, outcomeStatus)
+    );
 }
 
 export default buildCPPTRecord;

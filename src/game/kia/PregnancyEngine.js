@@ -8,6 +8,8 @@
  * [LAST_UPDATE]: 2026-02-18
  */
 
+import { chanceFromSeed, createDeterministicSequence, seedKey } from '../../utils/deterministicRandom.js';
+
 // ═══════════════════════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════
@@ -70,10 +72,13 @@ export { ANC_VISITS, RISK_FACTORS, KB_METHODS };
  * @returns {Object} - ANC patient with pregnancy tracking fields
  */
 export function createANCPatient(basePatient, _villageData = {}) {
-    const gestationalWeek = Math.floor(Math.random() * 12) + 4; // 4-16 weeks at first visit
-    const parity = Math.floor(Math.random() * 4); // 0-3 previous pregnancies
-    const height = 145 + Math.floor(Math.random() * 20); // 145-165 cm
-    const weight = 45 + Math.floor(Math.random() * 25); // 45-70 kg
+    const rng = createDeterministicSequence(
+        seedKey('anc-patient', basePatient.id || basePatient.name, basePatient.age, basePatient.gender)
+    );
+    const gestationalWeek = rng.int(12) + 4; // 4-16 weeks at first visit
+    const parity = rng.int(4); // 0-3 previous pregnancies
+    const height = 145 + rng.int(20); // 145-165 cm
+    const weight = 45 + rng.int(25); // 45-70 kg
     const bmi = Math.round((weight / ((height / 100) ** 2)) * 10) / 10;
 
     return {
@@ -85,13 +90,13 @@ export function createANCPatient(basePatient, _villageData = {}) {
             edd: calculateEDD(gestationalWeek),
             gravida: parity + 1,
             parity,
-            abortus: Math.random() < 0.1 ? 1 : 0,
+            abortus: rng.chance(0.1) ? 1 : 0,
             height,
             weightStart: weight,
             bmi,
-            prevCSection: Math.random() < 0.12,
-            prevComplication: Math.random() < 0.08,
-            twins: Math.random() < 0.02,
+            prevCSection: rng.chance(0.12),
+            prevComplication: rng.chance(0.08),
+            twins: rng.chance(0.02),
             visits: [],
             riskScore: 0,
             riskFactors: [],
@@ -126,7 +131,7 @@ export function simulateANCVisit(patient, visitType, doctorActions = {}) {
     const riskResult = evaluateRiskFactors(patient, visitParams);
 
     // Generate random events based on risk
-    const events = generateRandomEvents(patient, trimester, riskResult.riskScore);
+    const events = generateRandomEvents(patient, trimester, riskResult.riskScore, visitType);
 
     // Score doctor's performance
     const checksPerformed = doctorActions.checksPerformed || [];
@@ -211,15 +216,23 @@ export function evaluateRiskFactors(patient, visitParams = {}) {
 /**
  * Generate random obstetric events based on risk
  */
-export function generateRandomEvents(patient, trimester, riskScore) {
+export function generateRandomEvents(patient, trimester, riskScore, visitType = 'visit') {
     const triggered = [];
+    const eventSeed = seedKey(
+        'anc-events',
+        patient.id || patient.name,
+        trimester,
+        riskScore,
+        visitType,
+        patient.ancData?.visits?.length || 0
+    );
 
     for (const event of OBSTETRIC_EVENTS) {
         if (!event.triggerTrimester.includes(trimester)) continue;
         if (riskScore < event.riskThreshold) continue;
 
         const adjustedProb = event.probability * (1 + riskScore * 0.1);
-        if (Math.random() < adjustedProb) {
+        if (chanceFromSeed(seedKey(eventSeed, event.id), adjustedProb)) {
             triggered.push({ ...event });
         }
     }
@@ -283,7 +296,9 @@ export function processKBCounseling(patient, methodId) {
  */
 export function simulateDelivery(patient) {
     const risk = evaluateRiskFactors(patient);
-    const roll = Math.random();
+    const roll = createDeterministicSequence(
+        seedKey('delivery', patient.id || patient.name, patient.ancData?.gestationalWeek, patient.ancData?.visits?.length || 0)
+    ).nextFloat();
 
     let outcome, babyHealth, complication, mode;
 
@@ -338,16 +353,19 @@ function generateVisitParams(patient, _visitType) {
     const anc = patient.ancData || {};
     const baseWeight = anc.weightStart || 55;
     const weekGain = (anc.gestationalWeek || 12) * 0.4; // ~0.4 kg/week average
+    const rng = createDeterministicSequence(
+        seedKey('anc-visit-params', patient.id || patient.name, _visitType, anc.gestationalWeek, anc.visits?.length || 0)
+    );
 
     return {
         weight: Math.round((baseWeight + weekGain) * 10) / 10,
-        systolic: 100 + Math.floor(Math.random() * 35),
-        diastolic: 60 + Math.floor(Math.random() * 25),
-        hb: 10 + Math.random() * 3, // 10-13 g/dL
-        fundusHeight: Math.max(10, (anc.gestationalWeek || 12) - 2 + Math.floor(Math.random() * 4)),
-        fetalHeartRate: 120 + Math.floor(Math.random() * 40), // 120-160 bpm
-        fetalPosition: Math.random() < 0.85 ? 'kepala' : (Math.random() < 0.7 ? 'sungsang' : 'lintang'),
-        proteinUrin: Math.random() < 0.1 ? 'positif' : 'negatif',
-        edema: Math.random() < 0.15
+        systolic: 100 + rng.int(35),
+        diastolic: 60 + rng.int(25),
+        hb: 10 + (rng.nextFloat() * 3), // 10-13 g/dL
+        fundusHeight: Math.max(10, (anc.gestationalWeek || 12) - 2 + rng.int(4)),
+        fetalHeartRate: 120 + rng.int(40), // 120-160 bpm
+        fetalPosition: rng.chance(0.85) ? 'kepala' : (rng.chance(0.7) ? 'sungsang' : 'lintang'),
+        proteinUrin: rng.chance(0.1) ? 'positif' : 'negatif',
+        edema: rng.chance(0.15)
     };
 }

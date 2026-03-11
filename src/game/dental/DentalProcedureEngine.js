@@ -8,6 +8,8 @@
  * [LAST_UPDATE]: 2026-02-18
  */
 
+import { chanceFromSeed, seedKey } from '../../utils/deterministicRandom.js';
+
 // ═══════════════════════════════════════════════════════════════
 // PROCEDURE DEFINITIONS
 // ═══════════════════════════════════════════════════════════════
@@ -135,6 +137,15 @@ export function generateProcedure(type, difficulty = 1) {
 export function evaluateStep(stepId, playerInput, procedureContext) {
     const step = procedureContext?.steps?.find(s => s.id === stepId);
     if (!step) return { accuracy: 0, complication: null, feedback: 'Step tidak ditemukan', xpStep: 0 };
+    const complicationSeed = seedKey(
+        'dental-step',
+        procedureContext?.procedure?.id,
+        stepId,
+        procedureContext?.difficulty,
+        playerInput?.timing,
+        playerInput?.pressure,
+        playerInput?.accuracy
+    );
 
     const { timing = 0.5, pressure = 0.5, accuracy: inputAccuracy = 0.5 } = playerInput;
 
@@ -150,14 +161,14 @@ export function evaluateStep(stepId, playerInput, procedureContext) {
     let complication = null;
     if (step.criticalError && overallAccuracy < 40) {
         const compChance = (100 - overallAccuracy) / 100 * 0.5;
-        if (Math.random() < compChance) {
+        if (chanceFromSeed(complicationSeed, compChance)) {
             complication = COMPLICATIONS[step.criticalError] || null;
         }
     }
 
     // Too much pressure on extraction
     if (stepId === 'luksasi' && pressure > 0.85) {
-        if (Math.random() < 0.3) {
+        if (chanceFromSeed(seedKey(complicationSeed, 'root-fracture'), 0.3)) {
             complication = COMPLICATIONS.fraktur_akar;
         }
     }

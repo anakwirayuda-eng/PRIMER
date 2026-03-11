@@ -31,7 +31,7 @@ import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '.
 import { guardActionGroup } from '../utils/dispatchGuard.js';
 import { CURRENT_SAVE_VERSION, createSaveSnapshot, parseSavePayload } from '../utils/savePayload.js';
 import { withTransaction } from '../utils/transactions.js';
-import { chanceFromSeed, pickDeterministic, seededBetween, seededInt } from '../utils/deterministicRandom.js';
+import { chanceFromSeed, pickDeterministic, seedKey, seededBetween, seededInt } from '../utils/deterministicRandom.js';
 
 
 import {
@@ -554,7 +554,10 @@ export const useGameStore = create(
                             ? dayOrDiseaseType
                             : (patient.prolanisData?.diseaseType || 'dm_type2');
                         if (s.publicHealth.prolanisRoster.some(p => p.id === patient.id)) return false;
-                        const initialParams = generateInitialParameters(diseaseType);
+                        const initialParams = generateInitialParameters(
+                            diseaseType,
+                            seedKey('prolanis-enroll', patient.id || patient.name, day)
+                        );
                         const newMember = {
                             id: patient.id, name: patient.name, age: patient.age, gender: patient.gender,
                             anthropometrics: patient.anthropometrics,
@@ -578,7 +581,11 @@ export const useGameStore = create(
                         set(state => {
                             const updatedRoster = state.publicHealth.prolanisRoster.map(member => {
                                 if (member.id !== rosterId) return member;
-                                const outcome = determineMonthlyOutcome({ ...member }, doctorDecisions);
+                                const outcome = determineMonthlyOutcome(
+                                    { ...member },
+                                    doctorDecisions,
+                                    seedKey('prolanis-visit', member.id, day)
+                                );
                                 return {
                                     ...member,
                                     prolanisData: {
@@ -695,7 +702,8 @@ export const useGameStore = create(
                                 impact.spawnPatients.diseaseId,
                                 impact.spawnPatients.amount || 1,
                                 impact.spawnPatients.targetClinic,
-                                s.world?.currentTime || 480
+                                s.world?.currentTime || 480,
+                                seedKey('ikm-spawn', resolved.scenarioId, s.world.day, impact.spawnPatients.diseaseId)
                             );
                         }
 
@@ -951,7 +959,11 @@ export const useGameStore = create(
                         if (time === 480) {
                             const followups = getScheduledFollowups(state.clinical.consequenceQueue, day);
                             followups.forEach(consequence => {
-                                const followupPatient = generateFollowupPatient(consequence, time);
+                                const followupPatient = generateFollowupPatient(
+                                    consequence,
+                                    time,
+                                    seedKey('followup-spawn', consequence.id, day)
+                                );
                                 state.clinical.queue.push(followupPatient);
                             });
                             if (followups.length > 0) {
@@ -984,7 +996,14 @@ export const useGameStore = create(
                             ) &&
                             state.clinical.queue.length < maxCapacity
                         ) {
-                            const newPatient = generatePatient(time, villageData, day, facilities, profile.skills);
+                            const newPatient = generatePatient(
+                                time,
+                                villageData,
+                                day,
+                                facilities,
+                                profile.skills,
+                                seedKey('queue-spawn', day, time, state.clinical.queue.length, state.clinical.todayLog.length)
+                            );
                             state.clinical.queue.push(newPatient); // Immer push
                             soundManager.playNotification();
                         }
@@ -997,7 +1016,12 @@ export const useGameStore = create(
                             ) &&
                             state.clinical.emergencyQueue.length < 3
                         ) {
-                            const newEmergency = generateEmergencyPatient(time, facilities, villageData);
+                            const newEmergency = generateEmergencyPatient(
+                                time,
+                                facilities,
+                                villageData,
+                                seedKey('emergency-spawn', day, time, state.clinical.emergencyQueue.length)
+                            );
                             if (newEmergency) {
                                 state.clinical.emergencyQueue.push(newEmergency);
                                 soundManager.playNotification();
@@ -1362,9 +1386,9 @@ export const useGameStore = create(
                             state.publicHealth.villageData = population;
 
                             state.clinical.queue = [
-                                generatePatient(480, population, 1, state.finance.facilities, []),
-                                generatePatient(480, population, 1, state.finance.facilities, []),
-                                generatePatient(480, population, 1, state.finance.facilities, [])
+                                generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game-patient', 0)),
+                                generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game-patient', 1)),
+                                generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game-patient', 2))
                             ];
                             state.nav.gameState = 'playing';
                         }));
@@ -1448,6 +1472,7 @@ export const useGameStore = create(
 
                             // 4.7. TheDirector — Evaluate Stress & Set Pacing
                             const directorInput = {
+                                day: nextDayVal,
                                 queueLength: state.clinical.queue.length,
                                 emergencyQueueLength: (state.clinical.emergencyQueue || []).length,
                                 energy: state.player.profile.energy || 100,
@@ -1460,7 +1485,7 @@ export const useGameStore = create(
 
                             // Director Gift (mercy/breathing mode bonus)
                             if (verdict.shouldGift) {
-                                const gift = generateDirectorGift();
+                                const gift = generateDirectorGift(seedKey('director-gift', nextDayVal, verdict.label));
                                 if (gift.impact.energy) state.player.profile.energy = Math.min(100, state.player.profile.energy + gift.impact.energy);
                                 if (gift.impact.spirit) state.player.profile.spirit = Math.min(100, state.player.profile.spirit + gift.impact.spirit);
                                 if (gift.impact.reputation) state.player.profile.reputation = Math.min(100, state.player.profile.reputation + gift.impact.reputation);

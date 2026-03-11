@@ -10,6 +10,10 @@
  */
 
 
+import { pickDeterministic, seedKey } from '../utils/deterministicRandom.js';
+
+let guestEventCounter = 0;
+
 export const GUEST_EVENTS = [
     {
         id: 'family_visit_1',
@@ -43,6 +47,6 @@ export const GUEST_EVENTS = [
     }
 ];
 
-export const getRandomGuestEvent = () => {
-    return GUEST_EVENTS[Math.floor(Math.random() * GUEST_EVENTS.length)];
+export const getRandomGuestEvent = (seedHint = guestEventCounter++) => {
+    return pickDeterministic(GUEST_EVENTS, seedKey('guest-event', seedHint));
 };

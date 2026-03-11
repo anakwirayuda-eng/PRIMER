@@ -9,6 +9,7 @@
  */
 
 import { getMedicationById } from '../data/MedicationDatabase.js';
+import { pickDeterministic, seedKey, shuffleDeterministic } from '../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // 5-RIGHTS VERIFICATION
@@ -188,9 +189,14 @@ export function checkDrugInteractions(medIds) {
  * @returns {{ challenge, timeLimit, targetMeds[], distractorMeds[] }}
  */
 export function generateDispensingChallenge(difficulty = 1, prescriptionQueue = []) {
+    const challengeSeed = seedKey(
+        'dispensing-challenge',
+        difficulty,
+        prescriptionQueue.map(item => item?.id || item?.patientId || item?.patientName || 'queue')
+    );
     // Pick a prescription from queue or generate one
     const prescription = prescriptionQueue.length > 0
-        ? prescriptionQueue[Math.floor(Math.random() * prescriptionQueue.length)]
+        ? pickDeterministic(prescriptionQueue, seedKey(challengeSeed, 'prescription'))
         : null;
 
     const targetMeds = prescription
@@ -222,7 +228,7 @@ export function generateDispensingChallenge(difficulty = 1, prescriptionQueue = 
         timeLimit,
         targetMeds,
         distractorMeds,
-        allMeds: [...targetMeds, ...distractorMeds].sort(() => Math.random() - 0.5)
+        allMeds: shuffleDeterministic([...targetMeds, ...distractorMeds], seedKey(challengeSeed, 'all-meds'))
     };
 }
 

@@ -9,6 +9,7 @@
 
 import { getMedicationById } from '../data/MedicationDatabase.js';
 import { TRIAGE_LEVELS, EMERGENCY_ACTIONS, ESI_LEVELS } from './emergency/EmergencyRegistry.js';
+import { seedKey, weightedPickDeterministic } from '../utils/deterministicRandom.js';
 
 // 1. Core Constants
 export { TRIAGE_LEVELS, ESI_LEVELS, EMERGENCY_ACTIONS };
@@ -74,21 +75,18 @@ export function getEmergencyCase(id) {
     return EMERGENCY_CASES.find(c => c.id === id);
 }
 
-export function getRandomEmergencyCase() {
+export function getRandomEmergencyCase(seedHint = 'default') {
     const weights = EMERGENCY_CASES.map(c => {
         if (c.triageLevel === 1) return 1;
         if (c.triageLevel === 2) return 3;
         return 5;
     });
 
-    const totalWeight = weights.reduce((a, b) => a + b, 0);
-    let random = Math.random() * totalWeight;
-
-    for (let i = 0; i < EMERGENCY_CASES.length; i++) {
-        random -= weights[i];
-        if (random <= 0) return EMERGENCY_CASES[i];
-    }
-    return EMERGENCY_CASES[EMERGENCY_CASES.length - 1];
+    return weightedPickDeterministic(
+        EMERGENCY_CASES,
+        weights,
+        seedKey('emergency-case', seedHint)
+    ) || EMERGENCY_CASES[EMERGENCY_CASES.length - 1];
 }
 
 // (Redundant imports removed)
