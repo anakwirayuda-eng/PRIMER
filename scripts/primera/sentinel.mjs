@@ -1,125 +1,137 @@
+/**
+ * @reflection
+ * [IDENTITY]: sentinel
+ * [PURPOSE]: Generate PRIMERA_INTELLIGENCE.md from canonical health.json and lightweight topology diagnostics.
+ * [STATE]: Active
+ * [ANCHOR]: main
+ * [DEPENDS_ON]: artifact_manifest
+ */
+
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import { readStampedJson, stampMarkdown } from './artifact_manifest.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../../');
+const OUTDIR = path.join(ROOT, 'megalog/outputs');
 const INTELLIGENCE_PATH = path.join(ROOT, 'PRIMERA_INTELLIGENCE.md');
+const HEALTH_PATH = path.join(OUTDIR, 'health.json');
 const DIAG_DIR = path.join(ROOT, 'diagnostics');
-const WATCHDOG_ESLINT = path.join(ROOT, 'megalog/outputs/eslint.json');
 
-async function main() {
-    console.log("🛰️ PRIMERA Sentinel: Scanning Structural Integrity...");
-
-    // 1. Run Sub-Diagnostics
-    try {
-        execSync(`node scripts/primera/pldb_analyzer.mjs`, { cwd: ROOT });
-        execSync(`node scripts/primera/store_dumper.mjs`, { cwd: ROOT });
-    } catch (e) {
-        console.warn("⚠️ Some sub-diagnostics failed, but continuing Sentinel scan...");
-    }
-
-    // 2. Generate Tree Data
-    let treeMD = "";
-    try {
-        // Simple internal tree generator for MD
-        const getTree = (dir, depth = 0) => {
-            if (depth > 2) return "";
-            let str = "";
-            const files = fs.readdirSync(dir, { withFileTypes: true });
-            files.forEach(file => {
-                if (['node_modules', '.git', 'dist', '_backups'].includes(file.name)) return;
-                const indent = "  ".repeat(depth);
-                str += `${indent}- ${file.isDirectory() ? '📁' : '📄'} ${file.name}\n`;
-                if (file.isDirectory()) {
-                    str += getTree(path.join(dir, file.name), depth + 1);
-                }
-            });
-            return str;
-        };
-        treeMD = getTree(path.join(ROOT, 'src'));
-    } catch (e) {
-        console.error("Tree generation error:", e);
-        treeMD = "Error generating tree: " + e.message;
-    }
-
-    // 3. Risk Assessment Logic — reads FRESH data from watchdog ESLint output
-    let riskLevel = "UNKNOWN";
-    let riskColor = "gray";
-    let riskReason = "Scan incomplete.";
-
-    let undefCount = 0;
-    let purityCount = 0;
-
-    // Primary: Read live ESLint JSON from watchdog pipeline
-    if (fs.existsSync(WATCHDOG_ESLINT)) {
-        try {
-            const eslintData = JSON.parse(fs.readFileSync(WATCHDOG_ESLINT, 'utf8'));
-            for (const file of eslintData) {
-                for (const msg of (file.messages || [])) {
-                    if (msg.severity === 2) {
-                        if (msg.ruleId === 'no-undef') undefCount++;
-                        if (msg.ruleId === 'react-hooks/purity') purityCount++;
-                    }
-                }
-            }
-        } catch { /* fallback below */ }
-    }
-    // Fallback: Read from diagnostics summary if watchdog output is missing
-    else {
-        const summaryPath = path.join(DIAG_DIR, 'lint-rules-summary.json');
-        if (fs.existsSync(summaryPath)) {
-            try {
-                const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
-                undefCount = summary['no-undef'] || 0;
-                purityCount = summary['react-hooks/purity'] || 0;
-            } catch { /* ignore */ }
+function buildTree(dir, depth = 0) {
+    if (depth > 2) return '';
+    let output = '';
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+        if (['node_modules', '.git', 'dist', '_backups'].includes(entry.name)) continue;
+        const indent = '  '.repeat(depth);
+        output += `${indent}- ${entry.isDirectory() ? '[DIR]' : '[FILE]'} ${entry.name}\n`;
+        if (entry.isDirectory()) {
+            output += buildTree(path.join(dir, entry.name), depth + 1);
         }
     }
-
-    if (undefCount > 5) {
-        riskLevel = "CRITICAL (FATAL)";
-        riskColor = "red";
-        riskReason = `${undefCount} orphan variables (no-undef) detected. Core features are likely broken.`;
-    } else if (undefCount > 0 || purityCount > 5) {
-        riskLevel = "HIGH (STABILITY AT RISK)";
-        riskColor = "orange";
-        riskReason = "Undefined symbols or React purity violations detected. High regression probability.";
-    } else {
-        riskLevel = "STABLE";
-        riskColor = "green";
-        riskReason = "Structural wiring is secure. No critical lint violations.";
-    }
-
-    // 4. Generate PRIMERA_INTELLIGENCE.md
-    const timestamp = new Date().toLocaleString();
-    let intelligenceMD = `# 🧠 PRIMERA Intelligence Hub\n\n`;
-    intelligenceMD += `> **Sentinel Status**: Active\n`;
-    intelligenceMD += `> **Last Scan**: ${timestamp}\n\n`;
-
-    intelligenceMD += `## 🛡️ Structural Risk Assessment\n\n`;
-    intelligenceMD += `| Metric | Value |\n`;
-    intelligenceMD += `| :--- | :--- |\n`;
-    intelligenceMD += `| **Risk Level** | **${riskLevel}** |\n`;
-    intelligenceMD += `| **Reason** | ${riskReason} |\n\n`;
-
-    intelligenceMD += `## 🌳 Project Topology (src/)\n\n\`\`\`text\n${treeMD}\n\`\`\`\n\n`;
-
-    intelligenceMD += `## 🧊 State Contract (Zustand)\n\n`;
-    const storeSchemaPath = path.join(DIAG_DIR, 'store-schema.md');
-    if (fs.existsSync(storeSchemaPath)) {
-        intelligenceMD += fs.readFileSync(storeSchemaPath, 'utf8').split('\n').slice(3).join('\n');
-    } else {
-        intelligenceMD += "*Store schema not available.*\n";
-    }
-
-    intelligenceMD += `\n---
-Generated by PRIMERA Sentinel v1.0
-`;
-
-    fs.writeFileSync(INTELLIGENCE_PATH, intelligenceMD);
-    console.log(`✅ Intelligence Hub Updated: ${INTELLIGENCE_PATH}`);
+    return output;
 }
 
-main();
+function deriveRisk(health) {
+    if (!health) {
+        return {
+            level: 'UNKNOWN',
+            reason: 'health.json is missing. Run megalog_v5 first.'
+        };
+    }
+
+    if ((health.staleInputs || []).length > 0) {
+        return {
+            level: 'HIGH',
+            reason: `Canonical health is carrying stale inputs: ${(health.staleInputs || []).join(', ')}.`
+        };
+    }
+
+    if (health.total < 50) {
+        return {
+            level: 'CRITICAL',
+            reason: health.capReason || 'Unified health is below 50.'
+        };
+    }
+
+    if (health.total < 80) {
+        return {
+            level: 'HARDENING',
+            reason: health.capReason || 'Unified health is below the trusted threshold.'
+        };
+    }
+
+    return {
+        level: 'STABLE',
+        reason: 'Canonical health.json indicates trusted runtime and structural posture.'
+    };
+}
+
+async function main() {
+    console.log('PRIMERA Sentinel: reading canonical health...');
+
+    try {
+        execSync('node scripts/primera/pldb_analyzer.mjs', { cwd: ROOT, stdio: 'ignore' });
+        execSync('node scripts/primera/store_dumper.mjs', { cwd: ROOT, stdio: 'ignore' });
+    } catch {
+        // Lightweight diagnostics are best-effort only.
+    }
+
+    const health = readStampedJson(HEALTH_PATH);
+    const risk = deriveRisk(health);
+    const tree = buildTree(path.join(ROOT, 'src'));
+    const storeSchemaPath = path.join(DIAG_DIR, 'store-schema.md');
+    const storeSchema = fs.existsSync(storeSchemaPath)
+        ? fs.readFileSync(storeSchemaPath, 'utf8').split('\n').slice(3).join('\n')
+        : '*Store schema not available.*\n';
+
+    const markdown = `# PRIMERA Intelligence Hub
+
+> Sentinel Status: Active
+> Last Scan: ${new Date().toLocaleString('id-ID')}
+
+## Structural Risk Assessment
+
+| Metric | Value |
+| :--- | :--- |
+| **Risk Level** | **${risk.level}** |
+| **Reason** | ${risk.reason} |
+| **Health Score** | **${health?.total ?? 'missing'}/100** |
+| **Cap Reason** | ${health?.capReason || '-'} |
+| **Dirty Worktree** | ${health?.dirty ?? 'unknown'} |
+| **Health Git SHA** | ${health?.gitSha || 'unknown'} |
+
+## Breakdown
+
+\`\`\`json
+${JSON.stringify(health?.breakdown || {}, null, 2)}
+\`\`\`
+
+## Project Topology (src/)
+
+\`\`\`text
+${tree}
+\`\`\`
+
+## State Contract (Zustand)
+
+${storeSchema}
+
+---
+Generated by PRIMERA Sentinel vNext
+`;
+
+    fs.writeFileSync(
+        INTELLIGENCE_PATH,
+        stampMarkdown(markdown, 'sentinel', ['health.json', 'store-schema.md'])
+    );
+    console.log(`Intelligence Hub updated: ${INTELLIGENCE_PATH}`);
+}
+
+main().catch((error) => {
+    console.error('Sentinel failed:', error);
+    process.exit(1);
+});

@@ -1,43 +1,90 @@
+/**
+ * @reflection
+ * [IDENTITY]: engine-scenario-replay
+ * [PURPOSE]: Execute deterministic golden-path scenario replays through Vitest and export replay artifacts.
+ * [STATE]: Active
+ * [ANCHOR]: run
+ * [DEPENDS_ON]: vitest, artifact_manifest
+ */
+
 import fs from 'fs';
 import path from 'path';
+import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { readStampedJson, writeStampedJson } from './artifact_manifest.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const ROOT = path.resolve(__dirname, '../../');
+const OUTDIR = path.join(ROOT, 'megalog/outputs/scenarios');
+const VITEST_JSON = path.join(OUTDIR, 'scenario_replay_vitest.json');
+const SUMMARY_PATH = path.join(ROOT, 'megalog/outputs/scenario_replay.json');
 
-const scenarioDir = path.resolve(__dirname, '../../tests/scenarios');
-const outputDir = path.resolve(__dirname, '../../megalog/outputs/scenarios');
+function runVitest() {
+    const isWin = process.platform === 'win32';
+    const bin = isWin
+        ? path.join(ROOT, 'node_modules/.bin/vitest.cmd')
+        : path.join(ROOT, 'node_modules/.bin/vitest');
 
-/**
- * ENGINE: SCENARIO REPLAY
- * 🎭 Deterministically replays clinical scenarios to verify system integrity.
- */
-async function runReplay(scenarioName = 'golden_path_clinical.json') {
-    console.log(`🎭 Replaying Scenario: ${scenarioName}...`);
+    const result = spawnSync(bin, [
+        'run',
+        'tests/scenarios/scenario_runner.test.js',
+        '--reporter=json',
+        `--outputFile=${VITEST_JSON}`
+    ], {
+        cwd: ROOT,
+        encoding: 'utf8',
+        shell: isWin
+    });
 
-    const scenarioPath = path.join(scenarioDir, scenarioName);
-    if (!fs.existsSync(scenarioPath)) {
-        console.error(`❌ Scenario file not found: ${scenarioPath}`);
-        // Create a template if it doesn't exist
-        if (!fs.existsSync(scenarioDir)) fs.mkdirSync(scenarioDir, { recursive: true });
-        const template = {
-            name: "Golden Path Clinical",
-            steps: [
-                { action: "setActivePatientId", payload: "p_001" },
-                { action: "orderLab", payload: { patientId: "p_001", labId: "L001" } },
-                { action: "dischargePatient", payload: { patientId: "p_001", decision: { action: "treat" } } }
-            ]
-        };
-        fs.writeFileSync(scenarioPath, JSON.stringify(template, null, 2));
-        console.log('📝 Created scenario template.');
-    }
-
-    // Logic for Vitest/Headless simulation would go here
-    console.log('🤖 Simulation environment: JSDOM / Vitest');
-    console.log('✅ Scenario replay initialized (ready for Phase 22 integration).');
+    return {
+        code: result.status ?? 1,
+        stdout: result.stdout || '',
+        stderr: result.stderr || ''
+    };
 }
 
-runReplay().catch(err => {
-    console.error('❌ Replay Engine Failure:', err);
+async function run() {
+    console.log('PRIMERA Scenario Replay Engine starting...');
+    fs.mkdirSync(OUTDIR, { recursive: true });
+
+    const vitestRun = runVitest();
+    const replayResults = fs.readdirSync(OUTDIR)
+        .filter((file) => file.endsWith('_result.json'))
+        .map((file) => readStampedJson(path.join(OUTDIR, file)))
+        .filter(Boolean);
+
+    const summary = {
+        pass: vitestRun.code === 0 && replayResults.every((result) => result.pass),
+        replayCount: replayResults.length,
+        results: replayResults.map((result) => ({
+            name: result.name,
+            pass: result.pass,
+            assertions: result.assertions
+        })),
+        vitest: readStampedJson(VITEST_JSON) || {
+            rawExitCode: vitestRun.code,
+            stdout: vitestRun.stdout,
+            stderr: vitestRun.stderr
+        }
+    };
+
+    writeStampedJson(
+        SUMMARY_PATH,
+        summary,
+        'engine-scenario-replay',
+        ['tests/scenarios/golden_path_clinical.json', 'tests/scenarios/save_roundtrip.json']
+    );
+
+    if (vitestRun.code !== 0) {
+        console.error(vitestRun.stderr || vitestRun.stdout);
+        process.exit(vitestRun.code);
+    }
+
+    console.log(`Scenario replay complete. pass=${summary.pass}`);
+}
+
+run().catch((error) => {
+    console.error('Scenario Replay Engine failed:', error);
     process.exit(1);
 });

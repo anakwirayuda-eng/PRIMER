@@ -1,38 +1,54 @@
 /**
  * @reflection
  * [IDENTITY]: engine-clinical-guardian
- * [PURPOSE]: Deep audit of CASE_LIBRARY for schema, reasoning, and public health integration.
- * [STATE]: Hardened
+ * [PURPOSE]: Deep audit of CASE_LIBRARY for schema, reasoning metadata, and impact-aware clinical integrity reporting.
+ * [STATE]: Active
+ * [ANCHOR]: runAudit
+ * [DEPENDS_ON]: CaseLibrary, CaseIndicators, artifact_manifest
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { CASE_LIBRARY } from '../../src/game/CaseLibrary.js';
+import { CASE_LIBRARY } from '../../src/content/cases/CaseLibrary.js';
 import { getIndicatorByDx } from '../../src/game/CaseIndicators.js';
+import { writeStampedJson } from './artifact_manifest.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, "../../");
-const OUTDIR = path.join(ROOT, "megalog/outputs");
+const ROOT = path.resolve(__dirname, '../../');
+const OUTDIR = path.join(ROOT, 'megalog/outputs');
 
-if (!fs.existsSync(OUTDIR)) fs.mkdirSync(OUTDIR, { recursive: true });
+const REQUIRED_FIELDS = ['id', 'diagnosis', 'icd10', 'category', 'anamnesis', 'correctTreatment'];
+const IMPACT_PRIORITY = {
+    crash_risk: 'P0',
+    save_corruption: 'P0',
+    wrong_clinical_scoring: 'P1',
+    nondeterminism: 'P1',
+    stale_telemetry: 'P2',
+    dead_ui_wiring: 'P2',
+    cosmetic: 'P3'
+};
 
-const REQUIRED_FIELDS = [
-    'id',
-    'diagnosis',
-    'icd10',
-    'category',
-    'anamnesis',
-    'correctTreatment'
-];
+function makeFinding(caseId, impact, message, severity = 'error') {
+    return {
+        caseId,
+        severity,
+        impact,
+        priority: IMPACT_PRIORITY[impact] || 'P3',
+        message
+    };
+}
 
 async function runAudit() {
-    console.log('🛡️  PRIMERA Clinical Guardian Engine active...');
-    console.log(`🔍 Auditing ${Object.keys(CASE_LIBRARY).length} cases for Clinical Integrity...`);
+    console.log('PRIMERA Clinical Guardian Engine active...');
+    console.log(`Auditing ${CASE_LIBRARY.length} cases for Clinical Integrity...`);
+
+    fs.mkdirSync(OUTDIR, { recursive: true });
 
     const results = {
         total: 0,
+        findings: [],
         errors: [],
         warnings: [],
         coverage: {
@@ -45,60 +61,67 @@ async function runAudit() {
         pass: false
     };
 
-    for (const [id, c] of Object.entries(CASE_LIBRARY)) {
+    for (const clinicalCase of CASE_LIBRARY) {
+        const caseId = clinicalCase.id || 'unknown';
         results.total++;
-        const caseIssues = [];
 
-        // 1. Structural requirements
-        REQUIRED_FIELDS.forEach(field => {
-            if (!c[field]) {
-                caseIssues.push({ type: 'error', message: `Missing required field: ${field}` });
+        for (const field of REQUIRED_FIELDS) {
+            if (!clinicalCase[field]) {
+                results.findings.push(makeFinding(caseId, 'wrong_clinical_scoring', `Missing required field: ${field}`));
             }
-        });
+        }
 
-        // 2. IKS Alignment Check
-        const iksKey = getIndicatorByDx(c.icd10);
+        const iksKey = getIndicatorByDx(clinicalCase.icd10);
         if (iksKey) {
             results.coverage.iksMapping++;
-        } else if (c.category === 'emergency' || c.skdi === '4A') {
-            // Optional: flag cases that SHOULD have IKS mapping but don't
         }
 
-        // 3. Bayesian Reasoning Meta-data
-        if (c.essentialQuestions && Array.isArray(c.essentialQuestions) && c.essentialQuestions.length > 0) {
+        if (Array.isArray(clinicalCase.essentialQuestions) && clinicalCase.essentialQuestions.length > 0) {
             results.coverage.bayesianMetadata++;
         } else {
-            caseIssues.push({ type: 'warning', message: 'Missing essentialQuestions for Bayesian Reasoning' });
+            results.findings.push(makeFinding(caseId, 'wrong_clinical_scoring', 'Missing essentialQuestions for Bayesian Reasoning', 'warning'));
         }
 
-        // 4. Clinical coverage checks
-        if (c.physicalExamFindings && Object.keys(c.physicalExamFindings).length > 0) results.coverage.physicalExam++;
-        if (c.relevantLabs && c.relevantLabs.length > 0) results.coverage.labs++;
-        if (c.requiredEducation && c.requiredEducation.length > 0) results.coverage.education++;
+        if (clinicalCase.physicalExamFindings && Object.keys(clinicalCase.physicalExamFindings).length > 0) {
+            results.coverage.physicalExam++;
+        }
+        if (clinicalCase.relevantLabs && clinicalCase.relevantLabs.length > 0) {
+            results.coverage.labs++;
+        }
+        if (clinicalCase.requiredEducation && clinicalCase.requiredEducation.length > 0) {
+            results.coverage.education++;
+        }
+    }
 
-        if (caseIssues.length > 0) {
-            caseIssues.forEach(issue => {
-                const logMsg = `[${id}] ${issue.message}`;
-                if (issue.type === 'error') results.errors.push(logMsg);
-                else results.warnings.push(logMsg);
-            });
+    for (const finding of results.findings) {
+        const line = `[${finding.caseId}] ${finding.message}`;
+        if (finding.severity === 'error') {
+            results.errors.push(line);
+        } else {
+            results.warnings.push(line);
         }
     }
 
     const health = Math.round(((results.total * REQUIRED_FIELDS.length - results.errors.length) / (results.total * REQUIRED_FIELDS.length)) * 100);
     results.pass = health >= 90;
     results.health = health;
+    results.impactSummary = results.findings.reduce((acc, finding) => {
+        acc[finding.impact] = (acc[finding.impact] || 0) + 1;
+        return acc;
+    }, {});
 
-    // Output Summary
-    console.log(`✅ Audit Complete. Score: ${health}%`);
+    console.log(`Audit Complete. Score: ${health}%`);
     console.log(`- Errors: ${results.errors.length} | Warnings: ${results.warnings.length}`);
-    console.log(`- IKS Mapping Coverage: ${Math.round(results.coverage.iksMapping / results.total * 100)}%`);
-    console.log(`- Bayesian Ready: ${Math.round(results.coverage.bayesianMetadata / results.total * 100)}%`);
 
-    fs.writeFileSync(path.join(OUTDIR, 'clinical_guardian.json'), JSON.stringify(results, null, 2));
+    writeStampedJson(
+        path.join(OUTDIR, 'clinical_guardian.json'),
+        results,
+        'engine-clinical-guardian',
+        ['CaseLibrary.js', 'CaseIndicators.js']
+    );
 }
 
-runAudit().catch(err => {
-    console.error('Guardian Engine failed:', err);
+runAudit().catch((error) => {
+    console.error('Guardian Engine failed:', error);
     process.exit(1);
 });

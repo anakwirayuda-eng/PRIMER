@@ -1,0 +1,14 @@
+{
+  "name": "golden_path_clinical",
+  "seed": 42,
+  "steps": [
+    { "action": "startNewGame", "payload": { "profile": { "name": "Test" }, "slotId": 0 } },
+    { "action": "nextDay" },
+    { "action": "setActivePatient", "payload": "first_in_queue" },
+    { "action": "discharge", "payload": { "action": "treat", "diagnoses": ["J06.9"] } },
+    { "assert": "state.player.profile.reputation >= 50" },
+    { "action": "saveGame", "payload": { "slotId": 0 } },
+    { "action": "loadGame", "payload": { "slotId": 0 } },
+    { "assert": "state.player.profile.name === 'Test'" }
+  ]
+}

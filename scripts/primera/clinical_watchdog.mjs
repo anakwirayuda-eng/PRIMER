@@ -11,11 +11,31 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { writeStampedJson } from './artifact_manifest.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '../../');
 const OUTDIR = path.join(ROOT, 'megalog/outputs');
+
+const IMPACT_PRIORITY = {
+    crash_risk: 'P0',
+    save_corruption: 'P0',
+    wrong_clinical_scoring: 'P1',
+    nondeterminism: 'P1',
+    stale_telemetry: 'P2',
+    dead_ui_wiring: 'P2',
+    cosmetic: 'P3'
+};
+
+function createFinding(impact, desc, extra = {}) {
+    return {
+        impact,
+        priority: IMPACT_PRIORITY[impact] || 'P3',
+        desc,
+        ...extra
+    };
+}
 
 // ─── Static ID Extraction (regex-based, no dynamic import needed) ───
 function extractIds(filePath) {
@@ -90,34 +110,38 @@ async function runClinicalAudit() {
 
         CASE_LIBRARY.forEach(c => {
             const prefix = `[Case: ${c.id || 'unknown'}]`;
-            if (!c.id) issues.push({ priority: 'high', desc: `${prefix} Missing unique ID.` });
-            if (!c.diagnosis) issues.push({ priority: 'high', desc: `${prefix} Missing diagnosis name.` });
-            if (!c.icd10) issues.push({ priority: 'medium', desc: `${prefix} Missing ICD-10 code.` });
+            if (!c.id) issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing unique ID.`));
+            if (!c.diagnosis) issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing diagnosis name.`));
+            if (!c.icd10) issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing ICD-10 code.`));
             if (!c.correctTreatment || c.correctTreatment.length === 0) {
-                issues.push({ priority: 'high', desc: `${prefix} Missing correct treatment plan.` });
+                issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing correct treatment plan.`));
             }
             if (c.correctTreatment) {
                 c.correctTreatment.forEach(t => {
                     if (Array.isArray(t)) {
-                        t.forEach(alt => { if (!medIds.has(alt)) issues.push({ priority: 'high', desc: `${prefix} Invalid Med ID: ${alt}` }); });
+                        t.forEach(alt => {
+                            if (!medIds.has(alt)) {
+                                issues.push(createFinding('wrong_clinical_scoring', `${prefix} Invalid Med ID: ${alt}`));
+                            }
+                        });
                     } else {
-                        if (!medIds.has(t)) issues.push({ priority: 'high', desc: `${prefix} Invalid Med ID: ${t}` });
+                        if (!medIds.has(t)) issues.push(createFinding('wrong_clinical_scoring', `${prefix} Invalid Med ID: ${t}`));
                     }
                 });
             }
             if (c.diagnosis?.toLowerCase().includes('dengue') || c.diagnosis?.toLowerCase().includes('dbd')) {
                 if (!c.relevantLabs?.includes('lab_hematology') && !c.relevantLabs?.includes('lab_ns1')) {
-                    issues.push({ priority: 'medium', desc: `${prefix} Dengue case missing Hematology/NS1 in relevant labs.` });
+                    issues.push(createFinding('wrong_clinical_scoring', `${prefix} Dengue case missing Hematology/NS1 in relevant labs.`));
                 }
             }
             if (c.diagnosis?.toLowerCase().includes('hipertensi') || c.id?.includes('hypertension')) {
                 if (!c.physicalExamFindings?.vitals?.bp) {
-                    issues.push({ priority: 'medium', desc: `${prefix} Hypertension case missing BP vital finding.` });
+                    issues.push(createFinding('wrong_clinical_scoring', `${prefix} Hypertension case missing BP vital finding.`));
                 }
             }
         });
     } catch (e) {
-        issues.push({ priority: 'high', desc: `Dynamic Import Crash: ${e.message}` });
+        issues.push(createFinding('stale_telemetry', `Dynamic Import Crash: ${e.message}`));
     }
 
     // ─── PHASE 2: MAIA Integrity (static file scanning) ───
@@ -168,16 +192,24 @@ async function runClinicalAudit() {
     // ─── Generate Report ───
     const report = {
         gate: "CLINICAL_INTEGRITY",
-        status: issues.filter(i => i.priority === 'high').length === 0 ? "passed" : "failed",
+        status: issues.filter(i => i.priority === 'P0' || i.priority === 'P1').length === 0 ? "passed" : "failed",
         casesCount,
         issuesCount: issues.length,
         issues,
         maiaIntegrity,
-        generatedAt: new Date().toISOString()
+        impactSummary: issues.reduce((acc, issue) => {
+            acc[issue.impact] = (acc[issue.impact] || 0) + 1;
+            return acc;
+        }, {})
     };
 
     if (!fs.existsSync(OUTDIR)) fs.mkdirSync(OUTDIR, { recursive: true });
-    fs.writeFileSync(path.join(OUTDIR, 'clinical.json'), JSON.stringify(report, null, 2));
+    writeStampedJson(
+        path.join(OUTDIR, 'clinical.json'),
+        report,
+        'clinical_watchdog',
+        ['CaseLibrary.js', 'MedicationDatabase.js', 'ProceduresDB.js', 'EducationOptions.js']
+    );
 
     console.log(`✅ Clinical Audit Complete. Found ${issues.length} anomalies.`);
     console.log(`🔒 MAIA Integrity: ${maiaIntegrity.status.toUpperCase()} (Meds=${maiaIntegrity.missingMeds} Procs=${maiaIntegrity.missingProcs} Edu=${maiaIntegrity.missingEdus})`);

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../../');
-const CASES_DIR = path.join(ROOT, 'src/game/cases');
+const CASES_DIR = path.join(ROOT, 'src/content/cases');
 
 /**
  * MEDICATION_ALIAS_MAP

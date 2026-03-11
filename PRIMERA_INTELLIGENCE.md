@@ -1,263 +1,349 @@
-# 🧠 PRIMERA Intelligence Hub
+<!-- PRIMERA_PROVENANCE {"generatedAt":"2026-03-10T23:48:33.130Z","gitSha":"abf2836","dirty":true,"sourceCommand":"sentinel","inputArtifacts":["health.json","store-schema.md"]} -->
+# PRIMERA Intelligence Hub
 
-> **Sentinel Status**: Active
-> **Last Scan**: 17/02/2026, 06.11.25
+> Sentinel Status: Active
+> Last Scan: 11/3/2026, 06.48.33
 
-## 🛡️ Structural Risk Assessment
+## Structural Risk Assessment
 
 | Metric | Value |
 | :--- | :--- |
 | **Risk Level** | **STABLE** |
-| **Reason** | Structural wiring is secure. No critical lint violations. |
+| **Reason** | Canonical health.json indicates trusted runtime and structural posture. |
+| **Health Score** | **83/100** |
+| **Cap Reason** | - |
+| **Dirty Worktree** | true |
+| **Health Git SHA** | abf2836 |
 
-## 🌳 Project Topology (src/)
+## Breakdown
+
+```json
+{
+  "coverage": 93,
+  "structure": 70,
+  "lint": 77.73851590106007,
+  "runtime": 90,
+  "clinical": 40,
+  "invariants": 100,
+  "lifecycle": 100,
+  "forensic": 90,
+  "assets": 97,
+  "build": 100
+}
+```
+
+## Project Topology (src/)
 
 ```text
-- 📄 App.jsx
-- 📁 assets
-  - 📄 asset-manifest.json
-  - 📄 assets.js
-  - 📁 buildings
-    - 📄 alun_alun.png
-    - 📄 balai_desa.png
-    - 📄 bank_sampah.png
-    - 📄 dashat.png
-    - 📄 house.png
-    - 📄 iks_scoreboard.png
-    - 📄 kantor_desa.png
-    - 📄 market.png
-    - 📄 mck.png
-    - 📄 mosque.png
-    - 📄 pamsimas.png
-    - 📄 polindes.png
-    - 📄 posyandu.png
-    - 📄 pos_gizi.png
-    - 📄 pos_ukk.png
-    - 📄 puskesmas.png
-    - 📄 pustu.png
-    - 📄 rtk.png
-    - 📄 rumah_dinas.png
-    - 📄 school.png
-    - 📄 tk.png
-    - 📄 toga.png
-    - 📄 tpu.png
-    - 📄 well.png
-- 📁 components
-  - 📁 apps
-    - 📄 BankApp.jsx
-    - 📄 ChatApp.jsx
-    - 📄 NewsApp.jsx
-    - 📄 ShopApp.jsx
-  - 📄 ArsipPage.jsx
-  - 📄 AvatarRenderer.jsx
-  - 📄 AvatarSelectionModal.jsx
-  - 📄 BodyMapWidget.jsx
-  - 📄 CalendarModal.jsx
-  - 📄 ClinicalPage.jsx
-  - 📄 CPPTCard.jsx
-  - 📄 DailyReportModal.jsx
-  - 📁 dashboard
-    - 📄 AccreditationView.jsx
-    - 📄 ClinicalView.jsx
-    - 📄 CommunityView.jsx
-    - 📄 LogisticsView.jsx
-    - 📄 PerformanceView.jsx
-  - 📄 Dashboard.jsx
-  - 📄 DashboardPage.jsx
-  - 📄 DatabaseSync.jsx
-  - 📄 DiklatPage.jsx
-  - 📄 EducationalWikiModal.jsx
-  - 📄 EmergencyPanel.jsx
-  - 📁 emr
-    - 📁 anamnesis
-    - 📄 AnamnesisTab.jsx
-    - 📄 AssessmentTab.jsx
-    - 📄 BillingTab.jsx
-    - 📄 ClinicalSidebar.jsx
-    - 📄 EducationTab.jsx
-    - 📄 HistoryTab.jsx
-    - 📄 LabTab.jsx
-    - 📄 PhysicalExamTab.jsx
-    - 📄 ProceduresTab.jsx
-    - 📄 ReasoningDashboard.jsx
-    - 📁 sidebar
-    - 📁 treatment
-    - 📄 TreatmentTab.jsx
-  - 📄 ErrorBoundary.jsx
-  - 📄 GameOverModal.jsx
-  - 📁 gedung
-    - 📄 RoomCard.jsx
-    - 📄 UpgradeModal.jsx
-  - 📄 GedungPage.jsx
-  - 📄 InfoTooltip.jsx
-  - 📄 InventoryPage.jsx
-  - 📄 KPIDashboard.jsx
-  - 📄 MainLayout.jsx
-  - 📄 MetricCard.jsx
-  - 📄 NarrativeOverlay.jsx
-  - 📄 OpeningScreen.jsx
-  - 📄 OrderModal.jsx
-  - 📄 OutbreakModal.jsx
-  - 📄 PatientEMR.jsx
-  - 📄 PatientHistoryModal.jsx
-  - 📄 PlayerSetup.jsx
-  - 📄 PosyanduModal.jsx
-  - 📄 ProlanisConsultation.jsx
-  - 📄 ProlanisPanel.jsx
-  - 📄 QuestBoard.jsx
-  - 📄 QueueList.jsx
-  - 📄 ReferralSISRUTEModal.jsx
-  - 📄 SaranaPage.jsx
-  - 📄 SaveSlotSelector.jsx
-  - 📄 ServiceCardDeck.jsx
-  - 📄 SettingsModal.jsx
-  - 📄 Smartphone.jsx
-  - 📁 staff
-    - 📄 StaffCard.jsx
-    - 📄 StaffDetail.jsx
-  - 📄 StaffPage.jsx
-  - 📄 StatusJunctionModal.jsx
-  - 📄 WeekendModal.jsx
-  - 📁 wilayah
-    - 📄 AuxiliaryComponents.jsx
-    - 📄 constants.js
-    - 📄 map-utils.js
-    - 📄 MapCanvas.jsx
-    - 📄 TerrainCanvas.jsx
-  - 📄 WilayahPage.jsx
-- 📁 content
-  - 📁 cases
-    - 📄 CaseLibrary.js
-    - 📁 modules
-  - 📁 concepts
-    - 📄 village_politics.md
-  - 📁 residents
-  - 📁 scenarios
-- 📁 context
-  - 📁 contracts
-    - 📄 gameContext.contract.js
-  - 📄 GameContext.jsx
-  - 📄 ThemeContext.jsx
-- 📁 contracts
-  - 📄 store.contract.mjs
-- 📁 data
-  - 📄 AppMetadata.js
-  - 📄 CalendarEventDB.js
-  - 📄 ClinicalServices.js
-  - 📄 EducationOptions.js
-  - 📄 extract_icd9.cjs
-  - 📄 extract_icd9.py
-  - 📄 FacilityData.js
-  - 📄 FKTP144Diseases.js
-  - 📄 FurnitureData.js
-  - 📄 HospitalDB.js
-  - 📄 ICD10.js
-  - 📄 ICD9CM.js
-  - 📄 index.js
-  - 📄 master_icd_10.json
-  - 📄 master_icd_9.json
-  - 📁 medication
-    - 📁 registry
-    - 📄 utils.js
-  - 📄 MedicationDatabase.js
-  - 📄 ProceduresDB.js
-  - 📄 ProlanisDB.js
-  - 📄 StaffData.js
-  - 📄 SupplierDatabase.js
-  - 📁 wiki
-    - 📄 klinis.js
-    - 📄 kulit.js
-    - 📄 lab_prosedur.js
-    - 📄 manajemen.js
-    - 📄 obat.js
-    - 📄 penyakit.js
-    - 📄 wilayah.js
-  - 📄 WikiData.js
-- 📁 diagnostics
-  - 📄 invariants.js
-- 📁 domains
-  - 📁 clinical
-  - 📁 community
-    - 📄 OutbreakSystem.js
-  - 📁 village
-    - 📄 VillageRegistry.js
-    - 📄 village_families.js
-- 📁 game
-  - 📁 anamnesis
-    - 📄 Constants.js
-    - 📄 DialogueEngine.js
-    - 📄 EmotionEngine.js
-    - 📄 InformantSystem.js
-    - 📄 SynthesisEngine.js
-    - 📄 TextAdapter.js
-    - 📁 variations
-  - 📄 AnamnesisEngine.js
-  - 📄 AnamnesisPrompts.js
-  - 📄 AnamnesisVariations.js
-  - 📄 BillingEngine.js
-  - 📄 CaseIndicators.js
-  - 📄 ClinicalReasoning.js
-  - 📄 CPPTEngine.js
-  - 📁 emergency
-    - 📁 cases
-    - 📄 EmergencyRegistry.js
-  - 📄 EmergencyCases.js
-  - 📄 GameCore.js
-  - 📄 GuestEventSystem.js
-  - 📄 index.js
-  - 📄 PatientGenerator.js
-  - 📄 PosyanduEngine.js
-  - 📄 ProlanisEngine.js
-  - 📄 QuestEngine.js
-  - 📄 StoryDatabase.js
-  - 📄 ValidationEngine.js
-- 📁 gameplay
-  - 📄 featureRegistry.js
-- 📁 hooks
-  - 📄 useGameLoop.js
-  - 📄 useNavAndSettings.js
-  - 📄 usePatientEMR.js
-  - 📄 useStaffManagement.js
-- 📄 i18n.js
-- 📄 index.css
-- 📁 locales
-  - 📄 en.json
-  - 📄 id.json
-- 📄 main.jsx
-- 📁 pages
-  - 📄 RumahDinas.jsx
-- 📁 services
-  - 📄 LLMService.js
-  - 📄 PersistenceService.js
-- 📁 store
-  - 📄 selectors.js
-  - 📄 useGameStore.js
-- 📁 tests
-  - 📄 dischargePatient.test.js
-  - 📄 feature.guard.test.jsx
-  - 📄 featureGuard.js
-  - 📄 riskFactors.test.js
-  - 📄 setup.js
-  - 📄 test-setup.js
-- 📁 utils
-  - 📄 AvatarUtils.js
-  - 📄 BuildingGenerator.js
-  - 📄 crashTrap.js
-  - 📄 dispatchGuard.js
-  - 📄 LevelingSystem.js
-  - 📄 prophylaxis.js
-  - 📄 SocialDeterminants.js
-  - 📄 SoundManager.js
-  - 📄 TerrainGenerator.js
-  - 📄 TextureGenerator.js
-  - 📄 transactions.js
-  - 📄 types.js
-  - 📄 UIInsetGenerator.js
-  - 📄 validation.js
+- [FILE] App.jsx
+- [DIR] assets
+  - [FILE] asset-manifest.json
+  - [FILE] assets.js
+  - [DIR] buildings
+    - [FILE] alun_alun.png
+    - [FILE] balai_desa.png
+    - [FILE] bank_sampah.png
+    - [FILE] dashat.png
+    - [FILE] house.png
+    - [FILE] iks_scoreboard.png
+    - [FILE] kantor_desa.png
+    - [FILE] market.png
+    - [FILE] mck.png
+    - [FILE] mosque.png
+    - [FILE] pamsimas.png
+    - [FILE] polindes.png
+    - [FILE] posyandu.png
+    - [FILE] pos_gizi.png
+    - [FILE] pos_ukk.png
+    - [FILE] puskesmas.png
+    - [FILE] pustu.png
+    - [FILE] rtk.png
+    - [FILE] rumah_dinas.png
+    - [FILE] school.png
+    - [FILE] tk.png
+    - [FILE] toga.png
+    - [FILE] tpu.png
+    - [FILE] well.png
+- [DIR] components
+  - [FILE] AboutModal.jsx
+  - [DIR] apps
+    - [FILE] BankApp.jsx
+    - [FILE] ChatApp.jsx
+    - [FILE] NewsApp.jsx
+    - [FILE] ShopApp.jsx
+  - [FILE] ArsipPage.jsx
+  - [FILE] AvatarRenderer.jsx
+  - [FILE] AvatarSelectionModal.jsx
+  - [FILE] BodyMapWidget.jsx
+  - [FILE] CalendarModal.jsx
+  - [FILE] ClinicalPage.jsx
+  - [FILE] CPPTCard.jsx
+  - [FILE] DailyReportModal.jsx
+  - [DIR] dashboard
+    - [FILE] AccreditationView.jsx
+    - [FILE] ClinicalView.jsx
+    - [FILE] CommunityView.jsx
+    - [FILE] LogisticsView.jsx
+    - [FILE] PerformanceView.jsx
+  - [FILE] DashboardPage.jsx
+  - [FILE] DatabaseSync.jsx
+  - [FILE] DiklatPage.jsx
+  - [FILE] EducationalWikiModal.jsx
+  - [FILE] EmergencyPanel.jsx
+  - [DIR] emr
+    - [DIR] anamnesis
+    - [FILE] AnamnesisTab.jsx
+    - [FILE] AssessmentTab.jsx
+    - [FILE] BillingTab.jsx
+    - [FILE] ClinicalSidebar.jsx
+    - [FILE] EducationTab.jsx
+    - [FILE] HistoryTab.jsx
+    - [FILE] LabTab.jsx
+    - [FILE] PhysicalExamTab.jsx
+    - [FILE] ProceduresTab.jsx
+    - [FILE] ReasoningDashboard.jsx
+    - [DIR] sidebar
+    - [DIR] treatment
+    - [FILE] TreatmentTab.jsx
+  - [FILE] EndOfDayModal.jsx
+  - [FILE] ErrorBoundary.jsx
+  - [FILE] FarmasiPanel.jsx
+  - [FILE] GameOverModal.jsx
+  - [DIR] gedung
+    - [FILE] RoomCard.jsx
+    - [FILE] UpgradeModal.jsx
+  - [FILE] GedungPage.jsx
+  - [FILE] InfoTooltip.jsx
+  - [FILE] InventoryPage.jsx
+  - [FILE] KPIDashboard.jsx
+  - [FILE] MainLayout.jsx
+  - [FILE] MetricCard.jsx
+  - [FILE] MorningBriefingModal.jsx
+  - [FILE] NarrativeOverlay.jsx
+  - [FILE] OpeningScreen.jsx
+  - [FILE] OrderModal.jsx
+  - [FILE] OutbreakBanner.jsx
+  - [FILE] OutbreakModal.jsx
+  - [FILE] PatientEMR.jsx
+  - [FILE] PatientHistoryModal.jsx
+  - [FILE] PlayerSetup.jsx
+  - [FILE] PosyanduModal.jsx
+  - [FILE] ProlanisConsultation.jsx
+  - [FILE] ProlanisPanel.jsx
+  - [FILE] QuestBoard.jsx
+  - [FILE] QueueList.jsx
+  - [FILE] ReferralHUD.jsx
+  - [FILE] ReferralSISRUTEModal.jsx
+  - [FILE] SaranaPage.jsx
+  - [FILE] SaveSlotSelector.jsx
+  - [DIR] sensus
+    - [FILE] SensusPage.jsx
+  - [FILE] ServiceCardDeck.jsx
+  - [FILE] SettingsModal.jsx
+  - [DIR] shared
+    - [FILE] ExpandableCard.jsx
+    - [FILE] GuidelineBadge.jsx
+    - [FILE] StatCard.jsx
+    - [FILE] StepCarousel.jsx
+  - [FILE] Smartphone.jsx
+  - [DIR] staff
+    - [FILE] StaffCard.jsx
+    - [FILE] StaffDetail.jsx
+  - [FILE] StaffPage.jsx
+  - [FILE] StatusJunctionModal.jsx
+  - [FILE] VillagerAvatar.jsx
+  - [FILE] WeekendModal.jsx
+  - [DIR] wilayah
+    - [DIR] 3d
+    - [FILE] AuxiliaryComponents.jsx
+    - [FILE] BehaviorCasePanel.jsx
+    - [FILE] BuildingGamePanel.jsx
+    - [FILE] buildingScenes.js
+    - [FILE] CommunityDiagnosisPanel.jsx
+    - [FILE] constants.js
+    - [FILE] EliteCOMBWheel.jsx
+    - [FILE] map-utils.js
+    - [FILE] MapCanvas.jsx
+    - [FILE] MiniGamePanel.jsx
+    - [FILE] PixelSceneRenderer.jsx
+    - [FILE] PosyanduActivePanel.jsx
+    - [FILE] PremiumMapDemo.jsx
+    - [FILE] PustuActivePanel.jsx
+    - [FILE] TerrainCanvas.jsx
+  - [FILE] WilayahPage.jsx
+- [DIR] content
+  - [DIR] cases
+    - [FILE] CaseLibrary.js
+    - [DIR] modules
+  - [DIR] concepts
+    - [FILE] village_politics.md
+  - [DIR] residents
+    - [FILE] DialogVariations.js
+    - [FILE] PersonalityTraits.js
+    - [FILE] ResidentProfiles.js
+  - [DIR] scenarios
+    - [FILE] CulturalBeliefs.js
+    - [FILE] DiseaseScenarios.js
+    - [FILE] IKMScenarioLibrary.js
+    - [FILE] PHBSIndicators.js
+- [DIR] context
+  - [DIR] contracts
+    - [FILE] gameContext.contract.js
+  - [FILE] GameContext.jsx
+  - [FILE] ThemeContext.jsx
+- [DIR] contracts
+  - [FILE] store.contract.mjs
+- [DIR] data
+  - [FILE] AppMetadata.js
+  - [FILE] CalendarEventDB.js
+  - [FILE] ClinicalServices.js
+  - [FILE] EducationOptions.js
+  - [FILE] extract_icd9.cjs
+  - [FILE] extract_icd9.py
+  - [FILE] FacilityData.js
+  - [FILE] FKTP144Diseases.js
+  - [FILE] FurnitureData.js
+  - [FILE] HospitalDB.js
+  - [FILE] ICD10.js
+  - [FILE] ICD10_ALIASES.js
+  - [FILE] ICD9CM.js
+  - [FILE] index.js
+  - [FILE] master_icd_10.json
+  - [FILE] master_icd_9.json
+  - [DIR] medication
+    - [DIR] registry
+    - [FILE] utils.js
+  - [FILE] MedicationDatabase.js
+  - [FILE] ProceduresDB.js
+  - [FILE] ProlanisDB.js
+  - [FILE] StaffData.js
+  - [FILE] SupplierDatabase.js
+  - [DIR] wiki
+    - [FILE] dashboard_manajemen.js
+    - [FILE] emergency_wiki.js
+    - [FILE] igd.js
+    - [FILE] klinis.js
+    - [FILE] kulit.js
+    - [FILE] lab_prosedur.js
+    - [FILE] manajemen.js
+    - [FILE] obat.js
+    - [FILE] penyakit.js
+    - [FILE] wilayah.js
+  - [FILE] WikiData.js
+- [DIR] diagnostics
+  - [FILE] invariants.js
+- [DIR] domains
+  - [DIR] clinical
+  - [DIR] community
+    - [FILE] OutbreakSystem.js
+  - [DIR] village
+    - [FILE] NPCReadiness.js
+    - [FILE] VillagerBehavior.js
+    - [FILE] VillageRegistry.js
+    - [FILE] village_families.js
+- [DIR] game
+  - [DIR] anamnesis
+    - [FILE] Constants.js
+    - [FILE] DialogueEngine.js
+    - [FILE] EmotionEngine.js
+    - [FILE] InformantSystem.js
+    - [FILE] SynthesisEngine.js
+    - [FILE] TextAdapter.js
+    - [DIR] variations
+  - [FILE] AnamnesisEngine.js
+  - [FILE] AnamnesisPrompts.js
+  - [FILE] AnamnesisVariations.js
+  - [FILE] BehaviorCaseEngine.js
+  - [FILE] BillingEngine.js
+  - [FILE] CaseIndicators.js
+  - [FILE] ClinicalReasoning.js
+  - [FILE] ConsequenceEngine.js
+  - [FILE] CPPTEngine.js
+  - [FILE] DebriefEngine.js
+  - [DIR] dental
+    - [FILE] DentalDiagnosisEngine.js
+    - [FILE] DentalProcedureEngine.js
+  - [FILE] DispensingEngine.js
+  - [DIR] emergency
+    - [DIR] cases
+    - [FILE] EmergencyRegistry.js
+  - [FILE] EmergencyCases.js
+  - [FILE] EmergingEventTriggers.js
+  - [FILE] GameCore.js
+  - [FILE] GuestEventSystem.js
+  - [FILE] IKMEventEngine.js
+  - [FILE] index.js
+  - [FILE] KaderNetwork.js
+  - [DIR] kia
+    - [FILE] GrowthChartEngine.js
+    - [FILE] ImmunizationEngine.js
+    - [FILE] PregnancyEngine.js
+  - [FILE] LabEngine.js
+  - [FILE] MiniGameLibrary.js
+  - [FILE] MorningBriefing.js
+  - [FILE] PatientGenerator.js
+  - [FILE] PosyanduEngine.js
+  - [FILE] ProlanisEngine.js
+  - [FILE] QuestEngine.js
+  - [FILE] StoryDatabase.js
+  - [FILE] TheDirector.js
+  - [FILE] ValidationEngine.js
+- [DIR] gameplay
+  - [FILE] featureRegistry.js
+- [DIR] hooks
+  - [FILE] useGameLoop.js
+  - [FILE] useModalA11y.js
+  - [FILE] useNavAndSettings.js
+  - [FILE] usePatientEMR.js
+  - [FILE] useStaffManagement.js
+- [FILE] i18n.js
+- [FILE] index.css
+- [DIR] locales
+  - [FILE] en.json
+  - [FILE] id.json
+- [FILE] main.jsx
+- [DIR] pages
+  - [FILE] RumahDinas.jsx
+- [DIR] scripts
+  - [FILE] validate_maia_suggestions.cjs
+  - [FILE] validate_summary.cjs
+  - [FILE] validation_output.txt
+  - [FILE] validation_report.txt
+- [DIR] services
+  - [FILE] LLMService.js
+  - [FILE] PersistenceService.js
+- [DIR] store
+  - [FILE] selectors.js
+  - [FILE] useGameStore.js
+- [DIR] tests
+  - [FILE] dischargeEmergencyPatient.test.js
+  - [FILE] dischargePatient.test.js
+  - [FILE] feature.guard.test.jsx
+  - [FILE] featureGuard.js
+  - [FILE] riskFactors.test.js
+  - [FILE] setup.js
+  - [FILE] test-setup.js
+- [DIR] utils
+  - [FILE] AvatarUtils.js
+  - [FILE] BuildingGenerator.js
+  - [FILE] crashTrap.js
+  - [FILE] dispatchGuard.js
+  - [FILE] formatTime.js
+  - [FILE] LevelingSystem.js
+  - [FILE] prophylaxis.js
+  - [FILE] SocialDeterminants.js
+  - [FILE] SoundManager.js
+  - [FILE] TerrainGenerator.js
+  - [FILE] TextureGenerator.js
+  - [FILE] ToastManager.js
+  - [FILE] transactions.js
+  - [FILE] types.js
+  - [FILE] UIInsetGenerator.js
+  - [FILE] validation.js
 
 ```
 
-## 🧊 State Contract (Zustand)
+## State Contract (Zustand)
 
 
 ## NAV Slice
@@ -654,5 +740,6 @@
 | **`clinical`** | **STATE ROOT** |
 
 
+
 ---
-Generated by PRIMERA Sentinel v1.0
+Generated by PRIMERA Sentinel vNext

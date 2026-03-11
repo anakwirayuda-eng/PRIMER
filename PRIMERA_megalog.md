@@ -1,7 +1,8 @@
+<!-- PRIMERA_PROVENANCE {"generatedAt":"2026-03-10T23:47:40.493Z","gitSha":"abf2836","dirty":true,"sourceCommand":"reflect_and_sync","inputArtifacts":["static_health.json","clinical_guardian.json","store_audit.json","save_audit.json"]} -->
 
 # PRIMERA MEGALOG v5.0
 > **Honest Hardening Report — Reliability Edition**
-> Generated: 23/2/2026 16.18.56
+> Generated: 11/3/2026 06.47.40
 
 ---
 
@@ -26,19 +27,19 @@
 | Gate / Metric | Status | Detail |
 | :--- | :--- | :--- |
 | **Health Score** | **94/100** | Overall structural integrity |
-| **Indexing** | ⚠️ | 92% coverage (10% weight) |
-| **Lint** | ⚠️ | 43 errors, 2 warnings (15% weight) |
+| **Indexing** | ⚠️ | 93% coverage (10% weight) |
+| **Lint** | ⚠️ | 63 errors, 7 warnings (15% weight) |
 | **Graph Integrity** | ✅ | 70% purity (5% weight) |
 | **Clinical** | ✅ | 100% clinical health (15% weight) |
-| **Unit Tests** | ✅ | 9 passed, 1 failed (15% weight) |
-| **Store Contract** | ✅ | 4 slices audited |
-| **Save Integrity** | ✅ | v3 persistence check |
+| **Unit Tests** | ✅ | 14 passed, 0 failed (15% weight) |
+| **Store Contract** | 🚨 | 4 slices audited |
+| **Save Integrity** | ✅ | v4 persistence check |
 | **Prophylaxis** | ✅ | 90% loop protection density |
 | **Invariants** | ✅ | 100% coverage (15% weight) |
 | **Lifecycle** | ✅ | State transition monitor |
 | **Triage Gate** | ✅ | ESI 1 / Red Flag safety gate |
 | **Collisions** | ✅ | 0 Name collision forensic guard |
-| **Assets** | ✅ | Score: 100 |
+| **Assets** | ✅ | Score: 97 |
 | **Forensic** | ✅ | 0 undefined symbols detected |
 | **Build** | ✅ | Vite build bundling status |
 | **Smoke (E2E)** | ✅ | 0 failed tests |
@@ -69,7 +70,7 @@
 - **[Monster File]** in `src/content/scenarios/IKMScenarioLibrary.js`: Large file (2227 LOC). Consider splitting.
 - **[Monster File]** in `src/data/medication/registry/missing_case_meds.js`: Large file (2122 LOC). Consider splitting.
 - **[Monster File]** in `src/game/PatientGenerator.js`: Large file (1016 LOC). Consider splitting.
-- **[Monster File]** in `src/store/useGameStore.js`: Large file (1360 LOC). Consider splitting.
+- **[Monster File]** in `src/store/useGameStore.js`: Large file (1411 LOC). Consider splitting.
 
 ---
 
@@ -202,7 +203,7 @@ src/
 | [NewsApp](#mod-NewsApp.jsx) | Experimental | 🟢 1 | Module: NewsApp... |
 | [ShopApp](#mod-ShopApp.jsx) | Experimental | 🟢 1 | Module: ShopApp... |
 | [ArsipPage](#mod-ArsipPage.jsx) | Experimental | 🟢 0 | React UI component: ArsipPage.... |
-| [AvatarRenderer](#mod-AvatarRenderer.jsx) | Production | 🟢 5 | High-quality SVG-based Avatar Renderer for PRIMER.... |
+| [AvatarRenderer](#mod-AvatarRenderer.jsx) | Production | 🟢 5 | Portrait-based Avatar System for PRIMER.... |
 | [AvatarSelectionModal](#mod-AvatarSelectionModal.jsx) | Experimental | 🟢 0 | React UI component: AvatarSelectionModal.... |
 | [BodyMapWidget](#mod-BodyMapWidget.jsx) | Experimental | 🟢 1 | Module: BodyMapWidget... |
 | [CalendarModal](#mod-CalendarModal.jsx) | Experimental | 🟢 0 | React UI component: CalendarModal.... |
@@ -256,12 +257,12 @@ src/
 | [MainLayout](#mod-MainLayout.jsx) | Experimental | 🟢 0 | React UI component: MainLayout.... |
 | [MetricCard](#mod-MetricCard.jsx) | Experimental | 🟢 0 | React UI component: MetricCard.... |
 | [NarrativeOverlay](#mod-NarrativeOverlay.jsx) | Experimental | 🟢 0 | Displays branching narrative dialogue and choices for the St... |
-| [OpeningScreen](#mod-OpeningScreen.jsx) | Stable | 🟢 1 | Cinematic console-game-style opening with dramatic logo reve... |
+| [OpeningScreen](#mod-OpeningScreen.jsx) | Stable | 🟢 1 | Cinematic opening — ITS logo reveal, dissolve, PRIMER title ... |
 | [OrderModal](#mod-OrderModal.jsx) | Experimental | 🟢 1 | React UI component: OrderModal.... |
 | [OutbreakModal](#mod-OutbreakModal.jsx) | Experimental | 🟢 0 | React UI component: OutbreakModal.... |
 | [PatientEMR](#mod-PatientEMR.jsx) | Experimental | 🟢 1 | React UI component: PatientEMR.... |
 | [PatientHistoryModal](#mod-PatientHistoryModal.jsx) | Experimental | 🟢 0 | React UI component: PatientHistoryModal.... |
-| [PlayerSetup](#mod-PlayerSetup.jsx) | Experimental | 🟢 0 | React UI component: AVATARS.... |
+| [PlayerSetup (Aegis Registration Protocol)](#mod-PlayerSetup.jsx) | Production | 🟢 0 | Cinematic character creation — diegetic terminal UI with RPG... |
 | [PosyanduModal](#mod-PosyanduModal.jsx) | Experimental | 🟢 0 | React UI component: PosyanduModal.... |
 | [ProlanisConsultation](#mod-ProlanisConsultation.jsx) | Experimental | 🟢 1 | Module: ProlanisConsultation... |
 | [ProlanisPanel](#mod-ProlanisPanel.jsx) | Experimental | 🟢 1 | Module: ProlanisPanel... |
@@ -269,7 +270,7 @@ src/
 | [QueueList](#mod-QueueList.jsx) | Experimental | 🟢 1 | React UI component: QueueList.... |
 | [ReferralSISRUTEModal](#mod-ReferralSISRUTEModal.jsx) | Experimental | 🟢 0 | React UI component: ReferralSISRUTEModal.... |
 | [SaranaPage](#mod-SaranaPage.jsx) | Experimental | 🟢 0 | React UI component: SaranaPage.... |
-| [SaveSlotSelector](#mod-SaveSlotSelector.jsx) | Experimental | 🟢 0 | React UI component: MAX_SLOTS.... |
+| [SaveSlotSelector (Aegis Command Center)](#mod-SaveSlotSelector.jsx) | Stable | 🟢 0 | Main Menu & Save Management.... |
 | [SensusPage](#mod-SensusPage.jsx) | Experimental | 🟢 0 | Census/demography view accessible from Kantor Desa building.... |
 | [ServiceCardDeck](#mod-ServiceCardDeck.jsx) | Experimental | 🟢 1 | React UI component: ServiceCardDeck.... |
 | [SettingsModal](#mod-SettingsModal.jsx) | Stable | 🟢 0 | Game settings panel with unified theme picker, volume, and g... |
@@ -281,12 +282,16 @@ src/
 | [VillagerAvatar](#mod-VillagerAvatar.jsx) | Stable | 🟢 1 | Deterministic SVG avatar generator for village residents.... |
 | [WeekendModal](#mod-WeekendModal.jsx) | Experimental | 🟢 0 | Module: WeekendModal... |
 | [AuxiliaryComponents](#mod-AuxiliaryComponents.jsx) | Stable | 🟢 1 | Helper UI components for WilayahPage HUD (PIS-PK panel, sate... |
+| [BehaviorCasePanel.jsx — "TACTILE MED-PUNK (EPIDEMIOLOGY OS)"](#mod-BehaviorCasePanel.jsx) | Polished | 🟢 1 | Multi-phase interactive panel for UKM Behavior Change cases.... |
 | [BuildingGamePanel](#mod-BuildingGamePanel.jsx) | Rewritten — denah layout, no Konva, no framer-motion | 🟢 1 | Full-screen Posyandu interior with clean denah-style layout.... |
 | [buildingScenes.js](#mod-buildingScenes.js) | New | 🟢 2 | Data-driven scene definitions for building interior gameplay... |
 | [constants.js](#mod-constants.js) | Stable | 🟡 7 | Unified constants for the village map system including tile ... |
 | [map-utils.js](#mod-map-utils.js) | Stable | 🟢 1 | Generation logic for the procedural village map and wiki key... |
 | [MapCanvas.jsx](#mod-MapCanvas.jsx) | Stable | 🟢 0 | Interactive map layer with building sprites, environmental e... |
+| [MiniGamePanel.jsx — "CLINICAL REALISM" Mini-Games](#mod-MiniGamePanel.jsx) | Experimental | 🟢 1 | Renders individual mini-games for behavior change interventi... |
 | [PixelSceneRenderer](#mod-PixelSceneRenderer.jsx) | New | 🟢 0 | Pure CSS/Canvas pixel art interior scenes for buildings.... |
+| [PosyanduActivePanel.jsx — "TACTILE MED-PUNK"](#mod-PosyanduActivePanel.jsx) | P0 Engine Integration — WIRED | 🟢 1 | Active clinical station for Posyandu. Kills passive "click-t... |
+| [PustuActivePanel.jsx — "BUKU KIA PINK"](#mod-PustuActivePanel.jsx) | P0 Engine Integration — WIRED | 🟢 1 | Active Pustu/Polindes clinical station for ANC (Antenatal Ca... |
 | [TerrainCanvas.jsx](#mod-TerrainCanvas.jsx) | Stable | 🟢 1 | Optimized canvas-based renderer for village terrain tiles.... |
 | [WilayahPage](#mod-WilayahPage.jsx) | Experimental | 🟢 0 | Strategy-game–style interactive village map with transparent... |
 
@@ -327,8 +332,8 @@ src/
 | [PersonalityTraits](#mod-PersonalityTraits.js) | Production | 🟢 0 | Defines 5 villager personality archetypes and their gameplay... |
 | [ResidentProfiles](#mod-ResidentProfiles.js) | Production | 🟢 0 | Personality, habits, beliefs & backstory for all 116 Desa Su... |
 | [CulturalBeliefs.js](#mod-CulturalBeliefs.js) | Stable | 🟢 0 | Database of Indonesian cultural beliefs, superstitions, and ... |
-| [DiseaseScenarios.js](#mod-DiseaseScenarios.js) | Experimental | 🟢 2 | UKM Behavior Change disease scenarios for the Behavior Case ... |
-| [IKMScenarioLibrary.js](#mod-IKMScenarioLibrary.js) | Stable | 🟢 2 | Comprehensive IKM scenario database for UKM community health... |
+| [DiseaseScenarios.js](#mod-DiseaseScenarios.js) | Experimental | 🟢 3 | UKM Behavior Change disease scenarios for the Behavior Case ... |
+| [IKMScenarioLibrary.js](#mod-IKMScenarioLibrary.js) | Stable | 🟢 3 | Comprehensive IKM scenario database for UKM community health... |
 | [PHBSIndicators.js](#mod-PHBSIndicators.js) | Stable | 🟢 0 | PHBS (Perilaku Hidup Bersih dan Sehat) scoring system and in... |
 
 
@@ -351,7 +356,8 @@ src/
 | [FKTP144Diseases](#mod-FKTP144Diseases.js) | Experimental | 🟢 2 | FKTP 144 Diseases Reference Database Based on KMK No. HK.01.... |
 | [FurnitureData](#mod-FurnitureData.js) | Experimental | 🟢 1 | Static data module exporting: FURNITURE_ITEMS, ROOMS, INITIA... |
 | [HospitalDB](#mod-HospitalDB.js) | Experimental | 🟢 2 | Static data module exporting: HOSPITALS, AMBULANCES, REFERRA... |
-| [ICD10](#mod-ICD10.js) | Experimental | 🟢 1 | Comprehensive ICD-10 Database for Indonesian Primary Care (P... |
+| [ICD10](#mod-ICD10.js) | Experimental | 🟢 2 | Comprehensive ICD-10 Database for Indonesian Primary Care (P... |
+| [ICD10_ALIASES](#mod-ICD10_ALIASES.js) | Stable | 🟢 1 | Indonesian colloquial / Puskesmas search aliases for ICD-10 ... |
 | [ICD9CM](#mod-ICD9CM.js) | Experimental | 🟢 1 | ICD-9-CM Procedure Library This file uses dynamic imports to... |
 | [analgesics.js](#mod-analgesics.js) | Stable | 🟢 1 | Registry for Analgesic and Antipyretic medications (NSAIDs, ... |
 | [antibiotics.js](#mod-antibiotics.js) | Stable | 🟢 1 | Registry for Antibiotics, Antifungals, Antivirals, and Anti-... |
@@ -418,10 +424,10 @@ src/
 | [AnamnesisEngine](#mod-AnamnesisEngine.js) | Production (Refactored v4.0) | 🟡 10 | ANAMNESIS ENGINE — Central Facade (Aggregator for modular su... |
 | [AnamnesisPrompts](#mod-AnamnesisPrompts.js) | Experimental | 🟢 0 | ANAMNESIS PROMPTS Central hub for prompt engineering in PRIM... |
 | [AnamnesisVariations](#mod-AnamnesisVariations.js) | Stable (Refactored v3.0) | 🟢 0 | ANAMNESIS VARIATIONS — Pre-Generated Persona Responses... |
-| [BehaviorCaseEngine.js](#mod-BehaviorCaseEngine.js) | Experimental | 🟢 0 | Core engine for UKM Behavior Change cases. Manages the lifec... |
+| [BehaviorCaseEngine.js](#mod-BehaviorCaseEngine.js) | Experimental | 🟢 1 | Core engine for UKM Behavior Change cases. Manages the lifec... |
 | [BillingEngine](#mod-BillingEngine.js) | Experimental | 🟢 2 | BillingEngine.js — Calculates costs for medical services.... |
 | [CaseIndicators](#mod-CaseIndicators.js) | Stable | 🟢 1 | Centralized mapping of ICD-10 codes/Case IDs to IKS (Indikat... |
-| [ClinicalReasoning](#mod-ClinicalReasoning.js) | Experimental | 🟢 1 | CLINICAL REASONING ENGINE (Sprint 2 - MAIA) Provides: 1. Glo... |
+| [ClinicalReasoning](#mod-ClinicalReasoning.js) | Experimental | 🟢 2 | CLINICAL REASONING ENGINE (Sprint 2 - MAIA) Provides: 1. Glo... |
 | [ConsequenceEngine](#mod-ConsequenceEngine.js) | Experimental | 🟢 4 | Evaluates clinical decisions and schedules delayed patient o... |
 | [CPPTEngine](#mod-CPPTEngine.js) | Experimental | 🟢 1 | CPPTEngine.js Catatan Perkembangan Pasien Terintegrasi (CPPT... |
 | [DebriefEngine](#mod-DebriefEngine.js) | Experimental | 🟢 1 | Analyzes daily performance and generates end-of-day reflecti... |
@@ -444,17 +450,19 @@ src/
 | [GameCore](#mod-GameCore.js) | Stable | 🟢 3 | Pure game mechanics extracted for headless simulation and lo... |
 | [GuestEventSystem](#mod-GuestEventSystem.js) | Experimental | 🟢 1 | Game engine module providing: GUEST_EVENTS, getRandomGuestEv... |
 | [IKMEventEngine.js](#mod-IKMEventEngine.js) | Experimental | 🟢 3 | Core game engine for IKM (Community Public Health) scenario ... |
-| [GrowthChartEngine](#mod-GrowthChartEngine.js) | Experimental | 🟢 0 | KMS digital — WHO z-score calculation, growth faltering dete... |
-| [ImmunizationEngine](#mod-ImmunizationEngine.js) | Experimental | 🟢 0 | Vaccine scheduling, catch-up logic, coverage tracking. Share... |
-| [PregnancyEngine](#mod-PregnancyEngine.js) | Experimental | 🟢 0 | ANC tracking (K1-K4), risk scoring, random obstetric events,... |
+| [KaderNetwork.js](#mod-KaderNetwork.js) | Experimental | 🟢 0 | Kader Viral Nodes engine — simulates the social network effe... |
+| [GrowthChartEngine](#mod-GrowthChartEngine.js) | Experimental | 🟢 1 | KMS digital — WHO z-score calculation, growth faltering dete... |
+| [ImmunizationEngine](#mod-ImmunizationEngine.js) | Experimental | 🟢 1 | Vaccine scheduling, catch-up logic, coverage tracking. Share... |
+| [PregnancyEngine](#mod-PregnancyEngine.js) | Experimental | 🟢 1 | ANC tracking (K1-K4), risk scoring, random obstetric events,... |
 | [LabEngine](#mod-LabEngine.js) | Experimental | 🟢 0 | Pure logic for lab interpretation — order processing, result... |
-| [MiniGameLibrary.js](#mod-MiniGameLibrary.js) | Experimental | 🟢 0 | Definitions for UKM behavior change mini-games and micro-tas... |
+| [MiniGameLibrary.js](#mod-MiniGameLibrary.js) | Experimental | 🟢 2 | Definitions for UKM behavior change mini-games and micro-tas... |
 | [MorningBriefing](#mod-MorningBriefing.js) | Experimental | 🟢 2 | Generates the morning briefing data for the strategic planni... |
 | [PatientGenerator](#mod-PatientGenerator.js) | Experimental | 🟢 1 | Game engine module providing: generatePatient, generateEmerg... |
 | [PosyanduEngine](#mod-PosyanduEngine.js) | Experimental | 🟢 2 | POSYANDU ENGINE Manages Posyandu (community health post) eve... |
 | [ProlanisEngine](#mod-ProlanisEngine.js) | Experimental | 🟢 1 | ProlanisEngine.js Core game logic for Prolanis (Chronic Dise... |
 | [QuestEngine](#mod-QuestEngine.js) | Experimental | 🟢 1 | Game engine module for Daily, Weekly, and Story branching qu... |
 | [StoryDatabase](#mod-StoryDatabase.js) | Experimental | 🟢 4 | Central database for branching story quests and public healt... |
+| [TheDirector.js](#mod-TheDirector.js) | Experimental | 🟢 1 | AI Drama Director — dynamically adjusts game pacing based on... |
 | [ValidationEngine](#mod-ValidationEngine.js) | Experimental | 🟢 0 | ValidationEngine.js — Medical logic for validating patient c... |
 
 
@@ -503,7 +511,7 @@ src/
 | Module | State | Blast Radius | Purpose |
 |--------|-------|--------------|---------|
 | [selectors](#mod-selectors.js) | Modular | 🟢 2 | Optimized selectors for useGameStore to avoid unnecessary re... |
-| [useGameStore (The New Central Brain)](#mod-useGameStore.js) | Initialization | 🟢 3 | Unified state management replacing Context API frenzy.... |
+| [useGameStore (The New Central Brain)](#mod-useGameStore.js) | Initialization | 🟢 4 | Unified state management replacing Context API frenzy.... |
 
 
 ### 📂 Section: UTILS
@@ -514,7 +522,7 @@ src/
 | [crashTrap](#mod-crashTrap.js) | Stable | 🟢 1 | Global error and rejection interceptor to prevent silent cra... |
 | [LevelingSystem](#mod-LevelingSystem.js) | Experimental | 🟢 0 | Leveling System Utility Defines the XP curve and level-up lo... |
 | [SocialDeterminants](#mod-SocialDeterminants.js) | Experimental | 🟢 1 | Enhanced Social Determinants of Health (SDoH) Generator Base... |
-| [SoundManager](#mod-SoundManager.js) | Experimental | 🟡 10 | SoundManager - FF8 Junction Style Implementation Uses FM Syn... |
+| [SoundManager](#mod-SoundManager.js) | Experimental | 🟡 9 | SoundManager - FF8 Junction Style Implementation Uses FM Syn... |
 | [TerrainGenerator](#mod-TerrainGenerator.js) | Modular | 🟢 3 | Helper for generating terrain and path textures.... |
 | [TextureGenerator](#mod-TextureGenerator.js) | Modular, Asset-Protected | 🟢 1 | Aggregator for programmatic pixel art textures used on the W... |
 | [ToastManager](#mod-ToastManager.js) | Stable | 🟢 2 | Lightweight global toast/notification bus. Any module can ca... |
@@ -529,26 +537,26 @@ src/
 
 | Risk | Module | Size | LOC | Radius | Suggestion |
 |------|--------|------|-----|--------|------------|
-| 🔴 | `src/content/scenarios/IKMScenarioLibrary.js` | 101.8K | 2227 | 2 | 🟡 Consider decomposing |
-| 🔴 | `src/store/useGameStore.js` | 86.1K | 1360 | 3 | 🟡 Consider decomposing |
+| 🔴 | `src/content/scenarios/IKMScenarioLibrary.js` | 101.8K | 2227 | 3 | 🟡 Consider decomposing |
+| 🔴 | `src/store/useGameStore.js` | 89.8K | 1411 | 4 | 🟡 Consider decomposing |
 | 🔴 | `src/components/wilayah/buildingScenes.js` | 84.8K | 1315 | 2 | 🟡 Consider decomposing |
-| 🟢 | `src/data/EducationOptions.js` | 71.1K | 749 | 5 | — |
-| 🔴 | `src/content/cases/modules/infectious/dermatology.js` | 63.7K | 1051 | 1 | 🟡 Consider decomposing |
+| 🟢 | `src/data/EducationOptions.js` | 70.8K | 748 | 5 | — |
+| 🔴 | `src/content/cases/modules/infectious/dermatology.js` | 66.8K | 1051 | 1 | 🟡 Consider decomposing |
+| 🟢 | `src/components/wilayah/BehaviorCasePanel.jsx` | 59.5K | 878 | 1 | — |
 | 🔴 | `src/data/medication/registry/missing_case_meds.js` | 55.3K | 2122 | 1 | 🟡 Consider decomposing |
+| 🟢 | `src/components/WilayahPage.jsx` | 52.4K | 849 | 0 | — |
 | 🟢 | `src/components/sensus/SensusPage.jsx` | 50.9K | 833 | 0 | — |
-| 🟢 | `src/components/WilayahPage.jsx` | 43.5K | 705 | 0 | — |
+| 🟢 | `src/components/wilayah/3d/BuildingRenderer.jsx` | 48.9K | 798 | 1 | — |
+| 🟢 | `src/data/ICD10.js` | 46.8K | 704 | 2 | — |
+| 🟢 | `src/components/wilayah/PosyanduActivePanel.jsx` | 45.6K | 608 | 1 | — |
 | 🔴 | `src/game/PatientGenerator.js` | 42.6K | 1016 | 1 | 🟡 Consider decomposing |
 | 🟢 | `src/components/EmergencyPanel.jsx` | 42.4K | 726 | 1 | — |
+| 🟢 | `src/content/cases/modules/modules/digestive.js` | 42.1K | 635 | 1 | — |
 | 🟢 | `src/components/KPIDashboard.jsx` | 41.9K | 621 | 1 | — |
 | 🟢 | `src/components/ArsipPage.jsx` | 41.4K | 632 | 0 | — |
-| 🟢 | `src/content/cases/modules/modules/digestive.js` | 40.4K | 635 | 1 | — |
 | 🟢 | `src/components/ClinicalPage.jsx` | 40.1K | 639 | 0 | — |
 | 🟢 | `src/pages/RumahDinas.jsx` | 39.3K | 714 | 0 | — |
-| 🟢 | `src/components/MainLayout.jsx` | 37.1K | 654 | 0 | — |
-| 🟢 | `src/content/cases/modules/infectious/general.js` | 36.5K | 680 | 1 | — |
-| 🟢 | `src/content/scenarios/DiseaseScenarios.js` | 35.3K | 689 | 2 | — |
-| 🟢 | `src/content/cases/modules/modules/reproductive.js` | 33.7K | 503 | 1 | — |
-| 🟢 | `src/components/wilayah/BuildingGamePanel.jsx` | 33.1K | 568 | 1 | — |
+| 🟢 | `src/components/wilayah/MiniGamePanel.jsx` | 38.7K | 589 | 1 | — |
 
 ---
 
@@ -612,7 +620,7 @@ This report is an automated intelligence tool.
 #### [AvatarRenderer]
 - **Path**: `src/components/AvatarRenderer.jsx`
 - **Blast Radius**: 5 downstream files
-- **Structural Role**: High-quality SVG-based Avatar Renderer for PRIMER.
+- **Structural Role**: Portrait-based Avatar System for PRIMER.
 - **Issues**: None
 
 
@@ -1044,7 +1052,7 @@ This report is an automated intelligence tool.
 #### [OpeningScreen]
 - **Path**: `src/components/OpeningScreen.jsx`
 - **Blast Radius**: 1 downstream files
-- **Structural Role**: Cinematic console-game-style opening with dramatic logo reveals and smooth transitions.
+- **Structural Role**: Cinematic opening — ITS logo reveal, dissolve, PRIMER title + CTA.
 - **Issues**: None
 
 
@@ -1081,10 +1089,10 @@ This report is an automated intelligence tool.
 
 
 <a name="mod-PlayerSetup.jsx"></a>
-#### [PlayerSetup]
+#### [PlayerSetup (Aegis Registration Protocol)]
 - **Path**: `src/components/PlayerSetup.jsx`
 - **Blast Radius**: 0 downstream files
-- **Structural Role**: React UI component: AVATARS.
+- **Structural Role**: Cinematic character creation — diegetic terminal UI with RPG age trade-offs,
 - **Issues**: None
 
 
@@ -1145,10 +1153,10 @@ This report is an automated intelligence tool.
 
 
 <a name="mod-SaveSlotSelector.jsx"></a>
-#### [SaveSlotSelector]
+#### [SaveSlotSelector (Aegis Command Center)]
 - **Path**: `src/components/SaveSlotSelector.jsx`
 - **Blast Radius**: 0 downstream files
-- **Structural Role**: React UI component: MAX_SLOTS.
+- **Structural Role**: Main Menu & Save Management.
 - **Issues**: None
 
 
@@ -1240,6 +1248,14 @@ This report is an automated intelligence tool.
 - **Issues**: None
 
 
+<a name="mod-BehaviorCasePanel.jsx"></a>
+#### [BehaviorCasePanel.jsx — "TACTILE MED-PUNK (EPIDEMIOLOGY OS)"]
+- **Path**: `src/components/wilayah/BehaviorCasePanel.jsx`
+- **Blast Radius**: 1 downstream files
+- **Structural Role**: Multi-phase interactive panel for UKM Behavior Change cases.
+- **Issues**: None
+
+
 <a name="mod-BuildingGamePanel.jsx"></a>
 #### [BuildingGamePanel]
 - **Path**: `src/components/wilayah/BuildingGamePanel.jsx`
@@ -1280,11 +1296,35 @@ This report is an automated intelligence tool.
 - **Issues**: None
 
 
+<a name="mod-MiniGamePanel.jsx"></a>
+#### [MiniGamePanel.jsx — "CLINICAL REALISM" Mini-Games]
+- **Path**: `src/components/wilayah/MiniGamePanel.jsx`
+- **Blast Radius**: 1 downstream files
+- **Structural Role**: Renders individual mini-games for behavior change intervention phases.
+- **Issues**: None
+
+
 <a name="mod-PixelSceneRenderer.jsx"></a>
 #### [PixelSceneRenderer]
 - **Path**: `src/components/wilayah/PixelSceneRenderer.jsx`
 - **Blast Radius**: 0 downstream files
 - **Structural Role**: Pure CSS/Canvas pixel art interior scenes for buildings.
+- **Issues**: None
+
+
+<a name="mod-PosyanduActivePanel.jsx"></a>
+#### [PosyanduActivePanel.jsx — "TACTILE MED-PUNK"]
+- **Path**: `src/components/wilayah/PosyanduActivePanel.jsx`
+- **Blast Radius**: 1 downstream files
+- **Structural Role**: Active clinical station for Posyandu. Kills passive "click-to-read".
+- **Issues**: None
+
+
+<a name="mod-PustuActivePanel.jsx"></a>
+#### [PustuActivePanel.jsx — "BUKU KIA PINK"]
+- **Path**: `src/components/wilayah/PustuActivePanel.jsx`
+- **Blast Radius**: 1 downstream files
+- **Structural Role**: Active Pustu/Polindes clinical station for ANC (Antenatal Care).
 - **Issues**: None
 
 
@@ -1571,7 +1611,7 @@ This report is an automated intelligence tool.
 <a name="mod-DiseaseScenarios.js"></a>
 #### [DiseaseScenarios.js]
 - **Path**: `src/content/scenarios/DiseaseScenarios.js`
-- **Blast Radius**: 2 downstream files
+- **Blast Radius**: 3 downstream files
 - **Structural Role**: UKM Behavior Change disease scenarios for the Behavior Case Engine.
 - **Issues**: None
 
@@ -1579,7 +1619,7 @@ This report is an automated intelligence tool.
 <a name="mod-IKMScenarioLibrary.js"></a>
 #### [IKMScenarioLibrary.js]
 - **Path**: `src/content/scenarios/IKMScenarioLibrary.js`
-- **Blast Radius**: 2 downstream files
+- **Blast Radius**: 3 downstream files
 - **Structural Role**: Comprehensive IKM scenario database for UKM community health events.
 - **Issues**: None
 
@@ -1683,8 +1723,16 @@ This report is an automated intelligence tool.
 <a name="mod-ICD10.js"></a>
 #### [ICD10]
 - **Path**: `src/data/ICD10.js`
-- **Blast Radius**: 1 downstream files
+- **Blast Radius**: 2 downstream files
 - **Structural Role**: Comprehensive ICD-10 Database for Indonesian Primary Care (Puskesmas) Covers SKDI 4A conditions (must be handled at prim
+- **Issues**: None
+
+
+<a name="mod-ICD10_ALIASES.js"></a>
+#### [ICD10_ALIASES]
+- **Path**: `src/data/ICD10_ALIASES.js`
+- **Blast Radius**: 1 downstream files
+- **Structural Role**: Indonesian colloquial / Puskesmas search aliases for ICD-10 codes.
 - **Issues**: None
 
 
@@ -2099,7 +2147,7 @@ This report is an automated intelligence tool.
 <a name="mod-BehaviorCaseEngine.js"></a>
 #### [BehaviorCaseEngine.js]
 - **Path**: `src/game/BehaviorCaseEngine.js`
-- **Blast Radius**: 0 downstream files
+- **Blast Radius**: 1 downstream files
 - **Structural Role**: Core engine for UKM Behavior Change cases. Manages the lifecycle
 - **Issues**: None
 
@@ -2123,7 +2171,7 @@ This report is an automated intelligence tool.
 <a name="mod-ClinicalReasoning.js"></a>
 #### [ClinicalReasoning]
 - **Path**: `src/game/ClinicalReasoning.js`
-- **Blast Radius**: 1 downstream files
+- **Blast Radius**: 2 downstream files
 - **Structural Role**: CLINICAL REASONING ENGINE (Sprint 2 - MAIA) Provides: 1. Global Coverage (Macro) — KU-RPS-RPD-RPK-Sosial exploration 2.
 - **Issues**: None
 
@@ -2304,10 +2352,18 @@ This report is an automated intelligence tool.
 - **Issues**: None
 
 
+<a name="mod-KaderNetwork.js"></a>
+#### [KaderNetwork.js]
+- **Path**: `src/game/KaderNetwork.js`
+- **Blast Radius**: 0 downstream files
+- **Structural Role**: Kader Viral Nodes engine — simulates the social network effect of
+- **Issues**: None
+
+
 <a name="mod-GrowthChartEngine.js"></a>
 #### [GrowthChartEngine]
 - **Path**: `src/game/kia/GrowthChartEngine.js`
-- **Blast Radius**: 0 downstream files
+- **Blast Radius**: 1 downstream files
 - **Structural Role**: KMS digital — WHO z-score calculation, growth faltering detection, nutritional status classification.
 - **Issues**: None
 
@@ -2315,7 +2371,7 @@ This report is an automated intelligence tool.
 <a name="mod-ImmunizationEngine.js"></a>
 #### [ImmunizationEngine]
 - **Path**: `src/game/kia/ImmunizationEngine.js`
-- **Blast Radius**: 0 downstream files
+- **Blast Radius**: 1 downstream files
 - **Structural Role**: Vaccine scheduling, catch-up logic, coverage tracking. Shared by KIA and PosyanduEngine.
 - **Issues**: None
 
@@ -2323,7 +2379,7 @@ This report is an automated intelligence tool.
 <a name="mod-PregnancyEngine.js"></a>
 #### [PregnancyEngine]
 - **Path**: `src/game/kia/PregnancyEngine.js`
-- **Blast Radius**: 0 downstream files
+- **Blast Radius**: 1 downstream files
 - **Structural Role**: ANC tracking (K1-K4), risk scoring, random obstetric events, KB counseling, delivery simulation.
 - **Issues**: None
 
@@ -2339,7 +2395,7 @@ This report is an automated intelligence tool.
 <a name="mod-MiniGameLibrary.js"></a>
 #### [MiniGameLibrary.js]
 - **Path**: `src/game/MiniGameLibrary.js`
-- **Blast Radius**: 0 downstream files
+- **Blast Radius**: 2 downstream files
 - **Structural Role**: Definitions for UKM behavior change mini-games and micro-tasks.
 - **Issues**: None
 
@@ -2389,6 +2445,14 @@ This report is an automated intelligence tool.
 - **Path**: `src/game/StoryDatabase.js`
 - **Blast Radius**: 4 downstream files
 - **Structural Role**: Central database for branching story quests and public health scenarios.
+- **Issues**: None
+
+
+<a name="mod-TheDirector.js"></a>
+#### [TheDirector.js]
+- **Path**: `src/game/TheDirector.js`
+- **Blast Radius**: 1 downstream files
+- **Structural Role**: AI Drama Director — dynamically adjusts game pacing based on player stress.
 - **Issues**: None
 
 
@@ -2499,7 +2563,7 @@ This report is an automated intelligence tool.
 <a name="mod-useGameStore.js"></a>
 #### [useGameStore (The New Central Brain)]
 - **Path**: `src/store/useGameStore.js`
-- **Blast Radius**: 3 downstream files
+- **Blast Radius**: 4 downstream files
 - **Structural Role**: Unified state management replacing Context API frenzy.
 - **Issues**: None
 
@@ -2547,7 +2611,7 @@ This report is an automated intelligence tool.
 <a name="mod-SoundManager.js"></a>
 #### [SoundManager]
 - **Path**: `src/utils/SoundManager.js`
-- **Blast Radius**: 10 downstream files
+- **Blast Radius**: 9 downstream files
 - **Structural Role**: SoundManager - FF8 Junction Style Implementation Uses FM Synthesis (Frequency Modulation) to create glassy, metallic, and sci-fi UI sounds.
 - **Issues**: None
 

@@ -1,20 +1,63 @@
 /**
  * @reflection
- * [IDENTITY]: SaveSlotSelector
- * [PURPOSE]: React UI component: MAX_SLOTS.
- * [STATE]: Experimental
+ * [IDENTITY]: SaveSlotSelector (Aegis Command Center)
+ * [PURPOSE]: Main Menu & Save Management.
+ *            Art Direction: Tactical UI, Dossier Files, Blueprint Radar.
+ * [STATE]: Stable
  * [ANCHOR]: SaveSlotSelector
- * [DEPENDS_ON]: AvatarRenderer
+ * [DEPENDS_ON]: AvatarRenderer, assets
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-03-11
  */
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, Play, Plus, Clock, Calendar, Award, Download, Upload, CheckCircle, AlertCircle, ChevronDown, Dna } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Trash2, Play, Plus, Clock, Calendar, Award, Download, Upload, AlertCircle, ChevronDown, Activity, ShieldCheck, Fingerprint, Database, Server, Lock, Cpu } from 'lucide-react';
 import AvatarRenderer from './AvatarRenderer.jsx';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
 
 const MAX_SLOTS = 5;
+
+// ═══ PRE-GENERATED DATA (outside render cycle — fixes C2) ═══
+const RADAR_NODES = [...Array(30)].map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: 2 + Math.random() * 3,
+    isOutbreak: Math.random() > 0.75,
+    delay: Math.random() * 5,
+    duration: 3 + Math.random() * 4,
+}));
+
+// ═══ SELF-CONTAINED CSS ═══
+const MENU_CSS = `
+    @keyframes sss-radar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes sss-pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    @keyframes sss-pulse-ring-red { 0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(225, 29, 72, 0); } 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); } }
+    @keyframes sss-auth-flash { 0% { opacity: 0; background: white; } 10% { opacity: 1; background: white; } 100% { opacity: 1; background: #020617; } }
+    @keyframes sss-slot-entry { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .sss-blueprint-bg {
+        background-color: #020617;
+        background-image:
+            linear-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(16, 185, 129, 0.05) 1px, transparent 1px);
+        background-size: 50px 50px;
+    }
+
+    .sss-crt-scanline {
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+        background-size: 100% 4px;
+        pointer-events: none;
+    }
+
+    .btn-tactical { border-bottom-width: 4px; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); }
+    .btn-tactical:active:not(:disabled) { border-bottom-width: 0px; transform: translateY(4px); }
+
+    .dossier-card {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(2, 6, 23, 0.95) 100%);
+        box-shadow: inset 0 1px 1px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.5);
+    }
+`;
 
 export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     const [slots, setSlots] = useState([]);
@@ -22,124 +65,122 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     const [notification, setNotification] = useState(null);
     const [showSlots, setShowSlots] = useState(false);
     const [titleAnimDone, setTitleAnimDone] = useState(false);
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
-    // --- New State for Import Hardening ---
     const fileInputRef = useRef(null);
     const [importTargetSlot, setImportTargetSlot] = useState(null);
     const [overwriteTarget, setOverwriteTarget] = useState(null);
-    const MAX_FILE_SIZE = 500 * 1024; // 500KB limit
-    // --------------------------------------
+    const MAX_FILE_SIZE = 500 * 1024;
+
+    const radarNodes = useMemo(() => RADAR_NODES, []);
 
     useEffect(() => { loadSlots(); }, []);
-
-    // Title animation sequence
+    useEffect(() => { const t = setTimeout(() => setTitleAnimDone(true), 800); return () => clearTimeout(t); }, []);
     useEffect(() => {
-        const timer = setTimeout(() => setTitleAnimDone(true), 1800);
-        return () => clearTimeout(timer);
-    }, []);
-
-    useEffect(() => {
-        if (notification) {
-            const timer = setTimeout(() => setNotification(null), 3000);
-            return () => clearTimeout(timer);
-        }
+        if (notification) { const t = setTimeout(() => setNotification(null), 3500); return () => clearTimeout(t); }
     }, [notification]);
+
+    // Normalize save data: v4 format uses { player: { profile }, world: { day } } 
+    // but slot UI reads flat: slot.profile, slot.day, slot.reputation
+    const normalizeSlot = (raw, slotId) => {
+        const profile = raw.player?.profile || raw.profile || null;
+        const day = raw.world?.day || raw.day || 1;
+        const reputation = profile?.reputation ?? raw.reputation ?? 80;
+        const savedAt = raw.savedAt || null;
+        return { slotId, profile, day, reputation, savedAt, _raw: raw };
+    };
 
     const loadSlots = () => {
         const loadedSlots = [];
         for (let i = 0; i < MAX_SLOTS; i++) {
-            const key = `primer_save_${i}`;
-            const data = localStorage.getItem(key);
+            const data = localStorage.getItem(`primer_save_${i}`);
             if (data) {
-                try { loadedSlots.push({ slotId: i, ...JSON.parse(data) }); }
-                catch { loadedSlots.push({ slotId: i, empty: true }); }
-            } else {
-                loadedSlots.push({ slotId: i, empty: true });
-            }
+                try {
+                    const parsed = JSON.parse(data);
+                    loadedSlots.push(normalizeSlot(parsed, i));
+                } catch { loadedSlots.push({ slotId: i, empty: true }); }
+            } else loadedSlots.push({ slotId: i, empty: true });
         }
         setSlots(loadedSlots);
     };
 
     const handleDeleteSlot = (slotId) => {
         localStorage.removeItem(`primer_save_${slotId}`);
-        loadSlots();
-        setConfirmDelete(null);
-        setNotification({ type: 'success', message: `Slot ${slotId + 1} berhasil dihapus` });
+        loadSlots(); setConfirmDelete(null);
+        setNotification({ type: 'success', message: `DATA OPERASIONAL SLOT 0${slotId + 1} DIHAPUS.` });
     };
 
     const formatDate = (timestamp) => {
         if (!timestamp) return '-';
-        const d = new Date(timestamp);
-        return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        return new Date(timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
     };
 
+    // ─── Cinematic Handoff (Flashbang) ───
+    const executeStartGame = (slotId, slotData) => {
+        if (isTransitioning) return;
+        setIsTransitioning(true);
+        setTimeout(() => onSelectSlot(slotId, slotData), 1200);
+    };
+
+    const executeNewGame = (slotId) => {
+        if (isTransitioning) return;
+        setIsTransitioning(true);
+        setTimeout(() => onNewGame(slotId), 1200);
+    };
+
+    // ─── Hardened Import / Export ───
     const handleExportSave = (slotId) => {
-        const key = `primer_save_${slotId}`;
-        const data = localStorage.getItem(key);
-        if (!data) { setNotification({ type: 'error', message: 'Tidak ada data untuk diekspor' }); return; }
+        const data = localStorage.getItem(`primer_save_${slotId}`);
+        if (!data) return;
         try {
             const parsed = JSON.parse(data);
             const exportData = { ...parsed, _exportInfo: { exportedAt: new Date().toISOString(), gameVersion: '1.0', originalSlot: slotId } };
             const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url;
-            a.download = `PRIMER_Save_${parsed.profile?.name || 'Unknown'}_Day${parsed.day || 1}_${new Date().toISOString().split('T')[0]}.json`;
+            const name = parsed.player?.profile?.name || parsed.profile?.name || 'Agent';
+            const day = parsed.world?.day || parsed.day || 1;
+            a.download = `PRIMER_Dossier_${name}_Day${day}.json`;
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-            setNotification({ type: 'success', message: `Save berhasil diekspor!` });
-        } catch { setNotification({ type: 'error', message: 'Gagal mengekspor save' }); }
+            setNotification({ type: 'success', message: 'BERKAS BERHASIL DIEKSPOR.' });
+        } catch { setNotification({ type: 'error', message: 'GAGAL MENGEKSPOR BERKAS.' }); }
     };
 
     const handleExportAll = () => {
         const allSaves = {}; let hasAnySave = false;
         for (let i = 0; i < MAX_SLOTS; i++) {
             const data = localStorage.getItem(`primer_save_${i}`);
-            if (data) { try { allSaves[`slot_${i}`] = JSON.parse(data); hasAnySave = true; } catch { /* ignore corrupt saves */ } }
+            if (data) { try { allSaves[`slot_${i}`] = JSON.parse(data); hasAnySave = true; } catch { } }
         }
-        if (!hasAnySave) { setNotification({ type: 'error', message: 'Tidak ada save untuk diekspor' }); return; }
-        const blob = new Blob([JSON.stringify({ _exportInfo: { exportedAt: new Date().toISOString(), gameVersion: '1.0', type: 'all_saves' }, saves: allSaves }, null, 2)], { type: 'application/json' });
+        if (!hasAnySave) { setNotification({ type: 'error', message: 'DATABASE KOSONG.' }); return; }
+        const blob = new Blob([JSON.stringify({ _exportInfo: { exportedAt: new Date().toISOString(), type: 'all_saves' }, saves: allSaves }, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a'); a.href = url;
-        a.download = `PRIMER_AllSaves_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `PRIMER_MasterDB_${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-        setNotification({ type: 'success', message: 'Semua save berhasil diekspor!' });
+        setNotification({ type: 'success', message: 'SELURUH DATABASE DIAMANKAN.' });
     };
 
     const handleImportClick = (slotId = null) => { setImportTargetSlot(slotId); fileInputRef.current?.click(); };
 
-    // --- Hardened Import Logic ---
-
     const processImport = (slotId, data) => {
         try {
             localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(data));
-            loadSlots();
-            setNotification({ type: 'success', message: `Save berhasil diimpor ke Slot ${slotId + 1}!` });
+            loadSlots(); setNotification({ type: 'success', message: `DOSSIER DITERIMA DI PORT 0${slotId + 1}.` });
             setOverwriteTarget(null);
-        } catch (e) {
-            console.error('Import failed:', e);
-            setNotification({ type: 'error', message: 'Gagal menyimpan data (Quota Exceeded?)' });
-        }
+        } catch { setNotification({ type: 'error', message: 'GAGAL MENYIMPAN DATA (QUOTA EXCEEDED).' }); }
     };
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
-        // 1. Size Validation
-        if (file.size > MAX_FILE_SIZE) {
-            setNotification({ type: 'error', message: `File terlalu besar (Max ${MAX_FILE_SIZE / 1024}KB)` });
-            e.target.value = '';
-            return;
-        }
+        if (file.size > MAX_FILE_SIZE) { setNotification({ type: 'error', message: 'FILE TERLALU BESAR (Max 500KB)' }); e.target.value = ''; return; }
 
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
                 const data = JSON.parse(event.target?.result);
-
-                // 2. Structure Validation
                 if (!data || typeof data !== 'object') throw new Error('Invalid JSON');
-
-                // Check for 'all_saves' package
                 if (data._exportInfo?.type === 'all_saves' && data.saves) {
                     let imported = 0;
                     Object.entries(data.saves).forEach(([slotKey, saveData]) => {
@@ -147,292 +188,268 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                         if (match) {
                             const slotId = parseInt(match[1]);
                             if (slotId >= 0 && slotId < MAX_SLOTS) {
-                                // For bulk import, we currently skip confirmation (or it would be too spammy)
                                 const { _exportInfo, ...cleanData } = saveData;
                                 localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(cleanData));
                                 imported++;
                             }
                         }
                     });
-                    loadSlots();
-                    setNotification({ type: 'success', message: `${imported} save berhasil diimpor!` });
+                    loadSlots(); setNotification({ type: 'success', message: `${imported} DATA BERHASIL DIPULIHKAN.` });
                 } else {
-                    // Single Save Import
                     const { _exportInfo, ...cleanData } = data;
-
-                    // Validate essential fields
-                    if (!cleanData.profile || !cleanData.stats) {
-                        setNotification({ type: 'error', message: 'Format save file tidak valid (Missing profile/stats)' });
-                        return;
-                    }
-
+                    // Accept both legacy (profile/stats) and v4 (player/world) format
+                    const isV4 = !!cleanData.player;
+                    const isLegacy = !!cleanData.profile;
+                    if (!isV4 && !isLegacy) { setNotification({ type: 'error', message: 'FORMAT BERKAS KORUP.' }); return; }
                     const targetSlot = importTargetSlot !== null ? importTargetSlot : (_exportInfo?.originalSlot ?? 0);
-
                     if (targetSlot >= 0 && targetSlot < MAX_SLOTS) {
-                        // Check if slot is occupied
                         const isOccupied = !slots.find(s => s.slotId === targetSlot)?.empty;
-
-                        // 3. Overwrite Confirmation
-                        if (isOccupied) {
-                            setOverwriteTarget({ slotId: targetSlot, data: cleanData });
-                        } else {
-                            processImport(targetSlot, cleanData);
-                        }
-                    } else {
-                        setNotification({ type: 'error', message: 'Slot tidak valid' });
+                        if (isOccupied) setOverwriteTarget({ slotId: targetSlot, data: cleanData });
+                        else processImport(targetSlot, cleanData);
                     }
                 }
-            } catch (err) {
-                console.error(err);
-                setNotification({ type: 'error', message: 'File rusak atau bukan JSON valid' });
-            }
+            } catch { setNotification({ type: 'error', message: 'DEKRIPSI FILE GAGAL.' }); }
         };
-        reader.readAsText(file);
-        e.target.value = '';
+        reader.readAsText(file); e.target.value = '';
     };
 
     const hasSaves = slots.some(s => !s.empty);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 flex flex-col items-center justify-center relative overflow-hidden">
-            {/* Hidden file input */}
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" aria-label="Pilih file save untuk diimpor" />
+        <div className="min-h-screen sss-blueprint-bg flex flex-col md:flex-row relative overflow-hidden text-slate-200 select-none">
+            <style>{MENU_CSS}</style>
 
-            {/* Notification Toast */}
-            {notification && (
-                <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2
-                    ${notification.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}
-                    role="alert" aria-live="polite">
-                    {notification.type === 'success' ? <CheckCircle size={18} aria-hidden="true" /> : <AlertCircle size={18} aria-hidden="true" />}
-                    <span className="font-medium text-sm">{notification.message}</span>
-                </div>
-            )}
+            {/* CRT Scanline */}
+            <div className="absolute inset-0 sss-crt-scanline z-40 pointer-events-none" />
+            {/* Flashbang Transition */}
+            {isTransitioning && <div className="absolute inset-0 z-[200] mix-blend-screen pointer-events-none" style={{ animation: 'sss-auth-flash 1.2s ease-out forwards' }} />}
 
-            {/* Overwrite Confirmation Modal */}
-            {overwriteTarget && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-200" role="alertdialog" aria-modal="true" aria-labelledby="overwrite-title">
-                        <div className="flex items-center gap-3 text-amber-500 mb-4">
-                            <AlertCircle size={32} aria-hidden="true" />
-                            <h3 id="overwrite-title" className="text-lg font-bold">Konfirmasi Timpa Data</h3>
-                        </div>
-                        <p className="text-slate-300 text-sm mb-6">
-                            Slot {overwriteTarget.slotId + 1} sudah berisi data. Apakah Anda yakin ingin menimpanya?
-                            <br /><span className="text-red-400 text-xs mt-2 block">Data lama akan hilang permanen.</span>
-                        </p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setOverwriteTarget(null)}
-                                className="px-4 py-2 rounded-lg bg-white/5 text-white hover:bg-white/10 text-sm font-medium transition-colors"
-                                aria-label="Batalkan impor"
-                            >
-                                Batal
-                            </button>
-                            <button
-                                onClick={() => processImport(overwriteTarget.slotId, overwriteTarget.data)}
-                                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-500 text-sm font-bold shadow-lg shadow-red-900/20 transition-all hover:scale-105"
-                                aria-label={`Timpa data di Slot ${overwriteTarget.slotId + 1}`}
-                            >
-                                Ya, Timpa Data
-                            </button>
-                        </div>
+            {/* ═══ RADAR BACKGROUND ═══ */}
+            <div className={`absolute inset-0 z-0 opacity-30 pointer-events-none transition-all duration-1000 ${isTransitioning ? 'scale-150 blur-xl opacity-0' : 'scale-100'}`}>
+                <div className="absolute top-1/2 left-[30%] w-[800px] h-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-500/20" />
+                <div className="absolute top-1/2 left-[30%] w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-500/30" />
+                <div className="absolute top-1/2 left-[30%] w-[400px] h-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-500/40" />
+                <div className="absolute top-1/2 left-[30%] w-[400px] h-[2px] bg-gradient-to-r from-emerald-500 to-transparent origin-left" style={{ animation: 'sss-radar-spin 6s linear infinite' }} />
+                {radarNodes.map(node => (
+                    <div key={node.id} className="absolute" style={{ left: `${node.x}%`, top: `${node.y}%` }}>
+                        <div className={`rounded-full ${node.isOutbreak ? 'bg-rose-500' : 'bg-emerald-400'}`}
+                             style={{
+                                 width: node.size, height: node.size,
+                                 animation: `${node.isOutbreak ? 'sss-pulse-ring-red' : 'sss-pulse-ring'} ${node.duration}s infinite ${node.delay}s`,
+                             }} />
                     </div>
-                </div>
-            )}
-
-            {/* Animated Background Particles */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                {[...Array(20)].map((_, i) => (
-                    <div key={i} className="absolute rounded-full"
-                        style={{
-                            width: 2 + Math.random() * 3,
-                            height: 2 + Math.random() * 3,
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            background: `rgba(${i % 3 === 0 ? '16,185,129' : i % 3 === 1 ? '59,130,246' : '139,92,246'}, ${0.15 + Math.random() * 0.2})`,
-                            animation: `slot-float ${8 + Math.random() * 12}s ease-in-out infinite alternate`,
-                            animationDelay: `${Math.random() * 5}s`,
-                        }}
-                    />
                 ))}
             </div>
 
-            {/* ========== TITLE SCREEN ========== */}
-            <div className={`flex flex-col items-center transition-all duration-1000 ${showSlots ? 'mb-4' : 'mb-0'}`}>
-                {/* Logo with Stethoscope */}
-                <div className={`transition-all duration-1000 ${titleAnimDone ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'}`}>
-                    <div className="flex justify-center mb-4">
-                        <div className="bg-emerald-500/15 p-4 rounded-2xl border border-emerald-500/20 shadow-lg shadow-emerald-900/30">
-                            <Dna size={44} className="text-emerald-400" />
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
+
+            {/* ═══ NOTIFICATION TOAST ═══ */}
+            {notification && (
+                <div className={`fixed top-8 right-8 z-[100] px-5 py-3 rounded-lg border-l-4 flex items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] bg-slate-950/90 backdrop-blur-md
+                    ${notification.type === 'success' ? 'border-emerald-500 text-emerald-400' : 'border-rose-500 text-rose-400'}`}
+                    style={{ animation: 'sss-slot-entry 0.3s ease-out' }}>
+                    {notification.type === 'success' ? <Database size={20} /> : <AlertCircle size={20} />}
+                    <div>
+                        <div className="text-[9px] font-mono tracking-widest uppercase font-bold opacity-70 mb-0.5">System Notice</div>
+                        <span className="font-bold text-sm tracking-wider">{notification.message}</span>
+                    </div>
+                </div>
+            )}
+
+            {/* ═══ OVERWRITE MODAL ═══ */}
+            {overwriteTarget && (
+                <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-[#05080f] border-t-4 border-t-rose-600 border border-slate-800 rounded-2xl p-8 max-w-md w-full shadow-[0_20px_60px_rgba(225,29,72,0.3)]"
+                         style={{ animation: 'sss-slot-entry 0.3s ease-out' }}>
+                        <div className="flex items-center gap-4 text-rose-500 mb-6 border-b border-rose-900/50 pb-4">
+                            <AlertCircle size={36} className="animate-pulse" />
+                            <div>
+                                <h3 className="text-xl font-black uppercase tracking-widest text-white">OVERWRITE PROTOCOL</h3>
+                                <p className="text-[9px] font-mono tracking-widest uppercase mt-1">Data collision at Node 0{overwriteTarget.slotId + 1}</p>
+                            </div>
+                        </div>
+                        <p className="text-slate-300 text-sm mb-8 font-mono leading-relaxed">
+                            Data operasional di Port 0{overwriteTarget.slotId + 1} akan ditimpa. Berkas lama akan <strong className="text-rose-400">dihapus permanen</strong> dari sistem lokal. Lanjutkan eksekusi?
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <button onClick={() => setOverwriteTarget(null)} className="px-5 py-2.5 rounded-xl font-bold text-xs tracking-widest uppercase text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">Batal</button>
+                            <button onClick={() => processImport(overwriteTarget.slotId, overwriteTarget.data)} className="px-6 py-2.5 rounded-xl bg-rose-600 text-white font-black text-xs uppercase tracking-widest btn-tactical border-b-rose-900 hover:bg-rose-500 flex items-center gap-2 shadow-[0_0_15px_rgba(225,29,72,0.4)]">
+                                <Trash2 size={14}/> FORCE OVERWRITE
+                            </button>
                         </div>
                     </div>
                 </div>
+            )}
 
-                {/* PRIMER Logo — SVG custom font for trademark consistency */}
-                <div className={`transition-all duration-700 delay-300 ${titleAnimDone ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-                    <h1 className="text-center select-none">
-                        <span className="font-display text-5xl md:text-6xl font-black tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-200 to-white"
-                            style={{
-                                textShadow: '0 0 40px rgba(16,185,129,0.3)',
-                                WebkitTextStroke: '0.5px rgba(255,255,255,0.1)',
-                            }}>
-                            PRIMER
-                        </span>
-                    </h1>
-                    <p className="text-center text-emerald-300/60 text-xs uppercase tracking-[0.3em] mt-2 font-medium">
-                        Primary Care Manager Simulator
+            {/* ════════ LEFT PANEL: LORE & COMMAND CENTER ════════ */}
+            <div className={`w-full md:w-5/12 lg:w-1/2 p-8 md:p-16 flex flex-col justify-center relative z-10 transition-all duration-1000 ${titleAnimDone ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'} ${isTransitioning ? 'opacity-0' : ''}`}>
+
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="bg-emerald-950/80 border border-emerald-500/50 p-3 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                        <Activity size={32} className="text-emerald-400" />
+                    </div>
+                    <div>
+                        <div className="font-mono text-[9px] text-emerald-500 tracking-[0.4em] uppercase font-bold flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"/> SISTEM ONLINE
+                        </div>
+                        <div className="font-black text-slate-300 text-xs tracking-widest uppercase mt-1">FKK — Institut Teknologi Sepuluh Nopember</div>
+                    </div>
+                </div>
+
+                <h1 className="font-display text-6xl lg:text-7xl font-black tracking-[0.15em] text-white mb-2 leading-none" style={{ textShadow: '0 0 50px rgba(16,185,129,0.5)', WebkitTextStroke: '1px rgba(255,255,255,0.1)' }}>
+                    PRIMER
+                </h1>
+                <p className="text-emerald-500/80 text-[10px] uppercase tracking-[0.5em] font-mono font-bold mb-8">
+                    Epidemiology Operating System
+                </p>
+
+                {/* Lore Quote */}
+                <div className="bg-[#0a0f16]/80 backdrop-blur-sm border-l-4 border-emerald-500 p-5 rounded-r-xl max-w-sm shadow-lg mb-10">
+                    <p className="text-slate-300 text-sm font-serif italic leading-relaxed">
+                        &ldquo;Di balik setiap angka kematian, ada satu desa yang terlambat dijangkau.&rdquo;
+                    </p>
+                    <p className="text-emerald-500/60 text-[9px] uppercase tracking-[0.3em] font-mono mt-3 font-bold">
+                        &mdash; Prinsip Pertama Surveilans
                     </p>
                 </div>
 
-                {/* Tagline */}
-                <div className={`mt-6 transition-all duration-700 delay-700 ${titleAnimDone ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <p className="text-white/40 text-sm italic text-center max-w-md px-4">
-                        "Bridging clinical excellence and public health leadership."
-                    </p>
-                </div>
-
-                {/* Action Buttons - Game Style */}
-                <div className={`mt-8 flex flex-col items-center gap-3 transition-all duration-700 delay-1000 ${titleAnimDone ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                {/* Main Actions */}
+                <div className="max-w-sm">
                     {!showSlots ? (
-                        <>
-                            <button
-                                onClick={() => setShowSlots(true)}
-                                className="group relative px-10 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg rounded-xl shadow-lg shadow-emerald-900/50 hover:shadow-emerald-700/50 hover:from-emerald-500 hover:to-teal-500 transition-all hover:scale-105 active:scale-95"
-                                aria-label={hasSaves ? 'Lanjutkan permainan — pilih save slot' : 'Mulai permainan baru'}
-                            >
-                                <span className="relative z-10 flex items-center gap-2">
-                                    <Play size={22} aria-hidden="true" /> {hasSaves ? 'Lanjutkan Permainan' : 'Mulai Permainan'}
-                                </span>
-                                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-20 transition-opacity" />
-                            </button>
-
-                            {hasSaves && (
-                                <button
-                                    onClick={() => {
-                                        const emptySlot = slots.find(s => s.empty);
-                                        if (emptySlot) onNewGame(emptySlot.slotId);
-                                        else setNotification({ type: 'error', message: 'Semua slot penuh. Hapus salah satu terlebih dahulu.' });
-                                    }}
-                                    className="px-6 py-2.5 text-white/50 hover:text-white border border-white/10 hover:border-white/25 rounded-lg text-sm transition-all hover:bg-white/5"
-                                >
-                                    <Plus size={16} className="inline mr-1" /> Game Baru
-                                </button>
-                            )}
-
-                            <div className="flex gap-3 mt-2">
-                                <button onClick={handleExportAll} className="text-xs text-emerald-400/60 hover:text-emerald-300 transition-colors flex items-center gap-1" aria-label="Ekspor semua save">
-                                    <Download size={12} aria-hidden="true" /> Ekspor
-                                </button>
-                                <span className="text-white/10" aria-hidden="true">|</span>
-                                <button onClick={() => handleImportClick(null)} className="text-xs text-blue-400/60 hover:text-blue-300 transition-colors flex items-center gap-1" aria-label="Impor save dari file">
-                                    <Upload size={12} aria-hidden="true" /> Impor
-                                </button>
-                            </div>
-                        </>
+                        <button onClick={() => setShowSlots(true)}
+                            className="w-full relative px-8 py-5 bg-emerald-600 text-white font-black text-lg tracking-[0.2em] uppercase rounded-xl btn-tactical border-b-emerald-900 shadow-[0_15px_40px_rgba(16,185,129,0.3)] hover:bg-emerald-500 flex items-center justify-between group"
+                        >
+                            <span className="flex items-center gap-3"><Fingerprint size={20}/> {hasSaves ? 'AKSES DATABASE' : 'INISIASI SISTEM'}</span>
+                            <Play size={20} className="transform group-hover:translate-x-2 transition-transform" />
+                        </button>
                     ) : (
                         <button onClick={() => setShowSlots(false)}
-                            className="text-white/40 hover:text-white/70 text-sm flex items-center gap-1 transition-colors">
-                            <ChevronDown size={14} className="rotate-180" /> Kembali ke Judul
+                            className="text-slate-500 hover:text-emerald-400 text-xs font-mono uppercase tracking-[0.3em] flex items-center gap-2 transition-colors font-bold bg-slate-900/50 px-6 py-3 rounded-xl border border-slate-800"
+                        >
+                            <ChevronDown size={14} className="rotate-90" /> TUTUP DATABASE
                         </button>
                     )}
+
+                    {hasSaves && !showSlots && (
+                        <div className="flex gap-5 font-mono text-[9px] tracking-widest mt-6 opacity-60 justify-center">
+                            <button onClick={handleExportAll} className="hover:text-emerald-400 flex items-center gap-1.5 uppercase"><Download size={12}/> Master Backup</button>
+                            <span className="text-slate-700">|</span>
+                            <button onClick={() => handleImportClick(null)} className="hover:text-cyan-400 flex items-center gap-1.5 uppercase"><Upload size={12}/> Restore OS</button>
+                        </div>
+                    )}
+                </div>
+
+                <div className="absolute bottom-8 left-8 lg:left-16 flex flex-col gap-2">
+                    <div className="flex items-center gap-4 opacity-40 grayscale">
+                        <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt="ITS" className="h-5 object-contain" />
+                        <div className="h-3 w-px bg-slate-500" />
+                        <img src={getAssetUrl(ASSET_KEY.FKK_LOGO)} alt="FKK" className="h-6 object-contain"
+                             style={{ filter: 'brightness(0) invert(1)', mixBlendMode: 'screen' }} />
+                    </div>
+                    <p className="text-[9px] text-white/20 uppercase tracking-widest font-mono">
+                        &copy; 2026 Anak Agung Bagus Wirayuda MD PhD &bull; ITS MEDICS
+                    </p>
                 </div>
             </div>
 
-            {/* ========== SAVE SLOTS PANEL (slides up) ========== */}
-            <div className={`w-full max-w-lg px-4 transition-all duration-500 ${showSlots
-                ? 'opacity-100 translate-y-0 max-h-[600px] mt-4'
-                : 'opacity-0 translate-y-8 max-h-0 overflow-hidden pointer-events-none'}`}>
+            {/* ════════ RIGHT PANEL: DOSSIER FILES ════════ */}
+            <div className={`w-full md:w-7/12 lg:w-1/2 p-4 md:p-8 flex items-center justify-center relative z-20 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+                ${showSlots ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-32 pointer-events-none absolute lg:relative'}`}>
 
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
-                    <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                        <h2 className="text-sm font-bold text-white/80">Pilih Save Slot</h2>
+                <div className="w-full max-w-xl bg-[#0a0f16]/95 backdrop-blur-2xl border border-slate-800 rounded-3xl overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
+
+                    {/* Header */}
+                    <div className="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/80 shrink-0">
+                        <div className="flex items-center gap-3">
+                            <Server className="text-cyan-500" size={24} />
+                            <div>
+                                <h3 className="font-black text-white uppercase tracking-widest text-sm leading-none">ACTIVE DEPLOYMENTS</h3>
+                                <p className="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1">Pilih profil agen untuk bertugas</p>
+                            </div>
+                        </div>
                         <div className="flex gap-2">
-                            <button onClick={handleExportAll} className="px-2.5 py-1 text-[10px] bg-emerald-500/15 text-emerald-400 rounded-lg hover:bg-emerald-500/25 flex items-center gap-1 font-medium border border-emerald-500/20" aria-label="Ekspor semua save">
-                                <Download size={10} aria-hidden="true" /> Ekspor
-                            </button>
-                            <button onClick={() => handleImportClick(null)} className="px-2.5 py-1 text-[10px] bg-blue-500/15 text-blue-400 rounded-lg hover:bg-blue-500/25 flex items-center gap-1 font-medium border border-blue-500/20" aria-label="Impor save dari file">
-                                <Upload size={10} aria-hidden="true" /> Impor
-                            </button>
+                            <button onClick={handleExportAll} className="p-2.5 bg-slate-800 text-slate-400 hover:text-emerald-400 hover:bg-emerald-950/50 rounded-xl transition-colors" title="Backup Seluruh Slot"><Download size={16} /></button>
+                            <button onClick={() => handleImportClick(null)} className="p-2.5 bg-slate-800 text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/50 rounded-xl transition-colors" title="Restore Data"><Upload size={16} /></button>
                         </div>
                     </div>
 
-                    <div className="p-3 space-y-2 max-h-[400px] overflow-y-auto thin-scrollbar">
-                        {slots.map((slot) => (
-                            <div key={slot.slotId}
-                                className={`rounded-xl p-3 transition-all ${slot.empty
-                                    ? 'border border-dashed border-white/10 hover:border-white/20 bg-white/[0.02]'
-                                    : 'border border-white/10 bg-white/5 hover:bg-white/[0.08] hover:border-emerald-500/30'}`}>
-                                {slot.empty ? (
-                                    <div className="flex items-center justify-center gap-4 py-1">
-                                        <button onClick={() => onNewGame(slot.slotId)} className="flex items-center gap-2 text-white/40 hover:text-emerald-300 transition-colors text-sm" aria-label={`Mulai game baru di Slot ${slot.slotId + 1}`}>
-                                            <Plus size={16} aria-hidden="true" /> Slot {slot.slotId + 1} — Game Baru
-                                        </button>
-                                        <span className="text-white/10" aria-hidden="true">|</span>
-                                        <button onClick={() => handleImportClick(slot.slotId)} className="flex items-center gap-1 text-blue-400/50 hover:text-blue-300 text-xs transition-colors" aria-label={`Impor save ke Slot ${slot.slotId + 1}`}>
-                                            <Upload size={12} aria-hidden="true" /> Impor
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-3">
-                                        {/* Avatar */}
-                                        <div className="flex-shrink-0 bg-white/10 rounded-xl p-1">
-                                            <AvatarRenderer avatar={slot.profile?.avatar} size={48} />
-                                        </div>
+                    {/* Slots */}
+                    <div className="p-5 flex-1 overflow-y-auto space-y-4 thin-scrollbar">
+                        {slots.map((slot, index) => (
+                            <div key={slot.slotId} style={{ animation: `sss-slot-entry 0.5s ease-out forwards ${index * 0.1}s`, opacity: 0 }}>
+                                <div className={`dossier-card rounded-2xl transition-all duration-300 border-l-4 relative overflow-hidden group
+                                    ${slot.empty ? 'border-l-slate-700 bg-slate-900/40 hover:border-l-cyan-500 hover:bg-slate-900/80 border border-transparent' : 'border-l-emerald-500 border border-slate-800 hover:border-emerald-500/30'}`}>
 
-                                        {/* Info */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="font-bold text-white text-sm truncate">
-                                                dr. {slot.profile?.name || 'Unknown'}
-                                            </div>
-                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] text-white/40 mt-0.5">
-                                                <span className="flex items-center gap-0.5"><Calendar size={10} /> Hari {slot.day || 1}</span>
-                                                <span className="flex items-center gap-0.5"><Award size={10} /> Rep: {slot.reputation || 80}</span>
-                                                <span className="flex items-center gap-0.5"><Clock size={10} /> {formatDate(slot.savedAt)}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Actions */}
-                                        <div className="flex gap-1.5 flex-shrink-0">
-                                            <button onClick={() => onSelectSlot(slot.slotId, slot)}
-                                                className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 flex items-center gap-1 text-xs font-bold transition-all shadow shadow-emerald-900/50"
-                                                aria-label={`Lanjutkan permainan dr. ${slot.profile?.name || 'Unknown'} — Hari ${slot.day || 1}`}>
-                                                <Play size={12} aria-hidden="true" /> Lanjut
-                                            </button>
-                                            <button onClick={() => handleExportSave(slot.slotId)}
-                                                className="p-1.5 text-emerald-400/50 hover:text-emerald-300 hover:bg-emerald-500/10 rounded-lg transition-colors"
-                                                aria-label={`Ekspor save Slot ${slot.slotId + 1}`}>
-                                                <Download size={14} />
-                                            </button>
-                                            {confirmDelete === slot.slotId ? (
-                                                <div className="flex gap-1" role="group" aria-label="Konfirmasi hapus">
-                                                    <button onClick={() => handleDeleteSlot(slot.slotId)} className="px-2 py-1 bg-red-600 text-white rounded-lg text-[10px] hover:bg-red-500" aria-label={`Konfirmasi hapus Slot ${slot.slotId + 1}`}>Hapus</button>
-                                                    <button onClick={() => setConfirmDelete(null)} className="px-2 py-1 bg-white/10 text-white/60 rounded-lg text-[10px] hover:bg-white/20" aria-label="Batalkan hapus">×</button>
+                                    {slot.empty ? (
+                                        <div className="flex items-center justify-between p-5">
+                                            <div className="flex items-center gap-4 text-slate-600 font-mono text-[10px] tracking-[0.2em] uppercase">
+                                                <Lock size={20} className="group-hover:text-cyan-500 transition-colors" />
+                                                <div>
+                                                    <div className="group-hover:text-cyan-400 transition-colors font-bold text-xs mb-1">NODE 0{slot.slotId + 1} : [ UNASSIGNED ]</div>
+                                                    <div className="opacity-70">Tersedia untuk Registrasi Baru</div>
                                                 </div>
-                                            ) : (
-                                                <button onClick={() => setConfirmDelete(slot.slotId)}
-                                                    className="p-1.5 text-white/20 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                                                    aria-label={`Hapus save Slot ${slot.slotId + 1}`}>
-                                                    <Trash2 size={14} />
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => handleImportClick(slot.slotId)} disabled={isTransitioning} className="p-3 border border-slate-800 hover:border-blue-900 text-slate-500 hover:text-blue-400 rounded-xl transition-colors bg-slate-900">
+                                                    <Upload size={16} />
                                                 </button>
-                                            )}
+                                                <button onClick={() => executeNewGame(slot.slotId)} disabled={isTransitioning} className="px-6 py-3 bg-cyan-950/40 text-cyan-400 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-cyan-600 hover:text-white transition-all btn-tactical border-b-cyan-900 flex items-center gap-2 border border-cyan-800">
+                                                    <Plus size={16} /> INISIASI
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    ) : (
+                                        <div className="p-4 relative z-10">
+                                            <div className="flex justify-between items-start mb-3 ml-2">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-16 h-16 rounded-xl bg-slate-950 border border-slate-700 p-1 shadow-inner shrink-0 relative overflow-hidden">
+                                                        <AvatarRenderer avatar={slot.profile?.avatar} size={54} />
+                                                        <div className="absolute bottom-0 left-0 right-0 bg-emerald-600/90 text-[7px] font-mono text-center text-white font-bold py-0.5">VERIFIED</div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <span className="text-[9px] font-mono text-emerald-400 tracking-widest flex items-center gap-1"><ShieldCheck size={10}/> STATUS: ACTIVE</span>
+                                                            <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest border-l border-slate-700 pl-2">AEGIS-0{slot.slotId + 1}</span>
+                                                        </div>
+                                                        <h3 className="font-black text-white text-xl uppercase tracking-wider mb-2 truncate max-w-[200px]">dr. {slot.profile?.name}</h3>
+                                                        <div className="flex flex-wrap gap-x-3 gap-y-1">
+                                                            <span className="font-mono text-[10px] text-cyan-400 uppercase tracking-widest flex items-center gap-1.5 bg-cyan-950/30 px-2 py-0.5 rounded border border-cyan-900/50"><Calendar size={10}/> Hari {slot.day || 1}</span>
+                                                            <span className="font-mono text-[10px] text-amber-400 uppercase tracking-widest flex items-center gap-1.5 bg-amber-950/30 px-2 py-0.5 rounded border border-amber-900/50"><Award size={10}/> Rep: {slot.reputation || 80}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    {confirmDelete === slot.slotId ? (
+                                                        <div className="flex flex-col gap-1 bg-rose-950/80 p-1 rounded-xl border border-rose-900">
+                                                            <button onClick={() => handleDeleteSlot(slot.slotId)} className="px-4 py-2 text-[9px] font-black uppercase text-white bg-rose-600 rounded-lg hover:bg-rose-500">Purge</button>
+                                                            <button onClick={() => setConfirmDelete(null)} className="px-4 py-1.5 text-[9px] text-slate-300 bg-slate-900 rounded-lg hover:text-white">Batal</button>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <button onClick={() => handleExportSave(slot.slotId)} disabled={isTransitioning} className="p-2.5 text-slate-400 hover:text-cyan-400 bg-slate-900 border border-slate-700 hover:border-cyan-800 rounded-lg transition-colors" title="Export Dossier"><Download size={14}/></button>
+                                                            <button onClick={() => setConfirmDelete(slot.slotId)} disabled={isTransitioning} className="p-2.5 text-slate-400 hover:text-rose-400 bg-slate-900 border border-slate-700 hover:border-rose-800 rounded-lg transition-colors" title="Delete Dossier"><Trash2 size={14}/></button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="ml-2 mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
+                                                <div className="text-[9px] font-mono text-slate-500 flex items-center gap-1.5"><Clock size={10}/> LAST_SYNC: {formatDate(slot.savedAt)}</div>
+                                                <button onClick={() => executeStartGame(slot.slotId, slot)} disabled={isTransitioning}
+                                                    className="px-8 py-3 bg-emerald-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-emerald-500 btn-tactical border-b-emerald-900 shadow-[0_5px_15px_rgba(16,185,129,0.2)] flex justify-center items-center gap-2"
+                                                >
+                                                    <Cpu size={14} /> OTORISASI LOGIN
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
-
-            {/* Footer */}
-            <div className={`mt-8 flex flex-col items-center gap-2 transition-all duration-700 delay-1200 ${titleAnimDone ? 'opacity-100' : 'opacity-0'}`}>
-                <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt="ITS" className="h-8 object-contain opacity-30 hover:opacity-50 transition-opacity" />
-                <p className="text-[9px] text-white/20 uppercase tracking-widest">
-                    © 2026 Anak Agung Bagus Wirayuda MD PhD • ITS MEDICS
-                </p>
-            </div>
-
-            {/* Global Styles */}
         </div>
     );
 }

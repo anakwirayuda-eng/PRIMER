@@ -6,6 +6,15 @@
  * [STATE]: Stable
  */
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { writeStampedJson } from './artifact_manifest.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT = path.resolve(__dirname, '../../');
+const HEALTH_PATH = path.join(ROOT, 'megalog/outputs/health.json');
+
 export const HEALTH_WEIGHTS = {
     STATIC_COVERAGE: 0.10,  // Reflections coverage
     STATIC_STRUCTURE: 0.05, // Cycles and broken imports
@@ -22,7 +31,18 @@ export const HEALTH_WEIGHTS = {
 /**
  * Calculates a unified health score from 0-100.
  */
-export function calculateUnifiedHealth(data) {
+export function writeHealthJSON(result, options = {}) {
+    const {
+        command = 'health_engine',
+        inputs = [],
+        rootDir = ROOT
+    } = options;
+
+    return writeStampedJson(HEALTH_PATH, result, command, inputs, { rootDir });
+}
+
+export function calculateUnifiedHealth(data, options = {}) {
+    const { writeJson = true } = options;
     const {
         lint = { errors: 0, warnings: 0, totalFiles: 1 },
         tests = { failed: 0, total: 1 },
@@ -34,7 +54,8 @@ export function calculateUnifiedHealth(data) {
         clinicalAudit = { health: 100 },
         invariants = { score: 0, assessed: false },
         lifecycle = { pass: true, assessed: false },
-        forensic = { undefinedCount: 0 }
+        forensic = { undefinedCount: 0 },
+        staleInputs = []
     } = data;
 
     let scores = {};
@@ -102,14 +123,38 @@ export function calculateUnifiedHealth(data) {
 
     // Hard Caps for Integrity
     let capped = false;
-    if (scores.build === 0) { total = Math.min(total, 50); capped = true; }
-    if (scores.runtime < 50) { total = Math.min(total, 70); capped = true; }
-    if (scores.structure < 50) { total = Math.min(total, 60); capped = true; }
-    if (invariants.assessed && scores.invariants < 50) { total = Math.min(total, 65); capped = true; }
+    let capReason = null;
+    if (scores.build === 0) {
+        total = Math.min(total, 50);
+        capped = true;
+        capReason ??= 'build failed';
+    }
+    if (scores.runtime < 50) {
+        total = Math.min(total, 70);
+        capped = true;
+        capReason ??= 'runtime failed';
+    }
+    if (scores.structure < 50) {
+        total = Math.min(total, 60);
+        capped = true;
+        capReason ??= 'structure failed';
+    }
+    if (invariants.assessed && scores.invariants < 50) {
+        total = Math.min(total, 65);
+        capped = true;
+        capReason ??= 'invariants failed';
+    }
 
-    return {
+    const result = {
         total: Math.round(total),
         breakdown: scores,
-        capped
+        capped,
+        capReason,
+        staleInputs
     };
+
+    if (writeJson) {
+        writeHealthJSON(result, options);
+    }
+    return result;
 }

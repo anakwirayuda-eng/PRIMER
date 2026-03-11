@@ -3,6 +3,7 @@ import { useGame } from '../../context/GameContext.jsx';
 import { Shield, CheckCircle, XCircle, ChevronRight, Activity } from 'lucide-react';
 import { soundManager } from '../../utils/SoundManager.js';
 import EliteCOMBWheel from './EliteCOMBWheel.jsx';
+import { getScenarioById } from '../../content/scenarios/IKMScenarioLibrary.js';
 
 export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
     const { advanceIKMPhase, resolveIKMEvent } = useGame();
@@ -18,7 +19,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
     // Note: In a real app we'd import getScenarioById from IKMScenarioLibrary,
     // but we can also just rely on eventInstance state if we keep phases simple.
     // Wait, we need the phase definition.
-    const scenarioDef = require('../../content/scenarios/IKMScenarioLibrary.js').getScenarioById(eventInstance.scenarioId);
+    const scenarioDef = getScenarioById(eventInstance.scenarioId);
     const phase = scenarioDef?.phases.find(p => p.id === eventInstance.currentPhaseId);
 
     if (!phase) return null;

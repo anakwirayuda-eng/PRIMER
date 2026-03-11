@@ -612,7 +612,7 @@ export function usePatientEMR() {
             medications: selectedMeds.map(m => m.id),
             labsRevealed,
             diagnosisScore: caseOutcome.diagnosisScore,
-            treatmentScore: treatScore
+            treatmentScore: treatResult?.score ?? 0
         }, world.day || 1);
         if (consequences) pushConsequence(consequences);
 

@@ -3,6 +3,7 @@ import path from 'path';
 import { execSync, spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { calculateUnifiedHealth } from './health_engine.mjs';
+import { stampMarkdown, writeStampedJson } from './artifact_manifest.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,13 +64,18 @@ async function main() {
     const staticHealth = {
         totalFiles: allFiles,
         reflections: {
-            coverage: healthScore.total, // or breakdown.coverage
+            coverage: healthScore.breakdown.coverage || 0,
             anomalies: anomalies.length,
             crossCycles: healthScore.structuralResults.cycles.length,
             brokenImports: healthScore.structuralResults.unresolved.length
         }
     };
-    fs.writeFileSync(path.join(ROOT_DIR, 'megalog/outputs/static_health.json'), JSON.stringify(staticHealth, null, 2));
+    writeStampedJson(
+        path.join(ROOT_DIR, 'megalog/outputs/static_health.json'),
+        staticHealth,
+        'reflect_and_sync',
+        ['eslint.json', 'vitest.json', 'playwright.json', 'clinical.json', 'clinical_guardian.json']
+    );
 
     const logs = scanLogs();
     buildMegalog(reflections, anomalies, logs, metrics, depGraph, reverseDeps, healthScore, lintResults, runtimeEvidence);
@@ -384,7 +390,7 @@ function calculateHealthScore(reflections, anomalies, totalFiles, depGraph, metr
         build: { status: fs.existsSync(path.join(ROOT_DIR, 'dist')) ? 'passed' : 'failed' }
     };
 
-    const unified = calculateUnifiedHealth(healthData);
+    const unified = calculateUnifiedHealth(healthData, { writeJson: false });
 
     // Inject cycles for specific reporting
     if (structuralResults.cycles.length > 0) {
@@ -610,12 +616,17 @@ ${reflections.map(r => `
 *End of Megalog v4.0*
 `;
 
-    fs.writeFileSync(MEGALOG_PATH, megalogBody);
+    const stampedMegalog = stampMarkdown(
+        megalogBody,
+        'reflect_and_sync',
+        ['static_health.json', 'clinical_guardian.json', 'store_audit.json', 'save_audit.json']
+    );
+    fs.writeFileSync(MEGALOG_PATH, stampedMegalog);
 
     // ALT path handling
     const ALT_MEGALOG_PATH = MEGALOG_PATH.replace('C:/Users/USER/.gemini', 'C:/Users/USER/gemini');
     if (ALT_MEGALOG_PATH !== MEGALOG_PATH && fs.existsSync(path.dirname(ALT_MEGALOG_PATH))) {
-        fs.writeFileSync(ALT_MEGALOG_PATH, megalogBody);
+        fs.writeFileSync(ALT_MEGALOG_PATH, stampedMegalog);
     }
 }
 

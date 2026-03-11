@@ -1,0 +1,14 @@
+{
+  "name": "save_roundtrip",
+  "seed": 99,
+  "steps": [
+    { "action": "startNewGame", "payload": { "profile": { "name": "RoundTrip" }, "slotId": 0 } },
+    { "action": "saveGame", "payload": { "slotId": 0 } },
+    { "action": "exportSave", "payload": { "slotId": 0 } },
+    { "action": "deleteSlot", "payload": { "slotId": 0 } },
+    { "action": "importSave", "payload": { "slotId": 0 } },
+    { "action": "loadGame", "payload": { "slotId": 0 } },
+    { "assert": "state.player.profile.name === 'RoundTrip'" },
+    { "assert": "state.nav.currentSlotId === 0" }
+  ]
+}

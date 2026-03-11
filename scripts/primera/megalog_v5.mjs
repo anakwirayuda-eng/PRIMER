@@ -1,26 +1,34 @@
+/**
+ * @reflection
+ * [IDENTITY]: megalog_v5
+ * [PURPOSE]: Orchestrate PRIMERA audits, enforce artifact freshness, and sync the megalog watchdog report.
+ * [STATE]: Active
+ * [ANCHOR]: main
+ * [DEPENDS_ON]: health_engine, artifact_manifest
+ */
+
 import fs from "fs";
 import path from "path";
 import { spawnSync } from "child_process";
 import { fileURLToPath } from "url";
 import { calculateUnifiedHealth } from "./health_engine.mjs";
+import { formatAge, getGitMetadata, stampMarkdown, validateArtifactFreshness } from "./artifact_manifest.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../../");
 const OUTDIR = path.join(ROOT, "megalog/outputs");
 const MEGALOG_PATH = path.join(ROOT, "PRIMERA_megalog.md");
+const FORCE_MODE = process.argv.includes("--force");
 
 function run(cmd, args, options = {}) {
     const isWin = process.platform === "win32";
-
-    // Bypass npm.ps1 issues on Windows by using node or .cmd directly
     let finalCmd = cmd;
     let finalArgs = [...args];
 
     if (isWin) {
         if (cmd === "npm" && args[0] === "run") {
             const scriptName = args[1];
-            // Map common scripts to their direct commands to avoid npm.ps1
             if (scriptName === "lint:json") {
                 finalCmd = "node";
                 finalArgs = ["scripts/primera/watchdog-lint-budget.mjs"];
@@ -33,7 +41,6 @@ function run(cmd, args, options = {}) {
             } else if (scriptName === "test:e2e:json") {
                 finalCmd = path.resolve(ROOT, "node_modules/.bin/playwright.cmd");
                 finalArgs = ["test", "--reporter=json"];
-                // Note: output redirection handled manually in playwright logic or here
             } else if (scriptName === "dep:json") {
                 finalCmd = path.resolve(ROOT, "node_modules/.bin/depcruise.cmd");
                 finalArgs = ["src", "--output-type", "json"];
@@ -53,10 +60,13 @@ function run(cmd, args, options = {}) {
         }
     }
 
-    console.log(`🚀 Running: ${finalCmd} ${finalArgs.join(" ")}`);
-    const r = spawnSync(finalCmd, finalArgs, { encoding: "utf8", shell: isWin, ...options });
+    console.log(`Running: ${finalCmd} ${finalArgs.join(" ")}`);
+    const result = spawnSync(finalCmd, finalArgs, {
+        encoding: "utf8",
+        shell: isWin,
+        ...options
+    });
 
-    // Output redirection for tools that usually use '>'
     if (isWin && cmd === "npm" && args[0] === "run") {
         const scriptName = args[1];
         const outMap = {
@@ -65,109 +75,130 @@ function run(cmd, args, options = {}) {
             "knip:json": "knip.json"
         };
         if (outMap[scriptName]) {
-            fs.writeFileSync(path.join(OUTDIR, outMap[scriptName]), r.stdout || "", "utf8");
+            fs.writeFileSync(path.join(OUTDIR, outMap[scriptName]), result.stdout || "", "utf8");
         }
     }
 
-    return { code: r.status ?? 0, stdout: r.stdout || "", stderr: r.stderr || "" };
+    return {
+        code: result.status ?? 0,
+        stdout: result.stdout || "",
+        stderr: result.stderr || ""
+    };
 }
 
-function readJson(p, fallback = null) {
-    if (!fs.existsSync(p)) return fallback;
-    try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return fallback; }
+function readJson(filePath, fallback = null) {
+    if (!fs.existsSync(filePath)) return fallback;
+    try {
+        return JSON.parse(fs.readFileSync(filePath, "utf8"));
+    } catch {
+        return fallback;
+    }
 }
 
 function summarizeEslint(eslintJson) {
     if (!eslintJson) return { problems: null, errors: null, warnings: null };
-    let errors = 0, warnings = 0;
-    for (const f of eslintJson) { errors += f.errorCount; warnings += f.warningCount; }
+    let errors = 0;
+    let warnings = 0;
+    for (const file of eslintJson) {
+        errors += file.errorCount || 0;
+        warnings += file.warningCount || 0;
+    }
     return { problems: errors + warnings, errors, warnings };
 }
 
-function summarizeVitest(v) {
-    if (!v) return { passed: null, failed: null };
-    const failed = v?.numFailedTests ?? v?.testResults?.reduce((a, t) => a + (t.numFailingTests || 0), 0) ?? 0;
-    const passed = v?.numPassedTests ?? v?.testResults?.reduce((a, t) => a + (t.numPassingTests || 0), 0) ?? 0;
+function summarizeVitest(vitestJson) {
+    if (!vitestJson) return { passed: 0, failed: 0 };
+    const failed = vitestJson?.numFailedTests ?? vitestJson?.testResults?.reduce((acc, test) => acc + (test.numFailingTests || 0), 0) ?? 0;
+    const passed = vitestJson?.numPassedTests ?? vitestJson?.testResults?.reduce((acc, test) => acc + (test.numPassingTests || 0), 0) ?? 0;
     return { passed, failed };
 }
 
-function summarizePlaywright(pw) {
-    if (!pw) return { status: "missing", failed: null };
-    const failed = pw?.stats?.failed ?? 0;
-    const passed = pw?.stats?.passed ?? 0;
-    return { passed, failed, status: failed > 0 ? "failed" : "passed" };
+function summarizePlaywright(playwrightJson) {
+    if (!playwrightJson) return { status: "missing", passed: 0, failed: 0 };
+    const failed = playwrightJson?.stats?.failed ?? 0;
+    const passed = playwrightJson?.stats?.passed ?? 0;
+    return { status: failed > 0 ? "failed" : "passed", passed, failed };
+}
+
+function enforceFreshArtifact(filePath, producerHint) {
+    if (FORCE_MODE) return;
+
+    const freshness = validateArtifactFreshness(filePath, {
+        maxAgeMs: 3_600_000,
+        currentGitSha: getGitMetadata(ROOT).gitSha
+    });
+
+    if (freshness.ok) return;
+
+    const artifactName = path.basename(filePath);
+    const generatedAt = freshness.meta?.generatedAt
+        ? new Date(freshness.meta.generatedAt).toLocaleString("id-ID")
+        : "unknown";
+    const ageText = freshness.ageMs ? formatAge(freshness.ageMs) : "unknown age";
+    const mismatchText = freshness.reason === "git_sha_mismatch" ? ", gitSha mismatch" : "";
+    throw new Error(
+        `MEGALOG REFUSED: ${artifactName} is ${freshness.reason} (generated ${generatedAt}, age ${ageText}${mismatchText}). Run ${producerHint} first or pass --force.`
+    );
 }
 
 function calculateScore(data) {
-    const unified = calculateUnifiedHealth(data);
-    return unified;
+    return calculateUnifiedHealth(data, {
+        command: "megalog_v5",
+        inputs: data.inputArtifacts || [],
+        staleInputs: data.staleInputs || []
+    });
+}
+
+function replaceOrAppendSection(content, pattern, nextSection) {
+    if (pattern.test(content)) {
+        return content.replace(pattern, nextSection);
+    }
+
+    const firstHeader = content.match(/^# .*$/m);
+    if (firstHeader) {
+        const insertPos = content.indexOf(firstHeader[0]) + firstHeader[0].length;
+        return `${content.slice(0, insertPos)}\n${nextSection}${content.slice(insertPos)}`;
+    }
+
+    return `${nextSection}${content}`;
 }
 
 async function main() {
-    if (!fs.existsSync(OUTDIR)) fs.mkdirSync(OUTDIR, { recursive: true });
-    const snapshotDir = path.join(OUTDIR, "snapshots");
-    if (!fs.existsSync(snapshotDir)) fs.mkdirSync(snapshotDir, { recursive: true });
+    fs.mkdirSync(OUTDIR, { recursive: true });
+    fs.mkdirSync(path.join(OUTDIR, "snapshots"), { recursive: true });
 
-    console.log("🛰️ Starting Megalog v5 Watchdog...");
+    console.log("Starting Megalog v5 Watchdog...");
 
-    console.log("🧹 Running Lint Budget...");
     run("npm", ["run", "lint:json"]);
-
-    console.log("📦 Running Asset Hygiene Check...");
     run("npm", ["run", "assets:check"]);
-
-    console.log("🧪 Running Unit Tests...");
     run("npm", ["run", "test:unit:json"]);
-
-    console.log("🔍 Running Knip Dependency Audit...");
     run("npm", ["run", "knip:json"]);
+    run("npm", ["run", "clinical:check"]);
+    enforceFreshArtifact(path.join(OUTDIR, "clinical.json"), "clinical_watchdog");
 
-    console.log("🏗️ Exporting PLDB Diagnostics...");
     run("npm", ["run", "diag:export"]);
-
-    console.log("🧪 Running Forensic Analyzer (PLDB)...");
     run("node", ["scripts/primera/pldb_analyzer.mjs"]);
-
-    console.log("📂 Mapping Repository Topology (Pathfinder)...");
     run("node", ["scripts/primera/watchdog-pathfinder.mjs"]);
-
-    console.log("📐 Running Topology & Wiring Engines...");
     run("node", ["scripts/primera/engine-topology.mjs"]);
     run("node", ["scripts/primera/engine-wiring.mjs"]);
-
-    console.log("🛡️ Running Store & Save Contract Audits...");
     run("node", ["scripts/primera/engine-store-audit.mjs"]);
     run("node", ["scripts/primera/engine-save-audit.mjs"]);
-
-    console.log("🛡️ Running Prophylaxis Collision Engine...");
     run("node", ["scripts/primera/engine-collision.mjs"]);
-
-    console.log("🛡️ Running Prophylaxis Oscillation Engine...");
     run("node", ["scripts/primera/engine-oscillation.mjs"]);
-
-    console.log("🧬 Running High-Precision Invariant Audit...");
     run("node", ["scripts/primera/engine-invariants-runtime.mjs"]);
-
-    console.log("🏥 Running Clinical Lifecycle Audit...");
     run("node", ["scripts/primera/engine-clinical-lifecycle.mjs"]);
-
-    console.log("🚨 Running Triage Safety Audit...");
     run("node", ["scripts/primera/engine-triage-gate.mjs"]);
-
-    console.log("📋 Running Clinical Guardian Engine...");
     run("node", ["scripts/primera/engine-clinical-guardian.mjs"]);
-    const guardianRes = readJson(path.join(OUTDIR, "clinical_guardian.json")) || { health: 0, pass: false };
 
-    console.log("🏗️ Running Build Gate...");
     const buildResult = run("npm", ["run", "build"]);
     const buildStatus = buildResult.code === 0 ? "passed" : "failed";
 
-    console.log("🔍 Running Static Reflection Sync...");
     run("node", ["scripts/primera/reflect_and_sync.mjs"]);
+    enforceFreshArtifact(path.join(OUTDIR, "static_health.json"), "reflect_and_sync");
 
     const eslintJson = readJson(path.join(OUTDIR, "eslint.json"));
     const vitestJson = readJson(path.join(OUTDIR, "vitest.json"));
-    const pwJson = readJson(path.join(OUTDIR, "playwright.json"));
+    const playwrightJson = readJson(path.join(OUTDIR, "playwright.json"));
     const assetsJson = readJson(path.join(OUTDIR, "assets.json"));
     const folderMapJson = readJson(path.join(OUTDIR, "folder_map.json"));
     const staticHealth = readJson(path.join(OUTDIR, "static_health.json")) || { reflections: { coverage: 0, anomalies: 0, crossCycles: 0, brokenImports: 0 } };
@@ -175,16 +206,29 @@ async function main() {
     const lifecycleAudit = readJson(path.join(OUTDIR, "clinical_lifecycle_audit.json")) || { pass: false, assessed: false };
     const triageAudit = readJson(path.join(OUTDIR, "triage_safety_audit.json")) || { pass: false, assessed: false };
     const lintReport = readJson(path.join(ROOT, "megalog/lint_report.json")) || { topRules: [], topFiles: [] };
+    const clinicalJson = readJson(path.join(OUTDIR, "clinical.json"));
+    const guardianRes = readJson(path.join(OUTDIR, "clinical_guardian.json")) || { health: 0, pass: false };
+    const forensicSummary = readJson(path.join(ROOT, "diagnostics/lint-rules-summary.json")) || {};
 
     const eslintSum = summarizeEslint(eslintJson);
     const vitestSum = summarizeVitest(vitestJson);
-    const pwSum = summarizePlaywright(pwJson);
+    const playwrightSum = summarizePlaywright(playwrightJson);
     const assetsSum = assetsJson || { status: "missing", score: 0 };
-    const clinicalJson = readJson(path.join(OUTDIR, "clinical.json"));
-    const forensicSum = readJson(path.join(ROOT, "diagnostics/lint-rules-summary.json")) || {};
-    const undefinedCount = forensicSum['no-undef'] || 0;
-    const maiaIntegrity = clinicalJson?.maiaIntegrity || { status: 'missing', missingMeds: '?', missingProcs: '?', missingEdus: '?' };
-
+    const undefinedCount = forensicSummary["no-undef"] || 0;
+    const maiaIntegrity = clinicalJson?.maiaIntegrity || { status: "missing", missingMeds: "?", missingProcs: "?", missingEdus: "?" };
+    const inputArtifacts = [
+        "eslint.json",
+        "vitest.json",
+        "playwright.json",
+        "assets.json",
+        "folder_map.json",
+        "static_health.json",
+        "clinical.json",
+        "clinical_guardian.json",
+        "invariant_audit.json",
+        "clinical_lifecycle_audit.json",
+        "triage_safety_audit.json"
+    ];
 
     const healthResult = calculateScore({
         lint: {
@@ -193,24 +237,24 @@ async function main() {
             totalFiles: staticHealth.totalFiles || 1
         },
         tests: vitestSum,
-        e2e: pwSum,
+        e2e: playwrightSum,
         assets: assetsSum,
-        clinical: clinicalJson || { status: 'missing', issuesCount: 0 },
+        clinical: clinicalJson || { status: "missing", issuesCount: 0 },
         clinicalAudit: guardianRes,
         forensic: { undefinedCount },
         build: { status: buildStatus },
         reflections: staticHealth.reflections,
         invariants: invariantAudit,
-        lifecycle: lifecycleAudit
+        lifecycle: lifecycleAudit,
+        inputArtifacts,
+        staleInputs: []
     });
 
-    const healthScore = healthResult.total;
     const timestamp = new Date().toLocaleString("id-ID");
-
-    // 📂 Folder Logic
+    const healthScore = healthResult.total;
     const asciiMap = folderMapJson?.ascii || "Map not available.";
     const folderSection = `
-## 📂 FOLDER TOPOLOGY
+## FOLDER TOPOLOGY
 Generated: ${timestamp}
 
 \`\`\`
@@ -218,97 +262,69 @@ ${asciiMap}
 \`\`\`
 `;
 
-    // 🏗️ Architecture Gate
-    const bibleContent = fs.existsSync(path.join(ROOT, "PRIMER_BIBLE.md")) ? fs.readFileSync(path.join(ROOT, "PRIMER_BIBLE.md"), "utf8") : "";
+    const bibleContent = fs.existsSync(path.join(ROOT, "PRIMER_BIBLE.md"))
+        ? fs.readFileSync(path.join(ROOT, "PRIMER_BIBLE.md"), "utf8")
+        : "";
     const hasArch = bibleContent.includes("## 3. ARCHITECTURE OVERVIEW");
-    const archStatus = hasArch ? "✅" : "🚨";
-    const archDetail = hasArch ? "Bridge Synchronized" : "SECTION MISSING (FAIL)";
-
-    // 🧹 Lint Breakdown
-    let lintDetail = "No data.";
-    if (lintReport.topRules.length > 0) {
-        lintDetail = "Top Rules:\n" + lintReport.topRules.map(([r, n]) => `  - \`${r}\`: ${n}`).slice(0, 5).join("\n");
-    }
+    const lintDetail = lintReport.topRules.length > 0
+        ? "Top Rules:\n" + lintReport.topRules.map(([rule, count]) => `  - \`${rule}\`: ${count}`).slice(0, 5).join("\n")
+        : "No data.";
 
     const watchdogSection = `
-## 🛰️ WATCHDOG REPORT (v5.0)
+## WATCHDOG REPORT (v5.0)
 Generated: ${timestamp}
+Force Mode: ${FORCE_MODE ? "YES" : "NO"}
 
 | Gate | Status | Assessed | Detail |
 | :--- | :--- | :--- | :--- |
-| **Honest Health** | **${healthScore >= 80 ? "🟢" : "🟡"}** | **YES** | **Score: ${healthScore}/100** |
-| **Arch Overview** | ${archStatus} | YES | ${archDetail} |
-| **Clinical** | ${guardianRes.pass ? "✅" : "⚠️"} | YES | ${guardianRes.health}% integrity |
-| **MAIA Integ.** | ${maiaIntegrity.status === 'passed' ? "✅" : maiaIntegrity.status === 'missing' ? "🚨" : "❌"} | ${maiaIntegrity.status !== 'missing' ? "YES" : "NO"} | M=${maiaIntegrity.missingMeds} P=${maiaIntegrity.missingProcs} E=${maiaIntegrity.missingEdus} |
-| **Lint Budget** | ${eslintSum.errors === 0 ? "✅" : "⚠️"} | YES | ${eslintSum.errors ?? "?"} errors (v5) |
-| **Unit Tests** | ${vitestSum.failed === 0 ? "✅" : "❌"} | YES | ${vitestSum.passed} passed, ${vitestSum.failed} failed |
-| **Invariants** | ${invariantAudit.pass ? "✅" : "🚨"} | ${invariantAudit.assessed ? "YES" : "NO"} | ${invariantAudit.score}% coverage (${invariantAudit.coverage?.percent || 0}%) |
-| **Lifecycle** | ${lifecycleAudit.pass ? "✅" : "🚨"} | ${lifecycleAudit.assessed ? "YES" : "NO"} | FSM state monitor |
-| **Triage Gate**| ${triageAudit.pass ? "✅" : "🚨"} | ${triageAudit.assessed ? "YES" : "NO"} | Safety enforcement |
-| **Forensic** | ${undefinedCount === 0 ? "✅" : "🚨"} | YES | ${undefinedCount} undefined symbols |
-| **Assets** | ${assetsSum.status === "passed" ? "✅" : "❌"} | YES | hygiene check |
-| **Build Guard** | ${buildStatus === "passed" ? "✅" : "❌"} | YES | Vite production gate |
-| **Smoke (E2E)** | ${pwSum.status === "passed" ? "✅" : "❌"} | ${pwSum.status !== "missing" ? "YES" : "NO"} | ${pwSum.failed ?? "?"} failed tests |
+| **Honest Health** | **${healthScore >= 80 ? "GREEN" : "AMBER"}** | **YES** | **Score: ${healthScore}/100** |
+| **Arch Overview** | ${hasArch ? "PASS" : "FAIL"} | YES | ${hasArch ? "Bridge Synchronized" : "SECTION MISSING"} |
+| **Clinical** | ${guardianRes.pass ? "PASS" : "WARN"} | YES | ${guardianRes.health}% integrity |
+| **MAIA Integ.** | ${maiaIntegrity.status || "missing"} | ${maiaIntegrity.status !== "missing" ? "YES" : "NO"} | M=${maiaIntegrity.missingMeds} P=${maiaIntegrity.missingProcs} E=${maiaIntegrity.missingEdus} |
+| **Lint Budget** | ${eslintSum.errors === 0 ? "PASS" : "WARN"} | YES | ${eslintSum.errors ?? "?"} errors |
+| **Unit Tests** | ${vitestSum.failed === 0 ? "PASS" : "FAIL"} | YES | ${vitestSum.passed} passed, ${vitestSum.failed} failed |
+| **Invariants** | ${invariantAudit.pass ? "PASS" : "WARN"} | ${invariantAudit.assessed ? "YES" : "NO"} | ${invariantAudit.score}% coverage (${invariantAudit.coverage?.percent || 0}%) |
+| **Lifecycle** | ${lifecycleAudit.pass ? "PASS" : "WARN"} | ${lifecycleAudit.assessed ? "YES" : "NO"} | FSM state monitor |
+| **Triage Gate** | ${triageAudit.pass ? "PASS" : "WARN"} | ${triageAudit.assessed ? "YES" : "NO"} | Safety enforcement |
+| **Forensic** | ${undefinedCount === 0 ? "PASS" : "WARN"} | YES | ${undefinedCount} undefined symbols |
+| **Assets** | ${assetsSum.status === "passed" ? "PASS" : "FAIL"} | YES | hygiene check |
+| **Build Guard** | ${buildStatus === "passed" ? "PASS" : "FAIL"} | YES | Vite production gate |
+| **Smoke (E2E)** | ${playwrightSum.status === "passed" ? "PASS" : (playwrightSum.status === "missing" ? "SKIP" : "FAIL")} | ${playwrightSum.status !== "missing" ? "YES" : "NO"} | ${playwrightSum.failed ?? "?"} failed tests |
+
+### Lint Snapshot
+${lintDetail}
 
 ---
 `;
 
     let content = fs.existsSync(MEGALOG_PATH) ? fs.readFileSync(MEGALOG_PATH, "utf8") : "# PRIMERA MEGALOG\n";
+    content = replaceOrAppendSection(content, /## WATCHDOG REPORT \(v5\.0\)[\s\S]*?---\n/m, watchdogSection);
+    content = replaceOrAppendSection(content, /## FOLDER TOPOLOGY[\s\S]*?(?=##|$)/m, folderSection);
 
-    // Update Watchdog Report
-    const watchdogPattern = /## 🛰️ WATCHDOG REPORT \(v5\.0\)[\s\S]*?---\n/m;
-    if (watchdogPattern.test(content)) {
-        content = content.replace(watchdogPattern, watchdogSection);
-    } else {
-        const firstHeader = content.match(/^# .*$/m);
-        if (firstHeader) {
-            const insertPos = content.indexOf(firstHeader[0]) + firstHeader[0].length;
-            content = content.slice(0, insertPos) + "\n" + watchdogSection + content.slice(insertPos);
-        } else {
-            content = watchdogSection + content;
-        }
-    }
-
-    // Update Folder Topology
-    const folderPattern = /## 📂 FOLDER TOPOLOGY[\s\S]*?(?=##|$)/m;
-    if (folderPattern.test(content)) {
-        content = content.replace(folderPattern, folderSection);
-    } else {
-        content += "\n" + folderSection;
-    }
-
-    // Update Forensic Debt (Newly Added)
     const ledgerPath = path.join(ROOT, "diagnostics/undefined-ledger.md");
     if (fs.existsSync(ledgerPath)) {
         const ledgerContent = fs.readFileSync(ledgerPath, "utf8");
-        const forensicSection = `\n## 🔍 FORENSIC DEBT\n> Automated forensic analysis of undefined symbols.\n\n${ledgerContent.replace(/# .*\n/, "")}\n---\n`;
-        const forensicPattern = /## 🔍 FORENSIC DEBT[\s\S]*?(?=##|$|---)/m;
-        if (forensicPattern.test(content)) {
-            content = content.replace(forensicPattern, forensicSection);
-        } else {
-            content += "\n" + forensicSection;
-        }
+        const forensicSection = `\n## FORENSIC DEBT\n> Automated forensic analysis of undefined symbols.\n\n${ledgerContent.replace(/# .*\n/, "")}\n---\n`;
+        content = replaceOrAppendSection(content, /## FORENSIC DEBT[\s\S]*?(?=##|$|---)/m, forensicSection);
     }
 
-    fs.writeFileSync(MEGALOG_PATH, content);
+    fs.writeFileSync(MEGALOG_PATH, stampMarkdown(content, "megalog_v5", inputArtifacts));
 
-    // 📖 Sync with PRIMER_BIBLE.md
-    const BIBLE_PATH = path.join(ROOT, "PRIMER_BIBLE.md");
-    if (fs.existsSync(BIBLE_PATH)) {
-        let bible = fs.readFileSync(BIBLE_PATH, "utf8");
+    const biblePath = path.join(ROOT, "PRIMER_BIBLE.md");
+    if (fs.existsSync(biblePath)) {
+        let bible = fs.readFileSync(biblePath, "utf8");
         const archPattern = /<!-- ARCH_MAP_START -->[\s\S]*?<!-- ARCH_MAP_END -->/m;
         if (archPattern.test(bible)) {
             const newArch = `<!-- ARCH_MAP_START -->\n\`\`\`\n${asciiMap}\`\`\`\n<!-- ARCH_MAP_END -->`;
             bible = bible.replace(archPattern, newArch);
-            fs.writeFileSync(BIBLE_PATH, bible, "utf8");
-            console.log("📖 PRIMER_BIBLE.md topology synchronized.");
+            fs.writeFileSync(biblePath, bible, "utf8");
         }
     }
 
-    console.log(`✅ Megalog v5 Synchronized. Score: ${healthScore}`);
+    console.log(`Megalog v5 synchronized. Score: ${healthScore}${FORCE_MODE ? " (forced)" : ""}`);
 }
 
-main().catch(e => {
-    console.error("❌ Megalog Orchestrator Error:", e);
+main().catch((error) => {
+    console.error("Megalog orchestrator error:", error.message || error);
     process.exit(1);
 });
