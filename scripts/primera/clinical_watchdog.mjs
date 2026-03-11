@@ -37,6 +37,11 @@ function createFinding(impact, desc, extra = {}) {
     };
 }
 
+function hasStructuredAnamnesisQuestions(clinicalCase) {
+    const questions = clinicalCase?.anamnesisQuestions;
+    return Boolean(questions && typeof questions === 'object' && !Array.isArray(questions) && Object.keys(questions).length > 0);
+}
+
 // ─── Static ID Extraction (regex-based, no dynamic import needed) ───
 function extractIds(filePath) {
     const content = fs.readFileSync(filePath, 'utf-8');
@@ -113,6 +118,9 @@ async function runClinicalAudit() {
             if (!c.id) issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing unique ID.`));
             if (!c.diagnosis) issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing diagnosis name.`));
             if (!c.icd10) issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing ICD-10 code.`));
+            if (!hasStructuredAnamnesisQuestions(c)) {
+                issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing structured anamnesisQuestions; anamnesis validation will auto-pass for this case.`));
+            }
             if (!c.correctTreatment || c.correctTreatment.length === 0) {
                 issues.push(createFinding('wrong_clinical_scoring', `${prefix} Missing correct treatment plan.`));
             }

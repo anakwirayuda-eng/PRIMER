@@ -58,6 +58,27 @@ export const RESPIRATORY_CASES = [
         icd10: 'J45.9',
         skdi: '4A',
         category: 'Respiratory',
+        symptoms: ["Sesak napas","Mengi/wheezing","Batuk malam","Riwayat atopi"],
+        clue: "[EBM: GINA 2023] Asma akut — sesak + wheezing + batuk. Klasifikasi derajat serangan. Nebulisasi SABA first-line. Steroid sistemik jika sedang-berat.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Sesaknya gimana?', response: 'Sesak napas dok, bunyi ngik-ngik, susah napas.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Mulai kapan?', response: 'Tadi malam dok, tiba-tiba kambuh.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_trigger', text: 'Ada pencetusnya?', response: 'Habis bersih-bersih rumah, kena debu banyak.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_talk', text: 'Bisa ngomong kalimat penuh?', response: 'Agak putus-putus dok.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_asthma', text: 'Memang asma ya?', response: 'Iya dok, dari kecil.', sentiment: 'confirmation' },
+            ],
+            rpk: [
+                { id: 'q_atopy', text: 'Keluarga ada asma/alergi?', response: 'Ibu saya juga asma.', sentiment: 'confirmation' },
+            ],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_onset","q_trigger"],
         anamnesis: ["Napas saya bunyi ngik-ngik dok, sesak banget.", "Barusan kena debu pas bersih-bersih rumah langsung sesak. Sudah pakai inhaler nggak mendingan."],
         physicalExamFindings: { general: "Tampak sesak berat, bicara terputus.", vitals: "TD 120/80, N 110x, RR 28x, S 36.6°C, SpO2 92%", thorax: "I: Retraksi interkostal (+). A: Wheezing (+/+) di seluruh lapang paru, fase ekspirasi diperpanjang." },
         labs: {}, vitals: { temp: 36.6, bp: '120/80', hr: 110, rr: 28, spo2: 92 },
@@ -73,6 +94,25 @@ export const RESPIRATORY_CASES = [
         icd10: 'J20.9',
         skdi: '4A',
         category: 'Respiratory',
+        symptoms: ["Batuk produktif","Demam ringan","Nyeri dada saat batuk","Ronki basah"],
+        clue: "[EBM: NICE CG69] Bronkitis akut — batuk produktif <3 minggu, sering viral. JANGAN antibiotik rutin! Simptomatik. AB hanya jika risiko tinggi/komorbid.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Batuknya gimana?', response: 'Batuk berdahak dok, warnanya putih kekuningan.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_duration', text: 'Sudah berapa hari?', response: 'Sudah 5 hari dok.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_fever', text: 'Demam?', response: 'Agak hangat aja dok.', sentiment: 'confirmation' },
+                { id: 'q_sob', text: 'Sesak?', response: 'Nggak sesak dok, cuma batuk terus.', sentiment: 'denial' },
+            ],
+            rpd: [],
+            rpk: [],
+            sosial: [
+                { id: 'q_smoke', text: 'Merokok?', response: 'Iya dok, sehari sebungkus.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_duration"],
         anamnesis: ["Batuk berdahak sudah 5 hari dok, dadanya agak nyeri kalau batuk.", "Awalnya pilek terus jadi batuk, dahaknya kuning kental. Suara agak serak juga."],
         physicalExamFindings: { general: "Tampak lelah.", vitals: "TD 120/80, N 84x, RR 20x, S 37.5°C", thorax: "A: Vesikuler normal, Ronkhi basah kasar (+/+) minimal, wheezing (-)." },
         labs: {}, vitals: { temp: 37.5, bp: '120/80', hr: 84, rr: 20 },
@@ -88,6 +128,25 @@ export const RESPIRATORY_CASES = [
         icd10: 'J15.9',
         skdi: '4A',
         category: 'Respiratory',
+        symptoms: ["Demam tinggi","Batuk produktif purulen","Sesak napas","Nyeri dada pleuritik"],
+        clue: "[EBM: IDSA/ATS 2019] CAP — demam+batuk purulen+sesak. CRB-65 scoring. Amoksisilin first-line. Makrolid jika alergi penisilin.",
+        relevantLabs: ["Darah Lengkap","Rontgen Thorax"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Apa keluhannya?', response: 'Batuk berdahak kuning kental dok, demam tinggi, sesak.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Sudah berapa hari?', response: 'Seminggu dok, makin berat.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_chest_pain', text: 'Dada sakit?', response: 'Sakit kalau napas dalam dok, sebelah kanan.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_sob', text: 'Sesak?', response: 'Iya dok, ngos-ngosan.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_comorbid', text: 'Ada penyakit lain?', response: 'Nggak ada dok.', sentiment: 'denial' },
+            ],
+            rpk: [],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_onset","q_chest_pain"],
         anamnesis: ["Sesak napas dan batuk berdahak dok, demamnya tinggi.", "Sudah 3 hari begini, dahaknya hijau dan kadang ada becak darahnya sedikit. Badan lemes banget."],
         physicalExamFindings: { general: "Tampak sakit sedang, sesak.", vitals: "TD 110/70, N 100x, RR 26x, S 38.8°C, SpO2 94%", thorax: "A: Ronkhi basah halus (+/+) di basal paru kanan. P: Fremitus suara meningkat di kanan." },
         labs: { "Rontgen Thorax": { result: "Infiltrat pada lobus kanan bawah.", cost: 100000 } },

@@ -56,7 +56,8 @@ async function runAudit() {
             labs: 0,
             education: 0,
             iksMapping: 0,
-            bayesianMetadata: 0
+            bayesianMetadata: 0,
+            structuredAnamnesis: 0
         },
         pass: false
     };
@@ -69,6 +70,12 @@ async function runAudit() {
             if (!clinicalCase[field]) {
                 results.findings.push(makeFinding(caseId, 'wrong_clinical_scoring', `Missing required field: ${field}`));
             }
+        }
+
+        if (clinicalCase.anamnesisQuestions && typeof clinicalCase.anamnesisQuestions === 'object' && !Array.isArray(clinicalCase.anamnesisQuestions) && Object.keys(clinicalCase.anamnesisQuestions).length > 0) {
+            results.coverage.structuredAnamnesis++;
+        } else {
+            results.findings.push(makeFinding(caseId, 'wrong_clinical_scoring', 'Missing structured anamnesisQuestions; anamnesis validation will auto-pass for this case.'));
         }
 
         const iksKey = getIndicatorByDx(clinicalCase.icd10);
@@ -102,7 +109,8 @@ async function runAudit() {
         }
     }
 
-    const health = Math.round(((results.total * REQUIRED_FIELDS.length - results.errors.length) / (results.total * REQUIRED_FIELDS.length)) * 100);
+    const auditedRuleCount = REQUIRED_FIELDS.length + 1;
+    const health = Math.round(((results.total * auditedRuleCount - results.errors.length) / (results.total * auditedRuleCount)) * 100);
     results.pass = health >= 90;
     results.health = health;
     results.impactSummary = results.findings.reduce((acc, finding) => {

@@ -197,6 +197,29 @@ export const DIGESTIVE_CASES = [
         icd10: 'K21.0',
         skdi: '4A',
         category: 'Digestive',
+        symptoms: ['Heartburn berat', 'Regurgitasi asam', 'Odinofagia', 'Disfagia intermiten'],
+        clue: "[EBM: ACG 2022] GERD erosif — heartburn refrakter terhadap antasida OTC. Skrining alarm symptoms (disfagia, BB turun, hematemesis). PPI dosis ganda jika gagal standar.",
+        relevantLabs: ['EKG'],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Apa keluhan utamanya?', response: 'Dada saya panas banget dok, udah perih sampai tenggorokan.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_duration', text: 'Sudah berapa lama?', response: 'Sudah 2 mingguan dok, makin berat.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_timing', text: 'Kapan paling parah?', response: 'Habis makan dan pas tiduran malam dok.', sentiment: 'confirmation' },
+                { id: 'q_regurg', text: 'Ada rasa asam naik ke mulut?', response: 'Sering sendawa asam, lidah pahit.', sentiment: 'confirmation' },
+                { id: 'q_dysphagia', text: 'Susah menelan nggak?', response: 'Kadang agak nyangkut kalau makan nasi dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_weight', text: 'Berat badan turun?', response: 'Nggak dok, tetap.', sentiment: 'denial' }
+            ],
+            rpd: [
+                { id: 'q_prev_med', text: 'Sudah minum obat apa?', response: 'Antasida warung nggak mempan, promag juga nggak.', sentiment: 'confirmation' }
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_lifestyle', text: 'Sering makan pedas atau kopi?', response: 'Ngopi 3x sehari, suka pedas, rokok juga.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_duration', 'q_dysphagia'],
         anamnesis: ["Dada saya panas banget dok, udah perih sampai tenggorokan.", "Sering sendawa asam, lidah pahit. Sudah minum obat maag biasa nggak mempan."],
         physicalExamFindings: { general: "Tampak tidak nyaman.", vitals: "TD 125/80, N 84x, RR 20x, S 36.7°C", abdomen: "Nyeri tekan epigastrium (++)" },
         labs: {}, vitals: { temp: 36.7, bp: '125/80', hr: 84, rr: 20 },
@@ -212,6 +235,28 @@ export const DIGESTIVE_CASES = [
         icd10: 'K29.0',
         skdi: '4A',
         category: 'Digestive',
+        symptoms: ['Nyeri epigastrium berat', 'Mual muntah', 'Hematemesis coffee-ground', 'Perut kembung'],
+        clue: "[EBM: NICE NG12] Gastritis erosiva — nyeri ulu hati + tanda red flag (hematemesis). Evaluasi NSAID use dan H. pylori. PPI + sucralfate + pantau tanda perdarahan GI.",
+        relevantLabs: ['Darah Lengkap'],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Perutnya kenapa dok?', response: 'Ulu hati perih banget dok, mual muntah.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Sejak kapan?', response: 'Sudah 4 hari dok, makin parah.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_hematemesis', text: 'Muntahnya ada darah nggak?', response: 'Kemarin sempat muntah ada bercak hitam sedikit dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_melena', text: 'BAB-nya hitam?', response: 'Nggak dok, BAB biasa.', sentiment: 'denial' },
+                { id: 'q_appetite', text: 'Nafsu makan?', response: 'Nggak ada dok, mual terus.', sentiment: 'denial' }
+            ],
+            rpd: [
+                { id: 'q_nsaid', text: 'Sering minum obat pereda nyeri?', response: 'Sering minum ibuprofen buat sakit gigi.', sentiment: 'confirmation' }
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_alcohol', text: 'Minum alkohol?', response: 'Kadang-kadang dok.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_onset', 'q_hematemesis'],
         anamnesis: ["Ulu hati perih banget dok, mual muntah.", "Kemarin sempat muntah ada bercak hitam sedikit dok, perut kembung banget."],
         physicalExamFindings: { general: "Tampak pucat, menahan nyeri.", vitals: "TD 110/70, N 90x, RR 22x, S 36.8°C", abdomen: "Nyeri tekan epigastrium (+)" },
         labs: {}, vitals: { temp: 36.8, bp: '110/70', hr: 90, rr: 22 },
@@ -227,6 +272,29 @@ export const DIGESTIVE_CASES = [
         icd10: 'A09.9',
         skdi: '4A',
         category: 'Digestive',
+        symptoms: ['BAB cair > 3x/hari', 'Nyeri perut kolik', 'Mual', 'Lemas'],
+        clue: "[EBM: WHO-UNICEF] Diare akut < 14 hari tanpa darah/lendir. Kunci: derajat dehidrasi (turgor, mata cekung, CRT). Terapi: ORS + Zinc 20mg 10 hari. JANGAN antibiotik rutin!",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'BAB-nya gimana?', response: 'Buang air besar cair dok, sudah 5 kali hari ini.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Mulai kapan?', response: 'Tadi malam dok, habis jajan sembarangan.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_blood', text: 'Ada darah atau lendir di BAB?', response: 'Nggak ada dok, cuma cair aja.', sentiment: 'denial', priority: 'essential' },
+                { id: 'q_vomit', text: 'Ada muntah?', response: 'Mual aja, belum muntah.', sentiment: 'denial' },
+                { id: 'q_thirst', text: 'Haus nggak?', response: 'Haus banget dok.', sentiment: 'confirmation' },
+                { id: 'q_urine', text: 'Kencing masih banyak?', response: 'Agak sedikit dari biasanya.', sentiment: 'confirmation' }
+            ],
+            rpd: [],
+            rpk: [
+                { id: 'q_family', text: 'Di rumah ada yang diare juga?', response: 'Nggak ada dok.', sentiment: 'denial' }
+            ],
+            sosial: [
+                { id: 'q_food', text: 'Kemarin makan apa?', response: 'Jajan bakso pinggir jalan dok.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_onset', 'q_blood'],
         anamnesis: ["Buang air besar cair dok, sudah 5 kali hari ini.", "Perut mules banget, BAB nggak ada darah atau lendir. Tadi jajan sembarangan."],
         physicalExamFindings: { general: "Tampak lemas, turgor baik.", vitals: "TD 110/70, N 88x, RR 20x, S 37.2°C", abdomen: "Bising usus meningkat (++)" },
         labs: {}, vitals: { temp: 37.2, bp: '110/70', hr: 88, rr: 20 },
@@ -242,6 +310,30 @@ export const DIGESTIVE_CASES = [
         icd10: 'A01.0',
         skdi: '4A',
         category: 'Digestive',
+        symptoms: ['Demam stepladder', 'Lidah kotor', 'Nyeri perut', 'Konstipasi', 'Sakit kepala'],
+        clue: "[EBM: IDI/PAPDI 2023] Demam stepladder ≥7 hari, sore-malam lebih tinggi. Typhoid tongue (lidah kotor tepi hiperemis). Bradikardi relatif. Widal ≥1/320 atau Tubex ≥4.",
+        relevantLabs: ['Widal Test', 'Tubex TF'],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Demamnya gimana?', response: 'Demam sudah seminggu dok, makin sore makin panas.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_duration', text: 'Berapa hari demam?', response: 'Sudah 7 hari dok, nggak turun-turun.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_pattern', text: 'Pola demamnya gimana?', response: 'Pagi agak turun, sore-malam naik lagi.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_headache', text: 'Sakit kepala?', response: 'Pusing banget dok.', sentiment: 'confirmation' },
+                { id: 'q_stool', text: 'BAB-nya gimana?', response: 'Susah BAB dok, konstipasi.', sentiment: 'confirmation' },
+                { id: 'q_appetite', text: 'Nafsu makan?', response: 'Nggak ada, lidah pahit terus.', sentiment: 'denial' }
+            ],
+            rpd: [
+                { id: 'q_history', text: 'Pernah tipes sebelumnya?', response: 'Belum pernah dok.', sentiment: 'denial' }
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_food', text: 'Sering jajan di luar?', response: 'Sering beli makanan pinggir jalan dok.', sentiment: 'confirmation' },
+                { id: 'q_water', text: 'Air minumnya dari mana?', response: 'Air sumur dok, kadang nggak dimasak.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_duration', 'q_pattern'],
         anamnesis: ["Demam sudah seminggu dok, makin sore makin panas.", "Lidah terasa pahit, perut kaku, susah BAB. Sudah minum obat penurun panas tapi naik lagi."],
         physicalExamFindings: { general: "Tampak sakit sedang, apatis.", vitals: "TD 110/70, N 72x (bradikardi relatif), RR 20x, S 38.9°C", heent: "Typhoid tongue (+), Rose spots (-)" },
         labs: { "Widal Test": { result: "S. Typhi O 1/320, H 1/320", cost: 50000 } },

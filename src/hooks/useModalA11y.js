@@ -44,7 +44,10 @@ export default function useModalA11y(onClose) {
 
     // Stable reference to onClose
     const onCloseRef = useRef(onClose);
-    onCloseRef.current = onClose;
+
+    useEffect(() => {
+        onCloseRef.current = onClose;
+    }, [onClose]);
 
     // Handle Escape key
     const handleKeyDown = useCallback((e) => {

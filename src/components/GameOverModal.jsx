@@ -10,11 +10,10 @@
  */
 
 import React, { useEffect } from 'react';
-import { AlertTriangle, FileWarning, Frown, LogOut, RefreshCw, ArrowRight } from 'lucide-react';
+import { AlertTriangle, FileWarning, LogOut, RefreshCw, ArrowRight } from 'lucide-react';
 import useModalA11y from '../hooks/useModalA11y.js';
 
 export default function GameOverModal({ type, reason, onContinue, onRestart }) {
-    if (!type) return null;
 
     const config = {
         warning1: {
@@ -60,6 +59,8 @@ export default function GameOverModal({ type, reason, onContinue, onRestart }) {
     const modalRef = useModalA11y(null); // No Escape — user must take action
 
     useEffect(() => {
+        if (!type) return undefined;
+
         const handleKeyDown = (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -69,6 +70,8 @@ export default function GameOverModal({ type, reason, onContinue, onRestart }) {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [type, onContinue, onRestart]);
+
+    if (!type) return null;
 
     return (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-hud p-4 backdrop-blur-sm">

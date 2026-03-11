@@ -13,6 +13,29 @@ export const MUSCULOSKELETAL_CASES = [
         icd10: 'M54.5',
         skdi: '4A',
         category: 'Musculoskeletal',
+        symptoms: ['Nyeri punggung bawah', 'Kaku otot lumbal', 'Nyeri saat membungkuk', 'Membaik saat istirahat'],
+        clue: "[EBM: ACP 2017] LBP mekanik — nyeri terlokalisir lumbal, tanpa radiculopathy. Red flags: inkontinensia, saddle anesthesia, kelemahan progresif, BB turun, riwayat kanker. Lasegue <70° = curiga HNP.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Pinggangnya kenapa pak/bu?', response: 'Pinggang saya sakit dok, apalagi kalau habis angkut-angkut barang.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Mulai kapan?', response: 'Sudah 4 hari dok, habis angkat galon.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_radiation', text: 'Sakitnya menjalar ke kaki nggak?', response: 'Nggak dok, cuma di pinggang aja.', sentiment: 'denial', priority: 'essential' },
+                { id: 'q_weakness', text: 'Ada kelemahan atau kesemutan di kaki?', response: 'Nggak ada dok.', sentiment: 'denial' },
+                { id: 'q_bladder', text: 'BAK dan BAB normal?', response: 'Normal dok.', sentiment: 'denial' },
+                { id: 'q_relief', text: 'Kapan berkurang sakitnya?', response: 'Kalau rebahan sebentar mendingan.', sentiment: 'confirmation' }
+            ],
+            rpd: [
+                { id: 'q_prev', text: 'Pernah sakit pinggang sebelumnya?', response: 'Pernah dok, tapi biasanya sembuh sendiri.', sentiment: 'confirmation' }
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_work', text: 'Kerja apa sehari-hari?', response: 'Kuli angkut di pasar dok.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_onset', 'q_radiation'],
         anamnesis: ["Pinggang saya sakit dok, apalagi kalau habis angkut-angkut barang.", "Sakitnya nggak sampai menjalar ke kaki. Membaik kalau rebahan sebentar."],
         physicalExamFindings: { general: "Tampak menahan nyeri saat bergerak.", vitals: "TD 130/80, N 80x, RR 18x, S 36.6°C", musculoskeletal: "Nyeri tekan otot paravertebral lumbal (+), Lasegue test (-) / (>70 deg)." },
         labs: {}, vitals: { temp: 36.6, bp: '130/80', hr: 80, rr: 18 },
@@ -28,6 +51,28 @@ export const MUSCULOSKELETAL_CASES = [
         icd10: 'M10.9',
         skdi: '4A',
         category: 'Musculoskeletal',
+        symptoms: ['Nyeri sendi akut (MTP-1)', 'Bengkak merah', 'Panas lokal', 'Podagra'],
+        clue: "[EBM: ACR/EULAR 2015] Gout: artritis monoartikular akut, terutama MTP-1 (podagra). Onset malam/pagi. Trigger: purin tinggi, alkohol, dehidrasi. Asam urat >7mg/dL. Kolkisin <12 jam onset.",
+        relevantLabs: ['Asam Urat'],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Kakinya kenapa?', response: 'Jempol kaki saya bengkak dan merah dok, sakit sekali buat jalan.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Mulai kapan?', response: 'Tiba-tiba begini pas bangun tidur tadi pagi.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_severity', text: 'Seberapa sakit?', response: 'Selimut kena aja sakit dok, nggak kuat.', sentiment: 'confirmation' },
+                { id: 'q_joints', text: 'Sendi lain ada yang sakit?', response: 'Nggak dok, cuma jempol kaki kanan ini.', sentiment: 'denial' }
+            ],
+            rpd: [
+                { id: 'q_history', text: 'Pernah kena asam urat sebelumnya?', response: 'Pernah dok, dulu juga pernah di jempol yang sama.', sentiment: 'confirmation' }
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_food', text: 'Kemarin makan apa?', response: 'Kemarin habis makan emping dan jeroan dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_alcohol', text: 'Minum bir atau alkohol?', response: 'Nggak dok.', sentiment: 'denial' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_onset', 'q_food'],
         anamnesis: ["Jempol kaki saya bengkak dan merah dok, sakit sekali buat jalan.", "Tiba-tiba begini pas bangun tidur. Kemarin habis makan emping dan jeroan."],
         physicalExamFindings: { general: "Tampak sakit sedang, pincang.", vitals: "TD 125/80, N 88x, RR 20x, S 37.2°C", musculoskeletal: "MTP-1 dekstra: Hiperemis, edema, panas, nyeri tekan (+)." },
         labs: { "Asam Urat": { result: "8.8 mg/dL", cost: 30000 } },
@@ -44,6 +89,27 @@ export const MUSCULOSKELETAL_CASES = [
         icd10: 'M10.9',
         skdi: '4A',
         category: 'Musculoskeletal',
+        symptoms: ['Artritis akut monoartikular', 'Nyeri hebat onset cepat', 'Eritema', 'Edema sendi'],
+        clue: "[EBM: ACR 2020] Flare gout akut — onset <24 jam, nyeri hebat. NSAID/kolkisin first-line (kolkisin paling efektif <12 jam). JANGAN mulai allopurinol saat serangan akut!",
+        relevantLabs: ['Asam Urat'],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Ada keluhan apa?', response: 'Lutut saya tiba-tiba bengkak dan merah, nyeri sekali dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Tiba-tiba ya? Kapan mulainya?', response: 'Tadi malam dok, bangun tidur sudah bengkak besar.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_severity', text: 'Sakitnya seberapa?', response: 'Ngenyut banget, nggak bisa ditekuk.', sentiment: 'confirmation' },
+                { id: 'q_mobility', text: 'Bisa jalan?', response: 'Nggak bisa jalan dok, harus dipapah.', sentiment: 'denial' }
+            ],
+            rpd: [
+                { id: 'q_history', text: 'Pernah serangan kayak gini?', response: 'Baru pertama dok ini.', sentiment: 'denial' }
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_trigger', text: 'Kemarin ada makan/minum apa?', response: 'Kemarin makan seafood banyak dok, udang dan kerang.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_onset'],
         anamnesis: ["Lutut saya tiba-tiba bengkak dan merah, nyeri sekali dok.", "Sakitnya ngenyut banget, nggak bisa ditekuk. Sudah 1 hari begini."],
         physicalExamFindings: { general: "Tampak kesakitan.", vitals: "TD 120/80, N 92x, RR 18x, S 37.5°C", musculoskeletal: "Genu sinistra: Edema, eritema, kalor, nyeri tekan (+), ROM terbatas." },
         labs: { "Asam Urat": { result: "9.2 mg/dL", cost: 30000 } },

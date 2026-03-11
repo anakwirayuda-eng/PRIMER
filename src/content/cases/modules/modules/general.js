@@ -14,6 +14,27 @@ export const GENERAL_CASES = [
         icd10: 'E11.9',
         skdi: '4A',
         category: 'General',
+        symptoms: ["Poliuria","Polidipsia","Polifagia","BB turun"],
+        clue: "[EBM: ADA 2024] DM tipe 2 — GDP ≥126, GD2PP ≥200, HbA1c ≥6.5%. Metformin first-line. Target HbA1c <7%. Skrining komplikasi: mata, ginjal, kaki.",
+        relevantLabs: ["GDS","GDP","HbA1c"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Ada keluhan apa?', response: 'Sering kencing dok, haus terus, badan lemas.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_polyuria', text: 'Kencing berapa kali sehari?', response: 'Bisa 10 kali lebih dok, malam juga bolak-balik.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_weight', text: 'Berat badan turun?', response: 'Iya dok, turun 5 kg 2 bulan ini.', sentiment: 'confirmation' },
+                { id: 'q_wound', text: 'Ada luka sulit sembuh?', response: 'Nggak ada dok.', sentiment: 'denial' },
+            ],
+            rpd: [],
+            rpk: [
+                { id: 'q_family', text: 'Keluarga ada diabetes?', response: 'Ibu dan kakak saya diabetes dok.', sentiment: 'confirmation' },
+            ],
+            sosial: [
+                { id: 'q_diet', text: 'Makannya gimana?', response: 'Suka manis-manis dok, nasi banyak.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_polyuria"],
         anamnesis: ["Sering haus dok, kencing terus dan berat badan turun.", "Cepat lapar tapi badan malah kurus. Kalo ada luka susah sembuhnya."],
         physicalExamFindings: { general: "Tampak baik, gizi cukup.", vitals: "TD 130/80, N 80x, RR 18x, S 36.6°C", skin: "Acanthosis nigricans (+) minimal di leher." },
         labs: { "Gula Darah Puasa": { result: "180 mg/dL", cost: 30000 }, "HbA1c": { result: "8.2%", cost: 150000 } },
@@ -30,6 +51,27 @@ export const GENERAL_CASES = [
         icd10: 'Z00.0',
         skdi: '4A',
         category: 'General',
+        symptoms: ["Tidak ada keluhan spesifik","Kunjungan rutin","Skrining kesehatan"],
+        clue: "[EBM: USPSTF] General checkup — skrining sesuai usia dan risiko: TD, GDS, kolesterol, BMI. Preventif: vaksinasi, konseling gaya hidup.",
+        relevantLabs: ["GDS","Darah Lengkap"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Ada keluhan apa pak/bu?', response: 'Nggak ada keluhan dok, cuma mau cek kesehatan aja.', sentiment: 'denial', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_any', text: 'Benar nggak ada keluhan sama sekali?', response: 'Kadang pusing sedikit dok, tapi biasa aja.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_history', text: 'Ada riwayat penyakit?', response: 'Nggak ada dok, belum pernah sakit berat.', sentiment: 'denial' },
+            ],
+            rpk: [
+                { id: 'q_family', text: 'Keluarga ada sakit berat?', response: 'Bapak saya darah tinggi dan kencing manis.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            sosial: [
+                { id: 'q_lifestyle', text: 'Olahraga? Merokok?', response: 'Jarang olahraga dok, nggak merokok.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_family"],
         anamnesis: ["Mau periksa aja dok, mumpung lagi libur kerja.", "Saya ingin melakukan general medical check-up rutin untuk screening kesehatan."],
         physicalExamFindings: { general: "Tampak sehat, gizi baik.", vitals: "TD 120/80, N 80x, RR 18x, S 36.5°C" },
         labs: { "Cek Darah Lengkap": { result: "Normal", cost: 50000 } },

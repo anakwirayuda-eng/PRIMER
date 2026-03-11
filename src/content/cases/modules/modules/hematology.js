@@ -13,6 +13,24 @@ export const HEMATOLOGY_CASES = [
         icd10: 'D50.9',
         skdi: '4A',
         category: 'Hematology',
+        symptoms: ["Pucat","Lemas","Pusing","Sesak saat aktivitas"],
+        clue: "[EBM: WHO] Anemia defisiensi besi — Hb rendah + MCV rendah (mikrositik hipokrom). Evaluasi penyebab: diet, menstruasi, cacing. Suplementasi Fe 2-3 bulan.",
+        relevantLabs: ["Darah Lengkap"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Ada keluhan apa?', response: 'Badan lemas terus dok, muka pucat, pusing.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_activity', text: 'Ngos-ngosan kalau aktivitas?', response: 'Iya dok, naik tangga aja sudah ngos-ngosan.', sentiment: 'confirmation' },
+                { id: 'q_diet', text: 'Makannya gimana? Cukup daging/sayur?', response: 'Jarang makan daging dok, nasi sayur aja.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rpd: [],
+            rpk: [],
+            sosial: [
+                { id: 'q_menstruation', text: 'Haidnya banyak?', response: 'Iya dok, banyak banget sampai ganti pembalut 5-6x.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_diet"],
         anamnesis: ["Badan lemes dok, cepat capek dan mata berkunang-kunang.", "Pucat, sering pusing, dan konsentrasi berkurang. Sudah sebulan merasa begini."],
         physicalExamFindings: { general: "Tampak pucat (konjungtiva anemis +/+).", vitals: "TD 110/70, N 88x, RR 18x, S 36.5°C", skin: "Koilonychia (+) minimal, pucat (+)." },
         labs: { "Darah Lengkap": { result: "Hb 9.2, MCV 72, MCH 24", cost: 50000 } },
@@ -29,6 +47,24 @@ export const HEMATOLOGY_CASES = [
         icd10: 'D50.9',
         skdi: '4A',
         category: 'Hematology',
+        symptoms: ["Pucat berat","Lemas hebat","Takikardia","Koilonychia"],
+        clue: "[EBM: BSH 2021] Anemia def. besi simptomatik — Hb <8, evaluasi kehilangan darah kronik. GI workup jika pria/>50th. Fe oral + cari sumber perdarahan.",
+        relevantLabs: ["Darah Lengkap","Ferritin"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Lemas banget ya?', response: 'Iya dok, nggak kuat ngapa-ngapain, kepala pusing terus.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_bleeding', text: 'Ada perdarahan? BAB hitam?', response: 'BAB kadang hitam dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_pica', text: 'Suka ngidam makan es/tanah?', response: 'Iya dok, suka ngunyah es batu terus.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_prev', text: 'Pernah kurang darah sebelumnya?', response: 'Pernah dok, dikasih tablet tambah darah.', sentiment: 'confirmation' },
+            ],
+            rpk: [],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_bleeding"],
         anamnesis: ["Dada berdebar-debar dok, sesak kalau jalan jauh.", "Wajah dan telapak tangan pucat sekali. Sudah 2 minggu jalan sedikit saja capek banget."],
         physicalExamFindings: { general: "Tampak pucat sekali.", vitals: "TD 100/60, N 105x (takikardi), RR 22x, S 36.6°C", heent: "Konjungtiva anemis (+/+), atrofi papil lidah (+)." },
         labs: { "Darah Lengkap": { result: "Hb 7.5, MCV 68, MCH 21", cost: 50000 } },
@@ -45,6 +81,25 @@ export const HEMATOLOGY_CASES = [
         icd10: 'A91',
         skdi: '4A',
         category: 'Hematology',
+        symptoms: ["Demam tinggi mendadak","Nyeri otot/sendi","Rumple Leede positif","Trombositopenia"],
+        clue: "[EBM: WHO DHF 2011] DBD grade 1 — demam + Rumple Leede (+) + trombositopenia. Monitor ketat fase kritis (hari 3-7). Terapi cairan agresif.",
+        relevantLabs: ["Darah Lengkap","NS1 Ag"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Demamnya gimana?', response: 'Demam tinggi mendadak dok, badan linu semua.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_day', text: 'Hari ke berapa demam?', response: 'Sudah hari ke-4 dok.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_bleeding', text: 'Ada mimisan atau gusi berdarah?', response: 'Nggak ada dok.', sentiment: 'denial', priority: 'essential' },
+                { id: 'q_warning', text: 'Muntah terus? Nyeri perut?', response: 'Mual aja dok, belum muntah.', sentiment: 'denial' },
+            ],
+            rpd: [],
+            rpk: [
+                { id: 'q_neighbor', text: 'Tetangga ada DB?', response: 'Ada dok, RT sebelah banyak.', sentiment: 'confirmation' },
+            ],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_day","q_bleeding"],
         anamnesis: ["Demam tinggi mendadak sudah 3 hari, nyeri sendi.", "Kepala pusing banget, mual, dan nggak nafsu makan. Ada bintik-bintik merah di lengan."],
         physicalExamFindings: { general: "Tampak sakit sedang, febris.", vitals: "TD 110/70, N 96x, RR 20x, S 39.2°C", skin: "Uji Rumple Leed (+), petechiae di ekstremitas (+)." },
         labs: { "Darah Lengkap": { result: "Hb 12.5, Hematokrit 40%, Trombosit 98.000", cost: 50000 }, "NS1 Antigen": { result: "Positif (+)", cost: 150000 } },

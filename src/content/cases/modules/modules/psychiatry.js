@@ -13,6 +13,27 @@ export const PSYCHIATRY_CASES = [
         icd10: 'F51.0',
         category: 'Psychiatry',
         skdi: '4A',
+        symptoms: ["Sulit tidur","Sering terbangun","Tidak segar bangun","Kantuk siang"],
+        clue: "[EBM: AASM 2017] Insomnia — sulit inisiasi/maintenance tidur ≥3x/minggu selama ≥3 bulan. CBT-I first-line. Sleep hygiene education. Farmako: short-term.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Tidurnya gimana?', response: 'Nggak bisa tidur dok, melek terus sampai subuh.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_duration', text: 'Sudah berapa lama?', response: 'Sudah 2 bulan lebih dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_daytime', text: 'Siang ngantuk?', response: 'Ngantuk terus dok, kerja nggak fokus.', sentiment: 'confirmation' },
+                { id: 'q_pattern', text: 'Sulit mulai tidur atau sering terbangun?', response: 'Dua-duanya dok.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_anxiety', text: 'Ada cemas atau depresi?', response: 'Cemas terus dok, banyak pikiran.', sentiment: 'confirmation' },
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_habits', text: 'Main HP sebelum tidur?', response: 'Iya dok, scrolling terus.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_duration"],
         anamnesis: ["Susah tidur dok, gelisah terus tiap malem.", "Mengalami insomnia sejak sebulan terakhir, sulit masuk tidur."],
         physicalExamFindings: { general: "Tampak lelah, konjungtiva tidak anemis.", vitals: "TD 120/80, N 84x, RR 18x, S 36.6°C" },
         labs: {},

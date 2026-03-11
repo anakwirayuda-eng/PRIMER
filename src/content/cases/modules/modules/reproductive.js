@@ -13,6 +13,24 @@ export const REPRODUCTIVE_CASES = [
         icd10: 'A51.0',
         skdi: '4A',
         category: 'Reproductive',
+        symptoms: ["Ulkus genital tidak nyeri","Tepi teratur","Indurasi","Limfadenopati inguinal"],
+        clue: "[EBM: CDC STI 2021] Sifilis primer — chancre: ulkus tunggal, tidak nyeri, indurasi, dasar bersih. VDRL/RPR screening. Benzathine penicillin G 2.4 MU IM single dose.",
+        relevantLabs: ["VDRL"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Ada keluhan apa?', response: 'Ada luka di kemaluan dok, nggak sakit.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_onset', text: 'Mulai kapan?', response: 'Sekitar 2 minggu lalu dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_pain', text: 'Sakit?', response: 'Nggak sakit sama sekali dok.', sentiment: 'denial', priority: 'essential' },
+            ],
+            rpd: [],
+            rpk: [],
+            sosial: [
+                { id: 'q_sexual', text: 'Riwayat hubungan seksual?', response: 'Baru ganti pasangan dok.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_onset","q_pain"],
         anamnesis: ["Ada luka di kemaluan dok, tapi tidak sakit sama sekali.", "Baru muncul seminggu yang lalu. Lukanya bersih dan pinggirannya keras."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "TD 120/80, N 80x, RR 18x, S 36.5°C", genitalia: "Ulkus durum: Ulkus tunggal, diameter 1cm, dasar bersih, indurasi (+), nyeri tekan (-)." },
         labs: { "VDRL/RPR": { result: "Reaktif 1:4", cost: 80000 }, "TPHA": { result: "Reaktif (+)", cost: 100000 } },
@@ -29,6 +47,24 @@ export const REPRODUCTIVE_CASES = [
         icd10: 'A54.0',
         skdi: '4A',
         category: 'Reproductive',
+        symptoms: ["Duh tubuh purulen","Disuria","Uretritis","Onset akut"],
+        clue: "[EBM: CDC STI 2021] Gonore — duh tubuh mukopurulen + disuria. Dual therapy: ceftriaxone 500mg IM + azithromycin 1g PO. Test of cure 2 minggu.",
+        relevantLabs: ["Gram Stain"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Keluhannya apa?', response: 'Keluar nanah dari kemaluan dok, perih kencing.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_onset', text: 'Kapan mulainya?', response: '3 hari lalu dok, makin banyak nanahnya.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_color', text: 'Warna cairan?', response: 'Kuning kental dok.', sentiment: 'confirmation' },
+            ],
+            rpd: [],
+            rpk: [],
+            sosial: [
+                { id: 'q_partner', text: 'Pasangan perlu diperiksa juga?', response: 'Iya dok.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_onset"],
         anamnesis: ["Kencing nanah dok, perih sekali kalau buang air kecil.", "Ujung kemaluan merah dan bengkak. Sudah 3 hari begini setelah kontak berisiko seminggu lalu."],
         physicalExamFindings: { general: "Tampak tidak nyaman.", vitals: "TD 120/80, N 84x, RR 18x, S 37.2°C", genitalia: "OUE: Edema, eritema, discharge mukopurulen (+) kental kekuningan." },
         labs: { "Gram Stain": { result: "Diplokokus Gram Negatif intra-ekstraseluler (+)", cost: 40000 } },
@@ -45,6 +81,25 @@ export const REPRODUCTIVE_CASES = [
         icd10: 'O80.9',
         skdi: '4A',
         category: 'Maternal',
+        symptoms: ["Telat haid","Mual pagi","Payudara tegang","Tes kehamilan positif"],
+        clue: "[EBM: WHO ANC 2016] Kehamilan normal — ANC minimal 8x. Skrining: Hb, goldarah, HBsAg, HIV, urin, GDS. Suplementasi: asam folat + Fe.",
+        relevantLabs: ["Darah Lengkap","Urinalisis"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Ada keluhan apa bu?', response: 'Telat haid 2 bulan dok, testpack positif.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_lmp', text: 'Haid terakhir kapan?', response: '2 bulan lalu dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_nausea', text: 'Mual?', response: 'Mual tiap pagi dok, kadang muntah.', sentiment: 'confirmation' },
+                { id: 'q_bleeding', text: 'Ada perdarahan?', response: 'Nggak ada dok.', sentiment: 'denial', priority: 'essential' },
+            ],
+            rpd: [
+                { id: 'q_gravida', text: 'Kehamilan ke berapa?', response: 'Kedua dok, yang pertama normal.', sentiment: 'confirmation' },
+            ],
+            rpk: [],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_lmp","q_bleeding"],
         anamnesis: ["Perut mules-mules dok, rasanya pengen mengejan terus.", "Ketuban sudah pecah tadi di rumah. Mulasnya makin sering dan makin kuat."],
         physicalExamFindings: { general: "Tampak gelisah, mengejan.", vitals: "TD 120/80, N 90x, RR 24x, S 37.0°C", obstetric: "VT: Pembukaan lengkap (10cm), ketuban (-), kepala H-IV, peritineum menonjol, anus membuka." },
         labs: {}, vitals: { temp: 37.0, bp: '120/80', hr: 90, rr: 24 },

@@ -43,16 +43,15 @@ const RumahDinas = ({ onClose }) => {
         showEndOfDayDebrief, setShowEndOfDayDebrief,
         todayLog, consequenceQueue,
         setDailyQuestId, setStaffAllocation,
-        addReflection, logCaseOutcome,
+        addReflection, logCaseOutcome: _logCaseOutcome,
         dailyQuestId, morningReputation,
         // Game state for briefing generators
         day, hiredStaff, pharmacyInventory,
-        queue, history
+        queue, history: _history
     } = useGame();
 
     const [activeTab, setActiveTab] = useState('living_room');
     const [alarmHour, setAlarmHour] = useState(5);
-    const [briefingData, setBriefingData] = useState(null);
     const [debriefData, setDebriefData] = useState(null);
 
     // Toast State
@@ -643,7 +642,6 @@ const RumahDinas = ({ onClose }) => {
         if (result.staffAllocation) setStaffAllocation(result.staffAllocation);
         if (result.dailyQuestId) setDailyQuestId(result.dailyQuestId);
         setShowMorningBriefing(false);
-        setBriefingData(null);
         showToast('Briefing selesai! Selamat bekerja! 🌅', 'success');
     }, [setStaffAllocation, setDailyQuestId, setShowMorningBriefing, showToast]);
 
@@ -667,11 +665,10 @@ const RumahDinas = ({ onClose }) => {
         }
     }, [addReflection, gainXp, setShowEndOfDayDebrief, sleepWithAlarm, alarmHour, day, showToast]);
 
-    // Phase 0: Generate briefing data when flag is set
     const activeBriefingData = useMemo(() => {
         if (!showMorningBriefing) return null;
-        if (briefingData) return briefingData;
-        const data = generateMorningBriefing({
+
+        return generateMorningBriefing({
             day: day || 1,
             hiredStaff: hiredStaff || [],
             pharmacyInventory: pharmacyInventory || [],
@@ -681,9 +678,7 @@ const RumahDinas = ({ onClose }) => {
             reputation: playerStats?.reputation || 80,
             stats: stats || {}
         });
-        setBriefingData(data);
-        return data;
-    }, [showMorningBriefing, briefingData, day, hiredStaff, pharmacyInventory, consequenceQueue, playerStats, queue, stats]);
+    }, [showMorningBriefing, day, hiredStaff, pharmacyInventory, consequenceQueue, playerStats, queue, stats]);
 
     return (
         <>
@@ -694,7 +689,7 @@ const RumahDinas = ({ onClose }) => {
                 <MorningBriefingModal
                     briefingData={activeBriefingData}
                     onComplete={handleBriefingComplete}
-                    onDismiss={() => { setShowMorningBriefing(false); setBriefingData(null); }}
+                    onDismiss={() => { setShowMorningBriefing(false); }}
                 />
             )}
 

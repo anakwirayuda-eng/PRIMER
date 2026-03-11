@@ -13,6 +13,25 @@ export const URINARY_CASES = [
         icd10: 'N39.0',
         skdi: '4A',
         category: 'Urinary',
+        symptoms: ["Nyeri saat BAK","Sering BAK","Urgensi","Nyeri suprapubik"],
+        clue: "[EBM: IDSA/ESCMID 2011] ISK non-komplikata — disuria+frekuensi+urgensi pada wanita. Nitrofurantoin 5 hari first-line. TIDAK perlu kultur jika uncomplicated.",
+        relevantLabs: ["Urinalisis"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'BAK-nya kenapa?', response: 'Perih banget dok kalau kencing, anyang-anyangan.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_frequency', text: 'Sering bolak-balik kencing?', response: 'Iya dok, tiap 15 menit mau kencing tapi cuma sedikit.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_fever', text: 'Demam? Nyeri pinggang?', response: 'Nggak demam dok, nggak nyeri pinggang.', sentiment: 'denial' },
+                { id: 'q_blood', text: 'Kencingnya ada darah?', response: 'Agak kemerahan dok.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_prev', text: 'Pernah ISK sebelumnya?', response: 'Pernah dok, tahun lalu.', sentiment: 'confirmation' },
+            ],
+            rpk: [],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_frequency"],
         anamnesis: ["Anyang-anyangan dok, kencing dikit-dikit dan perih.", "Perut bagian bawah rasanya nyeri. Air kencingnya agak keruh dan baunya tajam."],
         physicalExamFindings: { general: "Tampak tidak nyaman.", vitals: "TD 110/70, N 84x, RR 18x, S 37.4°C", abdomen: "Nyeri tekan suprapubik (+)." },
         labs: { "Urinalisis": { result: "Leukosuria (+++), Nitrit (+)", cost: 40000 } },

@@ -57,9 +57,11 @@ function GameRouter() {
   const { gameState, startNewGame, loadGame, setGameState } = context;
 
   const handleProfileComplete = (profile, saveData, slotId) => {
-    if (saveData) {
+    const resolvedSave = saveData?.saveData || saveData?._raw || saveData;
+
+    if (resolvedSave) {
       // Loading from save (legacy or new)
-      loadGame(saveData, slotId);
+      loadGame(resolvedSave, slotId);
     } else {
       // New game with specific slot
       startNewGame(profile, slotId);
@@ -67,8 +69,10 @@ function GameRouter() {
   };
 
   const handleSelectSlot = (slotId, saveData) => {
-    if (saveData && !saveData.empty) {
-      loadGame(saveData, slotId);
+    const resolvedSave = saveData?.saveData || saveData?._raw || saveData;
+
+    if (resolvedSave && !resolvedSave.empty) {
+      loadGame(resolvedSave, slotId);
     } else {
       // If empty slot, go to setup but remember slot ID
       setGameState({ type: 'setup', slotId });

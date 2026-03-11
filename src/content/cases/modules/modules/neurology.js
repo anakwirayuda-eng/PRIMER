@@ -14,6 +14,28 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Nyeri kepala seperti diikat', 'Nyeri tekan otot leher', 'Tidak mual/muntah'],
+        symptoms: ["Nyeri kepala bilateral","Seperti diikat","Tidak berdenyut","Tidak mual"],
+        clue: "[EBM: IHS/ICHD-3] TTH — nyeri bilateral, pressing/tightening, intensitas ringan-sedang, tanpa mual/fotofobia. Beda migrain: unilateral + pulsating + mual.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Sakit kepalanya gimana?', response: 'Kepala saya sakit kayak diikat dok, pusing terus.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Sudah berapa lama?', response: 'Sudah 3 hari dok.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_character', text: 'Sakitnya berdenyut atau kayak ditekan?', response: 'Kayak ditekan/diikat dok, nggak berdenyut.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_nausea', text: 'Ada mual atau silau cahaya?', response: 'Nggak ada dok.', sentiment: 'denial' },
+                { id: 'q_location', text: 'Di sebelah mana?', response: 'Dua-duanya dok, kanan kiri sama.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_history', text: 'Sering sakit kepala?', response: 'Kalau capek sering dok.', sentiment: 'confirmation' },
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_stress', text: 'Lagi banyak pikiran?', response: 'Iya dok, kerjaan numpuk.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_onset","q_character"],
         anamnesis: ["Kepala rasanya berat dok, kayak diikat kencang.", "Sudah 2 hari nyut-nyutan, tapi nggak mual. Lagi banyak kerjaan di kantor."],
         physicalExamFindings: { general: "Tampak lelah.", vitals: "TD 125/80, N 84x, RR 18x, S 36.8°C", neuro: "Status lokalis: Nyeri tekan otot perikranial (+) minimal." },
         labs: {}, vitals: { temp: 36.8, bp: '125/80', hr: 84, rr: 18 },
@@ -30,6 +52,24 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Pusing berputar', 'Dipicu perubahan posisi kepala', 'Mual dan muntah'],
+        symptoms: ["Pusing berputar","Dipicu perubahan posisi","Mual","Nistagmus"],
+        clue: "[EBM: AAO-HNS 2017] BPPV — vertigo posisional <1 menit, dipicu perubahan posisi kepala. Dix-Hallpike (+). Terapi: Epley maneuver. BUKAN stroke!",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Pusingnya gimana?', response: 'Pusing berputar dok, kayak mau jatuh.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_trigger', text: 'Kapan pusingnya muncul?', response: 'Pas miring ke kanan atau tengadah.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_duration', text: 'Berapa lama pusingnya?', response: 'Sebentar dok, kurang dari semenit, tapi sering kambuh.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_nausea', text: 'Mual?', response: 'Iya mual, sempat muntah 1x.', sentiment: 'confirmation' },
+                { id: 'q_hearing', text: 'Pendengaran berubah?', response: 'Nggak dok, masih normal.', sentiment: 'denial' },
+            ],
+            rpd: [],
+            rpk: [],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_trigger","q_duration"],
         anamnesis: ["Pusing tujuh keliling dok, rasanya kayak diputar-putar.", "Kalau berubah posisi kepala langsung kumat, mual dan muntah. Sudah 1 hari begini."],
         physicalExamFindings: { general: "Tampak tidak nyaman, menunduk.", vitals: "TD 120/80, N 88x, RR 20x, S 36.7°C", neuro: "Dix-Hallpike test (+): nistagmus (+)." },
         labs: {}, vitals: { temp: 36.7, bp: '120/80', hr: 88, rr: 20 },
@@ -46,6 +86,30 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Sakit kepala berdenyut', 'Sakit kepala sebelah', 'Fotofobia (silau)'],
+        symptoms: ["Nyeri kepala unilateral","Berdenyut","Mual/muntah","Fotofobia"],
+        clue: "[EBM: ICHD-3] Migrain tanpa aura — unilateral, pulsating, sedang-berat, diperburuk aktivitas fisik, +mual/fotofobia. Durasi 4-72 jam.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Sakit kepalanya gimana?', response: 'Kepala sebelah kiri berdenyut-denyut dok, sakit banget.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_duration', text: 'Sudah berapa lama?', response: 'Dari tadi pagi dok, makin lama makin sakit.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_nausea', text: 'Ada mual?', response: 'Mual banget dok, muntah 2 kali.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_light', text: 'Silau sama cahaya?', response: 'Iya dok, mau di ruang gelap aja.', sentiment: 'confirmation' },
+                { id: 'q_activity', text: 'Makin sakit kalau gerak?', response: 'Iya, jalan aja tambah nyut-nyutan.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_prev', text: 'Sering begini?', response: 'Sudah beberapa kali dok, tiap bulan.', sentiment: 'confirmation' },
+            ],
+            rpk: [
+                { id: 'q_family', text: 'Keluarga ada migrain?', response: 'Ibu saya juga sering migrain.', sentiment: 'confirmation' },
+            ],
+            sosial: [
+                { id: 'q_trigger', text: 'Ada pencetusnya?', response: 'Kurang tidur dok kemarin.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_duration","q_nausea"],
         anamnesis: ["Sakit kepala sebelah dok, berdenyut-denyut.", "Mual dan muntah, rasanya silau kalau kena cahaya. Sudah kumat-kumatan sejak remaja."],
         physicalExamFindings: { general: "Tampak menahan nyeri.", vitals: "TD 130/80, N 80x, RR 18x, S 36.5°C", neuro: "Fungsi motorik/sensorik normal, meningeal sign (-)." },
         labs: {}, vitals: { temp: 36.5, bp: '130/80', hr: 80, rr: 18 },
@@ -62,6 +126,28 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Kejang kaku-kelojot', 'Demam tinggi (>38°C)', 'Mata mendelik'],
+        symptoms: ["Kejang saat demam","Usia 6 bulan-5 tahun","Kejang tonik-klonik","Durasi <15 menit"],
+        clue: "[EBM: AAP 2011] Kejang demam sederhana — usia 6bln-5thn, kejang <15 menit, tonik-klonik umum, tidak berulang 24 jam. Turunkan demam, singkirkan meningitis.",
+        relevantLabs: ["Darah Lengkap"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Kejangnya gimana bu?', response: 'Anak saya tiba-tiba kejang dok, badannya kaku terus tangan kaki kelojotan.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_duration_seizure', text: 'Berapa lama kejangnya?', response: 'Sekitar 3 menit dok.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_fever', text: 'Sebelumnya demam?', response: 'Iya dok, demam tinggi dari tadi siang.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_after', text: 'Setelah kejang gimana?', response: 'Nangis terus tidur, sekarang sudah sadar.', sentiment: 'confirmation' },
+                { id: 'q_focal', text: 'Kejangnya seluruh badan atau satu sisi?', response: 'Seluruh badan dok.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_prev_seizure', text: 'Pernah kejang sebelumnya?', response: 'Belum pernah dok.', sentiment: 'denial' },
+            ],
+            rpk: [
+                { id: 'q_family_seizure', text: 'Keluarga ada riwayat kejang demam?', response: 'Kakaknya dulu juga pernah.', sentiment: 'confirmation' },
+            ],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_duration_seizure","q_fever"],
         anamnesis: ["Anak saya kejang dok, badannya kaku dan mata mendelik ke atas.", "Tadi badannya panas tinggi sekali, langsung kejang sebentar . Sekarang sudah sadar tapi lemes."],
         physicalExamFindings: { general: "Tampak lemas, post-ictal.", vitals: "TD - (pediatrik), N 110x, RR 24x, S 39.2°C", neuro: "Status neurologis saat ini normal, kaku kuduk (-)." },
         labs: { "Darah Lengkap": { result: "Leukosit 14.200", cost: 50000 } },
@@ -79,6 +165,24 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Sakit kepala berdenyut', 'Silau jika kena cahaya', 'Mual dan muntah'],
+        symptoms: ["Nyeri kepala unilateral berdenyut","Mual muntah","Fotofobia/fonofobia","Aura visual"],
+        clue: "[EBM: ICHD-3] Migrain — unilateral pulsating, moderate-severe, aggravated by activity, +nausea/photo-phonophobia. Triptans jika NSAID gagal.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Sakit kepalanya gimana?', response: 'Sakit sebelah dok, kayak ditusuk-tusuk, berdenyut.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_nausea', text: 'Mual?', response: 'Mual banget, muntah terus.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_aura', text: 'Sebelum sakit ada lihat cahaya/kilatan?', response: 'Kadang ada dok, lihat bintik-bintik.', sentiment: 'confirmation' },
+            ],
+            rpd: [
+                { id: 'q_freq', text: 'Seberapa sering?', response: '2-3 kali sebulan dok.', sentiment: 'confirmation' },
+            ],
+            rpk: [],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_nausea"],
         anamnesis: ["Kepala saya sakit sebelah dok, berdenyut-denyut.", "Sakitnya parah banget dok, sampai mual dan muntah. Kalau kena cahaya silau banget."],
         physicalExamFindings: { general: "Tampak sakit sedang.", vitals: "TD 125/80, N 88x, RR 18x, S 36.6°C", neuro: "Status neurologis normal, meningeal sign (-)." },
         labs: {}, vitals: { temp: 36.6, bp: '125/80', hr: 88, rr: 18 },
@@ -95,6 +199,24 @@ export const NEUROLOGY_CASES = [
         skdi: '3A',
         category: 'Neurology',
         symptoms: ['Sakit kepala hampir tiap hari', 'Kepala seperti diikat kencang', 'Faktor psikologis (+)'],
+        symptoms: ["Nyeri kepala >15 hari/bulan","Bilateral pressing","Intensitas ringan-sedang","Kronik >3 bulan"],
+        clue: "[EBM: ICHD-3] CTTH — nyeri kepala ≥15 hari/bulan selama >3 bulan. Evaluasi medication overuse headache. Amitriptilin profilaksis.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Pusing terus ya?', response: 'Iya dok, hampir tiap hari kepala sakit, sudah berbulan-bulan.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_frequency', text: 'Sebulan berapa hari sakitnya?', response: 'Hampir tiap hari dok, kadang sebulan penuh.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_meds', text: 'Sering minum obat sakit kepala?', response: 'Tiap hari minum paracetamol dok.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rpd: [],
+            rpk: [],
+            sosial: [
+                { id: 'q_stress', text: 'Ada masalah atau stres?', response: 'Banyak pikiran dok.', sentiment: 'confirmation' },
+            ],
+        },
+        essentialQuestions: ["q_main","q_frequency","q_meds"],
         anamnesis: ["Kepala saya rasanya berat terus dok, kayak diikat kencang.", "Sudah hampir tiap hari nyutan dok, tapi nggak mual. Lagi banyak pikiran di rumah."],
         physicalExamFindings: { general: "Tampak cemas/lelah.", vitals: "TD 130/85, N 80x, RR 20x, S 36.8°C", neuro: "Fungsi motorik/sensorik normal, nyeri tekan otot pericranial (+)." },
         labs: {}, vitals: { temp: 36.8, bp: '130/85', hr: 80, rr: 20 },
@@ -111,6 +233,24 @@ export const NEUROLOGY_CASES = [
         skdi: '3A',
         category: 'Neurology',
         symptoms: ['Sering lupa barang/kejadian', 'Disorientasi jalan', 'Emosi labil'],
+        symptoms: ["Lupa baru","Disorientasi","Kesulitan bahasa","Perubahan perilaku"],
+        clue: "[EBM: NIA-AA 2018] Early Alzheimer — gangguan memori episodik progresif >6 bulan. MMSE screening. Evaluasi reversible causes (B12, TSH, depresi).",
+        relevantLabs: ["Darah Lengkap"],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Ibu/Bapak keluhannya apa?', response: 'Bapak saya pelupa banget dok, sering lupa nama cucu, lupa sudah makan.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_progression', text: 'Makin parah?', response: 'Makin lama makin parah dok, sudah setahun.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_daily', text: 'Bisa aktivitas sendiri?', response: 'Sudah mulai nggak bisa masak sendiri dok.', sentiment: 'denial' },
+            ],
+            rpd: [],
+            rpk: [
+                { id: 'q_family', text: 'Keluarga ada yang pikun?', response: 'Neneknya dulu juga pikun.', sentiment: 'confirmation' },
+            ],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_progression"],
         anamnesis: ["Ibu saya sering lupa dok, naruh barang atau nanya hal yang sama terus.", "Kadang bingung kalau mau ke pasar, padahal sudah puluhan tahun lewat situ. Emosinya juga labil."],
         physicalExamFindings: { general: "Tampak bingung, kooperatif.", vitals: "TD 130/80, N 80x, RR 18x, S 36.5°C", neuro: "MMSE Score: 22/30 (Mild cognitive impairment)." },
         labs: {}, vitals: { temp: 36.5, bp: '130/80', hr: 80, rr: 18 },

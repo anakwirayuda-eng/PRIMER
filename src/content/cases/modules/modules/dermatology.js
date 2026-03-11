@@ -13,6 +13,28 @@ export const DERMATOLOGY_CASES = [
         icd10: 'L23.9',
         skdi: '4A',
         category: 'Dermatology',
+        symptoms: ['Gatal di area kontak', 'Kemerahan batas tegas', 'Vesikel', 'Edema lokal'],
+        clue: "[EBM: AAD 2020] DKA — lesi eksematosa batas tegas sesuai pola kontak. Tanyakan allergen baru (sabun, kosmetik, perhiasan, sarung tangan latex). Gold standard: patch test.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Kulitnya kenapa?', response: 'Kulit saya gatal dan merah dok, habis pakai sabun cuci baru.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Kapan mulainya?', response: 'Sudah 2 hari dok, habis nyuci baju.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_contact', text: 'Pakai produk baru akhir-akhir ini?', response: 'Iya dok, ganti sabun cuci merk baru.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_vesicle', text: 'Ada bintil-bintil berair?', response: 'Ada dok, sedikit, perih juga.', sentiment: 'confirmation' },
+                { id: 'q_area', text: 'Di bagian mana aja?', response: 'Kedua tangan dok, yang kena sabun.', sentiment: 'confirmation' }
+            ],
+            rpd: [
+                { id: 'q_allergy', text: 'Pernah alergi kulit sebelumnya?', response: 'Dulu pernah alergi perhiasan.', sentiment: 'confirmation' }
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_occupation', text: 'Kerja apa sehari-hari?', response: 'Ibu rumah tangga dok, sering cuci baju dan piring.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_onset', 'q_contact'],
         anamnesis: ["Kulit saya gatal dan merah dok, habis pakai sabun cuci baru.", "Rasanya perih, bengkak, dan ada bintil-bintil air sedikit. Sudah 2 hari."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "TD 120/80, N 78x, RR 18x, S 36.5°C", skin: "Eritema (+), vesikel (+), papul eritematosa (+), batas tegas pada area kontak." },
         labs: {}, vitals: { temp: 36.5, bp: '120/80', hr: 78, rr: 18 },
@@ -28,6 +50,27 @@ export const DERMATOLOGY_CASES = [
         icd10: 'B86',
         skdi: '4A',
         category: 'Dermatology',
+        symptoms: ['Gatal malam hari', 'Papul di sela jari', 'Kanalikuli/burrow', 'Penularan kontak erat'],
+        clue: "[EBM: CDC/IACS 2020] Skabies — Sarcoptes scabiei. Patognomonik: burrow/kanalikuli. Gatal MALAM hari. Predileksi: sela jari, pergelangan, aksila, genital. Treat semua kontak serumah!",
+        relevantLabs: ['Skin Scraping'],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Gatalnya gimana?', response: 'Gatal banget dok kalau malam, di sela-sela jari.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Sudah berapa lama?', response: 'Sudah seminggu gatalnya makin parah.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_nocturnal', text: 'Lebih gatal malam atau siang?', response: 'Malam dok, nggak bisa tidur.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_location', text: 'Di mana aja gatalnya?', response: 'Sela jari, pergelangan tangan, perut.', sentiment: 'confirmation' }
+            ],
+            rpd: [],
+            rpk: [
+                { id: 'q_contact', text: 'Di rumah/pesantren ada yang gatal juga?', response: 'Teman satu pesantren banyak yang begini.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            sosial: [
+                { id: 'q_living', text: 'Tinggalnya di mana?', response: 'Di pesantren dok, satu kamar ber-10.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_nocturnal', 'q_contact'],
         anamnesis: ["Gatal banget dok kalau malam, di sela-sela jari.", "Teman satu pesantren juga banyak yang begini. Sudah seminggu gatalnya makin parah."],
         physicalExamFindings: { general: "Tampak tidak nyaman, menggaruk.", vitals: "TD 120/80, N 80x, RR 18x, S 36.7°C", skin: "Papul eritematosa (+), kanalikuli (+), ekskoriasi (+) pada sela jari, pergelangan tangan, dan regio umbilikus." },
         labs: { "Skin Scraping": { result: "Sarcoptes scabiei (+)", cost: 30000 } },
@@ -44,6 +87,27 @@ export const DERMATOLOGY_CASES = [
         icd10: 'B35.4',
         skdi: '4A',
         category: 'Dermatology',
+        symptoms: ['Bercak merah bulat', 'Central healing', 'Tepi aktif bersisik', 'Gatal'],
+        clue: "[EBM: AAD/BAD] Tinea — dermatofitosis. Lesi anular eritematosa dengan central healing + tepi elevated bersisik. KOH: hifa (+). Topikal antifungal 2-4 minggu.",
+        relevantLabs: ['KOH Test'],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Di badan ada apa ini?', response: 'Gatal di badan dok, bentuknya kayak pulau merah-merah.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_duration', text: 'Sudah berapa lama?', response: 'Sudah 2 minggu, awalnya kecil terus makin melebar.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_itch', text: 'Gatalnya kapan?', response: 'Kalau berkeringat makin gatal.', sentiment: 'confirmation' },
+                { id: 'q_spread', text: 'Makin lebar?', response: 'Iya dok, pinggirnya merah tapi tengahnya agak mendingan.', sentiment: 'confirmation' }
+            ],
+            rpd: [],
+            rpk: [
+                { id: 'q_contact', text: 'Di rumah ada yang kena juga?', response: 'Anak saya juga ada dok.', sentiment: 'confirmation' }
+            ],
+            sosial: [
+                { id: 'q_hygiene', text: 'Sering berkeringat? Pakai handuk bareng?', response: 'Iya sering keringatan, handuk kadang tuker-tukeran.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_duration'],
         anamnesis: ["Gatal di badan dok, bentuknya kayak pulau merah-merah.", "Kalau berkeringat makin gatal. Sudah 2 minggu, awalnya kecil terus makin melebar."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "TD 120/80, N 76x, RR 18x, S 36.5°C", skin: "Makula eritematosa numular, central healing (+), tepi aktif elevated (+), squama (+)." },
         labs: { "KOH Test": { result: "Hifa panjang bercabang (+)", cost: 30000 } },
@@ -60,6 +124,25 @@ export const DERMATOLOGY_CASES = [
         icd10: 'B86',
         skdi: '4A',
         category: 'Dermatology',
+        symptoms: ['Pustul pada lesi skabies', 'Krusta keemasan', 'Demam ringan', 'Nyeri lokal'],
+        clue: "[EBM: WHO Essential Dermatology] Skabies + impetiginisasi — garukan menyebabkan port d'entrée bakteri (S. aureus/Streptococcus). Antibiotik + skabisida simultan. Evaluasi risiko GNAPS.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Gatalnya sekarang gimana?', response: 'Gatal skabies saya jadi bernanah dok, sakit.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_change', text: 'Berubah ya dari biasanya?', response: 'Dulu cuma gatal, sekarang ada nanahnya dan sakit.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_scratch', text: 'Sering digaruk?', response: 'Sudah digaruk terus sampai luka.', sentiment: 'confirmation' },
+                { id: 'q_fever', text: 'Ada demam?', response: 'Agak hangat badan dok.', sentiment: 'confirmation' }
+            ],
+            rpd: [
+                { id: 'q_scabies', text: 'Sebelumnya memang skabies ya?', response: 'Iya dok, sudah sebulan nggak sembuh.', sentiment: 'confirmation' }
+            ],
+            rpk: [],
+            sosial: []
+        },
+        essentialQuestions: ['q_main', 'q_change'],
         anamnesis: ["Gatal skabies saya jadi bernanah dok, sakit.", "Sudah digaruk terus sampai luka dan sekarang bengkak merah dan ada nanahnya."],
         physicalExamFindings: { general: "Tampak sakit ringan.", vitals: "TD 110/70, N 88x, RR 20x, S 37.8°C", skin: "Pustul (+), krusta keemasan (+), edema, eritema pada area skabies." },
         labs: {}, vitals: { temp: 37.8, bp: '110/70', hr: 88, rr: 20 },
@@ -75,6 +158,25 @@ export const DERMATOLOGY_CASES = [
         icd10: 'B35.4',
         skdi: '4A',
         category: 'Dermatology',
+        symptoms: ['Plak jamur multipel luas', 'Gagal terapi topikal', 'Menyebar ke badan/punggung', 'Gatal kronik'],
+        clue: "[EBM: AAD] Tinea korporis luas/refrakter — indikasi antifungal oral (griseofulvin/terbinafine). Evaluasi imunodefisiensi jika luas/rekuren. KOH wajib sebelum terapi sistemik.",
+        relevantLabs: ['KOH 10%'],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Gatalnya luas ya?', response: 'Gatal sebadan-badan dok, bercak merahnya banyak sekali.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_duration', text: 'Sudah berapa lama?', response: 'Sudah sebulan lebih dok.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_treatment', text: 'Sudah diobati apa?', response: 'Sudah pakai salep beli sendiri di warung nggak sembuh-sembuh.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_spread', text: 'Makin meluas?', response: 'Iya dok, dulu cuma di perut sekarang sampai punggung.', sentiment: 'confirmation' }
+            ],
+            rpd: [
+                { id: 'q_immune', text: 'Ada penyakit lain? Diabetes?', response: 'Nggak ada dok setahu saya.', sentiment: 'denial' }
+            ],
+            rpk: [],
+            sosial: []
+        },
+        essentialQuestions: ['q_main', 'q_duration', 'q_treatment'],
         anamnesis: ["Gatal sebadan-badan dok, bercak merahnya banyak sekali.", "Sudah sebulan lebih, sudah pakai salep beli sendiri di warung nggak sembuh-sembuh."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "TD 120/80, N 80x, RR 18x, S 36.6°C", skin: "Multiple plaques, eritematosa, central healing (+), tersebar di thorax, abdomen, dan punggung." },
         labs: { "KOH 10%": { result: "Hifa (+)", cost: 30000 } },
@@ -91,6 +193,27 @@ export const DERMATOLOGY_CASES = [
         icd10: 'L24.9',
         skdi: '4A',
         category: 'Dermatology',
+        symptoms: ['Kulit panas perih', 'Eritema akut', 'Bula pada area paparan', 'Riwayat kontak iritan'],
+        clue: "[EBM: BAD 2021] DKI — reaksi toksik langsung (non-imunologis). Onset cepat setelah kontak. Batas tegas sesuai pola paparan. Beda dengan DKA: DKI onset cepat, DKA onset lambat 24-72 jam.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Tangannya kenapa?', response: 'Tangan saya panas dan perih dok, rasanya kayak kebakar.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Kapan mulainya?', response: 'Tadi habis bersihin kamar mandi pakai cairan pembersih kuat.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_chemical', text: 'Pakai sarung tangan nggak?', response: 'Lupa pake sarung tangan dok.', sentiment: 'denial', priority: 'essential' },
+                { id: 'q_wash', text: 'Sudah dibilas?', response: 'Sudah dok, tapi masih perih.', sentiment: 'confirmation' }
+            ],
+            rpd: [
+                { id: 'q_prev', text: 'Pernah begini sebelumnya?', response: 'Nggak pernah dok, baru kali ini.', sentiment: 'denial' }
+            ],
+            rpk: [],
+            sosial: [
+                { id: 'q_product', text: 'Produknya apa?', response: 'Pembersih WC yang warna biru dok, baunya menyengat.', sentiment: 'confirmation' }
+            ]
+        },
+        essentialQuestions: ['q_main', 'q_onset', 'q_chemical'],
         anamnesis: ["Tangan saya panas dan perih dok, rasanya kayak kebakar.", "Tadi habis bersihin kamar mandi pakai cairan pembersih kuat, lupa pake sarung tangan."],
         physicalExamFindings: { general: "Tampak menahan perih.", vitals: "TD 120/80, N 82x, RR 18x, S 36.5°C", skin: "Eritema, edema, bula (+), nyeri tekan (+) pada area paparan cairan kimia." },
         labs: {}, vitals: { temp: 36.5, bp: '120/80', hr: 82, rr: 18 },

@@ -29,6 +29,57 @@ const RADAR_NODES = [...Array(30)].map((_, i) => ({
 }));
 
 // ═══ SELF-CONTAINED CSS ═══
+function buildCanonicalSave(saveBlob) {
+    if (!saveBlob || typeof saveBlob !== 'object') return null;
+
+    const legacyProfile = saveBlob.profile && typeof saveBlob.profile === 'object' ? saveBlob.profile : null;
+    const profile = {
+        ...(saveBlob.player?.profile || {}),
+        ...(legacyProfile || {}),
+    };
+
+    if (profile.reputation === undefined && saveBlob.reputation !== undefined) {
+        profile.reputation = saveBlob.reputation;
+    }
+
+    const world = { ...(saveBlob.world || {}) };
+    if ((world.day === undefined || world.day === null) && saveBlob.day !== undefined) {
+        world.day = saveBlob.day;
+    }
+    if (world.day === undefined || world.day === null) {
+        world.day = 1;
+    }
+
+    const canonicalSave = {
+        ...saveBlob,
+        saveVersion: saveBlob.saveVersion || 4,
+        savedAt: saveBlob.savedAt || Date.now(),
+        world,
+    };
+
+    if (saveBlob.player || Object.keys(profile).length > 0) {
+        canonicalSave.player = {
+            ...(saveBlob.player || {}),
+            profile,
+        };
+    }
+
+    delete canonicalSave.profile;
+    delete canonicalSave.day;
+    delete canonicalSave.reputation;
+
+    return canonicalSave;
+}
+
+function normalizeSlot(saveBlob, slotId) {
+    const canonicalSave = buildCanonicalSave(saveBlob);
+    const profile = canonicalSave?.player?.profile || null;
+    const day = canonicalSave?.world?.day || 1;
+    const reputation = profile?.reputation ?? 80;
+    const savedAt = canonicalSave?.savedAt || null;
+    return { slotId, profile, day, reputation, savedAt, saveData: canonicalSave, _raw: canonicalSave };
+}
+
 const MENU_CSS = `
     @keyframes sss-radar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes sss-pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
@@ -79,25 +130,14 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     useEffect(() => {
         if (notification) { const t = setTimeout(() => setNotification(null), 3500); return () => clearTimeout(t); }
     }, [notification]);
-
-    // Normalize save data: v4 format uses { player: { profile }, world: { day } } 
-    // but slot UI reads flat: slot.profile, slot.day, slot.reputation
-    const normalizeSlot = (raw, slotId) => {
-        const profile = raw.player?.profile || raw.profile || null;
-        const day = raw.world?.day || raw.day || 1;
-        const reputation = profile?.reputation ?? raw.reputation ?? 80;
-        const savedAt = raw.savedAt || null;
-        return { slotId, profile, day, reputation, savedAt, _raw: raw };
-    };
-
     const loadSlots = () => {
         const loadedSlots = [];
         for (let i = 0; i < MAX_SLOTS; i++) {
             const data = localStorage.getItem(`primer_save_${i}`);
             if (data) {
                 try {
-                    const parsed = JSON.parse(data);
-                    loadedSlots.push(normalizeSlot(parsed, i));
+                    const saveBlob = JSON.parse(data);
+                    loadedSlots.push(normalizeSlot(saveBlob, i));
                 } catch { loadedSlots.push({ slotId: i, empty: true }); }
             } else loadedSlots.push({ slotId: i, empty: true });
         }
@@ -119,7 +159,8 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     const executeStartGame = (slotId, slotData) => {
         if (isTransitioning) return;
         setIsTransitioning(true);
-        setTimeout(() => onSelectSlot(slotId, slotData), 1200);
+        const payload = slotData?.saveData || slotData?._raw || slotData;
+        setTimeout(() => onSelectSlot(slotId, payload), 1200);
     };
 
     const executeNewGame = (slotId) => {
@@ -133,13 +174,14 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
         const data = localStorage.getItem(`primer_save_${slotId}`);
         if (!data) return;
         try {
-            const parsed = JSON.parse(data);
-            const exportData = { ...parsed, _exportInfo: { exportedAt: new Date().toISOString(), gameVersion: '1.0', originalSlot: slotId } };
+            const saveBlob = JSON.parse(data);
+            const canonicalSave = buildCanonicalSave(saveBlob);
+            const exportData = { ...canonicalSave, _exportInfo: { exportedAt: new Date().toISOString(), gameVersion: '1.0', originalSlot: slotId } };
             const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url;
-            const name = parsed.player?.profile?.name || parsed.profile?.name || 'Agent';
-            const day = parsed.world?.day || parsed.day || 1;
+            const name = canonicalSave?.player?.profile?.name || 'Agent';
+            const day = canonicalSave?.world?.day || 1;
             a.download = `PRIMER_Dossier_${name}_Day${day}.json`;
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
             setNotification({ type: 'success', message: 'BERKAS BERHASIL DIEKSPOR.' });
@@ -150,7 +192,16 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
         const allSaves = {}; let hasAnySave = false;
         for (let i = 0; i < MAX_SLOTS; i++) {
             const data = localStorage.getItem(`primer_save_${i}`);
-            if (data) { try { allSaves[`slot_${i}`] = JSON.parse(data); hasAnySave = true; } catch { } }
+            if (data) {
+                try {
+                    const saveBlob = JSON.parse(data);
+                    const canonicalSave = buildCanonicalSave(saveBlob);
+                    if (canonicalSave) {
+                        allSaves[`slot_${i}`] = canonicalSave;
+                        hasAnySave = true;
+                    }
+                } catch { continue; }
+            }
         }
         if (!hasAnySave) { setNotification({ type: 'error', message: 'DATABASE KOSONG.' }); return; }
         const blob = new Blob([JSON.stringify({ _exportInfo: { exportedAt: new Date().toISOString(), type: 'all_saves' }, saves: allSaves }, null, 2)], { type: 'application/json' });
@@ -165,7 +216,9 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
 
     const processImport = (slotId, data) => {
         try {
-            localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(data));
+            const canonicalSave = buildCanonicalSave(data);
+            if (!canonicalSave) throw new Error('Invalid save payload');
+            localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(canonicalSave));
             loadSlots(); setNotification({ type: 'success', message: `DOSSIER DITERIMA DI PORT 0${slotId + 1}.` });
             setOverwriteTarget(null);
         } catch { setNotification({ type: 'error', message: 'GAGAL MENYIMPAN DATA (QUOTA EXCEEDED).' }); }
@@ -179,33 +232,33 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                const data = JSON.parse(event.target?.result);
-                if (!data || typeof data !== 'object') throw new Error('Invalid JSON');
-                if (data._exportInfo?.type === 'all_saves' && data.saves) {
+                const payload = JSON.parse(event.target?.result);
+                if (!payload || typeof payload !== 'object') throw new Error('Invalid JSON');
+                if (payload._exportInfo?.type === 'all_saves' && payload.saves) {
                     let imported = 0;
-                    Object.entries(data.saves).forEach(([slotKey, saveData]) => {
+                    Object.entries(payload.saves).forEach(([slotKey, saveBlob]) => {
                         const match = slotKey.match(/slot_(\d+)/);
-                        if (match) {
-                            const slotId = parseInt(match[1]);
-                            if (slotId >= 0 && slotId < MAX_SLOTS) {
-                                const { _exportInfo, ...cleanData } = saveData;
-                                localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(cleanData));
-                                imported++;
-                            }
-                        }
+                        if (!match) return;
+
+                        const slotId = parseInt(match[1], 10);
+                        if (slotId < 0 || slotId >= MAX_SLOTS) return;
+
+                        const canonicalSave = buildCanonicalSave(saveBlob);
+                        if (!canonicalSave) return;
+
+                        localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(canonicalSave));
+                        imported++;
                     });
                     loadSlots(); setNotification({ type: 'success', message: `${imported} DATA BERHASIL DIPULIHKAN.` });
                 } else {
-                    const { _exportInfo, ...cleanData } = data;
-                    // Accept both legacy (profile/stats) and v4 (player/world) format
-                    const isV4 = !!cleanData.player;
-                    const isLegacy = !!cleanData.profile;
-                    if (!isV4 && !isLegacy) { setNotification({ type: 'error', message: 'FORMAT BERKAS KORUP.' }); return; }
+                    const { _exportInfo, ...importBlob } = payload;
+                    const canonicalSave = buildCanonicalSave(importBlob);
+                    if (!canonicalSave?.player?.profile) { setNotification({ type: 'error', message: 'FORMAT BERKAS KORUP.' }); return; }
                     const targetSlot = importTargetSlot !== null ? importTargetSlot : (_exportInfo?.originalSlot ?? 0);
                     if (targetSlot >= 0 && targetSlot < MAX_SLOTS) {
                         const isOccupied = !slots.find(s => s.slotId === targetSlot)?.empty;
-                        if (isOccupied) setOverwriteTarget({ slotId: targetSlot, data: cleanData });
-                        else processImport(targetSlot, cleanData);
+                        if (isOccupied) setOverwriteTarget({ slotId: targetSlot, data: canonicalSave });
+                        else processImport(targetSlot, canonicalSave);
                     }
                 }
             } catch { setNotification({ type: 'error', message: 'DEKRIPSI FILE GAGAL.' }); }

@@ -58,6 +58,25 @@ export const OPHTHALMOLOGY_CASES = [
         icd10: 'H10.0',
         skdi: '4A',
         category: 'Ophthalmology',
+        symptoms: ["Mata merah","Sekret purulen","Kelopak lengket pagi","Tidak nyeri"],
+        clue: "[EBM: AAO PPP 2018] Konjungtivitis bakterial — sekret mukopurulen, kelopak lengket pagi. AB topikal (kloramfenikol/gentamisin tetes). Self-limited 5-7 hari.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Matanya kenapa?', response: 'Mata merah dok, keluar kotoran kuning kental.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_discharge', text: 'Pagi hari lengket?', response: 'Iya dok, pagi susah buka mata karena lengket.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_pain', text: 'Nyeri?', response: 'Nggak nyeri dok, cuma gatal sedikit.', sentiment: 'denial' },
+                { id: 'q_vision', text: 'Penglihatan terganggu?', response: 'Agak kabur karena kotoran, tapi kalau dilap bisa lihat.', sentiment: 'confirmation' },
+            ],
+            rpd: [],
+            rpk: [
+                { id: 'q_contact', text: 'Ada yang sakit mata juga?', response: 'Anak saya yang satu juga mulai merah.', sentiment: 'confirmation' },
+            ],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_discharge"],
         anamnesis: ["Mata merah dan berlendir dok, lengket pas bangun tidur.", "Sudah 2 hari matanya merah, gatal, dan keluar kotoran terus. Kakak saya juga kena kemarin."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "TD 120/80, N 78x, RR 18x, S 36.7°C", heent: "Mata: Konjungtiva palpebra hiperemis (+), sekret mukopurulen (+), kornea jernih. Visus normal." },
         labs: {}, vitals: { temp: 36.7, bp: '120/80', hr: 78, rr: 18 },
@@ -73,6 +92,24 @@ export const OPHTHALMOLOGY_CASES = [
         icd10: 'H00.0',
         skdi: '4A',
         category: 'Ophthalmology',
+        symptoms: ["Benjolan nyeri di kelopak mata","Kemerahan lokal","Bengkak","Nyeri tekan"],
+        clue: "[EBM: AAO] Hordeolum — infeksi kelenjar Zeiss/Moll (eksternum). Kompres hangat 10-15 menit 4x/hari. AB topikal. Insisi drainase jika tidak respon.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Matanya kenapa?', response: 'Ada bintitan dok, sakit dan bengkak.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_onset', text: 'Baru muncul kapan?', response: '2 hari lalu dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_vision', text: 'Penglihatan terganggu?', response: 'Nggak dok, cuma sakit aja.', sentiment: 'denial' },
+            ],
+            rpd: [
+                { id: 'q_recur', text: 'Sering bintitan?', response: 'Kadang-kadang dok.', sentiment: 'confirmation' },
+            ],
+            rpk: [],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_onset"],
         anamnesis: ["Ada bisul kecil di pinggir bulu mata dok, sakit.", "Baru muncul kemarin, merah dan bengkak. Malu dok jadi bintitan begini."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "TD 120/80, N 76x, RR 18x, S 36.8°C", heent: "Mata: Benjolan (nodul) kecil, merah, nyeri tekan (+), fluktuatif (+) minimal di margo palpebra." },
         labs: {}, vitals: { temp: 36.8, bp: '120/80', hr: 76, rr: 18 },
@@ -88,6 +125,22 @@ export const OPHTHALMOLOGY_CASES = [
         icd10: 'H52.4',
         skdi: '4A',
         category: 'Ophthalmology',
+        symptoms: ["Sulit membaca dekat","Menjauhkan bacaan","Mata lelah","Usia >40 tahun"],
+        clue: "[EBM: AAO] Presbiopi — penurunan akomodasi fisiologis usia >40. Koreksi: kacamata baca (+). Bukan penyakit, aging process normal.",
+        relevantLabs: [],
+        anamnesisQuestions: {
+            keluhan_utama: [
+                { id: 'q_main', text: 'Matanya kenapa pak/bu?', response: 'Susah baca dok, hurufnya kabur kalau dekat.', sentiment: 'confirmation', priority: 'essential' },
+            ],
+            rps: [
+                { id: 'q_distance', text: 'Kalau jauh gimana?', response: 'Kalau jauh masih jelas dok, yang dekat aja nggak bisa.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_fatigue', text: 'Mata cepat lelah?', response: 'Iya dok, apalagi baca lama.', sentiment: 'confirmation' },
+            ],
+            rpd: [],
+            rpk: [],
+            sosial: [],
+        },
+        essentialQuestions: ["q_main","q_distance"],
         anamnesis: ["Mata saya susah baca dekat dok, harus dijauhkan baru keliatan.", "Tulisan kecil nggak keliatan dok, harus menjauh dulu. Umur saya 45 tahun."],
         physicalExamFindings: {
             general: "Tampak baik, dewasa.",

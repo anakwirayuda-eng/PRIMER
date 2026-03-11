@@ -1,6 +1,9 @@
-<!-- PRIMERA_PROVENANCE {"generatedAt":"2026-03-11T12:08:10.052Z","gitSha":"7e78983","dirty":true,"sourceCommand":"megalog_v5","inputArtifacts":["eslint.json","vitest.json","playwright.json","assets.json","folder_map.json","static_health.json","clinical.json","clinical_guardian.json","invariant_audit.json","clinical_lifecycle_audit.json","triage_safety_audit.json"]} -->
+<!-- PRIMERA_PROVENANCE {"generatedAt":"2026-03-11T12:57:16.854Z","gitSha":"unknown","dirty":true,"sourceCommand":"megalog_v5","inputArtifacts":["eslint.json","vitest.json","playwright.json","assets.json","folder_map.json","static_health.json","clinical.json","clinical_guardian.json","invariant_audit.json","clinical_lifecycle_audit.json","triage_safety_audit.json"]} -->
 
 # PRIMERA MEGALOG v5.0
+
+
+
 
 ## FORENSIC DEBT
 > Automated forensic analysis of undefined symbols.
@@ -14,8 +17,2204 @@ Daftar identifier yang `no-undef` dan analisis posisinya.
 
 ---
 
+> Automated forensic analysis of undefined symbols.
+
+
+Daftar identifier yang `no-undef` dan analisis posisinya.
+
+| Symbol | File | Line | Context |
+| :--- | :--- | :--- | :--- |
+| `pickFromPool` | [DialogueEngine.js](file://D:\Dev\PRIMER\src\game\anamnesis\DialogueEngine.js) | 245 | `` |
+
+---
+
+> Automated forensic analysis of undefined symbols.
+
+
+Daftar identifier yang `no-undef` dan analisis posisinya.
+
+| Symbol | File | Line | Context |
+| :--- | :--- | :--- | :--- |
+| `pickFromPool` | [DialogueEngine.js](file://D:\Dev\PRIMER\src\game\anamnesis\DialogueEngine.js) | 245 | `` |
+
+---
+
+> Automated forensic analysis of undefined symbols.
+
+
+Daftar identifier yang `no-undef` dan analisis posisinya.
+
+| Symbol | File | Line | Context |
+| :--- | :--- | :--- | :--- |
+| `pickFromPool` | [DialogueEngine.js](file://D:\Dev\PRIMER\src\game\anamnesis\DialogueEngine.js) | 245 | `` |
+
+---
+
+
+
+
 
 ## FOLDER TOPOLOGY
+Generated: 11/3/2026, 19.57.16
+
+```
+.
+├── AI_Comparison_Report.md
+├── analyze_skdi.mjs
+├── backup_project.ps1
+├── build_error.log
+├── build_error.txt
+├── Data Luar/
+│   └── Mapping SKDI 2021.xlsx
+├── DESIGN_SPEC_INVARIANTS.md
+├── diagnostics/
+│   ├── configs/
+│   │   ├── eslint.config.js
+│   │   ├── package.json
+│   │   ├── postcss.config.js
+│   │   ├── tailwind.config.js
+│   │   ├── vite.config.js
+│   │   └── vitest.config.js
+│   ├── env.txt
+│   ├── eslint-final-fix.json
+│   ├── eslint-report.json
+│   ├── eslint.print-config.json
+│   ├── folder-tree.md
+│   ├── folder-typology.md
+│   ├── git-info.txt
+│   ├── lint-rules-summary.json
+│   ├── lint-stdout.txt
+│   ├── reachability_map.md
+│   ├── risk-assessment.md
+│   ├── store-schema.md
+│   ├── toolchain-fingerprint.md
+│   ├── tree.txt
+│   └── undefined-ledger.md
+├── docs/
+│   ├── anamnesis_architecture.md
+│   ├── grok_prompt_ukm_integration.md
+│   ├── icd_translation_audit.md
+│   └── prompt_ttm_behavioral_models.md
+├── eslint-report.json
+├── eslint.config.js
+├── eslint_final.json
+├── eslint_v2.json
+├── eslint_v3.json
+├── index.html
+├── megalog/
+│   ├── asset_hygiene.json
+│   ├── asset_hygiene.md
+│   ├── asset_reference_guard.json
+│   ├── asset_reference_guard.md
+│   ├── feature_guard.json
+│   ├── feature_guard.md
+│   ├── history/
+│   │   ├── PRIMERA_history.json
+│   │   └── simulation_results.json
+│   ├── lint_baseline.json
+│   ├── lint_raw_stderr.log
+│   ├── lint_raw_stdout.log
+│   ├── lint_report.json
+│   ├── lint_report.md
+│   └── outputs/
+│       ├── assets.json
+│       ├── asset_hygiene.md
+│       ├── clinical.json
+│       ├── clinical_audit.json
+│       ├── clinical_guardian.json
+│       ├── clinical_lifecycle_audit.json
+│       ├── collision_audit.json
+│       ├── depcruise.json
+│       ├── eslint.json
+│       ├── eslint_clean.json
+│       ├── eslint_clean_final.json
+│       ├── eslint_clean_v2.json
+│       ├── eslint_clean_v3.json
+│       ├── eslint_done.json
+│       ├── eslint_final.json
+│       ├── eslint_v2.json
+│       ├── eslint_v3.json
+│       ├── eslint_v4.json
+│       ├── extracted_anamnesis_ids.json
+│       ├── feature_graph.json
+│       ├── folder_map.json
+│       ├── health.json
+│       ├── igd_sisrute_gate.json
+│       ├── invariant_audit.json
+│       ├── knip.json
+│       ├── module-map.json
+│       ├── oscillation_audit.json
+│       ├── patch_proposals.json
+│       ├── playwright.json
+│       ├── playwright_utf8.json
+│       ├── save_audit.json
+│       ├── scenarios/
+│       │   ├── golden_path_clinical_result.json
+│       │   ├── save_roundtrip_result.json
+│       │   └── scenario_replay_vitest.json
+│       ├── scenario_replay.json
+│       ├── snapshots/
+│       │   ├── sim_day_1_1771209962696.json
+│       │   ├── sim_day_1_1771212729101.json
+│       │   └── sim_day_1_1771623873041.json
+│       ├── static_health.json
+│       ├── store_audit.json
+│       ├── test_clean.txt
+│       ├── test_output.txt
+│       ├── test_output_v2.txt
+│       ├── topology.json
+│       ├── triage_safety_audit.json
+│       └── vitest.json
+├── megalog_v4_report.md
+├── package.json
+├── parse_skdi.mjs
+├── playwright-report/
+│   ├── data/
+│   │   └── 53eca4aa95f837fbec89db17f3e3bceeba4a65c6.md
+│   └── index.html
+├── playwright.config.js
+├── postcss.config.js
+├── PRIMERA_AGENT_CONTEXT.md
+├── PRIMERA_AUTO_FIX.bat
+├── PRIMERA_DASHBOARD.bat
+├── PRIMERA_INJECT_TOOL.bat
+├── PRIMERA_INTELLIGENCE.md
+├── PRIMERA_megalog.md
+├── PRIMERA_SENTINEL.bat
+├── PRIMERA_SYNC.bat
+├── PRIMERA_system_overview.md
+├── PRIMERA_WATCH.bat
+├── PRIMER_BIBLE.md
+├── PROPHYLAXIS_CONTRACT.md
+├── public/
+│   ├── anatomical-base.png
+│   ├── assets/
+│   │   ├── avatars/
+│   │   │   ├── female_dark.png
+│   │   │   ├── female_hijab.png
+│   │   │   ├── female_light.png
+│   │   │   ├── female_medium.png
+│   │   │   ├── male_dark.png
+│   │   │   ├── male_glasses.png
+│   │   │   ├── male_light.png
+│   │   │   └── male_medium.png
+│   │   ├── buildings/
+│   │   │   ├── alun_alun.png
+│   │   │   ├── balai_desa.png
+│   │   │   ├── bank_sampah.png
+│   │   │   ├── dashat.png
+│   │   │   ├── farm_interior.png
+│   │   │   ├── house.png
+│   │   │   ├── house_blue.png
+│   │   │   ├── house_classic.png
+│   │   │   ├── house_hut.png
+│   │   │   ├── house_modern.png
+│   │   │   ├── house_red.png
+│   │   │   ├── house_trad.png
+│   │   │   ├── hutan_lindung.png
+│   │   │   ├── iks_scoreboard.png
+│   │   │   ├── kantor_desa.png
+│   │   │   ├── lapangan.png
+│   │   │   ├── market.png
+│   │   │   ├── mck.png
+│   │   │   ├── mosque.png
+│   │   │   ├── pamsimas.png
+│   │   │   ├── playground.png
+│   │   │   ├── polindes.png
+│   │   │   ├── posyandu.png
+│   │   │   ├── posyandu_interior.png
+│   │   │   ├── pos_gizi.png
+│   │   │   ├── pos_ukk.png
+│   │   │   ├── puskesmas.png
+│   │   │   ├── pustu.png
+│   │   │   ├── rtk.png
+│   │   │   ├── rumah_dinas.png
+│   │   │   ├── school.png
+│   │   │   ├── school_interior.png
+│   │   │   ├── sungai_cikapas.png
+│   │   │   ├── tk.png
+│   │   │   ├── toga.png
+│   │   │   ├── toko_kelontong.png
+│   │   │   ├── tpu.png
+│   │   │   ├── warung.png
+│   │   │   └── well.png
+│   │   ├── cursor_ff8.png
+│   │   ├── facility_tileset.png
+│   │   ├── fkk_logo.png
+│   │   ├── its_logo.png
+│   │   ├── mck_facility.png
+│   │   ├── road_asphalt_h.png
+│   │   ├── road_asphalt_v.png
+│   │   ├── road_dirt_h.png
+│   │   ├── road_dirt_v.png
+│   │   ├── rooms/
+│   │   │   ├── bedroom.png
+│   │   │   ├── garage.png
+│   │   │   ├── guest_room.png
+│   │   │   ├── gym.png
+│   │   │   ├── kitchen.png
+│   │   │   ├── living_room.png
+│   │   │   └── workspace.png
+│   │   ├── village_map.jpg
+│   │   ├── village_map_satellite.png
+│   │   ├── village_profile_hero.png
+│   │   └── wilayah_tileset.png
+│   ├── audio/
+│   │   ├── arni_another.mp3
+│   │   ├── arni_home.mp3
+│   │   ├── balamb_garden.mp3
+│   │   ├── blue_fields.mp3
+│   │   ├── fishermans_horizon.mp3
+│   │   ├── guldove_another.mp3
+│   │   └── guldove_home.mp3
+│   ├── avatars.png
+│   ├── images/
+│   │   ├── tiles/
+│   │   └── wilayah/
+│   │       ├── balai-desa.png
+│   │       ├── balai_desa_iso.png
+│   │       ├── forest_iso.png
+│   │       ├── house_blue_iso.png
+│   │       ├── house_classic_iso.png
+│   │       ├── house_hut_iso.png
+│   │       ├── house_modern_iso.png
+│   │       ├── house_red_iso.png
+│   │       ├── house_trad_iso.png
+│   │       ├── hutan.png
+│   │       ├── igd_bg.png
+│   │       ├── kantor-desa.png
+│   │       ├── kantor_desa_iso.png
+│   │       ├── lapangan.png
+│   │       ├── lapangan_bola_iso.png
+│   │       ├── market_iso.png
+│   │       ├── masjid.png
+│   │       ├── masjid_iso.png
+│   │       ├── mck_facility.png
+│   │       ├── pasar.png
+│   │       ├── playground_iso.png
+│   │       ├── playground_iso_refined.png
+│   │       ├── poli_umum_bg.png
+│   │       ├── posyandu_iso.png
+│   │       ├── puskesmas.png
+│   │       ├── puskesmas_iso.png
+│   │       ├── river_iso.png
+│   │       ├── rumah-pixel.png
+│   │       ├── rumah-warga.png
+│   │       ├── rumah_dinas_iso.png
+│   │       ├── school_iso.png
+│   │       ├── sekolah-pixel.png
+│   │       ├── sekolah.png
+│   │       ├── tk_iso.png
+│   │       ├── toko_kelontong_iso.png
+│   │       ├── tpu.png
+│   │       ├── tpu_iso_refined.png
+│   │       ├── warung_iso.png
+│   │       ├── well_iso.png
+│   │       └── wisata-alam.jpg
+│   └── vite.svg
+├── README.md
+├── ROADMAP.md
+├── run_backup.bat
+├── run_game.bat
+├── scripts/
+│   ├── add-relevant-categories.mjs
+│   ├── add-semantic-tags.mjs
+│   ├── analyze-fktp-gap.mjs
+│   ├── archive/
+│   │   ├── legacy_audits/
+│   │   │   ├── analyze_rules.mjs
+│   │   │   ├── audit_anamnesis.mjs
+│   │   │   ├── audit_cases.mjs
+│   │   │   ├── audit_clinical_review.mjs
+│   │   │   ├── audit_complete_sync.cjs
+│   │   │   ├── audit_comprehensive.mjs
+│   │   │   ├── audit_deep_dedup.cjs
+│   │   │   ├── audit_duplicates.cjs
+│   │   │   ├── audit_final_results.txt
+│   │   │   ├── audit_igd_sync.cjs
+│   │   │   ├── audit_inventory_sync.js
+│   │   │   ├── audit_master.mjs
+│   │   │   ├── audit_puskesmas_list.mjs
+│   │   │   ├── audit_results.txt
+│   │   │   ├── audit_results_final.txt
+│   │   │   ├── audit_results_fixed.txt
+│   │   │   ├── audit_results_full.txt
+│   │   │   ├── audit_results_latest.txt
+│   │   │   ├── audit_therapy_edu.js
+│   │   │   ├── audit_variations_gap.cjs
+│   │   │   ├── audit_variations_gap.js
+│   │   │   ├── build_log.txt
+│   │   │   ├── category_audit.mjs
+│   │   │   ├── compare_lints.mjs
+│   │   │   ├── compare_v3.mjs
+│   │   │   ├── consistency_audit.mjs
+│   │   │   ├── count_eslint_rules.mjs
+│   │   │   ├── debug_meds.mjs
+│   │   │   ├── debug_proc.mjs
+│   │   │   ├── deep_audit.mjs
+│   │   │   ├── demo_llm.mjs
+│   │   │   ├── extract_questions.js
+│   │   │   ├── fix_categories.mjs
+│   │   │   ├── fix_duplicates.cjs
+│   │   │   ├── merge_databases.cjs
+│   │   │   ├── verify_done.mjs
+│   │   │   └── verify_final.mjs
+│   │   └── phases/
+│   │       ├── apply_phase6.mjs
+│   │       ├── apply_phase7.mjs
+│   │       └── phase6_update.mjs
+│   ├── audit-anamnesis-dialogue.mjs
+│   ├── audit-data-contracts.mjs
+│   ├── audit-i18n-quality.mjs
+│   ├── audit-icd-concordance.mjs
+│   ├── audit-import-integrity.mjs
+│   ├── audit-integration-smoke.mjs
+│   ├── audit-maia-bruteforce.mjs
+│   ├── audit-search-ux.mjs
+│   ├── audit-ui-clinical.mjs
+│   ├── check_assets.mjs
+│   ├── export-textures.mjs
+│   ├── extract-missing-icd.mjs
+│   ├── fix-and-typo.cjs
+│   ├── fix-rng.cjs
+│   ├── fix_jsx_extensions.mjs
+│   ├── gen_missing_meds.mjs
+│   ├── maia-audit-results.txt
+│   ├── megalog_v4_analyzer.mjs
+│   ├── patch-maia-overlay.cjs
+│   ├── primera/
+│   │   ├── agent_snapshot.mjs
+│   │   ├── artifact_manifest.mjs
+│   │   ├── auto_fix_orchestrator.mjs
+│   │   ├── clinical_watchdog.mjs
+│   │   ├── engine-clinical-guardian.mjs
+│   │   ├── engine-clinical-lifecycle.mjs
+│   │   ├── engine-collision.mjs
+│   │   ├── engine-igd-sisrute-gate.mjs
+│   │   ├── engine-invariants-runtime.mjs
+│   │   ├── engine-oscillation.mjs
+│   │   ├── engine-save-audit.mjs
+│   │   ├── engine-scenario-replay.mjs
+│   │   ├── engine-store-audit.mjs
+│   │   ├── engine-topology.mjs
+│   │   ├── engine-triage-gate.mjs
+│   │   ├── engine-wiring.mjs
+│   │   ├── gameplay_test.mjs
+│   │   ├── health_engine.mjs
+│   │   ├── inject_reflection.mjs
+│   │   ├── lint_surgeon.mjs
+│   │   ├── megalog_v5.mjs
+│   │   ├── pldb_analyzer.mjs
+│   │   ├── pldb_exporter.mjs
+│   │   ├── reflection_ratchet.mjs
+│   │   ├── reflect_and_sync.mjs
+│   │   ├── sentinel.mjs
+│   │   ├── simulation_runner.mjs
+│   │   ├── store_dumper.mjs
+│   │   ├── test_invariants.mjs
+│   │   ├── ukm_test.mjs
+│   │   ├── watchdog-assets.mjs
+│   │   ├── watchdog-lint-budget.mjs
+│   │   └── watchdog-pathfinder.mjs
+│   ├── primera_watchdog.mjs
+│   ├── simulate-dialogue-10x.mjs
+│   ├── simulate-dialogue-v2.mjs
+│   ├── simulate-dialogue-v3.mjs
+│   ├── simulate-dialogue-v4.mjs
+│   ├── simulate-dialogue-v5.mjs
+│   ├── simulate-dialogue.mjs
+│   ├── test_migration.mjs
+│   ├── test_population_logic.js
+│   ├── test_registry.mjs
+│   ├── validate-assets.mjs
+│   └── watchdog-asset-refs.mjs
+├── skdi_Keterampilan_4A.json
+├── skdi_Penyakit_4A.json
+├── skdi_Plus_Keterampilan_Lain.json
+├── skdi_SKDI_2012.json
+├── src/
+│   ├── App.jsx
+│   ├── assets/
+│   │   ├── asset-manifest.json
+│   │   ├── assets.js
+│   │   └── buildings/
+│   │       ├── alun_alun.png
+│   │       ├── balai_desa.png
+│   │       ├── bank_sampah.png
+│   │       ├── dashat.png
+│   │       ├── house.png
+│   │       ├── iks_scoreboard.png
+│   │       ├── kantor_desa.png
+│   │       ├── market.png
+│   │       ├── mck.png
+│   │       ├── mosque.png
+│   │       ├── pamsimas.png
+│   │       ├── polindes.png
+│   │       ├── posyandu.png
+│   │       ├── pos_gizi.png
+│   │       ├── pos_ukk.png
+│   │       ├── puskesmas.png
+│   │       ├── pustu.png
+│   │       ├── rtk.png
+│   │       ├── rumah_dinas.png
+│   │       ├── school.png
+│   │       ├── tk.png
+│   │       ├── toga.png
+│   │       ├── tpu.png
+│   │       └── well.png
+│   ├── components/
+│   │   ├── AboutModal.jsx
+│   │   ├── apps/
+│   │   │   ├── BankApp.jsx
+│   │   │   ├── ChatApp.jsx
+│   │   │   ├── NewsApp.jsx
+│   │   │   └── ShopApp.jsx
+│   │   ├── ArsipPage.jsx
+│   │   ├── AvatarRenderer.jsx
+│   │   ├── AvatarSelectionModal.jsx
+│   │   ├── BodyMapWidget.jsx
+│   │   ├── CalendarModal.jsx
+│   │   ├── ClinicalPage.jsx
+│   │   ├── CPPTCard.jsx
+│   │   ├── DailyReportModal.jsx
+│   │   ├── dashboard/
+│   │   │   ├── AccreditationView.jsx
+│   │   │   ├── ClinicalView.jsx
+│   │   │   ├── CommunityView.jsx
+│   │   │   ├── LogisticsView.jsx
+│   │   │   └── PerformanceView.jsx
+│   │   ├── DashboardPage.jsx
+│   │   ├── DatabaseSync.jsx
+│   │   ├── DiklatPage.jsx
+│   │   ├── EducationalWikiModal.jsx
+│   │   ├── EmergencyPanel.jsx
+│   │   ├── emr/
+│   │   │   ├── AnamnesisTab.jsx
+│   │   │   ├── AssessmentTab.jsx
+│   │   │   ├── BillingTab.jsx
+│   │   │   ├── ClinicalSidebar.jsx
+│   │   │   ├── EducationTab.jsx
+│   │   │   ├── HistoryTab.jsx
+│   │   │   ├── LabTab.jsx
+│   │   │   ├── PhysicalExamTab.jsx
+│   │   │   ├── ProceduresTab.jsx
+│   │   │   ├── ReasoningDashboard.jsx
+│   │   │   └── TreatmentTab.jsx
+│   │   ├── EndOfDayModal.jsx
+│   │   ├── ErrorBoundary.jsx
+│   │   ├── FarmasiPanel.jsx
+│   │   ├── GameOverModal.jsx
+│   │   ├── gedung/
+│   │   │   ├── RoomCard.jsx
+│   │   │   └── UpgradeModal.jsx
+│   │   ├── GedungPage.jsx
+│   │   ├── InfoTooltip.jsx
+│   │   ├── InventoryPage.jsx
+│   │   ├── KPIDashboard.jsx
+│   │   ├── MainLayout.jsx
+│   │   ├── MetricCard.jsx
+│   │   ├── MorningBriefingModal.jsx
+│   │   ├── NarrativeOverlay.jsx
+│   │   ├── OpeningScreen.jsx
+│   │   ├── OrderModal.jsx
+│   │   ├── OutbreakBanner.jsx
+│   │   ├── OutbreakModal.jsx
+│   │   ├── PatientEMR.jsx
+│   │   ├── PatientHistoryModal.jsx
+│   │   ├── PlayerSetup.jsx
+│   │   ├── PosyanduModal.jsx
+│   │   ├── ProlanisConsultation.jsx
+│   │   ├── ProlanisPanel.jsx
+│   │   ├── QuestBoard.jsx
+│   │   ├── QueueList.jsx
+│   │   ├── ReferralHUD.jsx
+│   │   ├── ReferralSISRUTEModal.jsx
+│   │   ├── SaranaPage.jsx
+│   │   ├── SaveSlotSelector.jsx
+│   │   ├── sensus/
+│   │   │   └── SensusPage.jsx
+│   │   ├── ServiceCardDeck.jsx
+│   │   ├── SettingsModal.jsx
+│   │   ├── shared/
+│   │   │   ├── ExpandableCard.jsx
+│   │   │   ├── GuidelineBadge.jsx
+│   │   │   ├── StatCard.jsx
+│   │   │   └── StepCarousel.jsx
+│   │   ├── Smartphone.jsx
+│   │   ├── staff/
+│   │   │   ├── StaffCard.jsx
+│   │   │   └── StaffDetail.jsx
+│   │   ├── StaffPage.jsx
+│   │   ├── StatusJunctionModal.jsx
+│   │   ├── VillagerAvatar.jsx
+│   │   ├── WeekendModal.jsx
+│   │   ├── wilayah/
+│   │   │   ├── AuxiliaryComponents.jsx
+│   │   │   ├── BehaviorCasePanel.jsx
+│   │   │   ├── BuildingGamePanel.jsx
+│   │   │   ├── buildingScenes.js
+│   │   │   ├── CommunityDiagnosisPanel.jsx
+│   │   │   ├── constants.js
+│   │   │   ├── EliteCOMBWheel.jsx
+│   │   │   ├── map-utils.js
+│   │   │   ├── MapCanvas.jsx
+│   │   │   ├── MiniGamePanel.jsx
+│   │   │   ├── PixelSceneRenderer.jsx
+│   │   │   ├── PosyanduActivePanel.jsx
+│   │   │   ├── PremiumMapDemo.jsx
+│   │   │   ├── PustuActivePanel.jsx
+│   │   │   └── TerrainCanvas.jsx
+│   │   └── WilayahPage.jsx
+│   ├── content/
+│   │   ├── cases/
+│   │   │   └── CaseLibrary.js
+│   │   ├── concepts/
+│   │   │   └── village_politics.md
+│   │   ├── residents/
+│   │   │   ├── DialogVariations.js
+│   │   │   ├── PersonalityTraits.js
+│   │   │   └── ResidentProfiles.js
+│   │   └── scenarios/
+│   │       ├── CulturalBeliefs.js
+│   │       ├── DiseaseScenarios.js
+│   │       ├── IKMScenarioLibrary.js
+│   │       └── PHBSIndicators.js
+│   ├── context/
+│   │   ├── contracts/
+│   │   │   └── gameContext.contract.js
+│   │   ├── GameContext.jsx
+│   │   └── ThemeContext.jsx
+│   ├── contracts/
+│   │   └── store.contract.mjs
+│   ├── data/
+│   │   ├── AppMetadata.js
+│   │   ├── CalendarEventDB.js
+│   │   ├── ClinicalServices.js
+│   │   ├── EducationOptions.js
+│   │   ├── extract_icd9.cjs
+│   │   ├── extract_icd9.py
+│   │   ├── FacilityData.js
+│   │   ├── FKTP144Diseases.js
+│   │   ├── FurnitureData.js
+│   │   ├── HospitalDB.js
+│   │   ├── ICD10.js
+│   │   ├── ICD10_ALIASES.js
+│   │   ├── ICD9CM.js
+│   │   ├── index.js
+│   │   ├── master_icd_10.json
+│   │   ├── master_icd_9.json
+│   │   ├── medication/
+│   │   │   └── utils.js
+│   │   ├── MedicationDatabase.js
+│   │   ├── ProceduresDB.js
+│   │   ├── ProlanisDB.js
+│   │   ├── StaffData.js
+│   │   ├── SupplierDatabase.js
+│   │   ├── wiki/
+│   │   │   ├── dashboard_manajemen.js
+│   │   │   ├── emergency_wiki.js
+│   │   │   ├── igd.js
+│   │   │   ├── klinis.js
+│   │   │   ├── kulit.js
+│   │   │   ├── lab_prosedur.js
+│   │   │   ├── manajemen.js
+│   │   │   ├── obat.js
+│   │   │   ├── penyakit.js
+│   │   │   └── wilayah.js
+│   │   └── WikiData.js
+│   ├── diagnostics/
+│   │   └── invariants.js
+│   ├── domains/
+│   │   ├── clinical/
+│   │   ├── community/
+│   │   │   └── OutbreakSystem.js
+│   │   └── village/
+│   │       ├── NPCReadiness.js
+│   │       ├── VillagerBehavior.js
+│   │       ├── VillageRegistry.js
+│   │       └── village_families.js
+│   ├── game/
+│   │   ├── anamnesis/
+│   │   │   ├── Constants.js
+│   │   │   ├── DialogueEngine.js
+│   │   │   ├── EmotionEngine.js
+│   │   │   ├── InformantSystem.js
+│   │   │   ├── SynthesisEngine.js
+│   │   │   └── TextAdapter.js
+│   │   ├── AnamnesisEngine.js
+│   │   ├── AnamnesisPrompts.js
+│   │   ├── AnamnesisVariations.js
+│   │   ├── BehaviorCaseEngine.js
+│   │   ├── BillingEngine.js
+│   │   ├── CaseIndicators.js
+│   │   ├── ClinicalReasoning.js
+│   │   ├── ConsequenceEngine.js
+│   │   ├── CPPTEngine.js
+│   │   ├── DebriefEngine.js
+│   │   ├── dental/
+│   │   │   ├── DentalDiagnosisEngine.js
+│   │   │   └── DentalProcedureEngine.js
+│   │   ├── DispensingEngine.js
+│   │   ├── emergency/
+│   │   │   └── EmergencyRegistry.js
+│   │   ├── EmergencyCases.js
+│   │   ├── EmergingEventTriggers.js
+│   │   ├── GameCore.js
+│   │   ├── GuestEventSystem.js
+│   │   ├── IKMEventEngine.js
+│   │   ├── index.js
+│   │   ├── KaderNetwork.js
+│   │   ├── kia/
+│   │   │   ├── GrowthChartEngine.js
+│   │   │   ├── ImmunizationEngine.js
+│   │   │   └── PregnancyEngine.js
+│   │   ├── LabEngine.js
+│   │   ├── MiniGameLibrary.js
+│   │   ├── MorningBriefing.js
+│   │   ├── PatientGenerator.js
+│   │   ├── PosyanduEngine.js
+│   │   ├── ProlanisEngine.js
+│   │   ├── QuestEngine.js
+│   │   ├── StoryDatabase.js
+│   │   ├── TheDirector.js
+│   │   └── ValidationEngine.js
+│   ├── gameplay/
+│   │   └── featureRegistry.js
+│   ├── hooks/
+│   │   ├── useGameLoop.js
+│   │   ├── useModalA11y.js
+│   │   ├── useNavAndSettings.js
+│   │   ├── usePatientEMR.js
+│   │   └── useStaffManagement.js
+│   ├── i18n.js
+│   ├── index.css
+│   ├── locales/
+│   │   ├── en.json
+│   │   └── id.json
+│   ├── main.jsx
+│   ├── pages/
+│   │   └── RumahDinas.jsx
+│   ├── scripts/
+│   │   ├── validate_maia_suggestions.cjs
+│   │   ├── validate_summary.cjs
+│   │   ├── validation_output.txt
+│   │   └── validation_report.txt
+│   ├── services/
+│   │   ├── LLMService.js
+│   │   └── PersistenceService.js
+│   ├── store/
+│   │   ├── selectors.js
+│   │   └── useGameStore.js
+│   ├── tests/
+│   │   ├── dischargeEmergencyPatient.test.js
+│   │   ├── dischargePatient.test.js
+│   │   ├── feature.guard.test.jsx
+│   │   ├── featureGuard.js
+│   │   ├── riskFactors.test.js
+│   │   ├── setup.js
+│   │   └── test-setup.js
+│   └── utils/
+│       ├── AvatarUtils.js
+│       ├── BuildingGenerator.js
+│       ├── crashTrap.js
+│       ├── dispatchGuard.js
+│       ├── formatTime.js
+│       ├── LevelingSystem.js
+│       ├── prophylaxis.js
+│       ├── SocialDeterminants.js
+│       ├── SoundManager.js
+│       ├── TerrainGenerator.js
+│       ├── TextureGenerator.js
+│       ├── ToastManager.js
+│       ├── transactions.js
+│       ├── types.js
+│       ├── UIInsetGenerator.js
+│       └── validation.js
+├── start_game.ps1
+├── tailwind.config.js
+├── test-results/
+│   ├── .last-run.json
+│   ├── ui-UI-Baseline-Should-comp-62b6e--and-reach-main-game-layout-chromium/
+│   │   └── error-context.md
+│   ├── ui-UI-Baseline-Should-load-05910-c-and-skip-to-slot-selector-chromium/
+│   │   └── error-context.md
+│   ├── ui-UI-Baseline-Should-navi-d9a21-ot-selector-to-player-setup-chromium/
+│   │   └── error-context.md
+│   └── ui-UI-Baseline-Should-rend-9f5a6-r-with-interactive-elements-chromium/
+│       └── error-context.md
+├── tests/
+│   ├── scenarios/
+│   │   ├── golden_path_clinical.json
+│   │   ├── save_roundtrip.json
+│   │   └── scenario_runner.test.js
+│   └── visual/
+│       └── ui.spec.js
+├── test_db.js
+├── tools/
+│   └── gates/
+│       └── fast_gate.mjs
+├── UKM_CODEX.md
+├── user_meds_list.json
+├── vite.config.js
+├── vitest.config.js
+└── _backups/
+    ├── primer-game-backup.zip
+    ├── primer-game-source.zip
+    ├── primer-game_backup_20260208_1855.zip
+    ├── primer-game_backup_20260209_0446.zip
+    ├── primer-game_backup_20260209_0637.zip
+    ├── primer-game_backup_20260209_2145.zip
+    ├── primer-game_backup_20260210_1117.zip
+    ├── primer-game_backup_20260211_1106.zip
+    ├── primer-game_backup_20260212_1015.zip
+    ├── primer-game_backup_20260217_1842.zip
+    ├── primer-game_backup_20260218_1057.zip
+    ├── primer-game_backup_20260219_0744.zip
+    ├── primer-game_backup_20260225_0813.zip
+    └── primer-game_backup_20260310_2120.zip
+
+```
+
+Generated: 11/3/2026, 19.31.09
+
+```
+.
+├── AI_Comparison_Report.md
+├── analyze_skdi.mjs
+├── backup_project.ps1
+├── build_error.log
+├── build_error.txt
+├── Data Luar/
+│   └── Mapping SKDI 2021.xlsx
+├── DESIGN_SPEC_INVARIANTS.md
+├── diagnostics/
+│   ├── configs/
+│   │   ├── eslint.config.js
+│   │   ├── package.json
+│   │   ├── postcss.config.js
+│   │   ├── tailwind.config.js
+│   │   ├── vite.config.js
+│   │   └── vitest.config.js
+│   ├── env.txt
+│   ├── eslint-final-fix.json
+│   ├── eslint-report.json
+│   ├── eslint.print-config.json
+│   ├── folder-tree.md
+│   ├── folder-typology.md
+│   ├── git-info.txt
+│   ├── lint-rules-summary.json
+│   ├── lint-stdout.txt
+│   ├── reachability_map.md
+│   ├── risk-assessment.md
+│   ├── store-schema.md
+│   ├── toolchain-fingerprint.md
+│   ├── tree.txt
+│   └── undefined-ledger.md
+├── docs/
+│   ├── anamnesis_architecture.md
+│   ├── grok_prompt_ukm_integration.md
+│   ├── icd_translation_audit.md
+│   └── prompt_ttm_behavioral_models.md
+├── eslint-report.json
+├── eslint.config.js
+├── eslint_final.json
+├── eslint_v2.json
+├── eslint_v3.json
+├── index.html
+├── megalog/
+│   ├── asset_hygiene.json
+│   ├── asset_hygiene.md
+│   ├── asset_reference_guard.json
+│   ├── asset_reference_guard.md
+│   ├── feature_guard.json
+│   ├── feature_guard.md
+│   ├── history/
+│   │   ├── PRIMERA_history.json
+│   │   └── simulation_results.json
+│   ├── lint_baseline.json
+│   ├── lint_raw_stderr.log
+│   ├── lint_raw_stdout.log
+│   ├── lint_report.json
+│   ├── lint_report.md
+│   └── outputs/
+│       ├── assets.json
+│       ├── asset_hygiene.md
+│       ├── clinical.json
+│       ├── clinical_audit.json
+│       ├── clinical_guardian.json
+│       ├── clinical_lifecycle_audit.json
+│       ├── collision_audit.json
+│       ├── depcruise.json
+│       ├── eslint.json
+│       ├── eslint_clean.json
+│       ├── eslint_clean_final.json
+│       ├── eslint_clean_v2.json
+│       ├── eslint_clean_v3.json
+│       ├── eslint_done.json
+│       ├── eslint_final.json
+│       ├── eslint_v2.json
+│       ├── eslint_v3.json
+│       ├── eslint_v4.json
+│       ├── extracted_anamnesis_ids.json
+│       ├── feature_graph.json
+│       ├── folder_map.json
+│       ├── health.json
+│       ├── igd_sisrute_gate.json
+│       ├── invariant_audit.json
+│       ├── knip.json
+│       ├── module-map.json
+│       ├── oscillation_audit.json
+│       ├── patch_proposals.json
+│       ├── playwright.json
+│       ├── playwright_utf8.json
+│       ├── save_audit.json
+│       ├── scenarios/
+│       │   ├── golden_path_clinical_result.json
+│       │   ├── save_roundtrip_result.json
+│       │   └── scenario_replay_vitest.json
+│       ├── scenario_replay.json
+│       ├── snapshots/
+│       │   ├── sim_day_1_1771209962696.json
+│       │   ├── sim_day_1_1771212729101.json
+│       │   └── sim_day_1_1771623873041.json
+│       ├── static_health.json
+│       ├── store_audit.json
+│       ├── test_clean.txt
+│       ├── test_output.txt
+│       ├── test_output_v2.txt
+│       ├── topology.json
+│       ├── triage_safety_audit.json
+│       └── vitest.json
+├── megalog_v4_report.md
+├── package.json
+├── parse_skdi.mjs
+├── playwright-report/
+│   ├── data/
+│   │   └── 53eca4aa95f837fbec89db17f3e3bceeba4a65c6.md
+│   └── index.html
+├── playwright.config.js
+├── postcss.config.js
+├── PRIMERA_AGENT_CONTEXT.md
+├── PRIMERA_AUTO_FIX.bat
+├── PRIMERA_DASHBOARD.bat
+├── PRIMERA_INJECT_TOOL.bat
+├── PRIMERA_INTELLIGENCE.md
+├── PRIMERA_megalog.md
+├── PRIMERA_SENTINEL.bat
+├── PRIMERA_SYNC.bat
+├── PRIMERA_system_overview.md
+├── PRIMERA_WATCH.bat
+├── PRIMER_BIBLE.md
+├── PROPHYLAXIS_CONTRACT.md
+├── public/
+│   ├── anatomical-base.png
+│   ├── assets/
+│   │   ├── avatars/
+│   │   │   ├── female_dark.png
+│   │   │   ├── female_hijab.png
+│   │   │   ├── female_light.png
+│   │   │   ├── female_medium.png
+│   │   │   ├── male_dark.png
+│   │   │   ├── male_glasses.png
+│   │   │   ├── male_light.png
+│   │   │   └── male_medium.png
+│   │   ├── buildings/
+│   │   │   ├── alun_alun.png
+│   │   │   ├── balai_desa.png
+│   │   │   ├── bank_sampah.png
+│   │   │   ├── dashat.png
+│   │   │   ├── farm_interior.png
+│   │   │   ├── house.png
+│   │   │   ├── house_blue.png
+│   │   │   ├── house_classic.png
+│   │   │   ├── house_hut.png
+│   │   │   ├── house_modern.png
+│   │   │   ├── house_red.png
+│   │   │   ├── house_trad.png
+│   │   │   ├── hutan_lindung.png
+│   │   │   ├── iks_scoreboard.png
+│   │   │   ├── kantor_desa.png
+│   │   │   ├── lapangan.png
+│   │   │   ├── market.png
+│   │   │   ├── mck.png
+│   │   │   ├── mosque.png
+│   │   │   ├── pamsimas.png
+│   │   │   ├── playground.png
+│   │   │   ├── polindes.png
+│   │   │   ├── posyandu.png
+│   │   │   ├── posyandu_interior.png
+│   │   │   ├── pos_gizi.png
+│   │   │   ├── pos_ukk.png
+│   │   │   ├── puskesmas.png
+│   │   │   ├── pustu.png
+│   │   │   ├── rtk.png
+│   │   │   ├── rumah_dinas.png
+│   │   │   ├── school.png
+│   │   │   ├── school_interior.png
+│   │   │   ├── sungai_cikapas.png
+│   │   │   ├── tk.png
+│   │   │   ├── toga.png
+│   │   │   ├── toko_kelontong.png
+│   │   │   ├── tpu.png
+│   │   │   ├── warung.png
+│   │   │   └── well.png
+│   │   ├── cursor_ff8.png
+│   │   ├── facility_tileset.png
+│   │   ├── fkk_logo.png
+│   │   ├── its_logo.png
+│   │   ├── mck_facility.png
+│   │   ├── road_asphalt_h.png
+│   │   ├── road_asphalt_v.png
+│   │   ├── road_dirt_h.png
+│   │   ├── road_dirt_v.png
+│   │   ├── rooms/
+│   │   │   ├── bedroom.png
+│   │   │   ├── garage.png
+│   │   │   ├── guest_room.png
+│   │   │   ├── gym.png
+│   │   │   ├── kitchen.png
+│   │   │   ├── living_room.png
+│   │   │   └── workspace.png
+│   │   ├── village_map.jpg
+│   │   ├── village_map_satellite.png
+│   │   ├── village_profile_hero.png
+│   │   └── wilayah_tileset.png
+│   ├── audio/
+│   │   ├── arni_another.mp3
+│   │   ├── arni_home.mp3
+│   │   ├── balamb_garden.mp3
+│   │   ├── blue_fields.mp3
+│   │   ├── fishermans_horizon.mp3
+│   │   ├── guldove_another.mp3
+│   │   └── guldove_home.mp3
+│   ├── avatars.png
+│   ├── images/
+│   │   ├── tiles/
+│   │   └── wilayah/
+│   │       ├── balai-desa.png
+│   │       ├── balai_desa_iso.png
+│   │       ├── forest_iso.png
+│   │       ├── house_blue_iso.png
+│   │       ├── house_classic_iso.png
+│   │       ├── house_hut_iso.png
+│   │       ├── house_modern_iso.png
+│   │       ├── house_red_iso.png
+│   │       ├── house_trad_iso.png
+│   │       ├── hutan.png
+│   │       ├── igd_bg.png
+│   │       ├── kantor-desa.png
+│   │       ├── kantor_desa_iso.png
+│   │       ├── lapangan.png
+│   │       ├── lapangan_bola_iso.png
+│   │       ├── market_iso.png
+│   │       ├── masjid.png
+│   │       ├── masjid_iso.png
+│   │       ├── mck_facility.png
+│   │       ├── pasar.png
+│   │       ├── playground_iso.png
+│   │       ├── playground_iso_refined.png
+│   │       ├── poli_umum_bg.png
+│   │       ├── posyandu_iso.png
+│   │       ├── puskesmas.png
+│   │       ├── puskesmas_iso.png
+│   │       ├── river_iso.png
+│   │       ├── rumah-pixel.png
+│   │       ├── rumah-warga.png
+│   │       ├── rumah_dinas_iso.png
+│   │       ├── school_iso.png
+│   │       ├── sekolah-pixel.png
+│   │       ├── sekolah.png
+│   │       ├── tk_iso.png
+│   │       ├── toko_kelontong_iso.png
+│   │       ├── tpu.png
+│   │       ├── tpu_iso_refined.png
+│   │       ├── warung_iso.png
+│   │       ├── well_iso.png
+│   │       └── wisata-alam.jpg
+│   └── vite.svg
+├── README.md
+├── ROADMAP.md
+├── run_backup.bat
+├── run_game.bat
+├── scripts/
+│   ├── add-relevant-categories.mjs
+│   ├── add-semantic-tags.mjs
+│   ├── analyze-fktp-gap.mjs
+│   ├── archive/
+│   │   ├── legacy_audits/
+│   │   │   ├── analyze_rules.mjs
+│   │   │   ├── audit_anamnesis.mjs
+│   │   │   ├── audit_cases.mjs
+│   │   │   ├── audit_clinical_review.mjs
+│   │   │   ├── audit_complete_sync.cjs
+│   │   │   ├── audit_comprehensive.mjs
+│   │   │   ├── audit_deep_dedup.cjs
+│   │   │   ├── audit_duplicates.cjs
+│   │   │   ├── audit_final_results.txt
+│   │   │   ├── audit_igd_sync.cjs
+│   │   │   ├── audit_inventory_sync.js
+│   │   │   ├── audit_master.mjs
+│   │   │   ├── audit_puskesmas_list.mjs
+│   │   │   ├── audit_results.txt
+│   │   │   ├── audit_results_final.txt
+│   │   │   ├── audit_results_fixed.txt
+│   │   │   ├── audit_results_full.txt
+│   │   │   ├── audit_results_latest.txt
+│   │   │   ├── audit_therapy_edu.js
+│   │   │   ├── audit_variations_gap.cjs
+│   │   │   ├── audit_variations_gap.js
+│   │   │   ├── build_log.txt
+│   │   │   ├── category_audit.mjs
+│   │   │   ├── compare_lints.mjs
+│   │   │   ├── compare_v3.mjs
+│   │   │   ├── consistency_audit.mjs
+│   │   │   ├── count_eslint_rules.mjs
+│   │   │   ├── debug_meds.mjs
+│   │   │   ├── debug_proc.mjs
+│   │   │   ├── deep_audit.mjs
+│   │   │   ├── demo_llm.mjs
+│   │   │   ├── extract_questions.js
+│   │   │   ├── fix_categories.mjs
+│   │   │   ├── fix_duplicates.cjs
+│   │   │   ├── merge_databases.cjs
+│   │   │   ├── verify_done.mjs
+│   │   │   └── verify_final.mjs
+│   │   └── phases/
+│   │       ├── apply_phase6.mjs
+│   │       ├── apply_phase7.mjs
+│   │       └── phase6_update.mjs
+│   ├── audit-anamnesis-dialogue.mjs
+│   ├── audit-data-contracts.mjs
+│   ├── audit-i18n-quality.mjs
+│   ├── audit-icd-concordance.mjs
+│   ├── audit-import-integrity.mjs
+│   ├── audit-integration-smoke.mjs
+│   ├── audit-maia-bruteforce.mjs
+│   ├── audit-search-ux.mjs
+│   ├── audit-ui-clinical.mjs
+│   ├── check_assets.mjs
+│   ├── export-textures.mjs
+│   ├── extract-missing-icd.mjs
+│   ├── fix-and-typo.cjs
+│   ├── fix-rng.cjs
+│   ├── fix_jsx_extensions.mjs
+│   ├── gen_missing_meds.mjs
+│   ├── maia-audit-results.txt
+│   ├── megalog_v4_analyzer.mjs
+│   ├── patch-maia-overlay.cjs
+│   ├── primera/
+│   │   ├── agent_snapshot.mjs
+│   │   ├── artifact_manifest.mjs
+│   │   ├── auto_fix_orchestrator.mjs
+│   │   ├── clinical_watchdog.mjs
+│   │   ├── engine-clinical-guardian.mjs
+│   │   ├── engine-clinical-lifecycle.mjs
+│   │   ├── engine-collision.mjs
+│   │   ├── engine-igd-sisrute-gate.mjs
+│   │   ├── engine-invariants-runtime.mjs
+│   │   ├── engine-oscillation.mjs
+│   │   ├── engine-save-audit.mjs
+│   │   ├── engine-scenario-replay.mjs
+│   │   ├── engine-store-audit.mjs
+│   │   ├── engine-topology.mjs
+│   │   ├── engine-triage-gate.mjs
+│   │   ├── engine-wiring.mjs
+│   │   ├── gameplay_test.mjs
+│   │   ├── health_engine.mjs
+│   │   ├── inject_reflection.mjs
+│   │   ├── lint_surgeon.mjs
+│   │   ├── megalog_v5.mjs
+│   │   ├── pldb_analyzer.mjs
+│   │   ├── pldb_exporter.mjs
+│   │   ├── reflection_ratchet.mjs
+│   │   ├── reflect_and_sync.mjs
+│   │   ├── sentinel.mjs
+│   │   ├── simulation_runner.mjs
+│   │   ├── store_dumper.mjs
+│   │   ├── test_invariants.mjs
+│   │   ├── ukm_test.mjs
+│   │   ├── watchdog-assets.mjs
+│   │   ├── watchdog-lint-budget.mjs
+│   │   └── watchdog-pathfinder.mjs
+│   ├── primera_watchdog.mjs
+│   ├── simulate-dialogue-10x.mjs
+│   ├── simulate-dialogue-v2.mjs
+│   ├── simulate-dialogue-v3.mjs
+│   ├── simulate-dialogue-v4.mjs
+│   ├── simulate-dialogue-v5.mjs
+│   ├── simulate-dialogue.mjs
+│   ├── test_migration.mjs
+│   ├── test_population_logic.js
+│   ├── test_registry.mjs
+│   ├── validate-assets.mjs
+│   └── watchdog-asset-refs.mjs
+├── skdi_Keterampilan_4A.json
+├── skdi_Penyakit_4A.json
+├── skdi_Plus_Keterampilan_Lain.json
+├── skdi_SKDI_2012.json
+├── src/
+│   ├── App.jsx
+│   ├── assets/
+│   │   ├── asset-manifest.json
+│   │   ├── assets.js
+│   │   └── buildings/
+│   │       ├── alun_alun.png
+│   │       ├── balai_desa.png
+│   │       ├── bank_sampah.png
+│   │       ├── dashat.png
+│   │       ├── house.png
+│   │       ├── iks_scoreboard.png
+│   │       ├── kantor_desa.png
+│   │       ├── market.png
+│   │       ├── mck.png
+│   │       ├── mosque.png
+│   │       ├── pamsimas.png
+│   │       ├── polindes.png
+│   │       ├── posyandu.png
+│   │       ├── pos_gizi.png
+│   │       ├── pos_ukk.png
+│   │       ├── puskesmas.png
+│   │       ├── pustu.png
+│   │       ├── rtk.png
+│   │       ├── rumah_dinas.png
+│   │       ├── school.png
+│   │       ├── tk.png
+│   │       ├── toga.png
+│   │       ├── tpu.png
+│   │       └── well.png
+│   ├── components/
+│   │   ├── AboutModal.jsx
+│   │   ├── apps/
+│   │   │   ├── BankApp.jsx
+│   │   │   ├── ChatApp.jsx
+│   │   │   ├── NewsApp.jsx
+│   │   │   └── ShopApp.jsx
+│   │   ├── ArsipPage.jsx
+│   │   ├── AvatarRenderer.jsx
+│   │   ├── AvatarSelectionModal.jsx
+│   │   ├── BodyMapWidget.jsx
+│   │   ├── CalendarModal.jsx
+│   │   ├── ClinicalPage.jsx
+│   │   ├── CPPTCard.jsx
+│   │   ├── DailyReportModal.jsx
+│   │   ├── dashboard/
+│   │   │   ├── AccreditationView.jsx
+│   │   │   ├── ClinicalView.jsx
+│   │   │   ├── CommunityView.jsx
+│   │   │   ├── LogisticsView.jsx
+│   │   │   └── PerformanceView.jsx
+│   │   ├── DashboardPage.jsx
+│   │   ├── DatabaseSync.jsx
+│   │   ├── DiklatPage.jsx
+│   │   ├── EducationalWikiModal.jsx
+│   │   ├── EmergencyPanel.jsx
+│   │   ├── emr/
+│   │   │   ├── AnamnesisTab.jsx
+│   │   │   ├── AssessmentTab.jsx
+│   │   │   ├── BillingTab.jsx
+│   │   │   ├── ClinicalSidebar.jsx
+│   │   │   ├── EducationTab.jsx
+│   │   │   ├── HistoryTab.jsx
+│   │   │   ├── LabTab.jsx
+│   │   │   ├── PhysicalExamTab.jsx
+│   │   │   ├── ProceduresTab.jsx
+│   │   │   ├── ReasoningDashboard.jsx
+│   │   │   └── TreatmentTab.jsx
+│   │   ├── EndOfDayModal.jsx
+│   │   ├── ErrorBoundary.jsx
+│   │   ├── FarmasiPanel.jsx
+│   │   ├── GameOverModal.jsx
+│   │   ├── gedung/
+│   │   │   ├── RoomCard.jsx
+│   │   │   └── UpgradeModal.jsx
+│   │   ├── GedungPage.jsx
+│   │   ├── InfoTooltip.jsx
+│   │   ├── InventoryPage.jsx
+│   │   ├── KPIDashboard.jsx
+│   │   ├── MainLayout.jsx
+│   │   ├── MetricCard.jsx
+│   │   ├── MorningBriefingModal.jsx
+│   │   ├── NarrativeOverlay.jsx
+│   │   ├── OpeningScreen.jsx
+│   │   ├── OrderModal.jsx
+│   │   ├── OutbreakBanner.jsx
+│   │   ├── OutbreakModal.jsx
+│   │   ├── PatientEMR.jsx
+│   │   ├── PatientHistoryModal.jsx
+│   │   ├── PlayerSetup.jsx
+│   │   ├── PosyanduModal.jsx
+│   │   ├── ProlanisConsultation.jsx
+│   │   ├── ProlanisPanel.jsx
+│   │   ├── QuestBoard.jsx
+│   │   ├── QueueList.jsx
+│   │   ├── ReferralHUD.jsx
+│   │   ├── ReferralSISRUTEModal.jsx
+│   │   ├── SaranaPage.jsx
+│   │   ├── SaveSlotSelector.jsx
+│   │   ├── sensus/
+│   │   │   └── SensusPage.jsx
+│   │   ├── ServiceCardDeck.jsx
+│   │   ├── SettingsModal.jsx
+│   │   ├── shared/
+│   │   │   ├── ExpandableCard.jsx
+│   │   │   ├── GuidelineBadge.jsx
+│   │   │   ├── StatCard.jsx
+│   │   │   └── StepCarousel.jsx
+│   │   ├── Smartphone.jsx
+│   │   ├── staff/
+│   │   │   ├── StaffCard.jsx
+│   │   │   └── StaffDetail.jsx
+│   │   ├── StaffPage.jsx
+│   │   ├── StatusJunctionModal.jsx
+│   │   ├── VillagerAvatar.jsx
+│   │   ├── WeekendModal.jsx
+│   │   ├── wilayah/
+│   │   │   ├── AuxiliaryComponents.jsx
+│   │   │   ├── BehaviorCasePanel.jsx
+│   │   │   ├── BuildingGamePanel.jsx
+│   │   │   ├── buildingScenes.js
+│   │   │   ├── CommunityDiagnosisPanel.jsx
+│   │   │   ├── constants.js
+│   │   │   ├── EliteCOMBWheel.jsx
+│   │   │   ├── map-utils.js
+│   │   │   ├── MapCanvas.jsx
+│   │   │   ├── MiniGamePanel.jsx
+│   │   │   ├── PixelSceneRenderer.jsx
+│   │   │   ├── PosyanduActivePanel.jsx
+│   │   │   ├── PremiumMapDemo.jsx
+│   │   │   ├── PustuActivePanel.jsx
+│   │   │   └── TerrainCanvas.jsx
+│   │   └── WilayahPage.jsx
+│   ├── content/
+│   │   ├── cases/
+│   │   │   └── CaseLibrary.js
+│   │   ├── concepts/
+│   │   │   └── village_politics.md
+│   │   ├── residents/
+│   │   │   ├── DialogVariations.js
+│   │   │   ├── PersonalityTraits.js
+│   │   │   └── ResidentProfiles.js
+│   │   └── scenarios/
+│   │       ├── CulturalBeliefs.js
+│   │       ├── DiseaseScenarios.js
+│   │       ├── IKMScenarioLibrary.js
+│   │       └── PHBSIndicators.js
+│   ├── context/
+│   │   ├── contracts/
+│   │   │   └── gameContext.contract.js
+│   │   ├── GameContext.jsx
+│   │   └── ThemeContext.jsx
+│   ├── contracts/
+│   │   └── store.contract.mjs
+│   ├── data/
+│   │   ├── AppMetadata.js
+│   │   ├── CalendarEventDB.js
+│   │   ├── ClinicalServices.js
+│   │   ├── EducationOptions.js
+│   │   ├── extract_icd9.cjs
+│   │   ├── extract_icd9.py
+│   │   ├── FacilityData.js
+│   │   ├── FKTP144Diseases.js
+│   │   ├── FurnitureData.js
+│   │   ├── HospitalDB.js
+│   │   ├── ICD10.js
+│   │   ├── ICD10_ALIASES.js
+│   │   ├── ICD9CM.js
+│   │   ├── index.js
+│   │   ├── master_icd_10.json
+│   │   ├── master_icd_9.json
+│   │   ├── medication/
+│   │   │   └── utils.js
+│   │   ├── MedicationDatabase.js
+│   │   ├── ProceduresDB.js
+│   │   ├── ProlanisDB.js
+│   │   ├── StaffData.js
+│   │   ├── SupplierDatabase.js
+│   │   ├── wiki/
+│   │   │   ├── dashboard_manajemen.js
+│   │   │   ├── emergency_wiki.js
+│   │   │   ├── igd.js
+│   │   │   ├── klinis.js
+│   │   │   ├── kulit.js
+│   │   │   ├── lab_prosedur.js
+│   │   │   ├── manajemen.js
+│   │   │   ├── obat.js
+│   │   │   ├── penyakit.js
+│   │   │   └── wilayah.js
+│   │   └── WikiData.js
+│   ├── diagnostics/
+│   │   └── invariants.js
+│   ├── domains/
+│   │   ├── clinical/
+│   │   ├── community/
+│   │   │   └── OutbreakSystem.js
+│   │   └── village/
+│   │       ├── NPCReadiness.js
+│   │       ├── VillagerBehavior.js
+│   │       ├── VillageRegistry.js
+│   │       └── village_families.js
+│   ├── game/
+│   │   ├── anamnesis/
+│   │   │   ├── Constants.js
+│   │   │   ├── DialogueEngine.js
+│   │   │   ├── EmotionEngine.js
+│   │   │   ├── InformantSystem.js
+│   │   │   ├── SynthesisEngine.js
+│   │   │   └── TextAdapter.js
+│   │   ├── AnamnesisEngine.js
+│   │   ├── AnamnesisPrompts.js
+│   │   ├── AnamnesisVariations.js
+│   │   ├── BehaviorCaseEngine.js
+│   │   ├── BillingEngine.js
+│   │   ├── CaseIndicators.js
+│   │   ├── ClinicalReasoning.js
+│   │   ├── ConsequenceEngine.js
+│   │   ├── CPPTEngine.js
+│   │   ├── DebriefEngine.js
+│   │   ├── dental/
+│   │   │   ├── DentalDiagnosisEngine.js
+│   │   │   └── DentalProcedureEngine.js
+│   │   ├── DispensingEngine.js
+│   │   ├── emergency/
+│   │   │   └── EmergencyRegistry.js
+│   │   ├── EmergencyCases.js
+│   │   ├── EmergingEventTriggers.js
+│   │   ├── GameCore.js
+│   │   ├── GuestEventSystem.js
+│   │   ├── IKMEventEngine.js
+│   │   ├── index.js
+│   │   ├── KaderNetwork.js
+│   │   ├── kia/
+│   │   │   ├── GrowthChartEngine.js
+│   │   │   ├── ImmunizationEngine.js
+│   │   │   └── PregnancyEngine.js
+│   │   ├── LabEngine.js
+│   │   ├── MiniGameLibrary.js
+│   │   ├── MorningBriefing.js
+│   │   ├── PatientGenerator.js
+│   │   ├── PosyanduEngine.js
+│   │   ├── ProlanisEngine.js
+│   │   ├── QuestEngine.js
+│   │   ├── StoryDatabase.js
+│   │   ├── TheDirector.js
+│   │   └── ValidationEngine.js
+│   ├── gameplay/
+│   │   └── featureRegistry.js
+│   ├── hooks/
+│   │   ├── useGameLoop.js
+│   │   ├── useModalA11y.js
+│   │   ├── useNavAndSettings.js
+│   │   ├── usePatientEMR.js
+│   │   └── useStaffManagement.js
+│   ├── i18n.js
+│   ├── index.css
+│   ├── locales/
+│   │   ├── en.json
+│   │   └── id.json
+│   ├── main.jsx
+│   ├── pages/
+│   │   └── RumahDinas.jsx
+│   ├── scripts/
+│   │   ├── validate_maia_suggestions.cjs
+│   │   ├── validate_summary.cjs
+│   │   ├── validation_output.txt
+│   │   └── validation_report.txt
+│   ├── services/
+│   │   ├── LLMService.js
+│   │   └── PersistenceService.js
+│   ├── store/
+│   │   ├── selectors.js
+│   │   └── useGameStore.js
+│   ├── tests/
+│   │   ├── dischargeEmergencyPatient.test.js
+│   │   ├── dischargePatient.test.js
+│   │   ├── feature.guard.test.jsx
+│   │   ├── featureGuard.js
+│   │   ├── riskFactors.test.js
+│   │   ├── setup.js
+│   │   └── test-setup.js
+│   └── utils/
+│       ├── AvatarUtils.js
+│       ├── BuildingGenerator.js
+│       ├── crashTrap.js
+│       ├── dispatchGuard.js
+│       ├── formatTime.js
+│       ├── LevelingSystem.js
+│       ├── prophylaxis.js
+│       ├── SocialDeterminants.js
+│       ├── SoundManager.js
+│       ├── TerrainGenerator.js
+│       ├── TextureGenerator.js
+│       ├── ToastManager.js
+│       ├── transactions.js
+│       ├── types.js
+│       ├── UIInsetGenerator.js
+│       └── validation.js
+├── start_game.ps1
+├── tailwind.config.js
+├── test-results/
+│   ├── .last-run.json
+│   ├── ui-UI-Baseline-Should-comp-62b6e--and-reach-main-game-layout-chromium/
+│   │   └── error-context.md
+│   ├── ui-UI-Baseline-Should-load-05910-c-and-skip-to-slot-selector-chromium/
+│   │   └── error-context.md
+│   ├── ui-UI-Baseline-Should-navi-d9a21-ot-selector-to-player-setup-chromium/
+│   │   └── error-context.md
+│   └── ui-UI-Baseline-Should-rend-9f5a6-r-with-interactive-elements-chromium/
+│       └── error-context.md
+├── tests/
+│   ├── scenarios/
+│   │   ├── golden_path_clinical.json
+│   │   ├── save_roundtrip.json
+│   │   └── scenario_runner.test.js
+│   └── visual/
+│       └── ui.spec.js
+├── test_db.js
+├── tools/
+│   └── gates/
+│       └── fast_gate.mjs
+├── UKM_CODEX.md
+├── user_meds_list.json
+├── vite.config.js
+├── vitest.config.js
+└── _backups/
+    ├── primer-game-backup.zip
+    ├── primer-game-source.zip
+    ├── primer-game_backup_20260208_1855.zip
+    ├── primer-game_backup_20260209_0446.zip
+    ├── primer-game_backup_20260209_0637.zip
+    ├── primer-game_backup_20260209_2145.zip
+    ├── primer-game_backup_20260210_1117.zip
+    ├── primer-game_backup_20260211_1106.zip
+    ├── primer-game_backup_20260212_1015.zip
+    ├── primer-game_backup_20260217_1842.zip
+    ├── primer-game_backup_20260218_1057.zip
+    ├── primer-game_backup_20260219_0744.zip
+    ├── primer-game_backup_20260225_0813.zip
+    └── primer-game_backup_20260310_2120.zip
+
+```
+
+Generated: 11/3/2026, 19.30.21
+
+```
+.
+├── AI_Comparison_Report.md
+├── analyze_skdi.mjs
+├── backup_project.ps1
+├── build_error.log
+├── build_error.txt
+├── Data Luar/
+│   └── Mapping SKDI 2021.xlsx
+├── DESIGN_SPEC_INVARIANTS.md
+├── diagnostics/
+│   ├── configs/
+│   │   ├── eslint.config.js
+│   │   ├── package.json
+│   │   ├── postcss.config.js
+│   │   ├── tailwind.config.js
+│   │   ├── vite.config.js
+│   │   └── vitest.config.js
+│   ├── env.txt
+│   ├── eslint-final-fix.json
+│   ├── eslint-report.json
+│   ├── eslint.print-config.json
+│   ├── folder-tree.md
+│   ├── folder-typology.md
+│   ├── git-info.txt
+│   ├── lint-rules-summary.json
+│   ├── lint-stdout.txt
+│   ├── reachability_map.md
+│   ├── risk-assessment.md
+│   ├── store-schema.md
+│   ├── toolchain-fingerprint.md
+│   ├── tree.txt
+│   └── undefined-ledger.md
+├── docs/
+│   ├── anamnesis_architecture.md
+│   ├── grok_prompt_ukm_integration.md
+│   ├── icd_translation_audit.md
+│   └── prompt_ttm_behavioral_models.md
+├── eslint-report.json
+├── eslint.config.js
+├── eslint_final.json
+├── eslint_v2.json
+├── eslint_v3.json
+├── index.html
+├── megalog/
+│   ├── asset_hygiene.json
+│   ├── asset_hygiene.md
+│   ├── asset_reference_guard.json
+│   ├── asset_reference_guard.md
+│   ├── feature_guard.json
+│   ├── feature_guard.md
+│   ├── history/
+│   │   ├── PRIMERA_history.json
+│   │   └── simulation_results.json
+│   ├── lint_baseline.json
+│   ├── lint_raw_stderr.log
+│   ├── lint_raw_stdout.log
+│   ├── lint_report.json
+│   ├── lint_report.md
+│   └── outputs/
+│       ├── assets.json
+│       ├── asset_hygiene.md
+│       ├── clinical.json
+│       ├── clinical_audit.json
+│       ├── clinical_guardian.json
+│       ├── clinical_lifecycle_audit.json
+│       ├── collision_audit.json
+│       ├── depcruise.json
+│       ├── eslint.json
+│       ├── eslint_clean.json
+│       ├── eslint_clean_final.json
+│       ├── eslint_clean_v2.json
+│       ├── eslint_clean_v3.json
+│       ├── eslint_done.json
+│       ├── eslint_final.json
+│       ├── eslint_v2.json
+│       ├── eslint_v3.json
+│       ├── eslint_v4.json
+│       ├── extracted_anamnesis_ids.json
+│       ├── feature_graph.json
+│       ├── folder_map.json
+│       ├── health.json
+│       ├── igd_sisrute_gate.json
+│       ├── invariant_audit.json
+│       ├── knip.json
+│       ├── module-map.json
+│       ├── oscillation_audit.json
+│       ├── patch_proposals.json
+│       ├── playwright.json
+│       ├── playwright_utf8.json
+│       ├── save_audit.json
+│       ├── scenarios/
+│       │   ├── golden_path_clinical_result.json
+│       │   ├── save_roundtrip_result.json
+│       │   └── scenario_replay_vitest.json
+│       ├── scenario_replay.json
+│       ├── snapshots/
+│       │   ├── sim_day_1_1771209962696.json
+│       │   ├── sim_day_1_1771212729101.json
+│       │   └── sim_day_1_1771623873041.json
+│       ├── static_health.json
+│       ├── store_audit.json
+│       ├── test_clean.txt
+│       ├── test_output.txt
+│       ├── test_output_v2.txt
+│       ├── topology.json
+│       ├── triage_safety_audit.json
+│       └── vitest.json
+├── megalog_v4_report.md
+├── package.json
+├── parse_skdi.mjs
+├── playwright-report/
+│   ├── data/
+│   │   └── 53eca4aa95f837fbec89db17f3e3bceeba4a65c6.md
+│   └── index.html
+├── playwright.config.js
+├── postcss.config.js
+├── PRIMERA_AGENT_CONTEXT.md
+├── PRIMERA_AUTO_FIX.bat
+├── PRIMERA_DASHBOARD.bat
+├── PRIMERA_INJECT_TOOL.bat
+├── PRIMERA_INTELLIGENCE.md
+├── PRIMERA_megalog.md
+├── PRIMERA_SENTINEL.bat
+├── PRIMERA_SYNC.bat
+├── PRIMERA_system_overview.md
+├── PRIMERA_WATCH.bat
+├── PRIMER_BIBLE.md
+├── PROPHYLAXIS_CONTRACT.md
+├── public/
+│   ├── anatomical-base.png
+│   ├── assets/
+│   │   ├── avatars/
+│   │   │   ├── female_dark.png
+│   │   │   ├── female_hijab.png
+│   │   │   ├── female_light.png
+│   │   │   ├── female_medium.png
+│   │   │   ├── male_dark.png
+│   │   │   ├── male_glasses.png
+│   │   │   ├── male_light.png
+│   │   │   └── male_medium.png
+│   │   ├── buildings/
+│   │   │   ├── alun_alun.png
+│   │   │   ├── balai_desa.png
+│   │   │   ├── bank_sampah.png
+│   │   │   ├── dashat.png
+│   │   │   ├── farm_interior.png
+│   │   │   ├── house.png
+│   │   │   ├── house_blue.png
+│   │   │   ├── house_classic.png
+│   │   │   ├── house_hut.png
+│   │   │   ├── house_modern.png
+│   │   │   ├── house_red.png
+│   │   │   ├── house_trad.png
+│   │   │   ├── hutan_lindung.png
+│   │   │   ├── iks_scoreboard.png
+│   │   │   ├── kantor_desa.png
+│   │   │   ├── lapangan.png
+│   │   │   ├── market.png
+│   │   │   ├── mck.png
+│   │   │   ├── mosque.png
+│   │   │   ├── pamsimas.png
+│   │   │   ├── playground.png
+│   │   │   ├── polindes.png
+│   │   │   ├── posyandu.png
+│   │   │   ├── posyandu_interior.png
+│   │   │   ├── pos_gizi.png
+│   │   │   ├── pos_ukk.png
+│   │   │   ├── puskesmas.png
+│   │   │   ├── pustu.png
+│   │   │   ├── rtk.png
+│   │   │   ├── rumah_dinas.png
+│   │   │   ├── school.png
+│   │   │   ├── school_interior.png
+│   │   │   ├── sungai_cikapas.png
+│   │   │   ├── tk.png
+│   │   │   ├── toga.png
+│   │   │   ├── toko_kelontong.png
+│   │   │   ├── tpu.png
+│   │   │   ├── warung.png
+│   │   │   └── well.png
+│   │   ├── cursor_ff8.png
+│   │   ├── facility_tileset.png
+│   │   ├── fkk_logo.png
+│   │   ├── its_logo.png
+│   │   ├── mck_facility.png
+│   │   ├── road_asphalt_h.png
+│   │   ├── road_asphalt_v.png
+│   │   ├── road_dirt_h.png
+│   │   ├── road_dirt_v.png
+│   │   ├── rooms/
+│   │   │   ├── bedroom.png
+│   │   │   ├── garage.png
+│   │   │   ├── guest_room.png
+│   │   │   ├── gym.png
+│   │   │   ├── kitchen.png
+│   │   │   ├── living_room.png
+│   │   │   └── workspace.png
+│   │   ├── village_map.jpg
+│   │   ├── village_map_satellite.png
+│   │   ├── village_profile_hero.png
+│   │   └── wilayah_tileset.png
+│   ├── audio/
+│   │   ├── arni_another.mp3
+│   │   ├── arni_home.mp3
+│   │   ├── balamb_garden.mp3
+│   │   ├── blue_fields.mp3
+│   │   ├── fishermans_horizon.mp3
+│   │   ├── guldove_another.mp3
+│   │   └── guldove_home.mp3
+│   ├── avatars.png
+│   ├── images/
+│   │   ├── tiles/
+│   │   └── wilayah/
+│   │       ├── balai-desa.png
+│   │       ├── balai_desa_iso.png
+│   │       ├── forest_iso.png
+│   │       ├── house_blue_iso.png
+│   │       ├── house_classic_iso.png
+│   │       ├── house_hut_iso.png
+│   │       ├── house_modern_iso.png
+│   │       ├── house_red_iso.png
+│   │       ├── house_trad_iso.png
+│   │       ├── hutan.png
+│   │       ├── igd_bg.png
+│   │       ├── kantor-desa.png
+│   │       ├── kantor_desa_iso.png
+│   │       ├── lapangan.png
+│   │       ├── lapangan_bola_iso.png
+│   │       ├── market_iso.png
+│   │       ├── masjid.png
+│   │       ├── masjid_iso.png
+│   │       ├── mck_facility.png
+│   │       ├── pasar.png
+│   │       ├── playground_iso.png
+│   │       ├── playground_iso_refined.png
+│   │       ├── poli_umum_bg.png
+│   │       ├── posyandu_iso.png
+│   │       ├── puskesmas.png
+│   │       ├── puskesmas_iso.png
+│   │       ├── river_iso.png
+│   │       ├── rumah-pixel.png
+│   │       ├── rumah-warga.png
+│   │       ├── rumah_dinas_iso.png
+│   │       ├── school_iso.png
+│   │       ├── sekolah-pixel.png
+│   │       ├── sekolah.png
+│   │       ├── tk_iso.png
+│   │       ├── toko_kelontong_iso.png
+│   │       ├── tpu.png
+│   │       ├── tpu_iso_refined.png
+│   │       ├── warung_iso.png
+│   │       ├── well_iso.png
+│   │       └── wisata-alam.jpg
+│   └── vite.svg
+├── README.md
+├── ROADMAP.md
+├── run_backup.bat
+├── run_game.bat
+├── scripts/
+│   ├── add-relevant-categories.mjs
+│   ├── add-semantic-tags.mjs
+│   ├── analyze-fktp-gap.mjs
+│   ├── archive/
+│   │   ├── legacy_audits/
+│   │   │   ├── analyze_rules.mjs
+│   │   │   ├── audit_anamnesis.mjs
+│   │   │   ├── audit_cases.mjs
+│   │   │   ├── audit_clinical_review.mjs
+│   │   │   ├── audit_complete_sync.cjs
+│   │   │   ├── audit_comprehensive.mjs
+│   │   │   ├── audit_deep_dedup.cjs
+│   │   │   ├── audit_duplicates.cjs
+│   │   │   ├── audit_final_results.txt
+│   │   │   ├── audit_igd_sync.cjs
+│   │   │   ├── audit_inventory_sync.js
+│   │   │   ├── audit_master.mjs
+│   │   │   ├── audit_puskesmas_list.mjs
+│   │   │   ├── audit_results.txt
+│   │   │   ├── audit_results_final.txt
+│   │   │   ├── audit_results_fixed.txt
+│   │   │   ├── audit_results_full.txt
+│   │   │   ├── audit_results_latest.txt
+│   │   │   ├── audit_therapy_edu.js
+│   │   │   ├── audit_variations_gap.cjs
+│   │   │   ├── audit_variations_gap.js
+│   │   │   ├── build_log.txt
+│   │   │   ├── category_audit.mjs
+│   │   │   ├── compare_lints.mjs
+│   │   │   ├── compare_v3.mjs
+│   │   │   ├── consistency_audit.mjs
+│   │   │   ├── count_eslint_rules.mjs
+│   │   │   ├── debug_meds.mjs
+│   │   │   ├── debug_proc.mjs
+│   │   │   ├── deep_audit.mjs
+│   │   │   ├── demo_llm.mjs
+│   │   │   ├── extract_questions.js
+│   │   │   ├── fix_categories.mjs
+│   │   │   ├── fix_duplicates.cjs
+│   │   │   ├── merge_databases.cjs
+│   │   │   ├── verify_done.mjs
+│   │   │   └── verify_final.mjs
+│   │   └── phases/
+│   │       ├── apply_phase6.mjs
+│   │       ├── apply_phase7.mjs
+│   │       └── phase6_update.mjs
+│   ├── audit-anamnesis-dialogue.mjs
+│   ├── audit-data-contracts.mjs
+│   ├── audit-i18n-quality.mjs
+│   ├── audit-icd-concordance.mjs
+│   ├── audit-import-integrity.mjs
+│   ├── audit-integration-smoke.mjs
+│   ├── audit-maia-bruteforce.mjs
+│   ├── audit-search-ux.mjs
+│   ├── audit-ui-clinical.mjs
+│   ├── check_assets.mjs
+│   ├── export-textures.mjs
+│   ├── extract-missing-icd.mjs
+│   ├── fix-and-typo.cjs
+│   ├── fix-rng.cjs
+│   ├── fix_jsx_extensions.mjs
+│   ├── gen_missing_meds.mjs
+│   ├── maia-audit-results.txt
+│   ├── megalog_v4_analyzer.mjs
+│   ├── patch-maia-overlay.cjs
+│   ├── primera/
+│   │   ├── agent_snapshot.mjs
+│   │   ├── artifact_manifest.mjs
+│   │   ├── auto_fix_orchestrator.mjs
+│   │   ├── clinical_watchdog.mjs
+│   │   ├── engine-clinical-guardian.mjs
+│   │   ├── engine-clinical-lifecycle.mjs
+│   │   ├── engine-collision.mjs
+│   │   ├── engine-igd-sisrute-gate.mjs
+│   │   ├── engine-invariants-runtime.mjs
+│   │   ├── engine-oscillation.mjs
+│   │   ├── engine-save-audit.mjs
+│   │   ├── engine-scenario-replay.mjs
+│   │   ├── engine-store-audit.mjs
+│   │   ├── engine-topology.mjs
+│   │   ├── engine-triage-gate.mjs
+│   │   ├── engine-wiring.mjs
+│   │   ├── gameplay_test.mjs
+│   │   ├── health_engine.mjs
+│   │   ├── inject_reflection.mjs
+│   │   ├── lint_surgeon.mjs
+│   │   ├── megalog_v5.mjs
+│   │   ├── pldb_analyzer.mjs
+│   │   ├── pldb_exporter.mjs
+│   │   ├── reflection_ratchet.mjs
+│   │   ├── reflect_and_sync.mjs
+│   │   ├── sentinel.mjs
+│   │   ├── simulation_runner.mjs
+│   │   ├── store_dumper.mjs
+│   │   ├── test_invariants.mjs
+│   │   ├── ukm_test.mjs
+│   │   ├── watchdog-assets.mjs
+│   │   ├── watchdog-lint-budget.mjs
+│   │   └── watchdog-pathfinder.mjs
+│   ├── primera_watchdog.mjs
+│   ├── simulate-dialogue-10x.mjs
+│   ├── simulate-dialogue-v2.mjs
+│   ├── simulate-dialogue-v3.mjs
+│   ├── simulate-dialogue-v4.mjs
+│   ├── simulate-dialogue-v5.mjs
+│   ├── simulate-dialogue.mjs
+│   ├── test_migration.mjs
+│   ├── test_population_logic.js
+│   ├── test_registry.mjs
+│   ├── validate-assets.mjs
+│   └── watchdog-asset-refs.mjs
+├── skdi_Keterampilan_4A.json
+├── skdi_Penyakit_4A.json
+├── skdi_Plus_Keterampilan_Lain.json
+├── skdi_SKDI_2012.json
+├── src/
+│   ├── App.jsx
+│   ├── assets/
+│   │   ├── asset-manifest.json
+│   │   ├── assets.js
+│   │   └── buildings/
+│   │       ├── alun_alun.png
+│   │       ├── balai_desa.png
+│   │       ├── bank_sampah.png
+│   │       ├── dashat.png
+│   │       ├── house.png
+│   │       ├── iks_scoreboard.png
+│   │       ├── kantor_desa.png
+│   │       ├── market.png
+│   │       ├── mck.png
+│   │       ├── mosque.png
+│   │       ├── pamsimas.png
+│   │       ├── polindes.png
+│   │       ├── posyandu.png
+│   │       ├── pos_gizi.png
+│   │       ├── pos_ukk.png
+│   │       ├── puskesmas.png
+│   │       ├── pustu.png
+│   │       ├── rtk.png
+│   │       ├── rumah_dinas.png
+│   │       ├── school.png
+│   │       ├── tk.png
+│   │       ├── toga.png
+│   │       ├── tpu.png
+│   │       └── well.png
+│   ├── components/
+│   │   ├── AboutModal.jsx
+│   │   ├── apps/
+│   │   │   ├── BankApp.jsx
+│   │   │   ├── ChatApp.jsx
+│   │   │   ├── NewsApp.jsx
+│   │   │   └── ShopApp.jsx
+│   │   ├── ArsipPage.jsx
+│   │   ├── AvatarRenderer.jsx
+│   │   ├── AvatarSelectionModal.jsx
+│   │   ├── BodyMapWidget.jsx
+│   │   ├── CalendarModal.jsx
+│   │   ├── ClinicalPage.jsx
+│   │   ├── CPPTCard.jsx
+│   │   ├── DailyReportModal.jsx
+│   │   ├── dashboard/
+│   │   │   ├── AccreditationView.jsx
+│   │   │   ├── ClinicalView.jsx
+│   │   │   ├── CommunityView.jsx
+│   │   │   ├── LogisticsView.jsx
+│   │   │   └── PerformanceView.jsx
+│   │   ├── DashboardPage.jsx
+│   │   ├── DatabaseSync.jsx
+│   │   ├── DiklatPage.jsx
+│   │   ├── EducationalWikiModal.jsx
+│   │   ├── EmergencyPanel.jsx
+│   │   ├── emr/
+│   │   │   ├── AnamnesisTab.jsx
+│   │   │   ├── AssessmentTab.jsx
+│   │   │   ├── BillingTab.jsx
+│   │   │   ├── ClinicalSidebar.jsx
+│   │   │   ├── EducationTab.jsx
+│   │   │   ├── HistoryTab.jsx
+│   │   │   ├── LabTab.jsx
+│   │   │   ├── PhysicalExamTab.jsx
+│   │   │   ├── ProceduresTab.jsx
+│   │   │   ├── ReasoningDashboard.jsx
+│   │   │   └── TreatmentTab.jsx
+│   │   ├── EndOfDayModal.jsx
+│   │   ├── ErrorBoundary.jsx
+│   │   ├── FarmasiPanel.jsx
+│   │   ├── GameOverModal.jsx
+│   │   ├── gedung/
+│   │   │   ├── RoomCard.jsx
+│   │   │   └── UpgradeModal.jsx
+│   │   ├── GedungPage.jsx
+│   │   ├── InfoTooltip.jsx
+│   │   ├── InventoryPage.jsx
+│   │   ├── KPIDashboard.jsx
+│   │   ├── MainLayout.jsx
+│   │   ├── MetricCard.jsx
+│   │   ├── MorningBriefingModal.jsx
+│   │   ├── NarrativeOverlay.jsx
+│   │   ├── OpeningScreen.jsx
+│   │   ├── OrderModal.jsx
+│   │   ├── OutbreakBanner.jsx
+│   │   ├── OutbreakModal.jsx
+│   │   ├── PatientEMR.jsx
+│   │   ├── PatientHistoryModal.jsx
+│   │   ├── PlayerSetup.jsx
+│   │   ├── PosyanduModal.jsx
+│   │   ├── ProlanisConsultation.jsx
+│   │   ├── ProlanisPanel.jsx
+│   │   ├── QuestBoard.jsx
+│   │   ├── QueueList.jsx
+│   │   ├── ReferralHUD.jsx
+│   │   ├── ReferralSISRUTEModal.jsx
+│   │   ├── SaranaPage.jsx
+│   │   ├── SaveSlotSelector.jsx
+│   │   ├── sensus/
+│   │   │   └── SensusPage.jsx
+│   │   ├── ServiceCardDeck.jsx
+│   │   ├── SettingsModal.jsx
+│   │   ├── shared/
+│   │   │   ├── ExpandableCard.jsx
+│   │   │   ├── GuidelineBadge.jsx
+│   │   │   ├── StatCard.jsx
+│   │   │   └── StepCarousel.jsx
+│   │   ├── Smartphone.jsx
+│   │   ├── staff/
+│   │   │   ├── StaffCard.jsx
+│   │   │   └── StaffDetail.jsx
+│   │   ├── StaffPage.jsx
+│   │   ├── StatusJunctionModal.jsx
+│   │   ├── VillagerAvatar.jsx
+│   │   ├── WeekendModal.jsx
+│   │   ├── wilayah/
+│   │   │   ├── AuxiliaryComponents.jsx
+│   │   │   ├── BehaviorCasePanel.jsx
+│   │   │   ├── BuildingGamePanel.jsx
+│   │   │   ├── buildingScenes.js
+│   │   │   ├── CommunityDiagnosisPanel.jsx
+│   │   │   ├── constants.js
+│   │   │   ├── EliteCOMBWheel.jsx
+│   │   │   ├── map-utils.js
+│   │   │   ├── MapCanvas.jsx
+│   │   │   ├── MiniGamePanel.jsx
+│   │   │   ├── PixelSceneRenderer.jsx
+│   │   │   ├── PosyanduActivePanel.jsx
+│   │   │   ├── PremiumMapDemo.jsx
+│   │   │   ├── PustuActivePanel.jsx
+│   │   │   └── TerrainCanvas.jsx
+│   │   └── WilayahPage.jsx
+│   ├── content/
+│   │   ├── cases/
+│   │   │   └── CaseLibrary.js
+│   │   ├── concepts/
+│   │   │   └── village_politics.md
+│   │   ├── residents/
+│   │   │   ├── DialogVariations.js
+│   │   │   ├── PersonalityTraits.js
+│   │   │   └── ResidentProfiles.js
+│   │   └── scenarios/
+│   │       ├── CulturalBeliefs.js
+│   │       ├── DiseaseScenarios.js
+│   │       ├── IKMScenarioLibrary.js
+│   │       └── PHBSIndicators.js
+│   ├── context/
+│   │   ├── contracts/
+│   │   │   └── gameContext.contract.js
+│   │   ├── GameContext.jsx
+│   │   └── ThemeContext.jsx
+│   ├── contracts/
+│   │   └── store.contract.mjs
+│   ├── data/
+│   │   ├── AppMetadata.js
+│   │   ├── CalendarEventDB.js
+│   │   ├── ClinicalServices.js
+│   │   ├── EducationOptions.js
+│   │   ├── extract_icd9.cjs
+│   │   ├── extract_icd9.py
+│   │   ├── FacilityData.js
+│   │   ├── FKTP144Diseases.js
+│   │   ├── FurnitureData.js
+│   │   ├── HospitalDB.js
+│   │   ├── ICD10.js
+│   │   ├── ICD10_ALIASES.js
+│   │   ├── ICD9CM.js
+│   │   ├── index.js
+│   │   ├── master_icd_10.json
+│   │   ├── master_icd_9.json
+│   │   ├── medication/
+│   │   │   └── utils.js
+│   │   ├── MedicationDatabase.js
+│   │   ├── ProceduresDB.js
+│   │   ├── ProlanisDB.js
+│   │   ├── StaffData.js
+│   │   ├── SupplierDatabase.js
+│   │   ├── wiki/
+│   │   │   ├── dashboard_manajemen.js
+│   │   │   ├── emergency_wiki.js
+│   │   │   ├── igd.js
+│   │   │   ├── klinis.js
+│   │   │   ├── kulit.js
+│   │   │   ├── lab_prosedur.js
+│   │   │   ├── manajemen.js
+│   │   │   ├── obat.js
+│   │   │   ├── penyakit.js
+│   │   │   └── wilayah.js
+│   │   └── WikiData.js
+│   ├── diagnostics/
+│   │   └── invariants.js
+│   ├── domains/
+│   │   ├── clinical/
+│   │   ├── community/
+│   │   │   └── OutbreakSystem.js
+│   │   └── village/
+│   │       ├── NPCReadiness.js
+│   │       ├── VillagerBehavior.js
+│   │       ├── VillageRegistry.js
+│   │       └── village_families.js
+│   ├── game/
+│   │   ├── anamnesis/
+│   │   │   ├── Constants.js
+│   │   │   ├── DialogueEngine.js
+│   │   │   ├── EmotionEngine.js
+│   │   │   ├── InformantSystem.js
+│   │   │   ├── SynthesisEngine.js
+│   │   │   └── TextAdapter.js
+│   │   ├── AnamnesisEngine.js
+│   │   ├── AnamnesisPrompts.js
+│   │   ├── AnamnesisVariations.js
+│   │   ├── BehaviorCaseEngine.js
+│   │   ├── BillingEngine.js
+│   │   ├── CaseIndicators.js
+│   │   ├── ClinicalReasoning.js
+│   │   ├── ConsequenceEngine.js
+│   │   ├── CPPTEngine.js
+│   │   ├── DebriefEngine.js
+│   │   ├── dental/
+│   │   │   ├── DentalDiagnosisEngine.js
+│   │   │   └── DentalProcedureEngine.js
+│   │   ├── DispensingEngine.js
+│   │   ├── emergency/
+│   │   │   └── EmergencyRegistry.js
+│   │   ├── EmergencyCases.js
+│   │   ├── EmergingEventTriggers.js
+│   │   ├── GameCore.js
+│   │   ├── GuestEventSystem.js
+│   │   ├── IKMEventEngine.js
+│   │   ├── index.js
+│   │   ├── KaderNetwork.js
+│   │   ├── kia/
+│   │   │   ├── GrowthChartEngine.js
+│   │   │   ├── ImmunizationEngine.js
+│   │   │   └── PregnancyEngine.js
+│   │   ├── LabEngine.js
+│   │   ├── MiniGameLibrary.js
+│   │   ├── MorningBriefing.js
+│   │   ├── PatientGenerator.js
+│   │   ├── PosyanduEngine.js
+│   │   ├── ProlanisEngine.js
+│   │   ├── QuestEngine.js
+│   │   ├── StoryDatabase.js
+│   │   ├── TheDirector.js
+│   │   └── ValidationEngine.js
+│   ├── gameplay/
+│   │   └── featureRegistry.js
+│   ├── hooks/
+│   │   ├── useGameLoop.js
+│   │   ├── useModalA11y.js
+│   │   ├── useNavAndSettings.js
+│   │   ├── usePatientEMR.js
+│   │   └── useStaffManagement.js
+│   ├── i18n.js
+│   ├── index.css
+│   ├── locales/
+│   │   ├── en.json
+│   │   └── id.json
+│   ├── main.jsx
+│   ├── pages/
+│   │   └── RumahDinas.jsx
+│   ├── scripts/
+│   │   ├── validate_maia_suggestions.cjs
+│   │   ├── validate_summary.cjs
+│   │   ├── validation_output.txt
+│   │   └── validation_report.txt
+│   ├── services/
+│   │   ├── LLMService.js
+│   │   └── PersistenceService.js
+│   ├── store/
+│   │   ├── selectors.js
+│   │   └── useGameStore.js
+│   ├── tests/
+│   │   ├── dischargeEmergencyPatient.test.js
+│   │   ├── dischargePatient.test.js
+│   │   ├── feature.guard.test.jsx
+│   │   ├── featureGuard.js
+│   │   ├── riskFactors.test.js
+│   │   ├── setup.js
+│   │   └── test-setup.js
+│   └── utils/
+│       ├── AvatarUtils.js
+│       ├── BuildingGenerator.js
+│       ├── crashTrap.js
+│       ├── dispatchGuard.js
+│       ├── formatTime.js
+│       ├── LevelingSystem.js
+│       ├── prophylaxis.js
+│       ├── SocialDeterminants.js
+│       ├── SoundManager.js
+│       ├── TerrainGenerator.js
+│       ├── TextureGenerator.js
+│       ├── ToastManager.js
+│       ├── transactions.js
+│       ├── types.js
+│       ├── UIInsetGenerator.js
+│       └── validation.js
+├── start_game.ps1
+├── tailwind.config.js
+├── test-results/
+│   ├── .last-run.json
+│   ├── ui-UI-Baseline-Should-comp-62b6e--and-reach-main-game-layout-chromium/
+│   │   └── error-context.md
+│   ├── ui-UI-Baseline-Should-load-05910-c-and-skip-to-slot-selector-chromium/
+│   │   └── error-context.md
+│   ├── ui-UI-Baseline-Should-navi-d9a21-ot-selector-to-player-setup-chromium/
+│   │   └── error-context.md
+│   └── ui-UI-Baseline-Should-rend-9f5a6-r-with-interactive-elements-chromium/
+│       └── error-context.md
+├── tests/
+│   ├── scenarios/
+│   │   ├── golden_path_clinical.json
+│   │   ├── save_roundtrip.json
+│   │   └── scenario_runner.test.js
+│   └── visual/
+│       └── ui.spec.js
+├── test_db.js
+├── tools/
+│   └── gates/
+│       └── fast_gate.mjs
+├── UKM_CODEX.md
+├── user_meds_list.json
+├── vite.config.js
+├── vitest.config.js
+└── _backups/
+    ├── primer-game-backup.zip
+    ├── primer-game-source.zip
+    ├── primer-game_backup_20260208_1855.zip
+    ├── primer-game_backup_20260209_0446.zip
+    ├── primer-game_backup_20260209_0637.zip
+    ├── primer-game_backup_20260209_2145.zip
+    ├── primer-game_backup_20260210_1117.zip
+    ├── primer-game_backup_20260211_1106.zip
+    ├── primer-game_backup_20260212_1015.zip
+    ├── primer-game_backup_20260217_1842.zip
+    ├── primer-game_backup_20260218_1057.zip
+    ├── primer-game_backup_20260219_0744.zip
+    ├── primer-game_backup_20260225_0813.zip
+    └── primer-game_backup_20260310_2120.zip
+
+```
+
 Generated: 11/3/2026, 19.08.10
 
 ```
@@ -737,15 +2936,18 @@ Generated: 11/3/2026, 19.08.10
 ```
 
 
+
+
+
 ## WATCHDOG REPORT (v5.0)
-Generated: 11/3/2026, 19.08.10
+Generated: 11/3/2026, 19.57.16
 Force Mode: NO
 
 | Gate | Status | Assessed | Detail |
 | :--- | :--- | :--- | :--- |
-| **Honest Health** | **GREEN** | **YES** | **Score: 83/100** |
+| **Honest Health** | **AMBER** | **YES** | **Score: 77/100** |
 | **Arch Overview** | PASS | YES | Bridge Synchronized |
-| **Clinical** | PASS | YES | 100% integrity |
+| **Clinical** | PASS | YES | 98% integrity |
 | **MAIA Integ.** | passed | YES | M=0 P=0 E=0 |
 | **Lint Budget** | WARN | YES | 62 errors |
 | **Unit Tests** | PASS | YES | 14 passed, 0 failed |

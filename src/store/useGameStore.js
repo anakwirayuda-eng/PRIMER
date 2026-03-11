@@ -19,9 +19,9 @@ import { PROCEDURES_DB } from '../data/ProceduresDB.js';
 import { HOSPITALS, AMBULANCES } from '../data/HospitalDB.js';
 import { buildCPPTRecord, buildMaiaCPPTRecord } from '../game/CPPTEngine.js';
 import { getPatientSpikeMultiplier } from '../domains/community/OutbreakSystem.js';
-import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateUKPBridgePatient, generateGenericPatients } from '../game/PatientGenerator.js';
+import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateGenericPatients } from '../game/PatientGenerator.js';
 import { getScheduledFollowups, clearProcessedFollowups } from '../game/ConsequenceEngine.js';
-import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, getSeasonForDay, getEventSummaries, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
+import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
 import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
 import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGameProgress } from '../game/QuestEngine.js';
@@ -39,6 +39,54 @@ import {
     calculateGlobalBuffs
 } from '../game/GameCore.js';
 
+const normalizeLoadedSavePayload = (saveData) => {
+    if (!saveData || typeof saveData !== 'object') return null;
+
+    const payload = saveData.saveData || saveData._raw || saveData;
+    if (!payload || typeof payload !== 'object') return null;
+
+    const legacyProfile = payload.profile && typeof payload.profile === 'object'
+        ? payload.profile
+        : null;
+    const player = payload.player && typeof payload.player === 'object'
+        ? payload.player
+        : null;
+    const profile = {
+        ...(player?.profile || {}),
+        ...(legacyProfile || {}),
+    };
+
+    if (profile.reputation === undefined && payload.reputation !== undefined) {
+        profile.reputation = payload.reputation;
+    }
+
+    const hasProfile = Object.keys(profile).length > 0;
+    const world = {
+        ...(payload.world || {}),
+    };
+
+    if ((world.day === undefined || world.day === null) && payload.day !== undefined) {
+        world.day = payload.day;
+    }
+
+    if (
+        !player &&
+        !hasProfile &&
+        !payload.world &&
+        !payload.finance &&
+        !payload.clinical &&
+        !payload.publicHealth &&
+        !payload.staff
+    ) {
+        return null;
+    }
+
+    return {
+        ...payload,
+        player: (player || hasProfile) ? { ...(player || {}), profile } : null,
+        world,
+    };
+};
 const INITIAL_META_STATE = {
     activeQuests: [],
     activeStories: [],
@@ -573,31 +621,7 @@ export const useGameStore = create(
                     resetPublicHealth: () => set(() => ({
                         publicHealth: { villageData: null, prolanisRoster: [], prolanisState: { lastSenamMonth: -1, lastSenamDay: -1 }, activeOutbreaks: [], outbreakNotification: null, activeIKMEvents: [], completedIKMIds: [], ikmCooldowns: {}, ikmCaseBoosts: [], buildingProgress: {} }
                     })),
-
                     // --- UKM IKM Actions ---
-                    /** Forcibly trigger a specific IKM event (e.g. from NPC dialogue) */
-                    triggerIKMEvent: (scenarioId) => {
-                        const scenario = getScenarioById(scenarioId);
-                        if (!scenario) return;
-
-                        set(state => {
-                            const activeIds = state.publicHealth.activeIKMEvents.map(e => e.scenarioId);
-                            // Skip if already active or completed
-                            if (activeIds.includes(scenario.id) || state.publicHealth.completedIKMIds.includes(scenario.id)) {
-                                return state; // Only trigger if not already ongoing/done
-                            }
-
-                            const newInstance = createEventInstance(scenario, state.world.day);
-                            soundManager.playNotification();
-                            return {
-                                publicHealth: {
-                                    ...state.publicHealth,
-                                    activeIKMEvents: [...state.publicHealth.activeIKMEvents, newInstance]
-                                }
-                            };
-                        });
-                    },
-
                     /** Resolve a completed IKM event: apply impacts, produce case boosts */
                     resolveIKMEvent: (eventInstanceId) => {
                         const s = get();
@@ -697,7 +721,6 @@ export const useGameStore = create(
                     /** Manually trigger an IKM event (e.g. from clicking linkedScenario badge) */
                     triggerIKMEvent: (scenarioId) => {
                         const s = get();
-                        // Don't duplicate
                         if (s.publicHealth.activeIKMEvents.some(e => e.scenarioId === scenarioId)) return false;
                         if (s.publicHealth.completedIKMIds.includes(scenarioId)) return false;
 
@@ -705,6 +728,7 @@ export const useGameStore = create(
                         if (!scenario) return false;
 
                         const event = createEventInstance(scenario, s.world.day);
+                        soundManager.playNotification();
                         set(state => ({
                             publicHealth: {
                                 ...state.publicHealth,
@@ -1194,16 +1218,38 @@ export const useGameStore = create(
                     },
 
                     loadGame: (saveData, slotId) => {
-                        if (!saveData) return false;
+                        const normalizedSave = normalizeLoadedSavePayload(saveData);
+                        if (!normalizedSave) return false;
                         try {
                             set(produce(s => {
                                 s.nav.currentSlotId = slotId;
-                                s.player = saveData.player || s.player;
-                                s.world = saveData.world || s.world;
-                                s.finance = saveData.finance || s.finance;
-                                s.clinical = saveData.clinical || s.clinical;
-                                s.publicHealth = saveData.publicHealth || s.publicHealth;
-                                s.staff = saveData.staff || s.staff;
+
+                                if (normalizedSave.player) {
+                                    s.player = {
+                                        ...s.player,
+                                        ...normalizedSave.player,
+                                        profile: {
+                                            ...s.player.profile,
+                                            ...(normalizedSave.player.profile || {})
+                                        }
+                                    };
+                                }
+                                if (normalizedSave.world) {
+                                    s.world = { ...s.world, ...normalizedSave.world };
+                                }
+                                if (normalizedSave.finance) {
+                                    s.finance = { ...s.finance, ...normalizedSave.finance };
+                                }
+                                if (normalizedSave.clinical) {
+                                    s.clinical = { ...s.clinical, ...normalizedSave.clinical };
+                                }
+                                if (normalizedSave.publicHealth) {
+                                    s.publicHealth = { ...s.publicHealth, ...normalizedSave.publicHealth };
+                                }
+                                if (normalizedSave.staff) {
+                                    s.staff = { ...s.staff, ...normalizedSave.staff };
+                                }
+
                                 s.nav.gameState = 'playing';
                             }));
                             return true;
