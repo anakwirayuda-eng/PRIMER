@@ -14,7 +14,6 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Nyeri kepala seperti diikat', 'Nyeri tekan otot leher', 'Tidak mual/muntah'],
-        symptoms: ["Nyeri kepala bilateral","Seperti diikat","Tidak berdenyut","Tidak mual"],
         clue: "[EBM: IHS/ICHD-3] TTH — nyeri bilateral, pressing/tightening, intensitas ringan-sedang, tanpa mual/fotofobia. Beda migrain: unilateral + pulsating + mual.",
         relevantLabs: [],
         anamnesisQuestions: {
@@ -52,7 +51,6 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Pusing berputar', 'Dipicu perubahan posisi kepala', 'Mual dan muntah'],
-        symptoms: ["Pusing berputar","Dipicu perubahan posisi","Mual","Nistagmus"],
         clue: "[EBM: AAO-HNS 2017] BPPV — vertigo posisional <1 menit, dipicu perubahan posisi kepala. Dix-Hallpike (+). Terapi: Epley maneuver. BUKAN stroke!",
         relevantLabs: [],
         anamnesisQuestions: {
@@ -86,7 +84,6 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Sakit kepala berdenyut', 'Sakit kepala sebelah', 'Fotofobia (silau)'],
-        symptoms: ["Nyeri kepala unilateral","Berdenyut","Mual/muntah","Fotofobia"],
         clue: "[EBM: ICHD-3] Migrain tanpa aura — unilateral, pulsating, sedang-berat, diperburuk aktivitas fisik, +mual/fotofobia. Durasi 4-72 jam.",
         relevantLabs: [],
         anamnesisQuestions: {
@@ -126,7 +123,6 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Kejang kaku-kelojot', 'Demam tinggi (>38°C)', 'Mata mendelik'],
-        symptoms: ["Kejang saat demam","Usia 6 bulan-5 tahun","Kejang tonik-klonik","Durasi <15 menit"],
         clue: "[EBM: AAP 2011] Kejang demam sederhana — usia 6bln-5thn, kejang <15 menit, tonik-klonik umum, tidak berulang 24 jam. Turunkan demam, singkirkan meningitis.",
         relevantLabs: ["Darah Lengkap"],
         anamnesisQuestions: {
@@ -165,7 +161,6 @@ export const NEUROLOGY_CASES = [
         skdi: '4A',
         category: 'Neurology',
         symptoms: ['Sakit kepala berdenyut', 'Silau jika kena cahaya', 'Mual dan muntah'],
-        symptoms: ["Nyeri kepala unilateral berdenyut","Mual muntah","Fotofobia/fonofobia","Aura visual"],
         clue: "[EBM: ICHD-3] Migrain — unilateral pulsating, moderate-severe, aggravated by activity, +nausea/photo-phonophobia. Triptans jika NSAID gagal.",
         relevantLabs: [],
         anamnesisQuestions: {
@@ -199,7 +194,6 @@ export const NEUROLOGY_CASES = [
         skdi: '3A',
         category: 'Neurology',
         symptoms: ['Sakit kepala hampir tiap hari', 'Kepala seperti diikat kencang', 'Faktor psikologis (+)'],
-        symptoms: ["Nyeri kepala >15 hari/bulan","Bilateral pressing","Intensitas ringan-sedang","Kronik >3 bulan"],
         clue: "[EBM: ICHD-3] CTTH — nyeri kepala ≥15 hari/bulan selama >3 bulan. Evaluasi medication overuse headache. Amitriptilin profilaksis.",
         relevantLabs: [],
         anamnesisQuestions: {
@@ -233,7 +227,6 @@ export const NEUROLOGY_CASES = [
         skdi: '3A',
         category: 'Neurology',
         symptoms: ['Sering lupa barang/kejadian', 'Disorientasi jalan', 'Emosi labil'],
-        symptoms: ["Lupa baru","Disorientasi","Kesulitan bahasa","Perubahan perilaku"],
         clue: "[EBM: NIA-AA 2018] Early Alzheimer — gangguan memori episodik progresif >6 bulan. MMSE screening. Evaluasi reversible causes (B12, TSH, depresi).",
         relevantLabs: ["Darah Lengkap"],
         anamnesisQuestions: {

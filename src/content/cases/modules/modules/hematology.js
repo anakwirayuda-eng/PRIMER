@@ -103,7 +103,6 @@ export const HEMATOLOGY_CASES = [
         anamnesis: ["Demam tinggi mendadak sudah 3 hari, nyeri sendi.", "Kepala pusing banget, mual, dan nggak nafsu makan. Ada bintik-bintik merah di lengan."],
         physicalExamFindings: { general: "Tampak sakit sedang, febris.", vitals: "TD 110/70, N 96x, RR 20x, S 39.2°C", skin: "Uji Rumple Leed (+), petechiae di ekstremitas (+)." },
         labs: { "Darah Lengkap": { result: "Hb 12.5, Hematokrit 40%, Trombosit 98.000", cost: 50000 }, "NS1 Antigen": { result: "Positif (+)", cost: 150000 } },
-        relevantLabs: ['lab_hematology', 'lab_ns1'],
         vitals: { temp: 39.2, bp: '110/70', hr: 96, rr: 20 },
         correctTreatment: ['paracetamol_500', 'oralit'],
         correctProcedures: ['hospital_referral'],
