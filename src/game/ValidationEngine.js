@@ -37,6 +37,7 @@ export function validateDiagnosis(patientCase, selectedDiagnoses) {
 
     return {
         isPrimaryCorrect,
+        isCorrect: isPrimaryCorrect,
         hasReasonableDifferential,
         correctAnswer: correctCode,
         feedback: isPrimaryCorrect
@@ -140,7 +141,7 @@ export function validateExams(patientCase, performedExams, orderedLabs) {
     const OVEREXAM_GRACE = 2; // Allow 2 "exploratory" exams without penalty
     const overExamPenalty = Math.max(0, unnecessaryExams.length - OVEREXAM_GRACE) * 3;
 
-    const labsOrdered = orderedLabs || [];
+    const labsOrdered = Array.isArray(orderedLabs) ? orderedLabs : [];
     const labsCorrect = relevantLabs.filter(l => labsOrdered.includes(l));
     const unnecessaryLabs = labsOrdered.filter(l => !relevantLabs.includes(l));
     const missingLabs = relevantLabs.filter(l => !labsOrdered.includes(l));

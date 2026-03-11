@@ -557,6 +557,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             vitals: disease?.vitals || {},
             physicalExamFindings: disease?.physicalExamFindings || {},
             labs: disease?.labs || {},
+            icd10: disease?.icd10 || 'R69',
             trueDiagnosisCode: disease?.icd10 || 'R69',
             diagnosisName: disease?.diagnosis || 'Unknown',
             anamnesisQuestions: disease?.anamnesisQuestions || null,

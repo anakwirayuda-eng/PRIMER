@@ -249,7 +249,7 @@ export function determineMonthlyOutcome(patient, doctorDecisions) {
 /**
  * Check if all parameters are within target
  */
-function checkIfControlled(params, diseaseType) {
+export function checkIfControlled(params, diseaseType) {
     const disease = PROLANIS_DISEASES[diseaseType];
     if (!disease) return false;
 

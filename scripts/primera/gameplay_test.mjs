@@ -190,11 +190,12 @@ async function runAllTests() {
             name: 'Pak Slamet',
             age: 55,
             gender: 'L',
-            diseaseType: 'hypertension',
-            currentParams: { systolic: 145, diastolic: 95 },
-            history: [],
-            enrolledDay: 1,
-            lastCheckup: 1,
+            prolanisData: {
+                diseaseType: 'hypertension',
+                parameters: { systolic: 145, diastolic: 95 },
+                history: [],
+                consecutiveControlled: 0,
+            },
         };
         const p = PG.generateProlanisVisitPatient(rosterMember, 30);
         assert(p, 'generateProlanisVisitPatient returned null');
@@ -412,8 +413,8 @@ async function runAllTests() {
     console.log('\n⚖️ 10. POSYANDU ENGINE');
     const PE = await import('../../src/game/PosyanduEngine.js');
 
-    test('isPosyanduDay for day 30 is true', () => {
-        assert(PE.isPosyanduDay(30) === true, 'Day 30 should be a Posyandu day');
+    test('isPosyanduDay for day 35 is true', () => {
+        assert(PE.isPosyanduDay(35) === true, 'Day 35 should be a Posyandu day');
     });
 
     test('isPosyanduDay for day 1 is false', () => {
