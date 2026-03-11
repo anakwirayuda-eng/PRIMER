@@ -121,19 +121,27 @@ const AVATARS = [
 export { AVATARS };
 
 function AvatarRenderer({ avatar, size = 80, className = '' }) {
-    // Normalize legacy avatars — older saves may lack skinTone/gender fields
+    // Normalize legacy avatars — handles:
+    // - null/undefined → null (emoji fallback)
+    // - string 'default' → default male portrait (from INITIAL_PLAYER_STATE)
+    // - object without skinTone → infer from icon/color fields
+    // - object with skinTone → new format, pass through
     const normalizedAvatar = useMemo(() => {
         if (!avatar) return null;
+        // String-type from INITIAL_PLAYER_STATE ('default')
+        if (typeof avatar === 'string') {
+            return { skinTone: 'fair', hairStyle: 'neat', hairColor: 'black', gender: 'L', accessories: ['stethoscope'] };
+        }
         // Already has skinTone — new format, use as-is
         if (avatar.skinTone) return avatar;
-        // Legacy format: infer gender from icon/color, assign defaults
+        // Legacy object format: infer gender from icon/color, assign defaults
         const isFemale = avatar.icon?.includes('👩') || avatar.color?.includes('pink') || avatar.color?.includes('purple');
         return {
             ...avatar,
             skinTone: 'fair',
             hairStyle: isFemale ? 'neat' : 'neat',
             hairColor: 'black',
-            gender: isFemale ? 'P' : 'L',
+            gender: isFemale ? 'P' : (avatar.gender || 'L'),
             accessories: ['stethoscope'],
         };
     }, [avatar]);
