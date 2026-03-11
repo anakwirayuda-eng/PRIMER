@@ -29,6 +29,7 @@ import {
     RISK_FACTORS,
     KB_METHODS
 } from '../../game/kia/PregnancyEngine.js';
+import { chanceFromSeed } from '../../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // 🎨 KINETIC CSS (Reused from PosyanduActivePanel)
@@ -86,7 +87,6 @@ export default function PustuActivePanel({ onClose, onComplete }) {
     const [visitResult, setVisitResult] = useState(null);
     const [riskResult, setRiskResult] = useState(null);
     const [selectedKB, setSelectedKB] = useState(null);
-    const [kbResult, setKbResult] = useState(null);
 
     // Create ANC patients from demo data
     const [queue, setQueue] = useState(() =>
@@ -107,7 +107,6 @@ export default function PustuActivePanel({ onClose, onComplete }) {
         setVisitResult(null);
         setRiskResult(null);
         setSelectedKB(null);
-        setKbResult(null);
 
         // Determine visit type based on gestational week
         const gw = patient.ancData?.gestationalWeek || 8;
@@ -120,7 +119,7 @@ export default function PustuActivePanel({ onClose, onComplete }) {
     };
 
     const handleDelegateKader = (patient) => {
-        const isError = Math.random() < 0.25; // Kader ANC error rate higher
+        const isError = chanceFromSeed(`pustu-kader:${patient.id}`, 0.25);
         setSessionLog(prev => [...prev, {
             patient, handler: 'Bidan Desa',
             score: isError ? 15 : 30,
@@ -172,7 +171,6 @@ export default function PustuActivePanel({ onClose, onComplete }) {
         let kbRes = null;
         if (selectedKB) {
             kbRes = processKBCounseling(activePatient, selectedKB);
-            setKbResult(kbRes);
         }
         finalizeVisit(riskResult, kbRes);
     };
@@ -204,10 +202,9 @@ export default function PustuActivePanel({ onClose, onComplete }) {
         setPhase('triage');
     }, [activePatient, visitType, selectedChecks, visitResult]);
 
-    // Auto-advance to report when queue empty
-    if (queue.length === 0 && phase === 'triage' && sessionLog.length > 0) {
-        setPhase('report');
-    }
+    const activePhase = queue.length === 0 && phase === 'triage' && sessionLog.length > 0
+        ? 'report'
+        : phase;
 
     const essentialChecks = ANC_VISITS[visitType]?.essentialChecks || [];
 
@@ -217,12 +214,12 @@ export default function PustuActivePanel({ onClose, onComplete }) {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 font-sans pointer-events-none">
             <style dangerouslySetInnerHTML={{ __html: KINETIC_CSS }} />
-            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md pointer-events-auto" onClick={phase === 'report' ? onClose : undefined} />
+            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md pointer-events-auto" onClick={activePhase === 'report' ? onClose : undefined} />
 
             <div className={`w-full max-w-5xl h-[85vh] flex flex-col pointer-events-auto relative z-10 animate-in zoom-in-95 duration-500 shadow-[0_40px_100px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-[#0A0D14] ${shake ? 'bc-shake' : ''}`}>
 
                 {/* HEADER */}
-                {phase !== 'report' && (
+                {activePhase !== 'report' && (
                     <div className="bg-[#121824]/90 backdrop-blur-xl border-b border-white/10 p-5 shrink-0 flex justify-between items-center relative z-20">
                         <div className="absolute inset-0 blueprint-grid opacity-20" />
                         <div className="flex items-center gap-4 relative z-10">
@@ -238,7 +235,7 @@ export default function PustuActivePanel({ onClose, onComplete }) {
                         </div>
 
                         <div className="flex items-center gap-4 relative z-10">
-                            {phase === 'triage' && (
+                            {activePhase === 'triage' && (
                                 <div className="bg-black/50 border border-slate-700 px-4 py-2 rounded-lg flex items-center gap-4 shadow-inner">
                                     <div className="text-right">
                                         <div className="font-mono text-[9px] text-amber-500 font-bold tracking-widest uppercase">Kapasitas Dokter (AP)</div>
@@ -261,7 +258,7 @@ export default function PustuActivePanel({ onClose, onComplete }) {
                 <div className="flex-1 relative flex overflow-hidden">
 
                     {/* ════ TRIAGE ════ */}
-                    {phase === 'triage' && (
+                    {activePhase === 'triage' && (
                         <div className="w-full h-full p-8 overflow-y-auto blueprint-grid flex flex-col items-center bg-[#151b24]">
                             <div className="max-w-3xl w-full">
                                 <div className="border-l-4 border-pink-500 pl-4 mb-8">
@@ -311,7 +308,7 @@ export default function PustuActivePanel({ onClose, onComplete }) {
                     )}
 
                     {/* ════ ANC EXAMINATION ════ */}
-                    {phase === 'anc' && activePatient && (
+                    {activePhase === 'anc' && activePatient && (
                         <div className="w-full h-full flex animate-in slide-in-from-right-8 bg-[#1e232d]">
                             {/* Buku KIA Pink — Patient Info */}
                             <div className="flex-[3] p-8 overflow-y-auto">
@@ -387,7 +384,7 @@ export default function PustuActivePanel({ onClose, onComplete }) {
                     )}
 
                     {/* ════ RISK ASSESSMENT ════ */}
-                    {phase === 'risk' && activePatient && (
+                    {activePhase === 'risk' && activePatient && (
                         <div className="w-full h-full p-8 overflow-y-auto bg-[#1e232d] animate-in slide-in-from-right-8 flex flex-col items-center">
                             <div className="max-w-3xl w-full">
                                 <div className="border-l-4 border-amber-500 pl-4 mb-6">
@@ -439,7 +436,7 @@ export default function PustuActivePanel({ onClose, onComplete }) {
                     )}
 
                     {/* ════ KB COUNSELING ════ */}
-                    {phase === 'kb' && activePatient && (
+                    {activePhase === 'kb' && activePatient && (
                         <div className="w-full h-full p-8 overflow-y-auto bg-[#1e232d] animate-in slide-in-from-right-8 flex flex-col items-center">
                             <div className="max-w-3xl w-full">
                                 <div className="border-l-4 border-emerald-500 pl-4 mb-6">
@@ -486,7 +483,7 @@ export default function PustuActivePanel({ onClose, onComplete }) {
                     )}
 
                     {/* ════ REPORT ════ */}
-                    {phase === 'report' && (
+                    {activePhase === 'report' && (
                         <div className="flex flex-col h-full w-full bg-[#EAE6DF] paper-texture p-6 sm:p-10 text-slate-900 overflow-y-auto scrollbar-hide relative animate-in zoom-in-95 duration-500">
                             <div className="max-w-3xl mx-auto w-full bg-white p-8 rounded-sm shadow-2xl border border-slate-300 relative transform rotate-[1deg]">
                                 <div className="text-center mb-6 border-b-2 border-pink-800/30 pb-4">

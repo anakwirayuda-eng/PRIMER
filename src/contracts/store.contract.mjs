@@ -15,8 +15,12 @@ export const STORE_CONTRACT = {
             types: { time: 'number', day: 'number' }
         },
         finance: {
-            requiredKeys: ['stats', 'pharmacyInventory', 'prolanisRoster'],
+            requiredKeys: ['stats', 'pharmacyInventory'],
             types: { stats: 'object' }
+        },
+        publicHealth: {
+            requiredKeys: ['villageData', 'prolanisRoster', 'activeOutbreaks'],
+            types: { villageData: 'object' }
         },
         clinical: {
             requiredKeys: ['queue', 'activePatientId', 'history'],
@@ -27,7 +31,7 @@ export const STORE_CONTRACT = {
         clinicalActions: [
             'dischargePatient', 'updatePatient', 'orderLab'
         ],
-        financeActions: [
+        publicHealthActions: [
             'enrollProlanis'
         ],
         navActions: [

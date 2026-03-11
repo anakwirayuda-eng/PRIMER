@@ -20,6 +20,7 @@
     "knip:json": "knip --reporter json > megalog/outputs/knip.json || exit 0",
     "assets:check": "node scripts/primera/watchdog-assets.mjs",
     "clinical:check": "node scripts/primera/clinical_watchdog.mjs",
+    "content:check": "node scripts/primera/engine-content-audit.mjs",
     "build:gate": "npm run build || exit 0",
     "prebuild": "node scripts/validate-assets.mjs",
     "validate:assets": "node scripts/validate-assets.mjs",

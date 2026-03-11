@@ -14,6 +14,7 @@ import React, { useState, useMemo } from 'react';
 import { User, ChevronRight, ChevronLeft, Palette, Scissors, IdCard, Fingerprint, FileSignature, ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
 import AvatarRenderer, { SKIN_TONES, HAIR_COLORS } from './AvatarRenderer.jsx';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
+import { pickDeterministic } from '../utils/deterministicRandom.js';
 
 // ─── Backward compat export for AvatarSelectionModal ───
 // eslint-disable-next-line react-refresh/only-export-components
@@ -106,7 +107,10 @@ export default function PlayerSetup({ onComplete }) {
     }), [age]);
 
     // Alternating quote — picked once on mount
-    const activeQuote = useMemo(() => BRIEFING_QUOTES[Math.floor(Math.random() * BRIEFING_QUOTES.length)], []);
+    const activeQuote = useMemo(
+        () => pickDeterministic(BRIEFING_QUOTES, 'player-setup-briefing') || BRIEFING_QUOTES[0],
+        []
+    );
 
     const toggleAccessory = (accId) => setAccessories(prev =>
         prev.includes(accId) ? prev.filter(a => a !== accId) : [...prev, accId]

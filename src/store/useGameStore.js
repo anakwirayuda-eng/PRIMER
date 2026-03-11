@@ -28,8 +28,10 @@ import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGamePr
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
-// dispatchGuard reserved for future transaction safety layer
+import { guardActionGroup } from '../utils/dispatchGuard.js';
+import { CURRENT_SAVE_VERSION, createSaveSnapshot, parseSavePayload } from '../utils/savePayload.js';
 import { withTransaction } from '../utils/transactions.js';
+import { chanceFromSeed, pickDeterministic, seededBetween, seededInt } from '../utils/deterministicRandom.js';
 
 
 import {
@@ -39,60 +41,47 @@ import {
     calculateGlobalBuffs
 } from '../game/GameCore.js';
 
-const normalizeLoadedSavePayload = (saveData) => {
-    if (!saveData || typeof saveData !== 'object') return null;
-
-    const payload = saveData.saveData || saveData._raw || saveData;
-    if (!payload || typeof payload !== 'object') return null;
-
-    const legacyProfile = payload.profile && typeof payload.profile === 'object'
-        ? payload.profile
-        : null;
-    const player = payload.player && typeof payload.player === 'object'
-        ? payload.player
-        : null;
-    const profile = {
-        ...(player?.profile || {}),
-        ...(legacyProfile || {}),
-    };
-
-    if (profile.reputation === undefined && payload.reputation !== undefined) {
-        profile.reputation = payload.reputation;
-    }
-
-    const hasProfile = Object.keys(profile).length > 0;
-    const world = {
-        ...(payload.world || {}),
-    };
-
-    if ((world.day === undefined || world.day === null) && payload.day !== undefined) {
-        world.day = payload.day;
-    }
-
-    if (
-        !player &&
-        !hasProfile &&
-        !payload.world &&
-        !payload.finance &&
-        !payload.clinical &&
-        !payload.publicHealth &&
-        !payload.staff
-    ) {
-        return null;
-    }
-
-    return {
-        ...payload,
-        player: (player || hasProfile) ? { ...(player || {}), profile } : null,
-        world,
-    };
+const buildProlanisBpjsNumber = (patient, day) => {
+    const patientSeed = patient?.id || patient?.name || 'prolanis';
+    const suffix = String(seededInt(`prolanis:${patientSeed}:${day}`, 10000)).padStart(4, '0');
+    return `PRO-${suffix}`;
 };
+
+const applyFamilyIndicatorDrift = (family, seed) => {
+    if (!family?.indicators || !chanceFromSeed(seed, 0.05)) {
+        return family;
+    }
+
+    const keys = Object.keys(family.indicators);
+    if (keys.length === 0) {
+        return family;
+    }
+
+    const randomKey = pickDeterministic(keys, seed, 1);
+    const indicators = {
+        ...family.indicators,
+        [randomKey]: chanceFromSeed(seed, 0.6, 2)
+    };
+    return { ...family, indicators, iksScore: calculateIKS(indicators) };
+};
+
+const applyStaffMoraleDecay = (hiredStaff, seedPrefix) => {
+    return hiredStaff.map((staff, index) => ({
+        ...staff,
+        morale: Math.max(
+            0,
+            (staff.morale || 70) - seededBetween(`${seedPrefix}:${staff.id || index}`, 2, 7)
+        )
+    }));
+};
+
 const INITIAL_META_STATE = {
     activeQuests: [],
     activeStories: [],
     isWikiOpen: false,
     wikiMetric: null,
-    saveVersion: 3
+    saveVersion: CURRENT_SAVE_VERSION,
+    runtimeTrap: null
 };
 
 const INITIAL_FINANCE_STATS = {
@@ -166,11 +155,71 @@ const INITIAL_CLINICAL_STATE = {
     dentalLog: [],              // Completed dental procedure records
 };
 
+const ACTION_GROUP_NAMES = [
+    'navActions',
+    'worldActions',
+    'playerActions',
+    'financeActions',
+    'publicHealthActions',
+    'staffActions',
+    'clinicalActions',
+    'metaActions',
+    'actions'
+];
+
+const ACTIONS_ALLOWED_DURING_RUNTIME_TRAP = new Set([
+    'clinicalActions.dismissWarning',
+    'actions.saveGame',
+    'actions.loadGame',
+    'actions.startNewGame',
+    'actions.resetGame'
+]);
+
+const ACTIONS_SKIP_STABILITY_GUARD = new Set([
+    'actions.saveGame',
+    'actions.loadGame',
+    'actions.startNewGame',
+    'actions.resetGame',
+    'clinicalActions.dismissWarning'
+]);
+
+const ACTIONS_SKIP_INVARIANT_RECHECK = new Set([
+    'actions.saveGame',
+    'clinicalActions.dismissWarning'
+]);
+
+function shouldEnableActionStability(fullName, actionName) {
+    if (ACTIONS_SKIP_STABILITY_GUARD.has(fullName)) return false;
+    return !/^(set|open|close|toggle|clear)/.test(actionName);
+}
+
+function guardStoreActions(store, set, get) {
+    for (const groupName of ACTION_GROUP_NAMES) {
+        if (!store[groupName] || typeof store[groupName] !== 'object') continue;
+
+        store[groupName] = guardActionGroup(groupName, store[groupName], (actionName) => {
+            const fullName = `${groupName}.${actionName}`;
+            return {
+                getState: get,
+                setState: set,
+                allowDuringFreeze: ACTIONS_ALLOWED_DURING_RUNTIME_TRAP.has(fullName),
+                enableStability: shouldEnableActionStability(fullName, actionName),
+                freezeOnInvariant: !ACTIONS_SKIP_INVARIANT_RECHECK.has(fullName),
+                threshold: fullName === 'actions.nextDay' ? 2000 : 500,
+                maxBurst: fullName === 'actions.nextDay' ? 2 : 3
+            };
+        });
+    }
+
+    return store;
+}
+
 
 export const useGameStore = create(
     devtools(
         persist(
-            (set, get) => ({
+            (set, get) => {
+                const store = {
                 // --- SLICE: NAV & SETTINGS ---
                 nav: {
                     gameState: 'opening',
@@ -498,17 +547,21 @@ export const useGameStore = create(
                     setProlanisState: (val) => set(s => ({ publicHealth: { ...s.publicHealth, prolanisState: typeof val === 'function' ? val(s.publicHealth.prolanisState) : val } })),
                     setActiveOutbreaks: (val) => set(s => ({ publicHealth: { ...s.publicHealth, activeOutbreaks: typeof val === 'function' ? val(s.publicHealth.activeOutbreaks) : val } })),
                     setOutbreakNotification: (val) => set(s => ({ publicHealth: { ...s.publicHealth, outbreakNotification: typeof val === 'function' ? val(s.publicHealth.outbreakNotification) : val } })),
-                    enrollProlanis: (patient, day) => {
+                    enrollProlanis: (patient, dayOrDiseaseType) => {
                         const s = get();
+                        const day = Number.isFinite(dayOrDiseaseType) ? dayOrDiseaseType : s.world.day;
+                        const diseaseType = typeof dayOrDiseaseType === 'string'
+                            ? dayOrDiseaseType
+                            : (patient.prolanisData?.diseaseType || 'dm_type2');
                         if (s.publicHealth.prolanisRoster.some(p => p.id === patient.id)) return false;
-                        const initialParams = generateInitialParameters(patient.prolanisData?.diseaseType || 'dm_type2');
+                        const initialParams = generateInitialParameters(diseaseType);
                         const newMember = {
                             id: patient.id, name: patient.name, age: patient.age, gender: patient.gender,
                             anthropometrics: patient.anthropometrics,
-                            bpjsNumber: patient.social?.bpjsNumber || `PRO-${Math.floor(Math.random() * 10000)}`,
+                            bpjsNumber: patient.social?.bpjsNumber || buildProlanisBpjsNumber(patient, day),
                             social: patient.social,
                             prolanisData: {
-                                diseaseType: patient.prolanisData?.diseaseType || 'dm_type2',
+                                diseaseType,
                                 enrolledDay: day, lastVisitDay: day,
                                 parameters: initialParams, history: [], consecutiveControlled: 0
                             }
@@ -580,13 +633,7 @@ export const useGameStore = create(
                         let nextVillage = villageData;
                         if (nextVillage) {
                             const updatedFamilies = nextVillage.families.map(fam => {
-                                if (Math.random() < 0.05) {
-                                    const keys = Object.keys(fam.indicators);
-                                    const randomKey = keys[Math.floor(Math.random() * keys.length)];
-                                    const indicators = { ...fam.indicators, [randomKey]: Math.random() > 0.4 };
-                                    return { ...fam, indicators, iksScore: calculateIKS(indicators) };
-                                }
-                                return fam;
+                                return applyFamilyIndicatorDrift(fam, `public-health:${day}:${fam.id}`);
                             });
                             nextVillage = { ...nextVillage, families: updatedFamilies };
                         }
@@ -694,9 +741,9 @@ export const useGameStore = create(
                         set(state => {
                             const vd = state.publicHealth.villageData;
                             if (!vd || !vd.families) return state;
-                            // Apply SDOH improvement to random subset of families
+                            // Apply SDOH improvement to a deterministic subset of families
                             const updatedFamilies = vd.families.map(fam => {
-                                if (Math.random() > 0.4) return fam; // 60% chance to benefit
+                                if (!chanceFromSeed(`sdoh:${buildingType}:${fam.id}`, 0.4)) return fam;
                                 const indicators = { ...fam.indicators };
                                 for (const [key, val] of Object.entries(sdohDelta)) {
                                     if (typeof indicators[key] === 'boolean') {
@@ -781,7 +828,13 @@ export const useGameStore = create(
                         return { success: true, message: `Task assigned` };
                     },
                     processDailyDecay: () => {
-                        set(s => ({ staff: { ...s.staff, hiredStaff: s.staff.hiredStaff.map(st => ({ ...st, morale: Math.max(0, (st.morale || 70) - (Math.random() * 5 + 2)) })) } }));
+                        const day = get().world.day;
+                        set(s => ({
+                            staff: {
+                                ...s.staff,
+                                hiredStaff: applyStaffMoraleDecay(s.staff.hiredStaff, `staff-daily:${day}`)
+                            }
+                        }));
                     },
                     resetStaff: () => set(s => ({ staff: { ...s.staff, hiredStaff: [] } }))
                 },
@@ -813,7 +866,13 @@ export const useGameStore = create(
                     setGameOver: (val) => set(s => ({ clinical: { ...s.clinical, gameOver: typeof val === 'function' ? val(s.clinical.gameOver) : val } })),
                     dismissWarning: () => set(s => {
                         const isFainted = s.clinical.gameOver?.type === 'fainted';
+                        const isRuntimeTrap = s.clinical.gameOver?.type === 'runtime_trap';
                         const nextState = { clinical: { ...s.clinical, gameOver: null } };
+
+                        if (isRuntimeTrap) {
+                            nextState.meta = { ...s.meta, runtimeTrap: null };
+                            return nextState;
+                        }
 
                         // Faint recovery logic
                         if (isFainted) {
@@ -918,14 +977,26 @@ export const useGameStore = create(
                         const finalTimeFactor = timeFactor * getPatientSpikeMultiplier(activeOutbreaks) * ikmBoostMultiplier * directorMultiplier;
                         const maxCapacity = 12 + (facilities.poli_umum - 1) * 3;
 
-                        if (Math.random() < finalTimeFactor && state.clinical.queue.length < maxCapacity) {
+                        if (
+                            chanceFromSeed(
+                                `clinical-spawn:${day}:${time}:${state.clinical.queue.length}`,
+                                finalTimeFactor
+                            ) &&
+                            state.clinical.queue.length < maxCapacity
+                        ) {
                             const newPatient = generatePatient(time, villageData, day, facilities, profile.skills);
                             state.clinical.queue.push(newPatient); // Immer push
                             soundManager.playNotification();
                         }
 
                         // 5. Generate Emergency Patients (IGD)
-                        if (Math.random() < 0.08 && state.clinical.emergencyQueue.length < 3) {
+                        if (
+                            chanceFromSeed(
+                                `emergency-spawn:${day}:${time}:${state.clinical.emergencyQueue.length}`,
+                                0.08
+                            ) &&
+                            state.clinical.emergencyQueue.length < 3
+                        ) {
                             const newEmergency = generateEmergencyPatient(time, facilities, villageData);
                             if (newEmergency) {
                                 state.clinical.emergencyQueue.push(newEmergency);
@@ -943,6 +1014,10 @@ export const useGameStore = create(
                     dischargePatient: (patient, decision, day, time) => withTransaction(set, get, 'dischargePatient', (state) => {
                         day = day ?? state.world.day;
                         time = time ?? state.world.time;
+                        if (!patient?.id) {
+                            state.clinical.activePatientId = null;
+                            return;
+                        }
                         const buffs = calculateGlobalBuffs(state);
                         const isBPJS = patient.social?.hasBPJS;
                         const isCorrectTriage = patient.hidden?.requiredAction === decision.action;
@@ -1037,7 +1112,12 @@ export const useGameStore = create(
                                 const dxCode = patient.medicalData?.trueDiagnosisCode;
                                 const indicatorToUpdate = getIndicatorByDx(dxCode);
                                 if (indicatorToUpdate) {
-                                    if (indicatorToUpdate === 'jamban') indicators.jamban = Math.random() > 0.3;
+                                    if (indicatorToUpdate === 'jamban') {
+                                        indicators.jamban = chanceFromSeed(
+                                            `discharge:${day}:${patient.id}:${dxCode}:jamban`,
+                                            0.7
+                                        );
+                                    }
                                     else if (indicatorToUpdate === 'rokok') { if (decision.education?.includes('stop_smoking')) indicators.rokok = true; }
                                     else indicators[indicatorToUpdate] = true;
                                     changed = true;
@@ -1199,16 +1279,8 @@ export const useGameStore = create(
                         if (slotId === null) return false;
                         try {
                             const state = get();
-                            const saveData = {
-                                saveVersion: 4,
-                                player: state.player,
-                                world: state.world,
-                                finance: state.finance,
-                                clinical: state.clinical,
-                                publicHealth: state.publicHealth,
-                                staff: state.staff,
-                                savedAt: Date.now()
-                            };
+                            const saveData = createSaveSnapshot(state);
+                            if (!saveData) return false;
                             localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(saveData));
                             return true;
                         } catch (error) {
@@ -1218,8 +1290,11 @@ export const useGameStore = create(
                     },
 
                     loadGame: (saveData, slotId) => {
-                        const normalizedSave = normalizeLoadedSavePayload(saveData);
-                        if (!normalizedSave) return false;
+                        const normalizedSave = parseSavePayload(saveData);
+                        if (!normalizedSave) {
+                            console.warn('[Store] Load rejected: invalid save payload');
+                            return false;
+                        }
                         try {
                             set(produce(s => {
                                 s.nav.currentSlotId = slotId;
@@ -1250,6 +1325,13 @@ export const useGameStore = create(
                                     s.staff = { ...s.staff, ...normalizedSave.staff };
                                 }
 
+                                s.meta = {
+                                    ...s.meta,
+                                    runtimeTrap: null,
+                                    saveVersion: normalizedSave.saveVersion || CURRENT_SAVE_VERSION
+                                };
+                                s.clinical.gameOver = null;
+                                s.world.isPaused = false;
                                 s.nav.gameState = 'playing';
                             }));
                             return true;
@@ -1305,13 +1387,14 @@ export const useGameStore = create(
                             state.clinical.dailyQuestId = null;
                             state.clinical.morningReputation = state.player.profile.reputation || 80;
 
+                            const nextDayVal = targetDay + 1;
                             // 3. Staff Decay
-                            state.staff.hiredStaff.forEach(st => {
-                                st.morale = Math.max(0, (st.morale || 70) - (Math.random() * 5 + 2));
-                            });
+                            state.staff.hiredStaff = applyStaffMoraleDecay(
+                                state.staff.hiredStaff,
+                                `staff-next-day:${nextDayVal}`
+                            );
 
                             // 4. Public Health (Process Daily)
-                            const nextDayVal = targetDay + 1;
                             const { activeOutbreaks, villageData } = state.publicHealth;
                             // Note: We use state.publicHealth directly from draft
                             // Re-implement checkOutbreakExpiry logic inline or call helper if pure?
@@ -1328,14 +1411,13 @@ export const useGameStore = create(
 
                             // Village Dynamic Health (Random fluctuations)
                             if (state.publicHealth.villageData) {
-                                state.publicHealth.villageData.families.forEach(fam => {
-                                    if (Math.random() < 0.05) {
-                                        const keys = Object.keys(fam.indicators);
-                                        const randomKey = keys[Math.floor(Math.random() * keys.length)];
-                                        fam.indicators[randomKey] = Math.random() > 0.4;
-                                        fam.iksScore = calculateIKS(fam.indicators);
-                                    }
-                                });
+                                state.publicHealth.villageData.families =
+                                    state.publicHealth.villageData.families.map((fam) => {
+                                        return applyFamilyIndicatorDrift(
+                                            fam,
+                                            `next-day:${nextDayVal}:${fam.id}`
+                                        );
+                                    });
                             }
 
                             // 4.5. UKM: Evaluate IKM Triggers for new day
@@ -1439,7 +1521,10 @@ export const useGameStore = create(
                         meta: INITIAL_META_STATE,
                     }),
                 }
-            }),
+            };
+
+                return guardStoreActions(store, set, get);
+            },
             {
                 name: 'primer_gamestate_v4',
                 partialize: (state) => ({

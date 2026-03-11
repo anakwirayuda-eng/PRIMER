@@ -8,6 +8,7 @@
  */
 
 import { useGame } from '../context/GameContext.jsx';
+import { seededBetween } from '../utils/deterministicRandom.js';
 
 export const useStaffManagement = () => {
     const {
@@ -28,7 +29,7 @@ export const useStaffManagement = () => {
                 {
                     ...staff,
                     hiredDay: day,
-                    performance: 70 + Math.random() * 20,
+                    performance: seededBetween(`staff-hire:${staff.id}:${day}`, 70, 90),
                     morale: 100 // New hires start with full morale
                 }
             ]);

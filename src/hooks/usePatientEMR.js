@@ -30,6 +30,7 @@ import { guardStability } from '../utils/prophylaxis.js';
 import { classifyResponse } from '../game/anamnesis/SynthesisEngine.js';
 import { evaluateConsequences } from '../game/ConsequenceEngine.js';
 import { showToast, confirmToast } from '../utils/ToastManager.js';
+import { pickDeterministic } from '../utils/deterministicRandom.js';
 
 export function usePatientEMR() {
     // 1. Clinical Base Data & Actions
@@ -43,12 +44,12 @@ export function usePatientEMR() {
     // 3. Finance & Inventory
     const finance = useGameStore(useShallow(selectDerivedFinance));
     const { stats, pharmacyInventory } = finance;
-    const { enrollProlanis } = useGameStore(useShallow(s => s.financeActions));
-    const prolanisRoster = useGameStore(useShallow(s => s.finance.prolanisRoster));
+    const { enrollProlanis } = useGameStore(useShallow(s => s.publicHealthActions));
+    const prolanisRoster = useGameStore(useShallow(s => s.publicHealth.prolanisRoster));
 
     // 4. Global State & Navigation
     const world = useGameStore(useShallow(s => s.world));
-    const { time } = world;
+    const { time, day } = world;
     const { navigate } = useGameStore(useShallow(s => s.navActions));
     const { openWiki } = useGameStore(useShallow(s => s.metaActions));
     const activeOutbreaks = useGameStore(useShallow(s => s.publicHealth.activeOutbreaks));
@@ -335,7 +336,10 @@ export function usePatientEMR() {
                     ' (tampak berusaha mengingat)',
                     ' (sambil memegang bagian yang sakit)'
                 ];
-                const suffix = dedupSuffixes[Math.floor(Math.random() * dedupSuffixes.length)];
+                const suffix = pickDeterministic(
+                    dedupSuffixes,
+                    `${capturedPatientId}:${question.id}:${anamnesisHistory.length}:${responseText}`
+                ) || dedupSuffixes[0];
                 questionWithContext.response = responseText + suffix;
             }
 
@@ -505,7 +509,13 @@ export function usePatientEMR() {
         }
 
         const diseaseType = isDM ? 'dm_type2' : 'hypertension';
-        const success = enrollProlanis(patient, diseaseType);
+        const success = enrollProlanis({
+            ...patient,
+            prolanisData: {
+                ...(patient?.prolanisData || {}),
+                diseaseType
+            }
+        }, day);
 
         if (success) {
             showToast(`Berhasil mendaftarkan ${patient.name} ke klub Prolanis! 💗`, 'success');
@@ -513,7 +523,7 @@ export function usePatientEMR() {
         } else {
             showToast('Pasien sudah terdaftar di Prolanis.', 'warning');
         }
-    }, [selectedDiagnoses, enrollProlanis, patient]);
+    }, [selectedDiagnoses, enrollProlanis, patient, day]);
 
     const handleDischarge = useCallback(async (action) => {
         if (selectedDiagnoses.length === 0 && action === 'treat') {
@@ -613,7 +623,7 @@ export function usePatientEMR() {
             labsRevealed,
             diagnosisScore: caseOutcome.diagnosisScore,
             treatmentScore: treatResult?.score ?? 0
-        }, world.day || 1);
+        }, day || 1);
         if (consequences) pushConsequence(consequences);
 
         // Phase 0: Apply followupData impacts if this is a returning patient
@@ -630,7 +640,7 @@ export function usePatientEMR() {
         }
 
         // State reset for the next patient is handled by the initial patient-change useEffect
-    }, [selectedDiagnoses, patient, selectedMeds, selectedProcedures, examsPerformed, selectedEducation, anamnesisHistory, labsRevealed, dischargePatient, logCaseOutcome, pushConsequence, gainXp, setPlayerStats, setActiveReferral]);
+    }, [selectedDiagnoses, patient, selectedMeds, selectedProcedures, examsPerformed, selectedEducation, anamnesisHistory, labsRevealed, dischargePatient, logCaseOutcome, pushConsequence, gainXp, setPlayerStats, setActiveReferral, coverageScore, day]);
 
     return {
         patient,

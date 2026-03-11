@@ -11,6 +11,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Home as HomeIcon, Building } from 'lucide-react';
 import TerrainCanvas from './TerrainCanvas.jsx';
 import { BUILDING_TYPES, TILE_TYPES } from './constants.js';
+import { chanceFromSeed, seededBetween } from '../../utils/deterministicRandom.js';
 
 const MapCanvas = ({
     mapData,
@@ -54,18 +55,26 @@ const MapCanvas = ({
     const publicBuildings = mapData.buildings.filter(b => !b.familyId);
 
     const [birds, setBirds] = useState([]);
+    const birdCycleRef = useRef(0);
     useEffect(() => {
+        birdCycleRef.current = 0;
         const interval = setInterval(() => {
-            if (Math.random() > 0.7) {
-                const id = Date.now();
-                setBirds(prev => [...prev, { id, startY: Math.random() * 100, speed: 2 + Math.random() * 3 }]);
+            birdCycleRef.current += 1;
+            const cycleSeed = `${mapData?.name || 'map'}:${birdCycleRef.current}`;
+            if (chanceFromSeed(cycleSeed, 0.3)) {
+                const id = `bird:${cycleSeed}`;
+                setBirds(prev => [...prev, {
+                    id,
+                    startY: seededBetween(cycleSeed, 0, 100, 1),
+                    speed: seededBetween(cycleSeed, 2, 5, 2)
+                }]);
                 setTimeout(() => {
                     setBirds(prev => prev.filter(b => b.id !== id));
                 }, 10000);
             }
         }, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [mapData?.name]);
 
     if (!textures) return <div className="p-10 text-center">Loading High-Res Textures...</div>;
 

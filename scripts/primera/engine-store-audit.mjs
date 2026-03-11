@@ -20,6 +20,7 @@ const ROOT = path.resolve(__dirname, '../../');
 const OUTDIR = path.join(ROOT, 'megalog/outputs');
 const STORE_PATH = path.join(ROOT, 'src/store/useGameStore.js');
 const SAVE_SLOT_PATH = path.join(ROOT, 'src/components/SaveSlotSelector.jsx');
+const SAVE_PAYLOAD_PATH = path.join(ROOT, 'src/utils/savePayload.js');
 const SRC_ROOT = path.join(ROOT, 'src');
 
 function parseModule(filePath) {
@@ -29,6 +30,19 @@ function parseModule(filePath) {
         loc: true,
         ecmaFeatures: { jsx: true }
     });
+}
+
+function resolveModulePath(fromFile, specifier) {
+    const basePath = path.resolve(path.dirname(fromFile), specifier);
+    const candidates = [
+        basePath,
+        `${basePath}.js`,
+        `${basePath}.mjs`,
+        path.join(basePath, 'index.js'),
+        path.join(basePath, 'index.mjs')
+    ];
+
+    return candidates.find((candidate) => fs.existsSync(candidate)) || null;
 }
 
 function traverse(node, visit, parent = null, ancestors = []) {
@@ -91,7 +105,35 @@ function findStoreObject(ast) {
     return best;
 }
 
-function buildConstantObjectMap(ast) {
+function collectExportedObjectConstants(filePath, cache = new Map()) {
+    if (cache.has(filePath)) {
+        return cache.get(filePath);
+    }
+
+    const exportedConstants = new Map();
+    cache.set(filePath, exportedConstants);
+
+    const ast = parseModule(filePath);
+    traverse(ast, (node) => {
+        if (
+            node.type === 'ExportNamedDeclaration' &&
+            node.declaration?.type === 'VariableDeclaration'
+        ) {
+            for (const declaration of node.declaration.declarations) {
+                if (
+                    declaration.id.type === 'Identifier' &&
+                    declaration.init?.type === 'ObjectExpression'
+                ) {
+                    exportedConstants.set(declaration.id.name, declaration.init);
+                }
+            }
+        }
+    });
+
+    return exportedConstants;
+}
+
+function buildConstantObjectMap(filePath, ast, importCache = new Map()) {
     const constantMap = new Map();
     traverse(ast, (node) => {
         if (
@@ -102,6 +144,26 @@ function buildConstantObjectMap(ast) {
             constantMap.set(node.id.name, node.init);
         }
     });
+
+    traverse(ast, (node) => {
+        if (node.type !== 'ImportDeclaration' || !node.source.value.startsWith('.')) return;
+
+        const importedFile = resolveModulePath(filePath, node.source.value);
+        if (!importedFile) return;
+
+        const exportedConstants = collectExportedObjectConstants(importedFile, importCache);
+        for (const specifier of node.specifiers) {
+            if (specifier.type !== 'ImportSpecifier') continue;
+
+            const importedName = specifier.imported.name;
+            const localName = specifier.local.name;
+            const exportedObject = exportedConstants.get(importedName);
+            if (exportedObject) {
+                constantMap.set(localName, exportedObject);
+            }
+        }
+    });
+
     return constantMap;
 }
 
@@ -125,7 +187,7 @@ function extractObjectKeys(objectExpression, constantMap = new Map()) {
     return [...keys];
 }
 
-function findSaveDataFields(ast) {
+function findSaveDataFields(ast, helperAst = null) {
     let fields = [];
     traverse(ast, (node) => {
         if (node.type !== 'Property' || getPropertyName(node) !== 'saveGame' || !isFunctionLike(node.value)) {
@@ -143,12 +205,37 @@ function findSaveDataFields(ast) {
             }
         });
     });
+
+    if (fields.length > 0 || !helperAst) {
+        return fields;
+    }
+
+    traverse(helperAst, (node) => {
+        if (
+            node.type !== 'FunctionDeclaration' ||
+            node.id?.name !== 'createSaveSnapshot'
+        ) {
+            return;
+        }
+
+        traverse(node.body, (inner) => {
+            if (
+                inner.type === 'CallExpression' &&
+                inner.callee.type === 'Identifier' &&
+                inner.callee.name === 'parseSavePayload' &&
+                inner.arguments[0]?.type === 'ObjectExpression'
+            ) {
+                fields = extractObjectKeys(inner.arguments[0]);
+            }
+        });
+    });
+
     return fields;
 }
 
 function collectReadRoots(ast) {
     const roots = new Map();
-    const interestingRoots = new Set(['raw', 'parsed', 'cleanData']);
+    const interestingRoots = new Set(['raw', 'parsed', 'cleanData', 'payload', 'data', 'saveBlob', 'canonicalSave', 'importBlob']);
 
     traverse(ast, (node) => {
         const access = getRootMemberAccess(node);
@@ -251,8 +338,9 @@ async function run() {
 
     const storeAst = parseModule(STORE_PATH);
     const saveSlotAst = parseModule(SAVE_SLOT_PATH);
+    const savePayloadAst = parseModule(SAVE_PAYLOAD_PATH);
     const storeObject = findStoreObject(storeAst);
-    const constantMap = buildConstantObjectMap(storeAst);
+    const constantMap = buildConstantObjectMap(STORE_PATH, storeAst);
 
     if (!storeObject) {
         throw new Error('Failed to locate store root object in useGameStore.js');
@@ -300,14 +388,19 @@ async function run() {
         }
     }
 
-    const savedFields = findSaveDataFields(storeAst);
+    const savedFields = findSaveDataFields(storeAst, savePayloadAst);
     const readRootsMap = collectReadRoots(saveSlotAst);
-    const readFields = [...readRootsMap.keys()];
+    const ignoredReadFields = new Set(['_exportInfo', 'saves']);
+    const compatibilityReadFields = new Set(['profile', 'day', 'reputation']);
+    const requiredDirectReadFields = new Set(['player', 'world', 'saveVersion', 'savedAt']);
+    const readFields = [...readRootsMap.keys()].filter((field) => !ignoredReadFields.has(field));
     const schemaDrift = {
         savedFields,
         readFields,
-        readButNotSaved: readFields.filter((field) => !savedFields.includes(field)),
-        savedButNotRead: savedFields.filter((field) => !readFields.includes(field))
+        compatibilityReads: readFields.filter((field) => compatibilityReadFields.has(field)),
+        passThroughFields: savedFields.filter((field) => !requiredDirectReadFields.has(field)),
+        readButNotSaved: readFields.filter((field) => !savedFields.includes(field) && !compatibilityReadFields.has(field)),
+        savedButNotRead: savedFields.filter((field) => requiredDirectReadFields.has(field) && !readFields.includes(field))
     };
 
     if (schemaDrift.readButNotSaved.length > 0 || schemaDrift.savedButNotRead.length > 0) {
@@ -358,7 +451,7 @@ async function run() {
         path.join(OUTDIR, 'store_audit.json'),
         results,
         'engine-store-audit',
-        ['useGameStore.js', 'SaveSlotSelector.jsx', 'store.contract.mjs']
+        ['useGameStore.js', 'SaveSlotSelector.jsx', 'savePayload.js', 'store.contract.mjs']
     );
 
     console.log(`Store Contract Audit ${results.pass ? 'PASSED' : 'FAILED'} (${checkedSlices} slices, ${checkedActions} actions)`);

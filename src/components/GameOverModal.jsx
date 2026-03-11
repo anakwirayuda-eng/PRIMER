@@ -51,6 +51,15 @@ export default function GameOverModal({ type, reason, onContinue, onRestart }) {
             icon: AlertTriangle,
             message: 'Tubuh Anda mencapai batasnya. Anda pingsan karena kelelahan kronis.',
             action: 'Pulihkan Diri'
+        },
+        runtime_trap: {
+            title: 'MODE AMAN AKTIF',
+            color: 'text-amber-700',
+            bg: 'bg-amber-50',
+            border: 'border-amber-200',
+            icon: AlertTriangle,
+            message: 'Anomali runtime terdeteksi. Permainan dijeda untuk mencegah korupsi state lebih lanjut.',
+            action: 'Lanjutkan Dalam Mode Aman'
         }
     };
 
@@ -98,6 +107,10 @@ export default function GameOverModal({ type, reason, onContinue, onRestart }) {
                                 <li>Pastikan diagnosis akurat</li>
                                 <li>Hindari keluhan pasien</li>
                             </ul>
+                        </div>
+                    ) : type === 'runtime_trap' ? (
+                        <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6 text-sm text-amber-900">
+                            Sistem menahan aksi tulis sampai peringatan ini ditutup. Permainan tetap dalam status `paused` agar state bisa dipulihkan dengan aman.
                         </div>
                     ) : (
                         <div className="text-xs text-slate-400 mb-6 uppercase tracking-wider font-semibold">

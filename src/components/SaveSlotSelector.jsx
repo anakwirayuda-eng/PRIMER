@@ -14,6 +14,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Trash2, Play, Plus, Clock, Calendar, Award, Download, Upload, AlertCircle, ChevronDown, Activity, ShieldCheck, Fingerprint, Database, Server, Lock, Cpu } from 'lucide-react';
 import AvatarRenderer from './AvatarRenderer.jsx';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
+import { parseSavePayload } from '../utils/savePayload.js';
 
 const MAX_SLOTS = 5;
 
@@ -30,45 +31,7 @@ const RADAR_NODES = [...Array(30)].map((_, i) => ({
 
 // ═══ SELF-CONTAINED CSS ═══
 function buildCanonicalSave(saveBlob) {
-    if (!saveBlob || typeof saveBlob !== 'object') return null;
-
-    const legacyProfile = saveBlob.profile && typeof saveBlob.profile === 'object' ? saveBlob.profile : null;
-    const profile = {
-        ...(saveBlob.player?.profile || {}),
-        ...(legacyProfile || {}),
-    };
-
-    if (profile.reputation === undefined && saveBlob.reputation !== undefined) {
-        profile.reputation = saveBlob.reputation;
-    }
-
-    const world = { ...(saveBlob.world || {}) };
-    if ((world.day === undefined || world.day === null) && saveBlob.day !== undefined) {
-        world.day = saveBlob.day;
-    }
-    if (world.day === undefined || world.day === null) {
-        world.day = 1;
-    }
-
-    const canonicalSave = {
-        ...saveBlob,
-        saveVersion: saveBlob.saveVersion || 4,
-        savedAt: saveBlob.savedAt || Date.now(),
-        world,
-    };
-
-    if (saveBlob.player || Object.keys(profile).length > 0) {
-        canonicalSave.player = {
-            ...(saveBlob.player || {}),
-            profile,
-        };
-    }
-
-    delete canonicalSave.profile;
-    delete canonicalSave.day;
-    delete canonicalSave.reputation;
-
-    return canonicalSave;
+    return parseSavePayload(saveBlob);
 }
 
 function normalizeSlot(saveBlob, slotId) {
@@ -77,7 +40,8 @@ function normalizeSlot(saveBlob, slotId) {
     const day = canonicalSave?.world?.day || 1;
     const reputation = profile?.reputation ?? 80;
     const savedAt = canonicalSave?.savedAt || null;
-    return { slotId, profile, day, reputation, savedAt, saveData: canonicalSave, _raw: canonicalSave };
+    const saveVersion = canonicalSave?.saveVersion || null;
+    return { slotId, profile, day, reputation, savedAt, saveVersion, saveData: canonicalSave, _raw: canonicalSave };
 }
 
 const MENU_CSS = `

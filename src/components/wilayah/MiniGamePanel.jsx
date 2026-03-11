@@ -13,6 +13,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { scoreMiniGame } from '../../game/MiniGameLibrary.js';
 import { ClipboardCheck, Stethoscope, Users, CheckCircle2, XCircle, AlertTriangle, Crosshair, Activity, Scan, Search, Bug, Droplet, Wind } from 'lucide-react';
+import { shuffleDeterministic } from '../../utils/deterministicRandom.js';
 
 // Static barrier info (no dynamic Tailwind!)
 const BARRIER_INFO = {
@@ -58,8 +59,11 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
     const allItems = useMemo(() => {
         const h = (scene?.hazards || []).map(i => ({ ...i, isHazard: true }));
         const f = (scene?.fakeItems || []).map(i => ({ ...i, isHazard: false }));
-        return [...h, ...f].sort(() => Math.random() - 0.5);
-    }, [scene]);
+        return shuffleDeterministic(
+            [...h, ...f],
+            `${game?.id || game?.title || 'audit-kesling'}:${scenarioKey || scene?.title || 'general'}`
+        );
+    }, [game, scene, scenarioKey]);
 
     const hazardsCount = scene?.hazards?.length || 0;
     const [found, setFound] = useState([]); // IDs of found hazards
@@ -74,6 +78,7 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
     const [floats, setFloats] = useState([]);
     const [classifyTarget, setClassifyTarget] = useState(null); // hazard awaiting classification
     const timerRef = useRef(null);
+    const floatIdRef = useRef(0);
 
     useEffect(() => {
         if (finished) return;
@@ -100,14 +105,23 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
         }, 3000);
     }, [found, classified, allItems, mistakes, classifyMistakes, timeLeft, onComplete, finished]);
 
-    useEffect(() => { if (timeLeft === 0 && !finished) handleFinish(); }, [timeLeft, finished, handleFinish]);
+    useEffect(() => {
+        if (timeLeft !== 0 || finished) return undefined;
+        const finishTimer = setTimeout(() => handleFinish(), 0);
+        return () => clearTimeout(finishTimer);
+    }, [timeLeft, finished, handleFinish]);
     // Finish when all hazards found AND classified
     const allClassified = Object.keys(classified).length >= hazardsCount;
-    useEffect(() => { if (allClassified && hazardsCount > 0 && !finished) handleFinish(); }, [allClassified, hazardsCount, finished, handleFinish]);
+    useEffect(() => {
+        if (!allClassified || hazardsCount <= 0 || finished) return undefined;
+        const finishTimer = setTimeout(() => handleFinish(), 0);
+        return () => clearTimeout(finishTimer);
+    }, [allClassified, hazardsCount, finished, handleFinish]);
 
     const handleClick = (item) => {
         if (finished || found.includes(item.id) || classifyTarget) return;
-        const fid = Date.now();
+        floatIdRef.current += 1;
+        const fid = floatIdRef.current;
         setShutter(true); setTimeout(() => setShutter(false), 150);
 
         if (item.isHazard) {
@@ -126,7 +140,8 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
 
     const handleClassify = (route) => {
         if (!classifyTarget) return;
-        const fid = Date.now();
+        floatIdRef.current += 1;
+        const fid = floatIdRef.current;
         const isCorrect = classifyTarget.type === route || !classifyTarget.type;
 
         if (isCorrect) {
@@ -427,7 +442,13 @@ function AnamnesisSosial({ game, onComplete }) {
 // 📋 RENCANA TINDAK LANJUT (BCW Policy Allocation)
 // ═══════════════════════════════════════════════════════════════
 function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
-    const allCards = useMemo(() => [...(game.cards || []), ...(game.distractors || [])].sort(() => Math.random() - 0.5), [game]);
+    const allCards = useMemo(
+        () => shuffleDeterministic(
+            [...(game.cards || []), ...(game.distractors || [])],
+            `${game?.id || game?.title || 'rencana-tindak-lanjut'}:cards`
+        ),
+        [game]
+    );
     const barrierSlots = Object.keys(activeBarriers || {}).filter(k => activeBarriers[k] > 0);
 
     const [placements, setPlacements] = useState({});

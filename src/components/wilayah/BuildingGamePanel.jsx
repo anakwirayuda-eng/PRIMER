@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { getSceneForBuilding, COM_B_SEGMENTS } from './buildingScenes.js';
 import EliteCOMBWheel from './EliteCOMBWheel.jsx';
+import { pickDeterministic } from '../../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // STATION CARD — a single desk in the denah
@@ -281,8 +282,11 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
         if (station.findings && doneCount < station.findings.length) {
             const finding = station.findings[doneCount];
             if (finding?.severity === 'critical' || finding?.severity === 'warning') {
-                const randomBarrier = COM_B_SEGMENTS[Math.floor(Math.random() * COM_B_SEGMENTS.length)].id;
-                if (!discoveredBarriers.includes(randomBarrier)) {
+                const randomBarrier = pickDeterministic(
+                    COM_B_SEGMENTS,
+                    `${buildingType}:${station.id}:${finding.text}:${doneCount}`
+                )?.id;
+                if (randomBarrier && !discoveredBarriers.includes(randomBarrier)) {
                     setDiscoveredBarriers(prev => [...prev, randomBarrier]);
                 }
             }
@@ -296,7 +300,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
             const allStationsDone = scene.stations.every(s => completedStations.has(s.id) || s.id === station.id);
             if (allStationsDone) setTimeout(() => setShowCompletion(true), 600);
         }
-    }, [energy, onAction, onXpGain, completedActions, completedStations, discoveredBarriers, scene]);
+    }, [buildingType, energy, onAction, onXpGain, completedActions, completedStations, discoveredBarriers, scene]);
 
     const handleDialogChoice = useCallback((choice) => {
         if (choice.xp) {

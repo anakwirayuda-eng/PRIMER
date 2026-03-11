@@ -13,7 +13,7 @@
  * [LAST_UPDATE]: 2026-03-10
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     Activity, Scale, ClipboardList, ShieldAlert, CheckCircle2,
     AlertTriangle, Users, ThermometerSnowflake, X, Baby, Syringe
@@ -25,13 +25,12 @@ import {
 import {
     plotGrowthPoint,
     detectGrowthFaltering,
-    generateKMSData,
-    calculateNutritionStatus
+    generateKMSData
 } from '../../game/kia/GrowthChartEngine.js';
 import {
-    getVaccineSchedule,
     processImmunization
 } from '../../game/kia/ImmunizationEngine.js';
+import { chanceFromSeed } from '../../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════
 // 🎨 MED-PUNK TACTILE CSS
@@ -204,7 +203,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
     };
 
     const handleDelegateKader = (baby) => {
-        const isError = Math.random() < 0.2;
+        const isError = chanceFromSeed(`posyandu-kader:${baby.id}`, 0.2);
         setSessionLog(prev => [...prev, {
             baby, handler: 'Kader',
             malpractice: isError,
@@ -284,10 +283,9 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
         setPhase('triage');
     };
 
-    // Auto-advance to report when queue empty
-    useEffect(() => {
-        if (queue.length === 0 && phase === 'triage' && sessionLog.length > 0) setPhase('report');
-    }, [queue, phase, sessionLog]);
+    const activePhase = queue.length === 0 && phase === 'triage' && sessionLog.length > 0
+        ? 'report'
+        : phase;
 
     // ═══════════════════════════════════════════════════════════════
     // 🖥️ RENDER
@@ -295,12 +293,12 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 font-sans pointer-events-none">
             <style dangerouslySetInnerHTML={{ __html: KINETIC_CSS }} />
-            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md pointer-events-auto" onClick={phase === 'report' ? onClose : undefined} />
+            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md pointer-events-auto" onClick={activePhase === 'report' ? onClose : undefined} />
 
             <div className={`w-full max-w-5xl h-[85vh] flex flex-col pointer-events-auto relative z-10 animate-in zoom-in-95 duration-500 shadow-[0_40px_100px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-[#0A0D14] ${shake ? 'bc-shake' : ''}`}>
 
                 {/* 🪟 HEADER */}
-                {phase !== 'report' && (
+                {activePhase !== 'report' && (
                     <div className="bg-[#121824]/90 backdrop-blur-xl border-b border-white/10 p-5 shrink-0 flex justify-between items-center relative z-20">
                         <div className="absolute inset-0 blueprint-grid opacity-20" />
                         <div className="flex items-center gap-4 relative z-10">
@@ -316,7 +314,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                         </div>
 
                         <div className="flex items-center gap-4 relative z-10">
-                            {phase === 'triage' && (
+                            {activePhase === 'triage' && (
                                 <div className="bg-black/50 border border-slate-700 px-4 py-2 rounded-lg flex items-center gap-4 shadow-inner">
                                     <div className="text-right">
                                         <div className="font-mono text-[9px] text-amber-500 font-bold tracking-widest uppercase">Kapasitas Dokter (AP)</div>
@@ -339,7 +337,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                 <div className="flex-1 relative flex overflow-hidden">
 
                     {/* ════ TRIAGE ════ */}
-                    {phase === 'triage' && (
+                    {activePhase === 'triage' && (
                         <div className="w-full h-full p-8 overflow-y-auto blueprint-grid flex flex-col items-center bg-[#151b24]">
                             <div className="max-w-3xl w-full">
                                 <div className="border-l-4 border-cyan-500 pl-4 mb-8">
@@ -390,7 +388,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                     )}
 
                     {/* ════ MEJA 2: KMS ════ */}
-                    {phase === 'meja2' && activeBaby && (
+                    {activePhase === 'meja2' && activeBaby && (
                         <div className="w-full h-full flex animate-in slide-in-from-right-8 bg-[#1e232d]">
                             {/* Kertas KMS */}
                             <div className="flex-1 p-8 flex items-center justify-center relative overflow-hidden">
@@ -450,7 +448,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                     )}
 
                     {/* ════ MEJA 5: IMUNISASI ════ */}
-                    {phase === 'meja5' && activeBaby && (
+                    {activePhase === 'meja5' && activeBaby && (
                         <div className="w-full h-full flex animate-in slide-in-from-right-8 bg-[#1e232d]">
                             {/* Buku KIA Pink */}
                             <div className="flex-[3] p-8 flex items-center justify-center relative">
@@ -524,7 +522,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                     )}
 
                     {/* ════ REPORT ════ */}
-                    {phase === 'report' && (
+                    {activePhase === 'report' && (
                         <div className="flex flex-col h-full w-full bg-[#EAE6DF] paper-texture p-6 sm:p-10 text-slate-900 overflow-y-auto scrollbar-hide relative animate-in zoom-in-95 duration-500">
                             <div className="max-w-3xl mx-auto w-full bg-white p-8 rounded-sm shadow-2xl border border-slate-300 relative transform rotate-[1deg]">
                                 <div className="text-center mb-6 border-b-2 border-slate-800/30 pb-4">

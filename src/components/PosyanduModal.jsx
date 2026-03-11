@@ -24,6 +24,7 @@ import {
     generatePosyanduSummary
 } from '../game/PosyanduEngine.js';
 import { calculateIKS } from '../game/GameCore.js';
+import { chanceFromSeed } from '../utils/deterministicRandom.js';
 
 const ACTIVITY_ICONS = {
     penimbangan: Scale,
@@ -187,7 +188,8 @@ export default function PosyanduModal({ isOpen, onClose }) {
                 });
 
                 // Apply IKS improvement based on chance
-                if (Math.random() < improvementChance) {
+                const nutritionSeed = `posyandu:${day}:${fam.id}:${selectedActivities.join('|')}`;
+                if (chanceFromSeed(nutritionSeed, improvementChance)) {
                     // Assuming these are the indicators related to child nutrition
                     indicators.bayi_asi_eksklusif = true;
                     indicators.balita_pertumbuhan = true;

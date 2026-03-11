@@ -7,6 +7,9 @@ import {
 import { EffectComposer, Bloom, Outline, Selection, Select } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
+import { seededBetween } from '../../utils/deterministicRandom.js';
+
+const MotionDiv = motion.div;
 
 // --- Procedural Low-Poly Tree ---
 function Tree({ position, scale = 1 }) {
@@ -33,7 +36,7 @@ function StylizedBuilding({ position, scale = 1, color = '#ffffff', name, onSele
     const groupRef = useRef();
     const [hovered, setHovered] = useState(false);
 
-    useFrame((state) => {
+    useFrame(() => {
         if (!groupRef.current) return;
         const targetScale = hovered || selected ? scale * 1.05 : scale;
         const currentScale = groupRef.current.scale.x;
@@ -49,7 +52,7 @@ function StylizedBuilding({ position, scale = 1, color = '#ffffff', name, onSele
                 ref={groupRef}
                 position={position}
                 onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
-                onPointerOut={(e) => { setHovered(false); document.body.style.cursor = 'auto'; }}
+                onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
                 onClick={(e) => { e.stopPropagation(); onSelect(name); }}
             >
                 {/* Main Body */}
@@ -156,7 +159,7 @@ export function PremiumMapDemo({ onClose }) {
                 <h1 className="text-4xl font-black tracking-tight text-white drop-shadow-xl">Village Map 360&deg;</h1>
                 <p className="text-amber-400 font-medium tracking-wide">Phase 5 Luxury Voxel Diorama</p>
                 {selectedBuilding && (
-                    <motion.div
+                    <MotionDiv
                         initial={{ opacity: 0, scale: 0.9, y: -20, rotateX: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
                         className="mt-6 p-6 bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl text-left pointer-events-auto shadow-2xl"
@@ -169,7 +172,7 @@ export function PremiumMapDemo({ onClose }) {
                         <button className="mt-5 w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 rounded-lg font-bold text-white shadow-lg transition-all scale-100 hover:scale-105">
                             Masuk Gedung
                         </button>
-                    </motion.div>
+                    </MotionDiv>
                 )}
             </div>
 
@@ -221,7 +224,7 @@ export function PremiumMapDemo({ onClose }) {
                                 ))}
 
                                 {trees.map((pos, i) => (
-                                    <Tree key={`tree-${i}`} position={pos} scale={0.8 + Math.random() * 0.4} />
+                                    <Tree key={`tree-${i}`} position={pos} scale={seededBetween(`premium-tree:${i}`, 0.8, 1.2)} />
                                 ))}
                             </Bounds>
                         </Float>

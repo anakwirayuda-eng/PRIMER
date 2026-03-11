@@ -17,8 +17,7 @@ export const CHRONIC_CASES = [
         "icd10": "I50.0",
         "skdi": "3B",
         "risk": "high",
-        "symptoms": ["Sesak napas saat beraktivitas ringan", "Sesak saat berbaring", "Bengkak pada kedua kaki", "Cepat lelah"],
-        "symptoms": ["Sesak napas", "Edema tungkai", "Orthopnea", "PND"],
+        "symptoms": ["Sesak napas saat beraktivitas ringan", "Sesak saat berbaring", "Bengkak pada kedua kaki", "Cepat lelah", "Edema tungkai", "Orthopnea", "PND"],
         "clue": "[EBM: ESC 2021] HF — sesak + edema + orthopnea. BNP/NT-proBNP. Ekokardiografi. ACEi+BB+diuretik. NYHA class.",
         "relevantLabs": ["Darah Lengkap", "BNP"],
         "anamnesisQuestions": {
@@ -53,7 +52,6 @@ export const CHRONIC_CASES = [
             "extremities": "Edema pitting (+) pada kedua bipedis"
         },
         "referralRequired": true,
-        "clue": "Pasien dengan sesak napas, bengkak kaki, dan gallop. Ini adalah tanda gagal jantung yang butuh stabilisasi dan rujuk ke RS.",
         "correctTreatment": ["furosemide_inj", "nrb_mask"],
         "referralLevel": "Hospital",
         "storylineOnly": false
@@ -65,8 +63,7 @@ export const CHRONIC_CASES = [
         "icd10": "C95.9",
         "skdi": "2",
         "risk": "moderate",
-        "symptoms": ["Pucat lemas", "Banyak lebam di tubuh tanpa sebab", "Demam naik turun", "Gusi sering berdarah"],
-        "symptoms": ["Pucat berat", "Perdarahan spontan", "Demam persisten", "Hepatosplenomegali"],
+        "symptoms": ["Pucat lemas", "Banyak lebam di tubuh tanpa sebab", "Demam naik turun", "Gusi sering berdarah", "Pucat berat", "Perdarahan spontan", "Demam persisten", "Hepatosplenomegali"],
         "clue": "[EBM: WHO] Suspek leukemia — pansitopenia + organomegali + limfadenopati. APUSAN DARAH TEPI segera. Rujuk hematologi-onkologi untuk BMP.",
         "relevantLabs": ["Darah Lengkap", "Apusan Darah Tepi"],
         "anamnesisQuestions": {
@@ -100,7 +97,6 @@ export const CHRONIC_CASES = [
             "lymph_nodes": "Limfadenopati multipel di leher dan ketiak (+)"
         },
         "referralRequired": true,
-        "clue": "Kombinasi anemia, perdarahan (memar/petekie), dan organomegali sangat mencurigakan ke arah keganasan darah. Rujuk segera untuk BMP.",
         "correctTreatment": ["rl_500"],
         "referralLevel": "Hospital",
         "storylineOnly": true
