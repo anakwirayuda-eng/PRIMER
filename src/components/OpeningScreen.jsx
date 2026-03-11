@@ -10,7 +10,7 @@
  * [LAST_UPDATE]: 2026-03-11
  */
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { APP_METADATA } from '../data/AppMetadata.js';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
 
@@ -41,16 +41,12 @@ const PRIMER_LETTERS = 'PRIMER'.split('');
  * Flow (veteran): title_ready instantly
  */
 export default function OpeningScreen({ onComplete }) {
-    const isVeteran = useMemo(() => {
-        try { return localStorage.getItem('primer_seen_intro') === 'true'; } catch { return false; }
-    }, []);
-
-    const [phase, setPhase] = useState(isVeteran ? 'title_ready' : 'black');
-    const [letterIndex, setLetterIndex] = useState(isVeteran ? PRIMER_LETTERS.length : -1);
+    const [phase, setPhase] = useState('black');
+    const [letterIndex, setLetterIndex] = useState(-1);
     const [isExiting, setIsExiting] = useState(false);
 
     const timersRef = useRef([]);
-    const skippedRef = useRef(isVeteran);
+    const skippedRef = useRef(false);
 
     // ─── Preload ───
     useEffect(() => {
@@ -61,7 +57,6 @@ export default function OpeningScreen({ onComplete }) {
 
     // ─── Director's Timeline ───
     useEffect(() => {
-        if (isVeteran) return;
         const schedule = (fn, ms) => {
             const id = setTimeout(() => { if (!skippedRef.current) fn(); }, ms);
             timersRef.current.push(id);
@@ -84,13 +79,12 @@ export default function OpeningScreen({ onComplete }) {
         schedule(() => setPhase('title_ready'), t);     // CTA appears
 
         return () => timersRef.current.forEach(clearTimeout);
-    }, [isVeteran]);
+    }, []);
 
     // ─── Exit ───
     const triggerExit = useCallback(() => {
         if (isExiting) return;
         setIsExiting(true);
-        try { localStorage.setItem('primer_seen_intro', 'true'); } catch {}
         setTimeout(() => onComplete(), 800);
     }, [isExiting, onComplete]);
 
@@ -100,14 +94,14 @@ export default function OpeningScreen({ onComplete }) {
         if (e.type === 'click' || ['Escape', 'Enter', ' '].includes(e.key)) {
             if (phase === 'title_ready') {
                 triggerExit();
-            } else if (!isVeteran) {
+            } else {
                 skippedRef.current = true;
                 timersRef.current.forEach(clearTimeout);
                 setPhase('title_ready');
                 setLetterIndex(PRIMER_LETTERS.length);
             }
         }
-    }, [phase, isVeteran, isExiting, triggerExit]);
+    }, [phase, isExiting, triggerExit]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleInteraction);
@@ -284,7 +278,7 @@ export default function OpeningScreen({ onComplete }) {
             </div>
 
             {/* Skip hint */}
-            {!['title_ready', 'black'].includes(phase) && !isVeteran && !isExiting && (
+            {!['title_ready', 'black'].includes(phase) && !isExiting && (
                 <div className="absolute bottom-8 right-8 text-slate-600 font-mono text-[9px] tracking-[0.3em] uppercase z-40">
                     [ ESC / KLIK ]
                 </div>

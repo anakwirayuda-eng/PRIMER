@@ -13,6 +13,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { selectDerivedFinance, selectPlayerStats, selectClinical, selectBuffs } from '../store/selectors.js';
 import { useGameLoop } from '../hooks/useGameLoop.js';
 import { assertGameContextContract } from './contracts/gameContext.contract.js';
+import { soundManager } from '../utils/SoundManager.js';
 
 const GameContext = createContext();
 
@@ -89,8 +90,14 @@ export function GameProvider({ children }) {
             ...base,
             derivedKpis: finance, // selectDerivedFinance already returns the flat KPIs
             playerStats: player,
+            playerProfile: player,
             setPlayerStats: playerActions.setPlayerStats,
+            setPlayerProfile: (nextProfile) => {
+                const resolvedProfile = typeof nextProfile === 'function' ? nextProfile(player) : nextProfile;
+                playerActions.updateProfile(resolvedProfile);
+            },
             addXp: playerActions.gainXp,
+            soundManager,
             viewParams: nav.viewParams,
             navigate: navActions.navigate,
             gameState: nav.gameState,
