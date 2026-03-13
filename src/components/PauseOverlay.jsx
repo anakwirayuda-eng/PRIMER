@@ -1,9 +1,9 @@
 /**
- * PauseOverlay — Frosted glass overlay when game is paused
+ * PauseOverlay — Non-blocking floating badge when game is paused
  * 
- * Shows a breathing "WAKTU DIJEDA" badge with ambient visual cue.
- * Distinguishes between user pause and system/runtime trap pause.
- * pointer-events: none so player can still click the TimeController to unpause.
+ * Shows a small "WAKTU DIJEDA" badge at bottom-center.
+ * Player can still interact with ALL game UI while paused (superpower mode).
+ * Only time/energy/spawns stop — everything else is playable.
  */
 import React, { useEffect, useState } from 'react';
 import { Pause, ShieldAlert } from 'lucide-react';
@@ -12,60 +12,48 @@ import { useGame } from '../context/GameContext.jsx';
 const PO_STYLE_ID = 'po-overlay-styles';
 
 const PO_CSS = `
-    @keyframes po-fade-in {
-        from { opacity: 0; backdrop-filter: blur(0px); }
-        to { opacity: 1; backdrop-filter: blur(6px); }
+    @keyframes po-slide-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
     @keyframes po-breathe {
-        0%, 100% {
-            transform: scale(1) translateY(-20px);
-            opacity: 0.95;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-        50% {
-            transform: scale(1.02) translateY(-20px);
-            opacity: 1;
-        }
+        0%, 100% { box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2); }
+        50% { box-shadow: 0 4px 30px rgba(245, 158, 11, 0.4); }
     }
 
-    .po-backdrop {
-        position: fixed; inset: 0; z-index: 40;
-        background: radial-gradient(circle at center, transparent 0%, rgba(2,6,23,0.4) 100%);
+    .po-badge-float {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 40;
         pointer-events: none;
-        animation: po-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        display: flex; align-items: center; justify-content: center;
+        animation: po-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .po-badge {
-        background: rgba(15, 23, 42, 0.95);
-        border: 2px solid;
-        padding: 20px 48px;
-        border-radius: 100px;
-        display: flex; align-items: center; gap: 20px;
+    .po-badge-mini {
+        background: rgba(15, 23, 42, 0.92);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        border-radius: 999px;
+        padding: 8px 24px;
+        display: flex; align-items: center; gap: 10px;
         animation: po-breathe 3s ease-in-out infinite;
-        pointer-events: auto;
+    }
+    .po-badge-mini.po-system-mini {
+        border-color: rgba(225, 29, 72, 0.5);
+        animation: none;
+        box-shadow: 0 4px 20px rgba(225, 29, 72, 0.3);
     }
 
-    .po-badge.po-user {
-        border-color: rgba(245, 158, 11, 0.6);
-        box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
-    }
-    .po-badge.po-system {
-        border-color: rgba(225, 29, 72, 0.6);
-        box-shadow: 0 0 30px rgba(225, 29, 72, 0.15);
-        animation-duration: 1.5s;
-    }
-
-    .po-title {
+    .po-badge-mini .po-text {
         font-family: 'Courier New', monospace;
-        font-weight: 900; font-size: 28px;
-        letter-spacing: 0.3em; margin: 0; line-height: 1;
-        color: #fff;
+        font-weight: 900; font-size: 12px;
+        letter-spacing: 0.25em;
+        color: #FCD34D;
     }
-    .po-subtitle {
-        font-family: sans-serif; font-size: 11px;
-        letter-spacing: 0.2em; margin-top: 6px;
-        text-transform: uppercase; font-weight: bold;
+    .po-badge-mini.po-system-mini .po-text {
+        color: #FDA4AF;
     }
 `;
 
@@ -76,7 +64,6 @@ export default function PauseOverlay() {
     const isRuntimeTrap = gameState === 'paused' && gameOver?.type === 'runtime_trap';
     const isEffectivelyPaused = gameState === 'paused';
 
-    // Delay show slightly (avoid flash during fast state transitions)
     useEffect(() => {
         if (isEffectivelyPaused) {
             const t = setTimeout(() => setVisible(true), 150);
@@ -86,7 +73,6 @@ export default function PauseOverlay() {
         }
     }, [isEffectivelyPaused]);
 
-    // Inject styles once
     useEffect(() => {
         if (!document.getElementById(PO_STYLE_ID)) {
             const style = document.createElement('style');
@@ -99,26 +85,15 @@ export default function PauseOverlay() {
     if (!visible) return null;
 
     return (
-        <div className="po-backdrop">
-            <div className={`po-badge ${isRuntimeTrap ? 'po-system' : 'po-user'}`}>
+        <div className="po-badge-float">
+            <div className={`po-badge-mini ${isRuntimeTrap ? 'po-system-mini' : ''}`}>
                 {isRuntimeTrap
-                    ? <ShieldAlert size={40} color="#FB7185" />
-                    : <Pause size={40} color="#FBBF24" fill="#FBBF24" />
+                    ? <ShieldAlert size={14} color="#FB7185" />
+                    : <Pause size={14} color="#FBBF24" fill="#FBBF24" />
                 }
-                <div>
-                    <h2 className="po-title">
-                        {isRuntimeTrap ? 'SISTEM JEDA' : 'WAKTU DIJEDA'}
-                    </h2>
-                    <div
-                        className="po-subtitle"
-                        style={{ color: isRuntimeTrap ? '#FDA4AF' : '#FCD34D' }}
-                    >
-                        {isRuntimeTrap
-                            ? 'MENYELESAIKAN PROSES KLINIS...'
-                            : 'TEKAN SPACE ATAU ▶ UNTUK MELANJUTKAN'
-                        }
-                    </div>
-                </div>
+                <span className="po-text">
+                    {isRuntimeTrap ? 'SISTEM JEDA' : 'WAKTU DIJEDA'}
+                </span>
             </div>
         </div>
     );
