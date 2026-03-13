@@ -10,8 +10,9 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { safeGetStorageItem, safeSetStorageItem } from '../utils/browserSafety.js';
 
-const ThemeContext = createContext();
+const ThemeContext = createContext(null);
 
 /**
  * Theme definitions — each theme is self-contained.
@@ -104,12 +105,16 @@ const ALL_CSS_CLASSES = THEME_IDS
 
 // eslint-disable-next-line react-refresh/only-export-components -- Standard context pattern: hook + provider
 export function useTheme() {
-    return useContext(ThemeContext);
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useTheme must be used within ThemeProvider.');
+    }
+    return context;
 }
 
 export function ThemeProvider({ children }) {
     const [themeId, setThemeId] = useState(() => {
-        const saved = localStorage.getItem('primer_theme');
+        const saved = safeGetStorageItem('primer_theme');
         if (saved && THEMES[saved]) return saved;
         return 'medika';
     });
@@ -134,7 +139,7 @@ export function ThemeProvider({ children }) {
         }
 
         // Persist
-        localStorage.setItem('primer_theme', themeId);
+        safeSetStorageItem('primer_theme', themeId);
     }, [themeId, theme]);
 
     const value = useMemo(() => ({

@@ -185,7 +185,7 @@ export function PremiumMapDemo({ onClose }) {
             </div>
 
             {/* 3D Canvas */}
-            <Canvas shadows camera={{ position: [15, 15, 15], fov: 25 }}>
+            <Canvas shadows="percentage" camera={{ position: [15, 15, 15], fov: 25 }}>
                 <color attach="background" args={['#0f172a']} />
 
                 {/* Lighting setup for that "Luxury" feel */}

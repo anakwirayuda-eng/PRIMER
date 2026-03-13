@@ -14,25 +14,13 @@
  * Defines the XP curve and level-up logic.
  */
 
-// Base XP required for Level 1 -> 2
-const BASE_XP = 500;
-
-// Exponent for curve (1 = linear, 1.5 = somewhat exponential)
-const CURVE_EXPONENT = 1.2;
-
 /**
- * Calculate total XP required to reach the NEXT level.
- * Formula: Floor(BASE_XP * (Level ^ CURVE_EXPONENT))
- * Example with BASE=500, EXP=1.2:
- * Lv 1 -> 2: 500
- * Lv 2 -> 3: 500 * (2^1.2) = 1148 (Total, not incremental) -> usually incremental is better
+ * The current store levels up every fixed 1000 total XP.
+ * Keep this helper aligned with that model so selectors and UI remain consistent.
  */
+const XP_PER_LEVEL = 1000;
 
-// Simple Incremental Formula:
-// XP needed for current level to next level = Level * 500
-export const getNextLevelXp = (level) => {
-    return level * 500;
-};
+export const getNextLevelXp = () => XP_PER_LEVEL;
 
 /**
  * Check if player levels up.

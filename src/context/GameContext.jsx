@@ -14,12 +14,17 @@ import { selectDerivedFinance, selectPlayerStats, selectClinical, selectBuffs } 
 import { useGameLoop } from '../hooks/useGameLoop.js';
 import { assertGameContextContract } from './contracts/gameContext.contract.js';
 import { soundManager } from '../utils/SoundManager.js';
+import { safeReloadPage } from '../utils/browserSafety.js';
 
-const GameContext = createContext();
+const GameContext = createContext(null);
 
 // eslint-disable-next-line react-refresh/only-export-components -- Standard context pattern: hook + provider
 export function useGame() {
-    return useContext(GameContext);
+    const context = useContext(GameContext);
+    if (!context) {
+        throw new Error('useGame must be used within GameProvider.');
+    }
+    return context;
 }
 
 export function GameProvider({ children }) {
@@ -82,7 +87,7 @@ export function GameProvider({ children }) {
             buffs,
             saveGame, loadGame, startNewGame, nextDay,
             logout: () => { saveGame(nav.currentSlotId); navActions.setGameState('slot_select'); navActions.setSlotId(null); },
-            restartGame: () => window.location.reload()
+            restartGame: () => safeReloadPage()
         };
 
         // Compatibility aliases for legacy destructuring

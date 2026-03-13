@@ -12,6 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import { PersistenceService } from '../services/PersistenceService.js';
 import { Loader2, Database, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { safeReloadPage } from '../utils/browserSafety.js';
 
 export default function DatabaseSync({ onComplete }) {
     const [status, setStatus] = useState('Checking database...');
@@ -85,7 +86,7 @@ export default function DatabaseSync({ onComplete }) {
 
                 {error && (
                     <button
-                        onClick={() => window.location.reload()}
+                        onClick={() => safeReloadPage()}
                         className="mt-6 px-6 py-2 bg-red-600 hover:bg-red-500 rounded-lg text-sm font-bold transition-colors"
                     >
                         Retry Sync

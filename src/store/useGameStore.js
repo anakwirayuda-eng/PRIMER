@@ -28,10 +28,11 @@ import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGamePr
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
-import { guardActionGroup } from '../utils/dispatchGuard.js';
+import { buildRuntimeTrap, guardActionGroup, triggerFreezeProtocol } from '../utils/dispatchGuard.js';
 import { CURRENT_SAVE_VERSION, createSaveSnapshot, parseSavePayload } from '../utils/savePayload.js';
 import { withTransaction } from '../utils/transactions.js';
 import { chanceFromSeed, pickDeterministic, seedKey, seededBetween, seededInt } from '../utils/deterministicRandom.js';
+import { safeSetStorageItem } from '../utils/browserSafety.js';
 
 
 import {
@@ -134,6 +135,7 @@ const INITIAL_CLINICAL_STATE = {
     activeReferral: null,
     activeReferralLog: [],
     busyAmbulanceIds: [],
+    hospitalBedUsage: {},  // S4: tracks beds used per hospital {hospitalId: count}
     prbQueue: [],
     rrns: [], // Missing state that caused DashboardPage crash
     warningLevel: 0,
@@ -154,6 +156,8 @@ const INITIAL_CLINICAL_STATE = {
     kiaPatients: {},            // Persistent ANC patients { [id]: ancPatient }
     dentalLog: [],              // Completed dental procedure records
 };
+
+const MAX_CLINICAL_HISTORY = 200;
 
 const ACTION_GROUP_NAMES = [
     'navActions',
@@ -191,6 +195,27 @@ const ACTIONS_SKIP_INVARIANT_RECHECK = new Set([
 function shouldEnableActionStability(fullName, actionName) {
     if (ACTIONS_SKIP_STABILITY_GUARD.has(fullName)) return false;
     return !/^(set|open|close|toggle|clear)/.test(actionName);
+}
+
+function capClinicalHistory(history) {
+    if (!Array.isArray(history) || history.length <= MAX_CLINICAL_HISTORY) {
+        return Array.isArray(history) ? history : [];
+    }
+
+    return history.slice(-MAX_CLINICAL_HISTORY);
+}
+
+function appendClinicalHistory(history, entry) {
+    return capClinicalHistory([...(Array.isArray(history) ? history : []), entry]);
+}
+
+function armAutosaveTrap(setState, getState, phase, reason) {
+    const trap = buildRuntimeTrap('actions.saveGame', {
+        phase,
+        reason: reason || 'Autosave gagal. Penyimpanan lokal mungkin penuh atau tidak tersedia.'
+    });
+    triggerFreezeProtocol(setState, getState, trap);
+    return false;
 }
 
 function guardStoreActions(store, set, get) {
@@ -1072,6 +1097,11 @@ export const useGameStore = create(
                                 if (amb && amb.cost > 0) fundChange -= amb.cost;
                             }
                             soundManager.playSuccess();
+                        } else if (decision.action === 'refer') {
+                            // S1 Fix: refer tanpa melalui SISRUTE penalti bypass prosedur rujukan
+                            repChange = isCorrectTriage ? -3 : -5;
+                            satisfactionScore = isCorrectTriage ? 55 : 45;
+                            soundManager.playError();
                         }
 
                         satisfactionScore += (buffs.patientSatisfaction || 0);
@@ -1122,11 +1152,24 @@ export const useGameStore = create(
                                     hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
                                     timeSent: time, status: 'EN_ROUTE'
                                 });
+                            
+                                // S4 Fix: decrement hospital bed availability
+                                const bedKey = hosp.id;
+                                if (!state.clinical.hospitalBedUsage) state.clinical.hospitalBedUsage = {};
+                                state.clinical.hospitalBedUsage[bedKey] = (state.clinical.hospitalBedUsage[bedKey] || 0) + 1;
                             }
                         }
 
                         const cppt = buildCPPTRecord(patient, decision, day, time, { outcomeStatus: isCorrectAction ? 'pulih' : 'memburuk', satisfactionScore, isCorrectAction, isEmergency: false });
-                        state.clinical.history.push({ ...patient, day, dischargedAt: time, decision, outcome: repChange >= 0 ? 'good' : 'bad', satisfactionScore, cpptRecord: cppt });
+                        state.clinical.history = appendClinicalHistory(state.clinical.history, {
+                            ...patient,
+                            day,
+                            dischargedAt: time,
+                            decision,
+                            outcome: repChange >= 0 ? 'good' : 'bad',
+                            satisfactionScore,
+                            cpptRecord: cppt
+                        });
 
                         if (isCorrectAction && patient.familyId && state.publicHealth.villageData) {
                             state.publicHealth.villageData.families = state.publicHealth.villageData.families.map(fam => {
@@ -1200,6 +1243,7 @@ export const useGameStore = create(
                             let fundChange = billing.total;
                             let newBusyAmbulanceIds = state.clinical.busyAmbulanceIds;
                             let newActiveReferralLog = state.clinical.activeReferralLog;
+                            let newHospitalBedUsage = { ...(state.clinical.hospitalBedUsage || {}) };
 
                             // Handle SISRUTE referral completion: ambulance costs & referral log
                             if (decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED') {
@@ -1219,11 +1263,30 @@ export const useGameStore = create(
                                         hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
                                         timeSent: time, status: 'EN_ROUTE'
                                     }];
+                                    // S4 Fix: decrement hospital bed availability
+                                    newHospitalBedUsage[hosp.id] = (newHospitalBedUsage[hosp.id] || 0) + 1;
                                 }
                             }
 
                             return {
-                                clinical: { ...state.clinical, busyAmbulanceIds: newBusyAmbulanceIds, activeReferralLog: newActiveReferralLog, emergencyQueue: state.clinical.emergencyQueue.filter(p => p.id !== patient.id), activeEmergencyId: null, history: [...state.clinical.history, { ...patient, day, dischargedAt: time, decision, outcome: repChange >= 0 ? 'good' : 'bad', outcomeStatus: 'stabilized', satisfactionScore, isEmergency: true, cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'stabilized', true) }] },
+                                clinical: {
+                                    ...state.clinical,
+                                    busyAmbulanceIds: newBusyAmbulanceIds,
+                                    activeReferralLog: newActiveReferralLog,
+                                    emergencyQueue: state.clinical.emergencyQueue.filter(p => p.id !== patient.id),
+                                    activeEmergencyId: null,
+                                    history: appendClinicalHistory(state.clinical.history, {
+                                        ...patient,
+                                        day,
+                                        dischargedAt: time,
+                                        decision,
+                                        outcome: repChange >= 0 ? 'good' : 'bad',
+                                        outcomeStatus: 'stabilized',
+                                        satisfactionScore,
+                                        isEmergency: true,
+                                        cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'stabilized', true)
+                                    })
+                                },
                                 player: { ...state.player, profile: { ...state.player.profile, reputation: Math.min(100, Math.max(0, state.player.profile.reputation + repChange)), xp: state.player.profile.xp + (isCorrectTriage ? 30 : 10) } },
                                 finance: { ...state.finance, stats: { ...state.finance.stats, pendapatanUmum: state.finance.stats.pendapatanUmum + fundChange }, kpi: newKpi }
                             };
@@ -1243,7 +1306,7 @@ export const useGameStore = create(
                         if (score >= 90) newAccreditation = 'Paripurna'; else if (score >= 80) newAccreditation = 'Utama'; else if (score >= 70) newAccreditation = 'Madya';
                         if (newAccreditation !== s.clinical.accreditation) { set(st => ({ clinical: { ...st.clinical, accreditation: newAccreditation } })); }
                     },
-                    resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [] } })),
+                    resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [], hospitalBedUsage: {} } })),
                 },
 
                 // --- SLICE: META (Quests, Stories, Wiki) ---
@@ -1305,8 +1368,7 @@ export const useGameStore = create(
                             const state = get();
                             const saveData = createSaveSnapshot(state);
                             if (!saveData) return false;
-                            localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(saveData));
-                            return true;
+                            return safeSetStorageItem(`primer_save_${slotId}`, JSON.stringify(saveData));
                         } catch (error) {
                             console.error('[Store] Save failed:', error);
                             return false;
@@ -1396,7 +1458,15 @@ export const useGameStore = create(
 
                     nextDay: (targetDay = get().world.day) => {
                         const s = get();
-                        s.actions.saveGame(); // Save previous day state
+                        const didSaveSnapshot = s.actions.saveGame(); // Save previous day state
+                        if (!didSaveSnapshot) {
+                            return armAutosaveTrap(
+                                set,
+                                get,
+                                'autosave_preflight',
+                                'Autosave gagal sebelum pergantian hari. Permainan dijeda untuk mencegah kehilangan progres.'
+                            );
+                        }
 
                         set(produce(state => {
                             // 1. Archive Day (Finance)
@@ -1533,7 +1603,16 @@ export const useGameStore = create(
                         }
 
                         // Re-trigger auto-save
-                        setTimeout(() => get().actions.saveGame(), 500);
+                        setTimeout(() => {
+                            if (!get().actions.saveGame()) {
+                                armAutosaveTrap(
+                                    set,
+                                    get,
+                                    'autosave_postshift',
+                                    'Autosave gagal setelah pergantian hari. Bebaskan ruang penyimpanan sebelum melanjutkan.'
+                                );
+                            }
+                        }, 500);
                     },
 
                     resetGame: () => set({

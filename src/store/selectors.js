@@ -1,4 +1,5 @@
 import { calculateGlobalBuffs } from '../game/GameCore.js';
+import { getNextLevelXp } from '../utils/LevelingSystem.js';
 
 /**
  * @reflection
@@ -66,8 +67,17 @@ export const selectDerivedFinance = (state) => {
  */
 export const selectPlayerStats = (state) => {
     const { player } = state;
+    const level = Math.max(1, Number(player.profile?.level) || 1);
+    const totalXp = Math.max(0, Number(player.profile?.xp) || 0);
+    const nextLevelXp = getNextLevelXp(level);
+    const xpAtLevelStart = (level - 1) * nextLevelXp;
+    const levelProgressXp = Math.max(0, Math.min(nextLevelXp, totalXp - xpAtLevelStart));
+
     return {
         ...player.profile,
+        xp: levelProgressXp,
+        totalXp,
+        nextLevelXp,
         playerStats: player.profile, // Legacy shim
     };
 };

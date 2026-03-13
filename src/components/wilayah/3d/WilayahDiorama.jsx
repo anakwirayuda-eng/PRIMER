@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Environment, OrbitControls, Html, Bvh } from '@react-three/drei';
 import * as THREE from 'three';
@@ -6,31 +6,29 @@ import * as THREE from 'three';
 import { InstancedTerrain, TILE_SIZE } from './InstancedTerrain.jsx';
 import { BuildingRenderer } from './BuildingRenderer.jsx';
 import { useGameStore } from '../../../store/useGameStore.js';
+import ErrorBoundary from '../../ErrorBoundary.jsx';
 
-// ─── Premium Atmosphere Constants ─────────────────────────────────
 const SKY_COLOR = '#dbeafe';
 const FOG_NEAR = 40;
 const FOG_FAR = 150;
 
-// 🌟 CHRONOS SUN — directional light tied to player energy (diegetic anxiety)
 function ChronosSun() {
     const lightRef = React.useRef();
     const energy = useGameStore(s => s.player?.profile?.energy ?? 100);
 
     useFrame(() => {
         if (!lightRef.current) return;
-        // Energy 100 = overhead white, Energy 0 = low amber sunset
-        const t = Math.max(0, Math.min(1, energy / 100)); // 0..1
-        // Sun elevation: high (25) at full energy, low (5) as energy drains
+
+        const t = Math.max(0, Math.min(1, energy / 100));
         const sunY = 5 + t * 20;
         const sunX = 30 - (1 - t) * 15;
         lightRef.current.position.set(sunX, sunY, 20);
-        // Color: warm amber (#FFB347) at low energy, white-warm (#fff5e6) at full
-        const r = 1;
-        const g = 0.85 + t * 0.11; // 0.85 -> 0.96
-        const b = 0.28 + t * 0.62;  // 0.28 -> 0.90
-        lightRef.current.color.setRGB(r, g, b);
-        // Intensity slightly drops at low energy for dramatic effect
+
+        lightRef.current.color.setRGB(
+            1,
+            0.85 + t * 0.11,
+            0.28 + t * 0.62
+        );
         lightRef.current.intensity = 1.2 + t * 0.6;
     });
 
@@ -49,31 +47,30 @@ function ChronosSun() {
     );
 }
 
-// ─── THE AAA CAMERA ENGINE ────────────────────────────────────────
-// Handles: zoom ref, WASD, Cinematic Swoop (Clutch Pedal pattern),
-// Edge Panning (canvas-only), Home, Dive — all GPU-synced
 function CameraBridge({ controlsRef, zoomRef, selectedBuilding, mapData }) {
     const { camera } = useThree();
     const swoopState = useRef(null);
     const keysRef = useRef(new Set());
     const mouseRef = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2, onCanvas: true });
 
-    // Internal: trigger a cinematic swoop (disables OrbitControls during flight)
     const startSwoop = useCallback((endCam, endLook, speed = 1.5, onComplete = null) => {
         if (!controlsRef.current) return;
+
         swoopState.current = {
             startCam: camera.position.clone(),
             startLook: controlsRef.current.target.clone(),
-            endCam, endLook,
-            progress: 0, speed, onComplete,
+            endCam,
+            endLook,
+            progress: 0,
+            speed,
+            onComplete,
         };
-        // CLUTCH PEDAL: disable OrbitControls during autopilot
         controlsRef.current.enabled = false;
     }, [camera, controlsRef]);
 
-    // Expose zoom/home/dive methods to parent
     useEffect(() => {
         if (!zoomRef) return;
+
         zoomRef.current = {
             zoomIn: () => {
                 if (!controlsRef.current) return;
@@ -98,13 +95,13 @@ function CameraBridge({ controlsRef, zoomRef, selectedBuilding, mapData }) {
                 startSwoop(
                     new THREE.Vector3(px + 0.1, 2.5, pz + 0.1),
                     new THREE.Vector3(px, 1.0, pz),
-                    2.5, onComplete
+                    2.5,
+                    onComplete
                 );
             },
         };
     }, [camera, zoomRef, controlsRef, mapData, startSwoop]);
 
-    // Cinematic Swoop on building select (Rule of Thirds offset)
     useEffect(() => {
         if (!selectedBuilding || !mapData) return;
         const px = (selectedBuilding.x - mapData.centerX) * TILE_SIZE;
@@ -116,26 +113,25 @@ function CameraBridge({ controlsRef, zoomRef, selectedBuilding, mapData }) {
         );
     }, [selectedBuilding, mapData, startSwoop]);
 
-    // Keyboard + mouse listeners (capture only, processing in useFrame)
     useEffect(() => {
-        const onDown = (e) => {
-            keysRef.current.add(e.key.toLowerCase());
-            if (e.key === ' ') {
+        const onDown = (event) => {
+            keysRef.current.add(event.key.toLowerCase());
+            if (event.key === ' ') {
                 startSwoop(new THREE.Vector3(15, 12, 15), new THREE.Vector3(0, 0, 0), 2.0);
-                e.preventDefault();
+                event.preventDefault();
             }
         };
-        const onUp = (e) => keysRef.current.delete(e.key.toLowerCase());
-        const onMove = (e) => {
-            mouseRef.current.x = e.clientX;
-            mouseRef.current.y = e.clientY;
-            // ZERO-COST CANVAS CHECK: edge pan disabled when mouse over HUD
-            mouseRef.current.onCanvas = e.target.tagName === 'CANVAS';
+        const onUp = (event) => keysRef.current.delete(event.key.toLowerCase());
+        const onMove = (event) => {
+            mouseRef.current.x = event.clientX;
+            mouseRef.current.y = event.clientY;
+            mouseRef.current.onCanvas = event.target.tagName === 'CANVAS';
         };
 
         window.addEventListener('keydown', onDown);
         window.addEventListener('keyup', onUp);
         window.addEventListener('mousemove', onMove);
+
         return () => {
             window.removeEventListener('keydown', onDown);
             window.removeEventListener('keyup', onUp);
@@ -143,66 +139,61 @@ function CameraBridge({ controlsRef, zoomRef, selectedBuilding, mapData }) {
         };
     }, [startSwoop]);
 
-    // THE UNIFIED RENDER LOOP
     useFrame((_, delta) => {
         const controls = controlsRef.current;
         if (!controls) return;
 
-        // --- MODE A: AUTOPILOT (Cinematic Swoop) ---
         if (swoopState.current) {
-            const s = swoopState.current;
-            s.progress += delta * s.speed;
-            const t = Math.min(s.progress, 1);
-
-            // QUARTIC EASE-OUT: blazing fast start, silky smooth brake
+            const swoop = swoopState.current;
+            swoop.progress += delta * swoop.speed;
+            const t = Math.min(swoop.progress, 1);
             const ease = 1 - Math.pow(1 - t, 4);
 
-            camera.position.lerpVectors(s.startCam, s.endCam, ease);
-            controls.target.lerpVectors(s.startLook, s.endLook, ease);
+            camera.position.lerpVectors(swoop.startCam, swoop.endCam, ease);
+            controls.target.lerpVectors(swoop.startLook, swoop.endLook, ease);
             controls.update();
 
             if (t >= 1) {
-                if (s.onComplete) s.onComplete();
+                if (swoop.onComplete) swoop.onComplete();
                 swoopState.current = null;
-                controls.enabled = true; // RELEASE CLUTCH: player regains control
+                controls.enabled = true;
             }
-            return; // Don't mix with WASD during autopilot
+            return;
         }
 
-        // --- MODE B: MANUAL (WASD + Edge Pan) ---
         const keys = keysRef.current;
-        const PAN_SPEED = 18 * delta;
-        let truckX = 0, truckZ = 0;
+        const panSpeed = 18 * delta;
+        let truckX = 0;
+        let truckZ = 0;
 
-        if (keys.has('w') || keys.has('arrowup')) truckZ -= PAN_SPEED;
-        if (keys.has('s') || keys.has('arrowdown')) truckZ += PAN_SPEED;
-        if (keys.has('a') || keys.has('arrowleft')) truckX -= PAN_SPEED;
-        if (keys.has('d') || keys.has('arrowright')) truckX += PAN_SPEED;
+        if (keys.has('w') || keys.has('arrowup')) truckZ -= panSpeed;
+        if (keys.has('s') || keys.has('arrowdown')) truckZ += panSpeed;
+        if (keys.has('a') || keys.has('arrowleft')) truckX -= panSpeed;
+        if (keys.has('d') || keys.has('arrowright')) truckX += panSpeed;
 
-        // Edge panning (only when no WASD, cursor on canvas, window focused)
         if (truckX === 0 && truckZ === 0 && mouseRef.current.onCanvas && document.hasFocus()) {
-            const m = mouseRef.current;
-            const EDGE_MARGIN = 30;
-            const EDGE_SPEED = 12 * delta;
-            if (m.x < EDGE_MARGIN) truckX -= EDGE_SPEED;
-            else if (m.x > window.innerWidth - EDGE_MARGIN) truckX += EDGE_SPEED;
-            if (m.y < EDGE_MARGIN) truckZ -= EDGE_SPEED;
-            else if (m.y > window.innerHeight - EDGE_MARGIN) truckZ += EDGE_SPEED;
+            const { x, y } = mouseRef.current;
+            const edgeMargin = 30;
+            const edgeSpeed = 12 * delta;
+
+            if (x < edgeMargin) truckX -= edgeSpeed;
+            else if (x > window.innerWidth - edgeMargin) truckX += edgeSpeed;
+
+            if (y < edgeMargin) truckZ -= edgeSpeed;
+            else if (y > window.innerHeight - edgeMargin) truckZ += edgeSpeed;
         }
 
-        // Apply movement along camera's ground-plane directions
         if (truckX !== 0 || truckZ !== 0) {
             const forward = new THREE.Vector3();
             camera.getWorldDirection(forward);
             forward.y = 0;
             forward.normalize();
-            const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
 
+            const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
             const move = new THREE.Vector3()
                 .addScaledVector(right, truckX)
                 .addScaledVector(forward, truckZ);
 
-            // ANTI-STUTTER: temporarily disable damping during manual pan
             const wasDamping = controls.enableDamping;
             controls.enableDamping = false;
             camera.position.add(move);
@@ -215,20 +206,46 @@ function CameraBridge({ controlsRef, zoomRef, selectedBuilding, mapData }) {
     return null;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// MAIN COMPONENT
-// ═══════════════════════════════════════════════════════════════════
+function WebGLRecoveryBridge({ onContextLost, onContextRestored }) {
+    const { gl } = useThree();
+
+    useEffect(() => {
+        const canvas = gl?.domElement;
+        if (!canvas) return undefined;
+
+        const handleContextLost = (event) => {
+            event.preventDefault();
+            onContextLost();
+        };
+        const handleContextRestored = () => {
+            onContextRestored();
+        };
+
+        canvas.addEventListener('webglcontextlost', handleContextLost, false);
+        canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
+
+        return () => {
+            canvas.removeEventListener('webglcontextlost', handleContextLost, false);
+            canvas.removeEventListener('webglcontextrestored', handleContextRestored, false);
+        };
+    }, [gl, onContextLost, onContextRestored]);
+
+    return null;
+}
 
 export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuildingId, zoomRef, activeLayer }) {
     const controlsRef = useRef(null);
     const tooltipGroupRef = useRef(null);
+    const [canvasKey, setCanvasKey] = useState(0);
+    const [isContextLost, setIsContextLost] = useState(false);
 
-    // ZERO-COST HOVER — useRef + vanilla DOM, no React re-render
     const handleHover = useCallback((building, position) => {
         if (!tooltipGroupRef.current) return;
+
         if (building && position) {
             tooltipGroupRef.current.position.set(position.x, position.y + 2.5, position.z);
             tooltipGroupRef.current.visible = true;
+
             const nameEl = document.getElementById('tt-3d-name');
             const typeEl = document.getElementById('tt-3d-type');
             if (nameEl) nameEl.innerText = building.name || '';
@@ -242,132 +259,167 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
         ? mapData?.buildings?.find(b => b.id === selectedBuildingId) || null
         : null;
 
+    const handleContextLost = useCallback(() => {
+        setIsContextLost(true);
+        console.warn('[WilayahDiorama] WebGL context lost. Diorama interactions are paused until recovery.');
+    }, []);
+
+    const handleContextRestored = useCallback(() => {
+        setIsContextLost(false);
+        setCanvasKey(prev => prev + 1);
+        console.info('[WilayahDiorama] WebGL context restored. Rebuilding diorama canvas.');
+    }, []);
+
+    const handleCanvasRebuild = useCallback(() => {
+        setIsContextLost(false);
+        setCanvasKey(prev => prev + 1);
+    }, []);
+
     if (!mapData || !mapData.tiles) return null;
 
     return (
         <div className="absolute inset-0 z-0 overflow-hidden cursor-grab active:cursor-grabbing" style={{ background: `linear-gradient(180deg, ${SKY_COLOR} 0%, #f0f4f8 100%)` }}>
-            <Canvas
-                shadows
-                dpr={[1, 1.5]}
-                camera={{ position: [15, 12, 15], fov: 30, far: 150 }}
-                gl={{ antialias: false, powerPreference: 'high-performance', toneMapping: 3 }}
-            >
-                <color attach="background" args={[SKY_COLOR]} />
-                <fog attach="fog" args={[SKY_COLOR, FOG_NEAR, FOG_FAR]} />
+            <ErrorBoundary name="WilayahDiorama">
+                <Canvas
+                    key={canvasKey}
+                    shadows="percentage"
+                    dpr={[1, 1.5]}
+                    camera={{ position: [15, 12, 15], fov: 30, far: 150 }}
+                    gl={{ antialias: false, powerPreference: 'high-performance', toneMapping: 3 }}
+                >
+                    <WebGLRecoveryBridge
+                        onContextLost={handleContextLost}
+                        onContextRestored={handleContextRestored}
+                    />
+                    <color attach="background" args={[SKY_COLOR]} />
+                    <fog attach="fog" args={[SKY_COLOR, FOG_NEAR, FOG_FAR]} />
 
-                <CameraBridge
-                    controlsRef={controlsRef}
-                    zoomRef={zoomRef}
-                    selectedBuilding={selectedBuildingObj}
-                    mapData={mapData}
-                />
+                    <CameraBridge
+                        controlsRef={controlsRef}
+                        zoomRef={zoomRef}
+                        selectedBuilding={selectedBuildingObj}
+                        mapData={mapData}
+                    />
 
-                {/* GHIBLI LIGHTING — hemisphereLight for grass reflection */}
-                <hemisphereLight
-                    skyColor="#f0f4ff"
-                    groundColor="#3a5a28"
-                    intensity={0.75}
-                />
-                {/* 🌟 CHRONOS SUN — energy-driven lighting (diegetic anxiety) */}
-                <ChronosSun />
+                    <hemisphereLight
+                        skyColor="#f0f4ff"
+                        groundColor="#3a5a28"
+                        intensity={0.75}
+                    />
+                    <ChronosSun />
 
-                {/* Subtle rim light for silhouette depth */}
-                <directionalLight
-                    position={[-20, 10, -25]}
-                    intensity={0.4}
-                    color="#93c5fd"
-                />
+                    <directionalLight
+                        position={[-20, 10, -25]}
+                        intensity={0.4}
+                        color="#93c5fd"
+                    />
 
-                {/* 🌟 BVH SHIELD — 100x faster raycasting on mouse clicks */}
-                <Bvh firstHitOnly>
-                    <group position={[0, -1, 0]}>
-                        {/* INFINITE HORIZON: ground plane matching sky color */}
-                        <mesh position={[0, -0.25, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                            <planeGeometry args={[500, 500]} />
-                            <meshBasicMaterial color={SKY_COLOR} />
-                        </mesh>
+                    <Bvh firstHitOnly>
+                        <group position={[0, -1, 0]}>
+                            <mesh position={[0, -0.25, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+                                <planeGeometry args={[500, 500]} />
+                                <meshBasicMaterial color={SKY_COLOR} />
+                            </mesh>
 
-                        <InstancedTerrain mapData={mapData} />
+                            <InstancedTerrain mapData={mapData} />
 
-                        {mapData.buildings.map((b, idx) => (
-                            <BuildingRenderer
-                                key={b.id || idx}
-                                building={b}
-                                centerX={mapData.centerX}
-                                centerY={mapData.centerY}
-                                selected={selectedBuildingId === b.id}
-                                activeLayer={activeLayer}
-                                onHover={handleHover}
-                                onSelect={(selectedBuildingData) => {
-                                    selectedBuildingData.type = selectedBuildingData.type || b.type;
-                                    onBuildingSelect(selectedBuildingData);
-                                }}
-                            />
-                        ))}
+                            {mapData.buildings.map((building, idx) => (
+                                <BuildingRenderer
+                                    key={building.id || idx}
+                                    building={building}
+                                    centerX={mapData.centerX}
+                                    centerY={mapData.centerY}
+                                    selected={selectedBuildingId === building.id}
+                                    activeLayer={activeLayer}
+                                    onHover={handleHover}
+                                    onSelect={(selectedBuildingData) => {
+                                        selectedBuildingData.type = selectedBuildingData.type || building.type;
+                                        onBuildingSelect(selectedBuildingData);
+                                    }}
+                                />
+                            ))}
 
-                        {/* ZERO-COST SINGLETON TOOLTIP — rendered once, moved via ref */}
-                        <group ref={tooltipGroupRef} visible={false}>
-                            <Html center distanceFactor={15} style={{ pointerEvents: 'none', transition: 'opacity 0.1s' }}>
-                                <div className="relative transform -translate-y-3">
-                                    <div style={{
-                                        background: 'rgba(15,23,42,0.9)',
-                                        backdropFilter: 'blur(12px)',
-                                        WebkitBackdropFilter: 'blur(12px)',
-                                        color: 'white',
-                                        padding: '4px 12px',
-                                        borderRadius: '10px',
-                                        border: '1px solid rgba(255,255,255,0.15)',
-                                        textAlign: 'center',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <span id="tt-3d-type" style={{
-                                            display: 'block',
-                                            fontSize: '8px',
-                                            fontWeight: 900,
-                                            color: '#34d399',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.1em',
-                                        }}></span>
-                                        <span id="tt-3d-name" style={{
-                                            display: 'block',
-                                            fontSize: '12px',
-                                            fontWeight: 800,
-                                        }}></span>
+                            <group ref={tooltipGroupRef} visible={false}>
+                                <Html center distanceFactor={15} style={{ pointerEvents: 'none', transition: 'opacity 0.1s' }}>
+                                    <div className="relative transform -translate-y-3">
+                                        <div style={{
+                                            background: 'rgba(15,23,42,0.9)',
+                                            backdropFilter: 'blur(12px)',
+                                            WebkitBackdropFilter: 'blur(12px)',
+                                            color: 'white',
+                                            padding: '4px 12px',
+                                            borderRadius: '10px',
+                                            border: '1px solid rgba(255,255,255,0.15)',
+                                            textAlign: 'center',
+                                            whiteSpace: 'nowrap',
+                                        }}>
+                                            <span id="tt-3d-type" style={{
+                                                display: 'block',
+                                                fontSize: '8px',
+                                                fontWeight: 900,
+                                                color: '#34d399',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.1em',
+                                            }}></span>
+                                            <span id="tt-3d-name" style={{
+                                                display: 'block',
+                                                fontSize: '12px',
+                                                fontWeight: 800,
+                                            }}></span>
+                                        </div>
+                                        <div style={{
+                                            position: 'absolute',
+                                            left: '50%',
+                                            bottom: '-6px',
+                                            transform: 'translateX(-50%)',
+                                            width: 0,
+                                            height: 0,
+                                            borderLeft: '6px solid transparent',
+                                            borderRight: '6px solid transparent',
+                                            borderTop: '7px solid rgba(15,23,42,0.9)',
+                                        }} />
                                     </div>
-                                    <div style={{
-                                        position: 'absolute',
-                                        left: '50%',
-                                        bottom: '-6px',
-                                        transform: 'translateX(-50%)',
-                                        width: 0, height: 0,
-                                        borderLeft: '6px solid transparent',
-                                        borderRight: '6px solid transparent',
-                                        borderTop: '7px solid rgba(15,23,42,0.9)',
-                                    }} />
-                                </div>
-                            </Html>
+                                </Html>
+                            </group>
                         </group>
-                    </group>
-                </Bvh>
+                    </Bvh>
 
-                {/* THE TAMED BEAST: OrbitControls with Clutch pattern */}
-                <OrbitControls
-                    ref={controlsRef}
-                    makeDefault
-                    enableDamping
-                    dampingFactor={0.06}
-                    minPolarAngle={Math.PI / 6}
-                    maxPolarAngle={Math.PI / 2.25}
-                    minDistance={5}
-                    maxDistance={100}
-                    enablePan
-                    panSpeed={0.8}
-                    rotateSpeed={0.5}
-                    zoomSpeed={0.8}
-                />
+                    <OrbitControls
+                        ref={controlsRef}
+                        makeDefault
+                        enableDamping
+                        dampingFactor={0.06}
+                        minPolarAngle={Math.PI / 6}
+                        maxPolarAngle={Math.PI / 2.25}
+                        minDistance={5}
+                        maxDistance={100}
+                        enablePan
+                        panSpeed={0.8}
+                        rotateSpeed={0.5}
+                        zoomSpeed={0.8}
+                    />
 
-                <Environment preset="city" />
-            </Canvas>
+                    <Environment preset="city" />
+                </Canvas>
+            </ErrorBoundary>
+
+            {isContextLost && (
+                <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-6">
+                    <div className="max-w-md rounded-2xl border border-white/10 bg-slate-900/90 px-6 py-5 text-center shadow-2xl">
+                        <p className="text-xs font-black uppercase tracking-[0.25em] text-amber-400">GPU Recovery Mode</p>
+                        <h3 className="mt-3 text-lg font-black text-white">Koneksi WebGL terputus</h3>
+                        <p className="mt-2 text-sm text-slate-300">
+                            Diorama 3D dijeda sementara. Biasanya ini terjadi saat tab lama di-background atau driver GPU me-reset context.
+                        </p>
+                        <button
+                            onClick={handleCanvasRebuild}
+                            className="mt-5 rounded-xl border border-emerald-500/30 bg-emerald-500/15 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-emerald-300 transition-colors hover:bg-emerald-500/25"
+                        >
+                            Bangun Ulang Diorama
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

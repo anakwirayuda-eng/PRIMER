@@ -8,6 +8,10 @@
 
 export function installCrashTrap(reportFn = console.error) {
     if (typeof window === 'undefined') return;
+    if (window.__PRIMER_CRASH_TRAP_INSTALLED__) return;
+
+    // Avoid duplicate global listeners during dev HMR or repeated bootstrap paths.
+    window.__PRIMER_CRASH_TRAP_INSTALLED__ = true;
 
     window.addEventListener('error', (event) => {
         reportFn({

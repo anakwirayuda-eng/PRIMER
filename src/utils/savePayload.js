@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { INITIAL_PLAYER_STATE, INITIAL_TIME_STATE } from '../game/GameCore.js';
 
 export const CURRENT_SAVE_VERSION = 5;
+const MAX_CLINICAL_HISTORY = 200;
 
 const finiteNumber = z.number().finite();
 
@@ -160,6 +161,14 @@ export function parseSavePayload(rawSave) {
         saveVersion: CURRENT_SAVE_VERSION,
         savedAt: asFiniteNumber(parsed.data.savedAt, Date.now()),
         world: normalizeWorld(parsed.data.world),
+        clinical: parsed.data.clinical
+            ? {
+                ...parsed.data.clinical,
+                history: Array.isArray(parsed.data.clinical.history)
+                    ? parsed.data.clinical.history.slice(-MAX_CLINICAL_HISTORY)
+                    : parsed.data.clinical.history
+            }
+            : null,
         player: parsed.data.player
             ? {
                 ...parsed.data.player,

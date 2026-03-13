@@ -12,6 +12,7 @@
 import React, { useState, useMemo, Suspense } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
+import GameOverModal from './GameOverModal.jsx';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { formatTime } from '../utils/formatTime.js';
@@ -38,7 +39,6 @@ const StatusJunctionModal = React.lazy(() => import('./StatusJunctionModal'));
 const CalendarModal = React.lazy(() => import('./CalendarModal'));
 const DailyReportModal = React.lazy(() => import('./DailyReportModal'));
 const EducationalWikiModal = React.lazy(() => import('./EducationalWikiModal'));
-const GameOverModal = React.lazy(() => import('./GameOverModal'));
 const ReferralSISRUTEModal = React.lazy(() => import('./ReferralSISRUTEModal'));
 const OutbreakModal = React.lazy(() => import('./OutbreakModal'));
 const NarrativeOverlay = React.lazy(() => import('./NarrativeOverlay'));

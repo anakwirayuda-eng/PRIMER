@@ -24,7 +24,8 @@ export default defineConfig({
   },
   server: {
     host: true, // Listen on all addresses (0.0.0.0)
-    strictPort: false, // If 5173 is taken, try next
+    port: 5173,
+    strictPort: true, // Keep the dev URL stable so dynamic imports do not drift to a new port.
     hmr: {
       overlay: false, // Disable the error overlay if it's annoying, but keeping it is usually good.
     }

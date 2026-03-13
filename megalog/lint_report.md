@@ -1,37 +1,31 @@
 # 🧹 Lint Budget Report
-Generated: 11/03/2026, 19.06.02
+Generated: 12/03/2026, 01.11.34
 
-- **Errors:** 62
+- **Errors:** 37
 - **Baseline:** 159
-- **Delta:** -97
+- **Delta:** -122
 
 ## Top Rules
-- `no-unused-vars`: 34
-- `react-hooks/purity`: 7
+- `no-unused-vars`: 24
 - `react-hooks/static-components`: 7
-- `react-hooks/rules-of-hooks`: 2
-- `no-empty`: 2
 - `react-refresh/only-export-components`: 2
 - `react-hooks/set-state-in-effect`: 2
-- `react-hooks/preserve-manual-memoization`: 2
 - `react-hooks/use-memo`: 1
-- `react-hooks/refs`: 1
-- `react-hooks/set-state-in-render`: 1
-- `no-dupe-keys`: 1
+- `no-empty`: 1
 
 ## Top Files
 - 7 — `src\components\wilayah\3d\BuildingRenderer.jsx`
-- 4 — `src\components\wilayah\PremiumMapDemo.jsx`
 - 3 — `src\components\MainLayout.jsx`
 - 3 — `src\components\wilayah\BehaviorCasePanel.jsx`
-- 3 — `src\components\wilayah\MiniGamePanel.jsx`
-- 3 — `src\components\wilayah\PosyanduActivePanel.jsx`
 - 3 — `src\game\BehaviorCaseEngine.js`
 - 3 — `src\game\LabEngine.js`
-- 3 — `src\pages\RumahDinas.jsx`
-- 3 — `src\store\useGameStore.js`
-- 2 — `src\components\GameOverModal.jsx`
 - 2 — `src\components\OrderModal.jsx`
 - 2 — `src\components\sensus\SensusPage.jsx`
-- 2 — `src\components\wilayah\PustuActivePanel.jsx`
-- 2 — `src\hooks\usePatientEMR.js`
+- 1 — `src\components\AvatarRenderer.jsx`
+- 1 — `src\components\ClinicalPage.jsx`
+- 1 — `src\components\OpeningScreen.jsx`
+- 1 — `src\components\VillagerAvatar.jsx`
+- 1 — `src\components\emr\AnamnesisTab.jsx`
+- 1 — `src\components\emr\anamnesis\CaseSpecificSelection.jsx`
+- 1 — `src\components\shared\StatCard.jsx`
+- 1 — `src\components\wilayah\PixelSceneRenderer.jsx`

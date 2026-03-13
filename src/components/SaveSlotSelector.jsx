@@ -15,6 +15,7 @@ import { Trash2, Play, Plus, Clock, Calendar, Award, Download, Upload, AlertCirc
 import AvatarRenderer from './AvatarRenderer.jsx';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
 import { parseSavePayload } from '../utils/savePayload.js';
+import { safeGetStorageItem, safeSetStorageItem, safeRemoveStorageItem } from '../utils/browserSafety.js';
 
 const MAX_SLOTS = 5;
 
@@ -97,7 +98,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     const loadSlots = () => {
         const loadedSlots = [];
         for (let i = 0; i < MAX_SLOTS; i++) {
-            const data = localStorage.getItem(`primer_save_${i}`);
+            const data = safeGetStorageItem(`primer_save_${i}`);
             if (data) {
                 try {
                     const saveBlob = JSON.parse(data);
@@ -109,9 +110,14 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     };
 
     const handleDeleteSlot = (slotId) => {
-        localStorage.removeItem(`primer_save_${slotId}`);
+        const didRemove = safeRemoveStorageItem(`primer_save_${slotId}`);
         loadSlots(); setConfirmDelete(null);
-        setNotification({ type: 'success', message: `DATA OPERASIONAL SLOT 0${slotId + 1} DIHAPUS.` });
+        setNotification({
+            type: didRemove ? 'success' : 'error',
+            message: didRemove
+                ? `DATA OPERASIONAL SLOT 0${slotId + 1} DIHAPUS.`
+                : `GAGAL MENGHAPUS DATA SLOT 0${slotId + 1}.`
+        });
     };
 
     const formatDate = (timestamp) => {
@@ -135,7 +141,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
 
     // ─── Hardened Import / Export ───
     const handleExportSave = (slotId) => {
-        const data = localStorage.getItem(`primer_save_${slotId}`);
+        const data = safeGetStorageItem(`primer_save_${slotId}`);
         if (!data) return;
         try {
             const saveBlob = JSON.parse(data);
@@ -155,7 +161,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     const handleExportAll = () => {
         const allSaves = {}; let hasAnySave = false;
         for (let i = 0; i < MAX_SLOTS; i++) {
-            const data = localStorage.getItem(`primer_save_${i}`);
+            const data = safeGetStorageItem(`primer_save_${i}`);
             if (data) {
                 try {
                     const saveBlob = JSON.parse(data);
@@ -182,7 +188,8 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
         try {
             const canonicalSave = buildCanonicalSave(data);
             if (!canonicalSave) throw new Error('Invalid save payload');
-            localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(canonicalSave));
+            const didWrite = safeSetStorageItem(`primer_save_${slotId}`, JSON.stringify(canonicalSave));
+            if (!didWrite) throw new Error('Storage write failed');
             loadSlots(); setNotification({ type: 'success', message: `DOSSIER DITERIMA DI PORT 0${slotId + 1}.` });
             setOverwriteTarget(null);
         } catch { setNotification({ type: 'error', message: 'GAGAL MENYIMPAN DATA (QUOTA EXCEEDED).' }); }
@@ -210,8 +217,9 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                         const canonicalSave = buildCanonicalSave(saveBlob);
                         if (!canonicalSave) return;
 
-                        localStorage.setItem(`primer_save_${slotId}`, JSON.stringify(canonicalSave));
-                        imported++;
+                        if (safeSetStorageItem(`primer_save_${slotId}`, JSON.stringify(canonicalSave))) {
+                            imported++;
+                        }
                     });
                     loadSlots(); setNotification({ type: 'success', message: `${imported} DATA BERHASIL DIPULIHKAN.` });
                 } else {

@@ -22,7 +22,7 @@ import { isFKTPMandatory, getFKTPDiseaseByCode } from '../data/FKTP144Diseases.j
 
 export default function ReferralSISRUTEModal({ activeReferral, onClose }) {
     const modalRef = useModalA11y(onClose);
-    const { dischargePatient, dischargeEmergencyPatient, time, playerProfile: _playerProfile, busyAmbulanceIds } = useGame();
+    const { dischargePatient, dischargeEmergencyPatient, time, playerProfile: _playerProfile, busyAmbulanceIds, hospitalBedUsage } = useGame();
     const [step, setStep] = useState(1);
     const [referralResult, setReferralResult] = useState(null);
 
@@ -53,7 +53,9 @@ export default function ReferralSISRUTEModal({ activeReferral, onClose }) {
             patientCategory.includes(s)
         ) || hospital.id === 'rsup_nasional'; // Class A is catch-all
 
-        const isLowRes = hospital.bedCapacity.available === 0;
+        const usedBeds = (hospitalBedUsage || {})[hospital.id] || 0;
+            const effectiveAvailable = Math.max(0, hospital.bedCapacity.available - usedBeds);
+            const isLowRes = effectiveAvailable === 0;
 
         // 1. Check for 144 FKTP Mandatory diseases (Non-Specialistic Referral)
         const diagnosisCodes = decisionData.diagnoses || [];
@@ -323,8 +325,8 @@ export default function ReferralSISRUTEModal({ activeReferral, onClose }) {
                                         </div>
                                         <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-widest pt-3 border-t border-slate-100">
                                             <span className="text-slate-400">Kapasitas Bed:</span>
-                                            <span className={h.bedCapacity.available === 0 ? 'text-rose-500' : 'text-emerald-600'}>
-                                                {h.bedCapacity.available} / {h.bedCapacity.total} TERSEDIA
+                                            <span className={Math.max(0, h.bedCapacity.available - ((hospitalBedUsage || {})[h.id] || 0)) === 0 ? 'text-rose-500' : 'text-emerald-600'}>
+                                                { Math.max(0, h.bedCapacity.available - ((hospitalBedUsage || {})[h.id] || 0))} / {h.bedCapacity.total} TERSEDIA
                                             </span>
                                         </div>
                                         {selectedHospitalId === h.id && <div className="absolute top-0 right-0 w-8 h-8 bg-emerald-500 rounded-bl-3xl flex items-center justify-center text-white"><CheckCircle size={16} /></div>}
