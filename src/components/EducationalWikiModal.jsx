@@ -30,7 +30,7 @@ const MAIA_CODEX_THEME = {
     default: "from-slate-600 to-slate-800"
 };
 
-const EducationalWikiModal = ({ metricKey, isOpen, onClose }) => {
+const EducationalWikiModal = ({ metricKey, isOpen, onClose, liveStats = null }) => {
     const modalRef = useModalA11y(onClose);
     const [currentKey, setCurrentKey] = useState(metricKey || 'liquidity');
     const [data, setData] = useState(null);
@@ -72,6 +72,8 @@ const EducationalWikiModal = ({ metricKey, isOpen, onClose }) => {
             item.title.toLowerCase().includes(q)
         );
     }, [searchQuery, allItems]);
+
+    const telemetryEntries = useMemo(() => Object.entries(liveStats || {}), [liveStats]);
 
     const categories = Object.keys(WIKI_REGISTRY);
 
@@ -232,6 +234,23 @@ const EducationalWikiModal = ({ metricKey, isOpen, onClose }) => {
                                         {data.concept}
                                     </p>
                                 </section>
+
+                                {telemetryEntries.length > 0 && (
+                                    <section className="bg-cyan-500/5 border border-cyan-400/20 p-8 rounded-3xl">
+                                        <div className="flex items-center gap-2 mb-5 text-cyan-300">
+                                            <Activity size={20} />
+                                            <h3 className="font-black text-sm uppercase tracking-[0.2em]">Telemetry Snapshot</h3>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                                            {telemetryEntries.map(([label, value]) => (
+                                                <div key={label} className="rounded-2xl border border-white/5 bg-white/5 px-4 py-4">
+                                                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">{label}</div>
+                                                    <div className="text-lg font-bold text-white">{String(value)}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
 
                                 {/* Grid Contexts */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

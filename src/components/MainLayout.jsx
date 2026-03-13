@@ -10,6 +10,8 @@
  */
 
 import React, { useState, useMemo, Suspense } from 'react';
+import TimeController from './TimeController.jsx';
+import PauseOverlay from './PauseOverlay.jsx';
 import { useGame } from '../context/GameContext.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import GameOverModal from './GameOverModal.jsx';
@@ -62,7 +64,7 @@ const PageLoader = () => (
 );
 
 export default function MainLayout() {
-    const { playerProfile, day, time, logout: _logout, settings, setGameState, gameState, gameSpeed, setGameSpeed, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, prbQueue, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki } = useGame();
+    const { playerProfile, day, time, logout: _logout, settings, setGameState, gameState, gameSpeed, setGameSpeed, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki } = useGame();
     const { isDark, theme, toggleTheme: _toggleTheme } = useTheme();
     const { t: _t, i18n: _i18n } = useTranslation();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -112,6 +114,92 @@ export default function MainLayout() {
 
     // Derived XP Progress
     const xpPercentage = (playerStats.xp / (playerStats.nextLevelXp || 1000)) * 100;
+
+    const wikiLiveStats = useMemo(() => {
+        if (!wikiMetric) return null;
+        switch (wikiMetric) {
+            case 'energy':
+                return {
+                    'Level Energi': `${Math.round(energy)}%`,
+                    'Status': energy > 70 ? 'Fit' : energy > 40 ? 'Lelah' : 'Exhausted'
+                };
+            case 'reputation':
+                return {
+                    'Skor Reputasi': reputation,
+                    'Status': reputation > 80 ? 'Sangat Dipercaya' : 'Cukup'
+                };
+            case 'xp_level':
+                return {
+                    'Level': playerStats.level,
+                    'XP': `${playerStats.xp} / ${playerStats.nextLevelXp}`,
+                    'Pencapaian': 'Kepala Puskesmas'
+                };
+            case 'liquidity':
+                return {
+                    'Dana Kapitasi': `Rp ${(stats.kapitasi / 1000000).toFixed(1)}M`,
+                    'Pendapatan Umum': `Rp ${(stats.pendapatanUmum / 1000000).toFixed(2)}M`
+                };
+            case 'staff_readiness': {
+                const avg = hiredStaff.length > 0 ? Math.round(hiredStaff.reduce((sum, staff) => sum + (staff.performance || 0), 0) / hiredStaff.length) : 0;
+                return { 'Total Staf': hiredStaff.length, 'Avg Readiness': `${avg}%` };
+            }
+            case 'rrns':
+                return { 'Total Pasien': kpi.totalPatients, 'RRNS': `${derivedKpis.rrns}%`, 'Target': '< 5%' };
+            case 'accreditation':
+            case 'accreditation_chapters':
+                return { 'Status': accreditation, 'Overall Score': derivedKpis.overallScore };
+            case 'iks':
+            case 'ukm_overview': {
+                const families = villageData?.families || [];
+                const avgIKS = families.length > 0 ? (families.reduce((sum, family) => sum + (family.iksScore || 0), 0) / families.length) : 0;
+                return { 'Rata-rata IKS': `${(avgIKS * 100).toFixed(1)}%`, 'Total KK': families.length };
+            }
+            case 'kbk': {
+                const population = villageData?.stats?.totalPopulation || 1;
+                const months = Math.max(1, day / 30);
+                return {
+                    'Angka Kontak': `${Math.round((kpi.totalPatients / population) * 1000 / months)} per 1000`,
+                    'RRNS': `${derivedKpis.referralRate}%`
+                };
+            }
+            case 'angka_kontak':
+                return {
+                    'Total Kontak': kpi.totalPatients,
+                    'Populasi': villageData?.stats?.totalPopulation || 1
+                };
+            case 'skdi_coverage':
+                return { 'Total Pasien Ditangani': kpi.totalPatients };
+            case 'prolanis_compliance':
+                return { 'Peserta Prolanis': prolanisRoster?.length || 0 };
+            case 'stress':
+                return { 'Stress': `${playerStats.stress}%`, 'Energy': `${Math.round(playerStats.energy)}%` };
+            case 'accuracy':
+                return { 'Akurasi Diagnosa': `${derivedKpis.clinicalAccuracy}%`, 'Total Pasien': kpi.totalPatients };
+            case 'treatment':
+                return { 'Terapi Rasional': `${derivedKpis.treatmentAppropriateRate}%` };
+            case 'antibiotics':
+                return { 'AB Stewardship': `${derivedKpis.antibioticStewardship}%` };
+            case 'patient_safety':
+                return {
+                    'Akurasi': `${derivedKpis.clinicalAccuracy}%`,
+                    'Terapi': `${derivedKpis.treatmentAppropriateRate}%`,
+                    'AB': `${derivedKpis.antibioticStewardship}%`
+                };
+            case 'prb':
+                return {
+                    'PRB Aktif': prbQueue?.filter(p => p.status === 'active').length || 0,
+                    'PRB Selesai': prbQueue?.filter(p => p.status === 'completed').length || 0
+                };
+            case 'inventory': {
+                const outOfStock = pharmacyInventory?.filter(item => item.stock === 0).length || 0;
+                return { 'Total Item': pharmacyInventory?.length || 0, 'Stok Habis': outOfStock };
+            }
+            case 'ukp_overview':
+                return { 'Akurasi Klinis': `${derivedKpis.clinicalAccuracy}%`, 'Total Pasien': kpi.totalPatients };
+            default:
+                return null;
+        }
+    }, [wikiMetric, energy, reputation, playerStats, stats, kpi, derivedKpis, accreditation, villageData, hiredStaff, prolanisRoster, prbQueue, pharmacyInventory, day]);
 
     return (
         <div className="flex h-screen bg-[var(--color-bg-main)] overflow-hidden font-sans text-[var(--color-text-main)] transition-colors duration-300">
@@ -340,41 +428,10 @@ export default function MainLayout() {
                             </>
                         )}
                     </div>
-
-                    {/* CENTER: Time Controller */}
-                    <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-slate-800/80 rounded-lg border border-slate-700/50 px-1 py-0.5">
-                        {/* Play/Pause */}
-                        <button
-                            onClick={() => setGameState(gameState === 'playing' ? 'paused' : 'playing')}
-                            className={`w-7 h-7 flex items-center justify-center rounded-md transition-all ${gameState === 'paused' ? 'bg-amber-500/20 text-amber-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
-                            title={gameState === 'playing' ? 'Pause' : 'Resume'}
-                        >
-                            {gameState === 'paused' ? <Play size={13} fill="currentColor" /> : <Pause size={13} fill="currentColor" />}
-                        </button>
-
-                        {/* Speed */}
-                        <button
-                            onClick={() => setGameSpeed(s => s >= 4 ? 1 : s * 2)}
-                            className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:bg-white/5 hover:text-white transition-all"
-                            title={`Kecepatan: ${gameSpeed}x`}
-                        >
-                            <FastForward size={12} />
-                        </button>
-                        <span className="text-[9px] font-black text-emerald-400 tabular-nums pr-1">{gameSpeed}x</span>
-
-                        <div className="w-px h-4 bg-slate-700" />
-
-                        {/* Day + Time */}
-                        <button
-                            onClick={() => setShowCalendar(true)}
-                            className="flex items-center gap-1.5 px-2 py-0.5 rounded-md hover:bg-white/5 transition-all"
-                            title="Buka Kalender"
-                        >
-                            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-wider">H{day}</span>
-                            <span className="font-mono text-xs font-semibold text-white tabular-nums">{formatTime(time)}</span>
-                        </button>
+                     {/* CENTER: Luxury Time Controller */}
+                    <div className="absolute left-1/2 -translate-x-1/2">
+                        <TimeController />
                     </div>
-
                     {/* RIGHT: System & Meta */}
                     <div className="flex items-center gap-1">
                         {/* Home (contextual) */}
@@ -577,29 +634,7 @@ export default function MainLayout() {
                     isOpen={isWikiOpen}
                     onClose={closeWiki}
                     metricKey={wikiMetric}
-                    liveStats={useMemo(() => {
-                        if (!wikiMetric) return null;
-                        switch (wikiMetric) {
-                            case 'energy':
-                                return {
-                                    "Level Energi": energy + "%",
-                                    "Status": energy > 70 ? "Fit" : energy > 40 ? "Lelah" : "Exhausted"
-                                };
-                            case 'reputation':
-                                return {
-                                    "Skor Reputasi": reputation,
-                                    "Status": reputation > 80 ? "Sangat Dipercaya" : "Cukup"
-                                };
-                            case 'xp_level':
-                                return {
-                                    "Level": playerStats.level,
-                                    "XP": playerStats.xp + " / " + playerStats.nextLevelXp,
-                                    "Pencapaian": "Kepala Puskesmas"
-                                };
-                            default:
-                                return null;
-                        }
-                    }, [wikiMetric, energy, reputation, playerStats])}
+                    liveStats={wikiLiveStats}
                 />
                 {/* Narrative Overlay */}
                 {(focusedStory || interactiveStory) && (
@@ -638,6 +673,9 @@ export default function MainLayout() {
                 isOpen={!!outbreakNotification}
                 onClose={() => dismissOutbreakNotification()}
             />
+
+            {/* Pause Overlay (Frosted Glass) */}
+            <PauseOverlay />
 
             {/* Global Game Over / Warning / Faint Modal */}
             {gameOver && (

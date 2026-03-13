@@ -166,6 +166,67 @@ const INITIAL_CLINICAL_STATE = {
 
 const MAX_CLINICAL_HISTORY = 200;
 
+const INITIAL_NAV_SETTINGS = {
+    theme: 'medika',
+    fontSize: 'normal',
+    volume: 1.0,
+    autoSave: true
+};
+
+const createInitialNavState = (overrides = {}) => ({
+    gameState: 'opening',
+    activePage: 'dashboard',
+    viewParams: {},
+    sidebarCollapsed: false,
+    currentSlotId: null,
+    showKPIGlobal: false,
+    isWikiOpen: false,
+    wikiMetric: null,
+    settings: {
+        ...INITIAL_NAV_SETTINGS,
+        ...(overrides.settings || {})
+    },
+    ...overrides
+});
+
+const clampNumber = (value, min, max, fallback) => {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) {
+        return fallback;
+    }
+    return Math.min(max, Math.max(min, numeric));
+};
+
+const clampEnergyToProfile = (profile, energy) => Math.max(
+    0,
+    Math.min(profile?.maxEnergy || INITIAL_PLAYER_STATE.maxEnergy, Number(energy) || 0)
+);
+
+const createStartingPlayerProfile = (profile = {}) => {
+    const initialStats = profile.initialStats || {};
+    const maxEnergy = clampNumber(
+        profile.maxEnergy ?? initialStats.maxEnergy,
+        1,
+        150,
+        INITIAL_PLAYER_STATE.maxEnergy
+    );
+    const reputation = clampNumber(
+        profile.reputation ?? initialStats.baseReputation,
+        0,
+        100,
+        INITIAL_PLAYER_STATE.reputation
+    );
+
+    return {
+        ...INITIAL_PLAYER_STATE,
+        ...profile,
+        maxEnergy,
+        energy: maxEnergy,
+        reputation,
+        spirit: INITIAL_PLAYER_STATE.spirit
+    };
+};
+
 const ACTION_GROUP_NAMES = [
     'navActions',
     'worldActions',
@@ -253,22 +314,7 @@ export const useGameStore = create(
             (set, get) => {
                 const store = {
                 // --- SLICE: NAV & SETTINGS ---
-                nav: {
-                    gameState: 'opening',
-                    activePage: 'dashboard',
-                    viewParams: {},
-                    sidebarCollapsed: false,
-                    currentSlotId: null,
-                    showKPIGlobal: false,
-                    isWikiOpen: false, // This will be managed by meta slice
-                    wikiMetric: null, // This will be managed by meta slice
-                    settings: {
-                        theme: 'medika',
-                        fontSize: 'normal',
-                        volume: 1.0,
-                        autoSave: true
-                    },
-                },
+                nav: createInitialNavState(),
                 navActions: {
                     setGameState: (state) => set((s) => ({ nav: { ...s.nav, gameState: state } })),
                     setActivePage: (page) => set((s) => ({ nav: { ...s.nav, activePage: page } })),
@@ -279,6 +325,13 @@ export const useGameStore = create(
                     // openWiki: (key) => set((s) => ({ nav: { ...s.nav, isWikiOpen: true, wikiMetric: key } })), // Moved to metaActions
                     // closeWiki: () => set((s) => ({ nav: { ...s.nav, isWikiOpen: false } })), // Moved to metaActions
                     setShowKPIGlobal: (value) => set((s) => ({ nav: { ...s.nav, showKPIGlobal: value } })),
+                    resetNavigation: (overrides = {}) => set((s) => ({
+                        nav: createInitialNavState({
+                            sidebarCollapsed: s.nav.sidebarCollapsed,
+                            settings: s.nav.settings,
+                            ...overrides
+                        })
+                    })),
                     updateSettings: (newSettings) => set((s) => {
                         const updated = { ...s.nav.settings, ...newSettings };
                         // Theme CSS classes are now managed by ThemeContext
@@ -355,7 +408,7 @@ export const useGameStore = create(
                                 ...s.player,
                                 profile: {
                                     ...s.player.profile,
-                                    energy: isGroggy ? 70 : 100,
+                                    energy: isGroggy ? Math.min(s.player.profile.maxEnergy, 70) : s.player.profile.maxEnergy,
                                     stress: Math.max(0, s.player.profile.stress - (isGroggy ? 10 : 30)),
                                     morningStatus: status
                                 }
@@ -1334,7 +1387,7 @@ export const useGameStore = create(
                         const s = get();
                         if (choice.impact) {
                             if (choice.impact.balance) s.financeActions.setStats(stats => ({ ...stats, pendapatanUmum: stats.pendapatanUmum + choice.impact.balance }));
-                            if (choice.impact.energy) s.playerActions.updateProfile({ energy: Math.max(0, Math.min(100, s.player.profile.energy + choice.impact.energy)) });
+                            if (choice.impact.energy) s.playerActions.updateProfile({ energy: clampEnergyToProfile(s.player.profile, s.player.profile.energy + choice.impact.energy) });
                             if (choice.impact.spirit) s.playerActions.updateProfile({ spirit: Math.max(0, Math.min(100, s.player.profile.spirit + choice.impact.spirit)) });
                             if (choice.impact.reputation) s.playerActions.updateProfile({ reputation: s.player.profile.reputation + choice.impact.reputation });
                             if (choice.impact.xp) s.playerActions.gainXp(choice.impact.xp);
@@ -1386,7 +1439,12 @@ export const useGameStore = create(
                         }
                         try {
                             set(produce(s => {
-                                s.nav.currentSlotId = slotId;
+                                s.nav = createInitialNavState({
+                                    sidebarCollapsed: s.nav.sidebarCollapsed,
+                                    settings: s.nav.settings,
+                                    currentSlotId: slotId,
+                                    gameState: 'playing'
+                                });
 
                                 if (normalizedSave.player) {
                                     s.player = {
@@ -1414,14 +1472,9 @@ export const useGameStore = create(
                                     s.staff = { ...s.staff, ...normalizedSave.staff };
                                 }
 
-                                s.meta = {
-                                    ...s.meta,
-                                    runtimeTrap: null,
-                                    saveVersion: normalizedSave.saveVersion || CURRENT_SAVE_VERSION
-                                };
+                                s.meta = { ...INITIAL_META_STATE, saveVersion: normalizedSave.saveVersion || CURRENT_SAVE_VERSION };
                                 s.clinical.gameOver = null;
                                 s.world.isPaused = false;
-                                s.nav.gameState = 'playing';
                             }));
                             return true;
                         } catch (error) {
@@ -1436,7 +1489,7 @@ export const useGameStore = create(
 
                         set(produce(state => {
                             state.nav.currentSlotId = slotId;
-                            state.player.profile = { ...INITIAL_PLAYER_STATE, ...profile, energy: 100, spirit: 100 };
+                            state.player.profile = createStartingPlayerProfile(profile);
 
                             const population = {
                                 families: VILLAGE_FAMILIES.map(f => ({
@@ -1559,7 +1612,7 @@ export const useGameStore = create(
                             // Director Gift (mercy/breathing mode bonus)
                             if (verdict.shouldGift) {
                                 const gift = generateDirectorGift(seedKey('director-gift', nextDayVal, verdict.label));
-                                if (gift.impact.energy) state.player.profile.energy = Math.min(100, state.player.profile.energy + gift.impact.energy);
+                                if (gift.impact.energy) state.player.profile.energy = clampEnergyToProfile(state.player.profile, state.player.profile.energy + gift.impact.energy);
                                 if (gift.impact.spirit) state.player.profile.spirit = Math.min(100, state.player.profile.spirit + gift.impact.spirit);
                                 if (gift.impact.reputation) state.player.profile.reputation = Math.min(100, state.player.profile.reputation + gift.impact.reputation);
                                 state.world.directorGiftMessage = gift.message;
@@ -1618,7 +1671,11 @@ export const useGameStore = create(
                         }, 500);
                     },
 
-                    resetGame: () => set({
+                    resetGame: () => set((s) => ({
+                        nav: createInitialNavState({
+                            sidebarCollapsed: s.nav.sidebarCollapsed,
+                            settings: s.nav.settings
+                        }),
                         world: INITIAL_TIME_STATE,
                         player: { profile: INITIAL_PLAYER_STATE },
                         finance: { stats: INITIAL_FINANCE_STATS, kpi: INITIAL_KPI, facilities: INITIAL_FACILITIES, pendingOrders: [], pharmacyInventory: createInitialPharmacyInventory() },
@@ -1626,7 +1683,7 @@ export const useGameStore = create(
                         staff: { hiredStaff: [] },
                         clinical: INITIAL_CLINICAL_STATE,
                         meta: INITIAL_META_STATE,
-                    }),
+                    })),
                 }
             };
 

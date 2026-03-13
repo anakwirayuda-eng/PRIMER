@@ -17,7 +17,6 @@ import {
     Activity, AlertCircle, AlertTriangle, Clock, Info,
     Wifi, WifiOff, Zap, Users, Heart, Brain, Loader2
 } from 'lucide-react';
-import EducationalWikiModal from './EducationalWikiModal.jsx';
 // WIKI_DATA removed — EducationalWikiModal loads data internally via getWikiEntry
 import { getMedicationById } from '../data/MedicationDatabase.js';
 import ClinicalView from './dashboard/ClinicalView.jsx';
@@ -38,7 +37,7 @@ export default function DashboardPage() {
         day, villageData, activeEvent, pharmacyInventory,
         hiredStaff, queue, history, prbQueue, prolanisRoster,
         playerStats, activeOutbreaks,
-        isWikiOpen, wikiMetric, openWiki, closeWiki
+        wikiMetric, openWiki
     } = useGame();
 
     // Navigation state: 'hub' | 'clinical' | 'community' | 'performance' | 'accreditation' | 'logistics'
@@ -210,7 +209,6 @@ export default function DashboardPage() {
         <div className="h-full overflow-y-auto p-5 bg-slate-950">
             <div className="max-w-3xl mx-auto">
                 <ClinicalView onBack={() => setActiveView('hub')} openWiki={openWiki} />
-                <EducationalWikiModal isOpen={isWikiOpen} onClose={closeWiki} metricKey={wikiMetric} liveStats={wikiLiveStats} />
             </div>
         </div>
     );
@@ -218,7 +216,6 @@ export default function DashboardPage() {
         <div className="h-full overflow-y-auto p-5 bg-slate-950">
             <div className="max-w-3xl mx-auto">
                 <CommunityView onBack={() => setActiveView('hub')} openWiki={openWiki} />
-                <EducationalWikiModal isOpen={isWikiOpen} onClose={closeWiki} metricKey={wikiMetric} liveStats={wikiLiveStats} />
             </div>
         </div>
     );
@@ -226,7 +223,6 @@ export default function DashboardPage() {
         <div className="h-full overflow-y-auto p-5 bg-slate-950">
             <div className="max-w-3xl mx-auto">
                 <PerformanceView onBack={() => setActiveView('hub')} openWiki={openWiki} />
-                <EducationalWikiModal isOpen={isWikiOpen} onClose={closeWiki} metricKey={wikiMetric} liveStats={wikiLiveStats} />
             </div>
         </div>
     );
@@ -234,7 +230,6 @@ export default function DashboardPage() {
         <div className="h-full overflow-y-auto p-5 bg-slate-950">
             <div className="max-w-3xl mx-auto">
                 <AccreditationView onBack={() => setActiveView('hub')} openWiki={openWiki} />
-                <EducationalWikiModal isOpen={isWikiOpen} onClose={closeWiki} metricKey={wikiMetric} liveStats={wikiLiveStats} />
             </div>
         </div>
     );
@@ -242,7 +237,6 @@ export default function DashboardPage() {
         <div className="h-full overflow-y-auto p-5 bg-slate-950">
             <div className="max-w-3xl mx-auto">
                 <LogisticsView onBack={() => setActiveView('hub')} openWiki={openWiki} />
-                <EducationalWikiModal isOpen={isWikiOpen} onClose={closeWiki} metricKey={wikiMetric} liveStats={wikiLiveStats} />
             </div>
         </div>
     );
@@ -395,14 +389,6 @@ export default function DashboardPage() {
                     </div>
                 )}
             </div>
-
-            {/* Wiki Modal */}
-            <EducationalWikiModal
-                isOpen={isWikiOpen}
-                onClose={closeWiki}
-                metricKey={wikiMetric}
-                liveStats={wikiLiveStats}
-            />
         </div>
     );
 }

@@ -99,6 +99,132 @@ describe('store prophylaxis', () => {
         });
     });
 
+    it('clears slot-specific navigation state on full reset while preserving preferences', () => {
+        useGameStore.setState(state => ({
+            nav: {
+                ...state.nav,
+                activePage: 'inventory',
+                viewParams: { panel: 'warehouse' },
+                currentSlotId: 3,
+                showKPIGlobal: true,
+                gameState: 'playing',
+                sidebarCollapsed: true,
+                settings: { ...state.nav.settings, volume: 0.35 }
+            },
+            meta: {
+                ...state.meta,
+                isWikiOpen: true,
+                wikiMetric: 'inventory'
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().actions.resetGame();
+        });
+
+        const { nav, meta } = useGameStore.getState();
+        expect(nav.activePage).toBe('dashboard');
+        expect(nav.viewParams).toEqual({});
+        expect(nav.currentSlotId).toBeNull();
+        expect(nav.showKPIGlobal).toBe(false);
+        expect(nav.gameState).toBe('opening');
+        expect(nav.sidebarCollapsed).toBe(true);
+        expect(nav.settings.volume).toBe(0.35);
+        expect(meta.isWikiOpen).toBe(false);
+        expect(meta.wikiMetric).toBeNull();
+    });
+
+    it('applies player setup initial stats when starting a new game', () => {
+        act(() => {
+            useGameStore.getState().actions.startNewGame({
+                name: 'Senior Doc',
+                avatar: 'default',
+                initialStats: {
+                    maxEnergy: 77,
+                    baseReputation: 91
+                }
+            }, 1);
+        });
+
+        const state = useGameStore.getState();
+        expect(state.player.profile.name).toBe('Senior Doc');
+        expect(state.player.profile.maxEnergy).toBe(77);
+        expect(state.player.profile.energy).toBe(77);
+        expect(state.player.profile.reputation).toBe(91);
+        expect(state.nav.currentSlotId).toBe(1);
+        expect(state.nav.activePage).toBe('dashboard');
+        expect(state.nav.gameState).toBe('playing');
+    });
+
+    it('resets navigation and volatile meta state before loading another slot', () => {
+        useGameStore.setState(state => ({
+            nav: {
+                ...state.nav,
+                activePage: 'inventory',
+                viewParams: { panel: 'warehouse' },
+                showKPIGlobal: true,
+                sidebarCollapsed: true,
+                settings: { ...state.nav.settings, volume: 0.4 }
+            },
+            meta: {
+                ...state.meta,
+                activeQuests: [{ id: 'quest-old' }],
+                activeStories: [{ instanceId: 'story-old' }],
+                isWikiOpen: true,
+                wikiMetric: 'inventory'
+            }
+        }));
+
+        let didLoad = false;
+        act(() => {
+            didLoad = useGameStore.getState().actions.loadGame({
+                player: {
+                    profile: {
+                        name: 'Loaded Doc'
+                    }
+                },
+                world: {
+                    day: 4,
+                    time: 600
+                }
+            }, 2);
+        });
+
+        const state = useGameStore.getState();
+        expect(didLoad).toBe(true);
+        expect(state.player.profile.name).toBe('Loaded Doc');
+        expect(state.world.day).toBe(4);
+        expect(state.nav.currentSlotId).toBe(2);
+        expect(state.nav.activePage).toBe('dashboard');
+        expect(state.nav.viewParams).toEqual({});
+        expect(state.nav.showKPIGlobal).toBe(false);
+        expect(state.nav.sidebarCollapsed).toBe(true);
+        expect(state.nav.settings.volume).toBe(0.4);
+        expect(state.meta.activeQuests).toEqual([]);
+        expect(state.meta.activeStories).toEqual([]);
+        expect(state.meta.isWikiOpen).toBe(false);
+        expect(state.meta.wikiMetric).toBeNull();
+    });
+
+    it('caps full sleep recovery at the configured max energy', () => {
+        useGameStore.setState(state => ({
+            player: {
+                ...state.player,
+                profile: {
+                    ...state.player.profile,
+                    energy: 20,
+                    maxEnergy: 77
+                }
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().playerActions.calculateSleepRecovery(8, 23 * 60);
+        });
+
+        expect(useGameStore.getState().player.profile.energy).toBe(77);
+    });
+
     it('freezes the game before day rollover when preflight autosave fails', () => {
         safeSetStorageItem.mockReturnValueOnce(false);
 

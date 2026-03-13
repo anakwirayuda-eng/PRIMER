@@ -34,20 +34,73 @@ db.version(2).stores({
 
 let syncInProgress = null;
 
+export const REQUIRED_MEDICAL_TABLES = [
+    'icd10',
+    'icd9',
+    'medications',
+    'anamnesisVariations'
+];
+
+export async function getPopulationCounts(database = db) {
+    const counts = await Promise.all(
+        REQUIRED_MEDICAL_TABLES.map(async (tableName) => [tableName, await database[tableName].count()])
+    );
+    return Object.fromEntries(counts);
+}
+
+export function hasCompleteMedicalDataset(counts) {
+    return REQUIRED_MEDICAL_TABLES.every((tableName) => Number(counts?.[tableName]) > 0);
+}
+
+const DEFAULT_SYNC_LOADERS = {
+    async icd10() {
+        const icd10Module = await import('../data/master_icd_10.json');
+        const icd10Data = icd10Module.default || icd10Module;
+        return icd10Data.map(d => ({
+            code: d.kode_icd,
+            name: d.nama_icd,
+            originalIndo: d.nama_icd_indo || '',
+            category: d.kategori || 'general'
+        }));
+    },
+
+    async icd9() {
+        const icd9Module = await import('../data/master_icd_9.json');
+        const icd9Data = icd9Module.default || icd9Module;
+        return icd9Data.map(d => ({
+            code: d.code,
+            name: d.name
+        }));
+    },
+
+    async medications() {
+        const medModule = await import('../data/MedicationDatabase.js');
+        return medModule.MEDICATION_DATABASE;
+    },
+
+    async anamnesisVariations() {
+        const varModule = await import('../game/AnamnesisVariations.js');
+        const varData = varModule.default || varModule.ANAMNESIS_VARIATIONS || {};
+        return Object.entries(varData).map(([caseId, variations]) => ({
+            caseId,
+            variations
+        }));
+    }
+};
+
 export const PersistenceService = {
     /**
      * Check if the database is already populated
      */
-    async isPopulated() {
-        const count = await db.icd10.count();
-        return count > 0;
+    async isPopulated(database = db) {
+        return hasCompleteMedicalDataset(await getPopulationCounts(database));
     },
 
     /**
      * Initial sync: Hydrate IndexedDB from static JSON files
      * This should only run ONCE during the first boot or after an update.
      */
-    async syncData(onProgress) {
+    async syncData(onProgress, database = db, loaders = DEFAULT_SYNC_LOADERS) {
         if (syncInProgress) {
             console.debug('PersistenceService: Sync already in progress, waiting...');
             return syncInProgress;
@@ -56,42 +109,30 @@ export const PersistenceService = {
         syncInProgress = (async () => {
             try {
                 if (onProgress) onProgress('Loading ICD-10...', 10);
-                const icd10Module = await import('../data/master_icd_10.json');
-                const icd10Data = icd10Module.default || icd10Module;
+                const icd10Mapped = await loaders.icd10();
 
-                // Map JSON to internal schema
-                const icd10Mapped = icd10Data.map(d => ({
-                    code: d.kode_icd,
-                    name: d.nama_icd,
-                    originalIndo: d.nama_icd_indo || '',
-                    category: d.kategori || 'general'
-                }));
+                if (onProgress) onProgress('Loading ICD-9...', 25);
+                const icd9Mapped = await loaders.icd9();
 
-                if (onProgress) onProgress('Storing ICD-10...', 30);
-                await db.icd10.bulkPut(icd10Mapped);
+                if (onProgress) onProgress('Loading Medications...', 40);
+                const medicationData = await loaders.medications();
 
-                if (onProgress) onProgress('Loading ICD-9...', 40);
-                const icd9Module = await import('../data/master_icd_9.json');
-                const icd9Data = icd9Module.default || icd9Module;
-                const icd9Mapped = icd9Data.map(d => ({
-                    code: d.code,
-                    name: d.name
-                }));
-                await db.icd9.bulkPut(icd9Mapped);
+                if (onProgress) onProgress('Loading Anamnesis Variations...', 55);
+                const variationsArray = await loaders.anamnesisVariations();
 
-                if (onProgress) onProgress('Loading Medications...', 60);
-                const medModule = await import('../data/MedicationDatabase.js');
-                const medData = medModule.MEDICATION_DATABASE;
-                await db.medications.bulkPut(medData);
+                if (onProgress) onProgress('Writing medical database...', 75);
+                const tables = REQUIRED_MEDICAL_TABLES.map((tableName) => database[tableName]);
+                await database.transaction('rw', ...tables, async () => {
+                    await database.icd10.clear();
+                    await database.icd9.clear();
+                    await database.medications.clear();
+                    await database.anamnesisVariations.clear();
 
-                if (onProgress) onProgress('Loading Anamnesis Variations...', 80);
-                const varModule = await import('../game/AnamnesisVariations.js');
-                const varData = varModule.default || varModule.ANAMNESIS_VARIATIONS || {};
-                const variationsArray = Object.entries(varData).map(([caseId, variations]) => ({
-                    caseId,
-                    variations
-                }));
-                await db.anamnesisVariations.bulkPut(variationsArray);
+                    await database.icd10.bulkPut(icd10Mapped);
+                    await database.icd9.bulkPut(icd9Mapped);
+                    await database.medications.bulkPut(medicationData);
+                    await database.anamnesisVariations.bulkPut(variationsArray);
+                });
 
                 if (onProgress) onProgress('Finalizing...', 100);
                 return true;

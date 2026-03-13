@@ -86,7 +86,10 @@ export function GameProvider({ children }) {
             ...meta, ...metaActions,
             buffs,
             saveGame, loadGame, startNewGame, nextDay,
-            logout: () => { saveGame(nav.currentSlotId); navActions.setGameState('slot_select'); navActions.setSlotId(null); },
+            logout: () => {
+                saveGame(nav.currentSlotId);
+                navActions.resetNavigation({ gameState: 'slot_select' });
+            },
             restartGame: () => safeReloadPage()
         };
 
