@@ -35,8 +35,12 @@ function buildCanonicalSave(saveBlob) {
     return parseSavePayload(saveBlob);
 }
 
-function normalizeSlot(saveBlob, slotId) {
+export function normalizeSlot(saveBlob, slotId) {
     const canonicalSave = buildCanonicalSave(saveBlob);
+    if (!canonicalSave) {
+        return { slotId, empty: true };
+    }
+
     const profile = canonicalSave?.player?.profile || null;
     const day = canonicalSave?.world?.day || 1;
     const reputation = profile?.reputation ?? 80;

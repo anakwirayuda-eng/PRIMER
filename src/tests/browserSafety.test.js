@@ -31,6 +31,18 @@ describe('browser safety helpers', () => {
         expect(safeRemoveStorageItem('primer_save_0', storage)).toBe(false);
     });
 
+    it('handles localStorage getter failures inside the safety wrapper', () => {
+        const localStorageGetter = vi.spyOn(globalThis, 'localStorage', 'get').mockImplementation(() => {
+            throw new Error('blocked getter');
+        });
+
+        expect(safeGetStorageItem('primer_theme', 'medika')).toBe('medika');
+        expect(safeSetStorageItem('primer_save_0', '{}')).toBe(false);
+        expect(safeRemoveStorageItem('primer_save_0')).toBe(false);
+
+        localStorageGetter.mockRestore();
+    });
+
     it('reloads only when a reload function exists', () => {
         const reload = vi.fn();
 

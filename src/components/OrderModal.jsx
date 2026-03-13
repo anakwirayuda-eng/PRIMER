@@ -17,7 +17,7 @@ import { SUPPLIER_DATABASE } from '../data/SupplierDatabase.js';
 import { X, ShoppingCart } from 'lucide-react';
 
 export default function OrderModal({ onClose }) {
-    const { pharmacyInventory, submitOrder, stats: _stats } = useGame();
+    const { pharmacyInventory, submitOrder, day, stats: _stats } = useGame();
     const [quantities, setQuantities] = useState({});
     const modalRef = useModalA11y(onClose);
     const [selectedSupplierId, setSelectedSupplierId] = useState('dinkes');
@@ -35,7 +35,7 @@ export default function OrderModal({ onClose }) {
             quantity: med.minStock
         }));
 
-        const result = submitOrder(orderItems, selectedSupplierId);
+        const result = submitOrder(orderItems, selectedSupplierId, day);
         if (result.success) {
             alert('Order berhasil dibuat!');
             onClose();

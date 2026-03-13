@@ -23,6 +23,7 @@ import { useGameStore } from '../store/useGameStore.js';
 import { selectPlayerStats } from '../store/selectors.js';
 import { safeSetStorageItem } from '../utils/browserSafety.js';
 import { parseSavePayload } from '../utils/savePayload.js';
+import { MEDICATION_DATABASE } from '../data/MedicationDatabase.js';
 
 describe('store prophylaxis', () => {
     beforeEach(() => {
@@ -75,6 +76,27 @@ describe('store prophylaxis', () => {
         expect(history).toHaveLength(200);
         expect(history[0].id).toBe('hist-1');
         expect(history.at(-1).id).toBe('p-new');
+    });
+
+    it('restores seeded pharmacy inventory when the game is fully reset', () => {
+        useGameStore.setState(state => ({
+            finance: {
+                ...state.finance,
+                pharmacyInventory: []
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().actions.resetGame();
+        });
+
+        const inventory = useGameStore.getState().finance.pharmacyInventory;
+        expect(inventory).toHaveLength(MEDICATION_DATABASE.length);
+        expect(inventory[0]).toMatchObject({
+            medicationId: MEDICATION_DATABASE[0].id,
+            stock: Math.floor(MEDICATION_DATABASE[0].minStock * 1.5),
+            lastRestockDay: 0
+        });
     });
 
     it('freezes the game before day rollover when preflight autosave fails', () => {

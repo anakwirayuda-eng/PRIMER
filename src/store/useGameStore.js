@@ -21,6 +21,7 @@ import { buildCPPTRecord, buildMaiaCPPTRecord } from '../game/CPPTEngine.js';
 import { getPatientSpikeMultiplier } from '../domains/community/OutbreakSystem.js';
 import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateGenericPatients } from '../game/PatientGenerator.js';
 import { getScheduledFollowups, clearProcessedFollowups } from '../game/ConsequenceEngine.js';
+import { checkLevelUp } from '../utils/LevelingSystem.js';
 import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
 import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
@@ -92,6 +93,12 @@ const INITIAL_FINANCE_STATS = {
     pengeluaranLab: 0,
     pengeluaranOperasional: 0
 };
+
+const createInitialPharmacyInventory = () => MEDICATION_DATABASE.map((med) => ({
+    medicationId: med.id,
+    stock: Math.floor(med.minStock * 1.5),
+    lastRestockDay: 0
+}));
 
 const INITIAL_KPI = {
     totalPatients: 0,
@@ -297,8 +304,13 @@ export const useGameStore = create(
                         return { world: { ...s.world, time: newTime, day: newDay } };
                     }),
                     setTime: (val) => set((s) => {
-                        const next = typeof val === 'function' ? val(s.world.time) : val;
-                        return { world: { ...s.world, time: Number(next) || 0 } };
+                        let next = typeof val === 'function' ? val(s.world.time) : val;
+                        next = Number(next) || 0;
+                        // B4 Fix: clamp time with day rollover
+                        let newDay = s.world.day;
+                        if (next >= 1440) { next = next % 1440; newDay += 1; }
+                        if (next < 0) { next = 0; }
+                        return { world: { ...s.world, time: next, day: newDay } };
                     }),
                     setDay: (val) => set((s) => {
                         const next = typeof val === 'function' ? val(s.world.day) : val;
@@ -323,12 +335,11 @@ export const useGameStore = create(
                     })),
                     gainXp: (amount) => set((state) => {
                         const prev = state.player.profile;
-                        const newXp = prev.xp + amount;
-                        const newLevel = Math.floor(newXp / 1000) + 1;
+                        const result = checkLevelUp({ ...prev, xp: prev.xp + amount });
                         return {
                             player: {
                                 ...state.player,
-                                profile: { ...prev, xp: newXp, level: newLevel }
+                                profile: { ...prev, ...result.stats }
                             }
                         };
                     }),
@@ -388,11 +399,7 @@ export const useGameStore = create(
                     stats: INITIAL_FINANCE_STATS,
                     kpi: INITIAL_KPI,
                     facilities: INITIAL_FACILITIES,
-                    pharmacyInventory: MEDICATION_DATABASE.map(med => ({
-                        medicationId: med.id,
-                        stock: Math.floor(med.minStock * 1.5),
-                        lastRestockDay: 0
-                    })),
+                    pharmacyInventory: createInitialPharmacyInventory(),
                     pendingOrders: [],
                 },
                 financeActions: {
@@ -542,11 +549,7 @@ export const useGameStore = create(
                             stats: INITIAL_FINANCE_STATS,
                             kpi: INITIAL_KPI,
                             facilities: INITIAL_FACILITIES,
-                            pharmacyInventory: MEDICATION_DATABASE.map(med => ({
-                                medicationId: med.id,
-                                stock: Math.floor(med.minStock * 1.5),
-                                lastRestockDay: 0
-                            })),
+                            pharmacyInventory: createInitialPharmacyInventory(),
                             pendingOrders: []
                         }
                     }))
@@ -1618,7 +1621,7 @@ export const useGameStore = create(
                     resetGame: () => set({
                         world: INITIAL_TIME_STATE,
                         player: { profile: INITIAL_PLAYER_STATE },
-                        finance: { stats: INITIAL_FINANCE_STATS, kpi: INITIAL_KPI, facilities: INITIAL_FACILITIES, pendingOrders: [], pharmacyInventory: [] },
+                        finance: { stats: INITIAL_FINANCE_STATS, kpi: INITIAL_KPI, facilities: INITIAL_FACILITIES, pendingOrders: [], pharmacyInventory: createInitialPharmacyInventory() },
                         publicHealth: { villageData: null, prolanisRoster: [], prolanisState: { lastSenamMonth: -1, lastSenamDay: -1 }, activeOutbreaks: [], outbreakNotification: null, activeIKMEvents: [], completedIKMIds: [], ikmCooldowns: {}, ikmCaseBoosts: [], buildingProgress: {} },
                         staff: { hiredStaff: [] },
                         clinical: INITIAL_CLINICAL_STATE,
