@@ -141,10 +141,10 @@ export default function GedungPage() {
                         </div>
                         <div>
                             <h3 className="font-display text-sm font-black text-amber-300 uppercase tracking-tight">
-                                Ajukan Dana BOK
+                                Panduan Dana BOK
                             </h3>
                             <p className="text-[10px] text-amber-400/50 font-medium uppercase tracking-wider">
-                                Bantuan Operasional Kesehatan
+                                Buka penjelasan Bantuan Operasional Kesehatan
                             </p>
                         </div>
                         <Sparkles size={16} className="text-amber-400/50 ml-auto" />

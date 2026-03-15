@@ -1,0 +1,63 @@
+name: PRIMERA / full
+
+on:
+  schedule:
+    - cron: '0 19 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: primera-full
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  full:
+    name: PRIMERA full sweep
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run full watchdog
+        run: npm run watchdog:full
+
+      - name: Generate megalog
+        if: always()
+        run: npm run megalog -- --force
+
+      - name: Generate sentinel report
+        if: always()
+        run: node scripts/primera/sentinel.mjs
+
+      - name: Upload watchdog artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: primera-full-${{ github.run_id }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            megalog/**
+            diagnostics/**
+            PRIMERA_megalog.md
+            PRIMERA_INTELLIGENCE.md
+            PRIMER_BIBLE.md
+            playwright-report/**
+            test-results/**
+            simulation_results.json

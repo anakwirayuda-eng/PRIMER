@@ -2,6 +2,38 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+const normalizeId = (id) => id.replace(/\\/g, '/');
+
+function manualChunks(id) {
+  const normalizedId = normalizeId(id);
+
+  if (normalizedId.includes('/src/data/master_icd_10_parts/')) {
+    return `icd10-${path.basename(normalizedId, '.json')}`;
+  }
+  if (normalizedId.includes('/src/data/master_icd_9.json')) {
+    return 'master-icd9';
+  }
+  if (normalizedId.includes('/src/data/MedicationDatabase.js') || normalizedId.includes('/src/data/medication/')) {
+    return 'medication-data';
+  }
+  if (normalizedId.includes('/src/content/cases/')) {
+    return 'case-content';
+  }
+  if (normalizedId.includes('/src/content/scenarios/')) {
+    return 'scenario-content';
+  }
+  if (normalizedId.includes('/src/domains/village/')) {
+    return 'village-domain';
+  }
+  if (normalizedId.includes('/src/data/FKTP144Diseases.js')) {
+    return 'diseases-data';
+  }
+
+  if (normalizedId.includes('/node_modules/')) {
+    return 'vendor';
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -31,23 +63,10 @@ export default defineConfig({
     }
   },
   build: {
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 2000,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('src/game/CaseLibrary')) {
-            return 'case-library';
-          }
-          if (id.includes('src/data/VillageRegistry')) {
-            return 'village-registry';
-          }
-          if (id.includes('src/data/FKTP144Diseases')) {
-            return 'diseases-data';
-          }
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
-        }
+        manualChunks
       }
     }
   }

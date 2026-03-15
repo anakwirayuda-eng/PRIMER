@@ -16,6 +16,7 @@ import { TRIAGE_LEVELS, ESI_LEVELS, validateTriage, validateStabilization, calcu
 import { useTranslation } from 'react-i18next';
 import { soundManager as _soundManager } from '../utils/SoundManager.js';
 import { getAvatarStyle } from '../utils/AvatarUtils.js';
+import { formatTime } from '../utils/formatTime.js';
 
 // Triage color badge component
 export function TriageBadge({ level, esiLevel, size = 'sm' }) {
@@ -297,7 +298,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                     </div>
                     <div className="text-right">
                         <p className="text-xs text-slate-400">Tiba di IGD</p>
-                        <p className="font-mono text-sm">{Math.floor(patient.arrivalTime / 60).toString().padStart(2, '0')}:{(patient.arrivalTime % 60).toString().padStart(2, '0')}</p>
+                        <p className="font-mono text-sm">{formatTime(patient.arrivalTime)}</p>
                     </div>
                 </div>
 

@@ -523,8 +523,8 @@ export const OPHTHALMOLOGY_CASES = [
         anamnesis: ["Pandangan makin kabur setahun, berkabut, nggak bisa baca.", "Silau, DM 15 tahun."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "Normal", eyes: "OU: shadow test (+). Lensa: kekeruhan lentikular. Visus OD 6/60, OS 6/30." },
         labs: {}, vitals: { temp: 36.7, bp: '130/80', hr: 76, rr: 18 },
-        correctTreatment: [],
-        correctProcedures: ['visual_acuity_check', 'shadow_test'],
+        correctTreatment: ['observation'],
+        correctProcedures: ['visual_acuity_check', 'shadow_test', 'hospital_referral'],
         requiredEducation: ['surgery_only_treatment', 'phaco_referral', 'dm_control_important'],
         risk: 'low', nonReferrable: false, referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['H25.9', 'H40.1']

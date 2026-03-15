@@ -1,6 +1,12 @@
 import { calculateGlobalBuffs } from '../game/GameCore.js';
 import { getNextLevelXp } from '../utils/LevelingSystem.js';
 
+const normalizeSkills = (skills) => Array.isArray(skills)
+    ? skills
+    : Object.entries(skills || {})
+        .filter(([, unlocked]) => Boolean(unlocked))
+        .map(([skillId]) => skillId);
+
 /**
  * @reflection
  * [IDENTITY]: selectors
@@ -68,13 +74,19 @@ export const selectDerivedFinance = (state) => {
 export const selectPlayerStats = (state) => {
     const { player } = state;
     const level = Math.max(1, Number(player.profile?.level) || 1);
-    const totalXp = Math.max(0, Number(player.profile?.xp) || 0);
     const nextLevelXp = getNextLevelXp(level);
+    const storedXp = Math.max(0, Number(player.profile?.xp) || 0);
     const xpAtLevelStart = (level - 1) * nextLevelXp;
-    const levelProgressXp = Math.max(0, Math.min(nextLevelXp, totalXp - xpAtLevelStart));
+    const isLegacyTotalXp = level > 1 && storedXp >= xpAtLevelStart;
+    const levelProgressXp = isLegacyTotalXp
+        ? Math.max(0, Math.min(nextLevelXp, storedXp - xpAtLevelStart))
+        : Math.max(0, Math.min(nextLevelXp, storedXp));
+    const totalXp = isLegacyTotalXp ? storedXp : xpAtLevelStart + levelProgressXp;
 
     return {
         ...player.profile,
+        knowledge: Math.max(0, Number(player.profile?.knowledge) || 0),
+        skills: normalizeSkills(player.profile?.skills),
         xp: levelProgressXp,
         totalXp,
         nextLevelXp,

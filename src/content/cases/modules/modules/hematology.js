@@ -83,7 +83,7 @@ export const HEMATOLOGY_CASES = [
         category: 'Hematology',
         symptoms: ["Demam tinggi mendadak","Nyeri otot/sendi","Rumple Leede positif","Trombositopenia"],
         clue: "[EBM: WHO DHF 2011] DBD grade 1 — demam + Rumple Leede (+) + trombositopenia. Monitor ketat fase kritis (hari 3-7). Terapi cairan agresif.",
-        relevantLabs: ["Darah Lengkap","NS1 Ag"],
+        relevantLabs: ['lab_hematology', 'lab_ns1'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_main', text: 'Demamnya gimana?', response: 'Demam tinggi mendadak dok, badan linu semua.', sentiment: 'confirmation', priority: 'essential' },
@@ -118,7 +118,7 @@ export const HEMATOLOGY_CASES = [
         category: 'Hematology',
         symptoms: ['Demam tinggi mendadak', 'Nyeri retro-orbital', 'Mialgia', 'Trombosit >100.000'],
         clue: "Dengue TANPA warning signs: demam + nyeri retro-orbital + mialgia + artralgia. Trombosit masih >100.000. Rawat jalan + pantau warning signs. Beda dari DBD!",
-        relevantLabs: ['Darah Lengkap', 'NS1 Antigen'],
+        relevantLabs: ['lab_hematology', 'lab_ns1'],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Demamnya gimana ini pak/bu?', response: 'Demam tinggi mendadak 2 hari, nyeri di belakang mata, badan pegal-pegal.', sentiment: 'confirmation', priority: 'essential' }],
             rps: [{ id: 'q_bleeding', text: 'Ada tanda-tanda perdarahan nggak, kayak mimisan atau gusi berdarah?', response: 'Nggak ada dok.', sentiment: 'denial' }],
@@ -224,7 +224,7 @@ export const HEMATOLOGY_CASES = [
         category: 'Hematology',
         symptoms: ['Demam tinggi turun mendadak', 'Akral dingin', 'Nadi cepat lemah', 'Hemokonsentrasi'],
         clue: "DBD grade III-IV: syok! Demam turun (hari 3-7) + tanda syok: nadi cepat lemah, TD sempit (<20mmHg) atau hipotensi, akral dingin, gelisah. Hemokonsentrasi (Ht naik >20%). RESUSITASI CAIRAN AGRESIF: RL 20ml/kg guyur!",
-        relevantLabs: [],
+        relevantLabs: ['lab_hematology'],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Apa yang terjadi?', response: 'Anak saya demam 4 hari, tadi sore demamnya turun tapi malah lemas banget, tangan kakinya dingin!', sentiment: 'confirmation', priority: 'essential' }],
             rps: [

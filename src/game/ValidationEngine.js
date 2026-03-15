@@ -17,6 +17,12 @@ import { getMedicationById } from '../data/MedicationDatabase.js';
 import { PROCEDURES_DB, PROCEDURE_CODE_MAP } from '../data/ProceduresDB.js';
 import { EDUCATION_OPTIONS } from '../data/EducationOptions.js';
 import { calculateCoverageScore } from './ClinicalReasoning.js';
+import { getCanonicalPhysicalExamKeys } from '../utils/physicalExam.js';
+import {
+    getLabDisplayName,
+    normalizeLabEntries,
+    normalizeLabKey,
+} from '../utils/labs.js';
 
 export function validateDiagnosis(patientCase, selectedDiagnoses) {
     // Support both raw case data (.icd10) and patient.medicalData (.trueDiagnosisCode)
@@ -126,35 +132,53 @@ export function validateEducation(patientCase, selectedEducation) {
 }
 
 export function validateExams(patientCase, performedExams, orderedLabs) {
-    const relevantLabs = patientCase.relevantLabs || [];
-    const physicalFindings = Object.keys(patientCase.physicalExamFindings || {});
+    const relevantLabEntries = normalizeLabEntries(patientCase.relevantLabs || []);
+    const physicalFindings = getCanonicalPhysicalExamKeys(Object.keys(patientCase.physicalExamFindings || {}));
 
     const importantExams = physicalFindings.filter(e => e !== 'general' && e !== 'vitals');
-    const examsPerformed = performedExams || [];
-    const examsCorrect = importantExams.filter(e => examsPerformed.includes(e));
+    const examsPerformedCanonical = getCanonicalPhysicalExamKeys(performedExams || []);
+    const examsPerformedSet = new Set(examsPerformedCanonical);
+    const examsCorrect = importantExams.filter(e => examsPerformedSet.has(e));
 
     // A5: Track irrelevant exams (not in physicalExamFindings, excluding general/vitals)
     const allRelevantExams = new Set(physicalFindings);
     allRelevantExams.add('general');
     allRelevantExams.add('vitals');
-    const unnecessaryExams = examsPerformed.filter(e => !allRelevantExams.has(e));
+    const unnecessaryExams = examsPerformedCanonical.filter(e => !allRelevantExams.has(e));
     const OVEREXAM_GRACE = 2; // Allow 2 "exploratory" exams without penalty
     const overExamPenalty = Math.max(0, unnecessaryExams.length - OVEREXAM_GRACE) * 3;
 
     const labsOrdered = Array.isArray(orderedLabs) ? orderedLabs : [];
-    const labsCorrect = relevantLabs.filter(l => labsOrdered.includes(l));
-    const unnecessaryLabs = labsOrdered.filter(l => !relevantLabs.includes(l));
-    const missingLabs = relevantLabs.filter(l => !labsOrdered.includes(l));
+    const orderedEntries = normalizeLabEntries(labsOrdered);
+    const orderedCanonicalSet = new Set(orderedEntries.map(entry => entry.canonical));
+    const relevantCanonicalSet = new Set(relevantLabEntries.map(entry => entry.canonical));
+
+    const labsCorrect = relevantLabEntries
+        .filter(entry => orderedCanonicalSet.has(entry.canonical))
+        .map(entry => entry.label);
+
+    const missingLabs = relevantLabEntries
+        .filter(entry => !orderedCanonicalSet.has(entry.canonical))
+        .map(entry => entry.label);
+
+    const unnecessaryLabs = [];
+    const unnecessarySeen = new Set();
+    labsOrdered.forEach((lab) => {
+        const canonical = normalizeLabKey(lab);
+        if (!canonical || relevantCanonicalSet.has(canonical) || unnecessarySeen.has(canonical)) return;
+        unnecessarySeen.add(canonical);
+        unnecessaryLabs.push(getLabDisplayName(lab));
+    });
 
     const examScore = importantExams.length > 0
         ? Math.round((examsCorrect.length / importantExams.length) * 100)
-        : (examsPerformed.some(e => e === 'general' || e === 'vitals') ? 100 : 50);
+        : (examsPerformedCanonical.some(e => e === 'general' || e === 'vitals') ? 100 : 50);
 
-    const labScore = relevantLabs.length > 0
-        ? Math.round((labsCorrect.length / relevantLabs.length) * 100)
+    const labScore = relevantLabEntries.length > 0
+        ? Math.round((labsCorrect.length / relevantLabEntries.length) * 100)
         : 100;
 
-    const hasLabs = relevantLabs.length > 0;
+    const hasLabs = relevantLabEntries.length > 0;
     const combinedScore = hasLabs
         ? Math.round(examScore * 0.6 + labScore * 0.4)
         : examScore;
@@ -176,14 +200,14 @@ export function validateExams(patientCase, performedExams, orderedLabs) {
         examScore,
         labScore,
         examsCorrect,
-        missingExams: importantExams.filter(e => !examsPerformed.includes(e)),
+        missingExams: importantExams.filter(e => !examsPerformedSet.has(e)),
         unnecessaryExams,
         overExamPenalty,
         overExamWarning,
         labsCorrect,
         missingLabs,
         unnecessaryLabs,
-        relevantLabs,
+        relevantLabs: relevantLabEntries.map(entry => entry.label),
         feedback: overExamWarning ? `${baseFeedback}\n\n${overExamWarning}` : baseFeedback
     };
 }

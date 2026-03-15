@@ -13,8 +13,8 @@ import React from 'react';
 import { CheckCircle, Pill, Scissors, BookOpen, Stethoscope, FileText } from 'lucide-react';
 import { synthesizeAnamnesis } from '../../../game/AnamnesisEngine.js';
 import { PROCEDURES_DB, PHYSICAL_EXAM_OPTIONS } from '../../../data/ProceduresDB.js';
+import { COMMON_PROCEDURES } from '../../../data/CommonProcedures.js';
 import { EDUCATION_OPTIONS } from '../../../data/EducationOptions.js';
-import { COMMON_PROCEDURES } from '../ProceduresTab.jsx';
 // getMedicationById — medications are already resolved in selectedMeds prop
 
 export default function SOAPResume({

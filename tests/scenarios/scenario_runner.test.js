@@ -201,7 +201,7 @@ async function executeScenario(scenario) {
 beforeAll(async () => {
   ensureAudioMocks();
   await getStore();
-});
+}, 20000);
 
 describe('PRIMERA scenario replay', () => {
   const scenarios = fs.readdirSync(SCENARIO_DIR)

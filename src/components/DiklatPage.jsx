@@ -47,7 +47,7 @@ const ACCENT_MAP = {
 };
 
 export default function DiklatPage() {
-    const { playerStats, skills, unlockSkill } = useGame();
+    const { playerStats, skills, unlockSkill, addXp, stats, setStats, setPlayerProfile } = useGame();
     const [activeTab, setActiveTab] = useState('skills');
 
     React.useEffect(() => {
@@ -59,8 +59,12 @@ export default function DiklatPage() {
 
     const currentXP = playerStats?.xp || 0;
     const playerLevel = playerStats?.level || 1;
-    const xpToNextLevel = (playerStats?.level || 1) * 100 - (currentXP % 100);
-    const xpPct = Math.round(((currentXP % 100) / 100) * 100);
+    const xpTarget = playerStats?.nextLevelXp || 1000;
+    const xpToNextLevel = Math.max(0, xpTarget - currentXP);
+    const xpPct = Math.round((Math.min(currentXP, xpTarget) / xpTarget) * 100);
+    const completedWorkshops = Array.isArray(playerStats?.completedWorkshops)
+        ? playerStats.completedWorkshops
+        : [];
 
     const handleUpgradeSkill = (skill) => {
         setUpgradeAnim(skill.id);
@@ -69,6 +73,31 @@ export default function DiklatPage() {
             if (!success) alert('Tidak cukup XP!');
             setUpgradeAnim(null);
         }, 800);
+    };
+
+    const handleAttendWorkshop = (workshop) => {
+        if (completedWorkshops.includes(workshop.id)) return;
+
+        const currentFunds = stats?.pendapatanUmum || 0;
+        if (workshop.cost > currentFunds) {
+            alert('Pendapatan umum tidak cukup untuk mengikuti workshop ini.');
+            return;
+        }
+
+        if (workshop.cost > 0) {
+            setStats(prev => ({
+                ...prev,
+                pendapatanUmum: prev.pendapatanUmum - workshop.cost
+            }));
+        }
+
+        addXp?.(workshop.xpReward);
+        setPlayerProfile?.(prev => ({
+            ...prev,
+            completedWorkshops: [...new Set([...(prev.completedWorkshops || []), workshop.id])]
+        }));
+
+        alert(`${workshop.title} selesai. +${workshop.xpReward} XP`);
     };
 
     const filteredSkills = SKILLS.filter(s => filterCategory === 'all' || s.category === filterCategory);
@@ -209,7 +238,7 @@ export default function DiklatPage() {
                             {filteredSkills.map((skill, idx) => {
                                 const config = CATEGORY_CONFIG[skill.category];
                                 const a = ACCENT_MAP[config.accent];
-                                const isUnlocked = skills?.[skill.id];
+                                const isUnlocked = Array.isArray(skills) && skills.includes(skill.id);
                                 const canUpgrade = !isUnlocked && currentXP >= skill.xpCost;
                                 const isAnimating = upgradeAnim === skill.id;
 
@@ -286,6 +315,8 @@ export default function DiklatPage() {
                         {WORKSHOPS.map((ws, idx) => {
                             const config = CATEGORY_CONFIG[ws.category];
                             const a = ACCENT_MAP[config.accent];
+                            const isCompleted = completedWorkshops.includes(ws.id);
+                            const canAfford = (stats?.pendapatanUmum || 0) >= ws.cost;
 
                             return (
                                 <div
@@ -312,11 +343,19 @@ export default function DiklatPage() {
                                         </div>
                                     </div>
 
-                                    <button className={`relative z-10 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${ws.cost > 0
-                                        ? 'bg-amber-500/15 border border-amber-500/25 text-amber-400 hover:bg-amber-500/25'
-                                        : 'bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25'
-                                        }`}>
-                                        {ws.cost > 0 ? `Rp ${(ws.cost / 1000).toLocaleString()}K` : 'Gratis!'}
+                                    <button
+                                        onClick={() => handleAttendWorkshop(ws)}
+                                        disabled={isCompleted || !canAfford}
+                                        className={`relative z-10 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${isCompleted
+                                            ? 'bg-white/[0.06] border border-white/[0.08] text-white/30 cursor-default'
+                                            : ws.cost > 0
+                                                ? canAfford
+                                                    ? 'bg-amber-500/15 border border-amber-500/25 text-amber-400 hover:bg-amber-500/25'
+                                                    : 'bg-white/[0.04] border border-white/[0.06] text-white/20 cursor-not-allowed'
+                                                : 'bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25'
+                                            }`}
+                                    >
+                                        {isCompleted ? 'Selesai' : ws.cost > 0 ? `Rp ${(ws.cost / 1000).toLocaleString()}K` : 'Gratis!'}
                                         <ChevronRight size={12} />
                                     </button>
                                 </div>

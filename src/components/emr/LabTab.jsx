@@ -25,16 +25,26 @@ const COMMON_LABS = [
 export default function LabTab({ patient: _patient, isDark, labsRevealed, handleOrderLab, caseData, openWiki, maiaSuggestions, anamnesisScore }) {
     // Merge case-specific labs with common labs (deduplicate by name)
     const allLabs = useMemo(() => {
-        const caseLabs = caseData?.labs || {};
+        const rawLabs = caseData?.labs;
+        // Guard: labs must be a plain object, not array or null
+        const caseLabs = (rawLabs && typeof rawLabs === 'object' && !Array.isArray(rawLabs)) ? rawLabs : {};
         // Normalize: strip "(DL)" suffixes, underscores→spaces, lowercase
-        const normalize = (s) => s.toLowerCase().replace(/\s*\(.*?\)/, '').replace(/_/g, ' ').trim();
+        const normalize = (s) => {
+            if (typeof s !== 'string') return String(s || '').toLowerCase().trim();
+            return s.toLowerCase().replace(/\s*\(.*?\)/, '').replace(/_/g, ' ').trim();
+        };
         const caseLabNorms = new Set(Object.keys(caseLabs).map(normalize));
         const merged = [];
 
         // Case-specific labs first (primary)
-        Object.entries(caseLabs).forEach(([labName, labData]) => {
-            merged.push({ id: labName, name: labName, ...labData, isCase: true });
-        });
+        try {
+            Object.entries(caseLabs).forEach(([labName, labData]) => {
+                const safeData = (labData && typeof labData === 'object') ? labData : { result: String(labData || ''), cost: 50000 };
+                merged.push({ id: labName, name: labName, ...safeData, isCase: true });
+            });
+        } catch (e) {
+            console.warn('[LabTab] Error processing case labs:', e);
+        }
 
         // Common labs that aren't already in case data (fuzzy match)
         COMMON_LABS.forEach(lab => {
@@ -88,8 +98,8 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                     const isRevealed = labsRevealed[lab.id || lab.name];
                     const labName = lab.id || lab.name;
                     const displayName = lab.isCase ? labName : lab.name;
-                    const labCost = lab.cost || 50000;
-                    const labResult = isRevealed ? (lab.result || labsRevealed[labName]?.result || 'Dalam batas normal') : null;
+                    const labCost = Number(lab.cost) || 50000;
+                    const labResult = isRevealed ? (lab.result || (typeof labsRevealed[labName] === 'object' ? labsRevealed[labName]?.result : null) || 'Dalam batas normal') : null;
                     const labFlag = lab.flag || 'normal';
 
                     return (

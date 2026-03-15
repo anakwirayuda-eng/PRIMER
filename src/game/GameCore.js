@@ -13,6 +13,7 @@ export const INITIAL_PLAYER_STATE = {
     gender: 'L',
     level: 1,
     xp: 0,
+    knowledge: 0,
     energy: 100,
     maxEnergy: 100,
     spirit: 100,
@@ -42,7 +43,12 @@ export const calculateIKS = (indicators) => {
 export const calculateGlobalBuffs = (state) => {
     const hiredStaff = state.staff?.hiredStaff || [];
     const facilities = state.finance?.facilities || { poli_umum: 1 };
-    const skills = state.player?.profile?.skills || [];
+    const rawSkills = state.player?.profile?.skills;
+    const skills = Array.isArray(rawSkills)
+        ? rawSkills
+        : Object.entries(rawSkills || {})
+            .filter(([, unlocked]) => Boolean(unlocked))
+            .map(([skillId]) => skillId);
 
     const buffs = {
         labSpeed: 0,

@@ -38,10 +38,27 @@ export default class ErrorBoundary extends React.Component {
 
     componentDidCatch(error, errorInfo) {
         this.setState({ errorInfo });
+        this.props.onError?.(error, errorInfo);
         console.error(`[ErrorBoundary:${this.props.name || 'unnamed'}]`, error, errorInfo);
     }
 
+    componentDidUpdate(prevProps) {
+        if (!this.state.hasError) return;
+
+        const prevResetKeys = prevProps.resetKeys || [];
+        const nextResetKeys = this.props.resetKeys || [];
+        const hasResetKeyChange =
+            prevResetKeys.length !== nextResetKeys.length ||
+            nextResetKeys.some((key, index) => !Object.is(key, prevResetKeys[index]));
+
+        if (hasResetKeyChange) {
+            this.setState({ hasError: false, error: null, errorInfo: null });
+        }
+    }
+
     handleRetry = () => {
+        this.props.onReset?.(this.state.error, this.state.errorInfo);
+
         if (this.isDynamicImportError()) {
             safeReloadPage();
             return;
@@ -50,15 +67,20 @@ export default class ErrorBoundary extends React.Component {
         this.setState({ hasError: false, error: null, errorInfo: null });
     };
 
+    handleFallbackAction = () => {
+        this.props.fallbackAction?.(this.state.error, this.state.errorInfo);
+    };
+
     render() {
         if (this.state.hasError) {
             const isDark = this.props.isDark !== false;
             const name = this.props.name || 'Component';
             const isDynamicImportError = this.isDynamicImportError();
-            const description = isDynamicImportError
+            const description = this.props.description || (isDynamicImportError
                 ? 'Modul aplikasi gagal dimuat, biasanya karena server dev Vite sempat putus atau restart. Muat ulang aplikasi untuk menyambungkan ulang modul.'
-                : `${name} mengalami error. Klik tombol di bawah untuk mencoba lagi.`;
-            const buttonLabel = isDynamicImportError ? 'Muat Ulang Aplikasi' : 'Coba Lagi';
+                : `${name} mengalami error. Klik tombol di bawah untuk mencoba lagi.`);
+            const buttonLabel = this.props.retryLabel || (isDynamicImportError ? 'Muat Ulang Aplikasi' : 'Coba Lagi');
+            const fallbackActionLabel = this.props.fallbackActionLabel || 'Tutup';
 
             return (
                 <div className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed m-2 min-h-[200px] ${isDark
@@ -84,15 +106,29 @@ export default class ErrorBoundary extends React.Component {
                         </details>
                     )}
 
-                    <button
-                        onClick={this.handleRetry}
-                        className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${isDark
-                            ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30'
-                            : 'bg-emerald-500 text-white hover:bg-emerald-600'
-                        }`}
-                    >
-                        {buttonLabel}
-                    </button>
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                        <button
+                            onClick={this.handleRetry}
+                            className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${isDark
+                                ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30'
+                                : 'bg-emerald-500 text-white hover:bg-emerald-600'
+                            }`}
+                        >
+                            {buttonLabel}
+                        </button>
+
+                        {this.props.fallbackAction && (
+                            <button
+                                onClick={this.handleFallbackAction}
+                                className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${isDark
+                                    ? 'bg-white/5 text-slate-200 hover:bg-white/10 border border-white/10'
+                                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                                }`}
+                            >
+                                {fallbackActionLabel}
+                            </button>
+                        )}
+                    </div>
                 </div>
             );
         }

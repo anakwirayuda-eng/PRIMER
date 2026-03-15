@@ -1,15 +1,19 @@
 /* global process */
 import { defineConfig, devices } from '@playwright/test';
 
+const reporter = process.env.CI
+    ? [['list'], ['html', { open: 'never' }]]
+    : 'html';
+
 export default defineConfig({
     testDir: './tests/visual',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     workers: process.env.CI ? 1 : undefined,
-    reporter: 'html',
+    reporter,
     use: {
-        baseURL: 'http://localhost:5173',
+        baseURL: 'http://127.0.0.1:5173',
         trace: 'on-first-retry',
     },
     projects: [
@@ -19,8 +23,9 @@ export default defineConfig({
         },
     ],
     webServer: {
-        command: '.\\node_modules\\.bin\\vite.cmd',
-        url: 'http://localhost:5173',
+        command: 'npm run dev -- --host 127.0.0.1',
+        url: 'http://127.0.0.1:5173',
         reuseExistingServer: !process.env.CI,
+        timeout: 120000,
     },
 });

@@ -11,7 +11,7 @@
 
 import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { useGame } from '../context/GameContext.jsx';
-import { FURNITURE_ITEMS, ROOMS } from '../data/FurnitureData.js';
+import { FURNITURE_ITEMS, INITIAL_INVENTORY, ROOMS } from '../data/FurnitureData.js';
 import { getRandomGuestEvent } from '../game/GuestEventSystem.js';
 import { soundManager } from '../utils/SoundManager.js';
 import { generateMorningBriefing } from '../game/MorningBriefing.js';
@@ -32,9 +32,8 @@ const ICONS = {
 const RumahDinas = ({ onClose }) => {
     const {
         playerStats, setPlayerStats,
-        furnitureInventory, setFurnitureInventory,
         stats, setStats,
-        time, setTime,
+        time, advanceTime,
         sleepWithAlarm, setReputation,
         clearMorningStatus,
         gainXp, // Added for unified XP handling
@@ -53,6 +52,8 @@ const RumahDinas = ({ onClose }) => {
     const [activeTab, setActiveTab] = useState('living_room');
     const [alarmHour, setAlarmHour] = useState(5);
     const [debriefData, setDebriefData] = useState(null);
+
+    const furnitureInventory = playerStats?.furnitureInventory ?? INITIAL_INVENTORY;
 
     // Toast State
     const [toasts, setToasts] = useState([]);
@@ -210,16 +211,12 @@ const RumahDinas = ({ onClose }) => {
             ...prev,
             energy: Math.min(prev.maxEnergy, prev.energy - costEnergy + gainEnergy),
             stress: Math.max(0, prev.stress + gainStress),
-            knowledge: prev.knowledge + (gainExp > 0 ? 1 : 0),
+            knowledge: (prev.knowledge || 0) + (gainExp > 0 ? 1 : 0),
             spirit: Math.max(0, Math.min(100, (prev.spirit || 100) + (actionType === 'relax' ? 10 : actionType === 'cook' ? 5 : 0)))
         }));
 
         // Advance time (e.g. 30 mins per action)
-        setTime(prev => {
-            const newTime = prev + 30;
-            if (newTime >= 1440) return 0;
-            return newTime;
-        });
+        advanceTime(30);
         soundManager.playClick();
         showToast(message, 'success');
     };
@@ -230,7 +227,10 @@ const RumahDinas = ({ onClose }) => {
                 ...prev,
                 pendapatanUmum: prev.pendapatanUmum - item.price
             }));
-            setFurnitureInventory(prev => [...prev, item.id]);
+            setPlayerStats(prev => ({
+                ...prev,
+                furnitureInventory: [...new Set([...(prev.furnitureInventory ?? INITIAL_INVENTORY), item.id])]
+            }));
             soundManager.playSuccess();
             showToast(`Berhasil membeli ${item.name}!`, 'success');
         } else {
@@ -259,7 +259,7 @@ const RumahDinas = ({ onClose }) => {
             ...prev,
             energy: Math.min(prev.maxEnergy, prev.energy + (effect.energy || 0)),
             stress: Math.max(0, prev.stress + (effect.stress || 0)),
-            knowledge: prev.knowledge + (effect.knowledge || 0),
+            knowledge: (prev.knowledge || 0) + (effect.knowledge || 0),
             reputation: (prev.reputation || 80) + (effect.reputation || 0)
         }));
 
@@ -475,7 +475,7 @@ const RumahDinas = ({ onClose }) => {
                                                         stress: Math.max(0, prev.stress - 15)
                                                     }));
                                                     setReputation(r => Math.min(100, r + 5));
-                                                    setTime(prev => prev + 60);
+                                                    advanceTime(60);
                                                     showToast("Ketemu warga di Masjid. Spirit & Reputasi naik!", "success");
                                                 }}
                                                 className="btn-action bg-amber-500 text-white p-6 rounded-xl hover:scale-105 transition shadow-lg border-4 border-amber-200"
@@ -661,7 +661,10 @@ const RumahDinas = ({ onClose }) => {
         if (res?.success) {
             showToast(`Bangun tepat waktu! Status: ${res.status.toUpperCase()}`, 'success');
         } else if (res) {
-            showToast(`Kebablasan! Bangun jam ${Math.floor(res.time / 60)}:00. Status: ${res.status.toUpperCase()}`, 'error');
+            const wakeTime = res.wakeTime ?? res.time ?? 0;
+            showToast(`Kebablasan! Bangun jam ${Math.floor(wakeTime / 60)}:00. Status: ${res.status.toUpperCase()}`, 'error');
+        } else {
+            showToast('Tidur gagal diproses. Coba lagi.', 'error');
         }
     }, [addReflection, gainXp, setShowEndOfDayDebrief, sleepWithAlarm, alarmHour, day, showToast]);
 

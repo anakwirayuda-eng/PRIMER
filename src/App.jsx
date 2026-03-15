@@ -16,6 +16,7 @@ import { ThemeProvider } from './context/ThemeContext.jsx';
 import OpeningScreen from './components/OpeningScreen.jsx';
 import { soundManager } from './utils/SoundManager.js';
 import DatabaseSync from './components/DatabaseSync.jsx';
+import { safeReloadPage } from './utils/browserSafety.js';
 import './i18n';
 
 // Lazy load heavy game components
@@ -105,7 +106,12 @@ function GameRouter() {
 
   if (gameState === 'rumah_dinas') {
     return (
-      <ErrorBoundary name="Rumah Dinas">
+      <ErrorBoundary
+        name="Rumah Dinas"
+        resetKeys={[gameState]}
+        fallbackAction={() => setGameState('playing')}
+        fallbackActionLabel="Kembali ke Game"
+      >
         <RumahDinas onClose={() => setGameState('playing')} />
       </ErrorBoundary>
     );
@@ -113,7 +119,12 @@ function GameRouter() {
 
   return (
     <div className="min-h-screen font-sans">
-      <ErrorBoundary name="Game">
+      <ErrorBoundary
+        name="Game"
+        resetKeys={[gameState]}
+        fallbackAction={safeReloadPage}
+        fallbackActionLabel="Muat Ulang App"
+      >
         <MainLayout />
       </ErrorBoundary>
     </div>
@@ -167,7 +178,7 @@ function App() {
   return (
     <ThemeProvider>
       <GameProvider>
-        <ErrorBoundary>
+        <ErrorBoundary name="AppRoot" fallbackAction={safeReloadPage} fallbackActionLabel="Muat Ulang Aplikasi">
           <Suspense fallback={<LoadingScreen />}>
             <GameRouter />
           </Suspense>
@@ -178,4 +189,3 @@ function App() {
 }
 
 export default App;
-

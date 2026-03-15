@@ -14,6 +14,7 @@
 import React, { useState, useMemo } from 'react';
 import { VILLAGE_FAMILIES, FAMILY_SDOH, FAMILY_INDICATORS, VILLAGE_STATS } from '../../domains/village/VillageRegistry.js';
 import VillagerAvatar from '../VillagerAvatar.jsx';
+import { useGame } from '../../context/GameContext.jsx';
 import {
     Users, Home, MapPin, Shield, Heart, Search, ChevronDown, ChevronUp,
     TrendingUp, Baby, Briefcase, X, FileText, Droplets, Flame, Building2,
@@ -92,8 +93,8 @@ function calculateSDOHSummary(families) {
     const toiletTypes = {};
 
     families.forEach(f => {
-        const indicators = FAMILY_INDICATORS[f.id] || {};
-        const sdoh = FAMILY_SDOH[f.id] || {};
+        const indicators = f.indicators || FAMILY_INDICATORS[f.id] || {};
+        const sdoh = f.sdoh || FAMILY_SDOH[f.id] || {};
 
         if (indicators.jkn) jknCount++;
 
@@ -117,6 +118,14 @@ function calculateSDOHSummary(families) {
         waterSources,
         toiletTypes
     };
+}
+
+function getFamilyIndicators(family) {
+    return family?.indicators || FAMILY_INDICATORS[family?.id] || {};
+}
+
+function getFamilySDOH(family) {
+    return family?.sdoh || FAMILY_SDOH[family?.id] || {};
 }
 
 // Role label mapping to Indonesian KK format
@@ -144,8 +153,8 @@ const EDUCATION_LABELS = {
 // ═══════════════════════════════════════════════════════════════
 
 function KartuKeluargaModal({ family, onClose }) {
-    const sdoh = FAMILY_SDOH[family.id] || {};
-    const indicators = FAMILY_INDICATORS[family.id] || {};
+    const sdoh = getFamilySDOH(family);
+    const indicators = getFamilyIndicators(family);
 
     const kkNumber = `33${family.rt || '01'}${family.rw || '01'}0${family.id.replace('kk_', '')}2024`;
 
@@ -406,7 +415,7 @@ function AgePyramid({ ageGroups }) {
 // KK CARD PREVIEW — Used in the family grid
 // ═══════════════════════════════════════════════════════════════
 
-function KKCardPreview({ family, indicators, sdoh, onClick }) {
+function KKCardPreview({ family, indicators, onClick }) {
     const kepala = (family.members || []).find(m => m.role === 'head') || family.members?.[0] || {};
     const memberCount = (family.members || []).length;
 
@@ -508,20 +517,26 @@ function KKCardPreview({ family, indicators, sdoh, onClick }) {
 // ═══════════════════════════════════════════════════════════════
 
 export default function SensusPage() {
+    const { villageData } = useGame();
     const [search, setSearch] = useState('');
     const [selectedFamily, setSelectedFamily] = useState(null);
     const [filterRT, setFilterRT] = useState('all');
     const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
+    const families = useMemo(() => (
+        Array.isArray(villageData?.families) && villageData.families.length > 0
+            ? villageData.families
+            : VILLAGE_FAMILIES
+    ), [villageData]);
 
-    const demographics = useMemo(() => calculateDemographics(VILLAGE_FAMILIES), []);
-    const sdohSummary = useMemo(() => calculateSDOHSummary(VILLAGE_FAMILIES), []);
+    const demographics = useMemo(() => calculateDemographics(families), [families]);
+    const sdohSummary = useMemo(() => calculateSDOHSummary(families), [families]);
 
     const rtList = useMemo(() => {
-        return [...new Set(VILLAGE_FAMILIES.map(f => f.rt || 'N/A'))].sort();
-    }, []);
+        return [...new Set(families.map(f => f.rt || 'N/A'))].sort();
+    }, [families]);
 
     const filteredFamilies = useMemo(() => {
-        let list = [...VILLAGE_FAMILIES];
+        let list = [...families];
 
         if (search) {
             const q = search.toLowerCase();
@@ -538,7 +553,7 @@ export default function SensusPage() {
         }
 
         return list;
-    }, [search, filterRT]);
+    }, [families, search, filterRT]);
 
     const topOccupations = useMemo(() => {
         return Object.entries(demographics.occupations)
@@ -580,14 +595,14 @@ export default function SensusPage() {
                     <div className="grid grid-cols-6 divide-x" style={{ background: '#F0F7E8', borderTop: '2px solid #2E7D32', divideColor: '#C8E6C9' }}>
                         {[
                             { icon: Users, label: 'Jumlah Jiwa', value: demographics.total, sub: `${demographics.male}L / ${demographics.female}P` },
-                            { icon: Home, label: 'Kepala Keluarga', value: VILLAGE_FAMILIES.length, sub: 'KK terdaftar' },
+                            { icon: Home, label: 'Kepala Keluarga', value: families.length, sub: 'KK terdaftar' },
                             { icon: MapPin, label: 'Wilayah RT', value: rtList.length, sub: 'RT administratif' },
                             { icon: Shield, label: 'JKN/BPJS', value: `${sdohSummary.jknCoverage}%`, sub: `${sdohSummary.jknCount}/${sdohSummary.totalFamilies} KK` },
                             { icon: Baby, label: 'Balita', value: demographics.ageGroups.balita, sub: 'Usia 0-5 tahun' },
                             { icon: Briefcase, label: 'Lansia', value: demographics.ageGroups.lansia, sub: 'Usia 60+ tahun' },
-                        ].map(({ icon: Icon, label, value, sub }, i) => (
+                        ].map(({ icon, label, value, sub }, i) => (
                             <div key={i} className="px-3 py-3 text-center">
-                                <Icon size={16} className="text-green-600 mx-auto mb-1" />
+                                {React.createElement(icon, { size: 16, className: 'text-green-600 mx-auto mb-1' })}
                                 <div className="text-[9px] text-green-700 font-bold uppercase tracking-wider">{label}</div>
                                 <div className="text-xl font-black text-slate-800 leading-tight" style={{ fontFamily: '"Times New Roman", serif' }}>{value}</div>
                                 <div className="text-[9px] text-slate-500">{sub}</div>
@@ -728,8 +743,7 @@ export default function SensusPage() {
                                 <KKCardPreview
                                     key={family.id}
                                     family={family}
-                                    indicators={FAMILY_INDICATORS[family.id] || {}}
-                                    sdoh={FAMILY_SDOH[family.id] || {}}
+                                    indicators={getFamilyIndicators(family)}
                                     onClick={() => setSelectedFamily(family)}
                                 />
                             ))}
@@ -749,7 +763,7 @@ export default function SensusPage() {
                                 </thead>
                                 <tbody>
                                     {filteredFamilies.map((family, idx) => {
-                                        const indicators = FAMILY_INDICATORS[family.id] || {};
+                                        const indicators = getFamilyIndicators(family);
                                         const kepala = (family.members || []).find(m => m.role === 'head') || family.members?.[0] || {};
                                         const memberCount = (family.members || []).length;
                                         const scored = Object.values(indicators).filter(v => v !== null && v !== undefined);
@@ -811,7 +825,7 @@ export default function SensusPage() {
                     {/* Footer */}
                     <div className="px-4 py-2.5 flex items-center justify-between" style={{ background: '#E8F5E9', borderTop: '1px solid #C8E6C9' }}>
                         <span className="text-xs text-green-700 font-semibold">
-                            Menampilkan {filteredFamilies.length} dari {VILLAGE_FAMILIES.length} KK
+                            Menampilkan {filteredFamilies.length} dari {families.length} KK
                         </span>
                         <span className="text-[10px] text-green-600 italic">
                             Sumber: Sistem Informasi Kependudukan Desa Sukamaju

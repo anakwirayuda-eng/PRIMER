@@ -17,6 +17,7 @@ import { INDIVIDUAL_PROFILES, FAMILY_MEDICAL_HISTORY } from '../domains/village/
 import { useTheme } from '../context/ThemeContext.jsx';
 import CPPTCard from './CPPTCard.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
+import { formatTime } from '../utils/formatTime.js';
 
 export default function ArsipPage() {
     const { history, villageData, day, viewParams, navigate } = useGame();
@@ -242,7 +243,7 @@ export default function ArsipPage() {
                                     {dailyRecords.filter(r => r.name?.toLowerCase().includes(searchQuery.toLowerCase()) || r.label?.toLowerCase().includes(searchQuery.toLowerCase())).map((record, idx) => (
                                         <tr key={idx} className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
                                             <td className="px-6 py-4 font-mono text-slate-500">
-                                                Hari {record.day}, {record.dischargedAt ? `${Math.floor(record.dischargedAt / 60)}:${(record.dischargedAt % 60).toString().padStart(2, '0')}` : '08:00'}
+                                                Hari {record.day}, {record.dischargedAt ? formatTime(record.dischargedAt) : '08:00'}
                                             </td>
                                             <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
                                                 {record.name || record.label}

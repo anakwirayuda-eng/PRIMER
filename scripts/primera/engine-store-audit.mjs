@@ -92,8 +92,20 @@ function getRootMemberAccess(node) {
 }
 
 function findStoreObject(ast) {
+    let declaredStore = null;
     let best = null;
+
     traverse(ast, (node) => {
+        if (
+            !declaredStore &&
+            node.type === 'VariableDeclarator' &&
+            node.id.type === 'Identifier' &&
+            node.id.name === 'store' &&
+            node.init?.type === 'ObjectExpression'
+        ) {
+            declaredStore = node.init;
+        }
+
         if (node.type !== 'ObjectExpression') return;
         const names = node.properties.map(getPropertyName).filter(Boolean);
         if (names.includes('nav') && names.includes('world') && names.includes('player')) {
@@ -102,7 +114,8 @@ function findStoreObject(ast) {
             }
         }
     });
-    return best;
+
+    return declaredStore || best;
 }
 
 function collectExportedObjectConstants(filePath, cache = new Map()) {
@@ -165,6 +178,80 @@ function buildConstantObjectMap(filePath, ast, importCache = new Map()) {
     });
 
     return constantMap;
+}
+
+function getReturnedObjectExpression(body) {
+    if (!body) return null;
+
+    if (body.type === 'ObjectExpression') {
+        return body;
+    }
+
+    if (body.type !== 'BlockStatement') {
+        return null;
+    }
+
+    for (const statement of body.body) {
+        if (statement.type === 'ReturnStatement' && statement.argument?.type === 'ObjectExpression') {
+            return statement.argument;
+        }
+    }
+
+    return null;
+}
+
+function buildObjectFactoryMap(ast) {
+    const factoryMap = new Map();
+
+    traverse(ast, (node) => {
+        if (
+            node.type === 'FunctionDeclaration' &&
+            node.id?.type === 'Identifier'
+        ) {
+            const returnedObject = getReturnedObjectExpression(node.body);
+            if (returnedObject) {
+                factoryMap.set(node.id.name, returnedObject);
+            }
+            return;
+        }
+
+        if (
+            node.type === 'VariableDeclarator' &&
+            node.id.type === 'Identifier' &&
+            isFunctionLike(node.init)
+        ) {
+            const returnedObject = getReturnedObjectExpression(node.init.body);
+            if (returnedObject) {
+                factoryMap.set(node.id.name, returnedObject);
+            }
+        }
+    });
+
+    return factoryMap;
+}
+
+function resolveObjectExpression(node, constantMap = new Map(), factoryMap = new Map(), seen = new Set()) {
+    if (!node || seen.has(node)) return null;
+    seen.add(node);
+
+    if (node.type === 'ObjectExpression') {
+        return node;
+    }
+
+    if (node.type === 'Identifier') {
+        return resolveObjectExpression(
+            constantMap.get(node.name) || factoryMap.get(node.name),
+            constantMap,
+            factoryMap,
+            seen
+        );
+    }
+
+    if (node.type === 'CallExpression' && node.callee.type === 'Identifier') {
+        return resolveObjectExpression(factoryMap.get(node.callee.name), constantMap, factoryMap, seen);
+    }
+
+    return null;
 }
 
 function extractObjectKeys(objectExpression, constantMap = new Map()) {
@@ -341,6 +428,7 @@ async function run() {
     const savePayloadAst = parseModule(SAVE_PAYLOAD_PATH);
     const storeObject = findStoreObject(storeAst);
     const constantMap = buildConstantObjectMap(STORE_PATH, storeAst);
+    const objectFactoryMap = buildObjectFactoryMap(storeAst);
 
     if (!storeObject) {
         throw new Error('Failed to locate store root object in useGameStore.js');
@@ -359,12 +447,16 @@ async function run() {
     for (const [sliceName, config] of Object.entries(STORE_CONTRACT.slices)) {
         checkedSlices++;
         const sliceProp = rootProps.get(sliceName);
-        if (!sliceProp || sliceProp.value.type !== 'ObjectExpression') {
+        const sliceObject = sliceProp
+            ? resolveObjectExpression(sliceProp.value, constantMap, objectFactoryMap)
+            : null;
+
+        if (!sliceObject) {
             failures.push({ type: 'error', impact: 'dead_ui_wiring', priority: 'P2', message: `Slice [${sliceName}] missing in useGameStore` });
             continue;
         }
 
-        const sliceKeys = new Set(extractObjectKeys(sliceProp.value, constantMap));
+        const sliceKeys = new Set(extractObjectKeys(sliceObject, constantMap));
         for (const key of config.requiredKeys) {
             if (!sliceKeys.has(key)) {
                 failures.push({ type: 'warning', impact: 'dead_ui_wiring', priority: 'P2', message: `Key [${key}] missing from slice [${sliceName}]` });
@@ -455,9 +547,28 @@ async function run() {
     );
 
     console.log(`Store Contract Audit ${results.pass ? 'PASSED' : 'FAILED'} (${checkedSlices} slices, ${checkedActions} actions)`);
+
+    if (!results.pass) {
+        process.exit(1);
+    }
 }
 
-run().catch((error) => {
-    console.error('Store Audit Engine failed:', error);
-    process.exit(1);
-});
+function isDirectExecution() {
+    return Boolean(process.argv[1]) && path.resolve(process.argv[1]) === __filename;
+}
+
+export {
+    parseModule,
+    findStoreObject,
+    buildConstantObjectMap,
+    buildObjectFactoryMap,
+    resolveObjectExpression,
+    run
+};
+
+if (isDirectExecution()) {
+    run().catch((error) => {
+        console.error('Store Audit Engine failed:', error);
+        process.exit(1);
+    });
+}

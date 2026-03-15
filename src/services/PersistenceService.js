@@ -52,16 +52,31 @@ export function hasCompleteMedicalDataset(counts) {
     return REQUIRED_MEDICAL_TABLES.every((tableName) => Number(counts?.[tableName]) > 0);
 }
 
+const ICD10_PART_LOADERS = [
+    () => import('../data/master_icd_10_parts/part_1.json'),
+    () => import('../data/master_icd_10_parts/part_2.json'),
+    () => import('../data/master_icd_10_parts/part_3.json'),
+    () => import('../data/master_icd_10_parts/part_4.json')
+];
+
+function mapICD10Records(records = []) {
+    return records.map(d => ({
+        code: d.kode_icd,
+        name: d.nama_icd,
+        originalIndo: d.nama_icd_indo || '',
+        category: d.kategori || 'general'
+    }));
+}
+
 const DEFAULT_SYNC_LOADERS = {
     async icd10() {
-        const icd10Module = await import('../data/master_icd_10.json');
-        const icd10Data = icd10Module.default || icd10Module;
-        return icd10Data.map(d => ({
-            code: d.kode_icd,
-            name: d.nama_icd,
-            originalIndo: d.nama_icd_indo || '',
-            category: d.kategori || 'general'
-        }));
+        const icd10Parts = await Promise.all(
+            ICD10_PART_LOADERS.map(async (loadPart) => {
+                const module = await loadPart();
+                return module.default || module;
+            })
+        );
+        return mapICD10Records(icd10Parts.flat());
     },
 
     async icd9() {

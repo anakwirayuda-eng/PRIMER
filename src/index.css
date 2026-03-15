@@ -756,6 +756,222 @@
   }
 }
 
+/* ── PhysicalExamTab: Finding card entrance animation ── */
+@keyframes findingSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.finding-card-enter {
+  animation: findingSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── PhysicalExamTab: Medical scrollbar ── */
+.medic-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.medic-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.medic-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 10px;
+}
+
+.medic-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.6);
+}
+
+/* ── PhysicalExamTab: Fade bottom scroll edge ── */
+.mask-fade-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+}
+
+/* ========================================================
+   ⚕️ PRIMERA 3D VOLUMETRIC ENGINE v8 (BodyMapWidget)
+   Biomimetic + CT-Scan + Multi-Planar
+   ======================================================== */
+.bodymap-perspective {
+  perspective: 1200px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.backface-hidden {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Demographic Shape-Shifter (SVG path morphing) */
+.da-vinci-morph {
+  transition: d 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Depth of Field — focus/blur layers */
+.dof-blur {
+  filter: blur(3px);
+  opacity: 0.3;
+  transition: filter 0.8s ease, opacity 0.8s ease;
+  pointer-events: none;
+}
+
+.dof-focus {
+  filter: blur(0px);
+  opacity: 1;
+  transition: filter 0.8s ease, opacity 0.8s ease;
+  pointer-events: auto;
+}
+
+/* CT-Scan Dissolve (on flip transition) */
+.ct-scan-active .skin-layer {
+  opacity: 0 !important;
+  filter: blur(8px);
+}
+
+.ct-scan-active .png-layer {
+  opacity: 0 !important;
+  filter: blur(12px);
+}
+
+.ct-scan-active .organ-layer {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 20px currentColor) brightness(1.5);
+}
+
+/* Biomimetic Breathing — driven by --breathe-dur CSS variable from patient RR */
+@keyframes breathe-biome {
+  0%, 100% { transform: translateZ(var(--layer-z, 60px)) translateY(0); }
+  50% { transform: translateZ(var(--layer-z, 60px)) translateY(-3.5px) scale(1.015); }
+}
+
+.animate-breathe-biome {
+  animation: breathe-biome var(--breathe-dur, 3.75s) ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Biomimetic Heartbeat — driven by --beat-dur CSS variable from patient HR */
+@keyframes heartbeat-biome {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px currentColor); opacity: 0.4; }
+  15% { transform: scale(1.15); filter: drop-shadow(0 0 15px currentColor); opacity: 0.95; }
+  30% { transform: scale(1); filter: drop-shadow(0 0 2px currentColor); opacity: 0.4; }
+  45% { transform: scale(1.15); filter: drop-shadow(0 0 15px currentColor); opacity: 0.95; }
+}
+
+.animate-heartbeat-biome {
+  animation: heartbeat-biome var(--beat-dur, 0.8s) cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  transform-origin: center;
+}
+
+/* Volumetric Scan Beam */
+@keyframes bodymap-scan-sweep-3d {
+  0% { transform: translateY(-50px); opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { transform: translateY(480px); opacity: 0; }
+}
+
+/* Sonar Ripple */
+@keyframes bodymap-sonar-ripple {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; border-width: 4px; }
+  100% { transform: translate(-50%, -50%) scale(4); opacity: 0; border-width: 0px; }
+}
+
+/* Cyberpunk Decrypt Text */
+@keyframes decrypt-text {
+  0% { filter: blur(4px); opacity: 0; letter-spacing: -2px; }
+  50% { filter: blur(2px); opacity: 0.5; letter-spacing: 2px; }
+  100% { filter: blur(0px); opacity: 1; letter-spacing: 0; }
+}
+
+.animate-decrypt {
+  animation: decrypt-text 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Ambient Astrolabe Rings */
+@keyframes bodymap-ring-spin {
+  100% { transform: rotateX(75deg) rotateZ(360deg); }
+}
+
+/* ── PhysicalExamTab: Aegis Scanner Bay ── */
+@keyframes pe-scanline {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(300%); opacity: 0; }
+}
+@keyframes pe-slide-in {
+  0% { opacity: 0; transform: translateX(30px) scale(0.95); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes pe-flash-new {
+  0% { box-shadow: inset 10px 0 30px rgba(16,185,129,0.4); }
+  100% { box-shadow: inset 0 0 0 rgba(16,185,129,0); }
+}
+@keyframes pe-flash-abnormal {
+  0% { box-shadow: inset 10px 0 30px rgba(244,63,94,0.4); }
+  100% { box-shadow: inset 0 0 0 rgba(244,63,94,0); }
+}
+@keyframes pe-radar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes pe-ai-pulse {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(99,102,241,0.4)); }
+  50% { filter: drop-shadow(0 0 15px rgba(99,102,241,0.8)); }
+}
+
+/* HUD Sniper Reticles */
+.pe-hud-corner {
+  position: absolute; width: 24px; height: 24px;
+  border: 2px solid; opacity: 0.5; pointer-events: none; z-index: 10;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.pe-hud-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; border-top-left-radius: 8px; }
+.pe-hud-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; border-top-right-radius: 8px; }
+.pe-hud-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; border-bottom-left-radius: 8px; }
+.pe-hud-br { bottom: -2px; right: -2px; border-left: none; border-top: none; border-bottom-right-radius: 8px; }
+.pe-scanner-bay:hover .pe-hud-corner { width: 32px; height: 32px; opacity: 1; }
+
+/* Blueprint Grid */
+.pe-grid-dark {
+  background-size: 24px 24px;
+  background-image: linear-gradient(to right, rgba(16,185,129,0.04) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(16,185,129,0.04) 1px, transparent 1px);
+}
+.pe-grid-light {
+  background-size: 24px 24px;
+  background-image: linear-gradient(to right, rgba(15,23,42,0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(15,23,42,0.03) 1px, transparent 1px);
+}
+
+/* Finding card entry animation */
+.pe-log-card {
+  animation: pe-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             pe-flash-new 1s ease-out forwards;
+}
+.pe-log-card-abnormal {
+  animation: pe-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             pe-flash-abnormal 1s ease-out forwards;
+}
+
+/* Thin Scrollbar for Forensic Logs */
+.pe-thin-scrollbar::-webkit-scrollbar { width: 5px; }
+.pe-thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.pe-thin-scrollbar::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 10px; }
+.pe-thin-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(16,185,129,0.6); }
+
 /* ── Accessibility: prefers-reduced-motion ── */
 @media (prefers-reduced-motion: reduce) {
 

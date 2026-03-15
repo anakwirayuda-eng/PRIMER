@@ -20,6 +20,12 @@
  * 5. MAIA (Medical Artificial Intelligence Assistant) — Context-aware alerts
  */
 
+import {
+    getCanonicalPhysicalExamKeys,
+    getPhysicalExamDisplayName,
+} from '../utils/physicalExam.js';
+import { getCanonicalLabKeys, getLabDisplayName } from '../utils/labs.js';
+
 // ============================================================================
 // FRAMEWORKS
 // ============================================================================
@@ -140,7 +146,9 @@ export function calculateCoverageScore(askedQuestions, examsPerformed = [], labs
     }
 
     // 2. PHYSICAL EXAM COMPONENT
-    const performedExams = Array.isArray(examsPerformed) ? examsPerformed : Object.keys(examsPerformed || {});
+    const performedExams = getCanonicalPhysicalExamKeys(
+        Array.isArray(examsPerformed) ? examsPerformed : Object.keys(examsPerformed || {})
+    );
     const physicalScore = performedExams.length > 0 ? Math.min(100, performedExams.length * 20) : 0;
 
     // 3. LABS COMPONENT
@@ -376,44 +384,6 @@ export function initDiagnosticTracker(caseData) {
 // EXAM / LAB SUGGESTIONS (MAIA Tips)
 // ============================================================================
 
-const EXAM_DISPLAY_NAMES = {
-    general: 'Keadaan Umum',
-    vitals: 'Tanda Vital',
-    heent: 'Kepala, Mata, THT',
-    head: 'Kepala',
-    neck: 'Leher',
-    thorax: 'Dada/Paru & Jantung',
-    chest: 'Dada/Paru & Jantung',
-    abdomen: 'Abdomen',
-    extremities: 'Ekstremitas',
-    extremity: 'Ekstremitas',
-    neuro: 'Neurologis',
-    skin: 'Kulit/Dermatologi',
-    musculoskeletal: 'Muskuloskeletal',
-    genitalia: 'Genitalia',
-    genital: 'Genitalia',
-    rectal: 'Rectal',
-    breast: 'Payudara',
-    obstetric: 'Obstetri',
-    lymph: 'Kelenjar Getah Bening',
-    lymph_nodes: 'Kelenjar Getah Bening',
-    eyes: 'Mata',
-    ears: 'Telinga',
-    nose: 'Hidung',
-    throat: 'Tenggorokan',
-    cardiovascular: 'Kardiovaskular',
-    cardio: 'Kardiovaskular',
-    respiratory: 'Respirasi',
-    spine: 'Tulang Belakang',
-    joints: 'Sendi',
-    oral: 'Rongga Mulut',
-    dental: 'Gigi',
-    mental_status: 'Status Mental',
-    psych: 'Psikiatri/Mental',
-    anthropometry: 'Antropometri',
-    heart: 'Jantung'
-};
-
 /**
  * Generate context-aware exam and lab suggestions for MAIA.
  * Compares case-required exams/labs against what player has performed.
@@ -433,12 +403,12 @@ export function getExamLabSuggestions(caseData, performedExams = [], orderedLabs
     if (anamnesisProgress < 30) return { examSuggestions, labSuggestions };
 
     // 1. Physical Exam Suggestions
-    const requiredExams = Object.keys(caseData.physicalExamFindings || {});
-    const performedSet = new Set(performedExams);
+    const requiredExams = getCanonicalPhysicalExamKeys(Object.keys(caseData.physicalExamFindings || {}));
+    const performedSet = new Set(getCanonicalPhysicalExamKeys(performedExams));
 
     requiredExams.forEach(examId => {
         if (!performedSet.has(examId)) {
-            const displayName = EXAM_DISPLAY_NAMES[examId] || examId.replace(/_/g, ' ');
+            const displayName = getPhysicalExamDisplayName(examId);
             examSuggestions.push({
                 id: examId,
                 label: displayName,
@@ -453,15 +423,16 @@ export function getExamLabSuggestions(caseData, performedExams = [], orderedLabs
     examSuggestions.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
     // 2. Lab Suggestions
-    const requiredLabs = caseData.relevantLabs || [];
-    const orderedSet = new Set(orderedLabs);
+    const requiredLabs = getCanonicalLabKeys(caseData.relevantLabs || []);
+    const orderedSet = new Set(getCanonicalLabKeys(orderedLabs));
 
     requiredLabs.forEach(labId => {
         if (!orderedSet.has(labId)) {
+            const label = getLabDisplayName(labId);
             labSuggestions.push({
                 id: labId,
-                label: labId.replace(/_/g, ' '),
-                message: `Lab yang perlu dipertimbangkan: ${labId.replace(/_/g, ' ')}`,
+                label,
+                message: `Lab yang perlu dipertimbangkan: ${label}`,
                 priority: 'medium'
             });
         }

@@ -84,7 +84,7 @@ export const URINARY_CASES = [
         anamnesis: ["Kulup anak ketarik ke belakang, bengkak nggak bisa balik!", "Kemaluan anak bengkak dok, kulupnya nyangkut."],
         physicalExamFindings: { general: "Anak menangis kesakitan.", vitals: "TD -, N 110x, RR 24x, S 36.7°C", genitalia: "Prepuce terjepit di corona glandis. Glans edema (+), eritema (+), nyeri tekan (+). Tanda iskemia (-)." },
         labs: {}, vitals: { temp: 36.7, bp: '-', hr: 110, rr: 24 },
-        correctTreatment: [],
+        correctTreatment: ['cold_compress'],
         correctProcedures: ['manual_reduction_paraphimosis'],
         requiredEducation: ['always_retract_foreskin_back', 'circumcision_counseling'],
         risk: 'high', nonReferrable: true, referralExceptions: ['failed_reduction', 'necrosis'],

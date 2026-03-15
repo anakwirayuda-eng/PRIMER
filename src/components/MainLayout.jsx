@@ -9,7 +9,7 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React, { useState, useMemo, Suspense } from 'react';
+import React, { useState, useMemo, Suspense, useEffect, useCallback } from 'react';
 import TimeController from './TimeController.jsx';
 import PauseOverlay from './PauseOverlay.jsx';
 import { useGame } from '../context/GameContext.jsx';
@@ -17,8 +17,10 @@ import ErrorBoundary from './ErrorBoundary.jsx';
 import GameOverModal from './GameOverModal.jsx';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext.jsx';
-import { formatTime } from '../utils/formatTime.js';
-import { LayoutDashboard, Dna, Stethoscope, Users, Package, Settings, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Archive, GraduationCap, Map, Building2, Home, Smartphone as PhoneIcon, Play, Pause, FastForward, Activity, X, CheckCircle, Sparkles, AlertTriangle, Loader2, Brain, Landmark } from 'lucide-react';
+import useModalA11y from '../hooks/useModalA11y.js';
+import { safeReloadPage } from '../utils/browserSafety.js';
+import { PAGE_SHORTCUTS, TOGGLE_SHORTCUTS, SYSTEM_SHORTCUTS, resolveGlobalGameShortcut, shouldExecuteGlobalGameShortcut } from '../utils/gameShortcuts.js';
+import { LayoutDashboard, Dna, Stethoscope, Users, Package, Settings, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Archive, GraduationCap, Map, Building2, Home, Smartphone as PhoneIcon, Play, Pause, FastForward, Activity, X, CheckCircle, Sparkles, AlertTriangle, Loader2, Brain, Landmark, Keyboard } from 'lucide-react';
 // import Smartphone from './Smartphone.jsx'; // Lazy loaded below
 // Code-split heavy route components (only loaded when navigated to)
 const Smartphone = React.lazy(() => import('./Smartphone'));
@@ -51,7 +53,6 @@ import ReferralHUD from './ReferralHUD.jsx';
 import OutbreakBanner from './OutbreakBanner.jsx';
 // WIKI_DATA removed — EducationalWikiModal loads data internally via getWikiEntry
 import { APP_METADATA } from '../data/AppMetadata.js';
-import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
 
 // Reusable loading fallback for lazy-loaded components
 const PageLoader = () => (
@@ -63,9 +64,87 @@ const PageLoader = () => (
     </div>
 );
 
+const PAGE_SHORTCUT_HINTS = Object.fromEntries(PAGE_SHORTCUTS.map(({ id, hint }) => [id, hint]));
+const TOGGLE_SHORTCUT_HINTS = Object.fromEntries(TOGGLE_SHORTCUTS.map(({ id, hint }) => [id, hint]));
+
+function ShortcutHelpModal({ onClose }) {
+    const modalRef = useModalA11y(onClose);
+
+    return (
+        <div className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+            <div
+                ref={modalRef}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Daftar shortcut keyboard"
+                className="w-full max-w-3xl rounded-3xl border border-white/10 bg-slate-950/95 shadow-2xl overflow-hidden"
+            >
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                    <div>
+                        <div className="text-[11px] uppercase tracking-[0.3em] text-emerald-400 font-black">Input Layer</div>
+                        <h2 className="text-xl font-black text-white mt-1">Shortcut Keyboard</h2>
+                        <p className="text-sm text-slate-400 mt-1">Shortcut global aktif saat fokus tidak sedang berada di input atau textarea.</p>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 transition-all"
+                        aria-label="Tutup bantuan shortcut"
+                    >
+                        <X size={18} />
+                    </button>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-4 p-6">
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div className="text-xs font-black uppercase tracking-[0.25em] text-emerald-300 mb-3">Navigasi</div>
+                        <div className="space-y-2">
+                            {PAGE_SHORTCUTS.map(shortcut => (
+                                <div key={shortcut.id} className="flex items-center justify-between gap-3 text-sm">
+                                    <span className="text-slate-200">{shortcut.label}</span>
+                                    <kbd className="px-2 py-1 rounded-lg bg-slate-900 border border-white/10 text-emerald-300 font-mono text-xs">
+                                        {shortcut.hint}
+                                    </kbd>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div className="text-xs font-black uppercase tracking-[0.25em] text-cyan-300 mb-3">Panel Cepat</div>
+                        <div className="space-y-2">
+                            {TOGGLE_SHORTCUTS.map(shortcut => (
+                                <div key={shortcut.id} className="flex items-center justify-between gap-3 text-sm">
+                                    <span className="text-slate-200">{shortcut.label}</span>
+                                    <kbd className="px-2 py-1 rounded-lg bg-slate-900 border border-white/10 text-cyan-300 font-mono text-xs">
+                                        {shortcut.hint}
+                                    </kbd>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div className="text-xs font-black uppercase tracking-[0.25em] text-amber-300 mb-3">Sistem</div>
+                        <div className="space-y-2">
+                            {SYSTEM_SHORTCUTS.map(shortcut => (
+                                <div key={shortcut.hint} className="flex items-center justify-between gap-3 text-sm">
+                                    <span className="text-slate-200">{shortcut.label}</span>
+                                    <kbd className="px-2 py-1 rounded-lg bg-slate-900 border border-white/10 text-amber-300 font-mono text-xs">
+                                        {shortcut.hint}
+                                    </kbd>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function MainLayout() {
-    const { playerProfile, day, time, logout: _logout, settings, setGameState, gameState, gameSpeed, setGameSpeed, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki } = useGame();
-    const { isDark, theme, toggleTheme: _toggleTheme } = useTheme();
+    const { playerProfile, day, time, logout: _logout, setGameState, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki } = useGame();
+    const { theme, toggleTheme: _toggleTheme } = useTheme();
     const { t: _t, i18n: _i18n } = useTranslation();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
     const [showPhone, setShowPhone] = useState(false);
@@ -77,6 +156,7 @@ export default function MainLayout() {
     const [showAbout, setShowAbout] = useState(false);
     const [showAvatarEdit, setShowAvatarEdit] = useState(false);
     const [focusedStory, setFocusedStory] = useState(null);
+    const [showShortcutHelp, setShowShortcutHelp] = useState(false);
 
     // Find interactive stories
     const interactiveStory = useMemo(() => {
@@ -84,21 +164,138 @@ export default function MainLayout() {
         return activeStories.find(s => !s.completed);
     }, [activeStories]);
 
+    const isCalendarOpen = showCalendar || Boolean(selectedDailyReport);
+    const isNarrativeOpen = Boolean(focusedStory || interactiveStory);
+    const hasBlockingOverlay = Boolean(
+        showPhone ||
+        showQuests ||
+        showSettings ||
+        showStatus ||
+        isCalendarOpen ||
+        showAbout ||
+        showAvatarEdit ||
+        showKPIGlobal ||
+        activeReferral ||
+        outbreakNotification ||
+        isWikiOpen ||
+        isNarrativeOpen ||
+        gameOver ||
+        showShortcutHelp
+    );
+
+    const handleNavigateTarget = useCallback((targetId) => {
+        if (targetId === 'rumah_dinas') {
+            setGameState('rumah_dinas');
+            return;
+        }
+
+        if (targetId === 'wiki') {
+            openWiki('cppt');
+            return;
+        }
+
+        setActivePage(targetId);
+    }, [openWiki, setActivePage, setGameState]);
+
+    const toggleShortcutPanel = useCallback((targetId) => {
+        switch (targetId) {
+            case 'phone':
+                setShowPhone(prev => !prev);
+                break;
+            case 'quests':
+                setShowQuests(prev => !prev);
+                break;
+            case 'status':
+                setShowStatus(prev => !prev);
+                break;
+            case 'kpi':
+                setShowKPIGlobal(prev => !prev);
+                break;
+            case 'settings':
+                setShowSettings(prev => !prev);
+                break;
+            case 'calendar':
+                if (isCalendarOpen) {
+                    setSelectedDailyReport(null);
+                    setShowCalendar(false);
+                } else {
+                    setSelectedDailyReport(null);
+                    setShowCalendar(true);
+                }
+                break;
+            case 'shortcut_help':
+                setShowShortcutHelp(prev => !prev);
+                break;
+            default:
+                break;
+        }
+    }, [isCalendarOpen, setShowKPIGlobal]);
+
+    useEffect(() => {
+        const isShortcutOpen = (shortcutId) => {
+            switch (shortcutId) {
+                case 'phone':
+                    return showPhone;
+                case 'quests':
+                    return showQuests;
+                case 'status':
+                    return showStatus;
+                case 'kpi':
+                    return showKPIGlobal;
+                case 'settings':
+                    return showSettings;
+                case 'calendar':
+                    return isCalendarOpen;
+                case 'shortcut_help':
+                    return showShortcutHelp;
+                default:
+                    return false;
+            }
+        };
+
+        const handleGlobalShortcut = (event) => {
+            const shortcut = resolveGlobalGameShortcut(event);
+            if (!shortcut) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (!shouldExecuteGlobalGameShortcut(shortcut, { hasBlockingOverlay, isShortcutOpen })) {
+                return;
+            }
+
+            if (shortcut.type === 'page') {
+                handleNavigateTarget(shortcut.id);
+                return;
+            }
+
+            if (shortcut.id === 'rumah_dinas') {
+                handleNavigateTarget(shortcut.id);
+                return;
+            }
+
+            toggleShortcutPanel(shortcut.id);
+        };
+
+        window.addEventListener('keydown', handleGlobalShortcut);
+        return () => window.removeEventListener('keydown', handleGlobalShortcut);
+    }, [hasBlockingOverlay, handleNavigateTarget, isCalendarOpen, showKPIGlobal, showPhone, showQuests, showSettings, showShortcutHelp, showStatus, toggleShortcutPanel]);
+
 
     // Check for claimable quests
     const hasClaimableQuests = activeQuests?.some(q => q.progress >= q.target && !q.claimed);
 
     const menuItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'clinical', label: 'Layanan', icon: Stethoscope },
-        { id: 'wilayah', label: 'Wilayah (Map)', icon: Map },
-        { id: 'facility', label: 'Gedung', icon: Building2 },
-        { id: 'staff', label: 'SDM (Squad)', icon: Users },
-        { id: 'inventory', label: 'Sarana (Logistik)', icon: Package },
-        { id: 'academy', label: 'Diklat', icon: GraduationCap },
-        { id: 'wiki', label: 'MAIA Codex', icon: Brain },
-        { id: 'archive', label: 'Arsip', icon: Archive },
-        { id: 'sensus', label: 'Kantor Desa', icon: Landmark },
+        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, shortcutHint: PAGE_SHORTCUT_HINTS.dashboard },
+        { id: 'clinical', label: 'Layanan', icon: Stethoscope, shortcutHint: PAGE_SHORTCUT_HINTS.clinical },
+        { id: 'wilayah', label: 'Wilayah (Map)', icon: Map, shortcutHint: PAGE_SHORTCUT_HINTS.wilayah },
+        { id: 'facility', label: 'Gedung', icon: Building2, shortcutHint: PAGE_SHORTCUT_HINTS.facility },
+        { id: 'staff', label: 'SDM (Squad)', icon: Users, shortcutHint: PAGE_SHORTCUT_HINTS.staff },
+        { id: 'inventory', label: 'Sarana (Logistik)', icon: Package, shortcutHint: PAGE_SHORTCUT_HINTS.inventory },
+        { id: 'academy', label: 'Diklat', icon: GraduationCap, shortcutHint: PAGE_SHORTCUT_HINTS.academy },
+        { id: 'wiki', label: 'MAIA Codex', icon: Brain, shortcutHint: PAGE_SHORTCUT_HINTS.wiki },
+        { id: 'archive', label: 'Arsip', icon: Archive, shortcutHint: PAGE_SHORTCUT_HINTS.archive },
+        { id: 'sensus', label: 'Kantor Desa', icon: Landmark, shortcutHint: PAGE_SHORTCUT_HINTS.sensus },
     ];
 
 
@@ -228,7 +425,7 @@ export default function MainLayout() {
                 <div className={`${sidebarCollapsed ? 'p-1' : 'p-4'} border-b border-white/10 relative group transition-all`}>
                     <div
                         className={`flex items-center gap-3 ${sidebarCollapsed ? 'justify-center' : ''} cursor-pointer hover:brightness-110 transition-all`}
-                        title="Click to view Status/Junction"
+                        title={`Status / Junction (${TOGGLE_SHORTCUT_HINTS.status})`}
                         onClick={() => setShowStatus(true)}
                     >
                         {/* Avatar Circle with XP Ring */}
@@ -292,15 +489,8 @@ export default function MainLayout() {
                         {menuItems.map(item => (
                             <li key={item.id} className="relative group">
                                 <button
-                                    onClick={() => {
-                                        if (item.id === 'rumah_dinas') {
-                                            setGameState('rumah_dinas');
-                                        } else if (item.id === 'wiki') {
-                                            openWiki('cppt'); // Default topic for Codex entry
-                                        } else {
-                                            setActivePage(item.id);
-                                        }
-                                    }}
+                                    onClick={() => handleNavigateTarget(item.id)}
+                                    title={`${item.label} (${item.shortcutHint})`}
                                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${sidebarCollapsed ? 'justify-center' : ''} ${activePage === item.id
                                         ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-900/20 font-medium'
                                         : item.special
@@ -327,8 +517,9 @@ export default function MainLayout() {
                 <div className={`mt-auto ${sidebarCollapsed ? 'p-1' : 'p-2'} space-y-1.5 border-t border-white/10 transition-all`}>
                     <div className="relative group">
                         <button
-                            onClick={() => setGameState('rumah_dinas')}
+                            onClick={() => handleNavigateTarget('rumah_dinas')}
                             aria-label="Rumah Dinas"
+                            title={`Rumah Dinas (${TOGGLE_SHORTCUT_HINTS.rumah_dinas})`}
                             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-yellow-300 hover:bg-yellow-500/20 hover:text-yellow-200 border border-yellow-500/20 ${sidebarCollapsed ? 'justify-center' : ''}`}
                         >
                             <Home size={20} />
@@ -346,6 +537,7 @@ export default function MainLayout() {
                         <button
                             onClick={() => setShowSettings(true)}
                             aria-label="Buka Pengaturan"
+                            title={`Pengaturan (${TOGGLE_SHORTCUT_HINTS.settings})`}
                             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 ${sidebarCollapsed ? 'justify-center' : ''}`}
                         >
                             <Settings size={18} />
@@ -439,7 +631,7 @@ export default function MainLayout() {
                             <button
                                 onClick={() => setGameState('rumah_dinas')}
                                 className="flex items-center gap-1 bg-blue-600 text-white px-2.5 py-1 rounded-lg hover:bg-blue-500 transition-all text-[10px] font-bold mr-1"
-                                title="Pulang ke Rumah"
+                                title={`Pulang ke Rumah (${TOGGLE_SHORTCUT_HINTS.rumah_dinas})`}
                             >
                                 <Home size={12} />
                                 Pulang
@@ -451,7 +643,7 @@ export default function MainLayout() {
                             <button
                                 onClick={() => setShowQuests(!showQuests)}
                                 className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all relative ${showQuests ? 'bg-amber-500/20 text-amber-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
-                                title="Misi"
+                                title={`Misi (${TOGGLE_SHORTCUT_HINTS.quests})`}
                             >
                                 <span className="text-sm">📜</span>
                                 {hasClaimableQuests && (
@@ -463,9 +655,16 @@ export default function MainLayout() {
                             </button>
                             {showQuests && (
                                 <div className="absolute top-10 right-0 z-50 shadow-2xl rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                                    <div className="max-h-[80vh] overflow-hidden flex">
-                                        <QuestBoard />
-                                    </div>
+                                    <ErrorBoundary
+                                        name="QuestBoard"
+                                        resetKeys={[showQuests]}
+                                        fallbackAction={() => setShowQuests(false)}
+                                        fallbackActionLabel="Tutup Misi"
+                                    >
+                                        <div className="max-h-[80vh] overflow-hidden flex">
+                                            <QuestBoard />
+                                        </div>
+                                    </ErrorBoundary>
                                 </div>
                             )}
                         </div>
@@ -474,7 +673,7 @@ export default function MainLayout() {
                         <button
                             onClick={() => setShowKPIGlobal(true)}
                             className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all relative ${showKPIGlobal ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
-                            title="Review Kinerja (KPI)"
+                            title={`Review Kinerja (KPI) (${TOGGLE_SHORTCUT_HINTS.kpi})`}
                         >
                             <Activity size={14} />
                             {derivedKpis?.overallScore < 70 && (
@@ -482,11 +681,20 @@ export default function MainLayout() {
                             )}
                         </button>
 
+                        <button
+                            onClick={() => setShowShortcutHelp(true)}
+                            className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${showShortcutHelp ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}
+                            title="Shortcut Keyboard (?)"
+                            aria-label="Buka bantuan shortcut keyboard"
+                        >
+                            <Keyboard size={14} />
+                        </button>
+
                         {/* Settings */}
                         <button
                             onClick={() => setShowSettings(true)}
                             className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:bg-white/5 hover:text-white transition-all"
-                            title="Pengaturan"
+                            title={`Pengaturan (${TOGGLE_SHORTCUT_HINTS.settings})`}
                         >
                             <Settings size={14} />
                         </button>
@@ -498,47 +706,92 @@ export default function MainLayout() {
                     {/* Render Page based on state */}
                     <Suspense fallback={<PageLoader />}>
                         {activePage === 'dashboard' && (
-                            <ErrorBoundary name="DashboardPage">
+                            <ErrorBoundary
+                                name="DashboardPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={safeReloadPage}
+                                fallbackActionLabel="Muat Ulang App"
+                            >
                                 <DashboardPage />
                             </ErrorBoundary>
                         )}
                         {activePage === 'clinical' && (
-                            <ErrorBoundary name="ClinicalPage">
+                            <ErrorBoundary
+                                name="ClinicalPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
                                 <ClinicalPage />
                             </ErrorBoundary>
                         )}
                         {activePage === 'wilayah' && (
-                            <ErrorBoundary name="WilayahPage">
+                            <ErrorBoundary
+                                name="WilayahPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
                                 <WilayahPage />
                             </ErrorBoundary>
                         )}
                         {activePage === 'facility' && (
-                            <ErrorBoundary name="GedungPage">
+                            <ErrorBoundary
+                                name="GedungPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
                                 <GedungPage />
                             </ErrorBoundary>
                         )}
                         {activePage === 'staff' && (
-                            <ErrorBoundary name="StaffPage">
+                            <ErrorBoundary
+                                name="StaffPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
                                 <StaffPage />
                             </ErrorBoundary>
                         )}
                         {activePage === 'inventory' && (
-                            <ErrorBoundary name="InventoryPage">
+                            <ErrorBoundary
+                                name="InventoryPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
                                 <InventoryPage />
                             </ErrorBoundary>
                         )}
                         {activePage === 'academy' && (
-                            <ErrorBoundary name="DiklatPage">
+                            <ErrorBoundary
+                                name="DiklatPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
                                 <DiklatPage />
                             </ErrorBoundary>
                         )}
                         {activePage === 'archive' && (
-                            <ErrorBoundary name="ArsipPage">
+                            <ErrorBoundary
+                                name="ArsipPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
                                 <ArsipPage />
                             </ErrorBoundary>
                         )}
                         {activePage === 'sensus' && (
-                            <ErrorBoundary name="SensusPage">
+                            <ErrorBoundary
+                                name="SensusPage"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
                                 <SensusPage />
                             </ErrorBoundary>
                         )}
@@ -547,59 +800,104 @@ export default function MainLayout() {
             </main>
 
             {/* Smartphone Overlay */}
-            {showPhone && <Smartphone onClose={() => setShowPhone(false)} />}
+            {showPhone && (
+                <ErrorBoundary
+                    name="Smartphone"
+                    resetKeys={[showPhone]}
+                    fallbackAction={() => setShowPhone(false)}
+                    fallbackActionLabel="Tutup Smartphone"
+                >
+                    <Smartphone onClose={() => setShowPhone(false)} />
+                </ErrorBoundary>
+            )}
             <button
                 onClick={() => setShowPhone(!showPhone)}
                 className="fixed bottom-6 right-6 bg-slate-800 text-white p-4 rounded-full shadow-2xl hover:bg-slate-700 hover:scale-110 transition-all z-50 border-4 border-slate-600"
                 aria-label={showPhone ? 'Tutup Smartphone' : 'Buka Smartphone'}
+                title={`Smartphone (${TOGGLE_SHORTCUT_HINTS.phone})`}
             >
                 <PhoneIcon size={24} />
             </button>
+
+            {showShortcutHelp && <ShortcutHelpModal onClose={() => setShowShortcutHelp(false)} />}
 
             {/* Lazy-loaded Modals (wrapped in Suspense) */}
             <Suspense fallback={<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" role="status" aria-label="Memuat modal"><div className="w-8 h-8 border-2 border-white/20 border-t-emerald-400 rounded-full animate-spin" /></div>}>
                 {/* Settings Modal */}
                 {showSettings && (
-                    <ErrorBoundary name="SettingsModal">
+                    <ErrorBoundary
+                        name="SettingsModal"
+                        resetKeys={[showSettings]}
+                        fallbackAction={() => setShowSettings(false)}
+                        fallbackActionLabel="Tutup Modal"
+                    >
                         <SettingsModal onClose={() => setShowSettings(false)} />
                     </ErrorBoundary>
                 )}
 
                 {/* Avatar Selection Modal */}
-                {showAvatarEdit && <AvatarSelectionModal onClose={() => setShowAvatarEdit(false)} />}
+                {showAvatarEdit && (
+                    <ErrorBoundary
+                        name="AvatarSelectionModal"
+                        resetKeys={[showAvatarEdit]}
+                        fallbackAction={() => setShowAvatarEdit(false)}
+                        fallbackActionLabel="Tutup Modal"
+                    >
+                        <AvatarSelectionModal onClose={() => setShowAvatarEdit(false)} />
+                    </ErrorBoundary>
+                )}
 
                 {/* FF8 Status Modal */}
                 {showStatus && (
-                    <ErrorBoundary name="StatusJunctionModal">
+                    <ErrorBoundary
+                        name="StatusJunctionModal"
+                        resetKeys={[showStatus]}
+                        fallbackAction={() => setShowStatus(false)}
+                        fallbackActionLabel="Tutup Modal"
+                    >
                         <StatusJunctionModal onClose={() => setShowStatus(false)} onOpenWiki={openWiki} />
                     </ErrorBoundary>
                 )}
 
                 {/* Calendar Modal */}
                 {showCalendar && (
-                    <CalendarModal
-                        currentDay={day}
-                        dailyArchive={dailyArchive}
-                        onSelectDay={(dayData) => {
-                            setSelectedDailyReport(dayData);
-                            setShowCalendar(false);
-                        }}
-                        onClose={() => setShowCalendar(false)}
-                    />
+                    <ErrorBoundary
+                        name="CalendarModal"
+                        resetKeys={[showCalendar]}
+                        fallbackAction={() => setShowCalendar(false)}
+                        fallbackActionLabel="Tutup Modal"
+                    >
+                        <CalendarModal
+                            currentDay={day}
+                            dailyArchive={dailyArchive}
+                            onSelectDay={(dayData) => {
+                                setSelectedDailyReport(dayData);
+                                setShowCalendar(false);
+                            }}
+                            onClose={() => setShowCalendar(false)}
+                        />
+                    </ErrorBoundary>
                 )}
 
                 {/* Daily Report Modal */}
                 {selectedDailyReport && (
-                    <DailyReportModal
-                        dayData={selectedDailyReport}
-                        dailyArchive={dailyArchive}
-                        onNavigate={(newData) => setSelectedDailyReport(newData)}
-                        onBackToCalendar={() => {
-                            setSelectedDailyReport(null);
-                            setShowCalendar(true);
-                        }}
-                        onClose={() => setSelectedDailyReport(null)}
-                    />
+                    <ErrorBoundary
+                        name="DailyReportModal"
+                        resetKeys={[selectedDailyReport?.day || null]}
+                        fallbackAction={() => setSelectedDailyReport(null)}
+                        fallbackActionLabel="Tutup Laporan"
+                    >
+                        <DailyReportModal
+                            dayData={selectedDailyReport}
+                            dailyArchive={dailyArchive}
+                            onNavigate={(newData) => setSelectedDailyReport(newData)}
+                            onBackToCalendar={() => {
+                                setSelectedDailyReport(null);
+                                setShowCalendar(true);
+                            }}
+                            onClose={() => setSelectedDailyReport(null)}
+                        />
+                    </ErrorBoundary>
                 )}
 
                 {/* Global KPI Dashboard Modal */}
@@ -614,7 +912,12 @@ export default function MainLayout() {
                                 <X size={24} />
                             </button>
                             <div className="flex-1 overflow-hidden">
-                                <ErrorBoundary name="KPIDashboard">
+                                <ErrorBoundary
+                                    name="KPIDashboard"
+                                    resetKeys={[showKPIGlobal]}
+                                    fallbackAction={() => setShowKPIGlobal(false)}
+                                    fallbackActionLabel="Tutup Review"
+                                >
                                     <KPIDashboard />
                                 </ErrorBoundary>
                             </div>
@@ -630,32 +933,60 @@ export default function MainLayout() {
                     </div>
                 )}
                 {/* Educational Wiki Modal */}
-                <EducationalWikiModal
-                    isOpen={isWikiOpen}
-                    onClose={closeWiki}
-                    metricKey={wikiMetric}
-                    liveStats={wikiLiveStats}
-                />
+                <ErrorBoundary
+                    name="EducationalWikiModal"
+                    resetKeys={[isWikiOpen, wikiMetric]}
+                    fallbackAction={closeWiki}
+                    fallbackActionLabel="Tutup Wiki"
+                >
+                    <EducationalWikiModal
+                        isOpen={isWikiOpen}
+                        onClose={closeWiki}
+                        metricKey={wikiMetric}
+                        liveStats={wikiLiveStats}
+                    />
+                </ErrorBoundary>
                 {/* Narrative Overlay */}
                 {(focusedStory || interactiveStory) && (
-                    <NarrativeOverlay
-                        storyInstance={focusedStory || interactiveStory}
-                        onClose={() => setFocusedStory(null)}
-                    />
+                    <ErrorBoundary
+                        name="NarrativeOverlay"
+                        resetKeys={[focusedStory?.id || interactiveStory?.id || null]}
+                        fallbackAction={() => setFocusedStory(null)}
+                        fallbackActionLabel="Tutup Narasi"
+                    >
+                        <NarrativeOverlay
+                            storyInstance={focusedStory || interactiveStory}
+                            onClose={() => setFocusedStory(null)}
+                        />
+                    </ErrorBoundary>
                 )}
             </Suspense>
 
             {/* About PRIMER Modal */}
             {showAbout && (
-                <AboutModal onClose={() => setShowAbout(false)} />
+                <ErrorBoundary
+                    name="AboutModal"
+                    resetKeys={[showAbout]}
+                    fallbackAction={() => setShowAbout(false)}
+                    fallbackActionLabel="Tutup Modal"
+                >
+                    <AboutModal onClose={() => setShowAbout(false)} />
+                </ErrorBoundary>
             )}
 
             {/* Referral SISRUTE Modal */}
             {activeReferral && (
-                <ReferralSISRUTEModal
-                    activeReferral={activeReferral}
-                    onClose={() => setActiveReferral(null)}
-                />
+                <ErrorBoundary
+                    name="ReferralSISRUTEModal"
+                    resetKeys={[activeReferral?.patientId || activeReferral?.id || null]}
+                    fallbackAction={() => setActiveReferral(null)}
+                    fallbackActionLabel="Tutup Rujukan"
+                >
+                    <ReferralSISRUTEModal
+                        activeReferral={activeReferral}
+                        onClose={() => setActiveReferral(null)}
+                    />
+                </ErrorBoundary>
             )}
 
             {/* Referral HUD Tracker */}
@@ -669,10 +1000,17 @@ export default function MainLayout() {
             />
 
             {/* Outbreak Detail Modal (Global) */}
-            <OutbreakModal
-                isOpen={!!outbreakNotification}
-                onClose={() => dismissOutbreakNotification()}
-            />
+            <ErrorBoundary
+                name="OutbreakModal"
+                resetKeys={[outbreakNotification?.id || outbreakNotification?.title || null]}
+                fallbackAction={() => dismissOutbreakNotification()}
+                fallbackActionLabel="Tutup Notifikasi"
+            >
+                <OutbreakModal
+                    isOpen={!!outbreakNotification}
+                    onClose={() => dismissOutbreakNotification()}
+                />
+            </ErrorBoundary>
 
             {/* Pause Overlay (Frosted Glass) */}
             <PauseOverlay />

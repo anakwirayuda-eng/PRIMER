@@ -162,7 +162,7 @@ export default function TimeController() {
 
     const handleSetSpeed = (speed) => {
         if (isRuntimeTrap) return;
-        try { soundManager.playClick?.(); } catch (_) {}
+        try { soundManager.playClick?.(); } catch (_) { }
 
         if (speed === 0) {
             setGameState('paused');

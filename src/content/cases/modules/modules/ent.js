@@ -487,8 +487,8 @@ export const ENT_CASES = [
         anamnesis: ["Benjolan leher membesar, epistaksis berulang.", "Tuli kiri, hidung kiri tersumbat, suka ikan asin."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "Normal", heent: "KGB regio jugulodigastrik sinistra: massa 3x4cm, keras, fixed, tidak nyeri. Rinoskopi posterior: massa di fossa Rosenmuller sinistra. Otoskopi AS: retraksi MT, efusi." },
         labs: {}, vitals: { temp: 36.7, bp: '120/80', hr: 78, rr: 18 },
-        correctTreatment: [],
-        correctProcedures: [],
+        correctTreatment: ['tranexamic_acid_500'],
+        correctProcedures: ['hospital_referral'],
         requiredEducation: ['biopsy_needed', 'staging_ct_scan', 'early_detection_important'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_provinsi',
         differentialDiagnosis: ['C11.9', 'L04.0']

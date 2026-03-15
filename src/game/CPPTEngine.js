@@ -19,6 +19,11 @@
 
 import { synthesizeAnamnesis } from './AnamnesisEngine.js';
 import { randomIdFromSeed, seedKey } from '../utils/deterministicRandom.js';
+import { formatTime } from '../utils/formatTime.js';
+import {
+    getCanonicalPhysicalExamKeys,
+    normalizePhysicalExamFindings,
+} from '../utils/physicalExam.js';
 
 /**
  * Build a complete CPPT record from discharge data.
@@ -71,9 +76,11 @@ export function buildCPPTRecord(patient, decision, day, time, options = {}) {
     // Collect physical exam findings that were examined
     const physicalFindings = {};
     if (decision.examsPerformed && caseData.physicalExamFindings) {
-        decision.examsPerformed.forEach(examKey => {
-            if (caseData.physicalExamFindings[examKey]) {
-                physicalFindings[examKey] = caseData.physicalExamFindings[examKey];
+        const normalizedCaseFindings = normalizePhysicalExamFindings(caseData.physicalExamFindings);
+
+        getCanonicalPhysicalExamKeys(decision.examsPerformed).forEach(examKey => {
+            if (normalizedCaseFindings[examKey]) {
+                physicalFindings[examKey] = normalizedCaseFindings[examKey];
             }
         });
     }
@@ -83,7 +90,7 @@ export function buildCPPTRecord(patient, decision, day, time, options = {}) {
         timestamp: {
             day,
             time,
-            timeFormatted: `${Math.floor(time / 60).toString().padStart(2, '0')}:${(time % 60).toString().padStart(2, '0')}`,
+            timeFormatted: formatTime(time),
             createdAt: Date.now()
         },
 
@@ -156,7 +163,7 @@ export function buildMaiaCPPTRecord(patient, day, time, outcomeStatus, isEmergen
         timestamp: {
             day,
             time,
-            timeFormatted: `${Math.floor(time / 60).toString().padStart(2, '0')}:${(time % 60).toString().padStart(2, '0')}`,
+            timeFormatted: formatTime(time),
             createdAt: Date.now()
         },
         villagerId: patient.hidden?.villagerId || patient.social?.villagerId || null,

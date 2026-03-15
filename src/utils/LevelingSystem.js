@@ -29,9 +29,12 @@ export const getNextLevelXp = () => XP_PER_LEVEL;
  * @returns {object} { leveledUp: boolean, stats: object, reward: string }
  */
 export const checkLevelUp = (currentStats) => {
-    let { level, xp, knowledge, maxEnergy, energy } = currentStats;
+    let level = Math.max(1, Number(currentStats?.level) || 1);
+    let xp = Math.max(0, Number(currentStats?.xp) || 0);
+    let knowledge = Math.max(0, Number(currentStats?.knowledge) || 0);
+    let maxEnergy = Math.max(1, Number(currentStats?.maxEnergy) || 100);
+    let energy = Math.max(0, Number(currentStats?.energy) || maxEnergy);
     let leveledUp = false;
-    let _rewardMsg = '';
 
     let requiredXp = getNextLevelXp(level);
 

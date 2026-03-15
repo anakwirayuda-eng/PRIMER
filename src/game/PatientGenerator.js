@@ -103,9 +103,9 @@ const SEASONAL_MULTIPLIERS = {
     }
 };
 
-const NAMES_MALE = ['Budi', 'Agus', 'Joko', 'Andi', 'Dedi', 'Eko', 'Bambang', 'Hendra', 'Iwan', 'Rizky'];
-const NAMES_FEMALE = ['Siti', 'Dewi', 'Sri', 'Rina', 'Ani', 'Wati', 'Yuni', 'Lina', 'Mega', 'Fitri'];
-const SURNAMES = ['Santoso', 'Widodo', 'Kusuma', 'Putri', 'Wibowo', 'Lestari', 'Hidayat', 'Setiawan', 'Pratama', 'Nugroho'];
+const NAMES_MALE = ['Budi', 'Agus', 'Joko', 'Andi', 'Dedi', 'Eko', 'Bambang', 'Hendra', 'Iwan', 'Rizky', 'Fajar', 'Gilang', 'Hari', 'Irfan', 'Kurnia', 'Lukman', 'Maulana', 'Nanda', 'Oscar', 'Putra', 'Rendi', 'Surya', 'Taufik', 'Umar', 'Wahyu'];
+const NAMES_FEMALE = ['Siti', 'Dewi', 'Sri', 'Rina', 'Ani', 'Wati', 'Yuni', 'Lina', 'Mega', 'Fitri', 'Ayu', 'Bella', 'Citra', 'Dian', 'Eka', 'Farah', 'Gita', 'Hana', 'Intan', 'Kartika', 'Laras', 'Maya', 'Nita', 'Oktavia', 'Putri'];
+const SURNAMES = ['Santoso', 'Widodo', 'Kusuma', 'Putri', 'Wibowo', 'Lestari', 'Hidayat', 'Setiawan', 'Pratama', 'Nugroho', 'Saputra', 'Ramadhan', 'Permana', 'Utomo', 'Hartono', 'Cahyono', 'Firmansyah', 'Pradana', 'Sulistyo', 'Gunawan'];
 
 /**
  * Get BMI category based on value and age

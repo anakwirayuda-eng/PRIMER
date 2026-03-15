@@ -30,9 +30,11 @@ export default function StatusJunctionModal({ onClose, onOpenWiki }) {
     const xpPercentage = (playerStats.xp / (playerStats.nextLevelXp || 1000)) * 100;
 
     // Skill list
-    const unlockedSkills = Object.entries(skills)
-        .filter(([_, unlocked]) => unlocked)
-        .map(([id]) => id.replace(/_/g, ' ').toUpperCase());
+    const unlockedSkills = Array.isArray(skills)
+        ? skills.map((id) => id.replace(/_/g, ' ').toUpperCase())
+        : Object.entries(skills || {})
+            .filter(([_, unlocked]) => unlocked)
+            .map(([id]) => id.replace(/_/g, ' ').toUpperCase());
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">

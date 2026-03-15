@@ -31,6 +31,12 @@ import { classifyResponse } from '../game/anamnesis/SynthesisEngine.js';
 import { evaluateConsequences } from '../game/ConsequenceEngine.js';
 import { showToast, confirmToast } from '../utils/ToastManager.js';
 import { pickDeterministic } from '../utils/deterministicRandom.js';
+import {
+    getCanonicalPhysicalExamKeys,
+    getPhysicalExamFinding,
+    normalizePhysicalExamFindings,
+    normalizePhysicalExamKey,
+} from '../utils/physicalExam.js';
 
 export function usePatientEMR() {
     // 1. Clinical Base Data & Actions
@@ -93,6 +99,7 @@ export function usePatientEMR() {
 
     const chatEndRef = useRef(null);
     const examResultsRef = useRef(null);
+    const performedExamKeys = useMemo(() => getCanonicalPhysicalExamKeys(Object.keys(examsPerformed)), [examsPerformed]);
 
     const lastPatientIdRef = useRef(null);
 
@@ -207,7 +214,7 @@ export function usePatientEMR() {
         );
         const examValidation = validateExams(
             { relevantLabs: patient.hidden?.relevantLabs || [], physicalExamFindings: caseData?.physicalExamFindings || {} },
-            Object.keys(examsPerformed),
+            performedExamKeys,
             Object.keys(labsRevealed)
         );
         const anamnesisValidation = validateAnamnesis(caseData, anamnesisHistory);
@@ -215,7 +222,7 @@ export function usePatientEMR() {
         // MAIA Exam/Lab Suggestions (new feature)
         const examLabHints = getExamLabSuggestions(
             caseData,
-            Object.keys(examsPerformed),
+            performedExamKeys,
             Object.keys(labsRevealed),
             anamnesisValidation?.score ?? 0
         );
@@ -228,7 +235,7 @@ export function usePatientEMR() {
             anamnesis: anamnesisValidation,
             examLabSuggestions: examLabHints
         };
-    }, [patient, selectedDiagnoses, selectedMeds, selectedProcedures, selectedEducation, examsPerformed, labsRevealed, anamnesisHistory]);
+    }, [patient, selectedDiagnoses, selectedMeds, selectedProcedures, selectedEducation, performedExamKeys, labsRevealed, anamnesisHistory]);
 
     // Auto-scroll anamnesis
     useEffect(() => {
@@ -407,12 +414,18 @@ export function usePatientEMR() {
     const handleExam = useCallback((examKey) => {
         if (isProcessing) return;
 
+        const normalizedExamKey = normalizePhysicalExamKey(examKey);
+        if (!normalizedExamKey) return;
+
         const delay = morningStatus === 'groggy' ? 2000 : 0;
         if (delay > 0) setIsProcessing(true);
 
         setTimeout(() => {
-            const finding = patient.medicalData?.physicalExamFindings?.[examKey] || "Dalam batas normal / Tidak ada kelainan.";
-            const updatedExams = { ...examsPerformed, [examKey]: finding };
+            const finding = getPhysicalExamFinding(patient.medicalData, normalizedExamKey) || "Dalam batas normal / Tidak ada kelainan.";
+            const updatedExams = {
+                ...normalizePhysicalExamFindings(examsPerformed),
+                [normalizedExamKey]: finding,
+            };
             setExamsPerformed(updatedExams);
             recalculateClinicalScores(anamnesisHistory, updatedExams, labsRevealed);
             setIsProcessing(false);
@@ -560,7 +573,7 @@ export function usePatientEMR() {
                     diagnoses: selectedDiagnoses.map(d => d.code),
                     medications: selectedMeds.map(m => m.id),
                     procedures: selectedProcedures.map(p => p.id || p.code),
-                    examsPerformed: Object.keys(examsPerformed),
+                    examsPerformed: performedExamKeys,
                     education: selectedEducation,
                     anamnesisScore: validateAnamnesis(caseData, anamnesisHistory).score,
                     anamnesisHistory,
@@ -577,7 +590,7 @@ export function usePatientEMR() {
             diagnoses: selectedDiagnoses.map(d => d.code),
             medications: selectedMeds.map(m => m.id),
             procedures: selectedProcedures.map(p => p.id || p.code),
-            examsPerformed: Object.keys(examsPerformed),
+            examsPerformed: performedExamKeys,
             education: selectedEducation,
             anamnesisScore: validateAnamnesis(caseData, anamnesisHistory).score,
             anamnesisHistory,
@@ -640,7 +653,7 @@ export function usePatientEMR() {
         }
 
         // State reset for the next patient is handled by the initial patient-change useEffect
-    }, [selectedDiagnoses, patient, selectedMeds, selectedProcedures, examsPerformed, selectedEducation, anamnesisHistory, labsRevealed, dischargePatient, logCaseOutcome, pushConsequence, gainXp, setPlayerStats, setActiveReferral, coverageScore, day]);
+    }, [selectedDiagnoses, patient, selectedMeds, selectedProcedures, performedExamKeys, selectedEducation, anamnesisHistory, labsRevealed, dischargePatient, logCaseOutcome, pushConsequence, gainXp, setPlayerStats, setActiveReferral, coverageScore, day]);
 
     return {
         patient,
