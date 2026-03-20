@@ -30,7 +30,7 @@ dist-ssr
 
 # PRIMERA Artifacts & Backups
 megalog/outputs/
-diagnostics/
+/diagnostics/
 _backups/
 *.json.gz
 *.log
