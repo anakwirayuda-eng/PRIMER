@@ -12,7 +12,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Play, Pause, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
 import { soundManager } from '../utils/SoundManager.js';
-import { getDayDate } from '../data/CalendarEventDB.js';
+import { getDayDate, CALENDAR_EVENTS } from '../data/CalendarEventDB.js';
 
 const TC_STYLE_ID = 'tc-luxury-styles';
 
@@ -116,6 +116,8 @@ const POSITIONS = [
     { left: 151, w: 48 }, // 4x
 ];
 
+const HARI = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
 export default function TimeController() {
     const ctx = useGame();
     const { gameState, setGameState, day, setGameSpeed } = ctx;
@@ -147,8 +149,6 @@ export default function TimeController() {
     // Compute calendar date from day number
     const time = ctx.time || 480;
 
-    const HARI = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-
     const dateDisplay = useMemo(() => {
         const date = getDayDate(day || 1);
         const d = date.getDate();
@@ -162,12 +162,7 @@ export default function TimeController() {
     }, [day, Math.floor(time)]); // Floor prevents re-render on fractional changes
 
     // Calendar event for today
-    const todayEvent = useMemo(() => {
-        try {
-            const { CALENDAR_EVENTS } = require('../data/CalendarEventDB.js');
-            return CALENDAR_EVENTS[day] || null;
-        } catch { return null; }
-    }, [day]);
+    const todayEvent = useMemo(() => CALENDAR_EVENTS?.[day] || null, [day]);
 
     const [showTooltip, setShowTooltip] = React.useState(false);
 
@@ -196,6 +191,7 @@ export default function TimeController() {
     // Keyboard shortcut: Space to toggle pause
     useEffect(() => {
         const onKey = (e) => {
+            if (e.repeat) return; // Anti-machine-gun: reject held spacebar
             if (e.code === 'Space' && !e.target.closest('input, textarea, select, [contenteditable]')) {
                 e.preventDefault();
                 if (isRuntimeTrap) return;
