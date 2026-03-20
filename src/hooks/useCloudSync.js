@@ -68,7 +68,7 @@ export function useCloudSync({ slotId = 'default', enabled = true } = {}) {
 
                 // Circuit breaker: report cheat ONCE per session (saves API quota)
                 if (!hasReportedCheatThisSession) {
-                    AnalyticsService.track('cheat_detected', {
+                    AnalyticsService.trackEvent('cheat_detected', {
                         type: 'sanity_check',
                         violations: sanity.violations
                     });
