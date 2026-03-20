@@ -12,10 +12,11 @@ The first implementation pass after this audit has already addressed the top clo
 - Cloud snapshots now reuse the canonical save serializer used by local saves.
 - Canonical save parsing now unwraps Supabase-style `game_state` rows, including `saved_at` and `version` metadata.
 - Cloud save metadata now reads accreditation from `clinical.accreditation` and stores `saveVersion` consistently.
+- `nextDay()` now appends canonical daily report entries into `clinical.dailyArchive`.
+- `processMonthlyReport()` now aggregates `clinical.dailyArchive` into `clinical.monthlyArchive` before resetting monthly finance counters.
 
 The still-open items after this remediation pass are:
 
-- `dailyArchive` / `monthlyArchive` have UI consumers but still need producer logic.
 - `loadGame()` still bypasses the store's persisted-merge safety rules for volatile clinical state.
 
 ## Executive Summary

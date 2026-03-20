@@ -34,6 +34,7 @@ import { CURRENT_SAVE_VERSION, createSaveSnapshot, parseSavePayload } from '../u
 import { withTransaction } from '../utils/transactions.js';
 import { chanceFromSeed, pickDeterministic, seedKey, seededBetween, seededInt } from '../utils/deterministicRandom.js';
 import { safeSetStorageItem } from '../utils/browserSafety.js';
+import { selectDerivedFinance } from './selectors.js';
 
 
 import {
@@ -604,9 +605,42 @@ const ACTIONS_SKIP_INVARIANT_RECHECK = new Set([
     'clinicalActions.dismissWarning'
 ]);
 
+const ANTIBIOTIC_MEDICATION_IDS = new Set([
+    'amoxicillin',
+    'azithromycin',
+    'ciprofloxacin',
+    'metronidazole',
+    'doxycycline',
+    'cotrimoxazole',
+    'cefadroxil',
+    'cefixime',
+    'erythromycin',
+    'levofloxacin'
+]);
+
+const ACCREDITATION_MULTIPLIER = {
+    Dasar: 1.0,
+    Madya: 1.1,
+    Utama: 1.25,
+    Paripurna: 1.5
+};
+
 function shouldEnableActionStability(fullName, actionName) {
     if (ACTIONS_SKIP_STABILITY_GUARD.has(fullName)) return false;
     return !/^(set|open|close|toggle|clear)/.test(actionName);
+}
+
+function isCorrectMedicationSelection(requiredTreatments, selectedMedications) {
+    if (!Array.isArray(requiredTreatments) || requiredTreatments.length === 0) return true;
+    if (!Array.isArray(selectedMedications)) return false;
+
+    return requiredTreatments.every((requiredItem) => {
+        if (Array.isArray(requiredItem)) {
+            return requiredItem.some((candidate) => selectedMedications.includes(candidate));
+        }
+
+        return selectedMedications.includes(requiredItem);
+    });
 }
 
 function capClinicalHistory(history) {
@@ -619,6 +653,202 @@ function capClinicalHistory(history) {
 
 function appendClinicalHistory(history, entry) {
     return capClinicalHistory([...(Array.isArray(history) ? history : []), entry]);
+}
+
+function getHistoryForDay(history, day) {
+    return Array.isArray(history)
+        ? history.filter((entry) => Number(entry?.day) === Number(day))
+        : [];
+}
+
+function getEncounterAction(entry) {
+    return entry?.decision?.action || null;
+}
+
+function isEncounterCorrect(entry) {
+    const action = getEncounterAction(entry);
+    if (action === 'delegate_to_maia') return true;
+
+    const requiredAction = entry?.hidden?.requiredAction;
+    const hasOutcome = typeof entry?.outcome === 'string';
+    if (!requiredAction) {
+        return hasOutcome ? entry.outcome !== 'bad' : true;
+    }
+
+    const isCorrectAction = requiredAction === action;
+    if (action !== 'treat') {
+        return isCorrectAction;
+    }
+
+    return isCorrectAction && isCorrectMedicationSelection(
+        entry?.medicalData?.correctTreatment,
+        entry?.decision?.medications
+    );
+}
+
+function hasCorrectDiagnosis(entry) {
+    const trueDiagnosisCode = entry?.medicalData?.trueDiagnosisCode;
+    const chosenDiagnoses = entry?.decision?.diagnoses;
+    if (!trueDiagnosisCode || !Array.isArray(chosenDiagnoses)) return false;
+    return chosenDiagnoses.includes(trueDiagnosisCode);
+}
+
+function hasAntibioticMedication(entry) {
+    return (entry?.decision?.medications || []).some((medicationId) => ANTIBIOTIC_MEDICATION_IDS.has(medicationId));
+}
+
+function calculateEncounterRevenue(entry) {
+    const action = getEncounterAction(entry);
+    const isBPJS = Boolean(entry?.social?.hasBPJS);
+
+    if (action === 'delegate_to_maia') {
+        return isBPJS || entry?.isEmergency ? 0 : 25000;
+    }
+
+    if (entry?.isEmergency) {
+        const billing = calculateEmergencyBill(entry?.decision?.actions, entry?.hidden?.caseData);
+        let revenue = billing?.total || 0;
+
+        if (action === 'refer' && entry?.decision?.isSISRUTE && entry?.decision?.referralDetails?.result?.status === 'ACCEPTED') {
+            const ambulanceId = entry?.decision?.referralDetails?.ambulanceId;
+            const ambulance = AMBULANCES.find((item) => item.id === ambulanceId);
+            if (ambulance?.cost) revenue -= ambulance.cost;
+        }
+
+        return revenue;
+    }
+
+    if (action === 'treat') {
+        return !isBPJS && isEncounterCorrect(entry) ? 50000 : 0;
+    }
+
+    if (action === 'refer' && !isBPJS && entry?.decision?.isSISRUTE && entry?.decision?.referralDetails?.result?.status === 'ACCEPTED') {
+        const ambulanceId = entry?.decision?.referralDetails?.ambulanceId;
+        const ambulance = AMBULANCES.find((item) => item.id === ambulanceId);
+        return ambulance?.cost ? -ambulance.cost : 0;
+    }
+
+    return 0;
+}
+
+function buildHourlyTraffic(dayHistory) {
+    return Array.from({ length: 9 }, (_, index) => {
+        const hour = index + 8;
+        const start = hour * 60;
+        const end = (hour + 1) * 60;
+        const value = dayHistory.filter((entry) => {
+            const joinedAt = Number(entry?.joinedAt ?? 480);
+            return joinedAt >= start && joinedAt < end;
+        }).length;
+
+        return {
+            label: `${hour < 10 ? '0' : ''}${hour}:00`,
+            value
+        };
+    });
+}
+
+function buildTopDiseases(dayHistory) {
+    const diseaseCounts = {};
+    dayHistory.forEach((entry) => {
+        const diagnosisName = entry?.medicalData?.diagnosisName
+            || entry?.medicalData?.trueDiagnosis
+            || 'Undiagnosed';
+        diseaseCounts[diagnosisName] = (diseaseCounts[diagnosisName] || 0) + 1;
+    });
+
+    return Object.entries(diseaseCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8)
+        .map(([name, count]) => ({
+            name,
+            count,
+            percent: Math.round((count / Math.max(dayHistory.length, 1)) * 100)
+        }));
+}
+
+function buildDailyArchiveEntry(state, day) {
+    const dayHistory = getHistoryForDay(state?.clinical?.history, day);
+    const patientSatisfaction = dayHistory
+        .map((entry) => entry?.satisfactionScore)
+        .filter((score) => Number.isFinite(score));
+
+    const dailyKpi = {
+        totalPatients: dayHistory.length,
+        correctDiagnoses: dayHistory.filter(hasCorrectDiagnosis).length,
+        referrals: dayHistory.filter((entry) => getEncounterAction(entry) === 'refer').length,
+        nonSpecialisticReferrals: dayHistory.filter((entry) => getEncounterAction(entry) === 'refer' && !isEncounterCorrect(entry)).length,
+        treatedCases: dayHistory.filter((entry) => ['treat', 'delegate_to_maia'].includes(getEncounterAction(entry))).length,
+        inappropriateTreat: dayHistory.filter((entry) => getEncounterAction(entry) === 'treat' && !isEncounterCorrect(entry)).length,
+        antibioticPrescriptions: dayHistory.filter(hasAntibioticMedication).length,
+        rationalAntibiotics: dayHistory.filter((entry) => hasAntibioticMedication(entry) && isEncounterCorrect(entry)).length,
+        patientSatisfaction,
+        bpjsPatients: dayHistory.filter((entry) => Boolean(entry?.social?.hasBPJS)).length,
+        umumPatients: dayHistory.filter((entry) => !entry?.social?.hasBPJS).length
+    };
+
+    const derivedDailyFinance = selectDerivedFinance({
+        finance: {
+            stats: INITIAL_FINANCE_STATS,
+            kpi: dailyKpi
+        }
+    });
+
+    return {
+        day,
+        patientsToday: dayHistory.length,
+        revenue: dayHistory.reduce((total, entry) => total + calculateEncounterRevenue(entry), 0),
+        reputation: Math.round(Number(state?.player?.profile?.reputation) || 0),
+        overallScore: derivedDailyFinance.overallScore,
+        hourlyTraffic: buildHourlyTraffic(dayHistory),
+        topDiseases: buildTopDiseases(dayHistory)
+    };
+}
+
+function buildMonthlyArchiveEntry(state, accreditation, hiredStaff) {
+    const completedMonth = Math.max(1, Math.floor((Number(state?.world?.day) - 1) / 30));
+    const monthStartDay = ((completedMonth - 1) * 30) + 1;
+    const monthEndDay = completedMonth * 30;
+    const relevantDailyReports = (state?.clinical?.dailyArchive || []).filter(
+        (entry) => entry?.day >= monthStartDay && entry?.day <= monthEndDay
+    );
+
+    if (relevantDailyReports.length === 0) return null;
+
+    const avgScore = Math.round(
+        relevantDailyReports.reduce((total, entry) => total + (Number(entry?.overallScore) || 0), 0)
+        / relevantDailyReports.length
+    );
+    const avgReputation = Math.round(
+        relevantDailyReports.reduce((total, entry) => total + (Number(entry?.reputation) || 0), 0)
+        / relevantDailyReports.length
+    );
+    const totalPatients = relevantDailyReports.reduce((total, entry) => total + (Number(entry?.patientsToday) || 0), 0);
+    const totalDailyRevenue = relevantDailyReports.reduce((total, entry) => total + (Number(entry?.revenue) || 0), 0);
+    const staffSalaries = Array.isArray(hiredStaff)
+        ? hiredStaff.reduce((total, staffMember) => total + (Number(staffMember?.salary) || 0), 0)
+        : 0;
+    const monthlyKapitasi = 50000000 * (ACCREDITATION_MULTIPLIER[accreditation] || 1.0);
+    const totalRevenue = totalDailyRevenue + monthlyKapitasi;
+    const previousReport = Array.isArray(state?.clinical?.monthlyArchive) && state.clinical.monthlyArchive.length > 0
+        ? state.clinical.monthlyArchive[state.clinical.monthlyArchive.length - 1]
+        : null;
+    const trend = previousReport
+        ? {
+            score: avgScore - (Number(previousReport?.avgScore) || 0),
+            revenue: totalRevenue - (Number(previousReport?.totalRevenue) || 0)
+        }
+        : {};
+
+    return {
+        month: completedMonth,
+        avgScore,
+        avgReputation,
+        totalPatients,
+        totalRevenue,
+        staffSalaries,
+        trend
+    };
 }
 
 function armAutosaveTrap(setState, getState, phase, reason) {
@@ -991,9 +1221,17 @@ export const useGameStore = create(
                     },
                     processMonthlyReport: (accreditation, hiredStaff) => {
                         set(s => {
-                            const accreditationMultiplier = { 'Dasar': 1.0, 'Madya': 1.1, 'Utama': 1.25, 'Paripurna': 1.5 }[accreditation] || 1.0;
+                            const accreditationMultiplier = ACCREDITATION_MULTIPLIER[accreditation] || 1.0;
                             const monthlyKapitasi = 50000000 * accreditationMultiplier;
-                            const totalSalaries = hiredStaff.reduce((total, s) => total + (s.salary || 0), 0);
+                            const totalSalaries = hiredStaff.reduce((total, staffMember) => total + (staffMember.salary || 0), 0);
+                            const monthlyReport = buildMonthlyArchiveEntry(s, accreditation, hiredStaff);
+                            const monthlyArchive = monthlyReport
+                                ? [
+                                    ...(s.clinical.monthlyArchive || []).filter((entry) => entry?.month !== monthlyReport.month),
+                                    monthlyReport
+                                ]
+                                : s.clinical.monthlyArchive;
+
                             return {
                                 finance: {
                                     ...s.finance,
@@ -1006,6 +1244,10 @@ export const useGameStore = create(
                                         pendapatanUmum: 0
                                     },
                                     kpi: INITIAL_KPI
+                                },
+                                clinical: {
+                                    ...s.clinical,
+                                    monthlyArchive
                                 }
                             };
                         });
@@ -2224,6 +2466,11 @@ export const useGameStore = create(
                             const dailyOpCost = 50000 + (Object.values(state.finance.facilities).reduce((a, b) => a + b, 0) * 10000);
                             state.finance.stats.pengeluaranOperasional = (state.finance.stats.pengeluaranOperasional || 0) + dailyOpCost;
                             const casesToday = (state.clinical.todayLog || []).length;
+                            const archivedDay = buildDailyArchiveEntry(state, targetDay);
+                            state.clinical.dailyArchive = [
+                                ...(state.clinical.dailyArchive || []).filter((entry) => entry?.day !== targetDay),
+                                archivedDay
+                            ];
 
                             // 2. Reset Clinical State
                             state.clinical.queue = [];

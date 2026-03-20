@@ -9,7 +9,7 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React, { useState, useMemo, Suspense, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useRef, Suspense, useEffect, useCallback } from 'react';
 import TimeController from './TimeController.jsx';
 import PauseOverlay from './PauseOverlay.jsx';
 import { useGame } from '../context/GameContext.jsx';
@@ -302,12 +302,37 @@ export default function MainLayout() {
     // Sidebar gradient from active theme
     const sidebarGradient = theme?.sidebarGradient || 'from-emerald-900 to-teal-900';
 
+    // Night cycle — header changes color based on in-game time
+    const isNightShift = time >= 1140 || time < 300; // 19:00–05:00
+    const headerGradient = isNightShift
+        ? 'from-slate-950 via-indigo-950 to-slate-950'
+        : 'from-slate-900 via-slate-800 to-slate-900';
+
     // Get energy color based on level
     const getEnergyColor = (e) => {
         if (e >= 70) return 'bg-green-500';
         if (e >= 40) return 'bg-amber-500';
         return 'bg-red-500';
     };
+
+    // Pre-cog loading: prefetch route chunks on sidebar hover
+    const prefetchedRef = useRef({});
+    const prefetchRoute = useCallback((pageId) => {
+        if (prefetchedRef.current[pageId]) return;
+        prefetchedRef.current[pageId] = true;
+        const routeMap = {
+            'dashboard': () => import('./DashboardPage'),
+            'clinical': () => import('./ClinicalPage'),
+            'wilayah': () => import('./WilayahPage'),
+            'facility': () => import('./GedungPage'),
+            'staff': () => import('./StaffPage'),
+            'inventory': () => import('./InventoryPage'),
+            'academy': () => import('./DiklatPage'),
+            'archive': () => import('./ArsipPage'),
+            'sensus': () => import('./sensus/SensusPage'),
+        };
+        if (routeMap[pageId]) routeMap[pageId]();
+    }, []);
 
     // Derived XP Progress
     const xpPercentage = (playerStats.xp / (playerStats.nextLevelXp || 1000)) * 100;
@@ -399,7 +424,14 @@ export default function MainLayout() {
     }, [wikiMetric, energy, reputation, playerStats, stats, kpi, derivedKpis, accreditation, villageData, hiredStaff, prolanisRoster, prbQueue, pharmacyInventory, day]);
 
     return (
-        <div className="flex h-screen bg-[var(--color-bg-main)] overflow-hidden font-sans text-[var(--color-text-main)] transition-colors duration-300">
+        <div className="flex h-[100dvh] bg-[var(--color-bg-main)] overflow-hidden font-sans text-[var(--color-text-main)] transition-colors duration-300">
+            {/* Burnout Vignette — pulsing red overlay when energy critically low */}
+            {energy < 20 && (
+                <div
+                    className="pointer-events-none fixed inset-0 z-[40] animate-pulse"
+                    style={{ background: 'radial-gradient(circle, transparent 50%, rgba(220, 38, 38, 0.35) 100%)', animationDuration: '2s' }}
+                />
+            )}
             {/* Sidebar */}
             <aside
                 className={`flex flex-col bg-gradient-to-b ${sidebarGradient} text-white transition-all duration-300 ${sidebarCollapsed ? 'w-16' : 'w-64'} shadow-xl z-20 overflow-x-hidden`}
@@ -490,6 +522,7 @@ export default function MainLayout() {
                             <li key={item.id} className="relative group">
                                 <button
                                     onClick={() => handleNavigateTarget(item.id)}
+                                    onMouseEnter={() => prefetchRoute(item.id)}
                                     title={`${item.label} (${item.shortcutHint})`}
                                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${sidebarCollapsed ? 'justify-center' : ''} ${activePage === item.id
                                         ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-900/20 font-medium'
@@ -573,7 +606,7 @@ export default function MainLayout() {
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col min-w-0 bg-[var(--color-bg-main)] relative">
                 {/* Top Bar — Slim Futuristic HUD */}
-                <header className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 h-11 px-4 flex items-center justify-between shadow-lg shadow-black/20 z-10 relative border-b border-slate-700/50">
+                <header className={`bg-gradient-to-r ${headerGradient} h-11 px-4 flex items-center justify-between shadow-lg shadow-black/20 z-10 relative border-b ${isNightShift ? 'border-indigo-500/30' : 'border-slate-700/50'} transition-colors duration-1000`}>
                     {/* LEFT: Vitals */}
                     <div className="flex items-center gap-2">
                         {/* Energy */}
@@ -821,11 +854,22 @@ export default function MainLayout() {
             )}
             <button
                 onClick={() => setShowPhone(!showPhone)}
-                className="fixed bottom-6 right-6 bg-slate-800 text-white p-4 rounded-full shadow-2xl hover:bg-slate-700 hover:scale-110 transition-all z-50 border-4 border-slate-600"
+                className={`fixed bottom-6 right-6 p-4 rounded-full shadow-2xl transition-all z-50 border-4 ${
+                    outbreakNotification || (prbQueue && prbQueue.filter(p => p.status === 'active').length > 0)
+                        ? 'bg-red-600 text-white border-red-400 animate-bounce shadow-[0_0_20px_rgba(220,38,38,0.6)]'
+                        : 'bg-slate-800 text-white border-slate-600 hover:bg-slate-700 hover:scale-110'
+                }`}
                 aria-label={showPhone ? 'Tutup Smartphone' : 'Buka Smartphone'}
                 title={`Smartphone (${TOGGLE_SHORTCUT_HINTS.phone})`}
             >
-                <PhoneIcon size={24} />
+                <PhoneIcon size={24} className={outbreakNotification ? 'animate-pulse' : ''} />
+                {/* Urgent ping dot */}
+                {(activeReferralLog?.length > 0 || outbreakNotification) && (
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-slate-900"></span>
+                    </span>
+                )}
             </button>
 
             {showShortcutHelp && <ShortcutHelpModal onClose={() => setShowShortcutHelp(false)} />}

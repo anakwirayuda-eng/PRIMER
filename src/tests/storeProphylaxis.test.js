@@ -339,6 +339,169 @@ describe('store prophylaxis', () => {
         });
     });
 
+    it('archives a populated daily report during nextDay rollover', () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-01-01T00:00:06Z'));
+
+        useGameStore.setState(state => ({
+            nav: { ...state.nav, currentSlotId: 0, gameState: 'playing' },
+            world: { ...state.world, day: 4, time: 1439, isPaused: false },
+            player: {
+                ...state.player,
+                profile: {
+                    ...state.player.profile,
+                    reputation: 84
+                }
+            },
+            clinical: {
+                ...state.clinical,
+                history: [
+                    {
+                        id: 'hist-1',
+                        day: 4,
+                        joinedAt: 480,
+                        social: { hasBPJS: false },
+                        hidden: { requiredAction: 'treat' },
+                        medicalData: {
+                            trueDiagnosisCode: 'J00',
+                            diagnosisName: 'Nasofaringitis akut',
+                            correctTreatment: ['paracetamol']
+                        },
+                        decision: {
+                            action: 'treat',
+                            diagnoses: ['J00'],
+                            medications: ['paracetamol']
+                        },
+                        outcome: 'good',
+                        satisfactionScore: 88
+                    },
+                    {
+                        id: 'hist-2',
+                        day: 4,
+                        joinedAt: 540,
+                        social: { hasBPJS: false },
+                        hidden: { requiredAction: 'treat' },
+                        medicalData: {
+                            trueDiagnosisCode: 'L30',
+                            diagnosisName: 'Dermatitis',
+                            correctTreatment: ['hydrocortisone']
+                        },
+                        decision: {
+                            action: 'delegate_to_maia'
+                        },
+                        outcome: 'delegated',
+                        satisfactionScore: 78
+                    },
+                    {
+                        id: 'hist-3',
+                        day: 4,
+                        joinedAt: 605,
+                        social: { hasBPJS: true },
+                        hidden: { requiredAction: 'refer' },
+                        medicalData: {
+                            trueDiagnosisCode: 'J00',
+                            diagnosisName: 'Nasofaringitis akut',
+                            correctTreatment: ['paracetamol']
+                        },
+                        decision: {
+                            action: 'refer',
+                            diagnoses: ['J00']
+                        },
+                        outcome: 'good',
+                        satisfactionScore: 80
+                    }
+                ],
+                todayLog: [{ id: 'case-1' }, { id: 'case-2' }]
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().actions.nextDay(4);
+        });
+
+        const archivedDay = useGameStore.getState().clinical.dailyArchive.at(-1);
+        expect(archivedDay).toMatchObject({
+            day: 4,
+            patientsToday: 3,
+            revenue: 75000,
+            reputation: 84
+        });
+        expect(archivedDay.overallScore).toBeGreaterThan(0);
+        expect(archivedDay.hourlyTraffic).toEqual(expect.arrayContaining([
+            { label: '08:00', value: 1 },
+            { label: '09:00', value: 1 },
+            { label: '10:00', value: 1 }
+        ]));
+        expect(archivedDay.topDiseases[0]).toMatchObject({
+            name: 'Nasofaringitis akut',
+            count: 2
+        });
+
+        act(() => {
+            vi.runAllTimers();
+        });
+    });
+
+    it('builds a monthly archive from daily reports before monthly finance resets', () => {
+        const dailyArchive = Array.from({ length: 30 }, (_, index) => ({
+            day: index + 1,
+            patientsToday: 3,
+            revenue: 10000,
+            reputation: 85,
+            overallScore: 80,
+            hourlyTraffic: [],
+            topDiseases: []
+        }));
+        const hiredStaff = [
+            { id: 'staff-1', salary: 1500000 },
+            { id: 'staff-2', salary: 500000 }
+        ];
+
+        useGameStore.setState(state => ({
+            world: { ...state.world, day: 31 },
+            staff: { ...state.staff, hiredStaff },
+            clinical: {
+                ...state.clinical,
+                dailyArchive,
+                monthlyArchive: []
+            },
+            finance: {
+                ...state.finance,
+                stats: {
+                    ...state.finance.stats,
+                    kapitasi: 1000000,
+                    pengeluaranObat: 250000,
+                    pengeluaranLab: 125000,
+                    pengeluaranOperasional: 500000,
+                    pendapatanUmum: 700000
+                }
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().financeActions.processMonthlyReport('Utama', hiredStaff);
+        });
+
+        expect(useGameStore.getState().clinical.monthlyArchive).toEqual([
+            {
+                month: 1,
+                avgScore: 80,
+                avgReputation: 85,
+                totalPatients: 90,
+                totalRevenue: 62800000,
+                staffSalaries: 2000000,
+                trend: {}
+            }
+        ]);
+        expect(useGameStore.getState().finance.stats).toMatchObject({
+            kapitasi: 61500000,
+            pengeluaranObat: 0,
+            pengeluaranLab: 0,
+            pengeluaranOperasional: 0,
+            pendapatanUmum: 0
+        });
+    });
+
     it('initializes knowledge and preserves residual XP after level up', () => {
         act(() => {
             useGameStore.getState().playerActions.gainXp(1100);
