@@ -1,28 +1,29 @@
 /**
  * TimeController — Luxury Glassmorphism time control panel
- * Inspired by Two Point Hospital + Mini Metro
+ * Inspired by Two Point Hospital + Mini Metro + Plague Inc
  * 
  * Features:
+ * - Calendar date display (DD-M-YYYY)
  * - Sliding pill highlight with physics bounce curve
- * - Discrete speed buttons with dot indicators  
- * - Animated clock with pulsing colon
+ * - Discrete speed buttons with chevron indicators  
  * - Visual state changes for paused/playing/system
  */
-import React, { useEffect } from 'react';
-import { Play, Pause, FastForward, AlertTriangle } from 'lucide-react';
+import React, { useEffect, useMemo } from 'react';
+import { Play, Pause, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
 import { soundManager } from '../utils/SoundManager.js';
+import { getDayDate } from '../data/CalendarEventDB.js';
 
 const TC_STYLE_ID = 'tc-luxury-styles';
 
 const TC_CSS = `
     .tc-panel {
-        background: rgba(15, 23, 42, 0.85);
+        background: rgba(15, 23, 42, 0.88);
         backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 999px;
         padding: 4px 6px 4px 16px;
-        display: flex; align-items: center; gap: 8px;
+        display: flex; align-items: center; gap: 4px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
         user-select: none;
         transition: all 0.3s ease;
@@ -33,44 +34,35 @@ const TC_CSS = `
         box-shadow: 0 10px 30px rgba(225, 29, 72, 0.2);
     }
 
-    .tc-clock-wrapper {
-        display: flex; flex-direction: column;
-        align-items: flex-end; justify-content: center;
-    }
-    .tc-day-label {
-        font-size: 9px; color: rgba(255,255,255,0.4);
-        letter-spacing: 0.2em; margin-bottom: 2px; font-weight: bold;
-    }
-    .tc-clock {
+    /* ── Date Section ── */
+    .tc-date {
         font-family: 'Courier New', monospace;
-        font-size: 22px; font-weight: 900; letter-spacing: 0.1em;
+        font-size: 17px; font-weight: 900; letter-spacing: 0.05em;
         display: flex; align-items: center; line-height: 1;
-        padding-right: 12px; margin-right: 4px;
+        padding-right: 10px; margin-right: 2px;
         border-right: 1px solid rgba(255, 255, 255, 0.1);
         transition: color 0.3s ease;
+        white-space: nowrap;
     }
-    .tc-clock.tc-playing { color: #10B981; text-shadow: 0 0 12px rgba(16, 185, 129, 0.5); }
-    .tc-clock.tc-paused { color: #F59E0B; text-shadow: 0 0 12px rgba(245, 158, 11, 0.5); }
-    .tc-clock.tc-system { color: #E11D48; text-shadow: 0 0 12px rgba(225, 29, 72, 0.5); }
+    .tc-date.tc-playing { color: #e2e8f0; }
+    .tc-date.tc-paused { color: #F59E0B; text-shadow: 0 0 12px rgba(245, 158, 11, 0.4); }
+    .tc-date.tc-system { color: #E11D48; text-shadow: 0 0 12px rgba(225, 29, 72, 0.5); }
 
-    .tc-colon {
-        animation: tc-pulse-colon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        margin: 0 2px; transform: translateY(-1px);
+    .tc-date-sep {
+        opacity: 0.35; margin: 0 1px;
     }
-    .tc-clock.tc-paused .tc-colon,
-    .tc-clock.tc-system .tc-colon { animation: none; opacity: 1; }
-    @keyframes tc-pulse-colon { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
+    /* ── Controls ── */
     .tc-controls {
         display: flex; position: relative;
         background: rgba(0, 0, 0, 0.4);
-        border-radius: 999px; padding: 4px;
+        border-radius: 999px; padding: 3px;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
     }
 
     /* Sliding Pill */
     .tc-pill {
-        position: absolute; top: 4px; bottom: 4px;
+        position: absolute; top: 3px; bottom: 3px;
         border-radius: 999px; z-index: 1;
         transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
                     width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
@@ -94,35 +86,39 @@ const TC_CSS = `
 
     .tc-btn {
         position: relative; z-index: 2;
-        height: 32px; display: flex; flex-direction: column;
+        height: 30px; display: flex;
         align-items: center; justify-content: center;
         background: transparent; border: none;
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(255, 255, 255, 0.35);
         cursor: pointer; transition: color 0.2s;
+        padding: 0;
     }
     .tc-btn:hover:not(:disabled) { color: rgba(255, 255, 255, 0.9); }
     .tc-btn.tc-active { color: #fff; }
     .tc-btn:disabled { cursor: not-allowed; opacity: 0.3; }
 
-    .tc-dots { display: flex; gap: 2px; margin-top: 3px; }
-    .tc-dot {
-        width: 4px; height: 4px; border-radius: 50%;
-        background: currentColor; opacity: 0.4;
+    /* Speed chevron stacks */
+    .tc-chevrons {
+        display: flex; align-items: center;
+        margin: 0 -3px;
     }
-    .tc-btn.tc-active .tc-dot { opacity: 1; box-shadow: 0 0 4px currentColor; }
+    .tc-chevrons svg {
+        margin: 0 -4px;
+    }
 `;
 
 // Pill positions: [left offset, width] for each button
 const POSITIONS = [
-    { left: 4, w: 40 },   // pause
-    { left: 44, w: 44 },  // 1x
-    { left: 88, w: 48 },  // 2x
-    { left: 136, w: 56 }, // 4x
+    { left: 3, w: 34 },   // pause
+    { left: 37, w: 34 },  // 1x
+    { left: 71, w: 38 },  // 2x
+    { left: 109, w: 42 }, // 3x
+    { left: 151, w: 48 }, // 4x
 ];
 
 export default function TimeController() {
     const ctx = useGame();
-    const { gameState, setGameState, time, day, setGameSpeed } = ctx;
+    const { gameState, setGameState, day, setGameSpeed } = ctx;
     const gameSpeed = ctx.gameSpeed || 1;
     const gameOver = ctx.gameOver;
 
@@ -148,15 +144,40 @@ export default function TimeController() {
         } catch (_) { /* sound not critical */ }
     }, [isEffectivelyPaused]);
 
-    const hours = String(Math.floor((time || 0) / 60)).padStart(2, '0');
-    const minutes = String(Math.floor((time || 0) % 60)).padStart(2, '0');
+    // Compute calendar date from day number
+    const time = ctx.time || 480;
+
+    const HARI = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+    const dateDisplay = useMemo(() => {
+        const date = getDayDate(day || 1);
+        const d = date.getDate();
+        const m = date.getMonth() + 1;
+        const y = date.getFullYear();
+        const dayName = HARI[date.getDay()];
+        const totalMinutes = Math.floor(time);
+        const hh = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
+        const mm = String(totalMinutes % 60).padStart(2, '0');
+        return { d, m, y, hh, mm, dayName };
+    }, [day, Math.floor(time)]); // Floor prevents re-render on fractional changes
+
+    // Calendar event for today
+    const todayEvent = useMemo(() => {
+        try {
+            const { CALENDAR_EVENTS } = require('../data/CalendarEventDB.js');
+            return CALENDAR_EVENTS[day] || null;
+        } catch { return null; }
+    }, [day]);
+
+    const [showTooltip, setShowTooltip] = React.useState(false);
 
     // Determine active button index
     let activeIdx = 0; // paused
     if (!isEffectivelyPaused) {
         if (gameSpeed === 1) activeIdx = 1;
         else if (gameSpeed === 2) activeIdx = 2;
-        else if (gameSpeed >= 4) activeIdx = 3;
+        else if (gameSpeed === 3) activeIdx = 3;
+        else if (gameSpeed >= 4) activeIdx = 4;
     }
     const pillStyle = POSITIONS[activeIdx];
 
@@ -186,66 +207,104 @@ export default function TimeController() {
         return () => window.removeEventListener('keydown', onKey);
     }, [gameState, isRuntimeTrap, setGameState]);
 
+    // Chevron helper — renders N chevrons stacked tight
+    const Chevrons = ({ count, size = 13 }) => (
+        <div className="tc-chevrons">
+            {Array.from({ length: count }, (_, i) => (
+                <ChevronRight key={i} size={size} strokeWidth={2.5} />
+            ))}
+        </div>
+    );
+
     return (
         <div className={`tc-panel ${isRuntimeTrap ? 'tc-system' : ''}`}>
-            <div className="tc-clock-wrapper">
-                <span className="tc-day-label">HARI {day || 1}</span>
-                <div className={`tc-clock ${statusType}`}>
-                    {isRuntimeTrap && <AlertTriangle size={18} style={{ marginRight: 8, animation: 'tc-pulse-colon 1s infinite' }} />}
-                    {hours}<span className="tc-colon">:</span>{minutes}
-                </div>
+            {/* Date + Time Display */}
+            <div
+                className={`tc-date ${statusType}`}
+                onClick={() => setShowTooltip(!showTooltip)}
+                style={{ cursor: todayEvent ? 'pointer' : 'default', position: 'relative' }}
+            >
+                {isRuntimeTrap && <AlertTriangle size={16} style={{ marginRight: 8, animation: 'tc-pulse-colon 1s infinite' }} />}
+                <span style={{ opacity: 0.5, marginRight: 6, fontSize: '14px' }}>{dateDisplay.dayName}</span>
+                {dateDisplay.d}<span className="tc-date-sep">-</span>{dateDisplay.m}<span className="tc-date-sep">-</span>{dateDisplay.y}
+                <span className="tc-date-sep" style={{ marginLeft: 8, marginRight: 4 }}>|</span>
+                {dateDisplay.hh}<span className="tc-date-sep" style={{ opacity: 0.6 }}>:</span>{dateDisplay.mm}
+
+                {/* Calendar tooltip */}
+                {showTooltip && todayEvent && (
+                    <div style={{
+                        position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+                        marginTop: 8, padding: '8px 14px', borderRadius: 10,
+                        background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(16,185,129,0.3)',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap',
+                        fontSize: 13, color: '#e2e8f0', zIndex: 100,
+                    }}>
+                        <div style={{ fontWeight: 700, color: '#10b981' }}>{todayEvent.emoji || '📅'} {todayEvent.title}</div>
+                        <div style={{ opacity: 0.7, fontSize: 11, marginTop: 2 }}>{todayEvent.description}</div>
+                    </div>
+                )}
             </div>
 
+            {/* Speed Controls */}
             <div className="tc-controls">
                 <div
                     className={`tc-pill ${statusType}`}
                     style={{ transform: `translateX(${pillStyle.left}px)`, width: `${pillStyle.w}px` }}
                 />
 
+                {/* Pause */}
                 <button
                     className={`tc-btn ${activeIdx === 0 ? 'tc-active' : ''}`}
-                    style={{ width: 40 }}
+                    style={{ width: 34 }}
                     onClick={() => handleSetSpeed(0)}
                     disabled={isRuntimeTrap}
                     title="Jeda (Space)"
                 >
-                    <Pause size={14} fill={activeIdx === 0 ? "currentColor" : "none"} />
+                    <Pause size={13} fill={activeIdx === 0 ? "currentColor" : "none"} />
                 </button>
 
+                {/* 1x — ▶ */}
                 <button
                     className={`tc-btn ${activeIdx === 1 ? 'tc-active' : ''}`}
-                    style={{ width: 44 }}
+                    style={{ width: 34 }}
                     onClick={() => handleSetSpeed(1)}
                     disabled={isRuntimeTrap}
                     title="Kecepatan Normal"
                 >
-                    <Play size={14} fill={activeIdx === 1 ? "currentColor" : "none"} />
-                    <div className="tc-dots"><div className="tc-dot" /></div>
+                    <Play size={13} fill={activeIdx === 1 ? "currentColor" : "none"} />
                 </button>
 
+                {/* 2x — ▶▶ */}
                 <button
                     className={`tc-btn ${activeIdx === 2 ? 'tc-active' : ''}`}
-                    style={{ width: 48 }}
+                    style={{ width: 38 }}
                     onClick={() => handleSetSpeed(2)}
                     disabled={isRuntimeTrap}
                     title="Kecepatan Ganda"
                 >
-                    <FastForward size={14} fill={activeIdx === 2 ? "currentColor" : "none"} />
-                    <div className="tc-dots"><div className="tc-dot" /><div className="tc-dot" /></div>
+                    <Chevrons count={2} />
                 </button>
 
+                {/* 3x — ▶▶▶ */}
                 <button
                     className={`tc-btn ${activeIdx === 3 ? 'tc-active' : ''}`}
-                    style={{ width: 56 }}
+                    style={{ width: 42 }}
+                    onClick={() => handleSetSpeed(3)}
+                    disabled={isRuntimeTrap}
+                    title="Kecepatan Tinggi"
+                >
+                    <Chevrons count={3} />
+                </button>
+
+                {/* 4x — ▶▶▶▶ */}
+                <button
+                    className={`tc-btn ${activeIdx === 4 ? 'tc-active' : ''}`}
+                    style={{ width: 48 }}
                     onClick={() => handleSetSpeed(4)}
                     disabled={isRuntimeTrap}
                     title="Kecepatan Maksimal"
                 >
-                    <FastForward size={16} fill={activeIdx === 3 ? "currentColor" : "none"} />
-                    <div className="tc-dots">
-                        <div className="tc-dot" /><div className="tc-dot" />
-                        <div className="tc-dot" /><div className="tc-dot" />
-                    </div>
+                    <Chevrons count={4} size={14} />
                 </button>
             </div>
         </div>

@@ -12,6 +12,7 @@ import { useGameStore } from '../store/useGameStore.js';
 import { useShallow } from 'zustand/react/shallow';
 import { selectDerivedFinance, selectPlayerStats, selectClinical, selectBuffs } from '../store/selectors.js';
 import { useGameLoop } from '../hooks/useGameLoop.js';
+import { useCloudSync } from '../hooks/useCloudSync.js';
 import { assertGameContextContract } from './contracts/gameContext.contract.js';
 import { soundManager } from '../utils/SoundManager.js';
 import { safeReloadPage } from '../utils/browserSafety.js';
@@ -71,6 +72,9 @@ export function GameProvider({ children }) {
         setTime: worldActions.setTime,
         processTick: clinicalActions.processDailyTick || clinicalActions.processTick
     });
+
+    // Cloud Sync: auto-sync to Supabase on day transitions
+    useCloudSync({ slotId: nav.currentSlotId || 'default' });
 
     const value = useMemo(() => {
         // Prepare base object - Merging store states and actions

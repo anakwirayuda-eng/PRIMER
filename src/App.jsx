@@ -3,23 +3,26 @@
  * [IDENTITY]: PRIMER App Router
  * [PURPOSE]: Main routing logic and sound/theme initialization. Handles game states (opening, setup, playing).
  * [STATE]: Stable
- * [LAST_UPDATE]: 2026-02-12
- * [DEPENDS_ON]: GameContext, ThemeContext, OpeningScreen, PlayerSetup, MainLayout
- * [AI_CONTEXT]: Orchestrates the top-level switching between game modes.
+ * [LAST_UPDATE]: 2026-03-20
+ * [DEPENDS_ON]: GameContext, ThemeContext, AuthContext, OpeningScreen, PlayerSetup, MainLayout
+ * [AI_CONTEXT]: Orchestrates the top-level switching between game modes. Auth guard via AuthProvider.
  */
 import React, { useState, useEffect, Suspense } from 'react';
 // Sound init handled once via useEffect in App() — see lines below
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { GameProvider, useGame } from './context/GameContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 // Dashboard.jsx (legacy) deleted — DashboardPage.jsx is the active dashboard
 import OpeningScreen from './components/OpeningScreen.jsx';
 import { soundManager } from './utils/SoundManager.js';
 import DatabaseSync from './components/DatabaseSync.jsx';
 import { safeReloadPage } from './utils/browserSafety.js';
+import { isSupabaseConfigured } from './services/supabaseClient.js';
 import './i18n';
 
 // Lazy load heavy game components
+const LoginPage = React.lazy(() => import('./components/LoginPage'));
 const SaveSlotSelector = React.lazy(() => import('./components/SaveSlotSelector'));
 const PlayerSetup = React.lazy(() => import('./components/PlayerSetup'));
 const MainLayout = React.lazy(() => import('./components/MainLayout'));
@@ -36,7 +39,23 @@ const LoadingScreen = () => (
 
 function GameRouter() {
   const [dbReady, setDbReady] = useState(false);
+  const auth = useAuth();
   const context = useGame();
+
+  // Auth guard: show login when Supabase is configured but user is not authenticated
+  if (isSupabaseConfigured && !auth?.loading && !auth?.isAuthenticated) {
+    return (
+      <LoginPage
+        onLoginSuccess={(user) => {
+          if (user) {
+            auth.login(user);
+          } else {
+            auth.loginOffline();
+          }
+        }}
+      />
+    );
+  }
 
   // hasSaveData check removed — SaveSlotSelector handles this directly
 
@@ -176,15 +195,17 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <GameProvider>
-        <ErrorBoundary name="AppRoot" fallbackAction={safeReloadPage} fallbackActionLabel="Muat Ulang Aplikasi">
-          <Suspense fallback={<LoadingScreen />}>
-            <GameRouter />
-          </Suspense>
-        </ErrorBoundary>
-      </GameProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <GameProvider>
+          <ErrorBoundary name="AppRoot" fallbackAction={safeReloadPage} fallbackActionLabel="Muat Ulang Aplikasi">
+            <Suspense fallback={<LoadingScreen />}>
+              <GameRouter />
+            </Suspense>
+          </ErrorBoundary>
+        </GameProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

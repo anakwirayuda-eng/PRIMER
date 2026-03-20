@@ -1,56 +1,80 @@
 /**
  * @reflection
  * [IDENTITY]: LLMService
- * [PURPOSE]: LLM SERVICE Handles interaction with AI Models for dynamic dialogue. In production, this would use a real API key.
- * [STATE]: Experimental
- * [ANCHOR]: LLM_STRIKTHROUGH
- * [DEPENDS_ON]: None
+ * [PURPOSE]: LLM SERVICE — Proxies AI requests through Supabase Edge Function.
+ *            Falls back to local mock when offline.
+ * [STATE]: Production
+ * [ANCHOR]: LLM_SERVICE
+ * [DEPENDS_ON]: supabaseClient
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-03-20
  */
 
-/**
- * LLM SERVICE
- * 
- * Handles interaction with AI Models for dynamic dialogue.
- * In production, this would use a real API key.
- */
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 export const LLM_STRIKTHROUGH = false; // Toggle for testing/mock mode
 
+/**
+ * Get an LLM-enhanced patient response.
+ * Routes through Supabase Edge Function when online, falls back to local mock.
+ */
 export async function getLLMPatientResponse(question, baseResponse, patientData) {
     if (LLM_STRIKTHROUGH) return baseResponse;
 
-    const prompt = buildPatientPrompt(question, baseResponse, patientData);
+    // Try cloud LLM first
+    if (isSupabaseConfigured) {
+        try {
+            const { data, error } = await supabase.functions.invoke('llm-proxy', {
+                body: {
+                    question,
+                    baseResponse,
+                    patientData: {
+                        firstName: patientData.firstName || 'Anonymous',
+                        age: patientData.age,
+                        gender: patientData.gender,
+                        complaint: patientData.complaint,
+                        mood: patientData.mood || 'Neutral',
+                        education: patientData.social?.education,
+                    },
+                },
+            });
 
-    // CONTEXT: Kita asumsikan ada API endpoint atau library SDK di sini
-    // Untuk contoh ini, kita buat MOCK logic (atau bisa menggunakan fetch ke Gemini API)
+            if (!error && data?.response) {
+                return data.response;
+            }
 
-    console.debug("SENDING TO LLM:", prompt);
-
-    try {
-        // MOCK API DELAY
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        // LOGIC MOCK: Menambahkan gaya bicara berdasarkan usia/mood
-        let enhanced = baseResponse;
-
-        if (patientData.age < 15) {
-            enhanced = `(Tampak malu) ${baseResponse}, Dok...`;
-        } else if (patientData.mood === 'anxious') {
-            enhanced = `Duh saya takut banget Dok, ${baseResponse.toLowerCase()}. Gimana ya?`;
-        } else if (patientData.social?.education === 'SD') {
-            enhanced = `${baseResponse} gitu Dok, saya kurang paham kenapa bisa begini.`;
+            console.warn('[LLM] Edge Function error, falling back to local:', error?.message);
+        } catch (err) {
+            console.warn('[LLM] Edge Function unreachable, falling back to local:', err.message);
         }
-
-        return enhanced;
-    } catch (error) {
-        console.error("LLM Error, falling back to template:", error);
-        return baseResponse;
     }
+
+    // Fallback: local mock enhancement
+    return localMockEnhance(baseResponse, patientData);
 }
 
-function buildPatientPrompt(question, baseResponse, patient) {
+/**
+ * Local mock: adds conversational flavor based on patient demographics.
+ * Used when Supabase is offline or Edge Function fails.
+ */
+function localMockEnhance(baseResponse, patientData) {
+    if (patientData.age < 15) {
+        return `(Tampak malu) ${baseResponse}, Dok...`;
+    }
+    if (patientData.mood === 'anxious') {
+        return `Duh saya takut banget Dok, ${baseResponse.toLowerCase()}. Gimana ya?`;
+    }
+    if (patientData.social?.education === 'SD') {
+        return `${baseResponse} gitu Dok, saya kurang paham kenapa bisa begini.`;
+    }
+    return baseResponse;
+}
+
+/**
+ * Build a patient prompt for the LLM (used by Edge Function).
+ * Exported for testing.
+ */
+export function buildPatientPrompt(question, baseResponse, patient) {
     return `
       ACT AS A PATIENT:
       Name: ${patient.firstName || 'Anonymous'}
