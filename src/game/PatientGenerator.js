@@ -559,6 +559,49 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
 }
 
 /**
+ * Parse vitals from emergency case data into structured numeric object.
+ * Emergency case schemas store vitals as a string in physicalExamFindings.vitals
+ * e.g. "TD 90/60, N 50x, RR 30x, S 36.0°C, SpO2 88%, GDS 45"
+ * → { bp: '90/60', hr: 50, rr: 30, temp: 36.0, spo2: 88, gds: 45 }
+ */
+function parseVitalsToStruct(disease) {
+    // If disease.vitals is already a structured object with numeric values, use it
+    if (disease.vitals && typeof disease.vitals === 'object' && typeof disease.vitals.hr === 'number') {
+        return disease.vitals;
+    }
+
+    const raw = disease.physicalExamFindings?.vitals;
+    if (!raw || typeof raw !== 'string') return {};
+
+    const result = {};
+
+    // TD (Tekanan Darah) → bp: "120/80"
+    const bpMatch = raw.match(/TD\s*(\d+\/\d+)/i);
+    if (bpMatch) result.bp = bpMatch[1];
+
+    // N / Nadi → hr: 88
+    const hrMatch = raw.match(/N\s*(\d+)/i);
+    if (hrMatch) result.hr = parseInt(hrMatch[1]);
+
+    // RR → rr: 18
+    const rrMatch = raw.match(/RR\s*(\d+)/i);
+    if (rrMatch) result.rr = parseInt(rrMatch[1]);
+
+    // S / Suhu → temp: 36.6
+    const tempMatch = raw.match(/S\s*(\d+\.?\d*)\s*°?C/i);
+    if (tempMatch) result.temp = parseFloat(tempMatch[1]);
+
+    // SpO2 → spo2: 98
+    const spo2Match = raw.match(/SpO2\s*(\d+)/i);
+    if (spo2Match) result.spo2 = parseInt(spo2Match[1]);
+
+    // GDS → gds: 90
+    const gdsMatch = raw.match(/GDS\s*(\d+)/i);
+    if (gdsMatch) result.gds = parseInt(gdsMatch[1]);
+
+    return result;
+}
+/**
  * Generate emergency patient for IGD
  * @param {number} currentTime - Current time in minutes
  * @param {object} facilities - Active facilities levels
@@ -649,7 +692,7 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
         arrivalTime: currentTime || 480,
         medicalData: {
             symptoms: disease.symptoms,
-            vitals: disease.vitals,
+            vitals: parseVitalsToStruct(disease),
             physicalExamFindings: disease.physicalExamFindings,
             labs: disease.labs,
             trueDiagnosisCode: disease.icd10,

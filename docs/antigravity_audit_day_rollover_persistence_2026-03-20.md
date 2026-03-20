@@ -14,10 +14,12 @@ The first implementation pass after this audit has already addressed the top clo
 - Cloud save metadata now reads accreditation from `clinical.accreditation` and stores `saveVersion` consistently.
 - `nextDay()` now appends canonical daily report entries into `clinical.dailyArchive`.
 - `processMonthlyReport()` now aggregates `clinical.dailyArchive` into `clinical.monthlyArchive` before resetting monthly finance counters.
+- Manual `saveGame()` snapshots now sanitize volatile encounter state before writing save slots.
+- Manual `loadGame()` now restores slices through the same persisted-merge safety rules used by Zustand rehydration.
 
 The still-open items after this remediation pass are:
 
-- `loadGame()` still bypasses the store's persisted-merge safety rules for volatile clinical state.
+- No unresolved P1/P2 blockers remain from this specific persistence batch; the remaining work is broader architecture cleanup or next-domain audit work.
 
 ## Executive Summary
 

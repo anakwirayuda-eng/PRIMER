@@ -117,6 +117,21 @@ function normalizePlayer(player, legacyProfile, legacyReputation) {
     };
 }
 
+function sanitizeSnapshotClinical(clinical) {
+    if (!isPlainObject(clinical)) return clinical;
+
+    return {
+        ...clinical,
+        queue: [],
+        emergencyQueue: [],
+        activePatientId: null,
+        activeEmergencyId: null,
+        history: Array.isArray(clinical.history)
+            ? clinical.history.slice(-MAX_CLINICAL_HISTORY)
+            : clinical.history
+    };
+}
+
 export function buildCanonicalSavePayload(rawSave) {
     if (!isPlainObject(rawSave)) return null;
 
@@ -211,7 +226,7 @@ export function createSaveSnapshot(state) {
         player: state.player,
         world: state.world,
         finance: state.finance,
-        clinical: state.clinical,
+        clinical: sanitizeSnapshotClinical(state.clinical),
         publicHealth: state.publicHealth,
         staff: state.staff,
         savedAt: Date.now()

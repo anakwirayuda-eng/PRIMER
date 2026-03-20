@@ -207,6 +207,42 @@ describe('store prophylaxis', () => {
         expect(state.meta.wikiMetric).toBeNull();
     });
 
+    it('loads manual save slots through the persisted clinical merge contract', () => {
+        let didLoad = false;
+        act(() => {
+            didLoad = useGameStore.getState().actions.loadGame({
+                player: {
+                    profile: {
+                        name: 'Archive Doc'
+                    }
+                },
+                world: {
+                    day: 9,
+                    time: 700
+                },
+                clinical: {
+                    queue: [{ id: 'volatile-q-1' }],
+                    emergencyQueue: [{ id: 'volatile-e-1' }],
+                    activePatientId: 'volatile-q-1',
+                    activeEmergencyId: 'volatile-e-1',
+                    dailyArchive: [{ day: 8, patientsToday: 4, revenue: 50000, reputation: 82, overallScore: 77, hourlyTraffic: [], topDiseases: [] }]
+                }
+            }, 3);
+        });
+
+        const state = useGameStore.getState();
+        expect(didLoad).toBe(true);
+        expect(state.player.profile.name).toBe('Archive Doc');
+        expect(state.world.day).toBe(9);
+        expect(state.clinical.queue).toEqual([]);
+        expect(state.clinical.emergencyQueue).toEqual([]);
+        expect(state.clinical.activePatientId).toBeNull();
+        expect(state.clinical.activeEmergencyId).toBeNull();
+        expect(state.clinical.dailyArchive).toEqual([
+            { day: 8, patientsToday: 4, revenue: 50000, reputation: 82, overallScore: 77, hourlyTraffic: [], topDiseases: [] }
+        ]);
+    });
+
     it('caps full sleep recovery at the configured max energy', () => {
         useGameStore.setState(state => ({
             player: {
@@ -570,6 +606,43 @@ describe('store prophylaxis', () => {
         expect(state.world.isPaused).toBe(true);
         expect(state.clinical.gameOver?.type).toBe('runtime_trap');
         expect(state.meta.runtimeTrap?.phase).toBe('autosave_postshift');
+    });
+
+    it('sanitizes manual save snapshots before writing them to disk', () => {
+        useGameStore.setState(state => ({
+            nav: { ...state.nav, currentSlotId: 0 },
+            world: { ...state.world, day: 11, time: 930 },
+            clinical: {
+                ...state.clinical,
+                queue: [{ id: 'volatile-q-1' }],
+                emergencyQueue: [{ id: 'volatile-e-1' }],
+                activePatientId: 'volatile-q-1',
+                activeEmergencyId: 'volatile-e-1',
+                dailyArchive: [{ day: 10, patientsToday: 2, revenue: 50000, reputation: 81, overallScore: 75, hourlyTraffic: [], topDiseases: [] }]
+            }
+        }));
+
+        let didSave = false;
+        act(() => {
+            didSave = useGameStore.getState().actions.saveGame(0);
+        });
+
+        expect(didSave).toBe(true);
+        expect(safeSetStorageItem).toHaveBeenCalledTimes(1);
+
+        const [, rawPayload] = safeSetStorageItem.mock.calls[0];
+        const snapshot = JSON.parse(rawPayload);
+        expect(snapshot.world).toMatchObject({
+            day: 11,
+            time: 930
+        });
+        expect(snapshot.clinical.queue).toEqual([]);
+        expect(snapshot.clinical.emergencyQueue).toEqual([]);
+        expect(snapshot.clinical.activePatientId).toBeNull();
+        expect(snapshot.clinical.activeEmergencyId).toBeNull();
+        expect(snapshot.clinical.dailyArchive).toEqual([
+            { day: 10, patientsToday: 2, revenue: 50000, reputation: 81, overallScore: 75, hourlyTraffic: [], topDiseases: [] }
+        ]);
     });
 
     it('derives current-level XP progress and total XP from residual store state', () => {

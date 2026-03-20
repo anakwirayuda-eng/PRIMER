@@ -30,7 +30,7 @@ import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
 import { buildRuntimeTrap, guardActionGroup, triggerFreezeProtocol } from '../utils/dispatchGuard.js';
-import { CURRENT_SAVE_VERSION, createSaveSnapshot, parseSavePayload } from '../utils/savePayload.js';
+import { CURRENT_SAVE_VERSION, parseSavePayload } from '../utils/savePayload.js';
 import { withTransaction } from '../utils/transactions.js';
 import { chanceFromSeed, pickDeterministic, seedKey, seededBetween, seededInt } from '../utils/deterministicRandom.js';
 import { safeSetStorageItem } from '../utils/browserSafety.js';
@@ -571,6 +571,20 @@ const mergePersistedClinical = (clinical, currentClinical) => {
         dentalLog: Array.isArray(clinical.dentalLog) ? clinical.dentalLog : currentClinical.dentalLog
     };
 };
+
+const buildManualSaveSnapshot = (state) => parseSavePayload({
+    saveVersion: CURRENT_SAVE_VERSION,
+    savedAt: Date.now(),
+    world: normalizePersistedWorld(state.world),
+    player: {
+        ...state.player,
+        profile: sanitizePlayerProfile(state.player.profile)
+    },
+    finance: mergePersistedFinance(state.finance, createInitialFinanceState()),
+    publicHealth: mergePersistedPublicHealth(state.publicHealth, createInitialPublicHealthState()),
+    staff: mergePersistedStaff(state.staff, createInitialStaffState()),
+    clinical: mergePersistedClinical(state.clinical, createInitialClinicalState())
+});
 
 const ACTION_GROUP_NAMES = [
     'navActions',
@@ -2359,7 +2373,7 @@ export const useGameStore = create(
                         if (slotId === null) return false;
                         try {
                             const state = get();
-                            const saveData = createSaveSnapshot(state);
+                            const saveData = buildManualSaveSnapshot(state);
                             if (!saveData) return false;
                             return safeSetStorageItem(`primer_save_${slotId}`, JSON.stringify(saveData));
                         } catch (error) {
@@ -2394,19 +2408,19 @@ export const useGameStore = create(
                                     };
                                 }
                                 if (normalizedSave.world) {
-                                    s.world = { ...s.world, ...normalizedSave.world };
+                                    s.world = { ...s.world, ...normalizePersistedWorld(normalizedSave.world) };
                                 }
                                 if (normalizedSave.finance) {
-                                    s.finance = { ...s.finance, ...normalizedSave.finance };
+                                    s.finance = mergePersistedFinance(normalizedSave.finance, s.finance);
                                 }
                                 if (normalizedSave.clinical) {
-                                    s.clinical = { ...s.clinical, ...normalizedSave.clinical };
+                                    s.clinical = mergePersistedClinical(normalizedSave.clinical, s.clinical);
                                 }
                                 if (normalizedSave.publicHealth) {
-                                    s.publicHealth = { ...s.publicHealth, ...normalizedSave.publicHealth };
+                                    s.publicHealth = mergePersistedPublicHealth(normalizedSave.publicHealth, s.publicHealth);
                                 }
                                 if (normalizedSave.staff) {
-                                    s.staff = { ...s.staff, ...normalizedSave.staff };
+                                    s.staff = mergePersistedStaff(normalizedSave.staff, s.staff);
                                 }
 
                                 s.meta = { ...INITIAL_META_STATE, saveVersion: normalizedSave.saveVersion || CURRENT_SAVE_VERSION };

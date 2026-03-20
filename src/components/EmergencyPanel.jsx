@@ -1,17 +1,17 @@
 /**
  * @reflection
  * [IDENTITY]: EmergencyPanel
- * [PURPOSE]: React UI component: TriageBadge.
- * [STATE]: Experimental
+ * [PURPOSE]: React UI component: TriageBadge, EmergencyQueue, EmergencyEMR.
+ * [STATE]: Stable + Dynamic Vitals + Code Blue Engine
  * [ANCHOR]: EmergencyPanel
  * [DEPENDS_ON]: GameContext, EmergencyCases, SoundManager, AvatarUtils
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-03-21
  */
 
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext.jsx';
-import { AlertTriangle, Clock, Heart, Activity, Zap, CheckCircle, XCircle, ArrowRight, Siren, Thermometer, Droplets, Bot, FileText, Stethoscope, Info } from 'lucide-react';
+import { AlertTriangle, Clock, Heart, Activity, Zap, CheckCircle, XCircle, ArrowRight, Siren, Thermometer, Droplets, Bot, FileText, Stethoscope, Info, Truck } from 'lucide-react';
 import { TRIAGE_LEVELS, ESI_LEVELS, validateTriage, validateStabilization, calculatePatientStatus, getEmergencyCase, EMERGENCY_ACTIONS, calculateEmergencyBill } from '../game/EmergencyCases.js';
 import { useTranslation } from 'react-i18next';
 import { soundManager as _soundManager } from '../utils/SoundManager.js';
@@ -84,16 +84,19 @@ export function EmergencyTimer({ patient, time }) {
     );
 }
 
-// Single emergency patient card
+/// Single emergency patient card — with Plateau & SISRUTE Limbo visual states
 function EmergencyPatientCard({ patient, onSelect, isActive, time }) {
     const triage = TRIAGE_LEVELS[patient.triageLevel];
+    const isLimbo = patient.status === 'PENDING_SISRUTE';
 
     return (
         <button
             onClick={() => onSelect(patient.id)}
-            className={`w-full text-left p-3 rounded-lg border-2 transition-all ${isActive
-                ? `${triage?.borderColor || 'border-red-500'} bg-white dark:bg-slate-800 shadow-lg`
-                : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 hover:shadow-md'
+            className={`w-full text-left p-3 rounded-lg border-2 transition-all ${isLimbo
+                    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 opacity-90'
+                    : isActive
+                        ? `${triage?.borderColor || 'border-red-500'} bg-white dark:bg-slate-800 shadow-lg`
+                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 hover:shadow-md'
                 }`}
         >
             <div className="flex items-center justify-between gap-2">
@@ -112,15 +115,24 @@ function EmergencyPatientCard({ patient, onSelect, isActive, time }) {
                         </div>
                     </div>
                 </div>
-                <EmergencyTimer patient={patient} time={time} />
+                {!isLimbo && <EmergencyTimer patient={patient} time={time} />}
             </div>
             <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 line-clamp-2 italic">"{patient.complaint}"</p>
 
-            {/* Deterioration indicator */}
-            {patient.deterioration > 0 && (
-                <div className="mt-2 bg-red-50 text-red-700 text-xs px-2 py-1 rounded flex items-center gap-1">
-                    <Activity size={12} />
-                    Kondisi memburuk ({patient.deterioration}%)
+            {/* SISRUTE Limbo indicator */}
+            {isLimbo ? (
+                <div className="mt-2 bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-200 text-xs px-2 py-1.5 rounded flex items-center justify-between font-bold">
+                    <span className="flex items-center gap-1 animate-pulse"><Truck size={12} /> Menunggu Ambulans...</span>
+                    <span className="flex items-center gap-1"><Clock size={12} /> {patient.ambulanceETA || '?'}m</span>
+                </div>
+            ) : patient.deterioration > 0 && (
+                /* Deterioration indicator — shows Plateau when rate ≤ 0 */
+                <div className={`mt-2 text-xs px-2 py-1 rounded flex items-center gap-1 ${patient.deteriorationRate <= 0
+                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                        : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    }`}>
+                    <Activity size={12} className={patient.deteriorationRate > 0 ? 'animate-pulse' : ''} />
+                    {patient.deteriorationRate <= 0 ? 'Kondisi Tertahan (Plateau)' : `Kondisi memburuk (${patient.deterioration}%)`}
                 </div>
             )}
         </button>
@@ -198,6 +210,127 @@ export default function EmergencyPanel({ emergencyQueue, onAdmitEmergency, activ
     );
 }
 
+// S.A.M.P.L.E Cito Anamnesis — rapid emergency history taking
+const SAMPLE_CONFIG = [
+    { key: 'S', label: 'Symptoms', labelId: 'Gejala', color: 'bg-red-500', icon: '🩺' },
+    { key: 'A', label: 'Allergies', labelId: 'Alergi', color: 'bg-orange-500', icon: '⚠️' },
+    { key: 'M', label: 'Medications', labelId: 'Obat', color: 'bg-blue-500', icon: '💊' },
+    { key: 'P', label: 'Past History', labelId: 'Riwayat', color: 'bg-purple-500', icon: '📋' },
+    { key: 'L', label: 'Last Meal', labelId: 'Makan Terakhir', color: 'bg-green-500', icon: '🍚' },
+    { key: 'E', label: 'Events', labelId: 'Kejadian', color: 'bg-slate-600', icon: '🔍' },
+];
+
+function SampleAnamnesis({ patient }) {
+    const [revealed, setRevealed] = useState({});
+
+    const toggleReveal = (key) => {
+        setRevealed(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    // Map SAMPLE letters to case data
+    const getData = (key) => {
+        const aq = patient.medicalData?.anamnesisQuestions || {};
+        const hidden = patient.hidden || {};
+        switch (key) {
+            case 'S': {
+                const items = [];
+                (aq.keluhan_utama || []).forEach(q => items.push({ q: q.text, a: q.response, essential: q.priority === 'essential' }));
+                (aq.rps || []).forEach(q => items.push({ q: q.text, a: q.response, essential: q.priority === 'essential' }));
+                if (items.length === 0) {
+                    (patient.medicalData?.symptoms || []).forEach(s => items.push({ q: 'Gejala', a: s }));
+                }
+                return items;
+            }
+            case 'A': {
+                const allergies = hidden.allergies || [];
+                return allergies.length > 0
+                    ? allergies.map(a => ({ q: 'Alergi', a }))
+                    : [{ q: 'Ada alergi obat/makanan?', a: 'Tidak ada alergi yang diketahui.' }];
+            }
+            case 'M': {
+                const meds = hidden.currentMedications || [];
+                const items = meds.length > 0
+                    ? meds.map(m => ({ q: 'Obat rutin', a: m }))
+                    : [{ q: 'Minum obat rutin?', a: 'Tidak ada obat rutin.' }];
+                (aq.rpd || []).filter(q => q.text.toLowerCase().includes('obat')).forEach(q => items.push({ q: q.text, a: q.response }));
+                return items;
+            }
+            case 'P': {
+                const items = [];
+                (aq.rpd || []).forEach(q => items.push({ q: q.text, a: q.response }));
+                (hidden.conditions || []).forEach(c => items.push({ q: 'Riwayat penyakit', a: c }));
+                if (items.length === 0) items.push({ q: 'Riwayat penyakit dahulu?', a: 'Tidak ada riwayat penyakit penting.' });
+                return items;
+            }
+            case 'L':
+                return [{ q: 'Terakhir makan/minum kapan?', a: 'Tadi pagi sebelum kejadian.' }];
+            case 'E': {
+                const items = [];
+                (aq.sosial || []).forEach(q => items.push({ q: q.text, a: q.response }));
+                const mechanism = (aq.keluhan_utama || []).find(q => q.text.toLowerCase().includes('kenapa') || q.text.toLowerCase().includes('bagaimana') || q.text.toLowerCase().includes('kejadian'));
+                if (mechanism) items.unshift({ q: mechanism.text, a: mechanism.response, essential: true });
+                if (items.length === 0) items.push({ q: 'Apa yang terjadi sebelumnya?', a: patient.complaint || 'Keluhan muncul tiba-tiba.' });
+                return items;
+            }
+            default: return [];
+        }
+    };
+
+    const revealedCount = Object.values(revealed).filter(Boolean).length;
+
+    return (
+        <div className="bg-teal-50 dark:bg-teal-950/20 p-4 rounded-lg border border-teal-200 dark:border-teal-900/50">
+            <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-teal-800 dark:text-teal-400 flex items-center gap-2">
+                    <Stethoscope size={16} />
+                    S.A.M.P.L.E — Anamnesis Cito
+                </h3>
+                <span className="text-[10px] bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-400 px-2 py-0.5 rounded font-bold">
+                    {revealedCount}/6
+                </span>
+            </div>
+
+            {/* Chip Buttons */}
+            <div className="flex flex-wrap gap-1.5 mb-3">
+                {SAMPLE_CONFIG.map(({ key, label, labelId, color, icon }) => (
+                    <button
+                        key={key}
+                        onClick={() => toggleReveal(key)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 active:scale-95 ${revealed[key]
+                                ? `${color} text-white border-black/20 shadow-md`
+                                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                            }`}
+                    >
+                        <span>{icon}</span>
+                        <span className="font-black text-sm">{key}</span>
+                        <span className="hidden sm:inline">— {labelId}</span>
+                    </button>
+                ))}
+            </div>
+
+            {/* Revealed Content */}
+            {SAMPLE_CONFIG.filter(({ key }) => revealed[key]).map(({ key, label, labelId, color }) => {
+                const data = getData(key);
+                return (
+                    <div key={key} className="mb-2 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3 animate-in fade-in">
+                        <p className={`text-[10px] font-black uppercase tracking-wider mb-2 ${color.replace('bg-', 'text-')}`}>
+                            [{key}] {labelId} ({label})
+                        </p>
+                        <div className="space-y-1.5">
+                            {data.map((item, i) => (
+                                <div key={i} className={`text-xs ${item.essential ? 'bg-amber-50 dark:bg-amber-900/10 p-1.5 rounded border-l-2 border-amber-400' : ''}`}>
+                                    <span className="text-slate-500 dark:text-slate-400">{item.q}</span>
+                                    <p className="text-slate-800 dark:text-slate-200 font-medium italic">"{item.a}"</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
 // Emergency Patient EMR View (detailed view when admitted)
 export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDischarge }) {
     const { delegateEmergencyToMaia, openWiki } = useGame();
@@ -206,8 +339,32 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
     const [performedActions, setPerformedActions] = useState([]);
     const [showVitals, setShowVitals] = useState(false);
     const [stabilizationValidation, setStabilizationValidation] = useState(null);
+    const [isResuscitating, setIsResuscitating] = useState(false);
 
-    const vitals = patient.medicalData?.vitals || {};
+    // 💥 Dynamic Vitals — recalculates reactively when actions are toggled
+    const baseVitals = patient.medicalData?.vitals || {};
+    const vitals = React.useMemo(() => {
+        // Clone base vitals (numbers or parse from strings)
+        const current = { ...baseVitals };
+
+        // Apply vitalEffect from each performed action
+        performedActions.forEach(actionId => {
+            const effect = EMERGENCY_ACTIONS[actionId]?.vitalEffect;
+            if (!effect) return;
+            if (effect.hr && typeof current.hr === 'number') current.hr = Math.max(0, Math.min(200, current.hr + effect.hr));
+            if (effect.spo2 && typeof current.spo2 === 'number') current.spo2 = Math.max(0, Math.min(100, current.spo2 + effect.spo2));
+            if (effect.rr && typeof current.rr === 'number') current.rr = Math.max(4, Math.min(60, current.rr + effect.rr));
+            if (effect.temp && typeof current.temp === 'number') current.temp = Math.max(34, Math.min(42, current.temp + effect.temp));
+            if (effect.gds && typeof current.gds === 'number') current.gds = Math.max(10, Math.min(600, current.gds + effect.gds));
+            if (effect.bp_sys && typeof current.bp === 'string' && current.bp.includes('/')) {
+                const [sys, dia] = current.bp.split('/');
+                const newSys = Math.max(40, Math.min(250, parseInt(sys) + effect.bp_sys));
+                current.bp = `${newSys}/${dia}`;
+            }
+        });
+        return current;
+    }, [baseVitals, performedActions]);
+
     const triage = TRIAGE_LEVELS[patient.triageLevel];
 
     // Mappings for Wiki
@@ -230,6 +387,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
         setPerformedActions([]);
         setShowVitals(false);
         setStabilizationValidation(null);
+        setIsResuscitating(false);
     }, [patient.id]);
 
     // Handle triage selection
@@ -263,6 +421,30 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
         );
         setStabilizationValidation(validation);
     };
+
+    // 🚨 CODE BLUE: Deterioration ≥ 100% → force resuscitation screen
+    if (patient.deterioration >= 100 && patient.triageLevel !== 4 && !isResuscitating) {
+        return (
+            <div className="p-8 h-full min-h-[500px] flex flex-col items-center justify-center bg-slate-900 text-white rounded-lg border-4 border-red-600 relative overflow-hidden">
+                <div className="absolute inset-0 bg-red-600/20 animate-pulse pointer-events-none" />
+                <Activity size={80} className="text-red-500 mb-4 animate-bounce drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]" />
+                <h2 className="text-4xl font-black text-red-500 tracking-widest mb-2 drop-shadow-md">KODE BIRU!</h2>
+                <div className="bg-red-950/50 p-4 rounded-lg border border-red-800/50 mb-8 text-center z-10 w-full">
+                    <p className="text-red-200 font-bold text-lg mb-1">Deteriorasi 100% — Henti Jantung/Napas</p>
+                    <p className="text-sm text-red-400">Pasien <span className="text-white font-bold">{patient.name}</span> membutuhkan resusitasi SEGERA!</p>
+                </div>
+                <button
+                    onClick={() => {
+                        setIsResuscitating(true);
+                        if (!performedActions.includes('cpr')) toggleAction('cpr');
+                    }}
+                    className="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-black text-xl rounded-xl shadow-[0_0_40px_rgba(220,38,38,0.5)] active:scale-95 transition-all flex items-center justify-center gap-3 z-10 border-b-4 border-red-800"
+                >
+                    <Zap size={24} /> MULAI RJP & DEFIBRILASI
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="p-4 space-y-4 bg-slate-50/50 dark:bg-slate-950/20">
@@ -320,6 +502,11 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                     </div>
                 </div>
             </div>
+
+            {/* S.A.M.P.L.E Cito Anamnesis — unlocks after triage */}
+            {triageValidation && (
+                <SampleAnamnesis patient={patient} />
+            )}
 
             {/* Triage Assessment */}
             {
@@ -424,7 +611,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                 )
             }
 
-            {/* Vital Signs (expandable) */}
+            {/* Vital Signs (expandable) — Dynamic: colors react to performed stabilization actions */}
             <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3">
                 <button
                     onClick={() => setShowVitals(!showVitals)}
@@ -432,7 +619,8 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                 >
                     <h3 className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                         <Heart size={16} className="text-red-500" />
-                        Tanda Vital
+                        Tanda Vital (Monitor)
+                        {performedActions.length > 0 && <span className="text-[9px] bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded font-bold">LIVE</span>}
                     </h3>
                     <ArrowRight size={16} className={`transform transition-transform dark:text-slate-500 ${showVitals ? 'rotate-90' : ''}`} />
                 </button>
@@ -442,25 +630,25 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                         {vitals.bp && (
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded border border-slate-100 dark:border-slate-800">
                                 <p className="text-xs text-slate-500 dark:text-slate-400">TD</p>
-                                <p className="font-bold text-slate-800 dark:text-slate-200">{vitals.bp}</p>
+                                <p className="font-bold text-slate-800 dark:text-slate-200 transition-colors duration-500">{vitals.bp}</p>
                             </div>
                         )}
                         {vitals.hr && (
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded border border-slate-100 dark:border-slate-800">
                                 <p className="text-xs text-slate-500 dark:text-slate-400">Nadi</p>
-                                <p className="font-bold text-slate-800 dark:text-slate-200">{vitals.hr}x/m</p>
+                                <p className={`font-bold transition-colors duration-500 ${vitals.hr < 60 || vitals.hr > 100 ? 'text-red-600 animate-pulse' : 'text-emerald-600 dark:text-emerald-400'}`}>{vitals.hr}x/m</p>
                             </div>
                         )}
                         {vitals.rr && (
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded border border-slate-100 dark:border-slate-800">
                                 <p className="text-xs text-slate-500 dark:text-slate-400">RR</p>
-                                <p className="font-bold text-slate-800 dark:text-slate-200">{vitals.rr}x/m</p>
+                                <p className={`font-bold transition-colors duration-500 ${vitals.rr < 12 || vitals.rr > 24 ? 'text-red-600' : 'text-emerald-600 dark:text-emerald-400'}`}>{vitals.rr}x/m</p>
                             </div>
                         )}
                         {vitals.temp && (
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded border border-slate-100 dark:border-slate-800">
                                 <p className="text-xs text-slate-500 dark:text-slate-400">Suhu</p>
-                                <p className={`font-bold ${vitals.temp > 38 ? 'text-red-600' : 'text-slate-800 dark:text-slate-200'}`}>
+                                <p className={`font-bold transition-colors duration-500 ${vitals.temp > 38 || vitals.temp < 36 ? 'text-red-600' : 'text-emerald-600 dark:text-emerald-400'}`}>
                                     {vitals.temp}°C
                                 </p>
                             </div>
@@ -468,7 +656,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                         {vitals.spo2 && (
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded border border-slate-100 dark:border-slate-800">
                                 <p className="text-xs text-slate-500 dark:text-slate-400">SpO2</p>
-                                <p className={`font-bold ${vitals.spo2 < 92 ? 'text-red-600' : 'text-slate-800 dark:text-slate-200'}`}>
+                                <p className={`font-bold transition-colors duration-500 ${vitals.spo2 < 92 ? 'text-red-600 animate-pulse' : 'text-emerald-600 dark:text-emerald-400'}`}>
                                     {vitals.spo2}%
                                 </p>
                             </div>
@@ -476,7 +664,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                         {vitals.gds && (
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded border border-slate-100 dark:border-slate-800">
                                 <p className="text-xs text-slate-500 dark:text-slate-400">GDS</p>
-                                <p className={`font-bold ${vitals.gds < 70 || vitals.gds > 200 ? 'text-red-600' : 'text-slate-800 dark:text-slate-200'}`}>
+                                <p className={`font-bold transition-colors duration-500 ${vitals.gds < 70 || vitals.gds > 200 ? 'text-red-600' : 'text-emerald-600 dark:text-emerald-400'}`}>
                                     {vitals.gds} mg/dL
                                 </p>
                             </div>

@@ -43,6 +43,14 @@ describe('useCloudSync', () => {
     });
 
     it('syncs to cloud after the in-store day changes', async () => {
+        useGameStore.setState((state) => ({
+            clinical: {
+                ...state.clinical,
+                queue: [{ id: 'volatile-q-1' }],
+                activePatientId: 'volatile-q-1'
+            }
+        }));
+
         const { unmount } = renderHook(() => useCloudSync({ slotId: 'slot-cloud', enabled: true }));
 
         act(() => {
@@ -65,7 +73,11 @@ describe('useCloudSync', () => {
                 saveVersion: expect.any(Number),
                 savedAt: expect.any(Number),
                 _integrity: 'integrity-hash',
-                world: expect.objectContaining({ day: 2 })
+                world: expect.objectContaining({ day: 2 }),
+                clinical: expect.objectContaining({
+                    queue: [],
+                    activePatientId: null
+                })
             })
         );
         expect(AnalyticsService.trackGameSaved).toHaveBeenCalledWith('slot-cloud');
