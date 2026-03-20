@@ -17,6 +17,25 @@ describe('runtime hardening', () => {
         expect(parsed.world.day).toBe(7);
     });
 
+    it('unwraps cloud save rows into the canonical schema', () => {
+        const parsed = parseSavePayload({
+            game_state: {
+                world: { day: 9, time: 720 },
+                player: { profile: { name: 'Cloud Doc', reputation: 88 } }
+            },
+            day: 9,
+            saved_at: '2026-03-20T00:00:00.000Z',
+            version: 7
+        });
+
+        expect(parsed).not.toBeNull();
+        expect(parsed.saveVersion).toBe(CURRENT_SAVE_VERSION);
+        expect(parsed.world.day).toBe(9);
+        expect(parsed.world.time).toBe(720);
+        expect(parsed.player.profile.name).toBe('Cloud Doc');
+        expect(parsed.player.profile.reputation).toBe(88);
+    });
+
     it('rejects malformed save payloads before they enter the store', () => {
         expect(parseSavePayload({ player: [] })).toBeNull();
     });

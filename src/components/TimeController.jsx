@@ -118,7 +118,7 @@ const POSITIONS = [
 
 const HARI = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
-export default function TimeController() {
+export default function TimeController({ onOpenCalendar }) {
     const ctx = useGame();
     const { gameState, setGameState, day, setGameSpeed } = ctx;
     const gameSpeed = ctx.gameSpeed ?? 1;
@@ -220,8 +220,10 @@ export default function TimeController() {
             {/* Date + Time Display */}
             <div
                 className={`tc-date ${statusType}`}
-                onClick={() => setShowTooltip(!showTooltip)}
-                style={{ cursor: todayEvents ? 'pointer' : 'default', position: 'relative' }}
+                onClick={() => { if (onOpenCalendar) onOpenCalendar(); else setShowTooltip(!showTooltip); }}
+                onMouseEnter={() => { if (todayEvents) setShowTooltip(true); }}
+                onMouseLeave={() => setShowTooltip(false)}
+                style={{ cursor: 'pointer', position: 'relative' }}
             >
                 {isRuntimeTrap && <AlertTriangle size={16} style={{ marginRight: 8, animation: 'tc-pulse-colon 1s infinite' }} />}
                 <span style={{ opacity: 0.5, marginRight: 6, fontSize: '14px' }}>{dateDisplay.dayName}</span>

@@ -16,6 +16,7 @@ import { CloudSaveService } from '../services/CloudSaveService';
 import { AnalyticsService } from '../services/AnalyticsService';
 import { useGameStore } from '../store/useGameStore';
 import { sanityCheckState, generateIntegrityHash } from '../utils/GameIntegrity';
+import { createSaveSnapshot } from '../utils/savePayload.js';
 
 // ── Module-level variables: survives component remounts ──
 let globalLastSync = 0;
@@ -49,15 +50,12 @@ export function useCloudSync({ slotId = 'default', enabled = true } = {}) {
         try {
             const state = useGameStore.getState();
 
-            // Extract only persistable slices
-            const persistableState = {
-                world: state.world,
-                player: state.player,
-                finance: state.finance,
-                publicHealth: state.publicHealth,
-                staff: state.staff,
-                clinical: state.clinical,
-            };
+            // Reuse the canonical local save serializer so cloud/local contracts stay aligned.
+            const persistableState = createSaveSnapshot(state);
+            if (!persistableState) {
+                console.warn('[CloudSync] Cloud sync aborted: could not build a canonical save snapshot');
+                return;
+            }
 
             // ── Anti-Cheat: Sanity check ──
             const sanity = sanityCheckState(state);
@@ -104,17 +102,17 @@ export function useCloudSync({ slotId = 'default', enabled = true } = {}) {
         if (!enabled || !auth?.isOnline) return;
 
         let timeoutId; // Track for cleanup — prevents memory leak
+        let previousDay = useGameStore.getState()?.world?.day;
 
-        const unsub = useGameStore.subscribe(
-            (state) => state.world.day,
-            (day, prevDay) => {
-                if (day !== prevDay && day > 1) {
-                    // Clear previous timer if user spams "Next Day"
-                    if (timeoutId) clearTimeout(timeoutId);
-                    timeoutId = setTimeout(syncToCloud, 2000);
-                }
+        const unsub = useGameStore.subscribe((state) => {
+            const day = state?.world?.day;
+            if (day !== previousDay && day > 1) {
+                // Clear previous timer if user spams "Next Day"
+                if (timeoutId) clearTimeout(timeoutId);
+                timeoutId = setTimeout(syncToCloud, 2000);
             }
-        );
+            previousDay = day;
+        });
 
         return () => {
             unsub();

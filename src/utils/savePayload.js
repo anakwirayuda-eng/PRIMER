@@ -71,6 +71,15 @@ function asFiniteNumber(value, fallback) {
     return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }
 
+function normalizeTimestamp(value, fallback) {
+    if (typeof value === 'string') {
+        const parsed = Date.parse(value);
+        return Number.isFinite(parsed) ? parsed : fallback;
+    }
+
+    return asFiniteNumber(value, fallback);
+}
+
 function clampInteger(value, fallback, min, max) {
     const safeValue = Math.trunc(asFiniteNumber(value, fallback));
     return Math.min(max, Math.max(min, safeValue));
@@ -115,14 +124,29 @@ export function buildCanonicalSavePayload(rawSave) {
         ? rawSave.saveData
         : isPlainObject(rawSave._raw)
             ? rawSave._raw
-            : rawSave;
+            : isPlainObject(rawSave.game_state)
+                ? {
+                    ...rawSave.game_state,
+                    saveVersion: Number.isInteger(rawSave.game_state.saveVersion)
+                        ? rawSave.game_state.saveVersion
+                        : Number.isInteger(rawSave.version)
+                            ? rawSave.version
+                            : CURRENT_SAVE_VERSION,
+                    savedAt: typeof rawSave.game_state.savedAt !== 'undefined'
+                        ? rawSave.game_state.savedAt
+                        : rawSave.saved_at,
+                    day: typeof rawSave.day !== 'undefined'
+                        ? rawSave.day
+                        : rawSave.game_state.day
+                }
+                : rawSave;
 
     if (!isPlainObject(payload)) return null;
 
     const canonicalSave = {
         ...payload,
         saveVersion: Number.isInteger(payload.saveVersion) ? payload.saveVersion : CURRENT_SAVE_VERSION,
-        savedAt: asFiniteNumber(payload.savedAt, Date.now()),
+        savedAt: normalizeTimestamp(payload.savedAt, Date.now()),
         world: normalizeWorld(payload.world)
     };
 

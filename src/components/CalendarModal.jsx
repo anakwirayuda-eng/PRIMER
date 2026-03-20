@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { X, Calendar, ChevronLeft, ChevronRight, Activity, Star, AlertCircle, Heart, Stethoscope } from 'lucide-react';
+import { X, Calendar, ChevronLeft, ChevronRight, Activity, AlertCircle, Building2, FileText } from 'lucide-react';
 import useModalA11y from '../hooks/useModalA11y.js';
 import {
     CALENDAR_EVENTS,
@@ -22,7 +22,9 @@ import {
     getDaysInMonth,
     getDayNumberForDate,
     isWeekend,
-    isHoliday
+    isHoliday,
+    getDailyContext,
+    getEpidemiologicalSeason
 } from '../data/CalendarEventDB.js';
 
 const MONTHS = [
@@ -39,6 +41,12 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
     const [viewMonth, setViewMonth] = useState(currentDate.getMonth() + 1);
     const [viewYear, setViewYear] = useState(currentDate.getFullYear());
     const [selectedDayDetail, setSelectedDayDetail] = useState(null);
+
+    // Season widget for current view
+    const viewSeason = useMemo(() => {
+        const midMonthDay = getDayNumberForDate(viewYear, viewMonth, 15);
+        return getEpidemiologicalSeason(midMonthDay);
+    }, [viewMonth, viewYear]);
 
     const calendarData = useMemo(() => {
         const firstDay = getFirstDayOfMonth(viewMonth, viewYear);
@@ -113,6 +121,20 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                             </p>
                         </div>
                     </div>
+
+                    {/* Season Radar Widget */}
+                    <div className="hidden md:flex bg-black/30 px-4 py-2 rounded-xl border border-emerald-500/20 items-center gap-3 mr-12">
+                        <span className="text-2xl">{viewSeason.emoji}</span>
+                        <div>
+                            <div className="text-[9px] font-black uppercase tracking-widest text-emerald-500/70">Radar Epidemiologi</div>
+                            <div className="font-bold text-sm text-white">
+                                {viewSeason.name}
+                                {viewSeason.risks?.length > 0 && (
+                                    <span className="ml-2 bg-rose-500/20 text-rose-300 text-[9px] px-2 py-0.5 rounded font-black border border-rose-500/20">WASPADA: {viewSeason.risks[0]}</span>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex flex-1 overflow-hidden relative">
@@ -168,10 +190,12 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                             if (hasArchive) {
                                                 onSelectDay(cell.archived);
                                             } else {
+                                                const ctx = getDailyContext(cell.dayNumber);
                                                 setSelectedDayDetail({
                                                     ...cell,
                                                     event: cell.events,
-                                                    dateStr: formatDate(cell.dayNumber)
+                                                    dateStr: formatDate(cell.dayNumber),
+                                                    ctx
                                                 });
                                             }
                                         }}
@@ -233,7 +257,10 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                     return (
                                         <button
                                             key={entry.day}
-                                            onClick={() => setSelectedDayDetail({ dateStr: entry.dateStr, dayNumber: entry.day, isFuture: true, event: entry.events, hasEvents: true })}
+                                            onClick={() => {
+                                                const ctx = getDailyContext(entry.day);
+                                                setSelectedDayDetail({ dateStr: entry.dateStr, dayNumber: entry.day, isFuture: true, event: entry.events, hasEvents: true, ctx });
+                                            }}
                                             className={`
                                                 w-full text-left p-4 rounded-2xl border transition-all hover:scale-102 group
                                                 bg-white/5 border-white/5 hover:bg-emerald-500/10 hover:border-emerald-500/40
@@ -283,62 +310,106 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                         </div>
                     </div>
 
-                    {/* Selected Day Detail Modal Overlay */}
                     {selectedDayDetail && (
                         <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-6 z-20 animate-in zoom-in duration-300">
-                            <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.2)] p-8 max-w-sm w-full relative">
-                                <button
-                                    onClick={() => setSelectedDayDetail(null)}
-                                    className="absolute top-4 right-4 p-2 hover:bg-emerald-500/20 rounded-full text-emerald-500 transition-all border border-transparent hover:border-emerald-500/40"
-                                    aria-label="Tutup detail hari"
-                                >
-                                    <X size={20} />
-                                </button>
-
-                                <div className="text-center mb-8">
-                                    <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-                                        <span className="text-6xl filter drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]">
-                                            {Array.isArray(selectedDayDetail.event) && selectedDayDetail.event[0]?.emoji || (selectedDayDetail.isFuture ? '📅' : '📁')}
-                                        </span>
-                                    </div>
-                                    <h3 className="text-2xl font-black text-white leading-tight mb-2 uppercase tracking-tight">
-                                        {Array.isArray(selectedDayDetail.event) && selectedDayDetail.event[0]?.title || (selectedDayDetail.isFuture ? 'Agenda Mendatang' : 'Tidak Ada Laporan')}
-                                    </h3>
-                                    <div className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em]">
+                            <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.2)] p-0 max-w-sm w-full relative overflow-hidden">
+                                {/* Header — RED if poli closed, GREEN if open */}
+                                <div className={`p-6 text-center text-white ${selectedDayDetail.ctx?.facilities?.polyclinicOpen ? 'bg-gradient-to-br from-emerald-700 to-emerald-900' : 'bg-gradient-to-br from-rose-700 to-rose-900'}`}>
+                                    <button
+                                        onClick={() => setSelectedDayDetail(null)}
+                                        className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 rounded-full text-white transition-all"
+                                        aria-label="Tutup detail hari"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                    <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-1">
                                         {selectedDayDetail.dateStr}
                                     </div>
-                                </div>
-
-                                {/* Content Body */}
-                                <div className="space-y-4 mb-8">
-                                    {Array.isArray(selectedDayDetail.event) && selectedDayDetail.event.length > 0 ? (
-                                        <div className="space-y-2">
-                                            {selectedDayDetail.event.map((ev, i) => (
-                                                <div key={i} className="p-4 rounded-2xl bg-black/40 border border-emerald-500/20 text-emerald-50 text-sm text-center leading-relaxed">
-                                                    <div className="font-bold mb-1">{ev.emoji || '📅'} {ev.title}</div>
-                                                    <div className="opacity-80 text-xs">{ev.description}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : null}
-
-                                    {selectedDayDetail.isFuture ? (
-                                        <p className="text-center text-slate-400 text-xs italic px-4">
-                                            Data laporan akan muncul secara otomatis setelah Dokter menyelesaikan jadwal operasional hari ini.
-                                        </p>
-                                    ) : (!Array.isArray(selectedDayDetail.event) || selectedDayDetail.event.length === 0) && (
-                                        <p className="text-center text-slate-400 text-xs italic">
-                                            Tidak ada arsip laporan atau event khusus pada rotasi tanggal ini.
-                                        </p>
+                                    <h3 className="text-xl font-black leading-tight">
+                                        {selectedDayDetail.ctx?.gameplay?.vibe || 'Hari Normal'}
+                                    </h3>
+                                    {selectedDayDetail.dayNumber === currentDay && (
+                                        <span className="inline-block mt-2 text-[9px] px-3 py-1 bg-white/20 rounded-full font-bold uppercase">Hari Ini</span>
                                     )}
                                 </div>
 
-                                <button
-                                    onClick={() => setSelectedDayDetail(null)}
-                                    className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-black rounded-2xl font-black uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-95"
-                                >
-                                    Konfirmasi
-                                </button>
+                                <div className="p-6 space-y-4">
+                                    {/* Facility Status Card */}
+                                    {selectedDayDetail.ctx && (
+                                        <div className="flex items-center gap-3 p-3 rounded-2xl border border-white/10 bg-white/5">
+                                            <div className={`p-2 rounded-xl ${selectedDayDetail.ctx.facilities.polyclinicOpen ? 'bg-emerald-500' : 'bg-rose-500'}`}>
+                                                <Building2 size={20} className="text-white" />
+                                            </div>
+                                            <div>
+                                                <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">Status Poliklinik</div>
+                                                <div className="font-black text-white">{selectedDayDetail.ctx.facilities.statusText}</div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Traffic Alert */}
+                                    {selectedDayDetail.ctx?.gameplay?.patientTraffic > 1.0 && (
+                                        <div className="flex items-start gap-3 p-3 rounded-2xl border border-amber-500/30 bg-amber-500/10">
+                                            <AlertCircle size={18} className="text-amber-400 shrink-0 mt-0.5" />
+                                            <div>
+                                                <div className="font-black text-amber-300 text-xs uppercase">Pasien Membludak</div>
+                                                <div className="text-xs text-amber-200/80">Proyeksi trafik: <strong>{Math.round(selectedDayDetail.ctx.gameplay.patientTraffic * 100)}%</strong></div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Season Context */}
+                                    {selectedDayDetail.ctx?.season && (
+                                        <div className="flex items-center gap-3 p-3 rounded-2xl border border-white/5 bg-white/5">
+                                            <span className="text-2xl">{selectedDayDetail.ctx.season.emoji}</span>
+                                            <div>
+                                                <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">Musim</div>
+                                                <div className="text-sm text-white font-bold">{selectedDayDetail.ctx.season.name}</div>
+                                                {selectedDayDetail.ctx.season.risks?.length > 0 && (
+                                                    <div className="text-[10px] text-slate-400 mt-0.5">Risiko: {selectedDayDetail.ctx.season.risks.join(', ')}</div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Event List */}
+                                    {Array.isArray(selectedDayDetail.event) && selectedDayDetail.event.length > 0 ? (
+                                        <div className="space-y-2">
+                                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Agenda Harian</div>
+                                            {selectedDayDetail.event.map((ev, i) => (
+                                                <div key={i} className="p-3 rounded-2xl bg-black/40 border border-emerald-500/20 text-emerald-50 text-sm leading-relaxed">
+                                                    <div className="font-bold text-xs">{ev.emoji || '📅'} {ev.title}</div>
+                                                    <div className="opacity-70 text-[11px] mt-1">{ev.description}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-4 text-slate-500 text-xs italic">Rotasi reguler. Tidak ada instruksi khusus.</div>
+                                    )}
+
+                                    {/* Archive button if past day has report */}
+                                    {selectedDayDetail.archived && (
+                                        <button
+                                            onClick={() => { onSelectDay(selectedDayDetail.archived); setSelectedDayDetail(null); }}
+                                            className="w-full py-3 bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-black rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 border border-emerald-500/30"
+                                        >
+                                            <FileText size={16} /> Buka Laporan Harian
+                                        </button>
+                                    )}
+
+                                    {selectedDayDetail.isFuture && !selectedDayDetail.archived && (
+                                        <p className="text-center text-slate-500 text-[11px] italic">
+                                            Data laporan akan tersedia setelah rotasi hari ini selesai.
+                                        </p>
+                                    )}
+
+                                    <button
+                                        onClick={() => setSelectedDayDetail(null)}
+                                        className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-black rounded-xl font-black uppercase tracking-widest transition-all"
+                                    >
+                                        Tutup
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}

@@ -9,6 +9,7 @@
  */
 
 import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { buildCanonicalSavePayload, CURRENT_SAVE_VERSION } from '../utils/savePayload.js';
 
 /**
  * Extract leaderboard-relevant fields from a game state snapshot.
@@ -28,7 +29,7 @@ function extractLeaderboardData(gameState) {
         day_reached: world.day || 1,
         reputation: player.reputation || 0,
         level: player.level || 1,
-        accreditation: gameState?.publicHealth?.accreditation || 'Dasar',
+        accreditation: clinical.accreditation || 'Dasar',
         patients_treated: Array.isArray(clinical.history) ? clinical.history.length : 0,
     };
 }
@@ -49,7 +50,11 @@ export const CloudSaveService = {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return { success: false, error: 'Not authenticated' };
 
-        const leaderboard = extractLeaderboardData(gameState);
+        const canonicalGameState = buildCanonicalSavePayload(gameState) || gameState;
+        const leaderboard = extractLeaderboardData(canonicalGameState);
+        const saveVersion = Number.isInteger(canonicalGameState?.saveVersion)
+            ? canonicalGameState.saveVersion
+            : CURRENT_SAVE_VERSION;
 
         // Upsert save
         const { error: saveError } = await supabase
@@ -57,10 +62,10 @@ export const CloudSaveService = {
             .upsert({
                 user_id: user.id,
                 slot_id: slotId,
-                game_state: gameState,
+                game_state: canonicalGameState,
                 day: leaderboard.day_reached,
                 score: leaderboard.score,
-                version: (gameState._saveVersion || 0) + 1,
+                version: saveVersion,
                 saved_at: new Date().toISOString(),
             }, { onConflict: 'user_id,slot_id' });
 

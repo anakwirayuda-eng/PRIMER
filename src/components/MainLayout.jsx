@@ -622,7 +622,7 @@ export default function MainLayout() {
                     </div>
                      {/* CENTER: Luxury Time Controller */}
                     <div className="absolute left-1/2 -translate-x-1/2">
-                        <TimeController />
+                        <TimeController onOpenCalendar={() => setShowCalendar(true)} />
                     </div>
                     {/* RIGHT: System & Meta */}
                     <div className="flex items-center gap-1">
