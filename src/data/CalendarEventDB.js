@@ -40,7 +40,7 @@ export function formatDate(dayNumber) {
     const date = getDayDate(dayNumber);
     const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    return `${date.getDate()} ${months[date.getMonth()]} 2026`;
+    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -204,9 +204,9 @@ export const EVENT_COLORS = {
 /**
  * Get all events for a specific month (1-12)
  */
-export function getEventsForMonth(month) {
-    const startDay = getDayNumberForDate(2026, month, 1);
-    const endDay = getDayNumberForDate(2026, month + 1, 0); // Last day of month
+export function getEventsForMonth(month, year = GAME_START_DATE.getFullYear()) {
+    const startDay = getDayNumberForDate(year, month, 1);
+    const endDay = getDayNumberForDate(year, month + 1, 0); // Last day of month
 
     return Object.entries(CALENDAR_EVENTS)
         .filter(([day]) => {
@@ -232,15 +232,15 @@ export function getDayNumberForDate(year, month, day) {
 /**
  * Get the first day of a month as day number
  */
-export function getFirstDayOfMonth(month) {
-    return getDayNumberForDate(2026, month, 1);
+export function getFirstDayOfMonth(month, year = GAME_START_DATE.getFullYear()) {
+    return getDayNumberForDate(year, month, 1);
 }
 
 /**
  * Get number of days in a month
  */
-export function getDaysInMonth(month) {
-    return new Date(2026, month, 0).getDate();
+export function getDaysInMonth(month, year = GAME_START_DATE.getFullYear()) {
+    return new Date(year, month, 0).getDate();
 }
 
 /**

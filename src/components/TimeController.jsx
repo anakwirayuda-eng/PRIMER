@@ -121,7 +121,7 @@ const HARI = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 export default function TimeController() {
     const ctx = useGame();
     const { gameState, setGameState, day, setGameSpeed } = ctx;
-    const gameSpeed = ctx.gameSpeed || 1;
+    const gameSpeed = ctx.gameSpeed ?? 1;
     const gameOver = ctx.gameOver;
 
     const isRuntimeTrap = gameState === 'paused' && gameOver?.type === 'runtime_trap';
@@ -147,10 +147,10 @@ export default function TimeController() {
     }, [isEffectivelyPaused]);
 
     // Compute calendar date from day number
-    const time = ctx.time || 480;
+    const time = ctx.time ?? 480;
 
     const dateDisplay = useMemo(() => {
-        const date = getDayDate(day || 1);
+        const date = getDayDate(day ?? 1);
         const d = date.getDate();
         const m = date.getMonth() + 1;
         const y = date.getFullYear();

@@ -9,7 +9,7 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 import { FURNITURE_ITEMS, INITIAL_INVENTORY, ROOMS } from '../data/FurnitureData.js';
 import { getRandomGuestEvent } from '../game/GuestEventSystem.js';
@@ -61,6 +61,20 @@ const RumahDinas = ({ onClose }) => {
     // Calculate time of day for visuals
     const isLunch = time >= 720 && time < 780; // 12:00 - 13:00
 
+    // 🔒 Action Mutex: prevents auto-clicker double-spend & action spam
+    const isProcessingRef = useRef(false);
+
+    // 🔒 Guest event daily limit (1x per day max)
+    const [hasReceivedGuest, setHasReceivedGuest] = useState(false);
+    const currentDayRef = useRef(day);
+
+    useEffect(() => {
+        if (currentDayRef.current !== day) {
+            setHasReceivedGuest(false);
+            currentDayRef.current = day;
+        }
+    }, [day]);
+
     // Toast ID Ref to satisfy purity rules
     const toastIdRef = useRef(0);
 
@@ -90,6 +104,8 @@ const RumahDinas = ({ onClose }) => {
     };
 
     const handleAction = (actionType) => {
+        if (isProcessingRef.current) return; // 🔒 Anti-spam mutex
+        isProcessingRef.current = true;
         let costEnergy = 0;
         let gainEnergy = 0;
         let gainStress = 0; // Negative means stress reduction
@@ -219,9 +235,12 @@ const RumahDinas = ({ onClose }) => {
         advanceTime(30);
         soundManager.playClick();
         showToast(message, 'success');
+        setTimeout(() => { isProcessingRef.current = false; }, 300); // 🔓 Unlock after render
     };
 
     const buyItem = (item) => {
+        if (isProcessingRef.current) return; // 🔒 Anti double-spend mutex
+        isProcessingRef.current = true;
         if (stats.pendapatanUmum >= item.price) {
             setStats(prev => ({
                 ...prev,
@@ -237,18 +256,25 @@ const RumahDinas = ({ onClose }) => {
             soundManager.playError();
             showToast("Uang tidak cukup (Gunakan Pendapatan Umum)", 'error');
         }
+        setTimeout(() => { isProcessingRef.current = false; }, 300); // 🔓 Unlock
     };
 
     // Guest Event State
     const [activeEvent, setActiveEvent] = useState(null);
 
     const handleGuestEvent = () => {
+        if (hasReceivedGuest) {
+            showToast("Sudah tidak ada tamu hari ini.", 'error');
+            soundManager.playError();
+            return;
+        }
         const event = getRandomGuestEvent();
         setActiveEvent(event);
     };
 
     const handleEventChoice = (option) => {
         applyEffect(option.effect);
+        setHasReceivedGuest(true); // 🔒 Lock guest for today
         showToast(`Anda memilih: ${option.label}`, 'info');
         setActiveEvent(null);
     };

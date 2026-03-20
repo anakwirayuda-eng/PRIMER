@@ -15,6 +15,7 @@ import useModalA11y from '../hooks/useModalA11y.js';
 import {
     CALENDAR_EVENTS,
     EVENT_COLORS,
+    GAME_START_DATE,
     getDayDate,
     getDayOfWeek,
     formatDate,
@@ -34,15 +35,17 @@ const DAY_NAMES = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
 export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, onClose }) {
     const modalRef = useModalA11y(onClose);
+    const minCalendarYear = GAME_START_DATE.getFullYear();
     // Calculate current month based on game day
     const currentDate = getDayDate(currentDay);
     const [viewMonth, setViewMonth] = useState(currentDate.getMonth() + 1); // 1-indexed month
+    const [viewYear, setViewYear] = useState(currentDate.getFullYear());
     const [selectedDayDetail, setSelectedDayDetail] = useState(null);
 
     // Calculate calendar grid for the current view month
     const calendarData = useMemo(() => {
-        const firstDay = getFirstDayOfMonth(viewMonth);
-        const daysInMonth = getDaysInMonth(viewMonth);
+        const firstDay = getFirstDayOfMonth(viewMonth, viewYear);
+        const daysInMonth = getDaysInMonth(viewMonth, viewYear);
         const firstDayOfWeek = getDayOfWeek(firstDay);
 
         // Create grid with empty cells for padding
@@ -55,7 +58,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
 
         // Add actual days
         for (let d = 1; d <= daysInMonth; d++) {
-            const dayNum = getDayNumberForDate(2026, viewMonth, d);
+            const dayNum = getDayNumberForDate(viewYear, viewMonth, d);
             grid.push({
                 date: d,
                 dayNumber: dayNum,
@@ -70,7 +73,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
         }
 
         return grid;
-    }, [viewMonth, currentDay, dailyArchive]);
+    }, [viewMonth, viewYear, currentDay, dailyArchive]);
 
     // Get upcoming events for the sidebar
     const upcomingEvents = useMemo(() => {
@@ -84,8 +87,27 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
             }));
     }, [currentDay]);
 
-    const handlePrevMonth = () => setViewMonth(m => Math.max(1, m - 1));
-    const handleNextMonth = () => setViewMonth(m => Math.min(12, m + 1));
+    const handlePrevMonth = () => {
+        if (viewMonth > 1) {
+            setViewMonth(viewMonth - 1);
+            return;
+        }
+
+        if (viewYear > minCalendarYear) {
+            setViewYear(viewYear - 1);
+            setViewMonth(12);
+        }
+    };
+
+    const handleNextMonth = () => {
+        if (viewMonth < 12) {
+            setViewMonth(viewMonth + 1);
+            return;
+        }
+
+        setViewYear(viewYear + 1);
+        setViewMonth(1);
+    };
 
     return (
         <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -117,18 +139,17 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                         <div className="flex items-center justify-between mb-8 bg-black/40 p-2 rounded-2xl border border-white/5">
                             <button
                                 onClick={handlePrevMonth}
-                                disabled={viewMonth <= 1}
+                                disabled={viewYear === minCalendarYear && viewMonth <= 1}
                                 className="p-2 hover:bg-emerald-500/20 text-emerald-400 rounded-xl disabled:opacity-10 transition-all border border-transparent hover:border-emerald-500/30"
                                 aria-label="Bulan sebelumnya"
                             >
                                 <ChevronLeft size={24} />
                             </button>
                             <h3 className="text-2xl font-black uppercase tracking-widest text-emerald-50">
-                                {MONTHS[viewMonth - 1]} <span className="text-emerald-500 opacity-50">2026</span>
+                                {MONTHS[viewMonth - 1]} <span className="text-emerald-500 opacity-50">{viewYear}</span>
                             </h3>
                             <button
                                 onClick={handleNextMonth}
-                                disabled={viewMonth >= 12}
                                 className="p-2 hover:bg-emerald-500/20 text-emerald-400 rounded-xl disabled:opacity-10 transition-all border border-transparent hover:border-emerald-500/30"
                                 aria-label="Bulan berikutnya"
                             >

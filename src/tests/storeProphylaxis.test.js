@@ -272,6 +272,73 @@ describe('store prophylaxis', () => {
         });
     });
 
+    it('keeps ambulances busy across midnight until their absolute return time passes', () => {
+        useGameStore.setState(state => ({
+            world: { ...state.world, day: 2, time: 60 },
+            clinical: {
+                ...state.clinical,
+                busyAmbulanceIds: [{
+                    id: 'amb_transport',
+                    busyUntilTotal: ((2 - 1) * 1440) + 120,
+                    busyUntilDay: 2,
+                    busyUntilTime: 120
+                }]
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().clinicalActions.processDailyTick();
+        });
+
+        expect(useGameStore.getState().clinical.busyAmbulanceIds).toHaveLength(1);
+
+        useGameStore.setState(state => ({
+            world: { ...state.world, day: 2, time: 180 }
+        }));
+
+        act(() => {
+            useGameStore.getState().clinicalActions.processDailyTick();
+        });
+
+        expect(useGameStore.getState().clinical.busyAmbulanceIds).toEqual([]);
+    });
+
+    it('passes the previous day caseload into TheDirector before daily logs are cleared', () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-01-01T00:00:05Z'));
+
+        useGameStore.setState(state => ({
+            nav: { ...state.nav, currentSlotId: 0, gameState: 'playing' },
+            world: { ...state.world, day: 6, time: 1439, isPaused: false },
+            player: {
+                ...state.player,
+                profile: {
+                    ...state.player.profile,
+                    energy: 76,
+                    reputation: 50
+                }
+            },
+            clinical: {
+                ...state.clinical,
+                todayLog: Array.from({ length: 10 }, (_, index) => ({ id: `case-${index}` }))
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().actions.nextDay(6);
+        });
+
+        expect(useGameStore.getState().world.directorVerdict).toMatchObject({
+            stress: 16,
+            label: 'Pressure Rising',
+            spawnMultiplier: 1.3
+        });
+
+        act(() => {
+            vi.runAllTimers();
+        });
+    });
+
     it('initializes knowledge and preserves residual XP after level up', () => {
         act(() => {
             useGameStore.getState().playerActions.gainXp(1100);

@@ -288,6 +288,37 @@ const clampEnergyToProfile = (profile, energy) => Math.max(
     Math.min(profile?.maxEnergy || INITIAL_PLAYER_STATE.maxEnergy, Number(energy) || 0)
 );
 
+const toAbsoluteWorldMinutes = (day = 1, time = 0) => (
+    (Math.max(1, Math.trunc(Number(day) || 1)) - 1) * 1440
+) + Math.max(0, Number(time) || 0);
+
+const createBusyAmbulanceEntry = (ambulanceId, day, time, durationMinutes) => {
+    const busyUntilTotal = toAbsoluteWorldMinutes(day, time) + Math.max(0, Number(durationMinutes) || 0);
+    return {
+        id: ambulanceId,
+        busyUntilTotal,
+        busyUntilDay: Math.floor(busyUntilTotal / 1440) + 1,
+        busyUntilTime: busyUntilTotal % 1440
+    };
+};
+
+const isAmbulanceStillBusy = (item, day, time) => {
+    const currentTotal = toAbsoluteWorldMinutes(day, time);
+
+    if (Number.isFinite(Number(item?.busyUntilTotal))) {
+        return currentTotal < Number(item.busyUntilTotal);
+    }
+
+    if (
+        Number.isFinite(Number(item?.busyUntilDay)) &&
+        Number.isFinite(Number(item?.busyUntilTime))
+    ) {
+        return currentTotal < toAbsoluteWorldMinutes(item.busyUntilDay, item.busyUntilTime);
+    }
+
+    return (Number(time) || 0) < (Number(item?.busyUntil) || 0);
+};
+
 const getProfileLevel = (profile = {}) => Math.max(1, Number(profile.level) || INITIAL_PLAYER_STATE.level);
 
 const getCurrentLevelXp = (profile = {}) => {
@@ -1664,7 +1695,7 @@ export const useGameStore = create(
 
                         // 1. Update Busy Ambulances
                         // Ambulance filter (count tracked implicitly by array mutation)
-                        state.clinical.busyAmbulanceIds = state.clinical.busyAmbulanceIds.filter(item => time < item.busyUntil);
+                        state.clinical.busyAmbulanceIds = state.clinical.busyAmbulanceIds.filter(item => isAmbulanceStillBusy(item, day, time));
 
                         // 2. Queue capacity penalty at day end (16:00 = 960)
                         if (time === 960) {
@@ -1851,7 +1882,9 @@ export const useGameStore = create(
                             if (hosp && amb) {
                                 const travelTime = hosp.distance * (1 / (amb.speedBoost || 1)) * 2 * ((100 + (buffs.referralTime || 0)) / 100);
                                 if (amb.isAmbulance !== false) {
-                                    state.clinical.busyAmbulanceIds.push({ id: amb.id, busyUntil: time + (travelTime * 2) });
+                                    state.clinical.busyAmbulanceIds.push(
+                                        createBusyAmbulanceEntry(amb.id, day, time, travelTime * 2)
+                                    );
                                 }
                                 state.clinical.activeReferralLog.push({
                                     id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
@@ -1861,7 +1894,7 @@ export const useGameStore = create(
                                     hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
                                     timeSent: time, status: 'EN_ROUTE'
                                 });
-                            
+
                                 // S4 Fix: decrement hospital bed availability
                                 const bedKey = hosp.id;
                                 if (!state.clinical.hospitalBedUsage) state.clinical.hospitalBedUsage = {};
@@ -1962,7 +1995,10 @@ export const useGameStore = create(
                                 if (hosp && amb) {
                                     const travelTime = hosp.distance * (1 / (amb.speedBoost || 1)) * 2;
                                     if (amb.isAmbulance !== false) {
-                                        newBusyAmbulanceIds = [...newBusyAmbulanceIds, { id: amb.id, busyUntil: time + (travelTime * 2) }];
+                                        newBusyAmbulanceIds = [
+                                            ...newBusyAmbulanceIds,
+                                            createBusyAmbulanceEntry(amb.id, day, time, travelTime * 2)
+                                        ];
                                     }
                                     newActiveReferralLog = [...newActiveReferralLog, {
                                         id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
@@ -2187,6 +2223,7 @@ export const useGameStore = create(
                             // 1. Archive Day (Finance)
                             const dailyOpCost = 50000 + (Object.values(state.finance.facilities).reduce((a, b) => a + b, 0) * 10000);
                             state.finance.stats.pengeluaranOperasional = (state.finance.stats.pengeluaranOperasional || 0) + dailyOpCost;
+                            const casesToday = (state.clinical.todayLog || []).length;
 
                             // 2. Reset Clinical State
                             state.clinical.queue = [];
@@ -2263,7 +2300,7 @@ export const useGameStore = create(
                                 energy: state.player.profile.energy || 100,
                                 reputation: state.player.profile.reputation || 50,
                                 activeOutbreakCount: (state.publicHealth.activeOutbreaks || []).length,
-                                casesToday: (state.clinical.todayLog || []).length
+                                casesToday
                             };
                             const verdict = evaluateDirectorState(directorInput);
                             state.world.directorVerdict = verdict;
@@ -2307,6 +2344,9 @@ export const useGameStore = create(
                             // 5. Advance Time
                             state.world.day = nextDayVal;
                             state.world.time = 480;
+                            state.clinical.busyAmbulanceIds = state.clinical.busyAmbulanceIds.filter(
+                                item => isAmbulanceStillBusy(item, nextDayVal, 480)
+                            );
 
                             // 6. Monthly Report Trigger
                         }));
