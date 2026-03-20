@@ -682,6 +682,15 @@ export default function MainLayout() {
                         </button>
 
                         <button
+                            onClick={() => setShowCalendar(true)}
+                            className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${showCalendar ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                            title={`Kalender (${TOGGLE_SHORTCUT_HINTS.calendar})`}
+                            aria-label="Buka Kalender"
+                        >
+                            <span className="text-sm">📅</span>
+                        </button>
+
+                        <button
                             onClick={() => setShowShortcutHelp(true)}
                             className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${showShortcutHelp ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}
                             title="Shortcut Keyboard (?)"

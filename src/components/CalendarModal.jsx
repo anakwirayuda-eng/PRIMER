@@ -1,12 +1,11 @@
 /**
  * @reflection
  * [IDENTITY]: CalendarModal
- * [PURPOSE]: React UI component: CalendarModal.
- * [STATE]: Experimental
+ * [PURPOSE]: React UI component: CalendarModal — full calendar view with multi-event support
+ * [STATE]: Production
  * [ANCHOR]: CalendarModal
  * [DEPENDS_ON]: CalendarEventDB
- * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-03-20
  */
 
 import React, { useState, useMemo } from 'react';
@@ -36,33 +35,30 @@ const DAY_NAMES = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, onClose }) {
     const modalRef = useModalA11y(onClose);
     const minCalendarYear = GAME_START_DATE.getFullYear();
-    // Calculate current month based on game day
     const currentDate = getDayDate(currentDay);
-    const [viewMonth, setViewMonth] = useState(currentDate.getMonth() + 1); // 1-indexed month
+    const [viewMonth, setViewMonth] = useState(currentDate.getMonth() + 1);
     const [viewYear, setViewYear] = useState(currentDate.getFullYear());
     const [selectedDayDetail, setSelectedDayDetail] = useState(null);
 
-    // Calculate calendar grid for the current view month
     const calendarData = useMemo(() => {
         const firstDay = getFirstDayOfMonth(viewMonth, viewYear);
         const daysInMonth = getDaysInMonth(viewMonth, viewYear);
         const firstDayOfWeek = getDayOfWeek(firstDay);
 
-        // Create grid with empty cells for padding
         const grid = [];
-
-        // Add empty cells for days before the first of the month
         for (let i = 0; i < firstDayOfWeek; i++) {
             grid.push({ empty: true });
         }
 
-        // Add actual days
         for (let d = 1; d <= daysInMonth; d++) {
             const dayNum = getDayNumberForDate(viewYear, viewMonth, d);
+            const events = CALENDAR_EVENTS[dayNum];
+            const hasEvents = Array.isArray(events) && events.length > 0;
             grid.push({
                 date: d,
                 dayNumber: dayNum,
-                event: CALENDAR_EVENTS[dayNum],
+                events: hasEvents ? events : [],
+                hasEvents,
                 isToday: dayNum === currentDay,
                 isPast: dayNum < currentDay,
                 isFuture: dayNum > currentDay,
@@ -75,38 +71,25 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
         return grid;
     }, [viewMonth, viewYear, currentDay, dailyArchive]);
 
-    // Get upcoming events for the sidebar
     const upcomingEvents = useMemo(() => {
         return Object.entries(CALENDAR_EVENTS)
-            .filter(([day]) => parseInt(day) >= currentDay)
+            .filter(([day, events]) => parseInt(day) >= currentDay && Array.isArray(events) && events.length > 0)
             .slice(0, 8)
-            .map(([day, event]) => ({
+            .map(([day, events]) => ({
                 day: parseInt(day),
                 dateStr: formatDate(parseInt(day)),
-                ...event
+                events
             }));
     }, [currentDay]);
 
     const handlePrevMonth = () => {
-        if (viewMonth > 1) {
-            setViewMonth(viewMonth - 1);
-            return;
-        }
-
-        if (viewYear > minCalendarYear) {
-            setViewYear(viewYear - 1);
-            setViewMonth(12);
-        }
+        if (viewMonth > 1) { setViewMonth(viewMonth - 1); return; }
+        if (viewYear > minCalendarYear) { setViewYear(viewYear - 1); setViewMonth(12); }
     };
 
     const handleNextMonth = () => {
-        if (viewMonth < 12) {
-            setViewMonth(viewMonth + 1);
-            return;
-        }
-
-        setViewYear(viewYear + 1);
-        setViewMonth(1);
+        if (viewMonth < 12) { setViewMonth(viewMonth + 1); return; }
+        setViewYear(viewYear + 1); setViewMonth(1);
     };
 
     return (
@@ -176,7 +159,6 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                     return <div key={`empty-${idx}`} className="aspect-square opacity-0" />;
                                 }
 
-
                                 const hasArchive = !!cell.archived;
 
                                 return (
@@ -188,6 +170,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                             } else {
                                                 setSelectedDayDetail({
                                                     ...cell,
+                                                    event: cell.events,
                                                     dateStr: formatDate(cell.dayNumber)
                                                 });
                                             }
@@ -199,24 +182,24 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                             ${hasArchive ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : ''}
                                             ${!hasArchive && cell.isPast && !cell.isToday ? 'opacity-40 grayscale' : 'text-white'}
                                             ${!hasArchive && cell.isFuture ? 'text-slate-400' : ''}
-                                            ${cell.isWeekend && !cell.isToday && !cell.event ? 'bg-rose-500/5 border-rose-500/10' : ''}
+                                            ${cell.isWeekend && !cell.isToday && !cell.hasEvents ? 'bg-rose-500/5 border-rose-500/10' : ''}
                                             ${cell.isHoliday && !cell.isToday ? 'bg-rose-500/20 border-rose-500/40 shadow-[0_0_10px_rgba(244,63,94,0.1)]' : ''}
-                                            ${cell.event && !cell.isHoliday && !cell.isToday ? 'border-cyan-500/40 bg-cyan-500/5' : ''}
+                                            ${cell.hasEvents && !cell.isHoliday && !cell.isToday ? 'border-cyan-500/40 bg-cyan-500/5' : ''}
                                         `}
                                     >
                                         <span className={`${cell.isWeekend && !cell.isToday ? 'text-rose-400' : ''} ${cell.isToday ? 'text-emerald-400' : ''}`}>
                                             {cell.date}
                                         </span>
 
-                                        {/* Event indicator - Mini Glow */}
-                                        {cell.event && (
-                                            <div className={`absolute bottom-2 w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] ${cell.isHoliday ? 'bg-rose-500 text-rose-500' : 'bg-emerald-400 text-emerald-400'}`} />
-                                        )}
+                                        {/* Event indicators - stacked dots for multi-event days */}
+                                        {cell.hasEvents && cell.events.map((ev, i) => (
+                                            <div key={i} className={`absolute w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] ${ev.type === 'holiday' || ev.type === 'cuti' ? 'bg-rose-500 text-rose-500' : 'bg-emerald-400 text-emerald-400'}`} style={{ bottom: `${8 + i * 5}px` }} />
+                                        ))}
 
-                                        {/* Emoji floating */}
-                                        {cell.event && (
+                                        {/* Emoji floating — show first event's emoji */}
+                                        {cell.hasEvents && (
                                             <span className="absolute top-1.5 right-1.5 text-[10px] opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all">
-                                                {cell.event.emoji || EVENT_COLORS[cell.event.type]?.emoji}
+                                                {cell.events[0]?.emoji || EVENT_COLORS[cell.events[0]?.type]?.emoji}
                                             </span>
                                         )}
                                     </button>
@@ -243,13 +226,14 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                             <p className="text-sm text-slate-500 italic text-center p-8">No missions available</p>
                         ) : (
                             <div className="space-y-4 flex-1">
-                                {upcomingEvents.map(event => {
-                                    const style = EVENT_COLORS[event.type];
-                                    const isEmergency = event.type === 'holiday'; // Red accent for holidays
+                                {upcomingEvents.map(entry => {
+                                    const firstEvent = entry.events[0];
+                                    const style = EVENT_COLORS[firstEvent?.type];
+                                    const isEmergency = firstEvent?.type === 'holiday';
                                     return (
                                         <button
-                                            key={event.day}
-                                            onClick={() => setSelectedDayDetail({ ...event, dateStr: formatDate(event.day), dayNumber: event.day, isFuture: true, event: event })}
+                                            key={entry.day}
+                                            onClick={() => setSelectedDayDetail({ dateStr: entry.dateStr, dayNumber: entry.day, isFuture: true, event: entry.events, hasEvents: true })}
                                             className={`
                                                 w-full text-left p-4 rounded-2xl border transition-all hover:scale-102 group
                                                 bg-white/5 border-white/5 hover:bg-emerald-500/10 hover:border-emerald-500/40
@@ -258,13 +242,15 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                         >
                                             <div className="flex items-start gap-3">
                                                 <div className="p-2 bg-black/40 rounded-xl group-hover:bg-emerald-500/20 transition-all">
-                                                    <span className="text-xl">{event.emoji || style?.emoji}</span>
+                                                    <span className="text-xl">{firstEvent?.emoji || style?.emoji}</span>
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="font-black text-xs text-white truncate group-hover:text-emerald-400 transition-colors uppercase tracking-wider">{event.title}</div>
-                                                    <div className="text-[9px] font-bold text-emerald-500/60 mt-0.5">{event.dateStr}</div>
-                                                    {event.description && (
-                                                        <div className="text-[10px] text-slate-400 mt-2 line-clamp-2 leading-relaxed">{event.description}</div>
+                                                    <div className="font-black text-xs text-white truncate group-hover:text-emerald-400 transition-colors uppercase tracking-wider">
+                                                        {firstEvent?.title}{entry.events.length > 1 ? ` +${entry.events.length - 1}` : ''}
+                                                    </div>
+                                                    <div className="text-[9px] font-bold text-emerald-500/60 mt-0.5">{entry.dateStr}</div>
+                                                    {firstEvent?.description && (
+                                                        <div className="text-[10px] text-slate-400 mt-2 line-clamp-2 leading-relaxed">{firstEvent.description}</div>
                                                     )}
                                                 </div>
                                             </div>
@@ -312,11 +298,11 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                 <div className="text-center mb-8">
                                     <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
                                         <span className="text-6xl filter drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]">
-                                            {selectedDayDetail.event?.emoji || (selectedDayDetail.isFuture ? '📅' : '📁')}
+                                            {Array.isArray(selectedDayDetail.event) && selectedDayDetail.event[0]?.emoji || (selectedDayDetail.isFuture ? '📅' : '📁')}
                                         </span>
                                     </div>
                                     <h3 className="text-2xl font-black text-white leading-tight mb-2 uppercase tracking-tight">
-                                        {selectedDayDetail.event?.title || (selectedDayDetail.isFuture ? 'Agenda Mendatang' : 'Tidak Ada Laporan')}
+                                        {Array.isArray(selectedDayDetail.event) && selectedDayDetail.event[0]?.title || (selectedDayDetail.isFuture ? 'Agenda Mendatang' : 'Tidak Ada Laporan')}
                                     </h3>
                                     <div className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em]">
                                         {selectedDayDetail.dateStr}
@@ -325,9 +311,14 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
 
                                 {/* Content Body */}
                                 <div className="space-y-4 mb-8">
-                                    {selectedDayDetail.event ? (
-                                        <div className="p-5 rounded-2xl bg-black/40 border border-emerald-500/20 text-emerald-50 text-sm text-center leading-relaxed">
-                                            {selectedDayDetail.event.description}
+                                    {Array.isArray(selectedDayDetail.event) && selectedDayDetail.event.length > 0 ? (
+                                        <div className="space-y-2">
+                                            {selectedDayDetail.event.map((ev, i) => (
+                                                <div key={i} className="p-4 rounded-2xl bg-black/40 border border-emerald-500/20 text-emerald-50 text-sm text-center leading-relaxed">
+                                                    <div className="font-bold mb-1">{ev.emoji || '📅'} {ev.title}</div>
+                                                    <div className="opacity-80 text-xs">{ev.description}</div>
+                                                </div>
+                                            ))}
                                         </div>
                                     ) : null}
 
@@ -335,7 +326,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                         <p className="text-center text-slate-400 text-xs italic px-4">
                                             Data laporan akan muncul secara otomatis setelah Dokter menyelesaikan jadwal operasional hari ini.
                                         </p>
-                                    ) : !selectedDayDetail.event && (
+                                    ) : (!Array.isArray(selectedDayDetail.event) || selectedDayDetail.event.length === 0) && (
                                         <p className="text-center text-slate-400 text-xs italic">
                                             Tidak ada arsip laporan atau event khusus pada rotasi tanggal ini.
                                         </p>

@@ -161,8 +161,11 @@ export default function TimeController() {
         return { d, m, y, hh, mm, dayName };
     }, [day, Math.floor(time)]); // Floor prevents re-render on fractional changes
 
-    // Calendar event for today
-    const todayEvent = useMemo(() => CALENDAR_EVENTS?.[day] || null, [day]);
+    // Calendar events for today (now array-based)
+    const todayEvents = useMemo(() => {
+        const events = CALENDAR_EVENTS?.[day];
+        return (Array.isArray(events) && events.length > 0) ? events : null;
+    }, [day]);
 
     const [showTooltip, setShowTooltip] = React.useState(false);
 
@@ -218,7 +221,7 @@ export default function TimeController() {
             <div
                 className={`tc-date ${statusType}`}
                 onClick={() => setShowTooltip(!showTooltip)}
-                style={{ cursor: todayEvent ? 'pointer' : 'default', position: 'relative' }}
+                style={{ cursor: todayEvents ? 'pointer' : 'default', position: 'relative' }}
             >
                 {isRuntimeTrap && <AlertTriangle size={16} style={{ marginRight: 8, animation: 'tc-pulse-colon 1s infinite' }} />}
                 <span style={{ opacity: 0.5, marginRight: 6, fontSize: '14px' }}>{dateDisplay.dayName}</span>
@@ -227,7 +230,7 @@ export default function TimeController() {
                 {dateDisplay.hh}<span className="tc-date-sep" style={{ opacity: 0.6 }}>:</span>{dateDisplay.mm}
 
                 {/* Calendar tooltip */}
-                {showTooltip && todayEvent && (
+                {showTooltip && todayEvents && (
                     <div style={{
                         position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
                         marginTop: 8, padding: '8px 14px', borderRadius: 10,
@@ -235,8 +238,12 @@ export default function TimeController() {
                         boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap',
                         fontSize: 13, color: '#e2e8f0', zIndex: 100,
                     }}>
-                        <div style={{ fontWeight: 700, color: '#10b981' }}>{todayEvent.emoji || '📅'} {todayEvent.title}</div>
-                        <div style={{ opacity: 0.7, fontSize: 11, marginTop: 2 }}>{todayEvent.description}</div>
+                        {todayEvents.map((ev, i) => (
+                            <div key={i} style={{ marginTop: i > 0 ? 6 : 0 }}>
+                                <div style={{ fontWeight: 700, color: '#10b981' }}>{ev.emoji || '📅'} {ev.title}</div>
+                                <div style={{ opacity: 0.7, fontSize: 11, marginTop: 2 }}>{ev.description}</div>
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>
