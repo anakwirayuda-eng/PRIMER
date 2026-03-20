@@ -19,7 +19,6 @@ import { generateDebrief } from '../game/DebriefEngine.js';
 import MorningBriefingModal from '../components/MorningBriefingModal.jsx';
 import EndOfDayModal from '../components/EndOfDayModal.jsx';
 
-// Icons/Assets (using emoji for now, replace with generated assets later)
 const ICONS = {
     energy: '⚡',
     stress: '😌',
@@ -27,6 +26,33 @@ const ICONS = {
     maxEnergy: '🔋',
     reputation: '🌟',
     money: '💰'
+};
+
+// 📖 Medical trivia for stealth UKMPPD education (shown on study action)
+const MEDICAL_TRIVIA = [
+    "📖 JNC 8: Target TD pasien DM tipe 2 adalah <130/80 mmHg.",
+    "📖 Metformin adalah lini pertama DM tipe 2. Waspada efek GI.",
+    "📖 Curiga syok DBD jika Hematokrit meningkat >20% dari baseline.",
+    "📖 KODEKI: Jaga kerahasiaan diagnosis pasien dari pihak yg tak berhak.",
+    "📖 Rujuk pasien Hipertensi jika ada penyulit/kerusakan organ target.",
+    "📖 Diare akut anak: ORS + Zinc 20mg selama 10 hari.",
+    "📖 TB Paru: Regimen OAT kategori 1 = 2HRZE / 4HR3.",
+    "📖 Golden period luka: debridement idealnya dalam 6-8 jam pertama.",
+    "📖 Tanda Kernig & Brudzinski positif → curiga meningitis.",
+    "📖 ANC minimal 6x selama kehamilan (standar WHO terbaru).",
+    "📖 Imunisasi dasar lengkap: HB-0, BCG, Polio, DPT-HB-Hib, Campak.",
+    "📖 Asma serangan sedang: Nebulisasi salbutamol + ipratropium.",
+    "📖 Batu ginjal <5mm umumnya bisa keluar spontan dengan hidrasi.",
+    "📖 Triage P1 (merah) = mengancam jiwa, perlu penanganan segera.",
+    "📖 Informed consent wajib sebelum tindakan invasif apapun.",
+];
+
+// 🧠 Clinical burnout labels (Maslach Burnout Inventory terminology)
+const getBurnoutLabel = (stress) => {
+    if (stress < 30) return { label: 'Euthymic', color: 'text-emerald-600' };
+    if (stress < 60) return { label: 'Compassion Fatigue', color: 'text-yellow-600' };
+    if (stress < 85) return { label: 'Depersonalization', color: 'text-orange-600' };
+    return { label: 'Severe Burnout', color: 'text-red-600' };
 };
 
 const RumahDinas = ({ onClose }) => {
@@ -74,6 +100,19 @@ const RumahDinas = ({ onClose }) => {
             currentDayRef.current = day;
         }
     }, [day]);
+
+    // ⌨️ Keyboard hotkeys: 1-6 for room navigation
+    useEffect(() => {
+        const ROOM_KEYS = { '1': 'living_room', '2': 'bedroom', '3': 'kitchen', '4': 'workspace', '5': 'gym', '6': 'guest_room' };
+        const onKeyDown = (e) => {
+            if (e.repeat) return;
+            if (e.target.closest('input, textarea, select')) return;
+            const room = ROOM_KEYS[e.key];
+            if (room) { setActiveTab(room); soundManager.playClick?.(); }
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, []);
 
     // Toast ID Ref to satisfy purity rules
     const toastIdRef = useRef(0);
@@ -130,7 +169,7 @@ const RumahDinas = ({ onClose }) => {
                 const desk = getActiveItem('workspace', 'desk');
                 gainExp = desk?.effect.knowledge || 5;
                 costEnergy = 10;
-                message = "Membaca jurnal medis menambah wawasan.";
+                message = MEDICAL_TRIVIA[Math.floor(Math.random() * MEDICAL_TRIVIA.length)];
                 break;
             }
             case 'cook': {
@@ -599,12 +638,17 @@ const RumahDinas = ({ onClose }) => {
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="text-xs text-slate-500">Stress</div>
+                                    <div className="text-xs text-slate-500 flex justify-between">
+                                        <span>Burnout</span>
+                                        <span className={`font-bold ${getBurnoutLabel(playerStats.stress).color}`}>
+                                            {getBurnoutLabel(playerStats.stress).label}
+                                        </span>
+                                    </div>
                                     <div className="font-mono font-bold text-red-500">
                                         {Math.round(playerStats.stress)}%
                                     </div>
                                     <div className="w-full bg-slate-200 h-1.5 rounded-full mt-1">
-                                        <div className="bg-red-500 h-1.5 rounded-full" style={{ width: `${playerStats.stress}%` }}></div>
+                                        <div className={`h-1.5 rounded-full ${playerStats.stress >= 85 ? 'bg-red-600' : playerStats.stress >= 60 ? 'bg-orange-500' : playerStats.stress >= 30 ? 'bg-yellow-500' : 'bg-emerald-500'}`} style={{ width: `${playerStats.stress}%` }}></div>
                                     </div>
                                 </div>
                             </div>
