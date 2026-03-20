@@ -524,6 +524,7 @@ export function selectDailyCases(state) {
 
     // Check for emerging event (separate from core) — uses full engine
     let emergingAlert = null;
+    let emergingWarnings = [];
     const emergingResult = evaluateEmergingTriggers({
         day,
         villageData,
@@ -531,11 +532,14 @@ export function selectDailyCases(state) {
         emergingCooldowns: state.emergingCooldowns || {}
     });
 
-    if (emergingResult && !activeIds.includes(emergingResult.scenarioId)) {
-        emergingAlert = emergingResult;
+    if (emergingResult) {
+        emergingWarnings = emergingResult.earlyWarnings || [];
+        if (emergingResult.triggeredEvent && !activeIds.includes(emergingResult.triggeredEvent.scenarioId)) {
+            emergingAlert = emergingResult.triggeredEvent;
+        }
     }
 
-    return { coreCases, emergingAlert };
+    return { coreCases, emergingAlert, emergingWarnings };
 }
 
 // ═══════════════════════════════════════════════════════════════
