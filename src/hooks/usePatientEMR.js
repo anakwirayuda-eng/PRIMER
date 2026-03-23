@@ -393,8 +393,15 @@ export function usePatientEMR() {
             recalculateClinicalScores(newHistory, examsPerformed, labsRevealed);
 
             // 2. Context-aware MAIA feedback
-            const caseDataForMAIA = patient.medicalData || null;
-            const alerts = getMAIAAlerts(newHistory, anamnesisCategory, caseDataForMAIA);
+            // Codex Fix: enrich with skdi/triageLevel/esi like liveMaiaFeedback does
+            const rawCase = patient.medicalData || {};
+            const enrichedForMAIA = {
+                ...rawCase,
+                skdi: rawCase.skdi || patient.hidden?.skdi,
+                triageLevel: rawCase.triageLevel || patient.triageLevel,
+                esi: rawCase.esi || patient.esiLevel
+            };
+            const alerts = getMAIAAlerts(newHistory, anamnesisCategory, enrichedForMAIA);
             setMaiaAlertsLocal(alerts);
 
             updatePatient(capturedPatientId, {
@@ -426,7 +433,15 @@ export function usePatientEMR() {
 
         // Recalculate coverage and MAIA
         recalculateClinicalScores(newHistory, examsPerformed, labsRevealed);
-        const alerts = getMAIAAlerts(newHistory, 'keluhan_utama', patient.medicalData || null);
+        // Codex Fix: enrich with skdi/triageLevel/esi
+        const rawCase2 = patient.medicalData || {};
+        const enrichedForMAIA2 = {
+            ...rawCase2,
+            skdi: rawCase2.skdi || patient.hidden?.skdi,
+            triageLevel: rawCase2.triageLevel || patient.triageLevel,
+            esi: rawCase2.esi || patient.esiLevel
+        };
+        const alerts = getMAIAAlerts(newHistory, 'keluhan_utama', enrichedForMAIA2);
         setMaiaAlertsLocal(alerts);
     }, [patient, anamnesisContext, diagnosticTracker, examsPerformed, labsRevealed, recalculateClinicalScores]);
 

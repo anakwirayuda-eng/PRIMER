@@ -17,13 +17,43 @@ import { randomIdFromSeed, seedKey, seededInt } from '../utils/deterministicRand
 // Maps missed/incorrect actions to delayed outcomes
 // ═══════════════════════════════════════════════════════════════
 
+/**
+ * Extract systolic BP from various vital sign formats.
+ * Modern patients use vitals.bp ("180/110"), legacy used vitals.tekananDarah.
+ */
+function extractSystolicBP(caseData) {
+    const bpStr = caseData.vitals?.tekananDarah || caseData.vitals?.bp || caseData.vitals?.bloodPressure || '';
+    if (!bpStr) return 0;
+    return parseInt(bpStr.split('/')[0]) || 0;
+}
+
+/**
+ * Extract a lab value from the labsRevealed object.
+ * EMR stores labs as boolean true (flag-only) or as {value: string}.
+ * Returns NaN if the lab was not ordered or is flag-only without a value.
+ */
+function extractLabValue(labsRevealed, labKey) {
+    const entry = labsRevealed?.[labKey];
+    if (!entry) return NaN;
+    // If it's a boolean flag (true), the lab was ordered but no numeric value
+    if (entry === true) return NaN;
+    // If it's an object with .value
+    if (typeof entry === 'object' && entry.value !== undefined) {
+        return parseFloat(entry.value);
+    }
+    // If it's a string directly
+    if (typeof entry === 'string') return parseFloat(entry);
+    return NaN;
+}
+
 const CONSEQUENCE_RULES = [
     // ── Hypertension missed/undertreated ──
     {
         id: 'htn_missed',
         match: (caseData, decisions) => {
-            const hasTDHigh = caseData.vitals?.tekananDarah &&
-                (parseInt(caseData.vitals.tekananDarah.split('/')[0]) >= 140);
+            // Codex Fix: support both vitals.tekananDarah (legacy) and vitals.bp (modern)
+            const systolic = extractSystolicBP(caseData);
+            const hasTDHigh = systolic >= 140;
             // Codex Fix: hook sends ICD codes (e.g. 'I10'), not text labels
             const diagnosedHT = decisions.diagnosis?.some(d => {
                 const dl = (d || '').toLowerCase();
@@ -60,8 +90,9 @@ const CONSEQUENCE_RULES = [
                     const dl = (d || '').toLowerCase();
                     return dl.startsWith('o') || dl.includes('hamil') || dl.includes('pregnan');
                 });
-            const hasLowHb = decisions.labsRevealed?.hemoglobin &&
-                parseFloat(decisions.labsRevealed.hemoglobin?.value) < 11;
+            // Codex Fix: EMR stores labs as boolean true, not {value: string}
+            const hbValue = extractLabValue(decisions.labsRevealed, 'hemoglobin');
+            const hasLowHb = !isNaN(hbValue) && hbValue < 11;
             const treatedAnemia = decisions.medications?.some(m =>
                 m.toLowerCase().includes('fe') || m.toLowerCase().includes('sulfas')
             );
@@ -87,8 +118,9 @@ const CONSEQUENCE_RULES = [
     {
         id: 'dm_uncontrolled',
         match: (caseData, decisions) => {
-            const hasHighGDS = decisions.labsRevealed?.gds &&
-                parseFloat(decisions.labsRevealed.gds?.value) > 200;
+            // Codex Fix: EMR stores labs as boolean true, not {value: string}
+            const gdsValue = extractLabValue(decisions.labsRevealed, 'gds');
+            const hasHighGDS = !isNaN(gdsValue) && gdsValue > 200;
             const prescribedMed = decisions.medications?.some(m =>
                 m.toLowerCase().includes('metformin') || m.toLowerCase().includes('glibenclamid')
             );

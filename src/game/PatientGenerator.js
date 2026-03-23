@@ -786,8 +786,9 @@ export function generateProlanisVisitPatient(rosterMember, currentDay, seedHint 
  * @returns {Object} Patient object ready for the game queue
  */
 export function generateFollowupPatient(consequence, currentTime, seedHint = 'default') {
-    const { originalCase, condition, severity, narrative, newSymptoms = [], guidelineRef } = consequence;
-    const { patientName, age, gender, originalDiagnosis, category } = originalCase;
+    const { originalCase = {}, condition, severity, narrative, newSymptoms = [], guidelineRef } = consequence;
+    // Codex Fix: guard against missing originalCase (e.g. ukp_bridge entries)
+    const { patientName = 'Pasien', age = 30, gender = 'L', originalDiagnosis, category } = originalCase;
     const followupSeed = seedKey('followup-patient', consequence.id, currentTime, seedHint, patientName, severity, category);
 
     // Build symptoms based on condition

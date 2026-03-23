@@ -11,7 +11,7 @@
 
 import React from 'react';
 import useModalA11y from '../hooks/useModalA11y.js';
-import { X, Heart, HeartCrack, Ambulance, AlertTriangle, ThumbsDown, UserCheck } from 'lucide-react';
+import { X, Heart, HeartCrack, Ambulance, AlertTriangle, ThumbsDown, UserCheck, Bot, Send } from 'lucide-react';
 
 const outcomeConfig = {
     pulih: { label: 'Pulih', icon: Heart, color: 'text-emerald-600', bg: 'bg-emerald-50' },
@@ -20,6 +20,10 @@ const outcomeConfig = {
     komplain: { label: 'Komplain', icon: ThumbsDown, color: 'text-orange-600', bg: 'bg-orange-50' },
     rujuk_stabil: { label: 'Rujuk (Stabil)', icon: Ambulance, color: 'text-blue-600', bg: 'bg-blue-50' },
     rujuk_tidak_perlu: { label: 'Rujuk (Tidak Perlu)', icon: Ambulance, color: 'text-purple-600', bg: 'bg-purple-50' },
+    // Codex Fix: missing outcome statuses from useGameStore
+    delegated: { label: 'Didelegasikan', icon: Bot, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+    sisrute_transferred: { label: 'Transfer SISRUTE', icon: Send, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+    stabilized: { label: 'Stabilisasi', icon: Heart, color: 'text-teal-600', bg: 'bg-teal-50' },
     default: { label: 'Selesai', icon: UserCheck, color: 'text-slate-600', bg: 'bg-slate-50' }
 };
 
@@ -80,7 +84,12 @@ export default function PatientHistoryModal({ patients, filter, onClose, title }
                                                 </div>
                                                 <div className="text-sm text-slate-600">
                                                     <span className="font-medium">Keputusan:</span>{' '}
-                                                    {patient.decision?.action === 'treat' ? 'Rawat Jalan' : 'Rujuk'}
+                                                    {/* Codex Fix: properly label all action types */}
+                                                    {patient.decision?.action === 'treat' ? 'Rawat Jalan'
+                                                        : patient.decision?.action === 'refer' ? 'Rujuk'
+                                                        : patient.decision?.action === 'delegate_to_maia' ? 'Delegasi MAIA'
+                                                        : patient.decision?.action === 'stabilize' ? 'Stabilisasi'
+                                                        : patient.decision?.action || 'Selesai'}
                                                 </div>
                                             </div>
                                             <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${outcome.color} ${outcome.bg}`}>

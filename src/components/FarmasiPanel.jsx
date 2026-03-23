@@ -28,7 +28,12 @@ function buildPrescriptionQueue(history, currentDay) {
             patientGender: p.gender,
             patientAllergies: p.medicalData?.allergies || [],
             medications: p.decision.medications,
-            diagnosis: p.decision?.diagnoses?.[0]?.name || p.caseData?.diagnosis || 'Tidak ada diagnosis',
+            // Codex Fix: diagnoses is array of ICD code strings, not objects with .name
+            diagnosis: (() => {
+                const dx = p.decision?.diagnoses?.[0];
+                if (!dx) return p.medicalData?.trueDiagnosisCode || p.medicalData?.diagnosisName || 'Tidak ada diagnosis';
+                return typeof dx === 'object' ? (dx.name || dx.code || dx.label) : dx;
+            })(),
             dischargedAt: p.dischargedAt,
             items: p.decision.medications.map(m => ({
                 medId: typeof m === 'object' ? m.id : m,
@@ -182,7 +187,8 @@ export default function FarmasiPanel({ isDark, history, currentDay }) {
                             <div className="flex items-center justify-between mb-2">
                                 <h4 className={`text-sm font-black ${isDark ? 'text-white' : 'text-slate-800'}`}>{activeRx.patientName}</h4>
                                 <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
-                                    {activeRx.patientAge} th • {activeRx.patientGender === 'M' ? 'Laki-laki' : 'Perempuan'}
+                                    {/* Codex Fix: generator uses 'L'/'P', not 'M'/'F' */}
+                                    {activeRx.patientAge} th • {(activeRx.patientGender === 'M' || activeRx.patientGender === 'L' || activeRx.patientGender === 'male') ? 'Laki-laki' : 'Perempuan'}
                                 </span>
                             </div>
                             <p className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
