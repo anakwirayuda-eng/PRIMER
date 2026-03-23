@@ -10,6 +10,7 @@
  */
 
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { User, Shield, Brain, Microscope, Stethoscope, FileText, Activity, Pill, Scissors, BookOpen, Receipt, Scale } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { EDUCATION_OPTIONS } from '../data/EducationOptions.js';
@@ -109,8 +110,14 @@ export default function PatientEMR() {
     };
 
 
+    // Hack 2: Diegetic UI Degradation — EMR visually degrades when doctor is groggy
+    const isGroggy = morningStatus === 'groggy';
+
     return (
-        <div className={`p-4 h-full flex flex-col overflow-y-auto ${isDark ? 'bg-slate-950' : 'bg-slate-50'} transition-colors`}>
+        <div
+            className={`p-4 h-full flex flex-col overflow-y-auto ${isDark ? 'bg-slate-950' : 'bg-slate-50'} transition-all duration-1000`}
+            style={isGroggy ? { filter: 'saturate(0.45) blur(0.4px) brightness(0.85)', transition: 'filter 2s ease-in-out' } : undefined}
+        >
             {/* Header with Avatar */}
             <div className={`flex items-start gap-3 md:gap-4 mb-2 md:mb-4 ${isDark ? 'bg-slate-900 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'bg-white shadow-sm'} p-3 md:p-4 rounded-xl border ${isDark ? 'border-emerald-500/20' : 'border-slate-200'} relative overflow-hidden transition-all backdrop-blur-md`}>
                 {/* Futuristic Glow Backdrop */}
@@ -226,8 +233,12 @@ export default function PatientEMR() {
                                     <>
                                         {/* Bottom seamless connection */}
                                         <div className={`absolute -bottom-[3px] left-[1px] right-[1px] h-[5px] ${isDark ? 'bg-slate-900' : 'bg-white'} z-40`} />
-                                        {/* Premium Glow indicator */}
-                                        <div className={`absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl ${isDark ? 'bg-emerald-500/50' : 'bg-emerald-500/30'}`} />
+                                        {/* Hack 1: Fluid Spatial Geometry — emerald glow slides between tabs */}
+                                        <motion.div
+                                            layoutId="emr-tab-glow"
+                                            className={`absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl ${isDark ? 'bg-emerald-500/50' : 'bg-emerald-500/30'}`}
+                                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                                        />
                                     </>
                                 )}
                             </button>
