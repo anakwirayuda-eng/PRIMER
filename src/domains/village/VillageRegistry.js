@@ -77,7 +77,36 @@ export const FAMILY_INDICATORS = {
     'kk_30': { kb: true, persalinan: true, imunisasi: true, asi: true, balita: true, tb: true, hipertensi: false, jiwa: true, rokok: true, jkn: true, air: true, jamban: true, jentik: true },
 };
 
-export const VILLAGE_STATS = { totalKK: 30, totalPopulation: 116, byGender: { L: 60, P: 56 }, byAgeGroup: { bayi: 5, balita: 10, anak: 18, remaja: 13, dewasa: 52, lansia: 18 }, pregnantWomen: 3, kader: 2, avgIKS: 0.85 };
+// Codex Fix: derive VILLAGE_STATS from VILLAGE_FAMILIES to prevent stale data
+// Previously hardcoded (was stale: 116 pop vs actual 106)
+export const VILLAGE_STATS = (() => {
+    let totalL = 0, totalP = 0;
+    const ageGroups = { bayi: 0, balita: 0, anak: 0, remaja: 0, dewasa: 0, lansia: 0 };
+    let pregnantWomen = 0;
+    VILLAGE_FAMILIES.forEach(fam => {
+        (fam.members || []).forEach(m => {
+            if (m.gender === 'L') totalL++; else totalP++;
+            const age = m.age ?? 0;
+            if (age < 1) ageGroups.bayi++;
+            else if (age <= 5) ageGroups.balita++;
+            else if (age <= 11) ageGroups.anak++;
+            else if (age <= 17) ageGroups.remaja++;
+            else if (age <= 59) ageGroups.dewasa++;
+            else ageGroups.lansia++;
+            if (m.pregnant) pregnantWomen++;
+        });
+    });
+    const totalPopulation = totalL + totalP;
+    return {
+        totalKK: VILLAGE_FAMILIES.length,
+        totalPopulation,
+        byGender: { L: totalL, P: totalP },
+        byAgeGroup: ageGroups,
+        pregnantWomen,
+        kader: 2,
+        avgIKS: 0.85
+    };
+})();
 
 export const INDIVIDUAL_PROFILES = {
     'v_02_4': {
