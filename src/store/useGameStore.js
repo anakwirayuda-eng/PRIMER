@@ -1309,7 +1309,8 @@ export const useGameStore = create(
                             social: patient.social,
                             prolanisData: {
                                 diseaseType,
-                                enrolledDay: day, lastVisitDay: day,
+                                // Codex Fix: don't inflate KPI — 0 means "never visited yet"
+                                enrolledDay: day, lastVisitDay: 0,
                                 parameters: initialParams, history: [], consecutiveControlled: 0
                             }
                         };
@@ -1335,6 +1336,9 @@ export const useGameStore = create(
                                 xpEarned = outcome.xpEarned || 0;
                                 return {
                                     ...member,
+                                    // Codex Fix: sync complication state to root (UI reads root)
+                                    hasComplication: !!outcome.complication,
+                                    complicationRisk: outcome.complicationRisk ?? member.complicationRisk ?? 0,
                                     prolanisData: {
                                         ...member.prolanisData, lastVisitDay: effectiveDay, parameters: outcome.newParameters,
                                         consecutiveControlled: outcome.consecutiveControlled,
@@ -2016,12 +2020,11 @@ export const useGameStore = create(
                                 state.clinical.queue.push(followupPatient);
                             });
                             if (followups.length > 0) {
-                                // DeepThink Fix: filter out ukp_bridge before clearing, so they aren't swept
-                                const nonBridgeQueue = state.clinical.consequenceQueue.filter(c => c.type !== 'ukp_bridge');
-                                state.clinical.consequenceQueue = [
-                                    ...state.clinical.consequenceQueue.filter(c => c.type === 'ukp_bridge'),
-                                    ...clearProcessedFollowups(nonBridgeQueue, day)
-                                ];
+                                // DeepThink Fix: use processedIds to clear only spawned follow-ups
+                                const processedIds = followups.filter(c => c.type !== 'ukp_bridge').map(c => c.id);
+                                state.clinical.consequenceQueue = clearProcessedFollowups(
+                                    state.clinical.consequenceQueue, day, processedIds
+                                );
                                 soundManager.playNotification();
                             }
                         }
@@ -2115,6 +2118,43 @@ export const useGameStore = create(
                         time = time ?? state.world.time;
                         if (!patient?.id) {
                             state.clinical.activePatientId = null;
+                            return;
+                        }
+
+                        // Codex Fix: intercept Prolanis visit patients — redirect to completeProlanisVisit
+                        if (typeof patient.id === 'string' && patient.id.includes('_visit_')) {
+                            const visitData = {
+                                patientId: patient.id,
+                                doctorDecisions: {
+                                    diagnoses: decision.diagnoses,
+                                    medications: decision.medications,
+                                    action: decision.action,
+                                }
+                            };
+                            // Call completeProlanisVisit via get() to update roster
+                            get().publicHealthActions.completeProlanisVisit(visitData, day);
+                            // Also check PRB eligibility after visit
+                            const rosterId = patient.id.split('_visit_')[0];
+                            const member = state.publicHealth.prolanisRoster.find(m => m.id === rosterId);
+                            if (member && (member.prolanisData?.consecutiveControlled || 0) >= 3 && !member.hasComplication) {
+                                const prbExists = state.publicHealth.prbQueue?.some(p => p.patientId === rosterId);
+                                if (!prbExists) {
+                                    const prbEntry = {
+                                        id: `prb_${rosterId}_${day}`,
+                                        patientId: rosterId,
+                                        patientName: member.name,
+                                        diagnosis: member.prolanisData?.diseaseType === 'hypertension' ? 'Hipertensi' : 'DM Tipe 2',
+                                        status: 'active',
+                                        enrolledDay: day,
+                                        tasks: [
+                                            { id: 'prb_control_1', label: 'Kontrol PRB 1', dueDay: day + 30, completed: false },
+                                            { id: 'prb_control_2', label: 'Kontrol PRB 2', dueDay: day + 60, completed: false },
+                                            { id: 'prb_control_3', label: 'Kontrol PRB 3', dueDay: day + 90, completed: false },
+                                        ]
+                                    };
+                                    state.publicHealth.prbQueue = [...(state.publicHealth.prbQueue || []), prbEntry];
+                                }
+                            }
                             return;
                         }
                         const buffs = calculateGlobalBuffs(state);

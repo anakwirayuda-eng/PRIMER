@@ -34,7 +34,9 @@ export default function CommunityView({ onBack, openWiki }) {
         const total = prolanisRoster.length;
         const recentWindowDays = 30;
         const compliant = prolanisRoster.filter(m => {
-            const lastVisit = m.prolanisData?.lastVisitDay || 0;
+            // Codex Fix: use history (same as ProlanisPanel) instead of lastVisitDay
+            const history = m.prolanisData?.history || [];
+            const lastVisit = history.length > 0 ? history[history.length - 1].day : 0;
             return (day - lastVisit) <= recentWindowDays;
         }).length;
         return { total, compliant, rate: Math.round((compliant / total) * 100) };

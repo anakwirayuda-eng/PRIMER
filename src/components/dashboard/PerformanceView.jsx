@@ -35,7 +35,12 @@ export default function PerformanceView({ onBack, openWiki }) {
 
         // RPP (Prolanis)
         const prolanisTotal = prolanisRoster?.length || 0;
-        const prolanisActive = prolanisRoster?.filter(m => (day - (m.prolanisData?.lastVisitDay || 0)) <= 30).length || 0;
+        // Codex Fix: use history (same as ProlanisPanel) instead of lastVisitDay
+        const prolanisActive = prolanisRoster?.filter(m => {
+            const history = m.prolanisData?.history || [];
+            const lastVisit = history.length > 0 ? history[history.length - 1].day : 0;
+            return (day - lastVisit) <= 30;
+        }).length || 0;
         const rppRate = prolanisTotal > 0 ? Math.round((prolanisActive / prolanisTotal) * 100) : 0;
 
         // Weighted KBK Score

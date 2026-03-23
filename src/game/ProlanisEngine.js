@@ -296,7 +296,7 @@ export function isPatientDueForCheckup(patient, currentDay) {
 export function getPatientsDueToday(prolanisRoster, currentDay) {
     return prolanisRoster.filter(p =>
         isPatientDueForCheckup(p, currentDay) &&
-        !p.hasComplication
+        !p.hasComplication && !p.prolanisData?.hasComplication
     );
 }
 

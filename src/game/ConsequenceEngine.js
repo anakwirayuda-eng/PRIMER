@@ -125,9 +125,12 @@ const CONSEQUENCE_RULES = [
     {
         id: 'anemia_pregnancy',
         match: (caseData, decisions) => {
+            // DeepThink Fix: caseData.patientName is a ghost property (name is on root patient, not medicalData)
+            // Use decisions.patientName which is provided by the EMR hook
             const isPregnant = caseData.category === 'Maternal' ||
                 decisions.category === 'Maternal' ||
-                caseData.patientName?.includes('hamil') ||
+                decisions.patientName?.toLowerCase().includes('hamil') ||
+                caseData.trueDiagnosisCode?.startsWith('O') ||
                 decisions.diagnosis?.some(d => {
                     const dl = (d || '').toLowerCase();
                     return dl.startsWith('o') || dl.includes('hamil') || dl.includes('pregnan');
@@ -135,11 +138,12 @@ const CONSEQUENCE_RULES = [
             // Codex Fix: check if hemoglobin-related lab was ordered (via panel or direct)
             const hbOrdered = wasLabOrdered(decisions.labsRevealed, 'hb');
             const hbValue = extractLabValue(decisions.labsRevealed, 'hb');
-            // If lab was ordered but we can't get a value (boolean flag), we can't verify—skip
-            const hasLowHb = hbOrdered && !isNaN(hbValue) && hbValue < 11;
-            const treatedAnemia = decisions.medications?.some(m =>
-                m.toLowerCase().includes('fe') || m.toLowerCase().includes('sulfas')
-            );
+            // DeepThink Fix: if lab was ordered but value is boolean (NaN), use diagnosis-based fallback
+            const hasLowHb = hbOrdered && (!isNaN(hbValue) ? hbValue < 11 : isPregnant);
+            const treatedAnemia = decisions.medications?.some(m => {
+                const ml = (typeof m === 'object' ? (m.id || m.name || '') : m).toLowerCase();
+                return ml.includes('fe') || ml.includes('sulfas');
+            });
             return isPregnant && hasLowHb && !treatedAnemia;
         },
         outcome: {
@@ -165,10 +169,13 @@ const CONSEQUENCE_RULES = [
             // Codex Fix: check if gds was ordered (direct key or panel)
             const gdsOrdered = wasLabOrdered(decisions.labsRevealed, 'gds');
             const gdsValue = extractLabValue(decisions.labsRevealed, 'gds');
-            const hasHighGDS = gdsOrdered && !isNaN(gdsValue) && gdsValue > 200;
-            const prescribedMed = decisions.medications?.some(m =>
-                m.toLowerCase().includes('metformin') || m.toLowerCase().includes('glibenclamid')
-            );
+            // DeepThink Fix: if lab was ordered but value is boolean (NaN), use diagnosis-based fallback
+            const hasHighGDS = gdsOrdered && (!isNaN(gdsValue) ? gdsValue > 200 : 
+                (caseData.trueDiagnosisCode?.startsWith('E11') || caseData.trueDiagnosisCode?.startsWith('E10')));
+            const prescribedMed = decisions.medications?.some(m => {
+                const ml = (typeof m === 'object' ? (m.id || m.name || '') : m).toLowerCase();
+                return ml.includes('metformin') || ml.includes('glibenclamid');
+            });
             return hasHighGDS && !prescribedMed;
         },
         outcome: {
@@ -221,9 +228,11 @@ export function evaluateConsequences(caseData, decisions, currentDay) {
             if (rule.match(caseData, decisions)) {
                 const { outcome } = rule;
                 const [minDelay, maxDelay] = outcome.delayDays;
+                // DeepThink Fix: use decisions.patientName (root-level), not caseData.patientName (ghost)
+                const patientKey = decisions.patientName || caseData.name || 'unknown';
                 const delaySeed = seedKey(
                     'consequence-delay', rule.id, currentDay,
-                    caseData.patientName || caseData.name,
+                    patientKey,
                     decisions.diagnosis, decisions.action
                 );
                 const delay = minDelay + seededInt(delaySeed, maxDelay - minDelay + 1);
@@ -231,12 +240,12 @@ export function evaluateConsequences(caseData, decisions, currentDay) {
                 return {
                     id: randomIdFromSeed(
                         'consequence',
-                        seedKey('consequence', rule.id, currentDay, caseData.patientName || caseData.name, delay)
+                        seedKey('consequence', rule.id, currentDay, patientKey, delay)
                     ),
                     ruleId: rule.id,
                     returnDay: currentDay + delay,
                     originalCase: {
-                        patientName: caseData.patientName || decisions.patientName || 'Pasien',
+                        patientName: decisions.patientName || caseData.name || 'Pasien',
                         age: caseData.age || decisions.age,
                         gender: caseData.gender || decisions.gender,
                         originalDiagnosis: caseData.trueDiagnosisCode || caseData.correctDiagnosis || caseData.icd10 || caseData.diagnosisName || '',
@@ -252,7 +261,9 @@ export function evaluateConsequences(caseData, decisions, currentDay) {
                     createdDay: currentDay,
                 };
             }
-        } catch {
+        } catch (err) {
+            // DeepThink Fix: log errors instead of silently swallowing
+            console.error(`[ConsequenceEngine] Rule ${rule.id} error:`, err);
             continue;
         }
     }
@@ -269,6 +280,12 @@ export function getUpcomingFollowups(consequenceQueue = [], currentDay, lookahea
     );
 }
 
-export function clearProcessedFollowups(consequenceQueue = [], currentDay) {
+// DeepThink Fix: filter by processed IDs, not just by day (so ukp_bridge events survive)
+export function clearProcessedFollowups(consequenceQueue = [], currentDay, processedIds = []) {
+    if (processedIds.length > 0) {
+        // Remove only the specific follow-ups that were processed
+        return consequenceQueue.filter(c => !processedIds.includes(c.id));
+    }
+    // Fallback: remove all past-due (legacy behavior)
     return consequenceQueue.filter(c => c.returnDay > currentDay);
 }
