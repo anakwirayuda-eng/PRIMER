@@ -2306,24 +2306,27 @@ export const useGameStore = create(
                                     }];
                                 }
 
-                                // 🚑 SISRUTE LIMBO: patient stays in queue waiting for ambulance
-                                const patientIdx = state.clinical.emergencyQueue.findIndex(q => q.id === patient.id);
-                                if (patientIdx !== -1) {
-                                    const limboPatient = state.clinical.emergencyQueue[patientIdx];
-                                    limboPatient.status = 'sisrute_limbo';
-                                    limboPatient.sisruteData = {
-                                        hospitalId: hosp?.id, hospitalName: hosp?.name || 'RS Rujukan',
-                                        ambulanceId: amb?.id, ambulanceName: amb?.name || 'Ambulans',
-                                        acceptedAt: time, estimatedArrival: time + travelTime,
-                                        actionsPerformed: decision.actionsPerformed || [],
-                                        referralDetails: decision.referralDetails
+                                // 🚑 SISRUTE LIMBO: patient stays in queue waiting for ambulance (immutable update)
+                                const newEmergencyQueue = state.clinical.emergencyQueue.map(q => {
+                                    if (q.id !== patient.id) return q;
+                                    return {
+                                        ...q,
+                                        status: 'sisrute_limbo',
+                                        sisruteData: {
+                                            hospitalId: hosp?.id, hospitalName: hosp?.name || 'RS Rujukan',
+                                            ambulanceId: amb?.id, ambulanceName: amb?.name || 'Ambulans',
+                                            acceptedAt: time, estimatedArrival: time + travelTime,
+                                            actionsPerformed: decision.actionsPerformed || [],
+                                            referralDetails: decision.referralDetails
+                                        },
+                                        deteriorationRate: Math.max(0, (q.deteriorationRate || 0) * 0.5)
                                     };
-                                    limboPatient.deteriorationRate = Math.max(0, (limboPatient.deteriorationRate || 0) * 0.5);
-                                }
+                                });
 
                                 return {
                                     clinical: {
                                         ...state.clinical,
+                                        emergencyQueue: newEmergencyQueue,
                                         busyAmbulanceIds: newBusyAmbulanceIds,
                                         activeReferralLog: newActiveReferralLog,
                                         activeEmergencyId: null,
