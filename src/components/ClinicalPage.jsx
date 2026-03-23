@@ -34,7 +34,7 @@ export default function ClinicalPage() {
         emergencyQueue, activeEmergencyId, admitEmergencyPatient, dischargeEmergencyPatient,
         activePatientId, completeProlanisVisit, playerStats, time, day,
         morningStatus, takeLoungeRest, loungeRestCount, queue, hiredStaff, admitPatient, history,
-        pharmacyInventory, consumeMedication
+        pharmacyInventory, consumeMedication, markPrescriptionDispensed
     } = useGame();
     const { isDark } = useTheme();
     const { t } = useTranslation();
@@ -153,7 +153,7 @@ export default function ClinicalPage() {
                     />
                 );
             case 'farmasi_lab':
-                return <FarmasiPanel isDark={isDark} history={history} currentDay={day} pharmacyInventory={pharmacyInventory} consumeMedication={consumeMedication} />;
+                return <FarmasiPanel isDark={isDark} history={history} currentDay={day} pharmacyInventory={pharmacyInventory} consumeMedication={consumeMedication} markPrescriptionDispensed={markPrescriptionDispensed} />;
             default: {
                 // Check if service is level-gated or staff-gated
                 const needsLevel = activeService?.unlockLevel > playerLevel;

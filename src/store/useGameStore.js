@@ -1161,6 +1161,17 @@ export const useGameStore = create(
                         }));
                         return { success: true, remainingStock: currentItem.stock - quantity };
                     },
+                    // Codex Fix: mark prescription as dispensed in history to prevent double-dispense on remount
+                    markPrescriptionDispensed: (patientId) => {
+                        set(s => ({
+                            clinical: {
+                                ...s.clinical,
+                                history: (s.clinical.history || []).map(h =>
+                                    h.id === patientId ? { ...h, dispensed: true } : h
+                                )
+                            }
+                        }));
+                    },
                     checkInventoryAvailability: (medicationId, quantity) => {
                         const state = get();
                         const currentItem = state.finance.pharmacyInventory.find(item => item.medicationId === medicationId);

@@ -20,13 +20,15 @@ import { getMedicationById } from '../data/MedicationDatabase.js';
 function buildPrescriptionQueue(history, currentDay) {
     if (!history || history.length === 0) return [];
     return history
-        .filter(p => p.day === currentDay && p.decision?.medications?.length > 0)
+        // Codex Fix: also exclude already-dispensed entries to prevent double-dispense on remount
+        .filter(p => p.day === currentDay && p.decision?.medications?.length > 0 && !p.dispensed)
         .map(p => ({
             id: p.id,
             patientName: p.name,
             patientAge: p.age,
             patientGender: p.gender,
-            patientAllergies: p.medicalData?.allergies || [],
+            // Codex Fix: read allergies from multiple paths (generator puts them in hidden.allergies)
+            patientAllergies: p.hidden?.allergies || p.medicalData?.allergies || [],
             medications: p.decision.medications,
             // Codex Fix: diagnoses is array of ICD code strings, not objects with .name
             diagnosis: (() => {
@@ -35,9 +37,9 @@ function buildPrescriptionQueue(history, currentDay) {
                 return typeof dx === 'object' ? (dx.name || dx.code || dx.label) : dx;
             })(),
             dischargedAt: p.dischargedAt,
-            // Codex Fix: wire BPJS status from patient data for correct billing
+            // Codex Fix: wire BPJS status from all possible patient data paths
             patientSocial: {
-                hasBPJS: p.hidden?.bpjs ?? p.medicalData?.hasBPJS ?? p.medicalData?.bpjs ?? false
+                hasBPJS: p.social?.hasBPJS ?? p.hidden?.bpjs ?? p.medicalData?.hasBPJS ?? p.medicalData?.bpjs ?? false
             },
             items: p.decision.medications.map(m => ({
                 medId: typeof m === 'object' ? m.id : m,
@@ -59,7 +61,7 @@ function buildPrescriptionQueue(history, currentDay) {
         }));
 }
 
-export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInventory, consumeMedication }) {
+export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInventory, consumeMedication, markPrescriptionDispensed }) {
     const [activeRxId, setActiveRxId] = useState(null);
     const [verifiedRxIds, setVerifiedRxIds] = useState(new Set());
     const [dispensedRxIds, setDispensedRxIds] = useState(new Set());
@@ -95,11 +97,16 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
     const dispensingBill = useMemo(() => {
         if (!activeRx) return null;
         const isBPJS = activeRx.patientSocial?.hasBPJS ?? false;
-        return calculateDispensingBill(activeRx.items.map(i => ({
-            medId: i.medId,
-            medName: i.name,
-            qtyNeeded: (i.dose || 1) * (i.frequency || 1) * (i.duration || 1)
-        })), isBPJS);
+        // Codex Fix: include sellPrice from MedicationDatabase so billing calculates non-zero costs
+        return calculateDispensingBill(activeRx.items.map(i => {
+            const med = getMedicationById(i.medId);
+            return {
+                medId: i.medId,
+                medName: med?.name || i.medId,
+                sellPrice: med?.sellPrice || med?.unitPrice || 0,
+                qtyNeeded: (i.dose || 1) * (i.frequency || 1) * (i.duration || 1)
+            };
+        }), isBPJS);
     }, [activeRx]);
 
     const FIVE_RIGHTS = ['Obat Benar', 'Pasien Benar', 'Dosis Benar', 'Rute Benar', 'Waktu Benar'];
@@ -117,23 +124,35 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
 
     const handleDispense = useCallback(() => {
         if (!activeRxId || !verifiedRxIds.has(activeRxId)) return;
-        // Codex Fix: track consumeMedication results — don't mark dispensed if any fail
         if (consumeMedication && activeRx) {
-            let allSuccess = true;
-            activeRx.items.forEach(item => {
-                const qty = (item.dose || 1) * (item.frequency || 1) * (item.duration || 1);
-                const result = consumeMedication(item.medId, qty);
-                if (result && !result.success) allSuccess = false;
-            });
-            if (!allSuccess) {
-                // At least one item failed — don't mark as dispensed
-                return;
+            // Codex Fix: pre-validate ALL items have sufficient stock before consuming ANY
+            const itemsWithQty = activeRx.items.map(item => ({
+                medId: item.medId,
+                qty: (item.dose || 1) * (item.frequency || 1) * (item.duration || 1)
+            }));
+            // Check stock for all items first
+            if (Array.isArray(pharmacyInventory)) {
+                for (const { medId, qty } of itemsWithQty) {
+                    const invItem = pharmacyInventory.find(i => i.medicationId === medId);
+                    if (!invItem || invItem.stock < qty) {
+                        // Insufficient stock — abort without consuming anything
+                        return;
+                    }
+                }
             }
+            // All stock validated — now consume atomically
+            for (const { medId, qty } of itemsWithQty) {
+                consumeMedication(medId, qty);
+            }
+        }
+        // Codex Fix: persist dispensed status to store so remount doesn't re-dispense
+        if (markPrescriptionDispensed) {
+            markPrescriptionDispensed(activeRxId);
         }
         setDispensedRxIds(prev => new Set([...prev, activeRxId]));
         setActiveRxId(null);
         setChecklist({});
-    }, [activeRxId, verifiedRxIds, consumeMedication, activeRx]);
+    }, [activeRxId, verifiedRxIds, consumeMedication, activeRx, pharmacyInventory, markPrescriptionDispensed]);
 
     const pendingCount = queue.filter(rx => !dispensedRxIds.has(rx.id)).length;
     const completedCount = dispensedRxIds.size;

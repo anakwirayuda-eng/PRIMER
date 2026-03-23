@@ -5,7 +5,7 @@
  * [STATE]: Experimental
  * [ANCHOR]: verifyPrescription
  * [DEPENDS_ON]: MedicationDatabase
- * [LAST_UPDATE]: 2026-02-18
+ * [LAST_UPDATE]: 2026-03-24
  */
 
 import { getMedicationById } from '../data/MedicationDatabase.js';
@@ -326,24 +326,31 @@ export function processStockDispense(medId, qty, inventory) {
 
 /**
  * Calculate dispensing bill
- * @param {Object[]} verifiedItems - from verifyPrescription
+ * @param {Object[]} verifiedItems - from verifyPrescription or FarmasiPanel
  * @param {boolean} isBPJS
  * @returns {{ items[], subtotal, isCovered, finalBill }}
  */
 export function calculateDispensingBill(verifiedItems, isBPJS = false) {
     const items = verifiedItems.map(item => {
+        const med = getMedicationById(item.medId);
         const cost = (item.sellPrice || 0) * (item.qtyNeeded || 1);
-        return { name: item.medName || item.medId, qty: item.qtyNeeded || 1, unitPrice: item.sellPrice || 0, cost };
+        return {
+            name: item.medName || item.medId,
+            qty: item.qtyNeeded || 1,
+            unitPrice: item.sellPrice || 0,
+            cost,
+            isFornas: med?.fornas === true
+        };
     });
 
     const subtotal = items.reduce((sum, i) => sum + i.cost, 0);
-    const allFornas = verifiedItems.every(i => {
-        const med = getMedicationById(i.medId);
-        return med?.fornas === true;
-    });
+    const allFornas = items.every(i => i.isFornas);
+
+    // Codex Fix: for BPJS with mixed FORNAS/non-FORNAS, charge only non-FORNAS items
+    const nonFornasCost = items.filter(i => !i.isFornas).reduce((sum, i) => sum + i.cost, 0);
 
     const isCovered = isBPJS && allFornas;
-    const finalBill = isCovered ? 0 : subtotal;
+    const finalBill = isCovered ? 0 : isBPJS ? nonFornasCost : subtotal;
 
     return {
         items,
@@ -352,7 +359,7 @@ export function calculateDispensingBill(verifiedItems, isBPJS = false) {
         coverageNote: isCovered
             ? '✅ Semua obat FORNAS — ditanggung BPJS'
             : isBPJS
-                ? '⚠️ Ada obat non-FORNAS — pasien bayar selisih'
+                ? `⚠️ Ada obat non-FORNAS — pasien bayar Rp ${nonFornasCost.toLocaleString('id-ID')}`
                 : 'Pasien Umum — bayar penuh',
         finalBill
     };
