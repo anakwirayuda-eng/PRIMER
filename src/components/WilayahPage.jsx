@@ -58,7 +58,7 @@ export default function WilayahPage() {
     const {
         day, villageData, setVillageData,
         viewParams, navigate, history, playerStats, setPlayerStats,
-        addXp, publicHealth,
+        addXp, publicHealth, setTime,
         openWiki, isWikiOpen, closeWiki, updateProgress, wikiMetric,
         triggerIKMEvent, applyBuildingSDOH
     } = useGame();
@@ -758,45 +758,88 @@ export default function WilayahPage() {
                 {buildingInterior && buildingInterior === 'posyandu' && (
                     <PosyanduActivePanel
                         initialBabies={(() => {
-                            // Codex Fix: wire real village babies from population
+                            // Wire real village babies — convert to PosyanduActivePanel format
                             if (!villageData?.families) return undefined;
                             const babies = [];
                             villageData.families.forEach(fam => {
                                 (fam.members || []).forEach(m => {
                                     if (m.age !== undefined && m.age <= 5) {
+                                        const ageMonths = m.age < 1 ? Math.max(1, Math.round(m.age * 12) || 1) : m.age * 12;
+                                        // Approximate weight/height by age norms
+                                        const weight = m.weight || (ageMonths < 6 ? 3.5 + ageMonths * 0.7 : 6 + ageMonths * 0.2);
+                                        const height = m.height || (ageMonths < 12 ? 50 + ageMonths * 2 : 70 + (ageMonths - 12) * 0.8);
+                                        // Build growth history stubs (2 prior months)
+                                        const growthHistory = [];
+                                        if (ageMonths > 2) growthHistory.push({ ageMonths: ageMonths - 2, weight: weight - 0.4 });
+                                        if (ageMonths > 1) growthHistory.push({ ageMonths: ageMonths - 1, weight: weight - 0.2 });
+                                        // Completed vaccines by age (Indonesian schedule)
+                                        const completedVaccines = ['hb0'];
+                                        if (ageMonths >= 1) completedVaccines.push('bcg', 'polio1');
+                                        if (ageMonths >= 2) completedVaccines.push('dpt_hb_hib1', 'polio2');
+                                        if (ageMonths >= 3) completedVaccines.push('dpt_hb_hib2', 'polio3');
+                                        if (ageMonths >= 4) completedVaccines.push('dpt_hb_hib3', 'polio4', 'ipv1');
+                                        if (ageMonths >= 9) completedVaccines.push('campak_rubella1');
+
                                         babies.push({
                                             id: m.id || `${fam.id}_${m.firstName}`,
                                             name: m.fullName || `${m.firstName || 'Bayi'} ${fam.surname || ''}`.trim(),
-                                            age: m.age,
+                                            ageMonths,
                                             gender: m.gender || 'L',
                                             familyId: fam.id,
                                             familyName: fam.surname || 'Unknown',
-                                            weight: m.weight || (m.age < 1 ? 3.5 + Math.random() * 3 : 8 + m.age * 2 + Math.random() * 3),
-                                            height: m.height || (m.age < 1 ? 50 + Math.random() * 10 : 70 + m.age * 8 + Math.random() * 5),
+                                            weight: Math.round(weight * 10) / 10,
+                                            height: Math.round(height),
+                                            growthHistory,
+                                            completedVaccines,
+                                            complaint: ageMonths < 12
+                                                ? 'Ibu bawa untuk timbang dan imunisasi rutin'
+                                                : 'Ibu bawa untuk timbang rutin bulanan',
                                         });
                                     }
                                 });
                             });
-                            return babies.length > 0 ? babies : undefined; // fallback to demo if no babies
+                            return babies.length > 0 ? babies : undefined;
                         })()}
                         onClose={() => setBuildingInterior(null)}
                         onComplete={(result) => {
-                            // Codex Fix: write-back full results, not just XP
+                            // === FULL POSYANDU SIDE EFFECTS (ported from PosyanduModal V1) ===
+                            
+                            // 1. XP reward
                             if (result?.totalXP) addXp(result.totalXP);
-                            if (result?.repDelta) {
-                                setPlayerStats(prev => ({
-                                    ...prev,
-                                    reputation: Math.min(100, Math.max(0, (prev.reputation || 50) + result.repDelta)),
-                                    energy: Math.max(0, (prev.energy || 0) - 15) // Posyandu costs energy
-                                }));
+                            
+                            // 2. Reputation + Energy cost (30 EP per session)
+                            setPlayerStats(prev => ({
+                                ...prev,
+                                reputation: Math.min(100, Math.max(0, (prev.reputation || 50) + (result?.repDelta || 0))),
+                                energy: Math.max(0, (prev.energy || 0) - 30)
+                            }));
+                            
+                            // 3. Time advance (Posyandu session = ~45 minutes)
+                            if (setTime) setTime(t => Math.min(960, t + 45));
+                            
+                            // 4. Village IKS update — families whose babies attended get improved indicators
+                            if (result?.sessionLog?.length > 0 && villageData?.families) {
+                                const attendedFamilyIds = new Set(
+                                    result.sessionLog.map(log => log.baby?.familyId).filter(Boolean)
+                                );
+                                if (attendedFamilyIds.size > 0) {
+                                    setVillageData(prev => ({
+                                        ...prev,
+                                        families: prev.families.map(fam => {
+                                            if (!attendedFamilyIds.has(fam.id)) return fam;
+                                            const indicators = { ...fam.indicators };
+                                            // Posyandu participation improves nutrition & immunization indicators
+                                            indicators.gizi = true;
+                                            indicators.imunisasi = true;
+                                            return { ...fam, indicators };
+                                        })
+                                    }));
+                                }
                             }
-                            // Codex Fix: append to history for ArsipPage
-                            if (result?.sessionLog) {
-                                navigate('megalog', { type: 'posyandu',
-                                    totalBabies: result.sessionLog?.length || 0,
-                                    xpEarned: result.totalXP || 0,
-                                });
-                            }
+                            
+                            // 5. Update progress tracker
+                            if (updateProgress) updateProgress('posyandu', 1);
+                            
                             setBuildingInterior(null);
                         }}
                     />
