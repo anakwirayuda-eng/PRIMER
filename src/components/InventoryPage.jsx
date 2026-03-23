@@ -41,8 +41,12 @@ export default function InventoryPage() {
             return sum + (med ? med.unitPrice * item.stock : 0);
         }, 0);
 
+        // Codex Fix: show both pending and overdue orders (was hiding overdue)
         const activeOrders = pendingOrders.filter(o =>
             o.status === 'pending' && o.deliveryDay >= day
+        );
+        const overdueOrders = pendingOrders.filter(o =>
+            o.status === 'pending' && o.deliveryDay < day
         );
 
         return {
@@ -50,7 +54,8 @@ export default function InventoryPage() {
             lowStock: lowStock.length,
             outOfStock: outOfStock.length,
             totalValue,
-            pendingOrders: activeOrders.length
+            pendingOrders: activeOrders.length,
+            overdueOrders: overdueOrders.length
         };
     }, [pharmacyInventory, pendingOrders, day]);
 
@@ -153,6 +158,9 @@ export default function InventoryPage() {
                                 <div>
                                     <p className="text-xs text-indigo-600 font-bold">Pending Orders</p>
                                     <p className="text-2xl font-black text-indigo-900">{stats.pendingOrders}</p>
+                                    {stats.overdueOrders > 0 && (
+                                        <p className="text-[10px] font-bold text-rose-600">⚠ {stats.overdueOrders} overdue</p>
+                                    )}
                                 </div>
                             </div>
                         </div>

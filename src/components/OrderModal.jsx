@@ -6,7 +6,7 @@
  * [ANCHOR]: OrderModal
  * [DEPENDS_ON]: GameContext, MedicationDatabase, SupplierDatabase
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-03-24
  */
 
 import React, { useState } from 'react';
@@ -32,7 +32,8 @@ export default function OrderModal({ onClose }) {
     const handleOrder = () => {
         const orderItems = lowStockMeds.map(med => ({
             medicationId: med.id,
-            quantity: med.minStock
+            // Codex Fix: order deficit, not full minStock (prevents overstocking)
+            quantity: Math.max(1, med.minStock - med.currentStock)
         }));
 
         const result = submitOrder(orderItems, selectedSupplierId, day);
@@ -80,7 +81,7 @@ export default function OrderModal({ onClose }) {
                                         Stock: {med.currentStock} / Min: {med.minStock}
                                     </p>
                                 </div>
-                                <p className="text-sm font-semibold">Order: {med.minStock}</p>
+                                <p className="text-sm font-semibold">Order: {Math.max(1, med.minStock - med.currentStock)}</p>
                             </div>
                         ))}
                     </div>

@@ -11,7 +11,7 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { Pill, CheckCircle2, AlertTriangle, XCircle, Package, Clock, ShieldCheck, Zap, ChevronRight } from 'lucide-react';
-import { verifyPrescription, checkDrugInteractions } from '../game/DispensingEngine.js';
+import { verifyPrescription, checkDrugInteractions, calculateDispensingBill } from '../game/DispensingEngine.js';
 import { getMedicationById } from '../data/MedicationDatabase.js';
 
 /**
@@ -35,6 +35,10 @@ function buildPrescriptionQueue(history, currentDay) {
                 return typeof dx === 'object' ? (dx.name || dx.code || dx.label) : dx;
             })(),
             dischargedAt: p.dischargedAt,
+            // Codex Fix: wire BPJS status from patient data for correct billing
+            patientSocial: {
+                hasBPJS: p.hidden?.bpjs ?? p.medicalData?.hasBPJS ?? p.medicalData?.bpjs ?? false
+            },
             items: p.decision.medications.map(m => ({
                 medId: typeof m === 'object' ? m.id : m,
                 dose: typeof m === 'object' ? (m.dose || 1) : 1,
@@ -113,12 +117,18 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
 
     const handleDispense = useCallback(() => {
         if (!activeRxId || !verifiedRxIds.has(activeRxId)) return;
-        // Codex Fix: persist dispensing to store — reduce inventory for each item
+        // Codex Fix: track consumeMedication results — don't mark dispensed if any fail
         if (consumeMedication && activeRx) {
+            let allSuccess = true;
             activeRx.items.forEach(item => {
                 const qty = (item.dose || 1) * (item.frequency || 1) * (item.duration || 1);
-                consumeMedication(item.medId, qty);
+                const result = consumeMedication(item.medId, qty);
+                if (result && !result.success) allSuccess = false;
             });
+            if (!allSuccess) {
+                // At least one item failed — don't mark as dispensed
+                return;
+            }
         }
         setDispensedRxIds(prev => new Set([...prev, activeRxId]));
         setActiveRxId(null);

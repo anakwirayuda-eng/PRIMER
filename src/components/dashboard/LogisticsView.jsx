@@ -46,8 +46,13 @@ export default function LogisticsView({ onBack, openWiki }) {
         const consumption = {};
         relevantHistory.forEach(h => {
             if (h.decision?.medications) {
-                h.decision.medications.forEach(mId => {
-                    consumption[mId] = (consumption[mId] || 0) + 1;
+                h.decision.medications.forEach(m => {
+                    // Codex Fix: count actual quantity consumed, not just +1 per prescription entry
+                    const medId = typeof m === 'object' ? (m.id || m.medId) : m;
+                    const qty = typeof m === 'object'
+                        ? ((m.dose || 1) * (m.frequency || 1) * (m.duration || 1))
+                        : 1;
+                    consumption[medId] = (consumption[medId] || 0) + qty;
                 });
             }
         });

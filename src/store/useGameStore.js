@@ -2705,6 +2705,28 @@ export const useGameStore = create(
                             // 1. Archive Day (Finance)
                             const dailyOpCost = 50000 + (Object.values(state.finance.facilities).reduce((a, b) => a + b, 0) * 10000);
                             state.finance.stats.pengeluaranOperasional = (state.finance.stats.pengeluaranOperasional || 0) + dailyOpCost;
+
+                            // 1.5 Auto-receive matured orders (Codex Fix: receiveOrder was never called)
+                            const nextDayNum = targetDay + 1;
+                            if (state.finance.pendingOrders) {
+                                state.finance.pendingOrders.forEach(order => {
+                                    if (order.status === 'pending' && order.deliveryDay <= nextDayNum) {
+                                        // Add stock
+                                        order.items.forEach(oi => {
+                                            const invItem = state.finance.pharmacyInventory.find(
+                                                item => item.medicationId === oi.medicationId
+                                            );
+                                            if (invItem) {
+                                                invItem.stock += oi.quantity;
+                                                invItem.lastRestockDay = nextDayNum;
+                                            }
+                                        });
+                                        order.status = 'received';
+                                        order.receivedDay = nextDayNum;
+                                    }
+                                });
+                            }
+
                             const casesToday = (state.clinical.todayLog || []).length;
                             const archivedDay = buildDailyArchiveEntry(state, targetDay);
                             state.clinical.dailyArchive = [
