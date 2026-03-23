@@ -94,7 +94,7 @@ export default function SOAPResume({
                 <div className="space-y-2">
                     {examKeys.some(e => ['e_vitals', 'e_gcs'].includes(e)) && (
                         <div className={`p-2.5 rounded-lg border grid grid-cols-2 gap-2 ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
-                            {Object.entries(patient.medicalData.physicalExamFindings || {}).map(([key, value]) => {
+                            {Object.entries(patient.medicalData?.physicalExamFindings || {}).map(([key, value]) => {
                                 if (key.includes('TD') || key.includes('Nadi') || key.includes('Napas') || key.includes('Suhu')) {
                                     return (
                                         <div key={key} className="flex justify-between items-center text-[10px]">
@@ -113,7 +113,7 @@ export default function SOAPResume({
                             <p className="opacity-50 italic">Belum ada pemeriksaan...</p>
                         ) : (
                             <ul className="space-y-1">
-                                {Object.entries(patient.medicalData.physicalExamFindings || {}).map(([key, value]) => {
+                                {Object.entries(patient.medicalData?.physicalExamFindings || {}).map(([key, value]) => {
                                     const isVital = key.includes('TD') || key.includes('Nadi') || key.includes('Napas') || key.includes('Suhu');
                                     if (isVital) return null;
                                     return <li key={key} className="flex gap-2"><span className="text-emerald-500 shrink-0">•</span> <span><span className="font-bold">{key}:</span> {value}</span></li>;

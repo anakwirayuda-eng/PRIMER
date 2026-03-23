@@ -40,12 +40,22 @@ function buildPrescriptionQueue(history, currentDay) {
                 dose: 1,
                 frequency: typeof m === 'object' ? (m.frequency || 1) : 1,
                 duration: typeof m === 'object' ? (m.duration || 1) : 1,
-                route: getMedicationById(typeof m === 'object' ? m.id : m)?.form === 'tablet' ? 'oral' : 'oral'
+                // Codex Fix: map form to correct route
+                route: (() => {
+                    const med = getMedicationById(typeof m === 'object' ? m.id : m);
+                    const formRouteMap = {
+                        'tablet': 'oral', 'capsule': 'oral', 'syrup': 'oral', 'drop': 'oral',
+                        'cream': 'topical', 'ointment': 'topical',
+                        'injection': 'im', 'suppository': 'rectal',
+                        'nebulizer': 'inhalation', 'inhaler': 'inhalation'
+                    };
+                    return formRouteMap[med?.form] || 'oral';
+                })()
             }))
         }));
 }
 
-export default function FarmasiPanel({ isDark, history, currentDay }) {
+export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInventory, consumeMedication }) {
     const [activeRxId, setActiveRxId] = useState(null);
     const [verifiedRxIds, setVerifiedRxIds] = useState(new Set());
     const [dispensedRxIds, setDispensedRxIds] = useState(new Set());
@@ -56,6 +66,13 @@ export default function FarmasiPanel({ isDark, history, currentDay }) {
 
     const verification = useMemo(() => {
         if (!activeRx) return null;
+        // Codex Fix: build inventory map for stock validation
+        const inventoryMap = {};
+        if (Array.isArray(pharmacyInventory)) {
+            pharmacyInventory.forEach(item => {
+                inventoryMap[item.medicationId] = { stock: item.stock || 0 };
+            });
+        }
         return verifyPrescription({
             patientId: activeRx.id,
             patientName: activeRx.patientName,
@@ -63,7 +80,7 @@ export default function FarmasiPanel({ isDark, history, currentDay }) {
             patientGender: activeRx.patientGender,
             patientAllergies: activeRx.patientAllergies,
             items: activeRx.items
-        });
+        }, inventoryMap);
     }, [activeRx]);
 
     const interactions = useMemo(() => {
@@ -86,10 +103,17 @@ export default function FarmasiPanel({ isDark, history, currentDay }) {
 
     const handleDispense = useCallback(() => {
         if (!activeRxId || !verifiedRxIds.has(activeRxId)) return;
+        // Codex Fix: persist dispensing to store — reduce inventory for each item
+        if (consumeMedication && activeRx) {
+            activeRx.items.forEach(item => {
+                const qty = (item.dose || 1) * (item.frequency || 1) * (item.duration || 1);
+                consumeMedication(item.medId, qty);
+            });
+        }
         setDispensedRxIds(prev => new Set([...prev, activeRxId]));
         setActiveRxId(null);
         setChecklist({});
-    }, [activeRxId, verifiedRxIds]);
+    }, [activeRxId, verifiedRxIds, consumeMedication, activeRx]);
 
     const pendingCount = queue.filter(rx => !dispensedRxIds.has(rx.id)).length;
     const completedCount = dispensedRxIds.size;
