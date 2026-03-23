@@ -7,7 +7,7 @@
  * [ANCHOR]: evaluateConsequences
  * [DEPENDS_ON]: PatientGenerator case data format
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-17
+ * [LAST_UPDATE]: 2026-03-23
  */
 
 import { randomIdFromSeed, seedKey, seededInt } from '../utils/deterministicRandom.js';
@@ -24,9 +24,12 @@ const CONSEQUENCE_RULES = [
         match: (caseData, decisions) => {
             const hasTDHigh = caseData.vitals?.tekananDarah &&
                 (parseInt(caseData.vitals.tekananDarah.split('/')[0]) >= 140);
-            const diagnosedHT = decisions.diagnosis?.some(d =>
-                d.toLowerCase().includes('hipertensi') || d.toLowerCase().includes('hypertension')
-            );
+            // Codex Fix: hook sends ICD codes (e.g. 'I10'), not text labels
+            const diagnosedHT = decisions.diagnosis?.some(d => {
+                const dl = (d || '').toLowerCase();
+                return dl.includes('hipertensi') || dl.includes('hypertension') ||
+                    dl.startsWith('i10') || dl.startsWith('i11') || dl.startsWith('i15');
+            });
             return hasTDHigh && !diagnosedHT;
         },
         outcome: {
@@ -49,8 +52,14 @@ const CONSEQUENCE_RULES = [
     {
         id: 'anemia_pregnancy',
         match: (caseData, decisions) => {
+            // Codex Fix: category may not be in caseData (medicalData). Also check ICD codes.
             const isPregnant = caseData.category === 'Maternal' ||
-                caseData.patientName?.includes('hamil');
+                decisions.category === 'Maternal' ||
+                caseData.patientName?.includes('hamil') ||
+                decisions.diagnosis?.some(d => {
+                    const dl = (d || '').toLowerCase();
+                    return dl.startsWith('o') || dl.includes('hamil') || dl.includes('pregnan');
+                });
             const hasLowHb = decisions.labsRevealed?.hemoglobin &&
                 parseFloat(decisions.labsRevealed.hemoglobin?.value) < 11;
             const treatedAnemia = decisions.medications?.some(m =>
@@ -161,11 +170,13 @@ export function evaluateConsequences(caseData, decisions, currentDay) {
                     ruleId: rule.id,
                     returnDay: currentDay + delay,
                     originalCase: {
-                        patientName: caseData.patientName || 'Pasien',
-                        age: caseData.age,
-                        gender: caseData.gender,
-                        originalDiagnosis: caseData.correctDiagnosis,
-                        category: caseData.category,
+                        // Codex Fix: caseData IS patient.medicalData, which lacks patientName/age/gender/category.
+                        // Fall through to decisions or use defaults.
+                        patientName: caseData.patientName || decisions.patientName || 'Pasien',
+                        age: caseData.age || decisions.age,
+                        gender: caseData.gender || decisions.gender,
+                        originalDiagnosis: caseData.trueDiagnosisCode || caseData.correctDiagnosis || caseData.icd10 || caseData.diagnosisName || '',
+                        category: caseData.category || decisions.category || '',
                     },
                     condition: outcome.condition,
                     severity: outcome.severity,

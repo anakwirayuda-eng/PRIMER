@@ -673,7 +673,12 @@ export function usePatientEMR() {
             medications: selectedMeds.map(m => m.id),
             labsRevealed,
             diagnosisScore: caseOutcome.diagnosisScore,
-            treatmentScore: treatResult?.score ?? 0
+            treatmentScore: treatResult?.score ?? 0,
+            // Codex Fix: pass patient identity so ConsequenceEngine can build originalCase
+            patientName: patient.name,
+            age: patient.age,
+            gender: patient.gender,
+            category: patient.hidden?.category || caseData?.category || '',
         }, day || 1);
         if (consequences) pushConsequence(consequences);
 

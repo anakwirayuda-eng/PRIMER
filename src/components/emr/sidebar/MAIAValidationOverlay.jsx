@@ -141,12 +141,13 @@ export default function MAIAValidationOverlay({
                                             : <span className="text-rose-500 text-[9px] font-bold ml-auto">❌ SALAH</span>
                                         }
                                     </div>
-                                    <p className="font-bold">{patient.medicalData.diagnosisName}</p>
-                                    <p className={`font-mono text-[10px] ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>ICD-10: {patient.medicalData.trueDiagnosisCode}</p>
-                                    {(patient.hidden?.differentials?.length > 0) && (
+                                    <p className="font-bold">{patient.medicalData?.diagnosisName}</p>
+                                    <p className={`font-mono text-[10px] ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>ICD-10: {patient.medicalData?.trueDiagnosisCode}</p>
+                                    {/* Codex Fix: emergency uses differentialDiagnosis, regular uses differentials */}
+                                    {((patient.hidden?.differentialDiagnosis || patient.hidden?.differentials)?.length > 0) && (
                                         <div className="mt-1.5">
                                             <span className={`text-[9px] font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Diagnosis Banding:</span>
-                                            <p className="opacity-70">{patient.hidden.differentials.join(', ')}</p>
+                                            <p className="opacity-70">{(patient.hidden.differentialDiagnosis || patient.hidden.differentials).join(', ')}</p>
                                         </div>
                                     )}
                                 </div>

@@ -867,7 +867,7 @@ export function generateFollowupPatient(consequence, currentTime, seedHint = 'de
             skdi: condition === 'improved' ? '4A' : '3B',
             risk: severity === 'critical' ? 'high' : (severity === 'medium' ? 'medium' : 'low'),
             differentials: [],
-            clue: guidelineRef?.guideline || '',
+            clue: guidelineRef?.text || guidelineRef?.guideline || '',
             isResident: true,
             villagerId: null,
             familyId: null,
