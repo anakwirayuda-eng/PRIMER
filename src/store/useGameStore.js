@@ -1979,6 +1979,8 @@ export const useGameStore = create(
                         if (time === 480) {
                             const followups = getScheduledFollowups(state.clinical.consequenceQueue, day);
                             followups.forEach(consequence => {
+                                // Codex Fix: skip ukp_bridge entries — no originalCase data
+                                if (consequence.type === 'ukp_bridge') return;
                                 const followupPatient = generateFollowupPatient(
                                     consequence,
                                     time,

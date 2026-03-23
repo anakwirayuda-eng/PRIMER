@@ -5,7 +5,7 @@
  *            Creates follow-up patients that return days later with improved or worsened conditions.
  * [STATE]: Experimental
  * [ANCHOR]: evaluateConsequences
- * [DEPENDS_ON]: PatientGenerator case data format
+ * [DEPENDS_ON]: PatientGenerator case data format, LabEngine LAB_CATALOG
  * [KNOWN_ISSUES]: None
  * [LAST_UPDATE]: 2026-03-23
  */
@@ -28,20 +28,63 @@ function extractSystolicBP(caseData) {
 }
 
 /**
+ * Lab panel → individual parameter key mapping.
+ * EMR stores lab orders as panel keys (e.g. 'darah_lengkap': true),
+ * but clinical rules need individual parameter keys (e.g. 'hemoglobin').
+ * This maps panel keys to their contained parameter keys.
+ */
+const LAB_PANEL_TO_PARAMS = {
+    darah_lengkap: ['hb', 'hemoglobin', 'ht', 'leukosit', 'trombosit', 'eritrosit', 'led'],
+    gds: ['gds'],
+    gdp: ['gdp'],
+    gd2pp: ['gd2pp'],
+    urinalisis: ['protein', 'glukosa', 'leukosit_urin', 'eritrosit_urin', 'nitrit'],
+    hba1c: ['hba1c'],
+    asam_urat: ['asam_urat'],
+    kolesterol_total: ['kolesterol'],
+};
+
+/**
+ * Check if a lab parameter was ordered (even as boolean flag).
+ * Handles both direct key match and panel→parameter expansion.
+ * Returns true if the lab was ordered in any form.
+ */
+function wasLabOrdered(labsRevealed, paramKey) {
+    if (!labsRevealed) return false;
+    // Direct key check
+    if (labsRevealed[paramKey]) return true;
+    // Check if any ordered panel contains this parameter
+    for (const [panelKey, params] of Object.entries(LAB_PANEL_TO_PARAMS)) {
+        if (labsRevealed[panelKey] && params.includes(paramKey)) return true;
+    }
+    return false;
+}
+
+/**
  * Extract a lab value from the labsRevealed object.
  * EMR stores labs as boolean true (flag-only) or as {value: string}.
  * Returns NaN if the lab was not ordered or is flag-only without a value.
  */
-function extractLabValue(labsRevealed, labKey) {
-    const entry = labsRevealed?.[labKey];
+function extractLabValue(labsRevealed, paramKey) {
+    // Direct key check
+    let entry = labsRevealed?.[paramKey];
+
+    // If not found directly, check via panel mapping
+    if (entry === undefined) {
+        for (const [panelKey, params] of Object.entries(LAB_PANEL_TO_PARAMS)) {
+            if (labsRevealed?.[panelKey] && params.includes(paramKey)) {
+                entry = labsRevealed[panelKey];
+                break;
+            }
+        }
+    }
+
     if (!entry) return NaN;
-    // If it's a boolean flag (true), the lab was ordered but no numeric value
+    // Boolean flag = lab was ordered but no numeric value available
     if (entry === true) return NaN;
-    // If it's an object with .value
     if (typeof entry === 'object' && entry.value !== undefined) {
         return parseFloat(entry.value);
     }
-    // If it's a string directly
     if (typeof entry === 'string') return parseFloat(entry);
     return NaN;
 }
@@ -82,7 +125,6 @@ const CONSEQUENCE_RULES = [
     {
         id: 'anemia_pregnancy',
         match: (caseData, decisions) => {
-            // Codex Fix: category may not be in caseData (medicalData). Also check ICD codes.
             const isPregnant = caseData.category === 'Maternal' ||
                 decisions.category === 'Maternal' ||
                 caseData.patientName?.includes('hamil') ||
@@ -90,9 +132,11 @@ const CONSEQUENCE_RULES = [
                     const dl = (d || '').toLowerCase();
                     return dl.startsWith('o') || dl.includes('hamil') || dl.includes('pregnan');
                 });
-            // Codex Fix: EMR stores labs as boolean true, not {value: string}
-            const hbValue = extractLabValue(decisions.labsRevealed, 'hemoglobin');
-            const hasLowHb = !isNaN(hbValue) && hbValue < 11;
+            // Codex Fix: check if hemoglobin-related lab was ordered (via panel or direct)
+            const hbOrdered = wasLabOrdered(decisions.labsRevealed, 'hb');
+            const hbValue = extractLabValue(decisions.labsRevealed, 'hb');
+            // If lab was ordered but we can't get a value (boolean flag), we can't verify—skip
+            const hasLowHb = hbOrdered && !isNaN(hbValue) && hbValue < 11;
             const treatedAnemia = decisions.medications?.some(m =>
                 m.toLowerCase().includes('fe') || m.toLowerCase().includes('sulfas')
             );
@@ -118,9 +162,10 @@ const CONSEQUENCE_RULES = [
     {
         id: 'dm_uncontrolled',
         match: (caseData, decisions) => {
-            // Codex Fix: EMR stores labs as boolean true, not {value: string}
+            // Codex Fix: check if gds was ordered (direct key or panel)
+            const gdsOrdered = wasLabOrdered(decisions.labsRevealed, 'gds');
             const gdsValue = extractLabValue(decisions.labsRevealed, 'gds');
-            const hasHighGDS = !isNaN(gdsValue) && gdsValue > 200;
+            const hasHighGDS = gdsOrdered && !isNaN(gdsValue) && gdsValue > 200;
             const prescribedMed = decisions.medications?.some(m =>
                 m.toLowerCase().includes('metformin') || m.toLowerCase().includes('glibenclamid')
             );
@@ -167,30 +212,19 @@ const CONSEQUENCE_RULES = [
 
 /**
  * Evaluate a discharged patient's case and determine if there should be a follow-up.
- * 
- * @param {Object} caseData - The original case data from PatientGenerator
- * @param {Object} decisions - Player's clinical decisions:
- *   { diagnosis: string[], medications: string[], labsRevealed: Object,
- *     diagnosisScore: number, treatmentScore: number, referralMade: boolean }
- * @param {number} currentDay - Current game day
- * @returns {Object|null} Follow-up entry for consequenceQueue, or null if no consequence
  */
 export function evaluateConsequences(caseData, decisions, currentDay) {
     if (!caseData || !decisions) return null;
 
-    // Check each rule in priority order
     for (const rule of CONSEQUENCE_RULES) {
         try {
             if (rule.match(caseData, decisions)) {
                 const { outcome } = rule;
                 const [minDelay, maxDelay] = outcome.delayDays;
                 const delaySeed = seedKey(
-                    'consequence-delay',
-                    rule.id,
-                    currentDay,
+                    'consequence-delay', rule.id, currentDay,
                     caseData.patientName || caseData.name,
-                    decisions.diagnosis,
-                    decisions.action
+                    decisions.diagnosis, decisions.action
                 );
                 const delay = minDelay + seededInt(delaySeed, maxDelay - minDelay + 1);
 
@@ -202,8 +236,6 @@ export function evaluateConsequences(caseData, decisions, currentDay) {
                     ruleId: rule.id,
                     returnDay: currentDay + delay,
                     originalCase: {
-                        // Codex Fix: caseData IS patient.medicalData, which lacks patientName/age/gender/category.
-                        // Fall through to decisions or use defaults.
                         patientName: caseData.patientName || decisions.patientName || 'Pasien',
                         age: caseData.age || decisions.age,
                         gender: caseData.gender || decisions.gender,
@@ -221,48 +253,22 @@ export function evaluateConsequences(caseData, decisions, currentDay) {
                 };
             }
         } catch {
-            // If a rule match fails (missing data), skip silently
             continue;
         }
     }
-
     return null;
 }
 
-/**
- * Get all follow-up patients scheduled for a specific day.
- * Used by MorningBriefing to show alerts.
- * 
- * @param {Array} consequenceQueue - Array of consequence entries
- * @param {number} currentDay - Current game day
- * @returns {Array} Follow-ups due today
- */
 export function getScheduledFollowups(consequenceQueue = [], currentDay) {
     return consequenceQueue.filter(c => c.returnDay === currentDay);
 }
 
-/**
- * Get upcoming follow-ups within the next N days (for preview).
- * 
- * @param {Array} consequenceQueue - Array of consequence entries
- * @param {number} currentDay - Current game day
- * @param {number} lookahead - Days ahead to look (default 3)
- * @returns {Array} Upcoming follow-ups
- */
 export function getUpcomingFollowups(consequenceQueue = [], currentDay, lookahead = 3) {
     return consequenceQueue.filter(c =>
         c.returnDay > currentDay && c.returnDay <= currentDay + lookahead
     );
 }
 
-/**
- * Remove processed follow-ups from the queue.
- * Call after follow-up patients have been injected into the game queue.
- * 
- * @param {Array} consequenceQueue - Current queue
- * @param {number} currentDay - Current game day
- * @returns {Array} Updated queue without today's processed items
- */
 export function clearProcessedFollowups(consequenceQueue = [], currentDay) {
     return consequenceQueue.filter(c => c.returnDay > currentDay);
 }

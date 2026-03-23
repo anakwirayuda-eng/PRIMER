@@ -62,8 +62,8 @@ export default function HistoryTab({ patient, isDark, history, openWiki }) {
                                 {patientHistory.filter(v => !v.cpptRecord).map((visit, idx) => (
                                     <div key={`legacy-${idx}`} className="flex items-center gap-2 py-1">
                                         <span className="font-mono">H-{visit.day}</span>
-                                        <span className={`px-1.5 rounded text-[9px] font-bold ${visit.decision?.action === 'refer' ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                                            {visit.decision?.action === 'refer' ? 'RUJUK' : 'RAWAT'}
+                                        <span className={`px-1.5 rounded text-[9px] font-bold ${visit.decision?.action === 'refer' ? 'bg-rose-500/10 text-rose-400' : visit.decision?.action === 'delegate_to_maia' ? 'bg-indigo-500/10 text-indigo-400' : visit.decision?.action === 'stabilize' ? 'bg-teal-500/10 text-teal-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                                            {visit.decision?.action === 'refer' ? 'RUJUK' : visit.decision?.action === 'delegate_to_maia' ? 'DELEGASI' : visit.decision?.action === 'stabilize' ? 'STABILISASI' : 'RAWAT'}
                                         </span>
                                         <span className="truncate">{(visit.decision?.diagnoses || []).join(', ') || '-'}</span>
                                     </div>

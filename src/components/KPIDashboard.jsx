@@ -386,9 +386,10 @@ export default function KPIDashboard() {
 
                         <div className="space-y-4">
                             {clinicalAudit.length > 0 ? clinicalAudit.map((p, idx) => {
-                                // Adapted data contract: use outcome, decision, satisfactionScore
-                                const isPerfect = p.outcome === 'good' || (p.satisfactionScore && p.satisfactionScore >= 80);
-                                const diagName = p.decision?.diagnosis || p.medicalData?.diagnosis || p.medicalData?.diagnosisName || 'UNKNOWN';
+                                // Codex Fix: use decision.diagnoses[] not .diagnosis; exclude transfers from isPerfect
+                                const isTransferOrStabilize = ['sisrute_transferred', 'stabilized', 'delegated'].includes(p.outcomeStatus);
+                                const isPerfect = !isTransferOrStabilize && (p.outcome === 'good' || (p.satisfactionScore && p.satisfactionScore >= 80));
+                                const diagName = p.decision?.diagnoses?.[0] || p.medicalData?.trueDiagnosisCode || p.medicalData?.diagnosisName || 'UNKNOWN';
                                 const actionLabel = p.decision?.action === 'treat' ? 'TREATED' : p.decision?.action === 'refer' ? 'REFERRED' : p.decision?.action || 'N/A';
                                 const logId = generateMedHash(p.name, p.day);
 
@@ -429,7 +430,7 @@ export default function KPIDashboard() {
                                                 </div>
 
                                                 <p className={`text-[10px] font-mono mt-4 p-2.5 rounded-lg border italic border-l-2 ${isDark ? 'text-slate-400 bg-slate-900/50 border-slate-800/50 border-l-slate-600' : 'text-slate-600 bg-slate-50 border-slate-200 border-l-slate-400'}`}>
-                                                    &gt; {isPerfect ? "Protokol dieksekusi dengan sempurna. Pasien pulih." : "Analisis mendalam diperlukan. Deviasi protokol terdeteksi."}
+                                                    &gt; {isPerfect ? "Protokol dieksekusi dengan sempurna. Pasien pulih." : isTransferOrStabilize ? `Pasien di-${p.outcomeStatus === 'sisrute_transferred' ? 'transfer via SISRUTE' : p.outcomeStatus === 'stabilized' ? 'stabilisasi' : 'delegasikan'}.` : "Analisis mendalam diperlukan. Deviasi protokol terdeteksi."}
                                                 </p>
                                             </div>
 

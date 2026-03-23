@@ -662,6 +662,10 @@ export function usePatientEMR() {
             wasCorrect: diagResult?.isPrimaryCorrect ?? false,
             diagnosisScore: diagResult?.isPrimaryCorrect ? 100 : 0,
             action,
+            // Codex Fix: DebriefEngine needs these flags for generateSummary()
+            completed: action === 'treat',
+            referred: action === 'refer',
+            revenue: patient.social?.hasBPJS ? 0 : (selectedMeds.length * 5000 + selectedProcedures.length * 10000),
             medications: selectedMeds.map(m => m.id),
             keyLearning: caseData?.keyLearning || '',
             guidelineRef: caseData?.guidelineRef || null,

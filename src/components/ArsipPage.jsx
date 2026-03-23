@@ -278,11 +278,18 @@ export default function ArsipPage() {
                                                         record.type === 'senam_prolanis' ? 'MASSA' :
                                                             record.type === 'prolanis_call' ? 'PANGGIL' :
                                                                 record.type === 'prolanis_monitor' ? 'PANTAU' :
-                                                                    record.decision?.action === 'refer' ? 'RUJUK' : 'RAWAT'}
+                                                                    record.decision?.action === 'refer' ? 'RUJUK' :
+                                                                    record.decision?.action === 'delegate_to_maia' ? 'DELEGASI' :
+                                                                    record.decision?.action === 'stabilize' ? 'STABILISASI' :
+                                                                    'RAWAT'}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {record.outcome === 'bad' ? '⚠️' : '✅'}
+                                                {/* Codex Fix: proper status for modern outcomes */}
+                                                {record.outcomeStatus === 'sisrute_transferred' ? '🚑' :
+                                                 record.outcomeStatus === 'stabilized' ? '🩺' :
+                                                 record.outcomeStatus === 'delegated' ? '🤖' :
+                                                 record.outcome === 'bad' ? '⚠️' : '✅'}
                                             </td>
                                         </tr>
                                     ))}
@@ -613,8 +620,8 @@ function FamilyDetailView({ family, onBack }) {
                                                         </span>
                                                         <h4 className="font-bold text-slate-800 dark:text-slate-100">{visit.name}</h4>
                                                     </div>
-                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${visit.decision?.action === 'refer' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                                                        {visit.decision?.action === 'refer' ? 'Rujuk' : 'Rawat'}
+                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${visit.decision?.action === 'refer' ? 'bg-rose-100 text-rose-700' : visit.decision?.action === 'delegate_to_maia' ? 'bg-indigo-100 text-indigo-700' : visit.decision?.action === 'stabilize' ? 'bg-teal-100 text-teal-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                                                        {visit.decision?.action === 'refer' ? 'Rujuk' : visit.decision?.action === 'delegate_to_maia' ? 'Delegasi' : visit.decision?.action === 'stabilize' ? 'Stabilisasi' : 'Rawat'}
                                                     </span>
                                                 </div>
                                                 <p className="text-xs text-slate-500">{(visit.decision?.diagnoses || []).join(', ')}</p>
