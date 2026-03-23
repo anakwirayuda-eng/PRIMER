@@ -755,7 +755,6 @@ export function generateProlanisVisitPatient(rosterMember, currentDay, seedHint 
         complaint: "Kontrol rutin Prolanis bulan ini.",
         medicalData: {
             diagnosisName: isDM ? 'Diabetes Mellitus Tipe 2' : 'Hipertensi',
-            diagnosisCode: isDM ? 'E11' : 'I10',
             isChronic: true,
             symptoms: ["Pasien datang untuk kontrol rutin penyakit kronis"],
             vitals: {
@@ -771,6 +770,10 @@ export function generateProlanisVisitPatient(rosterMember, currentDay, seedHint 
             requiredAction: 'treat',
             risk: 'chronic',
             diseaseId: isDM ? 'dm_type2' : 'hypertension',
+            // DeepThink Fix: fill contract-required hidden attrs
+            differentials: [],
+            skdi: '4A',
+            clue: '',
             requiredEducation: [],
             correctTreatment: []
         }
@@ -923,19 +926,25 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
         name: fullName,
         age: member.age || 35,
         gender,
+        // DeepThink Fix: add missing root attrs
+        anthropometrics: generateAnthropometrics(member.age || 35, gender, seedKey(bridgeSeed, 'anthropometrics')),
+        isEmergency: false,
+        triageLevel: null,
         complaint: disease.chiefComplaint || disease.complaint || 'Keluhan tidak spesifik',
         narrative: `(Warga ini datang karena masalah kesehatan akibat perilaku yang belum berubah) ${disease.narrative || ''}`,
         facility,
-        medical: {
+        // DeepThink Fix: medical: → medicalData: (Data Contract)
+        medicalData: {
             vitals: disease.vitals || {},
-            physicalExam: disease.physicalExam || {},
+            // DeepThink Fix: physicalExam → physicalExamFindings
+            physicalExamFindings: disease.physicalExamFindings || disease.physicalExam || {},
             labs: {},
-            trueDiagnosisCode: disease.icdCode || disease.id,
-            diagnosisName: disease.diagnosisName || disease.condition || ukpDiseaseId,
+            trueDiagnosisCode: disease.icd10 || disease.icdCode || disease.id,
+            diagnosisName: disease.diagnosis || disease.diagnosisName || disease.condition || ukpDiseaseId,
             anamnesisQuestions: disease.anamnesisQuestions || null,
             essentialQuestions: disease.essentialQuestions || [],
             anamnesis: disease.anamnesis || [disease.chiefComplaint || ''],
-            nonReferrable: disease.skdiLevel === '4A',
+            nonReferrable: (disease.skdi || disease.skdiLevel) === '4A',
             correctTreatment: disease.correctTreatment || [],
             correctProcedures: disease.correctProcedures || [],
             requiredEducation: disease.requiredEducation || [],
@@ -950,11 +959,12 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
         patience: 80,
         hidden: {
             diseaseId: disease.id || ukpDiseaseId,
-            requiredAction: disease.skdiLevel === '4A' ? 'treat' : 'refer',
-            skdi: disease.skdiLevel || '4A',
+            requiredAction: (disease.skdi || disease.skdiLevel) === '4A' ? 'treat' : 'refer',
+            skdi: disease.skdi || disease.skdiLevel || '4A',
             risk: 'medium',
-            differentials: disease.differentials || [],
-            clue: disease.teachingPoint || '',
+            // DeepThink Fix: differentials → differentialDiagnosis
+            differentials: disease.differentialDiagnosis || disease.differentials || [],
+            clue: disease.clue || disease.teachingPoint || '',
             isResident: true,
             villagerId: member.id,
             familyId: familyId,
@@ -1024,8 +1034,9 @@ export function generateGenericPatients(diseaseId, amount, targetClinic, current
                 requiredAction: (disease.skdi || disease.skdiLevel) === '4A' ? 'treat' : 'refer',
                 skdi: disease.skdi || disease.skdiLevel || '4A',
                 risk: 'medium',
-                differentials: disease.differentials || [],
-                clue: disease.teachingPoint || '',
+                // DeepThink Fix: differentials → differentialDiagnosis
+                differentials: disease.differentialDiagnosis || disease.differentials || [],
+                clue: disease.clue || disease.teachingPoint || '',
                 isResident: true,
             }
         });
