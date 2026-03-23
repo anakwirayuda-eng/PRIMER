@@ -232,7 +232,14 @@ export function usePatientEMR() {
             physical: examValidation?.score ?? 0,
             labs: examValidation?.labScore ?? 0
         });
-        const maiaAlertsList = getMAIAAlerts(anamnesisHistory, activeTab, caseData, {
+        // Codex Fix: merge skdi/triageLevel/esi into caseData — they live on patient root/hidden, not medicalData
+        const enrichedCaseData = {
+            ...caseData,
+            skdi: caseData?.skdi || patient.hidden?.skdi,
+            triageLevel: caseData?.triageLevel || patient.triageLevel,
+            esi: caseData?.esi || patient.esiLevel
+        };
+        const maiaAlertsList = getMAIAAlerts(anamnesisHistory, activeTab, enrichedCaseData, {
             isEmergency: !!patient.isEmergency,
             diagnosticConfidence: diagnosticConf?.confidence ?? 0
         });
@@ -636,7 +643,7 @@ export function usePatientEMR() {
             patientName: patient.name,
             age: patient.age,
             diagnosis: selectedDiagnoses[0]?.code || 'unknown',
-            correctDiagnosis: caseData?.correctDiagnosis || caseData?.id || '',
+            correctDiagnosis: caseData?.correctDiagnosis || caseData?.trueDiagnosisCode || caseData?.icd10 || caseData?.diagnosisName || patient.hidden?.icd10 || patient.hidden?.diagnosis || caseData?.id || '',
             wasCorrect: diagResult?.isPrimaryCorrect ?? false,
             diagnosisScore: diagResult?.isPrimaryCorrect ? 100 : 0,
             action,

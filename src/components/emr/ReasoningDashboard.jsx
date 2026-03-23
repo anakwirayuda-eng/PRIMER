@@ -36,9 +36,12 @@ export default function ReasoningDashboard({
     const confidenceValue = typeof diagnosticConfidence === 'object' ? (diagnosticConfidence.confidence || 0) : (diagnosticConfidence || 0);
 
     // Differential Probabilities (Mock logic or from diagnosticTracker)
+    // Codex Fix: modern patients use trueDiagnosisCode (not diagnosisCode) and hidden.differentialDiagnosis (not differentials)
+    const primaryCode = patient.medicalData?.trueDiagnosisCode || patient.medicalData?.diagnosisCode || patient.hidden?.icd10 || 'unknown';
+    const differentialsList = patient.hidden?.differentialDiagnosis || patient.hidden?.differentials || [];
     const differentials = [
-        { id: `primary_${patient.medicalData.diagnosisCode}`, name: patient.medicalData.diagnosisName, prob: confidenceValue || 45, color: 'emerald' },
-        ...(patient.hidden?.differentials || []).map((d, i) => {
+        { id: `primary_${primaryCode}`, name: patient.medicalData?.diagnosisName || primaryCode, prob: confidenceValue || 45, color: 'emerald' },
+        ...differentialsList.map((d, i) => {
             let mappedName = ICD10_DB.find(icd => icd.code === d)?.name || d;
             // Clean up trailing codes in parentheses e.g. "Cholera (A00)" -> "Cholera"
             mappedName = mappedName.replace(/\s\([^)]+\)$/, '');

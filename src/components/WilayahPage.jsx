@@ -142,8 +142,9 @@ export default function WilayahPage() {
         if (!villageData || !history) return status;
         const recentHistory = history.filter(p => (day - p.day) <= 14);
         recentHistory.forEach(p => {
-            if (!p.medicalData || !p.medicalData.diagnosisCode) return;
-            const dx = p.medicalData.diagnosisCode;
+            // Codex Fix: modern patients use trueDiagnosisCode, legacy used diagnosisCode
+            const dx = p.medicalData?.trueDiagnosisCode || p.medicalData?.diagnosisCode || p.medicalData?.icd10 || p.hidden?.icd10 || '';
+            if (!dx) return;
             const houseId = p.hidden?.familyId ? villageData.families.find(f => f.id === p.hidden.familyId)?.houseId : null;
             if (houseId) {
                 let caseType = null;

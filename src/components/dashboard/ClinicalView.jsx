@@ -25,7 +25,8 @@ export default function ClinicalView({ onBack, openWiki }) {
     const skdiStats = useMemo(() => {
         const handledIds = new Set();
         history.forEach(p => {
-            const diseaseId = p.medicalData?.diseaseId || p.medicalData?.diagnosisId;
+            // Codex Fix: modern patients store diseaseId in hidden, not medicalData
+            const diseaseId = p.hidden?.diseaseId || p.medicalData?.diseaseId || p.medicalData?.diagnosisId;
             if (diseaseId) handledIds.add(diseaseId);
         });
         const matched = FKTP_144_DISEASES.filter(d => handledIds.has(d.id)).length;

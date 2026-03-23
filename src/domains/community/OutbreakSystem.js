@@ -222,8 +222,9 @@ export function checkForOutbreakTrigger(history, villageData, currentDay, active
         }
 
         // Find cases matching this outbreak type
+        // Codex Fix: modern patients use trueDiagnosisCode, legacy used diagnosisCode
         const matchingCases = recentHistory.filter(p => {
-            const diagCode = p.medicalData?.diagnosisCode || '';
+            const diagCode = p.medicalData?.trueDiagnosisCode || p.medicalData?.diagnosisCode || p.medicalData?.icd10 || p.hidden?.icd10 || '';
             return outbreakType.triggerCodes.some(code => diagCode.startsWith(code));
         });
 
