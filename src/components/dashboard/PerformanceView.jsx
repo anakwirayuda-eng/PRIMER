@@ -100,7 +100,7 @@ export default function PerformanceView({ onBack, openWiki }) {
                     <div className="flex-1 space-y-2">
                         {[
                             { label: 'Angka Kontak', value: `${kbkData.angkaKontak}‰`, score: kbkData.angkaKontakScore, weight: '40%', target: `≥${kbkData.angkaKontakTarget}‰`, wikiKey: 'angka_kontak' },
-                            { label: 'Rasio Rujukan', value: `${derivedKpis.referralRate}%`, score: kbkData.rrnsScore, weight: '50%', target: '< 15%', wikiKey: 'rrns' },
+                            { label: 'RRNS (Non-Spesialistik)', value: `${derivedKpis.rrns}%`, score: kbkData.rrnsScore, weight: '50%', target: '< 15%', wikiKey: 'rrns' },
                             { label: 'RPP Prolanis', value: `${kbkData.rppRate}%`, score: kbkData.rppRate, weight: '10%', target: '≥ 50%', wikiKey: 'prolanis_compliance' },
                         ].map(item => (
                             <div

@@ -37,12 +37,12 @@ function buildPrescriptionQueue(history, currentDay) {
             dischargedAt: p.dischargedAt,
             items: p.decision.medications.map(m => ({
                 medId: typeof m === 'object' ? m.id : m,
-                dose: 1,
-                frequency: typeof m === 'object' ? (m.frequency || 1) : 1,
-                duration: typeof m === 'object' ? (m.duration || 1) : 1,
-                // Codex Fix: map form to correct route
+                dose: typeof m === 'object' ? (m.dose || 1) : 1,
+                frequency: typeof m === 'object' ? (m.frequency || 3) : 3,
+                duration: typeof m === 'object' ? (m.duration || 3) : 3,
                 route: (() => {
-                    const med = getMedicationById(typeof m === 'object' ? m.id : m);
+                    const medId = typeof m === 'object' ? (m.id || m.medId) : m;
+                    const med = getMedicationById(medId);
                     const formRouteMap = {
                         'tablet': 'oral', 'capsule': 'oral', 'syrup': 'oral', 'drop': 'oral',
                         'cream': 'topical', 'ointment': 'topical',
@@ -81,11 +81,21 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
             patientAllergies: activeRx.patientAllergies,
             items: activeRx.items
         }, inventoryMap);
-    }, [activeRx]);
+    }, [activeRx, pharmacyInventory]); // Codex Fix: dependency on inventory for live updates
 
     const interactions = useMemo(() => {
         if (!activeRx) return [];
         return checkDrugInteractions(activeRx.items.map(i => i.medId));
+    }, [activeRx]);
+
+    const dispensingBill = useMemo(() => {
+        if (!activeRx) return null;
+        const isBPJS = activeRx.patientSocial?.hasBPJS ?? false;
+        return calculateDispensingBill(activeRx.items.map(i => ({
+            medId: i.medId,
+            medName: i.name,
+            qtyNeeded: (i.dose || 1) * (i.frequency || 1) * (i.duration || 1)
+        })), isBPJS);
     }, [activeRx]);
 
     const FIVE_RIGHTS = ['Obat Benar', 'Pasien Benar', 'Dosis Benar', 'Rute Benar', 'Waktu Benar'];
@@ -222,6 +232,23 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                                 <div className={`mt-2 px-2 py-1 rounded-lg text-[9px] font-bold flex items-center gap-1.5 ${isDark ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-red-50 text-red-700 border border-red-100'}`}>
                                     <AlertTriangle size={10} />
                                     Alergi: {activeRx.patientAllergies.join(', ')}
+                                </div>
+                            )}
+                            {/* Codex Fix: Display Billing/Coverage Info */}
+                            {dispensingBill && (
+                                <div className={`mt-2 px-2 py-1 rounded-lg text-[9px] font-bold flex flex-col gap-1 ${isDark ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'bg-indigo-50 text-indigo-700 border border-indigo-100'}`}>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-1.5">
+                                            <ShieldCheck size={10} />
+                                            <span>Billing: {dispensingBill.coverageNote}</span>
+                                        </div>
+                                        <span>Rp {dispensingBill.finalBill.toLocaleString()}</span>
+                                    </div>
+                                    {dispensingBill.isCovered && dispensingBill.subtotal > 0 && (
+                                        <div className="opacity-60 text-[8px] border-t border-current/10 pt-1 mt-0.5">
+                                            Penghematan Pasien: Rp {dispensingBill.subtotal.toLocaleString()}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

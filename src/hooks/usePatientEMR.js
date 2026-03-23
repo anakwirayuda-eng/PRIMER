@@ -639,7 +639,14 @@ export function usePatientEMR() {
                 decisionData: {
                     action: 'refer',
                     diagnoses: selectedDiagnoses.map(d => d.code),
-                    medications: selectedMeds.map(m => m.id),
+                    medications: selectedMeds.map(m => ({
+                        id: m.id,
+                        medId: m.id,
+                        name: m.name,
+                        dose: m.dose || 1,
+                        frequency: m.frequency || 3,
+                        duration: m.duration || 3
+                    })),
                     procedures: selectedProcedures.map(p => p.id || p.code),
                     examsPerformed: performedExamKeys,
                     education: selectedEducation,
@@ -656,7 +663,14 @@ export function usePatientEMR() {
         dischargePatient(patient, {
             action,
             diagnoses: selectedDiagnoses.map(d => d.code),
-            medications: selectedMeds.map(m => m.id),
+            medications: selectedMeds.map(m => ({
+                id: m.id,
+                medId: m.id,
+                name: m.name,
+                dose: m.dose || 1,
+                frequency: m.frequency || 3,
+                duration: m.duration || 3
+            })),
             procedures: selectedProcedures.map(p => p.id || p.code),
             examsPerformed: performedExamKeys,
             education: selectedEducation,
@@ -680,7 +694,9 @@ export function usePatientEMR() {
             // Codex Fix: DebriefEngine needs these flags for generateSummary()
             completed: action === 'treat',
             referred: action === 'refer',
-            revenue: patient.social?.hasBPJS ? 0 : (selectedMeds.length * 5000 + selectedProcedures.length * 10000),
+            // Codex Fix: Sync revenue with store logic (useGameStore:2139)
+            // +50,000 for Non-BPJS, -15,000 for BPJS (fee/kapitasi)
+            revenue: patient.social?.hasBPJS ? -15000 : 50000,
             medications: selectedMeds.map(m => m.id),
             keyLearning: caseData?.keyLearning || '',
             guidelineRef: caseData?.guidelineRef || null,

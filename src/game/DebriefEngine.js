@@ -93,7 +93,7 @@ export function generateDebrief({
         criticalCases,
         reflectionPrompts,
         consequencePreview: consequencePreview.map(c => ({
-            patientName: c.originalCase.patientName,
+            patientName: c.originalCase?.patientName || 'Pasien Follow-up',
             returnDay: c.returnDay,
             daysUntil: c.returnDay - day,
             condition: c.condition,

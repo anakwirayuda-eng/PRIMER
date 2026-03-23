@@ -2128,7 +2128,10 @@ export const useGameStore = create(
                             return true;
                         })(correctMedList, decision.medications || []);
                         const isCorrectAction = decision.action === 'treat' ? (isCorrectTriage && isCorrectMeds) : isCorrectTriage;
-                        const hasAntibiotic = decision.medications?.some(m => ['amoxicillin', 'azithromycin', 'ciprofloxacin', 'metronidazole', 'doxycycline', 'cotrimoxazole', 'cefadroxil', 'cefixime', 'erythromycin', 'levofloxacin'].includes(m));
+                        const hasAntibiotic = decision.medications?.some(m => {
+                            const medId = typeof m === 'object' ? (m.id || m.medId) : m;
+                            return ['amoxicillin', 'azithromycin', 'ciprofloxacin', 'metronidazole', 'doxycycline', 'cotrimoxazole', 'cefadroxil', 'cefixime', 'erythromycin', 'levofloxacin'].some(name => medId.startsWith(name));
+                        });
 
                         let fundChange = 0, repChange = 0, satisfactionScore = 70;
                         if (decision.action === 'treat') {
@@ -2156,10 +2159,12 @@ export const useGameStore = create(
 
                         satisfactionScore += (buffs.patientSatisfaction || 0);
                         const inventoryUpdates = new Map();
-                        if (decision.medications) decision.medications.forEach(id => inventoryUpdates.set(id, (inventoryUpdates.get(id) || 0) + 1));
+                        // Codex Fix: Remove double-deduction for medications (now handled by FarmasiPanel.consumeMedication)
+                        // if (decision.medications) decision.medications.forEach(id => inventoryUpdates.set(id, (inventoryUpdates.get(id) || 0) + 1));
                         if (decision.procedures) {
                             decision.procedures.forEach(procId => {
-                                const proc = PROCEDURES_DB.find(p => p.id === procId);
+                                const procIdClean = typeof procId === 'object' ? (procId.id || procId.code) : procId;
+                                const proc = PROCEDURES_DB.find(p => p.id === procIdClean);
                                 if (proc?.requiredItems) proc.requiredItems.forEach(itemId => inventoryUpdates.set(itemId, (inventoryUpdates.get(itemId) || 0) + 1));
                             });
                         }
