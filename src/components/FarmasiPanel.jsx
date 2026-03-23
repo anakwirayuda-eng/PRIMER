@@ -118,12 +118,15 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
     const allChecked = FIVE_RIGHTS.every(r => checklist[r]);
 
     const handleVerify = useCallback(() => {
-        if (!activeRxId || !allChecked) return;
+        // Codex Fix: block verify if verification found errors (allergies, interactions, etc.)
+        if (!activeRxId || !allChecked || (verification && !verification.isValid)) return;
         setVerifiedRxIds(prev => new Set([...prev, activeRxId]));
-    }, [activeRxId, allChecked]);
+    }, [activeRxId, allChecked, verification]);
 
     const handleDispense = useCallback(() => {
         if (!activeRxId || !verifiedRxIds.has(activeRxId)) return;
+        // Codex Fix: block dispense if verification detected invalid prescription
+        if (verification && !verification.isValid) return;
         if (consumeMedication && activeRx) {
             // Codex Fix: pre-validate ALL items have sufficient stock before consuming ANY
             const itemsWithQty = activeRx.items.map(item => ({

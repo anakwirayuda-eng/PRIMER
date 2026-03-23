@@ -647,13 +647,15 @@ function shouldEnableActionStability(fullName, actionName) {
 function isCorrectMedicationSelection(requiredTreatments, selectedMedications) {
     if (!Array.isArray(requiredTreatments) || requiredTreatments.length === 0) return true;
     if (!Array.isArray(selectedMedications)) return false;
+    // Codex Fix: normalize selected meds to string IDs (EMR saves objects {id, medId, dose...})
+    const selectedIds = selectedMedications.map(m => typeof m === 'object' ? (m.id || m.medId) : m);
 
     return requiredTreatments.every((requiredItem) => {
         if (Array.isArray(requiredItem)) {
-            return requiredItem.some((candidate) => selectedMedications.includes(candidate));
+            return requiredItem.some((candidate) => selectedIds.includes(candidate));
         }
 
-        return selectedMedications.includes(requiredItem);
+        return selectedIds.includes(requiredItem);
     });
 }
 
@@ -708,7 +710,11 @@ function hasCorrectDiagnosis(entry) {
 }
 
 function hasAntibioticMedication(entry) {
-    return (entry?.decision?.medications || []).some((medicationId) => ANTIBIOTIC_MEDICATION_IDS.has(medicationId));
+    // Codex Fix: handle both string and object medication entries
+    return (entry?.decision?.medications || []).some((m) => {
+        const medId = typeof m === 'object' ? (m.id || m.medId) : m;
+        return ANTIBIOTIC_MEDICATION_IDS.has(medId);
+    });
 }
 
 function calculateEncounterRevenue(entry) {
@@ -2214,7 +2220,9 @@ export const useGameStore = create(
                         const isCorrectMeds = ((required, selected) => {
                             if (!required || required.length === 0) return true;
                             if (!selected) return false;
-                            for (const req of required) { if (Array.isArray(req)) { if (!req.some(r => selected.includes(r))) return false; } else { if (!selected.includes(req)) return false; } }
+                            // Codex Fix: normalize meds to string IDs (EMR saves objects)
+                            const selectedIds = selected.map(m => typeof m === 'object' ? (m.id || m.medId) : m);
+                            for (const req of required) { if (Array.isArray(req)) { if (!req.some(r => selectedIds.includes(r))) return false; } else { if (!selectedIds.includes(req)) return false; } }
                             return true;
                         })(correctMedList, decision.medications || []);
                         const isCorrectAction = decision.action === 'treat' ? (isCorrectTriage && isCorrectMeds) : isCorrectTriage;

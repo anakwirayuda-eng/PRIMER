@@ -13,6 +13,7 @@
 import { getScheduledFollowups, getUpcomingFollowups } from './ConsequenceEngine.js';
 import { CLINICAL_SERVICES } from '../data/ClinicalServices.js';
 import { isPosyanduDay } from './PosyanduEngine.js';
+import { getMedicationById } from '../data/MedicationDatabase.js';
 
 // Local helper — PosyanduEngine doesn't export this  
 function getNextPosyanduDay(currentDay) {
@@ -94,13 +95,19 @@ function generateStockAlerts(pharmacyInventory) {
         return { lowStock: [], nearExpiry: [], criticalMissing: [] };
     }
 
+    // Codex Fix: read actual inventory shape { medicationId, stock, lastRestockDay }
+    // and lookup medication metadata for name and minStock
+
     const lowStock = pharmacyInventory
-        .filter(item => (item.quantity || 0) <= (item.minStock || 10))
-        .map(item => ({
-            name: item.name || item.id,
-            quantity: item.quantity || 0,
-            minStock: item.minStock || 10,
-        }))
+        .map(item => {
+            const med = getMedicationById(item.medicationId);
+            return {
+                name: med?.name || item.medicationId,
+                quantity: item.stock || 0,
+                minStock: med?.minStock || 10,
+            };
+        })
+        .filter(item => item.quantity <= item.minStock)
         .slice(0, 5); // Top 5 most critical
 
     return { lowStock, nearExpiry: [], criticalMissing: [] };
