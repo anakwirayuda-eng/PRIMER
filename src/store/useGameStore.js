@@ -1177,6 +1177,15 @@ export const useGameStore = create(
                         const state = get();
                         const supplier = getSupplierById(supplierId);
                         if (!supplier) return { success: false, error: 'Supplier not found' };
+                        // Codex Fix: validate supplier category for each item
+                        if (supplier.availableCategories) {
+                            for (const item of orderItems) {
+                                const med = getMedicationById(item.medicationId);
+                                if (med && !supplier.availableCategories.includes(med.category)) {
+                                    return { success: false, error: `${supplier.name} tidak menjual kategori ${med.category} (${med.name})` };
+                                }
+                            }
+                        }
                         const items = orderItems.map(item => ({ ...item, unitPrice: getMedicationById(item.medicationId).unitPrice }));
                         const costCalculation = calculateOrderCost(supplierId, items);
                         if (costCalculation.error) return { success: false, error: costCalculation.error };
@@ -2721,6 +2730,11 @@ export const useGameStore = create(
                                                 invItem.lastRestockDay = nextDayNum;
                                             }
                                         });
+                                        // Codex Fix: deduct kapitasi for kapitasi_deduction orders on receive
+                                        if (order.paymentTerms === 'kapitasi_deduction' && order.cost > 0) {
+                                            state.finance.stats.kapitasi -= order.cost;
+                                            state.finance.stats.pengeluaranObat = (state.finance.stats.pengeluaranObat || 0) + order.cost;
+                                        }
                                         order.status = 'received';
                                         order.receivedDay = nextDayNum;
                                     }
