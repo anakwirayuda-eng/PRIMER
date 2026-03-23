@@ -1534,7 +1534,7 @@ export const useGameStore = create(
                             if (actionId === 'psn_campaign' || actionId === 'fogging' || actionId === 'sanitation') {
                                 if (nextVillage) {
                                     const updatedFamilies = nextVillage.families.map(fam => {
-                                        if (!outbreak.affectedHouseIds.includes(fam.houseId)) return fam;
+                                        if (!outbreak.affectedHouseIds?.includes(fam.houseId)) return fam;
                                         const indicators = { ...fam.indicators };
                                         if (actionId === 'psn_campaign' || actionId === 'fogging') indicators.jentik = true;
                                         if (actionId === 'sanitation') { indicators.jamban = true; indicators.air = true; }
@@ -2016,9 +2016,12 @@ export const useGameStore = create(
                                 state.clinical.queue.push(followupPatient);
                             });
                             if (followups.length > 0) {
-                                state.clinical.consequenceQueue = clearProcessedFollowups(
-                                    state.clinical.consequenceQueue, day
-                                );
+                                // DeepThink Fix: filter out ukp_bridge before clearing, so they aren't swept
+                                const nonBridgeQueue = state.clinical.consequenceQueue.filter(c => c.type !== 'ukp_bridge');
+                                state.clinical.consequenceQueue = [
+                                    ...state.clinical.consequenceQueue.filter(c => c.type === 'ukp_bridge'),
+                                    ...clearProcessedFollowups(nonBridgeQueue, day)
+                                ];
                                 soundManager.playNotification();
                             }
                         }
@@ -2098,7 +2101,8 @@ export const useGameStore = create(
                             state.clinical.emergencyQueue = state.clinical.emergencyQueue.filter(q => q.id !== p.id);
                             state.clinical.history = appendClinicalHistory(state.clinical.history, {
                                 ...p, day: state.world.day, dischargedAt: currentTime,
-                                decision: { action: 'refer', isSISRUTE: true, actionsPerformed: p.sisruteData?.actionsPerformed || [], referralDetails: sd?.referralDetails },
+                                // DeepThink Fix: spread original decision to preserve diagnoses/medications
+                                decision: { ...(p.originalDecision || {}), action: 'refer', isSISRUTE: true, actionsPerformed: p.sisruteData?.actionsPerformed || [], referralDetails: sd?.referralDetails },
                                 outcome: 'referred', outcomeStatus: 'sisrute_transferred',
                                 satisfactionScore: 90, isEmergency: true,
                                 cpptRecord: buildMaiaCPPTRecord(p, state.world.day, currentTime, 'referred', true)
@@ -2198,7 +2202,7 @@ export const useGameStore = create(
                                     id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
                                     familyId: patient.hidden?.familyId || null,
                                     diagnosisId: patient.medicalData?.trueDiagnosisCode || '',
-                                    diagnosis: patient.medicalData?.trueDiagnosis || patient.medicalData?.diagnosis || '',
+                                    diagnosis: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosis || patient.medicalData?.diagnosis || '',
                                     hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
                                     timeSent: time, status: 'EN_ROUTE'
                                 });
@@ -2221,9 +2225,11 @@ export const useGameStore = create(
                             cpptRecord: cppt
                         });
 
-                        if (isCorrectAction && patient.familyId && state.publicHealth.villageData) {
+                        // DeepThink Fix: familyId is in hidden, not root
+                        const patientFamilyId = patient.hidden?.familyId || patient.familyId;
+                        if (isCorrectAction && patientFamilyId && state.publicHealth.villageData) {
                             state.publicHealth.villageData.families = state.publicHealth.villageData.families.map(fam => {
-                                if (fam.id !== patient.familyId) return fam;
+                                if (fam.id !== patientFamilyId) return fam;
                                 const indicators = { ...fam.indicators };
                                 let changed = false;
                                 const dxCode = patient.medicalData?.trueDiagnosisCode;
@@ -2329,7 +2335,7 @@ export const useGameStore = create(
                                         id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
                                         familyId: patient.hidden?.familyId || null,
                                         diagnosisId: patient.medicalData?.trueDiagnosisCode || '',
-                                        diagnosis: patient.medicalData?.trueDiagnosis || patient.medicalData?.diagnosis || '',
+                                        diagnosis: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosis || patient.medicalData?.diagnosis || '',
                                         hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
                                         timeSent: time, status: 'EN_ROUTE'
                                     }];
@@ -2341,6 +2347,8 @@ export const useGameStore = create(
                                     return {
                                         ...q,
                                         status: 'sisrute_limbo',
+                                        // DeepThink Fix: preserve original player decision for auto-discharge
+                                        originalDecision: decision,
                                         sisruteData: {
                                             hospitalId: hosp?.id, hospitalName: hosp?.name || 'RS Rujukan',
                                             ambulanceId: amb?.id, ambulanceName: amb?.name || 'Ambulans',
