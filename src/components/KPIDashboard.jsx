@@ -491,7 +491,7 @@ export default function KPIDashboard() {
                                             <div className={`sm:col-span-2 p-4 rounded-2xl flex items-center justify-between shadow-inner ${isDark ? 'bg-indigo-950/30 border border-indigo-900/50' : 'bg-indigo-50 border border-indigo-200'}`}>
                                                 <div>
                                                     <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>BONUS KAPITASI</p>
-                                                    <p className={`text-2xl font-black font-mono ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Rp <RollingNumber value={report.avgScore * 50000} isCurrency /></p>
+                                                    <p className={`text-2xl font-black font-mono ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Rp <RollingNumber value={report.totalRevenue || 0} isCurrency /></p>
                                                 </div>
                                                 <Award size={32} className="text-indigo-500 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
                                             </div>

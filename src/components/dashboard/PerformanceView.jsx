@@ -30,7 +30,8 @@ export default function PerformanceView({ onBack, openWiki }) {
         const angkaKontakScore = Math.min(100, (angkaKontak / angkaKontakTarget) * 100);
 
         // RRNS
-        const rrnsScore = derivedKpis.referralRate <= 15 ? 100 : Math.max(0, 100 - (derivedKpis.referralRate - 15) * 5);
+        // Codex Fix: use rrns (non-specialist referrals), not referralRate (total referrals)
+        const rrnsScore = derivedKpis.rrns <= 15 ? 100 : Math.max(0, 100 - (derivedKpis.rrns - 15) * 5);
 
         // RPP (Prolanis)
         const prolanisTotal = prolanisRoster?.length || 0;

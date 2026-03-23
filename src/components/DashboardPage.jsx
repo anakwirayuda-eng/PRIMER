@@ -110,7 +110,7 @@ export default function DashboardPage() {
             case 'kbk': {
                 const pop = villageData?.stats?.totalPopulation || 1;
                 const months = Math.max(1, day / 30);
-                return { "Angka Kontak": `${Math.round((kpi.totalPatients / pop) * 1000 / months)}‰`, "RRNS": derivedKpis.referralRate + "%" };
+                return { "Angka Kontak": `${Math.round((kpi.totalPatients / pop) * 1000 / months)}‰`, "RRNS": derivedKpis.rrns + "%" };
             }
             case 'angka_kontak': {
                 const pop2 = villageData?.stats?.totalPopulation || 1;

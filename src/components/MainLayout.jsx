@@ -381,7 +381,7 @@ export default function MainLayout() {
                 const months = Math.max(1, day / 30);
                 return {
                     'Angka Kontak': `${Math.round((kpi.totalPatients / population) * 1000 / months)} per 1000`,
-                    'RRNS': `${derivedKpis.referralRate}%`
+                    'RRNS': `${derivedKpis.rrns}%`
                 };
             }
             case 'angka_kontak':

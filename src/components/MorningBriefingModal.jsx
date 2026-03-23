@@ -106,7 +106,7 @@ export default function MorningBriefingModal({ gameState, onComplete, onDismiss 
                                     <div className="font-bold text-xs">⚠️ Pasien Kembali</div>
                                     {briefing.pendingFollowups.map((f, i) => (
                                         <div key={i} className="text-[11px] mt-0.5 opacity-80">
-                                            {f.originalCase.patientName} — {f.narrative}
+                                            {f.originalCase?.patientName || 'Pasien'} — {f.narrative}
                                         </div>
                                     ))}
                                 </div>

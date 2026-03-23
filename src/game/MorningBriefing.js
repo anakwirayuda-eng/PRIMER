@@ -53,7 +53,8 @@ export function generateMorningBriefing(state) {
         day,
         staffReport: generateStaffReport(hiredStaff),
         stockAlerts: generateStockAlerts(pharmacyInventory),
-        pendingFollowups: getScheduledFollowups(consequenceQueue, day),
+        // Codex Fix: filter out ukp_bridge entries which lack originalCase
+        pendingFollowups: getScheduledFollowups(consequenceQueue, day).filter(f => f.type !== 'ukp_bridge' && f.originalCase),
         upcomingFollowups: getUpcomingFollowups(consequenceQueue, day, 3),
         todayEvents: generateTodayEvents(day, prolanisRoster, activeOutbreaks),
         kpiSnapshot: generateKpiSnapshot(stats, villageData),
@@ -235,12 +236,14 @@ function generateSuggestedPriority(state) {
     // High: consequence patients returning
     const returningToday = getScheduledFollowups(consequenceQueue, day);
     if (returningToday.length > 0) {
-        const worst = returningToday.find(c => c.severity === 'critical') || returningToday[0];
-        return {
-            text: `${worst.originalCase.patientName} ${worst.narrative}. Prioritaskan penanganan ulang.`,
-            type: 'high',
-            icon: '⚠️',
-        };
+        const worst = returningToday.find(c => c.severity === 'critical' && c.originalCase) || returningToday.find(c => c.originalCase) || returningToday[0];
+        if (worst?.originalCase) {
+            return {
+                text: `${worst.originalCase.patientName} ${worst.narrative}. Prioritaskan penanganan ulang.`,
+                type: 'high',
+                icon: '⚠️',
+            };
+        }
     }
 
     // Default: general efficiency
