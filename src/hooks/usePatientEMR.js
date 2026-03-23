@@ -238,7 +238,8 @@ export function usePatientEMR() {
             ...caseData,
             skdi: caseData?.skdi || patient.hidden?.skdi,
             triageLevel: caseData?.triageLevel || patient.triageLevel,
-            esi: caseData?.esi || patient.esiLevel
+            esi: caseData?.esi || patient.esiLevel,
+            differentials: patient.hidden?.differentials || patient.hidden?.differentialDiagnosis || caseData?.differentials || []
         };
         const maiaAlertsList = getMAIAAlerts(anamnesisHistory, activeTab, enrichedCaseData, {
             isEmergency: !!patient.isEmergency,
@@ -318,7 +319,7 @@ export function usePatientEMR() {
     }, [icd9Query]);
 
     const handleAskQuestion = useCallback(async (question) => { // Made async
-        if (isProcessing) return;
+        if (!patient || isProcessing) return;
 
         const delay = morningStatus === 'groggy' ? 1500 : 0;
         if (delay > 0) setIsProcessing(true);
@@ -326,7 +327,7 @@ export function usePatientEMR() {
         const capturedPatientId = patient.id;
 
         setTimeout(async () => {
-            if (capturedPatientId !== activePatientId) {
+            if (!patient || capturedPatientId !== activePatientId) {
                 setIsProcessing(false);
                 return;
             }
@@ -400,7 +401,8 @@ export function usePatientEMR() {
                 ...rawCase,
                 skdi: rawCase.skdi || patient.hidden?.skdi,
                 triageLevel: rawCase.triageLevel || patient.triageLevel,
-                esi: rawCase.esi || patient.esiLevel
+                esi: rawCase.esi || patient.esiLevel,
+                differentials: patient.hidden?.differentials || patient.hidden?.differentialDiagnosis || rawCase.differentials || []
             };
             const alerts = getMAIAAlerts(newHistory, anamnesisCategory, enrichedForMAIA);
             setMaiaAlertsLocal(alerts);
@@ -440,14 +442,15 @@ export function usePatientEMR() {
             ...rawCase2,
             skdi: rawCase2.skdi || patient.hidden?.skdi,
             triageLevel: rawCase2.triageLevel || patient.triageLevel,
-            esi: rawCase2.esi || patient.esiLevel
+            esi: rawCase2.esi || patient.esiLevel,
+            differentials: patient.hidden?.differentials || patient.hidden?.differentialDiagnosis || rawCase2.differentials || []
         };
         const alerts = getMAIAAlerts(newHistory, 'keluhan_utama', enrichedForMAIA2);
         setMaiaAlertsLocal(alerts);
     }, [patient, anamnesisContext, diagnosticTracker, examsPerformed, labsRevealed, recalculateClinicalScores]);
 
     const handleExam = useCallback((examKey) => {
-        if (isProcessing) return;
+        if (!patient || isProcessing) return;
 
         const normalizedExamKey = normalizePhysicalExamKey(examKey);
         if (!normalizedExamKey) return;
@@ -456,6 +459,10 @@ export function usePatientEMR() {
         if (delay > 0) setIsProcessing(true);
 
         setTimeout(() => {
+            if (!patient) {
+                setIsProcessing(false);
+                return;
+            }
             const finding = getPhysicalExamFinding(patient.medicalData, normalizedExamKey) || "Dalam batas normal / Tidak ada kelainan.";
             const updatedExams = {
                 ...normalizePhysicalExamFindings(examsPerformed),
@@ -468,12 +475,18 @@ export function usePatientEMR() {
     }, [isProcessing, morningStatus, patient, examsPerformed, anamnesisHistory, labsRevealed, recalculateClinicalScores]);
 
     const handleOrderLab = useCallback((labName, cost) => {
-        if (stats.funds < cost) {
-            showToast('Dana Kapitasi tidak cukup untuk pemeriksaan ini!', 'error');
+        if (!patient) return;
+        const totalFunds = (stats.kapitasi || 0) + (stats.pendapatanUmum || 0);
+        if (totalFunds < cost) {
+            showToast('Dana faskes tidak cukup untuk pemeriksaan ini!', 'error');
             return;
         }
         orderLab(patient.id, labName, cost);
-        const updatedLabs = { ...labsRevealed, [labName]: true };
+        
+        // Codex Fix: Store real lab object, not primitive boolean 'true'.
+        const caseLab = patient.medicalData?.labs?.[labName] || patient.hidden?.caseData?.labs?.[labName];
+        const labResultObj = caseLab || { result: 'Dalam batas normal', isNormal: true };
+        const updatedLabs = { ...labsRevealed, [labName]: labResultObj };
         setLabsRevealed(updatedLabs);
         recalculateClinicalScores(anamnesisHistory, examsPerformed, updatedLabs);
         soundManager.playConfirm();
@@ -601,6 +614,7 @@ export function usePatientEMR() {
         if (action === 'refer') {
             const needsRef = patient.hidden?.requiredAction === 'refer'
                 || patient.hidden?.referralRequired === true
+                || patient.isEmergency === true
                 || patient.hidden?.risk === 'emergency';
             const skdi = patient.hidden?.skdi || '4A';
 
@@ -629,7 +643,7 @@ export function usePatientEMR() {
                     procedures: selectedProcedures.map(p => p.id || p.code),
                     examsPerformed: performedExamKeys,
                     education: selectedEducation,
-                    anamnesisScore: validateAnamnesis(caseData, anamnesisHistory).score,
+                    anamnesisScore: validateAnamnesis(caseData, anamnesisHistory)?.score ?? 0,
                     anamnesisHistory,
                     labsRevealed
                 },
@@ -646,7 +660,7 @@ export function usePatientEMR() {
             procedures: selectedProcedures.map(p => p.id || p.code),
             examsPerformed: performedExamKeys,
             education: selectedEducation,
-            anamnesisScore: validateAnamnesis(caseData, anamnesisHistory).score,
+            anamnesisScore: validateAnamnesis(caseData, anamnesisHistory)?.score ?? 0,
             anamnesisHistory,
             labsRevealed
         });
@@ -762,7 +776,10 @@ export function usePatientEMR() {
         diagnosticTracker,
         maiaAlerts, setMaiaAlerts: setMaiaAlertsLocal,
         coverageScore,
-        getDiagnosticConfidence: () => getDiagnosticConfidence(diagnosticTracker, coverageScore),
+        getDiagnosticConfidence: () => getDiagnosticConfidence(diagnosticTracker, {
+            physical: coverageScore?.physicalScore ?? coverageScore?.score ?? 0,
+            labs: coverageScore?.labScore ?? 0
+        }),
         // Game state exposure for convenience
         stats, time, playerProfile, navigate, history,
         morningStatus, pharmacyInventory, activeOutbreaks, openWiki, prolanisRoster, updatePatient,
