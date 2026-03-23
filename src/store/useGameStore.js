@@ -2309,18 +2309,16 @@ export const useGameStore = create(
                                 // 🚑 SISRUTE LIMBO: patient stays in queue waiting for ambulance
                                 const patientIdx = state.clinical.emergencyQueue.findIndex(q => q.id === patient.id);
                                 if (patientIdx !== -1) {
-                                    state.clinical.emergencyQueue[patientIdx] = {
-                                        ...state.clinical.emergencyQueue[patientIdx],
-                                        status: 'sisrute_limbo',
-                                        sisruteData: {
-                                            hospitalId: hosp?.id, hospitalName: hosp?.name || 'RS Rujukan',
-                                            ambulanceId: amb?.id, ambulanceName: amb?.name || 'Ambulans',
-                                            acceptedAt: time, estimatedArrival: time + travelTime,
-                                            actionsPerformed: decision.actionsPerformed || [],
-                                            referralDetails: decision.referralDetails
-                                        },
-                                        deteriorationRate: Math.max(0, (state.clinical.emergencyQueue[patientIdx].deteriorationRate || 0) * 0.5)
+                                    const limboPatient = state.clinical.emergencyQueue[patientIdx];
+                                    limboPatient.status = 'sisrute_limbo';
+                                    limboPatient.sisruteData = {
+                                        hospitalId: hosp?.id, hospitalName: hosp?.name || 'RS Rujukan',
+                                        ambulanceId: amb?.id, ambulanceName: amb?.name || 'Ambulans',
+                                        acceptedAt: time, estimatedArrival: time + travelTime,
+                                        actionsPerformed: decision.actionsPerformed || [],
+                                        referralDetails: decision.referralDetails
                                     };
+                                    limboPatient.deteriorationRate = Math.max(0, (limboPatient.deteriorationRate || 0) * 0.5);
                                 }
 
                                 return {
