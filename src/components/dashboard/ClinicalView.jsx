@@ -20,13 +20,19 @@ import { FKTP_144_DISEASES } from '../../data/FKTP144Diseases.js';
  */
 export default function ClinicalView({ onBack, openWiki }) {
     const { derivedKpis, kpi: _kpi, history } = useGame();
+    // DeepThink: null-safe fallbacks for early-game state
+    const safeKpis = derivedKpis || {};
+    const safeHistory = history || [];
 
     // SKDI 4A Coverage: unique diseases handled vs 144 total
     const skdiStats = useMemo(() => {
         const handledIds = new Set();
-        history.forEach(p => {
-            // Codex Fix: modern patients store diseaseId in hidden, not medicalData
-            const diseaseId = p.hidden?.diseaseId || p.medicalData?.diseaseId || p.medicalData?.diagnosisId;
+        safeHistory.forEach(p => {
+            let diseaseId = p.hidden?.diseaseId || p.medicalData?.diseaseId || p.medicalData?.diagnosisId;
+            // DeepThink Fix: normalize followup_ IDs so follow-up cases count toward SKDI coverage
+            if (diseaseId && typeof diseaseId === 'string') {
+                diseaseId = diseaseId.replace(/^followup_/, '').replace(/_missed$/, '');
+            }
             if (diseaseId) handledIds.add(diseaseId);
         });
         const matched = FKTP_144_DISEASES.filter(d => handledIds.has(d.id)).length;
@@ -36,29 +42,36 @@ export default function ClinicalView({ onBack, openWiki }) {
             percentage: FKTP_144_DISEASES.length > 0 ? Math.round((matched / FKTP_144_DISEASES.length) * 100) : 0,
             allHandled: [...handledIds]
         };
-    }, [history]);
+    }, [safeHistory]);
 
     // Top 10 diseases
     const topDiseases = useMemo(() => {
         const counts = {};
-        history.forEach(p => {
-            const name = p.medicalData?.diagnosisName || 'Unknown';
+        safeHistory.forEach(p => {
+            // DeepThink Fix: try multiple paths to get a real disease name, avoid 'Unknown' pollution
+            const name = p.medicalData?.diagnosisName
+                || p.hidden?.diseaseName
+                || (p.hidden?.diseaseId && FKTP_144_DISEASES.find(d => d.id === p.hidden.diseaseId)?.name)
+                || p.medicalData?.diagnosis
+                || null;
+            if (!name) return; // skip unnamed entries entirely instead of polluting with 'Unknown'
             counts[name] = (counts[name] || 0) + 1;
         });
         return Object.entries(counts)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 10)
             .map(([name, count]) => ({ name, count }));
-    }, [history]);
+    }, [safeHistory]);
 
     // Patient Safety Composite
+    // DeepThink Fix: NaN guards for early-game (0 patients = undefined metrics)
     const safetyScore = useMemo(() => {
-        return Math.round(
-            (derivedKpis.clinicalAccuracy * 0.4) +
-            (derivedKpis.treatmentAppropriateRate * 0.3) +
-            (derivedKpis.antibioticStewardship * 0.3)
-        );
-    }, [derivedKpis]);
+        const accuracy = safeKpis.clinicalAccuracy ?? 0;
+        const therapy = safeKpis.treatmentAppropriateRate ?? 0;
+        const abSteward = safeKpis.antibioticStewardship ?? 0;
+        const raw = (accuracy * 0.4) + (therapy * 0.3) + (abSteward * 0.3);
+        return isNaN(raw) ? 0 : Math.round(raw);
+    }, [safeKpis]);
 
     const getColor = (val) => val >= 80 ? 'text-emerald-400' : val >= 60 ? 'text-amber-400' : 'text-rose-400';
     const _getBarColor = (val) => val >= 80 ? 'bg-emerald-500' : val >= 60 ? 'bg-amber-500' : 'bg-rose-500';
@@ -96,9 +109,9 @@ export default function ClinicalView({ onBack, openWiki }) {
                 {/* Breakdown */}
                 <div className="space-y-2">
                     {[
-                        { label: 'Akurasi Dx', value: derivedKpis.clinicalAccuracy, wikiKey: 'accuracy' },
-                        { label: 'Terapi Rasional', value: derivedKpis.treatmentAppropriateRate, wikiKey: 'treatment' },
-                        { label: 'AB Stewardship', value: derivedKpis.antibioticStewardship, wikiKey: 'antibiotics' }
+                        { label: 'Akurasi Dx', value: safeKpis.clinicalAccuracy ?? 0, wikiKey: 'accuracy' },
+                        { label: 'Terapi Rasional', value: safeKpis.treatmentAppropriateRate ?? 0, wikiKey: 'treatment' },
+                        { label: 'AB Stewardship', value: safeKpis.antibioticStewardship ?? 0, wikiKey: 'antibiotics' }
                     ].map(item => (
                         <div
                             key={item.label}
@@ -109,8 +122,8 @@ export default function ClinicalView({ onBack, openWiki }) {
                                 <Info size={10} className="text-white/20 group-hover/item:text-white/60 transition-colors" />
                                 <span className="text-white/60 font-medium group-hover/item:text-white/90 transition-colors">{item.label}</span>
                             </div>
-                            <span className={`font-data font-black ${item.value >= 80 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                {item.value}%
+                            <span className={`font-data font-black ${(item.value || 0) >= 80 ? 'text-emerald-400' : (item.value || 0) >= 60 ? 'text-amber-400' : 'text-rose-400'}`}>
+                                {item.value ?? 0}%
                             </span>
                         </div>
                     ))}
@@ -165,15 +178,15 @@ export default function ClinicalView({ onBack, openWiki }) {
                 <div className="grid grid-cols-2 gap-3">
                     <div className="bg-white/[0.04] rounded-xl p-3">
                         <span className="text-[9px] font-bold text-white/40 uppercase tracking-wider block mb-1">Rasio Rujukan</span>
-                        <span className={`font-data text-lg font-black ${derivedKpis.referralRate <= 15 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                            {derivedKpis.referralRate}%
+                        <span className={`font-data text-lg font-black ${(safeKpis.referralRate ?? 0) <= 15 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {safeKpis.referralRate ?? 0}%
                         </span>
                         <span className="text-[9px] text-white/30 block">Target: &lt; 15%</span>
                     </div>
                     <div className="bg-white/[0.04] rounded-xl p-3">
                         <span className="text-[9px] font-bold text-white/40 uppercase tracking-wider block mb-1">RRNS (Non-Spesialistik)</span>
-                        <span className={`font-data text-lg font-black ${derivedKpis.rrns <= 5 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                            {derivedKpis.rrns}%
+                        <span className={`font-data text-lg font-black ${(safeKpis.rrns ?? 0) <= 5 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {safeKpis.rrns ?? 0}%
                         </span>
                         <span className="text-[9px] text-white/30 block">Target: &lt; 5%</span>
                     </div>
