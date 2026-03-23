@@ -15,6 +15,7 @@
 
 import { getMedicationById } from '../data/MedicationDatabase.js';
 import { PROCEDURES_DB } from '../data/ProceduresDB.js';
+import { LAB_CATALOG } from './LabEngine.js';
 
 /**
  * Calculates the total bill for a Poly patient.
@@ -25,9 +26,9 @@ export function calculatePatientBill(selectedMeds = [], selectedProcedures = [],
     const pendaftaran = 15000;
     const jasaMedis = 20000;
 
-    // Lab costs — guard: labsRevealed values may be boolean (true) instead of objects
+    // Lab costs — Codex Fix: use LAB_CATALOG canonical cost, then caseData, then fallback
     const labDetails = Object.entries(labsRevealed || {}).filter(([, data]) => !!data).map(([name, data]) => {
-        const cost = (typeof data === 'object' && data?.cost) ? Number(data.cost) : (caseData?.labs?.[name]?.cost || 50000);
+        const cost = (typeof data === 'object' && data?.cost) ? Number(data.cost) : (LAB_CATALOG[name]?.cost || caseData?.labs?.[name]?.cost || 50000);
         return { name, cost: Number(cost) || 0 };
     });
     const totalLabs = labDetails.reduce((sum, l) => sum + l.cost, 0);

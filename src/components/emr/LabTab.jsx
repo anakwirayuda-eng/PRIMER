@@ -14,14 +14,16 @@
 import React, { useMemo, useState } from 'react';
 import { Microscope, AlertCircle, Info, FlaskConical, Sparkles, CheckCircle2, ChevronRight, Activity, FileWarning } from 'lucide-react';
 import { findWikiKey } from '../../data/WikiData.js';
+import { LAB_CATALOG } from '../../game/LabEngine.js';
 
 // Common labs available at FKTP — always orderable regardless of case
+// Codex Fix: prices aligned with LAB_CATALOG canonical costs
 const COMMON_LABS = [
-    { id: 'darah_lengkap', name: 'Darah Lengkap (DL)', cost: 45000, result: 'Hb 13.2 g/dL, Leukosit 7.800/µL, Trombosit 245.000/µL, Ht 40%', flag: 'normal' },
-    { id: 'gds', name: 'Gula Darah Sewaktu (GDS)', cost: 25000, result: '98 mg/dL', flag: 'normal' },
-    { id: 'urinalisis', name: 'Urinalisis', cost: 35000, result: 'pH 6.0, Protein (-), Glukosa (-), Leukosit (-)', flag: 'normal' },
-    { id: 'kolesterol', name: 'Kolesterol Total', cost: 35000, result: '185 mg/dL', flag: 'normal' },
-    { id: 'asam_urat', name: 'Asam Urat', cost: 25000, result: '5.2 mg/dL', flag: 'normal' },
+    { id: 'darah_lengkap', name: 'Darah Lengkap (DL)', cost: LAB_CATALOG.darah_lengkap?.cost || 25000, result: 'Hb 13.2 g/dL, Leukosit 7.800/µL, Trombosit 245.000/µL, Ht 40%', flag: 'normal' },
+    { id: 'gds', name: 'Gula Darah Sewaktu (GDS)', cost: LAB_CATALOG.gds?.cost || 10000, result: '98 mg/dL', flag: 'normal' },
+    { id: 'urinalisis', name: 'Urinalisis', cost: LAB_CATALOG.urinalisis?.cost || 15000, result: 'pH 6.0, Protein (-), Glukosa (-), Leukosit (-)', flag: 'normal' },
+    { id: 'kolesterol', name: 'Kolesterol Total', cost: LAB_CATALOG.kolesterol_total?.cost || 20000, result: '185 mg/dL', flag: 'normal' },
+    { id: 'asam_urat', name: 'Asam Urat', cost: LAB_CATALOG.asam_urat?.cost || 15000, result: '5.2 mg/dL', flag: 'normal' },
 ];
 
 // Minimal CSS for suspense progress bar
@@ -45,7 +47,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
             if (typeof s !== 'string') return String(s || '').toLowerCase().trim();
             return s.toLowerCase().replace(/\s*\(.*?\)/, '').replace(/_/g, ' ').trim();
         };
-        const caseLabNorms = new Set(Object.keys(caseLabs).map(normalize));
+        const seenNorms = new Set(Object.keys(caseLabs).map(normalize));
         const merged = [];
 
         // Case-specific labs first (primary)
@@ -58,9 +60,26 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
             console.warn('[LabTab] Error processing case labs:', e);
         }
 
+        // Codex Fix: include relevantLabs from patient generator (BTA Sputum, Widal, etc.)
+        const relevantLabs = caseData?.relevantLabs || [];
+        relevantLabs.forEach(labNameOrId => {
+            const labId = typeof labNameOrId === 'string'
+                ? labNameOrId.toLowerCase().replace(/\s+/g, '_').replace(/[()]/g, '')
+                : labNameOrId;
+            if (seenNorms.has(normalize(labId))) return;
+            seenNorms.add(normalize(labId));
+            // Try to find in LAB_CATALOG for proper pricing
+            const catalogEntry = LAB_CATALOG[labId];
+            if (catalogEntry) {
+                merged.push({ id: catalogEntry.id, name: catalogEntry.name, cost: catalogEntry.cost, isCase: true });
+            } else {
+                merged.push({ id: labId, name: labNameOrId, cost: 50000, isCase: true });
+            }
+        });
+
         // Common labs that aren't already in case data (fuzzy match)
         COMMON_LABS.forEach(lab => {
-            if (!caseLabNorms.has(normalize(lab.id)) && !caseLabNorms.has(normalize(lab.name))) {
+            if (!seenNorms.has(normalize(lab.id)) && !seenNorms.has(normalize(lab.name))) {
                 merged.push({ ...lab, isCase: false });
             }
         });

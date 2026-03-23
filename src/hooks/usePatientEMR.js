@@ -124,7 +124,8 @@ export function usePatientEMR() {
             setSelectedMeds([]);
             setSelectedProcedures([]);
             setExamsPerformed({});
-            setLabsRevealed(patient.labsOrdered ? patient.medicalData.labs : {});
+            // Codex Fix: store writes to labsRevealed, not labsOrdered
+            setLabsRevealed(patient.labsRevealed && typeof patient.labsRevealed === 'object' && !Array.isArray(patient.labsRevealed) ? patient.labsRevealed : {});
             setShowValidation(false);
             setMedQuery('');
             setIcd9Query('');

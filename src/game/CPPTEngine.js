@@ -58,9 +58,10 @@ export function buildCPPTRecord(patient, decision, day, time, options = {}) {
 
     // Collect lab results that were actually revealed
     const labResults = {};
-    if (decision.labsRevealed && caseData.labs) {
+    if (decision.labsRevealed) {
         Object.keys(decision.labsRevealed).forEach(labKey => {
-            const labData = caseData.labs[labKey];
+            const revealedData = decision.labsRevealed[labKey];
+            const labData = caseData.labs?.[labKey];
             if (labData) {
                 labResults[labKey] = {
                     name: labKey,
@@ -69,6 +70,11 @@ export function buildCPPTRecord(patient, decision, day, time, options = {}) {
                     normal: labData.normal || '',
                     flag: labData.flag || null
                 };
+            } else if (typeof revealedData === 'object' && revealedData.parameters) {
+                const paramSummary = Object.values(revealedData.parameters).map(p => p.name + ': ' + p.value + (p.unit ? ' ' + p.unit : '') + ' (' + p.status + ')').join(', ');
+                labResults[labKey] = { name: revealedData.labName || labKey, result: paramSummary, unit: '', normal: '', flag: Object.values(revealedData.parameters).some(p => p.status !== 'normal') ? 'abnormal' : 'normal' };
+            } else if (revealedData === true) {
+                labResults[labKey] = { name: labKey, result: 'Dalam batas normal', unit: '', normal: '', flag: 'normal' };
             }
         });
     }

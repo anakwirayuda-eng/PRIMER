@@ -120,9 +120,17 @@ export default function SOAPResume({
                                 })}
                                 {labKeys.map(labId => {
                                     const labData = labsRevealed?.[labId];
-                                    const labDisplay = labData
-                                        ? (typeof labData === 'object' ? `${labData.result || '?'} ${labData.unit || ''}`.trim() : String(labData))
-                                        : '—';
+                                    // Codex Fix: handle LabEngine rich results and boolean flags
+                                    let labDisplay = '\u2014';
+                                    if (typeof labData === 'object' && labData && labData.parameters) {
+                                        labDisplay = Object.values(labData.parameters).map(p => p.name + ': ' + p.value + (p.unit ? ' ' + p.unit : '')).join(', ');
+                                    } else if (typeof labData === 'object' && labData) {
+                                        labDisplay = (labData.result || '?') + ' ' + (labData.unit || '');
+                                    } else if (labData === true) {
+                                        labDisplay = 'Diperiksa (dalam batas normal)';
+                                    } else if (labData) {
+                                        labDisplay = String(labData);
+                                    }
                                     return (
                                         <li key={labId} className="flex gap-2">
                                             <span className="text-cyan-500 shrink-0">•</span>

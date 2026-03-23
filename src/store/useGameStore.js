@@ -2409,8 +2409,34 @@ export const useGameStore = create(
                     },
                     orderLab: (patientId, labName, cost) => {
                         set(state => {
-                            const nextQueue = state.clinical.queue.map(p => p.id === patientId ? { ...p, labsRevealed: [...(p.labsRevealed || []), labName] } : p);
-                            const nextFinance = { ...state.finance, stats: { ...state.finance.stats, pengeluaranLab: (state.finance.stats.pengeluaranLab || 0) + cost } };
+                            const patient = state.clinical.queue.find(p => p.id === patientId);
+                            // Codex Fix: call processLabOrder to get real disease-contextualized results
+                            let labResult = true; // fallback: boolean flag
+                            let actualCost = cost;
+                            try {
+                                const { processLabOrder } = require('../game/LabEngine.js');
+                                const orderOutput = processLabOrder([labName], patient, {});
+                                if (orderOutput.results[labName]) {
+                                    labResult = orderOutput.results[labName];
+                                }
+                                if (orderOutput.totalCost > 0) {
+                                    actualCost = orderOutput.totalCost;
+                                }
+                            } catch (e) {
+                                console.warn('[orderLab] processLabOrder failed, using flag:', e);
+                            }
+                            // Store rich result object (or boolean flag as fallback) keyed by labName
+                            const nextQueue = state.clinical.queue.map(p => {
+                                if (p.id !== patientId) return p;
+                                const prevRevealed = p.labsRevealed || {};
+                                // Support both array (legacy) and object (modern) formats
+                                const revealedObj = Array.isArray(prevRevealed)
+                                    ? prevRevealed.reduce((acc, name) => ({ ...acc, [name]: true }), {})
+                                    : { ...prevRevealed };
+                                revealedObj[labName] = labResult;
+                                return { ...p, labsRevealed: revealedObj };
+                            });
+                            const nextFinance = { ...state.finance, stats: { ...state.finance.stats, pengeluaranLab: (state.finance.stats.pengeluaranLab || 0) + actualCost } };
                             return { clinical: { ...state.clinical, queue: nextQueue }, finance: nextFinance };
                         });
                     },
