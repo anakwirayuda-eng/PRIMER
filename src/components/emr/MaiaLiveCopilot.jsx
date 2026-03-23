@@ -20,7 +20,7 @@ const MAIA_HUD_CSS = `
     @keyframes maia-alert-pulse { 0%, 100% { box-shadow: 0 0 20px rgba(225,29,72,0.5); } 50% { box-shadow: 0 0 50px rgba(225,29,72,0.9); } }
     @keyframes maia-locked-glow { 0%, 100% { box-shadow: 0 0 15px rgba(16,185,129,0.4); } 50% { box-shadow: 0 0 25px rgba(16,185,129,0.7); } }
 
-    .maia-container { position: fixed; bottom: 32px; right: 32px; z-index: 999; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; }
+    .maia-container { position: fixed; bottom: 96px; right: 32px; z-index: 49; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; }
 
     .maia-orb {
         width: 52px; height: 52px; border-radius: 50%;
