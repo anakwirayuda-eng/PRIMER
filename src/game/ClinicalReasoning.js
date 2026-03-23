@@ -137,7 +137,8 @@ export function calculateCoverageScore(askedQuestions, examsPerformed = [], labs
             return aliases && aliases.some(a => idSet.has(a));
         }).length;
         const essentialTotal = essentialIds.length || 1;
-        const essentialProgress = Math.round((essentialHits / essentialTotal) * 100);
+        // DeepThink Fix: If no essentials required, score is 100% (not 0%)
+        const essentialProgress = essentialIds.length === 0 ? 100 : Math.round((essentialHits / essentialTotal) * 100);
 
         anamnesisBreakdown = { macro: macroScore, micro: microScore, essential: essentialProgress };
 
@@ -176,7 +177,8 @@ export function calculateCoverageScore(askedQuestions, examsPerformed = [], labs
         sosial: { label: 'Riwayat Sosial', ids: ['sosial_', 'q_social_', 'q_occupation', 'q_smoking', 'q_alcohol'] }
     };
     const categories = {};
-    const askedIds = askedQuestions.map(q => q.id || '');
+    // DeepThink Fix: guard against null/undefined askedQuestions
+    const askedIds = (askedQuestions || []).map(q => q.id || '');
     for (const [catId, catDef] of Object.entries(categoryMap)) {
         const covered = askedIds.some(id => catDef.ids.some(prefix => id === prefix || id.startsWith(prefix)));
         categories[catId] = { label: catDef.label, covered };
@@ -264,15 +266,21 @@ const CRITICAL_CHECKS = [
  */
 export function getMAIAAlerts(history, currentTab, caseData, options = {}) {
     const alerts = [];
-    const askedIds = new Set(history.map(q => q.id));
-    const askedCategories = new Set(history.map(q => q.category));
+    // DeepThink Fix: guard against null/undefined history
+    const safeHistory = history || [];
+    const askedIds = new Set(safeHistory.map(q => q.id));
+    const askedCategories = new Set(safeHistory.map(q => q.category));
 
     // 🚨 HACK 2: Golden Minute Override — bypass 7-question gate for ESI 1-2
-    const isEmergencyOverride = options.isEmergency && (caseData?.esi <= 2 || caseData?.triageLevel <= 2);
-    if (history.length < 7 && !isEmergencyOverride) return [];
+    // DeepThink Fix: triageLevel is a string ('merah'/'kuning'), not a number
+    const isEmergencyOverride = options.isEmergency && (
+        caseData?.esi <= 2 ||
+        ['merah', 'kuning'].includes(caseData?.triageLevel)
+    );
+    if (safeHistory.length < 7 && !isEmergencyOverride) return [];
 
     // Emergency panic alert: if > 2 questions but no diagnostic direction
-    if (isEmergencyOverride && history.length >= 2 && (options.diagnosticConfidence ?? 100) < 20) {
+    if (isEmergencyOverride && safeHistory.length >= 2 && (options.diagnosticConfidence ?? 100) < 20) {
         alerts.push({
             id: 'critical_override',
             label: 'M.A.I.A OVERRIDE',
@@ -286,7 +294,7 @@ export function getMAIAAlerts(history, currentTab, caseData, options = {}) {
     if (caseData?.skdi) {
         const skdi = String(caseData.skdi).toUpperCase();
         const needsReferral = ['1', '2', '3A', '3B'].includes(skdi);
-        if (needsReferral && history.length >= 6) {
+        if (needsReferral && safeHistory.length >= 6) {
             const skdiMessages = {
                 '1': 'Dok, kasus ini SKDI level 1 — harus dirujuk sepenuhnya ke spesialis. Stabilkan pasien dan siapkan rujukan.',
                 '2': 'Dok, kasus ini SKDI level 2 — pasien perlu dirujuk ke fasilitas yang lebih lengkap setelah penanganan awal.',
@@ -338,8 +346,9 @@ export function getMAIAAlerts(history, currentTab, caseData, options = {}) {
     });
 
     // Return only the highest priority alert
-    const order = { high: 0, medium: 1, low: 2 };
-    alerts.sort((a, b) => order[a.priority] - order[b.priority]);
+    // DeepThink Fix: add 'critical' priority to sort order
+    const order = { critical: -1, high: 0, medium: 1, low: 2 };
+    alerts.sort((a, b) => (order[a.priority] ?? 3) - (order[b.priority] ?? 3));
 
     return alerts.slice(0, 1);
 }
@@ -389,7 +398,12 @@ export function getDiagnosticConfidence(tracker, coverage) {
 // Compatibility layer for the old tracker function (minor Bayesian lite)
 export function updateDiagnosticProbability(tracker, questionId, responseStatus, essentialIds) {
     if (!tracker) return null;
-    const isEssential = essentialIds.includes(questionId);
+    // DeepThink Fix: check aliases so synonym questions also count
+    const isEssential = essentialIds.includes(questionId) ||
+        essentialIds.some(eId => {
+            const aliases = ESSENTIAL_ALIASES[eId];
+            return aliases && aliases.includes(questionId);
+        });
 
     return {
         ...tracker,
@@ -399,12 +413,14 @@ export function updateDiagnosticProbability(tracker, questionId, responseStatus,
 }
 
 export function initDiagnosticTracker(caseData) {
+    // DeepThink Fix: use trueDiagnosisCode (modern) instead of icd10 (legacy/hidden)
+    const diagCode = caseData?.trueDiagnosisCode || caseData?.icd10 || 'R69';
     return {
-        probabilities: { [caseData?.icd10 || 'R69']: 0.5 },
+        probabilities: { [diagCode]: 0.5 },
         totalQuestions: 0,
         essentialsCovered: 0,
         essentialsTotal: caseData?.essentialQuestions?.length || 0,
-        correctDiagnosis: caseData?.icd10 || 'R69'
+        correctDiagnosis: diagCode
     };
 }
 
