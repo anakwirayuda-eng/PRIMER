@@ -23,6 +23,7 @@ const outcomeConfig = {
     // Codex Fix: missing outcome statuses from useGameStore
     delegated: { label: 'Didelegasikan', icon: Bot, color: 'text-indigo-600', bg: 'bg-indigo-50' },
     sisrute_transferred: { label: 'Transfer SISRUTE', icon: Send, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+    referred_sisrute: { label: 'Dirujuk via SISRUTE', icon: Send, color: 'text-blue-600', bg: 'bg-blue-50' },
     stabilized: { label: 'Stabilisasi', icon: Heart, color: 'text-teal-600', bg: 'bg-teal-50' },
     default: { label: 'Selesai', icon: UserCheck, color: 'text-slate-600', bg: 'bg-slate-50' }
 };

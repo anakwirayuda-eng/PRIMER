@@ -2219,13 +2219,16 @@ export const useGameStore = create(
                             }
                         }
 
-                        const cppt = buildCPPTRecord(patient, decision, day, time, { outcomeStatus: isCorrectAction ? 'pulih' : 'memburuk', satisfactionScore, isCorrectAction, isEmergency: false });
+                        // Codex Fix: add outcomeStatus for SISRUTE referrals so PatientHistoryModal can distinguish them
+                        const isSISRUTEAccepted = decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED';
+                        const cppt = buildCPPTRecord(patient, decision, day, time, { outcomeStatus: isSISRUTEAccepted ? 'referred_sisrute' : (isCorrectAction ? 'pulih' : 'memburuk'), satisfactionScore, isCorrectAction, isEmergency: false });
                         state.clinical.history = appendClinicalHistory(state.clinical.history, {
                             ...patient,
                             day,
                             dischargedAt: time,
                             decision,
                             outcome: repChange >= 0 ? 'good' : 'bad',
+                            outcomeStatus: isSISRUTEAccepted ? 'referred_sisrute' : undefined,
                             satisfactionScore,
                             cpptRecord: cppt
                         });
@@ -2265,7 +2268,13 @@ export const useGameStore = create(
                         if (hasAntibiotic) newKpi.antibioticPrescriptions++;
                         if (hasAntibiotic && isCorrectAction) newKpi.rationalAntibiotics++;
                         newKpi.patientSatisfaction.push(satisfactionScore);
-                        if (decision.action === 'refer') newKpi.referrals++;
+                        if (decision.action === 'refer') {
+                            newKpi.referrals++;
+                            // Codex Fix: Increment nonSpecialisticReferrals at runtime (not just in archive)
+                            if (!isCorrectTriage) {
+                                newKpi.nonSpecialisticReferrals = (newKpi.nonSpecialisticReferrals || 0) + 1;
+                            }
+                        }
                     }),
                     dischargeEmergencyPatient: (patient, decision, day, time) => {
                         day = day ?? get().world.day;
@@ -2460,7 +2469,7 @@ export const useGameStore = create(
                         if (score >= 90) newAccreditation = 'Paripurna'; else if (score >= 80) newAccreditation = 'Utama'; else if (score >= 70) newAccreditation = 'Madya';
                         if (newAccreditation !== s.clinical.accreditation) { set(st => ({ clinical: { ...st.clinical, accreditation: newAccreditation } })); }
                     },
-                    resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [], hospitalBedUsage: {} } })),
+                    resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [], hospitalBedUsage: {}, activeReferralLog: [] } })),
                 },
 
                 // --- SLICE: META (Quests, Stories, Wiki) ---

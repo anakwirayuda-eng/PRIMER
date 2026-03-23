@@ -143,6 +143,13 @@ export default function ReferralSISRUTEModal({ activeReferral, onClose }) {
     };
 
     const handleComplete = () => {
+        // Codex Fix: REJECTED referrals should NOT discharge the patient.
+        // The patient stays in the queue/IGD to be re-assessed or treated locally.
+        if (referralResult.status !== 'ACCEPTED') {
+            onClose();
+            return;
+        }
+
         const finalizeData = {
             ...decisionData,
             action: 'refer',
