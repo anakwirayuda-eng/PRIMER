@@ -30,11 +30,14 @@ function buildPrescriptionQueue(history, currentDay) {
             // Codex Fix: read allergies from multiple paths (generator puts them in hidden.allergies)
             patientAllergies: p.hidden?.allergies || p.medicalData?.allergies || [],
             medications: p.decision.medications,
-            // Codex Fix: diagnoses is array of ICD code strings, not objects with .name
+            // Codex Fix: prioritize human-readable diagnosis name over raw ICD code
             diagnosis: (() => {
                 const dx = p.decision?.diagnoses?.[0];
-                if (!dx) return p.medicalData?.trueDiagnosisCode || p.medicalData?.diagnosisName || 'Tidak ada diagnosis';
-                return typeof dx === 'object' ? (dx.name || dx.code || dx.label) : dx;
+                const humanName = p.medicalData?.diagnosisName;
+                if (!dx) return humanName || p.medicalData?.trueDiagnosisCode || 'Tidak ada diagnosis';
+                // If dx is a raw ICD code string, prefer humanName if available
+                if (typeof dx === 'string') return humanName || dx;
+                return dx.name || dx.code || dx.label || humanName || 'Tidak ada diagnosis';
             })(),
             dischargedAt: p.dischargedAt,
             // Codex Fix: wire BPJS status from all possible patient data paths
