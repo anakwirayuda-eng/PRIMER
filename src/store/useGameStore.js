@@ -1622,7 +1622,7 @@ export const useGameStore = create(
                                 impact.spawnPatients.diseaseId,
                                 impact.spawnPatients.amount || 1,
                                 impact.spawnPatients.targetClinic,
-                                s.world?.currentTime || 480,
+                                s.world?.time || 480,
                                 seedKey('ikm-spawn', resolved.scenarioId, s.world.day, impact.spawnPatients.diseaseId)
                             );
                         }
@@ -2235,7 +2235,7 @@ export const useGameStore = create(
                             soundManager.playError();
                         }
 
-                        const billing = calculateEmergencyBill(decision.actions, patient.hidden?.caseData);
+                        const billing = calculateEmergencyBill(decision.actionsPerformed || decision.actions || [], patient.hidden?.caseData);
                         set(state => {
                             const newKpi = { ...state.finance.kpi }; if (isCorrectTriage) newKpi.correctTreatments++;
                             let fundChange = billing.total;

@@ -708,6 +708,7 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
         hidden: {
             diseaseId: disease.id,
             diagnosis: disease.diagnosis,
+            category: disease.category,
             icd10: disease.icd10,
             differentialDiagnosis: disease.differentialDiagnosis || [],
             requiredAction: disease.referralRequired ? 'refer' : 'stabilize',
@@ -998,7 +999,7 @@ export function generateGenericPatients(diseaseId, amount, targetClinic, current
             complaint: disease.chiefComplaint || disease.complaint || 'Keluhan tidak spesifik',
             narrative: `(Warga ini datang karena kejadian komunitas) ${disease.narrative || ''}`,
             facility,
-            medical: {
+            medicalData: {
                 vitals: disease.vitals || {},
                 physicalExam: disease.physicalExam || {},
                 labs: {},

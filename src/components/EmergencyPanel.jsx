@@ -766,12 +766,12 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                     <FileText size={14} />
                                     Rekap Biaya IGD
                                 </h4>
-                                <span className={`px-2 py-0.5 rounded-[4px] text-[10px] font-bold ${patient.isBPJS ? 'bg-green-600' : 'bg-slate-600'}`}>
-                                    {patient.isBPJS ? 'BPJS' : 'UMUM'}
+                                <span className={`px-2 py-0.5 rounded-[4px] text-[10px] font-bold ${patient.social?.hasBPJS ? 'bg-green-600' : 'bg-slate-600'}`}>
+                                    {patient.social?.hasBPJS ? 'BPJS' : 'UMUM'}
                                 </span>
                             </div>
                             {(() => {
-                                const bill = calculateEmergencyBill(performedActions, patient.isBPJS, triageSelection || patient.triageLevel);
+                                const bill = calculateEmergencyBill(performedActions, patient.social?.hasBPJS, triageSelection || patient.triageLevel);
                                 return (
                                     <div className="space-y-1.5 font-mono text-xs">
                                         <div className="flex justify-between border-b border-white/10 pb-1">
@@ -796,7 +796,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                         {/* Insurance Feedback */}
                                         <div className={`mt-3 p-2 rounded text-[10px] leading-relaxed border ${bill.isCovered
                                             ? 'bg-emerald-900/50 border-emerald-500/50 text-emerald-200'
-                                            : patient.isBPJS
+                                            : patient.social?.hasBPJS
                                                 ? 'bg-rose-900/50 border-rose-500/50 text-rose-200'
                                                 : 'bg-slate-700 border-slate-600 text-slate-300'
                                             }`}>
@@ -804,7 +804,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                                 {bill.isCovered ? <CheckCircle size={10} /> : <AlertTriangle size={10} />}
                                                 {bill.coverageType}
                                             </p>
-                                            {!bill.isCovered && patient.isBPJS && (
+                                            {!bill.isCovered && patient.social?.hasBPJS && (
                                                 <p className="mt-1 opacity-80">
                                                     ⚠️ Pasien Triase Hijau (Non-Emergency) tidak dijamin BPJS di IGD. Pasien harus membayar mandiri atau diarahkan ke Poli Umum.
                                                 </p>

@@ -77,9 +77,9 @@ export default function ReferralSISRUTEModal({ activeReferral, onClose }) {
         if (isEmergency) {
             const actions = decisionData.actionsPerformed || [];
             const hasBasicLifeSupport = actions.some(a =>
-                ['o2', 'infus', 'stabilize', 'emergency_kit', 'pasang infus', 'pemberian o2'].includes(a.toLowerCase())
+                ['oxygen', 'iv_line', 'iv_fluid_rl', 'nacl_resus', 'rehydration_bolus', 'protect_airway', 'cpr', 'rescue_breathing'].includes(a)
             );
-            if (!hasBasicLifeSupport && patient.triage && patient.triage !== 'Green') {
+            if (!hasBasicLifeSupport && patient.triageLevel && patient.triageLevel <= 2) {
                 isUnstable = true;
             }
         }
