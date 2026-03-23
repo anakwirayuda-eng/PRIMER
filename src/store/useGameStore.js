@@ -1428,6 +1428,16 @@ export const useGameStore = create(
                                     stress: Math.max(0, currentState.player.profile.stress - 8),
                                     reputation: Math.min(100, currentState.player.profile.reputation + 2)
                                 }, 25)
+                            },
+                            // Codex Fix: append to clinical.history so ArsipPage shows the activity
+                            clinical: {
+                                ...currentState.clinical,
+                                history: [...currentState.clinical.history, {
+                                    type: 'senam_prolanis',
+                                    day: currentState.world.day,
+                                    name: 'Senam Prolanis',
+                                    participants: currentState.publicHealth.prolanisRoster.length,
+                                }]
                             }
                         }));
                         soundManager.playSuccess();
@@ -1460,7 +1470,16 @@ export const useGameStore = create(
                         set(currentState => ({
                             clinical: {
                                 ...currentState.clinical,
-                                queue: [...currentState.clinical.queue, visitPatient]
+                                queue: [...currentState.clinical.queue, visitPatient],
+                                // Codex Fix: append to clinical.history so ArsipPage shows the activity
+                                history: [...currentState.clinical.history, {
+                                    type: 'prolanis_call',
+                                    day: currentState.world.day,
+                                    name: `Panggil Prolanis: ${rosterMember.name}`,
+                                    patientId: patientId,
+                                    patientName: rosterMember.name,
+                                    diseaseType: rosterMember.prolanisData?.diseaseType,
+                                }]
                             }
                         }));
                         soundManager.playConfirm();
@@ -1514,6 +1533,17 @@ export const useGameStore = create(
                                     ...currentState.player.profile,
                                     reputation: Math.min(100, currentState.player.profile.reputation + 1)
                                 }, 10)
+                            },
+                            // Codex Fix: append to clinical.history so ArsipPage shows the activity
+                            clinical: {
+                                ...currentState.clinical,
+                                history: [...currentState.clinical.history, {
+                                    type: 'prolanis_monitor',
+                                    day: currentState.world.day,
+                                    name: `Pantau Obat: ${rosterMember.name}`,
+                                    patientId: patientId,
+                                    patientName: rosterMember.name,
+                                }]
                             }
                         }));
                         soundManager.playConfirm();

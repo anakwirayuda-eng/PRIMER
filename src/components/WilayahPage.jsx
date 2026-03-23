@@ -757,9 +757,46 @@ export default function WilayahPage() {
                    ═══════════════════════════════════════════════════ */}
                 {buildingInterior && buildingInterior === 'posyandu' && (
                     <PosyanduActivePanel
+                        initialBabies={(() => {
+                            // Codex Fix: wire real village babies from population
+                            if (!villageData?.families) return undefined;
+                            const babies = [];
+                            villageData.families.forEach(fam => {
+                                (fam.members || []).forEach(m => {
+                                    if (m.age !== undefined && m.age <= 5) {
+                                        babies.push({
+                                            id: m.id || `${fam.id}_${m.firstName}`,
+                                            name: m.fullName || `${m.firstName || 'Bayi'} ${fam.surname || ''}`.trim(),
+                                            age: m.age,
+                                            gender: m.gender || 'L',
+                                            familyId: fam.id,
+                                            familyName: fam.surname || 'Unknown',
+                                            weight: m.weight || (m.age < 1 ? 3.5 + Math.random() * 3 : 8 + m.age * 2 + Math.random() * 3),
+                                            height: m.height || (m.age < 1 ? 50 + Math.random() * 10 : 70 + m.age * 8 + Math.random() * 5),
+                                        });
+                                    }
+                                });
+                            });
+                            return babies.length > 0 ? babies : undefined; // fallback to demo if no babies
+                        })()}
                         onClose={() => setBuildingInterior(null)}
                         onComplete={(result) => {
+                            // Codex Fix: write-back full results, not just XP
                             if (result?.totalXP) addXp(result.totalXP);
+                            if (result?.repDelta) {
+                                setPlayerStats(prev => ({
+                                    ...prev,
+                                    reputation: Math.min(100, Math.max(0, (prev.reputation || 50) + result.repDelta)),
+                                    energy: Math.max(0, (prev.energy || 0) - 15) // Posyandu costs energy
+                                }));
+                            }
+                            // Codex Fix: append to history for ArsipPage
+                            if (result?.sessionLog) {
+                                navigate('megalog', { type: 'posyandu',
+                                    totalBabies: result.sessionLog?.length || 0,
+                                    xpEarned: result.totalXP || 0,
+                                });
+                            }
                             setBuildingInterior(null);
                         }}
                     />
