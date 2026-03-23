@@ -167,6 +167,21 @@ export function calculateCoverageScore(askedQuestions, examsPerformed = [], labs
         (labsScore * weights.labs)
     );
 
+    // 5. CATEGORY COVERAGE (for AnamnesisTab category chips)
+    const categoryMap = {
+        keluhan_utama: { label: 'Keluhan Utama', ids: ['q_main', 'q_main_complaint', 'initial_complaint'] },
+        rps: { label: 'Riwayat Penyakit Sekarang', ids: ['rps_', 'q_onset', 'q_duration', 'q_severity', 'q_progression'] },
+        rpd: { label: 'Riwayat Penyakit Dahulu', ids: ['rpd_', 'q_past_', 'q_allergy', 'q_alergi'] },
+        rpk: { label: 'Riwayat Penyakit Keluarga', ids: ['rpk_', 'q_family_'] },
+        sosial: { label: 'Riwayat Sosial', ids: ['sosial_', 'q_social_', 'q_occupation', 'q_smoking', 'q_alcohol'] }
+    };
+    const categories = {};
+    const askedIds = askedQuestions.map(q => q.id || '');
+    for (const [catId, catDef] of Object.entries(categoryMap)) {
+        const covered = askedIds.some(id => catDef.ids.some(prefix => id === prefix || id.startsWith(prefix)));
+        categories[catId] = { label: catDef.label, covered };
+    }
+
     return {
         score: totalScore,
         anamnesisTotal: anamnesisScore,  // Pure anamnesis-only score (0-100) for UI binding
@@ -175,6 +190,7 @@ export function calculateCoverageScore(askedQuestions, examsPerformed = [], labs
         labs: labsScore,
         isEmergency,
         weights,
+        categories,
         // Legacy fields for UI compatibility
         macro: anamnesisBreakdown.macro,
         micro: anamnesisBreakdown.micro,

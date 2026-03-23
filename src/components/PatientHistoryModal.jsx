@@ -71,7 +71,8 @@ export default function PatientHistoryModal({ patients, filter, onClose, title }
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-semibold text-slate-800">{patient.name}</span>
                                                     <span className="text-xs text-slate-500">
-                                                        {patient.age} tahun, {patient.gender === 'male' ? 'Laki-laki' : 'Perempuan'}
+                                                        {/* Codex Fix: generator uses 'L'/'P', not 'male'/'female' */}
+                                                        {patient.age} tahun, {(patient.gender === 'male' || patient.gender === 'L') ? 'Laki-laki' : 'Perempuan'}
                                                     </span>
                                                 </div>
                                                 <div className="text-sm text-slate-600 mt-1">

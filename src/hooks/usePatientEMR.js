@@ -655,7 +655,8 @@ export function usePatientEMR() {
         logCaseOutcome(caseOutcome);
 
         // D3: Post-discharge feedback toast with scores
-        const coveragePct = Math.round((coverageScore || 0) * 100);
+        // Codex Fix: coverageScore is an object {score, anamnesisTotal, ...}, not a number
+        const coveragePct = Math.round((typeof coverageScore === 'object' ? coverageScore?.score : coverageScore) || 0);
         const diagPct = caseOutcome.diagnosisScore;
         const treatPct = Math.round((treatResult?.score ?? 0));
         const emoji = caseOutcome.wasCorrect ? '🎯' : '⚠️';
