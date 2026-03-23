@@ -472,20 +472,39 @@ export function usePatientEMR() {
         const medId = typeof med === 'string' ? med : med.id;
         const medData = typeof med === 'object' ? med : getMedicationById(medId);
 
+        // Removing a med — always allowed
         if (selectedMeds.find(m => m.id === medId)) {
             setSelectedMeds(prev => prev.filter(m => m.id !== medId));
             soundManager.playCancel();
-        } else {
-            setSelectedMeds(prev => [...prev, {
-                id: medId,
-                name: medData?.name || medId,
-                frequency: 3,
-                duration: 3,
-                price: medData?.sellPrice || medData?.price || 0
-            }]);
-            soundManager.playConfirm();
+            return;
         }
-    }, [isSigned, selectedMeds]);
+
+        // 🚨 POKA-YOKE: Allergy Firewall — block contraindicated meds
+        const allergies = patient?.hidden?.allergies || patient?.medicalData?.allergies || [];
+        if (allergies.length > 0 && medData) {
+            const medNameLower = (medData.name || '').toLowerCase();
+            const medIdLower = medId.toLowerCase();
+            const allergyMatch = allergies.find(a => {
+                const aLower = a.toLowerCase();
+                return medNameLower.includes(aLower) || medIdLower.includes(aLower) || aLower.includes(medNameLower);
+            });
+            if (allergyMatch) {
+                soundManager.playError?.() || soundManager.playCancel();
+                console.warn(`[ALLERGY FIREWALL] Blocked: ${medData.name} — patient allergic to "${allergyMatch}"`);
+                // Don't add — patient safety first
+                return;
+            }
+        }
+
+        setSelectedMeds(prev => [...prev, {
+            id: medId,
+            name: medData?.name || medId,
+            frequency: 3,
+            duration: 3,
+            price: medData?.sellPrice || medData?.price || 0
+        }]);
+        soundManager.playConfirm();
+    }, [isSigned, selectedMeds, patient]);
 
     const updateMedConfig = useCallback((medId, updates) => {
         if (isSigned) return;
