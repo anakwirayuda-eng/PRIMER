@@ -42,7 +42,7 @@ export default function MAIAClueOverlay({
                 </div>
                 <div className="flex-1 overflow-y-auto p-4">
                     <div className={`p-4 rounded-xl border-2 border-dashed text-sm italic leading-relaxed ${isDark ? 'bg-amber-500/5 border-amber-500/20 text-amber-200/90' : 'bg-amber-50/50 border-amber-200 text-amber-900'}`}>
-                        {patient.hidden?.clue || `Coba perhatikan ${Object.keys(patient.medicalData.physicalExamFindings || {})[0] || 'gejala utama'} dan riwayat pasien.`}
+                        {patient.hidden?.clue || `Coba perhatikan ${Object.keys(patient.medicalData?.physicalExamFindings || {})[0] || 'gejala utama'} dan riwayat pasien.`}
                     </div>
                 </div>
             </div>

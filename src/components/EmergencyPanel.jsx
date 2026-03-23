@@ -87,7 +87,7 @@ export function EmergencyTimer({ patient, time }) {
 /// Single emergency patient card — with Plateau & SISRUTE Limbo visual states
 function EmergencyPatientCard({ patient, onSelect, isActive, time }) {
     const triage = TRIAGE_LEVELS[patient.triageLevel];
-    const isLimbo = patient.status === 'PENDING_SISRUTE';
+    const isLimbo = patient.status === 'sisrute_limbo';
 
     return (
         <button
@@ -121,9 +121,9 @@ function EmergencyPatientCard({ patient, onSelect, isActive, time }) {
 
             {/* SISRUTE Limbo indicator */}
             {isLimbo ? (
-                <div className="mt-2 bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-200 text-xs px-2 py-1.5 rounded flex items-center justify-between font-bold">
-                    <span className="flex items-center gap-1 animate-pulse"><Truck size={12} /> Menunggu Ambulans...</span>
-                    <span className="flex items-center gap-1"><Clock size={12} /> {patient.ambulanceETA || '?'}m</span>
+                <div className="mt-2 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 text-xs px-2 py-1.5 rounded flex items-center justify-between font-bold">
+                    <span className="flex items-center gap-1 animate-pulse"><Truck size={12} /> {patient.sisruteData?.hospitalName || 'RS Rujukan'}</span>
+                    <span className="flex items-center gap-1"><Clock size={12} /> {patient.sisruteData?.estimatedArrival ? `ETA ${formatTime(patient.sisruteData.estimatedArrival)}` : '?'}</span>
                 </div>
             ) : patient.deterioration > 0 && (
                 /* Deterioration indicator — shows Plateau when rate ≤ 0 */
@@ -340,6 +340,8 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
     const [showVitals, setShowVitals] = useState(false);
     const [stabilizationValidation, setStabilizationValidation] = useState(null);
     const [isResuscitating, setIsResuscitating] = useState(false);
+    const [resuscitationAttempts, setResuscitationAttempts] = useState(0);
+    const MAX_RESUS_ATTEMPTS = 2;
 
     // 💥 Dynamic Vitals — recalculates reactively when actions are toggled
     const baseVitals = patient.medicalData?.vitals || {};
@@ -388,6 +390,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
         setShowVitals(false);
         setStabilizationValidation(null);
         setIsResuscitating(false);
+        setResuscitationAttempts(0);
     }, [patient.id]);
 
     // Handle triage selection
@@ -422,8 +425,33 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
         setStabilizationValidation(validation);
     };
 
-    // 🚨 CODE BLUE: Deterioration ≥ 100% → force resuscitation screen
+    // 🚨 CODE BLUE / KODE HITAM: Deterioration ≥ 100%
     if (patient.deterioration >= 100 && patient.triageLevel !== 4 && !isResuscitating) {
+        // 🖤 KODE HITAM: Max resuscitation attempts exhausted → death
+        if (resuscitationAttempts >= MAX_RESUS_ATTEMPTS) {
+            return (
+                <div className="p-8 h-full min-h-[500px] flex flex-col items-center justify-center bg-slate-950 text-white rounded-lg border-4 border-slate-700 relative overflow-hidden">
+                    <XCircle size={80} className="text-slate-500 mb-4 opacity-60" />
+                    <h2 className="text-3xl font-black text-slate-400 tracking-widest mb-2">KODE HITAM</h2>
+                    <div className="bg-slate-900/80 p-4 rounded-lg border border-slate-700 mb-8 text-center z-10 w-full">
+                        <p className="text-slate-300 font-bold text-lg mb-1">Pasien Tidak Merespons Resusitasi</p>
+                        <p className="text-sm text-slate-500">Pasien <span className="text-slate-300 font-bold">{patient.name}</span> dinyatakan meninggal setelah {MAX_RESUS_ATTEMPTS}x percobaan RJP.</p>
+                    </div>
+                    <button
+                        onClick={() => onDischarge(patient, {
+                            action: 'death',
+                            triageAssigned: 'hitam',
+                            actionsPerformed: performedActions
+                        })}
+                        className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-3 z-10 border border-slate-600"
+                    >
+                        <FileText size={20} /> Catat Kematian & Dokumentasi
+                    </button>
+                </div>
+            );
+        }
+
+        // 🚨 CODE BLUE: Still have resuscitation attempts left
         return (
             <div className="p-8 h-full min-h-[500px] flex flex-col items-center justify-center bg-slate-900 text-white rounded-lg border-4 border-red-600 relative overflow-hidden">
                 <div className="absolute inset-0 bg-red-600/20 animate-pulse pointer-events-none" />
@@ -432,16 +460,46 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                 <div className="bg-red-950/50 p-4 rounded-lg border border-red-800/50 mb-8 text-center z-10 w-full">
                     <p className="text-red-200 font-bold text-lg mb-1">Deteriorasi 100% — Henti Jantung/Napas</p>
                     <p className="text-sm text-red-400">Pasien <span className="text-white font-bold">{patient.name}</span> membutuhkan resusitasi SEGERA!</p>
+                    {resuscitationAttempts > 0 && (
+                        <p className="text-xs text-red-500 mt-2 font-bold">⚠ Percobaan ke-{resuscitationAttempts + 1} dari {MAX_RESUS_ATTEMPTS} — Sisa kesempatan: {MAX_RESUS_ATTEMPTS - resuscitationAttempts}</p>
+                    )}
                 </div>
                 <button
                     onClick={() => {
                         setIsResuscitating(true);
+                        setResuscitationAttempts(prev => prev + 1);
                         if (!performedActions.includes('cpr')) toggleAction('cpr');
                     }}
                     className="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-black text-xl rounded-xl shadow-[0_0_40px_rgba(220,38,38,0.5)] active:scale-95 transition-all flex items-center justify-center gap-3 z-10 border-b-4 border-red-800"
                 >
                     <Zap size={24} /> MULAI RJP & DEFIBRILASI
                 </button>
+            </div>
+        );
+    }
+    // 🚑 SISRUTE LIMBO: Read-only view while waiting for ambulance
+    if (patient.status === 'sisrute_limbo') {
+        const sd = patient.sisruteData || {};
+        const etaMinutes = sd.estimatedArrival ? Math.max(0, sd.estimatedArrival - time) : 0;
+        return (
+            <div className="p-6 h-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-slate-50 dark:from-blue-950/30 dark:to-slate-950/30 rounded-lg border-2 border-blue-300 dark:border-blue-800 text-center space-y-4">
+                <Truck size={48} className="text-blue-500 animate-bounce" />
+                <h3 className="text-xl font-black text-blue-800 dark:text-blue-300">Menunggu Ambulans</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Pasien <span className="font-bold text-slate-800 dark:text-slate-200">{patient.name}</span> sudah diterima di
+                </p>
+                <div className="bg-blue-100 dark:bg-blue-900/40 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="font-bold text-blue-800 dark:text-blue-200">{sd.hospitalName || 'RS Rujukan'}</p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                        🚑 {sd.ambulanceName || 'Ambulans'} • ETA: <span className="font-bold">{etaMinutes > 0 ? `${etaMinutes} menit` : 'Segera tiba!'}</span>
+                    </p>
+                </div>
+                <TriageBadge level={patient.triageLevel} esiLevel={patient.esiLevel} size="lg" />
+                {patient.deterioration > 30 && (
+                    <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800 text-xs text-amber-700 dark:text-amber-400">
+                        ⚠ Deteriorasi: <span className="font-bold">{Math.round(patient.deterioration)}%</span> — Pantau kondisi, Code Blue mungkin terjadi!
+                    </div>
+                )}
             </div>
         );
     }

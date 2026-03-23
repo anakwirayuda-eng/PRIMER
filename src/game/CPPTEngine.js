@@ -194,14 +194,14 @@ export function buildMaiaCPPTRecord(patient, day, time, outcomeStatus, isEmergen
         },
         planning: {
             action: isEmergency ? 'stabilize' : 'treat',
-            medications: caseData.correctTreatment || [],
+            medications: caseData.correctTreatment || patient.hidden?.correctTreatment || [],
             procedures: [],
             education: [],
             referralTarget: null
         },
         outcome: {
             status: outcomeStatus,
-            satisfaction: 80,
+            satisfaction: isEmergency ? 72 : 78,
             isCorrectAction: true
         }
     };

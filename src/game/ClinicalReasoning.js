@@ -246,13 +246,25 @@ const CRITICAL_CHECKS = [
  * @param {string} currentTab - Active category tab
  * @param {object} [caseData] - Optional case data for SKDI-aware referral alerts
  */
-export function getMAIAAlerts(history, currentTab, caseData) {
+export function getMAIAAlerts(history, currentTab, caseData, options = {}) {
     const alerts = [];
     const askedIds = new Set(history.map(q => q.id));
     const askedCategories = new Set(history.map(q => q.category));
 
-    // Threshold: don't annoy early on
-    if (history.length < 7) return [];
+    // 🚨 HACK 2: Golden Minute Override — bypass 7-question gate for ESI 1-2
+    const isEmergencyOverride = options.isEmergency && (caseData?.esi <= 2 || caseData?.triageLevel <= 2);
+    if (history.length < 7 && !isEmergencyOverride) return [];
+
+    // Emergency panic alert: if > 2 questions but no diagnostic direction
+    if (isEmergencyOverride && history.length >= 2 && (options.diagnosticConfidence ?? 100) < 20) {
+        alerts.push({
+            id: 'critical_override',
+            label: 'M.A.I.A OVERRIDE',
+            message: 'Saturasi anjlok! Hentikan anamnesis sekunder. Fokus Airway & Breathing SEKARANG, Dokter!',
+            priority: 'critical',
+            suggestTab: null
+        });
+    }
 
     // Referral-aware SKDI alert (highest priority)
     if (caseData?.skdi) {

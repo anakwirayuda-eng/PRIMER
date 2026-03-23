@@ -209,11 +209,11 @@ export function usePatientEMR() {
             selectedProcedures.map(p => p.id || p.code || p)
         );
         const eduValidation = validateEducation(
-            { requiredEducation: patient.hidden?.requiredEducation || [] },
+            { requiredEducation: patient.hidden?.requiredEducation || caseData?.requiredEducation || [] },
             selectedEducation
         );
         const examValidation = validateExams(
-            { relevantLabs: patient.hidden?.relevantLabs || [], physicalExamFindings: caseData?.physicalExamFindings || {} },
+            { relevantLabs: patient.hidden?.relevantLabs || caseData?.relevantLabs || [], physicalExamFindings: caseData?.physicalExamFindings || {} },
             performedExamKeys,
             Object.keys(labsRevealed)
         );
@@ -227,15 +227,27 @@ export function usePatientEMR() {
             anamnesisValidation?.score ?? 0
         );
 
+        // 🧠 CORTANA PROTOCOL: Bayesian Radar + Context-Aware Alerts
+        const diagnosticConf = getDiagnosticConfidence(diagnosticTracker, {
+            physical: examValidation?.score ?? 0,
+            labs: examValidation?.labScore ?? 0
+        });
+        const maiaAlertsList = getMAIAAlerts(anamnesisHistory, activeTab, caseData, {
+            isEmergency: !!patient.isEmergency,
+            diagnosticConfidence: diagnosticConf?.confidence ?? 0
+        });
+
         return {
             diagnosis: diagValidation,
             treatment: treatValidation,
             education: eduValidation,
             exams: examValidation,
             anamnesis: anamnesisValidation,
-            examLabSuggestions: examLabHints
+            examLabSuggestions: examLabHints,
+            diagnosticConfidence: diagnosticConf,
+            alerts: maiaAlertsList
         };
-    }, [patient, selectedDiagnoses, selectedMeds, selectedProcedures, selectedEducation, performedExamKeys, labsRevealed, anamnesisHistory]);
+    }, [patient, selectedDiagnoses, selectedMeds, selectedProcedures, selectedEducation, performedExamKeys, labsRevealed, anamnesisHistory, diagnosticTracker, activeTab]);
 
     // Auto-scroll anamnesis
     useEffect(() => {

@@ -720,7 +720,7 @@ function calculateEncounterRevenue(entry) {
     }
 
     if (entry?.isEmergency) {
-        const billing = calculateEmergencyBill(entry?.decision?.actions, entry?.hidden?.caseData);
+        const billing = calculateEmergencyBill(entry?.decision?.actionsPerformed || entry?.decision?.actions, entry?.hidden?.caseData);
         let revenue = billing?.total || 0;
 
         if (action === 'refer' && entry?.decision?.isSISRUTE && entry?.decision?.referralDetails?.result?.status === 'ACCEPTED') {
@@ -1867,6 +1867,7 @@ export const useGameStore = create(
                                 dischargedAt: time,
                                 decision: { action: 'delegate_to_maia' },
                                 outcome: 'delegated',
+                                outcomeStatus: 'delegated',
                                 satisfactionScore,
                                 cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'delegated')
                             });
@@ -1935,7 +1936,11 @@ export const useGameStore = create(
                                 },
                                 finance: {
                                     ...state.finance,
-                                    kpi: nextKpi
+                                    kpi: nextKpi,
+                                    stats: {
+                                        ...state.finance.stats,
+                                        ...(isBPJS ? {} : { pendapatanUmum: state.finance.stats.pendapatanUmum + 50000 })
+                                    }
                                 }
                             };
                         });
@@ -2049,9 +2054,27 @@ export const useGameStore = create(
 
                         // 6. Emergency Deterioration
                         state.clinical.emergencyQueue.forEach(p => {
-                            if (p.status === 'igd_waiting' && p.deteriorationRate > 0) {
+                            if ((p.status === 'igd_waiting' || p.status === 'sisrute_limbo') && p.deteriorationRate > 0) {
                                 p.deterioration = Math.min(100, p.deterioration + p.deteriorationRate);
                             }
+                        });
+
+                        // 7. SISRUTE Limbo Auto-Discharge (ambulance arrived)
+                        const currentTime = state.world.time;
+                        const arrivedPatients = state.clinical.emergencyQueue.filter(
+                            p => p.status === 'sisrute_limbo' && p.sisruteData?.estimatedArrival <= currentTime
+                        );
+                        arrivedPatients.forEach(p => {
+                            const sd = p.sisruteData;
+                            state.clinical.emergencyQueue = state.clinical.emergencyQueue.filter(q => q.id !== p.id);
+                            state.clinical.history = appendClinicalHistory(state.clinical.history, {
+                                ...p, day: state.world.day, dischargedAt: currentTime,
+                                decision: { action: 'refer', isSISRUTE: true, actionsPerformed: p.sisruteData?.actionsPerformed || [], referralDetails: sd?.referralDetails },
+                                outcome: 'referred', outcomeStatus: 'sisrute_transferred',
+                                satisfactionScore: 90, isEmergency: true,
+                                cpptRecord: buildMaiaCPPTRecord(p, state.world.day, currentTime, 'referred', true)
+                            });
+                            soundManager.playSuccess();
                         });
                     })),
                     dischargePatient: (patient, decision, day, time) => withTransaction(set, get, 'dischargePatient', (state) => {
@@ -2222,40 +2245,57 @@ export const useGameStore = create(
 
                         const isCorrectTriage = patient.hidden?.requiredAction === decision.action;
                         let repChange = isCorrectTriage ? 5 : -5, satisfactionScore = isCorrectTriage ? 95 : 50;
+                        let outcomeStatus = isCorrectTriage ? 'correct' : 'incorrect';
 
+                        // 🖤 DEATH: Patient died after failed resuscitation
+                        if (decision.action === 'death') {
+                            repChange = -15;
+                            satisfactionScore = 0;
+                            outcomeStatus = 'meninggal';
+                            soundManager.playError();
+                        }
                         // Override rep/score if it's a completed SISRUTE referral
-                        if (decision.action === 'refer' && decision.isSISRUTE) {
+                        else if (decision.action === 'refer' && decision.isSISRUTE) {
                             repChange = decision.repBonus || repChange;
                             satisfactionScore = decision.satisfaction || satisfactionScore;
                         }
 
-                        if (isCorrectTriage || (decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED')) {
-                            soundManager.playSuccess();
-                        } else {
-                            soundManager.playError();
+                        if (decision.action !== 'death') {
+                            if (isCorrectTriage || (decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED')) {
+                                soundManager.playSuccess();
+                            } else {
+                                soundManager.playError();
+                            }
                         }
 
-                        const billing = calculateEmergencyBill(decision.actionsPerformed || decision.actions || [], patient.hidden?.caseData);
+                        const billing = decision.action === 'death' ? { total: 0 } : calculateEmergencyBill(decision.actionsPerformed || decision.actions || [], patient.hidden?.caseData);
                         set(state => {
                             const newKpi = { ...state.finance.kpi }; if (isCorrectTriage) newKpi.correctTreatments++;
+                            if (decision.action === 'death') newKpi.deathCases = (newKpi.deathCases || 0) + 1;
                             let fundChange = billing.total;
                             let newBusyAmbulanceIds = state.clinical.busyAmbulanceIds;
                             let newActiveReferralLog = state.clinical.activeReferralLog;
                             let newHospitalBedUsage = { ...(state.clinical.hospitalBedUsage || {}) };
 
-                            // Handle SISRUTE referral completion: ambulance costs & referral log
+                            // Handle SISRUTE referral completion: → ENTER LIMBO instead of instant discharge
                             if (decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED') {
                                 const { hospitalId, ambulanceId } = decision.referralDetails;
                                 const hosp = HOSPITALS.find(h => h.id === hospitalId), amb = AMBULANCES.find(a => a.id === ambulanceId);
+                                const travelTime = hosp ? Math.ceil(hosp.distance * (1 / (amb?.speedBoost || 1)) * 2) : 30;
+
+                                // Deduct ambulance cost immediately
                                 if (amb && amb.cost > 0) fundChange -= amb.cost;
+                                // Mark ambulance as busy
+                                if (hosp && amb && amb.isAmbulance !== false) {
+                                    newBusyAmbulanceIds = [
+                                        ...newBusyAmbulanceIds,
+                                        createBusyAmbulanceEntry(amb.id, day, time, travelTime * 2)
+                                    ];
+                                }
+                                // Hospital bed reservation
+                                if (hosp) newHospitalBedUsage[hosp.id] = (newHospitalBedUsage[hosp.id] || 0) + 1;
+                                // Add referral log
                                 if (hosp && amb) {
-                                    const travelTime = hosp.distance * (1 / (amb.speedBoost || 1)) * 2;
-                                    if (amb.isAmbulance !== false) {
-                                        newBusyAmbulanceIds = [
-                                            ...newBusyAmbulanceIds,
-                                            createBusyAmbulanceEntry(amb.id, day, time, travelTime * 2)
-                                        ];
-                                    }
                                     newActiveReferralLog = [...newActiveReferralLog, {
                                         id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
                                         familyId: patient.hidden?.familyId || null,
@@ -2264,9 +2304,35 @@ export const useGameStore = create(
                                         hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
                                         timeSent: time, status: 'EN_ROUTE'
                                     }];
-                                    // S4 Fix: decrement hospital bed availability
-                                    newHospitalBedUsage[hosp.id] = (newHospitalBedUsage[hosp.id] || 0) + 1;
                                 }
+
+                                // 🚑 SISRUTE LIMBO: patient stays in queue waiting for ambulance
+                                const patientIdx = state.clinical.emergencyQueue.findIndex(q => q.id === patient.id);
+                                if (patientIdx !== -1) {
+                                    state.clinical.emergencyQueue[patientIdx] = {
+                                        ...state.clinical.emergencyQueue[patientIdx],
+                                        status: 'sisrute_limbo',
+                                        sisruteData: {
+                                            hospitalId: hosp?.id, hospitalName: hosp?.name || 'RS Rujukan',
+                                            ambulanceId: amb?.id, ambulanceName: amb?.name || 'Ambulans',
+                                            acceptedAt: time, estimatedArrival: time + travelTime,
+                                            actionsPerformed: decision.actionsPerformed || [],
+                                            referralDetails: decision.referralDetails
+                                        },
+                                        deteriorationRate: Math.max(0, (state.clinical.emergencyQueue[patientIdx].deteriorationRate || 0) * 0.5)
+                                    };
+                                }
+
+                                return {
+                                    clinical: {
+                                        ...state.clinical,
+                                        busyAmbulanceIds: newBusyAmbulanceIds,
+                                        activeReferralLog: newActiveReferralLog,
+                                        activeEmergencyId: null,
+                                        hospitalBedUsage: newHospitalBedUsage
+                                    },
+                                    finance: { ...state.finance, stats: { ...state.finance.stats, pendapatanUmum: state.finance.stats.pendapatanUmum + fundChange }, kpi: newKpi }
+                                };
                             }
 
                             return {
@@ -2598,7 +2664,7 @@ export const useGameStore = create(
                                     diseaseId: evt.diseaseId,
                                     severity: evt.severity,
                                     spawnDay: evt.spawnDay || nextDayVal,
-                                    followupDay: nextDayVal + 1
+                                    returnDay: nextDayVal + 1
                                 });
                             });
 
