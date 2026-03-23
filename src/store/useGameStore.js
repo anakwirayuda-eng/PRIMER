@@ -716,7 +716,9 @@ function calculateEncounterRevenue(entry) {
     const isBPJS = Boolean(entry?.social?.hasBPJS);
 
     if (action === 'delegate_to_maia') {
-        return isBPJS || entry?.isEmergency ? 0 : 25000;
+        // Codex Fix: emergency delegate non-BPJS earns 50000, not 25000
+        if (entry?.isEmergency) return isBPJS ? 0 : 50000;
+        return isBPJS ? 0 : 25000;
     }
 
     if (entry?.isEmergency) {
@@ -1883,6 +1885,19 @@ export const useGameStore = create(
                             if (isBPJS) state.finance.kpi.bpjsPatients++;
                             else state.finance.kpi.umumPatients++;
                             state.finance.kpi.patientSatisfaction.push(satisfactionScore);
+
+                            // Codex Fix: push to todayLog so debrief can count this encounter
+                            state.clinical.todayLog.push({
+                                patientName: patient.name,
+                                age: patient.age,
+                                diagnosis: patient.medicalData?.trueDiagnosisCode || 'unknown',
+                                action: 'delegate_to_maia',
+                                completed: true,
+                                referred: false,
+                                diagnosisScore: 0,
+                                revenue: isBPJS ? 0 : 25000,
+                                timestamp: Date.now()
+                            });
                         });
 
                         soundManager.playConfirm();
@@ -1925,7 +1940,19 @@ export const useGameStore = create(
                                         satisfactionScore,
                                         isEmergency: true,
                                         cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'delegated', true)
-                                    })
+                                    }),
+                                    // Codex Fix: push to todayLog so debrief counts emergency delegation
+                                    todayLog: [...state.clinical.todayLog, {
+                                        patientName: patient.name,
+                                        age: patient.age,
+                                        diagnosis: patient.medicalData?.trueDiagnosisCode || 'unknown',
+                                        action: 'delegate_to_maia',
+                                        completed: true,
+                                        referred: false,
+                                        diagnosisScore: 0,
+                                        revenue: isBPJS ? 0 : 50000,
+                                        timestamp: Date.now()
+                                    }]
                                 },
                                 player: {
                                     ...state.player,
@@ -2355,7 +2382,19 @@ export const useGameStore = create(
                                         satisfactionScore,
                                         isEmergency: true,
                                         cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'stabilized', true)
-                                    })
+                                    }),
+                                    // Codex Fix: push to todayLog so debrief counts emergency discharges
+                                    todayLog: [...state.clinical.todayLog, {
+                                        patientName: patient.name,
+                                        age: patient.age,
+                                        diagnosis: patient.medicalData?.trueDiagnosisCode || 'unknown',
+                                        action: decision.action,
+                                        completed: decision.action !== 'refer',
+                                        referred: decision.action === 'refer',
+                                        diagnosisScore: isCorrectTriage ? 100 : 0,
+                                        revenue: billing.total || 0,
+                                        timestamp: Date.now()
+                                    }]
                                 },
                                 player: {
                                     ...state.player,

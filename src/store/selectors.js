@@ -32,9 +32,9 @@ export const selectDerivedFinance = (state) => {
     const clinicalAccuracy = totalPatients > 0 ? Math.round((correctDiagnoses / totalPatients) * 100) : 0;
     const referralRate = totalPatients > 0 ? Math.round((referrals / totalPatients) * 100) : 0;
     const rrns = referrals > 0 ? Math.round((nonSpecialisticReferrals / referrals) * 100) : 0;
-    const treatmentAppropriateRate = treatedCases > 0 ? Math.round(((treatedCases - inappropriateTreat) / treatedCases) * 100) : 100;
-    const antibioticStewardship = antibioticPrescriptions > 0 ? Math.round((rationalAntibiotics / antibioticPrescriptions) * 100) : 100;
-    const avgSatisfaction = patientSatisfaction.length > 0 ? Math.round(patientSatisfaction.reduce((a, b) => a + b, 0) / patientSatisfaction.length) : 80;
+    const treatmentAppropriateRate = treatedCases > 0 ? Math.round(((treatedCases - inappropriateTreat) / treatedCases) * 100) : 0;
+    const antibioticStewardship = antibioticPrescriptions > 0 ? Math.round((rationalAntibiotics / antibioticPrescriptions) * 100) : 0;
+    const avgSatisfaction = patientSatisfaction.length > 0 ? Math.round(patientSatisfaction.reduce((a, b) => a + b, 0) / patientSatisfaction.length) : 0;
 
     const totalExpense = (stats.pengeluaranObat || 0) + (stats.pengeluaranLab || 0) + (stats.pengeluaranOperasional || 0);
     const totalRevenue = (stats.kapitasi || 0) + (stats.pendapatanUmum || 0);

@@ -136,10 +136,10 @@ export default function DailyReportModal({ dayData, dailyArchive = [], onNavigat
                             </h3>
                             <ResponsiveContainer width="100%" height={200} minWidth={0}>
                                 <LineChart data={hourlyTraffic || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                    <XAxis dataKey="hour" tick={{ fontSize: 10, fontWeight: 'bold' }} />
+                                    <XAxis dataKey="label" tick={{ fontSize: 10, fontWeight: 'bold' }} />
                                     <YAxis allowDecimals={false} tick={{ fontSize: 10, fontWeight: 'bold' }} />
                                     <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
-                                    <Line type="monotone" dataKey="count" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, fill: '#6366f1', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                                    <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, fill: '#6366f1', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>
