@@ -52,7 +52,6 @@ export default function ClinicalView({ onBack, openWiki }) {
             const name = p.medicalData?.diagnosisName
                 || p.hidden?.diseaseName
                 || (p.hidden?.diseaseId && FKTP_144_DISEASES.find(d => d.id === p.hidden.diseaseId)?.name)
-                || p.medicalData?.diagnosis
                 || null;
             if (!name) return; // skip unnamed entries entirely instead of polluting with 'Unknown'
             counts[name] = (counts[name] || 0) + 1;

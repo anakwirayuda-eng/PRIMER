@@ -37,7 +37,7 @@ describe('ReasoningDashboard dedup', () => {
                     trueDiagnosisCode: 'A09'
                 },
                 hidden: {
-                    differentials: ['urinary tract infection', 'Infeksi saluran kemih', 'N39.0']
+                    differentialDiagnosis: ['urinary tract infection', 'Infeksi saluran kemih', 'N39.0']
                 }
             },
             85

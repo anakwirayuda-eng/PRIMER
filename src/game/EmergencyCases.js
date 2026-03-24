@@ -162,3 +162,9 @@ export function calculateEmergencyBill(actionsPerformed = [], caseData = null, i
 
     return { pendaftaran, jasaMedis, actionDetails, total: subtotal, buyPriceTotal: totalActions, isCovered: isBPJS && isEmergency, coverageType: isBPJS ? (isEmergency ? 'BPJS (Covered)' : 'BPJS (REJECTED - Non-Emergency)') : 'Umum', finalBill };
 }
+
+export function calculateEmergencyBillForPatient(patient, actionsPerformed = [], triageLevel = null) {
+    const caseData = patient?.hidden?.caseData || getEmergencyCase(patient?.hidden?.diseaseId) || null;
+    const resolvedTriage = triageLevel ?? patient?.triageLevel ?? 3;
+    return calculateEmergencyBill(actionsPerformed, caseData, Boolean(patient?.social?.hasBPJS), resolvedTriage);
+}

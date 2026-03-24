@@ -15,7 +15,7 @@ import { getSupplierById, calculateOrderCost, estimateDeliveryDate } from '../da
 import { calculatePatientBill } from '../game/BillingEngine.js';
 import { generateInitialParameters, determineMonthlyOutcome } from '../game/ProlanisEngine.js';
 import { applyOutbreakAction, checkForOutbreakTrigger, checkOutbreakExpiry } from '../domains/community/OutbreakSystem.js';
-import { TRIAGE_LEVELS, EMERGENCY_ACTIONS, calculateEmergencyBill } from '../game/EmergencyCases.js';
+import { TRIAGE_LEVELS, EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../game/EmergencyCases.js';
 import { PROCEDURES_DB } from '../data/ProceduresDB.js';
 import { HOSPITALS, AMBULANCES } from '../data/HospitalDB.js';
 import { buildCPPTRecord, buildMaiaCPPTRecord } from '../game/CPPTEngine.js';
@@ -742,7 +742,11 @@ function calculateEncounterRevenue(entry) {
     }
 
     if (entry?.isEmergency) {
-        const billing = calculateEmergencyBill(entry?.decision?.actionsPerformed || entry?.decision?.actions, entry?.hidden?.caseData);
+        const billing = calculateEmergencyBillForPatient(
+            entry,
+            entry?.decision?.actionsPerformed || entry?.decision?.actions,
+            entry?.decision?.triageAssigned || entry?.triageLevel
+        );
         let revenue = billing?.total || 0;
 
         if (action === 'refer' && entry?.decision?.isSISRUTE && entry?.decision?.referralDetails?.result?.status === 'ACCEPTED') {
@@ -2432,7 +2436,7 @@ export const useGameStore = create(
                                     id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
                                     familyId: patient.hidden?.familyId || null,
                                     diagnosisId: patient.medicalData?.trueDiagnosisCode || '',
-                                    diagnosis: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosis || patient.medicalData?.diagnosis || '',
+                                    diagnosis: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || '',
                                     hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
                                     timeSent: time, status: 'EN_ROUTE'
                                 });
@@ -2542,7 +2546,13 @@ export const useGameStore = create(
                             }
                         }
 
-                        const billing = decision.action === 'death' ? { total: 0 } : calculateEmergencyBill(decision.actionsPerformed || decision.actions || [], patient.hidden?.caseData);
+                        const billing = decision.action === 'death'
+                            ? { total: 0 }
+                            : calculateEmergencyBillForPatient(
+                                patient,
+                                decision.actionsPerformed || decision.actions || [],
+                                decision.triageAssigned || patient.triageLevel
+                            );
                         set(state => {
                             const newKpi = { ...state.finance.kpi }; if (isCorrectTriage) newKpi.correctTreatments++;
                             if (decision.action === 'death') newKpi.deathCases = (newKpi.deathCases || 0) + 1;
@@ -2574,7 +2584,7 @@ export const useGameStore = create(
                                         id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
                                         familyId: patient.hidden?.familyId || null,
                                         diagnosisId: patient.medicalData?.trueDiagnosisCode || '',
-                                        diagnosis: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosis || patient.medicalData?.diagnosis || '',
+                                        diagnosis: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || '',
                                         hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
                                         timeSent: time, status: 'EN_ROUTE'
                                     }];

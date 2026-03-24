@@ -12,7 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 import { AlertTriangle, Clock, Heart, Activity, Zap, CheckCircle, XCircle, ArrowRight, Siren, Thermometer, Droplets, Bot, FileText, Stethoscope, Info, Truck } from 'lucide-react';
-import { TRIAGE_LEVELS, ESI_LEVELS, validateTriage, validateStabilization, calculatePatientStatus, getEmergencyCase, EMERGENCY_ACTIONS, calculateEmergencyBill } from '../game/EmergencyCases.js';
+import { TRIAGE_LEVELS, ESI_LEVELS, validateTriage, validateStabilization, calculatePatientStatus, getEmergencyCase, EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../game/EmergencyCases.js';
 import { useTranslation } from 'react-i18next';
 import { soundManager as _soundManager } from '../utils/SoundManager.js';
 import { getAvatarStyle } from '../utils/AvatarUtils.js';
@@ -656,7 +656,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                         </h3>
                         <div className="bg-white dark:bg-slate-900 p-3 rounded border border-purple-100 dark:border-purple-800">
                             <p className="font-semibold text-slate-800 dark:text-slate-100 text-lg">
-                                {patient.hidden?.diagnosis || patient.medicalData?.diagnosis || patient.medicalData?.diagnosisName || 'Belum ditentukan'}
+                                {patient.medicalData?.diagnosisName || patient.hidden?.diagnosis || 'Belum ditentukan'}
                             </p>
                             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                                 ICD-10: <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">{patient.medicalData?.trueDiagnosisCode || '-'}</span>
@@ -829,7 +829,11 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                 </span>
                             </div>
                             {(() => {
-                                const bill = calculateEmergencyBill(performedActions, patient.social?.hasBPJS, triageSelection || patient.triageLevel);
+                                const bill = calculateEmergencyBillForPatient(
+                                    patient,
+                                    performedActions,
+                                    triageSelection || patient.triageLevel
+                                );
                                 return (
                                     <div className="space-y-1.5 font-mono text-xs">
                                         <div className="flex justify-between border-b border-white/10 pb-1">
@@ -908,7 +912,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                     </div>
                                     <div className="mt-3 bg-indigo-100 dark:bg-indigo-900/40 p-2 rounded text-xs text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                                         <p><strong>📋 Untuk Surat Rujukan:</strong></p>
-                                        <p>• Working Dx: {patient.hidden?.diagnosis || patient.medicalData?.diagnosisName || '-'}</p>
+                                        <p>• Working Dx: {patient.medicalData?.diagnosisName || patient.hidden?.diagnosis || '-'}</p>
                                         <p>• DDx: {differentials.join(', ')}</p>
                                         <p>• Tindakan: {performedActions.length > 0
                                             ? performedActions.map(id => EMERGENCY_ACTIONS[id]?.name || id).join('; ')

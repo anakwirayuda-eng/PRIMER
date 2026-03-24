@@ -685,7 +685,7 @@ export function usePatientEMR() {
             patientName: patient.name,
             age: patient.age,
             diagnosis: selectedDiagnoses[0]?.code || 'unknown',
-            correctDiagnosis: caseData?.correctDiagnosis || caseData?.trueDiagnosisCode || caseData?.diagnosisName || patient.hidden?.diagnosis || caseData?.id || '',
+            correctDiagnosis: caseData?.trueDiagnosisCode || caseData?.diagnosisName || caseData?.id || '',
             wasCorrect: diagResult?.isPrimaryCorrect ?? false,
             diagnosisScore: diagResult?.isPrimaryCorrect ? 100 : 0,
             action,

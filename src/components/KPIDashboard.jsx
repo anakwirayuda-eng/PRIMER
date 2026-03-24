@@ -190,7 +190,10 @@ export default function KPIDashboard() {
         });
 
         const dCounts = {};
-        todayHistory.forEach(p => { const dx = p.medicalData?.diagnosis || p.medicalData?.diagnosisName || 'Belum Diketahui'; dCounts[dx] = (dCounts[dx] || 0) + 1; });
+        todayHistory.forEach(p => {
+            const dx = p.medicalData?.diagnosisName || p.medicalData?.trueDiagnosisCode || 'Belum Diketahui';
+            dCounts[dx] = (dCounts[dx] || 0) + 1;
+        });
         const tDiseases = Object.entries(dCounts).sort((a, b) => b[1] - a[1]).slice(0, 8)
             .map(([name, count]) => ({ name, count, percent: (count / (todayHistory.length || 1)) * 100 }));
 

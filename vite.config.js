@@ -71,18 +71,6 @@ function manualChunks(id) {
       return 'vendor-ui';
     }
 
-    if (
-      hasPackage(normalizedId, '@supabase/supabase-js') ||
-      hasPackage(normalizedId, 'dexie') ||
-      hasPackage(normalizedId, 'zustand') ||
-      hasPackage(normalizedId, 'zod') ||
-      hasPackage(normalizedId, 'seedrandom') ||
-      hasPackage(normalizedId, 'clsx') ||
-      hasPackage(normalizedId, 'tailwind-merge')
-    ) {
-      return 'vendor-data';
-    }
-
     return 'vendor-3d';
   }
 }
