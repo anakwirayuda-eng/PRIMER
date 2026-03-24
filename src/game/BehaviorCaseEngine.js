@@ -40,13 +40,20 @@ const CASE_MODES = {
     deep: { phases: 6, maxMinutes: 12, label: 'Kasus Mendalam' }
 };
 
-// 🌟 HACK: SDOH ARMOR — Semakin buruk kondisi sosio-ekonomi, semakin tebal resistensi keluarga
+// SDoH education levels considered "low" for resistance calc (matches VillageRegistry values)
+const LOW_EDUCATION = new Set(['No School', 'Elementary', 'Rendah', 'low']);
+// SDoH economy levels considered "low" (matches VillageRegistry values)
+const LOW_ECONOMY = new Set(['Very Low', 'Low', 'Low-Middle', 'Miskin', 'low']);
+// SDoH sanitation levels considered "poor" (matches VillageRegistry values)
+const POOR_SANITATION = new Set(['River/Open', 'Shared Latrine', 'poor']);
+
 function calculateResistance(sdoh) {
     let res = 0;
     if (!sdoh) return res;
-    if (sdoh.education === 'low' || sdoh.education === 'Rendah') res += 12;
-    if (sdoh.economic === 'low' || sdoh.economicStatus === 'Miskin') res += 12;
-    if (sdoh.sanitation === 'poor' || (sdoh.sanitationIndex != null && sdoh.sanitationIndex < 0.5)) res += 8;
+    // V9 Data Guard: use Set lookups instead of fragile string === checks
+    if (LOW_EDUCATION.has(sdoh.education)) res += 12;
+    if (LOW_ECONOMY.has(sdoh.economy) || LOW_ECONOMY.has(sdoh.economic) || LOW_ECONOMY.has(sdoh.economicStatus)) res += 12;
+    if (POOR_SANITATION.has(sdoh.sanitation) || (sdoh.sanitationIndex != null && sdoh.sanitationIndex < 0.5)) res += 8;
     return res; // Max 32 resistensi pasif
 }
 
@@ -256,6 +263,24 @@ export function scoreCOMBDiagnosis(caseInstance, playerBarriers) {
     if (magnitudeCount > 0) {
         totalScore += (magnitudeScore / magnitudeCount) * magnitudeWeight;
         maxScore += magnitudeWeight;
+    }
+
+    // 🌟 V9: APATHY PENALTY — empty submission is worse than wrong submission
+    // In medical ethics, Omission = as fatal as Commission
+    if (!playerBarriers || Object.keys(playerBarriers).length === 0) {
+        return {
+            ...caseInstance,
+            combDiagnosis: {
+                score: 0,
+                tier: 'fail',
+                primaryHits: 0,
+                primaryTotal: primary.length,
+                falsePositives: [],
+                critique: 'Datang ke rumah warga jauh-jauh hanya untuk diam dan tersenyum kosong? ' +
+                    'Anggaran perjalanan dinas Anda terbuang sia-sia. Omisi sama fatalnya dengan salah tindakan.',
+                apathyPenalty: true
+            }
+        };
     }
 
     // 🌟 HACK: RED HERRING GUILLOTINE — -10% per tebakan ngawur (nerfed from Gemini's -20%)

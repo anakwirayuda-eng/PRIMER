@@ -23,6 +23,7 @@ import {
 } from '../game/ClinicalReasoning.js';
 import { getMedicationById } from '../data/MedicationDatabase.js';
 import { matchDrugAllergy } from '../game/DispensingEngine.js';
+import { calculatePrimaryCareRevenueForDecision } from '../game/BillingEngine.js';
 import { useGameStore } from '../store/useGameStore.js';
 import { useShallow } from 'zustand/react/shallow';
 import { selectClinical, selectPlayerStats, selectDerivedFinance } from '../store/selectors.js';
@@ -658,7 +659,7 @@ export function usePatientEMR() {
         }
 
         const caseData = patient.medicalData;
-        dischargePatient(patient, {
+        const decisionPayload = {
             action,
             diagnoses: selectedDiagnoses.map(d => d.code),
             medications: selectedMeds.map(m => ({
@@ -675,7 +676,9 @@ export function usePatientEMR() {
             anamnesisScore: validateAnamnesis(caseData, anamnesisHistory)?.score ?? 0,
             anamnesisHistory,
             labsRevealed
-        });
+        };
+
+        dischargePatient(patient, decisionPayload);
 
         // Phase 0: Log case outcome for debrief + evaluate consequences
         // Cache validation results to avoid redundant calls
@@ -692,9 +695,7 @@ export function usePatientEMR() {
             // Codex Fix: DebriefEngine needs these flags for generateSummary()
             completed: action === 'treat',
             referred: action === 'refer',
-            // Codex Fix: Sync revenue with store logic (useGameStore:2139)
-            // +50,000 for Non-BPJS, -15,000 for BPJS (fee/kapitasi)
-            revenue: patient.social?.hasBPJS ? -15000 : 50000,
+            revenue: calculatePrimaryCareRevenueForDecision(patient, decisionPayload),
             medications: selectedMeds.map(m => m.id),
             keyLearning: caseData?.keyLearning || '',
             guidelineRef: caseData?.guidelineRef || null,

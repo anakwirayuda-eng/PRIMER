@@ -15,6 +15,7 @@
 
 import { getMedicationById } from '../data/MedicationDatabase.js';
 import { PROCEDURES_DB } from '../data/ProceduresDB.js';
+import { AMBULANCES } from '../data/HospitalDB.js';
 import { LAB_CATALOG } from './LabEngine.js';
 
 /**
@@ -83,4 +84,32 @@ export function calculatePatientBill(selectedMeds = [], selectedProcedures = [],
         buyPriceTotal, // HPP — for BPJS kapitasi deduction
         finalBill: isBPJS ? 0 : subtotal // Patient pays 0 if BPJS
     };
+}
+
+/**
+ * Calculates the actual finance delta for a primary-care encounter.
+ * Positive = revenue collected, negative = cost borne by facility.
+ */
+export function calculatePrimaryCareRevenueForDecision(patient = {}, decision = {}) {
+    const action = decision?.action;
+    const isBPJS = Boolean(patient?.social?.hasBPJS);
+
+    if (action === 'treat') {
+        const bill = calculatePatientBill(
+            decision?.medications || [],
+            decision?.procedures || [],
+            decision?.labsRevealed || {},
+            patient?.medicalData || {},
+            isBPJS
+        );
+        return isBPJS ? -(bill.buyPriceTotal || 0) : (bill.total || 0);
+    }
+
+    if (action === 'refer' && decision?.isSISRUTE && decision?.referralDetails?.result?.status === 'ACCEPTED') {
+        const ambulanceId = decision?.referralDetails?.ambulanceId;
+        const ambulance = AMBULANCES.find((item) => item.id === ambulanceId);
+        return ambulance?.cost ? -ambulance.cost : 0;
+    }
+
+    return 0;
 }

@@ -460,7 +460,7 @@ describe('store prophylaxis', () => {
         expect(archivedDay).toMatchObject({
             day: 4,
             patientsToday: 3,
-            revenue: 75000,
+            revenue: 60000,
             reputation: 84
         });
         expect(archivedDay.overallScore).toBeGreaterThan(0);

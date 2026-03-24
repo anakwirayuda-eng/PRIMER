@@ -12,7 +12,7 @@ import { produce } from 'immer';
 import { soundManager } from '../utils/SoundManager.js';
 import { MEDICATION_DATABASE, getMedicationById, MEDICATION_CATEGORIES } from '../data/MedicationDatabase.js';
 import { getSupplierById, calculateOrderCost, estimateDeliveryDate } from '../data/SupplierDatabase.js';
-import { calculatePatientBill } from '../game/BillingEngine.js';
+import { calculatePatientBill, calculatePrimaryCareRevenueForDecision } from '../game/BillingEngine.js';
 import { generateInitialParameters, determineMonthlyOutcome } from '../game/ProlanisEngine.js';
 import { applyOutbreakAction, checkForOutbreakTrigger, checkOutbreakExpiry } from '../domains/community/OutbreakSystem.js';
 import { TRIAGE_LEVELS, EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../game/EmergencyCases.js';
@@ -759,17 +759,7 @@ function calculateEncounterRevenue(entry) {
         return revenue;
     }
 
-    if (action === 'treat') {
-        return !isBPJS && isEncounterCorrect(entry) ? 50000 : 0;
-    }
-
-    if (action === 'refer' && !isBPJS && entry?.decision?.isSISRUTE && entry?.decision?.referralDetails?.result?.status === 'ACCEPTED') {
-        const ambulanceId = entry?.decision?.referralDetails?.ambulanceId;
-        const ambulance = AMBULANCES.find((item) => item.id === ambulanceId);
-        return ambulance?.cost ? -ambulance.cost : 0;
-    }
-
-    return 0;
+    return calculatePrimaryCareRevenueForDecision(entry, entry?.decision || {});
 }
 
 function buildHourlyTraffic(dayHistory) {
