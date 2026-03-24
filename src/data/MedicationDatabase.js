@@ -23,6 +23,7 @@ import { EMERGENCY_MEDS } from './medication/registry/emergency.js';
 import { METABOLIC_MEDS } from './medication/registry/metabolic.js';
 import { MISSING_CASE_MEDS } from './medication/registry/missing_case_meds.js';
 import { SPECIALTY_MEDS } from './medication/registry/specialty_meds.js';
+import { CONSUMABLES_MEDICATIONS } from './medication/registry/consumables_registry.js';
 
 import * as MedUtils from './medication/utils.js';
 
@@ -33,7 +34,7 @@ export const MEDICATION_CATEGORIES = MedUtils.MEDICATION_CATEGORIES;
  * CONSOLIDATED MEDICATION DATABASE
  * Single Source of Truth for Clinical, Inventory, and Billing
  */
-export const MEDICATION_DATABASE = [
+const _BASE_MEDS = [
     ...ANALGESIC_MEDS,
     ...ANTIBIOTIC_MEDS,
     ...CARDIOVASCULAR_MEDS,
@@ -50,6 +51,13 @@ export const MEDICATION_DATABASE = [
     ...METABOLIC_MEDS,
     ...MISSING_CASE_MEDS,
     ...SPECIALTY_MEDS
+];
+
+// Merge consumables, skipping duplicates (items already in base meds)
+const _existingIds = new Set(_BASE_MEDS.map(m => m.id));
+export const MEDICATION_DATABASE = [
+    ..._BASE_MEDS,
+    ...CONSUMABLES_MEDICATIONS.filter(c => !_existingIds.has(c.id))
 ];
 
 // Utility wrappers for backward compatibility with existing components

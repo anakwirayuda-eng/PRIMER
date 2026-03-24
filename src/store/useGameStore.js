@@ -15,7 +15,7 @@ import { getSupplierById, calculateOrderCost, estimateDeliveryDate } from '../da
 import { calculatePatientBill } from '../game/BillingEngine.js';
 import { generateInitialParameters, determineMonthlyOutcome } from '../game/ProlanisEngine.js';
 import { applyOutbreakAction, checkForOutbreakTrigger, checkOutbreakExpiry } from '../domains/community/OutbreakSystem.js';
-import { TRIAGE_LEVELS, calculateEmergencyBill } from '../game/EmergencyCases.js';
+import { TRIAGE_LEVELS, EMERGENCY_ACTIONS, calculateEmergencyBill } from '../game/EmergencyCases.js';
 import { PROCEDURES_DB } from '../data/ProceduresDB.js';
 import { HOSPITALS, AMBULANCES } from '../data/HospitalDB.js';
 import { buildCPPTRecord, buildMaiaCPPTRecord } from '../game/CPPTEngine.js';
@@ -2614,6 +2614,7 @@ export const useGameStore = create(
                                         outcomeStatus: 'stabilized',
                                         satisfactionScore,
                                         isEmergency: true,
+                                        dispensed: true, // IGD always auto-dispenses
                                         cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'stabilized', true)
                                     }),
                                     // Codex Fix: push to todayLog so debrief counts emergency discharges
@@ -2636,7 +2637,57 @@ export const useGameStore = create(
                                         reputation: Math.min(100, Math.max(0, state.player.profile.reputation + repChange))
                                     }, isCorrectTriage ? 30 : 10)
                                 },
-                                finance: { ...state.finance, stats: { ...state.finance.stats, pendapatanUmum: state.finance.stats.pendapatanUmum + fundChange }, kpi: newKpi }
+                                finance: {
+                                    ...state.finance,
+                                    stats: { ...state.finance.stats, pendapatanUmum: state.finance.stats.pendapatanUmum + fundChange },
+                                    kpi: newKpi,
+                                    // IGD AUTO-DEDUCT: consume meds/alkes used during emergency
+                                    pharmacyInventory: (() => {
+                                        const igdConsumption = new Map();
+                                        // 1. Actions performed → each action's med cost (if it's a real medication)
+                                        const actions = decision.actionsPerformed || decision.actions || [];
+                                        actions.forEach(actionId => {
+                                            const med = getMedicationById(actionId);
+                                            if (med && med.form !== 'action' && med.form !== 'equipment') {
+                                                igdConsumption.set(actionId, (igdConsumption.get(actionId) || 0) + 1);
+                                            }
+                                            // Also consume requiredItems from the action definition
+                                            const actionDef = EMERGENCY_ACTIONS[actionId];
+                                            if (actionDef?.requiredItems) {
+                                                actionDef.requiredItems.forEach(itemId => {
+                                                    const itemMed = getMedicationById(itemId);
+                                                    if (itemMed && itemMed.form !== 'equipment') {
+                                                        igdConsumption.set(itemId, (igdConsumption.get(itemId) || 0) + 1);
+                                                    }
+                                                });
+                                            }
+                                        });
+                                        // 2. Authored billingItems from case data (obat + alkes)
+                                        const caseData = patient.hidden?.caseData;
+                                        if (caseData?.billingItems?.obat) {
+                                            caseData.billingItems.obat.forEach(item => {
+                                                if (item.medId) igdConsumption.set(item.medId, (igdConsumption.get(item.medId) || 0) + (item.qty || 1));
+                                            });
+                                        }
+                                        if (caseData?.billingItems?.alkes) {
+                                            caseData.billingItems.alkes.forEach(item => {
+                                                if (item.id) {
+                                                    const itemMed = getMedicationById(item.id);
+                                                    if (itemMed && itemMed.form !== 'equipment') {
+                                                        igdConsumption.set(item.id, (igdConsumption.get(item.id) || 0) + (item.qty || 1));
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        if (igdConsumption.size === 0) return state.finance.pharmacyInventory;
+                                        return state.finance.pharmacyInventory.map(inv => {
+                                            if (igdConsumption.has(inv.medicationId)) {
+                                                return { ...inv, stock: Math.max(0, inv.stock - igdConsumption.get(inv.medicationId)) };
+                                            }
+                                            return inv;
+                                        });
+                                    })()
+                                }
                             };
                         });
                     },

@@ -13,6 +13,7 @@ import React, { useMemo } from 'react';
 import { useGame } from '../../context/GameContext.jsx';
 import { Package, ArrowLeft, Info, Users, Clock, AlertTriangle, Brain, Heart } from 'lucide-react';
 import { getMedicationById } from '../../data/MedicationDatabase.js';
+import { PROCEDURES_DB } from '../../data/ProceduresDB.js';
 
 /**
  * LogisticsView — Sub-module for Resources & Staff
@@ -63,11 +64,26 @@ export default function LogisticsView({ onBack, openWiki }) {
                     consumption[medId] = (consumption[medId] || 0) + qty;
                 });
             }
+            // Track procedure consumables (requiredItems)
+            if (h.decision?.procedures) {
+                h.decision.procedures.forEach(procId => {
+                    const pid = typeof procId === 'object' ? (procId.id || procId.code) : procId;
+                    const proc = PROCEDURES_DB.find(p => p.id === pid);
+                    if (proc?.requiredItems) {
+                        proc.requiredItems.forEach(itemId => {
+                            const med = getMedicationById(itemId);
+                            if (med && med.form !== 'action' && med.form !== 'equipment') {
+                                consumption[itemId] = (consumption[itemId] || 0) + 1;
+                            }
+                        });
+                    }
+                });
+            }
         });
         // Codex Fix: only predict for real stock items
         const realStockItems = pharmacyInventory.filter(item => {
             const med = getMedicationById(item.medicationId);
-            return med && med.form !== 'action';
+            return med && med.form !== 'action' && med.form !== 'equipment';
         });
         return realStockItems.map(item => {
             const avgDaily = (consumption[item.medicationId] || 0) / daysCount;
