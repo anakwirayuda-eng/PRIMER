@@ -29,6 +29,8 @@ import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } f
 import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGameProgress } from '../game/QuestEngine.js';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
+import { normalizeEncounter, normalizeEncounterList } from '../models/EncounterRuntime.js';
+import { normalizeInventoryList, normalizeMedicationId } from '../models/InventoryRuntime.js';
 import { processLabOrder } from '../game/LabEngine.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
@@ -100,13 +102,15 @@ const INITIAL_FINANCE_STATS = {
 };
 
 // Codex Fix: exclude non-stock pseudo-items (care instructions like bed_rest, diet)
-const createInitialPharmacyInventory = () => MEDICATION_DATABASE
-    .filter(med => med.form !== 'action') // Only exclude pseudo-items; program meds (buyPrice=0) are real stock
-    .map((med) => ({
-        medicationId: med.id,
-        stock: Math.floor(med.minStock * 1.5),
-        lastRestockDay: 0
-    }));
+const createInitialPharmacyInventory = () => normalizeInventoryList(
+    MEDICATION_DATABASE
+        .filter(med => med.form !== 'action') // Only exclude pseudo-items; program meds (buyPrice=0) are real stock
+        .map((med) => ({
+            medicationId: med.id,
+            stock: Math.floor(med.minStock * 1.5),
+            lastRestockDay: 0
+        }))
+);
 
 const INITIAL_KPI = {
     totalPatients: 0,
@@ -480,10 +484,12 @@ const mergePersistedFinance = (finance, currentFinance) => {
         pharmacyInventory: Array.isArray(finance.pharmacyInventory)
             ? (() => {
                 // Backfill: add any new catalog SKUs missing from old save
-                const savedIds = new Set(finance.pharmacyInventory.map(i => i.medicationId));
+                const savedIds = new Set(
+                    finance.pharmacyInventory.map(i => normalizeMedicationId(i?.medicationId))
+                );
                 const freshInventory = currentFinance.pharmacyInventory || [];
                 const missingItems = freshInventory.filter(i => !savedIds.has(i.medicationId));
-                return [...finance.pharmacyInventory, ...missingItems];
+                return normalizeInventoryList([...finance.pharmacyInventory, ...missingItems]);
             })()
             : currentFinance.pharmacyInventory,
         pendingOrders: Array.isArray(finance.pendingOrders)
@@ -559,7 +565,11 @@ const mergePersistedClinical = (clinical, currentClinical) => {
         emergencyQueue: [],
         activePatientId: null,
         activeEmergencyId: null,
-        history: normalizePatientList(capClinicalHistory(Array.isArray(clinical.history) ? clinical.history : currentClinical.history)),
+        history: normalizeEncounterList(
+            normalizePatientList(
+                capClinicalHistory(Array.isArray(clinical.history) ? clinical.history : currentClinical.history)
+            )
+        ),
         dailyArchive: Array.isArray(clinical.dailyArchive) ? clinical.dailyArchive : currentClinical.dailyArchive,
         monthlyArchive: Array.isArray(clinical.monthlyArchive) ? clinical.monthlyArchive : currentClinical.monthlyArchive,
         activeReferralLog: Array.isArray(clinical.activeReferralLog) ? clinical.activeReferralLog : currentClinical.activeReferralLog,
@@ -684,6 +694,10 @@ function capClinicalHistory(history) {
 
 function appendClinicalHistory(history, entry) {
     return capClinicalHistory([...(Array.isArray(history) ? history : []), entry]);
+}
+
+function normalizeClinicalHistoryEntry(entry) {
+    return normalizeEncounter(normalizePatient(entry));
 }
 
 function getHistoryForDay(history, day) {
@@ -1137,7 +1151,12 @@ export const useGameStore = create(
                     setStats: (val) => set(s => ({ finance: { ...s.finance, stats: typeof val === 'function' ? val(s.finance.stats) : val } })),
                     setKpi: (val) => set(s => ({ finance: { ...s.finance, kpi: typeof val === 'function' ? val(s.finance.kpi) : val } })),
                     setFacilities: (val) => set(s => ({ finance: { ...s.finance, facilities: typeof val === 'function' ? val(s.finance.facilities) : val } })),
-                    setPharmacyInventory: (val) => set(s => ({ finance: { ...s.finance, pharmacyInventory: typeof val === 'function' ? val(s.finance.pharmacyInventory) : val } })),
+                    setPharmacyInventory: (val) => set(s => ({
+                        finance: {
+                            ...s.finance,
+                            pharmacyInventory: normalizeInventoryList(typeof val === 'function' ? val(s.finance.pharmacyInventory) : val)
+                        }
+                    })),
                     setPendingOrders: (val) => set(s => ({ finance: { ...s.finance, pendingOrders: typeof val === 'function' ? val(s.finance.pendingOrders) : val } })),
                     upgradeFacility: (facilityId, cost) => {
                         const state = get();
@@ -1156,15 +1175,16 @@ export const useGameStore = create(
                     },
                     consumeMedication: (medicationId, quantity, buffs = {}) => {
                         const state = get();
-                        const currentItem = state.finance.pharmacyInventory.find(item => item.medicationId === medicationId);
-                        const medication = getMedicationById(medicationId);
+                        const canonicalMedicationId = normalizeMedicationId(medicationId);
+                        const currentItem = state.finance.pharmacyInventory.find(item => item.medicationId === canonicalMedicationId);
+                        const medication = getMedicationById(canonicalMedicationId) || getMedicationById(medicationId);
                         if (!medication) return { success: false, error: 'Medication not found' };
                         if (!currentItem || currentItem.stock < quantity) return { success: false, error: `Insufficient stock` };
                         set(s => ({
                             finance: {
                                 ...s.finance,
                                 pharmacyInventory: s.finance.pharmacyInventory.map(item =>
-                                    item.medicationId === medicationId ? { ...item, stock: item.stock - quantity } : item
+                                    item.medicationId === canonicalMedicationId ? { ...item, stock: item.stock - quantity } : item
                                 )
                             }
                         }));
@@ -1188,8 +1208,9 @@ export const useGameStore = create(
                     },
                     checkInventoryAvailability: (medicationId, quantity) => {
                         const state = get();
-                        const currentItem = state.finance.pharmacyInventory.find(item => item.medicationId === medicationId);
-                        const medication = getMedicationById(medicationId);
+                        const canonicalMedicationId = normalizeMedicationId(medicationId);
+                        const currentItem = state.finance.pharmacyInventory.find(item => item.medicationId === canonicalMedicationId);
+                        const medication = getMedicationById(canonicalMedicationId) || getMedicationById(medicationId);
                         if (!currentItem || !medication) return { available: false, stock: 0 };
                         return {
                             available: currentItem.stock >= quantity,
@@ -1202,14 +1223,18 @@ export const useGameStore = create(
                         const state = get();
                         const supplier = getSupplierById(supplierId);
                         if (!supplier) return { success: false, error: 'Supplier not found' };
+                        const normalizedOrderItems = (Array.isArray(orderItems) ? orderItems : []).map(item => ({
+                            ...item,
+                            medicationId: normalizeMedicationId(item?.medicationId)
+                        }));
 
                         // Codex Fix: filter compatible items instead of blocking entire batch.
                         // acceptsAll suppliers (dinkes, apotek) accept all categories incl. null.
-                        let compatibleItems = orderItems;
+                        let compatibleItems = normalizedOrderItems;
                         const skipped = [];
                         if (!supplier.acceptsAll && supplier.availableCategories) {
                             compatibleItems = [];
-                            for (const item of orderItems) {
+                            for (const item of normalizedOrderItems) {
                                 const med = getMedicationById(item.medicationId);
                                 if (!med) continue;
                                 // Codex Fix: null-category items are incompatible with specialized suppliers
@@ -1285,14 +1310,17 @@ export const useGameStore = create(
                                     orderId: newOrder.id,
                                     supplierName: supplier.name,
                                     supplierId,
-                                    itemCount: compatibleItems.length,
+                                    itemCount: newOrder.items.length,
                                     skippedCount: skipped.length,
                                     cost: totalCost, // Include express surcharge
+                                    isExpress,
+                                    orderMode: isExpress ? 'express' : 'regular',
                                     day,
                                     timestamp: Date.now()
                                 }]
                             }
                         }));
+                        compatibleItems = newOrder.items;
                         soundManager.playConfirm();
                         const msg = skipped.length > 0
                             ? `Order dikirim (${compatibleItems.length} item). ${skipped.length} item dilewati — tidak tersedia di ${supplier.name}.`
@@ -1315,7 +1343,7 @@ export const useGameStore = create(
                                     ...s.finance,
                                     stats: newStats,
                                     pharmacyInventory: s.finance.pharmacyInventory.map(item => {
-                                        const orderItem = order.items.find(oi => oi.medicationId === item.medicationId);
+                                        const orderItem = order.items.find(oi => normalizeMedicationId(oi.medicationId) === item.medicationId);
                                         return orderItem ? { ...item, stock: item.stock + orderItem.quantity, lastRestockDay: day } : item;
                                     }),
                                     pendingOrders: s.finance.pendingOrders.map(o => o.id === orderId ? { ...o, status: 'received', receivedDay: day } : o)
@@ -1330,8 +1358,12 @@ export const useGameStore = create(
                                 procurementLog: [...(s.finance.procurementLog || []), {
                                     type: 'order_received',
                                     orderId,
+                                    supplierId: order.supplierId,
+                                    supplierName: getSupplierById(order.supplierId)?.name || order.supplierId,
                                     itemCount: order.items.length,
                                     cost: order.cost,
+                                    isExpress: Boolean(order.isExpress),
+                                    receiptMode: 'manual',
                                     day,
                                     timestamp: Date.now()
                                 }]
@@ -2011,7 +2043,7 @@ export const useGameStore = create(
                             if (state.clinical.activePatientId === patientId) {
                                 state.clinical.activePatientId = null;
                             }
-                            state.clinical.history = appendClinicalHistory(state.clinical.history, normalizePatient({
+                            state.clinical.history = appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
                                 ...patient,
                                 day,
                                 dischargedAt: time,
@@ -2078,7 +2110,7 @@ export const useGameStore = create(
                                     ...state.clinical,
                                     emergencyQueue: state.clinical.emergencyQueue.filter(entry => entry.id !== patientId),
                                     activeEmergencyId: state.clinical.activeEmergencyId === patientId ? null : state.clinical.activeEmergencyId,
-                                    history: appendClinicalHistory(state.clinical.history, normalizePatient({
+                                    history: appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
                                         ...patient,
                                         day,
                                         dischargedAt: time,
@@ -2246,7 +2278,7 @@ export const useGameStore = create(
                         arrivedPatients.forEach(p => {
                             const sd = p.sisruteData;
                             state.clinical.emergencyQueue = state.clinical.emergencyQueue.filter(q => q.id !== p.id);
-                            state.clinical.history = appendClinicalHistory(state.clinical.history, normalizePatient({
+                            state.clinical.history = appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
                                 ...p, day: state.world.day, dischargedAt: currentTime,
                                 // DeepThink Fix: spread original decision to preserve diagnoses/medications
                                 decision: { ...(p.originalDecision || {}), action: 'refer', isSISRUTE: true, actionsPerformed: p.sisruteData?.actionsPerformed || [], referralDetails: sd?.referralDetails },
@@ -2375,7 +2407,7 @@ export const useGameStore = create(
                         const inventoryUpdates = new Map();
                         if (decision.action === 'treat' && decision.medications) {
                             decision.medications.forEach(m => {
-                                const medId = typeof m === 'object' ? (m.id || m.medId) : m;
+                                const medId = normalizeMedicationId(typeof m === 'object' ? (m.id || m.medId) : m);
                                 const freq = typeof m === 'object' ? (m.frequency || 1) : 1;
                                 const dur = typeof m === 'object' ? (m.duration || 1) : 1;
                                 const qty = freq * dur;
@@ -2387,7 +2419,12 @@ export const useGameStore = create(
                             decision.procedures.forEach(procId => {
                                 const procIdClean = typeof procId === 'object' ? (procId.id || procId.code) : procId;
                                 const proc = PROCEDURES_DB.find(p => p.id === procIdClean);
-                                if (proc?.requiredItems) proc.requiredItems.forEach(itemId => inventoryUpdates.set(itemId, (inventoryUpdates.get(itemId) || 0) + 1));
+                                if (proc?.requiredItems) {
+                                    proc.requiredItems.forEach(itemId => {
+                                        const canonicalItemId = normalizeMedicationId(itemId);
+                                        inventoryUpdates.set(canonicalItemId, (inventoryUpdates.get(canonicalItemId) || 0) + 1);
+                                    });
+                                }
                             });
                         }
 
@@ -2444,7 +2481,7 @@ export const useGameStore = create(
                         // Codex Fix: add outcomeStatus for SISRUTE referrals so PatientHistoryModal can distinguish them
                         const isSISRUTEAccepted = decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED';
                         const cppt = buildCPPTRecord(patient, decision, day, time, { outcomeStatus: isSISRUTEAccepted ? 'referred_sisrute' : (isCorrectAction ? 'pulih' : 'memburuk'), satisfactionScore, isCorrectAction, isEmergency: false });
-                        state.clinical.history = appendClinicalHistory(state.clinical.history, normalizePatient({
+                        state.clinical.history = appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
                             ...patient,
                             day,
                             dischargedAt: time,
@@ -2622,7 +2659,7 @@ export const useGameStore = create(
                                     activeReferralLog: newActiveReferralLog,
                                     emergencyQueue: state.clinical.emergencyQueue.filter(p => p.id !== patient.id),
                                     activeEmergencyId: null,
-                                    history: appendClinicalHistory(state.clinical.history, normalizePatient({
+                                    history: appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
                                         ...patient,
                                         day,
                                         dischargedAt: time,
@@ -2664,17 +2701,19 @@ export const useGameStore = create(
                                         // 1. Actions performed → each action's med cost (if it's a real medication)
                                         const actions = decision.actionsPerformed || decision.actions || [];
                                         actions.forEach(actionId => {
-                                            const med = getMedicationById(actionId);
+                                            const canonicalActionId = normalizeMedicationId(actionId);
+                                            const med = getMedicationById(canonicalActionId) || getMedicationById(actionId);
                                             if (med && med.form !== 'action' && med.form !== 'equipment') {
-                                                igdConsumption.set(actionId, (igdConsumption.get(actionId) || 0) + 1);
+                                                igdConsumption.set(canonicalActionId, (igdConsumption.get(canonicalActionId) || 0) + 1);
                                             }
                                             // Also consume requiredItems from the action definition
                                             const actionDef = EMERGENCY_ACTIONS[actionId];
                                             if (actionDef?.requiredItems) {
                                                 actionDef.requiredItems.forEach(itemId => {
-                                                    const itemMed = getMedicationById(itemId);
+                                                    const canonicalItemId = normalizeMedicationId(itemId);
+                                                    const itemMed = getMedicationById(canonicalItemId) || getMedicationById(itemId);
                                                     if (itemMed && itemMed.form !== 'equipment') {
-                                                        igdConsumption.set(itemId, (igdConsumption.get(itemId) || 0) + 1);
+                                                        igdConsumption.set(canonicalItemId, (igdConsumption.get(canonicalItemId) || 0) + 1);
                                                     }
                                                 });
                                             }
@@ -2683,15 +2722,19 @@ export const useGameStore = create(
                                         const caseData = patient.hidden?.caseData;
                                         if (caseData?.billingItems?.obat) {
                                             caseData.billingItems.obat.forEach(item => {
-                                                if (item.medId) igdConsumption.set(item.medId, (igdConsumption.get(item.medId) || 0) + (item.qty || 1));
+                                                if (item.medId) {
+                                                    const canonicalMedId = normalizeMedicationId(item.medId);
+                                                    igdConsumption.set(canonicalMedId, (igdConsumption.get(canonicalMedId) || 0) + (item.qty || 1));
+                                                }
                                             });
                                         }
                                         if (caseData?.billingItems?.alkes) {
                                             caseData.billingItems.alkes.forEach(item => {
                                                 if (item.id) {
-                                                    const itemMed = getMedicationById(item.id);
+                                                    const canonicalItemId = normalizeMedicationId(item.id);
+                                                    const itemMed = getMedicationById(canonicalItemId) || getMedicationById(item.id);
                                                     if (itemMed && itemMed.form !== 'equipment') {
-                                                        igdConsumption.set(item.id, (igdConsumption.get(item.id) || 0) + (item.qty || 1));
+                                                        igdConsumption.set(canonicalItemId, (igdConsumption.get(canonicalItemId) || 0) + (item.qty || 1));
                                                     }
                                                 }
                                             });
@@ -2934,7 +2977,7 @@ export const useGameStore = create(
                                         // Add stock
                                         order.items.forEach(oi => {
                                             const invItem = state.finance.pharmacyInventory.find(
-                                                item => item.medicationId === oi.medicationId
+                                                item => item.medicationId === normalizeMedicationId(oi.medicationId)
                                             );
                                             if (invItem) {
                                                 invItem.stock += oi.quantity;
@@ -2950,7 +2993,18 @@ export const useGameStore = create(
                                         // Audit trail: log auto-receive event
                                         state.finance.procurementLog = [
                                             ...(state.finance.procurementLog || []),
-                                            { type: 'order_received', orderId: order.id, supplierId: order.supplierId, itemCount: order.items.length, cost: order.cost, day: nextDayNum, timestamp: Date.now() }
+                                            {
+                                                type: 'order_received',
+                                                orderId: order.id,
+                                                supplierId: order.supplierId,
+                                                supplierName: getSupplierById(order.supplierId)?.name || order.supplierId,
+                                                itemCount: order.items.length,
+                                                cost: order.cost,
+                                                isExpress: Boolean(order.isExpress),
+                                                receiptMode: 'auto',
+                                                day: nextDayNum,
+                                                timestamp: Date.now()
+                                            }
                                         ];
                                     }
                                 });

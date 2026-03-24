@@ -250,7 +250,7 @@ export default function StatusJunctionModal({ onClose, onOpenWiki }) {
                         className="cursor-pointer hover:bg-white/5 px-2 py-0.5 rounded transition-all flex items-center gap-2 group/gil"
                         onClick={() => onOpenWiki?.('liquidity')}
                     >
-                        GIL (Pendapatan): <span className="text-yellow-400 font-mono">Rp {formatNumber(derivedKpis?.totalRevenue)}</span>
+                        GIL (Dana Aktif): <span className="text-yellow-400 font-mono">Rp {formatNumber(derivedKpis?.availableFunds ?? derivedKpis?.totalRevenue)}</span>
                         <Info size={12} className="text-slate-600 group-hover/gil:text-yellow-400" />
                     </div>
                 </div>

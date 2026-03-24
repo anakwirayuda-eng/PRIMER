@@ -15,6 +15,7 @@ import useModalA11y from '../hooks/useModalA11y.js';
 import { MEDICATION_DATABASE, getMedicationById } from '../data/MedicationDatabase.js';
 import { SUPPLIER_DATABASE, getSupplierById } from '../data/SupplierDatabase.js';
 import { X, ShoppingCart } from 'lucide-react';
+import { normalizeMedicationId } from '../models/InventoryRuntime.js';
 
 export default function OrderModal({ onClose }) {
     const { pharmacyInventory, submitOrder, day, stats: _stats, pendingOrders = [] } = useGame();
@@ -26,7 +27,7 @@ export default function OrderModal({ onClose }) {
     // Codex Fix: only exclude items with PENDING + not-overdue orders
     // Overdue orders (deliveryDay < day) should NOT block reorder
     const pendingMedIds = new Set((pendingOrders || []).filter(o => o.status === 'pending' && o.deliveryDay >= day).flatMap(o =>
-        (o.items || []).map(i => i.medicationId)
+        (o.items || []).map(i => normalizeMedicationId(i.medicationId))
     ));
 
     const lowStockMeds = pharmacyInventory

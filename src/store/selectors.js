@@ -37,7 +37,7 @@ export const selectDerivedFinance = (state) => {
     const avgSatisfaction = patientSatisfaction.length > 0 ? Math.round(patientSatisfaction.reduce((a, b) => a + b, 0) / patientSatisfaction.length) : 0;
 
     const totalExpense = (stats.pengeluaranObat || 0) + (stats.pengeluaranLab || 0) + (stats.pengeluaranOperasional || 0);
-    const totalRevenue = (stats.kapitasi || 0) + (stats.pendapatanUmum || 0);
+    const availableFunds = (stats.kapitasi || 0) + (stats.pendapatanUmum || 0);
 
     const overallScore = Math.round(
         (clinicalAccuracy * 0.25) +
@@ -60,8 +60,9 @@ export const selectDerivedFinance = (state) => {
         antibioticStewardship,
         avgSatisfaction,
         totalExpense,
-        totalRevenue,
-        netBalance: totalRevenue - totalExpense,
+        availableFunds,
+        totalRevenue: availableFunds, // Legacy alias used by older viewers for current liquid funds
+        netBalance: availableFunds, // Legacy alias kept for compatibility with existing saldo widgets
         overallScore,
         bpjsPatients,
         umumPatients

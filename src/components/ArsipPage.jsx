@@ -26,6 +26,48 @@ function getEncounterDiagnosisLabel(record) {
         || '-';
 }
 
+function getEncounterActionBadge(record) {
+    if (record?.type === 'posyandu') return { label: 'KEGIATAN', className: 'bg-rose-100 text-rose-700' };
+    if (record?.type === 'senam_prolanis') return { label: 'MASSA', className: 'bg-indigo-100 text-indigo-700' };
+    if (record?.type === 'prolanis_call') return { label: 'PANGGIL', className: 'bg-indigo-100 text-indigo-700' };
+    if (record?.type === 'prolanis_monitor') return { label: 'PANTAU', className: 'bg-indigo-100 text-indigo-700' };
+
+    const action = record?.decision?.action;
+    if (action === 'refer') return { label: 'RUJUK', className: 'bg-purple-100 text-purple-700' };
+    if (action === 'delegate_to_maia') return { label: 'DELEGASI', className: 'bg-indigo-100 text-indigo-700' };
+    if (action === 'stabilize') return { label: 'STABILISASI', className: 'bg-cyan-100 text-cyan-700' };
+    if (action === 'death') return { label: 'RESUS', className: 'bg-red-100 text-red-700' };
+    if (action === 'treat') return { label: 'RAWAT', className: 'bg-green-100 text-green-700' };
+
+    return {
+        label: action ? String(action).replaceAll('_', ' ').toUpperCase() : 'RAWAT',
+        className: 'bg-slate-100 text-slate-700'
+    };
+}
+
+function getEncounterStatusBadge(record) {
+    if (record?.type === 'posyandu' || String(record?.type || '').includes('prolanis')) {
+        return { label: 'Tercatat', className: 'bg-slate-100 text-slate-700' };
+    }
+
+    const outcomeStatus = record?.outcomeStatus;
+    if (outcomeStatus === 'sisrute_transferred') return { label: 'Transfer SISRUTE', className: 'bg-cyan-100 text-cyan-700' };
+    if (outcomeStatus === 'referred_sisrute') return { label: 'Rujuk SISRUTE', className: 'bg-blue-100 text-blue-700' };
+    if (outcomeStatus === 'referred') return { label: 'Dirujuk', className: 'bg-blue-100 text-blue-700' };
+    if (outcomeStatus === 'stabilized') return { label: 'Stabilisasi', className: 'bg-teal-100 text-teal-700' };
+    if (outcomeStatus === 'delegated') return { label: 'Didelegasikan', className: 'bg-indigo-100 text-indigo-700' };
+    if (outcomeStatus === 'pulih') return { label: 'Pulih', className: 'bg-emerald-100 text-emerald-700' };
+    if (outcomeStatus === 'memburuk') return { label: 'Memburuk', className: 'bg-amber-100 text-amber-700' };
+    if (outcomeStatus === 'meninggal') return { label: 'Meninggal', className: 'bg-red-100 text-red-700' };
+    if (outcomeStatus === 'komplain') return { label: 'Komplain', className: 'bg-orange-100 text-orange-700' };
+    if (outcomeStatus === 'correct') return { label: 'Tepat', className: 'bg-emerald-100 text-emerald-700' };
+    if (outcomeStatus === 'incorrect') return { label: 'Tidak Tepat', className: 'bg-rose-100 text-rose-700' };
+    if (record?.decision?.action === 'refer') return { label: 'Dirujuk', className: 'bg-blue-100 text-blue-700' };
+    if (record?.outcome === 'bad') return { label: 'Butuh Review', className: 'bg-amber-100 text-amber-700' };
+
+    return { label: 'Selesai', className: 'bg-emerald-100 text-emerald-700' };
+}
+
 export default function ArsipPage() {
     const { history, villageData, day, viewParams, navigate } = useGame();
     const [activeTab, setActiveTab] = useState('folders'); // 'folders' | 'daily'
@@ -276,27 +318,14 @@ export default function ArsipPage() {
                                                     : getEncounterDiagnosisLabel(record)}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded text-xs font-bold ${record.type === 'posyandu' ? 'bg-rose-100 text-rose-700' :
-                                                    record.type === 'senam_prolanis' ? 'bg-indigo-100 text-indigo-700' :
-                                                        record.decision?.action === 'refer' ? 'bg-purple-100 text-purple-700' :
-                                                            'bg-green-100 text-green-700'
-                                                    }`}>
-                                                    {record.type === 'posyandu' ? 'KEGIATAN' :
-                                                        record.type === 'senam_prolanis' ? 'MASSA' :
-                                                            record.type === 'prolanis_call' ? 'PANGGIL' :
-                                                                record.type === 'prolanis_monitor' ? 'PANTAU' :
-                                                                    record.decision?.action === 'refer' ? 'RUJUK' :
-                                                                    record.decision?.action === 'delegate_to_maia' ? 'DELEGASI' :
-                                                                    record.decision?.action === 'stabilize' ? 'STABILISASI' :
-                                                                    'RAWAT'}
+                                                <span className={`px-2 py-1 rounded text-xs font-bold ${getEncounterActionBadge(record).className}`}>
+                                                    {getEncounterActionBadge(record).label}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {/* Codex Fix: proper status for modern outcomes */}
-                                                {record.outcomeStatus === 'sisrute_transferred' ? '🚑' :
-                                                 record.outcomeStatus === 'stabilized' ? '🩺' :
-                                                 record.outcomeStatus === 'delegated' ? '🤖' :
-                                                 record.outcome === 'bad' ? '⚠️' : '✅'}
+                                                <span className={`px-2 py-1 rounded text-xs font-bold ${getEncounterStatusBadge(record).className}`}>
+                                                    {getEncounterStatusBadge(record).label}
+                                                </span>
                                             </td>
                                         </tr>
                                     ))}
@@ -644,3 +673,4 @@ function FamilyDetailView({ family, onBack }) {
         </div>
     );
 }
+

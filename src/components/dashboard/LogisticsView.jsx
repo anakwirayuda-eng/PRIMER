@@ -14,6 +14,7 @@ import { useGame } from '../../context/GameContext.jsx';
 import { Package, ArrowLeft, Info, Users, Clock, AlertTriangle, Brain, Heart } from 'lucide-react';
 import { getMedicationById } from '../../data/MedicationDatabase.js';
 import { PROCEDURES_DB } from '../../data/ProceduresDB.js';
+import { normalizeMedicationId } from '../../models/InventoryRuntime.js';
 
 /**
  * LogisticsView — Sub-module for Resources & Staff
@@ -54,7 +55,7 @@ export default function LogisticsView({ onBack, openWiki }) {
         relevantHistory.forEach(h => {
             if (h.decision?.medications) {
                 h.decision.medications.forEach(m => {
-                    const medId = typeof m === 'object' ? (m.id || m.medId) : m;
+                    const medId = normalizeMedicationId(typeof m === 'object' ? (m.id || m.medId) : m);
                     // Codex Fix: skip pseudo-items only (form=action), keep program meds
                     const med = getMedicationById(medId);
                     if (!med || med.form === 'action') return;
@@ -71,9 +72,10 @@ export default function LogisticsView({ onBack, openWiki }) {
                     const proc = PROCEDURES_DB.find(p => p.id === pid);
                     if (proc?.requiredItems) {
                         proc.requiredItems.forEach(itemId => {
-                            const med = getMedicationById(itemId);
+                            const canonicalItemId = normalizeMedicationId(itemId);
+                            const med = getMedicationById(canonicalItemId);
                             if (med && med.form !== 'action' && med.form !== 'equipment') {
-                                consumption[itemId] = (consumption[itemId] || 0) + 1;
+                                consumption[canonicalItemId] = (consumption[canonicalItemId] || 0) + 1;
                             }
                         });
                     }

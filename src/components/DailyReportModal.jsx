@@ -113,7 +113,8 @@ export default function DailyReportModal({ dayData, dailyArchive = [], onNavigat
                         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 text-center">
                             <DollarSign className="mx-auto text-emerald-500 mb-2" size={24} />
                             <div className="text-2xl font-bold text-emerald-700">Rp {formatCurrency(revenue)}</div>
-                            <div className="text-xs text-emerald-600">Pendapatan</div>
+                            <div className="text-xs text-emerald-600">Pendapatan Layanan</div>
+                            <div className="text-[10px] text-emerald-500/80 mt-1">Di luar kapitasi bulanan</div>
                         </div>
                         <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-center">
                             <Star className="mx-auto text-amber-500 mb-2" size={24} />

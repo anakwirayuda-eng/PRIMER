@@ -25,6 +25,7 @@ import { safeSetStorageItem } from '../utils/browserSafety.js';
 import { parseSavePayload } from '../utils/savePayload.js';
 import { MEDICATION_DATABASE } from '../data/MedicationDatabase.js';
 import { calculateGlobalBuffs } from '../game/GameCore.js';
+import { normalizeInventoryList } from '../models/InventoryRuntime.js';
 
 describe('store prophylaxis', () => {
     beforeEach(() => {
@@ -92,12 +93,20 @@ describe('store prophylaxis', () => {
         });
 
         const inventory = useGameStore.getState().finance.pharmacyInventory;
-        const expectedInventory = MEDICATION_DATABASE.filter(med => med.form !== 'action');
+        const expectedInventory = normalizeInventoryList(
+            MEDICATION_DATABASE
+                .filter(med => med.form !== 'action')
+                .map(med => ({
+                    medicationId: med.id,
+                    stock: Math.floor(med.minStock * 1.5),
+                    lastRestockDay: 0
+                }))
+        );
         expect(inventory).toHaveLength(expectedInventory.length);
         expect(inventory[0]).toMatchObject({
-            medicationId: expectedInventory[0].id,
-            stock: Math.floor(expectedInventory[0].minStock * 1.5),
-            lastRestockDay: 0
+            medicationId: expectedInventory[0].medicationId,
+            stock: expectedInventory[0].stock,
+            lastRestockDay: expectedInventory[0].lastRestockDay
         });
     });
 

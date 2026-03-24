@@ -288,20 +288,20 @@ export default function KPIDashboard() {
                                         <Briefcase size={14} /> FINANCIAL LEDGER
                                     </h3>
                                     <div className="mb-6">
-                                        <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest mb-1">GROSS REVENUE</p>
+                                        <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest mb-1">TOTAL DANA AKTIF</p>
                                         <p className="text-3xl font-black text-emerald-400 font-mono tracking-tighter" style={{ textShadow: '0 0 15px rgba(16,185,129,0.4)' }}>
-                                            <span className="text-slate-500 text-2xl mr-1">Rp</span><RollingNumber value={stats.kapitasi + stats.pendapatanUmum} isCurrency />
+                                            <span className="text-slate-500 text-2xl mr-1">Rp</span><RollingNumber value={derivedKpis.availableFunds ?? (stats.kapitasi + stats.pendapatanUmum)} isCurrency />
                                         </p>
                                     </div>
                                     <div className="space-y-4 pt-4 border-t border-slate-800">
                                         <div className="flex justify-between items-end">
-                                            <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">OPEX (PENGELUARAN)</p>
+                                            <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">BEBAN TERCATAT</p>
                                             <p className="text-sm font-black text-rose-400 font-mono">- Rp <RollingNumber value={derivedKpis.totalExpense} isCurrency /></p>
                                         </div>
                                         <div className="flex justify-between items-end">
-                                            <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">NET MARGIN</p>
-                                            <p className={`text-lg font-black font-mono ${derivedKpis.netBalance >= 0 ? 'text-emerald-400' : 'text-rose-400 animate-pulse'}`}>
-                                                Rp <RollingNumber value={Math.abs(derivedKpis.netBalance || 0)} isCurrency />
+                                            <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">PENDAPATAN UMUM</p>
+                                            <p className="text-lg font-black font-mono text-emerald-400">
+                                                Rp <RollingNumber value={stats.pendapatanUmum || 0} isCurrency />
                                             </p>
                                         </div>
                                     </div>
@@ -493,7 +493,7 @@ export default function KPIDashboard() {
                                             </div>
                                             <div className={`sm:col-span-2 p-4 rounded-2xl flex items-center justify-between shadow-inner ${isDark ? 'bg-indigo-950/30 border border-indigo-900/50' : 'bg-indigo-50 border border-indigo-200'}`}>
                                             <div>
-                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>TOTAL PENDAPATAN</p>
+                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>TOTAL PENERIMAAN SIKLUS</p>
                                                 <p className={`text-2xl font-black font-mono ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Rp <RollingNumber value={report.totalRevenue || 0} isCurrency /></p>
                                                 <p className={`text-[8px] font-mono mt-1 ${isDark ? 'text-indigo-300/60' : 'text-indigo-700/60'}`}>
                                                     Kapitasi Rp <RollingNumber value={report.monthlyKapitasi || 0} isCurrency /> • Layanan Rp <RollingNumber value={report.serviceRevenue || 0} isCurrency />

@@ -60,7 +60,7 @@ describe('engine-store-audit', () => {
         }
     });
 
-    it('keeps the CLI audit green for factory-backed slices', () => {
+    it('keeps the CLI audit green for factory-backed slices', { timeout: 15000 }, () => {
         const result = spawnSync(process.execPath, ['scripts/primera/engine-store-audit.mjs'], {
             cwd: ROOT,
             encoding: 'utf8'

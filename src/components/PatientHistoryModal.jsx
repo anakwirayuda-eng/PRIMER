@@ -18,6 +18,7 @@ const outcomeConfig = {
     memburuk: { label: 'Memburuk', icon: HeartCrack, color: 'text-amber-600', bg: 'bg-amber-50' },
     meninggal: { label: 'Meninggal', icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50' },
     komplain: { label: 'Komplain', icon: ThumbsDown, color: 'text-orange-600', bg: 'bg-orange-50' },
+    referred: { label: 'Dirujuk', icon: Ambulance, color: 'text-blue-600', bg: 'bg-blue-50' },
     rujuk_stabil: { label: 'Rujuk (Stabil)', icon: Ambulance, color: 'text-blue-600', bg: 'bg-blue-50' },
     rujuk_tidak_perlu: { label: 'Rujuk (Tidak Perlu)', icon: Ambulance, color: 'text-purple-600', bg: 'bg-purple-50' },
     // Codex Fix: missing outcome statuses from useGameStore

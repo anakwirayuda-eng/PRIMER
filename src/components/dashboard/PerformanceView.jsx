@@ -15,7 +15,7 @@ import { BarChart3, ArrowLeft, Info, TrendingUp, Wallet, Users, AlertTriangle } 
 
 /**
  * PerformanceView — Sub-module for KBK Scorecard & Finance
- * Shows: Angka Kontak, RRNS, RPP, KBK Grade, Revenue streams
+ * Shows: Angka Kontak, RRNS, RPP, KBK Grade, operational fund breakdown
  */
 export default function PerformanceView({ onBack, openWiki }) {
     const { stats, kpi, derivedKpis, villageData, prolanisRoster, day } = useGame();
@@ -158,12 +158,12 @@ export default function PerformanceView({ onBack, openWiki }) {
                 </div>
             </div>
 
-            {/* Revenue */}
+            {/* Operational Funds */}
             <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] p-5"
                 onClick={() => openWiki('liquidity')} style={{ cursor: 'pointer' }}>
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="text-[10px] font-black text-emerald-400/70 uppercase tracking-[0.2em] flex items-center gap-2">
-                        <Wallet size={12} /> Revenue Streams
+                        <Wallet size={12} /> Sumber Dana Operasional
                     </h3>
                     <Info size={14} className="text-white/20" />
                 </div>
@@ -177,9 +177,9 @@ export default function PerformanceView({ onBack, openWiki }) {
                         <span className="text-sm font-black text-sky-400">Rp {formatCurrency(stats.pendapatanUmum)}</span>
                     </div>
                     <div className="bg-white/[0.04] rounded-xl p-2.5">
-                        <span className="text-[9px] font-bold text-white/40 uppercase block">Saldo</span>
-                        <span className={`text-sm font-black ${derivedKpis.netBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                            Rp {formatCurrency(derivedKpis.netBalance)}
+                        <span className="text-[9px] font-bold text-white/40 uppercase block">Dana Aktif</span>
+                        <span className={`text-sm font-black ${(derivedKpis.availableFunds ?? derivedKpis.netBalance) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            Rp {formatCurrency(derivedKpis.availableFunds ?? derivedKpis.netBalance)}
                         </span>
                     </div>
                 </div>

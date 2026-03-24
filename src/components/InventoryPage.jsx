@@ -12,14 +12,18 @@
 import React, { useState, useMemo } from 'react';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { useGame } from '../context/GameContext.jsx';
+import { useGameStore } from '../store/useGameStore.js';
 import { guardStability } from '../utils/prophylaxis.js';
 import { MEDICATION_DATABASE, MEDICATION_CATEGORIES, getMedicationById } from '../data/MedicationDatabase.js';
-import { Package, ShoppingCart, Search, Filter, AlertTriangle, TrendingDown, Package2, BarChart3, ClipboardList } from 'lucide-react';
+import { Package, ShoppingCart, Search, Filter, AlertTriangle, TrendingDown, Package2, BarChart3, ClipboardList, ChevronDown } from 'lucide-react';
 import OrderModal from './OrderModal.jsx';
+import { normalizeMedicationId } from '../models/InventoryRuntime.js';
 
 export default function InventoryPage() {
     const { pharmacyInventory, pendingOrders, day } = useGame();
+    const procurementLog = useGameStore(state => state.finance.procurementLog || []);
     const [showOrderModal, setShowOrderModal] = useState(false);
+    const [showProcurementLog, setShowProcurementLog] = useState(false);
 
     React.useEffect(() => {
         guardStability('INVENTORY_INIT', 2000, 3);
@@ -66,8 +70,16 @@ export default function InventoryPage() {
 
     // Filter medications — Codex Fix: use stockItems base, null-safe search
     const filteredMeds = useMemo(() => {
-        // Start from real stock items, not raw MEDICATION_DATABASE
-        let result = MEDICATION_DATABASE.filter(m => m && m.form !== 'action' && m.form !== 'equipment');
+        const seen = new Set();
+        let result = MEDICATION_DATABASE
+            .filter(m => m && m.form !== 'action' && m.form !== 'equipment')
+            .map((med) => {
+                const canonicalId = normalizeMedicationId(med.id);
+                if (seen.has(canonicalId)) return null;
+                seen.add(canonicalId);
+                return getMedicationById(canonicalId) || med;
+            })
+            .filter(Boolean);
 
         if (selectedCategory !== 'all') {
             result = result.filter(m => m.category === selectedCategory);
@@ -84,6 +96,11 @@ export default function InventoryPage() {
 
         return result;
     }, [searchQuery, selectedCategory]);
+
+    const procurementEntries = useMemo(
+        () => [...procurementLog].slice().reverse(),
+        [procurementLog]
+    );
 
     return (
         <div className="h-full flex flex-col overflow-hidden bg-slate-50">
@@ -227,7 +244,7 @@ export default function InventoryPage() {
                             <tbody>
                                 <ErrorBoundary name="InventoryList">
                                     {filteredMeds.map(med => {
-                                        const item = pharmacyInventory.find(i => i.medicationId === med.id);
+                                        const item = pharmacyInventory.find(i => i.medicationId === normalizeMedicationId(med.id));
                                         const stock = item?.stock || 0;
                                         const isLow = stock < med.minStock;
                                         const isOut = stock === 0;
@@ -268,6 +285,81 @@ export default function InventoryPage() {
                                 <p className="font-semibold">Tidak ada hasil ditemukan</p>
                                 <p className="text-xs mt-1">Coba ubah kata kunci atau filter kategori</p>
                             </div>
+                        )}
+                    </div>
+
+                    <div className="mt-4 bg-white rounded-xl border shadow-sm overflow-hidden">
+                        <button
+                            type="button"
+                            onClick={() => setShowProcurementLog((prev) => !prev)}
+                            className="w-full flex items-center justify-between px-6 py-4 bg-slate-50 border-b text-left"
+                        >
+                            <div>
+                                <p className="text-sm font-bold text-slate-800">Riwayat Pembelian</p>
+                                <p className="text-xs text-slate-500">Log audit pengadaan farmasi dan alkes</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-full">
+                                    {procurementEntries.length} log
+                                </span>
+                                <ChevronDown
+                                    size={18}
+                                    className={`text-slate-500 transition-transform ${showProcurementLog ? 'rotate-180' : ''}`}
+                                />
+                            </div>
+                        </button>
+
+                        {showProcurementLog && (
+                            procurementEntries.length === 0 ? (
+                                <div className="px-6 py-10 text-center text-slate-500">
+                                    <ClipboardList size={28} className="mx-auto mb-3 opacity-40" />
+                                    <p className="font-semibold">Belum ada pembelian</p>
+                                </div>
+                            ) : (
+                                <div className="max-h-80 overflow-y-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-slate-50 sticky top-0 border-b">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">Hari</th>
+                                                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">Supplier</th>
+                                                <th className="px-6 py-3 text-center text-xs font-bold text-slate-600 uppercase">Items</th>
+                                                <th className="px-6 py-3 text-right text-xs font-bold text-slate-600 uppercase">Total Cost</th>
+                                                <th className="px-6 py-3 text-center text-xs font-bold text-slate-600 uppercase">Type</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {procurementEntries.map((entry, index) => {
+                                                const typeLabel = entry.receiptMode === 'auto'
+                                                    ? 'AUTO'
+                                                    : entry.isExpress
+                                                        ? 'EXPRESS'
+                                                        : 'REGULAR';
+                                                return (
+                                                    <tr key={`${entry.orderId || 'log'}-${entry.timestamp || index}`} className="border-b hover:bg-slate-50">
+                                                        <td className="px-6 py-3 text-sm text-slate-700">Hari {entry.day ?? '-'}</td>
+                                                        <td className="px-6 py-3 text-sm text-slate-700">{entry.supplierName || entry.supplierId || '-'}</td>
+                                                        <td className="px-6 py-3 text-center text-sm font-semibold text-slate-700">{entry.itemCount || 0}</td>
+                                                        <td className="px-6 py-3 text-right text-sm font-semibold text-slate-700">
+                                                            Rp {(entry.cost || 0).toLocaleString('id-ID')}
+                                                        </td>
+                                                        <td className="px-6 py-3 text-center">
+                                                            <span className={`text-[10px] font-bold px-2 py-1 rounded-full border ${
+                                                                typeLabel === 'AUTO'
+                                                                    ? 'bg-cyan-50 text-cyan-700 border-cyan-100'
+                                                                    : typeLabel === 'EXPRESS'
+                                                                        ? 'bg-amber-50 text-amber-700 border-amber-100'
+                                                                        : 'bg-slate-50 text-slate-700 border-slate-200'
+                                                            }`}>
+                                                                {typeLabel}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )
                         )}
                     </div>
                 </div>

@@ -11,17 +11,24 @@
 
 import React from 'react';
 import { useGame } from '../context/GameContext.jsx';
+import { useGameStore } from '../store/useGameStore.js';
 import { User, Timer, Bot, Scale, Dna, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { getAvatarStyle } from '../utils/AvatarUtils.js';
+import { getUpcomingFollowups } from '../game/ConsequenceEngine.js';
 
 export default function QueueList({ activeService }) {
-    const { queue, admitPatient, activePatientId, delegateToMaia, time } = useGame();
+    const { queue, admitPatient, activePatientId, delegateToMaia, time, day } = useGame();
+    const consequenceQueue = useGameStore(state => state.clinical.consequenceQueue || []);
     const { isDark } = useTheme();
     const { t } = useTranslation();
+    const upcomingFollowups = React.useMemo(
+        () => getUpcomingFollowups(consequenceQueue, day, 3).length,
+        [consequenceQueue, day]
+    );
 
     // Helper to get BMI color
     const getBMIIndicator = (patient) => {
@@ -62,6 +69,11 @@ export default function QueueList({ activeService }) {
                                 <span className={`${isDark ? 'bg-white/10 text-emerald-300' : 'bg-white/20 text-white'} px-2 py-0.5 rounded text-xs font-bold`}>
                                     {queue.length} {t('dashboard.waiting')}
                                 </span>
+                                {upcomingFollowups > 0 && (
+                                    <span className={`${isDark ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30' : 'bg-amber-100 text-amber-700 border border-amber-200'} px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider`}>
+                                        {upcomingFollowups} kontrol
+                                    </span>
+                                )}
                                 {queue.length > 0 && (
                                     <span className="text-[10px] text-emerald-100 flex items-center gap-1">
                                         <Timer size={10} />
