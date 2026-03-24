@@ -108,7 +108,7 @@ export default function EndOfDayModal({ debriefData, onComplete, onDismiss }) {
                         <StatCard
                             icon={<span className="text-sm">💰</span>}
                             value={Math.round(summary.todayRevenue / 1000)}
-                            label="Arus Dana"
+                            label="Net Layanan"
                             colorClass="bg-purple-50 text-purple-600"
                             suffix="rb"
                         />

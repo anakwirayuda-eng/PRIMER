@@ -873,15 +873,38 @@ function buildMonthlyArchiveEntry(state, accreditation, hiredStaff) {
     const staffSalaries = Array.isArray(hiredStaff)
         ? hiredStaff.reduce((total, staffMember) => total + (Number(staffMember?.salary) || 0), 0)
         : 0;
+    const recordedExpenses =
+        (Number(state?.finance?.stats?.pengeluaranObat) || 0) +
+        (Number(state?.finance?.stats?.pengeluaranLab) || 0) +
+        (Number(state?.finance?.stats?.pengeluaranOperasional) || 0);
+    const totalRecordedCosts = staffSalaries + recordedExpenses;
     const monthlyKapitasi = 50000000 * (ACCREDITATION_MULTIPLIER[accreditation] || 1.0);
     const totalRevenue = totalDailyRevenue + monthlyKapitasi;
+    const netOperationalResult = totalRevenue - totalRecordedCosts;
     const previousReport = Array.isArray(state?.clinical?.monthlyArchive) && state.clinical.monthlyArchive.length > 0
         ? state.clinical.monthlyArchive[state.clinical.monthlyArchive.length - 1]
         : null;
     const trend = previousReport
         ? {
             score: avgScore - (Number(previousReport?.avgScore) || 0),
-            revenue: totalRevenue - (Number(previousReport?.totalRevenue) || 0)
+            revenue: totalRevenue - (Number(previousReport?.totalRevenue) || 0),
+            totalRevenue: totalRevenue - (Number(previousReport?.totalRevenue) || 0),
+            serviceRevenue: totalDailyRevenue - (Number(previousReport?.serviceRevenue) || 0),
+            recordedExpenses: recordedExpenses - (Number(previousReport?.recordedExpenses) || 0),
+            totalRecordedCosts: totalRecordedCosts - (
+                Number(previousReport?.totalRecordedCosts)
+                || ((Number(previousReport?.staffSalaries) || 0) + (Number(previousReport?.recordedExpenses) || 0))
+            ),
+            netOperationalResult: netOperationalResult - (
+                Number(previousReport?.netOperationalResult)
+                || (
+                    (Number(previousReport?.totalRevenue) || 0) -
+                    (
+                        Number(previousReport?.totalRecordedCosts)
+                        || ((Number(previousReport?.staffSalaries) || 0) + (Number(previousReport?.recordedExpenses) || 0))
+                    )
+                )
+            )
         }
         : {};
 
@@ -894,6 +917,9 @@ function buildMonthlyArchiveEntry(state, accreditation, hiredStaff) {
         monthlyKapitasi,
         totalRevenue,
         staffSalaries,
+        recordedExpenses,
+        totalRecordedCosts,
+        netOperationalResult,
         trend
     };
 }
@@ -1388,12 +1414,24 @@ export const useGameStore = create(
                             const monthlyKapitasi = 50000000 * accreditationMultiplier;
                             const totalSalaries = hiredStaff.reduce((total, staffMember) => total + (staffMember.salary || 0), 0);
                             const monthlyReport = buildMonthlyArchiveEntry(s, accreditation, hiredStaff);
+                            const existingMonthReport = monthlyReport
+                                ? (s.clinical.monthlyArchive || []).find((entry) => entry?.month === monthlyReport.month)
+                                : null;
                             const monthlyArchive = monthlyReport
                                 ? [
                                     ...(s.clinical.monthlyArchive || []).filter((entry) => entry?.month !== monthlyReport.month),
                                     monthlyReport
                                 ]
                                 : s.clinical.monthlyArchive;
+
+                            if (existingMonthReport) {
+                                return {
+                                    clinical: {
+                                        ...s.clinical,
+                                        monthlyArchive
+                                    }
+                                };
+                            }
 
                             return {
                                 finance: {

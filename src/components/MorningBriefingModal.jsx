@@ -16,6 +16,20 @@ import StepCarousel from './shared/StepCarousel';
 import StatCard from './shared/StatCard';
 import { generateMorningBriefing, generateDefaultAllocation, generateDailyQuests } from '../game/MorningBriefing.js';
 
+function formatCompactRupiah(value) {
+    const amount = Number(value) || 0;
+    if (amount >= 1000000000) {
+        return `Rp ${(amount / 1000000000).toFixed(1).replace('.', ',')} M`;
+    }
+    if (amount >= 1000000) {
+        return `Rp ${(amount / 1000000).toFixed(1).replace('.', ',')} jt`;
+    }
+    if (amount >= 1000) {
+        return `Rp ${(amount / 1000).toFixed(1).replace('.', ',')} rb`;
+    }
+    return `Rp ${amount.toLocaleString('id-ID')}`;
+}
+
 export default function MorningBriefingModal({ briefingData = null, gameState = null, onComplete, onDismiss }) {
     const { isDark } = useTheme();
     const modalRef = useModalA11y(onDismiss);
@@ -99,6 +113,23 @@ export default function MorningBriefingModal({ briefingData = null, gameState = 
                                 colorClass="bg-amber-50 text-amber-600"
                                 suffix="%"
                             />
+                        </div>
+
+                        <div className={`p-3 rounded-xl text-xs ${isDark ? 'bg-slate-800/60 text-slate-300' : 'bg-slate-50 text-slate-600'}`}>
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="font-bold uppercase tracking-wider">Dana Aktif</span>
+                                <span className="font-mono font-bold">
+                                    {formatCompactRupiah(briefing.kpiSnapshot.availableFunds)}
+                                </span>
+                            </div>
+                            {briefing.kpiSnapshot.currentCycleReceipts > 0 && (
+                                <div className="mt-1 flex items-center justify-between gap-4 opacity-80">
+                                    <span>Penerimaan Siklus</span>
+                                    <span className="font-mono">
+                                        {formatCompactRupiah(briefing.kpiSnapshot.currentCycleReceipts)}
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Follow-up alerts */}

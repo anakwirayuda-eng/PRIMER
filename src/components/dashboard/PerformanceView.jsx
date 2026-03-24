@@ -82,7 +82,7 @@ export default function PerformanceView({ onBack, openWiki }) {
                         <BarChart3 size={20} className="text-emerald-400" />
                         Performance Scorecard
                     </h2>
-                    <p className="text-emerald-300/50 text-[10px] uppercase tracking-[0.3em] mt-0.5 ml-7 font-medium">KBK • Kapitasi • Revenue</p>
+                    <p className="text-emerald-300/50 text-[10px] uppercase tracking-[0.3em] mt-0.5 ml-7 font-medium">KBK • Dana Operasional • Kinerja</p>
                 </div>
             </div>
 

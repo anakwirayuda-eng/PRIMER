@@ -538,6 +538,9 @@ describe('store prophylaxis', () => {
                 monthlyKapitasi: 62500000,
                 totalRevenue: 62800000,
                 staffSalaries: 2000000,
+                recordedExpenses: 875000,
+                totalRecordedCosts: 2875000,
+                netOperationalResult: 59925000,
                 trend: {}
             }
         ]);
@@ -548,6 +551,116 @@ describe('store prophylaxis', () => {
             pengeluaranOperasional: 0,
             pendapatanUmum: 0
         });
+    });
+
+    it('tracks explicit monthly trend deltas for service, total receipts, and operational surplus', () => {
+        const hiredStaff = [
+            { id: 'staff-1', salary: 1500000 },
+            { id: 'staff-2', salary: 500000 }
+        ];
+        const previousReport = {
+            month: 1,
+            avgScore: 80,
+            avgReputation: 85,
+            totalPatients: 90,
+            serviceRevenue: 300000,
+            monthlyKapitasi: 62500000,
+            totalRevenue: 62800000,
+            staffSalaries: 2000000,
+            recordedExpenses: 0,
+            totalRecordedCosts: 2000000,
+            netOperationalResult: 60800000,
+            trend: {}
+        };
+
+        useGameStore.setState(state => ({
+            world: { ...state.world, day: 61 },
+            staff: { ...state.staff, hiredStaff },
+            clinical: {
+                ...state.clinical,
+                dailyArchive: [
+                    { day: 31, patientsToday: 20, revenue: 150000, reputation: 90, overallScore: 90 },
+                    { day: 45, patientsToday: 25, revenue: 250000, reputation: 92, overallScore: 80 }
+                ],
+                monthlyArchive: [previousReport]
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().financeActions.processMonthlyReport('Utama', hiredStaff);
+        });
+
+        expect(useGameStore.getState().clinical.monthlyArchive[1]).toMatchObject({
+            month: 2,
+            serviceRevenue: 400000,
+            totalRevenue: 62900000,
+            staffSalaries: 2000000,
+            recordedExpenses: 0,
+            totalRecordedCosts: 2000000,
+            netOperationalResult: 60900000,
+            trend: {
+                score: 5,
+                revenue: 100000,
+                totalRevenue: 100000,
+                serviceRevenue: 100000,
+                recordedExpenses: 0,
+                totalRecordedCosts: 0,
+                netOperationalResult: 100000
+            }
+        });
+    });
+
+    it('does not double-apply finance mutations when monthly report is processed twice for the same month', () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
+
+        const hiredStaff = [
+            { id: 'staff-1', salary: 1500000 },
+            { id: 'staff-2', salary: 500000 }
+        ];
+
+        useGameStore.setState(state => ({
+            world: { ...state.world, day: 31 },
+            staff: { ...state.staff, hiredStaff },
+            clinical: {
+                ...state.clinical,
+                dailyArchive: [
+                    { day: 1, patientsToday: 10, revenue: 100000, reputation: 80, overallScore: 80 },
+                    { day: 15, patientsToday: 20, revenue: 200000, reputation: 90, overallScore: 80 }
+                ],
+                monthlyArchive: []
+            },
+            finance: {
+                ...state.finance,
+                stats: {
+                    ...state.finance.stats,
+                    kapitasi: 1000000,
+                    pengeluaranObat: 250000,
+                    pengeluaranLab: 125000,
+                    pengeluaranOperasional: 500000,
+                    pendapatanUmum: 700000
+                }
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().financeActions.processMonthlyReport('Utama', hiredStaff);
+        });
+
+        const afterFirstRun = useGameStore.getState();
+
+        act(() => {
+            vi.advanceTimersByTime(1000);
+        });
+
+        act(() => {
+            useGameStore.getState().financeActions.processMonthlyReport('Utama', hiredStaff);
+        });
+
+        const afterSecondRun = useGameStore.getState();
+
+        expect(afterSecondRun.clinical.monthlyArchive).toHaveLength(1);
+        expect(afterSecondRun.finance.stats).toMatchObject(afterFirstRun.finance.stats);
     });
 
     it('initializes knowledge and preserves residual XP after level up', () => {

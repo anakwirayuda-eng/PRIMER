@@ -14,7 +14,7 @@ import { useGame } from '../../context/GameContext.jsx';
 import { CreditCard, Wallet, TrendingUp, History } from 'lucide-react';
 
 const BankApp = () => {
-    const { stats, playerStats } = useGame();
+    const { stats, playerStats, monthlyArchive } = useGame();
 
     // Simulate personal savings (separate from clinic money for now, or just mirror it as 'Gaji' portion)
     // For MVP, Personal Money = Pendapatan Umum (Clinic Profit) for now as requested in previous turn
@@ -22,8 +22,16 @@ const BankApp = () => {
 
     const personalSavings = Number(stats?.pendapatanUmum || 0);
     const monthlySalary = 4500000; // Basic salary
-    const jasaPelayananBase = Number(stats?.pendapatanJkn ?? stats?.kapitasi ?? 0);
-    const jasaPelayanan = Math.floor(jasaPelayananBase * 0.4); // 40% of JKN capitation
+    const latestMonthlyReport = Array.isArray(monthlyArchive) && monthlyArchive.length > 0
+        ? monthlyArchive[monthlyArchive.length - 1]
+        : null;
+    const jasaPelayananBase = Number(
+        stats?.pendapatanJkn
+        ?? stats?.currentCycleReceipts
+        ?? latestMonthlyReport?.serviceRevenue
+        ?? 0
+    );
+    const jasaPelayanan = Math.floor(jasaPelayananBase * 0.4); // 40% of explicit cycle receipts
 
     return (
         <div className="p-4 bg-blue-50 h-full">

@@ -181,11 +181,14 @@ function generateKpiSnapshot(stats, villageData, reputation) {
     const indicators = villageData?.healthIndicators || {};
     const totalPatientsServed = stats.totalPatientsServed ?? stats.totalPatients ?? 0;
     const reputationValue = reputation ?? stats.reputation ?? 80;
-    const revenueThisMonth = stats.monthlyRevenue ?? stats.totalRevenue ?? ((stats.kapitasi || 0) + (stats.pendapatanUmum || 0));
+    const availableFunds = stats.availableFunds ?? ((stats.kapitasi || 0) + (stats.pendapatanUmum || 0));
+    const currentCycleReceipts = stats.monthlyRevenue ?? stats.currentCycleReceipts ?? 0;
 
     return {
         patientsServedTotal: totalPatientsServed,
-        revenueThisMonth,
+        availableFunds,
+        currentCycleReceipts,
+        revenueThisMonth: currentCycleReceipts,
         reputation: reputationValue,
         outbreakRisk: indicators.outbreak_risk || 'low',
         kpiItems: [

@@ -195,9 +195,9 @@ export default function DashboardPage() {
             wikiKey: 'ukm_overview'
         },
         {
-            id: 'performance', label: 'Performance', sublabel: 'KBK • Kapitasi • Revenue',
+            id: 'performance', label: 'Performance', sublabel: 'KBK • Dana Operasional • Kinerja',
             icon: BarChart3, color: 'emerald',
-            quickStat: `Rp ${(stats.kapitasi / 1000000).toFixed(1)}M`,
+            quickStat: `Rp ${((derivedKpis.availableFunds ?? ((stats.kapitasi || 0) + (stats.pendapatanUmum || 0))) / 1000000).toFixed(1)}M`,
             wikiKey: 'kbk'
         },
         {

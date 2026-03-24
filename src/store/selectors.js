@@ -28,6 +28,15 @@ export const selectDerivedFinance = (state) => {
     } = finance.kpi || {};
 
     const stats = finance.stats || {};
+    const currentDay = Number(state?.world?.day) || 1;
+    const currentCycle = Math.max(1, Math.floor((currentDay - 1) / 30) + 1);
+    const currentCycleStartDay = ((currentCycle - 1) * 30) + 1;
+    const currentCycleReceipts = (Array.isArray(state?.clinical?.dailyArchive) ? state.clinical.dailyArchive : [])
+        .filter(entry => {
+            const entryDay = Number(entry?.day) || 0;
+            return entryDay >= currentCycleStartDay && entryDay < currentDay;
+        })
+        .reduce((total, entry) => total + (Number(entry?.revenue) || 0), 0);
 
     const clinicalAccuracy = totalPatients > 0 ? Math.round((correctDiagnoses / totalPatients) * 100) : 0;
     const referralRate = totalPatients > 0 ? Math.round((referrals / totalPatients) * 100) : 0;
@@ -61,6 +70,7 @@ export const selectDerivedFinance = (state) => {
         avgSatisfaction,
         totalExpense,
         availableFunds,
+        currentCycleReceipts,
         totalRevenue: availableFunds, // Legacy alias used by older viewers for current liquid funds
         netBalance: availableFunds, // Legacy alias kept for compatibility with existing saldo widgets
         overallScore,

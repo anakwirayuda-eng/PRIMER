@@ -15,12 +15,14 @@ describe('BankApp', () => {
         mockUseGame.mockReset();
     });
 
-    it('falls back to kapitasi when pendapatanJkn is unavailable', () => {
+    it('uses explicit cycle receipts instead of active kapitasi balance for jaspel', () => {
         mockUseGame.mockReturnValue({
             stats: {
                 pendapatanUmum: 125000,
-                kapitasi: 50000000
+                kapitasi: 50000000,
+                currentCycleReceipts: 300000
             },
+            monthlyArchive: [],
             playerStats: {
                 name: 'Dokter Test'
             }
@@ -28,7 +30,25 @@ describe('BankApp', () => {
 
         render(<BankApp />);
 
-        expect(screen.getByText('+Rp 20.000.000')).toBeInTheDocument();
+        expect(screen.getByText('+Rp 120.000')).toBeInTheDocument();
         expect(screen.queryByText(/NaN/)).not.toBeInTheDocument();
+    });
+
+    it('does not fall back to kapitasi when no receipt metric is available', () => {
+        mockUseGame.mockReturnValue({
+            stats: {
+                pendapatanUmum: 125000,
+                kapitasi: 50000000
+            },
+            monthlyArchive: [],
+            playerStats: {
+                name: 'Dokter Test'
+            }
+        });
+
+        render(<BankApp />);
+
+        expect(screen.getByText('+Rp 0')).toBeInTheDocument();
+        expect(screen.queryByText('+Rp 20.000.000')).not.toBeInTheDocument();
     });
 });

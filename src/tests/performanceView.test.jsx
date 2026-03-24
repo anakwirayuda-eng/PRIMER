@@ -38,6 +38,7 @@ describe('PerformanceView finance semantics', () => {
 
         expect(screen.getByText('Sumber Dana Operasional')).toBeInTheDocument();
         expect(screen.getByText('Dana Aktif')).toBeInTheDocument();
+        expect(screen.getByText('KBK • Dana Operasional • Kinerja')).toBeInTheDocument();
         expect(screen.getByText('Rp 50.2M')).toBeInTheDocument();
     });
 });

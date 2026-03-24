@@ -27,7 +27,7 @@ describe('MorningBriefingModal', () => {
                 briefingData={{
                     day: 7,
                     staffReport: { available: 3, total: 4, avgMorale: 82 },
-                    kpiSnapshot: { reputation: 91 },
+                    kpiSnapshot: { reputation: 91, availableFunds: 50250000, currentCycleReceipts: 1250000 },
                     pendingFollowups: [],
                     stockAlerts: { lowStock: [] },
                     todayEvents: [],
@@ -43,5 +43,9 @@ describe('MorningBriefingModal', () => {
         expect(screen.getByText(/Hari ke-7/)).toBeInTheDocument();
         expect(screen.getByText('Reputasi:91')).toBeInTheDocument();
         expect(screen.getByText('Staff Aktif:3/4')).toBeInTheDocument();
+        expect(screen.getByText('Dana Aktif')).toBeInTheDocument();
+        expect(screen.getByText('Rp 50,3 jt')).toBeInTheDocument();
+        expect(screen.getByText('Penerimaan Siklus')).toBeInTheDocument();
+        expect(screen.getByText('Rp 1,3 jt')).toBeInTheDocument();
     });
 });

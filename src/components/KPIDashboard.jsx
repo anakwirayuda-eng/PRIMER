@@ -496,7 +496,13 @@ export default function KPIDashboard() {
                                                 <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>TOTAL PENERIMAAN SIKLUS</p>
                                                 <p className={`text-2xl font-black font-mono ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Rp <RollingNumber value={report.totalRevenue || 0} isCurrency /></p>
                                                 <p className={`text-[8px] font-mono mt-1 ${isDark ? 'text-indigo-300/60' : 'text-indigo-700/60'}`}>
-                                                    Kapitasi Rp <RollingNumber value={report.monthlyKapitasi || 0} isCurrency /> • Layanan Rp <RollingNumber value={report.serviceRevenue || 0} isCurrency />
+                                                    Kapitasi Rp <RollingNumber value={report.monthlyKapitasi || 0} isCurrency /> | Layanan Rp <RollingNumber value={report.serviceRevenue || 0} isCurrency />
+                                                </p>
+                                                <p className={`text-[8px] font-mono mt-1 ${isDark ? 'text-indigo-300/60' : 'text-indigo-700/60'}`}>
+                                                    Gaji Rp <RollingNumber value={report.staffSalaries || 0} isCurrency /> | Beban Rp <RollingNumber value={report.recordedExpenses || 0} isCurrency />
+                                                </p>
+                                                <p className={`text-[8px] font-mono mt-1 ${isDark ? 'text-indigo-300/60' : 'text-indigo-700/60'}`}>
+                                                    Net Operasional Rp <RollingNumber value={report.netOperationalResult ?? ((report.totalRevenue || 0) - (((report.totalRecordedCosts || 0) || (report.staffSalaries || 0))))} isCurrency />
                                                 </p>
                                             </div>
                                                 <Award size={32} className="text-indigo-500 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
