@@ -20,7 +20,7 @@ export default function BillingTab({ patient: _patient, isDark, selectedMeds, se
     const items = [
         { label: 'Konsultasi & Pemeriksaan Dasar', price: billings.pendaftaran, qty: 1, total: billings.pendaftaran, icon: Stethoscope },
         ...billings.medDetails.map(m => ({
-            label: m.name, price: m.unitPrice, qty: m.qty, total: m.cost, icon: Pill
+            label: m.name, price: m.sellPrice || m.buyPrice, qty: m.qty, total: m.cost, icon: Pill
         })),
         ...billings.labDetails.map(l => ({
             label: `Lab: ${l.name.toUpperCase()}`, price: l.cost, qty: 1, total: l.cost, icon: Microscope

@@ -32,7 +32,7 @@ export default function InventoryPage() {
         // Codex Fix: exclude pseudo-items from inventory stats
         const stockItems = pharmacyInventory.filter(item => {
             const m = getMedicationById(item.medicationId);
-            return m && m.unitPrice > 0 && m.form !== 'action';
+            return m && m.buyPrice > 0 && m.form !== 'action';
         });
         const lowStock = stockItems.filter(item => {
             const med = getMedicationById(item.medicationId);
@@ -43,7 +43,7 @@ export default function InventoryPage() {
 
         const totalValue = stockItems.reduce((sum, item) => {
             const med = getMedicationById(item.medicationId);
-            return sum + (med ? med.unitPrice * item.stock : 0);
+            return sum + (med ? med.buyPrice * item.stock : 0);
         }, 0);
 
         // Codex Fix: show both pending and overdue orders (was hiding overdue)
@@ -67,7 +67,7 @@ export default function InventoryPage() {
     // Filter medications — Codex Fix: use stockItems base, null-safe search
     const filteredMeds = useMemo(() => {
         // Start from real stock items, not raw MEDICATION_DATABASE
-        let result = MEDICATION_DATABASE.filter(m => m && m.unitPrice > 0 && m.form !== 'action');
+        let result = MEDICATION_DATABASE.filter(m => m && m.buyPrice > 0 && m.form !== 'action');
 
         if (selectedCategory !== 'all') {
             result = result.filter(m => m.category === selectedCategory);
@@ -253,7 +253,7 @@ export default function InventoryPage() {
                                                     {med.minStock.toLocaleString('id-ID')}
                                                 </td>
                                                 <td className="text-right px-6 py-4 font-semibold text-slate-700">
-                                                    Rp {med.unitPrice.toLocaleString('id-ID')}
+                                                    Rp {med.buyPrice.toLocaleString('id-ID')}
                                                 </td>
                                             </tr>
                                         );

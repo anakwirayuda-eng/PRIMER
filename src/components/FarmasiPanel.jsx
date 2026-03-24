@@ -112,7 +112,7 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
             return {
                 medId: i.medId,
                 medName: med?.name || i.medId,
-                sellPrice: med?.sellPrice || med?.unitPrice || 0,
+                sellPrice: med?.sellPrice || 0,
                 qtyNeeded: (i.dose || 1) * (i.frequency || 1) * (i.duration || 1)
             };
         }), isBPJS);
@@ -134,29 +134,9 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
 
     const handleDispense = useCallback(() => {
         if (!activeRxId || !verifiedRxIds.has(activeRxId)) return;
-        // Codex Fix: block dispense if verification detected invalid prescription
         if (verification && !verification.isValid) return;
-        if (consumeMedication && activeRx) {
-            // Codex Fix: pre-validate ALL items have sufficient stock before consuming ANY
-            const itemsWithQty = activeRx.items.map(item => ({
-                medId: item.medId,
-                qty: (item.dose || 1) * (item.frequency || 1) * (item.duration || 1)
-            }));
-            // Check stock for all items first
-            if (Array.isArray(pharmacyInventory)) {
-                for (const { medId, qty } of itemsWithQty) {
-                    const invItem = pharmacyInventory.find(i => i.medicationId === medId);
-                    if (!invItem || invItem.stock < qty) {
-                        // Insufficient stock — abort without consuming anything
-                        return;
-                    }
-                }
-            }
-            // All stock validated — now consume atomically
-            for (const { medId, qty } of itemsWithQty) {
-                consumeMedication(medId, qty);
-            }
-        }
+        // Stock already auto-deducted at discharge — FarmasiPanel is optional verification
+        // Manual verification grants XP/reputation bonus as gameplay reward
         // Codex Fix: persist dispensed status to store so remount doesn't re-dispense
         if (markPrescriptionDispensed) {
             markPrescriptionDispensed(activeRxId);

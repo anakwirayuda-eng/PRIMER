@@ -21,6 +21,7 @@ export default function OrderModal({ onClose }) {
     const [quantities, setQuantities] = useState({});
     const modalRef = useModalA11y(onClose);
     const [selectedSupplierId, setSelectedSupplierId] = useState('dinkes');
+    const [isExpress, setIsExpress] = useState(false);
 
     // Codex Fix: only exclude items with PENDING + not-overdue orders
     // Overdue orders (deliveryDay < day) should NOT block reorder
@@ -34,7 +35,7 @@ export default function OrderModal({ onClose }) {
             currentStock: item.stock
         }))
         // Codex Fix: exclude non-stock pseudo-items (care instructions like bed_rest, diet)
-        .filter(med => med.id && med.unitPrice > 0 && med.form !== 'action')
+        .filter(med => med.id && med.buyPrice > 0 && med.form !== 'action')
         .filter(med => med.currentStock < med.minStock && !pendingMedIds.has(med.id));
 
     const handleOrder = () => {
@@ -44,7 +45,7 @@ export default function OrderModal({ onClose }) {
             quantity: Math.max(1, med.minStock - med.currentStock)
         }));
 
-        const result = submitOrder(orderItems, selectedSupplierId, day);
+        const result = submitOrder(orderItems, selectedSupplierId, day, isExpress);
         if (result.success) {
             // Codex Fix: show skipped items so player knows about partial orders
             const msg = result.skipped?.length
@@ -80,6 +81,21 @@ export default function OrderModal({ onClose }) {
                             </option>
                         ))}
                     </select>
+                </div>
+
+                <div className="mb-4">
+                    <label className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors">
+                        <input
+                            type="checkbox"
+                            checked={isExpress}
+                            onChange={(e) => setIsExpress(e.target.checked)}
+                            className="w-4 h-4 accent-amber-600"
+                        />
+                        <div>
+                            <span className="text-sm font-bold text-amber-800">🚀 Pengiriman Cito (Tiba Besok)</span>
+                            <p className="text-xs text-amber-600">Biaya ekstra +30% — order tidak terpengaruh keterlambatan logistik</p>
+                        </div>
+                    </label>
                 </div>
 
                 <div className="mb-6">

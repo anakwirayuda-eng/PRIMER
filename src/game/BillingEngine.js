@@ -51,19 +51,25 @@ export function calculatePatientBill(selectedMeds = [], selectedProcedures = [],
         const freq = typeof item === 'object' ? (item.frequency || 1) : 1;
         const dur = typeof item === 'object' ? (item.duration || 1) : 1;
         const qty = freq * dur;
-        const unitPrice = med?.sellPrice || 0;
-        const cost = unitPrice * qty;
+        const sellPrice = med?.sellPrice || 0;
+        const buyPrice = med?.buyPrice || 0;
+        const cost = sellPrice * qty;
+        const hppCost = buyPrice * qty;
 
         return {
             name: med?.name || id,
             cost,
-            unitPrice,
+            sellPrice,
+            buyPrice,
+            hppCost,
             qty,
             frequency: freq,
             duration: dur
         };
     });
     const totalMeds = medDetails.reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
+    // HPP: total cost at buyPrice — this is what Puskesmas actually pays suppliers
+    const buyPriceTotal = medDetails.reduce((sum, m) => sum + (Number(m.hppCost) || 0), 0);
 
     const subtotal = pendaftaran + jasaMedis + totalLabs + totalProcs + totalMeds;
 
@@ -74,6 +80,7 @@ export function calculatePatientBill(selectedMeds = [], selectedProcedures = [],
         procDetails,
         medDetails,
         total: subtotal,
+        buyPriceTotal, // HPP — for BPJS kapitasi deduction
         finalBill: isBPJS ? 0 : subtotal // Patient pays 0 if BPJS
     };
 }

@@ -12,6 +12,7 @@ import { produce } from 'immer';
 import { soundManager } from '../utils/SoundManager.js';
 import { MEDICATION_DATABASE, getMedicationById, MEDICATION_CATEGORIES } from '../data/MedicationDatabase.js';
 import { getSupplierById, calculateOrderCost, estimateDeliveryDate } from '../data/SupplierDatabase.js';
+import { calculatePatientBill } from '../game/BillingEngine.js';
 import { generateInitialParameters, determineMonthlyOutcome } from '../game/ProlanisEngine.js';
 import { applyOutbreakAction, checkForOutbreakTrigger, checkOutbreakExpiry } from '../domains/community/OutbreakSystem.js';
 import { TRIAGE_LEVELS, calculateEmergencyBill } from '../game/EmergencyCases.js';
@@ -98,7 +99,7 @@ const INITIAL_FINANCE_STATS = {
 
 // Codex Fix: exclude non-stock pseudo-items (care instructions like bed_rest, diet)
 const createInitialPharmacyInventory = () => MEDICATION_DATABASE
-    .filter(med => med.unitPrice > 0 && med.form !== 'action')
+    .filter(med => med.buyPrice > 0 && med.form !== 'action')
     .map((med) => ({
         medicationId: med.id,
         stock: Math.floor(med.minStock * 1.5),
@@ -1190,7 +1191,7 @@ export const useGameStore = create(
                             percentageOfMin: (currentItem.stock / medication.minStock) * 100
                         };
                     },
-                    submitOrder: (orderItems, supplierId, day) => {
+                    submitOrder: (orderItems, supplierId, day, isExpress = false) => {
                         const state = get();
                         const supplier = getSupplierById(supplierId);
                         if (!supplier) return { success: false, error: 'Supplier not found' };
@@ -1218,24 +1219,27 @@ export const useGameStore = create(
 
                         const items = compatibleItems.map(item => {
                             const med = getMedicationById(item.medicationId);
-                            return { ...item, unitPrice: med?.buyPrice || med?.unitPrice || 0 };
+                            return { ...item, unitPrice: med?.buyPrice || 0 };
                         });
                         const costCalculation = calculateOrderCost(supplierId, items);
+                        // Express: 30% surcharge
+                        const expressFee = isExpress ? Math.ceil(costCalculation.total * 0.3) : 0;
+                        const totalCost = costCalculation.total + expressFee;
                         if (costCalculation.error) return { success: false, error: costCalculation.error };
                         // Codex Fix: include pending kapitasi_deduction orders in solvency check
                         const pendingKapitasiReserved = (state.finance.pendingOrders || []).filter(
                             o => o.status === 'pending' && o.paymentTerms === 'kapitasi_deduction'
                         ).reduce((sum, o) => sum + (o.cost || 0), 0);
                         const effectiveKapitasi = state.finance.stats.kapitasi - pendingKapitasiReserved;
-                        if (effectiveKapitasi < costCalculation.total) return { success: false, error: 'Dana kapitasi tidak cukup (termasuk order pending)' };
+                        if (effectiveKapitasi < totalCost) return { success: false, error: 'Dana kapitasi tidak cukup (termasuk order pending)' };
                         if (supplier.paymentTerms === 'cash_upfront') {
                             set(s => ({
                                 finance: {
                                     ...s.finance,
                                     stats: {
                                         ...s.finance.stats,
-                                        kapitasi: s.finance.stats.kapitasi - costCalculation.total,
-                                        pengeluaranObat: (s.finance.stats.pengeluaranObat || 0) + costCalculation.total
+                                        kapitasi: s.finance.stats.kapitasi - totalCost,
+                                        pengeluaranObat: (s.finance.stats.pengeluaranObat || 0) + totalCost
                                     }
                                 }
                             }));
@@ -1246,7 +1250,7 @@ export const useGameStore = create(
                             items: compatibleItems,
                             orderDay: day,
                             // Codex Fix: respect item-level leadTime from medication catalog
-                            deliveryDay: (() => {
+                            deliveryDay: isExpress ? day + 1 : (() => {
                                 const baseDelivery = estimateDeliveryDate(supplierId, day);
                                 const maxItemLead = compatibleItems.reduce((max, item) => {
                                     const med = getMedicationById(item.medicationId);
@@ -1255,8 +1259,9 @@ export const useGameStore = create(
                                 return maxItemLead > 0 ? Math.max(baseDelivery, day + maxItemLead) : baseDelivery;
                             })(),
                             status: 'pending',
-                            cost: costCalculation.total,
-                            paymentTerms: supplier.paymentTerms
+                            cost: totalCost,
+                            paymentTerms: supplier.paymentTerms,
+                            isExpress
                         };
                         set(s => ({ finance: { ...s.finance, pendingOrders: [...s.finance.pendingOrders, newOrder] } }));
                         // Audit trail: log the procurement event
@@ -2303,12 +2308,28 @@ export const useGameStore = create(
                         });
 
                         let fundChange = 0, repChange = 0, satisfactionScore = 70;
+
+                        // === REAL BILLING (replaces flat +50k/-15k) ===
+                        let bill = null;
                         if (decision.action === 'treat') {
+                            bill = calculatePatientBill(
+                                decision.medications || [],
+                                decision.procedures || [],
+                                patient.medicalData?.labsRevealed || {},
+                                patient.medicalData || {},
+                                isBPJS
+                            );
                             if (!isCorrectAction) {
                                 if (!isCorrectTriage) { repChange = -10; satisfactionScore = 40; }
                                 else if (!isCorrectMeds) { repChange = -2; satisfactionScore = 60; }
                             } else {
-                                fundChange = isBPJS ? -15000 : 50000; repChange = +2; satisfactionScore = 85;
+                                repChange = +2; satisfactionScore = 85;
+                            }
+                            // Real revenue: Umum pays sellPrice, BPJS burns kapitasi at buyPrice (HPP)
+                            if (isBPJS) {
+                                fundChange = -(bill.buyPriceTotal || 0); // Kapitasi bears HPP
+                            } else {
+                                fundChange = bill.total || 0; // Umum pays full bill
                             }
                             if (!isCorrectAction) soundManager.playError(); else soundManager.playSuccess();
                         } else if (decision.action === 'refer' && decision.isSISRUTE) {
@@ -2320,16 +2341,25 @@ export const useGameStore = create(
                             }
                             soundManager.playSuccess();
                         } else if (decision.action === 'refer') {
-                            // S1 Fix: refer tanpa melalui SISRUTE penalti bypass prosedur rujukan
                             repChange = isCorrectTriage ? -3 : -5;
                             satisfactionScore = isCorrectTriage ? 55 : 45;
                             soundManager.playError();
                         }
 
                         satisfactionScore += (buffs.patientSatisfaction || 0);
+
+                        // === AUTO-DEDUCT STOCK (medications) ===
                         const inventoryUpdates = new Map();
-                        // Codex Fix: Remove double-deduction for medications (now handled by FarmasiPanel.consumeMedication)
-                        // if (decision.medications) decision.medications.forEach(id => inventoryUpdates.set(id, (inventoryUpdates.get(id) || 0) + 1));
+                        if (decision.action === 'treat' && decision.medications) {
+                            decision.medications.forEach(m => {
+                                const medId = typeof m === 'object' ? (m.id || m.medId) : m;
+                                const freq = typeof m === 'object' ? (m.frequency || 1) : 1;
+                                const dur = typeof m === 'object' ? (m.duration || 1) : 1;
+                                const qty = freq * dur;
+                                inventoryUpdates.set(medId, (inventoryUpdates.get(medId) || 0) + qty);
+                            });
+                        }
+                        // Procedure consumables
                         if (decision.procedures) {
                             decision.procedures.forEach(procId => {
                                 const procIdClean = typeof procId === 'object' ? (procId.id || procId.code) : procId;
@@ -2810,6 +2840,18 @@ export const useGameStore = create(
                             if (state.finance.pendingOrders) {
                                 state.finance.pendingOrders.forEach(order => {
                                     if (order.status === 'pending' && order.deliveryDay <= nextDayNum) {
+                                        // Supply Chain Friction: reliability RNG check
+                                        const supplier = getSupplierById(order.supplierId);
+                                        const reliability = supplier?.reliability || 0.95;
+                                        if (Math.random() > reliability && !order.isExpress) {
+                                            // Delivery delayed! Push back 1 day
+                                            order.deliveryDay += 1;
+                                            state.clinical.morningAlerts = [
+                                                ...(state.clinical.morningAlerts || []),
+                                                { type: 'supply_delay', message: `⚠️ Pengiriman dari ${supplier?.name || 'supplier'} tertunda (cuaca/logistik). Estimasi tiba: Hari ${order.deliveryDay}` }
+                                            ];
+                                            return; // Skip receive, try again next day
+                                        }
                                         // Add stock
                                         order.items.forEach(oi => {
                                             const invItem = state.finance.pharmacyInventory.find(
@@ -2820,7 +2862,6 @@ export const useGameStore = create(
                                                 invItem.lastRestockDay = nextDayNum;
                                             }
                                         });
-                                        // Codex Fix: deduct kapitasi for kapitasi_deduction orders on receive
                                         if (order.paymentTerms === 'kapitasi_deduction' && order.cost > 0) {
                                             state.finance.stats.kapitasi -= order.cost;
                                             state.finance.stats.pengeluaranObat = (state.finance.stats.pengeluaranObat || 0) + order.cost;

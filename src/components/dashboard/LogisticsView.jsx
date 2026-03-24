@@ -34,7 +34,7 @@ export default function LogisticsView({ onBack, openWiki }) {
         // Codex Fix: exclude pseudo-items from inventory stats
         const stockItems = pharmacyInventory.filter(item => {
             const m = getMedicationById(item.medicationId);
-            return m && m.unitPrice > 0 && m.form !== 'action';
+            return m && m.buyPrice > 0 && m.form !== 'action';
         });
         const low = stockItems.filter(item => {
             const med = getMedicationById(item.medicationId);
@@ -56,7 +56,7 @@ export default function LogisticsView({ onBack, openWiki }) {
                     const medId = typeof m === 'object' ? (m.id || m.medId) : m;
                     // Codex Fix: skip pseudo-items in consumption tracking
                     const med = getMedicationById(medId);
-                    if (!med || med.unitPrice === 0 || med.form === 'action') return;
+                    if (!med || med.buyPrice === 0 || med.form === 'action') return;
                     const qty = typeof m === 'object'
                         ? ((m.dose || 1) * (m.frequency || 1) * (m.duration || 1))
                         : 1;
@@ -67,7 +67,7 @@ export default function LogisticsView({ onBack, openWiki }) {
         // Codex Fix: only predict for real stock items
         const realStockItems = pharmacyInventory.filter(item => {
             const med = getMedicationById(item.medicationId);
-            return med && med.unitPrice > 0 && med.form !== 'action';
+            return med && med.buyPrice > 0 && med.form !== 'action';
         });
         return realStockItems.map(item => {
             const avgDaily = (consumption[item.medicationId] || 0) / daysCount;
@@ -189,7 +189,7 @@ export default function LogisticsView({ onBack, openWiki }) {
             {stockOutPredictions.length > 0 && (
                 <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] p-5">
                     <h3 className="text-[10px] font-black text-amber-400/70 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
-                        <Clock size={12} /> Prediksi Stok Habis
+                        <Clock size={12} /> Tren Kebutuhan (Clinical Demand)
                     </h3>
                     <div className="space-y-2">
                         {stockOutPredictions.slice(0, 5).map(p => (

@@ -49,7 +49,7 @@ export default function SaranaPage() {
             const med = getMedicationById(item.medicationId);
             if (!med) return null;
             // Codex Fix: filter pseudo-items (care instructions, non-stock)
-            if (med.unitPrice === 0 || med.form === 'action') return null;
+            if (med.buyPrice === 0 || med.form === 'action') return null;
             return {
                 id: item.medicationId,
                 name: med.name,
@@ -58,7 +58,7 @@ export default function SaranaPage() {
                 unit: med.type,
                 category: med.category === MEDICATION_CATEGORIES.MEDICAL_EQUIPMENT ? 'alkes' :
                     med.category === MEDICATION_CATEGORIES.EMERGENCY ? 'igd' : 'obat',
-                price: med.unitPrice,
+                price: med.buyPrice,
                 lastRestock: item.lastRestockDay ? `Hari ${item.lastRestockDay}` : '-',
                 icon: med.type === 'tablet' ? '💊' : med.type === 'botol' ? '🍯' : '💉'
             };
