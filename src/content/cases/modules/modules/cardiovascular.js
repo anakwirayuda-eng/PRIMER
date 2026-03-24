@@ -36,7 +36,7 @@ export const CARDIOVASCULAR_CASES = [
         correctProcedures: ['o2_nasal_4lpm', 'iv_access', 'monitor_vital', 'ecg_12lead'],
         requiredEducation: ['life_threatening', 'golden_period_pci', 'do_not_delay'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['I21.9', 'I20.0']
+        differentialDiagnosis: ['I20.0']
     },
     {
         id: 'gagal_jantung_kronik',
@@ -65,7 +65,7 @@ export const CARDIOVASCULAR_CASES = [
         correctProcedures: ['fluid_restriction'],
         requiredEducation: ['fluid_and_salt_restriction', 'daily_weight_monitoring', 'med_compliance', 'echo_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['I50.9', 'J81']
+        differentialDiagnosis: ['J81']
     },
     {
         id: 'angina_pektoris',
@@ -94,7 +94,7 @@ export const CARDIOVASCULAR_CASES = [
         correctProcedures: [],
         requiredEducation: ['nitrat_usage', 'when_to_emergency', 'risk_factor_modification'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['I20.9', 'I21.9']
+        differentialDiagnosis: ['I21.9']
     },
     {
         id: 'syok_hipovolemik',
@@ -122,7 +122,7 @@ export const CARDIOVASCULAR_CASES = [
         correctProcedures: ['iv_access_2_lines', 'pressure_bandage', 'o2_mask_10lpm', 'foley_catheter', 'monitor_vital'],
         requiredEducation: ['life_threatening', 'blood_transfusion_needed', 'surgery_likely'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['R57.1', 'R57.0']
+        differentialDiagnosis: ['R57.0']
     },
     {
         id: 'fibrilasi_atrial',
@@ -150,7 +150,7 @@ export const CARDIOVASCULAR_CASES = [
         correctProcedures: ['ecg_12lead'],
         requiredEducation: ['stroke_risk', 'anticoagulant_compliance', 'echo_referral', 'rate_control'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['I48.9', 'I47.1']
+        differentialDiagnosis: ['I47.1']
     },
     {
         id: 'dvt',
@@ -178,6 +178,6 @@ export const CARDIOVASCULAR_CASES = [
         correctProcedures: ['bed_rest', 'leg_elevation', 'compression_bandage'],
         requiredEducation: ['no_massage', 'pe_risk', 'usg_doppler_referral', 'mobilization_restriction'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['I80.2', 'I87.0']
+        differentialDiagnosis: ['I87.0']
     }
 ];

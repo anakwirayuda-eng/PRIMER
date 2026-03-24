@@ -22,7 +22,7 @@ import CaseSpecificSelection from './anamnesis/CaseSpecificSelection.jsx';
 export default function AnamnesisTab({
     patient, isDark, anamnesisHistory, setAnamnesisHistory, anamnesisCategory, setAnamnesisCategory,
     hasAskedComplaint, setHasAskedComplaint, handleAskQuestion, chatEndRef, showAnamnesisHint,
-    setShowAnamnesisHint, caseData, isProcessing: _isProcessing,
+    setShowAnamnesisHint, caseData, isProcessing,
     updatePatient,
     maiaAlerts = [],
     setMaiaAlerts: _setMaiaAlerts,
@@ -107,6 +107,7 @@ export default function AnamnesisTab({
                 patient={patient}
                 isDark={isDark}
                 chatEndRef={chatEndRef}
+                isProcessing={isProcessing}
             />
 
             {/* Question Area — Bottom Sheet on mobile, inline on desktop */}

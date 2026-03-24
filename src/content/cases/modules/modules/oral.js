@@ -38,6 +38,6 @@ export const ORAL_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_spicy_food', 'oral_hygiene', 'stress_management'],
         risk: 'low', nonReferrable: true, referralExceptions: ['persistent_ulcer_gt_2weeks'],
-        differentialDiagnosis: ['K12.0', 'B37.0']
+        differentialDiagnosis: ['B37.0']
     }
 ];

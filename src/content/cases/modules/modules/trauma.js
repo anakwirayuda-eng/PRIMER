@@ -33,7 +33,7 @@ export const TRAUMA_CASES = [
         correctProcedures: ['needle_decompression', 'airway_management'],
         requiredEducation: ['red_flag_monitor'],
         risk: 'emergency', nonReferrable: false, referralExceptions: ['emergency_stabilization'],
-        differentialDiagnosis: ['I21.9', 'I26.9']
+        differentialDiagnosis: ['I21.9','I26.9']
     },
     {
         id: 'bone_fracture_simple',
@@ -71,7 +71,7 @@ export const TRAUMA_CASES = [
         correctProcedures: ['fracture_splinting'],
         requiredEducation: ['dont_strain', 'routine_control'],
         risk: 'medium', nonReferrable: false, referralExceptions: ['conservative_management'],
-        differentialDiagnosis: ['S50', 'S53']
+        differentialDiagnosis: ['S50','S53']
     },
     {
         id: 'luka_bakar_minor',
@@ -98,7 +98,7 @@ export const TRAUMA_CASES = [
         correctProcedures: ['wound_care_burn', 'sterile_dressing'],
         requiredEducation: ['wound_care_home', 'bulla_care', 'follow_up_burn', 'tetanus_status'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['bsa_over_20', 'inhalation_injury', 'face_hands_genitalia', 'pediatric'],
-        differentialDiagnosis: ['T30.0', 'T31.0']
+        differentialDiagnosis: ['T31.0']
     },
     {
         id: 'vulnus_laceratum',
@@ -125,6 +125,6 @@ export const TRAUMA_CASES = [
         correctProcedures: ['wound_debridement', 'wound_suturing', 'tetanus_prophylaxis'],
         requiredEducation: ['wound_care_home', 'signs_of_infection', 'follow_up_suture_removal'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['tendon_nerve_vessel_injury', 'deep_contamination'],
-        differentialDiagnosis: ['T14.1', 'T14.0']
+        differentialDiagnosis: ['T14.0']
     }
 ];

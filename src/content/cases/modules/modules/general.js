@@ -43,7 +43,7 @@ export const GENERAL_CASES = [
         correctProcedures: [],
         requiredEducation: ['diet_diabetes', 'regular_exercise', 'foot_care'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['emergency_hhs_kad', 'comorbidity_renal_heart'],
-        differentialDiagnosis: ['E11.9', 'E10.9']
+        differentialDiagnosis: ['E10.9']
     },
     {
         id: 'general_checkup',
@@ -110,7 +110,7 @@ export const GENERAL_CASES = [
         correctProcedures: ['iv_access_2_lines', 'foley_catheter', 'monitor_vital', 'cek_gds_serial'],
         requiredEducation: ['life_threatening', 'icu_needed', 'insulin_education', 'dm_management'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['E10.1', 'E11.6']
+        differentialDiagnosis: ['E11.6']
     },
     {
         id: 'hipoglikemia_berat',
@@ -139,7 +139,7 @@ export const GENERAL_CASES = [
         correctProcedures: ['iv_access', 'cek_gds_serial', 'monitor_vital'],
         requiredEducation: ['insulin_dose_education', 'meal_timing', 'hypo_signs_recognition', 'glucometer_home'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['E16.2', 'E15']
+        differentialDiagnosis: ['E15']
     },
     {
         id: 'hipertiroid_graves',
@@ -168,7 +168,7 @@ export const GENERAL_CASES = [
         correctProcedures: ['cek_tsh_ft4'],
         requiredEducation: ['medication_compliance', 'regular_thyroid_monitoring', 'thyroid_storm_warning', 'endocrine_referral'],
         risk: 'medium', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['E05.0', 'E05.9']
+        differentialDiagnosis: ['E05.9']
     },
     {
         id: 'sindrom_metabolik',
@@ -197,6 +197,6 @@ export const GENERAL_CASES = [
         correctProcedures: ['lingkar_perut', 'bmi_calculation'],
         requiredEducation: ['lifestyle_modification', 'weight_loss_target', 'exercise_150min_week', 'stop_smoking', 'cardiovascular_risk'],
         risk: 'medium', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['E88.8', 'E11.9']
+        differentialDiagnosis: ['E11.9']
     }
 ];

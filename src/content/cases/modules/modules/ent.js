@@ -47,7 +47,7 @@ export const ENT_CASES = [
         risk: 'low',
         nonReferrable: true,
         referralExceptions: ['no_improvement', 'comorbidity'],
-        differentialDiagnosis: ['J00', 'J30.0']
+        differentialDiagnosis: ['J00','J30.0']
     },
     {
         id: 'faringitis_akut',
@@ -78,7 +78,7 @@ export const ENT_CASES = [
         correctProcedures: [],
         requiredEducation: ['rest_and_fluids', 'avoid_spicy_food', 'warm_saltwater_gargle'],
         risk: 'low', nonReferrable: true, referralExceptions: ['abscess_suspicion', 'dyspnea'],
-        differentialDiagnosis: ['J02.9', 'J03.9']
+        differentialDiagnosis: ['J03.9']
     },
     {
         id: 'tonsilitis_akut',
@@ -111,7 +111,7 @@ export const ENT_CASES = [
         correctProcedures: [],
         requiredEducation: ['rest_and_fluids', 'diet_soft', 'med_compliance'],
         risk: 'low', nonReferrable: true, referralExceptions: ['tonsil_hypertrophy_obs', 'recurrent_tonsillitis'],
-        differentialDiagnosis: ['J03.9', 'J35.0']
+        differentialDiagnosis: ['J35.0']
     },
     {
         id: 'otitis_media_akut',
@@ -144,7 +144,7 @@ export const ENT_CASES = [
         correctProcedures: [],
         requiredEducation: ['dont_swim', 'med_compliance', 'red_flag_perforation'],
         risk: 'low', nonReferrable: true, referralExceptions: ['perforation', 'chronic_discharge'],
-        differentialDiagnosis: ['H66.0', 'H60.0']
+        differentialDiagnosis: ['H66.0','H60.0']
     },
     {
         id: 'furunkel_hidung',
@@ -175,7 +175,7 @@ export const ENT_CASES = [
         correctProcedures: [],
         requiredEducation: ['dont_squeeze', 'warm_compress', 'hand_hygiene'],
         risk: 'low', nonReferrable: true, referralExceptions: ['cellulitis_face'],
-        differentialDiagnosis: ['J34.0', 'L02.0']
+        differentialDiagnosis: ['L02.0']
     },
     {
         id: 'faringitis_streptokokus',
@@ -207,7 +207,7 @@ export const ENT_CASES = [
         correctProcedures: [],
         requiredEducation: ['complete_antibiotics', 'rest_and_fluids', 'diet_soft'],
         risk: 'low', nonReferrable: true, referralExceptions: ['rheumatic_fever_history'],
-        differentialDiagnosis: ['J02.0', 'B27.0']
+        differentialDiagnosis: ['B27.0']
     },
     {
         id: 'otitis_eksterna',
@@ -231,7 +231,7 @@ export const ENT_CASES = [
         correctProcedures: ['ear_toilet'],
         requiredEducation: ['keep_ear_dry', 'no_cotton_buds', 'ear_plugs_swimming'],
         risk: 'low', nonReferrable: true, referralExceptions: ['malignant_oe'],
-        differentialDiagnosis: ['H60.9', 'H66.9']
+        differentialDiagnosis: ['H66.9']
     },
     {
         id: 'serumen_prop',
@@ -255,7 +255,7 @@ export const ENT_CASES = [
         correctProcedures: ['ear_irrigation', 'cerumen_removal'],
         requiredEducation: ['no_cotton_buds', 'normal_ear_wax'],
         risk: 'low', nonReferrable: true, referralExceptions: ['perforation_suspected'],
-        differentialDiagnosis: ['H61.2', 'H68.1']
+        differentialDiagnosis: ['H68.1']
     },
     {
         id: 'mabuk_perjalanan',
@@ -280,7 +280,7 @@ export const ENT_CASES = [
         correctProcedures: [],
         requiredEducation: ['sit_in_front', 'look_at_horizon', 'light_meal_before'],
         risk: 'low', nonReferrable: true, referralExceptions: [],
-        differentialDiagnosis: ['T75.3', 'H81.0']
+        differentialDiagnosis: ['H81.0']
     },
     {
         id: 'rhinitis_akut',
@@ -304,7 +304,7 @@ export const ENT_CASES = [
         correctProcedures: [],
         requiredEducation: ['rest_and_fluids', 'hand_hygiene', 'self_limiting_viral'],
         risk: 'low', nonReferrable: true, referralExceptions: [],
-        differentialDiagnosis: ['J00', 'J30.4']
+        differentialDiagnosis: ['J30.4']
     },
     {
         id: 'rhinitis_vasomotor',
@@ -328,7 +328,7 @@ export const ENT_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_triggers', 'nasal_spray_technique'],
         risk: 'low', nonReferrable: true, referralExceptions: ['no_improvement'],
-        differentialDiagnosis: ['J30.0', 'J30.4']
+        differentialDiagnosis: ['J30.4']
     },
     {
         id: 'benda_asing_hidung',
@@ -352,7 +352,7 @@ export const ENT_CASES = [
         correctProcedures: ['nasal_foreign_body_removal'],
         requiredEducation: ['child_safety', 'keep_small_objects_away'],
         risk: 'low', nonReferrable: true, referralExceptions: ['failed_removal', 'button_battery'],
-        differentialDiagnosis: ['T17.1', 'J32.0']
+        differentialDiagnosis: ['J32.0']
     },
     {
         id: 'epistaksis',
@@ -378,7 +378,7 @@ export const ENT_CASES = [
         correctProcedures: ['epistaxis_management', 'anterior_nasal_packing'],
         requiredEducation: ['pinch_nose_technique', 'sit_forward', 'control_bp'],
         risk: 'low', nonReferrable: true, referralExceptions: ['posterior_epistaxis', 'uncontrolled'],
-        differentialDiagnosis: ['R04.0', 'D68.9']
+        differentialDiagnosis: ['D68.9']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -407,7 +407,7 @@ export const ENT_CASES = [
         correctProcedures: ['iv_access'],
         requiredEducation: ['drainage_needed', 'airway_risk', 'tonsillectomy_after_recovery'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['J36', 'J03.9']
+        differentialDiagnosis: ['J03.9']
     },
     {
         id: 'omsk',
@@ -435,7 +435,7 @@ export const ENT_CASES = [
         correctProcedures: ['ear_toilet', 'otoskopi'],
         requiredEducation: ['keep_ear_dry', 'no_swimming', 'audiometry_referral', 'surgery_if_cholesteatoma'],
         risk: 'medium', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['H66.1', 'H72.9']
+        differentialDiagnosis: ['H72.9']
     },
     {
         id: 'sinusitis_akut',
@@ -463,7 +463,7 @@ export const ENT_CASES = [
         correctProcedures: ['transilluminasi_sinus'],
         requiredEducation: ['complete_antibiotic_course', 'steam_inhalation', 'ct_scan_if_recurrent'],
         risk: 'low', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['J01.9', 'J30.4']
+        differentialDiagnosis: ['J30.4']
     },
     {
         id: 'ca_nasofaring',
@@ -491,6 +491,6 @@ export const ENT_CASES = [
         correctProcedures: ['hospital_referral'],
         requiredEducation: ['biopsy_needed', 'staging_ct_scan', 'early_detection_important'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_provinsi',
-        differentialDiagnosis: ['C11.9', 'L04.0']
+        differentialDiagnosis: ['L04.0']
     }
 ];

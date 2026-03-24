@@ -43,7 +43,7 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: [],
         requiredEducation: ['proper_lifting_technique', 'back_exercises', 'avoid_prolonged_sitting'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['red_flags_lbp', 'no_improvement'],
-        differentialDiagnosis: ['M54.5', 'M51.2']
+        differentialDiagnosis: ['M51.2']
     },
     {
         id: 'gout_arthritis',
@@ -81,7 +81,7 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: [],
         requiredEducation: ['low_purine_diet', 'adequate_hydration', 'weight_management'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['multiple_joints', 'no_improvement'],
-        differentialDiagnosis: ['M10.9', 'M13.9']
+        differentialDiagnosis: ['M13.9']
     },
     {
         id: 'gout_akut',
@@ -118,7 +118,7 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: [],
         requiredEducation: ['diet_low_purine', 'acute_attack_care'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['septic_arthritis_suspicion'],
-        differentialDiagnosis: ['M10.9', 'M00.9']
+        differentialDiagnosis: ['M00.9']
     },
     {
         id: 'myalgia',
@@ -142,7 +142,7 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: [],
         requiredEducation: ['posture_correction', 'stretching_exercises', 'ergonomic_workspace'],
         risk: 'low', nonReferrable: true, referralExceptions: ['chronic_pain', 'neurological_signs'],
-        differentialDiagnosis: ['M79.1', 'M54.2']
+        differentialDiagnosis: ['M54.2']
     },
     {
         id: 'osteoarthritis',
@@ -166,7 +166,7 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: [],
         requiredEducation: ['weight_loss', 'low_impact_exercise', 'joint_protection', 'avoid_stairs'],
         risk: 'low', nonReferrable: true, referralExceptions: ['severe_deformity', 'joint_replacement_candidate'],
-        differentialDiagnosis: ['M17.9', 'M06.9']
+        differentialDiagnosis: ['M06.9']
     },
     {
         id: 'lipoma',
@@ -194,7 +194,7 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: ['excision_lipoma'],
         requiredEducation: ['benign_tumor', 'monitor_growth', 'surgery_if_cosmetic'],
         risk: 'low', nonReferrable: true, referralExceptions: ['rapid_growth', 'pain', 'suspected_liposarcoma'],
-        differentialDiagnosis: ['D17.9', 'C49.9']
+        differentialDiagnosis: ['C49.9']
     },
     {
         id: 'ulkus_tungkai',
@@ -223,7 +223,7 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: ['wound_debridement', 'compression_bandage'],
         requiredEducation: ['wound_care_home', 'diabetes_control', 'leg_elevation', 'proper_footwear'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['osteomyelitis', 'arterial_ulcer', 'non_healing_3months'],
-        differentialDiagnosis: ['L97', 'I83.0']
+        differentialDiagnosis: ['I83.0']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -252,7 +252,7 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: ['wound_irrigation_saline', 'splinting', 'sterile_dressing', 'iv_access'],
         requiredEducation: ['surgery_needed', 'infection_risk', 'orthopedic_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['T14.2', 'S82.9']
+        differentialDiagnosis: ['S82.9']
     },
     {
         id: 'osteomielitis',
@@ -280,6 +280,6 @@ export const MUSCULOSKELETAL_CASES = [
         correctProcedures: ['iv_access', 'immobilization'],
         requiredEducation: ['long_term_antibiotics', 'surgery_may_needed', 'orthopedic_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['M86.9', 'M86.1']
+        differentialDiagnosis: ['M86.1']
     }
 ];

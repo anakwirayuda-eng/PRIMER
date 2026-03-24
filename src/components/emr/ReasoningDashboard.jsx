@@ -6,12 +6,12 @@
  * [ANCHOR]: ReasoningDashboard
  * [DEPENDS_ON]: None
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-03-24
  */
 
 import React from 'react';
 import { Brain, Target, Activity, CheckCircle, ChevronRight, Info } from 'lucide-react';
-import { ICD10_DB } from '../../data/ICD10.js';
+import { buildDiagnosticProbabilities } from './reasoningDashboardUtils.js';
 
 export default function ReasoningDashboard({
     patient,
@@ -26,74 +26,19 @@ export default function ReasoningDashboard({
 }) {
     if (!patient) return null;
 
-    // Unified Score Breakdown
     const score = coverageScore?.score || 0;
     const _macro = coverageScore?.macro || 0;
     const _micro = coverageScore?.micro || 0;
     const _essential = coverageScore?.essential || 0;
 
-    // Extract confidence value from object or number
-    const confidenceValue = typeof diagnosticConfidence === 'object' ? (diagnosticConfidence.confidence || 0) : (diagnosticConfidence || 0);
+    const confidenceValue = typeof diagnosticConfidence === 'object'
+        ? (diagnosticConfidence.confidence || 0)
+        : (diagnosticConfidence || 0);
 
-    // Differential Probabilities (Mock logic or from diagnosticTracker)
-    // Codex Fix: modern patients use trueDiagnosisCode (not diagnosisCode) and hidden.differentialDiagnosis (not differentials)
-    const primaryCode = patient.medicalData?.trueDiagnosisCode || patient.medicalData?.diagnosisCode || patient.hidden?.icd10 || 'unknown';
-    const primaryName = patient.medicalData?.diagnosisName || primaryCode;
-    const differentialsList = patient.hidden?.differentialDiagnosis || patient.hidden?.differentials || [];
-
-    // Canonical key for dedup: lowercase, strip parenthesized codes, normalize whitespace
-    const toCanonical = (name) => {
-        let n = (name || '').toLowerCase().trim();
-        n = n.replace(/\s*\([^)]*\)\s*/g, ''); // strip "(GAD)", "(A00)", etc.
-        n = n.replace(/[^a-z0-9\s]/g, '');      // strip special chars
-        n = n.replace(/\s+/g, ' ').trim();
-        return n;
-    };
-
-    // Common bilingual synonym map (ID ↔ EN) for dedup
-    const SYNONYM_MAP = {
-        'generalized anxiety disorder': 'gangguan cemas menyeluruh',
-        'major depressive disorder': 'gangguan depresi mayor',
-        'panic disorder': 'gangguan panik',
-        'hypertension': 'hipertensi',
-        'diabetes mellitus': 'diabetes melitus',
-        'urinary tract infection': 'infeksi saluran kemih',
-        'acute gastroenteritis': 'gastroenteritis akut',
-        'pneumonia': 'pneumonia',
-        'tuberculosis': 'tuberkulosis',
-        'dengue fever': 'demam berdarah dengue',
-        'typhoid fever': 'demam tifoid',
-    };
-
-    // Resolve canonical with synonym collapsing
-    const resolveCanonical = (name) => {
-        const c = toCanonical(name);
-        return SYNONYM_MAP[c] || c;
-    };
-
-    const primaryCanonical = resolveCanonical(primaryName);
-
-    const differentials = [
-        { id: `primary_${primaryCode}`, name: primaryName, prob: confidenceValue || 45, color: 'emerald' },
-        ...differentialsList
-            .map((d, i) => {
-                let mappedName = ICD10_DB.find(icd => icd.code === d)?.name || d;
-                mappedName = mappedName.replace(/\s\([^)]+\)$/, '');
-                return {
-                    id: `diff_${i}`,
-                    name: mappedName,
-                    canonical: resolveCanonical(mappedName),
-                    prob: Math.max(10, (confidenceValue || 45) - (i + 1) * 15),
-                    color: 'indigo'
-                };
-            })
-            // Dedup: skip DDx that match primary after canonical normalization
-            .filter(d => d.canonical !== primaryCanonical)
-    ].sort((a, b) => b.prob - a.prob);
+    const differentials = buildDiagnosticProbabilities(patient, confidenceValue);
 
     return (
         <div className={`h-full flex flex-col ${isDark ? 'bg-slate-900 border-emerald-500/20 shadow-emerald-900/40' : 'bg-white border-slate-200 shadow-xl'} border rounded-xl overflow-hidden transition-all duration-500`}>
-            {/* Header */}
             <div className={`p-4 border-b flex items-center justify-between ${isDark ? 'bg-slate-800/50 border-emerald-500/10' : 'bg-slate-50'}`}>
                 <div className="flex items-center gap-2">
                     <div className={`p-2 rounded-lg ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>
@@ -111,7 +56,6 @@ export default function ReasoningDashboard({
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-6 thin-scrollbar">
-                {/* 1. Unified Coverage Rings */}
                 <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
                         <div className="flex justify-between items-end mb-2">
@@ -152,7 +96,6 @@ export default function ReasoningDashboard({
                     ))}
                 </div>
 
-                {/* 2. Bayesian Diagnostic Probability */}
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <Target size={16} className="text-indigo-500" />
@@ -177,12 +120,12 @@ export default function ReasoningDashboard({
                                 </div>
                                 <div className={`h-4 w-full rounded-lg overflow-hidden flex ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
                                     <div
-                                        className={`h-full transition-all duration-1000 relative group`}
+                                        className="h-full transition-all duration-1000 relative group"
                                         style={{
                                             width: `${diff.prob}%`,
                                             background: idx === 0
-                                                ? `linear-gradient(to right, #10b981, #34d399)`
-                                                : `linear-gradient(to right, #6366f1, #818cf8)`
+                                                ? 'linear-gradient(to right, #10b981, #34d399)'
+                                                : 'linear-gradient(to right, #6366f1, #818cf8)'
                                         }}
                                     >
                                         <div className="absolute inset-0 bg-white/20 animate-shimmer" />
@@ -201,7 +144,6 @@ export default function ReasoningDashboard({
                     )}
                 </div>
 
-                {/* Expert Insights (Formerly Clues) */}
                 {(patient.hidden?.clue || patient.hidden?.hint) && (
                     <div className={`p-4 rounded-xl border-2 border-dashed ${isDark ? 'bg-amber-500/5 border-amber-500/30' : 'bg-amber-50 border-amber-200 shadow-sm shadow-amber-200/50'}`}>
                         <div className="flex items-center gap-2 mb-2">
@@ -217,7 +159,6 @@ export default function ReasoningDashboard({
                 )}
             </div>
 
-            {/* Footer / Quick Action */}
             <div className={`p-3 border-t text-center ${isDark ? 'bg-slate-800/80 border-emerald-500/10' : 'bg-slate-50 border-slate-100'}`}>
                 <p className={`text-[9px] uppercase tracking-tighter font-bold opacity-40 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                     Confidence Level: {confidenceValue >= 80 ? 'HIGH (DEFINITIVE)' : confidenceValue >= 50 ? 'MEDIUM (PROBABLE)' : 'LOW (POSSIBLE)'}

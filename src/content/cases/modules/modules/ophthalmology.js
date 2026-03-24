@@ -50,7 +50,7 @@ export const OPHTHALMOLOGY_CASES = [
         risk: 'low',
         nonReferrable: true,
         referralExceptions: ['no_improvement'],
-        differentialDiagnosis: ['H00.1', 'H01.0']
+        differentialDiagnosis: ['H00.1','H01.0']
     },
     {
         id: 'konjungtivitas_bakterial',
@@ -84,7 +84,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['hand_hygiene', 'dont_share_towels', 'avoid_scratching'],
         risk: 'low', nonReferrable: true, referralExceptions: ['vision_loss', 'corneal_involvement'],
-        differentialDiagnosis: ['H10.0', 'H10.1']
+        differentialDiagnosis: ['H10.1']
     },
     {
         id: 'hordeolum_eksternum',
@@ -117,7 +117,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['warm_compress', 'hand_hygiene', 'dont_squeeze'],
         risk: 'low', nonReferrable: true, referralExceptions: ['no_improvement', 'preseptal_cellulitis'],
-        differentialDiagnosis: ['H00.0', 'H00.1']
+        differentialDiagnosis: ['H00.1']
     },
     {
         id: 'presbyopia',
@@ -152,7 +152,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['near_vision_test'],
         requiredEducation: ['normal_aging', 'need_reading_glasses', 'regular_check_yearly'],
         risk: 'low', nonReferrable: true, referralExceptions: [],
-        differentialDiagnosis: ['H52.4', 'H52.7']
+        differentialDiagnosis: ['H52.7']
     },
     {
         id: 'benda_asing_konjungtiva',
@@ -181,7 +181,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['foreign_body_removal_eye', 'eye_irrigation'],
         requiredEducation: ['wear_eye_protection', 'dont_rub_eye', 'follow_up_if_worse'],
         risk: 'low', nonReferrable: true, referralExceptions: ['corneal_involvement', 'intraocular_fb'],
-        differentialDiagnosis: ['T15.0', 'H10.3']
+        differentialDiagnosis: ['T15.0','H10.3']
     },
     {
         id: 'perdarahan_subkonjungtiva',
@@ -211,7 +211,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['self_limiting', 'control_blood_pressure', 'follow_up_if_recurrent'],
         risk: 'low', nonReferrable: true, referralExceptions: ['recurrent', 'bilateral', 'vision_loss'],
-        differentialDiagnosis: ['H11.3', 'H10.3']
+        differentialDiagnosis: ['H10.3']
     },
     {
         id: 'mata_kering',
@@ -240,7 +240,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['screen_break_20_20', 'blink_exercise', 'humidifier', 'reduce_ac'],
         risk: 'low', nonReferrable: true, referralExceptions: ['no_improvement', 'corneal_ulcer'],
-        differentialDiagnosis: ['H04.1', 'H10.4']
+        differentialDiagnosis: ['H10.4']
     },
     {
         id: 'blefaritis',
@@ -269,7 +269,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['lid_hygiene'],
         requiredEducation: ['warm_compress', 'lid_scrub_routine', 'face_hygiene'],
         risk: 'low', nonReferrable: true, referralExceptions: ['no_improvement'],
-        differentialDiagnosis: ['H00.0', 'H01.0']
+        differentialDiagnosis: ['H00.0']
     },
     {
         id: 'trikiasis',
@@ -298,7 +298,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['epilation'],
         requiredEducation: ['follow_up_recurrence', 'dont_rub_eye'],
         risk: 'low', nonReferrable: true, referralExceptions: ['recurrent', 'corneal_ulcer'],
-        differentialDiagnosis: ['H02.0', 'H02.4']
+        differentialDiagnosis: ['H02.4']
     },
     {
         id: 'episkleritis',
@@ -328,7 +328,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['self_limiting', 'follow_up_if_worse'],
         risk: 'low', nonReferrable: true, referralExceptions: ['recurrent', 'scleritis_suspicion'],
-        differentialDiagnosis: ['H15.0', 'H10.3']
+        differentialDiagnosis: ['H15.0','H10.3']
     },
     {
         id: 'hipermetropia_ringan',
@@ -356,7 +356,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['refraction_test'],
         requiredEducation: ['proper_lighting', 'reading_distance', 'regular_eye_check'],
         risk: 'low', nonReferrable: true, referralExceptions: ['high_degree', 'strabismus'],
-        differentialDiagnosis: ['H52.0', 'H52.1']
+        differentialDiagnosis: ['H52.1']
     },
     {
         id: 'miopia_ringan',
@@ -385,7 +385,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['refraction_test'],
         requiredEducation: ['limit_screen_time', 'outdoor_activity', 'regular_eye_check'],
         risk: 'low', nonReferrable: true, referralExceptions: ['high_degree', 'rapid_progression'],
-        differentialDiagnosis: ['H52.1', 'H44.2']
+        differentialDiagnosis: ['H44.2']
     },
     {
         id: 'buta_senja',
@@ -416,7 +416,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['vitamin_a_rich_food', 'balanced_diet', 'posyandu_routine'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['corneal_ulcer', 'keratomalacia'],
-        differentialDiagnosis: ['E50.5', 'H04.1']
+        differentialDiagnosis: ['H04.1']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -444,7 +444,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['visual_acuity_check'],
         requiredEducation: ['vision_threatening', 'immediate_ophthalmology', 'iridotomy_needed'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['H40.2', 'H10.0']
+        differentialDiagnosis: ['H10.0']
     },
     {
         id: 'keratitis',
@@ -471,7 +471,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['fluorescein_test', 'visual_acuity_check'],
         requiredEducation: ['vision_threatening', 'no_steroid_eye_drops', 'contact_lens_hygiene', 'ophthalmology_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['H16.9', 'H10.0']
+        differentialDiagnosis: ['H10.0']
     },
     {
         id: 'pterigium',
@@ -499,7 +499,7 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['visual_acuity_check'],
         requiredEducation: ['uv_protection', 'sunglasses_outdoor', 'surgery_if_progressive', 'recurrence_risk'],
         risk: 'low', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['H11.0', 'H11.1']
+        differentialDiagnosis: ['H11.1']
     },
     {
         id: 'katarak',
@@ -527,6 +527,6 @@ export const OPHTHALMOLOGY_CASES = [
         correctProcedures: ['visual_acuity_check', 'shadow_test', 'hospital_referral'],
         requiredEducation: ['surgery_only_treatment', 'phaco_referral', 'dm_control_important'],
         risk: 'low', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['H25.9', 'H40.1']
+        differentialDiagnosis: ['H40.1']
     }
 ];

@@ -130,7 +130,7 @@ export default function CaseSpecificSelection({ patient, anamnesisCategory, hasA
             <div
                 ref={gridRef}
                 onKeyDown={handleKeyDown}
-                className="grid grid-cols-2 md:grid-cols-3 gap-1.5 max-h-[4.5rem] overflow-y-auto pr-5 thin-scrollbar scroll-smooth"
+                className="flex flex-wrap gap-1.5 max-h-[6rem] overflow-y-auto pr-5 thin-scrollbar scroll-smooth"
                 role="grid"
                 aria-label="Pertanyaan anamnesis"
             >
@@ -156,7 +156,7 @@ export default function CaseSpecificSelection({ patient, anamnesisCategory, hasA
                                     response: historyEntry.rawClinical || historyEntry.clarifiedResponse || q.response,
                                     isReask: true
                                 })}
-                                className={`px-2 py-1.5 rounded-full border-2 border-dashed text-tag text-center truncate transition-all
+                                className={`px-2 py-1.5 rounded-full border-2 border-dashed text-tag text-center whitespace-normal transition-all
                                     ${isDark
                                         ? 'bg-amber-950/30 text-amber-400 border-amber-700/50 hover:bg-amber-900/40 hover:border-amber-500'
                                         : 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:border-amber-500'}
@@ -181,7 +181,7 @@ export default function CaseSpecificSelection({ patient, anamnesisCategory, hasA
                             title={fullText}
                             onClick={() => handleAskQuestion(q)}
                             disabled={isAsked}
-                            className={`px-2 py-1.5 rounded-full border text-tag text-center truncate transition-all
+                            className={`relative group px-2 py-1.5 rounded-full border text-tag text-center whitespace-normal transition-all
                                 ${isAsked
                                     ? (isDark ? 'bg-slate-800/50 text-slate-600 border-slate-800 cursor-default opacity-40' : 'bg-slate-100 text-slate-400 border-slate-100 cursor-default opacity-40')
                                     : isEssential
@@ -194,8 +194,11 @@ export default function CaseSpecificSelection({ patient, anamnesisCategory, hasA
                             onTouchStart={(e) => !isAsked && handleTouchStart(fullText, e)}
                             onTouchEnd={handleTouchEnd}
                             onContextMenu={(e) => e.preventDefault()}
-                        >
-                            {isAsked && <CheckCircle size={9} className="inline mr-0.5 opacity-60" />}
+                            >
+                                {!isAsked && idx < 9 && (
+                                    <span className="font-mono text-[8px] font-bold opacity-25 mr-0.5">[{idx + 1}]</span>
+                                )}
+                                {isAsked && <CheckCircle size={9} className="inline mr-0.5 opacity-60" />}
                             {isEssential && !isAsked && <Star size={9} className="inline mr-0.5 text-amber-500 fill-amber-500" />}
                             {tagLabel}
                         </button>

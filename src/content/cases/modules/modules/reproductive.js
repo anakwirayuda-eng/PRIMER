@@ -39,7 +39,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['partner_tracing'],
         requiredEducation: ['sexual_abstinence', 'sti_prevention', 'partner_treatment'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['pregnancy', 'penicillin_allergy'],
-        differentialDiagnosis: ['A51.0', 'A60.0']
+        differentialDiagnosis: ['A60.0']
     },
     {
         id: 'gonore_uncomplicated',
@@ -73,7 +73,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['partner_tracing'],
         requiredEducation: ['sexual_abstinence', 'sti_prevention', 'med_compliance_full'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['complicated_gonorrhea', 'no_improvement'],
-        differentialDiagnosis: ['A54.0', 'N34.1']
+        differentialDiagnosis: ['N34.1']
     },
     {
         id: 'normal_pregnancy',
@@ -107,7 +107,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['apn_procedures', 'newborn_care'],
         requiredEducation: ['postpartum_care', 'exclusive_breastfeeding'],
         risk: 'high', nonReferrable: true, referralExceptions: ['malpresentation', 'pph', 'fetal_distress'],
-        differentialDiagnosis: ['O80.9', 'O62.0']
+        differentialDiagnosis: ['O62.0']
     },
     {
         id: 'vulvitis',
@@ -131,7 +131,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['genital_hygiene', 'cotton_underwear', 'avoid_douching'],
         risk: 'low', nonReferrable: true, referralExceptions: ['recurrent'],
-        differentialDiagnosis: ['N76.0', 'B37.3']
+        differentialDiagnosis: ['B37.3']
     },
     {
         id: 'vaginosis_bakterialis',
@@ -155,7 +155,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_douching', 'complete_antibiotics'],
         risk: 'low', nonReferrable: true, referralExceptions: ['pregnancy'],
-        differentialDiagnosis: ['N77.1', 'B37.3']
+        differentialDiagnosis: ['B37.3']
     },
     {
         id: 'salpingitis',
@@ -183,7 +183,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['partner_tracing'],
         requiredEducation: ['complete_antibiotics', 'partner_treatment', 'sti_prevention'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['toa_suspicion', 'no_improvement'],
-        differentialDiagnosis: ['N70.9', 'N73.0']
+        differentialDiagnosis: ['N73.0']
     },
     {
         id: 'kehamilan_normal_anc',
@@ -215,7 +215,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['anc_examination'],
         requiredEducation: ['anc_schedule', 'balanced_nutrition', 'danger_signs_pregnancy', 'immunization_tt'],
         risk: 'low', nonReferrable: true, referralExceptions: ['high_risk_pregnancy'],
-        differentialDiagnosis: ['Z34.0', 'O02.1']
+        differentialDiagnosis: ['O02.1']
     },
     {
         id: 'aborsi_komplit',
@@ -240,7 +240,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['rest', 'adequate_nutrition', 'follow_up_1_week', 'contraception_counseling'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['incomplete_suspicion', 'heavy_bleeding'],
-        differentialDiagnosis: ['O03.9', 'O06.9']
+        differentialDiagnosis: ['O06.9']
     },
     {
         id: 'anemia_kehamilan',
@@ -265,7 +265,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['iron_rich_food', 'take_with_vitamin_c', 'avoid_tea_with_iron'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['hb_below_7', 'severe_symptoms'],
-        differentialDiagnosis: ['O99.0', 'D50.9']
+        differentialDiagnosis: ['D50.9']
     },
     {
         id: 'ruptur_perineum_12',
@@ -288,7 +288,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['perineum_repair'],
         requiredEducation: ['perineal_care', 'sitz_bath', 'pelvic_floor_exercise'],
         risk: 'low', nonReferrable: true, referralExceptions: ['grade_3_4', 'hematoma'],
-        differentialDiagnosis: ['O70.0', 'O70.1']
+        differentialDiagnosis: ['O70.1']
     },
     {
         id: 'mastitis',
@@ -312,7 +312,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['continue_breastfeeding', 'warm_compress', 'proper_latch', 'empty_breast'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['abscess', 'no_improvement'],
-        differentialDiagnosis: ['O91.2', 'N61']
+        differentialDiagnosis: ['N61']
     },
     {
         id: 'cracked_nipple',
@@ -336,7 +336,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['breastfeeding_counseling'],
         requiredEducation: ['proper_latch_technique', 'apply_breastmilk_on_nipple', 'air_dry'],
         risk: 'low', nonReferrable: true, referralExceptions: ['infection'],
-        differentialDiagnosis: ['O92.1', 'O91.0']
+        differentialDiagnosis: ['O91.0']
     },
     {
         id: 'inverted_nipple',
@@ -360,7 +360,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['breastfeeding_counseling', 'hoffman_technique'],
         requiredEducation: ['hoffman_exercise', 'nipple_stimulation', 'alternative_feeding'],
         risk: 'low', nonReferrable: true, referralExceptions: ['grade_3', 'failure_to_breastfeed'],
-        differentialDiagnosis: ['Q83.8', 'N64.5']
+        differentialDiagnosis: ['N64.5']
     },
     {
         id: 'abses_kelenjar_sebasea',
@@ -384,7 +384,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['incision_drainage'],
         requiredEducation: ['wound_care', 'skin_hygiene', 'follow_up'],
         risk: 'low', nonReferrable: true, referralExceptions: ['bartholin_abscess', 'recurrent'],
-        differentialDiagnosis: ['L02.2', 'N75.1']
+        differentialDiagnosis: ['L02.2','N75.1']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -415,7 +415,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['iv_access', 'foley_catheter', 'monitor_vital', 'pasang_mgso4'],
         requiredEducation: ['life_threatening', 'eclampsia_risk', 'delivery_may_needed'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['O14.1', 'O15.0']
+        differentialDiagnosis: ['O15.0']
     },
     {
         id: 'eklampsia',
@@ -442,7 +442,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['airway_protection', 'iv_access', 'foley_catheter', 'o2_mask', 'monitor_vital', 'left_lateral_position'],
         requiredEducation: ['life_threatening', 'immediate_delivery', 'magnesium_toxicity_monitoring'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['O15.0', 'G40.9']
+        differentialDiagnosis: ['G40.9']
     },
     {
         id: 'pph',
@@ -469,7 +469,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['uterine_massage', 'bimanual_compression', 'iv_access_2_lines', 'foley_catheter', 'monitor_vital'],
         requiredEducation: ['life_threatening', 'blood_transfusion_needed', 'surgery_if_persistent'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['O72.1', 'O72.0']
+        differentialDiagnosis: ['O72.0']
     },
     {
         id: 'kpd',
@@ -496,7 +496,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['lakmus_test', 'inspekulo', 'monitor_djj'],
         requiredEducation: ['infection_risk', 'cord_prolapse_risk', 'maturity_assessment_needed'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['O42.9', 'N39.0']
+        differentialDiagnosis: ['N39.0']
     },
     {
         id: 'abortus_inkomplit',
@@ -524,7 +524,7 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['iv_access', 'remove_tissue_at_oue', 'monitor_vital'],
         requiredEducation: ['curettage_needed', 'complete_evacuation', 'blood_transfusion_if_needed'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['O03.4', 'O20.0']
+        differentialDiagnosis: ['O20.0']
     },
     {
         id: 'hiperemesis_gravidarum',
@@ -552,6 +552,6 @@ export const REPRODUCTIVE_CASES = [
         correctProcedures: ['iv_access', 'monitor_vital', 'intake_output_chart'],
         requiredEducation: ['small_frequent_meals', 'avoid_triggers', 'electrolyte_monitoring'],
         risk: 'medium', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['O21.1', 'O21.0']
+        differentialDiagnosis: ['O21.0']
     }
 ];

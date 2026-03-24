@@ -37,7 +37,7 @@ export const FORENSIK_CASES = [
         correctProcedures: ['visum_documentation', 'wound_care'],
         requiredEducation: ['legal_rights', 'follow_up_if_worse'],
         risk: 'low', nonReferrable: true, referralExceptions: ['severe_injury', 'sexual_assault'],
-        differentialDiagnosis: ['Z04.5', 'T14.9']
+        differentialDiagnosis: ['T14.9']
     },
     {
         id: 'keracunan_makanan',
@@ -66,7 +66,7 @@ export const FORENSIK_CASES = [
         correctProcedures: ['food_sample_collection'],
         requiredEducation: ['rehydration', 'food_safety', 'report_to_health_office'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['severe_dehydration', 'botulism_suspicion', 'mass_poisoning'],
-        differentialDiagnosis: ['T62.9', 'A05.9']
+        differentialDiagnosis: ['A05.9']
     },
     {
         id: 'kekerasan_tumpul',
@@ -94,7 +94,7 @@ export const FORENSIK_CASES = [
         correctProcedures: ['visum_et_repertum', 'photo_documentation', 'wound_measurement'],
         requiredEducation: ['legal_rights', 'domestic_violence_hotline', 'safety_planning', 'psychological_support'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['fracture', 'internal_bleeding', 'head_injury'],
-        differentialDiagnosis: ['T14.0', 'T00.9']
+        differentialDiagnosis: ['T00.9']
     },
     {
         id: 'kekerasan_tajam',
@@ -122,7 +122,7 @@ export const FORENSIK_CASES = [
         correctProcedures: ['wound_suturing', 'visum_et_repertum', 'photo_documentation'],
         requiredEducation: ['wound_care', 'suture_removal_schedule', 'legal_rights'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['tendon_damage', 'deep_penetration', 'neurovascular_injury'],
-        differentialDiagnosis: ['T14.1', 'T01.9']
+        differentialDiagnosis: ['T01.9']
     },
     // === SKDI 1-3 REFERRAL CASE ===
     {
@@ -150,6 +150,6 @@ export const FORENSIK_CASES = [
         correctProcedures: ['airway_management', 'warming_blanket', 'monitor_vital', 'iv_access'],
         requiredEducation: ['24h_observation', 'secondary_drowning_risk', 'icu_monitoring'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['T75.1', 'J68.1']
+        differentialDiagnosis: ['J68.1']
     }
 ];

@@ -40,7 +40,7 @@ export const URINARY_CASES = [
         correctProcedures: [],
         requiredEducation: ['increased_fluid_intake', 'hygiene_education', 'med_compliance'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['pyelonephritis', 'pregnancy', 'no_improvement'],
-        differentialDiagnosis: ['N39.0', 'N30.9']
+        differentialDiagnosis: ['N30.9']
     },
     {
         id: 'fimosis',
@@ -64,7 +64,7 @@ export const URINARY_CASES = [
         correctProcedures: ['circumcision'],
         requiredEducation: ['genital_hygiene', 'follow_up'],
         risk: 'low', nonReferrable: true, referralExceptions: ['recurrent_uti', 'bxo'],
-        differentialDiagnosis: ['N47', 'N47.1']
+        differentialDiagnosis: ['N47.1']
     },
     {
         id: 'parafimosis',
@@ -88,7 +88,7 @@ export const URINARY_CASES = [
         correctProcedures: ['manual_reduction_paraphimosis'],
         requiredEducation: ['always_retract_foreskin_back', 'circumcision_counseling'],
         risk: 'high', nonReferrable: true, referralExceptions: ['failed_reduction', 'necrosis'],
-        differentialDiagnosis: ['N47.2', 'N48.1']
+        differentialDiagnosis: ['N48.1']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -118,7 +118,7 @@ export const URINARY_CASES = [
         correctProcedures: ['iv_access', 'usg_ginjal'],
         requiredEducation: ['adequate_hydration', 'urology_referral'],
         risk: 'medium', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['N20.0', 'N23']
+        differentialDiagnosis: ['N23']
     },
     {
         id: 'torsio_testis',
@@ -145,7 +145,7 @@ export const URINARY_CASES = [
         correctProcedures: ['manual_detorsion_attempt', 'iv_access'],
         requiredEducation: ['6_hour_window', 'surgery_needed_urgently'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['N44.0', 'N45.9']
+        differentialDiagnosis: ['N45.9']
     },
     {
         id: 'gna',
@@ -173,6 +173,6 @@ export const URINARY_CASES = [
         correctProcedures: ['fluid_restriction', 'monitor_vital'],
         requiredEducation: ['bed_rest', 'salt_restriction', 'nephrology_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['N00.9', 'N03.9']
+        differentialDiagnosis: ['N03.9']
     }
 ];

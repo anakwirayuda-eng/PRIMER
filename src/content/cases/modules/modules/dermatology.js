@@ -42,7 +42,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_irritants', 'barrier_protection', 'moisturizer_use'],
         risk: 'low', nonReferrable: true, referralExceptions: ['erythroderma', 'no_improvement'],
-        differentialDiagnosis: ['L25.9', 'L23.9']
+        differentialDiagnosis: ['L25.9']
     },
     {
         id: 'scabies',
@@ -79,7 +79,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: ['family_tracing'],
         requiredEducation: ['wash_bedding', 'treat_contacts', 'hygiene'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['scabies_norwegian', 'secondary_infection_severe'],
-        differentialDiagnosis: ['B86', 'L20.9']
+        differentialDiagnosis: ['L20.9']
     },
     {
         id: 'tinea_corporis',
@@ -116,7 +116,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['keep_skin_dry', 'avoid_sharing_towels', 'med_compliance'],
         risk: 'low', nonReferrable: true, referralExceptions: ['extensive_infection', 'no_improvement'],
-        differentialDiagnosis: ['B35.4', 'L40.0']
+        differentialDiagnosis: ['L40.0']
     },
     {
         id: 'scabies_infeksi',
@@ -150,7 +150,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['hygiene', 'wound_care'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['cellulitis_suspicion'],
-        differentialDiagnosis: ['B86', 'L01.0']
+        differentialDiagnosis: ['L01.0']
     },
     {
         id: 'tinea_corporis_extensive',
@@ -185,7 +185,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['med_compliance', 'hygiene'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['no_improvement_with_systemic'],
-        differentialDiagnosis: ['B35.4', 'L30.9']
+        differentialDiagnosis: ['L30.9']
     },
     {
         id: 'dermatitis_kontak_iritan',
@@ -221,7 +221,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: ['wound_debridement'],
         requiredEducation: ['use_protective_gear', 'immediate_wash_after_contact'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['extensive_burn', 'eye_involvement'],
-        differentialDiagnosis: ['L24.9', 'L23.9']
+        differentialDiagnosis: ['L23.9']
     },
     {
         id: 'exanthem_subitum',
@@ -248,7 +248,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['self_limited', 'fever_management', 'adequate_fluids'],
         risk: 'low', nonReferrable: true, referralExceptions: ['febrile_seizure', 'immunocompromised'],
-        differentialDiagnosis: ['B08.2', 'B05.9']
+        differentialDiagnosis: ['B05.9']
     },
     {
         id: 'pitiriasis_rosea',
@@ -275,7 +275,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['self_limited_6_8_weeks', 'avoid_hot_bath', 'moisturizer'],
         risk: 'low', nonReferrable: true, referralExceptions: ['atypical_distribution', 'persistent_beyond_3months'],
-        differentialDiagnosis: ['L42', 'B35.4']
+        differentialDiagnosis: ['B35.4']
     },
     {
         id: 'eritema_nodosum',
@@ -304,7 +304,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['rest_and_elevation', 'treat_underlying_cause', 'self_limited_3_6_weeks'],
         risk: 'low', nonReferrable: true, referralExceptions: ['recurrent', 'suspected_sarcoidosis', 'ulceration'],
-        differentialDiagnosis: ['L52', 'M79.3']
+        differentialDiagnosis: ['M79.3']
     },
     {
         id: 'kornu_kutaneum',
@@ -332,7 +332,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: ['excision_biopsy'],
         requiredEducation: ['sun_protection', 'monitor_regrowth', 'pathology_check_basis'],
         risk: 'low', nonReferrable: true, referralExceptions: ['suspected_scc', 'recurrence', 'large_base'],
-        differentialDiagnosis: ['L85.8', 'C44.9']
+        differentialDiagnosis: ['C44.9']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -360,7 +360,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: ['iv_access', 'monitor_vital', 'wound_care'],
         requiredEducation: ['life_threatening', 'burn_unit_care', 'drug_allergy_card', 'never_use_offending_drug'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_provinsi',
-        differentialDiagnosis: ['L51.1', 'L51.2']
+        differentialDiagnosis: ['L51.2']
     },
     {
         id: 'psoriasis_vulgaris',
@@ -388,7 +388,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['chronic_disease', 'trigger_avoidance', 'stress_management', 'systemic_therapy_referral'],
         risk: 'low', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['L40.0', 'L30.9']
+        differentialDiagnosis: ['L30.9']
     },
     {
         id: 'pemfigus_vulgaris',
@@ -415,7 +415,7 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: ['wound_dressing'],
         requiredEducation: ['autoimmune_disease', 'immunosuppressant_needed', 'dermatology_referral_urgent'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_provinsi',
-        differentialDiagnosis: ['L10.0', 'L12.0']
+        differentialDiagnosis: ['L12.0']
     },
     {
         id: 'luka_bakar_derajat_3',
@@ -442,6 +442,6 @@ export const DERMATOLOGY_CASES = [
         correctProcedures: ['iv_access_2_lines', 'foley_catheter', 'o2_mask', 'wound_cover_saline_gauze', 'monitor_vital'],
         requiredEducation: ['burn_unit_needed', 'skin_graft_likely', 'inhalation_injury_risk'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_provinsi',
-        differentialDiagnosis: ['T30.3', 'T30.2']
+        differentialDiagnosis: ['T30.2']
     }
 ];

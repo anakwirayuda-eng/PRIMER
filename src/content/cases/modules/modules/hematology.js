@@ -39,7 +39,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['diet_iron_rich', 'long_term_therapy'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['hb_below_7', 'pregnancy_severe'],
-        differentialDiagnosis: ['D50', 'D51']
+        differentialDiagnosis: ['D50','D51']
     },
     {
         id: 'anemia_defisiensi_besi_simptomatik',
@@ -73,7 +73,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: ['hospital_referral'],
         requiredEducation: ['diet_iron_rich', 'emergency_signs'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['hb_below_7', 'heart_failure_risk'],
-        differentialDiagnosis: ['D50', 'D56']
+        differentialDiagnosis: ['D50','D56']
     },
     {
         id: 'dbd_grade_1',
@@ -108,7 +108,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: ['hospital_referral'],
         requiredEducation: ['warning_signs_dhf', 'adequate_fluids'],
         risk: 'high', nonReferrable: true, referralExceptions: ['emergency', 'warning_signs_present'],
-        differentialDiagnosis: ['A91', 'A90']
+        differentialDiagnosis: ['A90']
     },
     {
         id: 'demam_dengue',
@@ -136,7 +136,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['adequate_fluids', 'warning_signs_dhf', 'daily_platelet_check', 'no_nsaids'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['warning_signs', 'platelet_drop'],
-        differentialDiagnosis: ['A90', 'A91']
+        differentialDiagnosis: ['A91']
     },
     {
         id: 'leptospirosis_ringan',
@@ -161,7 +161,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['complete_antibiotics', 'avoid_flood_water', 'rat_control'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['weil_disease', 'renal_failure', 'hemorrhagic'],
-        differentialDiagnosis: ['A27.9', 'A91']
+        differentialDiagnosis: ['A91']
     },
     {
         id: 'limfadenitis',
@@ -186,7 +186,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['complete_antibiotics', 'treat_primary_infection'],
         risk: 'low', nonReferrable: true, referralExceptions: ['abscess', 'suspected_malignancy', 'tb_lymphadenitis'],
-        differentialDiagnosis: ['L04.9', 'C77.9']
+        differentialDiagnosis: ['C77.9']
     },
     {
         id: 'reaksi_anafilaktik',
@@ -213,7 +213,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: ['airway_management', 'iv_access', 'monitor_vital'],
         requiredEducation: ['allergen_avoidance', 'epipen_education', 'medic_alert_bracelet'],
         risk: 'critical', nonReferrable: false,
-        differentialDiagnosis: ['T78.2', 'T78.0']
+        differentialDiagnosis: ['T78.0']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -242,7 +242,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: ['iv_access', 'monitor_vital_15min', 'foley_catheter', 'cek_ht_serial'],
         requiredEducation: ['life_threatening', 'icu_monitoring', 'transfusion_may_needed'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['A91', 'A97.0']
+        differentialDiagnosis: ['A97.0']
     },
     {
         id: 'sepsis',
@@ -271,7 +271,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: ['iv_access_2_lines', 'foley_catheter', 'monitor_vital', 'blood_culture'],
         requiredEducation: ['life_threatening', 'icu_needed', 'source_control_surgery'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['A41.9', 'R65.2']
+        differentialDiagnosis: ['R65.2']
     },
     {
         id: 'anemia_hemolitik',
@@ -301,7 +301,7 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_oxidant_drugs', 'g6pd_testing', 'transfusion_if_severe', 'hematology_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['D59.9', 'D55.0']
+        differentialDiagnosis: ['D55.0']
     },
     {
         id: 'artritis_reumatoid',
@@ -329,6 +329,6 @@ export const HEMATOLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['chronic_autoimmune', 'dmard_needed', 'joint_protection', 'rheumatology_referral'],
         risk: 'medium', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['M06.9', 'M10.9']
+        differentialDiagnosis: ['M10.9']
     }
 ];

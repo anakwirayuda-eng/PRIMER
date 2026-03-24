@@ -42,7 +42,7 @@ export const PSYCHIATRY_CASES = [
         correctProcedures: [],
         requiredEducation: ['sleep_hygiene', 'stress_management'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['depression_major', 'psychosis'],
-        differentialDiagnosis: ['F51.0', 'F41.1']
+        differentialDiagnosis: ['F41.1']
     },
     {
         id: 'gangguan_cemas',
@@ -71,7 +71,7 @@ export const PSYCHIATRY_CASES = [
         correctProcedures: [],
         requiredEducation: ['relaxation_techniques', 'regular_exercise', 'limit_caffeine', 'sleep_hygiene', 'counseling_referral'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['suicidal_ideation', 'psychosis', 'substance_abuse'],
-        differentialDiagnosis: ['F41.1', 'F41.0']
+        differentialDiagnosis: ['F41.0']
     },
     {
         id: 'gangguan_somatoform',
@@ -101,7 +101,7 @@ export const PSYCHIATRY_CASES = [
         correctProcedures: ['brief_psychotherapy'],
         requiredEducation: ['mind_body_connection', 'stress_management', 'regular_followup', 'avoid_unnecessary_tests'],
         risk: 'low', nonReferrable: true, referralExceptions: ['suicidal_ideation', 'severe_disability', 'comorbid_depression'],
-        differentialDiagnosis: ['F45.0', 'F41.1']
+        differentialDiagnosis: ['F41.1']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -130,7 +130,7 @@ export const PSYCHIATRY_CASES = [
         correctProcedures: ['safety_assessment'],
         requiredEducation: ['chronic_illness', 'medication_compliance', 'family_psychoeducation', 'psychiatry_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['F20.9', 'F23.9']
+        differentialDiagnosis: ['F23.9']
     },
     {
         id: 'depresi_berat',
@@ -158,7 +158,7 @@ export const PSYCHIATRY_CASES = [
         correctProcedures: ['safety_assessment', 'suicidal_risk_assessment'],
         requiredEducation: ['suicidal_hotline', 'medication_takes_2_4_weeks', 'psychotherapy_needed', 'psychiatry_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['F32.2', 'F33.2']
+        differentialDiagnosis: ['F33.2']
     },
     {
         id: 'bipolar_manik',
@@ -186,7 +186,7 @@ export const PSYCHIATRY_CASES = [
         correctProcedures: ['safety_assessment'],
         requiredEducation: ['psychiatric_emergency', 'mood_stabilizer_needed', 'chronic_relapsing', 'psychiatry_referral'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['F31.1', 'F30.1']
+        differentialDiagnosis: ['F30.1']
     },
     {
         id: 'intoksikasi_zat_psikoaktif',
@@ -213,6 +213,6 @@ export const PSYCHIATRY_CASES = [
         correctProcedures: ['airway_management', 'o2_mask_10lpm', 'iv_access', 'monitor_vital'],
         requiredEducation: ['overdose_risk', 'naloxone_may_repeat', 'rehabilitation_referral', 'harm_reduction'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['F19.0', 'F11.0']
+        differentialDiagnosis: ['F11.0']
     }
 ];

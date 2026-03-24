@@ -96,7 +96,7 @@ export const DIGESTIVE_CASES = [
         risk: 'medium',
         nonReferrable: true,
         referralExceptions: ['emergency', 'no_improvement'],
-        differentialDiagnosis: ['K29.7', 'I20.9']
+        differentialDiagnosis: ['K29.7','I20.9']
     },
     {
         id: 'gastritis_acute',
@@ -143,7 +143,7 @@ export const DIGESTIVE_CASES = [
         risk: 'low',
         nonReferrable: true,
         referralExceptions: ['emergency', 'comorbidity', 'no_improvement'],
-        differentialDiagnosis: ['K21.0', 'K25.9']
+        differentialDiagnosis: ['K21.0','K25.9']
     },
     {
         id: 'ascariasis',
@@ -189,7 +189,7 @@ export const DIGESTIVE_CASES = [
         risk: 'low',
         nonReferrable: true,
         referralExceptions: ['emergency', 'comorbidity'],
-        differentialDiagnosis: ['B76.0', 'B78.9']
+        differentialDiagnosis: ['B76.0','B78.9']
     },
     {
         id: 'gerd_erosive',
@@ -227,7 +227,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: ['endoscopy_referral'],
         requiredEducation: ['diet_reflux', 'diet_meal_freq', 'elevate_head'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['emergency', 'no_improvement', 'alarm_symptoms'],
-        differentialDiagnosis: ['K21.0', 'K29.1']
+        differentialDiagnosis: ['K29.1']
     },
     {
         id: 'gastritis_erosive',
@@ -264,7 +264,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: ['endoscopy_referral'],
         requiredEducation: ['diet_reflux', 'diet_soft', 'med_compliance'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['emergency', 'hematemesis_melena'],
-        differentialDiagnosis: ['K29.0', 'K25.9']
+        differentialDiagnosis: ['K25.9']
     },
     {
         id: 'diare_akut_non_spesifik',
@@ -302,7 +302,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['hand_hygiene', 'food_hygiene', 'rehydration'],
         risk: 'low', nonReferrable: true, referralExceptions: ['dehydration_severe'],
-        differentialDiagnosis: ['A09', 'A00']
+        differentialDiagnosis: ['A09','A00']
     },
     {
         id: 'demam_tifoid',
@@ -342,7 +342,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['bed_rest', 'diet_soft', 'med_compliance'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['emergency', 'complication_intestinal'],
-        differentialDiagnosis: ['A01.0', 'A75.9']
+        differentialDiagnosis: ['A75.9']
     },
     {
         id: 'ulkus_mulut',
@@ -366,7 +366,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_spicy_food', 'oral_hygiene', 'adequate_sleep'],
         risk: 'low', nonReferrable: true, referralExceptions: ['large_ulcer', 'no_improvement_2w'],
-        differentialDiagnosis: ['K12.0', 'B00.2']
+        differentialDiagnosis: ['B00.2']
     },
     {
         id: 'infeksi_umbilikus',
@@ -391,7 +391,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: ['wound_care_umbilical'],
         requiredEducation: ['umbilical_care', 'keep_dry_clean', 'danger_signs_neonate'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['sepsis_signs', 'necrotizing'],
-        differentialDiagnosis: ['P38', 'L08.8']
+        differentialDiagnosis: ['L08.8']
     },
     {
         id: 'intoleransi_makanan',
@@ -415,7 +415,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['elimination_diet', 'food_diary', 'lactose_free_alternatives'],
         risk: 'low', nonReferrable: true, referralExceptions: ['weight_loss', 'malabsorption'],
-        differentialDiagnosis: ['K90.4', 'T78.1']
+        differentialDiagnosis: ['T78.1']
     },
     {
         id: 'alergi_makanan',
@@ -443,7 +443,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_allergen', 'read_food_labels', 'carry_antihistamine', 'seek_er_if_severe'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['anaphylaxis', 'angioedema_severe'],
-        differentialDiagnosis: ['T78.1', 'L50.0']
+        differentialDiagnosis: ['L50.0']
     },
     {
         id: 'cacing_tambang',
@@ -471,7 +471,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['wear_shoes', 'hand_hygiene', 'food_hygiene'],
         risk: 'low', nonReferrable: true, referralExceptions: ['severe_anemia'],
-        differentialDiagnosis: ['B76.0', 'B77.9']
+        differentialDiagnosis: ['B77.9']
     },
     {
         id: 'strongiloidiasis',
@@ -499,7 +499,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['wear_shoes', 'hand_hygiene', 'food_hygiene'],
         risk: 'low', nonReferrable: true, referralExceptions: ['immunocompromised', 'hyperinfection'],
-        differentialDiagnosis: ['B78.9', 'B76.0']
+        differentialDiagnosis: ['B76.0']
     },
     {
         id: 'skistosomiasis',
@@ -524,7 +524,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_freshwater_contact', 'public_health_reporting'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['hepatosplenic_severe'],
-        differentialDiagnosis: ['B65.9', 'B77.9']
+        differentialDiagnosis: ['B77.9']
     },
     {
         id: 'taeniasis',
@@ -549,7 +549,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['cook_meat_thoroughly', 'hand_hygiene', 'food_hygiene'],
         risk: 'low', nonReferrable: true, referralExceptions: ['cysticercosis_suspicion'],
-        differentialDiagnosis: ['B68.9', 'B77.9']
+        differentialDiagnosis: ['B77.9']
     },
     {
         id: 'hemoroid_grade12',
@@ -576,7 +576,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: [],
         requiredEducation: ['high_fiber_diet', 'adequate_water', 'avoid_straining', 'sitz_bath'],
         risk: 'low', nonReferrable: true, referralExceptions: ['grade_3_4', 'thrombosed', 'rectal_bleeding_severe'],
-        differentialDiagnosis: ['K64.0', 'K62.5']
+        differentialDiagnosis: ['K62.5']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -605,7 +605,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: ['iv_access', 'puasakan', 'ngt_if_vomiting'],
         requiredEducation: ['surgery_needed', 'perforation_risk', 'no_laxatives'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['K35.9', 'K37']
+        differentialDiagnosis: ['K37']
     },
     {
         id: 'kolesistitis_akut',
@@ -634,7 +634,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: ['iv_access', 'puasakan'],
         requiredEducation: ['surgery_may_needed', 'usg_referral', 'low_fat_diet'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['K81.0', 'K80.0']
+        differentialDiagnosis: ['K80.0']
     },
     {
         id: 'hepatitis_b',
@@ -663,7 +663,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: ['cek_hbsag'],
         requiredEducation: ['transmission_prevention', 'no_alcohol', 'serial_liver_function', 'chronic_monitoring'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['B16.9', 'B15.9']
+        differentialDiagnosis: ['B15.9']
     },
     {
         id: 'perdarahan_gi_atas',
@@ -692,7 +692,7 @@ export const DIGESTIVE_CASES = [
         correctProcedures: ['iv_access_2_lines', 'ngt_lavage', 'foley_catheter', 'monitor_vital', 'head_down'],
         requiredEducation: ['life_threatening', 'blood_transfusion_needed', 'endoscopy_needed'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['K92.2', 'I85.0']
+        differentialDiagnosis: ['I85.0']
     },
     {
         id: 'ileus_obstruktif',
@@ -721,6 +721,6 @@ export const DIGESTIVE_CASES = [
         correctProcedures: ['ngt_decompression', 'iv_access', 'puasakan', 'foley_catheter', 'monitor_vital'],
         requiredEducation: ['surgery_likely', 'strangulation_risk', 'adhesion_cause'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['K56.6', 'K56.5']
+        differentialDiagnosis: ['K56.5']
     }
 ];

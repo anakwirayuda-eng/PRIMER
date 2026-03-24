@@ -50,7 +50,7 @@ export const RESPIRATORY_CASES = [
         risk: 'medium',
         nonReferrable: true,
         referralExceptions: ['emergency', 'no_improvement', 'comorbidity'],
-        differentialDiagnosis: ['J44.9', 'J18.9']
+        differentialDiagnosis: ['J44.9','J18.9']
     },
     {
         id: 'asma_bronkiale_akut',
@@ -86,7 +86,7 @@ export const RESPIRATORY_CASES = [
         correctProcedures: ['nebulizer', 'nasal_cannula'],
         requiredEducation: ['avoid_triggers', 'peak_flow_monitoring', 'emergency_plan'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['emergency', 'status_asthmaticus'],
-        differentialDiagnosis: ['J45', 'J46']
+        differentialDiagnosis: ['J45','J46']
     },
     {
         id: 'bronkhitis_akut',
@@ -120,7 +120,7 @@ export const RESPIRATORY_CASES = [
         correctProcedures: [],
         requiredEducation: ['rest_and_fluids', 'stop_smoking', 'complete_antibiotics'],
         risk: 'low', nonReferrable: true, referralExceptions: ['high_fever', 'shortness_of_breath'],
-        differentialDiagnosis: ['J20.9', 'J18.9']
+        differentialDiagnosis: ['J18.9']
     },
     {
         id: 'pneumonia_bakterial',
@@ -155,7 +155,7 @@ export const RESPIRATORY_CASES = [
         correctProcedures: ['nasal_cannula'],
         requiredEducation: ['rest_and_fluids', 'med_compliance', 'follow_up_xray'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['emergency', 'severe_pneumonia', 'elderly'],
-        differentialDiagnosis: ['J15.9', 'A15']
+        differentialDiagnosis: ['A15']
     },
     {
         id: 'ppok_exacerbation',
@@ -185,7 +185,7 @@ export const RESPIRATORY_CASES = [
         correctProcedures: ['spirometry', 'nebulizer', 'nasal_cannula'],
         requiredEducation: ['stop_smoking', 'red_flag_monitor', 'routine_control'],
         risk: 'high', nonReferrable: false, referralExceptions: ['frequent_exacerbations'],
-        differentialDiagnosis: ['J45', 'J15']
+        differentialDiagnosis: ['J45','J15']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -214,7 +214,7 @@ export const RESPIRATORY_CASES = [
         correctProcedures: ['o2_mask_10lpm', 'iv_access', 'monitor_vital', 'nebulizer_serial'],
         requiredEducation: ['life_threatening', 'icu_needed', 'step_up_therapy'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['J46', 'J45.9']
+        differentialDiagnosis: ['J45.9']
     },
     {
         id: 'bronkiolitis_akut',
@@ -242,7 +242,7 @@ export const RESPIRATORY_CASES = [
         correctProcedures: ['o2_nasal_2lpm', 'monitor_vital', 'suction_if_needed'],
         requiredEducation: ['keep_hydrated', 'monitor_breathing', 'apnea_risk_neonate'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['J21.9', 'J45.9']
+        differentialDiagnosis: ['J45.9']
     },
     {
         id: 'efusi_pleura',
@@ -271,7 +271,7 @@ export const RESPIRATORY_CASES = [
         correctProcedures: ['rontgen_thorax'],
         requiredEducation: ['thoracocentesis_needed', 'tb_evaluation', 'fluid_analysis'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['J90', 'A15.6']
+        differentialDiagnosis: ['A15.6']
     },
     {
         id: 'edema_paru_akut',
@@ -299,7 +299,7 @@ export const RESPIRATORY_CASES = [
         correctProcedures: ['o2_mask_15lpm', 'iv_access', 'posisi_duduk_fowler', 'monitor_vital', 'foley_catheter'],
         requiredEducation: ['life_threatening', 'icu_needed', 'heart_failure_management'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['J81', 'I50.1']
+        differentialDiagnosis: ['I50.1']
     },
     {
         id: 'pneumothorax',
@@ -328,6 +328,6 @@ export const RESPIRATORY_CASES = [
         correctProcedures: ['o2_nasal_4lpm', 'rontgen_thorax', 'monitor_vital'],
         requiredEducation: ['chest_tube_at_hospital', 'tension_pneumothorax_risk', 'no_flying'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['J93.9', 'J93.0']
+        differentialDiagnosis: ['J93.0']
     }
 ];

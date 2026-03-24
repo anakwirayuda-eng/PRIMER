@@ -1,23 +1,40 @@
 /**
  * @reflection
  * [IDENTITY]: DialogueLog
- * [PURPOSE]: React UI component: DialogueLog with flex-grow layout for maximum chat room.
+ * [PURPOSE]: React UI component: DialogueLog — Live Medical Transcript style.
  * [STATE]: Experimental
  * [ANCHOR]: DialogueLog
  * [DEPENDS_ON]: AnamnesisEngine
- * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-19
+ * [LAST_UPDATE]: 2026-03-24
  */
 
 import React from 'react';
+import { Stethoscope, Activity, Mic, AlertTriangle, User, HeartPulse } from 'lucide-react';
 import { adaptTextForGender, getInformantMode, getSpeakerLabel } from '../../../game/AnamnesisEngine.js';
 
-export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEndRef }) {
+/**
+ * Get demeanor-driven icon props instead of emoji faces
+ */
+function getDemeanorIcon(patient, q) {
+    if (q.isGreeting || q.isAcknowledgment) {
+        return { icon: User, className: 'text-emerald-400', animate: false };
+    }
+    const d = (patient?.demeanor || '').toLowerCase();
+    if (d.includes('dramatic') || d.includes('anxious') || d.includes('cemas')) {
+        return { icon: HeartPulse, className: 'text-rose-400', animate: true };
+    }
+    if (d.includes('stoic')) {
+        return { icon: Activity, className: 'text-slate-400', animate: false };
+    }
+    return { icon: Activity, className: 'text-emerald-400', animate: false };
+}
+
+export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEndRef, isProcessing }) {
     if (anamnesisHistory.length === 0) {
         return (
-            <div className={`flex-1 min-h-[200px] overflow-y-auto mb-2 p-2 ${isDark ? 'bg-slate-950/50 border-slate-800' : 'bg-slate-50 border-slate-200'} rounded border inner-shadow`}>
-                <div className="text-center text-slate-400 text-xs italic mt-4">
-                    Mulai anamnesis dengan memilih pertanyaan di bawah.
+            <div className={`flex-1 min-h-[200px] overflow-y-auto mb-2 p-4 ${isDark ? 'bg-[#0b1120] border-slate-800' : 'bg-slate-50 border-slate-200'} rounded-xl border inner-shadow`}>
+                <div className="text-center text-slate-500 text-xs italic mt-4 font-mono tracking-wide">
+                    [ AWAITING CLINICAL QUERY . . . ]
                 </div>
                 <div ref={chatEndRef} />
             </div>
@@ -25,38 +42,67 @@ export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEnd
     }
 
     return (
-        <div className={`flex-1 min-h-[200px] overflow-y-auto mb-2 space-y-3 p-2 ${isDark ? 'bg-slate-950/50 border-slate-800' : 'bg-slate-50 border-slate-200'} rounded border inner-shadow thin-scrollbar transition-colors`}>
+        <div className={`flex-1 min-h-[200px] overflow-y-auto mb-2 space-y-4 p-4 ${isDark ? 'bg-[#0b1120] border-slate-800' : 'bg-slate-50 border-slate-200'} rounded-xl border inner-shadow thin-scrollbar transition-colors`}>
             {anamnesisHistory.map((q, idx) => {
                 const infoMode = getInformantMode(patient);
                 const speakerLabel = getSpeakerLabel(q, patient);
+                const demeanor = getDemeanorIcon(patient, q);
+                const DemeanorIcon = demeanor.icon;
+
                 return (
-                    <div key={idx} className="flex flex-col gap-1.5 text-body-sm animate-fadeIn">
-                        {/* Doctor bubble — right aligned (like WhatsApp "you") */}
-                        <div className={`p-2.5 rounded-xl rounded-tr-none self-end max-w-[85%] border shadow-sm ${q.isAcknowledgment ? 'bg-emerald-50 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-100 border-emerald-200 dark:border-emerald-800' : 'bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 border-blue-200 dark:border-blue-800'}`}>
-                            <span className={`font-bold block text-caption ${q.isAcknowledgment ? 'text-emerald-700 dark:text-emerald-300' : 'text-blue-700 dark:text-blue-300'} mb-0.5`}>🩺 Dokter</span>
-                            {adaptTextForGender(q.text, patient, infoMode)}
+                    <div key={idx} className="flex flex-col gap-2.5 animate-fadeIn">
+                        {/* Doctor query — system command style */}
+                        <div className={`pl-3 border-l-2 ${q.isAcknowledgment ? 'border-emerald-500/50' : 'border-blue-500/50'}`}>
+                            <div className="flex items-center gap-2 mb-1 opacity-60">
+                                <Stethoscope size={12} className={q.isAcknowledgment ? 'text-emerald-400' : 'text-blue-400'} />
+                                <span className={`font-mono text-[9px] font-bold tracking-widest uppercase ${q.isAcknowledgment ? 'text-emerald-400' : 'text-blue-400'}`}>
+                                    SYS_QUERY // {q.category?.toUpperCase() || 'GENERAL'}
+                                </span>
+                            </div>
+                            <p className={`text-sm font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                                "{adaptTextForGender(q.text, patient, infoMode)}"
+                            </p>
                         </div>
-                        {/* Patient bubble — left aligned with expression avatar */}
+
+                        {/* Patient response — audio transcript style */}
                         {q.response && (
-                            <div className="flex items-end gap-1.5 self-start max-w-[85%]">
-                                {/* Expression avatar */}
-                                <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm border ${isDark ? 'bg-slate-800 border-slate-600' : 'bg-slate-100 border-slate-200'}`}>
-                                    {q.isGreeting || q.isAcknowledgment ? '😊'
-                                        : patient?.demeanor?.toLowerCase().includes('dramatic') ? '😰'
-                                            : patient?.demeanor?.toLowerCase().includes('anxious') || patient?.demeanor?.toLowerCase().includes('cemas') ? '😟'
-                                                : patient?.demeanor?.toLowerCase().includes('stoic') ? '😐'
-                                                    : '🙂'}
+                            <div className={`pl-3 border-l-2 py-0.5 ml-4 ${q.isVague ? 'border-amber-500/50' : 'border-emerald-500/50'}`}>
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <DemeanorIcon
+                                        size={12}
+                                        className={`${demeanor.className} ${demeanor.animate ? 'animate-pulse' : ''}`}
+                                    />
+                                    <span className={`font-mono text-[9px] font-bold tracking-widest uppercase ${q.isVague ? 'text-amber-500' : q.isChildDirect ? 'text-amber-400' : 'text-emerald-500'}`}>
+                                        AUDIO_TRANSCRIPT // {speakerLabel?.toUpperCase() || 'PATIENT'}
+                                    </span>
+                                    {q.isVague && (
+                                        <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 flex items-center gap-1 text-[8px] font-bold uppercase animate-pulse">
+                                            <AlertTriangle size={8} /> VAGUE
+                                        </span>
+                                    )}
                                 </div>
-                                <div className={`p-2.5 rounded-xl rounded-tl-none flex-1 shadow-sm border ${q.isChildDirect ? 'bg-amber-50 dark:bg-amber-900/40 text-amber-900 dark:text-amber-100 border-amber-200 dark:border-amber-800' : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700'}`} title={q.metadata ? JSON.stringify(q.metadata, null, 2) : undefined}>
-                                    <span className={`font-bold block text-caption ${q.isChildDirect ? 'text-amber-600 dark:text-amber-300' : 'text-slate-500 dark:text-slate-400'} mb-0.5`}>🗣️ {speakerLabel || 'Pasien'}</span>
+                                <p className={`text-[14px] leading-relaxed ${isDark ? 'text-white' : 'text-slate-900'} ${q.isVague ? 'opacity-60 italic' : ''}`}>
                                     {q.response}
-                                </div>
+                                </p>
                             </div>
                         )}
                     </div>
                 );
             })}
-            <div ref={chatEndRef} />
+
+            {/* M.A.I.A Transcribing indicator — covers groggy delay */}
+            {isProcessing && (
+                <div className="pl-3 border-l-2 border-slate-500/30 py-2 ml-4 animate-pulse">
+                    <div className="flex items-center gap-2">
+                        <Mic size={12} className="text-slate-400 animate-bounce" />
+                        <span className="font-mono text-[10px] font-bold text-slate-500 tracking-widest uppercase">
+                            M.A.I.A TRANSCRIBING . . .
+                        </span>
+                    </div>
+                </div>
+            )}
+
+            <div ref={chatEndRef} className="h-4" />
         </div>
     );
 }

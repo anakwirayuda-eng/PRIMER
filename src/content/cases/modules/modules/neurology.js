@@ -42,7 +42,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['stress_mgmt', 'sleep_hygiene'],
         risk: 'low', nonReferrable: true, referralExceptions: ['red_flags_headache'],
-        differentialDiagnosis: ['G44.2', 'G43.9']
+        differentialDiagnosis: ['G43.9']
     },
     {
         id: 'vertigo_bppv',
@@ -75,7 +75,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['epley_maneuver'],
         requiredEducation: ['home_maneuver', 'avoid_sudden_movement'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['central_vertigo', 'no_improvement'],
-        differentialDiagnosis: ['H81.1', 'H81.4']
+        differentialDiagnosis: ['H81.4']
     },
     {
         id: 'migraine',
@@ -114,7 +114,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['trigger_avoidance', 'dark_room_rest'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['status_migrainosus'],
-        differentialDiagnosis: ['G43.9', 'G44.2']
+        differentialDiagnosis: ['G44.2']
     },
     {
         id: 'kejang_demam',
@@ -152,7 +152,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['fever_reduction', 'seizure_first_aid'],
         risk: 'high', nonReferrable: true, referralExceptions: ['complex_febrile_seizure', 'recurrent'],
-        differentialDiagnosis: ['R56.0', 'G00.9']
+        differentialDiagnosis: ['G00.9']
     },
     {
         id: 'migrain',
@@ -185,7 +185,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['trigger_avoidance', 'med_compliance'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['status_migrainosus'],
-        differentialDiagnosis: ['G43.9', 'G44.2']
+        differentialDiagnosis: ['G44.2']
     },
     {
         id: 'tension_headache_chronic',
@@ -218,7 +218,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['stress_mgmt', 'lifestyle_mod'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['red_flags_headache'],
-        differentialDiagnosis: ['G44.2', 'G43.9']
+        differentialDiagnosis: ['G43.9']
     },
     {
         id: 'alzheimers_early',
@@ -251,7 +251,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['neuro_referral'],
         requiredEducation: ['caregiver_support', 'safety_at_home'],
         risk: 'medium', nonReferrable: true, referralExceptions: ['rapid_decline', 'behavioral_emergency'],
-        differentialDiagnosis: ['F03', 'G30.9']
+        differentialDiagnosis: ['F03','G30.9']
     },
     {
         id: 'bells_palsy',
@@ -281,7 +281,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['eye_protection'],
         requiredEducation: ['facial_exercise', 'eye_care', 'prognosis_good'],
         risk: 'low', nonReferrable: true, referralExceptions: ['bilateral_palsy', 'no_improvement_4weeks', 'recurrent'],
-        differentialDiagnosis: ['G51.0', 'I63.9']
+        differentialDiagnosis: ['I63.9']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -311,7 +311,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['airway_protection', 'safety_position'],
         requiredEducation: ['medication_compliance', 'seizure_safety', 'driving_restriction', 'trigger_avoidance'],
         risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['G40.9', 'R56.8']
+        differentialDiagnosis: ['R56.8']
     },
     {
         id: 'stroke_infark',
@@ -340,7 +340,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['head_elevation_30', 'iv_access', 'monitor_vital', 'ngt_if_dysphagia'],
         requiredEducation: ['golden_period', 'do_not_lower_bp_aggressively', 'urgent_ct_scan'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['I63.9', 'I61.9']
+        differentialDiagnosis: ['I61.9']
     },
     {
         id: 'meningitis_bakterial',
@@ -369,7 +369,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['iv_access', 'monitor_vital', 'head_elevation_30'],
         requiredEducation: ['life_threatening', 'urgent_lp_at_hospital', 'contact_tracing'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['G00.9', 'A87.9']
+        differentialDiagnosis: ['A87.9']
     },
     {
         id: 'status_epileptikus',
@@ -397,7 +397,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['airway_management', 'o2_mask', 'iv_access', 'monitor_vital', 'safety_position'],
         requiredEducation: ['life_threatening', 'icu_needed', 'medication_compliance'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['G41.9', 'G40.9']
+        differentialDiagnosis: ['G40.9']
     },
     {
         id: 'carpal_tunnel',
@@ -425,7 +425,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['ergonomic_work', 'rest_breaks', 'wrist_splint_night', 'emg_referral'],
         risk: 'low', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['G56.0', 'M54.1']
+        differentialDiagnosis: ['M54.1']
     },
     {
         id: 'gbs',
@@ -453,7 +453,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['monitor_respiratory_rate', 'iv_access', 'airway_preparation'],
         requiredEducation: ['respiratory_failure_risk', 'icu_needed', 'ivig_at_hospital'],
         risk: 'critical', nonReferrable: false, referralTarget: 'rs_provinsi',
-        differentialDiagnosis: ['G61.0', 'G82.0']
+        differentialDiagnosis: ['G82.0']
     },
     {
         id: 'neuropati_dm',
@@ -482,7 +482,7 @@ export const NEUROLOGY_CASES = [
         correctProcedures: ['monofilamen_test', 'foot_examination'],
         requiredEducation: ['foot_care_diabetic', 'blood_sugar_control', 'proper_footwear', 'daily_foot_inspection'],
         risk: 'medium', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['G63.2', 'G62.9']
+        differentialDiagnosis: ['G62.9']
     },
     {
         id: 'hnp_lumbal',
@@ -510,6 +510,6 @@ export const NEUROLOGY_CASES = [
         correctProcedures: [],
         requiredEducation: ['avoid_heavy_lifting', 'proper_posture', 'mri_referral', 'red_flag_cauda_equina'],
         risk: 'medium', nonReferrable: false, referralTarget: 'rs_kabupaten',
-        differentialDiagnosis: ['M51.1', 'M54.5']
+        differentialDiagnosis: ['M54.5']
     }
 ];
