@@ -18,6 +18,7 @@ export const MEDICATION_CATEGORIES = {
     PSYCHIATRY_NEURO: 'Psikiatri & Neurologi',
     ENT_EYE: 'Mata/Telinga/Hidung/Tenggorokan',
     MEDICAL_EQUIPMENT: 'Alat Kesehatan Habis Pakai',
+    EQUIPMENT: 'Peralatan Medis',
     LAB_REAGENT: 'Reagensia Laboratorium',
     EMERGENCY: 'Gawat Darurat / Injeksi',
     METABOLIC: 'Obat Metabolik & Gout'

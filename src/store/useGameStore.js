@@ -476,7 +476,13 @@ const mergePersistedFinance = (finance, currentFinance) => {
             ? { ...currentFinance.facilities, ...finance.facilities }
             : currentFinance.facilities,
         pharmacyInventory: Array.isArray(finance.pharmacyInventory)
-            ? finance.pharmacyInventory
+            ? (() => {
+                // Backfill: add any new catalog SKUs missing from old save
+                const savedIds = new Set(finance.pharmacyInventory.map(i => i.medicationId));
+                const freshInventory = currentFinance.pharmacyInventory || [];
+                const missingItems = freshInventory.filter(i => !savedIds.has(i.medicationId));
+                return [...finance.pharmacyInventory, ...missingItems];
+            })()
             : currentFinance.pharmacyInventory,
         pendingOrders: Array.isArray(finance.pendingOrders)
             ? finance.pendingOrders
@@ -1248,7 +1254,14 @@ export const useGameStore = create(
                         const newOrder = {
                             id: `ORDER_${Date.now()}`,
                             supplierId,
-                            items: compatibleItems,
+                            items: compatibleItems.filter(ci => {
+                                // Codex Fix: Strip program meds (buyPrice=0) from non-government orders
+                                // so they don't piggyback into restock for free
+                                const med = getMedicationById(ci.medicationId);
+                                if (!med) return false;
+                                if (med.buyPrice === 0 && supplier.type !== 'government') return false;
+                                return true;
+                            }),
                             orderDay: day,
                             // Use estimateDeliveryDate with express flag (respects supplier contract)
                             deliveryDay: (() => {

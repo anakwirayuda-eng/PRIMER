@@ -32,7 +32,7 @@ export default function InventoryPage() {
         // Codex Fix: exclude pseudo-items from inventory stats
         const stockItems = pharmacyInventory.filter(item => {
             const m = getMedicationById(item.medicationId);
-            return m && m.form !== 'action';
+            return m && m.form !== 'action' && m.form !== 'equipment';
         });
         const lowStock = stockItems.filter(item => {
             const med = getMedicationById(item.medicationId);
@@ -67,7 +67,7 @@ export default function InventoryPage() {
     // Filter medications — Codex Fix: use stockItems base, null-safe search
     const filteredMeds = useMemo(() => {
         // Start from real stock items, not raw MEDICATION_DATABASE
-        let result = MEDICATION_DATABASE.filter(m => m && m.form !== 'action');
+        let result = MEDICATION_DATABASE.filter(m => m && m.form !== 'action' && m.form !== 'equipment');
 
         if (selectedCategory !== 'all') {
             result = result.filter(m => m.category === selectedCategory);
