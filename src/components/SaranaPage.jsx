@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
 import { getMedicationById, MEDICATION_CATEGORIES } from '../data/MedicationDatabase.js';
 import { Package, Search, AlertTriangle, TrendingDown, ShoppingCart, Box, Pill, Syringe, Shield, Filter, ChevronDown, BarChart3, Info } from 'lucide-react';
+import OrderModal from './OrderModal.jsx';
 /**
  * @reflection
  * [IDENTITY]: SaranaPage
@@ -30,8 +31,9 @@ const CATEGORY_ICONS = {
 };
 
 export default function SaranaPage() {
-    const { stats, setStats, pharmacyInventory, updateInventory, openWiki } = useGame();
+    const { stats, pharmacyInventory, day, openWiki } = useGame();
     const { isDark } = useTheme();
+    const [showOrderModal, setShowOrderModal] = useState(false);
 
     React.useEffect(() => {
         guardStability('SARANA_INIT', 2000, 3);
@@ -46,6 +48,8 @@ export default function SaranaPage() {
         return (pharmacyInventory || []).map(item => {
             const med = getMedicationById(item.medicationId);
             if (!med) return null;
+            // Codex Fix: filter pseudo-items (care instructions, non-stock)
+            if (med.unitPrice === 0 || med.form === 'action') return null;
             return {
                 id: item.medicationId,
                 name: med.name,
@@ -55,21 +59,13 @@ export default function SaranaPage() {
                 category: med.category === MEDICATION_CATEGORIES.MEDICAL_EQUIPMENT ? 'alkes' :
                     med.category === MEDICATION_CATEGORIES.EMERGENCY ? 'igd' : 'obat',
                 price: med.unitPrice,
-                expiry: '2026-12', // Placeholder for simplicity
+                lastRestock: item.lastRestockDay ? `Hari ${item.lastRestockDay}` : '-',
                 icon: med.type === 'tablet' ? '💊' : med.type === 'botol' ? '🍯' : '💉'
             };
         }).filter(Boolean);
     }, [pharmacyInventory]);
 
-    const _handleRestock = (item) => {
-        const cost = item.price * 100; // Buy 100 units
-        if (stats.pendapatanUmum >= cost) {
-            setStats(prev => ({ ...prev, pendapatanUmum: prev.pendapatanUmum - cost }));
-            updateInventory(item.id, 100);
-        } else {
-            alert('Dana tidak cukup!');
-        }
-    };
+
 
     const filteredItems = (medicalInventory || [])
         .filter(item => {
@@ -79,12 +75,11 @@ export default function SaranaPage() {
         })
         .sort((a, b) => {
             if (sortBy === 'stock') return a.stock - b.stock;
-            if (sortBy === 'expiry') return new Date(a.expiry) - new Date(b.expiry);
             return a.name.localeCompare(b.name);
         });
 
     const lowStockCount = medicalInventory.filter(i => i.stock < i.minStock).length;
-    const expiringCount = 0; // Simplified
+    const expiringCount = 0; // Expiry simulated via TheDirector random events
 
     const totalItems = medicalInventory.reduce((sum, i) => sum + i.stock, 0);
     const totalValue = medicalInventory.reduce((sum, i) => sum + (i.stock * i.price), 0);
@@ -117,7 +112,10 @@ export default function SaranaPage() {
                             <p className={textSecondary}>Kelola stok obat, alkes, dan kebutuhan operasional</p>
                         </div>
                     </div>
-                    <button className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-lg hover:shadow-orange-500/30 hover:scale-[1.02] transition-all">
+                    <button
+                        onClick={() => setShowOrderModal(true)}
+                        className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-lg hover:shadow-orange-500/30 hover:scale-[1.02] transition-all active:scale-95"
+                    >
                         <ShoppingCart size={20} />
                         Pengadaan
                     </button>
@@ -194,7 +192,7 @@ export default function SaranaPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {filteredItems.map((item, idx) => {
                         const isLowStock = item.stock < item.minStock;
-                        const isExpiring = (new Date(item.expiry) - new Date()) / (1000 * 60 * 60 * 24 * 30) < 3;
+                        const isExpiring = false; // Expiry simulated via random events
 
                         return (
                             <div
@@ -222,7 +220,7 @@ export default function SaranaPage() {
                                 </div>
 
                                 <div className={`flex justify-between text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                                    <span>Exp: {item.expiry}</span>
+                                    <span>Restock: {item.lastRestock}</span>
                                     <span>Rp {item.price.toLocaleString('id-ID')}</span>
                                 </div>
 
@@ -238,6 +236,8 @@ export default function SaranaPage() {
                     })}
                 </div>
             </div>
+
+            {showOrderModal && <OrderModal onClose={() => setShowOrderModal(false)} />}
         </div>
     );
 }

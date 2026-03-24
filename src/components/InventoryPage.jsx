@@ -29,14 +29,19 @@ export default function InventoryPage() {
 
     // Calculate stats
     const stats = useMemo(() => {
-        const lowStock = pharmacyInventory.filter(item => {
+        // Codex Fix: exclude pseudo-items from inventory stats
+        const stockItems = pharmacyInventory.filter(item => {
+            const m = getMedicationById(item.medicationId);
+            return m && m.unitPrice > 0 && m.form !== 'action';
+        });
+        const lowStock = stockItems.filter(item => {
             const med = getMedicationById(item.medicationId);
             return med ? item.stock < med.minStock : false;
         });
 
-        const outOfStock = pharmacyInventory.filter(item => item.stock === 0);
+        const outOfStock = stockItems.filter(item => item.stock === 0);
 
-        const totalValue = pharmacyInventory.reduce((sum, item) => {
+        const totalValue = stockItems.reduce((sum, item) => {
             const med = getMedicationById(item.medicationId);
             return sum + (med ? med.unitPrice * item.stock : 0);
         }, 0);
@@ -50,7 +55,7 @@ export default function InventoryPage() {
         );
 
         return {
-            totalItems: MEDICATION_DATABASE.length,
+            totalItems: stockItems.length, // Codex Fix: use filtered count, not raw DB
             lowStock: lowStock.length,
             outOfStock: outOfStock.length,
             totalValue,
@@ -59,9 +64,10 @@ export default function InventoryPage() {
         };
     }, [pharmacyInventory, pendingOrders, day]);
 
-    // Filter medications
+    // Filter medications — Codex Fix: use stockItems base, null-safe search
     const filteredMeds = useMemo(() => {
-        let result = MEDICATION_DATABASE;
+        // Start from real stock items, not raw MEDICATION_DATABASE
+        let result = MEDICATION_DATABASE.filter(m => m && m.unitPrice > 0 && m.form !== 'action');
 
         if (selectedCategory !== 'all') {
             result = result.filter(m => m.category === selectedCategory);
@@ -70,9 +76,9 @@ export default function InventoryPage() {
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
             result = result.filter(m =>
-                m.name.toLowerCase().includes(q) ||
-                m.category.toLowerCase().includes(q) ||
-                m.description.toLowerCase().includes(q)
+                (m.name && m.name.toLowerCase().includes(q)) ||
+                (m.category && m.category.toLowerCase().includes(q)) ||
+                (m.description && m.description.toLowerCase().includes(q))
             );
         }
 

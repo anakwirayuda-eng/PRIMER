@@ -22,6 +22,7 @@ import { LAB_REAGENT_MEDS } from './medication/registry/lab_reagents.js';
 import { EMERGENCY_MEDS } from './medication/registry/emergency.js';
 import { METABOLIC_MEDS } from './medication/registry/metabolic.js';
 import { MISSING_CASE_MEDS } from './medication/registry/missing_case_meds.js';
+import { SPECIALTY_MEDS } from './medication/registry/specialty_meds.js';
 
 import * as MedUtils from './medication/utils.js';
 
@@ -47,7 +48,8 @@ export const MEDICATION_DATABASE = [
     ...LAB_REAGENT_MEDS,
     ...EMERGENCY_MEDS,
     ...METABOLIC_MEDS,
-    ...MISSING_CASE_MEDS
+    ...MISSING_CASE_MEDS,
+    ...SPECIALTY_MEDS
 ];
 
 // Utility wrappers for backward compatibility with existing components

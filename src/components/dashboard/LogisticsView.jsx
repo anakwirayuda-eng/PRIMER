@@ -31,24 +31,32 @@ export default function LogisticsView({ onBack, openWiki }) {
 
     const inventoryData = useMemo(() => {
         if (!pharmacyInventory || !Array.isArray(pharmacyInventory)) return { total: 0, low: 0, out: 0 };
-        const low = pharmacyInventory.filter(item => {
+        // Codex Fix: exclude pseudo-items from inventory stats
+        const stockItems = pharmacyInventory.filter(item => {
+            const m = getMedicationById(item.medicationId);
+            return m && m.unitPrice > 0 && m.form !== 'action';
+        });
+        const low = stockItems.filter(item => {
             const med = getMedicationById(item.medicationId);
             return med && item.stock < med.minStock && item.stock > 0;
         }).length;
-        const out = pharmacyInventory.filter(item => item.stock === 0).length;
-        return { total: pharmacyInventory.length, low, out };
+        const out = stockItems.filter(item => item.stock === 0).length;
+        return { total: stockItems.length, low, out };
     }, [pharmacyInventory]);
 
     const stockOutPredictions = useMemo(() => {
         if (!history || !pharmacyInventory) return [];
-        const relevantHistory = history.filter(h => h.day > day - 7);
+        // Codex Fix: only count consumption from non-referred patients
+        const relevantHistory = history.filter(h => h.day > day - 7 && h.decision?.action !== 'refer');
         const daysCount = Math.max(1, Math.min(day, 7));
         const consumption = {};
         relevantHistory.forEach(h => {
             if (h.decision?.medications) {
                 h.decision.medications.forEach(m => {
-                    // Codex Fix: count actual quantity consumed, not just +1 per prescription entry
                     const medId = typeof m === 'object' ? (m.id || m.medId) : m;
+                    // Codex Fix: skip pseudo-items in consumption tracking
+                    const med = getMedicationById(medId);
+                    if (!med || med.unitPrice === 0 || med.form === 'action') return;
                     const qty = typeof m === 'object'
                         ? ((m.dose || 1) * (m.frequency || 1) * (m.duration || 1))
                         : 1;
@@ -56,7 +64,12 @@ export default function LogisticsView({ onBack, openWiki }) {
                 });
             }
         });
-        return pharmacyInventory.map(item => {
+        // Codex Fix: only predict for real stock items
+        const realStockItems = pharmacyInventory.filter(item => {
+            const med = getMedicationById(item.medicationId);
+            return med && med.unitPrice > 0 && med.form !== 'action';
+        });
+        return realStockItems.map(item => {
             const avgDaily = (consumption[item.medicationId] || 0) / daysCount;
             const daysRemaining = avgDaily > 0 ? Math.floor(item.stock / avgDaily) : 99;
             const med = getMedicationById(item.medicationId);

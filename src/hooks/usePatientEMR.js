@@ -22,6 +22,7 @@ import {
     calculateCoverageScore, getMAIAAlerts, getExamLabSuggestions
 } from '../game/ClinicalReasoning.js';
 import { getMedicationById } from '../data/MedicationDatabase.js';
+import { matchDrugAllergy } from '../game/DispensingEngine.js';
 import { useGameStore } from '../store/useGameStore.js';
 import { useShallow } from 'zustand/react/shallow';
 import { selectClinical, selectPlayerStats, selectDerivedFinance } from '../store/selectors.js';
@@ -515,18 +516,15 @@ export function usePatientEMR() {
             return;
         }
 
-        // 🚨 POKA-YOKE: Allergy Firewall — block contraindicated meds
+        // 🚨 POKA-YOKE: Allergy Firewall — block contraindicated meds (class-based)
         const allergies = patient?.hidden?.allergies || patient?.medicalData?.allergies || [];
         if (allergies.length > 0 && medData) {
-            const medNameLower = (medData.name || '').toLowerCase();
-            const medIdLower = medId.toLowerCase();
-            const allergyMatch = allergies.find(a => {
-                const aLower = a.toLowerCase();
-                return medNameLower.includes(aLower) || medIdLower.includes(aLower) || aLower.includes(medNameLower);
-            });
+            // Codex Fix: use class-based allergy matching from DispensingEngine
+            const allergyMatch = matchDrugAllergy(medData, allergies);
             if (allergyMatch) {
                 soundManager.playError?.() || soundManager.playCancel();
                 console.warn(`[ALLERGY FIREWALL] Blocked: ${medData.name} — patient allergic to "${allergyMatch}"`);
+                showToast(`⚠️ ALERGI: ${medData.name} KONTRAINDIKASI — pasien alergi "${allergyMatch}"`, 'error');
                 // Don't add — patient safety first
                 return;
             }

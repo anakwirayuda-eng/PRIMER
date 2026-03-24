@@ -26,6 +26,8 @@ export const SUPPLIER_DATABASE = [
         description: 'Supplier utama untuk obat-obatan Fornas dan alkes standar',
         minOrderValue: 0, // Tidak ada minimum order
         maxOrderValue: 50000000, // Max Rp 50 juta per order
+        // Codex Fix: Dinkes = universal Puskesmas supplier — provides ALL formulary items
+        acceptsAll: true,
         availableCategories: [
             'Analgesik/Antipiretik',
             'Antibiotik',
@@ -34,7 +36,26 @@ export const SUPPLIER_DATABASE = [
             'Sistem Respirasi',
             'Saluran Cerna',
             'Dermatologi',
-            'Vitamin/Suplemen'
+            'Vitamin/Suplemen',
+            'Antimalaria',
+            'Antijamur',
+            'Antihistamin',
+            'Antiemetik',
+            'Antiepilepsi',
+            'Psikotropika',
+            'Mata',
+            'THT',
+            'Kardiovaskular',
+            'Hormon/Endokrin',
+            'Obat Darurat',
+            'OBH/Batuk',
+            'Antiseptik',
+            'Cairan Infus',
+            'Kontrasepsi',
+            'Neurologi',
+            'Anestesi Lokal',
+            'Vaksin',
+            'Alat Kesehatan Habis Pakai'
         ]
     },
     {
@@ -65,12 +86,27 @@ export const SUPPLIER_DATABASE = [
         description: 'Apotek lokal untuk kebutuhan mendesak (harga lebih mahal)',
         minOrderValue: 0,
         maxOrderValue: 5000000, // Max Rp 5 juta
+        // Codex Fix: local pharmacy can supply all common drug categories (at markup)
+        acceptsAll: true,
         availableCategories: [
             'Analgesik/Antipiretik',
             'Antibiotik',
+            'Antihipertensi',
+            'Antidiabetes',
             'Sistem Respirasi',
             'Saluran Cerna',
+            'Dermatologi',
             'Vitamin/Suplemen',
+            'Antihistamin',
+            'Antijamur',
+            'Antiemetik',
+            'Mata',
+            'THT',
+            'Kardiovaskular',
+            'Hormon/Endokrin',
+            'OBH/Batuk',
+            'Antiseptik',
+            'Kontrasepsi',
             'Alat Kesehatan Habis Pakai'
         ],
         priceMarkup: 1.3 // 30% lebih mahal dari harga normal

@@ -34,7 +34,9 @@ export default function AnamnesisTab({
     const score = coverageScore?.anamnesisTotal ?? coverageScore?.score ?? 0;
     const catDetails = coverageScore?.categories || {};
     const cartPct = coverageScore?.micro || 0;
-    const confidence = diagnosticConfidence || { confidence: 0, level: 'low' };
+    // Codex Fix: resolve diagnosticConfidence if it's a function (from usePatientEMR hook)
+    const rawConfidence = typeof diagnosticConfidence === 'function' ? diagnosticConfidence() : diagnosticConfidence;
+    const confidence = rawConfidence || { confidence: 0, level: 'low' };
     const confidenceValue = typeof confidence === 'object' ? (confidence.confidence || 0) : (confidence || 0);
 
     const catItems = [
@@ -155,11 +157,13 @@ export default function AnamnesisTab({
                             <div className="flex-1">
                                 <div className="flex justify-between items-center">
                                     <span className={`text-tag font-black uppercase tracking-wider ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
-                                        {maiaAlerts[0].priority === 'high' ? '🔴' : maiaAlerts[0].priority === 'medium' ? '🟡' : '🔵'} MAIA Suggestion
+                                        {maiaAlerts[0].priority === 'critical' ? '🚨' : maiaAlerts[0].priority === 'high' ? '🔴' : maiaAlerts[0].priority === 'medium' ? '🟡' : '🔵'} MAIA Suggestion
                                     </span>
-                                    <span className={`text-caption font-bold px-1.5 py-0.5 rounded ${isDark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>
-                                        Click to go to {maiaAlerts[0].suggestTab?.toUpperCase()}
-                                    </span>
+                                    {maiaAlerts[0].suggestTab && (
+                                        <span className={`text-caption font-bold px-1.5 py-0.5 rounded ${isDark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>
+                                            Click to go to {maiaAlerts[0].suggestTab?.toUpperCase()}
+                                        </span>
+                                    )}
                                 </div>
                                 <p className={`text-xs font-bold mt-1 leading-tight ${isDark ? 'text-amber-200' : 'text-amber-900'}`}>
                                     {maiaAlerts[0].message}
@@ -198,7 +202,8 @@ export default function AnamnesisTab({
                         />
                     )}
 
-                    {(anamnesisCategory === 'keluhan_utama' && hasAskedComplaint || anamnesisCategory === 'rps') && (
+                    {/* Codex Fix: explicit parentheses — RPS tab also requires hasAskedComplaint */}
+                    {((anamnesisCategory === 'keluhan_utama' || anamnesisCategory === 'rps') && hasAskedComplaint) && (
                         <ChildDirectSelection
                             patient={patient}
                             anamnesisHistory={anamnesisHistory}

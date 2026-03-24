@@ -107,7 +107,8 @@ function generateStockAlerts(pharmacyInventory) {
                 minStock: med?.minStock || 10,
             };
         })
-        .filter(item => item.quantity <= item.minStock)
+        // Codex Fix: use strict < to match OrderModal, InventoryPage, DashboardPage
+        .filter(item => item.quantity < item.minStock)
         .slice(0, 5); // Top 5 most critical
 
     return { lowStock, nearExpiry: [], criticalMissing: [] };

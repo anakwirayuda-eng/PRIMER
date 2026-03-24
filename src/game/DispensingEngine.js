@@ -23,14 +23,78 @@ const INTERACTION_PAIRS = [
     ['warfarin_tab', 'ibuprofen_200', 'major', 'Risiko perdarahan meningkat'],
     ['warfarin_tab', 'ibuprofen_400', 'major', 'Risiko perdarahan meningkat'],
     ['warfarin_tab', 'asam_mefenamat_500', 'major', 'Risiko perdarahan meningkat'],
-    ['metformin_500', 'alcohol', 'major', 'Risiko asidosis laktat'],
+    // Alcohol interactions: checked via patient.social lifestyle, not prescription basket
+    // ['metformin_500', 'alcohol', 'major', 'Risiko asidosis laktat'],
+    // ['metronidazole_500', 'alcohol', 'major', 'Reaksi disulfiram-like'],
     ['captopril_25', 'kalium_tab', 'moderate', 'Risiko hiperkalemia'],
     ['amlodipine_5', 'simvastatin_20', 'moderate', 'Monitor miopati'],
     ['ciprofloxacin_500', 'antasida_tab', 'moderate', 'Absorpsi ciprofloxacin menurun'],
-    ['metronidazole_500', 'alcohol', 'major', 'Reaksi disulfiram-like'],
-    ['amoxicillin_500', 'methotrexate', 'moderate', 'Toksisitas methotrexate meningkat'],
+    ['amoxicillin_500', 'methotrexate_tab', 'moderate', 'Toksisitas methotrexate meningkat'],
     ['glimepiride_2', 'ciprofloxacin_500', 'moderate', 'Risiko hipoglikemia meningkat'],
 ];
+
+/**
+ * Codex Fix: Drug class allergy mapping.
+ * Maps class-level allergy names to specific medication ID patterns/substrings.
+ * Enables detection like "Penisilin" allergy → blocks amoxicillin_500, ampicillin_500, etc.
+ */
+const DRUG_CLASS_ALLERGY_MAP = {
+    'penisilin': ['amoxicillin', 'ampicillin', 'penicillin', 'amoxiclav', 'co_amoxiclav', 'sultamicillin'],
+    'penicillin': ['amoxicillin', 'ampicillin', 'penicillin', 'amoxiclav', 'co_amoxiclav', 'sultamicillin'],
+    'sefalosporin': ['cefadroxil', 'cefalexin', 'cefixime', 'ceftriaxone', 'cefotaxime', 'cephalosporin'],
+    'cephalosporin': ['cefadroxil', 'cefalexin', 'cefixime', 'ceftriaxone', 'cefotaxime', 'cephalosporin'],
+    'nsaid': ['ibuprofen', 'asam_mefenamat', 'mefenamic', 'piroxicam', 'ketorolac', 'diclofenac', 'meloxicam', 'naproxen', 'ketoprofen'],
+    'sulfonamide': ['cotrimoxazole', 'sulfamethoxazole', 'trimethoprim', 'co_trimoxazole'],
+    'sulfa': ['cotrimoxazole', 'sulfamethoxazole', 'trimethoprim', 'co_trimoxazole'],
+    'makrolida': ['azithromycin', 'erythromycin', 'clarithromycin', 'roxithromycin'],
+    'macrolide': ['azithromycin', 'erythromycin', 'clarithromycin', 'roxithromycin'],
+    'tetrasiklin': ['doxycycline', 'tetracycline', 'minocycline'],
+    'tetracycline': ['doxycycline', 'tetracycline', 'minocycline'],
+    'fluorokuinolon': ['ciprofloxacin', 'levofloxacin', 'ofloxacin', 'moxifloxacin', 'norfloxacin'],
+    'fluoroquinolone': ['ciprofloxacin', 'levofloxacin', 'ofloxacin', 'moxifloxacin', 'norfloxacin'],
+    'aminoglikosida': ['gentamicin', 'amikacin', 'streptomycin', 'kanamycin'],
+    'aminoglycoside': ['gentamicin', 'amikacin', 'streptomycin', 'kanamycin'],
+};
+
+/**
+ * Check if a medication matches any of the patient's allergies.
+ * Uses both class-based mapping AND substring matching.
+ * Exported for use in both DispensingEngine and EMR firewall.
+ * 
+ * @param {Object} med - Medication object { id, name, category }
+ * @param {string[]} allergies - Patient allergy list
+ * @returns {string|null} The matching allergy name, or null
+ */
+export function matchDrugAllergy(med, allergies) {
+    if (!allergies || allergies.length === 0 || !med) return null;
+    const medIdLower = (med.id || '').toLowerCase();
+    const medNameLower = (med.name || '').toLowerCase();
+    const medCatLower = (med.category || '').toLowerCase();
+
+    for (const allergy of allergies) {
+        const aLower = allergy.toLowerCase().trim();
+
+        // 1. Class-based lookup: "Penisilin" → matches amoxicillin_500
+        const classMembers = DRUG_CLASS_ALLERGY_MAP[aLower];
+        if (classMembers) {
+            const classMatch = classMembers.some(member =>
+                medIdLower.includes(member) || medNameLower.includes(member)
+            );
+            if (classMatch) return allergy;
+        }
+
+        // 2. Substring match (original logic, bidirectional)
+        if (medNameLower.includes(aLower) || medIdLower.includes(aLower) || aLower.includes(medNameLower)) {
+            return allergy;
+        }
+
+        // 3. Category match: if allergy text matches medication category
+        if (medCatLower && (medCatLower.includes(aLower) || aLower.includes(medCatLower))) {
+            return allergy;
+        }
+    }
+    return null;
+}
 
 /**
  * Form-route compatibility for pediatric safety
@@ -66,12 +130,9 @@ export function verifyPrescription(prescription, inventory = {}) {
             continue;
         }
 
-        // RIGHT 2: Right Patient — allergy check
+        // RIGHT 2: Right Patient — allergy check (class-based + substring)
         if (prescription.patientAllergies && prescription.patientAllergies.length > 0) {
-            const allergyMatch = prescription.patientAllergies.find(a =>
-                med.name.toLowerCase().includes(a.toLowerCase()) ||
-                med.id.toLowerCase().includes(a.toLowerCase())
-            );
+            const allergyMatch = matchDrugAllergy(med, prescription.patientAllergies);
             if (allergyMatch) {
                 itemErrors.push(`⚠️ ALERGI: Pasien alergi terhadap "${allergyMatch}" — ${med.name} KONTRAINDIKASI`);
             }
@@ -103,11 +164,11 @@ export function verifyPrescription(prescription, inventory = {}) {
             itemWarnings.push(`Frekuensi ${item.frequency}x/hari — terlalu tinggi, periksa kembali`);
         }
 
-        // STOCK CHECK
+        // STOCK CHECK — Codex Fix: shortage is an ERROR, not warning (blocks verify+dispense)
         const stockData = inventory[item.medId];
         const qtyNeeded = (item.dose || 1) * (item.frequency || 1) * (item.duration || 1);
         if (stockData && stockData.stock < qtyNeeded) {
-            itemWarnings.push(`Stok tidak cukup: butuh ${qtyNeeded}, tersedia ${stockData.stock}`);
+            itemErrors.push(`Stok tidak cukup: butuh ${qtyNeeded}, tersedia ${stockData.stock}`);
         }
 
         // FORNAS CHECK
@@ -278,51 +339,8 @@ export function scoreBishiBashi(targetMeds, playerPicks, timeMs, timeLimitMs) {
 // STOCK & DISPENSING
 // ═══════════════════════════════════════════════════════════════
 
-/**
- * Process stock dispensing with FIFO enforcement
- * @param {string} medId
- * @param {number} qty
- * @param {Object} inventory - { [medId]: { stock, batches: [{ qty, expiry, lotNo }] } }
- * @returns {{ success, newStock, dispensed[], fifoWarning, expiryWarning }}
- */
-export function processStockDispense(medId, qty, inventory) {
-    const stockData = inventory[medId];
-    if (!stockData || stockData.stock < qty) {
-        return { success: false, newStock: stockData?.stock || 0, dispensed: [], fifoWarning: false, expiryWarning: false };
-    }
-
-    let remaining = qty;
-    const dispensed = [];
-    let fifoWarning = false;
-    let expiryWarning = false;
-
-    // Sort batches by expiry (FIFO — first expiry first out)
-    const sortedBatches = [...(stockData.batches || [])].sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
-
-    for (const batch of sortedBatches) {
-        if (remaining <= 0) break;
-
-        const take = Math.min(remaining, batch.qty);
-        dispensed.push({ lotNo: batch.lotNo, qty: take, expiry: batch.expiry });
-
-        // Check if expired
-        if (new Date(batch.expiry) < new Date()) {
-            expiryWarning = true;
-        }
-        // Check if expiring within 30 days
-        const thirtyDays = 30 * 24 * 60 * 60 * 1000;
-        if (new Date(batch.expiry) - new Date() < thirtyDays) {
-            fifoWarning = true;
-        }
-
-        batch.qty -= take;
-        remaining -= take;
-    }
-
-    const newStock = stockData.stock - qty;
-
-    return { success: true, newStock, dispensed, fifoWarning, expiryWarning };
-}
+// NOTE: FIFO batch dispensing removed (dead code). Store uses integer stock via consumeMedication().
+// Expiry mechanics can be simulated via TheDirector random events if needed.
 
 /**
  * Calculate dispensing bill

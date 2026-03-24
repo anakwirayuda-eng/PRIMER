@@ -17,17 +17,25 @@ import { SUPPLIER_DATABASE } from '../data/SupplierDatabase.js';
 import { X, ShoppingCart } from 'lucide-react';
 
 export default function OrderModal({ onClose }) {
-    const { pharmacyInventory, submitOrder, day, stats: _stats } = useGame();
+    const { pharmacyInventory, submitOrder, day, stats: _stats, pendingOrders = [] } = useGame();
     const [quantities, setQuantities] = useState({});
     const modalRef = useModalA11y(onClose);
     const [selectedSupplierId, setSelectedSupplierId] = useState('dinkes');
+
+    // Codex Fix: only exclude items with PENDING + not-overdue orders
+    // Overdue orders (deliveryDay < day) should NOT block reorder
+    const pendingMedIds = new Set((pendingOrders || []).filter(o => o.status === 'pending' && o.deliveryDay >= day).flatMap(o =>
+        (o.items || []).map(i => i.medicationId)
+    ));
 
     const lowStockMeds = pharmacyInventory
         .map(item => ({
             ...getMedicationById(item.medicationId),
             currentStock: item.stock
         }))
-        .filter(med => med.currentStock < med.minStock);
+        // Codex Fix: exclude non-stock pseudo-items (care instructions like bed_rest, diet)
+        .filter(med => med.id && med.unitPrice > 0 && med.form !== 'action')
+        .filter(med => med.currentStock < med.minStock && !pendingMedIds.has(med.id));
 
     const handleOrder = () => {
         const orderItems = lowStockMeds.map(med => ({
@@ -38,7 +46,11 @@ export default function OrderModal({ onClose }) {
 
         const result = submitOrder(orderItems, selectedSupplierId, day);
         if (result.success) {
-            alert('Order berhasil dibuat!');
+            // Codex Fix: show skipped items so player knows about partial orders
+            const msg = result.skipped?.length
+                ? `Order dikirim (${result.order.items.length} item). ${result.skipped.length} item dilewati karena tidak tersedia di supplier ini:\n${result.skipped.join(', ')}`
+                : `Order berhasil dibuat (${result.order.items.length} item)!`;
+            alert(msg);
             onClose();
         } else {
             alert(result.error);

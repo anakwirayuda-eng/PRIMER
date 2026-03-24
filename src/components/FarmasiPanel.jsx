@@ -21,7 +21,8 @@ function buildPrescriptionQueue(history, currentDay) {
     if (!history || history.length === 0) return [];
     return history
         // Codex Fix: also exclude already-dispensed entries to prevent double-dispense on remount
-        .filter(p => p.day === currentDay && p.decision?.medications?.length > 0 && !p.dispensed)
+        // Codex Fix: exclude referred patients — they left FKTP, don't dispense here
+        .filter(p => p.day === currentDay && p.decision?.medications?.length > 0 && !p.dispensed && p.decision?.action !== 'refer')
         .map(p => ({
             id: p.id,
             patientName: p.name,
@@ -30,14 +31,13 @@ function buildPrescriptionQueue(history, currentDay) {
             // Codex Fix: read allergies from multiple paths (generator puts them in hidden.allergies)
             patientAllergies: p.hidden?.allergies || p.medicalData?.allergies || [],
             medications: p.decision.medications,
-            // Codex Fix: prioritize human-readable diagnosis name over raw ICD code
+            // Codex Fix: always show DOCTOR'S diagnosis (decision), not case ground truth
+            // This lets pharmacy QA catch misdiagnosis
             diagnosis: (() => {
                 const dx = p.decision?.diagnoses?.[0];
-                const humanName = p.medicalData?.diagnosisName;
-                if (!dx) return humanName || p.medicalData?.trueDiagnosisCode || 'Tidak ada diagnosis';
-                // If dx is a raw ICD code string, prefer humanName if available
-                if (typeof dx === 'string') return humanName || dx;
-                return dx.name || dx.code || dx.label || humanName || 'Tidak ada diagnosis';
+                if (!dx) return p.medicalData?.diagnosisName || p.medicalData?.trueDiagnosisCode || 'Tidak ada diagnosis';
+                if (typeof dx === 'object') return dx.name || dx.code || dx.label || 'Tidak ada diagnosis';
+                return dx; // Show the ICD code/string the doctor chose
             })(),
             dischargedAt: p.dischargedAt,
             // Codex Fix: wire BPJS status from all possible patient data paths
@@ -55,9 +55,15 @@ function buildPrescriptionQueue(history, currentDay) {
                     const formRouteMap = {
                         'tablet': 'oral', 'capsule': 'oral', 'syrup': 'oral', 'drop': 'oral',
                         'cream': 'topical', 'ointment': 'topical',
-                        'injection': 'im', 'suppository': 'rectal',
+                        'suppository': 'rectal',
                         'nebulizer': 'inhalation', 'inhaler': 'inhalation'
                     };
+                    if (med?.form === 'injection') {
+                        // Codex Fix: derive route from ID suffix for injections
+                        if (medId.includes('_iv')) return 'iv';
+                        if (medId.includes('_sc')) return 'sc';
+                        return 'im'; // default for injections without suffix
+                    }
                     return formRouteMap[med?.form] || 'oral';
                 })()
             }))

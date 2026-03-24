@@ -1,0 +1,1217 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PRIMER Dossier - Technical Bible v0.9.x</title>
+<style>
+body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; line-height: 1.6; color: #333; }
+h1 { color: #1a5276; border-bottom: 3px solid #2ecc71; padding-bottom: 10px; }
+h2 { color: #1a5276; border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; }
+h3 { color: #2c3e50; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid #bbb; padding: 8px 12px; text-align: left; }
+th { background-color: #2ecc71; color: white; }
+tr:nth-child(even) { background-color: #f9f9f9; }
+code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; font-size: 0.9em; }
+pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+pre code { background: none; color: inherit; }
+blockquote { border-left: 4px solid #2ecc71; margin: 10px 0; padding: 10px 20px; background: #f0faf0; }
+hr { border: none; border-top: 2px solid #eee; margin: 25px 0; }
+ul, ol { padding-left: 20px; }
+</style>
+</head>
+<body><h1>PRIMER: Primary Care Manager Simulator â€” Complete Technical Bible</h1>
+<blockquote>
+<p><strong>Version:</strong> 0.9.x (Clinical Hardening Phase)<br><strong>Creator:</strong> Anak Agung Bagus Wirayuda, MD, PhD<br><strong>Organization:</strong> ITS MEDICS, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia<br><strong>Stack:</strong> React 19 + Vite 7 (Vanilla JS/JSX)<br><strong>Architecture:</strong> Zustand Monolith + GameContext Domain Facade<br><strong>Purpose:</strong> Educational simulation game for training primary healthcare (Puskesmas) doctors in clinical decision-making and public health management<br><strong>HAKI:</strong> Surat Pencatatan Ciptaan No. EC002026019623 (31 Januari 2026) â€” Kemenkumham RI<br><strong>Protection:</strong> UU No. 28/2014, 50 tahun, Nomor Pencatatan 001104039<br><strong>Monitoring:</strong> PRIMERA v5.1 (Proactive Brain) â€” Unified Health &amp; Clinical Watchdog<br><strong>Last Updated:</strong> March 2026 (Phase 0.9.x &quot;Clinical Hardening&quot;)</p>
+</blockquote>
+<hr>
+<h2>1. GAME IDENTITY &amp; CONCEPT</h2>
+<p><strong>PRIMER</strong> is a single-player management/simulation game where the player assumes the role of a <strong>fresh medical graduate</strong> posted to a rural <strong>Puskesmas</strong> (Indonesian primary healthcare center). The game simulates the full scope of a Puskesmas doctor&#39;s responsibilities:</p>
+<ul>
+<li><strong>Clinical care</strong> â€” Seeing patients, taking history, performing exams, ordering labs, diagnosing (ICD-10), prescribing medications, performing procedures (ICD-9-CM), writing referrals</li>
+<li><strong>Public health programs</strong> â€” Running Posyandu (community health posts), managing Prolanis (chronic disease management), conducting home visits, PIS-PK family health surveys</li>
+<li><strong>Outbreak response</strong> â€” Detecting, investigating, and responding to disease outbreaks (DBD, Malaria, Diare, ISPA)</li>
+<li><strong>Resource management</strong> â€” Managing medication inventory, ordering supplies, upgrading facilities, balancing budgets (kapitasi)</li>
+<li><strong>Personal wellness</strong> â€” Managing energy, stress, spirit, hygiene; sleeping, resting, weekend activities</li>
+</ul>
+<p>The game is <strong>bilingual Indonesian/English</strong> (i18n via <code>react-i18next</code>), targeting medical students, residents, and public health professionals in Indonesia.</p>
+<hr>
+<h2>2. DEVELOPMENT CONTINUITY &amp; AI SYNERGY</h2>
+<p>PRIMER is designed for long-term sustainability. It uses the <strong>PRIMERA System</strong> to ensure:</p>
+<ul>
+<li><strong>Zero-Muter (No Circles)</strong>: Automated gates prevent regressions, so updates always move forward.</li>
+<li><strong>Clinical Integrity</strong>: The <code>Clinical Watchdog</code> validates medical logic (ICD-10, dosage, procedures) against the <code>MedicationDatabase</code>.</li>
+<li><strong>AI-Ready Context</strong>: Reflection headers allow agents like Antigravity to act with 100% architectural awareness.</li>
+<li><strong>Scalable Integrity</strong>: The codebase reports its own health via a Unified Health Engine.</li>
+</ul>
+<hr>
+<h2>3. ARCHITECTURE OVERVIEW</h2>
+<pre><code>src/
+â”œâ”€â”€ App.jsx                    # Router: OpeningScreen â†’ PlayerSetup â†’ MainLayout
+â”œâ”€â”€ main.jsx                   # React entry point
+â”œâ”€â”€ index.css                  # Global styles (14KB, vanilla CSS)
+â”œâ”€â”€ i18n.js                    # Internationalization config
+â”‚
+â”œâ”€â”€ store/
+â”‚   â””â”€â”€ useGameStore.js         # â˜… CENTRAL STATE (Zustand + Persistence)
+â”‚
+â”œâ”€â”€ domains/                    # â˜… NEW DOMAIN LOGIC (vNext)
+â”‚   â”œâ”€â”€ village/
+â”‚   â”‚   â””â”€â”€ VillageRegistry.js  # Village population &amp; families (Moved from data/)
+â”‚   â””â”€â”€ community/
+â”‚       â””â”€â”€ OutbreakSystem.js   # Disease outbreak detection &amp; response (Moved from game/)
+â”‚
+â”œâ”€â”€ content/                    # â˜… NEW CONTENT LAYER (vNext)
+â”‚   â”œâ”€â”€ cases/
+â”‚   â”‚   â”œâ”€â”€ CaseLibrary.js      # Unified entry point for case data
+â”‚   â”‚   â””â”€â”€ modules/            # Sub-modules: infectious, metabolic, etc.
+â”‚   â”œâ”€â”€ concepts/               # Future ideas (Markdown only)
+â”‚   â””â”€â”€ ...
+â”‚
+â”œâ”€â”€ context/
+â”‚   â”œâ”€â”€ GameContext.jsx         # Domain Facade (Thinned, focus on clinical state)
+â”‚   â””â”€â”€ ThemeContext.jsx        # Dark/light theme toggle
+â”‚
+â”œâ”€â”€ game/                      # â˜… CORE GAME ENGINES (Logic Only)
+â”‚   â”œâ”€â”€ BillingEngine.js        # Medical billing &amp; cost logic (2KB)
+â”‚   â”œâ”€â”€ ValidationEngine.js     # Clinical accuracy validation (8KB)
+â”‚   â”œâ”€â”€ EmergencyCases.js       # Emergency/IGD cases with triage (57KB)
+â”‚   â”œâ”€â”€ AnamnesisEngine.js      # History-taking logic (46KB)
+â”‚   â”œâ”€â”€ ClinicalReasoning.js    # â˜… MAIA REASONING ENGINE (12KB)
+â”‚   â”œâ”€â”€ AnamnesisVariations.js  # Persona-based response variations (127KB)
+â”‚   â”œâ”€â”€ AnamnesisPrompts.js     # LLM prompt templates (1.2KB)
+â”‚   â”œâ”€â”€ PatientGenerator.js     # Patient creation with demographics (30KB)
+â”‚   â”œâ”€â”€ PosyanduEngine.js       # Community health post activities (10KB)
+â”‚   â”œâ”€â”€ ProlanisEngine.js       # Chronic disease management (11KB)
+â”‚   â”œâ”€â”€ QuestEngine.js          # Daily/weekly mission system (6KB)
+â”‚   â”œâ”€â”€ CPPTEngine.js           # SOAP medical records (6KB)
+â”‚   â””â”€â”€ GuestEventSystem.js     # Special visitor events (1.3KB)
+â”‚
+â”œâ”€â”€ data/                       # â˜… STATIC DATA LAYER
+â”‚   â”œâ”€â”€ WikiData.js             # Modular Medical Encyclopedia (Aggregator)
+â”‚   â”‚   â””â”€â”€ wiki/               # Sub-modules: manajemen, wilayah, klinis, penyakit, obat, lab_prosedur
+â”‚   â”œâ”€â”€ MedicationDatabase.js   # Drug database with prices (158KB)
+â”‚   â”œâ”€â”€ ProceduresDB.js         # Physical exam &amp; clinical procedure data (11KB)
+â”‚   â”œâ”€â”€ EducationOptions.js     # Patient education constants (36KB)
+â”‚   â”œâ”€â”€ ICD9CM.js               # Procedure codes search engine (1KB)
+â”‚   â”œâ”€â”€ ICD10.js                # Diagnosis codes (24KB)
+â”‚   â”œâ”€â”€ FKTP144Diseases.js      # 144 mandatory primary care diseases (19KB)
+â”‚   â”œâ”€â”€ CalendarEventDB.js      # National health days &amp; events (13KB)
+â”‚   â”œâ”€â”€ ProlanisDB.js           # Chronic disease parameter configs (13KB)
+â”‚   â”œâ”€â”€ ClinicalServices.js     # Poli/service routing (5KB)
+â”‚   â”œâ”€â”€ FurnitureData.js        # Rumah Dinas furniture upgrades (6KB)
+â”‚   â”œâ”€â”€ HospitalDB.js           # Referral hospital database (2KB)
+â”‚   â”œâ”€â”€ SupplierDatabase.js     # Medical supplier catalog (4KB)
+â”‚   â”œâ”€â”€ AppMetadata.js          # Version/HAKI metadata (2KB)
+â”‚   â”œâ”€â”€ master_icd_10.json      # Full ICD-10 master data (1.8MB)
+â”‚   â””â”€â”€ master_icd_9.json       # Full ICD-9-CM master data (605KB)
+â”‚
+â”œâ”€â”€ components/                 # â˜… UI COMPONENTS (52 files)
+â”‚   â”œâ”€â”€ MainLayout.jsx          # Top-level layout with sidebar navigation
+â”‚   â”œâ”€â”€ Dashboard.jsx           # Main dashboard with glassmorphism cards
+â”‚   â”œâ”€â”€ PatientEMR.jsx          # â˜… ORCHESTRATOR â€” Decomposed into 10 modules
+â”‚   â”œâ”€â”€ emr/                    # â˜… MODULAR EMR COMPONENTS
+â”‚   â”‚   â”œâ”€â”€ AnamnesisTab.jsx    # Patient interview logic
+â”‚   â”‚   â”œâ”€â”€ PhysicalExamTab.jsx # Body map &amp; exam findings
+â”‚   â”‚   â”œâ”€â”€ LabTab.jsx          # Lab ordering &amp; results
+â”‚   â”‚   â”œâ”€â”€ AssessmentTab.jsx   # ICD-10 diagnosis
+â”‚   â”‚   â”œâ”€â”€ TreatmentTab.jsx    # Medication prescription
+â”‚   â”‚   â”œâ”€â”€ ProceduresTab.jsx   # ICD-9-CM clinical procedures
+â”‚   â”‚   â”œâ”€â”€ EducationTab.jsx    # Patient education
+â”‚   â”‚   â”œâ”€â”€ BillingTab.jsx      # BPJS &amp; General billing logic
+â”‚   â”‚   â”œâ”€â”€ ClinicalSidebar.jsx # SOAP summary &amp; MAIA validation
+â”‚   â”‚   â””â”€â”€ HistoryTab.jsx      # Medical history archive
+â”‚   â”œâ”€â”€ WilayahPage.jsx         # Procedural village map with canvas (153KB)
+â”‚   â”œâ”€â”€ EmergencyPanel.jsx      # IGD triage &amp; stabilization (42KB)
+â”‚   â”œâ”€â”€ KPIDashboard.jsx        # Performance analytics (42KB)
+â”‚   â”œâ”€â”€ ArsipPage.jsx           # Patient archive/history (40KB)
+â”‚   â”œâ”€â”€ ReferralSISRUTEModal.jsx # Referral workflow simulation (31KB)
+â”‚   â”œâ”€â”€ ... (35 more components)
+â”‚
+â”œâ”€â”€ services/
+â”‚   â””â”€â”€ LLMService.js           # OpenAI/Gemini API integration (2KB)
+â”‚
+â”œâ”€â”€ utils/
+â”‚   â”œâ”€â”€ TextureGenerator.js     # Procedural pixel art textures (69KB)
+â”‚   â”œâ”€â”€ SoundManager.js         # FM synthesis audio engine (12KB)
+â”‚   â”œâ”€â”€ SocialDeterminants.js   # WHO-SDoH patient profiling (9KB)
+â”‚   â”œâ”€â”€ LevelingSystem.js       # XP curve &amp; level-up logic (2KB)
+â”‚   â””â”€â”€ AvatarUtils.js          # Avatar style generator (1.9KB)
+â”‚
+â”œâ”€â”€ scripts/                    &lt;-- â˜… AUTOMATION &amp; MONITORING (PRIMERA)
+â”‚   â””â”€â”€ primera/                &lt;-- [NEW] Core Logic
+â”‚       â”œâ”€â”€ megalog_v5.mjs      # Orchestrator
+â”‚       â”œâ”€â”€ health_engine.mjs   # Unified Calculator
+â”‚       â”œâ”€â”€ clinical_watchdog.mjs # Medical Logic Validator
+â”‚       â””â”€â”€ ...
+â”‚
+â”œâ”€â”€ PRIMERA_megalog.md          # Automated health report
+â”œâ”€â”€ PRIMER_BIBLE.md             # Technical documentation (this file)
+â””â”€â”€ assets/                     # Images, sprites, building PNGs
+</code></pre>
+<hr>
+<h2>3. THE GAME LOOP</h2>
+<h3>3.1 Daily Flow</h3>
+<pre><code>â”Œâ”€ Morning â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Wake up â†’ Morning status effects (alarm)      â”‚
+â”‚  Energy/Spirit restored based on sleep quality  â”‚
+â”‚  Daily quests assigned                          â”‚
+â”‚  Prolanis patients scheduled                    â”‚
+â”‚  Calendar events triggered                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+          â”‚
+â”Œâ”€ Clinical Hours (08:00-16:00) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Patient queue generated (seasonal, profile)    â”‚
+â”‚  Emergency patients may arrive (random)         â”‚
+â”‚  For each patient:                              â”‚
+â”‚    1. Greeting &amp; complaint                      â”‚
+â”‚    2. Anamnesis (persona-adapted dialogue)       â”‚
+â”‚    3. Physical examination                      â”‚
+â”‚    4. Lab orders (cost deducted)                â”‚
+â”‚    5. Diagnosis (ICD-10 search)                 â”‚
+â”‚    6. Treatment (medication from inventory)     â”‚
+â”‚    7. Procedures (ICD-9-CM)                     â”‚
+â”‚    8. Education topics                          â”‚
+â”‚    9. Discharge OR Referral (SISRUTE workflow)  â”‚
+â”‚   Each action costs TIME + ENERGY               â”‚
+â”‚   CPPT record auto-generated on discharge       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+          â”‚
+â”Œâ”€ Evening / Night â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  End-of-day report (patients seen, accuracy)    â”‚
+â”‚  Quest progress checked                         â”‚
+â”‚  Population health indicators updated (IKS)     â”‚
+â”‚  Outbreak checks triggered                      â”‚
+â”‚  Sleep â†’ set alarm â†’ next day                   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+</code></pre>
+<h3>3.2 Day Advancement (<code>nextDay()</code> â€” useGameStore.js)</h3>
+<p>The <code>nextDay</code> function in the Zustand store (<code>useGameStore.js</code>) acts as the central orchestrator for day transitions:</p>
+<ul>
+<li><strong>Morning Briefing</strong>: <code>generateMorningBriefing()</code> produces staff report, stock alerts, KPIs, priority suggestion</li>
+<li><strong>AI Director</strong>: <code>TheDirector.evaluateDirectorState()</code> evaluates player stress â†’ adjusts pacing (mercyâ†’crisis)</li>
+<li><strong>UKM Cases</strong>: <code>BehaviorCaseEngine.selectDailyCases()</code> picks daily behavior change scenarios</li>
+<li><strong>IKM Events</strong>: <code>IKMEventEngine.evaluateIKMTriggers()</code> checks community health events</li>
+<li><strong>UKP Bridge</strong>: <code>TheDirector.processUKPBridge()</code> converts failed UKM cases into clinical consequences</li>
+<li><strong>Clinical</strong>: Queue generation with seasonal/pacing multipliers</li>
+<li><strong>Finance</strong>: Archive + monthly reporting (kapitasi settlement)</li>
+<li><strong>Outbreak</strong>: Cluster detection + auto-receive pending supply orders</li>
+<li><strong>Staff</strong>: Morale/burnout decay</li>
+<li><strong>Quests</strong>: <code>QuestEngine</code> generates new daily/weekly missions</li>
+</ul>
+<p>This modular approach ensures each system manages its own reset logic.</p>
+<h3>3.3 Weekend System</h3>
+<p>Weekends (every 7th day) offer leisure activities that restore spirit/stress:</p>
+<ul>
+<li>Fishing, Jogging, Reading, Socializing (<code>performWeekendActivity</code>)</li>
+<li>Each activity has trade-offs (energy cost vs. spirit/stress recovery)</li>
+</ul>
+<hr>
+<h2>4. CORE ENGINES â€” DEEP DIVE</h2>
+<h3>4.1 Patient Generator (<code>PatientGenerator.js</code>)</h3>
+<p>Generates patients with realistic demographics tied to village population data:</p>
+<p><strong>Inputs:</strong></p>
+<ul>
+<li>Current time (affects arrival patterns)</li>
+<li>Village population registry (VillageRegistry.js)</li>
+<li>Current game day (for seasonal disease multipliers)</li>
+<li>Facility levels (determines available polis)</li>
+<li>Player skills (unlocks more complex cases)</li>
+</ul>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Profile-based generation</strong>: Patients with pre-existing conditions (from VillageRegistry) arrive with correlated diseases. Example: a villager with <code>hypertension_stage2</code> will present with <code>hypertension_primary</code>, <code>hypertensive_crisis</code>, or <code>tension_headache</code>.</li>
+<li><strong>Seasonal multipliers</strong>: Rainy season (Jan/Feb/Nov/Dec) â†’ 3x dengue, 2x diarrhea, 1.5x ILI. Dry season â†’ 2x URI, 2x skin infections.</li>
+<li><strong>Demographic realism</strong>: Indonesian names, age-appropriate occupations (WHO SDoH framework), education levels, housing types, family structures, health beliefs.</li>
+<li><strong>Anthropometric generation</strong>: Height/weight/BMI generated with percentile-based variation by age and gender.</li>
+<li><strong>Poli routing</strong>: Patients auto-routed to <code>poli_umum</code>, <code>poli_gigi</code>, or <code>poli_kia</code> based on case category.</li>
+</ul>
+<h3>4.2 Case Library (<code>CaseLibrary.js</code>)</h3>
+<p>A unified entry point for all clinical cases. As of Version 0.6.5, the cases have been migrated from a single massive file into specialized modules within <code>/src/game/cases/</code> (Infectious, Metabolic, Others, Emergency).</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Centralized Registry</strong>: Re-exports all cases into a single <code>CASE_LIBRARY</code> array.</li>
+<li><strong>Search &amp; Match</strong>: Provides <code>getCaseByCondition(caseId)</code> for finding cases by ID, name, or ICD-10 code.</li>
+<li><strong>Unified logic</strong>: Serves as a gateway for clinical logic re-exported from <code>ValidationEngine.js</code> and <code>BillingEngine.js</code>.</li>
+</ul>
+<pre><code class="language-javascript">{
+  id: &#39;dengue_df&#39;,
+  diagnosis: &#39;Dengue Fever&#39;,
+  diagnosisName: &#39;Demam Dengue&#39;,
+  icd10: &#39;A90&#39;,
+  skdi: &#39;4A&#39;,           // SKDI competency level
+  category: &#39;Infectious&#39;,
+  complaint: &#39;Demam tinggi mendadak sejak 3 hari...&#39;,
+  
+  // Demographic constraints
+  ageRange: [5, 50],
+  genderSpecific: null,
+  
+  // Clinical data
+  physicalExamFindings: {
+    head: &#39;Flushing...&#39;,
+    abdomen: &#39;Hepatomegali 2 jari...&#39;,
+    skin: &#39;Petekie positif pada tourniquet test...&#39;,
+    // ... more systems
+  },
+  
+  labs: {
+    cbc: { result: &#39;Trombosit 85.000/ÂµL&#39;, flag: &#39;low&#39;, cost: 50000 },
+    ns1_antigen: { result: &#39;Positif&#39;, flag: &#39;abnormal&#39;, cost: 150000 },
+  },
+  
+  // Correct answers (for scoring)
+  trueDiagnosisCode: &#39;A90&#39;,
+  correctTreatment: [&#39;paracetamol_500&#39;, &#39;oralit&#39;],
+  correctProcedures: [&#39;iv_fluid&#39;],
+  correctEducation: [&#39;fluid_intake&#39;, &#39;warning_signs&#39;, &#39;mosquito_prevention&#39;],
+  
+  // Anamnesis questions (4-8 per case, categorized)
+  anamnesisQuestions: {
+    keluhan_utama: [
+      { id: &#39;q_main&#39;, text: &#39;Ceritakan keluhan utama Anda?&#39;, response: &#39;...&#39; }
+    ],
+    riwayat_penyakit: [...],
+    riwayat_keluarga: [...],
+    sosial_lingkungan: [...]
+  },
+  
+  // Inline variations (some cases have these)
+  anamnesisVariations: {
+    q_main: {
+      low_education: &#39;...&#39;,
+      anxious: &#39;...&#39;
+    }
+  }
+}
+</code></pre>
+<p><strong>Case Categories:</strong> Infectious, Respiratory, Dermatology, GI, Cardiovascular, Musculoskeletal, Neurology, Ophthalmology, ENT, Dental, OB/GYN, Maternal, Pediatric, Metabolic/Endocrine, Tropical, Emergency, Psychiatric, General.</p>
+<h3>4.3 Anamnesis Engine (<code>AnamnesisEngine.js</code> â€” 46KB)</h3>
+<p>The most complex clinical engine, responsible for patient interview simulation:</p>
+<p><strong>Flow:</strong></p>
+<ol>
+<li>Patient greeting exchange (gender/time-adapted)</li>
+<li>Chief complaint presented via persona-adapted text</li>
+<li>Player selects question category tab (Keluhan Utama, Riwayat Penyakit, Riwayat Keluarga, Sosial &amp; Lingkungan)</li>
+<li>Player clicks a question â†’ <code>getAdaptiveResponse()</code> fires</li>
+<li>Response selected from: inline variations â†’ AnamnesisVariations.js â†’ base response</li>
+<li>Doctor acknowledgment auto-generated</li>
+<li>For pediatric cases: child-direct questions available</li>
+<li>All exchanges logged to <code>anamnesisHistory[]</code></li>
+</ol>
+<p><strong>Persona System (6 types):</strong></p>
+<ul>
+<li><code>low_education</code> â€” Simple language, colloquialisms, may confuse medical terms</li>
+<li><code>high_education</code> â€” Uses medical terminology, precise descriptions</li>
+<li><code>skeptical</code> â€” Terse, distrustful, minimum information</li>
+<li><code>anxious</code> â€” Catastrophizes, asks if they&#39;re dying, seeks reassurance</li>
+<li><code>child_proxy</code> â€” Parent/guardian speaking on behalf of child</li>
+<li><code>elderly</code> â€” Respectful address (&quot;Nak Dokter&quot;), polite, traditional</li>
+</ul>
+<p>Persona is <strong>auto-assigned</strong> via <code>pickPersona()</code> based on patient demographics (age, education level, social factors).</p>
+<p><strong>AnamnesisVariations.js (127KB):</strong> Contains persona-adapted responses for <strong>all 159 cases</strong> (as of latest update). Structure: <code>VARIATIONS[caseId][questionId][persona] = responseText</code>.</p>
+<p><strong>LLM Integration (optional):</strong> If configured, <code>LLMService.js</code> can generate dynamic responses via OpenAI/Gemini API using prompts from <code>AnamnesisPrompts.js</code>. Falls back to static variations when offline.</p>
+<p><strong>Anamnesis Synthesis:</strong> <code>synthesizeAnamnesis()</code> converts raw question-answer history into a structured SOAP-compatible clinical summary, auto-detecting covered domains and key findings.</p>
+<h3>4.4 Emergency System (<code>EmergencyCases.js</code> + <code>EmergencyPanel.jsx</code>)</h3>
+<p>Separate clinical pathway for IGD (emergency unit) cases:</p>
+<p><strong>Triage System (Dual):</strong></p>
+<ul>
+<li><strong>START Triage</strong>: Color-coded (MERAH=Immediate, KUNING=Delayed, HIJAU=Minor, HITAM=Deceased)</li>
+<li><strong>ESI (Emergency Severity Index)</strong>: 5 levels from Resuscitation to Non-Urgent</li>
+</ul>
+<p><strong>Emergency Cases:</strong> Feature <code>deteriorationRate</code> â€” patients physiologically worsen per-minute if untreated. Cases include:</p>
+<ul>
+<li>Severe Hypoglycemia (Level 1, 5 pts/min)</li>
+<li>Anaphylactic Shock (Level 1, 8 pts/min)  </li>
+<li>Status Epilepticus (Level 1)</li>
+<li>Febrile Seizure (Level 2)</li>
+<li>Asthma Exacerbation (Level 2)</li>
+<li>Burns (Level 2-3)</li>
+<li>Snake Bite (Level 2)</li>
+<li>Drowning (Level 1)</li>
+<li>And more...</li>
+</ul>
+<p><strong>Emergency Actions:</strong> 50+ standardized actions (IV line, intubation, nebulizer, medications) with costs, required items, and stock deduction.</p>
+<p><strong>Dr. MAIA:</strong> AI assistant NPC who can handle patients when the player delegates. Generates her own CPPT records with <code>buildMaiaCPPTRecord()</code>.</p>
+<h3>4.5 CPPT Engine (<code>CPPTEngine.js</code>)</h3>
+<p>Generates <strong>SOAP-format</strong> (Subjective, Objective, Assessment, Planning) medical records for every patient encounter:</p>
+<pre><code class="language-javascript">{
+  subjective: {
+    chiefComplaint: &#39;...&#39;,
+    anamnesisSynthesis: { /* structured checklist */ },
+    anamnesisScore: 85
+  },
+  objective: {
+    physicalFindings: { head: &#39;...&#39;, abdomen: &#39;...&#39; },
+    labResults: { cbc: { result: &#39;...&#39;, flag: &#39;low&#39; } }
+  },
+  assessment: {
+    diagnoses: [{ code: &#39;A90&#39;, name: &#39;Dengue Fever&#39; }],
+    trueDiagnosis: &#39;A90&#39;,
+    isCorrectDiagnosis: true
+  },
+  planning: {
+    action: &#39;treat&#39;,
+    medications: [&#39;paracetamol_500&#39;],
+    procedures: [&#39;iv_fluid&#39;],
+    education: [&#39;fluid_intake&#39;],
+    referralTarget: null
+  },
+  outcome: {
+    status: &#39;recovered&#39;,
+    satisfaction: 90,
+    isCorrectAction: true
+  }
+}
+</code></pre>
+<h3>4.6 Posyandu Engine (<code>PosyanduEngine.js</code>)</h3>
+<p>Simulates monthly community health post events:</p>
+<p><strong>Activities:</strong></p>
+<ul>
+<li><code>penimbangan</code> â€” Child weighing (detects faltering growth)</li>
+<li><code>kms</code> â€” Growth chart (KMS) documentation</li>
+<li><code>imunisasi</code> â€” Vaccination (tracks schedule by age)</li>
+<li><code>penyuluhan_gizi</code> â€” Nutrition education</li>
+<li><code>pmba</code> â€” Complementary feeding (6mo-2yr)</li>
+</ul>
+<p><strong>Mechanics:</strong></p>
+<ul>
+<li>Runs every 30 in-game days</li>
+<li>Attendance rate: base 60% + 15% if player sends reminder</li>
+<li>Eligible participants filtered from VillageRegistry by age</li>
+<li>Activities impact IKS indicators (immunization â†‘, nutrition â†‘)</li>
+<li>Vaccine schedule tracked per child (BCG, DPT, Polio, etc.)</li>
+</ul>
+<h3>4.7 Prolanis Engine (<code>ProlanisEngine.js</code>)</h3>
+<p>Chronic disease management simulation for DM Type 2 and Hypertension:</p>
+<p><strong>Monthly Visit Loop:</strong></p>
+<ol>
+<li>Patient arrives with current parameters (HbA1c, FBG for DM; SBP/DBP for HTN)</li>
+<li>Random events may occur (diet cheating, exercise started, medication skipped)</li>
+<li>Player makes intervention decisions (adjust medication, lifestyle counseling)</li>
+<li><code>simulateParameterChange()</code> calculates new values based on intervention + events + drift</li>
+<li>Complication risk calculated (<code>calculateComplicationRisk()</code>)</li>
+<li>Complications can trigger (stroke, MI, renal failure, diabetic foot)</li>
+<li>Patient may be referred to hospital if uncontrolled</li>
+</ol>
+<p><strong>Parameters fluctuate realistically</strong> with random drift, treatment effects, and event impacts.</p>
+<h3>4.8 Outbreak System (<code>OutbreakSystem.js</code>)</h3>
+<p><strong>4 Outbreak Types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Trigger</th>
+<th>Spike</th>
+<th>Duration</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DBD (Dengue)</td>
+<td>2+ cases</td>
+<td>1.5x</td>
+<td>14 days</td>
+<td>Fogging, Larviciding, PSN, Education</td>
+</tr>
+<tr>
+<td>Malaria</td>
+<td>2+ cases</td>
+<td>1.4x</td>
+<td>10 days</td>
+<td>Bed nets, MDA, Breeding site elimination</td>
+</tr>
+<tr>
+<td>Diare (Diarrhea)</td>
+<td>3+ cases</td>
+<td>1.3x</td>
+<td>7 days</td>
+<td>Water testing, ORS distribution, Sanitation</td>
+</tr>
+<tr>
+<td>ISPA (Respiratory)</td>
+<td>5+ cases</td>
+<td>1.3x</td>
+<td>7 days</td>
+<td>Mask campaign, Ventilation, Education</td>
+</tr>
+</tbody></table>
+<p><strong>Mechanics:</strong></p>
+<ul>
+<li><code>checkForOutbreakTrigger()</code> monitors case clusters by ICD-10 code within time window</li>
+<li>During outbreak: patient generation rate multiplied by spike factor</li>
+<li>Player must perform response actions to reduce severity</li>
+<li>Each action has energy/time cost and effectiveness rating</li>
+<li>Failed/expired outbreaks penalize reputation and IKS</li>
+</ul>
+<h3>4.9 Quest Engine (<code>QuestEngine.js</code>)</h3>
+<p><strong>Daily Quests (3/day, random):</strong></p>
+<ul>
+<li>Kunjungi 3 keluarga (Home Visits)</li>
+<li>Kunjungi 2 keluarga berisiko (Risk Visits)  </li>
+<li>PSN di 5 rumah (Mosquito Breeding Site Inspection)</li>
+<li>5 intervensi kesehatan (Health Interventions)</li>
+</ul>
+<p><strong>Weekly Quests (2/week, random):</strong></p>
+<ul>
+<li>Tangani 20 pasien (Treat 20 Patients)</li>
+<li>Tingkatkan IKS 5 keluarga (Improve 5 Family Health Indices)</li>
+<li>Layani 10 pasien Prolanis (Serve 10 Chronic Patients)</li>
+</ul>
+<p>Quests provide XP rewards (50-250) and drive gameplay direction.</p>
+<h3>4.10 Clinical Validation &amp; Billing Engines</h3>
+<p>The game features specialized engines for validating clinical correctness and calculating costs:</p>
+<ul>
+<li><strong>Validation Engine (<code>ValidationEngine.js</code>)</strong>:<ul>
+<li><strong>Diagnosis Validation (<code>validateDiagnosis</code>)</strong>: Matches player-selected ICD-10 codes against the case&#39;s primary code and differentials.</li>
+<li><strong>Treatment Validation (<code>validateTreatment</code>)</strong>: Checks medications and procedures. Requires <code>correctTreatment</code> and <code>correctProcedures</code> in <code>medicalData</code>.</li>
+<li><strong>Exams &amp; Labs</strong>: Ensures critical physical systems and relevant labs were performed.</li>
+<li><strong>Anamnesis</strong>: Scores interview completeness based on essential questions.</li>
+</ul>
+</li>
+<li><strong>Billing Engine (<code>BillingEngine.js</code>)</strong>:<ul>
+<li><strong>Automated Invoicing</strong>: Calculates costs for consultation, medications, labs, and procedures.</li>
+<li><strong>BPJS Support</strong>: Handles zero-cost final bills for patients with national health insurance.</li>
+</ul>
+</li>
+</ul>
+<h3>4.11 MAIA Clinical Reasoning Engine (<code>ClinicalReasoning.js</code>)</h3>
+<p><strong>MAIA (Medical AI Assistant)</strong> provides real-time clinical reasoning support:</p>
+<ol>
+<li><strong>Bayesian Diagnostic Tracker</strong>: Calculates diagnostic confidence for each differential based on anamnesis, physical exam, and lab findings.</li>
+<li><strong>Unified Coverage Scoring</strong>:<ul>
+<li><strong>Macro Coverage</strong>: Standard 7 domains of medical history.</li>
+<li><strong>Micro Coverage</strong>: Case-specific essential findings.</li>
+<li><strong>Sacred 7 / Basic 7</strong>: Adherence to formal history-taking structures.</li>
+</ul>
+</li>
+<li><strong>Context-Aware Alerts</strong>: Dynamic interrupts (Amber/Yellow) when critical diagnostic items are missing or when clinical probability shifts significantly.</li>
+<li><strong>Reasoning Dashboard</strong>: Visualizes multi-source EBM weights (70% Anamnesis, 15% Physical, 15% Labs) to guide player decision-making.</li>
+</ol>
+<h3>4.12 TheDirector â€” AI Drama Director (<code>TheDirector.js</code>)</h3>
+<p>Inspired by <strong>Left 4 Dead&#39;s AI Director</strong>. Dynamically adjusts game pacing based on player stress.</p>
+<ul>
+<li><strong>Stress Calculation</strong>: Weighted sum of queue pressure (30%), energy drain (25%), outbreak active (20%), reputation risk (15%), caseload today (10%)</li>
+<li><strong>5 Pacing Profiles</strong>: Crisis (â†‘1.6Ã— spawn) â†’ Pressure â†’ Normal â†’ Breathing â†’ Mercy (â†“0.4Ã— spawn)</li>
+<li><strong>Gift System</strong>: Mercy/breathing modes may spawn free supplies, volunteers, or morale boosts</li>
+<li><strong>UKP Bridge Processor</strong>: Converts failed/partial UKM behavior change cases into delayed clinical consequences (the &quot;karma loop&quot;)</li>
+</ul>
+<h3>4.13 Behavior Change Engine (<code>BehaviorCaseEngine.js</code>)</h3>
+<p>Core UKM engine for community health behavior interventions using the <strong>COM-B Framework</strong>:</p>
+<ul>
+<li><strong>6-Phase Lifecycle</strong>: Investigation â†’ Diagnosis â†’ Planning â†’ Intervention â†’ Follow-up â†’ Evaluation</li>
+<li><strong>COM-B Diagnosis Scoring</strong>: Player identifies barriers (Capability-Opportunity-Motivation), scored against ground truth</li>
+<li><strong>SDOH Armor</strong>: Socio-economic disadvantage creates resistance to interventions; accurate diagnosis mitigates resistance</li>
+<li><strong>UKMâ†’UKP Bridge</strong>: Failed cases trigger clinical consequences (e.g., failed PSN â†’ dengue patient in IGD)</li>
+<li><strong>Deterministic Karma</strong>: <code>fail</code> outcome = guaranteed IGD consequence; <code>partial</code> = probabilistic</li>
+<li><strong>Daily Case Selection</strong>: <code>selectDailyCases()</code> picks scenarios based on day, season, SDOH matching, and tier</li>
+</ul>
+<h3>4.14 IKM Event Engine (<code>IKMEventEngine.js</code>)</h3>
+<p>Community public health event lifecycle engine:</p>
+<ul>
+<li><strong>Trigger Evaluation</strong>: Season-aware, SDOH-dependent probabilistic triggers</li>
+<li><strong>IKMâ†”BC Overlap Prevention</strong>: When a BC deep case covers the same topic, the IKM quick event is suppressed</li>
+<li><strong>Phase Management</strong>: Discovery â†’ Dialog (player choice) â†’ Action (metric-based) â†’ Resolution</li>
+<li><strong>Impact System</strong>: Reputation, XP, IKS score, outbreak risk reduction</li>
+<li><strong>Season Logic</strong>: Indonesia Oct-Mar = rainy, Apr-Sep = dry</li>
+</ul>
+<h3>4.15 Story Database (<code>StoryDatabase.js</code>)</h3>
+<p>Branching narrative quests triggered by day/stat milestones:</p>
+<ul>
+<li><strong>Misteri Sungai Cikapas</strong>: Mass hysteria vs. CO2 poisoning investigation</li>
+<li><strong>Ancaman MDR-TB</strong>: Multi-drug resistant TB detection</li>
+<li><strong>Kembalinya Difteri</strong>: Diphtheria outbreak response + ORI</li>
+<li><strong>Desa Merah Stunting</strong>: Stunting prevalence intervention</li>
+<li><strong>Racun di Sawah</strong>: Pesticide poisoning investigation</li>
+<li><strong>Dukun &amp; Bidan Partnership</strong>: Traditional birth attendant integration</li>
+</ul>
+<h3>4.16 Additional Engines</h3>
+<table>
+<thead>
+<tr>
+<th>Engine</th>
+<th>Size</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>DispensingEngine.js</code></td>
+<td>15KB</td>
+<td>Pharmacy 5-rights verification, drug interactions, class-based allergy matching, FORNAS billing</td>
+</tr>
+<tr>
+<td><code>ConsequenceEngine.js</code></td>
+<td>13KB</td>
+<td>Post-discharge consequence spawning: follow-up patients, complication scheduling</td>
+</tr>
+<tr>
+<td><code>KaderNetwork.js</code></td>
+<td>10KB</td>
+<td>Community health volunteer (kader) management and effectiveness</td>
+</tr>
+<tr>
+<td><code>EmergingEventTriggers.js</code></td>
+<td>12KB</td>
+<td>5 emerging disease triggers: diphtheria, avian influenza, anthrax, malaria, pertussis</td>
+</tr>
+<tr>
+<td><code>DebriefEngine.js</code></td>
+<td>14KB</td>
+<td>End-of-day report generation, daily summary, performance feedback</td>
+</tr>
+<tr>
+<td><code>MiniGameLibrary.js</code></td>
+<td>26KB</td>
+<td>Interactive mini-games for UKM interventions (inspeksi_kilat, baca_ekspresi, susun_strategi)</td>
+</tr>
+<tr>
+<td><code>LabEngine.js</code></td>
+<td>24KB</td>
+<td>Lab test ordering, result interpretation, cost tracking</td>
+</tr>
+<tr>
+<td><code>GrowthChartEngine.js</code></td>
+<td>â€”</td>
+<td>WHO z-score (BB/U, TB/U, BB/TB), faltering detection</td>
+</tr>
+<tr>
+<td><code>ImmunizationEngine.js</code></td>
+<td>â€”</td>
+<td>14+ vaccines, national schedule, catch-up, coverage tracking</td>
+</tr>
+<tr>
+<td><code>GameCore.js</code></td>
+<td>4KB</td>
+<td>Core game loop primitives</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>4B. THE UKM â†” UKP BRIDGE (&quot;The Karma Loop&quot;)</h2>
+<p><strong>The defining gameplay mechanic</strong>: failure at UKM (preventive) spawns consequences at UKP (clinical).</p>
+<pre><code>UKM Failure (BehaviorCaseEngine)
+    â””â†’ processUKPBridge() (TheDirector.js)
+         â””â†’ Delayed Clinical Consequence (3-14 days)
+              â””â†’ Patient arrives at IGD/Poli with severe condition
+
+Examples:
+  Failed PSN campaign â†’ child with Dengue Shock Syndrome
+  Failed TB adherence â†’ household contact develops active TB
+  Failed dukun-bidan program â†’ postpartum hemorrhage at 2 AM
+</code></pre>
+<hr>
+<h2>4C. CRITICAL DATA CONTRACTS</h2>
+<blockquote>
+<p>âš ï¸ <strong>THE #1 BUG SOURCE</strong>: Data contract drift between generators and consumers.</p>
+</blockquote>
+<h3>Patient Object Data Paths</h3>
+<pre><code class="language-javascript">// BPJS status (authoritative path)
+patient.social.hasBPJS                // PRIMARY â€” PatientGenerator
+patient.hidden.bpjs                   // FALLBACK
+
+// Allergy data
+patient.hidden.allergies              // PRIMARY (hidden from player)
+
+// Medication decision format (from usePatientEMR.js)
+decision.medications = [{ id, medId, dose, frequency, duration }]  // OBJECTS!
+// âš ï¸ Many comparators still expect string IDs like &#39;amlodipine_5&#39;
+// Always normalize: const medId = typeof m === &#39;object&#39; ? (m.id || m.medId) : m;
+</code></pre>
+<h3>Inventory Item Shape</h3>
+<pre><code class="language-javascript">// state.finance.pharmacyInventory is an ARRAY:
+{ medicationId: &#39;amoxicillin_500&#39;, stock: 100, lastRestockDay: 5 }
+// âš ï¸ NOT { name, quantity, minStock } â€” those are stale field references
+// Lookup metadata: getMedicationById(medicationId) from MedicationDatabase.js
+</code></pre>
+<h3>Drug Class Allergy System</h3>
+<pre><code class="language-javascript">// DispensingEngine.js exports matchDrugAllergy(med, allergies)
+// Maps class names to specific medications:
+//   &#39;Penisilin&#39; â†’ [amoxicillin, ampicillin, penicillin, ...]
+//   &#39;NSAID&#39; â†’ [ibuprofen, asam_mefenamat, piroxicam, ...]
+//   &#39;Sefalosporin&#39; â†’ [cefadroxil, cefalexin, cefixime, ...]
+// Used in both pharmacy verification AND EMR allergy firewall
+</code></pre>
+<hr>
+<h2>5. DATA LAYER</h2>
+<h3>5.1 Village Registry (<code>VillageRegistry.js</code> â€” 55KB)</h3>
+<p>Pre-generated village population with <strong>families and individual villagers</strong>. Each family has:</p>
+<ul>
+<li>Head of household, spouse, children, elderly members</li>
+<li>House location (mapped to village map buildings)</li>
+<li>PIS-PK indicators (12 health indicators per family)</li>
+<li>Pre-existing conditions (hypertension, DM, tuberculosis, etc.)</li>
+<li>IKS (Indeks Keluarga Sehat) score per family</li>
+</ul>
+<h3>5.2 Medication Database (<code>MedicationDatabase.js</code> â€” 158KB)</h3>
+<p>700+ items including:</p>
+<ul>
+<li>Drugs: name, category, price, indications, dosage, contraindications</li>
+<li>Medical equipment: surgical instruments, consumables</li>
+<li>Organized by category (Analgesics, Antibiotics, Antihypertensives, etc.)</li>
+</ul>
+<h3>5.3 Wiki System (<code>WikiData.js</code> â€” 249KB)</h3>
+<p>In-game medical encyclopedia with entries for:</p>
+<ul>
+<li>Diseases (pathophysiology, diagnosis, treatment)</li>
+<li>Procedures (techniques, indications, complications)</li>
+<li>Lab tests (interpretation, normal values)</li>
+<li>Public health programs (Posyandu, Prolanis, PIS-PK)</li>
+<li>Triggered contextually via info icons in the EMR</li>
+</ul>
+<h3>5.4 ICD Systems</h3>
+<ul>
+<li><strong>ICD-10</strong> (<code>ICD10.js</code> + <code>master_icd_10.json</code>): Full diagnosis code search for patient discharge</li>
+<li><strong>ICD-9-CM</strong> (<code>ICD9CM.js</code> â€” 606KB): Procedure codes for clinical procedures</li>
+<li><strong>FKTP-144</strong> (<code>FKTP144Diseases.js</code>): 144 diseases mandatory for primary care (SKDI 4A)</li>
+</ul>
+<h3>5.5 Supplementary Data</h3>
+<ul>
+<li><code>HospitalDB.js</code> â€” Referral hospitals (RSUD, RS Swasta) with specialties and ambulance availability</li>
+<li><code>SupplierDatabase.js</code> â€” Medical suppliers with delivery times and pricing</li>
+<li><code>CalendarEventDB.js</code> â€” Indonesian national health days (Hari Kesehatan Nasional, Hari AIDS, etc.)</li>
+<li><code>ProlanisDB.js</code> â€” Disease-specific parameter ranges, events, and educational materials for chronic disease management</li>
+<li><code>ClinicalServices.js</code> â€” Service/poli routing configuration</li>
+<li><code>FurnitureData.js</code> â€” Upgradeable furniture for Rumah Dinas (doctor&#39;s house)</li>
+</ul>
+<hr>
+<h2>6. UI/UX ARCHITECTURE</h2>
+<h3>6.1 Design Language</h3>
+<ul>
+<li><strong>Theme:</strong> Futuristic glassmorphism, dark mode primary with emerald green accents</li>
+<li><strong>Icons:</strong> Lucide React icon library</li>
+<li><strong>Sound:</strong> FM synthesis audio engine (SoundManager.js) inspired by FF8 Junction system â€” all sounds generated with Web Audio API, no audio files</li>
+<li><strong>Typography:</strong> System fonts, with emoji-heavy UI for quick visual parsing</li>
+<li><strong>Animations:</strong> CSS transitions and micro-animations for hover/click feedback</li>
+</ul>
+<h3>6.2 Core Pages</h3>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>Component</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Opening</td>
+<td><code>OpeningScreen.jsx</code></td>
+<td>Title screen with game logo</td>
+</tr>
+<tr>
+<td>Setup</td>
+<td><code>PlayerSetup.jsx</code></td>
+<td>Character creation, name, avatar selection</td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td><code>Dashboard.jsx</code></td>
+<td>Main hub: stats, quick actions, patient queue</td>
+</tr>
+<tr>
+<td>Clinical</td>
+<td><code>ClinicalPage.jsx</code></td>
+<td>Patient queue + EMR side-by-side view</td>
+</tr>
+<tr>
+<td>EMR</td>
+<td><code>PatientEMR.jsx</code> (180KB)</td>
+<td>Full electronic medical record with 8+ tabs</td>
+</tr>
+<tr>
+<td>Emergency</td>
+<td><code>EmergencyPanel.jsx</code></td>
+<td>IGD triage, stabilization, real-time timers</td>
+</tr>
+<tr>
+<td>Village Map</td>
+<td><code>WilayahPage.jsx</code> (153KB)</td>
+<td>Procedural pixel art village, home visits, PIS-PK</td>
+</tr>
+<tr>
+<td>KPI</td>
+<td><code>KPIDashboard.jsx</code></td>
+<td>Analytics, accuracy stats, charts</td>
+</tr>
+<tr>
+<td>Archive</td>
+<td><code>ArsipPage.jsx</code></td>
+<td>CPPT history, patient records</td>
+</tr>
+<tr>
+<td>Inventory</td>
+<td><code>InventoryPage.jsx</code></td>
+<td>Medication stock management</td>
+</tr>
+<tr>
+<td>Facilities</td>
+<td><code>GedungPage.jsx</code></td>
+<td>Building upgrades (poli, lab, pharmacy)</td>
+</tr>
+<tr>
+<td>Staff</td>
+<td><code>StaffPage.jsx</code></td>
+<td>Staff management</td>
+</tr>
+<tr>
+<td>Training</td>
+<td><code>DiklatPage.jsx</code></td>
+<td>Skill tree, continuing education</td>
+</tr>
+<tr>
+<td>Rumah Dinas</td>
+<td><code>RumahDinas.jsx</code></td>
+<td>Doctor&#39;s home (rest, sleep, furniture)</td>
+</tr>
+<tr>
+<td>Sarana</td>
+<td><code>SaranaPage.jsx</code></td>
+<td>Medical equipment management</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>Refactored Architecture</strong>: As of Version 0.6.5, <code>PatientEMR.jsx</code> has been decomposed into 10 specialized sub-components in <code>src/components/emr/</code>. This improves state management performance and clinical logic isolation.</li>
+</ul>
+<ol>
+<li><strong>Anamnesis Tab</strong> â€” Chat-style dialogue with selectable questions, category tabs, persona-adaptive responses</li>
+<li><strong>Physical Exam Tab</strong> â€” Body system examination with BodyMapWidget integration</li>
+<li><strong>Lab Tab</strong> â€” Lab test ordering with cost tracking and Wiki interpretation</li>
+<li><strong>Assessment Tab</strong> â€” ICD-10 searchable diagnostic module</li>
+<li><strong>Treatment Tab</strong> â€” Smart formulary with MAIA recommendations</li>
+<li><strong>Procedures Tab</strong> â€” Expanded ICD-9-CM routine procedures (25+ routine FKTP actions). Supports mapping of internal game IDs to real-world ICD-9-CM codes via <code>PROCEDURE_CODE_MAP</code> in <code>CaseLibrary.js</code> for flexible validation.</li>
+<li><strong>Education Tab</strong> â€” EBM-based patient education suggestions</li>
+<li><strong>History Tab</strong> â€” Contextual patient visit history</li>
+<li><strong>Billing Tab</strong> â€” Automated BPJS/General billing breakdown</li>
+<li><strong>Clinical Sidebar</strong> â€” Real-time SOAP synthesis, MAIA validation, and referral triggers</li>
+</ol>
+<h3>6.4 Village Map (<code>WilayahPage.jsx</code>)</h3>
+<p><strong>Procedural generation</strong> creates a pixel-art village with:</p>
+<ul>
+<li>Canvas-based tile rendering (grass, water, roads, sawah, mountains)</li>
+<li>30+ building types (Puskesmas, schools, mosques, markets, houses, Posyandu, etc.)</li>
+<li>AI-generated building sprites (PNG assets)</li>
+<li>Clickable buildings for wiki info and interactions</li>
+<li>Home visit system with PIS-PK indicator surveys (12 indicators)</li>
+<li>PSN (mosquito breeding site) checks per house</li>
+<li>Family health interventions</li>
+</ul>
+<hr>
+<h2>7. STATE MANAGEMENT</h2>
+<h3>7.1 Architecture: Zustand Monolith + GameContext Facade</h3>
+<p>All game state lives in <code>useGameStore.js</code> (~3000 lines) â€” a <strong>Zustand store</strong> with <code>persist</code> middleware (auto-save to localStorage). <code>GameContext.jsx</code> is a thin <strong>domain facade</strong> that selects and re-exports Zustand slices for convenience. Components should call <code>useGame()</code> hook; internal code can access the store directly.</p>
+<pre><code class="language-javascript">// â”€â”€ Time â”€â”€
+world: { day, time, currentWeek, isWeekend, speed }
+
+// â”€â”€ Player â”€â”€
+player: { name, gender, avatar, level, xp, energy, maxEnergy, spirit, stress, confidence }
+
+// â”€â”€ Clinical (UKP) â”€â”€
+clinical: {
+  queue: [],              // Today&#39;s patient queue
+  emergencyQueue: [],     // IGD patients
+  activePatientId,        // Currently viewed
+  history: [],            // All treated patients
+}
+
+// â”€â”€ Finance â”€â”€
+finance: {
+  stats: { kapitasi, pendapatanUmum, pengeluaranObat, ... },
+  kpi: { totalPatients, correctDiagnoses, ... },
+  pharmacyInventory: [],  // Array of { medicationId, stock, lastRestockDay }
+  pendingOrders: [],      // Supplier orders in transit
+}
+
+// â”€â”€ Public Health (UKM) â”€â”€
+publicHealth: {
+  villageData: {},        // Full village registry
+  outbreaks: [],          // Active outbreaks
+  prolanisRoster: [],     // Chronic disease patients
+  activeBCCases: [],      // Behavior change cases
+  activeIKMEvents: [],    // Community health events
+}
+
+// â”€â”€ Progression â”€â”€
+quests: { daily: [], weekly: [] }
+cpptHistory: []           // All SOAP records
+facilities: {}            // Building upgrade levels
+skills: {}                // Unlocked skill tree nodes
+</code></pre>
+<h3>7.2 Key Context Functions</h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>admitPatient(id)</code></td>
+<td>Move patient from queue to active</td>
+</tr>
+<tr>
+<td><code>updatePatient(id, updates)</code></td>
+<td>Update patient data mid-encounter</td>
+</tr>
+<tr>
+<td><code>dischargePatient(patient, decision)</code></td>
+<td>Complete encounter, validate treatment, generate CPPT, award XP</td>
+</tr>
+<tr>
+<td><code>orderLab(patientId, labName, cost)</code></td>
+<td>Deduct funds, reveal lab results</td>
+</tr>
+<tr>
+<td><code>nextDay(targetDay)</code></td>
+<td>Advance game day with all recalculations</td>
+</tr>
+<tr>
+<td><code>sleepWithAlarm(targetHour)</code></td>
+<td>Sleep system with alarm clock</td>
+</tr>
+<tr>
+<td><code>gainXp(amount)</code></td>
+<td>Award XP with auto-level-up check</td>
+</tr>
+<tr>
+<td><code>enrollProlanis(patient, type)</code></td>
+<td>Add patient to chronic disease roster</td>
+</tr>
+<tr>
+<td><code>completeProlanisVisit(data)</code></td>
+<td>Process monthly Prolanis checkup</td>
+</tr>
+<tr>
+<td><code>delegateToMaia(patientId)</code></td>
+<td>Let AI assistant handle patient</td>
+</tr>
+<tr>
+<td><code>completePRBControl(prbId)</code></td>
+<td>Process referral-back followup</td>
+</tr>
+<tr>
+<td><code>performWeekendActivity(activity)</code></td>
+<td>Execute weekend leisure</td>
+</tr>
+</tbody></table>
+<h3>7.3 Discharge Scoring System</h3>
+<p><code>dischargePatient()</code> (lines 1479-1843) is the second most complex function. It validates:</p>
+<ol>
+<li><strong>Diagnosis accuracy</strong> â€” Is the player&#39;s ICD-10 code correct?</li>
+<li><strong>Treatment validation</strong> â€” Are the prescribed medications appropriate?</li>
+<li><strong>Procedure completeness</strong> â€” Were necessary procedures performed?</li>
+<li><strong>Education coverage</strong> â€” Were required patient education topics covered?</li>
+<li><strong>FKTP-144 compliance</strong> â€” If disease is on mandatory 144 list, was it handled at Puskesmas or properly referred?</li>
+<li><strong>SKDI level enforcement</strong> â€” Cases beyond SKDI 4A must be referred</li>
+<li><strong>PRB (Program Rujuk Balik)</strong> triggers â€” Chronic/complex cases flagged for hospital referral follow-up</li>
+</ol>
+<p>Scoring awards XP, reputation, patient satisfaction, and updates KPI metrics.</p>
+<hr>
+<h2>8. AUDIO SYSTEM</h2>
+<p><code>SoundManager.js</code> implements a <strong>FF8 (Final Fantasy VIII) Junction-style</strong> audio engine using <strong>Web Audio API FM synthesis</strong>:</p>
+<ul>
+<li><strong>No audio files</strong> â€” all sounds are generated procedurally</li>
+<li>Carrier + Modulator oscillator architecture</li>
+<li><strong>UI sounds:</strong> Cursor blip, Confirm chime, Cancel woosh, Notification scan, Success fanfare, Error buzzer, Emergency siren</li>
+<li><strong>BGM:</strong> Procedurally generated ambient tracks with day-aware mood</li>
+</ul>
+<hr>
+<h2>9. VISUAL SYSTEM</h2>
+<h3>Procedural Texture Generation (<code>TextureGenerator.js</code> â€” 69KB)</h3>
+<p>Generates all terrain textures, building sprites, and decorations as <strong>pixel art data URLs</strong> at runtime. No external sprite sheets needed. Includes:</p>
+<ul>
+<li>Terrain: grass, water, sawah (rice paddy), mountain, forest, sand, roads</li>
+<li>Buildings: 30+ types with unique color palettes</li>
+<li>Decorations: trees, flowers, bushes, rocks</li>
+</ul>
+<h3>Avatar System (<code>AvatarRenderer.jsx</code> + <code>AvatarUtils.js</code>)</h3>
+<p>Character avatars with:</p>
+<ul>
+<li>Age/gender-based appearance generation</li>
+<li>Style variations (hair, skin tone, clothing)</li>
+<li>Used for both player and patient avatars</li>
+</ul>
+<hr>
+<h2>10. REFERRAL SYSTEM</h2>
+<p><code>ReferralSISRUTEModal.jsx</code> simulates Indonesia&#39;s <strong>SISRUTE</strong> (Sistem Rujukan Terpadu) referral workflow:</p>
+<ol>
+<li><strong>Pre-referral checklist</strong> â€” Verify case exceeds FKTP competency</li>
+<li><strong>Hospital selection</strong> â€” Choose from RSUD/RS Swasta based on specialty</li>
+<li><strong>Ambulance</strong> â€” Select transport type</li>
+<li><strong>Documentation</strong> â€” Referral letter auto-generated</li>
+<li><strong>Outcome</strong> â€” Hospital accepts/rejects, PRB scheduling</li>
+</ol>
+<p>Integrates with <code>HospitalDB.js</code> (hospital specialties, distances) and <code>FKTP144Diseases.js</code> (mandatory disease list).</p>
+<hr>
+<h2>11. PROGRESSION SYSTEM</h2>
+<h3>Leveling (<code>LevelingSystem.js</code>)</h3>
+<ul>
+<li>XP curve: <code>Level Ã— 500</code> per level</li>
+<li>Rewards per level: +1 Skill Point, +5 Max Energy, full energy restore</li>
+<li>XP sources: patient treatment (10-50), correct diagnosis bonus (+20), quests (50-250), Posyandu/Prolanis (25-40), outbreak response (60-120)</li>
+</ul>
+<h3>KPI Tracking</h3>
+<ul>
+<li>Total patients treated</li>
+<li>Diagnosis accuracy (%)</li>
+<li>Treatment accuracy (%)</li>
+<li>Referral appropriateness (%)</li>
+<li>Average patient satisfaction</li>
+<li>Correct education coverage</li>
+</ul>
+<h3>Facilities &amp; Skills</h3>
+<ul>
+<li>Building upgrades unlock new capabilities (Lab Level 2 â†’ more tests available)</li>
+<li>Skill tree unlocks advanced procedures and diagnostic tools</li>
+</ul>
+<hr>
+<h2>12. FILE SIZE BREAKDOWN (Top 15)</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Size</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>master_icd_10.json</code></td>
+<td>1.8 MB</td>
+<td>Full ICD-10 database</td>
+</tr>
+<tr>
+<td><code>master_icd_9.json</code></td>
+<td>605 KB</td>
+<td>Full ICD-9-CM database</td>
+</tr>
+<tr>
+<td><code>WikiData.js</code></td>
+<td>249 KB</td>
+<td>Medical encyclopedia</td>
+</tr>
+<tr>
+<td><code>PatientEMR.jsx</code></td>
+<td>180 KB</td>
+<td>Full EMR UI (Legacy unified)</td>
+</tr>
+<tr>
+<td><code>MedicationDatabase.js</code></td>
+<td>158 KB</td>
+<td>Drug database</td>
+</tr>
+<tr>
+<td><code>WilayahPage.jsx</code></td>
+<td>153 KB</td>
+<td>Village map</td>
+</tr>
+<tr>
+<td><code>AnamnesisVariations.js</code></td>
+<td>127 KB</td>
+<td>Persona responses</td>
+</tr>
+<tr>
+<td><code>GameContext.jsx</code></td>
+<td>115 KB</td>
+<td>Central state</td>
+</tr>
+<tr>
+<td><code>TextureGenerator.js</code></td>
+<td>69 KB</td>
+<td>Procedural art</td>
+</tr>
+<tr>
+<td><code>EmergencyCases.js</code></td>
+<td>57 KB</td>
+<td>Emergency cases</td>
+</tr>
+<tr>
+<td><code>VillageRegistry.js</code></td>
+<td>55 KB</td>
+<td>Village population</td>
+</tr>
+<tr>
+<td><code>AnamnesisEngine.js</code></td>
+<td>46 KB</td>
+<td>Interview logic</td>
+</tr>
+<tr>
+<td><code>MainLayout.jsx</code></td>
+<td>45 KB</td>
+<td>Layout shell</td>
+</tr>
+<tr>
+<td><code>EmergencyPanel.jsx</code></td>
+<td>42 KB</td>
+<td>IGD interface</td>
+</tr>
+<tr>
+<td><code>EducationOptions.js</code></td>
+<td>36 KB</td>
+<td>Education constants</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>13. KEY DESIGN DECISIONS</h2>
+<ol>
+<li><strong>Offline-first</strong> â€” Entire game runs client-side in the browser. Supabase is optional cloud mirror. Save/load via localStorage + Zustand persist.</li>
+<li><strong>Vanilla CSS</strong> â€” No Tailwind, no CSS-in-JS. All styles in <code>index.css</code> (~24KB).</li>
+<li><strong>Zustand is truth</strong> â€” All state in <code>useGameStore.js</code> (Zustand monolith). <code>GameContext.jsx</code> is a thin domain facade that selects and re-exports store slices.</li>
+<li><strong>Procedural generation</strong> â€” Map terrain, textures, audio, and avatars are all generated at runtime. Zero sprite sheets, zero audio files.</li>
+<li><strong>Modular engines</strong> â€” Each game system (28 engines in <code>src/game/</code>) is a standalone JS module with pure functions. Easy to reuse.</li>
+<li><strong>Data-driven clinical content</strong> â€” Adding new diseases requires only adding entries to <code>CaseLibrary.js</code> and <code>AnamnesisVariations.js</code>. No code changes needed.</li>
+<li><strong>Dual language</strong> â€” All UI text uses <code>react-i18next</code>. Content in Indonesian with medical terms in Latin/English.</li>
+<li><strong>UKMâ†”UKP Karma Loop</strong> â€” Failed preventive (UKM) activities spawn clinical (UKP) consequences. This is the core gameplay hook.</li>
+<li><strong>No TypeScript</strong> â€” All data contracts are implicit. This makes medication object vs. string ID mismatches the #1 bug source.</li>
+</ol>
+<hr>
+<h2>14. CURRENT STATE &amp; KNOWN LIMITATIONS</h2>
+<h3>What Works Well</h3>
+<ul>
+<li>Complete end-to-end clinical workflow (anamnesis â†’ diagnosis â†’ treatment â†’ discharge â†’ CPPT)</li>
+<li>159+ clinical cases with persona-based dialogue variations</li>
+<li>Emergency system with real-time triage and deterioration</li>
+<li>Village map with procedural generation and interactive home visits</li>
+<li>Prolanis chronic disease management with parameter simulation</li>
+<li>Outbreak detection and response</li>
+<li>UKM behavior change cases with COM-B framework</li>
+<li>UKMâ†’UKP karma bridge (failed prevention â†’ clinical consequences)</li>
+<li>AI Director pacing system (Left 4 Dead inspired)</li>
+<li>Branching story quests (6 narrative arcs)</li>
+<li>Pharmacy dispensing with 5-rights verification and class-based allergy matching</li>
+<li>Comprehensive medical data layer (ICD-10, ICD-9-CM, medication database, wiki)</li>
+<li>Route-level code splitting: Heavy components lazy-loaded in <code>MainLayout.jsx</code></li>
+<li>Zustand state management with auto-save persistence</li>
+</ul>
+<h3>Known Limitations &amp; Audit Patterns</h3>
+<ul>
+<li><strong>Data contract drift</strong>: medication objects vs. string IDs cause false negatives in treatment validation</li>
+<li><strong>Inventory model gap</strong>: 122/123 procedures require consumables not in MEDICATION_DATABASE</li>
+<li><strong>Dead state</strong>: <code>state.clinical.pharmacyQueue</code> has mutators but zero callers</li>
+<li><strong>Dead interaction rules</strong>: Some drug interaction IDs reference medications not in formulary</li>
+<li><strong>No procurement audit trail</strong>: supply orders/restocks not visible in daily archive</li>
+<li><strong>14 unit tests passing</strong> but no full integration/E2E suite</li>
+<li><strong>SaranaPage dormant</strong>: Missing <code>updateInventory</code> action, no procurement onClick</li>
+</ul>
+<hr>
+<h2>15. GLOSSARY OF INDONESIAN TERMS</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Puskesmas</td>
+<td>Primary healthcare center (Pusat Kesehatan Masyarakat)</td>
+</tr>
+<tr>
+<td>FKTP</td>
+<td>Primary care facility (Fasilitas Kesehatan Tingkat Pertama)</td>
+</tr>
+<tr>
+<td>SKDI</td>
+<td>Indonesian clinical competency standard</td>
+</tr>
+<tr>
+<td>Posyandu</td>
+<td>Community health post (Pos Pelayanan Terpadu)</td>
+</tr>
+<tr>
+<td>Prolanis</td>
+<td>Chronic disease management program (Program Pengelolaan Penyakit Kronis)</td>
+</tr>
+<tr>
+<td>PIS-PK</td>
+<td>Family health approach (Program Indonesia Sehat - Pendekatan Keluarga)</td>
+</tr>
+<tr>
+<td>IKS</td>
+<td>Healthy family index (Indeks Keluarga Sehat)</td>
+</tr>
+<tr>
+<td>IGD</td>
+<td>Emergency unit (Instalasi Gawat Darurat)</td>
+</tr>
+<tr>
+<td>SISRUTE</td>
+<td>Integrated referral system (Sistem Rujukan Terpadu)</td>
+</tr>
+<tr>
+<td>PRB</td>
+<td>Back-referral program (Program Rujuk Balik)</td>
+</tr>
+<tr>
+<td>CPPT</td>
+<td>Integrated patient progress record (Catatan Perkembangan Pasien Terintegrasi)</td>
+</tr>
+<tr>
+<td>Kapitasi</td>
+<td>Capitation payment from BPJS (national health insurance)</td>
+</tr>
+<tr>
+<td>PSN</td>
+<td>Mosquito breeding site elimination (Pemberantasan Sarang Nyamuk)</td>
+</tr>
+<tr>
+<td>Dinas Rumah</td>
+<td>Doctor&#39;s official residence</td>
+</tr>
+<tr>
+<td>BPJS</td>
+<td>National health insurance (Badan Penyelenggara Jaminan Sosial)</td>
+</tr>
+<tr>
+<td>Kader</td>
+<td>Community health volunteer</td>
+</tr>
+<tr>
+<td>Balita</td>
+<td>Under-five child (Bawah Lima Tahun)</td>
+</tr>
+<tr>
+<td>KMS</td>
+<td>Growth chart card (Kartu Menuju Sehat)</td>
+</tr>
+<tr>
+<td>DBD</td>
+<td>Dengue hemorrhagic fever (Demam Berdarah Dengue)</td>
+</tr>
+<tr>
+<td>ISPA</td>
+<td>Acute respiratory infection (Infeksi Saluran Pernapasan Akut)</td>
+</tr>
+<tr>
+<td>Poli</td>
+<td>Outpatient clinic (Poliklinik)</td>
+</tr>
+<tr>
+<td>COM-B</td>
+<td>Capability-Opportunity-Motivation behavioral model</td>
+</tr>
+<tr>
+<td>UKP</td>
+<td>Individual health services (curative, Upaya Kesehatan Perorangan)</td>
+</tr>
+<tr>
+<td>UKM</td>
+<td>Community health services (preventive, Upaya Kesehatan Masyarakat)</td>
+</tr>
+<tr>
+<td>FORNAS</td>
+<td>National essential medicines list (Formularium Nasional)</td>
+</tr>
+<tr>
+<td>STBM</td>
+<td>Community-based total sanitation (Sanitasi Total Berbasis Masyarakat)</td>
+</tr>
+<tr>
+<td>IKM</td>
+<td>Community health intervention (Intervensi Kesehatan Masyarakat)</td>
+</tr>
+<tr>
+<td>PHBS</td>
+<td>Clean and healthy lifestyle (Perilaku Hidup Bersih dan Sehat)</td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>This document is intended as a comprehensive briefing for AI agents, engineers, or collaborators who need to understand and work with the PRIMER codebase. For specific implementation details, refer to the source files listed in Section 2.</em></p>
+
+</body></html>
