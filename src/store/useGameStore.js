@@ -792,7 +792,7 @@ function buildTopDiseases(dayHistory) {
     const diseaseCounts = {};
     dayHistory.forEach((entry) => {
         const diagnosisName = entry?.medicalData?.diagnosisName
-            || entry?.medicalData?.trueDiagnosis
+            || entry?.medicalData?.trueDiagnosisCode
             || 'Undiagnosed';
         diseaseCounts[diagnosisName] = (diseaseCounts[diagnosisName] || 0) + 1;
     });

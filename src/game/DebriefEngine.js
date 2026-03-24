@@ -185,7 +185,7 @@ function generateSummary(todayLog, stats, morningReputation) {
 function extractCriticalCases(todayLog) {
     // Sort by impact: incorrect diagnoses first, then referrals, then good ones
     const scored = todayLog
-        .filter(c => c.completed)
+        .filter(c => c.completed || c.referred)
         .map(c => ({
             ...c,
             impactScore:
@@ -201,7 +201,7 @@ function extractCriticalCases(todayLog) {
         age: c.age,
         gender: c.gender,
         diagnosis: c.diagnosis || c.correctDiagnosis || 'Tidak terdiagnosis',
-        correctDiagnosis: c.correctDiagnosis,
+        correctDiagnosis: c.correctDiagnosis || c.diagnosis || null,
         diagnosisScore: c.diagnosisScore,
         wasCorrect: (c.diagnosisScore || 0) >= 70,
         referred: c.referred || false,
@@ -219,7 +219,7 @@ function extractCriticalCases(todayLog) {
  */
 function generateKeyLearning(caseRecord) {
     if ((caseRecord.diagnosisScore || 0) < 50) {
-        return `Diagnosis yang tepat adalah "${caseRecord.correctDiagnosis || '?'}". Perhatikan gejala-gejala kunci pada anamnesis.`;
+        return `Diagnosis yang tepat adalah "${caseRecord.correctDiagnosis || caseRecord.diagnosis || '?'}". Perhatikan gejala-gejala kunci pada anamnesis.`;
     }
     if (caseRecord.referred) {
         return 'Kasus ini memerlukan rujukan. Pastikan stabilisasi sebelum pasien dikirim ke RS.';
@@ -256,6 +256,16 @@ function generateReflectionPrompts(todayLog, criticalCases) {
             type: 'time_pressure',
             text: REFLECTION_TEMPLATES.time_pressure(),
             category: 'improvement',
+        });
+    }
+
+    // Prompt for referrals
+    const referredCases = criticalCases.filter(c => c.referred);
+    if (referredCases.length > 0 && prompts.length < 3) {
+        prompts.push({
+            type: 'referral_question',
+            text: REFLECTION_TEMPLATES.referral_question(referredCases[0].patientName),
+            category: 'reflection',
         });
     }
 
