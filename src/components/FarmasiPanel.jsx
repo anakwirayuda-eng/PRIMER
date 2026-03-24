@@ -20,9 +20,9 @@ import { getMedicationById } from '../data/MedicationDatabase.js';
 function buildPrescriptionQueue(history, currentDay) {
     if (!history || history.length === 0) return [];
     return history
-        // Codex Fix: carry-over undispensed prescriptions from previous days (up to 3 days back)
+        // Codex Fix: carry-over ALL undispensed prescriptions (no day limit)
         // Codex Fix: exclude referred patients — they left FKTP, don't dispense here
-        .filter(p => p.day >= (currentDay - 3) && p.day <= currentDay && p.decision?.medications?.length > 0 && !p.dispensed && p.decision?.action !== 'refer')
+        .filter(p => p.day <= currentDay && p.decision?.medications?.length > 0 && !p.dispensed && p.decision?.action !== 'refer')
         .map(p => ({
             id: p.id,
             patientName: p.name,
@@ -146,8 +146,9 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
         setChecklist({});
     }, [activeRxId, verifiedRxIds, consumeMedication, activeRx, pharmacyInventory, markPrescriptionDispensed]);
 
-    const pendingCount = queue.filter(rx => !dispensedRxIds.has(rx.id)).length;
-    const completedCount = dispensedRxIds.size;
+    // Counters: pending = current queue (undispensed), completed = dispensed today from history
+    const pendingCount = queue.length;
+    const completedCount = (history || []).filter(p => p.day <= currentDay && p.dispensed && p.decision?.action !== 'refer').length;
 
     // ─── Empty State ───
     if (queue.length === 0) {

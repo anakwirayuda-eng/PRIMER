@@ -1170,13 +1170,16 @@ export const useGameStore = create(
                     },
                     // Codex Fix: mark prescription as dispensed in history to prevent double-dispense on remount
                     markPrescriptionDispensed: (patientId) => {
-                        set(s => ({
-                            clinical: {
-                                ...s.clinical,
-                                history: (s.clinical.history || []).map(h =>
-                                    h.id === patientId ? { ...h, dispensed: true } : h
-                                )
-                            }
+                        set(produce(state => {
+                            // Mark dispensed in history
+                            state.clinical.history = (state.clinical.history || []).map(h =>
+                                h.id === patientId ? { ...h, dispensed: true } : h
+                            );
+                            // Pharmacy verification bonus: +5 XP, +1 reputation
+                            state.player.profile = applyXpGainToProfile({
+                                ...state.player.profile,
+                                reputation: Math.min(100, (state.player.profile.reputation || 0) + 1)
+                            }, 5);
                         }));
                     },
                     checkInventoryAvailability: (medicationId, quantity) => {
@@ -1275,7 +1278,7 @@ export const useGameStore = create(
                                     supplierId,
                                     itemCount: compatibleItems.length,
                                     skippedCount: skipped.length,
-                                    cost: costCalculation.total,
+                                    cost: totalCost, // Include express surcharge
                                     day,
                                     timestamp: Date.now()
                                 }]
@@ -2868,6 +2871,11 @@ export const useGameStore = create(
                                         }
                                         order.status = 'received';
                                         order.receivedDay = nextDayNum;
+                                        // Audit trail: log auto-receive event
+                                        state.finance.procurementLog = [
+                                            ...(state.finance.procurementLog || []),
+                                            { type: 'order_received', orderId: order.id, supplierId: order.supplierId, itemCount: order.items.length, cost: order.cost, day: nextDayNum, timestamp: Date.now() }
+                                        ];
                                     }
                                 });
                             }

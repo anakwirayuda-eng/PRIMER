@@ -54,9 +54,9 @@ export default function LogisticsView({ onBack, openWiki }) {
             if (h.decision?.medications) {
                 h.decision.medications.forEach(m => {
                     const medId = typeof m === 'object' ? (m.id || m.medId) : m;
-                    // Codex Fix: skip pseudo-items in consumption tracking
+                    // Codex Fix: skip pseudo-items only (form=action), keep program meds
                     const med = getMedicationById(medId);
-                    if (!med || med.buyPrice === 0 || med.form === 'action') return;
+                    if (!med || med.form === 'action') return;
                     const qty = typeof m === 'object'
                         ? ((m.dose || 1) * (m.frequency || 1) * (m.duration || 1))
                         : 1;
