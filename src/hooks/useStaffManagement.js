@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 import { seededBetween } from '../utils/deterministicRandom.js';
+import { canAffordOperationalCost, getAvailableOperationalFunds, spendOperationalFunds } from '../utils/operationalFunds.js';
 
 export const useStaffManagement = () => {
     const {
@@ -23,11 +24,8 @@ export const useStaffManagement = () => {
 
     const hireStaff = (staff) => {
         const cost = staff.salary * 3; // 3 months salary as hiring cost
-        if (stats.kapitasi >= cost) {
-            setStats(prev => ({
-                ...prev,
-                kapitasi: prev.kapitasi - cost
-            }));
+        if (canAffordOperationalCost(stats, cost)) {
+            setStats(prev => spendOperationalFunds(prev, cost) || prev);
             setHiredStaff(prev => [
                 ...prev,
                 {
@@ -39,7 +37,7 @@ export const useStaffManagement = () => {
             ]);
             return { success: true, message: `Berhasil merekrut ${staff.name}!` };
         } else {
-            return { success: false, message: 'Dana kapitasi tidak cukup untuk merekrut staff ini!' };
+            return { success: false, message: 'Dana aktif tidak cukup untuk merekrut staff ini!' };
         }
     };
 
@@ -78,6 +76,6 @@ export const useStaffManagement = () => {
         runCoaching,
         monthlySalaryTotal,
         currentDay: day,
-        availableCapital: stats.kapitasi
+        availableCapital: getAvailableOperationalFunds(stats)
     };
 };

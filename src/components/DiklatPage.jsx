@@ -12,6 +12,7 @@
 import React, { useState, useMemo } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
+import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
 import {
     GraduationCap, BookOpen, Award, Clock, CheckCircle, Lock,
     Star, Zap, Brain, Heart, Users, Trophy, Sparkles, ChevronRight
@@ -78,17 +79,13 @@ export default function DiklatPage() {
     const handleAttendWorkshop = (workshop) => {
         if (completedWorkshops.includes(workshop.id)) return;
 
-        const currentFunds = stats?.pendapatanUmum || 0;
-        if (workshop.cost > currentFunds) {
-            alert('Pendapatan umum tidak cukup untuk mengikuti workshop ini.');
+        if (!canAffordOperationalCost(stats, workshop.cost)) {
+            alert('Dana aktif tidak cukup untuk mengikuti workshop ini.');
             return;
         }
 
         if (workshop.cost > 0) {
-            setStats(prev => ({
-                ...prev,
-                pendapatanUmum: prev.pendapatanUmum - workshop.cost
-            }));
+            setStats(prev => spendOperationalFunds(prev, workshop.cost) || prev);
         }
 
         addXp?.(workshop.xpReward);
@@ -316,7 +313,7 @@ export default function DiklatPage() {
                             const config = CATEGORY_CONFIG[ws.category];
                             const a = ACCENT_MAP[config.accent];
                             const isCompleted = completedWorkshops.includes(ws.id);
-                            const canAfford = (stats?.pendapatanUmum || 0) >= ws.cost;
+                            const canAfford = canAffordOperationalCost(stats, ws.cost);
 
                             return (
                                 <div

@@ -1,5 +1,6 @@
 import { calculateGlobalBuffs } from '../game/GameCore.js';
 import { getNextLevelXp } from '../utils/LevelingSystem.js';
+import { normalizeDailyArchive } from '../utils/archiveNormalization.js';
 
 const normalizeSkills = (skills) => Array.isArray(skills)
     ? skills
@@ -31,7 +32,7 @@ export const selectDerivedFinance = (state) => {
     const currentDay = Number(state?.world?.day) || 1;
     const currentCycle = Math.max(1, Math.floor((currentDay - 1) / 30) + 1);
     const currentCycleStartDay = ((currentCycle - 1) * 30) + 1;
-    const currentCycleReceipts = (Array.isArray(state?.clinical?.dailyArchive) ? state.clinical.dailyArchive : [])
+    const currentCycleReceipts = normalizeDailyArchive(Array.isArray(state?.clinical?.dailyArchive) ? state.clinical.dailyArchive : [])
         .filter(entry => {
             const entryDay = Number(entry?.day) || 0;
             return entryDay >= currentCycleStartDay && entryDay < currentDay;

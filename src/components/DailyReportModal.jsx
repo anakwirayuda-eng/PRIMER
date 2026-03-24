@@ -13,11 +13,13 @@ import React from 'react';
 import { X, TrendingUp, Activity, Stethoscope, Users, DollarSign, Star, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import useModalA11y from '../hooks/useModalA11y.js';
+import { normalizeDailyArchive } from '../utils/archiveNormalization.js';
 
 const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#84cc16', '#f97316', '#6366f1'];
 
 export default function DailyReportModal({ dayData, dailyArchive = [], onNavigate, onBackToCalendar, onClose }) {
     const modalRef = useModalA11y(onClose);
+    const orderedArchive = React.useMemo(() => normalizeDailyArchive(dailyArchive), [dailyArchive]);
     if (!dayData) return null;
 
     const { day, patientsToday, revenue, reputation, overallScore, hourlyTraffic, topDiseases } = dayData;
@@ -29,19 +31,19 @@ export default function DailyReportModal({ dayData, dailyArchive = [], onNavigat
     };
 
     // Find current index and check nav availability
-    const currentIndex = dailyArchive.findIndex(d => d.day === day);
+    const currentIndex = orderedArchive.findIndex(d => d.day === day);
     const hasPrev = currentIndex > 0;
-    const hasNext = currentIndex < dailyArchive.length - 1;
+    const hasNext = currentIndex < orderedArchive.length - 1;
 
     const handlePrev = () => {
         if (hasPrev && onNavigate) {
-            onNavigate(dailyArchive[currentIndex - 1]);
+            onNavigate(orderedArchive[currentIndex - 1]);
         }
     };
 
     const handleNext = () => {
         if (hasNext && onNavigate) {
-            onNavigate(dailyArchive[currentIndex + 1]);
+            onNavigate(orderedArchive[currentIndex + 1]);
         }
     };
 
@@ -181,7 +183,7 @@ export default function DailyReportModal({ dayData, dailyArchive = [], onNavigat
                         <Calendar size={16} /> Kembali ke Kalender
                     </button>
                     <div className="text-xs text-slate-400">
-                        Menampilkan data hari ke-{day} dari {dailyArchive.length} hari
+                        Menampilkan data hari ke-{day} dari {orderedArchive.length} hari
                     </div>
                 </div>
             </div>

@@ -34,4 +34,32 @@ describe('selectDerivedFinance', () => {
         expect(derived.totalRevenue).toBe(50_200_000);
         expect(derived.netBalance).toBe(50_200_000);
     });
+
+    it('deduplicates persisted daily archive entries before computing current cycle receipts', () => {
+        const derived = selectDerivedFinance({
+            world: {
+                day: 36
+            },
+            clinical: {
+                dailyArchive: [
+                    { day: 34, revenue: 70_000 },
+                    { day: 31, revenue: 50_000 },
+                    { day: 34, revenue: 99_000 },
+                    { day: 35, revenue: 40_000 }
+                ]
+            },
+            finance: {
+                stats: {
+                    kapitasi: 50_000_000,
+                    pendapatanUmum: 200_000,
+                    pengeluaranObat: 0,
+                    pengeluaranLab: 0,
+                    pengeluaranOperasional: 0
+                },
+                kpi: {}
+            }
+        });
+
+        expect(derived.currentCycleReceipts).toBe(189_000);
+    });
 });

@@ -16,6 +16,7 @@ import { getRandomGuestEvent } from '../game/GuestEventSystem.js';
 import { soundManager } from '../utils/SoundManager.js';
 import { generateMorningBriefing } from '../game/MorningBriefing.js';
 import { generateDebrief } from '../game/DebriefEngine.js';
+import { canAffordOperationalCost, getAvailableOperationalFunds, spendOperationalFunds } from '../utils/operationalFunds.js';
 import MorningBriefingModal from '../components/MorningBriefingModal.jsx';
 import EndOfDayModal from '../components/EndOfDayModal.jsx';
 
@@ -280,11 +281,8 @@ const RumahDinas = ({ onClose }) => {
     const buyItem = (item) => {
         if (isProcessingRef.current) return; // 🔒 Anti double-spend mutex
         isProcessingRef.current = true;
-        if (stats.pendapatanUmum >= item.price) {
-            setStats(prev => ({
-                ...prev,
-                pendapatanUmum: prev.pendapatanUmum - item.price
-            }));
+        if (canAffordOperationalCost(stats, item.price)) {
+            setStats(prev => spendOperationalFunds(prev, item.price) || prev);
             setPlayerStats(prev => ({
                 ...prev,
                 furnitureInventory: [...new Set([...(prev.furnitureInventory ?? INITIAL_INVENTORY), item.id])]
@@ -293,7 +291,7 @@ const RumahDinas = ({ onClose }) => {
             showToast(`Berhasil membeli ${item.name}!`, 'success');
         } else {
             soundManager.playError();
-            showToast("Uang tidak cukup (Gunakan Pendapatan Umum)", 'error');
+            showToast("Dana aktif tidak cukup", 'error');
         }
         setTimeout(() => { isProcessingRef.current = false; }, 300); // 🔓 Unlock
     };
@@ -660,7 +658,7 @@ const RumahDinas = ({ onClose }) => {
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="font-bold text-lg">🛍️ Katalog Furniture</h3>
                                 <div className="text-sm font-bold text-green-600">
-                                    Rp {stats.pendapatanUmum.toLocaleString('id-ID')}
+                                    Rp {getAvailableOperationalFunds(stats).toLocaleString('id-ID')}
                                 </div>
                             </div>
 
@@ -684,8 +682,8 @@ const RumahDinas = ({ onClose }) => {
                                             </div>
                                             <button
                                                 onClick={() => buyItem(item)}
-                                                disabled={stats.pendapatanUmum < item.price}
-                                                className={`text-xs px-3 py-1.5 rounded font-bold ${stats.pendapatanUmum >= item.price
+                                                disabled={!canAffordOperationalCost(stats, item.price)}
+                                                className={`text-xs px-3 py-1.5 rounded font-bold ${canAffordOperationalCost(stats, item.price)
                                                     ? 'bg-green-600 text-white hover:bg-green-700'
                                                     : 'bg-slate-300 text-slate-500 cursor-not-allowed'
                                                     }`}

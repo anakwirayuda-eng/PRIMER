@@ -73,7 +73,7 @@ function createGameContext(overrides = {}) {
         setPlayerStats: vi.fn(),
         furnitureInventory: undefined,
         setFurnitureInventory: undefined,
-        stats: { pendapatanUmum: 5_000_000 },
+        stats: { pendapatanUmum: 5_000_000, kapitasi: 0 },
         setStats: vi.fn(),
         time: 12 * 60,
         advanceTime: vi.fn(),
@@ -148,5 +148,29 @@ describe('RumahDinas', () => {
             'mic_basic',
             'ent_tv_crt'
         ]);
+    });
+
+    it('allows furniture purchases when pooled funds are sufficient even if pendapatan umum is zero', async () => {
+        const setPlayerStats = vi.fn();
+        const setStats = vi.fn();
+
+        mockUseGame.mockReturnValue(createGameContext({
+            stats: { pendapatanUmum: 0, kapitasi: 5_000_000 },
+            setPlayerStats,
+            setStats
+        }));
+
+        const user = userEvent.setup();
+        render(<RumahDinas onClose={() => {}} />);
+
+        await user.click(screen.getAllByRole('button', { name: 'Beli' })[0]);
+
+        expect(setStats).toHaveBeenCalledTimes(1);
+        expect(setPlayerStats).toHaveBeenCalledTimes(1);
+
+        const statsUpdater = setStats.mock.calls[0][0];
+        const nextStats = statsUpdater({ pendapatanUmum: 0, kapitasi: 5_000_000 });
+        expect(nextStats.pendapatanUmum).toBe(0);
+        expect(nextStats.kapitasi).toBeLessThan(5_000_000);
     });
 });

@@ -31,6 +31,7 @@ import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
 import { normalizeEncounter, normalizeEncounterList } from '../models/EncounterRuntime.js';
 import { normalizeInventoryList, normalizeMedicationId } from '../models/InventoryRuntime.js';
+import { normalizeDailyArchive, normalizeMonthlyArchive } from '../utils/archiveNormalization.js';
 import { processLabOrder } from '../game/LabEngine.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
@@ -39,6 +40,12 @@ import { CURRENT_SAVE_VERSION, parseSavePayload } from '../utils/savePayload.js'
 import { withTransaction } from '../utils/transactions.js';
 import { chanceFromSeed, pickDeterministic, seedKey, seededBetween, seededInt } from '../utils/deterministicRandom.js';
 import { safeSetStorageItem } from '../utils/browserSafety.js';
+import { showToast } from '../utils/ToastManager.js';
+import {
+    appendReferralLogEntry,
+    buildReferralLogEntry,
+    reconcileReferralLog
+} from '../utils/referralLog.js';
 import { selectDerivedFinance } from './selectors.js';
 
 
@@ -440,6 +447,19 @@ const advanceElapsedTime = (get, minutes = 1) => {
     return { success: didAdvanceDay !== false, dayChanged: didAdvanceDay !== false };
 };
 
+const reconcileClinicalReferralLog = (clinicalState, worldState) => {
+    const { activeReferralLog } = reconcileReferralLog(
+        clinicalState?.activeReferralLog,
+        worldState?.day,
+        worldState?.time
+    );
+
+    return {
+        ...clinicalState,
+        activeReferralLog
+    };
+};
+
 const createStartingPlayerProfile = (profile = {}) => {
     const initialStats = profile.initialStats || {};
     const maxEnergy = clampNumber(
@@ -570,8 +590,8 @@ const mergePersistedClinical = (clinical, currentClinical) => {
                 capClinicalHistory(Array.isArray(clinical.history) ? clinical.history : currentClinical.history)
             )
         ),
-        dailyArchive: Array.isArray(clinical.dailyArchive) ? clinical.dailyArchive : currentClinical.dailyArchive,
-        monthlyArchive: Array.isArray(clinical.monthlyArchive) ? clinical.monthlyArchive : currentClinical.monthlyArchive,
+        dailyArchive: normalizeDailyArchive(Array.isArray(clinical.dailyArchive) ? clinical.dailyArchive : currentClinical.dailyArchive),
+        monthlyArchive: normalizeMonthlyArchive(Array.isArray(clinical.monthlyArchive) ? clinical.monthlyArchive : currentClinical.monthlyArchive),
         activeReferralLog: Array.isArray(clinical.activeReferralLog) ? clinical.activeReferralLog : currentClinical.activeReferralLog,
         busyAmbulanceIds: Array.isArray(clinical.busyAmbulanceIds) ? clinical.busyAmbulanceIds : currentClinical.busyAmbulanceIds,
         hospitalBedUsage: isPlainObject(clinical.hospitalBedUsage)
@@ -2326,6 +2346,20 @@ export const useGameStore = create(
                             }));
                             soundManager.playSuccess();
                         });
+
+                        const referralLogResult = reconcileReferralLog(
+                            state.clinical.activeReferralLog,
+                            day,
+                            time
+                        );
+                        state.clinical.activeReferralLog = referralLogResult.activeReferralLog;
+                        referralLogResult.newlyArrived.forEach((referral) => {
+                            showToast(
+                                `Radio RS: ${referral.patientName} diterima di ${referral.hospitalName}. ${referral.arrivalNote}`,
+                                'success',
+                                4200
+                            );
+                        });
                     })),
                     dischargePatient: (patient, decision, day, time) => withTransaction(set, get, 'dischargePatient', (state) => {
                         day = day ?? state.world.day;
@@ -2500,14 +2534,19 @@ export const useGameStore = create(
                                         createBusyAmbulanceEntry(amb.id, day, time, travelTime * 2)
                                     );
                                 }
-                                state.clinical.activeReferralLog.push({
-                                    id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
-                                    familyId: patient.hidden?.familyId || null,
-                                    diagnosisId: patient.medicalData?.trueDiagnosisCode || '',
-                                    diagnosis: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || '',
-                                    hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
-                                    timeSent: time, status: 'EN_ROUTE'
-                                });
+                                state.clinical.activeReferralLog = appendReferralLogEntry(
+                                    state.clinical.activeReferralLog,
+                                    buildReferralLogEntry({
+                                        patient,
+                                        hospital: hosp,
+                                        ambulance: amb,
+                                        day,
+                                        time,
+                                        travelDurationMinutes: travelTime
+                                    }),
+                                    day,
+                                    time
+                                );
 
                                 // S4 Fix: decrement hospital bed availability
                                 const bedKey = hosp.id;
@@ -2648,14 +2687,19 @@ export const useGameStore = create(
                                 if (hosp) newHospitalBedUsage[hosp.id] = (newHospitalBedUsage[hosp.id] || 0) + 1;
                                 // Add referral log
                                 if (hosp && amb) {
-                                    newActiveReferralLog = [...newActiveReferralLog, {
-                                        id: `ref_${Date.now()}`, patientId: patient.id, patientName: patient.name,
-                                        familyId: patient.hidden?.familyId || null,
-                                        diagnosisId: patient.medicalData?.trueDiagnosisCode || '',
-                                        diagnosis: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || '',
-                                        hospitalName: hosp.name, distance: hosp.distance, ambulanceType: amb.type,
-                                        timeSent: time, status: 'EN_ROUTE'
-                                    }];
+                                    newActiveReferralLog = appendReferralLogEntry(
+                                        newActiveReferralLog,
+                                        buildReferralLogEntry({
+                                            patient,
+                                            hospital: hosp,
+                                            ambulance: amb,
+                                            day,
+                                            time,
+                                            travelDurationMinutes: travelTime
+                                        }),
+                                        day,
+                                        time
+                                    );
                                 }
 
                                 // 🚑 SISRUTE LIMBO: patient stays in queue waiting for ambulance (immutable update)
@@ -2941,6 +2985,7 @@ export const useGameStore = create(
                                 s.meta = { ...INITIAL_META_STATE, saveVersion: normalizedSave.saveVersion || CURRENT_SAVE_VERSION };
                                 s.clinical.gameOver = null;
                                 s.world.isPaused = false;
+                                s.clinical = reconcileClinicalReferralLog(s.clinical, s.world);
                             }));
                             return true;
                         } catch (error) {
@@ -3177,6 +3222,11 @@ export const useGameStore = create(
                             state.clinical.busyAmbulanceIds = state.clinical.busyAmbulanceIds.filter(
                                 item => isAmbulanceStillBusy(item, nextDayVal, 480)
                             );
+                            state.clinical.activeReferralLog = reconcileReferralLog(
+                                state.clinical.activeReferralLog,
+                                nextDayVal,
+                                480
+                            ).activeReferralLog;
 
                             // 6. Monthly Report Trigger
                         }));
@@ -3222,13 +3272,17 @@ export const useGameStore = create(
                 name: 'primer_gamestate_v4',
                 merge: (persistedState, currentState) => {
                     const nextState = isPlainObject(persistedState) ? persistedState : {};
+                    const mergedWorld = nextState.world
+                        ? { ...currentState.world, ...normalizePersistedWorld(nextState.world) }
+                        : currentState.world;
+                    const mergedClinical = nextState.clinical
+                        ? mergePersistedClinical(nextState.clinical, currentState.clinical)
+                        : currentState.clinical;
 
                     return {
                         ...currentState,
                         ...nextState,
-                        world: nextState.world
-                            ? { ...currentState.world, ...normalizePersistedWorld(nextState.world) }
-                            : currentState.world,
+                        world: mergedWorld,
                         player: nextState.player
                             ? {
                                 ...currentState.player,
@@ -3248,22 +3302,25 @@ export const useGameStore = create(
                         staff: nextState.staff
                             ? mergePersistedStaff(nextState.staff, currentState.staff)
                             : currentState.staff,
-                        clinical: nextState.clinical
-                            ? mergePersistedClinical(nextState.clinical, currentState.clinical)
-                            : currentState.clinical
+                        clinical: reconcileClinicalReferralLog(mergedClinical, mergedWorld)
                     };
                 },
-                partialize: (state) => ({
-                    world: normalizePersistedWorld(state.world),
-                    player: {
-                        ...state.player,
-                        profile: sanitizePlayerProfile(state.player.profile)
-                    },
-                    finance: mergePersistedFinance(state.finance, createInitialFinanceState()),
-                    publicHealth: mergePersistedPublicHealth(state.publicHealth, createInitialPublicHealthState()),
-                    staff: mergePersistedStaff(state.staff, createInitialStaffState()),
-                    clinical: mergePersistedClinical(state.clinical, createInitialClinicalState())
-                }),
+                partialize: (state) => {
+                    const normalizedWorld = normalizePersistedWorld(state.world);
+                    const mergedClinical = mergePersistedClinical(state.clinical, createInitialClinicalState());
+
+                    return {
+                        world: normalizedWorld,
+                        player: {
+                            ...state.player,
+                            profile: sanitizePlayerProfile(state.player.profile)
+                        },
+                        finance: mergePersistedFinance(state.finance, createInitialFinanceState()),
+                        publicHealth: mergePersistedPublicHealth(state.publicHealth, createInitialPublicHealthState()),
+                        staff: mergePersistedStaff(state.staff, createInitialStaffState()),
+                        clinical: reconcileClinicalReferralLog(mergedClinical, normalizedWorld)
+                    };
+                },
             }
         )
     )

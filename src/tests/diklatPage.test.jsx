@@ -22,7 +22,7 @@ function createGameContext(overrides = {}) {
         skills: [],
         unlockSkill: vi.fn(() => true),
         addXp: vi.fn(),
-        stats: { pendapatanUmum: 600_000 },
+        stats: { pendapatanUmum: 600_000, kapitasi: 0 },
         setStats: vi.fn(),
         setPlayerProfile: vi.fn(),
         ...overrides
@@ -61,7 +61,7 @@ describe('DiklatPage', () => {
         expect(setPlayerProfile).toHaveBeenCalledTimes(1);
 
         const statsUpdater = setStats.mock.calls[0][0];
-        expect(statsUpdater({ pendapatanUmum: 600_000 })).toEqual({ pendapatanUmum: 100_000 });
+        expect(statsUpdater({ pendapatanUmum: 600_000, kapitasi: 0 })).toEqual({ pendapatanUmum: 100_000, kapitasi: 0 });
 
         const profileUpdater = setPlayerProfile.mock.calls[0][0];
         expect(profileUpdater({ completedWorkshops: [] }).completedWorkshops).toEqual([2]);
@@ -83,5 +83,28 @@ describe('DiklatPage', () => {
         await user.click(screen.getByRole('button', { name: /Workshop/i }));
 
         expect(screen.getByRole('button', { name: /Selesai/i })).toBeDisabled();
+    });
+
+    it('allows paid workshops when pooled funds are sufficient even if pendapatan umum alone is not', async () => {
+        const setStats = vi.fn();
+
+        mockUseGame.mockReturnValue(createGameContext({
+            stats: { pendapatanUmum: 100_000, kapitasi: 500_000 },
+            setStats
+        }));
+
+        const user = userEvent.setup();
+        render(<DiklatPage />);
+
+        await user.click(screen.getByRole('button', { name: /Workshop/i }));
+        await user.click(screen.getByRole('button', { name: /Rp 500K/i }));
+
+        expect(setStats).toHaveBeenCalledTimes(1);
+
+        const statsUpdater = setStats.mock.calls[0][0];
+        expect(statsUpdater({ pendapatanUmum: 100_000, kapitasi: 500_000 })).toEqual({
+            pendapatanUmum: 0,
+            kapitasi: 100_000
+        });
     });
 });

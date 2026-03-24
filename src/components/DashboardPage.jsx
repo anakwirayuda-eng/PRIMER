@@ -18,7 +18,7 @@ import {
     Wifi, WifiOff, Zap, Users, Heart, Brain, Loader2
 } from 'lucide-react';
 // WIKI_DATA removed — EducationalWikiModal loads data internally via getWikiEntry
-import { getMedicationById } from '../data/MedicationDatabase.js';
+import { summarizeOperationalInventory } from '../utils/operationalInventory.js';
 import ClinicalView from './dashboard/ClinicalView.jsx';
 import CommunityView from './dashboard/CommunityView.jsx';
 import PerformanceView from './dashboard/PerformanceView.jsx';
@@ -54,16 +54,7 @@ export default function DashboardPage() {
 
     const alerts = useMemo(() => {
         const list = [];
-        // Codex Fix: exclude pseudo-items from inventory alerts
-        const stockItems = pharmacyInventory?.filter(i => {
-            const m = getMedicationById(i.medicationId);
-            return m && m.form !== 'action';
-        }) || [];
-        const outOfStock = stockItems.filter(i => i.stock === 0).length;
-        const lowStock = stockItems.filter(i => {
-            const med = getMedicationById(i.medicationId);
-            return med && i.stock < med.minStock && i.stock > 0;
-        }).length;
+        const { outOfStock, lowStock } = summarizeOperationalInventory(pharmacyInventory);
         if (outOfStock > 0) list.push({ text: `${outOfStock} obat HABIS`, icon: AlertTriangle, severity: 'critical' });
         if (lowStock > 0) list.push({ text: `${lowStock} obat rendah`, icon: Package, severity: 'warning' });
         if (derivedKpis.rrns > 5) list.push({ text: `RRNS: ${derivedKpis.rrns}% (tinggi)`, icon: Activity, severity: 'warning' });
@@ -138,13 +129,8 @@ export default function DashboardPage() {
             case 'prb':
                 return { "PRB Aktif": prbQueue?.filter(p => p.status === 'active').length || 0, "PRB Selesai": prbQueue?.filter(p => p.status === 'completed').length || 0 };
             case 'inventory': {
-                // Codex Fix: exclude pseudo-items from inventory widget
-                const stockItems2 = pharmacyInventory?.filter(i => {
-                    const m = getMedicationById(i.medicationId);
-                    return m && m.form !== 'action';
-                }) || [];
-                const outOfStock = stockItems2.filter(i => i.stock === 0).length;
-                return { "Total Item": stockItems2.length, "Stok Habis": outOfStock };
+                const { totalItems, outOfStock } = summarizeOperationalInventory(pharmacyInventory);
+                return { "Total Item": totalItems, "Stok Habis": outOfStock };
             }
             case 'ukp_overview':
                 return { "Akurasi Klinis": derivedKpis.clinicalAccuracy + "%", "Total Pasien": kpi.totalPatients };

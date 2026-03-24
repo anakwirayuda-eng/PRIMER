@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext.jsx';
 import useModalA11y from '../hooks/useModalA11y.js';
 import { safeReloadPage } from '../utils/browserSafety.js';
+import { summarizeOperationalInventory } from '../utils/operationalInventory.js';
 import { PAGE_SHORTCUTS, TOGGLE_SHORTCUTS, SYSTEM_SHORTCUTS, resolveGlobalGameShortcut, shouldExecuteGlobalGameShortcut } from '../utils/gameShortcuts.js';
 import { LayoutDashboard, Dna, Stethoscope, Users, Package, Settings, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Archive, GraduationCap, Map, Building2, Home, Smartphone as PhoneIcon, Play, Pause, FastForward, Activity, X, CheckCircle, Sparkles, AlertTriangle, Loader2, Brain, Landmark, Keyboard } from 'lucide-react';
 // import Smartphone from './Smartphone.jsx'; // Lazy loaded below
@@ -413,8 +414,8 @@ export default function MainLayout() {
                     'PRB Selesai': prbQueue?.filter(p => p.status === 'completed').length || 0
                 };
             case 'inventory': {
-                const outOfStock = pharmacyInventory?.filter(item => item.stock === 0).length || 0;
-                return { 'Total Item': pharmacyInventory?.length || 0, 'Stok Habis': outOfStock };
+                const { totalItems, outOfStock } = summarizeOperationalInventory(pharmacyInventory);
+                return { 'Total Item': totalItems, 'Stok Habis': outOfStock };
             }
             case 'ukp_overview':
                 return { 'Akurasi Klinis': `${derivedKpis.clinicalAccuracy}%`, 'Total Pasien': kpi.totalPatients };
@@ -1043,7 +1044,7 @@ export default function MainLayout() {
             )}
 
             {/* Referral HUD Tracker */}
-            <ReferralHUD activeReferralLog={activeReferralLog} time={time} />
+            <ReferralHUD activeReferralLog={activeReferralLog} day={day} time={time} />
 
             {/* Outbreak Notification Overlay */}
             <OutbreakBanner

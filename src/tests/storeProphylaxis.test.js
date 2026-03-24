@@ -253,6 +253,37 @@ describe('store prophylaxis', () => {
         ]);
     });
 
+    it('sorts and deduplicates persisted archive arrays during clinical hydration', () => {
+        let didLoad = false;
+
+        act(() => {
+            didLoad = useGameStore.getState().actions.loadGame({
+                clinical: {
+                    dailyArchive: [
+                        { day: 7, revenue: 10000, patientsToday: 1, reputation: 80, overallScore: 70, hourlyTraffic: [], topDiseases: [] },
+                        { day: 5, revenue: 20000, patientsToday: 2, reputation: 81, overallScore: 71, hourlyTraffic: [], topDiseases: [] },
+                        { day: 7, revenue: 30000, patientsToday: 3, reputation: 82, overallScore: 72, hourlyTraffic: [], topDiseases: [] }
+                    ],
+                    monthlyArchive: [
+                        { month: 3, totalRevenue: 150000 },
+                        { month: 1, totalRevenue: 50000 },
+                        { month: 3, totalRevenue: 175000 }
+                    ]
+                }
+            }, 4);
+        });
+
+        expect(didLoad).toBe(true);
+        expect(useGameStore.getState().clinical.dailyArchive).toEqual([
+            { day: 5, revenue: 20000, patientsToday: 2, reputation: 81, overallScore: 71, hourlyTraffic: [], topDiseases: [] },
+            { day: 7, revenue: 30000, patientsToday: 3, reputation: 82, overallScore: 72, hourlyTraffic: [], topDiseases: [] }
+        ]);
+        expect(useGameStore.getState().clinical.monthlyArchive).toEqual([
+            { month: 1, totalRevenue: 50000 },
+            { month: 3, totalRevenue: 175000 }
+        ]);
+    });
+
     it('caps full sleep recovery at the configured max energy', () => {
         useGameStore.setState(state => ({
             player: {

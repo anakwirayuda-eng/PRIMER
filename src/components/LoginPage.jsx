@@ -24,6 +24,8 @@ const LoginPage = ({ onLoginSuccess }) => {
     const translateError = (msg) => {
         if (!msg) return 'Terjadi kesalahan. Coba lagi.';
         const lower = msg.toLowerCase();
+        if (lower.includes('signups') && lower.includes('disabled')) return 'Pendaftaran akun baru sedang dinonaktifkan. Hubungi admin.';
+        if (lower.includes('signup') && lower.includes('disabled')) return 'Pendaftaran akun baru sedang dinonaktifkan. Hubungi admin.';
         if (lower.includes('email') && lower.includes('invalid')) return 'NIM tidak valid. Gunakan angka saja.';
         if (lower.includes('rate limit')) return 'Terlalu banyak percobaan. Tunggu 2-3 menit.';
         if (lower.includes('invalid login')) return 'NIM atau password salah.';
@@ -37,6 +39,19 @@ const LoginPage = ({ onLoginSuccess }) => {
         e.preventDefault();
         setError('');
         setLoading(true);
+
+        // Client-side NIM validation (prevent email input → double-@ crash)
+        const cleanNim = nim.trim();
+        if (cleanNim.includes('@')) {
+            setError('Masukkan NIM mahasiswa (angka/huruf), bukan alamat email.');
+            setLoading(false);
+            return;
+        }
+        if (cleanNim.length < 3) {
+            setError('NIM terlalu pendek. Minimal 3 karakter.');
+            setLoading(false);
+            return;
+        }
 
         try {
             if (isRegister) {
@@ -52,6 +67,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                     angkatan ? parseInt(angkatan, 10) : null
                 );
                 if (authError) {
+                    console.error('[SignUp RAW ERROR]', authError.message, authError);
                     setError(translateError(authError.message));
                     setLoading(false);
                     return;
@@ -60,6 +76,7 @@ const LoginPage = ({ onLoginSuccess }) => {
             } else {
                 const { user, error: authError } = await AuthService.signIn(nim.trim(), password);
                 if (authError) {
+                    console.error('[SignIn RAW ERROR]', authError.message, authError);
                     setError(translateError(authError.message));
                     setLoading(false);
                     return;
@@ -100,7 +117,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                             type="text"
                             value={nim}
                             onChange={(e) => setNim(e.target.value)}
-                            placeholder="Masukkan NIM"
+                            placeholder="Contoh: 2023001234"
                             required
                             autoComplete="username"
                             style={styles.input}
