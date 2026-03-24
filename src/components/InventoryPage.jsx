@@ -253,7 +253,7 @@ export default function InventoryPage() {
                                                     {med.minStock.toLocaleString('id-ID')}
                                                 </td>
                                                 <td className="text-right px-6 py-4 font-semibold text-slate-700">
-                                                    Rp {med.buyPrice.toLocaleString('id-ID')}
+                                                    Rp {(med.buyPrice || 0).toLocaleString('id-ID')}
                                                 </td>
                                             </tr>
                                         );

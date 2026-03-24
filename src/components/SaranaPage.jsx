@@ -49,7 +49,7 @@ export default function SaranaPage() {
             const med = getMedicationById(item.medicationId);
             if (!med) return null;
             // Codex Fix: filter pseudo-items (care instructions, non-stock)
-            if (med.buyPrice === 0 || med.form === 'action') return null;
+            if (med.form === 'action') return null;
             return {
                 id: item.medicationId,
                 name: med.name,

@@ -182,7 +182,7 @@ export function verifyPrescription(prescription, inventory = {}) {
             ...item,
             medName: med.name,
             medForm: med.form,
-            unitPrice: med.unitPrice,
+            buyPrice: med.buyPrice || 0,
             sellPrice: med.sellPrice,
             qtyNeeded,
             valid: itemErrors.length === 0,
