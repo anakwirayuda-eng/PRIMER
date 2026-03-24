@@ -99,6 +99,12 @@ export const CONSUMABLES_MEDICATIONS = [
     { id: 'stationery', name: 'Alat Tulis Medis', category: 'Alat Kesehatan Habis Pakai', form: 'consumable', buyPrice: 1000, sellPrice: 1000, minStock: 50, description: 'Alat tulis untuk dokumentasi' },
     { id: 'liquid_nitrogen', name: 'Nitrogen Cair (Cryotherapy)', category: 'Alat Kesehatan Habis Pakai', form: 'consumable', buyPrice: 25000, sellPrice: 40000, minStock: 5, description: 'Nitrogen cair untuk krioterapi' },
 
+    // Codex Batch 6 fix: missing SKUs referenced by EmergencyRegistry / ProceduresDB
+    { id: 'spuit_10cc', name: 'Spuit 10cc', category: 'Alat Kesehatan Habis Pakai', form: 'consumable', buyPrice: 2000, sellPrice: 4000, minStock: 50, description: 'Syringe 10ml untuk injeksi/aspirasi' },
+    { id: 'reagen_gds', name: 'Reagen Strip GDS (Glucotest)', category: 'Alat Kesehatan Habis Pakai', form: 'consumable', buyPrice: 3000, sellPrice: 5000, minStock: 100, description: 'Strip reagen cek gula darah sewaktu' },
+    { id: 'bidai_set', name: 'Bidai Set (Emergency Splint)', category: 'Alat Kesehatan Habis Pakai', form: 'consumable', buyPrice: 15000, sellPrice: 25000, minStock: 10, description: 'Bidai untuk fraktur — alias splint_set' },
+    { id: 'kateter_foley', name: 'Kateter Foley', category: 'Alat Kesehatan Habis Pakai', form: 'consumable', buyPrice: 18000, sellPrice: 30000, minStock: 10, description: 'Kateter urin Foley — alias folley_catheter' },
+
     // ═══════════════════════════════════════════════════════════
     // EQUIPMENT (form: 'equipment') — NOT deducted from stock
     // These are permanent Puskesmas assets, tracked for availability only

@@ -23,6 +23,10 @@ describe('ReasoningDashboard dedup', () => {
             'Gangguan Cemas Menyeluruh (GAD)',
             'Panic disorder'
         ]);
+        expect(probabilities.map(entry => entry.displayName)).toEqual([
+            'F41.1 Gangguan Cemas Menyeluruh (GAD)',
+            'F41.0 Panic disorder'
+        ]);
     });
 
     it('collapses DDx synonyms that normalize to the same disease', () => {
@@ -44,5 +48,24 @@ describe('ReasoningDashboard dedup', () => {
             .map(entry => resolveCanonicalDiagnosisName(entry.name));
 
         expect(ddxCanonicals).toEqual(['infeksi saluran kemih']);
+    });
+
+    it('prefixes ICD-10 codes on visible labels when a code can be resolved', () => {
+        const probabilities = buildDiagnosticProbabilities(
+            {
+                medicalData: {
+                    diagnosisName: 'Infark Serebral (Stroke Iskemik)',
+                    trueDiagnosisCode: 'I63.9'
+                },
+                hidden: {
+                    differentialDiagnosis: ['I61.9', 'Intracerebral haemorrhage']
+                }
+            },
+            40
+        );
+
+        expect(probabilities[0].displayName).toBe('I63.9 Infark Serebral (Stroke Iskemik)');
+        expect(probabilities[1].displayName).toBe('I61.9 Intracerebral haemorrhage');
+        expect(probabilities).toHaveLength(2);
     });
 });

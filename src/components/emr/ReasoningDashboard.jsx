@@ -111,7 +111,7 @@ export default function ReasoningDashboard({
                                     <div className="flex items-center gap-2">
                                         <div className={`w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'}`} />
                                         <span className={`text-[11px] font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                            {diff.name}
+                                            {diff.displayName || diff.name}
                                         </span>
                                     </div>
                                     <span className={`text-xs font-mono font-black ${idx === 0 ? 'text-emerald-500' : 'text-slate-500'}`}>
@@ -138,7 +138,7 @@ export default function ReasoningDashboard({
                     {confidenceValue < 60 && (
                         <div className={`p-3 rounded-xl border border-dashed text-center ${isDark ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-50 border-amber-200'}`}>
                             <p className="text-[10px] font-medium text-amber-600 dark:text-amber-400 italic">
-                                "Saran MAIA: Basis data investigasi masih rendah untuk membedakan {differentials[0]?.name} dengan {differentials[1]?.name || 'diagnosa banding'}. Lanjutkan eksplorasi."
+                                "Saran MAIA: Basis data investigasi masih rendah untuk membedakan {differentials[0]?.displayName || differentials[0]?.name} dengan {differentials[1]?.displayName || differentials[1]?.name || 'diagnosa banding'}. Lanjutkan eksplorasi."
                             </p>
                         </div>
                     )}

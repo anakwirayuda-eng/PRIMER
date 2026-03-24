@@ -41,18 +41,57 @@ export function resolveCanonicalDiagnosisName(name) {
     return SYNONYM_MAP[canonicalName] || canonicalName;
 }
 
+function buildIcdNameMap() {
+    const map = new Map();
+
+    ICD10_DB.forEach((entry) => {
+        const normalizedName = toCanonicalDiagnosisName(
+            String(entry?.name || '').replace(/\s\([^)]+\)$/, '').trim()
+        );
+
+        if (normalizedName && !map.has(normalizedName)) {
+            map.set(normalizedName, entry.code);
+        }
+    });
+
+    return map;
+}
+
+const ICD_NAME_MAP = buildIcdNameMap();
+
+export function formatDiagnosisDisplayName(name, code) {
+    const normalizedCode = normalizeDiagnosisCode(code);
+    const cleanedName = String(name || '').trim();
+
+    if (!cleanedName) {
+        return normalizedCode || '';
+    }
+
+    if (!normalizedCode || normalizedCode === 'UNKNOWN') {
+        return cleanedName;
+    }
+
+    if (cleanedName.toUpperCase().startsWith(`${normalizedCode} `)) {
+        return cleanedName;
+    }
+
+    return `${normalizedCode} ${cleanedName}`;
+}
+
 function resolveDifferentialEntry(rawEntry, index, confidenceValue) {
     const rawValue = String(rawEntry || '').trim();
     const matchedIcd = ICD10_DB.find(icd => icd.code === rawValue);
 
     let mappedName = matchedIcd?.name || rawValue;
     mappedName = mappedName.replace(/\s\([^)]+\)$/, '').trim();
+    const resolvedCode = matchedIcd?.code || ICD_NAME_MAP.get(toCanonicalDiagnosisName(mappedName)) || rawValue;
 
     return {
         id: `diff_${index}`,
         raw: rawValue,
-        code: matchedIcd?.code || rawValue,
+        code: resolvedCode,
         name: mappedName,
+        displayName: formatDiagnosisDisplayName(mappedName, resolvedCode),
         canonical: resolveCanonicalDiagnosisName(mappedName),
         prob: Math.max(10, (confidenceValue || 45) - (index + 1) * 15),
         color: 'indigo'
@@ -92,6 +131,8 @@ export function buildDiagnosticProbabilities(patient, confidenceValue) {
         {
             id: `primary_${primaryCode}`,
             name: primaryName,
+            code: normalizedPrimaryCode,
+            displayName: formatDiagnosisDisplayName(primaryName, normalizedPrimaryCode),
             prob: confidenceValue || 45,
             color: 'emerald'
         },

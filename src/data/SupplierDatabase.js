@@ -86,8 +86,8 @@ export const SUPPLIER_DATABASE = [
         description: 'Apotek lokal untuk kebutuhan mendesak (harga lebih mahal)',
         minOrderValue: 0,
         maxOrderValue: 5000000, // Max Rp 5 juta
-        // Local pharmacy can supply all common drug categories (at markup)
-        acceptsAll: true,
+        // apotek_lokal only carries common drug categories, NOT universal
+        // (acceptsAll removed — Codex Batch 6 fix)
         availableCategories: [
             'Analgesik/Antipiretik',
             'Antibiotik',

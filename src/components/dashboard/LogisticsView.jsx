@@ -35,7 +35,7 @@ export default function LogisticsView({ onBack, openWiki }) {
         // Codex Fix: exclude pseudo-items from inventory stats
         const stockItems = pharmacyInventory.filter(item => {
             const m = getMedicationById(item.medicationId);
-            return m && m.form !== 'action';
+            return m && m.form !== 'action' && m.form !== 'equipment';
         });
         const low = stockItems.filter(item => {
             const med = getMedicationById(item.medicationId);
