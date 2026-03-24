@@ -240,7 +240,7 @@ export function usePatientEMR() {
             skdi: caseData?.skdi || patient.hidden?.skdi,
             triageLevel: caseData?.triageLevel || patient.triageLevel,
             esi: caseData?.esi || patient.esiLevel,
-            differentials: patient.hidden?.differentials || patient.hidden?.differentialDiagnosis || caseData?.differentials || []
+            differentials: patient.hidden?.differentialDiagnosis || caseData?.differentialDiagnosis || []
         };
         const maiaAlertsList = getMAIAAlerts(anamnesisHistory, activeTab, enrichedCaseData, {
             isEmergency: !!patient.isEmergency,
@@ -403,7 +403,7 @@ export function usePatientEMR() {
                 skdi: rawCase.skdi || patient.hidden?.skdi,
                 triageLevel: rawCase.triageLevel || patient.triageLevel,
                 esi: rawCase.esi || patient.esiLevel,
-                differentials: patient.hidden?.differentials || patient.hidden?.differentialDiagnosis || rawCase.differentials || []
+                differentials: patient.hidden?.differentialDiagnosis || rawCase.differentialDiagnosis || []
             };
             const alerts = getMAIAAlerts(newHistory, anamnesisCategory, enrichedForMAIA);
             setMaiaAlertsLocal(alerts);
@@ -444,7 +444,7 @@ export function usePatientEMR() {
             skdi: rawCase2.skdi || patient.hidden?.skdi,
             triageLevel: rawCase2.triageLevel || patient.triageLevel,
             esi: rawCase2.esi || patient.esiLevel,
-            differentials: patient.hidden?.differentials || patient.hidden?.differentialDiagnosis || rawCase2.differentials || []
+            differentials: patient.hidden?.differentialDiagnosis || rawCase2.differentialDiagnosis || []
         };
         const alerts = getMAIAAlerts(newHistory, 'keluhan_utama', enrichedForMAIA2);
         setMaiaAlertsLocal(alerts);
@@ -685,7 +685,7 @@ export function usePatientEMR() {
             patientName: patient.name,
             age: patient.age,
             diagnosis: selectedDiagnoses[0]?.code || 'unknown',
-            correctDiagnosis: caseData?.correctDiagnosis || caseData?.trueDiagnosisCode || caseData?.icd10 || caseData?.diagnosisName || patient.hidden?.icd10 || patient.hidden?.diagnosis || caseData?.id || '',
+            correctDiagnosis: caseData?.correctDiagnosis || caseData?.trueDiagnosisCode || caseData?.diagnosisName || patient.hidden?.diagnosis || caseData?.id || '',
             wasCorrect: diagResult?.isPrimaryCorrect ?? false,
             diagnosisScore: diagResult?.isPrimaryCorrect ? 100 : 0,
             action,

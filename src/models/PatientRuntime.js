@@ -21,6 +21,7 @@
  * @property {number} age
  * @property {string} gender
  * @property {boolean} _isCanonical - Idempotency lock (O(1) skip on re-normalize)
+ * @property {number} _aclVersion - Canonical schema version
  * @property {Object} social
  * @property {boolean} social.hasBPJS - SINGLE SOURCE OF TRUTH for JKN status
  * @property {Object} medicalData
@@ -49,11 +50,13 @@
  * @param {Object} raw - Raw patient object from any source
  * @returns {CanonicalPatient|null} Canonical patient or null if invalid
  */
+export const PATIENT_ACL_VERSION = 2;
+
 export function normalizePatient(raw) {
     if (!raw || typeof raw !== 'object') return null;
 
     // Idempotency guard: already canonical → instant return O(1)
-    if (raw._isCanonical) return raw;
+    if (raw._isCanonical && raw._aclVersion === PATIENT_ACL_VERSION) return raw;
 
     // --- ABSORPTION SIEVE: Resolve all known aliases ---
 
@@ -88,15 +91,23 @@ export function normalizePatient(raw) {
     // Allergies: 2 known locations
     const allergies = rawHidden?.allergies || rawMed?.allergies || [];
 
-    // --- FORGE: Non-destructive canonical overlay ---
+    // --- FORGE: Hard-boundary canonical overlay ---
     // Spread ALL raw fields first to preserve runtime fields
     // (joinedAt, status, originalId, isProlanis, prolanisData, complicationRisk,
     //  triageLevel, esiLevel, labsRevealed, caseData, keyLearning, etc.)
-    // Then overlay only the canonical alias resolutions.
+    // Then overlay canonical fields and strip legacy aliases.
     return {
         ...raw,
 
         _isCanonical: true,
+        _aclVersion: PATIENT_ACL_VERSION,
+
+        // Strip legacy root aliases
+        isBPJS: undefined,
+        diagnosisCode: undefined,
+        icd10: undefined,
+        physicalExam: undefined,
+        differentials: undefined,
 
         // Normalize name aliases
         name: raw.patientName || raw.name || 'Pasien',
@@ -114,7 +125,12 @@ export function normalizePatient(raw) {
             differentialDiagnosis,
             physicalExamFindings,
             allergies,
-            hasBPJS, // sync copy for legacy consumers
+            hasBPJS,
+            diagnosisCode: undefined,
+            icd10: undefined,
+            physicalExam: undefined,
+            differentials: undefined,
+            bpjs: undefined,
         },
 
         hidden: {
@@ -122,6 +138,9 @@ export function normalizePatient(raw) {
             trueDiagnosisCode,
             differentialDiagnosis,
             allergies,
+            bpjs: undefined,
+            icd10: undefined,
+            differentials: undefined,
         },
     };
 }

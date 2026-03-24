@@ -659,7 +659,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                 {patient.hidden?.diagnosis || patient.medicalData?.diagnosis || patient.medicalData?.diagnosisName || 'Belum ditentukan'}
                             </p>
                             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                                ICD-10: <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">{patient.hidden?.icd10 || patient.medicalData?.icd10 || patient.medicalData?.trueDiagnosisCode || '-'}</span>
+                                ICD-10: <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">{patient.medicalData?.trueDiagnosisCode || '-'}</span>
                             </p>
                         </div>
                         <p className="text-xs text-purple-600 dark:text-purple-500 mt-2 italic">

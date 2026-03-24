@@ -2014,7 +2014,7 @@ export const useGameStore = create(
                             if (state.clinical.activePatientId === patientId) {
                                 state.clinical.activePatientId = null;
                             }
-                            state.clinical.history = appendClinicalHistory(state.clinical.history, {
+                            state.clinical.history = appendClinicalHistory(state.clinical.history, normalizePatient({
                                 ...patient,
                                 day,
                                 dischargedAt: time,
@@ -2023,7 +2023,7 @@ export const useGameStore = create(
                                 outcomeStatus: 'delegated',
                                 satisfactionScore,
                                 cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'delegated')
-                            });
+                            }));
 
                             if (isBPJS) {
                                 state.finance.stats.kapitasi -= 10000;
@@ -2081,7 +2081,7 @@ export const useGameStore = create(
                                     ...state.clinical,
                                     emergencyQueue: state.clinical.emergencyQueue.filter(entry => entry.id !== patientId),
                                     activeEmergencyId: state.clinical.activeEmergencyId === patientId ? null : state.clinical.activeEmergencyId,
-                                    history: appendClinicalHistory(state.clinical.history, {
+                                    history: appendClinicalHistory(state.clinical.history, normalizePatient({
                                         ...patient,
                                         day,
                                         dischargedAt: time,
@@ -2091,7 +2091,7 @@ export const useGameStore = create(
                                         satisfactionScore,
                                         isEmergency: true,
                                         cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'delegated', true)
-                                    }),
+                                    })),
                                     // Codex Fix: push to todayLog so debrief counts emergency delegation
                                     todayLog: [...state.clinical.todayLog, {
                                         patientName: patient.name,
@@ -2249,14 +2249,14 @@ export const useGameStore = create(
                         arrivedPatients.forEach(p => {
                             const sd = p.sisruteData;
                             state.clinical.emergencyQueue = state.clinical.emergencyQueue.filter(q => q.id !== p.id);
-                            state.clinical.history = appendClinicalHistory(state.clinical.history, {
+                            state.clinical.history = appendClinicalHistory(state.clinical.history, normalizePatient({
                                 ...p, day: state.world.day, dischargedAt: currentTime,
                                 // DeepThink Fix: spread original decision to preserve diagnoses/medications
                                 decision: { ...(p.originalDecision || {}), action: 'refer', isSISRUTE: true, actionsPerformed: p.sisruteData?.actionsPerformed || [], referralDetails: sd?.referralDetails },
                                 outcome: 'referred', outcomeStatus: 'sisrute_transferred',
                                 satisfactionScore: 90, isEmergency: true,
                                 cpptRecord: buildMaiaCPPTRecord(p, state.world.day, currentTime, 'referred', true)
-                            });
+                            }));
                             soundManager.playSuccess();
                         });
                     })),
@@ -2447,7 +2447,7 @@ export const useGameStore = create(
                         // Codex Fix: add outcomeStatus for SISRUTE referrals so PatientHistoryModal can distinguish them
                         const isSISRUTEAccepted = decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED';
                         const cppt = buildCPPTRecord(patient, decision, day, time, { outcomeStatus: isSISRUTEAccepted ? 'referred_sisrute' : (isCorrectAction ? 'pulih' : 'memburuk'), satisfactionScore, isCorrectAction, isEmergency: false });
-                        state.clinical.history = appendClinicalHistory(state.clinical.history, {
+                        state.clinical.history = appendClinicalHistory(state.clinical.history, normalizePatient({
                             ...patient,
                             day,
                             dischargedAt: time,
@@ -2456,7 +2456,7 @@ export const useGameStore = create(
                             outcomeStatus: isSISRUTEAccepted ? 'referred_sisrute' : undefined,
                             satisfactionScore,
                             cpptRecord: cppt
-                        });
+                        }));
 
                         // DeepThink Fix: familyId is in hidden, not root
                         const patientFamilyId = patient.hidden?.familyId || patient.familyId;

@@ -99,10 +99,7 @@ function resolveDifferentialEntry(rawEntry, index, confidenceValue) {
 }
 
 export function buildDiagnosticProbabilities(patient, confidenceValue) {
-    const primaryCode = patient?.medicalData?.trueDiagnosisCode
-        || patient?.medicalData?.diagnosisCode
-        || patient?.hidden?.icd10
-        || 'unknown';
+    const primaryCode = patient?.medicalData?.trueDiagnosisCode || 'unknown';
     const primaryName = patient?.medicalData?.diagnosisName || primaryCode;
     const differentialsList = patient?.hidden?.differentialDiagnosis || patient?.hidden?.differentials || [];
 

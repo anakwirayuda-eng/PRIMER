@@ -41,9 +41,8 @@ function buildPrescriptionQueue(history, currentDay) {
                 return dx; // Show the ICD code/string the doctor chose
             })(),
             dischargedAt: p.dischargedAt,
-            // Codex Fix: wire BPJS status from all possible patient data paths
             patientSocial: {
-                hasBPJS: p.social?.hasBPJS ?? p.hidden?.bpjs ?? p.medicalData?.hasBPJS ?? p.medicalData?.bpjs ?? false
+                hasBPJS: p.social?.hasBPJS ?? false
             },
             items: p.decision.medications.map(m => ({
                 medId: typeof m === 'object' ? m.id : m,
