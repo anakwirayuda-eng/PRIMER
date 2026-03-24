@@ -4,9 +4,10 @@ import { Shield, CheckCircle, XCircle, ChevronRight, Activity } from 'lucide-rea
 import { soundManager } from '../../utils/SoundManager.js';
 import EliteCOMBWheel from './EliteCOMBWheel.jsx';
 import { getScenarioById } from '../../content/scenarios/IKMScenarioLibrary.js';
+import { getAvailableOperationalFunds } from '../../utils/operationalFunds.js';
 
 export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
-    const { advanceIKMPhase, resolveIKMEvent } = useGame();
+    const { advanceIKMPhase, resolveIKMEvent, stats } = useGame();
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [evaluating, setEvaluating] = useState(false);
     const [stepResult, setStepResult] = useState(null); // { isSuccess: true/false, feedback: '...' }
@@ -21,14 +22,24 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
     // Wait, we need the phase definition.
     const scenarioDef = getScenarioById(eventInstance.scenarioId);
     const phase = scenarioDef?.phases.find(p => p.id === eventInstance.currentPhaseId);
+    const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
 
     if (!phase) return null;
 
+    const getChoiceCost = (choice) => Math.max(0, Math.abs(Number(choice?.impact?.balance || 0)));
+
     const handleChoice = (choice, index) => {
         soundManager.playClick();
-        advanceIKMPhase(eventInstance.instanceId, choice.nextNode || choice.nextPhase, choice.impact, {
+        const result = advanceIKMPhase(eventInstance.instanceId, choice.nextNode || choice.nextPhase, choice.impact, {
             phaseId: phase.id, choiceIndex: index, choiceText: choice.text
         });
+        if (result?.success === false) {
+            setStepResult({
+                isSuccess: false,
+                feedback: result.message || 'Dana aktif tidak cukup untuk intervensi ini.'
+            });
+            setTimeout(() => setStepResult(null), 2500);
+        }
     };
 
     const handleDiagnosisSubmit = () => {
@@ -97,8 +108,24 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
                 {phase.choices && (
                     <div className="space-y-3">
                         {phase.choices.map((c, i) => (
-                            <button key={i} onClick={() => handleChoice(c, i)} className="w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all flex items-center justify-between group">
-                                <span className="text-white/80 font-medium group-hover:text-white">{c.text}</span>
+                            <button
+                                key={i}
+                                onClick={() => handleChoice(c, i)}
+                                disabled={getChoiceCost(c) > availableFunds}
+                                className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between group ${
+                                    getChoiceCost(c) > availableFunds
+                                        ? 'bg-white/5 border-white/5 opacity-60 cursor-not-allowed'
+                                        : 'bg-white/5 hover:bg-white/10 border-white/10'
+                                }`}
+                            >
+                                <div>
+                                    <span className="text-white/80 font-medium group-hover:text-white">{c.text}</span>
+                                    {getChoiceCost(c) > 0 && (
+                                        <div className={`mt-1 text-[11px] font-bold ${getChoiceCost(c) > availableFunds ? 'text-rose-300' : 'text-amber-300'}`}>
+                                            Rp {getChoiceCost(c).toLocaleString('id-ID')}
+                                        </div>
+                                    )}
+                                </div>
                                 <ChevronRight size={16} className="text-white/30 group-hover:text-white" />
                             </button>
                         ))}

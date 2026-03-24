@@ -1,11 +1,11 @@
 /**
  * @reflection
  * [IDENTITY]: LoginPage
- * [PURPOSE]: NIM + password authentication screen for PRIMER game.
+ * [PURPOSE]: Email + password authentication screen for PRIMER game.
  * [STATE]: Production
  * [ANCHOR]: LOGIN_PAGE
  * [DEPENDS_ON]: AuthService
- * [LAST_UPDATE]: 2026-03-20
+ * [LAST_UPDATE]: 2026-03-25
  */
 
 import React, { useState, useCallback } from 'react';
@@ -13,25 +13,24 @@ import { AuthService } from '../services/AuthService';
 
 const LoginPage = ({ onLoginSuccess }) => {
     const [isRegister, setIsRegister] = useState(false);
-    const [nim, setNim] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [nama, setNama] = useState('');
     const [angkatan, setAngkatan] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Translate Supabase email errors to NIM-friendly messages
+    // Translate Supabase errors to user-friendly Indonesian messages
     const translateError = (msg) => {
         if (!msg) return 'Terjadi kesalahan. Coba lagi.';
         const lower = msg.toLowerCase();
         if (lower.includes('signups') && lower.includes('disabled')) return 'Pendaftaran akun baru sedang dinonaktifkan. Hubungi admin.';
         if (lower.includes('signup') && lower.includes('disabled')) return 'Pendaftaran akun baru sedang dinonaktifkan. Hubungi admin.';
-        if (lower.includes('email') && lower.includes('invalid')) return 'NIM tidak valid. Gunakan angka saja.';
+        if (lower.includes('email') && lower.includes('invalid')) return 'Format email tidak valid.';
         if (lower.includes('rate limit')) return 'Terlalu banyak percobaan. Tunggu 2-3 menit.';
-        if (lower.includes('invalid login')) return 'NIM atau password salah.';
-        if (lower.includes('already registered') || lower.includes('already been registered')) return 'NIM sudah terdaftar. Silakan login.';
+        if (lower.includes('invalid login')) return 'Email atau password salah.';
+        if (lower.includes('already registered') || lower.includes('already been registered')) return 'Email sudah terdaftar. Silakan login.';
         if (lower.includes('password') && lower.includes('6')) return 'Password minimal 6 karakter.';
-        if (lower.includes('email')) return 'NIM tidak valid.'; // catch-all for any email leak
         return msg;
     };
 
@@ -39,19 +38,6 @@ const LoginPage = ({ onLoginSuccess }) => {
         e.preventDefault();
         setError('');
         setLoading(true);
-
-        // Client-side NIM validation (prevent email input → double-@ crash)
-        const cleanNim = nim.trim();
-        if (cleanNim.includes('@')) {
-            setError('Masukkan NIM mahasiswa (angka/huruf), bukan alamat email.');
-            setLoading(false);
-            return;
-        }
-        if (cleanNim.length < 3) {
-            setError('NIM terlalu pendek. Minimal 3 karakter.');
-            setLoading(false);
-            return;
-        }
 
         try {
             if (isRegister) {
@@ -61,22 +47,20 @@ const LoginPage = ({ onLoginSuccess }) => {
                     return;
                 }
                 const { user, error: authError } = await AuthService.signUp(
-                    nim.trim(),
+                    email.trim(),
                     password,
                     nama.trim(),
                     angkatan ? parseInt(angkatan, 10) : null
                 );
                 if (authError) {
-                    console.error('[SignUp RAW ERROR]', authError.message, authError);
                     setError(translateError(authError.message));
                     setLoading(false);
                     return;
                 }
                 onLoginSuccess(user);
             } else {
-                const { user, error: authError } = await AuthService.signIn(nim.trim(), password);
+                const { user, error: authError } = await AuthService.signIn(email.trim(), password);
                 if (authError) {
-                    console.error('[SignIn RAW ERROR]', authError.message, authError);
                     setError(translateError(authError.message));
                     setLoading(false);
                     return;
@@ -89,7 +73,7 @@ const LoginPage = ({ onLoginSuccess }) => {
         } finally {
             setLoading(false);
         }
-    }, [isRegister, nim, password, nama, angkatan, onLoginSuccess]);
+    }, [isRegister, email, password, nama, angkatan, onLoginSuccess]);
 
     const handleSkipOffline = useCallback(() => {
         onLoginSuccess(null);
@@ -111,13 +95,13 @@ const LoginPage = ({ onLoginSuccess }) => {
 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     <div style={styles.inputGroup}>
-                        <label style={styles.label}>NIM</label>
+                        <label style={styles.label}>Email</label>
                         <input
-                            id="login-nim"
-                            type="text"
-                            value={nim}
-                            onChange={(e) => setNim(e.target.value)}
-                            placeholder="Contoh: 2023001234"
+                            id="login-email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="email@contoh.com"
                             required
                             autoComplete="username"
                             style={styles.input}
@@ -176,7 +160,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                     <button
                         id="login-submit"
                         type="submit"
-                        disabled={loading || !nim || !password}
+                        disabled={loading || !email || !password}
                         style={{
                             ...styles.button,
                             ...(loading ? styles.buttonDisabled : {}),

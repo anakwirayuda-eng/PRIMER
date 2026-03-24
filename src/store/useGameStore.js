@@ -33,6 +33,7 @@ import { normalizeEncounter, normalizeEncounterList } from '../models/EncounterR
 import { normalizeInventoryList, normalizeMedicationId } from '../models/InventoryRuntime.js';
 import { normalizeDailyArchive, normalizeMonthlyArchive } from '../utils/archiveNormalization.js';
 import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
+import { applyIkmScoreToVillage } from '../utils/ikmImpact.js';
 import { processLabOrder } from '../game/LabEngine.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
@@ -165,12 +166,48 @@ const createInitialPublicHealthState = () => ({
     prolanisState: { lastSenamMonth: -1, lastSenamDay: -1 },
     activeOutbreaks: [],
     outbreakNotification: null,
+    outbreakRiskModifiers: { protectedUntil: {}, vulnerableUntil: {} },
     activeIKMEvents: [],
     completedIKMIds: [],
     ikmCooldowns: {},
     ikmCaseBoosts: [],
     buildingProgress: {}
 });
+
+const OUTBREAK_RISK_WINDOW_DAYS = 7;
+
+const pruneOutbreakRiskModifiers = (modifiers = {}, currentDay = 1) => {
+    const protectedUntil = Object.fromEntries(
+        Object.entries(modifiers?.protectedUntil || {}).filter(([, until]) => Number(until) >= currentDay)
+    );
+    const vulnerableUntil = Object.fromEntries(
+        Object.entries(modifiers?.vulnerableUntil || {}).filter(([, until]) => Number(until) >= currentDay)
+    );
+    return { protectedUntil, vulnerableUntil };
+};
+
+const applyIkmOutbreakRiskModifiers = (modifiers = {}, impact = {}, currentDay = 1) => {
+    const next = pruneOutbreakRiskModifiers(modifiers, currentDay);
+    const protectedType = typeof impact?.outbreak_risk_reduction === 'string'
+        ? impact.outbreak_risk_reduction.toLowerCase()
+        : '';
+    const vulnerableType = typeof impact?.outbreak_risk === 'string'
+        ? impact.outbreak_risk.toLowerCase()
+        : '';
+    const expiryDay = currentDay + OUTBREAK_RISK_WINDOW_DAYS;
+
+    if (protectedType) {
+        delete next.vulnerableUntil[protectedType];
+        next.protectedUntil[protectedType] = Math.max(Number(next.protectedUntil[protectedType] || 0), expiryDay);
+    }
+
+    if (vulnerableType) {
+        delete next.protectedUntil[vulnerableType];
+        next.vulnerableUntil[vulnerableType] = Math.max(Number(next.vulnerableUntil[vulnerableType] || 0), expiryDay);
+    }
+
+    return next;
+};
 
 const createInitialStaffState = () => ({
     hiredStaff: []
@@ -542,6 +579,18 @@ const mergePersistedPublicHealth = (publicHealth, currentPublicHealth) => {
         outbreakNotification: hasOwn(publicHealth, 'outbreakNotification')
             ? publicHealth.outbreakNotification
             : currentPublicHealth.outbreakNotification,
+        outbreakRiskModifiers: isPlainObject(publicHealth.outbreakRiskModifiers)
+            ? {
+                protectedUntil: {
+                    ...(currentPublicHealth.outbreakRiskModifiers?.protectedUntil || {}),
+                    ...(publicHealth.outbreakRiskModifiers.protectedUntil || {})
+                },
+                vulnerableUntil: {
+                    ...(currentPublicHealth.outbreakRiskModifiers?.vulnerableUntil || {}),
+                    ...(publicHealth.outbreakRiskModifiers.vulnerableUntil || {})
+                }
+            }
+            : currentPublicHealth.outbreakRiskModifiers,
         activeIKMEvents: Array.isArray(publicHealth.activeIKMEvents)
             ? publicHealth.activeIKMEvents
             : currentPublicHealth.activeIKMEvents,
@@ -1793,8 +1842,9 @@ export const useGameStore = create(
                     processDailyPublicHealth: (day, history) => {
                         const s = get();
                         const { activeOutbreaks, villageData } = s.publicHealth;
+                        const riskModifiers = pruneOutbreakRiskModifiers(s.publicHealth.outbreakRiskModifiers, day);
                         const { updatedOutbreaks } = checkOutbreakExpiry(activeOutbreaks, day);
-                        const newOutbreak = checkForOutbreakTrigger(history, villageData, day, updatedOutbreaks);
+                        const newOutbreak = checkForOutbreakTrigger(history, villageData, day, updatedOutbreaks, riskModifiers);
                         let finalOutbreaks = [...updatedOutbreaks];
                         let notification = null;
                         if (newOutbreak) { finalOutbreaks.push(newOutbreak); notification = newOutbreak; soundManager.playError(); }
@@ -1828,13 +1878,14 @@ export const useGameStore = create(
                                 ...state.publicHealth,
                                 activeOutbreaks: finalOutbreaks,
                                 outbreakNotification: notification,
+                                outbreakRiskModifiers: riskModifiers,
                                 villageData: nextVillage,
                                 activeIKMEvents: nextIkmEvents
                             }
                         }));
                     },
                     resetPublicHealth: () => set(() => ({
-                        publicHealth: { villageData: null, prolanisRoster: [], prolanisState: { lastSenamMonth: -1, lastSenamDay: -1 }, activeOutbreaks: [], outbreakNotification: null, activeIKMEvents: [], completedIKMIds: [], ikmCooldowns: {}, ikmCaseBoosts: [], buildingProgress: {} }
+                        publicHealth: { villageData: null, prolanisRoster: [], prolanisState: { lastSenamMonth: -1, lastSenamDay: -1 }, activeOutbreaks: [], outbreakNotification: null, outbreakRiskModifiers: { protectedUntil: {}, vulnerableUntil: {} }, activeIKMEvents: [], completedIKMIds: [], ikmCooldowns: {}, ikmCaseBoosts: [], buildingProgress: {} }
                     })),
                     // --- UKM IKM Actions ---
                     /** Resolve a completed IKM event: apply impacts, produce case boosts */
@@ -1872,6 +1923,16 @@ export const useGameStore = create(
                             const ph = state.publicHealth;
                             const player = state.player;
                             const currentQueue = state.clinical.queue || [];
+                            const nextVillage = applyIkmScoreToVillage(
+                                ph.villageData,
+                                scenarioData,
+                                Number(impact.iks_score || 0)
+                            );
+                            const nextOutbreakRiskModifiers = applyIkmOutbreakRiskModifiers(
+                                ph.outbreakRiskModifiers,
+                                impact,
+                                state.world.day
+                            );
 
                             // Prevent overflowing the queue if there are too many patients
                             const spaceLeft = 30 - currentQueue.length;
@@ -1883,7 +1944,9 @@ export const useGameStore = create(
                                     activeIKMEvents: ph.activeIKMEvents.filter(e => e.instanceId !== eventInstanceId),
                                     completedIKMIds: [...ph.completedIKMIds, resolved.scenarioId],
                                     ikmCooldowns: { ...ph.ikmCooldowns, [resolved.category]: s.world.day },
-                                    ikmCaseBoosts: [...ph.ikmCaseBoosts, ...caseBoosts]
+                                    ikmCaseBoosts: [...ph.ikmCaseBoosts, ...caseBoosts],
+                                    villageData: nextVillage,
+                                    outbreakRiskModifiers: nextOutbreakRiskModifiers
                                 },
                                 player: {
                                     ...player,
@@ -1955,12 +2018,38 @@ export const useGameStore = create(
 
                     /** Generic phase advancer for the UI to move to the next phase (e.g. after Q&A) */
                     advanceIKMPhase: (eventInstanceId, nextPhaseId, impactDelta = {}, choiceLog = null) => {
+                        const snapshot = get();
+                        const balanceDelta = Number(impactDelta?.balance || 0);
+                        const requiredFunds = balanceDelta < 0 ? Math.abs(balanceDelta) : 0;
+
+                        if (requiredFunds > 0 && !canAffordOperationalCost(snapshot.finance.stats, requiredFunds)) {
+                            soundManager.playError();
+                            return { success: false, message: 'Dana aktif tidak cukup untuk intervensi komunitas ini.' };
+                        }
+
                         set(state => {
                             const event = state.publicHealth.activeIKMEvents.find(e => e.instanceId === eventInstanceId);
                             if (!event) return state;
 
-                            const updatedEvent = advanceEventPhase(event, nextPhaseId, impactDelta, choiceLog);
+                            let nextStats = state.finance.stats;
+                            if (requiredFunds > 0) {
+                                nextStats = spendOperationalFunds(state.finance.stats, requiredFunds) || state.finance.stats;
+                            } else if (balanceDelta > 0) {
+                                nextStats = {
+                                    ...state.finance.stats,
+                                    pendapatanUmum: (state.finance.stats.pendapatanUmum || 0) + balanceDelta
+                                };
+                            }
+
+                            const sanitizedImpactDelta = balanceDelta !== 0
+                                ? { ...impactDelta, balance: 0 }
+                                : impactDelta;
+                            const updatedEvent = advanceEventPhase(event, nextPhaseId, sanitizedImpactDelta, choiceLog);
                             return {
+                                finance: {
+                                    ...state.finance,
+                                    stats: nextStats
+                                },
                                 publicHealth: {
                                     ...state.publicHealth,
                                     activeIKMEvents: state.publicHealth.activeIKMEvents.map(e =>
@@ -1969,6 +2058,8 @@ export const useGameStore = create(
                                 }
                             };
                         });
+
+                        return { success: true };
                     }
                 },
 
@@ -3130,13 +3221,15 @@ export const useGameStore = create(
 
                             // 4. Public Health (Process Daily)
                             const { activeOutbreaks, villageData } = state.publicHealth;
+                            const riskModifiers = pruneOutbreakRiskModifiers(state.publicHealth.outbreakRiskModifiers, targetDay);
                             // Note: We use state.publicHealth directly from draft
                             // Re-implement checkOutbreakExpiry logic inline or call helper if pure?
                             // checkOutbreakExpiry is pure.
                             const { updatedOutbreaks } = checkOutbreakExpiry(activeOutbreaks, targetDay); // Use targetDay (current day) or nextDay? Original passed `day` (current).
-                            const newOutbreak = checkForOutbreakTrigger(state.clinical.history, villageData, targetDay, updatedOutbreaks);
+                            const newOutbreak = checkForOutbreakTrigger(state.clinical.history, villageData, targetDay, updatedOutbreaks, riskModifiers);
 
                             state.publicHealth.activeOutbreaks = updatedOutbreaks;
+                            state.publicHealth.outbreakRiskModifiers = riskModifiers;
                             if (newOutbreak) {
                                 state.publicHealth.activeOutbreaks.push(newOutbreak);
                                 state.publicHealth.outbreakNotification = newOutbreak;

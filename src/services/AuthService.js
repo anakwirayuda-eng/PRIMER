@@ -1,40 +1,34 @@
 /**
  * @reflection
  * [IDENTITY]: AuthService
- * [PURPOSE]: Authentication wrapper using Supabase Auth with NIM-based login.
+ * [PURPOSE]: Authentication wrapper using Supabase Auth with email-based login.
  * [STATE]: Production
  * [ANCHOR]: AUTH_SERVICE
  * [DEPENDS_ON]: supabaseClient
- * [LAST_UPDATE]: 2026-03-20
+ * [LAST_UPDATE]: 2026-03-25
  */
 
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 
-/**
- * Convert NIM to a pseudo-email for Supabase Auth
- * (Supabase requires email format for email/password auth)
- */
-const nimToEmail = (nim) => `${nim}@students.primer-app.com`;
-
 export const AuthService = {
     /**
-     * Register a new student account.
-     * @param {string} nim - Student NIM
+     * Register a new user account.
+     * @param {string} email - User email
      * @param {string} password - Password (min 6 chars)
      * @param {string} nama - Full name
      * @param {number} [angkatan] - Graduating class year
      * @returns {{ user, error }}
      */
-    async signUp(nim, password, nama, angkatan = null) {
+    async signUp(email, password, nama, angkatan = null) {
         if (!isSupabaseConfigured) {
             return { user: null, error: { message: 'Supabase belum dikonfigurasi.' } };
         }
 
         const { data, error } = await supabase.auth.signUp({
-            email: nimToEmail(nim),
+            email,
             password,
             options: {
-                data: { nim, nama, role: 'student', angkatan },
+                data: { nama, role: 'student', angkatan },
                 emailRedirectTo: undefined,
             },
         });
@@ -44,15 +38,15 @@ export const AuthService = {
     },
 
     /**
-     * Sign in with NIM + password.
+     * Sign in with email + password.
      */
-    async signIn(nim, password) {
+    async signIn(email, password) {
         if (!isSupabaseConfigured) {
             return { user: null, error: { message: 'Supabase belum dikonfigurasi.' } };
         }
 
         const { data, error } = await supabase.auth.signInWithPassword({
-            email: nimToEmail(nim),
+            email,
             password,
         });
 

@@ -205,7 +205,7 @@ export const OUTBREAK_ACTIONS = {
  * @param {Array} activeOutbreaks - Currently active outbreaks
  * @returns {Object|null} - New outbreak object or null
  */
-export function checkForOutbreakTrigger(history, villageData, currentDay, activeOutbreaks = []) {
+export function checkForOutbreakTrigger(history, villageData, currentDay, activeOutbreaks = [], riskModifiers = {}) {
     if (!history || !villageData || !villageData.families) return null;
 
     // Ensure activeOutbreaks is an array
@@ -216,6 +216,14 @@ export function checkForOutbreakTrigger(history, villageData, currentDay, active
 
     // Check each outbreak type
     for (const [_typeKey, outbreakType] of Object.entries(OUTBREAK_TYPES)) {
+        const protectedUntil = Number(riskModifiers?.protectedUntil?.[outbreakType.id] || 0);
+        if (protectedUntil >= currentDay) {
+            continue;
+        }
+
+        const vulnerabilityActive = Number(riskModifiers?.vulnerableUntil?.[outbreakType.id] || 0) >= currentDay;
+        const adjustedMinCases = Math.max(1, outbreakType.minCasesToTrigger - (vulnerabilityActive ? 1 : 0));
+
         // Skip if already have an active outbreak of this type
         if (outbreaksArray.some(o => o.type === outbreakType.id && !o.resolved)) {
             continue;
@@ -228,7 +236,7 @@ export function checkForOutbreakTrigger(history, villageData, currentDay, active
         });
 
         // Check if we have enough cases to trigger
-        if (matchingCases.length >= outbreakType.minCasesToTrigger) {
+        if (matchingCases.length >= adjustedMinCases) {
             // Find affected houses
             const affectedHouseIds = new Set();
             matchingCases.forEach(p => {

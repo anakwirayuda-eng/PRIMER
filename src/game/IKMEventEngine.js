@@ -323,6 +323,39 @@ export function resolveEvent(eventInstance) {
     };
 }
 
+function determineScenarioOutcomeKey(eventInstance, scenario) {
+    if (!scenario?.outcomes) return null;
+
+    const phase = getCurrentPhase(eventInstance);
+    const phaseId = String(phase?.id || eventInstance?.currentPhaseId || '').toLowerCase();
+
+    if ((phase?.spawnPatients || phase?.impact?.reputation < 0 || phase?.impact?.xp < 0 || /fail|failure/.test(phaseId)) && scenario.outcomes.failure) {
+        return 'failure';
+    }
+
+    if (/partial/.test(phaseId) && scenario.outcomes.partial) {
+        return 'partial';
+    }
+
+    if (/success/.test(phaseId) && scenario.outcomes.success) {
+        return 'success';
+    }
+
+    if (scenario.outcomes.partial && !scenario.outcomes.success) {
+        return 'partial';
+    }
+
+    if (scenario.outcomes.partial && !/success/.test(phaseId) && !/fail|failure/.test(phaseId)) {
+        return 'partial';
+    }
+
+    if (scenario.outcomes.success) {
+        return 'success';
+    }
+
+    return null;
+}
+
 // ═══════════════════════════════════════════════════════════════
 // IMPACT APPLICATION
 // ═══════════════════════════════════════════════════════════════
@@ -339,13 +372,14 @@ export function calculateEventImpact(eventInstance) {
 
     const scenario = getScenarioById(eventInstance.scenarioId);
     const accumulated = eventInstance.impactAccumulated || {};
+    const outcomeKey = determineScenarioOutcomeKey(eventInstance, scenario);
 
     // Merge accumulated choice impacts with final outcome
     const impact = { ...accumulated };
 
     // Add scenario-level outcome bonus if applicable
-    if (scenario?.outcomes?.success) {
-        const outcome = scenario.outcomes.success;
+    if (outcomeKey && scenario?.outcomes?.[outcomeKey]) {
+        const outcome = scenario.outcomes[outcomeKey];
         for (const [key, value] of Object.entries(outcome)) {
             if (key === 'outbreak_risk_reduction' || key === 'outbreak_risk' || key === 'spawnPatients') {
                 impact[key] = value; // Non-numeric values, don't accumulate
