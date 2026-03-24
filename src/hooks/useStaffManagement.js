@@ -7,6 +7,7 @@
  * [DEPENDS_ON]: GameContext
  */
 
+import { useState } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 import { seededBetween } from '../utils/deterministicRandom.js';
 
@@ -16,6 +17,9 @@ export const useStaffManagement = () => {
         hiredStaff, setHiredStaff,
         day, coachStaff
     } = useGame();
+
+    // Confirmation state for firing (replaces window.confirm for immersion)
+    const [pendingFireStaffId, setPendingFireStaffId] = useState(null);
 
     const hireStaff = (staff) => {
         const cost = staff.salary * 3; // 3 months salary as hiring cost
@@ -40,11 +44,21 @@ export const useStaffManagement = () => {
     };
 
     const fireStaff = (staffId) => {
-        if (window.confirm('Apakah Anda yakin ingin memberhentikan staff ini?')) {
-            setHiredStaff(prev => prev.filter(s => s.id !== staffId));
+        // Stage 1: set pending — UI should render confirmation modal
+        setPendingFireStaffId(staffId);
+    };
+
+    const confirmFireStaff = () => {
+        if (pendingFireStaffId) {
+            setHiredStaff(prev => prev.filter(s => s.id !== pendingFireStaffId));
+            setPendingFireStaffId(null);
             return true;
         }
         return false;
+    };
+
+    const cancelFireStaff = () => {
+        setPendingFireStaffId(null);
     };
 
     const runCoaching = (staffId) => {
@@ -58,6 +72,9 @@ export const useStaffManagement = () => {
         hiredStaff,
         hireStaff,
         fireStaff,
+        confirmFireStaff,
+        cancelFireStaff,
+        pendingFireStaffId,
         runCoaching,
         monthlySalaryTotal,
         currentDay: day,

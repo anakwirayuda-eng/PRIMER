@@ -25,7 +25,8 @@ export default function StaffPage() {
     const { playerStats, openWiki } = useGame();
     const { isDark } = useTheme();
     const {
-        hiredStaff, hireStaff, fireStaff, runCoaching,
+        hiredStaff, hireStaff, fireStaff, confirmFireStaff, cancelFireStaff,
+        pendingFireStaffId, runCoaching,
         monthlySalaryTotal, availableCapital: _availableCapital
     } = useStaffManagement();
 
@@ -156,6 +157,39 @@ export default function StaffPage() {
                     />
                 )}
             </div>
+
+            {/* Fire Staff Confirmation Modal — replaces window.confirm */}
+            {pendingFireStaffId && (() => {
+                const staff = hiredStaff.find(s => s.id === pendingFireStaffId);
+                return (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                        <div className={`max-w-md w-full mx-4 p-6 rounded-2xl shadow-2xl border ${isDark ? 'bg-slate-800 border-red-500/30' : 'bg-white border-red-300'}`}>
+                            <div className="text-center mb-4">
+                                <div className="text-4xl mb-2">⚠️</div>
+                                <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>Pemberhentian Staff</h3>
+                                <p className={`mt-2 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                                    Anda akan memberhentikan <strong>{staff?.name || 'staff ini'}</strong>.
+                                    Tindakan ini tidak dapat dibatalkan.
+                                </p>
+                            </div>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={cancelFireStaff}
+                                    className={`flex-1 py-2.5 rounded-lg font-medium transition-all ${isDark ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    onClick={() => { confirmFireStaff(); setSelectedStaff(null); }}
+                                    className="flex-1 py-2.5 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700 transition-all"
+                                >
+                                    🔴 Berhentikan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 }

@@ -1865,24 +1865,6 @@ export const MISSING_CASE_MEDS = [
         description: 'SSRI antidepresan'
     },
     {
-        id: 'silver_sulfadiazine',
-        name: 'Silver Sulfadiazine 1%',
-        category: MEDICATION_CATEGORIES.DERMATOLOGY,
-        type: 'tube',
-        form: 'topical',
-        fornas: true,
-        unitPrice: 18000,
-        buyPrice: 18000,
-        sellPrice: 35000,
-        igdPrice: 52500,
-        minStock: 10,
-        maxStock: 100,
-        supplier: 'dinkes',
-        leadTime: 5,
-        indication: ["luka_bakar"],
-        description: 'Antibiotik luka bakar'
-    },
-    {
         id: 'spironolakton_25',
         name: 'Spironolakton 25mg',
         category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
