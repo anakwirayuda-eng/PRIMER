@@ -78,20 +78,35 @@ export function generateDebrief({
     const criticalCases = extractCriticalCases(todayLog);
     const reflectionPrompts = generateReflectionPrompts(todayLog, criticalCases);
     const consequencePreview = getUpcomingFollowups(consequenceQueue, day, 7);
-    const grade = getGrade(summary.overallScore);
-
-    // Calculate XP bonus
-    const baseXp = Math.round(summary.overallScore * 0.5);
-    const questBonus = dailyQuestId ? 0 : 0; // Will be calculated with actual quest check
 
     // Build BC progress summary if bcState is provided
     const bcProgress = bcState ? buildBCProgress(bcState, day) : null;
+
+    // V7 Fix #2: KARMA PENALTY — UKM neglect reduces overall score
+    let finalScore = summary.overallScore;
+    if (bcProgress && bcProgress.neglectWarnings.length > 0) {
+        const penalty = bcProgress.neglectWarnings.length * 5;
+        finalScore = Math.max(0, finalScore - penalty);
+    }
+    const grade = getGrade(finalScore);
+
+    // Calculate XP bonus
+    const baseXp = Math.round(finalScore * 0.5);
+    const questBonus = dailyQuestId ? 0 : 0; // Will be calculated with actual quest check
+
+    // V7 Fix #4: MAIA FORECAST — ominous whisper instead of spoiler details
+    const incomingThreats = consequencePreview.filter(c => (c.returnDay - day) <= 2);
+    const maiaForecast = incomingThreats.length > 0
+        ? `[!] RADAR M.A.I.A: Terdeteksi anomali. ${incomingThreats.length} pasien berisiko komplikasi KRITIS dalam 48 jam. Bersiaplah.`
+        : '[!] RADAR M.A.I.A: Cuaca klinis stabil. Tidak ada anomali terdeteksi.';
 
     return {
         day,
         summary,
         criticalCases,
         reflectionPrompts,
+        maiaForecast,
+        // Keep full consequencePreview for internal use but UI should prefer maiaForecast
         consequencePreview: consequencePreview.map(c => ({
             patientName: c.originalCase?.patientName || 'Pasien Follow-up',
             returnDay: c.returnDay,
@@ -102,8 +117,9 @@ export function generateDebrief({
         })),
         grade,
         xpEarned: baseXp + questBonus,
-        reflectionXpBonus: 10, // Extra XP if player writes reflection
+        reflectionXpBonus: 20, // V7: bumped from 10 to incentivize reflection
         bcProgress,
+        karmaPenalty: bcProgress?.neglectWarnings?.length > 0 ? bcProgress.neglectWarnings.length * 5 : 0,
     };
 }
 
@@ -129,7 +145,10 @@ function generateSummary(todayLog, stats, morningReputation) {
     const correctDiagnoses = todayLog.filter(c => (c.diagnosisScore || 0) >= 80).length;
     const incorrectDiagnoses = todayLog.filter(c => c.completed && (c.diagnosisScore || 0) < 50).length;
 
-    const todayRevenue = todayLog.reduce((sum, c) => sum + (c.revenue || 0), 0);
+    // V7 Fix #3: FINANCIAL TRIAGE — split umum revenue vs kapitasi burn
+    const umumRevenue = todayLog.filter(c => (c.revenue || 0) > 0).reduce((sum, c) => sum + c.revenue, 0);
+    const kapitasiBurned = todayLog.filter(c => (c.revenue || 0) < 0).reduce((sum, c) => sum + Math.abs(c.revenue), 0);
+    const todayRevenue = umumRevenue - kapitasiBurned; // net
     const reputation = stats.reputation || 80;
     const reputationDelta = morningReputation !== null ? reputation - morningReputation : 0;
 
@@ -152,6 +171,8 @@ function generateSummary(todayLog, stats, morningReputation) {
         incorrectDiagnoses,
         avgDiagnosisScore,
         todayRevenue,
+        umumRevenue,
+        kapitasiBurned,
         reputation,
         reputationDelta,
         overallScore,
@@ -187,7 +208,9 @@ function extractCriticalCases(todayLog) {
         vitals: c.vitals || {},
         guidelineRef: c.guidelineRef || null,
         treatmentGiven: c.treatmentGiven || [],
-        keyLearning: generateKeyLearning(c),
+        // V7 Fix #1: Prioritize clinical pearls from CaseLibrary over generic template
+        keyLearning: c.keyLearning || generateKeyLearning(c),
+        // (keyLearning now set above with priority logic)
     }));
 }
 

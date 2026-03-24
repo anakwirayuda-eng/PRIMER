@@ -13,6 +13,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { Pill, CheckCircle2, AlertTriangle, XCircle, Package, Clock, ShieldCheck, Zap, ChevronRight } from 'lucide-react';
 import { verifyPrescription, checkDrugInteractions, calculateDispensingBill } from '../game/DispensingEngine.js';
 import { getMedicationById } from '../data/MedicationDatabase.js';
+import BishiBashiModal from './BishiBashiModal.jsx';
 
 /**
  * Build prescription queue from today's discharged patients
@@ -75,6 +76,7 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
     const [verifiedRxIds, setVerifiedRxIds] = useState(new Set());
     const [dispensedRxIds, setDispensedRxIds] = useState(new Set());
     const [checklist, setChecklist] = useState({});
+    const [showBishiBashi, setShowBishiBashi] = useState(false);
 
     const queue = useMemo(() => buildPrescriptionQueue(history, currentDay), [history, currentDay]);
     const activeRx = queue.find(rx => rx.id === activeRxId);
@@ -166,6 +168,7 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
     }
 
     return (
+        <>
         <div className="flex h-full overflow-hidden gap-4 p-4">
             {/* Left: Prescription Queue */}
             <div className="w-72 shrink-0 flex flex-col gap-3">
@@ -182,6 +185,20 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                         </span>
                     </div>
                 </div>
+
+                {/* Rush Hour trigger: queue >= 3 */}
+                {queue.length >= 3 && (
+                    <button
+                        onClick={() => setShowBishiBashi(true)}
+                        className={`w-full py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-[1.02] flex items-center justify-center gap-2 ${isDark
+                            ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100'
+                        }`}
+                    >
+                        <Zap size={12} />
+                        RUSH HOUR! (+XP)
+                    </button>
+                )}
 
                 <div className="flex-1 overflow-y-auto space-y-2 thin-scrollbar pr-1">
                     {queue.map(rx => {
@@ -401,5 +418,17 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                 )}
             </div>
         </div>
+        {showBishiBashi && (
+            <BishiBashiModal
+                prescriptionQueue={queue}
+                difficulty={Math.min(5, Math.max(1, Math.floor(queue.length / 2)))}
+                onComplete={(result) => {
+                    setShowBishiBashi(false);
+                    // XP reward is surfaced in result.xpEarned — store integration TBD
+                }}
+                onDismiss={() => setShowBishiBashi(false)}
+            />
+        )}
+        </>
     );
 }
