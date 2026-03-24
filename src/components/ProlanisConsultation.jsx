@@ -32,7 +32,7 @@ const ProlanisConsultation = ({ patient, onClose, onComplete }) => {
         return null;
     });
 
-    const isDM = patient.medicalData.diagnosisCode === 'E11';
+    const isDM = patient.medicalData.trueDiagnosisCode === 'E11';
     const currentParams = patient.prolanisData?.parameters || {};
     const history = patient.prolanisData?.history || [];
 

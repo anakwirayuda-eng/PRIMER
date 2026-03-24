@@ -28,6 +28,7 @@ import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
 import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGameProgress } from '../game/QuestEngine.js';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
+import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
 import { buildRuntimeTrap, guardActionGroup, triggerFreezeProtocol } from '../utils/dispatchGuard.js';
@@ -557,7 +558,7 @@ const mergePersistedClinical = (clinical, currentClinical) => {
         emergencyQueue: [],
         activePatientId: null,
         activeEmergencyId: null,
-        history: capClinicalHistory(Array.isArray(clinical.history) ? clinical.history : currentClinical.history),
+        history: normalizePatientList(capClinicalHistory(Array.isArray(clinical.history) ? clinical.history : currentClinical.history)),
         dailyArchive: Array.isArray(clinical.dailyArchive) ? clinical.dailyArchive : currentClinical.dailyArchive,
         monthlyArchive: Array.isArray(clinical.monthlyArchive) ? clinical.monthlyArchive : currentClinical.monthlyArchive,
         activeReferralLog: Array.isArray(clinical.activeReferralLog) ? clinical.activeReferralLog : currentClinical.activeReferralLog,
@@ -1587,7 +1588,7 @@ export const useGameStore = create(
                         set(currentState => ({
                             clinical: {
                                 ...currentState.clinical,
-                                queue: [...currentState.clinical.queue, visitPatient],
+                                queue: [...currentState.clinical.queue, normalizePatient(visitPatient)],
                                 // Codex Fix: append to clinical.history so ArsipPage shows the activity
                                 history: [...currentState.clinical.history, {
                                     type: 'prolanis_call',
@@ -1807,7 +1808,7 @@ export const useGameStore = create(
                                 },
                                 clinical: {
                                     ...state.clinical,
-                                    queue: [...currentQueue, ...patientsToAdd]
+                                    queue: [...currentQueue, ...normalizePatientList(patientsToAdd)]
                                 }
                             };
                         });
@@ -2163,7 +2164,7 @@ export const useGameStore = create(
                                     time,
                                     seedKey('followup-spawn', consequence.id, day)
                                 );
-                                state.clinical.queue.push(followupPatient);
+                                state.clinical.queue.push(normalizePatient(followupPatient));
                             });
                             if (followups.length > 0) {
                                 // DeepThink Fix: use processedIds to clear only spawned follow-ups
@@ -2208,7 +2209,7 @@ export const useGameStore = create(
                             // Dedup guard: skip if same name already in queue
                             const nameExists = state.clinical.queue.some(p => p.name === newPatient.name);
                             if (!nameExists) {
-                                state.clinical.queue.push(newPatient); // Immer push
+                                state.clinical.queue.push(normalizePatient(newPatient)); // Immer push + ACL
                             }
                             soundManager.playNotification();
                         }
@@ -2228,7 +2229,7 @@ export const useGameStore = create(
                                 seedKey('emergency-spawn', day, time, state.clinical.emergencyQueue.length)
                             );
                             if (newEmergency) {
-                                state.clinical.emergencyQueue.push(newEmergency);
+                                state.clinical.emergencyQueue.push(normalizePatient(newEmergency));
                                 soundManager.playNotification();
                             }
                         }
@@ -2618,7 +2619,7 @@ export const useGameStore = create(
                                     activeReferralLog: newActiveReferralLog,
                                     emergencyQueue: state.clinical.emergencyQueue.filter(p => p.id !== patient.id),
                                     activeEmergencyId: null,
-                                    history: appendClinicalHistory(state.clinical.history, {
+                                    history: appendClinicalHistory(state.clinical.history, normalizePatient({
                                         ...patient,
                                         day,
                                         dischargedAt: time,
@@ -2629,7 +2630,7 @@ export const useGameStore = create(
                                         isEmergency: true,
                                         dispensed: true, // IGD always auto-dispenses
                                         cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'stabilized', true)
-                                    }),
+                                    })),
                                     // Codex Fix: push to todayLog so debrief counts emergency discharges
                                     todayLog: [...state.clinical.todayLog, {
                                         patientName: patient.name,
