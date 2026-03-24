@@ -32,6 +32,7 @@ import { normalizePatient, normalizePatientList } from '../models/PatientRuntime
 import { normalizeEncounter, normalizeEncounterList } from '../models/EncounterRuntime.js';
 import { normalizeInventoryList, normalizeMedicationId } from '../models/InventoryRuntime.js';
 import { normalizeDailyArchive, normalizeMonthlyArchive } from '../utils/archiveNormalization.js';
+import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
 import { processLabOrder } from '../game/LabEngine.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
@@ -1206,11 +1207,11 @@ export const useGameStore = create(
                     setPendingOrders: (val) => set(s => ({ finance: { ...s.finance, pendingOrders: typeof val === 'function' ? val(s.finance.pendingOrders) : val } })),
                     upgradeFacility: (facilityId, cost) => {
                         const state = get();
-                        if (state.finance.stats.pendapatanUmum >= cost && state.finance.facilities[facilityId] !== undefined) {
+                        if (state.finance.facilities[facilityId] !== undefined && canAffordOperationalCost(state.finance.stats, cost)) {
                             set(s => ({
                                 finance: {
                                     ...s.finance,
-                                    stats: { ...s.finance.stats, pendapatanUmum: s.finance.stats.pendapatanUmum - cost },
+                                    stats: spendOperationalFunds(s.finance.stats, cost),
                                     facilities: { ...s.finance.facilities, [facilityId]: s.finance.facilities[facilityId] + 1 }
                                 }
                             }));
@@ -1579,9 +1580,9 @@ export const useGameStore = create(
                             soundManager.playError();
                             return { success: false, message: 'Energi tidak cukup untuk memimpin kegiatan.' };
                         }
-                        if (state.finance.stats.pendapatanUmum < 150000) {
+                        if (!canAffordOperationalCost(state.finance.stats, 150000)) {
                             soundManager.playError();
-                            return { success: false, message: 'Pendapatan umum tidak cukup untuk operasional kegiatan.' };
+                            return { success: false, message: 'Dana aktif tidak cukup untuk operasional kegiatan.' };
                         }
 
                         set(currentState => ({
@@ -1621,8 +1622,7 @@ export const useGameStore = create(
                             finance: {
                                 ...currentState.finance,
                                 stats: {
-                                    ...currentState.finance.stats,
-                                    pendapatanUmum: currentState.finance.stats.pendapatanUmum - 150000
+                                    ...spendOperationalFunds(currentState.finance.stats, 150000)
                                 }
                             },
                             player: {
@@ -2896,7 +2896,19 @@ export const useGameStore = create(
                     advanceStory: (storyInstance, choice) => {
                         const s = get();
                         if (choice.impact) {
-                            if (choice.impact.balance) s.financeActions.setStats(stats => ({ ...stats, pendapatanUmum: stats.pendapatanUmum + choice.impact.balance }));
+                            if (choice.impact.balance) {
+                                const balanceDelta = Number(choice.impact.balance) || 0;
+                                if (balanceDelta < 0) {
+                                    const nextStats = spendOperationalFunds(s.finance.stats, Math.abs(balanceDelta));
+                                    if (!nextStats) {
+                                        soundManager.playError();
+                                        return { success: false, message: 'Dana aktif tidak cukup untuk pilihan ini.' };
+                                    }
+                                    s.financeActions.setStats(nextStats);
+                                } else {
+                                    s.financeActions.setStats(stats => ({ ...stats, pendapatanUmum: stats.pendapatanUmum + balanceDelta }));
+                                }
+                            }
                             if (choice.impact.energy) s.playerActions.updateProfile({ energy: clampEnergyToProfile(s.player.profile, s.player.profile.energy + choice.impact.energy) });
                             if (choice.impact.spirit) s.playerActions.updateProfile({ spirit: Math.max(0, Math.min(100, s.player.profile.spirit + choice.impact.spirit)) });
                             if (choice.impact.reputation) s.playerActions.updateProfile({ reputation: s.player.profile.reputation + choice.impact.reputation });
@@ -2904,6 +2916,7 @@ export const useGameStore = create(
                         }
                         const updated = advanceStoryNode(storyInstance, choice);
                         set({ meta: { ...s.meta, activeStories: s.meta.activeStories.map(st => st.instanceId === storyInstance.instanceId ? updated : st) } });
+                        return { success: true, story: updated };
                     },
 
                     evaluateTriggers: () => {

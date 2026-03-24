@@ -51,4 +51,23 @@ describe('BankApp', () => {
         expect(screen.getByText('+Rp 0')).toBeInTheDocument();
         expect(screen.queryByText('+Rp 20.000.000')).not.toBeInTheDocument();
     });
+
+    it('keeps personal balance separate from clinic operational funds', () => {
+        mockUseGame.mockReturnValue({
+            stats: {
+                pendapatanUmum: 90000000,
+                kapitasi: 50000000
+            },
+            monthlyArchive: [],
+            playerStats: {
+                name: 'Dokter Test'
+            }
+        });
+
+        render(<BankApp />);
+
+        expect(screen.getByText('Rp 4.485.000')).toBeInTheDocument();
+        expect(screen.getByText(/Dana klinik tetap dihitung terpisah/i)).toBeInTheDocument();
+        expect(screen.queryByText('Rp 90.000.000')).not.toBeInTheDocument();
+    });
 });

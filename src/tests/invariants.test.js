@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { checkInvariants } from '../diagnostics/invariants.js';
 
-function buildState({ energy, maxEnergy }) {
+function buildState({ energy, maxEnergy, pendapatanUmum = 1 }) {
     return {
-        finance: { stats: { kapitasi: 1, pengeluaranObat: 0, pengeluaranLab: 0, pengeluaranOperasional: 0 } },
+        finance: { stats: { kapitasi: 1, pendapatanUmum, pengeluaranObat: 0, pengeluaranLab: 0, pengeluaranOperasional: 0 } },
         world: { time: 420 },
         player: { profile: { energy, maxEnergy } },
         clinical: { queue: [], history: [], activePatientId: null },
@@ -24,6 +24,16 @@ describe('invariants', () => {
             id: 'PLAYER_ENERGY_RANGE',
             message: 'Energy must be between 0 and the player maxEnergy cap',
             severity: 'warning',
+        });
+    });
+
+    it('rejects negative pendapatan umum balances', () => {
+        const failures = checkInvariants(buildState({ energy: 50, maxEnergy: 100, pendapatanUmum: -1 }));
+
+        expect(failures.find((failure) => failure.id === 'NON_NEGATIVE_MONEY')).toEqual({
+            id: 'NON_NEGATIVE_MONEY',
+            message: 'Operational fund buckets must not be negative',
+            severity: 'alert',
         });
     });
 });

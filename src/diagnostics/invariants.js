@@ -7,8 +7,8 @@
 export const INVARIANTS = [
     {
         id: 'NON_NEGATIVE_MONEY',
-        description: 'Kapitasi must not be negative',
-        check: (state) => state.finance?.stats?.kapitasi >= 0,
+        description: 'Operational fund buckets must not be negative',
+        check: (state) => (state.finance?.stats?.kapitasi ?? 0) >= 0 && (state.finance?.stats?.pendapatanUmum ?? 0) >= 0,
         severity: 'alert'
     },
     {

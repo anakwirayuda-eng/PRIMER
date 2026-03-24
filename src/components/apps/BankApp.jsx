@@ -16,11 +16,6 @@ import { CreditCard, Wallet, TrendingUp, History } from 'lucide-react';
 const BankApp = () => {
     const { stats, playerStats, monthlyArchive } = useGame();
 
-    // Simulate personal savings (separate from clinic money for now, or just mirror it as 'Gaji' portion)
-    // For MVP, Personal Money = Pendapatan Umum (Clinic Profit) for now as requested in previous turn
-    // But ideally split. Let's use playerStats.reputation to calc a mock 'salary'
-
-    const personalSavings = Number(stats?.pendapatanUmum || 0);
     const monthlySalary = 4500000; // Basic salary
     const latestMonthlyReport = Array.isArray(monthlyArchive) && monthlyArchive.length > 0
         ? monthlyArchive[monthlyArchive.length - 1]
@@ -32,6 +27,7 @@ const BankApp = () => {
         ?? 0
     );
     const jasaPelayanan = Math.floor(jasaPelayananBase * 0.4); // 40% of explicit cycle receipts
+    const personalSavings = Math.max(0, monthlySalary + jasaPelayanan - 15000);
 
     return (
         <div className="p-4 bg-blue-50 h-full">
@@ -42,11 +38,13 @@ const BankApp = () => {
                 </div>
                 <div className="relative z-10">
                     <div className="text-sm opacity-80 mb-1">Bank Desa Syariah</div>
+                    <div className="text-[10px] uppercase tracking-[0.25em] opacity-70 mb-1">Estimasi Rekening Pribadi</div>
                     <div className="text-2xl font-bold mb-4">Rp {personalSavings.toLocaleString('id-ID')}</div>
                     <div className="flex justify-between items-end">
                         <div className="text-xs font-mono opacity-75">**** **** **** 8899</div>
                         <div className="text-xs">Dr. {playerStats.name || 'Dokter'}</div>
                     </div>
+                    <div className="mt-3 text-[10px] opacity-75">Dana klinik tetap dihitung terpisah di dashboard operasional.</div>
                 </div>
             </div>
 

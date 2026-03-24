@@ -13,16 +13,14 @@ import React, { useState } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 import {
     Briefcase,
-    Coffee,
     BookOpen,
     Users,
     MapPin,
     Home,
-    TrendingUp,
     Activity,
-    Heart
 } from 'lucide-react';
 import useModalA11y from '../hooks/useModalA11y.js';
+import { getAvailableOperationalFunds } from '../utils/operationalFunds.js';
 
 const ACTIVITIES = [
     {
@@ -76,6 +74,8 @@ const ACTIVITIES = [
 const WeekendModal = () => {
     const { playerStats, stats, performWeekendActivity, day } = useGame();
     const [selectedActivity, setSelectedActivity] = useState(null);
+    const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
+    const isWeekendEngineAvailable = typeof performWeekendActivity === 'function';
     const modalRef = useModalA11y(null); // No Escape — must pick activity
 
     const getDayName = (dayCount) => {
@@ -86,7 +86,7 @@ const WeekendModal = () => {
     const dayName = getDayName(day);
 
     const handleConfirm = () => {
-        if (selectedActivity) {
+        if (selectedActivity && isWeekendEngineAvailable) {
             performWeekendActivity(selectedActivity);
         }
     };
@@ -105,6 +105,12 @@ const WeekendModal = () => {
                             Puskesmas tutup hari ini. Waktunya Kapus melakukan aktivitas lain untuk pengembangan diri atau istirahat.
                         </p>
                     </div>
+
+                    {!isWeekendEngineAvailable && (
+                        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+                            Mode akhir pekan belum aktif di build ini. Aktivitas bisa ditinjau, tetapi belum dapat dijalankan.
+                        </div>
+                    )}
 
                     <div className="space-y-4 mb-6">
                         <h3 className="font-semibold text-slate-700 flex items-center gap-2">
@@ -142,9 +148,9 @@ const WeekendModal = () => {
 
                             <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                    <span className="text-slate-600">Kas (Pribadi/Klinik)</span>
+                                    <span className="text-slate-600">Dana Aktif</span>
                                     <span className="text-emerald-700 font-medium">
-                                        Rp {stats.pendapatanUmum.toLocaleString()}
+                                        Rp {availableFunds.toLocaleString('id-ID')}
                                     </span>
                                 </div>
                             </div>
@@ -154,13 +160,13 @@ const WeekendModal = () => {
                     <div className="mt-auto pt-6 border-t border-slate-200">
                         <button
                             onClick={handleConfirm}
-                            disabled={!selectedActivity}
+                            disabled={!selectedActivity || !isWeekendEngineAvailable}
                             className={`w-full py-3 px-4 rounded-lg font-bold text-white shadow-lg transition-all transform hover:scale-[1.02] active:scale-[0.98]
-                 ${selectedActivity
+                 ${selectedActivity && isWeekendEngineAvailable
                                     ? 'bg-blue-600 hover:bg-blue-700'
                                     : 'bg-slate-300 cursor-not-allowed'}`}
                         >
-                            Mulai Aktivitas
+                            {isWeekendEngineAvailable ? 'Mulai Aktivitas' : 'Mode Belum Aktif'}
                         </button>
                     </div>
                 </div>
@@ -171,7 +177,7 @@ const WeekendModal = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {ACTIVITIES.map((act) => {
-                            const cantAfford = act.cost > stats.pendapatanUmum;
+                            const cantAfford = act.cost > availableFunds;
 
                             return (
                                 <button

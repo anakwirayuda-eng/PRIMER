@@ -19,6 +19,7 @@ import { Building2, Plus, Sparkles, Hammer, ArrowUp } from 'lucide-react';
 import { ROOMS } from '../data/FacilityData.js';
 import RoomCard from './gedung/RoomCard.jsx';
 import UpgradeModal from './gedung/UpgradeModal.jsx';
+import { getAvailableOperationalFunds } from '../utils/operationalFunds.js';
 
 export default function GedungPage() {
     // Prophylaxis: Navigation Stability Guard
@@ -45,6 +46,7 @@ export default function GedungPage() {
     };
 
     const currentLevels = facilities || {};
+    const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
     const totalLevel = ROOMS.reduce((sum, r) => sum + (currentLevels[r.id] || r.level), 0);
     const maxTotalLevel = ROOMS.reduce((sum, r) => sum + r.maxLevel, 0);
     const progressPct = Math.round((totalLevel / maxTotalLevel) * 100);
@@ -95,9 +97,9 @@ export default function GedungPage() {
                 <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] p-4">
                     <div className="flex items-center justify-around">
                         <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Dana Pembangunan</span>
+                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Dana Aktif</span>
                             <span className="font-data text-lg font-black text-amber-400">
-                                Rp {((stats?.pendapatanUmum || 0) / 1000000).toFixed(1)}M
+                                Rp {(availableFunds / 1000000).toFixed(1)}M
                             </span>
                         </div>
                         <div className="w-px h-8 bg-white/[0.08]" />

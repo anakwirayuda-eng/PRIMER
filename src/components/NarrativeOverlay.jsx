@@ -11,10 +11,12 @@ import useModalA11y from '../hooks/useModalA11y.js';
 import { useGame } from '../context/GameContext.jsx';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { MessageSquare, ChevronRight, X, Sparkles, AlertCircle } from 'lucide-react';
+import { getAvailableOperationalFunds } from '../utils/operationalFunds.js';
 
 export default function NarrativeOverlay({ storyInstance, onClose }) {
-    const { advanceStory } = useGame();
+    const { advanceStory, stats } = useGame();
     const modalRef = useModalA11y(onClose);
+    const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
 
     if (!storyInstance) return null;
 
@@ -25,7 +27,17 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
     if (!currentNode) return null;
 
     const handleChoice = (choice) => {
-        advanceStory(storyInstance, choice);
+        const requiredFunds = Math.max(0, -(Number(choice?.impact?.balance) || 0));
+        if (requiredFunds > availableFunds) {
+            alert('Dana aktif tidak cukup untuk pilihan ini.');
+            return;
+        }
+
+        const result = advanceStory(storyInstance, choice);
+        if (result && result.success === false) {
+            alert(result.message || 'Pilihan tidak dapat dijalankan.');
+            return;
+        }
         if (choice.nextNode === null || template.nodes[choice.nextNode]?.isEnd) {
             // Optional: small delay or auto-close logic
         }
@@ -75,20 +87,38 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
                     <div className="space-y-3 mt-8">
                         <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tentukan Pilihanmu:</h5>
                         {currentNode.choices.map((choice, idx) => (
+                            (() => {
+                                const requiredFunds = Math.max(0, -(Number(choice?.impact?.balance) || 0));
+                                const cantAfford = requiredFunds > availableFunds;
+                                return (
                             <button
                                 key={idx}
                                 onClick={() => handleChoice(choice)}
-                                className="w-full group flex items-center justify-between p-4 bg-white border-2 border-slate-100 rounded-2xl hover:border-indigo-600 hover:bg-indigo-50/50 transition-all text-left shadow-sm hover:shadow-md active:scale-[0.99]"
+                                disabled={cantAfford}
+                                className={`w-full group flex items-center justify-between p-4 bg-white border-2 rounded-2xl transition-all text-left shadow-sm active:scale-[0.99] ${
+                                    cantAfford
+                                        ? 'border-slate-100 opacity-60 cursor-not-allowed'
+                                        : 'border-slate-100 hover:border-indigo-600 hover:bg-indigo-50/50 hover:shadow-md'
+                                }`}
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-xs font-black text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black transition-colors ${
+                                        cantAfford
+                                            ? 'bg-slate-100 text-slate-400'
+                                            : 'bg-slate-100 text-slate-400 group-hover:bg-indigo-600 group-hover:text-white'
+                                    }`}>
                                         {String.fromCharCode(65 + idx)}
                                     </div>
                                     <span className="font-bold text-slate-800">{choice.text}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     {choice.impact && (
-                                        <div className="hidden md:flex flex-col items-end opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className={`hidden md:flex flex-col items-end transition-opacity ${cantAfford ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                                            {requiredFunds > 0 && (
+                                                <span className={`text-[10px] font-black ${cantAfford ? 'text-rose-600' : 'text-amber-600'}`}>
+                                                    Butuh Rp {requiredFunds.toLocaleString('id-ID')}
+                                                </span>
+                                            )}
                                             {choice.impact.reputation && (
                                                 <span className={`text-[10px] font-black ${choice.impact.reputation > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
                                                     {choice.impact.reputation > 0 ? '+' : ''}{choice.impact.reputation} Reputasi
@@ -96,9 +126,11 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
                                             )}
                                         </div>
                                     )}
-                                    <ChevronRight size={18} className="text-slate-300 group-hover:text-indigo-600 transition-colors" />
+                                    <ChevronRight size={18} className={cantAfford ? 'text-slate-300' : 'text-slate-300 group-hover:text-indigo-600 transition-colors'} />
                                 </div>
                             </button>
+                                );
+                            })()
                         ))}
                     </div>
                 </div>
