@@ -2321,7 +2321,18 @@ export const useGameStore = create(
                                 isBPJS
                             );
                             if (!isCorrectAction) {
-                                if (!isCorrectTriage) { repChange = -10; satisfactionScore = 40; }
+                                if (!isCorrectTriage) {
+                                    // Cowboy Doctor penalty: treating a case that should be referred
+                                    const isCowboy = decision.action === 'treat' && patient.hidden?.requiredAction === 'refer';
+                                    repChange = isCowboy ? -20 : -10;
+                                    satisfactionScore = isCowboy ? 30 : 40;
+                                    if (isCowboy) {
+                                        state.clinical.morningAlerts = [
+                                            ...(state.clinical.morningAlerts || []),
+                                            { type: 'warning', title: '⚠️ Peringatan Malapraktik', message: `Kasus ${patient.medicalData?.diagnosisName || 'pasien'} seharusnya dirujuk (di luar kompetensi FKTP). Menahan kasus di luar SKDI = risiko keselamatan pasien.`, day }
+                                        ];
+                                    }
+                                }
                                 else if (!isCorrectMeds) { repChange = -2; satisfactionScore = 60; }
                             } else {
                                 repChange = +2; satisfactionScore = 85;
