@@ -38,21 +38,57 @@ export default function ReasoningDashboard({
     // Differential Probabilities (Mock logic or from diagnosticTracker)
     // Codex Fix: modern patients use trueDiagnosisCode (not diagnosisCode) and hidden.differentialDiagnosis (not differentials)
     const primaryCode = patient.medicalData?.trueDiagnosisCode || patient.medicalData?.diagnosisCode || patient.hidden?.icd10 || 'unknown';
+    const primaryName = patient.medicalData?.diagnosisName || primaryCode;
     const differentialsList = patient.hidden?.differentialDiagnosis || patient.hidden?.differentials || [];
-    const differentials = [
-        { id: `primary_${primaryCode}`, name: patient.medicalData?.diagnosisName || primaryCode, prob: confidenceValue || 45, color: 'emerald' },
-        ...differentialsList.map((d, i) => {
-            let mappedName = ICD10_DB.find(icd => icd.code === d)?.name || d;
-            // Clean up trailing codes in parentheses e.g. "Cholera (A00)" -> "Cholera"
-            mappedName = mappedName.replace(/\s\([^)]+\)$/, '');
 
-            return {
-                id: `diff_${i}`,
-                name: mappedName,
-                prob: Math.max(10, (confidenceValue || 45) - (i + 1) * 15),
-                color: 'indigo'
-            };
-        })
+    // Canonical key for dedup: lowercase, strip parenthesized codes, normalize whitespace
+    const toCanonical = (name) => {
+        let n = (name || '').toLowerCase().trim();
+        n = n.replace(/\s*\([^)]*\)\s*/g, ''); // strip "(GAD)", "(A00)", etc.
+        n = n.replace(/[^a-z0-9\s]/g, '');      // strip special chars
+        n = n.replace(/\s+/g, ' ').trim();
+        return n;
+    };
+
+    // Common bilingual synonym map (ID ↔ EN) for dedup
+    const SYNONYM_MAP = {
+        'generalized anxiety disorder': 'gangguan cemas menyeluruh',
+        'major depressive disorder': 'gangguan depresi mayor',
+        'panic disorder': 'gangguan panik',
+        'hypertension': 'hipertensi',
+        'diabetes mellitus': 'diabetes melitus',
+        'urinary tract infection': 'infeksi saluran kemih',
+        'acute gastroenteritis': 'gastroenteritis akut',
+        'pneumonia': 'pneumonia',
+        'tuberculosis': 'tuberkulosis',
+        'dengue fever': 'demam berdarah dengue',
+        'typhoid fever': 'demam tifoid',
+    };
+
+    // Resolve canonical with synonym collapsing
+    const resolveCanonical = (name) => {
+        const c = toCanonical(name);
+        return SYNONYM_MAP[c] || c;
+    };
+
+    const primaryCanonical = resolveCanonical(primaryName);
+
+    const differentials = [
+        { id: `primary_${primaryCode}`, name: primaryName, prob: confidenceValue || 45, color: 'emerald' },
+        ...differentialsList
+            .map((d, i) => {
+                let mappedName = ICD10_DB.find(icd => icd.code === d)?.name || d;
+                mappedName = mappedName.replace(/\s\([^)]+\)$/, '');
+                return {
+                    id: `diff_${i}`,
+                    name: mappedName,
+                    canonical: resolveCanonical(mappedName),
+                    prob: Math.max(10, (confidenceValue || 45) - (i + 1) * 15),
+                    color: 'indigo'
+                };
+            })
+            // Dedup: skip DDx that match primary after canonical normalization
+            .filter(d => d.canonical !== primaryCanonical)
     ].sort((a, b) => b.prob - a.prob);
 
     return (
