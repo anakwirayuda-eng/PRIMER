@@ -29,6 +29,7 @@ import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } f
 import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGameProgress } from '../game/QuestEngine.js';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
+import { processLabOrder } from '../game/LabEngine.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
 import { buildRuntimeTrap, guardActionGroup, triggerFreezeProtocol } from '../utils/dispatchGuard.js';
@@ -2722,7 +2723,6 @@ export const useGameStore = create(
                             let labResult = true; // fallback: boolean flag
                             let actualCost = cost;
                             try {
-                                const { processLabOrder } = require('../game/LabEngine.js');
                                 const orderOutput = processLabOrder([labName], patient, {});
                                 if (orderOutput.results[labName]) {
                                     labResult = orderOutput.results[labName];

@@ -81,7 +81,7 @@ export default function PatientHistoryModal({ patients, filter, onClose, title }
                                                     </span>
                                                 </div>
                                                 <div className="text-sm text-slate-600 mt-1">
-                                                    <span className="font-medium">Dx:</span> {patient.decision?.diagnoses?.[0] || patient.medicalData?.trueDiagnosisCode || '-'}
+                                                    <span className="font-medium">Dx:</span> {patient.decision?.diagnoses?.[0] || patient.medicalData?.trueDiagnosisCode || patient.medicalData?.diagnosisName || '-'}
                                                 </div>
                                                 <div className="text-sm text-slate-600">
                                                     <span className="font-medium">Keputusan:</span>{' '}

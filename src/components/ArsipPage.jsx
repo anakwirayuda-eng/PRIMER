@@ -19,6 +19,13 @@ import CPPTCard from './CPPTCard.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
 import { formatTime } from '../utils/formatTime.js';
 
+function getEncounterDiagnosisLabel(record) {
+    return record?.decision?.diagnoses?.join(', ')
+        || record?.medicalData?.trueDiagnosisCode
+        || record?.medicalData?.diagnosisName
+        || '-';
+}
+
 export default function ArsipPage() {
     const { history, villageData, day, viewParams, navigate } = useGame();
     const [activeTab, setActiveTab] = useState('folders'); // 'folders' | 'daily'
@@ -266,7 +273,7 @@ export default function ArsipPage() {
                                             <td className="px-6 py-4 max-w-xs truncate text-slate-600 dark:text-slate-300" title={record.description}>
                                                 {record.type === 'posyandu' || record.type?.includes('prolanis')
                                                     ? record.description
-                                                    : record.decision?.diagnoses?.join(', ') || '-'}
+                                                    : getEncounterDiagnosisLabel(record)}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`px-2 py-1 rounded text-xs font-bold ${record.type === 'posyandu' ? 'bg-rose-100 text-rose-700' :
@@ -624,7 +631,7 @@ function FamilyDetailView({ family, onBack }) {
                                                         {visit.decision?.action === 'refer' ? 'Rujuk' : visit.decision?.action === 'delegate_to_maia' ? 'Delegasi' : visit.decision?.action === 'stabilize' ? 'Stabilisasi' : 'Rawat'}
                                                     </span>
                                                 </div>
-                                                <p className="text-xs text-slate-500">{(visit.decision?.diagnoses || []).join(', ')}</p>
+                                                <p className="text-xs text-slate-500">{getEncounterDiagnosisLabel(visit)}</p>
                                             </div>
                                         </div>
                                     ))}

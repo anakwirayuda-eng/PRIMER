@@ -14,6 +14,13 @@ import React from 'react';
 import { Activity, Info } from 'lucide-react';
 import CPPTCard from '../CPPTCard.jsx';
 
+function getVisitDiagnosisLabel(visit) {
+    return visit?.decision?.diagnoses?.join(', ')
+        || visit?.medicalData?.trueDiagnosisCode
+        || visit?.medicalData?.diagnosisName
+        || '-';
+}
+
 export default function HistoryTab({ patient, isDark, history, openWiki }) {
     return (
         <div className="space-y-4 animate-fadeIn h-full overflow-y-auto pr-1 thin-scrollbar">
@@ -65,7 +72,7 @@ export default function HistoryTab({ patient, isDark, history, openWiki }) {
                                         <span className={`px-1.5 rounded text-[9px] font-bold ${visit.decision?.action === 'refer' ? 'bg-rose-500/10 text-rose-400' : visit.decision?.action === 'delegate_to_maia' ? 'bg-indigo-500/10 text-indigo-400' : visit.decision?.action === 'stabilize' ? 'bg-teal-500/10 text-teal-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
                                             {visit.decision?.action === 'refer' ? 'RUJUK' : visit.decision?.action === 'delegate_to_maia' ? 'DELEGASI' : visit.decision?.action === 'stabilize' ? 'STABILISASI' : 'RAWAT'}
                                         </span>
-                                        <span className="truncate">{(visit.decision?.diagnoses || []).join(', ') || '-'}</span>
+                                        <span className="truncate">{getVisitDiagnosisLabel(visit)}</span>
                                     </div>
                                 ))}
                             </div>
