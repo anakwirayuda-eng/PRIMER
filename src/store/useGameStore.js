@@ -99,7 +99,7 @@ const INITIAL_FINANCE_STATS = {
 
 // Codex Fix: exclude non-stock pseudo-items (care instructions like bed_rest, diet)
 const createInitialPharmacyInventory = () => MEDICATION_DATABASE
-    .filter(med => med.buyPrice > 0 && med.form !== 'action')
+    .filter(med => med.form !== 'action') // Only exclude pseudo-items; program meds (buyPrice=0) are real stock
     .map((med) => ({
         medicationId: med.id,
         stock: Math.floor(med.minStock * 1.5),

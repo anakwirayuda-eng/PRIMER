@@ -34,7 +34,7 @@ export default function LogisticsView({ onBack, openWiki }) {
         // Codex Fix: exclude pseudo-items from inventory stats
         const stockItems = pharmacyInventory.filter(item => {
             const m = getMedicationById(item.medicationId);
-            return m && m.buyPrice > 0 && m.form !== 'action';
+            return m && m.form !== 'action';
         });
         const low = stockItems.filter(item => {
             const med = getMedicationById(item.medicationId);
@@ -67,7 +67,7 @@ export default function LogisticsView({ onBack, openWiki }) {
         // Codex Fix: only predict for real stock items
         const realStockItems = pharmacyInventory.filter(item => {
             const med = getMedicationById(item.medicationId);
-            return med && med.buyPrice > 0 && med.form !== 'action';
+            return med && med.form !== 'action';
         });
         return realStockItems.map(item => {
             const avgDaily = (consumption[item.medicationId] || 0) / daysCount;

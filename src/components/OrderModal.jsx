@@ -35,7 +35,7 @@ export default function OrderModal({ onClose }) {
             currentStock: item.stock
         }))
         // Codex Fix: exclude non-stock pseudo-items (care instructions like bed_rest, diet)
-        .filter(med => med.id && med.buyPrice > 0 && med.form !== 'action')
+        .filter(med => med.id && med.form !== 'action')
         .filter(med => med.currentStock < med.minStock && !pendingMedIds.has(med.id));
 
     const handleOrder = () => {

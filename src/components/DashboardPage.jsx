@@ -57,7 +57,7 @@ export default function DashboardPage() {
         // Codex Fix: exclude pseudo-items from inventory alerts
         const stockItems = pharmacyInventory?.filter(i => {
             const m = getMedicationById(i.medicationId);
-            return m && m.buyPrice > 0 && m.form !== 'action';
+            return m && m.form !== 'action';
         }) || [];
         const outOfStock = stockItems.filter(i => i.stock === 0).length;
         const lowStock = stockItems.filter(i => {
@@ -141,7 +141,7 @@ export default function DashboardPage() {
                 // Codex Fix: exclude pseudo-items from inventory widget
                 const stockItems2 = pharmacyInventory?.filter(i => {
                     const m = getMedicationById(i.medicationId);
-                    return m && m.buyPrice > 0 && m.form !== 'action';
+                    return m && m.form !== 'action';
                 }) || [];
                 const outOfStock = stockItems2.filter(i => i.stock === 0).length;
                 return { "Total Item": stockItems2.length, "Stok Habis": outOfStock };

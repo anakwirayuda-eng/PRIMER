@@ -167,7 +167,9 @@ export function verifyPrescription(prescription, inventory = {}) {
         // STOCK CHECK — Codex Fix: shortage is an ERROR, not warning (blocks verify+dispense)
         const stockData = inventory[item.medId];
         const qtyNeeded = (item.dose || 1) * (item.frequency || 1) * (item.duration || 1);
-        if (stockData && stockData.stock < qtyNeeded) {
+        if (!stockData) {
+            itemErrors.push(`${med.name} tidak tersedia di inventaris farmasi`);
+        } else if (stockData.stock < qtyNeeded) {
             itemErrors.push(`Stok tidak cukup: butuh ${qtyNeeded}, tersedia ${stockData.stock}`);
         }
 
