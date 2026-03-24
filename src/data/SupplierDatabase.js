@@ -6,7 +6,7 @@
  * [ANCHOR]: SUPPLIER_DATABASE
  * [DEPENDS_ON]: None
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-03-24
  */
 
 /**
@@ -26,7 +26,7 @@ export const SUPPLIER_DATABASE = [
         description: 'Supplier utama untuk obat-obatan Fornas dan alkes standar',
         minOrderValue: 0, // Tidak ada minimum order
         maxOrderValue: 50000000, // Max Rp 50 juta per order
-        // Codex Fix: Dinkes = universal Puskesmas supplier — provides ALL formulary items
+        // Dinkes = universal Puskesmas supplier — provides ALL formulary items incl. program meds
         acceptsAll: true,
         availableCategories: [
             'Analgesik/Antipiretik',
@@ -86,7 +86,7 @@ export const SUPPLIER_DATABASE = [
         description: 'Apotek lokal untuk kebutuhan mendesak (harga lebih mahal)',
         minOrderValue: 0,
         maxOrderValue: 5000000, // Max Rp 5 juta
-        // Codex Fix: local pharmacy can supply all common drug categories (at markup)
+        // Local pharmacy can supply all common drug categories (at markup)
         acceptsAll: true,
         availableCategories: [
             'Analgesik/Antipiretik',
@@ -124,37 +124,54 @@ export function getSuppliersForCategory(category) {
     );
 }
 
-export function calculateOrderCost(supplierId, items) {
+/**
+ * Calculate order cost with express support & program-meds guard.
+ * Express surcharge and program-meds filtering are handled HERE (single source of truth).
+ */
+export function calculateOrderCost(supplierId, items, isExpress = false) {
     const supplier = getSupplierById(supplierId);
     if (!supplier) return { error: 'Supplier not found' };
 
-    let subtotal = items.reduce((sum, item) => {
-        const basePrice = item.unitPrice * item.quantity;
-        // Apply markup if pharmacy
+    // Program meds (buyPrice=0) can only be ordered from government (dinkes)
+    const billableItems = supplier.type === 'government'
+        ? items
+        : items.filter(i => (i.unitPrice || 0) > 0);
+    const skippedProgram = items.length - billableItems.length;
+
+    if (billableItems.length === 0 && items.length > 0) {
+        return { error: 'Obat program hanya bisa diorder dari Dinas Kesehatan (supplier pemerintah)' };
+    }
+
+    let subtotal = billableItems.reduce((sum, item) => {
+        const basePrice = (item.unitPrice || 0) * item.quantity;
         const price = supplier.priceMarkup ? basePrice * supplier.priceMarkup : basePrice;
         return sum + price;
     }, 0);
 
-    // Apply discount if applicable
     const discount = subtotal >= 10000000 ? subtotal * supplier.discountRate : 0;
-    const total = subtotal - discount;
+    let total = subtotal - discount;
 
-    // Check min/max order value
+    // Express surcharge — only for suppliers that define expressFee
+    let expressFee = 0;
+    if (isExpress) {
+        if (!supplier.expressFee) {
+            return { error: `${supplier.name} tidak menyediakan layanan express` };
+        }
+        expressFee = supplier.expressFee;
+        total += expressFee;
+    }
+
+    // Validate min/max AFTER surcharge
     if (total < supplier.minOrderValue) {
         return {
             error: `Minimum order value: Rp ${supplier.minOrderValue.toLocaleString('id-ID')}`,
-            subtotal,
-            discount,
-            total
+            subtotal, discount, expressFee, total
         };
     }
-
     if (total > supplier.maxOrderValue) {
         return {
-            error: `Maximum order value: Rp ${supplier.maxOrderValue.toLocaleString('id-ID')}`,
-            subtotal,
-            discount,
-            total
+            error: `Maximum order value: Rp ${supplier.maxOrderValue.toLocaleString('id-ID')} (total: Rp ${total.toLocaleString('id-ID')})`,
+            subtotal, discount, expressFee, total
         };
     }
 
@@ -163,7 +180,9 @@ export function calculateOrderCost(supplierId, items) {
         supplierName: supplier.name,
         subtotal,
         discount,
+        expressFee,
         total,
+        skippedProgram,
         leadTime: supplier.leadTime,
         paymentTerms: supplier.paymentTerms
     };
@@ -175,8 +194,8 @@ export function estimateDeliveryDate(supplierId, currentDay, express = false) {
 
     let deliveryDays = supplier.leadTime;
 
-    // Express delivery option for vendor_swasta
-    if (express && supplierId === 'vendor_swasta') {
+    // Express uses supplier-specific contract (vendor_swasta = 3 days)
+    if (express && supplier.expressFee) {
         deliveryDays = 3;
     }
 

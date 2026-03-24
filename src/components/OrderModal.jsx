@@ -13,7 +13,7 @@ import React, { useState } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 import useModalA11y from '../hooks/useModalA11y.js';
 import { MEDICATION_DATABASE, getMedicationById } from '../data/MedicationDatabase.js';
-import { SUPPLIER_DATABASE } from '../data/SupplierDatabase.js';
+import { SUPPLIER_DATABASE, getSupplierById } from '../data/SupplierDatabase.js';
 import { X, ShoppingCart } from 'lucide-react';
 
 export default function OrderModal({ onClose }) {
@@ -83,20 +83,25 @@ export default function OrderModal({ onClose }) {
                     </select>
                 </div>
 
-                <div className="mb-4">
-                    <label className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors">
-                        <input
-                            type="checkbox"
-                            checked={isExpress}
-                            onChange={(e) => setIsExpress(e.target.checked)}
-                            className="w-4 h-4 accent-amber-600"
-                        />
-                        <div>
-                            <span className="text-sm font-bold text-amber-800">🚀 Pengiriman Cito (Tiba Besok)</span>
-                            <p className="text-xs text-amber-600">Biaya ekstra +30% — order tidak terpengaruh keterlambatan logistik</p>
+                {(() => {
+                    const sup = getSupplierById(selectedSupplierId);
+                    return sup?.expressFee ? (
+                        <div className="mb-4">
+                            <label className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors">
+                                <input
+                                    type="checkbox"
+                                    checked={isExpress}
+                                    onChange={(e) => setIsExpress(e.target.checked)}
+                                    className="w-4 h-4 accent-amber-600"
+                                />
+                                <div>
+                                    <span className="text-sm font-bold text-amber-800">🚀 Express Delivery (3 Hari)</span>
+                                    <p className="text-xs text-amber-600">Biaya tambahan Rp {sup.expressFee.toLocaleString('id-ID')} — order tidak terpengaruh keterlambatan logistik</p>
+                                </div>
+                            </label>
                         </div>
-                    </label>
-                </div>
+                    ) : null;
+                })()}
 
                 <div className="mb-6">
                     <h3 className="font-semibold mb-2">Item yang Perlu Diorder ({lowStockMeds.length})</h3>

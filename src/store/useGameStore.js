@@ -1224,11 +1224,9 @@ export const useGameStore = create(
                             const med = getMedicationById(item.medicationId);
                             return { ...item, unitPrice: med?.buyPrice || 0 };
                         });
-                        const costCalculation = calculateOrderCost(supplierId, items);
-                        // Express: 30% surcharge
-                        const expressFee = isExpress ? Math.ceil(costCalculation.total * 0.3) : 0;
-                        const totalCost = costCalculation.total + expressFee;
+                        const costCalculation = calculateOrderCost(supplierId, items, isExpress);
                         if (costCalculation.error) return { success: false, error: costCalculation.error };
+                        const totalCost = costCalculation.total; // Already includes express surcharge
                         // Codex Fix: include pending kapitasi_deduction orders in solvency check
                         const pendingKapitasiReserved = (state.finance.pendingOrders || []).filter(
                             o => o.status === 'pending' && o.paymentTerms === 'kapitasi_deduction'
@@ -1252,14 +1250,14 @@ export const useGameStore = create(
                             supplierId,
                             items: compatibleItems,
                             orderDay: day,
-                            // Codex Fix: respect item-level leadTime from medication catalog
-                            deliveryDay: isExpress ? day + 1 : (() => {
-                                const baseDelivery = estimateDeliveryDate(supplierId, day);
+                            // Use estimateDeliveryDate with express flag (respects supplier contract)
+                            deliveryDay: (() => {
+                                const baseDelivery = estimateDeliveryDate(supplierId, day, isExpress);
                                 const maxItemLead = compatibleItems.reduce((max, item) => {
                                     const med = getMedicationById(item.medicationId);
                                     return (med?.leadTime && med.leadTime > max) ? med.leadTime : max;
                                 }, 0);
-                                return maxItemLead > 0 ? Math.max(baseDelivery, day + maxItemLead) : baseDelivery;
+                                return !isExpress && maxItemLead > 0 ? Math.max(baseDelivery, day + maxItemLead) : baseDelivery;
                             })(),
                             status: 'pending',
                             cost: totalCost,
