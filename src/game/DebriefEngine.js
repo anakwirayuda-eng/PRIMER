@@ -70,11 +70,12 @@ export function generateDebrief({
     consequenceQueue = [],
     day = 1,
     stats = {},
+    reputation = null,
     dailyQuestId = null,
     morningReputation = null,
     bcState = null,
 }) {
-    const summary = generateSummary(todayLog, stats, morningReputation);
+    const summary = generateSummary(todayLog, stats, morningReputation, reputation);
     const criticalCases = extractCriticalCases(todayLog);
     const reflectionPrompts = generateReflectionPrompts(todayLog, criticalCases);
     const consequencePreview = getUpcomingFollowups(consequenceQueue, day, 7);
@@ -130,7 +131,7 @@ export function generateDebrief({
 /**
  * Generate summary statistics from today's log.
  */
-function generateSummary(todayLog, stats, morningReputation) {
+function generateSummary(todayLog, stats, morningReputation, reputation) {
     const patientsServed = todayLog.filter(c => c.completed).length;
     const patientsMissed = todayLog.filter(c => c.missed || c.leftWithoutService).length;
     const referralsMade = todayLog.filter(c => c.referred).length;
@@ -149,8 +150,8 @@ function generateSummary(todayLog, stats, morningReputation) {
     const umumRevenue = todayLog.filter(c => (c.revenue || 0) > 0).reduce((sum, c) => sum + c.revenue, 0);
     const kapitasiBurned = todayLog.filter(c => (c.revenue || 0) < 0).reduce((sum, c) => sum + Math.abs(c.revenue), 0);
     const todayRevenue = umumRevenue - kapitasiBurned; // net
-    const reputation = stats.reputation || 80;
-    const reputationDelta = morningReputation !== null ? reputation - morningReputation : 0;
+    const reputationValue = reputation ?? stats.reputation ?? 80;
+    const reputationDelta = morningReputation !== null ? reputationValue - morningReputation : 0;
 
     // Calculate overall score (weighted average)
     const servingScore = patientsServed > 0 ? Math.min(100, (patientsServed / Math.max(1, patientsServed + patientsMissed)) * 100) : 50;
@@ -173,7 +174,7 @@ function generateSummary(todayLog, stats, morningReputation) {
         todayRevenue,
         umumRevenue,
         kapitasiBurned,
-        reputation,
+        reputation: reputationValue,
         reputationDelta,
         overallScore,
     };

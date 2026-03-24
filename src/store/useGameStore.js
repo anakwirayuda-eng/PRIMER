@@ -876,6 +876,8 @@ function buildMonthlyArchiveEntry(state, accreditation, hiredStaff) {
         avgScore,
         avgReputation,
         totalPatients,
+        serviceRevenue: totalDailyRevenue,
+        monthlyKapitasi,
         totalRevenue,
         staffSalaries,
         trend

@@ -48,4 +48,18 @@ describe('DebriefEngine', () => {
         expect(result.criticalCases[0].correctDiagnosis).toBe('I21.9');
         expect(result.criticalCases[0].keyLearning).toContain('I21.9');
     });
+
+    it('uses explicit reputation snapshot when finance stats do not carry reputation', () => {
+        const result = generateDebrief({
+            todayLog: [],
+            consequenceQueue: [],
+            day: 5,
+            stats: { pendapatanUmum: 250000 },
+            reputation: 92,
+            morningReputation: 88
+        });
+
+        expect(result.summary.reputation).toBe(92);
+        expect(result.summary.reputationDelta).toBe(4);
+    });
 });

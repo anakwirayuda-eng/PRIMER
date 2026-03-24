@@ -492,10 +492,13 @@ export default function KPIDashboard() {
                                                 <p className="text-3xl font-black text-rose-500 font-mono">{report.avgReputation}%</p>
                                             </div>
                                             <div className={`sm:col-span-2 p-4 rounded-2xl flex items-center justify-between shadow-inner ${isDark ? 'bg-indigo-950/30 border border-indigo-900/50' : 'bg-indigo-50 border border-indigo-200'}`}>
-                                                <div>
-                                                    <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>BONUS KAPITASI</p>
-                                                    <p className={`text-2xl font-black font-mono ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Rp <RollingNumber value={report.totalRevenue || 0} isCurrency /></p>
-                                                </div>
+                                            <div>
+                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>TOTAL PENDAPATAN</p>
+                                                <p className={`text-2xl font-black font-mono ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Rp <RollingNumber value={report.totalRevenue || 0} isCurrency /></p>
+                                                <p className={`text-[8px] font-mono mt-1 ${isDark ? 'text-indigo-300/60' : 'text-indigo-700/60'}`}>
+                                                    Kapitasi Rp <RollingNumber value={report.monthlyKapitasi || 0} isCurrency /> • Layanan Rp <RollingNumber value={report.serviceRevenue || 0} isCurrency />
+                                                </p>
+                                            </div>
                                                 <Award size={32} className="text-indigo-500 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
                                             </div>
                                         </div>

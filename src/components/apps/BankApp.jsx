@@ -20,9 +20,10 @@ const BankApp = () => {
     // For MVP, Personal Money = Pendapatan Umum (Clinic Profit) for now as requested in previous turn
     // But ideally split. Let's use playerStats.reputation to calc a mock 'salary'
 
-    const personalSavings = stats.pendapatanUmum;
+    const personalSavings = Number(stats?.pendapatanUmum || 0);
     const monthlySalary = 4500000; // Basic salary
-    const jasaPelayanan = Math.floor(stats.pendapatanJkn * 0.4); // 40% of JKN capitation
+    const jasaPelayananBase = Number(stats?.pendapatanJkn ?? stats?.kapitasi ?? 0);
+    const jasaPelayanan = Math.floor(jasaPelayananBase * 0.4); // 40% of JKN capitation
 
     return (
         <div className="p-4 bg-blue-50 h-full">

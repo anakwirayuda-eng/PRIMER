@@ -456,6 +456,7 @@ const RumahDinas = ({ onClose }) => {
                                                     consequenceQueue: consequenceQueue || [],
                                                     day: day || 1,
                                                     stats: stats || {},
+                                                    reputation: playerStats?.reputation || 80,
                                                     dailyQuestId,
                                                     morningReputation
                                                 });
@@ -738,10 +739,10 @@ const RumahDinas = ({ onClose }) => {
         }
     }, [addReflection, gainXp, setShowEndOfDayDebrief, sleepWithAlarm, alarmHour, day, showToast]);
 
-    const activeBriefingData = useMemo(() => {
+    const activeBriefingState = useMemo(() => {
         if (!showMorningBriefing) return null;
 
-        return generateMorningBriefing({
+        return {
             day: day || 1,
             hiredStaff: hiredStaff || [],
             pharmacyInventory: pharmacyInventory || [],
@@ -750,8 +751,13 @@ const RumahDinas = ({ onClose }) => {
             queue: queue || [],
             reputation: playerStats?.reputation || 80,
             stats: stats || {}
-        });
+        };
     }, [showMorningBriefing, day, hiredStaff, pharmacyInventory, consequenceQueue, playerStats, queue, stats]);
+
+    const activeBriefingData = useMemo(() => {
+        if (!activeBriefingState) return null;
+        return generateMorningBriefing(activeBriefingState);
+    }, [activeBriefingState]);
 
     return (
         <>
@@ -761,6 +767,7 @@ const RumahDinas = ({ onClose }) => {
             {showMorningBriefing && activeBriefingData && (
                 <MorningBriefingModal
                     briefingData={activeBriefingData}
+                    gameState={activeBriefingState}
                     onComplete={handleBriefingComplete}
                     onDismiss={() => { setShowMorningBriefing(false); }}
                 />

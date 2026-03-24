@@ -47,6 +47,7 @@ export function generateMorningBriefing(state) {
         activeOutbreaks = [],
         prolanisRoster = [],
         stats = {},
+        reputation = null,
         playerLevel = 1,
     } = state;
 
@@ -58,7 +59,7 @@ export function generateMorningBriefing(state) {
         pendingFollowups: getScheduledFollowups(consequenceQueue, day).filter(f => f.type !== 'ukp_bridge' && f.originalCase),
         upcomingFollowups: getUpcomingFollowups(consequenceQueue, day, 3),
         todayEvents: generateTodayEvents(day, prolanisRoster, activeOutbreaks),
-        kpiSnapshot: generateKpiSnapshot(stats, villageData),
+        kpiSnapshot: generateKpiSnapshot(stats, villageData, reputation),
         availablePolis: getAvailablePolis(playerLevel, hiredStaff),
         suggestedPriority: generateSuggestedPriority(state),
     };
@@ -176,28 +177,31 @@ function generateTodayEvents(day, prolanisRoster, activeOutbreaks) {
 /**
  * Quick KPI snapshot vs targets.
  */
-function generateKpiSnapshot(stats, villageData) {
+function generateKpiSnapshot(stats, villageData, reputation) {
     const indicators = villageData?.healthIndicators || {};
+    const totalPatientsServed = stats.totalPatientsServed ?? stats.totalPatients ?? 0;
+    const reputationValue = reputation ?? stats.reputation ?? 80;
+    const revenueThisMonth = stats.monthlyRevenue ?? stats.totalRevenue ?? ((stats.kapitasi || 0) + (stats.pendapatanUmum || 0));
 
     return {
-        patientsServedTotal: stats.totalPatientsServed || 0,
-        revenueThisMonth: stats.monthlyRevenue || stats.totalRevenue || 0,
-        reputation: stats.reputation || 80,
+        patientsServedTotal: totalPatientsServed,
+        revenueThisMonth,
+        reputation: reputationValue,
         outbreakRisk: indicators.outbreak_risk || 'low',
         kpiItems: [
             {
                 label: 'Pasien Dilayani',
-                value: stats.totalPatientsServed || 0,
+                value: totalPatientsServed,
                 target: 10,
                 unit: '/hari',
-                status: (stats.totalPatientsServed || 0) >= 10 ? 'green' : 'amber',
+                status: totalPatientsServed >= 10 ? 'green' : 'amber',
             },
             {
                 label: 'Reputasi',
-                value: stats.reputation || 80,
+                value: reputationValue,
                 target: 75,
                 unit: '',
-                status: (stats.reputation || 80) >= 75 ? 'green' : 'red',
+                status: reputationValue >= 75 ? 'green' : 'red',
             },
         ],
     };

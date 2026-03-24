@@ -16,12 +16,15 @@ import StepCarousel from './shared/StepCarousel';
 import StatCard from './shared/StatCard';
 import { generateMorningBriefing, generateDefaultAllocation, generateDailyQuests } from '../game/MorningBriefing.js';
 
-export default function MorningBriefingModal({ gameState, onComplete, onDismiss }) {
+export default function MorningBriefingModal({ briefingData = null, gameState = null, onComplete, onDismiss }) {
     const { isDark } = useTheme();
     const modalRef = useModalA11y(onDismiss);
 
     // Generate briefing data
-    const briefing = useMemo(() => generateMorningBriefing(gameState || {}), [gameState]);
+    const briefing = useMemo(
+        () => briefingData || generateMorningBriefing(gameState || {}),
+        [briefingData, gameState]
+    );
     const dailyQuests = useMemo(() => generateDailyQuests(gameState || {}), [gameState]);
 
     // Staff allocation state

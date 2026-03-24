@@ -525,6 +525,8 @@ describe('store prophylaxis', () => {
                 avgScore: 80,
                 avgReputation: 85,
                 totalPatients: 90,
+                serviceRevenue: 300000,
+                monthlyKapitasi: 62500000,
                 totalRevenue: 62800000,
                 staffSalaries: 2000000,
                 trend: {}
