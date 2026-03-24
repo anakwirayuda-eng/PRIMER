@@ -48,9 +48,10 @@ export default function OrderModal({ onClose }) {
         const result = submitOrder(orderItems, selectedSupplierId, day, isExpress);
         if (result.success) {
             // Codex Fix: show skipped items so player knows about partial orders
+            const createdCount = result.order?.items?.length ?? orderItems.length;
             const msg = result.skipped?.length
-                ? `Order dikirim (${result.order.items.length} item). ${result.skipped.length} item dilewati karena tidak tersedia di supplier ini:\n${result.skipped.join(', ')}`
-                : `Order berhasil dibuat (${result.order.items.length} item)!`;
+                ? `Order dikirim (${createdCount} item). ${result.skipped.length} item dilewati karena tidak tersedia di supplier ini:\n${result.skipped.join(', ')}`
+                : `Order berhasil dibuat (${createdCount} item)!`;
             alert(msg);
             onClose();
         } else {

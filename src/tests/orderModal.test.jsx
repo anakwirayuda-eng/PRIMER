@@ -27,7 +27,12 @@ describe('OrderModal', () => {
     });
 
     it('passes the current day to submitOrder', async () => {
-        const submitOrder = vi.fn(() => ({ success: true }));
+        const submitOrder = vi.fn(() => ({
+            success: true,
+            order: {
+                items: [{ medicationId: medication.id, quantity: medication.minStock }]
+            }
+        }));
         const medication = MEDICATION_DATABASE[0];
 
         mockUseGame.mockReturnValue({
@@ -45,7 +50,8 @@ describe('OrderModal', () => {
         expect(submitOrder).toHaveBeenCalledWith(
             [{ medicationId: medication.id, quantity: medication.minStock }],
             'dinkes',
-            12
+            12,
+            false
         );
     });
 });

@@ -92,10 +92,11 @@ describe('store prophylaxis', () => {
         });
 
         const inventory = useGameStore.getState().finance.pharmacyInventory;
-        expect(inventory).toHaveLength(MEDICATION_DATABASE.length);
+        const expectedInventory = MEDICATION_DATABASE.filter(med => med.form !== 'action');
+        expect(inventory).toHaveLength(expectedInventory.length);
         expect(inventory[0]).toMatchObject({
-            medicationId: MEDICATION_DATABASE[0].id,
-            stock: Math.floor(MEDICATION_DATABASE[0].minStock * 1.5),
+            medicationId: expectedInventory[0].id,
+            stock: Math.floor(expectedInventory[0].minStock * 1.5),
             lastRestockDay: 0
         });
     });

@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 const normalizeId = (id) => id.replace(/\\/g, '/');
+const hasPackage = (id, pkg) => id.includes(`/node_modules/${pkg}/`);
 
 function manualChunks(id) {
   const normalizedId = normalizeId(id);
@@ -30,7 +31,59 @@ function manualChunks(id) {
   }
 
   if (normalizedId.includes('/node_modules/')) {
-    return 'vendor';
+    if (
+      hasPackage(normalizedId, 'react') ||
+      hasPackage(normalizedId, 'react-dom') ||
+      hasPackage(normalizedId, 'react-router-dom') ||
+      hasPackage(normalizedId, 'scheduler')
+    ) {
+      return 'vendor-react';
+    }
+
+    if (
+      hasPackage(normalizedId, 'i18next') ||
+      hasPackage(normalizedId, 'react-i18next')
+    ) {
+      return 'vendor-i18n';
+    }
+
+    if (
+      hasPackage(normalizedId, 'three') ||
+      hasPackage(normalizedId, '@react-three/fiber') ||
+      hasPackage(normalizedId, '@react-three/drei') ||
+      hasPackage(normalizedId, '@react-three/postprocessing')
+    ) {
+      return 'vendor-3d';
+    }
+
+    if (
+      hasPackage(normalizedId, 'konva') ||
+      hasPackage(normalizedId, 'react-konva') ||
+      hasPackage(normalizedId, 'recharts')
+    ) {
+      return 'vendor-visualization';
+    }
+
+    if (
+      hasPackage(normalizedId, 'lucide-react') ||
+      hasPackage(normalizedId, 'framer-motion')
+    ) {
+      return 'vendor-ui';
+    }
+
+    if (
+      hasPackage(normalizedId, '@supabase/supabase-js') ||
+      hasPackage(normalizedId, 'dexie') ||
+      hasPackage(normalizedId, 'zustand') ||
+      hasPackage(normalizedId, 'zod') ||
+      hasPackage(normalizedId, 'seedrandom') ||
+      hasPackage(normalizedId, 'clsx') ||
+      hasPackage(normalizedId, 'tailwind-merge')
+    ) {
+      return 'vendor-data';
+    }
+
+    return 'vendor-3d';
   }
 }
 
