@@ -237,7 +237,7 @@ function DialogPanel({ npc, dialog, onChoice, onDismiss }) {
 // MAIN BUILDING GAME PANEL
 // ═══════════════════════════════════════════════════════════════
 
-export default function BuildingGamePanel({ buildingType, energy, onAction, onClose, onXpGain, onTriggerScenario }) {
+export default function BuildingGamePanel({ buildingType, energy, onAction, onClose, onXpGain, onComplete, onTriggerScenario }) {
     const scene = getSceneForBuilding(buildingType);
     const [activeStation, setActiveStation] = useState(null);
     const [completedActions, setCompletedActions] = useState(new Set());
@@ -298,7 +298,18 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
             setCompletedStations(prev => new Set([...prev, station.id]));
             // Check full completion
             const allStationsDone = scene.stations.every(s => completedStations.has(s.id) || s.id === station.id);
-            if (allStationsDone) setTimeout(() => setShowCompletion(true), 600);
+            if (allStationsDone) {
+                // Apply completion bonus — XP via existing callback
+                onXpGain?.(scene.completionReward.xp);
+                // Signal completion to parent (includes reputation)
+                onComplete?.({
+                    buildingType,
+                    xp: scene.completionReward.xp,
+                    reputation: scene.completionReward.reputation,
+                    message: scene.completionReward.message
+                });
+                setTimeout(() => setShowCompletion(true), 600);
+            }
         }
     }, [buildingType, energy, onAction, onXpGain, completedActions, completedStations, discoveredBarriers, scene]);
 

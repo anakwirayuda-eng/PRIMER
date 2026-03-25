@@ -41,6 +41,21 @@ const HAIR_STYLE_LABELS = {
     long: 'Panjang', ponytail: 'Kuncir', bun: 'Sanggul', hijab: 'Hijab',
 };
 
+// ─── AEGIS Profiler: Deterministic codename + psych evaluation ───
+const AEGIS_CODENAMES = [
+    { id: 'VANGUARD',  minEnergy: 90, maxRep: 65,  note: 'Stamina fisik superior. Risiko: idealisme naif berpotensi diabaikan tetua desa saat negosiasi kasus rujukan.' },
+    { id: 'SENTINEL',  minEnergy: 80, maxRep: 75,  note: 'Profil seimbang. Kapasitas jaga malam memadai, namun perlu pembuktian otoritas di hadapan staf senior Puskesmas.' },
+    { id: 'SCALPEL',   minEnergy: 70, maxRep: 85,  note: 'Ketajaman klinis terverifikasi. Cadangan energi moderat — alokasi istirahat perlu diprioritaskan pada shift ketiga.' },
+    { id: 'ORACLE',    minEnergy: 0,  maxRep: 100, note: 'Wibawa absolut. Peringatan: kapasitas fisik menurun signifikan. Risiko dekompensasi kardiak pada jaga IGD 48 jam nonstop.' },
+];
+
+function generateAegisProfile(energy, rep) {
+    for (const profile of AEGIS_CODENAMES) {
+        if (energy >= profile.minEnergy && rep <= profile.maxRep) return profile;
+    }
+    return AEGIS_CODENAMES[AEGIS_CODENAMES.length - 1];
+}
+
 // ─── Kinetic CSS (self-contained, no external keyframes needed) ───
 const SETUP_CSS = `
     @keyframes sp-fade-in { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -107,6 +122,8 @@ export default function PlayerSetup({ onComplete }) {
         rep: Math.min(100, 50 + (age - 24)),
     }), [age]);
 
+    const aegisProfile = useMemo(() => generateAegisProfile(derivedStats.energy, derivedStats.rep), [derivedStats]);
+
     // Alternating quote — picked once on mount
     const activeQuote = useMemo(
         () => pickDeterministic(BRIEFING_QUOTES, 'player-setup-briefing') || BRIEFING_QUOTES[0],
@@ -135,6 +152,8 @@ export default function PlayerSetup({ onComplete }) {
         setTimeout(() => {
             const profile = {
                 name: playerName.trim(), gender, age,
+                codename: aegisProfile.id,
+                aegisNote: aegisProfile.note,
                 idType: idNumber.trim() ? idType : null,
                 idNumber: idNumber.trim() || null,
                 initialStats: { maxEnergy: derivedStats.energy, baseReputation: derivedStats.rep },
@@ -407,7 +426,13 @@ export default function PlayerSetup({ onComplete }) {
                                             <div className="text-[8px] font-mono text-slate-400 font-bold mb-0.5 uppercase tracking-widest">NAMA PEJABAT:</div>
                                             <div className="text-lg font-black text-slate-900 leading-none uppercase tracking-wide border-b border-slate-300 pb-2 mb-2">dr. {playerName}</div>
                                             <div className="text-[8px] font-mono text-slate-400 font-bold mb-0.5 uppercase tracking-widest">JABATAN TUGAS:</div>
-                                            <div className="text-[10px] font-bold text-emerald-800 uppercase mb-3 bg-emerald-100/80 border border-emerald-200 px-2 py-1 rounded inline-block w-fit shadow-sm">KEPALA PUSKESMAS</div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="text-[10px] font-bold text-emerald-800 uppercase bg-emerald-100/80 border border-emerald-200 px-2 py-1 rounded inline-block w-fit shadow-sm">KEPALA PUSKESMAS</div>
+                                                <div className="text-[9px] font-black text-amber-700 uppercase bg-amber-100/80 border border-amber-300 px-1.5 py-0.5 rounded font-mono tracking-wider shadow-sm">{aegisProfile.id}</div>
+                                            </div>
+                                            <div className="text-[7px] font-mono text-slate-400 leading-relaxed mb-2 border-l-2 border-slate-300 pl-2 italic">
+                                                AEGIS EVAL: {aegisProfile.note}
+                                            </div>
                                             <div className="grid grid-cols-2 gap-2 border-t border-slate-200 pt-2">
                                                 <div>
                                                     <div className="text-[7px] font-mono text-slate-400 font-bold tracking-widest">GENDER</div>

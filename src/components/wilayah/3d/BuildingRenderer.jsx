@@ -311,11 +311,10 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
         onPointerOver: (e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; onHover?.(building, groupRef.current?.position); },
         onPointerOut: () => { setHovered(false); document.body.style.cursor = 'auto'; onHover?.(null, null); },
         onClick: (e) => { e.stopPropagation(); onSelect(building); },
-        // DOUBLE-CLICK DIVE — instant building interior entry
+        // Double-click selects building (dive flow handled by parent)
         onDoubleClick: (e) => {
             e.stopPropagation();
             onSelect(building);
-            document.dispatchEvent(new CustomEvent('buildingDoubleDive', { detail: building }));
         },
     };
 
@@ -793,5 +792,6 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
 export const BuildingRenderer = React.memo(BuildingRendererInternal, (prev, next) => (
     prev.selected === next.selected &&
     prev.activeLayer === next.activeLayer &&
-    prev.building.id === next.building.id
+    prev.building.id === next.building.id &&
+    prev.building.familyData === next.building.familyData
 ));

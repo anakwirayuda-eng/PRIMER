@@ -89,7 +89,6 @@ export default function WilayahPage() {
     const energy = Math.max(0, Math.floor(Number(playerStats?.energy) || 0));
 
     const [selectedBuilding, setSelectedBuilding] = useState(null);
-    const [viewMode, setViewMode] = useState('satelite');
     const [activeLayer, setActiveLayer] = useState('general');
     const [homeVisitModal, setHomeVisitModal] = useState(null);
     const [showRiskOnly, setShowRiskOnly] = useState(false);
@@ -97,7 +96,6 @@ export default function WilayahPage() {
     const [buildingInterior, setBuildingInterior] = useState(null);
     const [activeIKMEventId, setActiveIKMEventId] = useState(null);
     const [activeBCCase, setActiveBCCase] = useState(null); // Behavior Change Case panel
-    const viewportRef = useRef(null);
     const dioramaZoomRef = useRef(null); // ref for 3D camera zoom callbacks
     const [diveWhiteout, setDiveWhiteout] = useState(false); // Dollhouse Dive flash
     const [textures] = useState(() => {
@@ -750,7 +748,10 @@ export default function WilayahPage() {
                             <div className="p-6 max-h-[400px] overflow-y-auto scrollbar-hide">
                                 <div className="grid grid-cols-1 gap-2">
                                     {HOME_VISIT_INTERVENTIONS.map((action) => {
-                                        const isCompleted = homeVisitModal.familyId && villageData.families.find(f => f.id === homeVisitModal.familyId)?.indicators?.[action.indicator];
+                                        // Fix: support both singular `indicator` and plural `indicators` for completion check
+                                        const family = villageData.families.find(f => f.id === homeVisitModal.familyId);
+                                        const idsToCheck = action.indicators || (action.indicator ? [action.indicator] : []);
+                                        const isCompleted = homeVisitModal.familyId && idsToCheck.length > 0 && idsToCheck.every(id => family?.indicators?.[id]);
                                         return (
                                             <button
                                                 key={action.id}
@@ -925,6 +926,14 @@ export default function WilayahPage() {
                                 }
                             }}
                             onXpGain={(xp) => addXp(xp)}
+                            onComplete={(reward) => {
+                                if (reward.reputation) {
+                                    setPlayerStats(prev => ({
+                                        ...prev,
+                                        reputation: (prev.reputation || 0) + reward.reputation
+                                    }));
+                                }
+                            }}
                             onClose={() => setBuildingInterior(null)}
                             onTriggerScenario={(scenarioId) => {
                                 triggerIKMEvent?.(scenarioId);
@@ -943,14 +952,15 @@ export default function WilayahPage() {
                         day={day}
                         onClose={handleCloseBehaviorCase}
                         onComplete={(result) => {
-                            // Apply XP and reputation
+                            // Apply XP, reputation, and energy cost
                             if (result.xpEarned) addXp(result.xpEarned);
-                            if (result.reputationDelta) {
-                                setPlayerStats(prev => ({
-                                    ...prev,
-                                    energy: Math.max(0, (prev.energy || 0) - 15) // BC case costs 15 energy
-                                }));
-                            }
+                            // Always deduct energy for BC case
+                            setPlayerStats(prev => ({
+                                ...prev,
+                                energy: Math.max(0, (prev.energy || 0) - 15), // BC case costs 15 energy
+                                // Apply reputation delta from behavior case outcome
+                                ...(result.reputationDelta ? { reputation: (prev.reputation || 0) + result.reputationDelta } : {})
+                            }));
                             setVillageData(prev => applyBehaviorCaseOutcomeToVillage(prev, result, day));
                             appendClinicalHistoryEntry?.(buildBehaviorCaseHistoryEntry(result, day));
                             if (updateProgress) updateProgress('home_visits', 1);
