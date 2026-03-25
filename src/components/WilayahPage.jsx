@@ -43,6 +43,10 @@ import { isGameEnabledBuilding } from './wilayah/buildingScenes.js';
 
 import { getCachedTextures, generateTextures } from '../utils/TextureGenerator.js';
 import { guardStability } from '../utils/prophylaxis.js';
+import {
+    applyBehaviorCaseOutcomeToVillage,
+    buildBehaviorCaseHistoryEntry
+} from '../utils/behaviorCaseRuntime.js';
 import VillagerBehavior from '../domains/village/VillagerBehavior.js';
 import { VILLAGE_FAMILIES } from '../domains/village/VillageRegistry.js';
 
@@ -60,7 +64,7 @@ export default function WilayahPage() {
         viewParams, navigate, history, playerStats, setPlayerStats,
         addXp, publicHealth, setTime,
         openWiki, isWikiOpen, closeWiki, updateProgress, wikiMetric,
-        triggerIKMEvent, applyBuildingSDOH
+        triggerIKMEvent, applyBuildingSDOH, appendClinicalHistoryEntry
     } = useGame();
 
     const energy = Math.max(0, Math.floor(Number(playerStats?.energy) || 0));
@@ -95,8 +99,8 @@ export default function WilayahPage() {
     const mapData = useMemo(() => {
         if (!staticMapTopology || !villageData?.families) return null;
         const families = villageData.families.map(f => {
-            const phbs = VillagerBehavior.calculatePHBSScore(f);
-            const risk = VillagerBehavior.classifyBehavioralRisk(f);
+            const phbs = VillagerBehavior.calculatePHBSScore(f.id);
+            const risk = VillagerBehavior.classifyBehavioralRisk(f.id);
             return {
                 ...f, phbsScore: phbs, behaviorRisk: risk?.level || 'low',
                 behaviorEmoji: risk?.level === 'high' ? '🔴' : risk?.level === 'medium' ? '🟠' : '🟢'
@@ -893,20 +897,8 @@ export default function WilayahPage() {
                                     energy: Math.max(0, (prev.energy || 0) - 15) // BC case costs 15 energy
                                 }));
                             }
-                            // Update village data based on outcome
-                            if (result.outcomeTier === 'excellent' || result.outcomeTier === 'good') {
-                                setVillageData(prev => ({
-                                    ...prev,
-                                    families: prev.families.map(f => {
-                                        if (f.id !== result.familyId) return f;
-                                        const boost = result.outcomeTier === 'excellent' ? 2 : 1;
-                                        return {
-                                            ...f,
-                                            phbsScore: Math.min(10, (f.phbsScore || 0) + boost)
-                                        };
-                                    })
-                                }));
-                            }
+                            setVillageData(prev => applyBehaviorCaseOutcomeToVillage(prev, result, day));
+                            appendClinicalHistoryEntry?.(buildBehaviorCaseHistoryEntry(result, day));
                             if (updateProgress) updateProgress('home_visits', 1);
                             setActiveBCCase(null);
                         }}

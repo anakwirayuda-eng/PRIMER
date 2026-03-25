@@ -17,6 +17,7 @@ import { soundManager } from '../utils/SoundManager.js';
 import { generateMorningBriefing } from '../game/MorningBriefing.js';
 import { generateDebrief } from '../game/DebriefEngine.js';
 import { canAffordOperationalCost, getAvailableOperationalFunds, spendOperationalFunds } from '../utils/operationalFunds.js';
+import { buildBehaviorCaseDebriefState } from '../utils/behaviorCaseRuntime.js';
 import MorningBriefingModal from '../components/MorningBriefingModal.jsx';
 import EndOfDayModal from '../components/EndOfDayModal.jsx';
 
@@ -73,7 +74,7 @@ const RumahDinas = ({ onClose }) => {
         dailyQuestId, morningReputation,
         // Game state for briefing generators
         day, hiredStaff, pharmacyInventory,
-        queue, history: _history
+        queue, history: _history, villageData
     } = useGame();
 
     const [activeTab, setActiveTab] = useState('living_room');
@@ -81,6 +82,10 @@ const RumahDinas = ({ onClose }) => {
     const [debriefData, setDebriefData] = useState(null);
 
     const furnitureInventory = playerStats?.furnitureInventory ?? INITIAL_INVENTORY;
+    const behaviorCaseDebriefState = useMemo(
+        () => buildBehaviorCaseDebriefState(villageData, _history, day),
+        [villageData, _history, day]
+    );
 
     // Toast State
     const [toasts, setToasts] = useState([]);
@@ -456,7 +461,8 @@ const RumahDinas = ({ onClose }) => {
                                                     stats: stats || {},
                                                     reputation: playerStats?.reputation || 80,
                                                     dailyQuestId,
-                                                    morningReputation
+                                                    morningReputation,
+                                                    bcState: behaviorCaseDebriefState
                                                 });
                                                 setDebriefData(debrief);
                                                 setShowEndOfDayDebrief(true);

@@ -238,6 +238,7 @@ export function processUKPBridge(completedCases, currentDay) {
         // Generate the UKP emergency event
         events.push({
             type: 'ukp_bridge_consequence',
+            historyEntryId: caseData.historyEntryId || null,
             diseaseId: pickedOutcome,
             severity: severityMap[caseData.outcome] || 'moderate',
             source: {

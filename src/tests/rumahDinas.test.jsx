@@ -98,6 +98,7 @@ function createGameContext(overrides = {}) {
         pharmacyInventory: [],
         queue: [],
         history: [],
+        villageData: null,
         ...overrides
     };
 }
@@ -172,5 +173,63 @@ describe('RumahDinas', () => {
         const nextStats = statsUpdater({ pendapatanUmum: 0, kapitasi: 5_000_000 });
         expect(nextStats.pendapatanUmum).toBe(0);
         expect(nextStats.kapitasi).toBeLessThan(5_000_000);
+    });
+
+    it('passes behavior change debrief state when ending the day', async () => {
+        mockUseGame.mockReturnValue(createGameContext({
+            villageData: {
+                families: [{ id: 'kk_01', iksScore: 0.5 }],
+                readinessState: {
+                    kk_01: {
+                        stage: 'action',
+                        familiarity: 20,
+                        visitCount: 1,
+                        lastVisitDay: 3,
+                        scenarioHistory: [],
+                        stageHistory: []
+                    }
+                }
+            },
+            history: [
+                {
+                    day: 3,
+                    behaviorCase: {
+                        scenarioId: 'bc_scabies_outbreak',
+                        outcomeTier: 'good',
+                        familyId: 'kk_01',
+                        xpEarned: 100
+                    }
+                }
+            ]
+        }));
+
+        const user = userEvent.setup();
+        render(<RumahDinas onClose={() => {}} />);
+
+        await user.click(screen.getByRole('button', { name: /Kamar Tidur/i }));
+        await user.click(screen.getByRole('button', { name: 'Tidur Sekarang' }));
+
+        expect(mockGenerateDebrief).toHaveBeenCalledTimes(1);
+        expect(mockGenerateDebrief.mock.calls[0][0].bcState).toEqual({
+            activeCases: [],
+            completedToday: [
+                {
+                    scenarioId: 'bc_scabies_outbreak',
+                    outcomeTier: 'good',
+                    familyId: 'kk_01',
+                    xpEarned: 100
+                }
+            ],
+            readinessState: {
+                kk_01: {
+                    stage: 'action',
+                    familiarity: 20,
+                    visitCount: 1,
+                    lastVisitDay: 3,
+                    scenarioHistory: [],
+                    stageHistory: []
+                }
+            }
+        });
     });
 });

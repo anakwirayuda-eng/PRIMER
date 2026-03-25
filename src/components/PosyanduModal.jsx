@@ -25,6 +25,7 @@ import {
 } from '../game/PosyanduEngine.js';
 import { calculateIKS } from '../game/GameCore.js';
 import { chanceFromSeed } from '../utils/deterministicRandom.js';
+import { calculateAverageIksFromFamilies } from '../utils/villageMetrics.js';
 
 const ACTIVITY_ICONS = {
     penimbangan: Scale,
@@ -198,7 +199,9 @@ export default function PosyanduModal({ isOpen, onClose }) {
                 return { ...fam, indicators, iksScore: calculateIKS(indicators) };
             });
 
-            return { ...prev, families: updatedFamilies, averageIks: calculateIKS(updatedFamilies) };
+            const averageIks = calculateAverageIksFromFamilies(updatedFamilies);
+
+            return { ...prev, families: updatedFamilies, averageIks };
         });
 
         // Record to History

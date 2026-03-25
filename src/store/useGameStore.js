@@ -35,6 +35,11 @@ import { normalizeDailyArchive, normalizeMonthlyArchive } from '../utils/archive
 import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
 import { applyIkmScoreToVillage } from '../utils/ikmImpact.js';
 import { formatIkmImpactSummary, getIkmOutcomeStatus } from '../utils/ikmHistory.js';
+import {
+    collectPendingUkpBridgeCases,
+    ensureVillageReadinessState,
+    markBehaviorCaseBridgeSpawned
+} from '../utils/behaviorCaseRuntime.js';
 import { processLabOrder } from '../game/LabEngine.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
@@ -566,7 +571,7 @@ const mergePersistedPublicHealth = (publicHealth, currentPublicHealth) => {
         ...currentPublicHealth,
         ...publicHealth,
         villageData: hasOwn(publicHealth, 'villageData')
-            ? publicHealth.villageData
+            ? ensureVillageReadinessState(publicHealth.villageData)
             : currentPublicHealth.villageData,
         prolanisRoster: Array.isArray(publicHealth.prolanisRoster)
             ? publicHealth.prolanisRoster
@@ -1536,7 +1541,18 @@ export const useGameStore = create(
                 // --- SLICE: PUBLIC HEALTH ---
                 publicHealth: createInitialPublicHealthState(),
                 publicHealthActions: {
-                    setVillageData: (val) => set(s => ({ publicHealth: { ...s.publicHealth, villageData: typeof val === 'function' ? val(s.publicHealth.villageData) : val } })),
+                    setVillageData: (val) => set(s => {
+                        const nextVillageData = typeof val === 'function'
+                            ? val(s.publicHealth.villageData)
+                            : val;
+
+                        return {
+                            publicHealth: {
+                                ...s.publicHealth,
+                                villageData: ensureVillageReadinessState(nextVillageData)
+                            }
+                        };
+                    }),
                     setProlanisRoster: (val) => set(s => ({ publicHealth: { ...s.publicHealth, prolanisRoster: typeof val === 'function' ? val(s.publicHealth.prolanisRoster) : val } })),
                     setProlanisState: (val) => set(s => ({ publicHealth: { ...s.publicHealth, prolanisState: typeof val === 'function' ? val(s.publicHealth.prolanisState) : val } })),
                     setActiveOutbreaks: (val) => set(s => ({ publicHealth: { ...s.publicHealth, activeOutbreaks: typeof val === 'function' ? val(s.publicHealth.activeOutbreaks) : val } })),
@@ -2128,6 +2144,12 @@ export const useGameStore = create(
                     setActivePatientId: (val) => set(s => ({ clinical: { ...s.clinical, activePatientId: typeof val === 'function' ? val(s.clinical.activePatientId) : val } })),
                     setActiveEmergencyId: (val) => set(s => ({ clinical: { ...s.clinical, activeEmergencyId: typeof val === 'function' ? val(s.clinical.activeEmergencyId) : val } })),
                     setHistory: (val) => set(s => ({ clinical: { ...s.clinical, history: typeof val === 'function' ? val(s.clinical.history) : val } })),
+                    appendClinicalHistoryEntry: (entry) => set(s => ({
+                        clinical: {
+                            ...s.clinical,
+                            history: appendClinicalHistory(s.clinical.history, entry)
+                        }
+                    })),
                     setAccreditation: (val) => set(s => ({ clinical: { ...s.clinical, accreditation: typeof val === 'function' ? val(s.clinical.accreditation) : val } })),
                     setActiveReferral: (val) => set(s => ({ clinical: { ...s.clinical, activeReferral: typeof val === 'function' ? val(s.clinical.activeReferral) : val } })),
                     setActiveReferralLog: (val) => set(s => ({ clinical: { ...s.clinical, activeReferralLog: typeof val === 'function' ? val(s.clinical.activeReferralLog) : val } })),
@@ -3140,7 +3162,7 @@ export const useGameStore = create(
                                 villagers: getAllVillagers(),
                                 stats: VILLAGE_STATS
                             };
-                            state.publicHealth.villageData = population;
+                            state.publicHealth.villageData = ensureVillageReadinessState(population);
 
                             state.clinical.queue = [
                                 generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game-patient', 0)),
@@ -3322,18 +3344,15 @@ export const useGameStore = create(
                             }
 
                             // 4.8. UKP Bridge — Failed UKM cases spawn clinical consequences
-                            const completedBCCases = (state.clinical.history || [])
-                                .filter(h => h.behaviorCase && (h.behaviorCase.outcome === 'failed' || h.behaviorCase.outcome === 'partial'))
-                                .map(h => ({
-                                    scenarioId: h.behaviorCase.scenarioId,
-                                    outcome: h.behaviorCase.outcome,
-                                    completedOnDay: h.behaviorCase.completedOnDay || h.day,
-                                    scenario: h.behaviorCase.scenario
-                                }));
+                            const completedBCCases = collectPendingUkpBridgeCases(state.clinical.history || []);
                             const ukpEvents = processUKPBridge(completedBCCases, nextDayVal);
+                            const bridgedHistoryIds = [];
                             ukpEvents.forEach(evt => {
                                 if (evt.reputationPenalty) {
                                     state.player.profile.reputation = Math.max(0, state.player.profile.reputation + evt.reputationPenalty);
+                                }
+                                if (evt.historyEntryId) {
+                                    bridgedHistoryIds.push(evt.historyEntryId);
                                 }
                                 // Push consequence narrative to clinical log
                                 state.clinical.consequenceQueue.push({
@@ -3345,6 +3364,13 @@ export const useGameStore = create(
                                     returnDay: nextDayVal + 1
                                 });
                             });
+                            if (bridgedHistoryIds.length > 0) {
+                                state.clinical.history = markBehaviorCaseBridgeSpawned(
+                                    state.clinical.history,
+                                    bridgedHistoryIds,
+                                    nextDayVal
+                                );
+                            }
 
                             // 5. Advance Time
                             state.world.day = nextDayVal;

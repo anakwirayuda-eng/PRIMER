@@ -34,4 +34,16 @@ describe('publicHealthActions', () => {
 
         expect(useGameStore.getState().publicHealth.outbreakNotification).toBeNull();
     });
+
+    it('backfills village readiness state when village data is set from a legacy shape', () => {
+        act(() => {
+            useGameStore.getState().publicHealthActions.setVillageData({
+                families: [{ id: 'kk_01', iksScore: 0.5 }]
+            });
+        });
+
+        const nextVillage = useGameStore.getState().publicHealth.villageData;
+        expect(nextVillage.readinessState).toBeTruthy();
+        expect(nextVillage.readinessState.kk_01.stage).toBe('contemplation');
+    });
 });
