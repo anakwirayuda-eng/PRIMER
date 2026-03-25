@@ -112,7 +112,8 @@ function CameraBridge({ controlsRef, zoomRef, selectedBuilding, mapData }) {
             new THREE.Vector3(px + 3, 0.5, pz),
             1.8
         );
-    }, [selectedBuilding, mapData, startSwoop]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedBuilding, startSwoop]); // Intentionally exclude mapData to prevent re-swoop on data changes
 
     useEffect(() => {
         const onDown = (event) => {

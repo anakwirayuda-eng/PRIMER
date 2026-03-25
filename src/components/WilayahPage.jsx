@@ -266,7 +266,10 @@ export default function WilayahPage() {
 
     const handleHomeVisitAction = (action) => {
         if (energy < action.energy) return;
-        const family = villageData.families.find(f => f.id === selectedBuilding.familyId);
+        // Use homeVisitModal's familyId, not selectedBuilding, to prevent desync
+        const targetFamilyId = homeVisitModal?.familyId;
+        if (!targetFamilyId) return;
+        const family = villageData.families.find(f => f.id === targetFamilyId);
         if (!family) return;
         let updatedIndicators = { ...family.indicators };
         // Support both singular `indicator` and plural `indicators` array
@@ -387,18 +390,9 @@ export default function WilayahPage() {
                         {/* Right: View Mode + Sensus */}
                         <div className="flex items-center gap-2">
                             <div className={`flex rounded-lg overflow-hidden ${GLASS}`}>
-                                <button
-                                    onClick={() => setViewMode('map')}
-                                    className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${viewMode === 'map' ? 'bg-emerald-500/30 text-emerald-300' : 'text-white/50 hover:text-white/80'}`}
-                                >
-                                    PETA
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('satelite')}
-                                    className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${viewMode === 'satelite' ? 'bg-emerald-500/30 text-emerald-300' : 'text-white/50 hover:text-white/80'}`}
-                                >
-                                    SATELIT
-                                </button>
+                                <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-500/30">
+                                    3D DIORAMA
+                                </div>
                             </div>
                             <button
                                 onClick={() => navigate('sensus')}

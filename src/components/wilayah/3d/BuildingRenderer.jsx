@@ -233,7 +233,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
 function isBuildingAtRisk(building, activeLayer) {
     if (activeLayer === 'general') return false;
     if (activeLayer === 'pispk') return building.familyData?.iksScore != null && building.familyData.iksScore < 0.4;
-    if (activeLayer === 'surveillance') return building.hasDBCase || building.familyData?.hasCase;
+    if (activeLayer === 'surveillance') return building.hasCase || building.familyData?.hasCase;
     if (activeLayer === 'phbs') return building.familyData?.phbsScore != null && building.familyData.phbsScore < 4;
     if (activeLayer === 'perilaku') return building.familyData?.behaviorRisk === 'high' || building.familyData?.behaviorRisk === 'medium';
     return false;
@@ -282,7 +282,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
     const isNatureOrFlat = NATURE_OR_FLAT.includes(building.type);
 
     // QUEST / ALERT marker logic
-    const hasOutbreak = building.familyData?.hasCase || building.hasDBCase;
+    const hasOutbreak = building.hasCase || building.familyData?.hasCase;
     const needsAttention = isHouse && building.familyData && !hasOutbreak && (
         (building.familyData.iksScore != null && building.familyData.iksScore < 0.5) ||
         building.familyData.behaviorRisk === 'high'

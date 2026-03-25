@@ -180,8 +180,7 @@ export const generateVillageMap = (width, height, _seed = 42, villageData = null
                                 name: `Kel. ${fam.headName}`,
                                 iksScore: fam.iksScore,
                                 indicators: fam.indicators,
-                                hasJentik: !fam.indicators.jentik,
-                                hasDBCase: _seededRand(fam.id) < 0.05
+                                hasJentik: !fam.indicators.jentik
                             });
                             placed = true;
                         }
