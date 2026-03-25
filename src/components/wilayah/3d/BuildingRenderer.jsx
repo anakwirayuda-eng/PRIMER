@@ -122,7 +122,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
 
     // Fascia (Lisplang Kayu) — wood trim under roof
     const Fascia = ({ yOff = 1.1 }) => (
-        <mesh position={[0, yOff, 0]} scale={[OVH, 0.08, OVH]} geometry={GEO.box} castShadow receiveShadow>
+        <mesh position={[0, yOff, 0]} scale={[OVH, 0.08, OVH]} geometry={GEO.box}>
             <meshStandardMaterial color="#292524" roughness={0.9} />
         </mesh>
     );
@@ -130,10 +130,10 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
     // 🌟 GHIBLI DORMER — small attic window protruding from roof
     const Dormer = ({ yOff = 0.2 }) => (
         <group position={[0, yOff, 0.45]}>
-            <mesh scale={[0.35, 0.35, 0.35]} geometry={GEO.box} castShadow>
+            <mesh scale={[0.35, 0.35, 0.35]} geometry={GEO.box}>
                 <meshPhysicalMaterial color={color} roughness={0.8} />
             </mesh>
-            <mesh position={[0, 0.22, 0]} scale={[0.5, 0.25, 0.5]} rotation={[0, Math.PI / 4, 0]} geometry={GEO.cone} castShadow>
+            <mesh position={[0, 0.22, 0]} scale={[0.5, 0.25, 0.5]} rotation={[0, Math.PI / 4, 0]} geometry={GEO.cone}>
                 <meshStandardMaterial color="#1C1917" roughness={0.9} />
             </mesh>
             <mesh position={[0, 0, 0.18]} scale={[0.18, 0.18, 0.02]} geometry={GEO.box}>
@@ -160,8 +160,8 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
                 <meshPhysicalMaterial color={color} roughness={0.9} flatShading />
             </mesh>
             {/* Nok Kayu (Crossed Ridge) */}
-            <mesh position={[0, 1.55, 0]} scale={[OVH * 1.2, 0.06, 0.06]} geometry={GEO.box} castShadow><meshStandardMaterial color="#451A03" /></mesh>
-            <mesh position={[0, 1.55, 0]} scale={[0.06, 0.06, OVH * 1.2]} geometry={GEO.box} castShadow><meshStandardMaterial color="#451A03" /></mesh>
+            <mesh position={[0, 1.55, 0]} scale={[OVH * 1.2, 0.06, 0.06]} geometry={GEO.box}><meshStandardMaterial color="#451A03" /></mesh>
+            <mesh position={[0, 1.55, 0]} scale={[0.06, 0.06, OVH * 1.2]} geometry={GEO.box}><meshStandardMaterial color="#451A03" /></mesh>
         </group>
     );
 
@@ -202,7 +202,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
                         <meshPhysicalMaterial color={color} roughness={0.8} flatShading clearcoat={0.1} />
                     </mesh>
                     {/* Nok Atap / Ridge Cap */}
-                    <mesh position={[0, 0.35, 0]} scale={[OVH + 0.05, 0.06, 0.06]} geometry={GEO.box} castShadow>
+                    <mesh position={[0, 0.35, 0]} scale={[OVH + 0.05, 0.06, 0.06]} geometry={GEO.box}>
                         <meshStandardMaterial color="#1E293B" roughness={0.9} />
                     </mesh>
                     {r > 0.75 && !isTwoStory && <Dormer yOff={0.15} />}
@@ -220,7 +220,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
                     <meshPhysicalMaterial color={color} roughness={0.8} flatShading clearcoat={0.1} />
                 </mesh>
                 {/* Flat ridge cap on top */}
-                <mesh position={[0, 0.3, 0]} scale={[0.3, 0.06, 0.3]} geometry={GEO.box} castShadow>
+                <mesh position={[0, 0.3, 0]} scale={[0.3, 0.06, 0.3]} geometry={GEO.box}>
                     <meshStandardMaterial color="#1E293B" roughness={0.9} />
                 </mesh>
                 {r > 0.65 && !isTwoStory && <Dormer yOff={0.1} />}
@@ -326,7 +326,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
             <group scale={scale}>
                 <mesh position={[0, 0.05, 0]} receiveShadow><boxGeometry args={[1.2, 0.1, 1.2]} /><meshStandardMaterial color="#475569" /></mesh>
                 {[[-0.3, -0.3], [0.3, -0.3], [-0.3, 0.3], [0.3, 0.3]].map(([lx, lz], i) => (
-                    <mesh key={i} position={[lx, 0.8, lz]} castShadow><cylinderGeometry args={[0.06, 0.06, 1.6]} /><meshStandardMaterial color="#94A3B8" /></mesh>
+                    <mesh key={i} position={[lx, 0.8, lz]}><cylinderGeometry args={[0.06, 0.06, 1.6]} /><meshStandardMaterial color="#94A3B8" /></mesh>
                 ))}
                 <mesh position={[0, 1.8, 0]} castShadow>
                     <cylinderGeometry args={[0.5, 0.5, 0.8, 16]} />
@@ -364,7 +364,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                 </mesh>
                 {/* Random rocks */}
                 {[0.3, -0.25, 0.15].map((offset, i) => (
-                    <mesh key={i} position={[offset * (i % 2 ? -1 : 1), 0.15, (mulberry32(seed + i + 20) - 0.5) * 0.6]} castShadow>
+                    <mesh key={i} position={[offset * (i % 2 ? -1 : 1), 0.15, (mulberry32(seed + i + 20) - 0.5) * 0.6]}>
                         <sphereGeometry args={[0.08 + mulberry32(seed + i + 30) * 0.06, 5, 5]} />
                         <meshStandardMaterial color="#94A3B8" roughness={0.9} />
                     </mesh>
@@ -383,7 +383,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                     <meshStandardMaterial color="#57534e" roughness={1} />
                 </mesh>
                 {/* Water cascade */}
-                <mesh ref={waterfallRef} position={[0, 0.4, 0.15]} castShadow>
+                <mesh ref={waterfallRef} position={[0, 0.4, 0.15]}>
                     <boxGeometry args={[0.5, 0.7, 0.1]} />
                     <meshPhysicalMaterial color="#7DD3FC" roughness={0.05} clearcoat={1} emissive="#38BDF8" emissiveIntensity={0.5} toneMapped={false} />
                 </mesh>
@@ -408,13 +408,13 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                     <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#78350F'} visible={hovered || selected} />
                 </mesh>
                 {/* Railings */}
-                <mesh position={[-0.55, 0.35, 0]} castShadow><boxGeometry args={[0.05, 0.25, 0.8]} /><meshStandardMaterial color="#451A03" /></mesh>
-                <mesh position={[0.55, 0.35, 0]} castShadow><boxGeometry args={[0.05, 0.25, 0.8]} /><meshStandardMaterial color="#451A03" /></mesh>
+                <mesh position={[-0.55, 0.35, 0]}><boxGeometry args={[0.05, 0.25, 0.8]} /><meshStandardMaterial color="#451A03" /></mesh>
+                <mesh position={[0.55, 0.35, 0]}><boxGeometry args={[0.05, 0.25, 0.8]} /><meshStandardMaterial color="#451A03" /></mesh>
                 {/* Support posts */}
-                <mesh position={[-0.4, 0, 0.35]} castShadow><cylinderGeometry args={[0.04, 0.04, 0.5]} /><meshStandardMaterial color="#451A03" /></mesh>
-                <mesh position={[0.4, 0, 0.35]} castShadow><cylinderGeometry args={[0.04, 0.04, 0.5]} /><meshStandardMaterial color="#451A03" /></mesh>
-                <mesh position={[-0.4, 0, -0.35]} castShadow><cylinderGeometry args={[0.04, 0.04, 0.5]} /><meshStandardMaterial color="#451A03" /></mesh>
-                <mesh position={[0.4, 0, -0.35]} castShadow><cylinderGeometry args={[0.04, 0.04, 0.5]} /><meshStandardMaterial color="#451A03" /></mesh>
+                <mesh position={[-0.4, 0, 0.35]}><cylinderGeometry args={[0.04, 0.04, 0.5]} /><meshStandardMaterial color="#451A03" /></mesh>
+                <mesh position={[0.4, 0, 0.35]}><cylinderGeometry args={[0.04, 0.04, 0.5]} /><meshStandardMaterial color="#451A03" /></mesh>
+                <mesh position={[-0.4, 0, -0.35]}><cylinderGeometry args={[0.04, 0.04, 0.5]} /><meshStandardMaterial color="#451A03" /></mesh>
+                <mesh position={[0.4, 0, -0.35]}><cylinderGeometry args={[0.04, 0.04, 0.5]} /><meshStandardMaterial color="#451A03" /></mesh>
             </group>
         </group>
     );
@@ -435,20 +435,20 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                             </mesh>
                             {/* Stepping stones to door */}
                             {!isLShaped && [-0.15, -0.45, -0.75].map((zPos, i) => (
-                                <mesh key={i} position={[0, 0.03, zPos]} castShadow receiveShadow>
+                                <mesh key={i} position={[0, 0.03, zPos]}>
                                     <boxGeometry args={[0.22, 0.02, 0.12]} />
                                     <meshStandardMaterial color="#94A3B8" roughness={0.9} />
                                 </mesh>
                             ))}
                             {/* Asymmetric bushes */}
                             {r > 0.3 && !detectiveActive && (
-                                <mesh position={[-0.6, 0.12, 0.5]} castShadow>
+                                <mesh position={[-0.6, 0.12, 0.5]}>
                                     <sphereGeometry args={[0.18, 6, 6]} />
                                     <meshStandardMaterial color="#15803D" roughness={0.9} flatShading />
                                 </mesh>
                             )}
                             {r > 0.6 && !detectiveActive && (
-                                <mesh position={[0.55, 0.1, -0.5]} castShadow>
+                                <mesh position={[0.55, 0.1, -0.5]}>
                                     <sphereGeometry args={[0.14, 6, 6]} />
                                     <meshStandardMaterial color="#16A34A" roughness={0.9} flatShading />
                                 </mesh>
@@ -503,7 +503,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                             </group>
                             {/* 🌟 GLASS BALCONY — on front dak */}
                             <group position={[0, -0.05, 0.52]}>
-                                <mesh position={[0, 0.1, 0]} scale={[0.8, 0.04, 0.2]} geometry={GEO.box} castShadow>
+                                <mesh position={[0, 0.1, 0]} scale={[0.8, 0.04, 0.2]} geometry={GEO.box}>
                                     <meshStandardMaterial color="#94A3B8" />
                                 </mesh>
                                 <mesh position={[0, 0.22, 0.1]} scale={[0.8, 0.18, 0.02]} geometry={GEO.box}>
@@ -540,16 +540,16 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                             {/* Porch canopy */}
                             {isHouse && (
                                 <>
-                                    <mesh position={[0, 0.65, 0.15]} rotation={[-0.15, 0, 0]} castShadow>
+                                    <mesh position={[0, 0.65, 0.15]} rotation={[-0.15, 0, 0]}>
                                         <boxGeometry args={[0.45, 0.04, 0.3]} />
                                         <meshStandardMaterial color="#78350F" />
                                     </mesh>
                                     {/* Porch columns */}
-                                    <mesh position={[-0.18, 0.35, 0.25]} castShadow>
+                                    <mesh position={[-0.18, 0.35, 0.25]}>
                                         <cylinderGeometry args={[0.02, 0.02, 0.6]} />
                                         <meshStandardMaterial color="#451A03" />
                                     </mesh>
-                                    <mesh position={[0.18, 0.35, 0.25]} castShadow>
+                                    <mesh position={[0.18, 0.35, 0.25]}>
                                         <cylinderGeometry args={[0.02, 0.02, 0.6]} />
                                         <meshStandardMaterial color="#451A03" />
                                     </mesh>
@@ -578,16 +578,16 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                                 <meshPhysicalMaterial color={windowColor} emissive={windowEmissive} emissiveIntensity={isCozy ? 1.5 : 0} transmission={isCozy ? 0 : 0.9} roughness={0.1} toneMapped={false} />
                             </mesh>
                             {/* Window canopy */}
-                            <mesh position={[0, 0.18, 0.04]} rotation={[-0.2, 0, 0]} castShadow>
+                            <mesh position={[0, 0.18, 0.04]} rotation={[-0.2, 0, 0]}>
                                 <boxGeometry args={[0.35, 0.03, 0.12]} />
                                 <meshStandardMaterial color={roofColor} />
                             </mesh>
                             {/* Planter box (60% of houses) */}
                             {r > 0.4 && !detectiveActive && (
                                 <group position={[0, -0.2, 0.05]}>
-                                    <mesh castShadow><boxGeometry args={[0.28, 0.06, 0.1]} /><meshStandardMaterial color="#78350F" roughness={0.9} /></mesh>
-                                    <mesh position={[-0.06, 0.05, 0]} castShadow><sphereGeometry args={[0.06, 5, 5, 0, Math.PI * 2, 0, Math.PI / 2]} /><meshStandardMaterial color="#15803D" roughness={0.9} /></mesh>
-                                    <mesh position={[0.06, 0.04, 0]} castShadow><sphereGeometry args={[0.05, 5, 5, 0, Math.PI * 2, 0, Math.PI / 2]} /><meshStandardMaterial color="#22C55E" roughness={0.9} /></mesh>
+                                    <mesh><boxGeometry args={[0.28, 0.06, 0.1]} /><meshStandardMaterial color="#78350F" roughness={0.9} /></mesh>
+                                    <mesh position={[-0.06, 0.05, 0]}><sphereGeometry args={[0.06, 5, 5, 0, Math.PI * 2, 0, Math.PI / 2]} /><meshStandardMaterial color="#15803D" roughness={0.9} /></mesh>
+                                    <mesh position={[0.06, 0.04, 0]}><sphereGeometry args={[0.05, 5, 5, 0, Math.PI * 2, 0, Math.PI / 2]} /><meshStandardMaterial color="#22C55E" roughness={0.9} /></mesh>
                                 </group>
                             )}
                         </group>
@@ -596,12 +596,12 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                     {/* SCHOOL RIBBON WINDOWS — classroom strip */}
                     {[BUILDING_TYPES.SCHOOL, BUILDING_TYPES.TK].includes(building.type) && (
                         <group position={[0, 0.7, 0.61]}>
-                            <mesh castShadow><boxGeometry args={[1.8, 0.35, 0.03]} /><meshStandardMaterial color={detectiveActive ? '#475569' : '#F8FAFC'} /></mesh>
+                            <mesh><boxGeometry args={[1.8, 0.35, 0.03]} /><meshStandardMaterial color={detectiveActive ? '#475569' : '#F8FAFC'} /></mesh>
                             <mesh position={[0, 0, 0.011]}><boxGeometry args={[1.7, 0.25, 0.02]} /><meshPhysicalMaterial color="#38BDF8" transmission={0.9} roughness={0.1} /></mesh>
                             {/* Divider mullions */}
-                            <mesh position={[-0.5, 0, 0.015]} castShadow><boxGeometry args={[0.03, 0.35, 0.02]} /><meshStandardMaterial color={detectiveActive ? '#475569' : '#F8FAFC'} /></mesh>
-                            <mesh position={[0, 0, 0.015]} castShadow><boxGeometry args={[0.03, 0.35, 0.02]} /><meshStandardMaterial color={detectiveActive ? '#475569' : '#F8FAFC'} /></mesh>
-                            <mesh position={[0.5, 0, 0.015]} castShadow><boxGeometry args={[0.03, 0.35, 0.02]} /><meshStandardMaterial color={detectiveActive ? '#475569' : '#F8FAFC'} /></mesh>
+                            <mesh position={[-0.5, 0, 0.015]}><boxGeometry args={[0.03, 0.35, 0.02]} /><meshStandardMaterial color={detectiveActive ? '#475569' : '#F8FAFC'} /></mesh>
+                            <mesh position={[0, 0, 0.015]}><boxGeometry args={[0.03, 0.35, 0.02]} /><meshStandardMaterial color={detectiveActive ? '#475569' : '#F8FAFC'} /></mesh>
+                            <mesh position={[0.5, 0, 0.015]}><boxGeometry args={[0.03, 0.35, 0.02]} /><meshStandardMaterial color={detectiveActive ? '#475569' : '#F8FAFC'} /></mesh>
                         </group>
                     )}
 
@@ -655,12 +655,12 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                     {/* CLOTHESLINE (30% houses — micro-storytelling) */}
                     {isHouse && r > 0.7 && !detectiveActive && (
                         <group position={[0.8, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-                            <mesh position={[-0.3, 0.3, 0]} castShadow><cylinderGeometry args={[0.015, 0.015, 0.6]} /><meshStandardMaterial color="#94A3B8" /></mesh>
-                            <mesh position={[0.3, 0.3, 0]} castShadow><cylinderGeometry args={[0.015, 0.015, 0.6]} /><meshStandardMaterial color="#94A3B8" /></mesh>
+                            <mesh position={[-0.3, 0.3, 0]}><cylinderGeometry args={[0.015, 0.015, 0.6]} /><meshStandardMaterial color="#94A3B8" /></mesh>
+                            <mesh position={[0.3, 0.3, 0]}><cylinderGeometry args={[0.015, 0.015, 0.6]} /><meshStandardMaterial color="#94A3B8" /></mesh>
                             <mesh position={[0, 0.55, 0]}><boxGeometry args={[0.6, 0.01, 0.01]} /><meshStandardMaterial color="#F8FAFC" /></mesh>
                             <group ref={clothesRef} position={[0, 0.55, 0]}>
-                                <mesh position={[-0.15, -0.15, 0.01]} castShadow><boxGeometry args={[0.15, 0.3, 0.01]} /><meshStandardMaterial color="#F472B6" /></mesh>
-                                <mesh position={[0.15, -0.1, -0.01]} castShadow><boxGeometry args={[0.12, 0.2, 0.01]} /><meshStandardMaterial color="#38BDF8" /></mesh>
+                                <mesh position={[-0.15, -0.15, 0.01]}><boxGeometry args={[0.15, 0.3, 0.01]} /><meshStandardMaterial color="#F472B6" /></mesh>
+                                <mesh position={[0.15, -0.1, -0.01]}><boxGeometry args={[0.12, 0.2, 0.01]} /><meshStandardMaterial color="#38BDF8" /></mesh>
                             </group>
                         </group>
                     )}
@@ -727,11 +727,11 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                         <meshStandardMaterial color="#573312" roughness={1} />
                     </mesh>
                     {/* Black trash bag */}
-                    <mesh rotation={[0, r * Math.PI, 0]} scale={[1, 0.8, 1.2]} geometry={GEO.trash} castShadow>
+                    <mesh rotation={[0, r * Math.PI, 0]} scale={[1, 0.8, 1.2]} geometry={GEO.trash}>
                         <meshStandardMaterial color="#1C1917" roughness={0.6} />
                     </mesh>
                     {/* Cardboard scraps */}
-                    <mesh position={[-0.15, 0.05, 0.15]} rotation={[r, 0, r]} scale={[0.12, 0.08, 0.12]} geometry={GEO.box} castShadow>
+                    <mesh position={[-0.15, 0.05, 0.15]} rotation={[r, 0, r]} scale={[0.12, 0.08, 0.12]} geometry={GEO.box}>
                         <meshStandardMaterial color="#78350F" />
                     </mesh>
                     {/* Buzzing flies (kinetic life particles) */}

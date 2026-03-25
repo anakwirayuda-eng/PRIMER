@@ -393,7 +393,7 @@ export function InstancedTerrain({ mapData }) {
             </group>
 
             {groundData.flowers.max > 0 && (
-                <instancedMesh ref={flowerRef} args={[flowerGeo, null, groundData.flowers.max]} castShadow>
+                <instancedMesh ref={flowerRef} args={[flowerGeo, null, groundData.flowers.max]}>
                     <meshStandardMaterial roughness={0.6} />
                 </instancedMesh>
             )}

@@ -283,7 +283,7 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
                 <Canvas
                     key={canvasKey}
                     shadows="percentage"
-                    dpr={[1, 1.5]}
+                    dpr={1}
                     camera={{ position: [15, 12, 15], fov: 30, far: 150 }}
                     gl={{ antialias: false, powerPreference: 'high-performance', toneMapping: 3 }}
                 >
