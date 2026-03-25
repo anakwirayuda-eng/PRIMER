@@ -72,7 +72,9 @@ export default function MaiaLiveCopilot({ patient, liveMaiaFeedback, historyLeng
 
     const handlePointerDown = useCallback((e) => {
         // Only drag from the orb area
-        e.preventDefault();
+        if (!e.touches && e.cancelable) {
+            e.preventDefault();
+        }
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         dragRef.current = { startX: clientX, startY: clientY, startPosX: pos.x, startPosY: pos.y, moved: false };
@@ -83,6 +85,9 @@ export default function MaiaLiveCopilot({ patient, liveMaiaFeedback, historyLeng
         if (!isDragging) return;
 
         const handleMove = (e) => {
+            if (e.touches && e.cancelable) {
+                e.preventDefault();
+            }
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
             const dx = clientX - dragRef.current.startX;

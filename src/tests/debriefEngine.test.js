@@ -62,4 +62,22 @@ describe('DebriefEngine', () => {
         expect(result.summary.reputation).toBe(92);
         expect(result.summary.reputationDelta).toBe(4);
     });
+
+    it('awards the selected morning priority quest bonus when its target is met', () => {
+        const result = generateDebrief({
+            todayLog: Array.from({ length: 10 }, (_, index) => ({
+                patientName: `Pasien ${index + 1}`,
+                completed: true,
+                diagnosisScore: 100,
+                revenue: 0
+            })),
+            consequenceQueue: [],
+            day: 4,
+            stats: { reputation: 80 },
+            dailyQuestId: 'serve_10'
+        });
+
+        expect(result.summary.overallScore).toBe(100);
+        expect(result.xpEarned).toBe(100);
+    });
 });

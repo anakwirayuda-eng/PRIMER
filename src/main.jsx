@@ -9,10 +9,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { installCrashTrap } from './utils/crashTrap.js'
+import { installConsoleNoiseFilter } from './utils/consoleNoiseFilter.js'
 import './index.css'
 import './i18n'
 import App from './App.jsx'
 
+installConsoleNoiseFilter();
 installCrashTrap();
 
 // 🩺 Psychological deterrent for F12 DevTools visitors

@@ -11,6 +11,7 @@
  */
 
 import { getUpcomingFollowups } from './ConsequenceEngine.js';
+import { generateDailyQuests as generatePriorityQuests } from './MorningBriefing.js';
 
 // ═══════════════════════════════════════════════════════════════
 // PERFORMANCE GRADING
@@ -93,7 +94,7 @@ export function generateDebrief({
 
     // Calculate XP bonus
     const baseXp = Math.round(finalScore * 0.5);
-    const questBonus = dailyQuestId ? 0 : 0; // Will be calculated with actual quest check
+    const questBonus = resolvePriorityQuestBonus(day, dailyQuestId, summary);
 
     // V7 Fix #4: MAIA FORECAST — ominous whisper instead of spoiler details
     const incomingThreats = consequencePreview.filter(c => (c.returnDay - day) <= 2);
@@ -178,6 +179,15 @@ function generateSummary(todayLog, stats, morningReputation, reputation) {
         reputationDelta,
         overallScore,
     };
+}
+
+function resolvePriorityQuestBonus(day, dailyQuestId, summary) {
+    if (!dailyQuestId) return 0;
+
+    const priorityQuest = generatePriorityQuests({ day }).find((quest) => quest.id === dailyQuestId);
+    if (!priorityQuest || typeof priorityQuest.check !== 'function') return 0;
+
+    return priorityQuest.check(summary) ? Math.max(0, Number(priorityQuest.xpBonus) || 0) : 0;
 }
 
 /**

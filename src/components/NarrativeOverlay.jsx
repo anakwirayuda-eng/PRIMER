@@ -25,6 +25,14 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
 
     const currentNode = template.nodes[storyInstance.currentNodeId];
     if (!currentNode) return null;
+    const isActionNode = currentNode.type === 'action';
+    const choiceList = Array.isArray(currentNode.choices) ? currentNode.choices : [];
+    const progressTarget = Math.max(0, Number(currentNode.target) || 0);
+    const progressValue = Math.max(0, Number(storyInstance.progress) || 0);
+    const progressPercent = progressTarget > 0
+        ? Math.min(100, Math.round((progressValue / progressTarget) * 100))
+        : 0;
+    const narrativeText = currentNode.text || currentNode.description || 'Cerita sedang berjalan.';
 
     const handleChoice = (choice) => {
         const requiredFunds = Math.max(0, -(Number(choice?.impact?.balance) || 0));
@@ -77,68 +85,101 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
                             <div className="bg-slate-50 p-6 rounded-2xl rounded-tl-none border border-slate-100 relative shadow-sm">
                                 <div className="absolute top-0 left-[-8px] w-0 h-0 border-t-[8px] border-t-transparent border-r-[8px] border-r-slate-50 border-b-[8px] border-b-transparent"></div>
                                 <p className="text-slate-700 font-medium leading-relaxed text-lg">
-                                    {currentNode.text}
+                                    {narrativeText}
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Choices */}
-                    <div className="space-y-3 mt-8">
-                        <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tentukan Pilihanmu:</h5>
-                        {currentNode.choices.map((choice, idx) => (
-                            (() => {
-                                const requiredFunds = Math.max(0, -(Number(choice?.impact?.balance) || 0));
-                                const cantAfford = requiredFunds > availableFunds;
-                                return (
-                            <button
-                                key={idx}
-                                onClick={() => handleChoice(choice)}
-                                disabled={cantAfford}
-                                className={`w-full group flex items-center justify-between p-4 bg-white border-2 rounded-2xl transition-all text-left shadow-sm active:scale-[0.99] ${
-                                    cantAfford
-                                        ? 'border-slate-100 opacity-60 cursor-not-allowed'
-                                        : 'border-slate-100 hover:border-indigo-600 hover:bg-indigo-50/50 hover:shadow-md'
-                                }`}
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black transition-colors ${
-                                        cantAfford
-                                            ? 'bg-slate-100 text-slate-400'
-                                            : 'bg-slate-100 text-slate-400 group-hover:bg-indigo-600 group-hover:text-white'
-                                    }`}>
-                                        {String.fromCharCode(65 + idx)}
+                    {isActionNode ? (
+                        <div className="space-y-4 mt-8">
+                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Progress Cerita:</h5>
+                            <div className="bg-white border-2 border-slate-100 rounded-2xl p-5 shadow-sm space-y-4">
+                                <div className="flex items-center justify-between gap-4">
+                                    <div>
+                                        <p className="text-sm font-black text-slate-800 uppercase tracking-tight">
+                                            {currentNode.metric?.replace(/_/g, ' ') || 'Tujuan aksi'}
+                                        </p>
+                                        <p className="text-xs text-slate-500 mt-1">
+                                            Cerita akan lanjut otomatis saat target aksi ini selesai.
+                                        </p>
                                     </div>
-                                    <span className="font-bold text-slate-800">{choice.text}</span>
+                                    <div className="text-right shrink-0">
+                                        <p className="text-2xl font-black text-indigo-600">{progressValue} / {progressTarget}</p>
+                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Selesai</p>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    {choice.impact && (
-                                        <div className={`hidden md:flex flex-col items-end transition-opacity ${cantAfford ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                                            {requiredFunds > 0 && (
-                                                <span className={`text-[10px] font-black ${cantAfford ? 'text-rose-600' : 'text-amber-600'}`}>
-                                                    Butuh Rp {requiredFunds.toLocaleString('id-ID')}
-                                                </span>
-                                            )}
-                                            {choice.impact.reputation && (
-                                                <span className={`text-[10px] font-black ${choice.impact.reputation > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                                    {choice.impact.reputation > 0 ? '+' : ''}{choice.impact.reputation} Reputasi
-                                                </span>
-                                            )}
+                                <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all duration-300"
+                                        style={{ width: `${progressPercent}%` }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ) : choiceList.length > 0 ? (
+                        <div className="space-y-3 mt-8">
+                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tentukan Pilihanmu:</h5>
+                            {choiceList.map((choice, idx) => (
+                                (() => {
+                                    const requiredFunds = Math.max(0, -(Number(choice?.impact?.balance) || 0));
+                                    const cantAfford = requiredFunds > availableFunds;
+                                    return (
+                                <button
+                                    key={idx}
+                                    onClick={() => handleChoice(choice)}
+                                    disabled={cantAfford}
+                                    className={`w-full group flex items-center justify-between p-4 bg-white border-2 rounded-2xl transition-all text-left shadow-sm active:scale-[0.99] ${
+                                        cantAfford
+                                            ? 'border-slate-100 opacity-60 cursor-not-allowed'
+                                            : 'border-slate-100 hover:border-indigo-600 hover:bg-indigo-50/50 hover:shadow-md'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black transition-colors ${
+                                            cantAfford
+                                                ? 'bg-slate-100 text-slate-400'
+                                                : 'bg-slate-100 text-slate-400 group-hover:bg-indigo-600 group-hover:text-white'
+                                        }`}>
+                                            {String.fromCharCode(65 + idx)}
                                         </div>
-                                    )}
-                                    <ChevronRight size={18} className={cantAfford ? 'text-slate-300' : 'text-slate-300 group-hover:text-indigo-600 transition-colors'} />
-                                </div>
-                            </button>
-                                );
-                            })()
-                        ))}
-                    </div>
+                                        <span className="font-bold text-slate-800">{choice.text}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        {choice.impact && (
+                                            <div className={`hidden md:flex flex-col items-end transition-opacity ${cantAfford ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                                                {requiredFunds > 0 && (
+                                                    <span className={`text-[10px] font-black ${cantAfford ? 'text-rose-600' : 'text-amber-600'}`}>
+                                                        Butuh Rp {requiredFunds.toLocaleString('id-ID')}
+                                                    </span>
+                                                )}
+                                                {choice.impact.reputation && (
+                                                    <span className={`text-[10px] font-black ${choice.impact.reputation > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                        {choice.impact.reputation > 0 ? '+' : ''}{choice.impact.reputation} Reputasi
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+                                        <ChevronRight size={18} className={cantAfford ? 'text-slate-300' : 'text-slate-300 group-hover:text-indigo-600 transition-colors'} />
+                                    </div>
+                                </button>
+                                    );
+                                })()
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="mt-8 bg-white border-2 border-slate-100 rounded-2xl p-5 shadow-sm">
+                            <p className="text-sm font-medium text-slate-600">
+                                Bagian cerita ini tidak punya pilihan tambahan. Tutup panel untuk melanjutkan permainan.
+                            </p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Footer (Hint) */}
                 <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 text-slate-400 text-[10px] font-bold">
                     <AlertCircle size={14} />
-                    <span>Pilihanmu berpengaruh pada jalannya cerita dan kondisi game.</span>
+                    <span>{isActionNode ? 'Selesaikan target aksi di game untuk melanjutkan cerita ini.' : 'Pilihanmu berpengaruh pada jalannya cerita dan kondisi game.'}</span>
                 </div>
             </div>
         </div>

@@ -27,7 +27,7 @@ import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, determineScena
 import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
 import { applyNeglectDecay } from '../domains/village/NPCReadiness.js';
-import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, getStoryNodeImpact, updateGameProgress } from '../game/QuestEngine.js';
+import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, getStoryNodeImpact, updateGameProgress, generateDailyQuests, generateWeeklyQuests, getWeekFromDay } from '../game/QuestEngine.js';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
 import { normalizeEncounter, normalizeEncounterList } from '../models/EncounterRuntime.js';
@@ -102,14 +102,39 @@ const applyStaffMoraleDecay = (hiredStaff, seedPrefix) => {
     }));
 };
 
-const INITIAL_META_STATE = {
-    activeQuests: [],
-    activeStories: [],
-    isWikiOpen: false,
-    wikiMetric: null,
-    saveVersion: CURRENT_SAVE_VERSION,
-    runtimeTrap: null
+const isMetaRecord = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+
+const createSeededQuestRoster = (day = INITIAL_TIME_STATE.day) => {
+    const safeDay = Math.max(1, Math.trunc(Number(day) || INITIAL_TIME_STATE.day));
+    return [
+        ...generateDailyQuests(safeDay),
+        ...generateWeeklyQuests(getWeekFromDay(safeDay))
+    ];
 };
+
+const syncQuestRoster = (quests, day = INITIAL_TIME_STATE.day) => {
+    const safeDay = Math.max(1, Math.trunc(Number(day) || INITIAL_TIME_STATE.day));
+    const safeWeek = getWeekFromDay(safeDay);
+    const questList = Array.isArray(quests) ? quests.filter(isMetaRecord) : [];
+    const currentDaily = questList.filter((quest) => quest.type === 'daily' && quest.assignedDay === safeDay);
+    const currentWeekly = questList.filter((quest) => quest.type === 'weekly' && quest.assignedWeek === safeWeek);
+
+    return [
+        ...(currentDaily.length > 0 ? currentDaily : generateDailyQuests(safeDay)),
+        ...(currentWeekly.length > 0 ? currentWeekly : generateWeeklyQuests(safeWeek))
+    ];
+};
+
+function createInitialMetaState(day = INITIAL_TIME_STATE.day) {
+    return {
+        activeQuests: createSeededQuestRoster(day),
+        activeStories: [],
+        isWikiOpen: false,
+        wikiMetric: null,
+        saveVersion: CURRENT_SAVE_VERSION,
+        runtimeTrap: null
+    };
+}
 
 const INITIAL_FINANCE_STATS = {
     kapitasi: 50000000,
@@ -714,6 +739,30 @@ const mergePersistedClinical = (clinical, currentClinical) => {
     };
 };
 
+const mergePersistedMeta = (meta, currentMeta, day = INITIAL_TIME_STATE.day) => {
+    const safeDay = Math.max(1, Math.trunc(Number(day) || INITIAL_TIME_STATE.day));
+    const baseMeta = createInitialMetaState(safeDay);
+    const fallbackMeta = isMetaRecord(currentMeta) ? currentMeta : baseMeta;
+    const safeMeta = isMetaRecord(meta) ? meta : {};
+    const questSource = Array.isArray(safeMeta.activeQuests) ? safeMeta.activeQuests : fallbackMeta.activeQuests;
+
+    return {
+        ...baseMeta,
+        ...fallbackMeta,
+        ...safeMeta,
+        activeQuests: syncQuestRoster(questSource, safeDay),
+        activeStories: Array.isArray(safeMeta.activeStories)
+            ? safeMeta.activeStories
+            : Array.isArray(fallbackMeta.activeStories)
+                ? fallbackMeta.activeStories
+                : [],
+        isWikiOpen: false,
+        wikiMetric: null,
+        saveVersion: Number.isInteger(safeMeta.saveVersion) ? safeMeta.saveVersion : CURRENT_SAVE_VERSION,
+        runtimeTrap: null
+    };
+};
+
 const buildManualSaveSnapshot = (state) => parseSavePayload({
     saveVersion: CURRENT_SAVE_VERSION,
     savedAt: Date.now(),
@@ -725,7 +774,12 @@ const buildManualSaveSnapshot = (state) => parseSavePayload({
     finance: mergePersistedFinance(state.finance, createInitialFinanceState()),
     publicHealth: mergePersistedPublicHealth(state.publicHealth, createInitialPublicHealthState()),
     staff: mergePersistedStaff(state.staff, createInitialStaffState()),
-    clinical: mergePersistedClinical(state.clinical, createInitialClinicalState())
+    clinical: mergePersistedClinical(state.clinical, createInitialClinicalState()),
+    meta: mergePersistedMeta(
+        { ...state.meta, saveVersion: CURRENT_SAVE_VERSION },
+        createInitialMetaState(state.world?.day),
+        state.world?.day
+    )
 });
 
 const ACTION_GROUP_NAMES = [
@@ -3074,7 +3128,7 @@ export const useGameStore = create(
                 },
 
                 // --- SLICE: META (Quests, Stories, Wiki) ---
-                meta: INITIAL_META_STATE,
+                meta: createInitialMetaState(INITIAL_TIME_STATE.day),
                 metaActions: {
                     setMeta: (meta) => set((s) => ({ meta: { ...s.meta, ...meta } })),
 
@@ -3185,7 +3239,7 @@ export const useGameStore = create(
                     openWiki: (key) => set((s) => ({ meta: { ...s.meta, isWikiOpen: true, wikiMetric: key } })),
                     closeWiki: () => set((s) => ({ meta: { ...s.meta, isWikiOpen: false } })),
 
-                    resetMeta: () => set({ meta: INITIAL_META_STATE })
+                    resetMeta: () => set({ meta: createInitialMetaState(get().world.day) })
                 },
 
                 // --- ORCHESTRATION ACTIONS ---
@@ -3244,7 +3298,14 @@ export const useGameStore = create(
                                     s.staff = mergePersistedStaff(normalizedSave.staff, s.staff);
                                 }
 
-                                s.meta = { ...INITIAL_META_STATE, saveVersion: normalizedSave.saveVersion || CURRENT_SAVE_VERSION };
+                                s.meta = mergePersistedMeta(
+                                    {
+                                        ...(normalizedSave.meta || {}),
+                                        saveVersion: normalizedSave.saveVersion || CURRENT_SAVE_VERSION
+                                    },
+                                    s.meta,
+                                    s.world.day
+                                );
                                 s.clinical.gameOver = null;
                                 s.world.isPaused = false;
                                 s.clinical = reconcileClinicalReferralLog(s.clinical, s.world);
@@ -3495,6 +3556,11 @@ export const useGameStore = create(
                             // 5. Advance Time
                             state.world.day = nextDayVal;
                             state.world.time = 480;
+                            state.meta.activeQuests = syncQuestRoster(state.meta.activeQuests, nextDayVal);
+                            state.meta.saveVersion = CURRENT_SAVE_VERSION;
+                            state.meta.isWikiOpen = false;
+                            state.meta.wikiMetric = null;
+                            state.meta.runtimeTrap = null;
                             state.clinical.busyAmbulanceIds = state.clinical.busyAmbulanceIds.filter(
                                 item => isAmbulanceStillBusy(item, nextDayVal, 480)
                             );
@@ -3539,7 +3605,7 @@ export const useGameStore = create(
                         publicHealth: createInitialPublicHealthState(),
                         staff: createInitialStaffState(),
                         clinical: createInitialClinicalState(),
-                        meta: INITIAL_META_STATE,
+                        meta: createInitialMetaState(INITIAL_TIME_STATE.day),
                     })),
                 }
             };
@@ -3556,6 +3622,9 @@ export const useGameStore = create(
                     const mergedClinical = nextState.clinical
                         ? mergePersistedClinical(nextState.clinical, currentState.clinical)
                         : currentState.clinical;
+                    const mergedMeta = nextState.meta
+                        ? mergePersistedMeta(nextState.meta, currentState.meta, mergedWorld.day)
+                        : mergePersistedMeta(currentState.meta, currentState.meta, mergedWorld.day);
 
                     return {
                         ...currentState,
@@ -3580,12 +3649,18 @@ export const useGameStore = create(
                         staff: nextState.staff
                             ? mergePersistedStaff(nextState.staff, currentState.staff)
                             : currentState.staff,
-                        clinical: reconcileClinicalReferralLog(mergedClinical, mergedWorld)
+                        clinical: reconcileClinicalReferralLog(mergedClinical, mergedWorld),
+                        meta: mergedMeta
                     };
                 },
                 partialize: (state) => {
                     const normalizedWorld = normalizePersistedWorld(state.world);
                     const mergedClinical = mergePersistedClinical(state.clinical, createInitialClinicalState());
+                    const mergedMeta = mergePersistedMeta(
+                        { ...state.meta, saveVersion: CURRENT_SAVE_VERSION },
+                        createInitialMetaState(normalizedWorld.day),
+                        normalizedWorld.day
+                    );
 
                     return {
                         world: normalizedWorld,
@@ -3596,7 +3671,8 @@ export const useGameStore = create(
                         finance: mergePersistedFinance(state.finance, createInitialFinanceState()),
                         publicHealth: mergePersistedPublicHealth(state.publicHealth, createInitialPublicHealthState()),
                         staff: mergePersistedStaff(state.staff, createInitialStaffState()),
-                        clinical: reconcileClinicalReferralLog(mergedClinical, normalizedWorld)
+                        clinical: reconcileClinicalReferralLog(mergedClinical, normalizedWorld),
+                        meta: mergedMeta
                     };
                 },
             }

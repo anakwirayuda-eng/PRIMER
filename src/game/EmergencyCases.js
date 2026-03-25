@@ -129,6 +129,11 @@ export function calculateEmergencyBill(actionsPerformed = [], caseData = null, i
     if (caseData?.billingItems) {
         const bi = caseData.billingItems;
         const tindakanCost = (bi.tindakan || []).reduce((sum, t) => sum + (t.cost || 0), 0);
+        const tindakanItems = (bi.tindakan || []).map(item => ({
+            name: item.name || item.code || 'Tindakan IGD',
+            qty: 1,
+            cost: item.cost || 0
+        }));
         const obatItems = (bi.obat || []).map(item => {
             const med = getMedicationById(item.medId);
             return { name: med?.name || item.medId, qty: item.qty || 1, cost: (med?.sellPrice || 0) * (item.qty || 1), buyPrice: (med?.buyPrice || 0) * (item.qty || 1) };
@@ -136,13 +141,18 @@ export function calculateEmergencyBill(actionsPerformed = [], caseData = null, i
         const alkesItems = (bi.alkes || []).map(item => ({
             name: item.name || item.id, qty: item.qty || 1, cost: (item.unitCost || 0) * (item.qty || 1), buyPrice: (item.unitCost || 0) * (item.qty || 1)
         }));
+        const actionDetails = [
+            ...tindakanItems.map(item => ({ name: item.name, cost: item.cost })),
+            ...obatItems.map(item => ({ name: item.qty > 1 ? `${item.name} x${item.qty}` : item.name, cost: item.cost })),
+            ...alkesItems.map(item => ({ name: item.qty > 1 ? `${item.name} x${item.qty}` : item.name, cost: item.cost }))
+        ];
         const obatCost = obatItems.reduce((s, i) => s + i.cost, 0);
         const alkesCost = alkesItems.reduce((s, i) => s + i.cost, 0);
         const subtotal = pendaftaran + jasaMedis + tindakanCost + obatCost + alkesCost;
         const buyPriceTotal = obatItems.reduce((s, i) => s + i.buyPrice, 0) + alkesItems.reduce((s, i) => s + i.buyPrice, 0);
         const isEmergency = triageLevel <= 2;
         const finalBill = isBPJS ? (isEmergency ? 0 : subtotal) : subtotal;
-        return { pendaftaran, jasaMedis, total: subtotal, buyPriceTotal, isCovered: isBPJS && isEmergency, coverageType: isBPJS ? (isEmergency ? 'BPJS (Covered)' : 'BPJS (REJECTED)') : 'Umum', finalBill };
+        return { pendaftaran, jasaMedis, actionDetails, total: subtotal, buyPriceTotal, isCovered: isBPJS && isEmergency, coverageType: isBPJS ? (isEmergency ? 'BPJS (Covered)' : 'BPJS (REJECTED)') : 'Umum', finalBill };
     }
 
     // Fallback: action-based billing (legacy)

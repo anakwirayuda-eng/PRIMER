@@ -25,6 +25,7 @@ import { safeSetStorageItem } from '../utils/browserSafety.js';
 import { parseSavePayload } from '../utils/savePayload.js';
 import { MEDICATION_DATABASE } from '../data/MedicationDatabase.js';
 import { calculateGlobalBuffs } from '../game/GameCore.js';
+import { generateDailyQuests, generateWeeklyQuests, getWeekFromDay } from '../game/QuestEngine.js';
 import { normalizeInventoryList } from '../models/InventoryRuntime.js';
 import { clearStability } from '../utils/prophylaxis.js';
 
@@ -171,7 +172,23 @@ describe('store prophylaxis', () => {
         expect(state.nav.gameState).toBe('playing');
     });
 
-    it('resets navigation and volatile meta state before loading another slot', () => {
+    it('restores persisted quest/story meta while clearing volatile wiki state before loading another slot', () => {
+        const [dailyQuest] = generateDailyQuests(4);
+        const [weeklyQuest] = generateWeeklyQuests(getWeekFromDay(4));
+        const savedQuests = [
+            { ...dailyQuest, progress: 2 },
+            { ...weeklyQuest, progress: 5 }
+        ];
+        const savedStory = {
+            instanceId: 'story-loaded',
+            templateId: 'cikapas_hysteria',
+            currentNodeId: 'team_sent',
+            progress: 1,
+            completed: false,
+            claimed: false,
+            data: {}
+        };
+
         useGameStore.setState(state => ({
             nav: {
                 ...state.nav,
@@ -201,6 +218,10 @@ describe('store prophylaxis', () => {
                 world: {
                     day: 4,
                     time: 600
+                },
+                meta: {
+                    activeQuests: savedQuests,
+                    activeStories: [savedStory]
                 }
             }, 2);
         });
@@ -215,10 +236,53 @@ describe('store prophylaxis', () => {
         expect(state.nav.showKPIGlobal).toBe(false);
         expect(state.nav.sidebarCollapsed).toBe(true);
         expect(state.nav.settings.volume).toBe(0.4);
-        expect(state.meta.activeQuests).toEqual([]);
-        expect(state.meta.activeStories).toEqual([]);
+        expect(state.meta.activeQuests).toEqual(savedQuests);
+        expect(state.meta.activeStories).toEqual([savedStory]);
         expect(state.meta.isWikiOpen).toBe(false);
         expect(state.meta.wikiMetric).toBeNull();
+    });
+
+    it('refreshes daily quests on nextDay while preserving weekly quest progress in the same week', () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-01-02T00:00:00Z'));
+
+        const day = 2;
+        const nextDay = day + 1;
+        const [dailyQuest] = generateDailyQuests(day);
+        const [weeklyQuest] = generateWeeklyQuests(getWeekFromDay(day));
+
+        useGameStore.setState(state => ({
+            nav: { ...state.nav, currentSlotId: 0, gameState: 'playing' },
+            world: { ...state.world, day, time: 1439, isPaused: false },
+            meta: {
+                ...state.meta,
+                activeQuests: [
+                    { ...dailyQuest, progress: 1, completed: false, claimed: false },
+                    { ...weeklyQuest, progress: 6, completed: false, claimed: false }
+                ]
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().actions.nextDay(day);
+        });
+
+        const quests = useGameStore.getState().meta.activeQuests;
+        const nextDayDailies = quests.filter((quest) => quest.type === 'daily');
+        const sameWeekWeeklies = quests.filter((quest) => quest.type === 'weekly');
+
+        expect(nextDayDailies.length).toBeGreaterThan(0);
+        expect(nextDayDailies.every((quest) => quest.assignedDay === nextDay)).toBe(true);
+        expect(sameWeekWeeklies).toHaveLength(1);
+        expect(sameWeekWeeklies[0]).toMatchObject({
+            id: weeklyQuest.id,
+            assignedWeek: getWeekFromDay(day),
+            progress: 6
+        });
+
+        act(() => {
+            vi.runAllTimers();
+        });
     });
 
     it('loads manual save slots through the persisted clinical merge contract', () => {
@@ -1093,6 +1157,55 @@ describe('store prophylaxis', () => {
         expect(player.xp).toBe(0);
         expect(buffs.accuracyBonus).toBe(5);
         expect(buffs.stressReduction).toBe(2);
+    });
+
+    it('round-trips active quest and story meta through persist hydration', () => {
+        const { partialize, merge } = useGameStore.persist.getOptions();
+        const initialState = useGameStore.getInitialState();
+        const [dailyQuest] = generateDailyQuests(8);
+        const [weeklyQuest] = generateWeeklyQuests(getWeekFromDay(8));
+        const story = {
+            instanceId: 'story-persisted',
+            templateId: 'mdr_tb_detection',
+            currentNodeId: 'tcm_referral',
+            progress: 1,
+            completed: false,
+            claimed: false,
+            data: {}
+        };
+
+        const snapshot = partialize({
+            ...initialState,
+            world: {
+                ...initialState.world,
+                day: 8,
+                time: 660
+            },
+            meta: {
+                ...initialState.meta,
+                activeQuests: [
+                    { ...dailyQuest, progress: 2 },
+                    { ...weeklyQuest, progress: 4 }
+                ],
+                activeStories: [story],
+                isWikiOpen: true,
+                wikiMetric: 'story'
+            }
+        });
+
+        expect(snapshot.meta.isWikiOpen).toBe(false);
+        expect(snapshot.meta.wikiMetric).toBeNull();
+        expect(snapshot.meta.activeStories).toEqual([story]);
+
+        const hydrated = merge(snapshot, initialState);
+
+        expect(hydrated.meta.activeQuests).toEqual([
+            { ...dailyQuest, progress: 2 },
+            { ...weeklyQuest, progress: 4 }
+        ]);
+        expect(hydrated.meta.activeStories).toEqual([story]);
+        expect(hydrated.meta.isWikiOpen).toBe(false);
+        expect(hydrated.meta.wikiMetric).toBeNull();
     });
 
     it('normalizes malformed world state during persist.merge', () => {

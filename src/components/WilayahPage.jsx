@@ -15,7 +15,7 @@ import { useGame } from '../context/GameContext.jsx';
 import { useGameStore } from '../store/useGameStore.js';
 import { useShallow } from 'zustand/react/shallow';
 import {
-    Map, Home as HomeIcon, Users, Activity,
+    Map as MapIcon, Home as HomeIcon, Users, Activity,
     Layers, Search, X, Bug, BookOpen,
     Plus, Minus, Minimize, Check, Heart,
     Footprints, Building
@@ -89,7 +89,7 @@ export default function WilayahPage() {
     const energy = Math.max(0, Math.floor(Number(playerStats?.energy) || 0));
 
     const [selectedBuilding, setSelectedBuilding] = useState(null);
-    const [viewMode, setViewMode] = useState('map');
+    const [viewMode, setViewMode] = useState('satelite');
     const [activeLayer, setActiveLayer] = useState('general');
     const [homeVisitModal, setHomeVisitModal] = useState(null);
     const [showRiskOnly, setShowRiskOnly] = useState(false);
@@ -253,7 +253,7 @@ export default function WilayahPage() {
             <ErrorBoundary>
                 <div className="relative w-full h-screen overflow-hidden bg-[#0a0f0d] flex items-center justify-center">
                     <div className="text-center space-y-4 animate-pulse">
-                        <Map className="mx-auto text-emerald-500/40" size={48} />
+                        <MapIcon className="mx-auto text-emerald-500/40" size={48} />
                         <p className="text-white/40 text-sm font-black uppercase tracking-widest">Memuat Peta Wilayah...</p>
                     </div>
                 </div>
@@ -385,7 +385,7 @@ export default function WilayahPage() {
                             </button>
                             <div>
                                 <h2 className="text-sm font-black text-white/90 tracking-tight flex items-center gap-2">
-                                    <Map className="text-emerald-400" size={16} />
+                                    <MapIcon className="text-emerald-400" size={16} />
                                     Wilayah Kerja Puskesmas
                                 </h2>
                                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">
@@ -448,6 +448,7 @@ export default function WilayahPage() {
                         </div>
                     </div>
                 </div>
+
 
                 {/* ═══════════════════════════════════════════════════
                     LAYER 2: BOTTOM HUD BAR (transparent toolbar)

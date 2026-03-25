@@ -834,6 +834,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                     performedActions,
                                     triageSelection || patient.triageLevel
                                 );
+                                const actionDetails = Array.isArray(bill.actionDetails) ? bill.actionDetails : [];
                                 return (
                                     <div className="space-y-1.5 font-mono text-xs">
                                         <div className="flex justify-between border-b border-white/10 pb-1">
@@ -844,7 +845,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                             <span className="text-slate-400">Jasa Medis</span>
                                             <span>Rp {bill.jasaMedis.toLocaleString()}</span>
                                         </div>
-                                        {bill.actionDetails.length > 0 && bill.actionDetails.map((a, idx) => (
+                                        {actionDetails.length > 0 && actionDetails.map((a, idx) => (
                                             <div key={idx} className="flex justify-between text-[10px] opacity-80">
                                                 <span className="truncate pr-4">• {a.name}</span>
                                                 <span>Rp {a.cost.toLocaleString()}</span>

@@ -52,6 +52,12 @@ const StaffSliceSchema = z.object({
     hiredStaff: z.array(z.unknown()).optional()
 }).passthrough();
 
+const MetaSliceSchema = z.object({
+    activeQuests: z.array(z.unknown()).optional(),
+    activeStories: z.array(z.unknown()).optional(),
+    saveVersion: z.number().int().nonnegative().optional()
+}).passthrough();
+
 export const SavePayloadSchema = z.object({
     saveVersion: z.number().int().nonnegative().optional(),
     savedAt: finiteNumber.optional(),
@@ -60,7 +66,8 @@ export const SavePayloadSchema = z.object({
     finance: FinanceSliceSchema.nullable().optional(),
     clinical: ClinicalSliceSchema.nullable().optional(),
     publicHealth: PublicHealthSliceSchema.nullable().optional(),
-    staff: StaffSliceSchema.nullable().optional()
+    staff: StaffSliceSchema.nullable().optional(),
+    meta: MetaSliceSchema.nullable().optional()
 }).passthrough();
 
 function isPlainObject(value) {
@@ -229,6 +236,7 @@ export function createSaveSnapshot(state) {
         clinical: sanitizeSnapshotClinical(state.clinical),
         publicHealth: state.publicHealth,
         staff: state.staff,
+        meta: state.meta,
         savedAt: Date.now()
     });
 }

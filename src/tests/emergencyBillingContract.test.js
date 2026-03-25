@@ -27,6 +27,9 @@ describe('emergency billing contract', () => {
         expect(viaPatient).toEqual(direct);
         expect(viaPatient.isCovered).toBe(true);
         expect(viaPatient.finalBill).toBe(0);
+        expect(viaPatient.actionDetails).toEqual([
+            { name: 'Anti-HT IV', cost: 100000 }
+        ]);
     });
 
     it('falls back to the authored emergency registry case via hidden.diseaseId', () => {
@@ -44,5 +47,6 @@ describe('emergency billing contract', () => {
         expect(bill.total).toBeGreaterThan(50000);
         expect(bill.isCovered).toBe(true);
         expect(bill.finalBill).toBe(0);
+        expect(Array.isArray(bill.actionDetails)).toBe(true);
     });
 });
