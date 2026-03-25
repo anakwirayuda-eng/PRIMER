@@ -332,8 +332,11 @@ function SampleAnamnesis({ patient }) {
 }
 
 // Emergency Patient EMR View (detailed view when admitted)
-export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDischarge }) {
-    const { delegateEmergencyToMaia, openWiki } = useGame();
+export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDischarge, time }) {
+    const gameCtx = useGame();
+    const { delegateEmergencyToMaia, openWiki } = gameCtx;
+    // Fallback time from game context if not passed as prop
+    const resolvedTime = time ?? gameCtx.time ?? 0;
     const [triageSelection, setTriageSelection] = useState(null);
     const [triageValidation, setTriageValidation] = useState(null);
     const [performedActions, setPerformedActions] = useState([]);
@@ -342,6 +345,15 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
     const [isResuscitating, setIsResuscitating] = useState(false);
     const [resuscitationAttempts, setResuscitationAttempts] = useState(0);
     const MAX_RESUS_ATTEMPTS = 2;
+
+    // Guard: patient may be undefined if queue desyncs from activeEmergencyId
+    if (!patient) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full p-8 text-slate-400">
+                <p className="text-sm">Pasien tidak ditemukan di antrian IGD.</p>
+            </div>
+        );
+    }
 
     // 💥 Dynamic Vitals — recalculates reactively when actions are toggled
     const baseVitals = patient.medicalData?.vitals || {};
@@ -480,7 +492,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
     // 🚑 SISRUTE LIMBO: Read-only view while waiting for ambulance
     if (patient.status === 'sisrute_limbo') {
         const sd = patient.sisruteData || {};
-        const etaMinutes = sd.estimatedArrival ? Math.max(0, sd.estimatedArrival - time) : 0;
+        const etaMinutes = sd.estimatedArrival ? Math.max(0, sd.estimatedArrival - resolvedTime) : 0;
         return (
             <div className="p-6 h-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-slate-50 dark:from-blue-950/30 dark:to-slate-950/30 rounded-lg border-2 border-blue-300 dark:border-blue-800 text-center space-y-4">
                 <Truck size={48} className="text-blue-500 animate-bounce" />

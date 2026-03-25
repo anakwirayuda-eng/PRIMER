@@ -19,7 +19,7 @@ installCrashTrap();
 
 // 🩺 Psychological deterrent for F12 DevTools visitors
 console.log(
-  "%c🩺 PERINGATAN KOMITE ETIK RUMAH SAKIT",
+  "%c🩺 PERINGATAN KOMITE ETIK LAYANAN PRIMER",
   "color: red; font-size: 20px; font-weight: bold;"
 );
 console.log(
