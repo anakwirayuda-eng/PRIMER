@@ -12,22 +12,16 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext.jsx';
 import { CreditCard, Wallet, TrendingUp, History } from 'lucide-react';
+import { buildPersonalBankSnapshot } from '../../utils/financeDisplay.js';
 
 const BankApp = () => {
     const { stats, playerStats, monthlyArchive } = useGame();
 
-    const monthlySalary = 4500000; // Basic salary
-    const latestMonthlyReport = Array.isArray(monthlyArchive) && monthlyArchive.length > 0
-        ? monthlyArchive[monthlyArchive.length - 1]
-        : null;
-    const jasaPelayananBase = Number(
-        stats?.pendapatanJkn
-        ?? stats?.currentCycleReceipts
-        ?? latestMonthlyReport?.serviceRevenue
-        ?? 0
-    );
-    const jasaPelayanan = Math.floor(jasaPelayananBase * 0.4); // 40% of explicit cycle receipts
-    const personalSavings = Math.max(0, monthlySalary + jasaPelayanan - 15000);
+    const {
+        monthlySalary,
+        jasaPelayanan,
+        personalSavings
+    } = buildPersonalBankSnapshot(stats, monthlyArchive);
 
     return (
         <div className="p-4 bg-blue-50 h-full">
@@ -38,13 +32,13 @@ const BankApp = () => {
                 </div>
                 <div className="relative z-10">
                     <div className="text-sm opacity-80 mb-1">Bank Desa Syariah</div>
-                    <div className="text-[10px] uppercase tracking-[0.25em] opacity-70 mb-1">Estimasi Rekening Pribadi</div>
+                    <div className="text-[10px] uppercase tracking-[0.25em] opacity-70 mb-1">Simulasi Rekening Pribadi</div>
                     <div className="text-2xl font-bold mb-4">Rp {personalSavings.toLocaleString('id-ID')}</div>
                     <div className="flex justify-between items-end">
                         <div className="text-xs font-mono opacity-75">**** **** **** 8899</div>
                         <div className="text-xs">Dr. {playerStats.name || 'Dokter'}</div>
                     </div>
-                    <div className="mt-3 text-[10px] opacity-75">Dana klinik tetap dihitung terpisah di dashboard operasional.</div>
+                    <div className="mt-3 text-[10px] opacity-75">Hanya estimasi dana pribadi. Dana aktif klinik tetap terpisah di dashboard operasional.</div>
                 </div>
             </div>
 
@@ -68,14 +62,14 @@ const BankApp = () => {
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="p-3 border-b border-slate-100 flex justify-between items-center">
                     <div>
-                        <div className="font-bold text-xs text-slate-700">Transfer Masuk (Gaji)</div>
+                        <div className="font-bold text-xs text-slate-700">Transfer Masuk (Gaji Pokok)</div>
                         <div className="text-[10px] text-slate-400">01 Jan 2026</div>
                     </div>
                     <div className="text-green-600 font-bold text-sm">+Rp {monthlySalary.toLocaleString('id-ID')}</div>
                 </div>
                 <div className="p-3 border-b border-slate-100 flex justify-between items-center">
                     <div>
-                        <div className="font-bold text-xs text-slate-700">Jasa Pelayanan (Jaspel)</div>
+                        <div className="font-bold text-xs text-slate-700">Estimasi Jasa Pelayanan</div>
                         <div className="text-[10px] text-slate-400">15 Jan 2026</div>
                     </div>
                     <div className="text-green-600 font-bold text-sm">+Rp {jasaPelayanan.toLocaleString('id-ID')}</div>

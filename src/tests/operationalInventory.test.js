@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { summarizeOperationalInventory } from '../utils/operationalInventory.js';
+import { buildOperationalInventoryWikiStats, summarizeOperationalInventory } from '../utils/operationalInventory.js';
 
 describe('operationalInventory', () => {
     it('excludes equipment and pseudo-items from operational stock summaries', () => {
@@ -19,5 +19,16 @@ describe('operationalInventory', () => {
         expect(summary.stockItems.map((item) => item.medicationId)).not.toEqual(
             expect.arrayContaining(['otoscope', 'bed_rest'])
         );
+    });
+
+    it('builds shell-level wiki stats from operational stock only', () => {
+        expect(buildOperationalInventoryWikiStats([
+            { medicationId: 'amoxicillin_500', stock: 0 },
+            { medicationId: 'amlodipine_5', stock: 5 },
+            { medicationId: 'otoscope', stock: 0 }
+        ])).toEqual({
+            'Total Item': 2,
+            'Stok Habis': 1
+        });
     });
 });

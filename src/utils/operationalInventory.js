@@ -24,3 +24,11 @@ export function summarizeOperationalInventory(pharmacyInventory = []) {
         outOfStock
     };
 }
+
+export function buildOperationalInventoryWikiStats(pharmacyInventory = []) {
+    const { totalItems, outOfStock } = summarizeOperationalInventory(pharmacyInventory);
+    return {
+        'Total Item': totalItems,
+        'Stok Habis': outOfStock
+    };
+}

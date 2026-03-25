@@ -67,7 +67,8 @@ describe('BankApp', () => {
         render(<BankApp />);
 
         expect(screen.getByText('Rp 4.485.000')).toBeInTheDocument();
-        expect(screen.getByText(/Dana klinik tetap dihitung terpisah/i)).toBeInTheDocument();
+        expect(screen.getByText(/Hanya estimasi dana pribadi/i)).toBeInTheDocument();
+        expect(screen.getByText(/Estimasi Jasa Pelayanan/i)).toBeInTheDocument();
         expect(screen.queryByText('Rp 90.000.000')).not.toBeInTheDocument();
     });
 });
