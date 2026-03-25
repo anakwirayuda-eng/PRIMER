@@ -83,7 +83,7 @@ describe('IKM public health actions', () => {
         expect(useGameStore.getState().publicHealth.activeIKMEvents[0].impactAccumulated.balance).toBe(0);
     });
 
-    it('applies village IKS improvement and outbreak protection when an IKM event resolves successfully', () => {
+    it('applies village IKS improvement, outbreak protection, and writes an audit trail when an IKM event resolves successfully', () => {
         const scenario = getScenarioById('bab_sembarangan');
         const event = advanceEventPhase(createEventInstance(scenario, 1), 'resolution_success');
 
@@ -110,10 +110,18 @@ describe('IKM public health actions', () => {
 
         const state = useGameStore.getState();
         const family = state.publicHealth.villageData.families[0];
+        const historyEntry = state.clinical.history.at(-1);
 
         expect(state.publicHealth.activeIKMEvents).toHaveLength(0);
         expect(family.iksScore).toBeGreaterThan(0.77);
         expect(family.indicators.air || family.indicators.jamban).toBe(true);
         expect(state.publicHealth.outbreakRiskModifiers.protectedUntil.diare).toBeGreaterThanOrEqual(8);
+        expect(historyEntry).toEqual(expect.objectContaining({
+            type: 'ikm_event',
+            outcomeStatus: 'ikm_success',
+            name: scenario.title
+        }));
+        expect(historyEntry.description).toContain('IKS +5');
+        expect(historyEntry.description).toContain('Risiko diare turun');
     });
 });

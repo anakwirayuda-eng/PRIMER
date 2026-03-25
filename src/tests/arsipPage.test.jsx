@@ -68,4 +68,33 @@ describe('ArsipPage daily log semantics', () => {
         expect(screen.getAllByText('RUJUK').length).toBeGreaterThan(0);
         expect(screen.getByText('Rujuk SISRUTE')).toBeInTheDocument();
     });
+
+    it('shows resolved IKM events in the daily archive with impact summary', () => {
+        mockUseGame.mockReturnValue({
+            history: [
+                {
+                    id: 'ikm-1',
+                    type: 'ikm_event',
+                    day: 6,
+                    dischargedAt: 600,
+                    name: 'BAB Sembarangan di Sungai',
+                    outcomeStatus: 'ikm_success',
+                    description: 'Biaya Rp 300.000 • IKS +5 • Risiko diare turun'
+                }
+            ],
+            villageData: { families: [] },
+            day: 6,
+            viewParams: null,
+            navigate: vi.fn()
+        });
+
+        render(<ArsipPage />);
+
+        fireEvent.click(screen.getByRole('button', { name: /log kunjungan harian/i }));
+
+        expect(screen.getAllByText('IKM').length).toBeGreaterThan(0);
+        expect(screen.getByText('Berhasil')).toBeInTheDocument();
+        expect(screen.getByText('BAB Sembarangan di Sungai')).toBeInTheDocument();
+        expect(screen.getByText('Biaya Rp 300.000 • IKS +5 • Risiko diare turun')).toBeInTheDocument();
+    });
 });

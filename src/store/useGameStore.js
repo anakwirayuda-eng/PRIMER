@@ -23,7 +23,7 @@ import { getPatientSpikeMultiplier } from '../domains/community/OutbreakSystem.j
 import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateGenericPatients, generateProlanisVisitPatient } from '../game/PatientGenerator.js';
 import { getScheduledFollowups, clearProcessedFollowups } from '../game/ConsequenceEngine.js';
 import { checkLevelUp, getNextLevelXp } from '../utils/LevelingSystem.js';
-import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
+import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, determineScenarioOutcomeKey, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
 import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
 import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGameProgress } from '../game/QuestEngine.js';
@@ -34,6 +34,7 @@ import { normalizeInventoryList, normalizeMedicationId } from '../models/Invento
 import { normalizeDailyArchive, normalizeMonthlyArchive } from '../utils/archiveNormalization.js';
 import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
 import { applyIkmScoreToVillage } from '../utils/ikmImpact.js';
+import { formatIkmImpactSummary, getIkmOutcomeStatus } from '../utils/ikmHistory.js';
 import { processLabOrder } from '../game/LabEngine.js';
 import { getIndicatorByDx } from '../game/CaseIndicators.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
@@ -1898,6 +1899,28 @@ export const useGameStore = create(
 
                         const impact = calculateEventImpact(resolved);
                         const scenarioData = getScenarioById(resolved.scenarioId);
+                        const outcomeKey = determineScenarioOutcomeKey(resolved, scenarioData) || 'success';
+                        const historyEntry = normalizeEncounter({
+                            type: 'ikm_event',
+                            day: s.world.day,
+                            dischargedAt: s.world.time || 480,
+                            name: scenarioData?.title || resolved.title || resolved.scenarioId,
+                            description: formatIkmImpactSummary(impact),
+                            outcome: outcomeKey,
+                            outcomeStatus: getIkmOutcomeStatus(outcomeKey),
+                            ikmEvent: {
+                                scenarioId: resolved.scenarioId,
+                                category: resolved.category,
+                                outcome: outcomeKey,
+                                impact: {
+                                    balance: Number(impact.balance || 0),
+                                    iks_score: Number(impact.iks_score || 0),
+                                    outbreak_risk_reduction: impact.outbreak_risk_reduction || null,
+                                    outbreak_risk: impact.outbreak_risk || null,
+                                    spawnedCases: Number(impact.spawnPatients?.amount || 0)
+                                }
+                            }
+                        });
 
                         // Produce case boosts from relatedCases
                         const caseBoosts = (scenarioData?.relatedCases || []).map(caseId => ({
@@ -1958,12 +1981,13 @@ export const useGameStore = create(
                                 },
                                 clinical: {
                                     ...state.clinical,
-                                    queue: [...currentQueue, ...normalizePatientList(patientsToAdd)]
+                                    queue: [...currentQueue, ...normalizePatientList(patientsToAdd)],
+                                    history: appendClinicalHistory(state.clinical.history, historyEntry)
                                 }
                             };
                         });
 
-                        return { resolved, impact, caseBoosts, newPatients };
+                        return { resolved, impact, outcomeKey, caseBoosts, newPatients };
                     },
 
                     /** Apply SDOH delta from building completion */

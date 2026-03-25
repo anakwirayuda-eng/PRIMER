@@ -7,7 +7,7 @@
  * [DEPENDS_ON]: usePatientEMR (liveMaiaFeedback), ClinicalReasoning
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BrainCircuit, Target, ShieldAlert, Sparkles, Lock, Zap } from 'lucide-react';
 
 // ============================================================================
@@ -20,7 +20,17 @@ const MAIA_HUD_CSS = `
     @keyframes maia-alert-pulse { 0%, 100% { box-shadow: 0 0 20px rgba(225,29,72,0.5); } 50% { box-shadow: 0 0 50px rgba(225,29,72,0.9); } }
     @keyframes maia-locked-glow { 0%, 100% { box-shadow: 0 0 15px rgba(16,185,129,0.4); } 50% { box-shadow: 0 0 25px rgba(16,185,129,0.7); } }
 
-    .maia-container { position: fixed; bottom: 96px; right: 32px; z-index: 49; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; }
+    .maia-container { position: fixed; z-index: 49; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; transition: none; }
+    .maia-container.dragging .maia-orb { animation: none !important; cursor: grabbing; }
+    .maia-container.dragging { user-select: none; }
+    .maia-orb { cursor: grab; }
+
+    .maia-panel {
+        background: rgba(15, 23, 42, 0.90); backdrop-filter: blur(16px);
+        border: 1px solid rgba(6,182,212,0.3); border-radius: 16px;
+        padding: 14px; width: 280px; pointer-events: auto;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.5), inset 0 0 16px rgba(6,182,212,0.08);
+    }
 
     .maia-orb {
         width: 52px; height: 52px; border-radius: 50%;
@@ -38,12 +48,7 @@ const MAIA_HUD_CSS = `
 
     .maia-ring { position: absolute; inset: -8px; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.3); animation: maia-spin 8s linear infinite; pointer-events: none; }
 
-    .maia-panel {
-        background: rgba(15, 23, 42, 0.90); backdrop-filter: blur(16px);
-        border: 1px solid rgba(6,182,212,0.3); border-radius: 16px 16px 0 16px;
-        padding: 14px; width: 280px; transform-origin: bottom right; pointer-events: auto;
-        box-shadow: 0 12px 32px rgba(0,0,0,0.5), inset 0 0 16px rgba(6,182,212,0.08);
-    }
+
 
     .radar-track { background: #1E293B; height: 5px; border-radius: 3px; overflow: hidden; margin-top: 4px; }
     .radar-fill { height: 100%; background: linear-gradient(90deg, #4F46E5, #22D3EE); transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 3px; }
@@ -55,6 +60,56 @@ const MAIA_HUD_CSS = `
 export default function MaiaLiveCopilot({ patient, liveMaiaFeedback, historyLength, isEmergency }) {
     const [expanded, setExpanded] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
+
+    // ── Drag-to-reposition ──
+    // Default: center-top of main content (accounting for sidebar ~256px and header ~44px)
+    const [pos, setPos] = useState(() => ({
+        x: Math.round((window.innerWidth + 256) / 2),
+        y: 100
+    }));
+    const [isDragging, setIsDragging] = useState(false);
+    const dragRef = useRef({ startX: 0, startY: 0, startPosX: 0, startPosY: 0, moved: false });
+
+    const handlePointerDown = useCallback((e) => {
+        // Only drag from the orb area
+        e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        dragRef.current = { startX: clientX, startY: clientY, startPosX: pos.x, startPosY: pos.y, moved: false };
+        setIsDragging(true);
+    }, [pos]);
+
+    useEffect(() => {
+        if (!isDragging) return;
+
+        const handleMove = (e) => {
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const dx = clientX - dragRef.current.startX;
+            const dy = clientY - dragRef.current.startY;
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) dragRef.current.moved = true;
+            if (!dragRef.current.moved) return;
+
+            const newX = Math.max(0, Math.min(window.innerWidth - 60, dragRef.current.startPosX + dx));
+            const newY = Math.max(40, Math.min(window.innerHeight - 60, dragRef.current.startPosY + dy));
+            setPos({ x: newX, y: newY });
+        };
+
+        const handleUp = () => {
+            setIsDragging(false);
+        };
+
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleUp);
+        window.addEventListener('touchmove', handleMove, { passive: false });
+        window.addEventListener('touchend', handleUp);
+        return () => {
+            window.removeEventListener('mousemove', handleMove);
+            window.removeEventListener('mouseup', handleUp);
+            window.removeEventListener('touchmove', handleMove);
+            window.removeEventListener('touchend', handleUp);
+        };
+    }, [isDragging]);
 
     // 🧠 Extract Cortana Protocol data
     const diagData = liveMaiaFeedback?.diagnosticConfidence || {};
@@ -86,6 +141,11 @@ export default function MaiaLiveCopilot({ patient, liveMaiaFeedback, historyLeng
     }, [confidence, hasInteracted]);
 
     const togglePanel = useCallback(() => {
+        // Don't toggle if we just finished dragging
+        if (dragRef.current.moved) {
+            dragRef.current.moved = false;
+            return;
+        }
         setExpanded(prev => !prev);
         setHasInteracted(true);
     }, []);
@@ -115,7 +175,10 @@ export default function MaiaLiveCopilot({ patient, liveMaiaFeedback, historyLeng
     const suggestion = liveMaiaFeedback?.examLabSuggestions?.examSuggestions?.[0];
 
     return (
-        <div className="maia-container select-none">
+        <div
+            className={`maia-container select-none ${isDragging ? 'dragging' : ''}`}
+            style={{ left: pos.x, top: pos.y }}
+        >
             <style dangerouslySetInnerHTML={{ __html: MAIA_HUD_CSS }} />
 
             {/* 📊 THE PROACTIVE HUD PANEL */}
@@ -188,7 +251,7 @@ export default function MaiaLiveCopilot({ patient, liveMaiaFeedback, historyLeng
             {/* 🤖 THE CORE ORB */}
             <div className="relative">
                 <div className={`maia-ring ${isCritical ? '!border-rose-500/60 !animate-[maia-spin_2s_linear_infinite_reverse]' : ''}`} />
-                <div className={`maia-orb ${orbState}`} onClick={togglePanel} title="Toggle M.A.I.A Neural Link">
+                <div className={`maia-orb ${orbState}`} onClick={togglePanel} onMouseDown={handlePointerDown} onTouchStart={handlePointerDown} title="Drag to move • Click to toggle M.A.I.A">
                     {isCritical
                         ? <ShieldAlert size={22} color="#fff" />
                         : <BrainCircuit size={22} color={isLocked ? '#064E3B' : '#fff'} />

@@ -18,8 +18,20 @@ import { useTheme } from '../context/ThemeContext.jsx';
 import CPPTCard from './CPPTCard.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
 import { formatTime } from '../utils/formatTime.js';
+import { formatIkmImpactSummary } from '../utils/ikmHistory.js';
 
 function getEncounterDiagnosisLabel(record) {
+    if (record?.type === 'ikm_event') {
+        return record?.description
+            || formatIkmImpactSummary({
+                balance: record?.ikmEvent?.impact?.balance,
+                iks_score: record?.ikmEvent?.impact?.iks_score,
+                outbreak_risk_reduction: record?.ikmEvent?.impact?.outbreak_risk_reduction,
+                outbreak_risk: record?.ikmEvent?.impact?.outbreak_risk,
+                spawnPatients: { amount: record?.ikmEvent?.impact?.spawnedCases || 0 }
+            });
+    }
+
     return record?.decision?.diagnoses?.join(', ')
         || record?.medicalData?.trueDiagnosisCode
         || record?.medicalData?.diagnosisName
@@ -31,6 +43,7 @@ function getEncounterActionBadge(record) {
     if (record?.type === 'senam_prolanis') return { label: 'MASSA', className: 'bg-indigo-100 text-indigo-700' };
     if (record?.type === 'prolanis_call') return { label: 'PANGGIL', className: 'bg-indigo-100 text-indigo-700' };
     if (record?.type === 'prolanis_monitor') return { label: 'PANTAU', className: 'bg-indigo-100 text-indigo-700' };
+    if (record?.type === 'ikm_event') return { label: 'IKM', className: 'bg-teal-100 text-teal-700' };
 
     const action = record?.decision?.action;
     if (action === 'refer') return { label: 'RUJUK', className: 'bg-purple-100 text-purple-700' };
@@ -48,6 +61,11 @@ function getEncounterActionBadge(record) {
 function getEncounterStatusBadge(record) {
     if (record?.type === 'posyandu' || String(record?.type || '').includes('prolanis')) {
         return { label: 'Tercatat', className: 'bg-slate-100 text-slate-700' };
+    }
+    if (record?.type === 'ikm_event') {
+        if (record?.outcomeStatus === 'ikm_failure') return { label: 'Gagal', className: 'bg-rose-100 text-rose-700' };
+        if (record?.outcomeStatus === 'ikm_partial') return { label: 'Parsial', className: 'bg-amber-100 text-amber-700' };
+        return { label: 'Berhasil', className: 'bg-emerald-100 text-emerald-700' };
     }
 
     const outcomeStatus = record?.outcomeStatus;
@@ -301,6 +319,11 @@ export default function ArsipPage() {
                                                         Posyandu
                                                     </span>
                                                 )}
+                                                {record.type === 'ikm_event' ? (
+                                                    <span className="ml-2 text-xs bg-teal-100 dark:bg-teal-950/40 px-1.5 py-0.5 rounded text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-900/50">
+                                                        IKM
+                                                    </span>
+                                                ) : null}
                                                 {record.type?.startsWith('prolanis') || record.type === 'senam_prolanis' ? (
                                                     <span className="ml-2 text-xs bg-indigo-100 dark:bg-indigo-950/40 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/50">
                                                         Prolanis
@@ -313,8 +336,8 @@ export default function ArsipPage() {
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 max-w-xs truncate text-slate-600 dark:text-slate-300" title={record.description}>
-                                                {record.type === 'posyandu' || record.type?.includes('prolanis')
-                                                    ? record.description
+                                                {record.type === 'posyandu' || record.type?.includes('prolanis') || record.type === 'ikm_event'
+                                                    ? (record.description || getEncounterDiagnosisLabel(record))
                                                     : getEncounterDiagnosisLabel(record)}
                                             </td>
                                             <td className="px-6 py-4">

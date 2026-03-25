@@ -733,6 +733,27 @@ export default function MainLayout() {
                             <Keyboard size={14} />
                         </button>
 
+                        {/* Smartphone */}
+                        <button
+                            onClick={() => setShowPhone(!showPhone)}
+                            className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all relative ${
+                                showPhone ? 'bg-emerald-500/20 text-emerald-400'
+                                    : outbreakNotification || (prbQueue && prbQueue.filter(p => p.status === 'active').length > 0)
+                                        ? 'text-red-400 animate-pulse'
+                                        : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                            }`}
+                            title={`Smartphone (${TOGGLE_SHORTCUT_HINTS.phone})`}
+                            aria-label={showPhone ? 'Tutup Smartphone' : 'Buka Smartphone'}
+                        >
+                            <PhoneIcon size={14} />
+                            {(activeReferralLog?.length > 0 || outbreakNotification) && (
+                                <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                                </span>
+                            )}
+                        </button>
+
                         {/* Settings */}
                         <button
                             onClick={() => setShowSettings(true)}
@@ -853,25 +874,7 @@ export default function MainLayout() {
                     <Smartphone onClose={() => setShowPhone(false)} />
                 </ErrorBoundary>
             )}
-            <button
-                onClick={() => setShowPhone(!showPhone)}
-                className={`fixed bottom-6 right-6 p-4 rounded-full shadow-2xl transition-all z-50 border-4 ${
-                    outbreakNotification || (prbQueue && prbQueue.filter(p => p.status === 'active').length > 0)
-                        ? 'bg-red-600 text-white border-red-400 animate-bounce shadow-[0_0_20px_rgba(220,38,38,0.6)]'
-                        : 'bg-slate-800 text-white border-slate-600 hover:bg-slate-700 hover:scale-110'
-                }`}
-                aria-label={showPhone ? 'Tutup Smartphone' : 'Buka Smartphone'}
-                title={`Smartphone (${TOGGLE_SHORTCUT_HINTS.phone})`}
-            >
-                <PhoneIcon size={24} className={outbreakNotification ? 'animate-pulse' : ''} />
-                {/* Urgent ping dot */}
-                {(activeReferralLog?.length > 0 || outbreakNotification) && (
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-slate-900"></span>
-                    </span>
-                )}
-            </button>
+            {/* Phone FAB removed — now in top bar header */}
 
             {showShortcutHelp && <ShortcutHelpModal onClose={() => setShowShortcutHelp(false)} />}
 

@@ -323,7 +323,7 @@ export function resolveEvent(eventInstance) {
     };
 }
 
-function determineScenarioOutcomeKey(eventInstance, scenario) {
+export function determineScenarioOutcomeKey(eventInstance, scenario) {
     if (!scenario?.outcomes) return null;
 
     const phase = getCurrentPhase(eventInstance);
@@ -481,6 +481,7 @@ export default {
     makeChoice,
     completeAction,
     resolveEvent,
+    determineScenarioOutcomeKey,
     calculateEventImpact,
     updateEventProgress,
     getSeasonForDay,
