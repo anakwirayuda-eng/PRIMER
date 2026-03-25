@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
-// NOTE: uses useEffect for auto-recovery below
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Environment, OrbitControls, Html, Bvh } from '@react-three/drei';
 import * as THREE from 'three';
@@ -276,16 +275,6 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
         setCanvasKey(prev => prev + 1);
     }, []);
 
-    // ═══ AUTO-RECOVERY: rebuild canvas automatically after context lost ═══
-    useEffect(() => {
-        if (!isContextLost) return;
-        const timer = setTimeout(() => {
-            console.info('[WilayahDiorama] Auto-recovering from WebGL context loss...');
-            handleCanvasRebuild();
-        }, 2000);
-        return () => clearTimeout(timer);
-    }, [isContextLost, handleCanvasRebuild]);
-
     if (!mapData || !mapData.tiles) return null;
 
     return (
@@ -296,7 +285,7 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
                     shadows="percentage"
                     dpr={1}
                     camera={{ position: [15, 12, 15], fov: 30, far: 150 }}
-                    gl={{ antialias: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false, toneMapping: 3 }}
+                    gl={{ antialias: false, powerPreference: 'high-performance', toneMapping: 3 }}
                 >
                     <WebGLRecoveryBridge
                         onContextLost={handleContextLost}

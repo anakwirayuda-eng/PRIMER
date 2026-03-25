@@ -11,7 +11,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { User, ChevronRight, ChevronLeft, Palette, Scissors, IdCard, Fingerprint, FileSignature, ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { User, ChevronRight, ChevronLeft, Palette, Scissors, Fingerprint, FileSignature, ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
 import AvatarRenderer, { SKIN_TONES, HAIR_COLORS } from './AvatarRenderer.jsx';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
 import { pickDeterministic } from '../utils/deterministicRandom.js';
@@ -26,8 +26,8 @@ export const AVATARS = [
 ];
 
 // ─── Derived from AvatarRenderer exports ───
-const SKIN_OPTIONS = Object.entries(SKIN_TONES).map(([key, hex]) => ({ id: key, hex }));
-const HAIR_COLOR_OPTIONS = Object.entries(HAIR_COLORS).map(([key, hex]) => ({ id: key, hex }));
+const SKIN_OPTIONS = Object.entries(SKIN_TONES).map(([key, val]) => ({ id: key, hex: val.hex || val, label: val.label || key }));
+const HAIR_COLOR_OPTIONS = Object.entries(HAIR_COLORS).map(([key, val]) => ({ id: key, hex: val.hex || val, label: val.label || key }));
 const HAIR_STYLE_OPTIONS_MALE = ['buzz', 'short', 'neat', 'parted'];
 const HAIR_STYLE_OPTIONS_FEMALE = ['short', 'neat', 'long', 'ponytail', 'bun', 'hijab'];
 
@@ -98,6 +98,7 @@ export default function PlayerSetup({ onComplete }) {
 
     const avatarData = useMemo(() => ({
         skinTone, hairStyle: effectiveHairStyle, hairColor, gender, accessories,
+        outfit: 'labCoat', eyeStyle: 'default',
     }), [skinTone, effectiveHairStyle, hairColor, gender, accessories]);
 
     // RPG Age Trade-Off: young = high energy low rep, old = low energy high rep
@@ -142,6 +143,7 @@ export default function PlayerSetup({ onComplete }) {
                     icon: gender === 'L' ? '👨‍⚕️' : '👩‍⚕️',
                     color: gender === 'L' ? 'bg-blue-500' : 'bg-pink-500',
                     skinTone, hairStyle: effectiveHairStyle, hairColor, accessories, gender,
+                    outfit: 'labCoat', eyeStyle: 'default',
                 },
                 createdAt: Date.now()
             };
