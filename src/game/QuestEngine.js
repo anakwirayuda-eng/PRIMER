@@ -8,6 +8,7 @@
 
 import { STORY_TEMPLATES } from './StoryDatabase.js';
 import { randomIdFromSeed, seedKey, shuffleDeterministic } from '../utils/deterministicRandom.js';
+import { normalizeProgressMetric } from '../utils/progressMetrics.js';
 
 export const QUEST_TEMPLATES = [
     // Daily Quests
@@ -166,15 +167,25 @@ export function advanceStoryNode(storyInstance, choice) {
     };
 }
 
+export function getStoryNodeImpact(storyInstance) {
+    if (!storyInstance?.templateId || !storyInstance?.currentNodeId) return null;
+    const template = STORY_TEMPLATES.find(t => t.id === storyInstance.templateId);
+    const node = template?.nodes?.[storyInstance.currentNodeId];
+    if (!node?.isEnd || !node?.impact) return null;
+    return node.impact;
+}
+
 /**
  * Global Progress Updater for both Quests and Stories
  */
 export function updateGameProgress(currentQuests, activeStories, metric, amount = 1) {
     let newlyCompleted = [];
+    const storyImpactEvents = [];
+    const normalizedMetric = normalizeProgressMetric(metric);
 
     // 1. Update Daily/Weekly Quests
     const updatedQuests = currentQuests.map(quest => {
-        if (quest.metric !== metric || quest.completed) return quest;
+        if (quest.metric !== normalizedMetric || quest.completed) return quest;
         const newProgress = Math.min(quest.progress + (amount || 1), quest.target);
         const isDone = newProgress >= quest.target;
         if (isDone) newlyCompleted.push(quest);
@@ -188,25 +199,33 @@ export function updateGameProgress(currentQuests, activeStories, metric, amount 
         const template = STORY_TEMPLATES.find(t => t.id === story.templateId);
         const currentNode = template?.nodes[story.currentNodeId];
 
-        if (currentNode?.type === 'action' && currentNode.metric === metric) {
+        if (currentNode?.type === 'action' && currentNode.metric === normalizedMetric) {
             const newProgress = story.progress + amount;
             const isDone = newProgress >= currentNode.target;
 
             if (isDone) {
                 const nextId = currentNode.onComplete;
-                return {
+                const advancedStory = {
                     ...story,
                     currentNodeId: nextId,
                     progress: 0,
                     completed: template.nodes[nextId]?.isEnd || false
                 };
+                const endImpact = getStoryNodeImpact(advancedStory);
+                if (endImpact) {
+                    storyImpactEvents.push({
+                        instanceId: advancedStory.instanceId,
+                        impact: endImpact
+                    });
+                }
+                return advancedStory;
             }
             return { ...story, progress: newProgress };
         }
         return story;
     });
 
-    return { updatedQuests, updatedStories, newlyCompleted };
+    return { updatedQuests, updatedStories, newlyCompleted, storyImpactEvents };
 }
 
 /**

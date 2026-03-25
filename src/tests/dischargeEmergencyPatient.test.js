@@ -67,6 +67,24 @@ describe('dischargeEmergencyPatient logic', () => {
                 activePatientId: null,
                 activeReferral: null,
                 queue: []
+            },
+            meta: {
+                ...state.meta,
+                activeQuests: [
+                    {
+                        id: 'treat_patients_20',
+                        type: 'weekly',
+                        label: 'Dokter Handal',
+                        description: 'Tangani 20 pasien di klinik',
+                        target: 20,
+                        metric: 'patients_treated',
+                        xp: 200,
+                        icon: '👨‍⚕️',
+                        progress: 0,
+                        completed: false,
+                        claimed: false
+                    }
+                ]
             }
         }));
     });
@@ -108,6 +126,7 @@ describe('dischargeEmergencyPatient logic', () => {
 
         // 4. XP should NOT change (the patient is not yet discharged)
         expect(state.player.profile.xp).toBe(0);
+        expect(state.meta.activeQuests[0].progress).toBe(0);
     });
 
     it('should instantly discharge if referred without isSISRUTE flag (bypasses modal)', () => {
@@ -141,5 +160,6 @@ describe('dischargeEmergencyPatient logic', () => {
 
         // 4. XP is awarded because isCorrectTriage is true (refer === refer) -> 30 XP
         expect(state.player.profile.xp).toBe(30);
+        expect(state.meta.activeQuests[0].progress).toBe(1);
     });
 });

@@ -27,7 +27,7 @@ import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, determineScena
 import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
 import { applyNeglectDecay } from '../domains/village/NPCReadiness.js';
-import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGameProgress } from '../game/QuestEngine.js';
+import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, getStoryNodeImpact, updateGameProgress } from '../game/QuestEngine.js';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
 import { normalizeEncounter, normalizeEncounterList } from '../models/EncounterRuntime.js';
@@ -50,11 +50,13 @@ import { withTransaction } from '../utils/transactions.js';
 import { chanceFromSeed, pickDeterministic, seedKey, seededBetween, seededInt } from '../utils/deterministicRandom.js';
 import { safeSetStorageItem } from '../utils/browserSafety.js';
 import { showToast } from '../utils/ToastManager.js';
+import { clearStability } from '../utils/prophylaxis.js';
 import {
     appendReferralLogEntry,
     buildReferralLogEntry,
     reconcileReferralLog
 } from '../utils/referralLog.js';
+import { normalizeProgressMetric } from '../utils/progressMetrics.js';
 import { selectDerivedFinance } from './selectors.js';
 
 
@@ -191,6 +193,46 @@ const pruneOutbreakRiskModifiers = (modifiers = {}, currentDay = 1) => {
         Object.entries(modifiers?.vulnerableUntil || {}).filter(([, until]) => Number(until) >= currentDay)
     );
     return { protectedUntil, vulnerableUntil };
+};
+
+const applyStoryImpactToDraft = (state, impact) => {
+    if (!impact) {
+        return { success: true };
+    }
+
+    if (impact.balance) {
+        const balanceDelta = Number(impact.balance) || 0;
+        if (balanceDelta < 0) {
+            const nextStats = spendOperationalFunds(state.finance.stats, Math.abs(balanceDelta));
+            if (!nextStats) {
+                return { success: false, message: 'Dana aktif tidak cukup untuk pilihan ini.' };
+            }
+            state.finance.stats = nextStats;
+        } else if (balanceDelta > 0) {
+            state.finance.stats.pendapatanUmum += balanceDelta;
+        }
+    }
+
+    let nextProfile = { ...state.player.profile };
+
+    if (impact.energy) {
+        nextProfile.energy = clampEnergyToProfile(nextProfile, nextProfile.energy + impact.energy);
+    }
+
+    if (impact.spirit) {
+        nextProfile.spirit = Math.max(0, Math.min(100, nextProfile.spirit + impact.spirit));
+    }
+
+    if (impact.reputation) {
+        nextProfile.reputation = Math.max(0, Math.min(100, nextProfile.reputation + impact.reputation));
+    }
+
+    nextProfile = sanitizePlayerProfile(nextProfile);
+    state.player.profile = impact.xp
+        ? applyXpGainToProfile(nextProfile, impact.xp)
+        : nextProfile;
+
+    return { success: true };
 };
 
 const applyIkmOutbreakRiskModifiers = (modifiers = {}, impact = {}, currentDay = 1) => {
@@ -2276,6 +2318,7 @@ export const useGameStore = create(
                             });
                         });
 
+                        get().metaActions.updateProgress('patients_treated', 1);
                         soundManager.playConfirm();
                         return { success: true };
                     },
@@ -2348,6 +2391,7 @@ export const useGameStore = create(
                             };
                         });
 
+                        get().metaActions.updateProgress('patients_treated', 1);
                         soundManager.playConfirm();
                         return { success: true };
                     },
@@ -2499,7 +2543,8 @@ export const useGameStore = create(
                             );
                         });
                     })),
-                    dischargePatient: (patient, decision, day, time) => withTransaction(set, get, 'dischargePatient', (state) => {
+                    dischargePatient: (patient, decision, day, time) => {
+                        const txResult = withTransaction(set, get, 'dischargePatient', (state) => {
                         day = day ?? state.world.day;
                         time = time ?? state.world.time;
                         if (!patient?.id) {
@@ -2749,7 +2794,14 @@ export const useGameStore = create(
                                 newKpi.nonSpecialisticReferrals = (newKpi.nonSpecialisticReferrals || 0) + 1;
                             }
                         }
-                    }),
+                    });
+
+                        if (txResult.success && patient?.id && !(typeof patient.id === 'string' && patient.id.includes('_visit_'))) {
+                            get().metaActions.updateProgress('patients_treated', 1);
+                        }
+
+                        return txResult;
+                    },
                     dischargeEmergencyPatient: (patient, decision, day, time) => {
                         day = day ?? get().world.day;
                         time = time ?? get().world.time;
@@ -2970,6 +3022,14 @@ export const useGameStore = create(
                                 }
                             };
                         });
+
+                        const entersSisruteLimbo = decision.action === 'refer'
+                            && decision.isSISRUTE
+                            && decision.referralDetails?.result?.status === 'ACCEPTED';
+
+                        if (!entersSisruteLimbo && patient?.id) {
+                            get().metaActions.updateProgress('patients_treated', 1);
+                        }
                     },
                     orderLab: (patientId, labName, cost) => {
                         set(state => {
@@ -3019,9 +3079,35 @@ export const useGameStore = create(
                     setMeta: (meta) => set((s) => ({ meta: { ...s.meta, ...meta } })),
 
                     updateProgress: (metric, amount = 1) => {
-                        const s = get();
-                        const { updatedQuests, updatedStories } = updateGameProgress(s.meta.activeQuests, s.meta.activeStories, metric, amount);
-                        set({ meta: { ...s.meta, activeQuests: updatedQuests, activeStories: updatedStories } });
+                        const normalizedMetric = normalizeProgressMetric(metric);
+                        let failureMessage = null;
+
+                        const txResult = withTransaction(set, get, 'updateProgress', (state) => {
+                            const { updatedQuests, updatedStories, storyImpactEvents } = updateGameProgress(
+                                state.meta.activeQuests,
+                                state.meta.activeStories,
+                                normalizedMetric,
+                                amount
+                            );
+
+                            for (const event of storyImpactEvents) {
+                                const impactResult = applyStoryImpactToDraft(state, event.impact);
+                                if (!impactResult.success) {
+                                    failureMessage = impactResult.message;
+                                    throw new Error(failureMessage);
+                                }
+                            }
+
+                            state.meta.activeQuests = updatedQuests;
+                            state.meta.activeStories = updatedStories;
+                        });
+
+                        if (!txResult.success) {
+                            soundManager.playError();
+                            return { success: false, message: failureMessage || 'Progress cerita gagal diperbarui.' };
+                        }
+
+                        return { success: true, metric: normalizedMetric };
                     },
 
                     claimQuest: (questId) => {
@@ -3032,28 +3118,53 @@ export const useGameStore = create(
                     },
 
                     advanceStory: (storyInstance, choice) => {
-                        const s = get();
-                        if (choice.impact) {
-                            if (choice.impact.balance) {
-                                const balanceDelta = Number(choice.impact.balance) || 0;
-                                if (balanceDelta < 0) {
-                                    const nextStats = spendOperationalFunds(s.finance.stats, Math.abs(balanceDelta));
-                                    if (!nextStats) {
-                                        soundManager.playError();
-                                        return { success: false, message: 'Dana aktif tidak cukup untuk pilihan ini.' };
-                                    }
-                                    s.financeActions.setStats(nextStats);
-                                } else {
-                                    s.financeActions.setStats(stats => ({ ...stats, pendapatanUmum: stats.pendapatanUmum + balanceDelta }));
-                                }
-                            }
-                            if (choice.impact.energy) s.playerActions.updateProfile({ energy: clampEnergyToProfile(s.player.profile, s.player.profile.energy + choice.impact.energy) });
-                            if (choice.impact.spirit) s.playerActions.updateProfile({ spirit: Math.max(0, Math.min(100, s.player.profile.spirit + choice.impact.spirit)) });
-                            if (choice.impact.reputation) s.playerActions.updateProfile({ reputation: s.player.profile.reputation + choice.impact.reputation });
-                            if (choice.impact.xp) s.playerActions.gainXp(choice.impact.xp);
+                        const currentState = get();
+                        const currentStory = currentState.meta.activeStories.find(st => st.instanceId === storyInstance.instanceId);
+
+                        if (!currentStory) {
+                            soundManager.playError();
+                            return { success: false, message: 'Cerita aktif tidak ditemukan.' };
                         }
-                        const updated = advanceStoryNode(storyInstance, choice);
-                        set({ meta: { ...s.meta, activeStories: s.meta.activeStories.map(st => st.instanceId === storyInstance.instanceId ? updated : st) } });
+
+                        if (currentStory.completed) {
+                            return { success: false, message: 'Cerita ini sudah selesai.' };
+                        }
+
+                        let updated = currentStory;
+                        let failureMessage = null;
+
+                        const txResult = withTransaction(set, get, 'advanceStory', (state) => {
+                            const liveStory = state.meta.activeStories.find(st => st.instanceId === storyInstance.instanceId);
+                            if (!liveStory || liveStory.completed) {
+                                failureMessage = 'Cerita ini sudah selesai.';
+                                throw new Error(failureMessage);
+                            }
+
+                            const choiceImpactResult = applyStoryImpactToDraft(state, choice?.impact);
+                            if (!choiceImpactResult.success) {
+                                failureMessage = choiceImpactResult.message;
+                                throw new Error(failureMessage);
+                            }
+
+                            updated = advanceStoryNode(liveStory, choice);
+
+                            const endNodeImpact = getStoryNodeImpact(updated);
+                            const endImpactResult = applyStoryImpactToDraft(state, endNodeImpact);
+                            if (!endImpactResult.success) {
+                                failureMessage = endImpactResult.message;
+                                throw new Error(failureMessage);
+                            }
+
+                            state.meta.activeStories = state.meta.activeStories.map(st =>
+                                st.instanceId === storyInstance.instanceId ? updated : st
+                            );
+                        });
+
+                        if (!txResult.success) {
+                            soundManager.playError();
+                            return { success: false, message: failureMessage || 'Pilihan tidak dapat dijalankan.' };
+                        }
+
                         return { success: true, story: updated };
                     },
 
@@ -3398,6 +3509,8 @@ export const useGameStore = create(
 
                         // Monthly Report (Post-update)
                         const nextDayVal = targetDay + 1;
+                        clearStability('ACTION_metaActions.updateProgress');
+                        get().metaActions.updateProgress('days_passed', 1);
                         if (nextDayVal % 30 === 1) {
                             get().financeActions.processMonthlyReport(get().clinical.accreditation, get().staff.hiredStaff);
                         }

@@ -42,6 +42,24 @@ describe('dischargePatient logic', () => {
                     totalPatients: 0,
                     correctTreatments: 0
                 }
+            },
+            meta: {
+                ...state.meta,
+                activeQuests: [
+                    {
+                        id: 'treat_patients_20',
+                        type: 'weekly',
+                        label: 'Dokter Handal',
+                        description: 'Tangani 20 pasien di klinik',
+                        target: 20,
+                        metric: 'patients_treated',
+                        xp: 200,
+                        icon: '👨‍⚕️',
+                        progress: 0,
+                        completed: false,
+                        claimed: false
+                    }
+                ]
             }
         }));
     });
@@ -83,6 +101,7 @@ describe('dischargePatient logic', () => {
         // Verify KPI updates
         expect(state.finance.kpi.totalPatients).toBe(1);
         expect(state.finance.kpi.correctTreatments).toBe(1);
+        expect(state.meta.activeQuests[0].progress).toBe(1);
     });
 
     it('should penalize incorrect treatment', () => {
@@ -139,5 +158,6 @@ describe('dischargePatient logic', () => {
         // Or check XP is 5 (failure) vs 20 (success).
 
         expect(state.player.profile.xp).toBe(5); // 5 for incorrect action
+        expect(state.meta.activeQuests[0].progress).toBe(1);
     });
 });

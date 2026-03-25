@@ -12,6 +12,8 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { useGame } from '../context/GameContext.jsx';
+import { useGameStore } from '../store/useGameStore.js';
+import { useShallow } from 'zustand/react/shallow';
 import {
     Map, Home as HomeIcon, Users, Activity,
     Layers, Search, X, Bug, BookOpen,
@@ -51,6 +53,10 @@ import {
     resolveBehaviorCaseScenarioId
 } from '../utils/behaviorCaseRuntime.js';
 import { calculateCommunityMetrics } from '../utils/communityMetrics.js';
+import {
+    getHomeVisitProgressMetrics,
+    getPosyanduProgressMetrics
+} from '../utils/progressMetrics.js';
 import VillagerBehavior from '../domains/village/VillagerBehavior.js';
 import { VILLAGE_FAMILIES } from '../domains/village/VillageRegistry.js';
 
@@ -63,10 +69,19 @@ export default function WilayahPage() {
         guardStability('NAV_WILAYAH_INIT', 2000, 3);
     }, []);
 
+    // ═══ P1 PERF FIX: Narrow selectors instead of broad useGame() context ═══
+    // Only subscribe to state fields this page actually needs → prevents rerender
+    // from unrelated state changes (queue, finance, time ticks, etc.)
+    const day = useGameStore(s => s.world.day);
+    const villageData = useGameStore(s => s.publicHealth.villageData);
+    const history = useGameStore(s => s.clinical.history);
+    const playerStats = useGameStore(useShallow(s => s.player.profile));
+    const activeIKMEvents = useGameStore(s => s.publicHealth.activeIKMEvents);
+
+    // Actions & UI state still come from useGame() (stable references, no perf impact)
     const {
-        day, villageData, setVillageData,
-        viewParams, navigate, history, playerStats, setPlayerStats,
-        addXp, publicHealth, setTime,
+        setVillageData, viewParams, navigate, setPlayerStats,
+        addXp, setTime,
         openWiki, isWikiOpen, closeWiki, updateProgress, wikiMetric,
         triggerIKMEvent, applyBuildingSDOH, appendClinicalHistoryEntry
     } = useGame();
@@ -100,6 +115,7 @@ export default function WilayahPage() {
     }, [isDataLoaded]); // Only depends on data EXISTING, not data CHANGING
 
     // Dynamic data injection: lightweight O(N) operation (~0.1ms)
+    // ═══ P1 PERF FIX: O(1) Map lookup instead of O(n) .find() per building ═══
     const mapData = useMemo(() => {
         if (!staticMapTopology || !villageData?.families) return null;
         const families = villageData.families.map(f => {
@@ -110,9 +126,11 @@ export default function WilayahPage() {
                 behaviorEmoji: risk?.level === 'high' ? '🔴' : risk?.level === 'medium' ? '🟠' : '🟢'
             };
         });
+        // Build O(1) lookup map instead of per-building .find()
+        const familyById = new Map(families.map(f => [f.id, f]));
         const buildings = staticMapTopology.buildings.map(b => {
             if (!b.familyId) return b;
-            return { ...b, familyData: families.find(f => f.id === b.familyId) };
+            return { ...b, familyData: familyById.get(b.familyId) || null };
         });
         return { ...staticMapTopology, buildings, families };
     }, [staticMapTopology, villageData]);
@@ -150,14 +168,21 @@ export default function WilayahPage() {
         }
     }, [viewParams, mapData, scrollToBuilding]);
 
+    // ═══ P1 PERF FIX: Pre-built familyId→houseId map for O(1) lookup ═══
+    const familyHouseIndex = useMemo(() => {
+        if (!villageData?.families) return null;
+        return new Map(villageData.families.map(f => [f.id, f.houseId]));
+    }, [villageData]);
+
     const surveillanceStatus = useMemo(() => {
         const status = {};
-        if (!villageData || !history) return status;
+        if (!familyHouseIndex || !history) return status;
         const recentHistory = history.filter(p => (day - p.day) <= 14);
         recentHistory.forEach(p => {
             const dx = p.medicalData?.trueDiagnosisCode || '';
             if (!dx) return;
-            const houseId = p.hidden?.familyId ? villageData.families.find(f => f.id === p.hidden.familyId)?.houseId : null;
+            // O(1) Map lookup instead of O(n) families.find()
+            const houseId = p.hidden?.familyId ? familyHouseIndex.get(p.hidden.familyId) : null;
             if (houseId) {
                 let caseType = null;
                 if (dx.startsWith('A90') || dx.startsWith('A91')) caseType = 'dbd';
@@ -176,7 +201,7 @@ export default function WilayahPage() {
             }
         });
         return status;
-    }, [history, day, villageData]);
+    }, [history, day, familyHouseIndex]);
 
     const centerMap = useCallback(() => {
         if (viewportRef.current && mapData) {
@@ -294,10 +319,9 @@ export default function WilayahPage() {
         addXp(action.xp);
 
         if (updateProgress) {
-            updateProgress('home_visits', 1);
-            if (action.id === 'psn') {
-                updateProgress('psn_done', 1);
-            }
+            getHomeVisitProgressMetrics(action.id).forEach(metric => {
+                updateProgress(metric, 1);
+            });
         }
 
         navigate('megalog', { type: 'home_visit', familyId: family.id, action: action.id });
@@ -385,13 +409,13 @@ export default function WilayahPage() {
                                     <span>⚠️ {stats.alertCount} KASUS</span>
                                 </div>
                             )}
-                            {publicHealth?.activeIKMEvents?.length > 0 && (
+                            {activeIKMEvents?.length > 0 && (
                                 <button
-                                    onClick={() => setActiveIKMEventId(publicHealth.activeIKMEvents[0].instanceId)}
+                                    onClick={() => setActiveIKMEventId(activeIKMEvents[0].instanceId)}
                                     className="flex items-center gap-2 text-purple-400 hover:text-purple-300 animate-pulse transition-colors"
                                     title="Ada Kasus IKM aktif!"
                                 >
-                                    <span>🛡️ {publicHealth.activeIKMEvents.length} IKM</span>
+                                    <span>🛡️ {activeIKMEvents.length} IKM</span>
                                 </button>
                             )}
                             <div className="flex items-center gap-2 text-blue-400">
@@ -866,7 +890,11 @@ export default function WilayahPage() {
                             }
                             
                             // 5. Update progress tracker
-                            if (updateProgress) updateProgress('posyandu', 1);
+                            if (updateProgress) {
+                                getPosyanduProgressMetrics().forEach(metric => {
+                                    updateProgress(metric, 1);
+                                });
+                            }
                             
                             setBuildingInterior(null);
                         }}
@@ -935,7 +963,7 @@ export default function WilayahPage() {
                    ═══════════════════════════════════════════════════ */}
                 {activeIKMEventId && (
                     <CommunityDiagnosisPanel
-                        eventInstance={publicHealth.activeIKMEvents.find(e => e.instanceId === activeIKMEventId)}
+                        eventInstance={activeIKMEvents?.find(e => e.instanceId === activeIKMEventId)}
                         onClose={() => setActiveIKMEventId(null)}
                     />
                 )}

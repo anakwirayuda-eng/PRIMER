@@ -36,17 +36,17 @@ const QuestBoard = () => {
                         </p>
 
                         {/* Story Progress */}
-                        {template.nodes[story.currentNodeId]?.progressTarget > 0 && (
+                        {template.nodes[story.currentNodeId]?.target > 0 && (
                             <div className="mt-2">
                                 <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
                                     <div
                                         className="h-full bg-indigo-500 transition-all duration-700"
-                                        style={{ width: `${Math.min(100, (story.progress / template.nodes[story.currentNodeId].progressTarget) * 100)}%` }}
+                                        style={{ width: `${Math.min(100, (story.progress / template.nodes[story.currentNodeId].target) * 100)}%` }}
                                     />
                                 </div>
                                 <div className="flex justify-between items-center mt-1">
                                     <span className="text-[9px] font-bold text-slate-400">
-                                        {story.progress} / {template.nodes[story.currentNodeId].progressTarget}
+                                        {story.progress} / {template.nodes[story.currentNodeId].target}
                                     </span>
                                 </div>
                             </div>
