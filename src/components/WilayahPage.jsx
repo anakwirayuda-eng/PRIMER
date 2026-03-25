@@ -91,7 +91,6 @@ export default function WilayahPage() {
     const [selectedBuilding, setSelectedBuilding] = useState(null);
     const [activeLayer, setActiveLayer] = useState('general');
     const [homeVisitModal, setHomeVisitModal] = useState(null);
-    const [showRiskOnly, setShowRiskOnly] = useState(false);
     const [zoom, setZoom] = useState(0.4);
     const [buildingInterior, setBuildingInterior] = useState(null);
     const [activeIKMEventId, setActiveIKMEventId] = useState(null);
@@ -112,60 +111,6 @@ export default function WilayahPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDataLoaded]); // Only depends on data EXISTING, not data CHANGING
 
-    // Dynamic data injection: lightweight O(N) operation (~0.1ms)
-    // ═══ P1 PERF FIX: O(1) Map lookup instead of O(n) .find() per building ═══
-    const mapData = useMemo(() => {
-        if (!staticMapTopology || !villageData?.families) return null;
-        const families = villageData.families.map(f => {
-            const phbs = VillagerBehavior.calculatePHBSScore(f.id);
-            const risk = VillagerBehavior.classifyBehavioralRisk(f.id);
-            return {
-                ...f, phbsScore: phbs, behaviorRisk: risk?.level || 'low',
-                behaviorEmoji: risk?.level === 'high' ? '🔴' : risk?.level === 'medium' ? '🟠' : '🟢'
-            };
-        });
-        // Build O(1) lookup map instead of per-building .find()
-        const familyById = new Map(families.map(f => [f.id, f]));
-        const buildings = staticMapTopology.buildings.map(b => {
-            if (!b.familyId) return b;
-            return { ...b, familyData: familyById.get(b.familyId) || null };
-        });
-        return { ...staticMapTopology, buildings, families };
-    }, [staticMapTopology, villageData]);
-
-    const communityMetrics = useMemo(
-        () => calculateCommunityMetrics(villageData),
-        [villageData]
-    );
-
-
-    const scrollToBuilding = useCallback((building) => {
-        if (!viewportRef.current || !building) return;
-        const container = viewportRef.current;
-        const TILE_SIZE = 36;
-        const paddingX = container.clientWidth * 0.15;
-        const paddingY = container.clientHeight * 0.15;
-        const targetX = (paddingX + building.x * TILE_SIZE + 1.5 * TILE_SIZE) * zoom;
-        const targetY = (paddingY + building.y * TILE_SIZE + 1.5 * TILE_SIZE) * zoom;
-        container.scrollTo({
-            left: targetX - container.clientWidth / 2,
-            top: targetY - container.clientHeight / 2,
-            behavior: 'smooth'
-        });
-    }, [zoom]);
-
-    useEffect(() => {
-        if (viewParams && viewParams.focusHouseId && mapData) {
-            const target = mapData.buildings.find(b => b.id === viewParams.focusHouseId || b.familyId === viewParams.focusHouseId);
-            if (target) {
-                // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: sync view state from navigation params
-                setViewMode('map');
-                setSelectedBuilding(target);
-                setTimeout(() => scrollToBuilding(target), 300);
-            }
-        }
-    }, [viewParams, mapData, scrollToBuilding]);
-
     // ═══ P1 PERF FIX: Pre-built familyId→houseId map for O(1) lookup ═══
     const familyHouseIndex = useMemo(() => {
         if (!villageData?.families) return null;
@@ -179,7 +124,6 @@ export default function WilayahPage() {
         recentHistory.forEach(p => {
             const dx = p.medicalData?.trueDiagnosisCode || '';
             if (!dx) return;
-            // O(1) Map lookup instead of O(n) families.find()
             const houseId = p.hidden?.familyId ? familyHouseIndex.get(p.hidden.familyId) : null;
             if (houseId) {
                 let caseType = null;
@@ -201,25 +145,44 @@ export default function WilayahPage() {
         return status;
     }, [history, day, familyHouseIndex]);
 
-    const centerMap = useCallback(() => {
-        if (viewportRef.current && mapData) {
-            const container = viewportRef.current;
-            const TILE_SIZE = 36;
-            const vw = container.clientWidth;
-            const vh = container.clientHeight;
-            const paddingX = vw * 0.15;
-            const paddingY = vh * 0.15;
-            const midX = mapData.width / 2;
-            const midY = mapData.height / 2;
-            const targetX = (paddingX + midX * TILE_SIZE) * zoom;
-            const targetY = (paddingY + midY * TILE_SIZE) * zoom;
-            container.scrollTo({
-                left: targetX - vw / 2,
-                top: targetY - vh / 2,
-                behavior: 'smooth'
-            });
+    // Dynamic data injection: lightweight O(N) operation (~0.1ms)
+    // ═══ P1 PERF FIX: O(1) Map lookup instead of O(n) .find() per building ═══
+    const mapData = useMemo(() => {
+        if (!staticMapTopology || !villageData?.families) return null;
+        const families = villageData.families.map(f => {
+            const phbs = VillagerBehavior.calculatePHBSScore(f.id);
+            const risk = VillagerBehavior.classifyBehavioralRisk(f.id);
+            return {
+                ...f, phbsScore: phbs, behaviorRisk: risk?.level || 'low',
+                behaviorEmoji: risk?.level === 'high' ? '🔴' : risk?.level === 'medium' ? '🟠' : '🟢'
+            };
+        });
+        // Build O(1) lookup map instead of per-building .find()
+        const familyById = new Map(families.map(f => [f.id, f]));
+        const buildings = staticMapTopology.buildings.map(b => {
+            if (!b.familyId) return b;
+            const fd = familyById.get(b.familyId) || null;
+            // Inject surveillance case data into building for 3D marker rendering
+            const surv = surveillanceStatus[b.id] || null;
+            return { ...b, familyData: fd, hasCase: !!surv, caseInfo: surv };
+        });
+        return { ...staticMapTopology, buildings, families };
+    }, [staticMapTopology, villageData, surveillanceStatus]);
+
+    const communityMetrics = useMemo(
+        () => calculateCommunityMetrics(villageData),
+        [villageData]
+    );
+
+    // ═══ 3D-compatible: select building from navigation params (e.g. Arsip → Wilayah) ═══
+    useEffect(() => {
+        if (viewParams && viewParams.focusHouseId && mapData) {
+            const target = mapData.buildings.find(b => b.id === viewParams.focusHouseId || b.familyId === viewParams.focusHouseId);
+            if (target) {
+                setSelectedBuilding(target);
+            }
         }
-    }, [mapData, zoom]);
+    }, [viewParams, mapData]);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -482,13 +445,6 @@ export default function WilayahPage() {
                         <div className="flex items-center gap-3">
                             {activeLayer === 'pispk' && (
                                 <div className="flex items-center gap-3 text-[9px] font-bold animate-in fade-in duration-300">
-                                    <label className="flex items-center gap-1.5 cursor-pointer group">
-                                        <input type="checkbox" checked={showRiskOnly} onChange={() => setShowRiskOnly(!showRiskOnly)} className="hidden" />
-                                        <div className={`w-3.5 h-3.5 rounded border transition-colors ${showRiskOnly ? 'bg-rose-500 border-rose-500' : 'border-white/30'}`}>
-                                            {showRiskOnly && <Check size={10} className="text-white" />}
-                                        </div>
-                                        <span className="text-white/60 group-hover:text-white/90 uppercase">Risiko Only</span>
-                                    </label>
                                     <div className="flex items-center gap-2">
                                         <span className="flex items-center gap-1 text-emerald-400"><span className="w-2 h-2 rounded-full bg-emerald-500" />Sehat</span>
                                         <span className="flex items-center gap-1 text-amber-400"><span className="w-2 h-2 rounded-full bg-amber-500" />Waspada</span>
