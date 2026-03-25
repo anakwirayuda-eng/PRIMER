@@ -32,13 +32,13 @@ const HAIR_STYLE_OPTIONS_MALE = ['buzz', 'short', 'neat', 'parted'];
 const HAIR_STYLE_OPTIONS_FEMALE = ['short', 'neat', 'long', 'ponytail', 'bun', 'hijab'];
 
 const ACCESSORY_OPTIONS = [
-    { id: 'glasses', label: 'Kacamata Optik', icon: '👓' },
-    { id: 'stethoscope', label: 'Stetoskop Klinis', icon: '🩺' },
+    { id: 'glasses', label: 'Kacamata', icon: '👓' },
+    { id: 'stethoscope', label: 'Stetoskop', icon: '🩺' },
 ];
 
 const HAIR_STYLE_LABELS = {
-    buzz: 'Cepak Taktis', short: 'Pendek', neat: 'Rapi Standar', parted: 'Belah Sisi',
-    long: 'Panjang', ponytail: 'Kuncir Kuda', bun: 'Sanggul Medis', hijab: 'Hijab Klinis',
+    buzz: 'Cepak', short: 'Pendek', neat: 'Rapi', parted: 'Belah Sisi',
+    long: 'Panjang', ponytail: 'Kuncir', bun: 'Sanggul', hijab: 'Hijab',
 };
 
 // ─── Kinetic CSS (self-contained, no external keyframes needed) ───
@@ -146,7 +146,7 @@ export default function PlayerSetup({ onComplete }) {
                 createdAt: Date.now()
             };
             onComplete(profile, null);
-        }, 1800);
+        }, 800);
     };
 
     const STEP_DEFS = [
@@ -218,7 +218,7 @@ export default function PlayerSetup({ onComplete }) {
                     <div className="bg-slate-900 border-b border-slate-800 p-5 flex justify-between items-center shrink-0 z-10">
                         <div className="font-mono text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            FKK — INSTITUT TEKNOLOGI SEPULUH NOPEMBER
+                            PRIMER // REGISTRASI DOKTER
                         </div>
                         <div className="font-mono text-[10px] text-cyan-400 font-bold tracking-widest border border-cyan-900 bg-cyan-950/50 px-3 py-1.5 rounded">
                             STEP 0{step + 1} / 03
@@ -263,50 +263,30 @@ export default function PlayerSetup({ onComplete }) {
                                 </div>
 
                                 {/* Age RPG Trade-Off */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                    <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                                        <div className="flex justify-between items-end mb-3">
-                                            <label className="text-[10px] font-mono text-amber-500 font-bold uppercase tracking-widest">USIA KLINIS</label>
-                                            <span className="text-amber-400 font-black text-xl">{age} <span className="text-xs text-amber-500/50">Thn</span></span>
-                                        </div>
-                                        <input type="range" min={24} max={65} value={age}
-                                            onChange={(e) => setAge(parseInt(e.target.value))}
-                                            className="w-full accent-amber-500 h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer mb-3" />
-                                        <div className="space-y-2 border-t border-slate-800 pt-3">
-                                            <div>
-                                                <div className="flex justify-between text-[8px] font-mono text-slate-400 mb-1 uppercase">
-                                                    <span>Stamina (AP)</span><span className="text-emerald-400 font-bold">{derivedStats.energy}</span>
-                                                </div>
-                                                <div className="h-1 bg-slate-950 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-emerald-500 transition-all" style={{ width: `${(derivedStats.energy / 120) * 100}%` }}/>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="flex justify-between text-[8px] font-mono text-slate-400 mb-1 uppercase">
-                                                    <span>Wibawa (Rep)</span><span className="text-purple-400 font-bold">{derivedStats.rep}</span>
-                                                </div>
-                                                <div className="h-1 bg-slate-950 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-purple-500 transition-all" style={{ width: `${derivedStats.rep}%` }}/>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                                    <div className="flex justify-between items-end mb-3">
+                                        <label className="text-[10px] font-mono text-amber-500 font-bold uppercase tracking-widest">USIA KLINIS</label>
+                                        <span className="text-amber-400 font-black text-xl">{age} <span className="text-xs text-amber-500/50">Thn</span></span>
                                     </div>
-
-                                    <div className="flex flex-col justify-center">
-                                        <label className="flex items-center gap-2 text-[10px] font-mono font-bold text-cyan-500 mb-3 uppercase tracking-widest">
-                                            <IdCard size={14} /> OTORITAS ID
-                                        </label>
-                                        <div className="flex gap-2">
-                                            <select value={idType} onChange={(e) => setIdType(e.target.value)}
-                                                className="w-24 px-3 py-4 bg-slate-900 border border-slate-700 rounded-xl text-cyan-400 font-black text-xs text-center focus:outline-none cursor-pointer">
-                                                <option value="NIP">NIP</option>
-                                                <option value="NIK">NIK</option>
-                                                <option value="NIM">NIM</option>
-                                            </select>
-                                            <input type="text" value={idNumber}
-                                                onChange={(e) => setIdNumber(e.target.value.toUpperCase())}
-                                                placeholder="OPSIONAL"
-                                                className="flex-1 px-4 py-4 bg-slate-900 border border-slate-700 rounded-xl text-white font-mono text-sm placeholder-slate-600 focus:outline-none focus:border-cyan-500" />
+                                    <input type="range" min={24} max={65} value={age}
+                                        onChange={(e) => setAge(parseInt(e.target.value))}
+                                        className="w-full accent-amber-500 h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer mb-3" />
+                                    <div className="grid grid-cols-2 gap-4 border-t border-slate-800 pt-3">
+                                        <div>
+                                            <div className="flex justify-between text-[8px] font-mono text-slate-400 mb-1 uppercase">
+                                                <span>Stamina (AP)</span><span className="text-emerald-400 font-bold">{derivedStats.energy}</span>
+                                            </div>
+                                            <div className="h-1 bg-slate-950 rounded-full overflow-hidden">
+                                                <div className="h-full bg-emerald-500 transition-all" style={{ width: `${(derivedStats.energy / 120) * 100}%` }}/>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="flex justify-between text-[8px] font-mono text-slate-400 mb-1 uppercase">
+                                                <span>Wibawa (Rep)</span><span className="text-purple-400 font-bold">{derivedStats.rep}</span>
+                                            </div>
+                                            <div className="h-1 bg-slate-950 rounded-full overflow-hidden">
+                                                <div className="h-full bg-purple-500 transition-all" style={{ width: `${derivedStats.rep}%` }}/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -407,7 +387,7 @@ export default function PlayerSetup({ onComplete }) {
                                         </div>
                                         <div className="flex items-center gap-3 relative z-10">
                                             <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt="ITS" className="h-9 brightness-200 drop-shadow-md" />
-                                            <div className="text-white font-mono text-[9px] leading-tight font-bold tracking-widest border-l-2 border-emerald-400/50 pl-3">FKK — ITS<br/>SEPULUH NOPEMBER</div>
+                                            <div className="text-white font-mono text-[9px] leading-tight font-bold tracking-widest border-l-2 border-emerald-400/50 pl-3">PRIMER<br/>SIMULASI PUSKESMAS</div>
                                         </div>
                                         <div className="text-emerald-100 font-black tracking-widest text-[9px] border border-emerald-400/50 px-2 py-1 rounded relative z-10 bg-emerald-900/80 backdrop-blur-sm shadow-sm">ID-ASN</div>
                                     </div>

@@ -1,6 +1,9 @@
 import { getDiseaseScenarioById } from '../content/scenarios/DiseaseScenarios.js';
+import { DISEASE_SCENARIOS } from '../content/scenarios/DiseaseScenarios.js';
 import {
     advanceReadiness,
+    calculateVillageIKS,
+    getReadinessSummary,
     initializeReadinessState,
     recordVisit
 } from '../domains/village/NPCReadiness.js';
@@ -60,7 +63,60 @@ export function applyBehaviorCaseOutcomeToVillage(villageData, result, day) {
 
     return {
         ...nextVillage,
+        families: Array.isArray(nextVillage.families)
+            ? nextVillage.families.map((family) => (
+                family.id === familyId
+                    ? { ...family, activeScenarioId: null }
+                    : family
+            ))
+            : nextVillage.families,
         readinessState: nextReadinessState
+    };
+}
+
+export function resolveBehaviorCaseScenarioId({ familyData, familyId, day = 1 }) {
+    if (familyData?.activeScenarioId) {
+        return familyData.activeScenarioId;
+    }
+
+    const tierOneScenarios = DISEASE_SCENARIOS.filter((scenario) => scenario.tier === 1);
+    if (tierOneScenarios.length === 0) {
+        return null;
+    }
+
+    const charSum = String(familyId || '').split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    return tierOneScenarios[(charSum + (Number(day) || 1)) % tierOneScenarios.length].id;
+}
+
+export function activateBehaviorCaseForVillage(villageData, familyId, scenarioId) {
+    const nextVillage = ensureVillageReadinessState(villageData);
+    if (!nextVillage?.families || !familyId || !scenarioId) {
+        return nextVillage;
+    }
+
+    return {
+        ...nextVillage,
+        families: nextVillage.families.map((family) => (
+            family.id === familyId
+                ? { ...family, activeScenarioId: scenarioId }
+                : family
+        ))
+    };
+}
+
+export function clearBehaviorCaseForVillage(villageData, familyId) {
+    const nextVillage = ensureVillageReadinessState(villageData);
+    if (!nextVillage?.families || !familyId) {
+        return nextVillage;
+    }
+
+    return {
+        ...nextVillage,
+        families: nextVillage.families.map((family) => (
+            family.id === familyId
+                ? { ...family, activeScenarioId: null }
+                : family
+        ))
     };
 }
 
@@ -109,6 +165,10 @@ export function buildBehaviorCaseDebriefState(villageData, history = [], day = 1
             ))
         )
         : {};
+    const readinessSummary = getReadinessSummary(readinessState);
+    const villageIKS = Object.keys(readinessState).length > 0
+        ? calculateVillageIKS(readinessState).iks
+        : 0;
     const safeHistory = Array.isArray(history) ? history : [];
     const numericDay = Number(day);
 
@@ -126,7 +186,9 @@ export function buildBehaviorCaseDebriefState(villageData, history = [], day = 1
                 familyId: entry.behaviorCase.familyId || null,
                 xpEarned: entry.behaviorCase.xpEarned || 0
             })),
-        readinessState
+        readinessState,
+        readinessSummary,
+        villageIKS
     };
 }
 

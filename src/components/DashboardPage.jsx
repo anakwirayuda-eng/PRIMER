@@ -20,6 +20,7 @@ import {
 // WIKI_DATA removed — EducationalWikiModal loads data internally via getWikiEntry
 import { buildOperationalInventoryWikiStats, summarizeOperationalInventory } from '../utils/operationalInventory.js';
 import { buildLiquidityWikiStats } from '../utils/financeDisplay.js';
+import { calculateCommunityMetrics } from '../utils/communityMetrics.js';
 import ClinicalView from './dashboard/ClinicalView.jsx';
 import CommunityView from './dashboard/CommunityView.jsx';
 import PerformanceView from './dashboard/PerformanceView.jsx';
@@ -47,6 +48,11 @@ export default function DashboardPage() {
     React.useEffect(() => {
         guardStability('DASHBOARD_LIVE', 2000, 3);
     }, []);
+
+    const communityMetrics = useMemo(
+        () => calculateCommunityMetrics(villageData),
+        [villageData]
+    );
 
     // Wiki Modal — uses global store state from useGame()
 
@@ -100,9 +106,7 @@ export default function DashboardPage() {
             case 'accreditation_chapters':
                 return { "Status": accreditation, "Overall Score": derivedKpis.overallScore };
             case 'iks': {
-                const fams = villageData?.families || [];
-                const avgIKS = fams.length > 0 ? (fams.reduce((s, f) => s + (f.iksScore || 0), 0) / fams.length) : 0;
-                return { "Rata-rata IKS": (avgIKS * 100).toFixed(1) + "%", "Total KK": fams.length };
+                return { "Rata-rata IKS": (communityMetrics.avgIKS * 100).toFixed(1) + "%", "Total KK": communityMetrics.totalKK };
             }
             case 'kbk': {
                 const pop = villageData?.stats?.totalPopulation || 1;
@@ -135,14 +139,12 @@ export default function DashboardPage() {
             case 'ukp_overview':
                 return { "Akurasi Klinis": derivedKpis.clinicalAccuracy + "%", "Total Pasien": kpi.totalPatients };
             case 'ukm_overview': {
-                const fams2 = villageData?.families || [];
-                const avgIKS2 = fams2.length > 0 ? (fams2.reduce((s, f) => s + (f.iksScore || 0), 0) / fams2.length) : 0;
-                return { "Rata-rata IKS": (avgIKS2 * 100).toFixed(1) + "%", "Total KK": fams2.length };
+                return { "Rata-rata IKS": (communityMetrics.avgIKS * 100).toFixed(1) + "%", "Total KK": communityMetrics.totalKK };
             }
             default:
                 return null;
         }
-    }, [wikiMetric, stats, kpi, derivedKpis, hiredStaff, accreditation, villageData, playerStats, prolanisRoster, prbQueue, pharmacyInventory, day]);
+    }, [wikiMetric, stats, kpi, derivedKpis, hiredStaff, accreditation, communityMetrics, villageData, playerStats, prolanisRoster, prbQueue, pharmacyInventory, day]);
 
     // Memoize particle positions so they don't change on every re-render
     const particles = useMemo(() => {
@@ -177,7 +179,7 @@ export default function DashboardPage() {
         {
             id: 'community', label: 'Community Intel', sublabel: 'UKM • PIS-PK • Prolanis',
             icon: MapPin, color: 'violet',
-            quickStat: `IKS ${((villageData?.families || []).length > 0 ? ((villageData.families.reduce((s, f) => s + (f.iksScore || 0), 0) / villageData.families.length) * 100).toFixed(0) : 0)}%`,
+            quickStat: `IKS ${(communityMetrics.avgIKS * 100).toFixed(0)}%`,
             wikiKey: 'ukm_overview'
         },
         {

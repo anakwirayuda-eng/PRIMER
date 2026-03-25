@@ -26,6 +26,7 @@ import { checkLevelUp, getNextLevelXp } from '../utils/LevelingSystem.js';
 import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, determineScenarioOutcomeKey, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
 import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
+import { applyNeglectDecay } from '../domains/village/NPCReadiness.js';
 import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, updateGameProgress } from '../game/QuestEngine.js';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
@@ -3291,6 +3292,14 @@ export const useGameStore = create(
                                             `next-day:${nextDayVal}:${fam.id}`
                                         );
                                     });
+
+                                if (state.publicHealth.villageData.readinessState) {
+                                    const readinessDecay = applyNeglectDecay(
+                                        state.publicHealth.villageData.readinessState,
+                                        nextDayVal
+                                    );
+                                    state.publicHealth.villageData.readinessState = readinessDecay.state;
+                                }
                             }
 
                             // 4.5. UKM: Evaluate IKM Triggers for new day

@@ -12,6 +12,7 @@
 import React, { useMemo } from 'react';
 import { useGame } from '../../context/GameContext.jsx';
 import { Shield, ArrowLeft, Info, Users, MapPin, Stethoscope, AlertTriangle, Award } from 'lucide-react';
+import { calculateCommunityMetrics } from '../../utils/communityMetrics.js';
 
 /**
  * AccreditationView — Sub-module for Accreditation Radar
@@ -28,9 +29,9 @@ export default function AccreditationView({ onBack, openWiki }) {
         const bab1 = Math.min(100, Math.round((staffCount * 10) + (avgMorale * 0.4) + (facilityLevel * 5)));
 
         // Bab 2: UKM
-        const families = villageData?.families || [];
-        const avgIKS = families.length > 0 ? families.reduce((s, f) => s + (f.iksScore || 0), 0) / families.length : 0;
-        const jentik = families.length > 0 ? (families.filter(f => f.indicators?.jentik).length / families.length) * 100 : 0;
+        const communityMetrics = calculateCommunityMetrics(villageData);
+        const avgIKS = communityMetrics.avgIKS;
+        const jentik = communityMetrics.jentik;
         const prolanisActive = prolanisRoster?.filter(m => (day - (m.prolanisData?.lastVisitDay || 0)) <= 30).length || 0;
         const bab2 = Math.min(100, Math.round((avgIKS * 50) + (jentik * 0.3) + (prolanisActive * 3)));
 

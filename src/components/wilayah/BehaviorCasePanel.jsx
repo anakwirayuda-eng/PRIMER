@@ -23,8 +23,9 @@ import {
     scoreCOMBDiagnosis, scoreIntervention, resolveOutcome, getOutcomeNarrative
 } from '../../game/BehaviorCaseEngine.js';
 import { getMiniGameForScenario } from '../../game/MiniGameLibrary.js';
-import { getDiseaseScenarioById, DISEASE_SCENARIOS } from '../../content/scenarios/DiseaseScenarios.js';
+import { getDiseaseScenarioById } from '../../content/scenarios/DiseaseScenarios.js';
 import MiniGamePanel from './MiniGamePanel.jsx';
+import { resolveBehaviorCaseScenarioId } from '../../utils/behaviorCaseRuntime.js';
 
 // ═══════════════════════════════════════════════════════════════
 // 📚 COM-B DICTIONARY (with hover-education descriptions)
@@ -755,11 +756,11 @@ function EvaluationPhase({ caseInstance, onClose }) {
 export default function BehaviorCasePanel({ building, familyData, day, onClose, onComplete }) {
 
     const scenarioId = useMemo(() => {
-        if (familyData?.activeScenarioId) return familyData.activeScenarioId;
-        const tier1 = DISEASE_SCENARIOS.filter(s => s.tier === 1);
-        if (tier1.length === 0) return null;
-        const charSum = (building?.familyId || '').split('').reduce((s, c) => s + c.charCodeAt(0), 0);
-        return tier1[(charSum + (day || 1)) % tier1.length].id;
+        return resolveBehaviorCaseScenarioId({
+            familyData,
+            familyId: building?.familyId,
+            day
+        });
     }, [familyData, building, day]);
 
     const scenario = useMemo(() => scenarioId ? getDiseaseScenarioById(scenarioId) : null, [scenarioId]);

@@ -12,6 +12,7 @@
 import React, { useMemo } from 'react';
 import { useGame } from '../../context/GameContext.jsx';
 import { MapPin, Heart, ArrowLeft, Info, Shield, Users, AlertTriangle } from 'lucide-react';
+import { calculateCommunityMetrics } from '../../utils/communityMetrics.js';
 
 /**
  * CommunityView — Sub-module for UKM (Community Health)
@@ -21,12 +22,7 @@ export default function CommunityView({ onBack, openWiki }) {
     const { villageData, prolanisRoster, prbQueue, day, completePRBControl } = useGame();
 
     const pispkMetrics = useMemo(() => {
-        if (!villageData?.families || villageData.families.length === 0) return { avgIKS: 0, jentik: 0, risky: 0, totalKK: 0 };
-        const families = villageData.families;
-        const avgIKS = families.reduce((sum, f) => sum + (f.iksScore || 0), 0) / families.length;
-        const jentik = (families.filter(f => f.indicators?.jentik).length / families.length) * 100;
-        const risky = families.filter(f => (f.iksScore || 0) < 0.5).length;
-        return { avgIKS, jentik, risky, totalKK: families.length };
+        return calculateCommunityMetrics(villageData);
     }, [villageData]);
 
     const prolanisStats = useMemo(() => {

@@ -21,6 +21,7 @@ import useModalA11y from '../hooks/useModalA11y.js';
 import { safeReloadPage } from '../utils/browserSafety.js';
 import { buildOperationalInventoryWikiStats } from '../utils/operationalInventory.js';
 import { buildLiquidityWikiStats } from '../utils/financeDisplay.js';
+import { calculateCommunityMetrics } from '../utils/communityMetrics.js';
 import { PAGE_SHORTCUTS, TOGGLE_SHORTCUTS, SYSTEM_SHORTCUTS, resolveGlobalGameShortcut, shouldExecuteGlobalGameShortcut } from '../utils/gameShortcuts.js';
 import { LayoutDashboard, Dna, Stethoscope, Users, Package, Settings, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Archive, GraduationCap, Map, Building2, Home, Smartphone as PhoneIcon, Play, Pause, FastForward, Activity, X, CheckCircle, Sparkles, AlertTriangle, Loader2, Brain, Landmark, Keyboard } from 'lucide-react';
 // import Smartphone from './Smartphone.jsx'; // Lazy loaded below
@@ -338,6 +339,10 @@ export default function MainLayout() {
 
     // Derived XP Progress
     const xpPercentage = (playerStats.xp / (playerStats.nextLevelXp || 1000)) * 100;
+    const communityMetrics = useMemo(
+        () => calculateCommunityMetrics(villageData),
+        [villageData]
+    );
 
     const wikiLiveStats = useMemo(() => {
         if (!wikiMetric) return null;
@@ -371,9 +376,10 @@ export default function MainLayout() {
                 return { 'Status': accreditation, 'Overall Score': derivedKpis.overallScore };
             case 'iks':
             case 'ukm_overview': {
-                const families = villageData?.families || [];
-                const avgIKS = families.length > 0 ? (families.reduce((sum, family) => sum + (family.iksScore || 0), 0) / families.length) : 0;
-                return { 'Rata-rata IKS': `${(avgIKS * 100).toFixed(1)}%`, 'Total KK': families.length };
+                return {
+                    'Rata-rata IKS': `${(communityMetrics.avgIKS * 100).toFixed(1)}%`,
+                    'Total KK': communityMetrics.totalKK
+                };
             }
             case 'kbk': {
                 const population = villageData?.stats?.totalPopulation || 1;
@@ -419,7 +425,7 @@ export default function MainLayout() {
             default:
                 return null;
         }
-    }, [wikiMetric, energy, reputation, playerStats, stats, kpi, derivedKpis, accreditation, villageData, hiredStaff, prolanisRoster, prbQueue, pharmacyInventory, day]);
+    }, [wikiMetric, energy, reputation, playerStats, stats, kpi, derivedKpis, accreditation, communityMetrics, villageData, hiredStaff, prolanisRoster, prbQueue, pharmacyInventory, day]);
 
     return (
         <div className="flex h-[100dvh] bg-[var(--color-bg-main)] overflow-hidden font-sans text-[var(--color-text-main)] transition-colors duration-300">

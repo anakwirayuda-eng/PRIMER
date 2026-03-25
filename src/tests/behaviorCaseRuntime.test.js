@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { processUKPBridge } from '../game/TheDirector.js';
 import {
+    activateBehaviorCaseForVillage,
     applyBehaviorCaseOutcomeToVillage,
     buildBehaviorCaseDebriefState,
     buildBehaviorCaseHistoryEntry,
+    clearBehaviorCaseForVillage,
     collectPendingUkpBridgeCases,
     ensureVillageReadinessState,
-    markBehaviorCaseBridgeSpawned
+    markBehaviorCaseBridgeSpawned,
+    resolveBehaviorCaseScenarioId
 } from '../utils/behaviorCaseRuntime.js';
 
 describe('behaviorCaseRuntime', () => {
@@ -21,7 +24,7 @@ describe('behaviorCaseRuntime', () => {
 
     it('records a visit and advances readiness when a behavior case is completed', () => {
         const villageData = ensureVillageReadinessState({
-            families: [{ id: 'kk_01', iksScore: 0.5 }]
+            families: [{ id: 'kk_01', iksScore: 0.5, activeScenarioId: 'bc_scabies_outbreak' }]
         });
 
         const nextVillage = applyBehaviorCaseOutcomeToVillage(villageData, {
@@ -38,6 +41,23 @@ describe('behaviorCaseRuntime', () => {
         expect(nextVillage.readinessState.kk_01.lastVisitDay).toBe(5);
         expect(nextVillage.readinessState.kk_01.stage).toBe('preparation');
         expect(nextVillage.readinessState.kk_01.scenarioHistory).toContain('bc_scabies_outbreak');
+        expect(nextVillage.families[0].activeScenarioId).toBeNull();
+    });
+
+    it('tracks active behavior cases on the village model until they are cleared', () => {
+        const villageData = ensureVillageReadinessState({
+            families: [{ id: 'kk_01', iksScore: 0.5 }]
+        });
+        const scenarioId = resolveBehaviorCaseScenarioId({ familyData: null, familyId: 'kk_01', day: 4 });
+
+        const activeVillage = activateBehaviorCaseForVillage(villageData, 'kk_01', scenarioId);
+        expect(activeVillage.families[0].activeScenarioId).toBe(scenarioId);
+
+        const bcState = buildBehaviorCaseDebriefState(activeVillage, [], 4);
+        expect(bcState.activeCases).toEqual([{ familyId: 'kk_01', scenarioId }]);
+
+        const clearedVillage = clearBehaviorCaseForVillage(activeVillage, 'kk_01');
+        expect(clearedVillage.families[0].activeScenarioId).toBeNull();
     });
 
     it('builds bridge-ready history entries with normalized failed outcome labels', () => {
@@ -138,5 +158,7 @@ describe('behaviorCaseRuntime', () => {
         expect(bcState.completedToday).toHaveLength(1);
         expect(bcState.completedToday[0].familyId).toBe('kk_01');
         expect(bcState.readinessState.kk_01).toBeTruthy();
+        expect(bcState.readinessSummary.some((stage) => stage.id === 'preparation' && stage.count === 1)).toBe(true);
+        expect(bcState.villageIKS).toBeGreaterThan(0);
     });
 });

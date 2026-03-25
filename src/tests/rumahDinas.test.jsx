@@ -210,7 +210,7 @@ describe('RumahDinas', () => {
         await user.click(screen.getByRole('button', { name: 'Tidur Sekarang' }));
 
         expect(mockGenerateDebrief).toHaveBeenCalledTimes(1);
-        expect(mockGenerateDebrief.mock.calls[0][0].bcState).toEqual({
+        expect(mockGenerateDebrief.mock.calls[0][0].bcState).toMatchObject({
             activeCases: [],
             completedToday: [
                 {
@@ -231,5 +231,7 @@ describe('RumahDinas', () => {
                 }
             }
         });
+        expect(mockGenerateDebrief.mock.calls[0][0].bcState.readinessSummary).toBeTruthy();
+        expect(mockGenerateDebrief.mock.calls[0][0].bcState.villageIKS).toBeGreaterThan(0);
     });
 });

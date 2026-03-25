@@ -26,6 +26,7 @@ import { parseSavePayload } from '../utils/savePayload.js';
 import { MEDICATION_DATABASE } from '../data/MedicationDatabase.js';
 import { calculateGlobalBuffs } from '../game/GameCore.js';
 import { normalizeInventoryList } from '../models/InventoryRuntime.js';
+import { clearStability } from '../utils/prophylaxis.js';
 
 describe('store prophylaxis', () => {
     beforeEach(() => {
@@ -34,6 +35,9 @@ describe('store prophylaxis', () => {
         safeSetStorageItem.mockReset();
         safeSetStorageItem.mockReturnValue(true);
         vi.useRealTimers();
+        clearStability('ACTION_actions.nextDay');
+        clearStability('ACTION_financeActions.processMonthlyReport');
+        clearStability('ACTION_actions.saveGame');
     });
 
     afterEach(() => {
@@ -410,6 +414,44 @@ describe('store prophylaxis', () => {
             label: 'Pressure Rising',
             spawnMultiplier: 1.3
         });
+
+        act(() => {
+            vi.runAllTimers();
+        });
+    });
+
+    it('applies readiness decay during nextDay rollover for families neglected longer than 30 days', () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-01-01T00:00:05.500Z'));
+
+        useGameStore.setState(state => ({
+            nav: { ...state.nav, currentSlotId: 0, gameState: 'playing' },
+            world: { ...state.world, day: 40, time: 1439, isPaused: false },
+            publicHealth: {
+                ...state.publicHealth,
+                villageData: {
+                    families: [{ id: 'kk_01', iksScore: 0.5, indicators: { jentik: false } }],
+                    stats: { totalPopulation: 3 },
+                    readinessState: {
+                        kk_01: {
+                            stage: 'action',
+                            familiarity: 40,
+                            visitCount: 2,
+                            lastVisitDay: 1,
+                            scenarioHistory: ['bc_scabies_outbreak'],
+                            stageHistory: []
+                        }
+                    }
+                }
+            }
+        }));
+
+        act(() => {
+            useGameStore.getState().actions.nextDay(40);
+        });
+
+        expect(useGameStore.getState().world.day).toBe(41);
+        expect(useGameStore.getState().publicHealth.villageData.readinessState.kk_01.stage).toBe('preparation');
 
         act(() => {
             vi.runAllTimers();

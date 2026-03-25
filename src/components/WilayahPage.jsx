@@ -44,9 +44,13 @@ import { isGameEnabledBuilding } from './wilayah/buildingScenes.js';
 import { getCachedTextures, generateTextures } from '../utils/TextureGenerator.js';
 import { guardStability } from '../utils/prophylaxis.js';
 import {
+    activateBehaviorCaseForVillage,
     applyBehaviorCaseOutcomeToVillage,
-    buildBehaviorCaseHistoryEntry
+    buildBehaviorCaseHistoryEntry,
+    clearBehaviorCaseForVillage,
+    resolveBehaviorCaseScenarioId
 } from '../utils/behaviorCaseRuntime.js';
+import { calculateCommunityMetrics } from '../utils/communityMetrics.js';
 import VillagerBehavior from '../domains/village/VillagerBehavior.js';
 import { VILLAGE_FAMILIES } from '../domains/village/VillageRegistry.js';
 
@@ -112,6 +116,11 @@ export default function WilayahPage() {
         });
         return { ...staticMapTopology, buildings, families };
     }, [staticMapTopology, villageData]);
+
+    const communityMetrics = useMemo(
+        () => calculateCommunityMetrics(villageData),
+        [villageData]
+    );
 
 
     const scrollToBuilding = useCallback((building) => {
@@ -228,15 +237,31 @@ export default function WilayahPage() {
     }
 
     const stats = {
-        totalHouses: villageData?.families?.length || 0,
-        avgIks: villageData?.families?.reduce((acc, f) => {
-            const ind = f.indicators || {};
-            const scored = Object.values(ind).filter(v => v !== null).length;
-            const healthy = Object.values(ind).filter(v => v === true).length;
-            return acc + (scored > 0 ? healthy / scored : 0);
-        }, 0) / (villageData?.families?.length || 1),
+        totalHouses: communityMetrics.totalKK,
+        avgIks: communityMetrics.avgIKS,
         alertCount: Object.keys(surveillanceStatus).length
     };
+
+    const handleStartBehaviorCase = useCallback(() => {
+        if (!selectedBuilding?.familyId) return;
+        const familyId = selectedBuilding.familyId;
+        const familyData = selectedBuilding.familyData || villageData?.families?.find(f => f.id === familyId) || null;
+        const scenarioId = resolveBehaviorCaseScenarioId({ familyData, familyId, day });
+        if (!scenarioId) return;
+
+        setVillageData(prev => activateBehaviorCaseForVillage(prev, familyId, scenarioId));
+        setActiveBCCase({
+            ...selectedBuilding,
+            familyData: familyData ? { ...familyData, activeScenarioId: scenarioId } : { id: familyId, activeScenarioId: scenarioId }
+        });
+    }, [day, selectedBuilding, setVillageData, villageData]);
+
+    const handleCloseBehaviorCase = useCallback(() => {
+        if (activeBCCase?.familyId) {
+            setVillageData(prev => clearBehaviorCaseForVillage(prev, activeBCCase.familyId));
+        }
+        setActiveBCCase(null);
+    }, [activeBCCase, setVillageData]);
 
     // ─── Compute actual IKS for selected building ───
     const selectedFamily = selectedBuilding?.familyId
@@ -645,7 +670,7 @@ export default function WilayahPage() {
                             {selectedBuilding.familyId && (
                                 <div className="p-4 border-t border-white/10 space-y-2">
                                     <button
-                                        onClick={() => setActiveBCCase(selectedBuilding)}
+                                        onClick={handleStartBehaviorCase}
                                         className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black p-3.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-emerald-500/30"
                                     >
                                         <Footprints size={16} /> 🔍 KUNJUNGAN RUMAH (Behavior Change)
@@ -887,7 +912,7 @@ export default function WilayahPage() {
                         building={activeBCCase}
                         familyData={activeBCCase.familyData || villageData?.families?.find(f => f.id === activeBCCase.familyId)}
                         day={day}
-                        onClose={() => setActiveBCCase(null)}
+                        onClose={handleCloseBehaviorCase}
                         onComplete={(result) => {
                             // Apply XP and reputation
                             if (result.xpEarned) addXp(result.xpEarned);
