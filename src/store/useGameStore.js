@@ -84,6 +84,8 @@ import { buildProlanisBpjsNumber, applyFamilyIndicatorDrift, applyStaffMoraleDec
 // ═══════════════════════════════════════════════════════════════
 import { createNavSlice } from './slices/createNavSlice.js';
 import { createWorldSlice } from './slices/createWorldSlice.js';
+import { createStaffSlice } from './slices/createStaffSlice.js';
+import { createPlayerSlice } from './slices/createPlayerSlice.js';
 
 const ACTION_GROUP_NAMES = [
     'navActions',
@@ -165,153 +167,8 @@ export const useGameStore = create(
                 // --- SLICE: WORLD (CP2 extracted) ---
                 ...createWorldSlice(set, get),
 
-                // --- SLICE: PLAYER ---
-                player: {
-                    profile: INITIAL_PLAYER_STATE },
-                playerActions: {
-                    setPlayerStats: (stats) => set((s) => {
-                        const nextStats = typeof stats === 'function' ? stats(s.player.profile) : stats;
-                        return {
-                            player: {
-                                ...s.player,
-                                profile: sanitizePlayerProfile({ ...s.player.profile, ...nextStats })
-                            }
-                        };
-                    }),
-                    updateProfile: (updates) => set((state) => ({
-                        player: {
-                            ...state.player,
-                            profile: sanitizePlayerProfile({ ...state.player.profile, ...updates })
-                        }
-                    })),
-                    gainXp: (amount) => set((state) => {
-                        return {
-                            player: {
-                                ...state.player,
-                                profile: applyXpGainToProfile(state.player.profile, amount)
-                            }
-                        };
-                    }),
-                    sleepWithAlarm: (targetHour) => {
-                        const state = get();
-                        const wakeHour = clampInteger(targetHour, 5, 0, 23);
-                        const outcome = calculateSleepRecoveryOutcome(
-                            state.world.time,
-                            wakeHour,
-                            state.player.profile.energy,
-                            state.player.profile.stress
-                        );
-
-                        if (outcome.isNextDay) {
-                            const didAdvanceDay = state.actions.nextDay(state.world.day);
-                            if (didAdvanceDay === false) {
-                                return {
-                                    success: false,
-                                    status: outcome.status,
-                                    wakeTime: outcome.wakeTime,
-                                    time: outcome.wakeTime,
-                                    isNextDay: true
-                                };
-                            }
-                        }
-
-                        set(s => ({
-                            player: {
-                                ...s.player,
-                                profile: sanitizePlayerProfile({
-                                    ...s.player.profile,
-                                    energy: Math.min(s.player.profile.maxEnergy, outcome.energy),
-                                    stress: outcome.stress,
-                                    morningStatus: outcome.status
-                                })
-                            }
-                        }));
-
-                        get().worldActions.setTime(outcome.wakeTime);
-
-                        return {
-                            success: true,
-                            status: outcome.status,
-                            wakeTime: outcome.wakeTime,
-                            time: outcome.wakeTime,
-                            isNextDay: outcome.isNextDay
-                        };
-                    },
-                    calculateSleepRecovery: (targetHour, currentTime) => {
-                        const sleepHour = Math.floor(currentTime / 60);
-                        const wakeHour = targetHour;
-                        let sleepDuration = (wakeHour > sleepHour) ? (wakeHour - sleepHour) : ((24 - sleepHour) + wakeHour);
-                        const isNextDay = wakeHour <= sleepHour;
-                        const isGroggy = sleepDuration < 6 || wakeHour < 5;
-                        const status = isGroggy ? 'groggy' : 'refreshed';
-                        set(s => ({
-                            player: {
-                                ...s.player,
-                                profile: sanitizePlayerProfile({
-                                    ...s.player.profile,
-                                    energy: isGroggy ? Math.min(s.player.profile.maxEnergy, 70) : s.player.profile.maxEnergy,
-                                    stress: Math.max(0, s.player.profile.stress - (isGroggy ? 10 : 30)),
-                                    morningStatus: status
-                                })
-                            }
-                        }));
-                        return { success: true, status, wakeTime: wakeHour * 60, isNextDay };
-                    },
-                    takeLoungeRest: () => {
-                        const s = get();
-                        const { day } = s.world;
-                        const profile = s.player.profile;
-                        const currentCount = profile.lastLoungeDay === day ? profile.loungeRestCount : 0;
-
-                        if (currentCount >= 3) return { success: false, message: 'Sudah mencapai batas istirahat hari ini.' };
-
-                        set(state => ({
-                            player: {
-                                ...state.player,
-                                profile: sanitizePlayerProfile({
-                                    ...state.player.profile,
-                                    energy: Math.min(state.player.profile.maxEnergy, state.player.profile.energy + 15),
-                                    stress: Math.max(0, state.player.profile.stress - 10),
-                                    loungeRestCount: currentCount + 1,
-                                    lastLoungeDay: day
-                                })
-                            }
-                        }));
-
-                        // Advance time by 15 mins
-                        get().worldActions.advanceTime(15);
-                        soundManager.playSuccess();
-                        return { success: true };
-                    },
-                    clearMorningStatus: () => set(s => ({ player: { ...s.player, profile: { ...s.player.profile, morningStatus: null } } })),
-                    setReputation: (rep) => set(s => ({ player: { ...s.player, profile: { ...s.player.profile, reputation: typeof rep === 'function' ? rep(s.player.profile.reputation) : rep } } })),
-                    unlockSkill: (skillId, xpCost = 0) => {
-                        const state = get();
-                        const currentSkills = normalizeSkillList(state.player.profile.skills);
-
-                        if (!skillId || currentSkills.includes(skillId)) {
-                            return false;
-                        }
-
-                        const spent = spendXpFromProfile(state.player.profile, xpCost);
-                        if (!spent.success) {
-                            soundManager.playError();
-                            return false;
-                        }
-
-                        set(s => ({
-                            player: {
-                                ...s.player,
-                                profile: sanitizePlayerProfile({
-                                    ...spent.profile,
-                                    skills: [...currentSkills, skillId]
-                                })
-                            }
-                        }));
-                        soundManager.playSuccess();
-                        return true;
-                    },
-                    resetPlayer: () => set(s => ({ player: { ...s.player, profile: sanitizePlayerProfile(INITIAL_PLAYER_STATE) } })) },
+                // --- SLICE: PLAYER (CP2 extracted) ---
+                ...createPlayerSlice(set, get),
 
                 // --- SLICE: FINANCE ---
                 finance: createInitialFinanceState(),
@@ -1233,38 +1090,8 @@ export const useGameStore = create(
                     }
                 },
 
-                // --- SLICE: STAFF ---
-                staff: createInitialStaffState(),
-                staffActions: {
-                    setHiredStaff: (val) => set(s => ({ staff: { ...s.staff, hiredStaff: typeof val === 'function' ? val(s.staff.hiredStaff) : val } })),
-                    coachStaff: (staffId, day) => {
-                        const s = get();
-                        const staff = s.staff.hiredStaff.find(st => st.id === staffId);
-                        if (!staff) return { success: false, message: 'Staff not found' };
-                        if (s.player.profile.energy < 10) { soundManager.playError(); return { success: false, message: 'Not enough energy' }; }
-                        set(state => ({
-                            staff: { ...state.staff, hiredStaff: state.staff.hiredStaff.map(st => st.id === staffId ? { ...st, morale: Math.min(100, (st.morale || 70) + 15), lastCoached: day } : st) },
-                            player: { ...state.player, profile: { ...state.player.profile, energy: state.player.profile.energy - 10 } }
-                        }));
-                        soundManager.playSuccess();
-                        return { success: true, message: `${staff.name} motivated!` };
-                    },
-                    assignTask: (staffId, taskId, day) => {
-                        set(s => ({ staff: { ...s.staff, hiredStaff: s.staff.hiredStaff.map(st => st.id === staffId ? { ...st, currentTask: taskId, taskAssignedDay: day } : st) } }));
-                        soundManager.playConfirm();
-                        return { success: true, message: `Task assigned` };
-                    },
-                    processDailyDecay: () => {
-                        const day = get().world.day;
-                        set(s => ({
-                            staff: {
-                                ...s.staff,
-                                hiredStaff: applyStaffMoraleDecay(s.staff.hiredStaff, `staff-daily:${day}`)
-                            }
-                        }));
-                    },
-                    resetStaff: () => set(s => ({ staff: { ...s.staff, hiredStaff: [] } }))
-                },
+                // --- SLICE: STAFF (CP2 extracted) ---
+                ...createStaffSlice(set, get),
 
                 // --- SLICE: CLINICAL ---
                 clinical: createInitialClinicalState(),
