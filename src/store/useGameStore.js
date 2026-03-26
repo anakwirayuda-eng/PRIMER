@@ -779,7 +779,7 @@ export const useGameStore = create(
                                     prolanisData: {
                                         ...member.prolanisData, lastVisitDay: effectiveDay, parameters: outcome.newParameters,
                                         consecutiveControlled: outcome.consecutiveControlled,
-                                        history: [...member.prolanisData.history, { day: effectiveDay, parameters: outcome.newParameters, wasControlled: outcome.wasControlled, doctorDecisions }],
+                                        history: [...(member.prolanisData?.history || []), { day: effectiveDay, parameters: outcome.newParameters, wasControlled: outcome.wasControlled, doctorDecisions }],
                                         hasComplication: !!outcome.complication, complicationDetails: outcome.complication
                                     }
                                 };
@@ -1712,29 +1712,81 @@ export const useGameStore = create(
                             return;
                         }
 
-                        // Codex Fix: intercept Prolanis visit patients — redirect to completeProlanisVisit
+                        // Codex Fix: intercept Prolanis visit patients — inline roster update
+                        // (do NOT call completeProlanisVisit via get() here — it creates a nested
+                        //  set() inside withTransaction that gets overwritten by the outer commit)
                         if (typeof patient.id === 'string' && patient.id.includes('_visit_')) {
-                            const visitData = {
-                                patientId: patient.id,
-                                doctorDecisions: {
-                                    diagnoses: decision.diagnoses,
-                                    medications: decision.medications,
-                                    action: decision.action,
-                                }
-                            };
-                            // Call completeProlanisVisit via get() to update roster
-                            get().publicHealthActions.completeProlanisVisit(visitData, day);
-                            // Also check PRB eligibility after visit
                             const rosterId = patient.id.split('_visit_')[0];
-                            const member = state.publicHealth.prolanisRoster.find(m => m.id === rosterId);
-                            if (member && (member.prolanisData?.consecutiveControlled || 0) >= 3 && !member.hasComplication) {
-                                const prbExists = state.publicHealth.prbQueue?.some(p => p.patientId === rosterId);
+                            const effectiveDay = day;
+
+                            // EMR → Engine contract adapter
+                            const hasMeds = Array.isArray(decision?.medications) && decision.medications.length > 0;
+                            let xpEarned = 0;
+
+                            state.publicHealth.prolanisRoster = state.publicHealth.prolanisRoster.map(member => {
+                                if (member.id !== rosterId) return member;
+
+                                const diseaseType = member.prolanisData?.diseaseType;
+                                const medicationAction = hasMeds ? {
+                                    effect: { paramChange: -(15 * Math.min(decision.medications.length, 3)) }
+                                } : null;
+                                const lastVisitDay = member.prolanisData?.lastVisitDay || 0;
+                                const complianceBonus = lastVisitDay > 0 && (effectiveDay - lastVisitDay) <= 35;
+                                const education = hasMeds ? [{
+                                    effect: diseaseType === 'dm_type2'
+                                        ? { gds: -8, hba1c: -0.05 }
+                                        : { systolic: -3, diastolic: -2 }
+                                }] : [];
+
+                                const outcome = determineMonthlyOutcome(
+                                    { ...member },
+                                    { medicationAction, education, complianceBonus },
+                                    seedKey('prolanis-visit', member.id, effectiveDay)
+                                );
+                                xpEarned = outcome.xpEarned || 0;
+
+                                return {
+                                    ...member,
+                                    hasComplication: !!outcome.complication,
+                                    complicationRisk: outcome.newRisk ?? member.complicationRisk ?? 0,
+                                    prolanisData: {
+                                        ...member.prolanisData,
+                                        lastVisitDay: effectiveDay,
+                                        parameters: outcome.newParameters,
+                                        consecutiveControlled: outcome.consecutiveControlled,
+                                        history: [...(member.prolanisData?.history || []), {
+                                            day: effectiveDay,
+                                            parameters: outcome.newParameters,
+                                            wasControlled: outcome.wasControlled,
+                                            doctorDecisions: decision
+                                        }],
+                                        hasComplication: !!outcome.complication,
+                                        complicationDetails: outcome.complication
+                                    }
+                                };
+                            });
+
+                            // Remove from queue + clear active
+                            state.clinical.queue = state.clinical.queue.filter(p => p.id !== patient.id);
+                            if (state.clinical.activePatientId === patient.id) {
+                                state.clinical.activePatientId = null;
+                            }
+
+                            // Award XP
+                            if (xpEarned > 0) {
+                                state.player.profile = applyXpGainToProfile(state.player.profile, xpEarned);
+                            }
+
+                            // PRB eligibility check — write to clinical.prbQueue (canonical)
+                            const updatedMember = state.publicHealth.prolanisRoster.find(m => m.id === rosterId);
+                            if (updatedMember && (updatedMember.prolanisData?.consecutiveControlled || 0) >= 3 && !updatedMember.hasComplication) {
+                                const prbExists = (state.clinical.prbQueue || []).some(p => p.patientId === rosterId);
                                 if (!prbExists) {
-                                    const prbEntry = {
+                                    state.clinical.prbQueue = [...(state.clinical.prbQueue || []), {
                                         id: `prb_${rosterId}_${day}`,
                                         patientId: rosterId,
-                                        patientName: member.name,
-                                        diagnosis: member.prolanisData?.diseaseType === 'hypertension' ? 'Hipertensi' : 'DM Tipe 2',
+                                        patientName: updatedMember.name,
+                                        diagnosis: updatedMember.prolanisData?.diseaseType === 'hypertension' ? 'Hipertensi' : 'DM Tipe 2',
                                         status: 'active',
                                         enrolledDay: day,
                                         tasks: [
@@ -1742,8 +1794,7 @@ export const useGameStore = create(
                                             { id: 'prb_control_2', label: 'Kontrol PRB 2', dueDay: day + 60, completed: false },
                                             { id: 'prb_control_3', label: 'Kontrol PRB 3', dueDay: day + 90, completed: false },
                                         ]
-                                    };
-                                    state.publicHealth.prbQueue = [...(state.publicHealth.prbQueue || []), prbEntry];
+                                    }];
                                 }
                             }
                             return;
