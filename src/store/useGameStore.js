@@ -10,29 +10,26 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { produce } from 'immer';
 import { soundManager } from '../utils/SoundManager.js';
-import { MEDICATION_DATABASE, getMedicationById, MEDICATION_CATEGORIES } from '../data/MedicationDatabase.js';
+import { getMedicationById } from '../data/MedicationDatabase.js';
 import { getSupplierById, calculateOrderCost, estimateDeliveryDate } from '../data/SupplierDatabase.js';
-import { calculatePatientBill, calculatePrimaryCareRevenueForDecision } from '../game/BillingEngine.js';
+import { calculatePatientBill } from '../game/BillingEngine.js';
 import { generateInitialParameters, determineMonthlyOutcome } from '../game/ProlanisEngine.js';
 import { applyOutbreakAction, checkForOutbreakTrigger, checkOutbreakExpiry } from '../domains/community/OutbreakSystem.js';
-import { TRIAGE_LEVELS, EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../game/EmergencyCases.js';
+import { EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../game/EmergencyCases.js';
 import { PROCEDURES_DB } from '../data/ProceduresDB.js';
 import { HOSPITALS, AMBULANCES } from '../data/HospitalDB.js';
 import { buildCPPTRecord, buildMaiaCPPTRecord } from '../game/CPPTEngine.js';
 import { getPatientSpikeMultiplier } from '../domains/community/OutbreakSystem.js';
 import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateGenericPatients, generateProlanisVisitPatient } from '../game/PatientGenerator.js';
 import { getScheduledFollowups, clearProcessedFollowups } from '../game/ConsequenceEngine.js';
-import { checkLevelUp, getNextLevelXp } from '../utils/LevelingSystem.js';
 import { evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact, determineScenarioOutcomeKey, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
 import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
 import { applyNeglectDecay } from '../domains/village/NPCReadiness.js';
-import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, getStoryNodeImpact, updateGameProgress, generateDailyQuests, generateWeeklyQuests, getWeekFromDay } from '../game/QuestEngine.js';
-import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
+import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, getStoryNodeImpact, updateGameProgress } from '../game/QuestEngine.js';
 import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
-import { normalizeEncounter, normalizeEncounterList } from '../models/EncounterRuntime.js';
+import { normalizeEncounter } from '../models/EncounterRuntime.js';
 import { normalizeInventoryList, normalizeMedicationId } from '../models/InventoryRuntime.js';
-import { normalizeDailyArchive, normalizeMonthlyArchive } from '../utils/archiveNormalization.js';
 import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
 import { applyIkmScoreToVillage } from '../utils/ikmImpact.js';
 import { formatIkmImpactSummary, getIkmOutcomeStatus } from '../utils/ikmHistory.js';
@@ -47,7 +44,7 @@ import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '.
 import { buildRuntimeTrap, guardActionGroup, triggerFreezeProtocol } from '../utils/dispatchGuard.js';
 import { CURRENT_SAVE_VERSION, parseSavePayload } from '../utils/savePayload.js';
 import { withTransaction } from '../utils/transactions.js';
-import { chanceFromSeed, pickDeterministic, seedKey, seededBetween, seededInt } from '../utils/deterministicRandom.js';
+import { chanceFromSeed, seedKey } from '../utils/deterministicRandom.js';
 import { safeSetStorageItem } from '../utils/browserSafety.js';
 import { showToast } from '../utils/ToastManager.js';
 import { clearStability } from '../utils/prophylaxis.js';
@@ -57,9 +54,6 @@ import {
     reconcileReferralLog
 } from '../utils/referralLog.js';
 import { normalizeProgressMetric } from '../utils/progressMetrics.js';
-import { selectDerivedFinance } from './selectors.js';
-
-
 import {
     INITIAL_PLAYER_STATE,
     INITIAL_TIME_STATE,
@@ -71,11 +65,11 @@ import {
 // ═══════════════════════════════════════════════════════════════
 // CP1 EXTRACTED HELPERS — Pure functions moved to store/helpers/
 // ═══════════════════════════════════════════════════════════════
-import { isPlainObject, isMetaRecord, hasOwn, asFiniteNumber, clampInteger, clampNumber, toAbsoluteWorldMinutes } from './helpers/storeUtils.js';
-import { sanitizePlayerProfile, applyXpGainToProfile, spendXpFromProfile, createStartingPlayerProfile, clampEnergyToProfile, getProfileLevel, normalizeSkillList } from './helpers/playerHelpers.js';
+import { isPlainObject, clampInteger } from './helpers/storeUtils.js';
+import { sanitizePlayerProfile, applyXpGainToProfile, spendXpFromProfile, createStartingPlayerProfile, clampEnergyToProfile, normalizeSkillList } from './helpers/playerHelpers.js';
 import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from './helpers/ambulanceHelpers.js';
-import { capClinicalHistory, appendClinicalHistory, normalizeClinicalHistoryEntry, getHistoryForDay, getEncounterAction, isAntibioticMed, isCorrectMedicationSelection, isEncounterCorrect, hasCorrectDiagnosis, hasAntibioticMedication, calculateEncounterRevenue, MAX_CLINICAL_HISTORY } from './helpers/clinicalHelpers.js';
-import { buildDailyArchiveEntry, buildMonthlyArchiveEntry, INITIAL_FINANCE_STATS, ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';
+import { appendClinicalHistory, normalizeClinicalHistoryEntry, isAntibioticMed } from './helpers/clinicalHelpers.js';
+import { buildDailyArchiveEntry, buildMonthlyArchiveEntry, ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';
 import {
     normalizePersistedWorld, createInitialMetaState, createInitialPublicHealthState, createInitialStaffState,
     INITIAL_CLINICAL_STATE, createInitialClinicalState, createInitialPharmacyInventory, INITIAL_KPI, INITIAL_FACILITIES,
@@ -83,7 +77,7 @@ import {
     mergePersistedFinance, mergePersistedPublicHealth, mergePersistedStaff, mergePersistedClinical, mergePersistedMeta,
     reconcileClinicalReferralLog, buildManualSaveSnapshot, syncQuestRoster
 } from './helpers/persistenceHelpers.js';
-import { buildProlanisBpjsNumber, applyFamilyIndicatorDrift, applyStaffMoraleDecay, pruneOutbreakRiskModifiers, applyIkmOutbreakRiskModifiers, applyStoryImpactToDraft, OUTBREAK_RISK_WINDOW_DAYS } from './helpers/publicHealthHelpers.js';
+import { buildProlanisBpjsNumber, applyFamilyIndicatorDrift, applyStaffMoraleDecay, pruneOutbreakRiskModifiers, applyIkmOutbreakRiskModifiers, applyStoryImpactToDraft } from './helpers/publicHealthHelpers.js';
 
 const advanceElapsedTime = (get, minutes = 1) => {
     const increment = Math.max(0, Number(minutes) || 0);
@@ -198,13 +192,11 @@ export const useGameStore = create(
                             soundManager.setVolume(updated.volume);
                         }
                         return { nav: { ...s.nav, settings: updated } };
-                    }),
-                },
+                    }) },
 
                 // --- SLICE: WORLD (Time & Environment) ---
                 world: {
-                    ...INITIAL_TIME_STATE,
-                },
+                    ...INITIAL_TIME_STATE },
                 worldActions: {
                     tick: (minutes = 1) => set((s) => {
                         let newTime = s.world.time + minutes;
@@ -230,13 +222,11 @@ export const useGameStore = create(
                     }),
                     setGameSpeed: (speed) => set((s) => ({ world: { ...s.world, speed: Number(speed) || 0, isPaused: speed === 0 } })),
                     advanceTime: (minutes = 1) => advanceElapsedTime(get, minutes),
-                    resetTime: () => set((s) => ({ world: { ...s.world, ...INITIAL_TIME_STATE } })),
-                },
+                    resetTime: () => set((s) => ({ world: { ...s.world, ...INITIAL_TIME_STATE } })) },
 
                 // --- SLICE: PLAYER ---
                 player: {
-                    profile: INITIAL_PLAYER_STATE,
-                },
+                    profile: INITIAL_PLAYER_STATE },
                 playerActions: {
                     setPlayerStats: (stats) => set((s) => {
                         const nextStats = typeof stats === 'function' ? stats(s.player.profile) : stats;
@@ -380,8 +370,7 @@ export const useGameStore = create(
                         soundManager.playSuccess();
                         return true;
                     },
-                    resetPlayer: () => set(s => ({ player: { ...s.player, profile: sanitizePlayerProfile(INITIAL_PLAYER_STATE) } })),
-                },
+                    resetPlayer: () => set(s => ({ player: { ...s.player, profile: sanitizePlayerProfile(INITIAL_PLAYER_STATE) } })) },
 
                 // --- SLICE: FINANCE ---
                 finance: createInitialFinanceState(),
@@ -872,8 +861,7 @@ export const useGameStore = create(
                                     type: 'senam_prolanis',
                                     day: currentState.world.day,
                                     name: 'Senam Prolanis',
-                                    participants: currentState.publicHealth.prolanisRoster.length,
-                                }]
+                                    participants: currentState.publicHealth.prolanisRoster.length }]
                             }
                         }));
                         soundManager.playSuccess();
@@ -914,8 +902,7 @@ export const useGameStore = create(
                                     name: `Panggil Prolanis: ${rosterMember.name}`,
                                     patientId: patientId,
                                     patientName: rosterMember.name,
-                                    diseaseType: rosterMember.prolanisData?.diseaseType,
-                                }]
+                                    diseaseType: rosterMember.prolanisData?.diseaseType }]
                             }
                         }));
                         soundManager.playConfirm();
@@ -978,8 +965,7 @@ export const useGameStore = create(
                                     day: currentState.world.day,
                                     name: `Pantau Obat: ${rosterMember.name}`,
                                     patientId: patientId,
-                                    patientName: rosterMember.name,
-                                }]
+                                    patientName: rosterMember.name }]
                             }
                         }));
                         soundManager.playConfirm();
@@ -2281,8 +2267,7 @@ export const useGameStore = create(
                         if (score >= 90) newAccreditation = 'Paripurna'; else if (score >= 80) newAccreditation = 'Utama'; else if (score >= 70) newAccreditation = 'Madya';
                         if (newAccreditation !== s.clinical.accreditation) { set(st => ({ clinical: { ...st.clinical, accreditation: newAccreditation } })); }
                     },
-                    resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [], hospitalBedUsage: {}, activeReferralLog: [] } })),
-                },
+                    resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [], hospitalBedUsage: {}, activeReferralLog: [] } })) },
 
                 // --- SLICE: META (Quests, Stories, Wiki) ---
                 meta: createInitialMetaState(INITIAL_TIME_STATE.day),
@@ -2762,9 +2747,7 @@ export const useGameStore = create(
                         publicHealth: createInitialPublicHealthState(),
                         staff: createInitialStaffState(),
                         clinical: createInitialClinicalState(),
-                        meta: createInitialMetaState(INITIAL_TIME_STATE.day),
-                    })),
-                }
+                        meta: createInitialMetaState(INITIAL_TIME_STATE.day) })) }
             };
 
                 return guardStoreActions(store, set, get);
@@ -2831,8 +2814,7 @@ export const useGameStore = create(
                         clinical: reconcileClinicalReferralLog(mergedClinical, normalizedWorld),
                         meta: mergedMeta
                     };
-                },
-            }
+                } }
         )
     )
 );
