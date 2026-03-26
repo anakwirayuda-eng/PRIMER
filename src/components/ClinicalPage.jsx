@@ -122,7 +122,7 @@ export default function ClinicalPage() {
                             {/* Sub-tab content */}
                             <div className="flex-1 overflow-y-auto">
                                 {poliUmumSubTab === 'prolanis'
-                                    ? <ProlanisPanel compact />
+                                    ? <ErrorBoundary name="ProlanisPanel"><ProlanisPanel compact /></ErrorBoundary>
                                     : (time < 480 || time >= 960) ? (
                                         <div className={`p-8 text-center ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                                             <Construction size={32} className="mx-auto mb-4 opacity-20" />
@@ -416,6 +416,7 @@ export default function ClinicalPage() {
 
                 {/* Service Card Deck */}
                 <div className={`p-3 border-b ${isDark ? 'border-slate-700' : 'border-slate-200'} ${isSidebarCollapsed ? 'hidden' : ''}`}>
+                    <ErrorBoundary name="ServiceCardDeck">
                     <ServiceCardDeck
                         services={CLINICAL_SERVICES}
                         activeServiceId={activeServiceId}
@@ -424,6 +425,7 @@ export default function ClinicalPage() {
                         hiredStaff={hiredStaff}
                         emergencyCount={emergencyQueue?.length || 0}
                     />
+                    </ErrorBoundary>
                 </div>
 
                 {/* Queue/Panel Content - When Expanded */}
@@ -590,15 +592,12 @@ export default function ClinicalPage() {
             `}>
                 {renderWorkArea()}
 
-                {/* Prolanis Overlay (now accessible via sub-tab in Poli Umum) */}
-                {activeServiceId === 'poli_umum' && poliUmumSubTab === 'prolanis' && !activePatientId && (
-                    <div className={`absolute inset-0 z-20 p-4 ${isDark ? 'bg-slate-800' : 'bg-slate-50'}`}>
-                        <ProlanisPanel />
-                    </div>
-                )}
+                {/* Prolanis Overlay removed — compact version in sidebar sub-tab is sufficient (prevents double-mount) */}
+
 
                 {/* Prolanis Consultation Modal */}
                 {activeProlanisConsultation && (
+                    <ErrorBoundary name="ProlanisConsultation" fallbackAction={() => setActiveProlanisConsultation(null)} fallbackActionLabel="Tutup Konsultasi">
                     <ProlanisConsultation
                         patient={activeProlanisConsultation}
                         onClose={() => setActiveProlanisConsultation(null)}
@@ -608,6 +607,7 @@ export default function ClinicalPage() {
                             setActiveServiceId('poli_umum');
                         }}
                     />
+                    </ErrorBoundary>
                 )}
             </div>
 

@@ -127,7 +127,7 @@ export default function WilayahPage() {
         if (!isDataLoaded) return null;
         return generateVillageMap(60, 50, 42, villageData);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isDataLoaded]); // Only depends on data EXISTING, not data CHANGING
+    }, [isDataLoaded, villageData]); // Regenerate if village data identity changes
 
     // ═══ P1 PERF FIX: Pre-built familyId→houseId map for O(1) lookup ═══
     const familyHouseIndex = useMemo(() => {
