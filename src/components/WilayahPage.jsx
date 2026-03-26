@@ -782,6 +782,7 @@ export default function WilayahPage() {
                     FULL-SCREEN BUILDING INTERIOR OVERLAY
                    ═══════════════════════════════════════════════════ */}
                 {buildingInterior && buildingInterior === 'posyandu' && (
+                    <ErrorBoundary name="PosyanduActivePanel">
                     <PosyanduActivePanel
                         initialBabies={(() => {
                             // Wire real village babies — convert to PosyanduActivePanel format
@@ -873,8 +874,10 @@ export default function WilayahPage() {
                             setBuildingInterior(null);
                         }}
                     />
+                    </ErrorBoundary>
                 )}
                 {buildingInterior && (buildingInterior === 'pustu' || buildingInterior === 'polindes') && (
+                    <ErrorBoundary name="PustuActivePanel">
                     <PustuActivePanel
                         onClose={() => setBuildingInterior(null)}
                         onComplete={(result) => {
@@ -886,9 +889,11 @@ export default function WilayahPage() {
                             setBuildingInterior(null);
                         }}
                     />
+                    </ErrorBoundary>
                 )}
                 {buildingInterior && buildingInterior !== 'posyandu' && buildingInterior !== 'pustu' && buildingInterior !== 'polindes' && (
                     <div className="fixed inset-0 z-50 animate-in fade-in zoom-in-95 duration-300">
+                        <ErrorBoundary name="BuildingGamePanel">
                         <BuildingGamePanel
                             buildingType={buildingInterior}
                             energy={energy}
@@ -915,6 +920,7 @@ export default function WilayahPage() {
                                 triggerIKMEvent?.(scenarioId);
                             }}
                         />
+                        </ErrorBoundary>
                     </div>
                 )}
 
@@ -922,6 +928,7 @@ export default function WilayahPage() {
                     BEHAVIOR CHANGE CASE PANEL (UKM Gameplay)
                    ═══════════════════════════════════════════════════ */}
                 {activeBCCase && (
+                    <ErrorBoundary name="BehaviorCasePanel">
                     <BehaviorCasePanel
                         building={activeBCCase}
                         familyData={activeBCCase.familyData || villageData?.families?.find(f => f.id === activeBCCase.familyId)}
@@ -943,16 +950,19 @@ export default function WilayahPage() {
                             setActiveBCCase(null);
                         }}
                     />
+                    </ErrorBoundary>
                 )}
 
                 {/* ═══════════════════════════════════════════════════
                     COMMUNITY DIAGNOSIS PANEL (Global IKM Events)
                    ═══════════════════════════════════════════════════ */}
                 {activeIKMEventId && (
+                    <ErrorBoundary name="CommunityDiagnosisPanel">
                     <CommunityDiagnosisPanel
                         eventInstance={activeIKMEvents?.find(e => e.instanceId === activeIKMEventId)}
                         onClose={() => setActiveIKMEventId(null)}
                     />
+                    </ErrorBoundary>
                 )}
             </div>
         </ErrorBoundary>

@@ -145,12 +145,14 @@ export default function ClinicalPage() {
                 ) : <QueueList activeService={activeService} />;
             case 'emergency':
                 return (
+                    <ErrorBoundary name="EmergencyPanel">
                     <EmergencyPanel
                         emergencyQueue={emergencyQueue}
                         onAdmitEmergency={admitEmergencyPatient}
                         activeEmergencyId={activeEmergencyId}
                         time={time}
                     />
+                    </ErrorBoundary>
                 );
             case 'farmasi_lab':
                 return <FarmasiPanel isDark={isDark} history={history} currentDay={day} pharmacyInventory={pharmacyInventory} consumeMedication={consumeMedication} markPrescriptionDispensed={markPrescriptionDispensed} />;
@@ -239,6 +241,7 @@ export default function ClinicalPage() {
         if (showKPI) {
             return (
                 <div className="p-4">
+                    <ErrorBoundary name="KPIDashboard">
                     <KPIDashboard />
                     <button
                         onClick={() => setShowKPI(false)}
@@ -248,6 +251,7 @@ export default function ClinicalPage() {
                     >
                         <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
                     </button>
+                    </ErrorBoundary>
                 </div>
             );
         }
@@ -255,12 +259,14 @@ export default function ClinicalPage() {
         // Only show EmergencyEMR if we're in IGD service AND have an active emergency
         if (activeEmergencyId && activeServiceId === 'igd') {
             return (
+                <ErrorBoundary name="EmergencyEMR">
                 <EmergencyEMR
                     patient={emergencyQueue.find(p => p.id === activeEmergencyId)}
                     onStabilize={(patient, decision) => dischargeEmergencyPatient(patient, decision)}
                     onRefer={(patient, decision) => dischargeEmergencyPatient(patient, decision)}
                     onDischarge={(patient, decision) => dischargeEmergencyPatient(patient, decision)}
                 />
+                </ErrorBoundary>
             );
         }
 
