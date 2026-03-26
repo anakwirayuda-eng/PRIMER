@@ -129,7 +129,7 @@ export default function ClinicalPage() {
                                             <p className="text-xs font-bold uppercase tracking-widest">Antrean Belum Dibuka</p>
                                             <p className="text-[10px] mt-1 opacity-60">Poli melayani jam 08:00 - 16:00</p>
                                         </div>
-                                    ) : <QueueList activeService={activeService} />
+                                    ) : <ErrorBoundary name="QueueList"><QueueList activeService={activeService} /></ErrorBoundary>
                                 }
                             </div>
                         </div>
@@ -142,10 +142,10 @@ export default function ClinicalPage() {
                         <p className="text-xs font-bold uppercase tracking-widest">Antrean Belum Dibuka</p>
                         <p className="text-[10px] mt-1 opacity-60">Poli melayani jam 08:00 - 16:00</p>
                     </div>
-                ) : <QueueList activeService={activeService} />;
+                ) : <ErrorBoundary name="QueueList"><QueueList activeService={activeService} /></ErrorBoundary>;
             case 'emergency':
                 return (
-                    <ErrorBoundary name="EmergencyPanel">
+                    <ErrorBoundary name="EmergencyPanel" fallbackAction={() => setActiveServiceId('poli_umum')} fallbackActionLabel="Kembali ke Poli">
                     <EmergencyPanel
                         emergencyQueue={emergencyQueue}
                         onAdmitEmergency={admitEmergencyPatient}
@@ -155,7 +155,7 @@ export default function ClinicalPage() {
                     </ErrorBoundary>
                 );
             case 'farmasi_lab':
-                return <FarmasiPanel isDark={isDark} history={history} currentDay={day} pharmacyInventory={pharmacyInventory} consumeMedication={consumeMedication} markPrescriptionDispensed={markPrescriptionDispensed} />;
+                return <ErrorBoundary name="FarmasiPanel"><FarmasiPanel isDark={isDark} history={history} currentDay={day} pharmacyInventory={pharmacyInventory} consumeMedication={consumeMedication} markPrescriptionDispensed={markPrescriptionDispensed} /></ErrorBoundary>;
             default: {
                 // Check if service is level-gated or staff-gated
                 const needsLevel = activeService?.unlockLevel > playerLevel;
@@ -241,7 +241,7 @@ export default function ClinicalPage() {
         if (showKPI) {
             return (
                 <div className="p-4">
-                    <ErrorBoundary name="KPIDashboard">
+                    <ErrorBoundary name="KPIDashboard" fallbackAction={() => setShowKPI(false)} fallbackActionLabel="Tutup KPI">
                     <KPIDashboard />
                     <button
                         onClick={() => setShowKPI(false)}
@@ -259,7 +259,7 @@ export default function ClinicalPage() {
         // Only show EmergencyEMR if we're in IGD service AND have an active emergency
         if (activeEmergencyId && activeServiceId === 'igd') {
             return (
-                <ErrorBoundary name="EmergencyEMR">
+                <ErrorBoundary name="EmergencyEMR" fallbackAction={() => setActiveServiceId('poli_umum')} fallbackActionLabel="Kembali ke Poli">
                 <EmergencyEMR
                     patient={emergencyQueue.find(p => p.id === activeEmergencyId)}
                     onStabilize={(patient, decision) => dischargeEmergencyPatient(patient, decision)}

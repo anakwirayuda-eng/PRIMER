@@ -782,7 +782,7 @@ export default function WilayahPage() {
                     FULL-SCREEN BUILDING INTERIOR OVERLAY
                    ═══════════════════════════════════════════════════ */}
                 {buildingInterior && buildingInterior === 'posyandu' && (
-                    <ErrorBoundary name="PosyanduActivePanel">
+                    <ErrorBoundary name="PosyanduActivePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel="Tutup Posyandu">
                     <PosyanduActivePanel
                         initialBabies={(() => {
                             // Wire real village babies — convert to PosyanduActivePanel format
@@ -877,7 +877,7 @@ export default function WilayahPage() {
                     </ErrorBoundary>
                 )}
                 {buildingInterior && (buildingInterior === 'pustu' || buildingInterior === 'polindes') && (
-                    <ErrorBoundary name="PustuActivePanel">
+                    <ErrorBoundary name="PustuActivePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel="Tutup Pustu">
                     <PustuActivePanel
                         onClose={() => setBuildingInterior(null)}
                         onComplete={(result) => {
@@ -893,7 +893,7 @@ export default function WilayahPage() {
                 )}
                 {buildingInterior && buildingInterior !== 'posyandu' && buildingInterior !== 'pustu' && buildingInterior !== 'polindes' && (
                     <div className="fixed inset-0 z-50 animate-in fade-in zoom-in-95 duration-300">
-                        <ErrorBoundary name="BuildingGamePanel">
+                        <ErrorBoundary name="BuildingGamePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel="Tutup Gedung">
                         <BuildingGamePanel
                             buildingType={buildingInterior}
                             energy={energy}
@@ -917,7 +917,8 @@ export default function WilayahPage() {
                             }}
                             onClose={() => setBuildingInterior(null)}
                             onTriggerScenario={(scenarioId) => {
-                                triggerIKMEvent?.(scenarioId);
+                                const ok = triggerIKMEvent?.(scenarioId);
+                                if (!ok) alert(`Skenario "${scenarioId.replace(/_/g, ' ')}" tidak bisa dimulai saat ini (mungkin sudah aktif, cooldown, atau bukan skenario IKM).`);
                             }}
                         />
                         </ErrorBoundary>
@@ -928,7 +929,7 @@ export default function WilayahPage() {
                     BEHAVIOR CHANGE CASE PANEL (UKM Gameplay)
                    ═══════════════════════════════════════════════════ */}
                 {activeBCCase && (
-                    <ErrorBoundary name="BehaviorCasePanel">
+                    <ErrorBoundary name="BehaviorCasePanel" fallbackAction={handleCloseBehaviorCase} fallbackActionLabel="Tutup Kasus">
                     <BehaviorCasePanel
                         building={activeBCCase}
                         familyData={activeBCCase.familyData || villageData?.families?.find(f => f.id === activeBCCase.familyId)}
@@ -957,7 +958,7 @@ export default function WilayahPage() {
                     COMMUNITY DIAGNOSIS PANEL (Global IKM Events)
                    ═══════════════════════════════════════════════════ */}
                 {activeIKMEventId && (
-                    <ErrorBoundary name="CommunityDiagnosisPanel">
+                    <ErrorBoundary name="CommunityDiagnosisPanel" fallbackAction={() => setActiveIKMEventId(null)} fallbackActionLabel="Tutup Panel">
                     <CommunityDiagnosisPanel
                         eventInstance={activeIKMEvents?.find(e => e.instanceId === activeIKMEventId)}
                         onClose={() => setActiveIKMEventId(null)}
