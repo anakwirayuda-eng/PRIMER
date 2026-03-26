@@ -211,19 +211,35 @@ function VanguardFace({ mood, hairColor, gender }) {
 
 function VanguardHair({ style, color, isBackLayer }) {
     const SH_HAIR = "rgba(2,6,23,0.2)";
-    const baseCap = <path d="M64,76 C64,32 136,32 136,76 C136,40 64,40 64,76Z" fill={color} />;
+
+    // Shared "AAA Trademark" front style for female hair
+    const femaleFrontHair = (
+        <g id="female-front-hair">
+            {/* Base Cap + Sweeping Bangs (asymmetric poni) */}
+            <path d="M52,76 C52,25 148,25 148,76 C148,45 125,36 100,38 C75,40 52,50 52,76 Z" fill={color} />
+            <path d="M105,28 C75,30 58,45 54,76 C65,55 85,42 110,44 C125,44 140,55 146,76 C138,45 125,28 105,28 Z" fill={SH_HAIR} />
+            <path d="M108,30 C80,32 62,48 58,76 C68,58 85,46 112,48 C126,48 138,58 142,76 C135,48 122,30 108,30 Z" fill={color} />
+            <path d="M72,40 Q90,36 108,38" fill="none" stroke={HIGHLIGHT} strokeWidth="2" opacity="0.2" strokeLinecap="round" />
+            {/* Face-framing tendrils */}
+            <path d="M56,70 C52,90 54,105 60,115 C64,100 62,85 64,70 Z" fill={color} />
+            <path d="M144,70 C148,90 146,105 140,115 C136,100 138,85 136,70 Z" fill={color} />
+        </g>
+    );
 
     if (isBackLayer) {
         if (style === 'ponytail') return (
-            <g id="hair-back">
-                <circle cx="136" cy="52" r="14.4" fill={color} />
-                <path d="M136,52 C152,68 148,104 132,116 C140,88 128,64 136,52Z" fill={color} />
+            <g id="hair-back-ponytail">
+                <path d="M136,52 C165,45 170,100 145,130 C130,145 115,130 120,100 C125,75 125,60 136,52 Z" fill={color} />
+                <path d="M138,65 Q150,85 140,115" fill="none" stroke={SHADOW} strokeWidth="2" opacity="0.2" strokeLinecap="round" />
+                <rect x="130" y="48" width="8" height="12" rx="2" fill="#0f172a" transform="rotate(25 134 54)" />
             </g>
         );
         if (style === 'long') return (
-            <g id="hair-back">
-                <path d="M56,72 C56,128 64,160 72,168 L56,168Z" fill={color} />
-                <path d="M144,72 C144,128 136,160 128,168 L144,168Z" fill={color} />
+            <g id="hair-back-long">
+                <path d="M56,72 C40,90 35,150 55,185 C70,195 80,150 72,120 Z" fill={color} />
+                <path d="M144,72 C160,90 165,150 145,185 C130,195 120,150 128,120 Z" fill={color} />
+                <path d="M50,120 Q55,150 45,170" fill="none" stroke={SHADOW} strokeWidth="2" opacity="0.2" strokeLinecap="round" />
+                <path d="M150,120 Q145,150 155,170" fill="none" stroke={SHADOW} strokeWidth="2" opacity="0.2" strokeLinecap="round" />
             </g>
         );
         if (style === 'hijab') return (
@@ -270,12 +286,15 @@ function VanguardHair({ style, color, isBackLayer }) {
                 <path d="M128,38 C120,30 112,32 108,38" fill="none" stroke={HIGHLIGHT} strokeWidth="2" opacity="0.12" strokeLinecap="round" />
             </g>
         );
-        case 'long': case 'ponytail': return <g id="hair-front">{baseCap}</g>;
+        case 'long':
+        case 'ponytail':
+            return <g id={`hair-front-${style}`}>{femaleFrontHair}</g>;
         case 'bun': return (
-            <g id="hair-front">
-                <circle cx="100" cy="22.4" r="17.6" fill={color} />
-                <circle cx="100" cy="22.4" r="11.2" fill={SHADOW} opacity="0.15" />
-                {baseCap}
+            <g id="hair-front-bun">
+                <circle cx="100" cy="18" r="18" fill={color} />
+                <path d="M85,14 Q100,-2 115,14" fill="none" stroke={SHADOW} strokeWidth="3" opacity="0.2" strokeLinecap="round" />
+                <path d="M82,8 Q100,-8 118,8" fill="none" stroke={HIGHLIGHT} strokeWidth="2" opacity="0.2" strokeLinecap="round" />
+                {femaleFrontHair}
             </g>
         );
         case 'hijab': return (
@@ -346,8 +365,32 @@ function VanguardOutfit({ style }) {
         return (
             <g id="outfit-scrubs">
                 <path d={baseBody} fill="#059669" />
+                {/* Raglan Sleeve Seams */}
+                <path d="M65,120 Q45,150 20,185" fill="none" stroke="#047857" strokeWidth="2.5" opacity="0.8" strokeLinecap="round" />
+                <path d="M135,120 Q155,150 180,185" fill="none" stroke="#047857" strokeWidth="2.5" opacity="0.8" strokeLinecap="round" />
+                {/* Drape folds */}
+                <path d="M25,170 C30,185 30,195 20,200" fill="none" stroke={SHADOW} strokeWidth="2" opacity="0.15" strokeLinecap="round" />
+                <path d="M175,170 C170,185 170,195 180,200" fill="none" stroke={SHADOW} strokeWidth="2" opacity="0.15" strokeLinecap="round" />
+                {/* V-Neck */}
                 <path d="M85,120 L100,150 L115,120Z" fill={SHADOW} opacity="0.25" />
-                <path d="M85,120 L100,150 L115,120" fill="none" stroke="#047857" strokeWidth="2.5" strokeLinejoin="round" />
+                <path d="M85,120 L100,150 L115,120" fill="none" stroke="#047857" strokeWidth="3" strokeLinejoin="round" />
+                <path d="M82,120 L100,154 L118,120" fill="none" stroke="#10b981" strokeWidth="1.5" strokeLinejoin="round" opacity="0.5" />
+                {/* Chest Pocket (Left) */}
+                <g id="scrubs-pocket">
+                    <rect x="42" y="148" width="22" height="26" rx="2" fill="#059669" stroke="#047857" strokeWidth="1.5" />
+                    <line x1="42" y1="153" x2="64" y2="153" stroke="#047857" strokeWidth="1.5" />
+                    <line x1="44" y1="150.5" x2="62" y2="150.5" stroke="#047857" strokeWidth="1" strokeDasharray="2,2" />
+                    <line x1="48" y1="142" x2="48" y2="152" stroke="#0f172a" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="48" y1="140" x2="48" y2="142" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" />
+                </g>
+                {/* ID Badge (Right) */}
+                <g id="id-badge-scrubs">
+                    <rect x="152" y="146" width="4" height="6" rx="1" fill="#94a3b8" />
+                    <rect x="150" y="150" width="8" height="12" rx="1" fill="#f8fafc" stroke="#047857" strokeWidth="1.2" />
+                    <rect x="151" y="151.5" width="6" height="2.5" rx="0.5" fill="#0d9488" />
+                    <line x1="152" y1="156" x2="156" y2="156" stroke="#94a3b8" strokeWidth="1" strokeLinecap="round" />
+                    <line x1="152" y1="159" x2="154" y2="159" stroke="#cbd5e1" strokeWidth="1" strokeLinecap="round" />
+                </g>
             </g>
         );
     }
@@ -368,15 +411,22 @@ function VanguardAccessories({ accessories, outfit }) {
         <g id="accessories">
             {hasGlasses && (
                 <g id="glasses">
-                    <rect x="61" y="68" width="30" height="18" rx="4" fill="none" stroke="#0f172a" strokeWidth="3.2" />
-                    <rect x="109" y="68" width="30" height="18" rx="4" fill="none" stroke="#0f172a" strokeWidth="3.2" />
-                    <line x1="91" y1="74" x2="109" y2="74" stroke="#0f172a" strokeWidth="4" strokeLinecap="round" />
-                    <line x1="61" y1="74" x2="55" y2="71.6" stroke="#0f172a" strokeWidth="3.2" strokeLinecap="round" />
-                    <line x1="139" y1="74" x2="145" y2="71.6" stroke="#0f172a" strokeWidth="3.2" strokeLinecap="round" />
-                    <rect x="62.6" y="69.6" width="26.8" height="14.8" rx="2.4" fill="#38bdf8" opacity="0.1" />
-                    <rect x="110.6" y="69.6" width="26.8" height="14.8" rx="2.4" fill="#38bdf8" opacity="0.1" />
-                    <path d="M65,71 L78,71 L68,82 L65,82Z" fill={HIGHLIGHT} opacity="0.15" />
-                    <path d="M113,71 L126,71 L116,82 L113,82Z" fill={HIGHLIGHT} opacity="0.15" />
+                    {/* Frame centered on pupil (cx=80.4/119.6, cy=79.2) */}
+                    <rect x="62.4" y="66.2" width="36" height="26" rx="8" fill="none" stroke="#0f172a" strokeWidth="2.4" />
+                    <rect x="101.6" y="66.2" width="36" height="26" rx="8" fill="none" stroke="#0f172a" strokeWidth="2.4" />
+                    {/* Half-rim top bar */}
+                    <path d="M62.4,74 C62.4,66.2 70.4,66.2 80.4,66.2 C90.4,66.2 98.4,66.2 98.4,74" fill="none" stroke="#0f172a" strokeWidth="3.2" strokeLinecap="round" />
+                    <path d="M101.6,74 C101.6,66.2 109.6,66.2 119.6,66.2 C129.6,66.2 137.6,66.2 137.6,74" fill="none" stroke="#0f172a" strokeWidth="3.2" strokeLinecap="round" />
+                    {/* Bridge */}
+                    <path d="M98.4,75 Q100,73 101.6,75" fill="none" stroke="#0f172a" strokeWidth="2.4" strokeLinecap="round" />
+                    {/* Temple arms */}
+                    <path d="M62.4,74 Q56,72 52,69" fill="none" stroke="#0f172a" strokeWidth="2.4" strokeLinecap="round" />
+                    <path d="M137.6,74 Q144,72 148,69" fill="none" stroke="#0f172a" strokeWidth="2.4" strokeLinecap="round" />
+                    {/* Lens tint & reflection */}
+                    <rect x="63.6" y="67.4" width="33.6" height="23.6" rx="6.8" fill="#38bdf8" opacity="0.08" />
+                    <rect x="102.8" y="67.4" width="33.6" height="23.6" rx="6.8" fill="#38bdf8" opacity="0.08" />
+                    <path d="M66,69 L76,69 L68,88 L64,88 Z" fill={HIGHLIGHT} opacity="0.12" />
+                    <path d="M105,69 L115,69 L107,88 L103,88 Z" fill={HIGHLIGHT} opacity="0.12" />
                 </g>
             )}
 

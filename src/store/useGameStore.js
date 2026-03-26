@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @reflection
  * [IDENTITY]: useGameStore (The New Central Brain)
  * [PURPOSE]: Unified state management replacing Context API frenzy.
@@ -68,477 +68,22 @@ import {
     calculateSleepRecovery as calculateSleepRecoveryOutcome
 } from '../game/GameCore.js';
 
-const buildProlanisBpjsNumber = (patient, day) => {
-    const patientSeed = patient?.id || patient?.name || 'prolanis';
-    const suffix = String(seededInt(`prolanis:${patientSeed}:${day}`, 10000)).padStart(4, '0');
-    return `PRO-${suffix}`;
-};
-
-const applyFamilyIndicatorDrift = (family, seed) => {
-    if (!family?.indicators || !chanceFromSeed(seed, 0.05)) {
-        return family;
-    }
-
-    const keys = Object.keys(family.indicators);
-    if (keys.length === 0) {
-        return family;
-    }
-
-    const randomKey = pickDeterministic(keys, seed, 1);
-    const indicators = {
-        ...family.indicators,
-        [randomKey]: chanceFromSeed(seed, 0.6, 2)
-    };
-    return { ...family, indicators, iksScore: calculateIKS(indicators) };
-};
-
-const applyStaffMoraleDecay = (hiredStaff, seedPrefix) => {
-    return hiredStaff.map((staff, index) => ({
-        ...staff,
-        morale: Math.max(
-            0,
-            (staff.morale || 70) - seededBetween(`${seedPrefix}:${staff.id || index}`, 2, 7)
-        )
-    }));
-};
-
-const isMetaRecord = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-
-const createSeededQuestRoster = (day = INITIAL_TIME_STATE.day) => {
-    const safeDay = Math.max(1, Math.trunc(Number(day) || INITIAL_TIME_STATE.day));
-    return [
-        ...generateDailyQuests(safeDay),
-        ...generateWeeklyQuests(getWeekFromDay(safeDay))
-    ];
-};
-
-const syncQuestRoster = (quests, day = INITIAL_TIME_STATE.day) => {
-    const safeDay = Math.max(1, Math.trunc(Number(day) || INITIAL_TIME_STATE.day));
-    const safeWeek = getWeekFromDay(safeDay);
-    const questList = Array.isArray(quests) ? quests.filter(isMetaRecord) : [];
-    const currentDaily = questList.filter((quest) => quest.type === 'daily' && quest.assignedDay === safeDay);
-    const currentWeekly = questList.filter((quest) => quest.type === 'weekly' && quest.assignedWeek === safeWeek);
-
-    return [
-        ...(currentDaily.length > 0 ? currentDaily : generateDailyQuests(safeDay)),
-        ...(currentWeekly.length > 0 ? currentWeekly : generateWeeklyQuests(safeWeek))
-    ];
-};
-
-function createInitialMetaState(day = INITIAL_TIME_STATE.day) {
-    return {
-        activeQuests: createSeededQuestRoster(day),
-        activeStories: [],
-        isWikiOpen: false,
-        wikiMetric: null,
-        saveVersion: CURRENT_SAVE_VERSION,
-        runtimeTrap: null
-    };
-}
-
-const INITIAL_FINANCE_STATS = {
-    kapitasi: 50000000,
-    pendapatanUmum: 0,
-    pengeluaranObat: 0,
-    pengeluaranLab: 0,
-    pengeluaranOperasional: 0
-};
-
-// Codex Fix: exclude non-stock pseudo-items (care instructions like bed_rest, diet)
-const createInitialPharmacyInventory = () => normalizeInventoryList(
-    MEDICATION_DATABASE
-        .filter(med => med.form !== 'action') // Only exclude pseudo-items; program meds (buyPrice=0) are real stock
-        .map((med) => ({
-            medicationId: med.id,
-            stock: Math.floor(med.minStock * 1.5),
-            lastRestockDay: 0
-        }))
-);
-
-const INITIAL_KPI = {
-    totalPatients: 0,
-    correctDiagnoses: 0,
-    correctTreatments: 0,
-    referrals: 0,
-    nonSpecialisticReferrals: 0,
-    inappropriateReferrals: 0,
-    treatedCases: 0,
-    inappropriateTreat: 0,
-    antibioticPrescriptions: 0,
-    rationalAntibiotics: 0,
-    patientSatisfaction: [],
-    avgWaitTime: 0,
-    bpjsPatients: 0,
-    umumPatients: 0,
-    inappropriateTests: 0,
-    delegatedCases: 0
-};
-
-const INITIAL_FACILITIES = {
-    poli_umum: 1,
-    poli_gigi: 0,
-    poli_kia_kb: 1,
-    lab: 0,
-    apotek: 1,
-    igd: 1,
-    rawat_inap: 0,
-    gudang: 1
-};
-
-const createInitialFinanceState = () => ({
-    stats: { ...INITIAL_FINANCE_STATS },
-    kpi: { ...INITIAL_KPI },
-    facilities: { ...INITIAL_FACILITIES },
-    pharmacyInventory: createInitialPharmacyInventory(),
-    pendingOrders: [],
-    procurementLog: []  // Audit trail: { type, orderId, supplierId, items, cost, day, timestamp }
-});
-
-const createInitialPublicHealthState = () => ({
-    villageData: null,
-    prolanisRoster: [],
-    prolanisState: { lastSenamMonth: -1, lastSenamDay: -1 },
-    activeOutbreaks: [],
-    outbreakNotification: null,
-    outbreakRiskModifiers: { protectedUntil: {}, vulnerableUntil: {} },
-    activeIKMEvents: [],
-    completedIKMIds: [],
-    ikmCooldowns: {},
-    ikmCaseBoosts: [],
-    buildingProgress: {}
-});
-
-const OUTBREAK_RISK_WINDOW_DAYS = 7;
-
-const pruneOutbreakRiskModifiers = (modifiers = {}, currentDay = 1) => {
-    const protectedUntil = Object.fromEntries(
-        Object.entries(modifiers?.protectedUntil || {}).filter(([, until]) => Number(until) >= currentDay)
-    );
-    const vulnerableUntil = Object.fromEntries(
-        Object.entries(modifiers?.vulnerableUntil || {}).filter(([, until]) => Number(until) >= currentDay)
-    );
-    return { protectedUntil, vulnerableUntil };
-};
-
-const applyStoryImpactToDraft = (state, impact) => {
-    if (!impact) {
-        return { success: true };
-    }
-
-    if (impact.balance) {
-        const balanceDelta = Number(impact.balance) || 0;
-        if (balanceDelta < 0) {
-            const nextStats = spendOperationalFunds(state.finance.stats, Math.abs(balanceDelta));
-            if (!nextStats) {
-                return { success: false, message: 'Dana aktif tidak cukup untuk pilihan ini.' };
-            }
-            state.finance.stats = nextStats;
-        } else if (balanceDelta > 0) {
-            state.finance.stats.pendapatanUmum += balanceDelta;
-        }
-    }
-
-    let nextProfile = { ...state.player.profile };
-
-    if (impact.energy) {
-        nextProfile.energy = clampEnergyToProfile(nextProfile, nextProfile.energy + impact.energy);
-    }
-
-    if (impact.spirit) {
-        nextProfile.spirit = Math.max(0, Math.min(100, nextProfile.spirit + impact.spirit));
-    }
-
-    if (impact.reputation) {
-        nextProfile.reputation = Math.max(0, Math.min(100, nextProfile.reputation + impact.reputation));
-    }
-
-    nextProfile = sanitizePlayerProfile(nextProfile);
-    state.player.profile = impact.xp
-        ? applyXpGainToProfile(nextProfile, impact.xp)
-        : nextProfile;
-
-    return { success: true };
-};
-
-const applyIkmOutbreakRiskModifiers = (modifiers = {}, impact = {}, currentDay = 1) => {
-    const next = pruneOutbreakRiskModifiers(modifiers, currentDay);
-    const protectedType = typeof impact?.outbreak_risk_reduction === 'string'
-        ? impact.outbreak_risk_reduction.toLowerCase()
-        : '';
-    const vulnerableType = typeof impact?.outbreak_risk === 'string'
-        ? impact.outbreak_risk.toLowerCase()
-        : '';
-    const expiryDay = currentDay + OUTBREAK_RISK_WINDOW_DAYS;
-
-    if (protectedType) {
-        delete next.vulnerableUntil[protectedType];
-        next.protectedUntil[protectedType] = Math.max(Number(next.protectedUntil[protectedType] || 0), expiryDay);
-    }
-
-    if (vulnerableType) {
-        delete next.protectedUntil[vulnerableType];
-        next.vulnerableUntil[vulnerableType] = Math.max(Number(next.vulnerableUntil[vulnerableType] || 0), expiryDay);
-    }
-
-    return next;
-};
-
-const createInitialStaffState = () => ({
-    hiredStaff: []
-});
-
-const INITIAL_CLINICAL_STATE = {
-    queue: [],
-    emergencyQueue: [],
-    activePatientId: null,
-    activeEmergencyId: null,
-    history: [],
-    dailyArchive: [],
-    monthlyArchive: [],
-    accreditation: 'Dasar',
-    activeReferral: null,
-    activeReferralLog: [],
-    busyAmbulanceIds: [],
-    hospitalBedUsage: {},  // S4: tracks beds used per hospital {hospitalId: count}
-    prbQueue: [],
-    rrns: [], // Missing state that caused DashboardPage crash
-    warningLevel: 0,
-    gameOver: null,
-    // --- Phase 0: Foundation Engines ---
-    consequenceQueue: [],       // Delayed patient outcomes from ConsequenceEngine
-    todayLog: [],               // Case outcomes logged during the day for DebriefEngine
-    reflections: [],            // Player reflection texts (historical)
-    showMorningBriefing: false, // Modal display flag
-    showEndOfDayDebrief: false, // Modal display flag
-    dailyQuestId: null,         // Selected daily priority quest
-    staffAllocation: {},        // Poli → staff assignments from morning briefing
-    morningReputation: null,    // Reputation snapshot at start of day (for delta)
-    // --- Phase 1-3: Service Engine State ---
-    // pharmacyQueue removed — FarmasiPanel derives queue from history.filter() (Single Source of Truth)
-    labQueue: [],               // Pending lab orders for LabEngine
-    labMasteryHistory: [],      // Lab interpretation mastery tracking
-    kiaPatients: {},            // Persistent ANC patients { [id]: ancPatient }
-    dentalLog: [],              // Completed dental procedure records
-};
-
-const createInitialClinicalState = () => ({
-    ...INITIAL_CLINICAL_STATE,
-    queue: [],
-    emergencyQueue: [],
-    history: [],
-    dailyArchive: [],
-    monthlyArchive: [],
-    activeReferralLog: [],
-    busyAmbulanceIds: [],
-    hospitalBedUsage: {},
-    prbQueue: [],
-    rrns: [],
-    consequenceQueue: [],
-    todayLog: [],
-    reflections: [],
-    staffAllocation: {},
-
-    labQueue: [],
-    labMasteryHistory: [],
-    kiaPatients: {},
-    dentalLog: []
-});
-
-const MAX_CLINICAL_HISTORY = 200;
-
-const INITIAL_NAV_SETTINGS = {
-    theme: 'medika',
-    fontSize: 'normal',
-    volume: 1.0,
-    autoSave: true
-};
-
-const createInitialNavState = (overrides = {}) => ({
-    gameState: 'opening',
-    activePage: 'dashboard',
-    viewParams: {},
-    sidebarCollapsed: false,
-    currentSlotId: null,
-    showKPIGlobal: false,
-    isWikiOpen: false,
-    wikiMetric: null,
-    settings: {
-        ...INITIAL_NAV_SETTINGS,
-        ...(overrides.settings || {})
-    },
-    ...overrides
-});
-
-const normalizeSkillList = (skills) => {
-    if (Array.isArray(skills)) {
-        return [...new Set(skills.filter((skillId) => typeof skillId === 'string' && skillId.length > 0))];
-    }
-
-    if (skills && typeof skills === 'object') {
-        return Object.entries(skills)
-            .filter(([, unlocked]) => Boolean(unlocked))
-            .map(([skillId]) => skillId);
-    }
-
-    return [];
-};
-
-const isPlainObject = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-
-const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
-
-const asFiniteNumber = (value, fallback) => {
-    const numeric = Number(value);
-    return Number.isFinite(numeric) ? numeric : fallback;
-};
-
-const clampInteger = (value, fallback, min, max) => {
-    const safeValue = Math.trunc(asFiniteNumber(value, fallback));
-    return Math.min(max, Math.max(min, safeValue));
-};
-
-const normalizePersistedWorld = (world) => {
-    const nextWorld = isPlainObject(world) ? { ...world } : {};
-    nextWorld.day = clampInteger(nextWorld.day, INITIAL_TIME_STATE.day, 1, 999999);
-    nextWorld.time = clampInteger(nextWorld.time, INITIAL_TIME_STATE.time, 0, 1439);
-    nextWorld.speed = Math.max(0, asFiniteNumber(nextWorld.speed, INITIAL_TIME_STATE.speed));
-    nextWorld.isPaused = typeof nextWorld.isPaused === 'boolean' ? nextWorld.isPaused : INITIAL_TIME_STATE.isPaused;
-    return nextWorld;
-};
-
-const clampNumber = (value, min, max, fallback) => {
-    const numeric = Number(value);
-    if (!Number.isFinite(numeric)) {
-        return fallback;
-    }
-    return Math.min(max, Math.max(min, numeric));
-};
-
-const clampEnergyToProfile = (profile, energy) => Math.max(
-    0,
-    Math.min(profile?.maxEnergy || INITIAL_PLAYER_STATE.maxEnergy, Number(energy) || 0)
-);
-
-const toAbsoluteWorldMinutes = (day = 1, time = 0) => (
-    (Math.max(1, Math.trunc(Number(day) || 1)) - 1) * 1440
-) + Math.max(0, Number(time) || 0);
-
-const createBusyAmbulanceEntry = (ambulanceId, day, time, durationMinutes) => {
-    const busyUntilTotal = toAbsoluteWorldMinutes(day, time) + Math.max(0, Number(durationMinutes) || 0);
-    return {
-        id: ambulanceId,
-        busyUntilTotal,
-        busyUntilDay: Math.floor(busyUntilTotal / 1440) + 1,
-        busyUntilTime: busyUntilTotal % 1440
-    };
-};
-
-const isAmbulanceStillBusy = (item, day, time) => {
-    const currentTotal = toAbsoluteWorldMinutes(day, time);
-
-    if (Number.isFinite(Number(item?.busyUntilTotal))) {
-        return currentTotal < Number(item.busyUntilTotal);
-    }
-
-    if (
-        Number.isFinite(Number(item?.busyUntilDay)) &&
-        Number.isFinite(Number(item?.busyUntilTime))
-    ) {
-        return currentTotal < toAbsoluteWorldMinutes(item.busyUntilDay, item.busyUntilTime);
-    }
-
-    return (Number(time) || 0) < (Number(item?.busyUntil) || 0);
-};
-
-const getProfileLevel = (profile = {}) => Math.max(1, Number(profile.level) || INITIAL_PLAYER_STATE.level);
-
-const getCurrentLevelXp = (profile = {}) => {
-    const level = getProfileLevel(profile);
-    const nextLevelXp = getNextLevelXp(level);
-    const storedXp = Math.max(0, Number(profile.xp) || 0);
-    const xpAtLevelStart = (level - 1) * nextLevelXp;
-
-    if (level > 1 && storedXp >= xpAtLevelStart) {
-        return Math.max(0, Math.min(nextLevelXp, storedXp - xpAtLevelStart));
-    }
-
-    return Math.max(0, Math.min(nextLevelXp, storedXp));
-};
-
-const sanitizePlayerProfile = (profile = {}) => {
-    const level = getProfileLevel(profile);
-    const maxEnergy = clampNumber(
-        profile.maxEnergy,
-        1,
-        150,
-        INITIAL_PLAYER_STATE.maxEnergy
-    );
-
-    return {
-        ...INITIAL_PLAYER_STATE,
-        ...profile,
-        level,
-        xp: getCurrentLevelXp({ ...profile, level }),
-        knowledge: Math.max(0, Number(profile.knowledge) || 0),
-        maxEnergy,
-        energy: clampEnergyToProfile({ maxEnergy }, profile.energy ?? maxEnergy),
-        reputation: clampNumber(
-            profile.reputation,
-            0,
-            100,
-            INITIAL_PLAYER_STATE.reputation
-        ),
-        stress: clampNumber(
-            profile.stress,
-            0,
-            100,
-            INITIAL_PLAYER_STATE.stress
-        ),
-        spirit: clampNumber(
-            profile.spirit,
-            0,
-            100,
-            INITIAL_PLAYER_STATE.spirit
-        ),
-        skills: normalizeSkillList(profile.skills)
-    };
-};
-
-const applyXpGainToProfile = (profile, amount = 0) => {
-    const safeProfile = sanitizePlayerProfile(profile);
-    const xpGain = Math.max(0, Number(amount) || 0);
-
-    if (xpGain === 0) {
-        return safeProfile;
-    }
-
-    const result = checkLevelUp({
-        ...safeProfile,
-        xp: safeProfile.xp + xpGain
-    });
-
-    return sanitizePlayerProfile({
-        ...safeProfile,
-        ...result.stats
-    });
-};
-
-const spendXpFromProfile = (profile, cost = 0) => {
-    const safeProfile = sanitizePlayerProfile(profile);
-    const xpCost = Math.max(0, Number(cost) || 0);
-
-    if (safeProfile.xp < xpCost) {
-        return { success: false, profile: safeProfile };
-    }
-
-    return {
-        success: true,
-        profile: sanitizePlayerProfile({
-            ...safeProfile,
-            xp: safeProfile.xp - xpCost
-        })
-    };
-};
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// CP1 EXTRACTED HELPERS â€” Pure functions moved to store/helpers/
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+import { isPlainObject, isMetaRecord, hasOwn, asFiniteNumber, clampInteger, clampNumber, toAbsoluteWorldMinutes } from './helpers/storeUtils.js';
+import { sanitizePlayerProfile, applyXpGainToProfile, spendXpFromProfile, createStartingPlayerProfile, clampEnergyToProfile, getProfileLevel } from './helpers/playerHelpers.js';
+import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from './helpers/ambulanceHelpers.js';
+import { capClinicalHistory, appendClinicalHistory, normalizeClinicalHistoryEntry, getHistoryForDay, getEncounterAction, isAntibioticMed, isCorrectMedicationSelection, isEncounterCorrect, hasCorrectDiagnosis, hasAntibioticMedication, calculateEncounterRevenue, MAX_CLINICAL_HISTORY } from './helpers/clinicalHelpers.js';
+import { buildDailyArchiveEntry, buildMonthlyArchiveEntry, INITIAL_FINANCE_STATS, ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';
+import {
+    normalizePersistedWorld, createInitialMetaState, createInitialPublicHealthState, createInitialStaffState,
+    INITIAL_CLINICAL_STATE, createInitialClinicalState, createInitialPharmacyInventory, INITIAL_KPI, INITIAL_FACILITIES,
+    createInitialFinanceState, INITIAL_NAV_SETTINGS, createInitialNavState,
+    mergePersistedFinance, mergePersistedPublicHealth, mergePersistedStaff, mergePersistedClinical, mergePersistedMeta,
+    reconcileClinicalReferralLog, buildManualSaveSnapshot
+} from './helpers/persistenceHelpers.js';
+import { buildProlanisBpjsNumber, applyFamilyIndicatorDrift, applyStaffMoraleDecay, pruneOutbreakRiskModifiers, applyIkmOutbreakRiskModifiers, applyStoryImpactToDraft, OUTBREAK_RISK_WINDOW_DAYS } from './helpers/publicHealthHelpers.js';
 
 const advanceElapsedTime = (get, minutes = 1) => {
     const increment = Math.max(0, Number(minutes) || 0);
@@ -559,228 +104,19 @@ const advanceElapsedTime = (get, minutes = 1) => {
     return { success: didAdvanceDay !== false, dayChanged: didAdvanceDay !== false };
 };
 
-const reconcileClinicalReferralLog = (clinicalState, worldState) => {
-    const { activeReferralLog } = reconcileReferralLog(
-        clinicalState?.activeReferralLog,
-        worldState?.day,
-        worldState?.time
-    );
-
-    return {
-        ...clinicalState,
-        activeReferralLog
-    };
-};
-
-const createStartingPlayerProfile = (profile = {}) => {
-    const initialStats = profile.initialStats || {};
-    const maxEnergy = clampNumber(
-        profile.maxEnergy ?? initialStats.maxEnergy,
-        1,
-        150,
-        INITIAL_PLAYER_STATE.maxEnergy
-    );
-    const reputation = clampNumber(
-        profile.reputation ?? initialStats.baseReputation,
-        0,
-        100,
-        INITIAL_PLAYER_STATE.reputation
-    );
-
-    return sanitizePlayerProfile({
-        ...profile,
-        maxEnergy,
-        energy: maxEnergy,
-        reputation,
-        spirit: INITIAL_PLAYER_STATE.spirit
-    });
-};
-
-const mergePersistedFinance = (finance, currentFinance) => {
-    if (!isPlainObject(finance)) {
-        return currentFinance;
+const normalizeSkillList = (skills) => {
+    if (Array.isArray(skills)) {
+        return [...new Set(skills.filter((skillId) => typeof skillId === 'string' && skillId.length > 0))];
     }
 
-    return {
-        ...currentFinance,
-        ...finance,
-        stats: isPlainObject(finance.stats)
-            ? { ...currentFinance.stats, ...finance.stats }
-            : currentFinance.stats,
-        kpi: isPlainObject(finance.kpi)
-            ? { ...currentFinance.kpi, ...finance.kpi }
-            : currentFinance.kpi,
-        facilities: isPlainObject(finance.facilities)
-            ? { ...currentFinance.facilities, ...finance.facilities }
-            : currentFinance.facilities,
-        pharmacyInventory: Array.isArray(finance.pharmacyInventory)
-            ? (() => {
-                // Backfill: add any new catalog SKUs missing from old save
-                const savedIds = new Set(
-                    finance.pharmacyInventory.map(i => normalizeMedicationId(i?.medicationId))
-                );
-                const freshInventory = currentFinance.pharmacyInventory || [];
-                const missingItems = freshInventory.filter(i => !savedIds.has(i.medicationId));
-                return normalizeInventoryList([...finance.pharmacyInventory, ...missingItems]);
-            })()
-            : currentFinance.pharmacyInventory,
-        pendingOrders: Array.isArray(finance.pendingOrders)
-            ? finance.pendingOrders
-            : currentFinance.pendingOrders
-    };
-};
-
-const mergePersistedPublicHealth = (publicHealth, currentPublicHealth) => {
-    if (!isPlainObject(publicHealth)) {
-        return currentPublicHealth;
+    if (skills && typeof skills === 'object') {
+        return Object.entries(skills)
+            .filter(([, unlocked]) => Boolean(unlocked))
+            .map(([skillId]) => skillId);
     }
 
-    return {
-        ...currentPublicHealth,
-        ...publicHealth,
-        villageData: hasOwn(publicHealth, 'villageData')
-            ? ensureVillageReadinessState(publicHealth.villageData)
-            : currentPublicHealth.villageData,
-        prolanisRoster: Array.isArray(publicHealth.prolanisRoster)
-            ? publicHealth.prolanisRoster
-            : currentPublicHealth.prolanisRoster,
-        prolanisState: isPlainObject(publicHealth.prolanisState)
-            ? { ...currentPublicHealth.prolanisState, ...publicHealth.prolanisState }
-            : currentPublicHealth.prolanisState,
-        activeOutbreaks: Array.isArray(publicHealth.activeOutbreaks)
-            ? publicHealth.activeOutbreaks
-            : currentPublicHealth.activeOutbreaks,
-        outbreakNotification: hasOwn(publicHealth, 'outbreakNotification')
-            ? publicHealth.outbreakNotification
-            : currentPublicHealth.outbreakNotification,
-        outbreakRiskModifiers: isPlainObject(publicHealth.outbreakRiskModifiers)
-            ? {
-                protectedUntil: {
-                    ...(currentPublicHealth.outbreakRiskModifiers?.protectedUntil || {}),
-                    ...(publicHealth.outbreakRiskModifiers.protectedUntil || {})
-                },
-                vulnerableUntil: {
-                    ...(currentPublicHealth.outbreakRiskModifiers?.vulnerableUntil || {}),
-                    ...(publicHealth.outbreakRiskModifiers.vulnerableUntil || {})
-                }
-            }
-            : currentPublicHealth.outbreakRiskModifiers,
-        activeIKMEvents: Array.isArray(publicHealth.activeIKMEvents)
-            ? publicHealth.activeIKMEvents
-            : currentPublicHealth.activeIKMEvents,
-        completedIKMIds: Array.isArray(publicHealth.completedIKMIds)
-            ? publicHealth.completedIKMIds
-            : currentPublicHealth.completedIKMIds,
-        ikmCooldowns: isPlainObject(publicHealth.ikmCooldowns)
-            ? { ...currentPublicHealth.ikmCooldowns, ...publicHealth.ikmCooldowns }
-            : currentPublicHealth.ikmCooldowns,
-        ikmCaseBoosts: Array.isArray(publicHealth.ikmCaseBoosts)
-            ? publicHealth.ikmCaseBoosts
-            : currentPublicHealth.ikmCaseBoosts,
-        buildingProgress: isPlainObject(publicHealth.buildingProgress)
-            ? { ...currentPublicHealth.buildingProgress, ...publicHealth.buildingProgress }
-            : currentPublicHealth.buildingProgress
-    };
+    return [];
 };
-
-const mergePersistedStaff = (staff, currentStaff) => {
-    if (!isPlainObject(staff)) {
-        return currentStaff;
-    }
-
-    return {
-        ...currentStaff,
-        ...staff,
-        hiredStaff: Array.isArray(staff.hiredStaff)
-            ? staff.hiredStaff
-            : currentStaff.hiredStaff
-    };
-};
-
-const mergePersistedClinical = (clinical, currentClinical) => {
-    if (!isPlainObject(clinical)) {
-        return currentClinical;
-    }
-
-    return {
-        ...currentClinical,
-        ...clinical,
-        queue: [],
-        emergencyQueue: [],
-        activePatientId: null,
-        activeEmergencyId: null,
-        history: normalizeEncounterList(
-            normalizePatientList(
-                capClinicalHistory(Array.isArray(clinical.history) ? clinical.history : currentClinical.history)
-            )
-        ),
-        dailyArchive: normalizeDailyArchive(Array.isArray(clinical.dailyArchive) ? clinical.dailyArchive : currentClinical.dailyArchive),
-        monthlyArchive: normalizeMonthlyArchive(Array.isArray(clinical.monthlyArchive) ? clinical.monthlyArchive : currentClinical.monthlyArchive),
-        activeReferralLog: Array.isArray(clinical.activeReferralLog) ? clinical.activeReferralLog : currentClinical.activeReferralLog,
-        busyAmbulanceIds: Array.isArray(clinical.busyAmbulanceIds) ? clinical.busyAmbulanceIds : currentClinical.busyAmbulanceIds,
-        hospitalBedUsage: isPlainObject(clinical.hospitalBedUsage)
-            ? { ...currentClinical.hospitalBedUsage, ...clinical.hospitalBedUsage }
-            : currentClinical.hospitalBedUsage,
-        prbQueue: Array.isArray(clinical.prbQueue) ? clinical.prbQueue : currentClinical.prbQueue,
-        rrns: Array.isArray(clinical.rrns) ? clinical.rrns : currentClinical.rrns,
-        consequenceQueue: Array.isArray(clinical.consequenceQueue) ? clinical.consequenceQueue : currentClinical.consequenceQueue,
-        todayLog: Array.isArray(clinical.todayLog) ? clinical.todayLog : currentClinical.todayLog,
-        reflections: Array.isArray(clinical.reflections) ? clinical.reflections : currentClinical.reflections,
-        staffAllocation: isPlainObject(clinical.staffAllocation)
-            ? { ...currentClinical.staffAllocation, ...clinical.staffAllocation }
-            : currentClinical.staffAllocation,
-
-        labQueue: Array.isArray(clinical.labQueue) ? clinical.labQueue : currentClinical.labQueue,
-        labMasteryHistory: Array.isArray(clinical.labMasteryHistory) ? clinical.labMasteryHistory : currentClinical.labMasteryHistory,
-        kiaPatients: isPlainObject(clinical.kiaPatients)
-            ? { ...currentClinical.kiaPatients, ...clinical.kiaPatients }
-            : currentClinical.kiaPatients,
-        dentalLog: Array.isArray(clinical.dentalLog) ? clinical.dentalLog : currentClinical.dentalLog
-    };
-};
-
-const mergePersistedMeta = (meta, currentMeta, day = INITIAL_TIME_STATE.day) => {
-    const safeDay = Math.max(1, Math.trunc(Number(day) || INITIAL_TIME_STATE.day));
-    const baseMeta = createInitialMetaState(safeDay);
-    const fallbackMeta = isMetaRecord(currentMeta) ? currentMeta : baseMeta;
-    const safeMeta = isMetaRecord(meta) ? meta : {};
-    const questSource = Array.isArray(safeMeta.activeQuests) ? safeMeta.activeQuests : fallbackMeta.activeQuests;
-
-    return {
-        ...baseMeta,
-        ...fallbackMeta,
-        ...safeMeta,
-        activeQuests: syncQuestRoster(questSource, safeDay),
-        activeStories: Array.isArray(safeMeta.activeStories)
-            ? safeMeta.activeStories
-            : Array.isArray(fallbackMeta.activeStories)
-                ? fallbackMeta.activeStories
-                : [],
-        isWikiOpen: false,
-        wikiMetric: null,
-        saveVersion: Number.isInteger(safeMeta.saveVersion) ? safeMeta.saveVersion : CURRENT_SAVE_VERSION,
-        runtimeTrap: null
-    };
-};
-
-const buildManualSaveSnapshot = (state) => parseSavePayload({
-    saveVersion: CURRENT_SAVE_VERSION,
-    savedAt: Date.now(),
-    world: normalizePersistedWorld(state.world),
-    player: {
-        ...state.player,
-        profile: sanitizePlayerProfile(state.player.profile)
-    },
-    finance: mergePersistedFinance(state.finance, createInitialFinanceState()),
-    publicHealth: mergePersistedPublicHealth(state.publicHealth, createInitialPublicHealthState()),
-    staff: mergePersistedStaff(state.staff, createInitialStaffState()),
-    clinical: mergePersistedClinical(state.clinical, createInitialClinicalState()),
-    meta: mergePersistedMeta(
-        { ...state.meta, saveVersion: CURRENT_SAVE_VERSION },
-        createInitialMetaState(state.world?.day),
-        state.world?.day
-    )
-});
 
 const ACTION_GROUP_NAMES = [
     'navActions',
@@ -815,287 +151,11 @@ const ACTIONS_SKIP_INVARIANT_RECHECK = new Set([
     'clinicalActions.dismissWarning'
 ]);
 
-// Codex Fix: Canonical antibiotic check from MedicationDatabase category
-// Replaces both the old exact-ID set AND the live prefix-match approach
-function isAntibioticMed(medId) {
-    const med = getMedicationById(medId);
-    if (!med) return false;
-    // Anti-Infeksi category includes antibiotics, antifungals, antivirals
-    // We check for common antibiotic patterns to exclude antifungals/antivirals
-    if (med.category !== MEDICATION_CATEGORIES.ANTIBIOTIC) return false;
-    // Antifungals/antivirals are in same category but shouldn't count for AB stewardship
-    const antifungalPatterns = ['fluconazole', 'ketoconazole', 'nystatin', 'griseofulvin', 'miconazole', 'clotrimazole'];
-    const antiviralPatterns = ['acyclovir', 'oseltamivir', 'valacyclovir'];
-    const excluded = [...antifungalPatterns, ...antiviralPatterns];
-    return !excluded.some(pat => medId.includes(pat));
-}
-
-const ACCREDITATION_MULTIPLIER = {
-    Dasar: 1.0,
-    Madya: 1.1,
-    Utama: 1.25,
-    Paripurna: 1.5
-};
-
 function shouldEnableActionStability(fullName, actionName) {
     if (ACTIONS_SKIP_STABILITY_GUARD.has(fullName)) return false;
     return !/^(set|open|close|toggle|clear)/.test(actionName);
 }
 
-function isCorrectMedicationSelection(requiredTreatments, selectedMedications) {
-    if (!Array.isArray(requiredTreatments) || requiredTreatments.length === 0) return true;
-    if (!Array.isArray(selectedMedications)) return false;
-    // Codex Fix: normalize selected meds to string IDs (EMR saves objects {id, medId, dose...})
-    const selectedIds = selectedMedications.map(m => typeof m === 'object' ? (m.id || m.medId) : m);
-
-    return requiredTreatments.every((requiredItem) => {
-        if (Array.isArray(requiredItem)) {
-            return requiredItem.some((candidate) => selectedIds.includes(candidate));
-        }
-
-        return selectedIds.includes(requiredItem);
-    });
-}
-
-function capClinicalHistory(history) {
-    if (!Array.isArray(history) || history.length <= MAX_CLINICAL_HISTORY) {
-        return Array.isArray(history) ? history : [];
-    }
-
-    return history.slice(-MAX_CLINICAL_HISTORY);
-}
-
-function appendClinicalHistory(history, entry) {
-    return capClinicalHistory([...(Array.isArray(history) ? history : []), entry]);
-}
-
-function normalizeClinicalHistoryEntry(entry) {
-    return normalizeEncounter(normalizePatient(entry));
-}
-
-function getHistoryForDay(history, day) {
-    return Array.isArray(history)
-        ? history.filter((entry) => Number(entry?.day) === Number(day))
-        : [];
-}
-
-function getEncounterAction(entry) {
-    return entry?.decision?.action || null;
-}
-
-function isEncounterCorrect(entry) {
-    const action = getEncounterAction(entry);
-    if (action === 'delegate_to_maia') return true;
-
-    const requiredAction = entry?.hidden?.requiredAction;
-    const hasOutcome = typeof entry?.outcome === 'string';
-    if (!requiredAction) {
-        return hasOutcome ? entry.outcome !== 'bad' : true;
-    }
-
-    const isCorrectAction = requiredAction === action;
-    if (action !== 'treat') {
-        return isCorrectAction;
-    }
-
-    return isCorrectAction && isCorrectMedicationSelection(
-        entry?.medicalData?.correctTreatment,
-        entry?.decision?.medications
-    );
-}
-
-function hasCorrectDiagnosis(entry) {
-    const trueDiagnosisCode = entry?.medicalData?.trueDiagnosisCode;
-    const chosenDiagnoses = entry?.decision?.diagnoses;
-    if (!trueDiagnosisCode || !Array.isArray(chosenDiagnoses)) return false;
-    return chosenDiagnoses.includes(trueDiagnosisCode);
-}
-
-function hasAntibioticMedication(entry) {
-    // Codex Fix: handle both string and object medication entries, use canonical check
-    return (entry?.decision?.medications || []).some((m) => {
-        const medId = typeof m === 'object' ? (m.id || m.medId) : m;
-        return isAntibioticMed(medId);
-    });
-}
-
-function calculateEncounterRevenue(entry) {
-    const action = getEncounterAction(entry);
-    const isBPJS = Boolean(entry?.social?.hasBPJS);
-
-    if (action === 'delegate_to_maia') {
-        // Codex Fix: emergency delegate non-BPJS earns 50000, not 25000
-        if (entry?.isEmergency) return isBPJS ? 0 : 50000;
-        return isBPJS ? 0 : 25000;
-    }
-
-    if (entry?.isEmergency) {
-        const billing = calculateEmergencyBillForPatient(
-            entry,
-            entry?.decision?.actionsPerformed || entry?.decision?.actions,
-            entry?.decision?.triageAssigned || entry?.triageLevel
-        );
-        let revenue = billing?.total || 0;
-
-        if (action === 'refer' && entry?.decision?.isSISRUTE && entry?.decision?.referralDetails?.result?.status === 'ACCEPTED') {
-            const ambulanceId = entry?.decision?.referralDetails?.ambulanceId;
-            const ambulance = AMBULANCES.find((item) => item.id === ambulanceId);
-            if (ambulance?.cost) revenue -= ambulance.cost;
-        }
-
-        return revenue;
-    }
-
-    return calculatePrimaryCareRevenueForDecision(entry, entry?.decision || {});
-}
-
-function buildHourlyTraffic(dayHistory) {
-    return Array.from({ length: 9 }, (_, index) => {
-        const hour = index + 8;
-        const start = hour * 60;
-        const end = (hour + 1) * 60;
-        const value = dayHistory.filter((entry) => {
-            const joinedAt = Number(entry?.joinedAt ?? 480);
-            return joinedAt >= start && joinedAt < end;
-        }).length;
-
-        return {
-            label: `${hour < 10 ? '0' : ''}${hour}:00`,
-            value
-        };
-    });
-}
-
-function buildTopDiseases(dayHistory) {
-    const diseaseCounts = {};
-    dayHistory.forEach((entry) => {
-        const diagnosisName = entry?.medicalData?.diagnosisName
-            || entry?.medicalData?.trueDiagnosisCode
-            || 'Undiagnosed';
-        diseaseCounts[diagnosisName] = (diseaseCounts[diagnosisName] || 0) + 1;
-    });
-
-    return Object.entries(diseaseCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 8)
-        .map(([name, count]) => ({
-            name,
-            count,
-            percent: Math.round((count / Math.max(dayHistory.length, 1)) * 100)
-        }));
-}
-
-function buildDailyArchiveEntry(state, day) {
-    const dayHistory = getHistoryForDay(state?.clinical?.history, day);
-    const patientSatisfaction = dayHistory
-        .map((entry) => entry?.satisfactionScore)
-        .filter((score) => Number.isFinite(score));
-
-    const dailyKpi = {
-        totalPatients: dayHistory.length,
-        correctDiagnoses: dayHistory.filter(hasCorrectDiagnosis).length,
-        referrals: dayHistory.filter((entry) => getEncounterAction(entry) === 'refer').length,
-        nonSpecialisticReferrals: dayHistory.filter((entry) => getEncounterAction(entry) === 'refer' && !isEncounterCorrect(entry)).length,
-        treatedCases: dayHistory.filter((entry) => ['treat', 'delegate_to_maia'].includes(getEncounterAction(entry))).length,
-        inappropriateTreat: dayHistory.filter((entry) => getEncounterAction(entry) === 'treat' && !isEncounterCorrect(entry)).length,
-        antibioticPrescriptions: dayHistory.filter(hasAntibioticMedication).length,
-        rationalAntibiotics: dayHistory.filter((entry) => hasAntibioticMedication(entry) && isEncounterCorrect(entry)).length,
-        patientSatisfaction,
-        bpjsPatients: dayHistory.filter((entry) => Boolean(entry?.social?.hasBPJS)).length,
-        umumPatients: dayHistory.filter((entry) => !entry?.social?.hasBPJS).length
-    };
-
-    const derivedDailyFinance = selectDerivedFinance({
-        finance: {
-            stats: INITIAL_FINANCE_STATS,
-            kpi: dailyKpi
-        }
-    });
-
-    return {
-        day,
-        patientsToday: dayHistory.length,
-        revenue: dayHistory.reduce((total, entry) => total + calculateEncounterRevenue(entry), 0),
-        reputation: Math.round(Number(state?.player?.profile?.reputation) || 0),
-        overallScore: derivedDailyFinance.overallScore,
-        hourlyTraffic: buildHourlyTraffic(dayHistory),
-        topDiseases: buildTopDiseases(dayHistory)
-    };
-}
-
-function buildMonthlyArchiveEntry(state, accreditation, hiredStaff) {
-    const completedMonth = Math.max(1, Math.floor((Number(state?.world?.day) - 1) / 30));
-    const monthStartDay = ((completedMonth - 1) * 30) + 1;
-    const monthEndDay = completedMonth * 30;
-    const relevantDailyReports = (state?.clinical?.dailyArchive || []).filter(
-        (entry) => entry?.day >= monthStartDay && entry?.day <= monthEndDay
-    );
-
-    if (relevantDailyReports.length === 0) return null;
-
-    const avgScore = Math.round(
-        relevantDailyReports.reduce((total, entry) => total + (Number(entry?.overallScore) || 0), 0)
-        / relevantDailyReports.length
-    );
-    const avgReputation = Math.round(
-        relevantDailyReports.reduce((total, entry) => total + (Number(entry?.reputation) || 0), 0)
-        / relevantDailyReports.length
-    );
-    const totalPatients = relevantDailyReports.reduce((total, entry) => total + (Number(entry?.patientsToday) || 0), 0);
-    const totalDailyRevenue = relevantDailyReports.reduce((total, entry) => total + (Number(entry?.revenue) || 0), 0);
-    const staffSalaries = Array.isArray(hiredStaff)
-        ? hiredStaff.reduce((total, staffMember) => total + (Number(staffMember?.salary) || 0), 0)
-        : 0;
-    const recordedExpenses =
-        (Number(state?.finance?.stats?.pengeluaranObat) || 0) +
-        (Number(state?.finance?.stats?.pengeluaranLab) || 0) +
-        (Number(state?.finance?.stats?.pengeluaranOperasional) || 0);
-    const totalRecordedCosts = staffSalaries + recordedExpenses;
-    const monthlyKapitasi = 50000000 * (ACCREDITATION_MULTIPLIER[accreditation] || 1.0);
-    const totalRevenue = totalDailyRevenue + monthlyKapitasi;
-    const netOperationalResult = totalRevenue - totalRecordedCosts;
-    const previousReport = Array.isArray(state?.clinical?.monthlyArchive) && state.clinical.monthlyArchive.length > 0
-        ? state.clinical.monthlyArchive[state.clinical.monthlyArchive.length - 1]
-        : null;
-    const trend = previousReport
-        ? {
-            score: avgScore - (Number(previousReport?.avgScore) || 0),
-            revenue: totalRevenue - (Number(previousReport?.totalRevenue) || 0),
-            totalRevenue: totalRevenue - (Number(previousReport?.totalRevenue) || 0),
-            serviceRevenue: totalDailyRevenue - (Number(previousReport?.serviceRevenue) || 0),
-            recordedExpenses: recordedExpenses - (Number(previousReport?.recordedExpenses) || 0),
-            totalRecordedCosts: totalRecordedCosts - (
-                Number(previousReport?.totalRecordedCosts)
-                || ((Number(previousReport?.staffSalaries) || 0) + (Number(previousReport?.recordedExpenses) || 0))
-            ),
-            netOperationalResult: netOperationalResult - (
-                Number(previousReport?.netOperationalResult)
-                || (
-                    (Number(previousReport?.totalRevenue) || 0) -
-                    (
-                        Number(previousReport?.totalRecordedCosts)
-                        || ((Number(previousReport?.staffSalaries) || 0) + (Number(previousReport?.recordedExpenses) || 0))
-                    )
-                )
-            )
-        }
-        : {};
-
-    return {
-        month: completedMonth,
-        avgScore,
-        avgReputation,
-        totalPatients,
-        serviceRevenue: totalDailyRevenue,
-        monthlyKapitasi,
-        totalRevenue,
-        staffSalaries,
-        recordedExpenses,
-        totalRecordedCosts,
-        netOperationalResult,
-        trend
-    };
-}
 
 function armAutosaveTrap(setState, getState, phase, reason) {
     const trap = buildRuntimeTrap('actions.saveGame', {
@@ -1388,7 +448,7 @@ export const useGameStore = create(
                             }
                         }));
                         // Codex Fix: pengeluaranObat is procurement-side only (COGS-on-purchase).
-                        // Consumption just reduces stock — cost was already posted when order was placed/received.
+                        // Consumption just reduces stock â€” cost was already posted when order was placed/received.
                         return { success: true, remainingStock: currentItem.stock - quantity };
                     },
                     // Codex Fix: mark prescription as dispensed in history to prevent double-dispense on remount
@@ -1522,7 +582,7 @@ export const useGameStore = create(
                         compatibleItems = newOrder.items;
                         soundManager.playConfirm();
                         const msg = skipped.length > 0
-                            ? `Order dikirim (${compatibleItems.length} item). ${skipped.length} item dilewati — tidak tersedia di ${supplier.name}.`
+                            ? `Order dikirim (${compatibleItems.length} item). ${skipped.length} item dilewati â€” tidak tersedia di ${supplier.name}.`
                             : `Order berhasil dikirim (${compatibleItems.length} item)`;
                         return { success: true, order: newOrder, message: msg, skipped };
                     },
@@ -1532,7 +592,7 @@ export const useGameStore = create(
                         if (!order) return { success: false, error: 'Order not found' };
                         set(s => {
                             const newStats = { ...s.finance.stats };
-                            // Codex Fix: sync with nextDay path — deduct kapitasi for kapitasi_deduction orders
+                            // Codex Fix: sync with nextDay path â€” deduct kapitasi for kapitasi_deduction orders
                             if (order.paymentTerms === 'kapitasi_deduction' && order.cost) {
                                 newStats.kapitasi = (newStats.kapitasi || 0) - order.cost;
                                 newStats.pengeluaranObat = (newStats.pengeluaranObat || 0) + order.cost;
@@ -1678,7 +738,7 @@ export const useGameStore = create(
                             social: patient.social,
                             prolanisData: {
                                 diseaseType,
-                                // Codex Fix: don't inflate KPI — 0 means "never visited yet"
+                                // Codex Fix: don't inflate KPI â€” 0 means "never visited yet"
                                 enrolledDay: day, lastVisitDay: 0,
                                 parameters: initialParams, history: [], consecutiveControlled: 0
                             }
@@ -1698,13 +758,13 @@ export const useGameStore = create(
                             const updatedRoster = state.publicHealth.prolanisRoster.map(member => {
                                 if (member.id !== rosterId) return member;
 
-                                // ═══ CONTRACT ADAPTER ═══════════════════════════
+                                // â•â•â• CONTRACT ADAPTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                                 // EMR sends: { diagnoses, medications, action }
                                 // Engine expects: { medicationAction, education, complianceBonus }
                                 const hasMeds = Array.isArray(doctorDecisions?.medications) && doctorDecisions.medications.length > 0;
                                 const diseaseType = member.prolanisData?.diseaseType;
 
-                                // Map medications → medicationAction with paramChange
+                                // Map medications â†’ medicationAction with paramChange
                                 // Each medication given = -15 paramChange (therapeutic effect)
                                 const medicationAction = hasMeds ? {
                                     effect: {
@@ -1724,7 +784,7 @@ export const useGameStore = create(
                                 }] : [];
 
                                 const engineIntervention = { medicationAction, education, complianceBonus };
-                                // ═══ END ADAPTER ════════════════════════════════
+                                // â•â•â• END ADAPTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
                                 const outcome = determineMonthlyOutcome(
                                     { ...member },
@@ -2172,7 +1232,7 @@ export const useGameStore = create(
 
                         // Guard 1: Reject bc_* IDs
                         if (scenarioId?.startsWith('bc_')) {
-                            console.warn(`[triggerIKMEvent] Rejected bc_* ID "${scenarioId}" — use BehaviorCase engine instead.`);
+                            console.warn(`[triggerIKMEvent] Rejected bc_* ID "${scenarioId}" â€” use BehaviorCase engine instead.`);
                             return false;
                         }
 
@@ -2192,7 +1252,7 @@ export const useGameStore = create(
                             return false;
                         }
 
-                        // Guard 5: BC overlap — suppress if a matching BC case is active
+                        // Guard 5: BC overlap â€” suppress if a matching BC case is active
                         const activeBCIds = (s.publicHealth.villageData?.families || [])
                             .map(f => f.activeScenarioId).filter(Boolean).map(id => id.replace('bc_', ''));
                         if (isBlockedByBC(scenarioId, activeBCIds)) {
@@ -2376,7 +1436,7 @@ export const useGameStore = create(
                     setMorningReputation: (val) => set(s => ({ clinical: { ...s.clinical, morningReputation: val } })),
                     addReflection: (entry) => set(s => ({ clinical: { ...s.clinical, reflections: [...s.clinical.reflections, entry] } })),
                     // --- Phase 1-3 Service Engine Actions ---
-                    // pharmacyQueue mutators removed — dead state (FarmasiPanel uses derived state)
+                    // pharmacyQueue mutators removed â€” dead state (FarmasiPanel uses derived state)
                     setLabQueue: (val) => set(s => ({ clinical: { ...s.clinical, labQueue: typeof val === 'function' ? val(s.clinical.labQueue) : val } })),
                     pushLabOrder: (order) => set(s => ({ clinical: { ...s.clinical, labQueue: [...s.clinical.labQueue, order] } })),
                     addLabMasteryEntry: (entry) => set(s => ({ clinical: { ...s.clinical, labMasteryHistory: [...s.clinical.labMasteryHistory, entry] } })),
@@ -2547,7 +1607,7 @@ export const useGameStore = create(
                         if (time === 480) {
                             const followups = getScheduledFollowups(state.clinical.consequenceQueue, day);
                             followups.forEach(consequence => {
-                                // Codex Fix: skip ukp_bridge entries — no originalCase data
+                                // Codex Fix: skip ukp_bridge entries â€” no originalCase data
                                 if (consequence.type === 'ukp_bridge') return;
                                 const followupPatient = generateFollowupPatient(
                                     consequence,
@@ -2566,7 +1626,7 @@ export const useGameStore = create(
                             }
                         }
 
-                        // 3.6. UKM → UKP Bridge: IKM Case Boosts increase disease probability
+                        // 3.6. UKM â†’ UKP Bridge: IKM Case Boosts increase disease probability
                         // Active case boosts from resolved IKM events increase specific disease spawn rates
                         const activeBoosts = (state.publicHealth.ikmCaseBoosts || []).filter(b => b.expiresDay > day);
 
@@ -2673,7 +1733,7 @@ export const useGameStore = create(
                             return;
                         }
 
-                        // Codex Fix: intercept Prolanis visit patients — redirect to completeProlanisVisit
+                        // Codex Fix: intercept Prolanis visit patients â€” redirect to completeProlanisVisit
                         if (typeof patient.id === 'string' && patient.id.includes('_visit_')) {
                             const visitData = {
                                 patientId: patient.id,
@@ -2748,7 +1808,7 @@ export const useGameStore = create(
                                     if (isCowboy) {
                                         state.clinical.morningAlerts = [
                                             ...(state.clinical.morningAlerts || []),
-                                            { type: 'warning', title: '⚠️ Peringatan Malapraktik', message: `Kasus ${patient.medicalData?.diagnosisName || 'pasien'} seharusnya dirujuk (di luar kompetensi FKTP). Menahan kasus di luar SKDI = risiko keselamatan pasien.`, day }
+                                            { type: 'warning', title: 'âš ï¸ Peringatan Malapraktik', message: `Kasus ${patient.medicalData?.diagnosisName || 'pasien'} seharusnya dirujuk (di luar kompetensi FKTP). Menahan kasus di luar SKDI = risiko keselamatan pasien.`, day }
                                         ];
                                     }
                                 }
@@ -2936,14 +1996,14 @@ export const useGameStore = create(
                                     activeEmergencyId: null
                                 }
                             }));
-                            return; // Early return — patient stays in queue until SISRUTE completes
+                            return; // Early return â€” patient stays in queue until SISRUTE completes
                         }
 
                         const isCorrectTriage = patient.hidden?.requiredAction === decision.action;
                         let repChange = isCorrectTriage ? 5 : -5, satisfactionScore = isCorrectTriage ? 95 : 50;
                         let outcomeStatus = isCorrectTriage ? 'correct' : 'incorrect';
 
-                        // 🖤 DEATH: Patient died after failed resuscitation
+                        // ðŸ–¤ DEATH: Patient died after failed resuscitation
                         if (decision.action === 'death') {
                             repChange = -15;
                             satisfactionScore = 0;
@@ -2979,7 +2039,7 @@ export const useGameStore = create(
                             let newActiveReferralLog = state.clinical.activeReferralLog;
                             let newHospitalBedUsage = { ...(state.clinical.hospitalBedUsage || {}) };
 
-                            // Handle SISRUTE referral completion: → ENTER LIMBO instead of instant discharge
+                            // Handle SISRUTE referral completion: â†’ ENTER LIMBO instead of instant discharge
                             if (decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED') {
                                 const { hospitalId, ambulanceId } = decision.referralDetails;
                                 const hosp = HOSPITALS.find(h => h.id === hospitalId), amb = AMBULANCES.find(a => a.id === ambulanceId);
@@ -3013,7 +2073,7 @@ export const useGameStore = create(
                                     );
                                 }
 
-                                // 🚑 SISRUTE LIMBO: patient stays in queue waiting for ambulance (immutable update)
+                                // ðŸš‘ SISRUTE LIMBO: patient stays in queue waiting for ambulance (immutable update)
                                 const newEmergencyQueue = state.clinical.emergencyQueue.map(q => {
                                     if (q.id !== patient.id) return q;
                                     return {
@@ -3091,7 +2151,7 @@ export const useGameStore = create(
                                     // IGD AUTO-DEDUCT: consume meds/alkes used during emergency
                                     pharmacyInventory: (() => {
                                         const igdConsumption = new Map();
-                                        // 1. Actions performed → each action's med cost (if it's a real medication)
+                                        // 1. Actions performed â†’ each action's med cost (if it's a real medication)
                                         const actions = decision.actionsPerformed || decision.actions || [];
                                         actions.forEach(actionId => {
                                             const canonicalActionId = normalizeMedicationId(actionId);
@@ -3443,7 +2503,7 @@ export const useGameStore = create(
                                             order.deliveryDay += 1;
                                             state.clinical.morningAlerts = [
                                                 ...(state.clinical.morningAlerts || []),
-                                                { type: 'supply_delay', message: `⚠️ Pengiriman dari ${supplier?.name || 'supplier'} tertunda (cuaca/logistik). Estimasi tiba: Hari ${order.deliveryDay}` }
+                                                { type: 'supply_delay', message: `âš ï¸ Pengiriman dari ${supplier?.name || 'supplier'} tertunda (cuaca/logistik). Estimasi tiba: Hari ${order.deliveryDay}` }
                                             ];
                                             return; // Skip receive, try again next day
                                         }
@@ -3567,7 +2627,7 @@ export const useGameStore = create(
                                 );
                             }
 
-                            // 4.7. TheDirector — Evaluate Stress & Set Pacing
+                            // 4.7. TheDirector â€” Evaluate Stress & Set Pacing
                             const directorInput = {
                                 day: nextDayVal,
                                 queueLength: state.clinical.queue.length,
@@ -3591,7 +2651,7 @@ export const useGameStore = create(
                                 state.world.directorGiftMessage = null;
                             }
 
-                            // 4.8. UKP Bridge — Failed UKM cases spawn clinical consequences
+                            // 4.8. UKP Bridge â€” Failed UKM cases spawn clinical consequences
                             const completedBCCases = collectPendingUkpBridgeCases(state.clinical.history || []);
                             const ukpEvents = processUKPBridge(completedBCCases, nextDayVal);
                             const bridgedHistoryIds = [];

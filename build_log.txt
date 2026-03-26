@@ -1,0 +1,75 @@
+﻿[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 3663 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                               [39m[1m[2m    1.38 kB[22m[1m[22m[2m Γöé gzip:   0.56 kB[22m
+[2mdist/[22m[35massets/index-B6K6OUmc.css                [39m[1m[2m  241.03 kB[22m[1m[22m[2m Γöé gzip:  32.26 kB[22m
+[2mdist/[22m[36massets/useModalA11y-OkeHhsPn.js          [39m[1m[2m    1.12 kB[22m[1m[22m[2m Γöé gzip:   0.54 kB[22m
+[2mdist/[22m[36massets/klinis-DmBsA-FT.js                [39m[1m[2m    1.65 kB[22m[1m[22m[2m Γöé gzip:   0.90 kB[22m
+[2mdist/[22m[36massets/HistoryTab-BBAis_tD.js            [39m[1m[2m    2.78 kB[22m[1m[22m[2m Γöé gzip:   1.18 kB[22m
+[2mdist/[22m[36massets/ClinicalServices-F31idYcE.js      [39m[1m[2m    3.69 kB[22m[1m[22m[2m Γöé gzip:   1.68 kB[22m
+[2mdist/[22m[36massets/BillingTab-Bg_W7z_v.js            [39m[1m[2m    4.12 kB[22m[1m[22m[2m Γöé gzip:   1.44 kB[22m
+[2mdist/[22m[36massets/manajemen-t1VlhrAW.js             [39m[1m[2m    4.19 kB[22m[1m[22m[2m Γöé gzip:   1.94 kB[22m
+[2mdist/[22m[36massets/QuestBoard-DuFt9wfl.js            [39m[1m[2m    4.76 kB[22m[1m[22m[2m Γöé gzip:   1.60 kB[22m
+[2mdist/[22m[36massets/AvatarSelectionModal-CYnmo-71.js  [39m[1m[2m    5.04 kB[22m[1m[22m[2m Γöé gzip:   1.81 kB[22m
+[2mdist/[22m[36massets/WikiData-A0CEw8dM.js              [39m[1m[2m    5.47 kB[22m[1m[22m[2m Γöé gzip:   2.19 kB[22m
+[2mdist/[22m[36massets/SettingsModal-BcaaGfyC.js         [39m[1m[2m    5.48 kB[22m[1m[22m[2m Γöé gzip:   1.93 kB[22m
+[2mdist/[22m[36massets/EducationTab-DoBVxzth.js          [39m[1m[2m    5.75 kB[22m[1m[22m[2m Γöé gzip:   2.01 kB[22m
+[2mdist/[22m[36massets/AssessmentTab-CmQaTMwg.js         [39m[1m[2m    5.84 kB[22m[1m[22m[2m Γöé gzip:   1.80 kB[22m
+[2mdist/[22m[36massets/lab_prosedur-CNgNLN_c.js          [39m[1m[2m    6.01 kB[22m[1m[22m[2m Γöé gzip:   2.70 kB[22m
+[2mdist/[22m[36massets/NarrativeOverlay-0jD9yEd9.js      [39m[1m[2m    6.40 kB[22m[1m[22m[2m Γöé gzip:   2.28 kB[22m
+[2mdist/[22m[36massets/LoginPage-ByvjL9NG.js             [39m[1m[2m    6.54 kB[22m[1m[22m[2m Γöé gzip:   2.52 kB[22m
+[2mdist/[22m[36massets/ProceduresTab-DbCSBdZi.js         [39m[1m[2m    6.67 kB[22m[1m[22m[2m Γöé gzip:   2.20 kB[22m
+[2mdist/[22m[36massets/DailyReportModal-BDu5JKbh.js      [39m[1m[2m    6.75 kB[22m[1m[22m[2m Γöé gzip:   2.46 kB[22m
+[2mdist/[22m[36massets/OutbreakModal-BYEepbuU.js         [39m[1m[2m    6.83 kB[22m[1m[22m[2m Γöé gzip:   2.43 kB[22m
+[2mdist/[22m[36massets/emergency_wiki-CMeuBUpi.js        [39m[1m[2m    8.27 kB[22m[1m[22m[2m Γöé gzip:   3.23 kB[22m
+[2mdist/[22m[36massets/AnamnesisVariations-CTfb7Po0.js   [39m[1m[2m    8.92 kB[22m[1m[22m[2m Γöé gzip:   3.14 kB[22m
+[2mdist/[22m[36massets/StatusJunctionModal-8C2lb-uB.js   [39m[1m[2m    9.96 kB[22m[1m[22m[2m Γöé gzip:   2.91 kB[22m
+[2mdist/[22m[36massets/LabTab-kpt8bNPb.js                [39m[1m[2m   10.75 kB[22m[1m[22m[2m Γöé gzip:   3.59 kB[22m
+[2mdist/[22m[36massets/TreatmentTab-yjZYgxlZ.js          [39m[1m[2m   10.96 kB[22m[1m[22m[2m Γöé gzip:   2.82 kB[22m
+[2mdist/[22m[36massets/CPPTCard-BqiadA5Y.js              [39m[1m[2m   11.10 kB[22m[1m[22m[2m Γöé gzip:   3.06 kB[22m
+[2mdist/[22m[36massets/Smartphone-CqER8TSp.js            [39m[1m[2m   11.17 kB[22m[1m[22m[2m Γöé gzip:   3.43 kB[22m
+[2mdist/[22m[36massets/GedungPage-qYwhdDtF.js            [39m[1m[2m   11.70 kB[22m[1m[22m[2m Γöé gzip:   3.75 kB[22m
+[2mdist/[22m[36massets/EducationalWikiModal-B1g91uBc.js  [39m[1m[2m   11.79 kB[22m[1m[22m[2m Γöé gzip:   3.50 kB[22m
+[2mdist/[22m[36massets/DiklatPage--MqaxBUA.js            [39m[1m[2m   12.13 kB[22m[1m[22m[2m Γöé gzip:   3.87 kB[22m
+[2mdist/[22m[36massets/wilayah-BVTcjZOR.js               [39m[1m[2m   13.38 kB[22m[1m[22m[2m Γöé gzip:   5.53 kB[22m
+[2mdist/[22m[36massets/diseases-data-BHl40P0c.js         [39m[1m[2m   13.50 kB[22m[1m[22m[2m Γöé gzip:   3.45 kB[22m
+[2mdist/[22m[36massets/StaffPage-Cr970JLg.js             [39m[1m[2m   13.57 kB[22m[1m[22m[2m Γöé gzip:   4.50 kB[22m
+[2mdist/[22m[36massets/kulit-w10Q-HCS.js                 [39m[1m[2m   14.12 kB[22m[1m[22m[2m Γöé gzip:   5.54 kB[22m
+[2mdist/[22m[36massets/InventoryPage-DptX_b38.js         [39m[1m[2m   14.28 kB[22m[1m[22m[2m Γöé gzip:   4.08 kB[22m
+[2mdist/[22m[36massets/CalendarModal-B2Oln1F5.js         [39m[1m[2m   14.45 kB[22m[1m[22m[2m Γöé gzip:   4.21 kB[22m
+[2mdist/[22m[36massets/igd-C2WGxC8U.js                   [39m[1m[2m   15.47 kB[22m[1m[22m[2m Γöé gzip:   6.72 kB[22m
+[2mdist/[22m[36massets/ReferralSISRUTEModal-BPOElNQi.js  [39m[1m[2m   17.09 kB[22m[1m[22m[2m Γöé gzip:   5.08 kB[22m
+[2mdist/[22m[36massets/dashboard_manajemen-oZBaKq9j.js   [39m[1m[2m   17.58 kB[22m[1m[22m[2m Γöé gzip:   6.56 kB[22m
+[2mdist/[22m[36massets/AnamnesisTab-COXLqZ93.js          [39m[1m[2m   19.60 kB[22m[1m[22m[2m Γöé gzip:   6.12 kB[22m
+[2mdist/[22m[36massets/SaveSlotSelector-6IpQomZl.js      [39m[1m[2m   20.58 kB[22m[1m[22m[2m Γöé gzip:   6.49 kB[22m
+[2mdist/[22m[36massets/AvatarRenderer-br6Bmwkd.js        [39m[1m[2m   20.79 kB[22m[1m[22m[2m Γöé gzip:   5.24 kB[22m
+[2mdist/[22m[36massets/penyakit-BWfBY6LI.js              [39m[1m[2m   20.84 kB[22m[1m[22m[2m Γöé gzip:   8.05 kB[22m
+[2mdist/[22m[36massets/obat-BzT-0tZh.js                  [39m[1m[2m   21.13 kB[22m[1m[22m[2m Γöé gzip:   7.73 kB[22m
+[2mdist/[22m[36massets/PhysicalExamTab-lCJICfDM.js       [39m[1m[2m   24.25 kB[22m[1m[22m[2m Γöé gzip:   7.59 kB[22m
+[2mdist/[22m[36massets/PlayerSetup-CCf7__83.js           [39m[1m[2m   24.46 kB[22m[1m[22m[2m Γöé gzip:   7.49 kB[22m
+[2mdist/[22m[36massets/ArsipPage-D0yWBtB2.js             [39m[1m[2m   25.32 kB[22m[1m[22m[2m Γöé gzip:   6.26 kB[22m
+[2mdist/[22m[36massets/village-domain-CMuttvDC.js        [39m[1m[2m   28.57 kB[22m[1m[22m[2m Γöé gzip:   6.12 kB[22m
+[2mdist/[22m[36massets/KPIDashboard-C3adYU5X.js          [39m[1m[2m   28.86 kB[22m[1m[22m[2m Γöé gzip:   7.97 kB[22m
+[2mdist/[22m[36massets/SensusPage-CHxzVnA7.js            [39m[1m[2m   32.49 kB[22m[1m[22m[2m Γöé gzip:   9.07 kB[22m
+[2mdist/[22m[36massets/DashboardPage-BDlvgL7b.js         [39m[1m[2m   46.97 kB[22m[1m[22m[2m Γöé gzip:  10.13 kB[22m
+[2mdist/[22m[36massets/vendor-i18n-Beq840G-.js           [39m[1m[2m   46.98 kB[22m[1m[22m[2m Γöé gzip:  15.32 kB[22m
+[2mdist/[22m[36massets/MainLayout-DT0JC9W2.js            [39m[1m[2m   57.13 kB[22m[1m[22m[2m Γöé gzip:  15.84 kB[22m
+[2mdist/[22m[36massets/RumahDinas-FTF-1uPi.js            [39m[1m[2m   58.30 kB[22m[1m[22m[2m Γöé gzip:  18.13 kB[22m
+[2mdist/[22m[36massets/vendor-ui-CybtXEz_.js             [39m[1m[2m   66.00 kB[22m[1m[22m[2m Γöé gzip:  22.65 kB[22m
+[2mdist/[22m[36massets/scenario-content-D5PFb1Gc.js      [39m[1m[2m   81.50 kB[22m[1m[22m[2m Γöé gzip:  24.25 kB[22m
+[2mdist/[22m[36massets/medication-data-fvnSRp16.js       [39m[1m[2m  156.35 kB[22m[1m[22m[2m Γöé gzip:  24.76 kB[22m
+[2mdist/[22m[36massets/vendor-react-BQYpOFt0.js          [39m[1m[2m  193.08 kB[22m[1m[22m[2m Γöé gzip:  60.58 kB[22m
+[2mdist/[22m[36massets/vendor-visualization-C7lEGXC-.js  [39m[1m[2m  206.85 kB[22m[1m[22m[2m Γöé gzip:  55.35 kB[22m
+[2mdist/[22m[36massets/ClinicalPage-9FvImvwx.js          [39m[1m[2m  241.75 kB[22m[1m[22m[2m Γöé gzip:  65.13 kB[22m
+[2mdist/[22m[36massets/WilayahPage-CVkLNR1G.js           [39m[1m[2m  277.86 kB[22m[1m[22m[2m Γöé gzip:  78.48 kB[22m
+[2mdist/[22m[36massets/index-9wp3lMfI.js                 [39m[1m[2m  327.06 kB[22m[1m[22m[2m Γöé gzip: 105.12 kB[22m
+[2mdist/[22m[36massets/icd10-part_2-BQBWASyk.js          [39m[1m[2m  332.74 kB[22m[1m[22m[2m Γöé gzip:  52.73 kB[22m
+[2mdist/[22m[36massets/icd10-part_1-DcwGtkUv.js          [39m[1m[2m  356.65 kB[22m[1m[22m[2m Γöé gzip:  52.78 kB[22m
+[2mdist/[22m[36massets/icd10-part_3-uO4e6xLh.js          [39m[1m[2m  360.94 kB[22m[1m[22m[2m Γöé gzip:  54.59 kB[22m
+[2mdist/[22m[36massets/master-icd9-0pENjiBs.js           [39m[1m[2m  420.49 kB[22m[1m[22m[2m Γöé gzip:  50.49 kB[22m
+[2mdist/[22m[36massets/icd10-part_4-UfGjipsk.js          [39m[1m[2m  520.52 kB[22m[1m[22m[2m Γöé gzip:  58.87 kB[22m
+[2mdist/[22m[36massets/case-content-CO3sNKNw.js          [39m[1m[2m  558.58 kB[22m[1m[22m[2m Γöé gzip: 141.57 kB[22m
+[2mdist/[22m[36massets/vendor-3d-CqtRYl2A.js             [39m[1m[2m1,584.01 kB[22m[1m[22m[2m Γöé gzip: 455.30 kB[22m
+[32mΓ£ô built in 37.02s[39m
