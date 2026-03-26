@@ -1697,9 +1697,38 @@ export const useGameStore = create(
                             let xpEarned = 0;
                             const updatedRoster = state.publicHealth.prolanisRoster.map(member => {
                                 if (member.id !== rosterId) return member;
+
+                                // ═══ CONTRACT ADAPTER ═══════════════════════════
+                                // EMR sends: { diagnoses, medications, action }
+                                // Engine expects: { medicationAction, education, complianceBonus }
+                                const hasMeds = Array.isArray(doctorDecisions?.medications) && doctorDecisions.medications.length > 0;
+                                const diseaseType = member.prolanisData?.diseaseType;
+
+                                // Map medications → medicationAction with paramChange
+                                // Each medication given = -15 paramChange (therapeutic effect)
+                                const medicationAction = hasMeds ? {
+                                    effect: {
+                                        paramChange: -(15 * Math.min(doctorDecisions.medications.length, 3))
+                                    }
+                                } : null;
+
+                                // Compliance bonus if patient visited within 35 days
+                                const lastVisitDay = member.prolanisData?.lastVisitDay || 0;
+                                const complianceBonus = (effectiveDay - lastVisitDay) <= 35;
+
+                                // Education: if meds were given, assume basic education was provided
+                                const education = hasMeds ? [{
+                                    effect: diseaseType === 'dm_type2'
+                                        ? { gds: -8, hba1c: -0.05 }
+                                        : { systolic: -3, diastolic: -2 }
+                                }] : [];
+
+                                const engineIntervention = { medicationAction, education, complianceBonus };
+                                // ═══ END ADAPTER ════════════════════════════════
+
                                 const outcome = determineMonthlyOutcome(
                                     { ...member },
-                                    doctorDecisions,
+                                    engineIntervention,
                                     seedKey('prolanis-visit', member.id, effectiveDay)
                                 );
                                 xpEarned = outcome.xpEarned || 0;
