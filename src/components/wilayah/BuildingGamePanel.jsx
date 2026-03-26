@@ -547,7 +547,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                     <div className="bg-slate-900 border border-purple-500/30 rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center">
                         <div className="w-14 h-14 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">⚡</div>
                         <h3 className="text-lg font-black text-white mb-2">{pendingScenario.replace(/_/g, ' ').toUpperCase()}</h3>
-                        <p className="text-xs text-white/60 mb-6">Progress stasiun akan tersimpan.</p>
+                        <p className="text-xs text-white/60 mb-6">Membuka skenario ini akan meninggalkan denah gedung.</p>
                         <div className="flex gap-3">
                             <button onClick={() => setPendingScenario(null)}
                                 className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 font-bold text-xs transition-all">

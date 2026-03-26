@@ -23,7 +23,7 @@ import { getPatientSpikeMultiplier } from '../domains/community/OutbreakSystem.j
 import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateGenericPatients, generateProlanisVisitPatient } from '../game/PatientGenerator.js';
 import { getScheduledFollowups, clearProcessedFollowups } from '../game/ConsequenceEngine.js';
 import { checkLevelUp, getNextLevelXp } from '../utils/LevelingSystem.js';
-import { evaluateIKMTriggers, resolveEvent, calculateEventImpact, determineScenarioOutcomeKey, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
+import { evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact, determineScenarioOutcomeKey, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
 import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
 import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
 import { applyNeglectDecay } from '../domains/village/NPCReadiness.js';
@@ -2136,18 +2136,56 @@ export const useGameStore = create(
                     /** Manually trigger an IKM event (e.g. from clicking linkedScenario badge) */
                     triggerIKMEvent: (scenarioId) => {
                         const s = get();
-                        if (s.publicHealth.activeIKMEvents.some(e => e.scenarioId === scenarioId)) return false;
-                        if (s.publicHealth.completedIKMIds.includes(scenarioId)) return false;
-
+                        const activeEvents = s.publicHealth.activeIKMEvents || [];
+                        const completedIds = s.publicHealth.completedIKMIds || [];
+                        const cooldowns = s.publicHealth.ikmCooldowns || {};
                         const scenario = getScenarioById(scenarioId);
-                        if (!scenario) return false;
+
+                        // Guard 1: Reject bc_* IDs
+                        if (scenarioId?.startsWith('bc_')) {
+                            console.warn(`[triggerIKMEvent] Rejected bc_* ID "${scenarioId}" — use BehaviorCase engine instead.`);
+                            return false;
+                        }
+
+                        // Guard 2: Scenario not found
+                        if (!scenario) {
+                            console.warn(`[triggerIKMEvent] Scenario "${scenarioId}" not found.`);
+                            return false;
+                        }
+
+                        // Guard 3: Already active or completed
+                        if (activeEvents.some(e => e.scenarioId === scenarioId) || completedIds.includes(scenarioId)) {
+                            return false;
+                        }
+
+                        // Guard 4: MAX_ACTIVE_EVENTS (max 2)
+                        if (activeEvents.length >= 2) {
+                            return false;
+                        }
+
+                        // Guard 5: BC overlap — suppress if a matching BC case is active
+                        const activeBCIds = (s.publicHealth.villageData?.families || [])
+                            .map(f => f.activeScenarioId).filter(Boolean).map(id => id.replace('bc_', ''));
+                        if (isBlockedByBC(scenarioId, activeBCIds)) {
+                            return false;
+                        }
+
+                        // Guard 6: Category cooldown (5 days)
+                        const lastTrigger = cooldowns[scenario.category] || 0;
+                        if (s.world.day - lastTrigger < 5) {
+                            return false;
+                        }
 
                         const event = createEventInstance(scenario, s.world.day);
                         soundManager.playNotification();
                         set(state => ({
                             publicHealth: {
                                 ...state.publicHealth,
-                                activeIKMEvents: [...state.publicHealth.activeIKMEvents, event]
+                                activeIKMEvents: [...state.publicHealth.activeIKMEvents, event],
+                                ikmCooldowns: {
+                                    ...state.publicHealth.ikmCooldowns,
+                                    [scenario.category]: state.world.day
+                                }
                             }
                         }));
                         return true;

@@ -786,6 +786,12 @@ export default function BehaviorCasePanel({ building, familyData, day, onClose, 
     }, []);
 
     const handleClose = useCallback(() => {
+        // Guard: confirm before discarding in-progress case
+        if (caseInstance && !caseInstance.completed && caseInstance.phasesCompleted?.length > 0) {
+            if (!window.confirm('⚠️ Investigasi sedang berjalan. Keluar sekarang akan menghapus progres kasus ini. Lanjutkan?')) {
+                return;
+            }
+        }
         if (caseInstance?.completed) {
             onComplete?.({
                 caseInstance, familyId: building?.familyId, xpEarned: caseInstance.xpEarned,

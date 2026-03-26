@@ -31,12 +31,27 @@ export const AVATARS = [
 const SHADOW = '#020617';
 const HIGHLIGHT = '#ffffff';
 
+// ─── Adaptive Shadow Engine ───
+// Warm shift + opacity multiplier prevents ashy shadows on dark skin
+const SHADOW_PARAMS = {
+    light:  { mul: 1.0, color: SHADOW },
+    fair:   { mul: 1.0, color: SHADOW },
+    medium: { mul: 1.2, color: '#1a0f0a' },
+    tan:    { mul: 1.5, color: '#1a0f0a' },
+    brown:  { mul: 1.9, color: '#1a0f0a' },
+    dark:   { mul: 2.4, color: '#140a05' },
+};
+
 // ============================================================================
 // PREMIUM SVG COMPONENTS (PRIMER TRADEMARK EDITION)
 // ============================================================================
 
-function VanguardHead({ skin, gender }) {
+function VanguardHead({ skin, skinTone, gender }) {
     const isFemale = gender === 'P';
+    const shadowCfg = SHADOW_PARAMS[skinTone] || SHADOW_PARAMS.fair;
+    const sMul = shadowCfg.mul;
+    const sColor = shadowCfg.color;
+
     const jawPath = isFemale
         ? "M66.4,72 C66.4,108 82.4,132.8 100,132.8 C117.6,132.8 133.6,108 133.6,72 C133.6,40 116,28 100,28 C84,28 66.4,40 66.4,72Z"
         : "M64.8,72 C64.8,116 79.2,137.6 100,137.6 C120.8,137.6 135.2,116 135.2,72 C135.2,40 116,28 100,28 C84,28 64.8,40 64.8,72Z";
@@ -49,13 +64,13 @@ function VanguardHead({ skin, gender }) {
     return (
         <g id="head-base">
             <path d={neckPath} fill={skin} />
-            <path d={neckShadow} fill={SHADOW} opacity="0.18" />
+            <path d={neckShadow} fill={sColor} opacity={0.18 * sMul} />
             <path d={isFemale ? "M63.2,76 L68,68.8 L68,89.6 L63.2,83.2Z" : "M60,76 L66.4,68 L66.4,92 L60,84Z"} fill={skin} />
             <path d={isFemale ? "M136.8,76 L132,68.8 L132,89.6 L136.8,83.2Z" : "M140,76 L133.6,68 L133.6,92 L140,84Z"} fill={skin} />
-            <path d={isFemale ? "M64.8,78.4 L68,73.6 L68,86.4Z" : "M61.6,78.4 L64.8,73.6 L64.8,88Z"} fill={SHADOW} opacity="0.1" />
+            <path d={isFemale ? "M64.8,78.4 L68,73.6 L68,86.4Z" : "M61.6,78.4 L64.8,73.6 L64.8,88Z"} fill={sColor} opacity={0.1 * sMul} />
             <path d={jawPath} fill={skin} />
-            <path d={cheekShadow} fill={SHADOW} opacity="0.08" />
-            <path d="M100,76 L100,97.6 L96,100.8" fill="none" stroke={SHADOW} strokeWidth={isFemale ? "1.4" : "2"} strokeLinecap="round" strokeLinejoin="round" opacity="0.12" />
+            <path d={cheekShadow} fill={sColor} opacity={0.08 * sMul} />
+            <path d="M100,76 L100,97.6 L96,100.8" fill="none" stroke={sColor} strokeWidth={isFemale ? "1.4" : "2"} strokeLinecap="round" strokeLinejoin="round" opacity={0.12 * sMul} />
         </g>
     );
 }
@@ -393,7 +408,7 @@ export default function AvatarRenderer({ avatar, size = 80, className = '', mood
 
                 <g clipPath="url(#avatar-frame)">
                     {!isHijab && <VanguardHair style={norm.hairStyle} color={effectiveHairColor} isBackLayer={true} />}
-                    <VanguardHead skin={skin} gender={norm.gender || 'L'} />
+                    <VanguardHead skin={skin} skinTone={norm.skinTone || 'fair'} gender={norm.gender || 'L'} />
                     <VanguardFace mood={mood} hairColor={effectiveHairColor} gender={norm.gender || 'L'} />
                     <VanguardHair style={norm.hairStyle} color={effectiveHairColor} isBackLayer={false} />
                     <VanguardOutfit style={norm.outfit} />
