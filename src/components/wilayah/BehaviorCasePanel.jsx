@@ -461,8 +461,14 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
         const incorrect = targetBarriers.length - correct;
         setTimeout(() => {
             const best = scenario.bestInterventions?.[0];
+            // Use player's actual draft for metadata, not scenario's ideal answer
             let scored = best ? scoreIntervention(caseInstance, best) : caseInstance;
-            scored = { ...scored, interventionScore: finalScore, miniGameResult: { score: finalScore, normalized: finalScore, feedback: isBackfire ? 'BACKFIRE — Warga menolak!' : `Efikasi BCW: ${finalScore}%` } };
+            scored = {
+                ...scored,
+                interventionScore: finalScore,
+                interventionDraft: draft.map(p => ({ id: p.id, label: p.label, type: p.type })),
+                miniGameResult: { score: finalScore, normalized: finalScore, feedback: isBackfire ? 'BACKFIRE — Warga menolak!' : `Efikasi BCW: ${finalScore}%` }
+            };
             onAdvance(scored);
         }, 2500);
     };

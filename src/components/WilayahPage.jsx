@@ -43,8 +43,8 @@ import BehaviorCasePanel from './wilayah/BehaviorCasePanel.jsx';
 import WilayahDiorama from './wilayah/3d/WilayahDiorama.jsx';
 import { isGameEnabledBuilding } from './wilayah/buildingScenes.js';
 
-import { getCachedTextures, generateTextures } from '../utils/TextureGenerator.js';
 import { guardStability } from '../utils/prophylaxis.js';
+import { calculateIKS } from '../game/GameCore.js';
 import {
     activateBehaviorCaseForVillage,
     applyBehaviorCaseOutcomeToVillage,
@@ -91,16 +91,11 @@ export default function WilayahPage() {
     const [selectedBuilding, setSelectedBuilding] = useState(null);
     const [activeLayer, setActiveLayer] = useState('general');
     const [homeVisitModal, setHomeVisitModal] = useState(null);
-    const [zoom, setZoom] = useState(0.4);
     const [buildingInterior, setBuildingInterior] = useState(null);
     const [activeIKMEventId, setActiveIKMEventId] = useState(null);
     const [activeBCCase, setActiveBCCase] = useState(null); // Behavior Change Case panel
     const dioramaZoomRef = useRef(null); // ref for 3D camera zoom callbacks
     const [diveWhiteout, setDiveWhiteout] = useState(false); // Dollhouse Dive flash
-    const [textures] = useState(() => {
-        const cached = getCachedTextures('v10-modular-refactor');
-        return cached || generateTextures('v10-modular-refactor');
-    });
 
     // ═══ TOPOLOGY DECOUPLING (Performance Critical!) ═══════════════════
     // Static map geometry: generated ONCE, never regenerated on data changes
@@ -209,7 +204,7 @@ export default function WilayahPage() {
     }, []);
 
     // Loading guard (moved after all hooks to avoid Rules of Hooks violation)
-    if (!mapData || !textures) {
+    if (!mapData) {
         return (
             <ErrorBoundary>
                 <div className="relative w-full h-screen overflow-hidden bg-[#0a0f0d] flex items-center justify-center">
@@ -280,7 +275,7 @@ export default function WilayahPage() {
         idsToUpdate.forEach(id => { updatedIndicators[id] = true; });
         setVillageData(prev => ({
             ...prev,
-            families: prev.families.map(f => f.id === family.id ? { ...f, indicators: updatedIndicators } : f)
+            families: prev.families.map(f => f.id === family.id ? { ...f, indicators: updatedIndicators, iksScore: calculateIKS(updatedIndicators) } : f)
         }));
         setPlayerStats(prev => ({ ...prev, energy: energy - action.energy }));
         addXp(action.xp);
@@ -474,24 +469,24 @@ export default function WilayahPage() {
                             )}
                         </div>
 
-                        {/* Right: Zoom Controls (works for both 2D and 3D) */}
+                        {/* Right: Zoom Controls (3D camera via dioramaZoomRef) */}
                         <div className="flex items-center gap-1">
                             <button
-                                onClick={() => { setZoom(prev => Math.min(prev + 0.1, 1.5)); dioramaZoomRef.current?.zoomIn(); }}
+                                onClick={() => dioramaZoomRef.current?.zoomIn()}
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 ${GLASS_HOVER}`}
                                 aria-label="Perbesar peta"
                             >
                                 <Plus size={14} />
                             </button>
                             <button
-                                onClick={() => { setZoom(prev => Math.max(prev - 0.1, 0.2)); dioramaZoomRef.current?.zoomOut(); }}
+                                onClick={() => dioramaZoomRef.current?.zoomOut()}
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 ${GLASS_HOVER}`}
                                 aria-label="Perkecil peta"
                             >
                                 <Minus size={14} />
                             </button>
                             <button
-                                onClick={() => { setZoom(0.4); dioramaZoomRef.current?.reset(); }}
+                                onClick={() => dioramaZoomRef.current?.reset()}
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 ${GLASS_HOVER}`}
                                 aria-label="Reset zoom peta"
                             >
@@ -838,7 +833,7 @@ export default function WilayahPage() {
                                             // Posyandu participation improves nutrition & immunization indicators
                                             indicators.balita = true;
                                             indicators.imunisasi = true;
-                                            return { ...fam, indicators };
+                                            return { ...fam, indicators, iksScore: calculateIKS(indicators) };
                                         })
                                     }));
                                 }
