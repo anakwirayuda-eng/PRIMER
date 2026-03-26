@@ -34,7 +34,7 @@ export const FAMILY_SDOH = {
     'kk_20': { economy: 'Middle', housing: 'Permanent/Warung', education: 'Junior High', water: 'Well', sanitation: 'Private Latrine', diet: 'High Fat', smoking: true, activity: 'Moderate' },
     'kk_21': { economy: 'Middle', housing: 'Permanent', education: 'Junior High', water: 'Well', sanitation: 'Private Latrine', diet: 'Traditional', smoking: true, activity: 'Moderate' },
     'kk_22': { economy: 'Low', housing: 'Semi-Permanent', education: 'Junior High', water: 'Well', sanitation: 'Shared Latrine', diet: 'Poor Nutrition', smoking: false, activity: 'Sedentary' },
-    'kk_23': { economy: 'Very Low', housing: 'Make-shift/Bamboo', education: 'No School', water: 'River', sanitation: 'River/Open', diet: 'Poor Nutrition', smoking: true, activity: 'Active' },
+    'kk_23': { economy: 'Very Low', housing: 'Make-shift', education: 'No School', water: 'River', sanitation: 'River/Open', diet: 'Poor Nutrition', smoking: true, activity: 'Active' },
     'kk_24': { economy: 'Low', housing: 'Old Permanent', education: 'No School', water: 'Well', sanitation: 'Private Latrine', diet: 'Low Protein', smoking: true, activity: 'Sedentary' },
     'kk_25': { economy: 'Low-Middle', housing: 'Semi-Permanent', education: 'Elementary', water: 'Well', sanitation: 'Private Latrine', diet: 'Traditional', smoking: true, activity: 'Active' },
     'kk_26': { economy: 'Middle', housing: 'Permanent', education: 'University', water: 'PDAM', sanitation: 'Private Latrine', diet: 'Balanced', smoking: false, activity: 'Moderate' },

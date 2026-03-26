@@ -252,7 +252,7 @@ const PHBS_SCENARIOS = [
         description: 'Sumur di RT 03 tercemar bakteri E. coli setelah banjir. Warga belum sadar bahaya.',
         triggerConditions: {
             season: 'rainy',
-            sdoh: { water: ['Well', 'Unprotected Well'] },
+            sdoh: { water: ['Well', 'River'] },
             minDay: 20,
             probability: 0.10
         },

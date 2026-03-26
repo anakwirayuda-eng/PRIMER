@@ -284,9 +284,18 @@ function VanguardOutfit({ style }) {
                 <path d="M75,120 L60,185 L95,200" fill="none" stroke="#cbd5e1" strokeWidth="2.5" strokeLinejoin="round" />
                 <path d="M125,120 L140,185 L105,200" fill="none" stroke="#cbd5e1" strokeWidth="2.5" strokeLinejoin="round" />
                 <line x1="100" y1="160" x2="100" y2="200" stroke="#94a3b8" strokeWidth="2" />
-                <rect x="46" y="155" width="22" height="26" rx="2" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
-                <line x1="51" y1="150" x2="51" y2="165" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
-                <line x1="58" y1="153" x2="58" y2="165" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
+                {/* Lab Coat Pocket & Pens (validated at x=42,y=148 — clear of lapel) */}
+                <rect x="42" y="148" width="22" height="26" rx="2" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+                <line x1="47" y1="143" x2="47" y2="158" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="54" y1="146" x2="54" y2="158" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
+                {/* ID Badge — right chest, teal PRIMER theme */}
+                <g id="id-badge">
+                    <rect x="152" y="146" width="4" height="6" rx="1" fill="#94a3b8" />
+                    <rect x="150" y="150" width="8" height="12" rx="1" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.2" />
+                    <rect x="151" y="151.5" width="6" height="2.5" rx="0.5" fill="#0d9488" />
+                    <line x1="152" y1="156" x2="156" y2="156" stroke="#94a3b8" strokeWidth="1" strokeLinecap="round" />
+                    <line x1="152" y1="159" x2="154" y2="159" stroke="#cbd5e1" strokeWidth="1" strokeLinecap="round" />
+                </g>
             </g>
         );
     }
@@ -331,12 +340,15 @@ function VanguardAccessories({ accessories, outfit }) {
 
             {hasStethoscope && outfit !== 'casual' && (
                 <g id="stethoscope">
-                    <path d="M35,135 C20,225 180,225 165,135" fill="none" stroke="#020617" strokeWidth="9" strokeLinecap="round" />
-                    <path d="M37,135 C23,218 177,218 163,135" fill="none" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" />
-                    <path d="M100,185 L100,202" fill="none" stroke="#94a3b8" strokeWidth="6" strokeLinecap="round" />
-                    <path d="M102,185 L102,202" fill="none" stroke={HIGHLIGHT} strokeWidth="1.5" opacity="0.5" />
-                    <circle cx="100" cy="202" r="8" fill="#cbd5e1" stroke="#020617" strokeWidth="2.5" />
-                    <circle cx="100" cy="202" r="3.5" fill="#334155" />
+                    {/* Rubber tube — thinned to 5.5, bezier raised to y=195 */}
+                    <path d="M35,135 C20,195 180,195 165,135" fill="none" stroke="#020617" strokeWidth="5.5" strokeLinecap="round" />
+                    <path d="M35,135 C20,195 180,195 165,135" fill="none" stroke="#475569" strokeWidth="1.5" strokeLinecap="round" />
+                    {/* Connector stem — slimmed to strokeWidth 3 */}
+                    <path d="M100,178 L100,192" fill="none" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
+                    <path d="M100.5,178 L100.5,192" fill="none" stroke={HIGHLIGHT} strokeWidth="1" opacity="0.5" />
+                    {/* Chestpiece — proportional r=6 */}
+                    <circle cx="100" cy="192" r="6" fill="#cbd5e1" stroke="#020617" strokeWidth="2" />
+                    <circle cx="100" cy="192" r="2.5" fill="#334155" />
                 </g>
             )}
         </g>
