@@ -395,7 +395,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                         alt=""
                         className="absolute inset-0 w-full h-full object-cover opacity-30"
                         draggable={false}
-                        onError={(e) => { e.target.src = '/assets/buildings/posyandu_interior.png'; }}
+                        onError={(e) => { e.target.style.display = 'none'; }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/40 to-slate-950/80" />
 
@@ -469,6 +469,8 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                                         const nextDialog = npc.dialogs.find(d => !dialogShownRef.current.has(`${npc.id}_${d.trigger}`)) || npc.dialogs[0];
                                         setActiveNpc(npc);
                                         setActiveDialog(nextDialog || { text: npc.greeting, choices: [] });
+                                        // Mark manual dialog as shown so it doesn't repeat
+                                        if (nextDialog) dialogShownRef.current.add(`${npc.id}_${nextDialog.trigger}`);
                                     }}
                                     className="flex items-center gap-2 px-3 py-2 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all group">
                                     <span className="text-xl">{npc.avatar}</span>

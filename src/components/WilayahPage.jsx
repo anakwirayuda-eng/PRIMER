@@ -555,8 +555,8 @@ export default function WilayahPage() {
 
                                 <div className="flex items-center gap-3 mt-2 text-[10px] font-bold text-white/30">
                                     <span>📍 {selectedBuilding.x}, {selectedBuilding.y}</span>
-                                    {selectedFamily && (
-                                        <span>🏘️ RT {selectedFamily.rt || '01'}</span>
+                                    {activeFamily && (
+                                        <span>🏘️ RT {activeFamily.rt || '01'}</span>
                                     )}
                                 </div>
                             </div>
