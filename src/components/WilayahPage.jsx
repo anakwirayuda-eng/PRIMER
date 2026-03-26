@@ -249,13 +249,16 @@ export default function WilayahPage() {
         setActiveBCCase(null);
     }, [activeBCCase, setVillageData]);
 
-    // ─── Compute actual IKS for selected building ───
-    const selectedFamily = selectedBuilding?.familyId
-        ? villageData?.families?.find(f => f.id === selectedBuilding.familyId)
-        : null;
-    const selectedIks = selectedFamily
+    // ─── Compute actual IKS for selected building / home visit modal ───
+    // Use homeVisitModal family when modal is open, otherwise selectedBuilding
+    const activeFamily = homeVisitModal?.familyId
+        ? villageData?.families?.find(f => f.id === homeVisitModal.familyId)
+        : selectedBuilding?.familyId
+            ? villageData?.families?.find(f => f.id === selectedBuilding.familyId)
+            : null;
+    const selectedIks = activeFamily
         ? (() => {
-            const ind = selectedFamily.indicators || {};
+            const ind = activeFamily.indicators || {};
             const scored = Object.values(ind).filter(v => v !== null).length;
             const healthy = Object.values(ind).filter(v => v === true).length;
             return scored > 0 ? healthy / scored : 0;
@@ -488,7 +491,7 @@ export default function WilayahPage() {
                                 <Minus size={14} />
                             </button>
                             <button
-                                onClick={() => { setZoom(0.4); centerMap(); dioramaZoomRef.current?.reset(); }}
+                                onClick={() => { setZoom(0.4); dioramaZoomRef.current?.reset(); }}
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 ${GLASS_HOVER}`}
                                 aria-label="Reset zoom peta"
                             >
@@ -833,7 +836,7 @@ export default function WilayahPage() {
                                             if (!attendedFamilyIds.has(fam.id)) return fam;
                                             const indicators = { ...fam.indicators };
                                             // Posyandu participation improves nutrition & immunization indicators
-                                            indicators.gizi = true;
+                                            indicators.balita = true;
                                             indicators.imunisasi = true;
                                             return { ...fam, indicators };
                                         })

@@ -251,7 +251,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
     return (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-8 bg-black/80 backdrop-blur-sm">
             <div className="w-full max-w-4xl h-full max-h-[85vh] relative">
-                <button onClick={onClose} className="absolute -top-12 right-0 text-white/50 hover:text-white px-4 py-2 flex items-center gap-2 rounded-full border border-white/10 hover:border-white/30 transition-all font-bold text-xs uppercase tracking-widest">
+                <button onClick={() => { resolveIKMEvent(eventInstance.instanceId); onClose?.(); }} className="absolute -top-12 right-0 text-white/50 hover:text-white px-4 py-2 flex items-center gap-2 rounded-full border border-white/10 hover:border-white/30 transition-all font-bold text-xs uppercase tracking-widest">
                     <XCircle size={16} /> Tutup
                 </button>
                 {phase.type === 'dialog' && renderDialog()}
