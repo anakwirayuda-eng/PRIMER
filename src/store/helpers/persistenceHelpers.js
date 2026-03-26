@@ -33,7 +33,7 @@ const createSeededQuestRoster = (day = INITIAL_TIME_STATE.day) => {
     ];
 };
 
-const syncQuestRoster = (quests, day = INITIAL_TIME_STATE.day) => {
+export const syncQuestRoster = (quests, day = INITIAL_TIME_STATE.day) => {
     const safeDay = Math.max(1, Math.trunc(Number(day) || INITIAL_TIME_STATE.day));
     const safeWeek = getWeekFromDay(safeDay);
     const questList = Array.isArray(quests) ? quests.filter(isMetaRecord) : [];

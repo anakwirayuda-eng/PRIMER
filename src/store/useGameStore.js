@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @reflection
  * [IDENTITY]: useGameStore (The New Central Brain)
  * [PURPOSE]: Unified state management replacing Context API frenzy.
@@ -68,9 +68,9 @@ import {
     calculateSleepRecovery as calculateSleepRecoveryOutcome
 } from '../game/GameCore.js';
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// CP1 EXTRACTED HELPERS â€” Pure functions moved to store/helpers/
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════
+// CP1 EXTRACTED HELPERS — Pure functions moved to store/helpers/
+// ═══════════════════════════════════════════════════════════════
 import { isPlainObject, isMetaRecord, hasOwn, asFiniteNumber, clampInteger, clampNumber, toAbsoluteWorldMinutes } from './helpers/storeUtils.js';
 import { sanitizePlayerProfile, applyXpGainToProfile, spendXpFromProfile, createStartingPlayerProfile, clampEnergyToProfile, getProfileLevel } from './helpers/playerHelpers.js';
 import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from './helpers/ambulanceHelpers.js';
@@ -81,41 +81,21 @@ import {
     INITIAL_CLINICAL_STATE, createInitialClinicalState, createInitialPharmacyInventory, INITIAL_KPI, INITIAL_FACILITIES,
     createInitialFinanceState, INITIAL_NAV_SETTINGS, createInitialNavState,
     mergePersistedFinance, mergePersistedPublicHealth, mergePersistedStaff, mergePersistedClinical, mergePersistedMeta,
-    reconcileClinicalReferralLog, buildManualSaveSnapshot
+    reconcileClinicalReferralLog, buildManualSaveSnapshot, syncQuestRoster
 } from './helpers/persistenceHelpers.js';
 import { buildProlanisBpjsNumber, applyFamilyIndicatorDrift, applyStaffMoraleDecay, pruneOutbreakRiskModifiers, applyIkmOutbreakRiskModifiers, applyStoryImpactToDraft, OUTBREAK_RISK_WINDOW_DAYS } from './helpers/publicHealthHelpers.js';
 
 const advanceElapsedTime = (get, minutes = 1) => {
     const increment = Math.max(0, Number(minutes) || 0);
-
-    if (increment === 0) {
-        return { success: true, dayChanged: false };
-    }
-
+    if (increment === 0) return { success: true, dayChanged: false };
     const state = get();
     const nextTime = state.world.time + increment;
-
     if (nextTime < 1440) {
         state.worldActions.setTime(nextTime);
         return { success: true, dayChanged: false };
     }
-
     const didAdvanceDay = state.actions.nextDay(state.world.day);
     return { success: didAdvanceDay !== false, dayChanged: didAdvanceDay !== false };
-};
-
-const normalizeSkillList = (skills) => {
-    if (Array.isArray(skills)) {
-        return [...new Set(skills.filter((skillId) => typeof skillId === 'string' && skillId.length > 0))];
-    }
-
-    if (skills && typeof skills === 'object') {
-        return Object.entries(skills)
-            .filter(([, unlocked]) => Boolean(unlocked))
-            .map(([skillId]) => skillId);
-    }
-
-    return [];
 };
 
 const ACTION_GROUP_NAMES = [
@@ -155,7 +135,6 @@ function shouldEnableActionStability(fullName, actionName) {
     if (ACTIONS_SKIP_STABILITY_GUARD.has(fullName)) return false;
     return !/^(set|open|close|toggle|clear)/.test(actionName);
 }
-
 
 function armAutosaveTrap(setState, getState, phase, reason) {
     const trap = buildRuntimeTrap('actions.saveGame', {
@@ -448,7 +427,7 @@ export const useGameStore = create(
                             }
                         }));
                         // Codex Fix: pengeluaranObat is procurement-side only (COGS-on-purchase).
-                        // Consumption just reduces stock â€” cost was already posted when order was placed/received.
+                        // Consumption just reduces stock — cost was already posted when order was placed/received.
                         return { success: true, remainingStock: currentItem.stock - quantity };
                     },
                     // Codex Fix: mark prescription as dispensed in history to prevent double-dispense on remount
@@ -582,7 +561,7 @@ export const useGameStore = create(
                         compatibleItems = newOrder.items;
                         soundManager.playConfirm();
                         const msg = skipped.length > 0
-                            ? `Order dikirim (${compatibleItems.length} item). ${skipped.length} item dilewati â€” tidak tersedia di ${supplier.name}.`
+                            ? `Order dikirim (${compatibleItems.length} item). ${skipped.length} item dilewati — tidak tersedia di ${supplier.name}.`
                             : `Order berhasil dikirim (${compatibleItems.length} item)`;
                         return { success: true, order: newOrder, message: msg, skipped };
                     },
@@ -592,7 +571,7 @@ export const useGameStore = create(
                         if (!order) return { success: false, error: 'Order not found' };
                         set(s => {
                             const newStats = { ...s.finance.stats };
-                            // Codex Fix: sync with nextDay path â€” deduct kapitasi for kapitasi_deduction orders
+                            // Codex Fix: sync with nextDay path — deduct kapitasi for kapitasi_deduction orders
                             if (order.paymentTerms === 'kapitasi_deduction' && order.cost) {
                                 newStats.kapitasi = (newStats.kapitasi || 0) - order.cost;
                                 newStats.pengeluaranObat = (newStats.pengeluaranObat || 0) + order.cost;
@@ -738,7 +717,7 @@ export const useGameStore = create(
                             social: patient.social,
                             prolanisData: {
                                 diseaseType,
-                                // Codex Fix: don't inflate KPI â€” 0 means "never visited yet"
+                                // Codex Fix: don't inflate KPI — 0 means "never visited yet"
                                 enrolledDay: day, lastVisitDay: 0,
                                 parameters: initialParams, history: [], consecutiveControlled: 0
                             }
@@ -758,13 +737,13 @@ export const useGameStore = create(
                             const updatedRoster = state.publicHealth.prolanisRoster.map(member => {
                                 if (member.id !== rosterId) return member;
 
-                                // â•â•â• CONTRACT ADAPTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+                                // ═══ CONTRACT ADAPTER ═══════════════════════════
                                 // EMR sends: { diagnoses, medications, action }
                                 // Engine expects: { medicationAction, education, complianceBonus }
                                 const hasMeds = Array.isArray(doctorDecisions?.medications) && doctorDecisions.medications.length > 0;
                                 const diseaseType = member.prolanisData?.diseaseType;
 
-                                // Map medications â†’ medicationAction with paramChange
+                                // Map medications → medicationAction with paramChange
                                 // Each medication given = -15 paramChange (therapeutic effect)
                                 const medicationAction = hasMeds ? {
                                     effect: {
@@ -784,7 +763,7 @@ export const useGameStore = create(
                                 }] : [];
 
                                 const engineIntervention = { medicationAction, education, complianceBonus };
-                                // â•â•â• END ADAPTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+                                // ═══ END ADAPTER ════════════════════════════════
 
                                 const outcome = determineMonthlyOutcome(
                                     { ...member },
@@ -1232,7 +1211,7 @@ export const useGameStore = create(
 
                         // Guard 1: Reject bc_* IDs
                         if (scenarioId?.startsWith('bc_')) {
-                            console.warn(`[triggerIKMEvent] Rejected bc_* ID "${scenarioId}" â€” use BehaviorCase engine instead.`);
+                            console.warn(`[triggerIKMEvent] Rejected bc_* ID "${scenarioId}" — use BehaviorCase engine instead.`);
                             return false;
                         }
 
@@ -1252,7 +1231,7 @@ export const useGameStore = create(
                             return false;
                         }
 
-                        // Guard 5: BC overlap â€” suppress if a matching BC case is active
+                        // Guard 5: BC overlap — suppress if a matching BC case is active
                         const activeBCIds = (s.publicHealth.villageData?.families || [])
                             .map(f => f.activeScenarioId).filter(Boolean).map(id => id.replace('bc_', ''));
                         if (isBlockedByBC(scenarioId, activeBCIds)) {
@@ -1436,7 +1415,7 @@ export const useGameStore = create(
                     setMorningReputation: (val) => set(s => ({ clinical: { ...s.clinical, morningReputation: val } })),
                     addReflection: (entry) => set(s => ({ clinical: { ...s.clinical, reflections: [...s.clinical.reflections, entry] } })),
                     // --- Phase 1-3 Service Engine Actions ---
-                    // pharmacyQueue mutators removed â€” dead state (FarmasiPanel uses derived state)
+                    // pharmacyQueue mutators removed — dead state (FarmasiPanel uses derived state)
                     setLabQueue: (val) => set(s => ({ clinical: { ...s.clinical, labQueue: typeof val === 'function' ? val(s.clinical.labQueue) : val } })),
                     pushLabOrder: (order) => set(s => ({ clinical: { ...s.clinical, labQueue: [...s.clinical.labQueue, order] } })),
                     addLabMasteryEntry: (entry) => set(s => ({ clinical: { ...s.clinical, labMasteryHistory: [...s.clinical.labMasteryHistory, entry] } })),
@@ -1607,7 +1586,7 @@ export const useGameStore = create(
                         if (time === 480) {
                             const followups = getScheduledFollowups(state.clinical.consequenceQueue, day);
                             followups.forEach(consequence => {
-                                // Codex Fix: skip ukp_bridge entries â€” no originalCase data
+                                // Codex Fix: skip ukp_bridge entries — no originalCase data
                                 if (consequence.type === 'ukp_bridge') return;
                                 const followupPatient = generateFollowupPatient(
                                     consequence,
@@ -1626,7 +1605,7 @@ export const useGameStore = create(
                             }
                         }
 
-                        // 3.6. UKM â†’ UKP Bridge: IKM Case Boosts increase disease probability
+                        // 3.6. UKM → UKP Bridge: IKM Case Boosts increase disease probability
                         // Active case boosts from resolved IKM events increase specific disease spawn rates
                         const activeBoosts = (state.publicHealth.ikmCaseBoosts || []).filter(b => b.expiresDay > day);
 
@@ -1733,7 +1712,7 @@ export const useGameStore = create(
                             return;
                         }
 
-                        // Codex Fix: intercept Prolanis visit patients â€” redirect to completeProlanisVisit
+                        // Codex Fix: intercept Prolanis visit patients — redirect to completeProlanisVisit
                         if (typeof patient.id === 'string' && patient.id.includes('_visit_')) {
                             const visitData = {
                                 patientId: patient.id,
@@ -1808,7 +1787,7 @@ export const useGameStore = create(
                                     if (isCowboy) {
                                         state.clinical.morningAlerts = [
                                             ...(state.clinical.morningAlerts || []),
-                                            { type: 'warning', title: 'âš ï¸ Peringatan Malapraktik', message: `Kasus ${patient.medicalData?.diagnosisName || 'pasien'} seharusnya dirujuk (di luar kompetensi FKTP). Menahan kasus di luar SKDI = risiko keselamatan pasien.`, day }
+                                            { type: 'warning', title: '⚠️ Peringatan Malapraktik', message: `Kasus ${patient.medicalData?.diagnosisName || 'pasien'} seharusnya dirujuk (di luar kompetensi FKTP). Menahan kasus di luar SKDI = risiko keselamatan pasien.`, day }
                                         ];
                                     }
                                 }
@@ -1996,14 +1975,14 @@ export const useGameStore = create(
                                     activeEmergencyId: null
                                 }
                             }));
-                            return; // Early return â€” patient stays in queue until SISRUTE completes
+                            return; // Early return — patient stays in queue until SISRUTE completes
                         }
 
                         const isCorrectTriage = patient.hidden?.requiredAction === decision.action;
                         let repChange = isCorrectTriage ? 5 : -5, satisfactionScore = isCorrectTriage ? 95 : 50;
                         let outcomeStatus = isCorrectTriage ? 'correct' : 'incorrect';
 
-                        // ðŸ–¤ DEATH: Patient died after failed resuscitation
+                        // 🖤 DEATH: Patient died after failed resuscitation
                         if (decision.action === 'death') {
                             repChange = -15;
                             satisfactionScore = 0;
@@ -2039,7 +2018,7 @@ export const useGameStore = create(
                             let newActiveReferralLog = state.clinical.activeReferralLog;
                             let newHospitalBedUsage = { ...(state.clinical.hospitalBedUsage || {}) };
 
-                            // Handle SISRUTE referral completion: â†’ ENTER LIMBO instead of instant discharge
+                            // Handle SISRUTE referral completion: → ENTER LIMBO instead of instant discharge
                             if (decision.action === 'refer' && decision.isSISRUTE && decision.referralDetails?.result?.status === 'ACCEPTED') {
                                 const { hospitalId, ambulanceId } = decision.referralDetails;
                                 const hosp = HOSPITALS.find(h => h.id === hospitalId), amb = AMBULANCES.find(a => a.id === ambulanceId);
@@ -2073,7 +2052,7 @@ export const useGameStore = create(
                                     );
                                 }
 
-                                // ðŸš‘ SISRUTE LIMBO: patient stays in queue waiting for ambulance (immutable update)
+                                // 🚑 SISRUTE LIMBO: patient stays in queue waiting for ambulance (immutable update)
                                 const newEmergencyQueue = state.clinical.emergencyQueue.map(q => {
                                     if (q.id !== patient.id) return q;
                                     return {
@@ -2151,7 +2130,7 @@ export const useGameStore = create(
                                     // IGD AUTO-DEDUCT: consume meds/alkes used during emergency
                                     pharmacyInventory: (() => {
                                         const igdConsumption = new Map();
-                                        // 1. Actions performed â†’ each action's med cost (if it's a real medication)
+                                        // 1. Actions performed → each action's med cost (if it's a real medication)
                                         const actions = decision.actionsPerformed || decision.actions || [];
                                         actions.forEach(actionId => {
                                             const canonicalActionId = normalizeMedicationId(actionId);
@@ -2503,7 +2482,7 @@ export const useGameStore = create(
                                             order.deliveryDay += 1;
                                             state.clinical.morningAlerts = [
                                                 ...(state.clinical.morningAlerts || []),
-                                                { type: 'supply_delay', message: `âš ï¸ Pengiriman dari ${supplier?.name || 'supplier'} tertunda (cuaca/logistik). Estimasi tiba: Hari ${order.deliveryDay}` }
+                                                { type: 'supply_delay', message: `⚠️ Pengiriman dari ${supplier?.name || 'supplier'} tertunda (cuaca/logistik). Estimasi tiba: Hari ${order.deliveryDay}` }
                                             ];
                                             return; // Skip receive, try again next day
                                         }
@@ -2627,7 +2606,7 @@ export const useGameStore = create(
                                 );
                             }
 
-                            // 4.7. TheDirector â€” Evaluate Stress & Set Pacing
+                            // 4.7. TheDirector — Evaluate Stress & Set Pacing
                             const directorInput = {
                                 day: nextDayVal,
                                 queueLength: state.clinical.queue.length,
@@ -2651,7 +2630,7 @@ export const useGameStore = create(
                                 state.world.directorGiftMessage = null;
                             }
 
-                            // 4.8. UKP Bridge â€” Failed UKM cases spawn clinical consequences
+                            // 4.8. UKP Bridge — Failed UKM cases spawn clinical consequences
                             const completedBCCases = collectPendingUkpBridgeCases(state.clinical.history || []);
                             const ukpEvents = processUKPBridge(completedBCCases, nextDayVal);
                             const bridgedHistoryIds = [];
