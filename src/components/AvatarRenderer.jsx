@@ -226,6 +226,11 @@ function VanguardHair({ style, color, isBackLayer }) {
                 <path d="M144,72 C144,128 136,160 128,168 L144,168Z" fill={color} />
             </g>
         );
+        if (style === 'hijab') return (
+            <g id="hijab-back">
+                <path d="M30,80 C30,150 40,200 100,200 C160,200 170,150 170,80 Z" fill={color} />
+            </g>
+        );
         return null;
     }
 
@@ -274,11 +279,33 @@ function VanguardHair({ style, color, isBackLayer }) {
             </g>
         );
         case 'hijab': return (
-            <g id="hijab">
-                <path d="M61.6,60 C61.6,33.6 138.4,33.6 138.4,60Z" fill="#0f172a" />
-                <path d="M53.6,80 C53.6,24 146.4,24 146.4,80 C146.4,124 128,140 100,140 C72,140 53.6,124 53.6,80Z" fill={color} />
-                <path d="M53.6,80 C68,112 80,132 100,140 C120,132 132,112 146.4,80 C132,100 120,108 100,112 C80,108 68,100 53.6,80Z" fill={SHADOW} opacity="0.18" />
-                <path d="M55.2,80 C55.2,32 100,28 100,28" fill="none" stroke={HIGHLIGHT} strokeWidth="1.6" opacity="0.15" strokeLinecap="round" />
+            <g id="hijab-front">
+                {/* Inner Cap (Ciput) */}
+                <path d="M62,60 C62,25 138,25 138,60 Q100,42 62,60 Z" fill="#0f172a" opacity="0.95" />
+                {/* Main Hijab Drape & Face Hole (Compound Path) */}
+                <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="
+                        M 25,120 C 25,10 175,10 175,120 C 175,170 140,185 100,185 C 60,185 25,170 25,120 Z
+                        M 67,74 C 67,108 82,131 100,131 C 118,131 133,108 133,74 C 133,50 117,36 100,36 C 83,36 67,50 67,74 Z
+                    "
+                    fill={color}
+                />
+                {/* Rim Shadow around face opening */}
+                <path d="M67,74 C67,108 82,131 100,131 C118,131 133,108 133,74 C133,50 117,36 100,36 C83,36 67,50 67,74 Z" fill="none" stroke={SHADOW} strokeWidth="3" opacity="0.12" />
+                {/* Shadow Drape Folds */}
+                <path d="M68,105 C75,120 75,140 80,150" fill="none" stroke={SHADOW} strokeWidth="2.5" opacity="0.15" strokeLinecap="round" />
+                <path d="M132,105 C125,120 125,140 120,150" fill="none" stroke={SHADOW} strokeWidth="2.5" opacity="0.15" strokeLinecap="round" />
+                <path d="M60,95 Q64,110 68,115" fill="none" stroke={SHADOW} strokeWidth="1.5" opacity="0.1" strokeLinecap="round" />
+                <path d="M140,95 Q136,110 132,115" fill="none" stroke={SHADOW} strokeWidth="1.5" opacity="0.1" strokeLinecap="round" />
+                {/* Highlight cel-shade */}
+                <path d="M48,70 C48,25 100,20 100,20" fill="none" stroke={HIGHLIGHT} strokeWidth="2" opacity="0.2" strokeLinecap="round" />
+                {/* Medical Pin/Bros (PRIMER Theme) */}
+                <g id="hijab-pin" transform="translate(70, 112)">
+                    <circle cx="0" cy="0" r="2.5" fill="#0d9488" stroke="#fcd34d" strokeWidth="1" />
+                    <circle cx="-0.5" cy="-0.5" r="1" fill="#ccfbf1" opacity="0.8" />
+                </g>
             </g>
         );
         default: return null;
@@ -407,7 +434,7 @@ export default function AvatarRenderer({ avatar, size = 80, className = '', mood
                 <path d="M38,65 C38,120 18,170 30,200" fill="none" stroke="#2dd4bf" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
 
                 <g clipPath="url(#avatar-frame)">
-                    {!isHijab && <VanguardHair style={norm.hairStyle} color={effectiveHairColor} isBackLayer={true} />}
+                    <VanguardHair style={norm.hairStyle} color={effectiveHairColor} isBackLayer={true} />
                     <VanguardHead skin={skin} skinTone={norm.skinTone || 'fair'} gender={norm.gender || 'L'} />
                     <VanguardFace mood={mood} hairColor={effectiveHairColor} gender={norm.gender || 'L'} />
                     <VanguardHair style={norm.hairStyle} color={effectiveHairColor} isBackLayer={false} />

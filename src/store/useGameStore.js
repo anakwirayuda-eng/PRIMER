@@ -1714,7 +1714,7 @@ export const useGameStore = create(
 
                                 // Compliance bonus if patient visited within 35 days
                                 const lastVisitDay = member.prolanisData?.lastVisitDay || 0;
-                                const complianceBonus = (effectiveDay - lastVisitDay) <= 35;
+                                const complianceBonus = lastVisitDay > 0 && (effectiveDay - lastVisitDay) <= 35;
 
                                 // Education: if meds were given, assume basic education was provided
                                 const education = hasMeds ? [{
@@ -1736,7 +1736,7 @@ export const useGameStore = create(
                                     ...member,
                                     // Codex Fix: sync complication state to root (UI reads root)
                                     hasComplication: !!outcome.complication,
-                                    complicationRisk: outcome.complicationRisk ?? member.complicationRisk ?? 0,
+                                    complicationRisk: outcome.newRisk ?? member.complicationRisk ?? 0,
                                     prolanisData: {
                                         ...member.prolanisData, lastVisitDay: effectiveDay, parameters: outcome.newParameters,
                                         consecutiveControlled: outcome.consecutiveControlled,
