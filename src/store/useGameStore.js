@@ -79,18 +79,11 @@ import {
 } from './helpers/persistenceHelpers.js';
 import { buildProlanisBpjsNumber, applyFamilyIndicatorDrift, applyStaffMoraleDecay, pruneOutbreakRiskModifiers, applyIkmOutbreakRiskModifiers, applyStoryImpactToDraft } from './helpers/publicHealthHelpers.js';
 
-const advanceElapsedTime = (get, minutes = 1) => {
-    const increment = Math.max(0, Number(minutes) || 0);
-    if (increment === 0) return { success: true, dayChanged: false };
-    const state = get();
-    const nextTime = state.world.time + increment;
-    if (nextTime < 1440) {
-        state.worldActions.setTime(nextTime);
-        return { success: true, dayChanged: false };
-    }
-    const didAdvanceDay = state.actions.nextDay(state.world.day);
-    return { success: didAdvanceDay !== false, dayChanged: didAdvanceDay !== false };
-};
+// ═══════════════════════════════════════════════════════════════
+// CP2 EXTRACTED SLICES
+// ═══════════════════════════════════════════════════════════════
+import { createNavSlice } from './slices/createNavSlice.js';
+import { createWorldSlice } from './slices/createWorldSlice.js';
 
 const ACTION_GROUP_NAMES = [
     'navActions',
@@ -166,63 +159,11 @@ export const useGameStore = create(
         persist(
             (set, get) => {
                 const store = {
-                // --- SLICE: NAV & SETTINGS ---
-                nav: createInitialNavState(),
-                navActions: {
-                    setGameState: (state) => set((s) => ({ nav: { ...s.nav, gameState: state } })),
-                    setActivePage: (page) => set((s) => ({ nav: { ...s.nav, activePage: page } })),
-                    navigate: (page, params = {}) => set((s) => ({ nav: { ...s.nav, activePage: page, viewParams: params } })),
-                    toggleSidebar: () => set((s) => ({ nav: { ...s.nav, sidebarCollapsed: !s.nav.sidebarCollapsed } })),
-                    setSlotId: (id) => set((s) => ({ nav: { ...s.nav, currentSlotId: id } })),
-                    toggleKPI: () => set((s) => ({ nav: { ...s.nav, showKPIGlobal: !s.nav.showKPIGlobal } })),
-                    // openWiki: (key) => set((s) => ({ nav: { ...s.nav, isWikiOpen: true, wikiMetric: key } })), // Moved to metaActions
-                    // closeWiki: () => set((s) => ({ nav: { ...s.nav, isWikiOpen: false } })), // Moved to metaActions
-                    setShowKPIGlobal: (value) => set((s) => ({ nav: { ...s.nav, showKPIGlobal: value } })),
-                    resetNavigation: (overrides = {}) => set((s) => ({
-                        nav: createInitialNavState({
-                            sidebarCollapsed: s.nav.sidebarCollapsed,
-                            settings: s.nav.settings,
-                            ...overrides
-                        })
-                    })),
-                    updateSettings: (newSettings) => set((s) => {
-                        const updated = { ...s.nav.settings, ...newSettings };
-                        // Theme CSS classes are now managed by ThemeContext
-                        if (newSettings.volume !== undefined) {
-                            soundManager.setVolume(updated.volume);
-                        }
-                        return { nav: { ...s.nav, settings: updated } };
-                    }) },
+                // --- SLICE: NAV & SETTINGS (CP2 extracted) ---
+                ...createNavSlice(set, get),
 
-                // --- SLICE: WORLD (Time & Environment) ---
-                world: {
-                    ...INITIAL_TIME_STATE },
-                worldActions: {
-                    tick: (minutes = 1) => set((s) => {
-                        let newTime = s.world.time + minutes;
-                        let newDay = s.world.day;
-                        if (newTime >= 1440) { // 24 hours
-                            newTime = 0;
-                            newDay += 1;
-                        }
-                        return { world: { ...s.world, time: newTime, day: newDay } };
-                    }),
-                    setTime: (val) => set((s) => {
-                        let next = typeof val === 'function' ? val(s.world.time) : val;
-                        next = Number(next) || 0;
-                        // B4 Fix: clamp time with day rollover
-                        let newDay = s.world.day;
-                        if (next >= 1440) { next = next % 1440; newDay += 1; }
-                        if (next < 0) { next = 0; }
-                        return { world: { ...s.world, time: next, day: newDay } };
-                    }),
-                    setDay: (val) => set((s) => {
-                        const next = typeof val === 'function' ? val(s.world.day) : val;
-                        return { world: { ...s.world, day: Number(next) || 1 } };
-                    }),
-                    setGameSpeed: (speed) => set((s) => ({ world: { ...s.world, speed: Number(speed) || 0, isPaused: speed === 0 } })),
-                    advanceTime: (minutes = 1) => advanceElapsedTime(get, minutes),
-                    resetTime: () => set((s) => ({ world: { ...s.world, ...INITIAL_TIME_STATE } })) },
+                // --- SLICE: WORLD (CP2 extracted) ---
+                ...createWorldSlice(set, get),
 
                 // --- SLICE: PLAYER ---
                 player: {
