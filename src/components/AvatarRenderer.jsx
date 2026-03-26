@@ -1,10 +1,10 @@
 /**
  * @reflection
- * [IDENTITY]: AvatarRenderer (Golden Ratio 50:50 Edition)
- * [PURPOSE]: Ultra-premium SVG avatar for PRIMER. Zero dependencies.
- *            - Head:Body = 50:50 (not bobblehead 68:32).
- *            - Eyes at y=80 (40% golden line).
- *            - Shoulders x=10→190 (wide dominant anchor).
+ * [IDENTITY]: AvatarRenderer (PRIMER Trademark Edition)
+ * [PURPOSE]: Proprietary SVG avatar engine for PRIMER medical simulator.
+ *            - Golden Ratio 50:50 head:body proportions.
+ *            - Trademark eyes: overscaled iris, thick upper eyelid.
+ *            - Readable at 36px (HUD sidebar) and 120px (Status Junction).
  *            - Gender dimorphism, jewel iris, cel-shading.
  * [STATE]: Production
  * [ANCHOR]: AvatarRenderer
@@ -32,7 +32,7 @@ const SHADOW = '#020617';
 const HIGHLIGHT = '#ffffff';
 
 // ============================================================================
-// PREMIUM SVG COMPONENTS (GOLDEN RATIO 50:50 EDITION)
+// PREMIUM SVG COMPONENTS (PRIMER TRADEMARK EDITION)
 // ============================================================================
 
 function VanguardHead({ skin, gender }) {
@@ -82,7 +82,7 @@ function VanguardFace({ mood, hairColor, gender }) {
                 </>
             )}
 
-            {/* JEWEL EYES */}
+            {/* JEWEL EYES — PRIMER Trademark */}
             {isRelieved ? (
                 <>
                     <path d="M66,82 Q79,74 92,82" fill="none" stroke={SHADOW} strokeWidth="3.2" strokeLinecap="round" opacity="0.9" />
@@ -146,71 +146,6 @@ function VanguardFace({ mood, hairColor, gender }) {
                         <>
                             <path d={isPanic ? "M64,80 C64,65 94,65 94,80" : "M64,80 Q79,69 94,80"} fill="none" stroke={SHADOW} strokeWidth={isPanic ? "2.4" : "3.2"} strokeLinecap="round" opacity="0.9" />
                             <path d={isPanic ? "M136,80 C136,65 106,65 106,80" : "M136,80 Q121,69 106,80"} fill="none" stroke={SHADOW} strokeWidth={isPanic ? "2.4" : "3.2"} strokeLinecap="round" opacity="0.9" />
-                        </>
-                    )}
-                </g>
-            )}
-
-
-                    {isFemale && (
-                        <>
-                            <path d="M69.6,81.6 L66.4,80" fill="none" stroke={SHADOW} strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
-                            <path d="M130.4,81.6 L133.6,80" fill="none" stroke={SHADOW} strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
-                        </>
-                    )}
-                </>
-            ) : (
-                <g id="eyes-open">
-                    {/* Sclera */}
-                    <path d={isPanic ? "M68,80 C68,70.4 90.4,70.4 90.4,80 C90.4,89.6 68,89.6 68,80Z" : (isFemale ? "M68,80 Q80,72.8 90.4,80 Q80,86.4 68,80Z" : "M68,80 Q80,75.2 90.4,80 Q80,84 68,80Z")} fill="#f8fafc" />
-                    <path d={isPanic ? "M132,80 C132,70.4 109.6,70.4 109.6,80 C109.6,89.6 132,89.6 132,80Z" : (isFemale ? "M132,80 Q120,72.8 109.6,80 Q120,86.4 132,80Z" : "M132,80 Q120,75.2 109.6,80 Q120,84 132,80Z")} fill="#f8fafc" />
-                    {/* Sclera drop shadow */}
-                    {!isPanic && (
-                        <>
-                            <path d={isFemale ? "M68,80 Q80,72.8 90.4,80 Q80,77.6 68,80Z" : "M68,80 Q80,75.2 90.4,80 Q80,77.6 68,80Z"} fill={SHADOW} opacity="0.15" />
-                            <path d={isFemale ? "M132,80 Q120,72.8 109.6,80 Q120,77.6 132,80Z" : "M132,80 Q120,75.2 109.6,80 Q120,77.6 132,80Z"} fill={SHADOW} opacity="0.15" />
-                        </>
-                    )}
-                    {/* Iris */}
-                    <circle cx="80.4" cy={isPanic ? 80 : 79.2} r={isPanic ? 2.8 : (isFemale ? 3.8 : 3.2)} fill={hairColor} />
-                    <circle cx="119.6" cy={isPanic ? 80 : 79.2} r={isPanic ? 2.8 : (isFemale ? 3.8 : 3.2)} fill={hairColor} />
-                    {/* Jewel shading */}
-                    {!isPanic && (
-                        <>
-                            <path d={isFemale ? "M75.36,79.2 A3.84,3.84 0 0 1 83.04,79.2Z" : "M76,79.2 A3.2,3.2 0 0 1 82.4,79.2Z"} fill={SHADOW} opacity="0.4" />
-                            <path d={isFemale ? "M116.96,79.2 A3.84,3.84 0 0 1 124.64,79.2Z" : "M117.6,79.2 A3.2,3.2 0 0 1 124,79.2Z"} fill={SHADOW} opacity="0.4" />
-                            <path d={isFemale ? "M75.76,80 A3.04,3.04 0 0 0 82.64,80" : "M76.4,80 A2.4,2.4 0 0 0 82,80"} fill="none" stroke={HIGHLIGHT} strokeWidth="1" opacity="0.35" />
-                            <path d={isFemale ? "M117.36,80 A3.04,3.04 0 0 0 124.24,80" : "M118,80 A2.4,2.4 0 0 0 123.6,80"} fill="none" stroke={HIGHLIGHT} strokeWidth="1" opacity="0.35" />
-                        </>
-                    )}
-                    {/* Pupil */}
-                    <circle cx="80.4" cy={isPanic ? 80 : 79.2} r={isFemale ? 1.7 : 1.4} fill={SHADOW} opacity="0.9" />
-                    <circle cx="119.6" cy={isPanic ? 80 : 79.2} r={isFemale ? 1.7 : 1.4} fill={SHADOW} opacity="0.9" />
-                    {/* Dual catchlights */}
-                    {!isPanic && (
-                        <>
-                            <circle cx="78.8" cy="77.2" r={isFemale ? 1.4 : 1.1} fill={HIGHLIGHT} opacity="0.95" />
-                            <circle cx="81.6" cy="80.8" r="0.6" fill={HIGHLIGHT} opacity="0.7" />
-                            <circle cx="118" cy="77.2" r={isFemale ? 1.4 : 1.1} fill={HIGHLIGHT} opacity="0.95" />
-                            <circle cx="121.2" cy="80.8" r="0.6" fill={HIGHLIGHT} opacity="0.7" />
-                        </>
-                    )}
-                    {/* Eyeliner + eyelashes */}
-                    {isFemale ? (
-                        <>
-                            <path d={isPanic ? "M66.4,80 Q80,70.4 92,80" : "M66.4,80 Q80,72 90.4,80"} fill="none" stroke={SHADOW} strokeWidth="2.2" strokeLinecap="round" opacity="0.95" />
-                            <path d={isPanic ? "M133.6,80 Q120,70.4 108,80" : "M133.6,80 Q120,72 109.6,80"} fill="none" stroke={SHADOW} strokeWidth="2.2" strokeLinecap="round" opacity="0.95" />
-                            {!isPanic && (
-                                <g fill={SHADOW} opacity="0.95">
-                                    <path d="M66.4,80 Q63.2,76 60.8,73.6 Q64,76.8 68.8,77.6Z" />
-                                    <path d="M133.6,80 Q136.8,76 139.2,73.6 Q136,76.8 131.2,77.6Z" />
-                                </g>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            <path d={isPanic ? "M68,80 Q80,70.4 92,80" : "M66.4,80 Q80,73.6 90.4,80 L90.4,78.4 Q80,72 66.4,78.4Z"} fill={SHADOW} opacity="0.9" />
-                            <path d={isPanic ? "M132,80 Q120,70.4 108,80" : "M133.6,80 Q120,73.6 109.6,80 L109.6,78.4 Q120,72 133.6,78.4Z"} fill={SHADOW} opacity="0.9" />
                         </>
                     )}
                 </g>

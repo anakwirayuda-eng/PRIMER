@@ -60,6 +60,29 @@ import {
 import VillagerBehavior from '../domains/village/VillagerBehavior.js';
 import { VILLAGE_FAMILIES } from '../domains/village/VillageRegistry.js';
 
+// ─── Runtime PHBS & Risk helpers (from villageData, not static registry) ──
+function calculatePHBSFromIndicators(ind) {
+    if (!ind) return 5;
+    let s = 0;
+    if (ind.persalinan) s++;
+    if (ind.asi) s++;
+    if (ind.balita) s++;
+    if (ind.air) s++;
+    if (ind.jamban) s++;
+    if (ind.jentik) s++;
+    if (ind.rokok) s++;
+    if (ind.kb) s++;
+    if (ind.jkn) s++;
+    if (ind.imunisasi) s++;
+    return s;
+}
+function calculateAvgBarrierFromIndicators(ind) {
+    if (!ind) return 0.5;
+    const keys = ['kb','persalinan','imunisasi','asi','balita','tb','hipertensi','jiwa','rokok','jkn','air','jamban'];
+    const falseCount = keys.filter(k => ind[k] === false).length;
+    return falseCount / keys.length;
+}
+
 // ─── VisionOS Glassmorphism (Apple Vision Pro Style) ───────────────
 const GLASS = 'bg-slate-900/60 backdrop-blur-2xl backdrop-saturate-150 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_8px_32px_rgba(0,0,0,0.4)]';
 const GLASS_HOVER = 'hover:bg-slate-800/80 transition-all duration-300';
@@ -145,11 +168,12 @@ export default function WilayahPage() {
     const mapData = useMemo(() => {
         if (!staticMapTopology || !villageData?.families) return null;
         const families = villageData.families.map(f => {
-            const phbs = VillagerBehavior.calculatePHBSScore(f.id);
-            const risk = VillagerBehavior.classifyBehavioralRisk(f.id);
+            const phbs = calculatePHBSFromIndicators(f.indicators);
+            const avgBarrier = calculateAvgBarrierFromIndicators(f.indicators);
+            const riskLevel = avgBarrier >= 0.7 ? 'high' : avgBarrier >= 0.5 ? 'medium' : 'low';
             return {
-                ...f, phbsScore: phbs, behaviorRisk: risk?.level || 'low',
-                behaviorEmoji: risk?.level === 'high' ? '🔴' : risk?.level === 'medium' ? '🟠' : '🟢'
+                ...f, phbsScore: phbs, behaviorRisk: riskLevel,
+                behaviorEmoji: riskLevel === 'high' ? '🔴' : riskLevel === 'medium' ? '🟠' : '🟢'
             };
         });
         // Build O(1) lookup map instead of per-building .find()
@@ -855,6 +879,10 @@ export default function WilayahPage() {
                         onClose={() => setBuildingInterior(null)}
                         onComplete={(result) => {
                             if (result?.totalXP) addXp(result.totalXP);
+                            if (result?.repDelta) setPlayerStats(prev => ({
+                                ...prev,
+                                reputation: Math.max(0, Math.min(100, (prev.reputation || 50) + result.repDelta))
+                            }));
                             setBuildingInterior(null);
                         }}
                     />

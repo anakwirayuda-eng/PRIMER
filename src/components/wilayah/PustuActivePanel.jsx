@@ -155,6 +155,12 @@ export default function PustuActivePanel({ onClose, onComplete }) {
 
     const submitRisk = () => {
         const result = evaluateRiskFactors(activePatient, { ...visitResult?.newParams });
+        // Score player's risk identification accuracy
+        const actualRiskIds = (result.factors || []).map(f => f.id);
+        const correctPicks = selectedRisks.filter(r => actualRiskIds.includes(r)).length;
+        const falsePicks = selectedRisks.filter(r => !actualRiskIds.includes(r)).length;
+        const total = Math.max(1, actualRiskIds.length + falsePicks);
+        result.playerAccuracy = Math.max(0, Math.round(((correctPicks - falsePicks * 0.5) / total) * 100));
         setRiskResult(result);
 
         // Check if KB counseling applicable (K4 or high parity)
@@ -178,7 +184,7 @@ export default function PustuActivePanel({ onClose, onComplete }) {
     // ─── FINALIZE ──────────────────────────────────────────
     const finalizeVisit = useCallback((riskRes, kbRes = null) => {
         const visitScore = visitResult?.score || 0;
-        const riskScore = riskRes?.accuracy || 0;
+        const riskScore = riskRes?.playerAccuracy ?? riskRes?.riskScore ?? 0;
         const totalScore = Math.round((visitScore * 0.6 + riskScore * 0.4));
 
         setSessionLog(prev => [...prev, {

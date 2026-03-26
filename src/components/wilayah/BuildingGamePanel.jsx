@@ -156,7 +156,7 @@ function ActionPanel({ station, energy, completedActions, onAction, onBack }) {
                                 good: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', icon: '🟢' }
                             };
                             const s = sevMap[f.severity] || sevMap.info;
-                            const isRevealed = completedActions.size > i;
+                            const isRevealed = station.actions.filter(a => completedActions.has(a.id)).length > i;
                             return (
                                 <div key={i} className={`p-2.5 rounded-xl border mb-1.5 transition-all ${isRevealed
                                     ? `${s.bg} ${s.border}`
