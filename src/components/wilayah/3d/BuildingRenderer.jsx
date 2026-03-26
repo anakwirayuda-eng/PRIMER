@@ -793,5 +793,7 @@ export const BuildingRenderer = React.memo(BuildingRendererInternal, (prev, next
     prev.selected === next.selected &&
     prev.activeLayer === next.activeLayer &&
     prev.building.id === next.building.id &&
-    prev.building.familyData === next.building.familyData
+    prev.building.familyData === next.building.familyData &&
+    prev.building.hasCase === next.building.hasCase &&
+    prev.building.caseInfo === next.building.caseInfo
 ));

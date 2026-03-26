@@ -137,7 +137,6 @@ export function buildBehaviorCaseHistoryEntry(result, day) {
         behaviorCase: {
             instanceId: caseInstance.instanceId || null,
             scenarioId: caseInstance.scenarioId || null,
-            scenario,
             outcome: mapOutcomeTierToBehaviorOutcome(outcomeTier),
             outcomeTier,
             completedOnDay: day,
@@ -206,7 +205,7 @@ export function collectPendingUkpBridgeCases(history = []) {
             scenarioId: entry.behaviorCase.scenarioId,
             outcome: entry.behaviorCase.outcome,
             completedOnDay: entry.behaviorCase.completedOnDay || entry.day,
-            scenario: entry.behaviorCase.scenario
+            scenario: getDiseaseScenarioById(entry.behaviorCase.scenarioId)
         }));
 }
 

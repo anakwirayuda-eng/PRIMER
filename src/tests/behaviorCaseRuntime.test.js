@@ -76,10 +76,14 @@ describe('behaviorCaseRuntime', () => {
 
         expect(entry.type).toBe('behavior_case');
         expect(entry.behaviorCase.outcome).toBe('failed');
-        expect(entry.behaviorCase.scenario.title).toBe('Wabah Kudis di RT 03');
+        expect(entry.behaviorCase.scenarioId).toBe('bc_scabies_outbreak');
     });
 
     it('collects only pending failed or partial bridge cases and marks them once spawned', () => {
+        // Mock Math.random so processUKPBridge is deterministic (real scenario failProbability < 1.0)
+        const origRandom = Math.random;
+        Math.random = () => 0.1; // always below any failProbability
+
         const history = [
             {
                 id: 'bc-1',
@@ -87,15 +91,7 @@ describe('behaviorCaseRuntime', () => {
                 behaviorCase: {
                     scenarioId: 'bc_scabies_outbreak',
                     outcome: 'failed',
-                    completedOnDay: 3,
-                    scenario: {
-                        title: 'Wabah Kudis di RT 03',
-                        ukpBridge: {
-                            failOutcomes: ['impetigo'],
-                            failProbability: 1,
-                            delayDays: { min: 1, max: 2 }
-                        }
-                    }
+                    completedOnDay: 3
                 }
             },
             {
@@ -105,15 +101,7 @@ describe('behaviorCaseRuntime', () => {
                     scenarioId: 'bc_tb_paru',
                     outcome: 'partial',
                     completedOnDay: 3,
-                    ukpBridgeSpawnedOnDay: 4,
-                    scenario: {
-                        title: 'TB',
-                        ukpBridge: {
-                            failOutcomes: ['tb_pulmonary'],
-                            failProbability: 1,
-                            delayDays: { min: 1, max: 2 }
-                        }
-                    }
+                    ukpBridgeSpawnedOnDay: 4
                 }
             }
         ];
@@ -122,12 +110,14 @@ describe('behaviorCaseRuntime', () => {
         expect(pending).toHaveLength(1);
         expect(pending[0].historyEntryId).toBe('bc-1');
 
-        const events = processUKPBridge(pending, 5);
+        const events = processUKPBridge(pending, 7);
         expect(events).toHaveLength(1);
         expect(events[0].historyEntryId).toBe('bc-1');
 
-        const updatedHistory = markBehaviorCaseBridgeSpawned(history, ['bc-1'], 5);
+        const updatedHistory = markBehaviorCaseBridgeSpawned(history, ['bc-1'], 7);
         expect(collectPendingUkpBridgeCases(updatedHistory)).toHaveLength(0);
+
+        Math.random = origRandom; // restore
     });
 
     it('builds debrief BC state from village readiness and today history entries', () => {

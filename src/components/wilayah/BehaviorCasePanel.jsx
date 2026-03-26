@@ -772,6 +772,13 @@ export default function BehaviorCasePanel({ building, familyData, day, onClose, 
     const scenario = useMemo(() => scenarioId ? getDiseaseScenarioById(scenarioId) : null, [scenarioId]);
     const [caseInstance, setCaseInstance] = useState(() => scenarioId ? createBehaviorCase(scenarioId, 'deep', day || 1, { familyId: building?.familyId, sdoh: familyData?.sdoh }) : null);
 
+    // Reset caseInstance when scenario changes (e.g. different building selected while panel mounted)
+    React.useEffect(() => {
+        if (scenarioId) {
+            setCaseInstance(createBehaviorCase(scenarioId, 'deep', day || 1, { familyId: building?.familyId, sdoh: familyData?.sdoh }));
+        }
+    }, [scenarioId]); // eslint-disable-line react-hooks/exhaustive-deps
+
     const handleAdvance = useCallback((updatedCase) => {
         const advanced = advancePhase(updatedCase);
         if (advanced.completed) setCaseInstance(resolveOutcome(advanced));

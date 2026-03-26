@@ -215,25 +215,39 @@ function VanguardHair({ style, color, isBackLayer }) {
     }
 
     switch (style) {
-        case 'buzz': return <path d="M65.6,76 C65.6,33.6 134.4,33.6 134.4,76 C134.4,44 65.6,44 65.6,76Z" fill={color} opacity="0.7" />;
+        case 'buzz': return (
+            <g id="hair-front-buzz">
+                {/* BUZZ: M-shape widow's peak, super thin cap, nearly bald */}
+                <path d="M62,76 C62,34 78,24 100,24 C122,24 138,34 138,76 C138,48 120,36 104,36 L100,40 L96,36 C80,36 62,48 62,76Z" fill={color} opacity="0.75" />
+                <path d="M62,76 C62,48 80,36 96,36 L100,40 L104,36 C120,36 138,48 138,76" fill="none" stroke={color} strokeWidth="1.5" opacity="0.9" strokeLinejoin="round" />
+            </g>
+        );
         case 'short': return (
-            <g id="hair-front">
-                <path d="M61.6,76 C61.6,24 138.4,24 138.4,76 C138.4,44 116,28 100,28 C84,28 61.6,44 61.6,76Z" fill={color} />
-                <path d="M64,48 Q76,28 100,36 L88,24 Q68,28 64,48Z" fill="rgba(255,255,255,0.12)" />
+            <g id="hair-front-short">
+                {/* SHORT: Volume tinggi asimetris, spiky military, peak y=10 */}
+                <path d="M60,76 C60,30 70,14 86,16 L94,10 L102,16 L114,12 C130,16 140,30 140,76 C140,46 120,34 100,34 C80,34 60,46 60,76Z" fill={color} />
+                <path d="M60,76 C65,50 85,42 100,42 C115,42 135,50 140,76 C140,46 120,34 100,34 C80,34 60,46 60,76Z" fill={SH_HAIR} />
+                <path d="M72,26 C80,18 90,16 100,20 L92,10 C80,14 74,20 72,26Z" fill={HIGHLIGHT} opacity="0.15" />
             </g>
         );
         case 'neat': return (
-            <g id="hair-front">
-                <path d="M60,76 C60,20 140,20 140,76 C140,44 124,28 100,28 C76,28 60,44 60,76Z" fill={color} />
-                <path d="M60,68 Q76,44 108,32 Q84,48 72,76" fill={SH_HAIR} />
-                <path d="M74.4,38.4 Q88,30.4 100,33.6" fill="none" stroke={HIGHLIGHT} strokeWidth="3.2" strokeLinecap="round" opacity="0.1" />
+            <g id="hair-front-neat">
+                {/* NEAT: Side-swept kiri, asimetri horizontal ekstrem, formal */}
+                <path d="M52,76 C45,15 80,6 112,14 C136,20 138,40 138,76 C138,50 125,36 110,34 C75,28 60,50 52,76Z" fill={color} />
+                <path d="M110,34 C85,30 70,45 60,65 C68,55 85,45 110,40 Z" fill={SH_HAIR} />
+                <path d="M112,14 Q105,24 114,35" fill="none" stroke={SHADOW} strokeWidth="2.5" opacity="0.3" strokeLinecap="round" />
+                <path d="M66,48 C75,32 90,24 104,26" fill="none" stroke={HIGHLIGHT} strokeWidth="2" opacity="0.15" strokeLinecap="round" />
             </g>
         );
         case 'parted': return (
-            <g id="hair-front">
-                <path d="M61.6,76 C61.6,21 138.4,21 138.4,76 C138.4,44 118.8,26.2 100,26.2 C81.2,26.2 61.6,44 61.6,76Z" fill={color} />
-                <path d="M112,25.6 Q108,40 116,68" fill="none" stroke={SHADOW} strokeWidth="2" opacity="0.3" />
-                <path d="M72,36 Q88,28 100,30.4" fill="none" stroke={HIGHLIGHT} strokeWidth="2.4" opacity="0.1" strokeLinecap="round" />
+            <g id="hair-front-parted">
+                {/* PARTED: V-notch negative space split, dua massa terpisah */}
+                <path d="M80,30 C80,10 120,10 120,30 Z" fill={color} />
+                <path d="M56,76 C56,18 80,14 96,18 L90,44 C76,38 66,50 56,76Z" fill={color} />
+                <path d="M144,76 C144,18 120,14 104,18 L110,44 C124,38 134,50 144,76Z" fill={color} />
+                <path d="M100,16 L100,38" fill="none" stroke={SHADOW} strokeWidth="2.5" opacity="0.35" strokeLinecap="round" />
+                <path d="M72,38 C80,30 88,32 92,38" fill="none" stroke={HIGHLIGHT} strokeWidth="2" opacity="0.12" strokeLinecap="round" />
+                <path d="M128,38 C120,30 112,32 108,38" fill="none" stroke={HIGHLIGHT} strokeWidth="2" opacity="0.12" strokeLinecap="round" />
             </g>
         );
         case 'long': case 'ponytail': return <g id="hair-front">{baseCap}</g>;
