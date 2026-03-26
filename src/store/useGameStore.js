@@ -72,7 +72,7 @@ import {
 // CP1 EXTRACTED HELPERS — Pure functions moved to store/helpers/
 // ═══════════════════════════════════════════════════════════════
 import { isPlainObject, isMetaRecord, hasOwn, asFiniteNumber, clampInteger, clampNumber, toAbsoluteWorldMinutes } from './helpers/storeUtils.js';
-import { sanitizePlayerProfile, applyXpGainToProfile, spendXpFromProfile, createStartingPlayerProfile, clampEnergyToProfile, getProfileLevel } from './helpers/playerHelpers.js';
+import { sanitizePlayerProfile, applyXpGainToProfile, spendXpFromProfile, createStartingPlayerProfile, clampEnergyToProfile, getProfileLevel, normalizeSkillList } from './helpers/playerHelpers.js';
 import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from './helpers/ambulanceHelpers.js';
 import { capClinicalHistory, appendClinicalHistory, normalizeClinicalHistoryEntry, getHistoryForDay, getEncounterAction, isAntibioticMed, isCorrectMedicationSelection, isEncounterCorrect, hasCorrectDiagnosis, hasAntibioticMedication, calculateEncounterRevenue, MAX_CLINICAL_HISTORY } from './helpers/clinicalHelpers.js';
 import { buildDailyArchiveEntry, buildMonthlyArchiveEntry, INITIAL_FINANCE_STATS, ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';

@@ -6,7 +6,7 @@ import { INITIAL_PLAYER_STATE } from '../../game/GameCore.js';
 import { checkLevelUp, getNextLevelXp } from '../../utils/LevelingSystem.js';
 import { clampNumber } from './storeUtils.js';
 
-const normalizeSkillList = (skills) => {
+export const normalizeSkillList = (skills) => {
     if (Array.isArray(skills)) {
         return [...new Set(skills.filter((skillId) => typeof skillId === 'string' && skillId.length > 0))];
     }
