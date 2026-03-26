@@ -150,25 +150,25 @@ function shouldTrigger(conditions, context, seedHint = 'default') {
     return chanceFromSeed(seedKey('ikm-conditions', seedHint), probability);
 }
 
-/**
- * Extract SDOH value from village data
- */
 function getSDOHValue(villageData, key) {
-    // villageData might have families with SDOH indicators
     if (!villageData.families) return null;
-
-    // Check if any family matches the condition
+    const counts = {};
+    let total = 0;
     for (const family of Object.values(villageData.families)) {
         if (family.sdoh && family.sdoh[key]) {
-            return family.sdoh[key];
+            const val = family.sdoh[key];
+            counts[val] = (counts[val] || 0) + 1;
+            total++;
         }
     }
-    return null;
+    if (total === 0) return null;
+    let maxVal = null, maxCount = 0;
+    for (const [val, count] of Object.entries(counts)) {
+        if (count > maxCount) { maxCount = count; maxVal = val; }
+    }
+    return maxVal;
 }
 
-/**
- * Create a new event instance from a scenario template
- */
 export function createEventInstance(scenario, day) {
     return {
         instanceId: `ikm_${scenario.id}_${day}`,

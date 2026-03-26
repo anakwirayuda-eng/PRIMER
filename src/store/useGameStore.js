@@ -1978,7 +1978,7 @@ export const useGameStore = create(
                             activeIKMEvents: s.publicHealth.activeIKMEvents,
                             completedIKMEvents: s.publicHealth.completedIKMIds,
                             eventCooldowns: s.publicHealth.ikmCooldowns,
-                            activeBCCases: history.map(h => h.medicalData?.trueDiagnosisCode).filter(Boolean)
+                            activeBCCases: (nextVillage?.families || []).map(f => f.activeScenarioId).filter(Boolean).map(id => id.replace('bc_', ''))
                         });
 
                         let nextIkmEvents = [...s.publicHealth.activeIKMEvents];
@@ -3483,7 +3483,7 @@ export const useGameStore = create(
                                 activeIKMEvents: state.publicHealth.activeIKMEvents || [],
                                 completedIKMEvents: state.publicHealth.completedIKMIds || [],
                                 eventCooldowns: state.publicHealth.ikmCooldowns || {},
-                                activeBCCases: [] // BC cases not yet wired
+                                activeBCCases: (state.publicHealth.villageData?.families || []).map(f => f.activeScenarioId).filter(Boolean).map(id => id.replace('bc_', ''))
                             };
                             const newIKMEvents = evaluateIKMTriggers(ikmState);
                             if (newIKMEvents.length > 0) {
