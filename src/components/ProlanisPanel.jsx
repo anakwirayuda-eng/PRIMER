@@ -14,7 +14,7 @@ import { useGame } from '../context/GameContext.jsx';
 import { Users, Activity, TrendingUp, AlertCircle, Heart, Award } from 'lucide-react';
 import { PROLANIS_DISEASES } from '../data/ProlanisDB.js';
 
-const ProlanisPanel = ({ compact = false }) => {
+const ProlanisPanel = ({ compact = false, onPatientCalled }) => {
     const { prolanisRoster, prolanisState, triggerSenamProlanis, day, playerStats: _playerStats, stats: _stats } = useGame();
 
     const dmPatients = prolanisRoster.filter(p => p.prolanisData.diseaseType === 'dm_type2');
@@ -147,7 +147,7 @@ const ProlanisPanel = ({ compact = false }) => {
                         <EmptyState message="Belum ada pasien Diabetes terdaftar" />
                     ) : (
                         <div className="space-y-2">
-                            {dmPatients.map(p => <PatientCard key={p.id} patient={p} />)}
+                            {dmPatients.map(p => <PatientCard key={p.id} patient={p} onPatientCalled={onPatientCalled} />)}
                         </div>
                     )}
                 </div>
@@ -164,7 +164,7 @@ const ProlanisPanel = ({ compact = false }) => {
                         <EmptyState message="Belum ada pasien Hipertensi terdaftar" />
                     ) : (
                         <div className="space-y-2">
-                            {htPatients.map(p => <PatientCard key={p.id} patient={p} />)}
+                            {htPatients.map(p => <PatientCard key={p.id} patient={p} onPatientCalled={onPatientCalled} />)}
                         </div>
                     )}
                 </div>
@@ -174,7 +174,7 @@ const ProlanisPanel = ({ compact = false }) => {
     );
 };
 
-const PatientCard = ({ patient }) => {
+const PatientCard = ({ patient, onPatientCalled }) => {
     const { prolanisData } = patient;
     const { day, callProlanisPatient, monitorMedication } = useGame(); // Need day to check last visit status
     const history = prolanisData.history || [];
@@ -255,6 +255,7 @@ const PatientCard = ({ patient }) => {
                             e.stopPropagation();
                             const res = callProlanisPatient(patient.id);
                             if (res && !res.success) alert(res.message);
+                            else onPatientCalled?.();
                         }}
                         className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs py-1.5 rounded border border-slate-200 font-medium transition-colors"
                     >

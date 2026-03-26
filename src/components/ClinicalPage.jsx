@@ -19,10 +19,9 @@ import PatientEMR from './PatientEMR.jsx';
 import KPIDashboard from './KPIDashboard.jsx';
 import EmergencyPanel, { EmergencyEMR } from './EmergencyPanel.jsx';
 import ProlanisPanel from './ProlanisPanel.jsx';
-import ProlanisConsultation from './ProlanisConsultation.jsx';
 import FarmasiPanel from './FarmasiPanel.jsx';
 import ServiceCardDeck from './ServiceCardDeck.jsx';
-import { CLINICAL_SERVICES } from '../data/ClinicalServices.js';
+import { CLINICAL_SERVICES, isServiceUnlocked } from '../data/ClinicalServices.js';
 import { Stethoscope, BarChart3, Construction, X, ChevronLeft, ChevronRight, Siren, Users, Lock } from 'lucide-react';
 import { TRIAGE_LEVELS } from '../game/EmergencyCases.js';
 import { getAvatarStyle } from '../utils/AvatarUtils.js';
@@ -42,7 +41,7 @@ export default function ClinicalPage() {
     // Local state for this page
     const [activeServiceId, setActiveServiceId] = useState('poli_umum');
     const [showKPI, setShowKPI] = useState(false);
-    const [activeProlanisConsultation, setActiveProlanisConsultation] = useState(null);
+
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [poliUmumSubTab, setPoliUmumSubTab] = useState('antrian'); // 'antrian' | 'prolanis'
 
@@ -122,7 +121,13 @@ export default function ClinicalPage() {
                             {/* Sub-tab content */}
                             <div className="flex-1 overflow-y-auto">
                                 {poliUmumSubTab === 'prolanis'
-                                    ? <ErrorBoundary name="ProlanisPanel"><ProlanisPanel compact /></ErrorBoundary>
+                                    ? (time < 480 || time >= 960) ? (
+                                        <div className={`p-8 text-center ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                                            <Construction size={32} className="mx-auto mb-4 opacity-20" />
+                                            <p className="text-xs font-bold uppercase tracking-widest">Prolanis Belum Dibuka</p>
+                                            <p className="text-[10px] mt-1 opacity-60">Layanan Prolanis tersedia jam 08:00 - 16:00</p>
+                                        </div>
+                                    ) : <ErrorBoundary name="ProlanisPanel"><ProlanisPanel compact onPatientCalled={() => setPoliUmumSubTab('antrian')} /></ErrorBoundary>
                                     : (time < 480 || time >= 960) ? (
                                         <div className={`p-8 text-center ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                                             <Construction size={32} className="mx-auto mb-4 opacity-20" />
@@ -279,14 +284,7 @@ export default function ClinicalPage() {
             );
         }
 
-        // Handle prolanis consultation (now a sub-tab of Poli Umum)
-        if (activeProlanisConsultation && activeServiceId === 'poli_umum' && poliUmumSubTab === 'prolanis') {
-            return (
-                <ErrorBoundary name="Patient EMR (Prolanis)">
-                    <PatientEMR />
-                </ErrorBoundary>
-            );
-        }
+
 
         // Empty state background
         const emptyStateBg = activeServiceId === 'poli_umum' ? '/images/wilayah/poli_umum_bg.png' :
@@ -486,7 +484,10 @@ export default function ClinicalPage() {
                                     return (
                                         <div key={service.id} className="relative group">
                                             <button
-                                                onClick={() => setActiveServiceId(service.id)}
+                                                onClick={() => {
+                                                if (!isServiceUnlocked(service, playerLevel, hiredStaff)) return;
+                                                setActiveServiceId(service.id);
+                                            }}
                                                 className={`p-2.5 rounded-xl transition-all duration-200 ${isActive
                                                     ? `${serviceAccent} text-white shadow-lg scale-110`
                                                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:scale-105'
@@ -592,23 +593,7 @@ export default function ClinicalPage() {
             `}>
                 {renderWorkArea()}
 
-                {/* Prolanis Overlay removed — compact version in sidebar sub-tab is sufficient (prevents double-mount) */}
 
-
-                {/* Prolanis Consultation Modal */}
-                {activeProlanisConsultation && (
-                    <ErrorBoundary name="ProlanisConsultation" fallbackAction={() => setActiveProlanisConsultation(null)} fallbackActionLabel="Tutup Konsultasi">
-                    <ProlanisConsultation
-                        patient={activeProlanisConsultation}
-                        onClose={() => setActiveProlanisConsultation(null)}
-                        onComplete={(data) => {
-                            completeProlanisVisit(data);
-                            setActiveProlanisConsultation(null);
-                            setActiveServiceId('poli_umum');
-                        }}
-                    />
-                    </ErrorBoundary>
-                )}
             </div>
 
             {/* Global Toast Renderer */}
