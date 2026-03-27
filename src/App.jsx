@@ -20,6 +20,7 @@ import DatabaseSync from './components/DatabaseSync.jsx';
 import { safeReloadPage } from './utils/browserSafety.js';
 import { isSupabaseConfigured } from './services/supabaseClient.js';
 import './i18n';
+import TestAvatar from './TestAvatar';
 
 // Lazy load heavy game components
 const LoginPage = React.lazy(() => import('./components/LoginPage'));

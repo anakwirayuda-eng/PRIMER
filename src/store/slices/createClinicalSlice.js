@@ -498,6 +498,30 @@ export const createClinicalSlice = (set, get) => ({
                             }];
                         }
                     }
+                    // Codex Fix: write Prolanis visit to history + todayLog so debrief/archive captures it
+                    state.clinical.history = appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
+                        ...patient,
+                        day: effectiveDay,
+                        dischargedAt: time ?? state.world.time,
+                        decision: { ...decision, action: 'treat' },
+                        outcome: 'good',
+                        outcomeStatus: 'prolanis_visit',
+                        satisfactionScore: 85,
+                        isEmergency: false,
+                        isProlanis: true
+                    }));
+                    state.clinical.todayLog = [...state.clinical.todayLog, {
+                        patientName: patient.name,
+                        age: patient.age,
+                        diagnosis: patient.medicalData?.trueDiagnosisCode || 'prolanis',
+                        action: 'treat',
+                        completed: true,
+                        referred: false,
+                        diagnosisScore: 100,
+                        revenue: 0, // Prolanis = BPJS kapitasi, no direct revenue
+                        timestamp: Date.now()
+                    }];
+
                     return;
                 }
                 const buffs = calculateGlobalBuffs(state);
@@ -849,11 +873,11 @@ export const createClinicalSlice = (set, get) => ({
                             dischargedAt: time,
                             decision,
                             outcome: repChange >= 0 ? 'good' : 'bad',
-                            outcomeStatus: 'stabilized',
+                            outcomeStatus: outcomeStatus,
                             satisfactionScore,
                             isEmergency: true,
                             dispensed: true, // IGD always auto-dispenses
-                            cpptRecord: buildMaiaCPPTRecord(patient, day, time, 'stabilized', true)
+                            cpptRecord: buildMaiaCPPTRecord(patient, day, time, outcomeStatus, true)
                         })),
                         // Codex Fix: push to todayLog so debrief counts emergency discharges
                         todayLog: [...state.clinical.todayLog, {
