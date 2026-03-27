@@ -425,25 +425,19 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                                     ${slot.empty ? 'border-l-slate-700 bg-slate-900/40 hover:border-l-cyan-500 hover:bg-slate-900/80 border border-transparent' : 'border-l-emerald-500 border border-slate-800 hover:border-emerald-500/30'}`}>
 
                                     {slot.empty ? (
-                                        <div className="flex items-center justify-between p-5">
-                                            <div className="flex items-center gap-4 text-slate-600 font-mono text-[10px] tracking-[0.2em] uppercase">
-                                                <Lock size={20} className="group-hover:text-cyan-500 transition-colors" />
+                                        <div className="flex flex-col md:flex-row md:items-center justify-between p-4 gap-3">
+                                            <div className="flex items-center gap-3 text-slate-600 font-mono text-[10px] tracking-[0.2em] uppercase">
+                                                <Lock size={18} className="group-hover:text-cyan-500 transition-colors flex-shrink-0" />
                                                 <div>
-                                                    <div className="group-hover:text-cyan-400 transition-colors font-bold text-xs mb-1">NODE 0{slot.slotId + 1} : [ UNASSIGNED ]</div>
+                                                    <div className="group-hover:text-cyan-400 transition-colors font-bold text-xs mb-0.5">NODE 0{slot.slotId + 1} — KOSONG</div>
                                                     <div className="opacity-70">Tersedia untuk Registrasi Baru</div>
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
-                                                <button onClick={() => handleImportClick(slot.slotId)} disabled={isTransitioning} className="p-3 border border-slate-800 hover:border-blue-900 text-slate-500 hover:text-blue-400 rounded-xl transition-colors bg-slate-900">
+                                                <button onClick={() => handleImportClick(slot.slotId)} disabled={isTransitioning} className="p-2.5 border border-slate-800 hover:border-blue-900 text-slate-500 hover:text-blue-400 rounded-xl transition-colors bg-slate-900">
                                                     <Upload size={16} />
                                                 </button>
-                                                <button
-                                                    onClick={() => executeNewGame(slot.slotId)}
-                                                    onTouchEnd={(e) => handleTapAction(e, () => executeNewGame(slot.slotId))}
-                                                    style={touchActionStyle}
-                                                    disabled={isTransitioning}
-                                                    className="px-6 py-3 bg-cyan-950/40 text-cyan-400 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-cyan-600 hover:text-white transition-all btn-tactical border-b-cyan-900 flex items-center gap-2 border border-cyan-800"
-                                                >
+                                                <button onClick={() => executeNewGame(slot.slotId)} disabled={isTransitioning} className="flex-1 md:flex-none px-5 py-2.5 bg-cyan-950/40 text-cyan-400 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-cyan-600 hover:text-white transition-all btn-tactical border-b-cyan-900 flex items-center justify-center gap-2 border border-cyan-800">
                                                     <Plus size={16} /> INISIASI
                                                 </button>
                                             </div>
