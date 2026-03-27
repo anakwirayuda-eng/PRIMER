@@ -18,7 +18,7 @@ import { applyNeglectDecay } from '../../domains/village/NPCReadiness.js';
 import { normalizeMedicationId } from '../../models/InventoryRuntime.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../../game/TheDirector.js';
 import { CURRENT_SAVE_VERSION, parseSavePayload } from '../../utils/savePayload.js';
-import { seedKey } from '../../utils/deterministicRandom.js';
+import { seedKey, pickDeterministic } from '../../utils/deterministicRandom.js';
 import { safeSetStorageItem } from '../../utils/browserSafety.js';
 import { clearStability } from '../../utils/prophylaxis.js';
 import { reconcileReferralLog } from '../../utils/referralLog.js';
@@ -161,7 +161,7 @@ export const createOrchestratorSlice = (set, get) => ({
                 const _forceResident = (p, idx) => {
                     if (p.social?.isResident) return p; // Already resident
                     // Pick a random villager from the expanded pool
-                    const villagers = population.villagers?.filter(v => v.status === 'alive') || [];
+                    const villagers = population.villagers?.filter(v => !v.status || v.status === 'alive') || [];
                     if (villagers.length === 0) return p;
                     const v = pickDeterministic(villagers, seedKey('force-resident', idx));
                     const fam = population.families?.find(f => f.id === v.familyId);

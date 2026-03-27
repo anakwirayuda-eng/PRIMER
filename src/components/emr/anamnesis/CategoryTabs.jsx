@@ -13,6 +13,14 @@ import React from 'react';
 import { QUESTION_CATEGORIES } from '../../../game/AnamnesisEngine.js';
 
 export default function CategoryTabs({ anamnesisCategory, setAnamnesisCategory, isDark }) {
+    const SHORT_LABELS = {
+        keluhan_utama: 'KU',
+        rps: 'RPS',
+        rpd: 'RPD',
+        rpk: 'RPK',
+        sosial: 'Sos'
+    };
+
     return (
         <div className="flex items-end gap-1 overflow-x-auto snap-x snap-mandatory no-scrollbar translate-y-[1px] relative z-20 px-2 pb-[1px]">
             {Object.entries(QUESTION_CATEGORIES).map(([key, label]) => (
@@ -20,8 +28,8 @@ export default function CategoryTabs({ anamnesisCategory, setAnamnesisCategory, 
                     key={key}
                     onClick={() => setAnamnesisCategory(key)}
                     className={`
-                        snap-start relative px-4 py-2.5 md:py-2 text-tag whitespace-nowrap font-black uppercase tracking-tight transition-all duration-300
-                        rounded-t-2xl border-t border-x min-w-[3.5rem]
+                        snap-start relative px-2 md:px-4 py-2 text-[9px] md:text-tag whitespace-nowrap font-black uppercase tracking-tight transition-all duration-300
+                        rounded-t-2xl border-t border-x min-w-[2.5rem] md:min-w-[3.5rem]
                         ${anamnesisCategory === key
                             ? (isDark
                                 ? 'bg-slate-800 border-blue-500/40 text-blue-400 z-30 h-10 shadow-[0_-8px_15px_-3px_rgba(59,130,246,0.15)] translate-y-[2px]'
@@ -32,7 +40,8 @@ export default function CategoryTabs({ anamnesisCategory, setAnamnesisCategory, 
                         }
                     `}
                 >
-                    {label}
+                    <span className="md:hidden">{SHORT_LABELS[key] || label}</span>
+                    <span className="hidden md:inline">{label}</span>
                     {anamnesisCategory === key && (
                         <>
                             {/* Bottom seamless connection */}

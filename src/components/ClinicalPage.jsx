@@ -401,7 +401,7 @@ export default function ClinicalPage() {
     return (
         <div className="flex h-full overflow-hidden relative">
             {/* Left Sidebar: Service Card Deck & Queue */}
-            <div className={`border-r flex flex-col h-full transition-all duration-300 relative overflow-x-hidden ${isSidebarCollapsed ? 'w-16' : 'w-80'} ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+            <div className={`hidden md:flex border-r flex-col h-full transition-all duration-300 relative overflow-x-hidden ${isSidebarCollapsed ? 'w-16' : 'w-80'} ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
                 {/* Collapse Toggle Button */}
                 <button
                     onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}

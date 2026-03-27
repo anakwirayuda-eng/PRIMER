@@ -392,7 +392,7 @@ export default function PatientEMR() {
 
                 {/* Right Panel: RESUME MEDIS / REASONING / MAIA */}
                 <div
-                    className={`flex flex-col min-h-0 relative transition-all duration-500 ease-in-out ${isSidebarCollapsed ? 'w-12' : 'w-[400px] shadow-2xl'}`}
+                    className={`hidden md:flex flex-col min-h-0 relative transition-all duration-500 ease-in-out ${isSidebarCollapsed ? 'w-12' : 'w-[400px] shadow-2xl'}`}
                 >
 
                     {/* Folder Tabs (Vertical Stack on the left edge of sidebar) */}

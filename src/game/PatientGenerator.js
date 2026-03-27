@@ -236,7 +236,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
     let familyMedHistory = null;
 
     if (population && population.villagers && population.villagers.length > 0 && rng.chance(0.7)) {
-        const living = population.villagers.filter(v => v.status === 'alive');
+        const living = population.villagers.filter(v => !v.status || v.status === 'alive');
 
         if (living.length > 0) {
             const curatedMembers = living.filter(v => CURATED_FAMILY_IDS.includes(v.familyId));
@@ -466,7 +466,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
     if (age <= 7) {
         if (isResident && population && population.villagers) {
             const familyMembers = population.villagers.filter(v =>
-                v.familyId === resident.familyId && v.status === 'alive' && v.id !== resident.id && v.age >= 18
+                v.familyId === resident.familyId && (!v.status || v.status === 'alive') && v.id !== resident.id && v.age >= 18
             );
             const mother = familyMembers.find(m => m.gender === 'P');
             const father = familyMembers.find(m => m.gender === 'L');
@@ -630,7 +630,7 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
     let age;
 
     if (population && population.villagers && population.villagers.length > 0 && rng.chance(0.5)) {
-        const living = population.villagers.filter(v => v.status === 'alive');
+        const living = population.villagers.filter(v => !v.status || v.status === 'alive');
         if (living.length > 0) {
             if (disease.category === 'Pediatrics') {
                 const children = living.filter(v => v.age <= 5);

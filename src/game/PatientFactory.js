@@ -127,7 +127,7 @@ export function buildInformant(age, resident, population, patientName, rng, pati
     // Try to find a family member parent for residents
     if (resident && population?.villagers) {
         const familyMembers = population.villagers.filter(v =>
-            v.familyId === resident.familyId && v.status === 'alive' && v.id !== resident.id && v.age >= 18
+            v.familyId === resident.familyId && (!v.status || v.status === 'alive') && v.id !== resident.id && v.age >= 18
         );
         const mother = familyMembers.find(m => m.gender === 'P');
         const father = familyMembers.find(m => m.gender === 'L');
