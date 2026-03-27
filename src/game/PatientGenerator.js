@@ -502,7 +502,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         : pickDeterministic(commStyles, seedKey(patientSeed, 'communication-style'));
     const demeanor = pickDeterministic(demeanors, seedKey(patientSeed, 'demeanor'));
 
-    return {
+    return normalizePatientOutput({
         id: randomIdFromSeed('patient', seedKey(patientSeed, 'id'), 9),
         name,
         age,
@@ -556,7 +556,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             conditions: residentProfile?.conditions || [],
             familyMedicalHistory: familyMedHistory || null
         }
-    };
+    });
 }
 
 /**
@@ -677,7 +677,7 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
 
     const complaintText = pickDeterministic(disease.anamnesis || [], seedKey(emergencySeed, 'complaint')) || disease.diagnosis;
 
-    return {
+    return normalizePatientOutput({
         id: randomIdFromSeed('igd', seedKey(emergencySeed, 'id'), 9),
         name,
         age,
@@ -711,7 +711,7 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
             diagnosis: disease.diagnosis,
             category: disease.category,
             icd10: disease.icd10,
-            differentialDiagnosis: disease.differentialDiagnosis || [],
+            differentials: disease.differentialDiagnosis || [],
             requiredAction: disease.referralRequired ? 'refer' : 'stabilize',
             skdi: disease.skdi,
             risk: disease.risk,
@@ -728,7 +728,7 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
             familyId: isResident ? resident.familyId : null,
             houseId: isResident ? resident.houseId : null
         }
-    };
+    });
 }
 
 /**
@@ -746,12 +746,15 @@ export function generateProlanisVisitPatient(rosterMember, currentDay, seedHint 
     const sys = isDM ? 120 : (params.systolic || 140);
     const dia = isDM ? 80 : (params.diastolic || 90);
 
-    return {
+    return normalizePatientOutput({
         ...rosterMember, // Base info (name, age, gender, social, anthropometrics)
         id: `${rosterMember.id}_visit_${currentDay}`,
         originalId: rosterMember.id,
         isProlanis: true,
+        isEmergency: false,
         status: 'waiting',
+        patience: 100,
+        triageLevel: null,
         joinedAt: 480 + rng.int(60), // 08:00 - 09:00
         complaint: "Kontrol rutin Prolanis bulan ini.",
         medicalData: {
@@ -771,14 +774,17 @@ export function generateProlanisVisitPatient(rosterMember, currentDay, seedHint 
             requiredAction: 'treat',
             risk: 'chronic',
             diseaseId: isDM ? 'dm_type2' : 'hypertension',
-            // DeepThink Fix: fill contract-required hidden attrs
             differentials: [],
             skdi: '4A',
             clue: '',
             requiredEducation: [],
-            correctTreatment: []
+            correctTreatment: [],
+            isResident: true,
+            villagerId: rosterMember.villagerId || rosterMember.id,
+            familyId: rosterMember.familyId || null,
+            houseId: rosterMember.houseId || null
         }
-    };
+    });
 }
 
 /**
@@ -860,7 +866,7 @@ export function generateFollowupPatient(consequence, currentTime, seedHint = 'de
             relevantLabs: [],
         },
         social: {
-            isResident: true,
+            isResident: false,
             hasBPJS: true,
         },
         status: 'waiting',
@@ -1026,7 +1032,7 @@ export function generateGenericPatients(diseaseId, amount, targetClinic, current
                 requiredEducation: disease.requiredEducation || [],
                 relevantLabs: disease.relevantLabs || [],
             },
-            social: { isResident: true, hasBPJS: true },
+            social: { isResident: false, hasBPJS: true },
             status: 'waiting',
             joinedAt: currentTime + (i * 15),
             patience: 80,

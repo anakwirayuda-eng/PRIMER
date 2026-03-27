@@ -108,24 +108,34 @@ export const createPublicHealthSlice = (set, get) => ({
                 const updatedRoster = state.publicHealth.prolanisRoster.map(member => {
                     if (member.id !== rosterId) return member;
 
-                    // ═══ CONTRACT ADAPTER ═══════════════════════════
-                    const hasMeds = Array.isArray(doctorDecisions?.medications) && doctorDecisions.medications.length > 0;
+                    // ═══ CONTRACT ADAPTER (handles EMR + legacy shapes) ════
+                    // EMR shape: { medications: [...], education: [...] }
+                    // Legacy shape: { medicationAction: { effect }, education: [{ effect }] }
                     const diseaseType = member.prolanisData?.diseaseType;
-
-                    const medicationAction = hasMeds ? {
-                        effect: {
-                            paramChange: -(15 * Math.min(doctorDecisions.medications.length, 3))
-                        }
-                    } : null;
-
                     const lastVisitDay = member.prolanisData?.lastVisitDay || 0;
                     const complianceBonus = lastVisitDay > 0 && (effectiveDay - lastVisitDay) <= 35;
 
-                    const education = hasMeds ? [{
-                        effect: diseaseType === 'dm_type2'
-                            ? { gds: -8, hba1c: -0.05 }
-                            : { systolic: -3, diastolic: -2 }
-                    }] : [];
+                    let medicationAction = null;
+                    let education = [];
+
+                    if (doctorDecisions?.medicationAction) {
+                        // Legacy engine shape — pass through directly
+                        medicationAction = doctorDecisions.medicationAction;
+                        education = doctorDecisions.education || [];
+                    } else {
+                        // EMR shape — adapt medications[] to engine format
+                        const hasMeds = Array.isArray(doctorDecisions?.medications) && doctorDecisions.medications.length > 0;
+                        medicationAction = hasMeds ? {
+                            effect: {
+                                paramChange: -(15 * Math.min(doctorDecisions.medications.length, 3))
+                            }
+                        } : null;
+                        education = hasMeds ? [{
+                            effect: diseaseType === 'dm_type2'
+                                ? { gds: -8, hba1c: -0.05 }
+                                : { systolic: -3, diastolic: -2 }
+                        }] : [];
+                    }
 
                     const engineIntervention = { medicationAction, education, complianceBonus };
                     // ═══ END ADAPTER ════════════════════════════════

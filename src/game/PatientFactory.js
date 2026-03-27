@@ -337,7 +337,8 @@ const DEFAULT_HIDDEN = {
  * @returns {Object} Shape-guaranteed patient
  */
 export function normalizePatientOutput(patient) {
-    const isResident = patient._isResident || false;
+    // Determine resident status: prefer _isResident internal flag, fallback to hidden.isResident
+    const isResident = patient._isResident ?? patient.hidden?.isResident ?? false;
     const resident = patient._resident || null;
     const residentFamily = patient._residentFamily || null;
 
@@ -352,17 +353,20 @@ export function normalizePatientOutput(patient) {
         ...DEFAULT_HIDDEN,
         ...(patient.hidden || {}),
         isResident,
-        villagerId: isResident ? resident?.id : (patient.hidden?.villagerId || null),
-        familyId: isResident ? resident?.familyId : (patient.hidden?.familyId || null),
-        houseId: isResident ? resident?.houseId : (patient.hidden?.houseId || null),
+        villagerId: resident?.id ?? patient.hidden?.villagerId ?? null,
+        familyId: resident?.familyId ?? patient.hidden?.familyId ?? null,
+        houseId: resident?.houseId ?? patient.hidden?.houseId ?? null,
     };
 
-    // Ensure social.hasBPJS is derived from family, not hardcoded
+    // Ensure social.hasBPJS and social.isResident are derived correctly
     const social = { ...patient.social };
     if (isResident && residentFamily) {
         social.hasBPJS = residentFamily.indicators?.jkn !== false;
     } else if (social.hasBPJS === undefined) {
         social.hasBPJS = false;
+    }
+    if (social.isResident === undefined) {
+        social.isResident = isResident;
     }
 
     // Clean output — remove internal fields
@@ -373,11 +377,14 @@ export function normalizePatientOutput(patient) {
         medicalData,
         hidden,
         social,
-        // Guarantee root fields exist
+        // Guarantee root fields exist with correct types
+        isEmergency: typeof cleanPatient.isEmergency === 'boolean' ? cleanPatient.isEmergency : false,
+        triageLevel: cleanPatient.triageLevel !== undefined ? cleanPatient.triageLevel : null,
         communicationStyle: cleanPatient.communicationStyle || 'concise',
         demeanor: cleanPatient.demeanor || 'Normal',
         anthropometrics: cleanPatient.anthropometrics || { height: 165, weight: 60, bmi: 22.0, bmiCategory: 'Normal', bmiRiskFactors: [] },
-        informant: cleanPatient.informant || null,
+        informant: cleanPatient.informant !== undefined ? cleanPatient.informant : null,
         complaint: cleanPatient.complaint || 'Tidak enak badan dok...',
+        patience: typeof cleanPatient.patience === 'number' ? cleanPatient.patience : 100,
     };
 }
