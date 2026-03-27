@@ -277,7 +277,7 @@ export default function PlayerSetup({ onComplete }) {
                                         <span className="px-5 flex items-center justify-center bg-slate-900 border-r border-slate-800 text-slate-400 font-black text-sm">dr.</span>
                                         <input type="text" value={playerName}
                                             onChange={(e) => setPlayerName(e.target.value.replace(/[^a-zA-Z\s.,]/g, '').toUpperCase())}
-                                            placeholder="KETIK NAMA LENGKAP..."
+                                            placeholder="NAMA LENGKAP..."
                                             maxLength={30}
                                             className="w-full px-4 py-4 bg-transparent text-white font-black tracking-widest outline-none placeholder-slate-700 uppercase" />
                                     </div>
@@ -413,24 +413,24 @@ export default function PlayerSetup({ onComplete }) {
                                         <div className="text-emerald-100 font-black tracking-widest text-[9px] border border-emerald-400/50 px-2 py-1 rounded relative z-10 bg-emerald-900/80 backdrop-blur-sm shadow-sm">ID-ASN</div>
                                     </div>
 
-                                    <div className="p-6 pb-5 flex gap-4 bg-white text-slate-800 relative z-10">
+                                    <div className="p-4 md:p-6 pb-4 md:pb-5 flex flex-col sm:flex-row gap-3 sm:gap-4 bg-white text-slate-800 relative z-10">
                                         <div className="absolute right-[-10px] bottom-[-10px] opacity-[0.03] pointer-events-none">
                                             <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt="" className="h-36 grayscale" />
                                         </div>
-                                        {/* Photo Frame with inner shadow */}
-                                        <div className="w-22 h-30 bg-slate-200 border-2 border-white shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(0,0,0,0.1)] overflow-hidden flex items-end justify-center relative rounded z-10">
+                                        {/* Photo Frame */}
+                                        <div className="w-20 h-28 sm:w-22 sm:h-30 bg-slate-200 border-2 border-white shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(0,0,0,0.1)] overflow-hidden flex items-end justify-center relative rounded z-10 mx-auto sm:mx-0 flex-shrink-0">
                                             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/15 pointer-events-none z-20" />
-                                            <AvatarRenderer avatar={avatarData} size={100} />
+                                            <AvatarRenderer avatar={avatarData} size={90} />
                                         </div>
-                                        <div className="flex-1 flex flex-col justify-center z-10">
+                                        <div className="flex-1 flex flex-col justify-center z-10 min-w-0">
                                             <div className="text-[8px] font-mono text-slate-400 font-bold mb-0.5 uppercase tracking-widest">NAMA PEJABAT:</div>
-                                            <div className="text-lg font-black text-slate-900 leading-none uppercase tracking-wide border-b border-slate-300 pb-2 mb-2">dr. {playerName}</div>
+                                            <div className="text-base sm:text-lg font-black text-slate-900 leading-none uppercase tracking-wide border-b border-slate-300 pb-2 mb-2 truncate">dr. {playerName}</div>
                                             <div className="text-[8px] font-mono text-slate-400 font-bold mb-0.5 uppercase tracking-widest">JABATAN TUGAS:</div>
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <div className="text-[10px] font-bold text-emerald-800 uppercase bg-emerald-100/80 border border-emerald-200 px-2 py-1 rounded inline-block w-fit shadow-sm">KEPALA PUSKESMAS</div>
-                                                <div className="text-[9px] font-black text-amber-700 uppercase bg-amber-100/80 border border-amber-300 px-1.5 py-0.5 rounded font-mono tracking-wider shadow-sm">{aegisProfile.id}</div>
+                                            <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                                                <div className="text-[9px] sm:text-[10px] font-bold text-emerald-800 uppercase bg-emerald-100/80 border border-emerald-200 px-2 py-0.5 rounded shadow-sm">KEPALA PUSKESMAS</div>
+                                                <div className="text-[8px] sm:text-[9px] font-black text-amber-700 uppercase bg-amber-100/80 border border-amber-300 px-1.5 py-0.5 rounded font-mono tracking-wider shadow-sm">{aegisProfile.id}</div>
                                             </div>
-                                            <div className="text-[7px] font-mono text-slate-400 leading-relaxed mb-2 border-l-2 border-slate-300 pl-2 italic">
+                                            <div className="text-[7px] font-mono text-slate-400 leading-relaxed mb-2 border-l-2 border-slate-300 pl-2 italic hidden sm:block">
                                                 AEGIS EVAL: {aegisProfile.note}
                                             </div>
                                             <div className="grid grid-cols-2 gap-2 border-t border-slate-200 pt-2">
