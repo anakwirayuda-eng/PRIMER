@@ -524,8 +524,25 @@ export default function PatientEMR() {
                 ${isDark ? 'bg-slate-900/95 border-t border-slate-700 backdrop-blur-md' : 'bg-white/95 border-t border-slate-200 backdrop-blur-md'}
                 safe-area-pb`}
             >
-                {/* Mobile action shortcuts — replaces hidden desktop header buttons */}
-                <div className={`flex items-center justify-end gap-2 px-2 py-1 border-b ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+                {/* Mobile action shortcuts — Pulangkan/Rujuk + MAIA/Keluarga */}
+                <div className={`flex items-center gap-1.5 px-2 py-1 border-b ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+                    {/* Critical actions — Pulangkan / Rujuk */}
+                    <button
+                        onClick={() => handleDischarge('treat')}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-black transition-all active:scale-95
+                            ${isDark ? 'bg-emerald-600 text-white shadow-emerald-900/30' : 'bg-emerald-600 text-white'}`}
+                    >
+                        ✓ Pulangkan
+                    </button>
+                    <button
+                        onClick={() => handleDischarge('refer')}
+                        className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-[10px] font-bold transition-all active:scale-95 border
+                            ${isDark ? 'bg-slate-800 border-rose-500/30 text-rose-400' : 'bg-white border-rose-200 text-rose-600'}`}
+                    >
+                        Rujuk
+                    </button>
+                    <div className="flex-1" />
+                    {/* Secondary shortcuts */}
                     <button
                         onClick={() => openWiki(QUICK_CODEX_MAP[activeTab] || 'ukp_overview')}
                         className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold transition-all active:scale-95
@@ -539,36 +556,40 @@ export default function PatientEMR() {
                             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold transition-all active:scale-95
                                 ${isDark ? 'bg-teal-600/20 text-teal-400' : 'bg-teal-50 text-teal-600'}`}
                         >
-                            <BookOpen size={12} /> Keluarga
+                            <BookOpen size={12} /> KK
                         </button>
                     )}
                 </div>
                 {/* Tab bar — all 9 tabs, horizontally scrollable on small screens */}
-                <div className="flex items-center overflow-x-auto no-scrollbar py-1.5 px-0.5 gap-0.5">
-                    {[
-                        { key: 'anamnesis', icon: FileText, label: 'Anamn.' },
-                        { key: 'history', icon: Activity, label: 'Riwayat' },
-                        { key: 'physical', icon: Stethoscope, label: 'Fisik' },
-                        { key: 'labs', icon: Microscope, label: 'Lab' },
-                        { key: 'assessment', icon: Brain, label: 'Dx' },
-                        { key: 'treatment', icon: Pill, label: 'Obat' },
-                        { key: 'procedures', icon: Scissors, label: 'Tindakan' },
-                        { key: 'education', icon: BookOpen, label: 'Edukasi' },
-                        { key: 'billing', icon: Receipt, label: 'Billing' },
-                    ].map(tab => (
-                        <button
-                            key={tab.key}
-                            onClick={() => setActiveTab(tab.key)}
-                            className={`flex flex-col items-center gap-0.5 py-1.5 rounded-lg min-w-[2.8rem] min-h-[2.8rem] flex-shrink-0 justify-center transition-all
-                                ${activeTab === tab.key
-                                    ? (isDark ? 'text-emerald-400 bg-emerald-500/10' : 'text-emerald-600 bg-emerald-50')
-                                    : (isDark ? 'text-slate-500 active:text-slate-300' : 'text-slate-400 active:text-slate-600')
-                                }`}
-                        >
-                            <tab.icon size={20} />
-                            <span className="text-[9px] font-bold leading-none">{tab.label}</span>
-                        </button>
-                    ))}
+                <div className="relative">
+                    <div className="flex items-center overflow-x-auto no-scrollbar py-1.5 px-0.5 gap-0.5 scroll-smooth">
+                        {[
+                            { key: 'anamnesis', icon: FileText, label: 'Anamn.' },
+                            { key: 'history', icon: Activity, label: 'Riwayat' },
+                            { key: 'physical', icon: Stethoscope, label: 'Fisik' },
+                            { key: 'labs', icon: Microscope, label: 'Lab' },
+                            { key: 'assessment', icon: Brain, label: 'Dx' },
+                            { key: 'treatment', icon: Pill, label: 'Obat' },
+                            { key: 'procedures', icon: Scissors, label: 'Tindakan' },
+                            { key: 'education', icon: BookOpen, label: 'Edukasi' },
+                            { key: 'billing', icon: Receipt, label: 'Billing' },
+                        ].map(tab => (
+                            <button
+                                key={tab.key}
+                                onClick={() => setActiveTab(tab.key)}
+                                className={`flex flex-col items-center gap-0.5 py-1.5 rounded-lg min-w-[2.8rem] min-h-[2.8rem] flex-shrink-0 justify-center transition-all
+                                    ${activeTab === tab.key
+                                        ? (isDark ? 'text-emerald-400 bg-emerald-500/10' : 'text-emerald-600 bg-emerald-50')
+                                        : (isDark ? 'text-slate-500 active:text-slate-300' : 'text-slate-400 active:text-slate-600')
+                                    }`}
+                            >
+                                <tab.icon size={20} />
+                                <span className="text-[9px] font-bold leading-none">{tab.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                    {/* Right fade — scroll hint */}
+                    <div className={`absolute right-0 top-0 bottom-0 w-8 pointer-events-none ${isDark ? 'bg-gradient-to-l from-slate-900' : 'bg-gradient-to-l from-white'}`} />
                 </div>
             </nav>
 

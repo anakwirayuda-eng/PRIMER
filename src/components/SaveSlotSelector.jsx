@@ -368,7 +368,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                     )}
                 </div>
 
-                <div className="absolute bottom-8 left-8 lg:left-16 flex flex-col gap-2">
+                <div className="hidden md:flex absolute bottom-8 left-8 lg:left-16 flex-col gap-2">
                     <div className="flex items-center gap-4 opacity-40 grayscale">
                         <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt="ITS" className="h-5 object-contain" />
                         <div className="h-3 w-px bg-slate-500" />

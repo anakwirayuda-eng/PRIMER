@@ -623,12 +623,18 @@ export default function ClinicalPage() {
                             <div className={`relative max-h-[70vh] rounded-t-2xl overflow-hidden flex flex-col
                                 ${isDark ? 'bg-slate-900 border-t border-slate-700' : 'bg-white border-t border-slate-200'}
                                 animate-in slide-in-from-bottom-4 duration-300`}>
-                                {/* Handle */}
-                                <div className="flex justify-center pt-2 pb-1">
-                                    <div className={`h-1 w-10 rounded-full ${isDark ? 'bg-slate-600' : 'bg-slate-300'}`} />
-                                </div>
-                                <div className={`px-4 py-2 font-black text-xs uppercase tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                                    🩺 Antrian Pasien ({queue.length})
+                                {/* Header with close button */}
+                                <div className={`flex items-center justify-between px-4 pt-3 pb-2`}>
+                                    <span className={`font-black text-xs uppercase tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                                        🩺 Antrian Pasien ({queue.length})
+                                    </span>
+                                    <button
+                                        onClick={() => setMobileQueueOpen(false)}
+                                        aria-label="Tutup antrian"
+                                        className={`p-1.5 rounded-lg transition-all active:scale-90 ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}
+                                    >
+                                        ✕
+                                    </button>
                                 </div>
                                 <div className="flex-1 overflow-y-auto px-2 pb-4">
                                     {queue.length === 0 ? (
