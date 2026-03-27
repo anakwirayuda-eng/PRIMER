@@ -125,7 +125,7 @@ export default function WilayahPage() {
     const isDataLoaded = !!villageData?.families;
     const staticMapTopology = useMemo(() => {
         if (!isDataLoaded) return null;
-        return generateVillageMap(60, 50, 42, villageData);
+        return generateVillageMap(80, 100, 42, villageData);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDataLoaded, villageData]); // Regenerate if village data identity changes
 
