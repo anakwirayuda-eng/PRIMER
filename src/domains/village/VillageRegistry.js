@@ -7,9 +7,12 @@
  * [DEPENDS_ON]: ./village_families.js
  */
 
-import { VILLAGE_FAMILIES } from './village_families.js';
+import { VILLAGE_FAMILIES as VILLAGE_FAMILIES_ORIGINAL } from './village_families.js';
+import { VILLAGE_FAMILIES_EXPANDED } from './village_families_expanded.js';
+import { FAMILY_SDOH_EXPANDED, FAMILY_INDICATORS_EXPANDED } from './village_data_expanded.js';
 
-export { VILLAGE_FAMILIES };
+// Merge original 30 + expanded 170 = 200 KK
+export const VILLAGE_FAMILIES = [...VILLAGE_FAMILIES_ORIGINAL, ...VILLAGE_FAMILIES_EXPANDED];
 
 export const FAMILY_SDOH = {
     'kk_01': { economy: 'Middle', housing: 'Permanent', education: 'High School', water: 'PDAM', sanitation: 'Private Latrine', diet: 'Balanced', smoking: false, activity: 'Active' },
@@ -44,6 +47,9 @@ export const FAMILY_SDOH = {
     'kk_30': { economy: 'Middle', housing: 'Permanent', education: 'High School', water: 'PDAM', sanitation: 'Private Latrine', diet: 'Low Sodium', smoking: false, activity: 'Sedentary' },
 };
 
+// Merge expanded SDOH (kk_31–kk_200)
+Object.assign(FAMILY_SDOH, FAMILY_SDOH_EXPANDED);
+
 export const FAMILY_INDICATORS = {
     'kk_01': { kb: true, persalinan: true, imunisasi: true, asi: true, balita: true, tb: true, hipertensi: true, jiwa: true, rokok: false, jkn: true, air: true, jamban: true, jentik: true },
     'kk_02': { kb: true, persalinan: true, imunisasi: true, asi: true, balita: true, tb: true, hipertensi: false, jiwa: true, rokok: false, jkn: true, air: true, jamban: true, jentik: true },
@@ -76,6 +82,9 @@ export const FAMILY_INDICATORS = {
     'kk_29': { kb: true, persalinan: true, imunisasi: true, asi: true, balita: true, tb: true, hipertensi: true, jiwa: true, rokok: false, jkn: true, air: true, jamban: true, jentik: true },
     'kk_30': { kb: true, persalinan: true, imunisasi: true, asi: true, balita: true, tb: true, hipertensi: false, jiwa: true, rokok: true, jkn: true, air: true, jamban: true, jentik: true },
 };
+
+// Merge expanded indicators (kk_31–kk_200)
+Object.assign(FAMILY_INDICATORS, FAMILY_INDICATORS_EXPANDED);
 
 // Codex Fix: derive VILLAGE_STATS from VILLAGE_FAMILIES to prevent stale data
 // Previously hardcoded (was stale: 116 pop vs actual 106)
