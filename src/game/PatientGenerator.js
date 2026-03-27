@@ -2,11 +2,11 @@
  * @reflection
  * [IDENTITY]: PatientGenerator
  * [PURPOSE]: Game engine module providing: generatePatient, generateEmergencyPatient, generateProlanisVisitPatient.
- * [STATE]: Experimental
+ * [STATE]: Refactored (PatientFactory Phase 1)
  * [ANCHOR]: generatePatient
- * [DEPENDS_ON]: CaseLibrary, EmergencyCases, SocialDeterminants, VillageRegistry, CalendarEventDB
+ * [DEPENDS_ON]: PatientFactory, CaseLibrary, EmergencyCases, SocialDeterminants, VillageRegistry, CalendarEventDB
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-03-27
  */
 import { CASE_LIBRARY, getCaseByCondition } from '../content/cases/CaseLibrary.js';
 import { getRandomEmergencyCase } from './EmergencyCases.js';
@@ -14,6 +14,7 @@ import { generateSocialDeterminants } from '../utils/SocialDeterminants.js';
 import { calculateRiskFactors, INDIVIDUAL_PROFILES, FAMILY_MEDICAL_HISTORY } from '../domains/village/VillageRegistry.js';
 import { getDateFromDay } from '../data/CalendarEventDB.js';
 import { createDeterministicSequence, pickDeterministic, randomIdFromSeed, seedKey } from '../utils/deterministicRandom.js';
+import { normalizePatientOutput, generateAnthropometrics as _generateAnthropometrics, NAMES_MALE as _NM, NAMES_FEMALE as _NF, SURNAMES as _SN } from './PatientFactory.js';
 
 // Anchor family IDs - these have curated profiles and should appear more often
 const ANCHOR_FAMILY_IDS = ['kk_02', 'kk_04', 'kk_08', 'kk_15', 'kk_22', 'kk_23', 'kk_24', 'kk_25'];
@@ -818,7 +819,7 @@ export function generateFollowupPatient(consequence, currentTime, seedHint = 'de
         ? `Dok, saya ${patientName}. Saya datang kontrol, ${narrative}.`
         : `Dok, saya ${patientName}. ${narrative}.`;
 
-    return {
+    return normalizePatientOutput({
         id: randomIdFromSeed('followup', followupSeed),
         name: patientName,
         age: age,
@@ -878,7 +879,7 @@ export function generateFollowupPatient(consequence, currentTime, seedHint = 'de
             houseId: null,
             isFollowup: true,
         }
-    };
+    });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -921,7 +922,7 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
 
     const facility = CATEGORY_FACILITY_MAP[disease.category] || 'poli_umum';
 
-    return {
+    return normalizePatientOutput({
         id: randomIdFromSeed('patient_bcbridge', bridgeSeed),
         name: fullName,
         age: member.age || 35,
@@ -972,7 +973,7 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
             isBCBridge: true,
             bcScenarioId: scenarioId,
         }
-    };
+    });
 }
 
 /**
@@ -1001,7 +1002,7 @@ export function generateGenericPatients(diseaseId, amount, targetClinic, current
 
         const facility = targetClinic || CATEGORY_FACILITY_MAP[disease.category] || 'poli_umum';
 
-        patients.push({
+        patients.push(normalizePatientOutput({
             id: randomIdFromSeed(`patient_generic_${i}`, patientSeed),
             name: fullName,
             age,
@@ -1039,7 +1040,7 @@ export function generateGenericPatients(diseaseId, amount, targetClinic, current
                 clue: disease.clue || disease.teachingPoint || '',
                 isResident: true,
             }
-        });
+        }));
     }
     return patients;
 }
