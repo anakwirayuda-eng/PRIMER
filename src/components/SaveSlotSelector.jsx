@@ -93,6 +93,10 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     const MAX_FILE_SIZE = 500 * 1024;
 
     const radarNodes = useMemo(() => RADAR_NODES, []);
+    const touchActionStyle = useMemo(() => ({
+        touchAction: 'manipulation',
+        WebkitTapHighlightColor: 'transparent',
+    }), []);
 
     useEffect(() => { loadSlots(); }, []);
     useEffect(() => { const t = setTimeout(() => setTitleAnimDone(true), 800); return () => clearTimeout(t); }, []);
@@ -122,6 +126,11 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                 ? `DATA OPERASIONAL SLOT 0${slotId + 1} DIHAPUS.`
                 : `GAGAL MENGHAPUS DATA SLOT 0${slotId + 1}.`
         });
+    };
+
+    const handleTapAction = (e, handler) => {
+        e.preventDefault();
+        handler();
     };
 
     const formatDate = (timestamp) => {
@@ -249,7 +258,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
             <style>{MENU_CSS}</style>
 
             {/* CRT Scanline */}
-            <div className="absolute inset-0 sss-crt-scanline z-40 pointer-events-none" />
+            <div className="absolute inset-0 sss-crt-scanline z-40 pointer-events-none" style={{ touchAction: 'none' }} />
             {/* Flashbang Transition */}
             {isTransitioning && <div className="absolute inset-0 z-[200] mix-blend-screen pointer-events-none" style={{ animation: 'sss-auth-flash 1.2s ease-out forwards' }} />}
 
@@ -345,14 +354,20 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                 {/* Main Actions */}
                 <div className="max-w-sm">
                     {!showSlots ? (
-                        <button onClick={() => setShowSlots(true)}
-                            className="w-full relative px-8 py-5 bg-emerald-600 text-white font-black text-lg tracking-[0.2em] uppercase rounded-xl btn-tactical border-b-emerald-900 shadow-[0_15px_40px_rgba(16,185,129,0.3)] hover:bg-emerald-500 flex items-center justify-between group"
+                        <button
+                            onClick={() => setShowSlots(true)}
+                            onTouchEnd={(e) => handleTapAction(e, () => setShowSlots(true))}
+                            style={touchActionStyle}
+                            className="w-full relative z-50 px-8 py-5 bg-emerald-600 text-white font-black text-lg tracking-[0.2em] uppercase rounded-xl btn-tactical border-b-emerald-900 shadow-[0_15px_40px_rgba(16,185,129,0.3)] hover:bg-emerald-500 flex items-center justify-between group"
                         >
                             <span className="flex items-center gap-3"><Fingerprint size={20}/> {hasSaves ? 'AKSES DATABASE' : 'INISIASI SISTEM'}</span>
                             <Play size={20} className="transform group-hover:translate-x-2 transition-transform" />
                         </button>
                     ) : (
-                        <button onClick={() => setShowSlots(false)}
+                        <button
+                            onClick={() => setShowSlots(false)}
+                            onTouchEnd={(e) => handleTapAction(e, () => setShowSlots(false))}
+                            style={touchActionStyle}
                             className="text-slate-500 hover:text-emerald-400 text-xs font-mono uppercase tracking-[0.3em] flex items-center gap-2 transition-colors font-bold bg-slate-900/50 px-6 py-3 rounded-xl border border-slate-800"
                         >
                             <ChevronDown size={14} className="rotate-90" /> TUTUP DATABASE
@@ -368,7 +383,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                     )}
                 </div>
 
-                <div className="absolute bottom-8 left-8 lg:left-16 flex flex-col gap-2">
+                <div className="hidden md:flex absolute bottom-8 left-8 lg:left-16 flex-col gap-2">
                     <div className="flex items-center gap-4 opacity-40 grayscale">
                         <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt="ITS" className="h-5 object-contain" />
                         <div className="h-3 w-px bg-slate-500" />
@@ -383,7 +398,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
 
             {/* ════════ RIGHT PANEL: DOSSIER FILES ════════ */}
             <div className={`w-full md:w-7/12 lg:w-1/2 p-4 md:p-8 flex items-center justify-center relative z-20 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
-                ${showSlots ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-32 pointer-events-none absolute lg:relative'}`}>
+                ${showSlots ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-32 pointer-events-none hidden md:flex absolute lg:relative'}`}>
 
                 <div className="w-full max-w-xl bg-[#0a0f16]/95 backdrop-blur-2xl border border-slate-800 rounded-3xl overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
 
@@ -422,7 +437,13 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                                                 <button onClick={() => handleImportClick(slot.slotId)} disabled={isTransitioning} className="p-3 border border-slate-800 hover:border-blue-900 text-slate-500 hover:text-blue-400 rounded-xl transition-colors bg-slate-900">
                                                     <Upload size={16} />
                                                 </button>
-                                                <button onClick={() => executeNewGame(slot.slotId)} disabled={isTransitioning} className="px-6 py-3 bg-cyan-950/40 text-cyan-400 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-cyan-600 hover:text-white transition-all btn-tactical border-b-cyan-900 flex items-center gap-2 border border-cyan-800">
+                                                <button
+                                                    onClick={() => executeNewGame(slot.slotId)}
+                                                    onTouchEnd={(e) => handleTapAction(e, () => executeNewGame(slot.slotId))}
+                                                    style={touchActionStyle}
+                                                    disabled={isTransitioning}
+                                                    className="px-6 py-3 bg-cyan-950/40 text-cyan-400 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-cyan-600 hover:text-white transition-all btn-tactical border-b-cyan-900 flex items-center gap-2 border border-cyan-800"
+                                                >
                                                     <Plus size={16} /> INISIASI
                                                 </button>
                                             </div>
@@ -465,7 +486,11 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
 
                                             <div className="ml-2 mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
                                                 <div className="text-[9px] font-mono text-slate-500 flex items-center gap-1.5"><Clock size={10}/> LAST_SYNC: {formatDate(slot.savedAt)}</div>
-                                                <button onClick={() => executeStartGame(slot.slotId, slot)} disabled={isTransitioning}
+                                                <button
+                                                    onClick={() => executeStartGame(slot.slotId, slot)}
+                                                    onTouchEnd={(e) => handleTapAction(e, () => executeStartGame(slot.slotId, slot))}
+                                                    style={touchActionStyle}
+                                                    disabled={isTransitioning}
                                                     className="px-8 py-3 bg-emerald-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-emerald-500 btn-tactical border-b-emerald-900 shadow-[0_5px_15px_rgba(16,185,129,0.2)] flex justify-center items-center gap-2"
                                                 >
                                                     <Cpu size={14} /> OTORISASI LOGIN
