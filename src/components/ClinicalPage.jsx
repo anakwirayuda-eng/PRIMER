@@ -44,6 +44,7 @@ export default function ClinicalPage() {
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [poliUmumSubTab, setPoliUmumSubTab] = useState('antrian'); // 'antrian' | 'prolanis'
+    const [mobileQueueOpen, setMobileQueueOpen] = useState(false);
 
     // Get player level from game state
     const playerLevel = playerStats?.level || 1;
@@ -595,6 +596,74 @@ export default function ClinicalPage() {
 
 
             </div>
+
+            {/* Mobile Queue Drawer — floating button + slide-up panel */}
+            {!activePatientId && !activeEmergencyId && !showKPI && (
+                <>
+                    {/* Floating queue button */}
+                    <button
+                        onClick={() => setMobileQueueOpen(v => !v)}
+                        className={`md:hidden fixed bottom-20 right-4 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all active:scale-90
+                            ${isDark ? 'bg-indigo-600 text-white shadow-indigo-900/40' : 'bg-indigo-600 text-white shadow-indigo-200'}`}
+                    >
+                        <Users size={22} />
+                        {queue.length > 0 && (
+                            <span className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white">
+                                {queue.length}
+                            </span>
+                        )}
+                    </button>
+
+                    {/* Slide-up queue drawer */}
+                    {mobileQueueOpen && (
+                        <div className={`md:hidden fixed inset-0 z-50 flex flex-col justify-end`}>
+                            {/* Backdrop */}
+                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileQueueOpen(false)} />
+                            {/* Panel */}
+                            <div className={`relative max-h-[70vh] rounded-t-2xl overflow-hidden flex flex-col
+                                ${isDark ? 'bg-slate-900 border-t border-slate-700' : 'bg-white border-t border-slate-200'}
+                                animate-in slide-in-from-bottom-4 duration-300`}>
+                                {/* Handle */}
+                                <div className="flex justify-center pt-2 pb-1">
+                                    <div className={`h-1 w-10 rounded-full ${isDark ? 'bg-slate-600' : 'bg-slate-300'}`} />
+                                </div>
+                                <div className={`px-4 py-2 font-black text-xs uppercase tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                                    🩺 Antrian Pasien ({queue.length})
+                                </div>
+                                <div className="flex-1 overflow-y-auto px-2 pb-4">
+                                    {queue.length === 0 ? (
+                                        <div className={`p-8 text-center ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                                            <Stethoscope size={32} className="mx-auto mb-2 opacity-30" />
+                                            <p className="text-xs">Belum ada pasien</p>
+                                        </div>
+                                    ) : (
+                                        queue.map(patient => (
+                                            <button
+                                                key={patient.id}
+                                                onClick={() => { admitPatient(patient.id); setMobileQueueOpen(false); }}
+                                                className={`w-full flex items-center gap-3 p-3 rounded-xl mb-1.5 transition-all active:scale-[0.98]
+                                                    ${isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-700'}`}
+                                            >
+                                                <div
+                                                    style={getAvatarStyle(patient.age, patient.gender, 40)}
+                                                    className="w-10 h-10 rounded-full flex-shrink-0 border-2 border-indigo-400/30"
+                                                />
+                                                <div className="flex-1 text-left">
+                                                    <p className="font-bold text-sm">{patient.name}</p>
+                                                    <p className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                                                        {patient.age}th · {patient.gender} · {patient.social?.isResident ? '🏘️ Warga' : '👤 Visitor'}
+                                                    </p>
+                                                </div>
+                                                <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-lg ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>Panggil</span>
+                                            </button>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
 
             {/* Global Toast Renderer */}
             {toasts.length > 0 && (

@@ -115,7 +115,7 @@ export default function PatientEMR() {
 
     return (
         <div
-            className={`p-4 h-full flex flex-col overflow-y-auto ${isDark ? 'bg-slate-950' : 'bg-slate-50'} transition-all duration-1000`}
+            className={`p-2 md:p-4 h-full flex flex-col overflow-y-auto ${isDark ? 'bg-slate-950' : 'bg-slate-50'} transition-all duration-1000`}
             style={isGroggy ? { filter: 'saturate(0.45) blur(0.4px) brightness(0.85)', transition: 'filter 2s ease-in-out' } : undefined}
         >
             {/* Header with Avatar */}
@@ -132,19 +132,19 @@ export default function PatientEMR() {
                 <div className="flex-1 relative z-10">
                     <div className="flex justify-between items-start">
                         <div>
-                            <h2 className={`text-base md:text-xl font-black ${isDark ? 'text-white' : 'text-slate-800'} flex items-center gap-2 mb-1 tracking-tight`}>
+                            <h2 className={`text-sm md:text-xl font-black ${isDark ? 'text-white' : 'text-slate-800'} flex flex-wrap items-center gap-1 md:gap-2 mb-1 tracking-tight`}>
                                 {patient.name}
                                 {social.isResident ? (
-                                    <span className={`text-[10px] px-2 py-0.5 rounded-full border uppercase tracking-wider font-black ${isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-teal-100 text-teal-700 border-teal-200'}`}>
-                                        Warga Desa
+                                    <span className={`text-[9px] md:text-[10px] px-1.5 md:px-2 py-0.5 rounded-full border uppercase tracking-wider font-black ${isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-teal-100 text-teal-700 border-teal-200'}`}>
+                                        Warga
                                     </span>
                                 ) : (
-                                    <span className={`text-[10px] px-2 py-0.5 rounded-full border uppercase tracking-wider font-black ${isDark ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
-                                        Pengunjung
+                                    <span className={`text-[9px] md:text-[10px] px-1.5 md:px-2 py-0.5 rounded-full border uppercase tracking-wider font-black ${isDark ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                                        Visitor
                                     </span>
                                 )}
                                 {morningStatus === 'groggy' && (
-                                    <span className="bg-amber-100 text-amber-700 text-[10px] px-2 py-0.5 rounded-full border border-amber-200 uppercase tracking-wider font-bold">
+                                    <span className="bg-amber-100 text-amber-700 text-[9px] md:text-[10px] px-1.5 md:px-2 py-0.5 rounded-full border border-amber-200 uppercase tracking-wider font-bold">
                                         😵 Groggy
                                     </span>
                                 )}
@@ -248,7 +248,7 @@ export default function PatientEMR() {
                     {/* Content */}
                     <div
                         key={activeTab}
-                        className={`${isDark ? 'bg-slate-900 border-slate-700 shadow-emerald-900/10' : 'bg-white border-slate-200'} p-4 md:rounded-b-xl shadow-lg md:border-t-0 border flex-1 overflow-y-auto relative animate-fadeIn pb-20 md:pb-4`}
+                        className={`${isDark ? 'bg-slate-900 border-slate-700 shadow-emerald-900/10' : 'bg-white border-slate-200'} p-2 md:p-4 md:rounded-b-xl shadow-lg md:border-t-0 border flex-1 overflow-y-auto relative animate-fadeIn pb-28 md:pb-4`}
                     >
                         {isProcessing && (
                             <div className={`absolute inset-0 ${isDark ? 'bg-slate-900/60' : 'bg-white/60'} backdrop-blur-[1px] z-50 flex flex-col items-center justify-center`}>
@@ -520,46 +520,65 @@ export default function PatientEMR() {
             </div>
 
             {/* Mobile Bottom Nav Bar — visible only on mobile */}
-            <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex items-center justify-around
+            <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col
                 ${isDark ? 'bg-slate-900/95 border-t border-slate-700 backdrop-blur-md' : 'bg-white/95 border-t border-slate-200 backdrop-blur-md'}
-                py-1.5 px-1 safe-area-pb`}
+                safe-area-pb`}
             >
-                {[
-                    { key: 'anamnesis', icon: FileText, label: 'Anamn.' },
-                    { key: 'history', icon: Activity, label: 'Riwayat' },
-                    { key: 'physical', icon: Stethoscope, label: 'Fisik' },
-                    { key: 'labs', icon: Microscope, label: 'Lab' },
-                    { key: 'assessment', icon: Brain, label: 'Diagnosa' },
-                    { key: 'treatment', icon: Pill, label: 'Obat' },
-                    { key: 'procedures', icon: Scissors, label: 'Tindakan' },
-                    { key: 'education', icon: BookOpen, label: 'Edukasi' },
-                    { key: 'billing', icon: Receipt, label: 'Billing' },
-                ].map(tab => (
+                {/* Mobile action shortcuts — replaces hidden desktop header buttons */}
+                <div className={`flex items-center justify-end gap-2 px-2 py-1 border-b ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
                     <button
-                        key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
-                        className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg min-w-[2.5rem] transition-all
-                            ${activeTab === tab.key
-                                ? (isDark ? 'text-emerald-400' : 'text-emerald-600')
-                                : (isDark ? 'text-slate-500 active:text-slate-300' : 'text-slate-400 active:text-slate-600')
-                            }`}
+                        onClick={() => openWiki(QUICK_CODEX_MAP[activeTab] || 'ukp_overview')}
+                        className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold transition-all active:scale-95
+                            ${isDark ? 'bg-emerald-600/20 text-emerald-400' : 'bg-indigo-50 text-indigo-600'}`}
                     >
-                        <tab.icon size={18} />
-                        <span className="text-[9px] font-bold leading-none truncate max-w-[3rem]">{tab.label}</span>
-                        {activeTab === tab.key && (
-                            <div className={`w-1 h-1 rounded-full mt-0.5 ${isDark ? 'bg-emerald-400' : 'bg-emerald-500'}`} />
-                        )}
+                        <Brain size={12} /> MAIA
                     </button>
-                ))}
+                    {social.isResident && social.familyId && (
+                        <button
+                            onClick={() => navigate('archive', { familyId: social.familyId })}
+                            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold transition-all active:scale-95
+                                ${isDark ? 'bg-teal-600/20 text-teal-400' : 'bg-teal-50 text-teal-600'}`}
+                        >
+                            <BookOpen size={12} /> Keluarga
+                        </button>
+                    )}
+                </div>
+                {/* Tab bar — 7 tabs with 44px+ touch targets */}
+                <div className="flex items-center justify-around py-1.5 px-0.5">
+                    {[
+                        { key: 'anamnesis', icon: FileText, label: 'Anamn.' },
+                        { key: 'history', icon: Activity, label: 'Riwayat' },
+                        { key: 'physical', icon: Stethoscope, label: 'Fisik' },
+                        { key: 'labs', icon: Microscope, label: 'Lab' },
+                        { key: 'assessment', icon: Brain, label: 'Dx' },
+                        { key: 'treatment', icon: Pill, label: 'Obat' },
+                        { key: 'billing', icon: Receipt, label: 'Billing' },
+                    ].map(tab => (
+                        <button
+                            key={tab.key}
+                            onClick={() => setActiveTab(tab.key)}
+                            className={`flex flex-col items-center gap-0.5 py-1.5 rounded-lg min-w-[2.8rem] min-h-[2.8rem] justify-center transition-all
+                                ${activeTab === tab.key
+                                    ? (isDark ? 'text-emerald-400 bg-emerald-500/10' : 'text-emerald-600 bg-emerald-50')
+                                    : (isDark ? 'text-slate-500 active:text-slate-300' : 'text-slate-400 active:text-slate-600')
+                                }`}
+                        >
+                            <tab.icon size={20} />
+                            <span className="text-[9px] font-bold leading-none">{tab.label}</span>
+                        </button>
+                    ))}
+                </div>
             </nav>
 
-            {/* 🤖 CORTANA PROTOCOL: Floating MAIA Live Copilot */}
-            <MaiaLiveCopilot
-                patient={patient}
-                liveMaiaFeedback={maiaFeedback}
-                historyLength={anamnesisHistory?.length || 0}
-                isEmergency={!!patient.isEmergency}
-            />
+            {/* 🤖 CORTANA PROTOCOL: Floating MAIA Live Copilot — desktop only (redundant on mobile) */}
+            <div className="hidden md:block">
+                <MaiaLiveCopilot
+                    patient={patient}
+                    liveMaiaFeedback={maiaFeedback}
+                    historyLength={anamnesisHistory?.length || 0}
+                    isEmergency={!!patient.isEmergency}
+                />
+            </div>
         </div>
     );
 }
