@@ -543,8 +543,8 @@ export default function PatientEMR() {
                         </button>
                     )}
                 </div>
-                {/* Tab bar — 7 tabs with 44px+ touch targets */}
-                <div className="flex items-center justify-around py-1.5 px-0.5">
+                {/* Tab bar — all 9 tabs, horizontally scrollable on small screens */}
+                <div className="flex items-center overflow-x-auto no-scrollbar py-1.5 px-0.5 gap-0.5">
                     {[
                         { key: 'anamnesis', icon: FileText, label: 'Anamn.' },
                         { key: 'history', icon: Activity, label: 'Riwayat' },
@@ -552,12 +552,14 @@ export default function PatientEMR() {
                         { key: 'labs', icon: Microscope, label: 'Lab' },
                         { key: 'assessment', icon: Brain, label: 'Dx' },
                         { key: 'treatment', icon: Pill, label: 'Obat' },
+                        { key: 'procedures', icon: Scissors, label: 'Tindakan' },
+                        { key: 'education', icon: BookOpen, label: 'Edukasi' },
                         { key: 'billing', icon: Receipt, label: 'Billing' },
                     ].map(tab => (
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
-                            className={`flex flex-col items-center gap-0.5 py-1.5 rounded-lg min-w-[2.8rem] min-h-[2.8rem] justify-center transition-all
+                            className={`flex flex-col items-center gap-0.5 py-1.5 rounded-lg min-w-[2.8rem] min-h-[2.8rem] flex-shrink-0 justify-center transition-all
                                 ${activeTab === tab.key
                                     ? (isDark ? 'text-emerald-400 bg-emerald-500/10' : 'text-emerald-600 bg-emerald-50')
                                     : (isDark ? 'text-slate-500 active:text-slate-300' : 'text-slate-400 active:text-slate-600')
