@@ -683,4 +683,57 @@ export const createPublicHealthSlice = (set, get) => ({
             return { success: true };
         },
     },
+
+        // ═══ P6: Living Village — villageLedger feedback loop ═════
+        // Records discharge outcomes → updates family indicators
+        recordVillageLedgerEntry: (familyId, entryType, details = {}) => {
+            set(produce(s => {
+                if (!s.publicHealth.villageLedger) s.publicHealth.villageLedger = [];
+
+                const entry = {
+                    familyId,
+                    type: entryType, // 'discharge', 'home_visit', 'prolanis', 'immunization'
+                    day: get().world?.day || 0,
+                    timestamp: Date.now(),
+                    ...details
+                };
+                s.publicHealth.villageLedger.push(entry);
+
+                // Apply feedback to family indicators
+                if (s.publicHealth.villageData?.families && familyId) {
+                    const famIdx = s.publicHealth.villageData.families.findIndex(f => f.id === familyId);
+                    if (famIdx >= 0) {
+                        const fam = s.publicHealth.villageData.families[famIdx];
+                        const indicators = { ...(fam.indicators || {}) };
+
+                        // Discharge feedback: improve relevant indicators
+                        if (entryType === 'discharge' && details.diagnosisCategory) {
+                            if (details.diagnosisCategory === 'Cardiovascular') indicators.hipertensi = true;
+                            if (details.diagnosisCategory === 'Respiratory' && details.diagnosisCode?.startsWith('A15')) indicators.tb = true;
+                            if (details.diagnosisCategory === 'Psychiatry') indicators.jiwa = true;
+                        }
+
+                        // Prolanis completion: improve chronic indicators
+                        if (entryType === 'prolanis') {
+                            indicators.hipertensi = true;
+                        }
+
+                        // Immunization: improve imunisasi indicator
+                        if (entryType === 'immunization') {
+                            indicators.imunisasi = true;
+                        }
+
+                        s.publicHealth.villageData.families[famIdx] = {
+                            ...fam,
+                            indicators,
+                            lastLedgerDay: entry.day
+                        };
+                    }
+                }
+            }));
+        },
+
+        getVillageLedger: () => {
+            return get().publicHealth.villageLedger || [];
+        },
 });

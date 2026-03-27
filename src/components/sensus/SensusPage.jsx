@@ -520,7 +520,7 @@ export default function SensusPage() {
     const { villageData } = useGame();
     const [search, setSearch] = useState('');
     const [selectedFamily, setSelectedFamily] = useState(null);
-    const [filterRT, setFilterRT] = useState('all');
+    const [filterRwRt, setFilterRwRt] = useState('all');
     const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
     const families = useMemo(() => (
         Array.isArray(villageData?.families) && villageData.families.length > 0
@@ -531,8 +531,8 @@ export default function SensusPage() {
     const demographics = useMemo(() => calculateDemographics(families), [families]);
     const sdohSummary = useMemo(() => calculateSDOHSummary(families), [families]);
 
-    const rtList = useMemo(() => {
-        return [...new Set(families.map(f => f.rt || 'N/A'))].sort();
+    const rwRtList = useMemo(() => {
+        return [...new Set(families.map(f => (f.rw||'01')+'-'+(f.rt||'01')))].sort();
     }, [families]);
 
     const filteredFamilies = useMemo(() => {
@@ -548,12 +548,12 @@ export default function SensusPage() {
             );
         }
 
-        if (filterRT !== 'all') {
-            list = list.filter(f => (f.rt || 'N/A') === filterRT);
+        if (filterRwRt !== 'all') {
+            list = list.filter(f => ((f.rw||'01')+'-'+(f.rt||'01')) === filterRwRt);
         }
 
         return list;
-    }, [families, search, filterRT]);
+    }, [families, search, filterRwRt]);
 
     const topOccupations = useMemo(() => {
         return Object.entries(demographics.occupations)
@@ -596,7 +596,7 @@ export default function SensusPage() {
                         {[
                             { icon: Users, label: 'Jumlah Jiwa', value: demographics.total, sub: `${demographics.male}L / ${demographics.female}P` },
                             { icon: Home, label: 'Kepala Keluarga', value: families.length, sub: 'KK terdaftar' },
-                            { icon: MapPin, label: 'Wilayah RT', value: rtList.length, sub: 'RT administratif' },
+                            { icon: MapPin, label: 'Wilayah RW-RT', value: rwRtList.length, sub: 'Klaster wilayah' },
                             { icon: Shield, label: 'JKN/BPJS', value: `${sdohSummary.jknCoverage}%`, sub: `${sdohSummary.jknCount}/${sdohSummary.totalFamilies} KK` },
                             { icon: Baby, label: 'Balita', value: demographics.ageGroups.balita, sub: 'Usia 0-5 tahun' },
                             { icon: Briefcase, label: 'Lansia', value: demographics.ageGroups.lansia, sub: 'Usia 60+ tahun' },
@@ -710,14 +710,14 @@ export default function SensusPage() {
 
                             {/* RT filter */}
                             <select
-                                value={filterRT}
-                                onChange={e => setFilterRT(e.target.value)}
+                                value={filterRwRt}
+                                onChange={e => setFilterRwRt(e.target.value)}
                                 className="text-xs border border-green-300 rounded-lg px-2 py-1.5 focus:ring-green-500 focus:border-green-500"
                                 style={{ background: '#FFFBF0' }}
                             >
-                                <option value="all">Semua RT</option>
-                                {rtList.map(rt => (
-                                    <option key={rt} value={rt}>RT {rt}</option>
+                                <option value="all">Semua Wilayah</option>
+                                {rwRtList.map(rwRt => (
+                                    <option key={rwRt} value={rwRt}>RW {rwRt.replace('-',' RT ')}</option>
                                 ))}
                             </select>
 

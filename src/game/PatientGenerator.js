@@ -16,8 +16,9 @@ import { getDateFromDay } from '../data/CalendarEventDB.js';
 import { createDeterministicSequence, pickDeterministic, randomIdFromSeed, seedKey } from '../utils/deterministicRandom.js';
 import { normalizePatientOutput, generateAnthropometrics as _generateAnthropometrics, NAMES_MALE as _NM, NAMES_FEMALE as _NF, SURNAMES as _SN } from './PatientFactory.js';
 
-// Anchor family IDs - these have curated profiles and should appear more often
-const ANCHOR_FAMILY_IDS = ['kk_02', 'kk_04', 'kk_08', 'kk_15', 'kk_22', 'kk_23', 'kk_24', 'kk_25'];
+// Curated anchor families (have INDIVIDUAL_PROFILES or FAMILY_MEDICAL_HISTORY)
+// For 200 KK: bias is now lighter — pool is much bigger, so distribution is more even
+const CURATED_FAMILY_IDS = ['kk_02', 'kk_04', 'kk_08', 'kk_15', 'kk_22', 'kk_23', 'kk_24', 'kk_25'];
 
 const CATEGORY_FACILITY_MAP = {
     'Respiratory': 'poli_umum',
@@ -238,9 +239,9 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         const living = population.villagers.filter(v => v.status === 'alive');
 
         if (living.length > 0) {
-            const anchorMembers = living.filter(v => ANCHOR_FAMILY_IDS.includes(v.familyId));
-            resident = (anchorMembers.length > 0 && rng.chance(0.4))
-                ? pickDeterministic(anchorMembers, seedKey(patientSeed, 'anchor-member'))
+            const curatedMembers = living.filter(v => CURATED_FAMILY_IDS.includes(v.familyId));
+            resident = (curatedMembers.length > 0 && rng.chance(0.15))
+                ? pickDeterministic(curatedMembers, seedKey(patientSeed, 'curated-member'))
                 : pickDeterministic(living, seedKey(patientSeed, 'resident-member'));
 
             residentFamily = population.families?.find(f => f.id === resident.familyId);

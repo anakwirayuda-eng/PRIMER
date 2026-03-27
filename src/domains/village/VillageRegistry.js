@@ -86,6 +86,31 @@ export const FAMILY_INDICATORS = {
 // Merge expanded indicators (kk_31–kk_200)
 Object.assign(FAMILY_INDICATORS, FAMILY_INDICATORS_EXPANDED);
 
+
+// ═══ RW Progressive Unlock ═════════════════════════════
+// Game starts with RW 01-02 (30 KK). Additional RW unlock based on day + reputation.
+export const RW_UNLOCK_THRESHOLDS = {
+    '01': { day: 0, reputation: 0 },   // Always unlocked
+    '02': { day: 0, reputation: 0 },   // Always unlocked
+    '03': { day: 15, reputation: 30 },  // Early game
+    '04': { day: 30, reputation: 40 },  // Mid-early
+    '05': { day: 45, reputation: 50 },  // Mid game
+    '06': { day: 60, reputation: 55 },  // Mid-late
+    '07': { day: 75, reputation: 60 },  // Late game
+    '08': { day: 90, reputation: 65 },  // Endgame
+};
+
+export function getUnlockedRWs(day, reputation) {
+    return Object.entries(RW_UNLOCK_THRESHOLDS)
+        .filter(([, req]) => day >= req.day && reputation >= req.reputation)
+        .map(([rw]) => rw);
+}
+
+export function filterFamiliesByUnlockedRW(families, day, reputation) {
+    const unlockedRWs = getUnlockedRWs(day, reputation);
+    return families.filter(f => unlockedRWs.includes(f.rw || '01'));
+}
+
 // Codex Fix: derive VILLAGE_STATS from VILLAGE_FAMILIES to prevent stale data
 // Previously hardcoded (was stale: 116 pop vs actual 106)
 export const VILLAGE_STATS = (() => {

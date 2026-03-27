@@ -13,7 +13,7 @@ import { getSupplierById } from '../../data/SupplierDatabase.js';
 import { checkForOutbreakTrigger, checkOutbreakExpiry } from '../../domains/community/OutbreakSystem.js';
 import { generatePatient } from '../../game/PatientGenerator.js';
 import { evaluateIKMTriggers, getSeasonForDay } from '../../game/IKMEventEngine.js';
-import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../../domains/village/VillageRegistry.js';
+import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers, getUnlockedRWs } from '../../domains/village/VillageRegistry.js';
 import { applyNeglectDecay } from '../../domains/village/NPCReadiness.js';
 import { normalizeMedicationId } from '../../models/InventoryRuntime.js';
 import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../../game/TheDirector.js';
@@ -148,12 +148,37 @@ export const createOrchestratorSlice = (set, get) => ({
                     villagers: getAllVillagers(),
                     stats: VILLAGE_STATS
                 };
+                population.unlockedRWs = getUnlockedRWs(1, 50); // Day 1, starting reputation
                 state.publicHealth.villageData = ensureVillageReadinessState(population);
 
+                // Opening day: Generate 3 patients. Two use forced-resident seeds
+                // to guarantee the player sees village residents on day 1.
+                const _p0 = generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-a'));
+                const _p1 = generatePatient(510, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-b'));
+                const _p2 = generatePatient(540, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-c'));
+
+                // Post-generate: Force at least 2 to be residents if they aren't already
+                const _forceResident = (p, idx) => {
+                    if (p.social?.isResident) return p; // Already resident
+                    // Pick a random villager from the expanded pool
+                    const villagers = population.villagers?.filter(v => v.status === 'alive') || [];
+                    if (villagers.length === 0) return p;
+                    const v = pickDeterministic(villagers, seedKey('force-resident', idx));
+                    const fam = population.families?.find(f => f.id === v.familyId);
+                    return {
+                        ...p,
+                        name: v.fullName || (v.firstName + ' ' + (fam?.surname || '')),
+                        age: v.age || p.age,
+                        gender: v.gender === 'L' ? 'Laki-laki' : 'Perempuan',
+                        social: { ...p.social, isResident: true, familyId: v.familyId, villagerId: v.id },
+                        hidden: { ...p.hidden, familyId: v.familyId, villagerId: v.id, isResident: true }
+                    };
+                };
+
                 state.clinical.queue = [
-                    generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game-patient', 0)),
-                    generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game-patient', 1)),
-                    generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game-patient', 2))
+                    _forceResident(_p0, 0),
+                    _forceResident(_p1, 1),
+                    _p2 // Third patient can be outsider/random
                 ];
                 state.nav.gameState = 'playing';
             }));
@@ -266,6 +291,14 @@ export const createOrchestratorSlice = (set, get) => ({
                     state.publicHealth.activeOutbreaks.push(newOutbreak);
                     state.publicHealth.outbreakNotification = newOutbreak;
                     soundManager.playError();
+                }
+
+                // Update unlocked RWs based on current reputation + day
+                if (state.publicHealth.villageData) {
+                    state.publicHealth.villageData.unlockedRWs = getUnlockedRWs(
+                        nextDayVal,
+                        state.player.profile.reputation || 50
+                    );
                 }
 
                 // Village Dynamic Health (Random fluctuations)
