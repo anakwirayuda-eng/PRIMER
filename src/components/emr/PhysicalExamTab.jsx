@@ -1,333 +1,559 @@
 /**
  * @reflection
- * [IDENTITY]: PhysicalExamTab (Aegis Biometric Scanner × God-Tier Engine)
- * [PURPOSE]: Merged edition — Aegis visual skin (HUD reticles, scanning laser,
- *            forensic hex logs, radar idle) atop the original engine (memo(),
- *            severity NLP, actionable MAIA pills, normalization).
- * [STATE]: Production Ready
+ * [IDENTITY]: PhysicalExamTab
+ * [PURPOSE]: React UI component: PhysicalExamTab — System-grouped accordion with passive body reference.
+ * [STATE]: Production
  * [ANCHOR]: PhysicalExamTab
- * [DEPENDS_ON]: ProceduresDB, WikiData, BodyMapWidget, physicalExam utils
- * [LAST_UPDATE]: 2026-03-15
+ * [DEPENDS_ON]: ProceduresDB, physicalExam utils
+ * [KNOWN_ISSUES]: None
+ * [LAST_UPDATE]: 2026-03-28
  */
 
-import React, { useMemo, useEffect, memo } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import {
-    Info, Sparkles, Activity, CheckCircle2, AlertCircle,
-    Fingerprint, ChevronRight, Crosshair, Cpu, ScanFace
+    Activity,
+    AlertTriangle,
+    BookOpen,
+    BrainCircuit,
+    CheckCircle2,
+    ChevronDown,
+    ChevronRight,
+    Cpu,
+    Crosshair,
+    HeartPulse,
+    ScanEye,
+    ShieldAlert,
+    Sparkles,
 } from 'lucide-react';
 import { PHYSICAL_EXAM_OPTIONS } from '../../data/ProceduresDB.js';
-import { findWikiKey } from '../../data/WikiData.js';
-import BodyMapWidget from '../BodyMapWidget.jsx';
 import {
     getPhysicalExamDisplayName,
     normalizePhysicalExamFindings,
     normalizePhysicalExamKey,
 } from '../../utils/physicalExam.js';
 
-// ==========================================
-// 🧠 CLINICAL NLP HEURISTIC ENGINE (PRESERVED)
-// ==========================================
-const analyzeSeverity = (text) => {
-    if (!text) return 'neutral';
-    const t = typeof text === 'string' ? text.toLowerCase() : String(text).toLowerCase();
-    const abnormal = [
-        'nyeri', 'bengkak', 'abnormal', 'lesi', 'massa', 'krepitasi',
-        'ronkhi', 'wheezing', 'pucat', 'kemerahan', 'luka', 'fraktur',
-        'takikardi', 'deformitas', 'kaku', 'edema', 'murmur', 'stridor',
-        'ikterik', 'sianosis', 'retraksi', 'defans', 'rigiditas'
-    ];
-    const normal = [
-        'normal', 'dbn', 'simetris', 'reguler', 'clear', 'tidak ada',
-        'batas normal', 'sonor', 'vesikuler', 'utuh', 'baik', 'negatif',
-        'supel', 'tenang', 'compos mentis', 'dalam batas'
-    ];
-    if (abnormal.some(w => t.includes(w))) return 'abnormal';
-    if (normal.some(w => t.includes(w))) return 'normal';
-    return 'neutral';
+const ABNORMAL_WORDS = [
+    'nyeri', 'bengkak', 'abnormal', 'lesi', 'massa', 'krepitasi',
+    'ronkhi', 'wheezing', 'pucat', 'kemerahan', 'luka', 'fraktur',
+    'takikardi', 'deformitas', 'kaku', 'sesak', 'sianosis', 'menurun',
+    'murmur', 'gallop', 'edema', 'retraksi', 'defans', 'rigiditas',
+    'darah', 'jejas', 'perdarahan', 'henti', 'koma', 'apnea', 'asam',
+    'distensi', 'ikterik', 'lemah', 'defisit', 'parese', 'kejang',
+];
+
+const BODY_IMAGES = {
+    MALE: { front: '/body-male-front.png', back: '/body-male-back.png' },
+    FEMALE: { front: '/body-female-front.png', back: '/body-female-back.png' },
+    CHILD: { front: '/body-child-front.png', back: '/body-child-back.png' },
+    INFANT: { front: '/body-infant-front.png', back: '/body-infant-back.png' },
 };
 
-// Procedural hex code generator for forensic feel
-const generateMedHash = (str) => {
+const BODY_MARKERS = {
+    general: { side: 'front', x: 50, y: 7 },
+    vitals: { side: 'front', x: 18, y: 27 },
+    heent: { side: 'front', x: 50, y: 13 },
+    neck: { side: 'front', x: 50, y: 20 },
+    thorax: { side: 'front', x: 50, y: 31 },
+    breast: { side: 'front', x: 79, y: 30 },
+    abdomen: { side: 'front', x: 50, y: 48 },
+    genitalia: { side: 'front', x: 50, y: 62 },
+    rectal: { side: 'back', x: 50, y: 63 },
+    skin: { side: 'back', x: 31, y: 47 },
+    neuro: { side: 'back', x: 50, y: 29 },
+    extremities: { side: 'front', x: 36, y: 84 },
+};
+
+const EXAM_SYSTEM_GROUPS = [
+    {
+        id: 'general_assessment',
+        label: 'Penilaian Umum',
+        icon: ScanEye,
+        exams: ['general', 'vitals'],
+    },
+    {
+        id: 'head_neck',
+        label: 'Kepala & Leher',
+        icon: BrainCircuit,
+        exams: ['heent', 'neck'],
+    },
+    {
+        id: 'thorax_cardio',
+        label: 'Thorax & Kardiovaskular',
+        icon: HeartPulse,
+        exams: ['thorax', 'breast'],
+    },
+    {
+        id: 'abdominal_pelvic',
+        label: 'Abdomen & Pelvis',
+        icon: ShieldAlert,
+        exams: ['abdomen', 'genitalia', 'rectal'],
+    },
+    {
+        id: 'extremities_skin',
+        label: 'Ekstremitas & Kulit',
+        icon: Crosshair,
+        exams: ['extremities', 'skin', 'neuro'],
+    },
+];
+
+function analyzeSeverity(text) {
+    if (!text) return 'unexamined';
+    const normalized = String(text).toLowerCase();
+    return ABNORMAL_WORDS.some((word) => normalized.includes(word)) ? 'abnormal' : 'normal';
+}
+
+function generateMedHash(examKey, finding = '') {
+    const source = `${examKey}:${finding}`;
     let hash = 0;
-    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    return `0x${Math.abs(hash).toString(16).substring(0, 5).toUpperCase().padStart(5, '0')}`;
-};
+    for (let i = 0; i < source.length; i += 1) {
+        hash = ((hash << 5) - hash) + source.charCodeAt(i);
+        hash |= 0;
+    }
+    return `EX-${Math.abs(hash).toString(16).toUpperCase().padStart(6, '0').slice(0, 6)}`;
+}
 
-// ==========================================
-// ⚡ MEMOIZED FINDING CARD — O(1) Re-render (PRESERVED)
-// + Aegis visual: hex code, slide-in flash, SYS.VERIFIED
-// ==========================================
-const FindingCard = memo(({ examKey, finding, isDark, openWiki, index }) => {
-    const wikiKey = useMemo(() => findWikiKey('prob', examKey), [examKey]);
-    const examName = getPhysicalExamDisplayName(examKey) || PHYSICAL_EXAM_OPTIONS[examKey]?.name || examKey;
+function getBodyProfile(patient) {
+    const age = patient?.age || 25;
+    const gender = String(patient?.gender || '').toLowerCase();
+    const isFemale = gender === 'p' || gender === 'f' || gender.includes('female') || gender.includes('perempuan') || gender.includes('wanita');
+
+    if (age <= 3) return BODY_IMAGES.INFANT;
+    if (age <= 12) return BODY_IMAGES.CHILD;
+    if (isFemale) return BODY_IMAGES.FEMALE;
+    return BODY_IMAGES.MALE;
+}
+
+const FindingCard = memo(function FindingCard({ examKey, finding, isDark }) {
     const severity = analyzeSeverity(finding);
-    const hexLog = generateMedHash(examKey);
-
-    const theme = {
-        normal: {
-            bg: isDark ? 'bg-emerald-950/20 hover:bg-emerald-900/30' : 'bg-emerald-50/50 hover:bg-emerald-50',
-            border: isDark ? 'border-emerald-900/50 hover:border-emerald-500/50' : 'border-emerald-100 hover:border-emerald-300',
-            bar: 'bg-emerald-500',
-            text: isDark ? 'text-emerald-400' : 'text-emerald-700',
-            icon: <CheckCircle2 size={14} className={isDark ? 'text-emerald-500' : 'text-emerald-600'} />,
-            stamp: isDark ? 'bg-emerald-950/50 border-emerald-900 text-emerald-500' : 'bg-emerald-50 border-emerald-200 text-emerald-600',
-            cardAnim: 'pe-log-card',
-        },
-        abnormal: {
-            bg: isDark ? 'bg-rose-950/20 hover:bg-rose-900/30' : 'bg-rose-50/50 hover:bg-rose-50',
-            border: isDark ? 'border-rose-900/50 hover:border-rose-500/50' : 'border-rose-100 hover:border-rose-300',
-            bar: 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.4)]',
-            text: isDark ? 'text-rose-400' : 'text-rose-700',
-            icon: <AlertCircle size={14} className={isDark ? 'text-rose-500' : 'text-rose-600'} />,
-            stamp: isDark ? 'bg-rose-950/50 border-rose-900 text-rose-500' : 'bg-rose-50 border-rose-200 text-rose-600',
-            cardAnim: 'pe-log-card-abnormal',
-        },
-        neutral: {
-            bg: isDark ? 'bg-slate-900/40 hover:bg-slate-800/60' : 'bg-white hover:bg-slate-50',
-            border: isDark ? 'border-slate-800/60 hover:border-blue-500/40' : 'border-slate-200 hover:border-blue-300',
-            bar: 'bg-blue-500',
-            text: isDark ? 'text-blue-400' : 'text-blue-700',
-            icon: <div className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-blue-500' : 'bg-blue-600'} shadow-[0_0_8px_currentColor]`} />,
-            stamp: isDark ? 'bg-blue-950/50 border-blue-900 text-blue-500' : 'bg-blue-50 border-blue-200 text-blue-600',
-            cardAnim: 'pe-log-card',
-        }
-    }[severity];
+    const examLabel = getPhysicalExamDisplayName(examKey);
+    const hash = generateMedHash(examKey, finding);
 
     return (
-        <div
-            className={`${theme.cardAnim} group relative p-4 rounded-2xl border transition-all duration-300 transform hover:-translate-y-0.5 backdrop-blur-sm overflow-hidden ${theme.bg} ${theme.border} hover:shadow-lg`}
-            style={{ animationDelay: `${(index % 10) * 60}ms` }}
+        <article
+            className={`rounded-2xl border p-3 md:p-4 transition-colors ${
+                severity === 'abnormal'
+                    ? (isDark ? 'border-rose-500/30 bg-rose-500/10' : 'border-rose-200 bg-rose-50')
+                    : (isDark ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-emerald-200 bg-emerald-50/70')
+            }`}
         >
-            {/* Glowing Indicator Bar */}
-            <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-r-sm transition-all duration-300 ${theme.bar} opacity-70 group-hover:opacity-100 group-hover:shadow-[0_0_15px_currentColor]`} />
-
-            {/* Header: hex code + name + stamp + wiki */}
-            <div className="flex justify-between items-start mb-2.5 pl-3 pb-2 border-b border-dashed" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }}>
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Fingerprint size={8} className={isDark ? 'text-cyan-600' : 'text-slate-400'} />
-                        <span className={`text-[7px] font-mono tracking-widest uppercase font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                            LOG_ID: {hexLog}
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                        {theme.icon}
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${theme.text}`}>
-                            {examName}
-                        </span>
+            <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                        {severity === 'abnormal' ? (
+                            <AlertTriangle size={16} className="mt-0.5 shrink-0 text-rose-500" />
+                        ) : (
+                            <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald-500" />
+                        )}
+                        <div className="min-w-0">
+                            <h4 className={`text-sm font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                {examLabel}
+                            </h4>
+                            <p className={`font-mono text-[10px] uppercase tracking-[0.18em] ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                {hash}
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <div className={`text-[6px] font-black font-mono px-1.5 py-0.5 rounded border opacity-80 group-hover:opacity-100 transition-opacity ${theme.stamp}`}>
-                        VERIFIED
-                    </div>
-                    {wikiKey && (
-                        <button onClick={() => openWiki(wikiKey)} title="Referensi Medis"
-                            className={`p-1.5 rounded-xl transition-all duration-200 opacity-0 group-hover:opacity-100 active:scale-95 ${
-                                isDark ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-slate-400 hover:text-slate-800 hover:bg-slate-100'
-                            }`}>
-                            <Info size={14} />
-                        </button>
-                    )}
-                </div>
+                <span
+                    className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-wider ${
+                        severity === 'abnormal'
+                            ? 'bg-rose-500/15 text-rose-500'
+                            : 'bg-emerald-500/15 text-emerald-500'
+                    }`}
+                >
+                    {severity === 'abnormal' ? 'Abnormal' : 'Normal'}
+                </span>
             </div>
 
-            {/* Finding text */}
-            <p className={`text-[12px] leading-relaxed pl-3 font-medium transition-colors ${
-                isDark ? 'text-slate-300 group-hover:text-slate-100' : 'text-slate-600 group-hover:text-slate-900'
-            }`}>
+            <p className={`mt-3 whitespace-pre-line text-sm leading-relaxed ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
                 {finding}
             </p>
-        </div>
+        </article>
     );
 });
-FindingCard.displayName = 'FindingCard';
 
-// ==========================================
-// 🏥 MAIN COMPONENT
-// ==========================================
-export default function PhysicalExamTab({ patient: _patient, isDark, handleExam, examsPerformed = {}, examResultsRef, openWiki, maiaSuggestions, anamnesisScore }) {
-    const normalizedExamsPerformed = useMemo(() => normalizePhysicalExamFindings(examsPerformed), [examsPerformed]);
-    const examEntries = useMemo(() => Object.entries(normalizedExamsPerformed), [normalizedExamsPerformed]);
-    const examCount = examEntries.length;
+export default function PhysicalExamTab({
+    patient,
+    isDark,
+    handleExam,
+    examsPerformed,
+    examResultsRef,
+    openWiki,
+    maiaSuggestions = [],
+    anamnesisScore,
+}) {
+    const [openGroups, setOpenGroups] = useState(() => {
+        // Mobile: start with only first group open to reduce scroll. Desktop: all open.
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        return new Set(isMobile ? [EXAM_SYSTEM_GROUPS[0].id] : EXAM_SYSTEM_GROUPS.map((g) => g.id));
+    });
 
-    // Auto-scroll on new findings
-    useEffect(() => {
-        if (examCount > 0 && examResultsRef?.current) {
-            setTimeout(() => {
-                examResultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }, 100);
+    const normalizedFindings = useMemo(() => {
+        if (Array.isArray(examsPerformed)) {
+            return normalizePhysicalExamFindings(
+                Object.fromEntries(examsPerformed.map((examKey) => [normalizePhysicalExamKey(examKey), 'Sudah diperiksa']))
+            );
         }
-    }, [examCount, examResultsRef]);
+        return normalizePhysicalExamFindings(examsPerformed || {});
+    }, [examsPerformed]);
+
+    const findingEntries = useMemo(() => (
+        Object.entries(normalizedFindings).filter(([, finding]) => Boolean(finding))
+    ), [normalizedFindings]);
+
+    const bodyProfile = useMemo(() => getBodyProfile(patient), [patient]);
+
+    useEffect(() => {
+        if (!examResultsRef?.current || findingEntries.length === 0) return;
+        examResultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [findingEntries.length, examResultsRef]);
+
+    const suggestionItems = useMemo(() => (
+        (maiaSuggestions || []).map((suggestion) => ({
+            ...suggestion,
+            key: normalizePhysicalExamKey(suggestion.id),
+        })).filter((suggestion) => suggestion.key)
+    ), [maiaSuggestions]);
+
+    const completedCount = findingEntries.length;
+    const totalCount = Object.keys(PHYSICAL_EXAM_OPTIONS).length;
+    const completionPct = Math.round((completedCount / totalCount) * 100);
+
+    function toggleGroup(groupId) {
+        setOpenGroups((prev) => {
+            const next = new Set(prev);
+            if (next.has(groupId)) next.delete(groupId);
+            else next.add(groupId);
+            return next;
+        });
+    }
+
+    function renderMarker(examKey, side) {
+        const marker = BODY_MARKERS[examKey];
+        if (!marker || marker.side !== side) return null;
+
+        const finding = normalizedFindings[examKey];
+        const severity = analyzeSeverity(finding);
+        const markerColor = finding
+            ? (severity === 'abnormal' ? 'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.7)]' : 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.7)]')
+            : (isDark ? 'bg-slate-600' : 'bg-slate-300');
+
+        return (
+            <div
+                key={`${examKey}-${side}`}
+                className={`absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/80 ${markerColor}`}
+                style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
+                title={getPhysicalExamDisplayName(examKey)}
+            />
+        );
+    }
+
+    function renderExamButton(examKey) {
+        const finding = normalizedFindings[examKey];
+        const severity = analyzeSeverity(finding);
+        const isDone = Boolean(finding);
+        const examOption = PHYSICAL_EXAM_OPTIONS[examKey];
+        const label = getPhysicalExamDisplayName(examKey);
+        const accentClass = !isDone
+            ? (isDark ? 'border-slate-700 bg-slate-900/70 hover:border-cyan-500/40 hover:bg-slate-900' : 'border-slate-200 bg-white hover:border-cyan-300 hover:bg-cyan-50/50')
+            : severity === 'abnormal'
+                ? (isDark ? 'border-rose-500/30 bg-rose-500/10 hover:border-rose-500/50' : 'border-rose-200 bg-rose-50 hover:border-rose-300')
+                : (isDark ? 'border-emerald-500/25 bg-emerald-500/10 hover:border-emerald-500/45' : 'border-emerald-200 bg-emerald-50 hover:border-emerald-300');
+
+        return (
+            <button
+                key={examKey}
+                onClick={() => handleExam(examKey)}
+                className={`min-h-[48px] w-full rounded-2xl border p-3 text-left transition-all active:scale-[0.99] ${accentClass}`}
+            >
+                <div className="flex items-start gap-3">
+                    <div className="pt-0.5">
+                        {!isDone ? (
+                            <div className={`h-3 w-3 rounded-full border-2 ${isDark ? 'border-cyan-500/70' : 'border-cyan-500'}`} />
+                        ) : severity === 'abnormal' ? (
+                            <AlertTriangle size={16} className="text-rose-500" />
+                        ) : (
+                            <CheckCircle2 size={16} className="text-emerald-500" />
+                        )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                                <p className={`truncate text-sm font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                    {label}
+                                </p>
+                                <p className={`text-[11px] ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                    Estimasi {examOption?.time || 1} menit
+                                </p>
+                            </div>
+
+                            <span
+                                className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-wide ${
+                                    !isDone
+                                        ? (isDark ? 'bg-cyan-500/10 text-cyan-300' : 'bg-cyan-100 text-cyan-700')
+                                        : severity === 'abnormal'
+                                            ? 'bg-rose-500/15 text-rose-500'
+                                            : 'bg-emerald-500/15 text-emerald-500'
+                                }`}
+                            >
+                                {!isDone ? 'Periksa' : severity === 'abnormal' ? 'Abnormal' : 'Normal'}
+                            </span>
+                        </div>
+
+                        <p className={`mt-2 line-clamp-2 text-sm ${isDark ? 'text-slate-300' : 'text-slate-700'} ${!isDone ? 'opacity-80' : ''}`}>
+                            {isDone ? finding : 'Belum diperiksa. Ketuk untuk memulai pemeriksaan sistem ini.'}
+                        </p>
+                    </div>
+                </div>
+            </button>
+        );
+    }
 
     return (
-        <div className="flex flex-col h-full overflow-hidden relative">
-
-            {/* ✨ MAIA NEURAL ASSIST BANNER — Aegis visual + preserved actionable pills */}
-            {anamnesisScore >= 30 && (
-                <div className={`shrink-0 mb-5 rounded-2xl border relative overflow-hidden transition-all shadow-lg ${
+        <div className="flex h-full flex-col gap-4">
+            <section
+                className={`rounded-3xl border p-4 md:p-5 ${
                     isDark
-                        ? 'bg-gradient-to-br from-indigo-950/60 to-slate-900/80 border-indigo-500/30 shadow-[0_0_30px_-10px_rgba(99,102,241,0.15)]'
-                        : 'bg-gradient-to-br from-indigo-50/80 to-white border-indigo-200 shadow-sm'
-                }`}>
-                    {/* Glowing left accent */}
-                    <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-500" style={{ filter: 'drop-shadow(0 0 10px #6366F1)' }} />
+                        ? 'border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 via-slate-900 to-slate-950'
+                        : 'border-cyan-200 bg-gradient-to-br from-cyan-50 via-white to-slate-50'
+                }`}
+            >
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                            <Sparkles size={16} className="text-cyan-500" />
+                            <span className={`text-[10px] font-black uppercase tracking-[0.24em] ${isDark ? 'text-cyan-300' : 'text-cyan-700'}`}>
+                                MAIA Neural Assist
+                            </span>
+                        </div>
+                        <h3 className={`mt-2 text-lg font-black md:text-xl ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                            Clinical System Scanner
+                        </h3>
+                        <p className={`mt-1 max-w-3xl text-sm leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                            Periksa pasien berdasarkan kelompok sistem organ. Pilih pemeriksaan yang sesuai dengan keluhan utama.
+                        </p>
+                    </div>
 
-                    <div className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10 pl-6">
-                        <div className="flex items-start md:items-center gap-4">
-                            <div className={`p-2.5 rounded-xl flex-shrink-0 relative ${
-                                isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-100 text-indigo-600'
-                            }`}>
-                                <Cpu size={18} style={{ animation: 'pe-ai-pulse 2s infinite' }} />
-                                {maiaSuggestions?.length > 0 && <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping" />}
+                    <div className="grid min-w-[240px] grid-cols-3 gap-2 md:min-w-[280px]">
+                        <div className={`rounded-2xl border p-3 ${isDark ? 'border-slate-700 bg-slate-900/70' : 'border-slate-200 bg-white/80'}`}>
+                            <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                Anamnesis
+                            </p>
+                            <p className={`mt-1 text-xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                {Math.round(anamnesisScore || 0)}%
+                            </p>
+                        </div>
+                        <div className={`rounded-2xl border p-3 ${isDark ? 'border-slate-700 bg-slate-900/70' : 'border-slate-200 bg-white/80'}`}>
+                            <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                Progress
+                            </p>
+                            <p className={`mt-1 text-xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                {completedCount}/{totalCount}
+                            </p>
+                        </div>
+                        <div className={`rounded-2xl border p-3 ${isDark ? 'border-slate-700 bg-slate-900/70' : 'border-slate-200 bg-white/80'}`}>
+                            <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                Coverage
+                            </p>
+                            <p className={`mt-1 text-xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                {completionPct}%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex min-w-0 flex-1 flex-wrap gap-2">
+                        {suggestionItems.length > 0 ? suggestionItems.map((suggestion) => (
+                            <button
+                                key={suggestion.id}
+                                onClick={() => handleExam(suggestion.key)}
+                                className={`min-h-[44px] rounded-full border px-3 py-2 text-left text-xs font-bold transition-all active:scale-[0.99] ${
+                                    isDark
+                                        ? 'border-cyan-500/25 bg-cyan-500/10 text-cyan-200 hover:bg-cyan-500/15'
+                                        : 'border-cyan-200 bg-cyan-50 text-cyan-800 hover:bg-cyan-100'
+                                }`}
+                            >
+                                <span className="block text-[10px] uppercase tracking-wider opacity-70">
+                                    Prioritas MAIA
+                                </span>
+                                <span>{suggestion.label}</span>
+                            </button>
+                        )) : (
+                            <div className={`rounded-2xl border px-3 py-2 text-sm ${isDark ? 'border-slate-700 bg-slate-900/60 text-slate-400' : 'border-slate-200 bg-white text-slate-500'}`}>
+                                MAIA belum melihat kebutuhan prioritas tambahan. Lanjutkan sistem yang paling relevan dengan keluhan.
                             </div>
+                        )}
+                    </div>
+
+                    <button
+                        onClick={() => openWiki?.('accuracy')}
+                        className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl border px-4 py-2 text-sm font-black transition-colors ${
+                            isDark
+                                ? 'border-cyan-500/25 bg-slate-900/70 text-cyan-200 hover:bg-slate-900'
+                                : 'border-cyan-200 bg-white text-cyan-800 hover:bg-cyan-50'
+                        }`}
+                    >
+                        <BookOpen size={15} />
+                        Buka Panduan MAIA
+                    </button>
+                </div>
+            </section>
+
+            <div className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[320px_minmax(0,1fr)]">
+                <aside className="hidden xl:flex xl:min-h-0 xl:flex-col">
+                    <div className={`h-full rounded-3xl border p-4 ${isDark ? 'border-slate-700 bg-slate-900/70' : 'border-slate-200 bg-white'}`}>
+                        <div className="flex items-center justify-between gap-3">
                             <div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <h4 className={`text-[10px] font-black uppercase tracking-[0.25em] ${isDark ? 'text-indigo-400/80' : 'text-indigo-600/80'}`}>
-                                        M.A.I.A · Neural Assist
-                                    </h4>
-                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_8px_#6366F1]" />
-                                </div>
-                                <p className={`text-xs font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                                    {maiaSuggestions?.length > 0 ? 'Fokus prioritas pemindaian biometrik:' : 'Anamnesis solid. Lakukan pemeriksaan general.'}
+                                <p className={`text-[10px] font-black uppercase tracking-[0.22em] ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                Referensi Visual
                                 </p>
+                                <h4 className={`mt-1 text-base font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                    Area Pemeriksaan
+                                </h4>
+                            </div>
+                            <div className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${isDark ? 'bg-slate-800 text-cyan-300' : 'bg-cyan-50 text-cyan-700'}`}>
+                                Baca Saja
                             </div>
                         </div>
 
-                        {/* 🔥 ACTIONABLE PILLS — PRESERVED from original */}
-                        {maiaSuggestions?.length > 0 && (
-                            <div className="flex flex-wrap gap-2 relative z-10 md:ml-auto pl-14 md:pl-0">
-                                {maiaSuggestions.map((suggestion, idx) => {
-                                    const rawActionId = suggestion.id || suggestion.key || suggestion.value || null;
-                                    const actionId = rawActionId ? normalizePhysicalExamKey(rawActionId) : null;
+                        <div className="mt-4 grid gap-4">
+                            {[
+                                { side: 'front', label: 'Anterior', src: bodyProfile.front },
+                                { side: 'back', label: 'Posterior', src: bodyProfile.back },
+                            ].map((view) => (
+                                <div
+                                    key={view.side}
+                                    className={`rounded-2xl border p-3 ${isDark ? 'border-slate-800 bg-slate-950/70' : 'border-slate-200 bg-slate-50'}`}
+                                >
+                                    <div className="mb-2 flex items-center justify-between">
+                                        <span className={`text-xs font-black uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                            {view.label}
+                                        </span>
+                                        <span className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                            Titik hijau = normal, merah = temuan
+                                        </span>
+                                    </div>
+
+                                    <div className={`relative overflow-hidden rounded-2xl border ${isDark ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-white'}`}>
+                                        <img
+                                            src={view.src}
+                                            alt={`Referensi tubuh ${view.label.toLowerCase()}`}
+                                            className="h-[260px] w-full object-contain"
+                                        />
+                                        {Object.keys(BODY_MARKERS).map((examKey) => renderMarker(examKey, view.side))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </aside>
+
+                <section className="flex min-h-0 flex-col gap-4">
+                    <div className={`min-h-0 rounded-3xl border ${isDark ? 'border-slate-700 bg-slate-900/70' : 'border-slate-200 bg-white'}`}>
+                        <div className={`border-b px-4 py-3 md:px-5 ${isDark ? 'border-slate-700' : 'border-slate-200'}`}>
+                            <div className="flex items-center gap-2">
+                                <Cpu size={16} className="text-cyan-500" />
+                                <h4 className={`text-sm font-black uppercase tracking-[0.2em] ${isDark ? 'text-cyan-300' : 'text-cyan-700'}`}>
+                                    Kelompok Sistem
+                                </h4>
+                            </div>
+                            <p className={`mt-1 text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                Pilih pemeriksaan berdasarkan sistem organ. Target sentuh sudah dioptimalkan untuk layar sentuh.
+                            </p>
+                        </div>
+
+                        <div className="max-h-[52vh] overflow-y-auto p-3 md:p-4 thin-scrollbar">
+                            <div className="space-y-3">
+                                {EXAM_SYSTEM_GROUPS.map((group) => {
+                                    const Icon = group.icon;
+                                    const groupDone = group.exams.filter((examKey) => Boolean(normalizedFindings[examKey])).length;
+                                    const isOpen = openGroups.has(group.id);
+
                                     return (
-                                        <button key={idx} onClick={() => actionId && handleExam(actionId)}
-                                            className={`text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all hover:-translate-y-0.5 active:scale-95 ${
-                                                isDark
-                                                    ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/40 hover:text-indigo-200 border border-indigo-500/30 hover:shadow-[0_0_15px_rgba(99,102,241,0.2)]'
-                                                    : 'bg-white text-indigo-700 hover:bg-indigo-50 border border-indigo-200 shadow-sm hover:shadow-md'
-                                            }`}>
-                                            <Fingerprint size={12} className="opacity-70" />
-                                            {suggestion.label || suggestion.name || actionId}
-                                            <ChevronRight size={12} className="opacity-50" />
-                                        </button>
+                                        <section
+                                            key={group.id}
+                                            className={`overflow-hidden rounded-2xl border ${isDark ? 'border-slate-700 bg-slate-950/50' : 'border-slate-200 bg-slate-50/70'}`}
+                                        >
+                                            <button
+                                                onClick={() => toggleGroup(group.id)}
+                                                className="flex min-h-[52px] w-full items-center justify-between gap-3 px-4 py-3 text-left"
+                                            >
+                                                <div className="flex min-w-0 items-center gap-3">
+                                                    <div className={`rounded-2xl p-2 ${isDark ? 'bg-cyan-500/10 text-cyan-300' : 'bg-cyan-100 text-cyan-700'}`}>
+                                                        <Icon size={18} />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <h5 className={`truncate text-sm font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                                            {group.label}
+                                                        </h5>
+                                                        <p className={`text-[11px] ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                                            {groupDone}/{group.exams.length} selesai
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-wide ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-white text-slate-600'}`}>
+                                                        {groupDone === group.exams.length ? 'Lengkap ✓' : `${groupDone}/${group.exams.length}`}
+                                                    </span>
+                                                    {isOpen ? (
+                                                        <ChevronDown size={18} className={isDark ? 'text-slate-400' : 'text-slate-500'} />
+                                                    ) : (
+                                                        <ChevronRight size={18} className={isDark ? 'text-slate-400' : 'text-slate-500'} />
+                                                    )}
+                                                </div>
+                                            </button>
+
+                                            {isOpen && (
+                                                <div className={`border-t p-3 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                                                    <div className="grid gap-2">
+                                                        {group.exams.map((examKey) => renderExamButton(examKey))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </section>
                                     );
                                 })}
                             </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Two-column layout: Scanner Bay (5) + Forensic Logs (7) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-0 overflow-hidden">
-
-                {/* 📌 LEFT: SCANNER BAY */}
-                <div className="lg:col-span-5 flex flex-col gap-3 min-h-0 relative">
-                    <div className="flex items-center justify-between px-1 shrink-0">
-                        <div className="flex items-center gap-2">
-                            <Crosshair size={14} className={isDark ? 'text-emerald-500' : 'text-emerald-600'} />
-                            <h4 className={`text-[11px] font-black uppercase tracking-[0.3em] ${isDark ? 'text-emerald-400' : 'text-emerald-800'}`}>
-                                Scanner Bay
-                            </h4>
-                        </div>
-                        <div className={`flex items-center gap-2 px-3 py-1 rounded text-[8px] font-bold tracking-widest uppercase border ${
-                            isDark ? 'bg-emerald-950/30 text-emerald-500 border-emerald-900/50' : 'bg-emerald-50 text-emerald-600 border-emerald-200'
-                        }`}>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Sensor Aktif
                         </div>
                     </div>
 
-                    {/* HUD Bay Wrapper */}
-                    <div className={`pe-scanner-bay flex-1 overflow-hidden relative p-2 rounded-2xl transition-all duration-500 border ${
-                        isDark ? 'bg-[#020617] border-slate-800 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]' : 'bg-slate-50 border-slate-300 shadow-inner'
-                    }`}>
-                        {/* HUD Reticle Corners */}
-                        <div className={`pe-hud-corner pe-hud-tl ${isDark ? 'border-emerald-500/50' : 'border-slate-400'}`} />
-                        <div className={`pe-hud-corner pe-hud-tr ${isDark ? 'border-emerald-500/50' : 'border-slate-400'}`} />
-                        <div className={`pe-hud-corner pe-hud-bl ${isDark ? 'border-emerald-500/50' : 'border-slate-400'}`} />
-                        <div className={`pe-hud-corner pe-hud-br ${isDark ? 'border-emerald-500/50' : 'border-slate-400'}`} />
-
-                        {/* Blueprint Grid */}
-                        <div className={`absolute inset-0 ${isDark ? 'pe-grid-dark' : 'pe-grid-light'} opacity-60 pointer-events-none z-0`} />
-
-                        {/* Scanning Laser (dark mode only) */}
-                        {isDark && (
-                            <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-emerald-500/15 border-b border-emerald-400/30 pointer-events-none z-20 mix-blend-screen"
-                                style={{ animation: 'pe-scanline 3s linear infinite' }} />
-                        )}
-
-                        <div className="relative z-10 w-full h-full">
-                            <BodyMapWidget isDark={isDark} patient={_patient} onExam={handleExam} examsPerformed={normalizedExamsPerformed} />
-                        </div>
-
-                        {/* Telemetry overlay */}
-                        <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end pointer-events-none z-30">
-                            <div className="font-mono text-[7px] uppercase tracking-[0.15em] opacity-50">
-                                <div className={isDark ? 'text-emerald-400' : 'text-slate-500'}>BIO_SYNC: STABLE</div>
-                                <div className={isDark ? 'text-slate-500' : 'text-slate-400'}>MAP_V2.14</div>
+                    <div className={`min-h-0 rounded-3xl border ${isDark ? 'border-slate-700 bg-slate-900/70' : 'border-slate-200 bg-white'}`}>
+                        <div className={`border-b px-4 py-3 md:px-5 ${isDark ? 'border-slate-700' : 'border-slate-200'}`}>
+                            <div className="flex items-center gap-2">
+                                <Activity size={16} className="text-emerald-500" />
+                                <h4 className={`text-sm font-black uppercase tracking-[0.2em] ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>
+                                    Telemetry Logs
+                                </h4>
                             </div>
+                            <p className={`mt-1 text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                Ringkasan temuan terkini dari seluruh pemeriksaan fisik yang sudah dilakukan.
+                            </p>
                         </div>
-                    </div>
-                </div>
 
-                {/* 📌 RIGHT: TELEMETRY LOGS */}
-                <div className="lg:col-span-7 flex flex-col gap-3 min-h-0 relative">
-                    <div className={`flex items-center justify-between px-1 pb-2 border-b border-dashed shrink-0 ${isDark ? 'border-slate-700/30' : 'border-slate-300'}`}>
-                        <div className="flex items-center gap-2">
-                            <Activity size={14} className={isDark ? 'text-cyan-400' : 'text-blue-600'} />
-                            <h4 className={`text-[11px] font-black uppercase tracking-[0.3em] ${isDark ? 'text-cyan-400' : 'text-blue-800'}`}>
-                                Telemetry Logs
-                            </h4>
-                        </div>
-                        <div className={`px-2 py-1 rounded-md font-mono font-black tracking-widest text-[9px] border ${
-                            examCount > 0
-                                ? (isDark ? 'bg-cyan-950/40 text-cyan-400 border-cyan-900/50' : 'bg-blue-100 text-blue-700 border-blue-200')
-                                : (isDark ? 'bg-slate-900 border-slate-800 text-slate-500' : 'bg-slate-200 border-slate-300 text-slate-500')
-                        }`}>
-                            {examCount.toString().padStart(2, '0')} Entries
-                        </div>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto space-y-3 pr-2 pb-10 pt-2 pe-thin-scrollbar scroll-smooth">
-                        {examCount > 0 ? (
-                            examEntries.map(([key, finding], index) => (
-                                <FindingCard
-                                    key={key}
-                                    examKey={key}
-                                    finding={finding}
-                                    isDark={isDark}
-                                    openWiki={openWiki}
-                                    index={index}
-                                />
-                            ))
-                        ) : (
-                            /* RADAR IDLE STATE — Aegis "Awaiting Sensor Input" */
-                            <div className={`h-full min-h-[300px] flex flex-col items-center justify-center p-8 text-center rounded-3xl border-2 border-dashed transition-all ${
-                                isDark ? 'border-slate-800/60 bg-slate-900/20' : 'border-slate-200 bg-slate-50/50'
-                            }`}>
-                                <div className="relative w-24 h-24 mb-6 flex items-center justify-center">
-                                    {/* Sonar Rings */}
-                                    <div className={`absolute inset-0 rounded-full border-2 border-dashed ${isDark ? 'border-slate-700' : 'border-slate-300'}`}
-                                        style={{ animation: 'pe-radar-spin 10s linear infinite' }} />
-                                    <div className={`absolute inset-3 rounded-full border ${isDark ? 'border-cyan-900/50' : 'border-blue-200'}`}
-                                        style={{ animation: 'pe-radar-spin 5s linear infinite reverse' }} />
-                                    {/* Ping pulse */}
-                                    <div className={`absolute w-4 h-4 rounded-full animate-ping ${isDark ? 'bg-cyan-500/50' : 'bg-blue-400/50'}`}
-                                        style={{ animationDuration: '2s' }} />
-                                    <ScanFace size={32} className={isDark ? 'text-cyan-600' : 'text-slate-400'} />
+                        <div className="max-h-[34vh] overflow-y-auto p-3 md:p-4 thin-scrollbar">
+                            {findingEntries.length === 0 ? (
+                                <div className={`rounded-2xl border border-dashed p-6 text-center ${isDark ? 'border-slate-700 text-slate-500' : 'border-slate-200 text-slate-500'}`}>
+                                    Belum ada telemetry log. Pilih salah satu sistem di atas untuk mulai memeriksa pasien.
                                 </div>
-                                <h3 className={`font-mono text-xs font-black uppercase tracking-[0.3em] mb-2 ${isDark ? 'text-cyan-500' : 'text-slate-500'}`}>
-                                    [ Awaiting Sensor Input ]
-                                </h3>
-                                <p className={`text-[10px] font-medium max-w-[220px] leading-relaxed uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                                    Arahkan pemindai pada area tubuh pasien di Scanner Bay untuk mengekstrak data.
-                                </p>
-                            </div>
-                        )}
-                        <div ref={examResultsRef} className="h-4" />
+                            ) : (
+                                <div className="space-y-3">
+                                    {findingEntries.map(([examKey, finding]) => (
+                                        <FindingCard
+                                            key={examKey}
+                                            examKey={examKey}
+                                            finding={finding}
+                                            isDark={isDark}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                            <div ref={examResultsRef} />
+                        </div>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     );
