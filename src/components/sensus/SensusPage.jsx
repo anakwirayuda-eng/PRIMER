@@ -190,8 +190,8 @@ function KartuKeluargaModal({ family, onClose }) {
                 
                 {/* Floating Actions */}
                 <div className="absolute top-4 right-4 flex items-center gap-2 z-20">
-                    <button className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-md shadow-sm transition-colors border border-emerald-200 text-xs font-bold" title="Cetak Dokumen">
-                        <Printer size={14} /> <span className="hidden sm:inline">Cetak Dokumen</span>
+                    <button disabled className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-400 rounded-md shadow-sm border border-slate-200 text-xs font-bold cursor-not-allowed opacity-60" title="Fitur cetak belum tersedia">
+                        <Printer size={14} /> <span className="hidden sm:inline">Cetak (Segera)</span>
                     </button>
                     <button onClick={onClose} className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-md shadow-sm transition-colors border border-rose-200" title="Tutup">
                         <X size={16} />
@@ -242,7 +242,8 @@ function KartuKeluargaModal({ family, onClose }) {
                                     </thead>
                                     <tbody className="bg-white/60">
                                         {(family.members || []).map((m, idx) => {
-                                            const nik = `337${(family.rt || '01').padStart(2, '0')}${m.gender === 'L' ? '0' : '4'}${String(m.age > 9 ? m.age : '0' + m.age)}${String(idx + 1).padStart(4, '0')}`;
+                                            const familyNum = family.id.replace(/\D/g, '').padStart(3, '0');
+                                            const nik = `33${(family.rw || '01').padStart(2, '0')}${(family.rt || '01').padStart(2, '0')}${m.gender === 'L' ? '0' : '4'}${String(m.age > 9 ? m.age : '0' + m.age)}${familyNum}${String(idx + 1).padStart(2, '0')}`;
                                             const birthYear = new Date().getFullYear() - m.age;
                                             return (
                                                 <tr key={m.id || idx} className="border-b border-slate-300 last:border-b-0 hover:bg-emerald-50/50 transition-colors">
@@ -362,6 +363,10 @@ function KKCardPreview({ family, indicators, onClick, isLocked }) {
             className={`relative group transition-all duration-300 rounded-xl overflow-hidden border bg-white
                 ${isLocked ? 'border-slate-300 cursor-not-allowed' : 'border-emerald-200 cursor-pointer hover:-translate-y-1 hover:shadow-lg hover:border-emerald-400'}`}
             onClick={isLocked ? undefined : onClick}
+            role={isLocked ? undefined : 'button'}
+            tabIndex={isLocked ? -1 : 0}
+            onKeyDown={isLocked ? undefined : (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick?.(); } }}
+            aria-label={isLocked ? `Keluarga ${family.surname} — RW terkunci` : `Buka detail Keluarga ${family.surname}`}
         >
             {/* Immersive Locked Overlay */}
             {isLocked && (
@@ -447,10 +452,11 @@ export default function SensusPage() {
 
     // P5: RW Progressive Unlock awareness
     const unlockedRWs = villageData?.unlockedRWs || ['01', '02'];
+    // eslint-disable-next-line react-hooks/exhaustive-deps — unlockedRWs is derived from villageData, safe to omit
     const families = useMemo(() => {
         const raw = Array.isArray(villageData?.families) && villageData.families.length > 0 ? villageData.families : VILLAGE_FAMILIES;
         return raw.map(f => ({ ...f, isLocked: !unlockedRWs.includes(f.rw || '01') }));
-    }, [villageData, unlockedRWs]);
+    }, [villageData]);
 
     const demographics = useMemo(() => calculateDemographics(families), [families]);
     const sdohSummary = useMemo(() => calculateSDOHSummary(families), [families]);
@@ -460,7 +466,17 @@ export default function SensusPage() {
         let list = [...families];
         if (search) {
             const q = search.toLowerCase();
-            list = list.filter(f => f.id.toLowerCase().includes(q) || (f.surname || '').toLowerCase().includes(q) || (f.headName || '').toLowerCase().includes(q) || (f.members || []).some(m => (m.firstName || '').toLowerCase().includes(q)));
+            list = list.filter(f => {
+                // Search by family id, surname, head name, member names
+                if (f.id.toLowerCase().includes(q) || (f.surname || '').toLowerCase().includes(q) || (f.headName || '').toLowerCase().includes(q)) return true;
+                if ((f.members || []).some(m => (m.firstName || '').toLowerCase().includes(q))) return true;
+                // Search by synthetic NIK (matches promise in search placeholder)
+                const familyNum = f.id.replace(/\D/g, '').padStart(3, '0');
+                return (f.members || []).some((m, idx) => {
+                    const nik = `33${(f.rw || '01').padStart(2, '0')}${(f.rt || '01').padStart(2, '0')}${m.gender === 'L' ? '0' : '4'}${String(m.age > 9 ? m.age : '0' + m.age)}${familyNum}${String(idx + 1).padStart(2, '0')}`;
+                    return nik.includes(q);
+                });
+            });
         }
         if (filterRwRt !== 'all') list = list.filter(f => ((f.rw||'01')+'-'+(f.rt||'01')) === filterRwRt);
         return list;
@@ -500,10 +516,10 @@ export default function SensusPage() {
                             { icon: Shield, label: 'Cakupan JKN', value: `${sdohSummary.jknCoverage}%`, sub: `${sdohSummary.jknCount} Keluarga`, color: 'text-indigo-600', bg: 'bg-indigo-50' },
                             { icon: Baby, label: 'Balita', value: demographics.ageGroups.balita.L + demographics.ageGroups.balita.P, sub: '0-5 Tahun', color: 'text-pink-500', bg: 'bg-pink-50' },
                             { icon: Briefcase, label: 'Lansia', value: demographics.ageGroups.lansia.L + demographics.ageGroups.lansia.P, sub: '> 60 Tahun', color: 'text-slate-600', bg: 'bg-slate-50' },
-                        ].map(({ icon: Icon, label, value, sub, color, bg }, i) => (
+                        ].map(({ icon: StatIcon, label, value, sub, color, bg }, i) => (
                             <div key={i} className="p-4 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors">
                                 <div className={`p-2 rounded-full ${bg} ${color} mb-2`}>
-                                    <Icon size={20} />
+                                    <StatIcon size={20} />
                                 </div>
                                 <div className="text-2xl font-black text-slate-800 font-serif leading-none mb-1">{value}</div>
                                 <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{label}</div>
@@ -632,7 +648,7 @@ export default function SensusPage() {
                                             const iksScore = scored.length > 0 ? Math.round((healthy / scored.length) * 100) : 0;
 
                                             return (
-                                                <tr key={family.id} className={`transition-colors ${family.isLocked ? 'bg-slate-50/50 cursor-not-allowed' : 'hover:bg-emerald-50/30 cursor-pointer'}`} onClick={family.isLocked ? undefined : () => setSelectedFamily(family)}>
+                                                <tr key={family.id} className={`transition-colors ${family.isLocked ? 'bg-slate-50/50 cursor-not-allowed' : 'hover:bg-emerald-50/30 cursor-pointer'}`} onClick={family.isLocked ? undefined : () => setSelectedFamily(family)} tabIndex={family.isLocked ? -1 : 0} onKeyDown={family.isLocked ? undefined : (e) => { if (e.key === 'Enter') setSelectedFamily(family); }} aria-label={family.isLocked ? `${family.surname} — terkunci` : `Buka arsip ${family.surname}`}>
                                                     <td className="px-4 py-3 font-mono text-xs font-bold text-slate-500">
                                                         {family.isLocked && <Lock size={12} className="inline mr-1 text-slate-400" />}
                                                         {family.id.toUpperCase()}
