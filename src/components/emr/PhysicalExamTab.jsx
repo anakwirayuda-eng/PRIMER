@@ -8,8 +8,8 @@
  * [LAST_UPDATE]: 2026-03-28
  */
 
-import React, { memo, useEffect, useMemo, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { memo, useEffect, useMemo, useState } from 'react';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, AlertTriangle, BookOpen, BrainCircuit, CheckCircle2,
     ChevronDown, Cpu, Crosshair, HeartPulse, ScanEye,
@@ -36,19 +36,18 @@ const BODY_IMAGES = {
     INFANT: { front: '/body-infant-front.png', back: '/body-infant-back.png' },
 };
 
+// Only anatomically-localized exams get map markers.
+// general, vitals, skin → panel-only (no specific body locus).
 const BODY_MARKERS = {
-    general: { side: 'front', x: 50, y: 7 },
-    vitals: { side: 'front', x: 22, y: 27 },
-    heent: { side: 'front', x: 50, y: 13 },
-    neck: { side: 'front', x: 50, y: 20 },
-    thorax: { side: 'front', x: 50, y: 31 },
-    breast: { side: 'front', x: 75, y: 30 },
-    abdomen: { side: 'front', x: 50, y: 48 },
-    genitalia: { side: 'front', x: 50, y: 62 },
-    rectal: { side: 'back', x: 50, y: 63 },
-    skin: { side: 'back', x: 28, y: 47 },
-    neuro: { side: 'back', x: 50, y: 29 },
-    extremities: { side: 'front', x: 36, y: 84 },
+    heent:        { side: 'front', x: 50, y: 9,  icon: BrainCircuit, label: 'Kepala' },
+    neck:         { side: 'front', x: 50, y: 20, icon: ScanEye,      label: 'Leher' },
+    thorax:       { side: 'front', x: 42, y: 33, icon: HeartPulse,   label: 'Thorax' },
+    breast:       { side: 'front', x: 62, y: 33, icon: Target,       label: 'Mammae' },
+    abdomen:      { side: 'front', x: 50, y: 50, icon: ShieldAlert,  label: 'Abdomen' },
+    genitalia:    { side: 'front', x: 50, y: 66, icon: Fingerprint,  label: 'Genitalia' },
+    extremities:  { side: 'front', x: 30, y: 82, icon: Crosshair,    label: 'Ekstremitas' },
+    neuro:        { side: 'back',  x: 50, y: 28, icon: Cpu,          label: 'Neurologi' },
+    rectal:       { side: 'back',  x: 50, y: 64, icon: Fingerprint,  label: 'Rektal' },
 };
 
 const EXAM_SYSTEM_GROUPS = [
@@ -74,8 +73,9 @@ function generateMedHash(examKey, finding = '') {
 
 function getBodyProfile(patient) {
     const age = patient?.age || 25;
-    const gender = String(patient?.gender || '').toLowerCase();
-    const isFemale = gender.match(/p|f|female|perempuan|wanita/);
+    const gender = String(patient?.gender || '').toLowerCase().trim();
+    // Strict matching to avoid 'pria' matching 'p'
+    const isFemale = /^(p|f|female|perempuan|wanita)$/i.test(gender);
     if (age <= 3) return BODY_IMAGES.INFANT;
     if (age <= 12) return BODY_IMAGES.CHILD;
     if (isFemale) return BODY_IMAGES.FEMALE;
@@ -92,7 +92,7 @@ const FindingCard = memo(function FindingCard({ examKey, finding, isDark }) {
     const isAbnormal = severity === 'abnormal';
 
     return (
-        <motion.article
+        <Motion.article
             initial={{ opacity: 0, x: -20, height: 0, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, height: 'auto', scale: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
@@ -126,7 +126,7 @@ const FindingCard = memo(function FindingCard({ examKey, finding, isDark }) {
             <p className={`mt-3 text-xs leading-relaxed pl-12 font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                 {">"} {finding}
             </p>
-        </motion.article>
+        </Motion.article>
     );
 });
 
@@ -136,9 +136,27 @@ const FindingCard = memo(function FindingCard({ examKey, finding, isDark }) {
 export default function PhysicalExamTab({
     patient, isDark, handleExam, examsPerformed, examResultsRef, openWiki, maiaSuggestions = [], anamnesisScore,
 }) {
-    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+    const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
     const [openGroups, setOpenGroups] = useState(() => new Set(isDesktop ? EXAM_SYSTEM_GROUPS.map(g => g.id) : [EXAM_SYSTEM_GROUPS[0].id]));
     const [bodyView, setBodyView] = useState('front');
+
+    // Consolidated sync logic for resize and orientation change
+    useEffect(() => {
+        const handleResize = () => {
+            const nowDesktop = window.innerWidth >= 1024;
+            setIsDesktop(nowDesktop);
+            
+            // Sync openGroups layout mode change
+            setOpenGroups(prev => {
+                if (nowDesktop) return new Set(EXAM_SYSTEM_GROUPS.map(g => g.id));
+                // Only reset to single open if transitioning from desktop
+                if (prev.size > 1) return new Set([EXAM_SYSTEM_GROUPS[0].id]);
+                return prev;
+            });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const normalizedFindings = useMemo(() => {
         if (Array.isArray(examsPerformed)) return normalizePhysicalExamFindings(Object.fromEntries(examsPerformed.map((examKey) => [normalizePhysicalExamKey(examKey), 'Sudah diperiksa'])));
@@ -169,36 +187,74 @@ export default function PhysicalExamTab({
         });
     };
 
-    // 🌟 INTERACTIVE RADAR MARKERS 🌟
+    // 🌟 COMPARTMENTALIZED BODY MAP MARKERS 🌟
     const renderMarker = (examKey, side) => {
         const marker = BODY_MARKERS[examKey];
         if (!marker || marker.side !== side) return null;
 
+        const MarkerIcon = marker.icon;
         const finding = normalizedFindings[examKey];
         const isDone = Boolean(finding);
         const severity = analyzeSeverity(finding);
         const isSuggested = suggestedKeys.includes(examKey) && !isDone;
         
-        let markerClass = '';
-        if (!isDone) markerClass = isSuggested ? 'bg-cyan-400 border-cyan-200' : 'bg-slate-400 border-white';
-        else if (severity === 'abnormal') markerClass = 'bg-rose-500 border-white shadow-[0_0_15px_rgba(244,63,94,1)] scale-110 z-10';
-        else markerClass = 'bg-emerald-500 border-white shadow-[0_0_10px_rgba(16,185,129,0.8)] opacity-80';
+        // State-driven styling
+        let ringColor, bgColor, iconColor, glowStyle;
+        if (!isDone && isSuggested) {
+            ringColor = 'border-cyan-400';
+            bgColor = isDark ? 'bg-cyan-500/20' : 'bg-cyan-100/80';
+            iconColor = isDark ? 'text-cyan-300' : 'text-cyan-600';
+            glowStyle = '0 0 12px rgba(6,182,212,0.5)';
+        } else if (!isDone) {
+            ringColor = isDark ? 'border-slate-500/60' : 'border-slate-400/60';
+            bgColor = isDark ? 'bg-slate-800/70' : 'bg-slate-200/80';
+            iconColor = isDark ? 'text-slate-400' : 'text-slate-500';
+            glowStyle = 'none';
+        } else if (severity === 'abnormal') {
+            ringColor = 'border-rose-400';
+            bgColor = isDark ? 'bg-rose-500/30' : 'bg-rose-100';
+            iconColor = 'text-rose-400';
+            glowStyle = '0 0 16px rgba(244,63,94,0.7)';
+        } else {
+            ringColor = 'border-emerald-400/60';
+            bgColor = isDark ? 'bg-emerald-500/20' : 'bg-emerald-100/80';
+            iconColor = 'text-emerald-400';
+            glowStyle = '0 0 8px rgba(16,185,129,0.4)';
+        }
 
         return (
             <button
-                key={examKey} onClick={() => {
+                key={examKey}
+                onClick={() => {
                     const group = EXAM_SYSTEM_GROUPS.find(g => g.exams.includes(examKey));
                     if (group) setOpenGroups(prev => new Set(prev).add(group.id));
                     handleExam(examKey);
                 }}
-                className={`group absolute -translate-x-1/2 -translate-y-1/2 z-10 p-2 outline-none cursor-crosshair`}
+                className="group absolute -translate-x-1/2 -translate-y-1/2 z-10 outline-none cursor-crosshair"
                 style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
+                title={marker.label}
             >
-                <div className={`h-4 w-4 rounded-full border-[2.5px] transition-transform duration-200 group-hover:scale-150 group-active:scale-90 flex items-center justify-center ${markerClass}`}>
-                    {(!isDone && isSuggested) && <div className="absolute w-full h-full rounded-full border-2 border-cyan-400 animate-ping" />}
+                {/* Ping ring for MAIA-suggested targets */}
+                {(!isDone && isSuggested) && (
+                    <div className="absolute inset-[-4px] rounded-full border-2 border-cyan-400 animate-ping opacity-60" />
+                )}
+
+                {/* Node circle with icon */}
+                <div
+                    className={`relative w-8 h-8 rounded-full border-2 backdrop-blur-sm flex items-center justify-center
+                        transition-all duration-200 group-hover:scale-125 group-active:scale-90
+                        ${ringColor} ${bgColor}`}
+                    style={{ boxShadow: glowStyle }}
+                >
+                    <MarkerIcon size={14} className={`${iconColor} transition-colors`} />
                 </div>
-                <div className={`absolute left-1/2 top-full mt-1 -translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest z-20 ${isDark ? 'bg-cyan-900 text-cyan-100 border border-cyan-500/30' : 'bg-slate-800 text-white shadow-lg'}`}>
-                    [{getPhysicalExamDisplayName(examKey)}]
+
+                {/* Hover tooltip */}
+                <div className={`absolute left-1/2 top-full mt-2 -translate-x-1/2 pointer-events-none
+                    opacity-0 group-hover:opacity-100 transition-opacity duration-150
+                    whitespace-nowrap px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest z-30
+                    ${isDark ? 'bg-slate-900/95 text-cyan-200 border border-cyan-500/30 shadow-lg' : 'bg-slate-800 text-white shadow-xl'}`}>
+                    {marker.label}
                 </div>
             </button>
         );
@@ -222,7 +278,7 @@ export default function PhysicalExamTab({
         }
 
         return (
-            <motion.button
+            <Motion.button
                 key={examKey} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => handleExam(examKey)}
                 className={`group relative w-full rounded-xl border p-3 text-left transition-all overflow-hidden ${btnClass}`}
             >
@@ -250,7 +306,7 @@ export default function PhysicalExamTab({
                         </span>
                     ) : null}
                 </div>
-            </motion.button>
+            </Motion.button>
         );
     };
 
@@ -320,14 +376,22 @@ export default function PhysicalExamTab({
                         </button>
                     </div>
 
-                    <div className="relative flex-1 flex items-center justify-center p-6 pt-16">
+                    <div className="relative flex-1 flex items-center justify-center p-2 pt-14">
                         {/* Scanning Laser Animation */}
                         {completedCount < totalCount && <div className="absolute left-0 right-0 h-10 bg-gradient-to-t from-cyan-500/30 to-transparent border-b-2 border-cyan-400/50 opacity-50 z-20 pointer-events-none" style={{ animation: 'scan-line 3s linear infinite' }} />}
                         
-                        <div className="relative h-full w-full max-w-[180px]">
-                            <img src={bodyView === 'front' ? bodyProfile.front : bodyProfile.back} alt="Tubuh" className={`h-full w-full object-contain relative z-10 drop-shadow-2xl transition-opacity duration-500 ${isDark ? 'opacity-60 sepia-[.3] hue-rotate-[180deg] saturate-[2]' : 'opacity-90'}`} />
+                        <div className="relative h-full w-full flex items-center justify-center">
+                            <Motion.img 
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: isDark ? 0.7 : 0.95 }}
+                                transition={{ duration: 0.8 }}
+                                src={bodyView === 'front' ? bodyProfile.front : bodyProfile.back} 
+                                alt="Anatomy Visual" 
+                                className={`h-full w-full object-contain relative z-10 drop-shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-700 ${isDark ? 'sepia-[.2] hue-rotate-[180deg] saturate-[2.5]' : ''}`} 
+                            />
+                            {/* Compartmentalized anatomical markers */}
                             <div className="absolute inset-0 z-20">
-                                {Object.keys(BODY_MARKERS).map((examKey) => renderMarker(examKey, bodyView))}
+                                {Object.keys(BODY_MARKERS).map(examKey => renderMarker(examKey, bodyView))}
                             </div>
                         </div>
                     </div>
@@ -367,23 +431,23 @@ export default function PhysicalExamTab({
                                                     <span className={`text-[9px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>{groupDone}/{total}</span>
                                                 </div>
                                                 <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`}>
-                                                    <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} className={`h-full rounded-full ${groupDone === total ? (hasAbnormal ? 'bg-rose-500' : 'bg-emerald-500') : 'bg-cyan-500'}`} />
+                                                    <Motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} className={`h-full rounded-full ${groupDone === total ? (hasAbnormal ? 'bg-rose-500' : 'bg-emerald-500') : 'bg-cyan-500'}`} />
                                                 </div>
                                             </div>
                                         </div>
-                                        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ type: "spring", stiffness: 200 }}>
+                                        <Motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ type: "spring", stiffness: 200 }}>
                                             <ChevronDown size={18} className={isDark ? 'text-slate-500' : 'text-slate-400'} />
-                                        </motion.div>
+                                        </Motion.div>
                                     </button>
 
                                     <AnimatePresence initial={false}>
                                         {isOpen && (
-                                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                                            <Motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                                                 <div className={`p-3 pt-0 grid gap-2 border-t ${isDark ? 'border-slate-800/50' : 'border-slate-100'}`}>
                                                     <div className="h-1" />
                                                     {group.exams.map(key => renderExamButton(key))}
                                                 </div>
-                                            </motion.div>
+                                            </Motion.div>
                                         )}
                                     </AnimatePresence>
                                 </div>
