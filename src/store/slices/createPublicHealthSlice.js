@@ -682,28 +682,26 @@ export const createPublicHealthSlice = (set, get) => ({
 
             return { success: true };
         },
-    },
 
         // ═══ P6: Living Village — villageLedger feedback loop ═════
         // Records discharge outcomes → updates family indicators
         recordVillageLedgerEntry: (familyId, entryType, details = {}) => {
-            set(produce(s => {
-                if (!s.publicHealth.villageLedger) s.publicHealth.villageLedger = [];
-
+            const day = get().world?.day || 0;
+            set(s => {
+                const ledger = s.publicHealth.villageLedger || [];
                 const entry = {
                     familyId,
                     type: entryType, // 'discharge', 'home_visit', 'prolanis', 'immunization'
-                    day: get().world?.day || 0,
+                    day,
                     timestamp: Date.now(),
                     ...details
                 };
-                s.publicHealth.villageLedger.push(entry);
+                const nextLedger = [...ledger, entry];
 
-                // Apply feedback to family indicators
-                if (s.publicHealth.villageData?.families && familyId) {
-                    const famIdx = s.publicHealth.villageData.families.findIndex(f => f.id === familyId);
-                    if (famIdx >= 0) {
-                        const fam = s.publicHealth.villageData.families[famIdx];
+                let nextFamilies = s.publicHealth.villageData?.families;
+                if (nextFamilies && familyId) {
+                    nextFamilies = nextFamilies.map(fam => {
+                        if (fam.id !== familyId) return fam;
                         const indicators = { ...(fam.indicators || {}) };
 
                         // Discharge feedback: improve relevant indicators
@@ -723,17 +721,24 @@ export const createPublicHealthSlice = (set, get) => ({
                             indicators.imunisasi = true;
                         }
 
-                        s.publicHealth.villageData.families[famIdx] = {
-                            ...fam,
-                            indicators,
-                            lastLedgerDay: entry.day
-                        };
-                    }
+                        return { ...fam, indicators, lastLedgerDay: entry.day };
+                    });
                 }
-            }));
+
+                return {
+                    publicHealth: {
+                        ...s.publicHealth,
+                        villageLedger: nextLedger,
+                        villageData: nextFamilies
+                            ? { ...s.publicHealth.villageData, families: nextFamilies }
+                            : s.publicHealth.villageData
+                    }
+                };
+            });
         },
 
         getVillageLedger: () => {
             return get().publicHealth.villageLedger || [];
         },
+    },
 });

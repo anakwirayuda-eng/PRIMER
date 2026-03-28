@@ -262,6 +262,17 @@ export const createClinicalSlice = (set, get) => ({
             const { profile } = state.player;
             const { villageData, activeOutbreaks } = state.publicHealth;
 
+            // P5: RW Progressive Unlock — filter to only unlocked RW families for patient spawn
+            const unlockedRWs = villageData?.unlockedRWs || ['01', '02'];
+            const villageDataFiltered = villageData ? {
+                ...villageData,
+                families: (villageData.families || []).filter(f => unlockedRWs.includes(f.rw || '01')),
+                villagers: (villageData.villagers || []).filter(v => {
+                    const fam = (villageData.families || []).find(f => f.id === v.familyId);
+                    return unlockedRWs.includes(fam?.rw || '01');
+                })
+            } : null;
+
             // 1. Update Busy Ambulances
             // Ambulance filter (count tracked implicitly by array mutation)
             state.clinical.busyAmbulanceIds = state.clinical.busyAmbulanceIds.filter(item => isAmbulanceStillBusy(item, day, time));
@@ -330,7 +341,7 @@ export const createClinicalSlice = (set, get) => ({
             ) {
                 const newPatient = generatePatient(
                     time,
-                    villageData,
+                    villageDataFiltered,
                     day,
                     facilities,
                     normalizeSkillList(profile.skills),
@@ -734,6 +745,22 @@ export const createClinicalSlice = (set, get) => ({
 
             if (txResult.success && patient?.id && !(typeof patient.id === 'string' && patient.id.includes('_visit_'))) {
                 get().metaActions.updateProgress('patients_treated', 1);
+
+                // P6: Living Village Ledger — record discharge outcome for resident families
+                const patientFamilyId = patient.hidden?.familyId || patient.familyId;
+                if (patientFamilyId) {
+                    const dxCode = patient.medicalData?.trueDiagnosisCode || '';
+                    const category = dxCode.startsWith('I') ? 'Cardiovascular'
+                        : dxCode.startsWith('A15') ? 'Respiratory'
+                        : (dxCode.startsWith('F') ? 'Psychiatry' : 'General');
+                    get().publicHealthActions.recordVillageLedgerEntry(patientFamilyId, 'discharge', {
+                        patientId: patient.id,
+                        patientName: patient.name,
+                        diagnosisCode: dxCode,
+                        diagnosisCategory: category,
+                        action: decision.action,
+                    });
+                }
             }
 
             return txResult;

@@ -68,7 +68,8 @@ export const createInitialPublicHealthState = () => ({
     completedIKMIds: [],
     ikmCooldowns: {},
     ikmCaseBoosts: [],
-    buildingProgress: {}
+    buildingProgress: {},
+    villageLedger: []
 });
 
 export const createInitialStaffState = () => ({
@@ -285,7 +286,10 @@ export const mergePersistedPublicHealth = (publicHealth, currentPublicHealth) =>
             : currentPublicHealth.ikmCaseBoosts,
         buildingProgress: isPlainObject(publicHealth.buildingProgress)
             ? { ...currentPublicHealth.buildingProgress, ...publicHealth.buildingProgress }
-            : currentPublicHealth.buildingProgress
+            : currentPublicHealth.buildingProgress,
+        villageLedger: Array.isArray(publicHealth.villageLedger)
+            ? publicHealth.villageLedger
+            : currentPublicHealth.villageLedger
     };
 };
 
