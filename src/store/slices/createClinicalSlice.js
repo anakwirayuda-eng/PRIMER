@@ -916,7 +916,7 @@ export const createClinicalSlice = (set, get) => ({
                             satisfactionScore,
                             isEmergency: true,
                             dispensed: true, // IGD always auto-dispenses
-                            cpptRecord: buildMaiaCPPTRecord(patient, day, time, outcomeStatus, true)
+                            cpptRecord: buildCPPTRecord(patient, decision, day, time, { outcomeStatus, satisfactionScore, isCorrectAction: isCorrectTriage, isEmergency: true, handledBy: 'Player' })
                         })),
                         // Codex Fix: push to todayLog so debrief counts emergency discharges
                         todayLog: [...state.clinical.todayLog, {
