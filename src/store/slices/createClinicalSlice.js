@@ -763,6 +763,18 @@ export const createClinicalSlice = (set, get) => ({
                 }
             }
 
+            // P6: Living Village Ledger — Prolanis visits also feed back to village
+            if (txResult.success && typeof patient?.id === 'string' && patient.id.includes('_visit_')) {
+                const proFamilyId = patient.hidden?.familyId || patient.familyId;
+                if (proFamilyId) {
+                    get().publicHealthActions.recordVillageLedgerEntry(proFamilyId, 'prolanis', {
+                        patientId: patient.id,
+                        patientName: patient.name,
+                        diseaseType: patient.hidden?.diseaseId || 'chronic',
+                    });
+                }
+            }
+
             return txResult;
         },
         dischargeEmergencyPatient: (patient, decision, day, time) => {
@@ -992,6 +1004,23 @@ export const createClinicalSlice = (set, get) => ({
 
             if (!entersSisruteLimbo && patient?.id) {
                 get().metaActions.updateProgress('patients_treated', 1);
+
+                // P6: Living Village Ledger — record emergency discharge for resident families
+                const patientFamilyId = patient.hidden?.familyId || patient.familyId;
+                if (patientFamilyId) {
+                    const dxCode = patient.medicalData?.trueDiagnosisCode || patient.hidden?.icd10 || '';
+                    const category = dxCode.startsWith('I') ? 'Cardiovascular'
+                        : dxCode.startsWith('A15') ? 'Respiratory'
+                        : (dxCode.startsWith('F') ? 'Psychiatry' : 'General');
+                    get().publicHealthActions.recordVillageLedgerEntry(patientFamilyId, 'discharge', {
+                        patientId: patient.id,
+                        patientName: patient.name,
+                        diagnosisCode: dxCode,
+                        diagnosisCategory: category,
+                        action: decision.action,
+                        isEmergency: true,
+                    });
+                }
             }
         },
         orderLab: (patientId, labName, cost) => {

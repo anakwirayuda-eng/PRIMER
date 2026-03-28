@@ -415,7 +415,7 @@ function AgePyramid({ ageGroups }) {
 // KK CARD PREVIEW — Used in the family grid
 // ═══════════════════════════════════════════════════════════════
 
-function KKCardPreview({ family, indicators, onClick }) {
+function KKCardPreview({ family, indicators, onClick, isLocked }) {
     const kepala = (family.members || []).find(m => m.role === 'head') || family.members?.[0] || {};
     const memberCount = (family.members || []).length;
 
@@ -426,8 +426,8 @@ function KKCardPreview({ family, indicators, onClick }) {
 
     return (
         <div
-            className="group cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-            onClick={onClick}
+            className={`group transition-all duration-200 ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]'}`}
+            onClick={isLocked ? undefined : onClick}
         >
             <div
                 className="rounded-lg overflow-hidden shadow-sm"
@@ -522,11 +522,14 @@ export default function SensusPage() {
     const [selectedFamily, setSelectedFamily] = useState(null);
     const [filterRwRt, setFilterRwRt] = useState('all');
     const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
-    const families = useMemo(() => (
-        Array.isArray(villageData?.families) && villageData.families.length > 0
+    // P5: RW Progressive Unlock awareness
+    const unlockedRWs = villageData?.unlockedRWs || ['01', '02'];
+    const families = useMemo(() => {
+        const raw = Array.isArray(villageData?.families) && villageData.families.length > 0
             ? villageData.families
-            : VILLAGE_FAMILIES
-    ), [villageData]);
+            : VILLAGE_FAMILIES;
+        return raw.map(f => ({ ...f, isLocked: !unlockedRWs.includes(f.rw || '01') }));
+    }, [villageData, unlockedRWs]);
 
     const demographics = useMemo(() => calculateDemographics(families), [families]);
     const sdohSummary = useMemo(() => calculateSDOHSummary(families), [families]);
@@ -745,6 +748,7 @@ export default function SensusPage() {
                                     family={family}
                                     indicators={getFamilyIndicators(family)}
                                     onClick={() => setSelectedFamily(family)}
+                                    isLocked={family.isLocked}
                                 />
                             ))}
                         </div>

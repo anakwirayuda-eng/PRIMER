@@ -167,13 +167,17 @@ export default function WilayahPage() {
     // ═══ P1 PERF FIX: O(1) Map lookup instead of O(n) .find() per building ═══
     const mapData = useMemo(() => {
         if (!staticMapTopology || !villageData?.families) return null;
+        // P5: RW Progressive Unlock — determine which RWs are accessible
+        const unlockedRWs = villageData.unlockedRWs || ['01', '02'];
         const families = villageData.families.map(f => {
             const phbs = calculatePHBSFromIndicators(f.indicators);
             const avgBarrier = calculateAvgBarrierFromIndicators(f.indicators);
             const riskLevel = avgBarrier >= 0.7 ? 'high' : avgBarrier >= 0.5 ? 'medium' : 'low';
+            const isLocked = !unlockedRWs.includes(f.rw || '01');
             return {
                 ...f, phbsScore: phbs, behaviorRisk: riskLevel,
-                behaviorEmoji: riskLevel === 'high' ? '🔴' : riskLevel === 'medium' ? '🟠' : '🟢'
+                behaviorEmoji: riskLevel === 'high' ? '🔴' : riskLevel === 'medium' ? '🟠' : '🟢',
+                isLocked
             };
         });
         // Build O(1) lookup map instead of per-building .find()
@@ -183,7 +187,7 @@ export default function WilayahPage() {
             const fd = familyById.get(b.familyId) || null;
             // Inject surveillance case data into building for 3D marker rendering
             const surv = surveillanceStatus[b.id] || null;
-            return { ...b, familyData: fd, hasCase: !!surv, caseInfo: surv };
+            return { ...b, familyData: fd, hasCase: !!surv, caseInfo: surv, isLocked: fd?.isLocked || false };
         });
         return { ...staticMapTopology, buildings, families };
     }, [staticMapTopology, villageData, surveillanceStatus]);
@@ -584,7 +588,15 @@ export default function WilayahPage() {
 
                             {/* Drawer Content — scrollable */}
                             <div className="flex-1 overflow-y-auto scrollbar-hide">
-                                {selectedBuilding.familyId ? (
+                                {selectedBuilding.isLocked ? (
+                                    <div className="p-5 text-center space-y-3">
+                                        <div className="text-4xl opacity-40">🔒</div>
+                                        <h4 className="text-sm font-black text-white/60 uppercase tracking-wider">Wilayah Belum Terbuka</h4>
+                                        <p className="text-xs text-white/40 leading-relaxed">
+                                            RW ini belum terbuka. Tingkatkan reputasi dan lanjutkan permainan untuk membuka akses ke wilayah baru.
+                                        </p>
+                                    </div>
+                                ) : selectedBuilding.familyId ? (
                                     <div className="p-5">
                                         <PISPKPanel
                                             building={selectedBuilding}
@@ -662,7 +674,7 @@ export default function WilayahPage() {
                             </div>
 
                             {/* Home Visit CTA */}
-                            {selectedBuilding.familyId && (
+                            {selectedBuilding.familyId && !selectedBuilding.isLocked && (
                                 <div className="p-4 border-t border-white/10 space-y-2">
                                     <button
                                         onClick={handleStartBehaviorCase}

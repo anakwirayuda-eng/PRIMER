@@ -721,7 +721,7 @@ export const createPublicHealthSlice = (set, get) => ({
                             indicators.imunisasi = true;
                         }
 
-                        return { ...fam, indicators, lastLedgerDay: entry.day };
+                        return { ...fam, indicators, iksScore: calculateIKS(indicators), lastLedgerDay: entry.day };
                     });
                 }
 
