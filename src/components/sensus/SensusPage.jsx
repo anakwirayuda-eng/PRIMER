@@ -777,8 +777,8 @@ export default function SensusPage() {
                                         return (
                                             <tr
                                                 key={family.id}
-                                                className="hover:bg-yellow-50/60 transition-colors cursor-pointer"
-                                                onClick={() => setSelectedFamily(family)}
+                                                className={`transition-colors ${family.isLocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-yellow-50/60 cursor-pointer'}`}
+                                                onClick={family.isLocked ? undefined : () => setSelectedFamily(family)}
                                                 style={{
                                                     borderBottom: '1px solid #C8E6C9',
                                                     background: idx % 2 === 0 ? 'transparent' : 'rgba(232, 245, 233, 0.2)'

@@ -100,6 +100,7 @@ export default function WilayahPage() {
     const history = useGameStore(s => s.clinical.history);
     const playerStats = useGameStore(useShallow(s => s.player.profile));
     const activeIKMEvents = useGameStore(s => s.publicHealth.activeIKMEvents);
+    const recordVillageLedgerEntry = useGameStore(s => s.publicHealthActions.recordVillageLedgerEntry);
 
     // Actions & UI state still come from useGame() (stable references, no perf impact)
     const {
@@ -311,6 +312,16 @@ export default function WilayahPage() {
         if (updateProgress) {
             getHomeVisitProgressMetrics(action.id).forEach(metric => {
                 updateProgress(metric, 1);
+            });
+        }
+
+        // P6: Living Village Ledger — record home visit
+        if (recordVillageLedgerEntry) {
+            const entryType = action.id === 'immunisasi' ? 'immunization' : 'home_visit';
+            recordVillageLedgerEntry(targetFamilyId, entryType, {
+                actionId: action.id,
+                actionLabel: action.label,
+                indicatorsUpdated: idsToUpdate,
             });
         }
 
