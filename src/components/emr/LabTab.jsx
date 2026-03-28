@@ -11,7 +11,7 @@
  * [LAST_UPDATE]: 2026-03-23
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { Microscope, AlertCircle, Info, FlaskConical, Sparkles, CheckCircle2, ChevronRight, Activity, FileWarning } from 'lucide-react';
 import { findWikiKey } from '../../data/WikiData.js';
 import { LAB_CATALOG } from '../../game/LabEngine.js';
@@ -54,7 +54,8 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
         try {
             Object.entries(caseLabs).forEach(([labName, labData]) => {
                 const safeData = (labData && typeof labData === 'object') ? labData : { result: String(labData || ''), cost: 50000 };
-                merged.push({ id: labName, name: labName, ...safeData, isCase: true });
+                const catalogEntry = LAB_CATALOG[labName];
+                merged.push({ id: labName, name: catalogEntry?.name || labName, ...safeData, isCase: true });
             });
         } catch (e) {
             console.warn('[LabTab] Error processing case labs:', e);
@@ -87,6 +88,17 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
         return merged;
     }, [caseData]);
 
+    // Track pending timers for cleanup on unmount
+    const pendingTimersRef = useRef(new Map());
+
+    // Cleanup pending lab timers on unmount
+    useEffect(() => {
+        return () => {
+            pendingTimersRef.current.forEach(timerId => clearTimeout(timerId));
+            pendingTimersRef.current.clear();
+        };
+    }, []);
+
     // Cherry-pick 2: 1.5s intentional friction before revealing results
     const executeLabOrder = (lab) => {
         const labId = lab.id || lab.name;
@@ -94,14 +106,16 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
 
         setProcessingLabs(prev => ({ ...prev, [labId]: true }));
 
-        setTimeout(() => {
+        const timerId = setTimeout(() => {
             handleOrderLab(labId, Number(lab.cost) || 50000);
             setProcessingLabs(prev => {
                 const next = { ...prev };
                 delete next[labId];
                 return next;
             });
+            pendingTimersRef.current.delete(labId);
         }, 1500);
+        pendingTimersRef.current.set(labId, timerId);
     };
 
     // Count completed results
@@ -164,7 +178,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                             const labId = lab.id || lab.name;
                             const isRevealed = labsRevealed[labId];
                             const isProcessing = processingLabs[labId];
-                            const displayName = lab.isCase ? labId : lab.name;
+                            const displayName = lab.name || labId;
                             const labCost = Number(lab.cost) || 50000;
                             const wikiKey = findWikiKey('lab', labId);
 
@@ -272,8 +286,11 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                             const labInfo = allLabs.find(l => (l.id || l.name) === labKey);
                             if (!labInfo) return null;
 
-                            const labResult = labInfo.result || (typeof labsRevealed[labKey] === 'object' ? labsRevealed[labKey]?.result : null) || 'Dalam batas normal';
-                            const labFlag = labInfo.flag || 'normal';
+                            // PRIORITY: engine result (labsRevealed) > static default (labInfo.result)
+                            const revealedData = labsRevealed[labKey];
+                            const engineResult = typeof revealedData === 'object' ? revealedData?.result : (typeof revealedData === 'string' ? revealedData : null);
+                            const labResult = engineResult || labInfo.result || 'Dalam batas normal';
+                            const labFlag = (typeof revealedData === 'object' ? revealedData?.flag : null) || labInfo.flag || 'normal';
                             const isAbnormal = labFlag !== 'normal' && labFlag !== 'negative';
 
                             return (

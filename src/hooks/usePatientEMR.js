@@ -485,14 +485,16 @@ export function usePatientEMR() {
         }
         orderLab(patient.id, labName, cost);
         
-        // Codex Fix: Store real lab object, not primitive boolean 'true'.
-        const caseLab = patient.medicalData?.labs?.[labName] || patient.hidden?.caseData?.labs?.[labName];
-        const labResultObj = caseLab || { result: 'Dalam batas normal', isNormal: true };
+        // Read the store-written result after orderLab's synchronous set().
+        // The store's orderLab() calls processLabOrder() for disease-contextualized results.
+        const updatedPatient = useGameStore.getState().clinical.queue.find(p => p.id === patient.id);
+        const storeResult = updatedPatient?.labsRevealed?.[labName];
+        const labResultObj = storeResult || { result: 'Dalam batas normal', isNormal: true };
         const updatedLabs = { ...labsRevealed, [labName]: labResultObj };
         setLabsRevealed(updatedLabs);
         recalculateClinicalScores(anamnesisHistory, examsPerformed, updatedLabs);
         soundManager.playConfirm();
-    }, [stats.funds, patient, orderLab, labsRevealed, anamnesisHistory, examsPerformed, recalculateClinicalScores]);
+    }, [stats.kapitasi, stats.pendapatanUmum, patient, orderLab, labsRevealed, anamnesisHistory, examsPerformed, recalculateClinicalScores]);
 
     const addDiagnosis = useCallback((d) => {
         if (!selectedDiagnoses.find(x => x.code === d.code)) {
