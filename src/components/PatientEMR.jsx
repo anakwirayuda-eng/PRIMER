@@ -30,7 +30,7 @@ const BillingTab = React.lazy(() => import('./emr/BillingTab'));
 const EducationTab = React.lazy(() => import('./emr/EducationTab'));
 import ClinicalSidebar from './emr/ClinicalSidebar.jsx';
 import ReasoningDashboard from './emr/ReasoningDashboard.jsx';
-import MaiaLiveCopilot from './emr/MaiaLiveCopilot.jsx';
+
 
 export default function PatientEMR() {
     const emr = usePatientEMR();
@@ -593,15 +593,7 @@ export default function PatientEMR() {
                 </div>
             </nav>
 
-            {/* 🤖 CORTANA PROTOCOL: Floating MAIA Live Copilot — desktop only (redundant on mobile) */}
-            <div className="hidden md:block">
-                <MaiaLiveCopilot
-                    patient={patient}
-                    liveMaiaFeedback={maiaFeedback}
-                    historyLength={anamnesisHistory?.length || 0}
-                    isEmergency={!!patient.isEmergency}
-                />
-            </div>
+
         </div>
     );
 }
