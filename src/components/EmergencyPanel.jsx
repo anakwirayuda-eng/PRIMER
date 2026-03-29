@@ -173,7 +173,6 @@ function EmergencyPatientCard({ patient, onSelect, isActive, time }) {
 
 // Main Emergency Panel Component
 export default function EmergencyPanel({ emergencyQueue, onAdmitEmergency, activeEmergencyId, time }) {
-    const { t: _t } = useTranslation();
 
     if (!emergencyQueue || emergencyQueue.length === 0) {
         return (
@@ -369,18 +368,8 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
         'monitor_gds': 'lab_gds'
     };
 
-    // Guard: patient may be undefined if queue desyncs from activeEmergencyId
-    if (!patient) {
-        return (
-            <div className="flex flex-col items-center justify-center h-full p-8 text-slate-400">
-                <Crosshair size={32} className="mb-3 opacity-50" />
-                <p className="font-bold">Pilih Pasien dari Triage Board</p>
-            </div>
-        );
-    }
-
-    // ðŸ’¥ Dynamic Vitals â€” recalculates reactively when actions are toggled
-    const baseVitals = patient.medicalData?.vitals || {};
+    // Codex Fix [High]: All hooks must be called BEFORE any early return.
+    const baseVitals = patient?.medicalData?.vitals || {};
     const vitals = useMemo(() => {
         const current = { ...baseVitals };
         performedActions.forEach(actionId => {
@@ -400,21 +389,33 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
         return current;
     }, [baseVitals, performedActions]);
 
-    const triage = TRIAGE_LEVELS[patient.triageLevel];
-    const deteriorationLevel = patient.deterioration || 0;
-
     // Reset state when patient changes
+    const patientId = patient?.id;
     useEffect(() => {
+        if (!patientId) return;
         // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: reset component state when patient changes
         setTriageSelection(null); setTriageValidation(null);
         setPerformedActions([]); setStabilizationValidation(null);
         setIsResuscitating(false); setResuscitationAttempts(0);
         setActivePhase(1); setShowBilling(false);
-    }, [patient.id]);
+    }, [patientId]);
 
     // Auto-advance phases smoothly
     useEffect(() => { if (triageValidation && activePhase === 1) setActivePhase(2); }, [triageValidation]);
     useEffect(() => { if (stabilizationValidation && activePhase === 2) setActivePhase(3); }, [stabilizationValidation]);
+
+    // Guard: patient may be undefined if queue desyncs from activeEmergencyId
+    if (!patient) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full p-8 text-slate-400">
+                <Crosshair size={32} className="mb-3 opacity-50" />
+                <p className="font-bold">Pilih Pasien dari Triage Board</p>
+            </div>
+        );
+    }
+
+    const triage = TRIAGE_LEVELS[patient.triageLevel];
+    const deteriorationLevel = patient.deterioration || 0;
 
     // Handle action toggle
     const toggleAction = (actionId) => {
