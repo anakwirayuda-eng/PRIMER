@@ -23,7 +23,7 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
             <div className={`p-4 rounded-2xl relative overflow-hidden transition-all ${isDark ? 'bg-gradient-to-br from-blue-900/40 to-slate-900 border border-blue-500/20' : 'bg-gradient-to-br from-blue-50 to-white border border-blue-100'}`}>
                 <div className="flex items-center gap-2 mb-3">
                     <Brain size={16} className="text-blue-500" />
-                    <h4 className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>Saran Tindakan MAIA</h4>
+                    <h4 className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>Saran Tindakan</h4>
                 </div>
                 <div className="flex flex-wrap gap-2 relative z-10">
                     {(() => {
