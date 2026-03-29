@@ -21,7 +21,7 @@ export default function ChildDirectSelection({ patient, anamnesisHistory, handle
 
     return (
         <div className="mb-2 p-1.5 bg-amber-50 dark:bg-amber-950/30 border-2 border-amber-200 dark:border-amber-800/50 rounded-lg">
-            <p className="text-tag text-amber-700 dark:text-amber-400 mb-1.5 font-medium">👶 Tanya langsung ke anak:</p>
+            <p className="text-tag text-amber-700 dark:text-amber-400 mb-1.5 font-medium">Tanya langsung ke anak:</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5">
                 {unaskedChildQs.map((q) => (
                     <button
@@ -30,7 +30,7 @@ export default function ChildDirectSelection({ patient, anamnesisHistory, handle
                         onClick={() => handleAskQuestion(q)}
                         className="px-2 py-1.5 rounded-full border text-tag text-center truncate transition-all bg-white dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700/50 hover:border-amber-500 hover:shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/50 font-medium"
                     >
-                        🗣️ {getTagLabel(q.id, q.text)}
+                        {getTagLabel(q.id, q.text)}
                     </button>
                 ))}
             </div>

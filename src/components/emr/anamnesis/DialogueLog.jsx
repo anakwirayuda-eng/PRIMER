@@ -139,19 +139,23 @@ export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEnd
                     );
                 })}
 
+                {/* Codex Fix [Medium-High]: Typing indicator was showing MAIA,
+                    but isProcessing fires during getAdaptiveResponse() which generates
+                    the PATIENT's answer. Now shows patient/informant typing bubble. */}
                 {isProcessing && (
-                    <div className="flex justify-start">
-                        <div className="relative max-w-[75%]">
-                            <div className={`relative rounded-2xl border-l-4 px-4 py-3 ${isDark ? 'border-cyan-500 bg-slate-800/75 text-slate-100' : 'border-cyan-300 bg-white text-slate-900 shadow-sm'}`}>
+                    <div className="flex justify-end">
+                        <div className="relative max-w-[85%] sm:max-w-[80%]">
+                            <div className={`relative rounded-2xl border-r-4 px-4 py-3 ${isDark ? 'border-indigo-500 bg-indigo-950/40 text-white' : 'border-indigo-200 bg-indigo-50 text-slate-900'}`}>
                                 <BubbleTail
-                                    side="left"
-                                    className={isDark ? 'border-l border-t border-cyan-500 bg-slate-800/75' : 'border-l border-t border-cyan-200 bg-white'}
+                                    side="right"
+                                    className={isDark ? 'border-r border-t border-indigo-500 bg-indigo-950/40' : 'border-r border-t border-indigo-200 bg-indigo-50'}
                                 />
 
-                                <div className="mb-2 flex items-center gap-2">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-500">
-                                        MAIA
+                                <div className="mb-1 flex items-center justify-end gap-2">
+                                    <span className={`text-[10px] font-black uppercase tracking-[0.18em] ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>
+                                        {getSpeakerLabel(null, patient)}
                                     </span>
+                                    <UserRound size={12} className={isDark ? 'text-indigo-300' : 'text-indigo-700'} />
                                 </div>
                                 <TypingDots isDark={isDark} />
                             </div>

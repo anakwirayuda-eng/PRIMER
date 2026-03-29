@@ -31,6 +31,11 @@ export default function AnamnesisTab({
     anamnesisContext,
     handleInitialComplaint
 }) {
+    // Codex Fix [Medium]: Separate mobile sheet state from MAIA tips state.
+    // Previously both used showAnamnesisHint, causing tips to appear when
+    // opening the mobile question panel.
+    const [isMobileSheetOpen, setIsMobileSheetOpen] = React.useState(false);
+
     const score = coverageScore?.anamnesisTotal ?? coverageScore?.score ?? 0;
     const catDetails = coverageScore?.categories || {};
     const cartPct = coverageScore?.micro || 0;
@@ -113,12 +118,12 @@ export default function AnamnesisTab({
             {/* Question Area — Bottom Sheet on mobile, inline on desktop */}
             {/* Mobile: floating toggle */}
             <button
-                onClick={() => setShowAnamnesisHint(prev => !prev)}
+                onClick={() => setIsMobileSheetOpen(prev => !prev)}
                 className={`md:hidden fixed bottom-16 right-4 z-30 px-4 py-2.5 rounded-2xl shadow-lg font-bold text-sm flex items-center gap-2 transition-all active:scale-95 ${isDark
                     ? 'bg-emerald-600 text-white shadow-emerald-900/40'
                     : 'bg-emerald-600 text-white shadow-emerald-200'
                     }`}
-                style={{ display: showAnamnesisHint ? 'none' : undefined }}
+                style={{ display: isMobileSheetOpen ? 'none' : undefined }}
             >
                 <Brain size={16} /> Pertanyaan
             </button>
@@ -130,18 +135,18 @@ export default function AnamnesisTab({
                 ${/* Mobile bottom sheet styles */''}
                 max-md:fixed max-md:bottom-0 max-md:inset-x-0 max-md:z-40 max-md:rounded-t-2xl max-md:shadow-2xl max-md:max-h-[50vh]
                 max-md:transition-transform max-md:duration-300
-                ${!showAnamnesisHint ? 'max-md:translate-y-[calc(100%-0px)] max-md:pointer-events-none max-md:opacity-0' : 'max-md:translate-y-0'}
+                ${!isMobileSheetOpen ? 'max-md:translate-y-[calc(100%-0px)] max-md:pointer-events-none max-md:opacity-0' : 'max-md:translate-y-0'}
                 ${isDark ? 'max-md:bg-slate-900 max-md:border-t max-md:border-slate-700' : 'max-md:bg-white max-md:border-t max-md:border-slate-200'}
             `}>
                 {/* Mobile header — drag handle + close button */}
                 <div className="md:hidden flex items-center justify-between px-3 pt-2 pb-1">
                     <span className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Pertanyaan</span>
                     <button
-                        onClick={() => setShowAnamnesisHint(false)}
+                        onClick={() => setIsMobileSheetOpen(false)}
                         aria-label="Tutup panel pertanyaan"
                         className={`p-1.5 rounded-lg transition-all active:scale-90 ${isDark ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-100 text-slate-500 hover:text-slate-800'}`}
                     >
-                        ✕
+                        {'\u00d7'}
                     </button>
                 </div>
 
@@ -164,7 +169,7 @@ export default function AnamnesisTab({
                             <div className="flex-1">
                                 <div className="flex justify-between items-center">
                                     <span className={`text-tag font-black uppercase tracking-wider ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
-                                        {maiaAlerts[0].priority === 'critical' ? '🚨' : maiaAlerts[0].priority === 'high' ? '🔴' : maiaAlerts[0].priority === 'medium' ? '🟡' : '🔵'} MAIA Suggestion
+                                        MAIA
                                     </span>
                                     {maiaAlerts[0].suggestTab && (
                                         <span className={`text-caption font-bold px-1.5 py-0.5 rounded ${isDark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>
@@ -193,7 +198,7 @@ export default function AnamnesisTab({
 
                     {showAnamnesisHint && ANAMNESIS_TIPS[anamnesisCategory] && (
                         <div className={`mb-2 p-2 rounded text-tag italic border ${isDark ? 'bg-indigo-950/30 text-indigo-300 border-indigo-900/50' : 'bg-indigo-50 text-indigo-800 border-indigo-100'}`}>
-                            💡 {ANAMNESIS_TIPS[anamnesisCategory]}
+                            Tip: {ANAMNESIS_TIPS[anamnesisCategory]}
                         </div>
                     )}
 

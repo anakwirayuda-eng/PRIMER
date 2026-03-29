@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @reflection
  * [IDENTITY]: EmergencyPanel
  * [PURPOSE]: React UI component: Gamified Trauma Bay Command Center (IGD).
@@ -219,7 +219,7 @@ export default function EmergencyPanel({ emergencyQueue, onAdmitEmergency, activ
                         {Object.entries(triageCounts).map(([level, count]) => (
                             <div key={level} className="flex items-center gap-1">
                                 <TriageBadge level={parseInt(level)} size="sm" />
-                                <span className="text-xs font-bold opacity-80">Ã—{count}</span>
+                                <span className="text-xs font-bold opacity-80">x{count}</span>
                             </div>
                         ))}
                     </div>
@@ -456,7 +456,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                 <div className="max-w-md bg-black/50 backdrop-blur-md p-6 rounded-xl border border-red-800/50 mb-8 relative z-10">
                     <p className="text-red-200 font-bold text-lg mb-2">Henti Jantung / Napas Terdeteksi</p>
                     <p className="text-sm text-red-400">Segera lakukan Resusitasi Jantung Paru (RJP) pada <span className="text-white font-bold">{patient.name}</span>!</p>
-                    {resuscitationAttempts > 0 && <p className="text-xs text-red-500 mt-3 font-bold uppercase tracking-wider">âš  Percobaan ke-{resuscitationAttempts + 1} / Limit: {MAX_RESUS_ATTEMPTS}</p>}
+                    {resuscitationAttempts > 0 && <p className="text-xs text-red-500 mt-3 font-bold uppercase tracking-wider">Percobaan ke-{resuscitationAttempts + 1} / Limit: {MAX_RESUS_ATTEMPTS}</p>}
                 </div>
                 <button onClick={() => { setIsResuscitating(true); setResuscitationAttempts(p => p + 1); if(!performedActions.includes('cpr')) toggleAction('cpr'); }}
                     className="z-10 px-10 py-6 bg-red-600 hover:bg-red-500 text-white font-black text-2xl rounded-2xl shadow-[0_0_40px_rgba(220,38,38,0.6)] active:scale-95 transition-transform flex items-center gap-4 border-b-4 border-red-800">
@@ -466,7 +466,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
         );
     }
 
-    // ðŸš‘ SISRUTE LIMBO: Read-only view while waiting for ambulance
+    // SISRUTE LIMBO: Read-only view while waiting for ambulance
     if (patient.status === 'sisrute_limbo') {
         const sd = patient.sisruteData || {};
         const etaMinutes = sd.estimatedArrival ? Math.max(0, sd.estimatedArrival - resolvedTime) : 0;
@@ -482,7 +482,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                 <TriageBadge level={patient.triageLevel} esiLevel={patient.esiLevel} size="lg" />
                 {patient.deterioration > 30 && (
                     <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800 text-xs text-amber-700 dark:text-amber-400">
-                        âš  Deteriorasi: <span className="font-bold">{Math.round(patient.deterioration)}%</span> â€” Pantau kondisi, Code Blue mungkin terjadi!
+                        Deteriorasi: <span className="font-bold">{Math.round(patient.deterioration)}%</span> - Pantau kondisi, Code Blue mungkin terjadi!
                     </div>
                 )}
             </div>
@@ -515,7 +515,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                         <div className="min-w-0">
                             <h2 className="font-bold text-white truncate text-lg leading-tight">{patient.name}</h2>
                             <p className="text-xs text-slate-400">{patient.age} th / {patient.gender}
-                                {patient.anthropometrics && ` Â· ${patient.anthropometrics.height}cm/${patient.anthropometrics.weight}kg`}
+                                {patient.anthropometrics && ` | ${patient.anthropometrics.height}cm/${patient.anthropometrics.weight}kg`}
                             </p>
                         </div>
                     </div>
@@ -549,7 +549,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                     {(vitals.temp || vitals.gds) && (
                         <div className="grid grid-cols-2 gap-3 mb-4">
                             {vitals.temp && <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-                                <p className="text-[10px] text-slate-500 font-bold mb-1">TEMP (Â°C)</p>
+                                <p className="text-[10px] text-slate-500 font-bold mb-1">TEMP</p>
                                 <LiveVitalValue value={vitals.temp} isCritical={vitals.temp > 38 || vitals.temp < 36} colorClass="text-orange-400" />
                             </div>}
                             {vitals.gds && <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
@@ -751,10 +751,10 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                                 {differentials.map((dx, i) => <li key={i}>{dx}</li>)}
                                             </ul>
                                             <div className="mt-3 bg-indigo-50 dark:bg-indigo-900/20 p-2 rounded text-xs text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                                                <p><strong>ðŸ“‹ Untuk Surat Rujukan:</strong></p>
-                                                <p>â€¢ Working Dx: {patient.medicalData?.diagnosisName || patient.hidden?.diagnosis || '-'}</p>
-                                                <p>â€¢ DDx: {differentials.join(', ')}</p>
-                                                <p>â€¢ Tindakan: {performedActions.length > 0 ? performedActions.map(id => EMERGENCY_ACTIONS[id]?.name || id).join('; ') : 'Belum ada'}</p>
+                                                <p><strong>Untuk Surat Rujukan:</strong></p>
+                                                <p>- Working Dx: {patient.medicalData?.diagnosisName || patient.hidden?.diagnosis || '-'}</p>
+                                                <p>- DDx: {differentials.join(', ')}</p>
+                                                <p>- Tindakan: {performedActions.length > 0 ? performedActions.map(id => EMERGENCY_ACTIONS[id]?.name || id).join('; ') : 'Belum ada'}</p>
                                             </div>
                                         </div>
                                     );
@@ -786,7 +786,7 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
                                                             <div className="flex justify-between pt-3 mt-3 border-t border-slate-700 font-black text-lg text-white"><span>TOTAL TAGIHAN</span><span className="text-emerald-400">Rp {bill.finalBill.toLocaleString()}</span></div>
                                                             <div className={`mt-4 p-4 rounded-xl font-sans text-xs border ${bill.isCovered ? 'bg-emerald-900/30 border-emerald-500/50 text-emerald-200' : 'bg-rose-900/30 border-rose-500/50 text-rose-200'}`}>
                                                                 <span className="font-black uppercase tracking-widest mb-1.5 block">Penjamin: {bill.coverageType}</span>
-                                                                {!bill.isCovered && patient.social?.hasBPJS ? 'âš ï¸ Triase non-emergency (Hijau) tidak dijamin BPJS di IGD.' : 'âœ… Seluruh tindakan gawat darurat dikaver penuh.'}
+                                                                {!bill.isCovered && patient.social?.hasBPJS ? 'Triase non-emergency (Hijau) tidak dijamin BPJS di IGD.' : 'Seluruh tindakan gawat darurat dikaver penuh.'}
                                                             </div>
                                                         </div>
                                                     );

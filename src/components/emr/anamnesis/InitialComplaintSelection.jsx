@@ -35,7 +35,7 @@ export default function InitialComplaintSelection({ patient, isDark, anamnesisHi
 
     return (
         <div className={`mb-2 p-1.5 border-2 rounded-lg ${isDark ? 'bg-emerald-950/30 border-emerald-900/50' : 'bg-emerald-50 border-emerald-200'}`}>
-            <p className={`text-tag mb-1.5 font-medium ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>📋 Tanyakan keluhan utama:</p>
+            <p className={`text-tag mb-1.5 font-medium ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>Tanyakan keluhan utama:</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5">
                 {complaintQuestions.map((q) => (
                     <button
@@ -71,7 +71,7 @@ export default function InitialComplaintSelection({ patient, isDark, anamnesisHi
                         }}
                         className={`px-2 py-1.5 rounded-full border-2 text-tag text-center truncate transition-all ${isDark ? 'bg-slate-800 text-emerald-400 border-emerald-900/50 hover:bg-slate-700' : 'bg-white text-emerald-800 border-emerald-300 hover:bg-emerald-100'} hover:border-emerald-500 hover:shadow-md font-medium`}
                     >
-                        💬 {q.tag}
+                        {q.tag}
                     </button>
                 ))}
             </div>

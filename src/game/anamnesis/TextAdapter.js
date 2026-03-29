@@ -188,6 +188,13 @@ export function getInitialComplaintResponse(patient, complaint) {
  * Get the speaker label for the response bubble.
  */
 export function getSpeakerLabel(question, patient) {
+    // Codex Fix [High]: Respect speaker field already saved in history entries.
+    // InitialComplaintSelection saves informant/patient name as speaker.
+    // DialogueEngine child-direct questions save the child's name as speaker.
+    // Without this check, pediatric cases always show "Ibu/Pendamping" even
+    // when the child answered directly.
+    if (question && question.speaker) return question.speaker;
+
     if (!patient) return 'Pasien';
     const info = getInformantMode(patient);
     if (info.isInformant) return info.informantLabel || 'Pendamping';

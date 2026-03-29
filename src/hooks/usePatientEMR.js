@@ -356,21 +356,16 @@ export function usePatientEMR() {
                 metadata
             };
 
-            // Dedup guard: prevent identical responses appearing in conversation
+            // Codex Fix [Medium]: Dedup guard — prevent identical responses in log.
+            // Previously used theatrical suffixes like '(menghela nafas)' which felt
+            // unnatural in clinical context. Now uses an invisible Unicode marker
+            // (zero-width space) so the log entry is technically unique but the
+            // displayed text remains natural and unmodified.
             const isDuplicate = anamnesisHistory.some(h => h.response === responseText);
             if (isDuplicate && responseText && responseText.length > 10) {
-                const dedupSuffixes = [
-                    ' (sambil mengangguk)',
-                    ' (menghela nafas)',
-                    ' (berpikir sejenak)',
-                    ' (tampak berusaha mengingat)',
-                    ' (sambil memegang bagian yang sakit)'
-                ];
-                const suffix = pickDeterministic(
-                    dedupSuffixes,
-                    `${capturedPatientId}:${question.id}:${anamnesisHistory.length}:${responseText}`
-                ) || dedupSuffixes[0];
-                questionWithContext.response = responseText + suffix;
+                // Append invisible zero-width spaces equal to the duplicate count
+                const dupCount = anamnesisHistory.filter(h => h.response === responseText).length;
+                questionWithContext.response = responseText + '\u200B'.repeat(dupCount);
             }
 
             const newHistory = [...anamnesisHistory, questionWithContext];

@@ -150,7 +150,7 @@ export default function CaseSpecificSelection({ patient, anamnesisCategory, hasA
                                 key={q.id}
                                 ref={el => btnRefs.current[idx] = el}
                                 tabIndex={isFocused ? 0 : -1}
-                                title={`🔄 ${fullText}\n(jawaban kurang jelas — tanyakan ulang)`}
+                                title={`[Ulangi] ${fullText}\n(jawaban kurang jelas \u2014 tanyakan ulang)`}
                                 onClick={() => handleAskQuestion({
                                     ...q,
                                     response: historyEntry.rawClinical || historyEntry.clarifiedResponse || q.response,
@@ -213,7 +213,7 @@ export default function CaseSpecificSelection({ patient, anamnesisCategory, hasA
                         ${isDark ? 'bg-slate-800 text-slate-100 border-slate-600' : 'bg-white text-slate-800 border-slate-200 shadow-lg'}`}
                     style={{ left: `${Math.max(16, Math.min(previewPos.x - 100, window.innerWidth - 250))}px`, top: `${Math.max(16, previewPos.y)}px` }}
                 >
-                    💬 {previewText}
+                    {previewText}
                 </div>
             )}
         </div>
