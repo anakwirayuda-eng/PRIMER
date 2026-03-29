@@ -34,16 +34,30 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
                                 return PROCEDURES_DB.find(p => p.id === id) || COMMON_PROCEDURES.find(p => p.id === id || p.code === id);
                             }).filter(Boolean);
                         } else {
+                            // Codex Fix [High]: Removed catch-all IM/IV default.
+                            // Only suggest when diagnosis keywords match known patterns.
+                            const diagText = selectedDiagnoses.map(d => d.name.toLowerCase()).join(' ');
                             suggestions = COMMON_PROCEDURES.filter(cp => {
-                                const diagText = selectedDiagnoses.map(d => d.name.toLowerCase()).join(' ');
-                                if (diagText.includes('vulnus') || diagText.includes('luka')) return cp.id === 'wound_care' || cp.id === 'suturing' || cp.id === 'im_injection';
-                                if (diagText.includes('asma') || diagText.includes('pneu') || diagText.includes('napas')) return cp.id === 'nebulizer' || cp.id === 'iv_injection';
-                                if (diagText.includes('diare') || diagText.includes('muntah') || diagText.includes('shock')) return cp.id === 'iv_fluid';
-                                if (diagText.includes('jantung') || diagText.includes('dada')) return cp.id === 'ecg';
-                                return cp.id === 'im_injection' || cp.id === 'iv_injection';
+                                if (diagText.includes('vulnus') || diagText.includes('luka')) return cp.id === 'wound_care' || cp.id === 'suturing';
+                                if (diagText.includes('abses')) return cp.id === 'incision_drainage' || cp.id === 'wound_care';
+                                if (diagText.includes('asma') || diagText.includes('bronk')) return cp.id === 'nebulizer';
+                                if (diagText.includes('pneumonia') || diagText.includes('sesak') || diagText.includes('napas')) return cp.id === 'nebulizer' || cp.id === 'oxygen_therapy';
+                                if (diagText.includes('diare') || diagText.includes('dehidrasi') || diagText.includes('muntah') || diagText.includes('shock')) return cp.id === 'iv_fluid';
+                                if (diagText.includes('jantung') || diagText.includes('dada') || diagText.includes('aritmia')) return cp.id === 'ecg';
+                                if (diagText.includes('telinga') || diagText.includes('cerumen') || diagText.includes('otitis')) return cp.id === 'ear_toilet';
+                                if (diagText.includes('epistaksis') || diagText.includes('mimisan')) return cp.id === 'epistaxis_tampon';
+                                if (diagText.includes('fraktur') || diagText.includes('patah')) return cp.id === 'fracture_splinting';
+                                return false; // No catch-all — don't suggest injections by default
                             }).slice(0, 3);
                         }
 
+                        if (suggestions.length === 0) {
+                            return (
+                                <p className={`text-[10px] italic ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                                    Tidak ada saran tindakan khusus. Gunakan pencarian di bawah jika diperlukan.
+                                </p>
+                            );
+                        }
                         return suggestions.map(proc => (
                             <button
                                 key={proc.id}
