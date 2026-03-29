@@ -241,12 +241,12 @@ export default function PhysicalExamTab({
 
                 {/* Node circle with icon */}
                 <div
-                    className={`relative w-8 h-8 rounded-full border-2 backdrop-blur-sm flex items-center justify-center
+                    className={`relative w-[44px] h-[44px] rounded-full border-2 backdrop-blur-sm flex items-center justify-center
                         transition-all duration-200 group-hover:scale-125 group-active:scale-90
                         ${ringColor} ${bgColor}`}
                     style={{ boxShadow: glowStyle }}
                 >
-                    <MarkerIcon size={14} className={`${iconColor} transition-colors`} />
+                    <MarkerIcon size={16} className={`${iconColor} transition-colors`} />
                 </div>
 
                 {/* Hover tooltip */}

@@ -9,7 +9,7 @@
  * [LAST_UPDATE]: 2026-03-29
  */
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../context/GameContext.jsx';
 import {
@@ -87,25 +87,13 @@ export function EmergencyTimer({ patient, time }) {
     );
 }
 
-// ðŸŒŸ WISDOM 3: Diegetic Vitals with Pop Animation
+// ⭐ WISDOM 3: Diegetic Vitals with Pop Animation
 function LiveVitalValue({ value, unit, isCritical, colorClass }) {
-    const prevValue = useRef(value);
-    const [flash, setFlash] = useState(false);
-
-    useEffect(() => {
-        if (value !== prevValue.current && value !== undefined) {
-            setFlash(true);
-            const t = setTimeout(() => setFlash(false), 400);
-            prevValue.current = value;
-            return () => clearTimeout(t);
-        }
-    }, [value]);
-
     return (
         <div className="flex items-baseline gap-1">
             <motion.span
-                key={flash ? `${value}-flash` : value}
-                initial={flash ? { scale: 1.25, filter: 'brightness(1.5)' } : false}
+                key={value}
+                initial={{ scale: 1.25, filter: 'brightness(1.5)' }}
                 animate={{ scale: 1, filter: 'brightness(1)' }}
                 transition={{ duration: 0.3 }}
                 className={`text-xl md:text-2xl font-black font-mono leading-none ${isCritical ? 'text-rose-500 animate-pulse' : colorClass}`}
@@ -369,8 +357,8 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
     };
 
     // Codex Fix [High]: All hooks must be called BEFORE any early return.
-    const baseVitals = patient?.medicalData?.vitals || {};
     const vitals = useMemo(() => {
+        const baseVitals = patient?.medicalData?.vitals || {};
         const current = { ...baseVitals };
         performedActions.forEach(actionId => {
             const effect = EMERGENCY_ACTIONS[actionId]?.vitalEffect;
@@ -387,22 +375,25 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
             }
         });
         return current;
-    }, [baseVitals, performedActions]);
+    }, [patient, performedActions]);
 
     // Reset state when patient changes
     const patientId = patient?.id;
     useEffect(() => {
         if (!patientId) return;
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: reset component state when patient changes
+        /* eslint-disable react-hooks/set-state-in-effect */
         setTriageSelection(null); setTriageValidation(null);
         setPerformedActions([]); setStabilizationValidation(null);
         setIsResuscitating(false); setResuscitationAttempts(0);
         setActivePhase(1); setShowBilling(false);
+        /* eslint-enable react-hooks/set-state-in-effect */
     }, [patientId]);
 
-    // Auto-advance phases smoothly
-    useEffect(() => { if (triageValidation && activePhase === 1) setActivePhase(2); }, [triageValidation]);
-    useEffect(() => { if (stabilizationValidation && activePhase === 2) setActivePhase(3); }, [stabilizationValidation]);
+    // Auto-advance phases smoothly (functional updater avoids hook dependency issues)
+    /* eslint-disable react-hooks/set-state-in-effect */
+    useEffect(() => { if (triageValidation) setActivePhase(p => p === 1 ? 2 : p); }, [triageValidation]);
+    useEffect(() => { if (stabilizationValidation) setActivePhase(p => p === 2 ? 3 : p); }, [stabilizationValidation]);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     // Guard: patient may be undefined if queue desyncs from activeEmergencyId
     if (!patient) {
@@ -414,7 +405,6 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
         );
     }
 
-    const triage = TRIAGE_LEVELS[patient.triageLevel];
     const deteriorationLevel = patient.deterioration || 0;
 
     // Handle action toggle

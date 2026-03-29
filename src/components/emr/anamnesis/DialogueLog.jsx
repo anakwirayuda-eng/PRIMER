@@ -60,7 +60,7 @@ export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEnd
 
             <div className="space-y-4">
                 {anamnesisHistory.map((question, idx) => {
-                    const speakerLabel = getSpeakerLabel(question, patient) || 'Pasien';
+                    const speakerLabel = question.speaker || getSpeakerLabel(question, patient) || 'Pasien';
                     const doctorTime = formatPseudoTime(idx, 0);
                     const patientTime = formatPseudoTime(idx, 1);
                     const doctorText = adaptTextForGender(question.text, patient, informantMode);
