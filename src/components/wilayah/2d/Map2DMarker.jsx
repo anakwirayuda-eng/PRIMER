@@ -170,6 +170,18 @@ function getOverlayRingColor(building, activeLayer) {
     return 'transparent';
 }
 
+// ═══ Directive 5: Colorblind-safe border pattern ═══
+// Good=solid, Warning=dashed, Critical=dotted — distinguishable without color
+function getColorblindBorderStyle(ringColor) {
+    if (!ringColor || ringColor === 'transparent') return 'solid';
+    // Red tones → dotted (critical)
+    if (ringColor === '#f87171' || ringColor === '#ef4444') return 'dotted';
+    // Orange/amber tones → dashed (warning)
+    if (ringColor === '#fbbf24' || ringColor === '#f97316') return 'dashed';
+    // Green tones → solid (good)
+    return 'solid';
+}
+
 
 function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick }) {
     const [hovered, setHovered] = useState(false);
@@ -229,12 +241,12 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick }
                     filter: isLocked ? 'grayscale(1) brightness(0.4)' : isDetective && !atRisk && isHouse ? 'grayscale(0.8) brightness(0.5)' : 'none',
                 }}
             >
-                {/* Overlay ring (detective mode) */}
+                {/* Overlay ring (detective mode) — Directive 5: colorblind borders */}
                 {isDetective && ringColor !== 'transparent' && (
                     <div
                         className="absolute inset-[-3px] rounded-full pointer-events-none"
                         style={{
-                            border: `2px solid ${ringColor}`,
+                            border: `2.5px ${getColorblindBorderStyle(ringColor)} ${ringColor}`,
                             boxShadow: atRisk ? `0 0 8px 2px ${ringColor}` : 'none',
                             animation: atRisk ? 'pulse 1.5s ease-in-out infinite' : 'none',
                         }}

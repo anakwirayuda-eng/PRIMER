@@ -97,6 +97,7 @@ export default function WilayahPage() {
     // Only subscribe to state fields this page actually needs → prevents rerender
     // from unrelated state changes (queue, finance, time ticks, etc.)
     const day = useGameStore(s => s.world.day);
+    const gameTime = useGameStore(s => s.world.time); // minutes 0-1440 for lighting overlay
     const villageData = useGameStore(s => s.publicHealth.villageData);
     const history = useGameStore(s => s.clinical.history);
     const playerStats = useGameStore(useShallow(s => s.player.profile));
@@ -119,7 +120,19 @@ export default function WilayahPage() {
     const [buildingInterior, setBuildingInterior] = useState(null);
     const [activeIKMEventId, setActiveIKMEventId] = useState(null);
     const [activeBCCase, setActiveBCCase] = useState(null); // Behavior Change Case panel
-    const [viewMode, setViewMode] = useState('2D'); // '2D' blueprint (mobile-first) or '3D' diorama (opt-in)
+    // ═══ ADAPTIVE DEVICE DETECTION (Blueprint: cross-platform auto-pick) ═══
+    const [canUse3D] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        // Mobile/touch → no 3D
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 768) return false;
+        // Desktop: check WebGL
+        try {
+            const c = document.createElement('canvas');
+            const gl = c.getContext('webgl2') || c.getContext('webgl');
+            return !!gl;
+        } catch { return false; }
+    });
+    const [viewMode, setViewMode] = useState('2D'); // always start 2D; 3D opt-in if canUse3D
     const dioramaZoomRef = useRef(null); // ref for 3D camera zoom callbacks
     const blueprint2dRef = useRef(null); // ref for 2D pan/zoom callbacks
     const activeZoomRef = viewMode === '3D' ? dioramaZoomRef : blueprint2dRef;
@@ -383,6 +396,7 @@ export default function WilayahPage() {
                             selectedBuildingId={selectedBuilding?.id}
                             onBuildingSelect={setSelectedBuilding}
                             activeLayer={activeLayer}
+                            gameTime={gameTime}
                         />
                     )}
                 </div>
@@ -456,11 +470,15 @@ export default function WilayahPage() {
                                     2D DENAH
                                 </button>
                                 <button
-                                    onClick={() => setViewMode('3D')}
+                                    onClick={() => canUse3D && setViewMode('3D')}
+                                    disabled={!canUse3D}
+                                    title={canUse3D ? '3D Diorama View' : 'WebGL not available on this device'}
                                     className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${
-                                        viewMode === '3D'
-                                            ? 'text-emerald-300 bg-emerald-500/30'
-                                            : 'text-white/40 hover:text-white/60 hover:bg-white/10'
+                                        !canUse3D
+                                            ? 'text-white/20 cursor-not-allowed'
+                                            : viewMode === '3D'
+                                                ? 'text-emerald-300 bg-emerald-500/30'
+                                                : 'text-white/40 hover:text-white/60 hover:bg-white/10'
                                     }`}
                                 >
                                     3D DIORAMA

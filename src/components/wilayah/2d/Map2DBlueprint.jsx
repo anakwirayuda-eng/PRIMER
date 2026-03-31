@@ -18,7 +18,7 @@ const MIN_ZOOM = 0.4;
 const MAX_ZOOM = 3.0;
 const ZOOM_STEP = 0.15;
 
-function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, activeLayer }, ref) {
+function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, activeLayer, gameTime = 480 }, ref) {
     const containerRef = useRef(null);
     const [zoom, setZoom] = useState(1.0);
     const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -192,25 +192,26 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
         });
     }, [mapData.buildings, zoom, selectedBuildingId]);
 
+    // ═══ XII.B: Warm editorial RW zone colors ═══
     const rwColors = {
-        '01': 'rgba(56,189,248,0.12)',  // sky
-        '02': 'rgba(167,139,250,0.12)', // violet
-        '03': 'rgba(52,211,153,0.12)',  // emerald
-        '04': 'rgba(251,191,36,0.12)',  // amber
-        '05': 'rgba(244,114,182,0.12)', // pink
-        '06': 'rgba(248,113,113,0.12)', // red
-        '07': 'rgba(132,204,22,0.12)',  // lime
-        '08': 'rgba(14,165,233,0.12)',  // blue
+        '01': 'rgba(120,160,180,0.08)', // steel blue
+        '02': 'rgba(140,130,160,0.08)', // muted lavender
+        '03': 'rgba(110,150,120,0.08)', // sage
+        '04': 'rgba(170,150,100,0.08)', // warm sand
+        '05': 'rgba(160,120,130,0.08)', // dusty rose
+        '06': 'rgba(150,110,100,0.08)', // terracotta
+        '07': 'rgba(130,150,90,0.08)',  // olive
+        '08': 'rgba(100,140,160,0.08)', // dusty teal
     };
     const rwBorderColors = {
-        '01': 'rgba(56,189,248,0.4)',
-        '02': 'rgba(167,139,250,0.4)',
-        '03': 'rgba(52,211,153,0.4)',
-        '04': 'rgba(251,191,36,0.4)',
-        '05': 'rgba(244,114,182,0.4)',
-        '06': 'rgba(248,113,113,0.4)',
-        '07': 'rgba(132,204,22,0.4)',
-        '08': 'rgba(14,165,233,0.4)',
+        '01': 'rgba(120,160,180,0.30)',
+        '02': 'rgba(140,130,160,0.30)',
+        '03': 'rgba(110,150,120,0.30)',
+        '04': 'rgba(170,150,100,0.30)',
+        '05': 'rgba(160,120,130,0.30)',
+        '06': 'rgba(150,110,100,0.30)',
+        '07': 'rgba(130,150,90,0.30)',
+        '08': 'rgba(100,140,160,0.30)',
     };
 
     return (
@@ -240,6 +241,43 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                     background: 'radial-gradient(ellipse at center, transparent 55%, rgba(60,40,20,0.3) 100%)',
                 }}
             />
+
+            {/* ═══ DIRECTIVE 3: Time-of-Day Lighting Overlay ═══ */}
+            {(() => {
+                // gameTime = minutes since midnight (0-1440)
+                const t = gameTime ?? 480;
+                let overlayColor = 'transparent';
+                let opacity = 0;
+                if (t < 360) {        // 00:00-06:00 Night
+                    overlayColor = 'rgba(15,23,42,0.35)';
+                    opacity = 1;
+                } else if (t < 480) { // 06:00-08:00 Dawn (golden)
+                    overlayColor = 'rgba(251,191,36,0.12)';
+                    opacity = 1 - (t - 360) / 120; // fade out
+                } else if (t < 960) { // 08:00-16:00 Day (clear)
+                    overlayColor = 'transparent';
+                    opacity = 0;
+                } else if (t < 1080) { // 16:00-18:00 Dusk (amber)
+                    overlayColor = 'rgba(245,158,11,0.15)';
+                    opacity = (t - 960) / 120; // fade in
+                } else {               // 18:00-24:00 Night
+                    overlayColor = 'rgba(15,23,42,0.35)';
+                    opacity = Math.min(1, (t - 1080) / 120);
+                }
+                if (opacity <= 0) return null;
+                return (
+                    <div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            zIndex: 45,
+                            backgroundColor: overlayColor,
+                            opacity,
+                            mixBlendMode: 'multiply',
+                            transition: 'background-color 2s ease, opacity 2s ease',
+                        }}
+                    />
+                );
+            })()}
 
             {/* ═══ TRANSFORM CONTAINER (pan + zoom) ═══ */}
             <div
