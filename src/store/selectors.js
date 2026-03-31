@@ -1,6 +1,7 @@
 import { calculateGlobalBuffs } from '../game/GameCore.js';
 import { getNextLevelXp } from '../utils/LevelingSystem.js';
 import { normalizeDailyArchive } from '../utils/archiveNormalization.js';
+import { getUnlockedVehicles } from '../domains/village/vehicleProgression.js';
 
 const normalizeSkills = (skills) => Array.isArray(skills)
     ? skills
@@ -121,3 +122,20 @@ export const selectClinical = (state) => {
  * Global Buffs selector
  */
 export const selectBuffs = (state) => calculateGlobalBuffs(state);
+
+/**
+ * Unlocked Village Vehicles selector
+ */
+export const selectUnlockedVillageVehicles = (state) => {
+    try {
+        const day = Number(state?.world?.day);
+        const kapitasi = Number(state?.finance?.stats?.kapitasi) || 0;
+        const pendapatanUmum = Number(state?.finance?.stats?.pendapatanUmum) || 0;
+        const balance = kapitasi + pendapatanUmum;
+        
+        const unlocked = getUnlockedVehicles(day, balance);
+        return (!unlocked || unlocked.length === 0) ? ['jalan_kaki'] : unlocked;
+    } catch {
+        return ['jalan_kaki'];
+    }
+};
