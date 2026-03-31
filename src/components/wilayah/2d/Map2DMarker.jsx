@@ -2,16 +2,25 @@
  * @reflection
  * [IDENTITY]: Map2DMarker
  * [PURPOSE]: Single interactive building marker for 2D blueprint map.
- *            Supports hover tooltips, selection glow, overlay coloring, 
- *            locked RW state, and outbreak/alert pulse animations.
- * [STATE]: New
+ *            Phase 2: Acrylic Token style with economy-tier LED coloring,
+ *            tap-first mobile UX, and icon mapping for all 47 building types.
+ * [STATE]: Production
  * [DEPENDS_ON]: constants.js (BUILDING_TYPES)
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import { BUILDING_TYPES } from '../constants.js';
 
-// ── Building type → emoji icon mapping ──
+// ═══ ECONOMY TIER → LED DOT COLOR (Geospatial Law 1 visual) ═══
+const ECONOMY_LED = {
+    'High':       '#34d399', // emerald — prosperity
+    'Middle':     '#60a5fa', // blue — stable
+    'Low-Middle': '#fbbf24', // amber — at-risk
+    'Low':        '#f97316', // orange — vulnerable
+    'Very Low':   '#ef4444', // red — critical
+};
+
+// ── Building type → icon character (emoji fallback, Phase 3 will use lucide) ──
 function getMarkerIcon(type) {
     switch (type) {
         case BUILDING_TYPES.PUSKESMAS: return '🏥';
@@ -44,10 +53,22 @@ function getMarkerIcon(type) {
         case BUILDING_TYPES.SUNGAI_CIKAPAS: return '🏞️';
         case BUILDING_TYPES.GAPURA_DESA: return '⛩️';
         case BUILDING_TYPES.SAWAH_BERUNDAK: return '🌾';
+        case BUILDING_TYPES.JEMBATAN: return '🌉';
+        case BUILDING_TYPES.WATERFALL: case BUILDING_TYPES.SUNGAI: return '🏞️';
+        // ═══ Phase 2: New Desa Wisata + One Health types ═══
+        case BUILDING_TYPES.HOMESTAY: return '🏨';
+        case BUILDING_TYPES.DERMAGA: return '⚓';
+        case BUILDING_TYPES.POS_RONDA: return '🛡️';
+        case BUILDING_TYPES.PESANTREN: return '📖';
+        case BUILDING_TYPES.PADEPOKAN_DUKUN: return '🏚️';
+        case BUILDING_TYPES.PASAR_HEWAN: return '🐄';
+        case BUILDING_TYPES.INFO_WISATA: return 'ℹ️';
+        case BUILDING_TYPES.GARDU_PANDANG: return '🔭';
+        // Houses — return null to use LED dot instead
         case BUILDING_TYPES.HOUSE_RED: case BUILDING_TYPES.HOUSE_BLUE:
         case BUILDING_TYPES.HOUSE_TRAD: case BUILDING_TYPES.HOUSE_MODERN:
-        case BUILDING_TYPES.HOUSE_HUT: return '🏠';
-        default: return '🏠';
+        case BUILDING_TYPES.HOUSE_HUT: return null;
+        default: return null;
     }
 }
 
@@ -55,21 +76,29 @@ function getMarkerIcon(type) {
 function getMarkerBg(type) {
     switch (type) {
         case BUILDING_TYPES.PUSKESMAS: case BUILDING_TYPES.PUSTU: case BUILDING_TYPES.POLINDES:
-            return 'rgba(220,38,38,0.35)';       // red health
+            return 'rgba(220,38,38,0.35)';
         case BUILDING_TYPES.APOTEK: return 'rgba(16,185,129,0.3)';
         case BUILDING_TYPES.POSYANDU: case BUILDING_TYPES.POS_GIZI: case BUILDING_TYPES.RTK:
         case BUILDING_TYPES.KB_POST: case BUILDING_TYPES.POS_UKK:
-            return 'rgba(236,72,153,0.3)';        // pink community
-        case BUILDING_TYPES.SCHOOL: case BUILDING_TYPES.TK:
-            return 'rgba(245,158,11,0.3)';        // amber education
+            return 'rgba(236,72,153,0.3)';
+        case BUILDING_TYPES.SCHOOL: case BUILDING_TYPES.TK: case BUILDING_TYPES.PESANTREN:
+            return 'rgba(245,158,11,0.3)';
         case BUILDING_TYPES.MOSQUE: return 'rgba(22,163,74,0.3)';
         case BUILDING_TYPES.MARKET: case BUILDING_TYPES.WARUNG: case BUILDING_TYPES.TOKO_KELONTONG:
-            return 'rgba(120,53,15,0.35)';        // brown commerce
+        case BUILDING_TYPES.PASAR_HEWAN:
+            return 'rgba(120,53,15,0.35)';
         case BUILDING_TYPES.BALAI_DESA: case BUILDING_TYPES.KANTOR_DESA: case BUILDING_TYPES.RUMAH_DINAS:
-            return 'rgba(51,65,85,0.45)';         // slate official
+        case BUILDING_TYPES.POS_RONDA:
+            return 'rgba(51,65,85,0.45)';
         case BUILDING_TYPES.HUTAN_LINDUNG: return 'rgba(5,46,22,0.4)';
-        case BUILDING_TYPES.SUNGAI_CIKAPAS: return 'rgba(14,165,233,0.35)';
-        default: return 'rgba(100,116,139,0.25)'; // neutral slate
+        case BUILDING_TYPES.SUNGAI_CIKAPAS: case BUILDING_TYPES.DERMAGA:
+        case BUILDING_TYPES.WATERFALL: case BUILDING_TYPES.SUNGAI:
+            return 'rgba(14,165,233,0.35)';
+        case BUILDING_TYPES.HOMESTAY: case BUILDING_TYPES.INFO_WISATA: case BUILDING_TYPES.GARDU_PANDANG:
+            return 'rgba(168,85,247,0.3)';
+        case BUILDING_TYPES.PADEPOKAN_DUKUN:
+            return 'rgba(139,92,246,0.35)';
+        default: return null; // houses use LED dot, no bg
     }
 }
 
@@ -81,12 +110,19 @@ function getMarkerSize(type) {
         case BUILDING_TYPES.SCHOOL: case BUILDING_TYPES.TK:
         case BUILDING_TYPES.MOSQUE: case BUILDING_TYPES.MARKET:
         case BUILDING_TYPES.BALAI_DESA: case BUILDING_TYPES.KANTOR_DESA:
+        case BUILDING_TYPES.PESANTREN: case BUILDING_TYPES.PADEPOKAN_DUKUN:
             return 22;
         case BUILDING_TYPES.POSYANDU: case BUILDING_TYPES.ALUN_ALUN:
         case BUILDING_TYPES.HUTAN_LINDUNG: case BUILDING_TYPES.SUNGAI_CIKAPAS:
         case BUILDING_TYPES.GAPURA_DESA: case BUILDING_TYPES.SAWAH_BERUNDAK:
+        case BUILDING_TYPES.HOMESTAY: case BUILDING_TYPES.DERMAGA:
+        case BUILDING_TYPES.PASAR_HEWAN: case BUILDING_TYPES.GARDU_PANDANG:
+        case BUILDING_TYPES.WATERFALL:
             return 20;
-        default: return 16; // houses & small posts
+        case BUILDING_TYPES.POS_RONDA: case BUILDING_TYPES.INFO_WISATA:
+            return 18;
+        // Houses: LED data nodes (economy-based sizing)
+        default: return 10;
     }
 }
 
@@ -127,7 +163,7 @@ function getOverlayRingColor(building, activeLayer) {
 }
 
 
-export default function Map2DMarker({ building, cellSize, activeLayer, selected, onClick }) {
+function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick }) {
     const [hovered, setHovered] = useState(false);
 
     const icon = useMemo(() => getMarkerIcon(building.type), [building.type]);
@@ -139,6 +175,12 @@ export default function Map2DMarker({ building, cellSize, activeLayer, selected,
     const hasOutbreak = building.hasCase || building.familyData?.hasCase;
     const isHouse = building.familyId != null;
 
+    // Economy-based LED color for houses
+    const ledColor = useMemo(() => {
+        if (!isHouse) return null;
+        return ECONOMY_LED[building.economyTier] || ECONOMY_LED['Middle'];
+    }, [isHouse, building.economyTier]);
+
     // Overlay ring
     const ringColor = useMemo(() => {
         if (!isDetective || !isHouse) return 'transparent';
@@ -148,74 +190,103 @@ export default function Map2DMarker({ building, cellSize, activeLayer, selected,
     const left = building.x * cellSize - size / 2;
     const top = building.y * cellSize - size / 2;
 
+    // Minimum hit area for touch (44px for facilities, 24px for houses)
+    const hitSize = isHouse ? Math.max(size, 24) : Math.max(size, 44);
+    const hitOffset = (hitSize - size) / 2;
+
     return (
         <div
-            className="absolute transition-all duration-150 cursor-pointer select-none group"
+            className="absolute"
             style={{
-                left,
-                top,
-                width: size,
-                height: size,
+                left: left - hitOffset,
+                top: top - hitOffset,
+                width: hitSize,
+                height: hitSize,
                 zIndex: selected ? 50 : hovered ? 40 : isHouse ? 10 : 20,
-                transform: hovered ? 'scale(1.5)' : selected ? 'scale(1.35)' : 'scale(1)',
-                filter: isLocked ? 'grayscale(1) brightness(0.4)' : isDetective && !atRisk && isHouse ? 'grayscale(0.8) brightness(0.5)' : 'none',
                 pointerEvents: isLocked ? 'none' : 'auto',
             }}
             onClick={(e) => { e.stopPropagation(); onClick(building); }}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            onPointerEnter={() => setHovered(true)}
+            onPointerLeave={() => setHovered(false)}
         >
-            {/* Overlay ring (detective mode) */}
-            {isDetective && ringColor !== 'transparent' && (
-                <div
-                    className="absolute inset-[-3px] rounded-full pointer-events-none"
-                    style={{
-                        border: `2px solid ${ringColor}`,
-                        boxShadow: atRisk ? `0 0 8px 2px ${ringColor}` : 'none',
-                        animation: atRisk ? 'pulse 1.5s ease-in-out infinite' : 'none',
-                    }}
-                />
-            )}
-
-            {/* Outbreak pulse */}
-            {hasOutbreak && !isDetective && (
-                <div
-                    className="absolute inset-[-5px] rounded-full pointer-events-none"
-                    style={{
-                        border: '2px solid #ef4444',
-                        boxShadow: '0 0 12px 3px rgba(239,68,68,0.5)',
-                        animation: 'pulse 1s ease-in-out infinite',
-                    }}
-                />
-            )}
-
-            {/* Selected glow */}
-            {selected && (
-                <div
-                    className="absolute inset-[-4px] rounded-full pointer-events-none"
-                    style={{
-                        border: '2px solid #f59e0b',
-                        boxShadow: '0 0 10px 3px rgba(245,158,11,0.4)',
-                    }}
-                />
-            )}
-
-            {/* Marker body */}
+            {/* Visual marker (centered within hit area) */}
             <div
-                className="w-full h-full rounded-full flex items-center justify-center relative"
+                className="absolute transition-all duration-150 select-none"
                 style={{
-                    background: bgColor,
-                    backdropFilter: 'blur(4px)',
-                    border: `1px solid rgba(255,255,255,${hovered ? 0.3 : 0.1})`,
-                    boxShadow: hovered ? '0 0 12px rgba(255,255,255,0.1)' : 'none',
+                    left: hitOffset,
+                    top: hitOffset,
+                    width: size,
+                    height: size,
+                    transform: hovered ? 'scale(1.5)' : selected ? 'scale(1.35)' : 'scale(1)',
+                    filter: isLocked ? 'grayscale(1) brightness(0.4)' : isDetective && !atRisk && isHouse ? 'grayscale(0.8) brightness(0.5)' : 'none',
                 }}
             >
-                <span style={{ fontSize: size * 0.55, lineHeight: 1 }}>
-                    {isLocked ? '🔒' : icon}
-                </span>
+                {/* Overlay ring (detective mode) */}
+                {isDetective && ringColor !== 'transparent' && (
+                    <div
+                        className="absolute inset-[-3px] rounded-full pointer-events-none"
+                        style={{
+                            border: `2px solid ${ringColor}`,
+                            boxShadow: atRisk ? `0 0 8px 2px ${ringColor}` : 'none',
+                            animation: atRisk ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                        }}
+                    />
+                )}
+
+                {/* Outbreak pulse */}
+                {hasOutbreak && !isDetective && (
+                    <div
+                        className="absolute inset-[-5px] rounded-full pointer-events-none"
+                        style={{
+                            border: '2px solid #ef4444',
+                            boxShadow: '0 0 12px 3px rgba(239,68,68,0.5)',
+                            animation: 'pulse 1s ease-in-out infinite',
+                        }}
+                    />
+                )}
+
+                {/* Selected glow */}
+                {selected && (
+                    <div
+                        className="absolute inset-[-4px] rounded-full pointer-events-none"
+                        style={{
+                            border: '2px solid #f59e0b',
+                            boxShadow: '0 0 10px 3px rgba(245,158,11,0.4)',
+                        }}
+                    />
+                )}
+
+                {/* Marker body */}
+                {isHouse ? (
+                    // ═══ LED DATA NODE (economy-colored dot) ═══
+                    <div
+                        className="w-full h-full rounded-full"
+                        style={{
+                            background: ledColor,
+                            opacity: 0.85,
+                            boxShadow: `0 0 ${selected || hovered ? 8 : 4}px ${ledColor}`,
+                            border: `1px solid rgba(255,255,255,${hovered ? 0.4 : 0.15})`,
+                        }}
+                    />
+                ) : (
+                    // ═══ ACRYLIC TOKEN (facility marker) ═══
+                    <div
+                        className="w-full h-full rounded-full flex items-center justify-center relative"
+                        style={{
+                            background: bgColor || 'rgba(100,116,139,0.25)',
+                            backdropFilter: 'blur(4px)',
+                            border: `1px solid rgba(255,255,255,${hovered ? 0.3 : 0.1})`,
+                            boxShadow: hovered ? '0 0 12px rgba(255,255,255,0.1)' : 'none',
+                        }}
+                    >
+                        <span style={{ fontSize: size * 0.55, lineHeight: 1 }}>
+                            {isLocked ? '🔒' : (icon || '📍')}
+                        </span>
+                    </div>
+                )}
             </div>
 
-            {/* Tooltip */}
+            {/* Tooltip (hover on desktop, appears on tap+hold on mobile) */}
             {hovered && !isLocked && (
                 <div
                     className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 whitespace-nowrap pointer-events-none"
@@ -234,6 +305,11 @@ export default function Map2DMarker({ building, cellSize, activeLayer, selected,
                         <div className="text-[11px] font-extrabold text-white leading-tight mt-0.5">
                             {building.name || 'Bangunan'}
                         </div>
+                        {building.economyTier && (
+                            <div className="text-[9px] font-bold mt-0.5" style={{ color: ledColor }}>
+                                {building.economyTier}
+                            </div>
+                        )}
                         {building.familyData?.iksScore != null && (
                             <div className={`text-[9px] font-bold mt-0.5 ${building.familyData.iksScore >= 0.8 ? 'text-emerald-400' : building.familyData.iksScore >= 0.5 ? 'text-amber-400' : 'text-red-400'}`}>
                                 IKS {(building.familyData.iksScore * 100).toFixed(0)}%
@@ -251,3 +327,6 @@ export default function Map2DMarker({ building, cellSize, activeLayer, selected,
         </div>
     );
 }
+
+const Map2DMarker = memo(Map2DMarkerInner);
+export default Map2DMarker;
