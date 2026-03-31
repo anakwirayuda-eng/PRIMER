@@ -10,6 +10,13 @@
 
 import React, { useState, useMemo, memo } from 'react';
 import { BUILDING_TYPES } from '../constants.js';
+import {
+    Cross, Stethoscope, Home, School, Backpack, Moon, Store, ShoppingCart,
+    Landmark, Heart, ShowerHead, Droplets, Pill, Square, FerrisWheel,
+    Leaf, Recycle, Construction, Apple, Baby, Sprout, HardHat,
+    BarChart3, Soup, Trees, Waves, Tent, Wheat, Footprints,
+    Hotel, Anchor, Shield, BookOpen, Skull, Beef, Info, Binoculars,
+} from 'lucide-react';
 
 // ═══ ECONOMY TIER → LED DOT COLOR (Geospatial Law 1 visual) ═══
 const ECONOMY_LED = {
@@ -20,50 +27,51 @@ const ECONOMY_LED = {
     'Very Low':   '#ef4444', // red — critical
 };
 
-// ── Building type → icon character (emoji fallback, Phase 3 will use lucide) ──
+// ═══ Guardrail #7: Zero-Emoji → lucide SVG icons (XII.K Hack 2) ═══
 function getMarkerIcon(type) {
+    const s = { width: '60%', height: '60%', strokeWidth: 2 };
     switch (type) {
-        case BUILDING_TYPES.PUSKESMAS: return '🏥';
-        case BUILDING_TYPES.PUSTU: case BUILDING_TYPES.POLINDES: return '🩺';
-        case BUILDING_TYPES.RUMAH_DINAS: return '🏡';
-        case BUILDING_TYPES.SCHOOL: return '🏫';
-        case BUILDING_TYPES.TK: return '🎒';
-        case BUILDING_TYPES.MOSQUE: return '🕌';
-        case BUILDING_TYPES.MARKET: return '🏪';
-        case BUILDING_TYPES.WARUNG: case BUILDING_TYPES.TOKO_KELONTONG: return '🛒';
-        case BUILDING_TYPES.BALAI_DESA: case BUILDING_TYPES.KANTOR_DESA: return '🏛️';
-        case BUILDING_TYPES.POSYANDU: return '💗';
-        case BUILDING_TYPES.MCK: return '🚿';
-        case BUILDING_TYPES.WELL: return '💧';
-        case BUILDING_TYPES.APOTEK: return '💊';
-        case BUILDING_TYPES.ALUN_ALUN: case BUILDING_TYPES.LAPANGAN: return '⬜';
-        case BUILDING_TYPES.PLAYGROUND: return '🎠';
-        case BUILDING_TYPES.TPU: return '🪦';
-        case BUILDING_TYPES.FARM: return '🌾';
-        case BUILDING_TYPES.BANK_SAMPAH: return '♻️';
-        case BUILDING_TYPES.PAMSIMAS: return '🏗️';
-        case BUILDING_TYPES.POS_GIZI: return '🍎';
-        case BUILDING_TYPES.RTK: return '🤰';
-        case BUILDING_TYPES.KB_POST: return '👶';
-        case BUILDING_TYPES.TOGA: return '🌿';
-        case BUILDING_TYPES.POS_UKK: return '🦺';
-        case BUILDING_TYPES.IKS_SCOREBOARD: return '📊';
-        case BUILDING_TYPES.DASHAT: return '🍲';
-        case BUILDING_TYPES.HUTAN_LINDUNG: return '🌳';
-        case BUILDING_TYPES.SUNGAI_CIKAPAS: return '🏞️';
-        case BUILDING_TYPES.GAPURA_DESA: return '⛩️';
-        case BUILDING_TYPES.SAWAH_BERUNDAK: return '🌾';
-        case BUILDING_TYPES.JEMBATAN: return '🌉';
-        case BUILDING_TYPES.WATERFALL: case BUILDING_TYPES.SUNGAI: return '🏞️';
-        // ═══ Phase 2: New Desa Wisata + One Health types ═══
-        case BUILDING_TYPES.HOMESTAY: return '🏨';
-        case BUILDING_TYPES.DERMAGA: return '⚓';
-        case BUILDING_TYPES.POS_RONDA: return '🛡️';
-        case BUILDING_TYPES.PESANTREN: return '📖';
-        case BUILDING_TYPES.PADEPOKAN_DUKUN: return '🏚️';
-        case BUILDING_TYPES.PASAR_HEWAN: return '🐄';
-        case BUILDING_TYPES.INFO_WISATA: return 'ℹ️';
-        case BUILDING_TYPES.GARDU_PANDANG: return '🔭';
+        case BUILDING_TYPES.PUSKESMAS: return <Cross {...s} />;
+        case BUILDING_TYPES.PUSTU: case BUILDING_TYPES.POLINDES: return <Stethoscope {...s} />;
+        case BUILDING_TYPES.RUMAH_DINAS: return <Home {...s} />;
+        case BUILDING_TYPES.SCHOOL: return <School {...s} />;
+        case BUILDING_TYPES.TK: return <Backpack {...s} />;
+        case BUILDING_TYPES.MOSQUE: return <Moon {...s} />;
+        case BUILDING_TYPES.MARKET: return <Store {...s} />;
+        case BUILDING_TYPES.WARUNG: case BUILDING_TYPES.TOKO_KELONTONG: return <ShoppingCart {...s} />;
+        case BUILDING_TYPES.BALAI_DESA: case BUILDING_TYPES.KANTOR_DESA: return <Landmark {...s} />;
+        case BUILDING_TYPES.POSYANDU: return <Heart {...s} />;
+        case BUILDING_TYPES.MCK: return <ShowerHead {...s} />;
+        case BUILDING_TYPES.WELL: return <Droplets {...s} />;
+        case BUILDING_TYPES.APOTEK: return <Pill {...s} />;
+        case BUILDING_TYPES.ALUN_ALUN: case BUILDING_TYPES.LAPANGAN: return <Square {...s} />;
+        case BUILDING_TYPES.PLAYGROUND: return <FerrisWheel {...s} />;
+        case BUILDING_TYPES.TPU: return <Leaf {...s} />;
+        case BUILDING_TYPES.FARM: return <Wheat {...s} />;
+        case BUILDING_TYPES.BANK_SAMPAH: return <Recycle {...s} />;
+        case BUILDING_TYPES.PAMSIMAS: return <Construction {...s} />;
+        case BUILDING_TYPES.POS_GIZI: return <Apple {...s} />;
+        case BUILDING_TYPES.RTK: return <Baby {...s} />;
+        case BUILDING_TYPES.KB_POST: return <Baby {...s} />;
+        case BUILDING_TYPES.TOGA: return <Sprout {...s} />;
+        case BUILDING_TYPES.POS_UKK: return <HardHat {...s} />;
+        case BUILDING_TYPES.IKS_SCOREBOARD: return <BarChart3 {...s} />;
+        case BUILDING_TYPES.DASHAT: return <Soup {...s} />;
+        case BUILDING_TYPES.HUTAN_LINDUNG: return <Trees {...s} />;
+        case BUILDING_TYPES.SUNGAI_CIKAPAS: return <Waves {...s} />;
+        case BUILDING_TYPES.GAPURA_DESA: return <Tent {...s} />;
+        case BUILDING_TYPES.SAWAH_BERUNDAK: return <Wheat {...s} />;
+        case BUILDING_TYPES.JEMBATAN: return <Footprints {...s} />;
+        case BUILDING_TYPES.WATERFALL: case BUILDING_TYPES.SUNGAI: return <Waves {...s} />;
+        // ═══ Desa Wisata + One Health types ═══
+        case BUILDING_TYPES.HOMESTAY: return <Hotel {...s} />;
+        case BUILDING_TYPES.DERMAGA: return <Anchor {...s} />;
+        case BUILDING_TYPES.POS_RONDA: return <Shield {...s} />;
+        case BUILDING_TYPES.PESANTREN: return <BookOpen {...s} />;
+        case BUILDING_TYPES.PADEPOKAN_DUKUN: return <Skull {...s} />;
+        case BUILDING_TYPES.PASAR_HEWAN: return <Beef {...s} />;
+        case BUILDING_TYPES.INFO_WISATA: return <Info {...s} />;
+        case BUILDING_TYPES.GARDU_PANDANG: return <Binoculars {...s} />;
         // Houses — return null to use LED dot instead
         case BUILDING_TYPES.HOUSE_RED: case BUILDING_TYPES.HOUSE_BLUE:
         case BUILDING_TYPES.HOUSE_TRAD: case BUILDING_TYPES.HOUSE_MODERN:
@@ -269,19 +277,21 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick }
                         }}
                     />
                 ) : (
-                    // ═══ ACRYLIC TOKEN (facility marker) ═══
+                    // ═══ ACRYLIC TOKEN (XII.K Hack 2 — board game pion) ═══
                     <div
-                        className="w-full h-full rounded-full flex items-center justify-center relative"
+                        className="w-full h-full rounded-lg flex items-center justify-center relative"
                         style={{
-                            background: bgColor || 'rgba(100,116,139,0.25)',
-                            backdropFilter: 'blur(4px)',
-                            border: `1px solid rgba(255,255,255,${hovered ? 0.3 : 0.1})`,
-                            boxShadow: hovered ? '0 0 12px rgba(255,255,255,0.1)' : 'none',
+                            background: bgColor || 'rgba(255,255,255,0.18)',
+                            backdropFilter: 'blur(6px)',
+                            borderTop: '1px solid rgba(255,255,255,0.35)',
+                            border: `1.5px solid rgba(255,255,255,${hovered ? 0.35 : 0.15})`,
+                            boxShadow: hovered
+                                ? '2px 6px 0 rgba(0,0,0,0.18)'
+                                : '2px 4px 0 rgba(0,0,0,0.12)',
+                            color: 'currentColor',
                         }}
                     >
-                        <span style={{ fontSize: size * 0.55, lineHeight: 1 }}>
-                            {isLocked ? '🔒' : (icon || '📍')}
-                        </span>
+                        {icon || null}
                     </div>
                 )}
             </div>

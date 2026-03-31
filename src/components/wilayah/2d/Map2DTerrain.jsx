@@ -47,7 +47,7 @@ export default function Map2DTerrain({ mapData, cellSize }) {
                     forest.push(x, y);
                 } else if (t === TILE_TYPES.SAWAH) {
                     sawah.push(x, y);
-                } else if (t === TILE_TYPES.ROAD_H || t === TILE_TYPES.ROAD_V || t === TILE_TYPES.ROAD_CROSS || t === TILE_TYPES.BRIDGE) {
+                } else if (t === TILE_TYPES.ROAD_H || t === TILE_TYPES.ROAD_V || t === TILE_TYPES.ROAD_CROSS) {
                     road.push(x, y);
                 } else if (t === TILE_TYPES.DIRT_ROAD_H || t === TILE_TYPES.DIRT_ROAD_V || t === TILE_TYPES.DIRT_ROAD_CROSS) {
                     dirtRoad.push(x, y);
@@ -96,6 +96,105 @@ export default function Map2DTerrain({ mapData, cellSize }) {
         paintBatch(tileClassification.road, TERRAIN_COLORS.road);
         paintBatch(tileClassification.flower, TERRAIN_COLORS.flower);
         paintBatch(tileClassification.bridge, TERRAIN_COLORS.bridge);
+
+        // ═══ DIRECTIVE 2: 2.5D Elevation Shadows (sawah/hutan edges) ═══
+        ctx.save();
+        ctx.shadowColor = '#2d5a27';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetY = 2;
+        // Shadow along forest edge (x ≈ 15)
+        ctx.fillStyle = 'rgba(45,90,39,0.15)';
+        for (let y = 0; y < height; y++) {
+            const edgeX = 15 + Math.sin(y * 0.25) * 4;
+            ctx.fillRect(Math.floor(edgeX) * cellSize, y * cellSize, cellSize * 2, cellSize);
+        }
+        // Shadow along sawah top edge (y ≈ 82)
+        ctx.shadowColor = '#6b9e4f';
+        for (let x = 15; x < 140; x += 2) {
+            ctx.fillRect(x * cellSize, 82 * cellSize, cellSize * 2, cellSize);
+        }
+        ctx.restore();
+
+        // ═══ DIRECTIVE 4: Bezier River — Sungai Cikapas ═══
+        ctx.save();
+        // Main river body
+        ctx.beginPath();
+        ctx.moveTo(148 * cellSize, 0);
+        ctx.bezierCurveTo(
+            150 * cellSize, 30 * cellSize,   // CP1
+            146 * cellSize, 60 * cellSize,   // CP2
+            152 * cellSize, 119 * cellSize   // End
+        );
+        ctx.lineWidth = 6 * cellSize;
+        ctx.strokeStyle = '#4a90d9';
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        // Shimmer highlight
+        ctx.beginPath();
+        ctx.moveTo(148 * cellSize, 0);
+        ctx.bezierCurveTo(
+            150 * cellSize, 30 * cellSize,
+            146 * cellSize, 60 * cellSize,
+            152 * cellSize, 119 * cellSize
+        );
+        ctx.lineWidth = 2 * cellSize;
+        ctx.strokeStyle = 'rgba(109,179,242,0.35)'; // #6db3f2 shimmer
+        ctx.stroke();
+        ctx.restore();
+
+        // ═══ DIRECTIVE 4: Bezier Roads — Jalan Utama ═══
+        ctx.save();
+        ctx.lineCap = 'round';
+        // Horizontal main road (y=25) — slight curve for organic feel
+        ctx.beginPath();
+        ctx.moveTo(0, 25 * cellSize + cellSize / 2);
+        ctx.bezierCurveTo(
+            40 * cellSize, 24.5 * cellSize,  // slight upward bow
+            120 * cellSize, 25.5 * cellSize,  // slight downward bow
+            width * cellSize, 25 * cellSize + cellSize / 2
+        );
+        ctx.lineWidth = cellSize * 1.8;
+        ctx.strokeStyle = '#8c8a85';
+        ctx.stroke();
+        // Road center line
+        ctx.beginPath();
+        ctx.moveTo(0, 25 * cellSize + cellSize / 2);
+        ctx.bezierCurveTo(
+            40 * cellSize, 24.5 * cellSize,
+            120 * cellSize, 25.5 * cellSize,
+            width * cellSize, 25 * cellSize + cellSize / 2
+        );
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+        ctx.setLineDash([cellSize * 2, cellSize * 2]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Vertical main road (x=80)
+        ctx.beginPath();
+        ctx.moveTo(80 * cellSize + cellSize / 2, 5 * cellSize);
+        ctx.bezierCurveTo(
+            79.5 * cellSize, 40 * cellSize,
+            80.5 * cellSize, 80 * cellSize,
+            80 * cellSize + cellSize / 2, 115 * cellSize
+        );
+        ctx.lineWidth = cellSize * 1.5;
+        ctx.strokeStyle = '#8c8a85';
+        ctx.stroke();
+        ctx.restore();
+
+        // ═══ DIRECTIVE 1: Contour lines (XII.K Hack 1) ═══
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.lineWidth = 0.5;
+        // Horizontal contours in sawah zone
+        for (let y = 84; y < height; y += 4) {
+            ctx.beginPath();
+            ctx.moveTo(15 * cellSize, y * cellSize);
+            for (let x = 16; x < 140; x++) {
+                ctx.lineTo(x * cellSize, (y + Math.sin(x * 0.3) * 0.5) * cellSize);
+            }
+            ctx.stroke();
+        }
 
         // ═══ GRID LINES (ultra-subtle blueprint feel) ═══
         const gridStep = cellSize * 5;
