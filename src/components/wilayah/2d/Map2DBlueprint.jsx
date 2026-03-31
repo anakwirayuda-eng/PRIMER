@@ -218,7 +218,8 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
             ref={containerRef}
             className="absolute inset-0 overflow-hidden select-none"
             style={{
-                background: '#0a0f14',
+                backgroundColor: '#f5f0e6',
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E")`,
                 cursor: isDragging ? 'grabbing' : 'grab',
                 touchAction: 'none',
             }}
@@ -232,11 +233,11 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
             onTouchEnd={handleTouchEnd}
             onContextMenu={(e) => e.preventDefault()}
         >
-            {/* ═══ SCANLINE + VIGNETTE (subtle sci-fi feel) ═══ */}
+            {/* ═══ VIGNETTE (warm parchment edge — XII.B) ═══ */}
             <div
                 className="absolute inset-0 pointer-events-none z-50"
                 style={{
-                    background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%)',
+                    background: 'radial-gradient(ellipse at center, transparent 55%, rgba(60,40,20,0.3) 100%)',
                 }}
             />
 
@@ -247,6 +248,7 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                     transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
                     width: mapW,
                     height: mapH,
+                    backgroundColor: '#8fbc6b', // Blueprint XII.B: warm grass base
                 }}
             >
                 {/* Terrain backdrop */}

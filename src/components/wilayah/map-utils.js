@@ -269,7 +269,7 @@ export const generateVillageMap = (width = 160, height = 120, _seed = 12345, vil
                 targetX = Math.max(2, Math.min(width - 2, targetX));
                 targetY = Math.max(2, Math.min(height - 2, targetY));
 
-                // Spiral search for valid placement
+                // Spiral search for valid placement (Guardrail #5: bounded by r <= 12)
                 let placed = false;
                 for (let r = 0; r <= 12 && !placed; r++) {
                     for (let dy = -r; dy <= r && !placed; dy++) {
@@ -305,6 +305,26 @@ export const generateVillageMap = (width = 160, height = 120, _seed = 12345, vil
                             placed = true;
                         }
                     }
+                }
+
+                // Guardrail #5: Fallback — if spiral failed, force-place with relaxed spacing
+                if (!placed) {
+                    const fallbackX = Math.max(2, Math.min(width - 2, center.x + Math.round((rand() - 0.5) * 20)));
+                    const fallbackY = Math.max(2, Math.min(height - 2, center.y + Math.round((rand() - 0.5) * 20)));
+                    const houseType = ECONOMY_HOUSE_TYPE[economy] || BUILDING_TYPES.HOUSE_TRAD;
+                    buildings.push({
+                        id: fam.houseId || fam.id,
+                        type: houseType,
+                        x: fallbackX, y: fallbackY,
+                        familyId: fam.id,
+                        familyData: fam,
+                        houseId: fam.houseId,
+                        name: `Kel. ${fam.headName}`,
+                        iksScore: fam.iksScore,
+                        indicators: fam.indicators,
+                        hasJentik: !fam.indicators?.jentik,
+                        economyTier: economy,
+                    });
                 }
             });
 
