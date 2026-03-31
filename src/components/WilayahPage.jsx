@@ -9,7 +9,7 @@
  * [LAST_UPDATE]: 2026-02-18
  */
 
-import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { useGame } from '../context/GameContext.jsx';
 import { useGameStore } from '../store/useGameStore.js';
@@ -40,7 +40,8 @@ import PosyanduActivePanel from './wilayah/PosyanduActivePanel.jsx';
 import PustuActivePanel from './wilayah/PustuActivePanel.jsx';
 import CommunityDiagnosisPanel from './wilayah/CommunityDiagnosisPanel.jsx';
 import BehaviorCasePanel from './wilayah/BehaviorCasePanel.jsx';
-import WilayahDiorama from './wilayah/3d/WilayahDiorama.jsx';
+const WilayahDiorama = lazy(() => import('./wilayah/3d/WilayahDiorama.jsx'));
+import Map2DBlueprint from './wilayah/2d/Map2DBlueprint.jsx';
 import { isGameEnabledBuilding } from './wilayah/buildingScenes.js';
 
 import { guardStability } from '../utils/prophylaxis.js';
@@ -118,7 +119,10 @@ export default function WilayahPage() {
     const [buildingInterior, setBuildingInterior] = useState(null);
     const [activeIKMEventId, setActiveIKMEventId] = useState(null);
     const [activeBCCase, setActiveBCCase] = useState(null); // Behavior Change Case panel
+    const [viewMode, setViewMode] = useState('2D'); // '2D' blueprint (mobile-first) or '3D' diorama (opt-in)
     const dioramaZoomRef = useRef(null); // ref for 3D camera zoom callbacks
+    const blueprint2dRef = useRef(null); // ref for 2D pan/zoom callbacks
+    const activeZoomRef = viewMode === '3D' ? dioramaZoomRef : blueprint2dRef;
     const [diveWhiteout, setDiveWhiteout] = useState(false); // Dollhouse Dive flash
 
     // ═══ TOPOLOGY DECOUPLING (Performance Critical!) ═══════════════════
@@ -126,8 +130,7 @@ export default function WilayahPage() {
     const isDataLoaded = !!villageData?.families;
     const staticMapTopology = useMemo(() => {
         if (!isDataLoaded) return null;
-        return generateVillageMap(80, 100, 42, villageData);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        return generateVillageMap(160, 120, 12345, villageData);
     }, [isDataLoaded, villageData]); // Regenerate if village data identity changes
 
     // ═══ P1 PERF FIX: Pre-built familyId→houseId map for O(1) lookup ═══
@@ -203,7 +206,7 @@ export default function WilayahPage() {
         if (viewParams && viewParams.focusHouseId && mapData) {
             const target = mapData.buildings.find(b => b.id === viewParams.focusHouseId || b.familyId === viewParams.focusHouseId);
             if (target) {
-                setSelectedBuilding(target);
+                queueMicrotask(() => setSelectedBuilding(target));
             }
         }
     }, [viewParams, mapData]);
@@ -211,15 +214,16 @@ export default function WilayahPage() {
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            // Zero-render zoom: call ref directly, no setState
+            // Derive correct ref inside handler to avoid stale closure
+            const zoomRef = viewMode === '3D' ? dioramaZoomRef : blueprint2dRef;
             if (e.key === '+' || e.key === '=') {
-                dioramaZoomRef.current?.zoomIn();
+                zoomRef.current?.zoomIn();
                 e.preventDefault();
             } else if (e.key === '-' || e.key === '_') {
-                dioramaZoomRef.current?.zoomOut();
+                zoomRef.current?.zoomOut();
                 e.preventDefault();
             } else if (e.key === '0') {
-                dioramaZoomRef.current?.reset();
+                zoomRef.current?.reset();
                 e.preventDefault();
             } else if (e.key === 'Escape') {
                 setSelectedBuilding(null);
@@ -230,27 +234,7 @@ export default function WilayahPage() {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
-
-    // Loading guard (moved after all hooks to avoid Rules of Hooks violation)
-    if (!mapData) {
-        return (
-            <ErrorBoundary>
-                <div className="relative w-full h-screen overflow-hidden bg-[#0a0f0d] flex items-center justify-center">
-                    <div className="text-center space-y-4 animate-pulse">
-                        <MapIcon className="mx-auto text-emerald-500/40" size={48} />
-                        <p className="text-white/40 text-sm font-black uppercase tracking-widest">Memuat Peta Wilayah...</p>
-                    </div>
-                </div>
-            </ErrorBoundary>
-        );
-    }
-
-    const stats = {
-        totalHouses: communityMetrics.totalKK,
-        avgIks: communityMetrics.avgIKS,
-        alertCount: Object.keys(surveillanceStatus).length
-    };
+    }, [viewMode]);
 
     const handleStartBehaviorCase = useCallback(() => {
         if (!selectedBuilding?.familyId) return;
@@ -272,6 +256,28 @@ export default function WilayahPage() {
         }
         setActiveBCCase(null);
     }, [activeBCCase, setVillageData]);
+
+    // Loading guard (moved after all hooks to avoid Rules of Hooks violation)
+    if (!mapData) {
+        return (
+            <ErrorBoundary>
+                <div className="relative w-full h-screen overflow-hidden bg-[#0a0f0d] flex items-center justify-center">
+                    <div className="text-center space-y-4 animate-pulse">
+                        <MapIcon className="mx-auto text-emerald-500/40" size={48} />
+                        <p className="text-white/40 text-sm font-black uppercase tracking-widest">Memuat Peta Wilayah...</p>
+                    </div>
+                </div>
+            </ErrorBoundary>
+        );
+    }
+
+    const stats = {
+        totalHouses: communityMetrics.totalKK,
+        avgIks: communityMetrics.avgIKS,
+        alertCount: Object.keys(surveillanceStatus).length
+    };
+
+
 
     // ─── Compute actual IKS for selected building / home visit modal ───
     // Use homeVisitModal family when modal is open, otherwise selectedBuilding
@@ -359,14 +365,26 @@ export default function WilayahPage() {
                     }}
                 />
 
-                <div className="absolute inset-0">
-                    <WilayahDiorama
-                        mapData={mapData}
-                        selectedBuildingId={selectedBuilding?.id}
-                        onBuildingSelect={setSelectedBuilding}
-                        zoomRef={dioramaZoomRef}
-                        activeLayer={activeLayer}
-                    />
+                <div className="absolute inset-0 z-0">
+                    {viewMode === '3D' ? (
+                        <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#94a3b8', fontSize: 14 }}>Loading 3D Diorama…</div>}>
+                            <WilayahDiorama
+                                mapData={mapData}
+                                selectedBuildingId={selectedBuilding?.id}
+                                onBuildingSelect={setSelectedBuilding}
+                                zoomRef={dioramaZoomRef}
+                                activeLayer={activeLayer}
+                            />
+                        </Suspense>
+                    ) : (
+                        <Map2DBlueprint
+                            ref={blueprint2dRef}
+                            mapData={mapData}
+                            selectedBuildingId={selectedBuilding?.id}
+                            onBuildingSelect={setSelectedBuilding}
+                            activeLayer={activeLayer}
+                        />
+                    )}
                 </div>
 
                 {/* ═══════════════════════════════════════════════════
@@ -424,12 +442,29 @@ export default function WilayahPage() {
                             </div>
                         </div>
 
-                        {/* Right: View Mode + Sensus */}
+                        {/* Right: View Mode Toggle + Sensus */}
                         <div className="flex items-center gap-2">
                             <div className={`flex rounded-lg overflow-hidden ${GLASS}`}>
-                                <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-500/30">
+                                <button
+                                    onClick={() => setViewMode('2D')}
+                                    className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${
+                                        viewMode === '2D'
+                                            ? 'text-cyan-300 bg-cyan-500/30'
+                                            : 'text-white/40 hover:text-white/60 hover:bg-white/10'
+                                    }`}
+                                >
+                                    2D DENAH
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('3D')}
+                                    className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all ${
+                                        viewMode === '3D'
+                                            ? 'text-emerald-300 bg-emerald-500/30'
+                                            : 'text-white/40 hover:text-white/60 hover:bg-white/10'
+                                    }`}
+                                >
                                     3D DIORAMA
-                                </div>
+                                </button>
                             </div>
                             <button
                                 onClick={() => navigate('sensus')}
@@ -511,21 +546,21 @@ export default function WilayahPage() {
                         {/* Right: Zoom Controls (3D camera via dioramaZoomRef) */}
                         <div className="flex items-center gap-1">
                             <button
-                                onClick={() => dioramaZoomRef.current?.zoomIn()}
+                                onClick={() => activeZoomRef.current?.zoomIn()}
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 ${GLASS_HOVER}`}
                                 aria-label="Perbesar peta"
                             >
                                 <Plus size={14} />
                             </button>
                             <button
-                                onClick={() => dioramaZoomRef.current?.zoomOut()}
+                                onClick={() => activeZoomRef.current?.zoomOut()}
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 ${GLASS_HOVER}`}
                                 aria-label="Perkecil peta"
                             >
                                 <Minus size={14} />
                             </button>
                             <button
-                                onClick={() => dioramaZoomRef.current?.reset()}
+                                onClick={() => activeZoomRef.current?.reset()}
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-white/60 ${GLASS_HOVER}`}
                                 aria-label="Reset zoom peta"
                             >

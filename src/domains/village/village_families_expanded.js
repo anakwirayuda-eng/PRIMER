@@ -7114,7 +7114,7 @@ export const VILLAGE_FAMILIES_EXPANDED = [
     "id": "kk_199",
     "houseId": "house_199",
     "rt": "01",
-    "rw": "09",
+    "rw": "08",
     "surname": "Halim",
     "headName": "Zainal Halim",
     "members": [
@@ -7172,7 +7172,7 @@ export const VILLAGE_FAMILIES_EXPANDED = [
     "id": "kk_200",
     "houseId": "house_200",
     "rt": "01",
-    "rw": "09",
+    "rw": "08",
     "surname": "Siswanto",
     "headName": "Surya Siswanto",
     "members": [

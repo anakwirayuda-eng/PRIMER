@@ -72,6 +72,15 @@ export const BUILDING_TYPES = {
     SUNGAI_CIKAPAS: 'sungai_cikapas',
     GAPURA_DESA: 'gapura_desa',
     SAWAH_BERUNDAK: 'sawah_berundak',
+    // ═══ Blueprint v2.3: Desa Wisata + One Health ═══
+    HOMESTAY: 'homestay',
+    DERMAGA: 'dermaga',
+    POS_RONDA: 'pos_ronda',
+    PESANTREN: 'pesantren',
+    PADEPOKAN_DUKUN: 'padepokan_dukun',
+    PASAR_HEWAN: 'pasar_hewan',
+    INFO_WISATA: 'info_wisata',
+    GARDU_PANDANG: 'gardu_pandang',
 };
 
 export const AI_ASSETS = {

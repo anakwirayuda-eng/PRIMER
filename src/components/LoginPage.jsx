@@ -8,8 +8,17 @@
  * [LAST_UPDATE]: 2026-03-25
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { AuthService } from '../services/AuthService';
+
+const PRIMER_QUOTES = [
+    { text: 'Your ZIP code is a better predictor of your health than your genetic code.', author: 'Dr. Tony Iton', field: 'Spatial Epidemiology' },
+    { text: 'Medicine is a social science, and politics is nothing but medicine on a grand scale.', author: 'Rudolf Virchow', field: 'Father of Social Medicine, 1848' },
+    { text: 'On proceeding to the spot, I found that nearly all the deaths had taken place within a short distance of the Broad Street pump.', author: 'John Snow', field: 'Father of Epidemiology, 1854' },
+    { text: 'Whoever wishes to investigate medicine properly should consider the seasons, the winds, the water, and the soil.', author: 'Hippocrates', field: 'Airs, Waters, and Places, 400 BC' },
+    { text: 'Public health is the science and art of preventing disease, prolonging life, and promoting health through the organized efforts of society.', author: 'C.-E.A. Winslow', field: 'Definition of Public Health, 1920' },
+    { text: 'Kamu tidak bisa menyembuhkan pasien yang sakit karena kemiskinan. Kamu harus menyembuhkan kemiskinannya.', author: 'PRIMER', field: 'Desa Sukamaju, 2026' },
+];
 
 const LoginPage = ({ onLoginSuccess }) => {
     const [isRegister, setIsRegister] = useState(false);
@@ -19,6 +28,19 @@ const LoginPage = ({ onLoginSuccess }) => {
     const [angkatan, setAngkatan] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [quoteIndex, setQuoteIndex] = useState(0);
+    const [quoteFade, setQuoteFade] = useState(true);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setQuoteFade(false);
+            setTimeout(() => {
+                setQuoteIndex(prev => (prev + 1) % PRIMER_QUOTES.length);
+                setQuoteFade(true);
+            }, 500);
+        }, 6000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Translate Supabase errors to user-friendly Indonesian messages
     const translateError = (msg) => {
@@ -91,6 +113,10 @@ const LoginPage = ({ onLoginSuccess }) => {
                     <div style={styles.logoIcon}>🏥</div>
                     <h1 style={styles.title}>PRIMER</h1>
                     <p style={styles.subtitle}>Primary Care Simulator</p>
+                    <div style={{ ...styles.quoteContainer, opacity: quoteFade ? 1 : 0 }}>
+                        <p style={styles.quoteText}>"{PRIMER_QUOTES[quoteIndex].text}"</p>
+                        <p style={styles.quoteAuthor}>— {PRIMER_QUOTES[quoteIndex].author} <span style={styles.quoteField}>({PRIMER_QUOTES[quoteIndex].field})</span></p>
+                    </div>
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
@@ -344,6 +370,35 @@ const styles = {
         border: '1px solid rgba(239, 68, 68, 0.3)',
         color: '#fca5a5',
         fontSize: '13px',
+    },
+    quoteContainer: {
+        marginTop: '16px',
+        padding: '12px 16px',
+        borderRadius: '10px',
+        background: 'rgba(16, 185, 129, 0.06)',
+        border: '1px solid rgba(16, 185, 129, 0.12)',
+        transition: 'opacity 0.5s ease',
+        minHeight: '72px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
+    quoteText: {
+        fontSize: '12px',
+        color: '#cbd5e1',
+        lineHeight: 1.5,
+        margin: 0,
+        fontStyle: 'italic',
+    },
+    quoteAuthor: {
+        fontSize: '11px',
+        color: '#10b981',
+        marginTop: '6px',
+        fontWeight: 600,
+    },
+    quoteField: {
+        color: '#64748b',
+        fontWeight: 400,
     },
     footer: {
         marginTop: '24px',
