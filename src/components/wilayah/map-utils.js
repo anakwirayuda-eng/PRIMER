@@ -307,24 +307,34 @@ export const generateVillageMap = (width = 160, height = 120, _seed = 12345, vil
                     }
                 }
 
-                // Guardrail #5: Fallback — if spiral failed, force-place with relaxed spacing
+                // Guardrail #5: Fallback — bounded random search with terrain + collision check
                 if (!placed) {
-                    const fallbackX = Math.max(2, Math.min(width - 2, center.x + Math.round((rand() - 0.5) * 20)));
-                    const fallbackY = Math.max(2, Math.min(height - 2, center.y + Math.round((rand() - 0.5) * 20)));
-                    const houseType = ECONOMY_HOUSE_TYPE[economy] || BUILDING_TYPES.HOUSE_TRAD;
-                    buildings.push({
-                        id: fam.houseId || fam.id,
-                        type: houseType,
-                        x: fallbackX, y: fallbackY,
-                        familyId: fam.id,
-                        familyData: fam,
-                        houseId: fam.houseId,
-                        name: `Kel. ${fam.headName}`,
-                        iksScore: fam.iksScore,
-                        indicators: fam.indicators,
-                        hasJentik: !fam.indicators?.jentik,
-                        economyTier: economy,
-                    });
+                    const MAX_FALLBACK = 50;
+                    for (let attempt = 0; attempt < MAX_FALLBACK && !placed; attempt++) {
+                        const fx = Math.max(2, Math.min(width - 2, center.x + Math.round((rand() - 0.5) * 24)));
+                        const fy = Math.max(2, Math.min(height - 2, center.y + Math.round((rand() - 0.5) * 24)));
+                        const tile = tiles[fy]?.[fx];
+                        if (tile !== TILE_TYPES.GRASS && tile !== TILE_TYPES.SAWAH) continue;
+                        // Relaxed spacing: 1 cell (vs 2 for normal)
+                        if (buildings.some(b => Math.abs(b.x - fx) < 1 && Math.abs(b.y - fy) < 1)) continue;
+                        const houseType = ECONOMY_HOUSE_TYPE[economy] || BUILDING_TYPES.HOUSE_TRAD;
+                        buildings.push({
+                            id: fam.houseId || fam.id,
+                            type: houseType,
+                            x: fx, y: fy,
+                            familyId: fam.id,
+                            familyData: fam,
+                            houseId: fam.houseId,
+                            name: `Kel. ${fam.headName}`,
+                            iksScore: fam.iksScore,
+                            indicators: fam.indicators,
+                            hasJentik: !fam.indicators?.jentik,
+                            economyTier: economy,
+                        });
+                        placed = true;
+                    }
+                    // If still not placed after 50 attempts: family silently dropped
+                    // (preferable to placing on water/road/forest)
                 }
             });
 
