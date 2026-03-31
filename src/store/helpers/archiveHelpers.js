@@ -97,7 +97,7 @@ export function buildDailyArchiveEntry(state, day) {
     };
 }
 
-export function buildMonthlyArchiveEntry(state, accreditation, hiredStaff) {
+export function buildMonthlyArchiveEntry(state, accreditation, hiredStaff, overrides = {}) {
     const completedMonth = Math.max(1, Math.floor((Number(state?.world?.day) - 1) / 30));
     const monthStartDay = ((completedMonth - 1) * 30) + 1;
     const monthEndDay = completedMonth * 30;
@@ -125,7 +125,9 @@ export function buildMonthlyArchiveEntry(state, accreditation, hiredStaff) {
         (Number(state?.finance?.stats?.pengeluaranLab) || 0) +
         (Number(state?.finance?.stats?.pengeluaranOperasional) || 0);
     const totalRecordedCosts = staffSalaries + recordedExpenses;
-    const monthlyKapitasi = 50000000 * (ACCREDITATION_MULTIPLIER[accreditation] || 1.0);
+    const monthlyKapitasi = Number.isFinite(overrides?.monthlyKapitasi)
+        ? overrides.monthlyKapitasi
+        : 50000000 * (ACCREDITATION_MULTIPLIER[accreditation] || 1.0);
     const totalRevenue = totalDailyRevenue + monthlyKapitasi;
     const netOperationalResult = totalRevenue - totalRecordedCosts;
     const previousReport = Array.isArray(state?.clinical?.monthlyArchive) && state.clinical.monthlyArchive.length > 0

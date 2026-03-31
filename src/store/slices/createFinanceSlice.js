@@ -19,6 +19,8 @@ import { buildMonthlyArchiveEntry, ACCREDITATION_MULTIPLIER } from '../helpers/a
 import { createInitialFinanceState } from '../helpers/persistenceHelpers.js';
 import { INITIAL_KPI } from '../helpers/persistenceHelpers.js';
 import { applyXpGainToProfile } from '../helpers/playerHelpers.js';
+import { calculateKBKPerformanceMultiplier } from '../../domains/village/kbkPerformance.js';
+import { calculateAverageIksFromFamilies } from '../../utils/villageMetrics.js';
 
 export const createFinanceSlice = (set, get) => ({
     // --- STATE ---
@@ -51,7 +53,7 @@ export const createFinanceSlice = (set, get) => ({
             }
             return false;
         },
-        consumeMedication: (medicationId, quantity, buffs = {}) => {
+        consumeMedication: (medicationId, quantity, _buffs = {}) => {
             const state = get();
             const canonicalMedicationId = normalizeMedicationId(medicationId);
             const currentItem = state.finance.pharmacyInventory.find(item => item.medicationId === canonicalMedicationId);
@@ -265,9 +267,17 @@ export const createFinanceSlice = (set, get) => ({
         processMonthlyReport: (accreditation, hiredStaff) => {
             set(s => {
                 const accreditationMultiplier = ACCREDITATION_MULTIPLIER[accreditation] || 1.0;
-                const monthlyKapitasi = 50000000 * accreditationMultiplier;
+                
+                // Geo Law SDoH Wiring: KBK Performance based on average IKS (Puskesmas Capitation)
+                const families = s.publicHealth?.villageData?.families || [];
+                const avgIKS = families.length > 0 ? calculateAverageIksFromFamilies(families) : null;
+                const kbkMultiplier = calculateKBKPerformanceMultiplier(avgIKS);
+                
+                const monthlyKapitasi = 50000000 * accreditationMultiplier * kbkMultiplier;
                 const totalSalaries = hiredStaff.reduce((total, staffMember) => total + (staffMember.salary || 0), 0);
-                const monthlyReport = buildMonthlyArchiveEntry(s, accreditation, hiredStaff);
+                const monthlyReport = buildMonthlyArchiveEntry(s, accreditation, hiredStaff, {
+                    monthlyKapitasi
+                });
                 const existingMonthReport = monthlyReport
                     ? (s.clinical.monthlyArchive || []).find((entry) => entry?.month === monthlyReport.month)
                     : null;
