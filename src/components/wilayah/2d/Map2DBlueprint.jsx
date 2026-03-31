@@ -169,6 +169,29 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
         return zones;
     }, [mapData.buildings]);
 
+    // ═══ SEMANTIC ZOOM: filter markers by zoom level ═══
+    // zoom < 0.6 → facilities + critical houses only (overview)
+    // zoom >= 0.6 → all buildings visible (detail)
+    const visibleBuildings = useMemo(() => {
+        if (!mapData.buildings) return [];
+        if (zoom >= 0.6) return mapData.buildings;
+
+        return mapData.buildings.filter(b => {
+            // Always show selected building
+            if (selectedBuildingId === b.id) return true;
+            // Always show facilities (non-house buildings)
+            if (!b.familyId) return true;
+            // Show at-risk houses (low IKS, has outbreak, has jentik)
+            if (b.familyData?.iksScore != null && b.familyData.iksScore < 0.4) return true;
+            if (b.hasCase || b.familyData?.hasCase) return true;
+            if (b.hasJentik) return true;
+            // Show Very Low / Low economy houses (vulnerable)
+            if (b.economyTier === 'Very Low' || b.economyTier === 'Low') return true;
+            // Hide regular houses at overview zoom
+            return false;
+        });
+    }, [mapData.buildings, zoom, selectedBuildingId]);
+
     const rwColors = {
         '01': 'rgba(56,189,248,0.12)',  // sky
         '02': 'rgba(167,139,250,0.12)', // violet
@@ -262,8 +285,8 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                     );
                 })}
 
-                {/* Building markers */}
-                {mapData.buildings.map((building) => (
+                {/* Building markers (semantic zoom filtering) */}
+                {visibleBuildings.map((building) => (
                     <Map2DMarker
                         key={building.id}
                         building={building}
