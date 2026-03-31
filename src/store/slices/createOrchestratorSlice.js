@@ -23,6 +23,7 @@ import { safeSetStorageItem } from '../../utils/browserSafety.js';
 import { clearStability } from '../../utils/prophylaxis.js';
 import { reconcileReferralLog } from '../../utils/referralLog.js';
 import { INITIAL_PLAYER_STATE, INITIAL_TIME_STATE, calculateIKS } from '../../game/GameCore.js';
+import { getSpatialContext } from '../../domains/village/spatialContext.js';
 import { sanitizePlayerProfile, createStartingPlayerProfile, clampEnergyToProfile } from '../helpers/playerHelpers.js';
 import { isAmbulanceStillBusy } from '../helpers/ambulanceHelpers.js';
 import { buildDailyArchiveEntry } from '../helpers/archiveHelpers.js';
@@ -153,9 +154,10 @@ export const createOrchestratorSlice = (set, get) => ({
 
                 // Opening day: Generate 3 patients. Two use forced-resident seeds
                 // to guarantee the player sees village residents on day 1.
-                const _p0 = generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-a'));
-                const _p1 = generatePatient(510, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-b'));
-                const _p2 = generatePatient(540, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-c'));
+                const spatialContext = getSpatialContext(state.publicHealth.villageData);
+                const _p0 = generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-a'), spatialContext);
+                const _p1 = generatePatient(510, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-b'), spatialContext);
+                const _p2 = generatePatient(540, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-c'), spatialContext);
 
                 // Post-generate: Force at least 2 to be residents if they aren't already
                 const _forceResident = (p, idx) => {

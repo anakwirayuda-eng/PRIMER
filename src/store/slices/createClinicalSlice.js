@@ -17,7 +17,7 @@ import { PROCEDURES_DB } from '../../data/ProceduresDB.js';
 import { HOSPITALS, AMBULANCES } from '../../data/HospitalDB.js';
 import { buildCPPTRecord, buildMaiaCPPTRecord } from '../../game/CPPTEngine.js';
 import { getPatientSpikeMultiplier } from '../../domains/community/OutbreakSystem.js';
-import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateProlanisVisitPatient } from '../../game/PatientGenerator.js';
+import { generatePatient, generateEmergencyPatient, generateFollowupPatient } from '../../game/PatientGenerator.js';
 import { getScheduledFollowups, clearProcessedFollowups } from '../../game/ConsequenceEngine.js';
 import { normalizePatient } from '../../models/PatientRuntime.js';
 import { normalizeMedicationId } from '../../models/InventoryRuntime.js';
@@ -36,6 +36,7 @@ import { sanitizePlayerProfile, applyXpGainToProfile, normalizeSkillList } from 
 import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from '../helpers/ambulanceHelpers.js';
 import { appendClinicalHistory, normalizeClinicalHistoryEntry, isAntibioticMed } from '../helpers/clinicalHelpers.js';
 import { createInitialClinicalState } from '../helpers/persistenceHelpers.js';
+import { getSpatialContext } from '../../domains/village/spatialContext.js';
 
 export const createClinicalSlice = (set, get) => ({
     // --- STATE ---
@@ -339,13 +340,15 @@ export const createClinicalSlice = (set, get) => ({
                 ) &&
                 state.clinical.queue.length < maxCapacity
             ) {
+                const spatialContext = getSpatialContext(villageData);
                 const newPatient = generatePatient(
                     time,
                     villageDataFiltered,
                     day,
                     facilities,
                     normalizeSkillList(profile.skills),
-                    seedKey('queue-spawn', day, time, state.clinical.queue.length, state.clinical.todayLog.length)
+                    seedKey('queue-spawn', day, time, state.clinical.queue.length, state.clinical.todayLog.length),
+                    spatialContext
                 );
                 // Dedup guard: skip if same name already in queue
                 const nameExists = state.clinical.queue.some(p => p.name === newPatient.name);

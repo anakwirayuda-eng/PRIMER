@@ -105,6 +105,74 @@ const SEASONAL_MULTIPLIERS = {
     }
 };
 
+// ═══ GEOSPATIAL LAW 2 & 3: Hazard Proximity + Distance Decay ═══
+// Maps hazardHub disease keys → real CASE_LIBRARY case IDs
+// Unknown keys are safely ignored (acceptance criteria)
+const HAZARD_DISEASE_MAP = {
+    'diare':                  ['acute_gastroenteritis'],
+    'tifoid':                 ['typhoid_fever'],
+    'leptospirosis':          ['leptospirosis', 'acute_gastroenteritis'],
+    'malaria':                ['malaria_vivax', 'malaria_falciparum'],
+    'keracunan_pestisida':    ['intoxication', 'contact_dermatitis'],
+    'avian_influenza':        ['ispa_common', 'pneumonia_community'],
+    'brucellosis':            ['acute_gastroenteritis', 'typhoid_fever'],
+    'komplikasi_persalinan':  ['normal_pregnancy'],
+};
+
+const MAX_COMBINED_MULTIPLIER = 5.0;
+
+/**
+ * Geo Law 2+3: Calculate spatial risk multipliers for a resident family.
+ * Pure function — no UI/React imports. Data passed as plain objects.
+ *
+ * @param {{ x: number, y: number }} familyCoords - grid position of family house
+ * @param {Array<{ id: string, x: number, y: number, radius: number, diseases: string[], multiplier: number }>} hazardHubs
+ * @returns {{ diseaseBoosts: Record<string, number>, debug: Array }}
+ */
+export function applySpatialRisk(familyCoords, hazardHubs) {
+    if (!familyCoords || !hazardHubs || hazardHubs.length === 0) {
+        return { diseaseBoosts: {}, debug: [] };
+    }
+
+    const diseaseBoosts = {};
+    const debug = [];
+
+    for (const hub of hazardHubs) {
+        const dx = (familyCoords.x || 0) - (hub.x || 0);
+        const dy = (familyCoords.y || 0) - (hub.y || 0);
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const radius = hub.radius || 10;
+
+        if (dist >= radius) continue;
+
+        // Quadratic decay: strongest at center, smooth falloff to edge
+        const decay = Math.pow(1 - dist / radius, 2);
+        const effectiveMultiplier = 1 + ((hub.multiplier || 2.0) - 1) * decay;
+
+        const resolvedCases = [];
+        for (const diseaseKey of (hub.diseases || [])) {
+            const caseIds = HAZARD_DISEASE_MAP[diseaseKey];
+            if (!caseIds) continue;
+            for (const caseId of caseIds) {
+                const existing = diseaseBoosts[caseId] || 1.0;
+                diseaseBoosts[caseId] = Math.min(MAX_COMBINED_MULTIPLIER, existing * effectiveMultiplier);
+                resolvedCases.push(caseId);
+            }
+        }
+
+        debug.push({
+            hazardId: hub.id,
+            distance: Math.round(dist * 100) / 100,
+            radius,
+            decay: Math.round(decay * 1000) / 1000,
+            appliedMultiplier: Math.round(effectiveMultiplier * 100) / 100,
+            affectedCases: resolvedCases,
+        });
+    }
+
+    return { diseaseBoosts, debug };
+}
+
 const NAMES_MALE = ['Budi', 'Agus', 'Joko', 'Andi', 'Dedi', 'Eko', 'Bambang', 'Hendra', 'Iwan', 'Rizky', 'Fajar', 'Gilang', 'Hari', 'Irfan', 'Kurnia', 'Lukman', 'Maulana', 'Nanda', 'Oscar', 'Putra', 'Rendi', 'Surya', 'Taufik', 'Umar', 'Wahyu'];
 const NAMES_FEMALE = ['Siti', 'Dewi', 'Sri', 'Rina', 'Ani', 'Wati', 'Yuni', 'Lina', 'Mega', 'Fitri', 'Ayu', 'Bella', 'Citra', 'Dian', 'Eka', 'Farah', 'Gita', 'Hana', 'Intan', 'Kartika', 'Laras', 'Maya', 'Nita', 'Oktavia', 'Putri'];
 const SURNAMES = ['Santoso', 'Widodo', 'Kusuma', 'Putri', 'Wibowo', 'Lestari', 'Hidayat', 'Setiawan', 'Pratama', 'Nugroho', 'Saputra', 'Ramadhan', 'Permana', 'Utomo', 'Hartono', 'Cahyono', 'Firmansyah', 'Pradana', 'Sulistyo', 'Gunawan'];
@@ -218,8 +286,10 @@ function generateComplaintText(disease, seedHint = 'default') {
  * @param {number} gameDay - Current game day (for seasonality)
  * @param {object} facilities - Active facilities levels
  * @param {object} skills - Unlocked player skills
+ * @param {string} seedHint - Deterministic seed hint
+ * @param {object} [spatialContext] - { hazardHubs, familyCoords: Record<familyId, {x,y}> }
  */
-export function generatePatient(currentTime, population, gameDay = 1, facilities = {}, _skills = {}, seedHint = 'default') {
+export function generatePatient(currentTime, population, gameDay = 1, facilities = {}, _skills = {}, seedHint = 'default', spatialContext = null) {
     const patientSeed = seedKey(
         'patient',
         seedHint,
@@ -282,6 +352,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
     }
 
     let disease = null;
+    let isStochastic = false;
 
     if (residentProfile?.storyline?.triggerEvent && rng.chance(0.4)) {
         const storyCase = getFilteredCaseByCondition(residentProfile.storyline.triggerEvent);
@@ -308,6 +379,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             disease = getRandomFilteredCase('profile-fallback');
         }
     } else if (isResident && resident?.riskFactors?.length > 0) {
+        isStochastic = true;
         const riskDiseaseMappings = {
             'poor_sanitation': ['acute_gastroenteritis', 'typhoid_fever', 'ascariasis'],
             'unsafe_water': ['acute_gastroenteritis', 'hepatitis_a'],
@@ -340,7 +412,41 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             disease = getRandomFilteredCase('risk-fallback');
         }
     } else {
+        isStochastic = true;
         disease = getRandomFilteredCase('default');
+    }
+
+    // ═══ GEO LAW 2+3: Spatial risk boost (resident only, stochastic branch only) ═══
+    let spatialRiskDebug = null;
+    if (isResident && isStochastic && spatialContext?.hazardHubs && spatialContext?.familyCoords) {
+        const familyCoords = spatialContext.familyCoords[resident.familyId];
+        if (familyCoords) {
+            const { diseaseBoosts, debug } = applySpatialRisk(familyCoords, spatialContext.hazardHubs);
+            spatialRiskDebug = debug;
+
+            // Check if current disease has a spatial boost — if not, try to swap
+            const currentBoost = disease?.id ? (diseaseBoosts[disease.id] || 1.0) : 1.0;
+            const boostedCaseIds = Object.entries(diseaseBoosts)
+                .filter(([, mult]) => mult > 1.2)
+                .sort(([, a], [, b]) => b - a);
+
+            if (boostedCaseIds.length > 0 && currentBoost <= 1.0) {
+                // Swap chance proportional to top boost (capped at 0.6)
+                const topBoost = boostedCaseIds[0][1];
+                const swapChance = Math.min(0.6, (topBoost - 1) * 0.15);
+                const spatialRng = createDeterministicSequence(seedKey(patientSeed, 'spatial'));
+                if (spatialRng.chance(swapChance)) {
+                    const targetCaseId = pickDeterministic(
+                        boostedCaseIds.map(([id]) => id),
+                        seedKey(patientSeed, 'spatial-pick')
+                    );
+                    const spatialCase = getFilteredCaseByCondition(targetCaseId);
+                    if (spatialCase) {
+                        disease = spatialCase;
+                    }
+                }
+            }
+        }
     }
 
     const date = getDateFromDay(gameDay);
@@ -555,7 +661,8 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             allergies: residentProfile?.allergies || [],
             currentMedications: residentProfile?.medications || [],
             conditions: residentProfile?.conditions || [],
-            familyMedicalHistory: familyMedHistory || null
+            familyMedicalHistory: familyMedHistory || null,
+            spatialRisk: spatialRiskDebug || null
         }
     });
 }
