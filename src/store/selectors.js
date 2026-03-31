@@ -2,6 +2,7 @@ import { calculateGlobalBuffs } from '../game/GameCore.js';
 import { getNextLevelXp } from '../utils/LevelingSystem.js';
 import { normalizeDailyArchive } from '../utils/archiveNormalization.js';
 import { getUnlockedVehicles } from '../domains/village/vehicleProgression.js';
+import { getWarungIntelCost, canAffordWarungIntel } from '../domains/village/warungIntelCost.js';
 
 const normalizeSkills = (skills) => Array.isArray(skills)
     ? skills
@@ -137,5 +138,27 @@ export const selectUnlockedVillageVehicles = (state) => {
         return (!unlocked || unlocked.length === 0) ? ['jalan_kaki'] : unlocked;
     } catch {
         return ['jalan_kaki'];
+    }
+};
+
+/**
+ * Warung Intel State selector
+ */
+export const selectWarungIntelState = (state) => {
+    try {
+        const energy = Number(state?.player?.profile?.energy) || 0;
+        const kapitasi = Number(state?.finance?.stats?.kapitasi) || 0;
+        const pendapatanUmum = Number(state?.finance?.stats?.pendapatanUmum) || 0;
+        const balance = kapitasi + pendapatanUmum;
+        
+        return {
+            ...getWarungIntelCost(),
+            canAfford: canAffordWarungIntel(energy, balance)
+        };
+    } catch {
+        return {
+            ...getWarungIntelCost(),
+            canAfford: false
+        };
     }
 };
