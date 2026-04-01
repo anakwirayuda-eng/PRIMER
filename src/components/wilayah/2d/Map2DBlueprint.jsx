@@ -13,12 +13,43 @@ import React, { useRef, useState, useCallback, useEffect, useImperativeHandle, f
 import Map2DTerrain from './Map2DTerrain.jsx';
 import Map2DMarker from './Map2DMarker.jsx';
 import { useGameStore } from '../../../store/useGameStore.js';
+import { BUILDING_TYPES } from '../constants.js';
 import { selectBridgeSeasonalState } from '../../../store/selectors.js';
+import { isLocalChampionEligible } from '../../../domains/village/localChampion.js';
+import { getChampionProtectedFamilies } from '../../../domains/village/championProtection.js';
+import { getSpatialContext } from '../../../domains/village/spatialContext.js';
 
 const CELL_SIZE = 10; // pixels per grid cell
 const MIN_ZOOM = 0.4;
 const MAX_ZOOM = 3.0;
 const ZOOM_STEP = 0.15;
+
+function getFacilityUpgradeStatus(building, buildingProgress = {}) {
+    if (!building || building.familyId != null) return null;
+
+    if (building.type === BUILDING_TYPES.POSYANDU) {
+        const posyandu = buildingProgress.posyandu;
+        if (posyandu?.isUpgraded) {
+            return { tone: 'emerald', showRing: true, level: 1 };
+        }
+        return null;
+    }
+
+    if (building.type === BUILDING_TYPES.PUSTU || building.type === BUILDING_TYPES.POLINDES) {
+        const progress = buildingProgress[building.type] || buildingProgress.fob;
+        if (!progress?.completed && !progress?.isActive) {
+            return null;
+        }
+
+        return {
+            tone: Number(progress?.level || 0) >= 2 ? 'gold' : 'emerald',
+            showRing: false,
+            level: Number(progress?.level || 1)
+        };
+    }
+
+    return null;
+}
 
 function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, activeLayer, gameTime = 480, bridgeStatus }, ref) {
     const containerRef = useRef(null);
@@ -27,6 +58,9 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
     const [isDragging, setIsDragging] = useState(false);
     const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
     const derivedBridgeStatus = useGameStore((state) => selectBridgeSeasonalState(state).status);
+    const buildingProgress = useGameStore((state) => state.publicHealth.buildingProgress);
+    const activeOutbreaks = useGameStore((state) => state.publicHealth.activeOutbreaks);
+    const villageData = useGameStore((state) => state.publicHealth.villageData);
     const effectiveBridgeStatus = bridgeStatus ?? derivedBridgeStatus ?? 'normal';
 
     const mapW = mapData.width * CELL_SIZE;
@@ -213,6 +247,64 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
         });
     }, [mapData.buildings, zoom, selectedBuildingId]);
 
+    const championFamilyIds = useMemo(() => {
+        const families = villageData?.families;
+        if (!Array.isArray(families) || families.length === 0) return [];
+        return families
+            .filter((family) => isLocalChampionEligible(family.iksScore))
+            .map((family) => family.id);
+    }, [villageData]);
+
+    const protectedFamilyIds = useMemo(() => {
+        if (!Array.isArray(championFamilyIds) || championFamilyIds.length === 0 || !villageData) return [];
+        const familyCoords = getSpatialContext(villageData)?.familyCoords;
+        if (!familyCoords) return [];
+        return getChampionProtectedFamilies(championFamilyIds, familyCoords, 3);
+    }, [championFamilyIds, villageData]);
+
+    const championFamilyIdSet = useMemo(() => new Set(championFamilyIds || []), [championFamilyIds]);
+    const protectedFamilyIdSet = useMemo(() => new Set(protectedFamilyIds || []), [protectedFamilyIds]);
+
+    const visibleBuildingsWithStatus = useMemo(() => (
+        visibleBuildings.map((building) => ({
+            ...building,
+            upgradeStatus: getFacilityUpgradeStatus(building, buildingProgress),
+            isChampion: Boolean(building.familyId && championFamilyIdSet.has(building.familyId)),
+            isChampionProtected: Boolean(building.familyId && protectedFamilyIdSet.has(building.familyId))
+        }))
+    ), [visibleBuildings, buildingProgress, championFamilyIdSet, protectedFamilyIdSet]);
+
+    const outbreakZones = useMemo(() => {
+        const buildingsById = new Map((mapData.buildings || []).map((building) => [building.id, building]));
+        return (Array.isArray(activeOutbreaks) ? activeOutbreaks : [])
+            .filter((outbreak) => !outbreak?.resolved && Array.isArray(outbreak.affectedHouseIds) && outbreak.affectedHouseIds.length > 0)
+            .map((outbreak) => {
+                const points = outbreak.affectedHouseIds
+                    .map((houseId) => buildingsById.get(houseId))
+                    .filter(Boolean)
+                    .map((building) => ({ x: Number(building.x), y: Number(building.y) }))
+                    .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
+
+                if (points.length === 0) return null;
+
+                const centroidX = points.reduce((sum, point) => sum + point.x, 0) / points.length;
+                const centroidY = points.reduce((sum, point) => sum + point.y, 0) / points.length;
+                const maxDistance = points.reduce((max, point) => {
+                    const distance = Math.hypot(point.x - centroidX, point.y - centroidY);
+                    return Math.max(max, distance);
+                }, 0);
+                const radius = Math.max(6, maxDistance + 3);
+                return {
+                    id: outbreak.id,
+                    label: `WABAH ${(outbreak.typeData?.label || outbreak.type || 'cluster').toUpperCase()}`,
+                    left: (centroidX - radius) * CELL_SIZE,
+                    top: (centroidY - radius) * CELL_SIZE,
+                    size: radius * 2 * CELL_SIZE
+                };
+            })
+            .filter(Boolean);
+    }, [activeOutbreaks, mapData.buildings]);
+
     // ═══ XII.B: Warm editorial RW zone colors ═══
     const rwColors = {
         '01': 'rgba(120,160,180,0.08)', // steel blue
@@ -351,6 +443,37 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                     );
                 })}
 
+                {outbreakZones.map((zone) => (
+                    <div
+                        key={zone.id}
+                        data-testid={`outbreak-zone-${zone.id}`}
+                        className="absolute pointer-events-none rounded-full"
+                        style={{
+                            left: zone.left,
+                            top: zone.top,
+                            width: zone.size,
+                            height: zone.size,
+                            zIndex: 17,
+                            background: activeLayer === 'surveillance'
+                                ? 'rgba(220,38,38,0.10)'
+                                : 'rgba(220,38,38,0.06)',
+                            border: '1px dashed rgba(220,38,38,0.20)'
+                        }}
+                    >
+                        <span
+                            className="absolute left-1/2 -translate-x-1/2 font-black uppercase tracking-[0.18em]"
+                            style={{
+                                top: -10,
+                                fontSize: 7,
+                                color: 'rgba(220,38,38,0.55)',
+                                whiteSpace: 'nowrap'
+                            }}
+                        >
+                            {zone.label}
+                        </span>
+                    </div>
+                ))}
+
                 {shouldShowEastOverlay && (
                     <div
                         data-testid="east-sector-overlay"
@@ -367,12 +490,13 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                 )}
 
                 {/* Building markers (semantic zoom filtering) */}
-                {visibleBuildings.map((building) => (
+                {visibleBuildingsWithStatus.map((building) => (
                     <Map2DMarker
                         key={building.id}
                         building={building}
                         cellSize={CELL_SIZE}
                         activeLayer={activeLayer}
+                        showStatusDetails={showBridgeStatusDetails}
                         selected={selectedBuildingId === building.id}
                         onClick={onBuildingSelect}
                     />

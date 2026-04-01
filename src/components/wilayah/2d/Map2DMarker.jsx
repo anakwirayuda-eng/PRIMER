@@ -182,8 +182,12 @@ function getColorblindBorderStyle(ringColor) {
     return 'solid';
 }
 
+function getUpgradeBadgeColor(upgradeStatus) {
+    if (upgradeStatus?.tone === 'gold') return '#f59e0b';
+    return '#34d399';
+}
 
-function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick }) {
+function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, showStatusDetails = true }) {
     const [hovered, setHovered] = useState(false);
 
     const icon = useMemo(() => getMarkerIcon(building.type), [building.type]);
@@ -194,6 +198,10 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick }
     const isLocked = building.isLocked;
     const hasOutbreak = building.hasCase || building.familyData?.hasCase;
     const isHouse = building.familyId != null;
+    const showUpgradeBadge = showStatusDetails && !isHouse && Boolean(building.upgradeStatus);
+    const showChampionStar = showStatusDetails && isHouse && Boolean(building.isChampion);
+    const showChampionShield = showStatusDetails && isHouse && Boolean(building.isChampionProtected);
+    const upgradeBadgeColor = useMemo(() => getUpgradeBadgeColor(building.upgradeStatus), [building.upgradeStatus]);
 
     // Economy-based LED color for houses
     const ledColor = useMemo(() => {
@@ -276,18 +284,53 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick }
                     />
                 )}
 
+                {showChampionStar && (
+                    <div
+                        data-testid={`champion-star-${building.id}`}
+                        className="absolute pointer-events-none"
+                        style={{
+                            left: '50%',
+                            top: -4,
+                            width: 6,
+                            height: 6,
+                            transform: 'translateX(-50%)',
+                            background: '#fbbf24',
+                            clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+                            boxShadow: '0 0 4px rgba(251,191,36,0.55)'
+                        }}
+                    />
+                )}
+
                 {/* Marker body */}
                 {isHouse ? (
                     // ═══ LED DATA NODE (economy-colored dot) ═══
-                    <div
-                        className="w-full h-full rounded-full"
-                        style={{
-                            background: ledColor,
-                            opacity: 0.85,
-                            boxShadow: `0 0 ${selected || hovered ? 8 : 4}px ${ledColor}`,
-                            border: `1px solid rgba(255,255,255,${hovered ? 0.4 : 0.15})`,
-                        }}
-                    />
+                    <>
+                        {showChampionShield && (
+                            <div
+                                data-testid={`champion-shield-${building.id}`}
+                                className="absolute pointer-events-none rounded-full"
+                                style={{
+                                    left: -2,
+                                    top: -2,
+                                    width: size + 4,
+                                    height: size + 4,
+                                    borderLeft: '1px solid #fbbf24',
+                                    borderTop: '1px solid #fbbf24',
+                                    borderBottom: '1px solid #fbbf24',
+                                    opacity: 0.9
+                                }}
+                            />
+                        )}
+                        <div
+                            className="w-full h-full rounded-full"
+                            style={{
+                                background: ledColor,
+                                opacity: 0.85,
+                                boxShadow: `0 0 ${selected || hovered ? 8 : 4}px ${ledColor}`,
+                                border: `1px solid rgba(255,255,255,${hovered ? 0.4 : 0.15})`,
+                            }}
+                        />
+                    </>
                 ) : (
                     // ═══ ACRYLIC TOKEN (XII.K Hack 2 — board game pion) ═══
                     <div
@@ -303,6 +346,30 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick }
                             color: 'currentColor',
                         }}
                     >
+                        {showUpgradeBadge && (
+                            <div
+                                data-testid={`upgrade-badge-${building.id}`}
+                                className="absolute pointer-events-none rotate-45"
+                                style={{
+                                    top: -3,
+                                    right: -3,
+                                    width: 6,
+                                    height: 6,
+                                    background: upgradeBadgeColor,
+                                    boxShadow: `0 0 4px ${upgradeBadgeColor}`
+                                }}
+                            />
+                        )}
+                        {showUpgradeBadge && building.upgradeStatus?.showRing && (
+                            <div
+                                data-testid={`upgrade-ring-${building.id}`}
+                                className="absolute pointer-events-none rounded-xl inset-[-2px]"
+                                style={{
+                                    border: `1px solid ${upgradeBadgeColor}`,
+                                    boxShadow: `0 0 6px ${upgradeBadgeColor}`
+                                }}
+                            />
+                        )}
                         {icon || null}
                     </div>
                 )}
