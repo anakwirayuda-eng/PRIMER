@@ -39,7 +39,7 @@ describe('Respond to Outbreak - Travel Energy Integration', () => {
         useGameStore.setState(useGameStore.getInitialState(), true);
     });
 
-    const setupTestStore = (houseId, x, y, day, balance, initialEnergy = 100) => {
+    const setupTestStore = (houseId, x, y, day, balance, initialEnergy = 100, buildingProgress = undefined) => {
         mockFamilyCoords = { 'fam-test': { x, y } };
         useGameStore.setState(state => ({
             world: {
@@ -77,7 +77,8 @@ describe('Respond to Outbreak - Travel Energy Integration', () => {
                         houseId: houseId,
                         indicators: {}
                     }]
-                }
+                },
+                ...(buildingProgress !== undefined ? { buildingProgress } : {})
             }
         }));
     };
@@ -114,6 +115,25 @@ describe('Respond to Outbreak - Travel Energy Integration', () => {
         expect(energySpent).toBeGreaterThan(40);
         expect(energySpent).toBeLessThan(45);
         expect(energySpent).toBe(41);
+    });
+
+    it('active Pustu reduces effective outbreak travel distance for nearby remote areas', () => {
+        setupTestStore('h-pustu', 30, 50, 1, 0, 100, { pustu: { completed: true } });
+        const res = runOutbreakAction(40);
+        expect(res.success).toBe(true);
+
+        const energySpent = 100 - useGameStore.getState().player.profile.energy;
+        expect(energySpent).toBeLessThan(54.4);
+        expect(energySpent).toBe(40.3);
+    });
+
+    it('without active FOB anchor, same nearby remote area still uses Puskesmas distance', () => {
+        setupTestStore('h-pustu', 30, 50, 1, 0, 100);
+        const res = runOutbreakAction(40);
+        expect(res.success).toBe(true);
+
+        const energySpent = 100 - useGameStore.getState().player.profile.energy;
+        expect(energySpent).toBe(54.4);
     });
 
     it('outbreak in pusat costs exactly flat base', () => {

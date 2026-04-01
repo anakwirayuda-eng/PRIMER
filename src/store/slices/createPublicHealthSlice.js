@@ -449,7 +449,27 @@ export const createPublicHealthSlice = (set, get) => ({
                 if (count > 0) {
                     const centroidX = sumX / count;
                     const centroidY = sumY / count;
-                    const distance = Math.abs(100 - centroidX) + Math.abs(30 - centroidY);
+                    const buildingProgress = s.publicHealth.buildingProgress || {};
+                    const serviceAnchors = [
+                        { id: 'puskesmas', x: 100, y: 30, isActive: true },
+                        {
+                            id: 'pustu',
+                            x: 28,
+                            y: 50,
+                            isActive: Boolean(buildingProgress.pustu?.completed || buildingProgress.fob?.completed)
+                        },
+                        {
+                            id: 'polindes',
+                            x: 25,
+                            y: 95,
+                            isActive: Boolean(buildingProgress.polindes?.completed || buildingProgress.fob?.completed)
+                        }
+                    ];
+                    const { distance } = getEffectiveServiceDistance(
+                        { x: centroidX, y: centroidY },
+                        serviceAnchors
+                    );
+                    const safeDistance = Number.isFinite(distance) ? distance : 0;
                     const sector = getSectorFromCoords(centroidX, centroidY);
                     
                     const balance = (s.finance.stats.kapitasi || 0) + (s.finance.stats.pendapatanUmum || 0);
@@ -458,7 +478,7 @@ export const createPublicHealthSlice = (set, get) => ({
                         ? unlockedVehicles[unlockedVehicles.length - 1]
                         : 'jalan_kaki';
 
-                    effectiveEnergyCost = calculateTravelEnergy(action.energyCost, distance, sector, vehicle);
+                    effectiveEnergyCost = calculateTravelEnergy(action.energyCost, safeDistance, sector, vehicle);
                 }
             }
 
