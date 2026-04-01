@@ -5,6 +5,8 @@ import { getUnlockedVehicles } from '../domains/village/vehicleProgression.js';
 import { getWarungIntelCost, canAffordWarungIntel } from '../domains/village/warungIntelCost.js';
 import { calculateAverageIksFromFamilies } from '../utils/villageMetrics.js';
 import { calculateKBKPerformanceMultiplier } from '../domains/village/kbkPerformance.js';
+import { getSeasonForDay } from '../game/IKMEventEngine.js';
+import { getBridgeSeasonalState } from '../domains/village/bridgeSeasonalState.js';
 
 const normalizeSkills = (skills) => Array.isArray(skills)
     ? skills
@@ -184,5 +186,24 @@ export const selectKBKPerformanceState = (state) => {
         };
     } catch {
         return { avgIKS: 0, multiplier: 1.0 };
+    }
+};
+
+/**
+ * Bridge Seasonal State selector
+ */
+export const selectBridgeSeasonalState = (state, isExtremeRain = false) => {
+    try {
+        const day = Number(state?.world?.day);
+        if (Number.isNaN(day) || day < 1) {
+            return getBridgeSeasonalState('kemarau', false); // fallback normal state
+        }
+        
+        const rawSeason = getSeasonForDay(day);
+        const mappedSeason = rawSeason === 'rainy' ? 'hujan' : 'kemarau';
+        
+        return getBridgeSeasonalState(mappedSeason, isExtremeRain);
+    } catch {
+        return getBridgeSeasonalState('kemarau', false);
     }
 };
