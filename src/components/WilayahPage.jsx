@@ -46,6 +46,8 @@ import { isGameEnabledBuilding } from './wilayah/buildingScenes.js';
 
 import { guardStability } from '../utils/prophylaxis.js';
 import { calculateIKS } from '../game/GameCore.js';
+import { selectBridgeSeasonalState } from '../store/selectors.js';
+import { resolveHomeVisitTravelState } from '../domains/village/homeVisitTravel.js';
 import {
     activateBehaviorCaseForVillage,
     applyBehaviorCaseOutcomeToVillage,
@@ -99,9 +101,12 @@ export default function WilayahPage() {
     const day = useGameStore(s => s.world.day);
     const gameTime = useGameStore(s => s.world.time); // minutes 0-1440 for lighting overlay
     const villageData = useGameStore(s => s.publicHealth.villageData);
+    const buildingProgress = useGameStore(s => s.publicHealth.buildingProgress);
+    const financeStats = useGameStore(s => s.finance.stats);
     const history = useGameStore(s => s.clinical.history);
     const playerStats = useGameStore(useShallow(s => s.player.profile));
     const activeIKMEvents = useGameStore(s => s.publicHealth.activeIKMEvents);
+    const bridgeState = useGameStore(useShallow(s => selectBridgeSeasonalState(s)));
     const recordVillageLedgerEntry = useGameStore(s => s.publicHealthActions.recordVillageLedgerEntry);
 
     // Actions & UI state still come from useGame() (stable references, no perf impact)
@@ -137,6 +142,10 @@ export default function WilayahPage() {
     const blueprint2dRef = useRef(null); // ref for 2D pan/zoom callbacks
     const activeZoomRef = viewMode === '3D' ? dioramaZoomRef : blueprint2dRef;
     const [diveWhiteout, setDiveWhiteout] = useState(false); // Dollhouse Dive flash
+    const liquidBalance = useMemo(
+        () => (Number(financeStats?.kapitasi) || 0) + (Number(financeStats?.pendapatanUmum) || 0),
+        [financeStats]
+    );
 
     // ═══ TOPOLOGY DECOUPLING (Performance Critical!) ═══════════════════
     // Static map geometry: generated ONCE, never regenerated on data changes
@@ -270,6 +279,22 @@ export default function WilayahPage() {
         setActiveBCCase(null);
     }, [activeBCCase, setVillageData]);
 
+    const homeVisitTravelByAction = useMemo(() => {
+        if (!homeVisitModal) return new Map();
+
+        return new Map(
+            HOME_VISIT_INTERVENTIONS.map(action => [
+                action.id,
+                resolveHomeVisitTravelState(action.energy, { x: homeVisitModal.x, y: homeVisitModal.y }, {
+                    day,
+                    balance: liquidBalance,
+                    buildingProgress,
+                    bridgeState
+                })
+            ])
+        );
+    }, [homeVisitModal, day, liquidBalance, buildingProgress, bridgeState]);
+
     // Loading guard (moved after all hooks to avoid Rules of Hooks violation)
     if (!mapData) {
         return (
@@ -311,7 +336,9 @@ export default function WilayahPage() {
     const iksColor = selectedIks >= 0.8 ? 'text-emerald-400' : selectedIks >= 0.5 ? 'text-amber-400' : 'text-red-400';
 
     const handleHomeVisitAction = (action) => {
-        if (energy < action.energy) return;
+        const travelState = homeVisitTravelByAction.get(action.id);
+        const effectiveEnergy = travelState?.effectiveEnergy ?? action.energy;
+        if (travelState?.isBlocked || energy < effectiveEnergy) return;
         // Use homeVisitModal's familyId, not selectedBuilding, to prevent desync
         const targetFamilyId = homeVisitModal?.familyId;
         if (!targetFamilyId) return;
@@ -325,7 +352,10 @@ export default function WilayahPage() {
             ...prev,
             families: prev.families.map(f => f.id === family.id ? { ...f, indicators: updatedIndicators, iksScore: calculateIKS(updatedIndicators) } : f)
         }));
-        setPlayerStats(prev => ({ ...prev, energy: energy - action.energy }));
+        setPlayerStats(prev => ({
+            ...prev,
+            energy: Math.max(0, (Number(prev?.energy) || 0) - effectiveEnergy)
+        }));
         addXp(action.xp);
 
         if (updateProgress) {
@@ -341,6 +371,7 @@ export default function WilayahPage() {
                 actionId: action.id,
                 actionLabel: action.label,
                 indicatorsUpdated: idsToUpdate,
+                energyCost: effectiveEnergy
             });
         }
 
@@ -800,14 +831,20 @@ export default function WilayahPage() {
                                         const family = villageData.families.find(f => f.id === homeVisitModal.familyId);
                                         const idsToCheck = action.indicators || (action.indicator ? [action.indicator] : []);
                                         const isCompleted = homeVisitModal.familyId && idsToCheck.length > 0 && idsToCheck.every(id => family?.indicators?.[id]);
+                                        const travelState = homeVisitTravelByAction.get(action.id);
+                                        const effectiveEnergy = travelState?.effectiveEnergy ?? action.energy;
+                                        const isBlocked = Boolean(travelState?.isBlocked);
+                                        const canAfford = energy >= effectiveEnergy;
                                         return (
                                             <button
                                                 key={action.id}
-                                                disabled={energy < action.energy || isCompleted}
+                                                disabled={isBlocked || !canAfford || isCompleted}
                                                 onClick={() => handleHomeVisitAction(action)}
                                                 className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${isCompleted
                                                     ? 'bg-emerald-500/10 border-emerald-500/20 opacity-60'
-                                                    : energy >= action.energy
+                                                    : isBlocked
+                                                        ? 'bg-red-500/10 border-red-500/20 opacity-70 cursor-not-allowed'
+                                                        : canAfford
                                                         ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
                                                         : 'bg-white/5 border-white/5 opacity-40 cursor-not-allowed'
                                                     }`}
@@ -815,14 +852,20 @@ export default function WilayahPage() {
                                                 <div className="text-xl">{action.icon}</div>
                                                 <div className="flex-1">
                                                     <h4 className="font-black text-white text-xs uppercase tracking-tight">{action.label}</h4>
-                                                    <p className="text-[10px] text-white/50 font-medium">{action.description}</p>
+                                                    <p className="text-[10px] text-white/50 font-medium">
+                                                        {isBlocked ? 'Akses ke sektor Timur terputus.' : action.description}
+                                                    </p>
                                                 </div>
                                                 <div className="text-right">
                                                     {isCompleted ? (
                                                         <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-md uppercase">Selesai</span>
+                                                    ) : isBlocked ? (
+                                                        <span className="text-[9px] font-black text-red-400 bg-red-500/20 px-2 py-1 rounded-md uppercase">
+                                                            {travelState?.blockedReason || 'Terblokir'}
+                                                        </span>
                                                     ) : (
                                                         <div className="flex flex-col items-end">
-                                                            <span className="text-[10px] font-black text-amber-400">-{action.energy} EP</span>
+                                                            <span className="text-[10px] font-black text-amber-400">-{effectiveEnergy} EP</span>
                                                             <span className="text-[9px] font-black text-emerald-400 uppercase">+{action.xp} XP</span>
                                                         </div>
                                                     )}
