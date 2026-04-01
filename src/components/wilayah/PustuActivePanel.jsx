@@ -19,6 +19,7 @@ import {
     Activity, Heart, ShieldAlert, CheckCircle2, AlertTriangle,
     X, ClipboardList, ThermometerSnowflake, Stethoscope, Baby
 } from 'lucide-react';
+import { useGameStore } from '../../store/useGameStore.js';
 
 import {
     createANCPatient,
@@ -75,7 +76,8 @@ const DEMO_PATIENTS = [
 // ═══════════════════════════════════════════════════════════════
 // 🏥 MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════
-export default function PustuActivePanel({ onClose, onComplete }) {
+export default function PustuActivePanel({ onClose, onComplete, buildingType = 'pustu' }) {
+    const recordFacilitySessionProgress = useGameStore(s => s.publicHealthActions.recordFacilitySessionProgress);
     const [phase, setPhase] = useState('triage'); // triage → anc → risk → kb → report
     const [ap, setAp] = useState(2);
     const [shake, setShake] = useState(false);
@@ -526,7 +528,12 @@ export default function PustuActivePanel({ onClose, onComplete }) {
                                             <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">Reputasi</div>
                                         </div>
                                     </div>
-                                    <button onClick={() => { onComplete?.({ sessionLog, totalXP, repDelta, malpracticeCount }); onClose?.(); }}
+                                    <button onClick={() => {
+                                        const sessionSummary = { sessionLog, totalXP, repDelta, malpracticeCount };
+                                        recordFacilitySessionProgress?.(buildingType, sessionSummary);
+                                        onComplete?.(sessionSummary);
+                                        onClose?.();
+                                    }}
                                         className="px-8 py-4 bg-slate-900 text-white font-black text-xs uppercase tracking-widest rounded shadow-xl hover:bg-slate-800 btn-med border-b-black">
                                         TUTUP LOGBOOK ✖
                                     </button>

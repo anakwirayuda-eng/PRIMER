@@ -18,6 +18,7 @@ import {
     Activity, Scale, ClipboardList, ShieldAlert, CheckCircle2,
     AlertTriangle, Users, ThermometerSnowflake, X, Baby, Syringe
 } from 'lucide-react';
+import { useGameStore } from '../../store/useGameStore.js';
 
 // ═══════════════════════════════════════════════════════════════
 // 🔌 REAL ENGINE WIRING
@@ -165,6 +166,7 @@ function KMSChart({ baby }) {
 // 🏥 MAIN COMPONENT: PosyanduActivePanel
 // ═══════════════════════════════════════════════════════════════
 export default function PosyanduActivePanel({ initialBabies, onClose, onComplete }) {
+    const recordFacilitySessionProgress = useGameStore(s => s.publicHealthActions.recordFacilitySessionProgress);
     const [queue, setQueue] = useState(initialBabies || DEMO_QUEUE);
     const [ap, setAp] = useState(2);
     const [phase, setPhase] = useState('triage'); // triage -> meja2 -> meja5 -> report
@@ -590,7 +592,12 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                             <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">Reputasi Desa</div>
                                         </div>
                                     </div>
-                                    <button onClick={() => { onComplete?.({ sessionLog, totalXP, repDelta, malpracticeCount }); onClose?.(); }}
+                                    <button onClick={() => {
+                                        const sessionSummary = { sessionLog, totalXP, repDelta, malpracticeCount };
+                                        recordFacilitySessionProgress?.('posyandu', sessionSummary);
+                                        onComplete?.(sessionSummary);
+                                        onClose?.();
+                                    }}
                                         className="px-8 py-4 bg-slate-900 text-white font-black text-xs uppercase tracking-widest rounded shadow-xl hover:bg-slate-800 btn-med border-b-black transition-all">
                                         TUTUP LOGBOOK ✖
                                     </button>

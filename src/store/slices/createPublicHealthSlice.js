@@ -32,6 +32,8 @@ import { getUnlockedVehicles } from '../../domains/village/vehicleProgression.js
 import { getWarungIntelTargets } from '../../domains/village/warungIntel.js';
 import { getWarungIntelCost, canAffordWarungIntel } from '../../domains/village/warungIntelCost.js';
 import { getBridgeSeasonalState, isExtremeRainDay } from '../../domains/village/bridgeSeasonalState.js';
+import { getFOBUpgradeState } from '../../domains/village/fobUpgrade.js';
+import { getPosyanduUpgradeState } from '../../domains/village/posyanduUpgrade.js';
 import { ensureVillageReadinessState } from '../../utils/behaviorCaseRuntime.js';
 import {
     evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact,
@@ -730,6 +732,66 @@ export const createPublicHealthSlice = (set, get) => ({
                     }
                 };
             });
+        },
+
+        /** Record session outcomes for facility progression helpers */
+        recordFacilitySessionProgress: (buildingType, sessionSummary = {}) => {
+            const supportedTypes = new Set(['posyandu', 'pustu', 'polindes', 'fob']);
+            if (!supportedTypes.has(buildingType)) return null;
+
+            const sessionLog = Array.isArray(sessionSummary?.sessionLog) ? sessionSummary.sessionLog : [];
+            const malpracticeCount = Number.isFinite(Number(sessionSummary?.malpracticeCount))
+                ? Number(sessionSummary.malpracticeCount)
+                : 0;
+            const wasSuccessful = sessionLog.length > 0 && malpracticeCount === 0;
+
+            let nextProgress = null;
+            set(state => {
+                const current = state.publicHealth.buildingProgress?.[buildingType] || {};
+
+                if (buildingType === 'posyandu') {
+                    const currentStreak = Number.isFinite(Number(current.successStreak))
+                        ? Math.max(0, Math.floor(Number(current.successStreak)))
+                        : (current.isUpgraded ? 3 : 0);
+                    const nextStreak = wasSuccessful ? currentStreak + 1 : 0;
+                    const upgradeState = getPosyanduUpgradeState(nextStreak);
+
+                    nextProgress = {
+                        ...current,
+                        ...upgradeState,
+                        successStreak: nextStreak,
+                        completed: upgradeState.isUpgraded,
+                        lastSessionDay: state.world.day,
+                        lastSessionSuccessful: wasSuccessful
+                    };
+                } else {
+                    const currentLevel = Number.isFinite(Number(current.level))
+                        ? Math.max(0, Math.floor(Number(current.level)))
+                        : (current.completed ? 1 : 0);
+                    const nextLevel = wasSuccessful ? Math.min(2, currentLevel + 1) : currentLevel;
+                    const upgradeState = getFOBUpgradeState(nextLevel);
+
+                    nextProgress = {
+                        ...current,
+                        ...upgradeState,
+                        completed: upgradeState.isActive,
+                        lastSessionDay: state.world.day,
+                        lastSessionSuccessful: wasSuccessful
+                    };
+                }
+
+                return {
+                    publicHealth: {
+                        ...state.publicHealth,
+                        buildingProgress: {
+                            ...state.publicHealth.buildingProgress,
+                            [buildingType]: nextProgress
+                        }
+                    }
+                };
+            });
+
+            return nextProgress;
         },
 
         /** Manually trigger an IKM event */

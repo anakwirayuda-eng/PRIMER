@@ -955,6 +955,7 @@ export default function WilayahPage() {
                 {buildingInterior && (buildingInterior === 'pustu' || buildingInterior === 'polindes') && (
                     <ErrorBoundary name="PustuActivePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel="Tutup Pustu">
                     <PustuActivePanel
+                        buildingType={buildingInterior}
                         onClose={() => setBuildingInterior(null)}
                         onComplete={(result) => {
                             if (result?.totalXP) addXp(result.totalXP);
