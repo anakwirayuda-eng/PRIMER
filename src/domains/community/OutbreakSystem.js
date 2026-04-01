@@ -276,9 +276,10 @@ export function checkForOutbreakTrigger(history, villageData, currentDay, active
  * Apply a response action to an outbreak
  * @param {Object} outbreak - The outbreak object
  * @param {string} actionId - Action ID to perform
+ * @param {Object} options - Optional runtime modifiers
  * @returns {Object} - Updated outbreak with new progress
  */
-export function applyOutbreakAction(outbreak, actionId) {
+export function applyOutbreakAction(outbreak, actionId, options = {}) {
     const action = OUTBREAK_ACTIONS[actionId];
     if (!action) return outbreak;
 
@@ -289,7 +290,10 @@ export function applyOutbreakAction(outbreak, actionId) {
 
     // Add action and update progress
     const newActionsPerformed = [...outbreak.actionsPerformed, actionId];
-    const progressIncrease = action.effectiveness * 100;
+    const effectivenessMultiplier = Number.isFinite(Number(options.effectivenessMultiplier))
+        ? Math.max(0, Number(options.effectivenessMultiplier))
+        : 1;
+    const progressIncrease = Math.min(100, action.effectiveness * effectivenessMultiplier * 100);
     const newProgress = Math.min(100, outbreak.resolutionProgress + progressIncrease);
 
     return {

@@ -433,6 +433,7 @@ export const createPublicHealthSlice = (set, get) => ({
             if (!outbreak) return { success: false, message: 'Outbreak not found' };
 
             let effectiveEnergyCost = action.energyCost;
+            let effectivenessMultiplier = 1;
 
             const villageData = s.publicHealth.villageData;
             if (villageData && outbreak.affectedHouseIds && outbreak.affectedHouseIds.length > 0) {
@@ -467,12 +468,18 @@ export const createPublicHealthSlice = (set, get) => ({
                             isActive: Boolean(buildingProgress.polindes?.completed || buildingProgress.fob?.completed)
                         }
                     ];
-                    const { distance } = getEffectiveServiceDistance(
+                    const { anchorId, distance } = getEffectiveServiceDistance(
                         { x: centroidX, y: centroidY },
                         serviceAnchors
                     );
                     const safeDistance = Number.isFinite(distance) ? distance : 0;
                     const sector = getSectorFromCoords(centroidX, centroidY);
+                    const nearestFacilityLevel = anchorId && anchorId !== 'puskesmas'
+                        ? Number(buildingProgress[anchorId]?.level ?? buildingProgress.fob?.level ?? 0)
+                        : 0;
+                    if (anchorId && anchorId !== 'puskesmas' && nearestFacilityLevel >= 2 && safeDistance <= 30) {
+                        effectivenessMultiplier = 1.3;
+                    }
                     
                     const balance = (s.finance.stats.kapitasi || 0) + (s.finance.stats.pendapatanUmum || 0);
                     const unlockedVehicles = getUnlockedVehicles(s.world.day, balance);
@@ -485,7 +492,7 @@ export const createPublicHealthSlice = (set, get) => ({
             }
 
             if (s.player.profile.energy < effectiveEnergyCost) { soundManager.playError(); return { success: false, message: 'Not enough energy' }; }
-            const updatedOutbreak = applyOutbreakAction(outbreak, actionId);
+            const updatedOutbreak = applyOutbreakAction(outbreak, actionId, { effectivenessMultiplier });
             set(state => {
                 const nextPlayer = {
                     ...state.player,
