@@ -8,6 +8,9 @@ import { calculateKBKPerformanceMultiplier } from '../domains/village/kbkPerform
 import { getSeasonForDay } from '../game/IKMEventEngine.js';
 import { getBridgeSeasonalState } from '../domains/village/bridgeSeasonalState.js';
 import { ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';
+import { isLocalChampionEligible } from '../domains/village/localChampion.js';
+import { getChampionProtectedFamilies } from '../domains/village/championProtection.js';
+import { getSpatialContext } from '../domains/village/spatialContext.js';
 
 const normalizeSkills = (skills) => Array.isArray(skills)
     ? skills
@@ -244,6 +247,50 @@ export const selectProjectedMonthlyKapitasi = (state, accreditation = 'Dasar') =
             accreditationMultiplier: 1.0,
             kbkMultiplier: 1.0,
             projectedMonthlyKapitasi: 50000000
+        };
+    }
+};
+
+/**
+ * Local Champion State selector
+ */
+export const selectLocalChampionState = (state) => {
+    try {
+        const villageData = state?.publicHealth?.villageData;
+        const families = villageData?.families;
+
+        if (!Array.isArray(families) || families.length === 0) {
+            return {
+                championFamilyIds: [],
+                protectedFamilyIds: [],
+                championCount: 0,
+                protectedCount: 0
+            };
+        }
+
+        const championFamilyIds = families
+            .filter(f => isLocalChampionEligible(f.iksScore))
+            .map(f => f.id);
+
+        const spatialContext = getSpatialContext(villageData);
+        let protectedFamilyIds = [];
+        
+        if (spatialContext?.familyCoords && championFamilyIds.length > 0) {
+            protectedFamilyIds = getChampionProtectedFamilies(championFamilyIds, spatialContext.familyCoords, 3);
+        }
+
+        return {
+            championFamilyIds,
+            protectedFamilyIds,
+            championCount: championFamilyIds.length,
+            protectedCount: protectedFamilyIds.length
+        };
+    } catch {
+        return {
+            championFamilyIds: [],
+            protectedFamilyIds: [],
+            championCount: 0,
+            protectedCount: 0
         };
     }
 };
