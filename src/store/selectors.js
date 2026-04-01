@@ -7,6 +7,7 @@ import { calculateAverageIksFromFamilies } from '../utils/villageMetrics.js';
 import { calculateKBKPerformanceMultiplier } from '../domains/village/kbkPerformance.js';
 import { getSeasonForDay } from '../game/IKMEventEngine.js';
 import { getBridgeSeasonalState } from '../domains/village/bridgeSeasonalState.js';
+import { ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';
 
 const normalizeSkills = (skills) => Array.isArray(skills)
     ? skills
@@ -216,4 +217,33 @@ export const selectVillageTravelContext = (state, isExtremeRain = false) => {
         unlockedVehicles: selectUnlockedVillageVehicles(state),
         bridgeState: selectBridgeSeasonalState(state, isExtremeRain)
     };
+};
+
+/**
+ * Projected Monthly Kapitasi selector
+ */
+export const selectProjectedMonthlyKapitasi = (state, accreditation = 'Dasar') => {
+    try {
+        const baseKapitasi = 50000000;
+        const accreditationMultiplier = ACCREDITATION_MULTIPLIER[accreditation] ?? 1.0;
+        
+        const kbkState = selectKBKPerformanceState(state);
+        const kbkMultiplier = kbkState.multiplier ?? 1.0;
+        
+        const projectedMonthlyKapitasi = baseKapitasi * accreditationMultiplier * kbkMultiplier;
+        
+        return {
+            baseKapitasi,
+            accreditationMultiplier,
+            kbkMultiplier,
+            projectedMonthlyKapitasi
+        };
+    } catch {
+        return {
+            baseKapitasi: 50000000,
+            accreditationMultiplier: 1.0,
+            kbkMultiplier: 1.0,
+            projectedMonthlyKapitasi: 50000000
+        };
+    }
 };
