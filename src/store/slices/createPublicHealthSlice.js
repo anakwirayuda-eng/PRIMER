@@ -29,6 +29,8 @@ import { getEffectiveServiceDistance } from '../../domains/village/serviceDistan
 import { calculateDistanceDecayModifiers } from '../../domains/village/spatialDistanceDecay.js';
 import { calculateTravelEnergy, getSectorFromCoords } from '../../domains/village/spatialEnergy.js';
 import { getUnlockedVehicles } from '../../domains/village/vehicleProgression.js';
+import { getWarungIntelTargets } from '../../domains/village/warungIntel.js';
+import { getWarungIntelCost, canAffordWarungIntel } from '../../domains/village/warungIntelCost.js';
 import { ensureVillageReadinessState } from '../../utils/behaviorCaseRuntime.js';
 import {
     evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact,
@@ -366,6 +368,60 @@ export const createPublicHealthSlice = (set, get) => ({
             }));
             soundManager.playConfirm();
             return { success: true, message: 'Pemantauan obat dicatat.' };
+        },
+        buyWarungIntel: (origin) => {
+            const s = get();
+            const currentEnergy = s.player.profile.energy;
+            const currentMoney = (s.finance.stats.kapitasi || 0) + (s.finance.stats.pendapatanUmum || 0);
+
+            if (!canAffordWarungIntel(currentEnergy, currentMoney)) {
+                soundManager.playError();
+                return { success: false, message: 'Dana atau stamina tidak cukup' };
+            }
+
+            const familyCoords = getSpatialContext(s.publicHealth.villageData)?.familyCoords;
+            if (!familyCoords || Object.keys(familyCoords).length === 0) {
+                soundManager.playError();
+                return { success: false, message: 'Data peta tidak tersedia' };
+            }
+
+            const targets = getWarungIntelTargets(origin, familyCoords, 5);
+            if (targets.length === 0) {
+                soundManager.playError();
+                return { success: false, message: 'Target intel tidak tersedia' };
+            }
+            const cost = getWarungIntelCost();
+
+            set(state => {
+                const nextPlayer = {
+                    ...state.player,
+                    profile: {
+                        ...state.player.profile,
+                        energy: Math.max(0, state.player.profile.energy - cost.energyCost)
+                    }
+                };
+
+                const nextWorld = {
+                    ...state.world,
+                    time: Math.min(960, state.world.time + cost.timeCost)
+                };
+
+                const nextStats = spendOperationalFunds(state.finance.stats, cost.cashCost);
+                const nextFinance = { ...state.finance, stats: nextStats };
+
+                return {
+                    player: nextPlayer,
+                    world: nextWorld,
+                    finance: nextFinance,
+                    publicHealth: {
+                        ...state.publicHealth,
+                        lastIntelTargets: targets
+                    }
+                };
+            });
+
+            soundManager.playSuccess();
+            return { success: true, targets };
         },
         // CROSS-SLICE: writes player, world.time
         respondToOutbreak: (outbreakId, actionId, action, _day) => {
