@@ -12,21 +12,42 @@
 import React, { useRef, useState, useCallback, useEffect, useImperativeHandle, forwardRef, useMemo } from 'react';
 import Map2DTerrain from './Map2DTerrain.jsx';
 import Map2DMarker from './Map2DMarker.jsx';
+import { useGameStore } from '../../../store/useGameStore.js';
+import { selectBridgeSeasonalState } from '../../../store/selectors.js';
 
 const CELL_SIZE = 10; // pixels per grid cell
 const MIN_ZOOM = 0.4;
 const MAX_ZOOM = 3.0;
 const ZOOM_STEP = 0.15;
 
-function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, activeLayer, gameTime = 480 }, ref) {
+function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, activeLayer, gameTime = 480, bridgeStatus }, ref) {
     const containerRef = useRef(null);
     const [zoom, setZoom] = useState(1.0);
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+    const derivedBridgeStatus = useGameStore((state) => selectBridgeSeasonalState(state).status);
+    const effectiveBridgeStatus = bridgeStatus ?? derivedBridgeStatus ?? 'normal';
 
     const mapW = mapData.width * CELL_SIZE;
     const mapH = mapData.height * CELL_SIZE;
+    const showBridgeStatusDetails = zoom >= 0.6;
+    const shouldShowEastOverlay = showBridgeStatusDetails && effectiveBridgeStatus !== 'normal';
+
+    const eastSectorOverlayStyle = useMemo(() => {
+        if (!shouldShowEastOverlay) return null;
+        if (effectiveBridgeStatus === 'putus') {
+            return {
+                background: 'rgba(220,38,38,0.06)',
+                borderLeft: '1px dashed rgba(220,38,38,0.25)',
+                animation: 'primer-east-danger-pulse 2.4s ease-in-out infinite'
+            };
+        }
+        return {
+            background: 'rgba(217,119,6,0.04)',
+            borderLeft: '1px solid rgba(217,119,6,0.15)'
+        };
+    }, [effectiveBridgeStatus, shouldShowEastOverlay]);
 
     // ═══ Center the map on initial mount ═══
     useEffect(() => {
@@ -290,7 +311,12 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                 }}
             >
                 {/* Terrain backdrop */}
-                <Map2DTerrain mapData={mapData} cellSize={CELL_SIZE} />
+                    <Map2DTerrain
+                        mapData={mapData}
+                        cellSize={CELL_SIZE}
+                        bridgeStatus={effectiveBridgeStatus}
+                        showBridgeStatusDetails={showBridgeStatusDetails}
+                    />
 
                 {/* RW Zone boundaries */}
                 {Object.entries(rwZones).map(([rw, zone]) => {
@@ -325,6 +351,21 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                     );
                 })}
 
+                {shouldShowEastOverlay && (
+                    <div
+                        data-testid="east-sector-overlay"
+                        className="absolute pointer-events-none"
+                        style={{
+                            left: 120 * CELL_SIZE,
+                            top: 0,
+                            width: Math.max(0, mapData.width - 120) * CELL_SIZE,
+                            height: mapH,
+                            zIndex: 18,
+                            ...eastSectorOverlayStyle
+                        }}
+                    />
+                )}
+
                 {/* Building markers (semantic zoom filtering) */}
                 {visibleBuildings.map((building) => (
                     <Map2DMarker
@@ -353,6 +394,15 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                     N
                 </div>
             </div>
+
+            <style>
+                {`
+                    @keyframes primer-east-danger-pulse {
+                        0%, 100% { opacity: 0.7; }
+                        50% { opacity: 1; }
+                    }
+                `}
+            </style>
         </div>
     );
 }

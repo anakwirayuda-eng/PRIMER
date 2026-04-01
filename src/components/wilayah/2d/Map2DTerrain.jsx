@@ -24,7 +24,7 @@ const TERRAIN_COLORS = {
 
 // Colors are now hex strings — no rgbaStr needed
 
-export default function Map2DTerrain({ mapData, cellSize }) {
+export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal', showBridgeStatusDetails = true }) {
     const { tiles, width, height, centerX } = mapData;
     const canvasRef = useRef(null);
 
@@ -86,6 +86,50 @@ export default function Map2DTerrain({ mapData, cellSize }) {
             for (let i = 0; i < coords.length; i += 2) {
                 ctx.fillRect(coords[i] * cellSize, coords[i + 1] * cellSize, cellSize, cellSize);
             }
+        };
+
+        const paintBridgeTiles = (color, options = {}) => {
+            const {
+                shadowColor = null,
+                shadowBlur = 0,
+                strokeColor = null,
+                strokeWidth = 1
+            } = options;
+
+            ctx.save();
+            if (shadowColor && shadowBlur > 0) {
+                ctx.shadowColor = shadowColor;
+                ctx.shadowBlur = shadowBlur;
+            }
+            ctx.fillStyle = color;
+            for (let i = 0; i < tileClassification.bridge.length; i += 2) {
+                const x = tileClassification.bridge[i] * cellSize;
+                const y = tileClassification.bridge[i + 1] * cellSize;
+                ctx.fillRect(x, y, cellSize, cellSize);
+                if (strokeColor) {
+                    ctx.strokeStyle = strokeColor;
+                    ctx.lineWidth = strokeWidth;
+                    ctx.strokeRect(x + 0.5, y + 0.5, Math.max(0, cellSize - 1), Math.max(0, cellSize - 1));
+                }
+            }
+            ctx.restore();
+        };
+
+        const paintBridgeCrosses = (strokeColor) => {
+            ctx.save();
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = Math.max(1, cellSize * 0.12);
+            for (let i = 0; i < tileClassification.bridge.length; i += 2) {
+                const x = tileClassification.bridge[i] * cellSize;
+                const y = tileClassification.bridge[i + 1] * cellSize;
+                ctx.beginPath();
+                ctx.moveTo(x + cellSize * 0.2, y + cellSize * 0.2);
+                ctx.lineTo(x + cellSize * 0.8, y + cellSize * 0.8);
+                ctx.moveTo(x + cellSize * 0.8, y + cellSize * 0.2);
+                ctx.lineTo(x + cellSize * 0.2, y + cellSize * 0.8);
+                ctx.stroke();
+            }
+            ctx.restore();
         };
 
         // Paint in z-order: water → forest → sawah → dirt roads → main roads
@@ -217,7 +261,24 @@ export default function Map2DTerrain({ mapData, cellSize }) {
         ctx.textAlign = 'center';
         ctx.fillText('JALAN UTAMA', (centerX || width / 2) * cellSize, 12);
 
-    }, [tileClassification, width, height, cellSize, centerX]);
+        if (showBridgeStatusDetails) {
+            if (bridgeStatus === 'rawan_banjir') {
+                paintBridgeTiles('#d97706', {
+                    strokeColor: 'rgba(34,211,238,0.75)',
+                    strokeWidth: Math.max(1, cellSize * 0.08)
+                });
+            } else if (bridgeStatus === 'putus') {
+                paintBridgeTiles('#dc2626', {
+                    shadowColor: 'rgba(220,38,38,0.75)',
+                    shadowBlur: 6,
+                    strokeColor: '#450a0a',
+                    strokeWidth: Math.max(1, cellSize * 0.08)
+                });
+                paintBridgeCrosses('#450a0a');
+            }
+        }
+
+    }, [tileClassification, width, height, cellSize, centerX, bridgeStatus, showBridgeStatusDetails]);
 
     return (
         <canvas
