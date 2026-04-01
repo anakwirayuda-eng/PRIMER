@@ -6,7 +6,7 @@ import { getWarungIntelCost, canAffordWarungIntel } from '../domains/village/war
 import { calculateAverageIksFromFamilies } from '../utils/villageMetrics.js';
 import { calculateKBKPerformanceMultiplier } from '../domains/village/kbkPerformance.js';
 import { getSeasonForDay } from '../game/IKMEventEngine.js';
-import { getBridgeSeasonalState } from '../domains/village/bridgeSeasonalState.js';
+import { getBridgeSeasonalState, isExtremeRainDay } from '../domains/village/bridgeSeasonalState.js';
 import { ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';
 import { isLocalChampionEligible } from '../domains/village/localChampion.js';
 import { getChampionProtectedFamilies } from '../domains/village/championProtection.js';
@@ -196,7 +196,7 @@ export const selectKBKPerformanceState = (state) => {
 /**
  * Bridge Seasonal State selector
  */
-export const selectBridgeSeasonalState = (state, isExtremeRain = false) => {
+export const selectBridgeSeasonalState = (state, isExtremeRain = null) => {
     try {
         const day = Number(state?.world?.day);
         if (Number.isNaN(day) || day < 1) {
@@ -205,8 +205,11 @@ export const selectBridgeSeasonalState = (state, isExtremeRain = false) => {
         
         const rawSeason = getSeasonForDay(day);
         const mappedSeason = rawSeason === 'rainy' ? 'hujan' : 'kemarau';
+        const overrideResolved = typeof isExtremeRain === 'boolean' 
+            ? isExtremeRain 
+            : isExtremeRainDay(day);
         
-        return getBridgeSeasonalState(mappedSeason, isExtremeRain);
+        return getBridgeSeasonalState(mappedSeason, overrideResolved);
     } catch {
         return getBridgeSeasonalState('kemarau', false);
     }
@@ -215,7 +218,7 @@ export const selectBridgeSeasonalState = (state, isExtremeRain = false) => {
 /**
  * Combined Village Travel Context selector
  */
-export const selectVillageTravelContext = (state, isExtremeRain = false) => {
+export const selectVillageTravelContext = (state, isExtremeRain = null) => {
     return {
         unlockedVehicles: selectUnlockedVillageVehicles(state),
         bridgeState: selectBridgeSeasonalState(state, isExtremeRain)

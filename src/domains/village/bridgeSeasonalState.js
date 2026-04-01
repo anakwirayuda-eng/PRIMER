@@ -4,6 +4,8 @@
  * Helper murni untuk mengevaluasi status mekanik Jembatan Gantung Cikapas
  * yang menghubungkan sektor Timur (Sungai) berdasarkan kondisi musim.
  */
+import { seedKey, chanceFromSeed } from '../../utils/deterministicRandom.js';
+import { getSeasonForDay } from '../../game/IKMEventEngine.js';
 
 /**
  * Mengembalikan objek status mekanik dari Jembatan Gantung.
@@ -50,4 +52,26 @@ export function getBridgeSeasonalState(season = 'kemarau', isExtremeRain = false
         severityBoost: 0,
         isolationDays: 0
     };
+}
+
+/**
+ * Validasi apakah hari ini mengalami cuaca hujan ekstrem (jembatan berpotensi putus)
+ * 
+ * @param {number} day - Hari simulasi (1-100)
+ * @returns {boolean} True jika hari ini adalah cuaca hujan ekstrem
+ */
+export function isExtremeRainDay(day) {
+    if (typeof day !== 'number' || isNaN(day) || day < 1) return false;
+    
+    const rawSeason = getSeasonForDay(day);
+    // getSeasonForDay usually returns 'dry' or 'rainy' (based on English) 
+    // but handle 'kemarau' / 'hujan' just in case
+    const normalized = typeof rawSeason === 'string' ? rawSeason.toLowerCase().trim() : 'kemarau';
+    const isRainy = normalized === 'rainy' || normalized === 'hujan';
+    
+    if (!isRainy) {
+        return false;
+    }
+
+    return chanceFromSeed(seedKey('bridge-extreme', day), 0.08);
 }

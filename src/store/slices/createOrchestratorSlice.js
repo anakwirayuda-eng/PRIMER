@@ -28,7 +28,7 @@ import { isLocalChampionEligible } from '../../domains/village/localChampion.js'
 import { getChampionProtectedFamilies } from '../../domains/village/championProtection.js';
 import { getEffectiveServiceDistance } from '../../domains/village/serviceDistance.js';
 import { calculateDistanceDecayModifiers } from '../../domains/village/spatialDistanceDecay.js';
-import { getBridgeSeasonalState } from '../../domains/village/bridgeSeasonalState.js';
+import { getBridgeSeasonalState, isExtremeRainDay } from '../../domains/village/bridgeSeasonalState.js';
 import { sanitizePlayerProfile, createStartingPlayerProfile, clampEnergyToProfile } from '../helpers/playerHelpers.js';
 import { isAmbulanceStillBusy } from '../helpers/ambulanceHelpers.js';
 import { buildDailyArchiveEntry } from '../helpers/archiveHelpers.js';
@@ -161,7 +161,7 @@ export const createOrchestratorSlice = (set, get) => ({
                 // to guarantee the player sees village residents on day 1.
                 const seasonObj = getSeasonForDay(1);
                 const mappedSeason = seasonObj === 'dry' ? 'kemarau' : 'hujan';
-                const bridgeState = getBridgeSeasonalState(mappedSeason, false);
+                const bridgeState = getBridgeSeasonalState(mappedSeason, isExtremeRainDay(1));
                 const baseSpatialContext = getSpatialContext(state.publicHealth.villageData);
                 const patientSpatialContext = { ...baseSpatialContext, bridgeState };
 
