@@ -27,6 +27,8 @@ import { isLocalChampionEligible } from '../../domains/village/localChampion.js'
 import { getChampionProtectedFamilies } from '../../domains/village/championProtection.js';
 import { getEffectiveServiceDistance } from '../../domains/village/serviceDistance.js';
 import { calculateDistanceDecayModifiers } from '../../domains/village/spatialDistanceDecay.js';
+import { calculateTravelEnergy, getSectorFromCoords } from '../../domains/village/spatialEnergy.js';
+import { getUnlockedVehicles } from '../../domains/village/vehicleProgression.js';
 import { ensureVillageReadinessState } from '../../utils/behaviorCaseRuntime.js';
 import {
     evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact,
@@ -370,14 +372,47 @@ export const createPublicHealthSlice = (set, get) => ({
             const s = get();
             const outbreak = s.publicHealth.activeOutbreaks.find(o => o.id === outbreakId);
             if (!outbreak) return { success: false, message: 'Outbreak not found' };
-            if (s.player.profile.energy < action.energyCost) { soundManager.playError(); return { success: false, message: 'Not enough energy' }; }
+
+            let effectiveEnergyCost = action.energyCost;
+
+            const villageData = s.publicHealth.villageData;
+            if (villageData && outbreak.affectedHouseIds && outbreak.affectedHouseIds.length > 0) {
+                const familyCoordsMap = getSpatialContext(villageData)?.familyCoords || {};
+                let sumX = 0, sumY = 0, count = 0;
+                
+                for (const houseId of outbreak.affectedHouseIds) {
+                    const family = villageData.families.find(f => f.houseId === houseId);
+                    if (family && familyCoordsMap[family.id]) {
+                        sumX += familyCoordsMap[family.id].x;
+                        sumY += familyCoordsMap[family.id].y;
+                        count++;
+                    }
+                }
+
+                if (count > 0) {
+                    const centroidX = sumX / count;
+                    const centroidY = sumY / count;
+                    const distance = Math.abs(100 - centroidX) + Math.abs(30 - centroidY);
+                    const sector = getSectorFromCoords(centroidX, centroidY);
+                    
+                    const balance = (s.finance.stats.kapitasi || 0) + (s.finance.stats.pendapatanUmum || 0);
+                    const unlockedVehicles = getUnlockedVehicles(s.world.day, balance);
+                    const vehicle = unlockedVehicles && unlockedVehicles.length > 0 
+                        ? unlockedVehicles[unlockedVehicles.length - 1]
+                        : 'jalan_kaki';
+
+                    effectiveEnergyCost = calculateTravelEnergy(action.energyCost, distance, sector, vehicle);
+                }
+            }
+
+            if (s.player.profile.energy < effectiveEnergyCost) { soundManager.playError(); return { success: false, message: 'Not enough energy' }; }
             const updatedOutbreak = applyOutbreakAction(outbreak, actionId);
             set(state => {
                 const nextPlayer = {
                     ...state.player,
                     profile: applyXpGainToProfile({
                         ...state.player.profile,
-                        energy: state.player.profile.energy - action.energyCost
+                        energy: state.player.profile.energy - effectiveEnergyCost
                     }, 25)
                 };
                 const nextOutbreaks = state.publicHealth.activeOutbreaks.map(o => o.id === outbreakId ? updatedOutbreak : o);

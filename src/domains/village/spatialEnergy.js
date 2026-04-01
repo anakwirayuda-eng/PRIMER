@@ -22,6 +22,15 @@ export const VEHICLE_MITIGATION = {
     'puskel':       0.0  // 0% penalty (immune to terrain)
 };
 
+export function getSectorFromCoords(x, y) {
+    if (x >= 50 && x <= 120 && y >= 5 && y <= 45) return 'pusat';
+    if (x >= 15 && x <= 145 && y >= 20 && y <= 28) return 'utara';
+    if (x >= 0 && x <= 40 && y >= 0 && y <= 80) return 'barat';
+    if (x >= 120 && x <= 159 && y >= 0 && y <= 80) return 'timur';
+    if (x >= 15 && x <= 140 && y >= 82 && y <= 119) return 'selatan';
+    return 'pusat';
+}
+
 /**
  * Calculates the travel energy cost based on terrain, distance, and vehicle.
  * 
