@@ -331,12 +331,22 @@ export const createOrchestratorSlice = (set, get) => ({
                         buildingProgress.fob?.completed
                     );
 
+                    const rawSeason = getSeasonForDay(nextDayVal);
+                    const mappedSeason = rawSeason === 'dry' ? 'kemarau' : 'hujan';
+                    const bridgeState = getBridgeSeasonalState(mappedSeason, isExtremeRainDay(nextDayVal));
+
                     for (const fam of state.publicHealth.villageData.families) {
                         const homeCoords = familyCoords[fam.id];
                         const { distance } = getEffectiveServiceDistance(homeCoords, [puskesmasAnchor]);
                         const safeDistance = Number.isFinite(distance) ? distance : 0;
-                        const { driftMultiplier } = calculateDistanceDecayModifiers(safeDistance, fobMitigation);
-                        driftMultiplierMap.set(fam.id, driftMultiplier);
+                        const { driftMultiplier: baseDriftMultiplier } = calculateDistanceDecayModifiers(safeDistance, fobMitigation);
+                        
+                        let finalDriftMultiplier = baseDriftMultiplier;
+                        if (bridgeState.status === 'putus' && homeCoords && homeCoords.x >= 120) {
+                            finalDriftMultiplier = Math.min(3.0, baseDriftMultiplier * 1.5);
+                        }
+
+                        driftMultiplierMap.set(fam.id, finalDriftMultiplier);
                     }
 
                     state.publicHealth.villageData.families =

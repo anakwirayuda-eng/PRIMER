@@ -31,6 +31,7 @@ import { calculateTravelEnergy, getSectorFromCoords } from '../../domains/villag
 import { getUnlockedVehicles } from '../../domains/village/vehicleProgression.js';
 import { getWarungIntelTargets } from '../../domains/village/warungIntel.js';
 import { getWarungIntelCost, canAffordWarungIntel } from '../../domains/village/warungIntelCost.js';
+import { getBridgeSeasonalState, isExtremeRainDay } from '../../domains/village/bridgeSeasonalState.js';
 import { ensureVillageReadinessState } from '../../utils/behaviorCaseRuntime.js';
 import {
     evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact,
@@ -520,12 +521,22 @@ export const createPublicHealthSlice = (set, get) => ({
                     buildingProgress.fob?.completed
                 );
 
+                const rawSeason = getSeasonForDay(day);
+                const mappedSeason = rawSeason === 'dry' ? 'kemarau' : 'hujan';
+                const bridgeState = getBridgeSeasonalState(mappedSeason, isExtremeRainDay(day));
+
                 for (const fam of nextVillage.families) {
                     const homeCoords = familyCoords[fam.id];
                     const { distance } = getEffectiveServiceDistance(homeCoords, [puskesmasAnchor]);
                     const safeDistance = Number.isFinite(distance) ? distance : 0;
-                    const { driftMultiplier } = calculateDistanceDecayModifiers(safeDistance, fobMitigation);
-                    driftMultiplierMap.set(fam.id, driftMultiplier);
+                    const { driftMultiplier: baseDriftMultiplier } = calculateDistanceDecayModifiers(safeDistance, fobMitigation);
+                    
+                    let finalDriftMultiplier = baseDriftMultiplier;
+                    if (bridgeState.status === 'putus' && homeCoords && homeCoords.x >= 120) {
+                        finalDriftMultiplier = Math.min(3.0, baseDriftMultiplier * 1.5);
+                    }
+                    
+                    driftMultiplierMap.set(fam.id, finalDriftMultiplier);
                 }
 
                 const updatedFamilies = nextVillage.families.map(fam => {
