@@ -6,7 +6,7 @@ import { getWarungIntelCost, canAffordWarungIntel } from '../domains/village/war
 import { calculateAverageIksFromFamilies } from '../utils/villageMetrics.js';
 import { calculateKBKPerformanceMultiplier } from '../domains/village/kbkPerformance.js';
 import { getSeasonForDay } from '../game/IKMEventEngine.js';
-import { getBridgeSeasonalState, isExtremeRainDay } from '../domains/village/bridgeSeasonalState.js';
+import { getBridgeSeasonalState, isBridgeOutageActive, isExtremeRainDay } from '../domains/village/bridgeSeasonalState.js';
 import { ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';
 import { isLocalChampionEligible } from '../domains/village/localChampion.js';
 import { getChampionProtectedFamilies } from '../domains/village/championProtection.js';
@@ -205,9 +205,10 @@ export const selectBridgeSeasonalState = (state, isExtremeRain = null) => {
         
         const rawSeason = getSeasonForDay(day);
         const mappedSeason = rawSeason === 'rainy' ? 'hujan' : 'kemarau';
+        const persistedOutageUntilDay = Number(state?.publicHealth?.bridgeOutageUntilDay) || 0;
         const overrideResolved = typeof isExtremeRain === 'boolean' 
             ? isExtremeRain 
-            : isExtremeRainDay(day);
+            : (isBridgeOutageActive(day, persistedOutageUntilDay) || isExtremeRainDay(day));
         
         return getBridgeSeasonalState(mappedSeason, overrideResolved);
     } catch {

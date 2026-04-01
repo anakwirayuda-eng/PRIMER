@@ -68,6 +68,7 @@ export const createInitialPublicHealthState = () => ({
     completedIKMIds: [],
     ikmCooldowns: {},
     ikmCaseBoosts: [],
+    bridgeOutageUntilDay: 0,
     buildingProgress: {},
     lastIntelTargets: null,
     villageLedger: []
@@ -285,6 +286,9 @@ export const mergePersistedPublicHealth = (publicHealth, currentPublicHealth) =>
         ikmCaseBoosts: Array.isArray(publicHealth.ikmCaseBoosts)
             ? publicHealth.ikmCaseBoosts
             : currentPublicHealth.ikmCaseBoosts,
+        bridgeOutageUntilDay: hasOwn(publicHealth, 'bridgeOutageUntilDay')
+            ? clampInteger(publicHealth.bridgeOutageUntilDay, currentPublicHealth.bridgeOutageUntilDay, 0, 999999)
+            : currentPublicHealth.bridgeOutageUntilDay,
         buildingProgress: isPlainObject(publicHealth.buildingProgress)
             ? { ...currentPublicHealth.buildingProgress, ...publicHealth.buildingProgress }
             : currentPublicHealth.buildingProgress,

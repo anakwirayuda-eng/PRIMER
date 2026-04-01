@@ -31,7 +31,7 @@ import { calculateTravelEnergy, getSectorFromCoords } from '../../domains/villag
 import { getUnlockedVehicles } from '../../domains/village/vehicleProgression.js';
 import { getWarungIntelTargets } from '../../domains/village/warungIntel.js';
 import { getWarungIntelCost, canAffordWarungIntel } from '../../domains/village/warungIntelCost.js';
-import { getBridgeSeasonalState, isExtremeRainDay } from '../../domains/village/bridgeSeasonalState.js';
+import { getBridgeSeasonalState, isBridgeOutageActive, resolveBridgeOutageUntilDay } from '../../domains/village/bridgeSeasonalState.js';
 import { getFOBUpgradeState } from '../../domains/village/fobUpgrade.js';
 import { getPosyanduUpgradeState } from '../../domains/village/posyanduUpgrade.js';
 import { ensureVillageReadinessState } from '../../utils/behaviorCaseRuntime.js';
@@ -533,6 +533,7 @@ export const createPublicHealthSlice = (set, get) => ({
             let notification = null;
             if (newOutbreak) { finalOutbreaks.push(newOutbreak); notification = newOutbreak; soundManager.playError(); }
             let nextVillage = villageData;
+            const bridgeOutageUntilDay = resolveBridgeOutageUntilDay(day, s.publicHealth.bridgeOutageUntilDay);
             if (nextVillage) {
                 const activeChampions = nextVillage.families
                     .filter(f => isLocalChampionEligible(f.iksScore))
@@ -552,7 +553,7 @@ export const createPublicHealthSlice = (set, get) => ({
 
                 const rawSeason = getSeasonForDay(day);
                 const mappedSeason = rawSeason === 'dry' ? 'kemarau' : 'hujan';
-                const bridgeState = getBridgeSeasonalState(mappedSeason, isExtremeRainDay(day));
+                const bridgeState = getBridgeSeasonalState(mappedSeason, isBridgeOutageActive(day, bridgeOutageUntilDay));
 
                 for (const fam of nextVillage.families) {
                     const homeCoords = familyCoords[fam.id];
@@ -601,7 +602,8 @@ export const createPublicHealthSlice = (set, get) => ({
                     outbreakNotification: notification,
                     outbreakRiskModifiers: riskModifiers,
                     villageData: nextVillage,
-                    activeIKMEvents: nextIkmEvents
+                    activeIKMEvents: nextIkmEvents,
+                    bridgeOutageUntilDay
                 }
             }));
         },

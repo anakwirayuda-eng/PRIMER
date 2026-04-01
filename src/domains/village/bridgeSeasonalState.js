@@ -7,6 +7,16 @@
 import { seedKey, chanceFromSeed } from '../../utils/deterministicRandom.js';
 import { getSeasonForDay } from '../../game/IKMEventEngine.js';
 
+const BRIDGE_OUTAGE_DURATION_DAYS = 3;
+
+function normalizeBridgeOutageUntilDay(outageUntilDay = 0) {
+    if (typeof outageUntilDay !== 'number' || !Number.isFinite(outageUntilDay) || outageUntilDay < 1) {
+        return 0;
+    }
+
+    return Math.trunc(outageUntilDay);
+}
+
 /**
  * Mengembalikan objek status mekanik dari Jembatan Gantung.
  * 
@@ -74,4 +84,28 @@ export function isExtremeRainDay(day) {
     }
 
     return chanceFromSeed(seedKey('bridge-extreme', day), 0.08);
+}
+
+export function isBridgeOutageActive(day, outageUntilDay = 0) {
+    if (typeof day !== 'number' || isNaN(day) || day < 1) {
+        return false;
+    }
+
+    return normalizeBridgeOutageUntilDay(outageUntilDay) >= Math.trunc(day);
+}
+
+export function resolveBridgeOutageUntilDay(day, currentOutageUntilDay = 0) {
+    const safeCurrentOutageUntilDay = normalizeBridgeOutageUntilDay(currentOutageUntilDay);
+
+    if (typeof day !== 'number' || isNaN(day) || day < 1) {
+        return safeCurrentOutageUntilDay;
+    }
+
+    const safeDay = Math.trunc(day);
+    if (!isExtremeRainDay(safeDay)) {
+        return safeCurrentOutageUntilDay;
+    }
+
+    const isolationDays = getBridgeSeasonalState('hujan', true).isolationDays || BRIDGE_OUTAGE_DURATION_DAYS;
+    return Math.max(safeCurrentOutageUntilDay, safeDay + isolationDays - 1);
 }

@@ -3,7 +3,7 @@ import { useGameStore } from '../store/useGameStore.js';
 import * as spatialContext from '../domains/village/spatialContext.js';
 import * as helpers from '../store/helpers/publicHealthHelpers.js';
 import * as eventEngine from '../game/IKMEventEngine.js';
-import * as bridgeSeasonal from '../domains/village/bridgeSeasonalState.js';
+import * as randomUtils from '../utils/deterministicRandom.js';
 
 vi.mock('../store/helpers/publicHealthHelpers.js', async (importOriginal) => {
     const orig = await importOriginal();
@@ -44,10 +44,11 @@ describe('Bridge Seasonal -> East-Sector Drift Amplification', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockFamilyCoords = {};
+        vi.spyOn(randomUtils, 'chanceFromSeed').mockReturnValue(false);
         useGameStore.setState(useGameStore.getInitialState(), true);
     });
 
-    const setupTestStore = () => {
+    const setupTestStore = (bridgeOutageUntilDay = 0) => {
         const familyEastFar = { id: 'fam-east-far', houseId: 'h-1', indicators: {} };
         const familyEastNear = { id: 'fam-east-near', houseId: 'h-2', indicators: {} };
         const familyWest = { id: 'fam-west', houseId: 'h-3', indicators: {} };
@@ -67,7 +68,8 @@ describe('Bridge Seasonal -> East-Sector Drift Amplification', () => {
                 ...state.publicHealth,
                 villageData: {
                     families: [familyEastFar, familyEastNear, familyWest, familyMissing]
-                }
+                },
+                bridgeOutageUntilDay
             }
         }));
     };
@@ -87,9 +89,8 @@ describe('Bridge Seasonal -> East-Sector Drift Amplification', () => {
     };
 
     it('east family on putus day gets amplified multiplier above base', () => {
-        setupTestStore();
+        setupTestStore(1);
         vi.spyOn(eventEngine, 'getSeasonForDay').mockReturnValue('rainy');
-        vi.spyOn(bridgeSeasonal, 'isExtremeRainDay').mockReturnValue(true);
 
         const multipliers = runDailyCycle();
         
@@ -98,9 +99,8 @@ describe('Bridge Seasonal -> East-Sector Drift Amplification', () => {
     });
 
     it('amplification is capped at 3.0', () => {
-        setupTestStore();
+        setupTestStore(1);
         vi.spyOn(eventEngine, 'getSeasonForDay').mockReturnValue('rainy');
-        vi.spyOn(bridgeSeasonal, 'isExtremeRainDay').mockReturnValue(true);
 
         const multipliers = runDailyCycle();
         
@@ -109,9 +109,8 @@ describe('Bridge Seasonal -> East-Sector Drift Amplification', () => {
     });
 
     it('west family on putus day keeps base multiplier', () => {
-        setupTestStore();
+        setupTestStore(1);
         vi.spyOn(eventEngine, 'getSeasonForDay').mockReturnValue('rainy');
-        vi.spyOn(bridgeSeasonal, 'isExtremeRainDay').mockReturnValue(true);
 
         const multipliers = runDailyCycle();
         
@@ -122,7 +121,6 @@ describe('Bridge Seasonal -> East-Sector Drift Amplification', () => {
     it('east family on non-putus rainy day keeps base multiplier', () => {
         setupTestStore();
         vi.spyOn(eventEngine, 'getSeasonForDay').mockReturnValue('rainy');
-        vi.spyOn(bridgeSeasonal, 'isExtremeRainDay').mockReturnValue(false);
 
         const multipliers = runDailyCycle();
         
@@ -131,9 +129,8 @@ describe('Bridge Seasonal -> East-Sector Drift Amplification', () => {
     });
 
     it('missing coords keeps base multiplier', () => {
-        setupTestStore();
+        setupTestStore(1);
         vi.spyOn(eventEngine, 'getSeasonForDay').mockReturnValue('rainy');
-        vi.spyOn(bridgeSeasonal, 'isExtremeRainDay').mockReturnValue(true);
 
         const multipliers = runDailyCycle();
         

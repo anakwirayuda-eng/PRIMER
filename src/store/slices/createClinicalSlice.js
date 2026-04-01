@@ -40,7 +40,7 @@ import { createInitialClinicalState } from '../helpers/persistenceHelpers.js';
 import { getSpatialContext } from '../../domains/village/spatialContext.js';
 import { calculateKBKPerformanceMultiplier } from '../../domains/village/kbkPerformance.js';
 import { getSeasonForDay } from '../../game/IKMEventEngine.js';
-import { getBridgeSeasonalState, isExtremeRainDay } from '../../domains/village/bridgeSeasonalState.js';
+import { getBridgeSeasonalState, isBridgeOutageActive, resolveBridgeOutageUntilDay } from '../../domains/village/bridgeSeasonalState.js';
 
 export function invertAndCapKbkSpawnPressure(kbkMultiplier = 1.0) {
     const safeKbkMultiplier = typeof kbkMultiplier === 'number' && Number.isFinite(kbkMultiplier) && kbkMultiplier > 0
@@ -369,7 +369,9 @@ export const createClinicalSlice = (set, get) => ({
             ) {
                 const seasonObj = getSeasonForDay(day);
                 const mappedSeason = seasonObj === 'dry' ? 'kemarau' : 'hujan';
-                const bridgeState = getBridgeSeasonalState(mappedSeason, isExtremeRainDay(day));
+                const bridgeOutageUntilDay = resolveBridgeOutageUntilDay(day, state.publicHealth.bridgeOutageUntilDay);
+                state.publicHealth.bridgeOutageUntilDay = bridgeOutageUntilDay;
+                const bridgeState = getBridgeSeasonalState(mappedSeason, isBridgeOutageActive(day, bridgeOutageUntilDay));
                 const baseSpatialContext = getSpatialContext(villageData);
                 const buildingProgress = state.publicHealth.buildingProgress || {};
                 const serviceAnchors = [
