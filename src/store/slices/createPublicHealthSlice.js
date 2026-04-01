@@ -426,6 +426,55 @@ export const createPublicHealthSlice = (set, get) => ({
             soundManager.playSuccess();
             return { success: true, targets };
         },
+        repairBridge: () => {
+            const s = get();
+            const currentDay = Math.max(1, Math.trunc(Number(s.world.day) || 1));
+            const currentOutageUntilDay = Number(s.publicHealth.bridgeOutageUntilDay) || 0;
+            const lastBridgeRepairDay = Number.isFinite(Number(s.publicHealth.lastBridgeRepairDay))
+                ? Math.trunc(Number(s.publicHealth.lastBridgeRepairDay))
+                : -1;
+
+            if (!isBridgeOutageActive(currentDay, currentOutageUntilDay)) {
+                soundManager.playError();
+                return { success: false, message: 'Jembatan tidak sedang putus.' };
+            }
+
+            if (lastBridgeRepairDay === currentDay) {
+                soundManager.playError();
+                return { success: false, message: 'Sudah dikerjakan hari ini.' };
+            }
+
+            if (s.player.profile.energy < 25) {
+                soundManager.playError();
+                return { success: false, message: 'Energi tidak cukup untuk koordinasi perbaikan jembatan.' };
+            }
+
+            let nextOutageUntilDay = currentOutageUntilDay;
+            set((state) => {
+                nextOutageUntilDay = Math.max(currentDay - 1, (Number(state.publicHealth.bridgeOutageUntilDay) || 0) - 1);
+                return {
+                    player: {
+                        ...state.player,
+                        profile: applyXpGainToProfile({
+                            ...state.player.profile,
+                            energy: Math.max(0, state.player.profile.energy - 25)
+                        }, 30)
+                    },
+                    world: {
+                        ...state.world,
+                        time: Math.min(960, state.world.time + 60)
+                    },
+                    publicHealth: {
+                        ...state.publicHealth,
+                        bridgeOutageUntilDay: nextOutageUntilDay,
+                        lastBridgeRepairDay: currentDay
+                    }
+                };
+            });
+
+            soundManager.playSuccess();
+            return { success: true, bridgeOutageUntilDay: nextOutageUntilDay };
+        },
         // CROSS-SLICE: writes player, world.time
         respondToOutbreak: (outbreakId, actionId, action, _day) => {
             const s = get();
