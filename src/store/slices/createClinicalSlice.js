@@ -26,6 +26,7 @@ import { getIndicatorByDx } from '../../game/CaseIndicators.js';
 import { withTransaction } from '../../utils/transactions.js';
 import { chanceFromSeed, seedKey } from '../../utils/deterministicRandom.js';
 import { showToast } from '../../utils/ToastManager.js';
+import { calculateAverageIksFromFamilies } from '../../utils/villageMetrics.js';
 import {
     appendReferralLogEntry,
     buildReferralLogEntry,
@@ -37,8 +38,27 @@ import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from '../helpers/ambul
 import { appendClinicalHistory, normalizeClinicalHistoryEntry, isAntibioticMed } from '../helpers/clinicalHelpers.js';
 import { createInitialClinicalState } from '../helpers/persistenceHelpers.js';
 import { getSpatialContext } from '../../domains/village/spatialContext.js';
+import { calculateKBKPerformanceMultiplier } from '../../domains/village/kbkPerformance.js';
 import { getSeasonForDay } from '../../game/IKMEventEngine.js';
 import { getBridgeSeasonalState, isExtremeRainDay } from '../../domains/village/bridgeSeasonalState.js';
+
+export function invertAndCapKbkSpawnPressure(kbkMultiplier = 1.0) {
+    const safeKbkMultiplier = typeof kbkMultiplier === 'number' && Number.isFinite(kbkMultiplier) && kbkMultiplier > 0
+        ? kbkMultiplier
+        : 1.0;
+    const rawSpawnPressure = 1 / safeKbkMultiplier;
+    return Math.max(0.75, Math.min(1.5, rawSpawnPressure));
+}
+
+export function calculateKbkSpawnPressureMultiplier(families) {
+    if (!Array.isArray(families) || families.length === 0) {
+        return 1.0;
+    }
+
+    const avgIKS = calculateAverageIksFromFamilies(families);
+    const kbkMultiplier = calculateKBKPerformanceMultiplier(avgIKS);
+    return invertAndCapKbkSpawnPressure(kbkMultiplier);
+}
 
 export const createClinicalSlice = (set, get) => ({
     // --- STATE ---
@@ -332,7 +352,12 @@ export const createClinicalSlice = (set, get) => ({
             const ikmBoostMultiplier = activeBoosts.length > 0 ? 1 + (activeBoosts.length * 0.15) : 1;
             // TheDirector spawn multiplier (mercy=0.4, crisis=1.6)
             const directorMultiplier = state.world.directorVerdict?.spawnMultiplier || 1.0;
-            const finalTimeFactor = timeFactor * getPatientSpikeMultiplier(activeOutbreaks) * ikmBoostMultiplier * directorMultiplier;
+            const kbkSpawnPressureMultiplier = calculateKbkSpawnPressureMultiplier(villageData?.families);
+            const finalTimeFactor = timeFactor
+                * getPatientSpikeMultiplier(activeOutbreaks)
+                * ikmBoostMultiplier
+                * directorMultiplier
+                * kbkSpawnPressureMultiplier;
             const maxCapacity = 12 + (facilities.poli_umum - 1) * 3;
 
             if (
