@@ -163,7 +163,23 @@ export const createOrchestratorSlice = (set, get) => ({
                 const mappedSeason = seasonObj === 'dry' ? 'kemarau' : 'hujan';
                 const bridgeState = getBridgeSeasonalState(mappedSeason, isExtremeRainDay(1));
                 const baseSpatialContext = getSpatialContext(state.publicHealth.villageData);
-                const patientSpatialContext = { ...baseSpatialContext, bridgeState };
+                const buildingProgress = state.publicHealth.buildingProgress || {};
+                const serviceAnchors = [
+                    { id: 'puskesmas', x: 100, y: 30, isActive: true },
+                    {
+                        id: 'pustu',
+                        x: 28,
+                        y: 50,
+                        isActive: Boolean(buildingProgress.pustu?.completed || buildingProgress.fob?.completed)
+                    },
+                    {
+                        id: 'polindes',
+                        x: 25,
+                        y: 95,
+                        isActive: Boolean(buildingProgress.polindes?.completed || buildingProgress.fob?.completed)
+                    }
+                ];
+                const patientSpatialContext = { ...baseSpatialContext, bridgeState, serviceAnchors };
 
                 const _p0 = generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-a'), patientSpatialContext);
                 const _p1 = generatePatient(510, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-b'), patientSpatialContext);

@@ -22,6 +22,7 @@ import { normalizePatientOutput, generateAnthropometrics as _generateAnthropomet
 // For 200 KK: bias is now lighter — pool is much bigger, so distribution is more even
 const CURATED_FAMILY_IDS = ['kk_02', 'kk_04', 'kk_08', 'kk_15', 'kk_22', 'kk_23', 'kk_24', 'kk_25'];
 const PUSKESMAS_ANCHOR = { id: 'puskesmas', x: 100, y: 30, isActive: true };
+const DEFAULT_SERVICE_ANCHORS = [PUSKESMAS_ANCHOR];
 
 const CATEGORY_FACILITY_MAP = {
     'Respiratory': 'poli_umum',
@@ -618,7 +619,10 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         let totalSeverityBoost = 0;
 
         if (familyCoords) {
-            const { distance } = getEffectiveServiceDistance(familyCoords, [PUSKESMAS_ANCHOR]);
+            const serviceAnchors = Array.isArray(spatialContext?.serviceAnchors) && spatialContext.serviceAnchors.length > 0
+                ? spatialContext.serviceAnchors
+                : DEFAULT_SERVICE_ANCHORS;
+            const { distance } = getEffectiveServiceDistance(familyCoords, serviceAnchors);
             const safeDistance = Number.isFinite(distance) ? distance : 0;
             totalSeverityBoost += calculateDistanceDecayModifiers(safeDistance, false).severityBoost || 0;
 

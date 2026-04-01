@@ -17,10 +17,15 @@ describe('Distance Decay -> Severity On Arrival', () => {
         families: [{ id: familyId }]
     };
 
-    const generateResidentPatient = (coords, bridgeState = { status: 'normal', severityBoost: 0 }) =>
+    const generateResidentPatient = (
+        coords,
+        bridgeState = { status: 'normal', severityBoost: 0 },
+        serviceAnchors = undefined
+    ) =>
         generatePatient(480, mockPopulation, 1, { poli_umum: 1 }, {}, 'stable-seed-1', {
             familyCoords: coords ? { [familyId]: coords } : {},
-            bridgeState
+            bridgeState,
+            ...(serviceAnchors ? { serviceAnchors } : {})
         });
 
     it('mid-distance resident gets +1 severity tier over near baseline', () => {
@@ -52,5 +57,34 @@ describe('Distance Decay -> Severity On Arrival', () => {
 
         expect(midDistancePatient.hidden.risk).toBe('medium');
         expect(boostedPatient.hidden.risk).toBe('high');
+    });
+
+    it('active pustu anchor reduces distance-decay severity for nearby remote residents', () => {
+        const withoutFob = generateResidentPatient({ x: 30, y: 50 });
+        const withActivePustu = generateResidentPatient(
+            { x: 30, y: 50 },
+            { status: 'normal', severityBoost: 0 },
+            [
+                { id: 'puskesmas', x: 100, y: 30, isActive: true },
+                { id: 'pustu', x: 28, y: 50, isActive: true }
+            ]
+        );
+
+        expect(withoutFob.hidden.risk).toBe('high');
+        expect(withActivePustu.hidden.risk).toBe('low');
+    });
+
+    it('inactive service anchors preserve existing puskesmas-only behavior', () => {
+        const baseline = generateResidentPatient({ x: 30, y: 50 });
+        const withInactivePustu = generateResidentPatient(
+            { x: 30, y: 50 },
+            { status: 'normal', severityBoost: 0 },
+            [
+                { id: 'puskesmas', x: 100, y: 30, isActive: true },
+                { id: 'pustu', x: 28, y: 50, isActive: false }
+            ]
+        );
+
+        expect(withInactivePustu.hidden.risk).toBe(baseline.hidden.risk);
     });
 });

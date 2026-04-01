@@ -371,7 +371,23 @@ export const createClinicalSlice = (set, get) => ({
                 const mappedSeason = seasonObj === 'dry' ? 'kemarau' : 'hujan';
                 const bridgeState = getBridgeSeasonalState(mappedSeason, isExtremeRainDay(day));
                 const baseSpatialContext = getSpatialContext(villageData);
-                const patientSpatialContext = { ...baseSpatialContext, bridgeState };
+                const buildingProgress = state.publicHealth.buildingProgress || {};
+                const serviceAnchors = [
+                    { id: 'puskesmas', x: 100, y: 30, isActive: true },
+                    {
+                        id: 'pustu',
+                        x: 28,
+                        y: 50,
+                        isActive: Boolean(buildingProgress.pustu?.completed || buildingProgress.fob?.completed)
+                    },
+                    {
+                        id: 'polindes',
+                        x: 25,
+                        y: 95,
+                        isActive: Boolean(buildingProgress.polindes?.completed || buildingProgress.fob?.completed)
+                    }
+                ];
+                const patientSpatialContext = { ...baseSpatialContext, bridgeState, serviceAnchors };
 
                 const newPatient = generatePatient(
                     time,
