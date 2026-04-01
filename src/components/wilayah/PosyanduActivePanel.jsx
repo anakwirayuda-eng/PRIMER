@@ -32,6 +32,7 @@ import {
     processImmunization
 } from '../../game/kia/ImmunizationEngine.js';
 import { chanceFromSeed } from '../../utils/deterministicRandom.js';
+import { getPosyanduUpgradeState } from '../../domains/village/posyanduUpgrade.js';
 
 // ═══════════════════════════════════════════════════════════════
 // 🎨 MED-PUNK TACTILE CSS
@@ -76,6 +77,8 @@ const VIALS = [
     { id: 'ipv1',              name: 'IPV 1',         color: 'bg-sky-500/80',     cap: 'bg-sky-200' },
     { id: 'tunda',             name: 'TUNDA VAKSIN',  color: 'bg-slate-500/50 border-dashed border-2', cap: 'hidden' }
 ];
+
+const POSYANDU_MANDIRI_XP_BONUS = 20;
 
 // ═══════════════════════════════════════════════════════════════
 // 🗄️ DEMO QUEUE (replaced by real VillageRegistry data at runtime)
@@ -167,6 +170,7 @@ function KMSChart({ baby }) {
 // ═══════════════════════════════════════════════════════════════
 export default function PosyanduActivePanel({ initialBabies, onClose, onComplete }) {
     const recordFacilitySessionProgress = useGameStore(s => s.publicHealthActions.recordFacilitySessionProgress);
+    const currentPosyanduProgress = useGameStore(s => s.publicHealth.buildingProgress?.posyandu);
     const [queue, setQueue] = useState(initialBabies || DEMO_QUEUE);
     const [ap, setAp] = useState(2);
     const [phase, setPhase] = useState('triage'); // triage -> meja2 -> meja5 -> report
@@ -191,6 +195,17 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
 
     const malpracticeCount = useMemo(() => sessionLog.filter(l => l.malpractice).length, [sessionLog]);
     const repDelta = useMemo(() => malpracticeCount > 0 ? -(malpracticeCount * 15) : sessionLog.length * 5, [malpracticeCount, sessionLog]);
+    const currentSuccessStreak = useMemo(() => {
+        const safeStreak = Number(currentPosyanduProgress?.successStreak);
+        if (Number.isFinite(safeStreak)) return Math.max(0, Math.floor(safeStreak));
+        return currentPosyanduProgress?.isUpgraded ? 3 : 0;
+    }, [currentPosyanduProgress]);
+    const projectedSessionSuccess = sessionLog.length > 0 && malpracticeCount === 0;
+    const projectedUpgradeState = useMemo(() => (
+        getPosyanduUpgradeState(projectedSessionSuccess ? currentSuccessStreak + 1 : 0)
+    ), [currentSuccessStreak, projectedSessionSuccess]);
+    const mandiriXpBonus = projectedUpgradeState.isUpgraded ? POSYANDU_MANDIRI_XP_BONUS : 0;
+    const displayTotalXP = totalXP + mandiriXpBonus;
 
     // ─── TRIAGE ──────────────────────────────────────────
     const handleManualExamine = (baby) => {
@@ -584,8 +599,13 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                 <div className="mt-8 pt-6 border-t-2 border-slate-800/30 flex justify-between items-center">
                                     <div className="flex gap-6">
                                         <div className="text-center">
-                                            <div className="font-black text-2xl text-emerald-700">+{totalXP}</div>
+                                            <div className="font-black text-2xl text-emerald-700">+{displayTotalXP}</div>
                                             <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">XP Medis</div>
+                                            {mandiriXpBonus > 0 && (
+                                                <div className="mt-1 font-mono text-[8px] uppercase tracking-widest text-cyan-600 font-black">
+                                                    Aura Mandiri +{mandiriXpBonus} XP
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="text-center">
                                             <div className={`font-black text-2xl ${repDelta >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>{repDelta >= 0 ? '+' : ''}{repDelta}</div>
@@ -593,7 +613,14 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                         </div>
                                     </div>
                                     <button onClick={() => {
-                                        const sessionSummary = { sessionLog, totalXP, repDelta, malpracticeCount };
+                                        const sessionSummary = {
+                                            sessionLog,
+                                            totalXP: displayTotalXP,
+                                            repDelta,
+                                            malpracticeCount,
+                                            xpBonus: mandiriXpBonus,
+                                            auraBuff: mandiriXpBonus > 0 ? 'xp_posyandu' : null
+                                        };
                                         recordFacilitySessionProgress?.('posyandu', sessionSummary);
                                         onComplete?.(sessionSummary);
                                         onClose?.();
