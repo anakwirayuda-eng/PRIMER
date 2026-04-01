@@ -457,11 +457,18 @@ export const createPublicHealthSlice = (set, get) => ({
 
                 const puskesmasAnchor = { id: 'puskesmas', x: 100, y: 30, isActive: true };
                 const driftMultiplierMap = new Map();
+                const buildingProgress = s.publicHealth.buildingProgress || {};
+                const fobMitigation = Boolean(
+                    buildingProgress.pustu?.completed ||
+                    buildingProgress.polindes?.completed ||
+                    buildingProgress.fob?.completed
+                );
+
                 for (const fam of nextVillage.families) {
                     const homeCoords = familyCoords[fam.id];
                     const { distance } = getEffectiveServiceDistance(homeCoords, [puskesmasAnchor]);
                     const safeDistance = Number.isFinite(distance) ? distance : 0;
-                    const { driftMultiplier } = calculateDistanceDecayModifiers(safeDistance, false);
+                    const { driftMultiplier } = calculateDistanceDecayModifiers(safeDistance, fobMitigation);
                     driftMultiplierMap.set(fam.id, driftMultiplier);
                 }
 
