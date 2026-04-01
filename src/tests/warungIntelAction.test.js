@@ -37,6 +37,23 @@ describe('Warung Intel -> Store Action Integration', () => {
         useGameStore.setState(useGameStore.getInitialState(), true);
     });
 
+    it('initial and reset publicHealth state keep lastIntelTargets canonical', () => {
+        expect(useGameStore.getInitialState().publicHealth.lastIntelTargets).toBeNull();
+
+        useGameStore.setState(state => ({
+            publicHealth: {
+                ...state.publicHealth,
+                lastIntelTargets: [{ familyId: 'fam-temp', distance: 1 }]
+            }
+        }));
+
+        useGameStore.getState().publicHealthActions.resetPublicHealth();
+
+        const resetState = useGameStore.getState().publicHealth;
+        expect(resetState.lastIntelTargets).toBeNull();
+        expect(resetState.villageLedger).toEqual([]);
+    });
+
     const setupTestStore = (energy, balance, time = 480) => {
         useGameStore.setState(state => ({
             ...state,

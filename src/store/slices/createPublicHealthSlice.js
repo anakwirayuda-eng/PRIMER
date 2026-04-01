@@ -597,7 +597,7 @@ export const createPublicHealthSlice = (set, get) => ({
             }));
         },
         resetPublicHealth: () => set(() => ({
-            publicHealth: { villageData: null, prolanisRoster: [], prolanisState: { lastSenamMonth: -1, lastSenamDay: -1 }, activeOutbreaks: [], outbreakNotification: null, outbreakRiskModifiers: { protectedUntil: {}, vulnerableUntil: {} }, activeIKMEvents: [], completedIKMIds: [], ikmCooldowns: {}, ikmCaseBoosts: [], buildingProgress: {} }
+            publicHealth: createInitialPublicHealthState()
         })),
         // --- UKM IKM Actions ---
         /** Resolve a completed IKM event: apply impacts, produce case boosts */

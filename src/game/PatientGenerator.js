@@ -12,6 +12,8 @@ import { CASE_LIBRARY, getCaseByCondition } from '../content/cases/CaseLibrary.j
 import { getRandomEmergencyCase } from './EmergencyCases.js';
 import { generateSocialDeterminants } from '../utils/SocialDeterminants.js';
 import { calculateRiskFactors, INDIVIDUAL_PROFILES, FAMILY_MEDICAL_HISTORY } from '../domains/village/VillageRegistry.js';
+import { getEffectiveServiceDistance } from '../domains/village/serviceDistance.js';
+import { calculateDistanceDecayModifiers } from '../domains/village/spatialDistanceDecay.js';
 import { getDateFromDay } from '../data/CalendarEventDB.js';
 import { createDeterministicSequence, pickDeterministic, randomIdFromSeed, seedKey } from '../utils/deterministicRandom.js';
 import { normalizePatientOutput, generateAnthropometrics as _generateAnthropometrics, NAMES_MALE as _NM, NAMES_FEMALE as _NF, SURNAMES as _SN } from './PatientFactory.js';
@@ -19,6 +21,7 @@ import { normalizePatientOutput, generateAnthropometrics as _generateAnthropomet
 // Curated anchor families (have INDIVIDUAL_PROFILES or FAMILY_MEDICAL_HISTORY)
 // For 200 KK: bias is now lighter — pool is much bigger, so distribution is more even
 const CURATED_FAMILY_IDS = ['kk_02', 'kk_04', 'kk_08', 'kk_15', 'kk_22', 'kk_23', 'kk_24', 'kk_25'];
+const PUSKESMAS_ANCHOR = { id: 'puskesmas', x: 100, y: 30, isActive: true };
 
 const CATEGORY_FACILITY_MAP = {
     'Respiratory': 'poli_umum',
@@ -610,14 +613,25 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
     const demeanor = pickDeterministic(demeanors, seedKey(patientSeed, 'demeanor'));
 
     let finalRisk = disease?.risk || 'low';
-    if (isResident && spatialContext?.bridgeState?.status === 'putus') {
+    if (isResident) {
         const familyCoords = spatialContext?.familyCoords?.[resident.familyId];
-        if (familyCoords && familyCoords.x >= 120) {
+        let totalSeverityBoost = 0;
+
+        if (familyCoords) {
+            const { distance } = getEffectiveServiceDistance(familyCoords, [PUSKESMAS_ANCHOR]);
+            const safeDistance = Number.isFinite(distance) ? distance : 0;
+            totalSeverityBoost += calculateDistanceDecayModifiers(safeDistance, false).severityBoost || 0;
+
+            if (spatialContext?.bridgeState?.status === 'putus' && familyCoords.x >= 120) {
+                totalSeverityBoost += Math.max(0, spatialContext.bridgeState.severityBoost || 0);
+            }
+        }
+
+        if (totalSeverityBoost > 0) {
             const riskLadder = ['low', 'medium', 'high'];
             const currentIndex = riskLadder.indexOf(finalRisk);
-            
-            if (currentIndex !== -1 && spatialContext.bridgeState.severityBoost > 0) {
-                const newIndex = Math.min(riskLadder.length - 1, currentIndex + spatialContext.bridgeState.severityBoost);
+            if (currentIndex !== -1) {
+                const newIndex = Math.min(riskLadder.length - 1, currentIndex + totalSeverityBoost);
                 finalRisk = riskLadder[newIndex];
             }
         }

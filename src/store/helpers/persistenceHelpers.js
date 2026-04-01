@@ -69,6 +69,7 @@ export const createInitialPublicHealthState = () => ({
     ikmCooldowns: {},
     ikmCaseBoosts: [],
     buildingProgress: {},
+    lastIntelTargets: null,
     villageLedger: []
 });
 
