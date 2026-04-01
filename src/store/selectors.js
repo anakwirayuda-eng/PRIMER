@@ -3,6 +3,8 @@ import { getNextLevelXp } from '../utils/LevelingSystem.js';
 import { normalizeDailyArchive } from '../utils/archiveNormalization.js';
 import { getUnlockedVehicles } from '../domains/village/vehicleProgression.js';
 import { getWarungIntelCost, canAffordWarungIntel } from '../domains/village/warungIntelCost.js';
+import { calculateAverageIksFromFamilies } from '../utils/villageMetrics.js';
+import { calculateKBKPerformanceMultiplier } from '../domains/village/kbkPerformance.js';
 
 const normalizeSkills = (skills) => Array.isArray(skills)
     ? skills
@@ -160,5 +162,27 @@ export const selectWarungIntelState = (state) => {
             ...getWarungIntelCost(),
             canAfford: false
         };
+    }
+};
+
+/**
+ * KBK Performance State selector
+ */
+export const selectKBKPerformanceState = (state) => {
+    try {
+        const families = state?.publicHealth?.villageData?.families;
+        if (!Array.isArray(families) || families.length === 0) {
+            return { avgIKS: 0, multiplier: 1.0 };
+        }
+        
+        const avgIKS = calculateAverageIksFromFamilies(families);
+        const multiplier = calculateKBKPerformanceMultiplier(avgIKS);
+        
+        return {
+            avgIKS,
+            multiplier
+        };
+    } catch {
+        return { avgIKS: 0, multiplier: 1.0 };
     }
 };
