@@ -24,7 +24,10 @@ export const applyFamilyIndicatorDrift = (family, seed, options = {}) => {
         return family;
     }
 
-    if (!family?.indicators || !chanceFromSeed(seed, 0.05)) {
+    const driftMultiplier = options?.driftMultiplier ?? 1.0;
+    const baseChance = Math.min(0.15, 0.05 * driftMultiplier);
+
+    if (!family?.indicators || !chanceFromSeed(seed, baseChance)) {
         return family;
     }
 

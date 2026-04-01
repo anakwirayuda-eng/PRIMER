@@ -25,6 +25,8 @@ import { formatIkmImpactSummary, getIkmOutcomeStatus } from '../../utils/ikmHist
 import { getSpatialContext } from '../../domains/village/spatialContext.js';
 import { isLocalChampionEligible } from '../../domains/village/localChampion.js';
 import { getChampionProtectedFamilies } from '../../domains/village/championProtection.js';
+import { getEffectiveServiceDistance } from '../../domains/village/serviceDistance.js';
+import { calculateDistanceDecayModifiers } from '../../domains/village/spatialDistanceDecay.js';
 import { ensureVillageReadinessState } from '../../utils/behaviorCaseRuntime.js';
 import {
     evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact,
@@ -415,10 +417,24 @@ export const createPublicHealthSlice = (set, get) => ({
                     .filter(f => isLocalChampionEligible(f.iksScore))
                     .map(f => f.id);
                 const spatialContext = getSpatialContext(nextVillage);
-                const protectedFamilyIds = getChampionProtectedFamilies(activeChampions, spatialContext?.familyCoords || {});
+                const familyCoords = spatialContext?.familyCoords || {};
+                const protectedFamilyIds = getChampionProtectedFamilies(activeChampions, familyCoords);
+
+                const puskesmasAnchor = { id: 'puskesmas', x: 100, y: 30, isActive: true };
+                const driftMultiplierMap = new Map();
+                for (const fam of nextVillage.families) {
+                    const homeCoords = familyCoords[fam.id];
+                    const { distance } = getEffectiveServiceDistance(homeCoords, [puskesmasAnchor]);
+                    const safeDistance = Number.isFinite(distance) ? distance : 0;
+                    const { driftMultiplier } = calculateDistanceDecayModifiers(safeDistance, false);
+                    driftMultiplierMap.set(fam.id, driftMultiplier);
+                }
 
                 const updatedFamilies = nextVillage.families.map(fam => {
-                    return applyFamilyIndicatorDrift(fam, `public-health:${day}:${fam.id}`, { protectedFamilyIds });
+                    return applyFamilyIndicatorDrift(fam, `public-health:${day}:${fam.id}`, { 
+                        protectedFamilyIds, 
+                        driftMultiplier: driftMultiplierMap.get(fam.id) ?? 1.0 
+                    });
                 });
                 nextVillage = { ...nextVillage, families: updatedFamilies };
             }

@@ -26,6 +26,8 @@ import { INITIAL_PLAYER_STATE, INITIAL_TIME_STATE, calculateIKS } from '../../ga
 import { getSpatialContext } from '../../domains/village/spatialContext.js';
 import { isLocalChampionEligible } from '../../domains/village/localChampion.js';
 import { getChampionProtectedFamilies } from '../../domains/village/championProtection.js';
+import { getEffectiveServiceDistance } from '../../domains/village/serviceDistance.js';
+import { calculateDistanceDecayModifiers } from '../../domains/village/spatialDistanceDecay.js';
 import { sanitizePlayerProfile, createStartingPlayerProfile, clampEnergyToProfile } from '../helpers/playerHelpers.js';
 import { isAmbulanceStillBusy } from '../helpers/ambulanceHelpers.js';
 import { buildDailyArchiveEntry } from '../helpers/archiveHelpers.js';
@@ -311,14 +313,25 @@ export const createOrchestratorSlice = (set, get) => ({
                         .filter(f => isLocalChampionEligible(f.iksScore))
                         .map(f => f.id);
                     const spatialContext = getSpatialContext(state.publicHealth.villageData);
-                    const protectedFamilyIds = getChampionProtectedFamilies(activeChampions, spatialContext?.familyCoords || {});
+                    const familyCoords = spatialContext?.familyCoords || {};
+                    const protectedFamilyIds = getChampionProtectedFamilies(activeChampions, familyCoords);
+
+                    const puskesmasAnchor = { id: 'puskesmas', x: 100, y: 30, isActive: true };
+                    const driftMultiplierMap = new Map();
+                    for (const fam of state.publicHealth.villageData.families) {
+                        const homeCoords = familyCoords[fam.id];
+                        const { distance } = getEffectiveServiceDistance(homeCoords, [puskesmasAnchor]);
+                        const safeDistance = Number.isFinite(distance) ? distance : 0;
+                        const { driftMultiplier } = calculateDistanceDecayModifiers(safeDistance, false);
+                        driftMultiplierMap.set(fam.id, driftMultiplier);
+                    }
 
                     state.publicHealth.villageData.families =
                         state.publicHealth.villageData.families.map((fam) => {
                             return applyFamilyIndicatorDrift(
                                 fam,
                                 `next-day:${nextDayVal}:${fam.id}`,
-                                { protectedFamilyIds }
+                                { protectedFamilyIds, driftMultiplier: driftMultiplierMap.get(fam.id) ?? 1.0 }
                             );
                         });
 
