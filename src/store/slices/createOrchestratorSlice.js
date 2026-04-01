@@ -24,6 +24,8 @@ import { clearStability } from '../../utils/prophylaxis.js';
 import { reconcileReferralLog } from '../../utils/referralLog.js';
 import { INITIAL_PLAYER_STATE, INITIAL_TIME_STATE, calculateIKS } from '../../game/GameCore.js';
 import { getSpatialContext } from '../../domains/village/spatialContext.js';
+import { isLocalChampionEligible } from '../../domains/village/localChampion.js';
+import { getChampionProtectedFamilies } from '../../domains/village/championProtection.js';
 import { sanitizePlayerProfile, createStartingPlayerProfile, clampEnergyToProfile } from '../helpers/playerHelpers.js';
 import { isAmbulanceStillBusy } from '../helpers/ambulanceHelpers.js';
 import { buildDailyArchiveEntry } from '../helpers/archiveHelpers.js';
@@ -305,11 +307,18 @@ export const createOrchestratorSlice = (set, get) => ({
 
                 // Village Dynamic Health (Random fluctuations)
                 if (state.publicHealth.villageData) {
+                    const activeChampions = state.publicHealth.villageData.families
+                        .filter(f => isLocalChampionEligible(f.iksScore))
+                        .map(f => f.id);
+                    const spatialContext = getSpatialContext(state.publicHealth.villageData);
+                    const protectedFamilyIds = getChampionProtectedFamilies(activeChampions, spatialContext?.familyCoords || {});
+
                     state.publicHealth.villageData.families =
                         state.publicHealth.villageData.families.map((fam) => {
                             return applyFamilyIndicatorDrift(
                                 fam,
-                                `next-day:${nextDayVal}:${fam.id}`
+                                `next-day:${nextDayVal}:${fam.id}`,
+                                { protectedFamilyIds }
                             );
                         });
 

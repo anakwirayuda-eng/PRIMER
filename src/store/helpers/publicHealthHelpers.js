@@ -15,7 +15,15 @@ export const buildProlanisBpjsNumber = (patient, day) => {
     return `PRO-${suffix}`;
 };
 
-export const applyFamilyIndicatorDrift = (family, seed) => {
+export const applyFamilyIndicatorDrift = (family, seed, options = {}) => {
+    if (!family) {
+        return family;
+    }
+
+    if (options?.protectedFamilyIds?.includes(family.id)) {
+        return family;
+    }
+
     if (!family?.indicators || !chanceFromSeed(seed, 0.05)) {
         return family;
     }

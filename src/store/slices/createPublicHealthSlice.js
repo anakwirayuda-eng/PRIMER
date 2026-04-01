@@ -22,6 +22,9 @@ import { normalizeEncounter } from '../../models/EncounterRuntime.js';
 import { canAffordOperationalCost, spendOperationalFunds } from '../../utils/operationalFunds.js';
 import { applyIkmScoreToVillage } from '../../utils/ikmImpact.js';
 import { formatIkmImpactSummary, getIkmOutcomeStatus } from '../../utils/ikmHistory.js';
+import { getSpatialContext } from '../../domains/village/spatialContext.js';
+import { isLocalChampionEligible } from '../../domains/village/localChampion.js';
+import { getChampionProtectedFamilies } from '../../domains/village/championProtection.js';
 import { ensureVillageReadinessState } from '../../utils/behaviorCaseRuntime.js';
 import {
     evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact,
@@ -408,8 +411,14 @@ export const createPublicHealthSlice = (set, get) => ({
             if (newOutbreak) { finalOutbreaks.push(newOutbreak); notification = newOutbreak; soundManager.playError(); }
             let nextVillage = villageData;
             if (nextVillage) {
+                const activeChampions = nextVillage.families
+                    .filter(f => isLocalChampionEligible(f.iksScore))
+                    .map(f => f.id);
+                const spatialContext = getSpatialContext(nextVillage);
+                const protectedFamilyIds = getChampionProtectedFamilies(activeChampions, spatialContext?.familyCoords || {});
+
                 const updatedFamilies = nextVillage.families.map(fam => {
-                    return applyFamilyIndicatorDrift(fam, `public-health:${day}:${fam.id}`);
+                    return applyFamilyIndicatorDrift(fam, `public-health:${day}:${fam.id}`, { protectedFamilyIds });
                 });
                 nextVillage = { ...nextVillage, families: updatedFamilies };
             }
