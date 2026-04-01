@@ -609,6 +609,24 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         : pickDeterministic(commStyles, seedKey(patientSeed, 'communication-style'));
     const demeanor = pickDeterministic(demeanors, seedKey(patientSeed, 'demeanor'));
 
+    let finalRisk = disease?.risk || 'low';
+    if (isResident && spatialContext?.bridgeState?.status === 'putus') {
+        const familyCoords = spatialContext?.familyCoords?.[resident.familyId];
+        if (familyCoords && familyCoords.x >= 120) {
+            const riskLadder = ['low', 'medium', 'high'];
+            const currentIndex = riskLadder.indexOf(finalRisk);
+            
+            if (currentIndex !== -1 && spatialContext.bridgeState.severityBoost > 0) {
+                const newIndex = Math.min(riskLadder.length - 1, currentIndex + spatialContext.bridgeState.severityBoost);
+                finalRisk = riskLadder[newIndex];
+            }
+        }
+    }
+    
+    if (finalRisk !== (disease?.risk || 'low')) {
+        disease = { ...disease, risk: finalRisk };
+    }
+
     return normalizePatientOutput({
         id: randomIdFromSeed('patient', seedKey(patientSeed, 'id'), 9),
         name,

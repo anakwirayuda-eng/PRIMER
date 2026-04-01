@@ -37,6 +37,8 @@ import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from '../helpers/ambul
 import { appendClinicalHistory, normalizeClinicalHistoryEntry, isAntibioticMed } from '../helpers/clinicalHelpers.js';
 import { createInitialClinicalState } from '../helpers/persistenceHelpers.js';
 import { getSpatialContext } from '../../domains/village/spatialContext.js';
+import { getSeasonForDay } from '../../game/IKMEventEngine.js';
+import { getBridgeSeasonalState } from '../../domains/village/bridgeSeasonalState.js';
 
 export const createClinicalSlice = (set, get) => ({
     // --- STATE ---
@@ -340,7 +342,12 @@ export const createClinicalSlice = (set, get) => ({
                 ) &&
                 state.clinical.queue.length < maxCapacity
             ) {
-                const spatialContext = getSpatialContext(villageData);
+                const seasonObj = getSeasonForDay(day);
+                const mappedSeason = seasonObj === 'dry' ? 'kemarau' : 'hujan';
+                const bridgeState = getBridgeSeasonalState(mappedSeason, false);
+                const baseSpatialContext = getSpatialContext(villageData);
+                const patientSpatialContext = { ...baseSpatialContext, bridgeState };
+
                 const newPatient = generatePatient(
                     time,
                     villageDataFiltered,
@@ -348,7 +355,7 @@ export const createClinicalSlice = (set, get) => ({
                     facilities,
                     normalizeSkillList(profile.skills),
                     seedKey('queue-spawn', day, time, state.clinical.queue.length, state.clinical.todayLog.length),
-                    spatialContext
+                    patientSpatialContext
                 );
                 // Dedup guard: skip if same name already in queue
                 const nameExists = state.clinical.queue.some(p => p.name === newPatient.name);

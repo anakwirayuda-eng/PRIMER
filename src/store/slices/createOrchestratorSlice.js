@@ -28,6 +28,7 @@ import { isLocalChampionEligible } from '../../domains/village/localChampion.js'
 import { getChampionProtectedFamilies } from '../../domains/village/championProtection.js';
 import { getEffectiveServiceDistance } from '../../domains/village/serviceDistance.js';
 import { calculateDistanceDecayModifiers } from '../../domains/village/spatialDistanceDecay.js';
+import { getBridgeSeasonalState } from '../../domains/village/bridgeSeasonalState.js';
 import { sanitizePlayerProfile, createStartingPlayerProfile, clampEnergyToProfile } from '../helpers/playerHelpers.js';
 import { isAmbulanceStillBusy } from '../helpers/ambulanceHelpers.js';
 import { buildDailyArchiveEntry } from '../helpers/archiveHelpers.js';
@@ -158,10 +159,15 @@ export const createOrchestratorSlice = (set, get) => ({
 
                 // Opening day: Generate 3 patients. Two use forced-resident seeds
                 // to guarantee the player sees village residents on day 1.
-                const spatialContext = getSpatialContext(state.publicHealth.villageData);
-                const _p0 = generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-a'), spatialContext);
-                const _p1 = generatePatient(510, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-b'), spatialContext);
-                const _p2 = generatePatient(540, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-c'), spatialContext);
+                const seasonObj = getSeasonForDay(1);
+                const mappedSeason = seasonObj === 'dry' ? 'kemarau' : 'hujan';
+                const bridgeState = getBridgeSeasonalState(mappedSeason, false);
+                const baseSpatialContext = getSpatialContext(state.publicHealth.villageData);
+                const patientSpatialContext = { ...baseSpatialContext, bridgeState };
+
+                const _p0 = generatePatient(480, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-a'), patientSpatialContext);
+                const _p1 = generatePatient(510, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-b'), patientSpatialContext);
+                const _p2 = generatePatient(540, population, 1, state.finance.facilities, [], seedKey('new-game', 'open-c'), patientSpatialContext);
 
                 // Post-generate: Force at least 2 to be residents if they aren't already
                 const _forceResident = (p, idx) => {
