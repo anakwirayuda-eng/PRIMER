@@ -207,3 +207,13 @@ export const selectBridgeSeasonalState = (state, isExtremeRain = false) => {
         return getBridgeSeasonalState('kemarau', false);
     }
 };
+
+/**
+ * Combined Village Travel Context selector
+ */
+export const selectVillageTravelContext = (state, isExtremeRain = false) => {
+    return {
+        unlockedVehicles: selectUnlockedVillageVehicles(state),
+        bridgeState: selectBridgeSeasonalState(state, isExtremeRain)
+    };
+};
