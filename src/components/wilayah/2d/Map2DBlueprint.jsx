@@ -23,6 +23,59 @@ const CELL_SIZE = 10; // pixels per grid cell
 const MIN_ZOOM = 0.4;
 const MAX_ZOOM = 3.0;
 const ZOOM_STEP = 0.15;
+const SERVICE_RING_RADIUS = 30 * CELL_SIZE;
+const SERVICE_RING_INNER_RADIUS = 20 * CELL_SIZE;
+
+function getServiceAnchorVisuals(buildings = [], buildingProgress = {}) {
+    const buildingsByType = new Map(
+        (Array.isArray(buildings) ? buildings : []).map((building) => [building.type, building])
+    );
+    const fobLevel = Number(buildingProgress?.fob?.level || 0);
+
+    const anchorDefs = [
+        {
+            id: 'puskesmas',
+            type: BUILDING_TYPES.PUSKESMAS,
+            isActive: true,
+            tone: 'primary',
+            fallback: { x: 100, y: 30 },
+            level: 0
+        },
+        {
+            id: 'pustu',
+            type: BUILDING_TYPES.PUSTU,
+            isActive: Boolean(buildingProgress?.pustu?.completed || buildingProgress?.fob?.completed),
+            tone: 'satellite',
+            fallback: { x: 28, y: 50 },
+            level: Number(buildingProgress?.pustu?.level || 0) || fobLevel
+        },
+        {
+            id: 'polindes',
+            type: BUILDING_TYPES.POLINDES,
+            isActive: Boolean(buildingProgress?.polindes?.completed || buildingProgress?.fob?.completed),
+            tone: 'satellite',
+            fallback: { x: 25, y: 95 },
+            level: Number(buildingProgress?.polindes?.level || 0) || fobLevel
+        }
+    ];
+
+    return anchorDefs
+        .filter((anchor) => anchor.isActive)
+        .map((anchor) => {
+            const building = buildingsByType.get(anchor.type);
+            const x = Number(building?.x ?? anchor.fallback.x);
+            const y = Number(building?.y ?? anchor.fallback.y);
+            return Number.isFinite(x) && Number.isFinite(y)
+                ? {
+                    ...anchor,
+                    x,
+                    y,
+                    isLevel2: anchor.tone === 'satellite' && anchor.level >= 2
+                }
+                : null;
+        })
+        .filter(Boolean);
+}
 
 function getFacilityUpgradeStatus(building, buildingProgress = {}) {
     if (!building || building.familyId != null) return null;
@@ -56,17 +109,21 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
     const [zoom, setZoom] = useState(1.0);
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
+    const [bridgeRepairFeedback, setBridgeRepairFeedback] = useState(null);
     const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+    const bridgeRepairTimerRef = useRef(null);
     const derivedBridgeStatus = useGameStore((state) => selectBridgeSeasonalState(state).status);
     const buildingProgress = useGameStore((state) => state.publicHealth.buildingProgress);
     const activeOutbreaks = useGameStore((state) => state.publicHealth.activeOutbreaks);
     const villageData = useGameStore((state) => state.publicHealth.villageData);
+    const repairBridge = useGameStore((state) => state.publicHealthActions.repairBridge);
     const effectiveBridgeStatus = bridgeStatus ?? derivedBridgeStatus ?? 'normal';
 
     const mapW = mapData.width * CELL_SIZE;
     const mapH = mapData.height * CELL_SIZE;
     const showBridgeStatusDetails = zoom >= 0.6;
     const shouldShowEastOverlay = showBridgeStatusDetails && effectiveBridgeStatus !== 'normal';
+    const showServiceCoverage = activeLayer !== 'general';
 
     const eastSectorOverlayStyle = useMemo(() => {
         if (!shouldShowEastOverlay) return null;
@@ -305,6 +362,48 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
             .filter(Boolean);
     }, [activeOutbreaks, mapData.buildings]);
 
+    const serviceAnchorVisuals = useMemo(
+        () => getServiceAnchorVisuals(mapData.buildings, buildingProgress),
+        [mapData.buildings, buildingProgress]
+    );
+
+    const bridgeBuilding = useMemo(
+        () => (mapData.buildings || []).find((building) => building.type === BUILDING_TYPES.JEMBATAN) || null,
+        [mapData.buildings]
+    );
+
+    const showBridgeRepairChip = Boolean(bridgeBuilding && effectiveBridgeStatus === 'putus' && showBridgeStatusDetails);
+
+    useEffect(() => () => {
+        if (bridgeRepairTimerRef.current) {
+            window.clearTimeout(bridgeRepairTimerRef.current);
+        }
+    }, []);
+
+    const handleBridgeRepair = useCallback(() => {
+        if (typeof repairBridge !== 'function') return;
+        const result = repairBridge();
+        if (bridgeRepairTimerRef.current) {
+            window.clearTimeout(bridgeRepairTimerRef.current);
+        }
+
+        if (result?.success) {
+            setBridgeRepairFeedback({ tone: 'success', label: 'DIPERBAIKI ✓' });
+            bridgeRepairTimerRef.current = window.setTimeout(() => {
+                setBridgeRepairFeedback(null);
+            }, 1000);
+            return;
+        }
+
+        setBridgeRepairFeedback({
+            tone: 'error',
+            label: result?.message || 'Perbaikan gagal'
+        });
+        bridgeRepairTimerRef.current = window.setTimeout(() => {
+            setBridgeRepairFeedback(null);
+        }, 2000);
+    }, [repairBridge]);
+
     // ═══ XII.B: Warm editorial RW zone colors ═══
     const rwColors = {
         '01': 'rgba(120,160,180,0.08)', // steel blue
@@ -474,6 +573,49 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                     </div>
                 ))}
 
+                {showServiceCoverage && serviceAnchorVisuals.map((anchor) => {
+                    const primaryStyle = anchor.tone === 'primary'
+                        ? {
+                            border: '1.5px dashed rgba(14,165,233,0.25)',
+                            background: 'rgba(14,165,233,0.03)'
+                        }
+                        : {
+                            border: '1.5px dashed rgba(16,185,129,0.25)',
+                            background: 'rgba(16,185,129,0.03)'
+                        };
+
+                    return (
+                        <React.Fragment key={`service-ring-${anchor.id}`}>
+                            <div
+                                data-testid={`service-ring-${anchor.id}`}
+                                className="absolute pointer-events-none rounded-full"
+                                style={{
+                                    left: (anchor.x * CELL_SIZE) - SERVICE_RING_RADIUS,
+                                    top: (anchor.y * CELL_SIZE) - SERVICE_RING_RADIUS,
+                                    width: SERVICE_RING_RADIUS * 2,
+                                    height: SERVICE_RING_RADIUS * 2,
+                                    zIndex: 15,
+                                    ...primaryStyle
+                                }}
+                            />
+                            {anchor.isLevel2 && (
+                                <div
+                                    data-testid={`service-ring-inner-${anchor.id}`}
+                                    className="absolute pointer-events-none rounded-full"
+                                    style={{
+                                        left: (anchor.x * CELL_SIZE) - SERVICE_RING_INNER_RADIUS,
+                                        top: (anchor.y * CELL_SIZE) - SERVICE_RING_INNER_RADIUS,
+                                        width: SERVICE_RING_INNER_RADIUS * 2,
+                                        height: SERVICE_RING_INNER_RADIUS * 2,
+                                        zIndex: 16,
+                                        border: '1px solid rgba(16,185,129,0.15)'
+                                    }}
+                                />
+                            )}
+                        </React.Fragment>
+                    );
+                })}
+
                 {shouldShowEastOverlay && (
                     <div
                         data-testid="east-sector-overlay"
@@ -487,6 +629,40 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                             ...eastSectorOverlayStyle
                         }}
                     />
+                )}
+
+                {showBridgeRepairChip && (
+                    <button
+                        type="button"
+                        data-testid="bridge-repair-chip"
+                        onClick={handleBridgeRepair}
+                        className={`absolute rounded-md px-2 py-1 text-left ${bridgeRepairFeedback?.tone === 'error' ? 'animate-[primer-bridge-chip-shake_0.2s_ease-in-out_1]' : ''}`}
+                        style={{
+                            left: bridgeBuilding.x * CELL_SIZE,
+                            top: (bridgeBuilding.y * CELL_SIZE) + 16,
+                            transform: 'translateX(-50%)',
+                            zIndex: 28,
+                            pointerEvents: 'auto',
+                            background: bridgeRepairFeedback?.tone === 'success'
+                                ? 'rgba(16,185,129,0.88)'
+                                : 'rgba(220,38,38,0.85)',
+                            backdropFilter: 'blur(6px)',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.25)'
+                        }}
+                    >
+                        <div
+                            className="font-black uppercase tracking-[0.15em] text-white"
+                            style={{ fontSize: 8 }}
+                        >
+                            {bridgeRepairFeedback?.label || 'PERBAIKI'}
+                        </div>
+                        <div
+                            className="font-black uppercase"
+                            style={{ fontSize: 7, color: '#fbbf24' }}
+                        >
+                            -25 EP
+                        </div>
+                    </button>
                 )}
 
                 {/* Building markers (semantic zoom filtering) */}
@@ -524,6 +700,12 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                     @keyframes primer-east-danger-pulse {
                         0%, 100% { opacity: 0.7; }
                         50% { opacity: 1; }
+                    }
+
+                    @keyframes primer-bridge-chip-shake {
+                        0%, 100% { transform: translateX(-50%); }
+                        25% { transform: translateX(calc(-50% - 3px)); }
+                        75% { transform: translateX(calc(-50% + 3px)); }
                     }
                 `}
             </style>
