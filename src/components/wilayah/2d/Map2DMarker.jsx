@@ -201,6 +201,7 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
     const showUpgradeBadge = showStatusDetails && !isHouse && Boolean(building.upgradeStatus);
     const showChampionStar = showStatusDetails && isHouse && Boolean(building.isChampion);
     const showChampionShield = showStatusDetails && isHouse && Boolean(building.isChampionProtected);
+    const showIntelTarget = isHouse && Boolean(building.isIntelTarget) && Number.isFinite(building.rank);
     const upgradeBadgeColor = useMemo(() => getUpgradeBadgeColor(building.upgradeStatus), [building.upgradeStatus]);
 
     // Economy-based LED color for houses
@@ -286,19 +287,74 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
 
                 {showChampionStar && (
                     <div
-                        data-testid={`champion-star-${building.id}`}
+                        data-testid={`champion-beacon-${building.id}`}
                         className="absolute pointer-events-none"
                         style={{
                             left: '50%',
-                            top: -4,
-                            width: 6,
-                            height: 6,
+                            top: -6,
+                            width: 10,
+                            height: 10,
                             transform: 'translateX(-50%)',
-                            background: '#fbbf24',
-                            clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
-                            boxShadow: '0 0 4px rgba(251,191,36,0.55)'
+                            borderRadius: '999px',
+                            background: 'rgba(15,23,42,0.88)',
+                            border: '1px solid rgba(251,191,36,0.55)',
+                            boxShadow: '0 0 8px rgba(251,191,36,0.35)'
                         }}
-                    />
+                    >
+                        <div
+                            data-testid={`champion-star-${building.id}`}
+                            className="absolute pointer-events-none"
+                            style={{
+                                left: '50%',
+                                top: '50%',
+                                width: 7,
+                                height: 7,
+                                transform: 'translate(-50%, -50%)',
+                                background: '#fbbf24',
+                                clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+                                boxShadow: '0 0 5px rgba(251,191,36,0.7)'
+                            }}
+                        />
+                    </div>
+                )}
+
+                {showIntelTarget && (
+                    <>
+                        <div
+                            data-testid={`intel-ring-${building.id}`}
+                            className="absolute inset-[-5px] rounded-full pointer-events-none"
+                            style={{
+                                border: '1.5px dashed rgba(34,211,238,0.85)',
+                                boxShadow: '0 0 10px rgba(34,211,238,0.32)',
+                                animation: 'pulse 1.8s ease-in-out infinite',
+                            }}
+                        />
+                        <div
+                            data-testid={`intel-badge-${building.id}`}
+                            className="absolute pointer-events-none rounded-full"
+                            style={{
+                                right: -8,
+                                top: -7,
+                                minWidth: 14,
+                                height: 14,
+                                padding: '0 4px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: 'rgba(8,145,178,0.95)',
+                                color: '#ecfeff',
+                                border: '1px solid rgba(165,243,252,0.75)',
+                                boxShadow: '0 0 8px rgba(34,211,238,0.35)',
+                            }}
+                        >
+                            <span
+                                className="font-black"
+                                style={{ fontSize: 8, lineHeight: 1 }}
+                            >
+                                {building.rank}
+                            </span>
+                        </div>
+                    </>
                 )}
 
                 {/* Marker body */}
@@ -314,10 +370,11 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                                     top: -2,
                                     width: size + 4,
                                     height: size + 4,
-                                    borderLeft: '1px solid #fbbf24',
-                                    borderTop: '1px solid #fbbf24',
-                                    borderBottom: '1px solid #fbbf24',
-                                    opacity: 0.9
+                                    borderLeft: '1.5px solid #fbbf24',
+                                    borderTop: '1.5px solid #fbbf24',
+                                    borderBottom: '1.5px solid #fbbf24',
+                                    boxShadow: '0 0 6px rgba(251,191,36,0.22)',
+                                    opacity: 0.95
                                 }}
                             />
                         )}
@@ -402,6 +459,21 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                         {building.familyData?.iksScore != null && (
                             <div className={`text-[9px] font-bold mt-0.5 ${building.familyData.iksScore >= 0.8 ? 'text-emerald-400' : building.familyData.iksScore >= 0.5 ? 'text-amber-400' : 'text-red-400'}`}>
                                 IKS {(building.familyData.iksScore * 100).toFixed(0)}%
+                            </div>
+                        )}
+                        {building.isChampion && (
+                            <div className="text-[9px] font-bold mt-0.5 text-amber-300 uppercase tracking-wide">
+                                Kader Lokal
+                            </div>
+                        )}
+                        {!building.isChampion && building.isChampionProtected && (
+                            <div className="text-[9px] font-bold mt-0.5 text-amber-200 uppercase tracking-wide">
+                                Dilindungi Kader
+                            </div>
+                        )}
+                        {showIntelTarget && (
+                            <div className="text-[9px] font-bold mt-0.5 text-cyan-300 uppercase tracking-wide">
+                                Intel Prioritas #{building.rank}
                             </div>
                         )}
                     </div>

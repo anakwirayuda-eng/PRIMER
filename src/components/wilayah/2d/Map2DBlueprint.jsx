@@ -34,6 +34,18 @@ function getServiceAnchorLabel(anchor) {
     return String(anchor.id || '').toUpperCase();
 }
 
+function getIntelTargetMap(lastIntelTargets = []) {
+    const targetMap = new Map();
+    (Array.isArray(lastIntelTargets) ? lastIntelTargets : []).forEach((target, index) => {
+        if (!target?.familyId || targetMap.has(target.familyId)) return;
+        targetMap.set(target.familyId, {
+            rank: index + 1,
+            distance: Number(target.distance ?? 0)
+        });
+    });
+    return targetMap;
+}
+
 function getServiceAnchorVisuals(buildings = [], buildingProgress = {}) {
     const buildingsByType = new Map(
         (Array.isArray(buildings) ? buildings : []).map((building) => [building.type, building])
@@ -123,6 +135,7 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
     const derivedBridgeStatus = useGameStore((state) => selectBridgeSeasonalState(state).status);
     const buildingProgress = useGameStore((state) => state.publicHealth.buildingProgress);
     const activeOutbreaks = useGameStore((state) => state.publicHealth.activeOutbreaks);
+    const lastIntelTargets = useGameStore((state) => state.publicHealth.lastIntelTargets);
     const villageData = useGameStore((state) => state.publicHealth.villageData);
     const repairBridge = useGameStore((state) => state.publicHealthActions.repairBridge);
     const effectiveBridgeStatus = bridgeStatus ?? derivedBridgeStatus ?? 'normal';
@@ -133,6 +146,7 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
     const shouldShowEastOverlay = showBridgeStatusDetails && effectiveBridgeStatus !== 'normal';
     const showServiceCoverage = activeLayer !== 'general';
     const serviceLabelScale = Math.min(1.4, Math.max(0.9, 1 / Math.max(zoom, 0.01)));
+    const intelTargetMap = useMemo(() => getIntelTargetMap(lastIntelTargets), [lastIntelTargets]);
 
     const eastSectorOverlayStyle = useMemo(() => {
         if (!shouldShowEastOverlay) return null;
@@ -308,10 +322,12 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
             if (b.hasJentik) return true;
             // Show Very Low / Low economy houses (vulnerable)
             if (b.economyTier === 'Very Low' || b.economyTier === 'Low') return true;
+            // Always surface active local intel targets, even at overview zoom.
+            if (b.familyId && intelTargetMap.has(b.familyId)) return true;
             // Hide regular houses at overview zoom
             return false;
         });
-    }, [mapData.buildings, zoom, selectedBuildingId]);
+    }, [mapData.buildings, zoom, selectedBuildingId, intelTargetMap]);
 
     const championFamilyIds = useMemo(() => {
         const families = villageData?.families;
@@ -333,12 +349,14 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
 
     const visibleBuildingsWithStatus = useMemo(() => (
         visibleBuildings.map((building) => ({
+            ...(intelTargetMap.get(building.familyId) || {}),
             ...building,
             upgradeStatus: getFacilityUpgradeStatus(building, buildingProgress),
             isChampion: Boolean(building.familyId && championFamilyIdSet.has(building.familyId)),
-            isChampionProtected: Boolean(building.familyId && protectedFamilyIdSet.has(building.familyId))
+            isChampionProtected: Boolean(building.familyId && protectedFamilyIdSet.has(building.familyId)),
+            isIntelTarget: Boolean(building.familyId && intelTargetMap.has(building.familyId))
         }))
-    ), [visibleBuildings, buildingProgress, championFamilyIdSet, protectedFamilyIdSet]);
+    ), [visibleBuildings, buildingProgress, championFamilyIdSet, protectedFamilyIdSet, intelTargetMap]);
 
     const outbreakZones = useMemo(() => {
         const buildingsById = new Map((mapData.buildings || []).map((building) => [building.id, building]));
