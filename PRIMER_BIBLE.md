@@ -676,14 +676,17 @@ In-game medical encyclopedia with entries for:
 
 ### 6.4 Village Map (`WilayahPage.jsx`)
 
-**Procedural generation** creates a pixel-art village with:
-- Canvas-based tile rendering (grass, water, roads, sawah, mountains)
-- 30+ building types (Puskesmas, schools, mosques, markets, houses, Posyandu, etc.)
-- AI-generated building sprites (PNG assets)
-- Clickable buildings for wiki info and interactions
-- Home visit system with PIS-PK indicator surveys (12 indicators)
-- PSN (mosquito breeding site) checks per house
-- Family health interventions
+The village map features a **Dual-Mode Architecture** to balance strategic oversight and visual immersion for a scalable 200 KK (family) demographic:
+1. **2D Blueprint (Helicopter View)**: Dom/CSS-based map overlaying procedural SVG terrain (`Map2DBlueprint.jsx`) for high-performance viewing and interactions across 250+ markers. Features semantic zoom, "Fog of War" for locked RWs, and click telemetry.
+2. **3D Pocket Diorama (Dollhouse View)**: Interactive WebGL isometric view (Three.js) focused on rendering 1 active RW at a time to prevent performance bottlenecks over scalable terrain.
+
+**Integrated Gameplay Mechanics**:
+- **Demographics & SDOH**: `VillageRegistry.js` defines socioeconomic stats, 13 PIS-PK indicators, and housing types for 200 interconnected families across 8 progressive RWs.
+- **Home Visits & PIS-PK**: 12 specific interventions (e.g., KB counseling, TB tracking) that cost energy but alter family PIS-PK indicators over time.
+- **Building Scenes**: 15 interactive facilities (Posyandu, SDN, MCK, Farm, Pustu, etc.) containing NPCs, minigames, and actionable `stations` linking the community to clinical outcomes.
+- **IKM & Behavior Change (BC) Cases**: Triggered community events with COM-B analysis forensically examining Capability, Opportunity, and Motivation to permanently alter health behaviors.
+- **Outbreak System & UKP Bridge**: The "Karma Loop." Neglected UKM tasks (e.g., failed PSN) spawn UKP emergencies in the clinic (e.g., DSS patients in IGD 3-14 days later). Includes seasonal disease multipliers.
+- **The Director (AI Pacing)**: Dynamic game difficulty manager inspired by *Left 4 Dead*. Adjusts spawn rates, events, and "Mercy Gifts" based on the player's real-time stress score (Queue length, Energy, Reputation, Outbreaks).
 
 ---
 
