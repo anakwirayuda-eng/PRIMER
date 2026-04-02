@@ -26,6 +26,14 @@ const ZOOM_STEP = 0.15;
 const SERVICE_RING_RADIUS = 30 * CELL_SIZE;
 const SERVICE_RING_INNER_RADIUS = 20 * CELL_SIZE;
 
+function getServiceAnchorLabel(anchor) {
+    if (!anchor) return '';
+    if (anchor.id === 'puskesmas') return 'PUSKESMAS';
+    if (anchor.id === 'pustu') return 'PUSTU';
+    if (anchor.id === 'polindes') return 'POLINDES';
+    return String(anchor.id || '').toUpperCase();
+}
+
 function getServiceAnchorVisuals(buildings = [], buildingProgress = {}) {
     const buildingsByType = new Map(
         (Array.isArray(buildings) ? buildings : []).map((building) => [building.type, building])
@@ -124,6 +132,7 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
     const showBridgeStatusDetails = zoom >= 0.6;
     const shouldShowEastOverlay = showBridgeStatusDetails && effectiveBridgeStatus !== 'normal';
     const showServiceCoverage = activeLayer !== 'general';
+    const serviceLabelScale = Math.min(1.4, Math.max(0.9, 1 / Math.max(zoom, 0.01)));
 
     const eastSectorOverlayStyle = useMemo(() => {
         if (!shouldShowEastOverlay) return null;
@@ -583,6 +592,19 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                             border: '1.5px dashed rgba(16,185,129,0.25)',
                             background: 'rgba(16,185,129,0.03)'
                         };
+                    const labelTone = anchor.tone === 'primary'
+                        ? {
+                            border: '1px solid rgba(14,165,233,0.32)',
+                            background: 'rgba(15,23,42,0.76)',
+                            color: 'rgba(186,230,253,0.95)',
+                            accent: 'rgba(14,165,233,0.95)'
+                        }
+                        : {
+                            border: '1px solid rgba(16,185,129,0.32)',
+                            background: 'rgba(15,23,42,0.72)',
+                            color: 'rgba(167,243,208,0.95)',
+                            accent: 'rgba(16,185,129,0.92)'
+                        };
 
                     return (
                         <React.Fragment key={`service-ring-${anchor.id}`}>
@@ -612,6 +634,45 @@ function Map2DBlueprintInner({ mapData, selectedBuildingId, onBuildingSelect, ac
                                     }}
                                 />
                             )}
+                            <div
+                                data-testid={`service-label-${anchor.id}`}
+                                className="absolute pointer-events-none rounded-full px-2 py-1"
+                                style={{
+                                    left: anchor.x * CELL_SIZE,
+                                    top: (anchor.y * CELL_SIZE) - SERVICE_RING_RADIUS - 12,
+                                    transform: `translate(-50%, -100%) scale(${serviceLabelScale})`,
+                                    transformOrigin: 'center bottom',
+                                    zIndex: 19,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 4,
+                                    whiteSpace: 'nowrap',
+                                    backdropFilter: 'blur(6px)',
+                                    boxShadow: '0 6px 18px rgba(15,23,42,0.16)',
+                                    ...labelTone
+                                }}
+                            >
+                                <span
+                                    className="font-black uppercase tracking-[0.18em]"
+                                    style={{ fontSize: 7.5, lineHeight: 1 }}
+                                >
+                                    {getServiceAnchorLabel(anchor)}
+                                </span>
+                                {anchor.isLevel2 && (
+                                    <span
+                                        className="rounded-full px-1 py-0.5 font-black uppercase"
+                                        style={{
+                                            fontSize: 6.5,
+                                            lineHeight: 1,
+                                            color: '#052e16',
+                                            background: 'rgba(167,243,208,0.92)',
+                                            border: `1px solid ${labelTone.accent}`
+                                        }}
+                                    >
+                                        L2
+                                    </span>
+                                )}
+                            </div>
                         </React.Fragment>
                     );
                 })}
