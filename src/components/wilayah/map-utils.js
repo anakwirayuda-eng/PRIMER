@@ -47,7 +47,7 @@ export const getWikiKeyForBuilding = (building) => {
     if (type === BUILDING_TYPES.PUSTU) return 'pustu';
     if (type === BUILDING_TYPES.PAMSIMAS) return 'sanitasi';
     if (type === BUILDING_TYPES.BANK_SAMPAH) return 'waste_management';
-    if (type === BUILDING_TYPES.RTK) return 'kb_post';
+    if (type === BUILDING_TYPES.RTK) return 'polindes';
     if (type === BUILDING_TYPES.POS_GIZI) return 'gizi';
     if (type === BUILDING_TYPES.TOGA) return 'toga';
     if (type === BUILDING_TYPES.POS_UKK) return 'ukk';

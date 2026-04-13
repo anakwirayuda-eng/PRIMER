@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useGame } from '../../context/GameContext.jsx';
 import { Shield, CheckCircle, XCircle, ChevronRight, Activity } from 'lucide-react';
 import { soundManager } from '../../utils/SoundManager.js';
@@ -11,20 +11,41 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [evaluating, setEvaluating] = useState(false);
     const [stepResult, setStepResult] = useState(null); // { isSuccess: true/false, feedback: '...' }
-
-    if (!eventInstance || eventInstance.completed) {
-        return null;
-    }
+    const timeoutIdsRef = useRef(new Set());
 
     // Determine current phase from the scenario definition
     // Note: In a real app we'd import getScenarioById from IKMScenarioLibrary,
     // but we can also just rely on eventInstance state if we keep phases simple.
     // Wait, we need the phase definition.
-    const scenarioDef = getScenarioById(eventInstance.scenarioId);
-    const phase = scenarioDef?.phases.find(p => p.id === eventInstance.currentPhaseId);
+    const scenarioDef = eventInstance ? getScenarioById(eventInstance.scenarioId) : null;
+    const phase = scenarioDef?.phases?.find(p => p.id === eventInstance?.currentPhaseId);
     const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
 
-    if (!phase) return null;
+    const clearScheduledTimeouts = useCallback(() => {
+        timeoutIdsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+        timeoutIdsRef.current.clear();
+    }, []);
+
+    const scheduleTimeout = useCallback((callback, delay) => {
+        const timeoutId = setTimeout(() => {
+            timeoutIdsRef.current.delete(timeoutId);
+            callback();
+        }, delay);
+
+        timeoutIdsRef.current.add(timeoutId);
+        return timeoutId;
+    }, []);
+
+    useEffect(() => () => {
+        clearScheduledTimeouts();
+    }, [clearScheduledTimeouts]);
+
+    useEffect(() => {
+        clearScheduledTimeouts();
+        setSelectedAnswers({});
+        setEvaluating(false);
+        setStepResult(null);
+    }, [clearScheduledTimeouts, eventInstance?.instanceId, phase?.id]);
 
     const getChoiceCost = (choice) => Math.max(0, Math.abs(Number(choice?.impact?.balance || 0)));
 
@@ -38,20 +59,21 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
                 isSuccess: false,
                 feedback: result.message || 'Dana aktif tidak cukup untuk intervensi ini.'
             });
-            setTimeout(() => setStepResult(null), 2500);
+            scheduleTimeout(() => setStepResult(null), 2500);
         }
     };
 
     const handleDiagnosisSubmit = () => {
         const choice = phase.choices[selectedAnswers.diagnosis || 0];
+        clearScheduledTimeouts();
         setEvaluating(true);
-        setTimeout(() => {
+        scheduleTimeout(() => {
             soundManager.playNotification();
             setStepResult({
                 isSuccess: choice.isCorrect,
                 feedback: choice.feedback
             });
-            setTimeout(() => {
+            scheduleTimeout(() => {
                 setEvaluating(false);
                 setStepResult(null);
                 setSelectedAnswers({});
@@ -71,8 +93,9 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
 
         const isSuccess = correctCount >= 4;
 
+        clearScheduledTimeouts();
         setEvaluating(true);
-        setTimeout(() => {
+        scheduleTimeout(() => {
             if (isSuccess) soundManager.playSuccess();
             else soundManager.playError();
 
@@ -83,7 +106,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
                     : `Perencanaan intervensi kurang tepat sasaran (${correctCount}/${total}). Evaluasi kembali!`
             });
 
-            setTimeout(() => {
+            scheduleTimeout(() => {
                 setEvaluating(false);
                 setStepResult(null);
                 advanceIKMPhase(eventInstance.instanceId, isSuccess ? 'resolution_success' : 'resolution_fail', {}, null);
@@ -91,6 +114,10 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
             }, 3000);
         }, 1500);
     };
+
+    if (!eventInstance || eventInstance.completed || !phase) {
+        return null;
+    }
 
     const renderDialog = () => (
         <div className="flex flex-col h-full bg-[#0f172a] rounded-2xl overflow-hidden border border-white/20 shadow-2xl">

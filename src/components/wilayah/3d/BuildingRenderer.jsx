@@ -121,14 +121,14 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
     const isHouseType = buildingType?.includes?.('house') || buildingType?.includes?.('HOUSE');
 
     // Fascia (Lisplang Kayu) — wood trim under roof
-    const Fascia = ({ yOff = 1.1 }) => (
+    const renderFascia = (yOff = 1.1) => (
         <mesh position={[0, yOff, 0]} scale={[OVH, 0.08, OVH]} geometry={GEO.box}>
             <meshStandardMaterial color="#292524" roughness={0.9} />
         </mesh>
     );
 
     // 🌟 GHIBLI DORMER — small attic window protruding from roof
-    const Dormer = ({ yOff = 0.2 }) => (
+    const renderDormer = (yOff = 0.2) => (
         <group position={[0, yOff, 0.45]}>
             <mesh scale={[0.35, 0.35, 0.35]} geometry={GEO.box}>
                 <meshPhysicalMaterial color={color} roughness={0.8} />
@@ -145,7 +145,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
     // MOSQUE — dome
     if (buildingType === BUILDING_TYPES.MOSQUE) return (
         <group>
-            <Fascia />
+            {renderFascia()}
             <mesh position={[0, 1.15, 0]} scale={[OVH, OVH * 0.8, OVH]} geometry={GEO.dome} castShadow receiveShadow>
                 <meshPhysicalMaterial color={color} roughness={0.4} clearcoat={0.6} metalness={0.1} />
             </mesh>
@@ -155,7 +155,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
     // TRAD — steep pyramid with crossed ridge
     if (buildingType === BUILDING_TYPES.HOUSE_TRAD) return (
         <group>
-            <Fascia />
+            {renderFascia()}
             <mesh position={[0, 1.15, 0]} rotation={[0, Math.PI / 4, 0]} scale={[OVH * 1.4, 0.8, OVH * 1.4]} geometry={GEO.cone} castShadow receiveShadow>
                 <meshPhysicalMaterial color={color} roughness={0.9} flatShading />
             </mesh>
@@ -176,7 +176,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
     if ([BUILDING_TYPES.BALAI_DESA, BUILDING_TYPES.KANTOR_DESA, BUILDING_TYPES.HOUSE_MODERN,
     BUILDING_TYPES.MCK, BUILDING_TYPES.BANK_SAMPAH, BUILDING_TYPES.APOTEK].includes(buildingType)) return (
         <group>
-            <Fascia yOff={1.05} />
+            {renderFascia(1.05)}
             {/* Raised parapet walls */}
             <mesh position={[0, 1.2, 0]} scale={[OVH - 0.05, 0.18, OVH - 0.05]} geometry={GEO.box} castShadow receiveShadow>
                 <meshPhysicalMaterial color={color} roughness={0.7} />
@@ -196,7 +196,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
         // PELANA (Gable) — rotated box forming peaked roof
         return (
             <group>
-                <Fascia yOff={fasciaY} />
+                {renderFascia(fasciaY)}
                 <group position={[0, roofY + 0.15, 0]}>
                     <mesh rotation={[Math.PI / 4, 0, 0]} scale={[OVH, OVH * 0.707, OVH * 0.707]} geometry={GEO.box} castShadow receiveShadow>
                         <meshPhysicalMaterial color={color} roughness={0.8} flatShading clearcoat={0.1} />
@@ -205,7 +205,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
                     <mesh position={[0, 0.35, 0]} scale={[OVH + 0.05, 0.06, 0.06]} geometry={GEO.box}>
                         <meshStandardMaterial color="#1E293B" roughness={0.9} />
                     </mesh>
-                    {r > 0.75 && !isTwoStory && <Dormer yOff={0.15} />}
+                    {r > 0.75 && !isTwoStory && renderDormer(0.15)}
                 </group>
             </group>
         );
@@ -214,7 +214,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
     // LIMASAN (Hip) — truncated pyramid with flat top
     return (
         <group>
-            <Fascia yOff={fasciaY} />
+            {renderFascia(fasciaY)}
             <group position={[0, roofY + 0.2, 0]}>
                 <mesh rotation={[0, Math.PI / 4, 0]} scale={[OVH, 0.6, OVH]} geometry={GEO.hip} castShadow receiveShadow>
                     <meshPhysicalMaterial color={color} roughness={0.8} flatShading clearcoat={0.1} />
@@ -223,7 +223,7 @@ function RoofMesh({ buildingType, color, seedValue = 0, isTwoStory = false }) {
                 <mesh position={[0, 0.3, 0]} scale={[0.3, 0.06, 0.3]} geometry={GEO.box}>
                     <meshStandardMaterial color="#1E293B" roughness={0.9} />
                 </mesh>
-                {r > 0.65 && !isTwoStory && <Dormer yOff={0.1} />}
+                {r > 0.65 && !isTwoStory && renderDormer(0.1)}
             </group>
         </group>
     );
@@ -246,7 +246,7 @@ const COMMERCIAL_TYPES = [BUILDING_TYPES.WARUNG, BUILDING_TYPES.MARKET, BUILDING
 // ═══════════════════════════════════════════════════════════════════
 
 // Internal component — wrapped in React.memo below
-function BuildingRendererInternal({ building, centerX, centerY, onSelect, selected, activeLayer, onHover }) {
+function BuildingRendererInternal({ building, centerX, centerY, onSelect, selected, activeLayer, onHover, renderTier = 'standard' }) {
     const groupRef = useRef();
     const waterfallRef = useRef();
     const clothesRef = useRef();
@@ -280,6 +280,9 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
     const windowEmissive = isCozy ? '#F59E0B' : '#000000';
     const trimColor = getTrimColor(bodyColor); // Wainscoting color
     const isNatureOrFlat = NATURE_OR_FLAT.includes(building.type);
+    const isLowDetail = renderTier === 'low';
+    const showOutline = selected || (!isLowDetail && hovered);
+    const showDiegeticMarkers = !isLowDetail && !selected;
 
     // QUEST / ALERT marker logic
     const hasOutbreak = building.hasCase || building.familyData?.hasCase;
@@ -330,7 +333,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                 <mesh position={[0, 1.8, 0]} castShadow>
                     <cylinderGeometry args={[0.5, 0.5, 0.8, 16]} />
                     <meshPhysicalMaterial color="#0EA5E9" roughness={0.2} clearcoat={1.0} emissive={emissive} emissiveIntensity={emissiveIntensity} toneMapped={!atRisk} />
-                    <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#0284c7'} visible={hovered || selected} />
+                    <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#0284c7'} visible={showOutline} />
                 </mesh>
             </group>
         </group>
@@ -359,7 +362,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                 <mesh position={[0, 0.05, 0]} receiveShadow>
                     <boxGeometry args={[1.1, 0.15, 1.1]} />
                     <meshPhysicalMaterial color="#0EA5E9" roughness={0.05} metalness={0.3} clearcoat={1} emissive={emissive} emissiveIntensity={emissiveIntensity} toneMapped={!atRisk} />
-                    <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#0284c7'} visible={hovered || selected} />
+                    <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#0284c7'} visible={showOutline} />
                 </mesh>
                 {/* Random rocks */}
                 {[0.3, -0.25, 0.15].map((offset, i) => (
@@ -390,7 +393,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                 <mesh position={[0, 0.02, 0.3]} receiveShadow>
                     <cylinderGeometry args={[0.4, 0.5, 0.08, 12]} />
                     <meshPhysicalMaterial color="#0EA5E9" roughness={0.05} metalness={0.3} clearcoat={1} />
-                    <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#0284c7'} visible={hovered || selected} />
+                    <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#0284c7'} visible={showOutline} />
                 </mesh>
             </group>
         </group>
@@ -404,7 +407,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                 <mesh position={[0, 0.2, 0]} castShadow receiveShadow>
                     <boxGeometry args={[1.2, 0.1, 0.8]} />
                     <meshStandardMaterial color="#78350F" roughness={0.9} />
-                    <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#78350F'} visible={hovered || selected} />
+                    <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#78350F'} visible={showOutline} />
                 </mesh>
                 {/* Railings */}
                 <mesh position={[-0.55, 0.35, 0]}><boxGeometry args={[0.05, 0.25, 0.8]} /><meshStandardMaterial color="#451A03" /></mesh>
@@ -478,7 +481,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                     ) : (
                         <RoundedBox args={[1.2, 0.7, 1.2]} position={[0, 0.75, 0]} radius={0.05} smoothness={1} castShadow receiveShadow>
                             <meshPhysicalMaterial color={bodyColor} roughness={0.85} clearcoat={0.15} emissive={emissive} emissiveIntensity={emissiveIntensity} toneMapped={!(detectiveActive && atRisk)} />
-                            <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#1e293b'} visible={hovered || selected} />
+                            <Outlines thickness={selected ? 0.04 : 0.02} color={selected ? '#f59e0b' : '#1e293b'} visible={showOutline} />
                         </RoundedBox>
                     )}
 
@@ -695,7 +698,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                 <group scale={scale}>
                     <RoundedBox args={[1.8, 0.15, 1.8]} position={[0, 0.08, 0]} radius={0.05} smoothness={1} receiveShadow>
                         <meshPhysicalMaterial color={bodyColor} roughness={0.9} clearcoat={0.05} emissive={emissive} emissiveIntensity={emissiveIntensity} toneMapped={!(detectiveActive && atRisk)} />
-                        <Outlines thickness={0.02} color="#0F172A" visible={hovered || selected} />
+                        <Outlines thickness={0.02} color="#0F172A" visible={showOutline} />
                     </RoundedBox>
 
                     {/* TPU: scattered tombstones */}
@@ -734,7 +737,9 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
                         <meshStandardMaterial color="#78350F" />
                     </mesh>
                     {/* Buzzing flies (kinetic life particles) */}
-                    <Sparkles count={6} scale={0.3} size={2.5} speed={4} opacity={0.8} color="#000000" position={[0, 0.25, 0]} noise={1} />
+                    {!isLowDetail && (
+                        <Sparkles count={6} scale={0.3} size={2.5} speed={4} opacity={0.8} color="#000000" position={[0, 0.25, 0]} noise={1} />
+                    )}
                 </group>
             )}
 
@@ -749,7 +754,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
             )}
 
             {/* QUEST / ALERT MARKER — floating bouncing icon */}
-            {needsAttention && !detectiveActive && !selected && (
+            {needsAttention && !detectiveActive && showDiegeticMarkers && (
                 <Html
                     position={[0, scale[1] * 2 + 0.8, 0]}
                     center
@@ -768,7 +773,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
             )}
 
             {/* OUTBREAK MARKER — urgent red pulse */}
-            {hasOutbreak && !detectiveActive && !selected && (
+            {hasOutbreak && !detectiveActive && showDiegeticMarkers && (
                 <Html
                     position={[0, scale[1] * 2 + 0.8, 0]}
                     center
@@ -790,6 +795,7 @@ function BuildingRendererInternal({ building, centerX, centerY, onSelect, select
 
 // 🌟 THE VRAM SAVIOR: Only re-render when THIS building's props actually change
 export const BuildingRenderer = React.memo(BuildingRendererInternal, (prev, next) => (
+    prev.renderTier === next.renderTier &&
     prev.selected === next.selected &&
     prev.activeLayer === next.activeLayer &&
     prev.building.id === next.building.id &&

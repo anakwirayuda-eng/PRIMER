@@ -2,9 +2,9 @@
  * @reflection
  * [IDENTITY]: Map2DMarker
  * [PURPOSE]: Single interactive building marker for 2D blueprint map.
- *            Phase 2: Acrylic Token style with economy-tier LED coloring,
- *            tap-first mobile UX, and icon mapping for all 47 building types.
- * [STATE]: Production
+ *            Canonical Hybrid A+C marker language: acrylic tokens for facilities,
+ *            LED data nodes for houses, and layer-readable status cues.
+ * [STATE]: Runtime-Audited
  * [DEPENDS_ON]: constants.js (BUILDING_TYPES)
  */
 
@@ -15,7 +15,7 @@ import {
     Landmark, Heart, ShowerHead, Droplets, Pill, Square, FerrisWheel,
     Leaf, Recycle, Construction, Apple, Baby, Sprout, HardHat,
     BarChart3, Soup, Trees, Waves, Tent, Wheat, Footprints,
-    Hotel, Anchor, Shield, BookOpen, Skull, Beef, Info, Binoculars,
+    Hotel, Anchor, Shield, BookOpen, Beef, Info, Binoculars,
 } from 'lucide-react';
 
 // ═══ ECONOMY TIER → LED DOT COLOR (Geospatial Law 1 visual) ═══
@@ -68,7 +68,7 @@ function getMarkerIcon(type) {
         case BUILDING_TYPES.DERMAGA: return <Anchor {...s} />;
         case BUILDING_TYPES.POS_RONDA: return <Shield {...s} />;
         case BUILDING_TYPES.PESANTREN: return <BookOpen {...s} />;
-        case BUILDING_TYPES.PADEPOKAN_DUKUN: return <Skull {...s} />;
+        case BUILDING_TYPES.PADEPOKAN_DUKUN: return <Leaf {...s} />;
         case BUILDING_TYPES.PASAR_HEWAN: return <Beef {...s} />;
         case BUILDING_TYPES.INFO_WISATA: return <Info {...s} />;
         case BUILDING_TYPES.GARDU_PANDANG: return <Binoculars {...s} />;
@@ -121,6 +121,7 @@ function getMarkerSize(type) {
         case BUILDING_TYPES.PESANTREN: case BUILDING_TYPES.PADEPOKAN_DUKUN:
             return 22;
         case BUILDING_TYPES.POSYANDU: case BUILDING_TYPES.ALUN_ALUN:
+        case BUILDING_TYPES.RTK:
         case BUILDING_TYPES.HUTAN_LINDUNG: case BUILDING_TYPES.SUNGAI_CIKAPAS:
         case BUILDING_TYPES.GAPURA_DESA: case BUILDING_TYPES.SAWAH_BERUNDAK:
         case BUILDING_TYPES.HOMESTAY: case BUILDING_TYPES.DERMAGA:
@@ -187,6 +188,63 @@ function getUpgradeBadgeColor(upgradeStatus) {
     return '#34d399';
 }
 
+function getNarrativeCue(buildingType, activeLayer, showStatusDetails) {
+    if (!showStatusDetails) return null;
+
+    switch (buildingType) {
+        case BUILDING_TYPES.RTK:
+            if (activeLayer === 'surveillance') {
+                return {
+                    label: 'SIAGA',
+                    eyebrow: 'Maternal Hub',
+                    title: 'Pantau Ibu Risiko Tinggi',
+                    detail: 'Anchor rujukan maternal',
+                    badgeColor: 'rgba(244,63,94,0.96)',
+                    badgeBorder: 'rgba(254,205,211,0.72)',
+                    textColor: '#ffe4e6',
+                    glowColor: 'rgba(244,63,94,0.34)',
+                };
+            }
+
+            return {
+                label: 'RUJUK',
+                eyebrow: 'Maternal Hub',
+                title: 'Rujukan Maternal',
+                detail: 'Persalinan aman dan transit ibu',
+                badgeColor: 'rgba(244,63,94,0.94)',
+                badgeBorder: 'rgba(254,205,211,0.68)',
+                textColor: '#fff1f2',
+                glowColor: 'rgba(244,63,94,0.3)',
+            };
+        case BUILDING_TYPES.PADEPOKAN_DUKUN:
+            if (activeLayer === 'perilaku') {
+                return {
+                    label: 'MEDIASI',
+                    eyebrow: 'Budaya',
+                    title: 'Dialog Tradisi',
+                    detail: 'Jembatan adat dan evidence',
+                    badgeColor: 'rgba(109,40,217,0.94)',
+                    badgeBorder: 'rgba(221,214,254,0.72)',
+                    textColor: '#f5f3ff',
+                    glowColor: 'rgba(167,139,250,0.28)',
+                };
+            }
+
+            return {
+                label: 'ADAT',
+                eyebrow: 'Budaya',
+                title: 'Anchor Tradisi',
+                detail: 'Negosiasi kepercayaan warga',
+                badgeColor: 'rgba(124,58,237,0.92)',
+                badgeBorder: 'rgba(221,214,254,0.68)',
+                textColor: '#f5f3ff',
+                glowColor: 'rgba(167,139,250,0.26)',
+            };
+        default:
+            return null;
+    }
+}
+
 function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, showStatusDetails = true }) {
     const [hovered, setHovered] = useState(false);
 
@@ -203,6 +261,11 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
     const showChampionShield = showStatusDetails && isHouse && Boolean(building.isChampionProtected);
     const showIntelTarget = isHouse && Boolean(building.isIntelTarget) && Number.isFinite(building.rank);
     const upgradeBadgeColor = useMemo(() => getUpgradeBadgeColor(building.upgradeStatus), [building.upgradeStatus]);
+    const narrativeCue = useMemo(
+        () => (isHouse ? null : getNarrativeCue(building.type, activeLayer, showStatusDetails)),
+        [activeLayer, building.type, isHouse, showStatusDetails]
+    );
+    const keepReadableInDetective = showIntelTarget || showChampionStar || showChampionShield;
 
     // Economy-based LED color for houses
     const ledColor = useMemo(() => {
@@ -215,6 +278,7 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
         if (!isDetective || !isHouse) return 'transparent';
         return getOverlayRingColor(building, activeLayer);
     }, [building, activeLayer, isDetective, isHouse]);
+    const shouldDimForDetective = isDetective && !atRisk && isHouse && !keepReadableInDetective;
 
     const left = building.x * cellSize - size / 2;
     const top = building.y * cellSize - size / 2;
@@ -226,6 +290,7 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
     return (
         <div
             className="absolute"
+            data-testid={`map-marker-${building.id}`}
             style={{
                 left: left - hitOffset,
                 top: top - hitOffset,
@@ -247,7 +312,7 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                     width: size,
                     height: size,
                     transform: hovered ? 'scale(1.5)' : selected ? 'scale(1.35)' : 'scale(1)',
-                    filter: isLocked ? 'grayscale(1) brightness(0.4)' : isDetective && !atRisk && isHouse ? 'grayscale(0.8) brightness(0.5)' : 'none',
+                    filter: isLocked ? 'grayscale(1) brightness(0.4)' : shouldDimForDetective ? 'grayscale(0.8) brightness(0.5)' : 'none',
                 }}
             >
                 {/* Overlay ring (detective mode) — Directive 5: colorblind borders */}
@@ -257,7 +322,7 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                         style={{
                             border: `2.5px ${getColorblindBorderStyle(ringColor)} ${ringColor}`,
                             boxShadow: atRisk ? `0 0 8px 2px ${ringColor}` : 'none',
-                            animation: atRisk ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                            animation: atRisk ? 'primer-map-pulse 1.5s ease-in-out infinite' : 'none',
                         }}
                     />
                 )}
@@ -269,7 +334,7 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                         style={{
                             border: '2px solid #ef4444',
                             boxShadow: '0 0 12px 3px rgba(239,68,68,0.5)',
-                            animation: 'pulse 1s ease-in-out infinite',
+                            animation: 'primer-map-pulse 1s ease-in-out infinite',
                         }}
                     />
                 )}
@@ -326,7 +391,7 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                             style={{
                                 border: '1.5px dashed rgba(34,211,238,0.85)',
                                 boxShadow: '0 0 10px rgba(34,211,238,0.32)',
-                                animation: 'pulse 1.8s ease-in-out infinite',
+                                animation: 'primer-map-pulse 1.8s ease-in-out infinite',
                             }}
                         />
                         <div
@@ -379,27 +444,46 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                             />
                         )}
                         <div
-                            className="w-full h-full rounded-full"
+                            className="relative w-full h-full rounded-full"
                             style={{
                                 background: ledColor,
                                 opacity: 0.85,
                                 boxShadow: `0 0 ${selected || hovered ? 8 : 4}px ${ledColor}`,
                                 border: `1px solid rgba(255,255,255,${hovered ? 0.4 : 0.15})`,
                             }}
-                        />
+                        >
+                            <div
+                                className="absolute inset-[1px] rounded-full pointer-events-none"
+                                style={{
+                                    background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.45), transparent 48%)',
+                                    mixBlendMode: 'screen',
+                                    opacity: 0.9
+                                }}
+                            />
+                            {isLocked && (
+                                <div
+                                    className="absolute inset-0 rounded-full pointer-events-none"
+                                    style={{
+                                        background: 'repeating-linear-gradient(135deg, rgba(15,23,42,0.32) 0 2px, transparent 2px 5px)',
+                                        border: '1px solid rgba(226,232,240,0.18)'
+                                    }}
+                                />
+                            )}
+                        </div>
                     </>
                 ) : (
                     // ═══ ACRYLIC TOKEN (XII.K Hack 2 — board game pion) ═══
                     <div
                         className="w-full h-full rounded-lg flex items-center justify-center relative"
                         style={{
-                            background: bgColor || 'rgba(255,255,255,0.18)',
-                            backdropFilter: 'blur(6px)',
+                            background: bgColor
+                                ? `linear-gradient(180deg, rgba(255,255,255,0.14), ${bgColor})`
+                                : 'linear-gradient(180deg, rgba(255,255,255,0.14), rgba(148,163,184,0.22))',
                             borderTop: '1px solid rgba(255,255,255,0.35)',
                             border: `1.5px solid rgba(255,255,255,${hovered ? 0.35 : 0.15})`,
                             boxShadow: hovered
-                                ? '2px 6px 0 rgba(0,0,0,0.18)'
-                                : '2px 4px 0 rgba(0,0,0,0.12)',
+                                ? '0 10px 22px rgba(2,6,23,0.28)'
+                                : '0 6px 14px rgba(2,6,23,0.18)',
                             color: 'currentColor',
                         }}
                     >
@@ -427,6 +511,34 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                                 }}
                             />
                         )}
+                        {narrativeCue && (
+                            <div
+                                data-testid={`narrative-cue-${building.id}`}
+                                className="absolute pointer-events-none rounded-full"
+                                style={{
+                                    left: '50%',
+                                    bottom: -8,
+                                    minWidth: narrativeCue.label.length > 5 ? 34 : 26,
+                                    height: 12,
+                                    padding: '0 5px',
+                                    transform: 'translateX(-50%)',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: narrativeCue.badgeColor,
+                                    color: narrativeCue.textColor,
+                                    border: `1px solid ${narrativeCue.badgeBorder}`,
+                                    boxShadow: `0 0 8px ${narrativeCue.glowColor}`,
+                                }}
+                            >
+                                <span
+                                    className="font-black uppercase"
+                                    style={{ fontSize: 6.5, lineHeight: 1, letterSpacing: '0.12em' }}
+                                >
+                                    {narrativeCue.label}
+                                </span>
+                            </div>
+                        )}
                         {icon || null}
                     </div>
                 )}
@@ -441,8 +553,8 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                     <div className="px-2.5 py-1.5 rounded-lg text-center"
                         style={{
                             background: 'rgba(15,23,42,0.92)',
-                            backdropFilter: 'blur(12px)',
                             border: '1px solid rgba(255,255,255,0.12)',
+                            boxShadow: '0 12px 28px rgba(2,6,23,0.32)',
                         }}
                     >
                         <div className="text-[8px] font-black uppercase tracking-[0.15em] text-emerald-400">
@@ -451,6 +563,25 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                         <div className="text-[11px] font-extrabold text-white leading-tight mt-0.5">
                             {building.name || 'Bangunan'}
                         </div>
+                        {narrativeCue && (
+                            <>
+                                <div
+                                    className="text-[8px] font-black uppercase tracking-[0.18em] mt-1"
+                                    style={{ color: narrativeCue.textColor }}
+                                >
+                                    {narrativeCue.eyebrow}
+                                </div>
+                                <div
+                                    className="text-[9px] font-bold mt-0.5"
+                                    style={{ color: narrativeCue.textColor }}
+                                >
+                                    {narrativeCue.title}
+                                </div>
+                                <div className="text-[9px] font-medium mt-0.5 text-slate-300">
+                                    {narrativeCue.detail}
+                                </div>
+                            </>
+                        )}
                         {building.economyTier && (
                             <div className="text-[9px] font-bold mt-0.5" style={{ color: ledColor }}>
                                 {building.economyTier}

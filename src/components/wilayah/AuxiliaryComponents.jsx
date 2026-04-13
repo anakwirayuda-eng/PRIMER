@@ -1,10 +1,10 @@
 /**
  * @reflection
  * [IDENTITY]: AuxiliaryComponents
- * [PURPOSE]: Helper UI components for WilayahPage HUD (PIS-PK panel, satellite view, IKS board).
+ * [PURPOSE]: Helper HUD components for WilayahPage side panels (PIS-PK detail and IKS board).
  * [STATE]: Stable
  * [ANCHOR]: PISPKPanel
- * [LAST_UPDATE]: 2026-02-18
+ * [LAST_UPDATE]: 2026-04-04
  */
 
 import React from 'react';
@@ -16,23 +16,10 @@ import {
 import { useGame } from '../../context/GameContext.jsx';
 import { INDIVIDUAL_PROFILES } from '../../domains/village/VillageRegistry.js';
 import { PISPK_INDICATORS } from './constants.js';
-import { getAssetUrl, ASSET_KEY } from '../../assets/assets.js';
 
 // ─── Satellite View (clean image, no interactive markers) ───
-export const ImageMapCanvas = ({ mapData: _mapData, selectedBuilding: _selectedBuilding, onSelectBuilding: _onSelectBuilding }) => {
-    return (
-        <div className="relative w-full h-full overflow-hidden">
-            <img
-                src={getAssetUrl(ASSET_KEY.VILLAGE_MAP_SATELLITE)}
-                alt="Peta Wilayah Satelit"
-                className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.3)]" />
-        </div>
-    );
-};
-
 // ─── PIS-PK Detail Panel (designed for dark glassmorphism context) ───
+// PIS-PK detail panel for the Wilayah side drawer.
 export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenIntervention, onOpenWiki }) => {
     const { navigate } = useGame();
 
@@ -191,6 +178,7 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
 };
 
 // ─── IKS Scoreboard (for dark glassmorphism drawer) ───
+// IKS scoreboard for the Wilayah side drawer.
 export const IKSBoardPanel = ({ stats, onOpenAnnouncements }) => {
     return (
         <div className="space-y-3">

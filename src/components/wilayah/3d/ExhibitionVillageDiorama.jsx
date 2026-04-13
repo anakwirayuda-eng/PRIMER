@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 // NOTE: uses useEffect for auto-recovery below
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { Environment, OrbitControls, Html, Bvh } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { InstancedTerrain, TILE_SIZE } from './InstancedTerrain.jsx';
-import { BuildingRenderer } from './BuildingRenderer.jsx';
+import { TILE_SIZE } from './InstancedTerrain.jsx';
+import DioramaSceneCore from './DioramaSceneCore.jsx';
 import { useGameStore } from '../../../store/useGameStore.js';
 import ErrorBoundary from '../../ErrorBoundary.jsx';
 
@@ -13,7 +13,7 @@ const SKY_COLOR = '#dbeafe';
 const FOG_NEAR = 40;
 const FOG_FAR = 150;
 
-function ChronosSun() {
+function ChronosSun({ enableShadow = true }) {
     const lightRef = React.useRef();
     const energy = useGameStore(s => s.player?.profile?.energy ?? 100);
 
@@ -36,14 +36,16 @@ function ChronosSun() {
     return (
         <directionalLight
             ref={lightRef}
-            castShadow
+            castShadow={enableShadow}
             position={[30, 25, 20]}
             intensity={1.5}
             color="#fff5e6"
-            shadow-mapSize={[1024, 1024]}
+            shadow-mapSize={enableShadow ? [1024, 1024] : [1, 1]}
             shadow-bias={-0.0002}
         >
-            <orthographicCamera attach="shadow-camera" args={[-40, 40, 40, -40, 0.1, 80]} />
+            {enableShadow && (
+                <orthographicCamera attach="shadow-camera" args={[-40, 40, 40, -40, 0.1, 80]} />
+            )}
         </directionalLight>
     );
 }
@@ -235,27 +237,18 @@ function WebGLRecoveryBridge({ onContextLost, onContextRestored }) {
     return null;
 }
 
-export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuildingId, zoomRef, activeLayer }) {
+export default function ExhibitionVillageDiorama({
+    mapData,
+    onBuildingSelect,
+    selectedBuildingId,
+    zoomRef,
+    activeLayer,
+    renderTier = 'standard',
+}) {
     const controlsRef = useRef(null);
-    const tooltipGroupRef = useRef(null);
     const [canvasKey, setCanvasKey] = useState(0);
     const [isContextLost, setIsContextLost] = useState(false);
-
-    const handleHover = useCallback((building, position) => {
-        if (!tooltipGroupRef.current) return;
-
-        if (building && position) {
-            tooltipGroupRef.current.position.set(position.x, position.y + 2.5, position.z);
-            tooltipGroupRef.current.visible = true;
-
-            const nameEl = document.getElementById('tt-3d-name');
-            const typeEl = document.getElementById('tt-3d-type');
-            if (nameEl) nameEl.innerText = building.name || '';
-            if (typeEl) typeEl.innerText = (building.type || '').replace(/_/g, ' ').toUpperCase();
-        } else {
-            tooltipGroupRef.current.visible = false;
-        }
-    }, []);
+    const isLowDetail = renderTier === 'low';
 
     const selectedBuildingObj = selectedBuildingId
         ? mapData?.buildings?.find(b => b.id === selectedBuildingId) || null
@@ -263,13 +256,13 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
 
     const handleContextLost = useCallback(() => {
         setIsContextLost(true);
-        console.warn('[WilayahDiorama] WebGL context lost. Diorama interactions are paused until recovery.');
+        console.warn('[ExhibitionVillageDiorama] WebGL context lost. Diorama interactions are paused until recovery.');
     }, []);
 
     const handleContextRestored = useCallback(() => {
         setIsContextLost(false);
         setCanvasKey(prev => prev + 1);
-        console.info('[WilayahDiorama] WebGL context restored. Rebuilding diorama canvas.');
+        console.info('[ExhibitionVillageDiorama] WebGL context restored. Rebuilding diorama canvas.');
     }, []);
 
     const handleCanvasRebuild = useCallback(() => {
@@ -281,7 +274,7 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
     useEffect(() => {
         if (!isContextLost) return;
         const timer = setTimeout(() => {
-            console.info('[WilayahDiorama] Auto-recovering from WebGL context loss...');
+            console.info('[ExhibitionVillageDiorama] Auto-recovering from WebGL context loss...');
             handleCanvasRebuild();
         }, 2000);
         return () => clearTimeout(timer);
@@ -291,13 +284,18 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
 
     return (
         <div className="absolute inset-0 z-0 overflow-hidden cursor-grab active:cursor-grabbing" style={{ background: `linear-gradient(180deg, ${SKY_COLOR} 0%, #f0f4f8 100%)` }}>
-            <ErrorBoundary name="WilayahDiorama">
+            <ErrorBoundary name="ExhibitionVillageDiorama">
                 <Canvas
                     key={canvasKey}
-                    shadows="percentage"
+                    shadows={isLowDetail ? false : 'percentage'}
                     dpr={1}
-                    camera={{ position: [15, 12, 15], fov: 30, far: 150 }}
-                    gl={{ antialias: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false, toneMapping: 3 }}
+                    camera={{ position: [15, 12, 15], fov: 30, far: isLowDetail ? 120 : 150 }}
+                    gl={{
+                        antialias: false,
+                        powerPreference: isLowDetail ? 'low-power' : 'high-performance',
+                        failIfMajorPerformanceCaveat: false,
+                        toneMapping: 3,
+                    }}
                 >
                     <WebGLRecoveryBridge
                         onContextLost={handleContextLost}
@@ -318,7 +316,7 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
                         groundColor="#3a5a28"
                         intensity={0.75}
                     />
-                    <ChronosSun />
+                    <ChronosSun enableShadow={!isLowDetail} />
 
                     <directionalLight
                         position={[-20, 10, -25]}
@@ -326,75 +324,16 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
                         color="#93c5fd"
                     />
 
-                    <Bvh firstHitOnly>
-                        <group position={[0, -1, 0]}>
-                            <mesh position={[0, -0.25, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                                <planeGeometry args={[500, 500]} />
-                                <meshBasicMaterial color={SKY_COLOR} />
-                            </mesh>
-
-                            <InstancedTerrain mapData={mapData} />
-
-                            {mapData.buildings.map((building, idx) => (
-                                <BuildingRenderer
-                                    key={building.id || idx}
-                                    building={building}
-                                    centerX={mapData.centerX}
-                                    centerY={mapData.centerY}
-                                    selected={selectedBuildingId === building.id}
-                                    activeLayer={activeLayer}
-                                    onHover={handleHover}
-                                    onSelect={(selectedBuildingData) => {
-                                        selectedBuildingData.type = selectedBuildingData.type || building.type;
-                                        onBuildingSelect(selectedBuildingData);
-                                    }}
-                                />
-                            ))}
-
-                            <group ref={tooltipGroupRef} visible={false}>
-                                <Html center distanceFactor={15} style={{ pointerEvents: 'none', transition: 'opacity 0.1s' }}>
-                                    <div className="relative transform -translate-y-3">
-                                        <div style={{
-                                            background: 'rgba(15,23,42,0.9)',
-                                            backdropFilter: 'blur(12px)',
-                                            WebkitBackdropFilter: 'blur(12px)',
-                                            color: 'white',
-                                            padding: '4px 12px',
-                                            borderRadius: '10px',
-                                            border: '1px solid rgba(255,255,255,0.15)',
-                                            textAlign: 'center',
-                                            whiteSpace: 'nowrap',
-                                        }}>
-                                            <span id="tt-3d-type" style={{
-                                                display: 'block',
-                                                fontSize: '8px',
-                                                fontWeight: 900,
-                                                color: '#34d399',
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '0.1em',
-                                            }}></span>
-                                            <span id="tt-3d-name" style={{
-                                                display: 'block',
-                                                fontSize: '12px',
-                                                fontWeight: 800,
-                                            }}></span>
-                                        </div>
-                                        <div style={{
-                                            position: 'absolute',
-                                            left: '50%',
-                                            bottom: '-6px',
-                                            transform: 'translateX(-50%)',
-                                            width: 0,
-                                            height: 0,
-                                            borderLeft: '6px solid transparent',
-                                            borderRight: '6px solid transparent',
-                                            borderTop: '7px solid rgba(15,23,42,0.9)',
-                                        }} />
-                                    </div>
-                                </Html>
-                            </group>
-                        </group>
-                    </Bvh>
+                    <DioramaSceneCore
+                        mapData={mapData}
+                        selectedBuildingId={selectedBuildingId}
+                        activeLayer={activeLayer}
+                        onBuildingSelect={onBuildingSelect}
+                        enableTooltip={!isLowDetail}
+                        tooltipDistanceFactor={15}
+                        backgroundColor={SKY_COLOR}
+                        renderTier={renderTier}
+                    />
 
                     <OrbitControls
                         ref={controlsRef}
@@ -410,8 +349,6 @@ export default function WilayahDiorama({ mapData, onBuildingSelect, selectedBuil
                         rotateSpeed={0.5}
                         zoomSpeed={0.8}
                     />
-
-                    <Environment preset="city" />
                 </Canvas>
             </ErrorBoundary>
 

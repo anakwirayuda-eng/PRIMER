@@ -8,7 +8,8 @@
  * [DEPENDS_ON]: buildingScenes.js, EliteCOMBWheel
  */
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     X, Zap, Star, MessageCircle,
     ChevronRight, Search, Eye, CheckCircle, Play,
@@ -17,12 +18,33 @@ import {
 import { getSceneForBuilding, COM_B_SEGMENTS } from './buildingScenes.js';
 import EliteCOMBWheel from './EliteCOMBWheel.jsx';
 import { pickDeterministic } from '../../utils/deterministicRandom.js';
+import { translateWilayahString } from './contentI18n.js';
+
+const BUILDING_ARTWORK_FALLBACKS = {
+    padepokan_dukun: 'toga',
+};
+
+function getBuildingArtworkCandidates(buildingType) {
+    const fallbackType = BUILDING_ARTWORK_FALLBACKS[buildingType];
+    const baseCandidates = [
+        `/assets/buildings/${buildingType}_interior.png`,
+        `/assets/buildings/${buildingType}.png`,
+    ];
+
+    if (!fallbackType || fallbackType === buildingType) return baseCandidates;
+
+    return [
+        ...baseCandidates,
+        `/assets/buildings/${fallbackType}_interior.png`,
+        `/assets/buildings/${fallbackType}.png`,
+    ];
+}
 
 // ═══════════════════════════════════════════════════════════════
 // STATION CARD — a single desk in the denah
 // ═══════════════════════════════════════════════════════════════
 
-function StationCard({ station, index, isActive, isDone, onClick }) {
+function StationCard({ station, index, isActive, isDone, onClick, copy }) {
     return (
         <button
             onClick={onClick}
@@ -59,14 +81,14 @@ function StationCard({ station, index, isActive, isDone, onClick }) {
             <p className={`text-[8px] font-black uppercase tracking-wider text-center leading-tight
                 ${isActive ? 'text-white' : isDone ? 'text-emerald-300' : 'text-white/60 group-hover:text-white/90'}
             `}>
-                {station.label.replace(/^Meja \d: /, '')}
+                {station.label.replace(/^(Meja|Desk) \d:\s*/i, '')}
             </p>
 
             {/* Status */}
             <div className={`mt-1.5 px-2 py-0.5 rounded-full text-[7px] font-bold uppercase tracking-widest
                 ${isDone ? 'bg-emerald-500/20 text-emerald-300' : isActive ? 'bg-white/20 text-white' : 'bg-white/5 text-white/30'}
             `}>
-                {isDone ? 'Selesai' : isActive ? 'Aktif' : `Meja ${index + 1}`}
+                {isDone ? copy.statusDone : isActive ? copy.statusActive : copy.stationStep(index + 1)}
             </div>
         </button>
     );
@@ -92,7 +114,7 @@ function FlowArrow({ direction = 'right' }) {
 // ACTION PANEL (Right sidebar when station selected)
 // ═══════════════════════════════════════════════════════════════
 
-function ActionPanel({ station, energy, completedActions, onAction, onBack }) {
+function ActionPanel({ station, energy, completedActions, onAction, onBack, copy }) {
     return (
         <div className="flex flex-col h-full">
             {/* Header */}
@@ -111,7 +133,7 @@ function ActionPanel({ station, energy, completedActions, onAction, onBack }) {
 
             {/* Actions list */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                <h5 className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-2">Aksi Tersedia</h5>
+                <h5 className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-2">{copy.actionsAvailable}</h5>
                 {station.actions.map((action) => {
                     const isDone = completedActions.has(action.id);
                     const canDo = energy >= action.energy && !isDone;
@@ -146,7 +168,7 @@ function ActionPanel({ station, energy, completedActions, onAction, onBack }) {
                 {station.findings && station.findings.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-white/10">
                         <h5 className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-2 flex items-center gap-1">
-                            <Search size={10} /> Temuan
+                            <Search size={10} /> {copy.findings}
                         </h5>
                         {station.findings.map((f, i) => {
                             const sevMap = {
@@ -169,7 +191,7 @@ function ActionPanel({ station, energy, completedActions, onAction, onBack }) {
                                     ) : (
                                         <div className="flex items-center gap-2">
                                             <Eye size={10} className="text-white/20" />
-                                            <span className="text-[9px] text-white/20 italic">Lakukan aksi untuk mengungkap...</span>
+                                            <span className="text-[9px] text-white/20 italic">{copy.revealHint}</span>
                                         </div>
                                     )}
                                 </div>
@@ -237,8 +259,14 @@ function DialogPanel({ npc, dialog, onChoice, onDismiss }) {
 // MAIN BUILDING GAME PANEL
 // ═══════════════════════════════════════════════════════════════
 
-export default function BuildingGamePanel({ buildingType, energy, onAction, onClose, onXpGain, onComplete, onTriggerScenario }) {
-    const scene = getSceneForBuilding(buildingType);
+export default function BuildingGamePanel({ buildingType, buildingName = null, energy, onAction, onClose, onXpGain, onComplete, onTriggerScenario }) {
+    const { t } = useTranslation();
+    const tr = useCallback(
+        (key, fallback, options = {}) => translateWilayahString(t, key, fallback, options),
+        [t]
+    );
+    const scene = useMemo(() => getSceneForBuilding(buildingType, t), [buildingType, t]);
+    const artworkCandidates = getBuildingArtworkCandidates(buildingType);
     const [activeStation, setActiveStation] = useState(null);
     const [completedActions, setCompletedActions] = useState(new Set());
     const [completedStations, setCompletedStations] = useState(new Set());
@@ -250,6 +278,37 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
     const [showDiagnostic, setShowDiagnostic] = useState(false);
     const [pendingScenario, setPendingScenario] = useState(null);
     const dialogShownRef = useRef(new Set());
+    const copy = useMemo(() => ({
+        exit: tr('wilayahContent.ui.buildingGamePanel.exit', 'Keluar'),
+        sceneReference: tr(
+            'wilayahContent.ui.buildingGamePanel.sceneReference',
+            '{{title}} mode | {{subtitle}}',
+            { title: scene?.title, subtitle: scene?.subtitle }
+        ),
+        barrierCount: (count) => tr(
+            'wilayahContent.ui.buildingGamePanel.barrierCount',
+            '{{count}} hambatan',
+            { count }
+        ),
+        statusDone: tr('wilayahContent.ui.buildingGamePanel.statusDone', 'Selesai'),
+        statusActive: tr('wilayahContent.ui.buildingGamePanel.statusActive', 'Aktif'),
+        stationStep: (index) => tr('wilayahContent.ui.buildingGamePanel.stationStep', 'Meja {{index}}', { index }),
+        actionsAvailable: tr('wilayahContent.ui.buildingGamePanel.actionsAvailable', 'Aksi Tersedia'),
+        findings: tr('wilayahContent.ui.buildingGamePanel.findings', 'Temuan'),
+        revealHint: tr('wilayahContent.ui.buildingGamePanel.revealHint', 'Lakukan aksi untuk mengungkap...'),
+        enterDoor: tr('wilayahContent.ui.buildingGamePanel.enterDoor', 'Pintu Masuk'),
+        exitDoor: tr('wilayahContent.ui.buildingGamePanel.exitDoor', 'Pintu Keluar'),
+        linkedCases: tr('wilayahContent.ui.buildingGamePanel.linkedCases', 'Kasus Terkait'),
+        close: tr('wilayahContent.ui.buildingGamePanel.close', 'Tutup'),
+        scenarioLeavePrompt: tr(
+            'wilayahContent.ui.buildingGamePanel.scenarioLeavePrompt',
+            'Membuka skenario ini akan meninggalkan denah gedung.'
+        ),
+        cancel: tr('wilayahContent.ui.buildingGamePanel.cancel', 'Batal'),
+        start: tr('wilayahContent.ui.buildingGamePanel.start', 'Mulai'),
+        completionReputation: tr('wilayahContent.ui.buildingGamePanel.completionReputation', 'Reputasi'),
+        completionButton: tr('wilayahContent.ui.buildingGamePanel.completionButton', 'Selesai')
+    }), [scene?.subtitle, scene?.title, tr]);
 
     // Auto-triggered NPC dialogs
     useEffect(() => {
@@ -311,7 +370,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                 setTimeout(() => setShowCompletion(true), 600);
             }
         }
-    }, [buildingType, energy, onAction, onXpGain, completedActions, completedStations, discoveredBarriers, scene]);
+    }, [buildingType, energy, onAction, onComplete, onXpGain, completedActions, completedStations, discoveredBarriers, scene]);
 
     const handleDialogChoice = useCallback((choice) => {
         if (choice.xp) {
@@ -344,6 +403,8 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
     }
     const topRow = scene.stations.slice(0, topCount);
     const bottomRow = scene.stations.slice(topCount, totalStations);
+    const displayTitle = buildingName || scene.title;
+    const showSceneReference = Boolean(buildingName && buildingName !== scene.title);
 
     return (
         <div className="fixed inset-0 z-50 flex flex-col bg-slate-950/85 backdrop-blur-xl text-white font-sans overflow-hidden">
@@ -352,14 +413,16 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
             <div className="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-black/80 backdrop-blur-md border-b border-white/10 z-10">
                 <button onClick={onClose}
                     className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest">
-                    <ArrowLeft size={14} /> Keluar
+                    <ArrowLeft size={14} /> {copy.exit}
                 </button>
 
                 <div className="flex-1 flex items-center gap-2 justify-center">
                     <span className="text-xl">{scene.theme.icon}</span>
                     <div>
-                        <h2 className="text-sm font-black text-white tracking-tight">{scene.title}</h2>
-                        <p className="text-[8px] font-bold text-white/40 uppercase tracking-widest">{scene.subtitle}</p>
+                        <h2 className="text-sm font-black text-white tracking-tight">{displayTitle}</h2>
+                        <p className="text-[8px] font-bold text-white/40 uppercase tracking-widest">
+                            {showSceneReference ? copy.sceneReference : scene.subtitle}
+                        </p>
                     </div>
                 </div>
 
@@ -373,7 +436,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                     {discoveredBarriers.length > 0 && (
                         <button onClick={() => setShowDiagnostic(true)}
                             className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-[10px] font-black text-purple-400 hover:bg-purple-500/20 transition-colors">
-                            <Target size={12} /> {discoveredBarriers.length} Barrier
+                            <Target size={12} /> {copy.barrierCount(discoveredBarriers.length)}
                         </button>
                     )}
                 </div>
@@ -391,11 +454,23 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                 <div className={`flex-1 relative transition-all duration-500 ${panelOpen ? 'mr-0' : ''}`}>
                     {/* Painted background */}
                     <img
-                        src={`/assets/buildings/${buildingType}_interior.png`}
+                        src={artworkCandidates[0]}
                         alt=""
                         className="absolute inset-0 w-full h-full object-cover opacity-30"
                         draggable={false}
-                        onError={(e) => { e.target.style.display = 'none'; }}
+                        onError={(e) => {
+                            const target = e.currentTarget;
+                            const currentIndex = Number(target.dataset.assetIndex || '0');
+                            const nextIndex = currentIndex + 1;
+
+                            if (nextIndex >= artworkCandidates.length) {
+                                target.style.display = 'none';
+                                return;
+                            }
+
+                            target.dataset.assetIndex = String(nextIndex);
+                            target.src = artworkCandidates[nextIndex];
+                        }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/40 to-slate-950/80" />
 
@@ -412,6 +487,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                                         isActive={activeStation?.id === st.id}
                                         isDone={completedStations.has(st.id)}
                                         onClick={() => setActiveStation(st)}
+                                        copy={copy}
                                     />
                                     {i < topRow.length - 1 && <FlowArrow direction="right" />}
                                 </React.Fragment>
@@ -438,6 +514,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                                                     isActive={activeStation?.id === st.id}
                                                     isDone={completedStations.has(st.id)}
                                                     onClick={() => setActiveStation(st)}
+                                                    copy={copy}
                                                 />
                                                 {i < bottomRow.length - 1 && <FlowArrow direction="left" />}
                                             </React.Fragment>
@@ -450,11 +527,11 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                         {/* "Pintu Masuk / Keluar" labels */}
                         <div className="flex justify-between w-[460px] mt-8 opacity-30 pointer-events-none">
                             <div className="text-[9px] font-bold text-white uppercase tracking-widest flex items-center gap-1">
-                                ↗ Pintu Masuk
+                                ↗ {copy.enterDoor}
                             </div>
                             {bottomRow.length > 0 && (
                                 <div className="text-[9px] font-bold text-white uppercase tracking-widest flex items-center gap-1">
-                                    Pintu Keluar ↘
+                                    {copy.exitDoor} ↘
                                 </div>
                             )}
                         </div>
@@ -489,7 +566,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                         <div className="absolute bottom-4 right-4 z-20">
                             <div className="p-3 rounded-xl bg-black/60 backdrop-blur-md border border-white/10">
                                 <h5 className="text-[8px] font-black text-purple-300 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-                                    <Shield size={8} /> Kasus Terkait
+                                    <Shield size={8} /> {copy.linkedCases}
                                 </h5>
                                 <div className="flex flex-col gap-1">
                                     {scene.linkedScenarios.map(s => (
@@ -513,6 +590,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                             completedActions={completedActions}
                             onAction={handleAction}
                             onBack={() => setActiveStation(null)}
+                            copy={copy}
                         />
                     </div>
                 )}
@@ -534,7 +612,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                     <div className="relative">
                         <button onClick={() => setShowDiagnostic(false)}
                             className="absolute -top-10 right-0 flex items-center gap-2 text-white/60 hover:text-white px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-xs font-bold uppercase tracking-widest">
-                            Tutup <X size={14} />
+                            {copy.close} <X size={14} />
                         </button>
                         <EliteCOMBWheel activeBarriers={discoveredBarriers} size={500} />
                     </div>
@@ -547,15 +625,15 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                     <div className="bg-slate-900 border border-purple-500/30 rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center">
                         <div className="w-14 h-14 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">⚡</div>
                         <h3 className="text-lg font-black text-white mb-2">{pendingScenario.replace(/_/g, ' ').toUpperCase()}</h3>
-                        <p className="text-xs text-white/60 mb-6">Membuka skenario ini akan meninggalkan denah gedung.</p>
+                        <p className="text-xs text-white/60 mb-6">{copy.scenarioLeavePrompt}</p>
                         <div className="flex gap-3">
                             <button onClick={() => setPendingScenario(null)}
                                 className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 font-bold text-xs transition-all">
-                                Batal
+                                {copy.cancel}
                             </button>
                             <button onClick={() => { onTriggerScenario?.(pendingScenario); setPendingScenario(null); }}
                                 className="flex-1 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs transition-all flex items-center justify-center gap-2">
-                                <Play size={14} /> Mulai
+                                <Play size={14} /> {copy.start}
                             </button>
                         </div>
                     </div>
@@ -570,11 +648,11 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                         <h3 className="text-2xl font-black text-white mb-3">{scene.completionReward.message}</h3>
                         <div className="flex items-center justify-center gap-4 mb-8">
                             <span className="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-[11px] font-black text-emerald-300 uppercase tracking-widest">+{scene.completionReward.xp} XP</span>
-                            <span className="px-4 py-2 rounded-xl bg-purple-500/20 border border-purple-500/40 text-[11px] font-black text-purple-300 uppercase tracking-widest">+{scene.completionReward.reputation} Reputasi</span>
+                            <span className="px-4 py-2 rounded-xl bg-purple-500/20 border border-purple-500/40 text-[11px] font-black text-purple-300 uppercase tracking-widest">+{scene.completionReward.reputation} {copy.completionReputation}</span>
                         </div>
                         <button onClick={() => { setShowCompletion(false); onClose?.(); }}
                             className="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl text-xs uppercase tracking-widest transition-all hover:scale-105 flex items-center gap-2 mx-auto">
-                            <Sparkles size={16} /> SELESAI
+                            <Sparkles size={16} /> {copy.completionButton}
                         </button>
                     </div>
                 </div>
