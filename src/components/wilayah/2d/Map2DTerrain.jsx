@@ -1,11 +1,11 @@
 /**
  * @reflection
  * [IDENTITY]: Map2DTerrain
- * [PURPOSE]: Canvas-based 2D terrain renderer for helicopter-view blueprint map.
- *            Single <canvas> element replaces hundreds of SVG <rect> nodes.
- *            Guardrail #2: MURNI canvas, no per-tile DOM nodes.
- * [STATE]: Production
- * [DEPENDS_ON]: map-utils.js (tile data for road/terrain positions)
+ * [PURPOSE]: Canonical canvas terrain renderer for the 2D Wilayah blueprint.
+ *            Owns the Hybrid A+C terrain language: editorial cartography below,
+ *            data-readable overlays above. Guardrail #2: no per-tile DOM nodes.
+ * [STATE]: Runtime-Audited
+ * [DEPENDS_ON]: constants.js (tile data for road/terrain positions)
  */
 
 import React, { useRef, useEffect, useMemo } from 'react';
@@ -13,18 +13,31 @@ import { TILE_TYPES } from '../constants.js';
 
 // ═══ TERRAIN COLOR PALETTE — Blueprint XII.B ═══
 const TERRAIN_COLORS = {
-    water:    '#4a90d9',   // Biru cerah (Sungai)
-    forest:   '#2d5a27',   // Gelap (zona bahaya)
-    sawah:    '#a8d86e',   // Hijau muda (padi tumbuh)
-    road:     '#8c8a85',   // Abu netral warm (jalan aspal)
-    dirtRoad: '#c4a882',   // Coklat sandy (jalan tanah)
-    flower:   '#e8a0c8',   // Pink accent (bunga dekorasi)
-    bridge:   '#a0785a',   // Kayu tua
+    water: '#3f667f',
+    forest: '#1d2e28',
+    sawah: '#617465',
+    road: '#5e676f',
+    dirtRoad: '#786a5b',
+    flower: '#8d6b79',
+    bridge: '#8b7356',
+    base: '#18242d',
+    contour: 'rgba(187,210,221,0.08)',
+    grid: 'rgba(148,163,184,0.07)',
+    axis: 'rgba(196,211,219,0.36)',
+};
+
+const LAYER_WASH = {
+    general: null,
+    pispk: 'rgba(56,189,248,0.045)',
+    surveillance: 'rgba(225,29,72,0.062)',
+    psn: 'rgba(163,230,53,0.048)',
+    phbs: 'rgba(244,114,182,0.04)',
+    perilaku: 'rgba(129,140,248,0.048)',
 };
 
 // Colors are now hex strings — no rgbaStr needed
 
-export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal', showBridgeStatusDetails = true }) {
+export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal', showBridgeStatusDetails = true, activeLayer = 'general' }) {
     const { tiles, width, height, centerX } = mapData;
     const canvasRef = useRef(null);
 
@@ -79,6 +92,8 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
         const ctx = canvas.getContext('2d');
         ctx.scale(dpr, dpr);
         ctx.clearRect(0, 0, pxW, pxH);
+        ctx.fillStyle = TERRAIN_COLORS.base;
+        ctx.fillRect(0, 0, pxW, pxH);
 
         // ═══ BATCH RENDER: one fillStyle set per terrain type ═══
         const paintBatch = (coords, color) => {
@@ -143,17 +158,17 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
 
         // ═══ DIRECTIVE 2: 2.5D Elevation Shadows (sawah/hutan edges) ═══
         ctx.save();
-        ctx.shadowColor = '#2d5a27';
+        ctx.shadowColor = 'rgba(17,24,39,0.4)';
         ctx.shadowBlur = 4;
         ctx.shadowOffsetY = 2;
         // Shadow along forest edge (x ≈ 15)
-        ctx.fillStyle = 'rgba(45,90,39,0.15)';
+        ctx.fillStyle = 'rgba(15,23,42,0.12)';
         for (let y = 0; y < height; y++) {
             const edgeX = 15 + Math.sin(y * 0.25) * 4;
             ctx.fillRect(Math.floor(edgeX) * cellSize, y * cellSize, cellSize * 2, cellSize);
         }
         // Shadow along sawah top edge (y ≈ 82)
-        ctx.shadowColor = '#6b9e4f';
+        ctx.shadowColor = 'rgba(107,114,128,0.22)';
         for (let x = 15; x < 140; x += 2) {
             ctx.fillRect(x * cellSize, 82 * cellSize, cellSize * 2, cellSize);
         }
@@ -170,7 +185,7 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
             152 * cellSize, 119 * cellSize   // End
         );
         ctx.lineWidth = 6 * cellSize;
-        ctx.strokeStyle = '#4a90d9';
+        ctx.strokeStyle = TERRAIN_COLORS.water;
         ctx.lineCap = 'round';
         ctx.stroke();
         // Shimmer highlight
@@ -182,7 +197,7 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
             152 * cellSize, 119 * cellSize
         );
         ctx.lineWidth = 2 * cellSize;
-        ctx.strokeStyle = 'rgba(109,179,242,0.35)'; // #6db3f2 shimmer
+        ctx.strokeStyle = 'rgba(125,211,252,0.18)';
         ctx.stroke();
         ctx.restore();
 
@@ -198,7 +213,7 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
             width * cellSize, 25 * cellSize + cellSize / 2
         );
         ctx.lineWidth = cellSize * 1.8;
-        ctx.strokeStyle = '#8c8a85';
+        ctx.strokeStyle = TERRAIN_COLORS.road;
         ctx.stroke();
         // Road center line
         ctx.beginPath();
@@ -223,12 +238,12 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
             80 * cellSize + cellSize / 2, 115 * cellSize
         );
         ctx.lineWidth = cellSize * 1.5;
-        ctx.strokeStyle = '#8c8a85';
+        ctx.strokeStyle = TERRAIN_COLORS.road;
         ctx.stroke();
         ctx.restore();
 
         // ═══ DIRECTIVE 1: Contour lines (XII.K Hack 1) ═══
-        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.strokeStyle = TERRAIN_COLORS.contour;
         ctx.lineWidth = 0.5;
         // Horizontal contours in sawah zone
         for (let y = 84; y < height; y += 4) {
@@ -240,9 +255,17 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
             ctx.stroke();
         }
 
+        const layerWash = LAYER_WASH[activeLayer] || null;
+        if (layerWash) {
+            ctx.save();
+            ctx.fillStyle = layerWash;
+            ctx.fillRect(0, 0, pxW, pxH);
+            ctx.restore();
+        }
+
         // ═══ GRID LINES (ultra-subtle blueprint feel) ═══
         const gridStep = cellSize * 5;
-        ctx.strokeStyle = 'rgba(120,100,70,0.08)';  // Blueprint XII.B: warm brown grid
+        ctx.strokeStyle = TERRAIN_COLORS.grid;
         ctx.lineWidth = 0.5;
         ctx.beginPath();
         for (let x = 0; x <= pxW; x += gridStep) {
@@ -256,7 +279,7 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
         ctx.stroke();
 
         // ═══ AXIS LABEL ═══
-        ctx.fillStyle = 'rgba(80,60,30,0.4)';  // Blueprint XII.B: warm brown labels
+        ctx.fillStyle = TERRAIN_COLORS.axis;
         ctx.font = '900 8px monospace';
         ctx.textAlign = 'center';
         ctx.fillText('JALAN UTAMA', (centerX || width / 2) * cellSize, 12);
@@ -278,7 +301,7 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
             }
         }
 
-    }, [tileClassification, width, height, cellSize, centerX, bridgeStatus, showBridgeStatusDetails]);
+    }, [tileClassification, width, height, cellSize, centerX, bridgeStatus, showBridgeStatusDetails, activeLayer]);
 
     return (
         <canvas

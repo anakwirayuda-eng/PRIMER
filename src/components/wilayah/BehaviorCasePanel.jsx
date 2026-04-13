@@ -26,6 +26,7 @@ import { getMiniGameForScenario } from '../../game/MiniGameLibrary.js';
 import { getDiseaseScenarioById } from '../../content/scenarios/DiseaseScenarios.js';
 import MiniGamePanel from './MiniGamePanel.jsx';
 import { resolveBehaviorCaseScenarioId } from '../../utils/behaviorCaseRuntime.js';
+import { confirmToast } from '../../utils/ToastManager.js';
 
 // ═══════════════════════════════════════════════════════════════
 // 📚 COM-B DICTIONARY (with hover-education descriptions)
@@ -785,10 +786,11 @@ export default function BehaviorCasePanel({ building, familyData, day, onClose, 
         else setCaseInstance(advanced);
     }, []);
 
-    const handleClose = useCallback(() => {
+    const handleClose = useCallback(async () => {
         // Guard: confirm before discarding in-progress case
         if (caseInstance && !caseInstance.completed && caseInstance.phasesCompleted?.length > 0) {
-            if (!window.confirm('⚠️ Investigasi sedang berjalan. Keluar sekarang akan menghapus progres kasus ini. Lanjutkan?')) {
+            const shouldClose = await confirmToast('Investigasi sedang berjalan. Keluar sekarang akan menghapus progres kasus ini. Lanjutkan?', 'warning');
+            if (!shouldClose) {
                 return;
             }
         }

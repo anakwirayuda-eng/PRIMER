@@ -3,11 +3,14 @@
  * [IDENTITY]: buildingScenes.js
  * [PURPOSE]: Data-driven scene definitions for building interior gameplay.
  *            Each building has stations (clickable hotspots), NPCs with dialog,
- *            and linked UKM scenarios with COM-B barriers.
- * [STATE]: New
- * [ANCHOR]: BUILDING_SCENES, GAME_ENABLED_BUILDINGS
+ *            linked UKM scenarios with COM-B barriers, and alias wiring for
+ *            topology types that reuse an existing playable scene.
+ * [STATE]: Runtime-Audited
+ * [ANCHOR]: BUILDING_SCENES, GAME_ENABLED_BUILDINGS, BUILDING_SCENE_ALIASES
  * [DEPENDS_ON]: constants.js
  */
+
+import { localizeBuildingScene } from './contentI18n.js';
 
 // ═══════════════════════════════════════════════════════════════
 // BUILDING SCENE DEFINITIONS
@@ -16,8 +19,23 @@
 export const GAME_ENABLED_BUILDINGS = [
     'posyandu', 'school', 'farm', 'pustu', 'polindes',
     'pos_gizi', 'pos_ukk', 'kb_post', 'mck', 'pamsimas',
-    'bank_sampah', 'balai_desa', 'market', 'warung', 'toga'
+    'bank_sampah', 'balai_desa', 'market', 'warung', 'toga',
+    'rtk', 'padepokan_dukun'
 ];
+
+const BUILDING_SCENE_ALIASES = {
+    alun_alun: 'balai_desa',
+    apotek: 'pustu',
+    kantor_desa: 'balai_desa',
+    dashat: 'pos_gizi',
+    lapangan: 'balai_desa',
+    pasar_hewan: 'market',
+    pesantren: 'school',
+    pos_ronda: 'warung',
+    tk: 'school',
+    toko_kelontong: 'warung',
+    well: 'pamsimas',
+};
 
 export const BUILDING_SCENES = {
     // ─── P0: POSYANDU ────────────────────────────────────────
@@ -1072,6 +1090,90 @@ export const BUILDING_SCENES = {
     },
 
     // ─── P3: MARKET (Pasar Desa) ────────────────────────────
+    rtk: {
+        title: 'RTK (Rumah Tunggu Kelahiran)',
+        subtitle: 'Maternal Referral Hub - staging aman sebelum rujukan persalinan',
+        theme: { bg: 'from-fuchsia-950 via-rose-950 to-slate-950', accent: 'fuchsia', icon: '🚑' },
+        ambience: 'Rumah singgah sederhana dekat jalur utama desa. Ada kasur lipat, tas siaga, papan P4K, dan radio komunikasi rujukan.',
+        stations: [
+            {
+                id: 'triage_rtk', label: 'Sudut Triage Ibu Risiko Tinggi', icon: '🩺',
+                description: 'Pemeriksaan cepat ibu hamil yang menunggu rujukan: tekanan darah, kontraksi, perdarahan, dan kesiapan transport.',
+                position: { col: 1, row: 1 },
+                actions: [
+                    { id: 'rapid_triage', label: 'Triage Cepat Ibu Masuk', energy: 6, xp: 20, type: 'investigate' },
+                    { id: 'danger_signs', label: 'Verifikasi Tanda Bahaya Maternal', energy: 5, xp: 20, type: 'investigate' },
+                    { id: 'stabilize_waiting', label: 'Stabilisasi Sambil Menunggu Ambulans', energy: 8, xp: 25, type: 'task' }
+                ],
+                findings: [
+                    { text: 'Bu Tini (G5P4, riwayat SC) datang dengan kontraksi teratur - tidak boleh menunggu di rumah lagi.', severity: 'critical' },
+                    { text: 'Satu ibu hamil 17 tahun tampak cemas, tekanan darah 150/100, kaki bengkak bilateral.', severity: 'critical' },
+                    { text: 'Tas siaga 2 keluarga belum lengkap - tidak ada kain bayi dan dokumen JKN.', severity: 'warning' }
+                ]
+            },
+            {
+                id: 'logistik_rujukan', label: 'Logistik Rujukan & Tas Siaga', icon: '🎒',
+                description: 'Area simpan tas siaga, surat rujukan, donor darah cadangan, dan perlengkapan ibu-neonatus.',
+                position: { col: 2, row: 1 },
+                actions: [
+                    { id: 'check_referral_pack', label: 'Cek Tas Siaga & Dokumen Rujukan', energy: 5, xp: 15, type: 'task' },
+                    { id: 'blood_donor_map', label: 'Peta Donor Darah Siaga', energy: 5, xp: 18, type: 'investigate' },
+                    { id: 'jkn_verify', label: 'Verifikasi JKN / Jampersal', energy: 4, xp: 12, type: 'investigate' }
+                ],
+                findings: [
+                    { text: 'Nomor donor darah golongan O aktif, tetapi keluarga belum tahu cara menghubungi saat malam.', severity: 'warning' },
+                    { text: 'Surat rujukan satu ibu belum ditandatangani - berisiko menunda masuk IGD RS.', severity: 'critical' },
+                    { text: 'Tas siaga Bu Rina lengkap: buku KIA, kain bayi, pembalut nifas, dan kartu JKN tersedia.', severity: 'good' }
+                ]
+            },
+            {
+                id: 'transport_desk', label: 'Meja Transport & Komunikasi', icon: '📻',
+                description: 'Koordinasi sopir desa, ambulans, kontak IGD RS, dan jalur evakuasi ketika jembatan atau hujan mengganggu rujukan.',
+                position: { col: 3, row: 1 },
+                actions: [
+                    { id: 'call_hospital', label: 'Konfirmasi Tempat Tidur RS Rujukan', energy: 5, xp: 18, type: 'dialog' },
+                    { id: 'transport_plan', label: 'Susun Jalur Evakuasi Malam Hari', energy: 7, xp: 22, type: 'task' },
+                    { id: 'brief_family', label: 'Briefing Keluarga Sebelum Berangkat', energy: 6, xp: 18, type: 'dialog' }
+                ],
+                findings: [
+                    { text: 'Sopir ambulans siaga, tetapi jalur jembatan timur rawan putus jika hujan deras malam ini.', severity: 'warning' },
+                    { text: 'IGD RS meminta laporan preeklampsia dikirim sebelum pasien berangkat agar magnesium sulfate siap.', severity: 'good' },
+                    { text: 'Suami Bu Tini masih ragu karena takut biaya rujukan membengkak.', severity: 'critical' }
+                ]
+            }
+        ],
+        npcs: [
+            {
+                id: 'bidan_referal', name: 'Bidan Rere', avatar: '👩‍⚕️', role: 'Koordinator RTK',
+                greeting: 'Dok, RTK ini jadi titik penyangga terakhir sebelum ibu risiko tinggi dirujuk. Kalau telat sedikit saja, akibatnya bisa fatal.',
+                dialogs: [
+                    {
+                        trigger: 'auto', text: 'Bu Tini sudah mau tinggal di RTK, tapi keluarga terus bilang "nanti saja kalau benar-benar sakit". Padahal riwayat SC dan jarak ke RS 90 menit kalau hujan.',
+                        choices: [
+                            { text: 'Kita pakai RTK sebagai bukti: semua faktor risiko dan jarak harus dijelaskan terbuka', action: 'focus_station', target: 'triage_rtk' },
+                            { text: 'Saya bantu negosiasi keluarga dan tekankan bahwa RTK justru mencegah rujukan terlambat', action: 'add_task', target: 'family_briefing_rtk' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'suami_tini', name: 'Pak Yono', avatar: '👨', role: 'Suami Ibu Hamil Risiko Tinggi',
+                greeting: 'Dok, saya takut kalau dirujuk ke RS nanti biayanya besar dan keluarga bingung ikutnya.',
+                dialogs: [
+                    {
+                        trigger: 'transport_desk_done', text: 'Kalau memang RTK ini bikin semua siap sebelum darurat, saya mau dengar lagi. Yang penting istri saya jangan dipingpong.',
+                        choices: [
+                            { text: 'RTK justru mencegah ibu dipingpong - semua dokumen, donor, dan jalur rujukan disiapkan dari awal', action: 'educate', xp: 18 },
+                            { text: 'Mari kita cek bersama tas siaga dan nomor RS supaya Bapak yakin', action: 'focus_station', target: 'logistik_rujukan' }
+                        ]
+                    }
+                ]
+            }
+        ],
+        linkedScenarios: ['dukun_beranak', 'teen_pregnancy'],
+        completionReward: { xp: 115, reputation: 14, message: 'Operasi RTK selesai! Jalur rujukan maternal desa kini lebih siap dan keluarga mulai percaya pada rencana persalinan aman.' }
+    },
+
     market: {
         title: 'Pasar Desa Sukamaju',
         subtitle: 'Keamanan Pangan & Kesehatan Lingkungan Pasar',
@@ -1283,6 +1385,90 @@ export const BUILDING_SCENES = {
         ],
         linkedScenarios: ['jamu_berbahaya'],
         completionReward: { xp: 100, reputation: 10, message: 'Kunjungan TOGA selesai! Katalog tanaman obat berbasis bukti telah diperbarui.' }
+    },
+
+    padepokan_dukun: {
+        title: 'Padepokan Dukun Mbah Surti',
+        subtitle: 'Negosiasi tradisi vs evidence - kemitraan agar warga tetap selamat',
+        theme: { bg: 'from-violet-950 via-fuchsia-950 to-slate-950', accent: 'violet', icon: '🕯️' },
+        ambience: 'Pendopo kayu remang dengan asap dupa, rak botol jamu, tikar konseling, dan sudut ritual yang sering didatangi keluarga cemas.',
+        stations: [
+            {
+                id: 'ruang_ritual', label: 'Ruang Ritual & Konsultasi', icon: '🕯️',
+                description: 'Tempat warga meminta penjelasan spiritual untuk kehamilan, panas anak, atau penyakit yang dianggap kiriman.',
+                position: { col: 1, row: 1 },
+                actions: [
+                    { id: 'belief_mapping', label: 'Peta Keyakinan Keluarga', energy: 5, xp: 18, type: 'investigate' },
+                    { id: 'danger_sign_bridge', label: 'Jembatani Tanda Bahaya dengan Bahasa Budaya', energy: 8, xp: 25, type: 'dialog' },
+                    { id: 'respectful_confront', label: 'Konfrontasi Mitos Secara Hormat', energy: 7, xp: 22, type: 'dialog' }
+                ],
+                findings: [
+                    { text: 'Keluarga Bu Sari percaya perdarahan pascapersalinan adalah "darah kotor keluar", bukan bahaya.', severity: 'critical' },
+                    { text: 'Dua keluarga mau mendengar jika Mbah Surti sendiri yang menyebut kapan harus ke bidan/RS.', severity: 'good' },
+                    { text: 'Mitos "kalau dirujuk berarti ibu lemah" masih dominan di sekitar padepokan.', severity: 'warning' }
+                ]
+            },
+            {
+                id: 'meja_racikan', label: 'Meja Racikan Jamu & Pantangan', icon: '🫖',
+                description: 'Racikan herbal, minyak gosok, dan daftar pantangan makanan untuk ibu hamil, nifas, dan anak demam.',
+                position: { col: 2, row: 1 },
+                actions: [
+                    { id: 'review_herbs', label: 'Telaah Racikan Herbal yang Dipakai Warga', energy: 6, xp: 20, type: 'investigate' },
+                    { id: 'interaction_screen', label: 'Screening Interaksi Jamu vs Obat', energy: 7, xp: 22, type: 'investigate' },
+                    { id: 'safe_substitution', label: 'Negosiasikan Herbal Aman sebagai Pendamping, bukan Pengganti', energy: 8, xp: 25, type: 'dialog' }
+                ],
+                findings: [
+                    { text: 'Ada ramuan pahit untuk ibu hamil dengan edema yang justru menunda pemeriksaan preeklampsia.', severity: 'critical' },
+                    { text: 'Sebagian herbal seperti jahe hangat aman jika tidak dipakai menggantikan terapi inti.', severity: 'good' },
+                    { text: 'Pantangan protein hewani pada nifas masih diajarkan - risiko memperlambat pemulihan ibu.', severity: 'warning' }
+                ]
+            },
+            {
+                id: 'balai_mediasi', label: 'Balai Mediasi Bidan-Dukun', icon: '🤝',
+                description: 'Ruang musyawarah kecil untuk menyusun batas peran: dukun mendampingi spiritual, bidan menangani medis dan rujukan.',
+                position: { col: 3, row: 1 },
+                actions: [
+                    { id: 'partnership_charter', label: 'Susun Kesepakatan Kemitraan Dukun-Bidan', energy: 8, xp: 25, type: 'task' },
+                    { id: 'referral_trigger', label: 'Latih Trigger Rujukan Cepat', energy: 6, xp: 20, type: 'task' },
+                    { id: 'public_message', label: 'Rancang Pesan Publik Tradisi Aman + Evidence', energy: 6, xp: 18, type: 'dialog' }
+                ],
+                findings: [
+                    { text: 'Mbah Surti mau tetap memimpin doa dan pijat ringan, asalkan bidan tidak merendahkan perannya di depan warga.', severity: 'info' },
+                    { text: 'Belum ada daftar jelas kapan dukun wajib berhenti dan langsung menyerahkan ke bidan.', severity: 'critical' },
+                    { text: 'Tokoh agama lokal siap mendukung pesan "tradisi boleh, bahaya jangan ditunda".', severity: 'good' }
+                ]
+            }
+        ],
+        npcs: [
+            {
+                id: 'mbah_surti', name: 'Mbah Surti', avatar: '🧓', role: 'Dukun Beranak / Pengobat Tradisional',
+                greeting: 'Dokter, saya tidak mau disebut penyebab celaka warga. Tapi orang datang ke sini karena mereka merasa didengar.',
+                dialogs: [
+                    {
+                        trigger: 'auto', text: 'Kalau bidan datang cuma untuk melarang, warga akan makin sembunyi-sembunyi. Tapi kalau saya diajak kerja sama, saya bisa bantu bilang kapan harus dirujuk.',
+                        choices: [
+                            { text: 'Kita bangun kemitraan: Mbah pegang dukungan budaya, bidan pegang tindakan medis', action: 'focus_station', target: 'balai_mediasi' },
+                            { text: 'Baik, tapi saya perlu pastikan racikan dan pantangan yang berbahaya dihentikan', action: 'focus_station', target: 'meja_racikan' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'bu_sari_family', name: 'Keluarga Bu Sari', avatar: '👪', role: 'Keluarga Pasien yang Bingung',
+                greeting: 'Kami cuma ingin Bu Sari selamat, tapi kalau semua dipaksa ke RS kami takut dicap tidak hormat adat.',
+                dialogs: [
+                    {
+                        trigger: 'balai_mediasi_done', text: 'Kalau Mbah Surti dan bidan kompak, kami lebih tenang. Selama ini kami dapat pesan yang saling bertolak belakang.',
+                        choices: [
+                            { text: 'Itulah tujuan kemitraan: adat dihormati, tanda bahaya tetap ditangani cepat', action: 'educate', xp: 18 },
+                            { text: 'Mari kita sepakati tanda bahaya yang membuat keluarga harus langsung berangkat malam itu juga', action: 'focus_station', target: 'ruang_ritual' }
+                        ]
+                    }
+                ]
+            }
+        ],
+        linkedScenarios: ['dukun_beranak', 'jamu_berbahaya'],
+        completionReward: { xp: 120, reputation: 15, message: 'Mediasi padepokan selesai! Konflik tradisi vs evidence mulai bergeser menjadi kemitraan yang lebih aman bagi warga.' }
     }
 };
 
@@ -1305,10 +1491,13 @@ export const COM_B_SEGMENTS = [
 
 export function isGameEnabledBuilding(buildingType) {
     if (!buildingType) return false;
-    return GAME_ENABLED_BUILDINGS.includes(buildingType.toLowerCase());
+    const normalizedType = BUILDING_SCENE_ALIASES[buildingType.toLowerCase()] || buildingType.toLowerCase();
+    return GAME_ENABLED_BUILDINGS.includes(normalizedType);
 }
 
-export function getSceneForBuilding(buildingType) {
+export function getSceneForBuilding(buildingType, t = null) {
     if (!buildingType) return null;
-    return BUILDING_SCENES[buildingType.toLowerCase()] || null;
+    const normalizedType = BUILDING_SCENE_ALIASES[buildingType.toLowerCase()] || buildingType.toLowerCase();
+    const scene = BUILDING_SCENES[normalizedType] || null;
+    return t ? localizeBuildingScene(normalizedType, scene, t) : scene;
 }

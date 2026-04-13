@@ -54,6 +54,31 @@ const TRANSMISSION_ROUTES = [
 // ═══════════════════════════════════════════════════════════════
 // 📋 FORENSIK SANITASI (Inspeksi + Triangulasi Transmisi)
 // ═══════════════════════════════════════════════════════════════
+function useScheduledTimeouts() {
+    const timeoutIdsRef = useRef(new Set());
+
+    const clearScheduledTimeouts = useCallback(() => {
+        timeoutIdsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+        timeoutIdsRef.current.clear();
+    }, []);
+
+    const scheduleTimeout = useCallback((callback, delay) => {
+        const timeoutId = setTimeout(() => {
+            timeoutIdsRef.current.delete(timeoutId);
+            callback();
+        }, delay);
+
+        timeoutIdsRef.current.add(timeoutId);
+        return timeoutId;
+    }, []);
+
+    useEffect(() => () => {
+        clearScheduledTimeouts();
+    }, [clearScheduledTimeouts]);
+
+    return { clearScheduledTimeouts, scheduleTimeout };
+}
+
 function AuditKesling({ game, scenarioKey, onComplete }) {
     const scene = game.scenes?.[scenarioKey] || game.scenes?.general;
     const allItems = useMemo(() => {
@@ -79,6 +104,7 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
     const [classifyTarget, setClassifyTarget] = useState(null); // hazard awaiting classification
     const timerRef = useRef(null);
     const floatIdRef = useRef(0);
+    const { scheduleTimeout } = useScheduledTimeouts();
 
     useEffect(() => {
         if (finished) return;
@@ -96,14 +122,14 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
             const hazard = allItems.find(i => i.id === id);
             return hazard?.type === route || !hazard?.type; // If no type defined, count as correct
         }).length;
-        setTimeout(() => {
+        scheduleTimeout(() => {
             onComplete(scoreMiniGame('inspeksi_kilat', {
                 correct: found.length + correctClassifications,
                 incorrect: mistakes + classifyMistakes,
                 timeRemaining: timeLeft
             }));
         }, 3000);
-    }, [found, classified, allItems, mistakes, classifyMistakes, timeLeft, onComplete, finished]);
+    }, [found, classified, allItems, mistakes, classifyMistakes, timeLeft, onComplete, finished, scheduleTimeout]);
 
     useEffect(() => {
         if (timeLeft !== 0 || finished) return undefined;
@@ -122,7 +148,8 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
         if (finished || found.includes(item.id) || classifyTarget) return;
         floatIdRef.current += 1;
         const fid = floatIdRef.current;
-        setShutter(true); setTimeout(() => setShutter(false), 150);
+        setShutter(true);
+        scheduleTimeout(() => setShutter(false), 150);
 
         if (item.isHazard) {
             setFound(prev => [...prev, item.id]);
@@ -131,11 +158,12 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
             setClassifyTarget(item);
         } else {
             setMistakes(prev => prev + 1);
-            setShake(true); setTimeout(() => setShake(false), 300);
+            setShake(true);
+            scheduleTimeout(() => setShake(false), 300);
             setTimeLeft(p => Math.max(0, p - 5));
             setFloats(p => [...p, { id: fid, x: item.x, y: item.y, text: '-5s', color: 'text-red-500' }]);
         }
-        setTimeout(() => setFloats(p => p.filter(f => f.id !== fid)), 800);
+        scheduleTimeout(() => setFloats(p => p.filter(f => f.id !== fid)), 800);
     };
 
     const handleClassify = (route) => {
@@ -151,15 +179,16 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
             // BRUTAL PENALTY: -20% battery for wrong epidemiological classification
             setBattery(b => Math.max(0, b - 20));
             setClassifyMistakes(m => m + 1);
-            setShake(true); setTimeout(() => setShake(false), 400);
+            setShake(true);
+            scheduleTimeout(() => setShake(false), 400);
             setFloats(p => [...p, { id: fid, x: classifyTarget.x, y: classifyTarget.y, text: 'SALAH! -20%🔋', color: 'text-red-500' }]);
         }
         setClassifyTarget(null);
-        setTimeout(() => setFloats(p => p.filter(f => f.id !== fid)), 1200);
+        scheduleTimeout(() => setFloats(p => p.filter(f => f.id !== fid)), 1200);
 
         // Battery dead = forced finish
         if (!isCorrect && battery - 20 <= 0) {
-            setTimeout(() => handleFinish(), 500);
+            scheduleTimeout(() => handleFinish(), 500);
         }
     };
 
@@ -324,6 +353,7 @@ function AnamnesisSosial({ game, onComplete }) {
     const [selected, setSelected] = useState(null);
     const [showFeedback, setShowFeedback] = useState(false);
     const [shake, setShake] = useState(false);
+    const { scheduleTimeout } = useScheduledTimeouts();
 
     const current = expressions[round];
 
@@ -332,11 +362,14 @@ function AnamnesisSosial({ game, onComplete }) {
         const isCorrect = answer === current.correctRead;
         setSelected(answer);
         setShowFeedback(true);
-        if (!isCorrect) { setShake(true); setTimeout(() => setShake(false), 400); }
+        if (!isCorrect) {
+            setShake(true);
+            scheduleTimeout(() => setShake(false), 400);
+        }
 
         setScore(p => ({ correct: p.correct + (isCorrect ? 1 : 0), incorrect: p.incorrect + (isCorrect ? 0 : 1), streak: isCorrect ? p.streak + 1 : 0 }));
 
-        setTimeout(() => {
+        scheduleTimeout(() => {
             if (round + 1 >= expressions.length) {
                 onComplete(scoreMiniGame('baca_ekspresi', { correct: score.correct + (isCorrect ? 1 : 0), incorrect: score.incorrect + (isCorrect ? 0 : 1), streak: isCorrect ? score.streak + 1 : 0 }));
             } else {
@@ -454,6 +487,7 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
     const [placements, setPlacements] = useState({});
     const [selectedCard, setSelectedCard] = useState(null);
     const [submitted, setSubmitted] = useState(false);
+    const { scheduleTimeout } = useScheduledTimeouts();
 
     const handleSlotClick = (barrierId) => {
         if (submitted) return;
@@ -476,7 +510,7 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
         for (const [id, card] of Object.entries(placements)) {
             if (card.matchBarriers?.includes(id)) correct++; else incorrect++;
         }
-        setTimeout(() => onComplete(scoreMiniGame('susun_strategi', { correct, incorrect })), 2500);
+        scheduleTimeout(() => onComplete(scoreMiniGame('susun_strategi', { correct, incorrect })), 2500);
     };
 
     const placedCardIds = new Set(Object.values(placements).map(c => c.id));
@@ -587,12 +621,16 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
 export default function MiniGamePanel({ game, scenarioKey, activeBarriers, onComplete }) {
     if (!game) return null;
 
+    const sessionKey = [game.id, game.title, game.gameType, scenarioKey]
+        .filter(Boolean)
+        .join(':');
+
     return (
         <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-[inset_0_0_80px_rgba(0,0,0,0.8)] bg-[#05080C] text-slate-200">
             <style dangerouslySetInnerHTML={{__html: MINI_CSS}} />
-            {game.gameType === 'hidden_object' && <AuditKesling game={game} scenarioKey={scenarioKey} onComplete={onComplete} />}
-            {game.gameType === 'expression_reading' && <AnamnesisSosial game={game} onComplete={onComplete} />}
-            {game.gameType === 'card_matching' && <RencanaTindakLanjut game={game} activeBarriers={activeBarriers} onComplete={onComplete} />}
+            {game.gameType === 'hidden_object' && <AuditKesling key={sessionKey} game={game} scenarioKey={scenarioKey} onComplete={onComplete} />}
+            {game.gameType === 'expression_reading' && <AnamnesisSosial key={sessionKey} game={game} onComplete={onComplete} />}
+            {game.gameType === 'card_matching' && <RencanaTindakLanjut key={sessionKey} game={game} activeBarriers={activeBarriers} onComplete={onComplete} />}
 
             {!['hidden_object', 'expression_reading', 'card_matching'].includes(game.gameType) && (
                 <div className="flex flex-col items-center justify-center h-full border-2 border-dashed border-slate-800 m-8 rounded-2xl">
