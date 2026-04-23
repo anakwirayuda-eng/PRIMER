@@ -80,5 +80,13 @@ describe('normalizeIcd10OriginalIndo', () => {
                 indo: 'Neoplasma ganas sekunder dari situs tertentu lainnya'
             })
         ).toBe('Neoplasma ganas sekunder dari lokasi tertentu lainnya');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'I71.8',
+                english: 'Aortic aneurysm of unspecified site, ruptured',
+                indo: 'Aneurisma aorta situs yang tidak spesifik, pecah'
+            })
+        ).toBe('Aneurisma aorta lokasi yang tidak spesifik, pecah');
     });
 });

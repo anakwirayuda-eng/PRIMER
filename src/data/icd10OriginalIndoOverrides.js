@@ -58,7 +58,7 @@ export function normalizeIcd10OriginalIndo({ code, english, indo }) {
     let normalized = (indo || '').replace(/\s+/g, ' ').trim();
     const englishLower = String(english || '').toLowerCase();
 
-    if (englishLower.includes('sites') && /\bsitus\b/i.test(normalized)) {
+    if (/\bsites?\b/i.test(englishLower) && /\bsitus\b/i.test(normalized)) {
         normalized = normalized.replace(/\bsitus\b/gi, 'lokasi');
     }
     if (englishLower.includes('appendix') && /\blampiran\b/i.test(normalized)) {
