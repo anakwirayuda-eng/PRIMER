@@ -220,19 +220,15 @@ class SoundManager {
     isLoading = false; // Lock to prevent double playback
     lastPlayedIndices = [];
 
-    // BGM track list
-    bgmTracks = [
-        '/audio/balamb_garden.mp3',
-        '/audio/blue_fields.mp3',
-        '/audio/fishermans_horizon.mp3',
-        '/audio/guldove_home.mp3',
-        '/audio/guldove_another.mp3',
-        '/audio/arni_home.mp3',
-        '/audio/arni_another.mp3'
-    ];
+    // BGM tracks — cleared 2026-04-24 after legal audit.
+    // Previously held 7 copyrighted Square Enix tracks (FF8/Chrono Cross).
+    // Pending royalty-free replacement per docs/AUDIO_DESIGN.md:
+    //   target 3-4 CC0 ambient soundscape (Freesound.org) — not melody.
+    bgmTracks = [];
 
     playBGM(day) {
         if (this.muted || this.isLoading) return;
+        if (this.bgmTracks.length === 0) return;
 
         // Calculate which track should play
         const trackIndex = (day - 1) % this.bgmTracks.length;
@@ -319,6 +315,7 @@ class SoundManager {
 
     playRandomBGM() {
         if (this.muted || this.isLoading) return;
+        if (this.bgmTracks.length === 0) return;
 
         // Cleanup existing
         this.stopBGM();

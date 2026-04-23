@@ -168,7 +168,8 @@ function App() {
     document.addEventListener('keydown', initSound);
     document.addEventListener('touchstart', initSound);
 
-    // 2. Play click sound for interactive elements (persistent)
+    // 2. Cursor tick on semantic buttons/links only. Scoped 2026-04-24 to avoid
+    // audio fatigue from `.cursor-pointer` catch-all — see docs/AUDIO_DESIGN.md.
     const handleNavigationSound = (e) => {
       const target = e.target;
       const isInteractive =
@@ -176,12 +177,10 @@ function App() {
         target.tagName === 'A' ||
         target.closest('button') ||
         target.closest('a') ||
-        target.closest('[role="button"]') ||
-        target.closest('.cursor-pointer') ||
-        target.classList.contains('cursor-pointer');
+        target.closest('[role="button"]');
 
       if (isInteractive) {
-        soundManager.playClick();
+        soundManager.playCursor();
       }
     };
 
