@@ -83,17 +83,10 @@ const FINDING_DEFS = [
     },
     {
         id: 'pediculosis_family_leftover',
-        label: 'Pediculosis/phthiriasis left untranslated',
+        label: 'Pediculosis left untranslated',
         kind: 'english_leftover',
         severity: 'medium',
-        test: ({ label }) => /\b(pediculosis|phthiriasis)\b/i.test(label)
-    },
-    {
-        id: 'migrans_leftover',
-        label: 'Migrans left untranslated',
-        kind: 'english_leftover',
-        severity: 'low',
-        test: ({ label }) => /\bmigrans\b/i.test(label)
+        test: ({ label }) => /\bpediculosis\b/i.test(label)
     },
     {
         id: 'thoracoabdominal_leftover',
@@ -122,6 +115,20 @@ const FINDING_DEFS = [
         kind: 'english_leftover',
         severity: 'medium',
         test: ({ label }) => /\b(intraventricular|intracerebral)\b/i.test(label)
+    },
+    {
+        id: 'intrathoracic_leftover',
+        label: 'Intrathoracic left untranslated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\bintrathoracic\b/i.test(label)
+    },
+    {
+        id: 'cultur_typo_leftover',
+        label: 'Legacy cultur typo left unnormalized',
+        kind: 'english_leftover',
+        severity: 'low',
+        test: ({ english, label }) => /\bculture\b/i.test(english) && /\bcultur\b/i.test(label)
     }
 ];
 

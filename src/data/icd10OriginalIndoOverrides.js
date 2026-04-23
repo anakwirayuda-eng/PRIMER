@@ -111,6 +111,12 @@ export function normalizeIcd10OriginalIndo({ code, english, indo }) {
     if (englishLower.includes('intracerebral') && /\bintracerebral\b/i.test(normalized)) {
         normalized = replaceTermPreservingSentenceCase(normalized, /\bintracerebral\b/gi, 'intraserebral');
     }
+    if (englishLower.includes('intrathoracic') && /\bintrathoracic\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bintrathoracic\b/gi, 'intratorakal');
+    }
+    if (englishLower.includes('culture') && /\bcultur\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bcultur\b/gi, 'kultur');
+    }
     if (englishLower.includes('nontraffic') && /\bnontraffic\b/i.test(normalized)) {
         normalized = replaceTermPreservingSentenceCase(normalized, /\bnontraffic\b/gi, 'non-lalu lintas');
     }
@@ -119,9 +125,6 @@ export function normalizeIcd10OriginalIndo({ code, english, indo }) {
     }
     if (englishLower.includes('noncollision') && /\bnoncollision\b/i.test(normalized)) {
         normalized = replaceTermPreservingSentenceCase(normalized, /\bnoncollision\b/gi, 'tanpa tabrakan');
-    }
-    if (englishLower.includes('phthiriasis') && /\bphthiriasis\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bphthiriasis\b/gi, 'ftiriasis');
     }
     if (englishLower.includes('thoracoabdominal') && /\bthoracoabdominal\b/i.test(normalized)) {
         normalized = replaceTermPreservingSentenceCase(normalized, /\bthoracoabdominal\b/gi, 'torakoabdominal');

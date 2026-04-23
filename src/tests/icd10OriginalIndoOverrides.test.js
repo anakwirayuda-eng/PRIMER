@@ -130,6 +130,22 @@ describe('normalizeIcd10OriginalIndo', () => {
                 indo: 'Intraventricular ( nontraumatic ) perdarahan , kelas 1 , janin dan bayi baru lahir'
             })
         ).toBe('Intraventrikular ( nontraumatik ) perdarahan , kelas 1 , janin dan bayi baru lahir');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'A15.0',
+                english: 'Tuberculosis of lung, confirmed by sputum microscopy with or without culture',
+                indo: 'TBC paru-paru , hasil konfirmasi mikroskop pada sputum dengan atau tanpa cultur'
+            })
+        ).toBe('TBC paru-paru , hasil konfirmasi mikroskop pada sputum dengan atau tanpa kultur');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'A15.3',
+                english: 'Tuberculosis of intrathoracic lymph nodes, confirmed bacteriologically and histologically',
+                indo: 'Tuberkulosis kelenjar getah bening intrathoracic , dikonfirmasi bakteriologis dan histologis'
+            })
+        ).toBe('Tuberkulosis kelenjar getah bening intratorakal , dikonfirmasi bakteriologis dan histologis');
     });
 
     it('normalizes recurring transport and ectoparasite leftovers in the external-cause chapter', () => {
@@ -171,7 +187,7 @@ describe('normalizeIcd10OriginalIndo', () => {
                 english: 'Phthiriasis',
                 indo: 'Phthiriasis'
             })
-        ).toBe('Ftiriasis');
+        ).toBe('Phthiriasis');
 
         expect(
             normalizeIcd10OriginalIndo({
