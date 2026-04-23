@@ -10,6 +10,7 @@
  */
 
 import Dexie from 'dexie';
+import { normalizeIcd10OriginalIndo } from '../data/icd10OriginalIndoOverrides.js';
 
 /**
  * PersistenceService — Offloads massive medical datasets to IndexedDB
@@ -59,11 +60,20 @@ const ICD10_PART_LOADERS = [
     () => import('../data/master_icd_10_parts/part_4.json')
 ];
 
-function mapICD10Records(records = []) {
+function getOriginalIndoLabel(record) {
+    const code = String(record?.kode_icd || '').trim();
+    return normalizeIcd10OriginalIndo({
+        code,
+        english: record?.nama_icd,
+        indo: record?.nama_icd_indo
+    });
+}
+
+export function mapICD10Records(records = []) {
     return records.map(d => ({
         code: d.kode_icd,
         name: d.nama_icd,
-        originalIndo: d.nama_icd_indo || '',
+        originalIndo: getOriginalIndoLabel(d),
         category: d.kategori || 'general'
     }));
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { PersistenceService, REQUIRED_MEDICAL_TABLES } from '../services/PersistenceService.js';
+import { PersistenceService, REQUIRED_MEDICAL_TABLES, mapICD10Records } from '../services/PersistenceService.js';
 
 const createFakeDatabase = (counts = {}) => {
     const tables = Object.fromEntries(
@@ -23,6 +23,47 @@ const createFakeDatabase = (counts = {}) => {
 };
 
 describe('PersistenceService', () => {
+    it('maps raw ICD-10 records through the runtime Indonesian normalization layer', () => {
+        const mapped = mapICD10Records([
+            {
+                kode_icd: 'C38.0',
+                nama_icd: 'Malignant neoplasm of heart',
+                nama_icd_indo: 'Neoplasma ganas hati'
+            },
+            {
+                kode_icd: 'R09.2',
+                nama_icd: 'Respiratory arrest',
+                nama_icd_indo: 'pernapasan lambat'
+            },
+            {
+                kode_icd: 'K38.0',
+                nama_icd: 'Hyperplasia of appendix',
+                nama_icd_indo: 'Hiperplasia lampiran'
+            }
+        ]);
+
+        expect(mapped).toEqual([
+            {
+                code: 'C38.0',
+                name: 'Malignant neoplasm of heart',
+                originalIndo: 'Neoplasma ganas jantung',
+                category: 'general'
+            },
+            {
+                code: 'R09.2',
+                name: 'Respiratory arrest',
+                originalIndo: 'Henti napas',
+                category: 'general'
+            },
+            {
+                code: 'K38.0',
+                name: 'Hyperplasia of appendix',
+                originalIndo: 'Hiperplasia apendiks',
+                category: 'general'
+            }
+        ]);
+    });
+
     it('treats the database as populated only when every required table has rows', async () => {
         const incompleteDb = createFakeDatabase({
             icd10: 10,
