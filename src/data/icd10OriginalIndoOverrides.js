@@ -51,6 +51,15 @@ export const ICD10_ORIGINAL_INDO_OVERRIDES = {
     'Y97': 'Kondisi terkait polusi lingkungan'
 };
 
+function replaceTermPreservingSentenceCase(text, pattern, replacement) {
+    return text.replace(pattern, (match) => {
+        if (/^[A-Z]/.test(match)) {
+            return replacement.charAt(0).toUpperCase() + replacement.slice(1);
+        }
+        return replacement;
+    });
+}
+
 export function normalizeIcd10OriginalIndo({ code, english, indo }) {
     const override = ICD10_ORIGINAL_INDO_OVERRIDES[code];
     if (override) return override;
@@ -59,13 +68,31 @@ export function normalizeIcd10OriginalIndo({ code, english, indo }) {
     const englishLower = String(english || '').toLowerCase();
 
     if (/\bsites?\b/i.test(englishLower) && /\bsitus\b/i.test(normalized)) {
-        normalized = normalized.replace(/\bsitus\b/gi, 'lokasi');
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bsitus\b/gi, 'lokasi');
     }
     if (englishLower.includes('appendix') && /\blampiran\b/i.test(normalized)) {
-        normalized = normalized.replace(/\blampiran\b/gi, 'apendiks');
+        normalized = replaceTermPreservingSentenceCase(normalized, /\blampiran\b/gi, 'apendiks');
     }
     if (englishLower.includes('gait') && /\bkiprah\b/i.test(normalized)) {
-        normalized = normalized.replace(/\bkiprah\b/gi, 'gaya jalan');
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bkiprah\b/gi, 'gaya jalan');
+    }
+    if (englishLower.includes('sequelae') && /\bsequelae\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bsequelae\b/gi, 'gejala sisa');
+    }
+    if (englishLower.includes('nontraumatic') && /\bnontraumatic\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bnontraumatic\b/gi, 'nontraumatik');
+    }
+    if (englishLower.includes('frostbite') && /\bfrostbite\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bfrostbite\b/gi, 'radang dingin');
+    }
+    if (englishLower.includes('pediculosis') && /\bpediculosis\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bpediculosis\b/gi, 'pedikulosis');
+    }
+    if (englishLower.includes('intraventricular') && /\bintraventricular\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bintraventricular\b/gi, 'intraventrikular');
+    }
+    if (englishLower.includes('intracerebral') && /\bintracerebral\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bintracerebral\b/gi, 'intraserebral');
     }
 
     return normalized;

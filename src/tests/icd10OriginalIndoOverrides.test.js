@@ -89,4 +89,46 @@ describe('normalizeIcd10OriginalIndo', () => {
             })
         ).toBe('Aneurisma aorta lokasi yang tidak spesifik, pecah');
     });
+
+    it('normalizes supported clinical glossary leftovers in the legacy Indonesian field', () => {
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'B90.0',
+                english: 'Sequelae of central nervous system tuberculosis',
+                indo: 'Sequelae tuberkulosis sistem saraf pusat'
+            })
+        ).toBe('Gejala sisa tuberkulosis sistem saraf pusat');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'I62.0',
+                english: 'Subdural haemorrhage (acute) (nontraumatic)',
+                indo: 'Perdarahan subdural ( akut ) ( nontraumatic )'
+            })
+        ).toBe('Perdarahan subdural ( akut ) ( nontraumatik )');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'T34.0',
+                english: 'Frostbite with tissue necrosis of head',
+                indo: 'Frostbite dengan nekrosis jaringan kepala'
+            })
+        ).toBe('Radang dingin dengan nekrosis jaringan kepala');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'B85.2',
+                english: 'Pediculosis, unspecified',
+                indo: 'Pediculosis, tidak spesifik'
+            })
+        ).toBe('Pedikulosis, tidak spesifik');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'P52.0',
+                english: 'Intraventricular (nontraumatic) haemorrhage, grade 1, of fetus and newborn',
+                indo: 'Intraventricular ( nontraumatic ) perdarahan , kelas 1 , janin dan bayi baru lahir'
+            })
+        ).toBe('Intraventrikular ( nontraumatik ) perdarahan , kelas 1 , janin dan bayi baru lahir');
+    });
 });
