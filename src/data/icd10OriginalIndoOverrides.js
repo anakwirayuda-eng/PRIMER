@@ -67,6 +67,23 @@ export function normalizeIcd10OriginalIndo({ code, english, indo }) {
     let normalized = (indo || '').replace(/\s+/g, ' ').trim();
     const englishLower = String(english || '').toLowerCase();
 
+    if (englishLower.includes('unspecified whether traffic or nontraffic accident')
+        && /tidak spesifik apakah lalu lintas atau kecelakaan nontraffic/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(
+            normalized,
+            /tidak spesifik apakah lalu lintas atau kecelakaan nontraffic/gi,
+            'tidak spesifik apakah kecelakaan lalu lintas atau non-lalu lintas'
+        );
+    }
+    if (englishLower.includes('unspecified nontraffic accident')
+        && /\bkecelakaan nontraffic spesifik\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(
+            normalized,
+            /\bkecelakaan nontraffic spesifik\b/gi,
+            'kecelakaan non-lalu lintas yang tidak spesifik'
+        );
+    }
+
     if (/\bsites?\b/i.test(englishLower) && /\bsitus\b/i.test(normalized)) {
         normalized = replaceTermPreservingSentenceCase(normalized, /\bsitus\b/gi, 'lokasi');
     }
@@ -93,6 +110,36 @@ export function normalizeIcd10OriginalIndo({ code, english, indo }) {
     }
     if (englishLower.includes('intracerebral') && /\bintracerebral\b/i.test(normalized)) {
         normalized = replaceTermPreservingSentenceCase(normalized, /\bintracerebral\b/gi, 'intraserebral');
+    }
+    if (englishLower.includes('nontraffic') && /\bnontraffic\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bnontraffic\b/gi, 'non-lalu lintas');
+    }
+    if (englishLower.includes('nonmotor') && /\bnonmotor\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bnonmotor\b/gi, 'tidak bermotor');
+    }
+    if (englishLower.includes('noncollision') && /\bnoncollision\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bnoncollision\b/gi, 'tanpa tabrakan');
+    }
+    if (englishLower.includes('phthiriasis') && /\bphthiriasis\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bphthiriasis\b/gi, 'ftiriasis');
+    }
+    if (englishLower.includes('thoracoabdominal') && /\bthoracoabdominal\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bthoracoabdominal\b/gi, 'torakoabdominal');
+    }
+    if (englishLower.includes('thrombosed') && /\bthrombosed\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bthrombosed\b/gi, 'trombosis');
+    }
+    if (englishLower.includes('pedestrian') && /\bpedestrian\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bpedestrian\b/gi, 'pejalan kaki');
+    }
+    if (englishLower.includes('driver') && /\bdriver\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bdriver\b/gi, 'pengemudi');
+    }
+    if (englishLower.includes('pedal cyclist') && /\bpedal sepeda\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bpedal sepeda\b/gi, 'pengendara sepeda');
+    }
+    if (englishLower.includes('pedal cycle') && /\bsiklus pedal\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bsiklus pedal\b/gi, 'sepeda');
     }
 
     return normalized;

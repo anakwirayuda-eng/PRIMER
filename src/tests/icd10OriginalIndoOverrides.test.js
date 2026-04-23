@@ -131,4 +131,62 @@ describe('normalizeIcd10OriginalIndo', () => {
             })
         ).toBe('Intraventrikular ( nontraumatik ) perdarahan , kelas 1 , janin dan bayi baru lahir');
     });
+
+    it('normalizes recurring transport and ectoparasite leftovers in the external-cause chapter', () => {
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'V01.0',
+                english: 'Pedestrian injured in collision with pedal cycle, nontraffic accident',
+                indo: 'Pedestrian terluka dalam tabrakan dengan siklus pedal , kecelakaan nontraffic'
+            })
+        ).toBe('Pejalan kaki terluka dalam tabrakan dengan sepeda , kecelakaan non-lalu lintas');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'V06.0',
+                english: 'Pedestrian injured in collision with other nonmotor vehicle, nontraffic accident',
+                indo: 'Pedestrian terluka dalam tabrakan dengan kendaraan nonmotor lain , kecelakaan nontraffic'
+            })
+        ).toBe('Pejalan kaki terluka dalam tabrakan dengan kendaraan tidak bermotor lain , kecelakaan non-lalu lintas');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'V18.0',
+                english: 'Pedal cyclist injured in noncollision transport accident, driver, nontraffic accident',
+                indo: 'Pedal sepeda terluka dalam kecelakaan transportasi noncollision , driver, kecelakaan nontraffic'
+            })
+        ).toBe('Pengendara sepeda terluka dalam kecelakaan transportasi tanpa tabrakan , pengemudi, kecelakaan non-lalu lintas');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'V09.1',
+                english: 'Pedestrian injured in unspecified nontraffic accident',
+                indo: 'Pedestrian terluka dalam kecelakaan nontraffic spesifik'
+            })
+        ).toBe('Pejalan kaki terluka dalam kecelakaan non-lalu lintas yang tidak spesifik');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'B85.3',
+                english: 'Phthiriasis',
+                indo: 'Phthiriasis'
+            })
+        ).toBe('Ftiriasis');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'I71.5',
+                english: 'Thoracoabdominal aortic aneurysm, ruptured',
+                indo: 'Aneurisma aorta Thoracoabdominal , pecah'
+            })
+        ).toBe('Aneurisma aorta Torakoabdominal , pecah');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'I84.0',
+                english: 'Internal thrombosed haemorrhoids',
+                indo: 'Wasir thrombosed internal'
+            })
+        ).toBe('Wasir trombosis internal');
+    });
 });
