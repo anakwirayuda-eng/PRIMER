@@ -129,6 +129,55 @@ const FINDING_DEFS = [
         kind: 'english_leftover',
         severity: 'low',
         test: ({ english, label }) => /\bculture\b/i.test(english) && /\bcultur\b/i.test(label)
+    },
+    {
+        id: 'arthritis_family_leftover',
+        label: 'Arthritis-family terms left untranslated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\b(polyarthritis|arthritis|arthrosis|arthropathy|arthropathies)\b/i.test(label)
+    },
+    {
+        id: 'juvenile_idiopathic_leftover',
+        label: 'Juvenile/idiopathic left untranslated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\b(juvenile|idiopathic)\b/i.test(label)
+    },
+    {
+        id: 'interstitial_postprocedural_leftover',
+        label: 'Interstitial/postprocedural left untranslated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\b(interstitial|postprocedural)\b/i.test(label)
+    },
+    {
+        id: 'septicaemia_immunodeficiency_leftover',
+        label: 'Septicaemia/immunodeficiency left untranslated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\b(septicaemia|immunodeficiency)\b/i.test(label)
+    },
+    {
+        id: 'disc_myelopathy_leftover',
+        label: 'Disc/myelopathy left untranslated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\b(disc|myelopathy)\b/i.test(label)
+    },
+    {
+        id: 'cardiomyopathy_myiasis_leftover',
+        label: 'Cardiomyopathy/myiasis left untranslated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\b(cardiomyopathy|myiasis)\b/i.test(label)
+    },
+    {
+        id: 'rheumatic_ciliary_leftover',
+        label: 'Rheumatoid/nonrheumatic/ciliary left untranslated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\b(rheumatoid|nonrheumatic|ciliary)\b/i.test(label)
     }
 ];
 

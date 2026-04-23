@@ -26,7 +26,7 @@ export const ICD10_ORIGINAL_INDO_OVERRIDES = {
     'B46.3': 'Mukormikosis kulit',
     'B78.1': 'Strongiloidiasis kulit',
     'B87.0': 'Miasis kulit',
-    'B87.8': 'Myiasis pada lokasi lain',
+    'B87.8': 'Miasis pada lokasi lain',
     'C38.0': 'Neoplasma ganas jantung',
     'C38.8': 'Neoplasma ganas tumpang tindih pada lokasi jantung, mediastinum, dan pleura',
     'C06.8': 'Neoplasma ganas tumpang tindih pada lokasi mulut lain dan tidak spesifik',
@@ -60,6 +60,47 @@ function replaceTermPreservingSentenceCase(text, pattern, replacement) {
     });
 }
 
+const CONDITIONAL_TERM_FIXES = [
+    { englishPattern: /\bsites?\b/i, indoPattern: /\bsitus\b/gi, replacement: 'lokasi' },
+    { englishPattern: /\bappendix\b/i, indoPattern: /\blampiran\b/gi, replacement: 'apendiks' },
+    { englishPattern: /\bgait\b/i, indoPattern: /\bkiprah\b/gi, replacement: 'gaya jalan' },
+    { englishPattern: /\bsequelae\b/i, indoPattern: /\bsequelae\b/gi, replacement: 'gejala sisa' },
+    { englishPattern: /\bnontraumatic\b/i, indoPattern: /\bnontraumatic\b/gi, replacement: 'nontraumatik' },
+    { englishPattern: /\bfrostbite\b/i, indoPattern: /\bfrostbite\b/gi, replacement: 'radang dingin' },
+    { englishPattern: /\bpediculosis\b/i, indoPattern: /\bpediculosis\b/gi, replacement: 'pedikulosis' },
+    { englishPattern: /\bintraventricular\b/i, indoPattern: /\bintraventricular\b/gi, replacement: 'intraventrikular' },
+    { englishPattern: /\bintracerebral\b/i, indoPattern: /\bintracerebral\b/gi, replacement: 'intraserebral' },
+    { englishPattern: /\bintrathoracic\b/i, indoPattern: /\bintrathoracic\b/gi, replacement: 'intratorakal' },
+    { englishPattern: /\bculture\b/i, indoPattern: /\bcultur\b/gi, replacement: 'kultur' },
+    { englishPattern: /\bpolyarthritis\b/i, indoPattern: /\bpolyarthritis\b/gi, replacement: 'poliartritis' },
+    { englishPattern: /\barthritis\b/i, indoPattern: /\barthritis\b/gi, replacement: 'artritis' },
+    { englishPattern: /\bjuvenile\b/i, indoPattern: /\bjuvenile\b/gi, replacement: 'juvenil' },
+    { englishPattern: /\bidiopathic\b/i, indoPattern: /\bidiopathic\b/gi, replacement: 'idiopatik' },
+    { englishPattern: /\binterstitial\b/i, indoPattern: /\binterstitial\b/gi, replacement: 'interstisial' },
+    { englishPattern: /\bpostprocedural\b/i, indoPattern: /\bpostprocedural\b/gi, replacement: 'pascaprosedural' },
+    { englishPattern: /\bsepticaemia\b/i, indoPattern: /\bsepticaemia\b/gi, replacement: 'septikemia' },
+    { englishPattern: /\bdisc\b/i, indoPattern: /\bdisc\b/gi, replacement: 'disk' },
+    { englishPattern: /\bmyelopathy\b/i, indoPattern: /\bmyelopathy\b/gi, replacement: 'mielopati' },
+    { englishPattern: /\bcardiomyopathy\b/i, indoPattern: /\bcardiomyopathy\b/gi, replacement: 'kardiomiopati' },
+    { englishPattern: /\bmyiasis\b/i, indoPattern: /\bmyiasis\b/gi, replacement: 'miasis' },
+    { englishPattern: /\barthrosis\b/i, indoPattern: /\barthrosis\b/gi, replacement: 'artrosis' },
+    { englishPattern: /\barthropathies\b/i, indoPattern: /\barthropathies\b/gi, replacement: 'artropati' },
+    { englishPattern: /\barthropathy\b/i, indoPattern: /\barthropathy\b/gi, replacement: 'artropati' },
+    { englishPattern: /\brheumatoid\b/i, indoPattern: /\brheumatoid\b/gi, replacement: 'reumatoid' },
+    { englishPattern: /\bnonrheumatic\b/i, indoPattern: /\bnonrheumatic\b/gi, replacement: 'nonreumatik' },
+    { englishPattern: /\bimmunodeficiency\b/i, indoPattern: /\bimmunodeficiency\b/gi, replacement: 'imunodefisiensi' },
+    { englishPattern: /\bciliary\b/i, indoPattern: /\bciliary\b/gi, replacement: 'siliaris' },
+    { englishPattern: /\bnontraffic\b/i, indoPattern: /\bnontraffic\b/gi, replacement: 'non-lalu lintas' },
+    { englishPattern: /\bnonmotor\b/i, indoPattern: /\bnonmotor\b/gi, replacement: 'tidak bermotor' },
+    { englishPattern: /\bnoncollision\b/i, indoPattern: /\bnoncollision\b/gi, replacement: 'tanpa tabrakan' },
+    { englishPattern: /\bthoracoabdominal\b/i, indoPattern: /\bthoracoabdominal\b/gi, replacement: 'torakoabdominal' },
+    { englishPattern: /\bthrombosed\b/i, indoPattern: /\bthrombosed\b/gi, replacement: 'trombosis' },
+    { englishPattern: /\bpedestrian\b/i, indoPattern: /\bpedestrian\b/gi, replacement: 'pejalan kaki' },
+    { englishPattern: /\bdriver\b/i, indoPattern: /\bdriver\b/gi, replacement: 'pengemudi' },
+    { englishPattern: /\bpedal cyclist\b/i, indoPattern: /\bpedal sepeda\b/gi, replacement: 'pengendara sepeda' },
+    { englishPattern: /\bpedal cycle\b/i, indoPattern: /\bsiklus pedal\b/gi, replacement: 'sepeda' }
+];
+
 export function normalizeIcd10OriginalIndo({ code, english, indo }) {
     const override = ICD10_ORIGINAL_INDO_OVERRIDES[code];
     if (override) return override;
@@ -84,66 +125,11 @@ export function normalizeIcd10OriginalIndo({ code, english, indo }) {
         );
     }
 
-    if (/\bsites?\b/i.test(englishLower) && /\bsitus\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bsitus\b/gi, 'lokasi');
-    }
-    if (englishLower.includes('appendix') && /\blampiran\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\blampiran\b/gi, 'apendiks');
-    }
-    if (englishLower.includes('gait') && /\bkiprah\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bkiprah\b/gi, 'gaya jalan');
-    }
-    if (englishLower.includes('sequelae') && /\bsequelae\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bsequelae\b/gi, 'gejala sisa');
-    }
-    if (englishLower.includes('nontraumatic') && /\bnontraumatic\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bnontraumatic\b/gi, 'nontraumatik');
-    }
-    if (englishLower.includes('frostbite') && /\bfrostbite\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bfrostbite\b/gi, 'radang dingin');
-    }
-    if (englishLower.includes('pediculosis') && /\bpediculosis\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bpediculosis\b/gi, 'pedikulosis');
-    }
-    if (englishLower.includes('intraventricular') && /\bintraventricular\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bintraventricular\b/gi, 'intraventrikular');
-    }
-    if (englishLower.includes('intracerebral') && /\bintracerebral\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bintracerebral\b/gi, 'intraserebral');
-    }
-    if (englishLower.includes('intrathoracic') && /\bintrathoracic\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bintrathoracic\b/gi, 'intratorakal');
-    }
-    if (englishLower.includes('culture') && /\bcultur\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bcultur\b/gi, 'kultur');
-    }
-    if (englishLower.includes('nontraffic') && /\bnontraffic\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bnontraffic\b/gi, 'non-lalu lintas');
-    }
-    if (englishLower.includes('nonmotor') && /\bnonmotor\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bnonmotor\b/gi, 'tidak bermotor');
-    }
-    if (englishLower.includes('noncollision') && /\bnoncollision\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bnoncollision\b/gi, 'tanpa tabrakan');
-    }
-    if (englishLower.includes('thoracoabdominal') && /\bthoracoabdominal\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bthoracoabdominal\b/gi, 'torakoabdominal');
-    }
-    if (englishLower.includes('thrombosed') && /\bthrombosed\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bthrombosed\b/gi, 'trombosis');
-    }
-    if (englishLower.includes('pedestrian') && /\bpedestrian\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bpedestrian\b/gi, 'pejalan kaki');
-    }
-    if (englishLower.includes('driver') && /\bdriver\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bdriver\b/gi, 'pengemudi');
-    }
-    if (englishLower.includes('pedal cyclist') && /\bpedal sepeda\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bpedal sepeda\b/gi, 'pengendara sepeda');
-    }
-    if (englishLower.includes('pedal cycle') && /\bsiklus pedal\b/i.test(normalized)) {
-        normalized = replaceTermPreservingSentenceCase(normalized, /\bsiklus pedal\b/gi, 'sepeda');
-    }
+    CONDITIONAL_TERM_FIXES.forEach(({ englishPattern, indoPattern, replacement }) => {
+        if (englishPattern.test(englishLower) && indoPattern.test(normalized)) {
+            normalized = replaceTermPreservingSentenceCase(normalized, indoPattern, replacement);
+        }
+    });
 
     return normalized;
 }

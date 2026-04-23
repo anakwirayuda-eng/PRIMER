@@ -146,6 +146,94 @@ describe('normalizeIcd10OriginalIndo', () => {
                 indo: 'Tuberkulosis kelenjar getah bening intrathoracic , dikonfirmasi bakteriologis dan histologis'
             })
         ).toBe('Tuberkulosis kelenjar getah bening intratorakal , dikonfirmasi bakteriologis dan histologis');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'M00.0',
+                english: 'Staphylococcal arthritis and polyarthritis',
+                indo: 'Arthritis stafilokokus dan polyarthritis'
+            })
+        ).toBe('Artritis stafilokokus dan poliartritis');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'M08.1',
+                english: 'Juvenile ankylosing spondylitis',
+                indo: 'Juvenile ankylosing spondylitis'
+            })
+        ).toBe('Juvenil ankylosing spondylitis');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'D69.3',
+                english: 'Idiopathic thrombocytopenic purpura',
+                indo: 'Idiopathic thrombocytopenic purpura'
+            })
+        ).toBe('Idiopatik thrombocytopenic purpura');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'E89.0',
+                english: 'Postprocedural hypothyroidism',
+                indo: 'Hipotiroidisme postprocedural'
+            })
+        ).toBe('Hipotiroidisme pascaprosedural');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'A40.0',
+                english: 'Septicaemia due to streptococcus, group A',
+                indo: 'Septicaemia karena streptokokus grup A'
+            })
+        ).toBe('Septikemia karena streptokokus grup A');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'M50.0',
+                english: 'Cervical disc disorder with myelopathy',
+                indo: 'Gangguan disc serviks dengan myelopathy'
+            })
+        ).toBe('Gangguan disk serviks dengan mielopati');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'I42.0',
+                english: 'Alcoholic cardiomyopathy',
+                indo: 'Cardiomyopathy beralkohol'
+            })
+        ).toBe('Kardiomiopati beralkohol');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'B87.2',
+                english: 'Ocular myiasis',
+                indo: 'Myiasis pada mata'
+            })
+        ).toBe('Miasis pada mata');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'B87.8',
+                english: 'Myiasis of other sites',
+                indo: 'Myiasis pada lokasi lain'
+            })
+        ).toBe('Miasis pada lokasi lain');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'D80.9',
+                english: 'Immunodeficiency with predominantly antibody defects, unspecified',
+                indo: 'Immunodeficiency dengan cacat terutama antibodi , tidak spesifik'
+            })
+        ).toBe('Imunodefisiensi dengan cacat terutama antibodi , tidak spesifik');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'B22.1',
+                english: 'HIV disease resulting in lymphoid interstitial pneumonitis',
+                indo: 'Penyakit HIV mengakibatkan limfoid interstitial pneumonitis'
+            })
+        ).toBe('Penyakit HIV mengakibatkan limfoid interstisial pneumonitis');
     });
 
     it('normalizes recurring transport and ectoparasite leftovers in the external-cause chapter', () => {
