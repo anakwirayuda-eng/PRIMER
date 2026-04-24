@@ -220,6 +220,11 @@ class SoundManager {
     isLoading = false; // Lock to prevent double playback
     lastPlayedIndices = [];
 
+    // --- Mixer state (3-channel + focus mode). See docs/AUDIO_DESIGN.md §3 ---
+    masterVolume = 1.0;
+    sfxVolume = 1.0;
+    focusMode = false;
+
     // BGM tracks — cleared 2026-04-24 after legal audit.
     // Previously held 7 copyrighted Square Enix tracks (FF8/Chrono Cross).
     // Pending royalty-free replacement per docs/AUDIO_DESIGN.md:
@@ -252,7 +257,7 @@ class SoundManager {
         // Create audio element for selected track
         this.bgmAudio = new Audio(trackPath);
         this.bgmAudio.loop = true;
-        this.bgmAudio.volume = this.bgmVolume;
+        this.bgmAudio.volume = this._computeBgmVolume();
 
         // Play with promise handling for autoplay restrictions
         this.bgmAudio.play().then(() => {
@@ -296,22 +301,60 @@ class SoundManager {
         }
     }
 
-    setBGMVolume(volume) {
-        this.bgmVolume = Math.max(0, Math.min(1, volume));
+    // --- Mixer helpers (3-channel routing) ---
+
+    _clamp01(v) { return Math.max(0, Math.min(1, Number(v) || 0)); }
+
+    _computeBgmVolume() {
+        if (this.muted || this.focusMode) return 0;
+        return this.masterVolume * this.bgmVolume;
+    }
+
+    _applySfxGain() {
+        if (!this.masterGain) return;
+        const effective = this.muted ? 0 : this.masterVolume * this.sfxVolume * 0.4;
+        this.masterGain.gain.setValueAtTime(effective, 0);
+    }
+
+    _applyBgmVolume() {
+        if (this.bgmAudio) this.bgmAudio.volume = this._computeBgmVolume();
+    }
+
+    setMasterVolume(v) {
+        this.masterVolume = this._clamp01(v);
+        this._applySfxGain();
+        this._applyBgmVolume();
+    }
+
+    setBGMVolume(v) {
+        this.bgmVolume = this._clamp01(v);
+        this._applyBgmVolume();
+    }
+
+    setSfxVolume(v) {
+        this.sfxVolume = this._clamp01(v);
+        this._applySfxGain();
+    }
+
+    setFocusMode(enabled) {
+        this.focusMode = !!enabled;
+        this._applyBgmVolume();
+    }
+
+    setMuted(muted) {
+        const next = !!muted;
+        if (this.muted === next) return;
+        this.muted = next;
+        this._applySfxGain();
         if (this.bgmAudio) {
-            this.bgmAudio.volume = this.bgmVolume;
+            if (next) this.bgmAudio.pause();
+            else if (!this.isPaused) this.bgmAudio.play().catch(() => {});
         }
+        this._applyBgmVolume();
     }
 
-    setVolume(volume) {
-        // Set Master Gain (SFX)
-        if (this.masterGain) {
-            this.masterGain.gain.setValueAtTime(Math.max(0, Math.min(1, volume * 0.4)), 0);
-        }
-
-        // Set BGM Volume
-        this.setBGMVolume(volume);
-    }
+    // Legacy alias — single master knob
+    setVolume(volume) { this.setMasterVolume(volume); }
 
     playRandomBGM() {
         if (this.muted || this.isLoading) return;
@@ -341,7 +384,7 @@ class SoundManager {
         // Create audio element
         this.bgmAudio = new Audio(trackPath);
         this.bgmAudio.loop = true;
-        this.bgmAudio.volume = this.bgmVolume;
+        this.bgmAudio.volume = this._computeBgmVolume();
 
         // Play
         this.bgmAudio.play().then(() => {
@@ -380,14 +423,7 @@ class SoundManager {
     }
 
     toggleMute() {
-        this.muted = !this.muted;
-        if (this.muted) {
-            this.stopBGM();
-            if (this.masterGain) this.masterGain.gain.cancelScheduledValues(0);
-            if (this.masterGain) this.masterGain.gain.setValueAtTime(0, 0);
-        } else {
-            if (this.masterGain) this.masterGain.gain.setValueAtTime(0.4, 0);
-        }
+        this.setMuted(!this.muted);
         return this.muted;
     }
 }

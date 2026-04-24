@@ -243,8 +243,9 @@ Stay dengan `<audio>` element (atau Howler wrapper) yang stream-decode.
 
 ## 🔗 Related
 
+- **Sourcing guide (3 CC0 tracks curated)**: [`AUDIO_SOURCING.md`](./AUDIO_SOURCING.md)
 - **Konteks + DeepThink review**: [`AUDIO_DOSSIER.md`](./AUDIO_DOSSIER.md) § 13
 - **Existing code**: [`src/utils/SoundManager.js`](../src/utils/SoundManager.js)
-- **BGM directory**: `public/audio/` *(dibersihkan 2026-04-24, pending refill)*
+- **BGM directory**: `public/audio/` *(dibersihkan 2026-04-24, pending refill per AUDIO_SOURCING.md)*
 - **Global click listener**: [`src/App.jsx:172-188`](../src/App.jsx)
 - **Clinical risk context**: memory `project_primer_clinical_risks.md`

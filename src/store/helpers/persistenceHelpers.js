@@ -185,7 +185,11 @@ export const createInitialFinanceState = () => ({
 export const INITIAL_NAV_SETTINGS = {
     theme: 'medika',
     fontSize: 'normal',
-    volume: 1.0,
+    volume: 1.0,         // master
+    bgmVolume: 0.7,
+    sfxVolume: 1.0,
+    focusMode: false,    // mute BGM only — SFX tetap (sesi belajar panjang)
+    muted: false,
     autoSave: true
 };
 

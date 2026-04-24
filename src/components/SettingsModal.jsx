@@ -13,7 +13,7 @@ import React from 'react';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
 import { useGame } from '../context/GameContext.jsx';
 import { useTheme, THEMES } from '../context/ThemeContext.jsx';
-import { Save, LogOut, Volume2, X, Check, Palette } from 'lucide-react';
+import { Save, LogOut, Volume2, VolumeX, Music, Zap, Headphones, X, Check, Palette } from 'lucide-react';
 import { APP_METADATA } from '../data/AppMetadata.js';
 import useModalA11y from '../hooks/useModalA11y.js';
 
@@ -52,22 +52,66 @@ export default function SettingsModal({ onClose }) {
                 {/* Body */}
                 <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
 
-                    {/* Volume Control */}
-                    <div>
-                        <label className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2 block flex justify-between">
-                            <span>Master Volume</span>
-                            <span className="font-mono text-emerald-600 dark:text-emerald-400">{Math.round(settings.volume * 100)}%</span>
-                        </label>
-                        <div className="flex items-center gap-3">
-                            <Volume2 size={18} className="text-slate-400" />
+                    {/* Volume Controls — 3-channel mixer */}
+                    <div className="space-y-4">
+                        {[
+                            { key: 'volume', label: 'Master', fallback: 1, Icon: Volume2, accent: 'accent-emerald-500' },
+                            { key: 'bgmVolume', label: 'Musik (BGM)', fallback: 0.7, Icon: Music, accent: 'accent-sky-500' },
+                            { key: 'sfxVolume', label: 'Efek Suara (SFX)', fallback: 1, Icon: Zap, accent: 'accent-amber-500' },
+                        ].map((row) => {
+                            const { key, label, fallback, Icon, accent } = row;
+                            const value = settings[key] ?? fallback;
+                            return (
+                                <div key={key}>
+                                    <label className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2 flex justify-between">
+                                        <span>{label}</span>
+                                        <span className="font-mono text-emerald-600 dark:text-emerald-400">{Math.round(value * 100)}%</span>
+                                    </label>
+                                    <div className="flex items-center gap-3">
+                                        <Icon size={18} className="text-slate-400" />
+                                        <input
+                                            type="range"
+                                            min="0" max="1" step="0.05"
+                                            value={value}
+                                            onChange={(e) => updateSettings({ [key]: parseFloat(e.target.value) })}
+                                            className={`w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer ${accent}`}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Audio Toggles — Mute + Focus Mode */}
+                    <div className="space-y-2">
+                        <label className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition">
+                            <div className="flex items-center gap-2">
+                                <VolumeX size={16} className="text-slate-500" />
+                                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Mute semua</span>
+                            </div>
                             <input
-                                type="range"
-                                min="0" max="1" step="0.1"
-                                value={settings.volume}
-                                onChange={(e) => updateSettings({ volume: parseFloat(e.target.value) })}
-                                className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                                type="checkbox"
+                                checked={settings.muted ?? false}
+                                onChange={(e) => updateSettings({ muted: e.target.checked })}
+                                className="w-5 h-5 accent-emerald-500 cursor-pointer"
                             />
-                        </div>
+                        </label>
+
+                        <label className="flex items-start justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition">
+                            <div className="flex items-start gap-2 min-w-0">
+                                <Headphones size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                <div className="min-w-0">
+                                    <div className="text-sm font-medium text-slate-700 dark:text-slate-200">Focus Mode</div>
+                                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Mute musik, SFX tetap — untuk sesi belajar panjang</div>
+                                </div>
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={settings.focusMode ?? false}
+                                onChange={(e) => updateSettings({ focusMode: e.target.checked })}
+                                className="w-5 h-5 accent-sky-500 cursor-pointer flex-shrink-0 ml-2"
+                            />
+                        </label>
                     </div>
 
                     <hr className="border-slate-100 dark:border-slate-700" />
