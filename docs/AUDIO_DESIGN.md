@@ -199,12 +199,15 @@ Stay dengan `<audio>` element (atau Howler wrapper) yang stream-decode.
 - [ ] Source **3 soundscape ambient** (Menu, Wilayah, Puskesmas) dari Freesound CC0
 - [ ] Normalisasi -18 LUFS di Audacity, export `.ogg` + `.mp3` fallback
 
-### Phase 2 — Safety Wiring P0 (Week 2)
-- [ ] Implement `playCriticalAlarm` (IEC 60601-1-8 high priority pattern) via FM synth
-- [ ] Wire `playCriticalAlarm` ke allergy gate *(dependency: allergy gate P0 itself)*
-- [ ] Implement Respectful Silence sequence untuk patient death (deterioration ≥100)
-- [ ] Diegetic EMR SFX: paper rustle, pen scratch, stamp confirm
-- [ ] Visual banner (not audio) untuk autosave failure & runtime trap
+### Phase 2 — Safety Wiring P0 (Week 2) ✅
+- [x] Implement `playCriticalAlarm` (IEC 60601-1-8 high priority: 2 bursts × 5 pulses @ 1 kHz) via FM synth
+- [x] Implement `playMediumAlarm` (IEC medium: 3 pulses @ 800 Hz) for near-miss events
+- [x] Wire `playCriticalAlarm` ke allergy gate di [`hooks/usePatientEMR.js:523`](../src/hooks/usePatientEMR.js) — upgrade dari `playError`
+- [x] Implement Respectful Silence sequence (fade BGM 1s → flatline 800 Hz 3s → silence 3s → BGM @ 30%)
+- [x] Wire `playRespectfulSilence` di [`EmergencyPanel.jsx:420`](../src/components/EmergencyPanel.jsx) via useEffect + useRef (fires once per death event)
+- [x] Diegetic EMR SFX methods: `playPaperRustle`, `playPenScratch`, `playStampConfirm` (FM approximation; swap for field recordings later)
+- [x] Wire `playStampConfirm` di [`PrescriptionSection.jsx:59`](../src/components/emr/treatment/PrescriptionSection.jsx) (replace `playSuccess`)
+- [x] Visual banner (no audio) untuk autosave failure — confirmed existing via `triggerFreezeProtocol` → `clinical.gameOver` modal ([`createOrchestratorSlice.js:59`](../src/store/slices/createOrchestratorSlice.js))
 
 ### Phase 3 — Polish (Week 3)
 - [ ] Ducking 50% saat EMR panel open

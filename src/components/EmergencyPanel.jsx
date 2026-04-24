@@ -9,9 +9,10 @@
  * [LAST_UPDATE]: 2026-03-29
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../context/GameContext.jsx';
+import { soundManager } from '../utils/SoundManager.js';
 import {
     AlertTriangle, Clock, Heart, Activity, Zap, CheckCircle, XCircle, ArrowRight,
     Siren, Thermometer, Droplets, Bot, FileText, Stethoscope, Info, Truck,
@@ -394,6 +395,24 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
     useEffect(() => { if (triageValidation) setActivePhase(p => p === 1 ? 2 : p); }, [triageValidation]);
     useEffect(() => { if (stabilizationValidation) setActivePhase(p => p === 2 ? 3 : p); }, [stabilizationValidation]);
     /* eslint-enable react-hooks/set-state-in-effect */
+
+    // Respectful Silence audio cue on patient death (deterioration ≥ 100 after
+    // max resus attempts). Fires once per death event; resets when patient
+    // changes or condition clears. See docs/AUDIO_DESIGN.md § Kategori 3.
+    const respectfulSilenceFiredRef = useRef(false);
+    const isDeathState = useMemo(() => {
+        if (!patient) return false;
+        const dl = patient.deterioration || 0;
+        return dl >= 100 && patient.triageLevel !== 4 && resuscitationAttempts >= MAX_RESUS_ATTEMPTS;
+    }, [patient, resuscitationAttempts]);
+    useEffect(() => {
+        if (isDeathState && !respectfulSilenceFiredRef.current) {
+            soundManager.playRespectfulSilence?.();
+            respectfulSilenceFiredRef.current = true;
+        } else if (!isDeathState) {
+            respectfulSilenceFiredRef.current = false;
+        }
+    }, [isDeathState]);
 
     // Guard: patient may be undefined if queue desyncs from activeEmergencyId
     if (!patient) {

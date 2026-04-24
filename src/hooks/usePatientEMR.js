@@ -520,7 +520,8 @@ export function usePatientEMR() {
             // Codex Fix: use class-based allergy matching from DispensingEngine
             const allergyMatch = matchDrugAllergy(medData, allergies);
             if (allergyMatch) {
-                soundManager.playError?.() || soundManager.playCancel();
+                // IEC 60601-1-8 high-priority clinical alarm (medical authority anchor)
+                soundManager.playCriticalAlarm?.() || soundManager.playError?.() || soundManager.playCancel();
                 console.warn(`[ALLERGY FIREWALL] Blocked: ${medData.name} — patient allergic to "${allergyMatch}"`);
                 showToast(`⚠️ ALERGI: ${medData.name} KONTRAINDIKASI — pasien alergi "${allergyMatch}"`, 'error');
                 // Don't add — patient safety first

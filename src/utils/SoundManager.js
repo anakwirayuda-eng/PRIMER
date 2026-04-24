@@ -426,6 +426,210 @@ class SoundManager {
         this.setMuted(!this.muted);
         return this.muted;
     }
+
+    // --- IEC 60601-1-8 Clinical Alarms (safety audio P0) ---
+    // Medical device alarm standard — mahasiswa FK auto-asosiasi ICU/IGD.
+    // Docs: docs/AUDIO_DESIGN.md § Kategori 1.
+
+    _playTone(freq, duration, startTime, type = 'sine', volume = 0.5) {
+        if (!this.context || !this.masterGain) return;
+        const osc = this.context.createOscillator();
+        const gain = this.context.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(volume, startTime + 0.01);
+        gain.gain.setValueAtTime(volume, startTime + Math.max(0, duration - 0.05));
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start(startTime);
+        osc.stop(startTime + duration + 0.05);
+    }
+
+    // High-priority: 2 bursts × 5 pulses @ 1 kHz, pulse 180ms, gap 120ms.
+    // Use for life-threatening events: allergy violation, critical contraindication.
+    playCriticalAlarm() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const now = this.context.currentTime;
+        const pulse = 0.18;
+        const gap = 0.12;
+        const burstPause = 0.4;
+        let t = now;
+        for (let b = 0; b < 2; b++) {
+            for (let p = 0; p < 5; p++) {
+                this._playTone(1000, pulse, t, 'sine', 0.5);
+                t += pulse + gap;
+            }
+            t += burstPause;
+        }
+    }
+
+    // Medium-priority: single burst of 3 pulses @ 800 Hz.
+    // Use for: wrong ICD, deterioration worsening, near-miss events.
+    playMediumAlarm() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const now = this.context.currentTime;
+        const pulse = 0.22;
+        const gap = 0.14;
+        let t = now;
+        for (let p = 0; p < 3; p++) {
+            this._playTone(800, pulse, t, 'sine', 0.45);
+            t += pulse + gap;
+        }
+    }
+
+    // Flatline tone — continuous 800 Hz sine. Used inside Respectful Silence.
+    playFlatline(duration = 3) {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        this._playTone(800, duration, this.context.currentTime, 'sine', 0.35);
+    }
+
+    // Respectful Silence sequence — patient death (deterioration ≥ 100).
+    // t=0..1s   fade BGM to 0
+    // t=1..4s   flatline 800 Hz
+    // t=4..7s   total silence (gravitas moment)
+    // t=7s      resume BGM at 30% of effective volume
+    // See docs/AUDIO_DESIGN.md § Kategori 3.
+    playRespectfulSilence() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+
+        // Stage 1 — fade BGM over 1s (preserves track position via pause)
+        if (this.bgmAudio && !this.bgmAudio.paused) {
+            const startVol = this.bgmAudio.volume;
+            const steps = 20;
+            const stepMs = 50;
+            let i = 0;
+            const fadeInterval = setInterval(() => {
+                i++;
+                if (!this.bgmAudio) { clearInterval(fadeInterval); return; }
+                this.bgmAudio.volume = startVol * Math.max(0, 1 - i / steps);
+                if (i >= steps) {
+                    clearInterval(fadeInterval);
+                    this.bgmAudio?.pause();
+                }
+            }, stepMs);
+        }
+
+        // Stage 2 — flatline at t=1s
+        this._playTone(800, 3, this.context.currentTime + 1, 'sine', 0.35);
+
+        // Stage 3+4 — silence, then resume at 30% after t=7s
+        setTimeout(() => {
+            if (this.bgmAudio && !this.muted && !this.focusMode) {
+                this.bgmAudio.volume = this._computeBgmVolume() * 0.3;
+                this.bgmAudio.play().catch(() => {});
+            }
+        }, 7000);
+    }
+
+    // --- Diegetic Clinical UI SFX ---
+    // FM-synth approximations — swap for field recordings when sourced.
+    // Docs: docs/AUDIO_DESIGN.md § Kategori 2.
+
+    // Paper rustle — highpass noise burst (EMR tab open).
+    playPaperRustle() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const ctx = this.context;
+        const now = ctx.currentTime;
+        const duration = 0.28;
+
+        const bufferSize = Math.floor(ctx.sampleRate * duration);
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 2200;
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.35, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+        source.start(now);
+        source.stop(now + duration);
+    }
+
+    // Pen scratch — bandpass noise ~1.5 kHz (writing EMR note).
+    playPenScratch() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const ctx = this.context;
+        const now = ctx.currentTime;
+        const duration = 0.2;
+
+        const bufferSize = Math.floor(ctx.sampleRate * duration);
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
+
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 1500;
+        filter.Q.value = 2;
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.3, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+        source.start(now);
+        source.stop(now + duration);
+    }
+
+    // Stamp confirm — low thud + high tick (prescription sign / discharge final).
+    playStampConfirm() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const ctx = this.context;
+        const now = ctx.currentTime;
+
+        // Low thud 120 → 50 Hz
+        const thudOsc = ctx.createOscillator();
+        const thudGain = ctx.createGain();
+        thudOsc.type = 'sine';
+        thudOsc.frequency.setValueAtTime(120, now);
+        thudOsc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
+        thudGain.gain.setValueAtTime(0, now);
+        thudGain.gain.linearRampToValueAtTime(0.55, now + 0.005);
+        thudGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        thudOsc.connect(thudGain);
+        thudGain.connect(this.masterGain);
+        thudOsc.start(now);
+        thudOsc.stop(now + 0.22);
+
+        // High tick @ 3 kHz
+        const tickOsc = ctx.createOscillator();
+        const tickGain = ctx.createGain();
+        tickOsc.type = 'triangle';
+        tickOsc.frequency.setValueAtTime(3000, now);
+        tickGain.gain.setValueAtTime(0, now);
+        tickGain.gain.linearRampToValueAtTime(0.12, now + 0.002);
+        tickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        tickOsc.connect(tickGain);
+        tickGain.connect(this.masterGain);
+        tickOsc.start(now);
+        tickOsc.stop(now + 0.06);
+    }
 }
 
 const soundManager = new SoundManager();
