@@ -15,7 +15,13 @@ import {
 } from 'lucide-react';
 import { useGame } from '../../context/GameContext.jsx';
 import { INDIVIDUAL_PROFILES } from '../../domains/village/VillageRegistry.js';
-import { PISPK_INDICATORS } from './constants.js';
+import {
+    PIS_PK_INDICATORS,
+    PIS_PK_CATEGORIES,
+    calculateFamilyIKSPisPk,
+    classifyFamilyIKS,
+    evaluateFamilyIndicators
+} from '../../domains/village/pisPkIndicators.js';
 import { getAssetUrl, ASSET_KEY } from '../../assets/assets.js';
 
 // ─── Satellite View (clean image, no interactive markers) ───
@@ -37,11 +43,22 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
     const { navigate } = useGame();
 
     const family = villageData?.families?.find(f => f.id === building.familyId);
-    const indicators = family?.indicators || building.indicators || {};
+    const workingFamily = family || { id: building.familyId, members: building.members || [], indicators: building.indicators || {} };
+    const pisPk = calculateFamilyIKSPisPk(workingFamily, { forceRecompute: true });
+    const score = pisPk.iks;
+    const tier = classifyFamilyIKS(score);
+    const tierLabel = tier === 'sehat' ? 'Keluarga Sehat' : tier === 'pra_sehat' ? 'Pra-Sehat' : 'Tidak Sehat';
+    const breakdown = evaluateFamilyIndicators(workingFamily);
 
-    const scoredIndicators = Object.values(indicators).filter(v => v !== null).length;
-    const healthyIndicators = Object.values(indicators).filter(v => v === true).length;
-    const score = scoredIndicators > 0 ? healthyIndicators / scoredIndicators : 0;
+    // Group breakdown rows by category for easier scanning
+    const breakdownByCategory = {};
+    breakdown.forEach(row => {
+        const def = PIS_PK_INDICATORS.find(i => i.id === row.id);
+        if (!def) return;
+        const cat = def.category;
+        if (!breakdownByCategory[cat]) breakdownByCategory[cat] = [];
+        breakdownByCategory[cat].push({ ...row, def });
+    });
 
     return (
         <div className="space-y-4">
@@ -49,16 +66,16 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
             <button
                 onClick={() => onOpenWiki('iks')}
                 className="w-full text-left bg-white/5 p-4 rounded-xl cursor-pointer hover:bg-white/10 transition-all group border border-white/10 hover:border-emerald-500/30"
-                aria-label={`Skor IKS Keluarga: ${(score * 100).toFixed(0)}% — ${score > 0.8 ? 'Keluarga Sehat' : score > 0.5 ? 'Pra-Sehat' : 'Tidak Sehat'}. Klik untuk info.`}
+                aria-label={`Skor IKS Keluarga: ${(score * 100).toFixed(0)}% — ${tierLabel}. Klik untuk info.`}
             >
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
-                        <span className="font-black text-[10px] text-white/40 uppercase tracking-widest">Skor IKS Keluarga</span>
+                        <span className="font-black text-[10px] text-white/40 uppercase tracking-widest">Skor IKS (PIS-PK)</span>
                         <Info size={12} className="text-white/20 group-hover:text-emerald-400 transition-colors" />
                     </div>
                     <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase
-                        ${score > 0.8 ? 'bg-emerald-500/20 text-emerald-300' :
-                            score > 0.5 ? 'bg-amber-500/20 text-amber-300' :
+                        ${tier === 'sehat' ? 'bg-emerald-500/20 text-emerald-300' :
+                            tier === 'pra_sehat' ? 'bg-amber-500/20 text-amber-300' :
                                 'bg-red-500/20 text-red-300'}
                     `}>
                         {(score * 100).toFixed(0)}%
@@ -66,13 +83,18 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
                 </div>
                 <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
                     <div
-                        className={`h-full transition-all duration-500 ${score > 0.8 ? 'bg-emerald-500' : score > 0.5 ? 'bg-amber-500' : 'bg-red-500'}`}
+                        className={`h-full transition-all duration-500 ${tier === 'sehat' ? 'bg-emerald-500' : tier === 'pra_sehat' ? 'bg-amber-500' : 'bg-red-500'}`}
                         style={{ width: `${score * 100}%` }}
                     />
                 </div>
-                <p className="text-[9px] uppercase font-black text-white/30 mt-1.5 text-right tracking-widest">
-                    {score > 0.8 ? 'Keluarga Sehat' : score > 0.5 ? 'Pra-Sehat' : 'Tidak Sehat'}
-                </p>
+                <div className="flex justify-between items-center mt-1.5">
+                    <span className="text-[9px] text-white/40 font-bold tabular-nums">
+                        {pisPk.fulfilled}/{pisPk.applicable} tercapai · {breakdown.filter(b => b.status === 'na').length} N/A
+                    </span>
+                    <p className="text-[9px] uppercase font-black text-white/30 tracking-widest">
+                        {tierLabel}
+                    </p>
+                </div>
             </button>
 
             {/* Family Members */}
@@ -163,24 +185,45 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
                 </div>
             )}
 
-            {/* PIS-PK Indicators */}
-            <div className="space-y-2">
-                <h4 className="font-black text-[10px] text-white/30 uppercase tracking-widest">
-                    Indikator {PISPK_INDICATORS.length} PIS-PK
-                </h4>
-                <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto pr-1 scrollbar-hide">
-                    {PISPK_INDICATORS.map(ind => {
-                        const isHealthy = indicators[ind.id];
+            {/* PIS-PK Indicators (grouped by category + N/A state) */}
+            <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                    <h4 className="font-black text-[10px] text-white/30 uppercase tracking-widest">
+                        12 Indikator PIS-PK + PSN
+                    </h4>
+                    <div className="flex items-center gap-2 text-[8px] font-bold">
+                        <span className="text-emerald-400">✓ Tercapai</span>
+                        <span className="text-red-400">✕ Belum</span>
+                        <span className="text-white/30">– N/A</span>
+                    </div>
+                </div>
+                <div className="max-h-56 overflow-y-auto pr-1 scrollbar-hide space-y-2">
+                    {Object.entries(breakdownByCategory).map(([catId, rows]) => {
+                        const catMeta = PIS_PK_CATEGORIES[catId];
                         return (
-                            <div key={ind.id} className="flex items-start gap-2 py-1.5 border-b border-white/5 last:border-0">
-                                <div className={`mt-0.5 w-3.5 h-3.5 rounded-full shrink-0 flex items-center justify-center text-[9px] font-black
-                                    ${isHealthy ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}
-                                `}>
-                                    {isHealthy ? '✓' : '✕'}
-                                </div>
-                                <span className={`text-[10px] font-bold leading-tight ${isHealthy ? 'text-white/60' : 'text-red-300'}`}>
-                                    {ind.label}
-                                </span>
+                            <div key={catId} className="bg-white/5 rounded-lg p-2 border border-white/5">
+                                <h5 className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1.5 flex items-center gap-1">
+                                    <span>{catMeta?.icon}</span>{catMeta?.label || catId}
+                                </h5>
+                                {rows.map(row => {
+                                    const isHealthy = row.status === 'healthy';
+                                    const isNa = row.status === 'na';
+                                    return (
+                                        <div key={row.id} className="flex items-start gap-2 py-1" title={row.def.description}>
+                                            <div className={`mt-0.5 w-3.5 h-3.5 rounded-full shrink-0 flex items-center justify-center text-[9px] font-black
+                                                ${isHealthy ? 'bg-emerald-500/20 text-emerald-400' :
+                                                    isNa ? 'bg-white/5 text-white/30' :
+                                                        'bg-red-500/20 text-red-400'}
+                                            `}>
+                                                {isHealthy ? '✓' : isNa ? '–' : '✕'}
+                                            </div>
+                                            <span className={`text-[10px] font-bold leading-tight ${isHealthy ? 'text-white/60' : isNa ? 'text-white/30 italic' : 'text-red-300'}`}>
+                                                {row.def.shortLabel}
+                                                {isNa && <span className="ml-1 text-white/20 normal-case">(tidak berlaku untuk keluarga ini)</span>}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         );
                     })}

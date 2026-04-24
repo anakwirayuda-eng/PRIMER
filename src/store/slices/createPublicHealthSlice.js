@@ -80,6 +80,13 @@ export const createPublicHealthSlice = (set, get) => ({
                 outbreakNotification: null
             }
         })),
+        // PIS-PK "Desa Sehat" victory: dismiss celebration modal (player keeps playing).
+        acknowledgeVillageVictory: () => set(s => ({
+            publicHealth: {
+                ...s.publicHealth,
+                villageVictoryAcknowledged: true
+            }
+        })),
         // CROSS-SLICE: writes player.profile.reputation
         enrollProlanis: (patient, dayOrDiseaseType) => {
             const s = get();

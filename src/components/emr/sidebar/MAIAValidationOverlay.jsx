@@ -9,11 +9,13 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React from 'react';
-import { CheckCircle, XCircle, Brain, Stethoscope, FileText, Pill, Microscope, Shield, BookOpen } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { CheckCircle, XCircle, Brain, Stethoscope, FileText, Pill, Microscope, Shield, BookOpen, HeartHandshake } from 'lucide-react';
 import { PHYSICAL_EXAM_OPTIONS, PROCEDURES_DB } from '../../../data/ProceduresDB.js';
 import { EDUCATION_OPTIONS } from '../../../data/EducationOptions.js';
 import { getMedicationById } from '../../../data/MedicationDatabase.js';
+import { useGame } from '../../../context/GameContext.jsx';
+import { getFamilyContextForPatient, deriveSdohTeachingNotes } from '../../../utils/familyContext.js';
 
 export default function MAIAValidationOverlay({
     patient,
@@ -27,6 +29,16 @@ export default function MAIAValidationOverlay({
     anamnesisHistory = [],
     selectedEducation = []
 }) {
+    const { villageData, villageLedger } = useGame();
+
+    // SDOH teaching notes — MAIA shows family-level risks (JKN, jamban, rokok…)
+    // so students factor social determinants into the plan, not just the diagnosis.
+    const sdohAlerts = useMemo(() => {
+        const ctx = getFamilyContextForPatient(patient, villageData, villageLedger || []);
+        if (!ctx) return [];
+        return deriveSdohTeachingNotes(ctx);
+    }, [patient, villageData, villageLedger]);
+
     if (!showValidation || !maiaFeedback) return null;
 
     return (
@@ -77,6 +89,32 @@ export default function MAIAValidationOverlay({
                             </div>
                         ))}
                     </div>
+
+                    {/* SDOH Context (family-level risks from PIS-PK) */}
+                    {sdohAlerts.length > 0 && (
+                        <div className={`rounded-xl p-3 space-y-2 border ${isDark ? 'bg-amber-500/5 border-amber-500/25' : 'bg-amber-50 border-amber-200'}`}
+                             data-testid="maia-sdoh-alerts">
+                            <div className="flex items-center gap-1.5">
+                                <HeartHandshake size={12} className="text-amber-500" />
+                                <span className={`text-[9px] font-black uppercase tracking-widest ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>
+                                    Konteks SDOH Keluarga ({sdohAlerts.length})
+                                </span>
+                            </div>
+                            <p className={`text-[10px] italic leading-tight ${isDark ? 'text-amber-200/80' : 'text-amber-800/80'}`}>
+                                MAIA menyorot faktor sosial-lingkungan yang relevan untuk rencana edukasi dan rujukan lintas sektor.
+                            </p>
+                            <ul className="space-y-1.5">
+                                {sdohAlerts.map((alert) => (
+                                    <li key={alert.id} className={`text-[10px] leading-tight ${isDark ? 'text-amber-100' : 'text-amber-900'}`}>
+                                        <span className={`font-black uppercase tracking-wider mr-1 ${alert.severity === 'danger' ? (isDark ? 'text-rose-300' : 'text-rose-700') : (isDark ? 'text-amber-300' : 'text-amber-700')}`}>
+                                            {alert.label}:
+                                        </span>
+                                        {alert.note}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     {/* MAIA Exam/Lab Suggestions */}
                     {(maiaFeedback?.examLabSuggestions?.examSuggestions?.length > 0 || maiaFeedback?.examLabSuggestions?.labSuggestions?.length > 0) && (

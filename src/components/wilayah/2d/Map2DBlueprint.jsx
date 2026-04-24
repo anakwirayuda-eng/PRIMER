@@ -23,7 +23,11 @@ const CELL_SIZE = 10; // pixels per grid cell
 const MIN_ZOOM = 0.4;
 const MAX_ZOOM = 3.0;
 const ZOOM_STEP = 0.15;
-const SERVICE_RING_RADIUS = 30 * CELL_SIZE;
+// Distance-decay zones (see spatialDistanceDecay.js):
+//   ≤20 sel: drift x1.0 (zona dekat)  ← inner ring
+//   20–40 sel: drift x1.5 (zona menengah) ← outer ring edge
+//   >40 sel: drift x2.0 (zona jauh, di luar lingkaran service)
+const SERVICE_RING_RADIUS = 40 * CELL_SIZE;
 const SERVICE_RING_INNER_RADIUS = 20 * CELL_SIZE;
 
 function getServiceAnchorLabel(anchor) {

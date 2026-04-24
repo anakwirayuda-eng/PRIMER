@@ -15,6 +15,10 @@ import PauseOverlay from './PauseOverlay.jsx';
 import { useGame } from '../context/GameContext.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import GameOverModal from './GameOverModal.jsx';
+import VictoryModal from './VictoryModal.jsx';
+import { calculateVillageIKSPisPk } from '../domains/village/pisPkIndicators.js';
+import { calculateVillageIKS as calculateReadinessVillageIKS } from '../domains/village/NPCReadiness.js';
+import { useChampionPromotionWatcher } from '../hooks/useChampionPromotionWatcher.js';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext.jsx';
 import useModalA11y from '../hooks/useModalA11y.js';
@@ -146,7 +150,7 @@ function ShortcutHelpModal({ onClose }) {
 }
 
 export default function MainLayout() {
-    const { playerProfile, day, time, logout: _logout, setGameState, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki } = useGame();
+    const { playerProfile, day, time, logout: _logout, setGameState, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki, villageVictoryAcknowledged, acknowledgeVillageVictory } = useGame();
     const { theme, toggleTheme: _toggleTheme } = useTheme();
     const { t: _t, i18n: _i18n } = useTranslation();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -167,6 +171,41 @@ export default function MainLayout() {
         return activeStories.find(s => !s.completed);
     }, [activeStories]);
 
+    // ═══ Champion promotion watcher — toast saat keluarga capai IKS 100% ═══
+    useChampionPromotionWatcher(villageData?.families);
+
+    // ═══ "Desa Sehat" victory detection — dual PIS-PK × TTM criterion ═══
+    // IKS PIS-PK ≥70% (rata-rata 12 indikator Kemenkes per keluarga)
+    // Readiness TTM ≥60 (agregat tahap TTM per keluarga yang sudah engaged)
+    const villageVictory = useMemo(() => {
+        if (villageVictoryAcknowledged) return null;
+        const families = villageData?.families;
+        if (!Array.isArray(families) || families.length === 0) return null;
+
+        const kemenkes = calculateVillageIKSPisPk(families);
+        const readinessState = villageData?.readinessState || {};
+        const engagedReadinessState = Object.fromEntries(
+            Object.entries(readinessState).filter(([, entry]) =>
+                (entry?.visitCount || 0) > 0 ||
+                (Array.isArray(entry?.stageHistory) && entry.stageHistory.length > 0)
+            )
+        );
+        const readiness = Object.keys(engagedReadinessState).length > 0
+            ? calculateReadinessVillageIKS(engagedReadinessState)
+            : { iks: 0 };
+
+        const achieved = kemenkes.meanIks >= 0.70 && (readiness.iks || 0) >= 60;
+        if (!achieved) return null;
+
+        return {
+            kemenkes: kemenkes.meanIks,
+            readiness: (readiness.iks || 0) / 100,
+            kkSehatCount: kemenkes.kkSehatCount,
+            totalKK: kemenkes.totalKK,
+            indicatorCoverage: kemenkes.indicatorCoverage
+        };
+    }, [villageData, villageVictoryAcknowledged]);
+
     const isCalendarOpen = showCalendar || Boolean(selectedDailyReport);
     const isNarrativeOpen = Boolean(focusedStory || interactiveStory);
     const hasBlockingOverlay = Boolean(
@@ -183,7 +222,8 @@ export default function MainLayout() {
         isWikiOpen ||
         isNarrativeOpen ||
         gameOver ||
-        showShortcutHelp
+        showShortcutHelp ||
+        villageVictory
     );
 
     const handleNavigateTarget = useCallback((targetId) => {
@@ -1082,6 +1122,15 @@ export default function MainLayout() {
                     reason={gameOver.reason}
                     onContinue={dismissWarning}
                     onRestart={restartGame}
+                />
+            )}
+
+            {/* "Desa Sehat" celebration — fires once when dual criterion met */}
+            {villageVictory && !gameOver && (
+                <VictoryModal
+                    scores={villageVictory}
+                    day={day}
+                    onContinue={() => acknowledgeVillageVictory?.()}
                 />
             )}
         </div>

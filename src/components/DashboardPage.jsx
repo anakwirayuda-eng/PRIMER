@@ -106,7 +106,7 @@ export default function DashboardPage() {
             case 'accreditation_chapters':
                 return { "Status": accreditation, "Overall Score": derivedKpis.overallScore };
             case 'iks': {
-                return { "Rata-rata IKS": (communityMetrics.avgIKS * 100).toFixed(1) + "%", "Total KK": communityMetrics.totalKK };
+                return { "IKS PIS-PK (Kemenkes)": (communityMetrics.avgIKS * 100).toFixed(1) + "%", "Total KK": communityMetrics.totalKK };
             }
             case 'kbk': {
                 const pop = villageData?.stats?.totalPopulation || 1;
@@ -139,7 +139,11 @@ export default function DashboardPage() {
             case 'ukp_overview':
                 return { "Akurasi Klinis": derivedKpis.clinicalAccuracy + "%", "Total Pasien": kpi.totalPatients };
             case 'ukm_overview': {
-                return { "Rata-rata IKS": (communityMetrics.avgIKS * 100).toFixed(1) + "%", "Total KK": communityMetrics.totalKK };
+                return {
+                    "IKS PIS-PK (Kemenkes)": (communityMetrics.avgIKS * 100).toFixed(1) + "%",
+                    "Kesiapan TTM": ((communityMetrics.readinessVillageIKS || 0) * 100).toFixed(0) + "%",
+                    "Total KK": communityMetrics.totalKK
+                };
             }
             default:
                 return null;
@@ -179,7 +183,7 @@ export default function DashboardPage() {
         {
             id: 'community', label: 'Community Intel', sublabel: 'UKM • PIS-PK • Prolanis',
             icon: MapPin, color: 'violet',
-            quickStat: `IKS ${(communityMetrics.avgIKS * 100).toFixed(0)}%`,
+            quickStat: `IKS ${(communityMetrics.avgIKS * 100).toFixed(0)}% · TTM ${((communityMetrics.readinessVillageIKS || 0) * 100).toFixed(0)}%`,
             wikiKey: 'ukm_overview'
         },
         {

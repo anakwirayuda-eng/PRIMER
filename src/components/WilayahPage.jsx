@@ -62,6 +62,10 @@ import {
 } from '../utils/progressMetrics.js';
 import VillagerBehavior from '../domains/village/VillagerBehavior.js';
 import { VILLAGE_FAMILIES } from '../domains/village/VillageRegistry.js';
+import {
+    calculateFamilyIKSPisPk,
+    classifyFamilyIKS
+} from '../domains/village/pisPkIndicators.js';
 
 // ─── Runtime PHBS & Risk helpers (from villageData, not static registry) ──
 function calculatePHBSFromIndicators(ind) {
@@ -324,16 +328,15 @@ export default function WilayahPage() {
         : selectedBuilding?.familyId
             ? villageData?.families?.find(f => f.id === selectedBuilding.familyId)
             : null;
-    const selectedIks = activeFamily
-        ? (() => {
-            const ind = activeFamily.indicators || {};
-            const scored = Object.values(ind).filter(v => v !== null).length;
-            const healthy = Object.values(ind).filter(v => v === true).length;
-            return scored > 0 ? healthy / scored : 0;
-        })()
-        : 0;
-    const iksLabel = selectedIks >= 0.8 ? 'SEHAT' : selectedIks >= 0.5 ? 'PRA SEHAT' : 'TIDAK SEHAT';
-    const iksColor = selectedIks >= 0.8 ? 'text-emerald-400' : selectedIks >= 0.5 ? 'text-amber-400' : 'text-red-400';
+    // Canonical PIS-PK score with demographic applicability (N/A filtered).
+    const pisPkResult = activeFamily ? calculateFamilyIKSPisPk(activeFamily, { forceRecompute: true }) : null;
+    const selectedIks = pisPkResult?.iks ?? 0;
+    const iksTier = classifyFamilyIKS(selectedIks);
+    const iksLabel = iksTier === 'sehat' ? 'SEHAT' : iksTier === 'pra_sehat' ? 'PRA SEHAT' : 'TIDAK SEHAT';
+    const iksColor = iksTier === 'sehat' ? 'text-emerald-400' : iksTier === 'pra_sehat' ? 'text-amber-400' : 'text-red-400';
+    const iksBreakdownText = pisPkResult && pisPkResult.applicable > 0
+        ? `${pisPkResult.fulfilled}/${pisPkResult.applicable} indikator tercapai`
+        : null;
 
     const handleHomeVisitAction = (action) => {
         const travelState = homeVisitTravelByAction.get(action.id);
@@ -564,6 +567,10 @@ export default function WilayahPage() {
                                         <span className="flex items-center gap-1 text-emerald-400"><span className="w-2 h-2 rounded-full bg-emerald-500" />Sehat</span>
                                         <span className="flex items-center gap-1 text-amber-400"><span className="w-2 h-2 rounded-full bg-amber-500" />Waspada</span>
                                         <span className="flex items-center gap-1 text-rose-400"><span className="w-2 h-2 rounded-full bg-rose-500" />Risiko</span>
+                                        <span className="flex items-center gap-1 text-amber-300 uppercase tracking-wider">
+                                            <span className="px-1 rounded-full bg-amber-400/90 text-[7px] font-black text-slate-900">KADER</span>
+                                            Kader Lokal (IKS 100%)
+                                        </span>
                                     </div>
                                 </div>
                             )}
@@ -819,6 +826,9 @@ export default function WilayahPage() {
                                     <div className="flex flex-col">
                                         <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">Status IKS</span>
                                         <span className={`text-sm font-black ${iksColor}`}>{iksLabel}</span>
+                                        {iksBreakdownText && (
+                                            <span className="text-[9px] text-white/50 font-bold mt-0.5 tabular-nums">{iksBreakdownText}</span>
+                                        )}
                                     </div>
                                 </div>
                             </div>

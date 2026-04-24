@@ -72,7 +72,10 @@ export const createInitialPublicHealthState = () => ({
     lastBridgeRepairDay: -1,
     buildingProgress: {},
     lastIntelTargets: null,
-    villageLedger: []
+    villageLedger: [],
+    // PIS-PK "Desa Sehat" victory flag: set once when dual criteria met (meanIKS
+    // ≥0.70 + readiness ≥60). Persist acknowledgement so the modal fires only once.
+    villageVictoryAcknowledged: false
 });
 
 export const createInitialStaffState = () => ({

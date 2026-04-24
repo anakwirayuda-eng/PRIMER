@@ -286,36 +286,60 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                 )}
 
                 {showChampionStar && (
-                    <div
-                        data-testid={`champion-beacon-${building.id}`}
-                        className="absolute pointer-events-none"
-                        style={{
-                            left: '50%',
-                            top: -6,
-                            width: 10,
-                            height: 10,
-                            transform: 'translateX(-50%)',
-                            borderRadius: '999px',
-                            background: 'rgba(15,23,42,0.88)',
-                            border: '1px solid rgba(251,191,36,0.55)',
-                            boxShadow: '0 0 8px rgba(251,191,36,0.35)'
-                        }}
-                    >
+                    <>
                         <div
-                            data-testid={`champion-star-${building.id}`}
+                            data-testid={`champion-beacon-${building.id}`}
                             className="absolute pointer-events-none"
                             style={{
                                 left: '50%',
-                                top: '50%',
-                                width: 7,
-                                height: 7,
-                                transform: 'translate(-50%, -50%)',
-                                background: '#fbbf24',
-                                clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
-                                boxShadow: '0 0 5px rgba(251,191,36,0.7)'
+                                top: -6,
+                                width: 10,
+                                height: 10,
+                                transform: 'translateX(-50%)',
+                                borderRadius: '999px',
+                                background: 'rgba(15,23,42,0.88)',
+                                border: '1px solid rgba(251,191,36,0.55)',
+                                boxShadow: '0 0 8px rgba(251,191,36,0.35)'
                             }}
-                        />
-                    </div>
+                        >
+                            <div
+                                data-testid={`champion-star-${building.id}`}
+                                className="absolute pointer-events-none"
+                                style={{
+                                    left: '50%',
+                                    top: '50%',
+                                    width: 7,
+                                    height: 7,
+                                    transform: 'translate(-50%, -50%)',
+                                    background: '#fbbf24',
+                                    clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+                                    boxShadow: '0 0 5px rgba(251,191,36,0.7)'
+                                }}
+                            />
+                        </div>
+                        {/* Always-on pill label so students SEE "Kader" on the map,
+                            not just via hover tooltip. Tiny, muted, non-interactive. */}
+                        <div
+                            data-testid={`champion-label-${building.id}`}
+                            className="absolute pointer-events-none font-black uppercase"
+                            style={{
+                                left: '50%',
+                                top: -20,
+                                transform: 'translateX(-50%)',
+                                padding: '1px 5px',
+                                borderRadius: 999,
+                                fontSize: 7,
+                                letterSpacing: '0.12em',
+                                color: '#0b0f19',
+                                background: 'rgba(251,191,36,0.92)',
+                                border: '1px solid rgba(245,158,11,0.7)',
+                                boxShadow: '0 1px 4px rgba(251,191,36,0.4)',
+                                whiteSpace: 'nowrap'
+                            }}
+                        >
+                            KADER
+                        </div>
+                    </>
                 )}
 
                 {showIntelTarget && (
