@@ -10,22 +10,36 @@
 
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 import { buildCanonicalSavePayload, CURRENT_SAVE_VERSION } from '../utils/savePayload.js';
+import { calculatePerformanceScore } from '../utils/scoringEngine.js';
 
 /**
  * Extract leaderboard-relevant fields from a game state snapshot.
+ *
+ * Formula skor sekarang memakai Skor Kinerja Terpadu 4-dimensi (UKP/UKM/
+ * Manajemen/Ketahanan) dari `scoringEngine.js`. Formula lama
+ * (`reputation*10 + level*50 + knowledge*2 + day*5`) dihapus karena
+ * mendorong perilaku grind XP yang tidak pedagogis (membiarkan warga sakit
+ * agar poli ramai). Engine baru memiliki guillotine RRNS dan apathy penalty
+ * yang mencegah min-max — verifikasi via tests/scoringEngine.test.js.
  */
 function extractLeaderboardData(gameState) {
     const player = gameState?.player?.profile || {};
     const world = gameState?.world || {};
     const clinical = gameState?.clinical || {};
 
+    const performance = calculatePerformanceScore(gameState);
+
     return {
-        score: Math.round(
-            (player.reputation || 0) * 10 +
-            (player.level || 1) * 50 +
-            (player.knowledge || 0) * 2 +
-            (world.day || 1) * 5
-        ),
+        // Skor terpadu 0-100 sebagai metrik utama leaderboard
+        score: Math.round(performance.total),
+        grade: performance.grade.grade,
+        grade_label: performance.grade.label,
+        // Per-dimensi untuk dashboard dosen
+        score_ukp: Math.round(performance.ukp.score * 10) / 10,
+        score_ukm: Math.round(performance.ukm.score * 10) / 10,
+        score_management: Math.round(performance.management.score * 10) / 10,
+        score_resilience: Math.round(performance.resilience.score * 10) / 10,
+        // Konteks meta
         day_reached: world.day || 1,
         reputation: player.reputation || 0,
         level: player.level || 1,

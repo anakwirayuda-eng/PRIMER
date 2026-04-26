@@ -48,13 +48,31 @@ export const syncQuestRoster = (quests, day = INITIAL_TIME_STATE.day) => {
 
 // --- Initial State Constructors ---
 
+/** Default Stase length. DeepThink usul 60 hari (lab one-shot), kami pakai
+ *  90 hari karena pemakaian hybrid lab+rumah memungkinkan playtime lebih
+ *  panjang & TTM keluarga butuh observasi 3 bulan untuk bergerak meaningful
+ *  (Prochaska & DiClemente 1983).
+ */
+export const STASE_TARGET_DAY = 90;
+
+/** Initial state untuk Stase / endgame tracking. */
+const createInitialStaseState = () => ({
+    targetDay: STASE_TARGET_DAY,
+    phase: 'active',                 // 'active' | 'postStase'
+    finalScore: null,                // hasil calculatePerformanceScore saat hari (target+1) — immutable
+    finalScoreLockedAt: null,        // timestamp ms saat skor di-lock
+    finalScoreDay: null,             // day saat lock (sanity check)
+    finalReportAcknowledged: false,  // user sudah dismiss laporan akhir?
+});
+
 export const createInitialMetaState = (day = INITIAL_TIME_STATE.day) => ({
     activeQuests: createSeededQuestRoster(day),
     activeStories: [],
     isWikiOpen: false,
     wikiMetric: null,
     saveVersion: CURRENT_SAVE_VERSION,
-    runtimeTrap: null
+    runtimeTrap: null,
+    stase: createInitialStaseState(),
 });
 
 export const createInitialPublicHealthState = () => ({

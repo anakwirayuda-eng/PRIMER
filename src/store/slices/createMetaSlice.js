@@ -22,7 +22,8 @@ import {
     evaluateStoryTriggers
 } from '../../game/QuestEngine.js';
 import { applyStoryImpactToDraft } from '../helpers/publicHealthHelpers.js';
-import { createInitialMetaState } from '../helpers/persistenceHelpers.js';
+import { createInitialMetaState, STASE_TARGET_DAY } from '../helpers/persistenceHelpers.js';
+import { calculatePerformanceScore } from '../../utils/scoringEngine.js';
 
 export const createMetaSlice = (set, get) => ({
     // --- STATE ---
@@ -140,6 +141,57 @@ export const createMetaSlice = (set, get) => ({
 
         openWiki: (key) => set((s) => ({ meta: { ...s.meta, isWikiOpen: true, wikiMetric: key } })),
         closeWiki: () => set((s) => ({ meta: { ...s.meta, isWikiOpen: false } })),
+
+        // ═══ STASE ENDGAME — final score lock di hari ke-(STASE_TARGET_DAY+1) ═══
+        /**
+         * Hitung Skor Kinerja Terpadu dari snapshot state saat ini, lock-in
+         * sebagai final score, dan transisi ke phase 'postStase'. Idempotent:
+         * memanggil ulang setelah lock pertama tidak meng-overwrite skor.
+         * Mahasiswa tetap bisa lanjut main untuk hunt achievement Model C —
+         * skor leaderboard tidak berubah lagi.
+         */
+        lockStaseFinalScore: () => {
+            const s = get();
+            if (s.meta.stase?.finalScore != null) {
+                return s.meta.stase.finalScore; // already locked
+            }
+            const snapshot = {
+                player: s.player,
+                clinical: s.clinical,
+                publicHealth: s.publicHealth,
+                world: s.world,
+                derivedKpis: s.finance, // selectDerivedFinance shape
+            };
+            const performance = calculatePerformanceScore(snapshot);
+            const now = Date.now();
+            const dayAtLock = s.world?.day ?? null;
+            set((state) => ({
+                meta: {
+                    ...state.meta,
+                    stase: {
+                        ...(state.meta.stase || {}),
+                        targetDay: state.meta.stase?.targetDay ?? STASE_TARGET_DAY,
+                        phase: 'postStase',
+                        finalScore: performance,
+                        finalScoreLockedAt: now,
+                        finalScoreDay: dayAtLock,
+                        finalReportAcknowledged: false,
+                    },
+                },
+            }));
+            return performance;
+        },
+
+        /** Dismiss laporan akhir; mode pasca-stase tetap aktif untuk badge hunt. */
+        acknowledgeStaseFinalReport: () => set((state) => ({
+            meta: {
+                ...state.meta,
+                stase: {
+                    ...(state.meta.stase || {}),
+                    finalReportAcknowledged: true,
+                },
+            },
+        })),
 
         resetMeta: () => set({ meta: createInitialMetaState(get().world.day) }),
     },

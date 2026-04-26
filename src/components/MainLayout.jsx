@@ -16,9 +16,12 @@ import { useGame } from '../context/GameContext.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import GameOverModal from './GameOverModal.jsx';
 import VictoryModal from './VictoryModal.jsx';
+import StaseFinalReportModal from './StaseFinalReportModal.jsx';
 import { calculateVillageIKSPisPk } from '../domains/village/pisPkIndicators.js';
 import { calculateVillageIKS as calculateReadinessVillageIKS } from '../domains/village/NPCReadiness.js';
 import { useChampionPromotionWatcher } from '../hooks/useChampionPromotionWatcher.js';
+import { useGameStore } from '../store/useGameStore.js';
+import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext.jsx';
 import useModalA11y from '../hooks/useModalA11y.js';
@@ -174,6 +177,21 @@ export default function MainLayout() {
     // ═══ Champion promotion watcher — toast saat keluarga capai IKS 100% ═══
     useChampionPromotionWatcher(villageData?.families);
 
+    // ═══ Stase endgame — auto-lock final score di Day > targetDay ═══
+    // Subscribe narrow ke meta.stase + dispatch action sekali ketika kondisi
+    // terpenuhi. Aman untuk save-load: idempotent karena lockStaseFinalScore
+    // mengecek finalScore !== null sebelum re-compute.
+    const staseState = useGameStore(useShallow(s => s.meta?.stase));
+    const lockStaseFinalScore = useGameStore(s => s.metaActions?.lockStaseFinalScore);
+    const acknowledgeStaseFinalReport = useGameStore(s => s.metaActions?.acknowledgeStaseFinalReport);
+    useEffect(() => {
+        if (!staseState || !lockStaseFinalScore) return;
+        const target = staseState.targetDay ?? 90;
+        if (day > target && staseState.phase === 'active' && staseState.finalScore == null) {
+            lockStaseFinalScore();
+        }
+    }, [day, staseState, lockStaseFinalScore]);
+
     // ═══ "Desa Sehat" victory detection — dual PIS-PK × TTM criterion ═══
     // IKS PIS-PK ≥70% (rata-rata 12 indikator Kemenkes per keluarga)
     // Readiness TTM ≥60 (agregat tahap TTM per keluarga yang sudah engaged)
@@ -223,7 +241,8 @@ export default function MainLayout() {
         isNarrativeOpen ||
         gameOver ||
         showShortcutHelp ||
-        villageVictory
+        villageVictory ||
+        (staseState?.phase === 'postStase' && staseState?.finalScore && !staseState?.finalReportAcknowledged)
     );
 
     const handleNavigateTarget = useCallback((targetId) => {
@@ -1131,6 +1150,19 @@ export default function MainLayout() {
                     scores={villageVictory}
                     day={day}
                     onContinue={() => acknowledgeVillageVictory?.()}
+                />
+            )}
+
+            {/* Laporan Akhir Stase — muncul sekali setelah Day > targetDay (90) */}
+            {staseState?.phase === 'postStase'
+                && staseState?.finalScore
+                && !staseState?.finalReportAcknowledged
+                && !gameOver && (
+                <StaseFinalReportModal
+                    finalScore={staseState.finalScore}
+                    dayLockedAt={staseState.finalScoreDay}
+                    targetDay={staseState.targetDay}
+                    onContinue={() => acknowledgeStaseFinalReport?.()}
                 />
             )}
         </div>
