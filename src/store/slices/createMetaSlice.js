@@ -193,6 +193,25 @@ export const createMetaSlice = (set, get) => ({
             },
         })),
 
+        /**
+         * Tandai milestone monthly debrief sebagai "sudah dilihat".
+         * Idempotent — kalau milestoneDay <= lastDebriefDay, tidak berubah.
+         */
+        acknowledgeMonthlyDebrief: (milestoneDay) => set((state) => {
+            const current = state.meta.stase?.lastDebriefDay ?? 0;
+            const next = Number(milestoneDay) || 0;
+            if (next <= current) return {};
+            return {
+                meta: {
+                    ...state.meta,
+                    stase: {
+                        ...(state.meta.stase || {}),
+                        lastDebriefDay: next,
+                    },
+                },
+            };
+        }),
+
         resetMeta: () => set({ meta: createInitialMetaState(get().world.day) }),
     },
 });

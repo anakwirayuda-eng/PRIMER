@@ -23,7 +23,7 @@ const STRESS_WEIGHTS = {
     caseloadToday: 0.1     // Cases treated today → fatigue
 };
 
-const PACING_PROFILES = {
+export const PACING_PROFILES = {
     mercy: {
         spawnMultiplier: 0.4,      // 60% fewer patients
         eventProbability: 0.05,    // Almost no new events
@@ -55,6 +55,50 @@ const PACING_PROFILES = {
         label: 'Crisis Mode'
     }
 };
+
+// ═══════════════════════════════════════════════════════════════
+// DAY-AWARE INTENSITY CAP (DeepThink M2 — kurva mercy → crisis 90-hari)
+// ═══════════════════════════════════════════════════════════════
+//
+// Pemain di awal stase (Pekan 1-2) butuh ruang adaptasi: meski stress
+// rendah karena belum terjadi apa-apa, jangan langsung crisis. Pemain di
+// akhir stase (Pekan 7-13) layak penuh intensitas. Cap mencegah "boredom
+// crisis" early-game dan memberi kurva pedagogis bertahap.
+
+const PROFILE_INTENSITY = Object.freeze({
+    mercy: 0,
+    breathing: 1,
+    normal: 2,
+    pressure: 3,
+    crisis: 4,
+});
+const PROFILE_BY_INTENSITY = Object.freeze(['mercy', 'breathing', 'normal', 'pressure', 'crisis']);
+
+/**
+ * Maksimum intensitas pacing yang diizinkan pada hari tertentu.
+ * Day 1-14   = breathing (adaptasi triase + UKP dasar)
+ * Day 15-30  = normal    (UKM dasar mulai dibuka)
+ * Day 31-60  = pressure  (kasus kronis, SISRUTE, Prolanis)
+ * Day 61+    = crisis    (epidemiologi, akreditasi, full intensitas)
+ *
+ * Special: `Infinity` → crisis cap (no effective cap, untuk back-compat
+ * caller yang explicitly minta "no day awareness").
+ * Invalid input (NaN/undefined/null) → breathing cap (paling konservatif
+ * untuk safety).
+ *
+ * @param {number} day - Current game day
+ * @returns {number} Max intensity index 0..4
+ */
+export function getDayPhaseCapIntensity(day) {
+    if (day === Infinity) return PROFILE_INTENSITY.crisis;
+    const n = Number(day);
+    if (!Number.isFinite(n)) return PROFILE_INTENSITY.breathing;
+    const safeDay = Math.max(1, n);
+    if (safeDay <= 14) return PROFILE_INTENSITY.breathing;
+    if (safeDay <= 30) return PROFILE_INTENSITY.normal;
+    if (safeDay <= 60) return PROFILE_INTENSITY.pressure;
+    return PROFILE_INTENSITY.crisis;
+}
 
 // ═══════════════════════════════════════════════════════════════
 // CORE: EVALUATE PLAYER STRESS LEVEL
@@ -103,17 +147,31 @@ export function calculateStress(state) {
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * Determine pacing profile based on stress level.
- * 
+ * Determine pacing profile based on stress level + day-aware cap.
+ *
+ * Stress reaktif: high-stress → mercy (helps player), low-stress → crisis
+ * (challenges bored player). Day-aware cap menetapkan intensitas maksimum
+ * per fase stase (lihat getDayPhaseCapIntensity) sehingga pemain awal
+ * tidak langsung dilempar ke crisis hanya karena queue kosong.
+ *
  * @param {number} stressScore - 0-100 stress score
- * @returns {Object} Pacing profile with spawnMultiplier, eventProbability, giftChance
+ * @param {number} [day=Infinity] - Current game day; default no cap (back-compat)
+ * @returns {Object} Pacing profile
  */
-export function selectPacingProfile(stressScore) {
-    if (stressScore >= 80) return PACING_PROFILES.mercy;
-    if (stressScore >= 60) return PACING_PROFILES.breathing;
-    if (stressScore >= 35) return PACING_PROFILES.normal;
-    if (stressScore >= 15) return PACING_PROFILES.pressure;
-    return PACING_PROFILES.crisis; // Player is bored → dial up the heat!
+export function selectPacingProfile(stressScore, day = Infinity) {
+    let chosen;
+    if (stressScore >= 80) chosen = 'mercy';
+    else if (stressScore >= 60) chosen = 'breathing';
+    else if (stressScore >= 35) chosen = 'normal';
+    else if (stressScore >= 15) chosen = 'pressure';
+    else chosen = 'crisis'; // Player is bored — dial up the heat (subject to cap)
+
+    const cap = getDayPhaseCapIntensity(day);
+    const intensity = PROFILE_INTENSITY[chosen];
+    if (intensity > cap) {
+        chosen = PROFILE_BY_INTENSITY[cap];
+    }
+    return PACING_PROFILES[chosen];
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -128,7 +186,7 @@ export function selectPacingProfile(stressScore) {
  */
 export function evaluateDirectorState(gameState) {
     const stress = calculateStress(gameState);
-    const profile = selectPacingProfile(stress);
+    const profile = selectPacingProfile(stress, gameState?.day);
     const rng = createDeterministicSequence(
         seedKey(
             'director-state',
@@ -266,7 +324,7 @@ export function processUKPBridge(completedCases, currentDay) {
  * @param {string} caseOutcome - 'failed' or 'partial'
  * @returns {string} Narrative text
  */
-function generateBridgeNarrative(scenario, outcome, caseOutcome) {
+function generateBridgeNarrative(scenario, outcome, _caseOutcome) {
     const narratives = {
         'dengue_df': '🚨 [DARURAT IGD] Anak dari RT yang gagal PSN masuk dengan Dengue Shock Syndrome. Hematokrit 48%, trombosit anjlok. Stok RL menipis!',
         'dbd_grade_1': '🏥 [IGD] Pasien anak demam tinggi hari ke-4 dengan petekie. Suspek DHF Grade I. Akibat langsung kegagalan program PSN.',

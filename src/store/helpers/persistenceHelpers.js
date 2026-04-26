@@ -55,6 +55,9 @@ export const syncQuestRoster = (quests, day = INITIAL_TIME_STATE.day) => {
  */
 export const STASE_TARGET_DAY = 90;
 
+/** Hari-hari milestone bulanan untuk debrief non-blocking (selain Day-1 day endpoint). */
+export const STASE_DEBRIEF_MILESTONES = Object.freeze([30, 60]);
+
 /** Initial state untuk Stase / endgame tracking. */
 const createInitialStaseState = () => ({
     targetDay: STASE_TARGET_DAY,
@@ -63,6 +66,7 @@ const createInitialStaseState = () => ({
     finalScoreLockedAt: null,        // timestamp ms saat skor di-lock
     finalScoreDay: null,             // day saat lock (sanity check)
     finalReportAcknowledged: false,  // user sudah dismiss laporan akhir?
+    lastDebriefDay: 0,               // last monthly debrief milestone yang sudah dilewati & di-ack
 });
 
 export const createInitialMetaState = (day = INITIAL_TIME_STATE.day) => ({

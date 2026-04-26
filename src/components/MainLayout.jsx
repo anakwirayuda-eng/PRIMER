@@ -17,6 +17,7 @@ import ErrorBoundary from './ErrorBoundary.jsx';
 import GameOverModal from './GameOverModal.jsx';
 import VictoryModal from './VictoryModal.jsx';
 import StaseFinalReportModal from './StaseFinalReportModal.jsx';
+import MonthlyDebriefModal from './MonthlyDebriefModal.jsx';
 import { calculateVillageIKSPisPk } from '../domains/village/pisPkIndicators.js';
 import { calculateVillageIKS as calculateReadinessVillageIKS } from '../domains/village/NPCReadiness.js';
 import { useChampionPromotionWatcher } from '../hooks/useChampionPromotionWatcher.js';
@@ -184,6 +185,7 @@ export default function MainLayout() {
     const staseState = useGameStore(useShallow(s => s.meta?.stase));
     const lockStaseFinalScore = useGameStore(s => s.metaActions?.lockStaseFinalScore);
     const acknowledgeStaseFinalReport = useGameStore(s => s.metaActions?.acknowledgeStaseFinalReport);
+    const acknowledgeMonthlyDebrief = useGameStore(s => s.metaActions?.acknowledgeMonthlyDebrief);
     useEffect(() => {
         if (!staseState || !lockStaseFinalScore) return;
         const target = staseState.targetDay ?? 90;
@@ -191,6 +193,27 @@ export default function MainLayout() {
             lockStaseFinalScore();
         }
     }, [day, staseState, lockStaseFinalScore]);
+
+    // ═══ Monthly debrief — trigger non-blocking saat day melewati Day 30/60 ═══
+    // Defensive: hanya hitung untuk fase 'active' (jangan tampilkan setelah
+    // post-stase atau sebelum lock final score).
+    const monthlyDebriefMilestone = useMemo(() => {
+        if (!staseState || staseState.phase !== 'active') return null;
+        const target = staseState.targetDay ?? 90;
+        const lastSeen = staseState.lastDebriefDay ?? 0;
+        const milestones = [30, 60].filter((m) => m < target);
+        // Cari milestone terkecil yang sudah dilewati pemain tapi belum di-ack
+        return milestones.find((m) => day >= m && lastSeen < m) ?? null;
+    }, [day, staseState]);
+
+    // Snapshot state utk modal — diambil dari store
+    const debriefStateSnapshot = useGameStore(useShallow(s => ({
+        player: s.player,
+        clinical: s.clinical,
+        publicHealth: s.publicHealth,
+        world: s.world,
+        derivedKpis: s.finance,
+    })));
 
     // ═══ "Desa Sehat" victory detection — dual PIS-PK × TTM criterion ═══
     // IKS PIS-PK ≥70% (rata-rata 12 indikator Kemenkes per keluarga)
@@ -242,7 +265,8 @@ export default function MainLayout() {
         gameOver ||
         showShortcutHelp ||
         villageVictory ||
-        (staseState?.phase === 'postStase' && staseState?.finalScore && !staseState?.finalReportAcknowledged)
+        (staseState?.phase === 'postStase' && staseState?.finalScore && !staseState?.finalReportAcknowledged) ||
+        monthlyDebriefMilestone
     );
 
     const handleNavigateTarget = useCallback((targetId) => {
@@ -1163,6 +1187,16 @@ export default function MainLayout() {
                     dayLockedAt={staseState.finalScoreDay}
                     targetDay={staseState.targetDay}
                     onContinue={() => acknowledgeStaseFinalReport?.()}
+                />
+            )}
+
+            {/* Monthly debrief — non-blocking checkpoint Day 30 & Day 60 */}
+            {monthlyDebriefMilestone && !gameOver && (
+                <MonthlyDebriefModal
+                    state={debriefStateSnapshot}
+                    milestoneDay={monthlyDebriefMilestone}
+                    targetDay={staseState?.targetDay}
+                    onContinue={() => acknowledgeMonthlyDebrief?.(monthlyDebriefMilestone)}
                 />
             )}
         </div>
