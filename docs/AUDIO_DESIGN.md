@@ -209,11 +209,12 @@ Stay dengan `<audio>` element (atau Howler wrapper) yang stream-decode.
 - [x] Wire `playStampConfirm` di [`PrescriptionSection.jsx:59`](../src/components/emr/treatment/PrescriptionSection.jsx) (replace `playSuccess`)
 - [x] Visual banner (no audio) untuk autosave failure — confirmed existing via `triggerFreezeProtocol` → `clinical.gameOver` modal ([`createOrchestratorSlice.js:59`](../src/store/slices/createOrchestratorSlice.js))
 
-### Phase 3 — Polish (Week 3)
-- [ ] Ducking 50% saat EMR panel open
-- [ ] Door-open stinger per lokasi utama
-- [ ] Day start/end SFX (netral, non-religious)
-- [ ] Level up gamelan glissando
+### Phase 3 — Polish (Week 3) ✅
+- [x] Ducking 50% saat EMR panel open — BGM effective volume × 0.5 via `_computeBgmVolume`, wired di [`GameContext.jsx`](../src/context/GameContext.jsx) useEffect watching `clinical.activePatientId` + `activeEmergencyId`
+- [x] Scene enter stinger (low woosh + high chime) — fires on `navActions.setActivePage` / `navigate` saat page berbeda
+- [x] Day start SFX (ascending C5-E5-G5 + sparkle) — wired di [`MorningBriefingModal.jsx`](../src/components/MorningBriefingModal.jsx) mount
+- [x] Day end SFX (descending G4-E4-C4 + low pad, non-religious) — wired di [`EndOfDayModal.jsx`](../src/components/EndOfDayModal.jsx) mount
+- [x] Level up gamelan glissando (FM synth metallic bell) — wired di `unlockSkill` ([`createPlayerSlice.js`](../src/store/slices/createPlayerSlice.js)) + `checkAccreditation` ([`createClinicalSlice.js`](../src/store/slices/createClinicalSlice.js))
 
 ### Phase 4 — Extreme Playtest (Week 4)
 - [ ] Device test: Chrome desktop, Firefox, **Safari iOS (paling agresif!)**, Chrome Android

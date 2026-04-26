@@ -7,7 +7,7 @@
  * [LAST_UPDATE]: 2026-02-14
  */
 
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useEffect } from 'react';
 import { useGameStore } from '../store/useGameStore.js';
 import { useShallow } from 'zustand/react/shallow';
 import { selectDerivedFinance, selectPlayerStats, selectClinical, selectBuffs } from '../store/selectors.js';
@@ -75,6 +75,13 @@ export function GameProvider({ children }) {
 
     // Cloud Sync: auto-sync to Supabase on day transitions
     useCloudSync({ slotId: nav.currentSlotId || 'default' });
+
+    // Audio ducking — BGM drops to 50% when EMR panel is focused (tunnel vision)
+    // See docs/AUDIO_DESIGN.md § Ducking.
+    useEffect(() => {
+        const emrOpen = !!(clinical.activePatientId || clinical.activeEmergencyId);
+        soundManager.setDucked?.(emrOpen);
+    }, [clinical.activePatientId, clinical.activeEmergencyId]);
 
     const value = useMemo(() => {
         // Prepare base object - Merging store states and actions

@@ -1113,7 +1113,11 @@ export const createClinicalSlice = (set, get) => ({
             const score = s.player.profile.reputation;
             let newAccreditation = 'Dasar';
             if (score >= 90) newAccreditation = 'Paripurna'; else if (score >= 80) newAccreditation = 'Utama'; else if (score >= 70) newAccreditation = 'Madya';
-            if (newAccreditation !== s.clinical.accreditation) { set(st => ({ clinical: { ...st.clinical, accreditation: newAccreditation } })); }
+            if (newAccreditation !== s.clinical.accreditation) {
+                set(st => ({ clinical: { ...st.clinical, accreditation: newAccreditation } }));
+                // Accreditation upgrade — gamelan glissando celebration
+                soundManager.playLevelUp?.();
+            }
         },
         resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [], hospitalBedUsage: {}, activeReferralLog: [] } }))
     },

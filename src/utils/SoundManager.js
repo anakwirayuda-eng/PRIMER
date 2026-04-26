@@ -220,10 +220,11 @@ class SoundManager {
     isLoading = false; // Lock to prevent double playback
     lastPlayedIndices = [];
 
-    // --- Mixer state (3-channel + focus mode). See docs/AUDIO_DESIGN.md §3 ---
+    // --- Mixer state (3-channel + focus mode + ducking). See docs/AUDIO_DESIGN.md §3 ---
     masterVolume = 1.0;
     sfxVolume = 1.0;
     focusMode = false;
+    ducked = false;  // Tunnel-vision hack: BGM @ 50% when EMR panel active
 
     // BGM tracks — cleared 2026-04-24 after legal audit.
     // Previously held 7 copyrighted Square Enix tracks (FF8/Chrono Cross).
@@ -307,7 +308,8 @@ class SoundManager {
 
     _computeBgmVolume() {
         if (this.muted || this.focusMode) return 0;
-        return this.masterVolume * this.bgmVolume;
+        const duck = this.ducked ? 0.5 : 1;
+        return this.masterVolume * this.bgmVolume * duck;
     }
 
     _applySfxGain() {
@@ -338,6 +340,12 @@ class SoundManager {
 
     setFocusMode(enabled) {
         this.focusMode = !!enabled;
+        this._applyBgmVolume();
+    }
+
+    // Ducking — reduce BGM to 50% when EMR panel active (tunnel-vision sim).
+    setDucked(ducked) {
+        this.ducked = !!ducked;
         this._applyBgmVolume();
     }
 
@@ -594,6 +602,99 @@ class SoundManager {
         gain.connect(this.masterGain);
         source.start(now);
         source.stop(now + duration);
+    }
+
+    // --- Environmental Stingers (Phase 3 polish) ---
+    // Docs: docs/AUDIO_DESIGN.md § Kategori 5.
+
+    // Day start — ascending C5-E5-G5 arpeggio + high sparkle (MorningBriefing).
+    playDayStart() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const now = this.context.currentTime;
+        this._playTone(523.25, 0.25, now, 'sine', 0.35);           // C5
+        this._playTone(659.25, 0.25, now + 0.18, 'sine', 0.35);    // E5
+        this._playTone(783.99, 0.4, now + 0.36, 'sine', 0.4);      // G5
+        this._playTone(1567.98, 0.5, now + 0.6, 'triangle', 0.15); // G6 sparkle
+    }
+
+    // Day end — descending G4-E4-C4 with low pad (EndOfDay debrief, twilight).
+    playDayEnd() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const now = this.context.currentTime;
+        this._playTone(392.00, 0.3, now, 'sine', 0.3);             // G4
+        this._playTone(329.63, 0.3, now + 0.22, 'sine', 0.3);      // E4
+        this._playTone(261.63, 0.7, now + 0.44, 'sine', 0.4);      // C4
+        this._playTone(130.81, 1.0, now + 0.6, 'sine', 0.15);      // C3 settling pad
+    }
+
+    // Level up — gamelan-ish glissando (skill unlock, accreditation upgrade).
+    // FM synth with non-integer modulator for metallic bell character.
+    playLevelUp() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const ctx = this.context;
+        const now = ctx.currentTime;
+        const duration = 0.8;
+
+        const osc = ctx.createOscillator();
+        const modulator = ctx.createOscillator();
+        const modGain = ctx.createGain();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(261.63, now); // C4
+        osc.frequency.exponentialRampToValueAtTime(1046.50, now + duration * 0.7); // C6
+
+        modulator.type = 'sine';
+        modulator.frequency.setValueAtTime(440, now);
+        modulator.frequency.exponentialRampToValueAtTime(1760, now + duration);
+
+        modGain.gain.setValueAtTime(800, now);
+        modGain.gain.linearRampToValueAtTime(200, now + duration);
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.4, now + 0.05);
+        gain.gain.setValueAtTime(0.4, now + duration * 0.7);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        modulator.connect(modGain);
+        modGain.connect(osc.frequency);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+
+        modulator.start(now);
+        osc.start(now);
+        modulator.stop(now + duration);
+        osc.stop(now + duration);
+
+        // Sparkle at +400ms
+        this._playTone(1975.53, 0.3, now + 0.4, 'triangle', 0.2);
+    }
+
+    // Scene enter — low woosh + high chime (navigation to new page/location).
+    playSceneEnter() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const ctx = this.context;
+        const now = ctx.currentTime;
+
+        const woosh = ctx.createOscillator();
+        const wooshGain = ctx.createGain();
+        woosh.type = 'sine';
+        woosh.frequency.setValueAtTime(200, now);
+        woosh.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+        wooshGain.gain.setValueAtTime(0, now);
+        wooshGain.gain.linearRampToValueAtTime(0.22, now + 0.02);
+        wooshGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        woosh.connect(wooshGain);
+        wooshGain.connect(this.masterGain);
+        woosh.start(now);
+        woosh.stop(now + 0.35);
+
+        // High chime at +100ms
+        this._playTone(1200, 0.25, now + 0.1, 'triangle', 0.15);
     }
 
     // Stamp confirm — low thud + high tick (prescription sign / discharge final).

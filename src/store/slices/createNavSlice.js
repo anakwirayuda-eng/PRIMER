@@ -16,8 +16,14 @@ export const createNavSlice = (set, _get) => ({
     // --- ACTIONS ---
     navActions: {
         setGameState: (state) => set((s) => ({ nav: { ...s.nav, gameState: state } })),
-        setActivePage: (page) => set((s) => ({ nav: { ...s.nav, activePage: page } })),
-        navigate: (page, params = {}) => set((s) => ({ nav: { ...s.nav, activePage: page, viewParams: params } })),
+        setActivePage: (page) => set((s) => {
+            if (s.nav.activePage !== page) soundManager.playSceneEnter?.();
+            return { nav: { ...s.nav, activePage: page } };
+        }),
+        navigate: (page, params = {}) => set((s) => {
+            if (s.nav.activePage !== page) soundManager.playSceneEnter?.();
+            return { nav: { ...s.nav, activePage: page, viewParams: params } };
+        }),
         toggleSidebar: () => set((s) => ({ nav: { ...s.nav, sidebarCollapsed: !s.nav.sidebarCollapsed } })),
         setSlotId: (id) => set((s) => ({ nav: { ...s.nav, currentSlotId: id } })),
         toggleKPI: () => set((s) => ({ nav: { ...s.nav, showKPIGlobal: !s.nav.showKPIGlobal } })),

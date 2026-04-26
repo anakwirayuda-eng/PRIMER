@@ -169,7 +169,8 @@ export const createPlayerSlice = (set, get) => ({
                     })
                 }
             }));
-            soundManager.playSuccess();
+            // Gamelan-ish glissando — "level up" feel (skill unlocked via XP).
+            soundManager.playLevelUp?.() || soundManager.playSuccess();
             return true;
         },
         resetPlayer: () => set(s => ({ player: { ...s.player, profile: sanitizePlayerProfile(INITIAL_PLAYER_STATE) } })),
