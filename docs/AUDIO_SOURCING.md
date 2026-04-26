@@ -153,17 +153,22 @@ Setelah 6 file (.ogg + .mp3) berada di `public/audio/`, edit `src/utils/SoundMan
 -    //   target 3-4 CC0 ambient soundscape (Freesound.org) — not melody.
 -    bgmTracks = [];
 +    // BGM tracks — CC0 ambient soundscape from Freesound.org.
-+    // See docs/AUDIO_SOURCING.md for source + license details.
++    // Howler accepts array: tries .ogg first (smaller, gapless), falls
++    // back to .mp3 if browser doesn't support. See AUDIO_SOURCING.md.
 +    bgmTracks = [
-+        '/audio/menu.mp3',       // felix.blume/674665 (Amazon village morning)
-+        '/audio/wilayah.mp3',    // Vrymaa/805467 (Jungle & summer day crickets)
-+        '/audio/puskesmas.mp3',  // richwise/456207 (Empty office room tone)
++        ['/audio/menu.ogg', '/audio/menu.mp3'],         // felix.blume/674665
++        ['/audio/wilayah.ogg', '/audio/wilayah.mp3'],   // Vrymaa/805467
++        ['/audio/puskesmas.ogg', '/audio/puskesmas.mp3'], // richwise/456207
 +    ];
 ```
 
-**Catatan**: mulai dengan `.mp3` dulu untuk universal compatibility. OGG fallback/preference bisa ditambahkan di iterasi berikut (perlu browser `canPlayType` detection + switch logic).
+**Catatan**: BGM playback sudah pakai Howler.js (commit pasca-Phase 3). Howler otomatis handle:
+- Multi-format fallback (OGG primary, MP3 fallback Safari lama)
+- Autoplay policy + iOS audio unlock
+- HTML5 streaming (large files tidak dibuffer ke RAM — anti-OOM)
+- Smooth `fade()` untuk crossfade & Respectful Silence
 
-**Saat ini** `playBGM(day)` rotates berdasarkan `day % bgmTracks.length`. Idealnya di-refactor jadi location-based (`playBGM({ location: 'puskesmas' })`), tapi itu work untuk Phase 3 [AUDIO_DESIGN.md](./AUDIO_DESIGN.md).
+**Future iteration**: refactor `playBGM(day)` → `playBGM({ location: 'puskesmas' })` untuk context-aware BGM selection (Phase 3+ di [AUDIO_DESIGN.md](./AUDIO_DESIGN.md)).
 
 ---
 

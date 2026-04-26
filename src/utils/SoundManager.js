@@ -1,17 +1,19 @@
 /**
  * @reflection
  * [IDENTITY]: SoundManager
- * [PURPOSE]: SoundManager - FF8 Junction Style Implementation Uses FM Synthesis (Frequency Modulation) to create glassy, metallic, and sci-fi UI sounds.
- * [STATE]: Experimental
+ * [PURPOSE]: 3-channel mixer (master/BGM/SFX) + FM-synth UI SFX + Howler-backed BGM playback. Includes IEC 60601-1-8 clinical alarms, Respectful Silence sequence, diegetic EMR SFX, and environmental stingers.
+ * [STATE]: Production
  * [ANCHOR]: soundManager
- * [DEPENDS_ON]: None
+ * [DEPENDS_ON]: howler
  * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-13
+ * [LAST_UPDATE]: 2026-04-26
  */
 
+import { Howl } from 'howler';
+
 /**
- * SoundManager - FF8 Junction Style Implementation
- * Uses FM Synthesis (Frequency Modulation) to create glassy, metallic, and sci-fi UI sounds.
+ * SoundManager — FM-synth UI SFX + Howler-backed BGM.
+ * See docs/AUDIO_DESIGN.md and docs/AUDIO_DOSSIER.md for the full design.
  */
 class SoundManager {
     constructor() {
@@ -119,7 +121,7 @@ class SoundManager {
     // Requires high harmonic content (FM)
     playConfirm() {
         // Try to resume BGM on user interaction (safe-guarded from autoplay blocks)
-        if (this.bgmAudio?.paused) {
+        if (this.bgmAudio && !this.bgmAudio.playing() && !this.bgmStarted) {
             this.resumeBGM();
         }
 
@@ -232,6 +234,29 @@ class SoundManager {
     //   target 3-4 CC0 ambient soundscape (Freesound.org) — not melody.
     bgmTracks = [];
 
+    // Build a Howl instance for BGM playback. Howler handles autoplay policy,
+    // iOS audio unlock, and HTML5 streaming for large music files.
+    _createBgmHowl(trackSrc) {
+        return new Howl({
+            src: Array.isArray(trackSrc) ? trackSrc : [trackSrc],
+            loop: true,
+            html5: true, // Stream — keeps BGM out of decoded buffer (avoids RAM bomb)
+            volume: this._computeBgmVolume(),
+            onplay: () => { this.bgmStarted = true; this.isLoading = false; },
+            onplayerror: () => {
+                console.debug('BGM autoplay blocked, will play on user interaction');
+                this.bgmStarted = false;
+                this.isLoading = false;
+                // Howler emits 'unlock' on first user gesture (mobile-friendly)
+                this.bgmAudio?.once('unlock', () => this.bgmAudio?.play());
+            },
+            onloaderror: (_id, err) => {
+                console.warn('BGM load error:', trackSrc, err);
+                this.isLoading = false;
+            }
+        });
+    }
+
     playBGM(day) {
         if (this.muted || this.isLoading) return;
         if (this.bgmTracks.length === 0) return;
@@ -240,65 +265,41 @@ class SoundManager {
         const trackIndex = (day - 1) % this.bgmTracks.length;
 
         // If same track is already playing, don't restart
-        if (this.bgmAudio && this.currentTrackIndex === trackIndex && !this.bgmAudio.paused) {
+        if (this.bgmAudio && this.currentTrackIndex === trackIndex && this.bgmAudio.playing()) {
             return;
         }
 
         this.isLoading = true;
-
-        // Store for later if autoplay is blocked
         this.pendingBGMDay = day;
-
-        // Stop existing BGM completely
         this.stopBGM();
 
-        const trackPath = this.bgmTracks[trackIndex];
+        const trackSrc = this.bgmTracks[trackIndex];
         this.currentTrackIndex = trackIndex;
 
-        // Create audio element for selected track
-        this.bgmAudio = new Audio(trackPath);
-        this.bgmAudio.loop = true;
-        this.bgmAudio.volume = this._computeBgmVolume();
-
-        // Play with promise handling for autoplay restrictions
-        this.bgmAudio.play().then(() => {
-            this.bgmStarted = true;
-            this.isLoading = false;
-        }).catch(() => {
-            console.debug('BGM autoplay blocked, will play on user interaction');
-            this.bgmStarted = false;
-            this.isLoading = false;
-        });
+        this.bgmAudio = this._createBgmHowl(trackSrc);
+        this.bgmAudio.play();
     }
 
     // Call this when user clicks anywhere to resume BGM
     resumeBGM() {
-        // Case 1: Was playing and paused manually
         if (this.isPaused) {
             this.resumeFromPause();
             return;
         }
-
-        // Case 2: Autoplay was blocked initially
-        if (this.bgmAudio && !this.bgmStarted && !this.muted && this.bgmAudio.paused) {
-            this.bgmAudio.play().then(() => {
-                this.bgmStarted = true;
-            }).catch(() => {
-                console.debug('BGM still blocked');
-            });
+        if (this.bgmAudio && !this.bgmStarted && !this.muted && !this.bgmAudio.playing()) {
+            this.bgmAudio.play();
         }
     }
 
     stopBGM() {
         if (this.bgmAudio) {
-            this.bgmAudio.pause();
-            this.bgmAudio.currentTime = 0;
-            this.bgmAudio.src = ''; // Clear source to fully release
+            this.bgmAudio.stop();
+            this.bgmAudio.unload(); // Release Howler resources
             this.bgmAudio = null;
             this.bgmStarted = false;
             this.currentTrackIndex = -1;
             this.isPaused = false;
-            this.isLoading = false; // Reset lock if force stopped
+            this.isLoading = false;
         }
     }
 
@@ -319,7 +320,7 @@ class SoundManager {
     }
 
     _applyBgmVolume() {
-        if (this.bgmAudio) this.bgmAudio.volume = this._computeBgmVolume();
+        if (this.bgmAudio) this.bgmAudio.volume(this._computeBgmVolume());
     }
 
     setMasterVolume(v) {
@@ -356,7 +357,7 @@ class SoundManager {
         this._applySfxGain();
         if (this.bgmAudio) {
             if (next) this.bgmAudio.pause();
-            else if (!this.isPaused) this.bgmAudio.play().catch(() => {});
+            else if (!this.isPaused) this.bgmAudio.play();
         }
         this._applyBgmVolume();
     }
@@ -368,45 +369,28 @@ class SoundManager {
         if (this.muted || this.isLoading) return;
         if (this.bgmTracks.length === 0) return;
 
-        // Cleanup existing
         this.stopBGM();
         this.isLoading = true;
 
         let trackIndex;
-        // Keep checking random indices until we find one not in last 3 played
         let attempts = 0;
         do {
             trackIndex = Math.floor(Math.random() * this.bgmTracks.length);
             attempts++;
         } while (this.lastPlayedIndices.includes(trackIndex) && attempts < 10);
 
-        // Update history
         this.lastPlayedIndices.push(trackIndex);
-        if (this.lastPlayedIndices.length > 3) {
-            this.lastPlayedIndices.shift();
-        }
+        if (this.lastPlayedIndices.length > 3) this.lastPlayedIndices.shift();
 
-        const trackPath = this.bgmTracks[trackIndex];
+        const trackSrc = this.bgmTracks[trackIndex];
         this.currentTrackIndex = trackIndex;
 
-        // Create audio element
-        this.bgmAudio = new Audio(trackPath);
-        this.bgmAudio.loop = true;
-        this.bgmAudio.volume = this._computeBgmVolume();
-
-        // Play
-        this.bgmAudio.play().then(() => {
-            this.bgmStarted = true;
-            this.isLoading = false;
-        }).catch(() => {
-            console.debug('BGM autoplay blocked');
-            this.bgmStarted = false;
-            this.isLoading = false;
-        });
+        this.bgmAudio = this._createBgmHowl(trackSrc);
+        this.bgmAudio.play();
     }
 
     pauseBGM() {
-        if (this.bgmAudio && !this.bgmAudio.paused) {
+        if (this.bgmAudio && this.bgmAudio.playing()) {
             this.bgmAudio.pause();
             this.isPaused = true;
         }
@@ -414,7 +398,7 @@ class SoundManager {
 
     resumeFromPause() {
         if (this.bgmAudio && this.isPaused && !this.muted) {
-            this.bgmAudio.play().catch(() => console.debug('Resume blocked'));
+            this.bgmAudio.play();
             this.isPaused = false;
         }
     }
@@ -422,11 +406,8 @@ class SoundManager {
     // Generic resume that handles both initial autoplay block and manual pause
     tryResume() {
         this.resumeFromPause();
-        // Also try the initial start resume
-        if (this.bgmAudio && !this.bgmStarted && !this.muted && this.bgmAudio.paused) {
-            this.bgmAudio.play().then(() => {
-                this.bgmStarted = true;
-            }).catch(() => console.debug('Resume still blocked'));
+        if (this.bgmAudio && !this.bgmStarted && !this.muted && !this.bgmAudio.playing()) {
+            this.bgmAudio.play();
         }
     }
 
@@ -506,21 +487,11 @@ class SoundManager {
         if (!this.initialized || this.muted) return;
         if (!this.context) return;
 
-        // Stage 1 — fade BGM over 1s (preserves track position via pause)
-        if (this.bgmAudio && !this.bgmAudio.paused) {
-            const startVol = this.bgmAudio.volume;
-            const steps = 20;
-            const stepMs = 50;
-            let i = 0;
-            const fadeInterval = setInterval(() => {
-                i++;
-                if (!this.bgmAudio) { clearInterval(fadeInterval); return; }
-                this.bgmAudio.volume = startVol * Math.max(0, 1 - i / steps);
-                if (i >= steps) {
-                    clearInterval(fadeInterval);
-                    this.bgmAudio?.pause();
-                }
-            }, stepMs);
+        // Stage 1 — fade BGM to 0 over 1s via Howler's smooth fade
+        if (this.bgmAudio && this.bgmAudio.playing()) {
+            const startVol = this.bgmAudio.volume();
+            this.bgmAudio.fade(startVol, 0, 1000);
+            this.bgmAudio.once('fade', () => this.bgmAudio?.pause());
         }
 
         // Stage 2 — flatline at t=1s
@@ -529,8 +500,8 @@ class SoundManager {
         // Stage 3+4 — silence, then resume at 30% after t=7s
         setTimeout(() => {
             if (this.bgmAudio && !this.muted && !this.focusMode) {
-                this.bgmAudio.volume = this._computeBgmVolume() * 0.3;
-                this.bgmAudio.play().catch(() => {});
+                this.bgmAudio.volume(this._computeBgmVolume() * 0.3);
+                this.bgmAudio.play();
             }
         }, 7000);
     }
