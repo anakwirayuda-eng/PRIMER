@@ -15,6 +15,7 @@ import { useGame } from '../context/GameContext.jsx';
 import { useTheme, THEMES } from '../context/ThemeContext.jsx';
 import { Save, LogOut, Volume2, VolumeX, Music, Zap, Headphones, X, Check, Palette } from 'lucide-react';
 import { APP_METADATA } from '../data/AppMetadata.js';
+import { AUDIO_CREDITS } from '../data/audioCredits.js';
 import useModalA11y from '../hooks/useModalA11y.js';
 
 const THEME_LIST = Object.values(THEMES);
@@ -196,6 +197,21 @@ export default function SettingsModal({ onClose }) {
                         <div className="text-center text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">
                             PRIMER v{APP_METADATA.version} • {APP_METADATA.organization}
                         </div>
+                        {AUDIO_CREDITS.length > 0 && (
+                            <details className="w-full mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+                                <summary className="cursor-pointer hover:text-slate-700 dark:hover:text-slate-200 font-medium text-center">
+                                    Audio Credits ({AUDIO_CREDITS.length})
+                                </summary>
+                                <ul className="mt-2 space-y-1.5 pl-3 text-left">
+                                    {AUDIO_CREDITS.map((c) => (
+                                        <li key={c.id}>
+                                            <span className="font-bold">{c.title}</span> — {c.creator} ({c.license})
+                                            {c.url && <> · <a href={c.url} target="_blank" rel="noreferrer" className="underline hover:text-emerald-500">source</a></>}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </details>
+                        )}
                     </div>
                 </div>
             </div>

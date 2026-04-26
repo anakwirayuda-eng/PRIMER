@@ -16,6 +16,7 @@ import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 // Dashboard.jsx (legacy) deleted — DashboardPage.jsx is the active dashboard
 import OpeningScreen from './components/OpeningScreen.jsx';
 import { soundManager } from './utils/SoundManager.js';
+import AudioTestPanel from './components/dev/AudioTestPanel.jsx';
 import DatabaseSync from './components/DatabaseSync.jsx';
 import { safeReloadPage } from './utils/browserSafety.js';
 import { isSupabaseConfigured } from './services/supabaseClient.js';
@@ -203,6 +204,7 @@ function App() {
               <GameRouter />
             </Suspense>
           </ErrorBoundary>
+          <AudioTestPanel />
         </GameProvider>
       </ThemeProvider>
     </AuthProvider>
