@@ -21,6 +21,9 @@ import {
 import { TRIAGE_LEVELS, ESI_LEVELS, validateTriage, validateStabilization, calculatePatientStatus, getEmergencyCase, EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../game/EmergencyCases.js';
 import { getAvatarStyle } from '../utils/AvatarUtils.js';
 import { formatTime } from '../utils/formatTime.js';
+import { matchDrugAllergy } from '../game/DispensingEngine.js';
+import { getMedicationById } from '../data/MedicationDatabase.js';
+import { showToast } from '../utils/ToastManager.js';
 
 // Triage color badge component
 export function TriageBadge({ level, esiLevel, size = 'sm' }) {
@@ -428,11 +431,34 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
 
     // Handle action toggle
     const toggleAction = (actionId) => {
+        // Removing an action — always allowed
         if (performedActions.includes(actionId)) {
             setPerformedActions(performedActions.filter(a => a !== actionId));
-        } else {
-            setPerformedActions([...performedActions, actionId]);
+            return;
         }
+
+        // 🚨 ALLERGY FIREWALL (Gap 1 fix, audit 2026-04-26):
+        // For drug-administration actions (deductStock: true), validate against
+        // patient allergies before adding. Mirrors usePatientEMR.js:521 gate.
+        const action = EMERGENCY_ACTIONS[actionId];
+        if (action?.deductStock) {
+            const allergies = patient?.hidden?.allergies || patient?.medicalData?.allergies || [];
+            if (allergies.length > 0) {
+                const medData = getMedicationById(actionId);
+                if (medData) {
+                    const allergyMatch = matchDrugAllergy(medData, allergies);
+                    if (allergyMatch) {
+                        // IEC 60601-1-8 high-priority alarm + visual toast
+                        soundManager.playCriticalAlarm?.() || soundManager.playError?.();
+                        console.warn(`[ALLERGY FIREWALL/IGD] Blocked: ${action.name} — patient allergic to "${allergyMatch}"`);
+                        showToast(`⚠️ ALERGI: ${action.name} KONTRAINDIKASI — pasien alergi "${allergyMatch}"`, 'error');
+                        return;
+                    }
+                }
+            }
+        }
+
+        setPerformedActions([...performedActions, actionId]);
     };
 
     // ðŸ–¤ KODE HITAM (DEATH) â€” Max resuscitation attempts exhausted
