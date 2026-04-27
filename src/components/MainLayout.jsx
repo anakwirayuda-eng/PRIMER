@@ -21,6 +21,7 @@ import MonthlyDebriefModal from './MonthlyDebriefModal.jsx';
 import { calculateVillageIKSPisPk } from '../domains/village/pisPkIndicators.js';
 import { calculateVillageIKS as calculateReadinessVillageIKS } from '../domains/village/NPCReadiness.js';
 import { useChampionPromotionWatcher } from '../hooks/useChampionPromotionWatcher.js';
+import { useFeatureUnlockWatcher } from '../hooks/useFeatureUnlockWatcher.js';
 import { useGameStore } from '../store/useGameStore.js';
 import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
@@ -177,6 +178,9 @@ export default function MainLayout() {
 
     // ═══ Champion promotion watcher — toast saat keluarga capai IKS 100% ═══
     useChampionPromotionWatcher(villageData?.families);
+
+    // ═══ Feature unlock watcher — toast saat melewati Day 15/30/45 ═══
+    useFeatureUnlockWatcher(day);
 
     // ═══ Stase endgame — auto-lock final score di Day > targetDay ═══
     // Subscribe narrow ke meta.stase + dispatch action sekali ketika kondisi

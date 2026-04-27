@@ -32,6 +32,9 @@ import { guardStability } from '../utils/prophylaxis.js';
 import { classifyResponse } from '../game/anamnesis/SynthesisEngine.js';
 import { evaluateConsequences } from '../game/ConsequenceEngine.js';
 import { showToast, confirmToast } from '../utils/ToastManager.js';
+import { isFeatureUnlocked, FEATURE_UNLOCKS } from '../utils/featureUnlocks.js';
+// pickDeterministic kept for future stochastic enroll variants (currently unused).
+// eslint-disable-next-line no-unused-vars
 import { pickDeterministic } from '../utils/deterministicRandom.js';
 import {
     getCanonicalPhysicalExamKeys,
@@ -571,6 +574,19 @@ export function usePatientEMR() {
     }, []);
 
     const handleEnrollProlanis = useCallback(() => {
+        // Curriculum scaffolding: Klub Prolanis terbuka mulai Hari ke-30.
+        // Pasien DM/HT tetap dirawat jalan biasa di awal stase; pendaftaran
+        // Prolanis bisa menyusul setelah pemain stabil mengelola UKP dasar.
+        if (!isFeatureUnlocked('prolanis', day)) {
+            const cfg = FEATURE_UNLOCKS.prolanis;
+            showToast(
+                `${cfg.icon} ${cfg.label} terbuka mulai Hari ke-${cfg.unlockDay}. Pasien tetap dirawat jalan biasa; daftar Prolanis menyusul.`,
+                'info',
+                5000
+            );
+            return;
+        }
+
         const isDM = selectedDiagnoses.some(d =>
             d.code.startsWith('E10') || d.code.startsWith('E11') || d.code.startsWith('E13')
         );

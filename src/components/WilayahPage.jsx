@@ -66,6 +66,8 @@ import {
     calculateFamilyIKSPisPk,
     classifyFamilyIKS
 } from '../domains/village/pisPkIndicators.js';
+import { isFeatureUnlocked, FEATURE_UNLOCKS } from '../utils/featureUnlocks.js';
+import { showToast } from '../utils/ToastManager.js';
 
 // ─── Runtime PHBS & Risk helpers (from villageData, not static registry) ──
 function calculatePHBSFromIndicators(ind) {
@@ -337,6 +339,28 @@ export default function WilayahPage() {
     const iksBreakdownText = pisPkResult && pisPkResult.applicable > 0
         ? `${pisPkResult.fulfilled}/${pisPkResult.applicable} indikator tercapai`
         : null;
+
+    /**
+     * Guarded setBuildingInterior — block entry untuk fitur yang masih ter-gate
+     * (Posyandu, dll) dan tampilkan toast pedagogis. SISRUTE/poli/inventaris
+     * TIDAK pernah lewat sini → tetap selalu accessible.
+     * Plain function (not memoized): callers bind to fresh onClick handlers
+     * tiap render anyway, dan menghindari "hook called conditionally" lint
+     * karena posisi declaration berada setelah branching state.
+     */
+    const tryEnterBuilding = (buildingType) => {
+        if (!buildingType) return;
+        if (buildingType === 'posyandu' && !isFeatureUnlocked('posyandu', day)) {
+            const cfg = FEATURE_UNLOCKS.posyandu;
+            showToast(
+                `${cfg.icon} ${cfg.label} masih tutup — buka mulai Hari ke-${cfg.unlockDay}. ${cfg.rationale}`,
+                'info',
+                5000
+            );
+            return;
+        }
+        setBuildingInterior(buildingType);
+    };
 
     const handleHomeVisitAction = (action) => {
         const travelState = homeVisitTravelByAction.get(action.id);
@@ -670,7 +694,7 @@ export default function WilayahPage() {
                             {/* Building Sprite */}
                             <div className="px-5 pt-4">
                                 <div
-                                    onClick={() => isGameEnabledBuilding(selectedBuilding.type) && setBuildingInterior(selectedBuilding.type)}
+                                    onClick={() => isGameEnabledBuilding(selectedBuilding.type) && tryEnterBuilding(selectedBuilding.type)}
                                     className={`group aspect-[2/1] bg-white/5 rounded-xl border border-white/5 flex items-center justify-center relative overflow-hidden ${isGameEnabledBuilding(selectedBuilding.type) ? 'cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all shadow-lg hover:shadow-emerald-500/20' : ''}`}
                                     title={isGameEnabledBuilding(selectedBuilding.type) ? "Masuk Gedung" : ""}
                                 >
@@ -750,13 +774,13 @@ export default function WilayahPage() {
                                                             () => {
                                                                 setDiveWhiteout(true);
                                                                 setTimeout(() => {
-                                                                    setBuildingInterior(selectedBuilding.type);
+                                                                    tryEnterBuilding(selectedBuilding.type);
                                                                     setDiveWhiteout(false);
                                                                 }, 250);
                                                             }
                                                         );
                                                     } else {
-                                                        setBuildingInterior(selectedBuilding.type);
+                                                        tryEnterBuilding(selectedBuilding.type);
                                                     }
                                                 }}
                                                 className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white p-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/30 uppercase tracking-wider"

@@ -486,6 +486,21 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         }
     }
 
+    // ═══ ONBOARDING BIAS — Day 1-14 prefer SKDI 4A (FKTP-tuntas) ═══
+    // Pekan 1-2 mahasiswa beradaptasi triase + UKP dasar. Bias hanya
+    // pada kasus stokastik (isStochastic) — scripted scenarios (storyline,
+    // profile conditions, UKP-bridge) TIDAK boleh dioverride. SISRUTE flow
+    // tetap dapat dipraktikkan karena 8-22% pasien tetap non-4A (gradient).
+    if (gameDay <= 14 && isStochastic && disease?.skdi && disease.skdi !== '4A') {
+        const biasChance = gameDay <= 7 ? 0.92 : 0.78;
+        if (rng.chance(biasChance)) {
+            const fourAcases = availableCases.filter((c) => c.skdi === '4A');
+            if (fourAcases.length > 0) {
+                disease = pickDeterministic(fourAcases, seedKey(patientSeed, 'onboarding-4A-bias', gameDay));
+            }
+        }
+    }
+
     if (disease?.id === 'dengue_fever' && jentikCoverage > 0.7 && rng.chance(0.5)) {
         let redraw = 0;
         disease = getRandomFilteredCase(seedKey('dengue-reroll', redraw));
