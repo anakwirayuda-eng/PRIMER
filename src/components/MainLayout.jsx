@@ -48,6 +48,7 @@ const ArsipPage = React.lazy(() => import('./ArsipPage'));
 const StaffPage = React.lazy(() => import('./StaffPage'));
 const KPIDashboard = React.lazy(() => import('./KPIDashboard'));
 const SensusPage = React.lazy(() => import('./sensus/SensusPage'));
+const DosenDashboard = React.lazy(() => import('./DosenDashboard'));
 
 // Code-split modals (loaded on first open)
 const SettingsModal = React.lazy(() => import('./SettingsModal'));
@@ -179,6 +180,20 @@ export default function MainLayout() {
 
     // ═══ Champion promotion watcher — toast saat keluarga capai IKS 100% ═══
     useChampionPromotionWatcher(villageData?.families);
+
+    // ═══ Hash-based deep-link untuk Dosen Dashboard ═══
+    // Akses: tambahkan #dosen-dashboard di URL → otomatis switch page
+    useEffect(() => {
+        const checkHash = () => {
+            if (typeof window === 'undefined') return;
+            if (window.location.hash === '#dosen-dashboard' && activePage !== 'dosen_dashboard') {
+                setActivePage('dosen_dashboard');
+            }
+        };
+        checkHash();
+        window.addEventListener('hashchange', checkHash);
+        return () => window.removeEventListener('hashchange', checkHash);
+    }, [activePage, setActivePage]);
 
     // ═══ Feature unlock watcher — toast saat melewati Day 15/30/45 ═══
     useFeatureUnlockWatcher(day);
@@ -888,6 +903,16 @@ export default function MainLayout() {
                                 fallbackActionLabel="Kembali ke Dashboard"
                             >
                                 <WilayahPage />
+                            </ErrorBoundary>
+                        )}
+                        {activePage === 'dosen_dashboard' && (
+                            <ErrorBoundary
+                                name="DosenDashboard"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
+                                <DosenDashboard />
                             </ErrorBoundary>
                         )}
                         {activePage === 'facility' && (
