@@ -65,6 +65,21 @@ const createInitialOnboardingState = () => ({
     dismissed: false,         // user manual dismiss → tidak muncul lagi
 });
 
+/**
+ * Initial state untuk lifetime tracking — DIPELIHARA antar playthrough.
+ * Tidak di-reset oleh resetMeta atau startNewGame. Layer C (Mastery) per
+ * DeepThink: pemain yang ulang stase mendapat insentif intrinsik via
+ * koleksi badge + tracker SKDI.
+ */
+const createInitialLifetimeState = () => ({
+    totalCases: 0,            // jumlah pasien tuntas seumur hidup akun
+    skdiTouched: [],          // array unique SKDI codes (4A, 3B, dll) yg pernah didiagnosa
+    diagnosisIcdTouched: [],  // array unique ICD-10 codes yg pernah didiagnosa
+    badges: [],               // array { id, awardedAt, awardedAtDay, label }
+    bestStaseGrade: null,     // 'A' | 'B' | 'C' | 'D' — grade terbaik yang pernah dicapai
+    completedStases: 0,       // berapa kali pemain capai Day > targetDay & lock final
+});
+
 /** Initial state untuk Stase / endgame tracking. */
 const createInitialStaseState = () => ({
     targetDay: STASE_TARGET_DAY,
@@ -85,6 +100,7 @@ export const createInitialMetaState = (day = INITIAL_TIME_STATE.day) => ({
     runtimeTrap: null,
     stase: createInitialStaseState(),
     onboarding: createInitialOnboardingState(),
+    lifetime: createInitialLifetimeState(),
 });
 
 export const createInitialPublicHealthState = () => ({

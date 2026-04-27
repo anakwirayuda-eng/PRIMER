@@ -24,6 +24,8 @@ import {
 import { applyStoryImpactToDraft } from '../helpers/publicHealthHelpers.js';
 import { createInitialMetaState, STASE_TARGET_DAY } from '../helpers/persistenceHelpers.js';
 import { calculatePerformanceScore } from '../../utils/scoringEngine.js';
+import { BADGE_CATALOGUE, evaluateNewlyEligibleBadges } from '../../utils/lifetimeBadges.js';
+import { showToast } from '../../utils/ToastManager.js';
 
 export const createMetaSlice = (set, get) => ({
     // --- STATE ---
@@ -179,6 +181,12 @@ export const createMetaSlice = (set, get) => ({
                     },
                 },
             }));
+            // Auto-update Layer C lifetime tracker (best grade + completed stases)
+            try {
+                get().metaActions.recordStaseCompletion(performance.grade.grade);
+            } catch (err) {
+                console.warn('[lifetime] recordStaseCompletion failed:', err);
+            }
             return performance;
         },
 
@@ -192,6 +200,92 @@ export const createMetaSlice = (set, get) => ({
                 },
             },
         })),
+
+        // ═══ LIFETIME — Layer C Mastery (DeepThink M5) ═══
+        // Tracker antar-playthrough; tidak di-reset oleh resetMeta atau startNewGame.
+        // Semua action idempotent dan defensive thd undefined lifetime state.
+
+        /**
+         * Catat 1 kasus tuntas ke lifetime tracker. Auto-evaluate badges
+         * setelah update + emit toast untuk badge baru.
+         * @param {{skdi?:string, icd10?:string}} caseInfo
+         */
+        recordLifetimeCase: (caseInfo = {}) => set((state) => {
+            const lifetime = state.meta.lifetime || {};
+            const skdiSet = new Set(lifetime.skdiTouched || []);
+            const icdSet = new Set(lifetime.diagnosisIcdTouched || []);
+            if (caseInfo.skdi) skdiSet.add(String(caseInfo.skdi));
+            if (caseInfo.icd10) icdSet.add(String(caseInfo.icd10));
+            const nextLifetime = {
+                ...lifetime,
+                totalCases: (lifetime.totalCases || 0) + 1,
+                skdiTouched: Array.from(skdiSet),
+                diagnosisIcdTouched: Array.from(icdSet),
+                badges: lifetime.badges || [],
+                bestStaseGrade: lifetime.bestStaseGrade ?? null,
+                completedStases: lifetime.completedStases || 0,
+            };
+
+            // Evaluate newly eligible badges
+            const newlyEligible = evaluateNewlyEligibleBadges(nextLifetime);
+            if (newlyEligible.length > 0) {
+                const now = Date.now();
+                const day = state.world?.day ?? null;
+                newlyEligible.forEach((badgeId) => {
+                    const def = BADGE_CATALOGUE[badgeId];
+                    if (!def) return;
+                    nextLifetime.badges = [
+                        ...nextLifetime.badges,
+                        { id: badgeId, label: def.label, awardedAt: now, awardedAtDay: day },
+                    ];
+                    showToast(`${def.icon} Lencana baru: ${def.label} — ${def.description}`, 'success', 6000);
+                });
+            }
+
+            return { meta: { ...state.meta, lifetime: nextLifetime } };
+        }),
+
+        /**
+         * Catat 1 stase selesai (final score locked). Update bestGrade +
+         * completedStases counter, lalu evaluate badges stase.
+         * @param {string} grade - 'A'|'B'|'C'|'D'
+         */
+        recordStaseCompletion: (grade) => set((state) => {
+            const lifetime = state.meta.lifetime || {};
+            // Best grade comparison: A > B > C > D (lower letter = better).
+            const gradeOrder = { A: 0, B: 1, C: 2, D: 3 };
+            const newGradeRank = gradeOrder[grade] ?? 99;
+            const currentBest = lifetime.bestStaseGrade;
+            const currentRank = gradeOrder[currentBest] ?? 99;
+            const nextBest = newGradeRank < currentRank ? grade : currentBest;
+
+            const nextLifetime = {
+                ...lifetime,
+                bestStaseGrade: nextBest ?? null,
+                completedStases: (lifetime.completedStases || 0) + 1,
+                totalCases: lifetime.totalCases || 0,
+                skdiTouched: lifetime.skdiTouched || [],
+                diagnosisIcdTouched: lifetime.diagnosisIcdTouched || [],
+                badges: lifetime.badges || [],
+            };
+
+            const newlyEligible = evaluateNewlyEligibleBadges(nextLifetime);
+            if (newlyEligible.length > 0) {
+                const now = Date.now();
+                const day = state.world?.day ?? null;
+                newlyEligible.forEach((badgeId) => {
+                    const def = BADGE_CATALOGUE[badgeId];
+                    if (!def) return;
+                    nextLifetime.badges = [
+                        ...nextLifetime.badges,
+                        { id: badgeId, label: def.label, awardedAt: now, awardedAtDay: day },
+                    ];
+                    showToast(`${def.icon} Lencana stase: ${def.label} — ${def.description}`, 'success', 7000);
+                });
+            }
+
+            return { meta: { ...state.meta, lifetime: nextLifetime } };
+        }),
 
         // ═══ ONBOARDING — hints Day 1-2 untuk mahasiswa baru ═══
         advanceOnboardingStep: () => set((state) => ({
@@ -232,6 +326,15 @@ export const createMetaSlice = (set, get) => ({
             };
         }),
 
-        resetMeta: () => set({ meta: createInitialMetaState(get().world.day) }),
+        /**
+         * Reset meta state untuk new game / load fresh — TAPI preserve
+         * `lifetime` (Layer C Mastery). Pemain yang ulang stase tetap
+         * bawa badge + tracker SKDI dari run sebelumnya.
+         */
+        resetMeta: () => set((state) => {
+            const fresh = createInitialMetaState(state.world.day);
+            const preservedLifetime = state.meta?.lifetime || fresh.lifetime;
+            return { meta: { ...fresh, lifetime: preservedLifetime } };
+        }),
     },
 });
