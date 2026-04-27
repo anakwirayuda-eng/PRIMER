@@ -18,6 +18,7 @@ import GameOverModal from './GameOverModal.jsx';
 import VictoryModal from './VictoryModal.jsx';
 import StaseFinalReportModal from './StaseFinalReportModal.jsx';
 import MonthlyDebriefModal from './MonthlyDebriefModal.jsx';
+import OnboardingHints from './OnboardingHints.jsx';
 import { calculateVillageIKSPisPk } from '../domains/village/pisPkIndicators.js';
 import { calculateVillageIKS as calculateReadinessVillageIKS } from '../domains/village/NPCReadiness.js';
 import { useChampionPromotionWatcher } from '../hooks/useChampionPromotionWatcher.js';
@@ -1193,6 +1194,9 @@ export default function MainLayout() {
                     onContinue={() => acknowledgeStaseFinalReport?.()}
                 />
             )}
+
+            {/* Onboarding hints — non-blocking floating panel Day 1-2 */}
+            {!gameOver && <OnboardingHints />}
 
             {/* Monthly debrief — non-blocking checkpoint Day 30 & Day 60 */}
             {monthlyDebriefMilestone && !gameOver && (

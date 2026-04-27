@@ -193,6 +193,26 @@ export const createMetaSlice = (set, get) => ({
             },
         })),
 
+        // ═══ ONBOARDING — hints Day 1-2 untuk mahasiswa baru ═══
+        advanceOnboardingStep: () => set((state) => ({
+            meta: {
+                ...state.meta,
+                onboarding: {
+                    ...(state.meta.onboarding || { enabled: true, currentStep: 0, dismissed: false }),
+                    currentStep: (state.meta.onboarding?.currentStep ?? 0) + 1,
+                },
+            },
+        })),
+        dismissOnboarding: () => set((state) => ({
+            meta: {
+                ...state.meta,
+                onboarding: {
+                    ...(state.meta.onboarding || {}),
+                    dismissed: true,
+                },
+            },
+        })),
+
         /**
          * Tandai milestone monthly debrief sebagai "sudah dilihat".
          * Idempotent — kalau milestoneDay <= lastDebriefDay, tidak berubah.

@@ -58,6 +58,13 @@ export const STASE_TARGET_DAY = 90;
 /** Hari-hari milestone bulanan untuk debrief non-blocking (selain Day-1 day endpoint). */
 export const STASE_DEBRIEF_MILESTONES = Object.freeze([30, 60]);
 
+/** Initial state untuk onboarding hints Day 1-2. */
+const createInitialOnboardingState = () => ({
+    enabled: true,            // false = user matikan dari settings
+    currentStep: 0,           // index step aktif
+    dismissed: false,         // user manual dismiss → tidak muncul lagi
+});
+
 /** Initial state untuk Stase / endgame tracking. */
 const createInitialStaseState = () => ({
     targetDay: STASE_TARGET_DAY,
@@ -77,6 +84,7 @@ export const createInitialMetaState = (day = INITIAL_TIME_STATE.day) => ({
     saveVersion: CURRENT_SAVE_VERSION,
     runtimeTrap: null,
     stase: createInitialStaseState(),
+    onboarding: createInitialOnboardingState(),
 });
 
 export const createInitialPublicHealthState = () => ({
