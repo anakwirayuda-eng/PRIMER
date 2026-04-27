@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Initial bundle (core, eager)",
+    "path": "dist/assets/index-*.js",
+    "limit": "120 kB",
+    "gzip": true,
+    "_comment": "index entry — sebelum lazy chunks. Target ≤120KB gzip; sekarang 107KB."
+  },
+  {
+    "name": "MainLayout shell",
+    "path": "dist/assets/MainLayout-*.js",
+    "limit": "25 kB",
+    "gzip": true,
+    "_comment": "Top-level shell. Target ≤25KB; sekarang ~18KB."
+  },
+  {
+    "name": "vendor-react",
+    "path": "dist/assets/vendor-react-*.js",
+    "limit": "65 kB",
+    "gzip": true,
+    "_comment": "React 19 + react-dom + zustand + zustand/shallow. Tidak boleh balloon."
+  },
+  {
+    "name": "vendor-3d (LAZY — diorama only)",
+    "path": "dist/assets/vendor-3d-*.js",
+    "limit": "520 kB",
+    "gzip": true,
+    "_comment": "Three.js + R3F + drei + postprocessing. Hanya muat saat user buka 3D mode. M8: kalau melebihi 520KB pertimbangkan strip postprocessing."
+  },
+  {
+    "name": "WilayahPage",
+    "path": "dist/assets/WilayahPage-*.js",
+    "limit": "85 kB",
+    "gzip": true,
+    "_comment": "Map page utama. Target ≤85KB gzip. Setelah extract M8+ kandidat turun ke ≤60KB."
+  },
+  {
+    "name": "ClinicalPage",
+    "path": "dist/assets/ClinicalPage-*.js",
+    "limit": "75 kB",
+    "gzip": true
+  },
+  {
+    "name": "case-content (BC + IKM scenarios)",
+    "path": "dist/assets/case-content-*.js",
+    "limit": "150 kB",
+    "gzip": true,
+    "_comment": "1358 case definitions + 30 IKM. Bisa dipotong ke modul kalau perlu."
+  },
+  {
+    "name": "village-domain (PIS-PK + readiness)",
+    "path": "dist/assets/village-domain-*.js",
+    "limit": "35 kB",
+    "gzip": true,
+    "_comment": "Engine kanonik PIS-PK + NPCReadiness + family helpers. Stable."
+  }
+]
