@@ -473,10 +473,15 @@ describe('store prophylaxis', () => {
             useGameStore.getState().actions.nextDay(6);
         });
 
+        // M2 (DeepThink curva 90-hari): stress 16 → natural 'pressure',
+        // tapi day-aware cap di Day 7 (Pekan 1) = breathing. Test tetap
+        // validates bahwa caseload di-read sebelum dailyClear (stress=16
+        // = 10 cases × 0.1 weight + factor lain) — perubahan label
+        // mencerminkan intended pacing curve, bukan regresi.
         expect(useGameStore.getState().world.directorVerdict).toMatchObject({
             stress: 16,
-            label: 'Pressure Rising',
-            spawnMultiplier: 1.3
+            label: 'Breathing Room',
+            spawnMultiplier: 0.7
         });
 
         act(() => {

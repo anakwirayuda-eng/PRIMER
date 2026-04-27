@@ -13,6 +13,7 @@ import React, { useMemo } from 'react';
 import { useGame } from '../../context/GameContext.jsx';
 import { MapPin, Heart, ArrowLeft, Info, Shield, Users, AlertTriangle } from 'lucide-react';
 import { calculateCommunityMetrics } from '../../utils/communityMetrics.js';
+import PisPkCoverageChart from './PisPkCoverageChart.jsx';
 
 /**
  * CommunityView — Sub-module for UKM (Community Health)
@@ -104,6 +105,12 @@ export default function CommunityView({ onBack, openWiki }) {
                     </div>
                 </div>
             </div>
+
+            {/* PIS-PK Indicator Coverage (per-indikator bar chart) */}
+            <PisPkCoverageChart
+                families={villageData?.families || []}
+                onOpenInfo={() => openWiki?.('iks')}
+            />
 
             {/* Prolanis Compliance */}
             <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] p-5"

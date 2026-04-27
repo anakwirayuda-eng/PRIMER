@@ -48,13 +48,59 @@ export const syncQuestRoster = (quests, day = INITIAL_TIME_STATE.day) => {
 
 // --- Initial State Constructors ---
 
+/** Default Stase length. DeepThink usul 60 hari (lab one-shot), kami pakai
+ *  90 hari karena pemakaian hybrid lab+rumah memungkinkan playtime lebih
+ *  panjang & TTM keluarga butuh observasi 3 bulan untuk bergerak meaningful
+ *  (Prochaska & DiClemente 1983).
+ */
+export const STASE_TARGET_DAY = 90;
+
+/** Hari-hari milestone bulanan untuk debrief non-blocking (selain Day-1 day endpoint). */
+export const STASE_DEBRIEF_MILESTONES = Object.freeze([30, 60]);
+
+/** Initial state untuk onboarding hints Day 1-2. */
+const createInitialOnboardingState = () => ({
+    enabled: true,            // false = user matikan dari settings
+    currentStep: 0,           // index step aktif
+    dismissed: false,         // user manual dismiss → tidak muncul lagi
+});
+
+/**
+ * Initial state untuk lifetime tracking — DIPELIHARA antar playthrough.
+ * Tidak di-reset oleh resetMeta atau startNewGame. Layer C (Mastery) per
+ * DeepThink: pemain yang ulang stase mendapat insentif intrinsik via
+ * koleksi badge + tracker SKDI.
+ */
+const createInitialLifetimeState = () => ({
+    totalCases: 0,            // jumlah pasien tuntas seumur hidup akun
+    skdiTouched: [],          // array unique SKDI codes (4A, 3B, dll) yg pernah didiagnosa
+    diagnosisIcdTouched: [],  // array unique ICD-10 codes yg pernah didiagnosa
+    badges: [],               // array { id, awardedAt, awardedAtDay, label }
+    bestStaseGrade: null,     // 'A' | 'B' | 'C' | 'D' — grade terbaik yang pernah dicapai
+    completedStases: 0,       // berapa kali pemain capai Day > targetDay & lock final
+});
+
+/** Initial state untuk Stase / endgame tracking. */
+const createInitialStaseState = () => ({
+    targetDay: STASE_TARGET_DAY,
+    phase: 'active',                 // 'active' | 'postStase'
+    finalScore: null,                // hasil calculatePerformanceScore saat hari (target+1) — immutable
+    finalScoreLockedAt: null,        // timestamp ms saat skor di-lock
+    finalScoreDay: null,             // day saat lock (sanity check)
+    finalReportAcknowledged: false,  // user sudah dismiss laporan akhir?
+    lastDebriefDay: 0,               // last monthly debrief milestone yang sudah dilewati & di-ack
+});
+
 export const createInitialMetaState = (day = INITIAL_TIME_STATE.day) => ({
     activeQuests: createSeededQuestRoster(day),
     activeStories: [],
     isWikiOpen: false,
     wikiMetric: null,
     saveVersion: CURRENT_SAVE_VERSION,
-    runtimeTrap: null
+    runtimeTrap: null,
+    stase: createInitialStaseState(),
+    onboarding: createInitialOnboardingState(),
+    lifetime: createInitialLifetimeState(),
 });
 
 export const createInitialPublicHealthState = () => ({
@@ -72,7 +118,10 @@ export const createInitialPublicHealthState = () => ({
     lastBridgeRepairDay: -1,
     buildingProgress: {},
     lastIntelTargets: null,
-    villageLedger: []
+    villageLedger: [],
+    // PIS-PK "Desa Sehat" victory flag: set once when dual criteria met (meanIKS
+    // ≥0.70 + readiness ≥60). Persist acknowledgement so the modal fires only once.
+    villageVictoryAcknowledged: false
 });
 
 export const createInitialStaffState = () => ({

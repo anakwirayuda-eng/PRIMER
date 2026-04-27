@@ -18,6 +18,7 @@ import BillingSummary from './sidebar/BillingSummary.jsx';
 import ActionButtons from './sidebar/ActionButtons.jsx';
 import MAIAClueOverlay from './sidebar/MAIAClueOverlay.jsx';
 import MAIAValidationOverlay from './sidebar/MAIAValidationOverlay.jsx';
+import FamilyPisPkCard from './sidebar/FamilyPisPkCard.jsx';
 
 export default function ClinicalSidebar({
     patient,
@@ -90,6 +91,9 @@ export default function ClinicalSidebar({
                     selectedProcedures={selectedProcedures}
                     selectedEducation={selectedEducation}
                 />
+
+                {/* Family PIS-PK context (only for village residents) */}
+                <FamilyPisPkCard patient={patient} isDark={isDark} />
 
                 {/* Billing Summary */}
                 <BillingSummary

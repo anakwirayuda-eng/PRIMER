@@ -23,7 +23,7 @@ export const LeaderboardService = {
 
         const { data, error } = await supabase
             .from('leaderboard')
-            .select('nama, nim, score, day_reached, reputation, level, accreditation, patients_treated, updated_at')
+            .select('nama, nim, score, grade, grade_label, score_ukp, score_ukm, score_management, score_resilience, day_reached, reputation, level, accreditation, patients_treated, updated_at')
             .order('score', { ascending: false })
             .limit(limit);
 

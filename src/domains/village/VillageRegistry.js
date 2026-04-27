@@ -210,6 +210,9 @@ export function updateFamilyIndicators(villageData, familyId, updates) {
 
 export function recordHomeVisit(villageData, _familyId, _visitData) { return villageData; }
 export function getFamiliesAtRisk(_villageData, _riskIndicator) { return []; }
-export function calculateVillageIKS(_villageData) { return 0.85; }
+// NOTE: Village-wide IKS is computed from PIS-PK indicators via
+// `calculateVillageIKSPisPk` (src/domains/village/pisPkIndicators.js) or from
+// TTM readiness via `calculateVillageIKS` (NPCReadiness.js). This stub was a
+// hardcoded 0.85 placeholder that shadowed both — removed 2026-04-23.
 export function getVillageHealthStats(_villageData) { return {}; }
 export function validateVillageData(_villageData) { return { isValid: true, errors: [] }; }

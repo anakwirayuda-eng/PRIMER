@@ -828,6 +828,19 @@ export const createClinicalSlice = (set, get) => ({
                 }
             }
 
+            // ═══ LIFETIME (Layer C Mastery, M5) — track SKDI/ICD touched ═══
+            if (txResult.success && decision?.action === 'treat') {
+                try {
+                    const skdi = patient.medicalData?.skdi || patient.hidden?.skdi || '4A';
+                    const icd10 = patient.medicalData?.trueDiagnosisCode
+                        || decision?.diagnoses?.[0]
+                        || null;
+                    get().metaActions?.recordLifetimeCase({ skdi, icd10 });
+                } catch (err) {
+                    console.warn('[lifetime] recordLifetimeCase failed:', err);
+                }
+            }
+
             return txResult;
         },
         dischargeEmergencyPatient: (patient, decision, day, time) => {

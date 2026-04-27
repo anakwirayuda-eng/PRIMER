@@ -4,26 +4,18 @@ import {
     calculateVillageIKS,
     getReadinessSummary
 } from '../domains/village/NPCReadiness.js';
+import { calculateFamilyIKSPisPk } from '../domains/village/pisPkIndicators.js';
 
 const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
 
+/**
+ * Family-level PIS-PK score (0-1). Delegates to the canonical engine which
+ * applies the 12-indikator Kemenkes formula with demographic applicability
+ * (e.g. ASI indicator N/A for a family without bayi). Honours `family.iksScore`
+ * override for save-game and PosyanduModal flows.
+ */
 export function calculateFamilyIndicatorIks(family) {
-    if (!family || typeof family !== 'object') {
-        return 0;
-    }
-
-    if (Number.isFinite(Number(family.iksScore))) {
-        return clamp01(family.iksScore);
-    }
-
-    const indicators = family.indicators || {};
-    const scored = Object.values(indicators).filter(value => value !== null);
-    if (scored.length === 0) {
-        return 0;
-    }
-
-    const healthy = scored.filter(value => value === true).length;
-    return clamp01(healthy / scored.length);
+    return calculateFamilyIKSPisPk(family).iks;
 }
 
 export function hasBehaviorReadinessEngagement(readinessEntry) {

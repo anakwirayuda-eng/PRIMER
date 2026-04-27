@@ -15,6 +15,16 @@ import PauseOverlay from './PauseOverlay.jsx';
 import { useGame } from '../context/GameContext.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import GameOverModal from './GameOverModal.jsx';
+import VictoryModal from './VictoryModal.jsx';
+import StaseFinalReportModal from './StaseFinalReportModal.jsx';
+import MonthlyDebriefModal from './MonthlyDebriefModal.jsx';
+import OnboardingHints from './OnboardingHints.jsx';
+import { calculateVillageIKSPisPk } from '../domains/village/pisPkIndicators.js';
+import { calculateVillageIKS as calculateReadinessVillageIKS } from '../domains/village/NPCReadiness.js';
+import { useChampionPromotionWatcher } from '../hooks/useChampionPromotionWatcher.js';
+import { useFeatureUnlockWatcher } from '../hooks/useFeatureUnlockWatcher.js';
+import { useGameStore } from '../store/useGameStore.js';
+import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext.jsx';
 import useModalA11y from '../hooks/useModalA11y.js';
@@ -38,6 +48,7 @@ const ArsipPage = React.lazy(() => import('./ArsipPage'));
 const StaffPage = React.lazy(() => import('./StaffPage'));
 const KPIDashboard = React.lazy(() => import('./KPIDashboard'));
 const SensusPage = React.lazy(() => import('./sensus/SensusPage'));
+const DosenDashboard = React.lazy(() => import('./DosenDashboard'));
 
 // Code-split modals (loaded on first open)
 const SettingsModal = React.lazy(() => import('./SettingsModal'));
@@ -146,7 +157,7 @@ function ShortcutHelpModal({ onClose }) {
 }
 
 export default function MainLayout() {
-    const { playerProfile, day, time, logout: _logout, setGameState, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki } = useGame();
+    const { playerProfile, day, time, logout: _logout, setGameState, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki, villageVictoryAcknowledged, acknowledgeVillageVictory } = useGame();
     const { theme, toggleTheme: _toggleTheme } = useTheme();
     const { t: _t, i18n: _i18n } = useTranslation();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -167,6 +178,95 @@ export default function MainLayout() {
         return activeStories.find(s => !s.completed);
     }, [activeStories]);
 
+    // ═══ Champion promotion watcher — toast saat keluarga capai IKS 100% ═══
+    useChampionPromotionWatcher(villageData?.families);
+
+    // ═══ Hash-based deep-link untuk Dosen Dashboard ═══
+    // Akses: tambahkan #dosen-dashboard di URL → otomatis switch page
+    useEffect(() => {
+        const checkHash = () => {
+            if (typeof window === 'undefined') return;
+            if (window.location.hash === '#dosen-dashboard' && activePage !== 'dosen_dashboard') {
+                setActivePage('dosen_dashboard');
+            }
+        };
+        checkHash();
+        window.addEventListener('hashchange', checkHash);
+        return () => window.removeEventListener('hashchange', checkHash);
+    }, [activePage, setActivePage]);
+
+    // ═══ Feature unlock watcher — toast saat melewati Day 15/30/45 ═══
+    useFeatureUnlockWatcher(day);
+
+    // ═══ Stase endgame — auto-lock final score di Day > targetDay ═══
+    // Subscribe narrow ke meta.stase + dispatch action sekali ketika kondisi
+    // terpenuhi. Aman untuk save-load: idempotent karena lockStaseFinalScore
+    // mengecek finalScore !== null sebelum re-compute.
+    const staseState = useGameStore(useShallow(s => s.meta?.stase));
+    const lockStaseFinalScore = useGameStore(s => s.metaActions?.lockStaseFinalScore);
+    const acknowledgeStaseFinalReport = useGameStore(s => s.metaActions?.acknowledgeStaseFinalReport);
+    const acknowledgeMonthlyDebrief = useGameStore(s => s.metaActions?.acknowledgeMonthlyDebrief);
+    useEffect(() => {
+        if (!staseState || !lockStaseFinalScore) return;
+        const target = staseState.targetDay ?? 90;
+        if (day > target && staseState.phase === 'active' && staseState.finalScore == null) {
+            lockStaseFinalScore();
+        }
+    }, [day, staseState, lockStaseFinalScore]);
+
+    // ═══ Monthly debrief — trigger non-blocking saat day melewati Day 30/60 ═══
+    // Defensive: hanya hitung untuk fase 'active' (jangan tampilkan setelah
+    // post-stase atau sebelum lock final score).
+    const monthlyDebriefMilestone = useMemo(() => {
+        if (!staseState || staseState.phase !== 'active') return null;
+        const target = staseState.targetDay ?? 90;
+        const lastSeen = staseState.lastDebriefDay ?? 0;
+        const milestones = [30, 60].filter((m) => m < target);
+        // Cari milestone terkecil yang sudah dilewati pemain tapi belum di-ack
+        return milestones.find((m) => day >= m && lastSeen < m) ?? null;
+    }, [day, staseState]);
+
+    // Snapshot state utk modal — diambil dari store
+    const debriefStateSnapshot = useGameStore(useShallow(s => ({
+        player: s.player,
+        clinical: s.clinical,
+        publicHealth: s.publicHealth,
+        world: s.world,
+        derivedKpis: s.finance,
+    })));
+
+    // ═══ "Desa Sehat" victory detection — dual PIS-PK × TTM criterion ═══
+    // IKS PIS-PK ≥70% (rata-rata 12 indikator Kemenkes per keluarga)
+    // Readiness TTM ≥60 (agregat tahap TTM per keluarga yang sudah engaged)
+    const villageVictory = useMemo(() => {
+        if (villageVictoryAcknowledged) return null;
+        const families = villageData?.families;
+        if (!Array.isArray(families) || families.length === 0) return null;
+
+        const kemenkes = calculateVillageIKSPisPk(families);
+        const readinessState = villageData?.readinessState || {};
+        const engagedReadinessState = Object.fromEntries(
+            Object.entries(readinessState).filter(([, entry]) =>
+                (entry?.visitCount || 0) > 0 ||
+                (Array.isArray(entry?.stageHistory) && entry.stageHistory.length > 0)
+            )
+        );
+        const readiness = Object.keys(engagedReadinessState).length > 0
+            ? calculateReadinessVillageIKS(engagedReadinessState)
+            : { iks: 0 };
+
+        const achieved = kemenkes.meanIks >= 0.70 && (readiness.iks || 0) >= 60;
+        if (!achieved) return null;
+
+        return {
+            kemenkes: kemenkes.meanIks,
+            readiness: (readiness.iks || 0) / 100,
+            kkSehatCount: kemenkes.kkSehatCount,
+            totalKK: kemenkes.totalKK,
+            indicatorCoverage: kemenkes.indicatorCoverage
+        };
+    }, [villageData, villageVictoryAcknowledged]);
+
     const isCalendarOpen = showCalendar || Boolean(selectedDailyReport);
     const isNarrativeOpen = Boolean(focusedStory || interactiveStory);
     const hasBlockingOverlay = Boolean(
@@ -183,7 +283,10 @@ export default function MainLayout() {
         isWikiOpen ||
         isNarrativeOpen ||
         gameOver ||
-        showShortcutHelp
+        showShortcutHelp ||
+        villageVictory ||
+        (staseState?.phase === 'postStase' && staseState?.finalScore && !staseState?.finalReportAcknowledged) ||
+        monthlyDebriefMilestone
     );
 
     const handleNavigateTarget = useCallback((targetId) => {
@@ -802,6 +905,16 @@ export default function MainLayout() {
                                 <WilayahPage />
                             </ErrorBoundary>
                         )}
+                        {activePage === 'dosen_dashboard' && (
+                            <ErrorBoundary
+                                name="DosenDashboard"
+                                resetKeys={[activePage]}
+                                fallbackAction={() => setActivePage('dashboard')}
+                                fallbackActionLabel="Kembali ke Dashboard"
+                            >
+                                <DosenDashboard />
+                            </ErrorBoundary>
+                        )}
                         {activePage === 'facility' && (
                             <ErrorBoundary
                                 name="GedungPage"
@@ -1082,6 +1195,41 @@ export default function MainLayout() {
                     reason={gameOver.reason}
                     onContinue={dismissWarning}
                     onRestart={restartGame}
+                />
+            )}
+
+            {/* "Desa Sehat" celebration — fires once when dual criterion met */}
+            {villageVictory && !gameOver && (
+                <VictoryModal
+                    scores={villageVictory}
+                    day={day}
+                    onContinue={() => acknowledgeVillageVictory?.()}
+                />
+            )}
+
+            {/* Laporan Akhir Stase — muncul sekali setelah Day > targetDay (90) */}
+            {staseState?.phase === 'postStase'
+                && staseState?.finalScore
+                && !staseState?.finalReportAcknowledged
+                && !gameOver && (
+                <StaseFinalReportModal
+                    finalScore={staseState.finalScore}
+                    dayLockedAt={staseState.finalScoreDay}
+                    targetDay={staseState.targetDay}
+                    onContinue={() => acknowledgeStaseFinalReport?.()}
+                />
+            )}
+
+            {/* Onboarding hints — non-blocking floating panel Day 1-2 */}
+            {!gameOver && <OnboardingHints />}
+
+            {/* Monthly debrief — non-blocking checkpoint Day 30 & Day 60 */}
+            {monthlyDebriefMilestone && !gameOver && (
+                <MonthlyDebriefModal
+                    state={debriefStateSnapshot}
+                    milestoneDay={monthlyDebriefMilestone}
+                    targetDay={staseState?.targetDay}
+                    onContinue={() => acknowledgeMonthlyDebrief?.(monthlyDebriefMilestone)}
                 />
             )}
         </div>
