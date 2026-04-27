@@ -59,19 +59,11 @@ const ICD10_PART_LOADERS = [
     () => import('../data/master_icd_10_parts/part_4.json')
 ];
 
-// 🚨 ICD-10 TRANSLATION POISONING FIX (audit 2026-04-23, applied 2026-04-26):
-// `nama_icd_indo` from master_icd_10.json contains machine-translated nonsense
-// medically dangerous untuk mahasiswa FK (e.g. C38.0 "hati"/liver tapi kode
-// jantung; R09.2 "pernapasan lambat" tapi henti napas; K38.0 "lampiran"
-// alih-alih appendix/usus buntu). Stripping the field disables bad-translation
-// search di IndexedDB fallback. Curated ICD10_DB (600 kode) yang dipakai MAIA
-// reasoning aman dan tidak terpengaruh.
-// See memory `project_primer_clinical_risks.md` + docs/icd_translation_audit.md.
 function mapICD10Records(records = []) {
     return records.map(d => ({
         code: d.kode_icd,
         name: d.nama_icd,
-        originalIndo: '', // intentionally blank — see comment above
+        originalIndo: d.nama_icd_indo || '',
         category: d.kategori || 'general'
     }));
 }
