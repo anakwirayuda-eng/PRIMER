@@ -405,7 +405,7 @@ const RumahDinas = ({ onClose }) => {
                         {/* Dynamic Background based on Room */}
                         <div className="absolute inset-0 opacity-20 pointer-events-none"
                             style={{
-                                backgroundImage: `url(/assets/rooms/${activeTab}.png)`,
+                                backgroundImage: `url(/assets/rooms/${activeTab}.webp)`,
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center'
                             }}

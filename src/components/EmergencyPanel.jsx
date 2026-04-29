@@ -191,7 +191,7 @@ export default function EmergencyPanel({ emergencyQueue, onAdmitEmergency, activ
             <div className="relative bg-gradient-to-r from-red-600 to-red-700 p-4 text-white overflow-hidden">
                 {/* Background Pattern/Image */}
                 <div className="absolute right-0 top-0 h-full w-1/2 opacity-30 pointer-events-none">
-                    <img src="/images/wilayah/igd_bg.png" alt="IGD" className="h-full object-cover object-left" />
+                    <img src="/images/wilayah/igd_bg.webp" alt="IGD" className="h-full object-cover object-left" />
                 </div>
 
                 <div className="relative z-10">

@@ -47,7 +47,7 @@ export default function QueueList({ activeService }) {
                 {/* Background Pattern/Image */}
                 {(!activeService || activeService.id === 'poli_umum') && (
                     <div className="absolute right-0 top-0 h-full w-1/2 opacity-20 pointer-events-none">
-                        <img src="/images/wilayah/poli_umum_bg.png" alt="Poli Umum" className="h-full object-cover object-left" />
+                        <img src="/images/wilayah/poli_umum_bg.webp" alt="Poli Umum" className="h-full object-cover object-left" />
                     </div>
                 )}
 

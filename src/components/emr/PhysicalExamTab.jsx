@@ -30,10 +30,10 @@ const ABNORMAL_WORDS = [
 ];
 
 const BODY_IMAGES = {
-    MALE: { front: '/body-male-front.png', back: '/body-male-back.png' },
-    FEMALE: { front: '/body-female-front.png', back: '/body-female-back.png' },
-    CHILD: { front: '/body-child-front.png', back: '/body-child-back.png' },
-    INFANT: { front: '/body-infant-front.png', back: '/body-infant-back.png' },
+    MALE: { front: '/body-male-front.webp', back: '/body-male-back.webp' },
+    FEMALE: { front: '/body-female-front.webp', back: '/body-female-back.webp' },
+    CHILD: { front: '/body-child-front.webp', back: '/body-child-back.webp' },
+    INFANT: { front: '/body-infant-front.webp', back: '/body-infant-back.webp' },
 };
 
 // Only anatomically-localized exams get map markers.

@@ -136,7 +136,7 @@
     input,
     select,
     textarea {
-      cursor: url('/assets/cursor_ff8.png'), auto;
+      cursor: url('/assets/cursor_ff8.webp'), auto;
     }
 
     /* Pointer states */
@@ -144,7 +144,7 @@
     a:hover,
     [role="button"]:hover,
     .cursor-pointer {
-      cursor: url('/assets/cursor_ff8.png'), pointer;
+      cursor: url('/assets/cursor_ff8.webp'), pointer;
     }
   }
 }

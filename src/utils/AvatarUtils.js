@@ -1,7 +1,7 @@
 /**
  * @reflection
  * [IDENTITY]: AvatarUtils
- * [PURPOSE]: Utility for rendering patient avatars based on age and gender. Uses a sprite sheet (/avatars.png) with a 4x3 grid.
+ * [PURPOSE]: Utility for rendering patient avatars based on age and gender. Uses a sprite sheet (/avatars.webp) with a 4x3 grid.
  * [STATE]: Experimental
  * [ANCHOR]: AVATAR_POSITIONS
  * [DEPENDS_ON]: None
@@ -11,10 +11,10 @@
 
 /**
  * Utility for rendering patient avatars based on age and gender.
- * Uses a sprite sheet (/avatars.png) with a 4x3 grid.
+ * Uses a sprite sheet (/avatars.webp) with a 4x3 grid.
  */
 
-// Avatar sprite positions (4x3 grid in /avatars.png)
+// Avatar sprite positions (4x3 grid in /avatars.webp)
 export const AVATAR_POSITIONS = {
     'young_male': { x: 0, y: 0 },
     'young_female_hijab': { x: 1, y: 0 },
@@ -61,7 +61,7 @@ export function getAvatarStyle(age, gender, size = 80) {
     const pos = AVATAR_POSITIONS[key];
 
     return {
-        backgroundImage: 'url(/avatars.png)',
+        backgroundImage: 'url(/avatars.webp)',
         backgroundSize: '400% 300%',
         backgroundPosition: `${pos.x * 33.33}% ${pos.y * 50}%`,
         width: `${size}px`,

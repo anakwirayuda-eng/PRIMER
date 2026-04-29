@@ -5,7 +5,7 @@
  *            Clean circle nodes, hover tooltips. No SVG mismatch.
  * [STATE]: Production — Stable
  * [ANCHOR]: BodyMapWidget
- * [DEPENDS_ON]: body-{male,female,child,infant}-{front,back}.png, Web Audio API
+ * [DEPENDS_ON]: body-{male,female,child,infant}-{front,back}.webp, Web Audio API
  * [LAST_UPDATE]: 2026-03-15
  */
 
@@ -37,10 +37,10 @@ const analyzeSeverity = (text) => {
 };
 
 const BODY_IMAGES = {
-    MALE:   { front: '/body-male-front.png',   back: '/body-male-back.png' },
-    FEMALE: { front: '/body-female-front.png', back: '/body-female-back.png' },
-    CHILD:  { front: '/body-child-front.png',  back: '/body-child-back.png' },
-    INFANT: { front: '/body-infant-front.png', back: '/body-infant-back.png' },
+    MALE:   { front: '/body-male-front.webp',   back: '/body-male-back.webp' },
+    FEMALE: { front: '/body-female-front.webp', back: '/body-female-back.webp' },
+    CHILD:  { front: '/body-child-front.webp',  back: '/body-child-back.webp' },
+    INFANT: { front: '/body-infant-front.webp', back: '/body-infant-back.webp' },
 };
 
 // Body zone: the region within the PNG where the body sits
