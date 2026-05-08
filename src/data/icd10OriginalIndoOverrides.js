@@ -90,6 +90,43 @@ const CONDITIONAL_TERM_FIXES = [
     { englishPattern: /\bnonrheumatic\b/i, indoPattern: /\bnonrheumatic\b/gi, replacement: 'nonreumatik' },
     { englishPattern: /\bimmunodeficiency\b/i, indoPattern: /\bimmunodeficiency\b/gi, replacement: 'imunodefisiensi' },
     { englishPattern: /\bciliary\b/i, indoPattern: /\bciliary\b/gi, replacement: 'siliaris' },
+    { englishPattern: /\bacquired\b/i, indoPattern: /\bacquired\b/gi, replacement: 'didapat' },
+    { englishPattern: /\bassault\b/i, indoPattern: /\bassault\b/gi, replacement: 'penyerangan' },
+    { englishPattern: /\bsuperficial\b/i, indoPattern: /\bsuperficial\b/gi, replacement: 'superfisial' },
+    { englishPattern: /\blocalized\b/i, indoPattern: /\blocalized\b/gi, replacement: 'terlokalisasi' },
+    { englishPattern: /\bstrains?\b/i, indoPattern: /\bstrain\b/gi, replacement: 'regangan' },
+    { englishPattern: /\bosteochondrosis\b/i, indoPattern: /\bosteochondrosis\b/gi, replacement: 'osteokondrosis' },
+    { englishPattern: /\bcorrosions?\b/i, indoPattern: /\bcorrosions?\b/gi, replacement: 'korosi' },
+    { englishPattern: /\bsubarachnoid\b/i, indoPattern: /\bsubarachnoid\b/gi, replacement: 'subaraknoid' },
+    { englishPattern: /\bcerebral\b/i, indoPattern: /\bcerebral\b/gi, replacement: 'serebral' },
+    { englishPattern: /\bpick-up\b/i, indoPattern: /\bpick-up\b/gi, replacement: 'pikap' },
+    { englishPattern: /\bfitting\b/i, indoPattern: /\bfitting\b/gi, replacement: 'pemasangan' },
+    { englishPattern: /\bglomerular\b/i, indoPattern: /\bglomerular\b/gi, replacement: 'glomerulus' },
+    { englishPattern: /\bviral\b/i, indoPattern: /\bviral\b/gi, replacement: 'virus' },
+    { englishPattern: /\bherpesviral\b/i, indoPattern: /\bherpesviral\b/gi, replacement: 'herpesvirus' },
+    { englishPattern: /\blumbar\b/i, indoPattern: /\blumbar\b/gi, replacement: 'lumbal' },
+    { englishPattern: /\bsclerosis\b/i, indoPattern: /\bsclerosis\b/gi, replacement: 'sklerosis' },
+    { englishPattern: /\btransient\b/i, indoPattern: /\btransient\b/gi, replacement: 'sementara' },
+    { englishPattern: /\bresidual\b/i, indoPattern: /\bresidual\b/gi, replacement: 'sisa' },
+    { englishPattern: /\bscoliosis\b/i, indoPattern: /\bscoliosis\b/gi, replacement: 'skoliosis' },
+    { englishPattern: /\bmyositis\b/i, indoPattern: /\bmyositis\b/gi, replacement: 'miositis' },
+    { englishPattern: /\bhypomanic\b/i, indoPattern: /\bhypomanic\b/gi, replacement: 'hipomanik' },
+    { englishPattern: /\bnondisjunction\b/i, indoPattern: /\bnondisjunction\b/gi, replacement: 'nondisjungsi' },
+    { englishPattern: /\bmosaicism\b/i, indoPattern: /\bmosaicism\b/gi, replacement: 'mosaikisme' },
+    { englishPattern: /\bcannabinoids\b/i, indoPattern: /\bcannabinoids\b/gi, replacement: 'kanabinoid' },
+    { englishPattern: /\bcoxarthrosis\b/i, indoPattern: /\bcoxarthrosis\b/gi, replacement: 'koksartrosis' },
+    { englishPattern: /\blipomatous\b/i, indoPattern: /\blipomatous\b/gi, replacement: 'lipomatosa' },
+    { englishPattern: /\bpoliomyelitis\b/i, indoPattern: /\bpoliomyelitis\b/gi, replacement: 'poliomielitis' },
+    { englishPattern: /\bvitreous\b/i, indoPattern: /\bvitreous\b/gi, replacement: 'vitreus' },
+    { englishPattern: /\brider\b/i, indoPattern: /\brider\b/gi, replacement: 'pengendara' },
+    { englishPattern: /\bvalve\b/i, indoPattern: /\bvalve\b/gi, replacement: 'katup' },
+    { englishPattern: /\bgangrene\b/i, indoPattern: /\bgangrene\b/gi, replacement: 'gangren' },
+    { englishPattern: /\bintrauterine\b/i, indoPattern: /\bintrauterine\b/gi, replacement: 'intrauterin' },
+    { englishPattern: /\balzheimers\b/i, indoPattern: /\balzheimers\b/gi, replacement: 'Alzheimer' },
+    { englishPattern: /\bprecerebral\b/i, indoPattern: /\bprecerebral\b/gi, replacement: 'praserebral' },
+    { englishPattern: /\bendocapillary\b/i, indoPattern: /\bendocapillary\b/gi, replacement: 'endokapiler' },
+    { englishPattern: /\bnonmedicinal\b/i, indoPattern: /\bnonmedicinal\b/gi, replacement: 'nonmedis' },
+    { englishPattern: /\bkaposis\b/i, indoPattern: /\bkaposis\b/gi, replacement: 'Kaposi' },
     { englishPattern: /\bnontraffic\b/i, indoPattern: /\bnontraffic\b/gi, replacement: 'non-lalu lintas' },
     { englishPattern: /\bnonmotor\b/i, indoPattern: /\bnonmotor\b/gi, replacement: 'tidak bermotor' },
     { englishPattern: /\bnoncollision\b/i, indoPattern: /\bnoncollision\b/gi, replacement: 'tanpa tabrakan' },
@@ -123,6 +160,12 @@ export function normalizeIcd10OriginalIndo({ code, english, indo }) {
             /\bkecelakaan nontraffic spesifik\b/gi,
             'kecelakaan non-lalu lintas yang tidak spesifik'
         );
+    }
+    if (/\bcrushing injur/i.test(englishLower) && /\bcrushing cedera\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bcrushing cedera\b/gi, 'cedera remuk');
+    }
+    if (englishLower.includes('maternal care') && /\bmaternal perawatan\b/i.test(normalized)) {
+        normalized = replaceTermPreservingSentenceCase(normalized, /\bmaternal perawatan\b/gi, 'perawatan ibu');
     }
 
     CONDITIONAL_TERM_FIXES.forEach(({ englishPattern, indoPattern, replacement }) => {

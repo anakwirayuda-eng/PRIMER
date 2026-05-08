@@ -234,6 +234,190 @@ describe('normalizeIcd10OriginalIndo', () => {
                 indo: 'Penyakit HIV mengakibatkan limfoid interstitial pneumonitis'
             })
         ).toBe('Penyakit HIV mengakibatkan limfoid interstisial pneumonitis');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'D60.9',
+                english: 'Acquired pure red cell aplasia, unspecified',
+                indo: 'Acquired murni aplasia sel darah merah , tidak spesifik'
+            })
+        ).toBe('Didapat murni aplasia sel darah merah , tidak spesifik');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'S07.0',
+                english: 'Crushing injury of face',
+                indo: 'Crushing cedera wajah'
+            })
+        ).toBe('Cedera remuk wajah');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'X86',
+                english: 'Assault by corrosive substance',
+                indo: 'Assault oleh zat korosif'
+            })
+        ).toBe('Penyerangan oleh zat korosif');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'B36.9',
+                english: 'Superficial mycosis, unspecified',
+                indo: 'Mikosis Superficial , tidak spesifik'
+            })
+        ).toBe('Mikosis Superfisial , tidak spesifik');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'E65',
+                english: 'Localized adiposity',
+                indo: 'Localized adipositas'
+            })
+        ).toBe('Terlokalisasi adipositas');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'S03.5',
+                english: 'Sprain and strain of joints and ligaments of other and unspecified parts of head',
+                indo: 'Keseleo dan strain sendi dan ligamen dari bagian lain dan tidak spesifik dari kepala'
+            })
+        ).toBe('Keseleo dan regangan sendi dan ligamen dari bagian lain dan tidak spesifik dari kepala');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'T03.0',
+                english: 'Dislocations, sprains and strains involving head with neck',
+                indo: 'Dislokasi , keseleo dan strain melibatkan kepala dengan leher'
+            })
+        ).toBe('Dislokasi , keseleo dan regangan melibatkan kepala dengan leher');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'S06.6',
+                english: 'Traumatic subarachnoid haemorrhage',
+                indo: 'perdarahan subarachnoid traumatis'
+            })
+        ).toBe('perdarahan subaraknoid traumatis');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'T04.0',
+                english: 'Crushing injuries involving head with neck',
+                indo: 'Crushing cedera yang melibatkan kepala dengan leher'
+            })
+        ).toBe('Cedera remuk yang melibatkan kepala dengan leher');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'V03.0',
+                english: 'Pedestrian injured in collision with car, pick-up truck or van, nontraffic accident',
+                indo: 'Pejalan kaki terluka dalam tabrakan dengan mobil , truk pick-up atau van , kecelakaan nontraffic'
+            })
+        ).toBe('Pejalan kaki terluka dalam tabrakan dengan mobil , truk pikap atau van , kecelakaan non-lalu lintas');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'Z44.0',
+                english: 'Fitting and adjustment of artificial arm',
+                indo: 'Fitting dan penyesuaian lengan buatan'
+            })
+        ).toBe('Pemasangan dan penyesuaian lengan buatan');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'A83.8',
+                english: 'Other mosquito-borne viral encephalitis',
+                indo: 'Ensefalitis viral yang ditularkan dari virus nyamuk lainnya'
+            })
+        ).toBe('Ensefalitis virus yang ditularkan dari virus nyamuk lainnya');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'M51.0',
+                english: 'Lumbar and other intervertebral disc disorders with myelopathy',
+                indo: 'Lumbar dan gangguan disc intervertebralis lainnya dengan myelopathy'
+            })
+        ).toBe('Lumbal dan gangguan disk intervertebralis lainnya dengan mielopati');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'F10.7',
+                english: 'Mental and behavioural disorders due to use of alcohol, residual and late-onset psychotic disorder',
+                indo: 'Gangguan mental dan perilaku akibat penggunaan alkohol , residual dan gangguan psikotik akhir-onset'
+            })
+        ).toBe('Gangguan mental dan perilaku akibat penggunaan alkohol , sisa dan gangguan psikotik akhir-onset');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'M41.0',
+                english: 'Infantile idiopathic scoliosis',
+                indo: 'Infantile idiopatik scoliosis'
+            })
+        ).toBe('Infantile idiopatik skoliosis');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'F31.0',
+                english: 'Bipolar affective disorder, current episode hypomanic',
+                indo: 'Gangguan afektif bipolar , episode hypomanic saat ini'
+            })
+        ).toBe('Gangguan afektif bipolar , episode hipomanik saat ini');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'Q90.0',
+                english: 'Trisomy 21, meiotic nondisjunction',
+                indo: 'Trisomi 21 , nondisjunction meiosis'
+            })
+        ).toBe('Trisomi 21 , nondisjungsi meiosis');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'F12.0',
+                english: 'Mental and behavioural disorders due to use of cannabinoids, acute intoxication',
+                indo: 'Gangguan mental dan perilaku akibat penggunaan cannabinoids , intoksikasi akut'
+            })
+        ).toBe('Gangguan mental dan perilaku akibat penggunaan kanabinoid , intoksikasi akut');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'H43.0',
+                english: 'Vitreous prolapse',
+                indo: 'Prolaps vitreous'
+            })
+        ).toBe('Prolaps vitreus');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'V80.0',
+                english: 'Rider or occupant injured by fall from or being thrown from animal or animal-drawn vehicle in noncollision accident',
+                indo: 'Rider atau penghuni terluka oleh jatuh dari atau terlempar dari hewan atau kendaraan ditarik hewan dalam kecelakaan noncollision'
+            })
+        ).toBe('Pengendara atau penghuni terluka oleh jatuh dari atau terlempar dari hewan atau kendaraan ditarik hewan dalam kecelakaan tanpa tabrakan');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'I34.1',
+                english: 'Mitral (valve) prolapse',
+                indo: 'Mitral ( valve ) prolaps'
+            })
+        ).toBe('Mitral ( katup ) prolaps');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'K40.2',
+                english: 'Bilateral inguinal hernia, without obstruction or gangrene',
+                indo: 'Hernia inguinalis bilateral, tanpa halangan atau gangrene'
+            })
+        ).toBe('Hernia inguinalis bilateral, tanpa halangan atau gangren');
+
+        expect(
+            normalizeIcd10OriginalIndo({
+                code: 'F00.0',
+                english: 'Dementia in Alzheimers disease with early onset',
+                indo: 'Demensia pada penyakit Alzheimers dengan onset awal'
+            })
+        ).toBe('Demensia pada penyakit Alzheimer dengan onset awal');
     });
 
     it('normalizes recurring transport and ectoparasite leftovers in the external-cause chapter', () => {

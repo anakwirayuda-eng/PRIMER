@@ -178,6 +178,27 @@ const FINDING_DEFS = [
         kind: 'english_leftover',
         severity: 'medium',
         test: ({ label }) => /\b(rheumatoid|nonrheumatic|ciliary)\b/i.test(label)
+    },
+    {
+        id: 'mechanical_translation_leftover',
+        label: 'Mechanical translation leftovers still visible',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\b(acquired|assault|superficial|localized|strain|osteochondrosis|corrosions?|subarachnoid|cerebral|pick-up|fitting|glomerular|viral|herpesviral|lumbar|sclerosis|transient|residual|scoliosis|myositis|hypomanic|nondisjunction|mosaicism|cannabinoids|coxarthrosis|lipomatous|poliomyelitis|vitreous|rider|valve|gangrene|intrauterine|alzheimers|precerebral|endocapillary|nonmedicinal|kaposis)\b/i.test(label)
+    },
+    {
+        id: 'crushing_injury_word_order',
+        label: 'Crushing injury word order left machine-translated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\bcrushing cedera\b/i.test(label)
+    },
+    {
+        id: 'maternal_care_word_order',
+        label: 'Maternal care word order left machine-translated',
+        kind: 'english_leftover',
+        severity: 'medium',
+        test: ({ label }) => /\bmaternal perawatan\b/i.test(label)
     }
 ];
 
