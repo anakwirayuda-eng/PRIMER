@@ -8,76 +8,21 @@
  */
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { produce } from 'immer';
-import { soundManager } from '../utils/SoundManager.js';
-import { getMedicationById } from '../data/MedicationDatabase.js';
-import { getSupplierById, calculateOrderCost, estimateDeliveryDate } from '../data/SupplierDatabase.js';
-import { calculatePatientBill } from '../game/BillingEngine.js';
-import { generateInitialParameters, determineMonthlyOutcome } from '../game/ProlanisEngine.js';
-import { applyOutbreakAction, checkForOutbreakTrigger, checkOutbreakExpiry } from '../domains/community/OutbreakSystem.js';
-import { EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../game/EmergencyCases.js';
-import { PROCEDURES_DB } from '../data/ProceduresDB.js';
-import { HOSPITALS, AMBULANCES } from '../data/HospitalDB.js';
-import { buildCPPTRecord, buildMaiaCPPTRecord } from '../game/CPPTEngine.js';
-import { getPatientSpikeMultiplier } from '../domains/community/OutbreakSystem.js';
-import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateGenericPatients, generateProlanisVisitPatient } from '../game/PatientGenerator.js';
-import { getScheduledFollowups, clearProcessedFollowups } from '../game/ConsequenceEngine.js';
-import { evaluateIKMTriggers, isBlockedByBC, resolveEvent, calculateEventImpact, determineScenarioOutcomeKey, getSeasonForDay, createEventInstance, advanceEventPhase } from '../game/IKMEventEngine.js';
-import { getScenarioById } from '../content/scenarios/IKMScenarioLibrary.js';
-import { VILLAGE_FAMILIES, FAMILY_INDICATORS, VILLAGE_STATS, getAllVillagers } from '../domains/village/VillageRegistry.js';
-import { applyNeglectDecay } from '../domains/village/NPCReadiness.js';
-import { claimQuestReward, evaluateStoryTriggers, advanceStoryNode, getStoryNodeImpact, updateGameProgress } from '../game/QuestEngine.js';
-import { normalizePatient, normalizePatientList } from '../models/PatientRuntime.js';
-import { normalizeEncounter } from '../models/EncounterRuntime.js';
-import { normalizeInventoryList, normalizeMedicationId } from '../models/InventoryRuntime.js';
-import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
-import { applyIkmScoreToVillage } from '../utils/ikmImpact.js';
-import { formatIkmImpactSummary, getIkmOutcomeStatus } from '../utils/ikmHistory.js';
-import {
-    collectPendingUkpBridgeCases,
-    ensureVillageReadinessState,
-    markBehaviorCaseBridgeSpawned
-} from '../utils/behaviorCaseRuntime.js';
-import { processLabOrder } from '../game/LabEngine.js';
-import { getIndicatorByDx } from '../game/CaseIndicators.js';
-import { evaluateDirectorState, generateDirectorGift, processUKPBridge } from '../game/TheDirector.js';
-import { buildRuntimeTrap, guardActionGroup, triggerFreezeProtocol } from '../utils/dispatchGuard.js';
-import { CURRENT_SAVE_VERSION, parseSavePayload } from '../utils/savePayload.js';
-import { withTransaction } from '../utils/transactions.js';
-import { chanceFromSeed, seedKey } from '../utils/deterministicRandom.js';
-import { safeSetStorageItem } from '../utils/browserSafety.js';
-import { showToast } from '../utils/ToastManager.js';
-import { clearStability } from '../utils/prophylaxis.js';
-import {
-    appendReferralLogEntry,
-    buildReferralLogEntry,
-    reconcileReferralLog
-} from '../utils/referralLog.js';
-import { normalizeProgressMetric } from '../utils/progressMetrics.js';
-import {
-    INITIAL_PLAYER_STATE,
-    INITIAL_TIME_STATE,
-    calculateIKS,
-    calculateGlobalBuffs,
-    calculateSleepRecovery as calculateSleepRecoveryOutcome
-} from '../game/GameCore.js';
+import { guardActionGroup } from '../utils/dispatchGuard.js';
+import { CURRENT_SAVE_VERSION } from '../utils/savePayload.js';
 
 // ═══════════════════════════════════════════════════════════════
 // CP1 EXTRACTED HELPERS — Pure functions moved to store/helpers/
 // ═══════════════════════════════════════════════════════════════
-import { isPlainObject, clampInteger } from './helpers/storeUtils.js';
-import { sanitizePlayerProfile, applyXpGainToProfile, spendXpFromProfile, createStartingPlayerProfile, clampEnergyToProfile, normalizeSkillList } from './helpers/playerHelpers.js';
-import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from './helpers/ambulanceHelpers.js';
-import { appendClinicalHistory, normalizeClinicalHistoryEntry, isAntibioticMed } from './helpers/clinicalHelpers.js';
-import { buildDailyArchiveEntry, buildMonthlyArchiveEntry, ACCREDITATION_MULTIPLIER } from './helpers/archiveHelpers.js';
+import { isPlainObject } from './helpers/storeUtils.js';
+import { sanitizePlayerProfile } from './helpers/playerHelpers.js';
 import {
     normalizePersistedWorld, createInitialMetaState, createInitialPublicHealthState, createInitialStaffState,
-    INITIAL_CLINICAL_STATE, createInitialClinicalState, createInitialPharmacyInventory, INITIAL_KPI, INITIAL_FACILITIES,
-    createInitialFinanceState, INITIAL_NAV_SETTINGS, createInitialNavState,
-    mergePersistedFinance, mergePersistedPublicHealth, mergePersistedStaff, mergePersistedClinical, mergePersistedMeta,
-    reconcileClinicalReferralLog, buildManualSaveSnapshot, syncQuestRoster
+    createInitialClinicalState,
+    createInitialFinanceState, INITIAL_NAV_SETTINGS,
+    mergePersistedNav, mergePersistedFinance, mergePersistedPublicHealth, mergePersistedStaff, mergePersistedClinical, mergePersistedMeta,
+    reconcileClinicalReferralLog
 } from './helpers/persistenceHelpers.js';
-import { buildProlanisBpjsNumber, applyFamilyIndicatorDrift, applyStaffMoraleDecay, pruneOutbreakRiskModifiers, applyIkmOutbreakRiskModifiers, applyStoryImpactToDraft } from './helpers/publicHealthHelpers.js';
 
 // ═══════════════════════════════════════════════════════════════
 // CP2 EXTRACTED SLICES
@@ -128,15 +73,6 @@ const ACTIONS_SKIP_INVARIANT_RECHECK = new Set([
 function shouldEnableActionStability(fullName, actionName) {
     if (ACTIONS_SKIP_STABILITY_GUARD.has(fullName)) return false;
     return !/^(set|open|close|toggle|clear)/.test(actionName);
-}
-
-function armAutosaveTrap(setState, getState, phase, reason) {
-    const trap = buildRuntimeTrap('actions.saveGame', {
-        phase,
-        reason: reason || 'Autosave gagal. Penyimpanan lokal mungkin penuh atau tidak tersedia.'
-    });
-    triggerFreezeProtocol(setState, getState, trap);
-    return false;
 }
 
 function guardStoreActions(store, set, get) {
@@ -202,6 +138,7 @@ export const useGameStore = create(
                 name: 'primer_gamestate_v4',
                 merge: (persistedState, currentState) => {
                     const nextState = isPlainObject(persistedState) ? persistedState : {};
+                    const mergedNav = mergePersistedNav(nextState.nav, currentState.nav);
                     const mergedWorld = nextState.world
                         ? { ...currentState.world, ...normalizePersistedWorld(nextState.world) }
                         : currentState.world;
@@ -235,6 +172,7 @@ export const useGameStore = create(
                         staff: nextState.staff
                             ? mergePersistedStaff(nextState.staff, currentState.staff)
                             : currentState.staff,
+                        nav: mergedNav,
                         clinical: reconcileClinicalReferralLog(mergedClinical, mergedWorld),
                         meta: mergedMeta
                     };
@@ -249,6 +187,12 @@ export const useGameStore = create(
                     );
 
                     return {
+                        nav: {
+                            settings: {
+                                ...INITIAL_NAV_SETTINGS,
+                                ...state.nav.settings
+                            }
+                        },
                         world: normalizedWorld,
                         player: {
                             ...state.player,

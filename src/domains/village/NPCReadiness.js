@@ -320,7 +320,7 @@ export function calculateVillageIKS(readinessState) {
 
     // IKS = weighted average of stage positions
     let totalScore = 0;
-    for (const [familyId, data] of Object.entries(readinessState)) {
+    for (const [_familyId, data] of Object.entries(readinessState)) {
         const idx = STAGE_INDEX[data.stage] ?? 0;
         totalScore += idx / (STAGE_ORDER.length - 1); // Normalize to 0-1
     }

@@ -13,6 +13,7 @@
  */
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Search, Brain, CheckCircle2, AlertTriangle, X, ShieldAlert, Zap,
     Eye, HeartHandshake, Fingerprint, Activity, FileText, Crosshair,
@@ -22,7 +23,6 @@ import {
     createBehaviorCase, advancePhase, getCurrentPhaseInfo, recordClueFound,
     scoreCOMBDiagnosis, scoreIntervention, resolveOutcome, getOutcomeNarrative
 } from '../../game/BehaviorCaseEngine.js';
-import { getMiniGameForScenario } from '../../game/MiniGameLibrary.js';
 import { getDiseaseScenarioById } from '../../content/scenarios/DiseaseScenarios.js';
 import MiniGamePanel from './MiniGamePanel.jsx';
 import { resolveBehaviorCaseScenarioId } from '../../utils/behaviorCaseRuntime.js';
@@ -94,6 +94,8 @@ const KINETIC_CSS = `
 // 🕵️ FASE 1: INTEROGASI KLINIS (OARS Psychological Siege)
 // ═══════════════════════════════════════════════════════════════
 function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
+    const { t } = useTranslation();
+    const tx = (key, options = {}) => t(`wilayahContent.ui.behaviorCase.investigation.${key}`, options);
     const clues = scenario?.investigationClues || [];
     const [localCase, setLocalCase] = useState(caseInstance);
     const [shake, setShake] = useState(false);
@@ -110,7 +112,6 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
     // EKG visualization
     const isCritical = tension >= 90;
     const ekgColor = tension > 75 ? '#e11d48' : tension > 50 ? '#f59e0b' : '#10b981';
-    const ekgSpeed = tension > 75 ? '0.4s' : tension > 50 ? '0.8s' : '1.5s';
 
     const handleTactic = (type) => {
         if (walkOut || !currentClue) return;
@@ -120,19 +121,19 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
 
         if (type === 'EMPATI') {
             tensionChange = -30;
-            logMsg = '[EMPATI] Anda memvalidasi beban warga. Tembok pertahanan turun drastis.';
+            logMsg = tx('logs.empathy');
         } else if (type === 'PROBE') {
             tensionChange = +15;
             if (tension <= defenseThreshold) {
                 extracted = true;
-                logMsg = `[KLARIFIKASI BERHASIL] Warga curhat terbuka. Bukti: "${currentClue.finding}"`;
+                logMsg = tx('logs.probeSuccess', { finding: currentClue.finding });
             } else {
-                logMsg = `[KLARIFIKASI DITOLAK] Warga masih terlalu defensif (Tension ${tension}% > threshold ${defenseThreshold}%).`;
+                logMsg = tx('logs.probeRejected', { tension, threshold: defenseThreshold });
                 setShake(true); setTimeout(() => setShake(false), 400);
             }
         } else if (type === 'KONFRONTASI') {
             tensionChange = +45;
-            logMsg = '[KONFRONTASI MEDIS] Anda menggurui warga. Mereka merasa dihakimi dan marah!';
+            logMsg = tx('logs.confrontation');
             setShake(true); setTimeout(() => setShake(false), 400);
         }
 
@@ -165,16 +166,16 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
             <div className="flex justify-between items-center border-b border-white/10 pb-3 shrink-0 mb-4">
                 <div className="border-l-4 border-emerald-500 pl-3">
                     <h3 className="text-white font-black text-xl uppercase tracking-widest flex items-center gap-2">
-                        <Microscope size={20} className="text-emerald-500" /> INTEROGASI KLINIS
+                        <Microscope size={20} className="text-emerald-500" /> {tx('title')}
                     </h3>
-                    <p className="text-slate-400 font-mono text-[9px] tracking-widest uppercase mt-1">O.A.R.S Motivational Interviewing</p>
+                    <p className="text-slate-400 font-mono text-[9px] tracking-widest uppercase mt-1">{tx('subtitle')}</p>
                 </div>
 
                 {/* EKG Tension Meter */}
                 <div className="flex items-center gap-4">
                     <div className="w-48 bg-black border border-slate-800 p-2 rounded-lg shadow-inner">
                         <div className="text-[9px] font-mono text-slate-500 tracking-widest mb-1 flex justify-between font-bold">
-                            <span>RESISTENSI WARGA</span>
+                            <span>{tx('resistance')}</span>
                             <span className={isCritical ? 'text-red-500 animate-pulse' : 'text-slate-300'}>{tension}%</span>
                         </div>
                         <div className="h-4 w-full bg-slate-900 rounded overflow-hidden relative">
@@ -185,7 +186,7 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
                         </div>
                     </div>
                     <div className="bg-black/40 p-2 rounded-lg border border-slate-800">
-                        <span className="text-[9px] font-mono text-amber-500 tracking-widest uppercase font-bold">BUKTI</span>
+                        <span className="text-[9px] font-mono text-amber-500 tracking-widest uppercase font-bold">{tx('evidence')}</span>
                         <div className="text-lg font-black text-white">{foundCount}<span className="text-slate-600 text-sm">/{clues.length}</span></div>
                     </div>
                 </div>
@@ -194,12 +195,12 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
             {/* NPC Quote */}
             {!walkOut && currentClue && (
                 <div className="bg-slate-900/60 border border-slate-700 rounded-xl p-5 relative shadow-lg transform -rotate-1 mx-1 mb-4">
-                    <span className="absolute -top-3 left-4 text-[9px] font-mono text-cyan-400 bg-slate-950 border border-cyan-900 px-3 py-0.5 rounded tracking-widest uppercase">SUBJEK MENGATAKAN:</span>
+                    <span className="absolute -top-3 left-4 text-[9px] font-mono text-cyan-400 bg-slate-950 border border-cyan-900 px-3 py-0.5 rounded tracking-widest uppercase">{tx('subjectSays')}</span>
                     <p className="text-lg font-serif italic text-amber-50 leading-relaxed font-medium">
-                        "{currentClue.npcLine || currentClue.finding || `Saya tidak mengerti kenapa harus berubah. ${currentClue.label} itu sudah biasa.`}"
+                        "{currentClue.npcLine || currentClue.finding || tx('fallbackNpcLine', { label: currentClue.label })}"
                     </p>
                     <div className="mt-2 text-[9px] font-mono text-slate-500 tracking-widest uppercase">
-                        Topik {round + 1}/{clues.length} · Threshold: Tension &lt; {defenseThreshold}%
+                        {tx('topicThreshold', { current: round + 1, total: clues.length, threshold: defenseThreshold })}
                     </div>
                 </div>
             )}
@@ -220,13 +221,13 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
             {walkOut && (
                 <div className="absolute inset-0 bg-red-950/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center text-center animate-in zoom-in-95 p-8 rounded-xl">
                     <ShieldAlert size={56} className="text-red-500 mb-4 animate-bounce" />
-                    <h2 className="text-2xl font-black text-white tracking-widest uppercase mb-2">WARGA MENGAMUK</h2>
+                    <h2 className="text-2xl font-black text-white tracking-widest uppercase mb-2">{tx('walkoutTitle')}</h2>
                     <p className="text-red-300 font-mono text-xs max-w-md leading-relaxed mb-6">
-                        Menceramahi warga yang defensif memicu "Righting Reflex". Warga menutup pintu. Anamnesis gagal.
+                        {tx('walkoutBody')}
                     </p>
                     <button onClick={() => onAdvance(localCase)}
                         className="px-6 py-3 bg-slate-900 text-white rounded-xl font-black tracking-widest uppercase btn-med border-slate-700 border-b-black hover:bg-slate-800 text-xs">
-                        LANJUT DENGAN DATA TERBATAS →
+                        {tx('continueLimitedData')}
                     </button>
                 </div>
             )}
@@ -234,25 +235,25 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
             {/* Tactics Deck */}
             {!walkOut && currentClue && (
                 <div className="shrink-0 pt-3 border-t border-slate-800/50">
-                    <div className="text-[9px] font-mono text-slate-500 tracking-[0.2em] text-center mb-2 uppercase">STRATEGI RESPON:</div>
+                    <div className="text-[9px] font-mono text-slate-500 tracking-[0.2em] text-center mb-2 uppercase">{tx('responseStrategy')}</div>
                     <div className="grid grid-cols-3 gap-2 mb-2">
                         <button onClick={() => handleTactic('EMPATI')}
                             className="p-3 rounded-xl border-2 bg-emerald-950/20 border-emerald-900 hover:bg-emerald-900/50 hover:border-emerald-500 text-emerald-500 flex flex-col items-center btn-med group transition-colors border-b-emerald-950">
                             <HeartHandshake size={18} className="mb-1 group-hover:scale-110 transition-transform" />
-                            <span className="text-[9px] font-black tracking-widest">EMPATI</span>
-                            <span className="text-[7px] mt-0.5 font-mono opacity-70">Tension -30%</span>
+                            <span className="text-[9px] font-black tracking-widest">{tx('tactics.empathy')}</span>
+                            <span className="text-[7px] mt-0.5 font-mono opacity-70">{tx('tactics.empathyHint')}</span>
                         </button>
                         <button onClick={() => handleTactic('PROBE')}
                             className="p-3 rounded-xl border-2 bg-cyan-950/20 border-cyan-900 hover:bg-cyan-900/50 hover:border-cyan-500 text-cyan-500 flex flex-col items-center btn-med group transition-colors border-b-cyan-950">
                             <Search size={18} className="mb-1 group-hover:scale-110 transition-transform" />
-                            <span className="text-[9px] font-black tracking-widest">KLARIFIKASI</span>
-                            <span className="text-[7px] mt-0.5 font-mono opacity-70">Syarat: &lt; {defenseThreshold}%</span>
+                            <span className="text-[9px] font-black tracking-widest">{tx('tactics.probe')}</span>
+                            <span className="text-[7px] mt-0.5 font-mono opacity-70">{tx('tactics.probeHint', { threshold: defenseThreshold })}</span>
                         </button>
                         <button onClick={() => handleTactic('KONFRONTASI')}
                             className="p-3 rounded-xl border-2 bg-rose-950/20 border-rose-900 hover:bg-rose-900/50 hover:border-rose-500 text-rose-500 flex flex-col items-center btn-med group transition-colors border-b-rose-950">
                             <Zap size={18} className="mb-1 group-hover:scale-110 transition-transform" />
-                            <span className="text-[9px] font-black tracking-widest">KONFRONTASI</span>
-                            <span className="text-[7px] mt-0.5 font-mono opacity-70">Tension +45% ⚠️</span>
+                            <span className="text-[9px] font-black tracking-widest">{tx('tactics.confrontation')}</span>
+                            <span className="text-[7px] mt-0.5 font-mono opacity-70">{tx('tactics.confrontationHint')}</span>
                         </button>
                     </div>
                 </div>
@@ -263,7 +264,7 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
                 <div className="shrink-0">
                     <button onClick={() => onAdvance(localCase)}
                         className="w-full py-4 rounded-2xl font-black text-sm uppercase tracking-[0.2em] btn-med bg-amber-500 border-amber-400 border-b-amber-700 text-slate-950 hover:bg-amber-400 shadow-[0_10px_30px_rgba(245,158,11,0.25)]">
-                        BUKTI CUKUP. LANJUT SINTESIS →
+                        {tx('advanceSynthesis')}
                     </button>
                 </div>
             )}
@@ -275,6 +276,10 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
 // 🧠 FASE 2: DIAGNOSIS (Red String Corkboard + Hover Education)
 // ═══════════════════════════════════════════════════════════════
 function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
+    const { t } = useTranslation();
+    const tx = (key, options = {}) => t(`wilayahContent.ui.behaviorCase.diagnosis.${key}`, options);
+    const getBarrierLabel = (id) => t(`wilayahContent.ui.behaviorCase.barriers.${id}.label`, { defaultValue: BARRIER_LABELS[id]?.label || id });
+    const getBarrierDescription = (id) => t(`wilayahContent.ui.behaviorCase.barriers.${id}.desc`, { defaultValue: BARRIER_LABELS[id]?.desc || '' });
     const [selectedBarriers, setSelectedBarriers] = useState({});
     const [hoveredBarrier, setHoveredBarrier] = useState(null);
     const [shake, setShake] = useState(false);
@@ -305,7 +310,7 @@ function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
 
                 <div className="relative z-10 flex justify-between items-center mb-3 border-b border-slate-600/50 pb-2">
                     <h4 className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest flex items-center gap-2 font-bold">
-                        <FileText size={14}/> PETA BUKTI EMPIRIS
+                        <FileText size={14}/> {tx('evidenceMap')}
                     </h4>
                 </div>
                 <div className="relative min-h-[100px] w-full flex flex-wrap gap-4 items-start z-10 justify-center">
@@ -325,7 +330,7 @@ function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
                     ))}
                     {foundClueData.length === 0 && (
                         <div className="w-full flex items-center justify-center py-6 bg-black/30 rounded-lg border border-dashed border-slate-700">
-                            <span className="text-slate-500 font-mono text-[10px] uppercase tracking-widest">[ NIHIL BUKTI — ANDA MENEBAK BUTA ]</span>
+                            <span className="text-slate-500 font-mono text-[10px] uppercase tracking-widest">{tx('noEvidence')}</span>
                         </div>
                     )}
                 </div>
@@ -335,8 +340,8 @@ function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
             <div className="flex-1 flex flex-col">
                 <div className="mb-3 flex justify-between items-end border-b border-white/10 pb-2">
                     <div>
-                        <h3 className="text-white font-black text-xl uppercase tracking-widest leading-none">ANALISIS DETERMINAN</h3>
-                        <p className="text-slate-400 font-mono text-[9px] tracking-widest uppercase mt-1.5">Pilih <span className="text-amber-400 font-bold px-1 bg-amber-500/10 rounded">Maks {maxSelect}</span> Akar Masalah (COM-B).</p>
+                        <h3 className="text-white font-black text-xl uppercase tracking-widest leading-none">{tx('title')}</h3>
+                        <p className="text-slate-400 font-mono text-[9px] tracking-widest uppercase mt-1.5">{tx('hintPrefix')} <span className="text-amber-400 font-bold px-1 bg-amber-500/10 rounded">{tx('maxSelect', { count: maxSelect })}</span> {tx('hintSuffix')}</p>
                     </div>
                     <span className="text-cyan-400 font-mono text-[11px] font-bold tracking-widest bg-cyan-950/50 px-2 py-1 rounded border border-cyan-800">[{activeCount}/{maxSelect}]</span>
                 </div>
@@ -347,13 +352,13 @@ function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
                         <div className="flex gap-3 items-center animate-in fade-in slide-in-from-left-2 duration-200">
                             <div className="text-cyan-400 bg-cyan-950/50 p-1.5 rounded-lg border border-cyan-900 shrink-0">{BARRIER_LABELS[hoveredBarrier].icon}</div>
                             <div>
-                                <span className="text-[10px] font-black text-white uppercase tracking-wider block mb-0.5">{BARRIER_LABELS[hoveredBarrier].label}</span>
-                                <span className="text-[10px] text-slate-400 leading-tight">{BARRIER_LABELS[hoveredBarrier].desc}</span>
+                                <span className="text-[10px] font-black text-white uppercase tracking-wider block mb-0.5">{getBarrierLabel(hoveredBarrier)}</span>
+                                <span className="text-[10px] text-slate-400 leading-tight">{getBarrierDescription(hoveredBarrier)}</span>
                             </div>
                         </div>
                     ) : (
                         <span className="text-[10px] text-slate-500 font-mono uppercase tracking-widest mx-auto animate-pulse flex items-center gap-2">
-                            <Info size={14}/> Sorot klasifikasi untuk panduan teori COM-B...
+                            <Info size={14}/> {tx('hoverGuide')}
                         </span>
                     )}
                 </div>
@@ -382,7 +387,7 @@ function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
                                         {info.icon}
                                     </div>
                                     <span className={`text-[10px] font-black uppercase tracking-wider leading-tight ${active ? 'text-white' : 'text-slate-400 group-hover:text-white'}`}>
-                                        {info.label}
+                                        {getBarrierLabel(id)}
                                     </span>
                                 </div>
                             </button>
@@ -398,7 +403,7 @@ function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
                         : 'bg-slate-900 border-slate-800 border-b-black text-slate-600 cursor-not-allowed'
                     }`}
                 >
-                    {activeCount > 0 ? <><FileSignature size={18} className="animate-pulse"/> SAHKAN DIAGNOSIS IKM</> : 'TENTUKAN PRIORITAS INTERVENSI...'}
+                    {activeCount > 0 ? <><FileSignature size={18} className="animate-pulse"/> {tx('confirmDiagnosis')}</> : tx('choosePriority')}
                 </button>
             </div>
         </div>
@@ -413,11 +418,15 @@ const BCT_ARSENAL = [
     { id: 'env', label: 'Bantuan Fisik/Subsidi', type: 'Env. Restructuring', cost: 6, trust: +20, impact: ['opp_phy', 'cap_phy'], icon: '🏗️' },
     { id: 'coe', label: 'Perdes/Hukuman', type: 'Coercion', cost: 1, trust: -30, impact: ['mot_aut', 'opp_soc'], icon: '⚖️' },
     { id: 'mod', label: 'Pendekatan Tokoh', type: 'Modeling', cost: 3, trust: +15, impact: ['opp_soc', 'mot_ref'], icon: '🤝' },
-    { id: 'inc', label: 'Insentif Warga', type: 'Incentivisation', cost: 4, trust: +10, impact: ['mot_aut', 'mot_ref'], icon: '🎁' },
-    { id: 'trn', label: 'Pelatihan Kader', type: 'Training', cost: 3, trust: +5, impact: ['cap_phy', 'cap_psy'], icon: '🎓' },
+    { id: 'inc', label: 'Insentif Warga', type: 'Incentivisation', cost: 4, trust: +10, impact: ['mot_aut', 'mot_ref'], icon: 'INC' },
+    { id: 'trn', label: 'Pelatihan Kader', type: 'Training', cost: 3, trust: +5, impact: ['cap_phy', 'cap_psy'], icon: 'TRN' },
 ];
 
 function InterventionPhase({ caseInstance, scenario, onAdvance }) {
+    const { t } = useTranslation();
+    const tx = (key, options = {}) => t(`wilayahContent.ui.behaviorCase.intervention.${key}`, options);
+    const getBarrierLabel = (id) => t(`wilayahContent.ui.behaviorCase.barriers.${id}.label`, { defaultValue: BARRIER_LABELS[id]?.label || id });
+    const getPolicyLabel = (id, fallback) => tx(`policies.${id}`, { defaultValue: fallback });
     const targetBarriers = Object.keys(caseInstance.comBDiagnosis?.actual || {}).filter(k => (caseInstance.comBDiagnosis?.actual || {})[k] > 0);
 
     const MAX_BUDGET = 10;
@@ -467,8 +476,14 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
             scored = {
                 ...scored,
                 interventionScore: finalScore,
-                interventionDraft: draft.map(p => ({ id: p.id, label: p.label, type: p.type })),
-                miniGameResult: { score: finalScore, normalized: finalScore, feedback: isBackfire ? 'BACKFIRE — Warga menolak!' : `Efikasi BCW: ${finalScore}%` }
+                interventionDraft: draft.map(p => ({ id: p.id, label: getPolicyLabel(p.id, p.label), type: p.type })),
+                miniGameResult: {
+                    score: finalScore,
+                    normalized: finalScore,
+                    correct,
+                    incorrect,
+                    feedback: isBackfire ? tx('feedback.backfire') : tx('feedback.efficacy', { score: finalScore })
+                }
             };
             onAdvance(scored);
         }, 2500);
@@ -480,17 +495,17 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
             <div className="flex justify-between items-end mb-4 border-b border-white/10 pb-3 shrink-0">
                 <div className="border-l-4 border-purple-500 pl-3">
                     <h3 className="text-white font-black text-xl uppercase tracking-widest flex items-center gap-2">
-                        <HeartHandshake className="text-purple-400" size={20} /> MEJA STRATEGI B.C.W
+                        <HeartHandshake className="text-purple-400" size={20} /> {tx('title')}
                     </h3>
-                    <p className="text-slate-400 font-mono text-[9px] tracking-widest uppercase mt-1">Alokasi Anggaran & Kebijakan Promkes</p>
+                    <p className="text-slate-400 font-mono text-[9px] tracking-widest uppercase mt-1">{tx('subtitle')}</p>
                 </div>
                 <div className="flex gap-3 items-center">
                     <div className={`bg-black/40 px-3 py-2 rounded-lg border border-slate-800 text-center ${budget <= 2 ? 'animate-pulse' : ''}`}>
-                        <div className="text-[8px] font-mono text-slate-500 uppercase tracking-widest font-bold">DANA (AP)</div>
+                        <div className="text-[8px] font-mono text-slate-500 uppercase tracking-widest font-bold">{tx('budget')}</div>
                         <div className={`text-xl font-black font-mono ${budget <= 2 ? 'text-red-400' : 'text-emerald-400'}`}>{budget}<span className="text-sm opacity-50">/{MAX_BUDGET}</span></div>
                     </div>
                     <div className={`bg-black/40 px-3 py-2 rounded-lg border border-slate-800 text-center ${socialTrust <= 20 ? 'animate-pulse' : ''}`}>
-                        <div className="text-[8px] font-mono text-slate-500 uppercase tracking-widest font-bold">TRUST</div>
+                        <div className="text-[8px] font-mono text-slate-500 uppercase tracking-widest font-bold">{tx('trust')}</div>
                         <div className={`text-xl font-black font-mono ${socialTrust <= 20 ? 'text-red-400' : 'text-sky-400'}`}>{socialTrust}%</div>
                     </div>
                 </div>
@@ -499,7 +514,7 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
             <div className="flex-1 flex flex-col gap-4 overflow-hidden">
                 {/* Target Barriers */}
                 <div>
-                    <div className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest mb-2">DIAGNOSIS COM-B:</div>
+                    <div className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest mb-2">{tx('combDiagnosis')}</div>
                     <div className="flex flex-wrap gap-1.5">
                         {targetBarriers.map(b => {
                             const isHit = draft.some(p => p.impact.includes(b));
@@ -507,7 +522,7 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
                             return (
                                 <span key={b} className={`px-2 py-1 text-[8px] font-black uppercase tracking-widest border-2 rounded flex items-center gap-1 transition-colors
                                     ${isHit ? `${info?.activeBtn || 'bg-emerald-950 border-emerald-500'}` : 'bg-slate-900 border-slate-700 text-slate-500'}`}>
-                                    {info?.label || b} {isHit && <CheckCircle2 size={10}/>}
+                                    {getBarrierLabel(b)} {isHit && <CheckCircle2 size={10}/>}
                                 </span>
                             );
                         })}
@@ -527,17 +542,17 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
                                 ${isSelected ? 'bg-purple-950/60 border-purple-500 border-b-purple-800 text-white shadow-lg' :
                                   isBroke ? 'bg-slate-950 border-slate-800 border-b-slate-950 text-slate-600 opacity-40 cursor-not-allowed' :
                                   'bg-slate-800/60 border-slate-600 border-b-slate-800 hover:bg-slate-700 hover:border-purple-400/50 text-slate-300'}`}>
-                                <span className="text-xl">{pol.icon}</span>
+                                <span className="text-[10px] font-black tracking-widest text-purple-200 bg-slate-950/70 px-2 py-1 rounded">{tx(`policyCodes.${pol.id}`)}</span>
                                 <div className="flex-1 pr-16">
-                                    <div className="font-black text-[10px] uppercase tracking-widest leading-snug">{pol.label}</div>
-                                    <div className={`text-[8px] font-mono mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>Target: {pol.impact.map(i => BARRIER_LABELS[i]?.label?.split(' ')[1] || i).join(', ')}</div>
+                                    <div className="font-black text-[10px] uppercase tracking-widest leading-snug">{getPolicyLabel(pol.id, pol.label)}</div>
+                                    <div className={`text-[8px] font-mono mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>{tx('target')}: {pol.impact.map(getBarrierLabel).join(', ')}</div>
                                 </div>
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-end gap-0.5">
                                     <div className={`text-[9px] font-black font-mono px-1.5 py-0.5 rounded ${isSelected ? 'bg-purple-800 text-white' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}`}>
                                         -{pol.cost} AP
                                     </div>
                                     <div className={`text-[7px] font-bold font-mono ${pol.trust < 0 ? 'text-rose-400' : 'text-sky-400'}`}>
-                                        {pol.trust > 0 ? '+' + pol.trust : pol.trust} TRST
+                                        {pol.trust > 0 ? '+' + pol.trust : pol.trust} {tx('trustShort')}
                                     </div>
                                 </div>
                             </button>
@@ -550,14 +565,14 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
                     {isBackfire ? (
                         <div className="text-center mb-3 text-rose-400 animate-in zoom-in-95">
                             <AlertTriangle size={32} className="mx-auto mb-1 animate-pulse" />
-                            <div className="font-black text-lg tracking-widest uppercase">BACKFIRE!</div>
+                            <div className="font-black text-lg tracking-widest uppercase">{tx('backfireTitle')}</div>
                             <p className="font-mono text-[9px] text-rose-300 max-w-[250px] mx-auto leading-relaxed">
-                                Social Trust terlalu rendah untuk Peraturan/Sanksi. Warga menolak masif!
+                                {tx('backfireBody')}
                             </p>
                         </div>
                     ) : draft.length > 0 && (
                         <div className="text-center mb-3">
-                            <div className="text-[9px] font-mono text-slate-500 uppercase tracking-[0.3em] mb-1 font-bold">PROYEKSI EFIKASI</div>
+                            <div className="text-[9px] font-mono text-slate-500 uppercase tracking-[0.3em] mb-1 font-bold">{tx('efficacyProjection')}</div>
                             <div className={`text-3xl font-black tracking-tighter ${coverage >= 100 ? 'text-emerald-400' : coverage > 0 ? 'text-amber-400' : 'text-slate-500'}`}>
                                 {Math.round(coverage)}%
                             </div>
@@ -568,7 +583,7 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
                         ${submitted ? 'bg-slate-800 border-slate-700 border-b-slate-900 text-slate-500' :
                           draft.length > 0 ? 'bg-purple-600 border-purple-400 border-b-purple-800 text-white hover:bg-purple-500 shadow-[0_10px_30px_rgba(147,51,234,0.3)]' :
                           'bg-slate-900 border-slate-800 border-b-black text-slate-600 cursor-not-allowed'}`}>
-                        <FileSignature size={16}/> {submitted ? 'MENGEKSEKUSI...' : 'SAHKAN KEBIJAKAN'}
+                        <FileSignature size={16}/> {submitted ? tx('executing') : tx('confirmPolicy')}
                     </button>
                 </div>
             </div>
@@ -577,7 +592,7 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
             {submitted && !isBackfire && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
                     <div className="border-[5px] border-emerald-600 text-emerald-600 px-6 py-2 rounded-xl font-black text-3xl uppercase tracking-widest bc-stamp bg-white/80 backdrop-blur-[2px] mix-blend-multiply">
-                        DISETUJUI
+                        {tx('approvedStamp')}
                     </div>
                 </div>
             )}
@@ -589,7 +604,9 @@ function InterventionPhase({ caseInstance, scenario, onAdvance }) {
 // 🩸 FASE 4: EVALUASI (Paper Theme + Typewriter + Macro Handoff)
 // ═══════════════════════════════════════════════════════════════
 function EvaluationPhase({ caseInstance, onClose }) {
-    const narrativeText = getOutcomeNarrative(caseInstance);
+    const { t } = useTranslation();
+    const tx = (key, options = {}) => t(`wilayahContent.ui.behaviorCase.evaluation.${key}`, options);
+    const narrativeText = tx(`narrative.${caseInstance.outcomeTier}`, { defaultValue: getOutcomeNarrative(caseInstance) });
     const [step, setStep] = useState(0);
     const [displayScore, setDisplayScore] = useState(0);
     const [displayedNarrative, setDisplayedNarrative] = useState('');
@@ -628,10 +645,10 @@ function EvaluationPhase({ caseInstance, onClose }) {
     }, [step, narrativeText]);
 
     const TIERS = {
-        excellent: { color: 'text-emerald-700', border: 'border-emerald-700', stamp: 'EFEKTIF', bg: 'bg-emerald-50' },
-        good: { color: 'text-blue-700', border: 'border-blue-700', stamp: 'DITERIMA', bg: 'bg-blue-50' },
-        partial: { color: 'text-amber-700', border: 'border-amber-700', stamp: 'PERLU REVISI', bg: 'bg-amber-50' },
-        fail: { color: 'text-red-700', border: 'border-red-700', stamp: 'DITOLAK', bg: 'bg-red-50' }
+        excellent: { color: 'text-emerald-700', border: 'border-emerald-700', stamp: tx('stamps.excellent'), bg: 'bg-emerald-50' },
+        good: { color: 'text-blue-700', border: 'border-blue-700', stamp: tx('stamps.good'), bg: 'bg-blue-50' },
+        partial: { color: 'text-amber-700', border: 'border-amber-700', stamp: tx('stamps.partial'), bg: 'bg-amber-50' },
+        fail: { color: 'text-red-700', border: 'border-red-700', stamp: tx('stamps.fail'), bg: 'bg-red-50' }
     };
     const tier = TIERS[caseInstance.outcomeTier] || TIERS.partial;
     const invScore = Math.round((caseInstance.cluesFound?.length || 0) / Math.max(1, caseInstance.totalClues) * 100);
@@ -645,8 +662,8 @@ function EvaluationPhase({ caseInstance, onClose }) {
 
             {/* Header Laporan Resmi */}
             <div className="text-center mb-5 shrink-0 border-b-2 border-slate-800/30 pb-4">
-                <h3 className="text-slate-600 font-serif text-[10px] uppercase tracking-[0.4em] mb-1 font-bold">Kementerian Kesehatan RI</h3>
-                <h2 className="text-slate-900 font-black text-2xl uppercase tracking-widest font-serif">LAPORAN EVALUASI UKM</h2>
+                <h3 className="text-slate-600 font-serif text-[10px] uppercase tracking-[0.4em] mb-1 font-bold">{tx('ministry')}</h3>
+                <h2 className="text-slate-900 font-black text-2xl uppercase tracking-widest font-serif">{tx('title')}</h2>
             </div>
 
             <div className="flex-1 overflow-y-auto scrollbar-hide space-y-5 relative z-10 pb-20">
@@ -654,17 +671,17 @@ function EvaluationPhase({ caseInstance, onClose }) {
                 <div className="space-y-4 font-mono text-xs tracking-widest bg-white/60 p-5 border border-slate-400 border-dashed rounded-sm">
                     {step >= 1 && (
                         <div className="flex justify-between items-end border-b border-slate-300 pb-1 animate-in slide-in-from-left-4 fade-in">
-                            <span className="text-slate-600">I. Cakupan Surveilans</span><span className="text-slate-900 font-black">{invScore}%</span>
+                            <span className="text-slate-600">{tx('surveillanceCoverage')}</span><span className="text-slate-900 font-black">{invScore}%</span>
                         </div>
                     )}
                     {step >= 2 && (
                         <div className="flex justify-between items-end border-b border-slate-300 pb-1 animate-in slide-in-from-left-4 fade-in">
-                            <span className="text-slate-600">II. Akurasi Akar Masalah</span><span className="text-slate-900 font-black">{caseInstance.comBDiagnosis?.score || 0}%</span>
+                            <span className="text-slate-600">{tx('rootCauseAccuracy')}</span><span className="text-slate-900 font-black">{caseInstance.comBDiagnosis?.score || 0}%</span>
                         </div>
                     )}
                     {step >= 3 && (
                         <div className="flex justify-between items-end animate-in slide-in-from-left-4 fade-in">
-                            <span className="text-slate-600">III. Efikasi Promkes</span><span className="text-slate-900 font-black">{caseInstance.interventionScore || 0}%</span>
+                            <span className="text-slate-600">{tx('healthPromotionEfficacy')}</span><span className="text-slate-900 font-black">{caseInstance.interventionScore || 0}%</span>
                         </div>
                     )}
                 </div>
@@ -674,7 +691,7 @@ function EvaluationPhase({ caseInstance, onClose }) {
                     {step >= 4 && (
                         <div className="relative w-32 h-32 mx-auto rounded-full bg-white border-4 border-slate-400 flex flex-col items-center justify-center z-10 shadow-sm">
                             <span className="text-6xl font-black tabular-nums tracking-tighter text-slate-800">{displayScore}</span>
-                            <span className="text-[9px] font-mono text-slate-500 tracking-[0.3em] uppercase mt-1 font-bold">INDEKS TOTAL</span>
+                            <span className="text-[9px] font-mono text-slate-500 tracking-[0.3em] uppercase mt-1 font-bold">{tx('totalIndex')}</span>
                         </div>
                     )}
                     {step >= 5 && (
@@ -691,7 +708,7 @@ function EvaluationPhase({ caseInstance, onClose }) {
                     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
                         {/* Typewriter Narrative */}
                         <div className="bg-white/50 p-4 text-[13px] text-slate-800 font-serif leading-relaxed border-l-4 border-slate-500 shadow-sm relative">
-                            <span className="font-mono font-bold block mb-1 text-[9px] tracking-widest uppercase text-slate-500 border-b border-slate-300/50 pb-1">Evaluasi Pimpinan:</span>
+                            <span className="font-mono font-bold block mb-1 text-[9px] tracking-widest uppercase text-slate-500 border-b border-slate-300/50 pb-1">{tx('leaderEvaluation')}</span>
                             <span className="italic">&quot;{displayedNarrative}&quot;</span>
                             <span className="animate-pulse bg-slate-800 w-1.5 h-3.5 inline-block ml-1 align-middle" />
                         </div>
@@ -702,10 +719,10 @@ function EvaluationPhase({ caseInstance, onClose }) {
                                 <div className="flex items-start gap-3">
                                     <Briefcase className="text-amber-700 shrink-0" size={22} />
                                     <div>
-                                        <h4 className="text-amber-800 font-black text-[10px] uppercase tracking-widest mb-1">LIMITASI K.I.E MIKRO TERDETEKSI</h4>
+                                        <h4 className="text-amber-800 font-black text-[10px] uppercase tracking-widest mb-1">{tx('macro.title')}</h4>
                                         <p className="text-amber-900 text-xs font-medium leading-relaxed">
-                                            Akar masalah struktural (Peluang Lingkungan/Sosial) tidak bisa diselesaikan hanya dengan edukasi keluarga!
-                                            <br/><span className="text-amber-800 font-bold mt-1 block">→ TINDAK LANJUT: Bawa temuan ini ke Musyawarah Balai Desa untuk intervensi Makro!</span>
+                                            {tx('macro.body')}
+                                            <br/><span className="text-amber-800 font-bold mt-1 block">{tx('macro.followup')}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -719,9 +736,9 @@ function EvaluationPhase({ caseInstance, onClose }) {
                                 <div className="relative z-10 flex items-start gap-3">
                                     <ShieldAlert className="text-rose-600 shrink-0 mt-0.5" size={24} />
                                     <div>
-                                        <h4 className="text-rose-800 font-black text-[11px] uppercase tracking-widest mb-1">UKM GAGAL — BEBAN UKP MENINGKAT!</h4>
+                                        <h4 className="text-rose-800 font-black text-[11px] uppercase tracking-widest mb-1">{tx('ukp.title')}</h4>
                                         <p className="text-rose-900 text-[11px] font-medium leading-relaxed font-mono">
-                                            Upaya preventif komunitas gagal. Warga jatuh sakit dan menjadi beban IGD. Siapkan ranjang dalam <b className="bg-rose-200 px-1 rounded">{caseInstance.ukpDelayDays} Hari</b>.
+                                            {tx('ukp.body')} <b className="bg-rose-200 px-1 rounded">{tx('ukp.days', { count: caseInstance.ukpDelayDays })}</b>.
                                         </p>
                                     </div>
                                 </div>
@@ -732,13 +749,13 @@ function EvaluationPhase({ caseInstance, onClose }) {
                         <div className="flex justify-center gap-3 pt-2">
                             <div className="flex-1 bg-amber-50 border border-amber-300 rounded-lg px-3 py-2 flex flex-col items-center shadow-sm">
                                 <span className="text-amber-700 font-black text-xl">+{caseInstance.xpEarned}</span>
-                                <span className="text-amber-800 text-[8px] uppercase font-bold tracking-widest">XP Petugas</span>
+                                <span className="text-amber-800 text-[8px] uppercase font-bold tracking-widest">{tx('staffXp')}</span>
                             </div>
                             <div className={`flex-1 border rounded-lg px-3 py-2 flex flex-col items-center shadow-sm ${caseInstance.reputationDelta >= 0 ? 'bg-emerald-50 border-emerald-300' : 'bg-red-50 border-red-300'}`}>
                                 <span className={`font-black text-xl ${caseInstance.reputationDelta >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
                                     {caseInstance.reputationDelta > 0 ? '+' : ''}{caseInstance.reputationDelta}
                                 </span>
-                                <span className={`text-[8px] uppercase font-bold tracking-widest ${caseInstance.reputationDelta >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>Kepercayaan Warga</span>
+                                <span className={`text-[8px] uppercase font-bold tracking-widest ${caseInstance.reputationDelta >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>{tx('communityTrust')}</span>
                             </div>
                         </div>
                     </div>
@@ -749,7 +766,7 @@ function EvaluationPhase({ caseInstance, onClose }) {
             {step >= 5 && (
                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#EAE6DF] via-[#EAE6DF] to-transparent pt-12 z-20 animate-in slide-in-from-bottom-4 delay-500">
                     <button onClick={onClose} className="w-full py-4 rounded-xl font-black text-sm uppercase tracking-[0.3em] bg-slate-900 text-white btn-med border-b-slate-950 hover:bg-slate-800 shadow-xl">
-                        ARSIPKAN BERKAS ✖
+                        {tx('archiveFile')}
                     </button>
                 </div>
             )}
@@ -761,6 +778,8 @@ function EvaluationPhase({ caseInstance, onClose }) {
 // 🏛️ MAIN ORCHESTRATOR (Bento Box + SDOH Bar + Evidence Handoff)
 // ═══════════════════════════════════════════════════════════════
 export default function BehaviorCasePanel({ building, familyData, day, onClose, onComplete }) {
+    const { t } = useTranslation();
+    const tx = useCallback((key, options = {}) => t(`wilayahContent.ui.behaviorCase.shell.${key}`, options), [t]);
 
     const scenarioId = useMemo(() => {
         return resolveBehaviorCaseScenarioId({
@@ -789,7 +808,7 @@ export default function BehaviorCasePanel({ building, familyData, day, onClose, 
     const handleClose = useCallback(async () => {
         // Guard: confirm before discarding in-progress case
         if (caseInstance && !caseInstance.completed && caseInstance.phasesCompleted?.length > 0) {
-            const shouldClose = await confirmToast('Investigasi sedang berjalan. Keluar sekarang akan menghapus progres kasus ini. Lanjutkan?', 'warning');
+            const shouldClose = await confirmToast(tx('confirmExit'), 'warning');
             if (!shouldClose) {
                 return;
             }
@@ -807,10 +826,11 @@ export default function BehaviorCasePanel({ building, familyData, day, onClose, 
             });
         }
         onClose();
-    }, [caseInstance, building, onClose, onComplete, scenario]);
+    }, [caseInstance, building, onClose, onComplete, scenario, tx]);
 
     if (!caseInstance || !scenario) return null;
     const phaseInfo = getCurrentPhaseInfo(caseInstance);
+    const phaseLabel = tx(`phaseLabels.${caseInstance.currentPhase}`, { defaultValue: phaseInfo.label });
     const progress = caseInstance.phasesCompleted.length / caseInstance.availablePhases.length;
 
     // SDOH bar data (V1)
@@ -840,12 +860,12 @@ export default function BehaviorCasePanel({ building, familyData, day, onClose, 
                             <div className="flex items-center gap-4">
                                 <div className="w-14 h-14 bg-slate-950 border border-slate-700 rounded-2xl shadow-inner flex items-center justify-center text-cyan-400 text-3xl shrink-0 relative overflow-hidden">
                                     <div className="absolute inset-0 blueprint-grid opacity-30" />
-                                    <span className="relative z-10">{scenario.icon || '⚕️'}</span>
+                                    <span className="relative z-10">{scenario.icon || 'MED'}</span>
                                 </div>
                                 <div>
                                     <div className="font-mono text-[9px] text-cyan-400 tracking-[0.3em] uppercase mb-1 flex items-center gap-2 font-bold">
                                         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                                        PIS-PK: {scenario.category}
+                                        {tx('category', { category: scenario.category })}
                                     </div>
                                     <h2 className="text-white font-black text-xl uppercase tracking-widest leading-none mb-2">{scenario.title}</h2>
                                     <div className="flex gap-2 font-mono text-[9px] tracking-widest uppercase font-bold">
@@ -861,14 +881,14 @@ export default function BehaviorCasePanel({ building, familyData, day, onClose, 
 
                         {/* SDOH Profile Bar (V1) */}
                         <div className={`mt-4 px-3 py-2 rounded-lg border flex justify-between items-center font-mono text-[10px] uppercase tracking-widest ${isVulnerable ? 'bg-rose-950/40 border-rose-900/60 text-rose-400' : 'bg-slate-900 border-slate-700 text-slate-400'}`}>
-                            <span className="flex items-center gap-2"><Database size={12}/> PROFIL SDOH</span>
-                            <span className="font-bold">EKO: {sdohEco} | DIDIK: {sdohEdu}</span>
+                            <span className="flex items-center gap-2"><Database size={12}/> {tx('sdohProfile')}</span>
+                            <span className="font-bold">{tx('sdohMeta', { economy: sdohEco, education: sdohEdu })}</span>
                         </div>
 
                         {/* Progress Bar */}
                         <div className="mt-4 bg-black/40 p-3 rounded-xl border border-slate-800/50">
                             <div className="flex justify-between font-mono text-[9px] uppercase tracking-[0.2em] text-slate-400 mb-2 font-bold">
-                                <span>PROSEDUR: <span className="text-white">{phaseInfo.label}</span></span>
+                                <span>{tx('procedure')}: <span className="text-white">{phaseLabel}</span></span>
                                 <span className="text-cyan-400">[{Math.round(progress * 100)}%]</span>
                             </div>
                             <div className="flex gap-1.5">

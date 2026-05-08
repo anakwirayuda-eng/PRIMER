@@ -6,6 +6,7 @@
  * [STATE]: Active
  * [LAST_UPDATE]: 2026-03-27
  */
+/* eslint-disable react-refresh/only-export-components */
 import React, { useMemo } from 'react';
 import { createAvatar } from '@dicebear/core';
 import * as lorelei from '@dicebear/lorelei';
@@ -47,7 +48,7 @@ function buildSeed(norm) {
 }
 
 // ─── Main Component ───
-export default function AvatarRenderer({ avatar, size = 80, className = '', mood = 'neutral' }) {
+export default function AvatarRenderer({ avatar, size = 80, className = '', mood: _mood = 'neutral' }) {
     const norm = useMemo(() => normalizeAvatar(avatar), [avatar]);
 
     const svgDataUri = useMemo(() => {

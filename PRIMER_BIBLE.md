@@ -1,6 +1,6 @@
-# PRIMER: Primary Care Manager Simulator — Complete Technical Bible
+﻿﻿# PRIMER: Primary Care Manager Simulator — Complete Technical Bible
 
-> **Version:** 0.9.x (Clinical Hardening Phase)  
+> **Version:** 0.8.5 (Release-Gate Hardening)  
 > **Creator:** Anak Agung Bagus Wirayuda, MD, PhD  
 > **Organization:** ITS MEDICS, Institut Teknologi Sepuluh Nopember, Surabaya, Indonesia  
 > **Stack:** React 19 + Vite 7 (Vanilla JS/JSX)  
@@ -9,7 +9,7 @@
 > **HAKI:** Surat Pencatatan Ciptaan No. EC002026019623 (31 Januari 2026) — Kemenkumham RI  
 > **Protection:** UU No. 28/2014, 50 tahun, Nomor Pencatatan 001104039  
 > **Monitoring:** PRIMERA v5.1 (Proactive Brain) — Unified Health & Clinical Watchdog  
-> **Last Updated:** March 2026 (Phase 0.9.x "Clinical Hardening")
+> **Last Updated:** May 2026 (v0.8.5 release-gate hardening)
 
 
 ---
@@ -44,7 +44,7 @@ PRIMER is designed for long-term sustainability. It uses the **PRIMERA System** 
 src/
 ├── App.jsx                    # Router: OpeningScreen → PlayerSetup → MainLayout
 ├── main.jsx                   # React entry point
-├── index.css                  # Global styles (14KB, vanilla CSS)
+├── index.css                  # Global Tailwind/CSS-variable layer
 ├── i18n.js                    # Internationalization config
 │
 ├── store/
@@ -857,7 +857,7 @@ Integrates with `HospitalDB.js` (hospital specialties, distances) and `FKTP144Di
 ## 13. KEY DESIGN DECISIONS
 
 1. **Offline-first** — Entire game runs client-side in the browser. Supabase is optional cloud mirror. Save/load via localStorage + Zustand persist.
-2. **Vanilla CSS** — No Tailwind, no CSS-in-JS. All styles in `index.css` (~24KB).
+2. **Tailwind CSS v3 + CSS variables** — Utility classes, design tokens, and custom component rules live in `tailwind.config.js` and `index.css`.
 3. **Zustand is truth** — All state in `useGameStore.js` (Zustand monolith). `GameContext.jsx` is a thin domain facade that selects and re-exports store slices.
 4. **Procedural generation** — Map terrain, textures, audio, and avatars are all generated at runtime. Zero sprite sheets, zero audio files.
 5. **Modular engines** — Each game system (28 engines in `src/game/`) is a standalone JS module with pure functions. Easy to reuse.

@@ -1,20 +1,17 @@
 /**
  * @reflection
  * [IDENTITY]: PosyanduModal
- * [PURPOSE]: React UI component: PosyanduModal.
+ * [PURPOSE]: Posyandu session setup, activity, and summary flow.
  * [STATE]: Experimental
- * [ANCHOR]: PosyanduModal
- * [DEPENDS_ON]: GameContext, PosyanduEngine
- * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useModalA11y from '../hooks/useModalA11y.js';
 import { useGame } from '../context/GameContext.jsx';
 import {
     X, Scale, ClipboardList, Syringe, Apple, Baby, Award,
-    Users, CheckCircle, AlertTriangle, ChevronRight, Heart
+    Users, CheckCircle, AlertTriangle, ChevronRight, Heart, Clock, Megaphone
 } from 'lucide-react';
 import {
     POSYANDU_ACTIVITIES,
@@ -26,6 +23,7 @@ import {
 import { calculateIKS } from '../game/GameCore.js';
 import { chanceFromSeed } from '../utils/deterministicRandom.js';
 import { calculateAverageIksFromFamilies } from '../utils/villageMetrics.js';
+import { showToast } from '../utils/ToastManager.js';
 
 const ACTIVITY_ICONS = {
     penimbangan: Scale,
@@ -36,42 +34,43 @@ const ACTIVITY_ICONS = {
     pmba: Baby
 };
 
+const REMINDER_ENERGY_COST = 5;
+
 export default function PosyanduModal({ isOpen, onClose }) {
+    if (!isOpen) return null;
+
+    return <PosyanduModalContent onClose={onClose} />;
+}
+
+function PosyanduModalContent({ onClose }) {
+    const { t } = useTranslation();
     const modalRef = useModalA11y(onClose);
     const {
         villageData, reputation, day, playerStats, setPlayerStats,
         setTime, setReputation, setVillageData, soundManager, setHistory, getStaffBuffs,
-        gainXp // Added for unified XP handling
+        gainXp
     } = useGame();
 
-    const [phase, setPhase] = useState('setup'); // setup, activity, summary
+    const [phase, setPhase] = useState('setup');
     const [selectedActivities, setSelectedActivities] = useState(['penimbangan', 'kms']);
     const [attendees, setAttendees] = useState([]);
     const [currentAttendeeIndex, setCurrentAttendeeIndex] = useState(0);
     const [results, setResults] = useState([]);
     const [reminderSent, setReminderSent] = useState(false);
 
-    // Get eligible participants
-    const eligibleChildren = useMemo(() => {
-        return getEligibleParticipants(villageData, 'penimbangan');
-    }, [villageData]);
+    const eligibleChildren = useMemo(() => getEligibleParticipants(villageData, 'penimbangan'), [villageData]);
+    const eligibleMothers = useMemo(() => getEligibleParticipants(villageData, 'penyuluhan_gizi'), [villageData]);
 
-    const eligibleMothers = useMemo(() => {
-        return getEligibleParticipants(villageData, 'penyuluhan_gizi');
-    }, [villageData]);
+    const localizeActivity = useCallback((activity) => ({
+        ...activity,
+        name: t(`posyanduModal.activities.${activity.id}.name`, { defaultValue: activity.name }),
+        description: t(`posyanduModal.activities.${activity.id}.description`, { defaultValue: activity.description })
+    }), [t]);
 
-    // Reset state when modal opens
-    useEffect(() => {
-        if (isOpen) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: reset form state when modal opens
-            setPhase('setup');
-            setSelectedActivities(['penimbangan', 'kms']);
-            setAttendees([]);
-            setCurrentAttendeeIndex(0);
-            setResults([]);
-            setReminderSent(false);
-        }
-    }, [isOpen]);
+    const localizedActivities = useMemo(
+        () => Object.values(POSYANDU_ACTIVITIES).map(localizeActivity),
+        [localizeActivity]
+    );
 
     const toggleActivity = (activityId) => {
         setSelectedActivities(prev =>
@@ -81,31 +80,27 @@ export default function PosyanduModal({ isOpen, onClose }) {
         );
     };
 
+    const getReminderEnergyCost = () => (reminderSent ? REMINDER_ENERGY_COST : 0);
+    const getSessionEnergyCost = () => (
+        selectedActivities.reduce((sum, actId) => sum + POSYANDU_ACTIVITIES[actId].energyCost, 0) +
+        getReminderEnergyCost()
+    );
+
     const startPosyandu = () => {
-        // Calculate total energy needed
-        const totalEnergy = selectedActivities.reduce((sum, actId) =>
-            sum + POSYANDU_ACTIVITIES[actId].energyCost, 0);
+        const totalEnergy = getSessionEnergyCost();
 
         if (playerStats.energy < totalEnergy) {
-            alert('Energi tidak cukup untuk menyelenggarakan Posyandu!');
+            showToast(t('posyanduModal.toast.notEnoughEnergy'), 'warning');
             return;
         }
 
-        // Determine participants based on activities
-        const hasChildActivity = selectedActivities.some(a =>
-            POSYANDU_ACTIVITIES[a].targetAge !== null);
-        const hasMotherActivity = selectedActivities.some(a =>
-            POSYANDU_ACTIVITIES[a].targetAge === null);
+        const hasChildActivity = selectedActivities.some(a => POSYANDU_ACTIVITIES[a].targetAge !== null);
+        const hasMotherActivity = selectedActivities.some(a => POSYANDU_ACTIVITIES[a].targetAge === null);
 
         let participants = [];
-        if (hasChildActivity) {
-            participants = [...participants, ...eligibleChildren];
-        }
-        if (hasMotherActivity) {
-            participants = [...participants, ...eligibleMothers];
-        }
+        if (hasChildActivity) participants = [...participants, ...eligibleChildren];
+        if (hasMotherActivity) participants = [...participants, ...eligibleMothers];
 
-        // Calculate attendance
         const attending = calculateAttendance(participants, {
             reminderSent,
             reputation,
@@ -113,7 +108,7 @@ export default function PosyanduModal({ isOpen, onClose }) {
         });
 
         if (attending.length === 0) {
-            alert('Tidak ada warga yang hadir hari ini. Coba lagi di hari kegiatan berikutnya atau tingkatkan Reputasi desa.');
+            showToast(t('posyanduModal.toast.noAttendance'), 'info', 4200);
             return;
         }
 
@@ -126,72 +121,54 @@ export default function PosyanduModal({ isOpen, onClose }) {
         const attendee = attendees[currentAttendeeIndex];
         if (!attendee) return;
 
-        // Process each selected activity for this attendee
         const attendeeResults = selectedActivities.map(actId => {
             const activity = POSYANDU_ACTIVITIES[actId];
             return processActivityResult(activity, attendee, {});
         });
 
-        setResults(prev => [...prev, ...attendeeResults]);
+        const nextResults = [...results, ...attendeeResults];
+        setResults(nextResults);
 
         if (currentAttendeeIndex < attendees.length - 1) {
             setCurrentAttendeeIndex(prev => prev + 1);
         } else {
-            // All done, move to summary
-            finishPosyandu();
+            finishPosyandu(nextResults);
         }
     };
 
-    const finishPosyandu = () => {
-        const summary = generatePosyanduSummary(results);
-
-        // --- STAFF BUFF INTEGRATION ---
+    const finishPosyandu = (sessionResults = results) => {
+        const summary = generatePosyanduSummary(sessionResults);
         const buffs = getStaffBuffs();
         const nutritionBonus = buffs.childNutrition || 0;
-        const improvementChance = 0.3 + (nutritionBonus / 100); // Base 30% + staff bonus
-
-        // Award XP using unified gainXp function
+        const improvementChance = 0.3 + (nutritionBonus / 100);
         const totalXpEarned = summary.totalXP + (nutritionBonus * 2);
+
         gainXp(totalXpEarned);
 
-        // Handle energy separately
         setPlayerStats(prev => ({
             ...prev,
-            energy: prev.energy - selectedActivities.reduce((sum, actId) =>
-                sum + POSYANDU_ACTIVITIES[actId].energyCost, 0)
+            energy: prev.energy - getSessionEnergyCost()
         }));
 
-        // Advance time
-        const totalTime = selectedActivities.reduce((sum, actId) =>
-            sum + POSYANDU_ACTIVITIES[actId].timeCost, 0);
-        setTime(t => Math.min(960, t + totalTime));
-
-        // Improve reputation
+        const totalTime = selectedActivities.reduce((sum, actId) => sum + POSYANDU_ACTIVITIES[actId].timeCost, 0);
+        setTime(time => Math.min(960, time + totalTime));
         setReputation(prev => Math.min(100, prev + 2 + Math.floor(summary.totalParticipants / 5)));
 
-        // Update village IKS
         setVillageData(prev => {
             if (!prev) return prev;
             const updatedFamilies = prev.families.map(fam => {
-                // Check if any attendee is from this family
                 const attended = attendees.some(a => a.familyId === fam.id);
                 if (!attended) return fam;
 
                 const indicators = { ...fam.indicators };
                 selectedActivities.forEach(actId => {
                     const activity = POSYANDU_ACTIVITIES[actId];
-                    if (activity.iksImpact?.indicator === 'gizi') {
-                        indicators.gizi = true;
-                    }
-                    if (activity.iksImpact?.indicator === 'imunisasi') {
-                        indicators.imunisasi = true;
-                    }
+                    if (activity.iksImpact?.indicator === 'gizi') indicators.gizi = true;
+                    if (activity.iksImpact?.indicator === 'imunisasi') indicators.imunisasi = true;
                 });
 
-                // Apply IKS improvement based on chance
                 const nutritionSeed = `posyandu:${day}:${fam.id}:${selectedActivities.join('|')}`;
                 if (chanceFromSeed(nutritionSeed, improvementChance)) {
-                    // Assuming these are the indicators related to child nutrition
                     indicators.bayi_asi_eksklusif = true;
                     indicators.balita_pertumbuhan = true;
                 }
@@ -200,17 +177,19 @@ export default function PosyanduModal({ isOpen, onClose }) {
             });
 
             const averageIks = calculateAverageIksFromFamilies(updatedFamilies);
-
             return { ...prev, families: updatedFamilies, averageIks };
         });
 
-        // Record to History
         setHistory(prev => [...prev, {
             day,
             type: 'posyandu',
-            label: `Kegiatan Posyandu`,
-            description: `${summary.totalParticipants} warga dilayani. ${summary.issuesFound} masalah gizi terdeteksi. (Bonus Staff: +${nutritionBonus}%)`,
-            xp: summary.totalXP + (nutritionBonus * 2), // Extra XP from staff
+            label: t('posyanduModal.history.label'),
+            description: t('posyanduModal.history.description', {
+                participants: summary.totalParticipants,
+                issues: summary.issuesFound,
+                nutritionBonus
+            }),
+            xp: totalXpEarned,
             timestamp: Date.now()
         }]);
 
@@ -223,12 +202,9 @@ export default function PosyanduModal({ isOpen, onClose }) {
         return generatePosyanduSummary(results);
     }, [results]);
 
-    if (!isOpen) return null;
-
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="posyandu-title" className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-                {/* Header */}
                 <div className="bg-gradient-to-r from-pink-500 to-rose-500 text-white p-6">
                     <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
@@ -236,48 +212,36 @@ export default function PosyanduModal({ isOpen, onClose }) {
                                 <Heart className="text-white" size={28} />
                             </div>
                             <div>
-                                <h2 id="posyandu-title" className="text-2xl font-bold">Posyandu</h2>
-                                <p className="text-pink-100 text-sm">Pos Pelayanan Terpadu</p>
+                                <h2 id="posyandu-title" className="text-2xl font-bold">{t('posyanduModal.title')}</h2>
+                                <p className="text-pink-100 text-sm">{t('posyanduModal.subtitle')}</p>
                             </div>
                         </div>
                         <button
                             onClick={onClose}
                             className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-                            aria-label="Tutup Posyandu"
+                            aria-label={t('posyanduModal.closeAria')}
                         >
                             <X size={24} />
                         </button>
                     </div>
 
-                    {/* Stats */}
                     <div className="flex gap-4 mt-4">
-                        <div className="bg-white/20 rounded-lg px-4 py-2 backdrop-blur-sm">
-                            <div className="text-xs text-pink-100">Balita Eligible</div>
-                            <div className="text-xl font-bold">{eligibleChildren.length}</div>
-                        </div>
-                        <div className="bg-white/20 rounded-lg px-4 py-2 backdrop-blur-sm">
-                            <div className="text-xs text-pink-100">Ibu Eligible</div>
-                            <div className="text-xl font-bold">{eligibleMothers.length}</div>
-                        </div>
-                        <div className="bg-white/20 rounded-lg px-4 py-2 backdrop-blur-sm">
-                            <div className="text-xs text-pink-100">Hari ke-</div>
-                            <div className="text-xl font-bold">{day}</div>
-                        </div>
+                        <HeaderStat label={t('posyanduModal.stats.eligibleChildren')} value={eligibleChildren.length} />
+                        <HeaderStat label={t('posyanduModal.stats.eligibleMothers')} value={eligibleMothers.length} />
+                        <HeaderStat label={t('posyanduModal.stats.day')} value={day} />
                     </div>
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 overflow-y-auto p-6">
                     {phase === 'setup' && (
                         <div className="space-y-6">
-                            {/* Activity Selection */}
                             <div>
                                 <h3 className="font-bold text-slate-700 mb-3 flex items-center gap-2">
                                     <ClipboardList size={18} />
-                                    Pilih Kegiatan Posyandu
+                                    {t('posyanduModal.setup.chooseActivities')}
                                 </h3>
                                 <div className="grid grid-cols-2 gap-3">
-                                    {Object.values(POSYANDU_ACTIVITIES).map(activity => {
+                                    {localizedActivities.map(activity => {
                                         const Icon = ACTIVITY_ICONS[activity.id] || ClipboardList;
                                         const isSelected = selectedActivities.includes(activity.id);
                                         return (
@@ -297,13 +261,11 @@ export default function PosyanduModal({ isOpen, onClose }) {
                                                     <div className="flex-1">
                                                         <div className="font-bold text-slate-700 text-sm">{activity.name}</div>
                                                         <div className="text-xs text-slate-400 flex items-center gap-2">
-                                                            <span>⚡{activity.energyCost}</span>
-                                                            <span>🕐{activity.timeCost}m</span>
+                                                            <span>{t('posyanduModal.cost.energy', { value: activity.energyCost })}</span>
+                                                            <span>{t('posyanduModal.cost.time', { value: activity.timeCost })}</span>
                                                         </div>
                                                     </div>
-                                                    {isSelected && (
-                                                        <CheckCircle size={20} className="text-pink-500" />
-                                                    )}
+                                                    {isSelected && <CheckCircle size={20} className="text-pink-500" />}
                                                 </div>
                                             </button>
                                         );
@@ -311,7 +273,6 @@ export default function PosyanduModal({ isOpen, onClose }) {
                                 </div>
                             </div>
 
-                            {/* Reminder Toggle */}
                             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                                 <label className="flex items-center gap-3 cursor-pointer">
                                     <input
@@ -321,21 +282,22 @@ export default function PosyanduModal({ isOpen, onClose }) {
                                         className="w-5 h-5 rounded accent-amber-500"
                                     />
                                     <div>
-                                        <div className="font-bold text-amber-800">Kirim Pengumuman ke Warga</div>
+                                        <div className="font-bold text-amber-800 flex items-center gap-2">
+                                            <Megaphone size={16} /> {t('posyanduModal.reminder.title')}
+                                        </div>
                                         <div className="text-xs text-amber-600">
-                                            +15% kehadiran • Biaya: 5 Energi tambahan
+                                            {t('posyanduModal.reminder.description', { energy: REMINDER_ENERGY_COST })}
                                         </div>
                                     </div>
                                 </label>
                             </div>
 
-                            {/* Start Button */}
                             <button
                                 onClick={startPosyandu}
                                 disabled={selectedActivities.length === 0}
                                 className="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl hover:from-pink-600 hover:to-rose-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                             >
-                                <span>Mulai Posyandu</span>
+                                <span>{t('posyanduModal.setup.start')}</span>
                                 <ChevronRight size={20} />
                             </button>
                         </div>
@@ -343,7 +305,6 @@ export default function PosyanduModal({ isOpen, onClose }) {
 
                     {phase === 'activity' && (
                         <div className="space-y-6">
-                            {/* Progress */}
                             <div className="flex items-center gap-4">
                                 <div className="flex-1 bg-slate-100 rounded-full h-3 overflow-hidden">
                                     <div
@@ -356,32 +317,25 @@ export default function PosyanduModal({ isOpen, onClose }) {
                                 </div>
                             </div>
 
-                            {/* Current Attendee */}
                             {attendees[currentAttendeeIndex] && (
                                 <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 text-center">
-                                    <div className="w-20 h-20 bg-pink-100 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl">
-                                        {attendees[currentAttendeeIndex].age < 6 ? '👶' : '👩'}
+                                    <div className="w-20 h-20 bg-pink-100 rounded-full mx-auto mb-4 flex items-center justify-center text-pink-500">
+                                        {attendees[currentAttendeeIndex].age < 6 ? <Baby size={38} /> : <Users size={38} />}
                                     </div>
                                     <h3 className="text-xl font-bold text-slate-800">
                                         {attendees[currentAttendeeIndex].name}
                                     </h3>
                                     <p className="text-slate-500 text-sm">
-                                        {attendees[currentAttendeeIndex].age < 1
-                                            ? `${Math.round(attendees[currentAttendeeIndex].age * 12)} bulan`
-                                            : `${attendees[currentAttendeeIndex].age} tahun`
-                                        } • Keluarga {attendees[currentAttendeeIndex].familyName}
+                                        {formatAttendeeAge(t, attendees[currentAttendeeIndex].age)} | {t('posyanduModal.activity.family', { family: attendees[currentAttendeeIndex].familyName })}
                                     </p>
 
-                                    {/* Activity Buttons */}
                                     <div className="flex flex-wrap gap-2 justify-center mt-4">
                                         {selectedActivities.map(actId => {
-                                            const activity = POSYANDU_ACTIVITIES[actId];
+                                            const activity = localizeActivity(POSYANDU_ACTIVITIES[actId]);
+                                            const Icon = ACTIVITY_ICONS[activity.id] || ClipboardList;
                                             return (
-                                                <span
-                                                    key={actId}
-                                                    className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium"
-                                                >
-                                                    {activity.icon} {activity.name}
+                                                <span key={actId} className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium flex items-center gap-1">
+                                                    <Icon size={12} /> {activity.name}
                                                 </span>
                                             );
                                         })}
@@ -389,13 +343,12 @@ export default function PosyanduModal({ isOpen, onClose }) {
                                 </div>
                             )}
 
-                            {/* Process Button */}
                             <button
                                 onClick={processCurrentAttendee}
                                 className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2"
                             >
                                 <CheckCircle size={20} />
-                                <span>Layani & Lanjut</span>
+                                <span>{t('posyanduModal.activity.serveNext')}</span>
                             </button>
                         </div>
                     )}
@@ -407,35 +360,24 @@ export default function PosyanduModal({ isOpen, onClose }) {
                             </div>
 
                             <div>
-                                <h3 className="text-2xl font-bold text-slate-800">Posyandu Selesai! 🎉</h3>
-                                <p className="text-slate-500">Terima kasih atas dedikasi Anda</p>
+                                <h3 className="text-2xl font-bold text-slate-800">{t('posyanduModal.summary.title')}</h3>
+                                <p className="text-slate-500">{t('posyanduModal.summary.subtitle')}</p>
                             </div>
 
-                            {/* Stats Grid */}
                             <div className="grid grid-cols-3 gap-4">
-                                <div className="bg-slate-50 rounded-xl p-4">
-                                    <div className="text-3xl font-black text-pink-600">{summary.totalParticipants}</div>
-                                    <div className="text-xs text-slate-500 font-medium">Peserta Dilayani</div>
-                                </div>
-                                <div className="bg-slate-50 rounded-xl p-4">
-                                    <div className="text-3xl font-black text-amber-500">+{summary.totalXP}</div>
-                                    <div className="text-xs text-slate-500 font-medium">XP Diperoleh</div>
-                                </div>
-                                <div className="bg-slate-50 rounded-xl p-4">
-                                    <div className="text-3xl font-black text-rose-500">{summary.issuesFound}</div>
-                                    <div className="text-xs text-slate-500 font-medium">Masalah Terdeteksi</div>
-                                </div>
+                                <SummaryStat value={summary.totalParticipants} label={t('posyanduModal.summary.participants')} valueClass="text-pink-600" />
+                                <SummaryStat value={`+${summary.totalXP}`} label={t('posyanduModal.summary.xp')} valueClass="text-amber-500" />
+                                <SummaryStat value={summary.issuesFound} label={t('posyanduModal.summary.issues')} valueClass="text-rose-500" />
                             </div>
 
                             {summary.issuesFound > 0 && (
                                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-left">
                                     <div className="flex items-center gap-2 text-amber-700 font-bold mb-2">
                                         <AlertTriangle size={18} />
-                                        <span>Tindak Lanjut Diperlukan</span>
+                                        <span>{t('posyanduModal.summary.followUpTitle')}</span>
                                     </div>
                                     <p className="text-sm text-amber-600">
-                                        Ditemukan {summary.issuesFound} anak dengan gizi kurang.
-                                        Jadwalkan kunjungan rumah atau konseling gizi lebih lanjut.
+                                        {t('posyanduModal.summary.followUpBody', { count: summary.issuesFound })}
                                     </p>
                                 </div>
                             )}
@@ -444,7 +386,7 @@ export default function PosyanduModal({ isOpen, onClose }) {
                                 onClick={onClose}
                                 className="w-full py-4 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-all"
                             >
-                                Selesai
+                                {t('common.done')}
                             </button>
                         </div>
                     )}
@@ -452,4 +394,29 @@ export default function PosyanduModal({ isOpen, onClose }) {
             </div>
         </div>
     );
+}
+
+function HeaderStat({ label, value }) {
+    return (
+        <div className="bg-white/20 rounded-lg px-4 py-2 backdrop-blur-sm">
+            <div className="text-xs text-pink-100">{label}</div>
+            <div className="text-xl font-bold">{value}</div>
+        </div>
+    );
+}
+
+function SummaryStat({ value, label, valueClass }) {
+    return (
+        <div className="bg-slate-50 rounded-xl p-4">
+            <div className={`text-3xl font-black ${valueClass}`}>{value}</div>
+            <div className="text-xs text-slate-500 font-medium">{label}</div>
+        </div>
+    );
+}
+
+function formatAttendeeAge(t, age) {
+    if (age < 1) {
+        return t('posyanduModal.activity.ageMonths', { count: Math.round(age * 12) });
+    }
+    return t('posyanduModal.activity.ageYears', { count: age });
 }

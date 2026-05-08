@@ -262,7 +262,7 @@ function drawSchoolScene(ctx, w, h) {
     drawPerson(ctx, s(200), s(85), '#d4a574', PAL.cloth_blue);
 }
 
-function drawFarmScene(ctx, w, h) {
+function drawFarmScene(ctx, w, _h) {
     const scale = w / 400;
     const s = (v) => Math.floor(v * scale);
 

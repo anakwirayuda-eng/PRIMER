@@ -457,8 +457,6 @@ export function applyPersonaAdaptation(response, patient, context, opts = {}) {
     const style = patient.communicationStyle || 'concise';
     const demeanor = (patient.demeanor || '').toLowerCase();
     const qId = opts.questionId || '';
-    const questionCount = context?.count || 0;
-
     let adapted = response;
     let wasStyleApplied = false;
     opts.metadata = opts.metadata || {};

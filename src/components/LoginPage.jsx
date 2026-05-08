@@ -8,19 +8,47 @@
  * [LAST_UPDATE]: 2026-03-25
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { AlertTriangle, HeartPulse } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { SUPPORTED_LANGUAGE_OPTIONS } from '../config/languages.js';
 import { AuthService } from '../services/AuthService';
 
-const PRIMER_QUOTES = [
-    { text: 'Your ZIP code is a better predictor of your health than your genetic code.', author: 'Dr. Tony Iton', field: 'Spatial Epidemiology' },
-    { text: 'Medicine is a social science, and politics is nothing but medicine on a grand scale.', author: 'Rudolf Virchow', field: 'Father of Social Medicine, 1848' },
-    { text: 'On proceeding to the spot, I found that nearly all the deaths had taken place within a short distance of the Broad Street pump.', author: 'John Snow', field: 'Father of Epidemiology, 1854' },
-    { text: 'Whoever wishes to investigate medicine properly should consider the seasons, the winds, the water, and the soil.', author: 'Hippocrates', field: 'Airs, Waters, and Places, 400 BC' },
-    { text: 'Public health is the science and art of preventing disease, prolonging life, and promoting health through the organized efforts of society.', author: 'C.-E.A. Winslow', field: 'Definition of Public Health, 1920' },
-    { text: 'Kamu tidak bisa menyembuhkan pasien yang sakit karena kemiskinan. Kamu harus menyembuhkan kemiskinannya.', author: 'PRIMER', field: 'Desa Sukamaju, 2026' },
-];
+const LOGIN_QUOTE_FALLBACKS = {
+    tony_iton: {
+        text: 'Your ZIP code is a better predictor of your health than your genetic code.',
+        author: 'Dr. Tony Iton',
+        field: 'Spatial Epidemiology'
+    },
+    virchow: {
+        text: 'Medicine is a social science, and politics is nothing but medicine on a grand scale.',
+        author: 'Rudolf Virchow',
+        field: 'Father of Social Medicine, 1848'
+    },
+    john_snow: {
+        text: 'On proceeding to the spot, I found that nearly all the deaths had taken place within a short distance of the Broad Street pump.',
+        author: 'John Snow',
+        field: 'Father of Epidemiology, 1854'
+    },
+    hippocrates: {
+        text: 'Whoever wishes to investigate medicine properly should consider the seasons, the winds, the water, and the soil.',
+        author: 'Hippocrates',
+        field: 'Airs, Waters, and Places, 400 BC'
+    },
+    winslow: {
+        text: 'Public health is the science and art of preventing disease, prolonging life, and promoting health through the organized efforts of society.',
+        author: 'C.-E.A. Winslow',
+        field: 'Definition of Public Health, 1920'
+    },
+    primer: {
+        text: 'You cannot heal patients made sick by poverty. You have to heal the poverty first.',
+        author: 'PRIMER',
+        field: 'Sukamaju Village, 2026'
+    }
+};
 
 const LoginPage = ({ onLoginSuccess }) => {
+    const { t, i18n } = useTranslation();
     const [isRegister, setIsRegister] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -30,31 +58,47 @@ const LoginPage = ({ onLoginSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [quoteIndex, setQuoteIndex] = useState(0);
     const [quoteFade, setQuoteFade] = useState(true);
+    const readTranslation = useCallback((key, fallback) => {
+        const value = t(key, { defaultValue: fallback });
+        return value === key ? fallback : value;
+    }, [t]);
+    const primerQuotes = useMemo(
+        () => Object.entries(LOGIN_QUOTE_FALLBACKS).map(([quoteId, fallback]) => ({
+            text: readTranslation(`login.quotes.${quoteId}.text`, fallback.text),
+            author: readTranslation(`login.quotes.${quoteId}.author`, fallback.author),
+            field: readTranslation(`login.quotes.${quoteId}.field`, fallback.field)
+        })),
+        [readTranslation]
+    );
 
     useEffect(() => {
+        let fadeTimerId;
         const interval = setInterval(() => {
             setQuoteFade(false);
-            setTimeout(() => {
-                setQuoteIndex(prev => (prev + 1) % PRIMER_QUOTES.length);
+            clearTimeout(fadeTimerId);
+            fadeTimerId = setTimeout(() => {
+                setQuoteIndex(prev => (prev + 1) % primerQuotes.length);
                 setQuoteFade(true);
             }, 500);
         }, 6000);
-        return () => clearInterval(interval);
-    }, []);
+        return () => {
+            clearInterval(interval);
+            clearTimeout(fadeTimerId);
+        };
+    }, [primerQuotes.length]);
 
-    // Translate Supabase errors to user-friendly Indonesian messages
-    const translateError = (msg) => {
-        if (!msg) return 'Terjadi kesalahan. Coba lagi.';
+    const translateError = useCallback((msg) => {
+        if (!msg) return t('login.errors.generic');
         const lower = msg.toLowerCase();
-        if (lower.includes('signups') && lower.includes('disabled')) return 'Pendaftaran akun baru sedang dinonaktifkan. Hubungi admin.';
-        if (lower.includes('signup') && lower.includes('disabled')) return 'Pendaftaran akun baru sedang dinonaktifkan. Hubungi admin.';
-        if (lower.includes('email') && lower.includes('invalid')) return 'Format email tidak valid.';
-        if (lower.includes('rate limit')) return 'Terlalu banyak percobaan. Tunggu 2-3 menit.';
-        if (lower.includes('invalid login')) return 'Email atau password salah.';
-        if (lower.includes('already registered') || lower.includes('already been registered')) return 'Email sudah terdaftar. Silakan login.';
-        if (lower.includes('password') && lower.includes('6')) return 'Password minimal 6 karakter.';
+        if (lower.includes('signups') && lower.includes('disabled')) return t('login.errors.signup_disabled');
+        if (lower.includes('signup') && lower.includes('disabled')) return t('login.errors.signup_disabled');
+        if (lower.includes('email') && lower.includes('invalid')) return t('login.errors.email_invalid');
+        if (lower.includes('rate limit')) return t('login.errors.rate_limit');
+        if (lower.includes('invalid login')) return t('login.errors.invalid_login');
+        if (lower.includes('already registered') || lower.includes('already been registered')) return t('login.errors.already_registered');
+        if (lower.includes('password') && lower.includes('6')) return t('login.errors.password_short');
         return msg;
-    };
+    }, [t]);
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
@@ -64,7 +108,7 @@ const LoginPage = ({ onLoginSuccess }) => {
         try {
             if (isRegister) {
                 if (!nama.trim()) {
-                    setError('Nama harus diisi.');
+                    setError(t('login.errors.name_required'));
                     setLoading(false);
                     return;
                 }
@@ -90,16 +134,22 @@ const LoginPage = ({ onLoginSuccess }) => {
                 onLoginSuccess(user);
             }
         } catch (err) {
-            setError('Terjadi kesalahan. Coba lagi.');
+            setError(t('login.errors.generic'));
             console.error('[Login]', err);
         } finally {
             setLoading(false);
         }
-    }, [isRegister, email, password, nama, angkatan, onLoginSuccess]);
+    }, [isRegister, email, password, nama, angkatan, onLoginSuccess, t, translateError]);
 
     const handleSkipOffline = useCallback(() => {
         onLoginSuccess(null);
     }, [onLoginSuccess]);
+
+    const currentLanguage = i18n.resolvedLanguage || i18n.language || 'id';
+    const handleLanguageChange = useCallback(async (languageId) => {
+        if (languageId === currentLanguage) return;
+        await i18n.changeLanguage(languageId);
+    }, [currentLanguage, i18n]);
 
     return (
         <div style={styles.container}>
@@ -108,26 +158,49 @@ const LoginPage = ({ onLoginSuccess }) => {
             <div style={styles.bgGrid} />
 
             <div style={styles.card}>
+                <div style={styles.languageSwitcher} aria-label={t('login.language.label')}>
+                    {SUPPORTED_LANGUAGE_OPTIONS.map((language) => {
+                        const isActive = currentLanguage === language.id;
+                        return (
+                            <button
+                                key={language.id}
+                                type="button"
+                                onClick={() => handleLanguageChange(language.id)}
+                                style={{
+                                    ...styles.languageButton,
+                                    ...(isActive ? styles.languageButtonActive : {})
+                                }}
+                                aria-pressed={isActive}
+                                aria-label={t('login.language.switch_to', { language: language.label })}
+                            >
+                                {language.id.toUpperCase()}
+                            </button>
+                        );
+                    })}
+                </div>
+
                 {/* Logo */}
                 <div style={styles.logoContainer}>
-                    <div style={styles.logoIcon}>🏥</div>
+                    <div style={styles.logoIcon}>
+                        <HeartPulse size={42} strokeWidth={2.4} />
+                    </div>
                     <h1 style={styles.title}>PRIMER</h1>
-                    <p style={styles.subtitle}>Primary Care Simulator</p>
+                    <p style={styles.subtitle}>{t('login.subtitle')}</p>
                     <div style={{ ...styles.quoteContainer, opacity: quoteFade ? 1 : 0 }}>
-                        <p style={styles.quoteText}>"{PRIMER_QUOTES[quoteIndex].text}"</p>
-                        <p style={styles.quoteAuthor}>— {PRIMER_QUOTES[quoteIndex].author} <span style={styles.quoteField}>({PRIMER_QUOTES[quoteIndex].field})</span></p>
+                        <p style={styles.quoteText}>"{primerQuotes[quoteIndex].text}"</p>
+                        <p style={styles.quoteAuthor}>- {primerQuotes[quoteIndex].author} <span style={styles.quoteField}>({primerQuotes[quoteIndex].field})</span></p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     <div style={styles.inputGroup}>
-                        <label style={styles.label}>Email</label>
+                        <label style={styles.label}>{t('login.labels.email')}</label>
                         <input
                             id="login-email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="email@contoh.com"
+                            placeholder={t('login.placeholders.email')}
                             required
                             autoComplete="username"
                             style={styles.input}
@@ -135,13 +208,13 @@ const LoginPage = ({ onLoginSuccess }) => {
                     </div>
 
                     <div style={styles.inputGroup}>
-                        <label style={styles.label}>Password</label>
+                        <label style={styles.label}>{t('login.labels.password')}</label>
                         <input
                             id="login-password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Masukkan password"
+                            placeholder={t('login.placeholders.password')}
                             required
                             minLength={6}
                             autoComplete={isRegister ? 'new-password' : 'current-password'}
@@ -152,25 +225,25 @@ const LoginPage = ({ onLoginSuccess }) => {
                     {isRegister && (
                         <>
                             <div style={styles.inputGroup}>
-                                <label style={styles.label}>Nama Lengkap</label>
+                                <label style={styles.label}>{t('login.labels.full_name')}</label>
                                 <input
                                     id="login-nama"
                                     type="text"
                                     value={nama}
                                     onChange={(e) => setNama(e.target.value)}
-                                    placeholder="Nama lengkap"
+                                    placeholder={t('login.placeholders.full_name')}
                                     required
                                     style={styles.input}
                                 />
                             </div>
                             <div style={styles.inputGroup}>
-                                <label style={styles.label}>Angkatan (opsional)</label>
+                                <label style={styles.label}>{t('login.labels.class_year_optional')}</label>
                                 <input
                                     id="login-angkatan"
                                     type="number"
                                     value={angkatan}
                                     onChange={(e) => setAngkatan(e.target.value)}
-                                    placeholder="2023"
+                                    placeholder={t('login.placeholders.class_year')}
                                     style={styles.input}
                                 />
                             </div>
@@ -179,7 +252,8 @@ const LoginPage = ({ onLoginSuccess }) => {
 
                     {error && (
                         <div style={styles.error}>
-                            ⚠️ {error}
+                            <AlertTriangle size={16} style={styles.errorIcon} />
+                            <span>{error}</span>
                         </div>
                     )}
 
@@ -193,10 +267,10 @@ const LoginPage = ({ onLoginSuccess }) => {
                         }}
                     >
                         {loading
-                            ? '⏳ Memproses...'
+                            ? t('login.actions.processing')
                             : isRegister
-                                ? '📝 Daftar'
-                                : '🎮 Masuk'}
+                                ? t('login.actions.register')
+                                : t('login.actions.login')}
                     </button>
                 </form>
 
@@ -205,20 +279,20 @@ const LoginPage = ({ onLoginSuccess }) => {
                     style={styles.toggleLink}
                 >
                     {isRegister
-                        ? 'Sudah punya akun? Masuk di sini'
-                        : 'Belum punya akun? Daftar di sini'}
+                        ? t('login.actions.have_account')
+                        : t('login.actions.need_account')}
                 </button>
 
                 <button
                     onClick={handleSkipOffline}
                     style={styles.offlineLink}
                 >
-                    ⚡ Main Offline (tanpa cloud save)
+                    {t('login.actions.play_offline')}
                 </button>
             </div>
 
             <p style={styles.footer}>
-                PRIMER © 2026 — Medical Education Simulator
+                {t('login.footer', { year: 2026 })}
             </p>
         </div>
     );
@@ -267,13 +341,44 @@ const styles = {
         border: '1px solid rgba(16, 185, 129, 0.2)',
         boxShadow: '0 25px 60px rgba(0,0,0,0.4), 0 0 40px rgba(16,185,129,0.08)',
     },
+    languageSwitcher: {
+        position: 'absolute',
+        top: '18px',
+        right: '18px',
+        display: 'flex',
+        gap: '6px',
+        padding: '4px',
+        borderRadius: '999px',
+        background: 'rgba(15, 23, 42, 0.72)',
+        border: '1px solid rgba(148, 163, 184, 0.18)',
+        boxShadow: '0 10px 24px rgba(0,0,0,0.18)',
+    },
+    languageButton: {
+        border: 'none',
+        borderRadius: '999px',
+        padding: '5px 9px',
+        background: 'transparent',
+        color: '#94a3b8',
+        fontSize: '10px',
+        fontWeight: 800,
+        letterSpacing: '0.08em',
+        cursor: 'pointer',
+        transition: 'background 0.2s, color 0.2s',
+    },
+    languageButtonActive: {
+        background: 'linear-gradient(135deg, #10b981, #059669)',
+        color: '#ecfdf5',
+        boxShadow: '0 6px 18px rgba(16,185,129,0.28)',
+    },
     logoContainer: {
         textAlign: 'center',
         marginBottom: '32px',
     },
     logoIcon: {
-        fontSize: '48px',
+        display: 'flex',
+        justifyContent: 'center',
         marginBottom: '8px',
+        color: '#34d399',
     },
     title: {
         fontSize: '28px',
@@ -370,6 +475,12 @@ const styles = {
         border: '1px solid rgba(239, 68, 68, 0.3)',
         color: '#fca5a5',
         fontSize: '13px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+    },
+    errorIcon: {
+        flexShrink: 0,
     },
     quoteContainer: {
         marginTop: '16px',

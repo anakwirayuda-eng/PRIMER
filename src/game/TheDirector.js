@@ -233,12 +233,15 @@ export function processUKPBridge(completedCases, currentDay) {
 
         // Pick a random fail outcome from the bridge
         const outcomes = bridge.failOutcomes || [];
-        const pickedOutcome = pickDeterministic(outcomes, seedKey(bridgeSeed, 'outcome')) || 'unknown_complication';
+        const pickedOutcome = caseData.ukpDiseaseId
+            || pickDeterministic(outcomes, seedKey(bridgeSeed, 'outcome'))
+            || 'unknown_complication';
 
         // Generate the UKP emergency event
         events.push({
             type: 'ukp_bridge_consequence',
             historyEntryId: caseData.historyEntryId || null,
+            familyId: caseData.familyId || null,
             diseaseId: pickedOutcome,
             severity: severityMap[caseData.outcome] || 'moderate',
             source: {
@@ -249,7 +252,7 @@ export function processUKPBridge(completedCases, currentDay) {
             },
             message: generateBridgeNarrative(caseData.scenario, pickedOutcome, caseData.outcome),
             reputationPenalty: caseData.outcome === 'failed' ? -5 : -2,
-            isNightEmergency: pickedOutcome === 'perdarahan_postpartum' || 
+            isNightEmergency: pickedOutcome === 'pph' || 
                               pickedOutcome === 'dengue_df' || 
                               pickedOutcome === 'dbd_grade_1',
             spawnDay: currentDay
@@ -263,10 +266,10 @@ export function processUKPBridge(completedCases, currentDay) {
  * Generate a dramatic narrative for a UKP bridge consequence.
  * @param {Object} scenario - Original disease scenario
  * @param {string} outcome - The clinical outcome (e.g. 'dengue_df')
- * @param {string} caseOutcome - 'failed' or 'partial'
+ * @param {string} _caseOutcome - 'failed' or 'partial'
  * @returns {string} Narrative text
  */
-function generateBridgeNarrative(scenario, outcome, caseOutcome) {
+function generateBridgeNarrative(scenario, outcome, _caseOutcome) {
     const narratives = {
         'dengue_df': '🚨 [DARURAT IGD] Anak dari RT yang gagal PSN masuk dengan Dengue Shock Syndrome. Hematokrit 48%, trombosit anjlok. Stok RL menipis!',
         'dbd_grade_1': '🏥 [IGD] Pasien anak demam tinggi hari ke-4 dengan petekie. Suspek DHF Grade I. Akibat langsung kegagalan program PSN.',
@@ -276,8 +279,8 @@ function generateBridgeNarrative(scenario, outcome, caseOutcome) {
         'anemia_deficiency': '🩸 [POLI ANAK] Anak BB di bawah -3SD, pucat, perut buncit. Anemia defisiensi besi akibat cacingan kronik yang diabaikan.',
         'morbilli': '🔴 [DARURAT] Outbreak campak di SD — 8 anak demam + ruam. Komplikasi pneumonia pada 2 anak yang belum vaksin.',
         'pneumonia_bacterial': '🫁 [IGD ANAK] Pneumonia berat pasca-campak. Anak sesak napas, SpO2 88%. Rujukan RS segera!',
-        'perdarahan_postpartum': '🩸 [DARURAT JAM 2 PAGI] Ibu melahirkan di dukun, perdarahan masif post-partum. Ambulans desa tersendat! Reputasi Puskesmas di ujung tanduk.',
-        'sepsis_neonatal': '👶 [IGD NEONATUS] Bayi 3 hari demam tinggi, tali pusar dipotong bambu oleh dukun. Suspek tetanus neonatorum + sepsis.',
+        'pph': '🩸 [DARURAT JAM 2 PAGI] Ibu melahirkan di dukun, perdarahan masif post-partum. Ambulans desa tersendat! Reputasi Puskesmas di ujung tanduk.',
+        'infeksi_umbilikus': '👶 [IGD NEONATUS] Bayi 3 hari demam tinggi, pusar merah bernanah setelah persalinan tidak steril. Risiko sepsis neonatus tinggi.',
         'filariasis': '🦵 [POLI] Pasien datang dengan kaki bengkak (limfedema) — akibat menolak BELKAGA tahun lalu.',
         'leprosy': '🏥 [POLI] Pasien dengan deformitas jari — kusta yang terlambat terdeteksi karena stigma sosial.',
     };

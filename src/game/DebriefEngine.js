@@ -133,7 +133,7 @@ export function generateDebrief({
  * Generate summary statistics from today's log.
  */
 function generateSummary(todayLog, stats, morningReputation, reputation) {
-    const patientsServed = todayLog.filter(c => c.completed).length;
+    const patientsServed = todayLog.filter(c => c.completed || c.referred).length;
     const patientsMissed = todayLog.filter(c => c.missed || c.leftWithoutService).length;
     const referralsMade = todayLog.filter(c => c.referred).length;
 
@@ -207,38 +207,57 @@ function extractCriticalCases(todayLog) {
         }))
         .sort((a, b) => b.impactScore - a.impactScore);
 
-    return scored.slice(0, 3).map(c => ({
-        patientName: c.patientName || 'Pasien',
-        age: c.age,
-        gender: c.gender,
-        diagnosis: c.diagnosis || c.correctDiagnosis || 'Tidak terdiagnosis',
-        correctDiagnosis: c.correctDiagnosis || c.diagnosis || null,
-        diagnosisScore: c.diagnosisScore,
-        wasCorrect: (c.diagnosisScore || 0) >= 70,
-        referred: c.referred || false,
-        vitals: c.vitals || {},
-        guidelineRef: c.guidelineRef || null,
-        treatmentGiven: c.treatmentGiven || [],
-        // V7 Fix #1: Prioritize clinical pearls from CaseLibrary over generic template
-        keyLearning: c.keyLearning || generateKeyLearning(c),
-        // (keyLearning now set above with priority logic)
-    }));
+    return scored.slice(0, 3).map(c => {
+        const generatedLearning = c.keyLearning ? null : generateKeyLearningMeta(c);
+
+        return {
+            patientName: c.patientName || 'Pasien',
+            age: c.age,
+            gender: c.gender,
+            diagnosis: c.diagnosis || c.correctDiagnosis || 'Tidak terdiagnosis',
+            correctDiagnosis: c.correctDiagnosis || c.diagnosis || null,
+            diagnosisScore: c.diagnosisScore,
+            wasCorrect: (c.diagnosisScore || 0) >= 70,
+            referred: c.referred || false,
+            vitals: c.vitals || {},
+            guidelineRef: c.guidelineRef || null,
+            treatmentGiven: c.treatmentGiven || [],
+            // CaseLibrary pearls stay authoritative; generated fallbacks expose i18n metadata for UI.
+            keyLearning: c.keyLearning || generatedLearning.text,
+            keyLearningKey: generatedLearning?.key || null,
+            keyLearningParams: generatedLearning?.params || {},
+        };
+    });
 }
 
-/**
- * Generate a key learning point for a case.
- */
-function generateKeyLearning(caseRecord) {
+function generateKeyLearningMeta(caseRecord) {
     if ((caseRecord.diagnosisScore || 0) < 50) {
-        return `Diagnosis yang tepat adalah "${caseRecord.correctDiagnosis || caseRecord.diagnosis || '?'}". Perhatikan gejala-gejala kunci pada anamnesis.`;
+        const diagnosis = caseRecord.correctDiagnosis || caseRecord.diagnosis || '?';
+        return {
+            key: 'endOfDay.keyLearning.missedDiagnosis',
+            params: { diagnosis },
+            text: `Diagnosis yang tepat adalah "${diagnosis}". Perhatikan gejala-gejala kunci pada anamnesis.`
+        };
     }
     if (caseRecord.referred) {
-        return 'Kasus ini memerlukan rujukan. Pastikan stabilisasi sebelum pasien dikirim ke RS.';
+        return {
+            key: 'endOfDay.keyLearning.referral',
+            params: {},
+            text: 'Kasus ini memerlukan rujukan. Pastikan stabilisasi sebelum pasien dikirim ke RS.'
+        };
     }
     if ((caseRecord.diagnosisScore || 0) >= 90) {
-        return 'Diagnosa dan tatalaksana tepat. Pertahankan pola klinis seperti ini!';
+        return {
+            key: 'endOfDay.keyLearning.excellent',
+            params: {},
+            text: 'Diagnosa dan tatalaksana tepat. Pertahankan pola klinis seperti ini!'
+        };
     }
-    return 'Evaluasi kembali alur anamnesis dan pemeriksaan fisik untuk akurasi lebih tinggi.';
+    return {
+        key: 'endOfDay.keyLearning.reviewFlow',
+        params: {},
+        text: 'Evaluasi kembali alur anamnesis dan pemeriksaan fisik untuk akurasi lebih tinggi.'
+    };
 }
 
 /**
@@ -250,12 +269,16 @@ function generateReflectionPrompts(todayLog, criticalCases) {
     // Prompt for missed diagnoses
     const missed = criticalCases.filter(c => !c.wasCorrect);
     if (missed.length > 0) {
+        const missedCase = missed[0];
+        const condition = missedCase.correctDiagnosis || 'kondisi pasien';
         prompts.push({
             type: 'missed_diagnosis',
             text: REFLECTION_TEMPLATES.missed_diagnosis(
-                missed[0].patientName,
-                missed[0].correctDiagnosis || 'kondisi pasien'
+                missedCase.patientName,
+                condition
             ),
+            patientName: missedCase.patientName,
+            condition,
             category: 'critical',
         });
     }
@@ -273,9 +296,11 @@ function generateReflectionPrompts(todayLog, criticalCases) {
     // Prompt for referrals
     const referredCases = criticalCases.filter(c => c.referred);
     if (referredCases.length > 0 && prompts.length < 3) {
+        const referredCase = referredCases[0];
         prompts.push({
             type: 'referral_question',
-            text: REFLECTION_TEMPLATES.referral_question(referredCases[0].patientName),
+            text: REFLECTION_TEMPLATES.referral_question(referredCase.patientName),
+            patientName: referredCase.patientName,
             category: 'reflection',
         });
     }
@@ -283,9 +308,11 @@ function generateReflectionPrompts(todayLog, criticalCases) {
     // Prompt for good cases
     const excellent = criticalCases.filter(c => c.wasCorrect && (c.diagnosisScore || 0) >= 90);
     if (excellent.length > 0 && prompts.length < 3) {
+        const excellentCase = excellent[0];
         prompts.push({
             type: 'good_case',
-            text: REFLECTION_TEMPLATES.good_case(excellent[0].patientName),
+            text: REFLECTION_TEMPLATES.good_case(excellentCase.patientName),
+            patientName: excellentCase.patientName,
             category: 'positive',
         });
     }

@@ -11,8 +11,13 @@
 
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Brain, ShieldCheck, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { QUESTION_CATEGORIES, ANAMNESIS_TIPS } from '../../game/AnamnesisEngine.js';
+import { ANAMNESIS_TIPS } from '../../game/AnamnesisEngine.js';
+import {
+    getLocalizedAnamnesisTip,
+    getLocalizedQuestionCategory
+} from '../../game/anamnesis/QuestionPresentation.js';
 import CategoryTabs from './anamnesis/CategoryTabs.jsx';
 import DialogueLog from './anamnesis/DialogueLog.jsx';
 import InitialComplaintSelection from './anamnesis/InitialComplaintSelection.jsx';
@@ -28,9 +33,10 @@ export default function AnamnesisTab({
     setMaiaAlerts: _setMaiaAlerts,
     diagnosticConfidence,
     coverageScore,
-    anamnesisContext,
+    anamnesisContext: _anamnesisContext,
     handleInitialComplaint
 }) {
+    const { t } = useTranslation();
     // Codex Fix [Medium]: Separate mobile sheet state from MAIA tips state.
     // Previously both used showAnamnesisHint, causing tips to appear when
     // opening the mobile question panel.
@@ -43,6 +49,8 @@ export default function AnamnesisTab({
     const rawConfidence = typeof diagnosticConfidence === 'function' ? diagnosticConfidence() : diagnosticConfidence;
     const confidence = rawConfidence || { confidence: 0, level: 'low' };
     const confidenceValue = typeof confidence === 'object' ? (confidence.confidence || 0) : (confidence || 0);
+    const activeCategoryLabel = getLocalizedQuestionCategory(anamnesisCategory, t);
+    const activeTip = getLocalizedAnamnesisTip(anamnesisCategory, t) || ANAMNESIS_TIPS[anamnesisCategory];
 
     const catItems = [
         { id: 'keluhan_utama', label: 'KU' },
@@ -56,46 +64,50 @@ export default function AnamnesisTab({
         <div className="flex flex-col h-full overflow-hidden">
             {/* Sprint 2: Synchronized Coverage & Confidence Indicators */}
             {hasAskedComplaint && (
-                <div className={`flex items-center gap-2 mb-2 p-2 rounded-lg border text-tag ${isDark ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
-                    <div className="flex items-center gap-1.5 flex-1 p-0.5">
-                        <ShieldCheck size={12} className="text-emerald-500" />
-                        <span className={`font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>Coverage:</span>
-                        <div className={`flex-1 mx-1 h-1.5 rounded-full ${isDark ? 'bg-slate-700' : 'bg-slate-200'} overflow-hidden relative group`}>
-                            <div
-                                className={`h-full rounded-full transition-all duration-500 ${score > 70 ? 'bg-emerald-500' : score > 40 ? 'bg-amber-500' : 'bg-red-400'}`}
-                                style={{ width: `${score}%` }}
-                            />
+                <div className={`mb-2 rounded-2xl border p-3 ${isDark ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                    <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_auto_auto]">
+                        <div className="flex items-center gap-2 rounded-xl p-2">
+                            <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
+                            <span className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{t('anamnesis.ui.coverage')}</span>
+                            <div className={`flex-1 h-1.5 rounded-full ${isDark ? 'bg-slate-700' : 'bg-slate-200'} overflow-hidden relative group`}>
+                                <div
+                                    className={`h-full rounded-full transition-all duration-500 ${score > 70 ? 'bg-emerald-500' : score > 40 ? 'bg-amber-500' : 'bg-red-400'}`}
+                                    style={{ width: `${score}%` }}
+                                />
+                            </div>
+                            <span className={`text-sm font-black ${score > 70 ? 'text-emerald-500' : score > 40 ? 'text-amber-500' : 'text-red-400'}`}>{score}%</span>
                         </div>
-                        <span className={`font-black ${score > 70 ? 'text-emerald-500' : score > 40 ? 'text-amber-500' : 'text-red-400'}`}>{score}%</span>
-                    </div>
 
-                    <div className={`flex items-center gap-1 px-2 border-l ${isDark ? 'border-slate-700' : 'border-slate-300'}`}>
-                        {catItems.map(item => (
-                            <span
-                                key={item.id}
-                                title={catDetails[item.id]?.label}
-                                className={`px-1 rounded font-bold ${catDetails[item.id]?.covered
-                                    ? 'bg-emerald-500/20 text-emerald-500'
-                                    : (isDark ? 'bg-slate-700 text-slate-500' : 'bg-slate-200 text-slate-400')}`}
-                            >
-                                {item.label}
-                            </span>
-                        ))}
-                    </div>
-
-                    <div className={`border-l pl-2 ${isDark ? 'border-slate-700' : 'border-slate-300'}`}>
-                        <span className={`font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>B7:</span>
-                        <span className={`ml-1 font-black ${cartPct > 70 ? 'text-emerald-500' : 'text-amber-500'}`}>{cartPct}%</span>
-                    </div>
-
-                    {score > 40 && confidenceValue > 0 && (
-                        <div className={`border-l pl-2 flex items-center gap-1 ${isDark ? 'border-slate-700' : 'border-slate-300'}`}>
-                            <span className={`font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Dx:</span>
-                            <span className={`font-black ${confidence.level === 'high' ? 'text-emerald-500' : confidence.level === 'moderate' ? 'text-blue-500' : 'text-amber-500'}`}>
-                                {confidenceValue}%
-                            </span>
+                        <div className={`flex flex-wrap items-center gap-1.5 rounded-xl border px-2 py-2 ${isDark ? 'border-slate-700 bg-slate-900/60' : 'border-slate-200 bg-white/70'}`}>
+                            {catItems.map(item => (
+                                <span
+                                    key={item.id}
+                                    title={catDetails[item.id]?.label}
+                                    className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] ${catDetails[item.id]?.covered
+                                        ? 'bg-emerald-500/20 text-emerald-500'
+                                        : (isDark ? 'bg-slate-700 text-slate-500' : 'bg-slate-200 text-slate-400')}`}
+                                >
+                                    {item.label}
+                                </span>
+                            ))}
                         </div>
-                    )}
+
+                        <div className="flex flex-wrap items-center gap-2">
+                            <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${isDark ? 'bg-slate-900/60 text-slate-300' : 'bg-white/80 text-slate-600'}`}>
+                                <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>B7</span>
+                                <span className={cartPct > 70 ? 'text-emerald-500' : 'text-amber-500'}>{cartPct}%</span>
+                            </div>
+
+                            {score > 40 && confidenceValue > 0 && (
+                                <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${isDark ? 'bg-slate-900/60 text-slate-300' : 'bg-white/80 text-slate-600'}`}>
+                                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Dx</span>
+                                    <span className={confidence.level === 'high' ? 'text-emerald-500' : confidence.level === 'moderate' ? 'text-blue-500' : 'text-amber-500'}>
+                                        {confidenceValue}%
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             )}
 
@@ -103,6 +115,7 @@ export default function AnamnesisTab({
                 anamnesisCategory={anamnesisCategory}
                 setAnamnesisCategory={setAnamnesisCategory}
                 isDark={isDark}
+                t={t}
             />
 
 
@@ -113,19 +126,20 @@ export default function AnamnesisTab({
                 isDark={isDark}
                 chatEndRef={chatEndRef}
                 isProcessing={isProcessing}
+                t={t}
             />
 
             {/* Question Area — Bottom Sheet on mobile, inline on desktop */}
             {/* Mobile: floating toggle */}
             <button
                 onClick={() => setIsMobileSheetOpen(prev => !prev)}
-                className={`md:hidden fixed bottom-16 right-4 z-30 px-4 py-2.5 rounded-2xl shadow-lg font-bold text-sm flex items-center gap-2 transition-all active:scale-95 ${isDark
+                className={`md:hidden fixed bottom-16 right-4 z-30 px-3.5 py-2 rounded-2xl shadow-lg font-bold text-xs flex items-center gap-2 transition-all active:scale-95 ${isDark
                     ? 'bg-emerald-600 text-white shadow-emerald-900/40'
                     : 'bg-emerald-600 text-white shadow-emerald-200'
                     }`}
                 style={{ display: isMobileSheetOpen ? 'none' : undefined }}
             >
-                <Brain size={16} /> Pertanyaan
+                <Brain size={16} /> {t('anamnesis.ui.questions')}
             </button>
 
             {/* Desktop inline / Mobile bottom sheet */}
@@ -133,24 +147,24 @@ export default function AnamnesisTab({
                 flex-shrink-0
                 md:relative md:rounded-none md:shadow-none md:max-h-none md:translate-y-0 md:border-0
                 ${/* Mobile bottom sheet styles */''}
-                max-md:fixed max-md:bottom-0 max-md:inset-x-0 max-md:z-40 max-md:rounded-t-2xl max-md:shadow-2xl max-md:max-h-[50vh]
+                max-md:fixed max-md:bottom-0 max-md:inset-x-0 max-md:z-40 max-md:rounded-t-2xl max-md:shadow-2xl max-md:max-h-[46vh]
                 max-md:transition-transform max-md:duration-300
                 ${!isMobileSheetOpen ? 'max-md:translate-y-[calc(100%-0px)] max-md:pointer-events-none max-md:opacity-0' : 'max-md:translate-y-0'}
                 ${isDark ? 'max-md:bg-slate-900 max-md:border-t max-md:border-slate-700' : 'max-md:bg-white max-md:border-t max-md:border-slate-200'}
             `}>
                 {/* Mobile header — drag handle + close button */}
                 <div className="md:hidden flex items-center justify-between px-3 pt-2 pb-1">
-                    <span className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Pertanyaan</span>
+                    <span className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('anamnesis.ui.questions')}</span>
                     <button
                         onClick={() => setIsMobileSheetOpen(false)}
-                        aria-label="Tutup panel pertanyaan"
+                        aria-label={t('anamnesis.ui.close_questions')}
                         className={`p-1.5 rounded-lg transition-all active:scale-90 ${isDark ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-100 text-slate-500 hover:text-slate-800'}`}
                     >
                         {'\u00d7'}
                     </button>
                 </div>
 
-                <div className="max-md:px-4 max-md:pb-4 max-md:overflow-y-auto max-md:max-h-[45vh] max-md:pointer-events-auto thin-scrollbar">
+                <div className="max-md:px-4 max-md:pb-4 max-md:overflow-y-auto max-md:max-h-[41vh] max-md:pointer-events-auto thin-scrollbar">
                     {/* Sprint 2: MAIA EBM Feedback */}
                     {maiaAlerts.length > 0 && (
                         <button
@@ -173,7 +187,9 @@ export default function AnamnesisTab({
                                     </span>
                                     {maiaAlerts[0].suggestTab && (
                                         <span className={`text-caption font-bold px-1.5 py-0.5 rounded ${isDark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>
-                                            Click to go to {maiaAlerts[0].suggestTab?.toUpperCase()}
+                                            {t('anamnesis.ui.jump_to_tab', {
+                                                tab: getLocalizedQuestionCategory(maiaAlerts[0].suggestTab, t)
+                                            })}
                                         </span>
                                     )}
                                 </div>
@@ -184,21 +200,26 @@ export default function AnamnesisTab({
                         </button>
                     )}
 
-                    <div className="flex justify-between items-center mb-2 mt-1">
-                        <h4 className={`font-bold text-xs ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                            Pertanyaan ({QUESTION_CATEGORIES[anamnesisCategory]}):
-                        </h4>
+                    <div className="mb-2 mt-1 flex items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+                                {activeCategoryLabel}
+                            </span>
+                            <span className={`text-[11px] ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                {t('anamnesis.ui.active_questions')}
+                            </span>
+                        </div>
                         <button
                             onClick={() => setShowAnamnesisHint(!showAnamnesisHint)}
-                            className="text-tag text-blue-600 hidden md:flex items-center gap-1 hover:underline"
+                            className={`hidden md:inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] transition-colors ${isDark ? 'bg-blue-500/10 text-blue-300 hover:bg-blue-500/20' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}
                         >
-                            <Brain size={10} /> Tips MAIA
+                            <Brain size={10} /> {t('anamnesis.ui.tips_button')}
                         </button>
                     </div>
 
-                    {showAnamnesisHint && ANAMNESIS_TIPS[anamnesisCategory] && (
-                        <div className={`mb-2 p-2 rounded text-tag italic border ${isDark ? 'bg-indigo-950/30 text-indigo-300 border-indigo-900/50' : 'bg-indigo-50 text-indigo-800 border-indigo-100'}`}>
-                            Tip: {ANAMNESIS_TIPS[anamnesisCategory]}
+                    {showAnamnesisHint && activeTip && (
+                        <div className={`mb-2 rounded-xl border px-3 py-2 text-xs italic leading-relaxed ${isDark ? 'bg-indigo-950/30 text-indigo-300 border-indigo-900/50' : 'bg-indigo-50 text-indigo-800 border-indigo-100'}`}>
+                            {t('anamnesis.ui.tip_prefix', { text: activeTip })}
                         </div>
                     )}
 
@@ -211,6 +232,7 @@ export default function AnamnesisTab({
                             setHasAskedComplaint={setHasAskedComplaint}
                             updatePatient={updatePatient}
                             onComplaintAsked={handleInitialComplaint}
+                            t={t}
                         />
                     )}
 
@@ -220,6 +242,7 @@ export default function AnamnesisTab({
                             patient={patient}
                             anamnesisHistory={anamnesisHistory}
                             handleAskQuestion={handleAskQuestion}
+                            t={t}
                         />
                     )}
 
@@ -232,6 +255,7 @@ export default function AnamnesisTab({
                             anamnesisHistory={anamnesisHistory}
                             handleAskQuestion={handleAskQuestion}
                             isDark={isDark}
+                            t={t}
                         />
                     )}
                 </div>

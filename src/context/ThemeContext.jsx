@@ -8,6 +8,7 @@
  * [KNOWN_ISSUES]: None
  * [LAST_UPDATE]: 2026-02-17
  */
+/* eslint-disable react-refresh/only-export-components */
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { safeGetStorageItem, safeSetStorageItem } from '../utils/browserSafety.js';
@@ -103,7 +104,6 @@ const ALL_CSS_CLASSES = THEME_IDS
     .map(id => THEMES[id].cssClass)
     .filter(Boolean);
 
-// eslint-disable-next-line react-refresh/only-export-components -- Standard context pattern: hook + provider
 export function useTheme() {
     const context = useContext(ThemeContext);
     if (!context) {

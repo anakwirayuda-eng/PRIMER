@@ -144,6 +144,19 @@ function detect3DProfile() {
     };
 }
 
+function getWilayahViewportMode() {
+    if (typeof window === 'undefined') {
+        return { compact: false, compressed: false };
+    }
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const compact = width < 960;
+    const compressed = compact || width <= 1180 || height < 820;
+
+    return { compact, compressed };
+}
+
 export default function WilayahPage() {
     const { t } = useTranslation();
     const tr = useCallback((key, fallback, options = {}) => translateWilayahString(t, key, fallback, options), [t]);
@@ -189,14 +202,11 @@ export default function WilayahPage() {
     const canUse3D = threeDProfile.canUse3D;
     const dioramaRenderTier = threeDProfile.renderTier;
     const [showShowcaseModal, setShowShowcaseModal] = useState(false);
-    const [isCompactHud, setIsCompactHud] = useState(() => {
-        if (typeof window === 'undefined') return false;
-        return window.innerWidth < 1024;
-    });
+    const [{ compact: isCompactHud, compressed: isCompressedHud }, setViewportMode] = useState(() => getWilayahViewportMode());
     const dioramaZoomRef = useRef(null); // ref for 3D camera zoom callbacks
     const blueprint2dRef = useRef(null); // ref for 2D pan/zoom callbacks
     const activeZoomRef = blueprint2dRef;
-    const [diveWhiteout, setDiveWhiteout] = useState(false); // Dollhouse Dive flash
+    const [diveWhiteout, setDiveWhiteout] = useState(false);
     const liquidBalance = useMemo(
         () => (Number(financeStats?.kapitasi) || 0) + (Number(financeStats?.pendapatanUmum) || 0),
         [financeStats]
@@ -231,7 +241,7 @@ export default function WilayahPage() {
     useEffect(() => {
         if (typeof window === 'undefined') return undefined;
         const handleResize = () => {
-            setIsCompactHud(window.innerWidth < 1024);
+            setViewportMode(getWilayahViewportMode());
             setThreeDProfile(detect3DProfile());
         };
         window.addEventListener('resize', handleResize);
@@ -293,7 +303,7 @@ export default function WilayahPage() {
             const isLocked = !unlockedRWs.includes(f.rw || '01');
             return {
                 ...f, phbsScore: phbs, behaviorRisk: riskLevel,
-                behaviorEmoji: riskLevel === 'high' ? 'ðŸ”´' : riskLevel === 'medium' ? 'ðŸŸ ' : 'ðŸŸ¢',
+                behaviorEmoji: riskLevel === 'high' ? 'H' : riskLevel === 'medium' ? 'M' : 'L',
                 isLocked
             };
         });
@@ -356,8 +366,8 @@ export default function WilayahPage() {
         [selectedBuilding?.type, t]
     );
     const inspectorDossier = useMemo(
-        () => getBuildingInspectorDossier(selectedBuilding?.type),
-        [selectedBuilding?.type]
+        () => getBuildingInspectorDossier(selectedBuilding?.type, t),
+        [selectedBuilding?.type, t]
     );
     const activeScenarioMap = useMemo(
         () => new Map(
@@ -516,6 +526,14 @@ export default function WilayahPage() {
             ])
         );
     }, [homeVisitModal, day, liquidBalance, buildingProgress, bridgeState]);
+
+    const localizedHomeVisitInterventions = useMemo(() => (
+        HOME_VISIT_INTERVENTIONS.map(action => ({
+            ...action,
+            label: tr(`wilayahContent.ui.homeVisitModal.interventions.${action.id}.label`, action.label),
+            description: tr(`wilayahContent.ui.homeVisitModal.interventions.${action.id}.description`, action.description)
+        }))
+    ), [tr]);
 
     const stats = {
         totalHouses: communityMetrics.totalKK,
@@ -693,7 +711,9 @@ export default function WilayahPage() {
     const activeLayerMeta = OVERLAY_LAYERS.find((layer) => layer.id === activeLayer) || OVERLAY_LAYERS[0];
     const visibleLayerLegendItems = isCompactHud
         ? activeLayerMeta.legendItems.slice(0, 2)
-        : activeLayerMeta.legendItems;
+        : isCompressedHud
+            ? activeLayerMeta.legendItems.slice(0, 3)
+            : activeLayerMeta.legendItems;
     const shouldShowInspectorBackdrop = isCompactHud && Boolean(selectedBuilding || selectedRwDossier);
     const inspectorBackdropStyle = isCompactHud
         ? {
@@ -703,7 +723,7 @@ export default function WilayahPage() {
         : undefined;
     const inspectorShellClass = isCompactHud
         ? 'absolute inset-x-3 z-40 flex flex-col animate-in slide-in-from-bottom-6 duration-300'
-        : 'absolute left-3 right-3 top-16 bottom-24 z-40 flex flex-col animate-in slide-in-from-right-8 duration-300 md:left-auto md:right-4 md:top-14 md:bottom-14 md:w-[400px]';
+        : `absolute left-3 right-3 top-16 bottom-24 z-40 flex flex-col animate-in slide-in-from-right-8 duration-300 md:left-auto md:right-4 md:top-14 md:bottom-14 ${isCompressedHud ? 'md:w-[360px] xl:w-[400px]' : 'md:w-[400px]'}`;
     const inspectorShellStyle = isCompactHud
         ? {
             top: 'auto',
@@ -845,9 +865,9 @@ export default function WilayahPage() {
                     className={`absolute top-0 left-0 right-0 z-30 ${GLASS} border-t-0 border-x-0`}
                     style={isCompactHud ? { paddingTop: 'max(env(safe-area-inset-top, 0px), 0px)' } : undefined}
                     onWheel={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
-                    <div className={`flex items-center justify-between ${isCompactHud ? 'gap-2 px-3 py-2.5' : 'px-5 py-3'}`}>
+                    <div className={`flex items-center justify-between ${isCompactHud ? 'gap-2 px-3 py-2.5' : isCompressedHud ? 'gap-3 px-4 py-2.5' : 'px-5 py-3'}`}>
                         {/* Left: Back + Title */}
-                        <div className={`flex items-center ${isCompactHud ? 'gap-2' : 'gap-4'}`}>
+                        <div className={`flex items-center ${isCompactHud ? 'gap-2' : isCompressedHud ? 'gap-3' : 'gap-4'}`}>
                             <button
                                 onClick={() => navigate('dashboard')}
                                 className={`p-2 rounded-lg ${GLASS_HOVER} text-white/60 hover:text-white`}
@@ -856,7 +876,7 @@ export default function WilayahPage() {
                                 <X size={18} />
                             </button>
                             <div>
-                                <h2 className={`${isCompactHud ? 'text-[11px]' : 'text-sm'} font-black text-white/90 tracking-tight flex items-center gap-2`}>
+                                <h2 className={`${isCompactHud ? 'text-[11px]' : isCompressedHud ? 'text-[13px]' : 'text-sm'} font-black text-white/90 tracking-tight flex items-center gap-2`}>
                                     <MapIcon className="text-emerald-400" size={16} />
                                     {t('wilayah.title')}
                                 </h2>
@@ -880,7 +900,7 @@ export default function WilayahPage() {
                         </div>
 
                         {/* Center: Stats */}
-                        <div className={`${isCompactHud ? 'hidden' : 'flex'} items-center gap-6 text-[10px] font-black uppercase tracking-widest`}>
+                        <div className={`${isCompactHud || isCompressedHud ? 'hidden' : 'flex'} items-center gap-6 text-[10px] font-black uppercase tracking-widest`}>
                             <div className="flex items-center gap-2 text-emerald-400">
                                 <HomeIcon size={12} />
                                 <span>{stats.totalHouses} {t('wilayah.kk')}</span>
@@ -909,12 +929,12 @@ export default function WilayahPage() {
                         </div>
 
                         {/* Right: Utility Actions */}
-                        <div className={`flex items-center ${isCompactHud ? 'gap-1' : 'gap-2'}`}>
+                        <div className={`flex items-center ${isCompactHud ? 'gap-1' : isCompressedHud ? 'gap-1.5' : 'gap-2'}`}>
                             <button
                                 onClick={() => navigate('sensus')}
-                                className={`${isCompactHud ? 'px-2 py-1.5 text-[9px]' : 'px-3 py-1.5 text-[10px]'} rounded-lg font-black uppercase tracking-wider ${GLASS} ${GLASS_HOVER} text-amber-300`}
+                                className={`${isCompactHud ? 'px-2 py-1.5 text-[9px]' : isCompressedHud ? 'px-2.5 py-1.5 text-[9px]' : 'px-3 py-1.5 text-[10px]'} rounded-lg font-black uppercase tracking-wider ${GLASS} ${GLASS_HOVER} text-amber-300`}
                             >
-                                {isCompactHud ? 'Sns' : t('wilayah.census')}
+                                {isCompactHud || isCompressedHud ? 'Sns' : t('wilayah.census')}
                             </button>
                             {canUse3D && (
                                 <button
@@ -922,9 +942,9 @@ export default function WilayahPage() {
                                     onMouseEnter={warmExhibitionDiorama}
                                     onFocus={warmExhibitionDiorama}
                                     title={t('wilayah.showcase_open_title')}
-                                    className={`${isCompactHud ? 'px-2 py-1.5 text-[9px]' : 'px-3 py-1.5 text-[10px]'} rounded-lg font-black uppercase tracking-wider ${GLASS} ${GLASS_HOVER} text-cyan-300`}
+                                    className={`${isCompactHud ? 'px-2 py-1.5 text-[9px]' : isCompressedHud ? 'px-2.5 py-1.5 text-[9px]' : 'px-3 py-1.5 text-[10px]'} rounded-lg font-black uppercase tracking-wider ${GLASS} ${GLASS_HOVER} text-cyan-300`}
                                 >
-                                    {isCompactHud ? '3D' : t('wilayah.showcase_open')}
+                                    {isCompactHud || isCompressedHud ? '3D' : t('wilayah.showcase_open')}
                                 </button>
                             )}
                         </div>
@@ -940,9 +960,9 @@ export default function WilayahPage() {
                     className={`absolute bottom-0 left-0 right-0 z-30 ${GLASS} border-b-0 border-x-0`}
                     style={isCompactHud ? { paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0px)' } : undefined}
                     onWheel={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
-                    <div className={`flex flex-col gap-2 ${isCompactHud ? 'px-3 py-2' : 'px-4 py-2.5'} lg:flex-row lg:items-center lg:justify-between`}>
+                    <div className={`flex flex-col gap-2 ${isCompactHud ? 'px-3 py-2' : isCompressedHud ? 'px-3 py-2' : 'px-4 py-2.5'} lg:flex-row lg:items-center lg:justify-between`}>
                         {/* Left: Overlay Layer Buttons */}
-                        <div className={`flex items-center gap-1.5 lg:max-w-[38%] ${isCompactHud ? 'overflow-x-auto whitespace-nowrap pb-1' : 'flex-wrap'}`}>
+                        <div className={`flex items-center gap-1.5 ${isCompressedHud ? 'lg:max-w-[42%]' : 'lg:max-w-[38%]'} ${isCompactHud || isCompressedHud ? 'overflow-x-auto whitespace-nowrap pb-1' : 'flex-wrap'}`}>
                             <span className="mr-1 text-[9px] font-black text-white/30 uppercase tracking-widest">{t('wilayah.overlay')}</span>
                             {OVERLAY_LAYERS.map((layer) => {
                                 const isActive = activeLayer === layer.id;
@@ -956,7 +976,7 @@ export default function WilayahPage() {
                                             // if (layer.id !== 'general') setOverlayPanelOpen(true);
                                             // else setOverlayPanelOpen(false);
                                         }}
-                                        className={`flex items-center gap-1.5 rounded-lg ${isCompactHud ? 'px-2 py-1.5 text-[9px]' : 'px-2.5 py-1.5 text-[10px]'} font-black uppercase tracking-wider transition-all ${isActive ? '' : GLASS_HOVER}`}
+                                        className={`flex items-center gap-1.5 rounded-lg ${isCompactHud ? 'px-2 py-1.5 text-[9px]' : isCompressedHud ? 'px-2 py-1.5 text-[9px]' : 'px-2.5 py-1.5 text-[10px]'} font-black uppercase tracking-wider transition-all ${isActive ? '' : GLASS_HOVER}`}
                                         style={isActive ? {
                                             background: layer.activeBg,
                                             color: layer.activeText,
@@ -972,13 +992,13 @@ export default function WilayahPage() {
                                         data-testid={`wilayah-layer-toggle-${layer.id}`}
                                     >
                                         <LayerIcon size={12} />
-                                        <span className="hidden sm:inline">{layer.label}</span>
+                                        <span className={`${isCompressedHud ? 'hidden md:inline' : 'hidden sm:inline'}`}>{layer.label}</span>
                                     </button>
                                 );
                             })}
                         </div>
 
-                        <div className="min-w-0 flex-1 lg:max-w-[44%]">
+                        <div className={`min-w-0 flex-1 ${isCompressedHud ? 'lg:max-w-[40%]' : 'lg:max-w-[44%]'}`}>
                             <div
                                 className="rounded-xl border px-3 py-2 animate-in fade-in duration-300"
                                 style={{
@@ -997,7 +1017,7 @@ export default function WilayahPage() {
                                         >
                                             {t('wilayah.mode_label', { label: activeLayerMeta.label })}
                                         </div>
-                                        <div className={`${isCompactHud ? 'text-[9px]' : 'text-[10px]'} mt-1 font-bold leading-snug text-white/78`}>
+                                        <div className={`${isCompactHud || isCompressedHud ? 'text-[9px]' : 'text-[10px]'} mt-1 font-bold leading-snug text-white/78`}>
                                             {activeLayerMeta.subtitle}
                                         </div>
                                     </div>
@@ -1101,7 +1121,7 @@ export default function WilayahPage() {
                         className="absolute inset-x-0 z-35 bg-slate-950/30 backdrop-blur-[2px] animate-in fade-in duration-200"
                         style={inspectorBackdropStyle}
                         onClick={handleCloseInspector}
-                        aria-label="Tutup inspector wilayah"
+                        aria-label={tr('wilayahContent.ui.rwInspector.closeInspectorAria', 'Close region inspector')}
                     />
                 )}
 
@@ -1123,14 +1143,14 @@ export default function WilayahPage() {
                                 <button
                                     onClick={handleCloseInspector}
                                     className={`absolute ${isCompactHud ? 'right-4 top-3' : 'right-4 top-4'} p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all`}
-                                    aria-label="Tutup dossier RW"
+                                    aria-label={tr('wilayahContent.ui.rwInspector.closeDossierAria', 'Close RW dossier')}
                                 >
                                     <X size={16} />
                                 </button>
 
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="px-2 py-0.5 bg-amber-500/20 text-amber-200 text-[9px] font-black uppercase tracking-widest rounded-md border border-amber-500/30">
-                                        Blank Spot PIS-PK
+                                        {tr('wilayahContent.ui.rwInspector.blankSpotBadge', 'PIS-PK Blank Spot')}
                                     </span>
                                     <span className="px-2 py-0.5 bg-white/10 text-white/60 text-[9px] font-black uppercase tracking-widest rounded-md border border-white/10">
                                         RW {selectedRwDossier.rw}
@@ -1138,31 +1158,39 @@ export default function WilayahPage() {
                                 </div>
 
                                 <h3 className="text-xl font-black text-white leading-tight tracking-tight pr-8">
-                                    Dossier Zona Belum Terdata
+                                    {tr('wilayahContent.ui.rwInspector.title', 'Unmapped Zone Dossier')}
                                 </h3>
                                 <p className="mt-2 max-w-sm text-xs font-medium leading-relaxed text-white/50">
-                                    Sektor ini sudah ada di topologi desa, tetapi data rumah tangga PIS-PK belum menjadi wilayah operasional aktif.
+                                    {tr('wilayahContent.ui.rwInspector.description', 'This sector exists in the village topology, but its PIS-PK household data is not yet an active operational area.')}
                                 </p>
                             </div>
 
                             <div className="flex-1 overflow-y-auto scrollbar-hide p-5 space-y-4">
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/35">Keluarga</div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/35">
+                                            {tr('wilayahContent.ui.rwInspector.families', 'Families')}
+                                        </div>
                                         <div className="mt-1 text-2xl font-black text-white">{selectedRwDossier.familyCount}</div>
-                                        <div className="text-[10px] font-bold uppercase tracking-wider text-white/35">KK terpetakan</div>
+                                        <div className="text-[10px] font-bold uppercase tracking-wider text-white/35">
+                                            {tr('wilayahContent.ui.rwInspector.mappedHouseholds', 'mapped households')}
+                                        </div>
                                     </div>
                                     <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/35">Penduduk</div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/35">
+                                            {tr('wilayahContent.ui.rwInspector.residents', 'Residents')}
+                                        </div>
                                         <div className="mt-1 text-2xl font-black text-white">{selectedRwDossier.residentCount}</div>
-                                        <div className="text-[10px] font-bold uppercase tracking-wider text-white/35">Jiwa tercatat</div>
+                                        <div className="text-[10px] font-bold uppercase tracking-wider text-white/35">
+                                            {tr('wilayahContent.ui.rwInspector.recordedResidents', 'recorded residents')}
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4">
                                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.24em] text-amber-200">
                                         <Building size={14} />
-                                        Status Unlock RW {selectedRwDossier.rw}
+                                        {tr('wilayahContent.ui.rwInspector.unlockStatus', 'RW {{rw}} Unlock Status', { rw: selectedRwDossier.rw })}
                                     </div>
                                     <div className="mt-3 space-y-3">
                                         <div className="flex items-start justify-between gap-4 rounded-lg border border-white/10 bg-black/10 px-3 py-2">
@@ -1213,7 +1241,7 @@ export default function WilayahPage() {
 
                                 <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/10 p-4">
                                     <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-200">
-                                        Arahan Operasional
+                                        {tr('wilayahContent.ui.rwInspector.guidanceTitle', 'Operational Guidance')}
                                     </div>
                                     <p className="mt-2 text-xs font-medium leading-relaxed text-white/65">
                                         {tr(
@@ -1258,7 +1286,7 @@ export default function WilayahPage() {
                                 <button
                                     onClick={handleCloseInspector}
                                     className={`absolute ${isCompactHud ? 'right-4 top-3' : 'right-4 top-4'} p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all`}
-                                    aria-label="Tutup detail bangunan"
+                                    aria-label={tr('wilayahContent.ui.rwInspector.closeBuildingDetailAria', 'Close building detail')}
                                 >
                                     <X size={16} />
                                 </button>
@@ -1274,7 +1302,7 @@ export default function WilayahPage() {
                                     )}
                                     {selectedBuilding.familyId && (
                                         <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 text-[9px] font-black uppercase tracking-widest rounded-md border border-blue-500/30">
-                                            Hunian Aktif
+                                            {tr('wilayahContent.ui.rwInspector.activeResidence', 'Active Residence')}
                                         </span>
                                     )}
                                 </div>
@@ -1284,9 +1312,13 @@ export default function WilayahPage() {
                                 </h3>
 
                                 <div className="flex items-center gap-3 mt-2 text-[10px] font-bold text-white/30">
-                                    <span>ðŸ“ {selectedBuilding.x}, {selectedBuilding.y}</span>
+                                    <span className="inline-flex items-center gap-1">
+                                        <MapIcon size={11} /> {selectedBuilding.x}, {selectedBuilding.y}
+                                    </span>
                                     {activeFamily && (
-                                        <span>ðŸ˜ï¸ RT {activeFamily.rt || '01'}</span>
+                                        <span className="inline-flex items-center gap-1">
+                                            <HomeIcon size={11} /> {tr('wilayahContent.ui.rwInspector.rtLabel', 'RT {{rt}}', { rt: activeFamily.rt || '01' })}
+                                        </span>
                                     )}
                                 </div>
                             </div>
@@ -1296,7 +1328,7 @@ export default function WilayahPage() {
                                 <div
                                     onClick={() => isGameEnabledBuilding(selectedBuilding.type) && setBuildingInterior(selectedBuilding.type)}
                                     className={`group ${isCompactHud ? 'aspect-[2.4/1]' : 'aspect-[2/1]'} bg-white/5 rounded-xl border border-white/5 flex items-center justify-center relative overflow-hidden ${isGameEnabledBuilding(selectedBuilding.type) ? 'cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all shadow-lg hover:shadow-emerald-500/20' : ''}`}
-                                    title={isGameEnabledBuilding(selectedBuilding.type) ? "Masuk Gedung" : ""}
+                                    title={isGameEnabledBuilding(selectedBuilding.type) ? tr('wilayahContent.ui.inspectorActions.enterBuilding', 'Enter Building') : ''}
                                 >
                                     <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.3) 0.5px, transparent 0.5px)', backgroundSize: '16px 16px' }} />
                                     <img
@@ -1306,14 +1338,18 @@ export default function WilayahPage() {
                                     />
                                     {isGameEnabledBuilding(selectedBuilding.type) && (
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-center pb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-                                            <span className="text-[10px] font-black tracking-widest text-emerald-300 bg-black/50 px-3 py-1 rounded-full uppercase">Masuk Gedung</span>
+                                            <span className="text-[10px] font-black tracking-widest text-emerald-300 bg-black/50 px-3 py-1 rounded-full uppercase">
+                                                {tr('wilayahContent.ui.inspectorActions.enterBuilding', 'Enter Building')}
+                                            </span>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            {/* Drawer Content â€” scrollable */}
-                            {inspectorScope && pocketDioramaData?.scopeMeta && (
+                            {/* Pocket Diorama / 3D Inspector — only for FACILITY scope, not individual houses.
+                                For a house (familyId set), the spatial context is redundant (header already says RT/RW)
+                                and burying KUNJUNGAN RUMAH / Kunjungan Cepat below the fold confuses entry flow. */}
+                            {inspectorScope && pocketDioramaData?.scopeMeta && !selectedBuilding.familyId && (
                                 <div className="px-5 pt-3 space-y-3">
                                     {shouldRenderPocketSnapshot && (
                                         <PocketDioramaSnapshot
@@ -1672,7 +1708,7 @@ export default function WilayahPage() {
                             {/* Modal Body */}
                             <div className="p-6 max-h-[400px] overflow-y-auto scrollbar-hide">
                                 <div className="grid grid-cols-1 gap-2">
-                                    {HOME_VISIT_INTERVENTIONS.map((action) => {
+                                    {localizedHomeVisitInterventions.map((action) => {
                                         // Fix: support both singular `indicator` and plural `indicators` for completion check
                                         const family = villageData.families.find(f => f.id === homeVisitModal.familyId);
                                         const idsToCheck = action.indicators || (action.indicator ? [action.indicator] : []);
@@ -1699,15 +1735,17 @@ export default function WilayahPage() {
                                                 <div className="flex-1">
                                                     <h4 className="font-black text-white text-xs uppercase tracking-tight">{action.label}</h4>
                                                     <p className="text-[10px] text-white/50 font-medium">
-                                                        {isBlocked ? 'Akses ke sektor Timur terputus.' : action.description}
+                                                        {isBlocked ? tr('wilayahContent.ui.homeVisitModal.accessBlockedEast', 'Access to the eastern sector is cut off.') : action.description}
                                                     </p>
                                                 </div>
                                                 <div className="text-right">
                                                     {isCompleted ? (
-                                                        <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-md uppercase">Selesai</span>
+                                                        <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-md uppercase">
+                                                            {tr('wilayahContent.ui.homeVisitModal.completed', 'Done')}
+                                                        </span>
                                                     ) : isBlocked ? (
                                                         <span className="text-[9px] font-black text-red-400 bg-red-500/20 px-2 py-1 rounded-md uppercase">
-                                                            {travelState?.blockedReason || 'Terblokir'}
+                                                            {travelState?.blockedReason || tr('wilayahContent.ui.homeVisitModal.blocked', 'Blocked')}
                                                         </span>
                                                     ) : (
                                                         <div className="flex flex-col items-end">
@@ -1747,7 +1785,7 @@ export default function WilayahPage() {
                     FULL-SCREEN BUILDING INTERIOR OVERLAY
                    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
                 {buildingInterior && buildingInterior === 'posyandu' && (
-                    <ErrorBoundary name="PosyanduActivePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel="Tutup Posyandu">
+                    <ErrorBoundary name="PosyanduActivePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel={tr('wilayahContent.ui.errorBoundary.closePosyandu', 'Close Posyandu')}>
                         <PosyanduActivePanel
                             initialBabies={(() => {
                                 // Wire real village babies â€” convert to PosyanduActivePanel format
@@ -1842,7 +1880,7 @@ export default function WilayahPage() {
                     </ErrorBoundary>
                 )}
                 {buildingInterior && (buildingInterior === 'pustu' || buildingInterior === 'polindes') && (
-                    <ErrorBoundary name="PustuActivePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel="Tutup Pustu">
+                    <ErrorBoundary name="PustuActivePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel={tr('wilayahContent.ui.errorBoundary.closePustu', 'Close Pustu')}>
                         <PustuActivePanel
                             buildingType={buildingInterior}
                             onClose={() => setBuildingInterior(null)}
@@ -1859,7 +1897,7 @@ export default function WilayahPage() {
                 )}
                 {buildingInterior && buildingInterior !== 'posyandu' && buildingInterior !== 'pustu' && buildingInterior !== 'polindes' && (
                     <div className="fixed inset-0 z-50 animate-in fade-in zoom-in-95 duration-300">
-                        <ErrorBoundary name="BuildingGamePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel="Tutup Gedung">
+                        <ErrorBoundary name="BuildingGamePanel" fallbackAction={() => setBuildingInterior(null)} fallbackActionLabel={tr('wilayahContent.ui.errorBoundary.closeBuilding', 'Close Building')}>
                             <BuildingGamePanel
                                 buildingType={buildingInterior}
                                 buildingName={selectedBuilding?.name || null}
@@ -1886,7 +1924,15 @@ export default function WilayahPage() {
                                 onTriggerScenario={(scenarioId) => {
                                     const ok = triggerIKMEvent?.(scenarioId);
                                     if (!ok) {
-                                        showToast(`Skenario "${scenarioId.replace(/_/g, ' ')}" belum bisa dimulai saat ini. Cek status aktif, cooldown, atau kategori IKM.`, 'warning', 4200);
+                                        showToast(
+                                            tr(
+                                                'wilayahContent.ui.errorBoundary.scenarioUnavailable',
+                                                'Scenario "{{scenario}}" cannot be started right now. Check active status, cooldown, or the IKM category.',
+                                                { scenario: scenarioId.replace(/_/g, ' ') }
+                                            ),
+                                            'warning',
+                                            4200
+                                        );
                                     }
                                 }}
                             />
@@ -1898,7 +1944,7 @@ export default function WilayahPage() {
                     BEHAVIOR CHANGE CASE PANEL (UKM Gameplay)
                    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
                 {activeBCCase && (
-                    <ErrorBoundary name="BehaviorCasePanel" fallbackAction={handleCloseBehaviorCase} fallbackActionLabel="Tutup Kasus">
+                    <ErrorBoundary name="BehaviorCasePanel" fallbackAction={handleCloseBehaviorCase} fallbackActionLabel={tr('wilayahContent.ui.errorBoundary.closeCase', 'Close Case')}>
                         <BehaviorCasePanel
                             building={activeBCCase}
                             familyData={activeBCCase.familyData || villageData?.families?.find(f => f.id === activeBCCase.familyId)}
@@ -1927,7 +1973,7 @@ export default function WilayahPage() {
                     COMMUNITY DIAGNOSIS PANEL (Global IKM Events)
                    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
                 {activeIKMEventId && (
-                    <ErrorBoundary name="CommunityDiagnosisPanel" fallbackAction={() => setActiveIKMEventId(null)} fallbackActionLabel="Tutup Panel">
+                    <ErrorBoundary name="CommunityDiagnosisPanel" fallbackAction={() => setActiveIKMEventId(null)} fallbackActionLabel={tr('wilayahContent.ui.errorBoundary.closePanel', 'Close Panel')}>
                         <CommunityDiagnosisPanel
                             eventInstance={activeIKMEvents?.find(e => e.instanceId === activeIKMEventId)}
                             onClose={() => setActiveIKMEventId(null)}

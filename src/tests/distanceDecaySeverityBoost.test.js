@@ -22,7 +22,7 @@ describe('Distance Decay -> Severity On Arrival', () => {
         bridgeState = { status: 'normal', severityBoost: 0 },
         serviceAnchors = undefined
     ) =>
-        generatePatient(480, mockPopulation, 1, { poli_umum: 1 }, {}, 'stable-seed-1', {
+        generatePatient(480, mockPopulation, 1, { poli_umum: 1 }, {}, 'stable-seed-13', {
             familyCoords: coords ? { [familyId]: coords } : {},
             bridgeState,
             ...(serviceAnchors ? { serviceAnchors } : {})
@@ -45,7 +45,7 @@ describe('Distance Decay -> Severity On Arrival', () => {
     });
 
     it('missing family coords preserves baseline risk', () => {
-        const baselinePatient = generatePatient(480, mockPopulation, 1, { poli_umum: 1 }, {}, 'stable-seed-1');
+        const baselinePatient = generatePatient(480, mockPopulation, 1, { poli_umum: 1 }, {}, 'stable-seed-13');
         const missingCoordsPatient = generateResidentPatient(null);
 
         expect(missingCoordsPatient.hidden.risk).toBe(baselinePatient.hidden.risk);

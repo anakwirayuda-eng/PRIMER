@@ -57,19 +57,20 @@ export function useToast() {
     const timersRef = useRef({});
 
     useEffect(() => {
+        const timers = timersRef.current;
         const handler = (toast) => {
             setToasts(prev => [...prev, toast]);
             if (toast.duration > 0) {
-                timersRef.current[toast.id] = setTimeout(() => {
+                timers[toast.id] = setTimeout(() => {
                     setToasts(prev => prev.filter(t => t.id !== toast.id));
-                    delete timersRef.current[toast.id];
+                    delete timers[toast.id];
                 }, toast.duration);
             }
         };
         listeners.add(handler);
         return () => {
             listeners.delete(handler);
-            Object.values(timersRef.current).forEach(clearTimeout);
+            Object.values(timers).forEach(clearTimeout);
         };
     }, []);
 

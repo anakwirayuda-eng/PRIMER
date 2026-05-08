@@ -9,18 +9,20 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { isOfflineModeEnabled } from './offlineMode.js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const SUPABASE_SINGLETON_KEY = '__PRIMER_SUPABASE_CLIENT__';
+const hasSupabaseEnv = Boolean(supabaseUrl && supabaseAnonKey);
 
 /**
  * Whether Supabase is configured. When false, all services
  * gracefully degrade to offline/local-only mode.
  */
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+export const isSupabaseConfigured = hasSupabaseEnv && !isOfflineModeEnabled();
 
-if (!isSupabaseConfigured) {
+if (!hasSupabaseEnv) {
     console.warn(
         '[Supabase] Not configured — running in offline mode. ' +
         'Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env to enable cloud features.'
@@ -44,3 +46,20 @@ function getOrCreateSupabaseClient() {
 }
 
 export const supabase = getOrCreateSupabaseClient();
+
+export async function suspendSupabaseAuthForOfflineMode() {
+    const client = globalThis[SUPABASE_SINGLETON_KEY];
+    if (!client?.auth) return;
+
+    try {
+        client.auth.stopAutoRefresh?.();
+    } catch (error) {
+        console.warn('[Supabase] Failed to stop auth auto-refresh for offline mode.', error);
+    }
+
+    try {
+        await client.auth.signOut({ scope: 'local' });
+    } catch (error) {
+        console.warn('[Supabase] Failed to clear local auth session for offline mode.', error);
+    }
+}

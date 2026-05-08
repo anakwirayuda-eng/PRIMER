@@ -9,7 +9,8 @@
  * [DEPENDS_ON]: DispensingEngine (generateDispensingChallenge, scoreBishiBashi)
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Zap, Clock, Target, XCircle, CheckCircle2, AlertTriangle, X } from 'lucide-react';
 import { generateDispensingChallenge, scoreBishiBashi } from '../game/DispensingEngine.js';
 import { getMedicationById } from '../data/MedicationDatabase.js';
@@ -25,35 +26,19 @@ import { useTheme } from '../context/ThemeContext';
  * @param {Function} props.onDismiss - Cancel
  */
 export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1, onComplete, onDismiss }) {
+    const { t } = useTranslation();
     const { isDark } = useTheme();
     const [phase, setPhase] = useState('ready'); // ready | playing | result
-    const [challenge, setChallenge] = useState(null);
     const [selectedMeds, setSelectedMeds] = useState([]);
     const [timeElapsed, setTimeElapsed] = useState(0);
     const [result, setResult] = useState(null);
     const timerRef = useRef(null);
     const startTimeRef = useRef(null);
-
-    // Generate challenge on mount
-    useEffect(() => {
-        const ch = generateDispensingChallenge(difficulty, prescriptionQueue);
-        setChallenge(ch);
-    }, [difficulty, prescriptionQueue]);
-
-    // Timer logic
-    useEffect(() => {
-        if (phase !== 'playing' || !challenge) return;
-        startTimeRef.current = Date.now();
-        timerRef.current = setInterval(() => {
-            const elapsed = Date.now() - startTimeRef.current;
-            setTimeElapsed(elapsed);
-            if (elapsed >= challenge.timeLimit * 1000) {
-                clearInterval(timerRef.current);
-                handleSubmit(true);
-            }
-        }, 50);
-        return () => clearInterval(timerRef.current);
-    }, [phase, challenge]);
+    const selectedMedsRef = useRef([]);
+    const challenge = useMemo(
+        () => generateDispensingChallenge(difficulty, prescriptionQueue),
+        [difficulty, prescriptionQueue]
+    );
 
     const handleStart = useCallback(() => {
         setPhase('playing');
@@ -69,25 +54,54 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
         );
     }, []);
 
+    useEffect(() => {
+        selectedMedsRef.current = selectedMeds;
+    }, [selectedMeds]);
+
     const handleSubmit = useCallback((timeout = false) => {
         clearInterval(timerRef.current);
+        timerRef.current = null;
         if (!challenge) return;
         const elapsed = timeout ? challenge.timeLimit * 1000 : (Date.now() - startTimeRef.current);
         const score = scoreBishiBashi(
             challenge.targetMeds,
-            selectedMeds,
+            selectedMedsRef.current,
             elapsed,
             challenge.timeLimit * 1000
         );
         setResult(score);
         setPhase('result');
-    }, [challenge, selectedMeds]);
+    }, [challenge]);
+
+    // Timer logic
+    useEffect(() => {
+        if (phase !== 'playing' || !challenge) return;
+        startTimeRef.current = Date.now();
+        timerRef.current = setInterval(() => {
+            const elapsed = Date.now() - startTimeRef.current;
+            setTimeElapsed(elapsed);
+            if (elapsed >= challenge.timeLimit * 1000) {
+                handleSubmit(true);
+            }
+        }, 50);
+        return () => {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        };
+    }, [phase, challenge, handleSubmit]);
 
     if (!challenge) return null;
 
     const timeLimitMs = challenge.timeLimit * 1000;
     const progress = phase === 'playing' ? Math.max(0, 1 - timeElapsed / timeLimitMs) : 1;
     const fuseColor = progress > 0.5 ? 'bg-emerald-500' : progress > 0.2 ? 'bg-amber-500' : 'bg-red-500';
+    const getFeedback = () => {
+        if (!result) return '';
+        if (result.accuracy === 100 && result.wrong === 0) return t('bishiBashi.feedback.perfect');
+        if (result.accuracy >= 80) return t('bishiBashi.feedback.near');
+        if (result.accuracy >= 50) return t('bishiBashi.feedback.partial');
+        return t('bishiBashi.feedback.poor');
+    };
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -105,7 +119,7 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
                         <div>
                             <h2 className="text-sm font-black tracking-tight">PHARMACOVIGILANCE RUSH</h2>
                             <p className="text-[10px] text-white/60 font-medium">
-                                Level {difficulty} • {challenge.targetMeds.length} obat target
+                                {t('bishiBashi.subtitle', { level: difficulty, count: challenge.targetMeds.length })}
                             </p>
                         </div>
                     </div>
@@ -113,7 +127,7 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
 
                 {/* Content */}
                 <div className="p-5">
-                    {/* ─── READY PHASE ─── */}
+                    {/* READY PHASE */}
                     {phase === 'ready' && (
                         <div className="text-center py-8 space-y-4">
                             <div className={`inline-flex p-4 rounded-2xl ${isDark ? 'bg-amber-500/10' : 'bg-amber-50'}`}>
@@ -121,14 +135,14 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
                             </div>
                             <div>
                                 <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                                    Resep: {challenge.challenge.patientName}
+                                    {t('bishiBashi.prescription', { patient: challenge.challenge.patientName })}
                                 </p>
                                 <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                                    Pilih {challenge.targetMeds.length} obat yang BENAR dari grid. Hati-hati obat mirip (LASA)!
+                                    {t('bishiBashi.instruction', { count: challenge.targetMeds.length })}
                                 </p>
                             </div>
                             <div className={`text-xs font-mono ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                                Obat yang diresepkan:
+                                {t('bishiBashi.prescribed')}
                             </div>
                             <div className="flex flex-wrap gap-2 justify-center">
                                 {challenge.challenge.items.map((item, i) => (
@@ -139,19 +153,19 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
                             </div>
                             <div className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                                 <Clock size={12} className="inline mr-1" />
-                                Batas waktu: {challenge.timeLimit} detik
+                                {t('bishiBashi.timeLimit', { seconds: challenge.timeLimit })}
                             </div>
                             <button
                                 onClick={handleStart}
                                 className="px-6 py-3 rounded-xl font-black text-sm text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                             >
                                 <Zap size={16} className="inline mr-2" />
-                                MULAI RUSH!
+                                {t('bishiBashi.start')}
                             </button>
                         </div>
                     )}
 
-                    {/* ─── PLAYING PHASE ─── */}
+                    {/* PLAYING PHASE */}
                     {phase === 'playing' && (
                         <div className="space-y-4">
                             {/* Fuse Timer */}
@@ -167,7 +181,7 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
 
                             {/* Prescription reminder */}
                             <div className={`p-3 rounded-xl text-xs ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-50 text-slate-600'}`}>
-                                <span className="font-bold">Resep:</span>{' '}
+                                <span className="font-bold">{t('bishiBashi.prescriptionLabel')}</span>{' '}
                                 {challenge.challenge.items.map(i => i.name).join(', ')}
                             </div>
 
@@ -189,7 +203,7 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
                                                 {med?.name || medId}
                                             </div>
                                             <div className={`text-[9px] mt-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                                                {med?.form || '?'} • {med?.type || ''}
+                                                {med?.form || '?'} - {med?.type || ''}
                                             </div>
                                         </button>
                                     );
@@ -205,12 +219,12 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
                                         : `${isDark ? 'bg-slate-800 text-slate-600' : 'bg-slate-100 text-slate-400'} cursor-not-allowed`
                                     }`}
                             >
-                                SERAHKAN ({selectedMeds.length}/{challenge.targetMeds.length})
+                                {t('bishiBashi.submit', { selected: selectedMeds.length, total: challenge.targetMeds.length })}
                             </button>
                         </div>
                     )}
 
-                    {/* ─── RESULT PHASE ─── */}
+                    {/* RESULT PHASE */}
                     {phase === 'result' && result && (
                         <div className="text-center py-6 space-y-4">
                             {/* Score */}
@@ -229,18 +243,23 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
                             </div>
 
                             <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                                {result.feedback}
+                                {getFeedback()}
                             </p>
+                            {result.feedback && (
+                                <p className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                                    {result.feedback}
+                                </p>
+                            )}
 
                             {/* Stats */}
                             <div className="grid grid-cols-3 gap-3">
                                 <div className={`p-3 rounded-xl ${isDark ? 'bg-slate-800' : 'bg-slate-50'}`}>
                                     <div className={`text-xl font-black ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{result.accuracy}%</div>
-                                    <div className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Akurasi</div>
+                                    <div className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('bishiBashi.accuracy')}</div>
                                 </div>
                                 <div className={`p-3 rounded-xl ${isDark ? 'bg-slate-800' : 'bg-slate-50'}`}>
                                     <div className={`text-xl font-black ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>{result.speed}%</div>
-                                    <div className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Kecepatan</div>
+                                    <div className={`text-[9px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('bishiBashi.speed')}</div>
                                 </div>
                                 <div className={`p-3 rounded-xl ${isDark ? 'bg-slate-800' : 'bg-slate-50'}`}>
                                     <div className={`text-xl font-black ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>+{result.xpEarned}</div>
@@ -251,14 +270,14 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
                             {/* Detail */}
                             {(result.wrong > 0 || result.missed > 0) && (
                                 <div className={`p-3 rounded-xl text-xs text-left space-y-1 ${isDark ? 'bg-red-500/5 text-red-300' : 'bg-red-50 text-red-700'}`}>
-                                    {result.wrong > 0 && <p>❌ {result.wrong} obat SALAH dipilih</p>}
-                                    {result.missed > 0 && <p>⚠️ {result.missed} obat TERLEWAT</p>}
+                                    {result.wrong > 0 && <p>X {t('bishiBashi.wrong', { count: result.wrong })}</p>}
+                                    {result.missed > 0 && <p>WARN {t('bishiBashi.missed', { count: result.missed })}</p>}
                                 </div>
                             )}
 
                             {result.combo > 0 && (
                                 <div className={`text-xs font-black ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                                    🔥 COMBO x{result.combo}!
+                                    {t('bishiBashi.combo', { combo: result.combo })}
                                 </div>
                             )}
 
@@ -266,7 +285,7 @@ export default function BishiBashiModal({ prescriptionQueue = [], difficulty = 1
                                 onClick={() => onComplete?.(result)}
                                 className="px-6 py-3 rounded-xl font-black text-sm text-white bg-gradient-to-r from-slate-600 to-indigo-700 hover:from-slate-700 hover:to-indigo-800 transition-all shadow-lg"
                             >
-                                Selesai
+                                {t('bishiBashi.finish')}
                             </button>
                         </div>
                     )}

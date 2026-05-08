@@ -31,7 +31,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'amoxicillin_250_ped',
         name: 'Amoxicillin Sirup 250mg/5ml',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'botol',
         form: 'syrup',
         fornas: true,
@@ -49,7 +49,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'amoxicillin_clavulanate_625',
         name: 'Amoxicillin/Clavulanate 625mg',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -67,7 +67,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'amoxicillin_ped',
         name: 'Amoxicillin Sirup Ped',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'botol',
         form: 'syrup',
         fornas: true,
@@ -85,7 +85,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'ampicillin_1g_iv',
         name: 'Ampicillin 1g IV',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'vial',
         form: 'injection',
         fornas: true,
@@ -103,7 +103,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'ampicillin_sulbactam_1_5g_iv',
         name: 'Ampicillin/Sulbactam 1.5g IV',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'vial',
         form: 'injection',
         fornas: true,
@@ -121,7 +121,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'analgesik',
         name: 'Analgesik (Generic)',
-        category: MEDICATION_CATEGORIES.ANALGESICS,
+        category: MEDICATION_CATEGORIES.ANALGESIC,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -139,7 +139,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'asam_folat_1',
         name: 'Asam Folat 1mg',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -193,7 +193,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'aspirin_320_kunyah',
         name: 'Aspirin 320mg Kunyah',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -211,7 +211,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'aspirin_80',
         name: 'Aspirin 80mg',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -247,7 +247,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'bed_rest',
         name: 'Tirah Baring',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -301,7 +301,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'bisoprolol_2_5',
         name: 'Bisoprolol 2.5mg',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -337,7 +337,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'calcium_500',
         name: 'Kalsium 500mg',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -355,7 +355,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'captopril_12_5',
         name: 'Captopril 12.5mg',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -391,7 +391,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'cefazolin_1g_iv',
         name: 'Cefazolin 1g IV',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'vial',
         form: 'injection',
         fornas: true,
@@ -409,7 +409,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'ceftriaxone_1g_iv',
         name: 'Ceftriaxone 1g IV',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'vial',
         form: 'injection',
         fornas: true,
@@ -427,7 +427,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'ceftriaxone_2g_iv',
         name: 'Ceftriaxone 2g IV',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'vial',
         form: 'injection',
         fornas: true,
@@ -553,7 +553,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'dexamethasone_05',
         name: 'Dexamethasone 0.5mg',
-        category: MEDICATION_CATEGORIES.ANALGESICS,
+        category: MEDICATION_CATEGORIES.ANALGESIC,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -679,7 +679,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'diet_tinggi_kalori',
         name: 'Diet Tinggi Kalori',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -697,7 +697,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'dietary_modification',
         name: 'Modifikasi Diet',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -715,7 +715,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'diosmin_flavonoid',
         name: 'Diosmin/Hesperidin 500mg',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -769,7 +769,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'eperisone_50',
         name: 'Eperisone 50mg',
-        category: MEDICATION_CATEGORIES.ANALGESICS,
+        category: MEDICATION_CATEGORIES.ANALGESIC,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -841,7 +841,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'ferrous_sulfate_300',
         name: 'Ferrous Sulfate 300mg',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -859,7 +859,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'furosemide_20',
         name: 'Furosemide 20mg',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -895,7 +895,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'gentamicin_80_iv',
         name: 'Gentamicin 80mg IV',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'ampul',
         form: 'injection',
         fornas: true,
@@ -949,7 +949,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'heparin_subkutan',
         name: 'Heparin 5000IU Subkutan',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'vial',
         form: 'injection',
         fornas: true,
@@ -967,7 +967,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'high_fiber_diet',
         name: 'Diet Tinggi Serat',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -1021,7 +1021,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'isdn_5_sublingual',
         name: 'ISDN 5mg Sublingual',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'sublingual',
         fornas: true,
@@ -1039,7 +1039,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'ketorolac_30_im',
         name: 'Ketorolac 30mg IM',
-        category: MEDICATION_CATEGORIES.ANALGESICS,
+        category: MEDICATION_CATEGORIES.ANALGESIC,
         type: 'ampul',
         form: 'injection',
         fornas: true,
@@ -1057,7 +1057,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'ketorolac_30_iv',
         name: 'Ketorolac 30mg IV',
-        category: MEDICATION_CATEGORIES.ANALGESICS,
+        category: MEDICATION_CATEGORIES.ANALGESIC,
         type: 'ampul',
         form: 'injection',
         fornas: true,
@@ -1129,7 +1129,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'meropenem_1g_iv',
         name: 'Meropenem 1g IV',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'vial',
         form: 'injection',
         fornas: true,
@@ -1147,7 +1147,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'methylcobalamin_500',
         name: 'Methylcobalamin 500mcg',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -1201,7 +1201,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'metronidazole_500_iv',
         name: 'Metronidazole 500mg IV',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'kolf',
         form: 'infusion',
         fornas: true,
@@ -1291,7 +1291,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'multivitamin',
         name: 'Multivitamin',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -1381,7 +1381,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'niclosamide_2g',
         name: 'Niclosamide 500mg (4 tab)',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -1399,7 +1399,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'nifedipine_10',
         name: 'Nifedipine 10mg',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -1435,7 +1435,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'nutritional_support',
         name: 'Dukungan Nutrisi',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -1471,7 +1471,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'observation',
         name: 'Observasi',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -1615,7 +1615,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'paracetamol_syrup',
         name: 'Paracetamol Sirup 120mg/5ml',
-        category: MEDICATION_CATEGORIES.ANALGESICS,
+        category: MEDICATION_CATEGORIES.ANALGESIC,
         type: 'botol',
         form: 'syrup',
         fornas: true,
@@ -1633,7 +1633,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'praziquantel_600',
         name: 'Praziquantel 600mg',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -1867,7 +1867,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'spironolakton_25',
         name: 'Spironolakton 25mg',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -1885,7 +1885,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'stop_offending_drug',
         name: 'Hentikan Obat Penyebab',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -1903,7 +1903,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'supportive_care',
         name: 'Perawatan Suportif',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -1957,7 +1957,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'tramadol_50_iv',
         name: 'Tramadol 50mg IV',
-        category: MEDICATION_CATEGORIES.ANALGESICS,
+        category: MEDICATION_CATEGORIES.ANALGESIC,
         type: 'ampul',
         form: 'injection',
         fornas: true,
@@ -1993,7 +1993,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'vitamin_a_200000iu',
         name: 'Vitamin A 200.000 IU',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'kapsul',
         form: 'oral',
         fornas: true,
@@ -2011,7 +2011,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'vitamin_b6_25',
         name: 'Vitamin B6 25mg',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -2029,7 +2029,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'warfarin_2',
         name: 'Warfarin 2mg',
-        category: MEDICATION_CATEGORIES.CARDIOVASCULAR,
+        category: MEDICATION_CATEGORIES.ANTIHYPERTENSIVE,
         type: 'tablet',
         form: 'oral',
         fornas: true,
@@ -2101,7 +2101,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'diet_rendah_garam',
         name: 'Diet Rendah Garam',
-        category: MEDICATION_CATEGORIES.SUPPLEMENTS,
+        category: MEDICATION_CATEGORIES.SUPPLEMENT,
         type: 'tindakan',
         form: 'action',
         fornas: true,
@@ -2119,7 +2119,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'rifampicin_300',
         name: 'Rifampicin 300mg',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'kapsul',
         form: 'oral',
         fornas: true,
@@ -2191,7 +2191,7 @@ export const MISSING_CASE_MEDS = [
     {
         id: 'clindamycin_300',
         name: 'Clindamycin 300mg',
-        category: MEDICATION_CATEGORIES.ANTIBIOTICS,
+        category: MEDICATION_CATEGORIES.ANTIBIOTIC,
         type: 'kapsul',
         form: 'oral',
         fornas: true,

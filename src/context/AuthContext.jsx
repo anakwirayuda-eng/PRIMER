@@ -10,7 +10,8 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { AuthService } from '../services/AuthService';
-import { isSupabaseConfigured } from '../services/supabaseClient';
+import { isSupabaseConfigured, suspendSupabaseAuthForOfflineMode } from '../services/supabaseClient';
+import { isOfflineModeEnabled, setOfflineModeEnabled } from '../services/offlineMode';
 
 const AuthContext = createContext(null);
 
@@ -22,14 +23,14 @@ export function useAuth() {
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [profile, setProfile] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [offlineMode, setOfflineMode] = useState(() => isOfflineModeEnabled());
+    const [loading, setLoading] = useState(() => isSupabaseConfigured && !isOfflineModeEnabled());
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     // Check for existing session on mount
     useEffect(() => {
-        if (!isSupabaseConfigured) {
+        if (offlineMode || !isSupabaseConfigured) {
             // Offline mode — skip auth completely
-            setLoading(false);
             return;
         }
 
@@ -70,15 +71,22 @@ export function AuthProvider({ children }) {
             mounted = false;
             subscription.unsubscribe();
         };
-    }, []);
+    }, [offlineMode]);
 
     const login = useCallback((userData) => {
+        setOfflineModeEnabled(false);
+        setOfflineMode(false);
+        setLoading(false);
         setUser(userData);
         setIsAuthenticated(true);
     }, []);
 
-    const loginOffline = useCallback(() => {
+    const loginOffline = useCallback(async () => {
         // Allow playing without auth
+        setOfflineModeEnabled(true);
+        setOfflineMode(true);
+        await suspendSupabaseAuthForOfflineMode();
+        setLoading(false);
         setIsAuthenticated(true);
         setUser(null);
         setProfile(null);
@@ -95,8 +103,9 @@ export function AuthProvider({ children }) {
         user,
         profile,
         loading,
+        offlineMode,
         isAuthenticated,
-        isOnline: isSupabaseConfigured && !!user,
+        isOnline: !offlineMode && isSupabaseConfigured && !!user,
         login,
         loginOffline,
         logout,

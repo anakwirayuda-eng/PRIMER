@@ -268,7 +268,7 @@ export const addBuildingTextures = (cache) => {
 
     // Nature/TOGA
     cache.toga = createTexture(64, 64, (ctx) => {
-        const w = 64, h = 64;
+        const w = 64, _h = 64;
         ctx.fillStyle = '#4ade80'; ctx.fillRect(8, 20, 48, 36);
         ctx.strokeStyle = PALETTE.woodMid; ctx.lineWidth = 2; ctx.strokeRect(8, 20, 48, 36);
         // Plants

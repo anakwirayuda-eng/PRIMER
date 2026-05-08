@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useMemo } from 'react';
 import { SKIN_TONES, HAIR_COLORS, HAIR_STYLES_MALE, HAIR_STYLES_FEMALE } from './avatar/constants.js';
 

@@ -1,12 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../../context/GameContext.jsx';
 import { Shield, CheckCircle, XCircle, ChevronRight, Activity } from 'lucide-react';
 import { soundManager } from '../../utils/SoundManager.js';
 import EliteCOMBWheel from './EliteCOMBWheel.jsx';
 import { getScenarioById } from '../../content/scenarios/IKMScenarioLibrary.js';
 import { getAvailableOperationalFunds } from '../../utils/operationalFunds.js';
+import { localizeIKMScenario } from './contentI18n.js';
 
 export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
+    const { t } = useTranslation();
     const { advanceIKMPhase, resolveIKMEvent, stats } = useGame();
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [evaluating, setEvaluating] = useState(false);
@@ -17,9 +20,13 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
     // Note: In a real app we'd import getScenarioById from IKMScenarioLibrary,
     // but we can also just rely on eventInstance state if we keep phases simple.
     // Wait, we need the phase definition.
-    const scenarioDef = eventInstance ? getScenarioById(eventInstance.scenarioId) : null;
+    const scenarioDef = useMemo(
+        () => localizeIKMScenario(eventInstance ? getScenarioById(eventInstance.scenarioId) : null, t),
+        [eventInstance, t]
+    );
     const phase = scenarioDef?.phases?.find(p => p.id === eventInstance?.currentPhaseId);
     const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
+    const tx = (key, options = {}) => t(`wilayahContent.ui.communityDiagnosis.${key}`, options);
 
     const clearScheduledTimeouts = useCallback(() => {
         timeoutIdsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
@@ -57,7 +64,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
         if (result?.success === false) {
             setStepResult({
                 isSuccess: false,
-                feedback: result.message || 'Dana aktif tidak cukup untuk intervensi ini.'
+                feedback: result.message || tx('feedback.insufficientFunds')
             });
             scheduleTimeout(() => setStepResult(null), 2500);
         }
@@ -102,8 +109,8 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
             setStepResult({
                 isSuccess,
                 feedback: isSuccess
-                    ? `Intervensi disusun dengan baik! (${correctCount}/${total} tepat)`
-                    : `Perencanaan intervensi kurang tepat sasaran (${correctCount}/${total}). Evaluasi kembali!`
+                    ? tx('feedback.interventionGood', { correct: correctCount, total })
+                    : tx('feedback.interventionWeak', { correct: correctCount, total })
             });
 
             scheduleTimeout(() => {
@@ -126,8 +133,8 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
                     {eventInstance.icon}
                 </div>
                 <div>
-                    <h3 className="text-lg font-black text-white">{eventInstance.title}</h3>
-                    <p className="text-xs text-white/50">{phase.speaker || 'Laporan Kasus'}</p>
+                    <h3 className="text-lg font-black text-white">{scenarioDef?.title || eventInstance.title}</h3>
+                    <p className="text-xs text-white/50">{phase.speaker || tx('caseReport')}</p>
                 </div>
             </div>
             <div className="flex-1 p-6 overflow-y-auto">
@@ -160,7 +167,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
                 )}
                 {phase.isEnd && (
                     <button onClick={() => { resolveIKMEvent(eventInstance.instanceId); onClose?.(); }} className="w-full mt-6 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold text-white transition-all">
-                        Tutup Laporan
+                        {tx('closeReport')}
                     </button>
                 )}
             </div>
@@ -171,11 +178,11 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
         <div className="flex flex-col h-full bg-[#0f172a] rounded-2xl overflow-hidden border border-blue-500/30 shadow-2xl">
             <div className="p-4 bg-blue-950 border-b border-blue-500/30 flex items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-black text-blue-100">Analisis COM-B</h3>
+                    <h3 className="text-lg font-black text-blue-100">{tx('combAnalysis')}</h3>
                     <p className="text-xs text-blue-300/70">{phase.description}</p>
                 </div>
                 <button onClick={() => advanceIKMPhase(eventInstance.instanceId, phase.nextPhase)} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white text-xs font-bold transition-all">
-                    Selesai Analisis
+                    {tx('finishAnalysis')}
                 </button>
             </div>
             <div className="flex-1 relative overflow-hidden bg-black/40 p-4 flex items-center justify-center">
@@ -187,7 +194,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
     const renderDiagnosisQnA = () => (
         <div className="flex flex-col h-full bg-[#0f172a] rounded-2xl overflow-hidden border border-purple-500/30 shadow-2xl">
             <div className="p-6 bg-purple-950 border-b border-purple-500/30">
-                <h3 className="text-xl font-black text-purple-100 mb-2">Diagnosis Komunitas</h3>
+                <h3 className="text-xl font-black text-purple-100 mb-2">{tx('communityDiagnosis')}</h3>
                 <p className="text-sm text-purple-200/80 leading-relaxed">{phase.question}</p>
             </div>
             <div className="flex-1 p-6 overflow-y-auto space-y-4">
@@ -212,7 +219,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
                         onClick={handleDiagnosisSubmit}
                         className="w-full py-4 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg transition-all"
                     >
-                        {evaluating ? 'Menganalisis...' : 'Tetapkan Diagnosis'}
+                        {evaluating ? tx('analyzing') : tx('setDiagnosis')}
                     </button>
                 )}
             </div>
@@ -221,19 +228,19 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
 
     const renderInterventionQnA = () => {
         const questions = [
-            { key: 'who', label: 'Who', icon: '👥', data: phase.who },
-            { key: 'what', label: 'What', icon: '🎯', data: phase.what },
-            { key: 'where', label: 'Where', icon: '📍', data: phase.where },
-            { key: 'when', label: 'When', icon: '⏱️', data: phase.when },
-            { key: 'why', label: 'Why', icon: '❓', data: phase.why },
-            { key: 'how', label: 'How', icon: '🛠️', data: phase.how }
+            { key: 'who', label: 'Who', icon: 'WHO', data: phase.who },
+            { key: 'what', label: 'What', icon: 'WHAT', data: phase.what },
+            { key: 'where', label: 'Where', icon: 'WHERE', data: phase.where },
+            { key: 'when', label: 'When', icon: 'WHEN', data: phase.when },
+            { key: 'why', label: 'Why', icon: 'WHY', data: phase.why },
+            { key: 'how', label: 'How', icon: 'HOW', data: phase.how }
         ];
 
         return (
             <div className="flex flex-col h-full bg-[#0f172a] rounded-2xl overflow-hidden border border-emerald-500/30 shadow-2xl">
                 <div className="p-6 bg-emerald-950 border-b border-emerald-500/30">
-                    <h3 className="text-xl font-black text-emerald-100">Perencanaan Intervensi (5W1H)</h3>
-                    <p className="text-xs text-emerald-200/60 mt-1">Lengkapi rencana tindakan puskesmas.</p>
+                    <h3 className="text-xl font-black text-emerald-100">{tx('interventionPlanning')}</h3>
+                    <p className="text-xs text-emerald-200/60 mt-1">{tx('interventionHint')}</p>
                 </div>
                 <div className="flex-1 p-6 overflow-y-auto grid grid-cols-2 gap-4">
                     {questions.map(q => (
@@ -246,7 +253,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
                                 onChange={e => setSelectedAnswers(prev => ({ ...prev, [q.key]: e.target.value }))}
                                 disabled={evaluating}
                             >
-                                <option value="" disabled>Pilih jawaban...</option>
+                                <option value="" disabled>{tx('selectAnswer')}</option>
                                 {q.data.options.map((opt, i) => (
                                     <option key={i} value={opt}>{opt}</option>
                                 ))}
@@ -267,7 +274,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
                             className="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg transition-all flex items-center justify-center gap-2"
                         >
                             <Activity size={20} />
-                            {evaluating ? 'Memproses...' : 'Eksekusi Intervensi'}
+                            {evaluating ? tx('processing') : tx('executeIntervention')}
                         </button>
                     )}
                 </div>
@@ -279,7 +286,7 @@ export default function CommunityDiagnosisPanel({ eventInstance, onClose }) {
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-8 bg-black/80 backdrop-blur-sm">
             <div className="w-full max-w-4xl h-full max-h-[85vh] relative">
                 <button onClick={() => { resolveIKMEvent(eventInstance.instanceId); onClose?.(); }} className="absolute -top-12 right-0 text-white/50 hover:text-white px-4 py-2 flex items-center gap-2 rounded-full border border-white/10 hover:border-white/30 transition-all font-bold text-xs uppercase tracking-widest">
-                    <XCircle size={16} /> Tutup
+                    <XCircle size={16} /> {tx('close')}
                 </button>
                 {phase.type === 'dialog' && renderDialog()}
                 {phase.type === 'comb_analysis' && renderCombAnalysis()}

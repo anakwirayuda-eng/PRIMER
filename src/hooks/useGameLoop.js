@@ -49,13 +49,15 @@ export function useGameLoop({
 }) {
     // Use refs for values that change every tick to avoid destroying/recreating setInterval
     const tickRef = useRef({ time, day, buffs, villageData, activeOutbreaks, facilities, skills, playerStats });
+    const lastClinicalMinuteRef = useRef(null);
 
     // P3 Fix: gameSpeed in ref so interval doesn't recreate on speed change
     const speedRef = useRef(gameSpeed);
 
-    // Synchronously update refs on every render
-    tickRef.current = { time, day, buffs, villageData, activeOutbreaks, facilities, skills, playerStats };
-    speedRef.current = gameSpeed;
+    useEffect(() => {
+        tickRef.current = { time, day, buffs, villageData, activeOutbreaks, facilities, skills, playerStats };
+        speedRef.current = gameSpeed;
+    }, [time, day, buffs, villageData, activeOutbreaks, facilities, skills, playerStats, gameSpeed]);
 
     useEffect(() => {
         if (gameState !== 'playing') return;
@@ -93,17 +95,22 @@ export function useGameLoop({
                 soundManager.playError();
             }
 
-            // Process Clinical Tick (Referrals, Ambulances, Closing Time, Population Spawns)
-            processTick({
-                time: tick.time,
-                day: tick.day,
-                buffs: tick.buffs,
-                villageData: tick.villageData,
-                activeOutbreaks: tick.activeOutbreaks,
-                facilities: tick.facilities,
-                skills: tick.skills,
-                onNextDay: nextDay
-            });
+            // Clinical systems are authored in minute-scale units.
+            // Only advance clinical logic once per in-game minute so spawn/deterioration
+            // rates stay sane even though the render loop checks 4x per second.
+            if (Number.isInteger(tick.time) && lastClinicalMinuteRef.current !== tick.time) {
+                processTick({
+                    time: tick.time,
+                    day: tick.day,
+                    buffs: tick.buffs,
+                    villageData: tick.villageData,
+                    activeOutbreaks: tick.activeOutbreaks,
+                    facilities: tick.facilities,
+                    skills: tick.skills,
+                    onNextDay: nextDay
+                });
+                lastClinicalMinuteRef.current = tick.time;
+            }
 
             // Advance Time — scale by speed
             // At 1x: advance 1 min per second (4 ticks * 0.25 = 1)
@@ -131,6 +138,5 @@ export function useGameLoop({
 
         return () => clearInterval(timer);
     // P3 Fix: gameSpeed REMOVED from deps — reads from speedRef instead
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameState, gameOver, nextDay, setPlayerStats, setGameOver, setTime, processTick]);
 }

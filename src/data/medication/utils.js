@@ -21,7 +21,10 @@ export const MEDICATION_CATEGORIES = {
     EQUIPMENT: 'Peralatan Medis',
     LAB_REAGENT: 'Reagensia Laboratorium',
     EMERGENCY: 'Gawat Darurat / Injeksi',
-    METABOLIC: 'Obat Metabolik & Gout'
+    METABOLIC: 'Obat Metabolik & Gout',
+    HEMOSTATIC: 'Hemostatik/Antifibrinolitik',
+    STEROID_IMMUNO: 'Kortikosteroid & Imunomodulator',
+    GENITOURINARY: 'Saluran Kemih/Genitourinari'
 };
 
 /**

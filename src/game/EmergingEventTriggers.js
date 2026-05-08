@@ -12,7 +12,7 @@
  */
 
 import { getSeasonForDay } from './IKMEventEngine.js';
-import { CALENDAR_EVENTS, getEpidemiologicalSeason } from '../data/CalendarEventDB.js';
+import { CALENDAR_EVENTS } from '../data/CalendarEventDB.js';
 import { chanceFromSeed, seedKey } from '../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════

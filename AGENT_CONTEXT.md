@@ -1,4 +1,4 @@
-# 
+﻿﻿# 
 PRIMER — AI Agent Super Prompt
 
 > This file provides context for any AI coding assistant working on this codebase.
@@ -13,14 +13,14 @@ PRIMER — AI Agent Super Prompt
 | -------- | --------------------------------------- | ------------------------- |
 | Frontend | React 19 + Vite 7                       | SPA, lazy-loaded routes   |
 | State    | Zustand + persist middleware            | localStorage + cloud sync |
-| Styling  | Vanilla CSS + inline styles             | No Tailwind               |
+| Styling  | Tailwind CSS v3 + `index.css` tokens    | Utility-first + CSS vars  |
 | Backend  | Supabase (PostgreSQL + Auth + Realtime) | Free tier                 |
 | Hosting  | Vercel                                  | Auto-deploy from GitHub   |
 | Language | JavaScript (no TypeScript)              | JSX components            |
 
 ## Architecture Principles
 
-1. **Offline-first**: Game MUST work without Supabase. All cloud calls check `isSupabaseConfigured` first.
+1. **Offline-first**: Game MUST work without Supabase. "Main Offline" sets the session-scoped `primer:offlineMode` flag and cloud calls check `isSupabaseConfigured` first.
 2. **Graceful degradation**: If any service fails, log warning and continue — never crash the game.
 3. **Zustand is source of truth**: All game state in `useGameStore.js`. Cloud save is a mirror, not primary.
 4. **GameContext is the API**: Components use `useGame()` hook, never access store directly.
@@ -44,7 +44,8 @@ src/
 │   ├── useGameStore.js     # ⭐ CORE: 2400-line Zustand store
 │   └── selectors.js        # Derived state selectors
 ├── services/
-│   ├── supabaseClient.js   # Supabase singleton + offline check
+│   ├── supabaseClient.js   # Supabase singleton + explicit offline guard
+│   ├── offlineMode.js      # Session offline flag used by auth/cloud services
 │   ├── AuthService.js      # NIM→email auth wrapper
 │   ├── CloudSaveService.js # Save/load + leaderboard
 │   ├── LeaderboardService.js

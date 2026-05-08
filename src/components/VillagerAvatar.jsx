@@ -298,6 +298,7 @@ export default function VillagerAvatar({ name = 'Warga', age = 30, gender = 'M',
  * Generate an avatar for batch/non-React usage (returns SVG string).
  * Useful for canvas rendering or exporting.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function getAvatarSeed(name, gender, age) {
     return { name, gender, age };
 }

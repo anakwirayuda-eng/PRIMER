@@ -12,22 +12,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 export default function StatCard({ icon, value, label, colorClass = 'bg-blue-50 text-blue-600', prefix = '', suffix = '' }) {
-    const [displayValue, setDisplayValue] = useState(0);
-    const rafRef = useRef(null);
     const numericValue = typeof value === 'number' ? value : parseFloat(value) || 0;
     const isNumeric = typeof value === 'number' || !isNaN(parseFloat(value));
+    const [displayValue, setDisplayValue] = useState(() => isNumeric ? 0 : value);
+    const rafRef = useRef(null);
 
     useEffect(() => {
         if (!isNumeric) {
-            setDisplayValue(value);
             return;
         }
 
         // Check prefers-reduced-motion
         const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
         if (prefersReduced) {
-            setDisplayValue(numericValue);
-            return;
+            rafRef.current = requestAnimationFrame(() => setDisplayValue(numericValue));
+            return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
         }
 
         const duration = 600;
@@ -60,7 +59,7 @@ export default function StatCard({ icon, value, label, colorClass = 'bg-blue-50 
                 {icon}
             </div>
             <div className={`text-xl font-black ${textClass} tabular-nums`}>
-                {prefix}{isNumeric ? displayValue.toLocaleString('id-ID') : displayValue}{suffix}
+                {prefix}{isNumeric ? displayValue.toLocaleString('id-ID') : value}{suffix}
             </div>
             <div className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 opacity-70 ${textClass}`}>
                 {label}

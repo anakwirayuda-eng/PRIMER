@@ -20,13 +20,24 @@ class SoundManager {
         this.reverbNode = null;
         this.initialized = false;
         this.muted = false;
+        this.audioUnavailable = false;
     }
 
     init() {
-        if (this.initialized) return;
+        if (this.initialized || this.audioUnavailable) return;
+
+        if (typeof window === 'undefined') {
+            this.audioUnavailable = true;
+            return;
+        }
 
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (typeof AudioContext !== 'function') {
+                this.audioUnavailable = true;
+                return;
+            }
+
             this.context = new AudioContext();
             this.masterGain = this.context.createGain();
             this.masterGain.gain.value = 0.4; // Slightly louder master
@@ -41,9 +52,21 @@ class SoundManager {
                 this.playBGM(this.pendingBGMDay);
                 this.pendingBGMDay = null;
             }
-        } catch (e) {
-            console.error('Web Audio API not supported:', e);
+        } catch {
+            this.audioUnavailable = true;
         }
+    }
+
+    ensureAudioReady() {
+        if (this.muted || this.audioUnavailable) return false;
+        if (!this.initialized) this.init();
+        if (this.muted || this.audioUnavailable || !this.context) return false;
+
+        if (this.context.state === 'suspended') {
+            this.context.resume().catch(() => { });
+        }
+
+        return true;
     }
 
     // --- Core Synthesis Methods ---
@@ -57,19 +80,7 @@ class SoundManager {
      * @param {string} type - Waveform type for carrier ('sine', 'triangle', etc.)
      */
     playFMTone(carrierFreq, modulatorFreq, modIndex, duration, type = 'sine') {
-        if (!this.initialized || this.muted) {
-            if (!this.initialized) this.init();
-            if (this.muted) return;
-        }
-
-        // Guard: If context exists but is suspended (common in autoplay blocks), try to resume or abort
-        if (this.context?.state === 'suspended') {
-            this.context.resume().catch(() => { });
-            // Check again after simple resume attempt provided 
-            // Note: If strictly suspended, we might skip this SFX to avoid queuing glitches
-        }
-
-        if (!this.context) return;
+        if (!this.ensureAudioReady()) return;
 
         const now = this.context.currentTime;
 
@@ -139,7 +150,7 @@ class SoundManager {
 
     // 3. Cancel / Back: Lower pitch, "zip" or "woosh"
     playCancel() {
-        if (!this.initialized || this.muted) return;
+        if (!this.ensureAudioReady()) return;
         const now = this.context.currentTime;
         const osc = this.context.createOscillator();
         const gain = this.context.createGain();
@@ -161,7 +172,7 @@ class SoundManager {
     // 4. New Patient / Event: A "Draw" sound or "Scan" sound.
     // Digital rising tone
     playNotification() {
-        if (!this.initialized || this.muted) return;
+        if (!this.ensureAudioReady()) return;
 
         // Arpeggio
         this.playFMTone(523.25, 1046, 1, 0.2, 'sine'); // C
@@ -189,7 +200,7 @@ class SoundManager {
     // 7. Emergency / Danger
     // Siren-like
     playEmergency() {
-        if (!this.initialized || this.muted) return;
+        if (!this.ensureAudioReady()) return;
         const now = this.context.currentTime;
         const osc = this.context.createOscillator();
         const gain = this.context.createGain();

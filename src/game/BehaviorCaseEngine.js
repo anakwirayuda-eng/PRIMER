@@ -14,8 +14,7 @@ import {
     DISEASE_SCENARIOS,
     READINESS_STAGES,
     INTERVENTION_FUNCTIONS,
-    getDiseaseScenarioById,
-    getSeasonalEnvironmentalRisks
+    getDiseaseScenarioById
 } from '../content/scenarios/DiseaseScenarios.js';
 import { getSeasonForDay } from './IKMEventEngine.js';
 import { evaluateEmergingTriggers } from './EmergingEventTriggers.js';
@@ -73,8 +72,6 @@ function calculateResistance(sdoh) {
 export function createBehaviorCase(scenarioId, mode, gameDay, familyContext = null) {
     const scenario = getDiseaseScenarioById(scenarioId);
     if (!scenario) return null;
-
-    const caseMode = CASE_MODES[mode] || CASE_MODES.quick;
 
     return {
         instanceId: `bc_${scenarioId}_d${gameDay}_${Date.now()}`,
@@ -237,11 +234,9 @@ export function scoreCOMBDiagnosis(caseInstance, playerBarriers) {
 
     // 1. Did player identify the PRIMARY barriers? (60% of score)
     const primaryWeight = 60;
-    let primaryHits = 0;
     for (const barrier of primary) {
         maxScore += primaryWeight / primary.length;
         if (playerBarriers[barrier] && playerBarriers[barrier] >= 0.5) {
-            primaryHits++;
             totalScore += primaryWeight / primary.length;
         }
     }
@@ -408,9 +403,11 @@ export function resolveOutcome(caseInstance) {
 
     // 🌟 HACK 4: DETERMINISTIC KARMA — fail = guaranteed IGD, no lucky dice
     let ukpDelay = null;
+    let ukpOutcomeId = null;
+    let outcomeSeed = null;
     if (scenario.ukpBridge) {
         const { min, max } = scenario.ukpBridge.delayDays;
-        const outcomeSeed = seedKey(
+        outcomeSeed = seedKey(
             'bc-outcome',
             caseInstance.instanceId || caseInstance.scenarioId,
             outcomeTier,
@@ -428,6 +425,14 @@ export function resolveOutcome(caseInstance) {
         }
     }
 
+    if (ukpDelay !== null) {
+        const bridgeOutcomes = scenario.ukpBridge?.failOutcomes || [];
+        ukpOutcomeId = pickDeterministic(
+            bridgeOutcomes,
+            seedKey(outcomeSeed || caseInstance.instanceId || caseInstance.scenarioId, 'selected-outcome')
+        ) || bridgeOutcomes[0] || null;
+    }
+
     // Social Contagion flag for perfect play
     const socialContagion = outcomeTier === 'excellent' && overallScore >= 95;
 
@@ -443,7 +448,7 @@ export function resolveOutcome(caseInstance) {
         reputationDelta: repTable[outcomeTier],
         ukpTriggered: ukpDelay !== null,
         ukpDelayDays: ukpDelay,
-        ukpDiseaseId: ukpDelay ? scenario.ukpBridge?.failOutcomes?.[0] : null,
+        ukpDiseaseId: ukpOutcomeId,
         socialContagion,
         resolvedAt: Date.now()
     };

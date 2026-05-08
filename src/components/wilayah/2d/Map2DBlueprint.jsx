@@ -20,6 +20,7 @@ import { isLocalChampionEligible } from '../../../domains/village/localChampion.
 import { getChampionProtectedFamilies } from '../../../domains/village/championProtection.js';
 import { getSpatialContext } from '../../../domains/village/spatialContext.js';
 import { getScenarioById } from '../../../content/scenarios/IKMScenarioLibrary.js';
+import { localizeIKMScenario, translateWilayahString } from '../contentI18n.js';
 
 const CELL_SIZE = 10; // pixels per grid cell
 const MIN_ZOOM = 0.4;
@@ -31,6 +32,13 @@ const OVERVIEW_MAX_ZOOM = 0.6;
 const CLOSE_DETAIL_MIN_ZOOM = 1.15;
 
 const EVENT_MARKER_RADIUS = 16;
+
+function getEventRoleKey(label = '') {
+    return String(label)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'default';
+}
 
 const EVENT_ANCHOR_RULES = [
     {
@@ -222,6 +230,96 @@ function getSemanticZoomLevel(zoom) {
     return 'operational';
 }
 
+function matchMediaSafe(query) {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+    return window.matchMedia(query).matches;
+}
+
+function shouldEnableAmbientShowcaseFx() {
+    if (typeof window === 'undefined') return true;
+    const prefersReducedMotion = matchMediaSafe('(prefers-reduced-motion: reduce)');
+    const coarsePointer = matchMediaSafe('(pointer: coarse)') || matchMediaSafe('(hover: none)');
+    const compactViewport = window.innerWidth < 768;
+    return !prefersReducedMotion && !coarsePointer && !compactViewport;
+}
+
+function getSemanticZoomMeta(level, activeLayer = 'general') {
+    switch (level) {
+        case 'overview':
+            switch (activeLayer) {
+                case 'pispk':
+                    return {
+                        badge: 'Makro',
+                        detail: 'IKS prioritas dan jangkauan layanan'
+                    };
+                case 'surveillance':
+                    return {
+                        badge: 'Makro',
+                        detail: 'Klaster outbreak dan rumah tracing'
+                    };
+                case 'psn':
+                    return {
+                        badge: 'Makro',
+                        detail: 'Breeding risk dan target PSN'
+                    };
+                case 'phbs':
+                    return {
+                        badge: 'Makro',
+                        detail: 'Zona edukasi dasar dan mutu PHBS'
+                    };
+                case 'perilaku':
+                    return {
+                        badge: 'Makro',
+                        detail: 'Barrier perilaku dan fokus BCC'
+                    };
+                default:
+                    return {
+                        badge: 'Makro',
+                        detail: 'RW, blank spot, dan simpul layanan'
+                    };
+            }
+        case 'detail':
+            return {
+                badge: 'Detail',
+                detail: 'Cue lokal dan label dekat'
+            };
+        default:
+            return {
+                badge: 'Operasional',
+                detail: 'Peta kerja lapangan penuh'
+            };
+    }
+}
+
+function shouldKeepOverviewBuilding(building, activeLayer, selectedBuildingId, intelTargetMap) {
+    if (!building) return false;
+    if (selectedBuildingId === building.id) return true;
+    if (!building.familyId) return true;
+
+    const isIntelTarget = Boolean(building.familyId && intelTargetMap.has(building.familyId));
+
+    switch (activeLayer) {
+        case 'general':
+            return isIntelTarget;
+        case 'pispk':
+            return isIntelTarget
+                || (building.familyData?.iksScore != null && building.familyData.iksScore < 0.4);
+        case 'surveillance':
+            return isIntelTarget || building.hasCase || building.familyData?.hasCase;
+        case 'psn':
+            return isIntelTarget || Boolean(building.hasJentik);
+        case 'phbs':
+            return isIntelTarget
+                || (building.familyData?.phbsScore != null && building.familyData.phbsScore < 4);
+        case 'perilaku':
+            return isIntelTarget
+                || building.familyData?.behaviorRisk === 'high'
+                || building.familyData?.behaviorRisk === 'medium';
+        default:
+            return false;
+    }
+}
+
 function getIntelTargetMap(lastIntelTargets = []) {
     const targetMap = new Map();
     (Array.isArray(lastIntelTargets) ? lastIntelTargets : []).forEach((target, index) => {
@@ -329,9 +427,11 @@ function Map2DBlueprintInner({
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [bridgeRepairFeedback, setBridgeRepairFeedback] = useState(null);
+    const [ambientShowcaseFx, setAmbientShowcaseFx] = useState(() => shouldEnableAmbientShowcaseFx());
     const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
     const bridgeRepairTimerRef = useRef(null);
     const { t } = useTranslation();
+    const mapTx = useCallback((key, options = {}) => t(`wilayahContent.ui.map2dBlueprint.${key}`, options), [t]);
     const derivedBridgeStatus = useGameStore((state) => selectBridgeSeasonalState(state).status);
     const buildingProgress = useGameStore((state) => state.publicHealth.buildingProgress);
     const activeOutbreaks = useGameStore((state) => state.publicHealth.activeOutbreaks);
@@ -342,6 +442,10 @@ function Map2DBlueprintInner({
     const effectiveBridgeStatus = bridgeStatus ?? derivedBridgeStatus ?? 'normal';
     const layerVisual = getWilayahLayerMeta(activeLayer, t);
     const semanticZoomLevel = useMemo(() => getSemanticZoomLevel(zoom), [zoom]);
+    const semanticZoomMeta = useMemo(
+        () => getSemanticZoomMeta(semanticZoomLevel, activeLayer),
+        [semanticZoomLevel, activeLayer]
+    );
     const isOverviewZoom = semanticZoomLevel === 'overview';
     const isCloseDetailZoom = semanticZoomLevel === 'detail';
 
@@ -351,9 +455,12 @@ function Map2DBlueprintInner({
     const shouldShowEastOverlay = showBridgeStatusDetails && effectiveBridgeStatus !== 'normal';
     const showServiceCoverage = Boolean(layerVisual.showServiceCoverage);
     const showServiceLabels = Boolean(layerVisual.showServiceLabels || (activeLayer === 'general' && isCloseDetailZoom));
+    const shouldRenderServiceLabels = showServiceLabels && !isOverviewZoom;
     const serviceRingOpacity = Number(layerVisual.serviceRingOpacity ?? 1);
+    const serviceLabelOpacity = Math.min(0.94, Math.max(0.74, serviceRingOpacity + 0.16));
     const serviceLabelScale = Math.min(1.4, Math.max(0.9, 1 / Math.max(zoom, 0.01)));
     const intelTargetMap = useMemo(() => getIntelTargetMap(lastIntelTargets), [lastIntelTargets]);
+    const investigativeSweepLayers = useMemo(() => new Set(['surveillance', 'psn', 'phbs', 'perilaku']), []);
 
     const eastSectorOverlayStyle = useMemo(() => {
         if (!shouldShowEastOverlay) return null;
@@ -385,6 +492,42 @@ function Map2DBlueprintInner({
         setZoom(clampedZoom);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mapData.centerX, mapData.centerY]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return undefined;
+
+        const updateAmbientShowcaseFx = () => {
+            setAmbientShowcaseFx(shouldEnableAmbientShowcaseFx());
+        };
+
+        updateAmbientShowcaseFx();
+
+        const mediaQueries = [
+            window.matchMedia?.('(prefers-reduced-motion: reduce)'),
+            window.matchMedia?.('(pointer: coarse)'),
+            window.matchMedia?.('(hover: none)'),
+        ].filter(Boolean);
+
+        window.addEventListener('resize', updateAmbientShowcaseFx);
+        mediaQueries.forEach((mediaQuery) => {
+            if (typeof mediaQuery.addEventListener === 'function') {
+                mediaQuery.addEventListener('change', updateAmbientShowcaseFx);
+            } else if (typeof mediaQuery.addListener === 'function') {
+                mediaQuery.addListener(updateAmbientShowcaseFx);
+            }
+        });
+
+        return () => {
+            window.removeEventListener('resize', updateAmbientShowcaseFx);
+            mediaQueries.forEach((mediaQuery) => {
+                if (typeof mediaQuery.removeEventListener === 'function') {
+                    mediaQuery.removeEventListener('change', updateAmbientShowcaseFx);
+                } else if (typeof mediaQuery.removeListener === 'function') {
+                    mediaQuery.removeListener(updateAmbientShowcaseFx);
+                }
+            });
+        };
+    }, []);
 
     // ═══ Zoom controls exposed to parent via ref ═══
     useImperativeHandle(ref, () => ({
@@ -543,18 +686,15 @@ function Map2DBlueprintInner({
         if (!mapData.buildings) return [];
         if (!isOverviewZoom) return mapData.buildings;
 
-        return mapData.buildings.filter((b) => {
-            if (selectedBuildingId === b.id) return true;
-            if (!b.familyId) return true;
-            if (b.familyData?.iksScore != null && b.familyData.iksScore < 0.4) return true;
-            if (b.hasCase || b.familyData?.hasCase) return true;
-            if (b.hasJentik) return true;
-            if (b.economyTier === 'Very Low' || b.economyTier === 'Low') return true;
-            if (b.familyId && intelTargetMap.has(b.familyId)) return true;
-            if (b.familyId && championFamilyIdSet.has(b.familyId)) return true;
-            return false;
-        });
-    }, [mapData.buildings, isOverviewZoom, selectedBuildingId, intelTargetMap, championFamilyIdSet]);
+        return mapData.buildings.filter((building) => (
+            shouldKeepOverviewBuilding(
+                building,
+                activeLayer,
+                selectedBuildingId,
+                intelTargetMap
+            )
+        ));
+    }, [mapData.buildings, isOverviewZoom, activeLayer, selectedBuildingId, intelTargetMap]);
 
     const protectedFamilyIds = useMemo(() => {
         if (!Array.isArray(championFamilyIds) || championFamilyIds.length === 0 || !villageData) return [];
@@ -581,25 +721,35 @@ function Map2DBlueprintInner({
     const championCount = championFamilyIds.length;
     const intelTargetCount = intelTargetMap.size;
     const bridgeStatusLabel = effectiveBridgeStatus === 'putus'
-        ? 'Jembatan Putus'
+        ? mapTx('bridge.broken')
         : effectiveBridgeStatus === 'rawan_banjir'
-            ? 'Jembatan Rawan'
-            : 'Jembatan Normal';
+            ? mapTx('bridge.floodRisk')
+            : mapTx('bridge.normal');
     const ikmEventAnchors = useMemo(() => {
         return (Array.isArray(activeIKMEvents) ? activeIKMEvents : [])
             .filter((event) => event && !event.completed)
             .map((event, index) => {
-                const scenario = getScenarioById(event.scenarioId);
+                const rawScenario = getScenarioById(event.scenarioId);
+                const scenario = localizeIKMScenario(rawScenario, t);
                 const resolvedAnchor = resolveEventAnchorBuilding(event, scenario, mapData.buildings);
                 if (!resolvedAnchor?.building) return null;
 
                 const tone = getEventMarkerTone(event.category || scenario?.category);
+                const roleLabel = mapTx(`eventRoles.${getEventRoleKey(resolvedAnchor.roleLabel)}`, {
+                    defaultValue: resolvedAnchor.roleLabel
+                });
+                const hasCustomEventTitle = Boolean(event.title && rawScenario?.title && event.title !== rawScenario.title);
+                const eventTitle = hasCustomEventTitle
+                    ? event.title
+                    : event.title && scenario
+                    ? translateWilayahString(t, `wilayahContent.ikmScenarios.${scenario.category}.${scenario.id}.title`, event.title)
+                    : (scenario?.title || event.title || mapTx('ikmEvent'));
                 return {
                     id: `ikm-anchor-${event.instanceId}`,
                     eventInstanceId: event.instanceId,
-                    title: event.title || scenario?.title || 'Event IKM',
-                    phaseLabel: scenario?.phases?.find((phase) => phase.id === event.currentPhaseId)?.speaker || resolvedAnchor.roleLabel,
-                    roleLabel: resolvedAnchor.roleLabel,
+                    title: eventTitle,
+                    phaseLabel: scenario?.phases?.find((phase) => phase.id === event.currentPhaseId)?.speaker || roleLabel,
+                    roleLabel,
                     category: event.category || scenario?.category || 'phbs',
                     x: Number(resolvedAnchor.building.x),
                     y: Number(resolvedAnchor.building.y),
@@ -609,14 +759,14 @@ function Map2DBlueprintInner({
                 };
             })
             .filter((anchor) => anchor && Number.isFinite(anchor.x) && Number.isFinite(anchor.y));
-    }, [activeIKMEvents, mapData.buildings]);
+    }, [activeIKMEvents, mapData.buildings, mapTx, t]);
     const mapLegendItems = useMemo(() => {
         const items = [];
 
         if (lockedRwCount > 0) {
             items.push({
                 key: 'blank-spot',
-                label: `Blank ${lockedRwCount}`,
+                label: mapTx('legend.blank', { count: lockedRwCount }),
                 color: '#fef3c7',
                 background: 'rgba(146,64,14,0.35)',
                 border: '1px solid rgba(251,191,36,0.25)',
@@ -626,7 +776,7 @@ function Map2DBlueprintInner({
         if (showServiceCoverage) {
             items.push({
                 key: 'service-coverage',
-                label: 'Cakupan',
+                label: mapTx('legend.coverage'),
                 color: 'rgba(186,230,253,0.96)',
                 background: 'rgba(8,47,73,0.4)',
                 border: '1px solid rgba(56,189,248,0.22)',
@@ -636,7 +786,7 @@ function Map2DBlueprintInner({
         if (intelTargetCount > 0) {
             items.push({
                 key: 'intel-targets',
-                label: `Intel ${intelTargetCount}`,
+                label: mapTx('legend.intel', { count: intelTargetCount }),
                 color: '#cffafe',
                 background: 'rgba(8,145,178,0.35)',
                 border: '1px solid rgba(34,211,238,0.25)',
@@ -646,7 +796,7 @@ function Map2DBlueprintInner({
         if (championCount > 0) {
             items.push({
                 key: 'local-champions',
-                label: `Kader ${championCount}`,
+                label: mapTx('legend.cadre', { count: championCount }),
                 color: '#fef3c7',
                 background: 'rgba(120,53,15,0.35)',
                 border: '1px solid rgba(251,191,36,0.25)',
@@ -656,7 +806,7 @@ function Map2DBlueprintInner({
         if (ikmEventAnchors.length > 0) {
             items.push({
                 key: 'ikm-events',
-                label: `IKM ${ikmEventAnchors.length}`,
+                label: mapTx('legend.ikm', { count: ikmEventAnchors.length }),
                 color: 'rgba(224,242,254,0.96)',
                 background: 'rgba(8,47,73,0.4)',
                 border: '1px solid rgba(56,189,248,0.24)',
@@ -684,6 +834,7 @@ function Map2DBlueprintInner({
         ikmEventAnchors.length,
         effectiveBridgeStatus,
         bridgeStatusLabel,
+        mapTx,
     ]);
 
     const outbreakZones = useMemo(() => {
@@ -708,14 +859,52 @@ function Map2DBlueprintInner({
                 const radius = Math.max(6, maxDistance + 3);
                 return {
                     id: outbreak.id,
-                    label: `WABAH ${(outbreak.typeData?.label || outbreak.type || 'cluster').toUpperCase()}`,
+                    label: mapTx('outbreakLabel', { type: (outbreak.typeData?.label || outbreak.type || 'cluster').toUpperCase() }),
                     left: (centroidX - radius) * CELL_SIZE,
                     top: (centroidY - radius) * CELL_SIZE,
                     size: radius * 2 * CELL_SIZE
                 };
             })
             .filter(Boolean);
-    }, [activeOutbreaks, mapData.buildings]);
+    }, [activeOutbreaks, mapData.buildings, mapTx]);
+    const activeOutbreakCount = outbreakZones.length;
+    const showThreatVignette = activeOutbreakCount > 0;
+    const showRadarSweep = investigativeSweepLayers.has(activeLayer) && ambientShowcaseFx && !isDragging;
+    const showLiquidHeatBloom = activeLayer === 'surveillance';
+    const threatVignetteOpacity = activeLayer === 'surveillance' ? 0.88 : 0.7;
+    const radarSweepProfile = activeLayer === 'surveillance'
+        ? {
+            tone: 'rgba(125,211,252,0.14)',
+            highlight: 'rgba(255,241,242,0.22)',
+            opacity: 0.58,
+        }
+        : activeLayer === 'psn'
+            ? {
+                tone: 'rgba(163,230,53,0.24)',
+                highlight: 'rgba(236,252,203,0.18)',
+                opacity: 0.68,
+            }
+            : activeLayer === 'phbs'
+                ? {
+                    tone: 'rgba(244,114,182,0.24)',
+                    highlight: 'rgba(252,231,243,0.18)',
+                    opacity: 0.68,
+                }
+                : {
+                    tone: 'rgba(129,140,248,0.22)',
+                    highlight: 'rgba(224,231,255,0.18)',
+                    opacity: 0.64,
+                };
+    const radarSweepBackground = `linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent 46.8%,
+        ${radarSweepProfile.tone} 48.6%,
+        ${radarSweepProfile.highlight} 50%,
+        ${radarSweepProfile.tone} 51.4%,
+        transparent 53.2%,
+        transparent 100%
+    )`;
 
     const serviceAnchorVisuals = useMemo(
         () => getServiceAnchorVisuals(mapData.buildings, buildingProgress),
@@ -743,7 +932,7 @@ function Map2DBlueprintInner({
         }
 
         if (result?.success) {
-            setBridgeRepairFeedback({ tone: 'success', label: 'DIPERBAIKI ✓' });
+            setBridgeRepairFeedback({ tone: 'success', label: mapTx('bridge.repaired') });
             bridgeRepairTimerRef.current = window.setTimeout(() => {
                 setBridgeRepairFeedback(null);
             }, 1000);
@@ -752,12 +941,12 @@ function Map2DBlueprintInner({
 
         setBridgeRepairFeedback({
             tone: 'error',
-            label: result?.message || 'Perbaikan gagal'
+            label: result?.message || mapTx('bridge.repairFailed')
         });
         bridgeRepairTimerRef.current = window.setTimeout(() => {
             setBridgeRepairFeedback(null);
         }, 2000);
-    }, [repairBridge]);
+    }, [repairBridge, mapTx]);
 
     // ═══ XII.B: Warm editorial RW zone colors ═══
     const rwColors = {
@@ -788,7 +977,7 @@ function Map2DBlueprintInner({
             data-semantic-zoom={semanticZoomLevel}
             className="absolute inset-0 overflow-hidden select-none"
             style={{
-                backgroundColor: '#09131a',
+                backgroundColor: '#0a141b',
                 backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E")`,
                 cursor: isDragging ? 'grabbing' : 'grab',
                 touchAction: 'none',
@@ -807,9 +996,102 @@ function Map2DBlueprintInner({
             <div
                 className="absolute inset-0 pointer-events-none z-50"
                 style={{
-                    background: 'radial-gradient(ellipse at center, rgba(8,15,22,0) 54%, rgba(2,6,23,0.62) 100%)',
+                    background: 'radial-gradient(ellipse at center, rgba(8,15,22,0) 54%, rgba(2,6,23,0.56) 100%)',
                 }}
             />
+
+            {showThreatVignette && (
+                <div
+                    data-testid="wilayah-threat-vignette"
+                    className="absolute inset-0 pointer-events-none z-[52]"
+                    style={{
+                        opacity: threatVignetteOpacity,
+                        background: 'radial-gradient(circle at center, rgba(239,68,68,0) 46%, rgba(239,68,68,0.018) 64%, rgba(127,29,29,0.2) 100%)',
+                        boxShadow: activeLayer === 'surveillance'
+                            ? 'inset 0 0 84px rgba(127,29,29,0.26), inset 0 0 156px rgba(239,68,68,0.14)'
+                            : 'inset 0 0 60px rgba(127,29,29,0.18), inset 0 0 120px rgba(239,68,68,0.08)',
+                        animation: ambientShowcaseFx ? 'primer-threat-breathe 3.8s ease-in-out infinite' : 'none',
+                        transition: 'opacity 250ms ease, box-shadow 250ms ease',
+                    }}
+                />
+            )}
+
+            {showRadarSweep && (
+                <div
+                    data-testid="wilayah-radar-sweep"
+                    className="absolute inset-0 pointer-events-none z-[46]"
+                    style={{
+                        background: radarSweepBackground,
+                        backgroundSize: '100% 220%',
+                        mixBlendMode: 'screen',
+                        opacity: radarSweepProfile.opacity,
+                        animation: 'primer-radar-sweep 7.2s linear infinite',
+                    }}
+                />
+            )}
+
+            {isOverviewZoom && (
+                <div
+                    data-testid="map2d-semantic-zoom-overview-frame"
+                    className="absolute inset-0 pointer-events-none z-[38]"
+                    style={{
+                        background: 'radial-gradient(circle at center, rgba(148,163,184,0.04) 0%, rgba(15,23,42,0) 54%)',
+                    }}
+                >
+                    <div
+                        className="absolute"
+                        style={{
+                            inset: '7.5%',
+                            border: `1px solid ${layerVisual.chipBorder}`,
+                            borderRadius: 28,
+                            opacity: 0.28,
+                            boxShadow: 'inset 0 0 36px rgba(15,23,42,0.18)',
+                        }}
+                    />
+                    <div
+                        className="absolute left-1/2 -translate-x-1/2"
+                        style={{
+                            top: '7.5%',
+                            bottom: '7.5%',
+                            width: 1,
+                            background: 'linear-gradient(180deg, rgba(255,255,255,0), rgba(148,163,184,0.16), rgba(255,255,255,0))',
+                            opacity: 0.42,
+                        }}
+                    />
+                    <div
+                        className="absolute top-1/2 -translate-y-1/2"
+                        style={{
+                            left: '7.5%',
+                            right: '7.5%',
+                            height: 1,
+                            background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(148,163,184,0.16), rgba(255,255,255,0))',
+                            opacity: 0.42,
+                        }}
+                    />
+                    {[
+                        { key: 'tl-h', left: '7.5%', top: '7.5%', width: 42, height: 1 },
+                        { key: 'tl-v', left: '7.5%', top: '7.5%', width: 1, height: 42 },
+                        { key: 'tr-h', right: '7.5%', top: '7.5%', width: 42, height: 1 },
+                        { key: 'tr-v', right: '7.5%', top: '7.5%', width: 1, height: 42 },
+                        { key: 'bl-h', left: '7.5%', bottom: '7.5%', width: 42, height: 1 },
+                        { key: 'bl-v', left: '7.5%', bottom: '7.5%', width: 1, height: 42 },
+                        { key: 'br-h', right: '7.5%', bottom: '7.5%', width: 42, height: 1 },
+                        { key: 'br-v', right: '7.5%', bottom: '7.5%', width: 1, height: 42 },
+                    ].map((segment) => (
+                        <span
+                            key={segment.key}
+                            className="absolute"
+                            style={{
+                                ...segment,
+                                display: 'block',
+                                background: layerVisual.accent,
+                                opacity: 0.72,
+                                boxShadow: `0 0 12px ${layerVisual.accent}`,
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
 
             {/* ═══ DIRECTIVE 3: Time-of-Day Lighting Overlay ═══ */}
             {(() => {
@@ -873,10 +1155,10 @@ function Map2DBlueprintInner({
                     const isRwSelected = selectedRwZoneId === rw;
                     const isZoneInteractive = zone.isLocked && typeof onRwZoneSelect === 'function';
                     const zoneBackground = zone.isLocked
-                        ? `repeating-linear-gradient(-45deg, rgba(148,163,184,0.12) 0 7px, rgba(15,23,42,0.02) 7px 14px), ${rwColors[rw] || 'rgba(100,116,139,0.06)'}`
+                        ? `repeating-linear-gradient(-45deg, rgba(251,191,36,0.08) 0 6px, rgba(148,163,184,0.12) 6px 12px, rgba(8,15,23,0.04) 12px 18px), ${rwColors[rw] || 'rgba(100,116,139,0.06)'}`
                         : rwColors[rw] || 'rgba(100,116,139,0.06)';
                     const zoneBorder = zone.isLocked
-                        ? 'rgba(148,163,184,0.36)'
+                        ? 'rgba(251,191,36,0.22)'
                         : rwBorderColors[rw] || 'rgba(100,116,139,0.2)';
                     return (
                         <div
@@ -892,8 +1174,8 @@ function Map2DBlueprintInner({
                                 borderRadius: 8,
                                 boxShadow: zone.isLocked
                                     ? isRwSelected
-                                        ? 'inset 0 0 0 1px rgba(251,191,36,0.22), 0 0 0 1px rgba(251,191,36,0.16)'
-                                        : 'inset 0 0 0 1px rgba(226,232,240,0.05)'
+                                        ? 'inset 0 0 0 1px rgba(251,191,36,0.24), 0 0 0 1px rgba(251,191,36,0.14), 0 14px 32px rgba(15,23,42,0.14)'
+                                        : 'inset 0 0 0 1px rgba(251,191,36,0.08), 0 10px 26px rgba(15,23,42,0.08)'
                                     : 'inset 0 0 0 1px rgba(255,255,255,0.01)',
                             }}
                         >
@@ -901,12 +1183,13 @@ function Map2DBlueprintInner({
                                 <div
                                     className="absolute inset-0 flex items-center justify-center font-black uppercase tracking-[0.28em]"
                                     style={{
-                                        fontSize: 8,
-                                        color: 'rgba(226,232,240,0.12)',
+                                        fontSize: 7.5,
+                                        color: 'rgba(226,232,240,0.13)',
                                         textShadow: '0 1px 0 rgba(2,6,23,0.42)',
+                                        letterSpacing: '0.24em',
                                     }}
                                 >
-                                    Zona Belum Terdata
+                                    {mapTx('unmappedZone')}
                                 </div>
                             )}
                             <button
@@ -922,24 +1205,24 @@ function Map2DBlueprintInner({
                                         isLocked: zone.isLocked
                                     });
                                 } : undefined}
-                                title={zone.isLocked ? `Buka dossier blank spot RW ${rw}` : `RW ${rw}`}
-                                aria-label={zone.isLocked ? `Buka dossier blank spot RW ${rw}` : `RW ${rw}`}
+                                title={zone.isLocked ? mapTx('openBlankSpotDossier', { rw }) : mapTx('rwLabel', { rw })}
+                                aria-label={zone.isLocked ? mapTx('openBlankSpotDossier', { rw }) : mapTx('rwLabel', { rw })}
                                 className={`absolute rounded-md px-1.5 py-1 text-left ${isZoneInteractive ? 'pointer-events-auto transition-transform duration-200 hover:scale-[1.03]' : 'pointer-events-none'}`}
                                 style={{
                                     top: 4,
                                     left: 6,
-                                    maxWidth: 74,
+                                    maxWidth: 82,
                                     background: zone.isLocked
                                         ? isRwSelected
-                                            ? 'rgba(24,15,8,0.92)'
-                                            : 'rgba(7,12,20,0.86)'
-                                        : 'rgba(7,12,20,0.72)',
+                                            ? 'linear-gradient(180deg, rgba(34,21,10,0.96), rgba(10,16,24,0.92))'
+                                            : 'linear-gradient(180deg, rgba(16,19,28,0.96), rgba(8,12,20,0.9))'
+                                        : 'linear-gradient(180deg, rgba(9,16,24,0.88), rgba(7,12,20,0.76))',
                                     border: isRwSelected
                                         ? '1px solid rgba(251,191,36,0.45)'
                                         : `1px solid ${zoneBorder}`,
                                     boxShadow: isRwSelected
-                                        ? '0 10px 24px rgba(251,191,36,0.14)'
-                                        : '0 8px 18px rgba(2,6,23,0.28)',
+                                        ? '0 10px 26px rgba(251,191,36,0.16)'
+                                        : '0 10px 22px rgba(2,6,23,0.24)',
                                     cursor: isZoneInteractive ? 'pointer' : 'default',
                                 }}
                             >
@@ -948,10 +1231,11 @@ function Map2DBlueprintInner({
                                     style={{
                                         fontSize: 7,
                                         lineHeight: 1.1,
+                                        fontFamily: '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace',
                                         color: zone.isLocked ? 'rgba(226,232,240,0.96)' : rwBorderColors[rw] || 'rgba(148,163,184,0.58)',
                                     }}
                                 >
-                                    RW {rw}
+                                    {mapTx('rwLabel', { rw })}
                                 </div>
                                 <div
                                     className="font-black uppercase"
@@ -959,11 +1243,12 @@ function Map2DBlueprintInner({
                                         marginTop: 2,
                                         fontSize: 6.5,
                                         lineHeight: 1.1,
+                                        fontFamily: '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace',
                                         letterSpacing: '0.08em',
                                         color: zone.isLocked ? 'rgba(251,191,36,0.92)' : 'rgba(203,213,225,0.76)',
                                     }}
                                 >
-                                    {zone.isLocked ? 'ZONA BELUM TERDATA' : `${zone.familyCount} KK`}
+                                    {zone.isLocked ? mapTx('unmappedZoneShort') : mapTx('households', { count: zone.familyCount })}
                                 </div>
                                 {zone.isLocked && (
                                     <div
@@ -972,11 +1257,12 @@ function Map2DBlueprintInner({
                                             marginTop: 2,
                                             fontSize: 6,
                                             lineHeight: 1.15,
+                                            fontFamily: '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace',
                                             letterSpacing: '0.08em',
                                             color: 'rgba(148,163,184,0.88)',
                                         }}
                                     >
-                                        Blank Spot PIS-PK
+                                        {mapTx('blankSpotPispk')}
                                     </div>
                                 )}
                             </button>
@@ -995,18 +1281,33 @@ function Map2DBlueprintInner({
                             width: zone.size,
                             height: zone.size,
                             zIndex: 17,
-                            background: activeLayer === 'surveillance'
-                                ? 'rgba(220,38,38,0.10)'
+                            background: showLiquidHeatBloom
+                                ? 'radial-gradient(circle, rgba(248,113,113,0.18) 0%, rgba(220,38,38,0.1) 38%, rgba(127,29,29,0.03) 72%, transparent 100%)'
                                 : 'rgba(220,38,38,0.06)',
-                            border: '1px dashed rgba(220,38,38,0.20)'
+                            border: showLiquidHeatBloom
+                                ? '1px dashed rgba(248,113,113,0.28)'
+                                : '1px dashed rgba(220,38,38,0.20)',
+                            mixBlendMode: showLiquidHeatBloom ? 'screen' : 'normal',
                         }}
                     >
+                        {showLiquidHeatBloom && (
+                            <span
+                                data-testid={`outbreak-zone-bloom-${zone.id}`}
+                                className="absolute inset-[-16%] rounded-full"
+                                style={{
+                                    background: 'radial-gradient(circle, rgba(254,202,202,0.24) 0%, rgba(239,68,68,0.16) 28%, rgba(239,68,68,0.06) 58%, transparent 82%)',
+                                    opacity: 0.88,
+                                    animation: ambientShowcaseFx ? 'primer-liquid-heat 2.8s ease-in-out infinite' : 'none',
+                                }}
+                            />
+                        )}
                         <span
                             className="absolute left-1/2 -translate-x-1/2 font-black uppercase tracking-[0.18em]"
                             style={{
-                                top: -10,
+                                top: -12,
                                 fontSize: 7,
-                                color: 'rgba(220,38,38,0.55)',
+                                color: showLiquidHeatBloom ? 'rgba(254,202,202,0.76)' : 'rgba(220,38,38,0.55)',
+                                textShadow: showLiquidHeatBloom ? '0 0 12px rgba(239,68,68,0.45)' : 'none',
                                 whiteSpace: 'nowrap'
                             }}
                         >
@@ -1134,7 +1435,7 @@ function Map2DBlueprintInner({
                                     }}
                                 />
                             )}
-                            {showServiceLabels && (
+                            {shouldRenderServiceLabels && (
                                 <div
                                     data-testid={`service-label-${anchor.id}`}
                                     className="absolute pointer-events-none rounded-full px-2 py-1"
@@ -1148,14 +1449,27 @@ function Map2DBlueprintInner({
                                         alignItems: 'center',
                                         gap: 4,
                                         whiteSpace: 'nowrap',
-                                        boxShadow: '0 6px 18px rgba(15,23,42,0.16)',
-                                        opacity: Math.max(0.72, serviceRingOpacity),
+                                        boxShadow: '0 8px 22px rgba(15,23,42,0.18)',
+                                        opacity: serviceLabelOpacity,
                                         ...labelTone
                                     }}
                                 >
                                     <span
+                                        className="rounded-full"
+                                        style={{
+                                            width: 6,
+                                            height: 6,
+                                            background: labelTone.accent,
+                                            boxShadow: `0 0 8px ${labelTone.accent}`
+                                        }}
+                                    />
+                                    <span
                                         className="font-black uppercase tracking-[0.18em]"
-                                        style={{ fontSize: 7.5, lineHeight: 1 }}
+                                        style={{
+                                            fontSize: 7.5,
+                                            lineHeight: 1,
+                                            fontFamily: '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace'
+                                        }}
                                     >
                                         {getServiceAnchorLabel(anchor)}
                                     </span>
@@ -1254,22 +1568,56 @@ function Map2DBlueprintInner({
                         style={{
                             background: layerVisual.chipBg,
                             border: `1px solid ${layerVisual.chipBorder}`,
-                            boxShadow: '0 14px 32px rgba(15,23,42,0.14)',
+                            boxShadow: '0 18px 38px rgba(15,23,42,0.18)',
                         }}
                     >
-                        <div className="flex items-center justify-between gap-3">
-                            <div
-                                className="font-black uppercase tracking-[0.22em]"
-                                style={{ fontSize: 7.5, color: layerVisual.accent }}
-                            >
-                                Cue Peta
+                        <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                                <div
+                                    className="font-black uppercase tracking-[0.22em]"
+                                    style={{ fontSize: 7.5, color: layerVisual.accent }}
+                                >
+                                    Cue Peta
+                                </div>
+                                <div
+                                    className="mt-1 font-black uppercase tracking-[0.16em]"
+                                    style={{ fontSize: 9, color: layerVisual.chipText }}
+                                >
+                                    {layerVisual.label}
+                                </div>
+                                <div
+                                    className="mt-1 text-[9px] leading-snug"
+                                    style={{ color: layerVisual.chipText, opacity: 0.74 }}
+                                >
+                                    {layerVisual.subtitle}
+                                </div>
                             </div>
                             <div
-                                className="font-black uppercase tracking-[0.18em]"
-                                style={{ fontSize: 7, color: layerVisual.chipText, opacity: 0.72 }}
+                                className="rounded-full px-2 py-1 font-black uppercase tracking-[0.18em]"
+                                style={{
+                                    fontSize: 7,
+                                    color: layerVisual.accent,
+                                    background: 'rgba(255,255,255,0.04)',
+                                    border: `1px solid ${layerVisual.chipBorder}`,
+                                    fontFamily: '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace'
+                                }}
                             >
-                                {layerVisual.label}
+                                {semanticZoomMeta.badge}
                             </div>
+                        </div>
+                        <div
+                            className="mt-2 h-px"
+                            style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0))' }}
+                        />
+                        <div
+                            className="mt-2 text-[8px] uppercase tracking-[0.18em]"
+                            style={{
+                                color: layerVisual.chipText,
+                                opacity: 0.58,
+                                fontFamily: '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace'
+                            }}
+                        >
+                            {semanticZoomMeta.detail}
                         </div>
                         <div className="mt-2 flex flex-wrap gap-1.5">
                             {mapLegendItems.map((item) => (
@@ -1294,8 +1642,12 @@ function Map2DBlueprintInner({
             {/* ═══ ZOOM INDICATOR ═══ */}
             <div className="absolute bottom-16 left-4 z-40 pointer-events-none">
                 <div className="px-2 py-1 rounded-md text-[9px] font-black text-white/30 uppercase tracking-widest"
-                    style={{ background: 'rgba(15,23,42,0.5)', boxShadow: '0 8px 18px rgba(2,6,23,0.22)' }}>
-                    {(zoom * 100).toFixed(0)}%
+                    style={{
+                        background: 'rgba(11,18,28,0.64)',
+                        boxShadow: '0 8px 18px rgba(2,6,23,0.22)',
+                        fontFamily: '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace'
+                    }}>
+                    {semanticZoomMeta.badge} {(zoom * 100).toFixed(0)}%
                 </div>
             </div>
 
@@ -1317,6 +1669,21 @@ function Map2DBlueprintInner({
                     @keyframes primer-east-danger-pulse {
                         0%, 100% { opacity: 0.7; }
                         50% { opacity: 1; }
+                    }
+
+                    @keyframes primer-threat-breathe {
+                        0%, 100% { opacity: 0.62; }
+                        50% { opacity: 1; }
+                    }
+
+                    @keyframes primer-radar-sweep {
+                        0% { background-position: 0 -120%; }
+                        100% { background-position: 0 120%; }
+                    }
+
+                    @keyframes primer-liquid-heat {
+                        0%, 100% { transform: scale(0.94); opacity: 0.68; }
+                        50% { transform: scale(1.08); opacity: 1; }
                     }
 
                     @keyframes primer-bridge-chip-shake {

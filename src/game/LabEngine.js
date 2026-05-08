@@ -8,7 +8,6 @@
  * [LAST_UPDATE]: 2026-02-18
  */
 
-import { getMedicationById } from '../data/MedicationDatabase.js';
 import { pickDeterministic, seedKey, seededBetween, shuffleDeterministic } from '../utils/deterministicRandom.js';
 
 // ═══════════════════════════════════════════════════════════════

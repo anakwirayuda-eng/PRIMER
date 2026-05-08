@@ -139,7 +139,7 @@ export const ANALGESIC_MEDS = [
     {
         id: 'allopurinol_100',
         name: 'Allopurinol 100mg',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.METABOLIC,
         type: 'tablet',
         form: 'tablet',
         fornas: true,
@@ -157,7 +157,7 @@ export const ANALGESIC_MEDS = [
     {
         id: 'allopurinol_300',
         name: 'Allopurinol 300mg',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.METABOLIC,
         type: 'tablet',
         form: 'tablet',
         fornas: true,
@@ -175,7 +175,7 @@ export const ANALGESIC_MEDS = [
     {
         id: 'tranexamic_acid_500',
         name: 'Asam Traneksamat 500mg',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.HEMOSTATIC,
         type: 'tablet',
         form: 'tablet',
         fornas: true,
@@ -193,7 +193,7 @@ export const ANALGESIC_MEDS = [
     {
         id: 'prednisone_5',
         name: 'Prednisone 5mg',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.STEROID_IMMUNO,
         type: 'tablet',
         form: 'tablet',
         fornas: true,
@@ -211,7 +211,7 @@ export const ANALGESIC_MEDS = [
     {
         id: 'methylprednisolone_4',
         name: 'Methylprednisolone 4mg',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.STEROID_IMMUNO,
         type: 'tablet',
         form: 'tablet',
         fornas: true,
@@ -265,7 +265,7 @@ export const ANALGESIC_MEDS = [
     {
         id: 'prednisone_60',
         name: 'Prednisone (Total Dose / Tapering)',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.STEROID_IMMUNO,
         type: 'tablet',
         form: 'tablet',
         fornas: true,
@@ -301,7 +301,7 @@ export const ANALGESIC_MEDS = [
     {
         id: 'dexamethasone_0',
         name: 'Dexamethasone 0.5mg',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.STEROID_IMMUNO,
         type: 'tablet',
         form: 'tablet',
         fornas: true,
@@ -319,7 +319,7 @@ export const ANALGESIC_MEDS = [
     {
         id: 'phenazopyridine_100',
         name: 'Phenazopyridine 100mg',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.GENITOURINARY,
         type: 'tablet',
         form: 'tablet',
         fornas: true,

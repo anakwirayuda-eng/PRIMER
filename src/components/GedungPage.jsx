@@ -1,28 +1,26 @@
 /**
  * @reflection
  * [IDENTITY]: GedungPage
- * [PURPOSE]: React UI component: GedungPage.
+ * [PURPOSE]: React UI component for facility management.
  * [STATE]: Experimental
- * [ANCHOR]: GedungPage
- * [DEPENDS_ON]: GameContext
- * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { useGame } from '../context/GameContext.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
-import { Building2, Plus, Sparkles, Hammer, ArrowUp } from 'lucide-react';
+import { showToast } from '../utils/ToastManager.js';
+import { Building2, Plus, Sparkles } from 'lucide-react';
 
-// Modular Imports
 import { ROOMS } from '../data/FacilityData.js';
 import RoomCard from './gedung/RoomCard.jsx';
 import UpgradeModal from './gedung/UpgradeModal.jsx';
 import { getAvailableOperationalFunds } from '../utils/operationalFunds.js';
 
 export default function GedungPage() {
-    // Prophylaxis: Navigation Stability Guard
+    const { t } = useTranslation();
+
     useEffect(() => {
         guardStability('NAV_GEDUNG_INIT', 2000, 3);
     }, []);
@@ -31,27 +29,32 @@ export default function GedungPage() {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [isUpgrading, setIsUpgrading] = useState(false);
 
+    const currentLevels = facilities || {};
+    const localizedRooms = useMemo(() => ROOMS.map(room => ({
+        ...room,
+        name: t(`facility.rooms.${room.id}.name`, { defaultValue: room.name }),
+        effect: t(`facility.rooms.${room.id}.effect`, { defaultValue: room.effect })
+    })), [t]);
+
+    const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
+    const totalLevel = localizedRooms.reduce((sum, r) => sum + (currentLevels[r.id] || r.level), 0);
+    const maxTotalLevel = localizedRooms.reduce((sum, r) => sum + r.maxLevel, 0);
+    const progressPct = Math.round((totalLevel / maxTotalLevel) * 100);
+
     const handleUpgrade = (room) => {
         setIsUpgrading(true);
         setTimeout(() => {
             const success = upgradeFacility(room.id, room.cost);
             setIsUpgrading(false);
             if (success) {
-                alert(`✅ Upgrade ${room.name} berhasil!`);
+                showToast(t('gedungPage.toast.upgradeSuccess', { room: room.name }), 'success', 3600);
                 setSelectedRoom(null);
             } else {
-                alert('❌ Gagal upgrade! Dana tidak cukup.');
+                showToast(t('gedungPage.toast.upgradeFailed'), 'warning', 3600);
             }
         }, 1500);
     };
 
-    const currentLevels = facilities || {};
-    const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
-    const totalLevel = ROOMS.reduce((sum, r) => sum + (currentLevels[r.id] || r.level), 0);
-    const maxTotalLevel = ROOMS.reduce((sum, r) => sum + r.maxLevel, 0);
-    const progressPct = Math.round((totalLevel / maxTotalLevel) * 100);
-
-    // Stable floating particles
     const particles = useMemo(() => [...Array(10)].map((_, i) => ({
         w: 2 + (i * 0.4) % 3,
         left: ((i * 19 + 5) % 95),
@@ -64,7 +67,6 @@ export default function GedungPage() {
 
     return (
         <div className="h-full overflow-y-auto p-5 bg-slate-950 relative">
-            {/* Floating Particles */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                 {particles.map((p, i) => (
                     <div key={i} className="absolute rounded-full" style={{
@@ -78,60 +80,46 @@ export default function GedungPage() {
             </div>
 
             <div className="relative z-10 max-w-5xl mx-auto space-y-5">
-                {/* ── HEADER ── */}
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="font-display text-2xl font-black text-white/90 uppercase tracking-tight flex items-center gap-3">
                             <div className="bg-indigo-500/15 p-2.5 rounded-xl border border-indigo-500/20">
                                 <Building2 size={22} className="text-indigo-400" />
                             </div>
-                            Manajemen Gedung
+                            {t('gedungPage.title')}
                         </h2>
                         <p className="text-indigo-300/50 text-xs uppercase tracking-[0.3em] mt-1 ml-14 font-medium">
-                            Infrastruktur • Fasilitas • Upgrade
+                            {t('gedungPage.subtitle')}
                         </p>
                     </div>
                 </div>
 
-                {/* ── STATS BAR ── */}
                 <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] p-4">
                     <div className="flex items-center justify-around">
-                        <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Dana Aktif</span>
-                            <span className="font-data text-lg font-black text-amber-400">
-                                Rp {(availableFunds / 1000000).toFixed(1)}M
-                            </span>
-                        </div>
-                        <div className="w-px h-8 bg-white/[0.08]" />
-                        <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Progress</span>
-                            <span className="font-data text-lg font-black text-emerald-400">
-                                {progressPct}%
-                            </span>
-                        </div>
-                        <div className="w-px h-8 bg-white/[0.08]" />
-                        <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Level Total</span>
-                            <span className="font-data text-lg font-black text-white/80">
-                                {totalLevel}/{maxTotalLevel}
-                            </span>
-                        </div>
-                        <div className="w-px h-8 bg-white/[0.08]" />
-                        <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Fasilitas</span>
-                            <span className="font-data text-lg font-black text-indigo-400">
-                                {ROOMS.filter(r => !r.locked).length}/{ROOMS.length}
-                            </span>
-                        </div>
+                        <StatBlock
+                            label={t('gedungPage.stats.activeFunds')}
+                            value={t('gedungPage.currency.millionValue', { value: (availableFunds / 1000000).toFixed(1) })}
+                            valueClass="text-amber-400"
+                        />
+                        <Divider />
+                        <StatBlock label={t('gedungPage.stats.progress')} value={`${progressPct}%`} valueClass="text-emerald-400" />
+                        <Divider />
+                        <StatBlock label={t('gedungPage.stats.totalLevel')} value={`${totalLevel}/${maxTotalLevel}`} valueClass="text-white/80" />
+                        <Divider />
+                        <StatBlock
+                            label={t('gedungPage.stats.facilities')}
+                            value={`${localizedRooms.filter(r => !r.locked).length}/${localizedRooms.length}`}
+                            valueClass="text-indigo-400"
+                        />
                     </div>
-                    {/* Progress Bar */}
                     <div className="mt-3 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full transition-all duration-700"
-                            style={{ width: `${progressPct}%` }} />
+                        <div
+                            className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full transition-all duration-700"
+                            style={{ width: `${progressPct}%` }}
+                        />
                     </div>
                 </div>
 
-                {/* ── BOK ACTION CARD ── */}
                 <button
                     onClick={() => openWiki('dana_bok')}
                     className="group w-full relative p-4 rounded-2xl bg-amber-500/[0.08] backdrop-blur-md border border-amber-500/20 hover:bg-amber-500/15 transition-all duration-300 text-left overflow-hidden"
@@ -143,20 +131,19 @@ export default function GedungPage() {
                         </div>
                         <div>
                             <h3 className="font-display text-sm font-black text-amber-300 uppercase tracking-tight">
-                                Panduan Dana BOK
+                                {t('gedungPage.bok.title')}
                             </h3>
                             <p className="text-[10px] text-amber-400/50 font-medium uppercase tracking-wider">
-                                Buka penjelasan Bantuan Operasional Kesehatan
+                                {t('gedungPage.bok.subtitle')}
                             </p>
                         </div>
                         <Sparkles size={16} className="text-amber-400/50 ml-auto" />
                     </div>
                 </button>
 
-                {/* ── ROOM GRID ── */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     <ErrorBoundary name="RoomUpgradeList">
-                        {ROOMS.map((room, _idx) => (
+                        {localizedRooms.map((room) => (
                             <RoomCard
                                 key={room.id}
                                 room={room}
@@ -168,7 +155,6 @@ export default function GedungPage() {
                     </ErrorBoundary>
                 </div>
 
-                {/* ── UPGRADE MODAL ── */}
                 <UpgradeModal
                     room={selectedRoom}
                     currentLevel={currentLevels[selectedRoom?.id] || selectedRoom?.level}
@@ -181,3 +167,15 @@ export default function GedungPage() {
     );
 }
 
+function Divider() {
+    return <div className="w-px h-8 bg-white/[0.08]" />;
+}
+
+function StatBlock({ label, value, valueClass }) {
+    return (
+        <div className="text-center">
+            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">{label}</span>
+            <span className={`font-data text-lg font-black ${valueClass}`}>{value}</span>
+        </div>
+    );
+}

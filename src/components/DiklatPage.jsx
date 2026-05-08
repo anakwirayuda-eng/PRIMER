@@ -1,44 +1,43 @@
 /**
  * @reflection
  * [IDENTITY]: DiklatPage
- * [PURPOSE]: React UI component: DiklatPage.
+ * [PURPOSE]: Training center UI component.
  * [STATE]: Experimental
- * [ANCHOR]: DiklatPage
- * [DEPENDS_ON]: GameContext
- * [KNOWN_ISSUES]: None
- * [LAST_UPDATE]: 2026-02-12
  */
 
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
 import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
+import { showToast } from '../utils/ToastManager.js';
 import {
     GraduationCap, BookOpen, Award, Clock, CheckCircle, Lock,
-    Star, Zap, Brain, Heart, Users, Trophy, Sparkles, ChevronRight
+    Star, Zap, Brain, Heart, Users, Trophy, Sparkles, ChevronRight,
+    Stethoscope, Siren, Scissors, Landmark, Globe2, BatteryCharging, Leaf
 } from 'lucide-react';
 
 const SKILLS = [
-    { id: 'diagnosis_1', name: 'Diagnosis Lanjut', category: 'clinical', level: 2, maxLevel: 5, xpCost: 100, effect: '+10% akurasi diagnosis', unlocked: true, icon: '🩺' },
-    { id: 'emergency_1', name: 'Gawat Darurat', category: 'clinical', level: 1, maxLevel: 3, xpCost: 150, effect: '+20% IGD success', unlocked: true, icon: '🚑' },
-    { id: 'surgery_1', name: 'Bedah Minor', category: 'clinical', level: 0, maxLevel: 3, xpCost: 300, effect: 'Unlock operasi kecil', unlocked: false, icon: '🔪' },
-    { id: 'leadership_1', name: 'Kepemimpinan', category: 'management', level: 1, maxLevel: 5, xpCost: 80, effect: '+5% morale tim', unlocked: true, icon: '👔' },
-    { id: 'finance_1', name: 'Manajemen Keuangan', category: 'management', level: 0, maxLevel: 3, xpCost: 120, effect: '+10% efisiensi', unlocked: true, icon: '💰' },
-    { id: 'public_health', name: 'Kesmas', category: 'management', level: 2, maxLevel: 4, xpCost: 100, effect: '+15% outreach', unlocked: true, icon: '🌍' },
-    { id: 'stamina_1', name: 'Stamina Tinggi', category: 'personal', level: 3, maxLevel: 5, xpCost: 50, effect: '+10 Max Energy', unlocked: true, icon: '⚡' },
-    { id: 'stress_mgmt', name: 'Anti Stres', category: 'personal', level: 1, maxLevel: 3, xpCost: 80, effect: '-20% stress gain', unlocked: true, icon: '🧘' },
+    { id: 'diagnosis_1', nameKey: 'diagnosis_1.name', effectKey: 'diagnosis_1.effect', category: 'clinical', level: 2, maxLevel: 5, xpCost: 100, unlocked: true, Icon: Stethoscope },
+    { id: 'emergency_1', nameKey: 'emergency_1.name', effectKey: 'emergency_1.effect', category: 'clinical', level: 1, maxLevel: 3, xpCost: 150, unlocked: true, Icon: Siren },
+    { id: 'surgery_1', nameKey: 'surgery_1.name', effectKey: 'surgery_1.effect', category: 'clinical', level: 0, maxLevel: 3, xpCost: 300, unlocked: false, Icon: Scissors },
+    { id: 'leadership_1', nameKey: 'leadership_1.name', effectKey: 'leadership_1.effect', category: 'management', level: 1, maxLevel: 5, xpCost: 80, unlocked: true, Icon: Users },
+    { id: 'finance_1', nameKey: 'finance_1.name', effectKey: 'finance_1.effect', category: 'management', level: 0, maxLevel: 3, xpCost: 120, unlocked: true, Icon: Landmark },
+    { id: 'public_health', nameKey: 'public_health.name', effectKey: 'public_health.effect', category: 'management', level: 2, maxLevel: 4, xpCost: 100, unlocked: true, Icon: Globe2 },
+    { id: 'stamina_1', nameKey: 'stamina_1.name', effectKey: 'stamina_1.effect', category: 'personal', level: 3, maxLevel: 5, xpCost: 50, unlocked: true, Icon: BatteryCharging },
+    { id: 'stress_mgmt', nameKey: 'stress_mgmt.name', effectKey: 'stress_mgmt.effect', category: 'personal', level: 1, maxLevel: 3, xpCost: 80, unlocked: true, Icon: Leaf },
 ];
 
 const WORKSHOPS = [
-    { id: 1, title: 'Seminar Tatalaksana TB', date: 'Minggu depan', xpReward: 50, cost: 0, category: 'clinical', badge: '🆓' },
-    { id: 2, title: 'Workshop USG Dasar', date: '2 minggu lagi', xpReward: 100, cost: 500000, category: 'clinical', badge: '🔥' },
-    { id: 3, title: 'Pelatihan Manajemen', date: 'Bulan depan', xpReward: 80, cost: 0, category: 'management', badge: '📋' },
+    { id: 1, titleKey: 'tb.title', dateKey: 'tb.date', xpReward: 50, cost: 0, category: 'clinical', Icon: BookOpen },
+    { id: 2, titleKey: 'usg.title', dateKey: 'usg.date', xpReward: 100, cost: 500000, category: 'clinical', Icon: Sparkles },
+    { id: 3, titleKey: 'management.title', dateKey: 'management.date', xpReward: 80, cost: 0, category: 'management', Icon: GraduationCap },
 ];
 
 const CATEGORY_CONFIG = {
-    clinical: { accent: 'rose', icon: Brain, label: 'Klinis' },
-    management: { accent: 'indigo', icon: Users, label: 'Manajemen' },
-    personal: { accent: 'emerald', icon: Heart, label: 'Personal' },
+    clinical: { accent: 'rose', icon: Brain, labelKey: 'diklatPage.categories.clinical' },
+    management: { accent: 'indigo', icon: Users, labelKey: 'diklatPage.categories.management' },
+    personal: { accent: 'emerald', icon: Heart, labelKey: 'diklatPage.categories.personal' },
 };
 
 const ACCENT_MAP = {
@@ -48,6 +47,7 @@ const ACCENT_MAP = {
 };
 
 export default function DiklatPage() {
+    const { t, i18n } = useTranslation();
     const { playerStats, skills, unlockSkill, addXp, stats, setStats, setPlayerProfile } = useGame();
     const [activeTab, setActiveTab] = useState('skills');
 
@@ -67,11 +67,23 @@ export default function DiklatPage() {
         ? playerStats.completedWorkshops
         : [];
 
+    const localizedSkills = useMemo(() => SKILLS.map(skill => ({
+        ...skill,
+        name: t(`diklatPage.skills.${skill.nameKey}`),
+        effect: t(`diklatPage.skills.${skill.effectKey}`)
+    })), [t]);
+
+    const localizedWorkshops = useMemo(() => WORKSHOPS.map(workshop => ({
+        ...workshop,
+        title: t(`diklatPage.workshops.${workshop.titleKey}`),
+        date: t(`diklatPage.workshops.${workshop.dateKey}`)
+    })), [t]);
+
     const handleUpgradeSkill = (skill) => {
         setUpgradeAnim(skill.id);
         setTimeout(() => {
             const success = unlockSkill(skill.id, skill.xpCost);
-            if (!success) alert('Tidak cukup XP!');
+            if (!success) showToast(t('diklatPage.toast.notEnoughXp'), 'warning');
             setUpgradeAnim(null);
         }, 800);
     };
@@ -80,7 +92,7 @@ export default function DiklatPage() {
         if (completedWorkshops.includes(workshop.id)) return;
 
         if (!canAffordOperationalCost(stats, workshop.cost)) {
-            alert('Dana aktif tidak cukup untuk mengikuti workshop ini.');
+            showToast(t('diklatPage.toast.notEnoughFunds'), 'warning');
             return;
         }
 
@@ -94,12 +106,11 @@ export default function DiklatPage() {
             completedWorkshops: [...new Set([...(prev.completedWorkshops || []), workshop.id])]
         }));
 
-        alert(`${workshop.title} selesai. +${workshop.xpReward} XP`);
+        showToast(t('diklatPage.toast.workshopDone', { title: workshop.title, xp: workshop.xpReward }), 'success');
     };
 
-    const filteredSkills = SKILLS.filter(s => filterCategory === 'all' || s.category === filterCategory);
+    const filteredSkills = localizedSkills.filter(s => filterCategory === 'all' || s.category === filterCategory);
 
-    // Stable floating particles
     const particles = useMemo(() => [...Array(10)].map((_, i) => ({
         w: 2 + (i * 0.35) % 3,
         left: ((i * 21 + 7) % 93),
@@ -112,7 +123,6 @@ export default function DiklatPage() {
 
     return (
         <div className="h-full overflow-y-auto p-5 bg-slate-950 relative">
-            {/* Floating Particles */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                 {particles.map((p, i) => (
                     <div key={i} className="absolute rounded-full" style={{
@@ -126,24 +136,21 @@ export default function DiklatPage() {
             </div>
 
             <div className="relative z-10 max-w-5xl mx-auto space-y-5">
-                {/* ── HEADER ── */}
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="font-display text-2xl font-black text-white/90 uppercase tracking-tight flex items-center gap-3">
                             <div className="bg-violet-500/15 p-2.5 rounded-xl border border-violet-500/20">
                                 <GraduationCap size={22} className="text-violet-400" />
                             </div>
-                            Pusat Diklat
+                            {t('diklatPage.title')}
                         </h2>
                         <p className="text-violet-300/50 text-xs uppercase tracking-[0.3em] mt-1 ml-14 font-medium">
-                            Skill Tree • Workshop • Sertifikasi
+                            {t('diklatPage.subtitle')}
                         </p>
                     </div>
                 </div>
 
-                {/* ── XP & LEVEL CARD ── */}
                 <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] p-5 relative overflow-hidden">
-                    {/* Trophy BG */}
                     <div className="absolute -right-4 -top-4 opacity-[0.03] pointer-events-none">
                         <Trophy size={160} className="text-white" />
                     </div>
@@ -152,19 +159,22 @@ export default function DiklatPage() {
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                                 <Sparkles size={14} className="text-yellow-400" />
-                                <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Experience Points</span>
+                                <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">{t('diklatPage.xp.label')}</span>
                             </div>
                             <div className="font-data text-3xl font-black text-white/90 mb-2">
                                 {currentXP} <span className="text-lg text-white/30">XP</span>
                             </div>
                             <div className="h-2 w-48 bg-white/[0.06] rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full transition-all duration-700"
-                                    style={{ width: `${xpPct}%` }} />
+                                <div
+                                    className="h-full bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full transition-all duration-700"
+                                    style={{ width: `${xpPct}%` }}
+                                />
                             </div>
-                            <span className="text-[9px] text-white/20 font-mono mt-1 block">{xpToNextLevel} XP to next level</span>
+                            <span className="text-[9px] text-white/20 font-mono mt-1 block">
+                                {t('diklatPage.xp.toNextLevel', { xp: xpToNextLevel })}
+                            </span>
                         </div>
 
-                        {/* Level Ring */}
                         <div className="flex flex-col items-center">
                             <div className="w-20 h-20 rounded-full bg-white/[0.04] backdrop-blur border-2 border-yellow-400/30 flex items-center justify-center relative">
                                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-400/10 to-transparent" />
@@ -173,16 +183,15 @@ export default function DiklatPage() {
                                     <div className="font-data text-2xl font-black text-white">{playerLevel}</div>
                                 </div>
                             </div>
-                            <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest mt-1.5">Level</span>
+                            <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest mt-1.5">{t('diklatPage.xp.level')}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* ── TABS ── */}
                 <div className="flex gap-2">
                     {[
-                        { id: 'skills', label: 'Skill Tree', icon: Zap },
-                        { id: 'workshops', label: 'Workshop', icon: BookOpen }
+                        { id: 'skills', label: t('diklatPage.tabs.skills'), icon: Zap },
+                        { id: 'workshops', label: t('diklatPage.tabs.workshops'), icon: BookOpen }
                     ].map(tab => (
                         <button
                             key={tab.id}
@@ -198,10 +207,8 @@ export default function DiklatPage() {
                     ))}
                 </div>
 
-                {/* ── SKILL TREE TAB ── */}
                 {activeTab === 'skills' && (
                     <>
-                        {/* Category Filter */}
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setFilterCategory('all')}
@@ -210,7 +217,7 @@ export default function DiklatPage() {
                                     : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:text-white/50'
                                     }`}
                             >
-                                Semua
+                                {t('diklatPage.categories.all')}
                             </button>
                             {Object.entries(CATEGORY_CONFIG).map(([key, config]) => {
                                 const a = ACCENT_MAP[config.accent];
@@ -224,13 +231,12 @@ export default function DiklatPage() {
                                             }`}
                                     >
                                         <config.icon size={11} />
-                                        {config.label}
+                                        {t(config.labelKey)}
                                     </button>
                                 );
                             })}
                         </div>
 
-                        {/* Skills Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {filteredSkills.map((skill, idx) => {
                                 const config = CATEGORY_CONFIG[skill.category];
@@ -238,6 +244,7 @@ export default function DiklatPage() {
                                 const isUnlocked = Array.isArray(skills) && skills.includes(skill.id);
                                 const canUpgrade = !isUnlocked && currentXP >= skill.xpCost;
                                 const isAnimating = upgradeAnim === skill.id;
+                                const SkillIcon = skill.Icon;
 
                                 return (
                                     <div
@@ -248,7 +255,6 @@ export default function DiklatPage() {
                                         `}
                                         style={{ animationDelay: `${idx * 60}ms` }}
                                     >
-                                        {/* Animate Glow */}
                                         {isAnimating && (
                                             <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-amber-400/10" />
                                         )}
@@ -256,11 +262,13 @@ export default function DiklatPage() {
 
                                         <div className="relative z-10 flex items-start justify-between mb-3">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-2xl">{skill.icon}</span>
+                                                <span className="h-9 w-9 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center">
+                                                    <SkillIcon size={20} className="text-white/70" />
+                                                </span>
                                                 <div>
                                                     <h3 className="text-xs font-black text-white/80 uppercase tracking-tight">{skill.name}</h3>
                                                     <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${a.bg} ${a.text} border ${a.border}`}>
-                                                        {config.label}
+                                                        {t(config.labelKey)}
                                                     </span>
                                                 </div>
                                             </div>
@@ -270,7 +278,7 @@ export default function DiklatPage() {
                                                 <Award size={18} className="text-yellow-400" />
                                             ) : (
                                                 <div className="text-right">
-                                                    <div className="font-data text-sm font-black text-white/70">Lv.{skill.level}</div>
+                                                    <div className="font-data text-sm font-black text-white/70">{t('diklatPage.levelShort', { level: skill.level })}</div>
                                                     <div className="text-[9px] text-white/20 font-mono">/ {skill.maxLevel}</div>
                                                 </div>
                                             )}
@@ -281,8 +289,10 @@ export default function DiklatPage() {
                                         <div className="flex items-center gap-3">
                                             <div className="flex-1">
                                                 <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                                                    <div className={`h-full bg-gradient-to-r ${a.bar} rounded-full transition-all duration-700`}
-                                                        style={{ width: `${(skill.level / skill.maxLevel) * 100}%` }} />
+                                                    <div
+                                                        className={`h-full bg-gradient-to-r ${a.bar} rounded-full transition-all duration-700`}
+                                                        style={{ width: `${(skill.level / skill.maxLevel) * 100}%` }}
+                                                    />
                                                 </div>
                                             </div>
                                             {skill.unlocked && !isUnlocked && (
@@ -306,14 +316,14 @@ export default function DiklatPage() {
                     </>
                 )}
 
-                {/* ── WORKSHOP TAB ── */}
                 {activeTab === 'workshops' && (
                     <div className="space-y-3">
-                        {WORKSHOPS.map((ws, idx) => {
+                        {localizedWorkshops.map((ws, idx) => {
                             const config = CATEGORY_CONFIG[ws.category];
                             const a = ACCENT_MAP[config.accent];
                             const isCompleted = completedWorkshops.includes(ws.id);
                             const canAfford = canAffordOperationalCost(stats, ws.cost);
+                            const WorkshopIcon = ws.Icon;
 
                             return (
                                 <div
@@ -324,8 +334,8 @@ export default function DiklatPage() {
                                     <div className={`absolute top-0 left-0 w-24 h-24 ${a.glow} rounded-full -ml-8 -mt-8 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity`} />
 
                                     <div className="relative z-10 flex items-center gap-4">
-                                        <div className={`w-12 h-12 rounded-xl ${a.bg} border ${a.border} flex items-center justify-center text-xl`}>
-                                            {ws.badge}
+                                        <div className={`w-12 h-12 rounded-xl ${a.bg} border ${a.border} flex items-center justify-center`}>
+                                            <WorkshopIcon size={22} className={a.text} />
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-black text-white/80 uppercase tracking-tight">{ws.title}</h3>
@@ -352,7 +362,13 @@ export default function DiklatPage() {
                                                 : 'bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25'
                                             }`}
                                     >
-                                        {isCompleted ? 'Selesai' : ws.cost > 0 ? `Rp ${(ws.cost / 1000).toLocaleString()}K` : 'Gratis!'}
+                                        {isCompleted ? (
+                                            <><CheckCircle size={12} /> {t('diklatPage.actions.completed')}</>
+                                        ) : ws.cost > 0 ? (
+                                            t('diklatPage.currency.thousandValue', { value: (ws.cost / 1000).toLocaleString(i18n.resolvedLanguage === 'en' ? 'en-US' : 'id-ID') })
+                                        ) : (
+                                            t('diklatPage.actions.free')
+                                        )}
                                         <ChevronRight size={12} />
                                     </button>
                                 </div>
