@@ -170,7 +170,8 @@ export const createPlayerSlice = (set, get) => ({
                 }
             }));
             // Gamelan-ish glissando — "level up" feel (skill unlocked via XP).
-            soundManager.playLevelUp?.() || soundManager.playSuccess();
+            // Single call: `a?.() || b()` would fire BOTH (undefined is falsy) — Codex P2.
+            soundManager.playLevelUp?.();
             return true;
         },
         resetPlayer: () => set(s => ({ player: { ...s.player, profile: sanitizePlayerProfile(INITIAL_PLAYER_STATE) } })),
