@@ -706,9 +706,13 @@ class SoundManager {
 
 const soundManager = new SoundManager();
 
-// Expose for DEV console testing — hidden in production builds.
-if (typeof window !== 'undefined' && import.meta.env?.DEV) {
-    window.soundManager = soundManager;
+// Expose for console testing — DEV mode, or any build via `?audiotest` param.
+if (typeof window !== 'undefined') {
+    let exposeAudio = !!import.meta.env?.DEV;
+    if (!exposeAudio) {
+        try { exposeAudio = new URLSearchParams(window.location.search).has('audiotest'); } catch { /* noop */ }
+    }
+    if (exposeAudio) window.soundManager = soundManager;
 }
 
 export { soundManager };

@@ -66,12 +66,25 @@ const TOGGLES = [
     { label: 'Toggle Mute', getter: () => soundManager.muted, action: () => soundManager.toggleMute() },
 ];
 
+// Visible in DEV, or on ANY build (incl. Vercel preview) via `?audiotest`
+// query param — lets reviewers/AG audition every SFX on the deployed preview
+// without a local checkout. Hidden by default in production.
+function isAudioTestEnabled() {
+    if (import.meta.env.DEV) return true;
+    if (typeof window === 'undefined') return false;
+    try {
+        return new URLSearchParams(window.location.search).has('audiotest');
+    } catch {
+        return false;
+    }
+}
+
 export default function AudioTestPanel() {
     const [open, setOpen] = useState(false);
     const [, force] = useState(0); // force re-render after toggle
     const refresh = () => force((n) => n + 1);
 
-    if (!import.meta.env.DEV) return null;
+    if (!isAudioTestEnabled()) return null;
 
     if (!open) {
         return (
