@@ -276,20 +276,24 @@ function InvestigationPhase({ caseInstance, scenario, onAdvance }) {
 function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
     const [selectedBarriers, setSelectedBarriers] = useState({});
     const [hoveredBarrier, setHoveredBarrier] = useState(null);
-    const [shake, setShake] = useState(false);
     const allBarriers = Object.keys(BARRIER_LABELS);
     const activeCount = Object.values(selectedBarriers).filter(v => v > 0).length;
-    const maxSelect = 2;
 
+    // Continuous formulation: each domain carries a magnitude 0..1 (not a binary 2-of-6 pick).
+    // scoreCOMBDiagnosis already weights magnitude proximity (30%) + a guillotine for over-claiming,
+    // so there is NO hard cap here — over-claiming is punished by the engine, not blocked by the UI.
     const toggleBarrier = (id) => {
-        if (!selectedBarriers[id] && activeCount >= maxSelect) { setShake(true); setTimeout(() => setShake(false), 300); return; }
-        setSelectedBarriers(p => ({ ...p, [id]: p[id] ? 0 : 0.8 }));
+        setSelectedBarriers(p => (p[id] > 0 ? { ...p, [id]: 0 } : { ...p, [id]: 0.5 }));
     };
+    const setMagnitude = (id, val) => setSelectedBarriers(p => ({ ...p, [id]: val }));
+    // Only domains the player actually claimed (magnitude > 0) reach the engine, so a toggled-off
+    // domain can't accidentally trip the false-positive guillotine.
+    const playerBarriers = Object.fromEntries(Object.entries(selectedBarriers).filter(([, v]) => v > 0));
 
     const foundClueData = useMemo(() => caseInstance.cluesFound.map(loc => scenario.investigationClues.find(c => c.location === loc)).filter(Boolean), [caseInstance, scenario]);
 
     return (
-        <div className={`space-y-6 flex flex-col h-full animate-in fade-in slide-in-from-right-8 duration-500 ${shake ? 'bc-shake' : ''}`}>
+        <div className="space-y-6 flex flex-col h-full animate-in fade-in slide-in-from-right-8 duration-500">
 
             {/* The Crazy Wall (Corkboard + Red String + Pins) */}
             <div className="relative bg-[#1a1c23] p-5 rounded-2xl border-2 border-slate-700 shadow-[inset_0_20px_60px_rgba(0,0,0,0.8)] shrink-0 overflow-hidden">
@@ -335,9 +339,9 @@ function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
                 <div className="mb-3 flex justify-between items-end border-b border-white/10 pb-2">
                     <div>
                         <h3 className="text-white font-black text-xl uppercase tracking-widest leading-none">ANALISIS DETERMINAN</h3>
-                        <p className="text-slate-400 font-mono text-[9px] tracking-widest uppercase mt-1.5">Pilih <span className="text-amber-400 font-bold px-1 bg-amber-500/10 rounded">Maks {maxSelect}</span> Akar Masalah (COM-B).</p>
+                        <p className="text-slate-400 font-mono text-[9px] tracking-widest uppercase mt-1.5">Klik domain lalu <span className="text-amber-400 font-bold px-1 bg-amber-500/10 rounded">setel besarnya</span> hambatan (COM-B). Klaim berlebihan dihukum.</p>
                     </div>
-                    <span className="text-cyan-400 font-mono text-[11px] font-bold tracking-widest bg-cyan-950/50 px-2 py-1 rounded border border-cyan-800">[{activeCount}/{maxSelect}]</span>
+                    <span className="text-cyan-400 font-mono text-[11px] font-bold tracking-widest bg-cyan-950/50 px-2 py-1 rounded border border-cyan-800">{activeCount} diklaim</span>
                 </div>
 
                 {/* Hover Education Box — COM-B theory on demand */}
@@ -360,44 +364,45 @@ function DiagnosisPhase({ caseInstance, scenario, onAdvance }) {
                 <div className="grid grid-cols-2 gap-3 flex-1 content-start">
                     {allBarriers.map((id, idx) => {
                         const info = BARRIER_LABELS[id];
-                        const active = selectedBarriers[id] > 0;
-                        const disabled = !active && activeCount >= maxSelect;
+                        const mag = selectedBarriers[id] || 0;
+                        const active = mag > 0;
                         return (
-                            <button key={id}
-                                onClick={() => toggleBarrier(id)}
+                            <div key={id}
                                 onMouseEnter={() => setHoveredBarrier(id)}
                                 onMouseLeave={() => setHoveredBarrier(null)}
-                                disabled={disabled}
                                 style={{ animationDelay: `${idx * 40}ms` }}
-                                className={`
-                                    relative p-3 text-left transition-all duration-200 border rounded-2xl animate-in zoom-in-95 fill-mode-backwards btn-med group
-                                    ${active ? info.activeBtn
-                                        : disabled ? 'bg-slate-950 border-slate-900 border-b-slate-950 opacity-40 grayscale cursor-not-allowed'
-                                        : 'bg-[#121824] border-slate-700 border-b-slate-900 hover:bg-slate-800 hover:border-slate-500'}
-                                `}
+                                className={`relative p-3 transition-all duration-200 border rounded-2xl animate-in zoom-in-95 fill-mode-backwards group
+                                    ${active ? info.activeBtn : 'bg-[#121824] border-slate-700 border-b-slate-900 hover:bg-slate-800 hover:border-slate-500'}`}
                             >
-                                <div className="flex items-center gap-3">
+                                <button onClick={() => toggleBarrier(id)} className="w-full flex items-center gap-3 text-left">
                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 shadow-inner shrink-0 ${active ? info.activeIcon : 'border-slate-700 bg-[#0A0F18] text-slate-500 group-hover:text-slate-300'}`}>
                                         {info.icon}
                                     </div>
                                     <span className={`text-[10px] font-black uppercase tracking-wider leading-tight ${active ? 'text-white' : 'text-slate-400 group-hover:text-white'}`}>
                                         {info.label}
                                     </span>
-                                </div>
-                            </button>
+                                    {active && <span className="ml-auto text-white font-mono text-[12px] font-black shrink-0">{Math.round(mag * 100)}%</span>}
+                                </button>
+                                {active && (
+                                    <input type="range" min="5" max="100" step="5" value={Math.round(mag * 100)}
+                                        onChange={(e) => setMagnitude(id, Number(e.target.value) / 100)}
+                                        aria-label={`Besar hambatan ${info.label}`}
+                                        className="w-full mt-2.5 accent-cyan-400 cursor-pointer" />
+                                )}
+                            </div>
                         );
                     })}
                 </div>
             </div>
 
             <div className="shrink-0 pt-2 border-t border-slate-800/50">
-                <button onClick={() => onAdvance(scoreCOMBDiagnosis(caseInstance, selectedBarriers))} disabled={activeCount === 0}
-                    className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] btn-med transition-all ${activeCount > 0
-                        ? 'bg-cyan-600 border-cyan-400 border-b-cyan-800 text-white hover:bg-cyan-500 shadow-[0_10px_30px_rgba(8,148,235,0.4)] flex justify-center items-center gap-2'
-                        : 'bg-slate-900 border-slate-800 border-b-black text-slate-600 cursor-not-allowed'
+                <button onClick={() => onAdvance(scoreCOMBDiagnosis(caseInstance, playerBarriers))}
+                    className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] btn-med transition-all flex justify-center items-center gap-2 ${activeCount > 0
+                        ? 'bg-cyan-600 border-cyan-400 border-b-cyan-800 text-white hover:bg-cyan-500 shadow-[0_10px_30px_rgba(8,148,235,0.4)]'
+                        : 'bg-rose-900/60 border-rose-800 border-b-black text-rose-300 hover:bg-rose-900'
                     }`}
                 >
-                    {activeCount > 0 ? <><FileSignature size={18} className="animate-pulse"/> SAHKAN DIAGNOSIS IKM</> : 'TENTUKAN PRIORITAS INTERVENSI...'}
+                    {activeCount > 0 ? <><FileSignature size={18} className="animate-pulse"/> SAHKAN FORMULASI</> : 'SAHKAN TANPA DIAGNOSIS (APATI)'}
                 </button>
             </div>
         </div>
