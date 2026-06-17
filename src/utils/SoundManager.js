@@ -228,11 +228,19 @@ class SoundManager {
     focusMode = false;
     ducked = false;  // Tunnel-vision hack: BGM @ 50% when EMR panel active
 
-    // BGM tracks — cleared 2026-04-24 after legal audit.
-    // Previously held 7 copyrighted Square Enix tracks (FF8/Chrono Cross).
-    // Pending royalty-free replacement per docs/AUDIO_DESIGN.md:
-    //   target 3-4 CC0 ambient soundscape (Freesound.org) — not melody.
-    bgmTracks = [];
+    // BGM tracks — DEMO placeholder (2026-06-18).
+    // Single track wired to all slots so reviewers hear BGM + ducking +
+    // 3-channel mixer in every scene. Replace with curated 3-track CC0
+    // soundscape per docs/AUDIO_SOURCING.md before production release.
+    //
+    // gamelan_demo.mp3:
+    //   "Javanese Vibes" by fiikuri — Pixabay Content License
+    //   https://pixabay.com/music/world-free-javanese-vibes-gamelan-music-music-for-creator-383176/
+    //   Free for commercial use, no attribution required.
+    //   ⚠️ Region-specific (Jawa gamelan) — for final release, swap to pan-Indonesian neutral.
+    bgmTracks = [
+        ['/audio/gamelan_demo.mp3']
+    ];
 
     // Build a Howl instance for BGM playback. Howler handles autoplay policy,
     // iOS audio unlock, and HTML5 streaming for large music files.
