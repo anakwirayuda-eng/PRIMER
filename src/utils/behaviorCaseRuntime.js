@@ -148,7 +148,8 @@ export function buildBehaviorCaseHistoryEntry(result, day) {
             ukpTriggered: Boolean(result?.ukpTriggered ?? caseInstance.ukpTriggered),
             ukpDelayDays: result?.ukpDelayDays ?? caseInstance.ukpDelayDays ?? null,
             ukpDiseaseId: result?.ukpDiseaseId ?? caseInstance.ukpDiseaseId ?? null,
-            evidenceGathered: Array.isArray(result?.evidenceGathered) ? result.evidenceGathered : []
+            evidenceGathered: Array.isArray(result?.evidenceGathered) ? result.evidenceGathered : [],
+            comBDiagnosis: caseInstance.comBDiagnosis || null
         }
     };
 }

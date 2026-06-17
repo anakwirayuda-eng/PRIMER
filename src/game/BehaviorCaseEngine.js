@@ -270,7 +270,7 @@ export function scoreCOMBDiagnosis(caseInstance, playerBarriers) {
     if (!playerBarriers || Object.keys(playerBarriers).length === 0) {
         return {
             ...caseInstance,
-            combDiagnosis: {
+            comBDiagnosis: {
                 score: 0,
                 tier: 'fail',
                 primaryHits: 0,

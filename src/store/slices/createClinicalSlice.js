@@ -120,6 +120,8 @@ export const createClinicalSlice = (set, get) => ({
 
                 // Penalize reputation for fainting
                 nextState.player.profile.reputation = Math.max(0, s.player.profile.reputation - 5);
+                // Track burnout for the Resilience score (scoringEngine reads player.faintedCount)
+                nextState.player.profile.faintedCount = (s.player.profile.faintedCount || 0) + 1;
                 soundManager.playConfirm();
             }
 
