@@ -10,6 +10,7 @@
 import { produce } from 'immer';
 import { soundManager } from '../../utils/SoundManager.js';
 import { getMedicationById } from '../../data/MedicationDatabase.js';
+import { matchDrugAllergy } from '../../game/DispensingEngine.js';
 import { calculatePatientBill } from '../../game/BillingEngine.js';
 import { determineMonthlyOutcome } from '../../game/ProlanisEngine.js';
 import { EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../../game/EmergencyCases.js';
@@ -443,12 +444,36 @@ export const createClinicalSlice = (set, get) => ({
             arrivedPatients.forEach(p => {
                 const sd = p.sisruteData;
                 state.clinical.emergencyQueue = state.clinical.emergencyQueue.filter(q => q.id !== p.id);
+
+                // 🚨 ALLERGY FIREWALL/SISRUTE (Gap 2 fix, audit 2026-04-26):
+                // Re-validate actionsPerformed against patient allergies on
+                // auto-discharge. Decision was already made — we don't roll
+                // back, but conflicts are logged to CPPT for educational
+                // review and console-warned for dosen analytics.
+                const actionsPerformed = sd?.actionsPerformed || [];
+                const allergies = p?.hidden?.allergies || p?.medicalData?.allergies || [];
+                const allergyConflicts = [];
+                if (allergies.length > 0 && actionsPerformed.length > 0) {
+                    actionsPerformed.forEach(actionId => {
+                        const action = EMERGENCY_ACTIONS[actionId];
+                        if (!action?.deductStock) return;
+                        const med = getMedicationById(actionId);
+                        if (!med) return;
+                        const match = matchDrugAllergy(med, allergies);
+                        if (match) {
+                            allergyConflicts.push({ actionId, actionName: action.name, allergy: match });
+                            console.warn(`[ALLERGY FIREWALL/SISRUTE] Auto-discharge conflict: ${action.name} given to patient allergic to "${match}"`);
+                        }
+                    });
+                }
+
                 state.clinical.history = appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
                     ...p, day: state.world.day, dischargedAt: currentTime,
                     // DeepThink Fix: spread original decision to preserve diagnoses/medications
-                    decision: { ...(p.originalDecision || {}), action: 'refer', isSISRUTE: true, actionsPerformed: p.sisruteData?.actionsPerformed || [], referralDetails: sd?.referralDetails },
+                    decision: { ...(p.originalDecision || {}), action: 'refer', isSISRUTE: true, actionsPerformed, referralDetails: sd?.referralDetails },
                     outcome: 'referred', outcomeStatus: 'sisrute_transferred',
                     satisfactionScore: 90, isEmergency: true,
+                    allergyConflicts: allergyConflicts.length > 0 ? allergyConflicts : undefined,
                     cpptRecord: buildMaiaCPPTRecord(p, state.world.day, currentTime, 'referred', true)
                 }));
                 soundManager.playSuccess();
@@ -1126,7 +1151,11 @@ export const createClinicalSlice = (set, get) => ({
             const score = s.player.profile.reputation;
             let newAccreditation = 'Dasar';
             if (score >= 90) newAccreditation = 'Paripurna'; else if (score >= 80) newAccreditation = 'Utama'; else if (score >= 70) newAccreditation = 'Madya';
-            if (newAccreditation !== s.clinical.accreditation) { set(st => ({ clinical: { ...st.clinical, accreditation: newAccreditation } })); }
+            if (newAccreditation !== s.clinical.accreditation) {
+                set(st => ({ clinical: { ...st.clinical, accreditation: newAccreditation } }));
+                // Accreditation upgrade — gamelan glissando celebration
+                soundManager.playLevelUp?.();
+            }
         },
         resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [], hospitalBedUsage: {}, activeReferralLog: [] } }))
     },

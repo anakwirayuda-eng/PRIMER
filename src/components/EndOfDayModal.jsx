@@ -10,19 +10,23 @@
  * 
  * Design: calm twilight gradient (slate → indigo), scrollable single-page.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Moon, Users, TrendingUp, Star, AlertTriangle, BookOpen, MessageSquare, ArrowRight } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import useModalA11y from '../hooks/useModalA11y.js';
 import StatCard from './shared/StatCard';
 import ExpandableCard from './shared/ExpandableCard';
 import GuidelineBadge from './shared/GuidelineBadge';
+import { soundManager } from '../utils/SoundManager.js';
 
 export default function EndOfDayModal({ debriefData, onComplete, onDismiss }) {
     const { isDark } = useTheme();
     const modalRef = useModalA11y(onDismiss);
     const [reflectionText, setReflectionText] = useState('');
     const [showReflection, setShowReflection] = useState(false);
+
+    // Descending chime stinger on mount — "day settling into twilight"
+    useEffect(() => { if (debriefData) soundManager.playDayEnd?.(); }, [debriefData]);
 
     if (!debriefData) return null;
 

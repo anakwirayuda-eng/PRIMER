@@ -391,7 +391,7 @@ export default function BuildingGamePanel({ buildingType, energy, onAction, onCl
                 <div className={`flex-1 relative transition-all duration-500 ${panelOpen ? 'mr-0' : ''}`}>
                     {/* Painted background */}
                     <img
-                        src={`/assets/buildings/${buildingType}_interior.png`}
+                        src={`/assets/buildings/${buildingType}_interior.webp`}
                         alt=""
                         className="absolute inset-0 w-full h-full object-cover opacity-30"
                         draggable={false}

@@ -20,7 +20,7 @@ export const HOSPITALS = [
         specialties: ['pediatrics', 'obgyn', 'internal_medicine'],
         bedCapacity: { total: 20, available: 8 },
         description: 'RS terdekat dengan layanan dasar lengkap.',
-        img: '/images/hospitals/rs_class_c.png'
+        img: '/images/hospitals/rs_class_c.webp'
     },
     {
         id: 'rsud_kabupaten',
@@ -31,7 +31,7 @@ export const HOSPITALS = [
         specialties: ['surgery', 'internal_medicine', 'neurology', 'orthopedics'],
         bedCapacity: { total: 150, available: 22 },
         description: 'RS rujukan utama tingkat kabupaten dengan fasilitas bedah lengkap.',
-        img: '/images/hospitals/rs_class_b.png'
+        img: '/images/hospitals/rs_class_b.webp'
     },
     {
         id: 'rsup_nasional',
@@ -42,7 +42,7 @@ export const HOSPITALS = [
         specialties: ['cardiology', 'oncology', 'neurosurgery', 'urology'],
         bedCapacity: { total: 500, available: 15 },
         description: 'Pusat rujukan nasional untuk kasus kompleks dan subspesialis.',
-        img: '/images/hospitals/rs_class_a.png'
+        img: '/images/hospitals/rs_class_a.webp'
     },
     {
         id: 'rs_mata_bakti',
@@ -53,7 +53,7 @@ export const HOSPITALS = [
         specialties: ['ophthalmology'],
         bedCapacity: { total: 50, available: 12 },
         description: 'RS khusus mata dengan teknologi laser terbaru.',
-        img: '/images/hospitals/rs_specialist.png'
+        img: '/images/hospitals/rs_specialist.webp'
     }
 ];
 

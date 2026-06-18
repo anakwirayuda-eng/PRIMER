@@ -17,7 +17,7 @@ export const ASSET_KEY = Object.freeze(
 
 /**
  * Resolves a key to a stable URL.
- * Vite serves from /public by default, so 'assets/foo.png' -> '/assets/foo.png'
+ * Vite serves from /public by default, so 'assets/foo.webp' -> '/assets/foo.webp'
  */
 export function getAssetUrl(key) {
     const meta = ASSET_MANIFEST[key];

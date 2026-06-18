@@ -7,7 +7,7 @@
  * [LAST_UPDATE]: 2026-02-14
  */
 
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useEffect } from 'react';
 import { useGameStore } from '../store/useGameStore.js';
 import { useShallow } from 'zustand/react/shallow';
 import { selectDerivedFinance, selectPlayerStats, selectClinical, selectBuffs } from '../store/selectors.js';
@@ -75,6 +75,31 @@ export function GameProvider({ children }) {
 
     // Cloud Sync: auto-sync to Supabase on day transitions
     useCloudSync({ slotId: nav.currentSlotId || 'default' });
+
+    // Audio ducking — BGM drops to 50% when EMR panel is focused (tunnel vision)
+    // See docs/AUDIO_DESIGN.md § Ducking.
+    useEffect(() => {
+        const emrOpen = !!(clinical.activePatientId || clinical.activeEmergencyId);
+        soundManager.setDucked?.(emrOpen);
+    }, [clinical.activePatientId, clinical.activeEmergencyId]);
+
+    // Location-based BGM (T0.2) — pick the theme for the current scene + urgency
+    // and crossfade to it. Urgency (emergency in queue / active outbreak) wins.
+    // See docs/AUDIO_DESIGN.md § Smart BGM Selection.
+    const hasEmergency = (clinical.emergencyQueue?.length || 0) > 0;
+    const hasOutbreak = (publicHealth.activeOutbreaks?.length || 0) > 0;
+    useEffect(() => {
+        const theme = soundManager.themeForContext?.({
+            gameState: nav.gameState,
+            activePage: nav.activePage,
+            hasEmergency,
+            hasOutbreak,
+        });
+        if (theme) {
+            soundManager.playTheme?.(theme);
+            soundManager.playAmbient?.(theme); // T1.1 — no-op until ambient tracks sourced
+        }
+    }, [nav.gameState, nav.activePage, hasEmergency, hasOutbreak]);
 
     const value = useMemo(() => {
         // Prepare base object - Merging store states and actions

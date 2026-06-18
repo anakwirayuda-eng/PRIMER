@@ -288,8 +288,8 @@ export default function ClinicalPage() {
 
 
         // Empty state background
-        const emptyStateBg = activeServiceId === 'poli_umum' ? '/images/wilayah/poli_umum_bg.png' :
-            activeServiceId === 'igd' ? '/images/wilayah/igd_bg.png' : null;
+        const emptyStateBg = activeServiceId === 'poli_umum' ? '/images/wilayah/poli_umum_bg.webp' :
+            activeServiceId === 'igd' ? '/images/wilayah/igd_bg.webp' : null;
 
         const isNotYetOpen = time < 480 && activeServiceId !== 'igd';
         const isClosed = (time >= 960 || time < 480) && activeServiceId !== 'igd';

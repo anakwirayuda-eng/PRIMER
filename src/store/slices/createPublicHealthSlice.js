@@ -590,6 +590,11 @@ export const createPublicHealthSlice = (set, get) => ({
             if (newOutbreak) { finalOutbreaks.push(newOutbreak); notification = newOutbreak; soundManager.playError(); }
             let nextVillage = villageData;
             const bridgeOutageUntilDay = resolveBridgeOutageUntilDay(day, s.publicHealth.bridgeOutageUntilDay);
+            // P1 audio: cue the moment a bridge breaks (was passable → now putus)
+            if (!isBridgeOutageActive(day, s.publicHealth.bridgeOutageUntilDay) &&
+                isBridgeOutageActive(day, bridgeOutageUntilDay)) {
+                soundManager.playBridgeOutage();
+            }
             if (nextVillage) {
                 const activeChampions = nextVillage.families
                     .filter(f => isLocalChampionEligible(f.iksScore))

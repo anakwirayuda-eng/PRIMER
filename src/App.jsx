@@ -16,6 +16,7 @@ import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 // Dashboard.jsx (legacy) deleted — DashboardPage.jsx is the active dashboard
 import OpeningScreen from './components/OpeningScreen.jsx';
 import { soundManager } from './utils/SoundManager.js';
+import AudioTestPanel from './components/dev/AudioTestPanel.jsx';
 import DatabaseSync from './components/DatabaseSync.jsx';
 import { safeReloadPage } from './utils/browserSafety.js';
 import { isSupabaseConfigured } from './services/supabaseClient.js';
@@ -168,7 +169,8 @@ function App() {
     document.addEventListener('keydown', initSound);
     document.addEventListener('touchstart', initSound);
 
-    // 2. Play click sound for interactive elements (persistent)
+    // 2. Cursor tick on semantic buttons/links only. Scoped 2026-04-24 to avoid
+    // audio fatigue from `.cursor-pointer` catch-all — see docs/AUDIO_DESIGN.md.
     const handleNavigationSound = (e) => {
       const target = e.target;
       const isInteractive =
@@ -176,12 +178,10 @@ function App() {
         target.tagName === 'A' ||
         target.closest('button') ||
         target.closest('a') ||
-        target.closest('[role="button"]') ||
-        target.closest('.cursor-pointer') ||
-        target.classList.contains('cursor-pointer');
+        target.closest('[role="button"]');
 
-      if (isInteractive) {
-        soundManager.playClick();
+      if (isInteractive && !soundManager.reducedAudio) {
+        soundManager.playCursor();
       }
     };
 
@@ -204,6 +204,7 @@ function App() {
               <GameRouter />
             </Suspense>
           </ErrorBoundary>
+          <AudioTestPanel />
         </GameProvider>
       </ThemeProvider>
     </AuthProvider>

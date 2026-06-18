@@ -9,9 +9,10 @@
  * [LAST_UPDATE]: 2026-03-29
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../context/GameContext.jsx';
+import { soundManager } from '../utils/SoundManager.js';
 import {
     AlertTriangle, Clock, Heart, Activity, Zap, CheckCircle, XCircle, ArrowRight,
     Siren, Thermometer, Droplets, Bot, FileText, Stethoscope, Info, Truck,
@@ -20,6 +21,9 @@ import {
 import { TRIAGE_LEVELS, ESI_LEVELS, validateTriage, validateStabilization, calculatePatientStatus, getEmergencyCase, EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../game/EmergencyCases.js';
 import { getAvatarStyle } from '../utils/AvatarUtils.js';
 import { formatTime } from '../utils/formatTime.js';
+import { matchDrugAllergy } from '../game/DispensingEngine.js';
+import { getMedicationById } from '../data/MedicationDatabase.js';
+import { showToast } from '../utils/ToastManager.js';
 
 // Triage color badge component
 export function TriageBadge({ level, esiLevel, size = 'sm' }) {
@@ -187,7 +191,7 @@ export default function EmergencyPanel({ emergencyQueue, onAdmitEmergency, activ
             <div className="relative bg-gradient-to-r from-red-600 to-red-700 p-4 text-white overflow-hidden">
                 {/* Background Pattern/Image */}
                 <div className="absolute right-0 top-0 h-full w-1/2 opacity-30 pointer-events-none">
-                    <img src="/images/wilayah/igd_bg.png" alt="IGD" className="h-full object-cover object-left" />
+                    <img src="/images/wilayah/igd_bg.webp" alt="IGD" className="h-full object-cover object-left" />
                 </div>
 
                 <div className="relative z-10">
@@ -395,6 +399,24 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
     useEffect(() => { if (stabilizationValidation) setActivePhase(p => p === 2 ? 3 : p); }, [stabilizationValidation]);
     /* eslint-enable react-hooks/set-state-in-effect */
 
+    // Respectful Silence audio cue on patient death (deterioration ≥ 100 after
+    // max resus attempts). Fires once per death event; resets when patient
+    // changes or condition clears. See docs/AUDIO_DESIGN.md § Kategori 3.
+    const respectfulSilenceFiredRef = useRef(false);
+    const isDeathState = useMemo(() => {
+        if (!patient) return false;
+        const dl = patient.deterioration || 0;
+        return dl >= 100 && patient.triageLevel !== 4 && resuscitationAttempts >= MAX_RESUS_ATTEMPTS;
+    }, [patient, resuscitationAttempts]);
+    useEffect(() => {
+        if (isDeathState && !respectfulSilenceFiredRef.current) {
+            soundManager.playRespectfulSilence?.();
+            respectfulSilenceFiredRef.current = true;
+        } else if (!isDeathState) {
+            respectfulSilenceFiredRef.current = false;
+        }
+    }, [isDeathState]);
+
     // Guard: patient may be undefined if queue desyncs from activeEmergencyId
     if (!patient) {
         return (
@@ -409,11 +431,34 @@ export function EmergencyEMR({ patient, onStabilize: _onStabilize, onRefer, onDi
 
     // Handle action toggle
     const toggleAction = (actionId) => {
+        // Removing an action — always allowed
         if (performedActions.includes(actionId)) {
             setPerformedActions(performedActions.filter(a => a !== actionId));
-        } else {
-            setPerformedActions([...performedActions, actionId]);
+            return;
         }
+
+        // 🚨 ALLERGY FIREWALL (Gap 1 fix, audit 2026-04-26):
+        // For drug-administration actions (deductStock: true), validate against
+        // patient allergies before adding. Mirrors usePatientEMR.js:521 gate.
+        const action = EMERGENCY_ACTIONS[actionId];
+        if (action?.deductStock) {
+            const allergies = patient?.hidden?.allergies || patient?.medicalData?.allergies || [];
+            if (allergies.length > 0) {
+                const medData = getMedicationById(actionId);
+                if (medData) {
+                    const allergyMatch = matchDrugAllergy(medData, allergies);
+                    if (allergyMatch) {
+                        // IEC 60601-1-8 high-priority alarm + visual toast
+                        soundManager.playCriticalAlarm?.() || soundManager.playError?.();
+                        console.warn(`[ALLERGY FIREWALL/IGD] Blocked: ${action.name} — patient allergic to "${allergyMatch}"`);
+                        showToast(`⚠️ ALERGI: ${action.name} KONTRAINDIKASI — pasien alergi "${allergyMatch}"`, 'error');
+                        return;
+                    }
+                }
+            }
+        }
+
+        setPerformedActions([...performedActions, actionId]);
     };
 
     // ðŸ–¤ KODE HITAM (DEATH) â€” Max resuscitation attempts exhausted

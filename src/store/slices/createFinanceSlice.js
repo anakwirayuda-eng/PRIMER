@@ -265,6 +265,7 @@ export const createFinanceSlice = (set, get) => ({
         },
         // CROSS-SLICE: writes finance + clinical.monthlyArchive
         processMonthlyReport: (accreditation, hiredStaff) => {
+            let lowFundsWarning = false;
             set(s => {
                 const accreditationMultiplier = ACCREDITATION_MULTIPLIER[accreditation] || 1.0;
                 
@@ -297,12 +298,15 @@ export const createFinanceSlice = (set, get) => ({
                     };
                 }
 
+                const newBalance = s.finance.stats.kapitasi + monthlyKapitasi - totalSalaries;
+                lowFundsWarning = newBalance < 0; // went into the red this cycle
+
                 return {
                     finance: {
                         ...s.finance,
                         stats: {
                             ...s.finance.stats,
-                            kapitasi: s.finance.stats.kapitasi + monthlyKapitasi - totalSalaries,
+                            kapitasi: newBalance,
                             pengeluaranObat: 0,
                             pengeluaranLab: 0,
                             pengeluaranOperasional: 0,
@@ -316,7 +320,9 @@ export const createFinanceSlice = (set, get) => ({
                     }
                 };
             });
-            soundManager.playNotification();
+            // P1 audio: deficit → warning; otherwise the usual report chime
+            if (lowFundsWarning) soundManager.playError();
+            else soundManager.playNotification();
         },
         resetFinance: () => set(s => ({
             finance: {

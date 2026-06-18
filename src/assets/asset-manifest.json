@@ -2,227 +2,227 @@
     "VERSION": 1,
     "ASSETS": {
         "VILLAGE_MAP": {
-            "file": "village_map.jpg",
+            "file": "village_map.webp",
             "type": "image"
         },
         "VILLAGE_MAP_SATELLITE": {
-            "file": "village_map_satellite.png",
+            "file": "village_map_satellite.webp",
             "type": "image"
         },
         "VILLAGE_PROFILE_HERO": {
-            "file": "village_profile_hero.png",
+            "file": "village_profile_hero.webp",
             "type": "image"
         },
         "MCK_FACILITY": {
-            "file": "mck_facility.png",
+            "file": "mck_facility.webp",
             "type": "image"
         },
         "CURSOR_FF8": {
-            "file": "cursor_ff8.png",
+            "file": "cursor_ff8.webp",
             "type": "image"
         },
         "FACILITY_TILESET": {
-            "file": "facility_tileset.png",
+            "file": "facility_tileset.webp",
             "type": "image"
         },
         "WILAYAH_TILESET": {
-            "file": "wilayah_tileset.png",
+            "file": "wilayah_tileset.webp",
             "type": "image"
         },
         "FKK_LOGO": {
-            "file": "fkk_logo.png",
+            "file": "fkk_logo.webp",
             "type": "image"
         },
         "ITS_LOGO": {
-            "file": "its_logo.png",
+            "file": "its_logo.webp",
             "type": "image"
         },
         "BUILDING_ALUN_ALUN": {
-            "file": "buildings/alun_alun.png",
+            "file": "buildings/alun_alun.webp",
             "type": "image"
         },
         "BUILDING_BALAI_DESA": {
-            "file": "buildings/balai_desa.png",
+            "file": "buildings/balai_desa.webp",
             "type": "image"
         },
         "BUILDING_BANK_SAMPAH": {
-            "file": "buildings/bank_sampah.png",
+            "file": "buildings/bank_sampah.webp",
             "type": "image"
         },
         "BUILDING_DASHAT": {
-            "file": "buildings/dashat.png",
+            "file": "buildings/dashat.webp",
             "type": "image"
         },
         "BUILDING_HOUSE": {
-            "file": "buildings/house.png",
+            "file": "buildings/house.webp",
             "type": "image"
         },
         "BUILDING_IKS_SCOREBOARD": {
-            "file": "buildings/iks_scoreboard.png",
+            "file": "buildings/iks_scoreboard.webp",
             "type": "image"
         },
         "BUILDING_KANTOR_DESA": {
-            "file": "buildings/kantor_desa.png",
+            "file": "buildings/kantor_desa.webp",
             "type": "image"
         },
         "BUILDING_MARKET": {
-            "file": "buildings/market.png",
+            "file": "buildings/market.webp",
             "type": "image"
         },
         "BUILDING_MCK": {
-            "file": "buildings/mck.png",
+            "file": "buildings/mck.webp",
             "type": "image"
         },
         "BUILDING_MOSQUE": {
-            "file": "buildings/mosque.png",
+            "file": "buildings/mosque.webp",
             "type": "image"
         },
         "BUILDING_PAMSIMAS": {
-            "file": "buildings/pamsimas.png",
+            "file": "buildings/pamsimas.webp",
             "type": "image"
         },
         "BUILDING_POLINDES": {
-            "file": "buildings/polindes.png",
+            "file": "buildings/polindes.webp",
             "type": "image"
         },
         "BUILDING_POS_GIZI": {
-            "file": "buildings/pos_gizi.png",
+            "file": "buildings/pos_gizi.webp",
             "type": "image"
         },
         "BUILDING_POS_UKK": {
-            "file": "buildings/pos_ukk.png",
+            "file": "buildings/pos_ukk.webp",
             "type": "image"
         },
         "BUILDING_POSYANDU": {
-            "file": "buildings/posyandu.png",
+            "file": "buildings/posyandu.webp",
             "type": "image"
         },
         "BUILDING_PUSKESMAS": {
-            "file": "buildings/puskesmas.png",
+            "file": "buildings/puskesmas.webp",
             "type": "image"
         },
         "BUILDING_PUSTU": {
-            "file": "buildings/pustu.png",
+            "file": "buildings/pustu.webp",
             "type": "image"
         },
         "BUILDING_RTK": {
-            "file": "buildings/rtk.png",
+            "file": "buildings/rtk.webp",
             "type": "image"
         },
         "BUILDING_RUMAH_DINAS": {
-            "file": "buildings/rumah_dinas.png",
+            "file": "buildings/rumah_dinas.webp",
             "type": "image"
         },
         "BUILDING_SCHOOL": {
-            "file": "buildings/school.png",
+            "file": "buildings/school.webp",
             "type": "image"
         },
         "BUILDING_TK": {
-            "file": "buildings/tk.png",
+            "file": "buildings/tk.webp",
             "type": "image"
         },
         "BUILDING_TOGA": {
-            "file": "buildings/toga.png",
+            "file": "buildings/toga.webp",
             "type": "image"
         },
         "BUILDING_TPU": {
-            "file": "buildings/tpu.png",
+            "file": "buildings/tpu.webp",
             "type": "image"
         },
         "BUILDING_WELL": {
-            "file": "buildings/well.png",
+            "file": "buildings/well.webp",
             "type": "image"
         },
         "BUILDING_HOUSE_BLUE": {
-            "file": "buildings/house_blue.png",
+            "file": "buildings/house_blue.webp",
             "type": "image"
         },
         "BUILDING_HOUSE_MODERN": {
-            "file": "buildings/house_modern.png",
+            "file": "buildings/house_modern.webp",
             "type": "image"
         },
         "BUILDING_HOUSE_TRAD": {
-            "file": "buildings/house_trad.png",
+            "file": "buildings/house_trad.webp",
             "type": "image"
         },
         "BUILDING_HOUSE_CLASSIC": {
-            "file": "buildings/house_classic.png",
+            "file": "buildings/house_classic.webp",
             "type": "image"
         },
         "BUILDING_HOUSE_RED": {
-            "file": "buildings/house_red.png",
+            "file": "buildings/house_red.webp",
             "type": "image"
         },
         "BUILDING_HOUSE_HUT": {
-            "file": "buildings/house_hut.png",
+            "file": "buildings/house_hut.webp",
             "type": "image"
         },
         "BUILDING_HUTAN_LINDUNG": {
-            "file": "buildings/hutan_lindung.png",
+            "file": "buildings/hutan_lindung.webp",
             "type": "image"
         },
         "BUILDING_SUNGAI_CIKAPAS": {
-            "file": "buildings/sungai_cikapas.png",
+            "file": "buildings/sungai_cikapas.webp",
             "type": "image"
         },
         "BUILDING_PLAYGROUND": {
-            "file": "buildings/playground.png",
+            "file": "buildings/playground.webp",
             "type": "image"
         },
         "BUILDING_LAPANGAN": {
-            "file": "buildings/lapangan.png",
+            "file": "buildings/lapangan.webp",
             "type": "image"
         },
         "BUILDING_TOKO_KELONTONG": {
-            "file": "buildings/toko_kelontong.png",
+            "file": "buildings/toko_kelontong.webp",
             "type": "image"
         },
         "BUILDING_WARUNG": {
-            "file": "buildings/warung.png",
+            "file": "buildings/warung.webp",
             "type": "image"
         },
         "ROOM_BEDROOM": {
-            "file": "rooms/bedroom.png",
+            "file": "rooms/bedroom.webp",
             "type": "image"
         },
         "ROOM_GARAGE": {
-            "file": "rooms/garage.png",
+            "file": "rooms/garage.webp",
             "type": "image"
         },
         "ROOM_GUEST_ROOM": {
-            "file": "rooms/guest_room.png",
+            "file": "rooms/guest_room.webp",
             "type": "image"
         },
         "ROOM_GYM": {
-            "file": "rooms/gym.png",
+            "file": "rooms/gym.webp",
             "type": "image"
         },
         "ROOM_KITCHEN": {
-            "file": "rooms/kitchen.png",
+            "file": "rooms/kitchen.webp",
             "type": "image"
         },
         "ROOM_LIVING_ROOM": {
-            "file": "rooms/living_room.png",
+            "file": "rooms/living_room.webp",
             "type": "image"
         },
         "ROOM_WORKSPACE": {
-            "file": "rooms/workspace.png",
+            "file": "rooms/workspace.webp",
             "type": "image"
         },
         "ROAD_ASPHALT_H": {
-            "file": "road_asphalt_h.png",
+            "file": "road_asphalt_h.webp",
             "type": "image"
         },
         "ROAD_ASPHALT_V": {
-            "file": "road_asphalt_v.png",
+            "file": "road_asphalt_v.webp",
             "type": "image"
         },
         "ROAD_DIRT_H": {
-            "file": "road_dirt_h.png",
+            "file": "road_dirt_h.webp",
             "type": "image"
         },
         "ROAD_DIRT_V": {
-            "file": "road_dirt_v.png",
+            "file": "road_dirt_v.webp",
             "type": "image"
         }
     }

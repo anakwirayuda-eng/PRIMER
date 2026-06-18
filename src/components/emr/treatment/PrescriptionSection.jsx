@@ -56,7 +56,7 @@ export default function PrescriptionSection({
 
             {selectedMeds.length > 0 && (
                 <button
-                    onClick={() => { if (!isSigned) { setIsSigned(true); soundManager.playSuccess(); } }}
+                    onClick={() => { if (!isSigned) { setIsSigned(true); soundManager.playStampConfirm?.(); } }}
                     disabled={isSigned}
                     className={`w-full rounded-2xl py-3.5 text-xs font-black flex items-center justify-center gap-2 transition-all active:scale-95 group ${isSigned
                         ? (isDark ? 'bg-slate-800 text-slate-600 cursor-default' : 'bg-slate-200 text-slate-500')

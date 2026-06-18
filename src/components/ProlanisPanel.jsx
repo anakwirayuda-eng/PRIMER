@@ -48,7 +48,7 @@ const ProlanisPanel = ({ compact = false, onPatientCalled }) => {
                 <div className="relative bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-6 overflow-hidden">
                     {/* Background Pattern/Image */}
                     <div className="absolute right-0 top-0 h-full w-1/3 opacity-20 pointer-events-none">
-                        <img src="/images/wilayah/puskesmas_iso.png" alt="Puskesmas" className="h-full object-cover object-left" />
+                        <img src="/images/wilayah/puskesmas_iso.webp" alt="Puskesmas" className="h-full object-cover object-left" />
                     </div>
 
                     <div className="relative z-10 flex justify-between items-start">

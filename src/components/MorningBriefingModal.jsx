@@ -8,13 +8,14 @@
  * 
  * Design: warm sunrise gradient (amber → orange), mobile-first, dark mode aware.
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Sun, Users, AlertTriangle, Package, Calendar, Target, ShieldCheck, Zap } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import useModalA11y from '../hooks/useModalA11y.js';
 import StepCarousel from './shared/StepCarousel';
 import StatCard from './shared/StatCard';
 import { generateMorningBriefing, generateDefaultAllocation, generateDailyQuests } from '../game/MorningBriefing.js';
+import { soundManager } from '../utils/SoundManager.js';
 
 function formatCompactRupiah(value) {
     const amount = Number(value) || 0;
@@ -33,6 +34,9 @@ function formatCompactRupiah(value) {
 export default function MorningBriefingModal({ briefingData = null, gameState = null, onComplete, onDismiss }) {
     const { isDark } = useTheme();
     const modalRef = useModalA11y(onDismiss);
+
+    // Ascending chime stinger on mount — "new day begins"
+    useEffect(() => { soundManager.playDayStart?.(); }, []);
 
     // Generate briefing data
     const briefing = useMemo(
