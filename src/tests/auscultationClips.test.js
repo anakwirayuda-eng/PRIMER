@@ -15,7 +15,24 @@ function seededRng(seed) {
     };
 }
 
+// Authoritative ground truth from PhysioNet/CinC 2016 training-a/REFERENCE.csv
+// (-1 = normal, 1 = abnormal), verified 2026-06-18. Pinned so a mislabel can
+// never silently ship — this is a medical-education correctness guard.
+const REFERENCE_TRUTH = {
+    a0007: 'normal', a0009: 'normal', a0011: 'normal', a0012: 'normal',
+    a0016: 'normal', a0019: 'normal', a0025: 'normal', a0027: 'normal', a0035: 'normal',
+    a0001: 'abnormal', a0002: 'abnormal', a0003: 'abnormal', a0005: 'abnormal',
+    a0013: 'abnormal', a0020: 'abnormal', a0022: 'abnormal', a0031: 'abnormal', a0042: 'abnormal',
+};
+
 describe('auscultationClips data', () => {
+    it('every clip answer matches the authoritative REFERENCE.csv label', () => {
+        for (const clip of AUSCULTATION_CLIPS) {
+            expect(REFERENCE_TRUTH[clip.id], `clip ${clip.id} must exist in REFERENCE truth`).toBeTruthy();
+            expect(clip.answer, `clip ${clip.id} answer must match REFERENCE.csv`).toBe(REFERENCE_TRUTH[clip.id]);
+        }
+    });
+
     it('every clip has a valid answer + path', () => {
         const answers = new Set(AUSCULTATION_CHOICES.map(c => c.id));
         for (const clip of AUSCULTATION_CLIPS) {

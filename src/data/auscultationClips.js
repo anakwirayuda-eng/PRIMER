@@ -36,23 +36,30 @@ export const AUSCULTATION_EXPLAIN = Object.freeze({
     abnormal: 'Terdengar murmur / bunyi tambahan di luar S1–S2 — temuan patologis. Tindak lanjut: auskultasi 4 katup, lalu pertimbangkan ekokardiografi.',
 });
 
-// Curated clips from CinC 2016 training-a, labelled by its REFERENCE.csv.
+// Curated clips from CinC 2016 training-a. Each `answer` is the AUTHORITATIVE
+// label from training-a/REFERENCE.csv (-1 = normal, 1 = abnormal), verified
+// 2026-06-18. Do NOT hand-edit answers — re-derive from REFERENCE.csv if you
+// add clips. The regression test (auscultationClips.test.js) pins these.
 export const AUSCULTATION_CLIPS = Object.freeze([
+    // Normal (REFERENCE.csv = -1)
     { id: 'a0007', src: '/audio/auscultation/a0007.wav', answer: 'normal' },
     { id: 'a0009', src: '/audio/auscultation/a0009.wav', answer: 'normal' },
     { id: 'a0011', src: '/audio/auscultation/a0011.wav', answer: 'normal' },
     { id: 'a0012', src: '/audio/auscultation/a0012.wav', answer: 'normal' },
     { id: 'a0016', src: '/audio/auscultation/a0016.wav', answer: 'normal' },
     { id: 'a0019', src: '/audio/auscultation/a0019.wav', answer: 'normal' },
-    { id: 'a0020', src: '/audio/auscultation/a0020.wav', answer: 'normal' },
-    { id: 'a0022', src: '/audio/auscultation/a0022.wav', answer: 'normal' },
+    { id: 'a0025', src: '/audio/auscultation/a0025.wav', answer: 'normal' },
+    { id: 'a0027', src: '/audio/auscultation/a0027.wav', answer: 'normal' },
+    { id: 'a0035', src: '/audio/auscultation/a0035.wav', answer: 'normal' },
+    // Abnormal (REFERENCE.csv = 1)
     { id: 'a0001', src: '/audio/auscultation/a0001.wav', answer: 'abnormal' },
     { id: 'a0002', src: '/audio/auscultation/a0002.wav', answer: 'abnormal' },
     { id: 'a0003', src: '/audio/auscultation/a0003.wav', answer: 'abnormal' },
     { id: 'a0005', src: '/audio/auscultation/a0005.wav', answer: 'abnormal' },
     { id: 'a0013', src: '/audio/auscultation/a0013.wav', answer: 'abnormal' },
+    { id: 'a0020', src: '/audio/auscultation/a0020.wav', answer: 'abnormal' },
+    { id: 'a0022', src: '/audio/auscultation/a0022.wav', answer: 'abnormal' },
     { id: 'a0031', src: '/audio/auscultation/a0031.wav', answer: 'abnormal' },
-    { id: 'a0035', src: '/audio/auscultation/a0035.wav', answer: 'abnormal' },
     { id: 'a0042', src: '/audio/auscultation/a0042.wav', answer: 'abnormal' },
 ]);
 

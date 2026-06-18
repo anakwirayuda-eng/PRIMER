@@ -28,7 +28,8 @@ const ROUND_SIZE = 8;
 const XP_PER_CORRECT = 12;
 
 export default function AuscultationTrainer() {
-    const { addXp, logCaseOutcome } = useGame();
+    const { addXp, logCaseOutcome, settings } = useGame();
+    const masterVol = settings?.volume ?? 1;
 
     const [round, setRound] = useState(() => buildAuscultationRound(ROUND_SIZE));
     const [index, setIndex] = useState(0);
@@ -43,11 +44,13 @@ export default function AuscultationTrainer() {
     const isCorrect = revealed && selected === current.answer;
 
     // Sync the native audio element volume to the in-game master×clip level.
+    // Depends on masterVol (from context settings) so live volume changes while
+    // parked on a question re-sync — not just on question change.
     useEffect(() => {
         if (audioRef.current) {
-            audioRef.current.volume = Math.max(0, Math.min(1, soundManager.masterVolume * soundManager.clipVolume));
+            audioRef.current.volume = Math.max(0, Math.min(1, masterVol * soundManager.clipVolume));
         }
-    }, [index]);
+    }, [index, masterVol]);
 
     // Auto-play the new clip when the question changes (best-effort; native
     // controls remain for manual replay if autoplay is blocked).

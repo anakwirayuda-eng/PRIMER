@@ -243,6 +243,7 @@ class SoundManager {
 
     // --- One-shot clip channel (auscultation heart sounds, etc.) ---
     clipInstances = new Map();
+    clipSeq = 0; // monotonic key counter — never reused (size-based keys collide after delete)
 
     // BGM themes — semantic location/state → track. Each value is a Howler
     // multi-format src array. Currently every theme points at the same DEMO
@@ -426,7 +427,7 @@ class SoundManager {
         if (!this.initialized) this.init();
         if (this.muted || !clipSrc) return null;
         const vol = this.masterVolume * this.clipVolume * (opts.volume ?? 1);
-        const key = `${clipSrc}#${this.clipInstances.size}`;
+        const key = `${clipSrc}#${this.clipSeq++}`;
         const clip = new Howl({
             src: Array.isArray(clipSrc) ? clipSrc : [clipSrc],
             loop: false,
