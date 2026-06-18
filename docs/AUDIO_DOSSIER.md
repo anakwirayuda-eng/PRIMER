@@ -716,3 +716,77 @@ Internalisasi: **ship working minimum > ambitious incomplete**. Scope 3-4 track 
 ---
 
 **END OF REVISION** — v0.2 berlaku per 2026-04-24.
+
+---
+
+## 14. Post-Implementation Deep Research & Next-Wave Roadmap (2026-06-18)
+
+> Konteks: Phase 1-3 + Howler refactor + safety wiring + WebP **sudah landed** (PR #3, 15 commits). BGM demo (gamelan Jawa placeholder) sudah diverifikasi jalan live. Rilis Juni **dibatalkan → target ~September 2026** (runway ~3 bulan lebih panjang dari rencana awal). Section ini hasil deep-research 2026-06-18 untuk menjawab: "apalagi yang perlu dibuat untuk audio?"
+
+### 14.1 Temuan research yang MENGUBAH asumsi
+
+1. **Ambient ≠ Music (insight baru).** Riset serious-game audio ([SciTePress 2025](https://www.scitepress.org/Papers/2025/135044/135044.pdf)) memisahkan fungsi: *background music* → motivasi & cognitive processing; *ambient sound* → navigasi & regulasi emosi; *SFX* → feedback & engagement. Desain kita menggabung semua jadi "BGM". Pemisahan **music-bus** + **ambient-bus** (di bawah musik, per-lokasi: murmur warga di Puskesmas, jangkrik di wilayah) adalah extension natural dari 3-channel mixer → jadi efektif 4-channel. Murah, high-immersion, research-backed.
+
+2. **Auskultasi punya dataset riset besar, TAPI lisensi harus dicek.** [PhysioNet/CinC 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC7199391/) (2435 rekaman jantung, 1297 pasien) + [CirCor DigiScope](https://arxiv.org/pdf/2108.00813) (murmur-labeled). Ini bukan CC0 — PhysioNet pakai lisensi sendiri (sebagian ODC-BY, sebagian credentialed-restricted). [Easy Auscultation](https://www.easyauscultation.com/) & Wellcome punya MP3 gratis tapi **proprietary**. → Killer feature feasible, tapi **legal clearance per-dataset WAJIB sebelum commit**.
+
+3. **Feedback audio = "competence need" (validasi).** Systematic review medical serious games ([PMC11549195](https://pmc.ncbi.nlm.nih.gov/articles/PMC11549195/)): elemen tersering = storyline, points, **feedback**; "distinct and timely feedback addresses the need for competence." Pendekatan SFX-per-aksi kita tervalidasi. Bonus: review bilang "standardized sound design principles **belum** ada" → PRIMER bisa jadi studi kasus publikasi.
+
+4. **Accessibility bukan opsional untuk konteks akademik.** WCAG 1.2.1 + game-a11y: setiap cue audio penting **wajib** punya paralel visual. Manfaat melebar — bukan cuma mahasiswa tuli (0-1 dari 50), tapi juga *auditory processing*, *language learners*, dan yang main di lab ramai tanpa headphone. Plus: death-scene perlu **content-awareness** (mahasiswa FK bisa punya trauma kematian nyata), dan flash visual harus respek `prefers-reduced-motion` — **jangan** dilabeli "epilepsy mode" (anti-pattern per [Access-Ability](https://laurakbuzz.com/2020/08/28/)).
+
+5. **Adaptive music feasible via vertical layering ringan.** [Game Audio Co](https://www.thegameaudioco.com/making-your-game-s-music-more-dynamic-vertical-layering-vs-horizontal-resequencing): vertical layering (stem on/off, sinkron) lebih simpel dari horizontal resequencing. Howler bisa via parallel Howl + `fade()`. DeepThink dulu bilang "skip" untuk solo dev, tapi dengan runway +3 bulan, **2-stem** (base + tension) untuk Puskesmas (normal vs outbreak/emergency) jadi achievable.
+
+### 14.2 Roadmap terprioritaskan
+
+#### TIER 0 — Tutup gap dari yang SUDAH didesain (wajib sebelum rilis)
+
+| # | Item | Kenapa | Effort |
+|---|---|---|---|
+| 0.1 | **Source 3 BGM final** + ganti placeholder gamelan Jawa → pan-Indonesian netral | Placeholder region-specific (appropriation risk); AUDIO_SOURCING sudah kurasi 3 CC0 | 4-8j (user-side) |
+| 0.2 | **Location-based BGM** — refactor `playBGM(day)` → `playBGM({location, state})` | AUDIO_DESIGN Phase 3 **mendesain ini tapi belum diimplementasi**; sekarang masih day-rotation | 3-4j |
+| 0.3 | **Accessibility pass** — audit semua safety cue punya paralel visual + `Reduced Audio` mode aktif + `prefers-reduced-motion` di flash | WCAG, konteks lab kampus, language learners | 4-6j |
+| 0.4 | **Wire P1 missing audio** — pause/resume, bridge outage, outbreak escalation, low-funds warning | Sudah di-list di § 3.4 dossier, belum di-wire | 3-4j |
+
+#### TIER 1 — High-value, muat di runway September
+
+| # | Item | Kenapa | Effort |
+|---|---|---|---|
+| 1.1 | **Ambient-bus** (4-channel) — soundscape per-lokasi di bawah musik | Research §14.1.1; immersion besar, biaya kecil | 5-7j |
+| 1.2 | **Vertical layering Puskesmas** — base + tension stem, state-driven | Research §14.1.5; "feel" dokter saat tekanan naik | 6-10j |
+| 1.3 | **Content-warning + death-scene setting** — toggle intensitas, skip-able | Etika edukasi, trauma-aware | 2-3j |
+| 1.4 | **SFX upgrade** — ganti FM-synth diegetic (paper/pen/stamp) → field recording CC0 | Diegetic terasa nyata; Freesound banyak | 3-5j |
+| 1.5 | **Scene BGM tambahan** — Night shift, Game Over, Victory (VictoryModal sudah ada di master!), Emergency | Coverage scene yang sekarang silent | tergantung sourcing |
+
+#### TIER 2 — V2 / pembeda (butuh runway + legal)
+
+| # | Item | Kenapa | Effort |
+|---|---|---|---|
+| 2.1 | **🌟 Auskultasi mini-game** — identify murmur/wheeze/ronchi via stetoskop in-game | DeepThink killer feature; ubah PRIMER "manajemen" → "simulator klinis"; potensi publikasi | 30-60j + legal |
+| 2.2 | **Voice-over tutorial Indonesia** — VO untuk onboarding hints (sudah ada di master) | Aksesibilitas + first-run UX | 10-20j |
+| 2.3 | **Audio analytics** — ukur mute-rate, session-length audio on/off, post-event error-rate | Metodologi A/B + bukti efektivitas | 4-6j |
+
+#### TIER 3 — Riset & sustainability
+
+| # | Item | Kenapa |
+|---|---|---|
+| 3.1 | **Publikasi** "Audio design for medical education games — PRIMER case study" | Review bilang prinsip standar belum ada → kontribusi orisinal |
+| 3.2 | **LUFS normalization script** + audio preload strategy + service-worker cache (offline-first) | Konsistensi loudness antar-sumber; offline parity |
+| 3.3 | **Crossfade wiring** antar-track transisi (Howler `fade()` sudah dipakai di Respectful Silence) | Transisi mulus saat ganti lokasi |
+
+### 14.3 Rekomendasi urutan eksekusi
+
+**Sprint audio berikutnya (achievable, high-ROI):** 0.2 (location-based) → 0.3 (accessibility) → 0.4 (P1 wiring) → 1.1 (ambient-bus). Empat ini menutup gap arsitektur yang sudah didesain + memenuhi standar akademik, total ~15-21 jam, semuanya code-side (tidak nunggu sourcing).
+
+**Paralel user-side:** 0.1 (source 3 BGM final) — independen, bisa dikerjakan kapan saja.
+
+**Keputusan strategis yang butuh input AG:** apakah **2.1 Auskultasi** masuk scope September? Ini high-reward (pembeda + publikasi) tapi 30-60 jam + legal clearance. Kalau ya, mulai **legal clearance PhysioNet/CirCor SEKARANG** (proses lama) sambil fitur lain jalan.
+
+### 14.4 Hal yang sengaja TIDAK direkomendasi (cegah scope creep)
+
+- Horizontal resequencing music (terlalu kompleks vs vertical layering)
+- Procedural/generative audio (eksperimental, 50 user bukan audience eksperimen)
+- Spatial/3D audio (belum ada kebutuhan WebXR)
+- Voice-AI NPC dialog (bias + risiko edukasi medis)
+
+---
+
+**END OF § 14** — deep-research roadmap per 2026-06-18.
