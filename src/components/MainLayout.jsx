@@ -243,7 +243,7 @@ export default function MainLayout() {
         const families = villageData?.families;
         if (!Array.isArray(families) || families.length === 0) return null;
 
-        const kemenkes = calculateVillageIKSPisPk(families);
+        const kemenkes = calculateVillageIKSPisPk(families, { forceRecompute: true });
         const readinessState = villageData?.readinessState || {};
         const engagedReadinessState = Object.fromEntries(
             Object.entries(readinessState).filter(([, entry]) =>

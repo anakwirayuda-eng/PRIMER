@@ -43,7 +43,7 @@ function coverageStyle(coverage) {
 
 export default function PisPkCoverageChart({ families, onOpenInfo }) {
     const { rows, totalKK, meanIks, kkSehatPercent } = useMemo(() => {
-        const villageIks = calculateVillageIKSPisPk(Array.isArray(families) ? families : []);
+        const villageIks = calculateVillageIKSPisPk(Array.isArray(families) ? families : [], { forceRecompute: true });
         const nextRows = PIS_PK_INDICATORS.map((ind) => {
             const cov = villageIks.indicatorCoverage[ind.id] || { applicable: 0, fulfilled: 0, coverage: 0 };
             return {
