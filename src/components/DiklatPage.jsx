@@ -15,8 +15,10 @@ import { guardStability } from '../utils/prophylaxis.js';
 import { canAffordOperationalCost, spendOperationalFunds } from '../utils/operationalFunds.js';
 import {
     GraduationCap, BookOpen, Award, Clock, CheckCircle, Lock,
-    Star, Zap, Brain, Heart, Users, Trophy, Sparkles, ChevronRight
+    Star, Zap, Brain, Heart, Users, Trophy, Sparkles, ChevronRight, Stethoscope
 } from 'lucide-react';
+
+const AuscultationTrainer = React.lazy(() => import('./diklat/AuscultationTrainer.jsx'));
 
 const SKILLS = [
     { id: 'diagnosis_1', name: 'Diagnosis Lanjut', category: 'clinical', level: 2, maxLevel: 5, xpCost: 100, effect: '+10% akurasi diagnosis', unlocked: true, icon: '🩺' },
@@ -182,7 +184,8 @@ export default function DiklatPage() {
                 <div className="flex gap-2">
                     {[
                         { id: 'skills', label: 'Skill Tree', icon: Zap },
-                        { id: 'workshops', label: 'Workshop', icon: BookOpen }
+                        { id: 'workshops', label: 'Workshop', icon: BookOpen },
+                        { id: 'auscultation', label: 'Auskultasi', icon: Stethoscope }
                     ].map(tab => (
                         <button
                             key={tab.id}
@@ -359,6 +362,13 @@ export default function DiklatPage() {
                             );
                         })}
                     </div>
+                )}
+
+                {/* ── AUSKULTASI TAB ── */}
+                {activeTab === 'auscultation' && (
+                    <React.Suspense fallback={<div className="py-10 text-center text-white/40 text-sm">Memuat modul auskultasi…</div>}>
+                        <AuscultationTrainer />
+                    </React.Suspense>
                 )}
             </div>
         </div>

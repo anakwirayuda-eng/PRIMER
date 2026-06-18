@@ -21,4 +21,13 @@
  *
  * See docs/AUDIO_SOURCING.md for sourcing guidelines.
  */
-export const AUDIO_CREDITS = [];
+export const AUDIO_CREDITS = [
+    {
+        id: 'cinc2016_heart',
+        title: 'Heart Sound Database (training-a)',
+        creator: 'PhysioNet/CinC Challenge 2016 — Liu et al. (2016); Goldberger et al. (2000)',
+        url: 'https://physionet.org/content/challenge-2016/1.0.0/',
+        license: 'ODC-By 1.0',
+        type: 'clip',
+    },
+];
