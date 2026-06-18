@@ -150,7 +150,10 @@ export function countApathyEvents(clinicalHistory) {
  */
 export function calculateCommunityScore(families, readinessState, clinicalHistory) {
     const familiesArr = Array.isArray(families) ? families : [];
-    const pisPk = calculateVillageIKSPisPk(familiesArr);
+    // forceRecompute: ignore the per-family `iksScore` override (a simpler, inflated trueCount/N
+    // formula) so the grade uses the canonical conditional-denominator PIS-PK — the number the
+    // student is actually taught — instead of the masked ~69% override.
+    const pisPk = calculateVillageIKSPisPk(familiesArr, { forceRecompute: true });
     const kkSehatPercent = clamp(pisPk.kkSehatPercent, 0, 100);
 
     // Hanya hitung readiness untuk keluarga yang sudah di-engage agar tidak

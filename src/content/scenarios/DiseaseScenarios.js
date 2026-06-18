@@ -9,6 +9,8 @@
  * [DEPENDS_ON]: IKMEventEngine, CalendarEventDB, VillageRegistry
  */
 
+import { PISPK_LIFESTYLE_SCENARIOS } from './PisPkLifestyleScenarios.js';
+
 // ═══════════════════════════════════════════════════════════════
 // COM-B BARRIER TYPES
 // ═══════════════════════════════════════════════════════════════
@@ -669,6 +671,7 @@ const TIER_4_ENVIRONMENTAL = [
 
 export const DISEASE_SCENARIOS = [
     ...TIER_1_CORE,
+    ...PISPK_LIFESTYLE_SCENARIOS,
     ...TIER_2_IMPORTANT,
     ...TIER_3_EMERGING,
     ...TIER_4_ENVIRONMENTAL

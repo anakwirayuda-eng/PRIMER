@@ -19,6 +19,7 @@ export const INITIAL_PLAYER_STATE = {
     spirit: 100,
     reputation: 80,
     stress: 0,
+    faintedCount: 0,
     skills: [],
     hygiene: 100,
     morningStatus: null, // 'groggy', 'refreshed'

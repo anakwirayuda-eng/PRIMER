@@ -120,6 +120,8 @@ export const createClinicalSlice = (set, get) => ({
 
                 // Penalize reputation for fainting
                 nextState.player.profile.reputation = Math.max(0, s.player.profile.reputation - 5);
+                // Track burnout for the Resilience score (scoringEngine reads player.faintedCount)
+                nextState.player.profile.faintedCount = (s.player.profile.faintedCount || 0) + 1;
                 soundManager.playConfirm();
             }
 
@@ -828,13 +830,17 @@ export const createClinicalSlice = (set, get) => ({
                 }
             }
 
-            // ═══ LIFETIME (Layer C Mastery, M5) — track SKDI/ICD touched ═══
-            if (txResult.success && decision?.action === 'treat') {
+            // ═══ LIFETIME (Layer C Mastery, M5) — track SKDI/ICD ONLY on a verified-CORRECT diagnosis ═══
+            // Integrity fix: previously fired on every `treat` and logged the answer key
+            // (trueDiagnosisCode), so a student could earn "SKDI Master" with wrong diagnoses. Gate on
+            // the player's diagnosis actually matching the true code — the same signal used for the
+            // correctDiagnoses KPI above — and only then log that (verified-correct) code.
+            const isDiagnosisCorrect = Array.isArray(decision?.diagnoses)
+                && decision.diagnoses.includes(patient.medicalData?.trueDiagnosisCode);
+            if (txResult.success && decision?.action === 'treat' && isDiagnosisCorrect) {
                 try {
                     const skdi = patient.medicalData?.skdi || patient.hidden?.skdi || '4A';
-                    const icd10 = patient.medicalData?.trueDiagnosisCode
-                        || decision?.diagnoses?.[0]
-                        || null;
+                    const icd10 = patient.medicalData?.trueDiagnosisCode || null;
                     get().metaActions?.recordLifetimeCase({ skdi, icd10 });
                 } catch (err) {
                     console.warn('[lifetime] recordLifetimeCase failed:', err);
@@ -1123,9 +1129,18 @@ export const createClinicalSlice = (set, get) => ({
         },
         checkAccreditation: () => {
             const s = get();
-            const score = s.player.profile.reputation;
+            const rep = s.player.profile.reputation;
+            // Integrity fix: accreditation (the Management score, up to 15 pts) must reflect REAL
+            // facility investment, not reputation alone. Previously rep>=80 auto-granted Utama
+            // (12/15 pts) for free at the default starting reputation of 80. Now each tier also
+            // requires the player to have reinvested kapitasi into facilities.
+            const bp = s.publicHealth?.buildingProgress || {};
+            const lvl = (k) => Number(bp[k]?.level || 0) + (bp[k]?.completed ? 1 : 0);
+            const invest = lvl('pustu') + lvl('polindes') + lvl('posyandu') + lvl('fob');
             let newAccreditation = 'Dasar';
-            if (score >= 90) newAccreditation = 'Paripurna'; else if (score >= 80) newAccreditation = 'Utama'; else if (score >= 70) newAccreditation = 'Madya';
+            if (rep >= 90 && invest >= 4) newAccreditation = 'Paripurna';
+            else if (rep >= 80 && invest >= 2) newAccreditation = 'Utama';
+            else if (rep >= 70 && invest >= 1) newAccreditation = 'Madya';
             if (newAccreditation !== s.clinical.accreditation) { set(st => ({ clinical: { ...st.clinical, accreditation: newAccreditation } })); }
         },
         resetDailyState: () => set(s => ({ clinical: { ...s.clinical, queue: [], emergencyQueue: [], activePatientId: null, activeEmergencyId: null, activeReferral: null, busyAmbulanceIds: [], hospitalBedUsage: {}, activeReferralLog: [] } }))

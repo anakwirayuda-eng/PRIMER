@@ -59,7 +59,7 @@ export default function MonthlyDebriefModal({ state, milestoneDay, targetDay, on
     const { performance, topIndicators, bottomIndicators } = useMemo(() => {
         const perf = calculatePerformanceScore(state);
         const families = state?.publicHealth?.villageData?.families || [];
-        const villageIks = calculateVillageIKSPisPk(families);
+        const villageIks = calculateVillageIKSPisPk(families, { forceRecompute: true });
         const rows = Object.entries(villageIks.indicatorCoverage)
             .map(([id, data]) => ({ id, label: SHORT_LABEL[id] || id, ...data }))
             .filter((d) => d.applicable > 0);
