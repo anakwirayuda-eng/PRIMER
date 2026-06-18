@@ -60,9 +60,18 @@ const BGM_CONTROLS = [
     { label: '⏹ Stop BGM', action: () => soundManager.stopBGM() },
 ];
 
+const CLIP_AMBIENT_CONTROLS = [
+    { label: '🫀 Heart clip — normal (a0007)', action: () => soundManager.playClip('/audio/auscultation/a0007.wav') },
+    { label: '🫀 Heart clip — abnormal (a0001)', action: () => soundManager.playClip('/audio/auscultation/a0001.wav') },
+    { label: '⏹ Stop clips', action: () => soundManager.stopClip() },
+    { label: '🌫 Test ambient (demo loop)', action: () => soundManager._startAmbient(['/audio/gamelan_demo.mp3']) },
+    { label: '⏹ Stop ambient', action: () => soundManager.stopAmbient() },
+];
+
 const TOGGLES = [
     { label: 'Toggle Duck (50%)', getter: () => soundManager.ducked, action: () => soundManager.setDucked(!soundManager.ducked) },
     { label: 'Toggle Focus Mode', getter: () => soundManager.focusMode, action: () => soundManager.setFocusMode(!soundManager.focusMode) },
+    { label: 'Toggle Reduced Audio', getter: () => soundManager.reducedAudio, action: () => soundManager.setReducedAudio(!soundManager.reducedAudio) },
     { label: 'Toggle Mute', getter: () => soundManager.muted, action: () => soundManager.toggleMute() },
 ];
 
@@ -127,6 +136,21 @@ export default function AudioTestPanel() {
                 <div className="text-[10px] text-purple-300 uppercase tracking-wider mb-1.5 font-bold">BGM Controls</div>
                 <div className="grid grid-cols-1 gap-0.5">
                     {BGM_CONTROLS.map(({ label, action }) => (
+                        <button
+                            key={label}
+                            onClick={action}
+                            className="text-[11px] text-left px-2 py-1 rounded hover:bg-slate-700 transition"
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="mb-3">
+                <div className="text-[10px] text-purple-300 uppercase tracking-wider mb-1.5 font-bold">Clips & Ambient</div>
+                <div className="grid grid-cols-1 gap-0.5">
+                    {CLIP_AMBIENT_CONTROLS.map(({ label, action }) => (
                         <button
                             key={label}
                             onClick={action}

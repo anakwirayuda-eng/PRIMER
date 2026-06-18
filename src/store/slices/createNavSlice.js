@@ -40,6 +40,7 @@ export const createNavSlice = (set, _get) => ({
             if (newSettings.volume !== undefined) soundManager.setMasterVolume(updated.volume);
             if (newSettings.bgmVolume !== undefined) soundManager.setBGMVolume(updated.bgmVolume);
             if (newSettings.sfxVolume !== undefined) soundManager.setSfxVolume(updated.sfxVolume);
+            if (newSettings.ambientVolume !== undefined) soundManager.setAmbientVolume(updated.ambientVolume);
             if (newSettings.focusMode !== undefined) soundManager.setFocusMode(updated.focusMode);
             if (newSettings.reducedAudio !== undefined) soundManager.setReducedAudio(updated.reducedAudio);
             if (newSettings.muted !== undefined) soundManager.setMuted(updated.muted);

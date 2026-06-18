@@ -222,12 +222,27 @@ class SoundManager {
     isLoading = false; // Lock to prevent double playback
     lastPlayedIndices = [];
 
-    // --- Mixer state (3-channel + focus mode + ducking). See docs/AUDIO_DESIGN.md §3 ---
+    // --- Mixer state (4-channel + focus mode + ducking). See docs/AUDIO_DESIGN.md §3 ---
     masterVolume = 1.0;
     sfxVolume = 1.0;
+    ambientVolume = 0.5; // environmental soundscape bus (under the music)
+    clipVolume = 0.85;   // educational one-shot clips (auscultation) — own channel
     focusMode = false;
     ducked = false;  // Tunnel-vision hack: BGM @ 50% when EMR panel active
     reducedAudio = false; // A11y: silence BGM + pervasive UI ticks; keep safety cues
+
+    // --- Ambient bus (T1.1) — per-location soundscape, separate Howl from music.
+    // Research (AUDIO_DOSSIER §14.1): ambient ≠ music (navigation/emotion vs
+    // motivation). Empty until CC0 soundscapes are sourced; the plumbing is
+    // ready — fill a key and it crossfades in alongside the music theme.
+    ambientThemes = {
+        menu: [], home: [], clinic: [], wilayah: [], social: [], tension: [],
+    };
+    ambientAudio = null;
+    currentAmbient = null;
+
+    // --- One-shot clip channel (auscultation heart sounds, etc.) ---
+    clipInstances = new Map();
 
     // BGM themes — semantic location/state → track. Each value is a Howler
     // multi-format src array. Currently every theme points at the same DEMO
@@ -361,6 +376,84 @@ class SoundManager {
         }
     }
 
+    // --- Ambient bus (T1.1) — soundscape loop layered under the music theme ---
+
+    _startAmbient(src) {
+        const prev = this.ambientAudio;
+        const next = new Howl({
+            src: Array.isArray(src) ? src : [src],
+            loop: true,
+            html5: true,
+            volume: 0,
+            onloaderror: (_id, err) => console.warn('Ambient load error:', src, err),
+        });
+        this.ambientAudio = next;
+        next.play();
+        next.fade(0, this._computeAmbientVolume(), this.BGM_FADE_MS);
+        if (prev) {
+            try {
+                prev.fade(prev.volume(), 0, this.BGM_FADE_MS);
+                prev.once('fade', () => { try { prev.stop(); prev.unload(); } catch { /* noop */ } });
+                setTimeout(() => { try { prev.unload(); } catch { /* noop */ } }, this.BGM_FADE_MS + 600);
+            } catch { try { prev.unload(); } catch { /* noop */ } }
+        }
+    }
+
+    // Play the ambient loop for a theme key. No-op if the theme has no track
+    // (ambientThemes empty until CC0 soundscapes are sourced) or already on it.
+    playAmbient(themeKey) {
+        if (this.muted) return;
+        const src = this.ambientThemes[themeKey];
+        if (!src || src.length === 0) { this.stopAmbient(); return; }
+        if (this.currentAmbient === themeKey && this.ambientAudio) return;
+        this.currentAmbient = themeKey;
+        this._startAmbient(src);
+    }
+
+    stopAmbient() {
+        if (this.ambientAudio) {
+            try { this.ambientAudio.stop(); this.ambientAudio.unload(); } catch { /* noop */ }
+            this.ambientAudio = null;
+        }
+        this.currentAmbient = null;
+    }
+
+    // --- One-shot clips (auscultation heart sounds, etc.) ---
+    // Educational content on its own channel: gated by `muted` only (NOT
+    // reducedAudio/focusMode — clinical audio must stay audible). Streaming Howl,
+    // auto-released on end. Returns the Howl id (for stopClip) or null.
+    playClip(clipSrc, opts = {}) {
+        if (!this.initialized) this.init();
+        if (this.muted || !clipSrc) return null;
+        const vol = this.masterVolume * this.clipVolume * (opts.volume ?? 1);
+        const key = `${clipSrc}#${this.clipInstances.size}`;
+        const clip = new Howl({
+            src: Array.isArray(clipSrc) ? clipSrc : [clipSrc],
+            loop: false,
+            html5: true,
+            volume: vol,
+            onend: () => { this.clipInstances.delete(key); opts.onend?.(); },
+            onloaderror: (_id, err) => { this.clipInstances.delete(key); console.warn('Clip load error:', clipSrc, err); opts.onerror?.(err); },
+            onplayerror: () => { this.clipInstances.get(key)?.once('unlock', () => this.clipInstances.get(key)?.play()); },
+        });
+        this.clipInstances.set(key, clip);
+        clip.play();
+        return key;
+    }
+
+    // Stop a specific clip (by key from playClip) or all clips when omitted.
+    stopClip(key) {
+        if (key) {
+            const clip = this.clipInstances.get(key);
+            if (clip) { try { clip.stop(); clip.unload(); } catch { /* noop */ } this.clipInstances.delete(key); }
+            return;
+        }
+        for (const clip of this.clipInstances.values()) {
+            try { clip.stop(); clip.unload(); } catch { /* noop */ }
+        }
+        this.clipInstances.clear();
+    }
+
     // --- Mixer helpers (3-channel routing) ---
 
     _clamp01(v) { return Math.max(0, Math.min(1, Number(v) || 0)); }
@@ -381,10 +474,22 @@ class SoundManager {
         if (this.bgmAudio) this.bgmAudio.volume(this._computeBgmVolume());
     }
 
+    // Ambient bus mirrors the BGM gating (muted/focus/reduced/duck) but its own level.
+    _computeAmbientVolume() {
+        if (this.muted || this.focusMode || this.reducedAudio) return 0;
+        const duck = this.ducked ? 0.5 : 1;
+        return this.masterVolume * this.ambientVolume * duck;
+    }
+
+    _applyAmbientVolume() {
+        if (this.ambientAudio) this.ambientAudio.volume(this._computeAmbientVolume());
+    }
+
     setMasterVolume(v) {
         this.masterVolume = this._clamp01(v);
         this._applySfxGain();
         this._applyBgmVolume();
+        this._applyAmbientVolume();
     }
 
     setBGMVolume(v) {
@@ -400,12 +505,28 @@ class SoundManager {
     setFocusMode(enabled) {
         this.focusMode = !!enabled;
         this._applyBgmVolume();
+        this._applyAmbientVolume();
+    }
+
+    // Ambient bus level (own slider). Persisted via nav settings.ambientVolume.
+    setAmbientVolume(v) {
+        this.ambientVolume = this._clamp01(v);
+        this._applyAmbientVolume();
+    }
+
+    // Clip channel level (educational one-shots).
+    setClipVolume(v) {
+        this.clipVolume = this._clamp01(v);
+        for (const clip of this.clipInstances.values()) {
+            try { clip.volume(this.masterVolume * this.clipVolume); } catch { /* noop */ }
+        }
     }
 
     // Ducking — reduce BGM to 50% when EMR panel active (tunnel-vision sim).
     setDucked(ducked) {
         this.ducked = !!ducked;
         this._applyBgmVolume();
+        this._applyAmbientVolume();
     }
 
     // A11y "Mode Audio Minimal" — silence BGM + suppress pervasive UI ticks
@@ -414,6 +535,7 @@ class SoundManager {
     setReducedAudio(enabled) {
         this.reducedAudio = !!enabled;
         this._applyBgmVolume();
+        this._applyAmbientVolume();
     }
 
     setMuted(muted) {
@@ -425,7 +547,12 @@ class SoundManager {
             if (next) this.bgmAudio.pause();
             else if (!this.isPaused) this.bgmAudio.play();
         }
+        if (this.ambientAudio) {
+            if (next) this.ambientAudio.pause();
+            else this.ambientAudio.play();
+        }
         this._applyBgmVolume();
+        this._applyAmbientVolume();
     }
 
     // Legacy alias — single master knob

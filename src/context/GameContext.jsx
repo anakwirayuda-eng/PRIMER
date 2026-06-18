@@ -95,7 +95,10 @@ export function GameProvider({ children }) {
             hasEmergency,
             hasOutbreak,
         });
-        if (theme) soundManager.playTheme?.(theme);
+        if (theme) {
+            soundManager.playTheme?.(theme);
+            soundManager.playAmbient?.(theme); // T1.1 — no-op until ambient tracks sourced
+        }
     }, [nav.gameState, nav.activePage, hasEmergency, hasOutbreak]);
 
     const value = useMemo(() => {
