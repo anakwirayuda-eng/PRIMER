@@ -228,19 +228,29 @@ class SoundManager {
     focusMode = false;
     ducked = false;  // Tunnel-vision hack: BGM @ 50% when EMR panel active
 
-    // BGM tracks — DEMO placeholder (2026-06-18).
-    // Single track wired to all slots so reviewers hear BGM + ducking +
-    // 3-channel mixer in every scene. Replace with curated 3-track CC0
-    // soundscape per docs/AUDIO_SOURCING.md before production release.
+    // BGM themes — semantic location/state → track. Each value is a Howler
+    // multi-format src array. Currently every theme points at the same DEMO
+    // placeholder; fill each key with its curated CC0 track per
+    // docs/AUDIO_SOURCING.md before release. The theme architecture (T0.2)
+    // means swapping tracks is just editing this map — no wiring changes.
     //
-    // gamelan_demo.mp3:
-    //   "Javanese Vibes" by fiikuri — Pixabay Content License
+    // gamelan_demo.mp3: "Javanese Vibes" by fiikuri — Pixabay Content License
     //   https://pixabay.com/music/world-free-javanese-vibes-gamelan-music-music-for-creator-383176/
     //   Free for commercial use, no attribution required.
-    //   ⚠️ Region-specific (Jawa gamelan) — for final release, swap to pan-Indonesian neutral.
-    bgmTracks = [
-        ['/audio/gamelan_demo.mp3']
-    ];
+    //   ⚠️ Region-specific (Jawa gamelan) — final release: pan-Indonesian neutral.
+    bgmThemes = {
+        menu: ['/audio/gamelan_demo.mp3'],     // title / slot select / setup
+        home: ['/audio/gamelan_demo.mp3'],     // Rumah Dinas
+        clinic: ['/audio/gamelan_demo.mp3'],   // Puskesmas / admin pages (default)
+        wilayah: ['/audio/gamelan_demo.mp3'],  // peta desa
+        social: ['/audio/gamelan_demo.mp3'],   // Warung Intel
+        tension: ['/audio/gamelan_demo.mp3'],  // outbreak / emergency override
+    };
+    currentTheme = null;
+
+    // Legacy day-indexed list — derived from theme values so day-based
+    // callers (AudioTestPanel, pendingBGMDay) keep working without a 2nd store.
+    get bgmTracks() { return Object.values(this.bgmThemes); }
 
     // Build a Howl instance for BGM playback. Howler handles autoplay policy,
     // iOS audio unlock, and HTML5 streaming for large music files.
@@ -265,27 +275,65 @@ class SoundManager {
         });
     }
 
-    playBGM(day) {
-        if (this.muted || this.isLoading) return;
-        if (this.bgmTracks.length === 0) return;
+    // Crossfade BGM_FADE_MS between tracks; instant if nothing playing yet.
+    BGM_FADE_MS = 1200;
 
-        // Calculate which track should play
-        const trackIndex = (day - 1) % this.bgmTracks.length;
-
-        // If same track is already playing, don't restart
-        if (this.bgmAudio && this.currentTrackIndex === trackIndex && this.bgmAudio.playing()) {
-            return;
-        }
-
+    // Start a track, crossfading from any currently-playing one.
+    _startBgm(trackSrc) {
+        const prev = this.bgmAudio;
+        const next = this._createBgmHowl(trackSrc);
+        next.volume(0);
+        this.bgmAudio = next;
         this.isLoading = true;
+        this.isPaused = false;
+        next.play();
+        next.fade(0, this._computeBgmVolume(), this.BGM_FADE_MS);
+
+        if (prev) {
+            try {
+                prev.fade(prev.volume(), 0, this.BGM_FADE_MS);
+                prev.once('fade', () => { try { prev.stop(); prev.unload(); } catch { /* noop */ } });
+                // Safety unload in case 'fade' doesn't fire (e.g. already stopped)
+                setTimeout(() => { try { prev.unload(); } catch { /* noop */ } }, this.BGM_FADE_MS + 600);
+            } catch {
+                try { prev.unload(); } catch { /* noop */ }
+            }
+        }
+    }
+
+    // Resolve the semantic BGM theme for the current game context.
+    // Urgency (emergency/outbreak) overrides location. See docs/AUDIO_DESIGN.md.
+    themeForContext(ctx = {}) {
+        const { gameState, activePage, hasEmergency, hasOutbreak } = ctx;
+        if (hasEmergency || hasOutbreak) return 'tension';
+        if (gameState === 'rumah_dinas') return 'home';
+        const isMenu = gameState === 'opening' || gameState === 'slot_select' ||
+            gameState === 'setup' || (gameState && typeof gameState === 'object' && gameState.type === 'setup');
+        if (isMenu) return 'menu';
+        switch (activePage) {
+            case 'wilayah': return 'wilayah';
+            case 'warung': return 'social';
+            default: return 'clinic'; // dashboard, clinical, staff, facility, etc.
+        }
+    }
+
+    // Play the BGM for a semantic theme key. No-op if already on it.
+    playTheme(themeKey) {
+        if (this.muted) return;
+        const src = this.bgmThemes[themeKey];
+        if (!src) return; // unknown theme → leave whatever is playing
+        if (this.currentTheme === themeKey && this.bgmAudio) return; // already on it
+        this.currentTheme = themeKey;
+        this._startBgm(src);
+    }
+
+    // Legacy day-indexed entry — AudioTestPanel + pendingBGMDay. Maps the day
+    // onto the theme cycle so existing callers keep working.
+    playBGM(day) {
+        const keys = Object.keys(this.bgmThemes);
+        if (keys.length === 0) return;
         this.pendingBGMDay = day;
-        this.stopBGM();
-
-        const trackSrc = this.bgmTracks[trackIndex];
-        this.currentTrackIndex = trackIndex;
-
-        this.bgmAudio = this._createBgmHowl(trackSrc);
-        this.bgmAudio.play();
+        this.playTheme(keys[(Math.max(1, day) - 1) % keys.length]);
     }
 
     // Call this when user clicks anywhere to resume BGM
@@ -306,6 +354,7 @@ class SoundManager {
             this.bgmAudio = null;
             this.bgmStarted = false;
             this.currentTrackIndex = -1;
+            this.currentTheme = null;
             this.isPaused = false;
             this.isLoading = false;
         }

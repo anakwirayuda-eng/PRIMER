@@ -83,6 +83,21 @@ export function GameProvider({ children }) {
         soundManager.setDucked?.(emrOpen);
     }, [clinical.activePatientId, clinical.activeEmergencyId]);
 
+    // Location-based BGM (T0.2) — pick the theme for the current scene + urgency
+    // and crossfade to it. Urgency (emergency in queue / active outbreak) wins.
+    // See docs/AUDIO_DESIGN.md § Smart BGM Selection.
+    const hasEmergency = (clinical.emergencyQueue?.length || 0) > 0;
+    const hasOutbreak = (publicHealth.activeOutbreaks?.length || 0) > 0;
+    useEffect(() => {
+        const theme = soundManager.themeForContext?.({
+            gameState: nav.gameState,
+            activePage: nav.activePage,
+            hasEmergency,
+            hasOutbreak,
+        });
+        if (theme) soundManager.playTheme?.(theme);
+    }, [nav.gameState, nav.activePage, hasEmergency, hasOutbreak]);
+
     const value = useMemo(() => {
         // Prepare base object - Merging store states and actions
         // SPREAD SLICES for legacy compatibility (destructuring at top level)
