@@ -189,6 +189,7 @@ export const INITIAL_NAV_SETTINGS = {
     bgmVolume: 0.7,
     sfxVolume: 1.0,
     focusMode: false,    // mute BGM only — SFX tetap (sesi belajar panjang)
+    reducedAudio: false, // a11y: mute BGM + pervasive UI ticks; keep safety cues
     muted: false,
     autoSave: true
 };

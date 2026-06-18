@@ -227,6 +227,7 @@ class SoundManager {
     sfxVolume = 1.0;
     focusMode = false;
     ducked = false;  // Tunnel-vision hack: BGM @ 50% when EMR panel active
+    reducedAudio = false; // A11y: silence BGM + pervasive UI ticks; keep safety cues
 
     // BGM themes — semantic location/state → track. Each value is a Howler
     // multi-format src array. Currently every theme points at the same DEMO
@@ -365,7 +366,7 @@ class SoundManager {
     _clamp01(v) { return Math.max(0, Math.min(1, Number(v) || 0)); }
 
     _computeBgmVolume() {
-        if (this.muted || this.focusMode) return 0;
+        if (this.muted || this.focusMode || this.reducedAudio) return 0;
         const duck = this.ducked ? 0.5 : 1;
         return this.masterVolume * this.bgmVolume * duck;
     }
@@ -404,6 +405,14 @@ class SoundManager {
     // Ducking — reduce BGM to 50% when EMR panel active (tunnel-vision sim).
     setDucked(ducked) {
         this.ducked = !!ducked;
+        this._applyBgmVolume();
+    }
+
+    // A11y "Mode Audio Minimal" — silence BGM + suppress pervasive UI ticks
+    // (caller gates non-essential SFX on `reducedAudio`). Safety-critical cues
+    // (alarms, respectful silence, errors) still fire. See docs/AUDIO_DESIGN.md.
+    setReducedAudio(enabled) {
+        this.reducedAudio = !!enabled;
         this._applyBgmVolume();
     }
 

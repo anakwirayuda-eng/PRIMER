@@ -180,7 +180,7 @@ function App() {
         target.closest('a') ||
         target.closest('[role="button"]');
 
-      if (isInteractive) {
+      if (isInteractive && !soundManager.reducedAudio) {
         soundManager.playCursor();
       }
     };

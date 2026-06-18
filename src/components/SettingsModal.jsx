@@ -13,7 +13,7 @@ import React from 'react';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
 import { useGame } from '../context/GameContext.jsx';
 import { useTheme, THEMES } from '../context/ThemeContext.jsx';
-import { Save, LogOut, Volume2, VolumeX, Music, Zap, Headphones, X, Check, Palette } from 'lucide-react';
+import { Save, LogOut, Volume2, VolumeX, Music, Zap, Headphones, Ear, X, Check, Palette } from 'lucide-react';
 import { APP_METADATA } from '../data/AppMetadata.js';
 import { AUDIO_CREDITS } from '../data/audioCredits.js';
 import useModalA11y from '../hooks/useModalA11y.js';
@@ -111,6 +111,22 @@ export default function SettingsModal({ onClose }) {
                                 checked={settings.focusMode ?? false}
                                 onChange={(e) => updateSettings({ focusMode: e.target.checked })}
                                 className="w-5 h-5 accent-sky-500 cursor-pointer flex-shrink-0 ml-2"
+                            />
+                        </label>
+
+                        <label className="flex items-start justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition">
+                            <div className="flex items-start gap-2 min-w-0">
+                                <Ear size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
+                                <div className="min-w-0">
+                                    <div className="text-sm font-medium text-slate-700 dark:text-slate-200">Mode Audio Minimal</div>
+                                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Aksesibilitas — matikan musik & bunyi klik; alarm keselamatan tetap</div>
+                                </div>
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={settings.reducedAudio ?? false}
+                                onChange={(e) => updateSettings({ reducedAudio: e.target.checked })}
+                                className="w-5 h-5 accent-violet-500 cursor-pointer flex-shrink-0 ml-2"
                             />
                         </label>
                     </div>
