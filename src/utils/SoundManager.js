@@ -422,6 +422,12 @@ class SoundManager {
     // Legacy alias — single master knob
     setVolume(volume) { this.setMasterVolume(volume); }
 
+    // Aliases used by TimeController on game pause/resume (P1 wiring).
+    // Previously called as no-ops (methods didn't exist) — now they pause/
+    // resume BGM so the world freezing also quiets the music.
+    pause() { this.pauseBGM(); }
+    resume() { this.resumeFromPause(); }
+
     playRandomBGM() {
         if (this.muted || this.isLoading) return;
         if (this.bgmTracks.length === 0) return;
@@ -758,6 +764,45 @@ class SoundManager {
         tickGain.connect(this.masterGain);
         tickOsc.start(now);
         tickOsc.stop(now + 0.06);
+    }
+
+    // Bridge outage — wood crack (filtered noise burst) + low collapse thud.
+    // Environmental setback cue when a river crossing breaks (P1 wiring).
+    playBridgeOutage() {
+        if (!this.initialized || this.muted) return;
+        if (!this.context) return;
+        const ctx = this.context;
+        const now = ctx.currentTime;
+
+        // Crack — short bandpass noise burst
+        const dur = 0.22;
+        const size = Math.floor(ctx.sampleRate * dur);
+        const buffer = ctx.createBuffer(1, size, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < size; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / size);
+        const src = ctx.createBufferSource();
+        src.buffer = buffer;
+        const bp = ctx.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 900;
+        bp.Q.value = 0.8;
+        const crackGain = ctx.createGain();
+        crackGain.gain.setValueAtTime(0.5, now);
+        crackGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        src.connect(bp); bp.connect(crackGain); crackGain.connect(this.masterGain);
+        src.start(now); src.stop(now + dur);
+
+        // Collapse thud 160 → 40 Hz
+        const thud = ctx.createOscillator();
+        const thudGain = ctx.createGain();
+        thud.type = 'sine';
+        thud.frequency.setValueAtTime(160, now + 0.05);
+        thud.frequency.exponentialRampToValueAtTime(40, now + 0.5);
+        thudGain.gain.setValueAtTime(0, now + 0.05);
+        thudGain.gain.linearRampToValueAtTime(0.45, now + 0.08);
+        thudGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+        thud.connect(thudGain); thudGain.connect(this.masterGain);
+        thud.start(now + 0.05); thud.stop(now + 0.6);
     }
 }
 
