@@ -790,3 +790,38 @@ Internalisasi: **ship working minimum > ambitious incomplete**. Scope 3-4 track 
 ---
 
 **END OF § 14** — deep-research roadmap per 2026-06-18.
+
+---
+
+## 15. Auscultation Legal Clearance (2026-06-18) — T2.1 GO
+
+> AG memutuskan auskultasi mini-game masuk scope. Riset legal dijalankan paralel. **Hasil: heart sounds AMAN secara hukum; lung/bowel butuh kehati-hatian.**
+
+### 15.1 Verdict per sumber
+
+| Sumber | Lisensi | Verdict |
+|---|---|---|
+| **PhysioNet/CinC 2016 heart DB** | **ODC-By v1.0, open access** (bukan credentialed) | ✅ **AMAN** — redistribusi boleh, cukup atribusi (Liu 2016 + Goldberger 2000). [link](https://physionet.org/content/challenge-2016/1.0.0/) |
+| **CirCor DigiScope** | **ODC-By v1.0, open access** (rilis publik 70%; 30% yang ditahan = test-set Challenge, bukan gate kredensial) | ✅ **AMAN + TERBAIK** — label murmur expert (timing/shape/grade). Atribusi Oliveira 2021, DOI 10.13026/tshs-mw03. [link](https://physionet.org/content/circor-heart-sound/1.0.3/) |
+| ICBHI 2017 Respiratory DB | "freely available for research" — **tanpa lisensi CC eksplisit**; situs resmi cert expired | 🟡 **YELLOW** — framing "research", tak airtight untuk redistribusi game. Email penulis dulu, atau hindari. |
+| Freesound CC0 | CC0 (per-file, harus diverifikasi) | ✅ Aman sebagai **gap-filler** (bowel/lung) — kualitas hobbyist, patologi terbatas |
+| Wellcome "Heart sounds" | **CC BY-NC** 2.0 UK | ❌ **TOLAK** — klausa NC; "free MP3" menyesatkan |
+| Thinklabs / Littmann / eMurmur / Easy Auscultation | Proprietary | ❌ **TOLAK** — "gratis didengar" ≠ boleh redistribusi |
+
+### 15.2 Implikasi desain
+
+- **Jantung = fully covered, airtight.** CirCor (primary) + CinC 2016 (suplemen) menutup: normal S1/S2, murmur sistolik (CirCor punya grade labels — emas untuk teaching), murmur diastolik.
+- **Paru + bowel = bagian rapuh lisensi.** JANGAN default ke ICBHI. Untuk wheeze/rhonchi/crackles: minta izin tertulis ICBHI/auth.gr (1-4 minggu, tak dijamin) ATAU kurasi CC0 per-file dari Freesound. Bowel sounds: Freesound CC0 (langka).
+- **Tidak butuh izin formal** untuk CirCor + CinC + Freesound CC0 — cukup Credits screen (scaffold `audioCredits.js` sudah siap).
+
+### 15.3 Action items T2.1 (auskultasi)
+
+1. **MVP scope = jantung dulu** (legal aman 100%): mini-game "identifikasi murmur" pakai CirCor. Defer paru/bowel ke modul-2 setelah lisensi diamankan.
+2. Download CirCor DigiScope 1.0.3 + CinC 2016 → kurasi ~15-25 klip representatif (normal, sistolik bertingkat, diastolik).
+3. Isi `audioCredits.js` dengan ODC-By attributions (sekarang juga, mumpung ingat).
+4. Desain game mode: stetoskop in-game → play clip → MCQ (normal/sistolik/diastolik/grade) → feedback + skor. Nyambung ke `playStethoscope` SFX yang sudah ada.
+5. Effort revisi: **jantung-only MVP ~20-30 jam** (turun dari estimasi 30-60j karena scope dipangkas + legal sudah jelas).
+
+**Sumber:** [CinC 2016](https://physionet.org/content/challenge-2016/1.0.0/) · [CirCor](https://physionet.org/content/circor-heart-sound/1.0.3/) · [ODC-By v1.0](https://opendatacommons.org/licenses/by/1-0/)
+
+**END OF § 15** — auskultasi legal clearance per 2026-06-18.
