@@ -188,10 +188,10 @@
   text-align: center;
 }
 
-/* -- Kredit -------------------------------------------------------------------- */
+/* -- Kredit & HKI ---------------------------------------------------------------- */
 .title__kredit {
   position: absolute;
-  bottom: var(--sp-3);
+  bottom: var(--sp-2);
   left: 0;
   right: 0;
   z-index: 1;
@@ -199,6 +199,33 @@
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
   color: var(--kertas-050);
-  opacity: 0.75;
+  opacity: 0.8;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 var(--sp-5);
+}
+
+.title__kredit-haki {
+  font-size: 0.62rem;
+  opacity: 0.75;
+  letter-spacing: 0.05em;
+}
+
+.title__kredit-disklaimer {
+  font-size: 0.58rem;
+  opacity: 0.55;
+  letter-spacing: 0.02em;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* -- Tombol keluar (Electron) ------------------------------------------------------ */
+.title__keluar {
+  margin-top: var(--sp-2);
+  align-self: center;
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }

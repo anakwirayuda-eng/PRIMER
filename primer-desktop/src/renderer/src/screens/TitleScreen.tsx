@@ -6,7 +6,11 @@
 
 import { useState, type FormEvent } from 'react'
 import { useGame } from '../store'
+import { METADATA } from '@content/metadata'
 import './TitleScreen.css'
+
+/** Tombol Keluar hanya relevan di jendela Electron (bukan preview browser). */
+const DI_ELECTRON = typeof navigator !== 'undefined' && navigator.userAgent.includes('Electron')
 
 /** Siluet Desa Sukamaju saat fajar — bukit, pepohonan, gedung puskesmas. */
 function SiluetPuskesmas() {
@@ -174,13 +178,28 @@ export function TitleScreen() {
                 </p>
               )}
             </form>
+
+            {DI_ELECTRON && (
+              <button
+                className="tombol tombol--senyap title__keluar"
+                onClick={() => window.close()}
+              >
+                Keluar
+              </button>
+            )}
           </div>
         )}
       </div>
 
-      <p className="title__kredit mono">
-        PRIMER v0.9 — simulasi edukasi kedokteran keluarga &amp; komunitas untuk mahasiswa FK Indonesia
-      </p>
+      <div className="title__kredit mono">
+        <p>{METADATA.copyright}</p>
+        <p className="title__kredit-haki">
+          Hak Cipta terdaftar Kemenkumham RI — Surat Pencatatan Ciptaan No.{' '}
+          {METADATA.haki.nomorRegistrasi} ({METADATA.haki.tanggalRegistrasi}), Nomor Pencatatan{' '}
+          {METADATA.haki.nomorPencatatan} · {METADATA.haki.dasarHukum} · {METADATA.organisasi}
+        </p>
+        <p className="title__kredit-disklaimer">{METADATA.disklaimerMedis}</p>
+      </div>
     </div>
   )
 }
