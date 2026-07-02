@@ -1,0 +1,230 @@
+/* ============================================================================
+   RAPOR — 4 dimensi live, grade ber-stempel, tally, kalender musim 90 hari.
+   Semua warna dari tokens.css; kelas dasar dari base.css.
+   ========================================================================== */
+
+.rapor {
+  height: 100%;
+  padding: var(--sp-5);
+}
+
+/* Panel internal yang scroll (layar tanpa scroll dokumen). */
+.rapor__gulir {
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding-right: var(--sp-1);
+}
+
+/* -- Kepala: identitas + grade ------------------------------------------------ */
+.rapor__kepala {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  padding: var(--sp-5);
+  flex-shrink: 0;
+}
+
+.rapor__identitas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+
+.rapor__judul {
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+.rapor__grade {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}
+
+.rapor__grade-stempel {
+  font-size: var(--text-lg);
+  padding: var(--sp-2) var(--sp-4);
+}
+
+.rapor__total {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+}
+
+.rapor__total-maks {
+  font-size: var(--text-md);
+  color: var(--tinta-lembut);
+  font-weight: 400;
+}
+
+/* -- 4 kartu dimensi ------------------------------------------------------------ */
+.rapor__dimensi {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-4);
+}
+
+@media (max-width: 1080px) {
+  .rapor__dimensi {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rapor-dimensi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.rapor-dimensi__nilai {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.rapor-dimensi__maks {
+  font-size: var(--text-sm);
+  color: var(--tinta-lembut);
+  font-weight: 400;
+}
+
+.rapor-dimensi__rincian {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.rapor-dimensi__baris {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.rapor-dimensi__waspada {
+  color: var(--kunyit-700);
+  font-weight: 700;
+}
+
+/* -- Bawah: tally + kalender ------------------------------------------------------ */
+.rapor__bawah {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--sp-4);
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .rapor__bawah {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.rapor-tally {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.rapor-tally__tabel {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rapor-tally__tabel td {
+  padding: var(--sp-1) 0;
+  border-bottom: 1px dashed var(--border-halus);
+  vertical-align: baseline;
+}
+
+.rapor-tally__tabel tr:last-child td {
+  border-bottom: none;
+}
+
+.rapor-tally__angka {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* -- Kalender musim 90 hari ---------------------------------------------------------- */
+.rapor-kal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.rapor-kal__strip-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.rapor-kal__strip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.rapor-kal__strip--hujan {
+  --rapor-kal-warna: var(--tinta-biru);
+}
+
+.rapor-kal__strip--pancaroba {
+  --rapor-kal-warna: var(--daun-600);
+}
+
+.rapor-kal__strip--kemarau {
+  --rapor-kal-warna: var(--kunyit-600);
+}
+
+.rapor-kal__label {
+  letter-spacing: 0.08em;
+}
+
+.rapor-kal__hari-grid {
+  display: grid;
+  grid-template-columns: repeat(30, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.rapor-kal__hari {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-halus);
+}
+
+.rapor-kal__hari--lewat {
+  background: var(--rapor-kal-warna);
+  border-color: transparent;
+  opacity: 0.5;
+}
+
+.rapor-kal__hari--kini {
+  background: var(--rapor-kal-warna);
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--tinta);
+  animation: rapor-kal-denyut 1.8s var(--ease-keluar) infinite;
+}
+
+@keyframes rapor-kal-denyut {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+.rapor-kal__disclaimer {
+  border-top: 1px dashed var(--border-halus);
+  padding-top: var(--sp-2);
+}

@@ -1,0 +1,12 @@
+/* Font di-bundle offline via @fontsource — game harus jalan tanpa internet. */
+@import '@fontsource-variable/plus-jakarta-sans/index.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/600.css';
+@import '@fontsource/ibm-plex-mono/700.css';
+@import '@fontsource-variable/caveat/index.css';
+
+:root {
+  --font-utama: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Cascadia Mono', 'Consolas', monospace;
+  --font-tulis: 'Caveat Variable', 'Caveat', 'Segoe Print', cursive;
+}

@@ -1,0 +1,63 @@
+/**
+ * TOASTER — menampilkan GameEvent penting sebagai toast kertas kecil.
+ * Membaca lastEvents dari store; tidak menyimpan state game apa pun.
+ */
+
+import { useEffect, useState } from 'react'
+import { useGame } from '../store'
+import type { GameEvent } from '@engine/events'
+import './Toaster.css'
+
+interface Toast {
+  id: number
+  teks: string
+  nada: 'info' | 'sukses' | 'bahaya'
+}
+
+function eventKeToast(e: GameEvent): Toast | null {
+  const id = Math.random()
+  switch (e.type) {
+    case 'ERROR_AKSI':
+      return { id, teks: e.pesan, nada: 'bahaya' }
+    case 'FIREWALL_ALERGI':
+      return { id, teks: `KONTRAINDIKASI — pasien alergi golongan ${e.golongan}!`, nada: 'bahaya' }
+    case 'KARMA_TERJADI':
+      return { id, teks: e.narasi, nada: 'bahaya' }
+    case 'KARMA_DICEGAH':
+      return { id, teks: e.narasi, nada: 'sukses' }
+    case 'DEX_BERTAMBAH':
+      return { id, teks: `Buku Saku diperbarui (★${e.bintang})`, nada: 'info' }
+    case 'SURAT_MASUK':
+      return { id, teks: `Surat baru: ${e.surat.judul}`, nada: 'info' }
+    default:
+      return null
+  }
+}
+
+export function Toaster() {
+  const lastEvents = useGame((s) => s.lastEvents)
+  const eventTick = useGame((s) => s.eventTick)
+  const [toasts, setToasts] = useState<Toast[]>([])
+
+  useEffect(() => {
+    const baru = lastEvents.map(eventKeToast).filter((t): t is Toast => t !== null)
+    if (baru.length === 0) return
+    setToasts((prev) => [...prev, ...baru].slice(-4))
+    const timer = setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => !baru.some((b) => b.id === t.id)))
+    }, 4200)
+    return () => clearTimeout(timer)
+  }, [eventTick]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (toasts.length === 0) return null
+
+  return (
+    <div className="toaster">
+      {toasts.map((t) => (
+        <div key={t.id} className={`toast toast--${t.nada} kertas`}>
+          {t.teks}
+        </div>
+      ))}
+    </div>
+  )
+}

@@ -1,0 +1,130 @@
+.hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  z-index: var(--z-hud);
+}
+
+.hud__kiri {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  min-width: 300px;
+}
+
+.hud__hari {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--tinta-lembut);
+}
+
+.hud__hari-angka {
+  font-size: var(--text-xl);
+  color: var(--daun-700);
+}
+
+.hud__hari-total {
+  color: var(--tinta-pudar);
+}
+
+.hud__blok {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.hud__nav {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.hud__tab {
+  position: relative;
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--tinta-lembut);
+  border-bottom: 3px solid transparent;
+  transition: all var(--durasi-cepat) var(--ease-keluar);
+}
+
+.hud__tab:hover:not(:disabled) {
+  background: var(--bg-sunken);
+  color: var(--tinta);
+}
+
+.hud__tab--aktif {
+  color: var(--daun-800);
+  border-bottom-color: var(--daun-700);
+  background: var(--daun-50);
+}
+
+.hud__tab--kunci {
+  opacity: 0.5;
+}
+
+.hud__tab:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.hud__badge {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: var(--radius-pill);
+  background: var(--kunyit-600);
+  color: var(--kertas-050);
+  font-size: 11px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+.hud__gembok {
+  margin-left: 4px;
+  font-size: 11px;
+}
+
+.hud__kanan {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  min-width: 300px;
+  justify-content: flex-end;
+}
+
+.hud__stamina {
+  display: flex;
+  gap: 4px;
+}
+
+.hud__pip {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--daun-700);
+  background: transparent;
+  transition: background var(--durasi-normal) var(--ease-keluar);
+}
+
+.hud__pip--isi {
+  background: var(--daun-600);
+}
+
+.hud__dana {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--tinta-lembut);
+}

@@ -1,0 +1,267 @@
+/* ============================================================================
+   BUKU SAKU — Dex SKDI 144
+   Grid kartu kecil rasa arsip; siluet '???' vs entri terisi ber-bintang.
+   Semua warna dari tokens.css.
+   ========================================================================== */
+
+.dexskdi {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+}
+
+/* -- Header ------------------------------------------------------------------ */
+.dexskdi__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
+  flex-shrink: 0;
+}
+
+.dexskdi__header-kiri {
+  min-width: 0;
+}
+
+.dexskdi__judul {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.dexskdi__leitner {
+  margin-top: var(--sp-1);
+  max-width: 52ch;
+}
+
+.dexskdi__progres {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}
+
+.dexskdi__meter {
+  width: 220px;
+}
+
+.dexskdi__legenda {
+  display: flex;
+  gap: var(--sp-3);
+}
+
+.dexskdi__legenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.dexskdi__legenda-pin {
+  color: var(--kunyit-600);
+  font-size: 9px;
+}
+
+/* -- Isi: grid + panel detail -------------------------------------------------- */
+.dexskdi__isi {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: var(--sp-4);
+}
+
+.dexskdi__grid-wrap {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding-right: var(--sp-1);
+}
+
+.dexskdi__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: var(--sp-2);
+  align-content: start;
+}
+
+/* -- Kartu entri ---------------------------------------------------------------- */
+.dexskdi-kartu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-1);
+  min-height: 78px;
+  padding: var(--sp-2) var(--sp-3);
+  text-align: left;
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-kertas);
+  transition:
+    transform var(--durasi-cepat) var(--ease-keluar),
+    box-shadow var(--durasi-cepat) var(--ease-keluar),
+    border-color var(--durasi-cepat);
+}
+
+.dexskdi-kartu__nomor {
+  font-size: var(--text-xs);
+  color: var(--tinta-pudar);
+  letter-spacing: 0.08em;
+}
+
+/* Terisi: bisa diklik */
+.dexskdi-kartu--terisi:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-kartu);
+  border-color: var(--border-tegas);
+}
+
+.dexskdi-kartu--terisi:active {
+  transform: translateY(0);
+}
+
+.dexskdi-kartu--aktif {
+  border-color: var(--daun-700);
+  box-shadow: 0 0 0 2px var(--daun-100), var(--shadow-kertas);
+}
+
+.dexskdi-kartu__nama {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dexskdi-kartu__meta {
+  margin-top: auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--sp-2);
+}
+
+.dexskdi-kartu__hari {
+  font-size: var(--text-xs);
+  color: var(--tinta-pudar);
+}
+
+/* Siluet: belum dikenali */
+.dexskdi-kartu--siluet {
+  background: var(--bg-sunken);
+  box-shadow: none;
+  color: var(--tinta-pudar);
+  cursor: default;
+}
+
+.dexskdi-kartu__siluet {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: var(--tinta-pudar);
+  opacity: 0.7;
+  margin: auto 0;
+}
+
+/* Ada kasusnya di desa tapi belum ditangani */
+.dexskdi-kartu--desa {
+  border-style: dashed;
+  border-color: var(--kunyit-600);
+}
+
+.dexskdi-kartu__pin {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
+  color: var(--kunyit-600);
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* -- Bintang penguasaan ------------------------------------------------------------ */
+.dexskdi-bintang {
+  color: var(--kunyit-600);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.dexskdi-bintang--besar {
+  font-size: var(--text-lg);
+}
+
+.dexskdi-bintang__kosong {
+  color: var(--tinta-pudar);
+  opacity: 0.45;
+}
+
+/* -- Panel detail (kartu arsip kanan) ------------------------------------------------ */
+.dexskdi__detail {
+  width: 320px;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.dexskdi-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+}
+
+.dexskdi-detail__nama {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.dexskdi-detail__tabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+}
+
+.dexskdi-detail__baris {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  font-size: var(--text-sm);
+}
+
+.dexskdi-detail__clue {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.dexskdi-detail__clue-teks {
+  padding: var(--sp-3);
+  background: var(--kunyit-100);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-halus);
+}
+
+.dexskdi-detail__saran {
+  border-top: 1px dashed var(--border-halus);
+  padding-top: var(--sp-2);
+}
+
+.dexskdi-detail--kosong {
+  gap: var(--sp-3);
+}
+
+.dexskdi-detail__hint {
+  margin-top: auto;
+}

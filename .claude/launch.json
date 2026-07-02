@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "puskesmas-pagi-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--config", "vite.preview.config.ts"],
+      "cwd": "primer-desktop",
+      "port": 5199
+    }
+  ]
+}

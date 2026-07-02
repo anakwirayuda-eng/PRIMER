@@ -1,0 +1,476 @@
+/* ============================================================================
+   KUNJUNGAN RUMAH — panggung 4 babak: rumah SVG, hotspot denyut,
+   dialog box novel visual, kartu hambatan & resep sosial.
+   ========================================================================== */
+
+.kunjungan-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+}
+
+.kunjungan-root--kosong {
+  padding: var(--sp-8);
+}
+
+/* -- Header + stepper ---------------------------------------------------------- */
+
+.kunjungan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.kunjungan-header__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+
+.kunjungan-header__judul {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--daun-800);
+}
+
+.kunjungan-stepper {
+  display: flex;
+  gap: var(--sp-2);
+  list-style: none;
+}
+
+.kunjungan-stepper__langkah {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-halus);
+  color: var(--tinta-pudar);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  transition: all var(--durasi-normal) var(--ease-keluar);
+}
+
+.kunjungan-stepper__angka {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.kunjungan-stepper__langkah--aktif {
+  color: var(--daun-800);
+  border-color: var(--daun-700);
+  background: var(--daun-50);
+}
+
+.kunjungan-stepper__langkah--lewat {
+  color: var(--daun-700);
+}
+
+/* -- Panggung rumah ------------------------------------------------------------- */
+
+.kunjungan-scene {
+  position: relative;
+  flex: 1;
+  min-height: 180px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-tegas);
+  overflow: hidden;
+  box-shadow: var(--shadow-kertas);
+}
+
+.kunjungan-rumah {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: filter var(--durasi-santai) var(--ease-keluar);
+}
+
+.kunjungan-scene--redup .kunjungan-rumah {
+  filter: brightness(0.9) saturate(0.9);
+}
+
+.kunjungan-scene--redup::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(13, 21, 18, 0.18) 100%);
+  pointer-events: none;
+}
+
+/* -- Hotspot (denyut halus) ------------------------------------------------------ */
+
+.kunjungan-hotspot-lapis {
+  position: absolute;
+  inset: 0;
+}
+
+.kunjungan-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--kertas-050);
+  background: var(--kunyit-600);
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity var(--durasi-cepat) var(--ease-keluar), transform var(--durasi-cepat) var(--ease-keluar);
+}
+
+.kunjungan-hotspot::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 2px solid var(--kunyit-600);
+  animation: kunjungan-denyut 1.9s var(--ease-keluar) infinite;
+}
+
+.kunjungan-hotspot:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translate(-50%, -50%) scale(1.12);
+}
+
+.kunjungan-hotspot--ketemu {
+  background: var(--daun-600);
+  opacity: 0.9;
+  cursor: default;
+  color: var(--kertas-050);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kunjungan-hotspot--ketemu::after {
+  animation: none;
+  opacity: 0;
+}
+
+.kunjungan-hotspot:disabled {
+  cursor: default;
+}
+
+@keyframes kunjungan-denyut {
+  0% {
+    transform: scale(0.75);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* -- Catatan temuan (kanan atas panggung) ------------------------------------------ */
+
+.kunjungan-temuan {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-3);
+  width: min(280px, 34%);
+  max-height: calc(100% - var(--sp-6));
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.kunjungan-temuan__judul {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--tinta-lembut);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--sp-2);
+  align-self: flex-end;
+}
+
+.kunjungan-temuan__kartu {
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--text-sm);
+  animation: kunjungan-kartu-masuk var(--durasi-normal) var(--ease-pantul) both;
+}
+
+.kunjungan-temuan__kartu b {
+  display: block;
+  color: var(--daun-800);
+  margin-bottom: 2px;
+}
+
+.kunjungan-temuan__kartu p {
+  color: var(--tinta-lembut);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+
+@keyframes kunjungan-kartu-masuk {
+  from {
+    opacity: 0;
+    transform: translateX(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* -- Panel bawah per babak (transisi halus lewat remount) --------------------------- */
+
+.kunjungan-panel {
+  max-height: 46vh;
+  overflow-y: auto;
+  animation: kunjungan-panel-masuk var(--durasi-normal) var(--ease-keluar) both;
+}
+
+@keyframes kunjungan-panel-masuk {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Babak 1: pembuka & tombol lanjut */
+
+.kunjungan-pembuka {
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.kunjungan-pembuka__teks {
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--tinta);
+}
+
+/* Babak 2: dialog box novel visual */
+
+.kunjungan-wawancara {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.kunjungan-dialog {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+}
+
+.kunjungan-potret {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--daun-700);
+  color: var(--kertas-050);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--daun-800);
+  box-shadow: var(--shadow-kertas);
+}
+
+.kunjungan-dialog__isi {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.kunjungan-dialog__nama {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tinta-lembut);
+}
+
+.kunjungan-dialog__teks {
+  font-size: var(--text-md);
+  line-height: 1.6;
+}
+
+.kunjungan-dialog__narasi {
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--tinta-lembut);
+}
+
+.kunjungan-dialog__gema {
+  border-left: 2px solid var(--border-halus);
+  padding-left: var(--sp-2);
+}
+
+.kunjungan-pilihan-baris {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--sp-3);
+}
+
+.kunjungan-pilihan {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  text-align: left;
+  border-left-width: 4px;
+  cursor: pointer;
+}
+
+.kunjungan-pilihan__teks {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.kunjungan-pilihan--empati {
+  border-left-color: var(--daun-600);
+}
+
+.kunjungan-pilihan--refleksi {
+  border-left-color: var(--tinta-biru);
+}
+
+.kunjungan-pilihan--edukasi {
+  border-left-color: var(--kunyit-600);
+}
+
+.kunjungan-pilihan--konfrontasi {
+  border-left-color: var(--tinta-merah);
+}
+
+/* Babak 3: diagnosis perilaku */
+
+.kunjungan-diagnosis {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, 2fr);
+  gap: var(--sp-3);
+  align-items: stretch;
+}
+
+.kunjungan-rekap {
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.kunjungan-rekap__kolom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.kunjungan-rekap__kolom ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 3px;
+}
+
+.kunjungan-rekap__kolom li {
+  padding-left: var(--sp-2);
+  border-left: 2px solid var(--border-halus);
+  line-height: 1.4;
+}
+
+.kunjungan-hambatan-baris {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+
+.kunjungan-hambatan {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-1);
+  text-align: left;
+  cursor: pointer;
+  border-top: 3px solid var(--daun-700);
+}
+
+.kunjungan-hambatan__judul {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--daun-800);
+}
+
+.kunjungan-hambatan__sub {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--tinta);
+}
+
+.kunjungan-hambatan__deskripsi {
+  line-height: 1.5;
+}
+
+/* Babak 4: resep sosial */
+
+.kunjungan-resep {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.kunjungan-resep__baris {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sp-3);
+}
+
+.kunjungan-intervensi {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  text-align: left;
+  cursor: pointer;
+  border: 1px solid var(--border-halus);
+}
+
+.kunjungan-intervensi b {
+  color: var(--daun-800);
+}
+
+.kunjungan-intervensi--terpilih {
+  border-color: var(--daun-700);
+  box-shadow: 0 0 0 2px var(--daun-100), var(--shadow-kartu);
+  background: var(--daun-50);
+}

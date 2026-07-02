@@ -1,0 +1,51 @@
+/* MuteButton — tombol bisu kecil melayang, pojok kiri bawah. */
+
+.mute-tombol {
+  position: fixed;
+  left: var(--sp-3);
+  bottom: var(--sp-3);
+  z-index: var(--z-hud);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+
+  background: var(--bg-card);
+  color: var(--tinta-lembut);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-kertas);
+  cursor: pointer;
+
+  transition:
+    color var(--durasi-cepat) var(--ease-keluar),
+    border-color var(--durasi-cepat) var(--ease-keluar),
+    transform var(--durasi-cepat) var(--ease-keluar);
+}
+
+.mute-tombol:hover {
+  color: var(--tinta);
+  border-color: var(--border-tegas);
+  transform: translateY(-1px);
+}
+
+.mute-tombol:active {
+  transform: translateY(0);
+}
+
+.mute-tombol:focus-visible {
+  outline: 2px solid var(--daun-600);
+  outline-offset: 2px;
+}
+
+.mute-tombol--bisu {
+  color: var(--tinta-pudar);
+  background: var(--bg-sunken);
+}
+
+.mute-ikon {
+  display: block;
+}

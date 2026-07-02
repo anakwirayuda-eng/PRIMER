@@ -1,0 +1,318 @@
+/* ============================================================================
+   PETA DESA — choropleth kartu pos + panel keluarga
+   ========================================================================== */
+
+.peta-root {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(370px, 37vw, 480px);
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+}
+
+/* -- Kiri: peta ------------------------------------------------------------- */
+
+.peta-kiri {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  min-height: 0;
+}
+
+.peta-svg {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.peta-petak {
+  cursor: pointer;
+}
+
+.peta-petak__bidang {
+  transition:
+    filter var(--durasi-cepat) var(--ease-keluar),
+    stroke-width var(--durasi-cepat) var(--ease-keluar);
+}
+
+.peta-petak:hover .peta-petak__bidang {
+  filter: brightness(1.09);
+}
+
+.peta-petak--aktif .peta-petak__bidang {
+  filter: drop-shadow(0 3px 6px rgba(38, 49, 44, 0.3));
+}
+
+.peta-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--tinta);
+  paint-order: stroke;
+  stroke: var(--kertas-050);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.peta-label--sub {
+  font-size: 9.5px;
+  font-weight: 600;
+  fill: var(--tinta-lembut);
+}
+
+.peta-cartouche {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  fill: var(--daun-800);
+}
+
+.peta-karma circle {
+  animation: peta-denyut 1.5s var(--ease-keluar) infinite;
+}
+
+.peta-karma__seru {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  fill: var(--kertas-050);
+  pointer-events: none;
+}
+
+@keyframes peta-denyut {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.peta-legenda {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  font-size: var(--text-xs);
+  color: var(--tinta-lembut);
+}
+
+.peta-legenda__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.peta-legenda__swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-tegas);
+  display: inline-block;
+}
+
+.peta-legenda__pisah {
+  width: 1px;
+  height: 14px;
+  background: var(--border-halus);
+}
+
+/* -- Kanan: panel keluarga ---------------------------------------------------- */
+
+.peta-kanan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-height: 0;
+}
+
+.peta-roster-blok {
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.peta-roster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.peta-roster-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  font-size: var(--text-sm);
+  transition: all var(--durasi-cepat) var(--ease-keluar);
+}
+
+.peta-roster-item:hover {
+  border-color: var(--border-tinta);
+  transform: translateY(-1px);
+}
+
+.peta-roster-item--aktif {
+  border-color: var(--daun-700);
+  background: var(--daun-50);
+}
+
+.peta-roster-item__nama {
+  font-weight: 600;
+}
+
+.peta-roster-item__karma {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tinta-merah);
+  animation: peta-denyut 1.5s infinite;
+}
+
+.peta-petunjuk {
+  flex: 1;
+  min-height: 0;
+  padding: var(--sp-6);
+}
+
+.peta-petunjuk__ikon {
+  font-size: var(--text-3xl);
+  color: var(--tinta-pudar);
+  line-height: 1;
+}
+
+.peta-petunjuk .teks-pudar-hint {
+  color: var(--tinta-pudar);
+  max-width: 34ch;
+}
+
+.peta-detail {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+}
+
+.peta-detail__kepala {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px dashed var(--border-halus);
+}
+
+.peta-detail__judul {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--daun-800);
+}
+
+.peta-daftar {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-right: var(--sp-1);
+}
+
+/* -- Kartu keluarga ------------------------------------------------------------ */
+
+.peta-keluarga {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.peta-keluarga--karma {
+  border-color: var(--tinta-merah);
+  box-shadow: 0 0 0 1px var(--tinta-merah), var(--shadow-kertas);
+}
+
+.peta-keluarga__nama {
+  font-weight: 700;
+  font-size: var(--text-md);
+}
+
+.peta-keluarga__chipbaris {
+  gap: var(--sp-1);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.peta-chip-karma {
+  animation: peta-denyut 1.5s infinite;
+}
+
+.peta-keluarga__sinopsis {
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.peta-keluarga__iks {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.peta-keluarga__indikator {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.peta-keluarga__aksi {
+  padding-top: var(--sp-1);
+  border-top: 1px dashed var(--border-halus);
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.peta-hati {
+  display: inline-flex;
+  gap: 1px;
+  font-size: var(--text-sm);
+  line-height: 1;
+}
+
+.peta-hati__isi {
+  color: var(--tinta-merah);
+}
+
+.peta-hati__kosong {
+  color: var(--kertas-400);
+}
+
+/* -- Kartu hasil kunjungan ------------------------------------------------------ */
+
+.peta-hasil {
+  width: min(560px, 92vw);
+  padding: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+  text-align: center;
+}
+
+.peta-hasil__judul {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--daun-800);
+}
+
+.peta-hasil__narasi {
+  line-height: 1.6;
+  max-width: 52ch;
+}

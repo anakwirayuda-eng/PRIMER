@@ -1,0 +1,313 @@
+/* ============================================================================
+   PRIMER: PUSKESMAS PAGI — Base & Komponen Bersama
+   Kelas di sini adalah kosakata UI game. Layar baru WAJIB menyusun dari kelas
+   ini dulu; hanya tambah CSS modul bila benar-benar spesifik.
+   ========================================================================== */
+
+@import './tokens.css';
+@import './fonts.css';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden; /* game desktop: satu viewport, tanpa scroll dokumen */
+}
+
+body {
+  font-family: var(--font-utama);
+  font-size: var(--text-md);
+  color: var(--tinta);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+  user-select: none; /* rasa game, bukan dokumen web */
+}
+
+input,
+textarea {
+  user-select: text;
+  font-family: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+/* -- Tekstur kertas halus (dua lapis gradasi, tanpa aset) ------------------- */
+.kertas {
+  background-color: var(--bg-panel);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.5), transparent 55%),
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(38, 49, 44, 0.012) 2px 4px);
+  box-shadow: var(--shadow-kertas);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+}
+
+/* -- Kartu (unit dasar informasi) ------------------------------------------- */
+.kartu {
+  background: var(--bg-card);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-kertas);
+  padding: var(--sp-4);
+}
+
+.kartu--tebal {
+  box-shadow: var(--shadow-kartu);
+}
+
+.kartu--klik {
+  transition: transform var(--durasi-cepat) var(--ease-keluar), box-shadow var(--durasi-cepat) var(--ease-keluar);
+}
+
+.kartu--klik:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-kartu);
+}
+
+.kartu--klik:active {
+  transform: translateY(0);
+}
+
+/* -- Folder manila (map arsip) ---------------------------------------------- */
+.folder {
+  background: var(--kertas-300);
+  border: 1px solid var(--border-tegas);
+  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+  position: relative;
+}
+
+.folder::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  width: 34%;
+  height: 13px;
+  background: var(--kertas-300);
+  border: 1px solid var(--border-tegas);
+  border-bottom: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+/* -- Stempel (identitas visual kunci) --------------------------------------- */
+.stempel {
+  display: inline-block;
+  padding: var(--sp-1) var(--sp-3);
+  border: 2.5px solid currentColor;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  opacity: 0.92;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 60%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+.stempel--hijau { color: var(--daun-700); }
+.stempel--merah { color: var(--tinta-merah); }
+.stempel--kunyit { color: var(--kunyit-700); }
+.stempel--biru { color: var(--tinta-biru); }
+
+@keyframes stempel-jatuh {
+  0% { transform: rotate(-3deg) scale(2.2); opacity: 0; }
+  55% { transform: rotate(-3deg) scale(0.94); opacity: 1; }
+  100% { transform: rotate(-3deg) scale(1); opacity: 0.92; }
+}
+
+.stempel--jatuh {
+  animation: stempel-jatuh 380ms var(--ease-pantul) both;
+}
+
+/* -- Tombol ------------------------------------------------------------------ */
+.tombol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  border: 1px solid var(--border-tegas);
+  background: var(--bg-card);
+  color: var(--tinta);
+  transition: all var(--durasi-cepat) var(--ease-keluar);
+  box-shadow: 0 1px 0 var(--border-halus);
+}
+
+.tombol:hover { border-color: var(--border-tinta); transform: translateY(-1px); }
+.tombol:active { transform: translateY(0); }
+.tombol:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.tombol--utama {
+  background: var(--daun-700);
+  border-color: var(--daun-800);
+  color: var(--kertas-050);
+}
+
+.tombol--utama:hover { background: var(--daun-600); }
+
+.tombol--bahaya {
+  background: var(--tinta-merah);
+  border-color: #8f2d23;
+  color: var(--kertas-050);
+}
+
+.tombol--kunyit {
+  background: var(--kunyit-600);
+  border-color: var(--kunyit-700);
+  color: var(--kertas-050);
+}
+
+.tombol--senyap {
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  color: var(--tinta-lembut);
+}
+
+.tombol--senyap:hover { background: var(--bg-sunken); color: var(--tinta); }
+
+.tombol--besar {
+  padding: var(--sp-3) var(--sp-6);
+  font-size: var(--text-md);
+  border-radius: var(--radius-lg);
+}
+
+/* -- Chip / label ------------------------------------------------------------ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  border: 1px solid var(--border-halus);
+  background: var(--bg-sunken);
+  color: var(--tinta-lembut);
+}
+
+.chip--daun { background: var(--daun-100); color: var(--daun-800); border-color: transparent; }
+.chip--kunyit { background: var(--kunyit-100); color: var(--kunyit-700); border-color: transparent; }
+.chip--merah { background: #f6ddda; color: var(--tinta-merah); border-color: transparent; }
+.chip--biru { background: #dbe7f3; color: var(--tinta-biru); border-color: transparent; }
+.chip--malam { background: var(--malam-800); color: var(--kertas-100); border-color: transparent; }
+
+/* -- Meter (bar sumber daya) -------------------------------------------------- */
+.meter {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-halus);
+  overflow: hidden;
+}
+
+.meter__isi {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--daun-700);
+  transition: width var(--durasi-santai) var(--ease-keluar), background var(--durasi-normal);
+}
+
+.meter__isi--waspada { background: var(--kunyit-600); }
+.meter__isi--bahaya { background: var(--tinta-merah); }
+
+/* -- Judul seksi (garis arsip) ------------------------------------------------ */
+.judul-seksi {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tinta-lembut);
+}
+
+.judul-seksi::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-halus);
+}
+
+/* -- Tulisan tangan ------------------------------------------------------------ */
+.tulis-tangan {
+  font-family: var(--font-tulis);
+  font-size: 1.25em;
+  color: var(--tinta-biru);
+  line-height: 1.3;
+}
+
+/* -- Overlay & modal ------------------------------------------------------------ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 21, 18, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlay-masuk var(--durasi-normal) var(--ease-keluar) both;
+}
+
+@keyframes overlay-masuk {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  border: 1px solid var(--border-tegas);
+  max-width: min(920px, 92vw);
+  max-height: 88vh;
+  overflow: auto;
+  animation: modal-masuk var(--durasi-normal) var(--ease-pantul) both;
+}
+
+@keyframes modal-masuk {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* -- Scrollbar kertas ------------------------------------------------------------ */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--kertas-400);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--bg-panel);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--tinta-pudar); }
+
+/* -- Utilitas tata letak ----------------------------------------------------------- */
+.baris { display: flex; align-items: center; gap: var(--sp-3); }
+.baris--antara { justify-content: space-between; }
+.kolom { display: flex; flex-direction: column; gap: var(--sp-3); }
+.tengah { display: flex; align-items: center; justify-content: center; }
+.tumbuh { flex: 1; min-width: 0; }
+.mono { font-family: var(--font-mono); }
+.teks-lembut { color: var(--tinta-lembut); }
+.teks-kecil { font-size: var(--text-sm); }
+.teks-xs { font-size: var(--text-xs); }

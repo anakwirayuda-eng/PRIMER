@@ -1,0 +1,819 @@
+/* ============================================================================
+   KLINIK — "Lembar Periksa"
+   Kiri: rekam medis kertas ber-SOAP. Kanan: deck aksi per fase.
+   Semua warna dari token; kelas dasar (kertas/kartu/tombol/chip/stempel/meter)
+   dari base.css. Layar tidak scroll — panel internal yang scroll.
+   ========================================================================== */
+
+.klinik {
+  height: 100%;
+  padding: var(--sp-4);
+  display: flex;
+  min-height: 0;
+}
+
+.klinik__ruang {
+  display: grid;
+  grid-template-columns: minmax(0, 58fr) minmax(0, 42fr);
+  gap: var(--sp-4);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.klinik__rusak {
+  margin: auto;
+  max-width: 480px;
+  text-align: center;
+  color: var(--tinta-merah);
+}
+
+/* -- Goresan tinta baru (baris yang baru terisi di lembar) ------------------- */
+@keyframes klinik-tinta-masuk {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.klinik-tinta {
+  animation: klinik-tinta-masuk var(--durasi-santai) var(--ease-keluar) both;
+}
+
+/* ============================================================================
+   LEMBAR PERIKSA (kolom kiri)
+   ========================================================================== */
+
+.klinik-lembar {
+  overflow-y: auto;
+  min-height: 0;
+  padding: var(--sp-5) var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.klinik-lembar__kop {
+  text-align: center;
+  border-bottom: 3px double var(--border-tinta);
+  padding-bottom: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.klinik-lembar__kop-instansi {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.2em;
+  color: var(--tinta-lembut);
+}
+
+.klinik-lembar__kop-judul {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.klinik-lembar__seksi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.klinik-lembar__nama {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.klinik-lembar__chips {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--sp-1);
+}
+
+.klinik-lembar__catatan-kembali {
+  color: var(--tinta-merah);
+  font-style: italic;
+}
+
+.klinik-lembar__kosong {
+  color: var(--tinta-pudar);
+  font-style: italic;
+  font-size: var(--text-sm);
+}
+
+.klinik-lembar__qa {
+  padding-left: var(--sp-3);
+  border-left: 2px solid var(--border-halus);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.klinik-lembar__sublabel {
+  letter-spacing: 0.16em;
+  margin-top: var(--sp-1);
+}
+
+/* Vital: '—' sebelum diukur (pilar "setiap angka diperoleh") */
+.klinik-lembar__vital {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2) var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+}
+
+.klinik-lembar__vital-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.klinik-lembar__vital-label {
+  letter-spacing: 0.12em;
+}
+
+.klinik-lembar__vital-nilai {
+  font-family: var(--font-tulis);
+  font-size: var(--text-lg);
+  color: var(--tinta-biru);
+  line-height: 1.15;
+}
+
+.klinik-lembar__vital-nilai--kosong {
+  font-family: var(--font-mono);
+  color: var(--tinta-pudar);
+}
+
+.klinik-lembar__vital-satuan {
+  font-size: var(--text-xs);
+  color: var(--tinta-lembut);
+  font-family: var(--font-utama);
+}
+
+.klinik-lembar__resep {
+  border-bottom: 1px dotted var(--border-halus);
+  padding-bottom: 2px;
+}
+
+.klinik-lembar__coret {
+  padding: 0 var(--sp-1);
+  color: var(--tinta-merah);
+  font-size: var(--text-sm);
+}
+
+.klinik-lembar__firewall {
+  color: var(--tinta-merah);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.klinik-lembar__edukasi {
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+/* ============================================================================
+   DECK AKSI (kolom kanan)
+   ========================================================================== */
+
+.klinik-deck {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: var(--sp-4);
+  gap: var(--sp-3);
+}
+
+/* Stepper fase */
+.klinik-deck__stepper {
+  display: flex;
+  list-style: none;
+  gap: var(--sp-1);
+}
+
+.klinik-deck__step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: var(--sp-1);
+  border-bottom: 2px solid var(--border-halus);
+  color: var(--tinta-pudar);
+  font-size: var(--text-xs);
+}
+
+.klinik-deck__step-nomor {
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.klinik-deck__step-label {
+  letter-spacing: 0.02em;
+}
+
+.klinik-deck__step--aktif {
+  color: var(--daun-700);
+  border-bottom-color: var(--daun-700);
+  font-weight: 700;
+}
+
+.klinik-deck__step--lewat {
+  color: var(--tinta-lembut);
+  border-bottom-color: var(--daun-500);
+}
+
+.klinik-deck__isi {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding-right: var(--sp-1);
+}
+
+.klinik-deck__footer {
+  border-top: 1px dashed var(--border-tegas);
+  padding-top: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-1);
+  text-align: center;
+}
+
+.klinik-deck__grup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* -- Anamnesis ---------------------------------------------------------------- */
+
+.klinik-sabar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.klinik-sabar__judul::after {
+  content: none;
+}
+
+.klinik-lelah {
+  color: var(--kunyit-700);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.klinik-balon {
+  background: var(--bg-card);
+  border: 1px solid var(--border-tegas);
+  border-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-sm);
+  padding: var(--sp-3);
+  font-style: italic;
+  font-size: var(--text-sm);
+  animation: klinik-tinta-masuk var(--durasi-normal) var(--ease-keluar) both;
+}
+
+.klinik-tanya {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  text-align: left;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-kertas);
+  transition:
+    transform var(--durasi-cepat) var(--ease-keluar),
+    border-color var(--durasi-cepat),
+    box-shadow var(--durasi-cepat);
+}
+
+.klinik-tanya:hover:not(:disabled) {
+  border-color: var(--daun-700);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-kartu);
+}
+
+.klinik-tanya:disabled {
+  cursor: default;
+  background: var(--bg-sunken);
+  color: var(--tinta-lembut);
+  box-shadow: none;
+}
+
+.klinik-tanya__cek {
+  color: var(--daun-700);
+  font-weight: 700;
+}
+
+/* -- Pemeriksaan ---------------------------------------------------------------- */
+
+.klinik-pf {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-3);
+  align-items: start;
+}
+
+.klinik-figur {
+  width: 100%;
+  max-width: 220px;
+  margin: 0 auto;
+  display: block;
+}
+
+.klinik-figur__siluet {
+  fill: var(--kertas-300);
+  stroke: var(--border-tegas);
+  stroke-width: 1;
+  transition: fill var(--durasi-cepat);
+}
+
+.klinik-figur__hot {
+  cursor: pointer;
+}
+
+.klinik-figur__hot:hover .klinik-figur__siluet {
+  fill: var(--daun-100);
+}
+
+.klinik-figur__hot--sudah .klinik-figur__siluet {
+  fill: var(--daun-100);
+  stroke: var(--daun-700);
+}
+
+.klinik-figur__zona {
+  fill: var(--daun-500);
+  stroke: var(--daun-700);
+  stroke-width: 0;
+  opacity: 0;
+  transition: opacity var(--durasi-cepat);
+}
+
+.klinik-figur__hot:hover .klinik-figur__zona {
+  opacity: 0.32;
+}
+
+.klinik-figur__hot--sudah .klinik-figur__zona {
+  opacity: 0.45;
+  stroke-width: 1.5;
+}
+
+/* Regio non-topografis (kulit, neurologis): penanda putus-putus yang samar */
+.klinik-figur__zona--tanda {
+  opacity: 0.22;
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.klinik-regio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  align-content: flex-start;
+}
+
+.klinik-regio__chip {
+  cursor: pointer;
+  transition: background var(--durasi-cepat);
+}
+
+.klinik-regio__chip:hover {
+  border-color: var(--daun-700);
+  color: var(--daun-800);
+}
+
+.klinik-regio__chip--sudah {
+  background: var(--daun-100);
+  color: var(--daun-800);
+  border-color: transparent;
+}
+
+.klinik-lab__baris {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) 0;
+  border-bottom: 1px dotted var(--border-halus);
+}
+
+.klinik-lab__besok {
+  margin-left: var(--sp-2);
+}
+
+.klinik-lab__pesan {
+  padding: 2px var(--sp-2);
+  font-size: var(--text-xs);
+}
+
+/* -- Diagnosis ------------------------------------------------------------------- */
+
+.klinik-banding {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  text-align: left;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  transition:
+    border-color var(--durasi-cepat),
+    box-shadow var(--durasi-cepat);
+}
+
+.klinik-banding:hover {
+  border-color: var(--daun-700);
+}
+
+.klinik-banding--aktif {
+  border-color: var(--daun-700);
+  box-shadow: 0 0 0 1px var(--daun-700);
+  background: var(--daun-50);
+}
+
+.klinik-banding__radio {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border-tegas);
+  flex-shrink: 0;
+  background: var(--bg-card);
+}
+
+.klinik-banding--aktif .klinik-banding__radio {
+  border-color: var(--daun-700);
+  background: var(--daun-700);
+}
+
+.klinik-banding__nama {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.klinik-banding__kode {
+  display: block;
+}
+
+.klinik-tinta-pilih {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+}
+
+.klinik-tinta-pilih__opsi {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  text-align: left;
+  padding: var(--sp-3);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  transition:
+    border-color var(--durasi-cepat),
+    box-shadow var(--durasi-cepat);
+}
+
+.klinik-tinta-pilih__opsi:hover {
+  border-color: var(--border-tinta);
+}
+
+.klinik-tinta-pilih__opsi--aktif {
+  border-color: var(--daun-700);
+  box-shadow: 0 0 0 1px var(--daun-700);
+  background: var(--daun-50);
+}
+
+/* -- Terapi ----------------------------------------------------------------------- */
+
+.klinik-cari {
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-tegas);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--tinta);
+  font-size: var(--text-sm);
+}
+
+.klinik-cari:focus {
+  outline: none;
+  border-color: var(--daun-700);
+  box-shadow: 0 0 0 1px var(--daun-700);
+}
+
+.klinik-obat {
+  display: flex;
+  flex-direction: column;
+}
+
+.klinik-obat__baris {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px dotted var(--border-halus);
+}
+
+.klinik-obat__judul {
+  gap: var(--sp-2);
+}
+
+.klinik-obat__tambah {
+  padding: 2px var(--sp-2);
+  font-size: var(--text-xs);
+  flex-shrink: 0;
+}
+
+.klinik-firewall {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border: 2px solid var(--tinta-merah);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+}
+
+.klinik-firewall__stempel {
+  flex-shrink: 0;
+}
+
+.klinik-eduk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+.klinik-eduk__chip {
+  cursor: pointer;
+  transition: background var(--durasi-cepat);
+}
+
+.klinik-eduk__chip:hover {
+  border-color: var(--daun-700);
+  color: var(--daun-800);
+}
+
+.klinik-eduk__chip--dipilih {
+  background: var(--daun-100);
+  color: var(--daun-800);
+  border-color: transparent;
+}
+
+/* -- Disposisi -------------------------------------------------------------------- */
+
+.klinik-billing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-3);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+}
+
+.klinik-billing__total {
+  border-top: 1px solid var(--border-tegas);
+  padding-top: var(--sp-1);
+  font-weight: 700;
+}
+
+.klinik-sbar__kolom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.klinik-sbar__label {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--tinta-biru);
+}
+
+.klinik-sbar__isian {
+  width: 100%;
+  resize: vertical;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-tegas);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--tinta);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.klinik-sbar__isian:focus {
+  outline: none;
+  border-color: var(--kunyit-600);
+  box-shadow: 0 0 0 1px var(--kunyit-600);
+}
+
+/* ============================================================================
+   PANEL HASIL ENCOUNTER (modal)
+   ========================================================================== */
+
+.klinik-hasil {
+  width: min(660px, 92vw);
+  padding: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.klinik-hasil__atas {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+}
+
+.klinik-hasil__grade {
+  font-size: var(--text-3xl);
+  padding: var(--sp-2) var(--sp-5);
+  border-width: 4px;
+}
+
+.klinik-hasil__nama {
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+.klinik-hasil__diagnosis {
+  gap: var(--sp-3);
+}
+
+.klinik-hasil__jenis {
+  font-size: var(--text-xs);
+}
+
+.klinik-hasil__kalibrasi {
+  font-style: italic;
+}
+
+.klinik-hasil__skor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.klinik-hasil__skor-baris {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.klinik-hasil__skor-label {
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.klinik-hasil__flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+.klinik-hasil__konsekuensi {
+  color: var(--kunyit-700);
+  font-size: var(--text-sm);
+  font-style: italic;
+}
+
+.klinik-hasil__clue {
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+
+.klinik-hasil__aksi {
+  margin-top: var(--sp-1);
+}
+
+/* ============================================================================
+   RUANG TUNGGU (tanpa pasien aktif)
+   ========================================================================== */
+
+.klinik-tunggu {
+  width: 100%;
+  max-width: 840px;
+  margin: 0 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding-right: var(--sp-1);
+}
+
+.klinik-tunggu__kop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+}
+
+.klinik-tunggu__judul {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-top: var(--sp-1);
+}
+
+.klinik-tunggu__stamina {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.klinik-tunggu__antrian {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.klinik-tunggu__kartu {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.klinik-tunggu__nomor {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--tinta-pudar);
+  flex-shrink: 0;
+}
+
+.klinik-tunggu__nama {
+  font-weight: 700;
+}
+
+.klinik-tunggu__keluhan {
+  font-style: italic;
+  color: var(--tinta-lembut);
+  margin-top: 2px;
+}
+
+.klinik-tunggu__kembali {
+  color: var(--tinta-merah);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.klinik-tunggu__chips {
+  gap: var(--sp-1);
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.klinik-tunggu__panggil {
+  align-self: center;
+  margin-top: var(--sp-2);
+}
+
+.klinik-tunggu__kosong {
+  text-align: center;
+  padding: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.klinik-tunggu__kosong-judul {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.klinik-tunggu__rekap {
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.klinik-tunggu__rekap-baris {
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
