@@ -50,6 +50,7 @@ function pack(kasusList: KasusKlinis[]): ContentPack {
   for (const k of kasusList) kasusMap[k.id] = k
   return {
     kasus: kasusMap,
+    kasusIgd: {},
     keluarga: {},
     kader: [],
     rw: [],
@@ -84,7 +85,7 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
       rujukanTotal: 0, rujukanNonSpesialistik: 0, rujukanTepat: 0, rujukanDitolak: 0, cowboy: 0,
       antibiotikTanpaIndikasi: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
       kunjunganTotal: 0, kunjunganDiusir: 0, apathy: 0, autoBermasalah: 0, posyanduSesi: 0,
-      prolanisSesi: 0, klbTuntas: 0, hariKelelahan: 0, karmaTerjadi: 0, karmaDicegah: 0,
+      prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdMeninggal: 0, hariKelelahan: 0, karmaTerjadi: 0, karmaDicegah: 0,
     },
     dex: {},
     log: [],
@@ -93,6 +94,7 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
     flags: {},
     layar: 'meja',
     lapanganTerpakai: false,
+    igdHariIni: false,
     prolanis: { roster: [] },
     posyanduRwTerakhir: {},
     program: {},

@@ -55,6 +55,30 @@ function serialisasi(state: GameState): string {
   return JSON.stringify(state)
 }
 
+/**
+ * IGD interrupt (M3.14) bisa tiba subuh & memblokir LANJUTKAN. Tangani optimal:
+ * tiap langkah pilih tindakan benar → disposisi sesuai disposisiBenar. Deterministik.
+ */
+function selesaikanIgdJikaAda(state: GameState): GameState {
+  let s = state
+  let guard = 0
+  while (s.igd && guard++ < 30) {
+    const kasus = PACK.kasusIgd[s.igd.kasusId]
+    if (!kasus) break
+    if (s.igd.fase === 'langkah') {
+      const langkah = kasus.langkah[s.igd.langkahIndex]
+      if (!langkah) break
+      const benar = langkah.pilihan.find((p) => p.benar) ?? langkah.pilihan[0]!
+      s = run(s, { type: 'AKSI_IGD', langkahId: langkah.id, pilihanId: benar.id }).state
+    } else if (s.igd.fase === 'kode_biru') {
+      s = run(s, { type: 'RJP_IGD', berkualitas: true }).state
+    } else if (s.igd.fase === 'disposisi') {
+      s = run(s, { type: 'DISPOSISI_IGD', jenis: kasus.disposisiBenar }).state
+    } else break
+  }
+  return s
+}
+
 /* ---------------------------------------------------------------------------
  * Kebijakan "dokter rajin" — deterministik penuh terhadap state + PACK
  * ------------------------------------------------------------------------- */
@@ -142,6 +166,7 @@ function mainkanSampaiHari(
   const staminaPagi: number[] = [s.stamina]
 
   while (s.hari < hariAkhir) {
+    s = selesaikanIgdJikaAda(s) // subuh: tangani gawat darurat bila ada
     const pagi = mainkanPagiRajin(s)
     s = pagi.state
     semuaPenilaian.push(...pagi.penilaian)
@@ -156,7 +181,11 @@ function mainkanSampaiHari(
 /** Maju sampai blok siang pada hari `hariTarget` tanpa memainkan apa pun. */
 function majuKeSiangHari(state: GameState, hariTarget: number): GameState {
   let s = state
-  while (s.hari < hariTarget) s = run(s, { type: 'LANJUTKAN' }).state
+  while (s.hari < hariTarget) {
+    s = selesaikanIgdJikaAda(s)
+    s = run(s, { type: 'LANJUTKAN' }).state
+  }
+  s = selesaikanIgdJikaAda(s)
   expect(s.blok).toBe('pagi')
   return run(s, { type: 'LANJUTKAN' }).state // pagi → siang
 }
@@ -358,6 +387,7 @@ describe('selfplay: karma keluarga_wulan yang diabaikan (playthrough kedua)', ()
 
     // Abaikan seluruh dunia (hanya LANJUTKAN, 3× per hari) sampai lewat jatuh tempo.
     while (s.hari < jatuhTempo + 2) {
+      s = selesaikanIgdJikaAda(s)
       const langkah = run(s, { type: 'LANJUTKAN' })
       s = langkah.state
       const k = langkah.events.find(

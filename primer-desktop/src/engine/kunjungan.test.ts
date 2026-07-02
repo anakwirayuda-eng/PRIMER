@@ -549,6 +549,7 @@ const RW_UJI: RwProfil = { nomor: 1, nama: 'Banjar Kaja', jarak: 'dekat', totalK
 function buatPackKader(): ContentPack {
   return {
     kasus: {},
+    kasusIgd: {},
     keluarga: { fam1: BINAAN_UJI },
     kader: [KADER_UJI],
     rw: [RW_UJI],
@@ -614,7 +615,7 @@ function buatStateKader(): GameState {
       kunjunganDiusir: 0,
       apathy: 0,
       autoBermasalah: 0,
-      posyanduSesi: 0, prolanisSesi: 0, klbTuntas: 0,
+      posyanduSesi: 0, prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdMeninggal: 0,
       hariKelelahan: 0,
       karmaTerjadi: 0,
       karmaDicegah: 0,
@@ -626,6 +627,7 @@ function buatStateKader(): GameState {
     flags: {},
     layar: 'meja',
     lapanganTerpakai: false,
+    igdHariIni: false,
     prolanis: { roster: [] },
     posyanduRwTerakhir: {},
     program: {},

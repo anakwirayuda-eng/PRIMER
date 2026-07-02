@@ -46,7 +46,7 @@ export function Hud() {
             key={t.layar}
             className={`hud__tab ${state.layar === t.layar ? 'hud__tab--aktif' : ''} ${t.terkunci ? 'hud__tab--kunci' : ''}`}
             onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: t.layar })}
-            disabled={state.layar === 'kunjungan' || Boolean(state.klinik.aktif && t.layar !== 'klinik')}
+            disabled={state.layar === 'kunjungan' || Boolean(state.igd) || Boolean(state.klinik.aktif && t.layar !== 'klinik')}
             title={t.terkunci ? 'Terbuka besok' : undefined}
           >
             {t.label}

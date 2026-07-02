@@ -55,9 +55,10 @@ export function deserialize(json: string): GameState | null {
   const tally = st['tally'] as Record<string, unknown>
   // Migrasi-lite: field tally baru diisi 0 untuk save dari versi lebih lama.
   if (tally['autoBermasalah'] === undefined) tally['autoBermasalah'] = 0
-  for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas', 'rujukanTepat', 'rujukanDitolak'] as const) {
+  for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas', 'rujukanTepat', 'rujukanDitolak', 'igdStabil', 'igdMeninggal'] as const) {
     if (tally[kunci] === undefined) tally[kunci] = 0
   }
+  if (typeof st['igdHariIni'] !== 'boolean') st['igdHariIni'] = false
   for (const nilai of Object.values(tally)) {
     if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) return null
   }

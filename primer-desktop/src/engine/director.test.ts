@@ -55,6 +55,7 @@ function buatPack(daftarKasus: KasusKlinis[]): ContentPack {
   for (const k of daftarKasus) kasus[k.id] = k
   return {
     kasus,
+    kasusIgd: {},
     keluarga: {},
     kader: [],
     rw: [],
@@ -93,7 +94,7 @@ function buatTally(override?: Partial<SkorTally>): SkorTally {
     kunjunganDiusir: 0,
     apathy: 0,
     autoBermasalah: 0,
-    posyanduSesi: 0, prolanisSesi: 0, klbTuntas: 0,
+    posyanduSesi: 0, prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdMeninggal: 0,
     hariKelelahan: 0,
     karmaTerjadi: 0,
     karmaDicegah: 0,
@@ -157,6 +158,7 @@ function buatState(override?: Partial<GameState>): GameState {
     flags: {},
     layar: 'meja',
     lapanganTerpakai: false,
+    igdHariIni: false,
     prolanis: { roster: [] },
     posyanduRwTerakhir: {},
     program: {},

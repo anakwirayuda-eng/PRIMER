@@ -17,9 +17,25 @@ function run(state: GameState, action: Action): GameState {
   return advance(state, action, PACK).state
 }
 
+/** IGD interrupt (M3.14) memblokir LANJUTKAN — tangani optimal bila muncul. */
+function bereskanIgd(state: GameState): GameState {
+  let cur = state
+  let guard = 0
+  while (cur.igd && guard++ < 30) {
+    const kasus = PACK.kasusIgd[cur.igd.kasusId]!
+    if (cur.igd.fase === 'langkah') {
+      const l = kasus.langkah[cur.igd.langkahIndex]!
+      cur = run(cur, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: (l.pilihan.find((p) => p.benar) ?? l.pilihan[0]!).id })
+    } else if (cur.igd.fase === 'kode_biru') cur = run(cur, { type: 'RJP_IGD', berkualitas: true })
+    else if (cur.igd.fase === 'disposisi') cur = run(cur, { type: 'DISPOSISI_IGD', jenis: kasus.disposisiBenar })
+    else break
+  }
+  return cur
+}
+
 /** Lewati satu hari penuh: pagi (buang antrian) → siang → sore → pagi besok. */
 function lewatiHari(s: GameState): GameState {
-  let cur = s
+  let cur = bereskanIgd(s)
   while (cur.klinik.aktif) throw new Error('encounter aktif — selesaikan dulu')
   cur = run(cur, { type: 'LANJUTKAN' }) // → siang
   cur = run(cur, { type: 'LANJUTKAN' }) // → sore
@@ -85,7 +101,7 @@ function mainkanKunjungan(
 
 /** Sampai blok siang hari tertentu (untuk kunjungan). */
 function sampaiSiang(s: GameState, hari: number): GameState {
-  let cur = sampaiHari(s, hari)
+  let cur = bereskanIgd(sampaiHari(s, hari))
   cur = run(cur, { type: 'LANJUTKAN' }) // pagi → siang (antrian di-auto-resolve)
   expect(cur.blok).toBe('siang')
   return cur

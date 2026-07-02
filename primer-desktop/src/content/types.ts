@@ -143,6 +143,47 @@ export interface KasusKlinis {
 }
 
 /* ---------------------------------------------------------------------------
+ * IGD — kasus gawat darurat (M3.14): interrupt event turn-based.
+ * Stabilitas 0-100; tiap langkah pemain memilih SATU tindakan. Salah = pasien
+ * memburuk. Stabilitas habis → Kode Biru (RJP) → selamat atau Kode Hitam.
+ * ------------------------------------------------------------------------- */
+
+export interface PilihanIgd {
+  id: string
+  label: string
+  benar: boolean
+  /** Perubahan stabilitas (benar biasanya +15..+25; salah −15..−30). */
+  efekStabilitas: number
+  /** Umpan balik klinis singkat setelah dipilih. */
+  respons: string
+}
+
+export interface LangkahIgd {
+  id: string
+  /** Narasi kondisi pasien pada langkah ini (vital memburuk/membaik dsb). */
+  narasi: string
+  pilihan: PilihanIgd[]
+}
+
+export interface KasusIgd {
+  id: string
+  nama: string
+  icd10: string
+  skdi: Skdi
+  /** Narasi kedatangan dramatis. */
+  pembuka: string
+  demografi: { usiaMin: number; usiaMax: number; jenisKelamin?: JenisKelamin }
+  vitalAwal: TandaVital
+  /** Stabilitas awal 0-100 (biasanya 45-60 — genting tapi tertolong). */
+  stabilitasAwal: number
+  langkah: LangkahIgd[]
+  /** Disposisi benar setelah stabil. */
+  disposisiBenar: 'rujuk' | 'pulang'
+  spesialisRujukan?: SpesialisasiRs
+  clue: string
+}
+
+/* ---------------------------------------------------------------------------
  * Rujukan berjenjang (M3.13) — RS tujuan SISRUTE
  * ------------------------------------------------------------------------- */
 

@@ -1,0 +1,96 @@
+/**
+ * M3.14 — IGD turn-based: stabilitas, Kode Biru/RJP, disposisi, scoring.
+ */
+
+import { describe, expect, it } from 'vitest'
+import { PACK } from '@content/index'
+import type { GameState, IgdState } from './state'
+import type { Action } from './actions'
+import { advance } from './reducer'
+import { buildInitialState } from './init'
+import { hitungSkor } from './scoring'
+
+function base(igd?: IgdState): GameState {
+  const s = buildInitialState('Uji', 7, PACK)
+  return igd ? { ...s, igd, layar: 'igd' } : s
+}
+function run(s: GameState, a: Action): GameState {
+  return advance(s, a, PACK).state
+}
+function igdKasus(kasusId: string, stabilitas = 50): IgdState {
+  return {
+    kasusId, pasienNama: 'Pak Uji', usia: 40, jenisKelamin: 'L', rw: 3,
+    fase: 'langkah', langkahIndex: 0, stabilitas, jawaban: [],
+  }
+}
+
+const KASUS = 'igd_syok_anafilaksis'
+
+describe('M3.14 — alur IGD', () => {
+  it('jawaban benar menstabilkan; tuntas semua langkah → fase disposisi', () => {
+    let s = base(igdKasus(KASUS))
+    const kasus = PACK.kasusIgd[KASUS]!
+    for (const langkah of kasus.langkah) {
+      const benar = langkah.pilihan.find((p) => p.benar)!
+      s = run(s, { type: 'AKSI_IGD', langkahId: langkah.id, pilihanId: benar.id })
+    }
+    expect(s.igd?.fase).toBe('disposisi')
+    expect(s.igd!.stabilitas).toBeGreaterThan(50)
+  })
+
+  it('disposisi benar (rujuk pada kasus wajib-rujuk) → tally igdStabil + surat pujian', () => {
+    let s = base(igdKasus(KASUS))
+    const kasus = PACK.kasusIgd[KASUS]!
+    for (const l of kasus.langkah) s = run(s, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: l.pilihan.find((p) => p.benar)!.id })
+    s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+    expect(s.tally.igdStabil).toBe(1)
+    expect(s.igd).toBeUndefined()
+    expect(s.inbox.some((m) => m.dari.includes('Harsono') && m.jenis === 'pujian_kapus')).toBe(true)
+  })
+
+  it('pilihan salah beruntun → stabilitas habis → Kode Biru', () => {
+    // Mulai stabilitas rendah agar 1-2 kesalahan cukup.
+    let s = base(igdKasus(KASUS, 20))
+    const kasus = PACK.kasusIgd[KASUS]!
+    const l0 = kasus.langkah[0]!
+    const salah = l0.pilihan.find((p) => !p.benar)!
+    s = run(s, { type: 'AKSI_IGD', langkahId: l0.id, pilihanId: salah.id })
+    expect(s.igd?.fase).toBe('kode_biru')
+  })
+
+  it('RJP berkualitas (seed menguntungkan) → ROSC → disposisi; buruk bisa Kode Hitam', () => {
+    // Cari seed di mana RJP berkualitas berhasil, dan satu di mana buruk gagal.
+    let sukses = false
+    let hitam = false
+    for (let seed = 0; seed < 20 && !(sukses && hitam); seed++) {
+      let s: GameState = { ...base(igdKasus(KASUS, 10)), seed }
+      const l0 = PACK.kasusIgd[KASUS]!.langkah[0]!
+      const salah = l0.pilihan.find((p) => !p.benar)!
+      s = run(s, { type: 'AKSI_IGD', langkahId: l0.id, pilihanId: salah.id })
+      if (s.igd?.fase !== 'kode_biru') continue
+      const sSukses = run({ ...s }, { type: 'RJP_IGD', berkualitas: true })
+      if (sSukses.igd?.fase === 'disposisi') sukses = true
+      const sBuruk = run({ ...s }, { type: 'RJP_IGD', berkualitas: false })
+      if (sBuruk.tally.igdMeninggal === 1 && sBuruk.igd === undefined) {
+        hitam = true
+        expect(sBuruk.inbox.some((m) => m.judul.includes('KODE HITAM'))).toBe(true)
+        expect(sBuruk.burnout).toBeGreaterThan(0)
+      }
+    }
+    expect(sukses).toBe(true)
+    expect(hitam).toBe(true)
+  })
+
+  it('Kode Hitam menggerus UKP; pasien stabil memberi bonus kecil', () => {
+    const sHitam = base()
+    const skorHitam = hitungSkor({ ...sHitam, tally: { ...sHitam.tally, totalPasien: 4, diagnosisBenar: 4, tegakBenar: 4, igdMeninggal: 1 } })
+    const skorStabil = hitungSkor({ ...sHitam, tally: { ...sHitam.tally, totalPasien: 4, diagnosisBenar: 4, tegakBenar: 4, igdStabil: 2 } })
+    expect(skorStabil.ukp).toBeGreaterThan(skorHitam.ukp)
+  })
+
+  it('IGD memblokir LANJUTKAN & PANGGIL_PASIEN sampai selesai', () => {
+    const s = base(igdKasus(KASUS))
+    expect(advance(s, { type: 'LANJUTKAN' }, PACK).events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+    expect(advance(s, { type: 'PANGGIL_PASIEN' }, PACK).events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+  })
+})

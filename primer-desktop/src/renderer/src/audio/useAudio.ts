@@ -68,6 +68,8 @@ function mainkan(ev: GameEvent, blipTerakhir: { current: number }): void {
 
     case 'FIREWALL_ALERGI':
     case 'KARMA_TERJADI':
+    case 'KODE_HITAM':
+    case 'IGD_TIBA':
     case 'DIUSIR':
       sfxBuzzer()
       break

@@ -41,10 +41,13 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   // Confidence-tagging (M3.13): merujuk kasus wajib-rujuk dengan TEPAT dihargai —
   // guillotine tidak boleh mengajarkan "jangan pernah merujuk".
   const bonusRujukanTepat = Math.min(3, t.rujukanTepat * 0.75)
+  // IGD (M3.14): pasien gawat stabil = bonus kecil; Kode Hitam = luka besar.
+  const efekIgd = Math.min(2, t.igdStabil * 0.5) - 3 * t.igdMeninggal
   const ukp = clamp(
     ((0.75 * akurasi * 100 + 0.25 * kalibrasi) / 100) * 35 * guillotine -
       2 * t.cowboy +
-      bonusRujukanTepat,
+      bonusRujukanTepat +
+      efekIgd,
     0,
     35,
   )

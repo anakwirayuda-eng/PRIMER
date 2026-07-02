@@ -24,14 +24,32 @@ function ev(s: GameState, a: Action) {
   return advance(s, a, PACK)
 }
 
+/** IGD interrupt (M3.14) memblokir LANJUTKAN — tangani optimal bila muncul. */
+function bereskanIgd(state: GameState): GameState {
+  let s = state
+  let guard = 0
+  while (s.igd && guard++ < 30) {
+    const kasus = PACK.kasusIgd[s.igd.kasusId]!
+    if (s.igd.fase === 'langkah') {
+      const l = kasus.langkah[s.igd.langkahIndex]!
+      s = run(s, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: (l.pilihan.find((p) => p.benar) ?? l.pilihan[0]!).id })
+    } else if (s.igd.fase === 'kode_biru') s = run(s, { type: 'RJP_IGD', berkualitas: true })
+    else if (s.igd.fase === 'disposisi') s = run(s, { type: 'DISPOSISI_IGD', jenis: kasus.disposisiBenar })
+    else break
+  }
+  return s
+}
+
 /** Ke blok siang hari tertentu tanpa menyentuh klinik. */
 function siangHari(target: number): GameState {
   let s = buildInitialState('Uji', SEED, PACK)
   while (s.hari < target) {
+    s = bereskanIgd(s)
     s = run(s, { type: 'LANJUTKAN' }) // pagi → siang
     s = run(s, { type: 'LANJUTKAN' }) // siang → sore
     s = run(s, { type: 'LANJUTKAN' }) // sore → pagi besok
   }
+  s = bereskanIgd(s)
   s = run(s, { type: 'LANJUTKAN' }) // pagi → siang
   expect(s.blok).toBe('siang')
   return s
@@ -170,10 +188,12 @@ describe('M2.11 — Lokakarya Mini flag', () => {
 function siangDariState(s0: GameState, target: number): GameState {
   let s = s0
   while (s.hari < target) {
+    s = bereskanIgd(s)
     if (s.blok === 'pagi') s = run(s, { type: 'LANJUTKAN' })
     if (s.blok === 'siang') s = run(s, { type: 'LANJUTKAN' })
     if (s.blok === 'sore') s = run(s, { type: 'LANJUTKAN' })
   }
+  s = bereskanIgd(s)
   while (s.blok !== 'siang') s = run(s, { type: 'LANJUTKAN' })
   return s
 }

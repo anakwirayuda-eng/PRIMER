@@ -24,6 +24,7 @@ import {
   kartuProlanis,
   kartuKlb,
 } from './kegiatan'
+import { buatIgd, aksiIgd, rjpIgd, nilaiIgd } from './igd'
 
 export interface HasilAdvance {
   state: GameState
@@ -103,6 +104,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
     /* -- Klinik -------------------------------------------------------------- */
 
     case 'PANGGIL_PASIEN': {
+      if (s.igd) return err(s, 'Pasien IGD dulu — dia tidak bisa menunggu.')
       if (s.blok !== 'pagi') return err(s, 'Klinik hanya buka blok pagi.')
       if (s.klinik.aktif) return err(s, 'Masih ada pasien di ruang periksa.')
       const berikut = s.klinik.antrian[0]
@@ -651,6 +653,95 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       return { state: { ...s, flags: { ...s.flags, lokminDitutup: true } }, events: [] }
     }
 
+    /* -- IGD (M3.14): gawat darurat turn-based ---------------------------------- */
+
+    case 'AKSI_IGD': {
+      const igd = s.igd
+      if (!igd) return err(s, 'Tidak ada pasien IGD.')
+      const kasus = pack.kasusIgd[igd.kasusId]
+      if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
+      const hasil = aksiIgd(igd, kasus, action.langkahId, action.pilihanId)
+      const events: GameEvent[] = []
+      if (hasil.igd.fase === 'kode_biru') {
+        events.push({ type: 'IGD_TIBA', narasi: 'KODE BIRU — pasien henti napas/jantung! Mulai RJP!' })
+      }
+      return { state: { ...s, igd: hasil.igd }, events }
+    }
+
+    case 'RJP_IGD': {
+      const igd = s.igd
+      if (!igd || igd.fase !== 'kode_biru') return err(s, 'Tidak dalam Kode Biru.')
+      const kasus = pack.kasusIgd[igd.kasusId]
+      if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
+      const rng = new Rng(s.seed, 'rjp', s.hari, igd.kasusId)
+      const igdBaru = rjpIgd(igd, action.berkualitas, rng)
+
+      if (igdBaru.hasil === 'meninggal') {
+        // Kode Hitam — konsekuensi bernama yang paling berat di game ini.
+        const t = { ...s.tally, igdMeninggal: s.tally.igdMeninggal + 1 }
+        const surat: Surat = {
+          id: `surat_igd_${s.hari}_${s.log.length}`,
+          hari: s.hari,
+          jenis: 'igd',
+          dari: 'Perawat jaga',
+          judul: `KODE HITAM — ${igd.pasienNama} tidak tertolong`,
+          isi: `${igd.pasienNama} (${igd.usia} th) meninggal di IGD pagi ini — ${kasus.nama}. Keluarganya menunggu di lorong; kamu yang harus menyampaikannya. ${kasus.clue}`,
+          dibaca: false,
+        }
+        return {
+          state: {
+            ...s,
+            igd: undefined,
+            tally: t,
+            burnout: Math.min(100, s.burnout + 15),
+            layar: 'meja',
+            inbox: [...s.inbox, surat],
+          },
+          events: [
+            { type: 'KODE_HITAM', narasi: `Kode Hitam. ${igd.pasienNama} tidak tertolong.` },
+            { type: 'SURAT_MASUK', surat },
+          ],
+        }
+      }
+      return {
+        state: { ...s, igd: igdBaru },
+        events: [{ type: 'KARMA_DICEGAH', narasi: 'ROSC — sirkulasi kembali! Pasien selamat, segera disposisi.' }],
+      }
+    }
+
+    case 'DISPOSISI_IGD': {
+      const igd = s.igd
+      if (!igd || igd.fase !== 'disposisi') return err(s, 'Pasien belum siap disposisi.')
+      const kasus = pack.kasusIgd[igd.kasusId]
+      if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
+      const nilai = nilaiIgd({ ...igd, hasil: 'stabil' }, kasus, action.jenis)
+      const t = { ...s.tally, igdStabil: s.tally.igdStabil + 1 }
+      const rsNama = action.rumahSakitId
+        ? pack.rumahSakit.find((r) => r.id === action.rumahSakitId)?.nama ?? 'RS rujukan'
+        : 'RS rujukan'
+      // Prinsip SISRUTE: kasus EMERGENSI stabil selalu diterima jejaring.
+      const surat: Surat = {
+        id: `surat_igd_${s.hari}_${s.log.length}`,
+        hari: s.hari,
+        jenis: nilai.disposisiTepat ? 'pujian_kapus' : 'teguran_kapus',
+        dari: 'dr. Harsono, Kepala Puskesmas',
+        judul: nilai.disposisiTepat
+          ? `IGD: ${igd.pasienNama} tertangani baik (${nilai.benar}/${nilai.total} langkah tepat)`
+          : `IGD: disposisi ${igd.pasienNama} keliru`,
+        isi: nilai.disposisiTepat
+          ? `${igd.pasienNama} stabil dan ${action.jenis === 'rujuk' ? `diterima ${rsNama}` : 'dipulangkan dengan observasi'}. ${kasus.clue}`
+          : `${igd.pasienNama} selamat, tapi disposisimu keliru — ${kasus.disposisiBenar === 'rujuk' ? `kasus ${kasus.nama} pasca-stabilisasi wajib DIRUJUK, bukan dipulangkan. Untung keluarganya membawanya ke RS sendiri.` : `kasus ini dapat dituntaskan dengan observasi di Puskesmas — merujuk semuanya membebani jejaring.`} ${kasus.clue}`,
+        dibaca: false,
+      }
+      return {
+        state: { ...s, igd: undefined, tally: t, layar: 'klinik', inbox: [...s.inbox, surat] },
+        events: [
+          { type: 'STEMPEL', jenis: action.jenis === 'rujuk' ? 'rujuk' : 'pulang' },
+          { type: 'SURAT_MASUK', surat },
+        ],
+      }
+    }
+
     default:
       return err(s, `Aksi tidak dikenal: ${(action as Action).type}`)
   }
@@ -752,6 +843,7 @@ function tambahBonusIks(rwList: GameState['desa']['rw'], nomor: number, bonus: n
  * ------------------------------------------------------------------------- */
 
 function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
+  if (s.igd) return err(s, 'Pasien IGD menunggumu — nyawa dulu, jadwal belakangan.')
   if (s.kunjungan) return err(s, 'Selesaikan kunjungan dulu.')
   if (s.klinik.aktif) return err(s, 'Selesaikan pasien di ruang periksa dulu.')
 
@@ -1078,8 +1170,6 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   )
   const antrian = [...antrianKembali, ...antrianDirector]
 
-  for (const m of suratBaru) events.push({ type: 'SURAT_MASUK', surat: m })
-
   if (hari === HARI_BUKA_PETA) flags['petaBaruTerbuka'] = true
   if (hari === HARI_BUKA_KUNJUNGAN) flags['kunjunganBaruTerbuka'] = true
   if (hari === HARI_REKAP_SLICE) flags['rekapSlice'] = true
@@ -1087,12 +1177,59 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   if (hari === HARI_BUKA_PROLANIS) flags['prolanisBaruTerbuka'] = true
   if (hari === HARI_BUKA_KLB) flags['klbBaruTerbuka'] = true
 
+  // IGD interrupt (M3.14): sesekali pasien gawat tiba subuh — HARUS ditangani
+  // sebelum poli buka. Maks 1/hari, mulai hari 4, jeda minimal 4 hari.
+  let igd = undefined as GameState['igd']
+  let igdHariIni = false
+  const igdTerakhir = Object.keys(flags)
+    .filter((k) => k.startsWith('igdHari_'))
+    .map((k) => Number(k.slice(8)))
+    .reduce((maks, h) => Math.max(maks, h), 0)
+  const rngIgd = new Rng(s.seed, 'igd', hari)
+  const poolIgd = Object.values(pack.kasusIgd)
+  if (hari >= 4 && poolIgd.length > 0 && hari - igdTerakhir >= 4 && rngIgd.chance(0.15)) {
+    const kasusIgd = rngIgd.pick(poolIgd)
+    igd = buatIgd(kasusIgd, pack, rngIgd)
+    igdHariIni = true
+    flags[`igdHari_${hari}`] = true
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'igd',
+        dari: 'Perawat jaga',
+        judul: `PASIEN GAWAT — ${igd.pasienNama} di IGD`,
+        isi: kasusIgd.pembuka,
+      }),
+    )
+    events.push({ type: 'IGD_TIBA', narasi: `Pasien gawat tiba di IGD: ${kasusIgd.nama}. Tangani sebelum poli!` })
+  }
+
+  // Kalender musiman (M3.17): hari-hari bermakna mengirim surat + efek kecil.
+  const eventKalender = EVENT_KALENDER[hari]
+  if (eventKalender) {
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'sistem',
+        dari: eventKalender.dari,
+        judul: eventKalender.judul,
+        isi: eventKalender.isi,
+      }),
+    )
+    if (eventKalender.bonusIksSemua) {
+      rwSetelahProgram = rwSetelahProgram.map((r) => ({
+        ...r,
+        bonusIks: Math.min(0.3, r.bonusIks + eventKalender.bonusIksSemua!),
+      }))
+    }
+  }
+
+  for (const m of suratBaru) events.push({ type: 'SURAT_MASUK', surat: m })
+
   return {
     state: {
       ...s,
       hari,
       blok: 'pagi',
-      layar: 'meja',
+      layar: igd ? 'igd' : 'meja',
       stamina,
       burnout,
       tally,
@@ -1105,11 +1242,45 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       hasilKunjunganHariIni: undefined,
       lapanganTerpakai: false,
       kegiatan: undefined,
+      igd,
+      igdHariIni,
       prolanis,
       desa: { ...s.desa, keluarga: keluargaMap, rw: rwSetelahProgram, kader: kaderHasil.kader, surveilans, drift },
     },
     events,
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * KALENDER MUSIMAN (M3.17) — hari bermakna nasional/desa
+ * ------------------------------------------------------------------------- */
+
+const EVENT_KALENDER: Record<
+  number,
+  { dari: string; judul: string; isi: string; bonusIksSemua?: number }
+> = {
+  12: {
+    dari: 'Panitia GERMAS Kecamatan',
+    judul: 'Hari Cuci Tangan — gerakan CTPS serentak',
+    isi: 'Sekolah-sekolah menggelar cuci tangan massal. Kader melaporkan antusiasme tinggi — momentum bagus untuk pesan PHBS. (IKS seluruh RW terangkat tipis.)',
+    bonusIksSemua: 0.005,
+  },
+  26: {
+    dari: 'Kelompok Tani Sukamaju',
+    judul: 'Musim panen dimulai — sawah penuh, poli sepi?',
+    isi: 'Warga turun ke sawah dari subuh. Waspada: peserta Prolanis rawan bolos kontrol bulan ini, dan luka kerja (cangkul, pestisida) biasanya naik. Pertimbangkan jemput bola.',
+  },
+  48: {
+    dari: 'Panitia HUT RI Desa',
+    judul: '17 Agustus — Puskesmas diminta siaga lomba',
+    isi: 'Panjat pinang, balap karung, gerak jalan. Siapkan P3K; tahun lalu ada dua kasus terkilir dan satu dehidrasi. Hari yang baik untuk dilihat warga — kehadiranmu adalah promosi kesehatan.',
+    bonusIksSemua: 0.005,
+  },
+  70: {
+    dari: 'Dinas Kesehatan Kabupaten',
+    judul: 'Hari Kesehatan Nasional — apresiasi Puskesmas',
+    isi: 'Dinkes meminta laporan capaian program menjelang HKN. Rapormu di Lokakarya Mini berikutnya akan dibaca lebih banyak mata. Selesaikan kuat: stase tinggal sebulan.',
+  },
 }
 
 /* ---------------------------------------------------------------------------

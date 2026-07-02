@@ -238,6 +238,7 @@ const PACK = {
     ispa_mini: KASUS_VIRAL,
     pneumonia_mini: KASUS_RUJUK,
   } as Record<string, KasusKlinis>,
+  kasusIgd: {},
   keluarga: {},
   kader: [],
   rw: [],

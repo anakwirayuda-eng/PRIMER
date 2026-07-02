@@ -2,8 +2,18 @@
 
 > **Untuk:** CODEX (auditor eksternal, deep-check)
 > **Mode:** **READ-ONLY MUTLAK** — lihat Aturan §0
-> **Tanggal briefing:** 2026-07-02 · Commit basis: `0f2d84d` (branch `claude/vigorous-bose-f66bc6`)
+> **Tanggal briefing:** 2026-07-03 (refresh M3b) · Basis: HEAD branch `claude/vigorous-bose-f66bc6`
 > **Lokasi kode:** `primer-desktop/` (JANGAN tersesat ke root repo — itu game web LAMA yang berbeda)
+>
+> **PERUBAHAN SEJAK BRIEFING M0:** proyek kini sampai **M3b**. Yang bertambah & BELUM
+> pernah diaudit CODEX (fokuskan ke sini): M1 bridge UKM↔UKP (`surveilans.ts`, drift,
+> KBK, follow-up, SDOH armor di `reducer.ts`), M2 program terjadwal (`kegiatan.ts`:
+> Posyandu/Prolanis/KLB + Lokakarya Mini), M3a rujukan berjenjang (`reducer.ts` blok
+> SISRUTE + PRB, `scoring.ts` confidence-tag, `content/rumahSakit.ts`), **67 kasus
+> klinis** (bukan 16 lagi — `content/kasus/*.ts` 7 file) + `content/katalogM3.ts`
+> (56 obat/10 lab/19 edukasi/8 tindakan), dan M3b **IGD** (`igd.ts` engine + `content/igd.ts`
+> 5 kasus) + kalender musiman (`reducer.ts` EVENT_KALENDER). Kasus asli 16 + 12
+> skenario kunjungan SUDAH diaudit medis internal (nol P0) — boleh skim, fokus ke yang baru.
 
 ---
 
@@ -57,8 +67,16 @@ primer-desktop/
 │   ├── pack.ts              ContentPack + validasiPack (fail-fast anti-drift id)
 │   ├── kasus/               16 kasus klinis (8 infeksi + 8 kronis/berat)
 │   ├── keluarga/            6 keluarga binaan ber-arc + 8 kader + 8 RW
-│   ├── katalog.ts           36 obat / 14 lab / 18 edukasi
-│   ├── skdi144.ts           144 penyakit FKTP (Dex)
+│   ├── surveilans.ts        ★M1 kluster balik UKP→UKM (14 hari, ambang DBD/diare/ISPA)
+│   ├── kegiatan.ts          ★M2 mesin sesi Posyandu/Prolanis/KLB (dek kartu keputusan)
+│   ├── igd.ts               ★M3b mesin IGD turn-based (stabilitas, Kode Biru, RJP)
+│   ├── katalog.ts           36 obat / 14 lab / 18 edukasi (inti)
+│   ├── katalogM3.ts         ★M3 +56 obat / +10 lab / +19 edukasi / +8 tindakan (Fornas)
+│   ├── rumahSakit.ts        ★M3a jejaring rujukan SISRUTE (4 RS kelas D/C/B)
+│   ├── igd.ts (content)     ★M3b 5 kasus gawat darurat
+│   ├── kasus/*.ts           ★67 kasus (kasusInfeksi/Kronis + RespGi/Kulit/SarafMataTht/
+│   │                          MetabolikMsk/KiaJiwa) — 12 wajib-rujuk ber-spesialisRujukan
+│   ├── skdi144.ts           144 penyakit FKTP (Dex; auto-tautkan kasusId via ICD-10)
 │   └── metadata.ts          HKI resmi (EC002026019623) — JANGAN diubah
 └── src/renderer/src/        UI React (layar per file di screens/), store.ts zustand tipis
 ```
@@ -74,53 +92,64 @@ Invarian yang harus tetap benar:
 
 ## 3. YANG SUDAH DIAUDIT (jangan duplikasi — kecuali kamu menemukan regresi)
 
-Review multi-dimensi internal telah menemukan **38 temuan → 32 terkonfirmasi → semuanya
-diperbaiki** di commit basis, antara lain: kebocoran jawaban diagnosis (posisi pertama),
-`obatSalahUmum` tanpa gigi (ibuprofen pada DBD), autosave melompati layar judul, identitas
-pasien karma hilang (Bu Wulan jadi warga acak), guillotine meledak di denominator kecil,
-arc gagal bisa di-undo, apathy dead-code, save-scum harian, cherry-picking auto-resolve,
-lab dobel bakar biaya, provenance karma bocor sejak Hari 1, OAT-sebelum-BTA dihukum,
-edukasi shotgun, SBAR dinilai panjang karakter.
+- **M0 (review internal 32 temuan diperbaiki):** kebocoran jawaban diagnosis, obatSalahUmum
+  tanpa gigi, autosave melompati layar judul, identitas karma hilang, guillotine denominator
+  kecil, arc gagal di-undo, apathy dead-code, save-scum, cherry-picking auto-resolve, lab
+  dobel bakar biaya, provenance karma bocor, OAT-sebelum-BTA, edukasi shotgun, SBAR panjang.
+- **M3a (audit medis internal 5 dokter, nol P0, 9 P1/P2 diperbaiki):** 51 kasus baru sudah
+  diperiksa untuk dosis/indikasi/kontraindikasi/ICD/SKDI. Yang sudah dibetulkan: hemoroid
+  (laksatif→pelunak), rinitis (alasan trap), epilepsi (diazepam rektal + fktp144), glaukoma
+  (fktp144), ISK/dislipidemia/CHF (alergiTrap), malaria (edukasi+primakuin), permetrin clue.
+  **Boleh spot-check regresi, tapi jangan audit ulang 51 kasus itu dari nol.**
 
 ## 4. FOKUS AUDITMU (deep-check yang BELUM tersentuh)
 
-**P0 — Integritas medis konten** (kamu = dokter auditor):
-1. Audit klinis 16 kasus di `src/content/kasus/*.ts` baris per baris: kebenaran ICD-10,
-   tatalaksana vs guideline (PERKENI/JNC-8/WHO/Kemenkes), dosis & sediaan di
-   `katalog.ts`, kewajaran `diagnosisBanding`, kebenaran `harusDirujuk` vs SKDI,
-   `konsekuensi` yang masuk akal patofisiologis, `clue` yang tidak menyesatkan.
-2. Audit 12 skenario kunjungan (`keluarga/*.ts`): teknik MI benar? label `tepat` pada
-   pilihan dialog sesuai kaidah OARS? `hambatanSebenarnya` (COM-B) konsisten dengan
-   narasi? Indikator `indikatorAwal` N/A demografis sesuai Permenkes 39/2016?
-3. `skdi144.ts` vs KMK 1186/2022: id/nama/ICD yang salah atau tertukar.
+**P0 — Integritas medis konten BARU** (kamu = dokter auditor):
+1. **5 kasus IGD** (`content/igd.ts`) — BELUM diaudit medis sama sekali. Verifikasi tiap
+   `LangkahIgd`: apakah pilihan `benar:true` benar-benar tindakan lini pertama (anafilaksis→
+   adrenalin IM, kejang→diazepam rektal + posisi, asma→nebul+steroid, hipoglikemia→D40 IV
+   bukan insulin, DSS→kristaloid bukan antibiotik)? Apakah `efekStabilitas` proporsional
+   (kesalahan fatal seperti "insulin pada hipoglikemia" harus paling negatif)? `disposisiBenar`
+   & `spesialisRujukan` tepat? `clue` tidak menyesatkan?
+2. **Kasus IGD vs poli**: adakah tumpang-tindih/kontradiksi tata laksana antara `content/igd.ts`
+   dan kasus poli serupa (mis. dengue_df poli vs igd_dengue_syok)?
+3. `katalogM3.ts`: 56 obat baru — dosis/kelas/golonganAlergi benar? (mis. `nitrofurantoin_100`
+   golongan benar, `diazepam_rektal_10` sediaan tepat, `primakuin_15` gametosidal.)
 
-**P1 — Dua temuan lama yang BELUM terverifikasi** (verifikatornya mati kuota):
-4. *Grinding trust*: skenario kunjungan gagal bisa diulang tiap hari dengan dialog
-   identik — apakah `trustDelta` bertumpuk tanpa diminishing return? (`kunjungan.ts`
-   `terapkanHasil`, `reducer.ts` MULAI_KUNJUNGAN: arcIndex hanya maju saat berhasil.)
-5. *Stabilisasi-rujuk tanpa diagnosis*: `DISPOSISI rujuk` diizinkan tanpa `KOMIT_DIAGNOSIS`
-   — bagaimana `nilaiEncounter` menghitungnya (default 'suspek')? Adakah jalur di mana
-   keputusan yang KLINIS BENAR (rujuk cepat kasus gawat) terhitung `suspekSalah`?
+**P1 — Integritas asesmen mekanik BARU (M1/M2/M3):**
+4. **SISRUTE** (`reducer.ts` blok DISPOSISI rujuk, ~baris 190-320): adakah jalur di mana
+   rujukan yang KLINIS BENAR terhitung salah, atau boomerang/PRB salah menjadwalkan pasien
+   ganda? PRB: apakah `nilaiEncounter` (`clinic.ts`) benar menilai pasien `prb:true`
+   (pulang=tepat, rujuk-ulang=RRNS)? Confidence-tag `bonusRujukanTepat` bisa di-exploit?
+5. **IGD scoring** (`scoring.ts` efekIgd + `reducer.ts` DISPOSISI_IGD/RJP_IGD): Kode Hitam
+   `-3` UKP vs stabil `+0.5` — adakah strategi menghindari IGD (mis. tak pernah maju hari)?
+   RJP peluang 0.7/0.25 deterministik dari `Rng(seed,'rjp',hari,kasusId)` — bisa di-scum?
+6. **M2 program**: Posyandu `bonusIks` (cap 0.3) — bisa di-farm ulang tiap 30 hari untuk
+   IKS palsu? Prolanis `driftProlanis` (`kegiatan.ts`) — jawaban benar selalu menurunkan
+   parameter? KLB `klbTuntas` menghapus surveilans — bisa disalahgunakan?
+7. **M1 bridge** (`reducer.ts` hariBaru): drift keluarga rawan (cap 2/pekan) — benar tak
+   pernah menyalahi cap? KBK bulanan (`hari % 30 === 1`) — bisa dobel? Surveilans kluster
+   flag `cluster_*` — pernah re-fire?
 
-**P1 — Exploit hunting formula skor** (`scoring.ts` + `clinic.ts`):
-6. Cari strategi dominan degenerate yang lolos: mis. semua-SUSPEK selamanya (kalibrasi
-   0.9/0.4 — apakah TEGAK pernah lebih menguntungkan?), spam kunjungan keluarga yang
-   sama, manipulasi `autoBermasalah`, batas `rujukanTotal >= 3` (merujuk 2× bebas
-   guillotine?), Manajemen yang tidak bisa turun di bawah X.
-7. Determinisme: cari iterasi `Object.keys/values/entries` di engine yang urutannya
-   memengaruhi konsumsi Rng (drift replay).
+**P1 — Exploit formula skor & determinisme** (tetap relevan):
+8. Strategi degenerate: semua-SUSPEK selamanya (kalibrasi 0.9/0.4), `rujukanTotal>=3` gate
+   guillotine (merujuk 2× bebas?), `autoBermasalah`, Manajemen lantai.
+9. Determinisme: iterasi `Object.keys/values/entries` di engine yang urutannya memengaruhi
+   konsumsi Rng (drift replay) — PERHATIAN KHUSUS: blok M1/M2/M3 baru di `reducer.ts`
+   `hariBaru` (loop keluarga untuk drift & follow-up, loop kluster, loop RS SISRUTE).
 
 **P2 — Ketahanan:**
-8. Save/load: field yang hilang dari validasi `save.ts`; `kunjungan`/`klinik.aktif`
-   yang tersimpan mid-sesi lalu di-load (skenario hilang? PACK berubah?).
-9. UI-engine mirror: tombol yang enabled padahal reducer menolak (dan sebaliknya).
+10. Save/load: field M1/M2/M3 baru di `save.ts` (surveilans, drift, prolanis, program,
+    igd, igdHariIni, tally baru) — migrasi-lite benar? `igd`/`kegiatan`/`kunjungan` yang
+    tersimpan mid-sesi lalu di-load dengan PACK berubah?
+11. UI-engine mirror: layar `igd`/`kegiatan` — tombol enabled padahal reducer menolak.
 
 ## 5. CARA MENJALANKAN BUKTI (read-only)
 
 ```bash
 cd primer-desktop
 npx tsc --noEmit -p tsconfig.json   # harus 0 error
-npx vitest run                       # harus 82+ pass
+npx vitest run                       # harus 114+ pass (m1bridge/m2program/m3sisrute/m3igd)
 ```
 
 ## 6. FORMAT LAPORAN YANG DIMINTA

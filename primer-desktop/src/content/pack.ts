@@ -5,6 +5,7 @@
 
 import type {
   KasusKlinis,
+  KasusIgd,
   KeluargaBinaan,
   KaderProfil,
   RwProfil,
@@ -17,6 +18,8 @@ import type {
 
 export interface ContentPack {
   kasus: Record<string, KasusKlinis>
+  /** Kasus gawat darurat IGD (M3.14) — pool interrupt event. */
+  kasusIgd: Record<string, KasusIgd>
   keluarga: Record<string, KeluargaBinaan>
   kader: KaderProfil[]
   rw: RwProfil[]

@@ -23,6 +23,10 @@ function eventKeToast(e: GameEvent): Toast | null {
       return { id, teks: `KONTRAINDIKASI — pasien alergi golongan ${e.golongan}!`, nada: 'bahaya' }
     case 'KARMA_TERJADI':
       return { id, teks: e.narasi, nada: 'bahaya' }
+    case 'KODE_HITAM':
+      return { id, teks: e.narasi, nada: 'bahaya' }
+    case 'IGD_TIBA':
+      return { id, teks: e.narasi, nada: 'bahaya' }
     case 'KARMA_DICEGAH':
       return { id, teks: e.narasi, nada: 'sukses' }
     case 'DEX_BERTAMBAH':

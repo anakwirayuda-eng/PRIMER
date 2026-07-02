@@ -18,6 +18,7 @@ import { KASUS_KULIT } from './kasus/kasusKulit'
 import { KASUS_SARAF_MATA_THT } from './kasus/kasusSarafMataTht'
 import { KASUS_METABOLIK_MSK } from './kasus/kasusMetabolikMsk'
 import { KASUS_KIA_JIWA } from './kasus/kasusKiaJiwa'
+import { KASUS_IGD } from './igd'
 import { SKDI144 } from './skdi144'
 import { NAMA_WARGA } from './nama'
 
@@ -53,6 +54,7 @@ const skdi144Tertaut = SKDI144.map((entri) => {
 
 export const PACK: ContentPack = {
   kasus: kasusById,
+  kasusIgd: byId(KASUS_IGD),
   keluarga: byId(semuaKeluarga),
   kader: KADER_PROFIL,
   rw: RW_PROFIL,

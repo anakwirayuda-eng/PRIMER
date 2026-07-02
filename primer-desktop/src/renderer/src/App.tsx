@@ -11,6 +11,7 @@ import { Klinik } from './screens/Klinik'
 import { PetaDesa } from './screens/PetaDesa'
 import { Kunjungan } from './screens/Kunjungan'
 import { Kegiatan } from './screens/Kegiatan'
+import { Igd } from './screens/Igd'
 import { DexSkdi } from './screens/DexSkdi'
 import { Rapor } from './screens/Rapor'
 import { Hud } from './components/Hud'
@@ -47,6 +48,7 @@ export default function App() {
         {state.layar === 'peta' && <PetaDesa />}
         {state.layar === 'kunjungan' && <Kunjungan />}
         {state.layar === 'kegiatan' && <Kegiatan />}
+        {state.layar === 'igd' && <Igd />}
         {state.layar === 'dex' && <DexSkdi />}
         {state.layar === 'rapor' && <Rapor />}
       </main>

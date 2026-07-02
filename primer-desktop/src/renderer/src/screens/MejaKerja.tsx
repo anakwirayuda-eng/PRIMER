@@ -40,6 +40,7 @@ const SURAT_META: Record<JenisSurat, { label: string; chip: string }> = {
   teguran_kapus: { label: 'Teguran Kapus', chip: 'chip--merah' },
   pujian_kapus: { label: 'Pujian Kapus', chip: 'chip--daun' },
   karma: { label: 'Kabar Darurat', chip: 'chip--merah' },
+  igd: { label: 'IGD', chip: 'chip--merah' },
   sistem: { label: 'Puskesmas', chip: 'chip--daun' },
   tutorial: { label: 'Panduan', chip: 'chip--biru' },
 }

@@ -285,6 +285,28 @@ export interface HasilKunjungan {
 }
 
 /* ---------------------------------------------------------------------------
+ * IGD (M3.14) — sesi gawat darurat turn-based
+ * ------------------------------------------------------------------------- */
+
+export type FaseIgd = 'langkah' | 'kode_biru' | 'disposisi' | 'selesai'
+
+export interface IgdState {
+  kasusId: string
+  pasienNama: string
+  usia: number
+  jenisKelamin: JenisKelamin
+  rw: number
+  fase: FaseIgd
+  /** Index langkah aktif. */
+  langkahIndex: number
+  /** Stabilitas pasien 0-100 — habis = Kode Biru. */
+  stabilitas: number
+  jawaban: { langkahId: string; pilihanId: string; benar: boolean }[]
+  /** Hasil akhir (diisi saat selesai). */
+  hasil?: 'stabil' | 'meninggal'
+}
+
+/* ---------------------------------------------------------------------------
  * Inbox, jadwal, skor, dex
  * ------------------------------------------------------------------------- */
 
@@ -295,6 +317,7 @@ export type JenisSurat =
   | 'teguran_kapus'
   | 'pujian_kapus'
   | 'karma'
+  | 'igd'
   | 'sistem'
   | 'tutorial'
 
@@ -367,6 +390,9 @@ export interface SkorTally {
   posyanduSesi: number
   prolanisSesi: number
   klbTuntas: number
+  /** IGD (M3.14): pasien gawat stabil vs meninggal (Kode Hitam). */
+  igdStabil: number
+  igdMeninggal: number
   /** Hari stamina habis total (pakan burnout/resiliensi). */
   hariKelelahan: number
   karmaTerjadi: number
@@ -397,7 +423,7 @@ export interface LogEntry {
  * ROOT STATE
  * ------------------------------------------------------------------------- */
 
-export type LayarGame = 'meja' | 'klinik' | 'peta' | 'kunjungan' | 'kegiatan' | 'dex' | 'rapor'
+export type LayarGame = 'meja' | 'klinik' | 'peta' | 'kunjungan' | 'kegiatan' | 'igd' | 'dex' | 'rapor'
 
 export interface GameState {
   /** Versi skema save. */
@@ -439,6 +465,11 @@ export interface GameState {
 
   /** Sesi kegiatan lapangan aktif (M2): posyandu/prolanis/klb. */
   kegiatan?: KegiatanState
+
+  /** Sesi IGD aktif (M3.14): gawat darurat turn-based. */
+  igd?: IgdState
+  /** IGD hari ini sudah tiba? (maks 1 interrupt/hari). */
+  igdHariIni: boolean
   /** Slot lapangan (siang) sudah terpakai hari ini — kunjungan ATAU kegiatan. */
   lapanganTerpakai: boolean
   /** Program Prolanis: roster kronis + jadwal sesi (terbuka D30). */

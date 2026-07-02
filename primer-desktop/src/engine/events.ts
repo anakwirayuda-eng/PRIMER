@@ -26,6 +26,8 @@ export type GameEvent =
   | { type: 'SURAT_MASUK'; surat: Surat }
   | { type: 'KARMA_TERJADI'; narasi: string }
   | { type: 'KARMA_DICEGAH'; narasi: string }
+  | { type: 'IGD_TIBA'; narasi: string }
+  | { type: 'KODE_HITAM'; narasi: string }
   | { type: 'DEX_BERTAMBAH'; kasusId: string; bintang: number }
   | { type: 'TAMAT'; grade: string }
   | { type: 'ERROR_AKSI'; pesan: string }

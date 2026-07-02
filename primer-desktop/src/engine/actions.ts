@@ -58,4 +58,9 @@ export type Action =
   | { type: 'TETAPKAN_PROGRAM'; fokus: FokusProgram; rwFokus?: number }
   | { type: 'TUTUP_LOKMIN' }
 
+  /* -- IGD (M3.14): gawat darurat turn-based ------------------------------------ */
+  | { type: 'AKSI_IGD'; langkahId: string; pilihanId: string }
+  | { type: 'RJP_IGD'; berkualitas: boolean } // pilihan Kode Biru
+  | { type: 'DISPOSISI_IGD'; jenis: 'rujuk' | 'pulang'; rumahSakitId?: string }
+
 export type ActionType = Action['type']
