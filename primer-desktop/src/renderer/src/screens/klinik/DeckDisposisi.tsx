@@ -1,13 +1,24 @@
 /**
- * DECK DISPOSISI — pulangkan / observasi / rujuk (form SBAR SISRUTE 4 kolom
- * yang DINILAI engine) + ringkasan billing encounter.
+ * DECK DISPOSISI — pulangkan / observasi / rujuk.
+ *
+ * Alur rujuk = SISRUTE berjenjang (M3.13):
+ *   1) SBAR 4 kolom (dinilai engine — dipertahankan apa adanya).
+ *   2) PEMILIH RS: kartu jejaring rujukan (PACK.rumahSakit). RS yang spesialisasinya
+ *      COCOK dengan kebutuhan kasus aktif disorot & disorot-default (terdekat cocok),
+ *      TAPI pilihan salah TIDAK dikunci — pemain belajar dari penolakan RS.
+ *   3) Kirim → dispatch { type:'DISPOSISI', jenis:'rujuk', sbar, rumahSakitId }.
+ *
+ * Kartu pemilih tak menonjolkan rubrik karakter apa pun — hanya info operasional
+ * (kelas, jarak, spesialisasi, estimasi bed). Engine yang memutuskan terima/tolak.
  */
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { PACK } from '@content/index'
 import type { EncounterState, SbarIsi } from '@engine/state'
 import type { Action } from '@engine/actions'
+import type { RumahSakit, SpesialisasiRs } from '@content/types'
 import { formatRupiah } from './util'
+import './DeckDisposisi.css'
 
 interface Props {
   enc: EncounterState
@@ -39,6 +50,26 @@ const KOLOM_SBAR: { kunci: keyof SbarIsi; label: string; placeholder: string }[]
 
 const SBAR_KOSONG: SbarIsi = { situation: '', background: '', assessment: '', recommendation: '' }
 
+/** Label manusiawi untuk kelas RS. */
+const LABEL_KELAS: Record<RumahSakit['kelas'], string> = {
+  D: 'Kelas D',
+  C: 'Kelas C',
+  B: 'Kelas B',
+}
+
+/** Label Indonesia untuk chip spesialisasi. */
+const LABEL_SPESIALIS: Record<SpesialisasiRs, string> = {
+  penyakit_dalam: 'Penyakit Dalam',
+  bedah: 'Bedah',
+  anak: 'Anak',
+  obgyn: 'Obgyn',
+  saraf: 'Saraf',
+  mata: 'Mata',
+  tht: 'THT',
+  jiwa: 'Jiwa',
+  paru: 'Paru',
+}
+
 export function DeckDisposisi({ enc, dispatch }: Props) {
   const [modeRujuk, setModeRujuk] = useState(false)
   const [sbar, setSbar] = useState<SbarIsi>(SBAR_KOSONG)
@@ -55,6 +86,32 @@ export function DeckDisposisi({ enc, dispatch }: Props) {
   }, 0)
 
   const sbarLengkap = KOLOM_SBAR.every(({ kunci }) => sbar[kunci].trim().length > 0)
+
+  /* Spesialisasi yang DIBUTUHKAN kasus aktif (bila kasus wajib-rujuk). */
+  const spesialisDibutuhkan: SpesialisasiRs | undefined =
+    PACK.kasus[enc.pasien.kasusId]?.spesialisRujukan
+
+  /* Jejaring RS diurutkan: yang cocok dulu (terdekat), lalu sisanya (terdekat). */
+  const rsUrut = useMemo<RumahSakit[]>(() => {
+    const cocok = (rs: RumahSakit): boolean =>
+      spesialisDibutuhkan !== undefined && rs.spesialisasi.includes(spesialisDibutuhkan)
+    return [...PACK.rumahSakit].sort((a, b) => {
+      const skorCocok = Number(cocok(b)) - Number(cocok(a))
+      if (skorCocok !== 0) return skorCocok
+      return a.jarakMenit - b.jarakMenit
+    })
+  }, [spesialisDibutuhkan])
+
+  /* Default: RS cocok terdekat; bila tak ada yang cocok, RS terdekat apa pun. */
+  const rsDefault = rsUrut[0]?.id
+  const [rumahSakitId, setRumahSakitId] = useState<string | undefined>(rsDefault)
+  const rsTerpilih = rumahSakitId ?? rsDefault
+
+  const bukaFormRujuk = () => {
+    // Segarkan default saat form dibuka (kasus/antrian mungkin sudah berganti).
+    setRumahSakitId(rsDefault)
+    setModeRujuk(true)
+  }
 
   return (
     <>
@@ -113,8 +170,8 @@ export function DeckDisposisi({ enc, dispatch }: Props) {
             </button>
             <button
               className="tombol tombol--kunyit tombol--besar"
-              onClick={() => setModeRujuk(true)}
-              title="Buka form rujukan SISRUTE (SBAR 4 kolom)."
+              onClick={bukaFormRujuk}
+              title="Buka form rujukan SISRUTE (SBAR 4 kolom + pemilih RS)."
             >
               RUJUK &rarr;
             </button>
@@ -125,6 +182,7 @@ export function DeckDisposisi({ enc, dispatch }: Props) {
           </div>
         ) : (
           <div className="klinik-deck__grup">
+            {/* -- Langkah 1: SBAR (dipertahankan) -------------------------------- */}
             <div className="judul-seksi">Rujukan SISRUTE &mdash; SBAR</div>
             {KOLOM_SBAR.map(({ kunci, label, placeholder }) => (
               <label key={kunci} className="klinik-sbar__kolom">
@@ -147,14 +205,103 @@ export function DeckDisposisi({ enc, dispatch }: Props) {
               S: sebutkan kondisi &amp; tanda vital terukur &middot; B: riwayat singkat &middot; A:
               diagnosis kerja &middot; R: apa yang kamu minta dari RS.
             </span>
+
+            {/* -- Langkah 2: Pemilih RS SISRUTE ---------------------------------- */}
+            <div className="judul-seksi">Pilih RS Tujuan</div>
+            <span className="teks-xs teks-lembut">
+              {spesialisDibutuhkan !== undefined ? (
+                <>
+                  Kasus ini butuh layanan{' '}
+                  <strong>{LABEL_SPESIALIS[spesialisDibutuhkan]}</strong>. RS yang menyediakannya
+                  ditandai <span className="chip chip--daun">cocok</span> &mdash; sudah tersorot yang
+                  terdekat.
+                </>
+              ) : (
+                <>Pilih RS tujuan rujukan dari jejaring SISRUTE di bawah.</>
+              )}
+            </span>
+
+            <div className="sisrute-rs">
+              {rsUrut.map((rs) => {
+                const cocok =
+                  spesialisDibutuhkan !== undefined &&
+                  rs.spesialisasi.includes(spesialisDibutuhkan)
+                const dipilih = rsTerpilih === rs.id
+                const kelasKartu = [
+                  'sisrute-rs__kartu',
+                  dipilih ? 'sisrute-rs__kartu--dipilih' : '',
+                  cocok ? 'sisrute-rs__kartu--cocok' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')
+                return (
+                  <button
+                    key={rs.id}
+                    type="button"
+                    className={kelasKartu}
+                    aria-pressed={dipilih}
+                    onClick={() => setRumahSakitId(rs.id)}
+                  >
+                    <div className="sisrute-rs__kepala">
+                      <span className="sisrute-rs__radio" aria-hidden="true" />
+                      <span className="tumbuh">
+                        <span className="sisrute-rs__nama">{rs.nama}</span>
+                        <span className="sisrute-rs__meta">
+                          <span className="chip">{LABEL_KELAS[rs.kelas]}</span>
+                          <span className="chip">{rs.jarakMenit} menit</span>
+                          <span className="chip">bed &plusmn; {rs.bedDasar}</span>
+                          {cocok && <span className="chip chip--daun">cocok</span>}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="sisrute-rs__spesialisasi">
+                      {rs.spesialisasi.map((sp) => {
+                        const alasan = spesialisDibutuhkan === sp
+                        return (
+                          <span
+                            key={sp}
+                            className={
+                              alasan
+                                ? 'chip chip--daun sisrute-rs__chip-cocok'
+                                : 'chip'
+                            }
+                          >
+                            {LABEL_SPESIALIS[sp]}
+                          </span>
+                        )
+                      })}
+                    </div>
+                    {spesialisDibutuhkan !== undefined && !cocok && (
+                      <span className="teks-xs sisrute-rs__catatan">
+                        <span className="teks-lembut">
+                          Tak punya layanan {LABEL_SPESIALIS[spesialisDibutuhkan]} &mdash; berisiko
+                          ditolak &amp; dirujuk-ulang.
+                        </span>
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            <span className="teks-xs teks-lembut sisrute-rs__edu">
+              SISRUTE memverifikasi rujukan: RS bisa <strong>menolak</strong> bila spesialisasi tak
+              tersedia, bed penuh, atau kasus sebenarnya masih tuntas di FKTP. Penolakan menambah
+              churn administrasi &mdash; pilih RS yang tepat sejak awal.
+            </span>
+
             <button
               className="tombol tombol--kunyit tombol--besar"
-              onClick={() => dispatch({ type: 'DISPOSISI', jenis: 'rujuk', sbar })}
-              disabled={!sbarLengkap}
+              onClick={() =>
+                dispatch({ type: 'DISPOSISI', jenis: 'rujuk', sbar, rumahSakitId: rsTerpilih })
+              }
+              disabled={!sbarLengkap || rsTerpilih === undefined}
               title={
-                sbarLengkap
-                  ? 'Kirim rujukan ke rumah sakit melalui SISRUTE.'
-                  : 'Isi keempat kolom SBAR dulu.'
+                !sbarLengkap
+                  ? 'Isi keempat kolom SBAR dulu.'
+                  : rsTerpilih === undefined
+                    ? 'Pilih satu RS tujuan.'
+                    : 'Kirim rujukan ke RS terpilih melalui SISRUTE.'
               }
             >
               Kirim Rujukan (SISRUTE)

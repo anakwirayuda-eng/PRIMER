@@ -12,6 +12,7 @@ import type {
   Obat,
   ItemLab,
   TopikEdukasi,
+  Tindakan,
 } from './types'
 
 export interface ContentPack {
@@ -24,6 +25,7 @@ export interface ContentPack {
   obat: Record<string, Obat>
   lab: Record<string, ItemLab>
   edukasi: Record<string, TopikEdukasi>
+  tindakan: Record<string, Tindakan>
   /** Daftar 144 penyakit SKDI 4A untuk Dex (id → nama; sebagian punya kasus). */
   skdi144: { id: string; nama: string; icd10: string; kasusId?: string }[]
   namaWarga: { pria: string[]; wanita: string[]; keluarga: string[] }
@@ -49,6 +51,9 @@ export function validasiPack(pack: ContentPack): string[] {
     }
     for (const e of k.tatalaksana.edukasi) {
       if (!pack.edukasi[e]) masalah.push(`Kasus ${k.id}: edukasi '${e}' tidak ada di katalog`)
+    }
+    for (const p of k.tatalaksana.prosedur ?? []) {
+      if (!pack.tindakan[p]) masalah.push(`Kasus ${k.id}: tindakan '${p}' tidak ada di katalog`)
     }
     // Rujukan berjenjang: kasus wajib-rujuk harus tahu spesialisasi tujuannya,
     // dan minimal satu RS di jejaring menyediakannya.

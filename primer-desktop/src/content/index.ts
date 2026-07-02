@@ -12,6 +12,12 @@ import { KELUARGA_DESA_A } from './keluarga/desaA'
 import { KELUARGA_DESA_B, KADER_PROFIL, RW_PROFIL } from './keluarga/desaB'
 import { RUMAH_SAKIT } from './rumahSakit'
 import { OBAT, LAB, EDUKASI } from './katalog'
+import { OBAT_M3, LAB_M3, EDUKASI_M3, TINDAKAN_M3 } from './katalogM3'
+import { KASUS_RESPIRASI_GI } from './kasus/kasusRespGi'
+import { KASUS_KULIT } from './kasus/kasusKulit'
+import { KASUS_SARAF_MATA_THT } from './kasus/kasusSarafMataTht'
+import { KASUS_METABOLIK_MSK } from './kasus/kasusMetabolikMsk'
+import { KASUS_KIA_JIWA } from './kasus/kasusKiaJiwa'
 import { SKDI144 } from './skdi144'
 import { NAMA_WARGA } from './nama'
 
@@ -24,7 +30,15 @@ function byId<T extends { id: string }>(arr: T[]): Record<string, T> {
   return out
 }
 
-const semuaKasus: KasusKlinis[] = [...KASUS_INFEKSI, ...KASUS_KRONIS]
+const semuaKasus: KasusKlinis[] = [
+  ...KASUS_INFEKSI,
+  ...KASUS_KRONIS,
+  ...KASUS_RESPIRASI_GI,
+  ...KASUS_KULIT,
+  ...KASUS_SARAF_MATA_THT,
+  ...KASUS_METABOLIK_MSK,
+  ...KASUS_KIA_JIWA,
+]
 const semuaKeluarga: KeluargaBinaan[] = [...KELUARGA_DESA_A, ...KELUARGA_DESA_B]
 
 const kasusById = byId(semuaKasus)
@@ -43,9 +57,10 @@ export const PACK: ContentPack = {
   kader: KADER_PROFIL,
   rw: RW_PROFIL,
   rumahSakit: RUMAH_SAKIT,
-  obat: OBAT,
-  lab: LAB,
-  edukasi: EDUKASI,
+  obat: { ...OBAT, ...OBAT_M3 },
+  lab: { ...LAB, ...LAB_M3 },
+  edukasi: { ...EDUKASI, ...EDUKASI_M3 },
+  tindakan: TINDAKAN_M3,
   skdi144: skdi144Tertaut,
   namaWarga: NAMA_WARGA,
 }

@@ -1,0 +1,105 @@
+/* ============================================================================
+   DECK DISPOSISI — pemilih RS SISRUTE berjenjang (M3.13)
+   Kartu RS tujuan di bawah form SBAR. Semua warna dari token; kelas dasar
+   (kartu/chip/stempel) dari base.css. Hanya CSS spesifik pemilih yang di sini.
+   ========================================================================== */
+
+.sisrute-rs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* Satu kartu RS: dipilih via radio-baris, cocok/tak cocok ditandai warna aksen. */
+.sisrute-rs__kartu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  text-align: left;
+  width: 100%;
+  padding: var(--sp-3);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-kertas);
+  transition:
+    border-color var(--durasi-cepat) var(--ease-keluar),
+    box-shadow var(--durasi-cepat) var(--ease-keluar),
+    transform var(--durasi-cepat) var(--ease-keluar);
+}
+
+.sisrute-rs__kartu:hover {
+  border-color: var(--border-tinta);
+  transform: translateY(-1px);
+}
+
+.sisrute-rs__kartu--dipilih {
+  border-color: var(--kunyit-600);
+  box-shadow: 0 0 0 1px var(--kunyit-600);
+  background: var(--kunyit-100);
+}
+
+/* Kartu RS yang spesialisasinya cocok kasus aktif — jangan dikunci, hanya disorot. */
+.sisrute-rs__kartu--cocok {
+  border-left: 4px solid var(--daun-700);
+}
+
+.sisrute-rs__kepala {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+
+.sisrute-rs__radio {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border-tegas);
+  flex-shrink: 0;
+  background: var(--bg-card);
+}
+
+.sisrute-rs__kartu--dipilih .sisrute-rs__radio {
+  border-color: var(--kunyit-700);
+  background: var(--kunyit-600);
+}
+
+.sisrute-rs__nama {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.sisrute-rs__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-2);
+  align-items: center;
+  margin-top: 2px;
+}
+
+.sisrute-rs__spesialisasi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  padding-left: calc(15px + var(--sp-3));
+}
+
+/* Chip spesialisasi yang menjadi alasan RS ini cocok. */
+.sisrute-rs__chip-cocok {
+  outline: 1.5px solid var(--daun-700);
+  outline-offset: -1px;
+}
+
+.sisrute-rs__catatan {
+  padding-left: calc(15px + var(--sp-3));
+}
+
+.sisrute-rs__edu {
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-sunken);
+  border: 1px dashed var(--border-tegas);
+  border-radius: var(--radius-md);
+  line-height: 1.4;
+}

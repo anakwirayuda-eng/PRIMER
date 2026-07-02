@@ -245,6 +245,7 @@ const PACK = {
   obat: OBAT_MINI,
   lab: LAB_MINI,
   edukasi: EDUKASI_MINI,
+  tindakan: {},
   skdi144: [],
   namaWarga: { pria: [], wanita: [], keluarga: [] },
 }

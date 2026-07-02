@@ -62,6 +62,7 @@ function buatPack(daftarKasus: KasusKlinis[]): ContentPack {
     obat: {},
     lab: {},
     edukasi: {},
+    tindakan: {},
     skdi144: [],
     namaWarga: {
       pria: ['Budi', 'Wayan', 'Ahmad', 'Togar'],

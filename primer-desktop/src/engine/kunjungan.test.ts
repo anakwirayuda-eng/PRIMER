@@ -556,6 +556,7 @@ function buatPackKader(): ContentPack {
     obat: {},
     lab: {},
     edukasi: {},
+    tindakan: {},
     skdi144: [],
     namaWarga: { pria: [], wanita: [], keluarga: [] },
   }
