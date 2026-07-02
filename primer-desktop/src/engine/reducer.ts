@@ -6,7 +6,7 @@
 
 import type { Action } from './actions'
 import type { GameEvent } from './events'
-import type { GameState, PenilaianEncounter, Surat } from './state'
+import type { GameState, PenilaianEncounter, PesertaProlanis, Surat } from './state'
 import type { ContentPack } from '@content/pack'
 import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter } from './clinic'
@@ -14,6 +14,16 @@ import { buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundu
 import { prosesHarianKader } from './kader'
 import { susunAntrianHarian, buatPasienDariKasus } from './director'
 import { kasusMenular, pangkasSurveilans, hitungCluster } from './surveilans'
+import {
+  buatKegiatan,
+  jawabKegiatan,
+  delegasiKegiatan,
+  nilaiKegiatan,
+  driftProlanis,
+  kartuPosyandu,
+  kartuProlanis,
+  kartuKlb,
+} from './kegiatan'
 
 export interface HasilAdvance {
   state: GameState
@@ -32,6 +42,11 @@ export const BIAYA_STAMINA_KUNJUNGAN: Record<'dekat' | 'sedang' | 'terpencil', n
   terpencil: 2,
 }
 export const LUNTUR_BINTANG_HARI = 5
+export const HARI_BUKA_POSYANDU = 15
+export const HARI_BUKA_PROLANIS = 30
+export const HARI_BUKA_KLB = 45
+export const COOLDOWN_POSYANDU = 30
+export const BIAYA_STAMINA_KEGIATAN = 2
 
 /** Id surat deterministik: hari + urutan dalam hari (aman untuk save/load). */
 function buatSuratHarian(hari: number, seq: number, s: Omit<Surat, 'id' | 'hari' | 'dibaca'>): Surat {
@@ -390,6 +405,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
           ...next,
           kunjungan: undefined,
           hasilKunjunganHariIni: hasil,
+          lapanganTerpakai: true,
           layar: 'peta',
           tally: t,
           jadwal,
@@ -403,9 +419,196 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       return { state: next, events }
     }
 
+    /* -- UKM: kegiatan lapangan terjadwal (M2) --------------------------------- */
+
+    case 'MULAI_POSYANDU': {
+      const cek = cekSlotKegiatan(s, HARI_BUKA_POSYANDU, 'Posyandu')
+      if (cek) return err(s, cek)
+      const terakhir = s.posyanduRwTerakhir[String(action.rw)]
+      if (terakhir !== undefined && s.hari - terakhir < COOLDOWN_POSYANDU) {
+        return err(s, `Posyandu RW ${action.rw} baru digelar — jadwalnya bulanan (tiap 30 hari).`)
+      }
+      return {
+        state: {
+          ...s,
+          stamina: s.stamina - BIAYA_STAMINA_KEGIATAN,
+          layar: 'kegiatan',
+          kegiatan: buatKegiatan('posyandu', kartuPosyandu(), { rw: action.rw }),
+        },
+        events: [],
+      }
+    }
+
+    case 'MULAI_PROLANIS': {
+      const cek = cekSlotKegiatan(s, HARI_BUKA_PROLANIS, 'Prolanis')
+      if (cek) return err(s, cek)
+      if (s.prolanis.roster.length === 0) return err(s, 'Belum ada peserta Prolanis terdaftar.')
+      return {
+        state: {
+          ...s,
+          stamina: s.stamina - BIAYA_STAMINA_KEGIATAN,
+          layar: 'kegiatan',
+          kegiatan: buatKegiatan('prolanis', kartuProlanis(s.prolanis.roster)),
+        },
+        events: [],
+      }
+    }
+
+    case 'MULAI_KLB': {
+      const cek = cekSlotKegiatan(s, HARI_BUKA_KLB, 'Respons KLB')
+      if (cek) return err(s, cek)
+      const cluster = hitungCluster(s.desa.surveilans, s.hari).find(
+        (c) => c.rw === action.rw && c.kasusId === action.kasusId,
+      )
+      if (!cluster) return err(s, 'Kluster itu tidak lagi aktif.')
+      const namaKasus = pack.kasus[action.kasusId]?.nama ?? action.kasusId
+      const namaRw = pack.rw.find((r) => r.nomor === action.rw)?.nama ?? `RW ${action.rw}`
+      return {
+        state: {
+          ...s,
+          stamina: s.stamina - BIAYA_STAMINA_KEGIATAN,
+          layar: 'kegiatan',
+          kegiatan: buatKegiatan('klb', kartuKlb(action.kasusId, namaKasus, namaRw), {
+            rw: action.rw,
+            kasusId: action.kasusId,
+          }),
+        },
+        events: [],
+      }
+    }
+
+    case 'JAWAB_KEGIATAN':
+    case 'DELEGASI_KEGIATAN': {
+      const kg = s.kegiatan
+      if (!kg) return err(s, 'Tidak ada kegiatan berjalan.')
+      if (kg.jenis !== 'posyandu' && action.type === 'DELEGASI_KEGIATAN')
+        return err(s, 'Hanya Posyandu yang bisa didelegasikan ke kader.')
+
+      const hasilSesi =
+        action.type === 'DELEGASI_KEGIATAN'
+          ? { kg: delegasiKegiatan(kg, new Rng(s.seed, 'delegasi', s.hari, kg.rw ?? 0)), selesai: true, benar: false }
+          : jawabKegiatan(kg, action.kartuId, action.pilihanId)
+
+      if (!hasilSesi.selesai) {
+        return { state: { ...s, kegiatan: hasilSesi.kg }, events: [] }
+      }
+      return selesaikanKegiatan(s, hasilSesi.kg, pack)
+    }
+
+    case 'TETAPKAN_PROGRAM': {
+      if (s.hari < HARI_BUKA_PETA) return err(s, 'Program wilayah terbuka bersama Peta Desa.')
+      const mingguIni = Math.ceil(s.hari / 7)
+      return {
+        state: {
+          ...s,
+          program: {
+            fokus: action.fokus,
+            ...(action.rwFokus !== undefined ? { rwFokus: action.rwFokus } : {}),
+            mingguDitetapkan: mingguIni,
+          },
+        },
+        events: [],
+      }
+    }
+
+    case 'TUTUP_LOKMIN': {
+      return { state: { ...s, flags: { ...s.flags, lokminDitutup: true } }, events: [] }
+    }
+
     default:
       return err(s, `Aksi tidak dikenal: ${(action as Action).type}`)
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * KEGIATAN — helper penyelesaian sesi
+ * ------------------------------------------------------------------------- */
+
+function cekSlotKegiatan(s: GameState, hariBuka: number, nama: string): string | null {
+  if (s.hari < hariBuka) return `${nama} terbuka di hari ke-${hariBuka}.`
+  if (s.blok !== 'siang') return `${nama} dilakukan di blok siang.`
+  if (s.kegiatan || s.kunjungan) return 'Sedang ada kegiatan lapangan berjalan.'
+  if (s.lapanganTerpakai || s.hasilKunjunganHariIni) return 'Slot lapangan hari ini sudah terpakai.'
+  if (s.stamina < BIAYA_STAMINA_KEGIATAN) return `Butuh ${BIAYA_STAMINA_KEGIATAN} stamina untuk kegiatan ini.`
+  return null
+}
+
+function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: ContentPack): HasilAdvance {
+  if (!kg) return err(s, 'Kegiatan tidak ada.')
+  const hasil = nilaiKegiatan(kg)
+  const events: GameEvent[] = [{ type: 'KEGIATAN_SELESAI', hasil }]
+  const tally = { ...s.tally }
+  let next: GameState = { ...s, kegiatan: undefined, lapanganTerpakai: true, layar: 'peta' }
+
+  if (hasil.jenis === 'posyandu' && hasil.rw !== undefined) {
+    tally.posyanduSesi += 1
+    // Kualitas posyandu → bonus IKS RW (gizi & imunisasi terangkat).
+    const bonus = 0.02 + 0.04 * hasil.skor
+    next = {
+      ...next,
+      posyanduRwTerakhir: { ...next.posyanduRwTerakhir, [String(hasil.rw)]: s.hari },
+      desa: { ...next.desa, rw: tambahBonusIks(next.desa.rw, hasil.rw, bonus) },
+    }
+  } else if (hasil.jenis === 'prolanis') {
+    tally.prolanisSesi += 1
+    // Drift tiap peserta menurut ketepatan jawaban kartu-nya + jembatan UKP.
+    const rng = new Rng(s.seed, 'prolanis', s.hari)
+    const jadwalBaru = [...next.jadwal]
+    const roster = s.prolanis.roster.map((p) => {
+      const jwb = hasil.jawaban.find((j) => j.kartuId === `prol_${p.id}`)
+      const pBaru = driftProlanis(p, jwb?.benar ?? false, rng)
+      // 2x tak terkontrol berturut → komplikasi bernama muncul di poli (bridge).
+      if (pBaru.takTerkontrolBerturut >= 2) {
+        const kasusId = pBaru.jenis === 'ht' ? 'stroke_iskemik' : 'dm_tipe2'
+        if (pack.kasus[kasusId]) {
+          jadwalBaru.push({
+            id: `jadwal_prolanis_${s.hari}_${p.id}`,
+            hari: s.hari + rng.int(2, 6),
+            jenis: 'pasien_kembali',
+            kasusId,
+            catatan: `${p.nama} — ${pBaru.jenis === 'ht' ? 'hipertensi tak terkontrol berbulan-bulan' : 'gula darah liar tak terkendali'}`,
+            nama: p.nama,
+            usia: p.usia,
+            jenisKelamin: p.jenisKelamin,
+            rw: p.rw,
+          })
+        }
+        return { ...pBaru, takTerkontrolBerturut: 0 }
+      }
+      return pBaru
+    })
+    next = {
+      ...next,
+      jadwal: jadwalBaru,
+      prolanis: { ...s.prolanis, roster, sesiBerikutHari: s.hari + 30 },
+    }
+  } else if (hasil.jenis === 'klb' && hasil.rw !== undefined && hasil.kasusId !== undefined) {
+    // Respons KLB tuntas: buang entri surveilans kluster itu (penularan diputus)
+    // + bonus IKS RW; buruk = kluster tetap menyala.
+    if (hasil.skor >= 0.66) {
+      tally.klbTuntas += 1
+      const kunciFlag = `cluster_${hasil.kasusId}_rw${hasil.rw}`
+      const { [kunciFlag]: _reset, ...flagsSisa } = next.flags
+      next = {
+        ...next,
+        flags: flagsSisa,
+        desa: {
+          ...next.desa,
+          surveilans: next.desa.surveilans.filter(
+            (e) => !(e.rw === hasil.rw && e.kasusId === hasil.kasusId),
+          ),
+          rw: tambahBonusIks(next.desa.rw, hasil.rw, 0.03),
+        },
+      }
+      events.push({ type: 'KARMA_DICEGAH', narasi: `Kluster ${pack.kasus[hasil.kasusId]?.nama ?? hasil.kasusId} di RW ${hasil.rw} berhasil ditanggulangi.` })
+    }
+  }
+
+  return { state: { ...next, tally }, events }
+}
+
+function tambahBonusIks(rwList: GameState['desa']['rw'], nomor: number, bonus: number): GameState['desa']['rw'] {
+  return rwList.map((r) => (r.nomor === nomor ? { ...r, bonusIks: Math.min(0.3, r.bonusIks + bonus) } : r))
 }
 
 /* ---------------------------------------------------------------------------
@@ -626,9 +829,30 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   keluargaMap = kaderHasil.keluarga
   suratBaru.push(...kaderHasil.surat)
 
-  // Surveilans (M1.2): pangkas jendela 14 hari, lalu deteksi KLUSTER BARU —
-  // pola di poli menjadi kabar di peta (satu surat per kluster per RW).
-  const surveilans = pangkasSurveilans(s.desa.surveilans, hari)
+  // Program wilayah agregat (M2.10): fokus mingguan (PSN/PHBS/skrining) yang
+  // ditetapkan dokter bekerja tiap hari — menekan penularan (buang 1 entri
+  // surveilans yang cocok) & menaikkan bonus IKS RW fokus sedikit demi sedikit.
+  let surveilans = pangkasSurveilans(s.desa.surveilans, hari)
+  let rwSetelahProgram = kaderHasil.rw
+  if (s.program.fokus) {
+    const fokus = s.program.fokus
+    // PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
+    // menekan droplet/kronis-terdeteksi. Satu entri kluster yang cocok diredam/hari.
+    const targetKasus =
+      fokus === 'psn' ? ['dengue_df'] : fokus === 'phbs' ? ['diare_akut_anak', 'demam_tifoid'] : ['tb_paru', 'ispa_common_cold']
+    const idxRedam = surveilans.findIndex(
+      (e) => targetKasus.includes(e.kasusId) && (s.program.rwFokus === undefined || e.rw === s.program.rwFokus),
+    )
+    if (idxRedam >= 0) surveilans = surveilans.filter((_, i) => i !== idxRedam)
+    if (s.program.rwFokus !== undefined) {
+      rwSetelahProgram = rwSetelahProgram.map((r) =>
+        r.nomor === s.program.rwFokus ? { ...r, bonusIks: Math.min(0.3, r.bonusIks + 0.004) } : r,
+      )
+    }
+  }
+
+  // Surveilans (M1.2): deteksi KLUSTER BARU — pola di poli jadi kabar di peta
+  // (satu surat per kluster per RW). Kluster ≥ambang juga membuka Respons KLB.
   const flags = { ...s.flags }
   for (const c of hitungCluster(surveilans, hari)) {
     const kunciFlag = `cluster_${c.kasusId}_rw${c.rw}`
@@ -665,11 +889,33 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     )
   }
 
+  // Prolanis roster (M2.8): dibentuk sekali saat program terbuka (D30) dari
+  // warga binaan/desa ber-kondisi kronis (HT/DM). Deterministik dari konten.
+  let prolanis = s.prolanis
+  if (hari === HARI_BUKA_PROLANIS && prolanis.roster.length === 0) {
+    prolanis = { roster: bentukRosterProlanis(pack, new Rng(s.seed, 'prolanis-roster')), sesiBerikutHari: hari }
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'sistem',
+        dari: 'Koordinator Prolanis',
+        judul: `Program Prolanis dibuka — ${prolanis.roster.length} peserta kronis terdaftar`,
+        isi: `Peserta hipertensi & diabetes terdaftar untuk pemantauan rutin bulanan. Gelar sesi Prolanis di blok siang. Peserta yang dua bulan berturut tak terkontrol akan berujung di poli dengan komplikasi — pantau ketat.`,
+      }),
+    )
+  }
+
+  // Lokakarya Mini (M2.11): rapat evaluasi bulanan D31/D61 — rapor formatif +
+  // ghost rival dr. Ratih (data statis, tanpa multiplayer).
+  if (hari === 31 || hari === 61) {
+    flags['lokminDitutup'] = false
+    flags[`lokmin${hari}`] = true
+  }
+
   // Susun antrian pagi: Director + pasien kembali/karma di depan
   const stateUntukDirector: GameState = {
     ...stateSementara,
     dex,
-    desa: { ...stateSementara.desa, keluarga: keluargaMap, rw: kaderHasil.rw, kader: kaderHasil.kader, surveilans },
+    desa: { ...stateSementara.desa, keluarga: keluargaMap, rw: rwSetelahProgram, kader: kaderHasil.kader, surveilans },
   }
   // Konten bisa berubah antar versi save — buang jadwal dengan kasus tak dikenal.
   const pasienKembaliValid = pasienKembali.filter((p) => pack.kasus[p.kasusId])
@@ -697,6 +943,9 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   if (hari === HARI_BUKA_PETA) flags['petaBaruTerbuka'] = true
   if (hari === HARI_BUKA_KUNJUNGAN) flags['kunjunganBaruTerbuka'] = true
   if (hari === HARI_REKAP_SLICE) flags['rekapSlice'] = true
+  if (hari === HARI_BUKA_POSYANDU) flags['posyanduBaruTerbuka'] = true
+  if (hari === HARI_BUKA_PROLANIS) flags['prolanisBaruTerbuka'] = true
+  if (hari === HARI_BUKA_KLB) flags['klbBaruTerbuka'] = true
 
   return {
     state: {
@@ -714,8 +963,40 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       flags,
       klinik: { antrian, aktif: undefined, selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } },
       hasilKunjunganHariIni: undefined,
-      desa: { ...s.desa, keluarga: keluargaMap, rw: kaderHasil.rw, kader: kaderHasil.kader, surveilans, drift },
+      lapanganTerpakai: false,
+      kegiatan: undefined,
+      prolanis,
+      desa: { ...s.desa, keluarga: keluargaMap, rw: rwSetelahProgram, kader: kaderHasil.kader, surveilans, drift },
     },
     events,
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * PROLANIS — pembentukan roster dari warga ber-kondisi kronis
+ * ------------------------------------------------------------------------- */
+
+function bentukRosterProlanis(pack: ContentPack, rng: Rng): PesertaProlanis[] {
+  const roster: PesertaProlanis[] = []
+  for (const kel of Object.values(pack.keluarga)) {
+    for (const a of kel.anggota) {
+      const kondisi = a.kondisi ?? []
+      const ht = kondisi.some((k) => k.includes('hipertensi'))
+      const dm = kondisi.some((k) => k.includes('dm') || k.includes('diabetes'))
+      if (!ht && !dm) continue
+      const jenis: 'ht' | 'dm' = ht ? 'ht' : 'dm'
+      roster.push({
+        id: `prol_${kel.id}_${a.nama.replace(/\s+/g, '')}`,
+        nama: a.nama,
+        usia: a.usia,
+        jenisKelamin: a.jenisKelamin,
+        rw: kel.rw,
+        jenis,
+        // Mulai tak terkontrol (butuh intervensi) — itulah gunanya program.
+        param: jenis === 'ht' ? rng.int(150, 175) : rng.int(210, 280),
+        takTerkontrolBerturut: 0,
+      })
+    }
+  }
+  return roster
 }

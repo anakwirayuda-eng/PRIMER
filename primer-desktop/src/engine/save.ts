@@ -55,6 +55,9 @@ export function deserialize(json: string): GameState | null {
   const tally = st['tally'] as Record<string, unknown>
   // Migrasi-lite: field tally baru diisi 0 untuk save dari versi lebih lama.
   if (tally['autoBermasalah'] === undefined) tally['autoBermasalah'] = 0
+  for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas'] as const) {
+    if (tally[kunci] === undefined) tally[kunci] = 0
+  }
   for (const nilai of Object.values(tally)) {
     if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) return null
   }
@@ -65,6 +68,18 @@ export function deserialize(json: string): GameState | null {
   if (typeof desa['drift'] !== 'object' || desa['drift'] === null) {
     desa['drift'] = { minggu: 1, jumlah: 0 }
   }
+  // Migrasi-lite M2: bonusIks per RW + state program/prolanis/lapangan.
+  if (Array.isArray(desa['rw'])) {
+    for (const r of desa['rw'] as Record<string, unknown>[]) {
+      if (typeof r['bonusIks'] !== 'number') r['bonusIks'] = 0
+    }
+  }
+  if (typeof st['lapanganTerpakai'] !== 'boolean') st['lapanganTerpakai'] = false
+  if (typeof st['prolanis'] !== 'object' || st['prolanis'] === null) st['prolanis'] = { roster: [] }
+  if (typeof st['posyanduRwTerakhir'] !== 'object' || st['posyanduRwTerakhir'] === null) {
+    st['posyanduRwTerakhir'] = {}
+  }
+  if (typeof st['program'] !== 'object' || st['program'] === null) st['program'] = {}
   // Pasien lama tanpa RW mendapat RW 1 (cukup untuk melanjutkan save lama).
   const klinik = st['klinik'] as Record<string, unknown>
   if (Array.isArray(klinik['antrian'])) {

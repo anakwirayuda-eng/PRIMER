@@ -27,6 +27,12 @@ function eventKeToast(e: GameEvent): Toast | null {
       return { id, teks: e.narasi, nada: 'sukses' }
     case 'DEX_BERTAMBAH':
       return { id, teks: `Buku Saku diperbarui (★${e.bintang})`, nada: 'info' }
+    case 'KEGIATAN_SELESAI':
+      return {
+        id,
+        teks: `Kegiatan selesai — ${e.hasil.benar}/${e.hasil.total} tepat`,
+        nada: e.hasil.skor >= 0.6 ? 'sukses' : 'info',
+      }
     case 'SURAT_MASUK':
       return { id, teks: `Surat baru: ${e.surat.judul}`, nada: 'info' }
     default:

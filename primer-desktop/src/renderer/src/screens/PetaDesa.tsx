@@ -8,7 +8,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { hitungIksKeluarga, klasifikasiIks } from '@engine/pispk'
-import { BIAYA_STAMINA_KUNJUNGAN, HARI_BUKA_KUNJUNGAN } from '@engine/reducer'
+import {
+  BIAYA_STAMINA_KUNJUNGAN,
+  BIAYA_STAMINA_KEGIATAN,
+  HARI_BUKA_KUNJUNGAN,
+  HARI_BUKA_POSYANDU,
+  HARI_BUKA_KLB,
+} from '@engine/reducer'
 import type { HasilKunjungan, KeluargaState } from '@engine/state'
 import type { KeluargaBinaan } from '@content/types'
 import { PACK } from '@content/index'
@@ -85,6 +91,24 @@ export function PetaDesa() {
     if (state.stamina < biaya)
       return { alasan: `Butuh ${biaya} stamina untuk perjalanan ke ${rwProfil ? rwProfil.nama : `RW ${content.rw}`}.`, biaya }
     return { alasan: null, biaya }
+  }
+
+  /** Cermin guard slot kegiatan (siang, satu slot/hari, stamina). */
+  function alasanSlotLapangan(biaya: number): string | null {
+    if (state.blok !== 'siang') return 'Kegiatan lapangan hanya di blok siang.'
+    if (state.lapanganTerpakai || state.hasilKunjunganHariIni)
+      return 'Slot lapangan hari ini sudah terpakai.'
+    if (state.stamina < biaya) return `Butuh ${biaya} stamina untuk kegiatan ini.`
+    return null
+  }
+  function alasanKegiatanPosyandu(rw: number): string | null {
+    const terakhir = state.posyanduRwTerakhir[String(rw)]
+    if (terakhir !== undefined && state.hari - terakhir < 30)
+      return `Posyandu RW ${rw} baru digelar — jadwalnya bulanan.`
+    return alasanSlotLapangan(BIAYA_STAMINA_KEGIATAN)
+  }
+  function alasanKegiatanKlb(): string | null {
+    return alasanSlotLapangan(BIAYA_STAMINA_KEGIATAN)
   }
 
   const keluargaHasil = hasilKunjungan ? PACK.keluarga[hasilKunjungan.keluargaId] : undefined
@@ -196,6 +220,32 @@ export function PetaDesa() {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Kegiatan lapangan M2: Posyandu per RW + Respons KLB per kluster */}
+            <div className="peta-kegiatan">
+              {state.hari >= HARI_BUKA_POSYANDU && (
+                <button
+                  className="tombol tombol--kunyit"
+                  disabled={alasanKegiatanPosyandu(rwAktif.nomor) !== null}
+                  title={alasanKegiatanPosyandu(rwAktif.nomor) ?? 'Gelar Posyandu bulanan di RW ini (blok siang, 2 stamina).'}
+                  onClick={() => dispatch({ type: 'MULAI_POSYANDU', rw: rwAktif.nomor })}
+                >
+                  🍼 Gelar Posyandu
+                </button>
+              )}
+              {state.hari >= HARI_BUKA_KLB &&
+                clusterRwAktif.map((c) => (
+                  <button
+                    key={c.kasusId}
+                    className="tombol tombol--bahaya"
+                    disabled={alasanKegiatanKlb() !== null}
+                    title={alasanKegiatanKlb() ?? 'Turun ke lapangan menyelidiki & mengendalikan kluster ini.'}
+                    onClick={() => dispatch({ type: 'MULAI_KLB', rw: rwAktif.nomor, kasusId: c.kasusId })}
+                  >
+                    🚨 Respons KLB {PACK.kasus[c.kasusId]?.nama ?? c.kasusId}
+                  </button>
+                ))}
             </div>
 
             <div className="peta-daftar">

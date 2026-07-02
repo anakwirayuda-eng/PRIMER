@@ -1,0 +1,131 @@
+.kegiatan {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-6);
+  overflow: auto;
+}
+
+.kegiatan__panel {
+  width: min(720px, 100%);
+  padding: var(--sp-5);
+}
+
+.kegiatan__kepala {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-halus);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.kegiatan__label {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--daun-700);
+}
+
+.kegiatan__langkah {
+  font-size: var(--text-xs);
+  color: var(--tinta-lembut);
+}
+
+.kegiatan__narasi {
+  margin: var(--sp-3) 0 var(--sp-4);
+  line-height: 1.55;
+  color: var(--tinta);
+}
+
+.kegiatan__pilihan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.kegiatan__opsi {
+  text-align: left;
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--border-tegas);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--tinta);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  transition: all var(--durasi-cepat) var(--ease-keluar);
+}
+
+.kegiatan__opsi:hover:not(:disabled) {
+  border-color: var(--daun-600);
+  transform: translateX(3px);
+}
+
+.kegiatan__opsi:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.kegiatan__opsi--benar {
+  border-color: var(--daun-700);
+  background: var(--daun-50);
+  opacity: 1;
+}
+
+.kegiatan__opsi--salah {
+  border-color: var(--tinta-merah);
+  background: #f6ddda;
+  opacity: 1;
+}
+
+.kegiatan__respons {
+  margin-top: var(--sp-4);
+  padding: var(--sp-4);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--tinta-biru);
+  background: var(--bg-sunken);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  align-items: flex-start;
+  animation: kegiatan-masuk var(--durasi-normal) var(--ease-keluar) both;
+}
+
+.kegiatan__respons--benar { border-left-color: var(--daun-700); }
+.kegiatan__respons--salah { border-left-color: var(--tinta-merah); }
+.kegiatan__respons p { line-height: 1.5; font-size: var(--text-sm); }
+
+.stempel--kecil {
+  font-size: var(--text-xs);
+  padding: 2px var(--sp-2);
+  transform: rotate(-2deg);
+}
+
+.kegiatan__delegasi {
+  margin-top: var(--sp-4);
+  font-size: var(--text-xs);
+}
+
+@keyframes kegiatan-masuk {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* -- Kartu hasil -------------------------------------------------------------- */
+.kegiatan__hasil {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.kegiatan__hasil-cap--baik { color: var(--daun-700); }
+.kegiatan__hasil-cap--cukup { color: var(--kunyit-700); }
+.kegiatan__hasil-cap--kurang { color: var(--tinta-merah); }
+
+.kegiatan__skor {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}

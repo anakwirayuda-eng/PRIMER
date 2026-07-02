@@ -587,7 +587,7 @@ function buatStateKader(): GameState {
       kader: {
         k1: { id: 'k1', nama: 'Bu Sari', rw: 1, ketelitian: 100, bias: ['tidak_merokok'], kkTersurvei: 0 },
       },
-      rw: [{ nomor: 1, nama: 'Banjar Kaja', jarak: 'dekat', totalKk: 25, kkTersurvei: 0, iks: 0 }],
+      rw: [{ nomor: 1, nama: 'Banjar Kaja', jarak: 'dekat', totalKk: 25, kkTersurvei: 0, iks: 0, bonusIks: 0 }],
       binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 }
     },
     inbox: [],
@@ -611,6 +611,7 @@ function buatStateKader(): GameState {
       kunjunganDiusir: 0,
       apathy: 0,
       autoBermasalah: 0,
+      posyanduSesi: 0, prolanisSesi: 0, klbTuntas: 0,
       hariKelelahan: 0,
       karmaTerjadi: 0,
       karmaDicegah: 0,
@@ -621,6 +622,10 @@ function buatStateKader(): GameState {
     refleksi: {},
     flags: {},
     layar: 'meja',
+    lapanganTerpakai: false,
+    prolanis: { roster: [] },
+    posyanduRwTerakhir: {},
+    program: {},
   }
 }
 

@@ -48,21 +48,27 @@ integrasi (`m1bridge.test.ts`); catatan implementasi per butir di bawah:
    kenaikan trust 50% bila hipotesis hambatan meleset; diagnosis tepat menembus
    armor. Ditandai `armorAktif` di hasil kunjungan (bahan debrief).
 
-## M2 — Program UKM Terjadwal (kalender bulanan)
+## M2 — Program UKM Terjadwal ✅ (selesai 2026-07-02, 5/5 butir)
 
-7. **Posyandu** (unlock D15): sesi bulanan per RW — mini-game 5 meja versi desktop:
-   timbang→plot KMS (port `GrowthChartEngine` z-score WHO), imunisasi + cold chain
-   (port `ImmunizationEngine` 14 vaksin), delegasi kader (error 20%).
-8. **Prolanis** (unlock D30): roster DM/HT kronis, kunjungan bulanan, parameter drift
-   (port `ProlanisEngine`: HbA1c/GDS/TD + event kepatuhan), mangkir dipengaruhi jarak RW.
-9. **Respons KLB** (unlock D45): trigger cluster dari surveilans M1.2 (DBD 2+ kasus,
-   diare 3+, ISPA 5+ — angka lama), investigasi 5W1H ringkas + aksi PSN/fogging/sanitasi
-   ber-biaya slot & dana, memengaruhi spawn kasus klinik.
-10. **Program agregat 184 KK**: instruksi mingguan (kampanye PSN, mobile screening,
-    penyuluhan) resolve agregat → IKS statistik RW; laporan naratif Jumat.
-    (Jawaban untuk kritik "manajemen populasi tipis".)
-11. **Lokakarya Mini bulanan** (D30/D60): rapor formatif + *ghost* rival dr. Ratih
-    (data statis, tanpa multiplayer).
+Satu mesin sesi generik (`kegiatan.ts` + layar `Kegiatan.tsx`): dek kartu keputusan
+klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
+(`m2program.test.ts`), verifikasi visual Posyandu end-to-end.
+
+7. ✅ **Posyandu** (unlock D15, cooldown 30 hari/RW): 4 kartu — penimbangan/faltering,
+   KMS, imunisasi (ISPA ringan bukan kontraindikasi + cold chain), penyuluhan. Sesi
+   berkualitas → bonus IKS RW persisten. Delegasi kader (80% benar/kartu) =
+   task-shifting yang mengajarkan supervisi.
+8. ✅ **Prolanis** (unlock D30): roster HT/DM otomatis dari warga kronis, sesi
+   bulanan, `driftProlanis` menaikkan/menurunkan param menurut ketepatan; 2 sesi
+   tak-terkontrol berturut → komplikasi bernama muncul di poli (bridge UKM→UKP).
+9. ✅ **Respons KLB** (unlock D45): dipicu kluster surveilans M1.2; 3 kartu 5W1H
+   (verifikasi→penyelidikan Orang-Tempat-Waktu→aksi sesuai pola vektor/air-makanan/
+   droplet); tuntas (≥66%) memutus kluster (hapus entri surveilans) + bonus IKS.
+10. ✅ **Program wilayah agregat**: fokus mingguan (PSN/PHBS/skrining) ditetapkan di
+    Meja Kerja, bekerja tiap hari menekan 1 entri surveilans yang cocok + bonus IKS
+    RW fokus — instruksi tim tanpa memakai slot siang. (Jawaban "manajemen populasi".)
+11. ✅ **Lokakarya Mini** (D31/D61): modal rapor formatif 4 dimensi + *ghost* rival
+    dr. Ratih (skor statis 71/78) — tekanan sosial tanpa multiplayer.
 
 ## M3 — Konten Skala Penuh & Rujukan Berjenjang (90 hari tidak boleh kering)
 

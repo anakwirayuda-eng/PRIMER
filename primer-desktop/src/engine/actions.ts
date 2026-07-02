@@ -3,7 +3,7 @@
  * UI men-dispatch aksi; reducer memvalidasi & menerapkan; event keluar untuk juice.
  */
 
-import type { Disposisi, JenisDiagnosis, LayarGame, SbarIsi } from './state'
+import type { Disposisi, FokusProgram, JenisDiagnosis, LayarGame, SbarIsi } from './state'
 import type { RegionFisik } from '@content/types'
 
 export type Action =
@@ -42,5 +42,14 @@ export type Action =
   | { type: 'PILIH_DIALOG'; pilihanId: string }
   | { type: 'KOMIT_HAMBATAN'; hipotesis: 'kapabilitas' | 'kesempatan' | 'motivasi' }
   | { type: 'PILIH_INTERVENSI'; intervensiId: string }
+
+  /* -- UKM: kegiatan lapangan terjadwal (M2) ------------------------------------ */
+  | { type: 'MULAI_POSYANDU'; rw: number }
+  | { type: 'MULAI_PROLANIS' }
+  | { type: 'MULAI_KLB'; rw: number; kasusId: string }
+  | { type: 'JAWAB_KEGIATAN'; kartuId: string; pilihanId: string }
+  | { type: 'DELEGASI_KEGIATAN' } // sisa kartu dijawab kader (posyandu; error 20%)
+  | { type: 'TETAPKAN_PROGRAM'; fokus: FokusProgram; rwFokus?: number }
+  | { type: 'TUTUP_LOKMIN' }
 
 export type ActionType = Action['type']

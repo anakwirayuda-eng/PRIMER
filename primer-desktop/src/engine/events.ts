@@ -4,6 +4,7 @@
  */
 
 import type { PenilaianEncounter, HasilKunjungan, Surat } from './state'
+import type { HasilKegiatan } from './kegiatan'
 
 export type GameEvent =
   | { type: 'BLOK_BERGANTI'; blok: 'pagi' | 'siang' | 'sore' }
@@ -21,6 +22,7 @@ export type GameEvent =
   | { type: 'WARGA_BICARA'; teks: string; bohong?: boolean }
   | { type: 'DIUSIR' }
   | { type: 'KUNJUNGAN_SELESAI'; hasil: HasilKunjungan }
+  | { type: 'KEGIATAN_SELESAI'; hasil: HasilKegiatan }
   | { type: 'SURAT_MASUK'; surat: Surat }
   | { type: 'KARMA_TERJADI'; narasi: string }
   | { type: 'KARMA_DICEGAH'; narasi: string }

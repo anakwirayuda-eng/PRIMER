@@ -12,10 +12,22 @@ import type { JenisSurat, Surat } from '@engine/state'
 import type { Persona } from '@content/types'
 import { hitungSkor, ringkasanHarian } from '@engine/director'
 import { hitungIksKeluarga } from '@engine/pispk'
-import { HARI_BUKA_PETA, HARI_BUKA_KUNJUNGAN } from '@engine/reducer'
+import {
+  HARI_BUKA_PETA,
+  HARI_BUKA_KUNJUNGAN,
+  HARI_BUKA_PROLANIS,
+  BIAYA_STAMINA_KEGIATAN,
+} from '@engine/reducer'
+import type { FokusProgram } from '@engine/state'
 import { PACK } from '@content/index'
 import { karmaTerlihat } from './peta/petaUtil'
 import './MejaKerja.css'
+
+const LABEL_PROGRAM: Record<FokusProgram, string> = {
+  psn: 'PSN 3M (vektor DBD)',
+  phbs: 'PHBS & sanitasi (diare)',
+  skrining: 'Skrining aktif (TB/ISPA)',
+}
 
 /* ---------------------------------------------------------------------------
  * Label & format
@@ -89,7 +101,7 @@ export function MejaKerja() {
 
   const petaTerbuka = state.hari >= HARI_BUKA_PETA
   const kunjunganTerbuka = state.hari >= HARI_BUKA_KUNJUNGAN
-  const slotTerpakai = state.hasilKunjunganHariIni !== undefined
+  const slotTerpakai = state.hasilKunjunganHariIni !== undefined || state.lapanganTerpakai
   const antrianN = state.klinik.antrian.length
   const suratBaru = state.inbox.filter((m) => !m.dibaca).length
 
@@ -235,6 +247,10 @@ export function MejaKerja() {
   // Modal rekap dikendalikan flag engine — TUTUP_REKAP mem-false-kan permanen.
   const tampilkanRekap = Boolean(state.flags['rekapSlice'])
   const skorRekap = tampilkanRekap ? hitungSkor(state) : null
+  // Lokakarya Mini bulanan (M2.11) — rapor formatif + ghost rival dr. Ratih.
+  const tampilkanLokmin =
+    !tampilkanRekap && Boolean(state.flags['lokmin31'] || state.flags['lokmin61']) && !state.flags['lokminDitutup']
+  const skorLokmin = tampilkanLokmin ? hitungSkor(state) : null
 
   /* ------------------------------------------------------------------------- */
 
@@ -427,7 +443,45 @@ export function MejaKerja() {
                     ))}
                   </div>
                 )}
+
+                <div className="baris mk__lapangan-aksi">
+                  <button className="tombol tombol--utama" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })}>
+                    Buka Peta Desa — pilih kunjungan / Posyandu / KLB →
+                  </button>
+                  {state.hari >= HARI_BUKA_PROLANIS && state.prolanis.roster.length > 0 && (
+                    <button
+                      className="tombol tombol--kunyit"
+                      disabled={state.stamina < BIAYA_STAMINA_KEGIATAN || slotTerpakai}
+                      title={slotTerpakai ? 'Slot lapangan hari ini sudah terpakai.' : `Gelar sesi Prolanis (${state.prolanis.roster.length} peserta, ${BIAYA_STAMINA_KEGIATAN} stamina).`}
+                      onClick={() => dispatch({ type: 'MULAI_PROLANIS' })}
+                    >
+                      🩺 Gelar Sesi Prolanis ({state.prolanis.roster.length})
+                    </button>
+                  )}
+                </div>
               </>
+            )}
+
+            {/* Program wilayah agregat — instruksi mingguan, tak makan slot. */}
+            {petaTerbuka && (
+              <div className="kartu mk__program">
+                <div className="judul-seksi">Program Wilayah (mingguan)</div>
+                <p className="teks-xs teks-lembut">
+                  Fokus program menekan penularan & menaikkan IKS sepanjang pekan — tanpa memakai slot siang.
+                  {state.program.fokus ? ` Fokus kini: ${LABEL_PROGRAM[state.program.fokus]}.` : ' Belum ada fokus ditetapkan.'}
+                </p>
+                <div className="baris mk__program-opsi">
+                  {(['psn', 'phbs', 'skrining'] as const).map((f) => (
+                    <button
+                      key={f}
+                      className={`tombol ${state.program.fokus === f ? 'tombol--utama' : ''}`}
+                      onClick={() => dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f })}
+                    >
+                      {LABEL_PROGRAM[f]}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         )}
@@ -597,6 +651,76 @@ export function MejaKerja() {
               onClick={() => dispatch({ type: 'TUTUP_REKAP' })}
             >
               Lanjutkan Stase →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ================= LOKAKARYA MINI (Hari 31/61) ================= */}
+      {skorLokmin && (
+        <div className="overlay">
+          <div className="modal mk__rekap">
+            <h2 className="judul-seksi">Lokakarya Mini — Evaluasi Bulan Ini</h2>
+            <div className="mk__rekap-atas">
+              <span className={`stempel ${STEMPEL_GRADE[skorLokmin.grade] ?? 'stempel--kunyit'} stempel--jatuh mk__rekap-grade`}>
+                {skorLokmin.grade} · {skorLokmin.gradeLabel}
+              </span>
+              <span className="mk__rekap-total mono">
+                {fmt(skorLokmin.total)} <span className="teks-lembut">/ 100</span>
+              </span>
+            </div>
+
+            {/* Ghost rival dr. Ratih — tekanan sosial tanpa multiplayer (data statis). */}
+            <div className="kartu mk__lokmin-rival">
+              <div className="baris baris--antara">
+                <span className="teks-kecil">
+                  <strong>dr. Ratih</strong> · Puskesmas tetangga
+                </span>
+                <span className="mono teks-kecil">{state.hari >= 61 ? '78' : '71'} / 100</span>
+              </div>
+              <p className="teks-xs teks-lembut">
+                {skorLokmin.total >= (state.hari >= 61 ? 78 : 71)
+                  ? 'Kamu unggul dari rekan seangkatanmu bulan ini. Jaga momentum — bulan depan lebih berat.'
+                  : 'dr. Ratih sedikit di depanmu bulan ini. Lihat dimensi mana yang tertinggal, dan kejar.'}
+              </p>
+            </div>
+
+            <div className="mk__rekap-dimensi">
+              {(
+                [
+                  { label: 'UKP — Klinik', nilai: skorLokmin.ukp, maks: 35 },
+                  { label: 'UKM — Desa', nilai: skorLokmin.ukm, maks: 35 },
+                  { label: 'Manajemen', nilai: skorLokmin.manajemen, maks: 15 },
+                  { label: 'Resiliensi', nilai: skorLokmin.resiliensi, maks: 15 },
+                ] as const
+              ).map((d) => (
+                <div key={d.label} className="kartu mk__rekap-kartu">
+                  <div className="baris baris--antara">
+                    <span className="teks-kecil">{d.label}</span>
+                    <span className="mono teks-kecil">
+                      {fmt(d.nilai)}/{d.maks}
+                    </span>
+                  </div>
+                  <div className="meter">
+                    <div
+                      className={`meter__isi ${d.nilai / d.maks < 0.35 ? 'meter__isi--bahaya' : d.nilai / d.maks < 0.6 ? 'meter__isi--waspada' : ''}`}
+                      style={{ width: `${Math.round((d.nilai / d.maks) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p className="mk__rekap-ajakan">
+              Lokakarya Mini adalah rapat evaluasi bulanan Puskesmas. Angka ini formatif — belum
+              nilai akhir. Pekan-pekan berikutnya masih bisa membalikkan keadaan.
+            </p>
+
+            <button
+              className="tombol tombol--utama tombol--besar mk__rekap-tutup"
+              onClick={() => dispatch({ type: 'TUTUP_LOKMIN' })}
+            >
+              Kembali Bertugas →
             </button>
           </div>
         </div>

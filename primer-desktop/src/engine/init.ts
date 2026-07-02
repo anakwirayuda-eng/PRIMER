@@ -114,6 +114,7 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
     totalKk: r.totalKk,
     kkTersurvei: 0,
     iks: 0,
+    bonusIks: 0,
   }))
 
   const base: GameState = {
@@ -151,6 +152,9 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
       kunjunganDiusir: 0,
       apathy: 0,
       autoBermasalah: 0,
+      posyanduSesi: 0,
+      prolanisSesi: 0,
+      klbTuntas: 0,
       hariKelelahan: 0,
       karmaTerjadi: 0,
       karmaDicegah: 0,
@@ -161,6 +165,10 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
     refleksi: {},
     flags: {},
     layar: 'meja',
+    lapanganTerpakai: false,
+    prolanis: { roster: [] },
+    posyanduRwTerakhir: {},
+    program: {},
   }
 
   // Antrian hari pertama (bias 4A minggu pertama diatur Director)

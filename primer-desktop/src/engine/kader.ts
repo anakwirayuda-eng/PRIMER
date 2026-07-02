@@ -163,7 +163,9 @@ export function prosesHarianKader(
       nilaiKeluarga.length > 0
         ? nilaiKeluarga.reduce((jumlah, x) => jumlah + x, 0) / nilaiKeluarga.length
         : baseline
-    wilayah.iks = clamp01(0.5 * rata + 0.5 * baseline)
+    // Bonus program M2 (posyandu/KLB/program wilayah) menaikkan IKS RW secara
+    // persisten — kegiatan lapangan terbayar di indikator, bukan angka hantu.
+    wilayah.iks = clamp01(0.5 * rata + 0.5 * baseline + wilayah.bonusIks)
   }
 
   // Maksimal SATU surat laporan kader per hari.

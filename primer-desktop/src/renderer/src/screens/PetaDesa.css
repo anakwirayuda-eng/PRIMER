@@ -316,3 +316,11 @@
   line-height: 1.6;
   max-width: 52ch;
 }
+
+/* M2: tombol kegiatan lapangan di panel RW */
+.peta-kegiatan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: var(--sp-3) 0;
+}

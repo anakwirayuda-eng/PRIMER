@@ -175,6 +175,8 @@ export interface RwState {
   kkTersurvei: number
   /** IKS agregat RW 0-1 (kanonik, hanya dari KK yang punya data). */
   iks: number
+  /** Bonus IKS persisten dari program/kegiatan lapangan (M2) — ikut dihitung kader. */
+  bonusIks: number
 }
 
 /* ---------------------------------------------------------------------------
@@ -201,6 +203,58 @@ export interface KunjunganState {
   hipotesis?: 'kapabilitas' | 'kesempatan' | 'motivasi'
   intervensiDipilih?: string
 }
+
+/* ---------------------------------------------------------------------------
+ * Kegiatan lapangan terjadwal (M2) — Posyandu / Prolanis / Respons KLB
+ * Satu mesin sesi generik: dek kartu keputusan yang dijawab berurutan.
+ * ------------------------------------------------------------------------- */
+
+export type JenisKegiatan = 'posyandu' | 'prolanis' | 'klb'
+
+export interface PilihanKegiatan {
+  id: string
+  label: string
+  benar: boolean
+  /** Umpan balik singkat setelah memilih (pedagogis, muncul di kartu). */
+  respons: string
+}
+
+export interface KartuKegiatan {
+  id: string
+  judul: string
+  narasi: string
+  pilihan: PilihanKegiatan[]
+  /** Kaitan peserta Prolanis (untuk efek parameter pasca-sesi). */
+  pesertaId?: string
+}
+
+export interface KegiatanState {
+  jenis: JenisKegiatan
+  /** RW lokasi (posyandu/klb). */
+  rw?: number
+  /** Kasus kluster yang direspons (klb). */
+  kasusId?: string
+  kartu: KartuKegiatan[]
+  /** Index kartu aktif. */
+  index: number
+  jawaban: { kartuId: string; pilihanId: string; benar: boolean }[]
+}
+
+/** Peserta program Prolanis (penyakit kronis HT/DM) — roster bulanan. */
+export interface PesertaProlanis {
+  id: string
+  nama: string
+  usia: number
+  jenisKelamin: JenisKelamin
+  rw: number
+  jenis: 'ht' | 'dm'
+  /** Parameter kontrol: sistolik (ht) atau GDS (dm). */
+  param: number
+  /** Sesi berturut-turut dengan parameter tak terkontrol → jembatan UKP. */
+  takTerkontrolBerturut: number
+}
+
+export type FokusProgram = 'psn' | 'phbs' | 'skrining'
 
 export interface HasilKunjungan {
   keluargaId: string
@@ -297,6 +351,10 @@ export interface SkorTally {
   apathy: number
   /** Pasien auto-resolve yang bermasalah karena dilewatkan — pakan akurasi UKP. */
   autoBermasalah: number
+  /** Kegiatan lapangan M2 (statistik & debrief; skor mengalir via IKS). */
+  posyanduSesi: number
+  prolanisSesi: number
+  klbTuntas: number
   /** Hari stamina habis total (pakan burnout/resiliensi). */
   hariKelelahan: number
   karmaTerjadi: number
@@ -327,7 +385,7 @@ export interface LogEntry {
  * ROOT STATE
  * ------------------------------------------------------------------------- */
 
-export type LayarGame = 'meja' | 'klinik' | 'peta' | 'kunjungan' | 'dex' | 'rapor'
+export type LayarGame = 'meja' | 'klinik' | 'peta' | 'kunjungan' | 'kegiatan' | 'dex' | 'rapor'
 
 export interface GameState {
   /** Versi skema save. */
@@ -366,6 +424,17 @@ export interface GameState {
   kunjungan?: KunjunganState
   /** Hasil kunjungan hari ini (untuk debrief). */
   hasilKunjunganHariIni?: HasilKunjungan
+
+  /** Sesi kegiatan lapangan aktif (M2): posyandu/prolanis/klb. */
+  kegiatan?: KegiatanState
+  /** Slot lapangan (siang) sudah terpakai hari ini — kunjungan ATAU kegiatan. */
+  lapanganTerpakai: boolean
+  /** Program Prolanis: roster kronis + jadwal sesi (terbuka D30). */
+  prolanis: { roster: PesertaProlanis[]; sesiBerikutHari?: number }
+  /** Hari posyandu terakhir per RW (cooldown 30 hari). Kunci = String(nomor RW). */
+  posyanduRwTerakhir: Record<string, number>
+  /** Program wilayah agregat (M2.10): fokus mingguan menekan penularan + bonus IKS. */
+  program: { fokus?: FokusProgram; rwFokus?: number; mingguDitetapkan?: number }
 
   inbox: Surat[]
   jadwal: JadwalItem[]

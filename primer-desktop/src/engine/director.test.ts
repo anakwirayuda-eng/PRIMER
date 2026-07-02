@@ -90,6 +90,7 @@ function buatTally(override?: Partial<SkorTally>): SkorTally {
     kunjunganDiusir: 0,
     apathy: 0,
     autoBermasalah: 0,
+    posyanduSesi: 0, prolanisSesi: 0, klbTuntas: 0,
     hariKelelahan: 0,
     karmaTerjadi: 0,
     karmaDicegah: 0,
@@ -105,6 +106,7 @@ function buatRw(nomor: number, iks: number): RwState {
     totalKk: 25,
     kkTersurvei: iks > 0 ? 10 : 0,
     iks,
+    bonusIks: 0,
   }
 }
 
@@ -151,6 +153,10 @@ function buatState(override?: Partial<GameState>): GameState {
     refleksi: {},
     flags: {},
     layar: 'meja',
+    lapanganTerpakai: false,
+    prolanis: { roster: [] },
+    posyanduRwTerakhir: {},
+    program: {},
     ...override,
   }
 }

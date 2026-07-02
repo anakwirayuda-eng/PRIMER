@@ -418,3 +418,22 @@
   align-self: center;
   min-width: 260px;
 }
+
+/* -- M2: kegiatan lapangan & program wilayah -------------------------------- */
+.mk__lapangan-aksi {
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+.mk__program {
+  margin-top: var(--sp-4);
+}
+.mk__program-opsi {
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+.mk__lokmin-rival {
+  border-left: 4px solid var(--kunyit-600);
+  margin: var(--sp-3) 0;
+}
