@@ -70,7 +70,12 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
 11. ✅ **Lokakarya Mini** (D31/D61): modal rapor formatif 4 dimensi + *ghost* rival
     dr. Ratih (skor statis 71/78) — tekanan sosial tanpa multiplayer.
 
-## M3 — Konten Skala Penuh & Rujukan Berjenjang (90 hari tidak boleh kering)
+## M3 — Konten Skala Penuh & Rujukan Berjenjang (checkpoint ✅ 2026-07-03)
+
+> **Status M3a selesai:** 67 kasus (16→67), SISRUTE berjenjang + PRB + confidence-tag,
+> 4 guardrail balance terpasang, audit medis 5-dokter (9 fix P1/P2, nol P0), UI pemilih
+> RS terverifikasi. 116 test hijau. SISA M3: IGD penuh (butir 14), keluarga 6→16
+> (butir 15), musim penuh (butir 17) — ditunda ke M3b.
 
 > **Revisi 2026-07-02 (masukan user):** 60+ hanyalah *checkpoint* M3, BUKAN target
 > akhir. Repo lama punya **253 kasus rawat jalan (186×4A + 35×3B + 29×3A + 3×SKDI-2)
