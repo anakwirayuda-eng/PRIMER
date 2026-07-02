@@ -58,21 +58,40 @@ bonusTrust). Yang BELUM diport dari engine lama (`src/game/` repo web) — uruta
 11. **Lokakarya Mini bulanan** (D30/D60): rapor formatif + *ghost* rival dr. Ratih
     (data statis, tanpa multiplayer).
 
-## M3 — Konten Skala Penuh (90 hari tidak boleh kering)
+## M3 — Konten Skala Penuh & Rujukan Berjenjang (90 hari tidak boleh kering)
 
-12. **Kasus klinis 16 → 60+** (target akhir: 144 ter-cover Dex): port bertahap dari
-    ±255 kasus repo lama ke skema `KasusKlinis` baru (prioritas: 144 FKTP wajib;
-    minimal 40 kasus untuk 90 hari tanpa repetisi terasa).
-13. **IGD penuh**: triase + deteriorasi per-langkah + aksi stabilisasi ber-vitalEffect
+> **Revisi 2026-07-02 (masukan user):** 60+ hanyalah *checkpoint* M3, BUKAN target
+> akhir. Repo lama punya **253 kasus rawat jalan (186×4A + 35×3B + 29×3A + 3×SKDI-2)
+> + ~34 kasus IGD** — kasus di atas kompetensi 4A itu disengaja: pemain belajar
+> MENGENALI-lalu-MERUJUK sesuai sistem pelayanan kesehatan berjenjang, bukan hanya
+> menatalaksana. Target full-fledged mengembalikan paritas itu.
+
+12. **Kasus klinis bertahap**: checkpoint M3 = 16 → **60+** (semua kategori terisi,
+    ≥12 di antaranya kasus wajib-rujuk 3A/3B agar latihan rujukan hadir sejak dini);
+    target full-fledged = **144/144 penyakit FKTP punya kasus 4A playable + ±60 kasus
+    wajib-rujuk (3A/3B/2) + ±20 IGD ≈ 225 kasus** — port dari aset repo lama
+    (konversi skema sudah terbukti di 16 kasus pertama; sumber 186 kasus 4A lama
+    lebih dari cukup menutup daftar 144).
+13. **Sistem rujukan berjenjang penuh** (port `ReferralSISRUTEModal` + `HospitalDB`):
+    disposisi RUJUK berkembang dari SBAR-saja menjadi alur SISRUTE — pilih RS tujuan
+    (spesialisasi/jarak/ketersediaan bed), moda ambulans, lalu **penolakan berjenjang**
+    seperti repo lama (RS menolak rujukan kasus 144-FKTP; bed penuh; spesialisasi tak
+    cocok); **PRB (Program Rujuk Balik)**: pasien yang dirujuk KEMBALI dari RS dengan
+    surat balasan → kontrol lanjutan di poli (loop rujukan dua arah). Plus
+    **confidence-tagging guillotine** (catatan dossier lama): merujuk kasus non-4A
+    dengan TEPAT diberi *reward* kalibrasi — guillotine tidak boleh mengajarkan
+    "jangan pernah merujuk". Dex diperluas: entri non-4A dihitung dikuasai bila
+    dikenali-dan-dirujuk-benar (kompetensinya memang "kenali & rujuk").
+14. **IGD penuh**: triase + deteriorasi per-langkah + aksi stabilisasi ber-vitalEffect
     (port ringan `EmergencyRegistry` ~70 aksi) — sebagai *interrupt event* dramatis,
-    bukan layar permanen. Kode Biru→RJP→Kode Hitam.
-14. **Keluarga binaan 6 → 16** + arc 3-babak untuk sebagian (format Bu Wulan),
+    bukan layar permanen. Kode Biru→RJP→Kode Hitam; stabilisasi-dulu-baru-rujuk dinilai.
+15. **Keluarga binaan 6 → 16** + arc 3-babak untuk sebagian (format Bu Wulan),
     roster maks naik 8 → 16.
-15. **KIA**: ANC K1–K4 + skoring risiko bumil (port `PregnancyEngine`) — masuk sebagai
+16. **KIA**: ANC K1–K4 + skoring risiko bumil (port `PregnancyEngine`) — masuk sebagai
     jalur kasus poli + skenario kunjungan bumil risiko tinggi.
-16. **Kasus gigi dasar** (port `DentalDiagnosisEngine` FDI/DMFT) — opsional pasca-16.
-17. **Musim penuh**: event kalender (17 Agustus, musim panen → HT bolos kontrol,
-    pancaroba → ISPA) + hari kesehatan nasional sebagai surat/event.
+17. **Musim penuh & pelengkap**: event kalender (17 Agustus, musim panen → HT bolos
+    kontrol, pancaroba → ISPA) + hari kesehatan nasional sebagai surat/event; kasus
+    gigi dasar (port `DentalDiagnosisEngine` FDI/DMFT) opsional di ekor M3.
 
 ## M4 — Ekonomi & Manajemen Bergigi
 
@@ -139,4 +158,4 @@ bonusTrust). Yang BELUM diport dari engine lama (`src/game/` repo web) — uruta
   kasus trap; solusi jangka panjang: varian jawaban ber-state di skema konten).
 - Bundle renderer 1.1 MB (belum code-split; belum masalah untuk desktop).
 - `arcSelesai` global per keluarga (bukan per-skenario) — cukup untuk arc 2 kunjungan;
-  revisit saat arc 3+ babak (M3.14).
+  revisit saat arc 3+ babak (M3.15).
