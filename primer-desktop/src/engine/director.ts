@@ -14,6 +14,7 @@ import { musimDariHari } from './state'
 import type { ContentPack } from '@content/pack'
 import type { KasusKlinis, Persona } from '@content/types'
 import type { Rng } from './core/rng'
+import { clusterAktif } from './surveilans'
 
 // Re-export skor untuk UI: layar Rapor/MejaKerja mengimpor dari '@engine/director'.
 export { hitungSkor, ringkasanHarian } from './scoring'
@@ -68,6 +69,7 @@ export function buatPasienDariKasus(
     kasusId,
     bpjs: rng.chance(0.7),
     alergi,
+    rw: rng.int(1, 8),
     bonusTrust: false,
   }
   return { ...dasar, ...override }
@@ -83,7 +85,7 @@ function kasusAman(k: KasusKlinis): boolean {
   return k.skdi === '4A' && !k.harusDirujuk
 }
 
-function bobotKasus(k: KasusKlinis, state: GameState): number {
+function bobotKasus(k: KasusKlinis, state: GameState, berkluster: ReadonlySet<string>): number {
   // Leitner-lite dari Dex: belum pernah ×3; lemah (★0-1) ×2; dikuasai (★3) ×0.5.
   const entri = state.dex[k.id]
   let bobot: number
@@ -96,6 +98,10 @@ function bobotKasus(k: KasusKlinis, state: GameState): number {
   const musim = musimDariHari(state.hari)
   if (musim === 'hujan' && (k.kategori === 'infeksi' || k.kategori === 'pencernaan')) bobot *= 2
   if (musim === 'kemarau' && (k.kategori === 'respirasi' || k.kategori === 'kulit')) bobot *= 1.5
+
+  // Surveilans balik (M1.2): kluster aktif menyalakan penularan — kasus yang
+  // sedang berkluster lebih sering datang ke poli sampai wilayahnya dibereskan.
+  if (berkluster.has(k.id)) bobot *= 2.5
 
   return bobot
 }
@@ -121,11 +127,12 @@ export function susunAntrianHarian(
   const mingguPertama = state.hari <= 7
   const poolAman = semua.filter(kasusAman)
   const terpilih: KasusKlinis[] = []
+  const berkluster = new Set(clusterAktif(state).map((c) => c.kasusId))
 
   const pilihDari = (pool: KasusKlinis[]): KasusKlinis | undefined => {
     const kandidat = pool.filter((k) => !terpilih.some((t) => t.id === k.id))
     if (kandidat.length === 0) return undefined
-    return rng.weighted(kandidat.map((k) => ({ item: k, bobot: bobotKasus(k, state) })))
+    return rng.weighted(kandidat.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster) })))
   }
 
   for (let i = 0; i < jumlah; i++) {
@@ -150,7 +157,7 @@ export function susunAntrianHarian(
     const belumPernahAman = mingguPertama ? belumPernah.filter(kasusAman) : belumPernah
     const sumber = belumPernahAman.length > 0 ? belumPernahAman : belumPernah
     if (sumber.length > 0) {
-      const pengganti = rng.weighted(sumber.map((k) => ({ item: k, bobot: bobotKasus(k, state) })))
+      const pengganti = rng.weighted(sumber.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster) })))
       terpilih[terpilih.length - 1] = pengganti
     }
   }

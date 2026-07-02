@@ -52,6 +52,20 @@ function clamp(nilai: number, min: number, maks: number): number {
   return Math.max(min, Math.min(maks, nilai))
 }
 
+/** Tahap kesiapan berubah MUNDUR satu langkah (M1: drift & mangkir follow-up). */
+export function mundurTtm(ttm: TahapTtm): TahapTtm {
+  switch (ttm) {
+    case 'pemeliharaan':
+      return 'aksi'
+    case 'aksi':
+      return 'kontemplasi'
+    case 'kontemplasi':
+      return 'prekontemplasi'
+    default:
+      return 'prekontemplasi'
+  }
+}
+
 /** Tahap kesiapan berubah maju satu langkah (mentok di pemeliharaan). */
 function majuTtm(ttm: TahapTtm): TahapTtm {
   switch (ttm) {
@@ -258,6 +272,14 @@ export function selesaikanKunjungan(
   const hipotesisBenar = kj.hipotesis === skenario.hambatanSebenarnya
   const berhasil = !kj.diusir && hipotesisBenar && intervensiCocok
 
+  // Bridge bertingkat (M1.1): partial = tidak diusir & TEPAT SALAH SATU dari
+  // {hipotesis, intervensi} — kamu menyentuh keluarga ini tapi belum menggerakkan.
+  const tingkat: 'berhasil' | 'partial' | 'gagal' = berhasil
+    ? 'berhasil'
+    : !kj.diusir && (hipotesisBenar || intervensiCocok)
+      ? 'partial'
+      : 'gagal'
+
   const totalPilihan = kj.pilihanDiambil.length
   const kualitasMi = totalPilihan === 0 ? 0 : Math.round((100 * tepat) / totalPilihan)
 
@@ -271,6 +293,7 @@ export function selesaikanKunjungan(
     kualitasMi,
     indikatorTerverifikasi,
     narasiPenutup: berhasil ? skenario.penutupBerhasil : skenario.penutupGagal,
+    tingkat,
     indikatorDibohongi,
   }
   return hasil
@@ -324,14 +347,21 @@ export function terapkanHasil(
     }
   }
 
+  // Follow-up berkalender (M1.4): kunjungan APA PUN menghapus janji lama;
+  // kunjungan berhasil yang arc-nya belum tamat membuat janji kontrol baru.
+  // Mangkir dari janji dihukum reducer (TTM mundur) saat jatuh tempo lewat.
+  const { followUpHari: _janjiLama, ...kelBersih } = kel
+  const followUpBaru = hasil.berhasil && !arcTamatBerhasil ? hari + 4 : undefined
+
   return {
-    ...kel,
+    ...kelBersih,
     trust,
     ttm,
     indikator,
     arcIndex,
     jumlahKunjungan: kel.jumlahKunjungan + 1,
     kunjunganTerakhir: hari,
+    ...(followUpBaru !== undefined ? { followUpHari: followUpBaru } : {}),
     // Kegagalan yang sudah terjadi tidak bisa di-undo — krisis yang meletus
     // tetap tercatat gagal walau kunjungan berikutnya berjalan baik.
     ...(arcTamatBerhasil && kel.arcSelesai !== 'gagal' ? { arcSelesai: 'berhasil' as const } : {}),

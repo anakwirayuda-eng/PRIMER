@@ -588,7 +588,7 @@ function buatStateKader(): GameState {
         k1: { id: 'k1', nama: 'Bu Sari', rw: 1, ketelitian: 100, bias: ['tidak_merokok'], kkTersurvei: 0 },
       },
       rw: [{ nomor: 1, nama: 'Banjar Kaja', jarak: 'dekat', totalKk: 25, kkTersurvei: 0, iks: 0 }],
-      binaan: [],
+      binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 }
     },
     inbox: [],
     jadwal: [],

@@ -141,7 +141,7 @@ function buatState(override?: Partial<GameState>): GameState {
     stamina: 6,
     burnout: 0,
     klinik: { antrian: [], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } },
-    desa: { keluarga: {}, kader: {}, rw: [], binaan: [] },
+    desa: { keluarga: {}, kader: {}, rw: [], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } },
     inbox: [],
     jadwal: [],
     tally: buatTally(),
@@ -376,7 +376,7 @@ describe('hitungSkor — profil adversarial', () => {
       miTotal: 10,
       miTepat: 10,
     }
-    const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8), buatRw(2, 0)], binaan: [] }
+    const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8), buatRw(2, 0)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
     const rajin = hitungSkor(buatState({ desa, tally: buatTally(tallyDasar) }))
     const apatis = hitungSkor(buatState({ desa, tally: buatTally({ ...tallyDasar, apathy: 10 }) }))
     // iksDesa = rata-rata rw ber-iks > 0 saja → 0.8
@@ -406,7 +406,7 @@ describe('hitungSkor — profil adversarial', () => {
     )
     expect(cowboy.ukp).toBeCloseTo(35 - 6)
 
-    const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8)], binaan: [] }
+    const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
     const tallyUkm = { kunjunganTotal: 10, kunjunganBerhasil: 10, miTotal: 10, miTepat: 10 }
     const karma = hitungSkor(
       buatState({ desa, tally: buatTally({ ...tallyUkm, karmaTerjadi: 2, karmaDicegah: 1 }) }),
@@ -429,7 +429,7 @@ describe('hitungSkor — profil adversarial', () => {
   it('grade & label mengikuti ambang BUILD_SPECS', () => {
     const sempurna = hitungSkor(
       buatState({
-        desa: { keluarga: {}, kader: {}, rw: [buatRw(1, 1)], binaan: [] },
+        desa: { keluarga: {}, kader: {}, rw: [buatRw(1, 1)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } },
         tally: buatTally({
           totalPasien: 10,
           diagnosisBenar: 10,
@@ -512,7 +512,7 @@ describe('serialize / deserialize', () => {
           kader_1: { id: 'kader_1', nama: 'Bu Komang', rw: 1, ketelitian: 70, bias: ['kb'], kkTersurvei: 8 },
         },
         rw: [buatRw(1, 0.62)],
-        binaan: ['keluarga_uji'],
+        binaan: ['keluarga_uji'], surveilans: [], drift: { minggu: 1, jumlah: 0 }
       },
       kunjungan: {
         keluargaId: 'keluarga_uji',

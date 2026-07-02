@@ -15,6 +15,7 @@ import { PACK } from '@content/index'
 import { PetaSvg } from './peta/PetaSvg'
 import { KartuKeluarga } from './peta/KartuKeluarga'
 import { karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta/petaUtil'
+import { clusterAktif } from '@engine/surveilans'
 import './PetaDesa.css'
 
 const MAKS_BINAAN = 8
@@ -55,6 +56,10 @@ export function PetaDesa() {
     .filter((r): r is { id: string; content: KeluargaBinaan; kel: KeluargaState } =>
       Boolean(r.content && r.kel),
     )
+
+  // Sinyal kluster surveilans (M1.2): diagnosis menular di poli → peringatan wilayah.
+  const semuaCluster = clusterAktif(state)
+  const clusterRwAktif = rwTerpilih === null ? [] : semuaCluster.filter((c) => c.rw === rwTerpilih)
 
   const rwAktif = rwTerpilih === null ? undefined : state.desa.rw.find((r) => r.nomor === rwTerpilih)
   const kandidat =
@@ -182,6 +187,15 @@ export function PetaDesa() {
                   <span className="chip">belum ada data — kader belum sampai ke sini</span>
                 )}
               </div>
+              {clusterRwAktif.length > 0 && (
+                <div className="baris teks-xs" style={{ flexWrap: 'wrap' }}>
+                  {clusterRwAktif.map((c) => (
+                    <span key={c.kasusId} className="chip chip--merah" title="Kluster surveilans: beberapa kasus penyakit sama dari RW ini tercatat di poli dalam 14 hari — kunjungi wilayahnya.">
+                      ⚠ KLUSTER {(PACK.kasus[c.kasusId]?.nama ?? c.kasusId).toUpperCase()} — {c.jumlah} kasus/14 hr
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="peta-daftar">

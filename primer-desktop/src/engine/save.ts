@@ -59,5 +59,19 @@ export function deserialize(json: string): GameState | null {
     if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) return null
   }
 
+  // Migrasi-lite M1: surveilans & drift untuk save pra-bridge.
+  const desa = st['desa'] as Record<string, unknown>
+  if (!Array.isArray(desa['surveilans'])) desa['surveilans'] = []
+  if (typeof desa['drift'] !== 'object' || desa['drift'] === null) {
+    desa['drift'] = { minggu: 1, jumlah: 0 }
+  }
+  // Pasien lama tanpa RW mendapat RW 1 (cukup untuk melanjutkan save lama).
+  const klinik = st['klinik'] as Record<string, unknown>
+  if (Array.isArray(klinik['antrian'])) {
+    for (const p of klinik['antrian'] as Record<string, unknown>[]) {
+      if (typeof p['rw'] !== 'number') p['rw'] = 1
+    }
+  }
+
   return st as unknown as GameState
 }

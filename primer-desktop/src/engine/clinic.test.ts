@@ -262,6 +262,7 @@ function buatPasien(override: Partial<PasienAktif> = {}): PasienAktif {
     kasusId: 'faringitis_mini',
     bpjs: true,
     alergi: [],
+    rw: 3,
     bonusTrust: false,
     ...override,
   }

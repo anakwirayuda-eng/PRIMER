@@ -10,9 +10,10 @@ import type { GameState, PenilaianEncounter, Surat } from './state'
 import type { ContentPack } from '@content/pack'
 import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter } from './clinic'
-import { buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil } from './kunjungan'
+import { buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm } from './kunjungan'
 import { prosesHarianKader } from './kader'
 import { susunAntrianHarian, buatPasienDariKasus } from './director'
+import { kasusMenular, pangkasSurveilans, hitungCluster } from './surveilans'
 
 export interface HasilAdvance {
   state: GameState
@@ -236,11 +237,18 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
             nama: encFinal.pasien.nama,
             usia: encFinal.pasien.usia,
             jenisKelamin: encFinal.pasien.jenisKelamin,
+            rw: encFinal.pasien.rw,
             ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
           },
         ]
         penilaianFinal = { ...nilai, konsekuensiDijadwalkan: true }
       }
+
+      // Surveilans balik UKP→UKM (M1.2): diagnosis menular tercatat per RW —
+      // pola di poli menyalakan sinyal di peta, apa pun disposisinya.
+      const desa = kasusMenular(kasus.id)
+        ? { ...s.desa, surveilans: [...s.desa.surveilans, { hari: s.hari, rw: encFinal.pasien.rw, kasusId: kasus.id }] }
+        : s.desa
 
       return {
         state: {
@@ -249,6 +257,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
           tally: t,
           dex,
           jadwal,
+          desa,
           klinik: {
             ...s.klinik,
             aktif: undefined,
@@ -318,7 +327,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       const events = [...hasilAksi.events]
 
       if (hasilAksi.selesai) {
-        const hasil = selesaikanKunjungan(hasilAksi.kj, skenario, kel)
+        let hasil = selesaikanKunjungan(hasilAksi.kj, skenario, kel)
+
+        // SDOH armor (M1.6, port BehaviorCaseEngine): keluarga miskin/rentan
+        // menahan pendekatan yang salah sasaran — kenaikan trust dipangkas
+        // setengah bila hipotesis hambatan meleset. Diagnosis tepat menembus armor.
+        const kenaArmor =
+          (kelContent.ekonomi === 'miskin' || kelContent.ekonomi === 'rentan') &&
+          !hasil.hipotesisBenar &&
+          hasil.trustDelta > 0
+        if (kenaArmor) {
+          hasil = { ...hasil, trustDelta: Math.floor(hasil.trustDelta / 2), armorAktif: true }
+        }
+
         let kelBaru = terapkanHasil(kel, hasil, skenario, s.hari)
 
         // Tally MI & kunjungan
@@ -333,17 +354,36 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
         t.miTotal += totalPilihan
         t.miTepat += Math.round((hasil.kualitasMi / 100) * totalPilihan)
 
-        // Karma dicegah: kunjungan berhasil membatalkan jadwal karma keluarga ini
+        // Bridge bertingkat (M1.1): nasib jadwal karma keluarga ini mengikuti
+        // gradasi hasil — berhasil membatalkan, partial menunda jam pasir,
+        // gagal/diusir justru mempercepatnya.
         let jadwal = next.jadwal
-        if (hasil.berhasil) {
-          const adaKarma = jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId)
-          if (adaKarma) {
-            jadwal = jadwal.filter((j) => !(j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId))
-            const { karmaAktif: _lepas, ...kelTanpaKarma } = kelBaru
-            kelBaru = kelTanpaKarma
-            t.karmaDicegah += 1
-            events.push({ type: 'KARMA_DICEGAH', narasi: `Krisis di keluarga ${kelContent.namaKeluarga} berhasil dicegah.` })
-          }
+        const adaKarma = jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId)
+        if (adaKarma && hasil.berhasil) {
+          jadwal = jadwal.filter((j) => !(j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId))
+          const { karmaAktif: _lepas, ...kelTanpaKarma } = kelBaru
+          kelBaru = kelTanpaKarma
+          t.karmaDicegah += 1
+          events.push({ type: 'KARMA_DICEGAH', narasi: `Krisis di keluarga ${kelContent.namaKeluarga} berhasil dicegah.` })
+        } else if (adaKarma && hasil.tingkat === 'partial') {
+          jadwal = jadwal.map((j) =>
+            j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId ? { ...j, hari: j.hari + 3 } : j,
+          )
+          kelBaru = kelBaru.karmaAktif
+            ? { ...kelBaru, karmaAktif: { ...kelBaru.karmaAktif, jatuhTempoHari: kelBaru.karmaAktif.jatuhTempoHari + 3 } }
+            : kelBaru
+        } else if (adaKarma && hasil.tingkat === 'gagal') {
+          jadwal = jadwal.map((j) =>
+            j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId
+              ? { ...j, hari: Math.max(s.hari + 1, j.hari - 2) }
+              : j,
+          )
+          kelBaru = kelBaru.karmaAktif
+            ? {
+                ...kelBaru,
+                karmaAktif: { ...kelBaru.karmaAktif, jatuhTempoHari: Math.max(s.hari + 1, kelBaru.karmaAktif.jatuhTempoHari - 2) },
+              }
+            : kelBaru
         }
 
         next = {
@@ -440,6 +480,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     usia?: number
     jenisKelamin?: 'L' | 'P'
     keluargaId?: string
+    rw?: number
   }
   const pasienKembali: PasienJatuhTempo[] = []
   let keluargaMap = s.desa.keluarga
@@ -470,6 +511,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.usia !== undefined ? { usia: j.usia } : {}),
         ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
         ...(j.keluargaId ? { keluargaId: j.keluargaId } : {}),
+        ...(j.rw !== undefined ? { rw: j.rw } : {}),
       })
     } else if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId) {
       const kelContent = pack.keluarga[j.keluargaId]
@@ -484,6 +526,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           kasusId: j.kasusId,
           catatan: j.catatan ?? '',
           keluargaId: j.keluargaId,
+          rw: kelContent.rw,
           ...(j.nama ? { nama: j.nama } : {}),
           ...(j.usia !== undefined ? { usia: j.usia } : {}),
           ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
@@ -502,6 +545,77 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     }
   }
 
+  // Follow-up mangkir (M1.4): janji kontrol yang lewat >1 hari = komitmen layu.
+  // TTM mundur satu tahap; kader mengabarkan — tidak ada pembusukan senyap.
+  for (const [id, kel] of Object.entries(keluargaMap)) {
+    if (kel.followUpHari === undefined || hari <= kel.followUpHari + 1) continue
+    const kelContent = pack.keluarga[id]
+    const { followUpHari: _lewat, ...tanpaJanji } = kel
+    keluargaMap = { ...keluargaMap, [id]: { ...tanpaJanji, ttm: mundurTtm(kel.ttm) } }
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'kabar_warga',
+        dari: 'Kader RW ' + (kelContent?.rw ?? '?'),
+        judul: `${kelContent?.namaKeluarga ?? id} — janji kontrol terlewat`,
+        isi: `Dok, keluarga itu menunggu kunjungan lanjutan yang dijanjikan, tapi tidak ada yang datang. Semangat mereka yang kemarin mulai tumbuh sekarang kendur lagi. Perubahan perilaku itu seperti api kecil — kalau tidak dijaga, padam.`,
+        kaitKeluargaId: id,
+      }),
+    )
+  }
+
+  // Drift keluarga rawan (M1.3 — versi DIBALIK dari bug lama: memburuk, bukan
+  // membaik): keluarga berisiko yang ≥7 hari tak disentuh dokter bisa memburuk.
+  // Maks 2 kejadian/pekan, SELALU diberitakan lewat surat kader.
+  const mingguIni = Math.ceil(hari / 7)
+  let drift = s.desa.drift.minggu === mingguIni ? { ...s.desa.drift } : { minggu: mingguIni, jumlah: 0 }
+  const rngDrift = new Rng(s.seed, 'drift', hari)
+  for (const [id, kel] of Object.entries(keluargaMap)) {
+    if (drift.jumlah >= 2) break
+    if (kel.arcSelesai) continue
+    const kelContent = pack.keluarga[id]
+    if (!kelContent) continue
+    const rawan = s.desa.binaan.includes(id) || kel.karmaAktif !== undefined
+    if (!rawan) continue
+    const punyaData = Object.values(kel.indikator).some((n) => n.sumber !== 'belum')
+    if (!punyaData) continue
+    const terakhirDisentuh = kel.kunjunganTerakhir ?? 0
+    if (hari - terakhirDisentuh < 7) continue
+    if (!rngDrift.chance(0.35)) continue
+
+    let kelBaru = kel
+    let apaYangMemburuk: string
+    if (kel.ttm !== 'prekontemplasi') {
+      kelBaru = { ...kel, ttm: mundurTtm(kel.ttm) }
+      apaYangMemburuk = 'niat berubah mereka mengendur'
+    } else {
+      const kandidat = Object.entries(kel.indikator).filter(
+        ([, n]) => n.sumber !== 'belum' && n.statusSebenarnya === 'ya' && n.status !== 'na',
+      )
+      if (kandidat.length === 0) continue
+      const [indId] = rngDrift.pick(kandidat)
+      const lama = kel.indikator[indId as keyof typeof kel.indikator]
+      kelBaru = {
+        ...kel,
+        indikator: {
+          ...kel.indikator,
+          [indId]: { ...lama, status: 'tidak' as const, statusSebenarnya: 'tidak' as const, hariData: hari },
+        },
+      }
+      apaYangMemburuk = `indikator ${indId.replace(/_/g, ' ')} kembali jatuh`
+    }
+    keluargaMap = { ...keluargaMap, [id]: kelBaru }
+    drift = { ...drift, jumlah: drift.jumlah + 1 }
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'kabar_warga',
+        dari: 'Kader RW ' + kelContent.rw,
+        judul: `${kelContent.namaKeluarga} — kabar kurang baik`,
+        isi: `Dok, sudah lama tidak ada yang menengok keluarga ini; ${apaYangMemburuk}. Jarak dan waktu bekerja melawan kita — keluarga rawan yang dibiarkan tidak diam di tempat, mereka mundur.`,
+        kaitKeluargaId: id,
+      }),
+    )
+  }
+
   // Kader bekerja harian (sensus + laporan + kadang salah data)
   const stateSementara: GameState = {
     ...s,
@@ -512,11 +626,50 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   keluargaMap = kaderHasil.keluarga
   suratBaru.push(...kaderHasil.surat)
 
+  // Surveilans (M1.2): pangkas jendela 14 hari, lalu deteksi KLUSTER BARU —
+  // pola di poli menjadi kabar di peta (satu surat per kluster per RW).
+  const surveilans = pangkasSurveilans(s.desa.surveilans, hari)
+  const flags = { ...s.flags }
+  for (const c of hitungCluster(surveilans, hari)) {
+    const kunciFlag = `cluster_${c.kasusId}_rw${c.rw}`
+    if (flags[kunciFlag]) continue
+    flags[kunciFlag] = true
+    const namaKasus = pack.kasus[c.kasusId]?.nama ?? c.kasusId
+    const namaRw = pack.rw.find((r) => r.nomor === c.rw)?.nama ?? `RW ${c.rw}`
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'laporan_kader',
+        dari: 'Petugas Surveilans',
+        judul: `SINYAL KLUSTER — ${namaKasus} di ${namaRw}`,
+        isi: `${c.jumlah} kasus ${namaKasus} dari ${namaRw} tercatat di poli dalam 14 hari terakhir. Ini bukan kebetulan, Dok — ada sumbernya di lapangan. Poli mengobati satu-satu; yang menghentikan penularan adalah tindakan di wilayah. Prioritaskan kunjungan/pembinaan ke RW itu.`,
+      }),
+    )
+  }
+
+  // KBK riil (M1.5): tiap awal bulan (hari 31, 61), kapitasi BPJS masuk dengan
+  // pengali Kapitasi Berbasis Komitmen dari IKS desa — kerja UKM terasa di dompet.
+  let kapitasi = s.kapitasi
+  if (hari > 1 && hari % 30 === 1) {
+    const rwBerdata = kaderHasil.rw.filter((r) => r.iks > 0)
+    const iksDesa = rwBerdata.length > 0 ? rwBerdata.reduce((jml, r) => jml + r.iks, 0) / rwBerdata.length : 0
+    const pengali = iksDesa > 0.8 ? 1.3 : iksDesa >= 0.5 ? 1.0 : 0.8
+    const masukan = Math.round(6_000_000 * pengali)
+    kapitasi += masukan
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'sistem',
+        dari: 'BPJS Kesehatan',
+        judul: `Kapitasi bulan ini: Rp ${masukan.toLocaleString('id-ID')} (KBK ×${pengali})`,
+        isi: `Pembayaran kapitasi diterima. Pengali Kapitasi Berbasis Komitmen bulan ini ×${pengali} — ditentukan IKS desa binaanmu (${(iksDesa * 100).toFixed(0)}%). ${pengali < 1 ? 'IKS di bawah 0,5 memangkas pendapatan Puskesmas — kerja preventif di lapangan adalah kerja finansial juga.' : pengali > 1 ? 'IKS di atas 0,8 memberi bonus komitmen. Pertahankan.' : 'Naikkan IKS desa di atas 0,8 untuk pengali 1,3.'}`,
+      }),
+    )
+  }
+
   // Susun antrian pagi: Director + pasien kembali/karma di depan
   const stateUntukDirector: GameState = {
     ...stateSementara,
     dex,
-    desa: { ...stateSementara.desa, keluarga: keluargaMap, rw: kaderHasil.rw, kader: kaderHasil.kader },
+    desa: { ...stateSementara.desa, keluarga: keluargaMap, rw: kaderHasil.rw, kader: kaderHasil.kader, surveilans },
   }
   // Konten bisa berubah antar versi save — buang jadwal dengan kasus tak dikenal.
   const pasienKembaliValid = pasienKembali.filter((p) => pack.kasus[p.kasusId])
@@ -534,13 +687,13 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       ...(p.usia !== undefined ? { usia: p.usia } : {}),
       ...(p.jenisKelamin ? { jenisKelamin: p.jenisKelamin } : {}),
       ...(p.keluargaId ? { keluargaId: p.keluargaId } : {}),
+      ...(p.rw !== undefined ? { rw: p.rw } : {}),
     }),
   )
   const antrian = [...antrianKembali, ...antrianDirector]
 
   for (const m of suratBaru) events.push({ type: 'SURAT_MASUK', surat: m })
 
-  const flags = { ...s.flags }
   if (hari === HARI_BUKA_PETA) flags['petaBaruTerbuka'] = true
   if (hari === HARI_BUKA_KUNJUNGAN) flags['kunjunganBaruTerbuka'] = true
   if (hari === HARI_REKAP_SLICE) flags['rekapSlice'] = true
@@ -555,12 +708,13 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       burnout,
       tally,
       dex,
+      kapitasi,
       jadwal: jadwalSisa,
       inbox: [...s.inbox, ...suratBaru],
       flags,
       klinik: { antrian, aktif: undefined, selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } },
       hasilKunjunganHariIni: undefined,
-      desa: { ...s.desa, keluarga: keluargaMap, rw: kaderHasil.rw, kader: kaderHasil.kader },
+      desa: { ...s.desa, keluarga: keluargaMap, rw: kaderHasil.rw, kader: kaderHasil.kader, surveilans, drift },
     },
     events,
   }

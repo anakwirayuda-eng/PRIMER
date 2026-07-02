@@ -18,29 +18,35 @@ dimensi + guillotine, inbox + LANJUTKAN, refleksi malam, autosave atomik, audio 
 
 ---
 
-## M1 — "Bridge Penuh UKM↔UKP" (port algoritma repo lama)
+## M1 — "Bridge Penuh UKM↔UKP" ✅ (selesai 2026-07-02, 6/6 butir)
 
 Slice sudah punya bridge *scripted* (karma keluarga → pasien bernama; binaan sukses →
-bonusTrust). Yang BELUM diport dari engine lama (`src/game/` repo web) — urutan port:
+bonusTrust). Enam butir port dari engine lama — SEMUA terimplementasi + 11 test
+integrasi (`m1bridge.test.ts`); catatan implementasi per butir di bawah:
 
-1. **UKP-Bridge probabilistik** (`TheDirector.processUKPBridge` lama): kegagalan
-   kunjungan `partial` → konsekuensi klinis ber-window 3–14 hari dengan probabilitas
-   `failProbability × (0.5 + 0.5×progress)` — bukan hanya karma scripted per-arc.
-   → generalisasi `JadwalItem karma_igd` menjadi konsekuensi bertingkat (critical/moderate).
-2. **Surveilans balik UKP→UKM**: riwayat ICD klinik 14 hari (DBD/diare/pneumonia/TB)
-   mewarnai peta RW sebagai sinyal cluster (port pola `WilayahPage` surveillance layer,
-   versi ringan: chip cluster di petak RW + surat kader).
-3. **Drift keluarga rawan** (versi DIBALIK dari bug lama): keluarga berisiko yang
-   diabaikan >N hari memburuk (indikator target flip 'tidak' / TTM mundur), maks 2
-   kejadian/minggu, SELALU diberitakan lewat inbox. (State & aturan sudah dirancang
-   di GDD §6; belum diimplementasikan.)
-4. **Follow-up berkalender**: `JadwalItem follow_up_kunjungan` + `KeluargaState.followUpHari`
-   (sudah ada di kontrak state, masih yatim): indikator target flip HANYA setelah
-   kunjungan follow-up terverifikasi; mangkir follow-up = TTM mundur.
-5. **KBK riil**: IKS desa → multiplier kapitasi bulanan (formula lama:
-   IKS>0.8 ×1.3 / ≥0.5 ×1.0 / <0.5 ×0.8) — menutup loop UKM→ekonomi.
-6. **SDOH armor** (dari `BehaviorCaseEngine`): keluarga miskin/berpendidikan rendah
-   lebih resisten kecuali diagnosis hambatan tepat — modifier di `selesaikanKunjungan`.
+1. ✅ **Bridge bertingkat** (adaptasi `processUKPBridge` lama ke engine deterministik):
+   hasil kunjungan kini bergradasi `berhasil/partial/gagal` (partial = tepat salah
+   satu dari hipotesis/intervensi). Nasib karma mengikuti: berhasil membatalkan,
+   partial MENUNDA jam pasir +3 hari, gagal/diusir MEMPERCEPAT −2 hari.
+   (Diputuskan deterministik alih-alih probabilistik lama — lebih adil & teruji.)
+2. ✅ **Surveilans balik UKP→UKM** (`surveilans.ts`): diagnosis menular di poli
+   tercatat per RW (pasien kini ber-RW); kluster dalam jendela 14 hari (ambang
+   lama: DBD 2+, diare 3+, ISPA 5+) → chip merah di panel RW + surat "SINYAL
+   KLUSTER" (sekali per kluster) + Director menaikkan bobot kasus berkluster ×2.5
+   (loop UKP→UKM→UKP menutup).
+3. ✅ **Drift keluarga rawan** (versi DIBALIK dari bug lama): keluarga binaan/
+   ber-karma yang punya data & tak disentuh ≥7 hari bisa memburuk (TTM mundur,
+   atau indikator 'ya' jatuh ke 'tidak'), peluang 0.35/hari, cap 2 kejadian/pekan,
+   SELALU diberitakan surat kader — tanpa pembusukan senyap.
+4. ✅ **Follow-up berkalender**: kunjungan berhasil (arc belum tamat) membuat janji
+   `followUpHari = +4 hari`; mangkir >1 hari dari janji → TTM mundur + surat.
+   Saran follow-up di Tas Kunjungan MejaKerja kini hidup.
+5. ✅ **KBK riil**: tiap awal bulan (hari 31/61) kapitasi masuk 6 jt × pengali KBK
+   dari IKS desa (>0.8 ×1.3 / ≥0.5 ×1.0 / <0.5 ×0.8) + surat BPJS yang menjelaskan
+   — kerja UKM terasa di dompet UKP.
+6. ✅ **SDOH armor** (port `BehaviorCaseEngine`): keluarga miskin/rentan memangkas
+   kenaikan trust 50% bila hipotesis hambatan meleset; diagnosis tepat menembus
+   armor. Ditandai `armorAktif` di hasil kunjungan (bahan debrief).
 
 ## M2 — Program UKM Terjadwal (kalender bulanan)
 

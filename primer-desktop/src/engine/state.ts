@@ -41,6 +41,8 @@ export interface PasienAktif {
   bpjs: boolean
   /** Alergi yang dibawa pasien (golongan, mis. 'penisilin'). Tersembunyi sampai ditanya/RM. */
   alergi: string[]
+  /** RW tempat tinggal pasien — pakan surveilans balik UKP→UKM. */
+  rw: number
   /** Kaitan ke keluarga binaan (karma loop dua arah). */
   keluargaId?: string
   /** Pasien dari keluarga yang pernah dikunjungi → lebih jujur/terbuka. */
@@ -212,6 +214,14 @@ export interface HasilKunjungan {
   /** Indikator yang terverifikasi dokter selama observasi. */
   indikatorTerverifikasi: IndikatorPisPk[]
   narasiPenutup: string
+  /**
+   * Gradasi hasil (M1.1 — bridge bertingkat, port processUKPBridge lama):
+   * berhasil = hipotesis & intervensi tepat; partial = salah satunya tepat
+   * (karma tertunda); gagal = keduanya salah / diusir (karma dipercepat).
+   */
+  tingkat?: 'berhasil' | 'partial' | 'gagal'
+  /** SDOH armor aktif: keluarga miskin/rentan menahan trust bila diagnosis meleset. */
+  armorAktif?: boolean
 }
 
 /* ---------------------------------------------------------------------------
@@ -260,6 +270,7 @@ export interface JadwalItem {
   nama?: string
   usia?: number
   jenisKelamin?: 'L' | 'P'
+  rw?: number
 }
 
 /** Penghitung mentah — SATU-SATUNYA sumber skor. Diisi reducer, tak pernah UI. */
@@ -346,6 +357,10 @@ export interface GameState {
     rw: RwState[]
     /** Roster keluarga binaan (id) — maks 8 di slice. */
     binaan: string[]
+    /** Surveilans balik UKP→UKM: diagnosis menular per RW, jendela 14 hari. */
+    surveilans: { hari: number; rw: number; kasusId: string }[]
+    /** Penghitung drift keluarga rawan per pekan (cap 2 kejadian/minggu). */
+    drift: { minggu: number; jumlah: number }
   }
 
   kunjungan?: KunjunganState

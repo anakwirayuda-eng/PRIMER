@@ -91,6 +91,7 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
       keluargaId: id,
       kasusId: skenarioPertama.karma.kasusId,
       catatan: skenarioPertama.karma.narasi,
+      rw: content.rw,
       ...(anggota ? { nama: anggota.nama, usia: anggota.usia, jenisKelamin: anggota.jenisKelamin } : {}),
     })
     const kel = keluarga[id]
@@ -128,7 +129,7 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
       selesaiHariIni: [],
       autoHariIni: { jumlah: 0, bermasalah: 0 },
     },
-    desa: { keluarga, kader, rw, binaan: [] },
+    desa: { keluarga, kader, rw, binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } },
     inbox: suratSambutan(namaDokter),
     jadwal: jadwalKarma,
     tally: {
