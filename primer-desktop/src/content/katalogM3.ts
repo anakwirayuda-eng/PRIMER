@@ -78,6 +78,13 @@ export const OBAT_M3: Record<string, Obat> = {
   mgso4_inj: { id: 'mgso4_inj', nama: 'Magnesium Sulfat 40% Injeksi', kelas: 'antikonvulsan preeklampsia', sediaan: 'ampul', hargaBeli: 8000, hargaJual: 15000, fornas: true },
   vitamin_a_kapsul: { id: 'vitamin_a_kapsul', nama: 'Vitamin A 200.000 IU', kelas: 'suplemen', sediaan: 'kapsul', hargaBeli: 0, hargaJual: 0, fornas: true },
   garam_oralit_zinc: { id: 'garam_oralit_zinc', nama: 'Paket Oralit + Zinc (program)', kelas: 'rehidrasi', sediaan: 'sachet', hargaBeli: 0, hargaJual: 0, fornas: true },
+
+  // -- Tambahan hasil audit medis M3 --
+  laktulosa_syr: { id: 'laktulosa_syr', nama: 'Laktulosa Sirup', kelas: 'laksatif osmotik/pelunak tinja', sediaan: 'sirup', hargaBeli: 9000, hargaJual: 17000, fornas: true },
+  diazepam_rektal_10: { id: 'diazepam_rektal_10', nama: 'Diazepam Rektal 10 mg', kelas: 'antikonvulsan (rescue bangkitan)', sediaan: 'rektal tube', hargaBeli: 12000, hargaJual: 22000, fornas: true },
+  nitrofurantoin_100: { id: 'nitrofurantoin_100', nama: 'Nitrofurantoin 100 mg', kelas: 'antibiotik saluran kemih', sediaan: 'kapsul', hargaBeli: 600, hargaJual: 1300, fornas: true, antibiotik: true },
+  primakuin_15: { id: 'primakuin_15', nama: 'Primakuin 15 mg', kelas: 'antimalaria gametosidal', sediaan: 'tablet', hargaBeli: 0, hargaJual: 0, fornas: true },
+  ezetimibe_10: { id: 'ezetimibe_10', nama: 'Ezetimibe 10 mg', kelas: 'penghambat absorpsi kolesterol', sediaan: 'tablet', hargaBeli: 1500, hargaJual: 3000, fornas: true },
 }
 
 export const LAB_M3: Record<string, ItemLab> = {

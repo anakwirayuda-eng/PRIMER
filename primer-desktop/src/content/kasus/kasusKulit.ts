@@ -825,7 +825,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
   /* ======================================================================
    * 8. Pedikulosis Kapitis (Kutu Kepala) — PILAR: permetrin + kontak + cuci seprai
    * Poin ajar: gatal kulit kepala + telur (nits) melekat erat di batang rambut.
-   * Permetrin 1%; OBATI SEMUA KONTAK serumah/kelas serentak + cuci seprai/topi air panas.
+   * Permetrin (krim 5% tersedia; ideal 1%); OBATI SEMUA KONTAK serumah/kelas serentak + cuci seprai/topi air panas.
    * ==================================================================== */
   {
     id: 'kulit_pedikulosis_kapitis',
@@ -921,12 +921,12 @@ export const KASUS_KULIT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['permetrin_krim'],
       obatSalahUmum: [
-        { id: 'ketokonazol_krim', alasan: 'Pedikulosis disebabkan kutu (parasit), bukan jamur — antijamur tidak berefek. Butuh pedikulisida (permetrin 1%).' },
+        { id: 'ketokonazol_krim', alasan: 'Pedikulosis disebabkan kutu (parasit), bukan jamur — antijamur tidak berefek. Butuh pedikulisida permetrin (sediaan krim 5% Puskesmas dipakai untuk kulit kepala; standar ideal 1%).' },
         { id: 'hidrokortison_krim', alasan: 'Steroid hanya meredakan gatal sesaat tanpa membunuh kutu; sumber masalah (kutu & telur) tetap ada dan menular.' },
       ],
       edukasi: ['kebersihan_kulit', 'cuci_seprai_panas', 'cuci_tangan'],
     },
-    clue: 'Pedikulosis kapitis: gatal kulit kepala + NITS melekat erat di batang rambut (beda dari ketombe). Permetrin 1% dioleskan ke rambut, DIAMKAN lalu bilas, ULANGI 7-10 hari (bunuh nimfa yang menetas). WAJIB: obati SEMUA KONTAK (serumah/sekelas) SERENTAK + sisir serit + rendam sisir/cuci topi-seprai-bantal air PANAS (≥60°C) (PPK Perdoski/CDC).',
+    clue: 'Pedikulosis kapitis: gatal kulit kepala + NITS melekat erat di batang rambut (beda dari ketombe). Permetrin krim (di Puskesmas tersedia sediaan 5%; standar ideal pedikulisida 1%) dioleskan merata ke rambut & kulit kepala, DIAMKAN 10 menit lalu bilas, ULANGI 7-10 hari (bunuh nimfa yang menetas). WAJIB: obati SEMUA KONTAK (serumah/sekelas) SERENTAK + sisir serit + rendam sisir/cuci topi-seprai-bantal air PANAS (≥60°C) (PPK Perdoski/CDC).',
     konsekuensi: {
       narasi: 'Bila kontak serumah/sekelas tidak diobati serentak dan barang tidak dibersihkan, terjadi reinfestasi berulang (ping-pong); garukan menimbulkan infeksi sekunder pada kulit kepala.',
       kembaliHariMin: 10,

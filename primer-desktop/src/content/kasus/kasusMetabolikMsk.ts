@@ -252,7 +252,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     alergiTrap: {
       kelas: 'statin',
       obatTerlarang: ['simvastatin_20'],
-      alternatifBenar: [],
+      alternatifBenar: ['ezetimibe_10'],
     },
   },
 
@@ -1042,11 +1042,6 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       kondisiKembali: 'Pasien kembali/dibawa dalam kondisi sesak hebat, tidak bisa berbaring sama sekali, berbuih dari mulut — edema paru akut mengancam jiwa.',
       guideline: 'PPK Gagal Jantung Kemenkes / PERKI / ESC HF — stabilisasi diuretik + rujuk, hindari NSAID & beta-blocker saat dekompensasi.',
     },
-    alergiTrap: {
-      kelas: 'sulfa',
-      obatTerlarang: ['furosemid_40'],
-      alternatifBenar: [],
-    },
   },
 
   /* ======================================================================
@@ -1166,7 +1161,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     alergiTrap: {
       kelas: 'sulfa',
       obatTerlarang: ['cotrimoxazole_480'],
-      alternatifBenar: ['amoxiclav_625'],
+      alternatifBenar: ['nitrofurantoin_100'],
     },
   },
 ]

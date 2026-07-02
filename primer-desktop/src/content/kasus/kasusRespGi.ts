@@ -231,16 +231,16 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       obatBenar: ['loratadin_10', 'cetirizine_10'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Rinitis alergi bukan infeksi bakteri — antibiotik tidak berperan. Sekret jernih tanpa demam menyingkirkan sinusitis bakterial.' },
-        { id: 'pseudoefedrin_30', alasan: 'Dekongestan oral hanya untuk buntu jangka sangat pendek; bila dipakai rutin memicu rinitis medikamentosa dan menaikkan tekanan darah — bukan terapi utama alergi.' },
+        { id: 'pseudoefedrin_30', alasan: 'Dekongestan ORAL bukan terapi utama rinitis alergi; efek sistemiknya (menaikkan tekanan darah, insomnia, palpitasi) berbahaya, terutama pada hipertensi. Rinitis medikamentosa justru rebound dekongestan TOPIKAL (oksimetazolin), bukan oral.' },
       ],
       edukasi: ['hindari_alergen', 'cuci_seprai_panas', 'jaga_kelembapan_kulit', 'tanda_bahaya'],
     },
     clue: 'Rinitis alergi: bersin serial + rinorea ENCER JERNIH + gatal hidung/mata, dipicu debu/pagi, TANPA demam, riwayat atopi keluarga. Terapi lini pertama antihistamin non-sedatif (loratadin/setirizin) + kontrol lingkungan (ARIA/PPK IDI). Bedakan dari common cold (durasi lebih lama, gatal menonjol, tanpa demam).',
     konsekuensi: {
-      narasi: 'Bila alergen tidak dihindari, keluhan kronik-kambuh dan dapat berkembang menjadi asma; pemakaian dekongestan semprot berlebih memicu rinitis medikamentosa.',
+      narasi: 'Bila alergen tidak dihindari, keluhan kronik-kambuh dan dapat berkembang menjadi asma; pemakaian dekongestan oral rutin membebani jantung & tekanan darah tanpa mengatasi akar alergi.',
       kembaliHariMin: 14,
       kembaliHariMax: 30,
-      kondisiKembali: 'Pasien kembali dengan hidung buntu terus-menerus karena terlanjur ketergantungan semprot dekongestan.',
+      kondisiKembali: 'Pasien kembali; keluhan alergi tetap kambuh dan ia mengeluh jantung berdebar serta sulit tidur setelah rutin minum dekongestan oral.',
       guideline: 'ARIA / PPK IDI Rinitis Alergi — antihistamin + penghindaran alergen.',
     },
   },
@@ -997,7 +997,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['K64.0', 'K60.2', 'K62.5'],
     tatalaksana: {
-      obatBenar: ['bisakodil_5'],
+      obatBenar: ['laktulosa_syr'],
       obatSalahUmum: [
         { id: 'natrium_diklofenak_50', alasan: 'NSAID bukan terapi hemoroid grade 1 dan berisiko iritasi lambung; keluhan utamanya sembelit, bukan nyeri hebat. Fokus pelunak tinja & serat.' },
         { id: 'ciprofloxacin_500', alasan: 'Tidak ada indikasi antibiotik pada hemoroid tanpa infeksi; peresepan hanya menambah risiko resistensi.' },

@@ -1081,12 +1081,12 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B50.9', 'A90', 'A01.0'],
     tatalaksana: {
-      obatBenar: ['dihidroartemisinin_piperakuin', 'paracetamol_500'],
+      obatBenar: ['dihidroartemisinin_piperakuin', 'primakuin_15', 'paracetamol_500'],
       obatSalahUmum: [
         { id: 'ciprofloxacin_500', alasan: 'Antibiotik bukan terapi malaria (parasit, bukan bakteri) — menunda ACT yang menyelamatkan nyawa.' },
         { id: 'cotrimoxazole_480', alasan: 'Bukan antimalaria; keliru mengobati demam sebagai infeksi bakteri tanpa memeriksa RDT.' },
       ],
-      edukasi: ['minum_oat_tuntas', 'tanda_bahaya', 'psn_3m', 'kepatuhan_obat'],
+      edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'psn_3m'],
     },
     clue: 'Malaria falsiparum: demam periodik + menggigil + splenomegali + riwayat dari daerah endemis (Papua/NTT). KONFIRMASI dengan RDT/mikroskopis SEBELUM terapi. Lini pertama Kemenkes: ACT = DHP (Dihidroartemisinin-Piperakuin) 3 hari + primakuin dosis tunggal (gametosidal). JANGAN pakai klorukin untuk falsiparum — resisten luas di Indonesia. Kenali tanda MALARIA BERAT (penurunan kesadaran, kejang, ikterik, gagal ginjal, hipoglikemia) → rujuk (Pedoman Tata Laksana Malaria Kemenkes).',
     konsekuensi: {
