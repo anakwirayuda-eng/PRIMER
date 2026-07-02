@@ -13,7 +13,29 @@
     "start": "electron-vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "pack": "electron-vite build && electron-builder --win --dir",
+    "dist": "electron-vite build && electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "id.ac.its.medics.primer",
+    "productName": "PRIMER - Puskesmas Pagi",
+    "copyright": "© 2026 Anak Agung Bagus Wirayuda MD PhD. Hak Cipta Terdaftar — No. EC002026019623.",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "shortcutName": "PRIMER - Puskesmas Pagi"
+    }
   },
   "dependencies": {
     "@fontsource-variable/caveat": "^5.2.8",
@@ -29,6 +51,7 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "electron": "^37.2.0",
+    "electron-builder": "^26.15.3",
     "electron-vite": "^4.0.0",
     "typescript": "^5.8.0",
     "vite": "^7.0.0",
