@@ -118,6 +118,13 @@ export interface KasusKlinis {
   fktp144: boolean
   /** Kasus yang seharusnya DIRUJUK (di luar kompetensi 4A / butuh stabilisasi-rujuk). */
   harusDirujuk: boolean
+  /**
+   * Bobot epidemiologi FKTP nyata (guardrail KONTEN_BALANCE #1): top-20 diagnosis
+   * ≈80% kunjungan. tinggi ×3 · sedang ×1.5 (default) · rendah ×0.6.
+   */
+  prevalensi?: 'tinggi' | 'sedang' | 'rendah'
+  /** Spesialisasi RS yang dibutuhkan bila dirujuk (utk pemilihan RS SISRUTE). */
+  spesialisRujukan?: SpesialisasiRs
   /** Kalimat keluhan pembuka pasien. */
   keluhanUtama: string
   demografi: { usiaMin: number; usiaMax: number; jenisKelamin?: JenisKelamin }
@@ -133,6 +140,33 @@ export interface KasusKlinis {
   konsekuensi?: KonsekuensiKlinis
   /** Sebagian pasien kasus ini membawa alergi yang menjebak terapi standar. */
   alergiTrap?: { kelas: string; obatTerlarang: string[]; alternatifBenar: string[] }
+}
+
+/* ---------------------------------------------------------------------------
+ * Rujukan berjenjang (M3.13) — RS tujuan SISRUTE
+ * ------------------------------------------------------------------------- */
+
+export type SpesialisasiRs =
+  | 'penyakit_dalam'
+  | 'bedah'
+  | 'anak'
+  | 'obgyn'
+  | 'saraf'
+  | 'mata'
+  | 'tht'
+  | 'jiwa'
+  | 'paru'
+
+export interface RumahSakit {
+  id: string
+  nama: string
+  /** Kelas RS (D/C/B) — makin tinggi makin lengkap, makin jauh. */
+  kelas: 'D' | 'C' | 'B'
+  /** Jarak tempuh ambulans (menit) — pertimbangan kasus emergensi. */
+  jarakMenit: number
+  spesialisasi: SpesialisasiRs[]
+  /** Kapasitas dasar bed rujukan/hari (ketersediaan riil di-roll harian). */
+  bedDasar: number
 }
 
 /* ---------------------------------------------------------------------------

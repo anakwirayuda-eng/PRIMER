@@ -38,8 +38,13 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const totalDiagnosis = t.tegakBenar + t.tegakSalah + t.suspekBenar + t.suspekSalah
   const kalibrasi =
     ((t.tegakBenar + 0.9 * t.suspekBenar + 0.4 * t.suspekSalah) / Math.max(1, totalDiagnosis)) * 100
+  // Confidence-tagging (M3.13): merujuk kasus wajib-rujuk dengan TEPAT dihargai —
+  // guillotine tidak boleh mengajarkan "jangan pernah merujuk".
+  const bonusRujukanTepat = Math.min(3, t.rujukanTepat * 0.75)
   const ukp = clamp(
-    ((0.75 * akurasi * 100 + 0.25 * kalibrasi) / 100) * 35 * guillotine - 2 * t.cowboy,
+    ((0.75 * akurasi * 100 + 0.25 * kalibrasi) / 100) * 35 * guillotine -
+      2 * t.cowboy +
+      bonusRujukanTepat,
     0,
     35,
   )
@@ -60,10 +65,12 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   )
 
   /* -- Manajemen (0-15): stewardship lab/antibiotik + kesehatan kapitasi ------ */
+  // rujukanDitolak = churn administratif jejaring (salah RS / bed / kasus FKTP).
   const manajemen = clamp(
     15 -
       0.5 * t.labTakRelevan -
       1 * t.antibiotikTanpaIndikasi -
+      0.5 * t.rujukanDitolak -
       (state.kapitasi < 10_000_000 ? 3 : 0),
     0,
     15,

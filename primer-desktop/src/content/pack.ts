@@ -8,6 +8,7 @@ import type {
   KeluargaBinaan,
   KaderProfil,
   RwProfil,
+  RumahSakit,
   Obat,
   ItemLab,
   TopikEdukasi,
@@ -18,6 +19,8 @@ export interface ContentPack {
   keluarga: Record<string, KeluargaBinaan>
   kader: KaderProfil[]
   rw: RwProfil[]
+  /** Jejaring rujukan SISRUTE (M3.13). */
+  rumahSakit: RumahSakit[]
   obat: Record<string, Obat>
   lab: Record<string, ItemLab>
   edukasi: Record<string, TopikEdukasi>
@@ -46,6 +49,15 @@ export function validasiPack(pack: ContentPack): string[] {
     }
     for (const e of k.tatalaksana.edukasi) {
       if (!pack.edukasi[e]) masalah.push(`Kasus ${k.id}: edukasi '${e}' tidak ada di katalog`)
+    }
+    // Rujukan berjenjang: kasus wajib-rujuk harus tahu spesialisasi tujuannya,
+    // dan minimal satu RS di jejaring menyediakannya.
+    if (k.harusDirujuk) {
+      if (!k.spesialisRujukan) {
+        masalah.push(`Kasus ${k.id}: harusDirujuk tapi tanpa spesialisRujukan`)
+      } else if (!pack.rumahSakit.some((rs) => rs.spesialisasi.includes(k.spesialisRujukan!))) {
+        masalah.push(`Kasus ${k.id}: tidak ada RS dengan spesialisasi '${k.spesialisRujukan}'`)
+      }
     }
   }
   for (const kel of Object.values(pack.keluarga)) {

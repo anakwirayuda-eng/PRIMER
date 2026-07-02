@@ -142,6 +142,8 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
       suspekSalah: 0,
       rujukanTotal: 0,
       rujukanNonSpesialistik: 0,
+      rujukanTepat: 0,
+      rujukanDitolak: 0,
       cowboy: 0,
       antibiotikTanpaIndikasi: 0,
       labTakRelevan: 0,

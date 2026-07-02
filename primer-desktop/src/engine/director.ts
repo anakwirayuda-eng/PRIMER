@@ -103,6 +103,10 @@ function bobotKasus(k: KasusKlinis, state: GameState, berkluster: ReadonlySet<st
   // sedang berkluster lebih sering datang ke poli sampai wilayahnya dibereskan.
   if (berkluster.has(k.id)) bobot *= 2.5
 
+  // Epidemiologi FKTP nyata (guardrail KONTEN_BALANCE #1): top-diagnosis dominan.
+  const prevalensi = k.prevalensi ?? 'sedang'
+  bobot *= prevalensi === 'tinggi' ? 3 : prevalensi === 'rendah' ? 0.6 : 1.5
+
   return bobot
 }
 
@@ -159,6 +163,29 @@ export function susunAntrianHarian(
     if (sumber.length > 0) {
       const pengganti = rng.weighted(sumber.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster) })))
       terpilih[terpilih.length - 1] = pengganti
+    }
+  }
+
+  // Cap paparan rujukan (guardrail KONTEN_BALANCE #2): maksimal 1 kasus
+  // wajib-rujuk per pagi — RRNS sehat ≤5%, library rujukan besar boleh tapi
+  // EXPOSURE dikendalikan agar game tidak melatih over-refer lewat frekuensi.
+  const rujukTerpilih = terpilih.filter((k) => k.harusDirujuk)
+  if (rujukTerpilih.length > 1) {
+    const nonRujuk = semua.filter(
+      (k) => !k.harusDirujuk && !terpilih.some((t) => t.id === k.id),
+    )
+    for (let i = terpilih.length - 1; i >= 0 && rujukTerpilih.length > 1; i--) {
+      const k = terpilih[i]
+      if (!k?.harusDirujuk) continue
+      const pengganti =
+        nonRujuk.length > 0
+          ? rng.weighted(nonRujuk.map((c) => ({ item: c, bobot: bobotKasus(c, state, berkluster) })))
+          : undefined
+      if (pengganti) {
+        terpilih[i] = pengganti
+        nonRujuk.splice(nonRujuk.indexOf(pengganti), 1)
+        rujukTerpilih.pop()
+      }
     }
   }
 

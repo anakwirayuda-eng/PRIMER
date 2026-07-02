@@ -377,12 +377,19 @@ export function nilaiEncounter(
   )
 
   /* -- Disposisi: gatekeeper SKDI ---------------------------------------------- */
+  // PRB (M3.13): pasien rujuk-balik sudah distabilkan RS — kontrol & pulangkan
+  // dengan obat lanjutan adalah jalur benar; merujuk ULANG = pemborosan berjenjang.
   const disposisi = enc.disposisi
-  const disposisiTepat = kasus.harusDirujuk
+  const prb = enc.pasien.prb === true
+  const disposisiTepat = prb
+    ? disposisi === 'pulang' || disposisi === 'observasi'
+    : kasus.harusDirujuk
+      ? disposisi === 'rujuk'
+      : disposisi === 'pulang' || disposisi === 'observasi'
+  const rujukanNonSpesialistik = prb
     ? disposisi === 'rujuk'
-    : disposisi === 'pulang' || disposisi === 'observasi'
-  const rujukanNonSpesialistik = disposisi === 'rujuk' && !kasus.harusDirujuk
-  const cowboy = kasus.harusDirujuk && disposisi !== 'rujuk'
+    : disposisi === 'rujuk' && !kasus.harusDirujuk
+  const cowboy = !prb && kasus.harusDirujuk && disposisi !== 'rujuk'
 
   /* -- Lab tak relevan: dipesan tapi tidak terindikasi -------------------------- */
   let labTakRelevan = 0

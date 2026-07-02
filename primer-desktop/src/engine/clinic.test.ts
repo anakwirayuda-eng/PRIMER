@@ -241,6 +241,7 @@ const PACK = {
   keluarga: {},
   kader: [],
   rw: [],
+  rumahSakit: [],
   obat: OBAT_MINI,
   lab: LAB_MINI,
   edukasi: EDUKASI_MINI,

@@ -41,7 +41,9 @@ export const BIAYA_STAMINA_KUNJUNGAN: Record<'dekat' | 'sedang' | 'terpencil', n
   sedang: 1,
   terpencil: 2,
 }
-export const LUNTUR_BINTANG_HARI = 5
+// Diskalakan utk library 60+ kasus (guardrail KONTEN_BALANCE #3); ★3 = dikuasai
+// permanen dalam satu playthrough (tidak luntur).
+export const LUNTUR_BINTANG_HARI = 14
 export const HARI_BUKA_POSYANDU = 15
 export const HARI_BUKA_PROLANIS = 30
 export const HARI_BUKA_KLB = 45
@@ -213,14 +215,16 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
         kapitasi += encFinal.pasien.bpjs ? -o.hargaBeli : o.hargaJual
       }
 
-      // Dex (Leitner-lite)
+      // Dex (Leitner-lite). "Menguasai" = diagnosis benar DAN disposisi tepat —
+      // untuk kasus rujukan, kompetensinya memang "kenali & rujuk" (M3.13).
       const dex = { ...s.dex }
       const lama = dex[kasus.id] ?? { kasusId: kasus.id, ditangani: 0, benar: 0, bintang: 0, terakhirHari: 0 }
-      const bintang = nilai.diagnosisBenar ? Math.min(3, lama.bintang + 1) : Math.max(0, lama.bintang - 1)
+      const kuasai = nilai.diagnosisBenar && nilai.disposisiTepat
+      const bintang = kuasai ? Math.min(3, lama.bintang + 1) : Math.max(0, lama.bintang - 1)
       dex[kasus.id] = {
         ...lama,
         ditangani: lama.ditangani + 1,
-        benar: lama.benar + (nilai.diagnosisBenar ? 1 : 0),
+        benar: lama.benar + (kuasai ? 1 : 0),
         bintang,
         terakhirHari: s.hari,
       }
@@ -259,6 +263,137 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
         penilaianFinal = { ...nilai, konsekuensiDijadwalkan: true }
       }
 
+      // ---------------------------------------------------------------------
+      // SISRUTE — rujukan berjenjang (M3.13). Nasib rujukan diputus jejaring:
+      //  · kasus FKTP (bukan wajib-rujuk) → RS MENOLAK, pasien kembali besok
+      //    ("tuntaskan di FKTP") — over-refer berbalik jadi bebanmu sendiri;
+      //  · wajib-rujuk + RS tepat + bed ada → DITERIMA → PRB terjadwal 7-12 hari;
+      //  · salah spesialisasi / bed penuh → DITOLAK, rujuk ulang besok.
+      // ---------------------------------------------------------------------
+      let suratSisrute: Surat | undefined
+      if (action.jenis === 'rujuk') {
+        const kandidatRs = action.rumahSakitId
+          ? pack.rumahSakit.find((r) => r.id === action.rumahSakitId)
+          : [...pack.rumahSakit]
+              .filter((r) => !kasus.spesialisRujukan || r.spesialisasi.includes(kasus.spesialisRujukan))
+              .sort((a, b) => a.jarakMenit - b.jarakMenit)[0]
+        const rs = kandidatRs ?? pack.rumahSakit[0]
+
+        if (rs) {
+          const rngRs = new Rng(s.seed, 'sisrute', s.hari, rs.id, encFinal.pasien.id)
+          const spesialisCocok =
+            !kasus.spesialisRujukan || rs.spesialisasi.includes(kasus.spesialisRujukan)
+          const bedTersedia = rngRs.chance(Math.min(0.95, 0.5 + rs.bedDasar * 0.06))
+
+          if (!kasus.harusDirujuk || encFinal.pasien.prb) {
+            // Ditolak: kompetensi FKTP. Pasien dipulangkan RS, kembali besok.
+            t.rujukanDitolak += 1
+            jadwal = [
+              ...jadwal,
+              {
+                id: `jadwal_boomerang_${s.hari}_${encFinal.pasien.id}`,
+                hari: s.hari + 1,
+                jenis: 'pasien_kembali',
+                kasusId: kasus.id,
+                catatan: `${encFinal.pasien.nama} — dikembalikan ${rs.nama}: kasus kompetensi FKTP, mohon dituntaskan di Puskesmas`,
+                nama: encFinal.pasien.nama,
+                usia: encFinal.pasien.usia,
+                jenisKelamin: encFinal.pasien.jenisKelamin,
+                rw: encFinal.pasien.rw,
+              },
+            ]
+            suratSisrute = {
+              id: `surat_sisrute_${s.hari}_${s.log.length}`,
+              hari: s.hari,
+              jenis: 'teguran_kapus',
+              dari: rs.nama,
+              judul: `Rujukan DITOLAK — ${encFinal.pasien.nama}`,
+              isi: `Balasan SISRUTE: pasien dengan ${kasus.nama} adalah kompetensi FKTP (SKDI ${kasus.skdi}). Pasien kami pulangkan; mohon dituntaskan di Puskesmas. Rasio rujukan non-spesialistik Anda tercatat oleh BPJS — ia akan datang lagi besok pagi, dan kali ini tetap tanggung jawabmu.`,
+              dibaca: false,
+            }
+          } else if (!spesialisCocok) {
+            t.rujukanDitolak += 1
+            jadwal = [
+              ...jadwal,
+              {
+                id: `jadwal_tolakspes_${s.hari}_${encFinal.pasien.id}`,
+                hari: s.hari + 1,
+                jenis: 'pasien_kembali',
+                kasusId: kasus.id,
+                catatan: `${encFinal.pasien.nama} — ${rs.nama} tak punya layanan ${kasus.spesialisRujukan?.replace(/_/g, ' ')}; rujuk ulang ke RS yang tepat`,
+                nama: encFinal.pasien.nama,
+                usia: encFinal.pasien.usia,
+                jenisKelamin: encFinal.pasien.jenisKelamin,
+                rw: encFinal.pasien.rw,
+              },
+            ]
+            suratSisrute = {
+              id: `surat_sisrute_${s.hari}_${s.log.length}`,
+              hari: s.hari,
+              jenis: 'kabar_warga',
+              dari: rs.nama,
+              judul: `Rujukan tertahan — spesialisasi tidak tersedia`,
+              isi: `Balasan SISRUTE: kami tidak memiliki layanan ${kasus.spesialisRujukan?.replace(/_/g, ' ')} untuk ${kasus.nama}. Pasien kembali besok — pilih RS tujuan yang menyediakan spesialisasi itu (periksa jejaring SISRUTE sebelum mengirim).`,
+              dibaca: false,
+            }
+          } else if (!bedTersedia) {
+            t.rujukanDitolak += 1
+            jadwal = [
+              ...jadwal,
+              {
+                id: `jadwal_tolakbed_${s.hari}_${encFinal.pasien.id}`,
+                hari: s.hari + 1,
+                jenis: 'pasien_kembali',
+                kasusId: kasus.id,
+                catatan: `${encFinal.pasien.nama} — bed ${rs.nama} penuh; rujuk ulang (coba RS lain)`,
+                nama: encFinal.pasien.nama,
+                usia: encFinal.pasien.usia,
+                jenisKelamin: encFinal.pasien.jenisKelamin,
+                rw: encFinal.pasien.rw,
+              },
+            ]
+            suratSisrute = {
+              id: `surat_sisrute_${s.hari}_${s.log.length}`,
+              hari: s.hari,
+              jenis: 'kabar_warga',
+              dari: rs.nama,
+              judul: `Bed penuh — rujukan ${encFinal.pasien.nama} tertunda`,
+              isi: `Balasan SISRUTE: seluruh bed ${rs.nama} terisi hari ini. Pasien kembali besok — pertimbangkan RS lain di jejaring (kapasitas lebih besar biasanya lebih jauh; itulah trade-off rujukan).`,
+              dibaca: false,
+            }
+          } else {
+            // DITERIMA → Program Rujuk Balik terjadwal.
+            t.rujukanTepat += 1
+            const rngPrb = new Rng(s.seed, 'prb', s.hari, encFinal.pasien.id)
+            jadwal = [
+              ...jadwal,
+              {
+                id: `jadwal_prb_${s.hari}_${encFinal.pasien.id}`,
+                hari: s.hari + rngPrb.int(7, 12),
+                jenis: 'pasien_kembali',
+                kasusId: kasus.id,
+                catatan: `${encFinal.pasien.nama} — kontrol PRB: pulang dari ${rs.nama} dengan surat rujuk balik, lanjutkan terapi di FKTP`,
+                nama: encFinal.pasien.nama,
+                usia: encFinal.pasien.usia,
+                jenisKelamin: encFinal.pasien.jenisKelamin,
+                rw: encFinal.pasien.rw,
+                prb: true,
+              },
+            ]
+            suratSisrute = {
+              id: `surat_sisrute_${s.hari}_${s.log.length}`,
+              hari: s.hari,
+              jenis: 'pujian_kapus',
+              dari: rs.nama,
+              judul: `Rujukan DITERIMA — ${encFinal.pasien.nama}`,
+              isi: `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Setelah stabil, ia akan dipulangkan dengan surat rujuk balik (PRB) — kontrol lanjutannya kembali menjadi tanggung jawab FKTP-mu. Rujukan berjenjang bekerja dua arah.`,
+              dibaca: false,
+            }
+          }
+          events.push({ type: 'SURAT_MASUK', surat: suratSisrute })
+        }
+      }
+
       // Surveilans balik UKP→UKM (M1.2): diagnosis menular tercatat per RW —
       // pola di poli menyalakan sinyal di peta, apa pun disposisinya.
       const desa = kasusMenular(kasus.id)
@@ -278,6 +413,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
             aktif: undefined,
             selesaiHariIni: [...s.klinik.selesaiHariIni, penilaianFinal],
           },
+          ...(suratSisrute ? { inbox: [...s.inbox, suratSisrute] } : {}),
         },
         events,
       }
@@ -666,10 +802,11 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   const tally = { ...s.tally, hariKelelahan: s.tally.hariKelelahan + (kelelahan ? 1 : 0) }
   const stamina = burnout >= 70 ? STAMINA_MAKS - 2 : burnout >= 40 ? STAMINA_MAKS - 1 : STAMINA_MAKS
 
-  // Dex luntur (Leitner): bintang meluntur bila lama tak dilatih
+  // Dex luntur (Leitner): bintang meluntur bila lama tak dilatih.
+  // ★3 dibekukan — sekali benar-benar dikuasai, tidak dirampas waktu.
   const dex = { ...s.dex }
   for (const [id, entry] of Object.entries(dex)) {
-    if (entry.bintang > 0 && hari - entry.terakhirHari >= LUNTUR_BINTANG_HARI) {
+    if (entry.bintang > 0 && entry.bintang < 3 && hari - entry.terakhirHari >= LUNTUR_BINTANG_HARI) {
       dex[id] = { ...entry, bintang: entry.bintang - 1, terakhirHari: hari }
     }
   }
@@ -684,6 +821,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     jenisKelamin?: 'L' | 'P'
     keluargaId?: string
     rw?: number
+    prb?: boolean
   }
   const pasienKembali: PasienJatuhTempo[] = []
   let keluargaMap = s.desa.keluarga
@@ -715,6 +853,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
         ...(j.keluargaId ? { keluargaId: j.keluargaId } : {}),
         ...(j.rw !== undefined ? { rw: j.rw } : {}),
+        ...(j.prb ? { prb: true } : {}),
       })
     } else if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId) {
       const kelContent = pack.keluarga[j.keluargaId]
@@ -934,6 +1073,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       ...(p.jenisKelamin ? { jenisKelamin: p.jenisKelamin } : {}),
       ...(p.keluargaId ? { keluargaId: p.keluargaId } : {}),
       ...(p.rw !== undefined ? { rw: p.rw } : {}),
+      ...(p.prb ? { prb: true } : {}),
     }),
   )
   const antrian = [...antrianKembali, ...antrianDirector]

@@ -49,6 +49,12 @@ export interface PasienAktif {
   bonusTrust: boolean
   /** Pasien follow-up konsekuensi (kembali memburuk). */
   followUpDari?: string
+  /**
+   * Pasien Program Rujuk Balik (M3.13): sudah distabilkan RS, kembali untuk
+   * kontrol lanjutan di FKTP — memulangkan dengan obat lanjutan = TEPAT,
+   * merujuk ulang = pemborosan berjenjang.
+   */
+  prb?: boolean
 }
 
 export type FaseEncounter =
@@ -325,6 +331,8 @@ export interface JadwalItem {
   usia?: number
   jenisKelamin?: 'L' | 'P'
   rw?: number
+  /** Pasien kembali sebagai kontrol Program Rujuk Balik (M3.13). */
+  prb?: boolean
 }
 
 /** Penghitung mentah — SATU-SATUNYA sumber skor. Diisi reducer, tak pernah UI. */
@@ -338,6 +346,10 @@ export interface SkorTally {
   suspekSalah: number
   rujukanTotal: number
   rujukanNonSpesialistik: number
+  /** Rujukan TEPAT (kasus wajib-rujuk dirujuk) — reward kalibrasi (M3.13). */
+  rujukanTepat: number
+  /** Rujukan DITOLAK RS (salah spesialisasi/bed penuh/kasus FKTP) — churn admin. */
+  rujukanDitolak: number
   cowboy: number
   antibiotikTanpaIndikasi: number
   labTakRelevan: number

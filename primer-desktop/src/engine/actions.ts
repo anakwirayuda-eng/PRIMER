@@ -29,7 +29,13 @@ export type Action =
   | { type: 'HAPUS_OBAT'; obatId: string }
   | { type: 'TAMBAH_EDUKASI'; edukasiId: string }
   | { type: 'HAPUS_EDUKASI'; edukasiId: string }
-  | { type: 'DISPOSISI'; jenis: Disposisi; sbar?: SbarIsi }
+  | {
+      type: 'DISPOSISI'
+      jenis: Disposisi
+      sbar?: SbarIsi
+      /** RS tujuan SISRUTE (M3.13). Kosong = sistem memilih RS terdekat yang cocok. */
+      rumahSakitId?: string
+    }
 
   /* -- UKM: peta & roster ----------------------------------------------------- */
   | { type: 'PILIH_BINAAN'; keluargaId: string }
