@@ -16,3 +16,16 @@
   overflow: hidden;
   position: relative;
 }
+
+/* Juice (M7.32) — transisi halus antar layar. Wrapper di-key pada state.layar
+   sehingga animasi terpicu ulang tiap pindah layar. Tunduk reduce-motion
+   (gerbang global di base.css). */
+.app-transisi {
+  height: 100%;
+  animation: layar-masuk var(--durasi-normal) var(--ease-keluar);
+}
+
+@keyframes layar-masuk {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -74,15 +74,17 @@ export default function App() {
     <div className="app-frame" data-mode={mode}>
       <Hud />
       <main className="app-layar">
-        {state.layar === 'meja' && <MejaKerja />}
-        {state.layar === 'klinik' && <Klinik />}
-        {state.layar === 'peta' && <PetaDesa />}
-        {state.layar === 'kunjungan' && <Kunjungan />}
-        {state.layar === 'kegiatan' && <Kegiatan />}
-        {state.layar === 'igd' && <Igd />}
-        {state.layar === 'dex' && <DexSkdi />}
-        {state.layar === 'rapor' && <Rapor />}
-        {state.layar === 'laporan' && <LaporanAkhir />}
+        <div className="app-transisi" key={state.layar}>
+          {state.layar === 'meja' && <MejaKerja />}
+          {state.layar === 'klinik' && <Klinik />}
+          {state.layar === 'peta' && <PetaDesa />}
+          {state.layar === 'kunjungan' && <Kunjungan />}
+          {state.layar === 'kegiatan' && <Kegiatan />}
+          {state.layar === 'igd' && <Igd />}
+          {state.layar === 'dex' && <DexSkdi />}
+          {state.layar === 'rapor' && <Rapor />}
+          {state.layar === 'laporan' && <LaporanAkhir />}
+        </div>
       </main>
       <Toaster />
       <MuteButton />

@@ -46,7 +46,7 @@
 
 .peta-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 13px; /* CODEX P3: label peta 11px sulit dibaca — dinaikkan */
   font-weight: 700;
   fill: var(--tinta);
   paint-order: stroke;
@@ -57,7 +57,7 @@
 }
 
 .peta-label--sub {
-  font-size: 9.5px;
+  font-size: 11px; /* CODEX P3: sub-label 9.5px → 11px */
   font-weight: 600;
   fill: var(--tinta-lembut);
 }
