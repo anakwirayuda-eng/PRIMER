@@ -479,7 +479,9 @@ export interface GameState {
   /** Hari posyandu terakhir per RW (cooldown 30 hari). Kunci = String(nomor RW). */
   posyanduRwTerakhir: Record<string, number>
   /** Program wilayah agregat (M2.10): fokus mingguan menekan penularan + bonus IKS. */
-  program: { fokus?: FokusProgram; rwFokus?: number; mingguDitetapkan?: number }
+  /** Triase Anggaran (M2.10, DeepThink Q4): 1 fokus terkunci per PERIODE BULANAN
+   * (bukan mingguan) — memaksa mengorbankan area lain sepanjang bulan berjalan. */
+  program: { fokus?: FokusProgram; rwFokus?: number; periodeDitetapkan?: number }
 
   inbox: Surat[]
   jadwal: JadwalItem[]

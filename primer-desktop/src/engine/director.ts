@@ -151,18 +151,36 @@ export function susunAntrianHarian(
     terpilih.push(pilihan)
   }
 
-  // Jaminan kurikulum: minimal 1 kasus belum-pernah bila tersedia.
-  const adaBaru = terpilih.some((k) => state.dex[k.id] === undefined)
-  if (!adaBaru && terpilih.length > 0) {
-    const belumPernah = semua.filter(
-      (k) => state.dex[k.id] === undefined && !terpilih.some((t) => t.id === k.id),
+  // Curriculum Director (M3.18, DeepThink Q3): kasus 4A (kompetensi wajib inti)
+  // yang belum pernah tertangani HARUS diprioritaskan masuk antrian — bahkan
+  // bila hari ini "kebetulan" sudah membawa kasus NON-4A lain yang juga belum
+  // pernah (guardrail prevalensi tak boleh menunda kasus wajib selamanya hanya
+  // karena kasus lain yang lebih sering muncul kebetulan terpilih lebih dulu).
+  // Dipilih UNIFORM (bukan tertimbang prevalensi) khusus untuk slot ini — pity-
+  // timer harus melawan bobot prevalensi, bukan tunduk padanya.
+  const ada4ABelumPernah = terpilih.some((k) => k.skdi === '4A' && state.dex[k.id] === undefined)
+  if (!ada4ABelumPernah && terpilih.length > 0) {
+    const belumPernah4A = semua.filter(
+      (k) => k.skdi === '4A' && state.dex[k.id] === undefined && !terpilih.some((t) => t.id === k.id),
     )
     // Minggu pertama tetap mengutamakan kasus aman bila ada di pool belum-pernah.
-    const belumPernahAman = mingguPertama ? belumPernah.filter(kasusAman) : belumPernah
-    const sumber = belumPernahAman.length > 0 ? belumPernahAman : belumPernah
-    if (sumber.length > 0) {
-      const pengganti = rng.weighted(sumber.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster) })))
-      terpilih[terpilih.length - 1] = pengganti
+    const belumPernah4AAman = mingguPertama ? belumPernah4A.filter(kasusAman) : belumPernah4A
+    const sumber4A = belumPernah4AAman.length > 0 ? belumPernah4AAman : belumPernah4A
+    if (sumber4A.length > 0) {
+      terpilih[terpilih.length - 1] = rng.pick(sumber4A)
+    } else {
+      // Tak ada 4A belum-pernah tersisa — jaminan cakupan lama tetap berlaku
+      // untuk kasus non-4A (mis. rujukan 3A/3B) supaya library itu pun tersentuh.
+      const adaBaru = terpilih.some((k) => state.dex[k.id] === undefined)
+      if (!adaBaru) {
+        const belumPernah = semua.filter(
+          (k) => state.dex[k.id] === undefined && !terpilih.some((t) => t.id === k.id),
+        )
+        if (belumPernah.length > 0) {
+          const pengganti = rng.weighted(belumPernah.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster) })))
+          terpilih[terpilih.length - 1] = pengganti
+        }
+      }
     }
   }
 

@@ -184,6 +184,33 @@ describe('M2.11 — Lokakarya Mini flag', () => {
   })
 })
 
+describe('M2.10 — Program Wilayah: Triase Anggaran BULANAN (DeepThink Q4)', () => {
+  it('fokus terkunci sepanjang bulan yang sama — ganti ke fokus lain ditolak', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU) // hari > HARI_BUKA_PETA, blok siang
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    expect(s.program.fokus).toBe('psn')
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'phbs' })
+    expect(r.state.program.fokus).toBe('psn') // tak berubah
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+  })
+
+  it('menetapkan fokus yang SAMA lagi tidak dianggap pelanggaran kunci', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+  })
+
+  it('bulan berikutnya (+30 hari) → fokus baru bisa ditetapkan', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    s = siangDariState(s, s.hari + 30)
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'skrining' })
+    expect(r.state.program.fokus).toBe('skrining')
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+  })
+})
+
 /* -- util lokal -------------------------------------------------------------- */
 function siangDariState(s0: GameState, target: number): GameState {
   let s = s0

@@ -6,7 +6,7 @@
 
 import type { Action } from './actions'
 import type { GameEvent } from './events'
-import type { GameState, PenilaianEncounter, PesertaProlanis, Surat } from './state'
+import type { FokusProgram, GameState, PenilaianEncounter, PesertaProlanis, Surat } from './state'
 import type { ContentPack } from '@content/pack'
 import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter } from './clinic'
@@ -50,6 +50,15 @@ export const HARI_BUKA_PROLANIS = 30
 export const HARI_BUKA_KLB = 45
 export const COOLDOWN_POSYANDU = 30
 export const BIAYA_STAMINA_KEGIATAN = 2
+
+/** PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
+ * menekan droplet/kronis-terdeteksi. Diekspor agar UI (Lokakarya "Triase
+ * Anggaran") bisa menunjukkan kluster mana yang TAK terdanai fokus berjalan. */
+export const TARGET_KASUS_PROGRAM: Record<FokusProgram, string[]> = {
+  psn: ['dengue_df'],
+  phbs: ['diare_akut_anak', 'demam_tifoid'],
+  skrining: ['tb_paru', 'ispa_common_cold'],
+}
 
 /** Id surat deterministik: hari + urutan dalam hari (aman untuk save/load). */
 function buatSuratHarian(hari: number, seq: number, s: Omit<Surat, 'id' | 'hari' | 'dibaca'>): Surat {
@@ -646,11 +655,15 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
 
     case 'TETAPKAN_PROGRAM': {
       if (s.hari < HARI_BUKA_PETA) return err(s, 'Program wilayah terbuka bersama Peta Desa.')
-      const mingguIni = Math.ceil(s.hari / 7)
-      // Komitmen mingguan sungguhan: sekali ditetapkan pekan ini, tak bisa diganti-ganti
-      // tiap sore mengikuti surveilans — itu meniadakan makna "program" (CODEX P2).
-      if (s.program.mingguDitetapkan === mingguIni && s.program.fokus !== action.fokus) {
-        return err(s, 'Fokus program pekan ini sudah ditetapkan — baru bisa diganti pekan depan.')
+      // Triase Anggaran (M2.10, DeepThink Q4): kunci BULANAN, bukan mingguan —
+      // Lokakarya Mini adalah rapat anggaran sungguhan: sekali ditetapkan bulan
+      // ini, tak bisa diganti-ganti mengikuti surveilans harian (CODEX P2 asal +
+      // DeepThink Q4: tanpa kunci sebulan penuh, "program" hanya daftar centang
+      // tanpa ongkos oportunitas nyata — pemain bisa "menutupi" semua ancaman
+      // bergantian tiap pekan alih-alih benar-benar memilih & mengorbankan).
+      const periodeIni = Math.ceil(s.hari / 30)
+      if (s.program.periodeDitetapkan === periodeIni && s.program.fokus !== action.fokus) {
+        return err(s, 'Fokus program bulan ini sudah ditetapkan di Lokakarya Mini — baru bisa diganti bulan depan.')
       }
       return {
         state: {
@@ -658,7 +671,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
           program: {
             fokus: action.fokus,
             ...(action.rwFokus !== undefined ? { rwFokus: action.rwFokus } : {}),
-            mingguDitetapkan: mingguIni,
+            periodeDitetapkan: periodeIni,
           },
         },
         events: [],
@@ -1080,17 +1093,15 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   keluargaMap = kaderHasil.keluarga
   suratBaru.push(...kaderHasil.surat)
 
-  // Program wilayah agregat (M2.10): fokus mingguan (PSN/PHBS/skrining) yang
-  // ditetapkan dokter bekerja tiap hari — menekan penularan (buang 1 entri
-  // surveilans yang cocok) & menaikkan bonus IKS RW fokus sedikit demi sedikit.
+  // Program wilayah agregat (M2.10): fokus bulanan (Triase Anggaran, PSN/PHBS/
+  // skrining) yang ditetapkan dokter bekerja tiap hari — menekan penularan
+  // (buang 1 entri surveilans yang cocok) & menaikkan bonus IKS RW fokus
+  // sedikit demi sedikit.
   let surveilans = pangkasSurveilans(s.desa.surveilans, hari)
   let rwSetelahProgram = kaderHasil.rw
   if (s.program.fokus) {
     const fokus = s.program.fokus
-    // PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
-    // menekan droplet/kronis-terdeteksi. Satu entri kluster yang cocok diredam/hari.
-    const targetKasus =
-      fokus === 'psn' ? ['dengue_df'] : fokus === 'phbs' ? ['diare_akut_anak', 'demam_tifoid'] : ['tb_paru', 'ispa_common_cold']
+    const targetKasus = TARGET_KASUS_PROGRAM[fokus]
     const idxRedam = surveilans.findIndex(
       (e) => targetKasus.includes(e.kasusId) && (s.program.rwFokus === undefined || e.rw === s.program.rwFokus),
     )

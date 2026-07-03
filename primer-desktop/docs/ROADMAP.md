@@ -122,6 +122,18 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
 21. **Stamina/burnout lanjutan**: aktivitas pemulihan akhir pekan (sederhana, 1 pilihan
     per Minggu), burnout memengaruhi kualitas auto-resolve.
 
+## M4.5 — Mode Ujian 30-Hari (keputusan triangulasi DeepThink Q1, 2026-07-03)
+
+21b. **Mode Ujian**: layar judul menawarkan "Karier" (90 hari, bebas nilai) vs
+     "Ujian" (~30 hari/~8 jam, satu-satunya yang dinilai formal). Butuh (a)
+     pool 5-10 seed kurikulum terkurasi terpisah dari nama+timestamp mahasiswa,
+     (b) pemisahan seed konten (Director, sama per paket) vs seed flavor
+     (nama/RW pasien, per-mahasiswa) — perubahan arsitektur RNG, bukan cuma
+     penambahan mode, (c) kurasi subset kasus terpacing eksplisit (bukan
+     Director umum apa adanya). Spek lengkap + alasan penempatan setelah M4
+     ada di §Triangulasi M3b di atas. **Wajib**: rotasi seed (bukan satu seed
+     per angkatan) — mencegah kunci jawaban bocor via walkthrough grup.
+
 ## M5 — Stase Penuh & Endgame
 
 22. **Kurva 90 hari**: pacing Director per fase (D1–14 breathing → D61+ tekanan penuh),
@@ -244,8 +256,64 @@ Ringkasan penilaian (assessment lengkap tersimpan di histori sesi ini; poin utam
 
 CODEX → **diterima & dieksekusi penuh** (bug/integritas objektif, bukan pilihan desain).
 
-DeepThink → **butuh keputusan pemilik kurikulum** (Anda), bukan keputusan sepihak
-Claude — semua poin di atas mengubah bentuk M3–M6, bukan sekadar bug. Lihat
-percakapan untuk pertanyaan konfirmasi; hasilnya akan dicatat di sini setelah
-dijawab. Sampai dijawab, roadmap M4–M6 di bawah **belum direvisi** dan tetap
-mengikuti rencana pra-triangulasi.
+DeepThink → **empat keputusan diambil pemilik kurikulum**, dieksekusi sebagian
+di sesi ini, sebagian dijadwalkan:
+
+1. **Q6 (M4)**: ❌ TIDAK dipotong. M4 tetap 4 butir penuh (18-21) sesuai rencana
+   semula — ditolak rekomendasi DeepThink untuk menyusutkannya jadi kosmetik.
+2. **Q1 (Mode Ujian 30-Hari)**: ✅ DIBANGUN — lihat spek di bawah. Ditambahkan
+   sebagai milestone baru **M4.5** (setelah M4, sebelum M5) karena butuh
+   fondasi ekonomi/manajemen M4 selesai dulu (Laporan bulanan kapitasi dipakai
+   sbg bahan pacing kurasi 30-hari) dan harus rampung sebelum M5 mengunci
+   arsitektur endgame. **Belum diimplementasikan** — baru desain di bawah.
+3. **Q2 (rebalance skor SUSPEK/IGD)**: ⏸️ DITUNDA — butuh data playtest
+   sungguhan, bukan tebakan di atas tebakan. Dicatat sbg item M7 QA (butir 36)
+   ketika playtest 5-10 mahasiswa berjalan: ukur distribusi TEGAK/SUSPEK &
+   IGD-tuntas aktual, baru kalibrasi ulang bila datanya menunjukkan masalah.
+4. **Q3+Q4 (Curriculum Director + Lokakarya Triase Anggaran)**: ✅ DIBANGUN &
+   DIVERIFIKASI di sesi ini (lihat commit) — bukan ditunda ke M3c/M7 seperti
+   opsi awal, karena keduanya ternyata berukuran kecil & bounded:
+   - **Curriculum Director**: slot "jaminan kurikulum" di `director.ts`
+     (sebelumnya cuma "≥1 kasus belum-pernah, tertimbang prevalensi") kini
+     memprioritaskan kasus 4A wajib yang belum pernah tertangani secara
+     UNIFORM (melawan bobot prevalensi, bukan tunduk padanya) — kasus 4A
+     langka tak lagi bisa terkubur selamanya oleh guardrail prevalensi M3a.
+   - **Lokakarya Triase Anggaran**: Program Wilayah berubah dari kunci
+     MINGGUAN → **BULANAN** (field `program.periodeDitetapkan`, divisor 30)
+     — satu fokus per bulan sungguhan, bukan bisa dirotasi tiap pekan
+     mengikuti surveilans (itu meniadakan makna "memilih & mengorbankan").
+     Modal Lokakarya Mini kini menampilkan panel **"⚖️ Ongkos oportunitas
+     bulan ini"**: kluster aktif yang TAK tersentuh fokus berjalan, per RW +
+     jumlah kasus — ongkos oportunitas eksplisit, bukan implisit.
+   121 test hijau (+4 dari batch CODEX), tsc bersih, build OK, diverifikasi
+   visual di browser preview (panel ongkos oportunitas & kunci bulanan
+   dikonfirmasi render benar dengan data surveilans buatan).
+
+#### Spek Mode Ujian 30-Hari (M4.5, DESAIN — belum dibangun)
+
+Blind spot DeepThink WAJIB dipenuhi sejak desain awal, bukan ditambal belakangan:
+
+- **Dua mode di layar judul**: "Karier" (90 hari, seperti sekarang, bebas nilai,
+  progres lintas playthrough) vs "Ujian" (~30 hari, ~8 jam, SATU-SATUNYA yang
+  menghasilkan skor formal untuk disetor dosen via M6).
+- **Rotasi 5-10 seed kurikulum**, bukan satu seed tunggal per angkatan — Director
+  memilih dari pool paket ujian (mis. `ujian_paket_1`..`ujian_paket_5`), bukan
+  dari nama+timestamp mahasiswa. Wajib supaya kunci jawaban tak bisa disusun &
+  dibagi via grup WhatsApp angkatan dalam 48 jam pertama.
+- **Seed konten vs seed flavor HARUS terpisah** (perubahan arsitektur RNG,
+  bukan sekadar penambahan mode): seed paket menentukan URUTAN & JENIS kasus
+  yang tampil (identik untuk semua mahasiswa 1 paket, demi keadilan asesmen);
+  seed per-mahasiswa (dari nama+timestamp, seperti sekarang) tetap menentukan
+  nama/usia/RW pasien & detail kosmetik lain (mencegah "pasien bernama sama
+  persis di baris sama persis" jadi kunci jawaban yang lebih mudah dibaca).
+  Ini titik kerja paling berisiko di M4.5 — `Rng` & `susunAntrianHarian` saat
+  ini pakai SATU seed untuk semuanya; perlu pemisahan hati-hati agar
+  determinisme & test yang ada tidak rusak.
+- **Kurasi konten Mode Ujian**: bukan library 225 kasus penuh diputar acak
+  dalam 30 hari (terlalu padat/acak untuk sesi terkurasi) — pilih subset yang
+  menjamin cakupan SKDI 4A inti + sampel rujukan 3A/3B/IGD, dipacing eksplisit
+  per fase (mis. minggu 1-2 breathing, minggu 3-4 tekanan penuh), bukan
+  Director umum apa adanya.
+- **M6 (§26-27)** mengekspor skor dari Mode Ujian, bukan Mode Karier — perlu
+  ditandai jelas di `GameState` (field mode) supaya dashboard dosen tak
+  keliru menerima submission dari save Karier.

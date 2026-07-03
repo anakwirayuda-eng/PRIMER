@@ -275,6 +275,32 @@ describe('susunAntrianHarian', () => {
       expect(antrian.some((p) => p.kasusId === 'baru')).toBe(true)
     }
   })
+
+  it('Curriculum Director (M3.18): slot jaminan memprioritaskan 4A wajib meski prevalensinya rendah', () => {
+    // 'langka4a' belum pernah & 4A tapi prevalensi RENDAH (bobotKasus x0.6);
+    // 'seringNon4a' belum pernah & non-4A tapi prevalensi TINGGI (x3) — bila
+    // slot jaminan masih tertimbang prevalensi, langka4a nyaris tak pernah menang.
+    const pack = buatPack([
+      buatKasus('lama_1'),
+      buatKasus('lama_2'),
+      buatKasus('lama_3'),
+      buatKasus('langka4a', { prevalensi: 'rendah' }),
+      buatKasus('seringNon4a', { skdi: '3A', harusDirujuk: true, prevalensi: 'tinggi' }),
+    ])
+    const dex = {
+      lama_1: { kasusId: 'lama_1', ditangani: 5, benar: 5, bintang: 3, terakhirHari: 9 },
+      lama_2: { kasusId: 'lama_2', ditangani: 5, benar: 5, bintang: 3, terakhirHari: 9 },
+      lama_3: { kasusId: 'lama_3', ditangani: 5, benar: 5, bintang: 3, terakhirHari: 9 },
+    }
+    let munculLangka = 0
+    for (let seed = 0; seed < 200; seed++) {
+      const antrian = susunAntrianHarian(buatState({ hari: 10, dex }), pack, new Rng(seed, 'pity'))
+      if (antrian.some((p) => p.kasusId === 'langka4a')) munculLangka += 1
+    }
+    // Slot jaminan HARUS selalu jatuh ke langka4a (satu-satunya 4A belum-pernah) —
+    // bukan sesekali kalah oleh seringNon4a lewat rng.weighted.
+    expect(munculLangka).toBe(200)
+  })
 })
 
 /* ---------------------------------------------------------------------------

@@ -17,8 +17,10 @@ import {
   HARI_BUKA_KUNJUNGAN,
   HARI_BUKA_PROLANIS,
   BIAYA_STAMINA_KEGIATAN,
+  TARGET_KASUS_PROGRAM,
 } from '@engine/reducer'
 import type { FokusProgram } from '@engine/state'
+import { clusterAktif } from '@engine/surveilans'
 import { PACK } from '@content/index'
 import { karmaTerlihat } from './peta/petaUtil'
 import './MejaKerja.css'
@@ -473,24 +475,25 @@ export function MejaKerja() {
               </>
             )}
 
-            {/* Program wilayah agregat — instruksi mingguan, tak makan slot. */}
+            {/* Program wilayah agregat — Triase Anggaran bulanan, tak makan slot. */}
             {petaTerbuka && (
               <div className="kartu mk__program">
-                <div className="judul-seksi">Program Wilayah (mingguan)</div>
+                <div className="judul-seksi">Program Wilayah (bulanan — Triase Anggaran)</div>
                 <p className="teks-xs teks-lembut">
-                  Fokus program menekan penularan & menaikkan IKS sepanjang pekan — tanpa memakai slot siang.
+                  Hanya SATU fokus terdanai sebulan penuh — pilih, lalu terima area lain berisiko sampai
+                  Lokakarya Mini berikutnya.
                   {state.program.fokus ? ` Fokus kini: ${LABEL_PROGRAM[state.program.fokus]}.` : ' Belum ada fokus ditetapkan.'}
                 </p>
                 <div className="baris mk__program-opsi">
                   {(['psn', 'phbs', 'skrining'] as const).map((f) => {
-                    const mingguIni = Math.ceil(state.hari / 7)
-                    const terkunci = state.program.mingguDitetapkan === mingguIni && state.program.fokus !== f
+                    const periodeIni = Math.ceil(state.hari / 30)
+                    const terkunci = state.program.periodeDitetapkan === periodeIni && state.program.fokus !== f
                     return (
                       <button
                         key={f}
                         className={`tombol ${state.program.fokus === f ? 'tombol--utama' : ''}`}
                         disabled={terkunci}
-                        title={terkunci ? 'Fokus pekan ini sudah dikunci — ganti pekan depan.' : undefined}
+                        title={terkunci ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.' : undefined}
                         onClick={() => dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f })}
                       >
                         {LABEL_PROGRAM[f]}
@@ -498,8 +501,8 @@ export function MejaKerja() {
                     )
                   })}
                 </div>
-                {state.program.mingguDitetapkan === Math.ceil(state.hari / 7) && (
-                  <p className="teks-xs teks-lembut">🔒 Terkunci untuk pekan ini.</p>
+                {state.program.periodeDitetapkan === Math.ceil(state.hari / 30) && (
+                  <p className="teks-xs teks-lembut">🔒 Terkunci untuk bulan ini.</p>
                 )}
               </div>
             )}
@@ -704,6 +707,29 @@ export function MejaKerja() {
                   : 'dr. Ratih sedikit di depanmu bulan ini. Lihat dimensi mana yang tertinggal, dan kejar.'}
               </p>
             </div>
+
+            {/* Triase Anggaran (M2.10, DeepThink Q4): ongkos oportunitas EKSPLISIT —
+                kluster aktif yang tak tersentuh fokus program bulan lalu. */}
+            {(() => {
+              const tercakup = state.program.fokus ? TARGET_KASUS_PROGRAM[state.program.fokus] : []
+              const diabaikan = clusterAktif(state).filter((c) => !tercakup.includes(c.kasusId))
+              if (diabaikan.length === 0) return null
+              return (
+                <div className="kartu mk__lokmin-rival">
+                  <div className="teks-kecil">⚖️ Ongkos oportunitas bulan ini</div>
+                  <p className="teks-xs teks-lembut">
+                    Fokusmu ({state.program.fokus ? LABEL_PROGRAM[state.program.fokus] : 'belum ditetapkan'}) tak
+                    menyentuh kluster berikut — kamu memilih membiarkannya demi program lain:
+                  </p>
+                  {diabaikan.map((c) => (
+                    <p key={`${c.rw}_${c.kasusId}`} className="teks-xs">
+                      <span className="chip chip--merah">RW {c.rw}</span>{' '}
+                      {PACK.kasus[c.kasusId]?.nama ?? c.kasusId} — {c.jumlah} kasus dalam 14 hari terakhir.
+                    </p>
+                  ))}
+                </div>
+              )
+            })()}
 
             <div className="mk__rekap-dimensi">
               {(
