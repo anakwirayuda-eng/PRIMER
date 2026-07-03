@@ -11,10 +11,16 @@
 
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Brain, CheckCircle, Check, Heart, Shield, AlertCircle, Plus, BookOpen, Search } from 'lucide-react';
 import { EDUCATION_OPTIONS } from '../../data/EducationOptions.js';
+import { localizeClinicalText } from '../../utils/clinicalContentLocalization.js';
 
 export default function EducationTab({ patient, isDark, eduQuery, setEduQuery, eduFiltered, selectedDiagnoses, selectedEducation, setSelectedEducation }) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
+    const localize = (value) => localizeClinicalText(value, locale);
+
     return (
         <div className="flex flex-col gap-4 h-full overflow-hidden">
             {/* MAIA Smart Suggestions */}
@@ -23,11 +29,13 @@ export default function EducationTab({ patient, isDark, eduQuery, setEduQuery, e
                 : 'bg-gradient-to-br from-indigo-50 to-white border-indigo-500 border-indigo-100'} shadow-xl`}>
                 <div className="flex items-center gap-2 mb-4">
                     <Brain size={18} className="text-indigo-500" />
-                    <h4 className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-indigo-400' : 'text-indigo-900'}`}>MAIA Smart Guidance</h4>
+                    <h4 className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-indigo-400' : 'text-indigo-900'}`}>{t('emrWorkspace.education.title')}</h4>
                 </div>
                 <div className="flex flex-wrap gap-2 relative z-10">
                     {(() => {
-                        const required = patient.hidden?.requiredEducation || [];
+                        const required = patient.hidden?.requiredEducation?.length
+                            ? patient.hidden.requiredEducation
+                            : (patient.medicalData?.requiredEducation || []);
                         let suggestions;
                         if (required.length > 0) {
                             suggestions = required.map(id => EDUCATION_OPTIONS.find(e => e.id === id)).filter(Boolean);
@@ -50,7 +58,7 @@ export default function EducationTab({ patient, isDark, eduQuery, setEduQuery, e
                                     : (isDark ? 'bg-slate-800 text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/20' : 'bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50')}`}
                             >
                                 {selectedEducation.includes(edu.id) && <Check size={10} className="inline mr-1" />}
-                                {edu.label}
+                                {localize(edu.label)}
                             </button>
                         ));
                     })()}
@@ -62,7 +70,7 @@ export default function EducationTab({ patient, isDark, eduQuery, setEduQuery, e
                 <Search size={14} className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                 <input
                     type="text"
-                    placeholder="Cari topik edukasi..."
+                    placeholder={t('emrWorkspace.education.searchPlaceholder')}
                     className={`w-full pl-9 pr-4 py-2.5 rounded-xl border-2 text-xs transition-all outline-none font-bold ${isDark
                         ? 'bg-slate-900/60 border-slate-800 text-white focus:border-emerald-500'
                         : 'bg-white border-slate-200 text-slate-800 focus:border-emerald-500'}`}
@@ -85,16 +93,16 @@ export default function EducationTab({ patient, isDark, eduQuery, setEduQuery, e
                                 <div className={`mt-0.5 p-1 rounded-full ${selectedEducation.includes(edu.id) ? 'bg-emerald-500 text-white' : 'bg-slate-500/10 opacity-30 group-hover:opacity-100 transition-opacity'}`}>
                                     {selectedEducation.includes(edu.id) ? <Check size={12} /> : <Plus size={12} />}
                                 </div>
-                                <span className={`text-xs font-bold leading-tight ${selectedEducation.includes(edu.id) ? 'text-emerald-400' : ''}`}>{edu.label}</span>
+                                <span className={`text-xs font-bold leading-tight ${selectedEducation.includes(edu.id) ? 'text-emerald-400' : ''}`}>{localize(edu.label)}</span>
                             </button>
                         ))}
                     </div>
                 ) : (
                     <div className="space-y-6">
                         {[
-                            { id: 'lifestyle', label: 'Gaya Hidup & Nutrisi', desc: 'Diet, Aktivitas, Kebiasaan', categories: ['diet', 'lifestyle'], icon: Heart, color: 'text-rose-500' },
-                            { id: 'care', label: 'Perawatan & Kebersihan', desc: 'Luka, Higienitas, Pencegahan', categories: ['self_care', 'prevention', 'hygiene'], icon: Shield, color: 'text-emerald-500' },
-                            { id: 'medical', label: 'Medis & Kepatuhan', desc: 'Minum Obat, Tanda Bahaya, Kontrol', categories: ['compliance', 'warning_signs', 'maternal', 'infant'], icon: AlertCircle, color: 'text-amber-500' }
+                            { id: 'lifestyle', label: t('emrWorkspace.education.pillars.lifestyle.label'), desc: t('emrWorkspace.education.pillars.lifestyle.desc'), categories: ['diet', 'lifestyle'], icon: Heart, color: 'text-rose-500' },
+                            { id: 'care', label: t('emrWorkspace.education.pillars.care.label'), desc: t('emrWorkspace.education.pillars.care.desc'), categories: ['self_care', 'prevention', 'hygiene'], icon: Shield, color: 'text-emerald-500' },
+                            { id: 'medical', label: t('emrWorkspace.education.pillars.medical.label'), desc: t('emrWorkspace.education.pillars.medical.desc'), categories: ['compliance', 'warning_signs', 'maternal', 'infant'], icon: AlertCircle, color: 'text-amber-500' }
                         ].map(pillar => {
                             const pillarOptions = EDUCATION_OPTIONS.filter(e => pillar.categories.includes(e.category));
                             if (pillarOptions.length === 0) return null;
@@ -119,7 +127,7 @@ export default function EducationTab({ patient, isDark, eduQuery, setEduQuery, e
                                                 <div className={`mt-0.5 p-1 rounded-full ${selectedEducation.includes(edu.id) ? 'bg-emerald-500 text-white' : 'bg-slate-500/10 opacity-30 group-hover:opacity-100'}`}>
                                                     {selectedEducation.includes(edu.id) ? <Check size={10} /> : <Plus size={10} />}
                                                 </div>
-                                                <span className="text-[11px] font-bold leading-tight uppercase tracking-tight">{edu.label}</span>
+                                                <span className="text-[11px] font-bold leading-tight uppercase tracking-tight">{localize(edu.label)}</span>
                                             </button>
                                         ))}
                                     </div>

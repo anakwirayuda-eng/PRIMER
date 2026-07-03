@@ -27,6 +27,26 @@ describe('DebriefEngine', () => {
         expect(result.reflectionPrompts.some((prompt) => prompt.type === 'referral_question')).toBe(true);
     });
 
+    it('counts successful referrals as patients served in the daily summary', () => {
+        const result = generateDebrief({
+            todayLog: [
+                {
+                    patientName: 'Budi',
+                    diagnosis: 'I20.0',
+                    diagnosisScore: 85,
+                    referred: true,
+                    completed: false,
+                    revenue: -150000
+                }
+            ],
+            consequenceQueue: [],
+            day: 3,
+            stats: { reputation: 80 }
+        });
+
+        expect(result.summary.patientsServed).toBe(1);
+    });
+
     it('falls back to diagnosis when todayLog entries do not provide correctDiagnosis', () => {
         const result = generateDebrief({
             todayLog: [

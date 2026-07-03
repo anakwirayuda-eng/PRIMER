@@ -12,6 +12,7 @@ import { ensureVillageReadinessState } from '../../utils/behaviorCaseRuntime.js'
 import { reconcileReferralLog } from '../../utils/referralLog.js';
 import { generateDailyQuests, generateWeeklyQuests, getWeekFromDay } from '../../game/QuestEngine.js';
 import { MEDICATION_DATABASE } from '../../data/MedicationDatabase.js';
+import { getStoredLanguagePreference } from '../../config/languages.js';
 import { isPlainObject, isMetaRecord, hasOwn, clampInteger } from './storeUtils.js';
 import { sanitizePlayerProfile } from './playerHelpers.js';
 import { capClinicalHistory } from './clinicalHelpers.js';
@@ -186,7 +187,8 @@ export const INITIAL_NAV_SETTINGS = {
     theme: 'medika',
     fontSize: 'normal',
     volume: 1.0,
-    autoSave: true
+    autoSave: true,
+    language: getStoredLanguagePreference()
 };
 
 export const createInitialNavState = (overrides = {}) => ({
@@ -204,6 +206,21 @@ export const createInitialNavState = (overrides = {}) => ({
     },
     ...overrides
 });
+
+export const mergePersistedNav = (nav, currentNav) => {
+    if (!isPlainObject(nav)) {
+        return currentNav;
+    }
+
+    return {
+        ...currentNav,
+        settings: {
+            ...INITIAL_NAV_SETTINGS,
+            ...(currentNav?.settings || {}),
+            ...(isPlainObject(nav.settings) ? nav.settings : {})
+        }
+    };
+};
 
 // --- Merge/Persistence Helpers ---
 
@@ -397,6 +414,12 @@ export const reconcileClinicalReferralLog = (clinicalState, worldState) => {
 export const buildManualSaveSnapshot = (state) => parseSavePayload({
     saveVersion: CURRENT_SAVE_VERSION,
     savedAt: Date.now(),
+    nav: {
+        settings: {
+            ...INITIAL_NAV_SETTINGS,
+            ...(state.nav?.settings || {})
+        }
+    },
     world: normalizePersistedWorld(state.world),
     player: {
         ...state.player,

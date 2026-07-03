@@ -32,10 +32,11 @@ import { getBridgeSeasonalState, isBridgeOutageActive, resolveBridgeOutageUntilD
 import { sanitizePlayerProfile, createStartingPlayerProfile, clampEnergyToProfile } from '../helpers/playerHelpers.js';
 import { isAmbulanceStillBusy } from '../helpers/ambulanceHelpers.js';
 import { buildDailyArchiveEntry } from '../helpers/archiveHelpers.js';
+import { buildRolloverMissedEncounterLogs } from '../helpers/clinicalHelpers.js';
 import {
     normalizePersistedWorld, createInitialMetaState, createInitialPublicHealthState, createInitialStaffState,
     createInitialClinicalState, createInitialFinanceState, createInitialNavState,
-    mergePersistedFinance, mergePersistedPublicHealth, mergePersistedStaff, mergePersistedClinical, mergePersistedMeta,
+    mergePersistedNav, mergePersistedFinance, mergePersistedPublicHealth, mergePersistedStaff, mergePersistedClinical, mergePersistedMeta,
     reconcileClinicalReferralLog, buildManualSaveSnapshot, syncQuestRoster
 } from '../helpers/persistenceHelpers.js';
 import { applyFamilyIndicatorDrift, applyStaffMoraleDecay, pruneOutbreakRiskModifiers } from '../helpers/publicHealthHelpers.js';
@@ -84,12 +85,15 @@ export const createOrchestratorSlice = (set, get) => ({
             }
             try {
                 set(produce(s => {
-                    s.nav = createInitialNavState({
-                        sidebarCollapsed: s.nav.sidebarCollapsed,
-                        settings: s.nav.settings,
-                        currentSlotId: slotId,
-                        gameState: 'playing'
-                    });
+                    s.nav = mergePersistedNav(
+                        normalizedSave.nav,
+                        createInitialNavState({
+                            sidebarCollapsed: s.nav.sidebarCollapsed,
+                            settings: s.nav.settings,
+                            currentSlotId: slotId,
+                            gameState: 'playing'
+                        })
+                    );
 
                     if (normalizedSave.player) {
                         s.player = {
@@ -284,6 +288,15 @@ export const createOrchestratorSlice = (set, get) => ({
                     });
                 }
 
+                const strandedPatients = [...(state.clinical.queue || [])];
+                if (strandedPatients.length > 0) {
+                    state.clinical.todayLog = [
+                        ...(state.clinical.todayLog || []),
+                        ...buildRolloverMissedEncounterLogs(strandedPatients, 'day_rollover')
+                    ];
+                    state.player.profile.reputation = Math.max(0, state.player.profile.reputation - (strandedPatients.length * 1.5));
+                }
+
                 const casesToday = (state.clinical.todayLog || []).length;
                 const archivedDay = buildDailyArchiveEntry(state, targetDay);
                 state.clinical.dailyArchive = [
@@ -293,6 +306,7 @@ export const createOrchestratorSlice = (set, get) => ({
 
                 // 2. Reset Clinical State
                 state.clinical.queue = [];
+                state.clinical.activePatientId = null;
                 state.clinical.todayLog = [];           // Clear daily log
                 state.clinical.showMorningBriefing = true; // Trigger morning briefing
                 state.clinical.showEndOfDayDebrief = false;
@@ -450,8 +464,12 @@ export const createOrchestratorSlice = (set, get) => ({
                     }
                     // Push consequence narrative to clinical log
                     state.clinical.consequenceQueue.push({
+                        id: `ukp_bridge:${evt.historyEntryId || evt.diseaseId}:${evt.spawnDay || nextDayVal}`,
                         type: 'ukp_bridge',
                         message: evt.message,
+                        historyEntryId: evt.historyEntryId || null,
+                        familyId: evt.familyId || null,
+                        scenarioId: evt.source?.scenarioId || null,
                         diseaseId: evt.diseaseId,
                         severity: evt.severity,
                         spawnDay: evt.spawnDay || nextDayVal,

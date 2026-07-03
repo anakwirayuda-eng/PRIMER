@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
     safeGetStorageItem,
     safeSetStorageItem,
@@ -7,6 +7,16 @@ import {
 } from '../utils/browserSafety.js';
 
 describe('browser safety helpers', () => {
+    let consoleWarnSpy;
+
+    beforeEach(() => {
+        consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        consoleWarnSpy?.mockRestore();
+    });
+
     it('returns a fallback when storage reads throw', () => {
         const storage = {
             getItem: () => {

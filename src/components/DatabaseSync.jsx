@@ -9,8 +9,8 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React, { useState, useEffect } from 'react';
-import { PersistenceService } from '../services/PersistenceService.js';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { PersistenceService, db } from '../services/PersistenceService.js';
 import { Loader2, Database, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { safeReloadPage } from '../utils/browserSafety.js';
 
@@ -18,31 +18,47 @@ export default function DatabaseSync({ onComplete }) {
     const [status, setStatus] = useState('Checking database...');
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState(null);
+    const [isStalled, setIsStalled] = useState(false);
+    const inFlightRef = useRef(false);
+
+    const runSync = useCallback(async () => {
+        if (inFlightRef.current) return;
+        inFlightRef.current = true;
+        setError(null);
+        setIsStalled(false);
+        setStatus('Checking database...');
+        setProgress(0);
+
+        const stallTimer = setTimeout(() => {
+            setIsStalled(true);
+            setStatus('Sync is taking longer than expected...');
+        }, 12000);
+
+        try {
+            const isPopulated = await PersistenceService.isPopulated();
+            if (isPopulated) {
+                onComplete();
+                return;
+            }
+
+            await PersistenceService.syncData((msg, val) => {
+                setStatus(msg);
+                setProgress(val);
+            });
+
+            onComplete();
+        } catch (err) {
+            console.error('DatabaseSync Error:', err);
+            setError('Failed to synchronize medical database. Please refresh the page.');
+        } finally {
+            clearTimeout(stallTimer);
+            inFlightRef.current = false;
+        }
+    }, [onComplete]);
 
     useEffect(() => {
-        const init = async () => {
-            try {
-                const isPopulated = await PersistenceService.isPopulated();
-                if (isPopulated) {
-                    onComplete();
-                    return;
-                }
-
-                // Need to sync
-                await PersistenceService.syncData((msg, val) => {
-                    setStatus(msg);
-                    setProgress(val);
-                });
-
-                onComplete();
-            } catch (err) {
-                console.error('DatabaseSync Error:', err);
-                setError('Failed to synchronize medical database. Please refresh the page.');
-            }
-        };
-
-        init();
-    }, [onComplete]);
+        runSync();
+    }, [runSync]);
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-6 text-center">
@@ -91,6 +107,35 @@ export default function DatabaseSync({ onComplete }) {
                     >
                         Retry Sync
                     </button>
+                )}
+
+                {!error && isStalled && (
+                    <div className="mt-6 flex flex-col gap-2">
+                        <button
+                            onClick={runSync}
+                            className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-sm font-bold transition-colors"
+                        >
+                            Coba Lagi
+                        </button>
+                        <button
+                            onClick={() => onComplete()}
+                            className="px-6 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-bold transition-colors"
+                        >
+                            Lewati (Offline)
+                        </button>
+                        <button
+                            onClick={async () => {
+                                try {
+                                    await db.delete();
+                                } finally {
+                                    safeReloadPage();
+                                }
+                            }}
+                            className="px-6 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm font-bold transition-colors"
+                        >
+                            Reset Database
+                        </button>
+                    </div>
                 )}
             </div>
 

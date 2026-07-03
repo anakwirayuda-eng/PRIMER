@@ -11,8 +11,9 @@
 
 import React from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
+import { useTranslation } from 'react-i18next';
 import { Lock, Users } from 'lucide-react';
-import { isServiceUnlocked, getUnlockRequirement } from '../data/ClinicalServices.js';
+import { isServiceUnlocked } from '../data/ClinicalServices.js';
 
 /**
  * ServiceCardDeck - A flip-folder tab style UI for clinical services
@@ -24,148 +25,157 @@ export default function ServiceCardDeck({
     onSelectService,
     playerLevel = 1,
     hiredStaff = [],
-    emergencyCount = 0
+    emergencyCount = 0,
+    compact = false
 }) {
     const { isDark } = useTheme();
+    const { t } = useTranslation();
+    const tr = (key, fallback, options = {}) => {
+        const value = t(key, { ...options, defaultValue: fallback });
+        return value === key ? fallback : value;
+    };
+    const localizeService = (service) => ({
+        ...service,
+        name: tr(`clinical.services.${service.id}.name`, service.name),
+        shortName: tr(`clinical.services.${service.id}.short_name`, service.shortName),
+        description: tr(`clinical.services.${service.id}.description`, service.description)
+    });
+    const getServiceModeLabel = (service) => {
+        if (service.queueType === 'emergency') return tr('clinical.service_modes.emergency', 'Rapid triage');
+        if (service.queueType === 'farmasi_lab') return tr('clinical.service_modes.support', 'Support');
+        return tr('clinical.service_modes.queue', 'Clinic queue');
+    };
+    const getLocalizedRequirement = (service) => {
+        if (service.betaLocked) {
+            return tr('clinical.coming_soon', 'Coming Soon');
+        }
 
-    const _activeService = services.find(s => s.id === activeServiceId);
-    const activeIndex = services.findIndex(s => s.id === activeServiceId);
+        const requirements = [];
+        if (service.unlockLevel > playerLevel) {
+            requirements.push(tr('clinical.level_requirement', `Level ${service.unlockLevel} (current Lv.${playerLevel})`, {
+                level: service.unlockLevel,
+                currentLevel: playerLevel
+            }));
+        }
+
+        if (service.requiredStaff && !hiredStaff.includes(service.requiredStaff)) {
+            const staffLabel = tr(`morningBriefing.staff_roles.${service.requiredStaff}`, service.requiredStaff);
+            requirements.push(tr('clinical.staff_requirement', `Recruit ${staffLabel} from the Staff menu`, { staff: staffLabel }));
+        }
+
+        return requirements.join(' + ');
+    };
+
+    const activeService = services.find((service) => service.id === activeServiceId) || services[0] || null;
+    const activeUnlocked = activeService ? isServiceUnlocked(activeService, playerLevel, hiredStaff) : false;
+    const localizedActiveService = activeService ? localizeService(activeService) : null;
+    const activeRequirement = activeService && !activeUnlocked
+        ? getLocalizedRequirement(activeService)
+        : '';
+
+    if (!activeService || !localizedActiveService) return null;
 
     return (
-        <div className="relative">
-            {/* Folder Tabs Container */}
-            <div className="relative" style={{ perspective: '1000px' }}>
-                {/* Background folder tabs (stacked behind) */}
-                <div className="relative h-auto">
-                    {services.map((service, index) => {
+        <div className={compact ? 'space-y-2' : 'space-y-3'}>
+            <div className={`rounded-2xl border ${compact ? 'p-1.5' : 'p-2'} ${isDark ? 'border-slate-700 bg-slate-950/60' : 'border-slate-200 bg-slate-100/80'}`}>
+                <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                    {services.map((service) => {
                         const unlocked = isServiceUnlocked(service, playerLevel, hiredStaff);
                         const isActive = service.id === activeServiceId;
-                        const _requirement = !unlocked ? getUnlockRequirement(service, playerLevel, hiredStaff) : '';
-
-                        // Calculate position offset for stacking effect
-                        const distanceFromActive = index - activeIndex;
-                        const zIndex = isActive ? 50 : 40 - Math.abs(distanceFromActive);
-
-                        // Offset for tab peek effect
-                        const tabOffset = isActive ? 0 : (distanceFromActive * 2);
+                        const localizedService = localizeService(service);
 
                         return (
-                            <div
+                            <button
                                 key={service.id}
                                 onClick={() => unlocked && onSelectService(service.id)}
+                                disabled={!unlocked}
                                 className={`
-                                    ${isActive ? 'relative' : 'absolute top-0 left-0 right-0'}
-                                    transition-all duration-300 ease-out
-                                    ${unlocked ? 'cursor-pointer' : 'cursor-not-allowed'}
+                                    relative shrink-0 rounded-2xl border text-left transition-all
+                                    ${compact ? 'min-w-[4.75rem] px-2.5 py-2' : 'min-w-[5.5rem] px-3 py-2.5'}
+                                    ${isActive
+                                        ? `bg-gradient-to-r ${service.color} border-transparent text-white shadow-lg`
+                                        : unlocked
+                                            ? (isDark ? 'border-slate-700 bg-slate-900 text-slate-200 hover:border-slate-500 hover:bg-slate-800' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50')
+                                            : (isDark ? 'border-slate-800 bg-slate-900/70 text-slate-500' : 'border-slate-200 bg-slate-100 text-slate-400')
+                                    }
+                                    ${!unlocked ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}
                                 `}
-                                style={{
-                                    zIndex,
-                                    transform: isActive
-                                        ? 'translateY(0) scale(1)'
-                                        : `translateY(${tabOffset}px) scale(${1 - Math.abs(distanceFromActive) * 0.02})`,
-                                    opacity: isActive ? 1 : (unlocked ? 0.9 : 0.5),
-                                }}
                             >
-                                {/* Tab Header (always visible) */}
-                                <div
-                                    className={`
-                                        flex items-center gap-2 px-3 py-2 rounded-t-lg border-t border-l border-r
-                                        transition-all duration-200
-                                        ${isActive
-                                            ? `bg-gradient-to-r ${service.color} text-white border-transparent shadow-lg`
-                                            : isDark
-                                                ? 'bg-slate-700 text-slate-300 border-slate-600 hover:bg-slate-600'
-                                                : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
-                                        }
-                                        ${!unlocked ? 'opacity-50' : ''}
-                                    `}
-                                >
-                                    <span className="text-lg">{service.icon}</span>
-                                    <span className="font-bold text-sm">{service.shortName}</span>
-
-                                    {/* Lock icon */}
-                                    {!unlocked && (
-                                        <Lock size={12} className="ml-auto opacity-60" />
-                                    )}
-
-                                    {/* Emergency badge */}
+                                <div className="flex items-center justify-between gap-2">
+                                    <span className="text-lg leading-none">{service.icon}</span>
+                                    {!unlocked && <Lock size={12} className="shrink-0 opacity-70" />}
                                     {service.id === 'igd' && emergencyCount > 0 && (
-                                        <span className="ml-auto bg-white text-red-600 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                                        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-[10px] font-black text-red-600">
                                             {emergencyCount}
                                         </span>
                                     )}
                                 </div>
-
-                                {/* Folder Content (only for active) */}
-                                {isActive && (
-                                    <div
-                                        className={`
-                                            p-4 rounded-b-lg rounded-tr-lg border-b border-l border-r
-                                            ${isDark
-                                                ? 'bg-slate-800 border-slate-700'
-                                                : 'bg-white border-slate-200 shadow-sm'
-                                            }
-                                        `}
-                                    >
-                                        <h3 className={`font-bold text-lg mb-1 ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                                            {service.name}
-                                        </h3>
-                                        <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                                            {service.description}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
+                                <div className={compact ? 'mt-1.5' : 'mt-2'}>
+                                    <p className={`${compact ? 'text-[10px]' : 'text-[11px]'} font-black uppercase tracking-[0.14em]`}>{localizedService.shortName}</p>
+                                    <p className={`mt-1 truncate ${compact ? 'text-[9px]' : 'text-[10px]'} ${isActive ? 'text-white/75' : (isDark ? 'text-slate-400' : 'text-slate-500')}`}>
+                                        {getServiceModeLabel(service)}
+                                    </p>
+                                </div>
+                            </button>
                         );
                     })}
                 </div>
             </div>
 
-            {/* Quick Navigation Tabs (visible tabs strip) */}
-            <div className={`mt-4 flex flex-wrap gap-1 p-2 rounded-lg ${isDark ? 'bg-slate-900' : 'bg-slate-100'}`}>
-                {services.map((service) => {
-                    const unlocked = isServiceUnlocked(service, playerLevel, hiredStaff);
-                    const isActive = service.id === activeServiceId;
+            <div className={`rounded-2xl border ${compact ? 'px-3.5 py-3' : 'px-4 py-3'} ${isDark ? 'border-slate-700 bg-slate-900/90' : 'border-slate-200 bg-white'}`}>
+                <div className="flex items-start gap-3">
+                    <div className={`mt-0.5 flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${activeService.color} text-xl text-white shadow-md ${compact ? 'h-10 w-10' : 'h-11 w-11'}`}>
+                        {activeService.icon}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h3 className={`text-sm font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                {localizedActiveService.name}
+                            </h3>
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.16em] ${
+                                activeUnlocked
+                                    ? (isDark ? 'bg-emerald-500/10 text-emerald-300' : 'bg-emerald-50 text-emerald-700')
+                                    : (isDark ? 'bg-amber-500/10 text-amber-300' : 'bg-amber-50 text-amber-700')
+                            }`}>
+                                {activeUnlocked ? t('clinical.service_status_ready') : t('clinical.locked')}
+                            </span>
+                        </div>
+                        <p className={`mt-1 leading-relaxed ${compact ? 'text-[11px]' : 'text-xs'} ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                            {localizedActiveService.description}
+                        </p>
+                    </div>
+                </div>
 
-                    return (
-                        <button
-                            key={service.id}
-                            onClick={() => unlocked && onSelectService(service.id)}
-                            disabled={!unlocked}
-                            className={`
-                                relative px-2 py-1.5 rounded-md text-xs font-bold transition-all
-                                ${isActive
-                                    ? `bg-gradient-to-r ${service.color} text-white shadow-md scale-105`
-                                    : unlocked
-                                        ? isDark
-                                            ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                                            : 'bg-white text-slate-600 hover:bg-slate-50 shadow-sm'
-                                        : isDark
-                                            ? 'bg-slate-800 text-slate-600'
-                                            : 'bg-slate-200 text-slate-400'
-                                }
-                                ${!unlocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
-                            `}
-                        >
-                            <span className="mr-1">{service.icon}</span>
-                            {service.shortName}
+                <div className={`flex flex-wrap gap-2 ${compact ? 'mt-2.5' : 'mt-3'}`}>
+                    <span className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+                        {getServiceModeLabel(activeService)}
+                    </span>
+                    {activeService.requiredStaff && (
+                        <span className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${isDark ? 'bg-indigo-500/10 text-indigo-300' : 'bg-indigo-50 text-indigo-700'}`}>
+                            {t('clinical.service_staff_label', { staff: activeService.requiredStaff })}
+                        </span>
+                    )}
+                    {activeService.unlockLevel > 1 && (
+                        <span className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+                            {t('clinical.service_level_label', { level: activeService.unlockLevel })}
+                        </span>
+                    )}
+                    {activeService.id === 'igd' && emergencyCount > 0 && (
+                        <span className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${isDark ? 'bg-red-500/10 text-red-300' : 'bg-red-50 text-red-700'}`}>
+                            {t('clinical.service_emergency_count', { count: emergencyCount })}
+                        </span>
+                    )}
+                </div>
 
-                            {/* Emergency pulse */}
-                            {service.id === 'igd' && emergencyCount > 0 && (
-                                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                    <span className="animate-ping absolute h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span className="relative rounded-full h-3 w-3 bg-red-500"></span>
-                                </span>
-                            )}
-                        </button>
-                    );
-                })}
-            </div>
-
-            {/* Footer hint */}
-            <div className={`mt-3 text-center text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                <Users size={12} className="inline mr-1" />
-                Rekrut staff untuk membuka layanan baru
+                {!activeUnlocked && activeRequirement && (
+                    <div className={`mt-3 rounded-xl border px-3 py-2 text-xs leading-relaxed ${isDark ? 'border-amber-500/20 bg-amber-500/10 text-amber-200' : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
+                        <div className="mb-1 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em]">
+                            <Users size={12} />
+                            {t('clinical.unlock_requirements_short')}
+                        </div>
+                        <p>{activeRequirement}</p>
+                    </div>
+                )}
             </div>
         </div>
     );

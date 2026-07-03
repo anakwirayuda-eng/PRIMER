@@ -19,6 +19,10 @@ const WorldSliceSchema = z.object({
     isPaused: z.boolean().optional()
 }).passthrough();
 
+const NavSliceSchema = z.object({
+    settings: z.record(z.string(), z.unknown()).optional()
+}).passthrough();
+
 const FinanceSliceSchema = z.object({
     stats: z.record(z.string(), z.unknown()).optional(),
     facilities: z.record(z.string(), z.unknown()).optional(),
@@ -61,6 +65,7 @@ const MetaSliceSchema = z.object({
 export const SavePayloadSchema = z.object({
     saveVersion: z.number().int().nonnegative().optional(),
     savedAt: finiteNumber.optional(),
+    nav: NavSliceSchema.nullable().optional(),
     player: PlayerSliceSchema.nullable().optional(),
     world: WorldSliceSchema.nullable().optional(),
     finance: FinanceSliceSchema.nullable().optional(),

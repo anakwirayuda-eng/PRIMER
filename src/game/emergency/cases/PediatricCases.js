@@ -17,7 +17,8 @@ export const PEDIATRIC_CASES = [
         esiLevel: 2,
         symptoms: ['Sesak napas berat pada bayi', 'Wheezing', 'Retraksi dinding dada', 'Napas cuping hidung', 'Sulit menyusu'],
         clue: "[URGENT] Bayi <2 tahun dengan sesak + wheezing setelah ISPA. Curiga Bronkiolitis RSV — oksigenasi utama, bukan bronkodilator!",
-        relevantLabs: ['SpO2', 'Darah Lengkap'],
+        relevantLabs: ['Darah Lengkap'],
+        requiredMonitoring: ['SpO2'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_onset', text: 'Sesaknya sejak kapan?', response: 'Dari kemarin makin berat dok, awalnya cuma pilek.', priority: 'essential' },
@@ -140,7 +141,8 @@ export const PEDIATRIC_CASES = [
         esiLevel: 1,
         symptoms: ['Napas Kussmaul', 'Penurunan kesadaran', 'Muntah', 'Nyeri perut', 'Napas bau aseton', 'Dehidrasi berat'],
         clue: "[CRITICAL] Anak dengan napas cepat-dalam (Kussmaul) + dehidrasi + bau aseton. Curiga KAD! Cek GDS segera, resusitasi cairan!",
-        relevantLabs: ['GDS', 'Darah Lengkap', 'Elektrolit', 'AGD'],
+        relevantLabs: ['GDS', 'Darah Lengkap'],
+        referralLevelDiagnostics: ['Elektrolit', 'AGD'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_event', text: 'Apa yang terjadi?', response: 'Anak saya lemas, muntah terus, napasnya cepat banget dok.', priority: 'essential' },

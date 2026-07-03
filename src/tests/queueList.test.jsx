@@ -18,7 +18,15 @@ vi.mock('../context/ThemeContext.jsx', () => ({
 }));
 
 vi.mock('react-i18next', () => ({
-    useTranslation: () => ({ t: (key) => key === 'dashboard.waiting' ? 'waiting' : key })
+    useTranslation: () => ({
+        t: (key, options = {}) => {
+            if (key === 'dashboard.waiting') return 'waiting';
+            if (key === 'queue.upcoming_followups') return `${options.count} kontrol`;
+            if (key === 'queue.background_alt') return 'Ilustrasi poli umum';
+            if (key === 'queue.counter_label') return 'Antrian';
+            return key;
+        }
+    })
 }));
 
 vi.mock('../utils/AvatarUtils.js', () => ({

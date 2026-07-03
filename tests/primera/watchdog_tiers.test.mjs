@@ -1,10 +1,20 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runTier } from '../../scripts/primera/watchdog_tiers.mjs';
 
 describe('watchdog_tiers', () => {
+    let consoleLogSpy;
+
+    beforeEach(() => {
+        consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        consoleLogSpy?.mockRestore();
+    });
+
     it('stops the tier when store-audit exits non-zero', () => {
         const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'primer-watchdog-'));
         const markerPath = path.join(tempDir, 'after-store-audit.txt');

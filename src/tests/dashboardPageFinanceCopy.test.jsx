@@ -4,6 +4,17 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const mockUseGame = vi.fn();
 
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key, options = {}) => {
+            if (key === 'dashboard.hub.cards.performance.label') return 'KBK';
+            if (key === 'dashboard.hub.cards.performance.sublabel') return 'Dana Operasional • Kinerja';
+            if (key === 'dashboard.hub.cards.performance.quick_stat') return `Rp ${options.value}M`;
+            return options.defaultValue ?? key;
+        }
+    })
+}));
+
 vi.mock('../context/GameContext.jsx', () => ({
     useGame: () => mockUseGame()
 }));
@@ -58,7 +69,8 @@ describe('DashboardPage finance wording', () => {
 
         render(<DashboardPage />);
 
-        expect(screen.getByText('KBK • Dana Operasional • Kinerja')).toBeInTheDocument();
+        expect(screen.getByText('KBK')).toBeInTheDocument();
+        expect(screen.getByText('Dana Operasional • Kinerja')).toBeInTheDocument();
         expect(screen.getByText('Rp 50.2M')).toBeInTheDocument();
     });
 });

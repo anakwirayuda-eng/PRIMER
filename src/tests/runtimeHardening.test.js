@@ -1,8 +1,21 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { dispatchGuard } from '../utils/dispatchGuard.js';
 import { CURRENT_SAVE_VERSION, parseSavePayload } from '../utils/savePayload.js';
 
 describe('runtime hardening', () => {
+    let consoleWarnSpy;
+    let consoleErrorSpy;
+
+    beforeEach(() => {
+        consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        consoleWarnSpy?.mockRestore();
+        consoleErrorSpy?.mockRestore();
+    });
+
     it('normalizes legacy saves into the canonical schema', () => {
         const parsed = parseSavePayload({
             profile: { name: 'Legacy Dokter' },

@@ -49,3 +49,5 @@ health.json
 lint_report.json
 undefined-ledger.md
 PRIMERA_AGENT_CONTEXT.md
+
+.vercel

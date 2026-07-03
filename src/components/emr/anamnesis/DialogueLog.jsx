@@ -35,14 +35,25 @@ function TypingDots({ isDark }) {
     );
 }
 
-export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEndRef, isProcessing }) {
+function tr(t, key, fallback, options = {}) {
+    if (typeof t !== 'function') return fallback;
+    return t(key, { ...options, defaultValue: fallback });
+}
+
+function localizeSpeakerLabel(label, t) {
+    if (label === 'Pasien') return tr(t, 'anamnesis.dialogue.patient', 'Pasien');
+    if (label === 'Pendamping') return tr(t, 'anamnesis.dialogue.companion', 'Pendamping');
+    return label;
+}
+
+export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEndRef, isProcessing, t }) {
     const informantMode = getInformantMode(patient);
 
     if (anamnesisHistory.length === 0) {
         return (
             <div className={`mb-2 flex-1 overflow-y-auto rounded-xl border p-4 ${isDark ? 'border-slate-800 bg-[#0b1120]' : 'border-slate-200 bg-slate-50'} inner-shadow`}>
                 <div className="mt-4 text-center font-mono text-xs italic tracking-wide text-slate-500">
-                    [ MENUNGGU PERTANYAAN KLINIS ]
+                    {tr(t, 'anamnesis.dialogue.empty', '[ MENUNGGU PERTANYAAN KLINIS ]')}
                 </div>
                 <div ref={chatEndRef} />
             </div>
@@ -60,7 +71,7 @@ export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEnd
 
             <div className="space-y-4">
                 {anamnesisHistory.map((question, idx) => {
-                    const speakerLabel = question.speaker || getSpeakerLabel(question, patient) || 'Pasien';
+                    const speakerLabel = localizeSpeakerLabel(question.speaker || getSpeakerLabel(question, patient) || 'Pasien', t);
                     const doctorTime = formatPseudoTime(idx, 0);
                     const patientTime = formatPseudoTime(idx, 1);
                     const doctorText = adaptTextForGender(question.text, patient, informantMode);
@@ -85,7 +96,7 @@ export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEnd
                                         <div className="mb-1 flex items-center gap-2">
                                             <Stethoscope size={12} className="text-emerald-500" />
                                             <span className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-500">
-                                                Dokter
+                                                {tr(t, 'anamnesis.dialogue.doctor', 'Dokter')}
                                             </span>
                                         </div>
 
@@ -115,7 +126,7 @@ export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEnd
                                                 {question.isVague && (
                                                     <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-500">
                                                         <AlertTriangle size={10} />
-                                                        Vague
+                                                        {tr(t, 'anamnesis.dialogue.vague', 'Vague')}
                                                     </span>
                                                 )}
                                                 <span className={`text-[10px] font-black uppercase tracking-[0.18em] ${question.isVague ? 'text-amber-500' : (isDark ? 'text-indigo-300' : 'text-indigo-700')}`}>
@@ -153,7 +164,7 @@ export default function DialogueLog({ anamnesisHistory, patient, isDark, chatEnd
 
                                 <div className="mb-1 flex items-center justify-end gap-2">
                                     <span className={`text-[10px] font-black uppercase tracking-[0.18em] ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>
-                                        {getSpeakerLabel(null, patient)}
+                                        {localizeSpeakerLabel(getSpeakerLabel(null, patient), t)}
                                     </span>
                                     <UserRound size={12} className={isDark ? 'text-indigo-300' : 'text-indigo-700'} />
                                 </div>

@@ -29,8 +29,38 @@ export function normalizeClinicalHistoryEntry(entry) {
 
 export function getHistoryForDay(history, day) {
     return Array.isArray(history)
-        ? history.filter((entry) => Number(entry?.day) === Number(day))
+        ? history.filter((entry) => Number(entry?.archiveDay ?? entry?.day) === Number(day))
         : [];
+}
+
+export function buildMissedEncounterLog(patient = {}, reason = 'timeout') {
+    return {
+        patientId: patient?.id || null,
+        patientName: patient?.name || 'Pasien',
+        age: patient?.age,
+        gender: patient?.gender,
+        diagnosis: patient?.medicalData?.trueDiagnosisCode || 'unknown',
+        diagnosisName: patient?.medicalData?.diagnosisName || patient?.medicalData?.trueDiagnosisCode || 'Undiagnosed',
+        action: 'left_without_service',
+        completed: false,
+        referred: false,
+        missed: true,
+        leftWithoutService: true,
+        reason,
+        revenue: 0,
+        facility: patient?.facility || patient?.serviceId || 'poli_umum',
+        joinedAt: patient?.joinedAt ?? patient?.arrivalTime ?? 480,
+        hasBPJS: typeof patient?.social?.hasBPJS === 'boolean' ? patient.social.hasBPJS : null,
+        timestamp: Date.now()
+    };
+}
+
+export function buildRolloverMissedEncounterLogs(queue = [], reason = 'day_rollover') {
+    if (!Array.isArray(queue) || queue.length === 0) {
+        return [];
+    }
+
+    return queue.map((patient) => buildMissedEncounterLog(patient, reason));
 }
 
 export function getEncounterAction(entry) {

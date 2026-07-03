@@ -1,9 +1,13 @@
 const REFERRAL_ARRIVAL_NOTES = [
-    'Satpam RS sudah buka portal. Serah terima lancar.',
-    'Tim jaga menerima pasien tanpa drama.',
-    'Berkas lengkap. Stempel basah didapat.',
-    'Ambulans parkir miring sedikit, tapi pasien diterima.'
+    { key: 'portal_open', text: 'Satpam RS sudah buka portal. Serah terima lancar.' },
+    { key: 'on_call_team', text: 'Tim jaga menerima pasien tanpa drama.' },
+    { key: 'documents_complete', text: 'Berkas lengkap. Stempel basah didapat.' },
+    { key: 'ambulance_offset', text: 'Ambulans parkir miring sedikit, tapi pasien diterima.' }
 ];
+
+const REFERRAL_ARRIVAL_NOTE_MAP = new Map(
+    REFERRAL_ARRIVAL_NOTES.map((note) => [note.key, note.text])
+);
 
 export const REFERRAL_ARRIVED_RETENTION_MINUTES = 60;
 
@@ -39,8 +43,31 @@ const getFallbackTravelDurationMinutes = (entry = {}) => {
     return Math.max(1, Math.ceil(distance * multiplier));
 };
 
+export const resolveReferralArrivalNote = (translate, entry = {}) => {
+    const fallback = String(entry?.arrivalNote || '').trim()
+        || REFERRAL_ARRIVAL_NOTE_MAP.get(entry?.arrivalNoteKey)
+        || '';
+
+    if (entry?.arrivalNoteKey && typeof translate === 'function') {
+        return translate(`referral.arrivalNotes.${entry.arrivalNoteKey}`, {
+            defaultValue: fallback
+        });
+    }
+
+    return fallback;
+};
+
 export const pickReferralArrivalNote = (entry = {}) => {
-    if (entry.arrivalNote) return entry.arrivalNote;
+    if (entry.arrivalNoteKey) {
+        return {
+            key: entry.arrivalNoteKey,
+            text: entry.arrivalNote || REFERRAL_ARRIVAL_NOTE_MAP.get(entry.arrivalNoteKey) || ''
+        };
+    }
+
+    if (entry.arrivalNote) {
+        return { key: null, text: entry.arrivalNote };
+    }
 
     const seed = [
         entry.patientId,
@@ -83,6 +110,8 @@ const normalizeReferralLogEntry = (entry, day = 1, time = 0) => {
 
     const arrivedPoint = arrivedAtTotal == null ? null : fromAbsoluteWorldMinutes(arrivedAtTotal);
 
+    const arrivalNoteMeta = pickReferralArrivalNote(entry);
+
     return {
         ...entry,
         id: entry.id || `ref_${entry.patientId || 'unknown'}_${sentAtTotal}`,
@@ -103,7 +132,8 @@ const normalizeReferralLogEntry = (entry, day = 1, time = 0) => {
         arrivedAtTotal,
         arrivedDay: arrivedPoint?.day ?? entry.arrivedDay ?? null,
         arrivedTime: arrivedPoint?.time ?? entry.arrivedTime ?? null,
-        arrivalNote: pickReferralArrivalNote(entry)
+        arrivalNoteKey: arrivalNoteMeta?.key || entry.arrivalNoteKey || null,
+        arrivalNote: arrivalNoteMeta?.text || ''
     };
 };
 

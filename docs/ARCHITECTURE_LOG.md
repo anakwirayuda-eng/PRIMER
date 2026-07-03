@@ -1,4 +1,4 @@
-# 📋 PRIMER Architecture Decision Log
+﻿# 📋 PRIMER Architecture Decision Log
 > **Purpose**: Running log of architecture decisions. AI agents: read PRIMER_BIBLE.md first (game identity), then this file (technical decisions).
 > **Last Updated**: 2026-03-27
 

@@ -35,9 +35,9 @@ export const AVATAR_POSITIONS = {
  */
 export function normalizeGender(gender) {
     if (!gender) return 'L';
-    const g = gender.toString().toUpperCase();
-    if (g === 'MALE' || g === 'L' || g === 'Laki-laki') return 'L';
-    if (g === 'FEMALE' || g === 'P' || g === 'Perempuan') return 'P';
+    const g = gender.toString().trim().toUpperCase();
+    if (['MALE', 'M', 'L', 'LAKI-LAKI', 'LAKI LAKI'].includes(g)) return 'L';
+    if (['FEMALE', 'F', 'P', 'PEREMPUAN'].includes(g)) return 'P';
     return 'L';
 }
 

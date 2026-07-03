@@ -10,16 +10,17 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
+import { showToast } from '../utils/ToastManager.js';
 import {
     Stethoscope, MapPin, BarChart3, Shield, Package,
     Activity, AlertCircle, AlertTriangle, Clock, Info,
     Wifi, WifiOff, Zap, Users, Heart, Brain, Loader2
 } from 'lucide-react';
 // WIKI_DATA removed — EducationalWikiModal loads data internally via getWikiEntry
-import { buildOperationalInventoryWikiStats, summarizeOperationalInventory } from '../utils/operationalInventory.js';
-import { buildLiquidityWikiStats } from '../utils/financeDisplay.js';
+import { summarizeOperationalInventory } from '../utils/operationalInventory.js';
 import { calculateCommunityMetrics } from '../utils/communityMetrics.js';
 import ClinicalView from './dashboard/ClinicalView.jsx';
 import CommunityView from './dashboard/CommunityView.jsx';
@@ -34,12 +35,13 @@ import LogisticsView from './dashboard/LogisticsView.jsx';
  * Each button navigates to a specialized sub-view (Clinical, Community, KBK, Accreditation, Logistics).
  */
 export default function DashboardPage() {
+    const { t } = useTranslation();
     const {
         stats, kpi, derivedKpis, accreditation,
         day, villageData, activeEvent, pharmacyInventory,
-        hiredStaff, queue, history, prbQueue, prolanisRoster,
+        hiredStaff, queue, history, prbQueue,
         playerStats, activeOutbreaks,
-        wikiMetric, openWiki
+        openWiki
     } = useGame();
 
     // Navigation state: 'hub' | 'clinical' | 'community' | 'performance' | 'accreditation' | 'logistics'
@@ -53,6 +55,14 @@ export default function DashboardPage() {
         () => calculateCommunityMetrics(villageData),
         [villageData]
     );
+    const inventorySummary = useMemo(
+        () => summarizeOperationalInventory(pharmacyInventory),
+        [pharmacyInventory]
+    );
+    const overduePrbCount = useMemo(
+        () => prbQueue?.filter(p => p.status === 'active' && p.tasks.some(t => !t.completed && t.dueDay <= day)).length || 0,
+        [prbQueue, day]
+    );
 
     // Wiki Modal — uses global store state from useGame()
 
@@ -61,19 +71,18 @@ export default function DashboardPage() {
 
     const alerts = useMemo(() => {
         const list = [];
-        const { outOfStock, lowStock } = summarizeOperationalInventory(pharmacyInventory);
-        if (outOfStock > 0) list.push({ text: `${outOfStock} obat HABIS`, icon: AlertTriangle, severity: 'critical' });
-        if (lowStock > 0) list.push({ text: `${lowStock} obat rendah`, icon: Package, severity: 'warning' });
-        if (derivedKpis.rrns > 5) list.push({ text: `RRNS: ${derivedKpis.rrns}% (tinggi)`, icon: Activity, severity: 'warning' });
-        if (playerStats.stress > 70) list.push({ text: `Stress: ${playerStats.stress}%`, icon: Brain, severity: 'critical' });
-        if (playerStats.energy < 30) list.push({ text: `Energi: ${Math.round(playerStats.energy)}%`, icon: Zap, severity: 'critical' });
+        const { outOfStock, lowStock } = inventorySummary;
+        if (outOfStock > 0) list.push({ text: t('dashboard.hub.alerts.out_of_stock', { count: outOfStock }), icon: AlertTriangle, severity: 'critical' });
+        if (lowStock > 0) list.push({ text: t('dashboard.hub.alerts.low_stock', { count: lowStock }), icon: Package, severity: 'warning' });
+        if (derivedKpis.rrns > 5) list.push({ text: t('dashboard.hub.alerts.rrns_high', { value: derivedKpis.rrns }), icon: Activity, severity: 'warning' });
+        if (playerStats.stress > 70) list.push({ text: t('dashboard.hub.alerts.stress', { value: playerStats.stress }), icon: Brain, severity: 'critical' });
+        if (playerStats.energy < 30) list.push({ text: t('dashboard.hub.alerts.energy', { value: Math.round(playerStats.energy) }), icon: Zap, severity: 'critical' });
         const lowMoraleStaff = hiredStaff?.filter(s => (s.morale || 70) < 50).length || 0;
-        if (lowMoraleStaff > 0) list.push({ text: `${lowMoraleStaff} staf morale rendah`, icon: Heart, severity: 'warning' });
-        if (activeOutbreaks?.length > 0) list.push({ text: `KLB Aktif: ${activeOutbreaks.map(o => o.disease).join(', ')}`, icon: AlertCircle, severity: 'critical' });
-        const activePRB = prbQueue?.filter(p => p.status === 'active' && p.tasks.some(t => !t.completed && t.dueDay <= day)).length || 0;
-        if (activePRB > 0) list.push({ text: `${activePRB} PRB overdue`, icon: Clock, severity: 'warning' });
+        if (lowMoraleStaff > 0) list.push({ text: t('dashboard.hub.alerts.low_morale_staff', { count: lowMoraleStaff }), icon: Heart, severity: 'warning' });
+        if (activeOutbreaks?.length > 0) list.push({ text: t('dashboard.hub.alerts.outbreak_active', { diseases: activeOutbreaks.map(o => o.disease).join(', ') }), icon: AlertCircle, severity: 'critical' });
+        if (overduePrbCount > 0) list.push({ text: t('dashboard.hub.alerts.prb_overdue', { count: overduePrbCount }), icon: Clock, severity: 'warning' });
         return list;
-    }, [pharmacyInventory, derivedKpis, playerStats, hiredStaff, activeOutbreaks, prbQueue, day]);
+    }, [inventorySummary, derivedKpis, playerStats, hiredStaff, activeOutbreaks, overduePrbCount, t]);
 
     // Satu Sehat sync status (fictional — always "connected" for immersion)
     const syncStatus = useMemo(() => {
@@ -86,66 +95,8 @@ export default function DashboardPage() {
         // Simulate deep sync
         await new Promise(r => setTimeout(r, 1500));
         setIsSyncing(false);
-        alert('Satu Sehat Sync Complete! \n\nNote: Developer should run PRIMERA_SYNC.bat to update documentation reflections.');
+        showToast(t('dashboard.hub.sync_success'), 'success', 4200);
     };
-
-
-    // === WIKI LIVE STATS ===
-    const wikiLiveStats = useMemo(() => {
-        if (!wikiMetric) return null;
-        switch (wikiMetric) {
-            case 'liquidity':
-                return buildLiquidityWikiStats(stats);
-            case 'staff_readiness': {
-                const avg = hiredStaff.length > 0 ? Math.round(hiredStaff.reduce((s, st) => s + (st.performance || 0), 0) / hiredStaff.length) : 0;
-                return { "Total Staf": hiredStaff.length, "Avg Readiness": avg + "%" };
-            }
-            case 'rrns':
-                return { "Total Pasien": kpi.totalPatients, "RRNS": derivedKpis.rrns + "%", "Target": "< 5%" };
-            case 'accreditation':
-            case 'accreditation_chapters':
-                return { "Status": accreditation, "Overall Score": derivedKpis.overallScore };
-            case 'iks': {
-                return { "Rata-rata IKS": (communityMetrics.avgIKS * 100).toFixed(1) + "%", "Total KK": communityMetrics.totalKK };
-            }
-            case 'kbk': {
-                const pop = villageData?.stats?.totalPopulation || 1;
-                const months = Math.max(1, day / 30);
-                return { "Angka Kontak": `${Math.round((kpi.totalPatients / pop) * 1000 / months)}‰`, "RRNS": derivedKpis.rrns + "%" };
-            }
-            case 'angka_kontak': {
-                const pop2 = villageData?.stats?.totalPopulation || 1;
-                return { "Total Kontak": kpi.totalPatients, "Populasi": pop2 };
-            }
-            case 'skdi_coverage':
-                return { "Total Pasien Ditangani": kpi.totalPatients };
-            case 'prolanis_compliance':
-                return { "Peserta Prolanis": prolanisRoster?.length || 0 };
-            case 'stress':
-                return { "Stress": playerStats.stress + "%", "Energy": Math.round(playerStats.energy) + "%" };
-            case 'accuracy':
-                return { "Akurasi Diagnosa": derivedKpis.clinicalAccuracy + "%", "Total Pasien": kpi.totalPatients };
-            case 'treatment':
-                return { "Terapi Rasional": derivedKpis.treatmentAppropriateRate + "%" };
-            case 'antibiotics':
-                return { "AB Stewardship": derivedKpis.antibioticStewardship + "%" };
-            case 'patient_safety':
-                return { "Akurasi": derivedKpis.clinicalAccuracy + "%", "Terapi": derivedKpis.treatmentAppropriateRate + "%", "AB": derivedKpis.antibioticStewardship + "%" };
-            case 'prb':
-                return { "PRB Aktif": prbQueue?.filter(p => p.status === 'active').length || 0, "PRB Selesai": prbQueue?.filter(p => p.status === 'completed').length || 0 };
-            case 'inventory': {
-                return buildOperationalInventoryWikiStats(pharmacyInventory);
-            }
-            case 'ukp_overview':
-                return { "Akurasi Klinis": derivedKpis.clinicalAccuracy + "%", "Total Pasien": kpi.totalPatients };
-            case 'ukm_overview': {
-                return { "Rata-rata IKS": (communityMetrics.avgIKS * 100).toFixed(1) + "%", "Total KK": communityMetrics.totalKK };
-            }
-            default:
-                return null;
-        }
-    }, [wikiMetric, stats, kpi, derivedKpis, hiredStaff, accreditation, communityMetrics, villageData, playerStats, prolanisRoster, prbQueue, pharmacyInventory, day]);
-
     // Memoize particle positions so they don't change on every re-render
     const particles = useMemo(() => {
         return [...Array(12)].map((_, i) => ({
@@ -171,33 +122,55 @@ export default function DashboardPage() {
     // === HUB NAVIGATION BUTTONS ===
     const hubButtons = [
         {
-            id: 'clinical', label: 'Clinical Intel', sublabel: 'UKP • SKDI • Patient Safety',
+            id: 'clinical', label: t('dashboard.hub.cards.clinical.label'), sublabel: t('dashboard.hub.cards.clinical.sublabel'),
             icon: Stethoscope, color: 'rose',
-            quickStat: `${derivedKpis.clinicalAccuracy}% Akurasi`,
+            quickStat: t('dashboard.hub.cards.clinical.quick_stat', { value: derivedKpis.clinicalAccuracy }),
+            supportStats: [
+                { label: t('dashboard.hub.cards.clinical.support_queue'), value: queue.length },
+                { label: t('dashboard.hub.cards.clinical.support_today'), value: todayPatients }
+            ],
             wikiKey: 'ukp_overview'
         },
         {
-            id: 'community', label: 'Community Intel', sublabel: 'UKM • PIS-PK • Prolanis',
+            id: 'community', label: t('dashboard.hub.cards.community.label'), sublabel: t('dashboard.hub.cards.community.sublabel'),
             icon: MapPin, color: 'violet',
-            quickStat: `IKS ${(communityMetrics.avgIKS * 100).toFixed(0)}%`,
+            quickStat: t('dashboard.hub.cards.community.quick_stat', { value: (communityMetrics.avgIKS * 100).toFixed(0) }),
+            supportStats: [
+                { label: t('dashboard.hub.cards.community.support_prb'), value: overduePrbCount },
+                { label: t('dashboard.hub.cards.community.support_population'), value: villageData?.stats?.totalPopulation || villageData?.families?.length || 0 }
+            ],
             wikiKey: 'ukm_overview'
         },
         {
-            id: 'performance', label: 'Performance', sublabel: 'KBK • Dana Operasional • Kinerja',
+            id: 'performance', label: t('dashboard.hub.cards.performance.label'), sublabel: t('dashboard.hub.cards.performance.sublabel'),
             icon: BarChart3, color: 'emerald',
-            quickStat: `Rp ${((derivedKpis.availableFunds ?? ((stats.kapitasi || 0) + (stats.pendapatanUmum || 0))) / 1000000).toFixed(1)}M`,
+            quickStat: t('dashboard.hub.cards.performance.quick_stat', {
+                value: ((derivedKpis.availableFunds ?? ((stats.kapitasi || 0) + (stats.pendapatanUmum || 0))) / 1000000).toFixed(1)
+            }),
+            supportStats: [
+                { label: t('dashboard.hub.cards.performance.support_quality'), value: derivedKpis.overallScore },
+                { label: t('dashboard.hub.cards.performance.support_rrns'), value: `${derivedKpis.rrns}%` }
+            ],
             wikiKey: 'kbk'
         },
         {
-            id: 'accreditation', label: 'Accreditation', sublabel: '5 Bab • Radar Mutu',
+            id: 'accreditation', label: t('dashboard.hub.cards.accreditation.label'), sublabel: t('dashboard.hub.cards.accreditation.sublabel'),
             icon: Shield, color: 'amber',
             quickStat: accreditation,
+            supportStats: [
+                { label: t('dashboard.hub.cards.accreditation.support_alerts'), value: alerts.length },
+                { label: t('dashboard.hub.cards.accreditation.support_outbreak'), value: activeOutbreaks?.length || 0 }
+            ],
             wikiKey: 'accreditation_chapters'
         },
         {
-            id: 'logistics', label: 'Logistics', sublabel: 'Staff • Inventory • Wellness',
+            id: 'logistics', label: t('dashboard.hub.cards.logistics.label'), sublabel: t('dashboard.hub.cards.logistics.sublabel'),
             icon: Package, color: 'teal',
-            quickStat: `${hiredStaff?.length || 0} Staf`,
+            quickStat: t('dashboard.hub.cards.logistics.quick_stat', { count: hiredStaff?.length || 0 }),
+            supportStats: [
+                { label: t('dashboard.hub.cards.logistics.support_low'), value: inventorySummary.lowStock },
+                { label: t('dashboard.hub.cards.logistics.support_out'), value: inventorySummary.outOfStock }
+            ],
             wikiKey: null
         },
     ];
@@ -242,7 +215,7 @@ export default function DashboardPage() {
 
     // === MAIN HUB ===
     return (
-        <div className="h-full overflow-y-auto p-5 bg-slate-950 relative">
+        <div className="h-full overflow-y-auto bg-slate-950 relative px-4 py-4 sm:p-5">
             {/* mc-float keyframes */}
 
 
@@ -261,54 +234,51 @@ export default function DashboardPage() {
                 ))}
             </div>
 
-            <div className="relative z-10 max-w-4xl mx-auto space-y-5">
+            <div className="relative z-10 max-w-7xl mx-auto space-y-4 sm:space-y-5">
                 {/* ── HEADER ── */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h2 className="font-display text-2xl font-black text-white/90 uppercase tracking-tight flex items-center gap-3">
+                        <h2 className="font-display text-xl font-black text-white/90 uppercase tracking-tight flex items-center gap-2.5 sm:gap-3 sm:text-2xl">
                             <div className="bg-emerald-500/15 p-2 rounded-xl border border-emerald-500/20">
                                 <Activity size={22} className="text-emerald-400" />
                             </div>
-                            Mission Control
+                            {t('dashboard.hub.title')}
                         </h2>
-                        <p className="text-emerald-300/50 text-[10px] uppercase tracking-[0.3em] mt-1 ml-14 font-black">
-                            {accreditation} • SYSTEM HUB
+                        <p className="text-emerald-300/50 text-[11px] uppercase tracking-[0.22em] mt-1 ml-12 font-black sm:ml-14 sm:text-[10px] sm:tracking-[0.3em]">
+                            {t('dashboard.hub.subtitle', { accreditation })}
                         </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex w-full items-center gap-3 sm:w-auto">
                         {/* Satu Sehat Sync */}
                         <button
                             onClick={handleManualSync}
                             disabled={isSyncing}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-bold uppercase tracking-wider transition-all active:scale-95 ${isSyncing ? 'animate-pulse bg-blue-500/20 border-blue-500/40 text-blue-400' : syncStatus === 'synced' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20' : 'bg-white/[0.04] border-white/[0.08] text-white/30'}`}
-                            title="Sync Data & Documentation"
+                            className={`flex w-full items-center justify-center gap-1.5 px-3 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-[0.18em] transition-all active:scale-95 sm:w-auto sm:justify-start sm:py-1.5 sm:text-[10px] sm:tracking-wider ${isSyncing ? 'animate-pulse bg-blue-500/20 border-blue-500/40 text-blue-400' : syncStatus === 'synced' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20' : 'bg-white/[0.04] border-white/[0.08] text-white/30'}`}
+                            title={t('dashboard.hub.sync_title')}
                         >
                             {isSyncing ? <Loader2 size={12} className="animate-spin" /> : syncStatus === 'synced' ? <Wifi size={12} /> : <WifiOff size={12} />}
-                            <span>{isSyncing ? 'Syncing...' : 'Satu Sehat'}</span>
+                            <span>{isSyncing ? t('dashboard.hub.sync_busy') : t('dashboard.hub.sync_name')}</span>
                         </button>
                     </div>
                 </div>
 
                 {/* ── LIVE STATUS BAR ── */}
-                <div data-testid="dashboard-stats" className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] p-4">
-                    <div className="flex items-center justify-around">
-                        <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Pasien Hari Ini</span>
+                <div data-testid="dashboard-stats" className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] p-3.5 sm:p-4">
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-4 sm:gap-4">
+                        <div className="rounded-xl bg-white/[0.04] px-3 py-2 text-center sm:bg-transparent sm:px-0 sm:py-0">
+                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.18em] block sm:text-[9px] sm:tracking-widest">{t('dashboard.hub.stats.patients_today')}</span>
                             <span className="font-data text-xl font-black text-white/80">{todayPatients}</span>
                         </div>
-                        <div className="w-px h-8 bg-white/[0.08]" />
-                        <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Antrian</span>
+                        <div className="rounded-xl bg-white/[0.04] px-3 py-2 text-center sm:bg-transparent sm:px-0 sm:py-0">
+                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.18em] block sm:text-[9px] sm:tracking-widest">{t('dashboard.hub.stats.queue')}</span>
                             <span className="font-data text-xl font-black text-white/80">{queue.length}</span>
                         </div>
-                        <div className="w-px h-8 bg-white/[0.08]" />
-                        <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Quality Score</span>
+                        <div className="rounded-xl bg-white/[0.04] px-3 py-2 text-center sm:bg-transparent sm:px-0 sm:py-0">
+                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.18em] block sm:text-[9px] sm:tracking-widest">{t('dashboard.hub.stats.quality_score')}</span>
                             <span className="font-data text-xl font-black text-emerald-400">{derivedKpis.overallScore}</span>
                         </div>
-                        <div className="w-px h-8 bg-white/[0.08]" />
-                        <div className="text-center">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Kesembuhan</span>
+                        <div className="rounded-xl bg-white/[0.04] px-3 py-2 text-center sm:bg-transparent sm:px-0 sm:py-0">
+                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.18em] block sm:text-[9px] sm:tracking-widest">{t('dashboard.hub.stats.recovery')}</span>
                             <span className="font-data text-xl font-black text-blue-400">{Math.round(derivedKpis.clinicalAccuracy)}%</span>
                         </div>
                     </div>
@@ -327,22 +297,22 @@ export default function DashboardPage() {
                 )}
 
                 {/* ── NAVIGATION HUB — Holographic Buttons ── */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 xl:grid-cols-3">
                     {hubButtons.map(btn => {
                         const c = colorMap[btn.color];
                         return (
                             <button
                                 key={btn.id}
                                 onClick={() => setActiveView(btn.id)}
-                                className={`group relative p-5 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/[0.08] hover:${c.bg10} hover:${c.border30} transition-all duration-300 text-left overflow-hidden`}
+                                className={`group relative h-full min-h-[10rem] rounded-2xl bg-white/[0.03] p-4 text-left overflow-hidden border border-white/[0.08] transition-all duration-300 hover:${c.bg10} hover:${c.border30} sm:min-h-[10.75rem] sm:p-5 xl:min-h-[11.5rem]`}
                             >
                                 {/* Glow Effect */}
                                 <div className={`absolute top-0 right-0 w-32 h-32 ${c.bg5} rounded-full -mr-12 -mt-12 blur-2xl group-hover:${c.bgGlow} transition-all duration-500`} />
 
                                 <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <div className={`p-2.5 rounded-xl ${c.bg15} border ${c.border20} group-hover:scale-110 transition-transform`}>
-                                            <btn.icon size={20} className={c.text} />
+                                    <div className="flex items-start justify-between gap-3 mb-3">
+                                        <div className={`p-2 rounded-xl ${c.bg15} border ${c.border20} group-hover:scale-110 transition-transform sm:p-2.5`}>
+                                            <btn.icon size={18} className={c.text} />
                                         </div>
                                         {btn.wikiKey && (
                                             <div onClick={(e) => { e.stopPropagation(); openWiki(btn.wikiKey); }}
@@ -351,14 +321,26 @@ export default function DashboardPage() {
                                             </div>
                                         )}
                                     </div>
-                                    <h3 className={`font-display text-sm font-black text-white/80 uppercase tracking-tight group-hover:${c.textHover} transition-colors`}>
+                                    <h3 className={`font-display text-xs font-black text-white/80 uppercase leading-snug tracking-tight group-hover:${c.textHover} transition-colors sm:text-sm`}>
                                         {btn.label}
                                     </h3>
-                                    <p className="text-[10px] text-white/30 font-medium mt-0.5 uppercase tracking-wider">{btn.sublabel}</p>
-                                    <div className="mt-3 pt-3 border-t border-white/[0.06]">
-                                        <span className={`font-data text-xs font-black ${c.textStat}`}>
+                                    <p className="mt-1 text-[10px] text-white/35 font-medium leading-relaxed tracking-[0.08em] sm:text-[10px] sm:mt-0.5 sm:uppercase sm:tracking-wider">{btn.sublabel}</p>
+                                    <div className="mt-2.5 pt-2.5 border-t border-white/[0.06] sm:mt-3 sm:pt-3">
+                                        <span className={`font-data text-[11px] font-black ${c.textStat} sm:text-xs`}>
                                             {btn.quickStat}
                                         </span>
+                                    </div>
+                                    <div className="mt-2.5 grid grid-cols-2 gap-2 sm:mt-3">
+                                        {btn.supportStats?.map((stat) => (
+                                            <div key={`${btn.id}-${stat.label}`} className={`rounded-xl border px-2 py-1.5 sm:px-2.5 sm:py-2 ${c.bg5} ${c.border20}`}>
+                                                <span className="block text-[9px] font-black uppercase tracking-[0.16em] text-white/35">
+                                                    {stat.label}
+                                                </span>
+                                                <span className="mt-1 block text-[11px] font-black text-white/80">
+                                                    {stat.value}
+                                                </span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </button>
@@ -368,13 +350,13 @@ export default function DashboardPage() {
 
                 {/* ── ACTIVE EVENT BANNER ── */}
                 {activeEvent && (
-                    <div className="bg-indigo-500/10 backdrop-blur-md rounded-2xl border border-indigo-500/20 p-4 flex items-center gap-3">
+                    <div className="bg-indigo-500/10 backdrop-blur-md rounded-2xl border border-indigo-500/20 p-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                         <div className="p-2 bg-indigo-500/20 rounded-xl">
                             <Activity size={18} className="text-indigo-400" />
                         </div>
                         <div>
                             <p className="text-xs font-black text-indigo-300 uppercase tracking-wider">{activeEvent.title}</p>
-                            <p className="text-[10px] text-indigo-300/50">{activeEvent.description}</p>
+                            <p className="text-[11px] text-indigo-300/60 sm:text-[10px]">{activeEvent.description}</p>
                         </div>
                     </div>
                 )}
@@ -383,7 +365,7 @@ export default function DashboardPage() {
                 {alerts.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-8 opacity-30">
                         <Shield size={40} className="text-emerald-400 mb-2" />
-                        <p className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">Semua Sistem Normal</p>
+                        <p className="text-[11px] font-bold text-white/50 uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.2em]">{t('dashboard.hub.alerts.all_normal')}</p>
                     </div>
                 )}
             </div>

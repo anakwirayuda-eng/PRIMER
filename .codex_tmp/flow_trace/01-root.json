@@ -1,0 +1,22 @@
+{
+  "label": "01-root",
+  "url": "http://127.0.0.1:4273/",
+  "body": "🏥 PRIMER Primary Care Simulator \"Your ZIP code is a better predictor of your health than your genetic code.\" — Dr. Tony Iton (Spatial Epidemiology) EMAIL PASSWORD 🎮 Masuk Belum punya akun? Daftar di sini ⚡ Main Offline (tanpa cloud save) PRIMER © 2026 — Medical Education Simulator PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+  "buttons": [
+    {
+      "text": "🎮 Masuk",
+      "aria": null,
+      "testid": null
+    },
+    {
+      "text": "Belum punya akun? Daftar di sini",
+      "aria": null,
+      "testid": null
+    },
+    {
+      "text": "⚡ Main Offline (tanpa cloud save)",
+      "aria": null,
+      "testid": null
+    }
+  ]
+}

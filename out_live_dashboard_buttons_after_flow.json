@@ -1,0 +1,194 @@
+[
+  {
+    "i": 0,
+    "text": "",
+    "title": "Dashboard (Alt+1)",
+    "aria": ""
+  },
+  {
+    "i": 1,
+    "text": "",
+    "title": "Layanan (Alt+2)",
+    "aria": ""
+  },
+  {
+    "i": 2,
+    "text": "",
+    "title": "Wilayah (Map) (Alt+3)",
+    "aria": ""
+  },
+  {
+    "i": 3,
+    "text": "",
+    "title": "Gedung (Alt+4)",
+    "aria": ""
+  },
+  {
+    "i": 4,
+    "text": "",
+    "title": "SDM (Squad) (Alt+5)",
+    "aria": ""
+  },
+  {
+    "i": 5,
+    "text": "",
+    "title": "Sarana (Logistik) (Alt+6)",
+    "aria": ""
+  },
+  {
+    "i": 6,
+    "text": "",
+    "title": "Diklat (Alt+7)",
+    "aria": ""
+  },
+  {
+    "i": 7,
+    "text": "",
+    "title": "MAIA Codex (Alt+8)",
+    "aria": ""
+  },
+  {
+    "i": 8,
+    "text": "",
+    "title": "Arsip (Alt+9)",
+    "aria": ""
+  },
+  {
+    "i": 9,
+    "text": "",
+    "title": "Kantor Desa (Alt+0)",
+    "aria": ""
+  },
+  {
+    "i": 10,
+    "text": "",
+    "title": "Rumah Dinas (Alt+H)",
+    "aria": "Rumah Dinas"
+  },
+  {
+    "i": 11,
+    "text": "",
+    "title": "Pengaturan (Alt+S)",
+    "aria": "Buka Pengaturan"
+  },
+  {
+    "i": 12,
+    "text": "",
+    "title": "",
+    "aria": "Buka Panel Samping"
+  },
+  {
+    "i": 13,
+    "text": "⚡\n115",
+    "title": "Energi Dokter",
+    "aria": "Energi: 115%"
+  },
+  {
+    "i": 14,
+    "text": "⭐\n54",
+    "title": "Skor Reputasi",
+    "aria": "Reputasi: 54"
+  },
+  {
+    "i": 15,
+    "text": "",
+    "title": "Jeda (Space)",
+    "aria": ""
+  },
+  {
+    "i": 16,
+    "text": "",
+    "title": "Kecepatan Normal",
+    "aria": ""
+  },
+  {
+    "i": 17,
+    "text": "",
+    "title": "Kecepatan Ganda",
+    "aria": ""
+  },
+  {
+    "i": 18,
+    "text": "",
+    "title": "Kecepatan Tinggi",
+    "aria": ""
+  },
+  {
+    "i": 19,
+    "text": "",
+    "title": "Kecepatan Maksimal",
+    "aria": ""
+  },
+  {
+    "i": 20,
+    "text": "📜",
+    "title": "Misi (Alt+Q)",
+    "aria": ""
+  },
+  {
+    "i": 21,
+    "text": "",
+    "title": "Review Kinerja (KPI) (Alt+K)",
+    "aria": ""
+  },
+  {
+    "i": 22,
+    "text": "📅",
+    "title": "Kalender (Alt+C)",
+    "aria": "Buka Kalender"
+  },
+  {
+    "i": 23,
+    "text": "",
+    "title": "Shortcut Keyboard (?)",
+    "aria": "Buka bantuan shortcut keyboard"
+  },
+  {
+    "i": 24,
+    "text": "",
+    "title": "Smartphone (Alt+M)",
+    "aria": "Buka Smartphone"
+  },
+  {
+    "i": 25,
+    "text": "",
+    "title": "Pengaturan (Alt+S)",
+    "aria": ""
+  },
+  {
+    "i": 26,
+    "text": "SATU SEHAT",
+    "title": "Sync Data & Documentation",
+    "aria": ""
+  },
+  {
+    "i": 27,
+    "text": "CLINICAL INTEL\n\nUKP • SKDI • PATIENT SAFETY\n\n0% Akurasi",
+    "title": "",
+    "aria": ""
+  },
+  {
+    "i": 28,
+    "text": "COMMUNITY INTEL\n\nUKM • PIS-PK • PROLANIS\n\nIKS 85%",
+    "title": "",
+    "aria": ""
+  },
+  {
+    "i": 29,
+    "text": "PERFORMANCE\n\nKBK • DANA OPERASIONAL • KINERJA\n\nRp 50.0M",
+    "title": "",
+    "aria": ""
+  },
+  {
+    "i": 30,
+    "text": "ACCREDITATION\n\n5 BAB • RADAR MUTU\n\nDasar",
+    "title": "",
+    "aria": ""
+  },
+  {
+    "i": 31,
+    "text": "LOGISTICS\n\nSTAFF • INVENTORY • WELLNESS\n\n0 Staf",
+    "title": "",
+    "aria": ""
+  }
+]

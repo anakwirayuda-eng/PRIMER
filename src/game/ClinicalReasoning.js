@@ -24,7 +24,7 @@ import {
     getCanonicalPhysicalExamKeys,
     getPhysicalExamDisplayName,
 } from '../utils/physicalExam.js';
-import { getCanonicalLabKeys, getLabDisplayName } from '../utils/labs.js';
+import { getCanonicalLabKeys, getLabDisplayName, getSupportedRelevantLabEntries } from '../utils/labs.js';
 
 // ============================================================================
 // FRAMEWORKS
@@ -81,6 +81,133 @@ const ESSENTIAL_ALIASES = {
     'q_main_complaint': ['initial_complaint', 'q_main'],
 };
 
+const MAIN_COMPLAINT_IDS = new Set(['initial_complaint', 'q_main', 'q_main_complaint']);
+
+function getCaseQuestionEntries(caseData = {}) {
+    const relevantCategoryIds = Array.isArray(caseData?.relevantCategories) && caseData.relevantCategories.length > 0
+        ? caseData.relevantCategories
+        : ANAMNESIS_CATEGORIES
+            .map((category) => category.id)
+            .filter((categoryId) => (caseData?.anamnesisQuestions?.[categoryId] || []).length > 0);
+
+    const categoryIds = relevantCategoryIds.length > 0
+        ? relevantCategoryIds
+        : ANAMNESIS_CATEGORIES.map((category) => category.id);
+
+    return categoryIds.flatMap((categoryId) => (
+        (caseData?.anamnesisQuestions?.[categoryId] || []).map((question) => ({
+            ...question,
+            category: question?.category || categoryId,
+        }))
+    ));
+}
+
+function questionMatchesDimension(question, definition) {
+    const questionId = question?.id || '';
+    if (definition.ids.some((id) => id === questionId)) {
+        return true;
+    }
+
+    const text = (question?.text || '').toLowerCase();
+    return definition.keywords?.some((keyword) => text.includes(keyword)) || false;
+}
+
+function getMicroCoverageBlueprint(caseData = {}) {
+    const questionEntries = getCaseQuestionEntries(caseData);
+    if (questionEntries.length === 0) {
+        return Object.entries(OLD_CARTS);
+    }
+
+    const authoredDimensions = Object.entries(OLD_CARTS).filter(([, definition]) => (
+        questionEntries.some((question) => questionMatchesDimension(question, definition))
+    ));
+
+    return authoredDimensions.length > 0 ? authoredDimensions : Object.entries(OLD_CARTS);
+}
+
+export function isEssentialQuestionCovered(askedQuestions = [], essentialId = '') {
+    if (!essentialId) return false;
+
+    const askedIds = new Set((askedQuestions || []).map((question) => (
+        typeof question === 'string' ? question : question?.id
+    )).filter(Boolean));
+
+    if (MAIN_COMPLAINT_IDS.has(essentialId) && askedIds.has('initial_complaint')) {
+        return true;
+    }
+
+    const aliases = ESSENTIAL_ALIASES[essentialId] || [];
+    return [essentialId, ...aliases].some((candidateId) => askedIds.has(candidateId));
+}
+
+function calculateAnamnesisCoverage(askedQuestions, essentialIds = [], options = {}) {
+    const safeQuestions = Array.isArray(askedQuestions) ? askedQuestions : [];
+    const caseData = options.caseData || null;
+
+    if (safeQuestions.length === 0) {
+        return {
+            score: 0,
+            breakdown: { macro: 0, micro: 0, essential: essentialIds.length === 0 ? 100 : 0 },
+        };
+    }
+
+    const idSet = new Set(safeQuestions.map((question) => question?.id).filter(Boolean));
+    const catCounts = {};
+
+    safeQuestions.forEach((question) => {
+        if (question?.category) {
+            catCounts[question.category] = (catCounts[question.category] || 0) + 1;
+        }
+    });
+
+    const relevantCategories = caseData
+        ? ANAMNESIS_CATEGORIES.filter((category) => {
+            if (Array.isArray(caseData?.relevantCategories) && caseData.relevantCategories.length > 0) {
+                return caseData.relevantCategories.includes(category.id);
+            }
+            return (caseData?.anamnesisQuestions?.[category.id] || []).length > 0;
+        })
+        : ANAMNESIS_CATEGORIES;
+
+    const categoryBlueprint = relevantCategories.length > 0 ? relevantCategories : ANAMNESIS_CATEGORIES;
+    const categoryWeightTotal = categoryBlueprint.reduce((sum, category) => sum + category.weight, 0) || 1;
+    const coveredWeight = categoryBlueprint.reduce((sum, category) => (
+        catCounts[category.id] > 0 ? sum + category.weight : sum
+    ), 0);
+    const macroScore = Math.round((coveredWeight / categoryWeightTotal) * 100);
+
+    const microBlueprint = caseData ? getMicroCoverageBlueprint(caseData) : Object.entries(OLD_CARTS);
+    let microCoveredCount = 0;
+    microBlueprint.forEach(([, definition]) => {
+        if (definition.ids.some((id) => idSet.has(id))) {
+            microCoveredCount += 1;
+            return;
+        }
+        if (definition.keywords && safeQuestions.some((question) => {
+            const text = (question?.text || '').toLowerCase();
+            return definition.keywords.some((keyword) => text.includes(keyword));
+        })) {
+            microCoveredCount += 1;
+        }
+    });
+    const microTotal = microBlueprint.length || 1;
+    const microScore = Math.round((microCoveredCount / microTotal) * 100);
+
+    const essentialHits = essentialIds.filter((essentialId) => isEssentialQuestionCovered(safeQuestions, essentialId)).length;
+    const essentialProgress = essentialIds.length === 0
+        ? 100
+        : Math.round((essentialHits / essentialIds.length) * 100);
+
+    const score = essentialIds.length > 0
+        ? Math.round((essentialProgress * 0.8) + (macroScore * 0.1) + (microScore * 0.1))
+        : Math.round((macroScore * 0.6) + (microScore * 0.4));
+
+    return {
+        score,
+        breakdown: { macro: macroScore, micro: microScore, essential: essentialProgress },
+    };
+}
+
 // ============================================================================
 // SCORE CALCULATION
 // ============================================================================
@@ -92,59 +219,11 @@ const ESSENTIAL_ALIASES = {
  */
 export function calculateCoverageScore(askedQuestions, examsPerformed = [], labsRevealed = [], essentialIds = [], options = {}) {
     // 1. ANAMNESIS COMPONENT
-    let anamnesisScore = 0;
-    let anamnesisBreakdown = { macro: 0, micro: 0, essential: 0 };
-
-    if (askedQuestions && askedQuestions.length > 0) {
-        const idSet = new Set(askedQuestions.map(q => q.id));
-        const catCounts = {};
-
-        askedQuestions.forEach(q => {
-            if (q.category) {
-                catCounts[q.category] = (catCounts[q.category] || 0) + 1;
-            }
-        });
-
-        // Macro (Categories)
-        let macroScore = 0;
-        ANAMNESIS_CATEGORIES.forEach(cat => {
-            if (catCounts[cat.id] > 0) macroScore += cat.weight;
-        });
-
-        // Micro (OLD CARTS) — P0-B: ID match OR keyword match in question text
-        let microCoveredCount = 0;
-        const microTotal = Object.keys(OLD_CARTS).length;
-        Object.values(OLD_CARTS).forEach(def => {
-            // Check by ID first
-            if (def.ids.some(id => idSet.has(id))) {
-                microCoveredCount++;
-                return;
-            }
-            // Fallback: keyword match in question text
-            if (def.keywords && askedQuestions.some(q => {
-                const text = (q.text || '').toLowerCase();
-                return def.keywords.some(kw => text.includes(kw));
-            })) {
-                microCoveredCount++;
-            }
-        });
-        const microScore = Math.round((microCoveredCount / microTotal) * 100);
-
-        // Essential — P0-C: check aliases too
-        const essentialHits = essentialIds.filter(eId => {
-            if (idSet.has(eId)) return true;
-            const aliases = ESSENTIAL_ALIASES[eId];
-            return aliases && aliases.some(a => idSet.has(a));
-        }).length;
-        const essentialTotal = essentialIds.length || 1;
-        // DeepThink Fix: If no essentials required, score is 100% (not 0%)
-        const essentialProgress = essentialIds.length === 0 ? 100 : Math.round((essentialHits / essentialTotal) * 100);
-
-        anamnesisBreakdown = { macro: macroScore, micro: microScore, essential: essentialProgress };
-
-        // Inner Anamnesis weight: 25% Macro, 25% Micro, 50% Essential
-        anamnesisScore = Math.round((macroScore * 0.25) + (microScore * 0.25) + (essentialProgress * 0.5));
-    }
+    const { score: anamnesisScore, breakdown: anamnesisBreakdown } = calculateAnamnesisCoverage(
+        askedQuestions,
+        essentialIds,
+        options
+    );
 
     // 2. PHYSICAL EXAM COMPONENT
     const performedExams = getCanonicalPhysicalExamKeys(
@@ -467,7 +546,7 @@ export function getExamLabSuggestions(caseData, performedExams = [], orderedLabs
     examSuggestions.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
     // 2. Lab Suggestions
-    const requiredLabs = getCanonicalLabKeys(caseData.relevantLabs || []);
+    const requiredLabs = getSupportedRelevantLabEntries(caseData).map((entry) => entry.canonical);
     const orderedSet = new Set(getCanonicalLabKeys(orderedLabs));
 
     requiredLabs.forEach(labId => {

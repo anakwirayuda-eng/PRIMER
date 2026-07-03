@@ -1,4 +1,4 @@
-# PRIMER — Anamnesis System: Complete Architecture & Logic Reference
+﻿# PRIMER — Anamnesis System: Complete Architecture & Logic Reference
 **Date**: 2026-02-24 | **Purpose**: Triangulation document for cross-LLM review
 
 ---

@@ -272,7 +272,7 @@ export const MUSCULOSKELETAL_CASES = [
             rpd: [], rpk: [], sosial: []
         },
         essentialQuestions: ['q_main', 'q_fever'],
-        anamnesis: ["Kaki bengkak, demam 5 hari, nggak mau jalan.", "Disentuh aja nangis."],
+        anamnesis: ["Kaki anak saya bengkak dan demam sudah 5 hari dok, sekarang sampai nggak mau jalan.", "Kalau kaki yang bengkak disentuh sedikit saja anak saya langsung nangis kesakitan."],
         physicalExamFindings: { general: "Demam, tidak mau mobilisasi.", vitals: "TD 100/60, N 110x, RR 22x, S 39°C", extremity: "Tibia proksimal sinistra: bengkak, hangat, eritema, nyeri tekan hebat, pseudoparalysis." },
         labs: { "Darah Lengkap": { result: "Leukosit 18.000", cost: 50000 }, "LED": { result: "85 mm/jam", cost: 30000 } },
         vitals: { temp: 39, bp: '100/60', hr: 110, rr: 22 },

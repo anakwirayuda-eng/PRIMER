@@ -155,9 +155,8 @@ describe('dischargePatient logic', () => {
 
         // So rep might stay same (50) or change by global buffs?
         // Let's just expect it not to be the "success" value.
-        // Or check XP is 5 (failure) vs 20 (success).
-
-        expect(state.player.profile.xp).toBe(5); // 5 for incorrect action
+        // Wrong action with correct diagnosis now gets partial failure XP.
+        expect(state.player.profile.xp).toBe(10);
         expect(state.meta.activeQuests[0].progress).toBe(1);
     });
 });

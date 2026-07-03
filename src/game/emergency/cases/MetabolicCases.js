@@ -38,8 +38,8 @@ export const METABOLIC_CASES = [
         physicalExamFindings: {
             general: "GCS E3V2M5 (Somnolen), tampak pucat, diaphoresis (keringat dingin) profus (+).",
             vitals: "TD 110/70, N 104x (Tachicardia), RR 18x, S 36.2°C",
-            neurology: "Pupil isokor, reflex cahaya (+/+), tidak ada tanda lateralisasi.",
-            limbs: "Tremor halus pada tangan (+)."
+            neuro: "Pupil isokor, reflex cahaya (+/+), tidak ada tanda lateralisasi.",
+            extremities: "Tremor halus pada tangan (+)."
         },
         correctTreatment: [
             ['reagen_gds', 'iv_line', 'd40_iv', 'd10_maintenance'],
@@ -61,7 +61,8 @@ export const METABOLIC_CASES = [
         esiLevel: 1,
         symptoms: ['Napas Kussmaul', 'Dehidrasi berat', 'Bau aseton', 'Nyeri perut', 'Penurunan kesadaran'],
         clue: "[CRITICAL] DM tipe 1/2 dengan napas Kussmaul + bau aseton + GDS >300. Resusitasi NaCl + insulin drip. Monitor kalium!",
-        relevantLabs: ['GDS', 'Elektrolit', 'Darah Lengkap', 'AGD'],
+        relevantLabs: ['GDS', 'Darah Lengkap'],
+        referralLevelDiagnostics: ['Elektrolit', 'AGD'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_event', text: 'Apa yang terjadi?', response: 'Muntah-muntah dari kemarin dok, lemas, napasnya cepat.', priority: 'essential' },
@@ -119,7 +120,8 @@ export const METABOLIC_CASES = [
         esiLevel: 1,
         symptoms: ['Penurunan kesadaran berat', 'Dehidrasi berat', 'GDS >600', 'Tidak ada bau aseton', 'Kejang'],
         clue: "[CRITICAL] DM tipe 2 lansia dengan GDS >600 + dehidrasi masif TANPA aseton. HHS! Mortalitas tinggi — rehidrasi agresif!",
-        relevantLabs: ['GDS', 'Elektrolit', 'Darah Lengkap'],
+        relevantLabs: ['GDS', 'Darah Lengkap'],
+        referralLevelDiagnostics: ['Elektrolit'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_event', text: 'Kapan mulai lemas?', response: 'Sudah seminggu makin lemas, tadi pagi nggak bisa bangun.', priority: 'essential' },

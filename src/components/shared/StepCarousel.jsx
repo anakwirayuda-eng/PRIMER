@@ -12,10 +12,12 @@
  */
 import React, { useState, useRef, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 
-export default function StepCarousel({ children, onComplete, completeLabel = 'Selesai' }) {
+export default function StepCarousel({ children, onComplete, completeLabel }) {
     const { isDark } = useTheme();
+    const { t } = useTranslation();
     const [activeStep, setActiveStep] = useState(0);
     const touchRef = useRef({ startX: 0, startY: 0 });
     const containerRef = useRef(null);
@@ -24,6 +26,8 @@ export default function StepCarousel({ children, onComplete, completeLabel = 'Se
     const totalSteps = steps.length;
     const isLast = activeStep === totalSteps - 1;
     const isFirst = activeStep === 0;
+
+    const resolvedCompleteLabel = completeLabel ?? t('stepCarousel.complete');
 
     const goNext = useCallback(() => {
         if (isLast) {
@@ -89,7 +93,7 @@ export default function StepCarousel({ children, onComplete, completeLabel = 'Se
                                 : 'text-slate-500 hover:bg-slate-200'
                         }`}
                 >
-                    <ChevronLeft size={14} /> Kembali
+                    <ChevronLeft size={14} /> {t('stepCarousel.back')}
                 </button>
 
                 {/* Step dots */}
@@ -104,7 +108,7 @@ export default function StepCarousel({ children, onComplete, completeLabel = 'Se
                                         ? `w-2 h-2 ${isDark ? 'bg-amber-700' : 'bg-amber-300'}`
                                         : `w-2 h-2 ${isDark ? 'bg-slate-600' : 'bg-slate-300'}`
                                 }`}
-                            aria-label={`Step ${i + 1}`}
+                            aria-label={t('stepCarousel.step', { count: i + 1 })}
                         />
                     ))}
                 </div>
@@ -119,7 +123,7 @@ export default function StepCarousel({ children, onComplete, completeLabel = 'Se
                                 : 'text-amber-600 hover:bg-amber-50'
                         }`}
                 >
-                    {isLast ? completeLabel : <>Lanjut <ChevronRight size={14} /></>}
+                    {isLast ? resolvedCompleteLabel : <>{t('stepCarousel.next')} <ChevronRight size={14} /></>}
                 </button>
             </div>
         </div>

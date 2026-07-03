@@ -369,15 +369,19 @@ export const dermatology_infectious = [
             ],
             rps: [
                 { id: 'q_duration', text: 'Sudah berapa lama?', response: 'Berbulan-bulan dok.', sentiment: 'confirmation' },
-                { id: 'q_cough', text: 'Batuk lama?', response: 'Iya, batuk sudah 3 bulan.', sentiment: 'confirmation' }
+                { id: 'q_cough', text: 'Batuk lama?', response: 'Iya, batuk sudah 3 bulan.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_tb_systemic', text: 'Berat badan turun atau sering keringat malam?', response: 'Iya dok, belakangan saya makin kurus dan sering keringatan malam.', sentiment: 'confirmation' }
             ],
             rpd: [{ id: 'q_tb_contact', text: 'Kontak TB?', response: 'Tetangga pernah TB.', sentiment: 'neutral' }],
             rpk: [], sosial: []
         },
         essentialQuestions: ['q_main', 'q_cough'],
-        anamnesis: ["Benjolan di leher saya pecah dok, keluar nanahnya.", "Leher saya ada bengkak yang pecah-pecah dok, keluar cairan. Saya batuk lama juga."],
+        anamnesis: ["Benjolan di leher saya pecah dok, keluar nanahnya.", "Leher saya ada bengkak yang pecah-pecah, saya batuk lama, badan makin kurus, dan sering keringat malam."],
         physicalExamFindings: { general: "Tampak kurus, pucat.", vitals: "TD 110/70, N 86x, RR 20x, S 37.5°C", skin: "Nodus subkutan pecah di regio colli dextra, fistula (+), sekret serous, scar irregular. KGB teraba." },
-        labs: { "BTA Sputum": { result: "BTA (+) 1", cost: 30000 } },
+        labs: {
+            "BTA Sputum": { result: "BTA (+) 1", cost: 30000 },
+            "Rontgen Thorax": { result: "Infiltrat fibronodular di apex paru kanan dengan kavitas tipis, mendukung TB aktif", cost: 100000 }
+        },
         vitals: { temp: 37.5, bp: '110/70', hr: 86, rr: 20 },
         correctTreatment: ['oat_kat1'],
         correctProcedures: [],
@@ -1008,7 +1012,7 @@ export const dermatology_infectious = [
             rpd: [], rpk: [], sosial: [{ id: 'q_environment', text: 'Kasur bersih?', response: 'Kayaknya ada kutu kasur dok.', sentiment: 'confirmation' }]
         },
         essentialQuestions: ['q_main'],
-        anamnesis: ["Bentol-bentol gatal dok, kayaknya digigit serangga semalam.", "Anak saya digigit serangga dok, bentol-bentol merah di kaki, gatal."],
+        anamnesis: ["Bentol-bentol gatal dok, kayaknya digigit serangga semalam.", "Bentol-bentol merah di kaki saya gatal sekali dok, muncul habis tidur dan polanya berjajar."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "TD 120/80, N 78x, RR 18x, S 36.7°C", skin: "Papul eritematosa, urtikaria dengan central punctum (+) multipel di ekstremitas. Distribusi linear (breakfast-lunch-dinner pattern). Ekskoriasi (+)." },
         labs: {}, vitals: { temp: 36.7, bp: '120/80', hr: 78, rr: 18 },
         correctTreatment: ['cetirizine_10', 'hydrocortisone_cream'],

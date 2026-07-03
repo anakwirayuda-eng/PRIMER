@@ -199,7 +199,7 @@ export const DIGESTIVE_CASES = [
         category: 'Digestive',
         symptoms: ['Heartburn berat', 'Regurgitasi asam', 'Odinofagia', 'Disfagia intermiten'],
         clue: "[EBM: ACG 2022] GERD erosif — heartburn refrakter terhadap antasida OTC. Skrining alarm symptoms (disfagia, BB turun, hematemesis). PPI dosis ganda jika gagal standar.",
-        relevantLabs: ['EKG'],
+        relevantLabs: [],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_main', text: 'Apa keluhan utamanya?', response: 'Dada saya panas banget dok, udah perih sampai tenggorokan.', sentiment: 'confirmation', priority: 'essential' },
@@ -336,7 +336,10 @@ export const DIGESTIVE_CASES = [
         essentialQuestions: ['q_main', 'q_duration', 'q_pattern'],
         anamnesis: ["Demam sudah seminggu dok, makin sore makin panas.", "Lidah terasa pahit, perut kaku, susah BAB. Sudah minum obat penurun panas tapi naik lagi."],
         physicalExamFindings: { general: "Tampak sakit sedang, apatis.", vitals: "TD 110/70, N 72x (bradikardi relatif), RR 20x, S 38.9°C", heent: "Typhoid tongue (+), Rose spots (-)" },
-        labs: { "Widal Test": { result: "S. Typhi O 1/320, H 1/320", cost: 50000 } },
+        labs: {
+            "Widal Test": { result: "S. Typhi O 1/320, H 1/320", cost: 50000 },
+            "Tubex TF": { result: "Positif 6 (mendukung tifoid)", cost: 60000 }
+        },
         vitals: { temp: 38.9, bp: '110/70', hr: 72, rr: 20 },
         correctTreatment: ['chloramphenicol_500', 'paracetamol_500'],
         correctProcedures: [],
@@ -614,7 +617,7 @@ export const DIGESTIVE_CASES = [
         skdi: '3B',
         category: 'Digestive',
         symptoms: ['Nyeri perut kanan atas', 'Demam', 'Murphy sign positif', 'Mual muntah pasca makanan berlemak'],
-        clue: "Nyeri kolik RUQ setelah makan berlemak → persisten + demam = kolesistitis. Murphy sign (+): nyeri + arrest inspirasi saat palpasi deep RUQ. Antibiotik + analgesik + puasakan + rujuk USG dan bedah.",
+        clue: "Nyeri kolik RUQ setelah makan berlemak → persisten + demam = kolesistitis. Murphy sign (+): nyeri + arrest sesak nafas saat palpasi deep RUQ. Antibiotik + analgesik + puasakan + rujuk USG dan bedah.",
         relevantLabs: [],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Nyerinya di mana?', response: 'Perut kanan atas dok, sakit banget, sampai ke punggung kanan.', sentiment: 'confirmation', priority: 'essential' }],
@@ -644,7 +647,7 @@ export const DIGESTIVE_CASES = [
         category: 'Digestive',
         symptoms: ['Ikterik (mata kuning)', 'Lemas', 'Mual', 'Urin gelap', 'Nyeri perut kanan atas'],
         clue: "Fase prodromal (mual, anoreksia, myalgia) → fase ikterik (kuning, urin teh, feses pucat). Hepatomegali nyeri tekan. SGOT/SGPT meningkat tinggi. Cek HBsAg! Suportif + pantau + edukasi transmisi.",
-        relevantLabs: ['lab_liver_function'],
+        relevantLabs: ['Fungsi Hati', 'HBsAg'],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Apa keluhannya?', response: 'Badan lemas banget dok, mata kuning, BAK warnanya kayak teh.', sentiment: 'confirmation', priority: 'essential' }],
             rps: [
@@ -657,7 +660,13 @@ export const DIGESTIVE_CASES = [
         essentialQuestions: ['q_main', 'q_duration'],
         anamnesis: ["Lemas, mata kuning, BAK teh pekat.", "Seminggu, awalnya mual dulu, pernah di-tato."],
         physicalExamFindings: { general: "Ikterik (+), tampak lemah.", vitals: "TD 110/70, N 76x, RR 18x, S 37.5°C", abdomen: "Hepatomegali 2 jari BAC, nyeri tekan (+). Splenomegali (-)." },
-        labs: { "SGOT": { result: "450 U/L", cost: 40000 }, "SGPT": { result: "520 U/L", cost: 40000 }, "Bilirubin Total": { result: "8.5 mg/dL", cost: 50000 }, "HBsAg": { result: "Reaktif (+)", cost: 80000 } },
+        labs: {
+            "Fungsi Hati": { result: "SGOT 450 U/L, SGPT 520 U/L, Bilirubin Total 8.5 mg/dL", cost: 120000 },
+            "SGOT": { result: "450 U/L", cost: 40000 },
+            "SGPT": { result: "520 U/L", cost: 40000 },
+            "Bilirubin Total": { result: "8.5 mg/dL", cost: 50000 },
+            "HBsAg": { result: "Reaktif (+)", cost: 80000 }
+        },
         vitals: { temp: 37.5, bp: '110/70', hr: 76, rr: 18 },
         correctTreatment: ['bed_rest', 'diet_tinggi_kalori'],
         correctProcedures: ['cek_hbsag'],

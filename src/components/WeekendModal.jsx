@@ -9,7 +9,8 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
 import {
     Briefcase,
@@ -22,48 +23,38 @@ import {
 import useModalA11y from '../hooks/useModalA11y.js';
 import { getAvailableOperationalFunds } from '../utils/operationalFunds.js';
 
-const ACTIVITIES = [
+const ACTIVITY_DEFS = [
     {
         id: 'rest',
-        label: 'Istirahat Total',
         icon: Home,
-        description: 'Tidur seharian untuk memulihkan tenaga. Mengurangi stress secara signifikan.',
         cost: 0,
         effects: { stress: -40, energy: 100 },
         color: 'bg-blue-100 text-blue-700'
     },
     {
         id: 'recreation',
-        label: 'Liburan Singkat',
         icon: MapPin,
-        description: 'Jalan-jalan ke luar kota atau mall bersama keluarga/teman.',
         cost: 500000,
         effects: { stress: -30, happiness: 20 },
         color: 'bg-green-100 text-green-700'
     },
     {
         id: 'workshop',
-        label: 'Seminar Medis',
         icon: BookOpen,
-        description: 'Mengikuti update ilmu kedokteran terkini. Menambah Skill Point.',
         cost: 1000000,
         effects: { stress: 10, knowledge: 15, xp: 50 },
         color: 'bg-purple-100 text-purple-700'
     },
     {
         id: 'community',
-        label: 'Penyuluhan Warga',
         icon: Users,
-        description: 'Memberikan edukasi kesehatan ke desa sekitar. Meningkatkan Reputasi.',
         cost: 200000,
         effects: { stress: 15, reputation: 5, xp: 30 },
         color: 'bg-orange-100 text-orange-700'
     },
     {
         id: 'part_time',
-        label: 'Praktek Swasta',
         icon: Briefcase,
-        description: 'Menerima pasien di klinik pribadi. Menambah uang tapi melelahkan.',
         cost: 0,
         income: 1500000,
         effects: { stress: 25, xp: 20 },
@@ -72,15 +63,25 @@ const ACTIVITIES = [
 ];
 
 const WeekendModal = () => {
+    const { t, i18n } = useTranslation();
     const { playerStats, stats, performWeekendActivity, day } = useGame();
     const [selectedActivity, setSelectedActivity] = useState(null);
     const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
     const isWeekendEngineAvailable = typeof performWeekendActivity === 'function';
     const modalRef = useModalA11y(null); // No Escape — must pick activity
+    const locale = i18n.resolvedLanguage || 'id';
+    const activities = useMemo(
+        () => ACTIVITY_DEFS.map((activity) => ({
+            ...activity,
+            label: t(`weekend.activities.${activity.id}.label`),
+            description: t(`weekend.activities.${activity.id}.description`)
+        })),
+        [t]
+    );
 
     const getDayName = (dayCount) => {
         const dayOfWeek = dayCount % 7;
-        return dayOfWeek === 6 ? 'Sabtu' : 'Minggu';
+        return dayOfWeek === 6 ? t('weekend.days.saturday') : t('weekend.days.sunday');
     };
 
     const dayName = getDayName(day);
@@ -98,29 +99,29 @@ const WeekendModal = () => {
                 {/* Left Panel: Status & Context */}
                 <div className="w-full md:w-1/3 bg-slate-50 p-6 border-r border-slate-200 flex flex-col">
                     <div className="mb-6">
-                        <h2 id="weekend-title" className="text-2xl font-bold text-slate-800">Akhir Pekan!</h2>
-                        <p className="text-slate-500 mb-2">Hari ke-{day} ({dayName})</p>
+                        <h2 id="weekend-title" className="text-2xl font-bold text-slate-800">{t('weekend.title')}</h2>
+                        <p className="text-slate-500 mb-2">{t('weekend.day_label', { day, dayName })}</p>
                         <div className="bg-blue-600 h-1 w-16 rounded-full mb-4"></div>
                         <p className="text-sm text-slate-600">
-                            Puskesmas tutup hari ini. Waktunya Kapus melakukan aktivitas lain untuk pengembangan diri atau istirahat.
+                            {t('weekend.description')}
                         </p>
                     </div>
 
                     {!isWeekendEngineAvailable && (
                         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-                            Mode akhir pekan belum aktif di build ini. Aktivitas bisa ditinjau, tetapi belum dapat dijalankan.
+                            {t('weekend.unavailable')}
                         </div>
                     )}
 
                     <div className="space-y-4 mb-6">
                         <h3 className="font-semibold text-slate-700 flex items-center gap-2">
-                            <Activity size={18} /> Status Anda
+                            <Activity size={18} /> {t('weekend.status.title')}
                         </h3>
 
                         <div className="space-y-3">
                             <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                    <span className="text-slate-600">Stress Level</span>
+                                    <span className="text-slate-600">{t('weekend.status.stress')}</span>
                                     <span className={`font-medium ${playerStats.stress > 70 ? 'text-red-600' : 'text-slate-700'}`}>
                                         {playerStats.stress}%
                                     </span>
@@ -135,8 +136,8 @@ const WeekendModal = () => {
 
                             <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                    <span className="text-slate-600">Knowledge</span>
-                                    <span className="text-purple-700 font-medium">{playerStats.knowledge || 0} pts</span>
+                                    <span className="text-slate-600">{t('weekend.status.knowledge')}</span>
+                                    <span className="text-purple-700 font-medium">{playerStats.knowledge || 0} {t('weekend.status.points_short')}</span>
                                 </div>
                                 <div className="w-full bg-slate-200 rounded-full h-2">
                                     <div
@@ -148,9 +149,9 @@ const WeekendModal = () => {
 
                             <div>
                                 <div className="flex justify-between text-sm mb-1">
-                                    <span className="text-slate-600">Dana Aktif</span>
+                                    <span className="text-slate-600">{t('weekend.status.funds')}</span>
                                     <span className="text-emerald-700 font-medium">
-                                        Rp {availableFunds.toLocaleString('id-ID')}
+                                        {t('weekend.currency_prefix')} {availableFunds.toLocaleString(locale)}
                                     </span>
                                 </div>
                             </div>
@@ -166,17 +167,17 @@ const WeekendModal = () => {
                                     ? 'bg-blue-600 hover:bg-blue-700'
                                     : 'bg-slate-300 cursor-not-allowed'}`}
                         >
-                            {isWeekendEngineAvailable ? 'Mulai Aktivitas' : 'Mode Belum Aktif'}
+                            {isWeekendEngineAvailable ? t('weekend.actions.start') : t('weekend.actions.unavailable')}
                         </button>
                     </div>
                 </div>
 
                 {/* Right Panel: Activities Grid */}
                 <div className="w-full md:w-2/3 p-6 bg-white overflow-y-auto">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Pilih Aktivitas</h3>
+                    <h3 className="text-lg font-semibold text-slate-800 mb-4">{t('weekend.select_title')}</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {ACTIVITIES.map((act) => {
+                        {activities.map((act) => {
                             const cantAfford = act.cost > availableFunds;
 
                             return (
@@ -201,14 +202,14 @@ const WeekendModal = () => {
                                     <div className="space-y-1 text-xs">
                                         {act.cost > 0 && (
                                             <div className="flex items-center text-red-600 font-medium">
-                                                <span className="w-20">Biaya:</span>
-                                                <span>Rp {act.cost.toLocaleString()}</span>
+                                                <span className="w-20">{t('weekend.cost_label')}</span>
+                                                <span>{t('weekend.currency_prefix')} {act.cost.toLocaleString(locale)}</span>
                                             </div>
                                         )}
                                         {act.income > 0 && (
                                             <div className="flex items-center text-emerald-600 font-medium">
-                                                <span className="w-20">Pendapatan:</span>
-                                                <span>+Rp {act.income.toLocaleString()}</span>
+                                                <span className="w-20">{t('weekend.income_label')}</span>
+                                                <span>+{t('weekend.currency_prefix')} {act.income.toLocaleString(locale)}</span>
                                             </div>
                                         )}
 
@@ -219,7 +220,7 @@ const WeekendModal = () => {
                            ${value < 0 && key === 'stress' ? 'text-green-600 bg-green-50' : ''}
                            ${value > 0 && key === 'stress' ? 'text-red-600 bg-red-50' : ''}
                          `}>
-                                                    {key}: {value > 0 ? '+' : ''}{value}
+                                                    {t(`weekend.effects.${key}`)}: {value > 0 ? '+' : ''}{value}
                                                 </span>
                                             ))}
                                         </div>

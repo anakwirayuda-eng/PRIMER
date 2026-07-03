@@ -1,7 +1,7 @@
 /**
  * @reflection
  * [IDENTITY]: ValidationEngine
- * [PURPOSE]: ValidationEngine.js — Medical logic for validating patient care.
+ * [PURPOSE]: ValidationEngine.js - Medical logic for validating patient care.
  * [STATE]: Experimental
  * [ANCHOR]: validateDiagnosis
  * [DEPENDS_ON]: MedicationDatabase, ProceduresDB, EducationOptions
@@ -10,15 +10,16 @@
  */
 
 /**
- * ValidationEngine.js — Medical logic for validating patient care.
+ * ValidationEngine.js - Medical logic for validating patient care.
  */
 
 import { getMedicationById } from '../data/MedicationDatabase.js';
 import { PROCEDURES_DB, PROCEDURE_CODE_MAP } from '../data/ProceduresDB.js';
 import { EDUCATION_OPTIONS } from '../data/EducationOptions.js';
-import { calculateCoverageScore } from './ClinicalReasoning.js';
+import { calculateCoverageScore, isEssentialQuestionCovered } from './ClinicalReasoning.js';
 import { getCanonicalPhysicalExamKeys } from '../utils/physicalExam.js';
 import {
+    getSupportedRelevantLabEntries,
     getLabDisplayName,
     normalizeLabEntries,
     normalizeLabKey,
@@ -28,7 +29,7 @@ export function validateDiagnosis(patientCase, selectedDiagnoses) {
     // Support both raw case data (.icd10) and patient.medicalData (.trueDiagnosisCode)
     const correctCode = patientCase?.icd10 || patientCase?.trueDiagnosisCode;
     if (!correctCode || !selectedDiagnoses?.length) {
-        return { isPrimaryCorrect: false, hasReasonableDifferential: false, correctAnswer: correctCode || 'N/A', feedback: '❌ Diagnosis kurang tepat. Coba review ulang gejala dan pemeriksaan fisik.' };
+        return { isPrimaryCorrect: false, hasReasonableDifferential: false, correctAnswer: correctCode || 'N/A', feedback: '[Salah] Diagnosis kurang tepat. Coba review ulang gejala dan pemeriksaan fisik.' };
     }
     const isPrimaryCorrect = selectedDiagnoses.some(d => d.code === correctCode);
     const differentials = patientCase.differentialDiagnosis || [];
@@ -47,16 +48,17 @@ export function validateDiagnosis(patientCase, selectedDiagnoses) {
         hasReasonableDifferential,
         correctAnswer: correctCode,
         feedback: isPrimaryCorrect
-            ? "✅ Diagnosis utama BENAR!"
+            ? "[Benar] Diagnosis utama benar."
             : hasReasonableDifferential
-                ? "⚠️ Diagnosis bisa dipertimbangkan, tapi bukan yang paling tepat."
-                : "❌ Diagnosis kurang tepat. Coba review ulang gejala dan pemeriksaan fisik."
+                ? "[Waspada] Diagnosis bisa dipertimbangkan, tapi bukan yang paling tepat."
+                : "[Salah] Diagnosis kurang tepat. Coba review ulang gejala dan pemeriksaan fisik."
     };
 }
 
 export function validateTreatment(patientCase, selectedMeds, selectedProcedures) {
     const correctMeds = patientCase.correctTreatment || [];
     const correctProcs = patientCase.correctProcedures || [];
+    const normalizedProcedures = Array.isArray(selectedProcedures) ? selectedProcedures : [];
 
     const medsCorrect = correctMeds.filter(m => {
         if (Array.isArray(m)) return m.some(alt => selectedMeds.some(sm => (typeof sm === 'object' ? sm.id : sm) === alt));
@@ -64,15 +66,10 @@ export function validateTreatment(patientCase, selectedMeds, selectedProcedures)
     });
 
     const procsCorrect = correctProcs.filter(p => {
-        if (selectedProcedures.includes(p)) return true;
+        if (normalizedProcedures.includes(p)) return true;
         const mappedCodes = PROCEDURE_CODE_MAP[p] || [];
-        return mappedCodes.some(code => selectedProcedures.includes(code));
+        return mappedCodes.some(code => normalizedProcedures.includes(code));
     });
-
-    const score = (medsCorrect.length / Math.max(correctMeds.length, 1)) * 100;
-
-    const feedback = score >= 80 ? "✅ Terapi sudah tepat!" : score >= 50 ? "⚠️ Terapi sebagian benar." : "❌ Terapi perlu diperbaiki.";
-    const note = patientCase.treatmentNote ? `\n\n💡 Catatan: ${patientCase.treatmentNote}` : "";
 
     const getMedName = (id) => {
         if (Array.isArray(id)) return id.map(alt => getMedicationById(alt)?.name || alt.replace(/_/g, ' ')).join(' / ');
@@ -85,22 +82,50 @@ export function validateTreatment(patientCase, selectedMeds, selectedProcedures)
         return !selectedMeds.some(sm => (typeof sm === 'object' ? sm.id : sm) === m);
     }).map(getMedName);
 
+    const missingProcs = correctProcs.filter(p => {
+        if (normalizedProcedures.includes(p)) return false;
+        const mappedCodes = PROCEDURE_CODE_MAP[p] || [];
+        return !mappedCodes.some(code => normalizedProcedures.includes(code));
+    }).map(getProcName);
+
+    const unnecessaryMeds = selectedMeds.filter(m => {
+        const mId = typeof m === 'object' ? m.id : m;
+        return !correctMeds.some(cm => {
+            if (Array.isArray(cm)) return cm.includes(mId);
+            return cm === mId;
+        });
+    }).map(item => {
+        const id = typeof item === 'object' ? item.id : item;
+        return getMedicationById(id)?.name || id.replace(/_/g, ' ');
+    });
+
+    const unnecessaryProcs = normalizedProcedures.filter(procId => {
+        return !correctProcs.some(correctProc => {
+            if (correctProc === procId) return true;
+            const mappedCodes = PROCEDURE_CODE_MAP[correctProc] || [];
+            return mappedCodes.includes(procId);
+        });
+    }).map(getProcName);
+
+    const totalRequiredItems = correctMeds.length + correctProcs.length;
+    const baseScore = totalRequiredItems > 0
+        ? ((medsCorrect.length + procsCorrect.length) / totalRequiredItems) * 100
+        : 100;
+    const score = Math.max(0, Math.round(baseScore - (unnecessaryMeds.length * 5) - (unnecessaryProcs.length * 5)));
+    const feedback = score >= 80 ? "[Benar] Terapi sudah tepat." : score >= 50 ? "[Waspada] Terapi sebagian benar." : "[Salah] Terapi perlu diperbaiki.";
+    const note = patientCase.treatmentNote ? `\n\n[Catatan] ${patientCase.treatmentNote}` : "";
+
     return {
-        score: Math.round(score),
+        score,
+        medScore: correctMeds.length > 0 ? Math.round((medsCorrect.length / correctMeds.length) * 100) : 100,
+        procedureScore: correctProcs.length > 0 ? Math.round((procsCorrect.length / correctProcs.length) * 100) : 100,
+        isRequiredCareComplete: missingMeds.length === 0 && missingProcs.length === 0,
         correctMeds: medsCorrect.map(getMedName),
         missingMeds,
-        unnecessaryMeds: selectedMeds.filter(m => {
-            const mId = typeof m === 'object' ? m.id : m;
-            return !correctMeds.some(cm => {
-                if (Array.isArray(cm)) return cm.includes(mId);
-                return cm === mId;
-            });
-        }).map(item => {
-            const id = typeof item === 'object' ? item.id : item;
-            return getMedicationById(id)?.name || id.replace(/_/g, ' ');
-        }),
+        unnecessaryMeds,
         correctProcs: procsCorrect.map(getProcName),
-        missingProcs: correctProcs.filter(p => !selectedProcedures.includes(p)).map(getProcName),
+        missingProcs,
+        unnecessaryProcs,
         feedback: feedback + note
     };
 }
@@ -124,15 +149,15 @@ export function validateEducation(patientCase, selectedEducation) {
         missing: missing.map(getLabel),
         unnecessary: unnecessary.map(getLabel),
         feedback: score >= 80 && unnecessary.length === 0
-            ? "✅ Edukasi promotif & preventif sangat tepat!"
+            ? "[Benar] Edukasi promotif dan preventif sangat tepat."
             : score >= 50
-                ? "⚠️ Edukasi cukup baik, namun masih ada yang terlewat."
-                : "❌ Edukasi krusial belum disampaikan. Evaluasi lagi faktor risiko pasien."
+                ? "[Waspada] Edukasi cukup baik, namun masih ada yang terlewat."
+                : "[Salah] Edukasi krusial belum disampaikan. Evaluasi lagi faktor risiko pasien."
     };
 }
 
 export function validateExams(patientCase, performedExams, orderedLabs) {
-    const relevantLabEntries = normalizeLabEntries(patientCase.relevantLabs || []);
+    const relevantLabEntries = getSupportedRelevantLabEntries(patientCase);
     const physicalFindings = getCanonicalPhysicalExamKeys(Object.keys(patientCase.physicalExamFindings || {}));
 
     const importantExams = physicalFindings.filter(e => e !== 'general' && e !== 'vitals');
@@ -186,14 +211,14 @@ export function validateExams(patientCase, performedExams, orderedLabs) {
     const score = Math.max(0, combinedScore - (unnecessaryLabs.length * 5) - overExamPenalty);
 
     const overExamWarning = unnecessaryExams.length > OVEREXAM_GRACE
-        ? `⚠️ Over-investigation: ${unnecessaryExams.length} pemeriksaan tidak relevan. Fokuskan pemeriksaan fisik sesuai keluhan utama.`
+        ? `[Waspada] Over-investigation: ${unnecessaryExams.length} pemeriksaan tidak relevan. Fokuskan pemeriksaan fisik sesuai keluhan utama.`
         : null;
 
     const baseFeedback = score >= 70
-        ? "✅ Pemeriksaan fisik dan lab cukup lengkap."
+        ? "[Benar] Pemeriksaan fisik dan lab cukup lengkap."
         : score >= 40
-            ? "⚠️ Ada pemeriksaan penting yang belum dilakukan."
-            : "❌ Pemeriksaan fisik dan lab sangat kurang.";
+            ? "[Waspada] Ada pemeriksaan penting yang belum dilakukan."
+            : "[Salah] Pemeriksaan fisik dan lab sangat kurang.";
 
     return {
         score,
@@ -222,22 +247,19 @@ export function validateAnamnesis(patientCase, askedQuestions) {
         };
     }
 
-    const askedIds = askedQuestions.map(q => q.id);
-    const isEssentialAsked = (eId) => {
-        if ((eId === 'q_main_complaint' || eId === 'q_main') && askedIds.includes('initial_complaint')) return true;
-        return askedIds.includes(eId);
-    };
-    const { anamnesisTotal } = calculateCoverageScore(askedQuestions, [], [], essential);
+    const safeQuestions = Array.isArray(askedQuestions) ? askedQuestions : [];
+    const askedIds = safeQuestions.map(q => q.id);
+    const { anamnesisTotal } = calculateCoverageScore(safeQuestions, [], [], essential, { caseData: patientCase });
     const score = anamnesisTotal || 0;
-    const missed = essential.filter(e => !isEssentialAsked(e));
+    const missed = essential.filter(e => !isEssentialQuestionCovered(safeQuestions, e));
 
     let feedback = "";
     if (score >= 80) {
-        feedback = "✅ Anamnesis lengkap dan sistematis!";
+        feedback = "[Benar] Anamnesis lengkap dan sistematis.";
     } else if (score >= 50) {
-        feedback = "⚠️ Anamnesis cukup, tapi ada kategori atau pertanyaan penting terlewat.";
+        feedback = "[Waspada] Anamnesis cukup, tapi ada kategori atau pertanyaan penting terlewat.";
     } else {
-        feedback = "❌ Anamnesis kurang lengkap. Gali lebih dalam keluhan utama dan riwayat penyakit.";
+        feedback = "[Salah] Anamnesis kurang lengkap. Gali lebih dalam keluhan utama dan riwayat penyakit.";
     }
 
     return {

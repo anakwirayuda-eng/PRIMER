@@ -120,6 +120,52 @@ describe('behaviorCaseRuntime', () => {
         Math.random = origRandom; // restore
     });
 
+    it('carries stored bridge disease ids and family ids into pending runtime data', () => {
+        const history = [
+            {
+                id: 'bc-bridge-1',
+                day: 4,
+                behaviorCase: {
+                    scenarioId: 'bc_kia_dukun',
+                    outcome: 'failed',
+                    completedOnDay: 4,
+                    familyId: 'kk_05',
+                    ukpDiseaseId: 'pph'
+                }
+            }
+        ];
+
+        const pending = collectPendingUkpBridgeCases(history);
+        expect(pending).toHaveLength(1);
+        expect(pending[0].familyId).toBe('kk_05');
+        expect(pending[0].ukpDiseaseId).toBe('pph');
+    });
+
+    it('prefers the stored bridge disease id when spawning a consequence event', () => {
+        const events = processUKPBridge([
+            {
+                historyEntryId: 'bc-bridge-2',
+                scenarioId: 'bc-test',
+                scenario: {
+                    title: 'Kasus Bridge Test',
+                    ukpBridge: {
+                        failOutcomes: ['pph', 'infeksi_umbilikus'],
+                        failProbability: 1,
+                        delayDays: { min: 1, max: 3 }
+                    }
+                },
+                outcome: 'failed',
+                completedOnDay: 1,
+                familyId: 'kk_07',
+                ukpDiseaseId: 'infeksi_umbilikus'
+            }
+        ], 4);
+
+        expect(events).toHaveLength(1);
+        expect(events[0].diseaseId).toBe('infeksi_umbilikus');
+        expect(events[0].familyId).toBe('kk_07');
+    });
+
     it('builds debrief BC state from village readiness and today history entries', () => {
         const villageData = applyBehaviorCaseOutcomeToVillage(ensureVillageReadinessState({
             families: [{ id: 'kk_01', iksScore: 0.5 }]

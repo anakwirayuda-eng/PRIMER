@@ -20,6 +20,7 @@ const ROOT = path.resolve(__dirname, '../../');
 const OUTDIR = path.join(ROOT, 'megalog/outputs');
 const STORE_PATH = path.join(ROOT, 'src/store/useGameStore.js');
 const SAVE_SLOT_PATH = path.join(ROOT, 'src/components/SaveSlotSelector.jsx');
+const SAVE_SLOT_UTILS_PATH = path.join(ROOT, 'src/utils/saveSlotUtils.js');
 const SAVE_PAYLOAD_PATH = path.join(ROOT, 'src/utils/savePayload.js');
 const SRC_ROOT = path.join(ROOT, 'src');
 
@@ -146,6 +147,47 @@ function collectExportedObjectConstants(filePath, cache = new Map()) {
     return exportedConstants;
 }
 
+function collectExportedObjectFactories(filePath, cache = new Map()) {
+    if (cache.has(filePath)) {
+        return cache.get(filePath);
+    }
+
+    const exportedFactories = new Map();
+    cache.set(filePath, exportedFactories);
+
+    const ast = parseModule(filePath);
+    traverse(ast, (node) => {
+        if (node.type !== 'ExportNamedDeclaration' || !node.declaration) return;
+
+        if (
+            node.declaration.type === 'FunctionDeclaration' &&
+            node.declaration.id?.type === 'Identifier'
+        ) {
+            const returnedObject = getReturnedObjectExpression(node.declaration.body);
+            if (returnedObject) {
+                exportedFactories.set(node.declaration.id.name, returnedObject);
+            }
+            return;
+        }
+
+        if (node.declaration.type !== 'VariableDeclaration') return;
+
+        for (const declaration of node.declaration.declarations) {
+            if (
+                declaration.id.type === 'Identifier' &&
+                isFunctionLike(declaration.init)
+            ) {
+                const returnedObject = getReturnedObjectExpression(declaration.init.body);
+                if (returnedObject) {
+                    exportedFactories.set(declaration.id.name, returnedObject);
+                }
+            }
+        }
+    });
+
+    return exportedFactories;
+}
+
 function buildConstantObjectMap(filePath, ast, importCache = new Map()) {
     const constantMap = new Map();
     traverse(ast, (node) => {
@@ -200,7 +242,7 @@ function getReturnedObjectExpression(body) {
     return null;
 }
 
-function buildObjectFactoryMap(ast) {
+function buildObjectFactoryMap(filePath, ast, importCache = new Map()) {
     const factoryMap = new Map();
 
     traverse(ast, (node) => {
@@ -223,6 +265,25 @@ function buildObjectFactoryMap(ast) {
             const returnedObject = getReturnedObjectExpression(node.init.body);
             if (returnedObject) {
                 factoryMap.set(node.id.name, returnedObject);
+            }
+        }
+    });
+
+    traverse(ast, (node) => {
+        if (node.type !== 'ImportDeclaration' || !node.source.value.startsWith('.')) return;
+
+        const importedFile = resolveModulePath(filePath, node.source.value);
+        if (!importedFile) return;
+
+        const exportedFactories = collectExportedObjectFactories(importedFile, importCache);
+        for (const specifier of node.specifiers) {
+            if (specifier.type !== 'ImportSpecifier') continue;
+
+            const importedName = specifier.imported.name;
+            const localName = specifier.local.name;
+            const exportedFactory = exportedFactories.get(importedName);
+            if (exportedFactory) {
+                factoryMap.set(localName, exportedFactory);
             }
         }
     });
@@ -254,14 +315,14 @@ function resolveObjectExpression(node, constantMap = new Map(), factoryMap = new
     return null;
 }
 
-function extractObjectKeys(objectExpression, constantMap = new Map()) {
+function extractObjectKeys(objectExpression, constantMap = new Map(), factoryMap = new Map()) {
     if (!objectExpression || objectExpression.type !== 'ObjectExpression') return [];
     const keys = new Set();
 
     for (const property of objectExpression.properties) {
-        if (property.type === 'SpreadElement' && property.argument.type === 'Identifier') {
-            const spreadObject = constantMap.get(property.argument.name);
-            for (const key of extractObjectKeys(spreadObject, constantMap)) {
+        if (property.type === 'SpreadElement') {
+            const spreadObject = resolveObjectExpression(property.argument, constantMap, factoryMap);
+            for (const key of extractObjectKeys(spreadObject, constantMap, factoryMap)) {
                 keys.add(key);
             }
             continue;
@@ -272,6 +333,34 @@ function extractObjectKeys(objectExpression, constantMap = new Map()) {
     }
 
     return [...keys];
+}
+
+function buildResolvedPropertyMap(node, constantMap = new Map(), factoryMap = new Map(), seen = new Set()) {
+    const resolved = resolveObjectExpression(node, constantMap, factoryMap);
+    const propertyMap = new Map();
+
+    if (!resolved || resolved.type !== 'ObjectExpression' || seen.has(resolved)) {
+        return propertyMap;
+    }
+
+    seen.add(resolved);
+
+    for (const property of resolved.properties) {
+        if (property.type === 'SpreadElement') {
+            const spreadProps = buildResolvedPropertyMap(property.argument, constantMap, factoryMap, seen);
+            for (const [name, prop] of spreadProps.entries()) {
+                propertyMap.set(name, prop);
+            }
+            continue;
+        }
+
+        const name = getPropertyName(property);
+        if (name) {
+            propertyMap.set(name, property);
+        }
+    }
+
+    return propertyMap;
 }
 
 function findSaveDataFields(ast, helperAst = null) {
@@ -425,20 +514,17 @@ async function run() {
 
     const storeAst = parseModule(STORE_PATH);
     const saveSlotAst = parseModule(SAVE_SLOT_PATH);
+    const saveSlotUtilsAst = parseModule(SAVE_SLOT_UTILS_PATH);
     const savePayloadAst = parseModule(SAVE_PAYLOAD_PATH);
     const storeObject = findStoreObject(storeAst);
     const constantMap = buildConstantObjectMap(STORE_PATH, storeAst);
-    const objectFactoryMap = buildObjectFactoryMap(storeAst);
+    const objectFactoryMap = buildObjectFactoryMap(STORE_PATH, storeAst);
 
     if (!storeObject) {
         throw new Error('Failed to locate store root object in useGameStore.js');
     }
 
-    const rootProps = new Map();
-    for (const property of storeObject.properties) {
-        const name = getPropertyName(property);
-        if (name) rootProps.set(name, property);
-    }
+    const rootProps = buildResolvedPropertyMap(storeObject, constantMap, objectFactoryMap);
 
     const failures = [];
     let checkedSlices = 0;
@@ -456,7 +542,7 @@ async function run() {
             continue;
         }
 
-        const sliceKeys = new Set(extractObjectKeys(sliceObject, constantMap));
+        const sliceKeys = new Set(extractObjectKeys(sliceObject, constantMap, objectFactoryMap));
         for (const key of config.requiredKeys) {
             if (!sliceKeys.has(key)) {
                 failures.push({ type: 'warning', impact: 'dead_ui_wiring', priority: 'P2', message: `Key [${key}] missing from slice [${sliceName}]` });
@@ -466,12 +552,16 @@ async function run() {
 
     for (const [groupName, actions] of Object.entries(STORE_CONTRACT.actions)) {
         const actionGroup = rootProps.get(groupName);
-        if (!actionGroup || actionGroup.value.type !== 'ObjectExpression') {
+        const actionGroupObject = actionGroup
+            ? resolveObjectExpression(actionGroup.value, constantMap, objectFactoryMap)
+            : null;
+
+        if (!actionGroupObject || actionGroupObject.type !== 'ObjectExpression') {
             failures.push({ type: 'error', impact: 'dead_ui_wiring', priority: 'P2', message: `Action Group [${groupName}] missing` });
             continue;
         }
 
-        const groupActions = new Set(extractObjectKeys(actionGroup.value, constantMap));
+        const groupActions = new Set(extractObjectKeys(actionGroupObject, constantMap, objectFactoryMap));
         for (const action of actions) {
             checkedActions++;
             if (!groupActions.has(action)) {
@@ -481,7 +571,13 @@ async function run() {
     }
 
     const savedFields = findSaveDataFields(storeAst, savePayloadAst);
-    const readRootsMap = collectReadRoots(saveSlotAst);
+    const readRootsMap = new Map();
+    for (const sourceMap of [collectReadRoots(saveSlotAst), collectReadRoots(saveSlotUtilsAst)]) {
+        for (const [field, lines] of sourceMap.entries()) {
+            const bucket = readRootsMap.get(field) || [];
+            readRootsMap.set(field, [...bucket, ...lines]);
+        }
+    }
     const ignoredReadFields = new Set(['_exportInfo', 'saves']);
     const compatibilityReadFields = new Set(['profile', 'day', 'reputation']);
     const requiredDirectReadFields = new Set(['player', 'world', 'saveVersion', 'savedAt']);
@@ -543,7 +639,7 @@ async function run() {
         path.join(OUTDIR, 'store_audit.json'),
         results,
         'engine-store-audit',
-        ['useGameStore.js', 'SaveSlotSelector.jsx', 'savePayload.js', 'store.contract.mjs']
+        ['useGameStore.js', 'SaveSlotSelector.jsx', 'saveSlotUtils.js', 'savePayload.js', 'store.contract.mjs']
     );
 
     console.log(`Store Contract Audit ${results.pass ? 'PASSED' : 'FAILED'} (${checkedSlices} slices, ${checkedActions} actions)`);
@@ -562,6 +658,7 @@ export {
     findStoreObject,
     buildConstantObjectMap,
     buildObjectFactoryMap,
+    buildResolvedPropertyMap,
     resolveObjectExpression,
     run
 };

@@ -10,6 +10,7 @@
 
 import React, { memo, useEffect, useMemo, useState } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
     Activity, AlertTriangle, BookOpen, BrainCircuit, CheckCircle2,
     ChevronDown, Cpu, Crosshair, HeartPulse, ScanEye,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 import { PHYSICAL_EXAM_OPTIONS } from '../../data/ProceduresDB.js';
 import { getPhysicalExamDisplayName, normalizePhysicalExamFindings, normalizePhysicalExamKey } from '../../utils/physicalExam.js';
+import { localizeClinicalText } from '../../utils/clinicalContentLocalization.js';
 
 // ═══════════════════════════════════════════════════════════════
 // CONSTANTS & UTILS
@@ -86,8 +88,11 @@ function getBodyProfile(patient) {
 // TELEMETRY LOG ENTRY (Terminal Style)
 // ═══════════════════════════════════════════════════════════════
 const FindingCard = memo(function FindingCard({ examKey, finding, isDark }) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
+    const localize = (value) => localizeClinicalText(value, locale);
     const severity = analyzeSeverity(finding);
-    const examLabel = getPhysicalExamDisplayName(examKey);
+    const examLabel = localize(getPhysicalExamDisplayName(examKey));
     const hash = generateMedHash(examKey, finding);
     const isAbnormal = severity === 'abnormal';
 
@@ -120,11 +125,11 @@ const FindingCard = memo(function FindingCard({ examKey, finding, isDark }) {
                     ${isAbnormal 
                         ? (isDark ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-rose-100 text-rose-700 border-rose-200') 
                         : (isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200')}`}>
-                    {isAbnormal ? 'Abnormal' : 'Nominal'}
+                    {isAbnormal ? t('emrWorkspace.physical.detected') : t('emrWorkspace.physical.normal')}
                 </span>
             </div>
             <p className={`mt-3 text-xs leading-relaxed pl-12 font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                {">"} {finding}
+                {">"} {localize(finding)}
             </p>
         </Motion.article>
     );
@@ -136,6 +141,9 @@ const FindingCard = memo(function FindingCard({ examKey, finding, isDark }) {
 export default function PhysicalExamTab({
     patient, isDark, handleExam, examsPerformed, examResultsRef, openWiki, maiaSuggestions = [], anamnesisScore,
 }) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
+    const localize = (value) => localizeClinicalText(value, locale);
     const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
     const [openGroups, setOpenGroups] = useState(() => new Set(isDesktop ? EXAM_SYSTEM_GROUPS.map(g => g.id) : [EXAM_SYSTEM_GROUPS[0].id]));
     const [bodyView, setBodyView] = useState('front');
@@ -232,7 +240,7 @@ export default function PhysicalExamTab({
                 }}
                 className="group absolute -translate-x-1/2 -translate-y-1/2 z-10 outline-none cursor-crosshair"
                 style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
-                title={marker.label}
+                title={localize(marker.label)}
             >
                 {/* Ping ring for MAIA-suggested targets */}
                 {(!isDone && isSuggested) && (
@@ -254,7 +262,7 @@ export default function PhysicalExamTab({
                     opacity-0 group-hover:opacity-100 transition-opacity duration-150
                     whitespace-nowrap px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest z-30
                     ${isDark ? 'bg-slate-900/95 text-cyan-200 border border-cyan-500/30 shadow-lg' : 'bg-slate-800 text-white shadow-xl'}`}>
-                    {marker.label}
+                    {localize(marker.label)}
                 </div>
             </button>
         );
@@ -266,7 +274,7 @@ export default function PhysicalExamTab({
         const severity = analyzeSeverity(finding);
         const isDone = Boolean(finding);
         const isSuggested = suggestedKeys.includes(examKey) && !isDone;
-        const label = getPhysicalExamDisplayName(examKey);
+        const label = localize(getPhysicalExamDisplayName(examKey));
 
         let btnClass = isDark ? 'border-slate-700 bg-slate-900/50 hover:bg-slate-800 hover:border-slate-500' : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-cyan-300';
         if (isDone) {
@@ -292,17 +300,17 @@ export default function PhysicalExamTab({
                         </div>
                         <div>
                             <p className={`text-xs font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{label}</p>
-                            {!isDone && <p className={`text-[9px] uppercase tracking-wider font-mono mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Status: Pending</p>}
+                            {!isDone && <p className={`text-[9px] uppercase tracking-wider font-mono mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('emrWorkspace.physical.statusPending')}</p>}
                         </div>
                     </div>
 
                     {isDone ? (
                         <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${severity === 'abnormal' ? 'bg-rose-500/20 text-rose-500 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/30'}`}>
-                            {severity === 'abnormal' ? 'Deteksi' : 'Normal'}
+                            {severity === 'abnormal' ? t('emrWorkspace.physical.detected') : t('emrWorkspace.physical.normal')}
                         </span>
                     ) : isSuggested ? (
                         <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest bg-cyan-500/20 text-cyan-500 dark:text-cyan-400 px-2 py-0.5 rounded-md border border-cyan-500/30">
-                            <Target size={10} className="animate-spin-slow" /> Target
+                            <Target size={10} className="animate-spin-slow" /> {t('emrWorkspace.physical.target')}
                         </span>
                     ) : null}
                 </div>
@@ -328,34 +336,34 @@ export default function PhysicalExamTab({
                 <div className="flex-1 flex flex-col justify-center relative z-10">
                     <div className="flex items-center gap-2 mb-1.5">
                         <Radar size={18} className="text-cyan-500 animate-[spin_4s_linear_infinite]" />
-                        <h2 className={`font-black uppercase tracking-widest text-xs md:text-sm ${isDark ? 'text-cyan-400' : 'text-cyan-700'}`}>Sistem Pindai Medis</h2>
+                        <h2 className={`font-black uppercase tracking-widest text-xs md:text-sm ${isDark ? 'text-cyan-400' : 'text-cyan-700'}`}>{t('emrWorkspace.physical.title')}</h2>
                     </div>
                     
                     {/* MAIA Targets Priority */}
                     <div className="mt-2 flex flex-wrap gap-2 items-center">
-                        <span className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Prioritas MAIA:</span>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t('emrWorkspace.physical.maiaPriority')}</span>
                         {suggestionItems.length > 0 ? suggestionItems.map(s => (
                             <button key={s.id} onClick={() => {
                                 const targetGroup = EXAM_SYSTEM_GROUPS.find(g => g.exams.includes(s.key));
                                 if (targetGroup) setOpenGroups(prev => new Set(prev).add(targetGroup.id));
                                 handleExam(s.key);
                             }} className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[10px] font-bold transition-all hover:scale-105 active:scale-95 shadow-sm ${isDark ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.15)]' : 'border-cyan-300 bg-cyan-50 text-cyan-800 hover:bg-cyan-100'}`}>
-                                <Crosshair size={12} className="animate-pulse" /> {s.label}
+                                <Crosshair size={12} className="animate-pulse" /> {localize(s.label)}
                             </button>
-                        )) : <span className="text-[10px] font-mono italic opacity-70">Standby. Pola bebas.</span>}
+                        )) : <span className="text-[10px] font-mono italic opacity-70">{t('emrWorkspace.physical.standby')}</span>}
                     </div>
                 </div>
                 
                 <div className="flex gap-2 shrink-0 relative z-10">
                     <div className={`flex flex-col justify-center items-center w-24 rounded-xl border ${isDark ? 'bg-slate-950/50 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                         <span className={`text-xl font-black font-mono ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}>{completionPct}%</span>
-                        <span className={`text-[9px] font-bold uppercase tracking-widest mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Coverage</span>
+                        <span className={`text-[9px] font-bold uppercase tracking-widest mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('emrWorkspace.physical.coverage')}</span>
                     </div>
                     <div className={`flex flex-col justify-center items-center w-24 rounded-xl border ${isDark ? 'bg-slate-950/50 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                         <span className={`text-xl font-black font-mono ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>{Math.round(anamnesisScore || 0)}%</span>
-                        <span className={`text-[9px] font-bold uppercase tracking-widest mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Anamnesis</span>
+                        <span className={`text-[9px] font-bold uppercase tracking-widest mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('emrWorkspace.physical.anamnesis')}</span>
                     </div>
-                    <button onClick={() => openWiki?.('accuracy')} className={`flex items-center justify-center w-12 rounded-xl border transition-colors ${isDark ? 'bg-slate-800 border-slate-700 text-cyan-400 hover:bg-slate-700 hover:text-cyan-300' : 'bg-white border-slate-200 text-cyan-600 hover:bg-cyan-50'}`} title="Buku Panduan">
+                    <button onClick={() => openWiki?.('accuracy')} className={`flex items-center justify-center w-12 rounded-xl border transition-colors ${isDark ? 'bg-slate-800 border-slate-700 text-cyan-400 hover:bg-slate-700 hover:text-cyan-300' : 'bg-white border-slate-200 text-cyan-600 hover:bg-cyan-50'}`} title={t('emrWorkspace.physical.guideTitle')}>
                         <BookOpen size={16} />
                     </button>
                 </div>
@@ -369,10 +377,10 @@ export default function PhysicalExamTab({
                     <div className={`absolute top-0 inset-x-0 p-3 flex justify-between items-center z-20 border-b ${isDark ? 'bg-slate-900/80 border-slate-800 backdrop-blur-sm' : 'bg-white/90 border-slate-200 backdrop-blur-sm'}`}>
                         <div className="flex items-center gap-1.5">
                             <ScanEye size={14} className={isDark ? "text-cyan-400" : "text-cyan-600"} />
-                            <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Visual Target</span>
+                            <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>{t('emrWorkspace.physical.visualTarget')}</span>
                         </div>
                         <button onClick={() => setBodyView(v => v === 'front' ? 'back' : 'front')} className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${isDark ? 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30' : 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200'}`}>
-                            <RefreshCw size={10} /> {bodyView === 'front' ? 'Anterior' : 'Posterior'}
+                            <RefreshCw size={10} /> {bodyView === 'front' ? t('emrWorkspace.physical.anterior') : t('emrWorkspace.physical.posterior')}
                         </button>
                     </div>
 
@@ -386,7 +394,7 @@ export default function PhysicalExamTab({
                                 animate={{ scale: 1, opacity: isDark ? 0.7 : 0.95 }}
                                 transition={{ duration: 0.8 }}
                                 src={bodyView === 'front' ? bodyProfile.front : bodyProfile.back} 
-                                alt="Anatomy Visual" 
+                                alt={t('emrWorkspace.physical.anatomyAlt')} 
                                 className={`h-full w-full object-contain relative z-10 drop-shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-700 ${isDark ? 'sepia-[.2] hue-rotate-[180deg] saturate-[2.5]' : ''}`} 
                             />
                             {/* Compartmentalized anatomical markers */}
@@ -402,7 +410,7 @@ export default function PhysicalExamTab({
                     <div className={`p-3 border-b flex items-center justify-between shrink-0 ${isDark ? 'border-slate-800 bg-slate-950/50' : 'border-slate-100 bg-slate-50'}`}>
                         <div className="flex items-center gap-2">
                             <Cpu size={14} className="text-indigo-400" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Diagnostic Modules</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('emrWorkspace.physical.diagnosticModules')}</span>
                         </div>
                     </div>
                     
@@ -427,7 +435,7 @@ export default function PhysicalExamTab({
                                             </div>
                                             <div className="flex-1 text-left">
                                                 <div className="flex justify-between items-end mb-1">
-                                                    <span className={`text-xs font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{group.label}</span>
+                                                    <span className={`text-xs font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{localize(group.label)}</span>
                                                     <span className={`text-[9px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>{groupDone}/{total}</span>
                                                 </div>
                                                 <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`}>
@@ -461,10 +469,10 @@ export default function PhysicalExamTab({
                     <div className={`p-3 border-b flex items-center justify-between shrink-0 ${isDark ? 'border-slate-800 bg-slate-900/80' : 'border-slate-200 bg-white'}`}>
                         <div className="flex items-center gap-2">
                             <Activity size={14} className="text-emerald-500 animate-pulse" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Telemetry Log</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">{t('emrWorkspace.physical.telemetryLog')}</span>
                         </div>
                         <span className={`text-[9px] font-mono px-2 py-0.5 rounded ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
-                            {findingEntries.length} RECORDS
+                            {t('emrWorkspace.physical.records', { count: findingEntries.length })}
                         </span>
                     </div>
                     
@@ -472,7 +480,7 @@ export default function PhysicalExamTab({
                         {findingEntries.length === 0 ? (
                             <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
                                 <Activity size={32} className={`mb-3 ${isDark ? 'text-slate-600' : 'text-slate-400'}`} />
-                                <span className={`text-[10px] font-mono uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>SYSTEM STANDBY<br/>Awaiting scan inputs...</span>
+                                <span className={`text-[10px] font-mono uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>{t('emrWorkspace.physical.systemStandby')}<br/>{t('emrWorkspace.physical.awaitingScan')}</span>
                             </div>
                         ) : (
                             <div className="flex flex-col gap-3">

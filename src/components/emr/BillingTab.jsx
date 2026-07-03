@@ -10,23 +10,28 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Stethoscope, Pill, Microscope, Scissors, Receipt } from 'lucide-react';
 import { calculatePatientBill } from '../../game/BillingEngine.js';
+import { localizeClinicalText } from '../../utils/clinicalContentLocalization.js';
 
 export default function BillingTab({ patient: _patient, isDark, selectedMeds, selectedProcedures, labsRevealed, caseData, social }) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
+    const localize = (value) => localizeClinicalText(value, locale);
     const billings = calculatePatientBill(selectedMeds, selectedProcedures, labsRevealed, caseData, social?.hasBPJS);
 
     // Build display items from engine output (single source of truth)
     const items = [
-        { label: 'Konsultasi & Pemeriksaan Dasar', price: billings.pendaftaran, qty: 1, total: billings.pendaftaran, icon: Stethoscope },
+        { label: t('emrWorkspace.billing.consultation'), price: billings.pendaftaran, qty: 1, total: billings.pendaftaran, icon: Stethoscope },
         ...billings.medDetails.map(m => ({
             label: m.name, price: m.sellPrice || m.buyPrice, qty: m.qty, total: m.cost, icon: Pill
         })),
         ...billings.labDetails.map(l => ({
-            label: `Lab: ${l.name.toUpperCase()}`, price: l.cost, qty: 1, total: l.cost, icon: Microscope
+            label: t('emrWorkspace.billing.labPrefix', { name: localize(l.name).toUpperCase() }), price: l.cost, qty: 1, total: l.cost, icon: Microscope
         })),
         ...billings.procDetails.map(p => ({
-            label: p.name, price: p.cost, qty: 1, total: p.cost, icon: Scissors
+            label: localize(p.name), price: p.cost, qty: 1, total: p.cost, icon: Scissors
         }))
     ];
 
@@ -34,9 +39,9 @@ export default function BillingTab({ patient: _patient, isDark, selectedMeds, se
         <div className="flex flex-col h-full overflow-hidden">
             <div className={`flex-1 overflow-y-auto pr-1 thin-scrollbar space-y-6`}>
                 <div className="flex items-center justify-between">
-                    <h4 className={`text-xs font-black uppercase tracking-[0.2em] ${isDark ? 'text-emerald-400' : 'text-slate-800'}`}>Rincian Biaya Layan</h4>
+                    <h4 className={`text-xs font-black uppercase tracking-[0.2em] ${isDark ? 'text-emerald-400' : 'text-slate-800'}`}>{t('emrWorkspace.billing.title')}</h4>
                     <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${social?.hasBPJS ? 'bg-cyan-500/10 text-cyan-500 border border-cyan-500/20' : 'bg-orange-500/10 text-orange-500 border border-orange-500/20'}`}>
-                        {social?.hasBPJS ? 'Penjamin: BPJS' : 'Umum / Mandiri'}
+                        {social?.hasBPJS ? t('emrWorkspace.billing.payerBpjs') : t('emrWorkspace.billing.payerGeneral')}
                     </div>
                 </div>
 
@@ -45,10 +50,10 @@ export default function BillingTab({ patient: _patient, isDark, selectedMeds, se
                         <table className="w-full text-left text-[10px]">
                             <thead>
                                 <tr className={`border-b ${isDark ? 'border-slate-800 bg-slate-800/50 text-slate-400' : 'border-slate-200 bg-slate-100/50 text-slate-500'}`}>
-                                    <th className="px-4 py-2 font-black uppercase tracking-wider">Item Layan</th>
-                                    <th className="px-4 py-2 font-black uppercase tracking-wider text-right">Biaya Satuan</th>
-                                    <th className="px-4 py-2 font-black uppercase tracking-wider text-right">Qty</th>
-                                    <th className="px-4 py-2 font-black uppercase tracking-wider text-right">Subtotal</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-wider">{t('emrWorkspace.billing.tableItem')}</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-wider text-right">{t('emrWorkspace.billing.tableUnit')}</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-wider text-right">{t('emrWorkspace.billing.tableQty')}</th>
+                                    <th className="px-4 py-2 font-black uppercase tracking-wider text-right">{t('emrWorkspace.billing.tableSubtotal')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-current/5">
@@ -71,7 +76,7 @@ export default function BillingTab({ patient: _patient, isDark, selectedMeds, se
                         <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-10">
                             <Receipt size={64} className={isDark ? 'text-emerald-500' : 'text-emerald-600'} />
                         </div>
-                        <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${isDark ? 'text-emerald-500/60' : 'text-emerald-600'}`}>Total Tagihan Akhir</span>
+                        <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${isDark ? 'text-emerald-500/60' : 'text-emerald-600'}`}>{t('emrWorkspace.billing.finalTotal')}</span>
                         <div className="flex items-baseline gap-2">
                             <span className={`text-xs font-bold ${isDark ? 'text-emerald-500/40' : 'text-emerald-600/40'} line-through`}>Rp {billings.total.toLocaleString('id-ID')}</span>
                             <span className={`text-4xl font-black font-mono tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -79,7 +84,7 @@ export default function BillingTab({ patient: _patient, isDark, selectedMeds, se
                             </span>
                         </div>
                         <p className={`text-[9px] font-bold uppercase ${isDark ? 'text-emerald-400/50' : 'text-emerald-700/50'}`}>
-                            {social?.hasBPJS ? 'Dijamin Pemerintah / BPJS Health' : 'Pasien Membayar Tunai'}
+                            {social?.hasBPJS ? t('emrWorkspace.billing.covered') : t('emrWorkspace.billing.cash')}
                         </p>
                     </div>
                 </div>

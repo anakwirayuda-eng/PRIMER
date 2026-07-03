@@ -123,7 +123,7 @@ export const PSYCHIATRY_CASES = [
             sosial: [{ id: 'q_drugs', text: 'Pernah pakai narkoba?', response: 'Setahu saya tidak dok.', sentiment: 'denial' }]
         },
         essentialQuestions: ['q_main', 'q_hallucination'],
-        anamnesis: ["Bicara sendiri, dengar suara bisikan sebulan.", "Marah tiba-tiba, nggak mau mandi/makan, paman pernah di RSJ."],
+        anamnesis: ["Anak saya sudah sebulan bicara sendiri dan bilang dengar suara bisikan dok.", "Belakangan dia suka marah tiba-tiba, nggak mau mandi atau makan, dan pamannya dulu juga pernah dirawat di RSJ."],
         physicalExamFindings: { general: "Penampilan tidak terawat, kontak mata buruk.", vitals: "Normal", psych: "Afek datar. Proses pikir: asosiasi longgar. Isi pikir: waham kejar (merasa diikuti). Persepsi: halusinasi auditorik (+). Tilikan: buruk (derajat 1)." },
         labs: {}, vitals: { temp: 36.7, bp: '120/80', hr: 82, rr: 18 },
         correctTreatment: ['haloperidol_5_im', 'risperidone_2'],

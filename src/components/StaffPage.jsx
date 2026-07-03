@@ -10,10 +10,12 @@
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { useGame } from '../context/GameContext.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { Users, UserPlus, Briefcase } from 'lucide-react';
+import { showToast } from '../utils/ToastManager.js';
 
 // Modular Imports
 import { AVAILABLE_STAFF } from '../data/StaffData.js';
@@ -22,6 +24,7 @@ import StaffCard from './staff/StaffCard.jsx';
 import StaffDetail from './staff/StaffDetail.jsx';
 
 export default function StaffPage() {
+    const { t } = useTranslation();
     const { playerStats, openWiki } = useGame();
     const { isDark } = useTheme();
     const {
@@ -34,19 +37,26 @@ export default function StaffPage() {
     const [activeTab, setActiveTab] = useState('available');
 
     const playerLevel = playerStats?.level || 1;
+    const getStaffName = (staff) => t(`staffData.${staff.id}.name`, { defaultValue: staff.name });
 
     const handleHire = (staff) => {
         const result = hireStaff(staff);
         if (result.success) {
+            showToast(t('staffPage.toast.hired', { name: getStaffName(staff) }), 'success');
             setSelectedStaff(null);
         } else {
-            alert(result.message);
+            showToast(t('staffPage.toast.hireFailed'), 'warning');
         }
     };
 
     const handleCoach = (staffId) => {
         const res = runCoaching(staffId);
-        if (!res.success) alert(res.message);
+        if (!res.success) {
+            showToast(t('staffPage.toast.coachingFailed'), 'warning');
+            return;
+        }
+
+        showToast(t('staffPage.toast.coachingSuccess'), 'success');
     };
 
     return (
@@ -54,27 +64,27 @@ export default function StaffPage() {
             <header className="mb-6">
                 <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
                     <Users className="inline mr-2" size={28} />
-                    Manajemen SDM (Squad)
+                    {t('staffPage.title')}
                 </h1>
                 <p className={isDark ? 'text-slate-400' : 'text-slate-500'}>
-                    Rekrut dan kelola tim Puskesmas Anda
+                    {t('staffPage.subtitle')}
                 </p>
             </header>
 
             {/* Stats Bar */}
             <div className={`grid grid-cols-3 gap-4 mb-6 p-4 rounded-xl ${isDark ? 'bg-slate-800' : 'bg-white'} border ${isDark ? 'border-slate-700' : 'border-slate-200'}`}>
                 <div>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total Staff</p>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t('staffPage.stats.total')}</p>
                     <p className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{hiredStaff.length}</p>
                 </div>
                 <div>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Gaji Bulanan</p>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t('staffPage.stats.salary')}</p>
                     <p className={`text-xl font-bold text-red-500`}>
                         Rp {(monthlySalaryTotal / 1000000).toFixed(1)}jt
                     </p>
                 </div>
                 <div>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Level Anda</p>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t('staffPage.stats.level')}</p>
                     <p className={`text-xl font-bold text-purple-500`}>{playerLevel}</p>
                 </div>
             </div>
@@ -88,7 +98,7 @@ export default function StaffPage() {
                         : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-800'
                         }`}
                 >
-                    <UserPlus size={16} className="inline mr-1" /> Rekrutmen
+                    <UserPlus size={16} className="inline mr-1" /> {t('staffPage.tabs.recruitment')}
                 </button>
                 <button
                     onClick={() => setActiveTab('hired')}
@@ -97,7 +107,7 @@ export default function StaffPage() {
                         : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-800'
                         }`}
                 >
-                    <Briefcase size={16} className="inline mr-1" /> Tim Saya ({hiredStaff.length})
+                    <Briefcase size={16} className="inline mr-1" /> {t('staffPage.tabs.myTeam', { count: hiredStaff.length })}
                 </button>
             </div>
 
@@ -138,8 +148,8 @@ export default function StaffPage() {
                     {activeTab === 'hired' && hiredStaff.length === 0 && (
                         <div className={`col-span-2 text-center py-12 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                             <Users size={48} className="mx-auto mb-4 opacity-30" />
-                            <p>Belum ada staff yang direkrut.</p>
-                            <p className="text-sm">Klik tab Rekrutmen untuk mulai membangun tim!</p>
+                            <p>{t('staffPage.emptyTeamTitle')}</p>
+                            <p className="text-sm">{t('staffPage.emptyTeamHint')}</p>
                         </div>
                     )}
                 </div>
@@ -158,18 +168,19 @@ export default function StaffPage() {
                 )}
             </div>
 
-            {/* Fire Staff Confirmation Modal — replaces window.confirm */}
+            {/* Fire Staff Confirmation Modal - replaces window.confirm */}
             {pendingFireStaffId && (() => {
                 const staff = hiredStaff.find(s => s.id === pendingFireStaffId);
                 return (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
                         <div className={`max-w-md w-full mx-4 p-6 rounded-2xl shadow-2xl border ${isDark ? 'bg-slate-800 border-red-500/30' : 'bg-white border-red-300'}`}>
                             <div className="text-center mb-4">
-                                <div className="text-4xl mb-2">⚠️</div>
-                                <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>Pemberhentian Staff</h3>
+                                <div className="text-4xl mb-2">{t('staffPage.fireModal.warningIcon')}</div>
+                                <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{t('staffPage.fireModal.title')}</h3>
                                 <p className={`mt-2 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                                    Anda akan memberhentikan <strong>{staff?.name || 'staff ini'}</strong>.
-                                    Tindakan ini tidak dapat dibatalkan.
+                                    {t('staffPage.fireModal.message', {
+                                        name: staff ? getStaffName(staff) : t('staffPage.fireModal.fallbackName')
+                                    })}
                                 </p>
                             </div>
                             <div className="flex gap-3">
@@ -177,13 +188,13 @@ export default function StaffPage() {
                                     onClick={cancelFireStaff}
                                     className={`flex-1 py-2.5 rounded-lg font-medium transition-all ${isDark ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
                                 >
-                                    Batal
+                                    {t('staffPage.fireModal.cancel')}
                                 </button>
                                 <button
                                     onClick={() => { confirmFireStaff(); setSelectedStaff(null); }}
                                     className="flex-1 py-2.5 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700 transition-all"
                                 >
-                                    🔴 Berhentikan
+                                    {t('staffPage.fireModal.confirm')}
                                 </button>
                             </div>
                         </div>

@@ -230,7 +230,7 @@ export const METABOLIC_CASES = [
             "Profil Lipid": { result: "Total 265, LDL 175, HDL 38, TG 280 mg/dL. Kesan: Dislipidemia campuran.", cost: 80000 }
         },
         vitals: { temp: 36.7, bp: '135/85', hr: 78, rr: 18 },
-        correctTreatment: ['simvastatin_20', 'gemfibrozil_300'],
+        correctTreatment: ['simvastatin_20'],
         correctProcedures: [],
         requiredEducation: ['diet_low_fat', 'activity_aerobic', 'weight_loss', 'routine_control'],
         risk: 'medium',
@@ -274,9 +274,10 @@ export const METABOLIC_CASES = [
             "Gula Darah Puasa": { result: "115 mg/dL (Pre-DM)", cost: 30000 }
         },
         vitals: { temp: 36.8, bp: '140/90', hr: 85, rr: 20 },
-        correctTreatment: ['metformin_500'],
+        correctTreatment: [],
         correctProcedures: [],
-        requiredEducation: ['diet_low_calorie', 'activity_aerobic', 'weight_loss', 'routine_control'],
+        requiredEducation: ['diet_low_calorie', 'activity_aerobic', 'weight_loss', 'routine_control', 'nutrition_counseling'],
+        treatmentNote: 'Fokus pada intervensi gaya hidup intensif dan skrining komorbid; farmakoterapi anti-obesitas hanya bila indikasinya jelas.',
         risk: 'medium',
         nonReferrable: true,
         referralExceptions: ['comorbidity'],
@@ -331,6 +332,7 @@ export const METABOLIC_CASES = [
         requiredEducation: ['diet_low_sugar', 'diet_low_salt', 'routine_control', 'med_compliance'],
         risk: 'high',
         referralRequired: true,
+        referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['E11.5', 'N08.3']
     },
     {

@@ -1,0 +1,162 @@
+{
+  "runs": [
+    {
+      "name": "desktop-dashboard-clinical-emr",
+      "viewport": {
+        "width": 1366,
+        "height": 900
+      },
+      "failed": true,
+      "error": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Layanan' }).first() to be visible\u001b[22m\n",
+      "logs": [
+        {
+          "type": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+        },
+        {
+          "type": "debug",
+          "text": "🛡️ PRIMERA Crash Trap Activated."
+        },
+        {
+          "type": "log",
+          "text": "%c🩺 PERINGATAN KOMITE ETIK LAYANAN PRIMER color: red; font-size: 20px; font-weight: bold;"
+        },
+        {
+          "type": "log",
+          "text": "%cHalo Sejawat! Mengubah rekam medis pasien (LocalStorage) adalah pelanggaran Sumpah Dokter.\nSegala bentuk 'Malpraktik Digital' akan tercatat di sistem dan dapat mencabut peringkat Anda. font-size: 13px; color: #F59E0B;"
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connecting..."
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected."
+        },
+        {
+          "type": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+        },
+        {
+          "type": "debug",
+          "text": "🛡️ PRIMERA Crash Trap Activated."
+        },
+        {
+          "type": "log",
+          "text": "%c🩺 PERINGATAN KOMITE ETIK LAYANAN PRIMER color: red; font-size: 20px; font-weight: bold;"
+        },
+        {
+          "type": "log",
+          "text": "%cHalo Sejawat! Mengubah rekam medis pasien (LocalStorage) adalah pelanggaran Sumpah Dokter.\nSegala bentuk 'Malpraktik Digital' akan tercatat di sistem dan dapat mencabut peringkat Anda. font-size: 13px; color: #F59E0B;"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "tablet-clinical-open",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "failed": true,
+      "error": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Layanan' }).first() to be visible\u001b[22m\n",
+      "logs": [
+        {
+          "type": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+        },
+        {
+          "type": "debug",
+          "text": "🛡️ PRIMERA Crash Trap Activated."
+        },
+        {
+          "type": "log",
+          "text": "%c🩺 PERINGATAN KOMITE ETIK LAYANAN PRIMER color: red; font-size: 20px; font-weight: bold;"
+        },
+        {
+          "type": "log",
+          "text": "%cHalo Sejawat! Mengubah rekam medis pasien (LocalStorage) adalah pelanggaran Sumpah Dokter.\nSegala bentuk 'Malpraktik Digital' akan tercatat di sistem dan dapat mencabut peringkat Anda. font-size: 13px; color: #F59E0B;"
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connecting..."
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected."
+        },
+        {
+          "type": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+        },
+        {
+          "type": "debug",
+          "text": "🛡️ PRIMERA Crash Trap Activated."
+        },
+        {
+          "type": "log",
+          "text": "%c🩺 PERINGATAN KOMITE ETIK LAYANAN PRIMER color: red; font-size: 20px; font-weight: bold;"
+        },
+        {
+          "type": "log",
+          "text": "%cHalo Sejawat! Mengubah rekam medis pasien (LocalStorage) adalah pelanggaran Sumpah Dokter.\nSegala bentuk 'Malpraktik Digital' akan tercatat di sistem dan dapat mencabut peringkat Anda. font-size: 13px; color: #F59E0B;"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "mobile-clinical-locked-open",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "failed": true,
+      "error": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Layanan' }).first() to be visible\u001b[22m\n",
+      "logs": [
+        {
+          "type": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+        },
+        {
+          "type": "debug",
+          "text": "🛡️ PRIMERA Crash Trap Activated."
+        },
+        {
+          "type": "log",
+          "text": "%c🩺 PERINGATAN KOMITE ETIK LAYANAN PRIMER color: red; font-size: 20px; font-weight: bold;"
+        },
+        {
+          "type": "log",
+          "text": "%cHalo Sejawat! Mengubah rekam medis pasien (LocalStorage) adalah pelanggaran Sumpah Dokter.\nSegala bentuk 'Malpraktik Digital' akan tercatat di sistem dan dapat mencabut peringkat Anda. font-size: 13px; color: #F59E0B;"
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connecting..."
+        },
+        {
+          "type": "debug",
+          "text": "[vite] connected."
+        },
+        {
+          "type": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+        },
+        {
+          "type": "debug",
+          "text": "🛡️ PRIMERA Crash Trap Activated."
+        },
+        {
+          "type": "log",
+          "text": "%c🩺 PERINGATAN KOMITE ETIK LAYANAN PRIMER color: red; font-size: 20px; font-weight: bold;"
+        },
+        {
+          "type": "log",
+          "text": "%cHalo Sejawat! Mengubah rekam medis pasien (LocalStorage) adalah pelanggaran Sumpah Dokter.\nSegala bentuk 'Malpraktik Digital' akan tercatat di sistem dan dapat mencabut peringkat Anda. font-size: 13px; color: #F59E0B;"
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "startedAt": "2026-04-13T05:56:54.415Z",
+  "finishedAt": "2026-04-13T05:58:56.286Z"
+}

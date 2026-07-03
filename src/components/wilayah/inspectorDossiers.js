@@ -1,4 +1,5 @@
 import { BUILDING_TYPES } from './constants.js';
+import { translateWilayahString } from './contentI18n.js';
 
 const BUILDING_INSPECTOR_DOSSIERS = {
     [BUILDING_TYPES.RTK]: {
@@ -45,7 +46,31 @@ const BUILDING_INSPECTOR_DOSSIERS = {
     }
 };
 
-export function getBuildingInspectorDossier(buildingType) {
+function localizeInspectorDossier(buildingType, dossier, t) {
+    if (typeof t !== 'function' || !dossier) return dossier;
+
+    const baseKey = `wilayahContent.inspectorDossiers.${buildingType}`;
+    return {
+        ...dossier,
+        eyebrow: translateWilayahString(t, `${baseKey}.eyebrow`, dossier.eyebrow),
+        title: translateWilayahString(t, `${baseKey}.title`, dossier.title),
+        summary: translateWilayahString(t, `${baseKey}.summary`, dossier.summary),
+        focusPoints: Array.isArray(dossier.focusPoints)
+            ? dossier.focusPoints.map((point, index) => translateWilayahString(t, `${baseKey}.focusPoints.${index}`, point))
+            : dossier.focusPoints,
+        metrics: Array.isArray(dossier.metrics)
+            ? dossier.metrics.map((metric, index) => ({
+                ...metric,
+                label: translateWilayahString(t, `${baseKey}.metrics.${index}.label`, metric.label),
+                value: translateWilayahString(t, `${baseKey}.metrics.${index}.value`, metric.value)
+            }))
+            : dossier.metrics,
+        caseHint: translateWilayahString(t, `${baseKey}.caseHint`, dossier.caseHint)
+    };
+}
+
+export function getBuildingInspectorDossier(buildingType, t = null) {
     if (!buildingType) return null;
-    return BUILDING_INSPECTOR_DOSSIERS[buildingType] || null;
+    const dossier = BUILDING_INSPECTOR_DOSSIERS[buildingType] || null;
+    return localizeInspectorDossier(buildingType, dossier, t);
 }

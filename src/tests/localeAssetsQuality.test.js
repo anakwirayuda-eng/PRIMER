@@ -4,6 +4,8 @@ import enEmergency from '../locales/emergency/en.js';
 import idEmergency from '../locales/emergency/id.js';
 import enWilayah from '../locales/wilayah/en.js';
 import idWilayah from '../locales/wilayah/id.js';
+import enEmr from '../locales/emr/en.js';
+import idEmr from '../locales/emr/id.js';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
@@ -82,7 +84,9 @@ describe('locale assets quality', () => {
             'emergency/en.js': enEmergency,
             'emergency/id.js': idEmergency,
             'wilayah/en.js': enWilayah,
-            'wilayah/id.js': idWilayah
+            'wilayah/id.js': idWilayah,
+            'emr/en.js': enEmr,
+            'emr/id.js': idEmr
         };
 
         const findings = Object.entries(resources).flatMap(([name, resource]) =>
@@ -93,8 +97,8 @@ describe('locale assets quality', () => {
     });
 
     it('keeps supported merged locales in key parity', () => {
-        const mergedEn = mergeLocale(mergeLocale(en, enWilayah), enEmergency);
-        const mergedId = mergeLocale(mergeLocale(id, idWilayah), idEmergency);
+        const mergedEn = mergeLocale(mergeLocale(mergeLocale(en, enWilayah), enEmergency), enEmr);
+        const mergedId = mergeLocale(mergeLocale(mergeLocale(id, idWilayah), idEmergency), idEmr);
 
         const enKeys = new Set(collectLeafPaths(mergedEn));
         const idKeys = new Set(collectLeafPaths(mergedId));

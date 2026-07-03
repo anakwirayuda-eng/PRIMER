@@ -1,4 +1,4 @@
-<!-- PRIMERA_PROVENANCE {"generatedAt":"2026-03-10T23:48:33.130Z","gitSha":"abf2836","dirty":true,"sourceCommand":"sentinel","inputArtifacts":["health.json","store-schema.md"]} -->
+﻿﻿<!-- PRIMERA_PROVENANCE {"generatedAt":"2026-03-10T23:48:33.130Z","gitSha":"abf2836","dirty":true,"sourceCommand":"sentinel","inputArtifacts":["health.json","store-schema.md"]} -->
 # PRIMERA Intelligence Hub
 
 > Sentinel Status: Active

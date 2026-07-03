@@ -1,4 +1,4 @@
-# PRIMERA System Overview v4.5
+﻿﻿# PRIMERA System Overview v4.5
 
 PRIMERA (Primary Care Emergency & Reliability Architecture) adalah meta-kerangka kerja yang membungkus aplikasi PRIMER untuk menjamin tingkat reliabilitas medis dan teknis yang tinggi.
 

@@ -10,25 +10,23 @@
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
 import useModalA11y from '../hooks/useModalA11y.js';
-import { X, Palette, Scissors } from 'lucide-react';
+import { X, Palette, Scissors, Glasses, Stethoscope } from 'lucide-react';
 import AvatarRenderer, { SKIN_TONES, HAIR_COLORS } from './AvatarRenderer.jsx';
 
 const SKIN_OPTIONS = Object.entries(SKIN_TONES).map(([key, hex]) => ({ id: key, hex }));
 const HAIR_COLOR_OPTIONS = Object.entries(HAIR_COLORS).map(([key, hex]) => ({ id: key, hex }));
 const HAIR_STYLE_OPTIONS_MALE = ['buzz', 'short', 'neat', 'parted'];
 const HAIR_STYLE_OPTIONS_FEMALE = ['short', 'neat', 'long', 'ponytail', 'bun', 'hijab'];
-const HAIR_STYLE_LABELS = {
-    buzz: 'Cepak', short: 'Pendek', neat: 'Rapi', parted: 'Belah',
-    long: 'Panjang', ponytail: 'Ponytail', bun: 'Sanggul', hijab: 'Hijab',
-};
 const ACCESSORY_OPTIONS = [
-    { id: 'glasses', label: 'Kacamata', icon: '👓' },
-    { id: 'stethoscope', label: 'Stetoskop', icon: '🩺' },
+    { id: 'glasses', icon: Glasses },
+    { id: 'stethoscope', icon: Stethoscope },
 ];
 
 export default function AvatarSelectionModal({ onClose }) {
+    const { t } = useTranslation();
     const { playerProfile, setPlayerProfile, soundManager } = useGame();
     const modalRef = useModalA11y(onClose);
 
@@ -70,11 +68,11 @@ export default function AvatarSelectionModal({ onClose }) {
                 <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-5 text-white text-center relative">
                     <button onClick={onClose}
                         className="absolute right-3 top-3 p-1.5 hover:bg-white/20 rounded-full transition"
-                        aria-label="Tutup kustomisasi avatar">
+                        aria-label={t('avatarModal.closeAria')}>
                         <X size={18} />
                     </button>
-                    <h1 id="avatar-title" className="text-lg font-bold">Kustomisasi Penampilan</h1>
-                    <p className="text-xs opacity-70 mt-0.5">Ubah penampilan dokter Anda</p>
+                    <h1 id="avatar-title" className="text-lg font-bold">{t('avatarModal.title')}</h1>
+                    <p className="text-xs opacity-70 mt-0.5">{t('avatarModal.subtitle')}</p>
                 </div>
 
                 <div className="p-5 space-y-4">
@@ -88,7 +86,7 @@ export default function AvatarSelectionModal({ onClose }) {
                     {/* Skin Tone */}
                     <div>
                         <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
-                            <Palette size={12} className="inline mr-1" /> Warna Kulit
+                            <Palette size={12} className="inline mr-1" /> {t('avatarModal.skinTone')}
                         </label>
                         <div className="flex gap-2 justify-center">
                             {SKIN_OPTIONS.map(s => (
@@ -101,7 +99,7 @@ export default function AvatarSelectionModal({ onClose }) {
 
                     {/* Hair Color */}
                     <div>
-                        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Warna Rambut</label>
+                        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">{t('avatarModal.hairColor')}</label>
                         <div className="flex gap-2 justify-center">
                             {HAIR_COLOR_OPTIONS.map(h => (
                                 <button key={h.id} onClick={() => setHairColor(h.id)}
@@ -114,7 +112,7 @@ export default function AvatarSelectionModal({ onClose }) {
                     {/* Hair Style */}
                     <div>
                         <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
-                            <Scissors size={12} className="inline mr-1" /> Gaya Rambut
+                            <Scissors size={12} className="inline mr-1" /> {t('avatarModal.hairStyle')}
                         </label>
                         <div className="grid grid-cols-4 gap-1.5">
                             {availableHairStyles.map(hs => (
@@ -122,7 +120,7 @@ export default function AvatarSelectionModal({ onClose }) {
                                     className={`px-2 py-1.5 rounded-lg border text-xs text-center transition-all ${effectiveHairStyle === hs
                                         ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-bold'
                                         : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300'}`}>
-                                    {HAIR_STYLE_LABELS[hs]}
+                                    {t(`avatarModal.hairStyles.${hs}`)}
                                 </button>
                             ))}
                         </div>
@@ -130,23 +128,25 @@ export default function AvatarSelectionModal({ onClose }) {
 
                     {/* Accessories */}
                     <div>
-                        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Aksesori</label>
+                        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">{t('avatarModal.accessories')}</label>
                         <div className="flex gap-2">
-                            {ACCESSORY_OPTIONS.map(acc => (
+                            {ACCESSORY_OPTIONS.map(acc => {
+                                const AccessoryIcon = acc.icon;
+                                return (
                                 <button key={acc.id} onClick={() => toggleAccessory(acc.id)}
                                     className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-xs transition-all ${accessories.includes(acc.id)
                                         ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
                                         : 'border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300'}`}>
-                                    <span>{acc.icon}</span> {acc.label}
+                                    <AccessoryIcon size={14} /> {t(`avatarModal.accessoryLabels.${acc.id}`)}
                                 </button>
-                            ))}
+                            );})}
                         </div>
                     </div>
 
                     {/* Save */}
                     <button onClick={handleSave}
                         className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-xl hover:from-emerald-500 hover:to-teal-500 transition-all shadow-lg">
-                        Simpan Perubahan
+                        {t('avatarModal.save')}
                     </button>
                 </div>
             </div >

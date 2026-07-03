@@ -1,0 +1,24 @@
+{
+  "desktop": {
+    "ok": true,
+    "metrics": {
+      "viewportWidth": 1366,
+      "maxWidth": 1366,
+      "viewportHeight": 900,
+      "maxHeight": 900
+    }
+  },
+  "tablet": {
+    "ok": true,
+    "metrics": {
+      "viewportWidth": 1024,
+      "maxWidth": 1024,
+      "viewportHeight": 768,
+      "maxHeight": 768
+    }
+  },
+  "mobile": {
+    "ok": false,
+    "error": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button').filter({ hasText: /INISIASI SISTEM|AKSES DATABASE/i }).first() to be visible\u001b[22m\n"
+  }
+}

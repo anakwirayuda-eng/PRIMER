@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeSlot } from '../components/SaveSlotSelector.jsx';
+import { normalizeSlot } from '../utils/saveSlotUtils.js';
 
 describe('save slot normalization', () => {
     it('marks invalid save payloads as empty slots', () => {

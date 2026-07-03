@@ -1,4 +1,4 @@
-# PRIMER: Primary Care Manager Simulator — Complete Technical Bible
+﻿﻿# PRIMER: Primary Care Manager Simulator — Complete Technical Bible
 
 > **Version:** 0.9.x (Clinical Hardening Phase)  
 > **Creator:** Anak Agung Bagus Wirayuda, MD, PhD  

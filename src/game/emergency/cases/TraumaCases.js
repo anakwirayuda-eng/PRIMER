@@ -105,7 +105,8 @@ export const TRAUMA_CASES = [
         esiLevel: 2,
         symptoms: ['Luka gigitan 2 puncture marks', 'Bengkak progresif', 'Nyeri hebat', 'Mual', 'Perdarahan dari luka'],
         clue: "[URGENT] Gigitan ular dengan tanda envenomasi: bengkak progresif, nyeri hebat. Imobilisasi + SABU jika tersedia!",
-        relevantLabs: ['Darah Lengkap', 'PT/APTT'],
+        relevantLabs: ['Darah Lengkap'],
+        referralLevelDiagnostics: ['PT/APTT'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_event', text: 'Kapan digigitnya?', response: 'Baru setengah jam lalu dok, di sawah.', priority: 'essential' },
@@ -140,6 +141,7 @@ export const TRAUMA_CASES = [
         differentialDiagnosis: ['Gigitan serangga', 'Selulitis', 'Reaksi alergi lokal'],
         risk: 'emergency',
         referralRequired: true,
+        referralTarget: 'SpPD/Bedah',
         deteriorationRate: 3
     },
     {
@@ -178,13 +180,21 @@ export const TRAUMA_CASES = [
             vitals: "TD 110/70, N 100x, RR 22x, S 37.0°C",
             skin: "Combustio grade II pada antebrachii dextra et regio pectoralis dextra. Bula (+) multipel, dasar luka merah basah, nyeri sentuh (+). Estimasi luas ±12% TBSA (rule of 9s: lengan 9% + dada parsial 3%)."
         },
+        vitals: { temp: 37.0, bp: '110/70', hr: 100, rr: 22, spo2: 98 },
         correctTreatment: [
             ['burn_cooling', 'iv_line', 'ketorolac_iv', 'burn_wrap'],
             ['silver_sulfadiazine', 'ats_injection', 'iv_fluid_rl']
         ],
         differentialDiagnosis: ['Combustio grade III', 'Chemical burn', 'Sunburn berat'],
         risk: 'emergency',
-        referralRequired: false,
+        referralRequired: true,
+        referralTarget: 'Bedah/Burn Unit',
+        sisruteData: {
+            situation: 'Combustio grade II sekitar 12% TBSA pada antebrachii dextra dan regio pectoralis dextra, nyeri hebat, hemodinamik stabil.',
+            background: 'Terkena air/minyak panas sekitar 30 menit sebelum datang. Pertolongan awal di rumah tidak adekuat.',
+            assessment: 'Partial-thickness burn >10% TBSA dengan lokasi dada/lansia sebagai faktor risiko. Sudah cooling, analgesia, balut steril, akses IV.',
+            recommendation: 'Konsultasi/rujuk Bedah atau burn unit untuk evaluasi luas luka, kebutuhan cairan, dan perawatan luka lanjutan.'
+        },
         deteriorationRate: 1
     },
     {

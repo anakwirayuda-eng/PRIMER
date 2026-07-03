@@ -57,7 +57,7 @@ export const URINARY_CASES = [
             rpd: [], rpk: [], sosial: []
         },
         essentialQuestions: ['q_main', 'q_age'],
-        anamnesis: ["Kulup anak nggak bisa ditarik, kencing susah.", "Pipis anak mengembung di ujung, susah keluar."],
+        anamnesis: ["Kulup anak saya nggak bisa ditarik dok, kalau kencing jadi susah.", "Setiap pipis ujung kemaluannya mengembung dulu lalu alirannya kecil."],
         physicalExamFindings: { general: "Anak tampak baik.", vitals: "TD -, N 90x, RR 20x, S 36.7°C", genitalia: "Prepuce tidak dapat diretraksi. Orifisium preputii sempit (pinhole). Tanda BXO (-). Infeksi (-)." },
         labs: {}, vitals: { temp: 36.7, bp: '-', hr: 90, rr: 20 },
         correctTreatment: ['betamethasone_cream_topical'],
@@ -81,7 +81,7 @@ export const URINARY_CASES = [
             rpd: [], rpk: [], sosial: []
         },
         essentialQuestions: ['q_main', 'q_onset'],
-        anamnesis: ["Kulup anak ketarik ke belakang, bengkak nggak bisa balik!", "Kemaluan anak bengkak dok, kulupnya nyangkut."],
+        anamnesis: ["Kulup anak saya ketarik ke belakang dan sekarang bengkak, nggak bisa balik lagi dok.", "Kemaluannya bengkak sekali dan anak saya menangis terus karena sakit."],
         physicalExamFindings: { general: "Anak menangis kesakitan.", vitals: "TD -, N 110x, RR 24x, S 36.7°C", genitalia: "Prepuce terjepit di corona glandis. Glans edema (+), eritema (+), nyeri tekan (+). Tanda iskemia (-)." },
         labs: {}, vitals: { temp: 36.7, bp: '-', hr: 110, rr: 24 },
         correctTreatment: ['cold_compress'],
@@ -165,7 +165,7 @@ export const URINARY_CASES = [
             rpd: [], rpk: [], sosial: []
         },
         essentialQuestions: ['q_main', 'q_pharyngitis'],
-        anamnesis: ["Kencing merah kayak coca-cola, muka bengkak.", "Radang tenggorok 2 minggu lalu."],
+        anamnesis: ["Anak saya kencingnya merah seperti coca-cola dok, paginya muka juga bengkak.", "Sekitar 2 minggu lalu anak saya sempat radang tenggorok sebelum keluhan ini muncul."],
         physicalExamFindings: { general: "Edema periorbital (+), anak 8 tahun.", vitals: "TD 140/100, N 88x, RR 20x, S 37°C", extremity: "Edema pretibial minimal." },
         labs: { "Urinalisa": { result: "Eritrosit penuh, proteinuria +2, silinder eritrosit (+)", cost: 30000 }, "ASTO": { result: "400 IU/mL (tinggi)", cost: 60000 } },
         vitals: { temp: 37, bp: '140/100', hr: 88, rr: 20 },

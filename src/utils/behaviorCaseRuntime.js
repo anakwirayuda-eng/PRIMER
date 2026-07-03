@@ -205,6 +205,8 @@ export function collectPendingUkpBridgeCases(history = []) {
             scenarioId: entry.behaviorCase.scenarioId,
             outcome: entry.behaviorCase.outcome,
             completedOnDay: entry.behaviorCase.completedOnDay || entry.day,
+            familyId: entry.behaviorCase.familyId || null,
+            ukpDiseaseId: entry.behaviorCase.ukpDiseaseId || null,
             scenario: getDiseaseScenarioById(entry.behaviorCase.scenarioId)
         }));
 }

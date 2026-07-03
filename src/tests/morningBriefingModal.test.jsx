@@ -40,9 +40,9 @@ describe('MorningBriefingModal', () => {
             />
         );
 
-        expect(screen.getByText(/Hari ke-7/)).toBeInTheDocument();
+        expect(screen.getByText(/Hari 7 - Briefing Pagi/i)).toBeInTheDocument();
         expect(screen.getByText('Reputasi:91')).toBeInTheDocument();
-        expect(screen.getByText('Staff Aktif:3/4')).toBeInTheDocument();
+        expect(screen.getByText('Staf Aktif:3/4')).toBeInTheDocument();
         expect(screen.getByText('Dana Aktif')).toBeInTheDocument();
         expect(screen.getByText('Rp 50,3 jt')).toBeInTheDocument();
         expect(screen.getByText('Penerimaan Siklus')).toBeInTheDocument();

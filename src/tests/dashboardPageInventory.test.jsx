@@ -4,6 +4,15 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const mockUseGame = vi.fn();
 
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key, options = {}) => {
+            if (key === 'dashboard.hub.alerts.out_of_stock') return `${options.count} obat HABIS`;
+            return options.defaultValue ?? key;
+        }
+    })
+}));
+
 vi.mock('../context/GameContext.jsx', () => ({
     useGame: () => mockUseGame()
 }));

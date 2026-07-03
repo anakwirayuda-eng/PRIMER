@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { guardStability } from '../utils/prophylaxis.js';
 import { getMedicationById, MEDICATION_CATEGORIES } from '../data/MedicationDatabase.js';
-import { Package, Search, AlertTriangle, TrendingDown, ShoppingCart, Box, Pill, Syringe, Shield, Filter, ChevronDown, BarChart3, Info } from 'lucide-react';
+import { Package, Search, AlertTriangle, TrendingDown, ShoppingCart, Box, Pill, Syringe, Shield, Filter, BarChart3, Info } from 'lucide-react';
 import OrderModal from './OrderModal.jsx';
 /**
  * @reflection
@@ -22,16 +23,19 @@ const CATEGORY_COLORS = {
     obat: 'from-blue-500 to-indigo-600',
     alkes: 'from-emerald-500 to-teal-600',
     apd: 'from-amber-500 to-orange-600',
+    igd: 'from-rose-500 to-red-600',
 };
 
 const CATEGORY_ICONS = {
     obat: Pill,
     alkes: Syringe,
     apd: Shield,
+    igd: AlertTriangle,
 };
 
 export default function SaranaPage() {
-    const { stats, pharmacyInventory, day, openWiki } = useGame();
+    const { t } = useTranslation();
+    const { pharmacyInventory, openWiki } = useGame();
     const { isDark } = useTheme();
     const [showOrderModal, setShowOrderModal] = useState(false);
 
@@ -59,11 +63,10 @@ export default function SaranaPage() {
                 category: med.category === MEDICATION_CATEGORIES.MEDICAL_EQUIPMENT ? 'alkes' :
                     med.category === MEDICATION_CATEGORIES.EMERGENCY ? 'igd' : 'obat',
                 price: med.buyPrice,
-                lastRestock: item.lastRestockDay ? `Hari ${item.lastRestockDay}` : '-',
-                icon: med.type === 'tablet' ? '💊' : med.type === 'botol' ? '🍯' : '💉'
+                lastRestock: item.lastRestockDay ? t('saranaPage.lastRestockDay', { day: item.lastRestockDay }) : '-',
             };
         }).filter(Boolean);
-    }, [pharmacyInventory]);
+    }, [pharmacyInventory, t]);
 
 
 
@@ -108,8 +111,8 @@ export default function SaranaPage() {
                             <Package className="text-white" size={32} />
                         </div>
                         <div>
-                            <h1 className={`text-3xl font-black tracking-tight ${textPrimary}`}>Sarana & Logistik</h1>
-                            <p className={textSecondary}>Kelola stok obat, alkes, dan kebutuhan operasional</p>
+                            <h1 className={`text-3xl font-black tracking-tight ${textPrimary}`}>{t('saranaPage.title')}</h1>
+                            <p className={textSecondary}>{t('saranaPage.subtitle')}</p>
                         </div>
                     </div>
                     <button
@@ -117,7 +120,7 @@ export default function SaranaPage() {
                         className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-lg hover:shadow-orange-500/30 hover:scale-[1.02] transition-all active:scale-95"
                     >
                         <ShoppingCart size={20} />
-                        Pengadaan
+                        {t('saranaPage.order')}
                     </button>
                 </div>
 
@@ -126,22 +129,22 @@ export default function SaranaPage() {
                     <div className={`backdrop-blur-xl rounded-2xl p-5 border ${cardBg}`}>
                         <Box className="text-orange-500 mb-2" size={24} />
                         <div className={`text-2xl font-black ${textPrimary}`}>{totalItems.toLocaleString()}</div>
-                        <div className={`text-sm ${textSecondary}`}>Total Item</div>
+                        <div className={`text-sm ${textSecondary}`}>{t('saranaPage.stats.totalItems')}</div>
                     </div>
                     <div className={`backdrop-blur-xl rounded-2xl p-5 border ${cardBg}`}>
                         <BarChart3 className="text-green-500 mb-2" size={24} />
                         <div className={`text-2xl font-black ${textPrimary}`}>Rp {(totalValue / 1000000).toFixed(1)}M</div>
-                        <div className={`text-sm ${isDark ? 'text-green-300' : 'text-green-600'}`}>Nilai Inventori</div>
+                        <div className={`text-sm ${isDark ? 'text-green-300' : 'text-green-600'}`}>{t('saranaPage.stats.inventoryValue')}</div>
                     </div>
                     <div className={`rounded-2xl p-5 border ${lowStockCount > 0 ? 'bg-red-500/20 border-red-500/30' : cardBg}`}>
                         <TrendingDown className={`mb-2 ${lowStockCount > 0 ? 'text-red-500' : 'text-slate-400'}`} size={24} />
                         <div className={`text-2xl font-black ${textPrimary}`}>{lowStockCount}</div>
-                        <div className={`text-sm ${lowStockCount > 0 ? (isDark ? 'text-red-300' : 'text-red-600') : 'text-slate-400'}`}>Stok Rendah</div>
+                        <div className={`text-sm ${lowStockCount > 0 ? (isDark ? 'text-red-300' : 'text-red-600') : 'text-slate-400'}`}>{t('saranaPage.stats.lowStock')}</div>
                     </div>
                     <div className={`rounded-2xl p-5 border ${expiringCount > 0 ? 'bg-amber-500/20 border-amber-500/30' : cardBg}`}>
                         <AlertTriangle className={`mb-2 ${expiringCount > 0 ? 'text-amber-500' : 'text-slate-400'}`} size={24} />
                         <div className={`text-2xl font-black ${textPrimary}`}>{expiringCount}</div>
-                        <div className={`text-sm ${expiringCount > 0 ? (isDark ? 'text-amber-300' : 'text-amber-600') : 'text-slate-400'}`}>Segera Expired</div>
+                        <div className={`text-sm ${expiringCount > 0 ? (isDark ? 'text-amber-300' : 'text-amber-600') : 'text-slate-400'}`}>{t('saranaPage.stats.expiringSoon')}</div>
                     </div>
                 </div>
 
@@ -151,14 +154,14 @@ export default function SaranaPage() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
-                            placeholder="Cari barang..."
+                            placeholder={t('saranaPage.searchPlaceholder')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className={`w-full pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 ${inputBg}`}
                         />
                     </div>
                     <div className="flex gap-2">
-                        {['all', 'obat', 'alkes', 'apd'].map(cat => {
+                        {['all', 'obat', 'alkes', 'apd', 'igd'].map(cat => {
                             const Icon = cat !== 'all' ? CATEGORY_ICONS[cat] : Filter;
                             return (
                                 <button
@@ -170,7 +173,7 @@ export default function SaranaPage() {
                                         }`}
                                 >
                                     <Icon size={16} />
-                                    {cat === 'all' ? 'Semua' : cat.toUpperCase()}
+                                    {t(`saranaPage.categories.${cat}`)}
                                     {cat !== 'all' && (
                                         <div
                                             onClick={(e) => {
@@ -204,9 +207,12 @@ export default function SaranaPage() {
                                 style={{ animationDelay: `${idx * 30}ms` }}
                             >
                                 <div className="flex items-start justify-between mb-4">
-                                    <span className="text-3xl">{item.icon}</span>
+                                    {(() => {
+                                        const ItemIcon = CATEGORY_ICONS[item.category] || Package;
+                                        return <ItemIcon className={isLowStock ? 'text-red-500' : textSecondary} size={30} />;
+                                    })()}
                                     <span className={`text-xs font-bold px-2 py-1 rounded-full bg-gradient-to-r ${CATEGORY_COLORS[item.category]} text-white`}>
-                                        {item.category.toUpperCase()}
+                                        {t(`saranaPage.categories.${item.category}`)}
                                     </span>
                                 </div>
 
@@ -220,7 +226,7 @@ export default function SaranaPage() {
                                 </div>
 
                                 <div className={`flex justify-between text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                                    <span>Restock: {item.lastRestock}</span>
+                                    <span>{t('saranaPage.restock', { value: item.lastRestock })}</span>
                                     <span>Rp {item.price.toLocaleString('id-ID')}</span>
                                 </div>
 

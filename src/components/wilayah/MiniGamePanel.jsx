@@ -11,18 +11,19 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { scoreMiniGame } from '../../game/MiniGameLibrary.js';
 import { ClipboardCheck, Stethoscope, Users, CheckCircle2, XCircle, AlertTriangle, Crosshair, Activity, Scan, Search, Bug, Droplet, Wind } from 'lucide-react';
 import { shuffleDeterministic } from '../../utils/deterministicRandom.js';
 
 // Static barrier info (no dynamic Tailwind!)
 const BARRIER_INFO = {
-    cap_phy: { label: 'KAPABILITAS FISIK', slotActive: 'border-blue-400 bg-blue-950/30', slotLabel: 'text-blue-400' },
-    cap_psy: { label: 'KAPAB. PSIKOLOGIS', slotActive: 'border-purple-400 bg-purple-950/30', slotLabel: 'text-purple-400' },
-    opp_phy: { label: 'PELUANG FISIK', slotActive: 'border-amber-400 bg-amber-950/30', slotLabel: 'text-amber-400' },
-    opp_soc: { label: 'PELUANG SOSIAL', slotActive: 'border-pink-400 bg-pink-950/30', slotLabel: 'text-pink-400' },
-    mot_ref: { label: 'MOTIVASI REFLEKTIF', slotActive: 'border-cyan-400 bg-cyan-950/30', slotLabel: 'text-cyan-400' },
-    mot_aut: { label: 'MOTIVASI OTOMATIS', slotActive: 'border-emerald-400 bg-emerald-950/30', slotLabel: 'text-emerald-400' }
+    cap_phy: { labelKey: 'cap_phy', slotActive: 'border-blue-400 bg-blue-950/30', slotLabel: 'text-blue-400' },
+    cap_psy: { labelKey: 'cap_psy', slotActive: 'border-purple-400 bg-purple-950/30', slotLabel: 'text-purple-400' },
+    opp_phy: { labelKey: 'opp_phy', slotActive: 'border-amber-400 bg-amber-950/30', slotLabel: 'text-amber-400' },
+    opp_soc: { labelKey: 'opp_soc', slotActive: 'border-pink-400 bg-pink-950/30', slotLabel: 'text-pink-400' },
+    mot_ref: { labelKey: 'mot_ref', slotActive: 'border-cyan-400 bg-cyan-950/30', slotLabel: 'text-cyan-400' },
+    mot_aut: { labelKey: 'mot_aut', slotActive: 'border-emerald-400 bg-emerald-950/30', slotLabel: 'text-emerald-400' }
 };
 
 // Self-contained kinetic CSS
@@ -46,9 +47,9 @@ const MINI_CSS = `
 
 // Transmission route icons for triangulation classification
 const TRANSMISSION_ROUTES = [
-    { id: 'vector', label: 'VECTOR', icon: Bug, color: 'rose', hoverBg: 'hover:bg-rose-950 hover:border-rose-500 hover:text-rose-400' },
-    { id: 'water', label: 'WATER', icon: Droplet, color: 'blue', hoverBg: 'hover:bg-blue-950 hover:border-blue-500 hover:text-blue-400' },
-    { id: 'air', label: 'AIR', icon: Wind, color: 'emerald', hoverBg: 'hover:bg-emerald-950 hover:border-emerald-500 hover:text-emerald-400' },
+    { id: 'vector', labelKey: 'vector', icon: Bug, color: 'rose', hoverBg: 'hover:bg-rose-950 hover:border-rose-500 hover:text-rose-400' },
+    { id: 'water', labelKey: 'water', icon: Droplet, color: 'blue', hoverBg: 'hover:bg-blue-950 hover:border-blue-500 hover:text-blue-400' },
+    { id: 'air', labelKey: 'air', icon: Wind, color: 'emerald', hoverBg: 'hover:bg-emerald-950 hover:border-emerald-500 hover:text-emerald-400' },
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -80,6 +81,8 @@ function useScheduledTimeouts() {
 }
 
 function AuditKesling({ game, scenarioKey, onComplete }) {
+    const { t } = useTranslation();
+    const miniTx = (key, options = {}) => t(`wilayahContent.ui.miniGame.${key}`, options);
     const scene = game.scenes?.[scenarioKey] || game.scenes?.general;
     const allItems = useMemo(() => {
         const h = (scene?.hazards || []).map(i => ({ ...i, isHazard: true }));
@@ -153,7 +156,7 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
 
         if (item.isHazard) {
             setFound(prev => [...prev, item.id]);
-            setFloats(p => [...p, { id: fid, x: item.x, y: item.y, text: 'DITEMUKAN!', color: 'text-amber-400' }]);
+            setFloats(p => [...p, { id: fid, x: item.x, y: item.y, text: miniTx('audit.found'), color: 'text-amber-400' }]);
             // Open triangulation classification menu
             setClassifyTarget(item);
         } else {
@@ -174,14 +177,14 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
 
         if (isCorrect) {
             setClassified(p => ({ ...p, [classifyTarget.id]: route }));
-            setFloats(p => [...p, { id: fid, x: classifyTarget.x, y: classifyTarget.y, text: '✓ ' + route.toUpperCase(), color: 'text-emerald-400' }]);
+            setFloats(p => [...p, { id: fid, x: classifyTarget.x, y: classifyTarget.y, text: miniTx('audit.classifiedRoute', { route: route.toUpperCase() }), color: 'text-emerald-400' }]);
         } else {
             // BRUTAL PENALTY: -20% battery for wrong epidemiological classification
             setBattery(b => Math.max(0, b - 20));
             setClassifyMistakes(m => m + 1);
             setShake(true);
             scheduleTimeout(() => setShake(false), 400);
-            setFloats(p => [...p, { id: fid, x: classifyTarget.x, y: classifyTarget.y, text: 'SALAH! -20%🔋', color: 'text-red-500' }]);
+            setFloats(p => [...p, { id: fid, x: classifyTarget.x, y: classifyTarget.y, text: miniTx('audit.wrongBattery'), color: 'text-red-500' }]);
         }
         setClassifyTarget(null);
         scheduleTimeout(() => setFloats(p => p.filter(f => f.id !== fid)), 1200);
@@ -211,24 +214,24 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
                 <div className="flex items-center gap-3">
                     <Crosshair className={`${isCritical ? 'text-red-400 animate-pulse' : 'text-cyan-400'}`} size={24} />
                     <div>
-                        <h3 className="text-white font-black text-lg uppercase tracking-[0.15em] leading-none">TRIANGULASI TRANSMISI</h3>
-                        <p className="text-cyan-600 font-mono text-[9px] uppercase tracking-widest mt-1">Forensik Sanitasi — Temukan & Klasifikasikan Jalur</p>
+                        <h3 className="text-white font-black text-lg uppercase tracking-[0.15em] leading-none">{miniTx('audit.title')}</h3>
+                        <p className="text-cyan-600 font-mono text-[9px] uppercase tracking-widest mt-1">{miniTx('audit.subtitle')}</p>
                     </div>
                 </div>
                 <div className="flex gap-5 items-center">
                     <div className="text-right font-mono">
-                        <div className="text-[9px] text-rose-400 tracking-widest font-bold">TEMUAN</div>
+                        <div className="text-[9px] text-rose-400 tracking-widest font-bold">{miniTx('audit.findings')}</div>
                         <div className="text-xl font-black text-white">{Object.keys(classified).length}<span className="text-slate-600 text-sm">/{hazardsCount}</span></div>
                     </div>
                     <div className="text-right font-mono w-20">
-                        <div className={`text-[9px] tracking-widest font-bold ${isBatteryLow ? 'text-red-400 animate-pulse' : 'text-amber-500'}`}>BATERAI</div>
+                        <div className={`text-[9px] tracking-widest font-bold ${isBatteryLow ? 'text-red-400 animate-pulse' : 'text-amber-500'}`}>{miniTx('audit.battery')}</div>
                         <div className="h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700 mt-1">
                             <div className={`h-full transition-all ${isBatteryLow ? 'bg-red-500 animate-pulse' : 'bg-amber-400'}`} style={{ width: `${battery}%` }} />
                         </div>
                         <div className={`text-[10px] font-black mt-0.5 ${isBatteryLow ? 'text-red-400' : 'text-amber-400'}`}>{battery}%</div>
                     </div>
                     <div className="text-right font-mono w-16">
-                        <div className="text-[9px] text-slate-500 tracking-widest">WAKTU</div>
+                        <div className="text-[9px] text-slate-500 tracking-widest">{miniTx('audit.time')}</div>
                         <div className={`text-xl font-black tracking-tighter ${isCritical ? 'text-red-500 animate-pulse' : 'text-cyan-400'}`}>
                             {timeLeft}s
                         </div>
@@ -264,7 +267,7 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
                                           isFound ? 'bg-amber-900 text-amber-300 border border-amber-500' :
                                           'opacity-0 group-hover:opacity-100 bg-slate-900 border border-cyan-700 text-cyan-400 font-mono'}`}
                                     >
-                                        {isClassified ? `✓ ${classified[item.id].toUpperCase()}` : isRevealed ? item.label : 'TITIK-' + (idx + 1)}
+                                        {isClassified ? miniTx('audit.classifiedRoute', { route: classified[item.id].toUpperCase() }) : isRevealed ? item.label : miniTx('audit.pointLabel', { index: idx + 1 })}
                                     </span>
                                     {isClassified && (
                                         <div className="absolute -top-3 -right-3 text-emerald-500 font-black text-[10px] border-2 border-emerald-500 px-1 rounded transform -rotate-6 bg-emerald-950/90 mg-stamp">
@@ -282,7 +285,7 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
                                         return (
                                             <button key={route.id} onClick={() => handleClassify(route.id)}
                                                 className={`p-2.5 bg-slate-900 border border-slate-800 text-slate-400 rounded flex flex-col items-center btn-tac transition-colors ${route.hoverBg}`}>
-                                                <Icon size={16}/> <span className="text-[8px] mt-1.5 font-bold tracking-wider">{route.label}</span>
+                                                <Icon size={16}/> <span className="text-[8px] mt-1.5 font-bold tracking-wider">{miniTx(`audit.routes.${route.labelKey}`)}</span>
                                             </button>
                                         );
                                     })}
@@ -304,8 +307,8 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
                 {battery <= 0 && !finished && (
                     <div className="absolute inset-0 bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center z-50 animate-in fade-in">
                         <AlertTriangle className="text-red-500 mb-4 animate-pulse" size={56}/>
-                        <h2 className="text-red-500 font-black text-3xl tracking-widest uppercase">DAYA HABIS</h2>
-                        <p className="font-mono text-xs text-red-300 mt-2">Alat triangulasi mati. Investigasi dihentikan.</p>
+                        <h2 className="text-red-500 font-black text-3xl tracking-widest uppercase">{miniTx('audit.batteryDepletedTitle')}</h2>
+                        <p className="font-mono text-xs text-red-300 mt-2">{miniTx('audit.batteryDepletedBody')}</p>
                     </div>
                 )}
 
@@ -315,26 +318,26 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
                         <div className="text-center space-y-4">
                             <div className={`text-4xl font-black uppercase tracking-[0.2em] ${allClassified ? 'text-emerald-400' : 'text-amber-400'}`}
                                  style={{ textShadow: `0 0 40px ${allClassified ? 'rgba(16,185,129,0.6)' : 'rgba(245,158,11,0.6)'}` }}>
-                                {allClassified ? '✓ FORENSIK SELESAI' : battery <= 0 ? '🔋 DAYA HABIS' : '⏱ WAKTU HABIS'}
+                                {allClassified ? miniTx('audit.finishedComplete') : battery <= 0 ? miniTx('audit.finishedBattery') : miniTx('audit.finishedTime')}
                             </div>
                             <div className="flex gap-6 justify-center font-mono text-sm">
                                 <div className="text-center">
                                     <div className="text-2xl font-black text-white">{Object.keys(classified).length}/{hazardsCount}</div>
-                                    <div className="text-[9px] text-slate-500 tracking-widest uppercase">Terklasifikasi</div>
+                                    <div className="text-[9px] text-slate-500 tracking-widest uppercase">{miniTx('audit.classified')}</div>
                                 </div>
                                 <div className="text-center">
                                     <div className="text-2xl font-black text-cyan-400">+{timeLeft}s</div>
-                                    <div className="text-[9px] text-slate-500 tracking-widest uppercase">Bonus Waktu</div>
+                                    <div className="text-[9px] text-slate-500 tracking-widest uppercase">{miniTx('audit.timeBonus')}</div>
                                 </div>
                                 <div className="text-center">
                                     <div className="text-2xl font-black text-red-400">{classifyMistakes}</div>
-                                    <div className="text-[9px] text-slate-500 tracking-widest uppercase">Salah Klasifikasi</div>
+                                    <div className="text-[9px] text-slate-500 tracking-widest uppercase">{miniTx('audit.classificationMistakes')}</div>
                                 </div>
                             </div>
                             <div className="w-48 h-1 bg-slate-800 rounded-full mx-auto mt-4 overflow-hidden">
                                 <div className="h-full bg-cyan-500 rounded-full" style={{ animation: 'mg-autobar 3s linear forwards' }} />
                             </div>
-                            <div className="text-[10px] font-mono text-cyan-500 tracking-widest uppercase mt-1">→ MEMBUKA LAPORAN EVALUASI...</div>
+                            <div className="text-[10px] font-mono text-cyan-500 tracking-widest uppercase mt-1">{miniTx('audit.openingReport')}</div>
                         </div>
                     </div>
                 )}
@@ -347,6 +350,8 @@ function AuditKesling({ game, scenarioKey, onComplete }) {
 // 🩺 ANAMNESIS SOSIAL (Health Belief Model Profiling)
 // ═══════════════════════════════════════════════════════════════
 function AnamnesisSosial({ game, onComplete }) {
+    const { t } = useTranslation();
+    const miniTx = (key, options = {}) => t(`wilayahContent.ui.miniGame.${key}`, options);
     const expressions = game.expressions || [];
     const [round, setRound] = useState(0);
     const [score, setScore] = useState({ correct: 0, incorrect: 0, streak: 0 });
@@ -388,13 +393,13 @@ function AnamnesisSosial({ game, onComplete }) {
                 <div className="flex items-center gap-3">
                     <Stethoscope className={showFeedback ? 'text-emerald-400' : 'text-emerald-500 animate-pulse'} size={24} />
                     <div>
-                        <h4 className="font-black tracking-[0.15em] uppercase text-emerald-400 text-lg leading-none">ANAMNESIS SOSIAL</h4>
-                        <p className="text-[9px] font-mono text-emerald-700 tracking-widest uppercase mt-1">Health Belief Model (HBM) Profiling</p>
+                        <h4 className="font-black tracking-[0.15em] uppercase text-emerald-400 text-lg leading-none">{miniTx('anamnesis.title')}</h4>
+                        <p className="text-[9px] font-mono text-emerald-700 tracking-widest uppercase mt-1">{miniTx('anamnesis.subtitle')}</p>
                     </div>
                 </div>
                 <div className="flex gap-5 text-right font-mono">
                     <div>
-                        <span className="text-[9px] text-slate-500 tracking-widest block">KUTIPAN</span>
+                        <span className="text-[9px] text-slate-500 tracking-widest block">{miniTx('anamnesis.quote')}</span>
                         <span className="text-lg font-black text-white">[{round + 1}/{expressions.length}]</span>
                     </div>
                     {score.streak > 1 && (
@@ -420,7 +425,7 @@ function AnamnesisSosial({ game, onComplete }) {
                 </div>
 
                 <div className="relative z-10 bg-black/60 border border-slate-700/50 p-5 rounded-xl w-full max-w-lg text-center backdrop-blur-sm mb-6">
-                    <span className="absolute -top-3 left-4 text-[9px] font-mono text-emerald-500 tracking-[0.2em] bg-black px-2">TRANSKRIP WAWANCARA:</span>
+                    <span className="absolute -top-3 left-4 text-[9px] font-mono text-emerald-500 tracking-[0.2em] bg-black px-2">{miniTx('anamnesis.transcript')}</span>
                     <p className={`text-lg font-serif italic font-medium leading-relaxed ${showFeedback ? 'text-slate-500 line-through' : 'text-amber-100'}`}>
                         &quot;{current.npcLine.replace(/"/g, '')}&quot;
                     </p>
@@ -428,7 +433,7 @@ function AnamnesisSosial({ game, onComplete }) {
 
                 {/* Options */}
                 <div className="grid grid-cols-2 gap-3 w-full max-w-lg relative z-20">
-                    <div className="col-span-2 text-center text-[9px] font-mono text-cyan-600 tracking-[0.2em] uppercase mb-1">Identifikasi Dinding Psikologis Warga:</div>
+                    <div className="col-span-2 text-center text-[9px] font-mono text-cyan-600 tracking-[0.2em] uppercase mb-1">{miniTx('anamnesis.identifyBarrier')}</div>
                     {current.options.map((option) => {
                         const isCorrect = option === current.correctRead;
                         const isSelected = selected === option;
@@ -462,7 +467,7 @@ function AnamnesisSosial({ game, onComplete }) {
                 </div>
                 <div>
                     <div className={`font-mono text-[10px] uppercase tracking-[0.2em] mb-1.5 ${isSuccess ? 'text-emerald-400' : 'text-rose-500'}`}>
-                        &gt; {isSuccess ? 'ANALISIS HBM: AKURAT' : 'MISINTERPRETASI KLINIS'}
+                        &gt; {isSuccess ? miniTx('anamnesis.accurate') : miniTx('anamnesis.misinterpretation')}
                     </div>
                     <p className="text-slate-200 text-sm font-medium leading-relaxed">{current.followUp}</p>
                 </div>
@@ -475,6 +480,8 @@ function AnamnesisSosial({ game, onComplete }) {
 // 📋 RENCANA TINDAK LANJUT (BCW Policy Allocation)
 // ═══════════════════════════════════════════════════════════════
 function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
+    const { t } = useTranslation();
+    const miniTx = (key, options = {}) => t(`wilayahContent.ui.miniGame.${key}`, options);
     const allCards = useMemo(
         () => shuffleDeterministic(
             [...(game.cards || []), ...(game.distractors || [])],
@@ -522,12 +529,12 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
                 <div className="flex items-center gap-3">
                     <Users className="text-purple-400" size={24} />
                     <div>
-                        <h3 className="text-white font-black text-lg tracking-[0.15em] uppercase leading-none">Rencana Tindak Lanjut</h3>
-                        <p className="text-purple-600 font-mono text-[9px] tracking-widest uppercase mt-1">Alokasi Intervensi BCW Lintas Sektor</p>
+                        <h3 className="text-white font-black text-lg tracking-[0.15em] uppercase leading-none">{miniTx('rtl.title')}</h3>
+                        <p className="text-purple-600 font-mono text-[9px] tracking-widest uppercase mt-1">{miniTx('rtl.subtitle')}</p>
                     </div>
                 </div>
                 <div className="text-right font-mono">
-                    <span className="text-[10px] text-cyan-500">ALOKASI</span>
+                    <span className="text-[10px] text-cyan-500">{miniTx('rtl.allocation')}</span>
                     <div className="text-lg font-black text-white">{Object.keys(placements).length}/{barrierSlots.length}</div>
                 </div>
             </div>
@@ -536,7 +543,8 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
             <div className="grid grid-cols-2 gap-3 mb-5 shrink-0">
                 {barrierSlots.map(bId => {
                     const placed = placements[bId];
-                    const info = BARRIER_INFO[bId] || { label: bId, slotActive: 'border-slate-400 bg-slate-950/30', slotLabel: 'text-slate-400' };
+                    const info = BARRIER_INFO[bId] || { labelKey: bId, slotActive: 'border-slate-400 bg-slate-950/30', slotLabel: 'text-slate-400' };
+                    const barrierLabel = miniTx(`rtl.barriers.${info.labelKey}`, { defaultValue: bId });
                     const isTargetable = selectedCard !== null && !placed;
                     const isCorrect = submitted && placed?.matchBarriers?.includes(bId);
                     const isWrong = submitted && placed && !isCorrect;
@@ -553,8 +561,8 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
                                     : 'border-slate-800 border-dashed bg-slate-900/30 hover:border-slate-600'}
                             `}
                         >
-                            <div className="absolute top-2 left-2 text-[8px] font-mono text-slate-600 uppercase tracking-widest">TARGET:</div>
-                            <div className={`text-[10px] font-black uppercase tracking-widest mb-1 mt-2 ${placed ? info.slotLabel : 'text-slate-500'}`}>{info.label}</div>
+                            <div className="absolute top-2 left-2 text-[8px] font-mono text-slate-600 uppercase tracking-widest">{miniTx('rtl.target')}</div>
+                            <div className={`text-[10px] font-black uppercase tracking-widest mb-1 mt-2 ${placed ? info.slotLabel : 'text-slate-500'}`}>{barrierLabel}</div>
 
                             {placed ? (
                                 <div className="mt-1 w-full bg-slate-900/90 border border-slate-700 px-3 py-2 rounded-lg flex flex-col items-center gap-1 animate-in zoom-in-75 duration-200 shadow-inner">
@@ -568,7 +576,7 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
                                 </div>
                             ) : (
                                 <div className={`text-[10px] font-mono tracking-widest uppercase mt-2 ${isTargetable ? 'text-amber-400' : 'text-slate-600'}`}>
-                                    {isTargetable ? '< DEPLOY DISINI >' : '[ SLOT KOSONG ]'}
+                                    {isTargetable ? miniTx('rtl.deployHere') : miniTx('rtl.emptySlot')}
                                 </div>
                             )}
                         </button>
@@ -579,7 +587,7 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
             {/* Card Deck — Arsenal Intervensi */}
             <div className={`flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-[inset_0_0_40px_rgba(0,0,0,0.8)] overflow-y-auto transition-opacity duration-500 ${submitted ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 <div className="font-mono text-[9px] text-cyan-600 tracking-[0.2em] uppercase mb-3 text-center">
-                    {selectedCard ? '>>> KLIK SLOT TARGET DI ATAS <<<' : 'ARSENAL INTERVENSI — PILIH KEBIJAKAN'}
+                    {selectedCard ? miniTx('rtl.clickTargetSlot') : miniTx('rtl.selectPolicy')}
                 </div>
                 <div className="flex flex-wrap justify-center gap-3">
                     {allCards.map((card, idx) => {
@@ -607,7 +615,7 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
             {!submitted && allFilled && (
                 <div className="absolute bottom-6 left-6 right-6 z-50 animate-in slide-in-from-bottom-8 fade-in">
                     <button onClick={handleSubmit} className="w-full py-4 rounded-xl font-black text-sm uppercase tracking-[0.3em] bg-emerald-600 text-white shadow-[0_15px_40px_rgba(16,185,129,0.4)] btn-tac border-b-emerald-900 hover:bg-emerald-500 transition-all flex items-center justify-center gap-3">
-                        <ClipboardCheck size={18} /> SAHKAN RTL LINTAS SEKTOR
+                        <ClipboardCheck size={18} /> {miniTx('rtl.confirm')}
                     </button>
                 </div>
             )}
@@ -619,6 +627,9 @@ function RencanaTindakLanjut({ game, activeBarriers, onComplete }) {
 // MAIN EXPORT
 // ═══════════════════════════════════════════════════════════════
 export default function MiniGamePanel({ game, scenarioKey, activeBarriers, onComplete }) {
+    const { t } = useTranslation();
+    const miniTx = (key, options = {}) => t(`wilayahContent.ui.miniGame.${key}`, options);
+
     if (!game) return null;
 
     const sessionKey = [game.id, game.title, game.gameType, scenarioKey]
@@ -635,10 +646,10 @@ export default function MiniGamePanel({ game, scenarioKey, activeBarriers, onCom
             {!['hidden_object', 'expression_reading', 'card_matching'].includes(game.gameType) && (
                 <div className="flex flex-col items-center justify-center h-full border-2 border-dashed border-slate-800 m-8 rounded-2xl">
                     <AlertTriangle size={48} className="mb-4 text-amber-500 opacity-50" />
-                    <p className="font-mono text-sm tracking-[0.2em] uppercase text-slate-400 mb-6">MODULE [{game.gameType}]</p>
-                    <button onClick={() => onComplete({ score: 50, maxScore: 100, normalized: 50, feedback: 'AUTO-RESOLVED' })}
+                    <p className="font-mono text-sm tracking-[0.2em] uppercase text-slate-400 mb-6">{miniTx('fallback.module', { gameType: game.gameType })}</p>
+                    <button onClick={() => onComplete({ score: 50, maxScore: 100, normalized: 50, feedback: miniTx('fallback.autoResolved') })}
                         className="px-8 py-4 bg-slate-900 text-white rounded-xl font-black tracking-widest btn-tac border-slate-800 border-b-slate-950 hover:bg-slate-800 transition-all text-xs">
-                        BYPASS
+                        {miniTx('fallback.bypass')}
                     </button>
                 </div>
             )}

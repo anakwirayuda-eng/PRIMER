@@ -11,10 +11,13 @@
 
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Brain, Search, Plus, Trash2, Info } from 'lucide-react';
 import { findWikiKey } from '../../data/WikiData.js';
 
 export default function AssessmentTab({ isDark, icdQuery, setIcdQuery, icdResults, selectedDiagnoses, addDiagnosis, removeDiagnosis, openWiki }) {
+    const { t } = useTranslation();
+
     return (
         <div className="h-full flex flex-col gap-4 overflow-hidden pt-1">
             <div className={`p-4 rounded-xl border-2 border-dashed flex items-start gap-3 text-xs transition-all ${isDark ? 'bg-indigo-500/5 border-indigo-500/20 text-indigo-100' : 'bg-indigo-50/50 border-indigo-200 text-indigo-900 shadow-sm shadow-indigo-100/50'}`}>
@@ -22,8 +25,8 @@ export default function AssessmentTab({ isDark, icdQuery, setIcdQuery, icdResult
                     <Brain size={18} />
                 </div>
                 <div>
-                    <h4 className="font-black uppercase tracking-[0.15em] mb-1">Assessment & Diagnosis</h4>
-                    <p className="text-[11px] leading-tight opacity-70 italic font-medium">Tegakkan diagnosis kerja berdasarkan Anamnesis (S) dan Pemeriksaan Fisik (O). Gunakan kode ICD-10 yang sesuai.</p>
+                    <h4 className="font-black uppercase tracking-[0.15em] mb-1">{t('emrWorkspace.assessment.title')}</h4>
+                    <p className="text-[11px] leading-tight opacity-70 italic font-medium">{t('emrWorkspace.assessment.description')}</p>
                 </div>
             </div>
 
@@ -32,7 +35,7 @@ export default function AssessmentTab({ isDark, icdQuery, setIcdQuery, icdResult
                     <Search size={14} className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${isDark ? 'text-slate-500 group-focus-within:text-indigo-400' : 'text-slate-400 group-focus-within:text-indigo-600'}`} />
                     <input
                         type="text"
-                        placeholder="Cari kode ICD-10 atau nama penyakit..."
+                        placeholder={t('emrWorkspace.assessment.icdPlaceholder')}
                         className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 text-xs transition-all outline-none font-bold tracking-tight ${isDark
                             ? 'bg-slate-900/50 border-slate-800/60 text-white focus:border-indigo-500 focus:bg-slate-900 shadow-inner'
                             : 'bg-slate-50 border-slate-100 text-slate-800 focus:border-indigo-500 focus:bg-white'}`}
@@ -66,11 +69,11 @@ export default function AssessmentTab({ isDark, icdQuery, setIcdQuery, icdResult
                         <div className="flex items-center gap-2">
                             <div className={`w-1 h-3 rounded-full ${isDark ? 'bg-slate-700' : 'bg-slate-300'}`} />
                             <h4 className={`text-[10px] font-black uppercase tracking-[0.2em] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                                Diagnosis Terpilih
+                                {t('emrWorkspace.assessment.selectedTitle')}
                             </h4>
                         </div>
                         <span className={`px-2 py-0.5 rounded-md font-black text-[9px] ${isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400'}`}>
-                            {selectedDiagnoses.length} ITEMS
+                            {t('emrWorkspace.common.itemsCount', { count: selectedDiagnoses.length })}
                         </span>
                     </div>
 
@@ -80,7 +83,7 @@ export default function AssessmentTab({ isDark, icdQuery, setIcdQuery, icdResult
                                 <div className={`w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center border-2 border-dashed ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-100 bg-white'}`}>
                                     <Brain size={28} className="opacity-20 translate-y-[-1px]" />
                                 </div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] leading-normal opacity-40">Belum ada diagnosis dipilih</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] leading-normal opacity-40">{t('emrWorkspace.assessment.emptySelected')}</p>
                             </div>
                         ) : (
                             selectedDiagnoses.map((d, i) => (
@@ -98,7 +101,7 @@ export default function AssessmentTab({ isDark, icdQuery, setIcdQuery, icdResult
                                                     ? 'bg-emerald-500 text-white shadow-emerald-500/20'
                                                     : (isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400')
                                                 }`}>
-                                                {i === 0 ? 'UT' : i + 1}
+                                                {i === 0 ? t('emrWorkspace.assessment.primaryBadge') : i + 1}
                                             </div>
                                             <div>
                                                 <div className="flex items-center gap-2 mb-1">

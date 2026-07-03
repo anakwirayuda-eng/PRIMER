@@ -15,8 +15,10 @@ export const CARDIOVASCULAR_CASES = [
         triageLevel: 2,
         esiLevel: 2,
         symptoms: ['Nyeri dada kiri/tengah', 'Menjalar ke lengan/rahang', 'Keringat dingin', 'Mual', 'Sesak'],
-        clue: "[URGENT] Nyeri dada tipikal + keringat dingin pada usia >40th. Curiga ACS! MONA + EKG segera.",
-        relevantLabs: ['EKG', 'Troponin'],
+        clue: "[URGENT][EBM] Nyeri dada tipikal + keringat dingin pada usia >40th. Curiga ACS. EKG segera, aspirin loading, antiplatelet tambahan bila tersedia, oksigen hanya bila hipoksemia, dan nitrat hanya bila tekanan darah memadai.",
+        relevantLabs: [],
+        requiredDiagnostics: ['ecg'],
+        referralLevelDiagnostics: ['Troponin'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_pain', text: 'Sakit dadanya seperti apa?', response: 'Kayak ditindih batu besar dok, berat sekali.', priority: 'essential' },
@@ -45,12 +47,13 @@ export const CARDIOVASCULAR_CASES = [
             thorax: "Cor: S1 S2 normal, Gallop (-). Pulmo: Vesikuler (+/+)."
         },
         correctTreatment: [
-            ['oxygen', 'aspilet_160', 'clopidogrel_300', 'isdn_5', 'ecg'],
+            ['aspilet_160', 'clopidogrel_300', 'ecg'],
             ['iv_line', 'monitor_vitals_15']
         ],
         differentialDiagnosis: ['GERD/Dispepsia', 'Diseksi aorta', 'Emboli paru', 'Perikarditis'],
         risk: 'emergency',
         referralRequired: true,
+        referralTarget: 'SpJP',
         deteriorationRate: 4
     },
     {
@@ -63,7 +66,7 @@ export const CARDIOVASCULAR_CASES = [
         triageLevel: 2,
         esiLevel: 2,
         symptoms: ['TD sistolik >180 / diastolik >120', 'Nyeri kepala hebat', 'Pandangan kabur', 'Mimisan', 'Sesak napas'],
-        clue: "[URGENT] TD >180/120 dengan kerusakan organ target (otak/mata/ginjal). Turunkan TD bertahap, JANGAN terlalu cepat!",
+        clue: "[URGENT][EBM] TD >180/120 dengan kerusakan organ target (otak/mata/ginjal). Turunkan TD bertahap dengan anti-hipertensi IV titrasi, JANGAN terlalu cepat. Pilihan obat mengikuti organ target; loop diuretik tidak otomatis wajib bila tidak ada edema paru atau overload.",
         relevantLabs: ['Urinalisa', 'Darah Lengkap'],
         anamnesisQuestions: {
             keluhan_utama: [
@@ -92,7 +95,7 @@ export const CARDIOVASCULAR_CASES = [
         },
         correctTreatment: [
             ['nicardipine_drip', 'iv_line', 'monitor_vitals_15'],
-            ['furosemide_iv', 'observation_6h', 'catheter_urine']
+            ['observation_6h']
         ],
         differentialDiagnosis: ['Stroke hemoragik', 'Feokromositoma', 'Pre-eklampsia (jika hamil)', 'Diseksi aorta'],
         risk: 'emergency',
@@ -107,9 +110,9 @@ export const CARDIOVASCULAR_CASES = [
         },
         billingItems: {
             tindakan: [{ code: '99.29', name: 'Anti-HT IV', actionId: 'nicardipine_drip' }, { code: '96.6', name: 'IV Line', actionId: 'iv_line' }],
-            obat: [{ medId: 'nicardipine_drip', qty: 1 }, { medId: 'furosemide_iv', qty: 1 }],
-            alkes: [{ id: 'iv_cannula', qty: 1, unitCost: 15000 }, { id: 'kateter_foley', qty: 1, unitCost: 25000 }],
-            estimatedCost: 450000
+            obat: [{ medId: 'nicardipine_drip', qty: 1 }],
+            alkes: [{ id: 'iv_cannula', qty: 1, unitCost: 15000 }],
+            estimatedCost: 325000
         },
         wikiKey: 'igd_hypertensive_crisis'
     },
@@ -123,8 +126,9 @@ export const CARDIOVASCULAR_CASES = [
         triageLevel: 1,
         esiLevel: 1,
         symptoms: ['Sesak napas berat tiba-tiba', 'Ortopnea', 'Batuk berbusa pink', 'Ronkhi basah bilateral', 'JVP meningkat'],
-        clue: "[CRITICAL] Sesak akut + batuk berbusa pink + ronkhi bilateral = Edema Paru akut. Posisi duduk + O2 + Furosemide IV SEGERA!",
-        relevantLabs: ['EKG', 'Darah Lengkap'],
+        clue: "[CRITICAL][EBM] Sesak akut + batuk berbusa pink + ronkhi bilateral = edema paru akut. Posisi duduk, oksigen karena hipoksemia, diuretik IV, dan nitrat bila tekanan darah memadai. Opioid tidak rutin diwajibkan.",
+        relevantLabs: ['Darah Lengkap'],
+        requiredDiagnostics: ['ecg'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_breathe', text: 'Sesaknya sejak kapan?', response: 'Tadi malam tiba-tiba sesak banget dok, nggak bisa tidur.', priority: 'essential' },
@@ -150,7 +154,7 @@ export const CARDIOVASCULAR_CASES = [
         },
         correctTreatment: [
             ['oxygen', 'iv_line', 'furosemide_iv', 'isdn_5'],
-            ['morphine_iv', 'monitor_vitals_15', 'catheter_urine']
+            ['monitor_vitals_15']
         ],
         differentialDiagnosis: ['Pneumonia bilateral', 'ARDS', 'Emboli paru masif', 'Tamponade jantung'],
         risk: 'critical',
@@ -165,9 +169,9 @@ export const CARDIOVASCULAR_CASES = [
         },
         billingItems: {
             tindakan: [{ code: '96.04', name: 'Oksigen', actionId: 'oxygen' }, { code: '89.52', name: 'EKG', actionId: 'ecg' }],
-            obat: [{ medId: 'furosemide_iv', qty: 2 }, { medId: 'isdn_5', qty: 3 }, { medId: 'morphine_iv', qty: 1 }],
-            alkes: [{ id: 'iv_cannula', qty: 1, unitCost: 15000 }, { id: 'kateter_foley', qty: 1, unitCost: 25000 }],
-            estimatedCost: 400000
+            obat: [{ medId: 'furosemide_iv', qty: 2 }, { medId: 'isdn_5', qty: 3 }],
+            alkes: [{ id: 'iv_cannula', qty: 1, unitCost: 15000 }],
+            estimatedCost: 335000
         },
         wikiKey: 'igd_chf_acute'
     }

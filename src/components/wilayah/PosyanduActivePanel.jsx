@@ -14,6 +14,7 @@
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Activity, Scale, ClipboardList, ShieldAlert, CheckCircle2,
     AlertTriangle, Users, ThermometerSnowflake, X, Baby, Syringe
@@ -169,6 +170,7 @@ function KMSChart({ baby }) {
 // 🏥 MAIN COMPONENT: PosyanduActivePanel
 // ═══════════════════════════════════════════════════════════════
 export default function PosyanduActivePanel({ initialBabies, onClose, onComplete }) {
+    const { t } = useTranslation();
     const recordFacilitySessionProgress = useGameStore(s => s.publicHealthActions.recordFacilitySessionProgress);
     const currentPosyanduProgress = useGameStore(s => s.publicHealth.buildingProgress?.posyandu);
     const [queue, setQueue] = useState(initialBabies || DEMO_QUEUE);
@@ -206,6 +208,45 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
     ), [currentSuccessStreak, projectedSessionSuccess]);
     const mandiriXpBonus = projectedUpgradeState.isUpgraded ? POSYANDU_MANDIRI_XP_BONUS : 0;
     const displayTotalXP = totalXP + mandiriXpBonus;
+    const tx = (key, options = {}) => t(`wilayahContent.ui.posyanduActive.${key}`, options);
+    const getStampLabel = (key) => tx(`stamps.${key}`, { defaultValue: STAMPS[key]?.label || key || '-' });
+    const getVialName = (vialOrId) => {
+        const vial = typeof vialOrId === 'string' ? VIALS.find(v => v.id === vialOrId) : vialOrId;
+        if (!vial) return vialOrId || '-';
+        return vial.id === 'tunda' ? tx('vials.delay') : vial.name;
+    };
+    const getHandlerLabel = (handler) => {
+        if (handler === 'Kader') return tx('handlers.cadre');
+        if (handler === 'Dokter') return tx('handlers.doctor');
+        return handler;
+    };
+    const getGenderShort = (gender) => gender === 'L' ? tx('gender.maleShort') : tx('gender.femaleShort');
+    const getGenderFull = (gender) => gender === 'L' ? tx('gender.male') : tx('gender.female');
+    const getLogFeedback = (log) => (
+        log.feedbackKey
+            ? tx(`feedback.${log.feedbackKey}`, { defaultValue: log.feedback || '' })
+            : (log.feedback || '')
+    );
+    const getVaccineFeedback = (vaxResult) => {
+        if (!vaxResult) return '';
+        const vaccine = getVialName(vaxResult.vaccineName || vaxResult.feedbackParams?.vaccine || vaxResult.player);
+        if (vaxResult.feedbackKey) {
+            return tx(`feedback.${vaxResult.feedbackKey}`, {
+                ...(vaxResult.feedbackParams || {}),
+                vaccine,
+                defaultValue: vaxResult.feedback || ''
+            });
+        }
+        if (!vaxResult.success) {
+            if (vaxResult.feedback?.includes('sudah pernah')) return tx('feedback.vaccineAlreadyGiven', { vaccine });
+            if (vaxResult.feedback?.includes('belum waktunya')) return tx('feedback.vaccineTooEarly', { vaccine });
+            return vaxResult.feedback || '';
+        }
+        if (vaxResult.timingAccuracy === 'tepat_waktu') return tx('feedback.vaccineOnTime', { vaccine });
+        if (vaxResult.timingAccuracy === 'terlambat') return tx('feedback.vaccineLateCatchUp', { vaccine });
+        if (vaxResult.timingAccuracy === 'sangat_terlambat') return tx('feedback.vaccineVeryLate', { vaccine });
+        return vaxResult.feedback || tx('feedback.vaccineGiven', { vaccine });
+    };
 
     // ─── TRIAGE ──────────────────────────────────────────
     const handleManualExamine = (baby) => {
@@ -224,9 +265,8 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
         setSessionLog(prev => [...prev, {
             baby, handler: 'Kader',
             malpractice: isError,
-            feedback: isError
-                ? 'Kader salah interpretasi kurva KMS. Kasus berisiko lolos tanpa intervensi!'
-                : 'Kader melayani dengan standar dasar. Pencatatan OK.'
+            feedbackKey: isError ? 'cadreError' : 'cadreOk',
+            feedback: tx(`feedback.${isError ? 'cadreError' : 'cadreOk'}`)
         }]);
         setQueue(q => q.filter(b => b.id !== baby.id));
     };
@@ -274,7 +314,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
 
         let vaxResult;
         if (drawnVaccine.id === 'tunda') {
-            vaxResult = { success: true, feedback: 'Vaksinasi ditunda oleh dokter.', xp: 5 };
+            vaxResult = { success: true, feedback: tx('feedback.delayVaccine'), feedbackKey: 'delayVaccine', xp: 5 };
         } else {
             vaxResult = processImmunization(
                 { ...activeBaby, ageMonths: activeBaby.ageMonths, completedVaccines: activeBaby.completedVaccines || [] },
@@ -324,9 +364,9 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                             </div>
                             <div>
                                 <div className="font-mono text-[9px] text-cyan-400 tracking-[0.3em] uppercase mb-0.5 flex items-center gap-2 font-bold">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" /> POSYANDU AKTIF
+                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" /> {tx('header.badge')}
                                 </div>
-                                <h2 className="text-white font-black text-xl uppercase tracking-widest leading-none">LAYANAN MEJA 2 & 5</h2>
+                                <h2 className="text-white font-black text-xl uppercase tracking-widest leading-none">{tx('header.title')}</h2>
                             </div>
                         </div>
 
@@ -334,7 +374,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                             {activePhase === 'triage' && (
                                 <div className="bg-black/50 border border-slate-700 px-4 py-2 rounded-lg flex items-center gap-4 shadow-inner">
                                     <div className="text-right">
-                                        <div className="font-mono text-[9px] text-amber-500 font-bold tracking-widest uppercase">Kapasitas Dokter (AP)</div>
+                                        <div className="font-mono text-[9px] text-amber-500 font-bold tracking-widest uppercase">{tx('doctorCapacity')}</div>
                                         <div className="flex gap-1 mt-1.5 justify-end">
                                             {[0, 1].map((i) => (
                                                 <div key={i} className={`w-4 h-2.5 rounded-sm border ${i < ap ? 'bg-amber-400 border-amber-200 shadow-[0_0_10px_rgba(251,191,36,0.6)]' : 'bg-slate-800 border-slate-700 opacity-50'}`} />
@@ -358,8 +398,8 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                         <div className="w-full h-full p-8 overflow-y-auto blueprint-grid flex flex-col items-center bg-[#151b24]">
                             <div className="max-w-3xl w-full">
                                 <div className="border-l-4 border-cyan-500 pl-4 mb-8">
-                                    <h3 className="text-white font-black text-2xl uppercase tracking-widest">Meja 1: Pendaftaran & Triase</h3>
-                                    <p className="text-slate-400 font-mono text-[10px] tracking-widest uppercase mt-1">AP Terbatas. Prioritaskan Pasien Berisiko. Delegasi Kader = 20% Error Rate.</p>
+                                    <h3 className="text-white font-black text-2xl uppercase tracking-widest">{tx('triage.title')}</h3>
+                                    <p className="text-slate-400 font-mono text-[10px] tracking-widest uppercase mt-1">{tx('triage.subtitle')}</p>
                                 </div>
 
                                 <div className="space-y-4">
@@ -372,8 +412,8 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                                 <div>
                                                     <h4 className="text-white font-bold text-lg uppercase tracking-wider">{baby.name}</h4>
                                                     <div className="text-slate-400 text-[10px] font-mono uppercase tracking-widest mt-1 flex gap-3">
-                                                        <span>{baby.ageMonths} Bulan</span>
-                                                        <span>{baby.gender === 'L' ? '♂' : '♀'}</span>
+                                                        <span>{tx('ageMonths', { count: baby.ageMonths })}</span>
+                                                        <span>{getGenderShort(baby.gender)}</span>
                                                     </div>
                                                     {/* Neutral complaint — NO diagnosis hint */}
                                                     <p className="text-slate-500 text-[10px] font-mono mt-1.5 italic normal-case tracking-wide">"{baby.complaint}"</p>
@@ -381,11 +421,11 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                             </div>
                                             <div className="flex gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
                                                 <button onClick={() => handleDelegateKader(baby)} className="flex-1 sm:flex-none px-4 py-3 rounded-lg bg-slate-800 border border-slate-600 text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-white hover:border-slate-500 flex items-center justify-center gap-2 btn-med border-b-slate-900">
-                                                    <Users size={14} /> Kader (0 AP)
+                                                    <Users size={14} /> {tx('actions.delegateCadre')}
                                                 </button>
                                                 <button onClick={() => handleManualExamine(baby)} disabled={ap <= 0}
                                                     className={`flex-1 sm:flex-none px-4 py-3 rounded-lg font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 btn-med ${ap > 0 ? 'bg-cyan-600 text-white border-cyan-400 border-b-cyan-800 hover:bg-cyan-500 shadow-[0_0_15px_rgba(8,148,235,0.3)]' : 'bg-slate-800 text-slate-600 border-slate-700 border-b-slate-900 cursor-not-allowed'}`}>
-                                                    <Activity size={14} /> Periksa (-1 AP)
+                                                    <Activity size={14} /> {tx('actions.examine')}
                                                 </button>
                                             </div>
                                         </div>
@@ -396,7 +436,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                     <div className="mt-8 p-4 bg-red-950/40 border border-red-500/50 rounded-xl flex items-start gap-3 text-red-400 animate-pulse">
                                         <AlertTriangle size={20} className="shrink-0" />
                                         <div className="text-[10px] font-mono uppercase tracking-widest leading-relaxed">
-                                            <strong>CRITICAL:</strong> Tenaga Dokter Habis. Sisa pasien wajib didelegasikan ke Kader.
+                                            <strong>{tx('criticalLabel')}:</strong> {tx('triage.apEmpty')}
                                         </div>
                                     </div>
                                 )}
@@ -414,24 +454,24 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                 <div className="w-full max-w-md paper-texture border border-slate-300 p-6 flex flex-col transform rotate-[-1deg] relative z-10 rounded">
                                     <div className="border-b-2 border-slate-800 pb-2 mb-5 flex justify-between items-end">
                                         <div>
-                                            <h3 className="font-serif text-2xl font-black text-slate-900 uppercase tracking-tighter">Kartu Menuju Sehat</h3>
-                                            <p className="font-mono text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">GRAFIK PERTUMBUHAN WHO · {activeBaby.gender === 'L' ? 'LAKI-LAKI' : 'PEREMPUAN'}</p>
+                                            <h3 className="font-serif text-2xl font-black text-slate-900 uppercase tracking-tighter">{tx('kms.title')}</h3>
+                                            <p className="font-mono text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">{tx('kms.subtitle', { gender: getGenderFull(activeBaby.gender) })}</p>
                                         </div>
                                         <div className="text-right">
-                                            <div className="font-mono text-[10px] font-bold text-slate-800 bg-amber-100 border border-amber-300 px-2 py-0.5 mb-1">BB: {activeBaby.weight} kg</div>
-                                            <div className="font-mono text-[9px] text-slate-500 font-bold uppercase">{activeBaby.name} · {activeBaby.ageMonths} bln</div>
+                                            <div className="font-mono text-[10px] font-bold text-slate-800 bg-amber-100 border border-amber-300 px-2 py-0.5 mb-1">{tx('kms.weight', { weight: activeBaby.weight })}</div>
+                                            <div className="font-mono text-[9px] text-slate-500 font-bold uppercase">{tx('kms.patientAge', { name: activeBaby.name, age: activeBaby.ageMonths })}</div>
                                         </div>
                                     </div>
 
                                     {/* Real KMS chart from engine */}
                                     <KMSChart baby={activeBaby} />
-                                    <p className="text-center font-mono text-[8px] text-slate-500 uppercase font-bold mt-2">Analisis tren grafik. Salah diagnosis = pasien kehilangan intervensi gizi.</p>
+                                    <p className="text-center font-mono text-[8px] text-slate-500 uppercase font-bold mt-2">{tx('kms.note')}</p>
 
                                     {/* Stamp overlay */}
                                     {kmsStamp && (
                                         <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
                                             <div className={`px-6 py-2 border-[5px] rounded-lg font-black text-3xl tracking-widest uppercase bg-white/60 backdrop-blur-[2px] stamp-hit ${STAMPS[kmsStamp].color}`} style={{ '--rot': STAMPS[kmsStamp].rot }}>
-                                                {STAMPS[kmsStamp].label}
+                                                {getStampLabel(kmsStamp)}
                                             </div>
                                         </div>
                                     )}
@@ -442,9 +482,9 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                             <div className="w-80 bg-slate-900 border-l border-slate-800 p-6 flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.5)] z-20">
                                 <div className="mb-6">
                                     <h3 className="text-white font-black text-sm uppercase tracking-widest flex items-center gap-2">
-                                        <ClipboardList size={18} className="text-amber-500" /> DIAGNOSIS GIZI
+                                        <ClipboardList size={18} className="text-amber-500" /> {tx('stampPanel.title')}
                                     </h3>
-                                    <p className="text-slate-400 text-[10px] font-mono mt-2 leading-relaxed uppercase">Baca grafik lalu pilih stempel.<br />Tidak ada auto-reveal!</p>
+                                    <p className="text-slate-400 text-[10px] font-mono mt-2 leading-relaxed uppercase">{tx('stampPanel.hint')}<br />{tx('stampPanel.noReveal')}</p>
                                 </div>
                                 <div className="space-y-3 flex-1">
                                     {Object.entries(STAMPS).map(([key, data]) => (
@@ -452,13 +492,13 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                             className={`w-full py-4 border-2 rounded-xl font-black text-xs tracking-[0.15em] transition-all bg-slate-950 btn-med shadow-inner
                                                 ${kmsLocked ? 'opacity-40 cursor-not-allowed border-slate-800 border-b-slate-950' : `hover:bg-slate-800 border-slate-700 border-b-slate-950 hover:border-opacity-80`}
                                                 ${kmsStamp === key ? `${data.color} border-current` : data.color.split(' ')[0]}`}>
-                                            [ {data.label} ]
+                                            [ {getStampLabel(key)} ]
                                         </button>
                                     ))}
                                 </div>
                                 <button onClick={submitKMS} disabled={!kmsStamp}
                                     className={`w-full mt-4 py-4 rounded-xl font-black text-xs uppercase tracking-widest btn-med transition-all ${kmsStamp ? 'bg-cyan-600 text-white border-cyan-400 border-b-cyan-800' : 'bg-slate-800 text-slate-600 border-slate-700 cursor-not-allowed'}`}>
-                                    SAHKAN & LANJUT MEJA 5 →
+                                    {tx('actions.confirmKms')}
                                 </button>
                             </div>
                         </div>
@@ -472,8 +512,8 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                 <div className="absolute inset-0 opacity-10 blueprint-grid pointer-events-none" />
                                 <div className="w-full max-w-lg kia-pink rounded shadow-[5px_20px_50px_rgba(0,0,0,0.6)] border border-pink-300 relative flex transform rotate-1 flex-col p-8 z-10">
                                     <div className="border-b-2 border-pink-800/20 pb-2 mb-6 text-center">
-                                        <h4 className="font-serif text-pink-900 font-bold text-2xl uppercase tracking-widest">CATATAN IMUNISASI K.I.A</h4>
-                                        <p className="font-mono text-[10px] text-pink-700 font-bold tracking-widest uppercase mt-1">NAMA: {activeBaby.name} | USIA: {activeBaby.ageMonths} BLN</p>
+                                        <h4 className="font-serif text-pink-900 font-bold text-2xl uppercase tracking-widest">{tx('immunization.title')}</h4>
+                                        <p className="font-mono text-[10px] text-pink-700 font-bold tracking-widest uppercase mt-1">{tx('immunization.patient', { name: activeBaby.name, age: activeBaby.ageMonths })}</p>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4 content-start flex-1">
@@ -489,9 +529,9 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                                         drawnVaccine && drawnVaccine.id !== 'tunda' ? 'border-cyan-400 bg-cyan-50 border-dashed animate-pulse hover:bg-cyan-100' :
                                                         'border-dashed border-pink-300 bg-white/60'}`}
                                                 >
-                                                    <span className={`font-mono text-[10px] font-bold uppercase tracking-widest ${isDone ? 'text-emerald-800' : 'text-slate-500'}`}>{vial.name}</span>
-                                                    {isDone && <div className="absolute inset-0 flex items-center justify-center text-emerald-600 font-black text-2xl transform -rotate-12 mix-blend-multiply opacity-70">✔</div>}
-                                                    {isInjected && <div className="absolute inset-0 flex items-center justify-center text-blue-600 font-black text-xl transform -rotate-[15deg] stamp-hit opacity-90" style={{ '--rot': '-15deg' }}>✓ SUNTIK</div>}
+                                                    <span className={`font-mono text-[10px] font-bold uppercase tracking-widest ${isDone ? 'text-emerald-800' : 'text-slate-500'}`}>{getVialName(vial)}</span>
+                                                    {isDone && <div className="absolute inset-0 flex items-center justify-center text-emerald-600 font-black text-2xl transform -rotate-12 mix-blend-multiply opacity-70">{tx('immunization.doneStamp')}</div>}
+                                                    {isInjected && <div className="absolute inset-0 flex items-center justify-center text-blue-600 font-black text-xl transform -rotate-[15deg] stamp-hit opacity-90" style={{ '--rot': '-15deg' }}>{tx('immunization.injectedStamp')}</div>}
                                                 </div>
                                             );
                                         })}
@@ -503,10 +543,10 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                             <div className="w-80 border-l border-slate-700 p-6 flex flex-col cold-chain-glass z-20 relative shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
                                 <div className="mb-6 border-b border-sky-800/50 pb-4">
                                     <h3 className="text-white font-black text-sm uppercase tracking-widest flex items-center gap-2 drop-shadow-md">
-                                        <ThermometerSnowflake size={18} className="text-cyan-400" /> VACCINE COLD CHAIN
+                                        <ThermometerSnowflake size={18} className="text-cyan-400" /> {tx('coldChain.title')}
                                     </h3>
                                     <div className="flex justify-between items-end mt-2">
-                                        <p className="text-cyan-100/60 text-[9px] font-mono uppercase tracking-widest leading-relaxed">Suhu: 2.0°C - 8.0°C<br />Salah vaksin = KIPI!</p>
+                                        <p className="text-cyan-100/60 text-[9px] font-mono uppercase tracking-widest leading-relaxed">{tx('coldChain.temperature')}<br />{tx('coldChain.warning')}</p>
                                         <div className="bg-emerald-950 border border-emerald-500 text-emerald-400 font-mono text-[10px] font-bold px-2 py-1 rounded shadow-[0_0_10px_rgba(16,185,129,0.3)]">4.5°C</div>
                                     </div>
                                 </div>
@@ -523,7 +563,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                                     <div className="absolute left-0.5 top-0.5 bottom-0.5 w-0.5 bg-white/40 rounded-full" />
                                                 </div>
                                             )}
-                                            <span className={`relative z-10 font-mono text-[8px] font-bold uppercase tracking-widest px-1 text-center ${vial.id !== 'tunda' ? 'mt-10' : ''} ${drawnVaccine?.id === vial.id ? 'text-cyan-400' : 'text-slate-400'}`}>{vial.name}</span>
+                                            <span className={`relative z-10 font-mono text-[8px] font-bold uppercase tracking-widest px-1 text-center ${vial.id !== 'tunda' ? 'mt-10' : ''} ${drawnVaccine?.id === vial.id ? 'text-cyan-400' : 'text-slate-400'}`}>{getVialName(vial)}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -531,7 +571,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                 <div className="mt-4 pt-4 border-t border-sky-900/50">
                                     <button onClick={submitImunisasi} disabled={!drawnVaccine || (drawnVaccine.id !== 'tunda' && !injectedSlot)}
                                         className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-2 btn-med transition-all ${(drawnVaccine && (injectedSlot || drawnVaccine.id === 'tunda')) ? 'bg-blue-600 text-white border-blue-400 border-b-blue-800 shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'bg-slate-900 text-slate-600 border-slate-800 border-b-slate-950 cursor-not-allowed'}`}>
-                                        <Syringe size={16} /> SELESAIKAN EXAM
+                                        <Syringe size={16} /> {tx('actions.finishExam')}
                                     </button>
                                 </div>
                             </div>
@@ -543,40 +583,40 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                         <div className="flex flex-col h-full w-full bg-[#EAE6DF] paper-texture p-6 sm:p-10 text-slate-900 overflow-y-auto scrollbar-hide relative animate-in zoom-in-95 duration-500">
                             <div className="max-w-3xl mx-auto w-full bg-white p-8 rounded-sm shadow-2xl border border-slate-300 relative transform rotate-[1deg]">
                                 <div className="text-center mb-6 border-b-2 border-slate-800/30 pb-4">
-                                    <h3 className="text-slate-600 font-serif text-[10px] uppercase tracking-[0.4em] mb-1 font-bold">Kementerian Kesehatan RI</h3>
-                                    <h2 className="text-slate-900 font-black text-2xl uppercase tracking-widest font-serif">AUDIT MUTU POSYANDU</h2>
+                                    <h3 className="text-slate-600 font-serif text-[10px] uppercase tracking-[0.4em] mb-1 font-bold">{tx('report.ministry')}</h3>
+                                    <h2 className="text-slate-900 font-black text-2xl uppercase tracking-widest font-serif">{tx('report.title')}</h2>
                                 </div>
 
                                 <div className="space-y-4 font-mono text-xs text-slate-800 relative z-10">
-                                    <p className="font-bold border-b border-slate-400 border-dashed pb-1 uppercase tracking-widest text-[10px] text-slate-500">Log Rekam Medis:</p>
+                                    <p className="font-bold border-b border-slate-400 border-dashed pb-1 uppercase tracking-widest text-[10px] text-slate-500">{tx('report.logTitle')}</p>
 
                                     {sessionLog.map((log, i) => {
                                         const isDokter = log.handler === 'Dokter';
                                         return (
                                             <div key={i} className={`bg-slate-50 p-4 border-l-4 shadow-sm rounded flex flex-col gap-1.5 ${log.malpractice ? 'border-red-600' : 'border-emerald-500'}`}>
                                                 <div className="flex justify-between font-bold text-slate-900 uppercase">
-                                                    <span>{log.baby.name} <span className="text-[9px] bg-slate-200 px-1.5 py-0.5 rounded ml-1 tracking-widest">{log.handler}</span></span>
-                                                    <span className={log.malpractice ? 'text-red-600' : 'text-emerald-600'}>{log.malpractice ? 'MALPRAKTIK / ERROR' : 'SESUAI SOP'}</span>
+                                                    <span>{log.baby.name} <span className="text-[9px] bg-slate-200 px-1.5 py-0.5 rounded ml-1 tracking-widest">{getHandlerLabel(log.handler)}</span></span>
+                                                    <span className={log.malpractice ? 'text-red-600' : 'text-emerald-600'}>{log.malpractice ? tx('report.statusError') : tx('report.statusOk')}</span>
                                                 </div>
 
                                                 {!isDokter ? (
-                                                    <div className={`text-[10px] mt-1 ${log.malpractice ? 'text-red-600 font-bold' : 'text-slate-600'}`}>{log.feedback}</div>
+                                                    <div className={`text-[10px] mt-1 ${log.malpractice ? 'text-red-600 font-bold' : 'text-slate-600'}`}>{getLogFeedback(log)}</div>
                                                 ) : (
                                                     <div className="text-[10px] text-slate-700 space-y-1 mt-1 pl-2 border-l-2 border-slate-300">
                                                         <div className="flex justify-between">
-                                                            <span className="text-slate-500">Diagnosis KMS:</span>
+                                                            <span className="text-slate-500">{tx('report.kmsDiagnosis')}</span>
                                                             <b className={!log.kmsResult.isCorrect ? 'text-red-600' : 'text-emerald-700'}>
-                                                                {STAMPS[log.kmsResult.player]?.label || '-'} {log.kmsResult.isCorrect ? ' (TEPAT)' : ` ❌ Harusnya: ${STAMPS[log.kmsResult.actual]?.label || log.kmsResult.actual}`}
+                                                                {getStampLabel(log.kmsResult.player)} {log.kmsResult.isCorrect ? tx('report.correctSuffix') : tx('report.shouldBe', { stamp: getStampLabel(log.kmsResult.actual) })}
                                                             </b>
                                                         </div>
                                                         <div className="flex justify-between">
-                                                            <span className="text-slate-500">Vaksinasi:</span>
+                                                            <span className="text-slate-500">{tx('report.vaccination')}</span>
                                                             <b className={!log.vaxResult.success ? 'text-red-600' : 'text-emerald-700'}>
-                                                                {VIALS.find(v => v.id === log.vaxResult.player)?.name || 'Ditunda'} {!log.vaxResult.success ? ' (KIPI Risk!)' : ' (AMAN)'}
+                                                                {getVialName(log.vaxResult.player)} {!log.vaxResult.success ? tx('report.vaccineRiskSuffix') : tx('report.vaccineSafeSuffix')}
                                                             </b>
                                                         </div>
                                                         {log.vaxResult.feedback && (
-                                                            <div className={`mt-1 text-[9px] italic ${!log.vaxResult.success ? 'text-red-600' : 'text-slate-500'}`}>{log.vaxResult.feedback}</div>
+                                                            <div className={`mt-1 text-[9px] italic ${!log.vaxResult.success ? 'text-red-600' : 'text-slate-500'}`}>{getVaccineFeedback(log.vaxResult)}</div>
                                                         )}
                                                     </div>
                                                 )}
@@ -587,10 +627,10 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                     {malpracticeCount > 0 && (
                                         <div className="mt-6 bg-red-100 border-2 border-red-600 p-4 rounded shadow-md transform rotate-[-1deg]">
                                             <div className="flex items-center gap-2 mb-2 text-red-800 font-black uppercase text-sm">
-                                                <ShieldAlert size={18} /> LAPORAN MALPRAKTIK
+                                                <ShieldAlert size={18} /> {tx('report.malpracticeTitle')}
                                             </div>
                                             <p className="font-serif italic text-red-900 text-xs font-semibold leading-relaxed">
-                                                "{malpracticeCount} kasus malpraktik tercatat. Kesalahan diagnosis KMS menyebabkan kasus gizi buruk/stunting lolos tanpa intervensi. Kesalahan dosis vaksin memicu risiko KIPI. Reputasi Posyandu menurun."
+                                                "{tx('report.malpracticeBody', { count: malpracticeCount })}"
                                             </p>
                                         </div>
                                     )}
@@ -600,16 +640,16 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                     <div className="flex gap-6">
                                         <div className="text-center">
                                             <div className="font-black text-2xl text-emerald-700">+{displayTotalXP}</div>
-                                            <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">XP Medis</div>
+                                            <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">{tx('report.medicalXp')}</div>
                                             {mandiriXpBonus > 0 && (
                                                 <div className="mt-1 font-mono text-[8px] uppercase tracking-widest text-cyan-600 font-black">
-                                                    Aura Mandiri +{mandiriXpBonus} XP
+                                                    {tx('report.independentAura', { xp: mandiriXpBonus })}
                                                 </div>
                                             )}
                                         </div>
                                         <div className="text-center">
                                             <div className={`font-black text-2xl ${repDelta >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>{repDelta >= 0 ? '+' : ''}{repDelta}</div>
-                                            <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">Reputasi Desa</div>
+                                            <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">{tx('report.villageReputation')}</div>
                                         </div>
                                     </div>
                                     <button onClick={() => {
@@ -626,7 +666,7 @@ export default function PosyanduActivePanel({ initialBabies, onClose, onComplete
                                         onClose?.();
                                     }}
                                         className="px-8 py-4 bg-slate-900 text-white font-black text-xs uppercase tracking-widest rounded shadow-xl hover:bg-slate-800 btn-med border-b-black transition-all">
-                                        TUTUP LOGBOOK ✖
+                                        {tx('actions.closeLogbook')}
                                     </button>
                                 </div>
                             </div>

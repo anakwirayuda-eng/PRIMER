@@ -16,42 +16,46 @@
  */
 import React, { useState } from 'react';
 import {
-    ChevronDown, ChevronUp, FileText, Stethoscope, Brain, Pill,
-    Scissors, BookOpen, Activity, Info, AlertCircle, CheckCircle,
-    ArrowUpRight, Clock, User
+    ChevronDown, ChevronUp, Stethoscope, Pill,
+    Scissors, BookOpen, Info, ArrowUpRight, User
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { findWikiKey } from '../data/WikiData.js';
+import { localizeClinicalText } from '../utils/clinicalContentLocalization.js';
 
-const EDUCATION_LABELS = {
-    diet_nutrition: 'Diet & Nutrisi',
-    medication_adherence: 'Kepatuhan Obat',
-    wound_care: 'Perawatan Luka',
-    hygiene: 'Kebersihan / PHBS',
-    follow_up: 'Kontrol Ulang',
-    lifestyle: 'Gaya Hidup Sehat',
-    danger_signs: 'Tanda Bahaya',
-    stop_smoking: 'Berhenti Merokok',
-    breastfeeding: 'ASI Eksklusif',
-    family_planning: 'KB / Keluarga Berencana',
-    exercise: 'Aktivitas Fisik',
-    ors_zinc: 'Oralit + Zinc',
-    vaccination: 'Imunisasi',
-    mental_health: 'Kesehatan Jiwa'
-};
-
-const ACTION_LABELS = {
-    treat: { label: 'RAWAT JALAN', color: 'emerald' },
-    refer: { label: 'DIRUJUK', color: 'rose' },
-    stabilize: { label: 'STABILISASI', color: 'amber' }
+const ACTION_META = {
+    treat: { color: 'emerald' },
+    refer: { color: 'rose' },
+    stabilize: { color: 'amber' }
 };
 
 export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = false, showPatientName = false }) {
     const [expanded, setExpanded] = useState(defaultExpanded);
+    const { t, i18n } = useTranslation();
 
     if (!record) return null;
 
     const { timestamp, subjective, objective, assessment, planning, outcome, isEmergency, handledBy } = record;
-    const actionInfo = ACTION_LABELS[planning?.action] || ACTION_LABELS.treat;
+    const actionKey = planning?.action || 'treat';
+    const actionInfo = ACTION_META[actionKey] || ACTION_META.treat;
+    const localize = (value) => localizeClinicalText(value, i18n.language);
+    const getEducationLabel = (educationKey) => {
+        return t(`emrWorkspace.cppt.educationLabels.${educationKey}`, {
+            defaultValue: localize(String(educationKey).replace(/_/g, ' '))
+        });
+    };
+    const getActionLabel = () => {
+        return t(`emrWorkspace.cppt.actions.${actionKey}`, {
+            defaultValue: t('emrWorkspace.cppt.actions.treat')
+        });
+    };
+    const getOutcomeStatusLabel = (status) => {
+        if (!status) return t('emrWorkspace.cppt.unavailable');
+        const normalized = String(status).toLowerCase();
+        if (normalized === 'pulih' || normalized === 'sembuh') return t('emrWorkspace.cppt.statusRecovered');
+        if (normalized === 'membaik') return t('emrWorkspace.cppt.statusImproved');
+        return localize(status);
+    };
 
     // Status color for left bar
     const statusColor = outcome?.status === 'pulih' || outcome?.status === 'Sembuh'
@@ -82,7 +86,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                     {/* Top row: Day + Time + Emergency badge */}
                     <div className="flex items-center gap-2 mb-1">
                         <span className={`text-[10px] font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-slate-700'}`}>
-                            Hari ke-{timestamp?.day}
+                            {t('emrWorkspace.cppt.dayLabel', { day: timestamp?.day ?? '-' })}
                         </span>
                         <span className="text-[9px] font-mono text-slate-500">
                             {timestamp?.timeFormatted || '??:??'}
@@ -103,14 +107,14 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                     {showPatientName && record.patientName && (
                         <p className={`text-xs font-bold mb-0.5 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                             <User size={10} className="inline mr-1 opacity-50" />{record.patientName}
-                            {record.patientAge ? `, ${record.patientAge} th` : ''}
+                            {record.patientAge ? `, ${record.patientAge} ${t('emrWorkspace.cppt.yearsShort')}` : ''}
                         </p>
                     )}
 
                     {/* Chief complaint */}
                     <p className={`text-xs truncate ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         <span className="font-bold text-emerald-500 mr-1">S:</span>
-                        {subjective?.chiefComplaint || '-'}
+                        {localize(subjective?.chiefComplaint) || '-'}
                     </p>
 
                     {/* Primary diagnosis */}
@@ -118,7 +122,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                         <p className={`text-xs truncate mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                             <span className="font-bold text-emerald-500 mr-1">A:</span>
                             <span className="font-mono font-bold text-emerald-500 mr-1">{assessment.diagnoses[0].code}</span>
-                            {assessment.diagnoses[0].name}
+                            {localize(assessment.diagnoses[0].name)}
                             {assessment.diagnoses.length > 1 && (
                                 <span className="opacity-50 ml-1">(+{assessment.diagnoses.length - 1})</span>
                             )}
@@ -134,7 +138,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                             : `bg-${actionInfo.color}-50 text-${actionInfo.color}-700 border-${actionInfo.color}-100`
                         }`}
                     >
-                        {actionInfo.label}
+                        {getActionLabel()}
                     </span>
                     {expanded ? <ChevronUp size={14} className="text-slate-500" /> : <ChevronDown size={14} className="text-slate-500" />}
                 </div>
@@ -150,7 +154,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                             <span className="text-emerald-500">S</span>UBJECTIVE
                         </h5>
                         <div className={`p-2 rounded-lg border text-xs ${isDark ? 'bg-slate-950/30 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-100 text-slate-700'}`}>
-                            <p className="font-semibold mb-1">{subjective?.chiefComplaint || '-'}</p>
+                            <p className="font-semibold mb-1">{localize(subjective?.chiefComplaint) || '-'}</p>
                             {/* Anamnesis checklist */}
                             {subjective?.anamnesisSynthesis?.categories && (
                                 <div className="space-y-1.5 mt-2">
@@ -159,12 +163,12 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                         if (!items || items.length === 0) return null;
                                         return (
                                             <div key={catKey}>
-                                                <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">{catData?.label || catKey}</span>
+                                                <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">{localize(catData?.label || catKey)}</span>
                                                 <div className="ml-1">
                                                     {items.map((f, i) => (
                                                         <div key={i} className="flex items-center gap-1 text-[10px]">
-                                                            <span className="shrink-0">{f.status === 'confirmed' ? '✅' : f.status === 'denied' ? '❌' : '⚪'}</span>
-                                                            <span className={f.status === 'denied' ? 'line-through opacity-50' : ''}>{f.keyword}</span>
+                                                            <span className="shrink-0">{f.status === 'confirmed' ? 'OK' : f.status === 'denied' ? 'X' : '-'}</span>
+                                                            <span className={f.status === 'denied' ? 'line-through opacity-50' : ''}>{localize(f.keyword)}</span>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -174,7 +178,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                 </div>
                             )}
                             {!subjective?.anamnesisSynthesis?.categories && (
-                                <p className="text-[10px] opacity-50 italic">Anamnesis tidak tersedia</p>
+                                <p className="text-[10px] opacity-50 italic">{t('emrWorkspace.cppt.noAnamnesis')}</p>
                             )}
                         </div>
                     </div>
@@ -188,10 +192,10 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                             {/* Physical exam */}
                             {Object.keys(objective?.physicalFindings || {}).length > 0 ? (
                                 <div>
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Pemeriksaan Fisik</span>
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">{t('emrWorkspace.cppt.physicalExam')}</span>
                                     {Object.entries(objective.physicalFindings).map(([key, val]) => (
                                         <div key={key} className="flex justify-between text-[10px] ml-1">
-                                            <span className="capitalize">{key.replace(/_/g, ' ')}</span>
+                                            <span className="capitalize">{localize(key.replace(/_/g, ' '))}</span>
                                             <span className={`font-mono ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                                                 {typeof val === 'object' ? JSON.stringify(val) : String(val)}
                                             </span>
@@ -200,17 +204,17 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                 </div>
                             ) : (
                                 <p className="text-[10px] opacity-50 italic">
-                                    <Stethoscope size={10} className="inline mr-1" />Pemeriksaan fisik tidak dicatat
+                                    <Stethoscope size={10} className="inline mr-1" />{t('emrWorkspace.cppt.emptyPhysicalExam')}
                                 </p>
                             )}
 
                             {/* Lab results */}
                             {Object.keys(objective?.labResults || {}).length > 0 && (
                                 <div className="pt-1 border-t border-dashed border-slate-700/30">
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Laboratorium</span>
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">{t('emrWorkspace.cppt.laboratory')}</span>
                                     {Object.entries(objective.labResults).map(([key, lab]) => (
                                         <div key={key} className="flex justify-between text-[10px] ml-1">
-                                            <span className="capitalize">{key.replace(/_/g, ' ')}</span>
+                                            <span className="capitalize">{localize(key.replace(/_/g, ' '))}</span>
                                             <span className={`font-mono ${lab.flag === 'abnormal' ? 'text-amber-400 font-bold' : (isDark ? 'text-slate-300' : 'text-slate-700')}`}>
                                                 {lab.result}{lab.unit ? ` ${lab.unit}` : ''}
                                             </span>
@@ -231,7 +235,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                 assessment.diagnoses.map((d, i) => (
                                     <div key={i} className="flex items-center gap-1.5 group">
                                         <span className="font-mono font-black text-emerald-500">{d.code}</span>
-                                        <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{d.name}</span>
+                                        <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{localize(d.name)}</span>
                                         {openWiki && findWikiKey('prob', d.code) && (
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); openWiki(findWikiKey('prob', d.code)); }}
@@ -243,7 +247,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                     </div>
                                 ))
                             ) : (
-                                <p className="opacity-50 italic">Belum ada diagnosis</p>
+                                <p className="opacity-50 italic">{t('emrWorkspace.cppt.noDiagnosis')}</p>
                             )}
                         </div>
                     </div>
@@ -263,7 +267,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                             const medName = typeof m === 'string' ? m : m.name;
                                             return (
                                                 <div key={i} className={`flex justify-between group ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>
-                                                    <span className="capitalize">{medName.replace(/_/g, ' ')}</span>
+                                                    <span className="capitalize">{localize(medName.replace(/_/g, ' '))}</span>
                                                     {openWiki && findWikiKey('med', medName) && (
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); openWiki(findWikiKey('med', medName)); }}
@@ -283,7 +287,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                     <Scissors size={11} className="mt-0.5 opacity-50 shrink-0" />
                                     <div className="flex-1 text-[10px] space-y-0.5">
                                         {planning.procedures.map((p, i) => (
-                                            <div key={i} className={isDark ? 'text-slate-400' : 'text-slate-700'}>{p}</div>
+                                            <div key={i} className={isDark ? 'text-slate-400' : 'text-slate-700'}>{localize(p)}</div>
                                         ))}
                                     </div>
                                 </div>
@@ -296,7 +300,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                     <div className="flex-1 flex flex-wrap gap-1">
                                         {planning.education.map((e, i) => (
                                             <span key={i} className={`px-1.5 py-0.5 rounded text-[9px] ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600'}`}>
-                                                {EDUCATION_LABELS[e] || e}
+                                                {getEducationLabel(e)}
                                             </span>
                                         ))}
                                     </div>
@@ -307,13 +311,17 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                             {planning?.action === 'refer' && (
                                 <div className={`p-2 rounded-lg border flex items-center gap-2 ${isDark ? 'border-rose-500/20 bg-rose-500/5 text-rose-300' : 'border-rose-100 bg-rose-50 text-rose-700'}`}>
                                     <ArrowUpRight size={11} className="shrink-0" />
-                                    <span className="text-[10px] font-bold">Rujuk ke: {planning.referralTarget || 'RS Rujukan'}</span>
+                                    <span className="text-[10px] font-bold">
+                                        {t('emrWorkspace.cppt.referTo', {
+                                            target: localize(planning.referralTarget) || t('emrWorkspace.cppt.referralHospitalFallback')
+                                        })}
+                                    </span>
                                 </div>
                             )}
 
                             {/* No treatment */}
                             {(!planning?.medications?.length && !planning?.procedures?.length && !planning?.education?.length && planning?.action !== 'refer') && (
-                                <p className={`text-[10px] opacity-50 italic ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Tidak ada terapi dicatat</p>
+                                <p className={`text-[10px] opacity-50 italic ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('emrWorkspace.cppt.noTherapy')}</p>
                             )}
                         </div>
                     </div>
@@ -321,7 +329,7 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                     {/* Outcome footer */}
                     <div className={`flex items-center justify-between pt-2 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
                         <div className="flex items-center gap-2">
-                            <span className={`text-[9px] font-black uppercase tracking-widest ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>Outcome:</span>
+                            <span className={`text-[9px] font-black uppercase tracking-widest ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>{t('emrWorkspace.cppt.outcome')}</span>
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold capitalize
                                 ${outcome?.status === 'pulih' || outcome?.status === 'Sembuh'
                                     ? (isDark ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-100 text-emerald-700')
@@ -329,12 +337,12 @@ export default function CPPTCard({ record, isDark, openWiki, defaultExpanded = f
                                         ? (isDark ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-100 text-blue-700')
                                         : (isDark ? 'bg-amber-500/10 text-amber-400' : 'bg-amber-100 text-amber-700')
                                 }`}>
-                                {outcome?.status || 'N/A'}
+                                {getOutcomeStatusLabel(outcome?.status)}
                             </span>
                         </div>
                         {handledBy && (
                             <span className={`text-[9px] italic ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-                                oleh: {handledBy}
+                                {t('emrWorkspace.cppt.by')} {handledBy}
                             </span>
                         )}
                     </div>

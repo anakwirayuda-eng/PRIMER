@@ -3,7 +3,7 @@
  * [IDENTITY]: respiratory
  * [PURPOSE]: Respiratory cases for CaseLibrary.
  * [STATE]: Experimental
- * [LAST_UPDATE]: 2026-02-12
+ * [LAST_UPDATE]: 2026-04-16
  */
 
 export const RESPIRATORY_CASES = [
@@ -39,7 +39,7 @@ export const RESPIRATORY_CASES = [
         anamnesis: ["Sesak napas bunyi ngik-ngik dok, dicetuskan debu/dingin.", "Saya asma sejak kecil, ibu juga asma."],
         physicalExamFindings: {
             general: "Tampak sesak, berbicara kalimat tidak lengkap.",
-            vitals: "TD 120/80, N 100x, RR 26x, S 36.8°C, SpO2 94%",
+            vitals: "TD 120/80, N 100x, RR 26x, S 36.8C, SpO2 94%",
             thorax: "Ekspirasi memanjang, Wheezing (+/+) bilateral. Retraksi intercostal ringan."
         },
         labs: {},
@@ -50,7 +50,7 @@ export const RESPIRATORY_CASES = [
         risk: 'medium',
         nonReferrable: true,
         referralExceptions: ['emergency', 'no_improvement', 'comorbidity'],
-        differentialDiagnosis: ['J44.9','J18.9']
+        differentialDiagnosis: ['J44.9', 'J18.9']
     },
     {
         id: 'asma_bronkiale_akut',
@@ -58,8 +58,8 @@ export const RESPIRATORY_CASES = [
         icd10: 'J45.9',
         skdi: '4A',
         category: 'Respiratory',
-        symptoms: ["Sesak napas","Mengi/wheezing","Batuk malam","Riwayat atopi"],
-        clue: "[EBM: GINA 2023] Asma akut — sesak + wheezing + batuk. Klasifikasi derajat serangan. Nebulisasi SABA first-line. Steroid sistemik jika sedang-berat.",
+        symptoms: ['Sesak napas', 'Mengi/wheezing', 'Batuk malam', 'Riwayat atopi'],
+        clue: "[EBM: GINA] Asma akut: nilai derajat serangan. Beri bronkodilator kerja cepat inhalasi/nebulisasi segera, tambah ipratropium inhalasi pada serangan sedang-berat, oksigen bila hipoksemia, dan steroid sistemik bila sedang-berat.",
         relevantLabs: [],
         anamnesisQuestions: {
             keluhan_utama: [
@@ -78,15 +78,22 @@ export const RESPIRATORY_CASES = [
             ],
             sosial: [],
         },
-        essentialQuestions: ["q_main","q_onset","q_trigger"],
+        essentialQuestions: ['q_main', 'q_onset', 'q_trigger'],
         anamnesis: ["Napas saya bunyi ngik-ngik dok, sesak banget.", "Barusan kena debu pas bersih-bersih rumah langsung sesak. Sudah pakai inhaler nggak mendingan."],
-        physicalExamFindings: { general: "Tampak sesak berat, bicara terputus.", vitals: "TD 120/80, N 110x, RR 28x, S 36.6°C, SpO2 92%", thorax: "I: Retraksi interkostal (+). A: Wheezing (+/+) di seluruh lapang paru, fase ekspirasi diperpanjang." },
-        labs: {}, vitals: { temp: 36.6, bp: '120/80', hr: 110, rr: 28, spo2: 92 },
-        correctTreatment: ['salbutamol_inhaler', 'ipratropium_nasal', 'dexamethasone_inj'],
+        physicalExamFindings: {
+            general: "Tampak sesak berat, bicara terputus.",
+            vitals: "TD 120/80, N 110x, RR 28x, S 36.6C, SpO2 92%",
+            thorax: "I: Retraksi interkostal (+). A: Wheezing (+/+) di seluruh lapang paru, fase ekspirasi diperpanjang."
+        },
+        labs: {},
+        vitals: { temp: 36.6, bp: '120/80', hr: 110, rr: 28, spo2: 92 },
+        correctTreatment: ['ipratropium_nebulizer', 'dexamethasone_inj'],
         correctProcedures: ['nebulizer', 'nasal_cannula'],
         requiredEducation: ['avoid_triggers', 'peak_flow_monitoring', 'emergency_plan'],
-        risk: 'medium', nonReferrable: true, referralExceptions: ['emergency', 'status_asthmaticus'],
-        differentialDiagnosis: ['J45','J46']
+        risk: 'medium',
+        nonReferrable: true,
+        referralExceptions: ['emergency', 'status_asthmaticus'],
+        differentialDiagnosis: ['J45', 'J46']
     },
     {
         id: 'bronkhitis_akut',
@@ -94,8 +101,8 @@ export const RESPIRATORY_CASES = [
         icd10: 'J20.9',
         skdi: '4A',
         category: 'Respiratory',
-        symptoms: ["Batuk produktif","Demam ringan","Nyeri dada saat batuk","Ronki basah"],
-        clue: "[EBM: NICE CG69] Bronkitis akut — batuk produktif <3 minggu, sering viral. JANGAN antibiotik rutin! Simptomatik. AB hanya jika risiko tinggi/komorbid.",
+        symptoms: ['Batuk produktif', 'Demam ringan', 'Nyeri dada saat batuk', 'Ronki basah'],
+        clue: "[EBM: NICE NG120] Bronkitis akut: batuk produktif <3 minggu, paling sering viral. Jangan beri antibiotik rutin; terapi utama simptomatik dan edukasi red flag.",
         relevantLabs: [],
         anamnesisQuestions: {
             keluhan_utama: [
@@ -112,14 +119,21 @@ export const RESPIRATORY_CASES = [
                 { id: 'q_smoke', text: 'Merokok?', response: 'Iya dok, sehari sebungkus.', sentiment: 'confirmation' },
             ],
         },
-        essentialQuestions: ["q_main","q_duration"],
+        essentialQuestions: ['q_main', 'q_duration'],
         anamnesis: ["Batuk berdahak sudah 5 hari dok, dadanya agak nyeri kalau batuk.", "Awalnya pilek terus jadi batuk, dahaknya kuning kental. Suara agak serak juga."],
-        physicalExamFindings: { general: "Tampak lelah.", vitals: "TD 120/80, N 84x, RR 20x, S 37.5°C", thorax: "A: Vesikuler normal, Ronkhi basah kasar (+/+) minimal, wheezing (-)." },
-        labs: {}, vitals: { temp: 37.5, bp: '120/80', hr: 84, rr: 20 },
-        correctTreatment: ['ambroxol_syr', 'paracetamol_500', 'amoxicillin_500'],
+        physicalExamFindings: {
+            general: "Tampak lelah.",
+            vitals: "TD 120/80, N 84x, RR 20x, S 37.5C",
+            thorax: "A: Vesikuler normal, Ronkhi basah kasar (+/+) minimal, wheezing (-)."
+        },
+        labs: {},
+        vitals: { temp: 37.5, bp: '120/80', hr: 84, rr: 20 },
+        correctTreatment: ['ambroxol_30', 'paracetamol_500'],
         correctProcedures: [],
-        requiredEducation: ['rest_and_fluids', 'stop_smoking', 'complete_antibiotics'],
-        risk: 'low', nonReferrable: true, referralExceptions: ['high_fever', 'shortness_of_breath'],
+        requiredEducation: ['rest_and_fluids', 'stop_smoking', 'red_flag_monitor'],
+        risk: 'low',
+        nonReferrable: true,
+        referralExceptions: ['high_fever', 'shortness_of_breath'],
         differentialDiagnosis: ['J18.9']
     },
     {
@@ -128,13 +142,13 @@ export const RESPIRATORY_CASES = [
         icd10: 'J15.9',
         skdi: '4A',
         category: 'Respiratory',
-        symptoms: ["Demam tinggi","Batuk produktif purulen","Sesak napas","Nyeri dada pleuritik"],
-        clue: "[EBM: IDSA/ATS 2019] CAP — demam+batuk purulen+sesak. CRB-65 scoring. Amoksisilin first-line. Makrolid jika alergi penisilin.",
-        relevantLabs: ["Darah Lengkap","Rontgen Thorax"],
+        symptoms: ['Demam tinggi', 'Batuk produktif purulen', 'Sesak napas', 'Nyeri dada pleuritik'],
+        clue: "[EBM: PNPK Kemenkes 2023] Pneumonia komunitas dewasa: nilai derajat berat, pastikan tidak ada TB, dan pada kasus rawat jalan tanpa komorbid amoksisilin adalah lini pertama; makrolid untuk indikasi khusus atau alergi penisilin.",
+        relevantLabs: ['Darah Lengkap', 'Rontgen Thorax'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_main', text: 'Apa keluhannya?', response: 'Batuk berdahak kuning kental dok, demam tinggi, sesak.', sentiment: 'confirmation', priority: 'essential' },
-                { id: 'q_onset', text: 'Sudah berapa hari?', response: 'Seminggu dok, makin berat.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_onset', text: 'Sudah berapa hari?', response: 'Sudah 3 hari dok, makin berat.', sentiment: 'confirmation', priority: 'essential' },
             ],
             rps: [
                 { id: 'q_chest_pain', text: 'Dada sakit?', response: 'Sakit kalau napas dalam dok, sebelah kanan.', sentiment: 'confirmation', priority: 'essential' },
@@ -146,15 +160,21 @@ export const RESPIRATORY_CASES = [
             rpk: [],
             sosial: [],
         },
-        essentialQuestions: ["q_main","q_onset","q_chest_pain"],
+        essentialQuestions: ['q_main', 'q_onset', 'q_chest_pain'],
         anamnesis: ["Sesak napas dan batuk berdahak dok, demamnya tinggi.", "Sudah 3 hari begini, dahaknya hijau dan kadang ada becak darahnya sedikit. Badan lemes banget."],
-        physicalExamFindings: { general: "Tampak sakit sedang, sesak.", vitals: "TD 110/70, N 100x, RR 26x, S 38.8°C, SpO2 94%", thorax: "A: Ronkhi basah halus (+/+) di basal paru kanan. P: Fremitus suara meningkat di kanan." },
+        physicalExamFindings: {
+            general: "Tampak sakit sedang, sesak.",
+            vitals: "TD 110/70, N 100x, RR 26x, S 38.8C, SpO2 94%",
+            thorax: "A: Ronkhi basah halus (+/+) di basal paru kanan. P: Fremitus suara meningkat di kanan."
+        },
         labs: { "Rontgen Thorax": { result: "Infiltrat pada lobus kanan bawah.", cost: 100000 } },
         vitals: { temp: 38.8, bp: '110/70', hr: 100, rr: 26, spo2: 94 },
-        correctTreatment: ['azithromycin_500', 'paracetamol_500', 'ambroxol_30'],
+        correctTreatment: ['amoxicillin_500', 'paracetamol_500', 'ambroxol_30'],
         correctProcedures: ['nasal_cannula'],
-        requiredEducation: ['rest_and_fluids', 'med_compliance', 'follow_up_xray'],
-        risk: 'medium', nonReferrable: true, referralExceptions: ['emergency', 'severe_pneumonia', 'elderly'],
+        requiredEducation: ['rest_and_fluids', 'med_compliance', 'red_flag_monitor'],
+        risk: 'medium',
+        nonReferrable: true,
+        referralExceptions: ['emergency', 'severe_pneumonia', 'elderly'],
         differentialDiagnosis: ['A15']
     },
     {
@@ -163,29 +183,36 @@ export const RESPIRATORY_CASES = [
         icd10: 'J44.1',
         skdi: '4A',
         category: 'Respiratory',
-        symptoms: ['Makin sesak', 'Batuk dahak banyak', 'Riwayat merokok lama', 'Suara napas wheezing'],
-        clue: "Riwayat merokok berat (>20 tahun). Sesak napas kronis yang memberat. Dada spt tong (barrel chest). Pemeriksaan: Spirometri guna konfirmasi (post-bronkodilator).",
+        symptoms: ['Makin sesak', 'Batuk dahak makin banyak dan purulen', 'Riwayat merokok lama', 'Suara napas wheezing'],
+        clue: "[EBM: PNPK Kemenkes 2019] PPOK eksaserbasi akut: sesak memberat dengan volume sputum meningkat dan/atau menjadi purulen. Tata laksana akut fokus pada bronkodilator kerja cepat, oksigen terukur, steroid sistemik, dan antibiotik bila ada indikasi. Spirometri untuk konfirmasi diagnosis dasar dilakukan saat stabil, bukan saat fase eksaserbasi akut.",
         relevantLabs: ['Rontgen Thorax'],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Apa yang dirasakan pak/bu?', response: 'Sesak saya makin parah dok, udah seminggu ini.', sentiment: 'confirmation', priority: 'essential' }],
-            rps: [{ id: 'q_smoke', text: 'Merokok nggak pak?', response: 'Iya dok, saya merokok dari muda, sudah 30 tahun.', sentiment: 'neutral', priority: 'essential' }],
+            rps: [
+                { id: 'q_smoke', text: 'Merokok nggak pak?', response: 'Iya dok, saya merokok dari muda, sudah 30 tahun.', sentiment: 'neutral', priority: 'essential' },
+                { id: 'q_sputum', text: 'Dahaknya berubah warna atau jumlah?', response: 'Iya dok, dahaknya jadi lebih banyak dan kuning kehijauan.', sentiment: 'confirmation', priority: 'essential' }
+            ],
             rpd: [{ id: 'q_asthma', text: 'Punya riwayat asma nggak?', response: 'Nggak tahu dok, tapi sering sesak kalau capek.', sentiment: 'confirmation' }],
-            rpk: [], sosial: []
+            rpk: [],
+            sosial: []
         },
-        essentialQuestions: ['q_main', 'q_smoke'],
-        anamnesis: ["Napas saya sesak banget dok, berdahak juga. Saya perokok dari SMP.", "Dada rasanya ampek dok, udah biasa gini tapi ini yang paling parah."],
+        essentialQuestions: ['q_main', 'q_smoke', 'q_sputum'],
+        anamnesis: ["Napas saya sesak banget dok, dahaknya makin banyak dan sekarang kuning kehijauan. Saya perokok dari SMP.", "Dada rasanya ampek dok, udah biasa gini tapi ini yang paling parah."],
         physicalExamFindings: {
             general: "Tampak sesak, pursed-lip breathing.",
-            vitals: "TD 140/90, N 92x, RR 26x, S 37.0°C, SpO2 92%",
+            vitals: "TD 140/90, N 92x, RR 26x, S 37.0C, SpO2 92%",
             thorax: "I: Barrel chest (+). P: Fremitus menurun. P: Hipersonor seluruh lapang paru. A: Vesikuler menurun, Wheezing +/+ (ekspirasi memanjang)."
         },
         labs: { "Rontgen Thorax": { result: "Hiperinflasi paru, diafragma mendatar, jantung pendulum.", cost: 100000 } },
         vitals: { temp: 37.0, bp: '140/90', hr: 92, rr: 26, spo2: 92 },
-        correctTreatment: ['salbutamol_inhaler', 'prednisone_5', 'azithromycin_500'],
-        correctProcedures: ['spirometry', 'nebulizer', 'nasal_cannula'],
+        correctTreatment: ['ipratropium_nebulizer', 'prednisone_5', 'azithromycin_500'],
+        correctProcedures: ['nebulizer', 'nasal_cannula'],
         requiredEducation: ['stop_smoking', 'red_flag_monitor', 'routine_control'],
-        risk: 'high', nonReferrable: false, referralExceptions: ['frequent_exacerbations'],
-        differentialDiagnosis: ['J45','J15']
+        risk: 'high',
+        nonReferrable: false,
+        referralTarget: 'rs_kabupaten',
+        referralExceptions: ['frequent_exacerbations'],
+        differentialDiagnosis: ['J45', 'J15']
     },
     // === SKDI 1-3 REFERRAL CASES ===
     {
@@ -204,16 +231,24 @@ export const RESPIRATORY_CASES = [
                 { id: 'q_trigger', text: 'Ada pencetusnya?', response: 'Habis kena debu dok, tapi biasanya nebulizer langsung enak.', sentiment: 'confirmation' }
             ],
             rpd: [{ id: 'q_asthma', text: 'Riwayat asmanya?', response: 'Sejak kecil dok, sebulan bisa 3-4 kali kambuh.', sentiment: 'confirmation' }],
-            rpk: [], sosial: []
+            rpk: [],
+            sosial: []
         },
         essentialQuestions: ['q_main', 'q_severity'],
         anamnesis: ["Sesak banget, nebulizer nggak mempan!", "Bicara sepatah-patah, asma sejak kecil."],
-        physicalExamFindings: { general: "Sesak berat, posisi tripod, bicara kata per kata, sianosis (+).", vitals: "TD 130/80, N 130x, RR 36x, S 37°C, SpO2 85%", respiratory: "Retraksi supraklavikula dan interkostal (+). Wheezing ekspirasi dan inspirasi bilateral. Silent chest di basal kanan." },
-        labs: {}, vitals: { temp: 37, bp: '130/80', hr: 130, rr: 36 },
+        physicalExamFindings: {
+            general: "Sesak berat, posisi tripod, bicara kata per kata, sianosis (+).",
+            vitals: "TD 130/80, N 130x, RR 36x, S 37C, SpO2 85%",
+            respiratory: "Retraksi supraklavikula dan interkostal (+). Wheezing ekspirasi dan sesak nafas bilateral. Silent chest di basal kanan."
+        },
+        labs: {},
+        vitals: { temp: 37, bp: '130/80', hr: 130, rr: 36 },
         correctTreatment: ['salbutamol_nebulizer_serial', 'ipratropium_nebulizer', 'methylprednisolone_iv'],
         correctProcedures: ['o2_mask_10lpm', 'iv_access', 'monitor_vital', 'nebulizer_serial'],
         requiredEducation: ['life_threatening', 'icu_needed', 'step_up_therapy'],
-        risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
+        risk: 'critical',
+        nonReferrable: false,
+        referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['J45.9']
     },
     {
@@ -223,7 +258,7 @@ export const RESPIRATORY_CASES = [
         skdi: '3B',
         category: 'Respiratory',
         symptoms: ['Bayi sesak napas', 'Wheezing', 'Retraksi dada', 'Riwayat pilek sebelumnya'],
-        clue: "Bayi <2 tahun, ISPA → wheezing + retraksi + sesak. RSV paling sering. BUKAN asma! Bronkodilator kontroversial. O2 suportif, tetes hidung NaCl, monitor apnea pada neonatus. Rujuk jika SpO2<92%.",
+        clue: "Bayi <2 tahun, ISPA -> wheezing + retraksi + sesak. RSV paling sering. BUKAN asma! Bronkodilator kontroversial. O2 suportif, tetes hidung NaCl, monitor apnea pada neonatus. Rujuk jika SpO2<92%.",
         relevantLabs: [],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Bayinya kenapa bu?', response: 'Sesak napas dok, napasnya cepat banget, bunyi ngik-ngik.', sentiment: 'confirmation', priority: 'essential' }],
@@ -232,16 +267,24 @@ export const RESPIRATORY_CASES = [
                 { id: 'q_feeding', text: 'Masih bisa minum susu?', response: 'Susah dok, minum sedikit-sedikit terus berhenti karena sesak.', sentiment: 'confirmation' }
             ],
             rpd: [{ id: 'q_cold', text: 'Sebelumnya pilek?', response: '3 hari lalu pilek batuk, sekarang makin sesak.', sentiment: 'confirmation' }],
-            rpk: [], sosial: []
+            rpk: [],
+            sosial: []
         },
         essentialQuestions: ['q_main', 'q_age'],
         anamnesis: ["Bayi 5 bulan sesak napas, bunyi ngik-ngik.", "Pilek 3 hari lalu, susah minum susu."],
-        physicalExamFindings: { general: "Bayi tampak sesak, napas cuping hidung (+).", vitals: "N 160x, RR 60x, S 38°C, SpO2 89%", respiratory: "Retraksi subkostal dan interkostal (+). Wheezing dan crackles bilateral. Ekspirasi memanjang." },
-        labs: {}, vitals: { temp: 38, bp: '-', hr: 160, rr: 60 },
+        physicalExamFindings: {
+            general: "Bayi tampak sesak, napas cuping hidung (+).",
+            vitals: "N 160x, RR 60x, S 38C, SpO2 89%",
+            respiratory: "Retraksi subkostal dan interkostal (+). Wheezing dan crackles bilateral. Ekspirasi memanjang."
+        },
+        labs: {},
+        vitals: { temp: 38, bp: '-', hr: 160, rr: 60 },
         correctTreatment: ['nacl_nasal_drops', 'paracetamol_syrup'],
         correctProcedures: ['o2_nasal_2lpm', 'monitor_vital', 'suction_if_needed'],
         requiredEducation: ['keep_hydrated', 'monitor_breathing', 'apnea_risk_neonate'],
-        risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
+        risk: 'high',
+        nonReferrable: false,
+        referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['J45.9']
     },
     {
@@ -260,17 +303,24 @@ export const RESPIRATORY_CASES = [
                 { id: 'q_cough', text: 'Ada batuk?', response: 'Iya batuk kering, kadang nyeri di dada kanan kalau batuk.', sentiment: 'confirmation' }
             ],
             rpd: [{ id: 'q_tb', text: 'Pernah minum OAT atau kontak TB?', response: 'Tetangga saya berobat TB dok.', sentiment: 'neutral' }],
-            rpk: [], sosial: []
+            rpk: [],
+            sosial: []
         },
         essentialQuestions: ['q_main', 'q_duration'],
         anamnesis: ["Sesak napas makin berat 2 minggu, nggak bisa tidur miring kanan.", "Batuk kering, tetangga berobat TB."],
-        physicalExamFindings: { general: "Sesak, posisi setengah duduk.", vitals: "TD 110/70, N 96x, RR 26x, S 37.5°C", respiratory: "Hemithorax kanan: pergerakan tertinggal, stem fremitus menurun, perkusi redup dari iga VI ke bawah, suara napas vesikuler MENURUN. Kiri: normal." },
+        physicalExamFindings: {
+            general: "Sesak, posisi setengah duduk.",
+            vitals: "TD 110/70, N 96x, RR 26x, S 37.5C",
+            respiratory: "Hemithorax kanan: pergerakan tertinggal, stem fremitus menurun, perkusi redup dari iga VI ke bawah, suara napas vesikuler MENURUN. Kiri: normal."
+        },
         labs: { "Rontgen Thorax": { result: "Perselubungan homogen hemithorax dextra, pendorongan mediastinum ke kiri", cost: 75000 } },
         vitals: { temp: 37.5, bp: '110/70', hr: 96, rr: 26 },
         correctTreatment: ['paracetamol_500'],
         correctProcedures: ['rontgen_thorax'],
         requiredEducation: ['thoracocentesis_needed', 'tb_evaluation', 'fluid_analysis'],
-        risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
+        risk: 'high',
+        nonReferrable: false,
+        referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['A15.6']
     },
     {
@@ -280,7 +330,7 @@ export const RESPIRATORY_CASES = [
         skdi: '3B',
         category: 'Respiratory',
         symptoms: ['Sesak napas akut berat', 'Sputum berbuih pink', 'Orthopnea', 'Ronkhi bilateral'],
-        clue: "EMERGENCY! Sesak akut + sputum PINK FROTHY + ronkhi basah bilateral sampai apex. Posisi duduk tegak (fowler), O2 tinggi, furosemide IV STAT, nitrogliserin SL. Biasanya akibat gagal jantung akut.",
+        clue: "[EBM: PERKI 2023] Sesak akut + sputum pink frothy + ronkhi basah bilateral sampai apeks mengarah ke edema paru kardiogenik. Posisi duduk tegak, oksigen karena hipoksemia, diuretik IV, dan nitrat bila tekanan darah memadai. Opioid tidak rutin dijadikan terapi wajib awal.",
         relevantLabs: [],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Apa yang terjadi?', response: 'Sesak banget dok tiba-tiba, sampai nggak bisa tidur, batuk keluar dahak pink berbuih!', sentiment: 'confirmation', priority: 'essential' }],
@@ -289,16 +339,25 @@ export const RESPIRATORY_CASES = [
                 { id: 'q_sputum', text: 'Dahaknya seperti apa?', response: 'Berbuih-buih warna merah muda dok.', sentiment: 'confirmation' }
             ],
             rpd: [{ id: 'q_heart', text: 'Ada sakit jantung?', response: 'Gagal jantung dok, sudah 2 tahun, obat sering lupa minum.', sentiment: 'neutral' }],
-            rpk: [], sosial: []
+            rpk: [],
+            sosial: []
         },
         essentialQuestions: ['q_main', 'q_onset'],
         anamnesis: ["Sesak tiba-tiba, dahak pink berbuih!", "Gagal jantung 2 tahun, obat sering lupa."],
-        physicalExamFindings: { general: "Sesak berat, posisi duduk tegak, diaforesis (+), sianosis (+).", vitals: "TD 180/110, N 120x, RR 36x, S 37°C, SpO2 82%", respiratory: "Ronkhi basah bilateral sampai lapangan atas paru. JVP meningkat. Gallop S3 (+)." },
-        labs: {}, vitals: { temp: 37, bp: '180/110', hr: 120, rr: 36 },
-        correctTreatment: ['furosemide_40_iv', 'isdn_5_sublingual', 'morfin_2_iv'],
+        physicalExamFindings: {
+            general: "Sesak berat, posisi duduk tegak, diaforesis (+), sianosis (+).",
+            vitals: "TD 180/110, N 120x, RR 36x, S 37C, SpO2 82%",
+            respiratory: "Ronkhi basah bilateral sampai lapangan atas paru. JVP meningkat. Gallop S3 (+)."
+        },
+        labs: {},
+        vitals: { temp: 37, bp: '180/110', hr: 120, rr: 36 },
+        correctTreatment: ['furosemide_40_iv', 'isdn_5_sublingual'],
         correctProcedures: ['o2_mask_15lpm', 'iv_access', 'posisi_duduk_fowler', 'monitor_vital', 'foley_catheter'],
         requiredEducation: ['life_threatening', 'icu_needed', 'heart_failure_management'],
-        risk: 'critical', nonReferrable: false, referralTarget: 'rs_kabupaten',
+        treatmentNote: 'Nitrat tetap relevan pada kasus ini karena pasien hipertensif (180/110), tetapi morfin tidak dijadikan terapi wajib rutin.',
+        risk: 'critical',
+        nonReferrable: false,
+        referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['I50.1']
     },
     {
@@ -308,7 +367,7 @@ export const RESPIRATORY_CASES = [
         skdi: '3A',
         category: 'Respiratory',
         symptoms: ['Nyeri dada mendadak', 'Sesak napas akut', 'Suara napas hilang unilateral', 'Hipersonor perkusi'],
-        clue: "Nyeri dada MENDADAK + sesak. Suara napas HILANG satu sisi + perkusi HIPERSONOR. Tension pneumothorax: deviasi trakea + syok → DARURAT! Needle decompression iga II linea midklavikula jika tension.",
+        clue: "Nyeri dada MENDADAK + sesak. Suara napas HILANG satu sisi + perkusi HIPERSONOR. Tension pneumothorax: deviasi trakea + syok -> DARURAT! Needle decompression iga II linea midklavikula jika tension.",
         relevantLabs: [],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Apa yang terjadi?', response: 'Dada kiri saya tiba-tiba nyeri banget dok, sesak napas, pas lagi duduk.', sentiment: 'confirmation', priority: 'essential' }],
@@ -317,17 +376,24 @@ export const RESPIRATORY_CASES = [
                 { id: 'q_progression', text: 'Makin berat?', response: 'Iya makin sesak dok.', sentiment: 'confirmation' }
             ],
             rpd: [{ id: 'q_body', text: 'Posturnya bagaimana?', response: 'Saya kurus tinggi dok, umur 22 tahun.', sentiment: 'confirmation' }],
-            rpk: [], sosial: [{ id: 'q_smoke', text: 'Merokok?', response: 'Iya dok.', sentiment: 'confirmation' }]
+            rpk: [],
+            sosial: [{ id: 'q_smoke', text: 'Merokok?', response: 'Iya dok.', sentiment: 'confirmation' }]
         },
         essentialQuestions: ['q_main', 'q_onset'],
         anamnesis: ["Dada kiri nyeri tiba-tiba, sesak napas.", "Laki-laki 22 tahun, kurus tinggi, perokok."],
-        physicalExamFindings: { general: "Sesak, takipneu.", vitals: "TD 120/80, N 110x, RR 28x, S 36.8°C, SpO2 92%", respiratory: "Hemithorax kiri: pergerakan tertinggal, perkusi HIPERSONOR, suara napas HILANG. Trakea midline (non-tension)." },
+        physicalExamFindings: {
+            general: "Sesak, takipneu.",
+            vitals: "TD 120/80, N 110x, RR 28x, S 36.8C, SpO2 92%",
+            respiratory: "Hemithorax kiri: pergerakan tertinggal, perkusi HIPERSONOR, suara napas HILANG. Trakea midline (non-tension)."
+        },
         labs: { "Rontgen Thorax": { result: "Pneumothorax sinistra ~40%, garis pleura visceralis terlihat", cost: 75000 } },
         vitals: { temp: 36.8, bp: '120/80', hr: 110, rr: 28 },
         correctTreatment: ['analgesik'],
         correctProcedures: ['o2_nasal_4lpm', 'rontgen_thorax', 'monitor_vital'],
         requiredEducation: ['chest_tube_at_hospital', 'tension_pneumothorax_risk', 'no_flying'],
-        risk: 'high', nonReferrable: false, referralTarget: 'rs_kabupaten',
+        risk: 'high',
+        nonReferrable: false,
+        referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['J93.0']
     }
 ];

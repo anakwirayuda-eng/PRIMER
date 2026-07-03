@@ -22,6 +22,26 @@ describe('wilayah inspector dossiers', () => {
         expect(dossier?.caseHint).toContain('tradisi vs evidence');
     });
 
+    it('localizes inspector dossier copy when a translator is provided', () => {
+        const t = (key, options = {}) => ({
+            'wilayahContent.inspectorDossiers.rtk.title': 'RTK is the final referral buffer.',
+            'wilayahContent.inspectorDossiers.rtk.focusPoints.0': 'Keep the high-risk mother near referral transport.',
+            'wilayahContent.inspectorDossiers.rtk.metrics.1.label': 'Pressure',
+            'wilayahContent.inspectorDossiers.rtk.metrics.1.value': 'Preeclampsia / family hesitation',
+            'wilayahContent.inspectorDossiers.rtk.caseHint': 'Use linked cases to test maternal referral delay.'
+        })[key] ?? options.defaultValue;
+
+        const dossier = getBuildingInspectorDossier(BUILDING_TYPES.RTK, t);
+
+        expect(dossier?.title).toBe('RTK is the final referral buffer.');
+        expect(dossier?.focusPoints?.[0]).toBe('Keep the high-risk mother near referral transport.');
+        expect(dossier?.metrics?.[1]).toMatchObject({
+            label: 'Pressure',
+            value: 'Preeclampsia / family hesitation'
+        });
+        expect(dossier?.caseHint).toBe('Use linked cases to test maternal referral delay.');
+    });
+
     it('maps RTK wiki access to the maternal facility entry instead of kb_post', () => {
         expect(getWikiKeyForBuilding({ type: BUILDING_TYPES.RTK })).toBe('polindes');
     });

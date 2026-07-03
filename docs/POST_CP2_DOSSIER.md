@@ -1,4 +1,4 @@
-# 📂 DOSSIER: PRIMER Post-CP2 Pipeline
+﻿# 📂 DOSSIER: PRIMER Post-CP2 Pipeline
 > **Tujuan**: Briefing lengkap untuk AG workflow / DeepThink / Codex tentang tugas-tugas setelah CP2 Store Slicing selesai.
 > **Date**: 2026-03-27
 > **Author**: AG (Commander)

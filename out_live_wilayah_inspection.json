@@ -1,0 +1,293 @@
+{
+  "url": "https://primer-navy.vercel.app/",
+  "buttonData": [
+    {
+      "i": 0,
+      "text": "",
+      "title": "Dashboard (Alt+1)",
+      "aria": ""
+    },
+    {
+      "i": 1,
+      "text": "",
+      "title": "Layanan (Alt+2)",
+      "aria": ""
+    },
+    {
+      "i": 2,
+      "text": "",
+      "title": "Wilayah (Map) (Alt+3)",
+      "aria": ""
+    },
+    {
+      "i": 3,
+      "text": "",
+      "title": "Gedung (Alt+4)",
+      "aria": ""
+    },
+    {
+      "i": 4,
+      "text": "",
+      "title": "SDM (Squad) (Alt+5)",
+      "aria": ""
+    },
+    {
+      "i": 5,
+      "text": "",
+      "title": "Sarana (Logistik) (Alt+6)",
+      "aria": ""
+    },
+    {
+      "i": 6,
+      "text": "",
+      "title": "Diklat (Alt+7)",
+      "aria": ""
+    },
+    {
+      "i": 7,
+      "text": "",
+      "title": "MAIA Codex (Alt+8)",
+      "aria": ""
+    },
+    {
+      "i": 8,
+      "text": "",
+      "title": "Arsip (Alt+9)",
+      "aria": ""
+    },
+    {
+      "i": 9,
+      "text": "",
+      "title": "Kantor Desa (Alt+0)",
+      "aria": ""
+    },
+    {
+      "i": 10,
+      "text": "",
+      "title": "Rumah Dinas (Alt+H)",
+      "aria": "Rumah Dinas"
+    },
+    {
+      "i": 11,
+      "text": "",
+      "title": "Pengaturan (Alt+S)",
+      "aria": "Buka Pengaturan"
+    },
+    {
+      "i": 12,
+      "text": "",
+      "title": "",
+      "aria": "Buka Panel Samping"
+    },
+    {
+      "i": 13,
+      "text": "⚡\n115",
+      "title": "Energi Dokter",
+      "aria": "Energi: 115%"
+    },
+    {
+      "i": 14,
+      "text": "⭐\n54",
+      "title": "Skor Reputasi",
+      "aria": "Reputasi: 54"
+    },
+    {
+      "i": 15,
+      "text": "",
+      "title": "Jeda (Space)",
+      "aria": ""
+    },
+    {
+      "i": 16,
+      "text": "",
+      "title": "Kecepatan Normal",
+      "aria": ""
+    },
+    {
+      "i": 17,
+      "text": "",
+      "title": "Kecepatan Ganda",
+      "aria": ""
+    },
+    {
+      "i": 18,
+      "text": "",
+      "title": "Kecepatan Tinggi",
+      "aria": ""
+    },
+    {
+      "i": 19,
+      "text": "",
+      "title": "Kecepatan Maksimal",
+      "aria": ""
+    },
+    {
+      "i": 20,
+      "text": "📜",
+      "title": "Misi (Alt+Q)",
+      "aria": ""
+    },
+    {
+      "i": 21,
+      "text": "",
+      "title": "Review Kinerja (KPI) (Alt+K)",
+      "aria": ""
+    },
+    {
+      "i": 22,
+      "text": "📅",
+      "title": "Kalender (Alt+C)",
+      "aria": "Buka Kalender"
+    },
+    {
+      "i": 23,
+      "text": "",
+      "title": "Shortcut Keyboard (?)",
+      "aria": "Buka bantuan shortcut keyboard"
+    },
+    {
+      "i": 24,
+      "text": "",
+      "title": "Smartphone (Alt+M)",
+      "aria": "Buka Smartphone"
+    },
+    {
+      "i": 25,
+      "text": "",
+      "title": "Pengaturan (Alt+S)",
+      "aria": ""
+    },
+    {
+      "i": 26,
+      "text": "",
+      "title": "",
+      "aria": "Kembali ke dashboard"
+    },
+    {
+      "i": 27,
+      "text": "2D DENAH",
+      "title": "",
+      "aria": ""
+    },
+    {
+      "i": 28,
+      "text": "3D DIORAMA",
+      "title": "WebGL not available on this device",
+      "aria": ""
+    },
+    {
+      "i": 29,
+      "text": "📊 SENSUS",
+      "title": "",
+      "aria": ""
+    },
+    {
+      "i": 30,
+      "text": "INFRASTRUKTUR",
+      "title": "Infrastruktur",
+      "aria": ""
+    },
+    {
+      "i": 31,
+      "text": "PIS-PK",
+      "title": "PIS-PK",
+      "aria": ""
+    },
+    {
+      "i": 32,
+      "text": "SURVEILANS",
+      "title": "Surveilans",
+      "aria": ""
+    },
+    {
+      "i": 33,
+      "text": "JENTIK",
+      "title": "Jentik",
+      "aria": ""
+    },
+    {
+      "i": 34,
+      "text": "PHBS",
+      "title": "PHBS",
+      "aria": ""
+    },
+    {
+      "i": 35,
+      "text": "PERILAKU",
+      "title": "Perilaku",
+      "aria": ""
+    },
+    {
+      "i": 36,
+      "text": "",
+      "title": "",
+      "aria": "Perbesar peta"
+    },
+    {
+      "i": 37,
+      "text": "",
+      "title": "",
+      "aria": "Perkecil peta"
+    },
+    {
+      "i": 38,
+      "text": "",
+      "title": "",
+      "aria": "Reset zoom peta"
+    }
+  ],
+  "winKeys": [
+    "__PRIMER_CONSOLE_NOISE_FILTER_INSTALLED__",
+    "__PRIMER_CRASH_TRAP_INSTALLED__",
+    "__PRIMER_SUPABASE_CLIENT__",
+    "cookieStore",
+    "oncontextrestored",
+    "ongamepadconnected",
+    "ongamepaddisconnected"
+  ],
+  "possibleStores": [
+    {
+      "key": "__PRIMER_CONSOLE_NOISE_FILTER_INSTALLED__",
+      "type": "boolean",
+      "hasGetState": false,
+      "hasSetState": false
+    },
+    {
+      "key": "__PRIMER_CRASH_TRAP_INSTALLED__",
+      "type": "boolean",
+      "hasGetState": false,
+      "hasSetState": false
+    },
+    {
+      "key": "__PRIMER_SUPABASE_CLIENT__",
+      "type": "object",
+      "hasGetState": false,
+      "hasSetState": false
+    },
+    {
+      "key": "cookieStore",
+      "type": "object",
+      "hasGetState": false,
+      "hasSetState": false
+    },
+    {
+      "key": "oncontextrestored",
+      "type": "object",
+      "hasGetState": false,
+      "hasSetState": false
+    },
+    {
+      "key": "ongamepadconnected",
+      "type": "object",
+      "hasGetState": false,
+      "hasSetState": false
+    },
+    {
+      "key": "ongamepaddisconnected",
+      "type": "object",
+      "hasGetState": false,
+      "hasSetState": false
+    }
+  ],
+  "body": "Lv.1\nDashboard\nLayanan\nWilayah (Map)\nGedung\nSDM (Squad)\nSarana (Logistik)\nDiklat\nMAIA Codex\nArsip\nKantor Desa\n🏠 Rumah Dinas\n⚙️ Setting\n📂 Buka Panel\n⚡\n115\n⭐\n54\nKam\n1\n-\n1\n-\n2026\n|\n07\n:\n08\n📜\n📅\nRW 01\nRW 02\nRW 03\nRW 04\nRW 05\nRW 06\nRW 07\nRW 08\n75%\nN\nWilayah Kerja Puskesmas\n\nDESA SUKAMAJU • HARI KE-1\n\n200 KK\nIKS 85%\n⚡ 114 EP\n2D DENAH\n3D DIORAMA\n📊 SENSUS\nOVERLAY\nINFRASTRUKTUR\nPIS-PK\nSURVEILANS\nJENTIK\nPHBS\nPERILAKU\nPRIMER © A.A.B. Wirayuda | HAKI EC002026019623"
+}

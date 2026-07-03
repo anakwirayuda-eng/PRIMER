@@ -1,0 +1,3369 @@
+[
+  {
+    "viewport": {
+      "name": "desktop-1366x768",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      }
+    },
+    "queueState": {
+      "queueLength": 3,
+      "emergencyLength": 0,
+      "time": 540,
+      "day": 1,
+      "firstPatientName": "Nita Pratama",
+      "firstPatientId": "patient_a19927reg"
+    },
+    "screenshots": {
+      "dashboard": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\desktop-1366x768-dashboard.png",
+      "clinicalDefault": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\desktop-1366x768-clinical-default.png",
+      "clinicalExpanded": null,
+      "emr": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\desktop-1366x768-clinical-emr.png"
+    },
+    "metrics": {
+      "dashboard": {
+        "pageName": "dashboard",
+        "viewportName": "desktop-1366x768",
+        "viewport": {
+          "width": 1366,
+          "height": 768
+        },
+        "bodyScrollWidth": 1366,
+        "horizontalOverflow": false,
+        "smallInteractive": [
+          {
+            "tag": "button",
+            "label": "Dashboard (Alt+1)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 137
+          },
+          {
+            "tag": "button",
+            "label": "Layanan (Alt+2)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 181
+          },
+          {
+            "tag": "button",
+            "label": "Wilayah (Alt+3)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 225
+          },
+          {
+            "tag": "button",
+            "label": "Gedung (Alt+4)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 269
+          },
+          {
+            "tag": "button",
+            "label": "SDM (Alt+5)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 313
+          },
+          {
+            "tag": "button",
+            "label": "Sarana (Alt+6)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 357
+          },
+          {
+            "tag": "button",
+            "label": "Diklat (Alt+7)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 401
+          },
+          {
+            "tag": "button",
+            "label": "MAIA Codex (Alt+8)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 445
+          },
+          {
+            "tag": "button",
+            "label": "Arsip (Alt+9)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 489
+          },
+          {
+            "tag": "button",
+            "label": "Sensus (Alt+0)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 533
+          },
+          {
+            "tag": "button",
+            "label": "Rumah Dinas",
+            "width": 56,
+            "height": 42,
+            "x": 4,
+            "y": 640
+          },
+          {
+            "tag": "button",
+            "label": "Buka pengaturan",
+            "width": 56,
+            "height": 36,
+            "x": 4,
+            "y": 688
+          },
+          {
+            "tag": "button",
+            "label": "Buka panel samping",
+            "width": 56,
+            "height": 34,
+            "x": 4,
+            "y": 730
+          },
+          {
+            "tag": "button",
+            "label": "Energi: 115%",
+            "width": 127.5,
+            "height": 28,
+            "x": 80,
+            "y": 7.5
+          },
+          {
+            "tag": "button",
+            "label": "Reputasi: 54",
+            "width": 50.8,
+            "height": 28,
+            "x": 224.5,
+            "y": 7.5
+          },
+          {
+            "tag": "button",
+            "label": "Jeda (Space)",
+            "width": 34,
+            "height": 30,
+            "x": 733.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Normal",
+            "width": 34,
+            "height": 30,
+            "x": 767.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Ganda",
+            "width": 38,
+            "height": 30,
+            "x": 801.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Tinggi",
+            "width": 42,
+            "height": 30,
+            "x": 839.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Maksimal",
+            "width": 48,
+            "height": 30,
+            "x": 881.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Misi (Alt+Q)",
+            "width": 32,
+            "height": 32,
+            "x": 1138,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Review Kinerja (KPI) (Alt+K)",
+            "width": 32,
+            "height": 32,
+            "x": 1174,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka kalender",
+            "width": 32,
+            "height": 32,
+            "x": 1210,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Shortcut Keyboard",
+            "width": 32,
+            "height": 32,
+            "x": 1246,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka smartphone",
+            "width": 32,
+            "height": 32,
+            "x": 1282,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Pengaturan (Alt+S)",
+            "width": 32,
+            "height": 32,
+            "x": 1318,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Sync Data & Documentation",
+            "width": 107.6,
+            "height": 29,
+            "x": 1119.4,
+            "y": 79
+          }
+        ],
+        "tinyText": [
+          {
+            "tag": "div",
+            "text": "Lv. 1",
+            "fontSize": 10,
+            "width": 34.7,
+            "height": 17,
+            "x": 25.3,
+            "y": 103
+          },
+          {
+            "tag": "span",
+            "text": "115",
+            "fontSize": 10,
+            "width": 17.3,
+            "height": 15,
+            "x": 182.3,
+            "y": 14
+          },
+          {
+            "tag": "span",
+            "text": "54",
+            "fontSize": 10,
+            "width": 11.5,
+            "height": 15,
+            "x": 255.8,
+            "y": 14
+          },
+          {
+            "tag": "p",
+            "text": "DASAR • SYSTEM HUB",
+            "fontSize": 10,
+            "width": 243.8,
+            "height": 15,
+            "x": 259,
+            "y": 108
+          },
+          {
+            "tag": "button",
+            "text": "Sync Data & Documentation",
+            "fontSize": 10,
+            "width": 107.6,
+            "height": 29,
+            "x": 1119.4,
+            "y": 79
+          },
+          {
+            "tag": "span",
+            "text": "SATU SEHAT",
+            "fontSize": 10,
+            "width": 63.6,
+            "height": 15,
+            "x": 1150.4,
+            "y": 86
+          },
+          {
+            "tag": "span",
+            "text": "PASIEN HARI INI",
+            "fontSize": 9,
+            "width": 235.5,
+            "height": 13.5,
+            "x": 220,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "ANTRIAN",
+            "fontSize": 9,
+            "width": 235.5,
+            "height": 13.5,
+            "x": 471.5,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "QUALITY SCORE",
+            "fontSize": 9,
+            "width": 235.5,
+            "height": 13.5,
+            "x": 723,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "KESEMBUHAN",
+            "fontSize": 9,
+            "width": 235.5,
+            "height": 13.5,
+            "x": 974.5,
+            "y": 160
+          },
+          {
+            "tag": "p",
+            "text": "UKP • SKDI • PATIENT SAFETY",
+            "fontSize": 10,
+            "width": 288.7,
+            "height": 13.8,
+            "x": 224,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "UKM • PIS-PK • PROLANIS",
+            "fontSize": 10,
+            "width": 288.7,
+            "height": 13.8,
+            "x": 570.7,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "KBK • DANA OPERASIONAL • KINERJA",
+            "fontSize": 10,
+            "width": 288.7,
+            "height": 13.8,
+            "x": 917.3,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "5 BAB • RADAR MUTU",
+            "fontSize": 10,
+            "width": 288.7,
+            "height": 13.8,
+            "x": 224,
+            "y": 528.3
+          },
+          {
+            "tag": "p",
+            "text": "STAFF • INVENTORY • WELLNESS",
+            "fontSize": 10,
+            "width": 288.7,
+            "height": 13.8,
+            "x": 570.7,
+            "y": 528.3
+          },
+          {
+            "tag": "p",
+            "text": "SEMUA SISTEM NORMAL",
+            "fontSize": 10,
+            "width": 156.9,
+            "height": 15,
+            "x": 636.5,
+            "y": 712
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -456.6,
+            "right": 1822.6,
+            "top": -429,
+            "width": 2279.2,
+            "height": 1626
+          }
+        ],
+        "truncated": [
+          {
+            "tag": "aside",
+            "text": "Lv. 1 Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus Rumah Dinas Pengatu",
+            "scrollWidth": 210,
+            "clientWidth": 64
+          },
+          {
+            "tag": "nav",
+            "text": "Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus",
+            "scrollWidth": 163,
+            "clientWidth": 64
+          },
+          {
+            "tag": "ul",
+            "text": "Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus",
+            "scrollWidth": 163,
+            "clientWidth": 64
+          },
+          {
+            "tag": "li",
+            "text": "Dashboard",
+            "scrollWidth": 145,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Layanan",
+            "scrollWidth": 130,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Wilayah",
+            "scrollWidth": 129,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Gedung",
+            "scrollWidth": 128,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Sarana",
+            "scrollWidth": 122,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Diklat",
+            "scrollWidth": 118,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "MAIA Codex",
+            "scrollWidth": 155,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Arsip",
+            "scrollWidth": 113,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Sensus",
+            "scrollWidth": 122,
+            "clientWidth": 48
+          },
+          {
+            "tag": "div",
+            "text": "Rumah Dinas Pengaturan Buka panel samping",
+            "scrollWidth": 210,
+            "clientWidth": 64
+          },
+          {
+            "tag": "div",
+            "text": "Rumah Dinas",
+            "scrollWidth": 166,
+            "clientWidth": 56
+          },
+          {
+            "tag": "div",
+            "text": "Pengaturan",
+            "scrollWidth": 157,
+            "clientWidth": 56
+          },
+          {
+            "tag": "div",
+            "text": "Buka panel samping",
+            "scrollWidth": 206,
+            "clientWidth": 56
+          },
+          {
+            "tag": "button",
+            "text": "CLINICAL INTEL UKP • SKDI • PATIENT SAFETY 0% Akurasi",
+            "scrollWidth": 377,
+            "clientWidth": 329
+          },
+          {
+            "tag": "button",
+            "text": "COMMUNITY INTEL UKM • PIS-PK • PROLANIS IKS 85%",
+            "scrollWidth": 377,
+            "clientWidth": 329
+          },
+          {
+            "tag": "button",
+            "text": "PERFORMANCE KBK • DANA OPERASIONAL • KINERJA Rp 50.0M",
+            "scrollWidth": 377,
+            "clientWidth": 329
+          },
+          {
+            "tag": "button",
+            "text": "ACCREDITATION 5 BAB • RADAR MUTU Dasar",
+            "scrollWidth": 377,
+            "clientWidth": 329
+          },
+          {
+            "tag": "button",
+            "text": "LOGISTICS STAFF • INVENTORY • WELLNESS 0 Staf",
+            "scrollWidth": 377,
+            "clientWidth": 329
+          }
+        ]
+      },
+      "clinicalDefault": {
+        "pageName": "clinical-default",
+        "viewportName": "desktop-1366x768",
+        "viewport": {
+          "width": 1366,
+          "height": 768
+        },
+        "bodyScrollWidth": 1366,
+        "horizontalOverflow": false,
+        "smallInteractive": [],
+        "tinyText": [
+          {
+            "tag": "span",
+            "text": "BRIDGING CLINICAL EXCELLENCE AND PUBLIC HEALTH LEADERSHIP.",
+            "fontSize": 9,
+            "width": 443.6,
+            "height": 13.5,
+            "x": 483.7,
+            "y": 653.5
+          },
+          {
+            "tag": "p",
+            "text": "© 2026 ANAK AGUNG BAGUS WIRAYUDA MD PHD. HAK CIPTA TERDAFTAR — NO. EC002026019623. • V0.8.5",
+            "fontSize": 8,
+            "width": 604.5,
+            "height": 12,
+            "x": 380.8,
+            "y": 678.2
+          },
+          {
+            "tag": "div",
+            "text": "[ ESC / KLIK ]",
+            "fontSize": 9,
+            "width": 107.1,
+            "height": 13.5,
+            "x": 1226.9,
+            "y": 722.5
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -456.6,
+            "right": 1822.6,
+            "top": -429,
+            "width": 2279.2,
+            "height": 1626
+          }
+        ],
+        "truncated": [
+          {
+            "tag": "div",
+            "text": "P R I M E R",
+            "scrollWidth": 721,
+            "clientWidth": 702
+          }
+        ]
+      },
+      "clinicalExpanded": null,
+      "emr": {
+        "pageName": "clinical-emr",
+        "viewportName": "desktop-1366x768",
+        "viewport": {
+          "width": 1366,
+          "height": 768
+        },
+        "bodyScrollWidth": 1366,
+        "horizontalOverflow": false,
+        "smallInteractive": [],
+        "tinyText": [
+          {
+            "tag": "p",
+            "text": "INSTITUT TEKNOLOGI SEPULUH NOPEMBER",
+            "fontSize": 10,
+            "width": 382.7,
+            "height": 15,
+            "x": 491.6,
+            "y": 498.5
+          },
+          {
+            "tag": "span",
+            "text": "BRIDGING CLINICAL EXCELLENCE AND PUBLIC HEALTH LEADERSHIP.",
+            "fontSize": 9,
+            "width": 443.6,
+            "height": 13.5,
+            "x": 483.7,
+            "y": 653.5
+          },
+          {
+            "tag": "p",
+            "text": "© 2026 ANAK AGUNG BAGUS WIRAYUDA MD PHD. HAK CIPTA TERDAFTAR — NO. EC002026019623. • V0.8.5",
+            "fontSize": 8,
+            "width": 604.5,
+            "height": 12,
+            "x": 380.8,
+            "y": 678.2
+          },
+          {
+            "tag": "div",
+            "text": "[ ESC / KLIK ]",
+            "fontSize": 9,
+            "width": 107.1,
+            "height": 13.5,
+            "x": 1226.9,
+            "y": 722.5
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -456.6,
+            "right": 1822.6,
+            "top": -429,
+            "width": 2279.2,
+            "height": 1626
+          }
+        ],
+        "truncated": [
+          {
+            "tag": "div",
+            "text": "P R I M E R",
+            "scrollWidth": 721,
+            "clientWidth": 702
+          }
+        ]
+      }
+    }
+  },
+  {
+    "viewport": {
+      "name": "desktop-1024x768",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "queueState": {
+      "queueLength": 3,
+      "emergencyLength": 0,
+      "time": 540,
+      "day": 1,
+      "firstPatientName": "Nita Pratama",
+      "firstPatientId": "patient_a19927reg"
+    },
+    "screenshots": {
+      "dashboard": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\desktop-1024x768-dashboard.png",
+      "clinicalDefault": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\desktop-1024x768-clinical-default.png",
+      "clinicalExpanded": null,
+      "emr": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\desktop-1024x768-clinical-emr.png"
+    },
+    "metrics": {
+      "dashboard": {
+        "pageName": "dashboard",
+        "viewportName": "desktop-1024x768",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "bodyScrollWidth": 1024,
+        "horizontalOverflow": false,
+        "smallInteractive": [
+          {
+            "tag": "button",
+            "label": "Dashboard (Alt+1)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 137
+          },
+          {
+            "tag": "button",
+            "label": "Layanan (Alt+2)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 181
+          },
+          {
+            "tag": "button",
+            "label": "Wilayah (Alt+3)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 225
+          },
+          {
+            "tag": "button",
+            "label": "Gedung (Alt+4)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 269
+          },
+          {
+            "tag": "button",
+            "label": "SDM (Alt+5)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 313
+          },
+          {
+            "tag": "button",
+            "label": "Sarana (Alt+6)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 357
+          },
+          {
+            "tag": "button",
+            "label": "Diklat (Alt+7)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 401
+          },
+          {
+            "tag": "button",
+            "label": "MAIA Codex (Alt+8)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 445
+          },
+          {
+            "tag": "button",
+            "label": "Arsip (Alt+9)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 489
+          },
+          {
+            "tag": "button",
+            "label": "Sensus (Alt+0)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 533
+          },
+          {
+            "tag": "button",
+            "label": "Rumah Dinas",
+            "width": 56,
+            "height": 42,
+            "x": 4,
+            "y": 640
+          },
+          {
+            "tag": "button",
+            "label": "Buka pengaturan",
+            "width": 56,
+            "height": 36,
+            "x": 4,
+            "y": 688
+          },
+          {
+            "tag": "button",
+            "label": "Buka panel samping",
+            "width": 56,
+            "height": 34,
+            "x": 4,
+            "y": 730
+          },
+          {
+            "tag": "button",
+            "label": "Energi: 115%",
+            "width": 127.5,
+            "height": 28,
+            "x": 80,
+            "y": 7.5
+          },
+          {
+            "tag": "button",
+            "label": "Reputasi: 54",
+            "width": 50.8,
+            "height": 28,
+            "x": 224.5,
+            "y": 7.5
+          },
+          {
+            "tag": "button",
+            "label": "Jeda (Space)",
+            "width": 34,
+            "height": 30,
+            "x": 562.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Normal",
+            "width": 34,
+            "height": 30,
+            "x": 596.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Ganda",
+            "width": 38,
+            "height": 30,
+            "x": 630.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Tinggi",
+            "width": 42,
+            "height": 30,
+            "x": 668.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Maksimal",
+            "width": 48,
+            "height": 30,
+            "x": 710.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Misi (Alt+Q)",
+            "width": 32,
+            "height": 32,
+            "x": 796,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Review Kinerja (KPI) (Alt+K)",
+            "width": 32,
+            "height": 32,
+            "x": 832,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka kalender",
+            "width": 32,
+            "height": 32,
+            "x": 868,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Shortcut Keyboard",
+            "width": 32,
+            "height": 32,
+            "x": 904,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka smartphone",
+            "width": 32,
+            "height": 32,
+            "x": 940,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Pengaturan (Alt+S)",
+            "width": 32,
+            "height": 32,
+            "x": 976,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Sync Data & Documentation",
+            "width": 107.6,
+            "height": 29,
+            "x": 896.4,
+            "y": 79
+          }
+        ],
+        "tinyText": [
+          {
+            "tag": "div",
+            "text": "Lv. 1",
+            "fontSize": 10,
+            "width": 34.7,
+            "height": 17,
+            "x": 25.3,
+            "y": 103
+          },
+          {
+            "tag": "span",
+            "text": "115",
+            "fontSize": 10,
+            "width": 17.3,
+            "height": 15,
+            "x": 182.3,
+            "y": 14
+          },
+          {
+            "tag": "span",
+            "text": "54",
+            "fontSize": 10,
+            "width": 11.5,
+            "height": 15,
+            "x": 255.8,
+            "y": 14
+          },
+          {
+            "tag": "p",
+            "text": "DASAR • SYSTEM HUB",
+            "fontSize": 10,
+            "width": 243.8,
+            "height": 15,
+            "x": 140,
+            "y": 108
+          },
+          {
+            "tag": "button",
+            "text": "Sync Data & Documentation",
+            "fontSize": 10,
+            "width": 107.6,
+            "height": 29,
+            "x": 896.4,
+            "y": 79
+          },
+          {
+            "tag": "span",
+            "text": "SATU SEHAT",
+            "fontSize": 10,
+            "width": 63.6,
+            "height": 15,
+            "x": 927.4,
+            "y": 86
+          },
+          {
+            "tag": "span",
+            "text": "PASIEN HARI INI",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 101,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "ANTRIAN",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 326.5,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "QUALITY SCORE",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 552,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "KESEMBUHAN",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 777.5,
+            "y": 160
+          },
+          {
+            "tag": "p",
+            "text": "UKP • SKDI • PATIENT SAFETY",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 105,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "UKM • PIS-PK • PROLANIS",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 417,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "KBK • DANA OPERASIONAL • KINERJA",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 729,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "5 BAB • RADAR MUTU",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 105,
+            "y": 528.3
+          },
+          {
+            "tag": "p",
+            "text": "STAFF • INVENTORY • WELLNESS",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 417,
+            "y": 528.3
+          },
+          {
+            "tag": "p",
+            "text": "SEMUA SISTEM NORMAL",
+            "fontSize": 10,
+            "width": 156.9,
+            "height": 15,
+            "x": 465.5,
+            "y": 712
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "",
+            "left": 923,
+            "right": 1051,
+            "top": 191.5,
+            "width": 128,
+            "height": 128
+          },
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -347.5,
+            "right": 1371.5,
+            "top": -232.8,
+            "width": 1718.9,
+            "height": 1233.7
+          }
+        ],
+        "truncated": [
+          {
+            "tag": "aside",
+            "text": "Lv. 1 Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus Rumah Dinas Pengatu",
+            "scrollWidth": 210,
+            "clientWidth": 64
+          },
+          {
+            "tag": "nav",
+            "text": "Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus",
+            "scrollWidth": 163,
+            "clientWidth": 64
+          },
+          {
+            "tag": "ul",
+            "text": "Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus",
+            "scrollWidth": 163,
+            "clientWidth": 64
+          },
+          {
+            "tag": "li",
+            "text": "Dashboard",
+            "scrollWidth": 145,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Layanan",
+            "scrollWidth": 130,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Wilayah",
+            "scrollWidth": 129,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Gedung",
+            "scrollWidth": 128,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Sarana",
+            "scrollWidth": 122,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Diklat",
+            "scrollWidth": 118,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "MAIA Codex",
+            "scrollWidth": 155,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Arsip",
+            "scrollWidth": 113,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Sensus",
+            "scrollWidth": 122,
+            "clientWidth": 48
+          },
+          {
+            "tag": "div",
+            "text": "Rumah Dinas Pengaturan Buka panel samping",
+            "scrollWidth": 210,
+            "clientWidth": 64
+          },
+          {
+            "tag": "div",
+            "text": "Rumah Dinas",
+            "scrollWidth": 166,
+            "clientWidth": 56
+          },
+          {
+            "tag": "div",
+            "text": "Pengaturan",
+            "scrollWidth": 157,
+            "clientWidth": 56
+          },
+          {
+            "tag": "div",
+            "text": "Buka panel samping",
+            "scrollWidth": 206,
+            "clientWidth": 56
+          },
+          {
+            "tag": "button",
+            "text": "CLINICAL INTEL UKP • SKDI • PATIENT SAFETY 0% Akurasi",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "COMMUNITY INTEL UKM • PIS-PK • PROLANIS IKS 85%",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "PERFORMANCE KBK • DANA OPERASIONAL • KINERJA Rp 50.0M",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "ACCREDITATION 5 BAB • RADAR MUTU Dasar",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "LOGISTICS STAFF • INVENTORY • WELLNESS 0 Staf",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          }
+        ]
+      },
+      "clinicalDefault": {
+        "pageName": "clinical-default",
+        "viewportName": "desktop-1024x768",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "bodyScrollWidth": 1024,
+        "horizontalOverflow": false,
+        "smallInteractive": [
+          {
+            "tag": "button",
+            "label": "Dashboard (Alt+1)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 137
+          },
+          {
+            "tag": "button",
+            "label": "Layanan (Alt+2)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 181
+          },
+          {
+            "tag": "button",
+            "label": "Wilayah (Alt+3)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 225
+          },
+          {
+            "tag": "button",
+            "label": "Gedung (Alt+4)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 269
+          },
+          {
+            "tag": "button",
+            "label": "SDM (Alt+5)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 313
+          },
+          {
+            "tag": "button",
+            "label": "Sarana (Alt+6)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 357
+          },
+          {
+            "tag": "button",
+            "label": "Diklat (Alt+7)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 401
+          },
+          {
+            "tag": "button",
+            "label": "MAIA Codex (Alt+8)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 445
+          },
+          {
+            "tag": "button",
+            "label": "Arsip (Alt+9)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 489
+          },
+          {
+            "tag": "button",
+            "label": "Sensus (Alt+0)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 533
+          },
+          {
+            "tag": "button",
+            "label": "Rumah Dinas",
+            "width": 56,
+            "height": 42,
+            "x": 4,
+            "y": 640
+          },
+          {
+            "tag": "button",
+            "label": "Buka pengaturan",
+            "width": 56,
+            "height": 36,
+            "x": 4,
+            "y": 688
+          },
+          {
+            "tag": "button",
+            "label": "Buka panel samping",
+            "width": 56,
+            "height": 34,
+            "x": 4,
+            "y": 730
+          },
+          {
+            "tag": "button",
+            "label": "Energi: 114%",
+            "width": 127.5,
+            "height": 28,
+            "x": 80,
+            "y": 7.5
+          },
+          {
+            "tag": "button",
+            "label": "Reputasi: 54",
+            "width": 50.8,
+            "height": 28,
+            "x": 224.5,
+            "y": 7.5
+          },
+          {
+            "tag": "button",
+            "label": "Jeda (Space)",
+            "width": 34,
+            "height": 30,
+            "x": 562.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Normal",
+            "width": 34,
+            "height": 30,
+            "x": 596.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Ganda",
+            "width": 38,
+            "height": 30,
+            "x": 630.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Tinggi",
+            "width": 42,
+            "height": 30,
+            "x": 668.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Maksimal",
+            "width": 48,
+            "height": 30,
+            "x": 710.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Misi (Alt+Q)",
+            "width": 32,
+            "height": 32,
+            "x": 796,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Review Kinerja (KPI) (Alt+K)",
+            "width": 32,
+            "height": 32,
+            "x": 832,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka kalender",
+            "width": 32,
+            "height": 32,
+            "x": 868,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Shortcut Keyboard",
+            "width": 32,
+            "height": 32,
+            "x": 904,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka smartphone",
+            "width": 32,
+            "height": 32,
+            "x": 940,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Pengaturan (Alt+S)",
+            "width": 32,
+            "height": 32,
+            "x": 976,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Sync Data & Documentation",
+            "width": 107.6,
+            "height": 29,
+            "x": 896.4,
+            "y": 79
+          }
+        ],
+        "tinyText": [
+          {
+            "tag": "div",
+            "text": "Lv. 1",
+            "fontSize": 10,
+            "width": 34.7,
+            "height": 17,
+            "x": 25.3,
+            "y": 103
+          },
+          {
+            "tag": "span",
+            "text": "114",
+            "fontSize": 10,
+            "width": 17.3,
+            "height": 15,
+            "x": 182.3,
+            "y": 14
+          },
+          {
+            "tag": "span",
+            "text": "54",
+            "fontSize": 10,
+            "width": 11.5,
+            "height": 15,
+            "x": 255.8,
+            "y": 14
+          },
+          {
+            "tag": "p",
+            "text": "DASAR • SYSTEM HUB",
+            "fontSize": 10,
+            "width": 243.8,
+            "height": 15,
+            "x": 140,
+            "y": 108
+          },
+          {
+            "tag": "button",
+            "text": "Sync Data & Documentation",
+            "fontSize": 10,
+            "width": 107.6,
+            "height": 29,
+            "x": 896.4,
+            "y": 79
+          },
+          {
+            "tag": "span",
+            "text": "SATU SEHAT",
+            "fontSize": 10,
+            "width": 63.6,
+            "height": 15,
+            "x": 927.4,
+            "y": 86
+          },
+          {
+            "tag": "span",
+            "text": "PASIEN HARI INI",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 101,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "ANTRIAN",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 326.5,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "QUALITY SCORE",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 552,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "KESEMBUHAN",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 777.5,
+            "y": 160
+          },
+          {
+            "tag": "p",
+            "text": "UKP • SKDI • PATIENT SAFETY",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 105,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "UKM • PIS-PK • PROLANIS",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 417,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "KBK • DANA OPERASIONAL • KINERJA",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 729,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "5 BAB • RADAR MUTU",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 105,
+            "y": 528.3
+          },
+          {
+            "tag": "p",
+            "text": "STAFF • INVENTORY • WELLNESS",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 417,
+            "y": 528.3
+          },
+          {
+            "tag": "p",
+            "text": "SEMUA SISTEM NORMAL",
+            "fontSize": 10,
+            "width": 156.9,
+            "height": 15,
+            "x": 465.5,
+            "y": 712
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "",
+            "left": 923,
+            "right": 1051,
+            "top": 191.5,
+            "width": 128,
+            "height": 128
+          },
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -347.5,
+            "right": 1371.5,
+            "top": -232.8,
+            "width": 1718.9,
+            "height": 1233.7
+          }
+        ],
+        "truncated": [
+          {
+            "tag": "aside",
+            "text": "Lv. 1 Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus Rumah Dinas Pengatu",
+            "scrollWidth": 210,
+            "clientWidth": 64
+          },
+          {
+            "tag": "nav",
+            "text": "Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus",
+            "scrollWidth": 163,
+            "clientWidth": 64
+          },
+          {
+            "tag": "ul",
+            "text": "Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus",
+            "scrollWidth": 163,
+            "clientWidth": 64
+          },
+          {
+            "tag": "li",
+            "text": "Dashboard",
+            "scrollWidth": 145,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Layanan",
+            "scrollWidth": 130,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Wilayah",
+            "scrollWidth": 129,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Gedung",
+            "scrollWidth": 128,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Sarana",
+            "scrollWidth": 122,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Diklat",
+            "scrollWidth": 118,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "MAIA Codex",
+            "scrollWidth": 155,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Arsip",
+            "scrollWidth": 113,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Sensus",
+            "scrollWidth": 122,
+            "clientWidth": 48
+          },
+          {
+            "tag": "div",
+            "text": "Rumah Dinas Pengaturan Buka panel samping",
+            "scrollWidth": 210,
+            "clientWidth": 64
+          },
+          {
+            "tag": "div",
+            "text": "Rumah Dinas",
+            "scrollWidth": 166,
+            "clientWidth": 56
+          },
+          {
+            "tag": "div",
+            "text": "Pengaturan",
+            "scrollWidth": 157,
+            "clientWidth": 56
+          },
+          {
+            "tag": "div",
+            "text": "Buka panel samping",
+            "scrollWidth": 206,
+            "clientWidth": 56
+          },
+          {
+            "tag": "button",
+            "text": "CLINICAL INTEL UKP • SKDI • PATIENT SAFETY 0% Akurasi",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "COMMUNITY INTEL UKM • PIS-PK • PROLANIS IKS 85%",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "PERFORMANCE KBK • DANA OPERASIONAL • KINERJA Rp 50.0M",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "ACCREDITATION 5 BAB • RADAR MUTU Dasar",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "LOGISTICS STAFF • INVENTORY • WELLNESS 0 Staf",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          }
+        ]
+      },
+      "clinicalExpanded": null,
+      "emr": {
+        "pageName": "clinical-emr",
+        "viewportName": "desktop-1024x768",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "bodyScrollWidth": 1024,
+        "horizontalOverflow": false,
+        "smallInteractive": [
+          {
+            "tag": "button",
+            "label": "Dashboard (Alt+1)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 137
+          },
+          {
+            "tag": "button",
+            "label": "Layanan (Alt+2)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 181
+          },
+          {
+            "tag": "button",
+            "label": "Wilayah (Alt+3)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 225
+          },
+          {
+            "tag": "button",
+            "label": "Gedung (Alt+4)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 269
+          },
+          {
+            "tag": "button",
+            "label": "SDM (Alt+5)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 313
+          },
+          {
+            "tag": "button",
+            "label": "Sarana (Alt+6)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 357
+          },
+          {
+            "tag": "button",
+            "label": "Diklat (Alt+7)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 401
+          },
+          {
+            "tag": "button",
+            "label": "MAIA Codex (Alt+8)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 445
+          },
+          {
+            "tag": "button",
+            "label": "Arsip (Alt+9)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 489
+          },
+          {
+            "tag": "button",
+            "label": "Sensus (Alt+0)",
+            "width": 48,
+            "height": 40,
+            "x": 8,
+            "y": 533
+          },
+          {
+            "tag": "button",
+            "label": "Rumah Dinas",
+            "width": 56,
+            "height": 42,
+            "x": 4,
+            "y": 640
+          },
+          {
+            "tag": "button",
+            "label": "Buka pengaturan",
+            "width": 56,
+            "height": 36,
+            "x": 4,
+            "y": 688
+          },
+          {
+            "tag": "button",
+            "label": "Buka panel samping",
+            "width": 56,
+            "height": 34,
+            "x": 4,
+            "y": 730
+          },
+          {
+            "tag": "button",
+            "label": "Energi: 113%",
+            "width": 127.5,
+            "height": 28,
+            "x": 80,
+            "y": 7.5
+          },
+          {
+            "tag": "button",
+            "label": "Reputasi: 54",
+            "width": 50.8,
+            "height": 28,
+            "x": 224.5,
+            "y": 7.5
+          },
+          {
+            "tag": "button",
+            "label": "Jeda (Space)",
+            "width": 34,
+            "height": 30,
+            "x": 562.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Normal",
+            "width": 34,
+            "height": 30,
+            "x": 596.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Ganda",
+            "width": 38,
+            "height": 30,
+            "x": 630.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Tinggi",
+            "width": 42,
+            "height": 30,
+            "x": 668.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Kecepatan Maksimal",
+            "width": 48,
+            "height": 30,
+            "x": 710.8,
+            "y": 6.5
+          },
+          {
+            "tag": "button",
+            "label": "Misi (Alt+Q)",
+            "width": 32,
+            "height": 32,
+            "x": 796,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Review Kinerja (KPI) (Alt+K)",
+            "width": 32,
+            "height": 32,
+            "x": 832,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka kalender",
+            "width": 32,
+            "height": 32,
+            "x": 868,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Shortcut Keyboard",
+            "width": 32,
+            "height": 32,
+            "x": 904,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka smartphone",
+            "width": 32,
+            "height": 32,
+            "x": 940,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Pengaturan (Alt+S)",
+            "width": 32,
+            "height": 32,
+            "x": 976,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Sync Data & Documentation",
+            "width": 107.6,
+            "height": 29,
+            "x": 896.4,
+            "y": 79
+          }
+        ],
+        "tinyText": [
+          {
+            "tag": "div",
+            "text": "Lv. 1",
+            "fontSize": 10,
+            "width": 34.7,
+            "height": 17,
+            "x": 25.3,
+            "y": 103
+          },
+          {
+            "tag": "span",
+            "text": "113",
+            "fontSize": 10,
+            "width": 17.3,
+            "height": 15,
+            "x": 182.3,
+            "y": 14
+          },
+          {
+            "tag": "span",
+            "text": "54",
+            "fontSize": 10,
+            "width": 11.5,
+            "height": 15,
+            "x": 255.8,
+            "y": 14
+          },
+          {
+            "tag": "p",
+            "text": "DASAR • SYSTEM HUB",
+            "fontSize": 10,
+            "width": 243.8,
+            "height": 15,
+            "x": 140,
+            "y": 108
+          },
+          {
+            "tag": "button",
+            "text": "Sync Data & Documentation",
+            "fontSize": 10,
+            "width": 107.6,
+            "height": 29,
+            "x": 896.4,
+            "y": 79
+          },
+          {
+            "tag": "span",
+            "text": "SATU SEHAT",
+            "fontSize": 10,
+            "width": 63.6,
+            "height": 15,
+            "x": 927.4,
+            "y": 86
+          },
+          {
+            "tag": "span",
+            "text": "PASIEN HARI INI",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 101,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "ANTRIAN",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 326.5,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "QUALITY SCORE",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 552,
+            "y": 160
+          },
+          {
+            "tag": "span",
+            "text": "KESEMBUHAN",
+            "fontSize": 9,
+            "width": 209.5,
+            "height": 13.5,
+            "x": 777.5,
+            "y": 160
+          },
+          {
+            "tag": "p",
+            "text": "UKP • SKDI • PATIENT SAFETY",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 105,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "UKM • PIS-PK • PROLANIS",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 417,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "KBK • DANA OPERASIONAL • KINERJA",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 729,
+            "y": 333.5
+          },
+          {
+            "tag": "p",
+            "text": "5 BAB • RADAR MUTU",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 105,
+            "y": 528.3
+          },
+          {
+            "tag": "p",
+            "text": "STAFF • INVENTORY • WELLNESS",
+            "fontSize": 10,
+            "width": 254,
+            "height": 13.8,
+            "x": 417,
+            "y": 528.3
+          },
+          {
+            "tag": "p",
+            "text": "SEMUA SISTEM NORMAL",
+            "fontSize": 10,
+            "width": 156.9,
+            "height": 15,
+            "x": 465.5,
+            "y": 712
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "",
+            "left": 923,
+            "right": 1051,
+            "top": 191.5,
+            "width": 128,
+            "height": 128
+          },
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -347.5,
+            "right": 1371.5,
+            "top": -232.8,
+            "width": 1718.9,
+            "height": 1233.7
+          }
+        ],
+        "truncated": [
+          {
+            "tag": "aside",
+            "text": "Lv. 1 Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus Rumah Dinas Pengatu",
+            "scrollWidth": 210,
+            "clientWidth": 64
+          },
+          {
+            "tag": "nav",
+            "text": "Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus",
+            "scrollWidth": 163,
+            "clientWidth": 64
+          },
+          {
+            "tag": "ul",
+            "text": "Dashboard Layanan Wilayah Gedung SDM Sarana Diklat MAIA Codex Arsip Sensus",
+            "scrollWidth": 163,
+            "clientWidth": 64
+          },
+          {
+            "tag": "li",
+            "text": "Dashboard",
+            "scrollWidth": 145,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Layanan",
+            "scrollWidth": 130,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Wilayah",
+            "scrollWidth": 129,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Gedung",
+            "scrollWidth": 128,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Sarana",
+            "scrollWidth": 122,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Diklat",
+            "scrollWidth": 118,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "MAIA Codex",
+            "scrollWidth": 155,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Arsip",
+            "scrollWidth": 113,
+            "clientWidth": 48
+          },
+          {
+            "tag": "li",
+            "text": "Sensus",
+            "scrollWidth": 122,
+            "clientWidth": 48
+          },
+          {
+            "tag": "div",
+            "text": "Rumah Dinas Pengaturan Buka panel samping",
+            "scrollWidth": 210,
+            "clientWidth": 64
+          },
+          {
+            "tag": "div",
+            "text": "Rumah Dinas",
+            "scrollWidth": 166,
+            "clientWidth": 56
+          },
+          {
+            "tag": "div",
+            "text": "Pengaturan",
+            "scrollWidth": 157,
+            "clientWidth": 56
+          },
+          {
+            "tag": "div",
+            "text": "Buka panel samping",
+            "scrollWidth": 206,
+            "clientWidth": 56
+          },
+          {
+            "tag": "button",
+            "text": "CLINICAL INTEL UKP • SKDI • PATIENT SAFETY 0% Akurasi",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "COMMUNITY INTEL UKM • PIS-PK • PROLANIS IKS 85%",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "PERFORMANCE KBK • DANA OPERASIONAL • KINERJA Rp 50.0M",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "ACCREDITATION 5 BAB • RADAR MUTU Dasar",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          },
+          {
+            "tag": "button",
+            "text": "LOGISTICS STAFF • INVENTORY • WELLNESS 0 Staf",
+            "scrollWidth": 342,
+            "clientWidth": 294
+          }
+        ]
+      }
+    }
+  },
+  {
+    "viewport": {
+      "name": "mobile-390x844",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "isMobile": true,
+      "deviceScaleFactor": 2
+    },
+    "queueState": {
+      "queueLength": 3,
+      "emergencyLength": 0,
+      "time": 540,
+      "day": 1,
+      "firstPatientName": "Nita Pratama",
+      "firstPatientId": "patient_a19927reg"
+    },
+    "screenshots": {
+      "dashboard": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\mobile-390x844-dashboard.png",
+      "clinicalDefault": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\mobile-390x844-clinical-default.png",
+      "clinicalExpanded": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\mobile-390x844-clinical-mobile-drawer.png",
+      "emr": "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit\\mobile-390x844-clinical-emr.png"
+    },
+    "metrics": {
+      "dashboard": {
+        "pageName": "dashboard",
+        "viewportName": "mobile-390x844",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "bodyScrollWidth": 390,
+        "horizontalOverflow": false,
+        "smallInteractive": [
+          {
+            "tag": "button",
+            "label": "Buka menu navigasi",
+            "width": 32,
+            "height": 32,
+            "x": 12,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Misi (Alt+Q)",
+            "width": 32,
+            "height": 32,
+            "x": 274,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka smartphone",
+            "width": 32,
+            "height": 32,
+            "x": 310,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Pengaturan (Alt+S)",
+            "width": 32,
+            "height": 32,
+            "x": 346,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Sync Data & Documentation",
+            "width": 358,
+            "height": 34.5,
+            "x": 16,
+            "y": 132.5
+          }
+        ],
+        "tinyText": [
+          {
+            "tag": "div",
+            "text": "DASHBOARD",
+            "fontSize": 10,
+            "width": 81.5,
+            "height": 15,
+            "x": 52,
+            "y": 7.3
+          },
+          {
+            "tag": "div",
+            "text": "HARI 1",
+            "fontSize": 9,
+            "width": 81.5,
+            "height": 13.5,
+            "x": 52,
+            "y": 22.3
+          },
+          {
+            "tag": "span",
+            "text": "PASIEN HARI INI",
+            "fontSize": 10,
+            "width": 132,
+            "height": 15,
+            "x": 45,
+            "y": 208
+          },
+          {
+            "tag": "span",
+            "text": "ANTRIAN",
+            "fontSize": 10,
+            "width": 132,
+            "height": 15,
+            "x": 213,
+            "y": 208
+          },
+          {
+            "tag": "span",
+            "text": "QUALITY SCORE",
+            "fontSize": 10,
+            "width": 132,
+            "height": 15,
+            "x": 45,
+            "y": 279
+          },
+          {
+            "tag": "span",
+            "text": "KESEMBUHAN",
+            "fontSize": 10,
+            "width": 132,
+            "height": 15,
+            "x": 213,
+            "y": 279
+          },
+          {
+            "tag": "span",
+            "text": "DASH",
+            "fontSize": 8,
+            "width": 26.9,
+            "height": 10,
+            "x": 40.7,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "LAYAN",
+            "fontSize": 8,
+            "width": 32.8,
+            "height": 10,
+            "x": 108.2,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "PETA",
+            "fontSize": 8,
+            "width": 24.6,
+            "height": 10,
+            "x": 182.7,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "HP",
+            "fontSize": 8,
+            "width": 13.6,
+            "height": 10,
+            "x": 258.6,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "ATUR",
+            "fontSize": 8,
+            "width": 26.3,
+            "height": 10,
+            "x": 322.6,
+            "y": 805
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "",
+            "left": 293,
+            "right": 421,
+            "top": 316,
+            "width": 128,
+            "height": 128
+          },
+          {
+            "tag": "div",
+            "text": "",
+            "left": 293,
+            "right": 421,
+            "top": 509.8,
+            "width": 128,
+            "height": 128
+          },
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -165.8,
+            "right": 555.8,
+            "top": 139.3,
+            "width": 721.5,
+            "height": 565.3
+          }
+        ],
+        "truncated": [
+          {
+            "tag": "button",
+            "text": "CLINICAL INTEL UKP • SKDI • Patient Safety 0% Akurasi",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          },
+          {
+            "tag": "button",
+            "text": "COMMUNITY INTEL UKM • PIS-PK • Prolanis IKS 85%",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          },
+          {
+            "tag": "button",
+            "text": "PERFORMANCE KBK • Dana Operasional • Kinerja Rp 50.0M",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          },
+          {
+            "tag": "button",
+            "text": "ACCREDITATION 5 Bab • Radar Mutu Dasar",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          },
+          {
+            "tag": "button",
+            "text": "LOGISTICS Staff • Inventory • Wellness 0 Staf",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          }
+        ]
+      },
+      "clinicalDefault": {
+        "pageName": "clinical-default",
+        "viewportName": "mobile-390x844",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "bodyScrollWidth": 390,
+        "horizontalOverflow": false,
+        "smallInteractive": [
+          {
+            "tag": "button",
+            "label": "Buka menu navigasi",
+            "width": 32,
+            "height": 32,
+            "x": 12,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Misi (Alt+Q)",
+            "width": 32,
+            "height": 32,
+            "x": 274,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka smartphone",
+            "width": 32,
+            "height": 32,
+            "x": 310,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Pengaturan (Alt+S)",
+            "width": 32,
+            "height": 32,
+            "x": 346,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Sync Data & Documentation",
+            "width": 358,
+            "height": 34.5,
+            "x": 16,
+            "y": 132.5
+          }
+        ],
+        "tinyText": [
+          {
+            "tag": "div",
+            "text": "DASHBOARD",
+            "fontSize": 10,
+            "width": 81.5,
+            "height": 15,
+            "x": 52,
+            "y": 7.3
+          },
+          {
+            "tag": "div",
+            "text": "HARI 1",
+            "fontSize": 9,
+            "width": 81.5,
+            "height": 13.5,
+            "x": 52,
+            "y": 22.3
+          },
+          {
+            "tag": "span",
+            "text": "PASIEN HARI INI",
+            "fontSize": 10,
+            "width": 132,
+            "height": 15,
+            "x": 45,
+            "y": 208
+          },
+          {
+            "tag": "span",
+            "text": "ANTRIAN",
+            "fontSize": 10,
+            "width": 132,
+            "height": 15,
+            "x": 213,
+            "y": 208
+          },
+          {
+            "tag": "span",
+            "text": "QUALITY SCORE",
+            "fontSize": 10,
+            "width": 132,
+            "height": 15,
+            "x": 45,
+            "y": 279
+          },
+          {
+            "tag": "span",
+            "text": "KESEMBUHAN",
+            "fontSize": 10,
+            "width": 132,
+            "height": 15,
+            "x": 213,
+            "y": 279
+          },
+          {
+            "tag": "span",
+            "text": "DASH",
+            "fontSize": 8,
+            "width": 26.9,
+            "height": 10,
+            "x": 40.7,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "LAYAN",
+            "fontSize": 8,
+            "width": 32.8,
+            "height": 10,
+            "x": 108.2,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "PETA",
+            "fontSize": 8,
+            "width": 24.6,
+            "height": 10,
+            "x": 182.7,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "HP",
+            "fontSize": 8,
+            "width": 13.6,
+            "height": 10,
+            "x": 258.6,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "ATUR",
+            "fontSize": 8,
+            "width": 26.3,
+            "height": 10,
+            "x": 322.6,
+            "y": 805
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "",
+            "left": 293,
+            "right": 421,
+            "top": 316,
+            "width": 128,
+            "height": 128
+          },
+          {
+            "tag": "div",
+            "text": "",
+            "left": 293,
+            "right": 421,
+            "top": 509.8,
+            "width": 128,
+            "height": 128
+          },
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -165.8,
+            "right": 555.8,
+            "top": 139.3,
+            "width": 721.5,
+            "height": 565.3
+          }
+        ],
+        "truncated": [
+          {
+            "tag": "button",
+            "text": "CLINICAL INTEL UKP • SKDI • Patient Safety 0% Akurasi",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          },
+          {
+            "tag": "button",
+            "text": "COMMUNITY INTEL UKM • PIS-PK • Prolanis IKS 85%",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          },
+          {
+            "tag": "button",
+            "text": "PERFORMANCE KBK • Dana Operasional • Kinerja Rp 50.0M",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          },
+          {
+            "tag": "button",
+            "text": "ACCREDITATION 5 Bab • Radar Mutu Dasar",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          },
+          {
+            "tag": "button",
+            "text": "LOGISTICS Staff • Inventory • Wellness 0 Staf",
+            "scrollWidth": 219,
+            "clientWidth": 171
+          }
+        ]
+      },
+      "clinicalExpanded": {
+        "pageName": "clinical-mobile-drawer",
+        "viewportName": "mobile-390x844",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "bodyScrollWidth": 390,
+        "horizontalOverflow": false,
+        "smallInteractive": [
+          {
+            "tag": "button",
+            "label": "Buka menu navigasi",
+            "width": 32,
+            "height": 32,
+            "x": 12,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Misi (Alt+Q)",
+            "width": 32,
+            "height": 32,
+            "x": 274,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka smartphone",
+            "width": 32,
+            "height": 32,
+            "x": 310,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Pengaturan (Alt+S)",
+            "width": 32,
+            "height": 32,
+            "x": 346,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "",
+            "width": 36,
+            "height": 36,
+            "x": 20,
+            "y": 82.5
+          }
+        ],
+        "tinyText": [
+          {
+            "tag": "div",
+            "text": "DASHBOARD",
+            "fontSize": 10,
+            "width": 81.5,
+            "height": 15,
+            "x": 52,
+            "y": 7.3
+          },
+          {
+            "tag": "div",
+            "text": "HARI 1",
+            "fontSize": 9,
+            "width": 81.5,
+            "height": 13.5,
+            "x": 52,
+            "y": 22.3
+          },
+          {
+            "tag": "p",
+            "text": "5 BAB • RADAR • STANDAR NASIONAL",
+            "fontSize": 10,
+            "width": 274,
+            "height": 15,
+            "x": 96,
+            "y": 122
+          },
+          {
+            "tag": "h3",
+            "text": "STATUS AKREDITASI",
+            "fontSize": 10,
+            "width": 156.7,
+            "height": 15,
+            "x": 41,
+            "y": 178
+          },
+          {
+            "tag": "p",
+            "text": "Current Level",
+            "fontSize": 9,
+            "width": 80,
+            "height": 13.5,
+            "x": 41,
+            "y": 289
+          },
+          {
+            "tag": "div",
+            "text": "DASAR MADYA UTAMA PARIPURNA",
+            "fontSize": 8,
+            "width": 204,
+            "height": 12,
+            "x": 145,
+            "y": 242.8
+          },
+          {
+            "tag": "span",
+            "text": "DASAR",
+            "fontSize": 8,
+            "width": 26.7,
+            "height": 12,
+            "x": 145,
+            "y": 242.8
+          },
+          {
+            "tag": "span",
+            "text": "MADYA",
+            "fontSize": 8,
+            "width": 29.1,
+            "height": 12,
+            "x": 196.3,
+            "y": 242.8
+          },
+          {
+            "tag": "span",
+            "text": "UTAMA",
+            "fontSize": 8,
+            "width": 28.8,
+            "height": 12,
+            "x": 249.9,
+            "y": 242.8
+          },
+          {
+            "tag": "span",
+            "text": "PARIPURNA",
+            "fontSize": 8,
+            "width": 45.7,
+            "height": 12,
+            "x": 303.3,
+            "y": 242.8
+          },
+          {
+            "tag": "h3",
+            "text": "RADAR 5 BAB AKREDITASI",
+            "fontSize": 10,
+            "width": 308,
+            "height": 15,
+            "x": 41,
+            "y": 364.5
+          },
+          {
+            "tag": "div",
+            "text": "Bab 1: Kepemimpinan 45",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 398
+          },
+          {
+            "tag": "span",
+            "text": "Bab 1: Kepemimpinan",
+            "fontSize": 10,
+            "width": 103.1,
+            "height": 15,
+            "x": 85,
+            "y": 398
+          },
+          {
+            "tag": "span",
+            "text": "45",
+            "fontSize": 10,
+            "width": 12.2,
+            "height": 15,
+            "x": 336.8,
+            "y": 398
+          },
+          {
+            "tag": "div",
+            "text": "Bab 2: UKM 64",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 442
+          },
+          {
+            "tag": "span",
+            "text": "Bab 2: UKM",
+            "fontSize": 10,
+            "width": 55.3,
+            "height": 15,
+            "x": 85,
+            "y": 442
+          },
+          {
+            "tag": "span",
+            "text": "64",
+            "fontSize": 10,
+            "width": 12.2,
+            "height": 15,
+            "x": 336.8,
+            "y": 442
+          },
+          {
+            "tag": "div",
+            "text": "Bab 3: UKP 0",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 486
+          },
+          {
+            "tag": "span",
+            "text": "Bab 3: UKP",
+            "fontSize": 10,
+            "width": 51.9,
+            "height": 15,
+            "x": 85,
+            "y": 486
+          },
+          {
+            "tag": "div",
+            "text": "Bab 4: Prog. Prioritas 80",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 530
+          },
+          {
+            "tag": "span",
+            "text": "Bab 4: Prog. Prioritas",
+            "fontSize": 10,
+            "width": 99.5,
+            "height": 15,
+            "x": 85,
+            "y": 530
+          },
+          {
+            "tag": "span",
+            "text": "80",
+            "fontSize": 10,
+            "width": 12,
+            "height": 15,
+            "x": 337,
+            "y": 530
+          },
+          {
+            "tag": "div",
+            "text": "Bab 5: Mutu & Safety 9",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 574
+          },
+          {
+            "tag": "span",
+            "text": "Bab 5: Mutu & Safety",
+            "fontSize": 10,
+            "width": 101.1,
+            "height": 15,
+            "x": 85,
+            "y": 574
+          },
+          {
+            "tag": "span",
+            "text": "DASH",
+            "fontSize": 8,
+            "width": 26.9,
+            "height": 10,
+            "x": 40.7,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "LAYAN",
+            "fontSize": 8,
+            "width": 32.8,
+            "height": 10,
+            "x": 108.2,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "PETA",
+            "fontSize": 8,
+            "width": 24.6,
+            "height": 10,
+            "x": 182.7,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "HP",
+            "fontSize": 8,
+            "width": 13.6,
+            "height": 10,
+            "x": 258.6,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "ATUR",
+            "fontSize": 8,
+            "width": 26.3,
+            "height": 10,
+            "x": 322.6,
+            "y": 805
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -165.8,
+            "right": 555.8,
+            "top": 139.3,
+            "width": 721.5,
+            "height": 565.3
+          }
+        ],
+        "truncated": []
+      },
+      "emr": {
+        "pageName": "clinical-emr",
+        "viewportName": "mobile-390x844",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "bodyScrollWidth": 390,
+        "horizontalOverflow": false,
+        "smallInteractive": [
+          {
+            "tag": "button",
+            "label": "Buka menu navigasi",
+            "width": 32,
+            "height": 32,
+            "x": 12,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Misi (Alt+Q)",
+            "width": 32,
+            "height": 32,
+            "x": 274,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Buka smartphone",
+            "width": 32,
+            "height": 32,
+            "x": 310,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "Pengaturan (Alt+S)",
+            "width": 32,
+            "height": 32,
+            "x": 346,
+            "y": 5.5
+          },
+          {
+            "tag": "button",
+            "label": "",
+            "width": 36,
+            "height": 36,
+            "x": 20,
+            "y": 82.5
+          }
+        ],
+        "tinyText": [
+          {
+            "tag": "div",
+            "text": "DASHBOARD",
+            "fontSize": 10,
+            "width": 81.5,
+            "height": 15,
+            "x": 52,
+            "y": 7.3
+          },
+          {
+            "tag": "div",
+            "text": "HARI 1",
+            "fontSize": 9,
+            "width": 81.5,
+            "height": 13.5,
+            "x": 52,
+            "y": 22.3
+          },
+          {
+            "tag": "p",
+            "text": "5 BAB • RADAR • STANDAR NASIONAL",
+            "fontSize": 10,
+            "width": 274,
+            "height": 15,
+            "x": 96,
+            "y": 122
+          },
+          {
+            "tag": "h3",
+            "text": "STATUS AKREDITASI",
+            "fontSize": 10,
+            "width": 156.7,
+            "height": 15,
+            "x": 41,
+            "y": 178
+          },
+          {
+            "tag": "p",
+            "text": "Current Level",
+            "fontSize": 9,
+            "width": 80,
+            "height": 13.5,
+            "x": 41,
+            "y": 289
+          },
+          {
+            "tag": "div",
+            "text": "DASAR MADYA UTAMA PARIPURNA",
+            "fontSize": 8,
+            "width": 204,
+            "height": 12,
+            "x": 145,
+            "y": 242.8
+          },
+          {
+            "tag": "span",
+            "text": "DASAR",
+            "fontSize": 8,
+            "width": 26.7,
+            "height": 12,
+            "x": 145,
+            "y": 242.8
+          },
+          {
+            "tag": "span",
+            "text": "MADYA",
+            "fontSize": 8,
+            "width": 29.1,
+            "height": 12,
+            "x": 196.3,
+            "y": 242.8
+          },
+          {
+            "tag": "span",
+            "text": "UTAMA",
+            "fontSize": 8,
+            "width": 28.8,
+            "height": 12,
+            "x": 249.9,
+            "y": 242.8
+          },
+          {
+            "tag": "span",
+            "text": "PARIPURNA",
+            "fontSize": 8,
+            "width": 45.7,
+            "height": 12,
+            "x": 303.3,
+            "y": 242.8
+          },
+          {
+            "tag": "h3",
+            "text": "RADAR 5 BAB AKREDITASI",
+            "fontSize": 10,
+            "width": 308,
+            "height": 15,
+            "x": 41,
+            "y": 364.5
+          },
+          {
+            "tag": "div",
+            "text": "Bab 1: Kepemimpinan 45",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 398
+          },
+          {
+            "tag": "span",
+            "text": "Bab 1: Kepemimpinan",
+            "fontSize": 10,
+            "width": 103.1,
+            "height": 15,
+            "x": 85,
+            "y": 398
+          },
+          {
+            "tag": "span",
+            "text": "45",
+            "fontSize": 10,
+            "width": 12.2,
+            "height": 15,
+            "x": 336.8,
+            "y": 398
+          },
+          {
+            "tag": "div",
+            "text": "Bab 2: UKM 64",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 442
+          },
+          {
+            "tag": "span",
+            "text": "Bab 2: UKM",
+            "fontSize": 10,
+            "width": 55.3,
+            "height": 15,
+            "x": 85,
+            "y": 442
+          },
+          {
+            "tag": "span",
+            "text": "64",
+            "fontSize": 10,
+            "width": 12.2,
+            "height": 15,
+            "x": 336.8,
+            "y": 442
+          },
+          {
+            "tag": "div",
+            "text": "Bab 3: UKP 0",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 486
+          },
+          {
+            "tag": "span",
+            "text": "Bab 3: UKP",
+            "fontSize": 10,
+            "width": 51.9,
+            "height": 15,
+            "x": 85,
+            "y": 486
+          },
+          {
+            "tag": "div",
+            "text": "Bab 4: Prog. Prioritas 80",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 530
+          },
+          {
+            "tag": "span",
+            "text": "Bab 4: Prog. Prioritas",
+            "fontSize": 10,
+            "width": 99.5,
+            "height": 15,
+            "x": 85,
+            "y": 530
+          },
+          {
+            "tag": "span",
+            "text": "80",
+            "fontSize": 10,
+            "width": 12,
+            "height": 15,
+            "x": 337,
+            "y": 530
+          },
+          {
+            "tag": "div",
+            "text": "Bab 5: Mutu & Safety 9",
+            "fontSize": 10,
+            "width": 264,
+            "height": 15,
+            "x": 85,
+            "y": 574
+          },
+          {
+            "tag": "span",
+            "text": "Bab 5: Mutu & Safety",
+            "fontSize": 10,
+            "width": 101.1,
+            "height": 15,
+            "x": 85,
+            "y": 574
+          },
+          {
+            "tag": "span",
+            "text": "DASH",
+            "fontSize": 8,
+            "width": 26.9,
+            "height": 10,
+            "x": 40.7,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "LAYAN",
+            "fontSize": 8,
+            "width": 32.8,
+            "height": 10,
+            "x": 108.2,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "PETA",
+            "fontSize": 8,
+            "width": 24.6,
+            "height": 10,
+            "x": 182.7,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "HP",
+            "fontSize": 8,
+            "width": 13.6,
+            "height": 10,
+            "x": 258.6,
+            "y": 805
+          },
+          {
+            "tag": "span",
+            "text": "ATUR",
+            "fontSize": 8,
+            "width": 26.3,
+            "height": 10,
+            "x": 322.6,
+            "y": 805
+          }
+        ],
+        "offscreen": [
+          {
+            "tag": "div",
+            "text": "PRIMER © A.A.B. Wirayuda | HAKI EC002026019623",
+            "left": -165.8,
+            "right": 555.8,
+            "top": 139.3,
+            "width": 721.5,
+            "height": 565.3
+          }
+        ],
+        "truncated": []
+      }
+    }
+  }
+]

@@ -8,6 +8,7 @@
  */
 
 import { getMedicationById } from '../data/MedicationDatabase.js';
+import { attachAuthoredDemographicProfile } from '../content/cases/CaseDemographics.js';
 import { TRIAGE_LEVELS, EMERGENCY_ACTIONS, ESI_LEVELS } from './emergency/EmergencyRegistry.js';
 import { seedKey, weightedPickDeterministic } from '../utils/deterministicRandom.js';
 
@@ -31,7 +32,7 @@ function enrichCase(c) {
     if (!c.stabilizationChecklist && c.correctTreatment) {
         c.stabilizationChecklist = c.correctTreatment.flat();
     }
-    return c;
+    return attachAuthoredDemographicProfile(c);
 }
 
 // 4. Combined Export
@@ -76,10 +77,17 @@ export function getEmergencyCase(id) {
 }
 
 export function getRandomEmergencyCase(seedHint = 'default') {
-    const weights = EMERGENCY_CASES.map(c => {
-        if (c.triageLevel === 1) return 1;
-        if (c.triageLevel === 2) return 3;
-        return 5;
+    const weights = EMERGENCY_CASES.map((c) => {
+        if (Number.isFinite(Number(c?.spawnWeight))) {
+            return Math.max(0, Number(c.spawnWeight));
+        }
+
+        // PRIMER's IGD is a primary-care emergency lane, not a tertiary resus bay.
+        // Keep true red cases uncommon, let yellow dominate, and make green
+        // presentations show up often enough to keep the mix believable.
+        if (c.triageLevel === 1) return 0.75;
+        if (c.triageLevel === 2) return 3.5;
+        return 7;
     });
 
     return weightedPickDeterministic(
@@ -132,19 +140,50 @@ export function calculateEmergencyBill(actionsPerformed = [], caseData = null, i
         const tindakanItems = (bi.tindakan || []).map(item => ({
             name: item.name || item.code || 'Tindakan IGD',
             qty: 1,
-            cost: item.cost || 0
+            cost: item.cost || 0,
+            actionId: item.actionId || null,
+            code: item.code || null,
+            type: 'procedure'
         }));
         const obatItems = (bi.obat || []).map(item => {
             const med = getMedicationById(item.medId);
-            return { name: med?.name || item.medId, qty: item.qty || 1, cost: (med?.sellPrice || 0) * (item.qty || 1), buyPrice: (med?.buyPrice || 0) * (item.qty || 1) };
+            return {
+                name: med?.name || item.medId,
+                qty: item.qty || 1,
+                cost: (med?.sellPrice || 0) * (item.qty || 1),
+                buyPrice: (med?.buyPrice || 0) * (item.qty || 1),
+                medId: item.medId || null,
+                type: 'medication'
+            };
         });
         const alkesItems = (bi.alkes || []).map(item => ({
-            name: item.name || item.id, qty: item.qty || 1, cost: (item.unitCost || 0) * (item.qty || 1), buyPrice: (item.unitCost || 0) * (item.qty || 1)
+            name: item.name || item.id,
+            qty: item.qty || 1,
+            cost: (item.unitCost || 0) * (item.qty || 1),
+            buyPrice: (item.unitCost || 0) * (item.qty || 1),
+            itemId: item.id || null,
+            type: 'supply'
         }));
         const actionDetails = [
-            ...tindakanItems.map(item => ({ name: item.name, cost: item.cost })),
-            ...obatItems.map(item => ({ name: item.qty > 1 ? `${item.name} x${item.qty}` : item.name, cost: item.cost })),
-            ...alkesItems.map(item => ({ name: item.qty > 1 ? `${item.name} x${item.qty}` : item.name, cost: item.cost }))
+            ...tindakanItems.map(item => ({
+                name: item.name,
+                cost: item.cost,
+                actionId: item.actionId,
+                code: item.code,
+                type: item.type
+            })),
+            ...obatItems.map(item => ({
+                name: item.qty > 1 ? `${item.name} x${item.qty}` : item.name,
+                cost: item.cost,
+                medId: item.medId,
+                type: item.type
+            })),
+            ...alkesItems.map(item => ({
+                name: item.qty > 1 ? `${item.name} x${item.qty}` : item.name,
+                cost: item.cost,
+                itemId: item.itemId,
+                type: item.type
+            }))
         ];
         const obatCost = obatItems.reduce((s, i) => s + i.cost, 0);
         const alkesCost = alkesItems.reduce((s, i) => s + i.cost, 0);
@@ -159,10 +198,24 @@ export function calculateEmergencyBill(actionsPerformed = [], caseData = null, i
     const actionDetails = actionsPerformed.map(id => {
         const med = getMedicationById(id);
         const action = EMERGENCY_ACTIONS[id];
-        let cost = 0, name = action?.name || id;
-        if (med) { cost = med.igdPrice || med.sellPrice || 0; name = med.name; }
-        else if (action) { cost = action.cost || 0; }
-        return { name, cost };
+        let cost = 0;
+        let name = action?.name || id;
+        let medId = null;
+        let actionId = null;
+        let type = 'misc';
+
+        if (med) {
+            cost = med.igdPrice || med.sellPrice || 0;
+            name = med.name;
+            medId = id;
+            type = 'medication';
+        } else if (action) {
+            cost = action.cost || 0;
+            actionId = id;
+            type = 'procedure';
+        }
+
+        return { name, cost, medId, actionId, type };
     });
 
     const totalActions = actionDetails.reduce((sum, a) => sum + a.cost, 0);

@@ -50,6 +50,7 @@ export default function PocketDioramaSnapshot({
     const buildingCount = mapData.scopeMeta.buildingCount || mapData.buildings?.length || 0;
     const houseCount = mapData.scopeMeta.houseCount || 0;
     const normalizedModeVariant = SNAPSHOT_MODE_FALLBACKS[modeVariant] ? modeVariant : 'standard';
+    const isMobileMode = normalizedModeVariant === 'mobile';
     const modeCopy = SNAPSHOT_MODE_FALLBACKS[normalizedModeVariant];
     const modeLabel = tr(
         `wilayahContent.ui.dioramaInspector.modeLabels.${normalizedModeVariant}`,
@@ -83,18 +84,18 @@ export default function PocketDioramaSnapshot({
     );
 
     return (
-        <div className="space-y-3 sm:space-y-4" data-testid="pocket-diorama-snapshot">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className={isMobileMode ? 'space-y-2.5' : 'space-y-3 sm:space-y-4'} data-testid="pocket-diorama-snapshot">
+            <div className={`flex flex-col gap-2 ${isMobileMode ? '' : 'sm:flex-row sm:items-center sm:justify-between'}`}>
                 <div className="min-w-0">
                     <p className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300">{modeLabel}</p>
                     <p className="mt-1 truncate text-xs font-bold text-white/60">{mapData.scopeMeta.label}</p>
                 </div>
-                <div className="self-start rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/35">
+                <div className={`self-start rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${isMobileMode ? 'border-cyan-400/20 bg-cyan-400/10 text-cyan-100/80' : 'border-white/10 bg-white/5 text-white/35'}`}>
                     {modeDescriptor}
                 </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-slate-950/80 shadow-2xl shadow-black/30">
+            <div className={`relative overflow-hidden border border-white/10 bg-slate-950/80 shadow-2xl shadow-black/30 ${isMobileMode ? 'rounded-[22px]' : 'rounded-[24px]'}`}>
                 <div
                     className="absolute inset-0 opacity-[0.08]"
                     style={{
@@ -104,8 +105,8 @@ export default function PocketDioramaSnapshot({
                 />
                 <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-cyan-400/10 to-transparent" />
 
-                <div className="grid gap-0 lg:grid-cols-[1.12fr_0.88fr]">
-                    <div className="relative aspect-[4/3] min-h-[208px] sm:min-h-[228px]">
+                <div className={`grid gap-0 ${isMobileMode ? '' : 'lg:grid-cols-[1.12fr_0.88fr]'}`}>
+                    <div className={`relative ${isMobileMode ? 'aspect-[16/10] min-h-[176px]' : 'aspect-[4/3] min-h-[208px] sm:min-h-[228px]'}`}>
                         <svg
                             viewBox="0 0 100 100"
                             className="h-full w-full"
@@ -189,7 +190,7 @@ export default function PocketDioramaSnapshot({
                             })}
                         </svg>
 
-                        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/70 to-transparent px-4 pb-3 pt-10">
+                        <div className={`pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/70 to-transparent ${isMobileMode ? 'px-3.5 pb-2.5 pt-8' : 'px-4 pb-3 pt-10'}`}>
                             <div className="flex items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">
                                 <span>{nodeCountText}</span>
                                 <span>{houseCountText}</span>
@@ -197,55 +198,55 @@ export default function PocketDioramaSnapshot({
                         </div>
                     </div>
 
-                    <div className="relative flex min-h-[188px] flex-col justify-between gap-4 border-t border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-4 sm:min-h-[220px] sm:p-5 lg:border-l lg:border-t-0">
-                        <div className="space-y-3">
+                    <div className={`relative flex flex-col justify-between border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.02] ${isMobileMode ? 'min-h-[164px] gap-3 border-t p-4' : 'min-h-[188px] gap-4 border-t p-4 sm:min-h-[220px] sm:p-5 lg:border-l lg:border-t-0'}`}>
+                        <div className={isMobileMode ? 'space-y-2.5' : 'space-y-3'}>
                             <div className="inline-flex rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200">
                                 {scopeKindLabel}
                             </div>
 
-                            <div className="space-y-2">
-                                <h4 className="text-sm font-black leading-snug text-white sm:text-[15px]">
+                            <div className={isMobileMode ? 'space-y-1.5' : 'space-y-2'}>
+                                <h4 className={`font-black leading-snug text-white ${isMobileMode ? 'text-[15px]' : 'text-sm sm:text-[15px]'}`}>
                                     {focusBuilding?.name || mapData.scopeMeta.label}
                                 </h4>
-                                <p className="text-xs font-medium leading-relaxed text-white/55">
+                                <p className={`font-medium leading-relaxed text-white/55 ${isMobileMode ? 'text-[11px]' : 'text-xs'}`}>
                                     {snapshotSummary}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="space-y-3">
+                        <div className={isMobileMode ? 'space-y-2.5' : 'space-y-3'}>
                             {focusBuilding && (
-                                <div className="flex items-center gap-3.5 rounded-[20px] border border-white/10 bg-black/20 p-3.5 shadow-inner shadow-black/20">
+                                <div className={`flex items-center rounded-[20px] border border-white/10 bg-black/20 shadow-inner shadow-black/20 ${isMobileMode ? 'gap-3 p-3' : 'gap-3.5 p-3.5'}`}>
                                     <img
                                         src={getBuildingInsetUrl(focusBuilding.type)}
                                         alt={focusBuilding.name || focusBuilding.type}
-                                        className="h-16 w-16 shrink-0 object-contain drop-shadow-xl"
+                                        className={`${isMobileMode ? 'h-14 w-14' : 'h-16 w-16'} shrink-0 object-contain drop-shadow-xl`}
                                     />
                                     <div className="min-w-0">
                                         <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/35">
                                             {focusLabel}
                                         </div>
-                                        <div className="mt-1 text-xs font-bold leading-snug text-white/80">
+                                        <div className={`mt-1 font-bold leading-snug text-white/80 ${isMobileMode ? 'text-[11px]' : 'text-xs'}`}>
                                             {focusBuilding.name || focusBuilding.type}
                                         </div>
                                     </div>
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-2 gap-2.5">
-                                <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+                            <div className={`grid grid-cols-2 ${isMobileMode ? 'gap-2' : 'gap-2.5'}`}>
+                                <div className={`rounded-2xl border border-white/10 bg-white/5 ${isMobileMode ? 'p-2.5' : 'p-3'}`}>
                                     <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/35">
                                         {metricMode}
                                     </div>
-                                    <div className="mt-1 text-[11px] font-bold text-white/75">
+                                    <div className={`mt-1 font-bold text-white/75 ${isMobileMode ? 'text-[10px]' : 'text-[11px]'}`}>
                                         {metricModeSnapshot}
                                     </div>
                                 </div>
-                                <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+                                <div className={`rounded-2xl border border-white/10 bg-white/5 ${isMobileMode ? 'p-2.5' : 'p-3'}`}>
                                     <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/35">
                                         {metricRender}
                                     </div>
-                                    <div className="mt-1 text-[11px] font-bold text-white/75">
+                                    <div className={`mt-1 font-bold text-white/75 ${isMobileMode ? 'text-[10px]' : 'text-[11px]'}`}>
                                         {metricRenderSafe}
                                     </div>
                                 </div>

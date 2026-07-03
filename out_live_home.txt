@@ -1,0 +1,5 @@
+{
+  "title": "PRIMER: Primary Care Simulator",
+  "url": "https://primer-navy.vercel.app/",
+  "text": "🏥\nPRIMER\n\nPrimary Care Simulator\n\n\"Your ZIP code is a better predictor of your health than your genetic code.\"\n\n— Dr. Tony Iton (Spatial Epidemiology)\n\nEMAIL\nPASSWORD\n🎮 Masuk\nBelum punya akun? Daftar di sini\n⚡ Main Offline (tanpa cloud save)\n\nPRIMER © 2026 — Medical Education Simulator\n\nPRIMER © A.A.B. Wirayuda | HAKI EC002026019623"
+}

@@ -1,4 +1,4 @@
-# 🎮 PRIMER Game Design Log
+﻿# 🎮 PRIMER Game Design Log
 
 > Catatan keputusan desain gameplay. Format: `[YYYY-MM-DD HH:mm]` per entry.
 

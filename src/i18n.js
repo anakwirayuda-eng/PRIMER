@@ -17,6 +17,8 @@ import enWilayah from './locales/wilayah/en.js';
 import idWilayah from './locales/wilayah/id.js';
 import enEmergency from './locales/emergency/en.js';
 import idEmergency from './locales/emergency/id.js';
+import enEmr from './locales/emr/en.js';
+import idEmr from './locales/emr/id.js';
 import {
     DEFAULT_LANGUAGE,
     LANGUAGE_STORAGE_KEY,
@@ -46,8 +48,8 @@ i18n
     .use(initReactI18next)
     .init({
         resources: {
-            en: { translation: mergeLocale(mergeLocale(en, enWilayah), enEmergency) },
-            id: { translation: mergeLocale(mergeLocale(id, idWilayah), idEmergency) },
+            en: { translation: mergeLocale(mergeLocale(mergeLocale(en, enWilayah), enEmergency), enEmr) },
+            id: { translation: mergeLocale(mergeLocale(mergeLocale(id, idWilayah), idEmergency), idEmr) },
         },
         lng: getStoredLanguagePreference(),
         fallbackLng: DEFAULT_LANGUAGE,

@@ -69,7 +69,7 @@ export const SPECIALTY_MEDS = [
     {
         id: 'methotrexate_tab',
         name: 'Methotrexate 2.5mg',
-        category: MEDICATION_CATEGORIES.ANALGESIC,
+        category: MEDICATION_CATEGORIES.STEROID_IMMUNO,
         type: 'tablet',
         form: 'tablet',
         fornas: true,

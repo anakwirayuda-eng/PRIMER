@@ -9,9 +9,10 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
-import { X, Battery, Wifi, Signal, CreditCard, ShoppingBag, MessageCircle, Newspaper, ArrowLeft, Home } from 'lucide-react';
+import { X, Battery, Wifi, Signal, CreditCard, ShoppingBag, MessageCircle, Newspaper, ArrowLeft } from 'lucide-react';
 import { formatTime } from '../utils/formatTime.js';
 
 // Apps import (will create these next)
@@ -21,16 +22,20 @@ import ShopApp from './apps/ShopApp.jsx';
 import NewsApp from './apps/NewsApp.jsx';
 
 const Smartphone = ({ onClose }) => {
+    const { t } = useTranslation();
     const { time, day, playerProfile: _playerProfile } = useGame();
     const [currentApp, setCurrentApp] = useState(null); // null = homescreen
     const [_notification, _setNotification] = useState(null);
 
-    const apps = [
-        { id: 'chat', name: 'Watsap', icon: MessageCircle, color: 'bg-green-500', component: ChatApp },
-        { id: 'bank', name: 'Bank Desa', icon: CreditCard, color: 'bg-blue-600', component: BankApp },
-        { id: 'shop', name: 'Toko Oren', icon: ShoppingBag, color: 'bg-orange-500', component: ShopApp },
-        { id: 'news', name: 'Berita', icon: Newspaper, color: 'bg-red-500', component: NewsApp },
-    ];
+    const apps = useMemo(
+        () => [
+            { id: 'chat', name: t('smartphone.apps.chat'), icon: MessageCircle, color: 'bg-green-500', component: ChatApp },
+            { id: 'bank', name: t('smartphone.apps.bank'), icon: CreditCard, color: 'bg-blue-600', component: BankApp },
+            { id: 'shop', name: t('smartphone.apps.shop'), icon: ShoppingBag, color: 'bg-orange-500', component: ShopApp },
+            { id: 'news', name: t('smartphone.apps.news'), icon: Newspaper, color: 'bg-red-500', component: NewsApp }
+        ],
+        [t]
+    );
 
 
 
@@ -61,7 +66,7 @@ const Smartphone = ({ onClose }) => {
                                 {/* App Header */}
                                 {currentApp !== 'home' && (
                                     <div className="h-12 bg-white border-b flex items-center px-4 gap-2 shadow-sm shrink-0">
-                                        <button onClick={() => setCurrentApp(null)} className="p-1 hover:bg-slate-100 rounded-full" aria-label="Kembali ke homescreen">
+                                        <button onClick={() => setCurrentApp(null)} className="p-1 hover:bg-slate-100 rounded-full" aria-label={t('smartphone.back_home')}>
                                             <ArrowLeft size={20} />
                                         </button>
                                         <span className="font-bold">{apps.find(a => a.id === currentApp)?.name}</span>
@@ -82,7 +87,7 @@ const Smartphone = ({ onClose }) => {
                                     {/* Clock & Widget */}
                                     <div className="mt-8 mb-8 text-center">
                                         <div className="text-5xl font-thin text-slate-700">{formatTime(time)}</div>
-                                        <div className="text-sm text-slate-400 font-medium">Hari ke-{day}</div>
+                                        <div className="text-sm text-slate-400 font-medium">{t('smartphone.day_label', { day })}</div>
                                     </div>
 
                                     {/* App Grid */}
@@ -92,7 +97,7 @@ const Smartphone = ({ onClose }) => {
                                                 key={app.id}
                                                 onClick={() => setCurrentApp(app.id)}
                                                 className="flex flex-col items-center gap-1 group"
-                                                aria-label={`Buka aplikasi ${app.name}`}
+                                                aria-label={t('smartphone.open_app', { name: app.name })}
                                             >
                                                 <div className={`${app.color} w-14 h-14 rounded-2xl text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform`}>
                                                     <app.icon size={26} />
@@ -110,7 +115,7 @@ const Smartphone = ({ onClose }) => {
                                             key={app.id}
                                             onClick={() => setCurrentApp(app.id)}
                                             className={`${app.color} w-12 h-12 rounded-xl text-white flex items-center justify-center shadow-sm mx-auto`}
-                                            aria-label={`Buka ${app.name} dari dock`}
+                                            aria-label={t('smartphone.open_app_dock', { name: app.name })}
                                         >
                                             <app.icon size={20} />
                                         </button>
@@ -128,7 +133,7 @@ const Smartphone = ({ onClose }) => {
                 <button
                     onClick={onClose}
                     className="absolute -top-3 -right-3 bg-red-500 text-white p-2 rounded-full shadow-lg border-2 border-white hover:bg-red-600 transition"
-                    aria-label="Tutup smartphone"
+                    aria-label={t('smartphone.close')}
                 >
                     <X size={16} />
                 </button>

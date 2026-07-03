@@ -1,0 +1,26 @@
+[
+  {
+    "i": 0,
+    "text": "🎮 Masuk",
+    "title": "",
+    "aria": "",
+    "cls": "",
+    "html": "<button id=\"login-submit\" type=\"submit\" disabled=\"\" style=\"padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, rgb(16, 185, 129), rgb(5, 150, 105)); color: rgb(255, 255, 255); font-size: 16px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: tra"
+  },
+  {
+    "i": 1,
+    "text": "Belum punya akun? Daftar di sini",
+    "title": "",
+    "aria": "",
+    "cls": "",
+    "html": "<button style=\"display: block; width: 100%; text-align: center; margin-top: 16px; padding: 8px; background: none; border: none; color: rgb(16, 185, 129); font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;\">Belum punya akun? Daftar di sini</button>"
+  },
+  {
+    "i": 2,
+    "text": "⚡ Main Offline (tanpa cloud save)",
+    "title": "",
+    "aria": "",
+    "cls": "",
+    "html": "<button style=\"display: block; width: 100%; text-align: center; margin-top: 8px; padding: 8px; background: none; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 8px; color: rgb(148, 163, 184); font-size: 13px; cursor: pointer;\">⚡ Main Offline (tanpa cloud save)</button>"
+  }
+]

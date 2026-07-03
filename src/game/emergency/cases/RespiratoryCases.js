@@ -16,7 +16,9 @@ export const RESPIRATORY_CASES = [
         esiLevel: 2,
         symptoms: ['Sesak napas berat', 'Wheezing inspiratori/ekspiratori', 'Bicara terputus-putus', 'Penggunaan otot bantu napas'],
         clue: "[URGENT] Serangan Asma Berat. Silent chest adalah tanda fatal! Segera Nebulizer + Steroid IV.",
-        relevantLabs: ['Pemeriksaan Fisik Paru', 'SpO2'],
+        relevantLabs: [],
+        requiredPhysicalExam: ['thorax'],
+        requiredMonitoring: ['SpO2'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_main', text: 'Sesaknya sudah berapa lama?', response: 'Sejak tadi malam dok, makin lama makin berat.', priority: 'essential' },
@@ -60,7 +62,8 @@ export const RESPIRATORY_CASES = [
         esiLevel: 2,
         symptoms: ['Sesak napas memburuk', 'Batuk produktif purulen', 'Wheezing', 'Barrel chest', 'Sianosis'],
         clue: "[URGENT] Pasien PPOK dengan sesak memberat + sputum purulen. Nebulizer + steroid + antibiotik. Awasi gagal napas!",
-        relevantLabs: ['SpO2', 'Darah Lengkap'],
+        relevantLabs: ['Darah Lengkap'],
+        requiredMonitoring: ['SpO2'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_main', text: 'Sesaknya makin berat sejak kapan?', response: 'Dari 2 hari ini dok, biasanya nggak separah ini.', priority: 'essential' },

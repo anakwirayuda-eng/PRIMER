@@ -1,4 +1,4 @@
-# Prompt: Transtheoretical Model (TTM) & Behavioral Science Models untuk Gameplay Kesehatan Masyarakat
+﻿# Prompt: Transtheoretical Model (TTM) & Behavioral Science Models untuk Gameplay Kesehatan Masyarakat
 
 > Gunakan prompt ini untuk bertanya ke AI agent lain (ChatGPT, Grok, Gemini, dsb.) tentang bagaimana TTM dan model behavioral science lainnya bisa diterapkan dalam game simulasi kesehatan masyarakat.
 

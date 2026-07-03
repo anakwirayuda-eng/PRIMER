@@ -82,6 +82,9 @@ function extractLabValue(labsRevealed, paramKey) {
     if (!entry) return NaN;
     // Boolean flag = lab was ordered but no numeric value available
     if (entry === true) return NaN;
+    if (typeof entry === 'object' && entry.parameters && entry.parameters[paramKey]?.value !== undefined) {
+        return parseFloat(entry.parameters[paramKey].value);
+    }
     if (typeof entry === 'object' && entry.value !== undefined) {
         return parseFloat(entry.value);
     }
@@ -198,7 +201,13 @@ const CONSEQUENCE_RULES = [
     {
         id: 'good_outcome',
         match: (caseData, decisions) => {
-            return decisions.diagnosisScore >= 80 && decisions.treatmentScore >= 70;
+            const clinicalQualityScore = Number(decisions.clinicalQualityScore) || 0;
+            const isClinicalCareComplete = decisions.isClinicalCareComplete !== false;
+
+            return decisions.diagnosisScore >= 80
+                && decisions.treatmentScore >= 70
+                && clinicalQualityScore >= 70
+                && isClinicalCareComplete;
         },
         outcome: {
             delayDays: [7, 14],

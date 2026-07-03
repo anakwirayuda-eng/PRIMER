@@ -9,18 +9,27 @@
 
 import React from 'react';
 import { Star, Lock, Info, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const StaffCard = ({ staff, isHired = false, isLocked = false, isSelected = false, onSelect, onCoach, onOpenWiki, isDark }) => {
+    const { t } = useTranslation();
     const morale = staff.morale ?? 70;
     const moraleColor = morale >= 80 ? 'bg-green-500' : morale >= 50 ? 'bg-yellow-500' : morale >= 20 ? 'bg-orange-500' : 'bg-red-500';
     const moraleEmoji = morale >= 80 ? '😊' : morale >= 50 ? '😐' : morale >= 20 ? '😔' : '😫';
     const isBurnout = morale < 20;
+    const staffName = t(`staffData.${staff.id}.name`, { defaultValue: staff.name });
+    const staffType = t(`staffData.${staff.id}.type`, { defaultValue: staff.type });
+    const staffSkills = t(`staffData.${staff.id}.skills`, {
+        defaultValue: staff.skills,
+        returnObjects: true
+    });
+    const skills = Array.isArray(staffSkills) ? staffSkills : staff.skills;
 
     return (
         <div
             onClick={() => !isLocked && onSelect(staff)}
             role="button"
-            aria-label={`${isLocked ? 'Terkunci — ' : ''}Pilih staf ${staff.name}, ${staff.type}`}
+            aria-label={`${isLocked ? t('staffPage.card.lockedPrefix') : ''}${t('staffPage.card.selectAria', { name: staffName, type: staffType })}`}
             tabIndex={isLocked ? -1 : 0}
             className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${isDark
                 ? isLocked ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-800 border-slate-700 hover:border-blue-500'
@@ -31,7 +40,7 @@ const StaffCard = ({ staff, isHired = false, isLocked = false, isSelected = fals
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-xl z-10">
                     <div className="text-center">
                         <Lock size={24} className="mx-auto text-white mb-1" />
-                        <span className="text-white text-xs font-bold">Level {staff.unlockLevel}</span>
+                        <span className="text-white text-xs font-bold">{t('staffPage.card.level', { level: staff.unlockLevel })}</span>
                     </div>
                 </div>
             )}
@@ -51,22 +60,22 @@ const StaffCard = ({ staff, isHired = false, isLocked = false, isSelected = fals
                             onOpenWiki(`role_${staff.role}`);
                         }}
                         role="button"
-                        aria-label={`Info tentang peran ${staff.type}`}
+                        aria-label={t('staffPage.card.infoAria', { type: staffType })}
                         className="absolute -top-1 -right-1 opacity-0 group-hover/icon:opacity-100 transition-opacity bg-white/20 rounded-full p-0.5 pointer-events-auto"
                     >
                         <Info size={10} className={isDark ? 'text-white' : 'text-slate-800'} aria-hidden="true" />
                     </div>
                 </div>
                 <div className="flex-1">
-                    <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{staff.name}</h3>
-                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{staff.type}</p>
+                    <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{staffName}</h3>
+                    <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{staffType}</p>
 
                     {/* Morale Bar for Hired Staff */}
                     {isHired && (
                         <div className="mt-2">
                             <div className="flex items-center justify-between text-xs mb-1">
                                 <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>
-                                    {moraleEmoji} Morale
+                                    {moraleEmoji} {t('staffPage.card.morale')}
                                 </span>
                                 <span className={`font-bold ${morale >= 50 ? 'text-green-600' : 'text-orange-600'}`}>
                                     {morale}%
@@ -86,7 +95,7 @@ const StaffCard = ({ staff, isHired = false, isLocked = false, isSelected = fals
                         <div className="mt-2 flex items-center gap-2">
                             <Star size={14} className="text-yellow-500" />
                             <span className="text-xs text-yellow-600 font-medium">
-                                {staff.performance?.toFixed(0)}% Skill
+                                {staff.performance?.toFixed(0)}% {t('staffPage.card.skill')}
                             </span>
                         </div>
                     )}
@@ -95,12 +104,12 @@ const StaffCard = ({ staff, isHired = false, isLocked = false, isSelected = fals
                     <p className={`text-sm font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
                         Rp {(staff.salary / 1000000).toFixed(1)}jt
                     </p>
-                    <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>/bulan</p>
+                    <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('staffPage.card.perMonth')}</p>
                 </div>
             </div>
 
             <div className="mt-3 flex flex-wrap gap-1">
-                {staff.skills.map((skill, idx) => (
+                {skills.map((skill, idx) => (
                     <span key={idx} className={`text-xs px-2 py-0.5 rounded-full ${isDark ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'
                         }`}>
                         {skill}
@@ -119,9 +128,9 @@ const StaffCard = ({ staff, isHired = false, isLocked = false, isSelected = fals
                         ? 'bg-pink-900/50 text-pink-300 hover:bg-pink-800/50'
                         : 'bg-pink-50 text-pink-600 hover:bg-pink-100 border border-pink-200'
                         }`}
-                    aria-label={`Coaching staf ${staff.name} — tambah 15 morale`}
+                    aria-label={t('staffPage.card.coachingAria', { name: staffName })}
                 >
-                    <Heart size={14} aria-hidden="true" /> Coaching (+15 Morale)
+                    <Heart size={14} aria-hidden="true" /> {t('staffPage.card.coachingButton')}
                 </button>
             )}
         </div>

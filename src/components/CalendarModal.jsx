@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Calendar, ChevronLeft, ChevronRight, Activity, AlertCircle, Building2, FileText } from 'lucide-react';
 import useModalA11y from '../hooks/useModalA11y.js';
 import {
@@ -35,7 +36,10 @@ const MONTHS = [
 const DAY_NAMES = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
 export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, onClose }) {
+    const { t } = useTranslation();
     const modalRef = useModalA11y(onClose);
+    const monthNames = t('calendarModal.months', { returnObjects: true });
+    const dayNames = t('calendarModal.dayNames', { returnObjects: true });
     const minCalendarYear = GAME_START_DATE.getFullYear();
     const currentDate = getDayDate(currentDay);
     const [viewMonth, setViewMonth] = useState(currentDate.getMonth() + 1);
@@ -105,7 +109,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
             <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="calendar-title" className="bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.15)] w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh] border border-emerald-500/20">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-emerald-900/80 to-slate-900/80 text-white p-6 relative shrink-0 border-b border-emerald-500/20">
-                    <button onClick={onClose} className="absolute top-5 right-6 p-2 hover:bg-emerald-500/20 rounded-full transition-all text-emerald-400" aria-label="Tutup Kalender">
+                    <button onClick={onClose} className="absolute top-5 right-6 p-2 hover:bg-emerald-500/20 rounded-full transition-all text-emerald-400" aria-label={t('calendarModal.closeAria')}>
                         <X size={24} />
                     </button>
                     <div className="flex items-center gap-4">
@@ -117,7 +121,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                 Global Calendar
                             </h2>
                             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-500/80">
-                                Operational Day {currentDay} • {formatDate(currentDay)}
+                                {t('calendarModal.operationalDay', { day: currentDay, date: formatDate(currentDay) })}
                             </p>
                         </div>
                     </div>
@@ -126,11 +130,11 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                     <div className="hidden md:flex bg-black/30 px-4 py-2 rounded-xl border border-emerald-500/20 items-center gap-3 mr-12">
                         <span className="text-2xl">{viewSeason.emoji}</span>
                         <div>
-                            <div className="text-[9px] font-black uppercase tracking-widest text-emerald-500/70">Radar Epidemiologi</div>
+                            <div className="text-[9px] font-black uppercase tracking-widest text-emerald-500/70">{t('calendarModal.epidemiologyRadar')}</div>
                             <div className="font-bold text-sm text-white">
                                 {viewSeason.name}
                                 {viewSeason.risks?.length > 0 && (
-                                    <span className="ml-2 bg-rose-500/20 text-rose-300 text-[9px] px-2 py-0.5 rounded font-black border border-rose-500/20">WASPADA: {viewSeason.risks[0]}</span>
+                                    <span className="ml-2 bg-rose-500/20 text-rose-300 text-[9px] px-2 py-0.5 rounded font-black border border-rose-500/20">{t('calendarModal.riskAlert', { risk: viewSeason.risks[0] })}</span>
                                 )}
                             </div>
                         </div>
@@ -146,17 +150,17 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                 onClick={handlePrevMonth}
                                 disabled={viewYear === minCalendarYear && viewMonth <= 1}
                                 className="p-2 hover:bg-emerald-500/20 text-emerald-400 rounded-xl disabled:opacity-10 transition-all border border-transparent hover:border-emerald-500/30"
-                                aria-label="Bulan sebelumnya"
+                                aria-label={t('calendarModal.previousMonth')}
                             >
                                 <ChevronLeft size={24} />
                             </button>
                             <h3 className="text-2xl font-black uppercase tracking-widest text-emerald-50">
-                                {MONTHS[viewMonth - 1]} <span className="text-emerald-500 opacity-50">{viewYear}</span>
+                                {(Array.isArray(monthNames) ? monthNames : MONTHS)[viewMonth - 1]} <span className="text-emerald-500 opacity-50">{viewYear}</span>
                             </h3>
                             <button
                                 onClick={handleNextMonth}
                                 className="p-2 hover:bg-emerald-500/20 text-emerald-400 rounded-xl disabled:opacity-10 transition-all border border-transparent hover:border-emerald-500/30"
-                                aria-label="Bulan berikutnya"
+                                aria-label={t('calendarModal.nextMonth')}
                             >
                                 <ChevronRight size={24} />
                             </button>
@@ -164,7 +168,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
 
                         {/* Day Names */}
                         <div className="grid grid-cols-7 gap-2 mb-4">
-                            {DAY_NAMES.map((name, i) => (
+                            {(Array.isArray(dayNames) ? dayNames : DAY_NAMES).map((name, i) => (
                                 <div
                                     key={name}
                                     className={`text-center text-[10px] font-black uppercase tracking-tighter py-2 ${i === 0 ? 'text-rose-500' : 'text-slate-500'}`}
@@ -233,21 +237,21 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
 
                         {/* Legend */}
                         <div className="mt-8 flex flex-wrap gap-3 p-3 bg-black/30 rounded-2xl border border-white/5">
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20 text-[10px] font-bold">🏁 Libur Nasional</div>
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 text-orange-400 rounded-xl border border-orange-500/20 text-[10px] font-bold">🏖️ Cuti Bersama</div>
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 text-[10px] font-bold">💊 Hari Kesehatan</div>
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20 text-[10px] font-bold">✓ Ada Laporan</div>
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20 text-[10px] font-bold">{t('calendarModal.legend.nationalHoliday')}</div>
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 text-orange-400 rounded-xl border border-orange-500/20 text-[10px] font-bold">{t('calendarModal.legend.jointLeave')}</div>
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 text-[10px] font-bold">{t('calendarModal.legend.healthDay')}</div>
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20 text-[10px] font-bold">{t('calendarModal.legend.hasReport')}</div>
                         </div>
                     </div>
 
                     {/* Sidebar: Upcoming Events */}
                     <div className="w-80 border-l border-emerald-500/10 bg-slate-900/40 p-6 overflow-y-auto shrink-0 hidden lg:flex flex-col">
                         <h3 className="font-black text-emerald-400 text-sm mb-6 flex items-center gap-3 uppercase tracking-[0.2em]">
-                            <Activity size={20} /> Mission Agenda
+                            <Activity size={20} /> {t('calendarModal.missionAgenda')}
                         </h3>
 
                         {upcomingEvents.length === 0 ? (
-                            <p className="text-sm text-slate-500 italic text-center p-8">No missions available</p>
+                            <p className="text-sm text-slate-500 italic text-center p-8">{t('calendarModal.noMissions')}</p>
                         ) : (
                             <div className="space-y-4 flex-1">
                                 {upcomingEvents.map(entry => {
@@ -289,9 +293,9 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
 
                         {/* Quick Jump */}
                         <div className="mt-8 pt-8 border-t border-white/5">
-                            <h4 className="text-[10px] font-black text-emerald-500/40 mb-4 uppercase tracking-[0.3em]">Temporal Jump</h4>
+                            <h4 className="text-[10px] font-black text-emerald-500/40 mb-4 uppercase tracking-[0.3em]">{t('calendarModal.temporalJump')}</h4>
                             <div className="grid grid-cols-3 gap-2">
-                                {MONTHS.map((m, i) => (
+                                {(Array.isArray(monthNames) ? monthNames : MONTHS).map((m, i) => (
                                     <button
                                         key={m}
                                         onClick={() => setViewMonth(i + 1)}
@@ -318,7 +322,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                     <button
                                         onClick={() => setSelectedDayDetail(null)}
                                         className="absolute top-4 right-4 p-2 bg-black/20 hover:bg-black/40 rounded-full text-white transition-all"
-                                        aria-label="Tutup detail hari"
+                                        aria-label={t('calendarModal.detail.closeAria')}
                                     >
                                         <X size={20} />
                                     </button>
@@ -326,10 +330,10 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                         {selectedDayDetail.dateStr}
                                     </div>
                                     <h3 className="text-xl font-black leading-tight">
-                                        {selectedDayDetail.ctx?.gameplay?.vibe || 'Hari Normal'}
+                                        {selectedDayDetail.ctx?.gameplay?.vibe || t('calendarModal.detail.normalDay')}
                                     </h3>
                                     {selectedDayDetail.dayNumber === currentDay && (
-                                        <span className="inline-block mt-2 text-[9px] px-3 py-1 bg-white/20 rounded-full font-bold uppercase">Hari Ini</span>
+                                        <span className="inline-block mt-2 text-[9px] px-3 py-1 bg-white/20 rounded-full font-bold uppercase">{t('calendarModal.detail.today')}</span>
                                     )}
                                 </div>
 
@@ -341,7 +345,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                                 <Building2 size={20} className="text-white" />
                                             </div>
                                             <div>
-                                                <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">Status Poliklinik</div>
+                                                <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('calendarModal.detail.clinicStatus')}</div>
                                                 <div className="font-black text-white">{selectedDayDetail.ctx.facilities.statusText}</div>
                                             </div>
                                         </div>
@@ -352,8 +356,8 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                         <div className="flex items-start gap-3 p-3 rounded-2xl border border-amber-500/30 bg-amber-500/10">
                                             <AlertCircle size={18} className="text-amber-400 shrink-0 mt-0.5" />
                                             <div>
-                                                <div className="font-black text-amber-300 text-xs uppercase">Pasien Membludak</div>
-                                                <div className="text-xs text-amber-200/80">Proyeksi trafik: <strong>{Math.round(selectedDayDetail.ctx.gameplay.patientTraffic * 100)}%</strong></div>
+                                                <div className="font-black text-amber-300 text-xs uppercase">{t('calendarModal.detail.patientSurge')}</div>
+                                                <div className="text-xs text-amber-200/80">{t('calendarModal.detail.trafficProjection')} <strong>{Math.round(selectedDayDetail.ctx.gameplay.patientTraffic * 100)}%</strong></div>
                                             </div>
                                         </div>
                                     )}
@@ -363,10 +367,10 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                         <div className="flex items-center gap-3 p-3 rounded-2xl border border-white/5 bg-white/5">
                                             <span className="text-2xl">{selectedDayDetail.ctx.season.emoji}</span>
                                             <div>
-                                                <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">Musim</div>
+                                                <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('calendarModal.detail.season')}</div>
                                                 <div className="text-sm text-white font-bold">{selectedDayDetail.ctx.season.name}</div>
                                                 {selectedDayDetail.ctx.season.risks?.length > 0 && (
-                                                    <div className="text-[10px] text-slate-400 mt-0.5">Risiko: {selectedDayDetail.ctx.season.risks.join(', ')}</div>
+                                                    <div className="text-[10px] text-slate-400 mt-0.5">{t('calendarModal.detail.risks', { risks: selectedDayDetail.ctx.season.risks.join(', ') })}</div>
                                                 )}
                                             </div>
                                         </div>
@@ -375,7 +379,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                     {/* Event List */}
                                     {Array.isArray(selectedDayDetail.event) && selectedDayDetail.event.length > 0 ? (
                                         <div className="space-y-2">
-                                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Agenda Harian</div>
+                                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t('calendarModal.detail.dailyAgenda')}</div>
                                             {selectedDayDetail.event.map((ev, i) => (
                                                 <div key={i} className="p-3 rounded-2xl bg-black/40 border border-emerald-500/20 text-emerald-50 text-sm leading-relaxed">
                                                     <div className="font-bold text-xs">{ev.emoji || '📅'} {ev.title}</div>
@@ -384,7 +388,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="text-center py-4 text-slate-500 text-xs italic">Rotasi reguler. Tidak ada instruksi khusus.</div>
+                                        <div className="text-center py-4 text-slate-500 text-xs italic">{t('calendarModal.detail.noInstruction')}</div>
                                     )}
 
                                     {/* Archive button if past day has report */}
@@ -393,13 +397,13 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                             onClick={() => { onSelectDay(selectedDayDetail.archived); setSelectedDayDetail(null); }}
                                             className="w-full py-3 bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-black rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 border border-emerald-500/30"
                                         >
-                                            <FileText size={16} /> Buka Laporan Harian
+                                            <FileText size={16} /> {t('calendarModal.detail.openDailyReport')}
                                         </button>
                                     )}
 
                                     {selectedDayDetail.isFuture && !selectedDayDetail.archived && (
                                         <p className="text-center text-slate-500 text-[11px] italic">
-                                            Data laporan akan tersedia setelah rotasi hari ini selesai.
+                                            {t('calendarModal.detail.futureReport')}
                                         </p>
                                     )}
 
@@ -407,7 +411,7 @@ export default function CalendarModal({ currentDay, dailyArchive, onSelectDay, o
                                         onClick={() => setSelectedDayDetail(null)}
                                         className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-black rounded-xl font-black uppercase tracking-widest transition-all"
                                     >
-                                        Tutup
+                                        {t('common.close')}
                                     </button>
                                 </div>
                             </div>

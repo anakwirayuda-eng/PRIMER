@@ -1,0 +1,6 @@
+﻿
+D:\Dev\PRIMER\src\tests\fobDistanceMitigation.test.js
+  1:48  error  'afterEach' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Γ£û 1 problem (1 error, 0 warnings)
+

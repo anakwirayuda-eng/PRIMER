@@ -23,7 +23,7 @@ import { buildOperationalInventoryWikiStats } from '../utils/operationalInventor
 import { buildLiquidityWikiStats } from '../utils/financeDisplay.js';
 import { calculateCommunityMetrics } from '../utils/communityMetrics.js';
 import { PAGE_SHORTCUTS, TOGGLE_SHORTCUTS, SYSTEM_SHORTCUTS, resolveGlobalGameShortcut, shouldExecuteGlobalGameShortcut } from '../utils/gameShortcuts.js';
-import { LayoutDashboard, Dna, Stethoscope, Users, Package, Settings, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Archive, GraduationCap, Map, Building2, Home, Smartphone as PhoneIcon, Play, Pause, FastForward, Activity, X, CheckCircle, Sparkles, AlertTriangle, Loader2, Brain, Landmark, Keyboard, Menu } from 'lucide-react';
+import { LayoutDashboard, Dna, Stethoscope, Users, Package, Settings, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Archive, GraduationCap, Map, Building2, Home, Smartphone as PhoneIcon, Play, Pause, FastForward, Activity, X, CheckCircle, Sparkles, AlertTriangle, Loader2, Brain, Landmark, Keyboard, Menu, CalendarDays } from 'lucide-react';
 // import Smartphone from './Smartphone.jsx'; // Lazy loaded below
 // Code-split heavy route components (only loaded when navigated to)
 const Smartphone = React.lazy(() => import('./Smartphone'));
@@ -187,7 +187,7 @@ function ShortcutHelpModal({ onClose }) {
 }
 
 export default function MainLayout() {
-    const { playerProfile, day, time, logout: _logout, setGameState, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki, settings } = useGame();
+    const { playerProfile, day, time, logout: _logout, gameState, gameSpeed = 1, setGameSpeed, setGameState, activePage, setActivePage, activeQuests, activeStories, energy, reputation, playerStats, dailyArchive, derivedKpis, stats, kpi, accreditation, villageData, hiredStaff, pharmacyInventory, prolanisRoster, prbQueue, gameOver, dismissWarning, restartGame, activeReferral, setActiveReferral, activeReferralLog, outbreakNotification, dismissOutbreakNotification, showKPIGlobal, setShowKPIGlobal, wikiMetric, isWikiOpen, openWiki, closeWiki, settings } = useGame();
     const { theme, toggleTheme: _toggleTheme } = useTheme();
     const { t, i18n } = useTranslation();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -354,12 +354,55 @@ export default function MainLayout() {
         { id: 'sensus', label: t('navigation.sensus'), icon: Landmark, shortcutHint: PAGE_SHORTCUT_HINTS.sensus },
     ];
     const currentPageLabel = menuItems.find((item) => item.id === activePage)?.label || t('navigation.dashboard');
+    const appFullName = t('app.full_name', { defaultValue: APP_METADATA.fullName });
     const mobilePrimaryNav = [
         { id: 'dashboard', icon: LayoutDashboard, label: t('navigation.dashboard'), shortLabel: t('navigation.dashboard_short') },
         { id: 'clinical', icon: Stethoscope, label: t('navigation.clinical'), shortLabel: t('navigation.clinical_short') },
         { id: 'wilayah', icon: Map, label: t('navigation.wilayah'), shortLabel: t('navigation.wilayah_short') },
         { id: 'phone', icon: PhoneIcon, label: t('mainLayout.phone'), shortLabel: t('mainLayout.phone_short') },
         { id: 'settings', icon: Settings, label: t('settings.title'), shortLabel: t('settings.short_title') },
+    ];
+    const mobileUtilityActions = [
+        {
+            id: 'status',
+            icon: Sparkles,
+            label: t('mainLayout.status_junction'),
+            tone: 'text-emerald-200 border-emerald-400/15 bg-emerald-500/10',
+            onClick: () => {
+                setShowStatus(true);
+                setMobileNavOpen(false);
+            }
+        },
+        {
+            id: 'kpi',
+            icon: Activity,
+            label: t('mainLayout.kpi_review'),
+            tone: 'text-indigo-200 border-indigo-400/15 bg-indigo-500/10',
+            onClick: () => {
+                setShowKPIGlobal(true);
+                setMobileNavOpen(false);
+            }
+        },
+        {
+            id: 'calendar',
+            icon: CalendarDays,
+            label: t('mainLayout.report_calendar'),
+            tone: 'text-cyan-200 border-cyan-400/15 bg-cyan-500/10',
+            onClick: () => {
+                setShowCalendar(true);
+                setMobileNavOpen(false);
+            }
+        },
+        {
+            id: 'shortcut_help',
+            icon: Keyboard,
+            label: t('mainLayout.shortcuts'),
+            tone: 'text-amber-100 border-amber-400/15 bg-amber-500/10',
+            onClick: () => {
+                setShowShortcutHelp(true);
+                setMobileNavOpen(false);
+            }
+        }
     ];
 
 
@@ -404,89 +447,140 @@ export default function MainLayout() {
         () => calculateCommunityMetrics(villageData),
         [villageData]
     );
+    const mobileClockLabel = useMemo(() => {
+        const normalizedMinutes = Math.max(0, Math.floor(Number(time) || 0));
+        const hours = String(Math.floor(normalizedMinutes / 60)).padStart(2, '0');
+        const minutes = String(normalizedMinutes % 60).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }, [time]);
+    const isTimePaused = gameState !== 'playing';
+    const isRuntimeTrap = gameState === 'paused' && gameOver?.type === 'runtime_trap';
+    const pauseLabel = useMemo(() => t('common.pause'), [t]);
+    const mobileTimeStateLabel = isRuntimeTrap
+        ? t('common.system')
+        : isTimePaused
+            ? pauseLabel
+            : `${gameSpeed}x`;
+    const handleSetMobileTimeSpeed = useCallback((speed) => {
+        if (isRuntimeTrap) return;
+        if (speed === 0) {
+            setGameState('paused');
+            return;
+        }
+
+        if (gameState !== 'playing') {
+            setGameState('playing');
+        }
+        setGameSpeed?.(speed);
+    }, [gameState, isRuntimeTrap, setGameSpeed, setGameState]);
 
     const wikiLiveStats = useMemo(() => {
         if (!wikiMetric) return null;
         switch (wikiMetric) {
             case 'energy':
                 return {
-                    'Level Energi': `${Math.round(energy)}%`,
-                    'Status': energy > 70 ? 'Fit' : energy > 40 ? 'Lelah' : 'Exhausted'
+                    [t('mainLayout.wiki_stats.energy_label')]: `${Math.round(energy)}%`,
+                    [t('mainLayout.wiki_stats.status_label')]: energy > 70
+                        ? t('mainLayout.wiki_stats.status_fit')
+                        : energy > 40
+                            ? t('mainLayout.wiki_stats.status_tired')
+                            : t('mainLayout.wiki_stats.status_exhausted')
                 };
             case 'reputation':
                 return {
-                    'Skor Reputasi': reputation,
-                    'Status': reputation > 80 ? 'Sangat Dipercaya' : 'Cukup'
+                    [t('mainLayout.wiki_stats.reputation_label')]: reputation,
+                    [t('mainLayout.wiki_stats.status_label')]: reputation > 80
+                        ? t('mainLayout.wiki_stats.reputation_high')
+                        : t('mainLayout.wiki_stats.reputation_steady')
                 };
             case 'xp_level':
                 return {
-                    'Level': playerStats.level,
-                    'XP': `${playerStats.xp} / ${playerStats.nextLevelXp}`,
-                    'Pencapaian': 'Kepala Puskesmas'
+                    [t('mainLayout.wiki_stats.level_label')]: playerStats.level,
+                    XP: `${playerStats.xp} / ${playerStats.nextLevelXp}`,
+                    [t('mainLayout.wiki_stats.achievement_label')]: t('mainLayout.wiki_stats.achievement_head')
                 };
             case 'liquidity':
                 return buildLiquidityWikiStats(stats);
             case 'staff_readiness': {
                 const avg = hiredStaff.length > 0 ? Math.round(hiredStaff.reduce((sum, staff) => sum + (staff.performance || 0), 0) / hiredStaff.length) : 0;
-                return { 'Total Staf': hiredStaff.length, 'Avg Readiness': `${avg}%` };
+                return {
+                    [t('mainLayout.wiki_stats.total_staff_label')]: hiredStaff.length,
+                    [t('mainLayout.wiki_stats.avg_readiness_label')]: `${avg}%`
+                };
             }
             case 'rrns':
-                return { 'Total Pasien': kpi.totalPatients, 'RRNS': `${derivedKpis.rrns}%`, 'Target': '< 5%' };
+                return {
+                    [t('mainLayout.wiki_stats.total_patients_label')]: kpi.totalPatients,
+                    RRNS: `${derivedKpis.rrns}%`,
+                    [t('mainLayout.wiki_stats.target_label')]: '< 5%'
+                };
             case 'accreditation':
             case 'accreditation_chapters':
-                return { 'Status': accreditation, 'Overall Score': derivedKpis.overallScore };
+                return {
+                    [t('mainLayout.wiki_stats.status_label')]: accreditation,
+                    [t('mainLayout.wiki_stats.overall_score_label')]: derivedKpis.overallScore
+                };
             case 'iks':
             case 'ukm_overview': {
                 return {
-                    'Rata-rata IKS': `${(communityMetrics.avgIKS * 100).toFixed(1)}%`,
-                    'Total KK': communityMetrics.totalKK
+                    [t('mainLayout.wiki_stats.avg_iks_label')]: `${(communityMetrics.avgIKS * 100).toFixed(1)}%`,
+                    [t('mainLayout.wiki_stats.total_households_label')]: communityMetrics.totalKK
                 };
             }
             case 'kbk': {
                 const population = villageData?.stats?.totalPopulation || 1;
                 const months = Math.max(1, day / 30);
                 return {
-                    'Angka Kontak': `${Math.round((kpi.totalPatients / population) * 1000 / months)} per 1000`,
+                    [t('mainLayout.wiki_stats.contact_rate_label')]: `${Math.round((kpi.totalPatients / population) * 1000 / months)} ${t('mainLayout.wiki_stats.per_1000')}`,
                     'RRNS': `${derivedKpis.rrns}%`
                 };
             }
             case 'angka_kontak':
                 return {
-                    'Total Kontak': kpi.totalPatients,
-                    'Populasi': villageData?.stats?.totalPopulation || 1
+                    [t('mainLayout.wiki_stats.total_contacts_label')]: kpi.totalPatients,
+                    [t('mainLayout.wiki_stats.population_label')]: villageData?.stats?.totalPopulation || 1
                 };
             case 'skdi_coverage':
-                return { 'Total Pasien Ditangani': kpi.totalPatients };
+                return { [t('mainLayout.wiki_stats.total_cases_managed_label')]: kpi.totalPatients };
             case 'prolanis_compliance':
-                return { 'Peserta Prolanis': prolanisRoster?.length || 0 };
+                return { [t('mainLayout.wiki_stats.prolanis_members_label')]: prolanisRoster?.length || 0 };
             case 'stress':
-                return { 'Stress': `${playerStats.stress}%`, 'Energy': `${Math.round(playerStats.energy)}%` };
+                return {
+                    [t('mainLayout.wiki_stats.stress_label')]: `${playerStats.stress}%`,
+                    [t('mainLayout.wiki_stats.energy_short_label')]: `${Math.round(playerStats.energy)}%`
+                };
             case 'accuracy':
-                return { 'Akurasi Diagnosa': `${derivedKpis.clinicalAccuracy}%`, 'Total Pasien': kpi.totalPatients };
+                return {
+                    [t('mainLayout.wiki_stats.diagnostic_accuracy_label')]: `${derivedKpis.clinicalAccuracy}%`,
+                    [t('mainLayout.wiki_stats.total_patients_label')]: kpi.totalPatients
+                };
             case 'treatment':
-                return { 'Terapi Rasional': `${derivedKpis.treatmentAppropriateRate}%` };
+                return { [t('mainLayout.wiki_stats.rational_treatment_label')]: `${derivedKpis.treatmentAppropriateRate}%` };
             case 'antibiotics':
-                return { 'AB Stewardship': `${derivedKpis.antibioticStewardship}%` };
+                return { [t('mainLayout.wiki_stats.antibiotic_stewardship_label')]: `${derivedKpis.antibioticStewardship}%` };
             case 'patient_safety':
                 return {
-                    'Akurasi': `${derivedKpis.clinicalAccuracy}%`,
-                    'Terapi': `${derivedKpis.treatmentAppropriateRate}%`,
+                    [t('mainLayout.wiki_stats.accuracy_label')]: `${derivedKpis.clinicalAccuracy}%`,
+                    [t('mainLayout.wiki_stats.treatment_label')]: `${derivedKpis.treatmentAppropriateRate}%`,
                     'AB': `${derivedKpis.antibioticStewardship}%`
                 };
             case 'prb':
                 return {
-                    'PRB Aktif': prbQueue?.filter(p => p.status === 'active').length || 0,
-                    'PRB Selesai': prbQueue?.filter(p => p.status === 'completed').length || 0
+                    [t('mainLayout.wiki_stats.prb_active_label')]: prbQueue?.filter(p => p.status === 'active').length || 0,
+                    [t('mainLayout.wiki_stats.prb_completed_label')]: prbQueue?.filter(p => p.status === 'completed').length || 0
                 };
             case 'inventory': {
                 return buildOperationalInventoryWikiStats(pharmacyInventory);
             }
             case 'ukp_overview':
-                return { 'Akurasi Klinis': `${derivedKpis.clinicalAccuracy}%`, 'Total Pasien': kpi.totalPatients };
+                return {
+                    [t('mainLayout.wiki_stats.clinical_accuracy_label')]: `${derivedKpis.clinicalAccuracy}%`,
+                    [t('mainLayout.wiki_stats.total_patients_label')]: kpi.totalPatients
+                };
             default:
                 return null;
         }
-    }, [wikiMetric, energy, reputation, playerStats, stats, kpi, derivedKpis, accreditation, communityMetrics, villageData, hiredStaff, prolanisRoster, prbQueue, pharmacyInventory, day]);
+    }, [wikiMetric, energy, reputation, playerStats, stats, kpi, derivedKpis, accreditation, communityMetrics, villageData, hiredStaff, prolanisRoster, prbQueue, pharmacyInventory, day, t]);
 
     const topBarIconButtonClass = 'w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg transition-all shrink-0';
 
@@ -540,7 +634,79 @@ export default function MainLayout() {
                             </button>
                         </div>
 
-                        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
+                        <div className="px-3 py-4">
+                            <div className="rounded-2xl border border-white/10 bg-slate-950/25 p-3 shadow-lg shadow-slate-950/20">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div>
+                                        <div className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-200/75">
+                                            {t('mainLayout.report_calendar')}
+                                        </div>
+                                        <div className="mt-1 text-sm font-black text-white">
+                                            {t('wilayah.subtitle_day', { day })} • {mobileClockLabel}
+                                        </div>
+                                        <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/45">
+                                            {mobileTimeStateLabel}
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={() => {
+                                            setShowCalendar(true);
+                                            setMobileNavOpen(false);
+                                        }}
+                                        className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-200 transition-all hover:bg-white/10"
+                                    >
+                                        {t('mainLayout.calendar')}
+                                    </button>
+                                </div>
+
+                                <div className="mt-3 grid grid-cols-4 gap-2">
+                                    {[
+                                        { id: 'pause', label: pauseLabel, icon: Pause, active: isTimePaused, speed: 0 },
+                                        { id: '1x', label: '1x', icon: Play, active: !isTimePaused && gameSpeed === 1, speed: 1 },
+                                        { id: '2x', label: '2x', icon: FastForward, active: !isTimePaused && gameSpeed === 2, speed: 2 },
+                                        { id: '4x', label: '4x', icon: FastForward, active: !isTimePaused && gameSpeed >= 4, speed: 4 }
+                                    ].map((option) => (
+                                        <button
+                                            key={option.id}
+                                            type="button"
+                                            onClick={() => handleSetMobileTimeSpeed(option.speed)}
+                                            disabled={isRuntimeTrap}
+                                            className={`rounded-xl border px-2 py-2 text-[11px] font-black uppercase tracking-[0.16em] transition-all ${
+                                                option.active
+                                                    ? 'border-emerald-400/30 bg-emerald-500/18 text-emerald-100 shadow-lg shadow-emerald-950/20'
+                                                    : 'border-white/10 bg-white/5 text-slate-100/80 hover:bg-white/10'
+                                            } ${isRuntimeTrap ? 'cursor-not-allowed opacity-50' : ''}`}
+                                        >
+                                            <span className="flex items-center justify-center gap-1.5">
+                                                <option.icon size={13} />
+                                                {option.label}
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="mt-3 grid grid-cols-2 gap-2">
+                                    {mobileUtilityActions.map((action) => (
+                                        <button
+                                            key={action.id}
+                                            type="button"
+                                            onClick={action.onClick}
+                                            className={`rounded-xl border px-3 py-2.5 text-left transition-all hover:translate-y-[-1px] ${action.tone}`}
+                                        >
+                                            <span className="flex items-center gap-2">
+                                                <action.icon size={15} />
+                                                <span className="min-w-0 text-[11px] font-black uppercase tracking-[0.14em] leading-tight">
+                                                    {action.label}
+                                                </span>
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-1.5">
                             {menuItems.map((item) => (
                                 <button
                                     key={item.id}
@@ -602,7 +768,7 @@ export default function MainLayout() {
                     {!sidebarCollapsed && (
                         <div>
                             <h1 className="font-display font-bold text-lg leading-tight tracking-wider group-hover/brand:text-emerald-300 transition-colors">PRIMER</h1>
-                            <p className="text-[10px] text-emerald-200 opacity-80 uppercase tracking-widest">{APP_METADATA.fullName}</p>
+                            <p className="text-[10px] text-emerald-200 opacity-80 uppercase tracking-widest">{appFullName}</p>
                         </div>
                     )}
                 </div>
@@ -834,11 +1000,11 @@ export default function MainLayout() {
                         {((time >= 720 && time < 780) || time >= 960) && (
                             <button
                                 onClick={() => setGameState('rumah_dinas')}
-                                className="hidden sm:flex items-center gap-1 bg-blue-600 text-white px-2.5 py-1 rounded-lg hover:bg-blue-500 transition-all text-[10px] font-bold mr-1"
+                                className="flex items-center gap-1 bg-blue-600 text-white px-2.5 py-1 rounded-lg hover:bg-blue-500 transition-all text-[10px] font-bold mr-1"
                                 title={`${t('mainLayout.go_home')} (${TOGGLE_SHORTCUT_HINTS.rumah_dinas})`}
                             >
                                 <Home size={12} />
-                                {t('mainLayout.go_home')}
+                                <span className="hidden sm:inline">{t('mainLayout.go_home')}</span>
                             </button>
                         )}
 
@@ -877,7 +1043,7 @@ export default function MainLayout() {
                         {/* KPI Review */}
                         <button
                             onClick={() => setShowKPIGlobal(true)}
-                            className={`hidden sm:flex ${topBarIconButtonClass} relative ${showKPIGlobal ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                            className={`flex ${topBarIconButtonClass} relative ${showKPIGlobal ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
                             title={`${t('mainLayout.kpi_review')} (${TOGGLE_SHORTCUT_HINTS.kpi})`}
                             aria-label={t('mainLayout.kpi_review')}
                         >
@@ -889,7 +1055,7 @@ export default function MainLayout() {
 
                         <button
                             onClick={() => setShowCalendar(true)}
-                            className={`hidden sm:flex ${topBarIconButtonClass} ${showCalendar ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+                            className={`flex ${topBarIconButtonClass} ${showCalendar ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
                             title={`${t('mainLayout.calendar')} (${TOGGLE_SHORTCUT_HINTS.calendar})`}
                             aria-label={t('mainLayout.open_calendar')}
                         >

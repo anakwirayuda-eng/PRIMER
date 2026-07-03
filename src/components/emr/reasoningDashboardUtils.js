@@ -98,10 +98,10 @@ function resolveDifferentialEntry(rawEntry, index, confidenceValue) {
     };
 }
 
-export function buildDiagnosticProbabilities(patient, confidenceValue) {
+export function buildDiagnosticProbabilities(patient, confidenceValue, options = {}) {
     const primaryCode = patient?.medicalData?.trueDiagnosisCode || 'unknown';
-    const primaryName = patient?.medicalData?.diagnosisName || primaryCode;
-    const differentialsList = patient?.hidden?.differentialDiagnosis || [];
+    const primaryName = options.primaryName || patient?.medicalData?.diagnosisName || primaryCode;
+    const differentialsList = options.differentialsList || patient?.hidden?.differentialDiagnosis || [];
 
     const primaryCanonical = resolveCanonicalDiagnosisName(primaryName);
     const normalizedPrimaryCode = normalizeDiagnosisCode(primaryCode);

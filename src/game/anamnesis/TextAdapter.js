@@ -39,6 +39,13 @@ export function adaptTextForGender(text, patient, informantMode) {
     const info = informantMode || getInformantMode(patient);
 
     let adapted = text;
+    const applyHonorific = (value, replacement) => value
+        .replace(/\bBapak\/Ibu\b/g, replacement)
+        .replace(/\bIbu\/Bapak\b/g, replacement)
+        .replace(/\bbapak\/ibu\b/g, replacement.toLowerCase())
+        .replace(/\bibu\/bapak\b/g, replacement.toLowerCase())
+        .replace(/\bpak\/bu\b/gi, replacement)
+        .replace(/\bbu\/pak\b/gi, replacement);
 
     if (info.isInformant) {
         const parentPrefix = info.informantLabel || (gender === 'L' ? 'Ayah' : 'Ibu');
@@ -54,8 +61,7 @@ export function adaptTextForGender(text, patient, informantMode) {
         }
 
         adapted = adapted.split('{prefix}').join(parentPrefix);
-        adapted = adapted.split('Bapak/Ibu').join(parentPrefix);
-        adapted = adapted.split('bapak/ibu').join(parentPrefix.toLowerCase());
+        adapted = applyHonorific(adapted, parentPrefix);
     } else {
         let prefix;
         if (age < 15) {
@@ -65,17 +71,22 @@ export function adaptTextForGender(text, patient, informantMode) {
         }
 
         adapted = adapted.split('{prefix}').join(prefix);
-        adapted = adapted.split('Bapak/Ibu').join(prefix);
-        adapted = adapted.split('bapak/ibu').join(prefix.toLowerCase());
+        adapted = applyHonorific(adapted, prefix);
 
         if (gender === 'P') {
             if (adapted.startsWith('Bapak perokok')) adapted = adapted.replace('Bapak perokok', 'Ibu perokok');
             if (adapted.startsWith('Apakah Bapak')) adapted = adapted.replace('Apakah Bapak', 'Apakah Ibu');
+            adapted = adapted.replace(/\bpak\b(?=[?.!,\s]|$)/gi, 'Ibu');
+        }
+        if (gender === 'L') {
+            adapted = adapted.replace(/\bbu\b(?=[?.!,\s]|$)/gi, 'Pak');
         }
         if (age < 15) {
             if (adapted.startsWith('Bapak perokok')) adapted = adapted.replace('Bapak perokok', 'Adik perokok');
             if (adapted.startsWith('Apakah Bapak')) adapted = adapted.replace('Apakah Bapak', 'Apakah Adik');
             if (adapted.startsWith('Apakah Ibu')) adapted = adapted.replace('Apakah Ibu', 'Apakah Adik');
+            adapted = adapted.replace(/\bpak\b(?=[?.!,\s]|$)/gi, 'Adik');
+            adapted = adapted.replace(/\bbu\b(?=[?.!,\s]|$)/gi, 'Adik');
         }
     }
 

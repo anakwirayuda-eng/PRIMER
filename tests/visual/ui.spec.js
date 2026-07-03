@@ -1,34 +1,67 @@
 import { test, expect } from '@playwright/test';
 
+async function continueOffline(page) {
+    const offlineButton = page.getByRole('button', { name: /Main Offline|Lewati \(Offline\)|offline/i }).first();
+    await offlineButton.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+    if (await offlineButton.isVisible().catch(() => false)) {
+        await offlineButton.click();
+    }
+}
+
 /**
- * Helper: Navigate past DatabaseSync + cinematic opening to reach SaveSlotSelector.
- * New flow: click during cinematic → skips straight to SaveSlotSelector (no intermediate menu).
+ * Helper: Navigate past LoginPage + DatabaseSync + opening cinematic to reach SaveSlotSelector.
+ * Current flow: Main Offline -> wait for DB sync -> click opening screen -> SaveSlotSelector.
  */
 async function skipToSlotSelector(page) {
     await page.goto('/');
 
-    // Clear DB for fresh state
     await page.evaluate(async () => {
-        if (window.indexedDB) window.indexedDB.deleteDatabase('PrimerMedicalDB');
-    });
-    await page.reload({ waitUntil: 'networkidle' });
+        try {
+            window.localStorage.clear();
+            window.sessionStorage.clear();
+        } catch {
+            // Ignore storage cleanup failures during bootstrap.
+        }
 
-    // Wait for DB sync to finish
-    const syncHeader = page.locator('h1:has-text("PRIMER DATABASE")');
+        if (window.indexedDB) {
+            window.indexedDB.deleteDatabase('PrimerMedicalDB');
+        }
+    });
+
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await continueOffline(page);
+
+    const syncHeader = page.getByRole('heading', { name: 'PRIMER DATABASE' });
     if (await syncHeader.isVisible().catch(() => false)) {
+        const skipButton = page.getByRole('button', { name: /Main Offline|Lewati \(Offline\)|offline/i }).first();
+        if (await skipButton.isVisible().catch(() => false)) {
+            await skipButton.click();
+        }
         await expect(syncHeader).toBeHidden({ timeout: 60000 });
     }
 
-    // Wait for cinematic ITS logo, then click to skip → goes straight to SaveSlotSelector
-    const itsLogo = page.locator('img[alt="ITS"]').first();
-    await expect(itsLogo).toBeVisible({ timeout: 30000 });
-    await page.mouse.click(100, 100);
+    const slotSelector = page.locator('button').filter({ hasText: /INISIASI SISTEM|AKSES DATABASE/i }).first();
+    if (await slotSelector.isVisible({ timeout: 2000 }).catch(() => false)) {
+        return;
+    }
 
-    // Wait for SaveSlotSelector to appear (slot-related content)
-    await page.waitForTimeout(1500);
+    const openingScreen = page.getByRole('button', { name: 'Layar Pembuka' });
+    await expect(openingScreen).toBeVisible({ timeout: 30000 });
+    await openingScreen.click();
+    if (!(await slotSelector.isVisible({ timeout: 2000 }).catch(() => false))) {
+        await openingScreen.click();
+    }
+    await expect(slotSelector).toBeVisible({ timeout: 15000 });
+}
+
+async function openSlotDeck(page) {
+    const systemButton = page.locator('button').filter({ hasText: /INISIASI SISTEM|AKSES DATABASE/i }).first();
+    await expect(systemButton).toBeVisible({ timeout: 15000 });
+    await systemButton.click();
 }
 
 test.describe('UI Baseline', () => {
+    test.describe.configure({ mode: 'serial' });
     test.setTimeout(90000);
 
     test('Should load opening screen cinematic and skip to slot selector', async ({ page }) => {
@@ -37,11 +70,10 @@ test.describe('UI Baseline', () => {
 
         await skipToSlotSelector(page);
 
-        // After skipping, we should be at SaveSlotSelector — look for slot UI
-        const slotUI = page.locator('text=/Slot|SAVE|Pilih|Mulai Permainan|Lanjutkan Permainan/i').first();
+        const slotUI = page.locator('text=/ACTIVE DEPLOYMENTS|INISIASI SISTEM|AKSES DATABASE/i').first();
         await expect(slotUI).toBeVisible({ timeout: 15000 });
 
-        console.log("E2E Smoke Test Passed — cinematic skip → SaveSlotSelector!");
+        console.log('E2E Smoke Test Passed: opening flow -> SaveSlotSelector');
     });
 
     test('Should render save slot selector with interactive elements', async ({ page }) => {
@@ -49,19 +81,15 @@ test.describe('UI Baseline', () => {
         page.on('pageerror', err => console.log(`BROWSER ERROR: ${err.message}`));
 
         await skipToSlotSelector(page);
+        await openSlotDeck(page);
 
-        // Wait for full render
-        await page.waitForTimeout(2000);
-
-        // Verify slot-related text elements
-        const slotTexts = await page.locator('text=/Slot/i').count();
+        const slotTexts = await page.locator('text=/NODE 0|ACTIVE DEPLOYMENTS/i').count();
         expect(slotTexts).toBeGreaterThanOrEqual(1);
 
-        // Verify interactive buttons exist
         const buttons = await page.locator('button').count();
         expect(buttons).toBeGreaterThanOrEqual(2);
 
-        console.log(`Save Slot Selector E2E Test Passed! Found ${slotTexts} slot references, ${buttons} buttons.`);
+        console.log(`Save Slot Selector E2E Test Passed: found ${slotTexts} slot references and ${buttons} buttons.`);
     });
 
     test('Should navigate through slot selector to player setup', async ({ page }) => {
@@ -69,24 +97,16 @@ test.describe('UI Baseline', () => {
         page.on('pageerror', err => console.log(`BROWSER ERROR: ${err.message}`));
 
         await skipToSlotSelector(page);
+        await openSlotDeck(page);
 
-        // Click "Mulai Permainan" to reveal slot cards
-        await page.waitForTimeout(1000);
-        const playButton = page.locator('button').filter({ hasText: /Mulai Permainan|Lanjutkan Permainan/i });
-        await expect(playButton).toBeVisible({ timeout: 10000 });
-        await playButton.click();
-
-        // Wait for slot cards then click "Game Baru" on first empty slot
-        await page.waitForTimeout(1500);
-        const newGameSlot = page.locator('button').filter({ hasText: /Game Baru/i }).first();
+        const newGameSlot = page.getByRole('button', { name: 'INISIASI' }).first();
         await expect(newGameSlot).toBeVisible({ timeout: 10000 });
         await newGameSlot.click({ force: true });
 
-        // Should arrive at PlayerSetup — look for input field
         const setupInput = page.locator('input[type="text"]').first();
         await expect(setupInput).toBeVisible({ timeout: 15000 });
 
-        console.log("Full Flow → Player Setup E2E Test Passed!");
+        console.log('Full flow to Player Setup passed.');
     });
 
     test('Should complete setup and reach main game layout', async ({ page }) => {
@@ -94,44 +114,38 @@ test.describe('UI Baseline', () => {
         page.on('pageerror', err => console.log(`BROWSER ERROR: ${err.message}`));
 
         await skipToSlotSelector(page);
+        await openSlotDeck(page);
 
-        // Navigate through slots: Mulai Permainan → Game Baru
-        await page.waitForTimeout(1000);
-        const playButton = page.locator('button').filter({ hasText: /Mulai Permainan|Lanjutkan Permainan/i });
-        await expect(playButton).toBeVisible({ timeout: 10000 });
-        await playButton.click();
-
-        await page.waitForTimeout(1500);
-        const newGameSlot = page.locator('button').filter({ hasText: /Game Baru/i }).first();
+        const newGameSlot = page.getByRole('button', { name: 'INISIASI' }).first();
         await expect(newGameSlot).toBeVisible({ timeout: 10000 });
         await newGameSlot.click({ force: true });
 
-        // PlayerSetup — fill name
         const setupInput = page.locator('input[type="text"]').first();
         await expect(setupInput).toBeVisible({ timeout: 15000 });
-        await setupInput.fill('Dr. Tester');
+        await setupInput.fill('Dr Tester');
 
-        // Click through setup steps (Name → Gender → Hair → Accessories → Start)
-        let nextButton;
-        for (let step = 0; step < 5; step++) {
-            nextButton = page.locator('button').filter({ hasText: /Lanjut|Selanjutnya|Next|Mulai|Start/i }).first();
-            if (await nextButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-                await nextButton.click();
-                await page.waitForTimeout(800);
-            }
-        }
+        const processButton = page.locator('button').filter({ hasText: /PROSES DATA/i }).first();
+        await expect(processButton).toBeVisible({ timeout: 10000 });
+        await processButton.click();
+        await page.waitForTimeout(600);
+        await expect(processButton).toBeVisible({ timeout: 10000 });
+        await processButton.click();
+        await page.waitForTimeout(600);
 
-        // Check if we reached main game layout
+        const authorizeButton = page.getByRole('button', { name: 'SAHKAN S.K PENUGASAN' }).first();
+        await expect(authorizeButton).toBeVisible({ timeout: 10000 });
+        await authorizeButton.click();
+        await page.waitForTimeout(1200);
+
         const mainGameIndicator = page.locator('nav, [class*="sidebar"], [class*="dashboard"]').first();
         const reached = await mainGameIndicator.isVisible({ timeout: 20000 }).catch(() => false);
 
         if (reached) {
-            console.log("Full Setup → Main Game Layout E2E Test Passed!");
+            console.log('Full setup to main layout passed.');
         } else {
-            console.log("Setup flow completed, but main layout not detected. Partial pass.");
+            console.log('Setup flow completed, but main layout indicator was not detected.');
         }
 
-        // Best-effort — passes either way
         expect(true).toBe(true);
     });
 });

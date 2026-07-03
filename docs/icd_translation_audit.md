@@ -1,4 +1,4 @@
-# ICD Translation Quality Audit — PRIMER Project
+﻿# ICD Translation Quality Audit — PRIMER Project
 
 **Date:** 2026-02-24
 **Context:** PRIMER is an Indonesian medical education simulation game set in a Puskesmas (primary care clinic). The ICD databases drive the EMR's diagnosis & procedure search UI, the MAIA Clinical Reasoning engine, and the score evaluation pipeline. This audit evaluates the quality of Indonesian translations across all ICD data sources.

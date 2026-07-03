@@ -13,6 +13,62 @@ import { PersistenceService } from '../../services/PersistenceService.js';
 import { chanceFromSeed, pickDeterministic, seedKey } from '../../utils/deterministicRandom.js';
 
 const pickDialogueVariant = (items, ...parts) => pickDeterministic(items, seedKey(...parts));
+const INFORMANT_TITLE_EQUIVALENTS = {
+    Ibu: [/^ibu\b/i, /^bu\b/i],
+    Bapak: [/^bapak\b/i, /^pak\b/i],
+    Ayah: [/^ayah\b/i],
+    Pendamping: [/^pendamping\b/i]
+};
+
+function formatInformantDisplayName(label, name) {
+    const cleanLabel = (label || '').trim();
+    const cleanName = (name || '').trim();
+
+    if (!cleanName) return cleanLabel;
+    if (!cleanLabel) return cleanName;
+
+    const equivalents = INFORMANT_TITLE_EQUIVALENTS[cleanLabel] || [new RegExp(`^${cleanLabel}\\b`, 'i')];
+    if (equivalents.some(pattern => pattern.test(cleanName))) {
+        return cleanName;
+    }
+
+    return `${cleanLabel} ${cleanName}`;
+}
+
+function isParentFocusedQuestion(question) {
+    const text = question?.text || '';
+    return /\b(bapak\/ibu|pak\/bu|bapak|ibu|ayah|orang tua|wali|pendamping)\b/i.test(text);
+}
+
+function normalizePediatricInformantResponse(response, question, info) {
+    if (!response || !info?.isInformant || info.reason !== 'pediatric' || question?.isChildDirect) {
+        return response;
+    }
+
+    if (isParentFocusedQuestion(question)) {
+        return response;
+    }
+
+    const replacements = [
+        [/^Saya nggak bisa bilang sakitnya kayak apa\b/i, 'Saya nggak bisa bilang sakitnya anak saya kayak apa'],
+        [/^Saya bingung harus bilang apa\b/i, 'Saya bingung jelasinnya, Dok'],
+        [/^Saya cuma tau rasanya nggak bener aja\b/i, 'Saya cuma tau anak saya kelihatannya nggak nyaman aja'],
+        [/^Saya bisa rasain tapi nggak bisa jelasin ke orang lain\b/i, 'Saya lihat anak saya nggak nyaman, tapi susah saya jelaskan'],
+        [/^Saya sendiri heran kenapa bisa gini\b/i, 'Saya sendiri bingung anak saya kenapa bisa begini'],
+        [/^Yang pasti bikin nggak nyaman, tapi saya sendiri bingung\b/i, 'Yang pasti anak saya kelihatan nggak nyaman, tapi saya sendiri bingung'],
+        [/^Rasanya ada yang nggak beres tapi saya nggak ngerti\b/i, 'Kelihatannya ada yang nggak beres, tapi saya nggak ngerti pastinya'],
+        [/^Rasanya aneh, Dok\. Tapi saya nggak bisa ceritain\b/i, 'Kelihatannya aneh, Dok. Tapi saya nggak bisa ceritain persis'],
+        [/^Saya pasrah, Dok\.\.\./i, 'Saya bingung, Dok...'],
+        [/^Saya (sesak|batuk|demam|muntah|pilek|diare|mencret|gatal|nyeri|pusing|lemas|haus|sering sekali BAK|BAK|BAB)\b/i, 'Anak saya $1']
+    ];
+
+    let normalized = response;
+    replacements.forEach(([pattern, replacement]) => {
+        normalized = normalized.replace(pattern, replacement);
+    });
+
+    return normalized;
+}
 
 export async function getAsyncVariation(caseId, questionId, baseResponse, patient) {
     const persona = pickPersona(patient);
@@ -50,7 +106,7 @@ export function generateGreeting(patient, doctorName, time, context) {
         const childName = patient.name || patient.firstName || 'Adik';
         const parentLabel = info.informantLabel || (patient.gender === 'P' ? 'Ibu' : 'Bapak');
         const parentName = info.informantName || '';
-        const parentStr = parentName ? (parentLabel + ' ' + parentName) : parentLabel;
+        const parentStr = formatInformantDisplayName(parentLabel, parentName);
 
         const greetingVar = pickDialogueVariant([
             isFollowUp ? `${greeting} lagi ${parentStr}. Ada yang terlewat untuk ${childName}?` : `${greeting}, saya dr. ${drName} yang bertugas. Ini ${childName} ya, ${parentStr}?`,
@@ -246,6 +302,7 @@ export async function getAdaptiveResponse(question, patient, caseId, context) {
     }
 
     response = adaptTextForGender(response, patient, info);
+    response = normalizePediatricInformantResponse(response, question, info);
 
     // Capture the clinical response BEFORE persona adaptation (for accurate classification)
     const rawClinical = response;
@@ -260,9 +317,22 @@ export async function getAdaptiveResponse(question, patient, caseId, context) {
             sentiment: question.sentiment,
             metadata: {}
         };
-        const clarifiedResponse = applyPersonaAdaptation(response, patient, context, opts);
+        const clarifiedResponse = normalizePediatricInformantResponse(
+            applyPersonaAdaptation(response, patient, context, opts),
+            question,
+            info
+        );
         // Varied vague templates — realistic Puskesmas feel (large pool for variety)
-        const vaguePool = [
+        const vaguePool = info.isInformant && info.reason === 'pediatric' ? [
+            'Saya bingung jelasinnya, Dok. Yang pasti anak saya kelihatan nggak nyaman.',
+            'Saya kurang bisa jelasin, Dok. Pokoknya anak saya lagi nggak enak badan.',
+            'Susah saya ceritain, Dok. Yang jelas anak saya kelihatan sakit.',
+            'Saya nggak bisa bilang persis, Dok. Tapi anak saya kelihatan nggak nyaman.',
+            'Pokoknya anak saya rewel dan kelihatan nggak enak badan, Dok.',
+            'Yang saya lihat, anak saya lagi nggak seperti biasanya, Dok.',
+            'Saya bingung, Dok. Anak saya pokoknya kelihatan nggak enak badan.',
+            'Saya cuma tahu anak saya kelihatannya nggak nyaman, Dok.'
+        ] : [
             // Very short
             `${prefix} bingung, Dok.`,
             'Gimana ya...',
@@ -301,7 +371,11 @@ export async function getAdaptiveResponse(question, patient, caseId, context) {
             `Saya bisa rasain tapi nggak bisa ceritain.`,
             `Ya... gimana ya. Bingung ${prefix}, Dok.`
         ];
-        const vagueText = pickFromPool(vaguePool, question.id, 'dialogueVague');
+        const vagueText = normalizePediatricInformantResponse(
+            pickFromPool(vaguePool, question.id, 'dialogueVague'),
+            question,
+            info
+        );
         return { text: vagueText, rawClinical, isVague: true, clarifiedResponse, metadata: opts.metadata };
     }
 
@@ -310,7 +384,11 @@ export async function getAdaptiveResponse(question, patient, caseId, context) {
         sentiment: question.sentiment,
         metadata: {}
     };
-    response = applyPersonaAdaptation(response, patient, context, opts);
+    response = normalizePediatricInformantResponse(
+        applyPersonaAdaptation(response, patient, context, opts),
+        question,
+        info
+    );
 
     return { text: response, rawClinical, metadata: opts.metadata };
 }

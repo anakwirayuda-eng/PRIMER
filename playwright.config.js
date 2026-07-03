@@ -23,7 +23,7 @@ export default defineConfig({
         },
     ],
     webServer: {
-        command: 'npm run dev -- --host 127.0.0.1',
+        command: 'powershell -ExecutionPolicy Bypass -File tools/run-vite.ps1 --host 127.0.0.1',
         url: 'http://127.0.0.1:5173',
         reuseExistingServer: !process.env.CI,
         timeout: 120000,

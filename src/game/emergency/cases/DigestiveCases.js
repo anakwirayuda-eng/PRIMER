@@ -59,7 +59,8 @@ export const DIGESTIVE_CASES = [
         esiLevel: 1,
         symptoms: ['Tidak sadar/gelisah', 'Mata cekung', 'Kulit kering/turgor sangat lambat', 'Nadi lemah cepat', 'Tidak bisa minum'],
         clue: "[CRITICAL] Diare berat dengan tanda syok: nadi lemah, akral dingin, turgor sangat lambat. Resusitasi cairan SEGERA!",
-        relevantLabs: ['Darah Lengkap', 'Elektrolit'],
+        relevantLabs: ['Darah Lengkap'],
+        referralLevelDiagnostics: ['Elektrolit'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_event', text: 'Diare sudah berapa hari?', response: 'Sudah 2 hari dok, makin parah.', priority: 'essential' },
@@ -90,6 +91,7 @@ export const DIGESTIVE_CASES = [
         differentialDiagnosis: ['Kolera', 'Keracunan', 'Intususepsi (pada anak)', 'Syok septik'],
         risk: 'critical',
         referralRequired: true,
+        referralTarget: 'SpPD/SpA',
         deteriorationRate: 7
     },
     {

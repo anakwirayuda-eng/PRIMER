@@ -47,6 +47,7 @@ export const NEUROLOGY_CASES = [
         differentialDiagnosis: ['Kejang simptomatik (hipoglikemia)', 'Meningitis/Ensefalitis', 'Trauma kepala'],
         risk: 'critical',
         referralRequired: true,
+        referralTarget: 'SpS',
         deteriorationRate: 10
     },
     {

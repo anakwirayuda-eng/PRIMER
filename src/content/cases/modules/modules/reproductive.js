@@ -116,15 +116,22 @@ export const REPRODUCTIVE_CASES = [
         skdi: '4A',
         category: 'Reproductive',
         symptoms: ['Gatal vulva', 'Kemerahan', 'Nyeri', 'Keputihan'],
-        clue: "Peradangan vulva: eritema, edema, pruritus. Penyebab: iritasi, infeksi (Candida, bakteri), alergi. Identifikasi penyebab + topikal anti-jamur/steroid.",
+        clue: "Vulvitis dengan kecurigaan kandidiasis: pruritus vulva, eritema, edema ringan, dan discharge putih kental seperti susu basi. Gali faktor pencetus iritasi/kebersihan dan terapi antijamur.",
         relevantLabs: [],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Keluhannya bu?', response: 'Kemaluan saya gatal dan merah dok, perih.', sentiment: 'confirmation', priority: 'essential' }],
-            rps: [{ id: 'q_discharge', text: 'Ada keputihan?', response: 'Iya dok, putih kental kayak susu basi.', sentiment: 'confirmation' }],
-            rpd: [], rpk: [], sosial: []
+            rps: [
+                { id: 'q_discharge', text: 'Ada keputihan?', response: 'Iya dok, putih kental kayak susu basi.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_dysuria', text: 'Kalau kena air kencing atau digaruk terasa makin perih?', response: 'Iya dok, kalau kena air kencing rasanya makin perih.', sentiment: 'confirmation' }
+            ],
+            rpd: [],
+            rpk: [],
+            sosial: [
+                { id: 'q_trigger', text: 'Belakangan pakai sabun kewanitaan, pantyliner, atau celana yang lembap/ketat?', response: 'Iya dok, saya sering pakai pantyliner dan celana dalam kadang lembap habis kerja.', sentiment: 'confirmation' }
+            ]
         },
-        essentialQuestions: ['q_main'],
-        anamnesis: ["Kemaluan gatal merah dok, perih.", "Gatal di bawah dok, ada keputihan juga."],
+        essentialQuestions: ['q_main', 'q_discharge'],
+        anamnesis: ["Kemaluan gatal, merah, dan perih dok.", "Ada keputihan putih kental, kalau kena air kencing makin perih, dan belakangan area bawah sering lembap."],
         physicalExamFindings: { general: "Tampak tidak nyaman.", vitals: "TD 120/80, N 78x, RR 18x, S 36.7°C", genitalia: "Vulva: eritema (+), edema minimal, discharge putih kental (cottage cheese-like). Vagina: eritema." },
         labs: {}, vitals: { temp: 36.7, bp: '120/80', hr: 78, rr: 18 },
         correctTreatment: ['clotrimazole_vag', 'fluconazole_150'],

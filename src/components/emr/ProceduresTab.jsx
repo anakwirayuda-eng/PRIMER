@@ -11,23 +11,31 @@
 
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Brain, Search, Check, Scissors, Trash2, CheckCircle, Plus, Info } from 'lucide-react';
 // findICD9CM — search is handled by parent component
 import { PROCEDURES_DB } from '../../data/ProceduresDB.js';
 import { COMMON_PROCEDURES } from '../../data/CommonProcedures.js';
 import { findWikiKey } from '../../data/WikiData.js';
+import { localizeClinicalText } from '../../utils/clinicalContentLocalization.js';
 
 export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query, icd9Results, selectedDiagnoses, selectedProcedures, toggleProcedure, openWiki }) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
+    const localize = (value) => localizeClinicalText(value, locale);
+
     return (
         <div className="flex flex-col gap-4 h-full overflow-hidden">
             <div className={`p-4 rounded-2xl relative overflow-hidden transition-all ${isDark ? 'bg-gradient-to-br from-blue-900/40 to-slate-900 border border-blue-500/20' : 'bg-gradient-to-br from-blue-50 to-white border border-blue-100'}`}>
                 <div className="flex items-center gap-2 mb-3">
                     <Brain size={16} className="text-blue-500" />
-                    <h4 className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>Saran Tindakan</h4>
+                    <h4 className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>{t('emrWorkspace.procedures.suggestionTitle')}</h4>
                 </div>
                 <div className="flex flex-wrap gap-2 relative z-10">
                     {(() => {
-                        const correctProcs = patient.hidden?.correctProcedures || [];
+                        const correctProcs = patient.hidden?.correctProcedures?.length
+                            ? patient.hidden.correctProcedures
+                            : (patient.medicalData?.correctProcedures || []);
                         let suggestions;
                         if (correctProcs.length > 0) {
                             suggestions = correctProcs.map(id => {
@@ -54,7 +62,7 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
                         if (suggestions.length === 0) {
                             return (
                                 <p className={`text-[10px] italic ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                                    Tidak ada saran tindakan khusus. Gunakan pencarian di bawah jika diperlukan.
+                                    {t('emrWorkspace.procedures.noSpecificSuggestion')}
                                 </p>
                             );
                         }
@@ -67,7 +75,7 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
                                     : (isDark ? 'bg-slate-800 text-blue-300 border-blue-500/30 hover:bg-blue-500/20' : 'bg-white text-blue-700 border-blue-200 hover:bg-blue-50')}`}
                             >
                                 {(selectedProcedures.some(x => (x.id || x.code) === proc.id || (x.id || x.code) === proc.code)) && <Check size={10} className="inline mr-1" />}
-                                {proc.name}
+                                {localize(proc.name)}
                             </button>
                         ));
                     })()}
@@ -78,7 +86,7 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
                 <Search size={14} className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                 <input
                     type="text"
-                    placeholder="Cari kode atau nama tindakan (misal: 99.21 atau Injeksi)..."
+                    placeholder={t('emrWorkspace.procedures.searchPlaceholder')}
                     className={`w-full pl-9 pr-4 py-2.5 rounded-xl border-2 text-xs transition-all outline-none font-bold ${isDark
                         ? 'bg-slate-900/50 border-slate-800 text-white focus:border-blue-500 focus:bg-slate-900 shadow-inner'
                         : 'bg-slate-50 border-slate-100 text-slate-800 focus:border-blue-500 focus:bg-white'}`}
@@ -97,7 +105,7 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
                                     <span className={`font-black ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>{p.code}</span>
                                     <span className={`text-[9px] font-black uppercase tracking-widest ${isDark ? 'text-slate-600' : 'text-slate-300'}`}>ICD9-CM</span>
                                 </div>
-                                <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{p.name}</span>
+                                <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{localize(p.name)}</span>
                             </button>
                         ))}
                     </div>
@@ -106,7 +114,7 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
 
             <div className="flex-1 overflow-y-auto pr-1 thin-scrollbar space-y-4">
                 <div>
-                    <h4 className={`text-[9px] font-black uppercase tracking-widest mb-3 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Tindakan Terpilih</h4>
+                    <h4 className={`text-[9px] font-black uppercase tracking-widest mb-3 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('emrWorkspace.procedures.selectedTitle')}</h4>
                     <div className="flex flex-wrap gap-2">
                         {selectedProcedures.map(p => {
                             const pId = p.id || p.code;
@@ -114,7 +122,7 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
                             return (
                                 <div key={pId} className={`px-3 py-2 rounded-xl border flex items-center gap-2 animate-fadeIn ${isDark ? 'bg-blue-500/10 border-blue-500/30 text-blue-300' : 'bg-blue-50 border-blue-100 text-blue-700'}`}>
                                     <Scissors size={12} className="opacity-50" />
-                                    <span className="text-[10px] font-black uppercase tracking-tight">{p.code}: {p.name}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-tight">{p.code}: {localize(p.name)}</span>
                                     {wikiKey && (
                                         <button onClick={() => openWiki(wikiKey)} className="hover:text-blue-500 transition-colors">
                                             <Info size={12} />
@@ -128,14 +136,14 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
                         })}
                         {selectedProcedures.length === 0 && (
                             <div className="w-full py-8 text-center opacity-30">
-                                <p className="text-[10px] font-black uppercase tracking-widest italic">Belum ada tindakan</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest italic">{t('emrWorkspace.procedures.emptySelected')}</p>
                             </div>
                         )}
                     </div>
                 </div>
 
                 <div>
-                    <h4 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Tindakan Umum</h4>
+                    <h4 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('emrWorkspace.procedures.commonTitle')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {COMMON_PROCEDURES.map(proc => {
                             const _isSelected = selectedProcedures.includes(proc.id) || selectedProcedures.includes(proc.code);
@@ -152,7 +160,7 @@ export default function ProceduresTab({ patient, isDark, icd9Query, setIcd9Query
                                             <span className={`text-[9px] font-black ${selectedProcedures.some(x => (x.id || x.code) === proc.id || (x.id || x.code) === proc.code) ? 'text-blue-200' : 'text-blue-500'}`}>{proc.code}</span>
                                             <span className={`text-[8px] font-bold ${selectedProcedures.some(x => (x.id || x.code) === proc.id || (x.id || x.code) === proc.code) ? 'text-blue-300' : 'text-slate-400'}`}>Rp {proc.cost.toLocaleString('id-ID')}</span>
                                         </div>
-                                        <span className="text-xs font-bold truncate">{proc.name}</span>
+                                        <span className="text-xs font-bold truncate">{localize(proc.name)}</span>
                                     </div>
                                     {selectedProcedures.some(x => (x.id || x.code) === proc.id || (x.id || x.code) === proc.code) ? <CheckCircle size={14} /> : <Plus size={14} className="opacity-20" />}
                                 </button>

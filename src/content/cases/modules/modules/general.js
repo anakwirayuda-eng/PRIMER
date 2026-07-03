@@ -80,7 +80,7 @@ export const GENERAL_CASES = [
         correctProcedures: [],
         requiredEducation: ['diet_balanced', 'regular_exercise', 'sleep_hygiene'],
         risk: 'low', nonReferrable: true, referralExceptions: [],
-        differentialDiagnosis: []
+        differentialDiagnosis: ['Z13.9', 'Z00.8']
     },
     // === SKDI 1-3 REFERRAL CASES (Endocrine) ===
     {
@@ -102,7 +102,7 @@ export const GENERAL_CASES = [
             rpk: [], sosial: []
         },
         essentialQuestions: ['q_main', 'q_polyuria'],
-        anamnesis: ["Lemas, napas cepat dalam, bau aseton.", "Kencing terus, minum banyak, DM baru, belum kontrol."],
+        anamnesis: ["Anak saya lemas sekali, napasnya cepat dalam, dan mulutnya bau aseton dok.", "Beberapa minggu ini anak saya kencing terus, minum banyak, badannya makin kurus, dan diabetesnya baru ketahuan."],
         physicalExamFindings: { general: "Somnolen, dehidrasi berat, napas Kussmaul.", vitals: "TD 90/60, N 120x, RR 32x (Kussmaul), S 37°C", skin: "Turgor menurun, mukosa kering. BAU ASETON dari pernapasan." },
         labs: { "GDS": { result: "480 mg/dL", cost: 15000 }, "Urinalisa": { result: "Glukosa +4, Keton +3", cost: 30000 } },
         vitals: { temp: 37, bp: '90/60', hr: 120, rr: 32 },
@@ -178,7 +178,7 @@ export const GENERAL_CASES = [
         category: 'General',
         symptoms: ['Obesitas sentral', 'Hipertensi', 'Hiperglikemia', 'Dislipidemia', 'Lingkar perut besar'],
         clue: "Kriteria IDF (≥3 dari 5): LP >90cm (pria)/80cm (wanita) + TG >150 + HDL <40(pria)/50(wanita) + TD >130/85 + GDP >100. Kasus screening komprehensif. Intervensi gaya hidup + obati masing-masing komponen.",
-        relevantLabs: ['lab_lipid_profile', 'lab_glucose'],
+        relevantLabs: ['Profil Lipid', 'GDP'],
         anamnesisQuestions: {
             keluhan_utama: [{ id: 'q_main', text: 'Ada keluhan apa pak?', response: 'Saya cuma mau medical check-up dok, perut makin gendut, saya khawatir.', sentiment: 'confirmation', priority: 'essential' }],
             rps: [
@@ -191,7 +191,13 @@ export const GENERAL_CASES = [
         essentialQuestions: ['q_main', 'q_lifestyle'],
         anamnesis: ["Medical check-up, perut gendut, khawatir.", "Banyak gorengan, jarang olahraga, keluarga DM dan HT."],
         physicalExamFindings: { general: "Obesitas sentral, gizi lebih.", vitals: "TD 145/90, N 84x, RR 18x, S 36.7°C", anthropometry: "LP: 102 cm. BMI: 30.5. Acanthosis nigricans (+) leher dan aksila." },
-        labs: { "GDP": { result: "118 mg/dL", cost: 20000 }, "Kolesterol Total": { result: "245 mg/dL", cost: 40000 }, "Trigliserida": { result: "210 mg/dL", cost: 40000 }, "HDL": { result: "35 mg/dL", cost: 40000 } },
+        labs: {
+            "GDP": { result: "118 mg/dL", cost: 20000 },
+            "Profil Lipid": { result: "Kolesterol Total 245 mg/dL, Trigliserida 210 mg/dL, HDL 35 mg/dL", cost: 50000 },
+            "Kolesterol Total": { result: "245 mg/dL", cost: 40000 },
+            "Trigliserida": { result: "210 mg/dL", cost: 40000 },
+            "HDL": { result: "35 mg/dL", cost: 40000 }
+        },
         vitals: { temp: 36.7, bp: '145/90', hr: 84, rr: 18 },
         correctTreatment: ['metformin_500', 'simvastatin_20', 'amlodipine_5'],
         correctProcedures: ['lingkar_perut', 'bmi_calculation'],

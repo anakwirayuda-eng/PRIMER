@@ -8,9 +8,10 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { ICD10_DB } from '../src/data/ICD10.js';
 import { ICD10_ALIASES } from '../src/data/ICD10_ALIASES.js';
+import { normalizeIcd10OriginalIndo } from '../src/data/icd10OriginalIndoOverrides.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,8 @@ const warnings = [];
 let totalTests = 0;
 let passedTests = 0;
 
+const LOCALE_ARTIFACT_PATTERN = /(â€¢|â€“|â€”|â€|â†|âœ|Ã|Â|ðŸ|ï¸|�)/;
+
 function assert(test, label, details = '') {
     totalTests++;
     if (test) { passedTests++; }
@@ -28,9 +31,167 @@ function assert(test, label, details = '') {
 }
 function warn(label, details = '') { warnings.push({ label, details }); }
 
+function isPlainObject(value) {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function mergeLocale(base, extension) {
+    if (Array.isArray(base) && Array.isArray(extension)) {
+        return extension;
+    }
+
+    if (isPlainObject(base) && isPlainObject(extension)) {
+        const merged = { ...base };
+        Object.entries(extension).forEach(([key, value]) => {
+            merged[key] = key in merged ? mergeLocale(merged[key], value) : value;
+        });
+        return merged;
+    }
+
+    return extension ?? base;
+}
+
+function walkStringLeaves(value, visitor, currentPath = []) {
+    if (typeof value === 'string') {
+        visitor(value, currentPath.join('.'));
+        return;
+    }
+
+    if (Array.isArray(value)) {
+        value.forEach((item, index) => walkStringLeaves(item, visitor, [...currentPath, String(index)]));
+        return;
+    }
+
+    if (value && typeof value === 'object') {
+        Object.entries(value).forEach(([key, nested]) => {
+            walkStringLeaves(nested, visitor, [...currentPath, key]);
+        });
+    }
+}
+
+function collectLeafPaths(value, currentPath = [], leaves = []) {
+    if (typeof value === 'string') {
+        leaves.push(currentPath.join('.'));
+        return leaves;
+    }
+
+    if (Array.isArray(value)) {
+        value.forEach((item, index) => collectLeafPaths(item, [...currentPath, String(index)], leaves));
+        return leaves;
+    }
+
+    if (value && typeof value === 'object') {
+        Object.entries(value).forEach(([key, nested]) => {
+            collectLeafPaths(nested, [...currentPath, key], leaves);
+        });
+    }
+
+    return leaves;
+}
+
+async function loadLocaleResource(resourcePath) {
+    const absolutePath = path.join(ROOT, resourcePath);
+    if (resourcePath.endsWith('.json')) {
+        return JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
+    }
+
+    const imported = await import(pathToFileURL(absolutePath).href);
+    return imported.default;
+}
+
 console.log('═══════════════════════════════════════════════════════════');
 console.log('  T2: i18n TRANSLATION QUALITY GATE');
 console.log('═══════════════════════════════════════════════════════════\n');
+
+// ────────────────────────────────────────────────────
+// PHASE 0: Locale Resource Encoding Integrity
+// ────────────────────────────────────────────────────
+console.log('▶ PHASE 0: Locale Resource Encoding Integrity\n');
+
+const localeResources = [
+    'src/locales/en.json',
+    'src/locales/id.json',
+    'src/locales/emergency/en.js',
+    'src/locales/emergency/id.js',
+    'src/locales/wilayah/en.js',
+    'src/locales/wilayah/id.js',
+    'src/locales/emr/en.js',
+    'src/locales/emr/id.js'
+];
+
+let localeStringCount = 0;
+let localeArtifactCount = 0;
+const localeResourceData = {};
+
+for (const resourcePath of localeResources) {
+    const localeData = await loadLocaleResource(resourcePath);
+    localeResourceData[resourcePath] = localeData;
+    walkStringLeaves(localeData, (text, textPath) => {
+        localeStringCount++;
+        if (LOCALE_ARTIFACT_PATTERN.test(text)) {
+            localeArtifactCount++;
+            bugs.push({
+                label: `Locale artifact in ${resourcePath}`,
+                details: `${textPath} → ${text}`
+            });
+        }
+    });
+}
+
+console.log(`  Locale resources checked: ${localeResources.length}`);
+console.log(`  Locale strings checked: ${localeStringCount}`);
+console.log(`  Locale artifacts: ${localeArtifactCount}`);
+console.log('  ✅ Phase 0 complete\n');
+
+// ────────────────────────────────────────────────────
+// PHASE 0B: Supported Locale Key Parity
+// ────────────────────────────────────────────────────
+console.log('▶ PHASE 0B: Supported Locale Key Parity\n');
+
+const mergedEnLocale = mergeLocale(
+    mergeLocale(
+        mergeLocale(
+            localeResourceData['src/locales/en.json'],
+            localeResourceData['src/locales/wilayah/en.js']
+        ),
+        localeResourceData['src/locales/emergency/en.js']
+    ),
+    localeResourceData['src/locales/emr/en.js']
+);
+const mergedIdLocale = mergeLocale(
+    mergeLocale(
+        mergeLocale(
+            localeResourceData['src/locales/id.json'],
+            localeResourceData['src/locales/wilayah/id.js']
+        ),
+        localeResourceData['src/locales/emergency/id.js']
+    ),
+    localeResourceData['src/locales/emr/id.js']
+);
+
+const enLeafKeys = new Set(collectLeafPaths(mergedEnLocale));
+const idLeafKeys = new Set(collectLeafPaths(mergedIdLocale));
+
+const onlyEnKeys = [...enLeafKeys].filter((key) => !idLeafKeys.has(key));
+const onlyIdKeys = [...idLeafKeys].filter((key) => !enLeafKeys.has(key));
+
+onlyEnKeys.forEach((key) => {
+    bugs.push({
+        label: 'Missing locale key in Indonesian resources',
+        details: key
+    });
+});
+
+onlyIdKeys.forEach((key) => {
+    bugs.push({
+        label: 'Missing locale key in English resources',
+        details: key
+    });
+});
+
+console.log(`  EN-only keys: ${onlyEnKeys.length}`);
+console.log(`  ID-only keys: ${onlyIdKeys.length}`);
+console.log('  ✅ Phase 0B complete\n');
 
 // ────────────────────────────────────────────────────
 // PHASE 1: ICD10_DB — Curated Names Quality
@@ -101,39 +262,40 @@ for (const d of masterData) {
     const indo = d.nama_icd_indo || '';
     const code = d.kode_icd || '';
     const eng = d.nama_icd || '';
+    const normalizedIndo = normalizeIcd10OriginalIndo({ code, english: eng, indo });
 
-    if (!indo || indo.trim().length === 0) continue;
+    if (!normalizedIndo || normalizedIndo.trim().length === 0) continue;
 
     // 2a. Check for known dangerous mistranslations
     for (const danger of DANGEROUS_TRANSLATIONS) {
         if (code === danger.code) {
-            const hasBad = indo.toLowerCase().includes(danger.badText);
+            const hasBad = normalizedIndo.toLowerCase().includes(danger.badText);
             if (hasBad) {
                 dangerousCount++;
-                warn(`DANGEROUS: ${code} "${eng}" → "${indo}" (should contain "${danger.correctOrgan || danger.correct}")`);
+                warn(`DANGEROUS: ${code} "${eng}" → "${normalizedIndo}" (should contain "${danger.correctOrgan || danger.correct}")`);
             }
         }
     }
 
     // 2b. Encoding artifacts
-    if (/\?\?|â€|Ã[^a-z]|Â/i.test(indo)) {
+    if (/\?\?|â€|Ã[^a-z]|Â/i.test(normalizedIndo)) {
         encodingBadCount++;
-        if (encodingBadCount <= 5) warn(`Encoding artifact: ${code} → "${indo.substring(0, 60)}"`);
+        if (encodingBadCount <= 5) warn(`Encoding artifact: ${code} → "${normalizedIndo.substring(0, 60)}"`);
     }
 
     // 2c. Untranslated English medical terms left in Indonesian field
     const englishTerms = ['cutaneous', 'overlapping', 'unspecified', 'malignant', 'benign'];
     for (const term of englishTerms) {
-        if (indo.toLowerCase().includes(term) && !eng.toLowerCase().includes('(' + term)) {
+        if (normalizedIndo.toLowerCase().includes(term) && !eng.toLowerCase().includes('(' + term)) {
             untranslatedCount++;
             break; // count once per entry
         }
     }
 
     // 2d. Inverted grammar — dangling preposition at end
-    if (/\b(dengan|dari|untuk|pada|oleh)\s*$/i.test(indo.trim())) {
+    if (/\b(dengan|dari|untuk|pada|oleh)\s*$/i.test(normalizedIndo.trim())) {
         invertedGrammarCount++;
-        if (invertedGrammarCount <= 5) warn(`Inverted grammar: ${code} → "${indo.substring(0, 60)}"`);
+        if (invertedGrammarCount <= 5) warn(`Inverted grammar: ${code} → "${normalizedIndo.substring(0, 60)}"`);
     }
 
     // 2e. Classic homonym errors
@@ -143,7 +305,7 @@ for (const d of masterData) {
         { eng: 'sites', bad: 'situs', correct: 'lokasi' },
     ];
     for (const h of homonymChecks) {
-        if (eng.toLowerCase().includes(h.eng) && indo.toLowerCase().includes(h.bad)) {
+        if (eng.toLowerCase().includes(h.eng) && normalizedIndo.toLowerCase().includes(h.bad)) {
             homonymErrorCount++;
             if (homonymErrorCount <= 5) warn(`Homonym error: "${h.eng}" → "${h.bad}" (should: "${h.correct}") in ${code}`);
         }

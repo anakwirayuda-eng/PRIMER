@@ -10,11 +10,13 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
 import { CheckCircle2, Circle, Trophy, CalendarClock, Sparkles, BookOpen } from 'lucide-react';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 
 const QuestBoard = () => {
+    const { t } = useTranslation();
     const { activeQuests, claimQuest, activeStories } = useGame();
 
     const dailyQuests = activeQuests.filter(q => q.type === 'daily');
@@ -101,7 +103,7 @@ const QuestBoard = () => {
                                 onClick={() => claimQuest(quest.id)}
                                 className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded shadow-sm"
                             >
-                                KLAIM
+                                {t('questBoard.claim')}
                             </button>
                         ) : (
                             <Circle size={18} className="text-slate-300" />
@@ -115,7 +117,7 @@ const QuestBoard = () => {
     if (activeQuests.length === 0 && (!activeStories || activeStories.length === 0)) {
         return (
             <div className="p-4 text-center text-slate-500 text-sm">
-                Belum ada misi atau cerita aktif.
+                {t('questBoard.empty')}
             </div>
         );
     }
@@ -125,9 +127,9 @@ const QuestBoard = () => {
             <div className="p-4 bg-white border-b border-slate-200 sticky top-0 z-10">
                 <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
                     <Trophy className="text-amber-500" size={20} />
-                    Misi Harian
+                    {t('questBoard.title')}
                 </h3>
-                <p className="text-xs text-slate-500">Selesaikan misi untuk dapat XP & Reputasi</p>
+                <p className="text-xs text-slate-500">{t('questBoard.subtitle')}</p>
             </div>
 
             <div className="p-4 space-y-6">
@@ -135,7 +137,7 @@ const QuestBoard = () => {
                 {activeStories && activeStories.filter(s => !s.completed).length > 0 && (
                     <div className="animate-in slide-in-from-top-4 duration-500 mb-6">
                         <h4 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                            <BookOpen size={12} /> Cerita & Investigasi
+                            <BookOpen size={12} /> {t('questBoard.stories')}
                         </h4>
                         {activeStories.filter(s => !s.completed).map(renderStoryItem)}
                     </div>
@@ -144,12 +146,12 @@ const QuestBoard = () => {
                 {/* Daily Quests Section */}
                 <div>
                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1">
-                        <CalendarClock size={12} /> Harian
+                        <CalendarClock size={12} /> {t('questBoard.daily')}
                     </h4>
                     {dailyQuests.length > 0 ? (
                         dailyQuests.map(renderQuestItem)
                     ) : (
-                        <p className="text-xs text-slate-400 italic">Semua misi harian selesai!</p>
+                        <p className="text-xs text-slate-400 italic">{t('questBoard.dailyDone')}</p>
                     )}
                 </div>
 
@@ -157,7 +159,7 @@ const QuestBoard = () => {
                 {weeklyQuests.length > 0 && (
                     <div>
                         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1">
-                            <Trophy size={12} /> Mingguan
+                            <Trophy size={12} /> {t('questBoard.weekly')}
                         </h4>
                         {weeklyQuests.map(renderQuestItem)}
                     </div>

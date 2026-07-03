@@ -1,4 +1,4 @@
-# HIGH-PRECISION INVARIANT SPEC (PRIMERA)
+﻿﻿# HIGH-PRECISION INVARIANT SPEC (PRIMERA)
 
 Berdasarkan telaah kritis terhadap arsitektur `useGameStore`, berikut adalah spesifikasi invariant yang harus ditegakkan secara runtime oleh `engine-invariants-runtime.mjs`.
 

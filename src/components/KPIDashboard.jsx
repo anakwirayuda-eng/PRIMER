@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 import {
@@ -69,20 +70,27 @@ const DASHBOARD_CSS = `
 
 // 🌟 HACK 1: ROLLING NUMBER EFFECT
 function RollingNumber({ value, isCurrency = false }) {
-    const [display, setDisplay] = useState(0);
+    const numericValue = Math.abs(Number(value) || 0);
+    const [display, setDisplay] = useState(numericValue);
+
     useEffect(() => {
         let start = 0;
         const duration = 1000;
-        if (value === 0 || value == null) { setDisplay(0); return; }
-        const numValue = Math.abs(Number(value) || 0);
-        const increment = numValue / (duration / 16);
+        let resetTimer = null;
+
+        if (numericValue === 0) {
+            resetTimer = setTimeout(() => setDisplay(0), 0);
+            return () => clearTimeout(resetTimer);
+        }
+
+        const increment = numericValue / (duration / 16);
         const timer = setInterval(() => {
             start += increment;
-            if (start >= numValue) { setDisplay(numValue); clearInterval(timer); }
+            if (start >= numericValue) { setDisplay(numericValue); clearInterval(timer); }
             else setDisplay(Math.floor(start));
         }, 16);
         return () => clearInterval(timer);
-    }, [value]);
+    }, [numericValue]);
 
     const numVal = Number(display) || 0;
     if (isCurrency) {
@@ -97,7 +105,8 @@ const generateMedHash = (str, day) => {
     return `0x${Math.abs(code * (day || 1) * 13).toString(16).toUpperCase().padStart(4, '0')}`;
 };
 
-function TacticalKPICard({ title, value, unit, icon: Icon, colorTheme, subtext, trend, info, openWiki, isDark, delay = 0 }) {
+function TacticalKPICard({ title, value, unit, icon, colorTheme, subtext, trend, info, openWiki, isDark, delay = 0 }) {
+    const CardIcon = icon;
     const themes = {
         emerald: isDark ? 'text-emerald-400' : 'text-emerald-700',
         rose: isDark ? 'text-rose-400' : 'text-rose-700',
@@ -127,7 +136,7 @@ function TacticalKPICard({ title, value, unit, icon: Icon, colorTheme, subtext, 
                 </div>
 
                 <div className={`p-3 rounded-xl border transition-transform group-hover:scale-110 shadow-inner ${isDark ? 'bg-slate-900/80 border-slate-700' : 'bg-slate-50 border-slate-200'} ${themes[colorTheme]}`}>
-                    <Icon size={20} strokeWidth={2.5} />
+                    <CardIcon size={20} strokeWidth={2.5} />
                 </div>
             </div>
 
@@ -167,12 +176,10 @@ function CyberProgressBar({ value, max = 100, colorTheme = 'emerald', label, inf
 }
 
 export default function KPIDashboard() {
+    const { t } = useTranslation();
     const { stats, kpi, derivedKpis, day, history, queue, monthlyArchive, isWikiOpen, wikiMetric, openWiki, closeWiki } = useGame();
     const { isDark } = useTheme();
     const [activeTab, setActiveTab] = useState('performance');
-    const [renderKey, setRenderKey] = useState(0);
-
-    useEffect(() => { setRenderKey(prev => prev + 1); }, [activeTab]);
 
     const getPerformanceColor = (value, thresholds) => {
         if (value >= thresholds.good) return 'emerald';
@@ -191,14 +198,14 @@ export default function KPIDashboard() {
 
         const dCounts = {};
         todayHistory.forEach(p => {
-            const dx = p.medicalData?.diagnosisName || p.medicalData?.trueDiagnosisCode || 'Belum Diketahui';
+            const dx = p.medicalData?.diagnosisName || p.medicalData?.trueDiagnosisCode || t('kpiDashboard.unknownDiagnosis');
             dCounts[dx] = (dCounts[dx] || 0) + 1;
         });
         const tDiseases = Object.entries(dCounts).sort((a, b) => b[1] - a[1]).slice(0, 8)
             .map(([name, count]) => ({ name, count, percent: (count / (todayHistory.length || 1)) * 100 }));
 
         return { trafficData: tData, topDiseases: tDiseases, totalToday: todayHistory.length + queue.length, clinicalAudit: todayHistory.slice(-10).reverse() };
-    }, [history, queue, day]);
+    }, [history, queue, day, t]);
 
     const { trafficData, topDiseases, totalToday, clinicalAudit } = analytics;
     const maxTraffic = Math.max(...trafficData.map(d => d.value), 2);
@@ -215,37 +222,37 @@ export default function KPIDashboard() {
             )}
 
             {/* TACTICAL HEADER */}
-            <div className={`p-6 shrink-0 relative overflow-hidden border-b z-20 ${isDark ? 'bg-[#0a0f16]/80 backdrop-blur-xl border-slate-800 shadow-[0_10px_30px_rgba(0,0,0,0.5)]' : 'bg-white border-slate-200 shadow-sm'}`}>
-                <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div className="flex items-center gap-4">
+            <div className={`p-4 md:p-6 shrink-0 relative overflow-hidden border-b z-20 ${isDark ? 'bg-[#0a0f16]/80 backdrop-blur-xl border-slate-800 shadow-[0_10px_30px_rgba(0,0,0,0.5)]' : 'bg-white border-slate-200 shadow-sm'}`}>
+                <div className="relative z-10 flex flex-col justify-between gap-4 md:gap-6 lg:flex-row lg:items-end">
+                    <div className="flex items-center gap-3 md:gap-4">
                         <div className={`p-3 rounded-2xl border ${isDark ? 'bg-slate-900 border-indigo-500/30 text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)]' : 'bg-indigo-50 border-indigo-200 text-indigo-600'}`}>
                             <Radar size={28} className="animate-pulse" />
                         </div>
                         <div>
-                            <h1 className={`text-2xl md:text-3xl font-black tracking-[0.15em] uppercase leading-none ${isDark ? 'text-white drop-shadow-lg' : 'text-slate-800'}`}>
+                            <h1 className={`text-xl sm:text-2xl md:text-3xl font-black tracking-widest sm:tracking-[0.15em] uppercase leading-none ${isDark ? 'text-white drop-shadow-lg' : 'text-slate-800'}`}>
                                 AEGIS <span className="text-indigo-500">OVERWATCH</span>
                             </h1>
                             <div className={`flex items-center gap-2 mt-1.5 text-[10px] font-mono tracking-widest uppercase font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10B981]" />
-                                LIVE TELEMETRY // DAY {day}
+                                {t('kpiDashboard.header.liveTelemetry', { day })}
                             </div>
                         </div>
                     </div>
 
-                    <div className={`flex rounded-2xl p-1.5 border shadow-inner overflow-x-auto w-full md:w-auto thin-scrollbar ${isDark ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-100 border-slate-200'}`}>
+                    <div className={`flex w-full overflow-x-auto rounded-2xl border p-1 shadow-inner thin-scrollbar lg:w-auto ${isDark ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-100 border-slate-200'}`}>
                         {[
-                            { id: 'performance', label: 'Telemetry', icon: Target },
-                            { id: 'analytics', label: 'Radar', icon: Activity },
-                            { id: 'audit', label: 'Forensic', icon: Stethoscope },
-                            { id: 'monthly', label: 'Vault', icon: Database }
+                            { id: 'performance', label: t('kpiDashboard.tabs.telemetry'), icon: Target },
+                            { id: 'analytics', label: t('kpiDashboard.tabs.radar'), icon: Activity },
+                            { id: 'audit', label: t('kpiDashboard.tabs.forensic'), icon: Stethoscope },
+                            { id: 'monthly', label: t('kpiDashboard.tabs.vault'), icon: Database }
                         ].map(tab => (
                             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                                className={`tactical-tab flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap
+                                className={`tactical-tab flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-widest sm:px-5 md:px-6
                                     ${activeTab === tab.id
                                         ? (isDark ? 'active bg-indigo-500/10' : 'bg-white text-indigo-600 shadow-sm border border-slate-200')
                                         : (isDark ? 'text-slate-500 hover:text-slate-300 hover:bg-slate-800' : 'text-slate-500 hover:text-indigo-500 hover:bg-white/50')}`}>
                                 <tab.icon size={14} className={activeTab === tab.id ? 'animate-pulse' : ''} />
-                                <span className="hidden sm:inline">DIR://</span>{tab.label}
+                                <span className="hidden lg:inline">DIR://</span>{tab.label}
                             </button>
                         ))}
                     </div>
@@ -253,53 +260,53 @@ export default function KPIDashboard() {
             </div>
 
             {/* MAIN WORKSPACE */}
-            <div key={renderKey} className="flex-1 overflow-y-auto p-4 md:p-8 thin-scrollbar relative z-10">
+            <div key={activeTab} className="flex-1 overflow-y-auto p-4 md:p-6 xl:p-8 thin-scrollbar relative z-10">
 
                 {/* TAB: PERFORMANCE */}
                 {activeTab === 'performance' && (
-                    <div className="space-y-8 max-w-7xl mx-auto">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                            <TacticalKPICard title="Total Entitas" value={kpi.totalPatients} icon={Users} colorTheme="sky" isDark={isDark} openWiki={openWiki} delay={0.1} subtext={`${kpi.bpjsPatients} JKN | ${kpi.umumPatients} UMUM`} />
-                            <TacticalKPICard title="Akurasi Diagnostik" value={derivedKpis.clinicalAccuracy} unit="%" icon={Target} isDark={isDark} openWiki={openWiki} delay={0.2} colorTheme={getPerformanceColor(derivedKpis.clinicalAccuracy, { good: 85, fair: 70 })} info={{ wikiKey: 'accuracy' }} />
-                            <TacticalKPICard title="Rasio Evakuasi" value={derivedKpis.referralRate} unit="%" icon={Activity} isDark={isDark} openWiki={openWiki} delay={0.3} colorTheme={derivedKpis.referralRate <= 15 ? 'emerald' : 'rose'} subtext="TARGET: < 15%" info={{ wikiKey: 'rrns' }} />
-                            <TacticalKPICard title="RRNS (Deviasi)" value={derivedKpis.rrns} unit="%" icon={AlertTriangle} isDark={isDark} openWiki={openWiki} delay={0.4} colorTheme={derivedKpis.rrns <= 2 ? 'emerald' : 'amber'} subtext="Clinical Waste" info={{ wikiKey: 'rrns' }} />
+                    <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5 xl:grid-cols-4">
+                            <TacticalKPICard title={t('kpiDashboard.cards.totalEntities')} value={kpi.totalPatients} icon={Users} colorTheme="sky" isDark={isDark} openWiki={openWiki} delay={0.1} subtext={t('kpiDashboard.cards.patientMix', { bpjs: kpi.bpjsPatients, umum: kpi.umumPatients })} />
+                            <TacticalKPICard title={t('kpiDashboard.cards.diagnosticAccuracy')} value={derivedKpis.clinicalAccuracy} unit="%" icon={Target} isDark={isDark} openWiki={openWiki} delay={0.2} colorTheme={getPerformanceColor(derivedKpis.clinicalAccuracy, { good: 85, fair: 70 })} info={{ wikiKey: 'accuracy' }} />
+                            <TacticalKPICard title={t('kpiDashboard.cards.referralRatio')} value={derivedKpis.referralRate} unit="%" icon={Activity} isDark={isDark} openWiki={openWiki} delay={0.3} colorTheme={derivedKpis.referralRate <= 15 ? 'emerald' : 'rose'} subtext={t('kpiDashboard.cards.targetUnder15')} info={{ wikiKey: 'rrns' }} />
+                            <TacticalKPICard title={t('kpiDashboard.cards.rrnsDeviation')} value={derivedKpis.rrns} unit="%" icon={AlertTriangle} isDark={isDark} openWiki={openWiki} delay={0.4} colorTheme={derivedKpis.rrns <= 2 ? 'emerald' : 'amber'} subtext={t('kpiDashboard.cards.clinicalWaste')} info={{ wikiKey: 'rrns' }} />
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <div className={`lg:col-span-2 rounded-[32px] p-6 md:p-8 border ${isDark ? 'tactical-glass' : 'tactical-glass-light'}`} style={{ animation: 'db-fade-up 0.5s ease-out forwards 0.5s', opacity: 0 }}>
+                        <div className="grid grid-cols-1 gap-4 md:gap-6 xl:grid-cols-3">
+                            <div className={`xl:col-span-2 rounded-[32px] border p-5 md:p-6 xl:p-8 ${isDark ? 'tactical-glass' : 'tactical-glass-light'}`} style={{ animation: 'db-fade-up 0.5s ease-out forwards 0.5s', opacity: 0 }}>
                                 <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 flex items-center gap-2 border-b pb-3 font-mono ${isDark ? 'text-indigo-400 border-slate-700/50' : 'text-indigo-600 border-slate-200'}`}>
-                                    <Award size={14} /> QUALITY & SAFETY MATRIX
+                                    <Award size={14} /> {t('kpiDashboard.sections.qualityMatrix')}
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                                    <CyberProgressBar label="Validitas Terapi" value={derivedKpis.treatmentAppropriateRate} colorTheme="indigo" isDark={isDark} info={{ wikiKey: 'treatment' }} openWiki={openWiki} delay={0.6} />
-                                    <CyberProgressBar label="Antibiotic Defense" value={derivedKpis.antibioticStewardship} colorTheme="emerald" isDark={isDark} info={{ wikiKey: 'antibiotics' }} openWiki={openWiki} delay={0.7} />
-                                    <CyberProgressBar label="Efisiensi Logistik" value={derivedKpis.testEfficiency || 100} colorTheme="sky" isDark={isDark} info={{ wikiKey: 'inventory' }} openWiki={openWiki} delay={0.8} />
-                                    <CyberProgressBar label="Social Reputation" value={derivedKpis.avgSatisfaction} colorTheme="amber" isDark={isDark} info={{ wikiKey: 'reputation' }} openWiki={openWiki} delay={0.9} />
+                                <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 xl:gap-x-12">
+                                    <CyberProgressBar label={t('kpiDashboard.metrics.therapyValidity')} value={derivedKpis.treatmentAppropriateRate} colorTheme="indigo" isDark={isDark} info={{ wikiKey: 'treatment' }} openWiki={openWiki} delay={0.6} />
+                                    <CyberProgressBar label={t('kpiDashboard.metrics.antibioticDefense')} value={derivedKpis.antibioticStewardship} colorTheme="emerald" isDark={isDark} info={{ wikiKey: 'antibiotics' }} openWiki={openWiki} delay={0.7} />
+                                    <CyberProgressBar label={t('kpiDashboard.metrics.logisticsEfficiency')} value={derivedKpis.testEfficiency || 100} colorTheme="sky" isDark={isDark} info={{ wikiKey: 'inventory' }} openWiki={openWiki} delay={0.8} />
+                                    <CyberProgressBar label={t('kpiDashboard.metrics.socialReputation')} value={derivedKpis.avgSatisfaction} colorTheme="amber" isDark={isDark} info={{ wikiKey: 'reputation' }} openWiki={openWiki} delay={0.9} />
                                 </div>
                             </div>
 
                             {/* Financial Vault */}
-                            <div className={`lg:col-span-1 rounded-3xl p-6 md:p-8 relative overflow-hidden border shadow-2xl flex flex-col justify-between ${isDark ? 'bg-[#020617] border-slate-800' : 'bg-slate-900 border-slate-800 text-white'}`} style={{ animation: 'db-fade-up 0.5s ease-out forwards 0.6s', opacity: 0 }}>
+                            <div className={`rounded-3xl border p-5 md:p-6 xl:p-8 relative overflow-hidden shadow-2xl flex flex-col justify-between ${isDark ? 'bg-[#020617] border-slate-800' : 'bg-slate-900 border-slate-800 text-white'}`} style={{ animation: 'db-fade-up 0.5s ease-out forwards 0.6s', opacity: 0 }}>
                                 <div className="absolute -right-10 -bottom-10 opacity-[0.03] pointer-events-none"><DollarSign size={200} /></div>
                                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent" />
 
                                 <div>
                                     <h3 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-2 font-mono">
-                                        <Briefcase size={14} /> FINANCIAL LEDGER
+                                        <Briefcase size={14} /> {t('kpiDashboard.sections.financialLedger')}
                                     </h3>
                                     <div className="mb-6">
-                                        <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest mb-1">TOTAL DANA AKTIF</p>
+                                        <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest mb-1">{t('kpiDashboard.finance.activeFunds')}</p>
                                         <p className="text-3xl font-black text-emerald-400 font-mono tracking-tighter" style={{ textShadow: '0 0 15px rgba(16,185,129,0.4)' }}>
                                             <span className="text-slate-500 text-2xl mr-1">Rp</span><RollingNumber value={derivedKpis.availableFunds ?? (stats.kapitasi + stats.pendapatanUmum)} isCurrency />
                                         </p>
                                     </div>
                                     <div className="space-y-4 pt-4 border-t border-slate-800">
                                         <div className="flex justify-between items-end">
-                                            <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">BEBAN TERCATAT</p>
+                                            <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">{t('kpiDashboard.finance.recordedExpenses')}</p>
                                             <p className="text-sm font-black text-rose-400 font-mono">- Rp <RollingNumber value={derivedKpis.totalExpense} isCurrency /></p>
                                         </div>
                                         <div className="flex justify-between items-end">
-                                            <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">PENDAPATAN UMUM</p>
+                                            <p className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">{t('kpiDashboard.finance.generalRevenue')}</p>
                                             <p className="text-lg font-black font-mono text-emerald-400">
                                                 Rp <RollingNumber value={stats.pendapatanUmum || 0} isCurrency />
                                             </p>
@@ -313,18 +320,18 @@ export default function KPIDashboard() {
 
                 {/* TAB: RADAR ANALYTICS */}
                 {activeTab === 'analytics' && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 gap-5 h-full max-w-7xl mx-auto xl:grid-cols-2 xl:gap-8">
                         <div className={`rounded-[32px] border flex flex-col overflow-hidden relative ${isDark ? 'tactical-glass border-indigo-900/30' : 'tactical-glass-light border-indigo-200'}`}>
-                            <div className="p-8 pb-0 relative z-10">
+                            <div className="p-5 pb-0 md:p-6 md:pb-0 xl:p-8 xl:pb-0 relative z-10">
                                 <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-1 font-mono ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>
-                                    <Activity size={14} className="inline mr-2 -mt-0.5" /> LIVE TRAFFIC SONAR
+                                    <Activity size={14} className="inline mr-2 -mt-0.5" /> {t('kpiDashboard.sections.liveTraffic')}
                                 </h3>
-                                <p className={`text-2xl font-black font-mono tracking-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                                    TOTAL: <span className="text-slate-500"><RollingNumber value={totalToday} /> ENTITIES</span>
+                                <p className={`text-xl sm:text-2xl font-black font-mono tracking-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                                    {t('kpiDashboard.analytics.totalPrefix')}: <span className="text-slate-500"><RollingNumber value={totalToday} /> {t('kpiDashboard.analytics.entities')}</span>
                                 </p>
                             </div>
 
-                            <div className="flex-1 relative mt-6 chart-grid flex items-end px-8 pb-8 min-h-[300px]">
+                            <div className="flex-1 relative mt-4 md:mt-6 chart-grid flex items-end px-5 pb-5 min-h-[260px] md:px-6 md:pb-6 md:min-h-[300px] xl:px-8 xl:pb-8">
                                 {isDark && <div className="radar-scanner" />}
 
                                 <div className={`w-full flex items-end justify-between gap-2 sm:gap-4 h-full relative z-10 border-b-2 pb-2 ${isDark ? 'border-indigo-500/30' : 'border-slate-300'}`}>
@@ -338,7 +345,7 @@ export default function KPIDashboard() {
                                                     )}
                                                 </div>
                                                 <div className={`absolute bottom-[calc(100%+10px)] border text-[10px] font-mono px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none shadow-lg whitespace-nowrap ${isDark ? 'bg-slate-900 border-indigo-500 text-white' : 'bg-white border-indigo-200 text-indigo-700'}`}>
-                                                    {d.value} LOGS
+                                                    {t('kpiDashboard.analytics.logs', { count: d.value })}
                                                 </div>
                                                 <span className="text-[9px] font-mono font-black text-slate-500">{d.label}</span>
                                             </div>
@@ -349,16 +356,16 @@ export default function KPIDashboard() {
                         </div>
 
                         {/* Top Diseases */}
-                        <div className={`rounded-[32px] border p-8 flex flex-col ${isDark ? 'tactical-glass' : 'tactical-glass-light'}`}>
+                        <div className={`rounded-[32px] border p-5 md:p-6 xl:p-8 flex flex-col ${isDark ? 'tactical-glass' : 'tactical-glass-light'}`}>
                             <h3 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-8 flex items-center gap-2 border-b pb-3 font-mono ${isDark ? 'text-rose-400 border-slate-700/50' : 'text-rose-600 border-slate-200'}`}>
-                                <Target size={16} /> EPIDEMIOLOGY TARGETS
+                                <Target size={16} /> {t('kpiDashboard.sections.epidemiologyTargets')}
                             </h3>
                             <div className="flex-1 space-y-5 pr-2 overflow-y-auto thin-scrollbar">
                                 {topDiseases.length > 0 ? topDiseases.map((d, idx) => (
                                     <div key={idx} className="group cursor-default" style={{ animation: `db-fade-up 0.5s ease-out forwards ${idx * 0.1}s`, opacity: 0 }}>
                                         <div className="flex justify-between items-end mb-1.5">
                                             <span className={`font-mono text-[10px] font-black uppercase tracking-widest truncate pr-4 ${isDark ? 'text-slate-300' : 'text-slate-700'} transition-colors`}>{idx + 1}. {d.name}</span>
-                                            <span className="font-mono text-xs font-black text-rose-500">{d.count} <span className="text-[8px] text-slate-500">CASES</span></span>
+                                            <span className="font-mono text-xs font-black text-rose-500">{d.count} <span className="text-[8px] text-slate-500">{t('kpiDashboard.analytics.cases')}</span></span>
                                         </div>
                                         <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-slate-900 border border-slate-800' : 'bg-slate-200'}`}>
                                             <div className={`h-full bg-gradient-to-r from-rose-700 to-rose-500 holo-bar ${isDark ? 'shadow-[0_0_10px_rgba(225,29,72,0.5)]' : ''}`} style={{ width: `${d.percent}%`, animationDelay: `${idx * 0.1}s` }} />
@@ -366,7 +373,7 @@ export default function KPIDashboard() {
                                     </div>
                                 )) : (
                                     <div className="flex flex-col items-center justify-center h-full opacity-30 text-slate-500 text-[10px] font-mono uppercase tracking-widest">
-                                        <Search size={32} className="mb-2" /> SCANNING FOR ANOMALIES...
+                                        <Search size={32} className="mb-2" /> {t('kpiDashboard.analytics.scanning')}
                                     </div>
                                 )}
                             </div>
@@ -377,13 +384,13 @@ export default function KPIDashboard() {
                 {/* TAB: FORENSIC AUDIT */}
                 {activeTab === 'audit' && (
                     <div className="max-w-4xl mx-auto pb-10">
-                        <div className={`flex justify-between items-end mb-6 border-b pb-4 ${isDark ? 'border-slate-700' : 'border-slate-200'}`}>
+                        <div className={`mb-6 flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-end sm:justify-between ${isDark ? 'border-slate-700' : 'border-slate-200'}`}>
                             <div>
-                                <h3 className={`text-2xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>Forensic Audit Logs</h3>
-                                <p className="text-[10px] font-mono text-cyan-500 uppercase tracking-[0.2em] mt-1">&gt; Dekripsi Keputusan Medis (10 Pasien Terakhir)</p>
+                                <h3 className={`text-xl sm:text-2xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>{t('kpiDashboard.audit.title')}</h3>
+                                <p className="text-[10px] font-mono text-cyan-500 uppercase tracking-[0.2em] mt-1">&gt; {t('kpiDashboard.audit.subtitle')}</p>
                             </div>
                             <div className={`font-mono text-[10px] font-black px-3 py-1.5 rounded flex items-center gap-2 ${isDark ? 'text-indigo-400 bg-indigo-950/50 border border-indigo-900' : 'text-indigo-600 bg-indigo-50 border border-indigo-200'}`}>
-                                <Database size={12} /> {clinicalAudit.length} RECORDS
+                                <Database size={12} /> {t('kpiDashboard.audit.records', { count: clinicalAudit.length })}
                             </div>
                         </div>
 
@@ -392,8 +399,12 @@ export default function KPIDashboard() {
                                 // Codex Fix: use decision.diagnoses[] not .diagnosis; exclude transfers from isPerfect
                                 const isTransferOrStabilize = ['sisrute_transferred', 'stabilized', 'delegated'].includes(p.outcomeStatus);
                                 const isPerfect = !isTransferOrStabilize && (p.outcome === 'good' || (p.satisfactionScore && p.satisfactionScore >= 80));
-                                const diagName = p.decision?.diagnoses?.[0] || p.medicalData?.trueDiagnosisCode || p.medicalData?.diagnosisName || 'UNKNOWN';
-                                const actionLabel = p.decision?.action === 'treat' ? 'TREATED' : p.decision?.action === 'refer' ? 'REFERRED' : p.decision?.action || 'N/A';
+                                const diagName = p.decision?.diagnoses?.[0] || p.medicalData?.trueDiagnosisCode || p.medicalData?.diagnosisName || t('kpiDashboard.audit.unknown');
+                                const actionLabel = p.decision?.action === 'treat'
+                                    ? t('kpiDashboard.audit.actions.treated')
+                                    : p.decision?.action === 'refer'
+                                        ? t('kpiDashboard.audit.actions.referred')
+                                        : p.decision?.action || 'N/A';
                                 const logId = generateMedHash(p.name, p.day);
 
                                 return (
@@ -404,7 +415,7 @@ export default function KPIDashboard() {
                                         <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${isPerfect ? 'bg-emerald-500 shadow-[0_0_15px_#10B981]' : 'bg-rose-500 shadow-[0_0_15px_#E11D48]'}`} />
 
                                         <div className={`absolute -right-4 -top-6 text-[64px] font-black opacity-[0.03] transform rotate-12 pointer-events-none uppercase font-serif ${isPerfect ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                            {isPerfect ? 'VERIFIED' : 'REJECTED'}
+                                            {isPerfect ? t('kpiDashboard.audit.verified') : t('kpiDashboard.audit.rejected')}
                                         </div>
 
                                         <div className="flex flex-col md:flex-row md:items-center gap-6 pl-2 relative z-10">
@@ -414,18 +425,20 @@ export default function KPIDashboard() {
                                                         LOG_ID: {logId}
                                                     </span>
                                                     <h4 className={`font-black uppercase tracking-wider truncate text-sm ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{p.name}</h4>
-                                                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border hidden sm:inline ${isDark ? 'text-cyan-500 bg-cyan-950/50 border-cyan-900' : 'text-cyan-600 bg-cyan-50 border-cyan-200'}`}>DAY {p.day}</span>
+                                                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border hidden sm:inline ${isDark ? 'text-cyan-500 bg-cyan-950/50 border-cyan-900' : 'text-cyan-600 bg-cyan-50 border-cyan-200'}`}>
+                                                        {t('kpiDashboard.audit.day', { day: p.day })}
+                                                    </span>
                                                 </div>
 
                                                 <div className="flex gap-4 sm:gap-6 mt-3">
                                                     <div>
-                                                        <p className={`text-[8px] font-mono uppercase tracking-widest mb-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>DIAGNOSIS</p>
+                                                        <p className={`text-[8px] font-mono uppercase tracking-widest mb-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('kpiDashboard.audit.diagnosis')}</p>
                                                         <div className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isPerfect ? 'text-emerald-500' : 'text-rose-500'}`}>
                                                             {isPerfect ? <CheckCircle size={12} /> : <XCircle size={12} />} {diagName}
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <p className={`text-[8px] font-mono uppercase tracking-widest mb-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>TINDAKAN</p>
+                                                        <p className={`text-[8px] font-mono uppercase tracking-widest mb-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('kpiDashboard.audit.action')}</p>
                                                         <div className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${isPerfect ? 'text-emerald-500' : 'text-amber-500'}`}>
                                                             {isPerfect ? <CheckCircle size={12} /> : <AlertCircle size={12} />} {actionLabel}
                                                         </div>
@@ -433,12 +446,16 @@ export default function KPIDashboard() {
                                                 </div>
 
                                                 <p className={`text-[10px] font-mono mt-4 p-2.5 rounded-lg border italic border-l-2 ${isDark ? 'text-slate-400 bg-slate-900/50 border-slate-800/50 border-l-slate-600' : 'text-slate-600 bg-slate-50 border-slate-200 border-l-slate-400'}`}>
-                                                    &gt; {isPerfect ? "Protokol dieksekusi dengan sempurna. Pasien pulih." : isTransferOrStabilize ? `Pasien di-${p.outcomeStatus === 'sisrute_transferred' ? 'transfer via SISRUTE' : p.outcomeStatus === 'stabilized' ? 'stabilisasi' : 'delegasikan'}.` : "Analisis mendalam diperlukan. Deviasi protokol terdeteksi."}
+                                                    &gt; {isPerfect
+                                                        ? t('kpiDashboard.audit.feedback.perfect')
+                                                        : isTransferOrStabilize
+                                                            ? t(`kpiDashboard.audit.feedback.${p.outcomeStatus}`, { defaultValue: t('kpiDashboard.audit.feedback.transferred') })
+                                                            : t('kpiDashboard.audit.feedback.needsAnalysis')}
                                                 </p>
                                             </div>
 
                                             <div className="flex flex-col items-center md:items-end gap-2 shrink-0 md:pr-4 mt-4 md:mt-0">
-                                                <div className={`text-[9px] font-mono uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>SKOR</div>
+                                                <div className={`text-[9px] font-mono uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('kpiDashboard.audit.score')}</div>
                                                 <div className={`text-2xl font-black font-mono ${isPerfect ? 'text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]' : 'text-slate-600'}`}>
                                                     {p.satisfactionScore || (isPerfect ? 90 : 40)}
                                                 </div>
@@ -449,7 +466,7 @@ export default function KPIDashboard() {
                             }) : (
                                 <div className={`py-24 flex flex-col items-center justify-center border-2 border-dashed rounded-3xl ${isDark ? 'border-slate-700 bg-slate-900/20' : 'border-slate-300 bg-slate-50'}`}>
                                     <Search size={48} className="opacity-20 text-slate-500 mb-4" />
-                                    <p className={`text-[10px] font-mono font-bold uppercase tracking-[0.3em] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>DATABASE KOSONG. BELUM ADA PASIEN DITANGANI.</p>
+                                    <p className={`text-[10px] font-mono font-bold uppercase tracking-[0.3em] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('kpiDashboard.audit.empty')}</p>
                                 </div>
                             )}
                         </div>
@@ -459,50 +476,50 @@ export default function KPIDashboard() {
                 {/* TAB: FISCAL VAULT */}
                 {activeTab === 'monthly' && (
                     <div className="max-w-5xl mx-auto pb-10">
-                        <div className={`flex justify-between items-end mb-6 border-b pb-4 ${isDark ? 'border-slate-700' : 'border-slate-200'}`}>
+                        <div className={`mb-6 flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-end sm:justify-between ${isDark ? 'border-slate-700' : 'border-slate-200'}`}>
                             <div>
-                                <h3 className={`text-2xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>FISCAL VAULT ARCHIVES</h3>
-                                <p className="text-[10px] font-mono text-emerald-500 uppercase tracking-[0.2em] mt-1">&gt; REKAPITULASI JKN (30-DAY CYCLE)</p>
+                                <h3 className={`text-xl sm:text-2xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>{t('kpiDashboard.monthly.title')}</h3>
+                                <p className="text-[10px] font-mono text-emerald-500 uppercase tracking-[0.2em] mt-1">&gt; {t('kpiDashboard.monthly.subtitle')}</p>
                             </div>
                         </div>
                         {monthlyArchive && monthlyArchive.length > 0 ? (
                             <div className="space-y-6">
                                 {monthlyArchive.slice().reverse().map((report, idx) => (
                                     <div key={idx} style={{ animation: `db-fade-up 0.5s ease-out forwards ${idx * 0.1}s`, opacity: 0 }}
-                                        className={`p-6 rounded-[32px] border shadow-lg flex flex-col md:flex-row gap-8 items-center hover:border-indigo-500/50 transition-colors group ${isDark ? 'bg-[#0a0f16] border-slate-800' : 'bg-white border-slate-200'}`}>
+                                        className={`rounded-[32px] border p-5 md:p-6 shadow-lg flex flex-col gap-6 items-center hover:border-indigo-500/50 transition-colors group lg:flex-row lg:gap-8 ${isDark ? 'bg-[#0a0f16] border-slate-800' : 'bg-white border-slate-200'}`}>
 
-                                        <div className="w-32 h-32 rounded-full border-4 border-indigo-500/30 flex items-center justify-center relative shrink-0">
+                                        <div className="w-28 h-28 md:w-32 md:h-32 rounded-full border-4 border-indigo-500/30 flex items-center justify-center relative shrink-0">
                                             <div className="absolute inset-0 rounded-full border-t-4 border-indigo-500 animate-spin" style={{ animationDuration: '4s' }} />
                                             <div className="text-center">
                                                 <div className="text-4xl font-black text-indigo-500 leading-none font-mono drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]">{report.month}</div>
-                                                <div className="text-[8px] font-mono font-bold text-slate-500 uppercase tracking-widest mt-1">SIKLUS</div>
+                                                <div className="text-[8px] font-mono font-bold text-slate-500 uppercase tracking-widest mt-1">{t('kpiDashboard.monthly.cycle')}</div>
                                             </div>
                                         </div>
 
-                                        <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-6 w-full">
+                                        <div className="flex-1 grid grid-cols-2 gap-4 md:gap-6 w-full xl:grid-cols-4">
                                             <div>
-                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>RATA-RATA SKOR</p>
+                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('kpiDashboard.monthly.avgScore')}</p>
                                                 <div className="flex items-baseline gap-1">
                                                     <p className={`text-3xl font-black font-mono ${report.avgScore >= 80 ? 'text-emerald-500' : 'text-amber-500'}`}>{report.avgScore}</p>
                                                     <span className="text-sm opacity-50 font-bold">/100</span>
                                                 </div>
                                             </div>
                                             <div>
-                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>REPUTASI</p>
+                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('kpiDashboard.monthly.reputation')}</p>
                                                 <p className="text-3xl font-black text-rose-500 font-mono">{report.avgReputation}%</p>
                                             </div>
                                             <div className={`sm:col-span-2 p-4 rounded-2xl flex items-center justify-between shadow-inner ${isDark ? 'bg-indigo-950/30 border border-indigo-900/50' : 'bg-indigo-50 border border-indigo-200'}`}>
                                             <div>
-                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>TOTAL PENERIMAAN SIKLUS</p>
+                                                <p className={`text-[9px] font-mono uppercase tracking-widest mb-1 font-bold ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>{t('kpiDashboard.monthly.totalRevenue')}</p>
                                                 <p className={`text-2xl font-black font-mono ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Rp <RollingNumber value={report.totalRevenue || 0} isCurrency /></p>
                                                 <p className={`text-[8px] font-mono mt-1 ${isDark ? 'text-indigo-300/60' : 'text-indigo-700/60'}`}>
-                                                    Kapitasi Rp <RollingNumber value={report.monthlyKapitasi || 0} isCurrency /> | Layanan Rp <RollingNumber value={report.serviceRevenue || 0} isCurrency />
+                                                    {t('kpiDashboard.monthly.capitation')} Rp <RollingNumber value={report.monthlyKapitasi || 0} isCurrency /> | {t('kpiDashboard.monthly.services')} Rp <RollingNumber value={report.serviceRevenue || 0} isCurrency />
                                                 </p>
                                                 <p className={`text-[8px] font-mono mt-1 ${isDark ? 'text-indigo-300/60' : 'text-indigo-700/60'}`}>
-                                                    Gaji Rp <RollingNumber value={report.staffSalaries || 0} isCurrency /> | Beban Rp <RollingNumber value={report.recordedExpenses || 0} isCurrency />
+                                                    {t('kpiDashboard.monthly.salary')} Rp <RollingNumber value={report.staffSalaries || 0} isCurrency /> | {t('kpiDashboard.monthly.expenses')} Rp <RollingNumber value={report.recordedExpenses || 0} isCurrency />
                                                 </p>
                                                 <p className={`text-[8px] font-mono mt-1 ${isDark ? 'text-indigo-300/60' : 'text-indigo-700/60'}`}>
-                                                    Net Operasional Rp <RollingNumber value={report.netOperationalResult ?? ((report.totalRevenue || 0) - (((report.totalRecordedCosts || 0) || (report.staffSalaries || 0))))} isCurrency />
+                                                    {t('kpiDashboard.monthly.netOperational')} Rp <RollingNumber value={report.netOperationalResult ?? ((report.totalRevenue || 0) - (((report.totalRecordedCosts || 0) || (report.staffSalaries || 0))))} isCurrency />
                                                 </p>
                                             </div>
                                                 <Award size={32} className="text-indigo-500 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
@@ -514,7 +531,7 @@ export default function KPIDashboard() {
                         ) : (
                             <div className={`py-24 flex flex-col items-center justify-center border-2 border-dashed rounded-3xl ${isDark ? 'border-slate-700 bg-slate-900/20' : 'border-slate-300 bg-slate-50'}`}>
                                 <Calendar size={48} className="opacity-20 text-slate-500 mb-4" />
-                                <p className={`text-[10px] font-mono font-bold uppercase tracking-[0.3em] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>SIKLUS 30 HARI BELUM TERCAPAI.</p>
+                                <p className={`text-[10px] font-mono font-bold uppercase tracking-[0.3em] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('kpiDashboard.monthly.empty')}</p>
                             </div>
                         )}
                     </div>
@@ -527,13 +544,13 @@ export default function KPIDashboard() {
                 liveStats={useMemo(() => {
                     if (!wikiMetric) return null;
                     switch (wikiMetric) {
-                        case 'accuracy': return { "Diagnosa Tepat": derivedKpis.clinicalAccuracy + "%", "Total Pasien": kpi.totalPatients };
-                        case 'treatment': return { "Rasionalitas": derivedKpis.treatmentAppropriateRate + "%", "Target": "90%" };
-                        case 'antibiotics': return { "Rasio Bijak": derivedKpis.antibioticStewardship + "%", "Status": derivedKpis.antibioticStewardship < 80 ? "Over-prescribe" : "Normal" };
-                        case 'rrns': return { "Rasio RRNS": derivedKpis.rrns + "%", "Target": "< 2%" };
+                        case 'accuracy': return { [t('kpiDashboard.liveStats.correctDiagnosis')]: derivedKpis.clinicalAccuracy + "%", [t('kpiDashboard.liveStats.totalPatients')]: kpi.totalPatients };
+                        case 'treatment': return { [t('kpiDashboard.liveStats.rationality')]: derivedKpis.treatmentAppropriateRate + "%", [t('kpiDashboard.liveStats.target')]: "90%" };
+                        case 'antibiotics': return { [t('kpiDashboard.liveStats.stewardshipRatio')]: derivedKpis.antibioticStewardship + "%", [t('kpiDashboard.liveStats.status')]: derivedKpis.antibioticStewardship < 80 ? "Over-prescribe" : "Normal" };
+                        case 'rrns': return { [t('kpiDashboard.liveStats.rrnsRatio')]: derivedKpis.rrns + "%", [t('kpiDashboard.liveStats.target')]: "< 2%" };
                         default: return null;
                     }
-                }, [wikiMetric, derivedKpis, kpi])}
+                }, [wikiMetric, derivedKpis, kpi, t])}
             />
         </div>
     );

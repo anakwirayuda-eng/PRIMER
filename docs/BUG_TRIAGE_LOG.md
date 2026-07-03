@@ -1,4 +1,4 @@
-# 🐛 PRIMER Bug Triage Log
+﻿# 🐛 PRIMER Bug Triage Log
 
 > Ringkasan bug/regresi besar dan solusinya. Format: `[YYYY-MM-DD HH:mm]` per entry.
 

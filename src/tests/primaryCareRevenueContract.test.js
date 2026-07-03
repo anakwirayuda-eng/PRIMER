@@ -31,6 +31,34 @@ describe('primary-care revenue contract', () => {
         expect(calculatePrimaryCareRevenueForDecision(patient, decision)).toBe(bill.total);
     });
 
+    it('uses net-of-lab revenue for non-BPJS encounters when lab was already performed', () => {
+        const patient = {
+            social: { hasBPJS: false },
+            labsRevealed: {
+                gds: {
+                    cost: 15000,
+                    result: '312 mg/dL'
+                }
+            },
+            medicalData: {}
+        };
+        const decision = {
+            action: 'treat',
+            medications: stockMedication ? [{ id: stockMedication.id, frequency: 1, duration: 2 }] : [],
+            procedures: []
+        };
+
+        const bill = calculatePatientBill(
+            decision.medications,
+            decision.procedures,
+            patient.labsRevealed,
+            patient.medicalData,
+            false
+        );
+
+        expect(calculatePrimaryCareRevenueForDecision(patient, decision)).toBe((bill.total || 0) - 15000);
+    });
+
     it('uses buy-price burn for BPJS treated encounters', () => {
         const patient = {
             social: { hasBPJS: true },
@@ -52,6 +80,34 @@ describe('primary-care revenue contract', () => {
         );
 
         expect(calculatePrimaryCareRevenueForDecision(patient, decision)).toBe(-bill.buyPriceTotal);
+    });
+
+    it('includes ordered lab burn from patient runtime data for BPJS encounters', () => {
+        const patient = {
+            social: { hasBPJS: true },
+            labsRevealed: {
+                gds: {
+                    cost: 15000,
+                    result: '312 mg/dL'
+                }
+            },
+            medicalData: {}
+        };
+        const decision = {
+            action: 'treat',
+            medications: stockMedication ? [{ id: stockMedication.id, frequency: 1, duration: 2 }] : [],
+            procedures: []
+        };
+
+        const bill = calculatePatientBill(
+            decision.medications,
+            decision.procedures,
+            patient.labsRevealed,
+            patient.medicalData,
+            true
+        );
+
+        expect(calculatePrimaryCareRevenueForDecision(patient, decision)).toBe(-((bill.buyPriceTotal || 0) + 15000));
     });
 
     it('records accepted SISRUTE referrals as ambulance cost only', () => {

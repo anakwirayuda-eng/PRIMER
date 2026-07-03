@@ -208,8 +208,8 @@ export function getTagLabel(questionId, questionText) {
     if (!questionText) return questionId;
     // Fallback: strip filler words and take first 2-3 meaningful words
     const stripped = questionText
-        .replace(/^(apakah|bagaimana|seberapa|kapan|apa|sudah|pernah)\s+/i, '')
-        .replace(/\b(ada|yang|di|ke|dari|untuk|dengan|dan|atau|ini|itu|nya|dok|bapak\/ibu|bapak|ibu)\b/gi, '')
+        .replace(/^(apakah|bagaimana|seberapa|kapan|apa|sudah|pernah|how|what|when|where|who|which|have|has|had|did|do|does|is|are|was|were|can|could|would|should)\s+/i, '')
+        .replace(/\b(ada|yang|di|ke|dari|untuk|dengan|dan|atau|ini|itu|nya|dok|bapak\/ibu|bapak|ibu|the|a|an|to|for|from|with|and|or|this|that|your|you|patient|doctor)\b/gi, '')
         .replace(/[?.!,]/g, '')
         .trim();
     const words = stripped.split(/\s+/).filter(w => w.length > 1).slice(0, 3);

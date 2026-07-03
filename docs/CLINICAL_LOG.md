@@ -1,4 +1,4 @@
-# 🏥 PRIMER Clinical Content Log
+﻿# 🏥 PRIMER Clinical Content Log
 
 > Catatan keputusan konten klinis (case library, obat, ICD-10). Format: `[YYYY-MM-DD HH:mm]` per entry.
 

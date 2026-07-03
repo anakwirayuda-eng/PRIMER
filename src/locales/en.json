@@ -1,6 +1,13 @@
 {
     "app": {
         "title": "PRIMER: Primary Care Simulator",
+        "name": "PRIMER",
+        "full_name": "Primary Care Manager Simulator",
+        "tagline": "Bridging clinical excellence and public health leadership.",
+        "organization": "ITS MEDICS",
+        "department": "Institut Teknologi Sepuluh Nopember",
+        "copyright": "Copyright 2026 Anak Agung Bagus Wirayuda MD PhD. Registered Copyright - No. EC002026019623.",
+        "version_label": "v{{version}}",
         "start_game": "Start Residency",
         "settings": "Settings",
         "save_game": "Save Game",
@@ -11,7 +18,650 @@
         "close": "Close",
         "loading": "Loading...",
         "done": "Done",
-        "confirm": "Confirm"
+        "confirm": "Confirm",
+        "pause": "Pause",
+        "system": "System"
+    },
+    "avatarModal": {
+        "closeAria": "Close avatar customization",
+        "title": "Customize Appearance",
+        "subtitle": "Change your doctor's look",
+        "skinTone": "Skin Tone",
+        "hairColor": "Hair Color",
+        "hairStyle": "Hair Style",
+        "accessories": "Accessories",
+        "save": "Save Changes",
+        "hairStyles": {
+            "buzz": "Buzz",
+            "short": "Short",
+            "neat": "Neat",
+            "parted": "Side Part",
+            "long": "Long",
+            "ponytail": "Ponytail",
+            "bun": "Bun",
+            "hijab": "Hijab"
+        },
+        "accessoryLabels": {
+            "glasses": "Glasses",
+            "stethoscope": "Stethoscope"
+        }
+    },
+    "questBoard": {
+        "claim": "CLAIM",
+        "empty": "No active quests or stories yet.",
+        "title": "Daily Quests",
+        "subtitle": "Complete quests to earn XP & Reputation",
+        "stories": "Stories & Investigations",
+        "daily": "Daily",
+        "dailyDone": "All daily quests completed!",
+        "weekly": "Weekly"
+    },
+    "leaderboard": {
+        "title": "Leaderboard",
+        "myRank": "Your rank: #{{rank}}",
+        "rankUnavailable": "Rank unavailable",
+        "closeAria": "Close leaderboard",
+        "cloudRequired": "Leaderboard requires a cloud connection.",
+        "enableSupabase": "Enable Supabase to view rankings.",
+        "loading": "Loading rankings...",
+        "empty": "No data yet. Start playing to enter the leaderboard!",
+        "headers": {
+            "name": "Name",
+            "score": "Score",
+            "day": "Day",
+            "accreditation": "Accreditation"
+        }
+    },
+    "facility": {
+        "rooms": {
+            "poli_umum": {
+                "name": "General Clinic",
+                "effect": "Capacity +5 patients/day"
+            },
+            "poli_gigi": {
+                "name": "Dental Clinic",
+                "effect": "Unlock dental treatments"
+            },
+            "poli_kia_kb": {
+                "name": "MCH-Family Planning Clinic",
+                "effect": "+10% maternal care score"
+            },
+            "lab": {
+                "name": "Laboratory",
+                "effect": "Unlock lab tests"
+            },
+            "apotek": {
+                "name": "Pharmacy",
+                "effect": "Faster dispensing"
+            },
+            "igd": {
+                "name": "Emergency Room",
+                "effect": "+1 emergency bed"
+            },
+            "rawat_inap": {
+                "name": "Inpatient Ward",
+                "effect": "Overnight stays"
+            },
+            "gudang": {
+                "name": "Medicine Warehouse",
+                "effect": "+100 inventory slots"
+            }
+        }
+    },
+    "gedungPage": {
+        "title": "Facility Management",
+        "subtitle": "Infrastructure | Facilities | Upgrades",
+        "levelShort": "Lv. {{level}}",
+        "stats": {
+            "activeFunds": "Active Funds",
+            "progress": "Progress",
+            "totalLevel": "Total Level",
+            "facilities": "Facilities"
+        },
+        "currency": {
+            "fullValue": "IDR {{value}}",
+            "millionValue": "IDR {{value}}M",
+            "millionWhole": "IDR {{value}}M"
+        },
+        "bok": {
+            "title": "BOK Fund Guide",
+            "subtitle": "Open the Health Operational Assistance explainer"
+        },
+        "upgrade": {
+            "title": "Upgrade {{room}}",
+            "level": "Level {{current}} -> {{next}}",
+            "cost": "Upgrade Cost",
+            "bonus": "Bonus",
+            "building": "Building...",
+            "action": "Upgrade"
+        },
+        "toast": {
+            "upgradeSuccess": "{{room}} upgraded successfully!",
+            "upgradeFailed": "Upgrade failed. Not enough active funds."
+        }
+    },
+    "diklatPage": {
+        "title": "Training Center",
+        "subtitle": "Skill Tree | Workshops | Certification",
+        "levelShort": "Lv. {{level}}",
+        "xp": {
+            "label": "Experience Points",
+            "toNextLevel": "{{xp}} XP to next level",
+            "level": "Level"
+        },
+        "tabs": {
+            "skills": "Skill Tree",
+            "workshops": "Workshop"
+        },
+        "categories": {
+            "all": "All",
+            "clinical": "Clinical",
+            "management": "Management",
+            "personal": "Personal"
+        },
+        "actions": {
+            "completed": "Completed",
+            "free": "Free!"
+        },
+        "currency": {
+            "thousandValue": "IDR {{value}}K"
+        },
+        "toast": {
+            "notEnoughXp": "Not enough XP to upgrade this skill.",
+            "notEnoughFunds": "Not enough active funds to attend this workshop.",
+            "workshopDone": "{{title}} completed. +{{xp}} XP"
+        },
+        "skills": {
+            "diagnosis_1": {
+                "name": "Advanced Diagnosis",
+                "effect": "+10% diagnostic accuracy"
+            },
+            "emergency_1": {
+                "name": "Emergency Care",
+                "effect": "+20% emergency success"
+            },
+            "surgery_1": {
+                "name": "Minor Surgery",
+                "effect": "Unlock minor procedures"
+            },
+            "leadership_1": {
+                "name": "Leadership",
+                "effect": "+5% team morale"
+            },
+            "finance_1": {
+                "name": "Financial Management",
+                "effect": "+10% efficiency"
+            },
+            "public_health": {
+                "name": "Public Health",
+                "effect": "+15% outreach"
+            },
+            "stamina_1": {
+                "name": "High Stamina",
+                "effect": "+10 Max Energy"
+            },
+            "stress_mgmt": {
+                "name": "Stress Control",
+                "effect": "-20% stress gain"
+            }
+        },
+        "workshops": {
+            "tb": {
+                "title": "TB Management Seminar",
+                "date": "Next week"
+            },
+            "usg": {
+                "title": "Basic Ultrasound Workshop",
+                "date": "In 2 weeks"
+            },
+            "management": {
+                "title": "Management Training",
+                "date": "Next month"
+            }
+        }
+    },
+    "saranaPage": {
+        "title": "Supplies & Logistics",
+        "subtitle": "Manage medicines, medical equipment, and operational supplies",
+        "order": "Procurement",
+        "lastRestockDay": "Day {{day}}",
+        "searchPlaceholder": "Search item...",
+        "restock": "Restock: {{value}}",
+        "stats": {
+            "totalItems": "Total Items",
+            "inventoryValue": "Inventory Value",
+            "lowStock": "Low Stock",
+            "expiringSoon": "Expiring Soon"
+        },
+        "categories": {
+            "all": "All",
+            "obat": "Medicines",
+            "alkes": "Medical Equipment",
+            "apd": "PPE",
+            "igd": "Emergency"
+        }
+    },
+    "inventoryPage": {
+        "title": "Pharmacy & Medical Equipment Logistics",
+        "createOrder": "Create Order",
+        "searchPlaceholder": "Search medicine or equipment...",
+        "allCategories": "All Categories",
+        "emptyTitle": "No results found",
+        "emptyHint": "Try changing the keyword or category filter",
+        "stats": {
+            "totalItems": "Total Items",
+            "lowStock": "Low Stock",
+            "outOfStock": "Out of Stock",
+            "totalValue": "Total Value",
+            "pendingOrders": "Pending Orders",
+            "overdueOrders": "{{count}} overdue"
+        },
+        "table": {
+            "name": "Medicine/Equipment Name",
+            "stock": "Stock",
+            "minStock": "Min Stock",
+            "unitPrice": "Price/Unit"
+        },
+        "procurement": {
+            "title": "Purchase History",
+            "subtitle": "Audit log for pharmacy and medical equipment procurement",
+            "logCount": "{{count}} logs",
+            "empty": "No purchases yet",
+            "day": "Day",
+            "items": "Items",
+            "totalCost": "Total Cost",
+            "type": "Type",
+            "dayValue": "Day {{day}}"
+        },
+        "categories": {
+            "analgesic": "Analgesics/Antipyretics",
+            "antibiotic": "Anti-infectives",
+            "antihypertensive": "Antihypertensive/Cardiovascular",
+            "antidiabetic": "Antidiabetic",
+            "respiratory": "Respiratory System",
+            "gastrointestinal": "Gastrointestinal",
+            "dermatology": "Dermatology",
+            "supplement": "Vitamins/Supplements/Obstetrics",
+            "psychiatryNeuro": "Psychiatry & Neurology",
+            "entEye": "Eye/Ear/Nose/Throat",
+            "medicalEquipment": "Disposable Medical Supplies",
+            "equipment": "Medical Equipment",
+            "labReagent": "Laboratory Reagents",
+            "emergency": "Emergency / Injection",
+            "metabolic": "Metabolic & Gout Medicines"
+        }
+    },
+    "orderModal": {
+        "title": "Create Order",
+        "closeAria": "Close order",
+        "supplier": "Select Supplier",
+        "leadTime": "{{count}} days",
+        "expressTitle": "Express Delivery (3 Days)",
+        "expressDescription": "Additional fee Rp {{value}} - order is not affected by logistics delays",
+        "itemsToOrder": "Items to Order ({{count}})",
+        "stockLine": "Stock: {{stock}} / Min: {{min}}",
+        "orderQty": "Order: {{count}}",
+        "cancel": "Cancel",
+        "submit": "Send Order",
+        "toast": {
+            "success": "Order created successfully ({{count}} items)!",
+            "partial": "Order sent ({{count}} items). {{skippedCount}} items were skipped because this supplier does not carry them: {{skipped}}",
+            "error": "Failed to create order."
+        }
+    },
+    "patientHistory": {
+        "title": "Patient History",
+        "closeAria": "Close patient history",
+        "empty": "No patients in this category yet.",
+        "ageGender": "{{age}} years, {{gender}}",
+        "diagnosis": "Dx",
+        "decision": "Decision",
+        "generalPatient": "General",
+        "satisfaction": "Satisfaction: {{score}}%",
+        "total": "Total: {{count}} patients",
+        "gender": {
+            "male": "Male",
+            "female": "Female"
+        },
+        "actions": {
+            "treat": "Outpatient Care",
+            "refer": "Refer",
+            "delegate_to_maia": "Delegate to MAIA",
+            "stabilize": "Stabilize",
+            "default": "Completed"
+        },
+        "outcomes": {
+            "pulih": "Recovered",
+            "memburuk": "Worsened",
+            "meninggal": "Died",
+            "komplain": "Complaint",
+            "referred": "Referred",
+            "rujuk_stabil": "Referred (Stable)",
+            "rujuk_tidak_perlu": "Unnecessary Referral",
+            "delegated": "Delegated",
+            "sisrute_transferred": "SISRUTE Transfer",
+            "referred_sisrute": "Referred via SISRUTE",
+            "stabilized": "Stabilized",
+            "default": "Completed"
+        }
+    },
+    "prolanisPanel": {
+        "title": "Prolanis Club",
+        "subtitle": "Chronic Disease Management Program",
+        "compactTitle": "Prolanis Patients",
+        "totalValue": "{{count}} Total",
+        "patientCount": "{{count}} Patients",
+        "header": {
+            "imageAlt": "Clinic"
+        },
+        "metrics": {
+            "controlledRate": "Controlled Ratio",
+            "totalPatients": "Total Patients"
+        },
+        "exercise": {
+            "title": "Prolanis Exercise",
+            "done": "Completed",
+            "pending": "Not Held Yet",
+            "doneDescription": "This month's activity has been completed. Patients feel healthier.",
+            "pendingDescription": "Hold an exercise session in the clinic yard to improve member health.",
+            "action": "Hold Activity",
+            "energyCost": "{{value}} Energy",
+            "moneyCost": "{{value}}K"
+        },
+        "diseases": {
+            "dm": "Type 2 Diabetes Mellitus",
+            "hypertension": "Hypertension"
+        },
+        "empty": {
+            "dm": "No diabetes patients registered yet",
+            "hypertension": "No hypertension patients registered yet"
+        },
+        "params": {
+            "hba1c": "HbA1c: {{value}}",
+            "bp": "BP: {{systolic}}/{{diastolic}}"
+        },
+        "patient": {
+            "overdue": "Checkup Overdue",
+            "controlled": "Controlled",
+            "uncontrolled": "Uncontrolled",
+            "age": "{{age}} y",
+            "streak": "Streak: {{count}} mo",
+            "complicationRisk": "Complication Risk"
+        },
+        "actions": {
+            "call": "Call",
+            "monitorMedication": "Monitor Meds"
+        },
+        "toast": {
+            "activityUnavailable": "Prolanis activity cannot be run yet.",
+            "callUnavailable": "This Prolanis patient cannot be called yet.",
+            "monitorUnavailable": "Medication monitoring cannot be run yet."
+        }
+    },
+    "prolanisConsultation": {
+        "header": {
+            "doctorEnergy": "Doctor Energy: {{value}}%",
+            "close": "Close consultation"
+        },
+        "patient": {
+            "age": "{{age}} y"
+        },
+        "diagnoses": {
+            "dm": "Type 2 Diabetes Mellitus",
+            "hypertension": "Essential Hypertension"
+        },
+        "status": {
+            "title": "Current Status",
+            "values": {
+                "controlled": "Controlled",
+                "uncontrolled": "Uncontrolled",
+                "warning": "Warning",
+                "critical": "Critical"
+            }
+        },
+        "parameters": {
+            "hba1c": "HbA1c",
+            "gds": "Random Blood Glucose",
+            "bp": "Blood Pressure"
+        },
+        "risk": {
+            "title": "Complication Risk",
+            "description": "Risk increases when parameters remain uncontrolled or the patient misses follow-up."
+        },
+        "tabs": {
+            "medication": "Medication",
+            "education": "Education & Lifestyle"
+        },
+        "medication": {
+            "title": "This Month's Therapy Plan",
+            "description": "Choose a medication adjustment based on the patient's current condition.",
+            "effect": "Effect: {{value}}% Parameter",
+            "warning": "This action increases side effect risk by {{value}}%.",
+            "actions": {
+                "increase_dose": "Increase dose",
+                "decrease_dose": "Decrease dose",
+                "add_medication": "Add new medication",
+                "switch_medication": "Switch medication",
+                "maintain": "Maintain therapy",
+                "refer_specialist": "Refer to internist"
+            }
+        },
+        "education": {
+            "title": "Additional Education Materials",
+            "tip": "Tip: the right education gives a long-term parameter improvement bonus.",
+            "items": {
+                "diet_dm": "Diabetes diet education (3J: amount, schedule, type)",
+                "foot_care": "Diabetic foot care",
+                "hypoglycemia_awareness": "Recognize hypoglycemia signs",
+                "insulin_education": "Insulin use education",
+                "diet_ht": "Low-salt diet (DASH)",
+                "bp_monitoring": "How to measure blood pressure at home",
+                "medication_timing": "Correct medication timing",
+                "exercise_prolanis": "Routine Prolanis exercise",
+                "stress_management": "Stress management",
+                "smoking_cessation": "Smoking cessation",
+                "weight_management": "Weight management"
+            }
+        },
+        "footer": {
+            "selectedAction": "Action:",
+            "noAction": "No medical action selected",
+            "complete": "Complete Checkup"
+        },
+        "trends": {
+            "improving": "Improving",
+            "worsening": "Worsening",
+            "stable": "Stable"
+        }
+    },
+    "posyanduModal": {
+        "title": "Integrated Health Post (Posyandu)",
+        "subtitle": "Integrated Community Health Post",
+        "closeAria": "Close Integrated Health Post",
+        "stats": {
+            "eligibleChildren": "Eligible Toddlers",
+            "eligibleMothers": "Eligible Mothers",
+            "day": "Day"
+        },
+        "setup": {
+            "chooseActivities": "Choose Integrated Health Post Activities",
+            "start": "Start Integrated Health Post"
+        },
+        "activities": {
+            "penimbangan": {
+                "name": "Toddler Weighing",
+                "description": "Weigh and measure children"
+            },
+            "kms": {
+                "name": "Growth Chart Recording",
+                "description": "Record growth in the child health card"
+            },
+            "imunisasi": {
+                "name": "Routine Immunization",
+                "description": "Provide vaccines according to the national schedule"
+            },
+            "penyuluhan_gizi": {
+                "name": "Nutrition Education",
+                "description": "Nutrition education for pregnant and breastfeeding mothers"
+            },
+            "penyuluhan_asi": {
+                "name": "Exclusive Breastfeeding Counseling",
+                "description": "Education on the importance of exclusive breastfeeding"
+            },
+            "pmba": {
+                "name": "Infant and Young Child Feeding",
+                "description": "Demonstrate proper complementary feeding"
+            }
+        },
+        "cost": {
+            "energy": "{{value}} Energy",
+            "time": "{{value}}m"
+        },
+        "reminder": {
+            "title": "Send Announcement to Residents",
+            "description": "+15% attendance | Cost: {{energy}} additional Energy"
+        },
+        "activity": {
+            "family": "Family {{family}}",
+            "ageMonths": "{{count}} months",
+            "ageYears": "{{count}} years",
+            "serveNext": "Serve & Continue"
+        },
+        "summary": {
+            "title": "Integrated Health Post Complete!",
+            "subtitle": "Thank you for your dedication",
+            "participants": "Participants Served",
+            "xp": "XP Earned",
+            "issues": "Issues Detected",
+            "followUpTitle": "Follow-up Required",
+            "followUpBody": "{{count}} children with undernutrition were found. Schedule home visits or further nutrition counseling."
+        },
+        "history": {
+            "label": "Integrated Health Post Activity",
+            "description": "{{participants}} residents served. {{issues}} nutrition issues detected. (Staff Bonus: +{{nutritionBonus}}%)"
+        },
+        "toast": {
+            "notEnoughEnergy": "Not enough energy to run the Integrated Health Post.",
+            "noAttendance": "No residents attended today. Try again on the next activity day or improve village reputation."
+        }
+    },
+    "outbreak": {
+        "fallbackVillage": "the village",
+        "banner": {
+            "title": "Outbreak Alert!",
+            "description": "{{type}} cases detected in {{village}}.",
+            "viewMap": "View Map",
+            "closeAria": "Close outbreak notification"
+        },
+        "modal": {
+            "alertLabel": "OUTBREAK ALERT",
+            "caseCount": "{{count}} cases detected in the last 7 days",
+            "closeAria": "Close outbreak alert",
+            "affectedArea": "Affected Area",
+            "affectedHomes": "{{count}} homes in the service area",
+            "deadline": "Response deadline:",
+            "dayValue": "Day {{day}}",
+            "progress": "Response Progress",
+            "availableActions": "Available Actions",
+            "energyCost": "{{count}} Energy",
+            "timeCost": "{{count}} min",
+            "resolved": "Outbreak Resolved!",
+            "reward": "+{{xp}} XP | +{{reputation}} Reputation",
+            "tip": "Tip: Perform multiple actions to maximize response effectiveness."
+        }
+    },
+    "calendarModal": {
+        "closeAria": "Close calendar",
+        "operationalDay": "Operational Day {{day}} - {{date}}",
+        "epidemiologyRadar": "Epidemiology Radar",
+        "riskAlert": "ALERT: {{risk}}",
+        "previousMonth": "Previous month",
+        "nextMonth": "Next month",
+        "missionAgenda": "Mission Agenda",
+        "noMissions": "No missions available",
+        "temporalJump": "Temporal Jump",
+        "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "dayNames": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "legend": {
+            "nationalHoliday": "National Holiday",
+            "jointLeave": "Joint Leave",
+            "healthDay": "Health Day",
+            "hasReport": "Report Available"
+        },
+        "detail": {
+            "closeAria": "Close day detail",
+            "normalDay": "Normal Day",
+            "today": "Today",
+            "clinicStatus": "Polyclinic Status",
+            "patientSurge": "Patient Surge",
+            "trafficProjection": "Traffic projection:",
+            "season": "Season",
+            "risks": "Risks: {{risks}}",
+            "dailyAgenda": "Daily Agenda",
+            "noInstruction": "Regular rotation. No special instructions.",
+            "openDailyReport": "Open Daily Report",
+            "futureReport": "Report data will be available after today's rotation is complete."
+        }
+    },
+    "timeController": {
+        "pauseShortcut": "Pause (Space)",
+        "normalSpeed": "Normal speed",
+        "doubleSpeed": "Double speed",
+        "highSpeed": "High speed",
+        "maxSpeed": "Maximum speed"
+    },
+    "endOfDay": {
+        "title": "Day {{day}} Report",
+        "patientFallback": "Patient",
+        "ageShort": "{{age}}y",
+        "currencyThousandSuffix": "K",
+        "returnDay": "(Day {{day}})",
+        "writeReflection": "Write Reflection (+{{xp}} XP)",
+        "reflectionPlaceholder": "What will you do differently tomorrow?",
+        "reflectionBonus": "+{{xp}} XP reflection bonus!",
+        "earnedToday": "Earned Today",
+        "rest": "Rest -> Day {{day}}",
+        "grades": {
+            "S": "Outstanding!",
+            "A": "Excellent",
+            "B": "Good",
+            "C": "Adequate",
+            "D": "Needs Improvement"
+        },
+        "stats": {
+            "served": "Served",
+            "accuracy": "Accuracy",
+            "reputation": "Reputation",
+            "netService": "Service Net"
+        },
+        "diagnosis": {
+            "correct": "Correct",
+            "inaccurate": "Inaccurate",
+            "referral": "Referred"
+        },
+        "sections": {
+            "criticalCases": "Critical Cases",
+            "upcoming": "Coming Up",
+            "reflection": "Reflection"
+        },
+        "critical": {
+            "correct": "{{diagnosis}}",
+            "expected": "Expected: {{diagnosis}}"
+        },
+        "reflectionPrompts": {
+            "missed_diagnosis": "{{patientName}} was diagnosed with {{condition}}. Were there signs missed during history taking?",
+            "incorrect_treatment": "{{patientName}} received suboptimal therapy. What medication should have been given?",
+            "good_case": "{{patientName}} improved because of your management. What made it work?",
+            "time_pressure": "Several patients waited too long. How can tomorrow's service flow be optimized?",
+            "referral_question": "{{patientName}} was referred to the hospital. Was this referral appropriate, or could the case be handled at the clinic?",
+            "general": "What is one thing you will improve tomorrow at the clinic?"
+        },
+        "keyLearning": {
+            "missedDiagnosis": "The correct diagnosis is \"{{diagnosis}}\". Watch for key symptoms during history taking.",
+            "referral": "This case requires referral. Make sure the patient is stabilized before being sent to the hospital.",
+            "excellent": "Diagnosis and management were accurate. Keep this clinical pattern going.",
+            "reviewFlow": "Review the history-taking and physical exam flow to improve accuracy."
+        }
     },
     "roles": {
         "intern": "Internship",
@@ -75,7 +725,43 @@
         "reputation_aria": "Reputation: {{value}}",
         "prb_active": "Active PRB patients",
         "open_sidebar": "Open side panel",
-        "close_sidebar": "Close side panel"
+        "close_sidebar": "Close side panel",
+        "wiki_stats": {
+            "energy_label": "Energy Level",
+            "status_label": "Status",
+            "status_fit": "Fit",
+            "status_tired": "Tired",
+            "status_exhausted": "Exhausted",
+            "reputation_label": "Reputation Score",
+            "reputation_high": "Highly Trusted",
+            "reputation_steady": "Stable",
+            "level_label": "Level",
+            "achievement_label": "Achievement",
+            "achievement_head": "Clinic Director",
+            "total_staff_label": "Total Staff",
+            "avg_readiness_label": "Avg Readiness",
+            "total_patients_label": "Total Patients",
+            "target_label": "Target",
+            "overall_score_label": "Overall Score",
+            "avg_iks_label": "Average IKS",
+            "total_households_label": "Total Households",
+            "contact_rate_label": "Contact Rate",
+            "per_1000": "per 1000",
+            "total_contacts_label": "Total Contacts",
+            "population_label": "Population",
+            "total_cases_managed_label": "Total Cases Managed",
+            "prolanis_members_label": "Prolanis Members",
+            "stress_label": "Stress",
+            "energy_short_label": "Energy",
+            "diagnostic_accuracy_label": "Diagnostic Accuracy",
+            "rational_treatment_label": "Rational Treatment",
+            "antibiotic_stewardship_label": "Antibiotic Stewardship",
+            "accuracy_label": "Accuracy",
+            "treatment_label": "Treatment",
+            "prb_active_label": "Active PRB",
+            "prb_completed_label": "Completed PRB",
+            "clinical_accuracy_label": "Clinical Accuracy"
+        }
     },
     "settings": {
         "title": "Settings",
@@ -89,7 +775,114 @@
         "theme_dark": "Dark",
         "theme_light": "Light",
         "save": "Save Game",
-        "logout": "Logout"
+        "logout": "Logout",
+        "footer_signature": "PRIMER v{{version}} | {{organization}}",
+        "themes": {
+            "medika": {
+                "name": "Medika",
+                "description": "Default dark - emerald medical HUD"
+            },
+            "emerald": {
+                "name": "Emerald Chat",
+                "description": "Light mode - warm beige, chat-inspired"
+            },
+            "midnight": {
+                "name": "Neon Midnight",
+                "description": "Dark cyber - amber and violet neon"
+            },
+            "military": {
+                "name": "Tactical",
+                "description": "Dark rugged - olive drab, khaki accents"
+            },
+            "premium": {
+                "name": "Premium Glass",
+                "description": "Dark luxury - frosted glass, sky-blue glow"
+            }
+        }
+    },
+    "statusJunction": {
+        "title": "Status Junction",
+        "closeAria": "Close status junction",
+        "role": "Clinic Director",
+        "levelShort": "LV",
+        "exp": "EXP",
+        "condition": "Condition",
+        "conditionCritical": "CRITICAL",
+        "conditionNormal": "NORMAL",
+        "hoverHint": "Hover over a stat for details...",
+        "abilities": "Abilities (Junctioned)",
+        "noAbilities": "- No abilities unlocked -",
+        "playTime": "PLAY TIME",
+        "activeFunds": "GIL (Active Funds)",
+        "currency": {
+            "fullValue": "IDR {{value}}"
+        },
+        "stats": {
+            "energy": {
+                "title": "ENERGY (HP)",
+                "desc": "Power used for medical and management activities.",
+                "label": "Energy"
+            },
+            "stress": {
+                "title": "STRESS",
+                "desc": "Mental fatigue level. Affects diagnostic accuracy.",
+                "label": "Stress"
+            },
+            "knowledge": {
+                "title": "KNOWLEDGE (MAG)",
+                "desc": "Capacity to unlock new skills and research.",
+                "label": "Knowledge"
+            },
+            "confidence": {
+                "title": "CONFIDENCE (SPR)",
+                "desc": "Confidence when facing audiences and staff.",
+                "label": "Confidence"
+            },
+            "hygiene": {
+                "title": "HYGIENE (VIT)",
+                "desc": "Personal hygiene and disease resistance.",
+                "label": "Hygiene"
+            }
+        }
+    },
+    "wikiModal": {
+        "knowledgeBase": "Knowledge Base v1.0",
+        "searchPlaceholder": "Search knowledge...",
+        "loading": "Loading Knowledge...",
+        "inquiry": "Inquiry",
+        "aiVerified": "AI VERIFIED",
+        "notFound": "Knowledge not found.",
+        "closeAria": "Close MAIA Codex",
+        "chooseTopic": "Choose a topic in the sidebar to start learning.",
+        "empty": {
+            "title": "No results found",
+            "hint": "Try another keyword"
+        },
+        "categories": {
+            "manajemen": "Management",
+            "klinis": "Clinical",
+            "wilayah": "Community",
+            "prosedur": "Procedures",
+            "lab": "Lab",
+            "farmasi": "Pharmacy",
+            "default": "General"
+        },
+        "sections": {
+            "maiaInsight": "MAIA's Clinical Insight",
+            "fundamental": "Fundamental Description",
+            "telemetry": "Telemetry Snapshot",
+            "ikm": "Public Health Perspective",
+            "skn": "National Health System",
+            "didYouKnow": "Did You Know?",
+            "strategy": "MAIA's Strategy Recommendations"
+        },
+        "footer": {
+            "clinicalDatabase": "Clinical Database Linked",
+            "telemetryActive": "Real-time Telemetry Active"
+        },
+        "actions": {
+            "done": "Sync Complete"
+        }
     },
     "dashboard": {
         "waiting": "Waiting",
@@ -103,7 +896,281 @@
         "close_kpi": "Close Dashboard",
         "closed_title": "Clinic Service Closed",
         "closed_description": "All clinic services have ended for today.",
-        "closed_footer": "Simulation Ends at 17:00"
+        "closed_footer": "Simulation Ends at 17:00",
+        "hub": {
+            "title": "Mission Control",
+            "subtitle": "{{accreditation}} - SYSTEM HUB",
+            "sync_title": "Sync data and documentation",
+            "sync_busy": "Syncing...",
+            "sync_name": "Satu Sehat",
+            "sync_success": "Satu Sehat sync completed. Run PRIMERA_SYNC.bat if the documentation reflection needs to be refreshed.",
+            "stats": {
+                "patients_today": "Patients Today",
+                "queue": "Queue",
+                "quality_score": "Quality Score",
+                "recovery": "Recovery"
+            },
+            "alerts": {
+                "out_of_stock": "{{count}} medicines OUT OF STOCK",
+                "low_stock": "{{count}} medicines low",
+                "rrns_high": "RRNS: {{value}}% (high)",
+                "stress": "Stress: {{value}}%",
+                "energy": "Energy: {{value}}%",
+                "low_morale_staff": "{{count}} staff with low morale",
+                "outbreak_active": "Active outbreak: {{diseases}}",
+                "prb_overdue": "{{count}} overdue PRB",
+                "all_normal": "All Systems Normal"
+            },
+            "cards": {
+                "clinical": {
+                    "label": "Clinical Intel",
+                    "sublabel": "UKP - SKDI - Patient Safety",
+                    "quick_stat": "{{value}}% Accuracy",
+                    "support_queue": "Queue",
+                    "support_today": "Cases today"
+                },
+                "community": {
+                    "label": "Community Intel",
+                    "sublabel": "UKM - PIS-PK - Prolanis",
+                    "quick_stat": "IKS {{value}}%",
+                    "support_prb": "Active PRB",
+                    "support_population": "Population"
+                },
+                "performance": {
+                    "label": "Performance",
+                    "sublabel": "KBK - Operational Funds - Performance",
+                    "quick_stat": "Rp {{value}}M",
+                    "support_quality": "Quality",
+                    "support_rrns": "RRNS"
+                },
+                "accreditation": {
+                    "label": "Accreditation",
+                    "sublabel": "5 Chapters - Quality Radar",
+                    "support_alerts": "Active alerts",
+                    "support_outbreak": "Outbreak"
+                },
+                "logistics": {
+                    "label": "Logistics",
+                    "sublabel": "Staff - Inventory - Wellness",
+                    "quick_stat": "{{count}} Staff",
+                    "support_low": "Low stock",
+                    "support_out": "Out of stock"
+                }
+            }
+        },
+        "views": {
+            "clinical": {
+                "title": "Clinical Intelligence",
+                "subtitle": "UKP - Patient Safety - SKDI",
+                "safetyTitle": "Patient Safety Composite",
+                "breakdown": {
+                    "accuracy": "Diagnostic Accuracy",
+                    "rationalTherapy": "Rational Therapy",
+                    "antibioticStewardship": "Antibiotic Stewardship"
+                },
+                "skdiTitle": "SKDI 4A Coverage",
+                "diseasesHandled": "{{total}} diseases handled",
+                "skdiHint": "More case variety means stronger clinical competence",
+                "referralTitle": "Referral Quality Index",
+                "referralRate": "Referral Ratio",
+                "rrns": "RRNS (Non-Specialist)",
+                "targetLabel": "Target",
+                "topDiagnosesTitle": "Top 10 Diagnoses (P-Care Surveillance)",
+                "emptyPatients": "No patient data yet"
+            },
+            "community": {
+                "title": "Community Intelligence",
+                "subtitle": "UKM - PIS-PK - Prolanis",
+                "iksTitle": "Healthy Family Index (IKS)",
+                "householdCount": "{{count}} households",
+                "metrics": {
+                    "totalHouseholds": "Total Households",
+                    "highRisk": "High Risk",
+                    "larvaeFree": "Larvae-Free",
+                    "target": "Target"
+                },
+                "prolanisTitle": "Prolanis Compliance (RPP)",
+                "prolanisActive": "{{compliant}}/{{total}} active participants on follow-up",
+                "prbTitle": "Active PRB Patients ({{count}})",
+                "overdue": "Overdue!",
+                "controlDue": "Follow-up: Day {{day}}",
+                "controlAction": "Control"
+            },
+            "performance": {
+                "title": "Performance Scorecard",
+                "subtitle": "KBK - Operational Funds - Performance",
+                "kbkTitle": "Performance-Based Capitation (KBK)",
+                "totalScore": "Total KBK Score",
+                "contactDetailTitle": "Contact Rate Detail",
+                "fundsTitle": "Operational Funding Sources",
+                "perThousandValue": "{{value}}/1000",
+                "perThousandTarget": ">= {{value}}/1000",
+                "metrics": {
+                    "contactRate": "Contact Rate",
+                    "rrns": "RRNS (Non-Specialist)",
+                    "rpp": "RPP Prolanis",
+                    "totalContacts": "Total Contacts",
+                    "population": "Population",
+                    "contactsPerThousand": "Contacts/1000"
+                },
+                "funds": {
+                    "capitation": "BPJS Capitation",
+                    "general": "General",
+                    "available": "Available Funds"
+                },
+                "zones": {
+                    "safe": "Safe",
+                    "warning": "Warning",
+                    "penalty": "Penalty"
+                },
+                "currency": {
+                    "rupiah": "Rp {{value}}",
+                    "million": "{{value}}M",
+                    "thousand": "{{value}}K"
+                }
+            },
+            "accreditation": {
+                "title": "Accreditation Command",
+                "subtitle": "5 Chapters - Radar - National Standard",
+                "statusTitle": "Accreditation Status",
+                "currentLevel": "Current Level",
+                "averageScore": "Average Score",
+                "radarTitle": "5-Chapter Accreditation Radar",
+                "levels": {
+                    "dasar": "Basic",
+                    "madya": "Intermediate",
+                    "utama": "Advanced",
+                    "paripurna": "Full"
+                },
+                "chapters": {
+                    "chapter1": "Chapter 1",
+                    "chapter2": "Chapter 2",
+                    "chapter3": "Chapter 3",
+                    "chapter4": "Chapter 4",
+                    "chapter5": "Chapter 5",
+                    "leadership": "Leadership",
+                    "community": "Community Health",
+                    "clinical": "Clinical Care",
+                    "priorityPrograms": "Priority Programs",
+                    "qualitySafety": "Quality & Safety"
+                }
+            },
+            "logistics": {
+                "title": "Logistics & Staff",
+                "subtitle": "Supply Chain - HR - Wellness",
+                "wellnessTitle": "Player Wellness",
+                "staffTitle": "Staff Overview",
+                "inventoryTitle": "Inventory Status",
+                "demandTitle": "Clinical Demand Trend",
+                "noStaff": "No staff recruited yet",
+                "lowMoraleWarning": "{{count}} staff with low morale - resignation risk!",
+                "out": "OUT",
+                "daysRemaining": "{{count}} days",
+                "metrics": {
+                    "stress": "Stress Level",
+                    "energy": "Energy",
+                    "count": "Count",
+                    "avgMorale": "Avg Morale",
+                    "avgPerformance": "Avg Performance",
+                    "totalItems": "Total Items",
+                    "lowStock": "Low Stock",
+                    "stockout": "Stockout"
+                }
+            }
+        }
+    },
+    "kpiDashboard": {
+        "unknownDiagnosis": "Unknown",
+        "header": {
+            "liveTelemetry": "LIVE TELEMETRY // DAY {{day}}"
+        },
+        "tabs": {
+            "telemetry": "Telemetry",
+            "radar": "Radar",
+            "forensic": "Forensic",
+            "vault": "Vault"
+        },
+        "cards": {
+            "totalEntities": "Total Entities",
+            "patientMix": "{{bpjs}} JKN | {{umum}} GENERAL",
+            "diagnosticAccuracy": "Diagnostic Accuracy",
+            "referralRatio": "Referral Ratio",
+            "targetUnder15": "TARGET: < 15%",
+            "rrnsDeviation": "RRNS (Deviation)",
+            "clinicalWaste": "Clinical Waste"
+        },
+        "sections": {
+            "qualityMatrix": "QUALITY & SAFETY MATRIX",
+            "financialLedger": "FINANCIAL LEDGER",
+            "liveTraffic": "LIVE TRAFFIC SONAR",
+            "epidemiologyTargets": "EPIDEMIOLOGY TARGETS"
+        },
+        "metrics": {
+            "therapyValidity": "Therapy Validity",
+            "antibioticDefense": "Antibiotic Defense",
+            "logisticsEfficiency": "Logistics Efficiency",
+            "socialReputation": "Social Reputation"
+        },
+        "finance": {
+            "activeFunds": "TOTAL ACTIVE FUNDS",
+            "recordedExpenses": "RECORDED EXPENSES",
+            "generalRevenue": "GENERAL REVENUE"
+        },
+        "analytics": {
+            "totalPrefix": "TOTAL",
+            "entities": "ENTITIES",
+            "logs": "{{count}} LOGS",
+            "cases": "CASES",
+            "scanning": "SCANNING FOR ANOMALIES..."
+        },
+        "audit": {
+            "title": "Forensic Audit Logs",
+            "subtitle": "Medical Decision Decryption (Last 10 Patients)",
+            "records": "{{count}} RECORDS",
+            "unknown": "UNKNOWN",
+            "verified": "VERIFIED",
+            "rejected": "REJECTED",
+            "day": "DAY {{day}}",
+            "diagnosis": "DIAGNOSIS",
+            "action": "ACTION",
+            "score": "SCORE",
+            "empty": "DATABASE EMPTY. NO PATIENTS HANDLED YET.",
+            "actions": {
+                "treated": "TREATED",
+                "referred": "REFERRED"
+            },
+            "feedback": {
+                "perfect": "Protocol executed perfectly. Patient recovered.",
+                "sisrute_transferred": "Patient transferred via SISRUTE.",
+                "stabilized": "Patient stabilized.",
+                "delegated": "Patient delegated.",
+                "transferred": "Patient was transferred.",
+                "needsAnalysis": "Deep analysis required. Protocol deviation detected."
+            }
+        },
+        "monthly": {
+            "title": "FISCAL VAULT ARCHIVES",
+            "subtitle": "JKN Recapitulation (30-Day Cycle)",
+            "cycle": "CYCLE",
+            "avgScore": "AVERAGE SCORE",
+            "reputation": "REPUTATION",
+            "totalRevenue": "TOTAL CYCLE REVENUE",
+            "capitation": "Capitation",
+            "services": "Services",
+            "salary": "Salary",
+            "expenses": "Expenses",
+            "netOperational": "Net Operational",
+            "empty": "30-DAY CYCLE NOT REACHED YET."
+        },
+        "liveStats": {
+            "correctDiagnosis": "Correct Diagnosis",
+            "totalPatients": "Total Patients",
+            "rationality": "Rationality",
+            "target": "Target",
+            "stewardshipRatio": "Stewardship Ratio",
+            "status": "Status",
+            "rrnsRatio": "RRNS Ratio"
+        }
     },
     "wilayah": {
         "back_dashboard": "Back to dashboard",
@@ -183,11 +1250,69 @@
         "mobile_queue_closed_idle": "Waiting for clinic hours",
         "mobile_queue_idle": "No patients have arrived yet",
         "mobile_queue_preview": "Up next",
+        "workflow_ready_queue_title": "Clinic is ready. Call the next patient.",
+        "workflow_ready_queue_description": "The left panel holds the queue, while the main area stays focused on the active examination. Start with the next patient or review KPI first.",
+        "workflow_ready_emergency_title": "ER is ready. Take the next case.",
+        "workflow_ready_emergency_description": "The left panel holds emergency arrivals. The main area will switch into the resuscitation workspace once you select a patient.",
+        "workflow_metric_queue": "Active queue",
+        "workflow_metric_queue_hint": "Outpatient cases are ready to be called from the left panel.",
+        "workflow_metric_queue_hint_emergency": "Cases are ready to be handled in triage.",
+        "workflow_metric_wait": "Max wait",
+        "workflow_metric_wait_hint": "Useful for reading queue pressure before you start examining.",
+        "workflow_metric_emergency": "Priority",
+        "workflow_metric_emergency_hint": "Lower numbers indicate more critical cases.",
+        "workflow_metric_program": "Program in motion",
+        "workflow_metric_program_value": "{{count}} Prolanis patients",
+        "workflow_metric_program_hint": "The Prolanis tab stays available without leaving this page.",
+        "workflow_metric_support": "Service mode",
+        "workflow_metric_support_hint": "Use the left panel to choose the active service workflow.",
+        "workflow_next_patient": "Next patient",
+        "workflow_wait_compact": "{{minutes}}m waiting",
+        "workflow_call_next": "Call next patient",
+        "workflow_take_case": "Handle now",
+        "workflow_empty_queue": "There are no active patients in this service yet. Use the gap to review KPI, stock, or take a short rest.",
         "queue_locked_badge": "08:00-16:00",
         "call": "Call",
         "resident": "Resident",
         "visitor": "Visitor",
-        "rest_limit_reached": "Today's rest quota has been used up."
+        "rest_limit_reached": "Today's rest quota has been used up.",
+        "service_status_ready": "Ready",
+        "unlock_requirements_short": "Requirements",
+        "service_staff_label": "Staff: {{staff}}",
+        "service_level_label": "Lv {{level}}",
+        "service_emergency_count": "{{count}} emergencies",
+        "service_modes": {
+            "queue": "Clinic queue",
+            "emergency": "Rapid triage",
+            "support": "Support"
+        },
+        "services": {
+            "poli_umum": {
+                "name": "General Clinic",
+                "short_name": "General",
+                "description": "Primary outpatient care for common complaints."
+            },
+            "igd": {
+                "name": "Emergency Unit",
+                "short_name": "ER",
+                "description": "Emergency stabilization and triage for urgent cases."
+            },
+            "farmasi_lab": {
+                "name": "Pharmacy & Lab",
+                "short_name": "Pharm/Lab",
+                "description": "Medication dispensing, inventory, and clinical diagnostics."
+            },
+            "poli_kia_kb": {
+                "name": "Maternal & Child Care",
+                "short_name": "MCH",
+                "description": "Maternal health, child growth, contraception, and immunization services."
+            },
+            "poli_gigi": {
+                "name": "Dental Clinic",
+                "short_name": "Dental",
+                "description": "Oral and dental care for routine and procedural visits."
+            }
+        }
     },
     "emr": {
         "header_waiting": "Select a patient from queue to start examination",
@@ -207,11 +1332,940 @@
         "finish_case": "Finish Case",
         "enroll_prolanis": "Enroll Prolanis"
     },
+    "patientEMR": {
+        "tabs": {
+            "anamnesis_short": "Anamn",
+            "history": "History",
+            "history_short": "Hx",
+            "physical_short": "Exam",
+            "labs_short": "Labs",
+            "assessment": "Assessment",
+            "assessment_short": "Dx",
+            "treatment_short": "Meds",
+            "procedures": "Procedures",
+            "procedures_short": "Proc",
+            "education_short": "Edu",
+            "billing_short": "Billing"
+        },
+        "badges": {
+            "resident": "Local Resident",
+            "visitor": "Visitor",
+            "groggy": "Groggy",
+            "general_payment": "General"
+        },
+        "informant": "Accompanied by:",
+        "family_archive": "Family File",
+        "family_archive_short": "File",
+        "maia_insight": "MAIA Insight",
+        "processing": "Processing Data...",
+        "system_slowing": "System Slowing...",
+        "mobile_groups": {
+            "clinical": "Clinical",
+            "management": "Management"
+        },
+        "sidebar": {
+            "insight": "MAIA Insight",
+            "evaluation": "Evaluation",
+            "cppt": "CPPT"
+        }
+    },
+    "anamnesis": {
+        "categories": {
+            "keluhan_utama": "Chief Complaint",
+            "rps": "History of Present Illness",
+            "rpd": "Past Medical History",
+            "rpk": "Family History",
+            "sosial": "Social History"
+        },
+        "short_categories": {
+            "keluhan_utama": "Chief",
+            "rps": "HPI",
+            "rpd": "PMH",
+            "rpk": "FH",
+            "sosial": "Social"
+        },
+        "tips": {
+            "keluhan_utama": "Explore the chief complaint with an open-ended question.",
+            "rps": "Ask about onset, duration, location, quality, and aggravating or relieving factors (OLD CART).",
+            "rpd": "Look for similar prior illness, allergies, and past procedures.",
+            "rpk": "Focus on infectious risks (such as TB) or inherited disease (such as hypertension or diabetes).",
+            "sosial": "Ask about work, diet, smoking, and the home environment."
+        },
+        "ui": {
+            "coverage": "Coverage",
+            "questions": "Questions",
+            "close_questions": "Close question panel",
+            "jump_to_tab": "Jump to {{tab}}",
+            "active_questions": "Active questions",
+            "tips_button": "Tips",
+            "tip_prefix": "Tip: {{text}}",
+            "initial_title": "Ask the chief complaint:",
+            "child_direct_title": "Ask the child directly:",
+            "previous_row": "Previous row",
+            "next_row": "Next row",
+            "grid_label": "Anamnesis questions",
+            "repeat_title": "[Repeat] {{text}}\n(the answer was unclear - ask again)"
+        },
+        "initial": {
+            "pediatric_complaint_1": {
+                "text": "What complaint does the child have, {{prefix}}?",
+                "tag": "Child complaint"
+            },
+            "pediatric_complaint_2": {
+                "text": "{{prefix}}, what happened to the child?",
+                "tag": "What happened"
+            },
+            "pediatric_complaint_3": {
+                "text": "Can you describe {{prefix}}'s condition right now?",
+                "tag": "Current condition"
+            },
+            "informant_complaint_1": {
+                "text": "What is the complaint, {{prefix}}?",
+                "tag": "Complaint"
+            },
+            "informant_complaint_2": {
+                "text": "Could you describe what they are feeling?",
+                "tag": "What they feel"
+            },
+            "patient_complaint_1": {
+                "text": "How can I help you, {{prefix}}?",
+                "tag": "How can I help"
+            },
+            "patient_complaint_2": {
+                "text": "What complaint brings you in today, {{prefix}}?",
+                "tag": "Today's complaint"
+            },
+            "patient_complaint_3": {
+                "text": "How are you feeling right now, {{prefix}}?",
+                "tag": "Current condition"
+            }
+        },
+        "question_rewrites": {
+            "pediatric_activity": "What is the child's daily activity like? More time at home, at school, or playing?",
+            "pediatric_smoke": "Does anyone smoke at home or near the child?",
+            "pediatric_exercise": "What is the child's usual play activity like each day?",
+            "pediatric_diet": "What is the child's daily eating pattern like?",
+            "pediatric_sleep": "How is the child's sleep? Are they getting enough rest?",
+            "pediatric_home": "What are the home and neighborhood conditions like for the child?",
+            "pediatric_water": "Where does the child usually get drinking water from?",
+            "adolescent_activity": "What do they usually do day to day? School or other activities?",
+            "adolescent_smoke": "Have they ever smoked or been exposed to cigarette smoke often?",
+            "adolescent_exercise": "How often do they exercise or do physical activity?"
+        },
+        "child_questions": {
+            "child_pain_where": {
+                "text": "{{childName}}, where does it hurt? Show the doctor.",
+                "response": "({{childName}} points to the painful area)"
+            },
+            "child_eat": {
+                "text": "Have you eaten yet, {{childName}}?",
+                "response": "(shakes head softly)... I don't want to eat, Doc."
+            },
+            "child_cry": {
+                "text": "Did you cry earlier? When did it hurt the most?",
+                "response": "(nods)... Last night, Doc."
+            },
+            "child_describe": {
+                "text": "{{childName}}, can you describe what the pain feels like?",
+                "response": "It hurts, Doc, like... (tries to explain)"
+            },
+            "child_since": {
+                "text": "{{childName}}, when did it start to hurt?",
+                "response": "Since yesterday, Doc."
+            },
+            "child_activity": {
+                "text": "Were you still able to play with your friends yesterday?",
+                "response": "No, Doctor. I couldn't stand for long."
+            }
+        },
+        "dialogue": {
+            "empty": "[ WAITING FOR CLINICAL QUESTIONS ]",
+            "doctor": "Doctor",
+            "patient": "Patient",
+            "companion": "Companion",
+            "vague": "Unclear"
+        },
+        "questions": {
+            "gen_ku_severity": "How severe is the complaint? Does it interfere with daily activities?",
+            "gen_ku_trigger": "What made you come in for care today?",
+            "gen_ku_other": "Besides that complaint, are you feeling anything else?",
+            "rps_onset": "When did this complaint start?",
+            "rps_durasi": "How long does it usually last?",
+            "rps_lokasi": "Where exactly do you feel it?",
+            "rps_kualitas": "What does the pain feel like? Throbbing, stabbing, or burning?",
+            "rps_pemberat": "What makes the complaint worse?",
+            "rps_peringan": "What makes the complaint better?",
+            "rps_menjalar": "Does the pain spread anywhere else?",
+            "rps_obat": "What medicine have you taken before coming here?",
+            "rpd_serupa": "Have you had a similar complaint before?",
+            "rpd_hipertensi": "Do you have a history of high blood pressure?",
+            "rpd_diabetes": "Do you have a history of diabetes?",
+            "rpd_jantung": "Do you have a history of heart disease?",
+            "rpd_alergi": "Do you have any medication or food allergies?",
+            "rpd_operasi": "Have you ever had surgery?",
+            "rpd_rawat": "Have you ever been hospitalized?",
+            "rpd_obat_rutin": "Are there any medicines you take regularly?",
+            "rpk_hipertensi": "Does anyone in the family have high blood pressure?",
+            "rpk_diabetes": "Does anyone in the family have diabetes?",
+            "rpk_jantung": "Is there a history of heart disease in the family?",
+            "rpk_stroke": "Has anyone in the family had a stroke?",
+            "rpk_tbc": "Is there any family member or neighbor with a long cough or TB?",
+            "rpk_asma": "Does anyone in the family have asthma or allergies?",
+            "rpk_kanker": "Is there a history of cancer in the family?",
+            "sos_pekerjaan": "What do you do day to day?",
+            "sos_merokok": "Do you smoke?",
+            "sos_alkohol": "Do you drink alcohol?",
+            "sos_olahraga": "How often do you exercise?",
+            "sos_makan": "What is your daily eating pattern like?",
+            "sos_tidur": "How is your sleep pattern? Is it enough?",
+            "sos_rumah": "What are your home and neighborhood conditions like?",
+            "sos_air": "Where does your drinking water come from?"
+        },
+        "responses": {
+            "gen_ku_severity": "It's pretty disruptive, Doc. I also have trouble sleeping.",
+            "gen_ku_trigger": "It's getting worse, Doc, so I got worried.",
+            "gen_ku_other": "That's about it, Doc. Everything else feels okay.",
+            "rps_onset": "It started a few days ago, Doc.",
+            "rps_durasi": "It usually feels constant, Doc.",
+            "rps_lokasi": "(The patient points to the painful area)",
+            "rps_kualitas": "It feels like ordinary pain, Doc.",
+            "rps_pemberat": "It usually gets worse with a lot of activity, Doc.",
+            "rps_peringan": "Rest makes it a bit better, Doc.",
+            "rps_menjalar": "It does not spread, Doc. It stays there.",
+            "rps_obat": "I took over-the-counter medicine, but it did not change anything, Doc.",
+            "rpd_serupa": "I had it once before, but not this bad, Doc.",
+            "rpd_hipertensi": "As far as I know, no, Doc.",
+            "rpd_diabetes": "No, Doc.",
+            "rpd_jantung": "No, Doc.",
+            "rpd_alergi": "No allergies that I know of, Doc.",
+            "rpd_operasi": "I have never had surgery, Doc.",
+            "rpd_rawat": "I have never been hospitalized, Doc.",
+            "rpd_obat_rutin": "I do not take any regular medicines, Doc.",
+            "rpk_hipertensi": "My father used to have high blood pressure, Doc.",
+            "rpk_diabetes": "No, Doc.",
+            "rpk_jantung": "No, Doc.",
+            "rpk_stroke": "No, Doc.",
+            "rpk_tbc": "No one that I know of, Doc.",
+            "rpk_asma": "No, Doc.",
+            "rpk_kanker": "No, Doc.",
+            "sos_pekerjaan": "(Explains their work)",
+            "sos_merokok": "I do not smoke, Doc.",
+            "sos_alkohol": "No, Doc.",
+            "sos_olahraga": "I rarely exercise, Doc.",
+            "sos_makan": "I eat normally, three times a day, Doc.",
+            "sos_tidur": "I sleep enough, around 6 to 7 hours, Doc.",
+            "sos_rumah": "(Explains the home conditions)",
+            "sos_air": "I use bottled water or piped water, Doc."
+        },
+        "tags": {
+            "initial_complaint": "Chief complaint",
+            "q_main": "Chief complaint",
+            "q_main_complaint": "Chief complaint",
+            "gen_ku_severity": "Severity",
+            "gen_ku_trigger": "Reason for visit",
+            "gen_ku_other": "Other complaints",
+            "q_duration": "Duration",
+            "q_onset": "Onset",
+            "q_quality": "Quality",
+            "q_severity": "Severity",
+            "q_location": "Location",
+            "q_radiation": "Radiation",
+            "q_timing": "Timing",
+            "q_trigger": "Trigger",
+            "q_relieving": "Relieving factors",
+            "q_aggravating": "Aggravating factors",
+            "q_associated": "Associated symptoms",
+            "q_fever": "Fever",
+            "q_cough": "Cough",
+            "q_phlegm": "Sputum",
+            "q_nasal": "Nasal congestion",
+            "q_throat": "Sore throat",
+            "q_sob": "Shortness of breath",
+            "q_chest_pain": "Chest pain",
+            "q_palpitation": "Palpitations",
+            "q_nausea": "Nausea",
+            "q_vomit": "Vomiting",
+            "q_diarrhea": "Diarrhea",
+            "q_constipation": "Constipation",
+            "q_abd_pain": "Abdominal pain",
+            "q_appetite": "Appetite",
+            "q_urine": "Urination",
+            "q_stool": "Stool",
+            "q_headache": "Headache",
+            "q_dizzy": "Dizziness",
+            "q_weak": "Weakness",
+            "q_seizure": "Seizure",
+            "q_vision": "Blurred vision",
+            "q_hearing": "Hearing issue",
+            "q_edema": "Swelling",
+            "q_rash": "Rash",
+            "q_itch": "Itching",
+            "q_trauma": "Trauma history",
+            "rps_onset": "Onset",
+            "rps_durasi": "Duration",
+            "rps_lokasi": "Location",
+            "rps_kualitas": "Pain quality",
+            "rps_pemberat": "Worse with",
+            "rps_peringan": "Better with",
+            "rps_menjalar": "Radiation",
+            "rps_obat": "Prior medicine",
+            "q_history": "Similar history",
+            "q_ht": "Hypertension",
+            "q_dm": "Diabetes mellitus",
+            "q_asthma": "Asthma",
+            "q_allergy": "Allergy",
+            "q_surgery": "Surgery history",
+            "q_meds": "Medication history",
+            "rpd_serupa": "Similar history",
+            "rpd_hipertensi": "Hypertension",
+            "rpd_diabetes": "Diabetes",
+            "rpd_jantung": "Heart disease",
+            "rpd_alergi": "Allergy",
+            "rpd_operasi": "Surgery history",
+            "rpd_rawat": "Hospitalization",
+            "rpd_obat_rutin": "Routine medicine",
+            "q_family_history": "Family history",
+            "q_family_ht": "Family hypertension",
+            "q_family_dm": "Family diabetes",
+            "q_family_heart": "Family heart disease",
+            "q_family_tbc": "TB contact",
+            "rpk_hipertensi": "Family hypertension",
+            "rpk_diabetes": "Family diabetes",
+            "rpk_jantung": "Family heart disease",
+            "rpk_stroke": "Family stroke",
+            "rpk_tbc": "TB/contact",
+            "rpk_asma": "Family asthma",
+            "rpk_kanker": "Family cancer",
+            "sos_pekerjaan": "Occupation",
+            "sos_merokok": "Smoking",
+            "sos_alkohol": "Alcohol",
+            "sos_olahraga": "Exercise",
+            "sos_makan": "Diet",
+            "sos_tidur": "Sleep",
+            "sos_rumah": "Home condition",
+            "sos_air": "Water source",
+            "q_event": "Event",
+            "q_food": "Last meal",
+            "q_symptoms": "Associated symptoms",
+            "q_drink": "Drinking/fluids",
+            "q_thirst": "Thirst",
+            "q_insulin": "Insulin",
+            "q_habit": "Habit",
+            "q_infeksi": "Infection signs",
+            "q_prev_dka": "DKA history",
+            "q_diet": "Diet",
+            "q_exercise": "Physical activity",
+            "q_fam": "Family",
+            "q_stress": "Stress",
+            "q_sleep": "Sleep",
+            "q_weight": "Weight",
+            "child_pain_where": "Pain location",
+            "child_eat": "Has eaten?",
+            "child_cry": "Crying?",
+            "child_describe": "Describe pain",
+            "child_since": "Started when?",
+            "child_activity": "Activity"
+        }
+    },
+    "referral": {
+        "title": "SISRUTE",
+        "subtitle": "Integrated National Referral System",
+        "close_aria": "Close SISRUTE",
+        "steps": {
+            "sbar": "SBAR Form",
+            "hospital": "Hospital",
+            "transport": "Transport",
+            "feedback": "Feedback"
+        },
+        "warning_title": "This patient will most likely be REJECTED",
+        "warning_skdi": "This case is SKDI {{skdi}} and must be completed at primary care under KMK 1186/2022. The receiving hospital will reject the referral and you will receive a BPJS audit penalty.",
+        "warning_general": "This patient's condition does not require specialist care. The receiving hospital will most likely reject this referral.",
+        "warning_recommendation": "Recommendation: Manage at primary care / discharge with education",
+        "intro": "Complete the patient's clinical summary to help the hospital team perform early screening.",
+        "sbar": {
+            "situation_label": "Situation (Current Condition)",
+            "situation_placeholder": "Use a short summary (for example: severe shortness of breath, suspected pneumonia)",
+            "background_label": "Background (Medical History)",
+            "background_placeholder": "Past medical history, allergies, or routine medications...",
+            "assessment_label": "Assessment (Doctor's Analysis)",
+            "assessment_placeholder": "Key physical exam or lab findings that support the referral...",
+            "recommendation_label": "Recommendation",
+            "recommendation_placeholder": "What is requested from the hospital (for example: PICU, urgent surgery)..."
+        },
+        "hospital": {
+            "class": "Class {{value}}",
+            "distance": "{{value}} km",
+            "capacity": "Bed Capacity:",
+            "available": "{{available}} / {{total}} available"
+        },
+        "transport": {
+            "title": "Choose Transport Mode",
+            "busy": "Referring...",
+            "speed": "Speed:",
+            "stabilization_bonus": "Stabilization Bonus:",
+            "cost": "Cost:",
+            "free": "FREE",
+            "system_notice_title": "System Notice",
+            "system_notice_body": "Once the referral is sent, we will provide real-time feedback from the destination hospital. Make sure the patient has already been stabilized at our facility before transfer."
+        },
+        "result": {
+            "accepted_title": "REFERRAL ACCEPTED",
+            "rejected_title": "REFERRAL REJECTED",
+            "reputation": "Reputation Impact",
+            "satisfaction": "Patient Satisfaction",
+            "destination": "Destination Hospital",
+            "points": "pts"
+        },
+        "footer": {
+            "back": "Back",
+            "next": "Continue",
+            "send": "Send Referral to Hospital",
+            "finish": "Finish & Close",
+            "done": "SISRUTE process complete",
+            "careful": "Please review the data carefully"
+        },
+        "feedback": {
+            "accepted": "Your referral has been accepted by the destination hospital system.",
+            "rejected_fktp": "Referral Rejected (BPJS Audit): {{disease}} must be completed at primary care under the 144-diagnosis regulation. Reputation drops sharply!",
+            "rejected_skdi4a": "Referral Rejected (BPJS Audit): This disease falls under 4A competency (must be completed at primary care). Referring a case you can manage yourself lowers your BPJS score!",
+            "rejected_unnecessary": "Referral Rejected: The receiving hospital considers this condition does not require specialist care. Manage it at primary care or refer only if complications arise.",
+            "rejected_unstable": "Referral Rejected: The receiving hospital noted that basic stabilization (O2/IV) has not been performed. Stabilize the patient before referring!",
+            "rejected_capacity": "The receiving hospital refused the case because all beds are full. The patient must look for another hospital. Reputation penalty applied!",
+            "accepted_mismatch": "The receiving hospital accepted the referral but noted a specialty mismatch. The patient may need to be re-consulted.",
+            "non_specialistic": "non-specialistic case"
+        },
+        "hud": {
+            "aria": "Active referral status",
+            "live": "SISRUTE LIVE",
+            "arrived": "ARRIVED",
+            "en_route": "EN ROUTE",
+            "progress": "Referral Progress",
+            "eta": "ETA {{time}}",
+            "accepted": "Patient accepted at hospital",
+            "arrived_at": "Arrived {{time}}",
+            "patient_fallback": "Patient",
+            "hospital_fallback": "Referral Hospital"
+        },
+        "buttons": {
+            "warn_skdi4a": "Warning: SKDI 4A cases must be completed at primary care. The referral will likely be rejected.",
+            "refer_default": "Refer the patient to a hospital via SISRUTE",
+            "refer_aria": "Refer the patient to a hospital via SISRUTE"
+        },
+        "toast": {
+            "arrival": "Hospital radio: {{patient}} accepted at {{hospital}}. {{note}}"
+        },
+        "arrivalNotes": {
+            "portal_open": "Hospital security opened the gate. Handover went smoothly.",
+            "on_call_team": "The duty team accepted the patient without drama.",
+            "documents_complete": "Paperwork complete. Wet stamp secured.",
+            "ambulance_offset": "The ambulance parked a little crooked, but the patient was accepted."
+        }
+    },
+    "staffData": {
+        "nurse_basic": {
+            "name": "General Nurse",
+            "type": "Medical Staff",
+            "description": "Assists with vital-sign checks and basic nursing procedures.",
+            "skills": ["Triage", "Injection", "Wound Care"]
+        },
+        "midwife": {
+            "name": "Skilled Midwife",
+            "type": "Medical Staff",
+            "description": "Manages maternal-child health services and family planning programs.",
+            "skills": ["ANC", "Normal Delivery", "Family Planning"]
+        },
+        "lab_tech": {
+            "name": "Lab Analyst",
+            "type": "Clinical Support",
+            "description": "Speeds up laboratory results and expands available test types.",
+            "skills": ["Hematology", "Blood Chemistry", "Urinalysis"]
+        },
+        "pharmacist": {
+            "name": "Pharmacist",
+            "type": "Clinical Support",
+            "description": "Reduces medication errors and improves patient adherence.",
+            "skills": ["Dispensing", "Medication Counseling", "Stock Management"]
+        },
+        "admin": {
+            "name": "Administrative Staff",
+            "type": "Non-medical",
+            "description": "Speeds up administration workflows and BPJS claims.",
+            "skills": ["BPJS Claims", "Correspondence", "Medical Records"]
+        },
+        "driver": {
+            "name": "Ambulance Driver",
+            "type": "Non-medical",
+            "description": "Enables referral transport and patient pickup services.",
+            "skills": ["Evacuation", "First Aid", "Village Navigation"]
+        },
+        "dentist": {
+            "name": "Dentist",
+            "type": "Specialist Doctor",
+            "description": "Unlocks dental clinic services for oral health care.",
+            "skills": ["Dental Filling", "Tooth Extraction", "Scaling"]
+        },
+        "nutritionist": {
+            "name": "Nutritionist",
+            "type": "Clinical Support",
+            "description": "Improves outcomes for patients with nutrition problems.",
+            "skills": ["Diet Therapy", "Nutrition Counseling", "IYCF"]
+        }
+    },
+    "staffPage": {
+        "title": "Human Resources Management (Squad)",
+        "subtitle": "Recruit and manage your clinic team",
+        "stats": {
+            "total": "Total Staff",
+            "salary": "Monthly Salary",
+            "level": "Your Level"
+        },
+        "tabs": {
+            "recruitment": "Recruitment",
+            "myTeam": "My Team ({{count}})"
+        },
+        "emptyTeamTitle": "No staff have been recruited yet.",
+        "emptyTeamHint": "Open the Recruitment tab to start building your team.",
+        "toast": {
+            "hired": "Successfully recruited {{name}}!",
+            "hireFailed": "Staff recruitment failed.",
+            "coachingFailed": "Staff coaching cannot be run yet.",
+            "coachingSuccess": "Staff coaching completed successfully."
+        },
+        "card": {
+            "lockedPrefix": "Locked - ",
+            "selectAria": "Select staff {{name}}, {{type}}",
+            "level": "Level {{level}}",
+            "infoAria": "Info about the {{type}} role",
+            "morale": "Morale",
+            "skill": "Skill",
+            "perMonth": "/month",
+            "coachingAria": "Coach staff {{name}} - add 15 morale",
+            "coachingButton": "Coaching (+15 Morale)"
+        },
+        "detail": {
+            "effectsTitle": "Clinic Effects:",
+            "monthlySalary": "Monthly Salary",
+            "recruitCost": "Recruitment cost: Rp {{cost}}",
+            "fire": "Dismiss",
+            "fireAria": "Dismiss staff {{name}}",
+            "hire": "Recruit Now",
+            "hireAria": "Recruit {{name}} now",
+            "needLevel": "Needs Level {{level}}",
+            "needLevelAria": "Needs Level {{level}} to recruit"
+        },
+        "effects": {
+            "queueSpeed": "Queue Speed",
+            "patientCapacity": "Patient Capacity",
+            "kiaCapacity": "MCH Capacity",
+            "reputationBonus": "Reputation Bonus",
+            "labSpeed": "Lab Speed",
+            "labAccuracy": "Lab Accuracy",
+            "medicationError": "Medication Error",
+            "patientEducation": "Patient Education",
+            "adminSpeed": "Admin Speed",
+            "bpjsClaimBonus": "BPJS Claim Bonus",
+            "referralTime": "Referral Time",
+            "emergencyResponse": "Emergency Response",
+            "dentalService": "Dental Service",
+            "prolanisBonus": "Prolanis Bonus",
+            "childNutrition": "Child Nutrition"
+        },
+        "fireModal": {
+            "warningIcon": "!",
+            "title": "Staff Dismissal",
+            "message": "You are about to dismiss {{name}}. This action cannot be undone.",
+            "fallbackName": "this staff member",
+            "cancel": "Cancel",
+            "confirm": "Dismiss"
+        }
+    },
+    "pharmacyPanel": {
+        "fallbackNoDiagnosis": "No diagnosis",
+        "emptyTitle": "No Prescriptions Yet",
+        "emptyDescription": "Prescriptions will appear automatically after general-clinic patients are discharged with medication.",
+        "queueTitle": "Prescription Queue",
+        "pending": "{{count}} Pending",
+        "completed": "{{count}} done",
+        "rushHour": "RUSH HOUR! (+XP)",
+        "medCount": "{{count}} meds",
+        "selectTitle": "Select a Prescription from the Queue",
+        "selectHint": "Click a patient on the left to start verification.",
+        "ageGender": "{{age}} yrs - {{gender}}",
+        "male": "Male",
+        "female": "Female",
+        "allergy": "Allergy: {{items}}",
+        "billing": "Billing: {{note}}",
+        "coverage": {
+            "allFornas": "All medicines are FORNAS - covered by BPJS",
+            "nonFornas": "Non-FORNAS medicine found - patient pays Rp {{value}}",
+            "general": "General patient - full self-pay"
+        },
+        "patientSavings": "Patient savings: Rp {{value}}",
+        "prescribedMeds": "Prescribed Medicines",
+        "itemDetail": "{{form}} - {{frequency}}x/day - {{duration}} days - qty: {{qty}}",
+        "interactions": "Drug Interactions",
+        "fiveRightsTitle": "5-Rights Verification",
+        "fiveRights": {
+            "medicine": "Right Medicine",
+            "patient": "Right Patient",
+            "dose": "Right Dose",
+            "route": "Right Route",
+            "time": "Right Time"
+        },
+        "verify": "Verify Prescription",
+        "dispense": "Hand Medicine to Patient",
+        "dispensed": "Medicine Has Been Handed Over"
+    },
+    "bishiBashi": {
+        "subtitle": "Level {{level}} - {{count}} target meds",
+        "prescription": "Prescription: {{patient}}",
+        "instruction": "Select the {{count}} CORRECT medicines from the grid. Watch out for look-alike/sound-alike medicines (LASA).",
+        "prescribed": "Prescribed medicines:",
+        "timeLimit": "Time limit: {{seconds}} seconds",
+        "start": "START RUSH!",
+        "prescriptionLabel": "Prescription:",
+        "submit": "SUBMIT ({{selected}}/{{total}})",
+        "accuracy": "Accuracy",
+        "speed": "Speed",
+        "wrong": "{{count}} wrong medicines selected",
+        "missed": "{{count}} medicines missed",
+        "combo": "COMBO x{{combo}}!",
+        "finish": "Finish",
+        "feedback": {
+            "perfect": "PERFECT! All medicines were correct.",
+            "near": "Almost perfect - review missed items.",
+            "partial": "Several medicines were wrong or missed. Be more careful.",
+            "poor": "Too many errors. Read the prescription carefully."
+        }
+    },
+    "sensus": {
+        "gender": {
+            "maleUpper": "MALE",
+            "femaleUpper": "FEMALE",
+            "maleShort": "M",
+            "femaleShort": "F",
+            "male": "Male",
+            "female": "Female"
+        },
+        "common": {
+            "yes": "Yes",
+            "no": "No",
+            "active": "Active",
+            "none": "None",
+            "jknActive": "JKN Active",
+            "jknInactive": "No JKN",
+            "familyPrefix": "Family {{surname}}",
+            "headPrefix": "Head: {{name}}",
+            "memberCount": "{{count}} people",
+            "rtRw": "RT {{rt}}/RW {{rw}}",
+            "rwLocked": "RW {{rw}} Locked",
+            "openFamilyAria": "Open family details for {{surname}}",
+            "lockedFamilyAria": "Family {{surname}} - RW locked",
+            "openArchiveAria": "Open family archive for {{surname}}",
+            "lockedArchiveAria": "Family {{surname}} is locked",
+            "healthyIndexTitle": "Healthy Family Index: {{score}}%"
+        },
+        "document": {
+            "printDisabledTitle": "Print feature is not available yet",
+            "printSoon": "Print (Soon)",
+            "closeTitle": "Close",
+            "title": "FAMILY CARD",
+            "number": "No. {{number}}",
+            "householdHead": "Family Head Name",
+            "address": "Address",
+            "village": "Village/Subdistrict",
+            "district": "District",
+            "villageName": "Sukamaju",
+            "districtFallback": "Sehat Sentosa",
+            "birthplace": "Sukamaju",
+            "religionIslam": "Islam",
+            "tableHeaders": ["No", "Full Name", "NIK", "Sex", "Birthplace", "Birth Date", "Religion", "Education", "Occupation", "Status"],
+            "socialProfileTitle": "Social & Environmental Profile",
+            "healthyFamilyTitle": "Healthy Family Indicators (IKS)",
+            "householdHeadSignature": "Family Head",
+            "villageHeadSignature": "Sukamaju Village Head",
+            "villageHeadName": "Mr. Village Head",
+            "stampGovernment": "Government",
+            "stampRegency": "Sehat Sentosa Regency",
+            "stampVillage": "Sukamaju Village",
+            "sdoh": {
+                "housing": "Housing",
+                "water": "Water Source",
+                "sanitation": "Sanitation",
+                "economy": "Economy",
+                "smoking": "Smoking",
+                "activity": "Activity"
+            }
+        },
+        "roles": {
+            "head": "Family Head",
+            "spouse": "Spouse",
+            "child": "Child",
+            "elder": "Parent",
+            "relative": "Relative",
+            "grandchild": "Grandchild"
+        },
+        "education": {
+            "not_yet_school": "Not Yet in School",
+            "no_school": "No School",
+            "elementary": "Elementary",
+            "elementary_short": "Elementary",
+            "junior_high": "Junior High",
+            "junior_high_short": "Junior High",
+            "high_school": "High School",
+            "high_school_short": "High School",
+            "vocational": "Vocational",
+            "university": "Diploma/Bachelor",
+            "islamic_board": "Islamic Boarding School"
+        },
+        "indicators": {
+            "kb": "Family Planning",
+            "persalinan": "Skilled Delivery",
+            "imunisasi": "Immunization",
+            "asi": "Exclusive Breastfeeding",
+            "balita": "Toddler Monitoring",
+            "tb": "TB-free",
+            "hipertensi": "Hypertension Control",
+            "jiwa": "Mental Health",
+            "rokok": "Smoke-free",
+            "jkn": "JKN Member",
+            "air": "Clean Water",
+            "jamban": "Healthy Latrine"
+        },
+        "page": {
+            "government": "Sukamaju Village Government",
+            "title": "VILLAGE POPULATION DATA",
+            "subtitle": "Integrated Village Profile Information System",
+            "stats": {
+                "totalPeople": "Total Population",
+                "households": "Households",
+                "registered": "Registered",
+                "territory": "Territory",
+                "activeRwRt": "Active RW/RT",
+                "jknCoverage": "JKN Coverage",
+                "families": "{{count}} families",
+                "underFive": "Under-fives",
+                "age0to5": "0-5 years",
+                "olderAdults": "Older Adults",
+                "age60plus": "> 60 years"
+            }
+        },
+        "widgets": {
+            "agePyramid": "Population Pyramid",
+            "environment": "Environmental Overview",
+            "cleanWater": "Clean Water Sources",
+            "sanitation": "Sanitation Facilities",
+            "occupation": "Occupation Profile (Top 5)",
+            "peopleCount": "{{count}} people"
+        },
+        "explorer": {
+            "title": "Family Card Archive",
+            "cards": "Cards",
+            "table": "Table",
+            "allAreas": "All Areas",
+            "allRt": "All RT",
+            "rwOption": "RW {{rw}} (All RT)",
+            "rwRtOption": "Area RW {{rw}} RT {{rt}}",
+            "searchPlaceholder": "Search name or NIK...",
+            "focusTitle": "Focus from village blueprint: RW {{rw}}",
+            "focusDescription": "Archive is filtered to RW level so blank spots can be audited before the sector is opened.",
+            "compactTableNotice": "Table mode is summarized into row cards so it remains readable on this screen.",
+            "emptyTitle": "Data Not Found",
+            "emptyDescription": "No village database archive matches that keyword.",
+            "tableHeaders": ["Household ID", "Family Head", "Domicile", "Members", "JKN Status", "IKS Score", "Action"],
+            "openArchive": "Open Archive ->",
+            "locked": "Locked"
+        },
+        "values": {
+            "tidak_diketahui": "Unknown",
+            "sumur": "Well",
+            "middle": "Middle",
+            "low": "Low",
+            "very_low": "Very Low",
+            "high": "High",
+            "rendah": "Low",
+            "menengah": "Middle",
+            "tinggi": "High",
+            "jamban_sehat": "Healthy latrine",
+            "tidak_ada": "None",
+            "aktif": "Active"
+        }
+    },
+    "gameOver": {
+        "warning1": {
+            "title": "WARNING LETTER 1",
+            "message": "Clinic performance is below standard. Improve service quality and referral management immediately.",
+            "action": "Understood"
+        },
+        "warning2": {
+            "title": "WARNING LETTER 2",
+            "message": "CRITICAL condition. If there is no significant improvement tomorrow, the cooperation contract will be terminated.",
+            "action": "Understood"
+        },
+        "fired": {
+            "title": "TERMINATION OF EMPLOYMENT",
+            "message": "Your performance did not meet the competency standards expected from a clinic director. Your contract has been terminated.",
+            "action": "Try Again",
+            "tips_title": "Evaluation Tips:",
+            "tip_rrns": "Keep RRNS below 5%",
+            "tip_accuracy": "Maintain accurate diagnoses",
+            "tip_complaints": "Avoid patient complaints"
+        },
+        "fainted": {
+            "title": "YOU FAINTED!",
+            "message": "Your body hit its limit. You passed out from chronic exhaustion.",
+            "action": "Recover"
+        },
+        "runtime_trap": {
+            "title": "SAFE MODE ACTIVE",
+            "message": "A runtime anomaly was detected. The game is paused to prevent further state corruption.",
+            "action": "Continue in Safe Mode",
+            "notice": "The system is holding write actions until this warning is closed. The game stays paused so state can be restored safely."
+        },
+        "remaining_chances": "Remaining chances: {{count}}"
+    },
+    "narrative": {
+        "active_default": "The story is in progress.",
+        "insufficient_funds": "Active funds are not sufficient for this choice.",
+        "choice_unavailable": "This choice cannot be executed.",
+        "active_title": "Active Story",
+        "close_aria": "Close story",
+        "progress_title": "Story Progress:",
+        "action_goal": "Action goal",
+        "progress_help": "The story will continue automatically once this action target is completed.",
+        "completed_label": "Completed",
+        "choices_title": "Choose Your Path:",
+        "cost_required": "Needs Rp {{amount}}",
+        "reputation_delta": "{{sign}}{{value}} Reputation",
+        "no_extra_choices": "This story segment has no extra choices. Close the panel to continue the game.",
+        "footer_action_hint": "Finish the in-game action target to continue this story.",
+        "footer_choice_hint": "Your choice affects the story path and game state."
+    },
+    "archive": {
+        "header_title": "SIMPUS: Archive & Medical Records",
+        "header_subtitle": "Clinic documentation and reporting system",
+        "search_folders_placeholder": "Search household / family head...",
+        "search_patients_placeholder": "Search patient...",
+        "tabs": {
+            "folders": "Family Folder (Medical Record)",
+            "daily": "Daily Visit Log"
+        },
+        "empty": {
+            "search_title": "No Results",
+            "no_family_title": "No Family Data Yet",
+            "search_description": "No family matches the keyword \"{{query}}\"",
+            "no_family_description": "Family data is not available yet. Start a new game to initialize village records.",
+            "no_daily_title": "No Visit Logs Yet",
+            "no_daily_description": "Daily visit history will appear after patients complete their visits.",
+            "daily_search_description": "No visit log matches the keyword \"{{query}}\""
+        },
+        "filter_state": {
+            "folders": "Folder filter active: \"{{query}}\"",
+            "daily": "Visit log filter active: \"{{query}}\"",
+            "clear": "Clear filter"
+        },
+        "unnamed": "Unnamed",
+        "family_card": {
+            "family_prefix": "Fam.",
+            "new_badge": "NEW",
+            "members_label": "Members",
+            "members_value": "{{count}} people",
+            "total_visits_label": "Total Visits",
+            "pis_pk_status_label": "PIS-PK Status"
+        },
+        "view_house_map_title": "View house on map",
+        "house_short": "House",
+        "open_folder": "Open Folder",
+        "table": {
+            "time": "Time",
+            "patient_name": "Patient Name",
+            "diagnosis": "Diagnosis",
+            "action": "Action",
+            "status": "Status"
+        },
+        "day_time": "Day {{day}}, {{time}}",
+        "visit_day_only": "Day {{day}}",
+        "badges": {
+            "misc": {
+                "posyandu": "Integrated Health Post",
+                "resident": "Resident"
+            },
+            "action": {
+                "activity": "ACTIVITY",
+                "mass": "MASS",
+                "call": "CALL",
+                "monitor": "MONITOR",
+                "ikm": "CME",
+                "refer": "REFER",
+                "delegate": "DELEGATE",
+                "stabilize": "STABILIZE",
+                "resus": "RESUS",
+                "treat": "TREAT"
+            },
+            "status": {
+                "logged": "Logged",
+                "failed": "Failed",
+                "partial": "Partial",
+                "success": "Success",
+                "transfer_sisrute": "SISRUTE Transfer",
+                "refer_sisrute": "SISRUTE Referral",
+                "referred": "Referred",
+                "stabilized": "Stabilized",
+                "delegated": "Delegated",
+                "recovered": "Recovered",
+                "worsened": "Worsened",
+                "deceased": "Deceased",
+                "complaint": "Complaint",
+                "correct": "Correct",
+                "incorrect": "Incorrect",
+                "review_needed": "Needs Review",
+                "done": "Done"
+            }
+        },
+        "member": {
+            "roles": {
+                "head_short": "HH",
+                "spouse_short": "SP",
+                "elder_short": "EL",
+                "child_short": "CH",
+                "grandchild_short": "GC",
+                "other_short": "OT"
+            },
+            "gender_male": "Male",
+            "gender_female": "Female",
+            "identity_line": "{{age}} y.o. • {{gender}} • {{occupation}}",
+            "visit_count": "{{count}} visits",
+            "health_conditions": "Health Conditions",
+            "allergies": "Allergies",
+            "routine_meds": "Routine Medications",
+            "vaccination": "Vaccination",
+            "lifestyle": "Lifestyle",
+            "smoking_label": "Smoking:",
+            "exercise_label": "Exercise:",
+            "diet_label": "Diet:",
+            "no_profile": "No health profile has been recorded for this family member yet."
+        },
+        "back": "Back",
+        "family_detail": {
+            "title": "Family Folder: {{name}}",
+            "meta": "ID: {{id}} • Members: {{count}}"
+        },
+        "view_house": "View House",
+        "family_story": "Family Story",
+        "member_list": "Member List",
+        "risk_factors": "Risk Factors (PIS-PK)",
+        "indicator_healthy": "Healthy",
+        "indicator_risk": "Risk",
+        "visit_history": "Visit History",
+        "no_cppt_history": "No CPPT history yet."
+    },
     "queue": {
         "empty": "No patients waiting.",
         "relax": "Relax for a bit...",
         "delegate": "Delegate to Dr. MAIA (-3 Reputation)",
         "service_fallback": "General Clinic",
+        "counter_label": "Queue",
+        "background_alt": "General clinic illustration",
         "closed_badge": "Closed",
         "registration_closed": "Registration closed",
         "upcoming_followups": "{{count}} follow-ups",
@@ -232,5 +2286,628 @@
         "reload_app": "Reload App",
         "back_dashboard": "Back to Dashboard",
         "try_again": "Try Again"
+    },
+    "stepCarousel": {
+        "back": "Back",
+        "next": "Next",
+        "complete": "Done",
+        "step": "Step {{count}}"
+    },
+    "login": {
+        "subtitle": "Primary Care Simulator",
+        "labels": {
+            "email": "Email",
+            "password": "Password",
+            "full_name": "Full Name",
+            "class_year_optional": "Cohort (optional)"
+        },
+        "placeholders": {
+            "email": "email@example.com",
+            "password": "Enter password",
+            "full_name": "Full name",
+            "class_year": "2023"
+        },
+        "errors": {
+            "generic": "Something went wrong. Please try again.",
+            "signup_disabled": "New account registration is currently disabled. Please contact the admin.",
+            "email_invalid": "The email format is invalid.",
+            "rate_limit": "Too many attempts. Please wait 2-3 minutes.",
+            "invalid_login": "Incorrect email or password.",
+            "already_registered": "This email is already registered. Please log in.",
+            "password_short": "Password must be at least 6 characters.",
+            "name_required": "Full name is required."
+        },
+        "actions": {
+            "processing": "Processing...",
+            "register": "Register",
+            "login": "Log In",
+            "have_account": "Already have an account? Log in here",
+            "need_account": "Don't have an account? Register here",
+            "play_offline": "Play Offline (no cloud save)"
+        },
+        "language": {
+            "label": "Language",
+            "switch_to": "Switch language to {{language}}"
+        },
+        "quotes": {
+            "tony_iton": {
+                "text": "Your ZIP code is a better predictor of your health than your genetic code.",
+                "author": "Dr. Tony Iton",
+                "field": "Spatial Epidemiology"
+            },
+            "virchow": {
+                "text": "Medicine is a social science, and politics is nothing but medicine on a grand scale.",
+                "author": "Rudolf Virchow",
+                "field": "Father of Social Medicine, 1848"
+            },
+            "john_snow": {
+                "text": "On proceeding to the spot, I found that nearly all the deaths had taken place within a short distance of the Broad Street pump.",
+                "author": "John Snow",
+                "field": "Father of Epidemiology, 1854"
+            },
+            "hippocrates": {
+                "text": "Whoever wishes to investigate medicine properly should consider the seasons, the winds, the water, and the soil.",
+                "author": "Hippocrates",
+                "field": "Airs, Waters, and Places, 400 BC"
+            },
+            "winslow": {
+                "text": "Public health is the science and art of preventing disease, prolonging life, and promoting health through the organized efforts of society.",
+                "author": "C.-E.A. Winslow",
+                "field": "Definition of Public Health, 1920"
+            },
+            "primer": {
+                "text": "You cannot heal patients made sick by poverty. You have to heal the poverty first.",
+                "author": "PRIMER",
+                "field": "Sukamaju Village, 2026"
+            }
+        },
+        "footer": "PRIMER © {{year}} — Medical Education Simulator"
+    },
+    "opening": {
+        "aria": "Opening screen",
+        "university": "Institut Teknologi Sepuluh Nopember",
+        "start": "START",
+        "skip_hint": "ESC / CLICK"
+    },
+    "dailyReport": {
+        "close_aria": "Close daily report",
+        "header": {
+            "title": "Daily Report: Day {{day}}",
+            "subtitle": "Operational Summary & Regional Insights"
+        },
+        "status": {
+            "excellent": "Excellent",
+            "satisfactory": "Satisfactory",
+            "needs_improvement": "Needs Improvement"
+        },
+        "nav": {
+            "prev": "Previous Day",
+            "next": "Next Day"
+        },
+        "day_label": "Day {{day}}",
+        "stats": {
+            "patients": "Patients",
+            "revenue": "Service Revenue",
+            "revenue_hint": "Outside monthly capitation",
+            "reputation": "Reputation",
+            "score": "Score"
+        },
+        "charts": {
+            "hourly_traffic": "Hourly Patient Traffic",
+            "top_diseases": "Top 10 Diagnoses Today"
+        },
+        "no_data": "No data available",
+        "back_to_calendar": "Back to Calendar",
+        "footer": {
+            "summary": "Showing day {{day}} out of {{total}} days"
+        },
+        "currency_prefix": "IDR",
+        "units": {
+            "million": "M",
+            "thousand": "K"
+        }
+    },
+    "weekend": {
+        "title": "Weekend!",
+        "day_label": "Day {{day}} ({{dayName}})",
+        "description": "The clinic is closed today. Time for the director to pursue personal growth or take a real rest.",
+        "unavailable": "Weekend mode is not active in this build yet. Activities can be reviewed, but cannot be executed yet.",
+        "days": {
+            "saturday": "Saturday",
+            "sunday": "Sunday"
+        },
+        "status": {
+            "title": "Your Status",
+            "stress": "Stress Level",
+            "knowledge": "Knowledge",
+            "funds": "Active Funds",
+            "points_short": "pts"
+        },
+        "actions": {
+            "start": "Start Activity",
+            "unavailable": "Mode Unavailable"
+        },
+        "select_title": "Choose Activity",
+        "cost_label": "Cost:",
+        "income_label": "Income:",
+        "currency_prefix": "IDR",
+        "effects": {
+            "stress": "Stress",
+            "energy": "Energy",
+            "happiness": "Happiness",
+            "knowledge": "Knowledge",
+            "xp": "XP",
+            "reputation": "Reputation"
+        },
+        "activities": {
+            "rest": {
+                "label": "Full Rest",
+                "description": "Sleep all day to recover your energy. Significantly reduces stress."
+            },
+            "recreation": {
+                "label": "Short Getaway",
+                "description": "Take a trip out of town or visit the mall with family or friends."
+            },
+            "workshop": {
+                "label": "Medical Seminar",
+                "description": "Follow the latest clinical updates. Grants additional skill growth."
+            },
+            "community": {
+                "label": "Community Outreach",
+                "description": "Deliver health education to nearby villages. Improves reputation."
+            },
+            "part_time": {
+                "label": "Private Practice",
+                "description": "See patients at a private clinic. Earns money but is exhausting."
+            }
+        }
+    },
+    "saveSlots": {
+        "system_notice": "System Notice",
+        "system_online": "System Online",
+        "affiliation": "FKK - Institut Teknologi Sepuluh Nopember",
+        "system_tagline": "Epidemiology Operating System",
+        "footer_credit": "Anak Agung Bagus Wirayuda MD PhD - ITS MEDICS",
+        "logos": {
+            "its_alt": "ITS logo",
+            "fkk_alt": "FKK logo"
+        },
+        "quote": {
+            "text": "Behind every mortality figure is a village reached too late.",
+            "source": "First Principle of Surveillance"
+        },
+        "notifications": {
+            "slot_deleted": "Operational data for Slot {{slot}} deleted.",
+            "slot_delete_failed": "Failed to delete data for Slot {{slot}}.",
+            "file_exported": "File exported successfully.",
+            "file_export_failed": "Failed to export file.",
+            "database_empty": "Database is empty.",
+            "database_secured": "Entire database secured.",
+            "dossier_received": "Dossier received at Port {{slot}}.",
+            "save_failed": "Failed to save data (storage quota exceeded).",
+            "file_too_large": "File is too large (max {{size}}KB).",
+            "restored_count": "{{count}} records restored successfully.",
+            "corrupt_file": "The file format is corrupted.",
+            "decrypt_failed": "Failed to decrypt file."
+        },
+        "overwrite": {
+            "title": "Overwrite Protocol",
+            "collision": "Data collision at Node {{slot}}",
+            "message_prefix": "Operational data at Port {{slot}} will be overwritten. The previous file will be",
+            "permanent_delete": "permanently deleted",
+            "message_suffix": "from local storage. Continue?"
+        },
+        "actions": {
+            "cancel": "Cancel",
+            "force_overwrite": "Force Overwrite",
+            "access_database": "Access Database",
+            "initialize_system": "Initialize System",
+            "close_database": "Close Database",
+            "master_backup": "Master Backup",
+            "restore_os": "Restore OS",
+            "initialize": "Initialize",
+            "purge": "Purge",
+            "authorize_login": "Authorize Login"
+        },
+        "deployments": {
+            "title": "Active Deployments",
+            "subtitle": "Choose an agent profile to begin duty",
+            "backup_all": "Backup All Slots",
+            "restore_data": "Restore Data"
+        },
+        "slots": {
+            "empty_title": "Node {{slot}} — Empty",
+            "empty_subtitle": "Available for new registration",
+            "verified": "Verified",
+            "status_active": "Status: Active",
+            "doctor_prefix": "Dr. {{name}}",
+            "day_label": "Day {{day}}",
+            "reputation_label": "Rep: {{value}}",
+            "export_dossier": "Export Dossier",
+            "delete_dossier": "Delete Dossier",
+            "last_sync": "LAST_SYNC: {{value}}"
+        }
+    },
+    "about": {
+        "close_aria": "Close About PRIMER",
+        "description": "PRIMER (Primary Care Manager Simulator) is a primary care management simulation built to train clinical decision-making and operational leadership for health professionals and students. Grounded in minimum service standards, patient safety, and quality assurance, it challenges players to manage SKDI-aligned patient care, synchronize family intervention data, and keep a clinic operating efficiently. It also helps general audiences understand the National Health System and the complexity of building ideal community health services.",
+        "sections": {
+            "vision": "Vision & Mission",
+            "history": "Development History",
+            "objectives": "Primary Goals & Focus"
+        },
+        "labels": {
+            "creator": "Creator",
+            "version": "Software Version"
+        },
+        "history": [
+            {
+                "year": "2024-2025",
+                "event": "Core concept development for an RPG-flavored primary care management simulator."
+            },
+            {
+                "year": "2025",
+                "event": "Clinical standards (SKDI) and national programs (PIS-PK / Prolanis) were integrated into gameplay."
+            },
+            {
+                "year": "2026-01",
+                "event": "Official copyright registration with the Ministry of Law of the Republic of Indonesia (No. EC002026019623)."
+            },
+            {
+                "year": "2026-02",
+                "event": "v0.8.5 - Stability and hardening pass, including Lint Stability Pack and PRIMERA v5.0 Watchdog Mode."
+            },
+            {
+                "year": "2026-03",
+                "event": "Cloud deployment (Supabase + Vercel), security hardening, and anti-cheat systems."
+            }
+        ],
+        "objectives": [
+            "Strengthen clinic leadership and management skills.",
+            "Integrate patient safety principles and minimum service standards.",
+            "Support quality assurance through SKDI-aligned clinical accuracy.",
+            "Provide practical understanding of the National Health System.",
+            "Train efficient and accurate clinical decision-making.",
+            "Help the public understand the flow of primary care services."
+        ],
+        "footer": {
+            "thanks": "Thank you for contributing to public health"
+        },
+        "actions": {
+            "close": "Close Panel"
+        }
+    },
+    "morningBriefing": {
+        "header": {
+            "greeting": "Good morning, Doctor!",
+            "subtitle": "Day {{day}} - Morning Briefing"
+        },
+        "sections": {
+            "today_status": "Today's Status",
+            "poli_status": "Clinic Services",
+            "daily_mission": "Choose Today's Mission"
+        },
+        "actions": {
+            "start_day": "Start Day"
+        },
+        "stats": {
+            "staff_active": "Active Staff",
+            "reputation": "Reputation",
+            "morale": "Morale"
+        },
+        "funds": {
+            "active": "Available Funds",
+            "receipts": "Cycle Receipts"
+        },
+        "followups": {
+            "title": "Returning Patients"
+        },
+        "stock": {
+            "low_title": "Low Stock",
+            "item_line": "{{name}}: {{quantity}} left (min: {{minStock}})"
+        },
+        "currency": {
+            "prefix": "Rp",
+            "billion_suffix": "B",
+            "million_suffix": "M",
+            "thousand_suffix": "K"
+        },
+        "events": {
+            "posyandu": {
+                "title": "Integrated Health Post Day",
+                "description": "The integrated health post is scheduled today - weighing, growth card checks, and immunization."
+            },
+            "posyandu_soon": {
+                "title": "Integrated Health Post in {{days}} days",
+                "description": "Prepare the supplies and remind community cadres."
+            },
+            "prolanis": {
+                "title": "Prolanis Schedule",
+                "description": "{{count}} Prolanis patients are booked for control visits today."
+            },
+            "outbreak": {
+                "title": "Outbreak: {{name}}",
+                "description": "Cases may surge. Prepare medicines and protective equipment."
+            }
+        },
+        "kpi": {
+            "patients_served": "Patients Served",
+            "reputation": "Reputation"
+        },
+        "polis": {
+            "poli_umum": "General Clinic",
+            "igd": "Emergency Unit",
+            "farmasi_lab": "Pharmacy & Lab",
+            "poli_kia_kb": "Maternal & Child Care",
+            "poli_gigi": "Dental Clinic"
+        },
+        "staff_roles": {
+            "perawat": "Nurse",
+            "bidan": "Midwife",
+            "apoteker": "Pharmacist",
+            "analis_lab": "Lab Analyst",
+            "dokter_gigi": "Dentist"
+        },
+        "poli_reason": {
+            "coming_soon": "Coming soon",
+            "level_required": "Level {{level}}",
+            "staff_required": "Needs {{staff}}"
+        },
+        "priority": {
+            "outbreak": "An outbreak is active! Focus on {{name}} cases and contain the spread.",
+            "followup": "{{patient}} {{narrative}}. Prioritize reassessment.",
+            "efficiency": "See patients efficiently and keep waiting times low.",
+            "stock": "Check medicine stock and make sure supplies are safe for this week.",
+            "reputation": "Raise the clinic's reputation through excellent service."
+        },
+        "allocation": {
+            "title": "Automatic Staff Allocation",
+            "line": "{{count}} staff"
+        },
+        "quests": {
+            "helper": "Pick one mission for bonus XP at the end of the day.",
+            "serve_10": {
+                "title": "Treat 10 Patients",
+                "description": "Complete consultations for 10 patients today."
+            },
+            "zero_miss": {
+                "title": "No Missed Patients",
+                "description": "Make sure no patient leaves without being treated."
+            },
+            "accuracy_90": {
+                "title": "90% Diagnostic Accuracy",
+                "description": "Reach an average diagnosis score of at least 90% today."
+            },
+            "reputation_up": {
+                "title": "Raise Reputation",
+                "description": "End the day with a higher reputation than this morning."
+            }
+        }
+    },
+    "playerSetup": {
+        "panel": {
+            "protocol": "Medical Authorization Protocol"
+        },
+        "header": {
+            "registration": "PRIMER // DOCTOR REGISTRATION",
+            "step_counter": "STEP 0{{current}} / 0{{total}}"
+        },
+        "steps": {
+            "identity": {
+                "title": "Identity Credentials",
+                "desc": "Population Registry System"
+            },
+            "biometric": {
+                "title": "Biometric Scan",
+                "desc": "Visual Profiling"
+            },
+            "assignment": {
+                "title": "Assignment Warrant",
+                "desc": "Authorization & Medical Oath"
+            }
+        },
+        "identity": {
+            "gender_label": "Genetic Code (Gender)",
+            "name_label": "Medical Nomenclature",
+            "name_placeholder": "FULL NAME...",
+            "age_label": "Clinical Age",
+            "age_unit": "yrs"
+        },
+        "stats": {
+            "energy": "Stamina (AP)",
+            "reputation": "Authority (Rep)"
+        },
+        "biometric": {
+            "skin": "Pigmentation",
+            "hair_color": "Hair Follicles",
+            "hair_style": "Hair Topology",
+            "accessories": "Duty Accessories"
+        },
+        "accessories": {
+            "glasses": "Glasses",
+            "stethoscope": "Stethoscope"
+        },
+        "hair_styles": {
+            "buzz": "Buzz Cut",
+            "short": "Short",
+            "neat": "Neat",
+            "parted": "Side Part",
+            "long": "Long",
+            "ponytail": "Ponytail",
+            "bun": "Bun",
+            "hijab": "Hijab"
+        },
+        "genders": {
+            "male": "Male",
+            "female": "Female",
+            "male_short": "MALE",
+            "female_short": "FEMALE"
+        },
+        "profiles": {
+            "vanguard": {
+                "note": "Superior physical stamina. Risk: idealism may be underestimated by village elders during referral negotiations."
+            },
+            "sentinel": {
+                "note": "Balanced profile. Night-shift endurance is solid, but authority still needs to be proven to senior clinic staff."
+            },
+            "scalpel": {
+                "note": "Clinical sharpness verified. Energy reserves are moderate - rest allocation should be protected during later shifts."
+            },
+            "oracle": {
+                "note": "Absolute authority. Warning: physical capacity is significantly reduced. Risk of cardiac decompensation during nonstop emergency duty."
+            }
+        },
+        "card": {
+            "program": "CLINIC SIMULATION",
+            "officer_name": "OFFICER NAME:",
+            "assignment": "ASSIGNED ROLE:",
+            "role": "CLINIC DIRECTOR",
+            "evaluation_prefix": "AEGIS EVAL:",
+            "gender": "GENDER",
+            "registration": "REGISTRATION",
+            "registration_pending": "PENDING",
+            "approved": "APPROVED"
+        },
+        "actions": {
+            "process_data": "PROCESS DATA",
+            "authorizing": "PROCESSING AUTHORIZATION...",
+            "authorize_assignment": "AUTHORIZE ASSIGNMENT"
+        },
+        "errors": {
+            "name_required": "AUTHENTICATION FAILED: Medical nomenclature is required.",
+            "name_invalid": "AUTHENTICATION FAILED: Invalid name format."
+        },
+        "quotes": {
+            "assignment": {
+                "text": "One clinic. One remote village. Thousands of lives waiting for your decisions.",
+                "source": "PRIMER Assignment Briefing"
+            },
+            "public_health": {
+                "text": "Saving one life may need a stethoscope in the ER. Saving thousands needs maps and policy.",
+                "source": "Public Health Principle"
+            },
+            "mission": {
+                "text": "Your duty is not only to cure - but to prevent, educate, and build community resilience.",
+                "source": "Clinic Mission"
+            },
+            "field_orientation": {
+                "text": "In this village, you are the first and last line of defense. Every decision reaches the next generation.",
+                "source": "Field Orientation"
+            },
+            "surveillance": {
+                "text": "Epidemiology data is your compass. Without it, you are guessing in the dark.",
+                "source": "Surveillance Doctrine"
+            },
+            "memo": {
+                "text": "Limited budget. Limited time. Unlimited expectations. Good luck, Doctor.",
+                "source": "Official Memo No. 001"
+            }
+        }
+    },
+    "smartphone": {
+        "apps": {
+            "chat": "Watsap",
+            "bank": "Village Bank",
+            "shop": "Orange Shop",
+            "news": "News"
+        },
+        "back_home": "Back to home screen",
+        "day_label": "Day {{day}}",
+        "open_app": "Open {{name}} app",
+        "open_app_dock": "Open {{name}} from dock",
+        "close": "Close smartphone"
+    },
+    "bankApp": {
+        "bank_name": "Village Sharia Bank",
+        "account_simulation": "Personal Account Simulation",
+        "currency_prefix": "IDR",
+        "doctor_prefix": "Dr.",
+        "doctor_fallback": "Doctor",
+        "note": "This is only an estimate of personal funds. Active clinic funds remain separate on the operations dashboard.",
+        "actions": {
+            "top_up": "Top Up E-Wallet",
+            "invest": "Invest"
+        },
+        "history_title": "Account History",
+        "transactions": {
+            "salary": "Incoming Transfer (Base Salary)",
+            "salary_date": "Jan 1, 2026",
+            "service_fee": "Estimated Service Incentive",
+            "service_fee_date": "Jan 15, 2026",
+            "snack": "Bought Meatballs",
+            "yesterday": "Yesterday"
+        }
+    },
+    "newsApp": {
+        "categories": {
+            "all": "All",
+            "lokal": "Local",
+            "nasional": "National",
+            "intl": "Intl",
+            "tips": "Tips"
+        },
+        "time": {
+            "1h": "1h ago",
+            "3h": "3h ago",
+            "5h": "5h ago",
+            "1d": "1d ago",
+            "2d": "2d ago"
+        },
+        "ad": {
+            "badge": "AD",
+            "title": "Medical Equipment Promo!",
+            "subtitle": "50% off premium stethoscopes"
+        },
+        "source": "Source: {{source}}",
+        "items": {
+            "1": {
+                "title": "Flu Outbreak During Seasonal Transition"
+            },
+            "2": {
+                "title": "Tips for Handling Difficult Patients"
+            },
+            "3": {
+                "title": "Generic Drug Prices Drop!"
+            },
+            "4": {
+                "title": "Village Chief's Cow Escapes Into the Clinic"
+            },
+            "5": {
+                "title": "New Study: Coffee Prevents Sleepiness (Obviously)"
+            }
+        }
+    },
+    "shopApp": {
+        "title": "Orange Shop",
+        "subtitle": "Shop online for your lifestyle needs. Coming soon!",
+        "action": "Check Flash Sale"
+    },
+    "chatApp": {
+        "time": {
+            "yesterday": "Yesterday",
+            "two_days_ago": "2 days ago"
+        },
+        "items": {
+            "1": {
+                "name": "MoH RI Group",
+                "message": "New technical guideline update..."
+            },
+            "2": {
+                "name": "IDI Sukamaju Branch",
+                "message": "Medical seminar invitation..."
+            },
+            "3": {
+                "name": "Clinic Group",
+                "message": "Midwife Susi: Running late, doc"
+            },
+            "4": {
+                "name": "Mom",
+                "message": "Don't forget to eat, dear"
+            },
+            "5": {
+                "name": "Nosy Neighbor",
+                "message": "That medicine worked great, doc!"
+            }
+        }
     }
 }

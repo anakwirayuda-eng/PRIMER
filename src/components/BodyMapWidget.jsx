@@ -86,12 +86,23 @@ export default function BodyMapWidget({ patient, examsPerformed = {}, onExam, is
     const [isPosterior, setIsPosterior] = useState(false);
     const [isFlipping, setIsFlipping] = useState(false);
     const [tilt, setTilt] = useState({ x: 0, y: 0 });
-    const [hoveredNode, setHoveredNode] = useState(null);
+    const [_hoveredNode, setHoveredNode] = useState(null);
     const [sonarPulse, setSonarPulse] = useState(null);
     const [audioEnabled, setAudioEnabled] = useState(false);
     const [backLoaded, setBackLoaded] = useState(false);
     const stageRef = useRef(null);
     const audioCtxRef = useRef(null);
+    const pendingTimeoutsRef = useRef(new Set());
+
+    const scheduleTimeout = useCallback((callback, delay) => {
+        const timeoutId = setTimeout(() => {
+            pendingTimeoutsRef.current.delete(timeoutId);
+            callback();
+        }, delay);
+
+        pendingTimeoutsRef.current.add(timeoutId);
+        return timeoutId;
+    }, []);
 
     const normalizedExams = useMemo(() => normalizePhysicalExamFindings(examsPerformed), [examsPerformed]);
 
@@ -140,15 +151,18 @@ export default function BodyMapWidget({ patient, examsPerformed = {}, onExam, is
         if (!backLoaded) setBackLoaded(true);
         setIsFlipping(true);
         setIsPosterior(p => !p);
-        setTimeout(() => setIsFlipping(false), 800);
-    }, [backLoaded]);
+        scheduleTimeout(() => setIsFlipping(false), 800);
+    }, [backLoaded, scheduleTimeout]);
 
     const handleExamClick = useCallback((id, e) => {
         e.stopPropagation();
         if (navigator.vibrate) navigator.vibrate(25);
-        if (!normalizedExams[id]) { setSonarPulse(id); setTimeout(() => setSonarPulse(null), 800); }
+        if (!normalizedExams[id]) {
+            setSonarPulse(id);
+            scheduleTimeout(() => setSonarPulse(null), 800);
+        }
         onExam(id);
-    }, [normalizedExams, onExam]);
+    }, [normalizedExams, onExam, scheduleTimeout]);
 
     // Sub-Bass Auscultation
     const toggleAudio = useCallback((e) => {
@@ -180,6 +194,11 @@ export default function BodyMapWidget({ patient, examsPerformed = {}, onExam, is
         const t = setInterval(beat, ms);
         return () => clearInterval(t);
     }, [hr, audioEnabled, isCritical]);
+
+    useEffect(() => () => {
+        pendingTimeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+        pendingTimeoutsRef.current.clear();
+    }, []);
 
     const tipAlign = (x) => {
         const n = parseFloat(x);

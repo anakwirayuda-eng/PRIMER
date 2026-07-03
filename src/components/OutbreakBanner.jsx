@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle, X } from 'lucide-react';
 
 export default function OutbreakBanner({ outbreakNotification, onViewMap, onDismiss }) {
+    const { t } = useTranslation();
     if (!outbreakNotification) return null;
 
     return (
@@ -11,19 +13,24 @@ export default function OutbreakBanner({ outbreakNotification, onViewMap, onDism
                     <AlertTriangle size={24} />
                 </div>
                 <div>
-                    <h4 className="font-black text-sm uppercase tracking-tight">Peringatan Wabah!</h4>
-                    <p className="text-xs text-rose-100 italic">Kasus {outbreakNotification.typeData?.name} terdeteksi di {outbreakNotification.villageName || 'Desa'}.</p>
+                    <h4 className="font-black text-sm uppercase tracking-tight">{t('outbreak.banner.title')}</h4>
+                    <p className="text-xs text-rose-100 italic">
+                        {t('outbreak.banner.description', {
+                            type: outbreakNotification.typeData?.name,
+                            village: outbreakNotification.villageName || t('outbreak.fallbackVillage')
+                        })}
+                    </p>
                 </div>
                 <button
                     onClick={onViewMap}
                     className="ml-4 px-4 py-2 bg-white text-rose-600 rounded-xl font-bold text-xs hover:bg-rose-50 transition-colors"
                 >
-                    Lihat Peta
+                    {t('outbreak.banner.viewMap')}
                 </button>
                 <button
                     onClick={onDismiss}
                     className="p-1 hover:bg-white/10 rounded-full transition-colors"
-                    aria-label="Tutup notifikasi wabah"
+                    aria-label={t('outbreak.banner.closeAria')}
                 >
                     <X size={18} />
                 </button>

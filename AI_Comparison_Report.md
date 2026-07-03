@@ -1,4 +1,4 @@
-# AI Agent Performance Comparative Report (PRIMERA Diagnostics)
+﻿﻿# AI Agent Performance Comparative Report (PRIMERA Diagnostics)
 
 Laporan ini disusun sebagai pembanding untuk mengevaluasi efektivitas AI Agent dalam menangani basis kode PRIMERA yang memiliki tingkat kompleksitas tinggi dan ketergantungan domain medis yang ketat.
 

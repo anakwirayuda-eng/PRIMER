@@ -7,16 +7,20 @@
  * [DEPENDS_ON]: GameContext, StoryDatabase
  */
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import useModalA11y from '../hooks/useModalA11y.js';
 import { useGame } from '../context/GameContext.jsx';
 import { STORY_TEMPLATES } from '../game/StoryDatabase.js';
 import { MessageSquare, ChevronRight, X, Sparkles, AlertCircle } from 'lucide-react';
 import { getAvailableOperationalFunds } from '../utils/operationalFunds.js';
+import { showToast } from '../utils/ToastManager.js';
 
 export default function NarrativeOverlay({ storyInstance, onClose }) {
+    const { t, i18n } = useTranslation();
     const { advanceStory, stats } = useGame();
     const modalRef = useModalA11y(onClose);
     const availableFunds = Number(stats?.availableFunds ?? getAvailableOperationalFunds(stats));
+    const currencyFormatter = new Intl.NumberFormat(i18n.language === 'id' ? 'id-ID' : 'en-US');
 
     if (!storyInstance) return null;
 
@@ -32,18 +36,18 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
     const progressPercent = progressTarget > 0
         ? Math.min(100, Math.round((progressValue / progressTarget) * 100))
         : 0;
-    const narrativeText = currentNode.text || currentNode.description || 'Cerita sedang berjalan.';
+    const narrativeText = currentNode.text || currentNode.description || t('narrative.active_default');
 
     const handleChoice = (choice) => {
         const requiredFunds = Math.max(0, -(Number(choice?.impact?.balance) || 0));
         if (requiredFunds > availableFunds) {
-            alert('Dana aktif tidak cukup untuk pilihan ini.');
+            showToast(t('narrative.insufficient_funds'), 'warning');
             return;
         }
 
         const result = advanceStory(storyInstance, choice);
         if (result && result.success === false) {
-            alert(result.message || 'Pilihan tidak dapat dijalankan.');
+            showToast(result.message || t('narrative.choice_unavailable'), 'warning');
             return;
         }
         if (choice.nextNode === null || template.nodes[choice.nextNode]?.isEnd) {
@@ -61,14 +65,14 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
                             <Sparkles size={20} />
                         </div>
                         <div>
-                            <h4 className="text-[10px] uppercase tracking-widest font-black opacity-60">Cerita Aktif</h4>
+                            <h4 className="text-[10px] uppercase tracking-widest font-black opacity-60">{t('narrative.active_title')}</h4>
                             <h3 className="text-sm font-black tracking-tight uppercase">{template.title}</h3>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
                         className="p-1 hover:bg-white/10 rounded-full transition-colors text-white/40 hover:text-white"
-                        aria-label="Tutup cerita"
+                        aria-label={t('narrative.close_aria')}
                     >
                         <X size={20} />
                     </button>
@@ -93,20 +97,20 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
 
                     {isActionNode ? (
                         <div className="space-y-4 mt-8">
-                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Progress Cerita:</h5>
+                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('narrative.progress_title')}</h5>
                             <div className="bg-white border-2 border-slate-100 rounded-2xl p-5 shadow-sm space-y-4">
                                 <div className="flex items-center justify-between gap-4">
                                     <div>
                                         <p className="text-sm font-black text-slate-800 uppercase tracking-tight">
-                                            {currentNode.metric?.replace(/_/g, ' ') || 'Tujuan aksi'}
+                                            {currentNode.metric?.replace(/_/g, ' ') || t('narrative.action_goal')}
                                         </p>
                                         <p className="text-xs text-slate-500 mt-1">
-                                            Cerita akan lanjut otomatis saat target aksi ini selesai.
+                                            {t('narrative.progress_help')}
                                         </p>
                                     </div>
                                     <div className="text-right shrink-0">
                                         <p className="text-2xl font-black text-indigo-600">{progressValue} / {progressTarget}</p>
-                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">Selesai</p>
+                                        <p className="text-[10px] uppercase tracking-widest text-slate-400">{t('narrative.completed_label')}</p>
                                     </div>
                                 </div>
                                 <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
@@ -119,7 +123,7 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
                         </div>
                     ) : choiceList.length > 0 ? (
                         <div className="space-y-3 mt-8">
-                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tentukan Pilihanmu:</h5>
+                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{t('narrative.choices_title')}</h5>
                             {choiceList.map((choice, idx) => (
                                 (() => {
                                     const requiredFunds = Math.max(0, -(Number(choice?.impact?.balance) || 0));
@@ -149,13 +153,16 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
                                         {choice.impact && (
                                             <div className={`hidden md:flex flex-col items-end transition-opacity ${cantAfford ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                                                 {requiredFunds > 0 && (
-                                                    <span className={`text-[10px] font-black ${cantAfford ? 'text-rose-600' : 'text-amber-600'}`}>
-                                                        Butuh Rp {requiredFunds.toLocaleString('id-ID')}
-                                                    </span>
+                                                        <span className={`text-[10px] font-black ${cantAfford ? 'text-rose-600' : 'text-amber-600'}`}>
+                                                            {t('narrative.cost_required', { amount: currencyFormatter.format(requiredFunds) })}
+                                                        </span>
                                                 )}
                                                 {choice.impact.reputation && (
                                                     <span className={`text-[10px] font-black ${choice.impact.reputation > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                                        {choice.impact.reputation > 0 ? '+' : ''}{choice.impact.reputation} Reputasi
+                                                        {t('narrative.reputation_delta', {
+                                                            sign: choice.impact.reputation > 0 ? '+' : '',
+                                                            value: choice.impact.reputation
+                                                        })}
                                                     </span>
                                                 )}
                                             </div>
@@ -170,7 +177,7 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
                     ) : (
                         <div className="mt-8 bg-white border-2 border-slate-100 rounded-2xl p-5 shadow-sm">
                             <p className="text-sm font-medium text-slate-600">
-                                Bagian cerita ini tidak punya pilihan tambahan. Tutup panel untuk melanjutkan permainan.
+                                {t('narrative.no_extra_choices')}
                             </p>
                         </div>
                     )}
@@ -179,7 +186,7 @@ export default function NarrativeOverlay({ storyInstance, onClose }) {
                 {/* Footer (Hint) */}
                 <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2 text-slate-400 text-[10px] font-bold">
                     <AlertCircle size={14} />
-                    <span>{isActionNode ? 'Selesaikan target aksi di game untuk melanjutkan cerita ini.' : 'Pilihanmu berpengaruh pada jalannya cerita dan kondisi game.'}</span>
+                    <span>{isActionNode ? t('narrative.footer_action_hint') : t('narrative.footer_choice_hint')}</span>
                 </div>
             </div>
         </div>

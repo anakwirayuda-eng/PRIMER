@@ -88,7 +88,7 @@ export const respiratory_variations = {
         },
         q_chest_pain: {
             low_education: 'Sakit banget di dada kanan dok, apalagi kalau narik napas.',
-            high_education: 'Ada nyeri pleuritik di hemithorax dextra, terutama saat inspirasi dalam.',
+            high_education: 'Ada nyeri pleuritik di hemithorax dextra, terutama saat sesak nafas dalam.',
             skeptical: 'Sakit napas dalam.',
             anxious: 'Dada saya sakit parah Dok! Terutama kalau tarik napas, saya kira serangan jantung!',
             elderly: 'Dada kanan nyeri Nak Dokter, perih kalau napas, jadi saya napasnya pelan-pelan.',

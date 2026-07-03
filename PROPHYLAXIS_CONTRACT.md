@@ -1,4 +1,4 @@
-# PROPHYLAXIS CONTRACT v1.0 (PRIMERA)
+﻿﻿# PROPHYLAXIS CONTRACT v1.0 (PRIMERA)
 
 Kontrak ini mendefinisikan "Choke Points" dan "Invariants" yang wajib dilindungi untuk menjamin PRIMER anti-crash dan anti-regresi.
 

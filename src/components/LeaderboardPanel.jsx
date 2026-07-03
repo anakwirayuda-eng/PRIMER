@@ -9,10 +9,11 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LeaderboardService } from '../services/LeaderboardService';
 import { isSupabaseConfigured } from '../services/supabaseClient';
 
-const RANK_MEDALS = ['🥇', '🥈', '🥉'];
+const RANK_MEDALS = ['1', '2', '3'];
 const ACCREDITATION_COLORS = {
     Dasar: '#94a3b8',
     Madya: '#10b981',
@@ -21,6 +22,7 @@ const ACCREDITATION_COLORS = {
 };
 
 const LeaderboardPanel = ({ isOpen, onClose }) => {
+    const { t } = useTranslation();
     const [entries, setEntries] = useState([]);
     const [myRank, setMyRank] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -39,13 +41,18 @@ const LeaderboardPanel = ({ isOpen, onClose }) => {
     useEffect(() => {
         if (!isOpen || !isSupabaseConfigured) return;
 
-        fetchData();
+        const loadTimer = setTimeout(() => {
+            void fetchData();
+        }, 0);
 
         const unsubscribe = LeaderboardService.subscribeToLeaderboard((updated) => {
             setEntries(updated);
         });
 
-        return unsubscribe;
+        return () => {
+            clearTimeout(loadTimer);
+            unsubscribe?.();
+        };
     }, [isOpen, fetchData]);
 
     if (!isOpen) return null;
@@ -56,31 +63,31 @@ const LeaderboardPanel = ({ isOpen, onClose }) => {
                 {/* Header */}
                 <div style={styles.header}>
                     <div>
-                        <h2 style={styles.title}>🏆 Leaderboard</h2>
+                        <h2 style={styles.title}>{t('leaderboard.title')}</h2>
                         <p style={styles.subtitle}>
                             {myRank
-                                ? `Ranking kamu: #${myRank}`
-                                : 'Ranking belum tersedia'}
+                                ? t('leaderboard.myRank', { rank: myRank })
+                                : t('leaderboard.rankUnavailable')}
                         </p>
                     </div>
-                    <button onClick={onClose} style={styles.closeBtn}>✕</button>
+                    <button onClick={onClose} style={styles.closeBtn} aria-label={t('leaderboard.closeAria')}>x</button>
                 </div>
 
                 {/* Body */}
                 {!isSupabaseConfigured ? (
                     <div style={styles.offlineMsg}>
-                        📡 Leaderboard membutuhkan koneksi cloud.
+                        {t('leaderboard.cloudRequired')}
                         <br />
-                        Aktifkan Supabase untuk melihat ranking.
+                        {t('leaderboard.enableSupabase')}
                     </div>
                 ) : loading ? (
                     <div style={styles.loadingContainer}>
                         <div style={styles.spinner} />
-                        <p style={styles.loadingText}>Memuat ranking...</p>
+                        <p style={styles.loadingText}>{t('leaderboard.loading')}</p>
                     </div>
                 ) : entries.length === 0 ? (
                     <div style={styles.emptyMsg}>
-                        Belum ada data. Mulai bermain untuk masuk leaderboard!
+                        {t('leaderboard.empty')}
                     </div>
                 ) : (
                     <div style={styles.tableContainer}>
@@ -88,11 +95,11 @@ const LeaderboardPanel = ({ isOpen, onClose }) => {
                             <thead>
                                 <tr>
                                     <th style={styles.th}>#</th>
-                                    <th style={{ ...styles.th, textAlign: 'left' }}>Nama</th>
-                                    <th style={styles.th}>Skor</th>
-                                    <th style={styles.th}>Hari</th>
+                                    <th style={{ ...styles.th, textAlign: 'left' }}>{t('leaderboard.headers.name')}</th>
+                                    <th style={styles.th}>{t('leaderboard.headers.score')}</th>
+                                    <th style={styles.th}>{t('leaderboard.headers.day')}</th>
                                     <th style={styles.th}>Level</th>
-                                    <th style={styles.th}>Akreditasi</th>
+                                    <th style={styles.th}>{t('leaderboard.headers.accreditation')}</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -103,7 +103,8 @@ export const sti_urinary_infectious = [
             abdomen: "Datar, supel, nyeri tekan suprapubik (+). Nyeri ketok CVA kanan (+)."
         },
         labs: {
-            "Urinalisis": { result: "Leukosit penuh/LPB, nitrit (+), bakteri (+)", cost: 30000 }
+            "Urinalisis": { result: "Leukosit penuh/LPB, nitrit (+), bakteri (+)", cost: 30000 },
+            "Kultur Urin": { result: "Escherichia coli >100.000 CFU/mL, sensitif terhadap siprofloksasin", cost: 85000 }
         },
         vitals: { temp: 39.0, bp: '110/70', hr: 100, rr: 20 },
         correctTreatment: ['ciprofloxacin_500', 'paracetamol_500'],
@@ -120,8 +121,8 @@ export const sti_urinary_infectious = [
         icd10: 'A54.9',
         skdi: '4A',
         category: 'STI',
-        symptoms: ['Kencing nanah', 'Nyeri kencing', 'Keputihan berbau', 'Duh genital'],
-        clue: "Duh tubuh purulen dari uretra (pria) atau vagina (wanita). Riwayat seksual risiko tinggi. Diplokokus gram negatif.",
+        symptoms: ['Kencing nanah', 'Nyeri kencing', 'Duh uretra purulen', 'Riwayat seksual berisiko'],
+        clue: "Uretritis gonokokal pada pria: duh purulen dari uretra, disuria, riwayat hubungan seksual tanpa kondom. Gram stain sekret menunjukkan diplokokus gram negatif intraseluler.",
         relevantLabs: ['Gram Stain Sekret'],
         anamnesisQuestions: {
             keluhan_utama: [
@@ -144,7 +145,7 @@ export const sti_urinary_infectious = [
             rpd: [{ id: 'q_sti', text: 'Pernah penyakit kelamin sebelumnya?', response: 'Belum pernah dok.', sentiment: 'denial' }],
             rpk: [],
             sosial: [
-                { id: 'q_partner', text: 'Hubungan dengan siapa?', response: 'Dengan pacar dok, tanpa kondom.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_partner', text: 'Hubungan seksual terakhir dengan siapa? Pakai kondom?', response: 'Dengan pacar dok, tanpa kondom.', sentiment: 'confirmation', priority: 'essential' },
                 { id: 'q_multiple', text: 'Lebih dari 1 partner?', response: 'Iya dok.', sentiment: 'confirmation' }
             ]
         },
@@ -208,7 +209,9 @@ export const sti_urinary_infectious = [
             vitals: "TD 110/70, N 78x, RR 18x, S 36.8°C",
             genital: "Vulva eritema ringan. Discharge putih kekuningan, berbau (whiff test +). pH vagina >4.5."
         },
-        labs: {},
+        labs: {
+            "Gram Stain Sekret Vagina": { result: "Clue cells (+), leukosit meningkat, pseudohifa Candida (+)", cost: 50000 }
+        },
         vitals: { temp: 36.8, bp: '110/70', hr: 78, rr: 18 },
         correctTreatment: ['metronidazole_500', 'clotrimazole_vaginal'],
         correctProcedures: [],

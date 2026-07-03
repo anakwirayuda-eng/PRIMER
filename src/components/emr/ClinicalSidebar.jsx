@@ -10,7 +10,8 @@
  */
 
 import React from 'react';
-import { FileText, Brain, Info } from 'lucide-react';
+import { FileText, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Sub-components
 import SOAPResume from './sidebar/SOAPResume.jsx';
@@ -47,6 +48,8 @@ export default function ClinicalSidebar({
     prolanisRoster = [],
     openWiki
 }) {
+    const { t } = useTranslation();
+
     if (!patient) return null;
 
     return (
@@ -64,7 +67,7 @@ export default function ClinicalSidebar({
                         <button
                             onClick={() => openWiki('cppt')}
                             className="text-emerald-500 hover:scale-110 transition-transform"
-                            aria-label="Info: Apa itu CPPT?"
+                            aria-label={t('emrWorkspace.sidebar.cpptInfo')}
                         >
                             <Info size={14} aria-hidden="true" />
                         </button>
@@ -72,7 +75,7 @@ export default function ClinicalSidebar({
 
                     <div className="flex gap-1.5 items-center">
                         <span className={`text-[9px] font-black uppercase tracking-widest ${isDark ? 'text-emerald-500/50' : 'text-slate-400'}`}>
-                            Medical Record
+                            {t('emrWorkspace.sidebar.medicalRecord')}
                         </span>
                     </div>
                 </div>

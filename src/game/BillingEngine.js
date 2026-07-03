@@ -18,6 +18,19 @@ import { PROCEDURES_DB } from '../data/ProceduresDB.js';
 import { AMBULANCES } from '../data/HospitalDB.js';
 import { LAB_CATALOG } from './LabEngine.js';
 
+function resolveEncounterLabsForBilling(patient = {}, decision = {}) {
+    if (decision?.labsRevealed && typeof decision.labsRevealed === 'object' && !Array.isArray(decision.labsRevealed)) {
+        return decision.labsRevealed;
+    }
+    if (patient?.labsRevealed && typeof patient.labsRevealed === 'object' && !Array.isArray(patient.labsRevealed)) {
+        return patient.labsRevealed;
+    }
+    if (patient?.medicalData?.labsRevealed && typeof patient.medicalData.labsRevealed === 'object' && !Array.isArray(patient.medicalData.labsRevealed)) {
+        return patient.medicalData.labsRevealed;
+    }
+    return {};
+}
+
 /**
  * Calculates the total bill for a Poly patient.
  * Guards against labsRevealed values being boolean (true) instead of objects.
@@ -95,14 +108,16 @@ export function calculatePrimaryCareRevenueForDecision(patient = {}, decision = 
     const isBPJS = Boolean(patient?.social?.hasBPJS);
 
     if (action === 'treat') {
+        const labsRevealed = resolveEncounterLabsForBilling(patient, decision);
         const bill = calculatePatientBill(
             decision?.medications || [],
             decision?.procedures || [],
-            decision?.labsRevealed || {},
+            labsRevealed,
             patient?.medicalData || {},
             isBPJS
         );
-        return isBPJS ? -(bill.buyPriceTotal || 0) : (bill.total || 0);
+        const labCost = (bill?.labDetails || []).reduce((sum, lab) => sum + (Number(lab?.cost) || 0), 0);
+        return isBPJS ? -((bill.buyPriceTotal || 0) + labCost) : ((bill.total || 0) - labCost);
     }
 
     if (action === 'refer' && decision?.isSISRUTE && decision?.referralDetails?.result?.status === 'ACCEPTED') {

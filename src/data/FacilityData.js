@@ -7,14 +7,14 @@
  */
 
 export const ROOMS = [
-    { id: 'poli_umum', name: 'Poli Umum', level: 3, maxLevel: 5, cost: 5000000, icon: '🏥', effect: 'Kapasitas +5 pasien/hari', accent: 'emerald' },
-    { id: 'poli_gigi', name: 'Poli Gigi', level: 1, maxLevel: 3, cost: 10000000, icon: '🦷', effect: 'Unlock dental treatments', accent: 'cyan' },
-    { id: 'poli_kia_kb', name: 'Poli KIA-KB', level: 2, maxLevel: 3, cost: 8000000, icon: '👶', effect: '+10% maternal care score', accent: 'pink' },
-    { id: 'lab', name: 'Laboratorium', level: 0, maxLevel: 3, cost: 25000000, icon: '🔬', effect: 'Unlock lab tests', accent: 'violet', locked: true },
-    { id: 'apotek', name: 'Apotek', level: 2, maxLevel: 4, cost: 3000000, icon: '💊', effect: 'Faster dispensing', accent: 'amber' },
-    { id: 'igd', name: 'Ruang UGD', level: 1, maxLevel: 3, cost: 15000000, icon: '🚑', effect: '+1 emergency bed', accent: 'rose' },
-    { id: 'rawat_inap', name: 'Rawat Inap', level: 0, maxLevel: 2, cost: 50000000, icon: '🛏️', effect: 'Overnight stays', accent: 'blue', locked: true },
-    { id: 'gudang', name: 'Gudang Obat', level: 1, maxLevel: 3, cost: 5000000, icon: '📦', effect: '+100 inventory slots', accent: 'slate' },
+    { id: 'poli_umum', name: 'Poli Umum', level: 3, maxLevel: 5, cost: 5000000, icon: 'poli_umum', effect: 'Kapasitas +5 pasien/hari', accent: 'emerald' },
+    { id: 'poli_gigi', name: 'Poli Gigi', level: 1, maxLevel: 3, cost: 10000000, icon: 'poli_gigi', effect: 'Unlock dental treatments', accent: 'cyan' },
+    { id: 'poli_kia_kb', name: 'Poli KIA-KB', level: 2, maxLevel: 3, cost: 8000000, icon: 'poli_kia_kb', effect: '+10% maternal care score', accent: 'pink' },
+    { id: 'lab', name: 'Laboratorium', level: 0, maxLevel: 3, cost: 25000000, icon: 'lab', effect: 'Unlock lab tests', accent: 'violet', locked: true },
+    { id: 'apotek', name: 'Apotek', level: 2, maxLevel: 4, cost: 3000000, icon: 'apotek', effect: 'Faster dispensing', accent: 'amber' },
+    { id: 'igd', name: 'Ruang UGD', level: 1, maxLevel: 3, cost: 15000000, icon: 'igd', effect: '+1 emergency bed', accent: 'rose' },
+    { id: 'rawat_inap', name: 'Rawat Inap', level: 0, maxLevel: 2, cost: 50000000, icon: 'rawat_inap', effect: 'Overnight stays', accent: 'blue', locked: true },
+    { id: 'gudang', name: 'Gudang Obat', level: 1, maxLevel: 3, cost: 5000000, icon: 'gudang', effect: '+100 inventory slots', accent: 'slate' },
 ];
 
 export const ACCENT_MAP = {

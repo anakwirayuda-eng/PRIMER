@@ -9,17 +9,19 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React from 'react';
-import { Users, Circle } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Users } from 'lucide-react';
 
 const ChatApp = () => {
-    const chats = [
-        { id: 1, name: 'Grup Kemenkes RI', msg: 'Update Juknis terbaru...', time: '08:00', unread: 2, isGroup: true, avatar: '🏛️' },
-        { id: 2, name: 'IDI Cabang Sukamaju', msg: 'Undangan Seminar Medis...', time: 'Yesterday', unread: 0, isGroup: true, avatar: '👨‍⚕️' },
-        { id: 3, name: 'Grup Puskesmas', msg: 'Bidan Susi: Izin telat dok', time: 'Yesterday', unread: 5, isGroup: true, avatar: '🏥' },
-        { id: 4, name: 'Mama', msg: 'Jangan lupa makan ya nak', time: 'Yesterday', unread: 0, isGroup: false, avatar: '👩' },
-        { id: 5, name: 'Tetangga Reseh', msg: 'Obat kemarin manjur dok!', time: '2 days ago', unread: 0, isGroup: false, avatar: '😠' },
-    ];
+    const { t } = useTranslation();
+    const chats = useMemo(() => [
+        { id: 1, name: t('chatApp.items.1.name'), msg: t('chatApp.items.1.message'), time: '08:00', unread: 2, isGroup: true, avatar: '🏛️' },
+        { id: 2, name: t('chatApp.items.2.name'), msg: t('chatApp.items.2.message'), time: t('chatApp.time.yesterday'), unread: 0, isGroup: true, avatar: '👨‍⚕️' },
+        { id: 3, name: t('chatApp.items.3.name'), msg: t('chatApp.items.3.message'), time: t('chatApp.time.yesterday'), unread: 5, isGroup: true, avatar: '🏥' },
+        { id: 4, name: t('chatApp.items.4.name'), msg: t('chatApp.items.4.message'), time: t('chatApp.time.yesterday'), unread: 0, isGroup: false, avatar: '👩' },
+        { id: 5, name: t('chatApp.items.5.name'), msg: t('chatApp.items.5.message'), time: t('chatApp.time.two_days_ago'), unread: 0, isGroup: false, avatar: '😠' }
+    ], [t]);
 
     return (
         <div className="flex flex-col h-full bg-slate-50">

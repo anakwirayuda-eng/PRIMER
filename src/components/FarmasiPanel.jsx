@@ -10,15 +10,17 @@
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pill, CheckCircle2, AlertTriangle, XCircle, Package, Clock, ShieldCheck, Zap, ChevronRight } from 'lucide-react';
 import { verifyPrescription, checkDrugInteractions, calculateDispensingBill } from '../game/DispensingEngine.js';
 import { getMedicationById } from '../data/MedicationDatabase.js';
 import BishiBashiModal from './BishiBashiModal.jsx';
+import { isEnglishLocale } from '../utils/clinicalContentLocalization.js';
 
 /**
  * Build prescription queue from today's discharged patients
  */
-function buildPrescriptionQueue(history, currentDay) {
+function buildPrescriptionQueue(history, currentDay, fallbackNoDiagnosis = 'Tidak ada diagnosis') {
     if (!history || history.length === 0) return [];
     return history
         // Codex Fix: carry-over ALL undispensed prescriptions (no day limit)
@@ -36,8 +38,8 @@ function buildPrescriptionQueue(history, currentDay) {
             // This lets pharmacy QA catch misdiagnosis
             diagnosis: (() => {
                 const dx = p.decision?.diagnoses?.[0];
-                if (!dx) return p.medicalData?.diagnosisName || p.medicalData?.trueDiagnosisCode || 'Tidak ada diagnosis';
-                if (typeof dx === 'object') return dx.name || dx.code || dx.label || 'Tidak ada diagnosis';
+                if (!dx) return p.medicalData?.diagnosisName || p.medicalData?.trueDiagnosisCode || fallbackNoDiagnosis;
+                if (typeof dx === 'object') return dx.name || dx.code || dx.label || fallbackNoDiagnosis;
                 return dx; // Show the ICD code/string the doctor chose
             })(),
             dischargedAt: p.dischargedAt,
@@ -70,14 +72,18 @@ function buildPrescriptionQueue(history, currentDay) {
         }));
 }
 
-export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInventory, consumeMedication, markPrescriptionDispensed }) {
+export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInventory, consumeMedication: _consumeMedication, markPrescriptionDispensed }) {
+    const { t, i18n } = useTranslation();
     const [activeRxId, setActiveRxId] = useState(null);
     const [verifiedRxIds, setVerifiedRxIds] = useState(new Set());
     const [dispensedRxIds, setDispensedRxIds] = useState(new Set());
     const [checklist, setChecklist] = useState({});
     const [showBishiBashi, setShowBishiBashi] = useState(false);
 
-    const queue = useMemo(() => buildPrescriptionQueue(history, currentDay), [history, currentDay]);
+    const queue = useMemo(
+        () => buildPrescriptionQueue(history, currentDay, t('pharmacyPanel.fallbackNoDiagnosis')),
+        [history, currentDay, t]
+    );
     const activeRx = queue.find(rx => rx.id === activeRxId);
 
     const verification = useMemo(() => {
@@ -118,14 +124,35 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
             };
         }), isBPJS);
     }, [activeRx]);
+    const getCoverageNote = useCallback((bill) => {
+        if (!bill) return '';
+        if (bill.isCovered) return t('pharmacyPanel.coverage.allFornas');
+        if (activeRx?.patientSocial?.hasBPJS) {
+            return t('pharmacyPanel.coverage.nonFornas', { value: bill.finalBill.toLocaleString() });
+        }
+        return t('pharmacyPanel.coverage.general');
+    }, [activeRx, t]);
+    const localizePharmacyMessage = useCallback((message) => {
+        if (!isEnglishLocale(i18n.language) || typeof message !== 'string') return message;
+        return message
+            .replace('Resep kosong — tidak ada obat yang dituliskan', 'Empty prescription - no medicines written')
+            .replace('Resep kosong - tidak ada obat yang dituliskan', 'Empty prescription - no medicines written')
+            .replace(/(.+) bukan obat FORNAS [—-] tidak bisa diklaim BPJS/, '$1 is not a FORNAS medicine - cannot be claimed through BPJS');
+    }, [i18n.language]);
 
-    const FIVE_RIGHTS = ['Obat Benar', 'Pasien Benar', 'Dosis Benar', 'Rute Benar', 'Waktu Benar'];
+    const FIVE_RIGHTS = useMemo(() => [
+        { id: 'medicine', label: t('pharmacyPanel.fiveRights.medicine') },
+        { id: 'patient', label: t('pharmacyPanel.fiveRights.patient') },
+        { id: 'dose', label: t('pharmacyPanel.fiveRights.dose') },
+        { id: 'route', label: t('pharmacyPanel.fiveRights.route') },
+        { id: 'time', label: t('pharmacyPanel.fiveRights.time') }
+    ], [t]);
 
     const handleCheckRight = useCallback((right) => {
         setChecklist(prev => ({ ...prev, [right]: !prev[right] }));
     }, []);
 
-    const allChecked = FIVE_RIGHTS.every(r => checklist[r]);
+    const allChecked = FIVE_RIGHTS.every(r => checklist[r.id]);
 
     const handleVerify = useCallback(() => {
         // Codex Fix: block verify if verification found errors (allergies, interactions, etc.)
@@ -145,7 +172,7 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
         setDispensedRxIds(prev => new Set([...prev, activeRxId]));
         setActiveRxId(null);
         setChecklist({});
-    }, [activeRxId, verifiedRxIds, consumeMedication, activeRx, pharmacyInventory, markPrescriptionDispensed]);
+    }, [activeRxId, verifiedRxIds, verification, markPrescriptionDispensed]);
 
     // Counters: pending = current queue (undispensed), completed = dispensed today from history
     const pendingCount = queue.length;
@@ -159,8 +186,8 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                     <Pill size={40} className="opacity-30" />
                 </div>
                 <div className="text-center">
-                    <p className="text-sm font-bold mb-1">Belum Ada Resep</p>
-                    <p className="text-[10px] opacity-60 max-w-[200px]">Resep akan otomatis masuk setelah pasien Poli Umum dipulangkan dengan obat.</p>
+                    <p className="text-sm font-bold mb-1">{t('pharmacyPanel.emptyTitle')}</p>
+                    <p className="text-[10px] opacity-60 max-w-[200px]">{t('pharmacyPanel.emptyDescription')}</p>
                 </div>
             </div>
         );
@@ -173,14 +200,14 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
             <div className="w-72 shrink-0 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                     <h3 className={`text-xs font-black uppercase tracking-[0.2em] ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
-                        Antrian Resep
+                        {t('pharmacyPanel.queueTitle')}
                     </h3>
                     <div className="flex gap-2">
                         <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-700'}`}>
-                            {pendingCount} Pending
+                            {t('pharmacyPanel.pending', { count: pendingCount })}
                         </span>
                         <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>
-                            {completedCount} ✓
+                            {t('pharmacyPanel.completed', { count: completedCount })}
                         </span>
                     </div>
                 </div>
@@ -195,7 +222,7 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                         }`}
                     >
                         <Zap size={12} />
-                        RUSH HOUR! (+XP)
+                        {t('pharmacyPanel.rushHour')}
                     </button>
                 )}
 
@@ -231,10 +258,10 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                                 <div className="flex items-center gap-2 mt-1.5">
                                     <Pill size={10} className={`${isDark ? 'text-amber-500' : 'text-amber-600'}`} />
                                     <span className={`text-[9px] font-bold ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                                        {rx.items.length} obat
+                                        {t('pharmacyPanel.medCount', { count: rx.items.length })}
                                     </span>
                                     <Clock size={10} className="opacity-30" />
-                                    <span className={`text-[9px] opacity-50`}>{rx.dischargedAt || '—'}</span>
+                                    <span className={`text-[9px] opacity-50`}>{rx.dischargedAt || '-'}</span>
                                 </div>
                             </button>
                         );
@@ -248,8 +275,8 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                     <div className={`flex items-center justify-center h-full ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
                         <div className="text-center">
                             <Package size={48} className="mx-auto mb-3 opacity-20" />
-                            <p className="text-xs font-bold">Pilih Resep dari Antrian</p>
-                            <p className="text-[10px] opacity-60 mt-1">Klik pasien di sebelah kiri untuk mulai verifikasi</p>
+                            <p className="text-xs font-bold">{t('pharmacyPanel.selectTitle')}</p>
+                            <p className="text-[10px] opacity-60 mt-1">{t('pharmacyPanel.selectHint')}</p>
                         </div>
                     </div>
                 ) : (
@@ -260,7 +287,12 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                                 <h4 className={`text-sm font-black ${isDark ? 'text-white' : 'text-slate-800'}`}>{activeRx.patientName}</h4>
                                 <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
                                     {/* Codex Fix: generator uses 'L'/'P', not 'M'/'F' */}
-                                    {activeRx.patientAge} th • {(activeRx.patientGender === 'M' || activeRx.patientGender === 'L' || activeRx.patientGender === 'male') ? 'Laki-laki' : 'Perempuan'}
+                                    {t('pharmacyPanel.ageGender', {
+                                        age: activeRx.patientAge,
+                                        gender: (activeRx.patientGender === 'M' || activeRx.patientGender === 'L' || activeRx.patientGender === 'male')
+                                            ? t('pharmacyPanel.male')
+                                            : t('pharmacyPanel.female')
+                                    })}
                                 </span>
                             </div>
                             <p className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
@@ -269,7 +301,7 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                             {activeRx.patientAllergies.length > 0 && (
                                 <div className={`mt-2 px-2 py-1 rounded-lg text-[9px] font-bold flex items-center gap-1.5 ${isDark ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-red-50 text-red-700 border border-red-100'}`}>
                                     <AlertTriangle size={10} />
-                                    Alergi: {activeRx.patientAllergies.join(', ')}
+                                    {t('pharmacyPanel.allergy', { items: activeRx.patientAllergies.join(', ') })}
                                 </div>
                             )}
                             {/* Codex Fix: Display Billing/Coverage Info */}
@@ -278,13 +310,13 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-1.5">
                                             <ShieldCheck size={10} />
-                                            <span>Billing: {dispensingBill.coverageNote}</span>
+                                            <span>{t('pharmacyPanel.billing', { note: getCoverageNote(dispensingBill) })}</span>
                                         </div>
                                         <span>Rp {dispensingBill.finalBill.toLocaleString()}</span>
                                     </div>
                                     {dispensingBill.isCovered && dispensingBill.subtotal > 0 && (
                                         <div className="opacity-60 text-[8px] border-t border-current/10 pt-1 mt-0.5">
-                                            Penghematan Pasien: Rp {dispensingBill.subtotal.toLocaleString()}
+                                            {t('pharmacyPanel.patientSavings', { value: dispensingBill.subtotal.toLocaleString() })}
                                         </div>
                                     )}
                                 </div>
@@ -294,7 +326,7 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                         {/* Prescription Items */}
                         <div className={`rounded-2xl border-2 overflow-hidden ${isDark ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
                             <div className={`px-4 py-2 border-b ${isDark ? 'border-slate-800 bg-slate-800/50' : 'border-slate-100 bg-slate-50'}`}>
-                                <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Obat Diresepkan</span>
+                                <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t('pharmacyPanel.prescribedMeds')}</span>
                             </div>
                             <div className="divide-y divide-current/5">
                                 {verification?.verifiedItems?.map((item, idx) => {
@@ -313,19 +345,24 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                                                 )}
                                             </div>
                                             <div className={`text-[9px] pl-5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                                                {med?.form} • {item.frequency}x/hari • {item.duration} hari • qty: {item.qtyNeeded}
+                                                {t('pharmacyPanel.itemDetail', {
+                                                    form: med?.form || '-',
+                                                    frequency: item.frequency,
+                                                    duration: item.duration,
+                                                    qty: item.qtyNeeded
+                                                })}
                                             </div>
                                             {item.errors.length > 0 && (
                                                 <div className="mt-1 pl-5 space-y-0.5">
                                                     {item.errors.map((e, i) => (
-                                                        <p key={i} className="text-[9px] font-bold text-red-500">{e}</p>
+                                                        <p key={i} className="text-[9px] font-bold text-red-500">{localizePharmacyMessage(e)}</p>
                                                     ))}
                                                 </div>
                                             )}
                                             {item.warnings.length > 0 && (
                                                 <div className="mt-1 pl-5 space-y-0.5">
                                                     {item.warnings.map((w, i) => (
-                                                        <p key={i} className="text-[9px] font-medium text-amber-500">{w}</p>
+                                                        <p key={i} className="text-[9px] font-medium text-amber-500">{localizePharmacyMessage(w)}</p>
                                                     ))}
                                                 </div>
                                             )}
@@ -339,15 +376,15 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                         {interactions.length > 0 && (
                             <div className={`p-4 rounded-2xl border-2 ${isDark ? 'bg-red-500/5 border-red-500/20' : 'bg-red-50 border-red-100'}`}>
                                 <h5 className={`text-[10px] font-black uppercase tracking-widest mb-2 ${isDark ? 'text-red-400' : 'text-red-700'}`}>
-                                    ⚠️ Interaksi Obat
+                                    WARN {t('pharmacyPanel.interactions')}
                                 </h5>
                                 {interactions.map((inter, idx) => (
                                     <div key={idx} className={`text-[10px] mb-1 ${isDark ? 'text-red-300' : 'text-red-600'}`}>
-                                        <span className="font-bold">{inter.drugA}</span> × <span className="font-bold">{inter.drugB}</span>
+                                        <span className="font-bold">{inter.drugA}</span> x <span className="font-bold">{inter.drugB}</span>
                                         <span className={`ml-2 px-1.5 py-0.5 rounded text-[8px] font-black uppercase ${inter.severity === 'major' ? 'bg-red-500 text-white' : 'bg-amber-500 text-white'}`}>
                                             {inter.severity}
                                         </span>
-                                        <span className="ml-1 opacity-70">— {inter.description}</span>
+                                        <span className="ml-1 opacity-70">- {inter.description}</span>
                                     </div>
                                 ))}
                             </div>
@@ -357,25 +394,25 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                         {!verifiedRxIds.has(activeRxId) && (
                             <div className={`p-4 rounded-2xl border-2 ${isDark ? 'bg-blue-500/5 border-blue-500/20' : 'bg-blue-50 border-blue-100'}`}>
                                 <h5 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>
-                                    ✅ Verifikasi 5-Benar
+                                    OK {t('pharmacyPanel.fiveRightsTitle')}
                                 </h5>
                                 <div className="space-y-2">
                                     {FIVE_RIGHTS.map(right => (
                                         <button
-                                            key={right}
-                                            onClick={() => handleCheckRight(right)}
-                                            className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all ${checklist[right]
+                                            key={right.id}
+                                            onClick={() => handleCheckRight(right.id)}
+                                            className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all ${checklist[right.id]
                                                     ? `${isDark ? 'bg-emerald-500/10 border border-emerald-500/30' : 'bg-emerald-50 border border-emerald-200'}`
                                                     : `${isDark ? 'bg-slate-800/50 border border-slate-700 hover:border-blue-500/30' : 'bg-white border border-slate-200 hover:border-blue-300 shadow-sm'}`
                                                 }`}
                                         >
-                                            <div className={`w-5 h-5 rounded-md flex items-center justify-center ${checklist[right]
+                                            <div className={`w-5 h-5 rounded-md flex items-center justify-center ${checklist[right.id]
                                                     ? 'bg-emerald-500 text-white'
                                                     : `${isDark ? 'bg-slate-700 text-slate-500' : 'bg-slate-100 text-slate-400'}`
                                                 }`}>
-                                                {checklist[right] && <CheckCircle2 size={12} />}
+                                                {checklist[right.id] && <CheckCircle2 size={12} />}
                                             </div>
-                                            <span className={`text-[11px] font-bold ${isDark ? 'text-white' : 'text-slate-700'}`}>{right}</span>
+                                            <span className={`text-[11px] font-bold ${isDark ? 'text-white' : 'text-slate-700'}`}>{right.label}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -388,7 +425,7 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                                         }`}
                                 >
                                     <ShieldCheck size={14} className="inline mr-2" />
-                                    Verifikasi Resep
+                                    {t('pharmacyPanel.verify')}
                                 </button>
                             </div>
                         )}
@@ -403,14 +440,14 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
                                     }`}
                             >
                                 <Zap size={16} className="inline mr-2" />
-                                Serahkan Obat ke Pasien
+                                {t('pharmacyPanel.dispense')}
                             </button>
                         )}
 
                         {dispensedRxIds.has(activeRxId) && (
                             <div className={`p-4 rounded-2xl text-center ${isDark ? 'bg-emerald-500/10 border-2 border-emerald-500/20' : 'bg-emerald-50 border-2 border-emerald-100'}`}>
                                 <CheckCircle2 size={32} className="text-emerald-500 mx-auto mb-2" />
-                                <p className={`text-xs font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>Obat Sudah Diserahkan</p>
+                                <p className={`text-xs font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>{t('pharmacyPanel.dispensed')}</p>
                             </div>
                         )}
                     </div>
@@ -421,9 +458,9 @@ export default function FarmasiPanel({ isDark, history, currentDay, pharmacyInve
             <BishiBashiModal
                 prescriptionQueue={queue}
                 difficulty={Math.min(5, Math.max(1, Math.floor(queue.length / 2)))}
-                onComplete={(result) => {
+                onComplete={() => {
                     setShowBishiBashi(false);
-                    // XP reward is surfaced in result.xpEarned — store integration TBD
+                    // XP reward is surfaced in result.xpEarned - store integration TBD
                 }}
                 onDismiss={() => setShowBishiBashi(false)}
             />

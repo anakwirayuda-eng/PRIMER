@@ -12,30 +12,65 @@
 import React from 'react';
 import { getInformantMode, getPrefix, getInitialComplaintResponse, getDoctorAcknowledgment } from '../../../game/AnamnesisEngine.js';
 
-export default function InitialComplaintSelection({ patient, isDark, anamnesisHistory, setAnamnesisHistory, setHasAskedComplaint, updatePatient, onComplaintAsked }) {
+function buildLocalizedPrompt(t, key, fallbackText, fallbackTag, options = {}) {
+    const text = typeof t === 'function'
+        ? t(`anamnesis.initial.${key}.text`, { ...options, defaultValue: fallbackText })
+        : fallbackText;
+    const tag = typeof t === 'function'
+        ? t(`anamnesis.initial.${key}.tag`, { ...options, defaultValue: fallbackTag })
+        : fallbackTag;
+
+    return { text, tag };
+}
+
+export default function InitialComplaintSelection({ patient, isDark, anamnesisHistory, setAnamnesisHistory, setHasAskedComplaint, updatePatient, onComplaintAsked, t }) {
     const infoMode = getInformantMode(patient);
     const prefix = getPrefix(patient, infoMode);
 
     const complaintQuestions = infoMode.isInformant && infoMode.reason === 'pediatric'
         ? [
-            { id: 'complaint_1', text: `Ada keluhan apa untuk anaknya, ${prefix}?`, tag: 'Keluhan anak' },
-            { id: 'complaint_2', text: `${prefix}, apa yang terjadi dengan adiknya?`, tag: 'Apa yang terjadi' },
-            { id: 'complaint_3', text: `Ceritakan kondisi anak ${prefix} saat ini.`, tag: 'Kondisi saat ini' }
+            {
+                id: 'complaint_1',
+                ...buildLocalizedPrompt(t, 'pediatric_complaint_1', `Ada keluhan apa untuk anaknya, ${prefix}?`, 'Keluhan anak', { prefix })
+            },
+            {
+                id: 'complaint_2',
+                ...buildLocalizedPrompt(t, 'pediatric_complaint_2', `${prefix}, apa yang terjadi dengan adiknya?`, 'Apa yang terjadi', { prefix })
+            },
+            {
+                id: 'complaint_3',
+                ...buildLocalizedPrompt(t, 'pediatric_complaint_3', `Ceritakan kondisi anak ${prefix} saat ini.`, 'Kondisi saat ini', { prefix })
+            }
         ]
         : infoMode.isInformant
             ? [
-                { id: 'complaint_1', text: `Ada keluhan apa, ${prefix}?`, tag: 'Keluhan' },
-                { id: 'complaint_2', text: `Bisa ceritakan apa yang dirasakan beliau?`, tag: 'Apa yang dirasakan' }
+                {
+                    id: 'complaint_1',
+                    ...buildLocalizedPrompt(t, 'informant_complaint_1', `Ada keluhan apa, ${prefix}?`, 'Keluhan', { prefix })
+                },
+                {
+                    id: 'complaint_2',
+                    ...buildLocalizedPrompt(t, 'informant_complaint_2', 'Bisa ceritakan apa yang dirasakan beliau?', 'Apa yang dirasakan', { prefix })
+                }
             ]
             : [
-                { id: 'complaint_1', text: `Apa yang bisa saya bantu, ${prefix}?`, tag: 'Ada yang bisa dibantu' },
-                { id: 'complaint_2', text: `Ada keluhan apa ${prefix} hari ini?`, tag: 'Keluhan hari ini' },
-                { id: 'complaint_3', text: `Bagaimana kondisi ${prefix} saat ini?`, tag: 'Kondisi saat ini' }
+                {
+                    id: 'complaint_1',
+                    ...buildLocalizedPrompt(t, 'patient_complaint_1', `Apa yang bisa saya bantu, ${prefix}?`, 'Ada yang bisa dibantu', { prefix })
+                },
+                {
+                    id: 'complaint_2',
+                    ...buildLocalizedPrompt(t, 'patient_complaint_2', `Ada keluhan apa ${prefix} hari ini?`, 'Keluhan hari ini', { prefix })
+                },
+                {
+                    id: 'complaint_3',
+                    ...buildLocalizedPrompt(t, 'patient_complaint_3', `Bagaimana kondisi ${prefix} saat ini?`, 'Kondisi saat ini', { prefix })
+                }
             ];
 
     return (
         <div className={`mb-2 p-1.5 border-2 rounded-lg ${isDark ? 'bg-emerald-950/30 border-emerald-900/50' : 'bg-emerald-50 border-emerald-200'}`}>
-            <p className={`text-tag mb-1.5 font-medium ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>Tanyakan keluhan utama:</p>
+            <p className={`text-tag mb-1.5 font-medium ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>{typeof t === 'function' ? t('anamnesis.ui.initial_title') : 'Tanyakan keluhan utama:'}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5">
                 {complaintQuestions.map((q) => (
                     <button

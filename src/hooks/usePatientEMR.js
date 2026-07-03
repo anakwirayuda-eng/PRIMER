@@ -23,16 +23,13 @@ import {
 } from '../game/ClinicalReasoning.js';
 import { getMedicationById } from '../data/MedicationDatabase.js';
 import { matchDrugAllergy } from '../game/DispensingEngine.js';
-import { calculatePrimaryCareRevenueForDecision } from '../game/BillingEngine.js';
 import { useGameStore } from '../store/useGameStore.js';
 import { useShallow } from 'zustand/react/shallow';
 import { selectClinical, selectPlayerStats, selectDerivedFinance } from '../store/selectors.js';
 import { soundManager } from '../utils/SoundManager.js';
 import { guardStability } from '../utils/prophylaxis.js';
 import { classifyResponse } from '../game/anamnesis/SynthesisEngine.js';
-import { evaluateConsequences } from '../game/ConsequenceEngine.js';
 import { showToast, confirmToast } from '../utils/ToastManager.js';
-import { pickDeterministic } from '../utils/deterministicRandom.js';
 import {
     getCanonicalPhysicalExamKeys,
     getPhysicalExamFinding,
@@ -43,7 +40,7 @@ import {
 export function usePatientEMR() {
     // 1. Clinical Base Data & Actions
     const { queue, activePatientId, history } = useGameStore(useShallow(selectClinical));
-    const { dischargePatient, updatePatient, orderLab, logCaseOutcome, pushConsequence, setActiveReferral } = useGameStore(useShallow(s => s.clinicalActions));
+    const { dischargePatient, updatePatient, orderLab, setActiveReferral } = useGameStore(useShallow(s => s.clinicalActions));
 
     // 2. Player Profile & Status
     const playerProfile = useGameStore(useShallow(selectPlayerStats));
@@ -183,7 +180,8 @@ export function usePatientEMR() {
         const essentialIds = patient.medicalData?.essentialQuestions || [];
         const isEmergency = patient.isEmergency || patient.category === 'emergency' || patient.serviceId === 'igd';
         const newCoverage = calculateCoverageScore(history, exams, labs, essentialIds, {
-            caseType: isEmergency ? 'emergency' : 'general'
+            caseType: isEmergency ? 'emergency' : 'general',
+            caseData: patient.medicalData,
         });
         setCoverageScore(newCoverage);
         return newCoverage;
@@ -473,19 +471,35 @@ export function usePatientEMR() {
 
     const handleOrderLab = useCallback((labName, cost) => {
         if (!patient) return;
+        const isBPJS = Boolean(patient?.social?.hasBPJS);
         const totalFunds = (stats.kapitasi || 0) + (stats.pendapatanUmum || 0);
-        if (totalFunds < cost) {
+        if (isBPJS && (stats.kapitasi || 0) < cost) {
+            showToast('Plafon kapitasi tidak cukup untuk pemeriksaan BPJS ini!', 'error');
+            return;
+        }
+        if (!isBPJS && totalFunds < cost) {
             showToast('Dana faskes tidak cukup untuk pemeriksaan ini!', 'error');
             return;
         }
-        orderLab(patient.id, labName, cost);
-        
-        // Read the store-written result after orderLab's synchronous set().
-        // The store's orderLab() calls processLabOrder() for disease-contextualized results.
+        const orderResult = orderLab(patient.id, labName, cost);
+        if (orderResult?.reason === 'insufficient-kapitasi') {
+            showToast('Plafon kapitasi tidak cukup untuk pemeriksaan BPJS ini!', 'error');
+            return;
+        }
+        if (!orderResult?.ok) {
+            showToast('Pemeriksaan ini belum tersedia untuk diorder langsung di FKTP.', 'warning');
+            return;
+        }
+
         const updatedPatient = useGameStore.getState().clinical.queue.find(p => p.id === patient.id);
-        const storeResult = updatedPatient?.labsRevealed?.[labName];
-        const labResultObj = storeResult || { result: 'Dalam batas normal', isNormal: true };
-        const updatedLabs = { ...labsRevealed, [labName]: labResultObj };
+        const orderKey = orderResult.orderKey || labName;
+        const storeResult = updatedPatient?.labsRevealed?.[orderKey] || orderResult.labResult;
+        if (!storeResult) {
+            showToast('Hasil laboratorium belum bisa diproses untuk kasus ini.', 'warning');
+            return;
+        }
+
+        const updatedLabs = { ...labsRevealed, [orderKey]: storeResult };
         setLabsRevealed(updatedLabs);
         recalculateClinicalScores(anamnesisHistory, examsPerformed, updatedLabs);
         soundManager.playConfirm();
@@ -677,33 +691,13 @@ export function usePatientEMR() {
 
         dischargePatient(patient, decisionPayload);
 
-        // Phase 0: Log case outcome for debrief + evaluate consequences
-        // Cache validation results to avoid redundant calls
-        const diagResult = validateDiagnosis(caseData, selectedDiagnoses);
         const treatResult = validateTreatment(caseData, selectedMeds, selectedProcedures.map(p => p.id || p.code));
-        const caseOutcome = {
-            patientName: patient.name,
-            age: patient.age,
-            diagnosis: selectedDiagnoses[0]?.code || 'unknown',
-            correctDiagnosis: caseData?.trueDiagnosisCode || caseData?.diagnosisName || caseData?.id || '',
-            wasCorrect: diagResult?.isPrimaryCorrect ?? false,
-            diagnosisScore: diagResult?.isPrimaryCorrect ? 100 : 0,
-            action,
-            // Codex Fix: DebriefEngine needs these flags for generateSummary()
-            completed: action === 'treat',
-            referred: action === 'refer',
-            revenue: calculatePrimaryCareRevenueForDecision(patient, decisionPayload),
-            medications: selectedMeds.map(m => m.id),
-            keyLearning: caseData?.keyLearning || '',
-            guidelineRef: caseData?.guidelineRef || null,
-            timestamp: Date.now()
-        };
-        logCaseOutcome(caseOutcome);
-
         // D3: Post-discharge feedback toast with scores
         // Codex Fix: coverageScore is an object {score, anamnesisTotal, ...}, not a number
         const coveragePct = Math.round((typeof coverageScore === 'object' ? coverageScore?.score : coverageScore) || 0);
-        const diagPct = caseOutcome.diagnosisScore;
+        const diagResult = validateDiagnosis(caseData, selectedDiagnoses);
+        const diagPct = diagResult?.isPrimaryCorrect ? 100 : 0;
+        const caseOutcome = { wasCorrect: diagResult?.isPrimaryCorrect ?? false, diagnosisScore: diagPct };
         const treatPct = Math.round((treatResult?.score ?? 0));
         const emoji = caseOutcome.wasCorrect ? '🎯' : '⚠️';
         const toastType = caseOutcome.wasCorrect ? 'success' : 'warning';
@@ -712,22 +706,6 @@ export function usePatientEMR() {
             toastType,
             5000
         );
-
-        // Evaluate consequences (delayed patient outcomes)
-        const consequences = evaluateConsequences(caseData, {
-            action,
-            diagnosis: selectedDiagnoses.map(d => d.code),
-            medications: selectedMeds.map(m => m.id),
-            labsRevealed,
-            diagnosisScore: caseOutcome.diagnosisScore,
-            treatmentScore: treatResult?.score ?? 0,
-            // Codex Fix: pass patient identity so ConsequenceEngine can build originalCase
-            patientName: patient.name,
-            age: patient.age,
-            gender: patient.gender,
-            category: patient.hidden?.category || caseData?.category || '',
-        }, day || 1);
-        if (consequences) pushConsequence(consequences);
 
         // Phase 0: Apply followupData impacts if this is a returning patient
         if (patient.isFollowup && patient.followupData) {
@@ -743,7 +721,7 @@ export function usePatientEMR() {
         }
 
         // State reset for the next patient is handled by the initial patient-change useEffect
-    }, [selectedDiagnoses, patient, selectedMeds, selectedProcedures, performedExamKeys, selectedEducation, anamnesisHistory, labsRevealed, dischargePatient, logCaseOutcome, pushConsequence, gainXp, setPlayerStats, setActiveReferral, coverageScore, day]);
+    }, [selectedDiagnoses, patient, selectedMeds, selectedProcedures, performedExamKeys, selectedEducation, anamnesisHistory, labsRevealed, dischargePatient, gainXp, setPlayerStats, setActiveReferral, coverageScore]);
 
     return {
         patient,

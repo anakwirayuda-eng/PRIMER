@@ -140,9 +140,17 @@ export function simulateANCVisit(patient, visitType, doctorActions = {}) {
     const completeness = Math.round((essentialDone.length / visitDef.essentialChecks.length) * 100);
 
     let feedback;
-    if (completeness === 100) feedback = '✅ Pemeriksaan ANC lengkap sesuai standar!';
-    else if (completeness >= 70) feedback = `⚠️ ${essentialMissed.length} pemeriksaan esensial belum dilakukan: ${essentialMissed.join(', ')}`;
-    else feedback = `❌ Banyak pemeriksaan belum dilakukan. Standar K1 minimal: ${visitDef.essentialChecks.join(', ')}`;
+    let feedbackKey;
+    if (completeness === 100) {
+        feedback = '[Benar] Pemeriksaan ANC lengkap sesuai standar.';
+        feedbackKey = 'ancComplete';
+    } else if (completeness >= 70) {
+        feedback = `[Waspada] ${essentialMissed.length} pemeriksaan esensial belum dilakukan: ${essentialMissed.join(', ')}`;
+        feedbackKey = 'ancMissing';
+    } else {
+        feedback = `[Perlu Aksi] Banyak pemeriksaan belum dilakukan. Standar K1 minimal: ${visitDef.essentialChecks.join(', ')}`;
+        feedbackKey = 'ancManyMissing';
+    }
 
     // XP based on completeness
     const score = Math.round(completeness * 0.5 + (events.some(e => e.id !== 'normal_progress') && doctorActions.referralMade ? 20 : 0));
@@ -166,6 +174,8 @@ export function simulateANCVisit(patient, visitType, doctorActions = {}) {
         outcome: events.length > 0 ? events[0] : { id: 'normal_progress', label: 'Kehamilan Normal' },
         score,
         feedback,
+        feedbackKey,
+        feedbackParams: { count: essentialMissed.length, checks: essentialMissed.join(', ') },
         checksCompleted: essentialDone,
         checksMissed: essentialMissed,
         visitRecord
@@ -270,7 +280,9 @@ export function processKBCounseling(patient, methodId) {
         return {
             eligible: false,
             method: method.name,
-            feedback: `⚠️ ${method.name} KONTRAINDIKASI untuk pasien ini. Pilih metode lain.`
+            feedback: `[Waspada] ${method.name} kontraindikasi untuk pasien ini. Pilih metode lain.`,
+            feedbackKey: 'kbContraindicated',
+            feedbackParams: { method: method.name }
         };
     }
 
@@ -281,7 +293,9 @@ export function processKBCounseling(patient, methodId) {
         duration: method.duration,
         sideEffects: method.sideEffects,
         followUp: method.duration === 'permanen' ? 'Kontrol 1 minggu pasca tindakan' : `Kembali dalam ${method.duration}`,
-        feedback: `✅ ${method.name} sesuai untuk pasien. Efektivitas ${method.effectiveness}%.`
+        feedback: `[Benar] ${method.name} sesuai untuk pasien. Efektivitas ${method.effectiveness}%.`,
+        feedbackKey: 'kbEligible',
+        feedbackParams: { method: method.name, effectiveness: method.effectiveness }
     };
 }
 
@@ -333,8 +347,10 @@ export function simulateDelivery(patient) {
         complication,
         referralNeeded: outcome === 'complicated',
         feedback: outcome === 'normal'
-            ? '✅ Persalinan normal pervaginam. Ibu dan bayi sehat.'
-            : `⚠️ Komplikasi: ${complication}. ${mode === 'SC' ? 'Rujuk untuk SC.' : 'Tatalaksana segera.'}`
+            ? '[Benar] Persalinan normal pervaginam. Ibu dan bayi sehat.'
+            : `[Waspada] Komplikasi: ${complication}. ${mode === 'SC' ? 'Rujuk untuk SC.' : 'Tatalaksana segera.'}`,
+        feedbackKey: outcome === 'normal' ? 'deliveryNormal' : 'deliveryComplicated',
+        feedbackParams: { complication, mode }
     };
 }
 

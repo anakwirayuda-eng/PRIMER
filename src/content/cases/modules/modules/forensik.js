@@ -143,7 +143,7 @@ export const FORENSIK_CASES = [
             rpd: [], rpk: [], sosial: []
         },
         essentialQuestions: ['q_main', 'q_duration'],
-        anamnesis: ["Tenggelam di kolam renang, sudah diangkat.", "3 menit di bawah air, sudah CPR."],
+        anamnesis: ["Anak saya tenggelam di kolam renang dok, sekarang sudah diangkat tapi masih batuk dan sesak.", "Kira-kira 3 menit di bawah air, lalu langsung diberi napas buatan sebelum dibawa ke sini."],
         physicalExamFindings: { general: "Sadar, sesak, batuk, menggigil.", vitals: "TD 100/60, N 110x, RR 30x, S 35°C, SpO2 88%", thorax: "Ronki basah bilateral difus." },
         labs: {}, vitals: { temp: 35, bp: '100/60', hr: 110, rr: 30 },
         correctTreatment: ['o2_nrm_15lpm', 'rl_500'],

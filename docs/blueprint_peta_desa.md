@@ -1,8 +1,15 @@
 # Blueprint Definitif: Peta Wilayah Desa Sukamaju
 *Hasil Triangulasi Dossier v2.0 × DeepThink R1–R12 × Codebase Audit*
-*Status: FINAL v2.3 — Geospatial SDoH Engine Complete*
+*Status: RUNTIME-AUDITED v2.4 — Topologi Final, Implementasi Gameplay Parsial*
 
 ---
+
+> [!IMPORTANT]
+> Dokumen ini sudah diselaraskan ulang dengan runtime aktif per **9 April 2026**.
+> - Audit gap runtime: [`blueprint_runtime_gap_audit_2026-04-04.md`](./blueprint_runtime_gap_audit_2026-04-04.md)
+> - Source of truth sprint/phase: [`wilayah_execution_plan_2026-04.md`](./wilayah_execution_plan_2026-04.md)
+> - Dossier keputusan 3D: [`pocket_diorama_deepthink_dossier_2026-04-09.md`](./pocket_diorama_deepthink_dossier_2026-04-09.md)
+> - Prinsip kerja saat ini: **2D blueprint = source of truth gameplay**, **3D diorama = layer inspector / reward / empathy / exhibition**, **bukan target parity operasional default**.
 
 ## I. TRIAGE & VALIDASI DEEPTHINK
 
@@ -16,17 +23,17 @@ Saya telah mencocokkan setiap rekomendasi DeepThink dengan state aktual codebase
 | 2 | **Jarak = Biaya Energi** + Kendaraan Progression | Menambah kedalaman strategi. Sesuai dengan resource `energy` di `GameCore.js`. |
 | 3 | **Framing Unlock = "Ekspansi Pendataan PIS-PK"** | Secara naratif genius dan realistis. Pasien dari RW terkunci tetap datang ke UGD tapi tanpa data SDOH. |
 | 4 | **Staf = Defense, Dokter = Offense** | Sesuai dengan buff pasif staf yang sudah ada di `calculateGlobalBuffs()`. |
-| 5 | **Event Anchor di Peta** (ikon 🚨 berdenyut) | `Map2DMarker.jsx` sudah punya `outbreakPulse` animation. Tinggal extend untuk IKM events. |
+| 5 | **Event signal di peta** (ikon/alert spasial) | `outbreakPulse`, alert visual, dan cue bangunan sudah hidup. Anchor `🚨` generik untuk semua IKM event masih bertahap. |
 | 6 | **Upgrade Visual Fasilitas** (post-scenario) | Menambah `dopamine payoff` UKM. Bisa diimplementasikan via `facilityLevel` property. |
-| 7 | **Detective Mode 3 Lensa** (IKS/Outbreak/SDoH) | CSS overlay class swap — ringan di DOM. |
-| 8 | **Semantic Zoom** (heatmap ↔ individual) | Perlu threshold sistem — bisa pakai `zoomLevel` state yang sudah ada di `Map2DBlueprint.jsx`. |
+| 7 | **Detective overlays berbasis layer** | Runtime berkembang menjadi overlay operasional multi-layer (`general`, `pispk`, `surveillance`, `psn`, `phbs`, `perilaku`) dengan prinsip yang tetap ringan di DOM. |
+| 8 | **Semantic Zoom praktis** (overview ↔ detail) | Runtime memakai threshold zoom nyata di `Map2DBlueprint.jsx`, tetapi implementasi final saat ini masih 2 tahap, bukan heatmap 3 tahap penuh. |
 
 ### ⚠️ Diadopsi dengan Modifikasi
 
 | # | Rekomendasi DT | Modifikasi Saya | Alasan |
 |---|----------------|-----------------|--------|
 | 9 | **Bendera Kuning 🟨 + Zona Duka selama 3 hari** | Ya, TAPI: Bukan BC "otomatis gagal". Kunjungan rumah masih bisa dilakukan, tetapi **difficulty multiplier COM-B naik 2×** dan dialog NPC menjadi agresif/sinis. | Jika kunjungan *auto-fail*, pemain kehilangan agensi dan bisa terjebak *death spiral* yang tidak bisa diselamatkan. |
-| 10 | **Pocket Diorama (3D hanya 1 RW)** | Ya, tapi **tambahkan transisi animasi** dari 2D → 3D (kamera "melayang turun" ke RW) agar tidak terasa seperti *loading screen*. | UX polish penting agar tidak terasa *jarring*. |
+| 10 | **Pocket Diorama (3D hanya 1 RW)** | Diturunkan statusnya: **2D tetap source of truth**, sementara 3D runtime sekarang masih berupa **full-village diorama opsional**. Jika pocket RW-only dikejar nanti, bentuk yang paling sehat adalah **inspector/reward mode**, bukan layar taktis baru. | Menjaga scope Sprint 1-3 tetap realistis, mencegah jebakan parity 3D, dan tetap menyisakan ruang showcase. |
 | 11 | **Pustu/Polindes sebagai FOB (rest point)** | Ya, tetapi **memerlukan upgrade dulu** oleh pemain (investasi dana). Default = bangunan kosong. Setelah upgrade + staf ditugaskan → baru bisa jadi rest point. | Mencegah healing gratis yang terlalu mudah. |
 
 ### ❌ Ditolak / Ditangguhkan
@@ -73,19 +80,26 @@ Vehicle Mitigation (progression unlock):
   Puskel (mobil) → penalty 0%  (unlock: Hari 80 + Balance ≥ 5jt)
 ```
 
-#### Q3: Fog of War 3D — RESOLVED ✅
-**Keputusan**: **Pocket Diorama** (bukan kabut hitam). 2D map = Layar Komando (selalu utuh). Klik RW di 2D → transisi kamera "turun" ke 3D diorama RW itu saja. RW lain = tidak di-render.
+#### Q3: Fog of War 3D — DECISION LOCKED, IMPLEMENTATION PARTIAL 🟡
+**Keputusan saat ini**: **2D Blueprint = layar komando utama; 3D = mode inspector / reward / exhibition opsional.**
+
+- Runtime aktif **belum** memakai pocket diorama 1 RW.
+- `WilayahDiorama.jsx` saat ini masih menampilkan **desa penuh** sebagai layer presentasi.
+- Semua informasi gameplay kritis (unlock RW, outbreak, intel, champion, service rings, travel friction) **harus tetap terbaca dan playable di 2D**.
+- `3D` **tidak** memikul UI operasional seperti wabah, jentik, atau PIS-PK sebagai target default.
+- Jika pocket diorama per-RW dikejar, targetnya adalah **turntable inspector / sidebar scene / exhibition mode**, bukan parity taktis penuh.
 
 ### 🔄 Unlock RW
 
-#### Q4: Framing Unlock — RESOLVED ✅
+#### Q4: Framing Unlock — PARTIALLY RESOLVED 🟡
 **Keputusan**: **"Ekspansi Pendataan PIS-PK"**
 
 - RW 01-02: data lengkap sejak awal (30 KK).
 - RW 03-08: "Blank Spot Data" — pasien dari RW ini **tetap muncul di UGD/Poli**, namun:
   - EMR mereka tidak punya data SDoH/IKS
   - Behavior Change Case tidak bisa dijalankan (tidak ada baseline)
-  - Di peta 2D: area abu-abu dengan teks "📋 Belum Terdata"
+  - Di runtime saat ini, rumah/keluarga terkunci terutama dibaca lewat status `isLocked`, marker abu-abu, dan interaksi yang dinonaktifkan
+- Presentasi area abu-abu besar + label "📋 Belum Terdata" masih **provisional**, belum menjadi overlay final
 - Pemain mendanai "Operasi Sensus Kader" (biaya + waktu) → RW ter-*unlock*
 
 ### 🏗️ Fasilitas
@@ -98,8 +112,8 @@ Vehicle Mitigation (progression unlock):
 2. `Level 1` — Staf ditugaskan → bisa jadi transit point (pemulihan energi kecil +10)
 3. `Level 2` — Investasi dana → layanan ANC/KIA/pengobatan dasar tersedia
 
-#### Q6: Upgrade Visual Fasilitas — RESOLVED ✅
-**Keputusan**: **Ya, sebagai dopamine payoff UKM.**
+#### Q6: Upgrade Visual Fasilitas — PARTIALLY RESOLVED 🟡
+**Keputusan**: **Ya, sebagai dopamine payoff UKM**, tetapi runtime baru sampai ke layer **progress/readiness**. Set sprite/visual payoff penuh masih target sprint lanjutan.
 
 | Fasilitas | Trigger Sukses | Visual Upgrade | Buff AoE |
 |-----------|----------------|----------------|----------|
@@ -149,63 +163,66 @@ DOKTER (Offense) = Menciptakan Kemajuan
   → Building Scene completion: AoE buff ke seluruh RT/RW
 ```
 
-#### Q9: Event Spawning at Map — RESOLVED ✅
-**Keputusan**: **Anchor di lokasi + notifikasi ganda.**
+#### Q9: Event Spawning at Map — PARTIALLY RESOLVED 🟡
+**Keputusan**: **Anchor di lokasi + notifikasi ganda**, tetapi implementasi runtime saat ini belum merata.
 
-1. Ikon `🚨` berdenyut merah muncul **di atas atap bangunan** relevan di peta 2D.
-2. Notifikasi `toast` muncul di Morning Briefing: *"Laporan dari SDN: 12 anak batuk pilek!"*
-3. Pemain **harus navigasi** ke bangunan tersebut dan mengkliknya untuk memulai skenario.
-4. Jika diabaikan >2 hari → skenario auto-resolve dengan outcome `failed` → UKP Bridge aktif.
+1. Cue visual outbreak/surveillance di peta 2D **sudah hidup**.
+2. HUD/briefing dan panel `Wilayah` sudah memberi notifikasi sekunder yang cukup jelas.
+3. Anchor `🚨` generik di atas atap bangunan untuk semua IKM/community event masih **belum final**.
+4. Loop desain tetap dipertahankan: pemain diarahkan **navigasi ke lokasi** untuk menyelesaikan masalah komunitas.
 
-#### Q10: Death & Consequence — RESOLVED ✅
-**Keputusan**: **"Bendera Kuning" + Zona Distrust** (modifikasi).
+#### Q10: Death & Consequence — PROVISIONAL 🟠
+**Keputusan desain**: **"Bendera Kuning" + Zona Distrust** tetap dipertahankan sebagai intent, tetapi **belum hidup penuh di runtime peta**.
 
-Jika pasien meninggal di UGD akibat kegagalan UKM:
-1. **Visual**: Ikon 🕊️ muncul di rumah keluarga selama **3 hari game**.
-2. **Radius Distrust**: Tetangga dalam radius 3 rumah mengalami:
-   - COM-B motivation barrier naik (bukan auto-fail, tapi difficulty 2×)
-   - Dialog NPC berubah: *"Dokter macam apa yang biarkan anak tetangga meninggal?"*
-3. **Reputasi**: -10 di seluruh RW (bukan hanya RT), simulasi "berita menyebar".
-4. **Recovery**: Setelah 3 hari + 1 kunjungan rumah berhasil ke keluarga berduka → zona distrust dicabut.
+- Hukuman mortalitas dan konsekuensi sistemik sudah punya pondasi di gameplay klinis/komunitas.
+- Marker duka rumah, radius distrust tetangga, dan loop recovery via kunjungan rumah masih **belum menjadi feedback spasial final**.
+- Prinsip yang tetap final: **tidak boleh ada death spiral yang tidak bisa dipulihkan pemain**.
 
 ### 📊 Data & Visualisasi
 
-#### Q11: Detective Mode — RESOLVED ✅
-**Keputusan**: **3 Lensa Overlay** (CSS class swap pada `Map2DMarker`).
+#### Q11: Detective Mode — RESOLVED ✅ (Reframed)
+**Keputusan runtime**: **operational overlays berbasis layer**, bukan lagi hanya 3 lensa konseptual.
 
-| Lensa | Tombol | Visual | Data Source |
-|-------|--------|--------|-------------|
-| 🚦 **IKS** | `[1]` | Ring atap: Hijau (≥0.8) / Kuning (0.5-0.79) / Merah (<0.5) | `family.iksScore` |
-| 🦠 **Surveilans** | `[2]` | Pulse merah merambat dari klaster outbreak + ikon penyakit | `outbreaks[].affectedHouseIds` |
-| 💧 **Kerentanan SDoH** | `[3]` | Glow biru untuk `water:'River'`, Glow oranye untuk `housing:'Make-shift'` | `FAMILY_SDOH[familyId]` |
+| Layer | Tombol | Visual dominan | Data Source |
+|-------|--------|----------------|-------------|
+| 🧭 **General** | `[1]` | Peta normal + cue dasar lokasi | `mapData.buildings` |
+| 🏠 **PIS-PK** | `[2]` | Ring hijau/kuning/merah berdasarkan skor keluarga | `family.iksScore` |
+| 🦠 **Surveilans** | `[3]` | Pulse merah + rumah/faskes dengan kasus aktif | `surveillanceStatus`, `outbreaks[]` |
+| 🐛 **Jentik / PSN** | `[4]` | Ring merah/hijau berdasarkan `hasJentik` | `building.hasJentik` |
+| ❤️ **PHBS** | `[5]` | Ring hijau/kuning/merah berdasar `phbsScore` | `family.phbsScore` |
+| 👥 **Perilaku** | `[6]` | Ring risiko perilaku tinggi/sedang | `family.behaviorRisk` |
 
-Lensa aktif hanya 1 pada saat bersamaan (radio button, bukan toggle).
+Layer aktif tetap **1 pada satu waktu**. Catatan penting: 2D tetap layar komando paling lengkap; 3D boleh punya cue pendukung, tetapi **tidak lagi diposisikan sebagai target parity operasional penuh**.
 
-#### Q12: Semantic Zoom — RESOLVED ✅ 
-**Keputusan**: **Threshold-based rendering.**
+#### Q12: Semantic Zoom — FINALIZED PRACTICAL ✅
+**Keputusan runtime**: **threshold-based rendering 3 tahap praktis**.
 
 | Zoom Level | Render Mode | Detail |
 |------------|-------------|--------|
-| `< 0.5` (jauh) | **Heatmap RW** | 9 polygon RW berwarna rata-rata IKS. Tidak ada marker individual. |
-| `0.5 – 1.0` (sedang) | **Cluster markers** | Emoji kelompok per RT: "🏘️×8" dengan badge warna. |
-| `> 1.0` (dekat) | **Individual markers** | Setiap rumah/fasilitas = 1 marker `Map2DMarker`. Full interactivity. |
+| `< 0.6` (overview) | **Selective markers** | Fasilitas utama + rumah kritis/rentan + target intel/champion tetap terlihat. Bridge detail disederhanakan. |
+| `0.6 – < 1.15` (operational) | **Full markers** | Semua rumah dan bangunan aktif dirender, interaktivitas penuh, cue operasional tetap terbaca. |
+| `>= 1.15` (detail) | **Close detail** | Marker penuh + label lokal/event otomatis untuk pembacaan dekat. |
 
-**Implementation Pattern** (dari DT R3 — dikonfirmasi valid):
+**Implementation Pattern** (sinkron dengan runtime aktif):
 > [!TIP]
-> Jangan pisahkan macro/meso/micro ke route/scene terpisah.
-> Gunakan conditional render **dalam satu komponen** `Map2DBlueprint.jsx`:
+> Semantic zoom tetap berjalan **dalam satu komponen** `Map2DBlueprint.jsx`, tetapi kini dikunci sebagai 3 level praktis:
 > ```jsx
-> const isMacroView = zoom < 0.5;
-> // Sembunyikan rumah warga di Macro View,
-> // KECUALI rumah dalam kondisi kritis (outbreak/IKS merah)
-> {buildings.map(b => {
->   const isHouse = b.familyId != null;
->   const isCritical = b.hasOutbreak || (b.iksScore < 0.5);
->   if (isMacroView && isHouse && !isCritical) return null;
->   return <Map2DMarker key={b.id} building={b} />;
-> })}
+> const level = getSemanticZoomLevel(zoom);
+> const isOverview = level === 'overview';
+> const isDetail = level === 'detail';
+>
+> if (!isOverview) return mapData.buildings;
+>
+> return mapData.buildings.filter((b) => {
+>   const isFacility = !b.familyId;
+>   const isCritical = b.hasCase || (b.familyData?.iksScore ?? 1) < 0.5;
+>   const isVulnerable = ['Low', 'Very Low'].includes(b.familyData?.economy);
+>   const isIntelTarget = intelTargetMap.has(b.familyId);
+>   const isChampion = championFamilyIdSet.has(b.familyId);
+>   return isFacility || isCritical || isVulnerable || isIntelTarget || isChampion;
+> });
 > ```
-> Rumah kritis tetap terlihat di zoom-out sebagai "sinyal bahaya" visual.
+> Detail otomatis seperti label event IKM baru tampil di level `detail`, bukan sejak zoom operasional.
 
 ### Data Crosscheck: RW ↔ Keluarga ↔ Sektor (Audit Codebase 2026-03-31)
 
@@ -223,11 +240,10 @@ Lensa aktif hanya 1 pada saat bersamaan (radio button, bukan toggle).
 | 05 | 28 | **BARAT** (Pedalaman) | Day 45, Rep 50 | |
 | 06 | 28 | **BARAT** (Pedalaman) | Day 60, Rep 55 | |
 | 07 | 28 | **SELATAN** (Sawah) | Day 75, Rep 60 | |
-| 08 | 28 | **SELATAN** (Sawah) | Day 90, Rep 65 | Endgame |
-| 09 | 2 | **⚠️ ORPHAN** | ❌ Tidak ada threshold | **BUG**: Harus di-merge ke RW 08 |
+| 08 | 30 | **SELATAN** (Sawah) | Day 90, Rep 65 | Endgame. Sudah termasuk `kk_199` dan `kk_200` |
 
-> [!WARNING]
-> **RW 09 (2 KK)**: Bug di `generate_village_expansion.mjs`. Dua keluarga (`kk_199`, `kk_200`) ter-assign ke RW 09 yang tidak ada di `RW_UNLOCK_THRESHOLDS`. **Fix**: Ubah `rw: '09'` menjadi `rw: '08'` di `village_families_expanded.js` sebelum eksekusi Phase 1.
+> [!NOTE]
+> Catatan bug lama **RW 09 orphan** sudah stale. Runtime aktif sekarang menempatkan `kk_199` dan `kk_200` di **RW 08**, sehingga distribusi aktif kembali konsisten ke RW `01`–`08`.
 
 #### Distribusi Ekonomi SDoH (Aktual Codebase)
 
@@ -621,16 +637,16 @@ function placeAlongCurve(curvePoints, families, maxOffset, rng) {
 
 ## IV. DEEPTHINK ROUND 2: TRI-LAYER ARCHITECTURE (VALIDASI)
 
-DeepThink R2 merekomendasikan arsitektur **Makro-Meso-Mikro**. Setelah cross-reference, ini **SEPENUHNYA SEJALAN** dengan arsitektur yang sudah kita putuskan di DT R1:
+DeepThink R2 merekomendasikan arsitektur **Makro-Meso-Mikro**. Setelah runtime audit April 2026, visi ini **masih relevan**, tetapi status implementasinya tidak lagi 100% sama dengan blueprint awal:
 
-| Layer DT R2 | Padanan di Blueprint R1 | Status |
-|-------------|-------------------------|--------|
-| **Macro** (Peta RW polygons, lensa overlay) | Semantic Zoom level `< 0.5` + Detective Mode 3 Lensa | ✅ Sudah tercover |
-| **Meso** (Pocket Diorama 1 RW) | Semantic Zoom `> 1.0` + Pocket Diorama 3D | ✅ Sudah tercover |
-| **Micro** (Building Scene interior) | 15 Building Scenes di Dossier | ✅ Sudah tercover |
+| Layer DT R2 | Padanan di runtime saat ini | Status |
+|-------------|-----------------------------|--------|
+| **Macro** (peta overview + lensa overlay) | 2D blueprint + operational overlays + overview/detail zoom | ✅ Hidup |
+| **Meso** (diorama navigasi / inspector) | 3D full-village diorama opsional saat ini, dengan arah jangka lanjut ke **inspector/reward scene**, **bukan** pocket RW-only taktis | 🟡 Parsial |
+| **Micro** (building scene interior) | Subset building scenes aktif (`Posyandu`, `Pustu`, `Polindes`, behavior/community panels) | 🟡 Parsial |
 
 > [!NOTE]
-> Tidak ada perubahan arsitektural yang diperlukan. DT R2 memvalidasi keputusan DT R1.
+> Perubahan arsitektural utamanya adalah **penguncian 2D sebagai layar komando** dan **reposisi 3D sebagai layer inspector/showcase**. Jadi 3D tidak lagi dibaca sebagai parity debt yang harus mengejar semua overlay operasional 2D.
 
 ---
 
@@ -713,7 +729,7 @@ POS_RONDA: 'pos_ronda',                 // Hub 4: Intelligence hub (4 instances)
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│  UTARA — RW 07, RW 09                                  │
+│  UTARA — RW 03, RW 04                                  │
 │  ☕ Pos Ronda Utara                                     │
 ├───────────┬────────────────────────┬───────────────────┤
 │  BARAT    │     PUSAT              │     TIMUR         │
@@ -722,64 +738,37 @@ POS_RONDA: 'pos_ronda',                 // Hub 4: Intelligence hub (4 instances)
 │    Barat   │                        │  ☕ Pos Ronda    │
 │           │                        │     Timur         │
 ├───────────┴────────────────────────┴───────────────────┤
-│  SELATAN — RW 08                                        │
+│  SELATAN — RW 07, RW 08                                 │
 │  🏚️ Padepokan Dukun   ☕ Pos Ronda Selatan              │
 └────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## VII. PRIORITAS EKSEKUSI (Updated)
+## VII. PRIORITAS EKSEKUSI (Superseded 2026-04-04)
 
-### Phase 1: Map Engine Overhaul 🔴 (Critical Path)
-1. Refactor `map-utils.js`: Hybrid settlement algorithm
-2. Sector boundary definitions
-3. Road network generator (Bezier-based)
-4. **NEW**: Penempatan 3 Hazard Hub baru + 4 Pos Ronda
+> [!IMPORTANT]
+> Daftar phase 1-6 versi lama **bukan lagi source of truth**. Sebagian item di bawah sudah hidup di runtime, sementara sebagian lain masih aspirational. Source of truth eksekusi sekarang ada di [`wilayah_execution_plan_2026-04.md`](./wilayah_execution_plan_2026-04.md).
 
-### Phase 2: Gameplay Mechanics 🟡
-5. Distance-based energy cost + terrain penalty
-6. Vehicle progression system (Jalan Kaki → Puskel)
-7. Facility upgrade system (Level 0→1→2)
-8. **NEW**: Warung Kopi intel mechanic (reveal 5 rumah terdekat)
-9. **NEW**: Jembatan Gantung seasonal status (normal/rawan/putus)
-10. **NEW (DT R6)**: KBK BPJS — Kapitasi × IKS desa rata-rata (punish/reward UKM)
-11. **NEW (DT R6)**: Local Champion — keluarga IKS 100% → Kader Lokal + AoE buff
+### Phase A: Lock Source of Truth
+1. **Sprint 1 — Blueprint Lock + Cleanup**
+   Sinkronkan blueprint, audit runtime, hapus status stale (`RW 09`, semantic zoom 3 tahap, pocket diorama final, terrain SVG violation lama).
 
-### Phase 3: Visual & UX 🟢
-12. Detective Mode 3 lensa
-13. Semantic Zoom thresholds
-14. Event anchor markers (🚨 berdenyut)
-15. Bendera Kuning + Zona Distrust
-16. **NEW**: Dynamic Hidden Prop ⛓️ Pasung (overlay pada Map2DMarker)
-17. **NEW (DT R6)**: Karma Traceback UI — garis putus-putus merah dari IGD ke sumber masalah UKM
+### Phase B: Core `Wilayah` MVP Completion
+2. **Sprint 2 — 2D Gameplay Completion**
+   Finalkan source of truth 2D: visual cue unlock, parity overlay inti, activation subset bangunan yang sudah terpasang di topologi.
+3. **Sprint 3 — Systemic Feedback Loop**
+   Buat aksi pemain lebih terasa di desa: ledger, distrust/death consequences, readiness, behavior change, service coverage, dan feedback spasial.
 
-### Phase 4: Narrative & Content 🔵
-18. "Blank Spot" RW framing
-19. Kalender UKM
-20. Upgrade visual building sprites
-21. **NEW**: Building Scene — Pesantren (Interior: Asrama, Dapur, Pondok Kyai)
-22. **NEW**: Building Scene — Padepokan Dukun (Interior: Ruang Pengobatan, Halaman)
-23. **NEW**: Skenario IKM — "Sowan Kyai" (negosiasi akses screening pesantren)
-24. **NEW**: Skenario IKM — "Kemitraan Bidan-Dukun" (converting rival menjadi mitra)
-25. **NEW**: Skenario IKM — "Pembebasan Pasung" (cross-sector intervention)
-26. **NEW (DT R6)**: Tourist EMR Tab — 🎒 Travel History menggantikan PIS-PK/SDoH
+### Phase C: Narrative Node Activation
+4. **Sprint 4 — Hazard Hub Activation**
+   Aktifkan bangunan/naratif prioritas seperti pesantren, padepokan dukun, dan loop intervensi lintas-sektor.
+5. **Sprint 5 — Outsider / Tourism Layer**
+   Tambahkan wisatawan/pendatang, Tourist EMR tab, outsider cases, dan alur travel medicine yang sekarang masih provisional.
 
-### Phase 5: Post-MVP 🟣 (Future)
-27. Tambang Pasir / Pabrik Tahu + upstream pollution system
-28. Night-time emergency mechanics (jam 2 pagi calls)
-29. Advanced weather events (longsor, kebakaran hutan)
-30. **NEW (DT R5)**: Wastewater Surveillance — sampling di Sungai/MCK → early outbreak warning
-31. **NEW (DT R5)**: Hoax Event System — COM-B mass debuff + counter-campaign skenario
-32. **NEW (DT R5)**: Syndemics (Judol/Pinjol) — SDoH cascade → KDRT, suicide attempt, gizi buruk
-33. **NEW (DT R6)**: The 2 AM Shift — night emergency immersive (dark mode, audio cues)
-
-### Phase 6: Expansion / "Global Showcase DLC" 🌟 (Aspirational)
-34. AMR & Apotek Gelap — antibiotic resistance tracking system
-35. Planetary Health — El Niño mega-event cascade
-36. CDoH — Corporate invasion events (vape, junk food di SD)
-37. Zoonotic Spillover enhancement — deforestation indicator + Nipah suspect
-38. **RESERVED** — future community feedback items
+### Phase D: 3D Inspector + Showcase Hardening
+6. **Sprint 6 — 3D Inspector + Showcase Gate**
+   Kunci framing 3D sebagai inspector/reward/exhibition layer, capai `truthful minimum` agar tidak menyesatkan pemain, polish readability, dan siapkan fitur showcase seperti traceback UI yang belum live.
 
 ---
 
@@ -881,51 +870,33 @@ Konsep-konsep ini **terlalu bagus untuk dibuang** tapi **terlalu mahal untuk MVP
 
 ## X. DEEPTHINK R6: 6 UX/EXECUTION HACKS (TRIAGE)
 
-DT R6 bukan fitur/bangunan baru, melainkan **6 polish-level implementation hacks**. Semuanya 0% coverage di codebase. Triage:
+DT R6 bukan fitur/bangunan baru, melainkan **6 polish-level implementation hacks**. Per 4 April 2026, status implementasinya **campuran**, bukan lagi 0% coverage.
 
-### ✅ Semua 6 Diadopsi (varying phases)
+### Status aktual per hack
 
-#### Hack 1: 🔍 Karma Traceback UI → Phase 3 (Visual/UX) ✅
-- **Konsep**: Saat pasien UKP Bridge masuk IGD, Dr. MAIA menampilkan tombol `[Analisis Akar Masalah]`. Diklik → peta 2D terbuka, zoom ke rumah pasien, garis putus-putus merah ditarik ke sumber masalah (Dukun/Bank Sampah/dll).
-- **Cost**: MEDIUM — perlu menyimpan `sourceEventId` di setiap UKP Bridge patient, lalu render polyline overlay di Map2D.
-- **Why adopt**: Ini adalah **"mic drop moment"** untuk showcase. Tanpa ini, scholars mengira UKP cases = RNG. Dengan ini, mereka melihat kausalitas.
-- **Phase**: 3 (Visual/UX) — item #15 baru.
+#### Hack 1: 🔍 Karma Traceback UI — PROVISIONAL 🟠
+- Intent tetap valid untuk showcase kausalitas UKM → UKP.
+- Belum live di runtime. Tempat yang paling masuk akal sekarang = **Sprint 6 / Showcase Gate**.
 
-#### Hack 2: 🖥️ Canvas Terrain + DOM Markers → Phase 1 ✅
-- **Konsep**: Grid 160×120 = 19.200 sel. JANGAN render sebagai 19K `<div>`. Terrain harus 1 `<canvas>` statis. Hanya ~250 markers (47 fasilitas + 200 rumah) sebagai DOM elements.
-- **Audit codebase**: `Map2DTerrain.jsx` sudah menggunakan **SVG backdrop** (bukan 19K divs). Ini sudah BENAR secara prinsip — SVG = 1 elemen, bukan 19K.
+#### Hack 2: 🖥️ Canvas Terrain + DOM Markers — LIVE ✅
+- Prinsip ini sekarang **sudah tercapai** di runtime 2D.
+- `Map2DTerrain.jsx` memakai **1 `<canvas>`** untuk terrain, sementara marker interaktif tetap berada di DOM.
 
-> [!WARNING]
-> **Koreksi Prinsip #2**: "DOM-first untuk 2D" di-revisi menjadi: **"Canvas/SVG untuk terrain, DOM untuk interactive markers"**. Terrain = 1 elemen statis (SVG/Canvas). Markers = ~250 elemen DOM interaktif. JANGAN PERNAH render 19K sel sebagai individual DOM elements.
+#### Hack 3: 💰 KBK BPJS (Kapitasi Berbasis Kinerja) — LIVE ✅
+- Sudah punya pondasi runtime melalui sistem performa `KBK`/kapitasi berbasis kualitas desa.
+- Ini bukan lagi ide, melainkan bagian dari loop reward/punishment `Wilayah`.
 
-- **Phase**: 1 (Map Engine) — sudah benar di arsitektur saat ini, tapi prinsip harus diperjelas.
+#### Hack 4: 🎒 Tourist EMR Tab (Travel History) — PROVISIONAL 🟠
+- Masih desain target untuk outsider/tourism layer.
+- Belum aktif di EMR runtime saat ini, jadi **tidak boleh ditandai selesai**.
 
-#### Hack 3: 💰 KBK BPJS (Kapitasi Berbasis Kinerja) → Phase 2 ✅
-- **Konsep**: Dana Kapitasi bulanan dikalikan persentase IKS desa rata-rata:
-  - IKS < 0.5 → Kapitasi **-20%** (punish UKM negligence)
-  - IKS 0.5–0.8 → Kapitasi normal (100%)
-  - IKS > 0.8 → Kapitasi **+30%** (reward preventif excellence)
-- **Cost**: LOW — hanya 1 modifier di `createFinanceSlice.js` pada monthly income calculation.
-- **Why adopt**: Ini memberikan **extrinsic financial motivation** untuk peduli UKM. Tanpa ini, pemain bisa exploit Poli (UKP) saja. Sesuai kebijakan nyata BPJS Indonesia.
-- **Phase**: 2 (Gameplay Mechanics) — item #10 baru.
+#### Hack 5: 🕛 The 2 AM Shift (Night Emergency) — FUTURE 🔵
+- Masih cocok sebagai immersive polish pasca-MVP.
+- Belum punya implementasi runtime aktif.
 
-#### Hack 4: 🎒 Tourist EMR Tab (Travel History) → Phase 4 ✅
-- **Konsep**: Pasien `isTourist: true` → Tab PIS-PK/SDoH disembunyikan, diganti Tab 🎒 Travel History. Pemain harus pure clinical reasoning tanpa data komunitas.
-- **Cost**: LOW — conditional rendering di `PatientEMR.jsx` + tag `isTourist` di `PatientGenerator.js`.
-- **Why adopt**: Implementation detail yang WAJIB untuk Travel Medicine system yang sudah di-adopt.
-- **Phase**: 4 (Narrative/Content) — item #23 baru.
-
-#### Hack 5: 🕛 The 2 AM Shift (Night Emergency) → Phase 5 ✅
-- **Konsep**: Emergency merah dari Dukun/maternal → waktu game *jump* ke 02:00 → layar gelap, BGM jangkrik + sirine, pemain "dibangunkan" dari Rumah Dinas.
-- **Cost**: MEDIUM — perlu time-skip mechanic + dark mode toggle + audio cue.
-- **Why adopt**: Immersive storytelling level tertinggi. Dokter PTT pelosok BENAR-BENAR mengalami ini.
-- **Phase**: 5 (Post-MVP) — immersive polish, bukan MVP blocker.
-
-#### Hack 6: 🎖️ Local Champion / Kaderisasi → Phase 2 ✅
-- **Konsep**: Keluarga dengan 13/13 indikator PIS-PK hijau → menjadi **Kader Lokal**. Ikon 🎖️ di peta. Buff AoE: mencegah IKS decay pada 3 tetangga terdekat (drift rate 5% → 0%).
-- **Cost**: LOW — cek di daily orchestrator, jika `iksScore === 1.0` → set `isChampion: true` → override drift di `applyFamilyIndicatorDrift()` untuk neighbors.
-- **Why adopt**: Representasi **Community Empowerment** — kesehatan berkelanjutan bukan dari dokter, tapi dari warga berdaya. Secara mekanik, ini menjadi goal jangka panjang pemain.
-- **Phase**: 2 (Gameplay Mechanics) — item #11 baru.
+#### Hack 6: 🎖️ Local Champion / Kaderisasi — LIVE ✅
+- Local champion sudah hidup di peta 2D dan sistem proteksi tetangga.
+- Visual/readability-nya juga sudah masuk gelombang kerja sprint terakhir.
 
 ---
 
@@ -941,7 +912,7 @@ Setelah audit `useGameStore.js` (267 baris), **semua 6 klaim DT R7 terkonfirmasi
 | Guardrail | Klaim DT R7 | Verifikasi Codebase | Status |
 |-----------|-------------|---------------------|--------|
 | #1 Dependency Ban | Tidak boleh install map library | PRIMER = 0 map library, semua DIY | ✅ Confirmed |
-| #2 19K Tiles Trap | Jangan render 19K `<div>` | `Map2DTerrain.jsx` pakai SVG (1 elemen) | ✅ Confirmed |
+| #2 19K Tiles Trap | Jangan render 19K `<div>` | `Map2DTerrain.jsx` pakai canvas tunggal (1 elemen) | ✅ Confirmed |
 | #3 Zustand Persist | `persist` middleware ke localStorage | `useGameStore.js:166` → `persist()` aktif | ✅ Confirmed |
 | #4 Data Contracts | Vanilla JS butuh explicit schemas | Tidak ada TypeScript di seluruh codebase | ✅ Confirmed |
 | #5 Algorithmic Failsafe | Procedural gen bisa infinite loop | `map-utils.js` belum punya `MAX_ITER` | ✅ Confirmed |
@@ -955,7 +926,8 @@ Setelah audit `useGameStore.js` (267 baris), **semua 6 klaim DT R7 terkonfirmasi
 
 #### 2. THE 19.200 TILES TRAP ✅
 - **DILARANG** render `tiles[][]` sebagai 19K `<div>` via `.map()`.
-- `Map2DTerrain.jsx` = 1 elemen `<svg>` atau `<canvas>` statis.
+- Runtime aktif: `Map2DTerrain.jsx` = **1 elemen `<canvas>` statis**.
+- Guardrail tetap: jika suatu saat butuh SVG, gunakan hanya untuk overlay garis/route, bukan tile terrain per-sel.
 - React DOM hanya untuk ~250 `Map2DMarker` (interaktif).
 
 #### 3. ZUSTAND PERSISTENCE LIMIT ✅ (Corrected)
@@ -1035,7 +1007,7 @@ const energyCost = baseEnergy * (1.0 + distance / gridDiagonal * TERRAIN_PENALTY
 ## XII. VISUAL DESIGN SYSTEM — PETA 2D
 
 > [!IMPORTANT]
-> Section ini **hanya untuk peta 2D** (Helicopter View / Meja Komando). Visual 3D Pocket Diorama dispesifikasikan terpisah di KI `visual_architecture.md`.
+> Section ini **hanya untuk peta 2D** (Helicopter View / Meja Komando). Visual 3D saat ini masih berupa **full-village diorama opsional** dan ke depan harus dibingkai sebagai **inspector / reward / exhibition layer**, bukan peta taktis kedua.
 
 ### A. Art Direction — HYBRID A+C: "Premium GIS Tactical Dashboard" (FINAL)
 
@@ -1115,10 +1087,10 @@ TARGET (Hybrid A+C):
 
 ### C. Rendering Architecture (Canvas Terrain)
 
-> [!WARNING]
-> **Current `Map2DTerrain.jsx` MELANGGAR Guardrail #2!** Line 55–118 me-render ribuan SVG `<rect>` individual via `.map()`. Pada grid 160×120, ini = **~8.000+ SVG elements** untuk air+hutan+sawah+jalan saja. **HARUS direfactor.**
+> [!NOTE]
+> Runtime aktif **tidak lagi melanggar Guardrail #2**. `Map2DTerrain.jsx` sudah memakai **`<canvas>` tunggal** untuk terrain. Sisa pekerjaan di area ini adalah polish visual, seasonal variation, dan layering overlay, bukan migrasi away from per-tile DOM.
 
-**Target Architecture:**
+**Reference Architecture:**
 
 ```
 ┌─────────────────────────────────────┐
@@ -1227,14 +1199,14 @@ Saat ini markers = emoji mentah floating. Target = **rounded pill badge**:
 | Element | Min Size | Catatan |
 |---------|----------|---------|
 | Facility marker | **44×44px** (WCAG AA) | Puskesmas, Sekolah, dll |
-| House marker | **36×36px** minimum | Pada zoom ≥ 1.0 saja (Meso view) |
+| House marker | **36×36px** minimum | Utamanya pada zoom `>= 0.6` (detail view) |
 | HUD buttons (zoom +/-) | **48×48px** | Bottom-right corner |
 | Tooltip tap area | Same as marker | Long-press = tooltip sticky |
 | Swipe panning | Full container | Touch-action: pan-x pan-y |
 | Pinch zoom | Full container | gesturechange handler |
 
 > [!TIP]
-> Pada Macro View (zoom < 0.5), rumah warga disembunyikan (per Semantic Zoom Q12). Jadi masalah 200 × 36px markers **hanya muncul pada zoom dekat** di mana space cukup.
+> Pada overview view (`zoom < 0.6`), rumah warga tidak semuanya ditampilkan. Jadi masalah 200 × 36px markers **baru dominan pada zoom detail** ketika space visual memang sudah cukup.
 
 ### F. Seasonal Visual Variations
 
@@ -1266,7 +1238,7 @@ Saat ini markers = emoji mentah floating. Target = **rounded pill badge**:
 
 ```
 ┌─────────────────────────────────────────┐
-│ [Detective: 🚦IKS] [🦠Surv] [💧SDoH]  │ ← top-left: lens toggle
+│ [Layers: 🧭][🏠][🦠][🐛][❤️][👥]     │ ← top-left: layer toggle
 │                                   [N]   │ ← top-right: compass
 │                                   ↑     │
 │                                         │
@@ -1502,23 +1474,5 @@ Aset: 24 PNG existing → Inspector Panel. 8 missing (hazard/wisata) → generat
 ---
 
 *Blueprint ini adalah kontrak eksekusi. Setiap perubahan arsitektural harus dirujuk kembali ke dokumen ini.*
-*Versi: 2.3 — 2026-03-31T13:15+07:00*
+*Versi: 2.5 — 2026-04-09T22:10+07:00*
 *Includes: DT R1–R12 + Hybrid A+C + Geospatial SDoH + Data Crosscheck + Vibecoding Guardrails*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -100,7 +100,7 @@ const ECON_MAP = {
  * Build the shared social determinants object for a resident.
  * Previously inline in generatePatient L406-452 — now canonical.
  */
-export function buildResidentSdoh(resident, residentFamily, age) {
+export function buildResidentSdoh(resident, residentFamily, age, riskFactors = resident?.riskFactors || []) {
     const regSdoh = resident.sdoh || {};
     return {
         education: (regSdoh.education && EDU_MAP[regSdoh.education]) || (age < 6 ? 'Belum Sekolah' : 'SD'),
@@ -113,7 +113,7 @@ export function buildResidentSdoh(resident, residentFamily, age) {
         familyId: resident.familyId,
         villagerId: resident.id,
         familyName: residentFamily?.surname || 'Unknown',
-        riskFactors: resident.riskFactors
+        riskFactors
     };
 }
 
@@ -231,13 +231,16 @@ export function buildPatientShell(config) {
     // Social determinants
     let social;
     if (isResident && residentFamily) {
-        social = buildResidentSdoh(resident, residentFamily, age);
-        // Calculate risk factors
-        if (residentFamily.indicators) {
-            const profile = INDIVIDUAL_PROFILES[resident.id] || null;
-            resident.riskFactors = calculateRiskFactors(residentFamily.indicators, resident, resident.sdoh || {}, profile);
-            social.riskFactors = resident.riskFactors;
-        }
+        const residentRiskFactors = residentFamily.indicators
+            ? calculateRiskFactors(
+                residentFamily.indicators,
+                resident,
+                resident.sdoh || {},
+                INDIVIDUAL_PROFILES[resident.id] || null
+            )
+            : (resident?.riskFactors || []);
+
+        social = buildResidentSdoh(resident, residentFamily, age, residentRiskFactors);
     } else {
         social = generateSocialDeterminants(age);
         social.isResident = false;

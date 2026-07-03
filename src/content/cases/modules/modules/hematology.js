@@ -67,7 +67,10 @@ export const HEMATOLOGY_CASES = [
         essentialQuestions: ["q_main","q_bleeding"],
         anamnesis: ["Dada berdebar-debar dok, sesak kalau jalan jauh.", "Wajah dan telapak tangan pucat sekali. Sudah 2 minggu jalan sedikit saja capek banget."],
         physicalExamFindings: { general: "Tampak pucat sekali.", vitals: "TD 100/60, N 105x (takikardi), RR 22x, S 36.6°C", heent: "Konjungtiva anemis (+/+), atrofi papil lidah (+)." },
-        labs: { "Darah Lengkap": { result: "Hb 7.5, MCV 68, MCH 21", cost: 50000 } },
+        labs: {
+            "Darah Lengkap": { result: "Hb 7.5, MCV 68, MCH 21", cost: 50000 },
+            "Ferritin": { result: "Ferritin 8 ng/mL (rendah)", cost: 70000 }
+        },
         vitals: { temp: 36.6, bp: '100/60', hr: 105, rr: 22 },
         correctTreatment: ['sulfas_ferosus', 'folic_acid_0_4'],
         correctProcedures: ['hospital_referral'],
@@ -91,7 +94,8 @@ export const HEMATOLOGY_CASES = [
             ],
             rps: [
                 { id: 'q_bleeding', text: 'Ada mimisan atau gusi berdarah?', response: 'Nggak ada dok.', sentiment: 'denial', priority: 'essential' },
-                { id: 'q_warning', text: 'Muntah terus? Nyeri perut?', response: 'Mual aja dok, belum muntah.', sentiment: 'denial' },
+                { id: 'q_warning', text: 'Muntah terus? Nyeri perut?', response: 'Mual aja dok, belum muntah dan perut belum sakit berat.', sentiment: 'denial' },
+                { id: 'q_rash', text: 'Ada bintik merah di kulit atau nyeri belakang mata?', response: 'Ada bintik merah halus di lengan, mata juga terasa pegal kalau digerakkan.', sentiment: 'confirmation' },
             ],
             rpd: [],
             rpk: [
@@ -100,7 +104,7 @@ export const HEMATOLOGY_CASES = [
             sosial: [],
         },
         essentialQuestions: ["q_main","q_day","q_bleeding"],
-        anamnesis: ["Demam tinggi mendadak sudah 3 hari, nyeri sendi.", "Kepala pusing banget, mual, dan nggak nafsu makan. Ada bintik-bintik merah di lengan."],
+        anamnesis: ["Demam tinggi mendadak sudah 4 hari, badan pegal dan mata terasa pegal.", "Kepala pusing, mual, nafsu makan turun, dan mulai muncul bintik-bintik merah halus di lengan."],
         physicalExamFindings: { general: "Tampak sakit sedang, febris.", vitals: "TD 110/70, N 96x, RR 20x, S 39.2°C", skin: "Uji Rumple Leed (+), petechiae di ekstremitas (+)." },
         labs: { "Darah Lengkap": { result: "Hb 12.5, Hematokrit 40%, Trombosit 98.000", cost: 50000 }, "NS1 Antigen": { result: "Positif (+)", cost: 150000 } },
         vitals: { temp: 39.2, bp: '110/70', hr: 96, rr: 20 },
@@ -120,12 +124,22 @@ export const HEMATOLOGY_CASES = [
         clue: "Dengue TANPA warning signs: demam + nyeri retro-orbital + mialgia + artralgia. Trombosit masih >100.000. Rawat jalan + pantau warning signs. Beda dari DBD!",
         relevantLabs: ['lab_hematology', 'lab_ns1'],
         anamnesisQuestions: {
-            keluhan_utama: [{ id: 'q_main', text: 'Demamnya gimana ini pak/bu?', response: 'Demam tinggi mendadak 2 hari, nyeri di belakang mata, badan pegal-pegal.', sentiment: 'confirmation', priority: 'essential' }],
-            rps: [{ id: 'q_bleeding', text: 'Ada tanda-tanda perdarahan nggak, kayak mimisan atau gusi berdarah?', response: 'Nggak ada dok.', sentiment: 'denial' }],
-            rpd: [], rpk: [], sosial: []
+            keluhan_utama: [
+                { id: 'q_main', text: 'Demamnya gimana ini pak/bu?', response: 'Demam tinggi mendadak 2 hari, nyeri di belakang mata, badan pegal-pegal.', sentiment: 'confirmation', priority: 'essential' }
+            ],
+            rps: [
+                { id: 'q_day', text: 'Sekarang hari ke berapa demamnya?', response: 'Baru masuk hari ke-2 dok.', sentiment: 'confirmation', priority: 'essential' },
+                { id: 'q_bleeding', text: 'Ada tanda-tanda perdarahan nggak, kayak mimisan atau gusi berdarah?', response: 'Nggak ada dok.', sentiment: 'denial', priority: 'essential' },
+                { id: 'q_warning', text: 'Ada muntah terus, nyeri perut hebat, atau lemas sekali?', response: 'Mual ada, tapi belum muntah dan perut belum sakit hebat dok.', sentiment: 'denial' }
+            ],
+            rpd: [],
+            rpk: [
+                { id: 'q_neighbor', text: 'Di rumah atau sekitar ada yang sedang demam dengue juga?', response: 'Iya dok, di sekitar rumah ada beberapa yang lagi demam berdarah.', sentiment: 'confirmation' }
+            ],
+            sosial: []
         },
-        essentialQuestions: ['q_main', 'q_bleeding'],
-        anamnesis: ["Demam tinggi mendadak, pegal-pegal, nyeri belakang mata.", "Demam 2 hari, pusing, mual, nggak nafsu makan."],
+        essentialQuestions: ['q_main', 'q_day', 'q_bleeding'],
+        anamnesis: ["Demam tinggi mendadak 2 hari, badan pegal semua, dan nyeri di belakang mata.", "Pusing, mual, nafsu makan turun, tapi belum ada mimisan, muntah terus, atau nyeri perut hebat."],
         physicalExamFindings: { general: "Sakit sedang, febris.", vitals: "TD 110/70, N 88x, RR 18x, S 39.0°C", skin: "Rumple Leed (-). Petechiae (-)." },
         labs: {
             "Darah Lengkap": { result: "Hb 13.0, Ht 38%, Trombosit 125.000, Leukosit 3.500 (leukopenia)", cost: 50000 },
@@ -212,7 +226,7 @@ export const HEMATOLOGY_CASES = [
         correctTreatment: ['epinefrin_im', 'rl_500', 'dexamethasone_inj', 'diphenhydramine_inj'],
         correctProcedures: ['airway_management', 'iv_access', 'monitor_vital'],
         requiredEducation: ['allergen_avoidance', 'epipen_education', 'medic_alert_bracelet'],
-        risk: 'critical', nonReferrable: false,
+        risk: 'critical', nonReferrable: false, referralRequired: true, referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['T78.0']
     },
     // === SKDI 1-3 REFERRAL CASES ===
@@ -234,7 +248,7 @@ export const HEMATOLOGY_CASES = [
             rpd: [], rpk: [], sosial: []
         },
         essentialQuestions: ['q_main', 'q_defervescence'],
-        anamnesis: ["Demam 4 hari lalu turun, malah lemas, akral dingin.", "Mimisan, gusi berdarah."],
+        anamnesis: ["Anak saya demam 4 hari, tadi turun tapi sekarang malah lemas sekali dan tangan kakinya dingin.", "Tadi sempat mimisan dan gusinya juga berdarah dok."],
         physicalExamFindings: { general: "Gelisah, pucat, akral dingin dan lembab.", vitals: "TD 80/60 (pulse pressure <20), N 130x lemah, RR 28x, S 36°C", skin: "Petekie (+) difus. Rumple Leede (+). CRT >3 detik. Hepatomegali (+)." },
         labs: { "Darah Lengkap": { result: "Hb 16.5, Ht 48% (naik dari 38%), Trombosit 25.000, Leukosit 3.500", cost: 50000 } },
         vitals: { temp: 36, bp: '80/60', hr: 130, rr: 28 },

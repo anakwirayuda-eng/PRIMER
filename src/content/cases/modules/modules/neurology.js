@@ -304,7 +304,7 @@ export const NEUROLOGY_CASES = [
             sosial: []
         },
         essentialQuestions: ['q_main', 'q_pattern'],
-        anamnesis: ["Anak saya kejang-kejang lagi dok, sudah ketiga kalinya.", "Seluruh badan kaku terus kelojotan, setelahnya bingung."],
+        anamnesis: ["Anak saya kejang-kejang lagi dok, sudah ketiga kalinya.", "Seluruh badan anak saya kaku lalu kelojotan, setelahnya bingung dan langsung tertidur."],
         physicalExamFindings: { general: "Post-ictal, somnolen.", vitals: "TD 120/80, N 96x, RR 20x, S 36.8°C", neuro: "Post-ictal: somnolen, lidah tergigit lateral (+). Defisit neurologis fokal (-). Refleks fisiologis normal." },
         labs: {}, vitals: { temp: 36.8, bp: '120/80', hr: 96, rr: 20 },
         correctTreatment: ['fenitoin_100', 'diazepam_5_prn'],

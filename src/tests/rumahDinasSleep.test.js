@@ -92,4 +92,78 @@ describe('RumahDinas sleep flow', () => {
         expect(state.clinical.showEndOfDayDebrief).toBe(false);
         expect(state.clinical.todayLog).toEqual([]);
     });
+
+    it('converts stranded poli patients into missed encounters before overnight rollover archive', () => {
+        useGameStore.setState(state => ({
+            nav: {
+                ...state.nav,
+                currentSlotId: 0,
+                gameState: 'playing'
+            },
+            world: {
+                ...state.world,
+                day: 4,
+                time: 14 * 60,
+                isPaused: false
+            },
+            clinical: {
+                ...state.clinical,
+                queue: [
+                    {
+                        id: 'queue-stranded-1',
+                        name: 'Siti',
+                        age: 29,
+                        gender: 'P',
+                        joinedAt: 13 * 60,
+                        medicalData: {
+                            trueDiagnosisCode: 'R50.9',
+                            diagnosisName: 'Demam'
+                        }
+                    }
+                ],
+                activePatientId: 'queue-stranded-1',
+                todayLog: [],
+                showMorningBriefing: false,
+                showEndOfDayDebrief: true
+            },
+            player: {
+                ...state.player,
+                profile: {
+                    ...state.player.profile,
+                    reputation: 80,
+                    energy: 40,
+                    maxEnergy: 90,
+                    stress: 55,
+                    morningStatus: null
+                }
+            }
+        }));
+
+        let result;
+        act(() => {
+            result = useGameStore.getState().playerActions.sleepWithAlarm(5);
+            vi.runAllTimers();
+        });
+
+        const state = useGameStore.getState();
+        const archivedDay = state.clinical.dailyArchive.at(-1);
+
+        expect(result?.success).toBe(true);
+        expect(state.world.day).toBe(5);
+        expect(state.clinical.queue).toEqual([]);
+        expect(state.clinical.activePatientId).toBeNull();
+        expect(state.player.profile.reputation).toBe(78.5);
+        expect(archivedDay).toMatchObject({
+            day: 4,
+            patientsToday: 1,
+            revenue: 0
+        });
+        expect(archivedDay.hourlyTraffic).toEqual(expect.arrayContaining([
+            { label: '13:00', value: 1 }
+        ]));
+        expect(archivedDay.topDiseases[0]).toMatchObject({
+            name: 'Demam',
+            count: 1
+        });
+    });
 });

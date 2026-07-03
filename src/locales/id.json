@@ -1,6 +1,13 @@
 {
     "app": {
         "title": "PRIMER: Simulasi Puskesmas",
+        "name": "PRIMER",
+        "full_name": "Primary Care Manager Simulator",
+        "tagline": "Menjembatani keunggulan klinis dan kepemimpinan kesehatan masyarakat.",
+        "organization": "ITS MEDICS",
+        "department": "Institut Teknologi Sepuluh Nopember",
+        "copyright": "Hak Cipta 2026 Anak Agung Bagus Wirayuda MD PhD. Hak Cipta Terdaftar - No. EC002026019623.",
+        "version_label": "v{{version}}",
         "start_game": "Mulai Tugas",
         "settings": "Pengaturan",
         "save_game": "Simpan Game",
@@ -11,7 +18,650 @@
         "close": "Tutup",
         "loading": "Memuat...",
         "done": "Selesai",
-        "confirm": "Konfirmasi"
+        "confirm": "Konfirmasi",
+        "pause": "Jeda",
+        "system": "Sistem"
+    },
+    "avatarModal": {
+        "closeAria": "Tutup kustomisasi avatar",
+        "title": "Kustomisasi Penampilan",
+        "subtitle": "Ubah penampilan dokter Anda",
+        "skinTone": "Warna Kulit",
+        "hairColor": "Warna Rambut",
+        "hairStyle": "Gaya Rambut",
+        "accessories": "Aksesori",
+        "save": "Simpan Perubahan",
+        "hairStyles": {
+            "buzz": "Cepak",
+            "short": "Pendek",
+            "neat": "Rapi",
+            "parted": "Belah",
+            "long": "Panjang",
+            "ponytail": "Ponytail",
+            "bun": "Sanggul",
+            "hijab": "Hijab"
+        },
+        "accessoryLabels": {
+            "glasses": "Kacamata",
+            "stethoscope": "Stetoskop"
+        }
+    },
+    "questBoard": {
+        "claim": "KLAIM",
+        "empty": "Belum ada misi atau cerita aktif.",
+        "title": "Misi Harian",
+        "subtitle": "Selesaikan misi untuk dapat XP & Reputasi",
+        "stories": "Cerita & Investigasi",
+        "daily": "Harian",
+        "dailyDone": "Semua misi harian selesai!",
+        "weekly": "Mingguan"
+    },
+    "leaderboard": {
+        "title": "Leaderboard",
+        "myRank": "Ranking kamu: #{{rank}}",
+        "rankUnavailable": "Ranking belum tersedia",
+        "closeAria": "Tutup leaderboard",
+        "cloudRequired": "Leaderboard membutuhkan koneksi cloud.",
+        "enableSupabase": "Aktifkan Supabase untuk melihat ranking.",
+        "loading": "Memuat ranking...",
+        "empty": "Belum ada data. Mulai bermain untuk masuk leaderboard!",
+        "headers": {
+            "name": "Nama",
+            "score": "Skor",
+            "day": "Hari",
+            "accreditation": "Akreditasi"
+        }
+    },
+    "facility": {
+        "rooms": {
+            "poli_umum": {
+                "name": "Poli Umum",
+                "effect": "Kapasitas +5 pasien/hari"
+            },
+            "poli_gigi": {
+                "name": "Poli Gigi",
+                "effect": "Buka layanan tindakan gigi"
+            },
+            "poli_kia_kb": {
+                "name": "Poli KIA-KB",
+                "effect": "+10% skor layanan ibu-anak"
+            },
+            "lab": {
+                "name": "Laboratorium",
+                "effect": "Buka pemeriksaan laboratorium"
+            },
+            "apotek": {
+                "name": "Apotek",
+                "effect": "Dispensing lebih cepat"
+            },
+            "igd": {
+                "name": "Ruang UGD",
+                "effect": "+1 bed emergensi"
+            },
+            "rawat_inap": {
+                "name": "Rawat Inap",
+                "effect": "Layanan observasi menginap"
+            },
+            "gudang": {
+                "name": "Gudang Obat",
+                "effect": "+100 slot inventori"
+            }
+        }
+    },
+    "gedungPage": {
+        "title": "Manajemen Gedung",
+        "subtitle": "Infrastruktur | Fasilitas | Upgrade",
+        "levelShort": "Lv. {{level}}",
+        "stats": {
+            "activeFunds": "Dana Aktif",
+            "progress": "Progress",
+            "totalLevel": "Level Total",
+            "facilities": "Fasilitas"
+        },
+        "currency": {
+            "fullValue": "Rp {{value}}",
+            "millionValue": "Rp {{value}}M",
+            "millionWhole": "Rp {{value}}M"
+        },
+        "bok": {
+            "title": "Panduan Dana BOK",
+            "subtitle": "Buka penjelasan Bantuan Operasional Kesehatan"
+        },
+        "upgrade": {
+            "title": "Upgrade {{room}}",
+            "level": "Level {{current}} -> {{next}}",
+            "cost": "Biaya Upgrade",
+            "bonus": "Bonus",
+            "building": "Membangun...",
+            "action": "Upgrade"
+        },
+        "toast": {
+            "upgradeSuccess": "{{room}} berhasil di-upgrade!",
+            "upgradeFailed": "Gagal upgrade. Dana aktif tidak cukup."
+        }
+    },
+    "diklatPage": {
+        "title": "Pusat Diklat",
+        "subtitle": "Skill Tree | Workshop | Sertifikasi",
+        "levelShort": "Lv. {{level}}",
+        "xp": {
+            "label": "Experience Points",
+            "toNextLevel": "{{xp}} XP ke level berikutnya",
+            "level": "Level"
+        },
+        "tabs": {
+            "skills": "Skill Tree",
+            "workshops": "Workshop"
+        },
+        "categories": {
+            "all": "Semua",
+            "clinical": "Klinis",
+            "management": "Manajemen",
+            "personal": "Personal"
+        },
+        "actions": {
+            "completed": "Selesai",
+            "free": "Gratis!"
+        },
+        "currency": {
+            "thousandValue": "Rp {{value}}K"
+        },
+        "toast": {
+            "notEnoughXp": "XP tidak cukup untuk upgrade skill ini.",
+            "notEnoughFunds": "Dana aktif tidak cukup untuk mengikuti workshop ini.",
+            "workshopDone": "{{title}} selesai. +{{xp}} XP"
+        },
+        "skills": {
+            "diagnosis_1": {
+                "name": "Diagnosis Lanjut",
+                "effect": "+10% akurasi diagnosis"
+            },
+            "emergency_1": {
+                "name": "Gawat Darurat",
+                "effect": "+20% keberhasilan IGD"
+            },
+            "surgery_1": {
+                "name": "Bedah Minor",
+                "effect": "Buka tindakan operasi kecil"
+            },
+            "leadership_1": {
+                "name": "Kepemimpinan",
+                "effect": "+5% morale tim"
+            },
+            "finance_1": {
+                "name": "Manajemen Keuangan",
+                "effect": "+10% efisiensi"
+            },
+            "public_health": {
+                "name": "Kesmas",
+                "effect": "+15% outreach"
+            },
+            "stamina_1": {
+                "name": "Stamina Tinggi",
+                "effect": "+10 Max Energy"
+            },
+            "stress_mgmt": {
+                "name": "Anti Stres",
+                "effect": "-20% kenaikan stres"
+            }
+        },
+        "workshops": {
+            "tb": {
+                "title": "Seminar Tatalaksana TB",
+                "date": "Minggu depan"
+            },
+            "usg": {
+                "title": "Workshop USG Dasar",
+                "date": "2 minggu lagi"
+            },
+            "management": {
+                "title": "Pelatihan Manajemen",
+                "date": "Bulan depan"
+            }
+        }
+    },
+    "saranaPage": {
+        "title": "Sarana & Logistik",
+        "subtitle": "Kelola stok obat, alkes, dan kebutuhan operasional",
+        "order": "Pengadaan",
+        "lastRestockDay": "Hari {{day}}",
+        "searchPlaceholder": "Cari barang...",
+        "restock": "Restock: {{value}}",
+        "stats": {
+            "totalItems": "Total Item",
+            "inventoryValue": "Nilai Inventori",
+            "lowStock": "Stok Rendah",
+            "expiringSoon": "Segera Expired"
+        },
+        "categories": {
+            "all": "Semua",
+            "obat": "Obat",
+            "alkes": "Alkes",
+            "apd": "APD",
+            "igd": "IGD"
+        }
+    },
+    "inventoryPage": {
+        "title": "Logistik Farmasi & Alkes",
+        "createOrder": "Buat Pesanan",
+        "searchPlaceholder": "Cari obat atau alkes...",
+        "allCategories": "Semua Kategori",
+        "emptyTitle": "Tidak ada hasil ditemukan",
+        "emptyHint": "Coba ubah kata kunci atau filter kategori",
+        "stats": {
+            "totalItems": "Total Items",
+            "lowStock": "Low Stock",
+            "outOfStock": "Out of Stock",
+            "totalValue": "Total Value",
+            "pendingOrders": "Pending Orders",
+            "overdueOrders": "{{count}} overdue"
+        },
+        "table": {
+            "name": "Nama Obat/Alkes",
+            "stock": "Stok",
+            "minStock": "Min Stock",
+            "unitPrice": "Harga/Unit"
+        },
+        "procurement": {
+            "title": "Riwayat Pembelian",
+            "subtitle": "Log audit pengadaan farmasi dan alkes",
+            "logCount": "{{count}} log",
+            "empty": "Belum ada pembelian",
+            "day": "Hari",
+            "items": "Items",
+            "totalCost": "Total Cost",
+            "type": "Type",
+            "dayValue": "Hari {{day}}"
+        },
+        "categories": {
+            "analgesic": "Analgesik/Antipiretik",
+            "antibiotic": "Anti-Infeksi",
+            "antihypertensive": "Antihipertensi/Kardiovaskular",
+            "antidiabetic": "Antidiabetes",
+            "respiratory": "Sistem Respirasi",
+            "gastrointestinal": "Saluran Cerna",
+            "dermatology": "Dermatologi",
+            "supplement": "Vitamin/Suplemen/Obstetri",
+            "psychiatryNeuro": "Psikiatri & Neurologi",
+            "entEye": "Mata/Telinga/Hidung/Tenggorokan",
+            "medicalEquipment": "Alat Kesehatan Habis Pakai",
+            "equipment": "Peralatan Medis",
+            "labReagent": "Reagensia Laboratorium",
+            "emergency": "Gawat Darurat / Injeksi",
+            "metabolic": "Obat Metabolik & Gout"
+        }
+    },
+    "orderModal": {
+        "title": "Buat Pesanan",
+        "closeAria": "Tutup pesanan",
+        "supplier": "Pilih Supplier",
+        "leadTime": "{{count}} hari",
+        "expressTitle": "Express Delivery (3 Hari)",
+        "expressDescription": "Biaya tambahan Rp {{value}} - order tidak terpengaruh keterlambatan logistik",
+        "itemsToOrder": "Item yang Perlu Diorder ({{count}})",
+        "stockLine": "Stock: {{stock}} / Min: {{min}}",
+        "orderQty": "Order: {{count}}",
+        "cancel": "Batal",
+        "submit": "Kirim Order",
+        "toast": {
+            "success": "Order berhasil dibuat ({{count}} item)!",
+            "partial": "Order dikirim ({{count}} item). {{skippedCount}} item dilewati karena tidak tersedia di supplier ini: {{skipped}}",
+            "error": "Order gagal dibuat."
+        }
+    },
+    "patientHistory": {
+        "title": "Riwayat Pasien",
+        "closeAria": "Tutup riwayat pasien",
+        "empty": "Belum ada pasien dalam kategori ini.",
+        "ageGender": "{{age}} tahun, {{gender}}",
+        "diagnosis": "Dx",
+        "decision": "Keputusan",
+        "generalPatient": "Umum",
+        "satisfaction": "Kepuasan: {{score}}%",
+        "total": "Total: {{count}} pasien",
+        "gender": {
+            "male": "Laki-laki",
+            "female": "Perempuan"
+        },
+        "actions": {
+            "treat": "Rawat Jalan",
+            "refer": "Rujuk",
+            "delegate_to_maia": "Delegasi MAIA",
+            "stabilize": "Stabilisasi",
+            "default": "Selesai"
+        },
+        "outcomes": {
+            "pulih": "Pulih",
+            "memburuk": "Memburuk",
+            "meninggal": "Meninggal",
+            "komplain": "Komplain",
+            "referred": "Dirujuk",
+            "rujuk_stabil": "Rujuk (Stabil)",
+            "rujuk_tidak_perlu": "Rujuk (Tidak Perlu)",
+            "delegated": "Didelegasikan",
+            "sisrute_transferred": "Transfer SISRUTE",
+            "referred_sisrute": "Dirujuk via SISRUTE",
+            "stabilized": "Stabilisasi",
+            "default": "Selesai"
+        }
+    },
+    "prolanisPanel": {
+        "title": "Prolanis Club",
+        "subtitle": "Program Pengelolaan Penyakit Kronis",
+        "compactTitle": "Pasien Prolanis",
+        "totalValue": "{{count}} Total",
+        "patientCount": "{{count}} Pasien",
+        "header": {
+            "imageAlt": "Puskesmas"
+        },
+        "metrics": {
+            "controlledRate": "Rasio Terkontrol",
+            "totalPatients": "Total Pasien"
+        },
+        "exercise": {
+            "title": "Senam Prolanis",
+            "done": "Selesai",
+            "pending": "Belum Terlaksana",
+            "doneDescription": "Kegiatan bulan ini sudah terlaksana. Pasien merasa lebih sehat.",
+            "pendingDescription": "Adakan senam di pelataran Puskesmas untuk meningkatkan kesehatan semua anggota.",
+            "action": "Adakan Kegiatan",
+            "energyCost": "{{value}} Energi",
+            "moneyCost": "{{value}}k"
+        },
+        "diseases": {
+            "dm": "Diabetes Mellitus Tipe 2",
+            "hypertension": "Hipertensi"
+        },
+        "empty": {
+            "dm": "Belum ada pasien Diabetes terdaftar",
+            "hypertension": "Belum ada pasien Hipertensi terdaftar"
+        },
+        "params": {
+            "hba1c": "HbA1c: {{value}}",
+            "bp": "TD: {{systolic}}/{{diastolic}}"
+        },
+        "patient": {
+            "overdue": "Belum Kontrol",
+            "controlled": "Terkontrol",
+            "uncontrolled": "Tidak Terkontrol",
+            "age": "{{age}} th",
+            "streak": "Streak: {{count}} bln",
+            "complicationRisk": "Risiko Komplikasi"
+        },
+        "actions": {
+            "call": "Panggil",
+            "monitorMedication": "Pantau Obat"
+        },
+        "toast": {
+            "activityUnavailable": "Kegiatan Prolanis belum bisa dijalankan.",
+            "callUnavailable": "Pasien Prolanis belum bisa dipanggil.",
+            "monitorUnavailable": "Pemantauan obat belum bisa dijalankan."
+        }
+    },
+    "prolanisConsultation": {
+        "header": {
+            "doctorEnergy": "Energi Dokter: {{value}}%",
+            "close": "Tutup konsultasi"
+        },
+        "patient": {
+            "age": "{{age}} th"
+        },
+        "diagnoses": {
+            "dm": "Diabetes Mellitus Tipe 2",
+            "hypertension": "Hipertensi Esensial"
+        },
+        "status": {
+            "title": "Status Terkini",
+            "values": {
+                "controlled": "Terkontrol",
+                "uncontrolled": "Tidak Terkontrol",
+                "warning": "Waspada",
+                "critical": "Kritis"
+            }
+        },
+        "parameters": {
+            "hba1c": "HbA1c",
+            "gds": "Gula Darah Sewaktu",
+            "bp": "Tekanan Darah"
+        },
+        "risk": {
+            "title": "Risiko Komplikasi",
+            "description": "Risiko naik jika parameter tidak terkontrol atau pasien absen kontrol."
+        },
+        "tabs": {
+            "medication": "Pengobatan",
+            "education": "Edukasi & Lifestyle"
+        },
+        "medication": {
+            "title": "Rencana Terapi Bulan Ini",
+            "description": "Pilih penyesuaian dosis obat berdasarkan kondisi pasien saat ini.",
+            "effect": "Efek: {{value}}% Parameter",
+            "warning": "Tindakan ini meningkatkan risiko efek samping sebesar {{value}}%.",
+            "actions": {
+                "increase_dose": "Naikkan dosis",
+                "decrease_dose": "Turunkan dosis",
+                "add_medication": "Tambah obat baru",
+                "switch_medication": "Ganti obat",
+                "maintain": "Pertahankan terapi",
+                "refer_specialist": "Rujuk ke Sp.PD"
+            }
+        },
+        "education": {
+            "title": "Materi Edukasi Tambahan",
+            "tip": "Tips: edukasi yang tepat memberikan bonus penurunan parameter jangka panjang.",
+            "items": {
+                "diet_dm": "Edukasi diet DM (3J: Jumlah, Jadwal, Jenis)",
+                "foot_care": "Perawatan kaki diabetik",
+                "hypoglycemia_awareness": "Kenali tanda hipoglikemia",
+                "insulin_education": "Edukasi penggunaan insulin",
+                "diet_ht": "Diet rendah garam (DASH)",
+                "bp_monitoring": "Cara mengukur tekanan darah di rumah",
+                "medication_timing": "Waktu minum obat yang tepat",
+                "exercise_prolanis": "Senam Prolanis rutin",
+                "stress_management": "Manajemen stres",
+                "smoking_cessation": "Berhenti merokok",
+                "weight_management": "Manajemen berat badan"
+            }
+        },
+        "footer": {
+            "selectedAction": "Tindakan:",
+            "noAction": "Belum ada tindakan medis dipilih",
+            "complete": "Selesaikan Kontrol"
+        },
+        "trends": {
+            "improving": "Membaik",
+            "worsening": "Memburuk",
+            "stable": "Stabil"
+        }
+    },
+    "posyanduModal": {
+        "title": "Posyandu",
+        "subtitle": "Pos Pelayanan Terpadu",
+        "closeAria": "Tutup Posyandu",
+        "stats": {
+            "eligibleChildren": "Balita Eligible",
+            "eligibleMothers": "Ibu Eligible",
+            "day": "Hari ke-"
+        },
+        "setup": {
+            "chooseActivities": "Pilih Kegiatan Posyandu",
+            "start": "Mulai Posyandu"
+        },
+        "activities": {
+            "penimbangan": {
+                "name": "Penimbangan Balita",
+                "description": "Timbang berat badan dan ukur tinggi badan anak"
+            },
+            "kms": {
+                "name": "Pencatatan KMS",
+                "description": "Catat grafik pertumbuhan di Kartu Menuju Sehat"
+            },
+            "imunisasi": {
+                "name": "Imunisasi Rutin",
+                "description": "Pemberian vaksin sesuai jadwal imunisasi nasional"
+            },
+            "penyuluhan_gizi": {
+                "name": "Penyuluhan Gizi",
+                "description": "Edukasi nutrisi untuk ibu hamil dan menyusui"
+            },
+            "penyuluhan_asi": {
+                "name": "Konseling ASI Eksklusif",
+                "description": "Edukasi pentingnya ASI eksklusif 6 bulan pertama"
+            },
+            "pmba": {
+                "name": "PMBA",
+                "description": "Demonstrasi makanan pendamping ASI yang benar"
+            }
+        },
+        "cost": {
+            "energy": "{{value}} Energi",
+            "time": "{{value}}m"
+        },
+        "reminder": {
+            "title": "Kirim Pengumuman ke Warga",
+            "description": "+15% kehadiran | Biaya: {{energy}} Energi tambahan"
+        },
+        "activity": {
+            "family": "Keluarga {{family}}",
+            "ageMonths": "{{count}} bulan",
+            "ageYears": "{{count}} tahun",
+            "serveNext": "Layani & Lanjut"
+        },
+        "summary": {
+            "title": "Posyandu Selesai!",
+            "subtitle": "Terima kasih atas dedikasi Anda",
+            "participants": "Peserta Dilayani",
+            "xp": "XP Diperoleh",
+            "issues": "Masalah Terdeteksi",
+            "followUpTitle": "Tindak Lanjut Diperlukan",
+            "followUpBody": "Ditemukan {{count}} anak dengan gizi kurang. Jadwalkan kunjungan rumah atau konseling gizi lebih lanjut."
+        },
+        "history": {
+            "label": "Kegiatan Posyandu",
+            "description": "{{participants}} warga dilayani. {{issues}} masalah gizi terdeteksi. (Bonus Staff: +{{nutritionBonus}}%)"
+        },
+        "toast": {
+            "notEnoughEnergy": "Energi tidak cukup untuk menyelenggarakan Posyandu.",
+            "noAttendance": "Tidak ada warga yang hadir hari ini. Coba lagi di hari kegiatan berikutnya atau tingkatkan reputasi desa."
+        }
+    },
+    "outbreak": {
+        "fallbackVillage": "Desa",
+        "banner": {
+            "title": "Peringatan Wabah!",
+            "description": "Kasus {{type}} terdeteksi di {{village}}.",
+            "viewMap": "Lihat Peta",
+            "closeAria": "Tutup notifikasi wabah"
+        },
+        "modal": {
+            "alertLabel": "PERINGATAN OUTBREAK",
+            "caseCount": "Terdeteksi {{count}} kasus dalam 7 hari terakhir",
+            "closeAria": "Tutup peringatan outbreak",
+            "affectedArea": "Lokasi Terdampak",
+            "affectedHomes": "{{count}} rumah di area wilayah kerja",
+            "deadline": "Batas waktu penanganan:",
+            "dayValue": "Hari {{day}}",
+            "progress": "Progress Penanganan",
+            "availableActions": "Tindakan Tersedia",
+            "energyCost": "{{count}} Energi",
+            "timeCost": "{{count}} menit",
+            "resolved": "Outbreak Teratasi!",
+            "reward": "+{{xp}} XP | +{{reputation}} Reputasi",
+            "tip": "Tip: Lakukan beberapa tindakan untuk memaksimalkan efektivitas penanganan."
+        }
+    },
+    "calendarModal": {
+        "closeAria": "Tutup Kalender",
+        "operationalDay": "Operational Day {{day}} - {{date}}",
+        "epidemiologyRadar": "Radar Epidemiologi",
+        "riskAlert": "WASPADA: {{risk}}",
+        "previousMonth": "Bulan sebelumnya",
+        "nextMonth": "Bulan berikutnya",
+        "missionAgenda": "Mission Agenda",
+        "noMissions": "No missions available",
+        "temporalJump": "Temporal Jump",
+        "months": ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+        "dayNames": ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
+        "legend": {
+            "nationalHoliday": "Libur Nasional",
+            "jointLeave": "Cuti Bersama",
+            "healthDay": "Hari Kesehatan",
+            "hasReport": "Ada Laporan"
+        },
+        "detail": {
+            "closeAria": "Tutup detail hari",
+            "normalDay": "Hari Normal",
+            "today": "Hari Ini",
+            "clinicStatus": "Status Poliklinik",
+            "patientSurge": "Pasien Membludak",
+            "trafficProjection": "Proyeksi trafik:",
+            "season": "Musim",
+            "risks": "Risiko: {{risks}}",
+            "dailyAgenda": "Agenda Harian",
+            "noInstruction": "Rotasi reguler. Tidak ada instruksi khusus.",
+            "openDailyReport": "Buka Laporan Harian",
+            "futureReport": "Data laporan akan tersedia setelah rotasi hari ini selesai."
+        }
+    },
+    "timeController": {
+        "pauseShortcut": "Jeda (Space)",
+        "normalSpeed": "Kecepatan normal",
+        "doubleSpeed": "Kecepatan ganda",
+        "highSpeed": "Kecepatan tinggi",
+        "maxSpeed": "Kecepatan maksimal"
+    },
+    "endOfDay": {
+        "title": "Laporan Hari ke-{{day}}",
+        "patientFallback": "Pasien",
+        "ageShort": "{{age}}th",
+        "currencyThousandSuffix": "rb",
+        "returnDay": "(Hari ke-{{day}})",
+        "writeReflection": "Tulis Refleksi (+{{xp}} XP)",
+        "reflectionPlaceholder": "Apa yang akan kamu lakukan berbeda besok?",
+        "reflectionBonus": "+{{xp}} XP bonus refleksi!",
+        "earnedToday": "Diperoleh Hari Ini",
+        "rest": "Istirahat -> Hari ke-{{day}}",
+        "grades": {
+            "S": "Luar Biasa!",
+            "A": "Sangat Baik",
+            "B": "Baik",
+            "C": "Cukup",
+            "D": "Perlu Perbaikan"
+        },
+        "stats": {
+            "served": "Dilayani",
+            "accuracy": "Akurasi",
+            "reputation": "Reputasi",
+            "netService": "Net Layanan"
+        },
+        "diagnosis": {
+            "correct": "Benar",
+            "inaccurate": "Kurang Tepat",
+            "referral": "Rujuk"
+        },
+        "sections": {
+            "criticalCases": "Kasus Kritis",
+            "upcoming": "Yang Akan Datang",
+            "reflection": "Refleksi"
+        },
+        "critical": {
+            "correct": "{{diagnosis}}",
+            "expected": "Seharusnya: {{diagnosis}}"
+        },
+        "reflectionPrompts": {
+            "missed_diagnosis": "{{patientName}} terdiagnosis {{condition}}. Apakah ada tanda yang terlewat saat anamnesis?",
+            "incorrect_treatment": "Terapi untuk {{patientName}} kurang tepat. Obat apa yang seharusnya diberikan?",
+            "good_case": "{{patientName}} membaik berkat penanganan Anda. Apa kunci keberhasilannya?",
+            "time_pressure": "Beberapa pasien menunggu terlalu lama. Bagaimana mengoptimalkan alur pelayanan besok?",
+            "referral_question": "{{patientName}} dirujuk ke RS. Apakah rujukan ini tepat, atau bisa ditangani di Puskesmas?",
+            "general": "Apa satu hal yang akan kamu perbaiki besok di Puskesmas?"
+        },
+        "keyLearning": {
+            "missedDiagnosis": "Diagnosis yang tepat adalah \"{{diagnosis}}\". Perhatikan gejala-gejala kunci pada anamnesis.",
+            "referral": "Kasus ini memerlukan rujukan. Pastikan stabilisasi sebelum pasien dikirim ke RS.",
+            "excellent": "Diagnosa dan tatalaksana tepat. Pertahankan pola klinis seperti ini!",
+            "reviewFlow": "Evaluasi kembali alur anamnesis dan pemeriksaan fisik untuk akurasi lebih tinggi."
+        }
     },
     "roles": {
         "intern": "Internsip",
@@ -75,7 +725,43 @@
         "reputation_aria": "Reputasi: {{value}}",
         "prb_active": "Pasien PRB aktif",
         "open_sidebar": "Buka panel samping",
-        "close_sidebar": "Tutup panel samping"
+        "close_sidebar": "Tutup panel samping",
+        "wiki_stats": {
+            "energy_label": "Level Energi",
+            "status_label": "Status",
+            "status_fit": "Fit",
+            "status_tired": "Lelah",
+            "status_exhausted": "Exhausted",
+            "reputation_label": "Skor Reputasi",
+            "reputation_high": "Sangat Dipercaya",
+            "reputation_steady": "Cukup",
+            "level_label": "Level",
+            "achievement_label": "Pencapaian",
+            "achievement_head": "Kepala Puskesmas",
+            "total_staff_label": "Total Staf",
+            "avg_readiness_label": "Rata-rata Readiness",
+            "total_patients_label": "Total Pasien",
+            "target_label": "Target",
+            "overall_score_label": "Skor Keseluruhan",
+            "avg_iks_label": "Rata-rata IKS",
+            "total_households_label": "Total KK",
+            "contact_rate_label": "Angka Kontak",
+            "per_1000": "per 1000",
+            "total_contacts_label": "Total Kontak",
+            "population_label": "Populasi",
+            "total_cases_managed_label": "Total Pasien Ditangani",
+            "prolanis_members_label": "Peserta Prolanis",
+            "stress_label": "Stress",
+            "energy_short_label": "Energi",
+            "diagnostic_accuracy_label": "Akurasi Diagnosa",
+            "rational_treatment_label": "Terapi Rasional",
+            "antibiotic_stewardship_label": "AB Stewardship",
+            "accuracy_label": "Akurasi",
+            "treatment_label": "Terapi",
+            "prb_active_label": "PRB Aktif",
+            "prb_completed_label": "PRB Selesai",
+            "clinical_accuracy_label": "Akurasi Klinis"
+        }
     },
     "settings": {
         "title": "Pengaturan",
@@ -89,7 +775,114 @@
         "theme_dark": "Gelap",
         "theme_light": "Terang",
         "save": "Simpan Game",
-        "logout": "Keluar"
+        "logout": "Keluar",
+        "footer_signature": "PRIMER v{{version}} | {{organization}}",
+        "themes": {
+            "medika": {
+                "name": "Medika",
+                "description": "Mode gelap bawaan - HUD medis hijau"
+            },
+            "emerald": {
+                "name": "Emerald Chat",
+                "description": "Mode terang - hangat dan terinspirasi chat"
+            },
+            "midnight": {
+                "name": "Neon Midnight",
+                "description": "Gelap cyber - neon amber dan violet"
+            },
+            "military": {
+                "name": "Tactical",
+                "description": "Gelap taktis - olive drab dan aksen khaki"
+            },
+            "premium": {
+                "name": "Premium Glass",
+                "description": "Gelap premium - kaca buram dan cahaya biru"
+            }
+        }
+    },
+    "statusJunction": {
+        "title": "Status Junction",
+        "closeAria": "Tutup status junction",
+        "role": "Kepala Puskesmas",
+        "levelShort": "LV",
+        "exp": "EXP",
+        "condition": "Condition",
+        "conditionCritical": "CRITICAL",
+        "conditionNormal": "NORMAL",
+        "hoverHint": "Arahkan kursor ke stat untuk melihat detail...",
+        "abilities": "Abilities (Junctioned)",
+        "noAbilities": "- Belum ada ability terbuka -",
+        "playTime": "PLAY TIME",
+        "activeFunds": "GIL (Dana Aktif)",
+        "currency": {
+            "fullValue": "Rp {{value}}"
+        },
+        "stats": {
+            "energy": {
+                "title": "ENERGY (HP)",
+                "desc": "Tenaga untuk melakukan aktivitas medis dan manajemen.",
+                "label": "Energy"
+            },
+            "stress": {
+                "title": "STRESS",
+                "desc": "Tingkat kelelahan mental. Mempengaruhi akurasi diagnosis.",
+                "label": "Stress"
+            },
+            "knowledge": {
+                "title": "KNOWLEDGE (MAG)",
+                "desc": "Kemampuan untuk membuka skill baru dan riset.",
+                "label": "Knowledge"
+            },
+            "confidence": {
+                "title": "CONFIDENCE (SPR)",
+                "desc": "Kepercayaan diri saat menghadapi audiens dan staf.",
+                "label": "Confidence"
+            },
+            "hygiene": {
+                "title": "HYGIENE (VIT)",
+                "desc": "Kebersihan diri dan resistensi terhadap penyakit.",
+                "label": "Hygiene"
+            }
+        }
+    },
+    "wikiModal": {
+        "knowledgeBase": "Knowledge Base v1.0",
+        "searchPlaceholder": "Cari pengetahuan...",
+        "loading": "Memuat Pengetahuan...",
+        "inquiry": "Inquiry",
+        "aiVerified": "AI VERIFIED",
+        "notFound": "Pengetahuan tidak ditemukan.",
+        "closeAria": "Tutup MAIA Codex",
+        "chooseTopic": "Pilih topik di sidebar untuk mulai belajar.",
+        "empty": {
+            "title": "Tidak ditemukan",
+            "hint": "Coba kata kunci lain"
+        },
+        "categories": {
+            "manajemen": "Manajemen",
+            "klinis": "Klinis",
+            "wilayah": "Wilayah",
+            "prosedur": "Prosedur",
+            "lab": "Lab",
+            "farmasi": "Farmasi",
+            "default": "Umum"
+        },
+        "sections": {
+            "maiaInsight": "MAIA's Clinical Insight",
+            "fundamental": "Deskripsi Fundamental",
+            "telemetry": "Telemetry Snapshot",
+            "ikm": "Perspektif Ilmu Kesehatan (IKM)",
+            "skn": "Sistem Kesehatan Nasional (SKN)",
+            "didYouKnow": "Tahukah Anda?",
+            "strategy": "MAIA's Strategy Recommendations"
+        },
+        "footer": {
+            "clinicalDatabase": "Clinical Database Linked",
+            "telemetryActive": "Real-time Telemetry Active"
+        },
+        "actions": {
+            "done": "Sinkronisasi Selesai"
+        }
     },
     "dashboard": {
         "waiting": "Antrian",
@@ -103,7 +896,281 @@
         "close_kpi": "Tutup Dashboard",
         "closed_title": "Layanan Poli Tutup",
         "closed_description": "Seluruh layanan poli telah berakhir untuk hari ini.",
-        "closed_footer": "Simulasi Berakhir Pukul 17:00"
+        "closed_footer": "Simulasi Berakhir Pukul 17:00",
+        "hub": {
+            "title": "Mission Control",
+            "subtitle": "{{accreditation}} - SYSTEM HUB",
+            "sync_title": "Sinkronisasi data dan dokumentasi",
+            "sync_busy": "Menyinkronkan...",
+            "sync_name": "Satu Sehat",
+            "sync_success": "Sinkronisasi Satu Sehat selesai. Jalankan PRIMERA_SYNC.bat bila refleksi dokumentasi perlu diperbarui.",
+            "stats": {
+                "patients_today": "Pasien Hari Ini",
+                "queue": "Antrian",
+                "quality_score": "Quality Score",
+                "recovery": "Kesembuhan"
+            },
+            "alerts": {
+                "out_of_stock": "{{count}} obat HABIS",
+                "low_stock": "{{count}} obat rendah",
+                "rrns_high": "RRNS: {{value}}% (tinggi)",
+                "stress": "Stress: {{value}}%",
+                "energy": "Energi: {{value}}%",
+                "low_morale_staff": "{{count}} staf morale rendah",
+                "outbreak_active": "KLB Aktif: {{diseases}}",
+                "prb_overdue": "{{count}} PRB overdue",
+                "all_normal": "Semua Sistem Normal"
+            },
+            "cards": {
+                "clinical": {
+                    "label": "Clinical Intel",
+                    "sublabel": "UKP - SKDI - Patient Safety",
+                    "quick_stat": "{{value}}% Akurasi",
+                    "support_queue": "Antrian",
+                    "support_today": "Kasus hari ini"
+                },
+                "community": {
+                    "label": "Community Intel",
+                    "sublabel": "UKM - PIS-PK - Prolanis",
+                    "quick_stat": "IKS {{value}}%",
+                    "support_prb": "PRB aktif",
+                    "support_population": "Populasi"
+                },
+                "performance": {
+                    "label": "Performance",
+                    "sublabel": "KBK - Dana Operasional - Kinerja",
+                    "quick_stat": "Rp {{value}}M",
+                    "support_quality": "Quality",
+                    "support_rrns": "RRNS"
+                },
+                "accreditation": {
+                    "label": "Accreditation",
+                    "sublabel": "5 Bab - Radar Mutu",
+                    "support_alerts": "Alert aktif",
+                    "support_outbreak": "Outbreak"
+                },
+                "logistics": {
+                    "label": "Logistics",
+                    "sublabel": "Staff - Inventory - Wellness",
+                    "quick_stat": "{{count}} Staf",
+                    "support_low": "Stok tipis",
+                    "support_out": "Stok habis"
+                }
+            }
+        },
+        "views": {
+            "clinical": {
+                "title": "Clinical Intelligence",
+                "subtitle": "UKP - Patient Safety - SKDI",
+                "safetyTitle": "Komposit Patient Safety",
+                "breakdown": {
+                    "accuracy": "Akurasi Diagnosis",
+                    "rationalTherapy": "Terapi Rasional",
+                    "antibioticStewardship": "Antibiotic Stewardship"
+                },
+                "skdiTitle": "Cakupan SKDI 4A",
+                "diseasesHandled": "{{total}} penyakit tertangani",
+                "skdiHint": "Semakin banyak variasi kasus, semakin kuat kompetensi klinis",
+                "referralTitle": "Indeks Kualitas Rujukan",
+                "referralRate": "Rasio Rujukan",
+                "rrns": "RRNS (Non-Spesialistik)",
+                "targetLabel": "Target",
+                "topDiagnosesTitle": "Top 10 Diagnosa (Surveilans P-Care)",
+                "emptyPatients": "Belum ada data pasien"
+            },
+            "community": {
+                "title": "Community Intelligence",
+                "subtitle": "UKM - PIS-PK - Prolanis",
+                "iksTitle": "Indeks Keluarga Sehat (IKS)",
+                "householdCount": "{{count}} KK",
+                "metrics": {
+                    "totalHouseholds": "Total KK",
+                    "highRisk": "Risiko Tinggi",
+                    "larvaeFree": "Bebas Jentik",
+                    "target": "Target"
+                },
+                "prolanisTitle": "Kepatuhan Prolanis (RPP)",
+                "prolanisActive": "{{compliant}}/{{total}} peserta aktif kontrol",
+                "prbTitle": "Pasien PRB Aktif ({{count}})",
+                "overdue": "Overdue!",
+                "controlDue": "Kontrol: Hari ke-{{day}}",
+                "controlAction": "Kontrol"
+            },
+            "performance": {
+                "title": "Performance Scorecard",
+                "subtitle": "KBK - Dana Operasional - Kinerja",
+                "kbkTitle": "Kapitasi Berbasis Kinerja (KBK)",
+                "totalScore": "Skor KBK Total",
+                "contactDetailTitle": "Detail Angka Kontak",
+                "fundsTitle": "Sumber Dana Operasional",
+                "perThousandValue": "{{value}}/1000",
+                "perThousandTarget": ">= {{value}}/1000",
+                "metrics": {
+                    "contactRate": "Angka Kontak",
+                    "rrns": "RRNS (Non-Spesialistik)",
+                    "rpp": "RPP Prolanis",
+                    "totalContacts": "Total Kontak",
+                    "population": "Populasi",
+                    "contactsPerThousand": "Kontak/1000"
+                },
+                "funds": {
+                    "capitation": "Kapitasi BPJS",
+                    "general": "Umum",
+                    "available": "Dana Aktif"
+                },
+                "zones": {
+                    "safe": "Aman",
+                    "warning": "Waspada",
+                    "penalty": "Penalti"
+                },
+                "currency": {
+                    "rupiah": "Rp {{value}}",
+                    "million": "{{value}}M",
+                    "thousand": "{{value}}rb"
+                }
+            },
+            "accreditation": {
+                "title": "Accreditation Command",
+                "subtitle": "5 Bab - Radar - Standar Nasional",
+                "statusTitle": "Status Akreditasi",
+                "currentLevel": "Level Saat Ini",
+                "averageScore": "Skor Rata-rata",
+                "radarTitle": "Radar 5 Bab Akreditasi",
+                "levels": {
+                    "dasar": "Dasar",
+                    "madya": "Madya",
+                    "utama": "Utama",
+                    "paripurna": "Paripurna"
+                },
+                "chapters": {
+                    "chapter1": "Bab 1",
+                    "chapter2": "Bab 2",
+                    "chapter3": "Bab 3",
+                    "chapter4": "Bab 4",
+                    "chapter5": "Bab 5",
+                    "leadership": "Kepemimpinan",
+                    "community": "UKM",
+                    "clinical": "UKP",
+                    "priorityPrograms": "Program Prioritas",
+                    "qualitySafety": "Mutu & Safety"
+                }
+            },
+            "logistics": {
+                "title": "Logistics & Staff",
+                "subtitle": "Supply Chain - HR - Wellness",
+                "wellnessTitle": "Player Wellness",
+                "staffTitle": "Tinjauan Staf",
+                "inventoryTitle": "Status Inventory",
+                "demandTitle": "Tren Kebutuhan Klinis",
+                "noStaff": "Belum ada staf direkrut",
+                "lowMoraleWarning": "{{count}} staf morale rendah - risiko resign!",
+                "out": "HABIS",
+                "daysRemaining": "{{count}} Hari",
+                "metrics": {
+                    "stress": "Stress Level",
+                    "energy": "Energy",
+                    "count": "Jumlah",
+                    "avgMorale": "Avg Morale",
+                    "avgPerformance": "Avg Performa",
+                    "totalItems": "Total Items",
+                    "lowStock": "Low Stock",
+                    "stockout": "Stockout"
+                }
+            }
+        }
+    },
+    "kpiDashboard": {
+        "unknownDiagnosis": "Belum Diketahui",
+        "header": {
+            "liveTelemetry": "LIVE TELEMETRY // HARI {{day}}"
+        },
+        "tabs": {
+            "telemetry": "Telemetry",
+            "radar": "Radar",
+            "forensic": "Forensic",
+            "vault": "Vault"
+        },
+        "cards": {
+            "totalEntities": "Total Entitas",
+            "patientMix": "{{bpjs}} JKN | {{umum}} UMUM",
+            "diagnosticAccuracy": "Akurasi Diagnostik",
+            "referralRatio": "Rasio Evakuasi",
+            "targetUnder15": "TARGET: < 15%",
+            "rrnsDeviation": "RRNS (Deviasi)",
+            "clinicalWaste": "Clinical Waste"
+        },
+        "sections": {
+            "qualityMatrix": "QUALITY & SAFETY MATRIX",
+            "financialLedger": "FINANCIAL LEDGER",
+            "liveTraffic": "LIVE TRAFFIC SONAR",
+            "epidemiologyTargets": "EPIDEMIOLOGY TARGETS"
+        },
+        "metrics": {
+            "therapyValidity": "Validitas Terapi",
+            "antibioticDefense": "Antibiotic Defense",
+            "logisticsEfficiency": "Efisiensi Logistik",
+            "socialReputation": "Social Reputation"
+        },
+        "finance": {
+            "activeFunds": "TOTAL DANA AKTIF",
+            "recordedExpenses": "BEBAN TERCATAT",
+            "generalRevenue": "PENDAPATAN UMUM"
+        },
+        "analytics": {
+            "totalPrefix": "TOTAL",
+            "entities": "ENTITIES",
+            "logs": "{{count}} LOGS",
+            "cases": "CASES",
+            "scanning": "SCANNING FOR ANOMALIES..."
+        },
+        "audit": {
+            "title": "Forensic Audit Logs",
+            "subtitle": "Dekripsi Keputusan Medis (10 Pasien Terakhir)",
+            "records": "{{count}} RECORDS",
+            "unknown": "UNKNOWN",
+            "verified": "VERIFIED",
+            "rejected": "REJECTED",
+            "day": "HARI {{day}}",
+            "diagnosis": "DIAGNOSIS",
+            "action": "TINDAKAN",
+            "score": "SKOR",
+            "empty": "DATABASE KOSONG. BELUM ADA PASIEN DITANGANI.",
+            "actions": {
+                "treated": "TREATED",
+                "referred": "REFERRED"
+            },
+            "feedback": {
+                "perfect": "Protokol dieksekusi dengan sempurna. Pasien pulih.",
+                "sisrute_transferred": "Pasien ditransfer via SISRUTE.",
+                "stabilized": "Pasien distabilisasi.",
+                "delegated": "Pasien didelegasikan.",
+                "transferred": "Pasien ditransfer.",
+                "needsAnalysis": "Analisis mendalam diperlukan. Deviasi protokol terdeteksi."
+            }
+        },
+        "monthly": {
+            "title": "FISCAL VAULT ARCHIVES",
+            "subtitle": "Rekapitulasi JKN (30-Day Cycle)",
+            "cycle": "SIKLUS",
+            "avgScore": "RATA-RATA SKOR",
+            "reputation": "REPUTASI",
+            "totalRevenue": "TOTAL PENERIMAAN SIKLUS",
+            "capitation": "Kapitasi",
+            "services": "Layanan",
+            "salary": "Gaji",
+            "expenses": "Beban",
+            "netOperational": "Net Operasional",
+            "empty": "SIKLUS 30 HARI BELUM TERCAPAI."
+        },
+        "liveStats": {
+            "correctDiagnosis": "Diagnosa Tepat",
+            "totalPatients": "Total Pasien",
+            "rationality": "Rasionalitas",
+            "target": "Target",
+            "stewardshipRatio": "Rasio Bijak",
+            "status": "Status",
+            "rrnsRatio": "Rasio RRNS"
+        }
     },
     "wilayah": {
         "back_dashboard": "Kembali ke dashboard",
@@ -183,11 +1250,69 @@
         "mobile_queue_closed_idle": "Menunggu jam buka poli",
         "mobile_queue_idle": "Belum ada pasien masuk",
         "mobile_queue_preview": "Pasien berikutnya",
+        "workflow_ready_queue_title": "Pelayanan siap. Panggil pasien berikutnya.",
+        "workflow_ready_queue_description": "Panel kiri menampung antrean, sementara area utama dipakai penuh untuk pemeriksaan aktif. Mulai dari pasien berikutnya atau cek KPI dulu.",
+        "workflow_ready_emergency_title": "IGD siap. Ambil kasus berikutnya.",
+        "workflow_ready_emergency_description": "Panel kiri menampung daftar emergensi. Area utama akan berubah menjadi meja resusitasi saat Anda memilih pasien.",
+        "workflow_metric_queue": "Antrian aktif",
+        "workflow_metric_queue_hint": "Pasien rawat jalan siap dipanggil dari panel kiri.",
+        "workflow_metric_queue_hint_emergency": "Kasus siap ditangani di ruang triase.",
+        "workflow_metric_wait": "Tunggu maks",
+        "workflow_metric_wait_hint": "Berguna untuk melihat tekanan antrean sebelum mulai pemeriksaan.",
+        "workflow_metric_emergency": "Prioritas",
+        "workflow_metric_emergency_hint": "Semakin kecil angka, semakin kritis kasusnya.",
+        "workflow_metric_program": "Program berjalan",
+        "workflow_metric_program_value": "{{count}} pasien Prolanis",
+        "workflow_metric_program_hint": "Tab Prolanis tetap tersedia tanpa perlu pindah halaman.",
+        "workflow_metric_support": "Mode layanan",
+        "workflow_metric_support_hint": "Gunakan panel kiri untuk memilih alur kerja layanan yang aktif.",
+        "workflow_next_patient": "Pasien berikutnya",
+        "workflow_wait_compact": "{{minutes}}m menunggu",
+        "workflow_call_next": "Panggil pasien berikutnya",
+        "workflow_take_case": "Tangani sekarang",
+        "workflow_empty_queue": "Belum ada pasien aktif di layanan ini. Gunakan waktu luang untuk cek KPI, stok, atau istirahat singkat.",
         "queue_locked_badge": "08:00-16:00",
         "call": "Panggil",
         "resident": "Warga",
-        "visitor": "Visitor",
-        "rest_limit_reached": "Kuota istirahat hari ini sudah habis."
+        "visitor": "Pendatang",
+        "rest_limit_reached": "Kuota istirahat hari ini sudah habis.",
+        "service_status_ready": "Siap dipakai",
+        "unlock_requirements_short": "Prasyarat",
+        "service_staff_label": "Staf: {{staff}}",
+        "service_level_label": "Lv {{level}}",
+        "service_emergency_count": "{{count}} emergensi",
+        "service_modes": {
+            "queue": "Antrian poli",
+            "emergency": "Triage cepat",
+            "support": "Penunjang"
+        },
+        "services": {
+            "poli_umum": {
+                "name": "Poli Umum",
+                "short_name": "Umum",
+                "description": "Pelayanan rawat jalan dasar untuk keluhan umum."
+            },
+            "igd": {
+                "name": "IGD",
+                "short_name": "IGD",
+                "description": "Stabilisasi awal dan triase untuk kasus gawat darurat."
+            },
+            "farmasi_lab": {
+                "name": "Farmasi & Lab",
+                "short_name": "Farm/Lab",
+                "description": "Dispensing obat, manajemen stok, dan pemeriksaan penunjang."
+            },
+            "poli_kia_kb": {
+                "name": "Poli KIA-KB",
+                "short_name": "KIA",
+                "description": "Layanan kesehatan ibu-anak, KB, imunisasi, dan tumbuh kembang."
+            },
+            "poli_gigi": {
+                "name": "Poli Gigi",
+                "short_name": "Gigi",
+                "description": "Pelayanan kesehatan gigi dan mulut untuk kunjungan rutin maupun tindakan."
+            }
+        }
     },
     "emr": {
         "header_waiting": "Pilih pasien antrian untuk mulai pemeriksaan",
@@ -207,11 +1332,940 @@
         "finish_case": "Selesaikan Kasus",
         "enroll_prolanis": "Daftar Prolanis"
     },
+    "patientEMR": {
+        "tabs": {
+            "anamnesis_short": "Anamn",
+            "history": "Riwayat",
+            "history_short": "Riwayat",
+            "physical_short": "Fisik",
+            "labs_short": "Lab",
+            "assessment": "Diagnosa",
+            "assessment_short": "Dx",
+            "treatment_short": "Obat",
+            "procedures": "Tindakan",
+            "procedures_short": "Tndkn",
+            "education_short": "Edukasi",
+            "billing_short": "Billing"
+        },
+        "badges": {
+            "resident": "Warga Tetap",
+            "visitor": "Pendatang",
+            "groggy": "Groggy",
+            "general_payment": "UMUM"
+        },
+        "informant": "Diantar:",
+        "family_archive": "Berkas KK",
+        "family_archive_short": "Berkas",
+        "maia_insight": "MAIA Insight",
+        "processing": "Memproses Data...",
+        "system_slowing": "Sistem Melambat...",
+        "mobile_groups": {
+            "clinical": "Klinis",
+            "management": "Tindakan"
+        },
+        "sidebar": {
+            "insight": "MAIA Insight",
+            "evaluation": "Evaluasi",
+            "cppt": "CPPT"
+        }
+    },
+    "anamnesis": {
+        "categories": {
+            "keluhan_utama": "Keluhan Utama",
+            "rps": "Riwayat Penyakit Sekarang",
+            "rpd": "Riwayat Penyakit Dahulu",
+            "rpk": "Riwayat Penyakit Keluarga",
+            "sosial": "Riwayat Sosial"
+        },
+        "short_categories": {
+            "keluhan_utama": "Keluhan",
+            "rps": "RPS",
+            "rpd": "RPD",
+            "rpk": "RPK",
+            "sosial": "Sos"
+        },
+        "tips": {
+            "keluhan_utama": "Gali keluhan utama dengan pertanyaan terbuka.",
+            "rps": "Tanyakan onset, durasi, lokasi, kualitas, serta faktor pemberat dan peringan (OLD CART).",
+            "rpd": "Cari riwayat penyakit serupa, alergi, dan tindakan sebelumnya.",
+            "rpk": "Fokus pada risiko penyakit menular seperti TBC atau penyakit keturunan seperti hipertensi dan diabetes.",
+            "sosial": "Tanyakan pekerjaan, pola makan, merokok, dan lingkungan rumah."
+        },
+        "ui": {
+            "coverage": "Coverage",
+            "questions": "Pertanyaan",
+            "close_questions": "Tutup panel pertanyaan",
+            "jump_to_tab": "Buka cepat ke {{tab}}",
+            "active_questions": "Pertanyaan aktif",
+            "tips_button": "Tips",
+            "tip_prefix": "Tip: {{text}}",
+            "initial_title": "Tanyakan keluhan utama:",
+            "child_direct_title": "Tanya langsung ke anak:",
+            "previous_row": "Baris sebelumnya",
+            "next_row": "Baris berikutnya",
+            "grid_label": "Pertanyaan anamnesis",
+            "repeat_title": "[Ulangi] {{text}}\n(jawaban kurang jelas - tanyakan ulang)"
+        },
+        "initial": {
+            "pediatric_complaint_1": {
+                "text": "Ada keluhan apa untuk anaknya, {{prefix}}?",
+                "tag": "Keluhan anak"
+            },
+            "pediatric_complaint_2": {
+                "text": "{{prefix}}, apa yang terjadi dengan adiknya?",
+                "tag": "Apa yang terjadi"
+            },
+            "pediatric_complaint_3": {
+                "text": "Ceritakan kondisi anak {{prefix}} saat ini.",
+                "tag": "Kondisi saat ini"
+            },
+            "informant_complaint_1": {
+                "text": "Ada keluhan apa, {{prefix}}?",
+                "tag": "Keluhan"
+            },
+            "informant_complaint_2": {
+                "text": "Bisa ceritakan apa yang dirasakan beliau?",
+                "tag": "Apa yang dirasakan"
+            },
+            "patient_complaint_1": {
+                "text": "Apa yang bisa saya bantu, {{prefix}}?",
+                "tag": "Ada yang bisa dibantu"
+            },
+            "patient_complaint_2": {
+                "text": "Ada keluhan apa {{prefix}} hari ini?",
+                "tag": "Keluhan hari ini"
+            },
+            "patient_complaint_3": {
+                "text": "Bagaimana kondisi {{prefix}} saat ini?",
+                "tag": "Kondisi saat ini"
+            }
+        },
+        "question_rewrites": {
+            "pediatric_activity": "Aktivitas anak sehari-hari bagaimana? Lebih banyak di rumah, sekolah, atau bermain?",
+            "pediatric_smoke": "Ada yang merokok di rumah atau dekat anak?",
+            "pediatric_exercise": "Bagaimana aktivitas bermain anak sehari-hari?",
+            "pediatric_diet": "Bagaimana pola makan anak sehari-hari?",
+            "pediatric_sleep": "Bagaimana pola tidur anak? Apakah cukup?",
+            "pediatric_home": "Bagaimana kondisi rumah dan lingkungan tempat tinggal anak?",
+            "pediatric_water": "Sumber air minum anak sehari-hari dari mana?",
+            "adolescent_activity": "Sehari-hari aktivitasnya apa? Sekolah atau kegiatan lain?",
+            "adolescent_smoke": "Pernah merokok atau sering kena asap rokok?",
+            "adolescent_exercise": "Seberapa sering olahraga atau aktivitas fisik?"
+        },
+        "child_questions": {
+            "child_pain_where": {
+                "text": "{{childName}}, sakitnya di mana? Tunjukin ke Dokter ya.",
+                "response": "({{childName}} menunjuk ke bagian yang sakit)"
+            },
+            "child_eat": {
+                "text": "{{childName}} tadi sudah makan belum?",
+                "response": "(menggeleng pelan)... Nggak mau makan, Dok."
+            },
+            "child_cry": {
+                "text": "Adik nangis nggak tadi? Kapan sakitnya paling terasa?",
+                "response": "(mengangguk)... Tadi malam nangis dok."
+            },
+            "child_describe": {
+                "text": "{{childName}}, bisa ceritakan sakitnya kayak apa rasanya?",
+                "response": "Rasanya sakit dok, kayak... (berusaha menjelaskan)"
+            },
+            "child_since": {
+                "text": "{{childName}}, sakitnya mulai kapan?",
+                "response": "Dari kemarin dok."
+            },
+            "child_activity": {
+                "text": "Kemarin masih bisa ikut main sama teman-teman?",
+                "response": "Nggak, dokter. Nggak kuat berdiri lama."
+            }
+        },
+        "dialogue": {
+            "empty": "[ MENUNGGU PERTANYAAN KLINIS ]",
+            "doctor": "Dokter",
+            "patient": "Pasien",
+            "companion": "Pendamping",
+            "vague": "Kurang jelas"
+        },
+        "questions": {
+            "gen_ku_severity": "Seberapa berat keluhannya? Mengganggu aktivitas sehari-hari?",
+            "gen_ku_trigger": "Apa yang membuat Bapak/Ibu datang periksa hari ini?",
+            "gen_ku_other": "Selain keluhan tadi, ada keluhan lain yang dirasakan?",
+            "rps_onset": "Sejak kapan keluhan ini dirasakan?",
+            "rps_durasi": "Berapa lama biasanya keluhan ini berlangsung?",
+            "rps_lokasi": "Di bagian mana tepatnya yang dirasakan?",
+            "rps_kualitas": "Seperti apa rasa sakitnya? Berdenyut, ditusuk, atau panas?",
+            "rps_pemberat": "Apa yang membuat keluhan bertambah berat?",
+            "rps_peringan": "Apa yang membuat keluhan berkurang?",
+            "rps_menjalar": "Apakah nyerinya menjalar ke tempat lain?",
+            "rps_obat": "Sudah minum obat apa sebelum ke sini?",
+            "rpd_serupa": "Pernah mengalami keluhan serupa sebelumnya?",
+            "rpd_hipertensi": "Apakah ada riwayat darah tinggi?",
+            "rpd_diabetes": "Apakah ada riwayat kencing manis?",
+            "rpd_jantung": "Apakah ada riwayat penyakit jantung?",
+            "rpd_alergi": "Apakah ada alergi obat atau makanan?",
+            "rpd_operasi": "Apakah pernah menjalani operasi?",
+            "rpd_rawat": "Apakah pernah dirawat di rumah sakit?",
+            "rpd_obat_rutin": "Apakah ada obat yang rutin diminum?",
+            "rpk_hipertensi": "Apakah ada keluarga yang menderita darah tinggi?",
+            "rpk_diabetes": "Apakah ada keluarga dengan kencing manis?",
+            "rpk_jantung": "Apakah ada riwayat penyakit jantung di keluarga?",
+            "rpk_stroke": "Apakah ada keluarga yang pernah stroke?",
+            "rpk_tbc": "Apakah ada keluarga atau tetangga yang batuk lama atau TBC?",
+            "rpk_asma": "Apakah ada keluarga dengan asma atau alergi?",
+            "rpk_kanker": "Apakah ada riwayat kanker di keluarga?",
+            "sos_pekerjaan": "Apa pekerjaan sehari-hari?",
+            "sos_merokok": "Apakah merokok?",
+            "sos_alkohol": "Apakah mengonsumsi minuman beralkohol?",
+            "sos_olahraga": "Seberapa sering berolahraga?",
+            "sos_makan": "Bagaimana pola makan sehari-hari?",
+            "sos_tidur": "Bagaimana pola tidur? Apakah cukup?",
+            "sos_rumah": "Bagaimana kondisi rumah dan lingkungan tempat tinggal?",
+            "sos_air": "Sumber air minum dari mana?"
+        },
+        "responses": {
+            "gen_ku_severity": "Cukup mengganggu, Dok. Susah tidur juga.",
+            "gen_ku_trigger": "Soalnya makin parah dok, jadi khawatir.",
+            "gen_ku_other": "Itu aja sih dok, yang lain masih baik-baik aja.",
+            "rps_onset": "Sudah sekitar beberapa hari yang lalu, Dok.",
+            "rps_durasi": "Biasanya terasa terus-menerus, Dok.",
+            "rps_lokasi": "(Pasien menunjukkan lokasi yang sakit)",
+            "rps_kualitas": "Rasanya seperti nyeri biasa, Dok.",
+            "rps_pemberat": "Kalau banyak aktivitas biasanya makin terasa, Dok.",
+            "rps_peringan": "Kalau istirahat agak mendingan, Dok.",
+            "rps_menjalar": "Tidak menjalar, Dok. Di situ saja.",
+            "rps_obat": "Sudah minum obat warung tapi tidak ada perubahan, Dok.",
+            "rpd_serupa": "Dulu pernah sekali, tapi tidak separah ini, Dok.",
+            "rpd_hipertensi": "Setahu saya tidak ada, Dok.",
+            "rpd_diabetes": "Tidak ada, Dok.",
+            "rpd_jantung": "Tidak ada, Dok.",
+            "rpd_alergi": "Tidak ada alergi yang saya tahu, Dok.",
+            "rpd_operasi": "Belum pernah operasi, Dok.",
+            "rpd_rawat": "Belum pernah, Dok.",
+            "rpd_obat_rutin": "Tidak ada obat rutin, Dok.",
+            "rpk_hipertensi": "Bapak saya dulu ada darah tinggi, Dok.",
+            "rpk_diabetes": "Tidak ada, Dok.",
+            "rpk_jantung": "Tidak ada, Dok.",
+            "rpk_stroke": "Tidak ada, Dok.",
+            "rpk_tbc": "Tidak ada yang saya tahu, Dok.",
+            "rpk_asma": "Tidak ada, Dok.",
+            "rpk_kanker": "Tidak ada, Dok.",
+            "sos_pekerjaan": "(Menyebutkan pekerjaannya)",
+            "sos_merokok": "Tidak merokok, Dok.",
+            "sos_alkohol": "Tidak, Dok.",
+            "sos_olahraga": "Jarang olahraga, Dok.",
+            "sos_makan": "Makan biasa, 3 kali sehari, Dok.",
+            "sos_tidur": "Tidur cukup, sekitar 6-7 jam, Dok.",
+            "sos_rumah": "(Menjelaskan kondisi rumah)",
+            "sos_air": "Pakai air galon/PDAM, Dok."
+        },
+        "tags": {
+            "initial_complaint": "Keluhan utama",
+            "q_main": "Keluhan utama",
+            "q_main_complaint": "Keluhan utama",
+            "gen_ku_severity": "Beratnya",
+            "gen_ku_trigger": "Alasan datang",
+            "gen_ku_other": "Keluhan lain",
+            "q_duration": "Durasi",
+            "q_onset": "Onset",
+            "q_quality": "Kualitas",
+            "q_severity": "Keparahan",
+            "q_location": "Lokasi",
+            "q_radiation": "Penjalaran",
+            "q_timing": "Waktu",
+            "q_trigger": "Pencetus",
+            "q_relieving": "Faktor peringan",
+            "q_aggravating": "Faktor pemberat",
+            "q_associated": "Gejala penyerta",
+            "q_fever": "Demam",
+            "q_cough": "Batuk",
+            "q_phlegm": "Dahak/Sputum",
+            "q_nasal": "Hidung tersumbat",
+            "q_throat": "Nyeri tenggorokan",
+            "q_sob": "Sesak napas",
+            "q_chest_pain": "Nyeri dada",
+            "q_palpitation": "Berdebar",
+            "q_nausea": "Mual",
+            "q_vomit": "Muntah",
+            "q_diarrhea": "Diare",
+            "q_constipation": "Konstipasi",
+            "q_abd_pain": "Nyeri perut",
+            "q_appetite": "Nafsu makan",
+            "q_urine": "BAK",
+            "q_stool": "BAB",
+            "q_headache": "Sakit kepala",
+            "q_dizzy": "Pusing/Vertigo",
+            "q_weak": "Lemas",
+            "q_seizure": "Kejang",
+            "q_vision": "Pandangan kabur",
+            "q_hearing": "Gangguan pendengaran",
+            "q_edema": "Bengkak/Edema",
+            "q_rash": "Ruam",
+            "q_itch": "Gatal",
+            "q_trauma": "Riwayat trauma",
+            "rps_onset": "Onset",
+            "rps_durasi": "Durasi",
+            "rps_lokasi": "Lokasi",
+            "rps_kualitas": "Kualitas nyeri",
+            "rps_pemberat": "Faktor pemberat",
+            "rps_peringan": "Faktor peringan",
+            "rps_menjalar": "Penjalaran",
+            "rps_obat": "Obat sebelumnya",
+            "q_history": "Riwayat serupa",
+            "q_ht": "Hipertensi",
+            "q_dm": "Diabetes Melitus",
+            "q_asthma": "Asma",
+            "q_allergy": "Alergi",
+            "q_surgery": "Riwayat operasi",
+            "q_meds": "Riwayat obat",
+            "rpd_serupa": "Riwayat serupa",
+            "rpd_hipertensi": "Hipertensi",
+            "rpd_diabetes": "Diabetes",
+            "rpd_jantung": "Penyakit jantung",
+            "rpd_alergi": "Alergi",
+            "rpd_operasi": "Riwayat operasi",
+            "rpd_rawat": "Riwayat rawat",
+            "rpd_obat_rutin": "Obat rutin",
+            "q_family_history": "Riwayat keluarga",
+            "q_family_ht": "HT keluarga",
+            "q_family_dm": "DM keluarga",
+            "q_family_heart": "Jantung keluarga",
+            "q_family_tbc": "Kontak TBC",
+            "rpk_hipertensi": "HT keluarga",
+            "rpk_diabetes": "DM keluarga",
+            "rpk_jantung": "Jantung keluarga",
+            "rpk_stroke": "Stroke keluarga",
+            "rpk_tbc": "TBC/kontak",
+            "rpk_asma": "Asma keluarga",
+            "rpk_kanker": "Kanker keluarga",
+            "sos_pekerjaan": "Pekerjaan",
+            "sos_merokok": "Merokok",
+            "sos_alkohol": "Alkohol",
+            "sos_olahraga": "Olahraga",
+            "sos_makan": "Pola makan",
+            "sos_tidur": "Pola tidur",
+            "sos_rumah": "Kondisi rumah",
+            "sos_air": "Sumber air",
+            "q_event": "Kejadian",
+            "q_food": "Makan terakhir",
+            "q_symptoms": "Gejala penyerta",
+            "q_drink": "Minum/cairan",
+            "q_thirst": "Haus",
+            "q_insulin": "Insulin",
+            "q_habit": "Kebiasaan",
+            "q_infeksi": "Tanda infeksi",
+            "q_prev_dka": "Riwayat KAD",
+            "q_diet": "Diet",
+            "q_exercise": "Aktivitas fisik",
+            "q_fam": "Keluarga",
+            "q_stress": "Stres",
+            "q_sleep": "Tidur",
+            "q_weight": "Berat badan",
+            "child_pain_where": "Lokasi sakit",
+            "child_eat": "Sudah makan?",
+            "child_cry": "Menangis?",
+            "child_describe": "Ceritakan sakit",
+            "child_since": "Mulai kapan?",
+            "child_activity": "Aktivitas"
+        }
+    },
+    "referral": {
+        "title": "SISRUTE",
+        "subtitle": "Sistem Rujukan Terpadu Nasional",
+        "close_aria": "Tutup SISRUTE",
+        "steps": {
+            "sbar": "Form SBAR",
+            "hospital": "Rumah Sakit",
+            "transport": "Transportasi",
+            "feedback": "Feedback"
+        },
+        "warning_title": "Pasien Ini Kemungkinan Besar Akan DITOLAK",
+        "warning_skdi": "Kasus ini SKDI {{skdi}} dan wajib tuntas di FKTP sesuai KMK 1186/2022. RS tujuan akan menolak rujukan dan Anda akan menerima penalti audit BPJS.",
+        "warning_general": "Kondisi pasien tidak memerlukan penanganan spesialistik. RS tujuan kemungkinan besar akan menolak rujukan ini.",
+        "warning_recommendation": "Rekomendasi: Rawat di FKTP / Pulangkan dengan edukasi",
+        "intro": "Lengkapi ringkasan kondisi klinis pasien untuk memudahkan tim Rumah Sakit melakukan skrining awal.",
+        "sbar": {
+            "situation_label": "Situation (Kondisi Saat Ini)",
+            "situation_placeholder": "Gunakan ringkasan singkat (misal: Pasien sesak nafas berat, curiga pneumonia)",
+            "background_label": "Background (Riwayat Medis)",
+            "background_placeholder": "Riwayat penyakit terdahulu, alergi, atau obat rutin...",
+            "assessment_label": "Assessment (Analisis Dokter)",
+            "assessment_placeholder": "Hasil pemeriksaan fisik atau lab kunci yang mendukung rujukan...",
+            "recommendation_label": "Recommendation",
+            "recommendation_placeholder": "APA yang diminta dari RS (misal: PICU, tindakan bedah segera)..."
+        },
+        "hospital": {
+            "class": "Kelas {{value}}",
+            "distance": "{{value}} KM",
+            "capacity": "Kapasitas Bed:",
+            "available": "{{available}} / {{total}} TERSEDIA"
+        },
+        "transport": {
+            "title": "Pilih Moda Transportasi",
+            "busy": "Merujuk...",
+            "speed": "Kecepatan:",
+            "stabilization_bonus": "Bonus Stabilisasi:",
+            "cost": "Biaya:",
+            "free": "GRATIS",
+            "system_notice_title": "Pemberitahuan Sistem",
+            "system_notice_body": "Setelah rujukan dikirim, kami akan memberikan feedback real-time dari Rumah Sakit tujuan. Pastikan kondisi pasien sudah distabilkan di pusat layanan kami sebelum dikirim."
+        },
+        "result": {
+            "accepted_title": "RUJUKAN DITERIMA",
+            "rejected_title": "RUJUKAN DITOLAK",
+            "reputation": "Dampak Reputasi",
+            "satisfaction": "Kepuasan Pasien",
+            "destination": "RS Tujuan",
+            "points": "Poin"
+        },
+        "footer": {
+            "back": "Kembali",
+            "next": "Lanjut",
+            "send": "Kirim Rujukan ke RS",
+            "finish": "Selesai & Tutup",
+            "done": "Proses SISRUTE selesai",
+            "careful": "Mohon teliti dalam pengisian data"
+        },
+        "feedback": {
+            "accepted": "Rujukan Anda telah diterima oleh sistem rumah sakit tujuan.",
+            "rejected_fktp": "Rujukan Ditolak (Audit BPJS): Kasus {{disease}} harus tuntas di FKTP sesuai regulasi 144 diagnosa. Reputasi menurun drastis!",
+            "rejected_skdi4a": "Rujukan Ditolak (Audit BPJS): Penyakit ini termasuk kompetensi 4A (tuntas di FKTP). Merujuk kasus yang bisa ditangani sendiri menurunkan skor BPJS Anda!",
+            "rejected_unnecessary": "Rujukan Ditolak: RS tujuan menilai kondisi pasien tidak memerlukan penanganan spesialistik. Tangani di FKTP atau rujuk hanya jika ada komplikasi.",
+            "rejected_unstable": "Rujukan Ditolak: RS tujuan mencatat pasien belum dilakukan tindakan stabilisasi dasar (O2/Infus). Stabilkan pasien sebelum merujuk!",
+            "rejected_capacity": "Rumah sakit tujuan menolak karena kapasitas bed penuh. Pasien terpaksa mencari RS lain. Penalti reputasi!",
+            "accepted_mismatch": "RS tujuan menerima rujukan namun mencatat ketidaksesuaian spesialisasi. Pasien mungkin akan dikonsultasikan ulang.",
+            "non_specialistic": "Non-Spesialistik"
+        },
+        "hud": {
+            "aria": "Status rujukan aktif",
+            "live": "SISRUTE LIVE",
+            "arrived": "SAMPAI",
+            "en_route": "DI JALAN",
+            "progress": "Progress Rujukan",
+            "eta": "ETA {{time}}",
+            "accepted": "Pasien telah diterima di RS",
+            "arrived_at": "Tiba {{time}}",
+            "patient_fallback": "Pasien",
+            "hospital_fallback": "RS Rujukan"
+        },
+        "buttons": {
+            "warn_skdi4a": "Peringatan: Kasus SKDI 4A wajib tuntas di FKTP. Rujukan kemungkinan akan ditolak.",
+            "refer_default": "Rujuk pasien ke Rumah Sakit via SISRUTE",
+            "refer_aria": "Rujuk pasien ke Rumah Sakit via SISRUTE"
+        },
+        "toast": {
+            "arrival": "Radio RS: {{patient}} diterima di {{hospital}}. {{note}}"
+        },
+        "arrivalNotes": {
+            "portal_open": "Satpam RS sudah buka portal. Serah terima lancar.",
+            "on_call_team": "Tim jaga menerima pasien tanpa drama.",
+            "documents_complete": "Berkas lengkap. Stempel basah didapat.",
+            "ambulance_offset": "Ambulans parkir miring sedikit, tapi pasien diterima."
+        }
+    },
+    "staffData": {
+        "nurse_basic": {
+            "name": "Perawat Umum",
+            "type": "Tenaga Medis",
+            "description": "Membantu pemeriksaan vital sign dan tindakan keperawatan dasar.",
+            "skills": ["Triage", "Injeksi", "Rawat Luka"]
+        },
+        "midwife": {
+            "name": "Bidan Terampil",
+            "type": "Tenaga Medis",
+            "description": "Mengelola layanan KIA dan program KB.",
+            "skills": ["ANC", "Persalinan Normal", "KB"]
+        },
+        "lab_tech": {
+            "name": "Analis Lab",
+            "type": "Tenaga Penunjang",
+            "description": "Mempercepat hasil lab dan menambah jenis pemeriksaan.",
+            "skills": ["Hematologi", "Kimia Darah", "Urinalisa"]
+        },
+        "pharmacist": {
+            "name": "Apoteker",
+            "type": "Tenaga Penunjang",
+            "description": "Mengurangi kesalahan obat dan meningkatkan kepatuhan pasien.",
+            "skills": ["Dispensing", "Konseling Obat", "Stok Management"]
+        },
+        "admin": {
+            "name": "Staff Administrasi",
+            "type": "Non-Medis",
+            "description": "Mempercepat proses administrasi dan klaim BPJS.",
+            "skills": ["BPJS Claim", "Surat Menyurat", "Rekam Medis"]
+        },
+        "driver": {
+            "name": "Supir Ambulans",
+            "type": "Non-Medis",
+            "description": "Mengaktifkan layanan rujukan dan penjemputan pasien.",
+            "skills": ["Evakuasi", "P3K", "Navigasi Desa"]
+        },
+        "dentist": {
+            "name": "Dokter Gigi",
+            "type": "Dokter Spesialis",
+            "description": "Membuka poli gigi untuk layanan kesehatan mulut.",
+            "skills": ["Tambal Gigi", "Cabut Gigi", "Scaling"]
+        },
+        "nutritionist": {
+            "name": "Ahli Gizi",
+            "type": "Tenaga Penunjang",
+            "description": "Meningkatkan outcome pasien dengan masalah gizi.",
+            "skills": ["Diet Therapy", "Konseling Gizi", "PMBA"]
+        }
+    },
+    "staffPage": {
+        "title": "Manajemen SDM (Squad)",
+        "subtitle": "Rekrut dan kelola tim Puskesmas Anda",
+        "stats": {
+            "total": "Total Staff",
+            "salary": "Gaji Bulanan",
+            "level": "Level Anda"
+        },
+        "tabs": {
+            "recruitment": "Rekrutmen",
+            "myTeam": "Tim Saya ({{count}})"
+        },
+        "emptyTeamTitle": "Belum ada staff yang direkrut.",
+        "emptyTeamHint": "Klik tab Rekrutmen untuk mulai membangun tim.",
+        "toast": {
+            "hired": "Berhasil merekrut {{name}}!",
+            "hireFailed": "Rekrutmen staff gagal.",
+            "coachingFailed": "Coaching staff belum bisa dijalankan.",
+            "coachingSuccess": "Coaching staff berhasil dijalankan."
+        },
+        "card": {
+            "lockedPrefix": "Terkunci - ",
+            "selectAria": "Pilih staf {{name}}, {{type}}",
+            "level": "Level {{level}}",
+            "infoAria": "Info tentang peran {{type}}",
+            "morale": "Morale",
+            "skill": "Skill",
+            "perMonth": "/bulan",
+            "coachingAria": "Coaching staf {{name}} - tambah 15 morale",
+            "coachingButton": "Coaching (+15 Morale)"
+        },
+        "detail": {
+            "effectsTitle": "Efek pada Puskesmas:",
+            "monthlySalary": "Gaji Bulanan",
+            "recruitCost": "Biaya rekrut: Rp {{cost}}",
+            "fire": "Berhentikan",
+            "fireAria": "Berhentikan staf {{name}}",
+            "hire": "Rekrut Sekarang",
+            "hireAria": "Rekrut {{name}} sekarang",
+            "needLevel": "Perlu Level {{level}}",
+            "needLevelAria": "Perlu Level {{level}} untuk merekrut"
+        },
+        "effects": {
+            "queueSpeed": "Kecepatan Antrian",
+            "patientCapacity": "Kapasitas Pasien",
+            "kiaCapacity": "Kapasitas KIA",
+            "reputationBonus": "Bonus Reputasi",
+            "labSpeed": "Kecepatan Lab",
+            "labAccuracy": "Akurasi Lab",
+            "medicationError": "Kesalahan Obat",
+            "patientEducation": "Edukasi Pasien",
+            "adminSpeed": "Kecepatan Administrasi",
+            "bpjsClaimBonus": "Bonus Klaim BPJS",
+            "referralTime": "Waktu Rujukan",
+            "emergencyResponse": "Respons Gawat Darurat",
+            "dentalService": "Layanan Gigi",
+            "prolanisBonus": "Bonus Prolanis",
+            "childNutrition": "Gizi Anak"
+        },
+        "fireModal": {
+            "warningIcon": "!",
+            "title": "Pemberhentian Staff",
+            "message": "Anda akan memberhentikan {{name}}. Tindakan ini tidak dapat dibatalkan.",
+            "fallbackName": "staff ini",
+            "cancel": "Batal",
+            "confirm": "Berhentikan"
+        }
+    },
+    "pharmacyPanel": {
+        "fallbackNoDiagnosis": "Tidak ada diagnosis",
+        "emptyTitle": "Belum Ada Resep",
+        "emptyDescription": "Resep akan otomatis masuk setelah pasien Poli Umum dipulangkan dengan obat.",
+        "queueTitle": "Antrian Resep",
+        "pending": "{{count}} Pending",
+        "completed": "{{count}} selesai",
+        "rushHour": "RUSH HOUR! (+XP)",
+        "medCount": "{{count}} obat",
+        "selectTitle": "Pilih Resep dari Antrian",
+        "selectHint": "Klik pasien di sebelah kiri untuk mulai verifikasi.",
+        "ageGender": "{{age}} th - {{gender}}",
+        "male": "Laki-laki",
+        "female": "Perempuan",
+        "allergy": "Alergi: {{items}}",
+        "billing": "Billing: {{note}}",
+        "coverage": {
+            "allFornas": "Semua obat FORNAS - ditanggung BPJS",
+            "nonFornas": "Ada obat non-FORNAS - pasien bayar Rp {{value}}",
+            "general": "Pasien Umum - bayar penuh"
+        },
+        "patientSavings": "Penghematan Pasien: Rp {{value}}",
+        "prescribedMeds": "Obat Diresepkan",
+        "itemDetail": "{{form}} - {{frequency}}x/hari - {{duration}} hari - qty: {{qty}}",
+        "interactions": "Interaksi Obat",
+        "fiveRightsTitle": "Verifikasi 5-Benar",
+        "fiveRights": {
+            "medicine": "Obat Benar",
+            "patient": "Pasien Benar",
+            "dose": "Dosis Benar",
+            "route": "Rute Benar",
+            "time": "Waktu Benar"
+        },
+        "verify": "Verifikasi Resep",
+        "dispense": "Serahkan Obat ke Pasien",
+        "dispensed": "Obat Sudah Diserahkan"
+    },
+    "bishiBashi": {
+        "subtitle": "Level {{level}} - {{count}} obat target",
+        "prescription": "Resep: {{patient}}",
+        "instruction": "Pilih {{count}} obat yang BENAR dari grid. Hati-hati obat mirip (LASA).",
+        "prescribed": "Obat yang diresepkan:",
+        "timeLimit": "Batas waktu: {{seconds}} detik",
+        "start": "MULAI RUSH!",
+        "prescriptionLabel": "Resep:",
+        "submit": "SERAHKAN ({{selected}}/{{total}})",
+        "accuracy": "Akurasi",
+        "speed": "Kecepatan",
+        "wrong": "{{count}} obat SALAH dipilih",
+        "missed": "{{count}} obat TERLEWAT",
+        "combo": "COMBO x{{combo}}!",
+        "finish": "Selesai",
+        "feedback": {
+            "perfect": "SEMPURNA! Semua obat benar.",
+            "near": "Hampir sempurna - cek ulang yang terlewat.",
+            "partial": "Beberapa obat salah/terlewat. Teliti lagi.",
+            "poor": "Banyak kesalahan. Baca resep dengan seksama."
+        }
+    },
+    "sensus": {
+        "gender": {
+            "maleUpper": "LAKI-LAKI",
+            "femaleUpper": "PEREMPUAN",
+            "maleShort": "L",
+            "femaleShort": "P",
+            "male": "Laki-laki",
+            "female": "Perempuan"
+        },
+        "common": {
+            "yes": "Ya",
+            "no": "Tidak",
+            "active": "Aktif",
+            "none": "Tidak Ada",
+            "jknActive": "JKN Aktif",
+            "jknInactive": "Tidak Ada JKN",
+            "familyPrefix": "Kel. {{surname}}",
+            "headPrefix": "KK: {{name}}",
+            "memberCount": "{{count}} jiwa",
+            "rtRw": "RT {{rt}}/RW {{rw}}",
+            "rwLocked": "RW {{rw}} Terkunci",
+            "openFamilyAria": "Buka detail Keluarga {{surname}}",
+            "lockedFamilyAria": "Keluarga {{surname}} - RW terkunci",
+            "openArchiveAria": "Buka arsip keluarga {{surname}}",
+            "lockedArchiveAria": "Keluarga {{surname}} terkunci",
+            "healthyIndexTitle": "Skor IKS: {{score}}%"
+        },
+        "document": {
+            "printDisabledTitle": "Fitur cetak belum tersedia",
+            "printSoon": "Cetak (Segera)",
+            "closeTitle": "Tutup",
+            "title": "KARTU KELUARGA",
+            "number": "No. {{number}}",
+            "householdHead": "Nama Kepala Keluarga",
+            "address": "Alamat",
+            "village": "Desa/Kelurahan",
+            "district": "Kecamatan",
+            "villageName": "Sukamaju",
+            "districtFallback": "Sehat Sentosa",
+            "birthplace": "Sukamaju",
+            "religionIslam": "Islam",
+            "tableHeaders": ["No", "Nama Lengkap", "NIK", "JK", "Tempat Lahir", "Tanggal Lahir", "Agama", "Pendidikan", "Pekerjaan", "Status"],
+            "socialProfileTitle": "Profil Sosial & Lingkungan",
+            "healthyFamilyTitle": "Indikator Keluarga Sehat (IKS)",
+            "householdHeadSignature": "Kepala Keluarga",
+            "villageHeadSignature": "Kepala Desa Sukamaju",
+            "villageHeadName": "Bpk. Kades",
+            "stampGovernment": "Pemerintah",
+            "stampRegency": "Kab. Sehat Sentosa",
+            "stampVillage": "Desa Sukamaju",
+            "sdoh": {
+                "housing": "Perumahan",
+                "water": "Sumber Air",
+                "sanitation": "Sanitasi",
+                "economy": "Ekonomi",
+                "smoking": "Merokok",
+                "activity": "Aktivitas"
+            }
+        },
+        "roles": {
+            "head": "Kepala Keluarga",
+            "spouse": "Istri/Suami",
+            "child": "Anak",
+            "elder": "Orang Tua",
+            "relative": "Kerabat",
+            "grandchild": "Cucu"
+        },
+        "education": {
+            "not_yet_school": "Belum Sekolah",
+            "no_school": "Tidak Sekolah",
+            "elementary": "SD/MI",
+            "elementary_short": "SD/MI",
+            "junior_high": "SMP/MTs",
+            "junior_high_short": "SMP/MTs",
+            "high_school": "SMA/MA",
+            "high_school_short": "SMA/MA",
+            "vocational": "SMK",
+            "university": "Diploma/Sarjana",
+            "islamic_board": "Pesantren"
+        },
+        "indicators": {
+            "kb": "KB",
+            "persalinan": "Salin Nakes",
+            "imunisasi": "Imunisasi",
+            "asi": "ASI Eksklusif",
+            "balita": "Pantau Balita",
+            "tb": "Bebas TB",
+            "hipertensi": "Kontrol HT",
+            "jiwa": "Kesehatan Jiwa",
+            "rokok": "Bebas Rokok",
+            "jkn": "Peserta JKN",
+            "air": "Air Bersih",
+            "jamban": "Jamban Sehat"
+        },
+        "page": {
+            "government": "Pemerintah Desa Sukamaju",
+            "title": "DATA KEPENDUDUKAN DESA",
+            "subtitle": "Sistem Informasi Profil Desa Terpadu",
+            "stats": {
+                "totalPeople": "Total Jiwa",
+                "households": "Jumlah KK",
+                "registered": "Terdaftar",
+                "territory": "Wilayah",
+                "activeRwRt": "RW/RT Aktif",
+                "jknCoverage": "Cakupan JKN",
+                "families": "{{count}} Keluarga",
+                "underFive": "Balita",
+                "age0to5": "0-5 Tahun",
+                "olderAdults": "Lansia",
+                "age60plus": "> 60 Tahun"
+            }
+        },
+        "widgets": {
+            "agePyramid": "Piramida Penduduk",
+            "environment": "Tinjauan Lingkungan",
+            "cleanWater": "Sumber Air Bersih",
+            "sanitation": "Fasilitas Sanitasi",
+            "occupation": "Profil Pekerjaan (Top 5)",
+            "peopleCount": "{{count}} jiwa"
+        },
+        "explorer": {
+            "title": "Arsip Kartu Keluarga",
+            "cards": "Kartu",
+            "table": "Tabel",
+            "allAreas": "Semua Wilayah",
+            "allRt": "Semua RT",
+            "rwOption": "RW {{rw}} (Semua RT)",
+            "rwRtOption": "Wilayah RW {{rw}} RT {{rt}}",
+            "searchPlaceholder": "Cari nama atau NIK...",
+            "focusTitle": "Fokus dari blueprint wilayah: RW {{rw}}",
+            "focusDescription": "Arsip disaring ke level RW agar blank spot bisa diaudit dulu sebelum sektor dibuka.",
+            "compactTableNotice": "Mode tabel diringkas menjadi kartu baris agar tetap terbaca di layar ini.",
+            "emptyTitle": "Data Tidak Ditemukan",
+            "emptyDescription": "Arsip untuk warga dengan kata kunci tersebut tidak ada di dalam database desa.",
+            "tableHeaders": ["ID KK", "Kepala Keluarga", "Domisili", "Anggota", "Status JKN", "Skor IKS", "Aksi"],
+            "openArchive": "Buka Arsip ->",
+            "locked": "Terkunci"
+        },
+        "values": {
+            "tidak_diketahui": "Tidak diketahui",
+            "sumur": "Sumur",
+            "middle": "Menengah",
+            "low": "Rendah",
+            "very_low": "Sangat Rendah",
+            "high": "Tinggi",
+            "rendah": "Rendah",
+            "menengah": "Menengah",
+            "tinggi": "Tinggi",
+            "jamban_sehat": "Jamban sehat",
+            "tidak_ada": "Tidak Ada",
+            "aktif": "Aktif"
+        }
+    },
+    "gameOver": {
+        "warning1": {
+            "title": "SURAT PERINGATAN 1",
+            "message": "Kinerja klinik di bawah standar. Harap segera perbaiki kualitas pelayanan dan manajemen rujukan.",
+            "action": "Saya Mengerti"
+        },
+        "warning2": {
+            "title": "SURAT PERINGATAN 2",
+            "message": "Kondisi KRITIS. Jika tidak ada perbaikan signifikan besok, kontrak kerja sama akan diputus.",
+            "action": "Saya Mengerti"
+        },
+        "fired": {
+            "title": "PEMUTUSAN HUBUNGAN KERJA",
+            "message": "Maaf, kinerja Anda tidak memenuhi standar kompetensi Kepala Puskesmas. Kontrak Anda dihentikan.",
+            "action": "Coba Lagi",
+            "tips_title": "Tips Evaluasi:",
+            "tip_rrns": "Jaga RNS di bawah 5%",
+            "tip_accuracy": "Pastikan diagnosis akurat",
+            "tip_complaints": "Hindari keluhan pasien"
+        },
+        "fainted": {
+            "title": "ANDA PINGSAN!",
+            "message": "Tubuh Anda mencapai batasnya. Anda pingsan karena kelelahan kronis.",
+            "action": "Pulihkan Diri"
+        },
+        "runtime_trap": {
+            "title": "MODE AMAN AKTIF",
+            "message": "Anomali runtime terdeteksi. Permainan dijeda untuk mencegah korupsi state lebih lanjut.",
+            "action": "Lanjutkan Dalam Mode Aman",
+            "notice": "Sistem menahan aksi tulis sampai peringatan ini ditutup. Permainan tetap dalam status paused agar state bisa dipulihkan dengan aman."
+        },
+        "remaining_chances": "Kesempatan Tersisa: {{count}}"
+    },
+    "narrative": {
+        "active_default": "Cerita sedang berjalan.",
+        "insufficient_funds": "Dana aktif tidak cukup untuk pilihan ini.",
+        "choice_unavailable": "Pilihan tidak dapat dijalankan.",
+        "active_title": "Cerita Aktif",
+        "close_aria": "Tutup cerita",
+        "progress_title": "Progress Cerita:",
+        "action_goal": "Tujuan aksi",
+        "progress_help": "Cerita akan lanjut otomatis saat target aksi ini selesai.",
+        "completed_label": "Selesai",
+        "choices_title": "Tentukan Pilihanmu:",
+        "cost_required": "Butuh Rp {{amount}}",
+        "reputation_delta": "{{sign}}{{value}} Reputasi",
+        "no_extra_choices": "Bagian cerita ini tidak punya pilihan tambahan. Tutup panel untuk melanjutkan permainan.",
+        "footer_action_hint": "Selesaikan target aksi di game untuk melanjutkan cerita ini.",
+        "footer_choice_hint": "Pilihanmu berpengaruh pada jalannya cerita dan kondisi game."
+    },
+    "archive": {
+        "header_title": "SIMPUS: Arsip & Rekam Medis",
+        "header_subtitle": "Sistem pencatatan dan pelaporan puskesmas",
+        "search_folders_placeholder": "Cari KK / Kepala Keluarga...",
+        "search_patients_placeholder": "Cari Pasien...",
+        "tabs": {
+            "folders": "Family Folder (Rekam Medis)",
+            "daily": "Log Kunjungan Harian"
+        },
+        "empty": {
+            "search_title": "Tidak Ada Hasil",
+            "no_family_title": "Belum Ada Data Keluarga",
+            "search_description": "Tidak ditemukan keluarga dengan kata kunci \"{{query}}\"",
+            "no_family_description": "Data keluarga belum tersedia. Mulai permainan baru untuk menginisialisasi data wilayah.",
+            "no_daily_title": "Belum Ada Log Kunjungan",
+            "no_daily_description": "Riwayat kunjungan harian akan muncul setelah pasien selesai diproses.",
+            "daily_search_description": "Tidak ditemukan log kunjungan dengan kata kunci \"{{query}}\""
+        },
+        "filter_state": {
+            "folders": "Filter folder aktif: \"{{query}}\"",
+            "daily": "Filter log kunjungan aktif: \"{{query}}\"",
+            "clear": "Hapus filter"
+        },
+        "unnamed": "Tanpa Nama",
+        "family_card": {
+            "family_prefix": "Kel.",
+            "new_badge": "NEW",
+            "members_label": "Anggota",
+            "members_value": "{{count}} orang",
+            "total_visits_label": "Total Kunjungan",
+            "pis_pk_status_label": "Status PIS-PK"
+        },
+        "view_house_map_title": "Lihat rumah di peta",
+        "house_short": "Rumah",
+        "open_folder": "Buka Folder",
+        "table": {
+            "time": "Waktu",
+            "patient_name": "Nama Pasien",
+            "diagnosis": "Diagnosis",
+            "action": "Tindakan",
+            "status": "Status"
+        },
+        "day_time": "Hari {{day}}, {{time}}",
+        "visit_day_only": "Hari {{day}}",
+        "badges": {
+            "misc": {
+                "posyandu": "Posyandu",
+                "resident": "Warga"
+            },
+            "action": {
+                "activity": "KEGIATAN",
+                "mass": "MASSA",
+                "call": "PANGGIL",
+                "monitor": "PANTAU",
+                "ikm": "IKM",
+                "refer": "RUJUK",
+                "delegate": "DELEGASI",
+                "stabilize": "STABILISASI",
+                "resus": "RESUS",
+                "treat": "RAWAT"
+            },
+            "status": {
+                "logged": "Tercatat",
+                "failed": "Gagal",
+                "partial": "Parsial",
+                "success": "Berhasil",
+                "transfer_sisrute": "Transfer SISRUTE",
+                "refer_sisrute": "Rujuk SISRUTE",
+                "referred": "Dirujuk",
+                "stabilized": "Stabilisasi",
+                "delegated": "Didelegasikan",
+                "recovered": "Pulih",
+                "worsened": "Memburuk",
+                "deceased": "Meninggal",
+                "complaint": "Komplain",
+                "correct": "Tepat",
+                "incorrect": "Tidak Tepat",
+                "review_needed": "Butuh Review",
+                "done": "Selesai"
+            }
+        },
+        "member": {
+            "roles": {
+                "head_short": "KK",
+                "spouse_short": "IST",
+                "elder_short": "OR",
+                "child_short": "AK",
+                "grandchild_short": "CC",
+                "other_short": "L"
+            },
+            "gender_male": "Laki-laki",
+            "gender_female": "Perempuan",
+            "identity_line": "{{age}} th • {{gender}} • {{occupation}}",
+            "visit_count": "{{count}} kunjungan",
+            "health_conditions": "Kondisi Kesehatan",
+            "allergies": "Alergi",
+            "routine_meds": "Obat Rutin",
+            "vaccination": "Vaksinasi",
+            "lifestyle": "Gaya Hidup",
+            "smoking_label": "Merokok:",
+            "exercise_label": "Olahraga:",
+            "diet_label": "Diet:",
+            "no_profile": "Belum ada profil kesehatan tercatat untuk anggota ini."
+        },
+        "back": "Kembali",
+        "family_detail": {
+            "title": "Folder Keluarga: {{name}}",
+            "meta": "ID: {{id}} • Anggota: {{count}}"
+        },
+        "view_house": "Lihat Rumah",
+        "family_story": "Kisah Keluarga",
+        "member_list": "Daftar Anggota",
+        "risk_factors": "Faktor Risiko (PIS-PK)",
+        "indicator_healthy": "Sehat",
+        "indicator_risk": "Risiko",
+        "visit_history": "Riwayat Kunjungan",
+        "no_cppt_history": "Belum ada riwayat CPPT."
+    },
     "queue": {
         "empty": "Tidak ada antrian.",
         "relax": "Santai dulu...",
         "delegate": "Oper ke Dr. MAIA (-3 Reputasi)",
         "service_fallback": "Poli Umum",
+        "counter_label": "Antrian",
+        "background_alt": "Ilustrasi poli umum",
         "closed_badge": "Tutup",
         "registration_closed": "Pendaftaran berakhir",
         "upcoming_followups": "{{count}} kontrol",
@@ -232,5 +2286,628 @@
         "reload_app": "Muat Ulang Aplikasi",
         "back_dashboard": "Kembali ke Dashboard",
         "try_again": "Coba Lagi"
+    },
+    "stepCarousel": {
+        "back": "Kembali",
+        "next": "Lanjut",
+        "complete": "Selesai",
+        "step": "Langkah {{count}}"
+    },
+    "login": {
+        "subtitle": "Simulator Layanan Primer",
+        "labels": {
+            "email": "Email",
+            "password": "Password",
+            "full_name": "Nama Lengkap",
+            "class_year_optional": "Angkatan (opsional)"
+        },
+        "placeholders": {
+            "email": "email@contoh.com",
+            "password": "Masukkan password",
+            "full_name": "Nama lengkap",
+            "class_year": "2023"
+        },
+        "errors": {
+            "generic": "Terjadi kesalahan. Coba lagi.",
+            "signup_disabled": "Pendaftaran akun baru sedang dinonaktifkan. Hubungi admin.",
+            "email_invalid": "Format email tidak valid.",
+            "rate_limit": "Terlalu banyak percobaan. Tunggu 2-3 menit.",
+            "invalid_login": "Email atau password salah.",
+            "already_registered": "Email sudah terdaftar. Silakan login.",
+            "password_short": "Password minimal 6 karakter.",
+            "name_required": "Nama harus diisi."
+        },
+        "actions": {
+            "processing": "Memproses...",
+            "register": "Daftar",
+            "login": "Masuk",
+            "have_account": "Sudah punya akun? Masuk di sini",
+            "need_account": "Belum punya akun? Daftar di sini",
+            "play_offline": "Main Offline (tanpa cloud save)"
+        },
+        "language": {
+            "label": "Bahasa",
+            "switch_to": "Ganti bahasa ke {{language}}"
+        },
+        "quotes": {
+            "tony_iton": {
+                "text": "Kode pos tempat tinggal Anda sering lebih mampu memprediksi kesehatan dibandingkan kode genetik Anda.",
+                "author": "Dr. Tony Iton",
+                "field": "Epidemiologi Spasial"
+            },
+            "virchow": {
+                "text": "Kedokteran adalah ilmu sosial, dan politik tidak lain hanyalah kedokteran dalam skala besar.",
+                "author": "Rudolf Virchow",
+                "field": "Bapak Kedokteran Sosial, 1848"
+            },
+            "john_snow": {
+                "text": "Saat saya menuju lokasi, saya menemukan bahwa hampir semua kematian terjadi dalam jarak dekat dari pompa Broad Street.",
+                "author": "John Snow",
+                "field": "Bapak Epidemiologi, 1854"
+            },
+            "hippocrates": {
+                "text": "Siapa pun yang ingin mempelajari kedokteran dengan baik harus mempertimbangkan musim, angin, air, dan tanah.",
+                "author": "Hippocrates",
+                "field": "Airs, Waters, and Places, 400 SM"
+            },
+            "winslow": {
+                "text": "Kesehatan masyarakat adalah ilmu dan seni mencegah penyakit, memperpanjang hidup, dan meningkatkan derajat kesehatan melalui upaya masyarakat yang terorganisasi.",
+                "author": "C.-E.A. Winslow",
+                "field": "Definisi Kesehatan Masyarakat, 1920"
+            },
+            "primer": {
+                "text": "Kamu tidak bisa menyembuhkan pasien yang sakit karena kemiskinan. Kamu harus menyembuhkan kemiskinannya.",
+                "author": "PRIMER",
+                "field": "Desa Sukamaju, 2026"
+            }
+        },
+        "footer": "PRIMER © {{year}} — Simulator Pendidikan Medis"
+    },
+    "opening": {
+        "aria": "Layar pembuka",
+        "university": "Institut Teknologi Sepuluh Nopember",
+        "start": "MULAI",
+        "skip_hint": "ESC / KLIK"
+    },
+    "dailyReport": {
+        "close_aria": "Tutup laporan harian",
+        "header": {
+            "title": "Laporan Harian: Hari {{day}}",
+            "subtitle": "Ringkasan Operasional & Insight Wilayah"
+        },
+        "status": {
+            "excellent": "Excellent",
+            "satisfactory": "Memadai",
+            "needs_improvement": "Perlu Perbaikan"
+        },
+        "nav": {
+            "prev": "Hari Sebelumnya",
+            "next": "Hari Berikutnya"
+        },
+        "day_label": "Hari {{day}}",
+        "stats": {
+            "patients": "Pasien",
+            "revenue": "Pendapatan Layanan",
+            "revenue_hint": "Di luar kapitasi bulanan",
+            "reputation": "Reputasi",
+            "score": "Skor"
+        },
+        "charts": {
+            "hourly_traffic": "Lalu Lintas Pasien per Jam",
+            "top_diseases": "Top 10 Penyakit Hari Ini"
+        },
+        "no_data": "Belum ada data",
+        "back_to_calendar": "Kembali ke Kalender",
+        "footer": {
+            "summary": "Menampilkan data hari ke-{{day}} dari {{total}} hari"
+        },
+        "currency_prefix": "Rp",
+        "units": {
+            "million": "jt",
+            "thousand": "rb"
+        }
+    },
+    "weekend": {
+        "title": "Akhir Pekan!",
+        "day_label": "Hari ke-{{day}} ({{dayName}})",
+        "description": "Puskesmas tutup hari ini. Waktunya Kapus melakukan aktivitas lain untuk pengembangan diri atau istirahat.",
+        "unavailable": "Mode akhir pekan belum aktif di build ini. Aktivitas bisa ditinjau, tetapi belum dapat dijalankan.",
+        "days": {
+            "saturday": "Sabtu",
+            "sunday": "Minggu"
+        },
+        "status": {
+            "title": "Status Anda",
+            "stress": "Stress Level",
+            "knowledge": "Knowledge",
+            "funds": "Dana Aktif",
+            "points_short": "pts"
+        },
+        "actions": {
+            "start": "Mulai Aktivitas",
+            "unavailable": "Mode Belum Aktif"
+        },
+        "select_title": "Pilih Aktivitas",
+        "cost_label": "Biaya:",
+        "income_label": "Pendapatan:",
+        "currency_prefix": "Rp",
+        "effects": {
+            "stress": "Stress",
+            "energy": "Energi",
+            "happiness": "Kebahagiaan",
+            "knowledge": "Knowledge",
+            "xp": "XP",
+            "reputation": "Reputasi"
+        },
+        "activities": {
+            "rest": {
+                "label": "Istirahat Total",
+                "description": "Tidur seharian untuk memulihkan tenaga. Mengurangi stress secara signifikan."
+            },
+            "recreation": {
+                "label": "Liburan Singkat",
+                "description": "Jalan-jalan ke luar kota atau mall bersama keluarga atau teman."
+            },
+            "workshop": {
+                "label": "Seminar Medis",
+                "description": "Mengikuti update ilmu kedokteran terkini. Menambah perkembangan skill."
+            },
+            "community": {
+                "label": "Penyuluhan Warga",
+                "description": "Memberikan edukasi kesehatan ke desa sekitar. Meningkatkan reputasi."
+            },
+            "part_time": {
+                "label": "Praktek Swasta",
+                "description": "Menerima pasien di klinik pribadi. Menambah uang tapi melelahkan."
+            }
+        }
+    },
+    "saveSlots": {
+        "system_notice": "Notifikasi Sistem",
+        "system_online": "Sistem Online",
+        "affiliation": "FKK - Institut Teknologi Sepuluh Nopember",
+        "system_tagline": "Sistem Operasi Epidemiologi",
+        "footer_credit": "Anak Agung Bagus Wirayuda MD PhD - ITS MEDICS",
+        "logos": {
+            "its_alt": "Logo ITS",
+            "fkk_alt": "Logo FKK"
+        },
+        "quote": {
+            "text": "Di balik setiap angka kematian, ada satu desa yang terlambat dijangkau.",
+            "source": "Prinsip Pertama Surveilans"
+        },
+        "notifications": {
+            "slot_deleted": "Data operasional Slot {{slot}} dihapus.",
+            "slot_delete_failed": "Gagal menghapus data Slot {{slot}}.",
+            "file_exported": "Berkas berhasil diekspor.",
+            "file_export_failed": "Gagal mengekspor berkas.",
+            "database_empty": "Database kosong.",
+            "database_secured": "Seluruh database diamankan.",
+            "dossier_received": "Dossier diterima di Port {{slot}}.",
+            "save_failed": "Gagal menyimpan data (kuota penyimpanan penuh).",
+            "file_too_large": "File terlalu besar (maks {{size}}KB).",
+            "restored_count": "{{count}} data berhasil dipulihkan.",
+            "corrupt_file": "Format berkas korup.",
+            "decrypt_failed": "Dekripsi file gagal."
+        },
+        "overwrite": {
+            "title": "Protokol Overwrite",
+            "collision": "Benturan data di Node {{slot}}",
+            "message_prefix": "Data operasional di Port {{slot}} akan ditimpa. Berkas lama akan",
+            "permanent_delete": "dihapus permanen",
+            "message_suffix": "dari sistem lokal. Lanjutkan eksekusi?"
+        },
+        "actions": {
+            "cancel": "Batal",
+            "force_overwrite": "Paksa Timpa",
+            "access_database": "Akses Database",
+            "initialize_system": "Inisiasi Sistem",
+            "close_database": "Tutup Database",
+            "master_backup": "Master Backup",
+            "restore_os": "Pulihkan Sistem",
+            "initialize": "Inisiasi",
+            "purge": "Purge",
+            "authorize_login": "Otorisasi Login"
+        },
+        "deployments": {
+            "title": "Deploy Aktif",
+            "subtitle": "Pilih profil agen untuk bertugas",
+            "backup_all": "Backup Seluruh Slot",
+            "restore_data": "Restore Data"
+        },
+        "slots": {
+            "empty_title": "Node {{slot}} — Kosong",
+            "empty_subtitle": "Tersedia untuk registrasi baru",
+            "verified": "Terverifikasi",
+            "status_active": "Status: Aktif",
+            "doctor_prefix": "dr. {{name}}",
+            "day_label": "Hari {{day}}",
+            "reputation_label": "Rep: {{value}}",
+            "export_dossier": "Ekspor Dossier",
+            "delete_dossier": "Hapus Dossier",
+            "last_sync": "LAST_SYNC: {{value}}"
+        }
+    },
+    "about": {
+        "close_aria": "Tutup Tentang PRIMER",
+        "description": "PRIMER (Primary Care Manager Simulator) adalah simulasi manajemen layanan primer yang dirancang untuk melatih pengambilan keputusan klinis dan kepemimpinan operasional bagi tenaga kesehatan maupun mahasiswa. Berlandaskan standar pelayanan minimal, patient safety, dan quality assurance, pemain ditantang mengelola pelayanan pasien berbasis SKDI, sinkronisasi data intervensi keluarga, serta efisiensi operasional puskesmas. PRIMER juga membantu khalayak umum memahami Sistem Kesehatan Nasional dan kompleksitas membangun pelayanan kesehatan masyarakat yang ideal.",
+        "sections": {
+            "vision": "Visi & Misi",
+            "history": "Sejarah Pengembangan",
+            "objectives": "Tujuan & Fokus Utama"
+        },
+        "labels": {
+            "creator": "Kreator",
+            "version": "Versi Perangkat Lunak"
+        },
+        "history": [
+            {
+                "year": "2024-2025",
+                "event": "Pengembangan konsep dasar simulasi manajemen puskesmas bernuansa RPG."
+            },
+            {
+                "year": "2025",
+                "event": "Standar klinis (SKDI) dan program nasional (PIS-PK / Prolanis) mulai diintegrasikan ke gameplay."
+            },
+            {
+                "year": "2026-01",
+                "event": "Pencatatan hak cipta resmi di Kementerian Hukum Republik Indonesia (No. EC002026019623)."
+            },
+            {
+                "year": "2026-02",
+                "event": "v0.8.5 - stability dan hardening pass, termasuk Lint Stability Pack dan PRIMERA v5.0 Watchdog Mode."
+            },
+            {
+                "year": "2026-03",
+                "event": "Cloud deployment (Supabase + Vercel), security hardening, dan sistem anti-cheat."
+            }
+        ],
+        "objectives": [
+            "Meningkatkan kemampuan manajerial dan kepemimpinan kepala puskesmas.",
+            "Mengintegrasikan prinsip patient safety dan standar pelayanan minimal.",
+            "Menjaga quality assurance melalui akurasi klinis yang selaras dengan SKDI.",
+            "Memberikan pemahaman praktis tentang Sistem Kesehatan Nasional.",
+            "Melatih pengambilan keputusan klinis yang efisien dan akurat.",
+            "Membantu masyarakat memahami alur pelayanan kesehatan primer."
+        ],
+        "footer": {
+            "thanks": "Terima kasih telah berkontribusi bagi kesehatan bangsa"
+        },
+        "actions": {
+            "close": "Tutup Panel"
+        }
+    },
+    "morningBriefing": {
+        "header": {
+            "greeting": "Selamat pagi, Dokter!",
+            "subtitle": "Hari {{day}} - Briefing Pagi"
+        },
+        "sections": {
+            "today_status": "Kondisi Hari Ini",
+            "poli_status": "Status Poli",
+            "daily_mission": "Pilih Misi Hari Ini"
+        },
+        "actions": {
+            "start_day": "Mulai Hari"
+        },
+        "stats": {
+            "staff_active": "Staf Aktif",
+            "reputation": "Reputasi",
+            "morale": "Morale"
+        },
+        "funds": {
+            "active": "Dana Aktif",
+            "receipts": "Penerimaan Siklus"
+        },
+        "followups": {
+            "title": "Pasien Kembali"
+        },
+        "stock": {
+            "low_title": "Stok Rendah",
+            "item_line": "{{name}}: tersisa {{quantity}} (min: {{minStock}})"
+        },
+        "currency": {
+            "prefix": "Rp",
+            "billion_suffix": " M",
+            "million_suffix": " jt",
+            "thousand_suffix": " rb"
+        },
+        "events": {
+            "posyandu": {
+                "title": "Hari Posyandu",
+                "description": "Jadwal Posyandu hari ini - penimbangan, KMS, dan imunisasi."
+            },
+            "posyandu_soon": {
+                "title": "Posyandu {{days}} hari lagi",
+                "description": "Siapkan perlengkapan dan ingatkan kader."
+            },
+            "prolanis": {
+                "title": "Jadwal Prolanis",
+                "description": "{{count}} pasien Prolanis dijadwalkan kontrol hari ini."
+            },
+            "outbreak": {
+                "title": "Wabah: {{name}}",
+                "description": "Kasus bisa melonjak. Siapkan obat dan alat pelindung."
+            }
+        },
+        "kpi": {
+            "patients_served": "Pasien Dilayani",
+            "reputation": "Reputasi"
+        },
+        "polis": {
+            "poli_umum": "Poli Umum",
+            "igd": "IGD",
+            "farmasi_lab": "Farmasi & Lab",
+            "poli_kia_kb": "Poli KIA-KB",
+            "poli_gigi": "Poli Gigi"
+        },
+        "staff_roles": {
+            "perawat": "Perawat",
+            "bidan": "Bidan",
+            "apoteker": "Apoteker",
+            "analis_lab": "Analis Lab",
+            "dokter_gigi": "Dokter Gigi"
+        },
+        "poli_reason": {
+            "coming_soon": "Segera hadir",
+            "level_required": "Level {{level}}",
+            "staff_required": "Butuh {{staff}}"
+        },
+        "priority": {
+            "outbreak": "Wabah sedang aktif! Fokus tangani kasus {{name}} dan cegah penyebarannya.",
+            "followup": "{{patient}} {{narrative}}. Prioritaskan evaluasi ulang.",
+            "efficiency": "Layani pasien dengan efisien dan tekan waktu tunggu.",
+            "stock": "Cek stok obat dan pastikan persediaan aman untuk minggu ini.",
+            "reputation": "Naikkan reputasi puskesmas melalui pelayanan yang prima."
+        },
+        "allocation": {
+            "title": "Alokasi Staf Otomatis",
+            "line": "{{count}} staf"
+        },
+        "quests": {
+            "helper": "Pilih satu misi untuk bonus XP di akhir hari.",
+            "serve_10": {
+                "title": "Layani 10 Pasien",
+                "description": "Selesaikan konsultasi untuk 10 pasien hari ini."
+            },
+            "zero_miss": {
+                "title": "Zero Pasien Terlewat",
+                "description": "Pastikan tidak ada pasien yang pulang tanpa dilayani."
+            },
+            "accuracy_90": {
+                "title": "Akurasi Diagnosis 90%",
+                "description": "Capai skor diagnosis rata-rata minimal 90% hari ini."
+            },
+            "reputation_up": {
+                "title": "Naikkan Reputasi",
+                "description": "Akhiri hari dengan reputasi lebih tinggi daripada pagi tadi."
+            }
+        }
+    },
+    "playerSetup": {
+        "panel": {
+            "protocol": "Protokol Otorisasi Medis"
+        },
+        "header": {
+            "registration": "PRIMER // REGISTRASI DOKTER",
+            "step_counter": "STEP 0{{current}} / 0{{total}}"
+        },
+        "steps": {
+            "identity": {
+                "title": "Kredensial Identitas",
+                "desc": "Sistem Data Kependudukan"
+            },
+            "biometric": {
+                "title": "Pemindaian Biometrik",
+                "desc": "Visual Profiling"
+            },
+            "assignment": {
+                "title": "Penerbitan S.K",
+                "desc": "Otorisasi & Sumpah Dokter"
+            }
+        },
+        "identity": {
+            "gender_label": "Kode Genetik (Gender)",
+            "name_label": "Nomenklatur Medis",
+            "name_placeholder": "NAMA LENGKAP...",
+            "age_label": "Usia Klinis",
+            "age_unit": "th"
+        },
+        "stats": {
+            "energy": "Stamina (AP)",
+            "reputation": "Wibawa (Rep)"
+        },
+        "biometric": {
+            "skin": "Pigmentasi",
+            "hair_color": "Folikel Rambut",
+            "hair_style": "Topologi Rambut",
+            "accessories": "Perlengkapan Dinas"
+        },
+        "accessories": {
+            "glasses": "Kacamata",
+            "stethoscope": "Stetoskop"
+        },
+        "hair_styles": {
+            "buzz": "Cepak",
+            "short": "Pendek",
+            "neat": "Rapi",
+            "parted": "Belah Sisi",
+            "long": "Panjang",
+            "ponytail": "Kuncir",
+            "bun": "Sanggul",
+            "hijab": "Hijab"
+        },
+        "genders": {
+            "male": "Laki-laki",
+            "female": "Perempuan",
+            "male_short": "PRIA",
+            "female_short": "WANITA"
+        },
+        "profiles": {
+            "vanguard": {
+                "note": "Stamina fisik superior. Risiko: idealisme naif berpotensi diabaikan tetua desa saat negosiasi kasus rujukan."
+            },
+            "sentinel": {
+                "note": "Profil seimbang. Kapasitas jaga malam memadai, namun perlu pembuktian otoritas di hadapan staf senior Puskesmas."
+            },
+            "scalpel": {
+                "note": "Ketajaman klinis terverifikasi. Cadangan energi moderat - alokasi istirahat perlu diprioritaskan pada shift ketiga."
+            },
+            "oracle": {
+                "note": "Wibawa absolut. Peringatan: kapasitas fisik menurun signifikan. Risiko dekompensasi kardiak pada jaga IGD 48 jam nonstop."
+            }
+        },
+        "card": {
+            "program": "SIMULASI PUSKESMAS",
+            "officer_name": "NAMA PEJABAT:",
+            "assignment": "JABATAN TUGAS:",
+            "role": "KEPALA PUSKESMAS",
+            "evaluation_prefix": "AEGIS EVAL:",
+            "gender": "GENDER",
+            "registration": "REGISTRASI",
+            "registration_pending": "PENDING",
+            "approved": "DISETUJUI"
+        },
+        "actions": {
+            "process_data": "PROSES DATA",
+            "authorizing": "MEMPROSES OTORISASI...",
+            "authorize_assignment": "SAHKAN S.K PENUGASAN"
+        },
+        "errors": {
+            "name_required": "AUTENTIKASI GAGAL: Nomenklatur Medis wajib diisi.",
+            "name_invalid": "AUTENTIKASI GAGAL: Format nama tidak valid."
+        },
+        "quotes": {
+            "assignment": {
+                "text": "Satu Puskesmas. Satu desa terpencil. Ribuan nyawa yang menunggu keputusan Anda.",
+                "source": "Briefing Penugasan PRIMER"
+            },
+            "public_health": {
+                "text": "Menyelamatkan satu nyawa membutuhkan stetoskop di IGD. Menyelamatkan ribuan nyawa membutuhkan peta dan kebijakan.",
+                "source": "Prinsip Kesehatan Masyarakat"
+            },
+            "mission": {
+                "text": "Tugas Anda bukan hanya menyembuhkan - tetapi mencegah, mendidik, dan membangun ketahanan komunitas.",
+                "source": "Misi Puskesmas"
+            },
+            "field_orientation": {
+                "text": "Di desa ini, Anda adalah garis pertahanan pertama dan terakhir. Setiap keputusan berdampak pada generasi.",
+                "source": "Orientasi Lapangan"
+            },
+            "surveillance": {
+                "text": "Data epidemiologi adalah kompas Anda. Tanpanya, Anda hanya menebak di kegelapan.",
+                "source": "Doktrin Surveilans"
+            },
+            "memo": {
+                "text": "Anggaran terbatas. Waktu terbatas. Harapan masyarakat tak terbatas. Selamat bertugas, Dokter.",
+                "source": "Nota Dinas No. 001"
+            }
+        }
+    },
+    "smartphone": {
+        "apps": {
+            "chat": "Watsap",
+            "bank": "Bank Desa",
+            "shop": "Toko Oren",
+            "news": "Berita"
+        },
+        "back_home": "Kembali ke homescreen",
+        "day_label": "Hari ke-{{day}}",
+        "open_app": "Buka aplikasi {{name}}",
+        "open_app_dock": "Buka {{name}} dari dock",
+        "close": "Tutup smartphone"
+    },
+    "bankApp": {
+        "bank_name": "Bank Desa Syariah",
+        "account_simulation": "Simulasi Rekening Pribadi",
+        "currency_prefix": "Rp",
+        "doctor_prefix": "dr.",
+        "doctor_fallback": "Dokter",
+        "note": "Hanya estimasi dana pribadi. Dana aktif klinik tetap terpisah di dashboard operasional.",
+        "actions": {
+            "top_up": "Top Up E-Wallet",
+            "invest": "Investasi"
+        },
+        "history_title": "Mutasi Rekening",
+        "transactions": {
+            "salary": "Transfer Masuk (Gaji Pokok)",
+            "salary_date": "01 Jan 2026",
+            "service_fee": "Estimasi Jasa Pelayanan",
+            "service_fee_date": "15 Jan 2026",
+            "snack": "Beli Bakso",
+            "yesterday": "Kemarin"
+        }
+    },
+    "newsApp": {
+        "categories": {
+            "all": "Semua",
+            "lokal": "Lokal",
+            "nasional": "Nasional",
+            "intl": "Intl",
+            "tips": "Tips"
+        },
+        "time": {
+            "1h": "1j lalu",
+            "3h": "3j lalu",
+            "5h": "5j lalu",
+            "1d": "1h lalu",
+            "2d": "2h lalu"
+        },
+        "ad": {
+            "badge": "IKLAN",
+            "title": "Promo Alat Kesehatan!",
+            "subtitle": "Diskon 50% Stetoskop Sultan"
+        },
+        "source": "Sumber: {{source}}",
+        "items": {
+            "1": {
+                "title": "Wabah Flu di Musim Pancaroba"
+            },
+            "2": {
+                "title": "Tips Menghadapi Pasien Rewel"
+            },
+            "3": {
+                "title": "Harga Obat Generik Turun!"
+            },
+            "4": {
+                "title": "Sapi Pak Kades Lepas, Masuk Puskesmas"
+            },
+            "5": {
+                "title": "Studi Baru: Kopi Mencegah Kantuk (Ya iyalah)"
+            }
+        }
+    },
+    "shopApp": {
+        "title": "Toko Oren",
+        "subtitle": "Belanja online kebutuhan gaya hidup Anda. Segera hadir!",
+        "action": "Cek Flash Sale"
+    },
+    "chatApp": {
+        "time": {
+            "yesterday": "Kemarin",
+            "two_days_ago": "2 hari lalu"
+        },
+        "items": {
+            "1": {
+                "name": "Grup Kemenkes RI",
+                "message": "Update juknis terbaru..."
+            },
+            "2": {
+                "name": "IDI Cabang Sukamaju",
+                "message": "Undangan seminar medis..."
+            },
+            "3": {
+                "name": "Grup Puskesmas",
+                "message": "Bidan Susi: Izin telat dok"
+            },
+            "4": {
+                "name": "Mama",
+                "message": "Jangan lupa makan ya nak"
+            },
+            "5": {
+                "name": "Tetangga Reseh",
+                "message": "Obat kemarin manjur dok!"
+            }
+        }
     }
 }

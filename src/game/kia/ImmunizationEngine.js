@@ -76,11 +76,25 @@ export function getVaccineSchedule(babyAgeMonths, completedVaccines = []) {
  */
 export function processImmunization(baby, vaccineId, gameDay) {
     const vaccine = VACCINE_SCHEDULE.find(v => v.id === vaccineId);
-    if (!vaccine) return { success: false, feedback: `Vaksin "${vaccineId}" tidak ditemukan`, xp: 0 };
+    if (!vaccine) {
+        return {
+            success: false,
+            feedback: `Vaksin "${vaccineId}" tidak ditemukan`,
+            feedbackKey: 'vaccineNotFound',
+            feedbackParams: { vaccine: vaccineId },
+            xp: 0
+        };
+    }
 
     const completed = baby.completedVaccines || [];
     if (completed.includes(vaccineId)) {
-        return { success: false, feedback: `${vaccine.name} sudah pernah diberikan`, xp: 0 };
+        return {
+            success: false,
+            feedback: `${vaccine.name} sudah pernah diberikan.`,
+            feedbackKey: 'vaccineAlreadyGiven',
+            feedbackParams: { vaccine: vaccine.name },
+            xp: 0
+        };
     }
 
     const [dueStart, dueEnd] = vaccine.dueWindow;
@@ -90,22 +104,28 @@ export function processImmunization(baby, vaccineId, gameDay) {
 
     if (age < dueStart) {
         // Too early
-        return { success: false, feedback: `${vaccine.name} belum waktunya — tunggu usia ${dueStart} bulan`, xp: 0 };
+        return {
+            success: false,
+            feedback: `${vaccine.name} belum waktunya - tunggu usia ${dueStart} bulan.`,
+            feedbackKey: 'vaccineTooEarly',
+            feedbackParams: { vaccine: vaccine.name, dueStart },
+            xp: 0
+        };
     } else if (age >= dueStart && age <= dueEnd) {
         // Perfect timing
         timingAccuracy = 'tepat_waktu';
         xp = 20;
-        feedback = `✅ ${vaccine.name} diberikan tepat waktu!`;
+        feedback = `[Benar] ${vaccine.name} diberikan tepat waktu.`;
     } else if (age <= dueEnd + 6) {
         // Late but acceptable (catch-up)
         timingAccuracy = 'terlambat';
         xp = 10;
-        feedback = `⚠️ ${vaccine.name} diberikan terlambat ${Math.round(age - dueEnd)} bulan — catch-up berhasil`;
+        feedback = `[Waspada] ${vaccine.name} diberikan terlambat ${Math.round(age - dueEnd)} bulan - catch-up berhasil.`;
     } else {
         // Very late
         timingAccuracy = 'sangat_terlambat';
         xp = 5;
-        feedback = `⚠️ ${vaccine.name} sangat terlambat. Catch-up tetap penting untuk proteksi.`;
+        feedback = `[Waspada] ${vaccine.name} sangat terlambat. Catch-up tetap penting untuk proteksi.`;
     }
 
     const updatedVaccines = [...completed, vaccineId];
@@ -116,6 +136,12 @@ export function processImmunization(baby, vaccineId, gameDay) {
         timingAccuracy,
         xp,
         feedback,
+        feedbackKey: timingAccuracy === 'tepat_waktu'
+            ? 'vaccineOnTime'
+            : timingAccuracy === 'terlambat'
+                ? 'vaccineLateCatchUp'
+                : 'vaccineVeryLate',
+        feedbackParams: { vaccine: vaccine.name, monthsLate: Math.max(0, Math.round(age - dueEnd)) },
         updatedVaccines,
         record: { vaccineId, vaccineName: vaccine.name, ageMonths: age, gameDay, timingAccuracy }
     };
@@ -168,9 +194,9 @@ export function calculateCoverage(babies = []) {
 
     const target = 95; // UCI target
     let status;
-    if (overall >= target) status = '✅ UCI tercapai';
-    else if (overall >= 80) status = '⚠️ Hampir UCI — kejar cakupan';
-    else status = '❌ UCI belum tercapai — perlu sweeping';
+    if (overall >= target) status = '[Benar] UCI tercapai';
+    else if (overall >= 80) status = '[Waspada] Hampir UCI - kejar cakupan';
+    else status = '[Perlu Aksi] UCI belum tercapai - perlu sweeping';
 
     return { overall, byVaccine, target, gap: Math.max(0, target - overall), status };
 }

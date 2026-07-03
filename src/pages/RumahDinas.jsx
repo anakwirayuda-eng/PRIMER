@@ -16,8 +16,10 @@ import { getRandomGuestEvent } from '../game/GuestEventSystem.js';
 import { soundManager } from '../utils/SoundManager.js';
 import { generateMorningBriefing } from '../game/MorningBriefing.js';
 import { generateDebrief } from '../game/DebriefEngine.js';
+import { calculateSleepRecovery } from '../game/GameCore.js';
 import { canAffordOperationalCost, getAvailableOperationalFunds, spendOperationalFunds } from '../utils/operationalFunds.js';
 import { buildBehaviorCaseDebriefState } from '../utils/behaviorCaseRuntime.js';
+import { buildRolloverMissedEncounterLogs } from '../store/helpers/clinicalHelpers.js';
 import MorningBriefingModal from '../components/MorningBriefingModal.jsx';
 import EndOfDayModal from '../components/EndOfDayModal.jsx';
 
@@ -96,16 +98,9 @@ const RumahDinas = ({ onClose }) => {
     // 🔒 Action Mutex: prevents auto-clicker double-spend & action spam
     const isProcessingRef = useRef(false);
 
-    // 🔒 Guest event daily limit (1x per day max)
-    const [hasReceivedGuest, setHasReceivedGuest] = useState(false);
-    const currentDayRef = useRef(day);
-
-    useEffect(() => {
-        if (currentDayRef.current !== day) {
-            setHasReceivedGuest(false);
-            currentDayRef.current = day;
-        }
-    }, [day]);
+    // 🔒 Guest event daily limit is keyed to the in-game day to avoid reset effects.
+    const [guestReceivedDay, setGuestReceivedDay] = useState(null);
+    const hasReceivedGuest = guestReceivedDay === day;
 
     // ⌨️ Keyboard hotkeys: 1-6 for room navigation
     useEffect(() => {
@@ -316,7 +311,7 @@ const RumahDinas = ({ onClose }) => {
 
     const handleEventChoice = (option) => {
         applyEffect(option.effect);
-        setHasReceivedGuest(true); // 🔒 Lock guest for today
+        setGuestReceivedDay(day); // 🔒 Lock guest for today
         showToast(`Anda memilih: ${option.label}`, 'info');
         setActiveEvent(null);
     };
@@ -453,13 +448,23 @@ const RumahDinas = ({ onClose }) => {
 
                                         <button
                                             onClick={() => {
+                                                const sleepPreview = calculateSleepRecovery(
+                                                    time || 0,
+                                                    alarmHour,
+                                                    playerStats?.energy || 0,
+                                                    playerStats?.stress || 0
+                                                );
+                                                const rolloverMissedLog = sleepPreview.isNextDay
+                                                    ? buildRolloverMissedEncounterLogs(queue || [], 'day_rollover')
+                                                    : [];
+                                                const rolloverPenalty = rolloverMissedLog.length * 1.5;
                                                 // Phase 0: Show debrief BEFORE sleeping
                                                 const debrief = generateDebrief({
-                                                    todayLog: todayLog || [],
+                                                    todayLog: [...(todayLog || []), ...rolloverMissedLog],
                                                     consequenceQueue: consequenceQueue || [],
                                                     day: day || 1,
                                                     stats: stats || {},
-                                                    reputation: playerStats?.reputation || 80,
+                                                    reputation: Math.max(0, (playerStats?.reputation || 80) - rolloverPenalty),
                                                     dailyQuestId,
                                                     morningReputation,
                                                     bcState: behaviorCaseDebriefState

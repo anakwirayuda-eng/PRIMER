@@ -9,16 +9,17 @@
  */
 import { produce } from 'immer';
 import { soundManager } from '../../utils/SoundManager.js';
+import i18n from '../../i18n.js';
 import { getMedicationById } from '../../data/MedicationDatabase.js';
-import { calculatePatientBill } from '../../game/BillingEngine.js';
+import { calculatePatientBill, calculatePrimaryCareRevenueForDecision } from '../../game/BillingEngine.js';
 import { determineMonthlyOutcome } from '../../game/ProlanisEngine.js';
 import { EMERGENCY_ACTIONS, calculateEmergencyBillForPatient } from '../../game/EmergencyCases.js';
 import { PROCEDURES_DB } from '../../data/ProceduresDB.js';
 import { HOSPITALS, AMBULANCES } from '../../data/HospitalDB.js';
 import { buildCPPTRecord, buildMaiaCPPTRecord } from '../../game/CPPTEngine.js';
 import { getPatientSpikeMultiplier } from '../../domains/community/OutbreakSystem.js';
-import { generatePatient, generateEmergencyPatient, generateFollowupPatient } from '../../game/PatientGenerator.js';
-import { getScheduledFollowups, clearProcessedFollowups } from '../../game/ConsequenceEngine.js';
+import { generatePatient, generateEmergencyPatient, generateFollowupPatient, generateUKPBridgePatient } from '../../game/PatientGenerator.js';
+import { getScheduledFollowups, clearProcessedFollowups, evaluateConsequences } from '../../game/ConsequenceEngine.js';
 import { normalizePatient } from '../../models/PatientRuntime.js';
 import { normalizeMedicationId } from '../../models/InventoryRuntime.js';
 import { processLabOrder } from '../../game/LabEngine.js';
@@ -27,20 +28,28 @@ import { withTransaction } from '../../utils/transactions.js';
 import { chanceFromSeed, seedKey } from '../../utils/deterministicRandom.js';
 import { showToast } from '../../utils/ToastManager.js';
 import { calculateAverageIksFromFamilies } from '../../utils/villageMetrics.js';
+import { inferLabFlag, resolveLabOrderDefinition, summarizeLabResult } from '../../utils/labs.js';
 import {
     appendReferralLogEntry,
     buildReferralLogEntry,
-    reconcileReferralLog
+    reconcileReferralLog,
+    resolveReferralArrivalNote
 } from '../../utils/referralLog.js';
 import { calculateIKS, calculateGlobalBuffs } from '../../game/GameCore.js';
 import { sanitizePlayerProfile, applyXpGainToProfile, normalizeSkillList } from '../helpers/playerHelpers.js';
 import { createBusyAmbulanceEntry, isAmbulanceStillBusy } from '../helpers/ambulanceHelpers.js';
-import { appendClinicalHistory, normalizeClinicalHistoryEntry, isAntibioticMed } from '../helpers/clinicalHelpers.js';
+import {
+    appendClinicalHistory,
+    normalizeClinicalHistoryEntry,
+    isAntibioticMed,
+    buildMissedEncounterLog
+} from '../helpers/clinicalHelpers.js';
 import { createInitialClinicalState } from '../helpers/persistenceHelpers.js';
 import { getSpatialContext } from '../../domains/village/spatialContext.js';
 import { calculateKBKPerformanceMultiplier } from '../../domains/village/kbkPerformance.js';
 import { getSeasonForDay } from '../../game/IKMEventEngine.js';
 import { getBridgeSeasonalState, isBridgeOutageActive, resolveBridgeOutageUntilDay } from '../../domains/village/bridgeSeasonalState.js';
+import { validateDiagnosis, validateTreatment, validateEducation, validateExams } from '../../game/ValidationEngine.js';
 
 export function invertAndCapKbkSpawnPressure(kbkMultiplier = 1.0) {
     const safeKbkMultiplier = typeof kbkMultiplier === 'number' && Number.isFinite(kbkMultiplier) && kbkMultiplier > 0
@@ -58,6 +67,154 @@ export function calculateKbkSpawnPressureMultiplier(families) {
     const avgIKS = calculateAverageIksFromFamilies(families);
     const kbkMultiplier = calculateKBKPerformanceMultiplier(avgIKS);
     return invertAndCapKbkSpawnPressure(kbkMultiplier);
+}
+
+function getEmergencySpawnChanceForMinute(time) {
+    const minute = Math.max(0, Math.floor(Number(time) || 0));
+
+    if (minute < 360 || minute >= 1320) return 0.003;
+    if (minute < 480) return 0.007;
+    if (minute < 720) return 0.015;
+    if (minute < 840) return 0.018;
+    if (minute < 960) return 0.013;
+    return 0.008;
+}
+
+function clampPercent(value, fallback = 0) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return fallback;
+    return Math.max(0, Math.min(100, Math.round(numeric)));
+}
+
+function resolveEncounterLabs(decision = {}, patient = {}) {
+    if (decision?.labsRevealed && typeof decision.labsRevealed === 'object' && !Array.isArray(decision.labsRevealed)) {
+        return decision.labsRevealed;
+    }
+    if (patient?.labsRevealed && typeof patient.labsRevealed === 'object' && !Array.isArray(patient.labsRevealed)) {
+        return patient.labsRevealed;
+    }
+    if (patient?.medicalData?.labsRevealed && typeof patient.medicalData.labsRevealed === 'object' && !Array.isArray(patient.medicalData.labsRevealed)) {
+        return patient.medicalData.labsRevealed;
+    }
+    return {};
+}
+
+function buildPrimaryCareAssessment(patient = {}, decision = {}) {
+    const caseData = patient?.medicalData || {};
+    const selectedDiagnoses = (decision?.diagnoses || []).map((diagnosis) => {
+        if (diagnosis && typeof diagnosis === 'object') {
+            return diagnosis;
+        }
+        return { code: diagnosis, name: diagnosis };
+    });
+    const selectedProcedures = (decision?.procedures || [])
+        .map((procedure) => (typeof procedure === 'object' ? (procedure.id || procedure.code) : procedure))
+        .filter(Boolean);
+    const labsRevealed = resolveEncounterLabs(decision, patient);
+    const diagnosisValidation = validateDiagnosis(caseData, selectedDiagnoses);
+    const treatmentValidation = validateTreatment(caseData, decision?.medications || [], selectedProcedures);
+    const educationValidation = validateEducation(caseData, decision?.education || []);
+    const examValidation = validateExams(caseData, decision?.examsPerformed || [], Object.keys(labsRevealed));
+    const diagnosisScore = diagnosisValidation.isPrimaryCorrect ? 100 : (diagnosisValidation.hasReasonableDifferential ? 40 : 0);
+    const treatmentScore = clampPercent(treatmentValidation.score, 0);
+    const examScore = clampPercent(examValidation.score, 100);
+    const educationScore = clampPercent(educationValidation.score, 100);
+    const anamnesisScore = clampPercent(decision?.anamnesisScore, 0);
+    const hasExamRequirement = Boolean((caseData?.relevantLabs || []).length || (examValidation?.missingExams || []).length || (examValidation?.missingLabs || []).length);
+    const hasEducationRequirement = Boolean((caseData?.requiredEducation || []).length);
+    const examsAdequate = !hasExamRequirement || (
+        (examValidation?.missingExams || []).length === 0 &&
+        (examValidation?.missingLabs || []).length === 0 &&
+        examScore >= 70
+    );
+    const educationAdequate = !hasEducationRequirement || (
+        (educationValidation?.missing || []).length === 0 &&
+        educationScore >= 70
+    );
+    const clinicalQualityScore = Math.round(
+        (diagnosisScore * 0.35) +
+        (treatmentScore * 0.30) +
+        (examScore * 0.15) +
+        (educationScore * 0.10) +
+        (anamnesisScore * 0.10)
+    );
+
+    return {
+        caseData,
+        labsRevealed,
+        diagnosisValidation,
+        treatmentValidation,
+        educationValidation,
+        examValidation,
+        diagnosisScore,
+        treatmentScore,
+        examScore,
+        educationScore,
+        anamnesisScore,
+        clinicalQualityScore,
+        examsAdequate,
+        educationAdequate,
+        isClinicalCareComplete:
+            diagnosisValidation.isPrimaryCorrect &&
+            treatmentValidation.isRequiredCareComplete &&
+            examsAdequate &&
+            educationAdequate &&
+            clinicalQualityScore >= 70,
+        correctDiagnosis: caseData?.trueDiagnosisCode || caseData?.diagnosisName || caseData?.id || '',
+    };
+}
+
+function calculateLoggedPrimaryCareRevenue(patient = {}, decision = {}, bill = null) {
+    if (decision?.action !== 'treat') {
+        return calculatePrimaryCareRevenueForDecision(patient, decision);
+    }
+
+    const effectiveBill = bill || calculatePatientBill(
+        decision?.medications || [],
+        decision?.procedures || [],
+        resolveEncounterLabs(decision, patient),
+        patient?.medicalData || {},
+        Boolean(patient?.social?.hasBPJS)
+    );
+    const labCost = (effectiveBill?.labDetails || []).reduce((sum, lab) => sum + (Number(lab?.cost) || 0), 0);
+
+    if (patient?.social?.hasBPJS) {
+        return -((effectiveBill?.buyPriceTotal || 0) + labCost);
+    }
+
+    return (effectiveBill?.total || 0) - labCost;
+}
+
+function buildPrimaryCareTodayLog(patient = {}, decision = {}, assessment = {}, revenue = 0, satisfactionScore = null) {
+    return {
+        patientId: patient?.id || null,
+        patientName: patient?.name || 'Pasien',
+        age: patient?.age,
+        gender: patient?.gender,
+        diagnosis: decision?.diagnoses?.[0] || 'unknown',
+        diagnosisName: patient?.medicalData?.diagnosisName || patient?.medicalData?.trueDiagnosisCode || 'Undiagnosed',
+        correctDiagnosis: assessment?.correctDiagnosis || '',
+        wasCorrect: Boolean(assessment?.diagnosisValidation?.isPrimaryCorrect),
+        diagnosisScore: assessment?.diagnosisScore ?? 0,
+        treatmentScore: assessment?.treatmentScore ?? 0,
+        examScore: assessment?.examScore ?? 0,
+        educationScore: assessment?.educationScore ?? 0,
+        anamnesisScore: assessment?.anamnesisScore ?? 0,
+        clinicalQualityScore: assessment?.clinicalQualityScore ?? 0,
+        satisfactionScore,
+        action: decision?.action || 'treat',
+        completed: decision?.action === 'treat',
+        referred: decision?.action === 'refer',
+        revenue,
+        medications: (decision?.medications || []).map((medication) => (typeof medication === 'object' ? (medication.id || medication.medId) : medication)),
+        treatmentGiven: (decision?.procedures || []).map((procedure) => (typeof procedure === 'object' ? (procedure.id || procedure.code) : procedure)),
+        keyLearning: patient?.medicalData?.keyLearning || '',
+        guidelineRef: patient?.medicalData?.guidelineRef || null,
+        joinedAt: patient?.joinedAt ?? patient?.arrivalTime ?? 480,
+        hasBPJS: typeof patient?.social?.hasBPJS === 'boolean' ? patient.social.hasBPJS : null,
+        facility: patient?.facility || patient?.serviceId || 'poli_umum',
+        timestamp: Date.now()
+    };
 }
 
 export const createClinicalSlice = (set, get) => ({
@@ -190,14 +347,21 @@ export const createClinicalSlice = (set, get) => ({
 
                 // Codex Fix: push to todayLog so debrief can count this encounter
                 state.clinical.todayLog.push({
+                    patientId: patient.id,
                     patientName: patient.name,
                     age: patient.age,
+                    gender: patient.gender,
                     diagnosis: patient.medicalData?.trueDiagnosisCode || 'unknown',
+                    diagnosisName: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || 'Undiagnosed',
                     action: 'delegate_to_maia',
                     completed: true,
                     referred: false,
                     diagnosisScore: 0,
+                    satisfactionScore,
                     revenue: isBPJS ? 0 : 25000,
+                    joinedAt: patient.joinedAt ?? patient.arrivalTime ?? 480,
+                    hasBPJS: isBPJS,
+                    facility: patient.facility || patient.serviceId || 'poli_umum',
                     timestamp: Date.now()
                 });
             });
@@ -246,14 +410,21 @@ export const createClinicalSlice = (set, get) => ({
                         })),
                         // Codex Fix: push to todayLog so debrief counts emergency delegation
                         todayLog: [...state.clinical.todayLog, {
+                            patientId: patient.id,
                             patientName: patient.name,
                             age: patient.age,
+                            gender: patient.gender,
                             diagnosis: patient.medicalData?.trueDiagnosisCode || 'unknown',
+                            diagnosisName: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || 'Undiagnosed',
                             action: 'delegate_to_maia',
                             completed: true,
                             referred: false,
                             diagnosisScore: 0,
+                            satisfactionScore,
                             revenue: isBPJS ? 0 : 50000,
+                            joinedAt: patient.joinedAt ?? patient.arrivalTime ?? 480,
+                            hasBPJS: isBPJS,
+                            facility: patient.facility || patient.serviceId || 'igd',
                             timestamp: Date.now()
                         }]
                     },
@@ -302,9 +473,16 @@ export const createClinicalSlice = (set, get) => ({
 
             // 2. Queue capacity penalty at day end (16:00 = 960)
             if (time === 960) {
-                const waitingCount = state.clinical.queue.length;
+                const strandedPatients = [...state.clinical.queue];
+                const waitingCount = strandedPatients.length;
                 if (waitingCount > 0) {
+                    strandedPatients.forEach((patient) => {
+                        state.clinical.todayLog.push(buildMissedEncounterLog(patient, 'clinic_closed'));
+                    });
                     state.clinical.queue = [];
+                    if (strandedPatients.some((patient) => patient.id === state.clinical.activePatientId)) {
+                        state.clinical.activePatientId = null;
+                    }
                     state.player.profile.reputation = Math.max(0, state.player.profile.reputation - (waitingCount * 1.5));
                 }
             }
@@ -313,26 +491,49 @@ export const createClinicalSlice = (set, get) => ({
             const MAX_WAIT_TIME = 360;
             const timedOutPatients = state.clinical.queue.filter(p => time - (p.joinedAt || 480) > MAX_WAIT_TIME && p.status !== 'in_treatment');
             if (timedOutPatients.length > 0) {
+                timedOutPatients.forEach((patient) => {
+                    state.clinical.todayLog.push(buildMissedEncounterLog(patient, 'queue_timeout'));
+                });
                 state.clinical.queue = state.clinical.queue.filter(p => !timedOutPatients.includes(p)); // Immer handles this correctly? Yes, replacement.
+                if (timedOutPatients.some((patient) => patient.id === state.clinical.activePatientId)) {
+                    state.clinical.activePatientId = null;
+                }
                 state.player.profile.reputation = Math.max(0, state.player.profile.reputation - (timedOutPatients.length * 2));
             }
 
             // 3.5. Inject Followup Patients from Consequence Queue
             if (time === 480) {
                 const followups = getScheduledFollowups(state.clinical.consequenceQueue, day);
+                const processedIds = [];
                 followups.forEach(consequence => {
-                    // Codex Fix: skip ukp_bridge entries — no originalCase data
-                    if (consequence.type === 'ukp_bridge') return;
+                    // UKP bridge consequences synthesize a compatible clinical patient on the next morning tick.
+                    if (consequence.type === 'ukp_bridge') {
+                        const bridgePatient = generateUKPBridgePatient(
+                            {
+                                ukpDiseaseId: consequence.diseaseId,
+                                familyId: consequence.familyId,
+                                scenarioId: consequence.scenarioId,
+                            },
+                            time,
+                            state.publicHealth.villageData?.families || [],
+                            seedKey('ukp-bridge-spawn', consequence.id, day)
+                        );
+
+                        if (bridgePatient) {
+                            state.clinical.queue.push(normalizePatient(bridgePatient));
+                            processedIds.push(consequence.id);
+                        }
+                        return;
+                    }
                     const followupPatient = generateFollowupPatient(
                         consequence,
                         time,
                         seedKey('followup-spawn', consequence.id, day)
                     );
                     state.clinical.queue.push(normalizePatient(followupPatient));
+                    processedIds.push(consequence.id);
                 });
-                if (followups.length > 0) {
-                    // DeepThink Fix: use processedIds to clear only spawned follow-ups
-                    const processedIds = followups.filter(c => c.type !== 'ukp_bridge').map(c => c.id);
+                if (processedIds.length > 0) {
                     state.clinical.consequenceQueue = clearProcessedFollowups(
                         state.clinical.consequenceQueue, day, processedIds
                     );
@@ -391,28 +592,46 @@ export const createClinicalSlice = (set, get) => ({
                 ];
                 const patientSpatialContext = { ...baseSpatialContext, bridgeState, serviceAnchors };
 
-                const newPatient = generatePatient(
-                    time,
-                    villageDataFiltered,
-                    day,
-                    facilities,
-                    normalizeSkillList(profile.skills),
-                    seedKey('queue-spawn', day, time, state.clinical.queue.length, state.clinical.todayLog.length),
-                    patientSpatialContext
-                );
-                // Dedup guard: skip if same name already in queue
-                const nameExists = state.clinical.queue.some(p => p.name === newPatient.name);
-                if (!nameExists) {
-                    state.clinical.queue.push(normalizePatient(newPatient)); // Immer push + ACL
+                let enqueueCandidate = null;
+                for (let attempt = 0; attempt < 4; attempt += 1) {
+                    const candidate = generatePatient(
+                        time,
+                        villageDataFiltered,
+                        day,
+                        facilities,
+                        normalizeSkillList(profile.skills),
+                        seedKey('queue-spawn', day, time, state.clinical.queue.length, state.clinical.todayLog.length, attempt),
+                        patientSpatialContext
+                    );
+
+                    const residentId = candidate?.hidden?.villagerId || candidate?.social?.villagerId || null;
+                    const residentAlreadyQueued = residentId
+                        ? state.clinical.queue.some((queuedPatient) => {
+                            const queuedResidentId = queuedPatient?.hidden?.villagerId || queuedPatient?.social?.villagerId || null;
+                            return queuedResidentId === residentId;
+                        })
+                        : false;
+
+                    if (!residentAlreadyQueued) {
+                        enqueueCandidate = candidate;
+                        break;
+                    }
                 }
-                soundManager.playNotification();
+
+                if (enqueueCandidate) {
+                    state.clinical.queue.push(normalizePatient(enqueueCandidate));
+                    soundManager.playNotification();
+                }
             }
 
             // 5. Generate Emergency Patients (IGD)
+            // Rural / primary-care IGD should see emergencies regularly,
+            // but not feel like a nonstop tertiary resus bay.
+            const emergencySpawnChance = getEmergencySpawnChanceForMinute(time);
             if (
                 chanceFromSeed(
                     `emergency-spawn:${day}:${time}:${state.clinical.emergencyQueue.length}`,
-                    0.08
+                    emergencySpawnChance
                 ) &&
                 state.clinical.emergencyQueue.length < 3
             ) {
@@ -444,7 +663,7 @@ export const createClinicalSlice = (set, get) => ({
                 const sd = p.sisruteData;
                 state.clinical.emergencyQueue = state.clinical.emergencyQueue.filter(q => q.id !== p.id);
                 state.clinical.history = appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
-                    ...p, day: state.world.day, dischargedAt: currentTime,
+                    ...p, day: state.world.day, archiveDay: sd?.acceptedDay || state.world.day, dischargedAt: currentTime,
                     // DeepThink Fix: spread original decision to preserve diagnoses/medications
                     decision: { ...(p.originalDecision || {}), action: 'refer', isSISRUTE: true, actionsPerformed: p.sisruteData?.actionsPerformed || [], referralDetails: sd?.referralDetails },
                     outcome: 'referred', outcomeStatus: 'sisrute_transferred',
@@ -461,8 +680,19 @@ export const createClinicalSlice = (set, get) => ({
             );
             state.clinical.activeReferralLog = referralLogResult.activeReferralLog;
             referralLogResult.newlyArrived.forEach((referral) => {
+                const arrivalNote = resolveReferralArrivalNote(i18n.t.bind(i18n), referral);
+                const patientName = !referral.patientName || referral.patientName === 'Pasien'
+                    ? i18n.t('referral.hud.patient_fallback')
+                    : referral.patientName;
+                const hospitalName = !referral.hospitalName || referral.hospitalName === 'RS Rujukan'
+                    ? i18n.t('referral.hud.hospital_fallback')
+                    : referral.hospitalName;
                 showToast(
-                    `Radio RS: ${referral.patientName} diterima di ${referral.hospitalName}. ${referral.arrivalNote}`,
+                    i18n.t('referral.toast.arrival', {
+                        patient: patientName,
+                        hospital: hospitalName,
+                        note: arrivalNote
+                    }),
                     'success',
                     4200
                 );
@@ -575,14 +805,21 @@ export const createClinicalSlice = (set, get) => ({
                         isProlanis: true
                     }));
                     state.clinical.todayLog = [...state.clinical.todayLog, {
+                        patientId: patient.id,
                         patientName: patient.name,
                         age: patient.age,
+                        gender: patient.gender,
                         diagnosis: patient.medicalData?.trueDiagnosisCode || 'prolanis',
+                        diagnosisName: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || 'Prolanis',
                         action: 'treat',
                         completed: true,
                         referred: false,
                         diagnosisScore: 100,
+                        satisfactionScore: 85,
                         revenue: 0, // Prolanis = BPJS kapitasi, no direct revenue
+                        joinedAt: patient.joinedAt ?? 480,
+                        hasBPJS: typeof patient?.social?.hasBPJS === 'boolean' ? patient.social.hasBPJS : true,
+                        facility: patient.facility || patient.serviceId || 'poli_umum',
                         timestamp: Date.now()
                     }];
 
@@ -591,16 +828,25 @@ export const createClinicalSlice = (set, get) => ({
                 const buffs = calculateGlobalBuffs(state);
                 const isBPJS = patient.social?.hasBPJS;
                 const isCorrectTriage = patient.hidden?.requiredAction === decision.action;
-                const correctMedList = patient.medicalData?.correctTreatment || [];
-                const isCorrectMeds = ((required, selected) => {
-                    if (!required || required.length === 0) return true;
-                    if (!selected) return false;
-                    // Codex Fix: normalize meds to string IDs (EMR saves objects)
-                    const selectedIds = selected.map(m => typeof m === 'object' ? (m.id || m.medId) : m);
-                    for (const req of required) { if (Array.isArray(req)) { if (!req.some(r => selectedIds.includes(r))) return false; } else { if (!selectedIds.includes(req)) return false; } }
-                    return true;
-                })(correctMedList, decision.medications || []);
-                const isCorrectAction = decision.action === 'treat' ? (isCorrectTriage && isCorrectMeds) : isCorrectTriage;
+                const clinicalAssessment = buildPrimaryCareAssessment(patient, decision);
+                const {
+                    caseData,
+                    labsRevealed,
+                    diagnosisValidation,
+                    treatmentValidation,
+                    diagnosisScore,
+                    treatmentScore,
+                    examScore,
+                    educationScore,
+                    anamnesisScore,
+                    clinicalQualityScore,
+                    examsAdequate,
+                    educationAdequate,
+                    isClinicalCareComplete
+                } = clinicalAssessment;
+                const isCorrectAction = decision.action === 'treat'
+                    ? (isCorrectTriage && isClinicalCareComplete)
+                    : isCorrectTriage;
                 const hasAntibiotic = decision.medications?.some(m => {
                     const medId = typeof m === 'object' ? (m.id || m.medId) : m;
                     return isAntibioticMed(medId);
@@ -614,10 +860,11 @@ export const createClinicalSlice = (set, get) => ({
                     bill = calculatePatientBill(
                         decision.medications || [],
                         decision.procedures || [],
-                        patient.medicalData?.labsRevealed || {},
-                        patient.medicalData || {},
+                        labsRevealed,
+                        caseData,
                         isBPJS
                     );
+                    const labCost = (bill?.labDetails || []).reduce((sum, lab) => sum + (Number(lab?.cost) || 0), 0);
                     if (!isCorrectAction) {
                         if (!isCorrectTriage) {
                             // Cowboy Doctor penalty: treating a case that should be referred
@@ -631,15 +878,27 @@ export const createClinicalSlice = (set, get) => ({
                                 ];
                             }
                         }
-                        else if (!isCorrectMeds) { repChange = -2; satisfactionScore = 60; }
+                        else if (!diagnosisValidation.isPrimaryCorrect) {
+                            repChange = -6;
+                            satisfactionScore = 45;
+                        }
+                        else if (!treatmentValidation.isRequiredCareComplete) {
+                            repChange = -4;
+                            satisfactionScore = 55;
+                        }
+                        else if (!examsAdequate || !educationAdequate || clinicalQualityScore < 70) {
+                            repChange = -2;
+                            satisfactionScore = 65;
+                        }
                     } else {
-                        repChange = +2; satisfactionScore = 85;
+                        repChange = clinicalQualityScore >= 90 ? 3 : 2;
+                        satisfactionScore = clinicalQualityScore >= 90 ? 90 : 85;
                     }
                     // Real revenue: Umum pays sellPrice, BPJS burns kapitasi at buyPrice (HPP)
                     if (isBPJS) {
                         fundChange = -(bill.buyPriceTotal || 0); // Kapitasi bears HPP
                     } else {
-                        fundChange = bill.total || 0; // Umum pays full bill
+                        fundChange = (bill.total || 0) - labCost; // Net cash after direct lab operating cost
                     }
                     if (!isCorrectAction) soundManager.playError(); else soundManager.playSuccess();
                 } else if (decision.action === 'refer' && decision.isSISRUTE) {
@@ -701,8 +960,8 @@ export const createClinicalSlice = (set, get) => ({
                     ...state.player.profile,
                     reputation: Math.min(100, Math.max(0, state.player.profile.reputation + repChange)),
                     energy: Math.max(0, state.player.profile.energy - (5 - (buffs.energyEfficiency || 0))),
-                    stress: Math.max(0, Math.min(100, state.player.profile.stress + (isCorrectAction ? 2 : 5) - (buffs.stressReduction || 0)))
-                }, (isCorrectAction ? 20 : 5) + (buffs.accuracyBonus || 0));
+                    stress: Math.max(0, Math.min(100, state.player.profile.stress + (isCorrectAction ? 2 : (diagnosisValidation.isPrimaryCorrect ? 3 : 5)) - (buffs.stressReduction || 0)))
+                }, (isCorrectAction ? (clinicalQualityScore >= 90 ? 25 : 20) : (diagnosisValidation.isPrimaryCorrect ? 10 : 5)) + (buffs.accuracyBonus || 0));
 
                 state.clinical.queue = state.clinical.queue.filter(p => p.id !== patient.id);
                 state.clinical.activePatientId = null;
@@ -754,7 +1013,7 @@ export const createClinicalSlice = (set, get) => ({
 
                 // DeepThink Fix: familyId is in hidden, not root
                 const patientFamilyId = patient.hidden?.familyId || patient.familyId;
-                if (isCorrectAction && patientFamilyId && state.publicHealth.villageData) {
+                if (isCorrectAction && decision.action === 'treat' && patientFamilyId && state.publicHealth.villageData) {
                     state.publicHealth.villageData.families = state.publicHealth.villageData.families.map(fam => {
                         if (fam.id !== patientFamilyId) return fam;
                         const indicators = { ...fam.indicators };
@@ -778,14 +1037,40 @@ export const createClinicalSlice = (set, get) => ({
                     });
                 }
 
+                const encounterRevenue = decision.action === 'treat'
+                    ? calculateLoggedPrimaryCareRevenue(patient, decision, bill)
+                    : calculatePrimaryCareRevenueForDecision(patient, decision);
+                state.clinical.todayLog.push(buildPrimaryCareTodayLog(patient, decision, clinicalAssessment, encounterRevenue, satisfactionScore));
+
+                const consequences = evaluateConsequences(caseData, {
+                    action: decision.action,
+                    diagnosis: decision.diagnoses || [],
+                    medications: decision.medications || [],
+                    labsRevealed,
+                    diagnosisScore,
+                    treatmentScore,
+                    examScore,
+                    educationScore,
+                    anamnesisScore,
+                    clinicalQualityScore,
+                    isClinicalCareComplete,
+                    patientName: patient.name,
+                    age: patient.age,
+                    gender: patient.gender,
+                    category: patient.hidden?.category || caseData?.category || '',
+                }, day);
+                if (consequences) {
+                    state.clinical.consequenceQueue.push(consequences);
+                }
+
                 // KPI Updates
                 const newKpi = state.finance.kpi;
                 newKpi.totalPatients++;
                 if (isBPJS) newKpi.bpjsPatients++; else newKpi.umumPatients++;
                 if (isCorrectAction && decision.action === 'treat') newKpi.correctTreatments++;
-                if (decision.diagnoses?.includes(patient.medicalData?.trueDiagnosisCode)) newKpi.correctDiagnoses++;
+                if (diagnosisValidation.isPrimaryCorrect) newKpi.correctDiagnoses++;
                 if (hasAntibiotic) newKpi.antibioticPrescriptions++;
-                if (hasAntibiotic && isCorrectAction) newKpi.rationalAntibiotics++;
+                if (hasAntibiotic && diagnosisValidation.isPrimaryCorrect && treatmentValidation.score >= 70) newKpi.rationalAntibiotics++;
                 newKpi.patientSatisfaction.push(satisfactionScore);
                 if (decision.action === 'refer') {
                     newKpi.referrals++;
@@ -879,7 +1164,14 @@ export const createClinicalSlice = (set, get) => ({
                     decision.triageAssigned || patient.triageLevel
                 );
             set(state => {
-                const newKpi = { ...state.finance.kpi }; if (isCorrectTriage) newKpi.correctTreatments++;
+                const newKpi = { ...state.finance.kpi };
+                const isBPJS = Boolean(patient.social?.hasBPJS);
+                newKpi.totalPatients = (newKpi.totalPatients || 0) + 1;
+                if (isBPJS) newKpi.bpjsPatients = (newKpi.bpjsPatients || 0) + 1;
+                else newKpi.umumPatients = (newKpi.umumPatients || 0) + 1;
+                newKpi.patientSatisfaction = [...(newKpi.patientSatisfaction || []), satisfactionScore];
+                if (decision.action === 'refer') newKpi.referrals = (newKpi.referrals || 0) + 1;
+                if (isCorrectTriage) newKpi.correctTreatments++;
                 if (decision.action === 'death') newKpi.deathCases = (newKpi.deathCases || 0) + 1;
                 let fundChange = billing.total;
                 let newBusyAmbulanceIds = state.clinical.busyAmbulanceIds;
@@ -931,7 +1223,7 @@ export const createClinicalSlice = (set, get) => ({
                             sisruteData: {
                                 hospitalId: hosp?.id, hospitalName: hosp?.name || 'RS Rujukan',
                                 ambulanceId: amb?.id, ambulanceName: amb?.name || 'Ambulans',
-                                acceptedAt: time, estimatedArrival: time + travelTime,
+                                acceptedDay: day, acceptedAt: time, estimatedArrival: time + travelTime,
                                 actionsPerformed: decision.actionsPerformed || [],
                                 referralDetails: decision.referralDetails
                             },
@@ -946,7 +1238,25 @@ export const createClinicalSlice = (set, get) => ({
                             busyAmbulanceIds: newBusyAmbulanceIds,
                             activeReferralLog: newActiveReferralLog,
                             activeEmergencyId: null,
-                            hospitalBedUsage: newHospitalBedUsage
+                            hospitalBedUsage: newHospitalBedUsage,
+                            todayLog: [...state.clinical.todayLog, {
+                                patientId: patient.id,
+                                patientName: patient.name,
+                                age: patient.age,
+                                gender: patient.gender,
+                                diagnosis: patient.medicalData?.trueDiagnosisCode || 'unknown',
+                                diagnosisName: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || 'Undiagnosed',
+                                action: 'refer',
+                                completed: false,
+                                referred: true,
+                                diagnosisScore: isCorrectTriage ? 100 : 0,
+                                satisfactionScore,
+                                revenue: fundChange,
+                                joinedAt: patient.joinedAt ?? patient.arrivalTime ?? time,
+                                hasBPJS: isBPJS,
+                                facility: patient.facility || patient.serviceId || 'igd',
+                                timestamp: Date.now()
+                            }]
                         },
                         finance: { ...state.finance, stats: { ...state.finance.stats, pendapatanUmum: state.finance.stats.pendapatanUmum + fundChange }, kpi: newKpi }
                     };
@@ -962,6 +1272,7 @@ export const createClinicalSlice = (set, get) => ({
                         history: appendClinicalHistory(state.clinical.history, normalizeClinicalHistoryEntry({
                             ...patient,
                             day,
+                            archiveDay: patient.sisruteData?.acceptedDay || day,
                             dischargedAt: time,
                             decision,
                             outcome: repChange >= 0 ? 'good' : 'bad',
@@ -973,14 +1284,21 @@ export const createClinicalSlice = (set, get) => ({
                         })),
                         // Codex Fix: push to todayLog so debrief counts emergency discharges
                         todayLog: [...state.clinical.todayLog, {
+                            patientId: patient.id,
                             patientName: patient.name,
                             age: patient.age,
+                            gender: patient.gender,
                             diagnosis: patient.medicalData?.trueDiagnosisCode || 'unknown',
+                            diagnosisName: patient.medicalData?.diagnosisName || patient.medicalData?.trueDiagnosisCode || 'Undiagnosed',
                             action: decision.action,
                             completed: decision.action !== 'refer',
                             referred: decision.action === 'refer',
                             diagnosisScore: isCorrectTriage ? 100 : 0,
-                            revenue: billing.total || 0,
+                            satisfactionScore,
+                            revenue: fundChange,
+                            joinedAt: patient.joinedAt ?? patient.arrivalTime ?? time,
+                            hasBPJS: isBPJS,
+                            facility: patient.facility || patient.serviceId || 'igd',
                             timestamp: Date.now()
                         }]
                     },
@@ -1051,11 +1369,7 @@ export const createClinicalSlice = (set, get) => ({
                 };
             });
 
-            const entersSisruteLimbo = decision.action === 'refer'
-                && decision.isSISRUTE
-                && decision.referralDetails?.result?.status === 'ACCEPTED';
-
-            if (!entersSisruteLimbo && patient?.id) {
+            if (patient?.id) {
                 get().metaActions.updateProgress('patients_treated', 1);
 
                 // P6: Living Village Ledger — record emergency discharge for resident families
@@ -1077,36 +1391,83 @@ export const createClinicalSlice = (set, get) => ({
             }
         },
         orderLab: (patientId, labName, cost) => {
+            let orderOutcome = { ok: false, reason: 'patient-not-found' };
             set(state => {
                 const patient = state.clinical.queue.find(p => p.id === patientId);
-                // Codex Fix: call processLabOrder to get real disease-contextualized results
-                let labResult = true; // fallback: boolean flag
-                let actualCost = cost;
-                try {
-                    const orderOutput = processLabOrder([labName], patient, {});
-                    if (orderOutput.results[labName]) {
-                        labResult = orderOutput.results[labName];
-                    }
-                    if (orderOutput.totalCost > 0) {
-                        actualCost = orderOutput.totalCost;
-                    }
-                } catch (e) {
-                    console.warn('[orderLab] processLabOrder failed, using flag:', e);
+                if (!patient) {
+                    orderOutcome = { ok: false, reason: 'patient-not-found' };
+                    return state;
                 }
-                // Store rich result object (or boolean flag as fallback) keyed by labName
+
+                const resolvedLab = resolveLabOrderDefinition(patient.medicalData || {}, labName);
+                if (!resolvedLab) {
+                    orderOutcome = { ok: false, reason: 'unsupported-lab', requestedLab: labName };
+                    return state;
+                }
+
+                const orderKey = resolvedLab.id;
+                let actualCost = Number(resolvedLab.cost) || Number(cost) || 50000;
+                let labResult = null;
+
+                if (resolvedLab.source === 'case') {
+                    const definition = resolvedLab.definition || {};
+                    labResult = {
+                        ...definition,
+                        result: summarizeLabResult(definition) || definition.result || 'Hasil tersedia',
+                        flag: inferLabFlag(definition),
+                        cost: actualCost,
+                    };
+                } else {
+                    try {
+                        const orderOutput = processLabOrder([orderKey], patient, {});
+                        const engineResult = orderOutput.results?.[orderKey];
+                        if (!engineResult) {
+                            orderOutcome = { ok: false, reason: 'lab-unavailable', requestedLab: labName, orderKey };
+                            return state;
+                        }
+                        if (orderOutput.totalCost > 0) {
+                            actualCost = orderOutput.totalCost;
+                        }
+                        labResult = {
+                            ...engineResult,
+                            result: summarizeLabResult(engineResult) || 'Dalam batas normal',
+                            flag: inferLabFlag(engineResult),
+                            cost: actualCost,
+                        };
+                    } catch (e) {
+                        console.warn('[orderLab] processLabOrder failed:', e);
+                        orderOutcome = { ok: false, reason: 'lab-engine-error', requestedLab: labName, orderKey };
+                        return state;
+                    }
+                }
+
                 const nextQueue = state.clinical.queue.map(p => {
                     if (p.id !== patientId) return p;
                     const prevRevealed = p.labsRevealed || {};
-                    // Support both array (legacy) and object (modern) formats
                     const revealedObj = Array.isArray(prevRevealed)
                         ? prevRevealed.reduce((acc, name) => ({ ...acc, [name]: true }), {})
                         : { ...prevRevealed };
-                    revealedObj[labName] = labResult;
+                    revealedObj[orderKey] = labResult;
                     return { ...p, labsRevealed: revealedObj };
                 });
-                const nextFinance = { ...state.finance, stats: { ...state.finance.stats, pengeluaranLab: (state.finance.stats.pengeluaranLab || 0) + actualCost } };
+                const currentKapitasi = Number(state.finance.stats.kapitasi) || 0;
+                const isBPJS = Boolean(patient?.social?.hasBPJS);
+                if (isBPJS && currentKapitasi < actualCost) {
+                    orderOutcome = { ok: false, reason: 'insufficient-kapitasi', requestedLab: labName, orderKey, actualCost };
+                    return state;
+                }
+                const nextFinance = {
+                    ...state.finance,
+                    stats: {
+                        ...state.finance.stats,
+                        kapitasi: isBPJS ? (currentKapitasi - actualCost) : currentKapitasi,
+                        pengeluaranLab: (state.finance.stats.pengeluaranLab || 0) + actualCost
+                    }
+                };
+                orderOutcome = { ok: true, orderKey, labResult, actualCost };
                 return { clinical: { ...state.clinical, queue: nextQueue }, finance: nextFinance };
             });
+            return orderOutcome;
         },
         checkAccreditation: () => {
             const s = get();

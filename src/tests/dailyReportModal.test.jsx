@@ -52,7 +52,7 @@ describe('DailyReportModal', () => {
             />
         );
 
-        await user.click(screen.getByLabelText('Hari berikutnya'));
+        await user.click(screen.getByLabelText(/Hari Berikutnya/i));
         expect(onNavigate).toHaveBeenCalledWith(expect.objectContaining({ day: 6 }));
     });
 });

@@ -1,4 +1,4 @@
-<!-- PRIMERA_PROVENANCE {"generatedAt":"2026-03-11T18:13:51.579Z","gitSha":"08af289","dirty":true,"sourceCommand":"megalog_v5","inputArtifacts":["eslint.json","vitest.json","playwright.json","assets.json","folder_map.json","static_health.json","clinical.json","clinical_guardian.json","invariant_audit.json","clinical_lifecycle_audit.json","triage_safety_audit.json"]} -->
+﻿﻿<!-- PRIMERA_PROVENANCE {"generatedAt":"2026-03-11T18:13:51.579Z","gitSha":"08af289","dirty":true,"sourceCommand":"megalog_v5","inputArtifacts":["eslint.json","vitest.json","playwright.json","assets.json","folder_map.json","static_health.json","clinical.json","clinical_guardian.json","invariant_audit.json","clinical_lifecycle_audit.json","triage_safety_audit.json"]} -->
 
 # PRIMERA MEGALOG v5.0
 

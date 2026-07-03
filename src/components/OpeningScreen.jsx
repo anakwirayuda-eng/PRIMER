@@ -11,6 +11,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { APP_METADATA } from '../data/AppMetadata.js';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
 
@@ -41,52 +42,71 @@ const PRIMER_LETTERS = 'PRIMER'.split('');
  * Flow (veteran): title_ready instantly
  */
 export default function OpeningScreen({ onComplete }) {
+    const { t } = useTranslation();
     const [phase, setPhase] = useState('black');
     const [letterIndex, setLetterIndex] = useState(-1);
     const [isExiting, setIsExiting] = useState(false);
+    const appFullName = t('app.full_name', { defaultValue: APP_METADATA.fullName });
+    const appTagline = t('app.tagline', { defaultValue: APP_METADATA.tagline });
+    const appCopyright = t('app.copyright', { defaultValue: APP_METADATA.copyright });
+    const appVersionLabel = t('app.version_label', {
+        version: APP_METADATA.version,
+        defaultValue: `v${APP_METADATA.version}`
+    });
 
     const timersRef = useRef([]);
     const skippedRef = useRef(false);
 
+    const clearTimers = useCallback(() => {
+        timersRef.current.forEach(clearTimeout);
+        timersRef.current = [];
+    }, []);
+
+    const scheduleTimer = useCallback((callback, delayMs, options = {}) => {
+        const { ignoreSkip = false } = options;
+        const timeoutId = setTimeout(() => {
+            timersRef.current = timersRef.current.filter((activeId) => activeId !== timeoutId);
+            if (!skippedRef.current || ignoreSkip) callback();
+        }, delayMs);
+
+        timersRef.current.push(timeoutId);
+        return timeoutId;
+    }, []);
+
     // ─── Preload ───
     useEffect(() => {
-        [ASSET_KEY.ITS_LOGO].forEach(k => {
-            try { const img = new Image(); img.src = getAssetUrl(k); } catch {}
-        });
+        if (typeof Image === 'undefined') return;
+        const img = new Image();
+        img.src = getAssetUrl(ASSET_KEY.ITS_LOGO);
     }, []);
 
     // ─── Director's Timeline ───
     useEffect(() => {
-        const schedule = (fn, ms) => {
-            const id = setTimeout(() => { if (!skippedRef.current) fn(); }, ms);
-            timersRef.current.push(id);
-        };
-
         let t = 600;
-        schedule(() => setPhase('its_build'), t);      // logo materializes
+        scheduleTimer(() => setPhase('its_build'), t);      // logo materializes
         t += 1200;
-        schedule(() => setPhase('its_hold'), t);        // logo clean
+        scheduleTimer(() => setPhase('its_hold'), t);        // logo clean
         t += 2500;
-        schedule(() => setPhase('its_dissolve'), t);    // logo fades + burst
+        scheduleTimer(() => setPhase('its_dissolve'), t);    // logo fades + burst
         t += 1200;
-        schedule(() => setPhase('title_type'), t);      // PRIMER letters
+        scheduleTimer(() => setPhase('title_type'), t);      // PRIMER letters
         for (let i = 0; i < PRIMER_LETTERS.length; i++) {
             t += 100;
             const idx = i;
-            schedule(() => setLetterIndex(idx), t);
+            scheduleTimer(() => setLetterIndex(idx), t);
         }
         t += 800;
-        schedule(() => setPhase('title_ready'), t);     // CTA appears
+        scheduleTimer(() => setPhase('title_ready'), t);     // CTA appears
 
-        return () => timersRef.current.forEach(clearTimeout);
-    }, []);
+        return clearTimers;
+    }, [clearTimers, scheduleTimer]);
 
     // ─── Exit ───
     const triggerExit = useCallback(() => {
         if (isExiting) return;
         setIsExiting(true);
-        setTimeout(() => onComplete(), 800);
-    }, [isExiting, onComplete]);
+        scheduleTimer(onComplete, 800, { ignoreSkip: true });
+    }, [isExiting, onComplete, scheduleTimer]);
 
     // ─── Interaction ───
     const handleInteraction = useCallback((e) => {
@@ -96,12 +116,12 @@ export default function OpeningScreen({ onComplete }) {
                 triggerExit();
             } else {
                 skippedRef.current = true;
-                timersRef.current.forEach(clearTimeout);
+                clearTimers();
                 setPhase('title_ready');
                 setLetterIndex(PRIMER_LETTERS.length);
             }
         }
-    }, [phase, isExiting, triggerExit]);
+    }, [clearTimers, phase, isExiting, triggerExit]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleInteraction);
@@ -118,7 +138,7 @@ export default function OpeningScreen({ onComplete }) {
         <div
             className="fixed inset-0 flex items-center justify-center overflow-hidden select-none cursor-pointer"
             onClick={handleInteraction}
-            role="button" aria-label="Layar Pembuka" tabIndex={0}
+            role="button" aria-label={t('opening.aria')} tabIndex={0}
             style={{
                 backgroundColor: '#020617',
                 backgroundImage: 'linear-gradient(rgba(16,185,129,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.04) 1px, transparent 1px)',
@@ -179,7 +199,7 @@ export default function OpeningScreen({ onComplete }) {
                 {/* Logo */}
                 <img
                     src={getAssetUrl(ASSET_KEY.ITS_LOGO)}
-                    alt="Institut Teknologi Sepuluh Nopember"
+                    alt={t('opening.university')}
                     className="relative z-10 object-contain"
                     style={{
                         width: 'clamp(140px, 20vw, 220px)',
@@ -191,7 +211,7 @@ export default function OpeningScreen({ onComplete }) {
                 {/* University name */}
                 <p className="relative z-10 text-slate-400 text-[10px] tracking-[0.5em] uppercase font-bold mt-6"
                    style={{ opacity: itsReady ? 1 : 0, transition: 'opacity 0.8s ease 0.3s' }}>
-                    Institut Teknologi Sepuluh Nopember
+                    {t('opening.university')}
                 </p>
             </div>
 
@@ -248,7 +268,7 @@ export default function OpeningScreen({ onComplete }) {
                 {/* Subtitle */}
                 <p className="text-emerald-400/70 text-[10px] sm:text-xs tracking-[0.5em] uppercase font-bold mt-3"
                    style={{ opacity: phase === 'title_ready' ? 1 : 0, transition: 'opacity 1s ease 0.3s' }}>
-                    {APP_METADATA.fullName}
+                    {appFullName}
                 </p>
 
                 {/* CTA */}
@@ -258,7 +278,7 @@ export default function OpeningScreen({ onComplete }) {
                             className="text-white text-[10px] md:text-xs font-black tracking-[0.4em] uppercase px-10 py-4 border border-emerald-500/50 bg-emerald-950/40 backdrop-blur-md rounded-full shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:bg-emerald-800/60 hover:scale-105 transition-all"
                             style={{ animation: 'skip-pulse 2s ease-in-out infinite' }}
                         >
-                            [ MULAI ]
+                            [{` ${t('opening.start')} `}]
                         </button>
                     )}
                 </div>
@@ -269,10 +289,10 @@ export default function OpeningScreen({ onComplete }) {
                     <div className="flex items-center gap-3 mb-2 opacity-40">
                         <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt="ITS" className="h-5 w-5 object-contain" />
                         <div className="h-3 w-px bg-slate-700" />
-                        <span className="text-[9px] text-slate-500 uppercase tracking-[0.3em] font-mono">{APP_METADATA.tagline}</span>
+                        <span className="text-[9px] text-slate-500 uppercase tracking-[0.3em] font-mono">{appTagline}</span>
                     </div>
                     <p className="text-slate-600 text-[8px] tracking-[0.3em] uppercase">
-                        {APP_METADATA.copyright} &bull; v{APP_METADATA.version}
+                        {appCopyright} &bull; {appVersionLabel}
                     </p>
                 </div>
             </div>
@@ -280,7 +300,7 @@ export default function OpeningScreen({ onComplete }) {
             {/* Skip hint */}
             {!['title_ready', 'black'].includes(phase) && !isExiting && (
                 <div className="absolute bottom-8 right-8 text-slate-600 font-mono text-[9px] tracking-[0.3em] uppercase z-40">
-                    [ ESC / KLIK ]
+                    [{` ${t('opening.skip_hint')} `}]
                 </div>
             )}
         </div>

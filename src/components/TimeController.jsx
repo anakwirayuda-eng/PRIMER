@@ -9,6 +9,7 @@
  * - Visual state changes for paused/playing/system
  */
 import React, { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Play, Pause, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useGame } from '../context/GameContext.jsx';
 import { soundManager } from '../utils/SoundManager.js';
@@ -116,9 +117,27 @@ const POSITIONS = [
     { left: 151, w: 48 }, // 4x
 ];
 
-const HARI = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+const FALLBACK_DAY_NAMES = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+function resolveDayNames(t) {
+    const translated = t('calendarModal.dayNames', { returnObjects: true });
+    return Array.isArray(translated) && translated.length >= 7
+        ? translated
+        : FALLBACK_DAY_NAMES;
+}
+
+function TimeChevrons({ count, size = 13 }) {
+    return (
+        <div className="tc-chevrons">
+            {Array.from({ length: count }, (_value, index) => (
+                <ChevronRight key={index} size={size} strokeWidth={2.5} />
+            ))}
+        </div>
+    );
+}
 
 export default function TimeController({ onOpenCalendar }) {
+    const { t } = useTranslation();
     const ctx = useGame();
     const { gameState, setGameState, day, setGameSpeed } = ctx;
     const gameSpeed = ctx.gameSpeed ?? 1;
@@ -143,23 +162,25 @@ export default function TimeController({ onOpenCalendar }) {
         try {
             if (isEffectivelyPaused) soundManager.pause?.();
             else soundManager.resume?.();
-        } catch (_) { /* sound not critical */ }
+        } catch { /* sound not critical */ }
     }, [isEffectivelyPaused]);
 
     // Compute calendar date from day number
     const time = ctx.time ?? 480;
+    const flooredTime = Math.floor(time);
+    const dayNames = useMemo(() => resolveDayNames(t), [t]);
 
     const dateDisplay = useMemo(() => {
         const date = getDayDate(day ?? 1);
         const d = date.getDate();
         const m = date.getMonth() + 1;
         const y = date.getFullYear();
-        const dayName = HARI[date.getDay()];
-        const totalMinutes = Math.floor(time);
+        const dayName = dayNames[date.getDay()] || FALLBACK_DAY_NAMES[date.getDay()];
+        const totalMinutes = flooredTime;
         const hh = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
         const mm = String(totalMinutes % 60).padStart(2, '0');
         return { d, m, y, hh, mm, dayName };
-    }, [day, Math.floor(time)]); // Floor prevents re-render on fractional changes
+    }, [day, dayNames, flooredTime]); // Floor prevents re-render on fractional changes
 
     // Calendar events for today (now array-based)
     const todayEvents = useMemo(() => {
@@ -181,7 +202,7 @@ export default function TimeController({ onOpenCalendar }) {
 
     const handleSetSpeed = (speed) => {
         if (isRuntimeTrap) return;
-        try { soundManager.playClick?.(); } catch (_) { }
+        try { soundManager.playClick?.(); } catch { /* sound not critical */ }
 
         if (speed === 0) {
             setGameState('paused');
@@ -207,14 +228,6 @@ export default function TimeController({ onOpenCalendar }) {
     }, [gameState, isRuntimeTrap, setGameState]);
 
     // Chevron helper — renders N chevrons stacked tight
-    const Chevrons = ({ count, size = 13 }) => (
-        <div className="tc-chevrons">
-            {Array.from({ length: count }, (_, i) => (
-                <ChevronRight key={i} size={size} strokeWidth={2.5} />
-            ))}
-        </div>
-    );
-
     return (
         <div className={`tc-panel ${isRuntimeTrap ? 'tc-system' : ''}`}>
             {/* Date + Time Display */}
@@ -263,7 +276,8 @@ export default function TimeController({ onOpenCalendar }) {
                     style={{ width: 34 }}
                     onClick={() => handleSetSpeed(0)}
                     disabled={isRuntimeTrap}
-                    title="Jeda (Space)"
+                    title={t('timeController.pauseShortcut')}
+                    aria-label={t('timeController.pauseShortcut')}
                 >
                     <Pause size={13} fill={activeIdx === 0 ? "currentColor" : "none"} />
                 </button>
@@ -274,7 +288,8 @@ export default function TimeController({ onOpenCalendar }) {
                     style={{ width: 34 }}
                     onClick={() => handleSetSpeed(1)}
                     disabled={isRuntimeTrap}
-                    title="Kecepatan Normal"
+                    title={t('timeController.normalSpeed')}
+                    aria-label={t('timeController.normalSpeed')}
                 >
                     <Play size={13} fill={activeIdx === 1 ? "currentColor" : "none"} />
                 </button>
@@ -285,9 +300,10 @@ export default function TimeController({ onOpenCalendar }) {
                     style={{ width: 38 }}
                     onClick={() => handleSetSpeed(2)}
                     disabled={isRuntimeTrap}
-                    title="Kecepatan Ganda"
+                    title={t('timeController.doubleSpeed')}
+                    aria-label={t('timeController.doubleSpeed')}
                 >
-                    <Chevrons count={2} />
+                    <TimeChevrons count={2} />
                 </button>
 
                 {/* 3x — ▶▶▶ */}
@@ -296,9 +312,10 @@ export default function TimeController({ onOpenCalendar }) {
                     style={{ width: 42 }}
                     onClick={() => handleSetSpeed(3)}
                     disabled={isRuntimeTrap}
-                    title="Kecepatan Tinggi"
+                    title={t('timeController.highSpeed')}
+                    aria-label={t('timeController.highSpeed')}
                 >
-                    <Chevrons count={3} />
+                    <TimeChevrons count={3} />
                 </button>
 
                 {/* 4x — ▶▶▶▶ */}
@@ -307,9 +324,10 @@ export default function TimeController({ onOpenCalendar }) {
                     style={{ width: 48 }}
                     onClick={() => handleSetSpeed(4)}
                     disabled={isRuntimeTrap}
-                    title="Kecepatan Maksimal"
+                    title={t('timeController.maxSpeed')}
+                    aria-label={t('timeController.maxSpeed')}
                 >
-                    <Chevrons count={4} size={14} />
+                    <TimeChevrons count={4} size={14} />
                 </button>
             </div>
         </div>

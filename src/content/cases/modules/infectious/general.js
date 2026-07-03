@@ -241,7 +241,7 @@ export const general_infectious = [
         id: 'tetanus',
         diagnosis: 'Tetanus',
         icd10: 'A35',
-        skdi: '4A',
+        skdi: '3B',
         category: 'Infection',
         symptoms: ['Kaku rahang', 'Kaku otot', 'Kejang', 'Sulit menelan'],
         clue: "Trismus (kaku rahang), risus sardonicus, opistotonus. Riwayat luka kotor. Belum vaksin atau status vaksin tidak jelas.",
@@ -286,6 +286,7 @@ export const general_infectious = [
         risk: 'high',
         nonReferrable: false,
         referralRequired: true,
+        referralTarget: 'rs_kabupaten',
         referralExceptions: [],
         differentialDiagnosis: ['G24.9', 'A34']
     },
@@ -508,7 +509,7 @@ export const general_infectious = [
         category: 'Infection',
         symptoms: ['Papul gatal', 'Vesikel kehitaman', 'Edema perilesional', 'Eschar hitam', 'Demam ringan'],
         clue: "Eschar hitam (painless black ulcer) dengan edema non-pitting di sekitarnya. Riwayat kontak hewan ternak mati mendadak atau pekerjaan pemotongan hewan (post-Idul Adha). Kasus zoonosis yang wajib dilaporkan (SKDR).",
-        relevantLabs: ['Darah Lengkap', 'Gram Stain'],
+        relevantLabs: ['Darah Lengkap', 'Gram Stain Lesi'],
         anamnesisQuestions: {
             keluhan_utama: [
                 {
@@ -557,6 +558,7 @@ export const general_infectious = [
         risk: 'high',
         nonReferrable: false,
         referralRequired: true,
+        referralTarget: 'rs_kabupaten',
         referralExceptions: [],
         differentialDiagnosis: ['L02.9', 'A28.9'],
         notifiable: true
@@ -616,6 +618,7 @@ export const general_infectious = [
         risk: 'critical',
         nonReferrable: false,
         referralRequired: true,
+        referralTarget: 'rs_kabupaten',
         referralExceptions: [],
         differentialDiagnosis: ['J03.9', 'J36', 'B27.9'],
         notifiable: true
@@ -672,6 +675,7 @@ export const general_infectious = [
         risk: 'critical',
         nonReferrable: false,
         referralRequired: true,
+        referralTarget: 'rs_kabupaten',
         referralExceptions: [],
         differentialDiagnosis: ['T14.1'],
         notifiable: true

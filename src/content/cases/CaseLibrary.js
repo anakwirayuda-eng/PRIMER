@@ -14,6 +14,7 @@ import { METABOLIC_CASES } from './modules/metabolic.js';
 import { OTHER_CASES } from './modules/others.js';
 import { EMERGENCY_CASES } from './modules/emergency.js';
 import { CHRONIC_CASES } from './modules/chronic.js';
+import { attachAuthoredDemographicProfile } from './CaseDemographics.js';
 
 /**
  * Unified Case Library
@@ -25,7 +26,7 @@ export const CASE_LIBRARY = [
     ...OTHER_CASES,
     ...EMERGENCY_CASES,
     ...CHRONIC_CASES
-];
+].map((caseData) => attachAuthoredDemographicProfile(caseData));
 
 export function getRandomCase() {
     return CASE_LIBRARY[Math.floor(Math.random() * CASE_LIBRARY.length)];

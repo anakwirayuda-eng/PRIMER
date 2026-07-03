@@ -10,6 +10,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { useGame } from '../context/GameContext.jsx';
 import { useGameStore } from '../store/useGameStore.js';
@@ -19,7 +20,30 @@ import { Package, ShoppingCart, Search, Filter, AlertTriangle, TrendingDown, Pac
 import OrderModal from './OrderModal.jsx';
 import { normalizeMedicationId } from '../models/InventoryRuntime.js';
 
+const CATEGORY_LABEL_KEYS = {
+    [MEDICATION_CATEGORIES.ANALGESIC]: 'analgesic',
+    [MEDICATION_CATEGORIES.ANTIBIOTIC]: 'antibiotic',
+    [MEDICATION_CATEGORIES.ANTIHYPERTENSIVE]: 'antihypertensive',
+    [MEDICATION_CATEGORIES.ANTIDIABETIC]: 'antidiabetic',
+    [MEDICATION_CATEGORIES.RESPIRATORY]: 'respiratory',
+    [MEDICATION_CATEGORIES.GASTROINTESTINAL]: 'gastrointestinal',
+    [MEDICATION_CATEGORIES.DERMATOLOGY]: 'dermatology',
+    [MEDICATION_CATEGORIES.SUPPLEMENT]: 'supplement',
+    [MEDICATION_CATEGORIES.PSYCHIATRY_NEURO]: 'psychiatryNeuro',
+    [MEDICATION_CATEGORIES.ENT_EYE]: 'entEye',
+    [MEDICATION_CATEGORIES.MEDICAL_EQUIPMENT]: 'medicalEquipment',
+    [MEDICATION_CATEGORIES.EQUIPMENT]: 'equipment',
+    [MEDICATION_CATEGORIES.LAB_REAGENT]: 'labReagent',
+    [MEDICATION_CATEGORIES.EMERGENCY]: 'emergency',
+    [MEDICATION_CATEGORIES.METABOLIC]: 'metabolic'
+};
+
+function translateCategory(t, category) {
+    return t(`inventoryPage.categories.${CATEGORY_LABEL_KEYS[category]}`, { defaultValue: category });
+}
+
 export default function InventoryPage() {
+    const { t } = useTranslation();
     const { pharmacyInventory, pendingOrders, day } = useGame();
     const procurementLog = useGameStore(state => state.finance.procurementLog || []);
     const [showOrderModal, setShowOrderModal] = useState(false);
@@ -110,14 +134,14 @@ export default function InventoryPage() {
                     <div className="flex items-center justify-between mb-4">
                         <h1 className="text-3xl font-bold flex items-center gap-3">
                             <Package size={32} />
-                            Logistik Farmasi & Alkes
+                            {t('inventoryPage.title')}
                         </h1>
                         <button
                             onClick={() => setShowOrderModal(true)}
                             className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 flex items-center gap-2 shadow-lg shadow-emerald-200 transition-all active:scale-95"
                         >
                             <ShoppingCart size={20} />
-                            Buat Pesanan
+                            {t('inventoryPage.createOrder')}
                         </button>
                     </div>
 
@@ -129,7 +153,7 @@ export default function InventoryPage() {
                                     <Package2 size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-blue-600 font-bold">Total Items</p>
+                                    <p className="text-xs text-blue-600 font-bold">{t('inventoryPage.stats.totalItems')}</p>
                                     <p className="text-2xl font-black text-blue-900">{stats.totalItems}</p>
                                 </div>
                             </div>
@@ -141,7 +165,7 @@ export default function InventoryPage() {
                                     <TrendingDown size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-amber-600 font-bold">Low Stock</p>
+                                    <p className="text-xs text-amber-600 font-bold">{t('inventoryPage.stats.lowStock')}</p>
                                     <p className="text-2xl font-black text-amber-900">{stats.lowStock}</p>
                                 </div>
                             </div>
@@ -153,7 +177,7 @@ export default function InventoryPage() {
                                     <AlertTriangle size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-rose-600 font-bold">Out of Stock</p>
+                                    <p className="text-xs text-rose-600 font-bold">{t('inventoryPage.stats.outOfStock')}</p>
                                     <p className="text-2xl font-black text-rose-900">{stats.outOfStock}</p>
                                 </div>
                             </div>
@@ -165,7 +189,7 @@ export default function InventoryPage() {
                                     <BarChart3 size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-emerald-600 font-bold">Total Value</p>
+                                    <p className="text-xs text-emerald-600 font-bold">{t('inventoryPage.stats.totalValue')}</p>
                                     <p className="text-xl font-black text-emerald-900">
                                         Rp {(stats.totalValue / 1000000).toFixed(1)}M
                                     </p>
@@ -179,10 +203,10 @@ export default function InventoryPage() {
                                     <ClipboardList size={18} />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-indigo-600 font-bold">Pending Orders</p>
+                                    <p className="text-xs text-indigo-600 font-bold">{t('inventoryPage.stats.pendingOrders')}</p>
                                     <p className="text-2xl font-black text-indigo-900">{stats.pendingOrders}</p>
                                     {stats.overdueOrders > 0 && (
-                                        <p className="text-[10px] font-bold text-rose-600">⚠ {stats.overdueOrders} overdue</p>
+                                        <p className="text-[10px] font-bold text-rose-600">{t('inventoryPage.stats.overdueOrders', { count: stats.overdueOrders })}</p>
                                     )}
                                 </div>
                             </div>
@@ -198,7 +222,7 @@ export default function InventoryPage() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
-                            placeholder="Cari obat atau alkes..."
+                            placeholder={t('inventoryPage.searchPlaceholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
@@ -211,9 +235,9 @@ export default function InventoryPage() {
                             onChange={(e) => setSelectedCategory(e.target.value)}
                             className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-semibold"
                         >
-                            <option value="all">Semua Kategori</option>
+                            <option value="all">{t('inventoryPage.allCategories')}</option>
                             {Object.values(MEDICATION_CATEGORIES).map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
+                                <option key={cat} value={cat}>{translateCategory(t, cat)}</option>
                             ))}
                         </select>
                     </div>
@@ -228,16 +252,16 @@ export default function InventoryPage() {
                             <thead className="bg-slate-50 border-b sticky top-0">
                                 <tr>
                                     <th className="text-left px-6 py-3 text-xs font-bold text-slate-600 uppercase">
-                                        Nama Obat/Alkes
+                                        {t('inventoryPage.table.name')}
                                     </th>
                                     <th className="text-center px-6 py-3 text-xs font-bold text-slate-600 uppercase">
-                                        Stok
+                                        {t('inventoryPage.table.stock')}
                                     </th>
                                     <th className="text-center px-6 py-3 text-xs font-bold text-slate-600 uppercase">
-                                        Min Stock
+                                        {t('inventoryPage.table.minStock')}
                                     </th>
                                     <th className="text-right px-6 py-3 text-xs font-bold text-slate-600 uppercase">
-                                        Harga/Unit
+                                        {t('inventoryPage.table.unitPrice')}
                                     </th>
                                 </tr>
                             </thead>
@@ -254,7 +278,7 @@ export default function InventoryPage() {
                                                 <td className="px-6 py-4">
                                                     <div>
                                                         <p className="font-semibold text-slate-800">{med.name}</p>
-                                                        <p className="text-xs text-slate-500">{med.category}</p>
+                                                        <p className="text-xs text-slate-500">{translateCategory(t, med.category)}</p>
                                                     </div>
                                                 </td>
                                                 <td className="text-center px-6 py-4">
@@ -282,8 +306,8 @@ export default function InventoryPage() {
                         {filteredMeds.length === 0 && (
                             <div className="py-12 text-center text-slate-500">
                                 <Package size={48} className="mx-auto mb-3 opacity-30" />
-                                <p className="font-semibold">Tidak ada hasil ditemukan</p>
-                                <p className="text-xs mt-1">Coba ubah kata kunci atau filter kategori</p>
+                                <p className="font-semibold">{t('inventoryPage.emptyTitle')}</p>
+                                <p className="text-xs mt-1">{t('inventoryPage.emptyHint')}</p>
                             </div>
                         )}
                     </div>
@@ -295,12 +319,12 @@ export default function InventoryPage() {
                             className="w-full flex items-center justify-between px-6 py-4 bg-slate-50 border-b text-left"
                         >
                             <div>
-                                <p className="text-sm font-bold text-slate-800">Riwayat Pembelian</p>
-                                <p className="text-xs text-slate-500">Log audit pengadaan farmasi dan alkes</p>
+                                <p className="text-sm font-bold text-slate-800">{t('inventoryPage.procurement.title')}</p>
+                                <p className="text-xs text-slate-500">{t('inventoryPage.procurement.subtitle')}</p>
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-full">
-                                    {procurementEntries.length} log
+                                    {t('inventoryPage.procurement.logCount', { count: procurementEntries.length })}
                                 </span>
                                 <ChevronDown
                                     size={18}
@@ -313,18 +337,18 @@ export default function InventoryPage() {
                             procurementEntries.length === 0 ? (
                                 <div className="px-6 py-10 text-center text-slate-500">
                                     <ClipboardList size={28} className="mx-auto mb-3 opacity-40" />
-                                    <p className="font-semibold">Belum ada pembelian</p>
+                                    <p className="font-semibold">{t('inventoryPage.procurement.empty')}</p>
                                 </div>
                             ) : (
                                 <div className="max-h-80 overflow-y-auto">
                                     <table className="w-full">
                                         <thead className="bg-slate-50 sticky top-0 border-b">
                                             <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">Hari</th>
+                                                <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">{t('inventoryPage.procurement.day')}</th>
                                                 <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">Supplier</th>
-                                                <th className="px-6 py-3 text-center text-xs font-bold text-slate-600 uppercase">Items</th>
-                                                <th className="px-6 py-3 text-right text-xs font-bold text-slate-600 uppercase">Total Cost</th>
-                                                <th className="px-6 py-3 text-center text-xs font-bold text-slate-600 uppercase">Type</th>
+                                                <th className="px-6 py-3 text-center text-xs font-bold text-slate-600 uppercase">{t('inventoryPage.procurement.items')}</th>
+                                                <th className="px-6 py-3 text-right text-xs font-bold text-slate-600 uppercase">{t('inventoryPage.procurement.totalCost')}</th>
+                                                <th className="px-6 py-3 text-center text-xs font-bold text-slate-600 uppercase">{t('inventoryPage.procurement.type')}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -336,7 +360,7 @@ export default function InventoryPage() {
                                                         : 'REGULAR';
                                                 return (
                                                     <tr key={`${entry.orderId || 'log'}-${entry.timestamp || index}`} className="border-b hover:bg-slate-50">
-                                                        <td className="px-6 py-3 text-sm text-slate-700">Hari {entry.day ?? '-'}</td>
+                                                        <td className="px-6 py-3 text-sm text-slate-700">{t('inventoryPage.procurement.dayValue', { day: entry.day ?? '-' })}</td>
                                                         <td className="px-6 py-3 text-sm text-slate-700">{entry.supplierName || entry.supplierId || '-'}</td>
                                                         <td className="px-6 py-3 text-center text-sm font-semibold text-slate-700">{entry.itemCount || 0}</td>
                                                         <td className="px-6 py-3 text-right text-sm font-semibold text-slate-700">

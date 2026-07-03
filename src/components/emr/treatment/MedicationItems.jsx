@@ -10,10 +10,14 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pill, CheckCircle, Plus, Info, Brain } from 'lucide-react';
 import { findWikiKey } from '../../../data/WikiData.js';
+import { localizeClinicalText } from '../../../utils/clinicalContentLocalization.js';
 
 export function MedicationItem({ med, isDark, isSelected, toggleMed, openWiki }) {
+    const { i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
     const wikiKey = findWikiKey('med', med.id);
 
     return (
@@ -28,7 +32,7 @@ export function MedicationItem({ med, isDark, isSelected, toggleMed, openWiki })
                     <Pill size={14} className={isSelected ? 'text-white' : 'text-emerald-500 opacity-50'} />
                     <div className="truncate">
                         <p className="text-xs font-bold leading-none">{med.name}</p>
-                        <p className={`text-[9px] mt-0.5 opacity-60`}>{med.category}</p>
+                        <p className={`text-[9px] mt-0.5 opacity-60`}>{localizeClinicalText(med.category, locale)}</p>
                     </div>
                 </div>
                 {isSelected && <CheckCircle size={14} />}
@@ -46,6 +50,8 @@ export function MedicationItem({ med, isDark, isSelected, toggleMed, openWiki })
 }
 
 export function RecommendedMed({ med, isDark, isSelected, toggleMed, openWiki }) {
+    const { i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
     const wikiKey = findWikiKey('med', med.id);
 
     return (
@@ -62,7 +68,7 @@ export function RecommendedMed({ med, isDark, isSelected, toggleMed, openWiki })
                     </div>
                     <div className="truncate">
                         <p className="text-xs font-black leading-tight uppercase tracking-tight">{med.name}</p>
-                        <p className={`text-[10px] font-medium opacity-70`}>{med.category}</p>
+                        <p className={`text-[10px] font-medium opacity-70`}>{localizeClinicalText(med.category, locale)}</p>
                     </div>
                 </div>
                 {isSelected ? <CheckCircle size={14} /> : <Plus size={14} className="opacity-30 group-hover:opacity-100" />}

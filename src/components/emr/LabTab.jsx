@@ -12,9 +12,18 @@
  */
 
 import React, { useMemo, useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Microscope, AlertCircle, Info, FlaskConical, Sparkles, CheckCircle2, ChevronRight, Activity, FileWarning } from 'lucide-react';
 import { findWikiKey } from '../../data/WikiData.js';
 import { LAB_CATALOG } from '../../game/LabEngine.js';
+import {
+    getSupportedRelevantLabOrderables,
+    getUnsupportedRelevantLabEntries,
+    inferLabFlag,
+    resolveLabOrderDefinition,
+    summarizeLabResult,
+} from '../../utils/labs.js';
+import { localizeClinicalText } from '../../utils/clinicalContentLocalization.js';
 
 // Common labs available at FKTP — always orderable regardless of case
 // Codex Fix: prices aligned with LAB_CATALOG canonical costs
@@ -22,7 +31,7 @@ const COMMON_LABS = [
     { id: 'darah_lengkap', name: 'Darah Lengkap (DL)', cost: LAB_CATALOG.darah_lengkap?.cost || 25000, result: 'Hb 13.2 g/dL, Leukosit 7.800/µL, Trombosit 245.000/µL, Ht 40%', flag: 'normal' },
     { id: 'gds', name: 'Gula Darah Sewaktu (GDS)', cost: LAB_CATALOG.gds?.cost || 10000, result: '98 mg/dL', flag: 'normal' },
     { id: 'urinalisis', name: 'Urinalisis', cost: LAB_CATALOG.urinalisis?.cost || 15000, result: 'pH 6.0, Protein (-), Glukosa (-), Leukosit (-)', flag: 'normal' },
-    { id: 'kolesterol', name: 'Kolesterol Total', cost: LAB_CATALOG.kolesterol_total?.cost || 20000, result: '185 mg/dL', flag: 'normal' },
+    { id: 'kolesterol_total', name: 'Kolesterol Total', cost: LAB_CATALOG.kolesterol_total?.cost || 20000, result: '185 mg/dL', flag: 'normal' },
     { id: 'asam_urat', name: 'Asam Urat', cost: LAB_CATALOG.asam_urat?.cost || 15000, result: '5.2 mg/dL', flag: 'normal' },
 ];
 
@@ -34,8 +43,12 @@ const LAB_CSS = `
 `;
 
 export default function LabTab({ patient: _patient, isDark, labsRevealed, handleOrderLab, caseData, openWiki, maiaSuggestions, anamnesisScore }) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
+    const localize = (value) => localizeClinicalText(value, locale);
     // Cherry-pick 2: Suspense delay state
     const [processingLabs, setProcessingLabs] = useState({});
+    const unsupportedRelevantLabs = useMemo(() => getUnsupportedRelevantLabEntries(caseData), [caseData]);
 
     // Merge case-specific labs with common labs (deduplicate by name)
     const allLabs = useMemo(() => {
@@ -47,35 +60,41 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
             if (typeof s !== 'string') return String(s || '').toLowerCase().trim();
             return s.toLowerCase().replace(/\s*\(.*?\)/, '').replace(/_/g, ' ').trim();
         };
-        const seenNorms = new Set(Object.keys(caseLabs).map(normalize));
+        const seenNorms = new Set();
         const merged = [];
 
         // Case-specific labs first (primary)
         try {
             Object.entries(caseLabs).forEach(([labName, labData]) => {
                 const safeData = (labData && typeof labData === 'object') ? labData : { result: String(labData || ''), cost: 50000 };
-                const catalogEntry = LAB_CATALOG[labName];
-                merged.push({ id: labName, name: catalogEntry?.name || labName, ...safeData, isCase: true });
+                const resolved = resolveLabOrderDefinition(caseData, labName);
+                const entryId = resolved?.id || labName;
+                if (seenNorms.has(normalize(entryId)) || seenNorms.has(normalize(labName))) return;
+                seenNorms.add(normalize(entryId));
+                seenNorms.add(normalize(labName));
+                merged.push({
+                    id: entryId,
+                    name: resolved?.label || labName,
+                    cost: Number(resolved?.cost) || Number(safeData.cost) || 50000,
+                    result: safeData.result,
+                    flag: safeData.flag || null,
+                    isCase: true,
+                });
             });
         } catch (e) {
             console.warn('[LabTab] Error processing case labs:', e);
         }
 
-        // Codex Fix: include relevantLabs from patient generator (BTA Sputum, Widal, etc.)
-        const relevantLabs = caseData?.relevantLabs || [];
-        relevantLabs.forEach(labNameOrId => {
-            const labId = typeof labNameOrId === 'string'
-                ? labNameOrId.toLowerCase().replace(/\s+/g, '_').replace(/[()]/g, '')
-                : labNameOrId;
-            if (seenNorms.has(normalize(labId))) return;
-            seenNorms.add(normalize(labId));
-            // Try to find in LAB_CATALOG for proper pricing
-            const catalogEntry = LAB_CATALOG[labId];
-            if (catalogEntry) {
-                merged.push({ id: catalogEntry.id, name: catalogEntry.name, cost: catalogEntry.cost, isCase: true });
-            } else {
-                merged.push({ id: labId, name: labNameOrId, cost: 50000, isCase: true });
-            }
+        getSupportedRelevantLabOrderables(caseData).forEach((lab) => {
+            if (seenNorms.has(normalize(lab.id)) || seenNorms.has(normalize(lab.label))) return;
+            seenNorms.add(normalize(lab.id));
+            seenNorms.add(normalize(lab.label));
+            merged.push({
+                id: lab.id,
+                name: lab.label,
+                cost: Number(lab.cost) || 50000,
+                isCase: true,
+            });
         });
 
         // Common labs that aren't already in case data (fuzzy match)
@@ -93,9 +112,10 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
 
     // Cleanup pending lab timers on unmount
     useEffect(() => {
+        const pendingTimers = pendingTimersRef.current;
         return () => {
-            pendingTimersRef.current.forEach(timerId => clearTimeout(timerId));
-            pendingTimersRef.current.clear();
+            pendingTimers.forEach(timerId => clearTimeout(timerId));
+            pendingTimers.clear();
         };
     }, []);
 
@@ -134,8 +154,8 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                         <AlertCircle size={14} />
                     </div>
                     <div>
-                        <h5 className="text-[10px] font-black uppercase tracking-widest mb-1">Kendali Mutu & Biaya</h5>
-                        <p className="text-[11px] leading-tight opacity-80">Setiap pemeriksaan laboratorium memotong plafon Kapitasi. Gunakan secara bijak sesuai indikasi klinis.</p>
+                        <h5 className="text-[10px] font-black uppercase tracking-widest mb-1">{t('emrWorkspace.labs.qualityTitle')}</h5>
+                        <p className="text-[11px] leading-tight opacity-80">{t('emrWorkspace.labs.qualityDescription')}</p>
                     </div>
                 </div>
 
@@ -150,15 +170,29 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                                 <Sparkles size={16} />
                             </div>
                             <div>
-                                <h4 className="text-[10px] font-black uppercase tracking-widest mb-0.5 opacity-80">Saran MAIA</h4>
+                                <h4 className="text-[10px] font-black uppercase tracking-widest mb-0.5 opacity-80">{t('emrWorkspace.labs.maiaTitle')}</h4>
                                 {maiaSuggestions?.length > 0 ? (
                                     <p className="text-xs font-medium">
-                                        Pertimbangkan untuk memeriksa: <span className="font-bold text-indigo-600 dark:text-indigo-300">{maiaSuggestions.map(s => s.label).join(', ')}</span>
+                                        {t('emrWorkspace.labs.maiaConsider', { items: '' })}<span className="font-bold text-indigo-600 dark:text-indigo-300">{maiaSuggestions.map(s => localize(s.label)).join(', ')}</span>
                                     </p>
                                 ) : (
-                                    <p className="text-xs font-medium opacity-90">✨ Tidak ada usulan pemeriksaan laboratorium lebih lanjut.</p>
+                                    <p className="text-xs font-medium opacity-90">{t('emrWorkspace.labs.maiaNoMore')}</p>
                                 )}
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {unsupportedRelevantLabs.length > 0 && (
+                    <div className={`p-3 rounded-xl border flex items-start gap-3 ${isDark ? 'bg-amber-950/20 border-amber-900/50 text-amber-200' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
+                        <div className={`p-1.5 rounded-lg ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-600'}`}>
+                            <AlertCircle size={14} />
+                        </div>
+                        <div>
+                            <h4 className="text-[10px] font-black uppercase tracking-widest mb-0.5">{t('emrWorkspace.labs.unsupportedTitle')}</h4>
+                            <p className="text-xs leading-snug">
+                                {t('emrWorkspace.labs.unsupportedDescription', { items: unsupportedRelevantLabs.map((entry) => localize(entry.label)).join(', ') })}
+                            </p>
                         </div>
                     </div>
                 )}
@@ -170,7 +204,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                 {/* LEFT (40%): Order Catalog — static, scrollable */}
                 <div className={`lg:col-span-5 flex flex-col min-h-0 lg:border-r lg:pr-4 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
                     <h4 className={`text-[10px] font-black uppercase tracking-[0.2em] mb-3 shrink-0 flex items-center gap-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                        <Microscope size={12} /> Katalog Pemeriksaan
+                        <Microscope size={12} /> {t('emrWorkspace.labs.catalogTitle')}
                     </h4>
 
                     <div className="flex-1 overflow-y-auto thin-scrollbar space-y-2 pr-1">
@@ -178,7 +212,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                             const labId = lab.id || lab.name;
                             const isRevealed = labsRevealed[labId];
                             const isProcessing = processingLabs[labId];
-                            const displayName = lab.name || labId;
+                            const displayName = localize(lab.name || labId);
                             const labCost = Number(lab.cost) || 50000;
                             const wikiKey = findWikiKey('lab', labId);
 
@@ -204,7 +238,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                                             </span>
                                             {!lab.isCase && !isRevealed && (
                                                 <span className={`shrink-0 px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest ${isDark ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-blue-100 text-blue-600 border border-blue-200'}`}>
-                                                    Umum
+                                                    {t('emrWorkspace.labs.commonBadge')}
                                                 </span>
                                             )}
                                         </div>
@@ -236,7 +270,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                         {allLabs.length === 0 && (
                             <div className="flex flex-col items-center justify-center py-12 opacity-30">
                                 <Microscope size={48} className="mb-2" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">Fasilitas Lab Terbatas</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest">{t('emrWorkspace.labs.noLabs')}</p>
                             </div>
                         )}
                     </div>
@@ -246,10 +280,10 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                 <div className="lg:col-span-7 flex flex-col min-h-0">
                     <div className="flex items-center justify-between mb-3 shrink-0">
                         <h4 className={`text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-1.5 ${isDark ? 'text-emerald-500' : 'text-emerald-700'}`}>
-                            <FlaskConical size={12} /> Hasil Laboratorium
+                            <FlaskConical size={12} /> {t('emrWorkspace.labs.resultsTitle')}
                         </h4>
                         <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-widest ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
-                            {completedCount} TEREKAM
+                            {t('emrWorkspace.labs.recorded', { count: completedCount })}
                         </span>
                     </div>
 
@@ -260,7 +294,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                             <div className={`h-full flex flex-col items-center justify-center border-2 border-dashed rounded-2xl ${isDark ? 'border-slate-800 bg-slate-900/20' : 'border-slate-200 bg-slate-50/50'}`}>
                                 <Microscope size={40} className="mb-3 opacity-20" />
                                 <p className={`text-[10px] font-mono uppercase tracking-[0.2em] font-bold ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-                                    Belum Ada Sampel Diproses
+                                    {t('emrWorkspace.labs.emptySamples')}
                                 </p>
                             </div>
                         )}
@@ -273,7 +307,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                                     <div className="flex items-center gap-2">
                                         <Activity size={14} className="text-cyan-500 animate-pulse" />
                                         <span className={`text-[10px] font-mono font-black uppercase tracking-widest ${isDark ? 'text-cyan-400' : 'text-cyan-700'}`}>
-                                            ANALYZING: {labInfo?.name || labInfo?.id || id}
+                                            {t('emrWorkspace.labs.analyzing', { name: localize(labInfo?.name || labInfo?.id || id) })}
                                         </span>
                                     </div>
                                     <div className="lab-proc-bar"><div className="lab-proc-fill" /></div>
@@ -288,9 +322,9 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
 
                             // PRIORITY: engine result (labsRevealed) > static default (labInfo.result)
                             const revealedData = labsRevealed[labKey];
-                            const engineResult = typeof revealedData === 'object' ? revealedData?.result : (typeof revealedData === 'string' ? revealedData : null);
-                            const labResult = engineResult || labInfo.result || 'Dalam batas normal';
-                            const labFlag = (typeof revealedData === 'object' ? revealedData?.flag : null) || labInfo.flag || 'normal';
+                            const engineResult = summarizeLabResult(revealedData);
+                            const labResult = localize(engineResult || labInfo.result || t('emrWorkspace.labs.defaultNormalResult'));
+                            const labFlag = (typeof revealedData === 'object' ? inferLabFlag(revealedData) : null) || labInfo.flag || 'normal';
                             const isAbnormal = labFlag !== 'normal' && labFlag !== 'negative';
 
                             return (
@@ -307,7 +341,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                                     <div className={`p-4 flex justify-between items-center ${isDark && !isAbnormal && 'bg-emerald-500/5 rounded-t-xl'}`}>
                                         <div className="flex items-center gap-2 pl-2">
                                             <span className={`font-black text-[11px] uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-700'}`}>
-                                                {labInfo.name || labKey}
+                                                {localize(labInfo.name || labKey)}
                                             </span>
                                         </div>
                                         <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md border ${isAbnormal
@@ -320,7 +354,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
 
                                     <div className={`p-4 pt-0 pl-6 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                                         <div className="flex flex-col">
-                                            <span className="text-[8px] font-bold uppercase tracking-[0.2em] opacity-40 mb-1">Result</span>
+                                            <span className="text-[8px] font-bold uppercase tracking-[0.2em] opacity-40 mb-1">{t('emrWorkspace.labs.resultLabel')}</span>
                                             <span className="text-sm font-black tracking-tight">{labResult}</span>
                                         </div>
                                     </div>
@@ -330,7 +364,7 @@ export default function LabTab({ patient: _patient, isDark, labsRevealed, handle
                                         <div className={`mx-4 mb-3 pt-3 border-t flex items-start gap-1.5 ${isDark ? 'border-slate-800 text-amber-500/70' : 'border-slate-200 text-amber-600'}`}>
                                             <FileWarning size={11} className="mt-0.5 shrink-0" />
                                             <span className="text-[9px] font-mono font-bold uppercase tracking-widest leading-tight">
-                                                System Note: Tidak terdapat indikasi EBM spesifik untuk kasus ini. Terjadi inefisiensi biaya JKN.
+                                                {t('emrWorkspace.labs.systemNote')}
                                             </span>
                                         </div>
                                     )}

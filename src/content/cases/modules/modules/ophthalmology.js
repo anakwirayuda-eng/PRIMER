@@ -378,7 +378,7 @@ export const OPHTHALMOLOGY_CASES = [
             sosial: [{ id: 'q_screen', text: 'Anaknya sering main HP atau tablet nggak?', response: 'Iya dok, tiap hari main game dari siang sampai malam.', sentiment: 'confirmation' }]
         },
         essentialQuestions: ['q_main', 'q_squint'],
-        anamnesis: ["Anak saya nggak bisa lihat papan tulis di sekolah dok.", "Mata saya kabur kalau lihat jauh, harus disipitin baru agak jelas."],
+        anamnesis: ["Anak saya nggak bisa lihat papan tulis di sekolah dok.", "Kalau lihat jauh anak saya suka menyipitkan mata dan bilang tulisannya kabur."],
         physicalExamFindings: { general: "Tampak baik.", vitals: "TD -, N 82x, RR 18x, S 36.7°C", eyes: "Visus: OD 6/15, OS 6/12. Koreksi: OD S-1.50, OS S-1.25 → 6/6. Near vision: normal. Segmen anterior normal." },
         labs: {}, vitals: { temp: 36.7, bp: '-', hr: 82, rr: 18 },
         correctTreatment: ['corrective_lenses_minus'],
@@ -408,7 +408,7 @@ export const OPHTHALMOLOGY_CASES = [
             rpk: [], sosial: [{ id: 'q_economy', text: 'Kalau boleh tau, kondisi ekonomi keluarganya gimana bu?', response: 'Susah dok, sehari bisa makan satu kali aja.', sentiment: 'confirmation' }]
         },
         essentialQuestions: ['q_main', 'q_dry', 'q_nutrition'],
-        anamnesis: ["Anak saya nggak bisa lihat kalau malam/gelap dok.", "Matanya kering dok, sering kebentur kalau jalan malam-malam."],
+        anamnesis: ["Anak saya nggak bisa lihat kalau malam atau gelap dok.", "Matanya terlihat kering dan kalau jalan malam sering menabrak barang di rumah."],
         physicalExamFindings: { general: "Anak tampak kurus, pucat, rambut kemerahan.", vitals: "TD -, N 100x, RR 22x, S 36.5°C", eyes: "Konjungtiva: kering, Bitot spot (+) di temporal bilateral. Kornea: sedikit haze. Visus sulit dinilai (anak kecil). Funduskopi: normal." },
         labs: { "Darah Lengkap": { result: "Hb 9.0, MCV rendah (anemia def besi)", cost: 50000 } },
         vitals: { temp: 36.5, bp: '-', hr: 100, rr: 22 },

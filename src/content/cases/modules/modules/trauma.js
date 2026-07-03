@@ -32,7 +32,7 @@ export const TRAUMA_CASES = [
         correctTreatment: ['nasal_cannula', 'rl_500'],
         correctProcedures: ['needle_decompression', 'airway_management'],
         requiredEducation: ['red_flag_monitor'],
-        risk: 'emergency', nonReferrable: false, referralExceptions: ['emergency_stabilization'],
+        risk: 'emergency', nonReferrable: false, referralRequired: true, referralTarget: 'rs_kabupaten', referralExceptions: ['emergency_stabilization'],
         differentialDiagnosis: ['I21.9','I26.9']
     },
     {

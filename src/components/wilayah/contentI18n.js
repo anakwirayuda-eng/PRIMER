@@ -113,3 +113,72 @@ export function localizeBuildingScene(sceneId, scene, t) {
             : scene.completionReward
     };
 }
+
+function getIkmScenarioBaseKey(scenario) {
+    const category = scenario?.category || 'general';
+    const id = scenario?.id || 'unknown';
+    return `wilayahContent.ikmScenarios.${category}.${id}`;
+}
+
+function localizePhaseQuestionSet(t, phaseKey, alternatePhaseKey, group, fallback = {}) {
+    if (!isPlainObject(fallback)) return fallback;
+    return {
+        ...fallback,
+        question: translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, `${group}.question`, fallback.question),
+        correct: translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, `${group}.correct`, fallback.correct),
+        options: Array.isArray(fallback.options)
+            ? fallback.options.map((option, index) => (
+                translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, `${group}.options.${index}`, option)
+            ))
+            : fallback.options
+    };
+}
+
+function translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, field, fallback, options = {}) {
+    const translated = translateWilayahString(t, `${phaseKey}.${field}`, fallback, options);
+    if (translated !== fallback || !alternatePhaseKey) return translated;
+    return translateWilayahString(t, `${alternatePhaseKey}.${field}`, fallback, options);
+}
+
+function localizeScenarioChoice(t, phaseKey, alternatePhaseKey, choice, choiceIndex) {
+    return {
+        ...choice,
+        text: translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, `choices.${choiceIndex}.text`, choice.text),
+        feedback: translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, `choices.${choiceIndex}.feedback`, choice.feedback)
+    };
+}
+
+export function localizeIKMScenario(scenario, t) {
+    if (!scenario) return scenario;
+
+    const baseKey = getIkmScenarioBaseKey(scenario);
+    const phaseBaseKey = `wilayahContent.ikmScenarioPhases.${scenario.category || 'general'}.${scenario.id || 'unknown'}`;
+    return {
+        ...scenario,
+        title: translateWilayahString(t, `${baseKey}.title`, scenario.title),
+        description: translateWilayahString(t, `${baseKey}.description`, scenario.description),
+        categoryLabel: translateWilayahString(t, `wilayahContent.ikmCategories.${scenario.category}`, scenario.category),
+        phases: Array.isArray(scenario.phases)
+            ? scenario.phases.map((phase, phaseIndex) => {
+                const phaseKey = `${baseKey}.phases.${phase.id || phaseIndex}`;
+                const alternatePhaseKey = `${phaseBaseKey}.${phase.id || phaseIndex}`;
+                return {
+                    ...phase,
+                    speaker: translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, 'speaker', phase.speaker),
+                    text: translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, 'text', phase.text),
+                    description: translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, 'description', phase.description),
+                    question: translateScenarioPhaseString(t, phaseKey, alternatePhaseKey, 'question', phase.question),
+                    choices: Array.isArray(phase.choices)
+                        ? phase.choices.map((choice, choiceIndex) => localizeScenarioChoice(t, phaseKey, alternatePhaseKey, choice, choiceIndex))
+                        : phase.choices,
+                    who: localizePhaseQuestionSet(t, phaseKey, alternatePhaseKey, 'who', phase.who),
+                    what: localizePhaseQuestionSet(t, phaseKey, alternatePhaseKey, 'what', phase.what),
+                    where: localizePhaseQuestionSet(t, phaseKey, alternatePhaseKey, 'where', phase.where),
+                    when: localizePhaseQuestionSet(t, phaseKey, alternatePhaseKey, 'when', phase.when),
+                    why: localizePhaseQuestionSet(t, phaseKey, alternatePhaseKey, 'why', phase.why),
+                    how: localizePhaseQuestionSet(t, phaseKey, alternatePhaseKey, 'how', phase.how)
+                };
+            })
+            : scenario.phases
+    };
+}

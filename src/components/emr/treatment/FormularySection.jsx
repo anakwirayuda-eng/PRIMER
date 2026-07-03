@@ -10,6 +10,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, Brain } from 'lucide-react';
 import { MedicationItem, RecommendedMed } from './MedicationItems.jsx';
 
@@ -17,11 +18,13 @@ export default function FormularySection({
     isDark, medQuery, setMedQuery, filteredMeds,
     suggestedMeds, selectedMeds, toggleMed, openWiki
 }) {
+    const { t } = useTranslation();
+
     return (
         <div className="flex flex-col gap-3 min-h-0">
             <div className="flex items-center justify-between">
                 <h4 className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-emerald-400' : 'text-slate-500'}`}>
-                    Formularium Puskesmas
+                    {t('emrWorkspace.treatment.formularyTitle')}
                 </h4>
             </div>
 
@@ -29,7 +32,7 @@ export default function FormularySection({
                 <Search size={14} className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${isDark ? 'text-slate-500 group-focus-within:text-emerald-500' : 'text-slate-400 group-focus-within:text-emerald-600'}`} />
                 <input
                     type="text"
-                    placeholder="Cari obat (generik/merek)..."
+                    placeholder={t('emrWorkspace.treatment.searchPlaceholder')}
                     className={`w-full pl-9 pr-4 py-2.5 rounded-xl border-2 text-xs transition-all outline-none font-bold ${isDark
                         ? 'bg-slate-900/50 border-slate-800 text-white focus:border-emerald-500 focus:bg-slate-900 group-focus-within:shadow-[0_0_15px_rgba(16,185,129,0.1)]'
                         : 'bg-slate-50 border-slate-100 text-slate-800 focus:border-emerald-500 focus:bg-white'}`}
@@ -43,7 +46,7 @@ export default function FormularySection({
                 {suggestedMeds.length > 0 && !medQuery && (
                     <div>
                         <div className={`text-[9px] font-black uppercase tracking-widest mb-2 flex items-center gap-1.5 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                            <Brain size={12} /> Rekomendasi MAIA
+                            <Brain size={12} /> {t('emrWorkspace.treatment.maiaRecommendations')}
                         </div>
                         <div className="grid grid-cols-1 gap-2">
                             {suggestedMeds.map(med => (
@@ -61,7 +64,7 @@ export default function FormularySection({
                 )}
 
                 <div>
-                    <div className={`text-[9px] font-black uppercase tracking-widest mb-2 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Katalog Obat</div>
+                    <div className={`text-[9px] font-black uppercase tracking-widest mb-2 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{t('emrWorkspace.treatment.medicineCatalog')}</div>
                     <div className="grid grid-cols-1 gap-2">
                         {filteredMeds.map(med => (
                             <MedicationItem

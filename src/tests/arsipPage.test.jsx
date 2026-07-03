@@ -4,6 +4,28 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const mockUseGame = vi.fn();
 
+const translations = {
+    'archive.tabs.daily': 'Log Kunjungan Harian',
+    'archive.tabs.folders': 'Family Folder (Rekam Medis)',
+    'archive.badges.action.delegate': 'DELEGASI',
+    'archive.badges.action.refer': 'RUJUK',
+    'archive.badges.action.ikm': 'IKM',
+    'archive.badges.status.delegated': 'Didelegasikan',
+    'archive.badges.status.refer_sisrute': 'Rujuk SISRUTE',
+    'archive.badges.status.success': 'Berhasil',
+    'archive.search_folders_placeholder': 'Cari KK / Kepala Keluarga...',
+    'archive.search_patients_placeholder': 'Cari Pasien...',
+    'archive.filter_state.clear': 'Hapus filter',
+    'archive.empty.search_title': 'Tidak Ada Hasil',
+    'archive.empty.daily_search_description': 'Tidak ditemukan log kunjungan dengan kata kunci "{{query}}"',
+};
+
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key, options = {}) => translations[key] ?? options.defaultValue ?? key
+    })
+}));
+
 vi.mock('../context/GameContext.jsx', () => ({
     useGame: () => mockUseGame()
 }));
@@ -96,5 +118,72 @@ describe('ArsipPage daily log semantics', () => {
         expect(screen.getByText('Berhasil')).toBeInTheDocument();
         expect(screen.getByText('BAB Sembarangan di Sungai')).toBeInTheDocument();
         expect(screen.getByText('Biaya Rp 300.000 • IKS +5 • Risiko diare turun')).toBeInTheDocument();
+    });
+    it('keeps folder and daily searches isolated per tab', () => {
+        mockUseGame.mockReturnValue({
+            history: [
+                {
+                    id: 'enc-3',
+                    day: 7,
+                    dischargedAt: 600,
+                    name: 'Siti',
+                    decision: { action: 'treat' },
+                    outcomeStatus: 'correct',
+                    medicalData: { trueDiagnosisCode: 'A09' }
+                }
+            ],
+            villageData: {
+                families: [
+                    {
+                        id: 'fam-1',
+                        headName: 'Pak Budi',
+                        members: [],
+                        indicators: {}
+                    }
+                ]
+            },
+            day: 7,
+            viewParams: null,
+            navigate: vi.fn()
+        });
+
+        render(<ArsipPage />);
+
+        fireEvent.change(screen.getByRole('textbox'), { target: { value: 'zzz' } });
+        fireEvent.click(screen.getByRole('button', { name: /log kunjungan harian/i }));
+
+        expect(screen.getByRole('textbox')).toHaveValue('');
+        expect(screen.getByText('Siti')).toBeInTheDocument();
+    });
+
+    it('falls back to visit cards instead of the wide table at 1366px', () => {
+        const originalInnerWidth = window.innerWidth;
+        window.innerWidth = 1366;
+
+        mockUseGame.mockReturnValue({
+            history: [
+                {
+                    id: 'enc-4',
+                    day: 8,
+                    dischargedAt: 620,
+                    name: 'Dina',
+                    decision: { action: 'treat' },
+                    outcomeStatus: 'correct',
+                    medicalData: { trueDiagnosisCode: 'J11' }
+                }
+            ],
+            villageData: { families: [] },
+            day: 8,
+            viewParams: null,
+            navigate: vi.fn()
+        });
+
+        render(<ArsipPage />);
+        fireEvent.click(screen.getByRole('button', { name: /log kunjungan harian/i }));
+
+        expect(screen.queryByRole('table')).not.toBeInTheDocument();
+        expect(screen.getByText('Dina')).toBeInTheDocument();
+
+        window.innerWidth = originalInnerWidth;
     });
 });

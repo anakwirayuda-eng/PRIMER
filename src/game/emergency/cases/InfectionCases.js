@@ -16,7 +16,8 @@ export const INFECTION_CASES = [
         esiLevel: 2,
         symptoms: ['Demam tinggi', 'Nyeri perut hebat', 'Muntah persisten', 'Perdarahan gusi/hidung', 'Lemas berat'],
         clue: "[URGENT] DBD dengan warning signs: nyeri perut, muntah, perdarahan, letargi. Monitor ketat kebocoran plasma!",
-        relevantLabs: ['Darah Lengkap', 'NS1'],
+        relevantLabs: ['Darah Lengkap'],
+        referralLevelDiagnostics: ['NS1 Ag'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_fever', text: 'Demam hari ke berapa?', response: 'Hari ke-4 dok, tapi hari ini suhunya agak turun.', priority: 'essential' },
@@ -49,6 +50,7 @@ export const INFECTION_CASES = [
         differentialDiagnosis: ['Demam Tifoid', 'Leptospirosis', 'Chikungunya', 'Malaria'],
         risk: 'emergency',
         referralRequired: true,
+        referralTarget: 'SpPD',
         deteriorationRate: 2
     },
     {
@@ -62,7 +64,8 @@ export const INFECTION_CASES = [
         esiLevel: 1,
         symptoms: ['Demam tinggi periodik', 'Penurunan kesadaran', 'Anemia berat (pucat)', 'Ikterus', 'Urin gelap (black water)'],
         clue: "[CRITICAL] Malaria berat — demam + penurunan kesadaran + anemia berat. Artesunate IV SEGERA! Jangan tunggu hasil lab!",
-        relevantLabs: ['Darah Lengkap', 'Malaria Rapid Test', 'GDS'],
+        relevantLabs: ['Darah Lengkap', 'GDS'],
+        referralLevelDiagnostics: ['Malaria Rapid Test'],
         anamnesisQuestions: {
             keluhan_utama: [
                 { id: 'q_fever', text: 'Demamnya pola gimana?', response: 'Panas-dingin bergantian dok, sudah 5 hari, makin parah.', priority: 'essential' },

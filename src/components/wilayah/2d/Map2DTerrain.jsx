@@ -13,26 +13,26 @@ import { TILE_TYPES } from '../constants.js';
 
 // ═══ TERRAIN COLOR PALETTE — Blueprint XII.B ═══
 const TERRAIN_COLORS = {
-    water: '#3f667f',
-    forest: '#1d2e28',
-    sawah: '#617465',
-    road: '#5e676f',
-    dirtRoad: '#786a5b',
-    flower: '#8d6b79',
-    bridge: '#8b7356',
-    base: '#18242d',
-    contour: 'rgba(187,210,221,0.08)',
-    grid: 'rgba(148,163,184,0.07)',
-    axis: 'rgba(196,211,219,0.36)',
+    water: '#3a6477',
+    forest: '#213229',
+    sawah: '#687865',
+    road: '#667077',
+    dirtRoad: '#7b6c5c',
+    flower: '#8a6c77',
+    bridge: '#92785f',
+    base: '#14212a',
+    contour: 'rgba(211,223,232,0.1)',
+    grid: 'rgba(148,163,184,0.05)',
+    axis: 'rgba(214,225,232,0.42)',
 };
 
 const LAYER_WASH = {
     general: null,
-    pispk: 'rgba(56,189,248,0.045)',
-    surveillance: 'rgba(225,29,72,0.062)',
-    psn: 'rgba(163,230,53,0.048)',
-    phbs: 'rgba(244,114,182,0.04)',
-    perilaku: 'rgba(129,140,248,0.048)',
+    pispk: 'rgba(56,189,248,0.04)',
+    surveillance: 'rgba(225,29,72,0.055)',
+    psn: 'rgba(163,230,53,0.042)',
+    phbs: 'rgba(244,114,182,0.038)',
+    perilaku: 'rgba(129,140,248,0.042)',
 };
 
 // Colors are now hex strings — no rgbaStr needed
@@ -93,6 +93,12 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
         ctx.scale(dpr, dpr);
         ctx.clearRect(0, 0, pxW, pxH);
         ctx.fillStyle = TERRAIN_COLORS.base;
+        ctx.fillRect(0, 0, pxW, pxH);
+        const ambientGradient = ctx.createLinearGradient(0, 0, 0, pxH);
+        ambientGradient.addColorStop(0, 'rgba(250,232,198,0.04)');
+        ambientGradient.addColorStop(0.35, 'rgba(20,33,42,0)');
+        ambientGradient.addColorStop(1, 'rgba(5,10,18,0.18)');
+        ctx.fillStyle = ambientGradient;
         ctx.fillRect(0, 0, pxW, pxH);
 
         // ═══ BATCH RENDER: one fillStyle set per terrain type ═══
@@ -244,7 +250,7 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
 
         // ═══ DIRECTIVE 1: Contour lines (XII.K Hack 1) ═══
         ctx.strokeStyle = TERRAIN_COLORS.contour;
-        ctx.lineWidth = 0.5;
+        ctx.lineWidth = 0.55;
         // Horizontal contours in sawah zone
         for (let y = 84; y < height; y += 4) {
             ctx.beginPath();
@@ -280,7 +286,7 @@ export default function Map2DTerrain({ mapData, cellSize, bridgeStatus = 'normal
 
         // ═══ AXIS LABEL ═══
         ctx.fillStyle = TERRAIN_COLORS.axis;
-        ctx.font = '900 8px monospace';
+        ctx.font = '900 8px "JetBrains Mono", ui-monospace, monospace';
         ctx.textAlign = 'center';
         ctx.fillText('JALAN UTAMA', (centerX || width / 2) * cellSize, 12);
 

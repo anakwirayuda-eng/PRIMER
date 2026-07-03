@@ -8,7 +8,8 @@
  * [DEPENDS_ON]: constants.js (BUILDING_TYPES)
  */
 
-import React, { useState, useMemo, memo } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BUILDING_TYPES } from '../constants.js';
 import {
     Cross, Stethoscope, Home, School, Backpack, Moon, Store, ShoppingCart,
@@ -17,6 +18,8 @@ import {
     BarChart3, Soup, Trees, Waves, Tent, Wheat, Footprints,
     Hotel, Anchor, Shield, BookOpen, Beef, Info, Binoculars,
 } from 'lucide-react';
+
+const MONO_STACK = '"JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace';
 
 // ═══ ECONOMY TIER → LED DOT COLOR (Geospatial Law 1 visual) ═══
 const ECONOMY_LED = {
@@ -195,6 +198,7 @@ function getNarrativeCue(buildingType, activeLayer, showStatusDetails) {
         case BUILDING_TYPES.RTK:
             if (activeLayer === 'surveillance') {
                 return {
+                    key: 'rtkSurveillance',
                     label: 'SIAGA',
                     eyebrow: 'Maternal Hub',
                     title: 'Pantau Ibu Risiko Tinggi',
@@ -207,6 +211,7 @@ function getNarrativeCue(buildingType, activeLayer, showStatusDetails) {
             }
 
             return {
+                key: 'rtkDefault',
                 label: 'RUJUK',
                 eyebrow: 'Maternal Hub',
                 title: 'Rujukan Maternal',
@@ -219,6 +224,7 @@ function getNarrativeCue(buildingType, activeLayer, showStatusDetails) {
         case BUILDING_TYPES.PADEPOKAN_DUKUN:
             if (activeLayer === 'perilaku') {
                 return {
+                    key: 'dukunBehavior',
                     label: 'MEDIASI',
                     eyebrow: 'Budaya',
                     title: 'Dialog Tradisi',
@@ -231,6 +237,7 @@ function getNarrativeCue(buildingType, activeLayer, showStatusDetails) {
             }
 
             return {
+                key: 'dukunDefault',
                 label: 'ADAT',
                 eyebrow: 'Budaya',
                 title: 'Anchor Tradisi',
@@ -246,7 +253,9 @@ function getNarrativeCue(buildingType, activeLayer, showStatusDetails) {
 }
 
 function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, showStatusDetails = true }) {
+    const { t } = useTranslation();
     const [hovered, setHovered] = useState(false);
+    const markerTx = useCallback((key, options = {}) => t(`wilayahContent.ui.map2dMarker.${key}`, options), [t]);
 
     const icon = useMemo(() => getMarkerIcon(building.type), [building.type]);
     const bgColor = useMemo(() => getMarkerBg(building.type), [building.type]);
@@ -260,11 +269,21 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
     const showChampionStar = showStatusDetails && isHouse && Boolean(building.isChampion);
     const showChampionShield = showStatusDetails && isHouse && Boolean(building.isChampionProtected);
     const showIntelTarget = isHouse && Boolean(building.isIntelTarget) && Number.isFinite(building.rank);
+    const showOutbreakBloom = hasOutbreak && activeLayer === 'surveillance';
     const upgradeBadgeColor = useMemo(() => getUpgradeBadgeColor(building.upgradeStatus), [building.upgradeStatus]);
-    const narrativeCue = useMemo(
-        () => (isHouse ? null : getNarrativeCue(building.type, activeLayer, showStatusDetails)),
-        [activeLayer, building.type, isHouse, showStatusDetails]
-    );
+    const narrativeCue = useMemo(() => {
+        if (isHouse) return null;
+        const cue = getNarrativeCue(building.type, activeLayer, showStatusDetails);
+        if (!cue?.key) return cue;
+        const cueKey = `narrativeCues.${cue.key}`;
+        return {
+            ...cue,
+            label: markerTx(`${cueKey}.label`, { defaultValue: cue.label }),
+            eyebrow: markerTx(`${cueKey}.eyebrow`, { defaultValue: cue.eyebrow }),
+            title: markerTx(`${cueKey}.title`, { defaultValue: cue.title }),
+            detail: markerTx(`${cueKey}.detail`, { defaultValue: cue.detail }),
+        };
+    }, [activeLayer, building.type, isHouse, markerTx, showStatusDetails]);
     const keepReadableInDetective = showIntelTarget || showChampionStar || showChampionShield;
 
     // Economy-based LED color for houses
@@ -282,6 +301,7 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
 
     const left = building.x * cellSize - size / 2;
     const top = building.y * cellSize - size / 2;
+    const markerScale = selected ? (hovered ? 1.24 : 1.18) : (hovered ? 1.28 : 1);
 
     // Minimum hit area for touch (44px for facilities, 24px for houses)
     const hitSize = isHouse ? Math.max(size, 24) : Math.max(size, 44);
@@ -311,17 +331,32 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                     top: hitOffset,
                     width: size,
                     height: size,
-                    transform: hovered ? 'scale(1.5)' : selected ? 'scale(1.35)' : 'scale(1)',
+                    transform: `scale(${markerScale})`,
                     filter: isLocked ? 'grayscale(1) brightness(0.4)' : shouldDimForDetective ? 'grayscale(0.8) brightness(0.5)' : 'none',
                 }}
             >
+                {showOutbreakBloom && (
+                    <div
+                        data-testid={`outbreak-bloom-${building.id}`}
+                        className="absolute pointer-events-none"
+                        style={{
+                            inset: -10,
+                            borderRadius: isHouse ? 9999 : 18,
+                            background: 'radial-gradient(circle, rgba(254,202,202,0.34) 0%, rgba(239,68,68,0.24) 24%, rgba(239,68,68,0.08) 56%, transparent 78%)',
+                            mixBlendMode: 'screen',
+                            opacity: selected ? 0.96 : hovered ? 0.9 : 0.74,
+                            animation: 'primer-liquid-heat 2.8s ease-in-out infinite',
+                        }}
+                    />
+                )}
+
                 {/* Overlay ring (detective mode) — Directive 5: colorblind borders */}
                 {isDetective && ringColor !== 'transparent' && (
                     <div
                         className="absolute inset-[-3px] rounded-full pointer-events-none"
                         style={{
                             border: `2.5px ${getColorblindBorderStyle(ringColor)} ${ringColor}`,
-                            boxShadow: atRisk ? `0 0 8px 2px ${ringColor}` : 'none',
+                            boxShadow: atRisk ? `0 0 6px 1px ${ringColor}` : 'none',
                             animation: atRisk ? 'primer-map-pulse 1.5s ease-in-out infinite' : 'none',
                         }}
                     />
@@ -332,9 +367,9 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                     <div
                         className="absolute inset-[-5px] rounded-full pointer-events-none"
                         style={{
-                            border: '2px solid #ef4444',
-                            boxShadow: '0 0 12px 3px rgba(239,68,68,0.5)',
-                            animation: 'primer-map-pulse 1s ease-in-out infinite',
+                            border: '1.5px solid rgba(239,68,68,0.9)',
+                            boxShadow: '0 0 8px 2px rgba(239,68,68,0.32)',
+                            animation: 'primer-map-pulse 1.35s ease-in-out infinite',
                         }}
                     />
                 )}
@@ -344,8 +379,8 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                     <div
                         className="absolute inset-[-4px] rounded-full pointer-events-none"
                         style={{
-                            border: '2px solid #f59e0b',
-                            boxShadow: '0 0 10px 3px rgba(245,158,11,0.4)',
+                            border: '1.5px solid rgba(245,158,11,0.88)',
+                            boxShadow: '0 0 8px 2px rgba(245,158,11,0.28)',
                         }}
                     />
                 )}
@@ -447,9 +482,9 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                             className="relative w-full h-full rounded-full"
                             style={{
                                 background: ledColor,
-                                opacity: 0.85,
-                                boxShadow: `0 0 ${selected || hovered ? 8 : 4}px ${ledColor}`,
-                                border: `1px solid rgba(255,255,255,${hovered ? 0.4 : 0.15})`,
+                                opacity: selected ? 0.96 : 0.9,
+                                boxShadow: selected || hovered ? `0 0 8px ${ledColor}` : `0 0 4px ${ledColor}`,
+                                border: `1px solid rgba(255,255,255,${hovered || selected ? 0.34 : 0.12})`,
                             }}
                         >
                             <div
@@ -480,10 +515,10 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                                 ? `linear-gradient(180deg, rgba(255,255,255,0.14), ${bgColor})`
                                 : 'linear-gradient(180deg, rgba(255,255,255,0.14), rgba(148,163,184,0.22))',
                             borderTop: '1px solid rgba(255,255,255,0.35)',
-                            border: `1.5px solid rgba(255,255,255,${hovered ? 0.35 : 0.15})`,
+                            border: `1.5px solid rgba(255,255,255,${hovered || selected ? 0.3 : 0.14})`,
                             boxShadow: hovered
-                                ? '0 10px 22px rgba(2,6,23,0.28)'
-                                : '0 6px 14px rgba(2,6,23,0.18)',
+                                ? '0 8px 18px rgba(2,6,23,0.24)'
+                                : '0 5px 12px rgba(2,6,23,0.16)',
                             color: 'currentColor',
                         }}
                     >
@@ -552,13 +587,15 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                 >
                     <div className="px-2.5 py-1.5 rounded-lg text-center"
                         style={{
-                            background: 'rgba(15,23,42,0.92)',
-                            border: '1px solid rgba(255,255,255,0.12)',
-                            boxShadow: '0 12px 28px rgba(2,6,23,0.32)',
+                            background: 'linear-gradient(180deg, rgba(11,18,28,0.96), rgba(8,15,23,0.92))',
+                            border: '1px solid rgba(148,163,184,0.2)',
+                            boxShadow: '0 14px 30px rgba(2,6,23,0.34)',
                         }}
                     >
                         <div className="text-[8px] font-black uppercase tracking-[0.15em] text-emerald-400">
-                            {(building.type || '').replace(/_/g, ' ')}
+                            <span style={{ fontFamily: MONO_STACK }}>
+                                {(building.type || '').replace(/_/g, ' ')}
+                            </span>
                         </div>
                         <div className="text-[11px] font-extrabold text-white leading-tight mt-0.5">
                             {building.name || 'Bangunan'}
@@ -589,22 +626,24 @@ function Map2DMarkerInner({ building, cellSize, activeLayer, selected, onClick, 
                         )}
                         {building.familyData?.iksScore != null && (
                             <div className={`text-[9px] font-bold mt-0.5 ${building.familyData.iksScore >= 0.8 ? 'text-emerald-400' : building.familyData.iksScore >= 0.5 ? 'text-amber-400' : 'text-red-400'}`}>
-                                IKS {(building.familyData.iksScore * 100).toFixed(0)}%
+                                <span style={{ fontFamily: MONO_STACK }}>
+                                    {markerTx('iksValue', { value: (building.familyData.iksScore * 100).toFixed(0) })}
+                                </span>
                             </div>
                         )}
                         {building.isChampion && (
                             <div className="text-[9px] font-bold mt-0.5 text-amber-300 uppercase tracking-wide">
-                                Kader Lokal
+                                {markerTx('localCadre')}
                             </div>
                         )}
                         {!building.isChampion && building.isChampionProtected && (
                             <div className="text-[9px] font-bold mt-0.5 text-amber-200 uppercase tracking-wide">
-                                Dilindungi Kader
+                                {markerTx('cadreProtected')}
                             </div>
                         )}
                         {showIntelTarget && (
                             <div className="text-[9px] font-bold mt-0.5 text-cyan-300 uppercase tracking-wide">
-                                Intel Prioritas #{building.rank}
+                                {markerTx('priorityIntel', { rank: building.rank })}
                             </div>
                         )}
                     </div>

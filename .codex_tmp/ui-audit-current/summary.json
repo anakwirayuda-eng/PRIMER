@@ -1,0 +1,97 @@
+{
+  "baseUrl": "http://127.0.0.1:4173",
+  "generatedAt": "2026-04-13T05:38:43.185Z",
+  "runs": [
+    {
+      "scope": "desktop-1366",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "snapshots": [
+        "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit-current\\dashboard-desktop-1366.png",
+        "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit-current\\clinical-desktop-1366.png",
+        "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit-current\\emr-desktop-1366.png"
+      ],
+      "dashboardOverflow": {
+        "viewportWidth": 1366,
+        "maxWidth": 1366
+      },
+      "clinicalOverflow": {
+        "viewportWidth": 1366,
+        "maxWidth": 1366
+      },
+      "emrOverflow": {
+        "viewportWidth": 1366,
+        "maxWidth": 1366
+      },
+      "queueCount": 3
+    },
+    {
+      "scope": "tablet-1024",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "snapshots": [
+        "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit-current\\clinical-tablet-1024.png"
+      ],
+      "overflow": {
+        "viewportWidth": 1024,
+        "maxWidth": 1024
+      }
+    },
+    {
+      "scope": "mobile-390-locked",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "snapshots": [
+        "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit-current\\clinical-mobile-390-locked-drawer.png"
+      ],
+      "overflow": {
+        "viewportWidth": 390,
+        "maxWidth": 390
+      },
+      "queueCount": 3
+    },
+    {
+      "scope": "mobile-390-open",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "snapshots": [
+        "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit-current\\clinical-mobile-390-open-drawer.png",
+        "D:\\Dev\\PRIMER\\.codex_tmp\\ui-audit-current\\emr-mobile-390.png"
+      ],
+      "drawerOverflow": {
+        "viewportWidth": 390,
+        "maxWidth": 390
+      }
+    }
+  ],
+  "issues": [
+    {
+      "scope": "Desktop nav",
+      "message": "Failed to open Layanan from desktop dashboard."
+    },
+    {
+      "scope": "Desktop EMR",
+      "message": "Could not open seeded patient Taufik Utomo."
+    },
+    {
+      "scope": "Tablet nav",
+      "message": "Failed to open Layanan from tablet dashboard."
+    },
+    {
+      "scope": "Mobile nav",
+      "message": "Failed to open Layanan from mobile dashboard."
+    },
+    {
+      "scope": "Mobile queue",
+      "message": "Queue FAB not visible on locked mobile clinical screen."
+    },
+    {
+      "scope": "Mobile nav open",
+      "message": "Failed to open Layanan from mobile dashboard."
+    },
+    {
+      "scope": "Mobile EMR",
+      "message": "Could not open seeded patient Taufik Utomo on mobile."
+    }
+  ]
+}

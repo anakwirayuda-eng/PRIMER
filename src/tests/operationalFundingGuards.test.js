@@ -22,12 +22,16 @@ vi.mock('../utils/browserSafety.js', async () => {
 import { useGameStore } from '../store/useGameStore.js';
 
 describe('operational funding guards', () => {
+    let consoleErrorSpy;
+
     beforeEach(() => {
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         useGameStore.setState(useGameStore.getInitialState(), true);
     });
 
     afterEach(() => {
         vi.useRealTimers();
+        consoleErrorSpy?.mockRestore();
     });
 
     it('spends pooled operational funds for negative story balance choices', () => {

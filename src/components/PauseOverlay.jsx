@@ -65,12 +65,17 @@ export default function PauseOverlay() {
     const isEffectivelyPaused = gameState === 'paused';
 
     useEffect(() => {
+        let timerId = null;
+
         if (isEffectivelyPaused) {
-            const t = setTimeout(() => setVisible(true), 150);
-            return () => clearTimeout(t);
+            timerId = setTimeout(() => setVisible(true), 150);
         } else {
-            setVisible(false);
+            timerId = setTimeout(() => setVisible(false), 0);
         }
+
+        return () => {
+            if (timerId) clearTimeout(timerId);
+        };
     }, [isEffectivelyPaused]);
 
     useEffect(() => {

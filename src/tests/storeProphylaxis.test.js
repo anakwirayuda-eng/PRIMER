@@ -30,12 +30,17 @@ import { normalizeInventoryList } from '../models/InventoryRuntime.js';
 import { clearStability } from '../utils/prophylaxis.js';
 
 describe('store prophylaxis', () => {
+    let consoleWarnSpy;
+    let consoleErrorSpy;
+
     beforeEach(() => {
         const initialState = useGameStore.getInitialState();
         useGameStore.setState(initialState, true);
         safeSetStorageItem.mockReset();
         safeSetStorageItem.mockReturnValue(true);
         vi.useRealTimers();
+        consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         clearStability('ACTION_actions.nextDay');
         clearStability('ACTION_financeActions.processMonthlyReport');
         clearStability('ACTION_actions.saveGame');
@@ -43,6 +48,8 @@ describe('store prophylaxis', () => {
 
     afterEach(() => {
         vi.useRealTimers();
+        consoleWarnSpy?.mockRestore();
+        consoleErrorSpy?.mockRestore();
     });
 
     it('caps clinical history at 200 newest entries when patients are discharged', () => {
@@ -196,7 +203,7 @@ describe('store prophylaxis', () => {
                 viewParams: { panel: 'warehouse' },
                 showKPIGlobal: true,
                 sidebarCollapsed: true,
-                settings: { ...state.nav.settings, volume: 0.4 }
+                settings: { ...state.nav.settings, volume: 0.4, language: 'en' }
             },
             meta: {
                 ...state.meta,
@@ -236,10 +243,47 @@ describe('store prophylaxis', () => {
         expect(state.nav.showKPIGlobal).toBe(false);
         expect(state.nav.sidebarCollapsed).toBe(true);
         expect(state.nav.settings.volume).toBe(0.4);
+        expect(state.nav.settings.language).toBe('en');
         expect(state.meta.activeQuests).toEqual(savedQuests);
         expect(state.meta.activeStories).toEqual([savedStory]);
         expect(state.meta.isWikiOpen).toBe(false);
         expect(state.meta.wikiMetric).toBeNull();
+    });
+
+    it('hydrates only global nav settings while keeping slot-specific navigation volatile', () => {
+        const { partialize, merge } = useGameStore.persist.getOptions();
+        const initialState = useGameStore.getInitialState();
+
+        const snapshot = partialize({
+            ...initialState,
+            nav: {
+                ...initialState.nav,
+                activePage: 'inventory',
+                currentSlotId: 7,
+                gameState: 'playing',
+                settings: {
+                    ...initialState.nav.settings,
+                    volume: 0.65,
+                    language: 'en'
+                }
+            }
+        });
+
+        expect(snapshot.nav).toEqual({
+            settings: {
+                ...initialState.nav.settings,
+                volume: 0.65,
+                language: 'en'
+            }
+        });
+
+        const hydrated = merge(snapshot, initialState);
+
+        expect(hydrated.nav.activePage).toBe('dashboard');
+        expect(hydrated.nav.currentSlotId).toBeNull();
+        expect(hydrated.nav.gameState).toBe('opening');
+        expect(hydrated.nav.settings.volume).toBe(0.65);
+        expect(hydrated.nav.settings.language).toBe('en');
     });
 
     it('refreshes daily quests on nextDay while preserving weekly quest progress in the same week', () => {
@@ -905,6 +949,52 @@ describe('store prophylaxis', () => {
         expect(snapshot.clinical.dailyArchive).toEqual([
             { day: 10, patientsToday: 2, revenue: 50000, reputation: 81, overallScore: 75, hourlyTraffic: [], topDiseases: [] }
         ]);
+    });
+
+    it('persists app-wide language settings through manual save and load', () => {
+        useGameStore.setState(state => ({
+            nav: {
+                ...state.nav,
+                currentSlotId: 1,
+                settings: {
+                    ...state.nav.settings,
+                    language: 'en',
+                    theme: 'terminal'
+                }
+            }
+        }));
+
+        let didSave = false;
+        act(() => {
+            didSave = useGameStore.getState().actions.saveGame(1);
+        });
+
+        expect(didSave).toBe(true);
+
+        const [, rawPayload] = safeSetStorageItem.mock.calls.at(-1);
+        const snapshot = JSON.parse(rawPayload);
+        expect(snapshot.nav.settings.language).toBe('en');
+        expect(snapshot.nav.settings.theme).toBe('terminal');
+
+        useGameStore.setState(state => ({
+            nav: {
+                ...state.nav,
+                settings: {
+                    ...state.nav.settings,
+                    language: 'id',
+                    theme: 'medika'
+                }
+            }
+        }));
+
+        let didLoad = false;
+        act(() => {
+            didLoad = useGameStore.getState().actions.loadGame(snapshot, 1);
+        });
+
+        expect(didLoad).toBe(true);
+        expect(useGameStore.getState().nav.settings.language).toBe('en');
+        expect(useGameStore.getState().nav.settings.theme).toBe('terminal');
     });
 
     it('derives current-level XP progress and total XP from residual store state', () => {

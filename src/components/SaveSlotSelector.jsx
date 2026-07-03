@@ -12,10 +12,11 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Trash2, Play, Plus, Clock, Calendar, Award, Download, Upload, AlertCircle, ChevronDown, Activity, ShieldCheck, Fingerprint, Database, Server, Lock, Cpu } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import AvatarRenderer from './AvatarRenderer.jsx';
 import { getAssetUrl, ASSET_KEY } from '../assets/assets.js';
-import { parseSavePayload } from '../utils/savePayload.js';
 import { safeGetStorageItem, safeSetStorageItem, safeRemoveStorageItem } from '../utils/browserSafety.js';
+import { buildCanonicalSave, normalizeSlot } from '../utils/saveSlotUtils.js';
 
 const MAX_SLOTS = 5;
 
@@ -31,24 +32,6 @@ const RADAR_NODES = [...Array(30)].map((_, i) => ({
 }));
 
 // ═══ SELF-CONTAINED CSS ═══
-function buildCanonicalSave(saveBlob) {
-    return parseSavePayload(saveBlob);
-}
-
-export function normalizeSlot(saveBlob, slotId) {
-    const canonicalSave = buildCanonicalSave(saveBlob);
-    if (!canonicalSave) {
-        return { slotId, empty: true };
-    }
-
-    const profile = canonicalSave?.player?.profile || null;
-    const day = canonicalSave?.world?.day || 1;
-    const reputation = profile?.reputation ?? 80;
-    const savedAt = canonicalSave?.savedAt || null;
-    const saveVersion = canonicalSave?.saveVersion || null;
-    return { slotId, profile, day, reputation, savedAt, saveVersion, saveData: canonicalSave, _raw: canonicalSave };
-}
-
 const MENU_CSS = `
     @keyframes sss-radar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes sss-pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
@@ -80,6 +63,7 @@ const MENU_CSS = `
 `;
 
 export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
+    const { t, i18n } = useTranslation();
     const [slots, setSlots] = useState([]);
     const [confirmDelete, setConfirmDelete] = useState(null);
     const [notification, setNotification] = useState(null);
@@ -88,17 +72,26 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
     const [isTransitioning, setIsTransitioning] = useState(false);
 
     const fileInputRef = useRef(null);
+    const transitionTimerRef = useRef(null);
     const [importTargetSlot, setImportTargetSlot] = useState(null);
     const [overwriteTarget, setOverwriteTarget] = useState(null);
     const MAX_FILE_SIZE = 500 * 1024;
 
     const radarNodes = useMemo(() => RADAR_NODES, []);
+    const locale = i18n.resolvedLanguage || 'id';
+    const formatSlotNumber = (slotId) => String(slotId + 1).padStart(2, '0');
 
     useEffect(() => { loadSlots(); }, []);
     useEffect(() => { const t = setTimeout(() => setTitleAnimDone(true), 800); return () => clearTimeout(t); }, []);
     useEffect(() => {
         if (notification) { const t = setTimeout(() => setNotification(null), 3500); return () => clearTimeout(t); }
     }, [notification]);
+    useEffect(() => () => {
+        if (transitionTimerRef.current) {
+            clearTimeout(transitionTimerRef.current);
+            transitionTimerRef.current = null;
+        }
+    }, []);
     const loadSlots = () => {
         const loadedSlots = [];
         for (let i = 0; i < MAX_SLOTS; i++) {
@@ -119,14 +112,25 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
         setNotification({
             type: didRemove ? 'success' : 'error',
             message: didRemove
-                ? `DATA OPERASIONAL SLOT 0${slotId + 1} DIHAPUS.`
-                : `GAGAL MENGHAPUS DATA SLOT 0${slotId + 1}.`
+                ? t('saveSlots.notifications.slot_deleted', { slot: formatSlotNumber(slotId) })
+                : t('saveSlots.notifications.slot_delete_failed', { slot: formatSlotNumber(slotId) })
         });
     };
 
     const formatDate = (timestamp) => {
         if (!timestamp) return '-';
-        return new Date(timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
+        return new Date(timestamp).toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
+    };
+
+    const scheduleTransition = (callback) => {
+        if (transitionTimerRef.current) {
+            clearTimeout(transitionTimerRef.current);
+        }
+
+        transitionTimerRef.current = setTimeout(() => {
+            transitionTimerRef.current = null;
+            callback();
+        }, 1200);
     };
 
     // ─── Cinematic Handoff (Flashbang) ───
@@ -134,13 +138,13 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
         if (isTransitioning) return;
         setIsTransitioning(true);
         const payload = slotData?.saveData || slotData?._raw || slotData;
-        setTimeout(() => onSelectSlot(slotId, payload), 1200);
+        scheduleTransition(() => onSelectSlot(slotId, payload));
     };
 
     const executeNewGame = (slotId) => {
         if (isTransitioning) return;
         setIsTransitioning(true);
-        setTimeout(() => onNewGame(slotId), 1200);
+        scheduleTransition(() => onNewGame(slotId));
     };
 
     // ─── Hardened Import / Export ───
@@ -158,8 +162,8 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
             const day = canonicalSave?.world?.day || 1;
             a.download = `PRIMER_Dossier_${name}_Day${day}.json`;
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-            setNotification({ type: 'success', message: 'BERKAS BERHASIL DIEKSPOR.' });
-        } catch { setNotification({ type: 'error', message: 'GAGAL MENGEKSPOR BERKAS.' }); }
+            setNotification({ type: 'success', message: t('saveSlots.notifications.file_exported') });
+        } catch { setNotification({ type: 'error', message: t('saveSlots.notifications.file_export_failed') }); }
     };
 
     const handleExportAll = () => {
@@ -177,13 +181,13 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                 } catch { continue; }
             }
         }
-        if (!hasAnySave) { setNotification({ type: 'error', message: 'DATABASE KOSONG.' }); return; }
+        if (!hasAnySave) { setNotification({ type: 'error', message: t('saveSlots.notifications.database_empty') }); return; }
         const blob = new Blob([JSON.stringify({ _exportInfo: { exportedAt: new Date().toISOString(), type: 'all_saves' }, saves: allSaves }, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a'); a.href = url;
         a.download = `PRIMER_MasterDB_${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-        setNotification({ type: 'success', message: 'SELURUH DATABASE DIAMANKAN.' });
+        setNotification({ type: 'success', message: t('saveSlots.notifications.database_secured') });
     };
 
     const handleImportClick = (slotId = null) => { setImportTargetSlot(slotId); fileInputRef.current?.click(); };
@@ -194,15 +198,15 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
             if (!canonicalSave) throw new Error('Invalid save payload');
             const didWrite = safeSetStorageItem(`primer_save_${slotId}`, JSON.stringify(canonicalSave));
             if (!didWrite) throw new Error('Storage write failed');
-            loadSlots(); setNotification({ type: 'success', message: `DOSSIER DITERIMA DI PORT 0${slotId + 1}.` });
+            loadSlots(); setNotification({ type: 'success', message: t('saveSlots.notifications.dossier_received', { slot: formatSlotNumber(slotId) }) });
             setOverwriteTarget(null);
-        } catch { setNotification({ type: 'error', message: 'GAGAL MENYIMPAN DATA (QUOTA EXCEEDED).' }); }
+        } catch { setNotification({ type: 'error', message: t('saveSlots.notifications.save_failed') }); }
     };
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (file.size > MAX_FILE_SIZE) { setNotification({ type: 'error', message: 'FILE TERLALU BESAR (Max 500KB)' }); e.target.value = ''; return; }
+        if (file.size > MAX_FILE_SIZE) { setNotification({ type: 'error', message: t('saveSlots.notifications.file_too_large', { size: 500 }) }); e.target.value = ''; return; }
 
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -225,11 +229,11 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                             imported++;
                         }
                     });
-                    loadSlots(); setNotification({ type: 'success', message: `${imported} DATA BERHASIL DIPULIHKAN.` });
+                    loadSlots(); setNotification({ type: 'success', message: t('saveSlots.notifications.restored_count', { count: imported }) });
                 } else {
                     const { _exportInfo, ...importBlob } = payload;
                     const canonicalSave = buildCanonicalSave(importBlob);
-                    if (!canonicalSave?.player?.profile) { setNotification({ type: 'error', message: 'FORMAT BERKAS KORUP.' }); return; }
+                    if (!canonicalSave?.player?.profile) { setNotification({ type: 'error', message: t('saveSlots.notifications.corrupt_file') }); return; }
                     const targetSlot = importTargetSlot !== null ? importTargetSlot : (_exportInfo?.originalSlot ?? 0);
                     if (targetSlot >= 0 && targetSlot < MAX_SLOTS) {
                         const isOccupied = !slots.find(s => s.slotId === targetSlot)?.empty;
@@ -237,7 +241,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                         else processImport(targetSlot, canonicalSave);
                     }
                 }
-            } catch { setNotification({ type: 'error', message: 'DEKRIPSI FILE GAGAL.' }); }
+            } catch { setNotification({ type: 'error', message: t('saveSlots.notifications.decrypt_failed') }); }
         };
         reader.readAsText(file); e.target.value = '';
     };
@@ -279,7 +283,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                     style={{ animation: 'sss-slot-entry 0.3s ease-out' }}>
                     {notification.type === 'success' ? <Database size={20} /> : <AlertCircle size={20} />}
                     <div>
-                        <div className="text-[9px] font-mono tracking-widest uppercase font-bold opacity-70 mb-0.5">System Notice</div>
+                        <div className="text-[9px] font-mono tracking-widest uppercase font-bold opacity-70 mb-0.5">{t('saveSlots.system_notice')}</div>
                         <span className="font-bold text-sm tracking-wider">{notification.message}</span>
                     </div>
                 </div>
@@ -293,17 +297,17 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                         <div className="flex items-center gap-4 text-rose-500 mb-6 border-b border-rose-900/50 pb-4">
                             <AlertCircle size={36} className="animate-pulse" />
                             <div>
-                                <h3 className="text-xl font-black uppercase tracking-widest text-white">OVERWRITE PROTOCOL</h3>
-                                <p className="text-[9px] font-mono tracking-widest uppercase mt-1">Data collision at Node 0{overwriteTarget.slotId + 1}</p>
+                                <h3 className="text-xl font-black uppercase tracking-widest text-white">{t('saveSlots.overwrite.title')}</h3>
+                                <p className="text-[9px] font-mono tracking-widest uppercase mt-1">{t('saveSlots.overwrite.collision', { slot: formatSlotNumber(overwriteTarget.slotId) })}</p>
                             </div>
                         </div>
                         <p className="text-slate-300 text-sm mb-8 font-mono leading-relaxed">
-                            Data operasional di Port 0{overwriteTarget.slotId + 1} akan ditimpa. Berkas lama akan <strong className="text-rose-400">dihapus permanen</strong> dari sistem lokal. Lanjutkan eksekusi?
+                            {t('saveSlots.overwrite.message_prefix', { slot: formatSlotNumber(overwriteTarget.slotId) })} <strong className="text-rose-400">{t('saveSlots.overwrite.permanent_delete')}</strong> {t('saveSlots.overwrite.message_suffix')}
                         </p>
                         <div className="flex justify-end gap-3">
-                            <button onClick={() => setOverwriteTarget(null)} className="px-5 py-2.5 rounded-xl font-bold text-xs tracking-widest uppercase text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">Batal</button>
+                            <button onClick={() => setOverwriteTarget(null)} className="px-5 py-2.5 rounded-xl font-bold text-xs tracking-widest uppercase text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">{t('saveSlots.actions.cancel')}</button>
                             <button onClick={() => processImport(overwriteTarget.slotId, overwriteTarget.data)} className="px-6 py-2.5 rounded-xl bg-rose-600 text-white font-black text-xs uppercase tracking-widest btn-tactical border-b-rose-900 hover:bg-rose-500 flex items-center gap-2 shadow-[0_0_15px_rgba(225,29,72,0.4)]">
-                                <Trash2 size={14}/> FORCE OVERWRITE
+                                <Trash2 size={14}/> {t('saveSlots.actions.force_overwrite')}
                             </button>
                         </div>
                     </div>
@@ -319,9 +323,9 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                     </div>
                     <div>
                         <div className="font-mono text-[9px] text-emerald-500 tracking-[0.4em] uppercase font-bold flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"/> SISTEM ONLINE
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"/> {t('saveSlots.system_online')}
                         </div>
-                        <div className="font-black text-slate-300 text-xs tracking-widest uppercase mt-1">FKK — Institut Teknologi Sepuluh Nopember</div>
+                        <div className="font-black text-slate-300 text-xs tracking-widest uppercase mt-1">{t('saveSlots.affiliation')}</div>
                     </div>
                 </div>
 
@@ -329,16 +333,16 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                     PRIMER
                 </h1>
                 <p className="text-emerald-500/80 text-[10px] uppercase tracking-[0.5em] font-mono font-bold mb-8">
-                    Epidemiology Operating System
+                    {t('saveSlots.system_tagline')}
                 </p>
 
                 {/* Lore Quote */}
                 <div className="bg-[#0a0f16]/80 backdrop-blur-sm border-l-4 border-emerald-500 p-5 rounded-r-xl max-w-sm shadow-lg mb-10">
                     <p className="text-slate-300 text-sm font-serif italic leading-relaxed">
-                        &ldquo;Di balik setiap angka kematian, ada satu desa yang terlambat dijangkau.&rdquo;
+                        &ldquo;{t('saveSlots.quote.text')}&rdquo;
                     </p>
                     <p className="text-emerald-500/60 text-[9px] uppercase tracking-[0.3em] font-mono mt-3 font-bold">
-                        &mdash; Prinsip Pertama Surveilans
+                        &mdash; {t('saveSlots.quote.source')}
                     </p>
                 </div>
 
@@ -348,35 +352,35 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                         <button onClick={() => setShowSlots(true)}
                             className="w-full relative z-50 px-8 py-5 bg-emerald-600 text-white font-black text-lg tracking-[0.2em] uppercase rounded-xl btn-tactical border-b-emerald-900 shadow-[0_15px_40px_rgba(16,185,129,0.3)] hover:bg-emerald-500 flex items-center justify-between group"
                         >
-                            <span className="flex items-center gap-3"><Fingerprint size={20}/> {hasSaves ? 'AKSES DATABASE' : 'INISIASI SISTEM'}</span>
+                            <span className="flex items-center gap-3"><Fingerprint size={20}/> {hasSaves ? t('saveSlots.actions.access_database') : t('saveSlots.actions.initialize_system')}</span>
                             <Play size={20} className="transform group-hover:translate-x-2 transition-transform" />
                         </button>
                     ) : (
                         <button onClick={() => setShowSlots(false)}
                             className="text-slate-500 hover:text-emerald-400 text-xs font-mono uppercase tracking-[0.3em] flex items-center gap-2 transition-colors font-bold bg-slate-900/50 px-6 py-3 rounded-xl border border-slate-800"
                         >
-                            <ChevronDown size={14} className="rotate-90" /> TUTUP DATABASE
+                            <ChevronDown size={14} className="rotate-90" /> {t('saveSlots.actions.close_database')}
                         </button>
                     )}
 
                     {hasSaves && !showSlots && (
                         <div className="flex gap-5 font-mono text-[9px] tracking-widest mt-6 opacity-60 justify-center">
-                            <button onClick={handleExportAll} className="hover:text-emerald-400 flex items-center gap-1.5 uppercase"><Download size={12}/> Master Backup</button>
+                            <button onClick={handleExportAll} className="hover:text-emerald-400 flex items-center gap-1.5 uppercase"><Download size={12}/> {t('saveSlots.actions.master_backup')}</button>
                             <span className="text-slate-700">|</span>
-                            <button onClick={() => handleImportClick(null)} className="hover:text-cyan-400 flex items-center gap-1.5 uppercase"><Upload size={12}/> Restore OS</button>
+                            <button onClick={() => handleImportClick(null)} className="hover:text-cyan-400 flex items-center gap-1.5 uppercase"><Upload size={12}/> {t('saveSlots.actions.restore_os')}</button>
                         </div>
                     )}
                 </div>
 
                 <div className="hidden md:flex absolute bottom-8 left-8 lg:left-16 flex-col gap-2">
                     <div className="flex items-center gap-4 opacity-40 grayscale">
-                        <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt="ITS" className="h-5 object-contain" />
+                        <img src={getAssetUrl(ASSET_KEY.ITS_LOGO)} alt={t('saveSlots.logos.its_alt')} className="h-5 object-contain" />
                         <div className="h-3 w-px bg-slate-500" />
-                        <img src={getAssetUrl(ASSET_KEY.FKK_LOGO)} alt="FKK" className="h-6 object-contain"
+                        <img src={getAssetUrl(ASSET_KEY.FKK_LOGO)} alt={t('saveSlots.logos.fkk_alt')} className="h-6 object-contain"
                              style={{ filter: 'brightness(0) invert(1)', mixBlendMode: 'screen' }} />
                     </div>
                     <p className="text-[9px] text-white/20 uppercase tracking-widest font-mono">
-                        &copy; 2026 Anak Agung Bagus Wirayuda MD PhD &bull; ITS MEDICS
+                        &copy; 2026 {t('saveSlots.footer_credit')}
                     </p>
                 </div>
             </div>
@@ -392,13 +396,13 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                         <div className="flex items-center gap-3">
                             <Server className="text-cyan-500" size={24} />
                             <div>
-                                <h3 className="font-black text-white uppercase tracking-widest text-sm leading-none">ACTIVE DEPLOYMENTS</h3>
-                                <p className="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1">Pilih profil agen untuk bertugas</p>
+                                <h3 className="font-black text-white uppercase tracking-widest text-sm leading-none">{t('saveSlots.deployments.title')}</h3>
+                                <p className="text-[9px] font-mono text-slate-500 tracking-widest uppercase mt-1">{t('saveSlots.deployments.subtitle')}</p>
                             </div>
                         </div>
                         <div className="flex gap-2">
-                            <button onClick={handleExportAll} className="p-2.5 bg-slate-800 text-slate-400 hover:text-emerald-400 hover:bg-emerald-950/50 rounded-xl transition-colors" title="Backup Seluruh Slot"><Download size={16} /></button>
-                            <button onClick={() => handleImportClick(null)} className="p-2.5 bg-slate-800 text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/50 rounded-xl transition-colors" title="Restore Data"><Upload size={16} /></button>
+                            <button onClick={handleExportAll} className="p-2.5 bg-slate-800 text-slate-400 hover:text-emerald-400 hover:bg-emerald-950/50 rounded-xl transition-colors" title={t('saveSlots.deployments.backup_all')}><Download size={16} /></button>
+                            <button onClick={() => handleImportClick(null)} className="p-2.5 bg-slate-800 text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/50 rounded-xl transition-colors" title={t('saveSlots.deployments.restore_data')}><Upload size={16} /></button>
                         </div>
                     </div>
 
@@ -414,8 +418,8 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                                             <div className="flex items-center gap-3 text-slate-600 font-mono text-[10px] tracking-[0.2em] uppercase">
                                                 <Lock size={18} className="group-hover:text-cyan-500 transition-colors flex-shrink-0" />
                                                 <div>
-                                                    <div className="group-hover:text-cyan-400 transition-colors font-bold text-xs mb-0.5">NODE 0{slot.slotId + 1} — KOSONG</div>
-                                                    <div className="opacity-70">Tersedia untuk Registrasi Baru</div>
+                                                    <div className="group-hover:text-cyan-400 transition-colors font-bold text-xs mb-0.5">{t('saveSlots.slots.empty_title', { slot: formatSlotNumber(slot.slotId) })}</div>
+                                                    <div className="opacity-70">{t('saveSlots.slots.empty_subtitle')}</div>
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
@@ -423,7 +427,7 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                                                     <Upload size={16} />
                                                 </button>
                                                 <button onClick={() => executeNewGame(slot.slotId)} disabled={isTransitioning} className="flex-1 md:flex-none px-5 py-2.5 bg-cyan-950/40 text-cyan-400 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-cyan-600 hover:text-white transition-all btn-tactical border-b-cyan-900 flex items-center justify-center gap-2 border border-cyan-800">
-                                                    <Plus size={16} /> INISIASI
+                                                    <Plus size={16} /> {t('saveSlots.actions.initialize')}
                                                 </button>
                                             </div>
                                         </div>
@@ -433,17 +437,17 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-16 h-16 rounded-xl bg-slate-950 border border-slate-700 p-1 shadow-inner shrink-0 relative overflow-hidden">
                                                         <AvatarRenderer avatar={slot.profile?.avatar} size={54} />
-                                                        <div className="absolute bottom-0 left-0 right-0 bg-emerald-600/90 text-[7px] font-mono text-center text-white font-bold py-0.5">VERIFIED</div>
+                                                        <div className="absolute bottom-0 left-0 right-0 bg-emerald-600/90 text-[7px] font-mono text-center text-white font-bold py-0.5">{t('saveSlots.slots.verified')}</div>
                                                     </div>
                                                     <div>
                                                         <div className="flex items-center gap-2 mb-1">
-                                                            <span className="text-[9px] font-mono text-emerald-400 tracking-widest flex items-center gap-1"><ShieldCheck size={10}/> STATUS: ACTIVE</span>
-                                                            <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest border-l border-slate-700 pl-2">AEGIS-0{slot.slotId + 1}</span>
+                                                            <span className="text-[9px] font-mono text-emerald-400 tracking-widest flex items-center gap-1"><ShieldCheck size={10}/> {t('saveSlots.slots.status_active')}</span>
+                                                            <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest border-l border-slate-700 pl-2">AEGIS-{formatSlotNumber(slot.slotId)}</span>
                                                         </div>
-                                                        <h3 className="font-black text-white text-xl uppercase tracking-wider mb-2 truncate max-w-[200px]">dr. {slot.profile?.name}</h3>
+                                                        <h3 className="font-black text-white text-xl uppercase tracking-wider mb-2 truncate max-w-[200px]">{t('saveSlots.slots.doctor_prefix', { name: slot.profile?.name || t('mainLayout.player_fallback') })}</h3>
                                                         <div className="flex flex-wrap gap-x-3 gap-y-1">
-                                                            <span className="font-mono text-[10px] text-cyan-400 uppercase tracking-widest flex items-center gap-1.5 bg-cyan-950/30 px-2 py-0.5 rounded border border-cyan-900/50"><Calendar size={10}/> Hari {slot.day || 1}</span>
-                                                            <span className="font-mono text-[10px] text-amber-400 uppercase tracking-widest flex items-center gap-1.5 bg-amber-950/30 px-2 py-0.5 rounded border border-amber-900/50"><Award size={10}/> Rep: {slot.reputation || 80}</span>
+                                                            <span className="font-mono text-[10px] text-cyan-400 uppercase tracking-widest flex items-center gap-1.5 bg-cyan-950/30 px-2 py-0.5 rounded border border-cyan-900/50"><Calendar size={10}/> {t('saveSlots.slots.day_label', { day: slot.day || 1 })}</span>
+                                                            <span className="font-mono text-[10px] text-amber-400 uppercase tracking-widest flex items-center gap-1.5 bg-amber-950/30 px-2 py-0.5 rounded border border-amber-900/50"><Award size={10}/> {t('saveSlots.slots.reputation_label', { value: slot.reputation || 80 })}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -451,24 +455,24 @@ export default function SaveSlotSelector({ onSelectSlot, onNewGame }) {
                                                 <div className="flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     {confirmDelete === slot.slotId ? (
                                                         <div className="flex flex-col gap-1 bg-rose-950/80 p-1 rounded-xl border border-rose-900">
-                                                            <button onClick={() => handleDeleteSlot(slot.slotId)} className="px-4 py-2 text-[9px] font-black uppercase text-white bg-rose-600 rounded-lg hover:bg-rose-500">Purge</button>
-                                                            <button onClick={() => setConfirmDelete(null)} className="px-4 py-1.5 text-[9px] text-slate-300 bg-slate-900 rounded-lg hover:text-white">Batal</button>
+                                                            <button onClick={() => handleDeleteSlot(slot.slotId)} className="px-4 py-2 text-[9px] font-black uppercase text-white bg-rose-600 rounded-lg hover:bg-rose-500">{t('saveSlots.actions.purge')}</button>
+                                                            <button onClick={() => setConfirmDelete(null)} className="px-4 py-1.5 text-[9px] text-slate-300 bg-slate-900 rounded-lg hover:text-white">{t('saveSlots.actions.cancel')}</button>
                                                         </div>
                                                     ) : (
                                                         <>
-                                                            <button onClick={() => handleExportSave(slot.slotId)} disabled={isTransitioning} className="p-2.5 text-slate-400 hover:text-cyan-400 bg-slate-900 border border-slate-700 hover:border-cyan-800 rounded-lg transition-colors" title="Export Dossier"><Download size={14}/></button>
-                                                            <button onClick={() => setConfirmDelete(slot.slotId)} disabled={isTransitioning} className="p-2.5 text-slate-400 hover:text-rose-400 bg-slate-900 border border-slate-700 hover:border-rose-800 rounded-lg transition-colors" title="Delete Dossier"><Trash2 size={14}/></button>
+                                                            <button onClick={() => handleExportSave(slot.slotId)} disabled={isTransitioning} className="p-2.5 text-slate-400 hover:text-cyan-400 bg-slate-900 border border-slate-700 hover:border-cyan-800 rounded-lg transition-colors" title={t('saveSlots.slots.export_dossier')}><Download size={14}/></button>
+                                                            <button onClick={() => setConfirmDelete(slot.slotId)} disabled={isTransitioning} className="p-2.5 text-slate-400 hover:text-rose-400 bg-slate-900 border border-slate-700 hover:border-rose-800 rounded-lg transition-colors" title={t('saveSlots.slots.delete_dossier')}><Trash2 size={14}/></button>
                                                         </>
                                                     )}
                                                 </div>
                                             </div>
 
                                             <div className="ml-2 mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
-                                                <div className="text-[9px] font-mono text-slate-500 flex items-center gap-1.5"><Clock size={10}/> LAST_SYNC: {formatDate(slot.savedAt)}</div>
+                                                <div className="text-[9px] font-mono text-slate-500 flex items-center gap-1.5"><Clock size={10}/> {t('saveSlots.slots.last_sync', { value: formatDate(slot.savedAt) })}</div>
                                                 <button onClick={() => executeStartGame(slot.slotId, slot)} disabled={isTransitioning}
                                                     className="px-8 py-3 bg-emerald-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-emerald-500 btn-tactical border-b-emerald-900 shadow-[0_5px_15px_rgba(16,185,129,0.2)] flex justify-center items-center gap-2"
                                                 >
-                                                    <Cpu size={14} /> OTORISASI LOGIN
+                                                    <Cpu size={14} /> {t('saveSlots.actions.authorize_login')}
                                                 </button>
                                             </div>
                                         </div>

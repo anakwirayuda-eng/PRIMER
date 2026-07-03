@@ -10,16 +10,18 @@
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGame } from '../context/GameContext.jsx';
 import useModalA11y from '../hooks/useModalA11y.js';
 import { MEDICATION_DATABASE, getMedicationById } from '../data/MedicationDatabase.js';
 import { SUPPLIER_DATABASE, getSupplierById } from '../data/SupplierDatabase.js';
 import { X, ShoppingCart } from 'lucide-react';
 import { normalizeMedicationId } from '../models/InventoryRuntime.js';
+import { showToast } from '../utils/ToastManager.js';
 
 export default function OrderModal({ onClose }) {
+    const { t } = useTranslation();
     const { pharmacyInventory, submitOrder, day, stats: _stats, pendingOrders = [] } = useGame();
-    const [quantities, setQuantities] = useState({});
     const modalRef = useModalA11y(onClose);
     const [selectedSupplierId, setSelectedSupplierId] = useState('dinkes');
     const [isExpress, setIsExpress] = useState(false);
@@ -51,12 +53,12 @@ export default function OrderModal({ onClose }) {
             // Codex Fix: show skipped items so player knows about partial orders
             const createdCount = result.order?.items?.length ?? orderItems.length;
             const msg = result.skipped?.length
-                ? `Order dikirim (${createdCount} item). ${result.skipped.length} item dilewati karena tidak tersedia di supplier ini:\n${result.skipped.join(', ')}`
-                : `Order berhasil dibuat (${createdCount} item)!`;
-            alert(msg);
+                ? t('orderModal.toast.partial', { count: createdCount, skippedCount: result.skipped.length, skipped: result.skipped.join(', ') })
+                : t('orderModal.toast.success', { count: createdCount });
+            showToast(msg, result.skipped?.length ? 'warning' : 'success', 4200);
             onClose();
         } else {
-            alert(result.error);
+            showToast(result.error || t('orderModal.toast.error'), 'error', 4200);
         }
     };
 
@@ -64,14 +66,14 @@ export default function OrderModal({ onClose }) {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="order-title" className="bg-white w-full max-w-3xl rounded-xl p-6">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 id="order-title" className="text-2xl font-bold">Buat Pesanan</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded" aria-label="Tutup pesanan">
+                    <h2 id="order-title" className="text-2xl font-bold">{t('orderModal.title')}</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded" aria-label={t('orderModal.closeAria')}>
                         <X size={24} />
                     </button>
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-sm font-semibold mb-2">Pilih Supplier</label>
+                    <label className="block text-sm font-semibold mb-2">{t('orderModal.supplier')}</label>
                     <select
                         value={selectedSupplierId}
                         onChange={(e) => setSelectedSupplierId(e.target.value)}
@@ -79,7 +81,7 @@ export default function OrderModal({ onClose }) {
                     >
                         {SUPPLIER_DATABASE.map(supplier => (
                             <option key={supplier.id} value={supplier.id}>
-                                {supplier.name} - {supplier.leadTime} hari
+                                {supplier.name} - {t('orderModal.leadTime', { count: supplier.leadTime })}
                             </option>
                         ))}
                     </select>
@@ -97,8 +99,8 @@ export default function OrderModal({ onClose }) {
                                     className="w-4 h-4 accent-amber-600"
                                 />
                                 <div>
-                                    <span className="text-sm font-bold text-amber-800">🚀 Express Delivery (3 Hari)</span>
-                                    <p className="text-xs text-amber-600">Biaya tambahan Rp {sup.expressFee.toLocaleString('id-ID')} — order tidak terpengaruh keterlambatan logistik</p>
+                                    <span className="text-sm font-bold text-amber-800">{t('orderModal.expressTitle')}</span>
+                                    <p className="text-xs text-amber-600">{t('orderModal.expressDescription', { value: sup.expressFee.toLocaleString('id-ID') })}</p>
                                 </div>
                             </label>
                         </div>
@@ -106,17 +108,17 @@ export default function OrderModal({ onClose }) {
                 })()}
 
                 <div className="mb-6">
-                    <h3 className="font-semibold mb-2">Item yang Perlu Diorder ({lowStockMeds.length})</h3>
+                    <h3 className="font-semibold mb-2">{t('orderModal.itemsToOrder', { count: lowStockMeds.length })}</h3>
                     <div className="max-h-64 overflow-y-auto space-y-2">
                         {lowStockMeds.map(med => (
                             <div key={med.id} className="p-3 bg-slate-50 rounded flex justify-between">
                                 <div>
                                     <p className="font-semibold">{med.name}</p>
                                     <p className="text-xs text-slate-600">
-                                        Stock: {med.currentStock} / Min: {med.minStock}
+                                        {t('orderModal.stockLine', { stock: med.currentStock, min: med.minStock })}
                                     </p>
                                 </div>
-                                <p className="text-sm font-semibold">Order: {Math.max(1, med.minStock - med.currentStock)}</p>
+                                <p className="text-sm font-semibold">{t('orderModal.orderQty', { count: Math.max(1, med.minStock - med.currentStock) })}</p>
                             </div>
                         ))}
                     </div>
@@ -127,7 +129,7 @@ export default function OrderModal({ onClose }) {
                         onClick={onClose}
                         className="px-6 py-2 bg-slate-200 rounded-lg font-semibold hover:bg-slate-300"
                     >
-                        Batal
+                        {t('orderModal.cancel')}
                     </button>
                     <button
                         onClick={handleOrder}
@@ -135,7 +137,7 @@ export default function OrderModal({ onClose }) {
                         className="px-6 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 disabled:opacity-50"
                     >
                         <ShoppingCart className="inline mr-2" size={18} />
-                        Kirim Order
+                        {t('orderModal.submit')}
                     </button>
                 </div>
             </div>

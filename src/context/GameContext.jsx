@@ -56,7 +56,7 @@ export function GameProvider({ children }) {
     // --- Life Cycle Management ---
     useGameLoop({
         gameState: nav.gameState,
-        gameSpeed: world.speed || 1, // Fix: world.speed instead of nav.gameSpeed
+        gameSpeed: typeof world.speed === 'number' ? world.speed : 1,
         gameOver: clinical.gameOver,
         time: world.time,
         day: world.day,
@@ -114,7 +114,7 @@ export function GameProvider({ children }) {
             navigate: navActions.navigate,
             gameState: nav.gameState,
             setGameState: navActions.setGameState,
-            gameSpeed: world.speed || 1,
+            gameSpeed: typeof world.speed === 'number' ? world.speed : 1,
             setGameSpeed: worldActions.setGameSpeed,
             time: world.time,
             day: world.day,

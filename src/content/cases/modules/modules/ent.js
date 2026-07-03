@@ -137,7 +137,7 @@ export const ENT_CASES = [
             sosial: [],
         },
         essentialQuestions: ["q_main","q_ispa"],
-        anamnesis: ["Telinga kanan sakit banget dok, rasanya kayak penuh.", "Sedang batuk pilek dok sudah seminggu. Telinga rasanya ngenyut dan pendengaran berkurang sedikit."],
+        anamnesis: ["Anak saya pegang telinga kanan terus dok, kelihatan sakit sekali dan rewel.", "Sudah batuk pilek seminggu, sekarang telinganya seperti ngenyut dan kalau dipanggil harus lebih keras."],
         physicalExamFindings: { general: "Tampak tidak nyaman, memegang telinga.", vitals: "TD 120/80, N 84x, RR 18x, S 38.2°C", heent: "Telinga: Membran timpani hiperemis, bulging (+), refleks cahaya (-), tidak ada perforasi. Serumen (-)." },
         labs: {}, vitals: { temp: 38.2, bp: '120/80', hr: 84, rr: 18 },
         correctTreatment: ['amoxicillin_500', 'paracetamol_500', 'pseudoephedrine', 'boric_acid_ear'],

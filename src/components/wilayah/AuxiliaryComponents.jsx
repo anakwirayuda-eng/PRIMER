@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Users, User, Activity,
     BookOpen, Info, Baby, Accessibility, Heart,
@@ -21,6 +22,7 @@ import { PISPK_INDICATORS } from './constants.js';
 // ─── PIS-PK Detail Panel (designed for dark glassmorphism context) ───
 // PIS-PK detail panel for the Wilayah side drawer.
 export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenIntervention, onOpenWiki }) => {
+    const { t } = useTranslation();
     const { navigate } = useGame();
 
     const family = villageData?.families?.find(f => f.id === building.familyId);
@@ -29,6 +31,13 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
     const scoredIndicators = Object.values(indicators).filter(v => v !== null).length;
     const healthyIndicators = Object.values(indicators).filter(v => v === true).length;
     const score = scoredIndicators > 0 ? healthyIndicators / scoredIndicators : 0;
+    const tx = (key, options = {}) => t(`wilayahContent.ui.auxiliary.${key}`, options);
+    const getIksStatus = () => {
+        if (score > 0.8) return tx('iksStatus.healthy');
+        if (score > 0.5) return tx('iksStatus.preHealthy');
+        return tx('iksStatus.unhealthy');
+    };
+    const getIndicatorLabel = (indicator) => tx(`indicators.${indicator.id}`, { defaultValue: indicator.label });
 
     return (
         <div className="space-y-4">
@@ -36,11 +45,11 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
             <button
                 onClick={() => onOpenWiki('iks')}
                 className="w-full text-left bg-white/5 p-4 rounded-xl cursor-pointer hover:bg-white/10 transition-all group border border-white/10 hover:border-emerald-500/30"
-                aria-label={`Skor IKS Keluarga: ${(score * 100).toFixed(0)}% — ${score > 0.8 ? 'Keluarga Sehat' : score > 0.5 ? 'Pra-Sehat' : 'Tidak Sehat'}. Klik untuk info.`}
+                aria-label={tx('iksAria', { score: (score * 100).toFixed(0), status: getIksStatus() })}
             >
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
-                        <span className="font-black text-[10px] text-white/40 uppercase tracking-widest">Skor IKS Keluarga</span>
+                        <span className="font-black text-[10px] text-white/40 uppercase tracking-widest">{tx('familyIksScore')}</span>
                         <Info size={12} className="text-white/20 group-hover:text-emerald-400 transition-colors" />
                     </div>
                     <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase
@@ -58,7 +67,7 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
                     />
                 </div>
                 <p className="text-[9px] uppercase font-black text-white/30 mt-1.5 text-right tracking-widest">
-                    {score > 0.8 ? 'Keluarga Sehat' : score > 0.5 ? 'Pra-Sehat' : 'Tidak Sehat'}
+                    {getIksStatus()}
                 </p>
             </button>
 
@@ -66,7 +75,7 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
             {family && family.members && (
                 <div className="bg-white/5 border border-white/5 rounded-xl p-3">
                     <h4 className="font-black text-[10px] text-white/30 uppercase mb-3 flex items-center gap-1.5 tracking-widest">
-                        <Users size={11} /> Anggota ({family.members.length})
+                        <Users size={11} /> {tx('members', { count: family.members.length })}
                     </h4>
                     <div className="space-y-1.5">
                         {family.members.map((m, i) => {
@@ -123,11 +132,11 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
                                                     onClick={() => navigate('archive', { familyId: family.id, memberId: m.id })}
                                                     className="text-[9px] font-black text-emerald-400 uppercase tracking-tight hover:underline"
                                                 >
-                                                    Detail
+                                                    {tx('detail')}
                                                 </button>
                                             </div>
                                             <p className="text-[9px] text-white/30 font-bold uppercase tracking-tight">
-                                                {m.age} th • {m.gender === 'L' ? 'L' : 'P'} • {m.occupation}
+                                                {tx('memberMeta', { age: m.age, gender: m.gender === 'L' ? tx('gender.maleShort') : tx('gender.femaleShort'), occupation: m.occupation })}
                                             </p>
                                         </div>
                                     </div>
@@ -153,7 +162,7 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
             {/* PIS-PK Indicators */}
             <div className="space-y-2">
                 <h4 className="font-black text-[10px] text-white/30 uppercase tracking-widest">
-                    Indikator {PISPK_INDICATORS.length} PIS-PK
+                    {tx('indicatorCount', { count: PISPK_INDICATORS.length })}
                 </h4>
                 <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto pr-1 scrollbar-hide">
                     {PISPK_INDICATORS.map(ind => {
@@ -163,10 +172,10 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
                                 <div className={`mt-0.5 w-3.5 h-3.5 rounded-full shrink-0 flex items-center justify-center text-[9px] font-black
                                     ${isHealthy ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}
                                 `}>
-                                    {isHealthy ? '✓' : '✕'}
+                                    {isHealthy ? 'OK' : 'X'}
                                 </div>
                                 <span className={`text-[10px] font-bold leading-tight ${isHealthy ? 'text-white/60' : 'text-red-300'}`}>
-                                    {ind.label}
+                                    {getIndicatorLabel(ind)}
                                 </span>
                             </div>
                         );
@@ -180,26 +189,29 @@ export const PISPKPanel = ({ building, villageData, onOpenIntervention: _onOpenI
 // ─── IKS Scoreboard (for dark glassmorphism drawer) ───
 // IKS scoreboard for the Wilayah side drawer.
 export const IKSBoardPanel = ({ stats, onOpenAnnouncements }) => {
+    const { t } = useTranslation();
+    const tx = (key, options = {}) => t(`wilayahContent.ui.auxiliary.${key}`, options);
+
     return (
         <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
                 <div className="bg-white/5 p-3 rounded-xl border border-white/10">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1">Cakupan PIS-PK</p>
-                    <p className="text-xl font-black text-white">{stats.totalHouses} <span className="text-xs text-white/30">KK</span></p>
+                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1">{tx('pispkCoverage')}</p>
+                    <p className="text-xl font-black text-white">{stats.totalHouses} <span className="text-xs text-white/30">{tx('householdsShort')}</span></p>
                 </div>
                 <div className="bg-white/5 p-3 rounded-xl border border-white/10">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1">Alert Surveilans</p>
-                    <p className="text-xl font-black text-red-400">{stats.alertCount} <span className="text-xs text-white/30">Kasus</span></p>
+                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1">{tx('surveillanceAlert')}</p>
+                    <p className="text-xl font-black text-red-400">{stats.alertCount} <span className="text-xs text-white/30">{tx('cases')}</span></p>
                 </div>
             </div>
 
             <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl relative overflow-hidden">
                 <BarChart3 className="absolute -right-3 -bottom-3 text-emerald-500/10" size={80} />
-                <h4 className="text-[9px] font-black text-emerald-300 uppercase tracking-widest mb-2">IKS Desa</h4>
+                <h4 className="text-[9px] font-black text-emerald-300 uppercase tracking-widest mb-2">{tx('villageIks')}</h4>
                 <div className="flex items-end gap-2 mb-1.5">
                     <span className="text-3xl font-black text-white tracking-tighter">{(stats.avgIks * 100).toFixed(1)}%</span>
                 </div>
-                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.round(stats.avgIks * 100)} aria-valuemin="0" aria-valuemax="100" aria-label={`IKS Desa: ${(stats.avgIks * 100).toFixed(1)}%`}>
+                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.round(stats.avgIks * 100)} aria-valuemin="0" aria-valuemax="100" aria-label={tx('villageIksAria', { score: (stats.avgIks * 100).toFixed(1) })}>
                     <div className="h-full bg-emerald-400" style={{ width: `${stats.avgIks * 100}%` }} />
                 </div>
             </div>
@@ -213,7 +225,7 @@ export const IKSBoardPanel = ({ stats, onOpenAnnouncements }) => {
                         <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center group-hover:bg-amber-500/30 transition-all">
                             <Megaphone size={16} />
                         </div>
-                        <span className="font-black text-white/70 text-[10px] uppercase tracking-wider">Pengumuman</span>
+                        <span className="font-black text-white/70 text-[10px] uppercase tracking-wider">{tx('announcements')}</span>
                         <ChevronRight className="ml-auto text-white/20 group-hover:translate-x-1 transition-transform" size={14} />
                     </div>
                 </button>

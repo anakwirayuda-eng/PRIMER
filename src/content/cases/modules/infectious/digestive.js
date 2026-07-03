@@ -85,7 +85,8 @@ export const digestive_infectious = [
         },
         labs: {
             "SGOT/SGPT": { result: "SGOT 450, SGPT 520 (Tinggi)", cost: 60000 },
-            "Bilirubin": { result: "Total 8.5, Direct 6.2 (Tinggi)", cost: 50000 }
+            "Bilirubin": { result: "Total 8.5, Direct 6.2 (Tinggi)", cost: 50000 },
+            "IgM Anti-HAV": { result: "Reaktif (+), mendukung hepatitis A akut", cost: 90000 }
         },
         vitals: { temp: 37.5, bp: '110/70', hr: 78, rr: 18 },
         correctTreatment: ['hepatoprotector', 'vit_b_complex'],

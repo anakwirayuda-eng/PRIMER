@@ -46,6 +46,7 @@ export const OTHER_EMERGENCY_CASES = [
         differentialDiagnosis: ['Edema paru akut', 'Aspirasi pneumonia', 'Hipotermia berat', 'Cedera servikal'],
         risk: 'critical',
         referralRequired: true,
+        referralTarget: 'SpPD/ICU',
         deteriorationRate: 6
     },
     {

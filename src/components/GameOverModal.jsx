@@ -10,56 +10,58 @@
  */
 
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle, FileWarning, LogOut, RefreshCw, ArrowRight } from 'lucide-react';
 import useModalA11y from '../hooks/useModalA11y.js';
 
 export default function GameOverModal({ type, reason, onContinue, onRestart }) {
+    const { t } = useTranslation();
 
     const config = {
         warning1: {
-            title: 'SURAT PERINGATAN 1',
+            title: t('gameOver.warning1.title'),
             color: 'text-amber-600',
             bg: 'bg-amber-50',
             border: 'border-amber-200',
             icon: FileWarning,
-            message: 'Kinerja klinik di bawah standar. Harap segera perbaiki kualitas pelayanan dan manajemen rujukan.',
-            action: 'Saya Mengerti'
+            message: t('gameOver.warning1.message'),
+            action: t('gameOver.warning1.action')
         },
         warning2: {
-            title: 'SURAT PERINGATAN 2',
+            title: t('gameOver.warning2.title'),
             color: 'text-orange-600',
             bg: 'bg-orange-50',
             border: 'border-orange-200',
             icon: AlertTriangle,
-            message: 'Kondisi KRITIS. Jika tidak ada perbaikan signifikan besok, kontrak kerja sama akan diputus.',
-            action: 'Saya Mengerti'
+            message: t('gameOver.warning2.message'),
+            action: t('gameOver.warning2.action')
         },
         fired: {
-            title: 'PEMUTUSAN HUBUNGAN KERJA',
+            title: t('gameOver.fired.title'),
             color: 'text-red-700',
             bg: 'bg-red-50',
             border: 'border-red-200',
             icon: LogOut,
-            message: 'Maaf, kinerja Anda tidak memenuhi standar kompetensi Kepala Puskesmas. Kontrak Anda dihentikan.',
-            action: 'Coba Lagi'
+            message: t('gameOver.fired.message'),
+            action: t('gameOver.fired.action')
         },
         fainted: {
-            title: 'ANDA PINGSAN!',
+            title: t('gameOver.fainted.title'),
             color: 'text-indigo-700',
             bg: 'bg-indigo-50',
             border: 'border-indigo-200',
             icon: AlertTriangle,
-            message: 'Tubuh Anda mencapai batasnya. Anda pingsan karena kelelahan kronis.',
-            action: 'Pulihkan Diri'
+            message: t('gameOver.fainted.message'),
+            action: t('gameOver.fainted.action')
         },
         runtime_trap: {
-            title: 'MODE AMAN AKTIF',
+            title: t('gameOver.runtime_trap.title'),
             color: 'text-amber-700',
             bg: 'bg-amber-50',
             border: 'border-amber-200',
             icon: AlertTriangle,
-            message: 'Anomali runtime terdeteksi. Permainan dijeda untuk mencegah korupsi state lebih lanjut.',
-            action: 'Lanjutkan Dalam Mode Aman'
+            message: t('gameOver.runtime_trap.message'),
+            action: t('gameOver.runtime_trap.action')
         }
     };
 
@@ -101,20 +103,20 @@ export default function GameOverModal({ type, reason, onContinue, onRestart }) {
 
                     {type === 'fired' ? (
                         <div className="bg-slate-100 p-4 rounded-lg mb-6 text-sm text-slate-500">
-                            <p className="font-semibold mb-1">Tips Evaluasi:</p>
+                            <p className="font-semibold mb-1">{t('gameOver.fired.tips_title')}</p>
                             <ul className="text-left list-disc list-inside space-y-1">
-                                <li>Jaga RNS di bawah 5%</li>
-                                <li>Pastikan diagnosis akurat</li>
-                                <li>Hindari keluhan pasien</li>
+                                <li>{t('gameOver.fired.tip_rrns')}</li>
+                                <li>{t('gameOver.fired.tip_accuracy')}</li>
+                                <li>{t('gameOver.fired.tip_complaints')}</li>
                             </ul>
                         </div>
                     ) : type === 'runtime_trap' ? (
                         <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6 text-sm text-amber-900">
-                            Sistem menahan aksi tulis sampai peringatan ini ditutup. Permainan tetap dalam status `paused` agar state bisa dipulihkan dengan aman.
+                            {t('gameOver.runtime_trap.notice')}
                         </div>
                     ) : (
                         <div className="text-xs text-slate-400 mb-6 uppercase tracking-wider font-semibold">
-                            Kesempatan Tersisa: {type === 'warning1' ? '2' : '1'}
+                            {t('gameOver.remaining_chances', { count: type === 'warning1' ? 2 : 1 })}
                         </div>
                     )}
 

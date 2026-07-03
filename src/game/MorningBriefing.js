@@ -81,7 +81,11 @@ function generateStaffReport(hiredStaff) {
         total: hiredStaff.length,
         available: available.length,
         lowMorale: lowMorale.map(s => ({ name: s.name || s.type, morale: Math.round(s.morale || 0) })),
-        absent: absent.map(s => ({ name: s.name || s.type, reason: 'Morale terlalu rendah' })),
+        absent: absent.map(s => ({
+            name: s.name || s.type,
+            reason: 'Morale terlalu rendah',
+            reasonKey: 'morningBriefing.staff.low_morale_reason'
+        })),
         avgMorale: hiredStaff.length > 0
             ? Math.round(hiredStaff.reduce((sum, s) => sum + (s.morale || 70), 0) / hiredStaff.length)
             : 0,
@@ -127,6 +131,8 @@ function generateTodayEvents(day, prolanisRoster, activeOutbreaks) {
             type: 'posyandu',
             icon: '⚖️',
             title: 'Hari Posyandu',
+            titleKey: 'morningBriefing.events.posyandu.title',
+            descriptionKey: 'morningBriefing.events.posyandu.description',
             description: 'Jadwal Posyandu hari ini — penimbangan, KMS, imunisasi.',
             priority: 'medium',
         });
@@ -137,7 +143,10 @@ function generateTodayEvents(day, prolanisRoster, activeOutbreaks) {
                 type: 'posyandu_soon',
                 icon: '📅',
                 title: `Posyandu ${nextPosyandu - day} hari lagi`,
+                titleKey: 'morningBriefing.events.posyandu_soon.title',
+                titleVars: { days: nextPosyandu - day },
                 description: 'Persiapkan perlengkapan dan reminder ke kader.',
+                descriptionKey: 'morningBriefing.events.posyandu_soon.description',
                 priority: 'low',
             });
         }
@@ -149,7 +158,10 @@ function generateTodayEvents(day, prolanisRoster, activeOutbreaks) {
             type: 'prolanis',
             icon: '💗',
             title: 'Jadwal Prolanis',
+            titleKey: 'morningBriefing.events.prolanis.title',
             description: `${prolanisRoster.length} pasien Prolanis dijadwalkan kontrol hari ini.`,
+            descriptionKey: 'morningBriefing.events.prolanis.description',
+            descriptionVars: { count: prolanisRoster.length },
             priority: 'high',
         });
     }
@@ -161,7 +173,10 @@ function generateTodayEvents(day, prolanisRoster, activeOutbreaks) {
                 type: 'outbreak',
                 icon: '🦠',
                 title: `Wabah: ${outbreak.name || outbreak.disease || 'Tidak diketahui'}`,
+                titleKey: 'morningBriefing.events.outbreak.title',
+                titleVars: { name: outbreak.name || outbreak.disease || 'Tidak diketahui' },
                 description: 'Kasus bisa melonjak. Siapkan stok obat dan APD.',
+                descriptionKey: 'morningBriefing.events.outbreak.description',
                 priority: 'critical',
             });
         });
@@ -194,6 +209,7 @@ function generateKpiSnapshot(stats, villageData, reputation) {
         kpiItems: [
             {
                 label: 'Pasien Dilayani',
+                labelKey: 'morningBriefing.kpi.patients_served',
                 value: totalPatientsServed,
                 target: 10,
                 unit: '/hari',
@@ -201,6 +217,7 @@ function generateKpiSnapshot(stats, villageData, reputation) {
             },
             {
                 label: 'Reputasi',
+                labelKey: 'morningBriefing.kpi.reputation',
                 value: reputationValue,
                 target: 75,
                 unit: '',
@@ -230,6 +247,18 @@ function getAvailablePolis(playerLevel, hiredStaff) {
                 : service.requiredStaff && !staffTypes.includes(service.requiredStaff)
                     ? `Butuh ${service.requiredStaff}`
                     : null,
+        reasonKey: service.betaLocked
+            ? 'morningBriefing.poli_reason.coming_soon'
+            : service.unlockLevel > playerLevel
+                ? 'morningBriefing.poli_reason.level_required'
+                : service.requiredStaff && !staffTypes.includes(service.requiredStaff)
+                    ? 'morningBriefing.poli_reason.staff_required'
+                    : null,
+        reasonVars: service.unlockLevel > playerLevel
+            ? { level: service.unlockLevel }
+            : service.requiredStaff && !staffTypes.includes(service.requiredStaff)
+                ? { staff: service.requiredStaff }
+                : null,
     }));
 }
 
@@ -243,6 +272,8 @@ function generateSuggestedPriority(state) {
     if (activeOutbreaks.length > 0) {
         return {
             text: `Wabah aktif! Fokus tangani kasus ${activeOutbreaks[0]?.name || 'menular'} dan cegah penyebaran.`,
+            textKey: 'morningBriefing.priority.outbreak',
+            textVars: { name: activeOutbreaks[0]?.name || 'menular' },
             type: 'critical',
             icon: '🦠',
         };
@@ -255,6 +286,11 @@ function generateSuggestedPriority(state) {
         if (worst?.originalCase) {
             return {
                 text: `${worst.originalCase.patientName} ${worst.narrative}. Prioritaskan penanganan ulang.`,
+                textKey: 'morningBriefing.priority.followup',
+                textVars: {
+                    patient: worst.originalCase.patientName,
+                    narrative: worst.narrative,
+                },
                 type: 'high',
                 icon: '⚠️',
             };
@@ -262,11 +298,21 @@ function generateSuggestedPriority(state) {
     }
 
     // Default: general efficiency
-    const priorities = [
+    const prioritiesBase = [
         { text: 'Layani pasien dengan efisien — minimkan waktu tunggu.', type: 'normal', icon: '🎯' },
         { text: 'Cek stok obat dan pastikan persediaan cukup untuk minggu ini.', type: 'normal', icon: '💊' },
         { text: 'Tingkatkan skor reputasi Puskesmas melalui pelayanan prima.', type: 'normal', icon: '⭐' },
     ];
+
+    const priorityKeys = [
+        'morningBriefing.priority.efficiency',
+        'morningBriefing.priority.stock',
+        'morningBriefing.priority.reputation',
+    ];
+    const priorities = prioritiesBase.map((priority, index) => ({
+        ...priority,
+        textKey: priorityKeys[index],
+    }));
 
     return priorities[day % priorities.length];
 }
@@ -347,11 +393,34 @@ export function generateDailyQuests(state) {
         },
     ];
 
+    const questLocalization = {
+        serve_10: {
+            titleKey: 'morningBriefing.quests.serve_10.title',
+            descriptionKey: 'morningBriefing.quests.serve_10.description',
+        },
+        zero_miss: {
+            titleKey: 'morningBriefing.quests.zero_miss.title',
+            descriptionKey: 'morningBriefing.quests.zero_miss.description',
+        },
+        accuracy_90: {
+            titleKey: 'morningBriefing.quests.accuracy_90.title',
+            descriptionKey: 'morningBriefing.quests.accuracy_90.description',
+        },
+        reputation_up: {
+            titleKey: 'morningBriefing.quests.reputation_up.title',
+            descriptionKey: 'morningBriefing.quests.reputation_up.description',
+        },
+    };
+    const localizedQuests = allQuests.map(quest => ({
+        ...quest,
+        ...questLocalization[quest.id],
+    }));
+
     // Rotate 3 quests based on day
-    const startIdx = day % allQuests.length;
+    const startIdx = day % localizedQuests.length;
     const selected = [];
-    for (let i = 0; i < 3 && i < allQuests.length; i++) {
-        selected.push(allQuests[(startIdx + i) % allQuests.length]);
+    for (let i = 0; i < 3 && i < localizedQuests.length; i++) {
+        selected.push(localizedQuests[(startIdx + i) % localizedQuests.length]);
     }
 
     return selected;

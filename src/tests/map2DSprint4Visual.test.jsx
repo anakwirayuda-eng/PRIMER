@@ -118,7 +118,7 @@ describe('2D map sprint 4 service labels', () => {
         expect(screen.getByTestId('service-label-polindes')).toHaveTextContent('POLINDES');
     });
 
-    it('keeps service labels visible under overview zoom in detective mode', async () => {
+    it('hides service labels under overview zoom while keeping macro framing active', async () => {
         setViewportSize(400, 300);
 
         render(
@@ -131,7 +131,9 @@ describe('2D map sprint 4 service labels', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByTestId('service-label-puskesmas')).toBeInTheDocument();
+            expect(screen.getByTestId('map2d-semantic-zoom-root')).toHaveAttribute('data-semantic-zoom', 'overview');
         });
+        expect(screen.queryByTestId('service-label-puskesmas')).not.toBeInTheDocument();
+        expect(screen.getByTestId('map2d-semantic-zoom-overview-frame')).toBeInTheDocument();
     });
 });

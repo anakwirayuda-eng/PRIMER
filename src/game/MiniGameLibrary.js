@@ -465,7 +465,15 @@ export function getMiniGameForScenario(scenario, mode = 'deep') {
  */
 export function scoreMiniGame(gameId, results) {
     const game = MINI_GAMES[gameId] || MICRO_TASKS[gameId];
-    if (!game) return { score: 0, maxScore: 100, normalized: 0, feedback: 'Game not found' };
+    if (!game) {
+        return {
+            score: 0,
+            maxScore: 100,
+            normalized: 0,
+            feedback: 'Game not found',
+            feedbackKey: 'gameNotFound'
+        };
+    }
 
     const scoring = game.scoring || { correct: 20, incorrect: -5 };
     let score = 0;
@@ -489,12 +497,22 @@ export function scoreMiniGame(gameId, results) {
     const normalized = Math.max(0, Math.min(100, score));
 
     let feedback;
-    if (normalized >= 90) feedback = '🌟 Luar biasa! Anda sangat terampil!';
-    else if (normalized >= 70) feedback = '👍 Bagus! Pemahaman Anda sudah baik.';
-    else if (normalized >= 50) feedback = '⚠️ Cukup, tapi masih perlu latihan.';
-    else feedback = '❌ Perlu perbaikan. Coba lagi!';
+    let feedbackKey;
+    if (normalized >= 90) {
+        feedback = '[Hebat] Luar biasa. Anda sangat terampil.';
+        feedbackKey = 'excellent';
+    } else if (normalized >= 70) {
+        feedback = '[Bagus] Pemahaman Anda sudah baik.';
+        feedbackKey = 'good';
+    } else if (normalized >= 50) {
+        feedback = '[Waspada] Cukup, tapi masih perlu latihan.';
+        feedbackKey = 'practice';
+    } else {
+        feedback = '[Perlu Perbaikan] Coba lagi.';
+        feedbackKey = 'retry';
+    }
 
-    return { score, maxScore, normalized, feedback };
+    return { score, maxScore, normalized, feedback, feedbackKey };
 }
 
 // ═══════════════════════════════════════════════════════════════

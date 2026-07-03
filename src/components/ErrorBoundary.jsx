@@ -11,6 +11,7 @@
 
 import React from 'react';
 import { safeReloadPage } from '../utils/browserSafety.js';
+import i18n from '../i18n.js';
 
 /**
  * ErrorBoundary - Catches React rendering errors and shows a recovery UI.
@@ -74,13 +75,15 @@ export default class ErrorBoundary extends React.Component {
     render() {
         if (this.state.hasError) {
             const isDark = this.props.isDark !== false;
-            const name = this.props.name || 'Component';
+            const name = this.props.name || i18n.t('errorBoundary.component_fallback');
             const isDynamicImportError = this.isDynamicImportError();
             const description = this.props.description || (isDynamicImportError
-                ? 'Modul aplikasi gagal dimuat, biasanya karena server dev Vite sempat putus atau restart. Muat ulang aplikasi untuk menyambungkan ulang modul.'
-                : `${name} mengalami error. Klik tombol di bawah untuk mencoba lagi.`);
-            const buttonLabel = this.props.retryLabel || (isDynamicImportError ? 'Muat Ulang Aplikasi' : 'Coba Lagi');
-            const fallbackActionLabel = this.props.fallbackActionLabel || 'Tutup';
+                ? i18n.t('errorBoundary.dynamic_import_description')
+                : i18n.t('errorBoundary.default_description', { name }));
+            const buttonLabel = this.props.retryLabel || (isDynamicImportError
+                ? i18n.t('errorBoundary.reload_app')
+                : i18n.t('errorBoundary.try_again'));
+            const fallbackActionLabel = this.props.fallbackActionLabel || i18n.t('common.close');
 
             return (
                 <div className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed m-2 min-h-[200px] ${isDark
@@ -89,7 +92,7 @@ export default class ErrorBoundary extends React.Component {
                 }`}>
                     <div className="text-4xl mb-3">!</div>
                     <h3 className={`font-bold text-lg mb-1 ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>
-                        Terjadi Kesalahan
+                        {i18n.t('errorBoundary.title')}
                     </h3>
                     <p className={`text-sm mb-3 text-center max-w-md ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                         {description}

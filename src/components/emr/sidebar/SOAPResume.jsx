@@ -10,11 +10,14 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle, Pill, Scissors, BookOpen, Stethoscope, FileText } from 'lucide-react';
 import { synthesizeAnamnesis } from '../../../game/AnamnesisEngine.js';
 import { PROCEDURES_DB, PHYSICAL_EXAM_OPTIONS } from '../../../data/ProceduresDB.js';
 import { COMMON_PROCEDURES } from '../../../data/CommonProcedures.js';
 import { EDUCATION_OPTIONS } from '../../../data/EducationOptions.js';
+import { getEmergencyCasePresentation } from '../../../game/emergency/emergencyPresentation.js';
+import { localizeClinicalText } from '../../../utils/clinicalContentLocalization.js';
 // getMedicationById — medications are already resolved in selectedMeds prop
 
 export default function SOAPResume({
@@ -29,8 +32,13 @@ export default function SOAPResume({
     selectedProcedures = [],
     selectedEducation = []
 }) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.resolvedLanguage || i18n.language;
+    const localize = (value) => localizeClinicalText(value, locale);
     const examKeys = Array.isArray(examsPerformed) ? examsPerformed : Object.keys(examsPerformed || {});
     const labKeys = Array.isArray(labsRevealed) ? labsRevealed : Object.keys(labsRevealed || {});
+    const caseView = getEmergencyCasePresentation(patient, t, i18n);
+    const physicalExamFindings = caseView.physicalExamFindings || patient.medicalData?.physicalExamFindings || {};
 
     return (
         <div className="flex-1 overflow-y-auto p-3 space-y-4 thin-scrollbar">
@@ -51,33 +59,33 @@ export default function SOAPResume({
                         const completeness = essential.length > 0 ? Math.round((essentialAsked.length / essential.length) * 100) : 100;
                         const hasComplaint = anamnesisHistory.some(q => q.id === 'initial_complaint');
 
-                        if (!hasComplaint) return <p className="opacity-50 italic">Belum ada data anamnesis...</p>;
+                        if (!hasComplaint) return <p className="opacity-50 italic">{t('emrWorkspace.soap.noAnamnesis')}</p>;
 
                         const synthesis = synthesizeAnamnesis(anamnesisHistory, caseData, patient);
                         return (
                             <div className="space-y-2">
                                 <div className="flex justify-between items-center mb-1">
-                                    <span className="font-bold opacity-70">Kelengkapan Data:</span>
+                                    <span className="font-bold opacity-70">{t('emrWorkspace.soap.completeness')}</span>
                                     <span className={`font-mono font-bold ${completeness >= 80 ? 'text-emerald-500' : completeness >= 50 ? 'text-amber-500' : 'text-rose-500'}`}>
                                         {completeness}%
                                     </span>
                                 </div>
                                 <div className="space-y-1.5">
                                     {synthesis.complaintResponse && (
-                                        <p><span className="font-bold">KU:</span> {synthesis.complaintResponse}</p>
+                                        <p><span className="font-bold">{t('emrWorkspace.soap.chiefComplaint')}</span> {synthesis.complaintResponse}</p>
                                     )}
                                     {Object.values(synthesis.categories).map(cat => (
                                         <div key={cat.label}>
-                                            <p className="font-bold opacity-60 text-[9px] uppercase tracking-wider mt-1">{cat.label}</p>
+                                            <p className="font-bold opacity-60 text-[9px] uppercase tracking-wider mt-1">{localize(cat.label)}</p>
                                             {cat.findings.map((f, i) => (
                                                 <p key={i} className={f.status === 'denied' ? 'opacity-50' : ''}>
-                                                    {f.status === 'confirmed' ? '✓' : f.status === 'denied' ? '✗' : '•'} {f.keyword}: {f.summary}
+                                                    {f.status === 'confirmed' ? '+' : f.status === 'denied' ? '-' : '*'} {localize(f.keyword)}: {localize(f.summary)}
                                                 </p>
                                             ))}
                                         </div>
                                     ))}
                                     {synthesis.unaskedEssentials.length > 0 && (
-                                        <p className="text-rose-400 text-[10px] mt-1">⚠ Belum ditanyakan: {synthesis.unaskedEssentials.map(e => e.label).join(', ')}</p>
+                                        <p className="text-rose-400 text-[10px] mt-1">{t('emrWorkspace.soap.unasked', { items: synthesis.unaskedEssentials.map(e => e.label).join(', ') })}</p>
                                     )}
                                 </div>
                             </div>
@@ -94,12 +102,12 @@ export default function SOAPResume({
                 <div className="space-y-2">
                     {examKeys.some(e => ['e_vitals', 'e_gcs'].includes(e)) && (
                         <div className={`p-2.5 rounded-lg border grid grid-cols-2 gap-2 ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
-                            {Object.entries(patient.medicalData?.physicalExamFindings || {}).map(([key, value]) => {
+                            {Object.entries(physicalExamFindings).map(([key, value]) => {
                                 if (key.includes('TD') || key.includes('Nadi') || key.includes('Napas') || key.includes('Suhu')) {
                                     return (
                                         <div key={key} className="flex justify-between items-center text-[10px]">
-                                            <span className="opacity-60">{key}:</span>
-                                            <span className="font-mono font-bold">{value}</span>
+                                            <span className="opacity-60">{localize(key)}:</span>
+                                            <span className="font-mono font-bold">{localize(value)}</span>
                                         </div>
                                     );
                                 }
@@ -110,13 +118,13 @@ export default function SOAPResume({
 
                     <div className={`p-2.5 rounded-lg border text-xs leading-relaxed ${isDark ? 'bg-slate-950/30 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-100 text-slate-700'}`}>
                         {examKeys.length === 0 && labKeys.length === 0 ? (
-                            <p className="opacity-50 italic">Belum ada pemeriksaan...</p>
+                            <p className="opacity-50 italic">{t('emrWorkspace.soap.noExam')}</p>
                         ) : (
                             <ul className="space-y-1">
-                                {Object.entries(patient.medicalData?.physicalExamFindings || {}).map(([key, value]) => {
+                                {Object.entries(physicalExamFindings).map(([key, value]) => {
                                     const isVital = key.includes('TD') || key.includes('Nadi') || key.includes('Napas') || key.includes('Suhu');
                                     if (isVital) return null;
-                                    return <li key={key} className="flex gap-2"><span className="text-emerald-500 shrink-0">•</span> <span><span className="font-bold">{key}:</span> {value}</span></li>;
+                                    return <li key={key} className="flex gap-2"><span className="text-emerald-500 shrink-0">*</span> <span><span className="font-bold">{localize(key)}:</span> {localize(value)}</span></li>;
                                 })}
                                 {labKeys.map(labId => {
                                     const labData = labsRevealed?.[labId];
@@ -127,14 +135,14 @@ export default function SOAPResume({
                                     } else if (typeof labData === 'object' && labData) {
                                         labDisplay = (labData.result || '?') + ' ' + (labData.unit || '');
                                     } else if (labData === true) {
-                                        labDisplay = 'Diperiksa (dalam batas normal)';
+                                        labDisplay = t('emrWorkspace.soap.normalChecked');
                                     } else if (labData) {
                                         labDisplay = String(labData);
                                     }
                                     return (
                                         <li key={labId} className="flex gap-2">
-                                            <span className="text-cyan-500 shrink-0">•</span>
-                                            <span><span className="font-bold">{labId.replace(/_/g, ' ').toUpperCase()}:</span> {labDisplay}</span>
+                                            <span className="text-cyan-500 shrink-0">*</span>
+                                            <span><span className="font-bold">{localize(labId.replace(/_/g, ' ').toUpperCase())}:</span> {localize(labDisplay)}</span>
                                         </li>
                                     );
                                 })}
@@ -151,7 +159,7 @@ export default function SOAPResume({
                 </h4>
                 <div className={`p-2.5 rounded-lg border text-xs ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
                     {selectedDiagnoses.length === 0 ? (
-                        <p className="opacity-50 italic">Belum ada diagnosis...</p>
+                        <p className="opacity-50 italic">{t('emrWorkspace.soap.noDiagnosis')}</p>
                     ) : (
                         <div className="space-y-2">
                             {selectedDiagnoses.map((diag, i) => (
@@ -175,9 +183,9 @@ export default function SOAPResume({
                 </h4>
                 <div className="space-y-2">
                     <div className={`p-2.5 rounded-lg border text-xs ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
-                        <p className="text-[10px] font-bold opacity-40 uppercase tracking-tighter mb-1.5">Resep & Terapi</p>
+                        <p className="text-[10px] font-bold opacity-40 uppercase tracking-tighter mb-1.5">{t('emrWorkspace.soap.therapyTitle')}</p>
                         {selectedMeds.length === 0 ? (
-                            <p className="opacity-30 italic">Belum ada obat...</p>
+                            <p className="opacity-30 italic">{t('emrWorkspace.soap.noMeds')}</p>
                         ) : (
                             <ul className="space-y-1">
                                 {selectedMeds.map((med, i) => (
@@ -194,9 +202,9 @@ export default function SOAPResume({
                     </div>
 
                     <div className={`p-2.5 rounded-lg border text-xs ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
-                        <p className="text-[10px] font-bold opacity-40 uppercase tracking-tighter mb-1.5">Tindakan & Prosedur</p>
+                        <p className="text-[10px] font-bold opacity-40 uppercase tracking-tighter mb-1.5">{t('emrWorkspace.soap.proceduresTitle')}</p>
                         {selectedProcedures.length === 0 ? (
-                            <p className="opacity-30 italic">Belum ada tindakan...</p>
+                            <p className="opacity-30 italic">{t('emrWorkspace.soap.noProcedures')}</p>
                         ) : (
                             <ul className="space-y-1">
                                 {selectedProcedures.map((proc, i) => {
@@ -206,7 +214,7 @@ export default function SOAPResume({
                                     return (
                                         <li key={i} className="flex gap-2 items-center">
                                             <Scissors size={12} className="text-cyan-500 shrink-0" />
-                                            <span className="font-bold">{procName || procData?.name || procId}</span>
+                                            <span className="font-bold">{localize(procName || procData?.name || procId)}</span>
                                         </li>
                                     );
                                 })}
@@ -215,9 +223,9 @@ export default function SOAPResume({
                     </div>
 
                     <div className={`p-2.5 rounded-lg border text-xs ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
-                        <p className="text-[10px] font-bold opacity-40 uppercase tracking-tighter mb-1.5">Edukasi & Konseling</p>
+                        <p className="text-[10px] font-bold opacity-40 uppercase tracking-tighter mb-1.5">{t('emrWorkspace.soap.educationTitle')}</p>
                         {selectedEducation.length === 0 ? (
-                            <p className="opacity-30 italic">Belum ada edukasi...</p>
+                            <p className="opacity-30 italic">{t('emrWorkspace.soap.noEducation')}</p>
                         ) : (
                             <ul className="space-y-1">
                                 {selectedEducation.map((eduId, i) => {
@@ -225,7 +233,7 @@ export default function SOAPResume({
                                     return (
                                         <li key={i} className="flex gap-2 items-center">
                                             <BookOpen size={12} className="text-teal-500 shrink-0" />
-                                            <span className="font-bold">{eduData?.label || eduId}</span>
+                                            <span className="font-bold">{localize(eduData?.label || eduId)}</span>
                                         </li>
                                     );
                                 })}

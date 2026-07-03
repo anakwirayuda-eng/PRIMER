@@ -61,6 +61,30 @@ describe('physical exam normalization', () => {
         expect(finding).toContain('Respirasi: Wheezing bilateral.');
     });
 
+    it('normalizes emergency neurology and limb aliases to reachable exam keys', () => {
+        const neuroFinding = getPhysicalExamFinding(
+            {
+                physicalExamFindings: {
+                    neurology: 'Pupil isokor, tidak ada lateralisasi.',
+                    limbs: 'Tremor halus pada tangan (+).',
+                },
+            },
+            'neuro'
+        );
+        const extremityFinding = getPhysicalExamFinding(
+            {
+                physicalExamFindings: {
+                    neurology: 'Pupil isokor, tidak ada lateralisasi.',
+                    limbs: 'Tremor halus pada tangan (+).',
+                },
+            },
+            'extremities'
+        );
+
+        expect(neuroFinding).toContain('Pupil isokor');
+        expect(extremityFinding).toContain('Tremor halus');
+    });
+
     it('deduplicates MAIA exam suggestions onto canonical keys', () => {
         const { examSuggestions } = getExamLabSuggestions(
             {
@@ -86,6 +110,10 @@ describe('physical exam normalization', () => {
                     general: 'Tampak sakit sedang.',
                     vitals: 'TD 110/70, N 88x, RR 18x.',
                 },
+                labs: {
+                    'Darah Lengkap': { result: 'Hb 13.2, Leukosit 7.800', cost: 25000 },
+                    'NS1 Antigen': { result: 'Positif', cost: 25000 },
+                },
                 relevantLabs: ['lab_hematology', 'lab_ns1'],
             },
             ['general', 'vitals'],
@@ -103,6 +131,10 @@ describe('physical exam normalization', () => {
                 physicalExamFindings: {
                     general: 'Tampak sakit sedang.',
                     vitals: 'TD 110/70, N 88x, RR 18x.',
+                },
+                labs: {
+                    'Darah Lengkap': { result: 'Hb 13.2, Leukosit 7.800', cost: 25000 },
+                    'NS1 Antigen': { result: 'Positif', cost: 25000 },
                 },
                 relevantLabs: ['lab_hematology', 'lab_ns1'],
             },
@@ -149,5 +181,25 @@ describe('physical exam normalization', () => {
         const coverage = calculateCoverageScore([], ['thorax', 'respiratory', 'cardio'], [], []);
 
         expect(coverage.physical).toBe(20);
+    });
+
+    it('clears pending body-map timers when the widget unmounts mid-flip', () => {
+        vi.useFakeTimers();
+
+        const { unmount } = render(
+            <BodyMapWidget
+                examsPerformed={{}}
+                onExam={() => {}}
+                isDark={false}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /punggung/i }));
+        expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+        unmount();
+
+        expect(vi.getTimerCount()).toBe(0);
+        vi.useRealTimers();
     });
 });

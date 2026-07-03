@@ -28,7 +28,7 @@ describe('emergency billing contract', () => {
         expect(viaPatient.isCovered).toBe(true);
         expect(viaPatient.finalBill).toBe(0);
         expect(viaPatient.actionDetails).toEqual([
-            { name: 'Anti-HT IV', cost: 100000 }
+            { name: 'Anti-HT IV', cost: 100000, actionId: null, code: '99.29', type: 'procedure' }
         ]);
     });
 
@@ -48,5 +48,6 @@ describe('emergency billing contract', () => {
         expect(bill.isCovered).toBe(true);
         expect(bill.finalBill).toBe(0);
         expect(Array.isArray(bill.actionDetails)).toBe(true);
+        expect(bill.actionDetails.some((detail) => detail.actionId || detail.medId)).toBe(true);
     });
 });

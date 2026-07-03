@@ -1,4 +1,4 @@
-# Avatar Renderer Overhaul — Session Log
+﻿# Avatar Renderer Overhaul — Session Log
 > Date: 2026-03-27 | Status: **FROZEN** (DiceBear Lorelei active, Vanguard parked)
 
 ## Timeline

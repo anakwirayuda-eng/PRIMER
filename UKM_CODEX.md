@@ -1,4 +1,4 @@
-# UKM CODEX — Upaya Kesehatan Masyarakat Reference
+﻿﻿# UKM CODEX — Upaya Kesehatan Masyarakat Reference
 
 > **Version:** 1.0  
 > **Last Updated:** 2026-02-19  

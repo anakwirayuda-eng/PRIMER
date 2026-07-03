@@ -1,4 +1,4 @@
-# ⚕️ PRIMER Avatar Engine: Art Direction Bible
+﻿# ⚕️ PRIMER Avatar Engine: Art Direction Bible
 
 **Target Rendering:** Pure React SVG | **ViewBox:** `0 0 200 200` | **Skala Optimal:** `36px` (Sidebar HUD) & `120px` (Modal)
 

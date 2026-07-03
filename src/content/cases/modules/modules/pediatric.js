@@ -31,7 +31,7 @@ export const PEDIATRIC_CASES = [
         correctTreatment: ['nasal_cannula'],
         correctProcedures: ['neonatal_resuscitation', 'suction'],
         requiredEducation: ['red_flag_newborn'],
-        risk: 'emergency', nonReferrable: false, referralExceptions: ['emergency_stabilization'],
+        risk: 'emergency', nonReferrable: false, referralRequired: true, referralTarget: 'rs_kabupaten', referralExceptions: ['emergency_stabilization'],
         differentialDiagnosis: ['P22.0']
     }
 ];

@@ -9,6 +9,7 @@
  * [LAST_UPDATE]: 2026-03-27
  */
 import { CASE_LIBRARY, getCaseByCondition } from '../content/cases/CaseLibrary.js';
+import { getAuthoredDemographicProfile } from '../content/cases/CaseDemographics.js';
 import { getRandomEmergencyCase } from './EmergencyCases.js';
 import { generateSocialDeterminants } from '../utils/SocialDeterminants.js';
 import { calculateRiskFactors, INDIVIDUAL_PROFILES, FAMILY_MEDICAL_HISTORY } from '../domains/village/VillageRegistry.js';
@@ -40,42 +41,75 @@ const CATEGORY_FACILITY_MAP = {
     'Skeletal': 'poli_umum',
     'Trauma': 'poli_umum',
     'Environmental': 'poli_umum',
+    'Forensik': 'poli_umum',
+    'General': 'poli_umum',
+    'Musculoskeletal': 'poli_umum',
+    'Nutrition': 'poli_umum',
+    'Skin': 'poli_umum',
+    'STI': 'poli_kia_kb',
     'Dental': 'poli_gigi',
     'Maternal': 'poli_kia_kb',
     'Pediatrics': 'poli_kia_kb',
     'Reproductive': 'poli_kia_kb'
 };
 
+const CASE_ID_ALIASES = {
+    hypertensive_crisis: 'hypertension_primary',
+    uti_female: 'uti_uncomplicated',
+    stroke_ischemic: 'stroke_infark',
+    heart_failure_chronic: 'gagal_jantung_kronik',
+    ckd_stage3: 'dm_complicated',
+    copd_stable: 'bronchitis_acute',
+    perdarahan_postpartum: 'pph',
+    sepsis_neonatal: 'infeksi_umbilikus',
+};
+
+const DEFAULT_AUTHORED_DEMOGRAPHIC_PROFILE = Object.freeze({
+    kind: 'general',
+    minAge: 15,
+    maxAge: 89,
+    genders: ['L', 'P'],
+});
+
+function getClinicalHiddenContract(disease = {}) {
+    return {
+        correctTreatment: disease.correctTreatment || [],
+        correctProcedures: disease.correctProcedures || [],
+        requiredEducation: disease.requiredEducation || [],
+        relevantLabs: disease.relevantLabs || [],
+    };
+}
+
 // Condition to case mapping for profile-based generation
 // All IDs must exactly match a CASE_LIBRARY entry id
 const CONDITION_CASE_MAPPING = {
     'hypertension_stage1': ['hypertension_primary', 'tension_headache'],
-    'hypertension_stage2': ['hypertension_primary', 'hypertensive_crisis', 'tension_headache'],
+    'hypertension_stage2': ['hypertension_primary', 'tension_headache'],
     'diabetes_type2': ['dm_type2', 'dm_complicated'],
     'prediabetes': ['dm_type2', 'obesity'],
     'osteoarthritis': ['gout_arthritis', 'lbp_mechanical'],
     'osteoporosis': ['lbp_mechanical'],
-    'pregnancy_normal': ['normal_pregnancy', 'anemia_deficiency'],
+    'pregnancy_normal': ['kehamilan_normal_anc', 'anemia_kehamilan'],
     'recurrent_ari': ['ispa_common', 'bronchitis_acute', 'acute_pharyngitis'],
     'stunting_risk': ['pem', 'acute_gastroenteritis', 'anemia_deficiency'],
     'stunting_moderate': ['pem', 'anemia_deficiency', 'ascariasis'],
     'anemia_mild': ['anemia_deficiency'],
     'tb_latent': ['tb_pulmonary'],
-    'malnutrition_elderly': ['pem', 'anemia_deficiency'],
+    'malnutrition_elderly': ['anemia_deficiency'],
     'dementia_mild': ['insomnia'],
     'depression_mild': ['insomnia'],
     'chronic_back_pain': ['lbp_mechanical'],
     'scabies': ['scabies', 'contact_dermatitis'],
     'dental_caries': ['stomatitis_aftosa'],
     'helminthiasis': ['ascariasis', 'anemia_deficiency', 'acute_gastroenteritis'],
-    'benign_prostatic_hyperplasia': ['uti_female'],
+    'benign_prostatic_hyperplasia': ['uti_uncomplicated'],
     'cataract': ['conjunctivitis_bacterial', 'hordeolum'],
     'knee_osteoarthritis': ['gout_arthritis', 'lbp_mechanical'],
-    'underweight': ['pem', 'anemia_deficiency'],
-    'post_stroke_hemiparesis': ['stroke_ischemic'],
-    'heart_failure': ['heart_failure_chronic'],
-    'ckd': ['ckd_stage3'],
-    'copd': ['copd_stable'],
+    'underweight': ['anemia_deficiency'],
+    'post_stroke_hemiparesis': ['stroke_infark'],
+    'heart_failure': ['gagal_jantung_kronik'],
+    'ckd': ['dm_complicated'],
+    'copd': ['bronchitis_acute'],
     'growth_faltering_risk': ['pem', 'anemia_deficiency']
 };
 
@@ -120,10 +154,143 @@ const HAZARD_DISEASE_MAP = {
     'keracunan_pestisida':    ['intoxication', 'contact_dermatitis'],
     'avian_influenza':        ['ispa_common', 'pneumonia_community'],
     'brucellosis':            ['acute_gastroenteritis', 'typhoid_fever'],
-    'komplikasi_persalinan':  ['normal_pregnancy'],
+    'komplikasi_persalinan':  ['pph'],
 };
 
 const MAX_COMBINED_MULTIPLIER = 5.0;
+
+function resolveCanonicalCaseId(caseId) {
+    return CASE_ID_ALIASES[caseId] || caseId;
+}
+
+function resolveCaseByCondition(caseId) {
+    if (!caseId) return null;
+    return getCaseByCondition(resolveCanonicalCaseId(caseId));
+}
+
+function sampleAgeInRange(rng, minAge, maxAge) {
+    if (minAge >= maxAge) return minAge;
+    return minAge + rng.int((maxAge - minAge) + 1);
+}
+
+function normalizeDemographicProfile(profile = null) {
+    if (!profile || typeof profile !== 'object') return null;
+
+    const minAge = Number.isFinite(profile.minAge) ? Number(profile.minAge) : 15;
+    const maxAge = Number.isFinite(profile.maxAge) ? Number(profile.maxAge) : minAge;
+    const genders = Array.isArray(profile.genders) && profile.genders.length > 0
+        ? [...new Set(profile.genders.filter((gender) => gender === 'L' || gender === 'P'))]
+        : ['L', 'P'];
+
+    return {
+        kind: profile.kind || 'general',
+        minAge,
+        maxAge: Math.max(minAge, maxAge),
+        genders: genders.length > 0 ? genders : ['L', 'P'],
+        informant: profile.informant ? { ...profile.informant } : undefined,
+    };
+}
+
+export function getCaseDemographicProfile(caseData = {}) {
+    const id = caseData.id || '';
+    const authoredProfile = normalizeDemographicProfile(
+        caseData.demographicProfile || getAuthoredDemographicProfile(id)
+    );
+    if (authoredProfile) {
+        return authoredProfile;
+    }
+    // Age/gender must come from authored metadata only.
+    // Dialogue often contains caregiver narration, family history, or opposite-sex examples,
+    // so text heuristics are too brittle for reliable spawning.
+    if (typeof import.meta !== 'undefined' && import.meta.env?.DEV && id) {
+        console.warn(`[PatientGenerator] Missing authored demographicProfile for case "${id}". Falling back to default general adult profile.`);
+    }
+    return normalizeDemographicProfile(DEFAULT_AUTHORED_DEMOGRAPHIC_PROFILE);
+}
+
+function isCaseCompatibleWithDemographics(caseData, age = null, gender = null) {
+    if (!caseData) return false;
+    const profile = getCaseDemographicProfile(caseData);
+
+    if (gender && !profile.genders.includes(gender)) {
+        return false;
+    }
+
+    if (typeof age === 'number' && Number.isFinite(age)) {
+        if (age < profile.minAge || age > profile.maxAge) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function sampleDemographicsForCase(caseData, rng) {
+    const profile = getCaseDemographicProfile(caseData);
+    const gender = profile.genders.length === 1
+        ? profile.genders[0]
+        : (rng.chance(0.5) ? 'L' : 'P');
+
+    let age;
+    switch (profile.kind) {
+        case 'neonate':
+            age = 0;
+            break;
+        case 'maternal':
+            age = sampleAgeInRange(rng, Math.max(profile.minAge, 18), Math.min(profile.maxAge, 38));
+            break;
+        case 'infant':
+        case 'pediatric':
+            age = sampleAgeInRange(rng, profile.minAge, profile.maxAge);
+            break;
+        default: {
+            const ageRoll = rng.nextFloat();
+            const youngAdultMin = Math.max(profile.minAge, 15);
+            const youngAdultMax = Math.min(profile.maxAge, 49);
+            const middleAgeMin = Math.max(profile.minAge, 50);
+            const middleAgeMax = Math.min(profile.maxAge, 69);
+            const seniorMin = Math.max(profile.minAge, 70);
+            const seniorMax = profile.maxAge;
+
+            if (youngAdultMin <= youngAdultMax && ageRoll < 0.6) age = sampleAgeInRange(rng, youngAdultMin, youngAdultMax);
+            else if (middleAgeMin <= middleAgeMax && ageRoll < 0.85) age = sampleAgeInRange(rng, middleAgeMin, middleAgeMax);
+            else if (seniorMin <= seniorMax) age = sampleAgeInRange(rng, seniorMin, seniorMax);
+            else age = sampleAgeInRange(rng, profile.minAge, profile.maxAge);
+            break;
+        }
+    }
+
+    return { age, gender };
+}
+
+function buildSyntheticName(age, gender, seedHint = 'default', forcedSurname = null) {
+    const surname = forcedSurname || pickDeterministic(SURNAMES, seedKey(seedHint, 'surname'));
+    if (age === 0) {
+        return `Bayi ${surname}`.trim();
+    }
+
+    const firstNamePool = gender === 'L' ? NAMES_MALE : NAMES_FEMALE;
+    const firstName = pickDeterministic(firstNamePool, seedKey(seedHint, 'first-name', gender));
+    return `${firstName} ${surname}`.trim();
+}
+
+function getPrimaryComplaintResponse(caseData = {}) {
+    const mainQuestion = Object.values(caseData?.anamnesisQuestions || {})
+        .flat()
+        .find((question) => question?.id === 'q_main' || question?.id === 'q_main_complaint');
+
+    return mainQuestion?.response || '';
+}
+
+function pickCompatibleFamilyMember(familyMembers = [], caseData, localSeed = 'default') {
+    if (!Array.isArray(familyMembers) || familyMembers.length === 0) return null;
+    const compatibleMembers = familyMembers.filter((member) => (
+        isCaseCompatibleWithDemographics(caseData, member.age, member.gender)
+    ));
+
+    if (compatibleMembers.length === 0) return null;
+    return pickDeterministic(compatibleMembers, seedKey(localSeed, 'compatible-member'));
+}
 
 /**
  * Geo Law 2+3: Calculate spatial risk multipliers for a resident family.
@@ -270,6 +437,11 @@ function generateComplaintText(disease, seedHint = 'default') {
         return "Tidak enak badan dok...";
     }
 
+    const primaryComplaint = getPrimaryComplaintResponse(disease);
+    if (primaryComplaint) {
+        return primaryComplaint;
+    }
+
     // Use the disease's anamnesis entries directly — they should be complete, natural sentences
     // Do NOT append random greeting or duration fragments
     const anamnesis = disease.anamnesis || [];
@@ -308,6 +480,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
     let residentFamily = null;
     let residentProfile = null;
     let familyMedHistory = null;
+    let residentRiskFactors = [];
 
     if (population && population.villagers && population.villagers.length > 0 && rng.chance(0.7)) {
         const living = population.villagers.filter(v => !v.status || v.status === 'alive');
@@ -325,26 +498,43 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         }
     }
 
+    const residentAge = isResident ? resident?.age : null;
+    const residentGender = isResident ? resident?.gender : null;
+
     const availableCases = CASE_LIBRARY.filter(c => {
         const requiredFacility = CATEGORY_FACILITY_MAP[c.category] || 'poli_umum';
-        return (facilities[requiredFacility] || 0) > 0;
+        if ((facilities[requiredFacility] || 0) <= 0) return false;
+        return isCaseCompatibleWithDemographics(c, residentAge, residentGender);
     });
 
+    const compatibleFallbackCases = CASE_LIBRARY.filter((caseData) => (
+        isCaseCompatibleWithDemographics(caseData, residentAge, residentGender)
+    ));
+
     const getRandomFilteredCase = (localSeed = 'default') => {
-        const source = availableCases.length > 0 ? availableCases : CASE_LIBRARY;
+        const source = availableCases.length > 0
+            ? availableCases
+            : (compatibleFallbackCases.length > 0 ? compatibleFallbackCases : CASE_LIBRARY);
         return pickDeterministic(source, seedKey(patientSeed, 'case', localSeed));
     };
 
     const getFilteredCaseByCondition = (caseId) => {
-        const c = getCaseByCondition(caseId);
+        const c = resolveCaseByCondition(caseId);
         if (!c) return null;
         const requiredFacility = CATEGORY_FACILITY_MAP[c.category] || 'poli_umum';
-        if ((facilities[requiredFacility] || 0) > 0) return c;
+        if ((facilities[requiredFacility] || 0) > 0 && isCaseCompatibleWithDemographics(c, residentAge, residentGender)) return c;
         return null;
     };
 
     if (isResident && residentFamily && residentFamily.indicators) {
-        resident.riskFactors = calculateRiskFactors(residentFamily.indicators, resident, resident.sdoh || {}, residentProfile);
+        residentRiskFactors = calculateRiskFactors(
+            residentFamily.indicators,
+            resident,
+            resident.sdoh || {},
+            residentProfile
+        );
+    } else if (Array.isArray(resident?.riskFactors)) {
+        residentRiskFactors = resident.riskFactors;
     }
 
     const familyIKS = residentFamily?.iksScore || 0.5;
@@ -382,7 +572,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         if (!disease) {
             disease = getRandomFilteredCase('profile-fallback');
         }
-    } else if (isResident && resident?.riskFactors?.length > 0) {
+    } else if (isResident && residentRiskFactors.length > 0) {
         isStochastic = true;
         const riskDiseaseMappings = {
             'poor_sanitation': ['acute_gastroenteritis', 'typhoid_fever', 'ascariasis'],
@@ -393,14 +583,14 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             'hypertension_risk': ['hypertension_primary', 'tension_headache'],
             'obesity_risk': ['hypertension_primary', 'dm_type2', 'gout_arthritis'],
             'poor_housing': ['ispa_common', 'tb_pulmonary', 'scabies'],
-            'high_infection_risk': ['acute_gastroenteritis', 'typhoid_fever', 'dengue_fever'],
-            'stunting': ['stunting_assessment', 'anemia_deficiency', 'acute_gastroenteritis'],
+            'high_infection_risk': ['acute_gastroenteritis', 'typhoid_fever', 'dengue_df'],
+            'stunting': ['pem', 'anemia_deficiency', 'acute_gastroenteritis'],
             'anemia': ['anemia_deficiency'],
             'tb_contact': ['tb_pulmonary', 'ispa_common'],
             'uninsured': null
         };
 
-        const preferredDiseases = resident.riskFactors.reduce((acc, risk) => {
+        const preferredDiseases = residentRiskFactors.reduce((acc, risk) => {
             if (riskDiseaseMappings[risk]) {
                 acc.push(...riskDiseaseMappings[risk]);
             }
@@ -486,31 +676,29 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         }
     }
 
-    if (disease?.id === 'dengue_fever' && jentikCoverage > 0.7 && rng.chance(0.5)) {
+    if (disease?.id === 'dengue_df' && jentikCoverage > 0.7 && rng.chance(0.5)) {
         let redraw = 0;
         disease = getRandomFilteredCase(seedKey('dengue-reroll', redraw));
-        while (disease?.id === 'dengue_fever' && redraw < 10) {
+        while (disease?.id === 'dengue_df' && redraw < 10) {
             redraw += 1;
             disease = getRandomFilteredCase(seedKey('dengue-reroll', redraw));
         }
     }
 
-    const gender = isResident ? resident.gender : (rng.chance(0.5) ? 'L' : 'P');
-    const firstNamePool = gender === 'L' ? NAMES_MALE : NAMES_FEMALE;
-    const firstName = pickDeterministic(firstNamePool, seedKey(patientSeed, 'first-name', gender));
-    const surname = pickDeterministic(SURNAMES, seedKey(patientSeed, 'surname'));
-    const name = isResident ? resident.fullName : `${firstName} ${surname}`;
-
+    let gender;
     let age;
     if (isResident) {
+        gender = resident.gender;
         age = resident.age;
     } else {
-        const ageRoll = rng.nextFloat();
-        if (ageRoll < 0.15) age = rng.int(12) + 3;
-        else if (ageRoll < 0.6) age = rng.int(30) + 20;
-        else if (ageRoll < 0.85) age = rng.int(20) + 50;
-        else age = rng.int(20) + 70;
+        const demographics = sampleDemographicsForCase(disease, rng);
+        gender = demographics.gender;
+        age = demographics.age;
     }
+
+    const name = isResident
+        ? resident.fullName
+        : buildSyntheticName(age, gender, patientSeed);
 
     const anthropometrics = generateAnthropometrics(age, gender, seedKey(patientSeed, 'anthropometrics'));
 
@@ -555,7 +743,7 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             familyId: resident.familyId,
             villagerId: resident.id,
             familyName: residentFamily?.surname || 'Unknown',
-            riskFactors: resident.riskFactors
+            riskFactors: residentRiskFactors
         };
     } else {
         sdoh = generateSocialDeterminants(age);
@@ -570,10 +758,17 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
         ];
     }
 
-    const complaintText = generateComplaintText(disease, seedKey(patientSeed, 'complaint'));
+    const demographicProfile = getCaseDemographicProfile(disease);
+    const complaintText = generateComplaintText(
+        disease,
+        seedKey(patientSeed, 'complaint'),
+        { demographicProfile }
+    );
 
     let informant = null;
-    if (age <= 7) {
+    const explicitInformant = demographicProfile?.informant;
+    const requiresInformant = Boolean(explicitInformant?.required) || age <= 7;
+    if (requiresInformant) {
         if (isResident && population && population.villagers) {
             const familyMembers = population.villagers.filter(v =>
                 v.familyId === resident.familyId && (!v.status || v.status === 'alive') && v.id !== resident.id && v.age >= 18
@@ -583,25 +778,32 @@ export function generatePatient(currentTime, population, gameDay = 1, facilities
             const parentMember = mother || father || familyMembers[0];
 
             if (parentMember) {
+                const relation = explicitInformant?.relation
+                    || (parentMember.gender === 'P' ? 'Ibu' : 'Ayah');
                 informant = {
+                    required: true,
                     name: parentMember.fullName || parentMember.name || 'Ibu',
-                    relation: parentMember.gender === 'P' ? 'Ibu' : 'Ayah',
+                    relation,
                     age: parentMember.age || 30,
-                    villagerId: parentMember.id
+                    villagerId: parentMember.id,
+                    reason: explicitInformant?.reason || 'pediatric',
                 };
             }
         }
 
         if (!informant) {
-            const parentGender = rng.chance(0.7) ? 'P' : 'L';
+            const relation = explicitInformant?.relation || (rng.chance(0.7) ? 'Ibu' : 'Ayah');
+            const inferredGender = relation === 'Ayah' ? 'L' : relation === 'Ibu' ? 'P' : (rng.chance(0.5) ? 'L' : 'P');
             const parentFirstName = pickDeterministic(
-                parentGender === 'P' ? NAMES_FEMALE : NAMES_MALE,
-                seedKey(patientSeed, 'informant-name', parentGender)
+                inferredGender === 'P' ? NAMES_FEMALE : NAMES_MALE,
+                seedKey(patientSeed, 'informant-name', inferredGender)
             );
             informant = {
+                required: true,
                 name: `${parentFirstName} ${name.split(' ').pop()}`,
-                relation: parentGender === 'P' ? 'Ibu' : 'Ayah',
-                age: 25 + rng.int(15)
+                relation,
+                age: 25 + rng.int(15),
+                reason: explicitInformant?.reason || 'pediatric',
             };
         }
     }
@@ -733,7 +935,7 @@ function parseVitalsToStruct(disease) {
     if (rrMatch) result.rr = parseInt(rrMatch[1]);
 
     // S / Suhu → temp: 36.6
-    const tempMatch = raw.match(/S\s*(\d+\.?\d*)\s*°?C/i);
+    const tempMatch = raw.match(/S\s*(\d+\.?\d*)\s*(?:°|Â°)?C/i);
     if (tempMatch) result.temp = parseFloat(tempMatch[1]);
 
     // SpO2 → spo2: 98
@@ -774,15 +976,11 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
 
     if (population && population.villagers && population.villagers.length > 0 && rng.chance(0.5)) {
         const living = population.villagers.filter(v => !v.status || v.status === 'alive');
-        if (living.length > 0) {
-            if (disease.category === 'Pediatrics') {
-                const children = living.filter(v => v.age <= 5);
-                resident = children.length > 0
-                    ? pickDeterministic(children, seedKey(emergencySeed, 'child-resident'))
-                    : pickDeterministic(living, seedKey(emergencySeed, 'fallback-resident'));
-            } else {
-                resident = pickDeterministic(living, seedKey(emergencySeed, 'resident'));
-            }
+        const compatibleResidents = living.filter((villager) => (
+            isCaseCompatibleWithDemographics(disease, villager.age, villager.gender)
+        ));
+        if (compatibleResidents.length > 0) {
+            resident = pickDeterministic(compatibleResidents, seedKey(emergencySeed, 'resident'));
             residentFamily = population.families?.find(f => f.id === resident.familyId);
             isResident = true;
             gender = resident.gender;
@@ -792,22 +990,10 @@ export function generateEmergencyPatient(currentTime, facilities = {}, populatio
     }
 
     if (!isResident) {
-        gender = rng.chance(0.5) ? 'L' : 'P';
-        const names = gender === 'L' ? NAMES_MALE : NAMES_FEMALE;
-        name = `${pickDeterministic(names, seedKey(emergencySeed, 'first-name'))} ${pickDeterministic(SURNAMES, seedKey(emergencySeed, 'surname'))}`;
-
-        const ageRoll = rng.nextFloat();
-        if (disease.category === 'Pediatrics') {
-            age = rng.int(4) + 1;
-        } else if (ageRoll < 0.1) {
-            age = rng.int(10) + 5;
-        } else if (ageRoll < 0.5) {
-            age = rng.int(25) + 25;
-        } else if (ageRoll < 0.8) {
-            age = rng.int(20) + 50;
-        } else {
-            age = rng.int(20) + 70;
-        }
+        const demographics = sampleDemographicsForCase(disease, rng);
+        gender = demographics.gender;
+        age = demographics.age;
+        name = buildSyntheticName(age, gender, emergencySeed);
     }
 
     const anthropometrics = generateAnthropometrics(age, gender, seedKey(emergencySeed, 'anthropometrics'));
@@ -1058,30 +1244,34 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
     if (!family || !family.members?.length) return null;
 
     // Pick a random adult member (not a child if possible)
-    const adults = family.members.filter(m => (m.age || 0) >= 15);
-    const member = adults.length > 0
-        ? pickDeterministic(adults, seedKey(bridgeSeed, 'adult'))
-        : family.members[0];
-
     // Get the clinical case from CaseLibrary
-    const disease = getCaseByCondition(ukpDiseaseId);
+    const disease = resolveCaseByCondition(ukpDiseaseId);
     if (!disease) return null;
-
-    const gender = member.gender || 'L';
-    const fullName = `${member.firstName || 'Warga'} ${family.surname || ''}`.trim();
+    const member = pickCompatibleFamilyMember(family.members, disease, bridgeSeed);
+    const seededDemographics = sampleDemographicsForCase(
+        disease,
+        createDeterministicSequence(seedKey(bridgeSeed, 'synthetic-demographics'))
+    );
+    const gender = member?.gender || seededDemographics.gender;
+    const age = member?.age ?? seededDemographics.age;
+    const fullName = member
+        ? `${member.firstName || 'Warga'} ${family.surname || ''}`.trim()
+        : buildSyntheticName(age, gender, bridgeSeed, family.surname);
 
     const facility = CATEGORY_FACILITY_MAP[disease.category] || 'poli_umum';
 
     return normalizePatientOutput({
         id: randomIdFromSeed('patient_bcbridge', bridgeSeed),
         name: fullName,
-        age: member.age || 35,
+        age,
         gender,
         // DeepThink Fix: add missing root attrs
-        anthropometrics: generateAnthropometrics(member.age || 35, gender, seedKey(bridgeSeed, 'anthropometrics')),
+        anthropometrics: generateAnthropometrics(age, gender, seedKey(bridgeSeed, 'anthropometrics')),
         isEmergency: false,
         triageLevel: null,
-        complaint: disease.chiefComplaint || disease.complaint || 'Keluhan tidak spesifik',
+        complaint: generateComplaintText(disease, seedKey(bridgeSeed, 'complaint'), {
+            demographicProfile: getCaseDemographicProfile(disease)
+        }),
         narrative: `(Warga ini datang karena masalah kesehatan akibat perilaku yang belum berubah) ${disease.narrative || ''}`,
         facility,
         // DeepThink Fix: medical: → medicalData: (Data Contract)
@@ -1112,12 +1302,13 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
             diseaseId: disease.id || ukpDiseaseId,
             requiredAction: (disease.skdi || disease.skdiLevel) === '4A' ? 'treat' : 'refer',
             skdi: disease.skdi || disease.skdiLevel || '4A',
-            risk: 'medium',
+            risk: disease.risk || 'medium',
+            ...getClinicalHiddenContract(disease),
             // DeepThink Fix: differentials → differentialDiagnosis
             differentials: disease.differentialDiagnosis || disease.differentials || [],
             clue: disease.clue || disease.teachingPoint || '',
             isResident: true,
-            villagerId: member.id,
+            villagerId: member?.id || null,
             familyId: familyId,
             houseId: family.houseId,
             isBCBridge: true,
@@ -1133,7 +1324,7 @@ export function generateUKPBridgePatient(bridgeData, currentTime = 480, populati
 export function generateGenericPatients(diseaseId, amount, targetClinic, currentTime = 480, seedHint = 'default') {
     const patients = [];
     const genericSeed = seedKey('generic-patients', seedHint, diseaseId, amount, targetClinic, currentTime);
-    const disease = getCaseByCondition(diseaseId)
+    const disease = resolveCaseByCondition(diseaseId)
         || pickDeterministic(
             CASE_LIBRARY.filter(caseItem => caseItem.category === 'Respiratory'),
             seedKey(genericSeed, 'fallback-case')
@@ -1144,11 +1335,10 @@ export function generateGenericPatients(diseaseId, amount, targetClinic, current
     for (let i = 0; i < amount; i++) {
         const patientSeed = seedKey(genericSeed, i);
         const rng = createDeterministicSequence(patientSeed);
-        const isMale = rng.chance(0.5);
-        const gender = isMale ? 'L' : 'P';
-        const age = 5 + rng.int(60);
-        const nameList = isMale ? NAMES_MALE : NAMES_FEMALE;
-        const fullName = `${pickDeterministic(nameList, seedKey(patientSeed, 'first-name'))} ${pickDeterministic(SURNAMES, seedKey(patientSeed, 'surname'))}`;
+        const demographics = sampleDemographicsForCase(disease, rng);
+        const gender = demographics.gender;
+        const age = demographics.age;
+        const fullName = buildSyntheticName(age, gender, patientSeed);
 
         const facility = targetClinic || CATEGORY_FACILITY_MAP[disease.category] || 'poli_umum';
 
@@ -1158,7 +1348,9 @@ export function generateGenericPatients(diseaseId, amount, targetClinic, current
             age,
             gender,
             anthropometrics: generateAnthropometrics(age, gender, seedKey(patientSeed, 'anthropometrics')),
-            complaint: disease.chiefComplaint || disease.complaint || 'Keluhan tidak spesifik',
+            complaint: generateComplaintText(disease, seedKey(patientSeed, 'complaint'), {
+                demographicProfile: getCaseDemographicProfile(disease)
+            }),
             narrative: `(Warga ini datang karena kejadian komunitas) ${disease.narrative || ''}`,
             facility,
             medicalData: {
@@ -1185,10 +1377,11 @@ export function generateGenericPatients(diseaseId, amount, targetClinic, current
                 requiredAction: (disease.skdi || disease.skdiLevel) === '4A' ? 'treat' : 'refer',
                 skdi: disease.skdi || disease.skdiLevel || '4A',
                 risk: 'medium',
+                ...getClinicalHiddenContract(disease),
                 // DeepThink Fix: differentials → differentialDiagnosis
                 differentials: disease.differentialDiagnosis || disease.differentials || [],
                 clue: disease.clue || disease.teachingPoint || '',
-                isResident: true,
+                isResident: false,
             }
         }));
     }

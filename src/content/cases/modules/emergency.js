@@ -17,7 +17,7 @@ export const EMERGENCY_CASES = [
         skdi: '3B',
         category: 'Cardiovascular',
         symptoms: ['Nyeri dada kiri menjalar ke lengan/rahang', 'Keringat dingin', 'Sesak', 'Mual'],
-        clue: "Nyeri dada tipikal angina + keringat dingin adalah red flag. Segera EKG! Cari ST-elevasi. Ini butuh rujukan segera.",
+        clue: "[EBM: PERKI 2024] Nyeri dada tipikal + keringat dingin adalah red flag ACS. Segera EKG, berikan aspirin loading, tambah antiplatelet bila tersedia, dan rujuk reperfusi segera. Nitrat tidak wajib bila pasien hipotensi.",
         relevantLabs: ['EKG', 'Troponin (Rapid)'],
         anamnesisQuestions: {
             keluhan_utama: [
@@ -55,11 +55,13 @@ export const EMERGENCY_CASES = [
             "Troponin (Rapid)": { result: "Positif", cost: 100000 }
         },
         vitals: { temp: 36.5, bp: '90/60', hr: 110, rr: 24, spo2: 95 },
-        correctTreatment: ['aspilet_80', 'clopidogrel_75', 'isdn_5'],
+        correctTreatment: ['aspirin_320_kunyah', 'clopidogrel_300'],
         correctProcedures: ['iv_fluid', 'iv_injection', 'ecg'],
-        requiredEducation: ['red_flag_monitor', 'routine_control'],
+        requiredEducation: ['red_flag_monitor', 'do_not_delay'],
+        treatmentNote: 'Dosis loading antiplatelet diprioritaskan; nitrat tidak diwajibkan pada kasus hipotensi ini.',
         risk: 'emergency',
         referralRequired: true,
+        referralTarget: 'rs_kabupaten',
         differentialDiagnosis: ['I20.9', 'K21.0']
     }
 ];

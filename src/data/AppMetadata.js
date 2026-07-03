@@ -37,7 +37,7 @@ export const APP_METADATA = deepFreeze({
     releasedDate: "2026-01-30",
     origin: "Surabaya, Indonesia",
     tagline: "Bridging clinical excellence and public health leadership.",
-    copyright: "© 2026 Anak Agung Bagus Wirayuda MD PhD. Hak Cipta Terdaftar — No. EC002026019623.",
+    copyright: "Copyright 2026 Anak Agung Bagus Wirayuda MD PhD. Registered Copyright - No. EC002026019623.",
 
     // === OFFICIAL HAKI REGISTRATION ===
     // Surat Pencatatan Ciptaan — Kementerian Hukum Republik Indonesia
@@ -63,7 +63,7 @@ export const APP_METADATA = deepFreeze({
         internationalProtection: "Protected globally under the Berne Convention for the Protection of Literary and Artistic Works (181 member states). Indonesia ratified via Keppres No. 18/1997. DMCA/WIPO compliant for takedown enforcement on international hosting platforms.",
         medicalDisclaimer: "PRIMER is a management simulation game intended solely for educational purposes. It is NOT a Software as a Medical Device (SaMD), NOT an absolute clinical guideline (PNPK/PPK), and MUST NOT be used as the basis for real-world patient diagnosis or treatment decisions. All clinical scenarios are fictional simulations. The Creator bears zero liability for any real-world clinical decisions influenced by this software.",
         dataPrivacy: "Compliant with UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi (UU PDP). Operational logic and PIS-PK scoring algorithms are protected as Trade Secrets (Rahasia Dagang).",
-        trademarkNotice: "PRIMER™ is a recognized identifier of ITS MEDICS. Trademark registration pending at DJKI (Kelas 9: Software & Kelas 41: Edukasi)."
+        trademarkNotice: "PRIMER (TM) is a recognized identifier of ITS MEDICS. Trademark registration pending at DJKI (Kelas 9: Software & Kelas 41: Edukasi)."
     },
 
     // Formal Description for HAKI (Uraian Singkat)
@@ -84,7 +84,7 @@ export const APP_METADATA = deepFreeze({
         },
         {
             year: "2026-02",
-            event: "v0.8.5 — Stability & Hardening: Lint Stability Pack, PRIMERA v5.0 Watchdog Mode."
+            event: "v0.8.5 - Stability & Hardening: Lint Stability Pack, PRIMERA v5.0 Watchdog Mode."
         },
         { year: "2026-03", event: "Cloud deployment (Supabase + Vercel), Security Hardening, Anti-cheat systems." }
     ],

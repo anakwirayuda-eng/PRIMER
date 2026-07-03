@@ -378,7 +378,7 @@ export const respiratory_infectious = [
         skdi: '4A',
         category: 'Respiratory',
         symptoms: ['Batuk paroksismal', 'Whoop', 'Muntah setelah batuk', 'Sianosis saat batuk'],
-        clue: "Batuk paroksismal diikuti inspirasi berbunyi (whoop). Stadium: kataral, paroksismal, konvalesens. Biasanya anak belum imunisasi lengkap.",
+        clue: "Batuk paroksismal diikuti sesak nafas berbunyi (whoop). Stadium: kataral, paroksismal, konvalesens. Biasanya anak belum imunisasi lengkap.",
         relevantLabs: ['Darah Lengkap'],
         anamnesisQuestions: {
             keluhan_utama: [

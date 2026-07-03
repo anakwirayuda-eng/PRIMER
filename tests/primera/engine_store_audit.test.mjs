@@ -8,6 +8,7 @@ import {
     findStoreObject,
     buildConstantObjectMap,
     buildObjectFactoryMap,
+    buildResolvedPropertyMap,
     resolveObjectExpression
 } from '../../scripts/primera/engine-store-audit.mjs';
 
@@ -36,12 +37,8 @@ describe('engine-store-audit', () => {
         const storeAst = parseModule(STORE_PATH);
         const storeObject = findStoreObject(storeAst);
         const constantMap = buildConstantObjectMap(STORE_PATH, storeAst);
-        const factoryMap = buildObjectFactoryMap(storeAst);
-        const rootProps = new Map(
-            storeObject.properties
-                .map((property) => [getPropertyName(property), property])
-                .filter(([name]) => Boolean(name))
-        );
+        const factoryMap = buildObjectFactoryMap(STORE_PATH, storeAst);
+        const rootProps = buildResolvedPropertyMap(storeObject, constantMap, factoryMap);
 
         const expectedSlices = {
             finance: ['stats', 'pharmacyInventory'],

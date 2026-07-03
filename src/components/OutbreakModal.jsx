@@ -9,7 +9,8 @@
  * [LAST_UPDATE]: 2026-02-12
  */
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useModalA11y from '../hooks/useModalA11y.js';
 import { useGame } from '../context/GameContext.jsx';
 import {
@@ -23,48 +24,55 @@ import {
     Activity
 } from 'lucide-react';
 
-export default function OutbreakModal({ isOpen, onClose }) {
+function OutbreakModalContent({
+    outbreak,
+    onClose,
+    dismissOutbreakNotification,
+    respondToOutbreak,
+    getOutbreakActions,
+    playerStats
+}) {
+    const { t } = useTranslation();
     const modalRef = useModalA11y(onClose);
-    const {
-        outbreakNotification,
-        dismissOutbreakNotification,
-        activeOutbreaks,
-        respondToOutbreak,
-        getOutbreakActions,
-        OUTBREAK_ACTIONS,
-        playerStats
-    } = useGame();
-
-    const [_selectedAction, setSelectedAction] = useState(null);
+    const dismissTimerRef = useRef(null);
     const [actionResult, setActionResult] = useState(null);
 
-    if (!isOpen || !outbreakNotification) return null;
-
-    const outbreak = outbreakNotification;
+    const clearDismissTimer = useCallback(() => {
+        if (dismissTimerRef.current) {
+            clearTimeout(dismissTimerRef.current);
+            dismissTimerRef.current = null;
+        }
+    }, []);
     const typeData = outbreak.typeData;
     const availableActions = getOutbreakActions(outbreak.type);
     const performedActions = outbreak.actionsPerformed || [];
+
+    useEffect(() => () => {
+        clearDismissTimer();
+    }, [clearDismissTimer]);
+
+    useEffect(() => {
+        if (!outbreak.resolved || !actionResult?.success) return undefined;
+
+        clearDismissTimer();
+        dismissTimerRef.current = setTimeout(() => {
+            dismissTimerRef.current = null;
+            dismissOutbreakNotification();
+            onClose();
+        }, 2000);
+
+        return clearDismissTimer;
+    }, [actionResult?.success, clearDismissTimer, dismissOutbreakNotification, onClose, outbreak.resolved]);
 
     const handleAction = (actionId) => {
         if (performedActions.includes(actionId)) return;
 
         const result = respondToOutbreak(outbreak.id, actionId);
         setActionResult(result);
-
-        if (result.success) {
-            setSelectedAction(actionId);
-            // Check if outbreak is now resolved
-            const updated = activeOutbreaks.find(o => o.id === outbreak.id);
-            if (updated?.resolved) {
-                setTimeout(() => {
-                    dismissOutbreakNotification();
-                    onClose();
-                }, 2000);
-            }
-        }
     };
 
     const handleDismiss = () => {
+        clearDismissTimer();
         dismissOutbreakNotification();
         onClose();
     };
@@ -93,20 +101,20 @@ export default function OutbreakModal({ isOpen, onClose }) {
                             </div>
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/70 mb-1">
-                                    ⚠️ PERINGATAN OUTBREAK
+                                    {t('outbreak.modal.alertLabel')}
                                 </p>
                                 <h2 id="outbreak-title" className="text-2xl font-black tracking-tight">
                                     {typeData?.icon} {typeData?.name}
                                 </h2>
                                 <p className="text-sm text-white/80 mt-1">
-                                    Terdeteksi {outbreak.caseCount} kasus dalam 7 hari terakhir
+                                    {t('outbreak.modal.caseCount', { count: outbreak.caseCount })}
                                 </p>
                             </div>
                         </div>
                         <button
                             onClick={handleDismiss}
                             className="p-2 hover:bg-white/20 rounded-xl transition-colors"
-                            aria-label="Tutup peringatan outbreak"
+                            aria-label={t('outbreak.modal.closeAria')}
                         >
                             <X size={20} />
                         </button>
@@ -120,16 +128,16 @@ export default function OutbreakModal({ isOpen, onClose }) {
                         <div className="flex items-center gap-2 mb-3">
                             <MapPin size={16} className="text-slate-500" />
                             <span className="text-xs font-black text-slate-500 uppercase tracking-widest">
-                                Lokasi Terdampak
+                                {t('outbreak.modal.affectedArea')}
                             </span>
                         </div>
                         <p className="text-sm text-slate-700">
-                            {outbreak.affectedHouseIds?.length || 0} rumah di area wilayah kerja
+                            {t('outbreak.modal.affectedHomes', { count: outbreak.affectedHouseIds?.length || 0 })}
                         </p>
                         <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
                             <Clock size={12} />
                             <span>
-                                Batas waktu penanganan: <strong>Hari {outbreak.expiresOnDay}</strong>
+                                {t('outbreak.modal.deadline')} <strong>{t('outbreak.modal.dayValue', { day: outbreak.expiresOnDay })}</strong>
                             </span>
                         </div>
                     </div>
@@ -138,7 +146,7 @@ export default function OutbreakModal({ isOpen, onClose }) {
                     <div className="mb-6">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-xs font-black text-slate-500 uppercase tracking-widest">
-                                Progress Penanganan
+                                {t('outbreak.modal.progress')}
                             </span>
                             <span className="text-sm font-black text-slate-800">
                                 {Math.round(outbreak.resolutionProgress || 0)}%
@@ -155,7 +163,7 @@ export default function OutbreakModal({ isOpen, onClose }) {
                     {/* Available Actions */}
                     <div className="mb-4">
                         <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-3">
-                            Tindakan Tersedia
+                            {t('outbreak.modal.availableActions')}
                         </p>
                         <div className="grid grid-cols-1 gap-3">
                             {availableActions.map(action => {
@@ -192,10 +200,10 @@ export default function OutbreakModal({ isOpen, onClose }) {
                                                     </p>
                                                     <div className="flex items-center gap-4 mt-2">
                                                         <span className="text-[10px] font-bold text-amber-600 flex items-center gap-1">
-                                                            <Zap size={10} /> {action.energyCost} Energi
+                                                            <Zap size={10} /> {t('outbreak.modal.energyCost', { count: action.energyCost })}
                                                         </span>
                                                         <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                                                            <Clock size={10} /> {action.timeCost} menit
+                                                            <Clock size={10} /> {t('outbreak.modal.timeCost', { count: action.timeCost })}
                                                         </span>
                                                         <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
                                                             <Activity size={10} /> +{Math.round(action.effectiveness * 100)}%
@@ -227,9 +235,9 @@ export default function OutbreakModal({ isOpen, onClose }) {
                     {outbreak.resolved && (
                         <div className="mt-4 p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-200 text-center animate-in zoom-in-95 duration-500">
                             <CheckCircle size={32} className="text-emerald-500 mx-auto mb-2" />
-                            <h3 className="text-lg font-black text-emerald-700">Outbreak Teratasi!</h3>
+                            <h3 className="text-lg font-black text-emerald-700">{t('outbreak.modal.resolved')}</h3>
                             <p className="text-sm text-emerald-600 mt-1">
-                                +{typeData?.xpReward} XP | +{typeData?.reputationReward} Reputasi
+                                {t('outbreak.modal.reward', { xp: typeData?.xpReward, reputation: typeData?.reputationReward })}
                             </p>
                         </div>
                     )}
@@ -238,16 +246,40 @@ export default function OutbreakModal({ isOpen, onClose }) {
                 {/* Footer */}
                 <div className="px-6 pb-6 flex justify-between items-center">
                     <p className="text-[10px] text-slate-400">
-                        💡 Tip: Lakukan beberapa tindakan untuk memaksimalkan efektivitas penanganan.
+                        {t('outbreak.modal.tip')}
                     </p>
                     <button
                         onClick={handleDismiss}
                         className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold transition-colors"
                     >
-                        Tutup
+                        {t('common.close')}
                     </button>
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function OutbreakModal({ isOpen, onClose }) {
+    const {
+        outbreakNotification,
+        dismissOutbreakNotification,
+        respondToOutbreak,
+        getOutbreakActions,
+        playerStats
+    } = useGame();
+
+    if (!isOpen || !outbreakNotification) return null;
+
+    return (
+        <OutbreakModalContent
+            key={outbreakNotification.id}
+            outbreak={outbreakNotification}
+            onClose={onClose}
+            dismissOutbreakNotification={dismissOutbreakNotification}
+            respondToOutbreak={respondToOutbreak}
+            getOutbreakActions={getOutbreakActions}
+            playerStats={playerStats}
+        />
     );
 }

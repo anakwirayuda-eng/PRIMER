@@ -1,4 +1,4 @@
-# PRIMERA Watchdog Tiers
+﻿# PRIMERA Watchdog Tiers
 
 This document defines the CI gate tiers that map to the scripts already present in the repository.
 

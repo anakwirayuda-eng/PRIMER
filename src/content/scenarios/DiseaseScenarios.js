@@ -302,7 +302,7 @@ const TIER_1_CORE = [
             { location: 'dialog_ibu', finding: '"Saya sebenarnya mau ke bidan Dok, tapi mertua nggak boleh. Nanti dibilang nggak nurut."', comBRevealed: 'opp_soc' }
         ],
         ukpBridge: {
-            failOutcomes: ['perdarahan_postpartum', 'sepsis_neonatal'],
+            failOutcomes: ['pph', 'infeksi_umbilikus'],
             failProbability: 0.5,
             delayDays: { min: 30, max: 90 },
             description: 'Persalinan dukun tanpa supervisi bidan → perdarahan post-partum (HPP) → rujukan IGD jam 2 pagi. Bayi risiko tetanus neonatorum jika tali pusar dipotong bambu.'

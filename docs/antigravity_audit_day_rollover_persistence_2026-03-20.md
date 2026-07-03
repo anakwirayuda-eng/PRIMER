@@ -1,4 +1,4 @@
-# Antigravity Audit: Day-Rollover & Persistence
+﻿# Antigravity Audit: Day-Rollover & Persistence
 
 Date: 2026-03-20  
 Project: PRIMER  

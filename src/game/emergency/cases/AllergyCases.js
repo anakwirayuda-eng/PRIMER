@@ -44,6 +44,7 @@ export const ALLERGY_CASES = [
         differentialDiagnosis: ['Angioedema herediter', 'Serangan asma akut', 'Reaksi urtikaria berat'],
         risk: 'critical',
         referralRequired: true,
+        referralTarget: 'SpPD/ICU',
         deteriorationRate: 8
     },
     {
