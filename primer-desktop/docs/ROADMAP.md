@@ -192,6 +192,15 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
     terpisah — pasca-tamat pemain tetap bisa membuka Rapor/Dex/surat; berburu
     badge terjadi lintas playthrough via meta.
 
+## Audit EBM konten (2026-07-03) — docs/AUDIT_EBM_KASUS.md
+
+Telaah solo satu-per-satu 72 kasus (67 poli + 5 IGD) atas permintaan user.
+Akurasi EBM sangat tinggi. Dua perbaikan: (1) asma ringan → wajib ICS/budesonid
+per GINA 2019+; (2) mekanisme engine `obatAlternatif` (grup "pilih-salah-satu")
+memperbaiki 8 kasus yang sebelumnya menghukum monoterapi benar & memberi hadiah
+polifarmasi sekelas. Commit `6e09b52`. Titik "praktik lokal FKTP" (kloramfenikol
+tifoid, kotrimoksazol ISK, kombinasi analgesik) sengaja dipertahankan.
+
 ## M6 — Kelas & Dosen (integritas asesmen)
 
 26. **Rekomputasi skor dari action-log** saat submit (bukan percaya tally klien) —
