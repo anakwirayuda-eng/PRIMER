@@ -174,3 +174,29 @@ ganda — rinitis/GERD/askariasis/urtikaria) **sudah teratasi** oleh mekanisme
 CODEX menilai NOL P0. Semua P1/P2 valid diperbaiki. Yang **sudah beres sebelum
 audit CODEX** (P1-3 alternatif): tidak perlu aksi ulang. **163 test tetap hijau,
 tsc 0, build OK.**
+
+---
+
+## RONDE 3 — Playtest user + triase CODEX anamnesis (2026-07-03, commit 79795df)
+
+Dua keluhan playtest langsung dari user + 7 temuan triase CODEX atas alur
+anamnesis. Semua perbaikan diberi guard test (total 172 hijau).
+
+**Keluhan playtest:**
+
+| Keluhan | Akar masalah | Aksi |
+|---|---|---|
+| Pilihan diagnosis banding tampil telanjang "Kode M06.9" | 52 kode banding tak ter-resolve (bukan SKDI-144, bukan kasus playable) | ✅ Kamus `content/icd10.ts` (~130 entri ID) + `namaDiagnosis` berlapis (skdi144 → kasus playable lain → kamus → fallback); **pack.test menjaga semua kode banding bernama** — konten baru yang bocor langsung gagal CI |
+| Ketik nama obat tak ketemu (ejaan EN vs ID) | Filter `includes` polos: "paracetamol" ≠ "Parasetamol" | ✅ `normalisasiNamaObat` fonetik (ph→f, th→t, x→ks, c(e/i/y)→s, c→k, q→k, y→i, huruf-ganda→tunggal) + `cocokObat` mencari di nama/id/kelas/`sinonim` (field baru; CTM, TTD, OAT, oralit, DHP, MgSO4, dll.) |
+
+**Triase CODEX anamnesis:**
+
+| # | Temuan | Aksi |
+|---|---|---|
+| P1 | alergiTrap tak discoverable di gout/dislipidemia/OA/ISK (tak ada pertanyaan ber-teks "alergi" → UI tak pernah membuka riwayat alergi) | ✅ + pertanyaan alergi esensial bernarasi sesuai kelas trap di 4 kasus; **guard pack.test**: kasus ber-trap wajib punya jalan bertanya alergi |
+| P1 | Skor anamnesis menghitung klik saat sabar habis (jawaban ketus = tetap dapat kredit esensial) | ✅ engine `clinic.ts`: saat ketus, pertanyaan TIDAK masuk `ditanya`; guard clinic.test |
+| P2 | 6 kasus beri obat berisiko alergi tanpa pertanyaan alergi (OMA, pneumonia balita, impetigo, migrain, LBP, RA) | ✅ + `q_alergi` ("tidak ada") — kebiasaan medication safety |
+| P2 | Insomnia tanpa safety screen | ✅ + skrining ide menyakiti diri + alkohol/zat (mhGAP/NICE CKS) |
+| P2 | Anamnesis non-adaptif (branching) | ⏸ Diterima sbg keterbatasan desain deck statis — kandidat M7 |
+| P2/P3 | OLDCARTS universal utk kasus konseling (KB) — axis penilaian kurang pas | ⏸ Dicatat; butuh axis konseling terpisah — kandidat M7 |
+| P3 | Komentar director "alergiTrap 60%" padahal selalu | ✅ komentar diperbaiki |

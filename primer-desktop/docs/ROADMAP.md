@@ -201,6 +201,17 @@ memperbaiki 8 kasus yang sebelumnya menghukum monoterapi benar & memberi hadiah
 polifarmasi sekelas. Commit `6e09b52`. Titik "praktik lokal FKTP" (kloramfenikol
 tifoid, kotrimoksazol ISK, kombinasi analgesik) sengaja dipertahankan.
 
+Ronde 2 (`8e33d79`): respons audit CODEX — 7 temuan valid diperbaiki (apendisitis
+analgesia, PPOK GOLD, hipoglikemia disposisi rujuk, depresi ringan tanpa AD wajib,
+anafilaksis bifasik dilunakkan, gout ACR 2020, edukasi migrain).
+
+Ronde 3 (`79795df`, playtest user + triase CODEX anamnesis): kamus ICD-10
+(`content/icd10.ts`) — semua kode banding bernama (guard test); pencarian obat
+fonetik EN↔ID + `Obat.sinonim`; alergiTrap kini discoverable (pertanyaan alergi
+di 4 kasus trap, guard test); sabar-habis tak lagi memberi kredit anamnesis;
+q_alergi di 6 kasus obat-berisiko; safety screen insomnia. Ditunda ke M7:
+anamnesis branching + axis penilaian konseling (KB).
+
 ## M6 — Kelas & Dosen (integritas asesmen)
 
 26. **Rekomputasi skor dari action-log** saat submit (bukan percaya tally klien) —
