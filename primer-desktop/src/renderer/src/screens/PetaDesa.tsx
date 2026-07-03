@@ -14,6 +14,7 @@ import {
   HARI_BUKA_KUNJUNGAN,
   HARI_BUKA_POSYANDU,
   HARI_BUKA_KLB,
+  MAKS_BINAAN,
 } from '@engine/reducer'
 import type { HasilKunjungan, KeluargaState } from '@engine/state'
 import type { KeluargaBinaan } from '@content/types'
@@ -23,8 +24,6 @@ import { KartuKeluarga } from './peta/KartuKeluarga'
 import { karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta/petaUtil'
 import { clusterAktif } from '@engine/surveilans'
 import './PetaDesa.css'
-
-const MAKS_BINAAN = 8
 
 export function PetaDesa() {
   const state = useGame((s) => s.state)!

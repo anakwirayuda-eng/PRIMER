@@ -10,6 +10,10 @@ import { KASUS_INFEKSI } from './kasus/kasusInfeksi'
 import { KASUS_KRONIS } from './kasus/kasusKronis'
 import { KELUARGA_DESA_A } from './keluarga/desaA'
 import { KELUARGA_DESA_B, KADER_PROFIL, RW_PROFIL } from './keluarga/desaB'
+import { KELUARGA_DESA_C } from './keluarga/desaC'
+import { KELUARGA_DESA_D } from './keluarga/desaD'
+import { KELUARGA_DESA_E } from './keluarga/desaE'
+import { KELUARGA_DESA_F } from './keluarga/desaF'
 import { RUMAH_SAKIT } from './rumahSakit'
 import { OBAT, LAB, EDUKASI } from './katalog'
 import { OBAT_M3, LAB_M3, EDUKASI_M3, TINDAKAN_M3 } from './katalogM3'
@@ -40,7 +44,14 @@ const semuaKasus: KasusKlinis[] = [
   ...KASUS_METABOLIK_MSK,
   ...KASUS_KIA_JIWA,
 ]
-const semuaKeluarga: KeluargaBinaan[] = [...KELUARGA_DESA_A, ...KELUARGA_DESA_B]
+const semuaKeluarga: KeluargaBinaan[] = [
+  ...KELUARGA_DESA_A,
+  ...KELUARGA_DESA_B,
+  ...KELUARGA_DESA_C,
+  ...KELUARGA_DESA_D,
+  ...KELUARGA_DESA_E,
+  ...KELUARGA_DESA_F,
+]
 
 const kasusById = byId(semuaKasus)
 

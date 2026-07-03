@@ -453,7 +453,7 @@ export interface GameState {
     keluarga: Record<string, KeluargaState>
     kader: Record<string, KaderState>
     rw: RwState[]
-    /** Roster keluarga binaan (id) — maks 8 di slice. */
+    /** Roster keluarga binaan (id) — maks MAKS_BINAAN (16 sejak M3c). */
     binaan: string[]
     /** Surveilans balik UKP→UKM: diagnosis menular per RW, jendela 14 hari. */
     surveilans: { hari: number; rw: number; kasusId: string }[]

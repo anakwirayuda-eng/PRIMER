@@ -70,13 +70,20 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
 11. ✅ **Lokakarya Mini** (D31/D61): modal rapor formatif 4 dimensi + *ghost* rival
     dr. Ratih (skor statis 71/78) — tekanan sosial tanpa multiplayer.
 
-## M3 — Konten Skala Penuh & Rujukan Berjenjang (checkpoint ✅ 2026-07-03)
+## M3 — Konten Skala Penuh & Rujukan Berjenjang (SELESAI ✅ 2026-07-03)
 
-> **Status M3a+M3b selesai:** 67 kasus poli + 5 kasus IGD, SISRUTE berjenjang + PRB +
-> confidence-tag, 4 guardrail balance, audit medis 5-dokter (nol P0), IGD turn-based
-> (Kode Biru/RJP/Kode Hitam) + kalender musim (butir 14 & 17). 114 test hijau.
-> **SISA M3 → M3c:** keluarga binaan 6→16 (butir 15), ANC/KIA sebagai jalur kunjungan
-> bumil (butir 16). Bisa digabung ke M5 atau dikerjakan terpisah.
+> **M3a+M3b:** 67 kasus poli + 5 kasus IGD, SISRUTE berjenjang + PRB + confidence-tag,
+> 4 guardrail balance, audit medis 5-dokter (nol P0), IGD turn-based (Kode Biru/RJP/
+> Kode Hitam) + kalender musim (butir 14 & 17).
+> **M3c (butir 15-16) ✅:** keluarga binaan **6 → 16** (2 per RW, 4 file konten baru
+> desaC-F, ~14 skenario kunjungan baru) + **KIA**: flagship keluarga_asih — bumil
+> risiko SANGAT tinggi (38 th G4P3, riwayat HPP) dengan **arc 3-babak pertama**
+> (dukun→buta tanda bahaya→jalan ke PONED; skor Poedji Rochjati dianyam ke dialog)
+> — melengkapi 6 kasus KIA poli M3a. Karma kini **9 krisis tersebar D6→D50**
+> (drumbeat mingguan, dites anti-menumpuk). Engine: arc tamat diikat "skenario
+> terakhir sukses" (bukan TTM — dulu skenario ke-3 tak pernah termainkan & arc
+> 1-babak tak bisa tamat), roster binaan 8→16 (`MAKS_BINAAN` satu sumber di
+> reducer). 129 test hijau (8 baru: `m3keluarga.test.ts`).
 
 > **Revisi 2026-07-02 (masukan user):** 60+ hanyalah *checkpoint* M3, BUKAN target
 > akhir. Repo lama punya **253 kasus rawat jalan (186×4A + 35×3B + 29×3A + 3×SKDI-2)
@@ -189,8 +196,13 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
 - Jawaban anamnesis statis vs status pasien dinamis (alergi kini dipaksa 100% untuk
   kasus trap; solusi jangka panjang: varian jawaban ber-state di skema konten).
 - Bundle renderer 1.1 MB (belum code-split; belum masalah untuk desktop).
-- `arcSelesai` global per keluarga (bukan per-skenario) — cukup untuk arc 2 kunjungan;
-  revisit saat arc 3+ babak (M3.15).
+- ~~`arcSelesai` global per keluarga~~ — arc 3-babak jalan sejak M3c (tamat diikat
+  panjang arc, `terapkanHasil` menerima `totalSkenario`); `arcSelesai` global tetap
+  cukup karena tamat memang peristiwa tingkat-arc.
+- Label pembicara di layar Kunjungan selalu nama KEPALA keluarga (konvensi M0),
+  padahal banyak dialog diucapkan istri/anak (mis. respons Bu Asih berlabel
+  "Pak Jumadi"). Perbaikan butuh field `pembicara` per node dialog di skema
+  konten + migrasi 26 skenario — kandidat M7 polish.
 
 ---
 

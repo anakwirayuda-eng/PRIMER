@@ -304,15 +304,19 @@ export function selesaikanKunjungan(
  * - Indikator terverifikasi → status = statusSebenarnya, sumber 'dokter'.
  * - Indikator dibohongi → status 'ya' PADAHAL salah, sumber 'dokter' —
  *   kontradiksinya bisa ketahuan lewat hotspot; itulah pelajarannya.
- * - Berhasil → TTM maju 1 tahap + arc maju; TTM mencapai aksi/pemeliharaan →
+ * - Berhasil → TTM maju 1 tahap + arc maju; SKENARIO TERAKHIR arc sukses →
  *   indikator target skenario flip 'ya' (perubahan perilaku nyata) dan arc
- *   dinyatakan tamat berhasil (perubahan yang dituju sudah terjadi).
+ *   dinyatakan tamat berhasil. (M3c: tamat diikat ke panjang arc, bukan TTM —
+ *   untuk arc 2-babak dari prekontemplasi keduanya bertepatan persis, tapi
+ *   ikatan TTM membuat skenario ke-3 arc panjang tak pernah termainkan dan
+ *   arc 1-babak tak pernah tamat.)
  */
 export function terapkanHasil(
   kel: KeluargaState,
   hasil: HasilKunjungan,
   skenario: SkenarioKunjungan,
   hari: number,
+  totalSkenario: number,
 ): KeluargaState {
   const dibohongi: readonly IndikatorPisPk[] =
     (hasil as Partial<HasilKunjunganLengkap>).indikatorDibohongi ?? []
@@ -338,7 +342,7 @@ export function terapkanHasil(
   if (hasil.berhasil) {
     ttm = majuTtm(kel.ttm)
     arcIndex = kel.arcIndex + 1
-    if (ttm === 'aksi' || ttm === 'pemeliharaan') {
+    if (arcIndex >= totalSkenario) {
       // Perubahan perilaku terverifikasi: indikator target benar-benar berubah.
       for (const target of skenario.target) {
         indikator[target] = { status: 'ya', statusSebenarnya: 'ya', sumber: 'dokter', hariData: hari }

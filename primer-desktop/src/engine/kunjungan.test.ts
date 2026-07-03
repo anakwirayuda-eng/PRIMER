@@ -265,7 +265,7 @@ describe('gerbang kejujuran', () => {
     expect(hasil.indikatorTerverifikasi).toContain('jamban_sehat')
 
     // Data kader yang keliru ('ya') diluruskan jadi kebenaran ('tidak').
-    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 4)
+    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 4, 2)
     expect(kelBaru.indikator.jamban_sehat.status).toBe('tidak')
     expect(kelBaru.indikator.jamban_sehat.sumber).toBe('dokter')
     expect(kelBaru.indikator.jamban_sehat.hariData).toBe(4)
@@ -299,7 +299,7 @@ describe('gerbang kejujuran', () => {
     expect(hasil.indikatorTerverifikasi).not.toContain('jamban_sehat')
 
     // Kebohongan tercatat sebagai 'ya' PADAHAL sebenarnya 'tidak' — pedagogi.
-    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 4)
+    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 4, 2)
     expect(kelBaru.indikator.jamban_sehat.status).toBe('ya')
     expect(kelBaru.indikator.jamban_sehat.statusSebenarnya).toBe('tidak')
     expect(kelBaru.indikator.jamban_sehat.sumber).toBe('dokter')
@@ -324,7 +324,7 @@ describe('gerbang kejujuran', () => {
     const hasil = selesaikanKunjungan(r.kj, SKENARIO, kel)
     // ...tapi observasimu yang menang.
     expect(hasil.indikatorTerverifikasi).toContain('jamban_sehat')
-    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 4)
+    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 4, 2)
     expect(kelBaru.indikator.jamban_sehat.status).toBe('tidak')
   })
 })
@@ -355,7 +355,7 @@ describe('konfrontasi & diusir', () => {
     expect(hasil.berhasil).toBe(false)
     expect(hasil.narasiPenutup).toBe(SKENARIO.penutupGagal)
     // Trust tetap terjun: -2 -2 = -4, clamp di 0-10.
-    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 3)
+    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 3, 2)
     expect(kelBaru.trust).toBe(1)
     expect(kelBaru.ttm).toBe('prekontemplasi')
   })
@@ -406,7 +406,7 @@ describe('diagnosis perilaku (COM-B)', () => {
 
     // Gagal: TTM & arc tidak maju, tapi kunjungan tetap tercatat
     // dan verifikasi observasi tetap berlaku.
-    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 5)
+    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 5, 2)
     expect(kelBaru.ttm).toBe('prekontemplasi')
     expect(kelBaru.arcIndex).toBe(0)
     expect(kelBaru.jumlahKunjungan).toBe(1)
@@ -476,7 +476,7 @@ describe('diagnosis perilaku (COM-B)', () => {
     )
     const hasil = selesaikanKunjungan(r.kj, SKENARIO, kel)
     expect(hasil.berhasil).toBe(true)
-    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 8)
+    const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 8, 2)
     expect(kelBaru.ttm).toBe('aksi')
     expect(kelBaru.indikator.jamban_sehat.status).toBe('ya')
     expect(kelBaru.indikator.jamban_sehat.statusSebenarnya).toBe('ya')

@@ -50,6 +50,8 @@ export const HARI_BUKA_PROLANIS = 30
 export const HARI_BUKA_KLB = 45
 export const COOLDOWN_POSYANDU = 30
 export const BIAYA_STAMINA_KEGIATAN = 2
+/** Kapasitas roster keluarga binaan (M3c: 8 → 16 seiring 16 keluarga bernama). */
+export const MAKS_BINAAN = 16
 
 /** PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
  * menekan droplet/kronis-terdeteksi. Diekspor agar UI (Lokakarya "Triase
@@ -441,7 +443,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
 
     case 'PILIH_BINAAN': {
       if (s.desa.binaan.includes(action.keluargaId)) return err(s, 'Sudah jadi keluarga binaan.')
-      if (s.desa.binaan.length >= 8) return err(s, 'Roster binaan penuh (maks 8).')
+      if (s.desa.binaan.length >= MAKS_BINAAN) return err(s, `Roster binaan penuh (maks ${MAKS_BINAAN}).`)
       if (!s.desa.keluarga[action.keluargaId]) return err(s, 'Keluarga tidak dikenal.')
       return { state: { ...s, desa: { ...s.desa, binaan: [...s.desa.binaan, action.keluargaId] } }, events: [] }
     }
@@ -509,7 +511,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
           hasil = { ...hasil, trustDelta: Math.floor(hasil.trustDelta / 2), armorAktif: true }
         }
 
-        let kelBaru = terapkanHasil(kel, hasil, skenario, s.hari)
+        let kelBaru = terapkanHasil(kel, hasil, skenario, s.hari, kelContent.arc.kunjungan.length)
 
         // Tally MI & kunjungan
         const t = { ...next.tally }

@@ -146,7 +146,7 @@ export function KartuKeluarga({
               className="tombol"
               onClick={onBinaan}
               disabled={rosterPenuh}
-              title={rosterPenuh ? 'Roster binaan penuh (maks 8) — lepas satu keluarga dulu.' : 'Masukkan ke roster keluarga binaan.'}
+              title={rosterPenuh ? 'Roster binaan penuh — lepas satu keluarga dulu.' : 'Masukkan ke roster keluarga binaan.'}
             >
               Jadikan Binaan
             </button>
