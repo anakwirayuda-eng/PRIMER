@@ -453,7 +453,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       ],
       edukasi: ['kepatuhan_obat', 'istirahat_cukup', 'cuci_tangan', 'gizi_seimbang'],
     },
-    clue: 'Demam stepladder (naik bertahap, puncak sore-malam) + lidah kotor + bradikardia relatif → tifoid. Lini pertama Puskesmas: kloramfenikol; tekankan tuntas + istirahat total untuk cegah perforasi usus.',
+    clue: 'Demam stepladder (naik bertahap, puncak sore-malam) + lidah kotor + bradikardia relatif → tifoid. Lini pertama FKTP/Fornas: kloramfenikol (alternatif kotrimoksazol/amoksisilin; bila tersedia & sesuai antibiogram/derajat, sefiksim/seftriakson) — tekankan tuntas + istirahat total untuk cegah perforasi usus. Catatan: Widal tunggal punya angka positif-palsu tinggi, tegakkan dengan gambaran klinis + konteks endemis; kultur bila tersedia.',
     konsekuensi: {
       narasi: 'Bila antibiotik tidak dituntaskan atau pasien tetap beraktivitas berat, risiko perforasi usus dan perdarahan saluran cerna pada minggu ke-3.',
       kembaliHariMin: 7,

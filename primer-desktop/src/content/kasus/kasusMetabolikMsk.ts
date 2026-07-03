@@ -117,7 +117,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['natrium_diklofenak_50', 'kolkisin_500'],
       obatSalahUmum: [
-        { id: 'allopurinol_100', alasan: 'JANGAN memulai allopurinol saat serangan akut — fluktuasi kadar asam urat memperpanjang & memperberat serangan. Urate-lowering therapy dimulai SETELAH serangan reda (2–4 minggu), lalu diteruskan seumur hidup.' },
+        { id: 'allopurinol_100', alasan: 'Di FKTP, default aman: JANGAN mulai allopurinol saat serangan akut (fluktuasi asam urat memperpanjang serangan); mulai urate-lowering 2–4 minggu setelah reda + titrasi ke target <6 mg/dL. Catatan ACR 2020: memulai ULT saat serangan sebenarnya boleh HANYA bila disertai profilaksis antiinflamasi & follow-up ketat — di luar cakupan penanganan akut FKTP ini. Bila pasien SUDAH rutin allopurinol, jangan dihentikan.' },
         { id: 'amoxicillin_500', alasan: 'Gout bukan infeksi bakteri; antibiotik tidak berperan. Bila curiga artritis septik, itu justru indikasi RUJUK, bukan antibiotik oral coba-coba.' },
       ],
       edukasi: ['diet_purin', 'minum_air_cukup', 'kontrol_rutin'],

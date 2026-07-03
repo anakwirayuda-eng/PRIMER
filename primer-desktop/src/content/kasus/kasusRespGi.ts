@@ -451,16 +451,18 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     diagnosisBanding: ['J44.1', 'J18.9', 'I50.9'],
     tatalaksana: {
       obatBenar: [],
-      // Bronkodilator SABA pra-rujukan — inhalasi/oral, beri salah satu (nebulisasi
-      // di prosedur adalah tulang punggungnya). Bukan "harus keduanya".
-      obatAlternatif: [['salbutamol_inhaler', 'salbutamol_2']],
+      // GOLD: bronkodilator inhalasi/nebul + KORTIKOSTEROID SISTEMIK adalah pilar
+      // eksaserbasi; SABA ORAL (tablet) TIDAK setara & tak dianjurkan untuk
+      // eksaserbasi berat (dipindah ke obatSalahUmum). Nebulisasi = prosedur.
+      obatAlternatif: [['salbutamol_inhaler'], ['prednison_5']],
       prosedur: ['nebulisasi'],
       obatSalahUmum: [
-        { id: 'kloramfenikol_250', alasan: 'Bukan antibiotik yang tepat untuk eksaserbasi PPOK; lebih penting: jangan menunda rujukan dengan mencoba-coba obat di FKTP saat SpO2 89% dan ada tanda gagal napas.' },
+        { id: 'salbutamol_2', alasan: 'SABA ORAL (tablet) BUKAN pilihan untuk eksaserbasi berat — onset lambat, efek samping sistemik (tremor, takikardia) lebih besar; bronkodilator harus rute INHALASI/NEBULISASI (GOLD).' },
+        { id: 'kloramfenikol_250', alasan: 'Antibiotik yang tak tepat untuk eksaserbasi PPOK. Bila sputum purulen + gejala kardinal (indikasi antibiotik), pilih golongan yang sesuai — dan yang terpenting: jangan menunda rujukan saat SpO2 89% + tanda gagal napas.' },
       ],
       edukasi: ['berhenti_merokok', 'teknik_inhaler', 'tanda_bahaya', 'kepatuhan_kontrol_ptm'],
     },
-    clue: 'Eksaserbasi PPOK (kriteria Anthonisen: sesak↑, volume sputum↑, purulensi sputum↑) pada perokok berat. SpO2 89% + tanda gagal napas (bingung, sianosis, otot bantu) = eksaserbasi berat → STABILISASI di FKTP: O2 titrasi hati-hati (target SpO2 88–92%, hindari over-oksigenasi) + nebulisasi bronkodilator, lalu RUJUK paru. Jangan andalkan antibiotik oral & tunda rujukan.',
+    clue: 'Eksaserbasi PPOK (kriteria Anthonisen: sesak↑, volume sputum↑, purulensi sputum↑ — ketiganya ada → antibiotik terindikasi). SpO2 89% + tanda gagal napas (bingung, sianosis, otot bantu) = eksaserbasi BERAT. Bundel GOLD: O2 TERKONTROL (target SpO2 88–92%, hindari over-oksigenasi) + bronkodilator INHALASI/NEBULISASI (SABA ± SAMA) + KORTIKOSTEROID SISTEMIK + antibiotik (sputum purulen) — lalu RUJUK paru segera. SABA oral tak setara; jangan biarkan urusan obat menunda rujukan.',
     konsekuensi: {
       narasi: 'Bila tidak segera dirujuk, eksaserbasi berat berlanjut ke gagal napas hiperkapnik (asidosis respiratorik) dan penurunan kesadaran yang mengancam jiwa.',
       kembaliHariMin: 0,
@@ -1107,14 +1109,18 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['K35.80', 'N83.2', 'A09'],
     tatalaksana: {
+      // Analgesia adekuat DIANJURKAN pra-rujukan — mitos "analgesik menutupi tanda
+      // apendisitis" sudah TERBANTAH (Cochrane CD005660; WSES 2020). Parasetamol
+      // aman; hindari NSAID pada perut akut (risiko GI/perdarahan bila perforasi/bedah).
       obatBenar: [],
+      obatAlternatif: [['paracetamol_500']],
       obatSalahUmum: [
-        { id: 'natrium_diklofenak_50', alasan: 'JANGAN beri analgetik kuat (apalagi NSAID/opioid) sebelum penilaian bedah — meredakan nyeri & tanda peritoneal justru MENUTUPI perkembangan apendisitis dan menunda diagnosis. NSAID juga berisiko pada perut akut.' },
-        { id: 'amoxicillin_500', alasan: 'Apendisitis akut adalah kasus BEDAH — antibiotik oral di FKTP tidak menyembuhkan, hanya menunda rujukan dan berisiko perforasi. Antibiotik parenteral diberikan di pusat rujukan sebagai bagian tata laksana bedah.' },
+        { id: 'natrium_diklofenak_50', alasan: 'Untuk perut akut yang mungkin dioperasi, HINDARI NSAID (risiko iritasi/perdarahan GI & gangguan hemostasis peri-operatif) — pilih parasetamol. Catatan EBM: analgesia TIDAK menutupi tanda/menunda diagnosis (Cochrane), jadi nyeri tetap boleh diredakan; yang salah adalah memilih NSAID, bukan memberi analgesia.' },
+        { id: 'amoxicillin_500', alasan: 'Apendisitis akut adalah kasus BEDAH — antibiotik ORAL di FKTP tidak menyembuhkan & jangan sampai menunda rujukan. Antibiotik parenteral peri-operatif adalah bagian standar tata laksana DI RS rujukan.' },
       ],
       edukasi: ['tanda_bahaya'],
     },
-    clue: 'Apendisitis akut: nyeri BERPINDAH periumbilikal → McBurney + anoreksia/mual + nyeri lepas (Blumberg)/defans + demam ringan + leukositosis (skor Alvarado tinggi). Ini kompetensi 3B → PUASAKAN pasien, JANGAN beri analgetik/antibiotik oral yang menutupi tanda, pasang jalur (persiapan rujukan) dan RUJUK BEDAH segera. Singkirkan kehamilan ektopik (β-hCG) pada perempuan usia subur.',
+    clue: 'Apendisitis akut: nyeri BERPINDAH periumbilikal → McBurney + anoreksia/mual + nyeri lepas (Blumberg)/defans + demam ringan + leukositosis (skor Alvarado tinggi). Kompetensi 3B → PUASAKAN, pasang jalur IV, beri ANALGESIA ADEKUAT (parasetamol — mitos "analgesik menutupi tanda" sudah terbantah, Cochrane/WSES; hindari NSAID pada perut akut), dan RUJUK BEDAH segera. Jangan biarkan antibiotik oral menunda rujukan. Singkirkan kehamilan ektopik (β-hCG) pada perempuan usia subur.',
     konsekuensi: {
       narasi: 'Menunda rujukan atau memberi analgetik/antibiotik yang menutupi gejala berisiko perforasi apendiks → peritonitis generalisata dan sepsis yang mengancam jiwa.',
       kembaliHariMin: 0,

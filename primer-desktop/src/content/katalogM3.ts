@@ -118,6 +118,7 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
   minum_air_cukup: { id: 'minum_air_cukup', nama: 'Minum air cukup & tidak menahan kencing' },
   cuci_tangan_makanan: { id: 'cuci_tangan_makanan', nama: 'Higiene makanan & air matang' },
   hindari_pencetus_asma: { id: 'hindari_pencetus_asma', nama: 'Kenali & hindari pencetus (debu, dingin, asap)' },
+  hindari_pencetus_migrain: { id: 'hindari_pencetus_migrain', nama: 'Kenali & hindari pencetus migrain (kurang tidur, telat makan, stres, pencetus haid)' },
   teknik_inhaler: { id: 'teknik_inhaler', nama: 'Teknik pakai inhaler yang benar' },
   kepatuhan_kontrol_ptm: { id: 'kepatuhan_kontrol_ptm', nama: 'Kontrol rutin PTM & cegah komplikasi' },
 }

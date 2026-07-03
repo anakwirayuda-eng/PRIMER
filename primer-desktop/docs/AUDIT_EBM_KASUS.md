@@ -150,3 +150,27 @@ dilarang). Semua akurat PPGD/GINA/WHO. Tidak ada perbaikan baru.
   kotrimoksazol ISK, kombinasi analgesik multimodal — sesuai realitas FKTP &
   Fornas Indonesia (persis yang diminta: "EBM ATAU praktis lokal relevan").
 - **Verifikasi:** 163 test hijau, tsc strict 0, build OK.
+
+---
+
+## RONDE 2 — Respons audit CODEX (read-only) atas commit e94c598
+
+CODEX mengaudit di HEAD `e94c598` (161 test) — **sebelum** commit audit EBM saya
+`6e09b52`. Karena itu temuan besarnya (P1-3: `obatBenar` alternatif jadi wajib
+ganda — rinitis/GERD/askariasis/urtikaria) **sudah teratasi** oleh mekanisme
+`obatAlternatif`. Sisa temuan yang masih valid diperbaiki di ronde ini:
+
+| # | Temuan CODEX | Aksi |
+|---|---|---|
+| P1 | **Apendisitis** "jangan analgesik krn menutupi tanda" — mitos yang sudah terbantah (Cochrane CD005660, WSES 2020) | ✅ clue + alasan diklofenak ditulis ulang: analgesia adekuat DIANJURKAN, `obatAlternatif: [['paracetamol_500']]`; NSAID dihindari karena risiko GI/perforasi (bukan "masking"); antibiotik oral jangan menunda rujukan |
+| P1 | **PPOK eksaserbasi berat** — SABA oral (`salbutamol_2`) masih "benar"; bundel GOLD tak lengkap | ✅ SABA oral dipindah ke obatSalahUmum ("rute salah"); `obatAlternatif: [['salbutamol_inhaler'],['prednison_5']]` (bronkodilator inhalasi + steroid sistemik); clue jadi bundel GOLD: O2 88–92 + nebul + steroid + antibiotik (purulen) + rujuk |
+| P1 | **IGD hipoglikemia sulfonilurea** — `disposisiBenar: 'pulang'` bertentangan clue sendiri | ✅ → `'rujuk'` + `spesialisRujukan: 'penyakit_dalam'`; langkah h3 & clue diselaraskan (kambuh berjam-jam → observasi ketat/rawat di RS, bukan pulang) |
+| P2 | **Depresi ringan** — fluoksetin wajib skor, padahal psikososial lini pertama | ✅ `obatBenar: []` (mhGAP/NICE NG222: antidepresan tak rutin utk depresi ringan; psikoedukasi/aktivasi perilaku dulu); fluoksetin tak dihukum, clue diperjelas |
+| P2 | **Anafilaksis IGD** — klaim antihistamin/steroid "mencegah reaksi bifasik" | ✅ dilunakkan: adjunct gejala kulit setelah adrenalin, bukti pencegah bifasik LEMAH (Resus Council UK 2021/AAAAI); adrenalin + observasi/rujuk tetap kunci |
+| P2 | **Gout** — "jangan mulai allopurinol saat serangan" terlalu absolut vs ACR 2020 | ✅ dibingkai sebagai default-aman FKTP + catatan ACR 2020 (boleh mulai saat flare HANYA dgn profilaksis + follow-up, di luar cakupan akut FKTP); "sudah rutin jangan dihentikan" dipertahankan |
+| P2 | **Edukasi migrain** memakai id `hindari_pencetus_asma` (konteks salah) | ✅ tambah topik `hindari_pencetus_migrain` (kurang tidur/telat makan/stres/pencetus haid) di katalog + dipakai di kasus migrain |
+| P2 | **Tifoid** — Widal + kloramfenikol sbg lini tunggal | ✅ (defensible, CODEX setuju) clue diperkaya: alternatif kotrimoksazol/amoksisilin/sefiksim/seftriakson sesuai antibiogram; catatan positif-palsu Widal + kultur bila ada |
+
+CODEX menilai NOL P0. Semua P1/P2 valid diperbaiki. Yang **sudah beres sebelum
+audit CODEX** (P1-3 alternatif): tidak perlu aksi ulang. **163 test tetap hijau,
+tsc 0, build OK.**

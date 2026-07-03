@@ -44,8 +44,8 @@ export const KASUS_IGD: KasusIgd[] = [
         id: 'a3',
         narasi: 'TD mulai naik 100/70, saturasi 96%. Cairan sudah terpasang.',
         pilihan: [
-          { id: 'a', label: 'Beri antihistamin + kortikosteroid sebagai terapi tambahan, siapkan rujuk', benar: true, efekStabilitas: 15, respons: 'Tepat — setelah adrenalin & stabilisasi, antihistamin/steroid mencegah reaksi bifasik. Rujuk untuk observasi.' },
-          { id: 'b', label: 'Pasien membaik, langsung pulangkan', benar: false, efekStabilitas: -20, respons: 'Bahaya — reaksi bifasik bisa muncul 4-12 jam kemudian. Wajib observasi/rujuk.' },
+          { id: 'a', label: 'Beri antihistamin + kortikosteroid sebagai terapi tambahan, siapkan rujuk', benar: true, efekStabilitas: 15, respons: 'Tepat — antihistamin/steroid hanya TERAPI TAMBAHAN untuk gejala kulit setelah adrenalin & stabilisasi (bukti pencegah reaksi bifasik LEMAH — Resus Council UK/AAAAI). Kunci tetap adrenalin + observasi/rujuk.' },
+          { id: 'b', label: 'Pasien membaik, langsung pulangkan', benar: false, efekStabilitas: -20, respons: 'Bahaya — reaksi bifasik bisa muncul beberapa jam kemudian. Wajib observasi berkepanjangan/rujuk.' },
         ],
       },
     ],
@@ -152,8 +152,12 @@ export const KASUS_IGD: KasusIgd[] = [
     demografi: { usiaMin: 50, usiaMax: 75 },
     vitalAwal: { td: '110/70', nadi: 96, rr: 18, spo2: 97, gds: 38 },
     stabilitasAwal: 55,
-    disposisiBenar: 'pulang',
-    clue: 'Trias Whipple + GDS <70 pada pengguna OAD/insulin = hipoglikemia. Tak sadar → DEKSTROSA IV (D40% bolus), bukan oral (risiko aspirasi). Cek ulang GDS, cari pencetus. Sulfonilurea → observasi lama/rujuk (hipoglikemia berkepanjangan).',
+    // Hipoglikemia SULFONILUREA (glibenklamid dosis ganda) berisiko kambuh
+    // berjam-jam → butuh observasi ketat berkepanjangan / infus dekstrosa yang
+    // melampaui kapasitas IGD FKTP dasar → RUJUK untuk rawat & pantau (bukan pulang).
+    disposisiBenar: 'rujuk',
+    spesialisRujukan: 'penyakit_dalam',
+    clue: 'Trias Whipple + GDS <70 pada pengguna OAD/insulin = hipoglikemia. Tak sadar → DEKSTROSA IV (D40% bolus), bukan oral (risiko aspirasi). Cek ulang GDS, cari pencetus. Hipoglikemia karena SULFONILUREA kerja panjang bisa kambuh berjam-jam → JANGAN dipulangkan cepat; rujuk untuk observasi ketat/rawat (dekstrosa rumatan ± oktreotid di RS).',
     langkah: [
       {
         id: 'h1',
@@ -176,8 +180,8 @@ export const KASUS_IGD: KasusIgd[] = [
         id: 'h3',
         narasi: 'Keluarga menunjukkan obatnya: glibenklamid (sulfonilurea) dosis ganda tak sengaja.',
         pilihan: [
-          { id: 'a', label: 'Observasi lama + pantau GDS berkala (sulfonilurea kerja panjang)', benar: true, efekStabilitas: 15, respons: 'Tepat — hipoglikemia karena sulfonilurea bisa berulang berjam-jam. Observasi ketat sebelum pulang, edukasi.' },
-          { id: 'b', label: 'GDS sudah normal, pulangkan segera', benar: false, efekStabilitas: -20, respons: 'Bahaya — sulfonilurea kerja panjang; hipoglikemia bisa kambuh setelah pulang. Observasi dulu.' },
+          { id: 'a', label: 'Rujuk untuk observasi ketat + pantau GDS berkala (sulfonilurea kerja panjang)', benar: true, efekStabilitas: 15, respons: 'Tepat — hipoglikemia karena sulfonilurea bisa berulang berjam-jam; observasi ketat/rawat melampaui kapasitas IGD FKTP dasar → rujuk, jangan dipulangkan cepat.' },
+          { id: 'b', label: 'GDS sudah normal, pulangkan segera', benar: false, efekStabilitas: -20, respons: 'Bahaya — sulfonilurea kerja panjang; hipoglikemia bisa kambuh setelah pulang. Butuh observasi ketat/rujuk, bukan pulang.' },
         ],
       },
     ],

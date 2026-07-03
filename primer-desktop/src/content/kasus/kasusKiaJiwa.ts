@@ -756,14 +756,19 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     ],
     diagnosisBanding: ['F32.0', 'F43.2', 'F34.1'],
     tatalaksana: {
-      obatBenar: ['fluoksetin_20'],
+      // Depresi RINGAN (mhGAP/NICE NG222): lini pertama = intervensi PSIKOSOSIAL
+      // (psikoedukasi, aktivasi perilaku, aktivitas fisik) + active monitoring.
+      // Antidepresan TIDAK rutin ditawarkan untuk depresi ringan — hanya bila
+      // menetap/mengganggu → maka obat bukan wajib skor (obatBenar kosong).
+      // Fluoksetin bila diresepkan tidak salah, hanya bukan keharusan lini pertama.
+      obatBenar: [],
       obatSalahUmum: [
         { id: 'diazepam_2', alasan: 'Benzodiazepin tunggal TIDAK mengatasi depresi & berisiko ketergantungan — bukan antidepresan. Depresi butuh psikoterapi ± SSRI.' },
-        { id: 'amitriptilin_25', alasan: 'TCA efektif namun berbahaya bila overdosis (kardiotoksik) — kurang aman lini pertama untuk pasien dengan ide keputusasaan; SSRI lebih dipilih.' },
+        { id: 'amitriptilin_25', alasan: 'TCA efektif namun berbahaya bila overdosis (kardiotoksik) — kurang aman lini pertama untuk pasien dengan ide keputusasaan; bila memang perlu antidepresan, SSRI lebih dipilih.' },
       ],
       edukasi: ['manajemen_stres', 'aktivitas_fisik', 'higiene_tidur', 'kontrol_rutin'],
     },
-    clue: 'Depresi RINGAN: ≥2 minggu mood depresif + anhedonia + gejala penyerta (tidur, nafsu makan, energi turun) dengan fungsi MASIH cukup terjaga. WAJIB skrining risiko bunuh diri di tiap kunjungan. Tata laksana FKTP: psikoedukasi + konseling suportif/aktivasi perilaku, tambahkan SSRI (fluoksetin) bila gejala menetap/mengganggu. Singkirkan hipotiroid & pastikan tak ada riwayat manik (bipolar). Kontrol berkala; rujuk bila memberat/ada risiko bunuh diri (PPDGJ-III/PPK Jiwa FKTP).',
+    clue: 'Depresi RINGAN: ≥2 minggu mood depresif + anhedonia + gejala penyerta (tidur, nafsu makan, energi turun) dengan fungsi MASIH cukup terjaga. WAJIB skrining risiko bunuh diri di tiap kunjungan. Lini pertama mhGAP/NICE: PSIKOEDUKASI + konseling suportif/aktivasi perilaku + aktivitas fisik + active monitoring — antidepresan TIDAK rutin untuk depresi ringan, tambahkan SSRI (fluoksetin) HANYA bila gejala menetap/mengganggu fungsi. Singkirkan hipotiroid & riwayat manik (bipolar). Kontrol berkala; rujuk bila memberat/ada risiko bunuh diri (mhGAP WHO / PPK Jiwa FKTP).',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat penenang tanpa konseling dan tanpa skrining bunuh diri, gejala dapat memberat menjadi depresi sedang-berat dengan risiko keselamatan.',
       kembaliHariMin: 14,

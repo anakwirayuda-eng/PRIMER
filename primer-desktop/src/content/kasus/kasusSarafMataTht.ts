@@ -230,9 +230,9 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         { id: 'tramadol_50', alasan: 'Opioid tidak dianjurkan untuk migrain akut — memicu medication-overuse headache dan menyamarkan pola nyeri; NSAID/parasetamol adalah lini pertama.' },
         { id: 'amoxicillin_500', alasan: 'Migrain bukan infeksi; antibiotik sama sekali tidak berperan.' },
       ],
-      edukasi: ['hindari_pencetus_asma', 'higiene_tidur', 'manajemen_stres', 'kontrol_rutin'],
+      edukasi: ['hindari_pencetus_migrain', 'higiene_tidur', 'manajemen_stres', 'kontrol_rutin'],
     },
-    clue: 'Migrain tanpa aura (kriteria ICHD-3): nyeri unilateral + berdenyut + intensitas sedang-berat + diperberat aktivitas, disertai mual/muntah ATAU foto+fonofobia; neurologis normal. Terapi serangan: NSAID/parasetamol + antiemetik + istirahat ruang gelap. Bila ≥4 serangan/bulan pertimbangkan profilaksis (mis. amitriptilin/propranolol). Catatan: edukasi "hindari_pencetus" dipakai untuk menghindari trigger migrain (kurang tidur, telat makan, pencetus haid).',
+    clue: 'Migrain tanpa aura (kriteria ICHD-3): nyeri unilateral + berdenyut + intensitas sedang-berat + diperberat aktivitas, disertai mual/muntah ATAU foto+fonofobia; neurologis normal. Terapi serangan: NSAID/parasetamol + antiemetik + istirahat ruang gelap. Bila ≥4 serangan/bulan pertimbangkan profilaksis (mis. amitriptilin/propranolol). Edukasi hindari pencetus migrain: kurang tidur, telat makan, stres, pencetus haid.',
     konsekuensi: {
       narasi: 'Bila pencetus tidak dikenali dan pasien mengandalkan analgetik berlebihan, serangan makin sering dan berisiko kronis; opioid memperburuk siklus nyeri.',
       kembaliHariMin: 20,
