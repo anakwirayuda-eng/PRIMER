@@ -9,8 +9,8 @@
   min-height: 100vh;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   /* Langit fajar: mint pucat → kertas hangat → semburat kunyit di horizon */
   background: linear-gradient(
     180deg,
@@ -68,8 +68,18 @@
   width: min(600px, calc(100vw - var(--sp-6) * 2));
   padding: var(--sp-6) var(--sp-7) var(--sp-6);
   text-align: center;
-  margin-bottom: clamp(56px, 12vh, 130px);
+  /* Auto-margin: panel terpusat di ruang yang TERSISA di atas blok kredit
+     (kredit kini in-flow — tumpang-tindih mustahil di viewport mana pun).
+     Layar pendek: panel scroll internal, kredit legal tetap terlihat utuh. */
+  margin-top: auto;
+  margin-bottom: auto;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
   animation: title-panel-masuk 700ms 250ms var(--ease-keluar) both;
+}
+
+@media (max-height: 820px) {
+  .title__panel { padding: var(--sp-4) var(--sp-5); }
 }
 
 @keyframes title-panel-masuk {
@@ -189,21 +199,27 @@
 }
 
 /* -- Kredit & HKI ---------------------------------------------------------------- */
+/* Teks legal WAJIB terbaca (CODEX P1) TANPA menabrak apa pun (playtest:
+   "piye cara liatnya"): in-flow di dasar kolom flex (bukan absolute — dulu
+   tumbuh ke atas menembus siluet & menimpa panel), scrim daun-900 menjamin
+   kontras di atas latar apa pun, line-height menjaga baris tak menimpa. */
 .title__kredit {
-  position: absolute;
-  bottom: var(--sp-2);
-  left: 0;
-  right: 0;
+  position: relative;
   z-index: 1;
+  width: min(1100px, calc(100vw - var(--sp-5) * 2));
+  margin-bottom: var(--sp-2);
   text-align: center;
   font-size: var(--text-xs);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
   color: var(--kertas-050);
   pointer-events: none;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 0 var(--sp-5);
+  gap: 3px;
+  padding: var(--sp-2) var(--sp-4);
+  background: rgba(6, 63, 49, 0.82); /* daun-900 */
+  border-radius: var(--radius-md);
 }
 
 /* Teks legal/medis: WAJIB tetap terbaca (CODEX P1) — jangan di bawah
