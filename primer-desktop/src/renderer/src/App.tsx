@@ -3,7 +3,7 @@
  * Layar diambil dari state.layar (engine yang menentukan; UI hanya menampilkan).
  */
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useGame } from './store'
 import { TitleScreen } from './screens/TitleScreen'
 import { MejaKerja } from './screens/MejaKerja'
@@ -21,6 +21,7 @@ import { useAudio } from './audio/useAudio'
 import { useBgm } from './audio/bgm'
 import { MuteButton } from './audio/MuteButton'
 import { Pengaturan } from './components/Pengaturan'
+import { Onboarding, sudahOnboarding } from './components/Onboarding'
 import { usePengaturan } from './usePengaturan'
 import './App.css'
 
@@ -29,6 +30,8 @@ export default function App() {
   const muatAutosave = useGame((s) => s.muatAutosave)
   const muatMetaDanSlot = useGame((s) => s.muatMetaDanSlot)
   const pengaturan = usePengaturan()
+  // M7.30 — onboarding sekali per-instalasi, hanya Hari 1 blok pagi.
+  const [onboardingSelesai, setOnboardingSelesai] = useState(sudahOnboarding)
   useAudio()
   useBgm()
 
@@ -84,6 +87,9 @@ export default function App() {
       <Toaster />
       <MuteButton />
       <Pengaturan />
+      {!onboardingSelesai && state.hari === 1 && state.blok === 'pagi' && (
+        <Onboarding onSelesai={() => setOnboardingSelesai(true)} />
+      )}
     </div>
   )
 }
