@@ -265,8 +265,16 @@ anamnesis branching + axis penilaian konseling (KB).
     `prefers-reduced-motion`. **Sisa M7**: night-comfort toggle terpisah dari
     blok sore (CODEX P3), font kecil peta/kunjungan/dex (P3), headroom
     1200×760 + skala OS (P2 — diterima sbg batas desain, uji di lab FK).
-34b. **UX Edukasi Pasien** — tembok 38 chip (keluhan playtest + CODEX P2 panel
-    5758px). Dossier: `docs/DEEPTHINK_EDUKASI_UX.md`. **VERDIKT DEEPTHINK
+34b. **UX Edukasi Pasien** ✅ **DIEKSEKUSI 2026-07-03 (commit `7ac5015`)** —
+    O6: kategori WAJIB (6 laci, kontrak tsc) + sinonim + front-loading semua
+    label (38→37; merger tunggal kepatuhan_kontrol_ptm→kontrol_rutin — target
+    ±30 DT ditinjau: sisanya kembar-label, cukup rename). O4: KAPASITAS_EDUKASI
+    =3 di ENGINE + skor min(3,|wajib|) −15/salah + REVISI_ENGINE=2 di sidik
+    jari dossier. O1: tab [Resep|Edukasi], baki memo 3 slot, cari fonetik+
+    sinonim auto-buka laci, akordion default tutup per-sesi, chip disabled
+    saat penuh. 187 test (+4). SISA pasca-playtest: O5 (edukasi→drift
+    keluarga) + kalibrasi penalti.
+    Dossier: `docs/DEEPTHINK_EDUKASI_UX.md`. **VERDIKT DEEPTHINK
     DITERIMA 2026-07-03 dengan triase** (jawaban Q1–Q6 diarsip user di chat):
     - **Diterima**: Q1 konstruk prioritisasi top-3 slot (O4) + Q3 kuota
       menghancurkan strategi "4 sakti" via opportunity cost; Q2 kriteria
