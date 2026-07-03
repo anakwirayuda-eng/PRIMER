@@ -740,3 +740,42 @@ non-regresi redundansi aman), tsc 0, build+pack OK. Fix kontras diverifikasi
 via computed style langsung (bukan cuma visual) + reload penuh (hindari
 salah baca krn HMR stale). Fix Rapor diverifikasi di kedua mode (karier 90h
 + ujian 30h) — tak ada regresi silang.
+
+## 12. Follow-up #2 & #8 (§9) TUNTAS — phase-guard + harness test komponen
+
+Dua item yang sejak §9 sengaja ditunda ("butuh keputusan/effort lebih")
+sekarang dikerjakan (commit `8b76c25`, `ac42251`):
+
+**#2 Engine phase-guard.** `aksiKlinik` (clinic.ts) dulu menerima aksi
+kategori manapun di fase manapun — TANYA/UKUR_VITAL/PERIKSA/PESAN_LAB/
+KOMIT_DIAGNOSIS/TAMBAH_OBAT dkk semua bisa di-dispatch langsung dari fase
+`anamnesis` tanpa pernah lewat `LANJUT_FASE`. UI (DeckAksi) sudah membatasi
+lewat rendering, tapi engine sendiri permisif — dispatch manual (headless/
+API) bisa melompat fase. Kini tiap kategori aksi dijaga `bukanFase()`: hanya
+sah di fase kanoniknya (anamnesis/pemeriksaan/diagnosis/terapi), ditolak
+ERROR_AKSI di fase lain. DISPOSISI (reducer.ts) dapat guard serupa —
+sekarang menolak walau diagnosis sudah di-komit bila fase belum `disposisi`.
+Efek samping: banyak test lama SENGAJA permisif (dispatch aksi terapi/
+diagnosis langsung dari fase anamnesis default) — ditulis ulang memakai
+`buatEncounterFase()` (fast-forward test) atau `LANJUT_FASE` eksplisit utk
+sequence yang meniru playthrough asli (termasuk test "permainan asal-asalan"
+yang tetap harus lewat transisi fase, cuma skip datanya). 38 test baru
+mengunci matriks lengkap (9 kategori aksi × 4 fase salah).
+
+**#8 Harness test komponen.** Nol test UI React otomatis sejak awal proyek
+— semua verifikasi manual lewat preview tools (Claude Preview), tak
+berulang di CI. Setup @testing-library/react + jest-dom + user-event +
+jsdom; `environmentMatchGlobs` di vitest.config.ts memisahkan test komponen
+(*.test.tsx → jsdom) dari test engine/content (*.test.ts → node, tetap
+secepat sebelumnya). 2 test komponen ditulis dan DIBUKTIKAN bertaring —
+sengaja dikembalikan ke versi bug lalu dipastikan test merah, baru
+dikembalikan ke versi fix:
+- `DexSkdi.test.tsx` — regresi langsung utk bug §11 #4 (baca SKDI144 mentah)
+  memakai entri auto-tautan nyata.
+- `Hud.test.tsx` — total hari per-mode (kelas bug sama dgn §11 #5 Rapor),
+  wiring klik→dispatch, guard navigasi terkunci saat encounter aktif.
+
+247 test hijau total (46 baru), tsc 0, build OK. Follow-up lanjutan (kalau
+mau memperluas cakupan #8): tulis test serupa utk layar besar lain
+(Klinik/Kunjungan/LaporanAkhir) — pola & harness sudah berdiri, tinggal
+diulang per layar.
