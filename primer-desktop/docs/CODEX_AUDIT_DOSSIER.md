@@ -679,3 +679,30 @@ CODEX mengembalikan 9 temuan atas dossier ini. Triase & tindakan (commit
 Guard test baru: deteksi swap-nama & swap-paket dossier (m6verifikasi.test.ts).
 Sisa yang SENGAJA ditunda (butuh keputusan/effort lebih): #2 engine phase-guard,
 #8 UI component test harness. 199 test hijau, tsc 0, build OK.
+
+## 10. RESPONS BUILDER — ronde audit ke-3 2026-07-04 (konten/EBM, alat lain)
+
+CODEX (alat/instance terpisah) mengaudit ulang dan mengembalikan 5 temuan level
+konten/EBM, di luar 9 temuan §9. Semua diverifikasi manual terhadap kode/konten
+sebelum diubah — commit `dbde633`:
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | `mm_hipertensi_urgensi` diberi ICD I10 (esensial), padahal narasinya krisis hipertensi | ✅ FIX: I10 → I16.0. Investigasi lanjutan menemukan bug arsitektur lebih besar: `namaDiagnosis()` mengecek skdi144 SEBELUM kode kasus sendiri → 27 kasus salah tampil label generik SKDI utk jawaban benarnya sendiri. Dibalik + guard test baru (util.ts, util.test.ts) |
+| 2 | Tifoid: `obatSalahUmum` menjebak amoksisilin, padahal klinis juga valid utk tifoid tanpa komplikasi (kontradiksi klue) | ✅ FIX: dipindah ke `obatAlternatif` (kasusInfeksi.ts) |
+| 3 | Gout, OA lutut, LBP, hipertensi urgensi: hubungan terapi "ATAU" dimodelkan sebagai "DAN" wajib di `obatBenar` | ✅ FIX: 3 kasus (gout, LBP, hipertensi urgensi) dikonversi ke `obatAlternatif`; OA lutut disederhanakan jadi parasetamol-dulu (klue menyatakan sekuensial, bukan OR) (kasusMetabolikMsk.ts) |
+| 4 | `simvastatin_20` tak punya `golonganAlergi` → firewall alergi (poka-yoke) tak pernah memblokirnya walau `alergiTrap` kasus menarget obat itu utk skor "salah" | ✅ FIX: tambah `golonganAlergi: 'statin'` (katalogM3.ts) |
+| 5 | Label SKDI dengue/gastroenteritis "rawan ambigu" | ⏸ DITOLAK: CODEX sendiri menilai ini defensible/prioritas rendah; tak diubah |
+
+Bug tak dilaporkan CODEX, ditemukan solo saat playtest: (a) diagnosis banding
+dobel nama (D50.9/O99.0, lihat §7 e97286b) sudah beres di ronde sebelumnya;
+(b) hasil lab kosong utk lab di luar daftar kasus (reducer.ts, sudah beres
+4da3161); (c) lab dengue (igm_dengue) & HbA1c hilang dari kasus masing-masing
+→ ditambahkan (kasusInfeksi.ts, kasusKronis.ts).
+
+E2E smoke test manual (bukan otomatis — masih bagian dari gap #8): boot →
+kunjungan rumah penuh (wawancara→diagnosis_perilaku→resep_sosial→selesai) →
+Kegiatan/Posyandu → Tentang & Kredit → LaporanAkhir + ekspor Dossier Mahasiswa
+(blob diverifikasi berformat `primer-dossier` valid). Nol error konsol di
+semua layar, kontras mode gelap diperiksa via screenshot (legible). 200 test
+hijau, tsc 0, build + pack OK.
