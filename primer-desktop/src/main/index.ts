@@ -1,6 +1,12 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, shell, Menu } from 'electron'
 import { join } from 'path'
 import { promises as fs } from 'fs'
+
+// Build produksi: kunci DevTools & pintasannya. Integritas asesmen (CODEX P1):
+// tanpa konsol, mahasiswa tak bisa mem-bypass UI (dispatch aksi lompat-fase)
+// atau mengutak-atik state sebelum ekspor dossier. Dibuka hanya bila
+// PRIMER_DEV=1 (untuk pengembang), TIDAK di build kelas.
+const DEV = !!process.env['ELECTRON_RENDERER_URL'] || process.env['PRIMER_DEV'] === '1'
 
 // ---------------------------------------------------------------------------
 // PRIMER: Puskesmas Pagi — Electron main process
@@ -83,6 +89,20 @@ function createWindow(): void {
 
   win.on('ready-to-show', () => win.show())
 
+  // Kunci DevTools di produksi (CODEX P1): blokir pintasan F12/Ctrl+Shift+I/J/C
+  // dan tolak permintaan buka DevTools. Di DEV, biarkan agar bisa debug.
+  if (!DEV) {
+    win.webContents.on('before-input-event', (e, input) => {
+      const k = input.key?.toLowerCase()
+      const buka =
+        k === 'f12' ||
+        ((input.control || input.meta) && input.shift && (k === 'i' || k === 'j' || k === 'c')) ||
+        ((input.control || input.meta) && k === 'r' && input.shift) // hard reload
+      if (buka) e.preventDefault()
+    })
+    win.webContents.on('devtools-opened', () => win.webContents.closeDevTools())
+  }
+
   // Mode verifikasi: PRIMER_SHOT=<path.png> → potret jendela lalu keluar.
   const shotPath = process.env['PRIMER_SHOT']
   if (shotPath) {
@@ -115,6 +135,9 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  // Buang menu aplikasi bawaan (juga menghapus akselerator DevTools/reload
+  // dari menu) di produksi — game kelas tak butuh menu bar.
+  if (!DEV) Menu.setApplicationMenu(null)
   registerIpc()
   createWindow()
   app.on('activate', () => {

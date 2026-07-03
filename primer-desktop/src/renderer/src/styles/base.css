@@ -220,6 +220,21 @@ button {
 .chip--biru { background: #dbe7f3; color: var(--tinta-biru); border-color: transparent; }
 .chip--malam { background: var(--malam-800); color: var(--kertas-100); border-color: transparent; }
 
+/* Mode malam (CODEX P2): chip berlatar TERANG jadi tak terbaca krn teks aksen
+   kini terang — beri latar gelap-transparan agar teks aksen terang kontras. */
+[data-mode='malam'] .chip--daun { background: rgba(62, 208, 164, 0.16); }
+[data-mode='malam'] .chip--kunyit { background: rgba(234, 165, 79, 0.16); }
+[data-mode='malam'] .chip--merah { background: rgba(239, 132, 120, 0.16); }
+[data-mode='malam'] .chip--biru { background: rgba(131, 179, 222, 0.16); }
+
+/* Tombol aksi berlatar aksen (utama/bahaya/kunyit): di mode malam latarnya kini
+   TERANG (token diremap) — teks putih gagal kontras, jadi pakai teks gelap. */
+[data-mode='malam'] .tombol--utama,
+[data-mode='malam'] .tombol--bahaya,
+[data-mode='malam'] .tombol--kunyit {
+  color: var(--malam-900);
+}
+
 /* -- Meter (bar sumber daya) -------------------------------------------------- */
 .meter {
   height: 8px;

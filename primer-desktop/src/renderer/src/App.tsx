@@ -61,8 +61,12 @@ export default function App() {
           : 'pagi'
 
   if (!state) {
+    // Layar judul SELALU "pagi": latarnya gradient fajar hardcoded & itu
+    // identitas game ("Puskesmas Pagi"). Memaksa gelap di sini membuat panel
+    // kertas gelap mengambang di atas langit terang — inkonsisten (CODEX P2).
+    // Preferensi gelap pemain tetap berlaku begitu masuk permainan.
     return (
-      <div data-mode={pengaturan.modeMalam === 'malam' ? 'malam' : 'pagi'}>
+      <div data-mode="pagi">
         <TitleScreen />
         <MuteButton />
         <Pengaturan />

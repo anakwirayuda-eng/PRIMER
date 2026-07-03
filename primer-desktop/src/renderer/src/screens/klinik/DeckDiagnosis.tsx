@@ -86,13 +86,15 @@ export function DeckDiagnosis({ enc, kasus, dispatch }: Props) {
         >
           Stempelkan Diagnosis
         </button>
-        <button
-          className="tombol tombol--senyap"
-          onClick={() => dispatch({ type: 'LANJUT_FASE' })}
-          title="Untuk kasus gawat di luar kompetensi: langsung ke tatalaksana awal & rujukan tanpa menegakkan diagnosis."
-        >
-          Lewati &mdash; stabilisasi & rujuk tanpa diagnosis
-        </button>
+        {/* Kasus tak pasti / di luar kompetensi TETAP butuh diagnosis kerja:
+            pilih impresi terdekat lalu cap SUSPEK, baru rujuk. Disposisi
+            memang mensyaratkan diagnosis (juga utk rujuk) — dulu ada tombol
+            "lewati tanpa diagnosis" yang menuntun ke jalan buntu (CODEX P2),
+            sudah dihapus. */}
+        <span className="teks-xs teks-lembut klinik-deck__diag-nb">
+          Belum yakin? Pilih impresi terdekat, cap <strong>SUSPEK</strong> — lalu tata laksana awal &amp; rujuk.
+          Merujuk pun butuh diagnosis kerja di kolom A.
+        </span>
       </footer>
     </>
   )

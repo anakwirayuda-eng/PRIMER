@@ -119,4 +119,17 @@
   --border-tinta: rgba(230, 237, 232, 0.45);
   --shadow-kertas: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-kartu: 0 2px 4px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  /* AKSEN mode malam (CODEX P2): versi terang agar terbaca sbg TEKS di atas
+     panel gelap. Nilai pekat (daun-800 2.1:1, kunyit-700 2.75:1, merah/biru
+     <3:1) diganti terang (semua ≥5.5:1 di card malam). Tombol yg memakai token
+     ini sbg LATAR dioverride ke teks gelap; chip (latar terang) juga diremap
+     ke latar gelap di base.css — lihat blok [data-mode='malam'] di sana. */
+  --daun-800: #5fe0bd;
+  --daun-700: #3ed0a4;
+  --daun-600: #34d0a6;
+  --kunyit-700: #eaa54f;
+  --kunyit-600: #eaa54f;
+  --tinta-merah: #ef8478;
+  --tinta-biru: #83b3de;
 }
