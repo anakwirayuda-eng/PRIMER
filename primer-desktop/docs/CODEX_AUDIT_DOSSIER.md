@@ -706,3 +706,37 @@ Kegiatan/Posyandu → Tentang & Kredit → LaporanAkhir + ekspor Dossier Mahasis
 (blob diverifikasi berformat `primer-dossier` valid). Nol error konsol di
 semua layar, kontras mode gelap diperiksa via screenshot (legible). 200 test
 hijau, tsc 0, build + pack OK.
+
+## 11. RESPONS BUILDER — ronde audit ke-5 2026-07-04 (kontras gelap lanjutan + 4 bug fungsional)
+
+Dua laporan CODEX terpisah (alat berbeda) — satu audit kontras mode gelap
+lanjutan (root cause dari §7 belum tuntas), satu bug hunt umum. Commit `a526fc0`:
+
+**Kontras mode gelap (root cause tunggal, 10 lokasi):** `--daun-50` &
+`--kunyit-100` adalah token LATAR yang tak ikut diremap gelap di §7 — hanya
+token TEKS/aksen (`--daun-700/800`, `--kunyit-600/700`) yang diremap terang.
+Kombinasi latar-terang-tak-berubah + teks-diremap-terang jatuh ke ~1.1–2:1.
+✅ FIX: wash rgba tembus pandang per lokasi (pola sama `.chip--daun/kunyit`
+yang sudah benar) — `klinik-banding--aktif`, `klinik-tinta-pilih__opsi--aktif`,
+`hud__tab--aktif`, `igd__opsi--rjp`, `kunjungan-stepper__langkah--aktif`,
+`kunjungan-intervensi--terpilih`, `peta-roster-item--aktif`,
+`kegiatan__opsi--benar/salah`, `sisrute-rs__kartu--dipilih`,
+`dexskdi-detail__clue-teks`, `laporan__badge--raih`. `hud__badge` (teks gelap)
+dan `.folder` (`--kertas-300` → `--bg-sunken`, token yang SAMA nilainya di
+siang tapi sudah benar diremap gelap) dapat fix lebih sederhana.
+
+| # | Temuan (laporan bug hunt) | Status |
+|---|---|---|
+| 1 | `window.__game` terekspos di renderer | ⏸ BASI: sudah tak ada di HEAD saat audit — sisa debug hook sesi kerja sebelumnya yang lupa dihapus sebelum snapshot diambil, bukan kode yang di-commit |
+| 2 | `obatAlternatif` tak "exactly one" — polifarmasi tak dihukum | ✅ FIX SEBAGIAN: tambah penalti −20 khusus bila ≥2 ANTIBIOTIK dari satu grup diresepkan sekaligus (tifoid). Kombo amlodipin+kaptopril (hipertensi urgensi) SENGAJA tak dihukum — dua antihipertensi oral bertahap klinis wajar, beda dari polifarmasi antibiotik tanpa manfaat tambahan |
+| 3 | Prosedur klinis (Epley/ekstraksi serumen/tampon epistaksis/nebulisasi) ada di konten+katalog tapi tak ada UI/scoring | ⏸ DIAKUI gap nyata — field `prosedur` divalidasi tapi tak ada deck/aksi/skor. Butuh desain UI+engine baru (bukan tambal cepat), follow-up terpisah spt #2/#8 di §9 |
+| 4 | Dex SKDI baca `SKDI144` mentah, bukan `PACK.skdi144` (versi auto-tautan ICD) | ✅ FIX: 23 entri dulu permanen "???" walau kasusnya sudah ditangani (dikonfirmasi: raw 129 tanpa kasusId vs PACK.skdi144 106 tanpa kasusId = selisih 23, persis klaim CODEX) |
+| 5 | Rapor/LaporanAkhir angka tak konsisten | ✅ FIX: Rapor hardcode "dari 90"/"Hari 91" di mode ujian (30 hari) → pakai `HARI_STASE[mode]`, kalender musim disembunyikan di ujian. LaporanAkhir hitung ulang akurasi dari `diagnosisBenar/totalPasien` (beda dari formula resmi scoring.ts yg penyebutnya +`autoBermasalah`) → pakai `skor.rincian.akurasiDiagnosis` |
+| 6 | Kontras mode gelap | ✅ FIX — lihat di atas |
+| 7 | Seed ujian bisa "dipilih" lewat variasi ejaan nama (NIM opsional) | ⏸ DITUNDA: sudah ada mitigasi (ikatan nama→seed di verifikasi §9 #4 mendeteksi swap), tapi murni "coba-coba ejaan sebelum submit resmi" belum dicegah. Butuh keputusan kebijakan (wajib NIM di awal? kunci nama setelah hari 1?) — bukan bug murni kode |
+
+Verifikasi: 201 test hijau (2 baru: penalti polifarmasi antibiotik +
+non-regresi redundansi aman), tsc 0, build+pack OK. Fix kontras diverifikasi
+via computed style langsung (bukan cuma visual) + reload penuh (hindari
+salah baca krn HMR stale). Fix Rapor diverifikasi di kedua mode (karier 90h
++ ujian 30h) — tak ada regresi silang.
