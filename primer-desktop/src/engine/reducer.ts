@@ -81,7 +81,9 @@ function err(state: GameState, pesan: string): HasilAdvance {
 
 function catat(state: GameState, action: Action, detail?: string): GameState {
   const entry = { hari: state.hari, blok: state.blok, aksi: action.type, ...(detail ? { detail } : {}) }
-  return { ...state, log: [...state.log, entry] }
+  // M6: jejak = jurnal aksi PENUH (payload utuh) — aksi yang ditolak pun ikut
+  // dicatat supaya replay mereproduksi penolakan yang sama (verifikasi.ts).
+  return { ...state, log: [...state.log, entry], jejak: [...state.jejak, action] }
 }
 
 /* ---------------------------------------------------------------------------

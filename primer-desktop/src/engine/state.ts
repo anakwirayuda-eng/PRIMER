@@ -428,6 +428,16 @@ export interface LogEntry {
   detail?: string
 }
 
+/**
+ * M6 — Jurnal aksi PENUH (payload utuh, bukan cuma type seperti LogEntry):
+ * bersama (seed, mode, namaDokter) + engine deterministik, jejak ini cukup
+ * untuk mereplay seluruh permainan → dasar verifikasi skor dosen
+ * (docs/M6_KELAS_DOSEN.md). Aksi yang DITOLAK engine ikut dicatat — replay
+ * mereproduksi penolakan yang sama. Save pra-M6 tak punya field ini
+ * (deserialize mengisi [] → dossier-nya "tidak dapat diverifikasi").
+ */
+export type JejakAksi = import('./actions').Action
+
 /* ---------------------------------------------------------------------------
  * ROOT STATE
  * ------------------------------------------------------------------------- */
@@ -509,6 +519,8 @@ export interface GameState {
   tally: SkorTally
   dex: Record<string, DexEntry>
   log: LogEntry[]
+  /** M6 — jurnal aksi penuh untuk replay-verifikasi (lihat JejakAksi). */
+  jejak: JejakAksi[]
 
   /** Kapitasi berjalan (Rp) — ekonomi ringkas slice. */
   kapitasi: number

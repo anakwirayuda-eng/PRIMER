@@ -194,6 +194,7 @@ export function buildInitialState(
     },
     dex: {},
     log: [],
+    jejak: [],
     kapitasi: 15_000_000,
     // M4.18: stok awal seragam 12 per obat — fast mover (parasetamol, amoksisilin)
     // terkuras dalam ~2 pekan → pemain belajar pengadaan; obat jarang awet.

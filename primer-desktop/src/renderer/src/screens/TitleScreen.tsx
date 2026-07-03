@@ -8,6 +8,8 @@ import { useState, type FormEvent } from 'react'
 import { useGame } from '../store'
 import { METADATA } from '@content/metadata'
 import type { ModeStase } from '@engine/state'
+import { verifikasiDossier, type HasilVerifikasi } from '@engine/verifikasi'
+import { PACK } from '@content/index'
 import './TitleScreen.css'
 
 /** Tombol Keluar hanya relevan di jendela Electron (bukan preview browser). */
@@ -104,6 +106,8 @@ export function TitleScreen() {
   // M4.5 — dua mode: Karier 90 hari (default, bebas nilai) vs Ujian 30 hari
   // (satu-satunya yang dinilai formal; paket kurikulum dirotasi otomatis).
   const [mode, setMode] = useState<ModeStase>('karier')
+  // M6.27 — hasil verifikasi dossier mahasiswa (panel dosen).
+  const [hasilVerifikasi, setHasilVerifikasi] = useState<HasilVerifikasi | null>(null)
 
   const namaBersih = nama.trim()
 
@@ -245,6 +249,76 @@ export function TitleScreen() {
                 }}
               />
             </label>
+
+            {/* M6.27 — verifikasi dossier mahasiswa (untuk dosen, offline). */}
+            <label className="teks-xs teks-lembut title__impor">
+              Verifikasi Dossier — untuk dosen:{' '}
+              <input
+                type="file"
+                accept="application/json"
+                onChange={(e) => {
+                  const f = e.target.files?.[0]
+                  if (!f) return
+                  e.target.value = ''
+                  void f.text().then(async (json) => {
+                    const versiApp = await window.primer.appVersion()
+                    setHasilVerifikasi(await verifikasiDossier(json, PACK, versiApp))
+                  })
+                }}
+              />
+            </label>
+            {hasilVerifikasi !== null && (
+              <div className="kartu title__verifikasi" role="status">
+                <div className="baris baris--antara">
+                  <span
+                    className={`stempel ${
+                      hasilVerifikasi.status === 'sah'
+                        ? 'stempel--hijau'
+                        : hasilVerifikasi.status === 'tidak_sah'
+                          ? 'stempel--merah'
+                          : 'stempel--kunyit'
+                    }`}
+                  >
+                    {hasilVerifikasi.status === 'sah'
+                      ? 'SAH'
+                      : hasilVerifikasi.status === 'tidak_sah'
+                        ? 'TIDAK SAH'
+                        : 'TAK DAPAT DIVERIFIKASI'}
+                  </span>
+                  <button className="tombol tombol--senyap" onClick={() => setHasilVerifikasi(null)}>
+                    Tutup
+                  </button>
+                </div>
+                {hasilVerifikasi.ringkasan && (
+                  <p className="teks-xs">
+                    dr. {hasilVerifikasi.ringkasan.namaDokter}
+                    {hasilVerifikasi.ringkasan.nim ? ` (NIM ${hasilVerifikasi.ringkasan.nim})` : ''} ·{' '}
+                    {hasilVerifikasi.ringkasan.mode.toUpperCase()}
+                    {hasilVerifikasi.ringkasan.paketUjian ? ` ${hasilVerifikasi.ringkasan.paketUjian}` : ''} · Hari{' '}
+                    {hasilVerifikasi.ringkasan.hari}
+                    {hasilVerifikasi.ringkasan.tamat ? ' · TAMAT' : ' · belum tamat'} · seed{' '}
+                    <span className="mono">{hasilVerifikasi.ringkasan.seed}</span>
+                    <br />
+                    Klaim: <strong>{hasilVerifikasi.ringkasan.skorKlaim.total} ({hasilVerifikasi.ringkasan.skorKlaim.grade})</strong>
+                    {hasilVerifikasi.ringkasan.skorReplay && (
+                      <>
+                        {' '}· Replay:{' '}
+                        <strong>
+                          {hasilVerifikasi.ringkasan.skorReplay.total} ({hasilVerifikasi.ringkasan.skorReplay.grade})
+                        </strong>
+                      </>
+                    )}
+                  </p>
+                )}
+                {hasilVerifikasi.alasan.length > 0 && (
+                  <ul className="title__verifikasi-alasan teks-xs">
+                    {hasilVerifikasi.alasan.map((a, i) => (
+                      <li key={i}>{a}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
 
             {DI_ELECTRON && (
               <button

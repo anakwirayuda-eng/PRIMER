@@ -212,16 +212,41 @@ di 4 kasus trap, guard test); sabar-habis tak lagi memberi kredit anamnesis;
 q_alergi di 6 kasus obat-berisiko; safety screen insomnia. Ditunda ke M7:
 anamnesis branching + axis penilaian konseling (KB).
 
-## M6 — Kelas & Dosen (integritas asesmen)
+## M6 — Kelas & Dosen (integritas asesmen) — inti SELESAI ✅ (2026-07-03)
 
-26. **Rekomputasi skor dari action-log** saat submit (bukan percaya tally klien) —
-    fondasi sudah ada (log lengkap di state); tambah verifier headless.
-27. **Ekspor "Dossier Mahasiswa"**: file hasil stase bertanda tangan (checksum HMAC)
-    untuk disetor ke dosen — jalur offline-first tanpa server.
+> Desain: `docs/M6_KELAS_DOSEN.md` (ditulis sebelum kode). Temuan eksplorasi
+> yang MENGOREKSI asumsi roadmap: `LogEntry` lama cuma jurnal telemetri
+> (type+detail, tanpa payload) — TIDAK bisa direplay; "fondasi sudah ada"
+> ternyata baru setengah. M6 menambah `GameState.jejak: Action[]` (jurnal
+> aksi PENUH, aksi-ditolak ikut terekam) — bersama seed + engine murni,
+> seluruh permainan tereproduksi byte-demi-byte.
+
+26. ✅ **Rekomputasi skor dari action-log** — `engine/verifikasi.ts`:
+    `verifikasiDossier()` headless me-replay jejak (buildInitialState → fold
+    advance) lalu membandingkan tally/hari/tamat/skor vs klaim; skor TIDAK
+    pernah dipercaya dari file. Status 3 arah: SAH / TIDAK SAH /
+    TIDAK DAPAT DIVERIFIKASI (jejak kosong pra-M6, versi konten beda via
+    `sidikJariPack` FNV-1a). Model ancaman jujur di dokumen desain: HMAC =
+    deterrent; pertahanan sejati = replay; memalsukan jejak konsisten ≈
+    memainkan game (TAS).
+27. ✅ **Dossier Mahasiswa**: `susunDossier()` (identitas+NIM opsional, stase,
+    klaim skor/tally/badge, jejak penuh, versiApp+sidik jari konten,
+    HMAC-SHA256 WebCrypto atas JSON kanonik) — tombol ekspor di Laporan
+    Akhir (kartu "Setor ke Dosen"); verifikasi dosen offline di layar judul
+    (panel stempel SAH/TIDAK SAH + skor klaim vs replay + alasan).
+    11 test baru `m6verifikasi.test.ts` (183 total): sah, tamper klaim
+    ber-ttd-valid, jejak dipangkas, edit tanpa ttd, jejak kosong, beda
+    konten, determinisme, anti tukar-identitas.
 28. **Dosen Dashboard** (opsional online): Supabase 5 tabel pola lama, leaderboard
-    4 dimensi read-only, TANPA live leaderboard mid-game (prinsip lama dipertahankan).
+    4 dimensi read-only, TANPA live leaderboard mid-game (prinsip lama
+    dipertahankan). DITUNDA menunggu keputusan infra kelas — dossier JSON
+    terverifikasi (butir 27) adalah unit datanya (upload = 1 baris).
+    Deteksi jejak-kembar antar-mahasiswa (anti-joki) ikut ke sini.
 29. **Telemetri belajar** (opsional): event clinical_decision/case_completed untuk
-    riset pendidikan — buffer lokal, kirim saat online.
+    riset pendidikan — buffer lokal, kirim saat online. CATATAN M6: jejak aksi
+    penuh di dossier SUDAH menjadi telemetri per-keputusan; analisis batch
+    (mis. distribusi TEGAK/SUSPEK per kasus utk kalibrasi M7) bisa dibangun
+    di atas kumpulan dossier tanpa pipeline event baru.
 
 ## M7 — Polish Komersial & Distribusi
 

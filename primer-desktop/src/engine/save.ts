@@ -76,6 +76,9 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     st['seedKurikulum'] = st['seed']
   }
   if (typeof st['igdHariIni'] !== 'boolean') st['igdHariIni'] = false
+  // Migrasi-lite M6: save pra-jurnal-penuh → jejak kosong (dossier dari save
+  // semacam ini berstatus "tidak dapat diverifikasi", bukan ditolak).
+  if (!Array.isArray(st['jejak'])) st['jejak'] = []
   for (const nilai of Object.values(tally)) {
     if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) return null
   }

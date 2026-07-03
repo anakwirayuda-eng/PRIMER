@@ -11,6 +11,7 @@ import { hitungSkor } from '@engine/director'
 import { hitungBadge, SEMUA_BADGE } from '@engine/badge'
 import { HARI_STASE } from '@engine/paketUjian'
 import { serialize } from '@engine/save'
+import { susunDossier } from '@engine/verifikasi'
 import { PACK } from '@content/index'
 import './LaporanAkhir.css'
 
@@ -71,14 +72,30 @@ export function LaporanAkhir() {
     .filter((k) => k.arcSelesai !== undefined)
     .sort((a, b) => (a.arcSelesai === 'berhasil' ? -1 : 1) - (b.arcSelesai === 'berhasil' ? -1 : 1))
 
-  const eksporArsip = () => {
-    const blob = new Blob([serialize(state)], { type: 'application/json' })
+  const unduh = (isi: string, nama: string) => {
+    const blob = new Blob([isi], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `primer_${state.mode}_${state.namaDokter.replace(/\s+/g, '_')}_H${state.hari}.json`
+    a.download = nama
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  const eksporArsip = () => {
+    unduh(serialize(state), `primer_${state.mode}_${state.namaDokter.replace(/\s+/g, '_')}_H${state.hari}.json`)
+  }
+
+  // M6.27 — Dossier Mahasiswa: bukti hasil stase yang bisa diverifikasi dosen
+  // (replay + tanda tangan). Berbeda dari Arsip (save utk melanjutkan main).
+  const [nim, setNim] = useState('')
+  const eksporDossier = async () => {
+    const versiApp = await window.primer.appVersion()
+    const dossier = await susunDossier(state, PACK, { versiApp, ...(nim.trim() ? { nim: nim.trim() } : {}) })
+    unduh(
+      JSON.stringify(dossier),
+      `dossier_${state.mode}_${state.paketUjian ?? 'karier'}_${state.namaDokter.replace(/\s+/g, '_')}.primer-dossier.json`,
+    )
   }
 
   const dimensi = [
@@ -186,9 +203,31 @@ export function LaporanAkhir() {
               </div>
             )}
 
+            <div className="kartu laporan__dossier">
+              <div className="judul-seksi">Setor ke Dosen — Dossier Mahasiswa</div>
+              <div className="baris">
+                <input
+                  className="laporan__nim"
+                  type="text"
+                  value={nim}
+                  onChange={(e) => setNim(e.target.value)}
+                  placeholder="NIM (opsional)"
+                  aria-label="NIM mahasiswa"
+                />
+                <button className="tombol tombol--utama" onClick={() => void eksporDossier()}>
+                  Ekspor Dossier Mahasiswa
+                </button>
+              </div>
+              <p className="teks-xs teks-lembut">
+                Dossier berisi identitas, skor, dan jejak seluruh keputusanmu — dosen memverifikasinya
+                dengan mereplay jejak di game yang sama (menu &ldquo;Verifikasi Dossier&rdquo; di layar judul).
+                Skor tidak bisa diubah lagi.
+              </p>
+            </div>
+
             <div className="baris laporan__aksi">
-              <button className="tombol tombol--utama" onClick={eksporArsip}>
-                Ekspor Arsip (JSON)
+              <button className="tombol" onClick={eksporArsip}>
+                Ekspor Arsip Save (JSON)
               </button>
               <button className="tombol" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'rapor' })}>
                 Lihat Rapor Rinci
@@ -197,12 +236,6 @@ export function LaporanAkhir() {
                 Kembali ke Meja
               </button>
             </div>
-            {state.mode === 'ujian' && (
-              <p className="teks-xs teks-lembut">
-                File arsip berisi seluruh action-log stasemu — serahkan ke dosen sesuai petunjuk kelas.
-                Skor tidak bisa diubah lagi.
-              </p>
-            )}
           </div>
         )}
       </div>

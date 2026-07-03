@@ -91,6 +91,7 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
     },
     dex: {},
     log: [],
+    jejak: [],
     kapitasi: 15_000_000,
     gudang: { stok: {}, pesanan: [] },
     keuanganBulan: { belanjaObat: 0, belanjaPengadaan: 0 },
