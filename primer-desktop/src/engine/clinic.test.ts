@@ -723,6 +723,50 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     expect(nilai.antibiotikTanpaIndikasi).toBe(true)
   })
 
+  it('obatAlternatif: monoterapi benar dinilai penuh, polifarmasi sekelas tak berhadiah/berhukum', () => {
+    // Kasus mini: 1 obat wajib (parasetamol) + 1 slot alternatif "pilih salah satu
+    // antibiotik" (amoksisilin ATAU eritromisin). Mekanik murni, bukan farmakologi.
+    const KASUS_ALT: KasusKlinis = {
+      ...KASUS_VIRAL,
+      id: 'alt_mini',
+      tatalaksana: {
+        obatBenar: ['paracetamol_500'],
+        obatAlternatif: [['amoxicillin_500', 'eritromisin_500']],
+        edukasi: ['istirahat_cukup'],
+      },
+    }
+    const pack = { ...PACK, kasus: { ...PACK.kasus, alt_mini: KASUS_ALT } }
+    const enc = () => buatEncounter(buatPasien({ kasusId: 'alt_mini' }))
+    const skor = (resep: string[]): number => {
+      let e = enc()
+      for (const obatId of resep) e = jalankan(e, [{ type: 'TAMBAH_OBAT', obatId }], KASUS_ALT).enc
+      return nilaiEncounter({ ...e, disposisi: 'pulang' }, KASUS_ALT, pack).skorTerapi
+    }
+    // Wajib + salah satu alternatif → penuh, dua rute alternatif berbeda sama-sama 100.
+    expect(skor(['paracetamol_500', 'amoxicillin_500'])).toBe(100)
+    expect(skor(['paracetamol_500', 'eritromisin_500'])).toBe(100)
+    // Memberi KEDUA alternatif sekelas: slot tetap terpenuhi sekali, anggota kedua
+    // tidak dihukum sebagai obat di luar → tetap 100 (tak berhadiah, tak berhukum).
+    expect(skor(['paracetamol_500', 'amoxicillin_500', 'eritromisin_500'])).toBe(100)
+    // Lupa mengisi slot alternatif → hanya 1 dari 2 slot = 50.
+    expect(skor(['paracetamol_500'])).toBe(50)
+    // Obat di luar daftar tetap dihukum -15.
+    expect(skor(['paracetamol_500', 'amoxicillin_500', 'ibuprofen_400'])).toBe(85)
+  })
+
+  it('obatAlternatif berisi antibiotik → prescribing-nya BUKAN antibiotik tanpa indikasi', () => {
+    const KASUS_ALT: KasusKlinis = {
+      ...KASUS_VIRAL,
+      id: 'alt_ab_mini',
+      tatalaksana: { obatBenar: [], obatAlternatif: [['amoxicillin_500', 'eritromisin_500']], edukasi: [] },
+    }
+    const pack = { ...PACK, kasus: { ...PACK.kasus, alt_ab_mini: KASUS_ALT } }
+    let e = buatEncounter(buatPasien({ kasusId: 'alt_ab_mini' }))
+    e = jalankan(e, [{ type: 'TAMBAH_OBAT', obatId: 'amoxicillin_500' }], KASUS_ALT).enc
+    const nilai = nilaiEncounter({ ...e, disposisi: 'pulang' }, KASUS_ALT, pack)
+    expect(nilai.antibiotikTanpaIndikasi).toBe(false)
+  })
+
   it('merujuk kasus 4A = rujukan non-spesialistik; menahan kasus rujukan = cowboy', () => {
     const encFaringitis: EncounterState = {
       ...buatEncounter(buatPasien()),

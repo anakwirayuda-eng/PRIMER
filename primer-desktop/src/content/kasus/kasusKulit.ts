@@ -463,7 +463,9 @@ export const KASUS_KULIT: KasusKlinis[] = [
     ],
     diagnosisBanding: ['L50.9', 'L50.0', 'T78.3'],
     tatalaksana: {
-      obatBenar: ['cetirizine_10', 'loratadin_10'],
+      obatBenar: [],
+      // Antihistamin H1 gen-2 setara — beri SALAH SATU (setirizin ATAU loratadin).
+      obatAlternatif: [['cetirizine_10', 'loratadin_10']],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Urtikaria akut umumnya reaksi hipersensitivitas (mis. makanan), bukan infeksi. Antibiotik tidak berperan dan justru bisa menjadi pencetus alergi baru.' },
         { id: 'prednison_5', alasan: 'Kortikosteroid oral BUKAN lini pertama urtikaria akut ringan; cukup antihistamin H1 non-sedatif. Steroid hanya untuk kasus berat/refrakter jangka pendek.' },
@@ -805,7 +807,9 @@ export const KASUS_KULIT: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B37.2', 'B35.4', 'L23.9'],
     tatalaksana: {
-      obatBenar: ['mikonazol_krim', 'ketokonazol_krim'],
+      obatBenar: [],
+      // Antijamur azol topikal setara — beri SALAH SATU (mikonazol ATAU ketokonazol).
+      obatAlternatif: [['mikonazol_krim', 'ketokonazol_krim']],
       obatSalahUmum: [
         { id: 'betametason_krim', alasan: 'Steroid topikal tunggal pada kandidiasis meredakan radang sesaat tapi memperluas infeksi jamur (mirip tinea inkognito). Kandidiasis butuh ANTIJAMUR, bukan steroid.' },
         { id: 'amoxicillin_500', alasan: 'Kandidiasis disebabkan jamur Candida, bukan bakteri; antibiotik justru menekan flora normal dan bisa memperburuk pertumbuhan Candida.' },

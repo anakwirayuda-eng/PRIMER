@@ -161,6 +161,9 @@ describe('M4.20 — akreditasi D60 dari kelengkapan rekam medis', () => {
     s = run(s, { type: 'LANJUT_FASE' })
     s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' })
     for (const o of kasus.tatalaksana.obatBenar) s = run(s, { type: 'TAMBAH_OBAT', obatId: o })
+    for (const grup of kasus.tatalaksana.obatAlternatif ?? []) {
+      if (grup[0]) s = run(s, { type: 'TAMBAH_OBAT', obatId: grup[0] })
+    }
     for (const e of kasus.tatalaksana.edukasi) s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId: e })
     s = run(s, { type: 'LANJUT_FASE' })
     s = run(s, {

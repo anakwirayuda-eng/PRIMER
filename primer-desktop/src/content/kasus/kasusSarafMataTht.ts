@@ -111,7 +111,10 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     lab: [],
     diagnosisBanding: ['G44.2', 'G43.9', 'G44.0'],
     tatalaksana: {
-      obatBenar: ['paracetamol_500', 'ibuprofen_400'],
+      obatBenar: [],
+      // Analgetik simtomatik setara — beri SALAH SATU (parasetamol ATAU NSAID),
+      // bukan keduanya sekaligus; TTH episodik cukup analgetik tunggal.
+      obatAlternatif: [['paracetamol_500', 'ibuprofen_400']],
       obatSalahUmum: [
         { id: 'amitriptilin_25', alasan: 'Amitriptilin adalah profilaksis untuk TTH KRONIK (>15 hari/bulan); pada TTH episodik cukup analgetik simtomatik + manajemen stres, jangan langsung antidepresan.' },
         { id: 'tramadol_50', alasan: 'Opioid tidak diindikasikan pada TTH — berisiko ketergantungan dan medication-overuse headache; berlebihan untuk nyeri kepala primer ringan.' },

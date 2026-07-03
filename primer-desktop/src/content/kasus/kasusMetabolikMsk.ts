@@ -690,7 +690,9 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['M79.1', 'M54.5', 'M06.9'],
     tatalaksana: {
-      obatBenar: ['paracetamol_500', 'ibuprofen_400'],
+      obatBenar: [],
+      // Analgetik simtomatik setara — beri SALAH SATU (parasetamol ATAU NSAID).
+      obatAlternatif: [['paracetamol_500', 'ibuprofen_400']],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Mialgia mekanik pasca-aktivitas bukan infeksi; antibiotik tidak ada indikasinya sama sekali.' },
         { id: 'dexamethasone_05', alasan: 'Kortikosteroid untuk pegal otot biasa adalah overtreatment berbahaya — efek samping jauh melebihi manfaat pada keluhan swasirna.' },

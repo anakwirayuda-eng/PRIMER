@@ -222,6 +222,15 @@ export const OBAT: Record<string, Obat> = {
     hargaJual: 65000,
     fornas: true,
   },
+  budesonide_inhaler: {
+    id: 'budesonide_inhaler',
+    nama: 'Budesonid Inhaler 200 mcg',
+    kelas: 'Kortikosteroid inhalasi (ICS) — pengendali asma',
+    sediaan: 'MDI/DPI 200 mcg/dosis',
+    hargaBeli: 62000,
+    hargaJual: 85000,
+    fornas: true,
+  },
   cetirizine_10: {
     id: 'cetirizine_10',
     nama: 'Setirizin 10 mg',

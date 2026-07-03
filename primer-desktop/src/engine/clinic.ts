@@ -337,9 +337,21 @@ export function nilaiEncounter(
         ...trap.alternatifBenar,
       ]
     : kasus.tatalaksana.obatBenar
+  // Kelompok alternatif "pilih salah satu" (mis. 2 antihistamin setara). Tiap
+  // grup = satu slot; terpenuhi bila ≥1 anggota diresepkan. Bila pasien kena
+  // trap alergi, anggota terlarang dikeluarkan dari grup demi keamanan.
+  const grupAlternatif = (kasus.tatalaksana.obatAlternatif ?? []).map((g) =>
+    pasienKenaTrap && trap ? g.filter((id) => !trap.obatTerlarang.includes(id)) : g,
+  )
+  const idAlternatifSah = new Set(grupAlternatif.flat())
+  const slotAltTerpenuhi = grupAlternatif.filter((g) => g.some((id) => enc.resep.includes(id))).length
   const benarDiresepkan = obatBenar.filter((id) => enc.resep.includes(id)).length
-  const obatDiLuar = enc.resep.filter((id) => !obatBenar.includes(id)).length
-  const rasioTerapi = obatBenar.length > 0 ? benarDiresepkan / obatBenar.length : 1
+  // Obat di luar = bukan obatBenar DAN bukan anggota grup alternatif yang sah.
+  const obatDiLuar = enc.resep.filter(
+    (id) => !obatBenar.includes(id) && !idAlternatifSah.has(id),
+  ).length
+  const totalSlot = obatBenar.length + grupAlternatif.length
+  const rasioTerapi = totalSlot > 0 ? (benarDiresepkan + slotAltTerpenuhi) / totalSlot : 1
   // Obat BERBAHAYA untuk kasus ini (obatSalahUmum, mis. NSAID pada dengue)
   // dihukum jauh lebih berat daripada sekadar "obat di luar tatalaksana".
   const obatBerbahaya = (kasus.tatalaksana.obatSalahUmum ?? []).filter((o) =>
@@ -356,9 +368,12 @@ export function nilaiEncounter(
     enc.disposisi === 'observasi' && enc.labDipesan.some((id) => pack.lab[id]?.hasilBesok)
   if (menungguLabBesok && obatBerbahaya === 0) skorTerapi = Math.max(skorTerapi, 70)
 
-  // Stewardship: antibiotik diresepkan padahal tatalaksana benar tidak memuatnya.
+  // Stewardship: antibiotik diresepkan padahal tatalaksana benar tidak memuatnya
+  // (obatBenar maupun grup alternatif yang sah).
   const resepAdaAntibiotik = enc.resep.some((id) => pack.obat[id]?.antibiotik === true)
-  const indikasiAntibiotik = obatBenar.some((id) => pack.obat[id]?.antibiotik === true)
+  const indikasiAntibiotik =
+    obatBenar.some((id) => pack.obat[id]?.antibiotik === true) ||
+    idAlternatifSah.size > 0 && [...idAlternatifSah].some((id) => pack.obat[id]?.antibiotik === true)
   const antibiotikTanpaIndikasi = resepAdaAntibiotik && !indikasiAntibiotik
 
   /* -- Edukasi: cakupan topik wajib − penalti shotgun --------------------------- */

@@ -228,7 +228,9 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['J30.4', 'J00', 'J01.9'],
     tatalaksana: {
-      obatBenar: ['loratadin_10', 'cetirizine_10'],
+      obatBenar: [],
+      // Antihistamin gen-2 setara — beri SALAH SATU (bukan keduanya sekaligus).
+      obatAlternatif: [['loratadin_10', 'cetirizine_10']],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Rinitis alergi bukan infeksi bakteri — antibiotik tidak berperan. Sekret jernih tanpa demam menyingkirkan sinusitis bakterial.' },
         { id: 'pseudoefedrin_30', alasan: 'Dekongestan ORAL bukan terapi utama rinitis alergi; efek sistemiknya (menaikkan tekanan darah, insomnia, palpitasi) berbahaya, terutama pada hipertensi. Rinitis medikamentosa justru rebound dekongestan TOPIKAL (oksimetazolin), bukan oral.' },
@@ -448,7 +450,10 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['J44.1', 'J18.9', 'I50.9'],
     tatalaksana: {
-      obatBenar: ['salbutamol_inhaler', 'salbutamol_2'],
+      obatBenar: [],
+      // Bronkodilator SABA pra-rujukan — inhalasi/oral, beri salah satu (nebulisasi
+      // di prosedur adalah tulang punggungnya). Bukan "harus keduanya".
+      obatAlternatif: [['salbutamol_inhaler', 'salbutamol_2']],
       prosedur: ['nebulisasi'],
       obatSalahUmum: [
         { id: 'kloramfenikol_250', alasan: 'Bukan antibiotik yang tepat untuk eksaserbasi PPOK; lebih penting: jangan menunda rujukan dengan mencoba-coba obat di FKTP saat SpO2 89% dan ada tanda gagal napas.' },
@@ -562,7 +567,9 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['K21.9', 'K30', 'K25.9'],
     tatalaksana: {
-      obatBenar: ['omeprazole_20', 'lansoprazol_30'],
+      obatBenar: [],
+      // PPI setara — beri SALAH SATU (omeprazol atau lansoprazol), bukan dua PPI.
+      obatAlternatif: [['omeprazole_20', 'lansoprazol_30']],
       obatSalahUmum: [
         { id: 'natrium_diklofenak_50', alasan: 'NSAID mengiritasi mukosa lambung dan memperberat refluks/ulkus — kontraproduktif pada GERD. Jangan diberikan untuk "nyeri" ulu hati refluks.' },
         { id: 'domperidon_10', alasan: 'Prokinetik boleh sebagai tambahan bila regurgitasi menonjol, tetapi BUKAN pengganti PPI dan tidak diberikan tunggal sebagai terapi utama GERD.' },
@@ -890,7 +897,9 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B77.9', 'B76.9', 'B80'],
     tatalaksana: {
-      obatBenar: ['albendazol_400', 'pirantel_pamoat'],
+      obatBenar: [],
+      // Antelmintik setara — beri SALAH SATU (albendazol ATAU pirantel), bukan dua.
+      obatAlternatif: [['albendazol_400', 'pirantel_pamoat']],
       obatSalahUmum: [
         { id: 'metronidazol_500', alasan: 'Metronidazol untuk protozoa (amuba/giardia), bukan cacing gelang. Antelmintik (albendazol/pirantel) yang tepat untuk askariasis.' },
         { id: 'amoxicillin_500', alasan: 'Antibiotik tidak berperan pada infeksi cacing; nyeri perut di sini akibat cacing, bukan infeksi bakteri.' },

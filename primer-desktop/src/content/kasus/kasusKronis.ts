@@ -488,14 +488,14 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     ],
     diagnosisBanding: ['J45.9', 'J20.9', 'J44.9', 'J30.4'],
     tatalaksana: {
-      obatBenar: ['salbutamol_inhaler'],
+      obatBenar: ['salbutamol_inhaler', 'budesonide_inhaler'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Asma bukan infeksi bakteri; antibiotik tidak diindikasikan tanpa tanda infeksi.' },
         { id: 'salbutamol_2', alasan: 'SABA oral kurang efektif dan lebih banyak efek samping (tremor, berdebar) dibanding inhalasi.' },
       ],
       edukasi: ['hindari_alergen', 'kepatuhan_obat', 'kontrol_rutin'],
     },
-    clue: 'GINA: asma = gejala respiratori variabel (mengi, sesak, dada berat, batuk) + hambatan aliran napas ekspiratoar yang bervariasi. Reliever inhalasi (SABA/ICS-formoterol) + kendali pencetus, nilai kontrol tiap kunjungan. SABA oral & antibiotik rutin tidak dianjurkan; ajarkan teknik inhaler.',
+    clue: 'GINA 2019+: gejala ≥2×/minggu + terbangun malam = asma PERSISTEN, bukan sekadar intermiten. Kunci pembaruan GINA: SABA-tunggal TIDAK lagi dianjurkan pada asma mana pun — setiap pasien butuh terapi mengandung ICS. Beri pengendali ICS (budesonid inhalasi) + reliever (salbutamol inhalasi/ICS-formoterol), kendalikan pencetus (asap rokok rumah!), ajarkan teknik inhaler, nilai kontrol tiap kunjungan. Antibiotik rutin tidak diindikasikan.',
   },
 
   /* ======================================================================

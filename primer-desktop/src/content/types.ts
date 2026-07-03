@@ -86,8 +86,17 @@ export interface TandaVital {
 }
 
 export interface Tatalaksana {
-  /** id obat dari formularium yang benar (cukup salah satu kombinasi lengkap). */
+  /** Obat yang IDEALNYA semua ada — kombinasi komplementer (mis. antibiotik +
+   * antipiretik, oralit + zinc). Dinilai sebagai AND (semua menambah skor). */
   obatBenar: string[]
+  /**
+   * Kelompok obat ALTERNATIF setara — tiap sub-array = "pilih salah satu"
+   * (mis. [['loratadin','setirizin']] = beri salah satu antihistamin gen-2).
+   * Meresepkan ≥1 anggota memuaskan slot itu; anggota lain TIDAK dihukum
+   * sebagai obat di luar tatalaksana. Mencegah skor menghukum monoterapi yang
+   * benar & mencegah "hadiah" untuk polifarmasi obat sekelas.
+   */
+  obatAlternatif?: string[][]
   /** Jebakan umum: obat yang tampak masuk akal tapi salah, dengan alasan pedagogis. */
   obatSalahUmum?: { id: string; alasan: string }[]
   /** Prosedur/tindakan yang tepat (id dari katalog tindakan). */

@@ -110,9 +110,13 @@ function tanganiPasienRajin(state: GameState): { state: GameState; penilaian: Pe
   expect(s.klinik.aktif?.fase).toBe('diagnosis')
   s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' }).state
 
-  // TERAPI: semua obatBenar (firewall alergi boleh memblokir — bukan error) + edukasi wajib.
+  // TERAPI: semua obatBenar + SATU wakil tiap grup alternatif (firewall alergi
+  // boleh memblokir — bukan error) + edukasi wajib.
   for (const obatId of kasus.tatalaksana.obatBenar) {
     s = run(s, { type: 'TAMBAH_OBAT', obatId }).state
+  }
+  for (const grup of kasus.tatalaksana.obatAlternatif ?? []) {
+    if (grup[0]) s = run(s, { type: 'TAMBAH_OBAT', obatId: grup[0] }).state
   }
   for (const edukasiId of kasus.tatalaksana.edukasi) {
     s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId }).state

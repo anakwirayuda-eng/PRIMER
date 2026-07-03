@@ -41,6 +41,11 @@ export function validasiPack(pack: ContentPack): string[] {
     for (const o of k.tatalaksana.obatBenar) {
       if (!pack.obat[o]) masalah.push(`Kasus ${k.id}: obat '${o}' tidak ada di formularium`)
     }
+    for (const grup of k.tatalaksana.obatAlternatif ?? []) {
+      for (const o of grup) {
+        if (!pack.obat[o]) masalah.push(`Kasus ${k.id}: obatAlternatif '${o}' tidak ada di formularium`)
+      }
+    }
     for (const o of k.tatalaksana.obatSalahUmum ?? []) {
       if (!pack.obat[o.id]) masalah.push(`Kasus ${k.id}: obatSalahUmum '${o.id}' tidak ada di formularium`)
     }
