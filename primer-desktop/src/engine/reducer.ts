@@ -1124,9 +1124,14 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           jenis: 'hasil_lab',
           dari: 'Laboratorium Puskesmas',
           judul: `Hasil ${lab?.nama ?? j.labId} — ${j.catatan ?? 'pasien kemarin'}`,
+          // Kasus mendefinisikan hasil utk lab yang RELEVAN dengannya. Bila
+          // pemain memesan lab di luar itu (tak didefinisikan kasus), suratnya
+          // JANGAN kosong: tampilkan nilai rujukan sbg "dalam batas normal" +
+          // pesan stewardship (lab non-indikasi = pemborosan FKTP). Lab yang
+          // memang penting utk kasus HARUS punya entri di kasus.lab.
           isi: hasilLab
             ? `Hasil pemeriksaan ${lab?.nama}: ${hasilLab.hasil}. Nilai rujukan: ${lab?.nilaiNormal}. Cocokkan dengan keputusan interimmu kemarin — inilah kenapa dokter FKTP harus berani menata laksana sambil menunggu hasil.`
-            : `Hasil ${lab?.nama ?? j.labId} sudah keluar.`,
+            : `Hasil pemeriksaan ${lab?.nama ?? j.labId}: dalam batas rujukan${lab?.nilaiNormal ? ` (${lab.nilaiNormal})` : ''} — tidak menunjukkan kelainan bermakna untuk kasus ini. Timbang indikasi sebelum memesan penunjang: pemeriksaan yang tak mengubah tata laksana adalah beban biaya bagi Puskesmas.`,
         }),
       )
     } else if (j.jenis === 'pasien_kembali' && j.kasusId) {

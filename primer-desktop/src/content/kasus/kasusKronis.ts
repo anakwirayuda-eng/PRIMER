@@ -249,6 +249,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       { id: 'gdp', hasil: 'Gula darah puasa 182 mg/dL (tinggi, normal <100).', flag: 'tinggi', relevan: true },
       { id: 'urinalisis', hasil: 'Reduksi glukosa urin +++, keton negatif.', flag: 'abnormal', relevan: true },
       { id: 'kolesterol', hasil: 'LDL 148, trigliserida 210 mg/dL — dislipidemia penyerta.', flag: 'tinggi', relevan: true },
+      { id: 'hba1c', hasil: 'HbA1c 8,9% (tinggi, target <7%) — kendali glikemik 3 bulan terakhir buruk, mengonfirmasi DM.', flag: 'tinggi', relevan: true },
     ],
     diagnosisBanding: ['E11.9', 'E10.9', 'E13.9', 'N39.0'],
     tatalaksana: {

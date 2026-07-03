@@ -39,4 +39,23 @@ describe('PACK — validasi silang id konten', () => {
       .map((k) => k.id)
     expect(tanpaJalan).toEqual([])
   })
+
+  // Konkordansi ICD-10 (audit 2026-07-04): entri SKDI-144 yang MENAUTKAN kasus
+  // (kasusId) harus memakai icd10 yang SAMA dengan kasusnya — kecuali beberapa
+  // yang SENGAJA memakai kode kompetensi generik (parent/unspecified) sementara
+  // kasusnya lebih spesifik. Allowlist di bawah = keputusan sadar; entri baru
+  // yang mismatch (mis. kode SIBLING beda penyakit seperti otitis H65.0 vs
+  // H66.0 yang sudah diperbaiki) akan GAGAL agar ditinjau.
+  it('skdi144.kasusId ↔ icd10 cocok dgn kasus (kecuali kode kompetensi generik)', () => {
+    const GENERIK_SENGAJA = new Set(['conjunctivitis_bacterial', 'tb_pulmonary', 'dm_type2'])
+    const mismatch = PACK.skdi144
+      .filter((e): e is typeof e & { kasusId: string } => e.kasusId !== undefined)
+      .filter((e) => !GENERIK_SENGAJA.has(e.id))
+      .filter((e) => {
+        const k = PACK.kasus[e.kasusId]
+        return k !== undefined && k.icd10 !== e.icd10
+      })
+      .map((e) => `${e.id}: ${e.icd10} ≠ kasus ${PACK.kasus[e.kasusId]!.icd10}`)
+    expect(mismatch).toEqual([])
+  })
 })

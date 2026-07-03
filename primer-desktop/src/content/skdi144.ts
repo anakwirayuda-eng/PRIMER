@@ -51,9 +51,11 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   // === SISTEM INDRA — THT (9) ===
   { id: 'otitis_externa', nama: 'Otitis Eksterna', icd10: 'H60.9' },
   {
+    // H66.0 (otitis media akut SUPURATIF) — bukan H65.0 (serosa/non-supuratif,
+    // penyakit berbeda). Disamakan dgn kasus tertaut (otitis_media_akut, H66.0).
     id: 'otitis_media_acute',
     nama: 'Otitis Media Akut',
-    icd10: 'H65.0',
+    icd10: 'H66.0',
     kasusId: 'otitis_media_akut',
   },
   { id: 'cerumen_prop', nama: 'Serumen Prop', icd10: 'H61.2' },
@@ -125,9 +127,9 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   // === SISTEM REPRODUKSI (14) ===
   { id: 'genital_discharge', nama: 'Sindroma Duh Genital (Gonore & Non-Gonore)', icd10: 'N89' },
   { id: 'lower_uti', nama: 'Infeksi Saluran Kemih Bagian Bawah', icd10: 'N30.0' },
-  { id: 'vulvitis', nama: 'Vulvitis', icd10: 'N76.0' },
+  { id: 'vulvitis', nama: 'Vulvitis', icd10: 'N76.2' }, // N76.2 = vulvitis akut (bukan N76.0 = vaginitis)
   { id: 'vaginitis', nama: 'Vaginitis', icd10: 'N76.0' },
-  { id: 'bacterial_vaginosis', nama: 'Vaginosis Bakterialis', icd10: 'N76.0' },
+  { id: 'bacterial_vaginosis', nama: 'Vaginosis Bakterialis', icd10: 'N76.0' }, // BV = bentuk vaginitis bakterial, kode sama defensible
   { id: 'salpingitis', nama: 'Salpingitis', icd10: 'N70' },
   { id: 'normal_pregnancy', nama: 'Kehamilan Normal', icd10: 'Z34' },
   { id: 'complete_abortion', nama: 'Abortus Spontan Komplit', icd10: 'O03.9' },

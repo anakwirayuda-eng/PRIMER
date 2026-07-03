@@ -333,6 +333,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     lab: [
       { id: 'darah_rutin', hasil: 'Hb 14.2, Hct 42%, Leukosit 3.400/µL (leukopenia), Trombosit 98.000/µL (trombositopenia).', flag: 'abnormal', relevan: true },
       { id: 'ns1_dengue', hasil: 'NS1 Antigen: Positif.', flag: 'abnormal', relevan: true },
+      { id: 'igm_dengue', hasil: 'IgM Anti-Dengue: Negatif; IgG: Negatif — antibodi belum terbentuk pada fase demam dini (<hari ke-5). NS1 adalah penanda yang lebih sensitif di fase akut ini.', flag: 'normal', relevan: true },
     ],
     diagnosisBanding: ['A90', 'A91', 'A01.0'],
     tatalaksana: {
