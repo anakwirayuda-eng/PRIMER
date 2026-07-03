@@ -250,10 +250,20 @@ anamnesis branching + axis penilaian konseling (KB).
 
 ## M7 — Polish Komersial & Distribusi
 
-30. **Onboarding interaktif Hari 1** (tutorial diegetik dr. Harsono, bukan surat saja).
-31. **Pengaturan**: volume musik/SFX terpisah, ukuran teks, mode malam manual,
-    kecepatan animasi.
-32. **Juice pass**: transisi layar, stempel fisik lebih berat, kertas bergeser,
+30. ✅ **Onboarding interaktif Hari 1** (commit `0319923`): carousel diegetik
+    dr. Harsono (6 kartu, satu konsep per kartu — 3-blok, gali-jangan-menebak +
+    gauge sabar, TEGAK/SUSPEK, tuntas/rujuk + kuota edukasi, rapor 4 dimensi);
+    sekali per-instalasi (localStorage), hanya Hari 1 pagi, bisa dilewati, tak
+    menyentuh GameState.
+31. ✅ **Pengaturan** (commit `53e0389`): volume musik & SFX TERPISAH (live),
+    ukuran teks (root scale), mode tampilan auto/terang/gelap (override CODEX
+    P3), toggle kurangi-gerak. `settings.ts` non-React (persist localStorage +
+    subscribe) dibaca synth/bgm/App; BGM ambient synth lama dimatikan (musik
+    file jadi latar). Tombol gigi melayang di title & in-game.
+32. ✅ **Juice pass** (commit `40bdbfb` transisi layar; `69f1ee4` BGM): wrapper
+    `.app-transisi` di-key layar → fade+slide 0.22s tiap pindah (tunduk reduce-
+    motion). Stempel/kertas juice lanjutan & ilustrasi rumah per keluarga =
+    kandidat polish lanjutan (opsional).
     BGM adaptif per blok; ilustrasi rumah unik per keluarga.
     *BGM SELESAI duluan 2026-07-03 (permintaan user — regresi dari koleksi
     musik repo lama)*: 7 track `public/audio` lama → `renderer/public/bgm`,
@@ -268,14 +278,14 @@ anamnesis branching + axis penilaian konseling (KB).
     sunting konstanta TRACK di bgm.ts).
 33. **Packaging**: `electron-builder` → installer Windows (NSIS) + ikon + auto-update
     opsional; uji di lab FK (spek rendah).
-34. **Aksesibilitas**: navigasi keyboard penuh, kontras AA, reduce-motion.
-    *Sebagian sudah beres 2026-07-03 (commit `e80fd43`, triase CODEX UI + bug
-    playtest mode malam)*: color re-anchor `.app-frame` (tinta pagi di panel
-    malam 1.24:1 → 14:1), glow kertas varian malam, token kunyit-700/daun-700/
-    tinta-pudar ≥4.5:1, disclaimer title dibesarkan, gerbang global
-    `prefers-reduced-motion`. **Sisa M7**: night-comfort toggle terpisah dari
-    blok sore (CODEX P3), font kecil peta/kunjungan/dex (P3), headroom
-    1200×760 + skala OS (P2 — diterima sbg batas desain, uji di lab FK).
+34. **Aksesibilitas** ✅ (bertahap): commit `e80fd43` — kontras WCAG (tinta
+    pagi di panel malam 1.24:1→14:1, token kunyit-700/daun-700/tinta-pudar
+    ≥4.5:1, disclaimer title dibesarkan), gerbang global `prefers-reduced-
+    motion`. Commit `53e0389` — mode malam manual (butir 31, jawab night-comfort
+    P3) + ukuran teks global. Commit `40bdbfb` — font kecil dinaikkan (peta
+    11px→13px & 9.5px→11px, stepper kunjungan 10px→12px; CODEX P3). **Sisa
+    (opsional, uji lab FK)**: navigasi keyboard penuh, headroom 1200×760 +
+    skala OS besar (P2 — diterima sbg batas desain fixed-desktop).
 34b. **UX Edukasi Pasien** ✅ **DIEKSEKUSI 2026-07-03 (commit `7ac5015`)** —
     O6: kategori WAJIB (6 laci, kontrak tsc) + sinonim + front-loading semua
     label (38→37; merger tunggal kepatuhan_kontrol_ptm→kontrol_rutin — target
@@ -354,10 +364,15 @@ anamnesis branching + axis penilaian konseling (KB).
     dialog kunjungan bersih. Penutup: catatan gaya di `types.ts` (doc Persona)
     + **guard test `bahasaPasien.test.ts`** (188 total) yang menggagalkan CI
     bila konten baru menaruh jargon di ucapan pasien.
-35. **Layar Kredit & Tentang**: identitas ITS MEDICS + HKI (sudah di layar judul;
-    duplikasi di menu Tentang).
-36. **QA akhir**: playtest 5–10 mahasiswa, profil adversarial diperluas (port 7 profil
-    lama sebagai kontrak formula), soak test 90 hari headless.
+35. ✅ **Layar Kredit & Tentang** (commit `53e0389`): `TentangModal` dari
+    Pengaturan — identitas ITS MEDICS + HKI EC002026019623 lengkap + disclaimer
+    medis + kredit aset + peringatan lisensi musik.
+36. **QA akhir** (parsial ✅ commit `6378831`): **soak test 90 hari headless**
+    (`soak.test.ts` — Karier 90h + Ujian 30h×2 seed: nol crash/NaN, tamat tepat
+    waktu, jejak M6 utuh) + **profil adversarial** (`adversarial.test.ts` —
+    kontrak: main jujur mengungguli koboi-tangani-semua/SUSPEK-selamanya/rujuk-
+    semua/shotgun-edukasi). **SISA (butuh manusia/hardware)**: playtest 5–10
+    mahasiswa; uji di lab FK spek rendah.
     **CHECKLIST WAJIB pra-distribusi**: ganti BGM Square Enix dengan musik
     berlisensi (butir 32 — installer TIDAK BOLEH memuat track OST komersial).
 
