@@ -615,7 +615,7 @@ function buatStateKader(): GameState {
       kunjunganDiusir: 0,
       apathy: 0,
       autoBermasalah: 0,
-      posyanduSesi: 0, prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdMeninggal: 0,
+      posyanduSesi: 0, prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdSalahDisposisi: 0, igdMeninggal: 0,
       hariKelelahan: 0,
       karmaTerjadi: 0,
       karmaDicegah: 0,

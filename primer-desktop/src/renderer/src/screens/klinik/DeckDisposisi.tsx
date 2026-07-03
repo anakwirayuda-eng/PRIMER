@@ -171,7 +171,12 @@ export function DeckDisposisi({ enc, dispatch }: Props) {
             <button
               className="tombol tombol--kunyit tombol--besar"
               onClick={bukaFormRujuk}
-              title="Buka form rujukan SISRUTE (SBAR 4 kolom + pemilih RS)."
+              disabled={!punyaDiagnosis}
+              title={
+                punyaDiagnosis
+                  ? 'Buka form rujukan SISRUTE (SBAR 4 kolom + pemilih RS).'
+                  : alasanTanpaDiagnosis
+              }
             >
               RUJUK &rarr;
             </button>

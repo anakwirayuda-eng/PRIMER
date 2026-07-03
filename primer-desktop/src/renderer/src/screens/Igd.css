@@ -87,6 +87,13 @@
   line-height: 1.55;
 }
 
+.igd__narasi--pembuka {
+  font-style: italic;
+  color: var(--tinta-lembut);
+  border-bottom: 1px dashed var(--border-halus);
+  padding-bottom: var(--sp-3);
+}
+
 .igd__pilihan {
   display: flex;
   flex-direction: column;

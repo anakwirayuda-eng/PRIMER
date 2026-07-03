@@ -59,7 +59,8 @@ export const KASUS_IGD: KasusIgd[] = [
     skdi: '4A',
     pembuka:
       'Seorang ibu berlari masuk menggendong balita yang kejang, kelojotan seluruh tubuh. ' +
-      '"Sudah lima menit belum berhenti, Dok! Tadi panas tinggi!" Anak belum sadar.',
+      '"Sudah lebih dari sepuluh menit belum berhenti, Dok! Tadi panas tinggi, dan ini kejangnya yang KEDUA — ' +
+      'tadi siang sempat kejang juga tapi berhenti sendiri!" Anak belum sadar.',
     demografi: { usiaMin: 1, usiaMax: 5 },
     vitalAwal: { suhu: 39.8, nadi: 150, rr: 32, spo2: 94 },
     stabilitasAwal: 50,
@@ -88,8 +89,8 @@ export const KASUS_IGD: KasusIgd[] = [
         id: 'k3',
         narasi: 'Kejang berhenti, anak mulai sadar tapi mengantuk. Suhu masih 39,5.',
         pilihan: [
-          { id: 'a', label: 'Turunkan demam (parasetamol), pasang infus, rujuk (kejang kompleks)', benar: true, efekStabilitas: 15, respons: 'Tepat — kejang demam kompleks (durasi panjang) perlu evaluasi lanjut di RS anak.' },
-          { id: 'b', label: 'Kejang sudah berhenti, pulangkan dengan obat penurun panas', benar: false, efekStabilitas: -15, respons: 'Kejang kompleks/berkepanjangan wajib dirujuk untuk cari penyebab (mis. infeksi SSP).' },
+          { id: 'a', label: 'Turunkan demam (parasetamol), pasang infus, rujuk (kejang kompleks)', benar: true, efekStabilitas: 15, respons: 'Tepat — kejang demam KOMPLEKS (berulang 2x dalam <24 jam + durasi >10 menit) wajib evaluasi lanjut di RS anak, bukan cukup diobservasi di FKTP.' },
+          { id: 'b', label: 'Kejang sudah berhenti, pulangkan dengan obat penurun panas', benar: false, efekStabilitas: -15, respons: 'Kejang kompleks (berulang dalam sehari) wajib dirujuk untuk cari penyebab (mis. infeksi SSP), bukan cukup obat pulang.' },
         ],
       },
     ],

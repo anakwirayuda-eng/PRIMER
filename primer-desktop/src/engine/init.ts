@@ -158,6 +158,7 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
       prolanisSesi: 0,
       klbTuntas: 0,
       igdStabil: 0,
+      igdSalahDisposisi: 0,
       igdMeninggal: 0,
       hariKelelahan: 0,
       karmaTerjadi: 0,

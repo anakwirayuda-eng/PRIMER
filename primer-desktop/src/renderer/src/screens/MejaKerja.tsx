@@ -449,16 +449,26 @@ export function MejaKerja() {
                   <button className="tombol tombol--utama" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })}>
                     Buka Peta Desa — pilih kunjungan / Posyandu / KLB →
                   </button>
-                  {state.hari >= HARI_BUKA_PROLANIS && state.prolanis.roster.length > 0 && (
-                    <button
-                      className="tombol tombol--kunyit"
-                      disabled={state.stamina < BIAYA_STAMINA_KEGIATAN || slotTerpakai}
-                      title={slotTerpakai ? 'Slot lapangan hari ini sudah terpakai.' : `Gelar sesi Prolanis (${state.prolanis.roster.length} peserta, ${BIAYA_STAMINA_KEGIATAN} stamina).`}
-                      onClick={() => dispatch({ type: 'MULAI_PROLANIS' })}
-                    >
-                      🩺 Gelar Sesi Prolanis ({state.prolanis.roster.length})
-                    </button>
-                  )}
+                  {state.hari >= HARI_BUKA_PROLANIS && state.prolanis.roster.length > 0 && (() => {
+                    const berikut = state.prolanis.sesiBerikutHari
+                    const belumWaktunya = berikut !== undefined && state.hari < berikut
+                    return (
+                      <button
+                        className="tombol tombol--kunyit"
+                        disabled={state.stamina < BIAYA_STAMINA_KEGIATAN || slotTerpakai || belumWaktunya}
+                        title={
+                          belumWaktunya
+                            ? `Sesi bulan ini sudah digelar — berikutnya hari ke-${berikut}.`
+                            : slotTerpakai
+                              ? 'Slot lapangan hari ini sudah terpakai.'
+                              : `Gelar sesi Prolanis (${state.prolanis.roster.length} peserta, ${BIAYA_STAMINA_KEGIATAN} stamina).`
+                        }
+                        onClick={() => dispatch({ type: 'MULAI_PROLANIS' })}
+                      >
+                        🩺 Gelar Sesi Prolanis ({state.prolanis.roster.length}){belumWaktunya ? ` — hari ke-${berikut}` : ''}
+                      </button>
+                    )
+                  })()}
                 </div>
               </>
             )}
@@ -472,16 +482,25 @@ export function MejaKerja() {
                   {state.program.fokus ? ` Fokus kini: ${LABEL_PROGRAM[state.program.fokus]}.` : ' Belum ada fokus ditetapkan.'}
                 </p>
                 <div className="baris mk__program-opsi">
-                  {(['psn', 'phbs', 'skrining'] as const).map((f) => (
-                    <button
-                      key={f}
-                      className={`tombol ${state.program.fokus === f ? 'tombol--utama' : ''}`}
-                      onClick={() => dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f })}
-                    >
-                      {LABEL_PROGRAM[f]}
-                    </button>
-                  ))}
+                  {(['psn', 'phbs', 'skrining'] as const).map((f) => {
+                    const mingguIni = Math.ceil(state.hari / 7)
+                    const terkunci = state.program.mingguDitetapkan === mingguIni && state.program.fokus !== f
+                    return (
+                      <button
+                        key={f}
+                        className={`tombol ${state.program.fokus === f ? 'tombol--utama' : ''}`}
+                        disabled={terkunci}
+                        title={terkunci ? 'Fokus pekan ini sudah dikunci — ganti pekan depan.' : undefined}
+                        onClick={() => dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f })}
+                      >
+                        {LABEL_PROGRAM[f]}
+                      </button>
+                    )
+                  })}
                 </div>
+                {state.program.mingguDitetapkan === Math.ceil(state.hari / 7) && (
+                  <p className="teks-xs teks-lembut">🔒 Terkunci untuk pekan ini.</p>
+                )}
               </div>
             )}
           </div>

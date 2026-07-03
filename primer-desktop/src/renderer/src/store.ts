@@ -64,7 +64,7 @@ export const useGame = create<GameStore>((set, get) => ({
     try {
       const json = await window.primer.save.read(SLOT_AUTOSAVE)
       if (!json) return false
-      const arsip = deserialize(json)
+      const arsip = deserialize(json, PACK)
       if (!arsip) return false
       set({ arsip })
       return true

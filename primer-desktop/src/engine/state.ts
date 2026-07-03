@@ -390,8 +390,10 @@ export interface SkorTally {
   posyanduSesi: number
   prolanisSesi: number
   klbTuntas: number
-  /** IGD (M3.14): pasien gawat stabil vs meninggal (Kode Hitam). */
+  /** IGD (M3.14): pasien gawat stabil dgn disposisi TEPAT vs meninggal (Kode Hitam). */
   igdStabil: number
+  /** Stabil tapi disposisi keliru (mis. kasus wajib-rujuk dipulangkan) — tidak dihargai skor. */
+  igdSalahDisposisi: number
   igdMeninggal: number
   /** Hari stamina habis total (pakan burnout/resiliensi). */
   hariKelelahan: number

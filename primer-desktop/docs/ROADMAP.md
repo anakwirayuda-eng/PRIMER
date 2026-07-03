@@ -170,10 +170,82 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
 ## Utang teknis tercatat (dari review, sengaja ditunda)
 
 - `follow_up_kunjungan` & `followUpHari` yatim di kontrak state → diisi M1.4.
-- 2 temuan review belum terverifikasi: grinding trust kunjungan ulang; jalur
-  rujuk-tanpa-diagnosis (lihat `CODEX_AUDIT_DOSSIER.md` §4.4–4.5).
+- ~~Jalur rujuk-tanpa-diagnosis~~ — **DIPERBAIKI 2026-07-03** (audit CODEX, lihat
+  §Triangulasi di bawah): diagnosis kini wajib untuk SEMUA disposisi termasuk rujuk.
+- Grinding trust kunjungan ulang — masih belum terverifikasi (di luar cakupan audit
+  CODEX 2026-07-03, yang fokus ke permukaan M1–M3b yang genuinely baru).
 - Jawaban anamnesis statis vs status pasien dinamis (alergi kini dipaksa 100% untuk
   kasus trap; solusi jangka panjang: varian jawaban ber-state di skema konten).
 - Bundle renderer 1.1 MB (belum code-split; belum masalah untuk desktop).
 - `arcSelesai` global per keluarga (bukan per-skenario) — cukup untuk arc 2 kunjungan;
   revisit saat arc 3+ babak (M3.15).
+
+---
+
+## Triangulasi M3b — CODEX (audit kode read-only) + DeepThink (strategis) — 2026-07-03
+
+Dua reviewer independen dijalankan atas HEAD M3b: **CODEX** mengaudit kode/konten
+(read-only), **DeepThink** menilai arsitektur produk & validitas pedagogis. Metodologi
+triangulasi: Claude (builder) tidak mengaudit karyanya sendiri secara final — dua
+perspektif eksternal menyilang sebelum lanjut ke milestone berikutnya.
+
+### CODEX — 8 temuan, SEMUA diperbaiki + diverifikasi (117 test, tsc bersih, build OK)
+
+| # | Temuan | Perbaikan |
+|---|---|---|
+| P1 | Narasi "Kejang Demam Kompleks" tak penuhi kriteria kompleks (durasi/fokal/berulang) sendiri | Narasi diubah eksplisit berulang 2× dalam <24 jam |
+| P1 | IGD: disposisi KELIRU tetap dihitung `igdStabil` + bonus skor sama seperti disposisi tepat | Tally dipecah `igdStabil` vs `igdSalahDisposisi` baru; skor hanya menghargai yang tepat |
+| P1 | Prolanis "bulanan" bisa digelar harian setelah hari ke-30 (cooldown tak ditegakkan) | Guard `sesiBerikutHari` di reducer + UI (tombol terkunci + tanggal berikutnya) |
+| P1 | Rujuk tanpa komit diagnosis diterima & dihitung `rujukanTepat` | Diagnosis wajib untuk semua disposisi; confidence-tag hanya utk diagnosis benar |
+| P1 | Layar IGD membocorkan nama diagnosis + ICD-10 sejak langkah pertama | Disembunyikan sampai fase disposisi; narasi pembuka kasus (tak terpakai sebelumnya) kini ditampilkan sebagai gantinya |
+| P2 | Program Wilayah "mingguan" bisa diganti kapan saja (`mingguDitetapkan` tak dipakai) | Guard reducer + UI kunci 🔒 sepanjang pekan berjalan |
+| P2 | Save saat IGD aktif bisa macet permanen bila konten IGD berubah/hilang di build lebih baru | `deserialize(json, pack)` memulihkan IGD tak dikenal + surat kompensasi, bukan menolak seluruh save |
+| P2 | `validasiPack` cuma `console.warn` (bukan fail-fast sungguhan) & tak mencakup `kasusIgd` | Diperluas ke kasus IGD (langkah/pilihan-benar/spesialisasi-RS); throw di DEV; gerbang wajib `pack.test.ts` di CI |
+
+Semua diverifikasi ganda: unit test baru (3 test ditambah, 117 total) + interaksi
+langsung di browser preview (state IGD dipaksa via store, tally & UI dicek nyata).
+Regresi nol.
+
+### DeepThink — 6 penilaian strategis + 1 blind spot + 1 "jangan diubah"
+
+Ringkasan penilaian (assessment lengkap tersimpan di histori sesi ini; poin utama):
+
+- **Q1 Durasi 22–45 jam**: risiko validitas asesmen tinggi (kelelahan bermain ≠
+  inkompetensi medis). Rekomendasi: Mode "Ujian 30 Hari" (~8 jam, seed terkurasi)
+  sebagai satu-satunya instrumen bernilai; 90-hari jadi "Karier" bebas nilai.
+  **Blind spot yang disertakan**: seed tunggal deterministik = kunci jawaban bisa
+  bocor via grup WhatsApp angkatan dalam 48 jam — WAJIB rotasi 5–10 seed + acak
+  nama/visual pasien bila mode ini dibangun.
+- **Q2 Kalibrasi skor baru**: SUSPEK bisa jadi "lindung nilai" defensif (skor 0.4
+  untuk suspek-salah terlalu dekat ke tegak-benar); IGD murni hukuman tanpa
+  reward keberanian klinis. Rekomendasi: turunkan cap SUSPEK, beri IGD tuntas
+  bonus eksplisit +5 (bukan cuma "tak dihukum").
+- **Q3 Cakupan kurikulum vs prevalensi**: guardrail prevalensi M3a bisa membuat
+  kasus 4A langka tak pernah muncul dalam satu sesi. Rekomendasi: "Curriculum
+  Director" pity-timer yang menjamin kemunculan minimal 1× per sesi ujian.
+- **Q4 UKM "bergigi"**: kader-scout bagus tapi belum ada *opportunity cost* agregat.
+  Rekomendasi: Lokakarya Mini jadi "Triase Anggaran" — hanya boleh danai 1-2
+  program/bulan, memaksa mengorbankan area lain.
+- **Q5 M6 integritas asesmen**: HMAC offline murni rentan ekstraksi-secret oleh
+  mahasiswa tech-savvy; server penuh = scope-creep mematikan utk solo-dev.
+  Rekomendasi: **Hybrid Recomputation** — klien ekspor action-log kriptografis,
+  dosen-dashboard menghitung ulang skor server-side sebagai validasi absolut.
+  (DeepThink sendiri menandai ini kemungkinan besar OVER-ENGINEERING bila
+  asesmen berlangsung *proctored* di lab kampus — lihat bias-check.)
+- **Q6 M4 vs M5/M6**: ekonomi faskes detail (stok obat, defisit BPJS, akreditasi)
+  = kompetensi manajerial residen, bukan core S1/Profesi. Rekomendasi: potong
+  M4 jadi abstraksi kosmetik, alihkan bandwidth ke M5 (endgame) + M6 (ekspor
+  dosen) yang eksistensial untuk bisa dipakai menilai semester depan.
+- **🟢 Jangan diubah**: M1 Bridge (karma UKM↔UKP) + SDOH Armor — dinilai
+  "masterstroke pedagogis", satu-satunya mekanik yang menangkap realitas
+  sosiologis Puskesmas yang mustahil diajarkan lewat soal pilihan ganda.
+
+### Keputusan (builder + user, 2026-07-03)
+
+CODEX → **diterima & dieksekusi penuh** (bug/integritas objektif, bukan pilihan desain).
+
+DeepThink → **butuh keputusan pemilik kurikulum** (Anda), bukan keputusan sepihak
+Claude — semua poin di atas mengubah bentuk M3–M6, bukan sekadar bug. Lihat
+percakapan untuk pertanyaan konfirmasi; hasilnya akan dicatat di sini setelah
+dijawab. Sampai dijawab, roadmap M4–M6 di bawah **belum direvisi** dan tetap
+mengikuti rencana pra-triangulasi.

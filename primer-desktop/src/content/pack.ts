@@ -68,6 +68,22 @@ export function validasiPack(pack: ContentPack): string[] {
       }
     }
   }
+  // IGD (M3.14) — sama seperti kasus klinik: langkah harus punya pilihan benar,
+  // dan disposisi rujuk harus punya spesialisasi + RS yang menyediakannya.
+  for (const k of Object.values(pack.kasusIgd)) {
+    if (k.langkah.length === 0) masalah.push(`IGD ${k.id}: tidak punya langkah`)
+    for (const l of k.langkah) {
+      if (l.pilihan.length === 0) masalah.push(`IGD ${k.id} langkah ${l.id}: tidak punya pilihan`)
+      if (!l.pilihan.some((p) => p.benar)) masalah.push(`IGD ${k.id} langkah ${l.id}: tidak ada pilihan benar`)
+    }
+    if (k.disposisiBenar === 'rujuk') {
+      if (!k.spesialisRujukan) {
+        masalah.push(`IGD ${k.id}: disposisiBenar rujuk tapi tanpa spesialisRujukan`)
+      } else if (!pack.rumahSakit.some((rs) => rs.spesialisasi.includes(k.spesialisRujukan!))) {
+        masalah.push(`IGD ${k.id}: tidak ada RS dengan spesialisasi '${k.spesialisRujukan}'`)
+      }
+    }
+  }
   for (const kel of Object.values(pack.keluarga)) {
     for (const sk of kel.arc.kunjungan) {
       if (sk.karma) {

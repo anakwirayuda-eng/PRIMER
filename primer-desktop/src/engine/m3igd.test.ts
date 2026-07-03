@@ -9,6 +9,7 @@ import type { Action } from './actions'
 import { advance } from './reducer'
 import { buildInitialState } from './init'
 import { hitungSkor } from './scoring'
+import { serialize, deserialize } from './save'
 
 function base(igd?: IgdState): GameState {
   const s = buildInitialState('Uji', 7, PACK)
@@ -46,6 +47,20 @@ describe('M3.14 — alur IGD', () => {
     expect(s.tally.igdStabil).toBe(1)
     expect(s.igd).toBeUndefined()
     expect(s.inbox.some((m) => m.dari.includes('Harsono') && m.jenis === 'pujian_kapus')).toBe(true)
+  })
+
+  it('disposisi KELIRU (pulang pada kasus wajib-rujuk) → igdSalahDisposisi, BUKAN igdStabil, dan tak dihargai skor', () => {
+    let s = base(igdKasus(KASUS))
+    const kasus = PACK.kasusIgd[KASUS]!
+    for (const l of kasus.langkah) s = run(s, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: l.pilihan.find((p) => p.benar)!.id })
+    expect(kasus.disposisiBenar).toBe('rujuk')
+    s = run(s, { type: 'DISPOSISI_IGD', jenis: 'pulang' })
+    expect(s.tally.igdStabil).toBe(0)
+    expect(s.tally.igdSalahDisposisi).toBe(1)
+    expect(s.inbox.some((m) => m.dari.includes('Harsono') && m.jenis === 'teguran_kapus')).toBe(true)
+    const skorTepat = hitungSkor({ ...s, tally: { ...s.tally, totalPasien: 4, diagnosisBenar: 4, tegakBenar: 4, igdStabil: 1, igdSalahDisposisi: 0 } })
+    const skorKeliru = hitungSkor({ ...s, tally: { ...s.tally, totalPasien: 4, diagnosisBenar: 4, tegakBenar: 4, igdStabil: 0, igdSalahDisposisi: 1 } })
+    expect(skorKeliru.ukp).toBeLessThan(skorTepat.ukp)
   })
 
   it('pilihan salah beruntun → stabilitas habis → Kode Biru', () => {
@@ -92,5 +107,16 @@ describe('M3.14 — alur IGD', () => {
     const s = base(igdKasus(KASUS))
     expect(advance(s, { type: 'LANJUTKAN' }, PACK).events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
     expect(advance(s, { type: 'PANGGIL_PASIEN' }, PACK).events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+  })
+
+  it('save dgn IGD berkasus tak dikenal (CODEX P2) → dipulihkan via pack, bukan macet permanen', () => {
+    const s = base(igdKasus('kasus_igd_yang_sudah_dihapus'))
+    const json = serialize(s)
+    // Tanpa pack: perilaku lama dipertahankan (tidak menyentuh igd).
+    expect(deserialize(json)?.igd?.kasusId).toBe('kasus_igd_yang_sudah_dihapus')
+    // Dengan pack: IGD tak dikenal dibersihkan + surat kompensasi ditambahkan.
+    const pulih = deserialize(json, PACK)
+    expect(pulih?.igd).toBeUndefined()
+    expect(pulih?.inbox.some((m) => m.jenis === 'sistem' && m.judul.includes('dipulihkan'))).toBe(true)
   })
 })

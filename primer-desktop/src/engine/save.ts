@@ -6,6 +6,7 @@
  */
 
 import type { GameState } from './state'
+import type { ContentPack } from '@content/pack'
 
 const VERSI_SAVE = 1 as const
 
@@ -17,7 +18,14 @@ function objek(nilai: unknown): nilai is Record<string, unknown> {
   return typeof nilai === 'object' && nilai !== null && !Array.isArray(nilai)
 }
 
-export function deserialize(json: string): GameState | null {
+/**
+ * `pack` opsional: bila disertakan, deserialize memulihkan IGD aktif yang
+ * kasusnya sudah tak ada di konten (build lebih baru mengubah/menghapus kasus
+ * IGD) alih-alih membiarkan save tersebut macet permanen — layar IGD kosong
+ * ("return null") sementara LANJUTKAN tetap terkunci selama s.igd ada
+ * (CODEX P2). Dipanggil tanpa pack di test murni/migrasi skema dasar.
+ */
+export function deserialize(json: string, pack?: ContentPack): GameState | null {
   let mentah: unknown
   try {
     mentah = JSON.parse(json)
@@ -55,7 +63,7 @@ export function deserialize(json: string): GameState | null {
   const tally = st['tally'] as Record<string, unknown>
   // Migrasi-lite: field tally baru diisi 0 untuk save dari versi lebih lama.
   if (tally['autoBermasalah'] === undefined) tally['autoBermasalah'] = 0
-  for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas', 'rujukanTepat', 'rujukanDitolak', 'igdStabil', 'igdMeninggal'] as const) {
+  for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas', 'rujukanTepat', 'rujukanDitolak', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal'] as const) {
     if (tally[kunci] === undefined) tally[kunci] = 0
   }
   if (typeof st['igdHariIni'] !== 'boolean') st['igdHariIni'] = false
@@ -86,6 +94,28 @@ export function deserialize(json: string): GameState | null {
   if (Array.isArray(klinik['antrian'])) {
     for (const p of klinik['antrian'] as Record<string, unknown>[]) {
       if (typeof p['rw'] !== 'number') p['rw'] = 1
+    }
+  }
+
+  // Pemulihan IGD tak dikenal (CODEX P2): bila kasus IGD yang aktif sudah tak
+  // ada di pack (rename/hapus konten antar-versi), jangan biarkan save macet
+  // permanen — hapus IGD aktif & beri surat kompensasi.
+  if (pack && objek(st['igd'])) {
+    const igd = st['igd'] as Record<string, unknown>
+    const kasusId = igd['kasusId']
+    if (typeof kasusId !== 'string' || !pack.kasusIgd[kasusId]) {
+      st['igd'] = undefined
+      const hari = st['hari'] as number
+      const inbox = st['inbox'] as Record<string, unknown>[]
+      inbox.push({
+        id: `surat_pemulihan_igd_${hari}_${inbox.length}`,
+        hari,
+        jenis: 'sistem',
+        dari: 'Sistem',
+        judul: 'Pasien IGD dipulihkan otomatis',
+        isi: 'Kasus gawat darurat yang sedang berjalan tidak lagi tersedia di versi konten ini. Pasien dianggap sudah ditangani tim jaga lain — kamu bisa melanjutkan hari seperti biasa.',
+        dibaca: false,
+      })
     }
   }
 

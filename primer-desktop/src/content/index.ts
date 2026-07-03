@@ -67,10 +67,13 @@ export const PACK: ContentPack = {
   namaWarga: NAMA_WARGA,
 }
 
-// Fail-fast saat dev: drift id konten ketahuan sebelum sampai ke pemain.
+// Fail-fast saat dev: drift id konten ketahuan sebelum sampai ke pemain (CODEX
+// P2 — sekadar console.warn tidak "fail-fast" sungguhan; lempar error di dev
+// supaya penulis konten tak bisa mengabaikannya). Test wajib di pack.test.ts
+// menjaring hal yang sama di CI terlepas dari mode DEV.
 if (import.meta.env?.DEV) {
   const masalah = validasiPack(PACK)
   if (masalah.length > 0) {
-    console.warn(`[PACK] ${masalah.length} masalah konten:`, masalah)
+    throw new Error(`[PACK] ${masalah.length} masalah konten:\n${masalah.join('\n')}`)
   }
 }

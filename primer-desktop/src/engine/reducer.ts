@@ -179,7 +179,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
     case 'DISPOSISI': {
       const enc = s.klinik.aktif
       if (!enc) return err(s, 'Tidak ada pasien aktif.')
-      if (!enc.diagnosis && action.jenis !== 'rujuk') return err(s, 'Komit diagnosis dulu sebelum memulangkan pasien.')
+      // Diagnosis wajib untuk SEMUA disposisi, termasuk rujuk (CODEX P1): "kenali
+      // lalu rujuk" tak boleh diganti "rujuk tanpa bernalar" — confidence-tag di
+      // bawah hanya bermakna bila pemain benar-benar sudah menegakkan sesuatu.
+      if (!enc.diagnosis) return err(s, 'Komit diagnosis dulu sebelum menentukan disposisi (termasuk rujuk).')
       const kasus = pack.kasus[enc.pasien.kasusId]
       if (!kasus) return err(s, `Kasus ${enc.pasien.kasusId} tidak ditemukan.`)
 
@@ -364,8 +367,12 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
               dibaca: false,
             }
           } else {
-            // DITERIMA → Program Rujuk Balik terjadwal.
-            t.rujukanTepat += 1
+            // DITERIMA oleh jejaring — tapi confidence-tag (bonus skor) hanya untuk
+            // rujukan yang juga BENAR secara diagnosis (CODEX P1): RS menerima
+            // pasien gawat apa pun, itu bukan bukti penalaran klinis pemain tepat.
+            if (nilai.diagnosisBenar) t.rujukanTepat += 1
+            // PRB tetap terjadwal terlepas dari ketepatan diagnosis — pasien tetap
+            // harus kembali kontrol; hanya skor pengakuan yang dibedakan.
             const rngPrb = new Rng(s.seed, 'prb', s.hari, encFinal.pasien.id)
             jadwal = [
               ...jadwal,
@@ -581,6 +588,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       const cek = cekSlotKegiatan(s, HARI_BUKA_PROLANIS, 'Prolanis')
       if (cek) return err(s, cek)
       if (s.prolanis.roster.length === 0) return err(s, 'Belum ada peserta Prolanis terdaftar.')
+      const berikut = s.prolanis.sesiBerikutHari
+      if (berikut !== undefined && s.hari < berikut) {
+        return err(s, `Sesi Prolanis bulan ini sudah dilakukan — sesi berikutnya hari ke-${berikut}.`)
+      }
       return {
         state: {
           ...s,
@@ -636,6 +647,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
     case 'TETAPKAN_PROGRAM': {
       if (s.hari < HARI_BUKA_PETA) return err(s, 'Program wilayah terbuka bersama Peta Desa.')
       const mingguIni = Math.ceil(s.hari / 7)
+      // Komitmen mingguan sungguhan: sekali ditetapkan pekan ini, tak bisa diganti-ganti
+      // tiap sore mengikuti surveilans — itu meniadakan makna "program" (CODEX P2).
+      if (s.program.mingguDitetapkan === mingguIni && s.program.fokus !== action.fokus) {
+        return err(s, 'Fokus program pekan ini sudah ditetapkan — baru bisa diganti pekan depan.')
+      }
       return {
         state: {
           ...s,
@@ -715,7 +731,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       const kasus = pack.kasusIgd[igd.kasusId]
       if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
       const nilai = nilaiIgd({ ...igd, hasil: 'stabil' }, kasus, action.jenis)
-      const t = { ...s.tally, igdStabil: s.tally.igdStabil + 1 }
+      // Disposisi keliru (pasien selamat tapi diarahkan salah) tidak boleh dihargai
+      // sama seperti disposisi tepat — itu sebabnya CODEX menandai ini P1.
+      const t = nilai.disposisiTepat
+        ? { ...s.tally, igdStabil: s.tally.igdStabil + 1 }
+        : { ...s.tally, igdSalahDisposisi: s.tally.igdSalahDisposisi + 1 }
       const rsNama = action.rumahSakitId
         ? pack.rumahSakit.find((r) => r.id === action.rumahSakitId)?.nama ?? 'RS rujukan'
         : 'RS rujukan'

@@ -30,7 +30,14 @@ export function Igd() {
             <div className="igd__pasien">
               {igd.pasienNama} · {igd.usia} th · {igd.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
             </div>
-            <div className="teks-xs teks-lembut">{kasus.nama} · ICD-10 {kasus.icd10}</div>
+            {/* Nama diagnosis & ICD-10 disembunyikan selama pemain masih bernalar
+                (fase langkah/kode_biru) — baru terungkap di disposisi/debrief,
+                supaya keputusan dibangun dari keluhan & vital, bukan kunci jawaban. */}
+            {igd.fase === 'disposisi' ? (
+              <div className="teks-xs teks-lembut">{kasus.nama} · ICD-10 {kasus.icd10}</div>
+            ) : (
+              <div className="teks-xs teks-lembut">Kasus gawat darurat — kenali dari keluhan &amp; tanda vital</div>
+            )}
           </div>
           <div className="igd__stab">
             <div className="teks-xs teks-lembut mono">STABILITAS</div>
@@ -54,6 +61,7 @@ export function Igd() {
         {/* Fase: langkah keputusan */}
         {igd.fase === 'langkah' && langkah && (
           <div className="igd__isi">
+            {igd.langkahIndex === 0 && <p className="igd__narasi igd__narasi--pembuka">{kasus.pembuka}</p>}
             <div className="judul-seksi">
               Langkah {igd.langkahIndex + 1}/{kasus.langkah.length}
             </div>
