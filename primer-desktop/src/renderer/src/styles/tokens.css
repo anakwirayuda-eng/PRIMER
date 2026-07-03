@@ -9,7 +9,7 @@
   /* -- Palet inti (dari keputusan dossier "Puskesmas Pagi") ---------------- */
   --daun-900: #063f31;
   --daun-800: #0a5c47;
-  --daun-700: #0e8a6b; /* primer — hijau daun */
+  --daun-700: #0d8465; /* primer — hijau daun (≥4.5:1 di bawah teks putih tombol) */
   --daun-600: #16a37f;
   --daun-500: #2bbd96;
   --daun-100: #d7efe6;
@@ -21,8 +21,9 @@
   --kertas-300: #e8dcc4; /* kertas tua / folder manila */
   --kertas-400: #d9c9a8;
 
-  --kunyit-700: #b05f14;
-  --kunyit-600: #d9822b; /* aksen kunyit — stempel, peringatan hangat */
+  --kunyit-800: #7a410c;
+  --kunyit-700: #96500f; /* teks/tombol kunyit — 4.9:1 di kunyit-100, 5.9:1 di bawah putih */
+  --kunyit-600: #d9822b; /* aksen kunyit — stempel, peringatan hangat (dekoratif, bukan teks kecil) */
   --kunyit-100: #f9e5cd;
 
   --malam-900: #0d1512;
@@ -33,7 +34,7 @@
   /* -- Tinta & teks -------------------------------------------------------- */
   --tinta: #26312c; /* teks utama di kertas — tinta pulpen hitam-kehijauan */
   --tinta-lembut: #5b6a62; /* teks sekunder */
-  --tinta-pudar: #8d998f; /* placeholder, disabled */
+  --tinta-pudar: #6e7a70; /* placeholder, disabled — tetap ≥4:1 krn dipakai juga utk hint/legenda */
   --tinta-merah: #b3382c; /* stempel merah — bahaya, alergi, gawat */
   --tinta-biru: #2b5a8a; /* pulpen biru — catatan, link, info */
 
@@ -112,7 +113,7 @@
   --bg-sunken: #0a100d;
   --tinta: #e6ede8;
   --tinta-lembut: #9fb0a6;
-  --tinta-pudar: #64756c;
+  --tinta-pudar: #7d8f84;
   --border-halus: rgba(230, 237, 232, 0.1);
   --border-tegas: rgba(230, 237, 232, 0.24);
   --border-tinta: rgba(230, 237, 232, 0.45);

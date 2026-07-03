@@ -54,6 +54,14 @@ button {
   border-radius: var(--radius-md);
 }
 
+/* Mode malam: glow putih 50% milik kertas pagi mencuci teks terang (rasio jatuh
+   ke ~2.7:1 di zona glow) — redupkan jadi kilau lampu meja yang samar. */
+[data-mode='malam'] .kertas {
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.04), transparent 55%),
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(230, 237, 232, 0.015) 2px 4px);
+}
+
 /* -- Kartu (unit dasar informasi) ------------------------------------------- */
 .kartu {
   background: var(--bg-card);
@@ -168,10 +176,12 @@ button {
 }
 
 .tombol--kunyit {
-  background: var(--kunyit-600);
-  border-color: var(--kunyit-700);
+  background: var(--kunyit-700);
+  border-color: var(--kunyit-800);
   color: var(--kertas-050);
 }
+
+.tombol--kunyit:hover { background: var(--kunyit-600); }
 
 .tombol--senyap {
   border-color: transparent;
@@ -311,3 +321,17 @@ button {
 .teks-lembut { color: var(--tinta-lembut); }
 .teks-kecil { font-size: var(--text-sm); }
 .teks-xs { font-size: var(--text-xs); }
+
+/* -- Aksesibilitas: hormati preferensi reduksi gerak (CODEX P2) --------------------
+   Banyak animasi infinite (title, CTA meja, hotspot peta/kunjungan, IGD, kalender
+   rapor) — bagi pemain yang sensitif gerak, matikan semuanya lewat satu gerbang. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

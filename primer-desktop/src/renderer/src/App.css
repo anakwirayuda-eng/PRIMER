@@ -3,6 +3,11 @@
   display: flex;
   flex-direction: column;
   background: var(--bg-app);
+  /* WAJIB: re-resolve tinta di dalam scope [data-mode] — body memasang
+     color:var(--tinta) DI LUAR scope, jadi tanpa deklarasi ini semua teks
+     yang cuma mewarisi warna body tetap tinta-gelap saat mode malam
+     (bug playtest: catatan debrief tak terbaca, rasio 1.24:1). */
+  color: var(--tinta);
 }
 
 .app-layar {

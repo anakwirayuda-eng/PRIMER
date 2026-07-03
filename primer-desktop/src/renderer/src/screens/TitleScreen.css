@@ -199,7 +199,6 @@
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
   color: var(--kertas-050);
-  opacity: 0.8;
   pointer-events: none;
   display: flex;
   flex-direction: column;
@@ -207,17 +206,19 @@
   padding: 0 var(--sp-5);
 }
 
+/* Teks legal/medis: WAJIB tetap terbaca (CODEX P1) — jangan di bawah
+   --text-xs & jangan ditumpuk opacity parent × child hingga <0.8 efektif. */
 .title__kredit-haki {
-  font-size: 0.62rem;
-  opacity: 0.75;
+  font-size: var(--text-xs);
+  opacity: 0.95;
   letter-spacing: 0.05em;
 }
 
 .title__kredit-disklaimer {
-  font-size: 0.58rem;
-  opacity: 0.55;
+  font-size: var(--text-xs);
+  opacity: 0.88;
   letter-spacing: 0.02em;
-  max-width: 880px;
+  max-width: 920px;
   margin: 0 auto;
 }
 
