@@ -12,6 +12,7 @@ import { PACK } from '@content/index'
 import { buildInitialState } from './init'
 import { KAPASITAS_EDUKASI } from './clinic'
 import { advance } from './reducer'
+import { hashSeed } from './core/rng'
 import type { Action } from './actions'
 import type { GameState } from './state'
 import {
@@ -39,8 +40,12 @@ function run(state: GameState, action: Action, izinkanError = false): GameState 
  * aksi yang DITOLAK engine (peta terkunci H1) — membuktikan aksi gagal ikut
  * terekam & replay mereproduksi penolakan yang sama.
  */
+// Seed ujian diturunkan sama seperti store (anti-reroll + ikatan identitas).
+const NAMA_UJI = 'Uji Verifikasi'
+const SEED_UJI = hashSeed('ujian', NAMA_UJI)
+
 function mainkanSatuPasien(): GameState {
-  let s = buildInitialState('Uji Verifikasi', 4242, PACK, { mode: 'ujian' })
+  let s = buildInitialState(NAMA_UJI, SEED_UJI, PACK, { mode: 'ujian' })
   s = run(s, { type: 'BACA_SURAT', suratId: 'surat_1_0' })
   s = run(s, { type: 'PINDAH_LAYAR', layar: 'peta' }, true) // ditolak H1 — sengaja
   s = run(s, { type: 'PINDAH_LAYAR', layar: 'klinik' })
@@ -134,6 +139,26 @@ describe('M6 — verifikasi dossier', () => {
     const dossier = await susunDossier(dipangkas, PACK, { versiApp: V_APP })
     const hasil = await verifikasiDossier(JSON.stringify(dossier), PACK, V_APP)
     expect(hasil.status).toBe('tidak_sah')
+  })
+
+  it('nama ujian DIPALSUKAN (seed dari nama lama) + ttd VALID → ikatan identitas putus → TIDAK SAH (CODEX P1)', async () => {
+    const s = mainkanSatuPasien()
+    // Penyerang ganti nama tampilan tapi seed tetap (diturunkan dari nama asli);
+    // susunDossier menghasilkan ttd yang sah utk objek palsu ini (kunci di tangan).
+    const palsu: GameState = { ...s, namaDokter: 'Nama Palsu' }
+    const dossier = await susunDossier(palsu, PACK, { versiApp: V_APP })
+    const hasil = await verifikasiDossier(JSON.stringify(dossier), PACK, V_APP)
+    expect(hasil.status).toBe('tidak_sah')
+    expect(hasil.alasan.join(' ')).toMatch(/[Ii]dentitas/)
+  })
+
+  it('paketUjian DIPALSUKAN + ttd dihitung ulang → replay tak cocok → TIDAK SAH (CODEX P1)', async () => {
+    const s = mainkanSatuPasien()
+    const palsu: GameState = { ...s, paketUjian: s.paketUjian === 'paket_a' ? 'paket_b' : 'paket_a' }
+    const dossier = await susunDossier(palsu, PACK, { versiApp: V_APP }) // ttd VALID
+    const hasil = await verifikasiDossier(JSON.stringify(dossier), PACK, V_APP)
+    expect(hasil.status).toBe('tidak_sah')
+    expect(hasil.alasan.join(' ')).toMatch(/[Pp]aket/)
   })
 
   it('file diedit tangan TANPA ttd baru → gagal di tanda tangan → TIDAK SAH', async () => {

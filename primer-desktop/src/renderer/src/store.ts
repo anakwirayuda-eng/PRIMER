@@ -76,8 +76,13 @@ export const useGame = create<GameStore>((set, get) => ({
   sedangMemuat: false,
 
   mulaiGameBaru: (namaDokter: string, mode: ModeStase = 'karier') => {
-    const seed = hashSeed(namaDokter, Date.now())
-    // M4.5: mode 'ujian' memilih paket kurikulum dari seed (docs/M45_MODE_UJIAN.md).
+    // Anti-reroll paket (CODEX P1): di mode UJIAN seed diturunkan DETERMINISTIK
+    // dari nama/NIM saja — restart dgn identitas sama = paket & wajah pasien
+    // IDENTIK, jadi memulai ulang tak bisa dipakai "memancing" paket favorit
+    // (kunci walkthrough beredar per paket). Instruktur menetapkan identitas
+    // (NIM) → paket per mahasiswa terkendali & tak bisa diakali. Mode KARIER
+    // (tak dinilai) tetap memakai Date.now agar tiap main variatif.
+    const seed = mode === 'ujian' ? hashSeed('ujian', namaDokter) : hashSeed(namaDokter, Date.now())
     const state = buildInitialState(namaDokter, seed, PACK, { mode })
     set({ state, arsip: null, lastEvents: [], eventTick: 0 })
     void get().simpan()

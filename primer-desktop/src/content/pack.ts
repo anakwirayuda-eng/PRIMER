@@ -57,6 +57,12 @@ export function validasiPack(pack: ContentPack): string[] {
     for (const l of k.lab) {
       if (!pack.lab[l.id]) masalah.push(`Kasus ${k.id}: lab '${l.id}' tidak ada di katalog`)
     }
+    // Edukasi WAJIB tak boleh kosong (CODEX P3): skorEdukasi memberi 100 bila
+    // target 0 (kasus tanpa edukasi wajib) → celah auto-nilai. Setiap kasus
+    // klinis harus punya ≥1 topik edukasi relevan.
+    if (k.tatalaksana.edukasi.length === 0) {
+      masalah.push(`Kasus ${k.id}: daftar edukasi wajib KOSONG (min 1 topik)`)
+    }
     for (const e of k.tatalaksana.edukasi) {
       if (!pack.edukasi[e]) masalah.push(`Kasus ${k.id}: edukasi '${e}' tidak ada di katalog`)
     }

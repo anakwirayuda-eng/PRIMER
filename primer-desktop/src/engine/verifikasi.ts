@@ -18,6 +18,7 @@ import { buildInitialState } from './init'
 import { advance } from './reducer'
 import { hitungSkor } from './scoring'
 import { hitungBadge } from './badge'
+import { hashSeed } from './core/rng'
 
 /* ---------------------------------------------------------------------------
  * Format dossier
@@ -90,25 +91,57 @@ function fnv1a(teks: string): string {
  * Revisi SEMANTIK engine — naikkan setiap kali aturan skor/replay berubah
  * (dossier lama vs engine baru harus jatuh ke "tidak dapat diverifikasi",
  * bukan divonis TIDAK SAH palsu). Riwayat: 1 = M6 awal; 2 = M7 kuota edukasi
- * KAPASITAS_EDUKASI + formula prioritisasi min(3,|wajib|) − 15×salah.
+ * KAPASITAS_EDUKASI + formula prioritisasi min(3,|wajib|) − 15×salah;
+ * 3 = sidik jari konten sensitif-isi + ikatan identitas ujian (CODEX P1).
  */
-const REVISI_ENGINE = 2
+const REVISI_ENGINE = 3
 
 /**
- * Sidik jari konten + revisi engine: semua yang mempengaruhi replay. Beda
+ * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
  * antar-build → replay bisa melenceng → verifier menolak MEMVONIS
- * (status tidak_dapat_diverifikasi), bukan memvonis TIDAK SAH.
+ * (status tidak_dapat_diverifikasi), bukan memvonis TIDAK SAH palsu.
+ *
+ * CODEX P1: versi lama hanya me-list ID → mengubah clue/harga/tatalaksana/lab
+ * tanpa mengubah ID TIDAK terdeteksi, padahal itu mengubah hasil replay. Kini
+ * ISI yang menentukan skor ikut di-hash: per-kasus (icd10/harusDirujuk/prb/
+ * tatalaksana/alergiTrap/lab/anamnesis-esensial), per-obat (harga/golongan
+ * alergi/antibiotik/kelas), per-lab, IGD, dan pemetaan skdi144.
  */
 export function sidikJariPack(pack: ContentPack): string {
+  const kasus = Object.values(pack.kasus)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((k) =>
+      stringifyKanonik({
+        id: k.id,
+        icd: k.icd10,
+        rujuk: k.harusDirujuk ?? false,
+        trap: k.alergiTrap ?? null,
+        tx: k.tatalaksana,
+        lab: k.lab,
+        esensial: k.anamnesis.filter((q) => q.esensial).map((q) => q.id).sort(),
+      }),
+    )
+  const obat = Object.values(pack.obat)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((o) =>
+      stringifyKanonik({ id: o.id, beli: o.hargaBeli, jual: o.hargaJual, gol: o.golonganAlergi ?? null, ab: o.antibiotik ?? false, kelas: o.kelas }),
+    )
+  const lab = Object.values(pack.lab)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((l) => stringifyKanonik({ id: l.id, biaya: l.biaya, besok: l.hasilBesok ?? false }))
+  const igd = Object.keys(pack.kasusIgd).sort()
+  const skdi = [...pack.skdi144]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((e) => `${e.id}:${e.icd10}:${(e as { kasusId?: string }).kasusId ?? ''}`)
   const daftar = [
     'engine', String(REVISI_ENGINE),
-    'kasus', ...Object.keys(pack.kasus).sort(),
-    'igd', ...Object.keys(pack.kasusIgd).sort(),
-    'obat', ...Object.keys(pack.obat).sort(),
+    'kasus', ...kasus,
+    'obat', ...obat,
+    'lab', ...lab,
+    'igd', ...igd,
     'edukasi', ...Object.keys(pack.edukasi).sort(),
-    'lab', ...Object.keys(pack.lab).sort(),
     'keluarga', ...Object.keys(pack.keluarga).sort(),
-    'skdi', String(pack.skdi144.length),
+    'skdi', ...skdi,
   ]
   return fnv1a(daftar.join('|'))
 }
@@ -240,6 +273,21 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
     }
   }
 
+  /* 3b — IKATAN IDENTITAS (CODEX P1, mode UJIAN): seed ujian diturunkan
+     deterministik dari nama (store.mulaiGameBaru). Bila nama di dossier diubah
+     tapi seed tidak (atau sebaliknya), ikatan putus → identitas dipalsukan.
+     Menutup celah "ganti nama/NIM lalu hitung ulang HMAC" untuk ujian
+     (identitas yang DINILAI). Dijalankan SETELAH sidik jari cocok (build sama,
+     skema seed sama) agar dossier build lama jatuh ke "tidak dapat diverifikasi"
+     lebih dulu, bukan divonis TIDAK SAH palsu. Karier tak terikat (tak dinilai). */
+  if (d.stase.mode === 'ujian' && hashSeed('ujian', d.identitas.namaDokter) !== d.stase.seed) {
+    return {
+      status: 'tidak_sah',
+      alasan: ['Identitas tidak konsisten: seed ujian tidak cocok dengan nama pada dossier (kemungkinan nama/NIM diubah setelah stase).'],
+      ringkasan,
+    }
+  }
+
   /* 4 — jejak utuh */
   if (d.jejak.length === 0) {
     return {
@@ -267,6 +315,14 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
   }
   if (akhir.hari !== d.stase.hari) {
     alasan.push(`Hari hasil replay (${akhir.hari}) ≠ klaim (${d.stase.hari}).`)
+  }
+  // Paket ujian diturunkan replay dari seed — klaim paket/seedKurikulum yang
+  // dipalsukan (CODEX P1) tak akan cocok dgn hasil replay (buildInitialState).
+  if ((akhir.paketUjian ?? undefined) !== (d.stase.paketUjian ?? undefined)) {
+    alasan.push(`Paket ujian hasil replay (${akhir.paketUjian ?? '—'}) ≠ klaim (${d.stase.paketUjian ?? '—'}).`)
+  }
+  if (akhir.seedKurikulum !== d.stase.seedKurikulum) {
+    alasan.push(`Seed kurikulum hasil replay (${akhir.seedKurikulum}) ≠ klaim (${d.stase.seedKurikulum}).`)
   }
   if (stringifyKanonik(akhir.tamat) !== stringifyKanonik(d.stase.tamat)) {
     alasan.push('Status tamat hasil replay tidak sama dengan klaim.')
