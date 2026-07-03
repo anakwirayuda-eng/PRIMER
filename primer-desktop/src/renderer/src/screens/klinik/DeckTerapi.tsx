@@ -108,6 +108,11 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
             className={`klinik-deck__tab-tombol${tab === 'edukasi' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
             onClick={() => setTab('edukasi')}
           >
+            {/* Titik kunyit = pengingat baki masih kosong (playtest: tab tak terlihat).
+                Status milik pemain sendiri — bukan petunjuk isi kasus (anti-bocor). */}
+            {enc.edukasi.length === 0 && tab !== 'edukasi' && (
+              <span className="klinik-deck__tab-titik" aria-hidden="true" />
+            )}
             Edukasi ({enc.edukasi.length}/{KAPASITAS_EDUKASI})
           </button>
         </div>
@@ -295,9 +300,15 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
         >
           Selesai Terapi &mdash; ke Disposisi &rarr;
         </button>
-        <span className="teks-xs teks-lembut">
-          Resep masih bisa dicoret dari lembar (kolom P) sebelum pasien pulang.
-        </span>
+        {enc.edukasi.length === 0 ? (
+          <button className="teks-xs klinik-deck__footer-ingat" onClick={() => setTab('edukasi')}>
+            💬 Pasien belum diedukasi &mdash; buka tab <strong>Edukasi (0/{KAPASITAS_EDUKASI})</strong>; konseling ikut dinilai.
+          </button>
+        ) : (
+          <span className="teks-xs teks-lembut">
+            Resep masih bisa dicoret dari lembar (kolom P) sebelum pasien pulang.
+          </span>
+        )}
       </footer>
     </>
   )

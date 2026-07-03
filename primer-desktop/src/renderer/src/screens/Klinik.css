@@ -898,3 +898,28 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
+
+/* Diskoverabilitas tab Edukasi (playtest: "kok hilang?") — titik kunyit saat
+   baki kosong + pengingat footer yang bisa diklik. */
+.klinik-deck__tab-titik {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: var(--sp-1);
+  border-radius: 50%;
+  background: var(--kunyit-600);
+  animation: eduk-titik-denyut 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes eduk-titik-denyut {
+  from { transform: scale(1); opacity: 0.75; }
+  to { transform: scale(1.25); opacity: 1; }
+}
+
+.klinik-deck__footer-ingat {
+  color: var(--kunyit-700);
+  text-align: center;
+  cursor: pointer;
+}
+
+.klinik-deck__footer-ingat:hover { text-decoration: underline; }
