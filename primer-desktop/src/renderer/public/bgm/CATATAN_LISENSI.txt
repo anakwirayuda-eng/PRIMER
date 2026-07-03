@@ -1,0 +1,25 @@
+CATATAN LISENSI MUSIK LATAR (BGM) — WAJIB DIBACA SEBELUM DISTRIBUSI
+====================================================================
+
+Berkas musik di folder ini adalah koleksi pribadi pengembang yang
+dipindahkan dari repo lama (public/audio) atas permintaan pengembang,
+untuk pemakaian pribadi selama pengembangan/playtest internal:
+
+  arni_home / arni_another        — OST Chrono Cross (Yasunori Mitsuda)
+  guldove_home / guldove_another  — OST Chrono Cross (Yasunori Mitsuda)
+  balamb_garden / blue_fields /
+  fishermans_horizon              — OST Final Fantasy VIII (Nobuo Uematsu)
+
+Seluruhnya adalah karya berhak-cipta Square Enix. TIDAK ADA lisensi
+distribusi. Konsekuensi:
+
+  1. JANGAN mendistribusikan installer yang memuat berkas-berkas ini ke
+     mahasiswa/publik (kelas ±September 2026) — ganti dulu dengan musik
+     berlisensi (royalty-free/CC/karya komisi) bernuansa serupa.
+  2. Pemetaan konteks ada di src/renderer/src/audio/bgm.ts (konstanta
+     TRACK) — mengganti musik cukup menaruh berkas baru di folder ini
+     dan menyunting nama berkas di satu tempat itu.
+  3. Butir QA M7 (ROADMAP 36) mencakup pemeriksaan ulang folder ini
+     sebelum rilis kelas.
+
+Ditulis otomatis saat integrasi BGM, 2026-07-03.

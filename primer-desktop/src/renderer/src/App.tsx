@@ -18,6 +18,7 @@ import { LaporanAkhir } from './screens/LaporanAkhir'
 import { Hud } from './components/Hud'
 import { Toaster } from './components/Toaster'
 import { useAudio } from './audio/useAudio'
+import { useBgm } from './audio/bgm'
 import { MuteButton } from './audio/MuteButton'
 import './App.css'
 
@@ -26,6 +27,7 @@ export default function App() {
   const muatAutosave = useGame((s) => s.muatAutosave)
   const muatMetaDanSlot = useGame((s) => s.muatMetaDanSlot)
   useAudio()
+  useBgm()
 
   useEffect(() => {
     // Coba lanjutkan autosave saat boot (layar judul tetap yang memutuskan);

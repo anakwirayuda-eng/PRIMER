@@ -255,6 +255,17 @@ anamnesis branching + axis penilaian konseling (KB).
     kecepatan animasi.
 32. **Juice pass**: transisi layar, stempel fisik lebih berat, kertas bergeser,
     BGM adaptif per blok; ilustrasi rumah unik per keluarga.
+    *BGM SELESAI duluan 2026-07-03 (permintaan user — regresi dari koleksi
+    musik repo lama)*: 7 track `public/audio` lama → `renderer/public/bgm`,
+    pemutar `audio/bgm.ts` (loop + crossfade + ikut tombol bisu + retry
+    autoplay), peta konteks: title=arni_home, pagi-klinik=guldove_home
+    (desa penyembuh!), siang=blue_fields, sore=fishermans_horizon,
+    igd=guldove_another, laporan=balamb_garden.
+    ⚠️ **LISENSI**: track = OST Chrono Cross/FF8 (Square Enix, koleksi
+    pribadi user) — SAH untuk playtest internal, WAJIB DIGANTI musik
+    berlisensi sebelum distribusi kelas (lihat
+    `renderer/public/bgm/CATATAN_LISENSI.txt`; ganti = tukar file +
+    sunting konstanta TRACK di bgm.ts).
 33. **Packaging**: `electron-builder` → installer Windows (NSIS) + ikon + auto-update
     opsional; uji di lab FK (spek rendah).
 34. **Aksesibilitas**: navigasi keyboard penuh, kontras AA, reduce-motion.
@@ -350,6 +361,8 @@ anamnesis branching + axis penilaian konseling (KB).
     duplikasi di menu Tentang).
 36. **QA akhir**: playtest 5–10 mahasiswa, profil adversarial diperluas (port 7 profil
     lama sebagai kontrak formula), soak test 90 hari headless.
+    **CHECKLIST WAJIB pra-distribusi**: ganti BGM Square Enix dengan musik
+    berlisensi (butir 32 — installer TIDAK BOLEH memuat track OST komersial).
 
 ## M8 — Arena (pasca-rilis, app terpisah)
 
