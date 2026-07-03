@@ -245,6 +245,20 @@ anamnesis branching + axis penilaian konseling (KB).
     `docs/DEEPTHINK_EDUKASI_UX.md` (opsi O1–O6, Q1–Q6; kecondongan kami:
     taksonomi konten + grup/cari/reposisi murni-UI di M7-awal, perubahan
     konstruk skor pasca-playtest).
+34c. **Audit total "bahasa pasien"** (permintaan playtest 2026-07-03, KERJAKAN
+    DI M7 sebelum QA butir 36): telaah SEMUA string jawaban pasien — `jawab` +
+    `variasi` 6 persona di 72 kasus (poli+IGD) + dialog kunjungan/wawancara —
+    apakah masuk akal sebagai ucapan pasien sungguhan (register awam, bukan
+    jargon dokter). Contoh temuan pemicu: urtikaria `kasusKulit.ts:403` varian
+    `terpelajar` bicara "wheal eritematosa… evanescent" — persona terpelajar =
+    awam berpendidikan (menyebut "biduran", "kayak bentol digigit ulat, hilang
+    sendiri"), BUKAN kolega dermatologi. Heuristik audit: istilah Latin/Inggris
+    klinis (wheal, eritematosa, evanescent, dispnea, epigastrium, dsb.) hanya
+    boleh muncul di teks dokter (temuan fisik/clue/edukasi), tidak di mulut
+    pasien; kecurigaan ekstra pada varian `terpelajar` (paling rawan bocor) dan
+    jawaban hasil salin-tempel dari clue. Metode: sapu per-file konten (solo,
+    satu-satu), perbaiki in-place, lalu tambah catatan gaya di kontrak konten
+    (`types.ts` doc-comment `variasi`) agar konten baru tidak mengulang.
 35. **Layar Kredit & Tentang**: identitas ITS MEDICS + HKI (sudah di layar judul;
     duplikasi di menu Tentang).
 36. **QA akhir**: playtest 5–10 mahasiswa, profil adversarial diperluas (port 7 profil
