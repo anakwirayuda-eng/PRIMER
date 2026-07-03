@@ -656,3 +656,26 @@ save di `%APPDATA%\primer-desktop` (progres developer sungguhan).
 auditor eksternal · DeepThink reviewer strategis). Hak Cipta terdaftar: Surat
 Pencatatan Ciptaan Kemenkumham RI No. EC002026019623, Nomor Pencatatan
 001104039 — © 2026 Anak Agung Bagus Wirayuda MD PhD.*
+
+---
+
+## 9. RESPONS BUILDER — ronde audit 2026-07-04 (jangan re-report tanpa regresi)
+
+CODEX mengembalikan 9 temuan atas dossier ini. Triase & tindakan (commit
+`c088bf5` integritas + `80c9e54` security/UX/kontras):
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | Reroll paket ujian (seed dari Date.now) | ✅ FIX: mode ujian seed = `hashSeed('ujian', nama)` deterministik (store.ts) — restart tak bisa memancing paket; karier tetap variatif |
+| 2 | Engine terima aksi klinik lompat-fase via dispatch manual | ⏸ DICATAT: engine permisif by-design (invariant "UI membatasi"); skor merefleksikan kerja yang dilewati; exploit praktis butuh DevTools → dinetralkan #5. Guard fase penuh di engine = follow-up (butuh rewrite `clinic.test` yang sengaja permisif) |
+| 3 | `sidikJariPack` tak sensitif isi (clue/harga/tatalaksana) | ✅ FIX: kini hash ISI penentu skor per kasus/obat/lab/IGD/skdi (verifikasi.ts); REVISI_ENGINE 2→3 |
+| 4 | Identitas/paket bisa dipalsu bila HMAC dihitung ulang | ✅ FIX (sebagian): ikatan nama→seed ujian + banding paketUjian/seedKurikulum hasil replay → swap nama/paket ketahuan. NIM murni (tak memengaruhi replay) tetap tak terikat kriptografis — kontrol prosedural dosen (dokumentasi M6) |
+| 5 | DevTools produksi belum dimatikan | ✅ FIX: blokir F12/Ctrl+Shift+I/J/C + hard-reload, tolak devtools-opened, `Menu.setApplicationMenu(null)`; gated `!DEV` (main/index.ts) |
+| 6 | Jalan buntu diagnosis (lewati → disposisi disable) | ✅ FIX: tombol "lewati tanpa diagnosis" dihapus; nota SUSPEK (DeckDiagnosis.tsx) |
+| 7 | Kontras rendah aksen mode gelap | ✅ FIX: remap aksen malam terang ≥5.5:1, chip latar-gelap, tombol teks-gelap, title selalu 'pagi' (tokens/base.css, App.tsx) |
+| 8 | Nol test UI komponen | ⏸ DIAKUI gap tracked (butuh harness jsdom+RTL; follow-up terpisah) |
+| 9 | Celah laten edukasi kosong | ✅ FIX: `validasiPack` tolak edukasi wajib kosong (pack.ts) |
+
+Guard test baru: deteksi swap-nama & swap-paket dossier (m6verifikasi.test.ts).
+Sisa yang SENGAJA ditunda (butuh keputusan/effort lebih): #2 engine phase-guard,
+#8 UI component test harness. 199 test hijau, tsc 0, build OK.
