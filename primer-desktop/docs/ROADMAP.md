@@ -233,6 +233,18 @@ anamnesis branching + axis penilaian konseling (KB).
 33. **Packaging**: `electron-builder` → installer Windows (NSIS) + ikon + auto-update
     opsional; uji di lab FK (spek rendah).
 34. **Aksesibilitas**: navigasi keyboard penuh, kontras AA, reduce-motion.
+    *Sebagian sudah beres 2026-07-03 (commit `e80fd43`, triase CODEX UI + bug
+    playtest mode malam)*: color re-anchor `.app-frame` (tinta pagi di panel
+    malam 1.24:1 → 14:1), glow kertas varian malam, token kunyit-700/daun-700/
+    tinta-pudar ≥4.5:1, disclaimer title dibesarkan, gerbang global
+    `prefers-reduced-motion`. **Sisa M7**: night-comfort toggle terpisah dari
+    blok sore (CODEX P3), font kecil peta/kunjungan/dex (P3), headroom
+    1200×760 + skala OS (P2 — diterima sbg batas desain, uji di lab FK).
+34b. **UX Edukasi Pasien** — tembok 38 chip (keluhan playtest + CODEX P2 panel
+    5758px). MENUNGGU verdikt DeepThink: dossier lengkap di
+    `docs/DEEPTHINK_EDUKASI_UX.md` (opsi O1–O6, Q1–Q6; kecondongan kami:
+    taksonomi konten + grup/cari/reposisi murni-UI di M7-awal, perubahan
+    konstruk skor pasca-playtest).
 35. **Layar Kredit & Tentang**: identitas ITS MEDICS + HKI (sudah di layar judul;
     duplikasi di menu Tentang).
 36. **QA akhir**: playtest 5–10 mahasiswa, profil adversarial diperluas (port 7 profil
