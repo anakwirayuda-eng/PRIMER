@@ -6,6 +6,7 @@
 
 import { useMemo, useState } from 'react'
 import { PACK } from '@content/index'
+import { useGame } from '../../store'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
@@ -20,6 +21,8 @@ interface Props {
 
 export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
   const [cari, setCari] = useState('')
+  // M4.18 — stok gudang tampil di formularium; habis = tombol resep terkunci.
+  const stok = useGame((s) => s.state?.gudang.stok)
 
   const daftarObat = useMemo(() => {
     const q = cari.trim().toLowerCase()
@@ -74,6 +77,8 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
             ) : (
               daftarObat.map((o) => {
                 const diresepkan = enc.resep.includes(o.id)
+                const sisa = stok?.[o.id]
+                const habis = sisa !== undefined && sisa <= 0
                 return (
                   <div key={o.id} className="klinik-obat__baris">
                     <div className="tumbuh">
@@ -82,6 +87,11 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
                         {o.antibiotik === true && (
                           <span className="chip chip--kunyit">Antibiotik</span>
                         )}
+                        {habis ? (
+                          <span className="chip chip--merah">HABIS</span>
+                        ) : sisa !== undefined && sisa <= 3 ? (
+                          <span className="chip chip--kunyit">sisa {sisa}</span>
+                        ) : null}
                       </div>
                       <div className="teks-xs teks-lembut">
                         {o.sediaan} &middot; {o.kelas}
@@ -91,10 +101,16 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
                     <button
                       className="tombol klinik-obat__tambah"
                       onClick={() => dispatch({ type: 'TAMBAH_OBAT', obatId: o.id })}
-                      disabled={diresepkan}
-                      title={diresepkan ? 'Sudah ada di resep.' : `Tambahkan ${o.nama} ke resep.`}
+                      disabled={diresepkan || habis}
+                      title={
+                        diresepkan
+                          ? 'Sudah ada di resep.'
+                          : habis
+                            ? 'Stok habis — pesan lewat Gudang Obat (Meja Kerja) atau pilih alternatif.'
+                            : `Tambahkan ${o.nama} ke resep.`
+                      }
                     >
-                      {diresepkan ? '✓' : '+ Resep'}
+                      {diresepkan ? '✓' : habis ? '✕' : '+ Resep'}
                     </button>
                   </div>
                 )

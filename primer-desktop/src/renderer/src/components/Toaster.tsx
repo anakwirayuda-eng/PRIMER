@@ -37,6 +37,8 @@ function eventKeToast(e: GameEvent): Toast | null {
         teks: `Kegiatan selesai — ${e.hasil.benar}/${e.hasil.total} tepat`,
         nada: e.hasil.skor >= 0.6 ? 'sukses' : 'info',
       }
+    case 'PEMULIHAN_SELESAI':
+      return { id, teks: e.narasi, nada: 'sukses' }
     case 'SURAT_MASUK':
       return { id, teks: `Surat baru: ${e.surat.judul}`, nada: 'info' }
     default:

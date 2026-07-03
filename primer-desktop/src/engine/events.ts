@@ -29,5 +29,6 @@ export type GameEvent =
   | { type: 'IGD_TIBA'; narasi: string }
   | { type: 'KODE_HITAM'; narasi: string }
   | { type: 'DEX_BERTAMBAH'; kasusId: string; bintang: number }
+  | { type: 'PEMULIHAN_SELESAI'; jenis: 'istirahat' | 'olahraga' | 'keluarga'; narasi: string }
   | { type: 'TAMAT'; grade: string }
   | { type: 'ERROR_AKSI'; pesan: string }

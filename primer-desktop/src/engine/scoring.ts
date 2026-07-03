@@ -71,12 +71,17 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
 
   /* -- Manajemen (0-15): stewardship lab/antibiotik + kesehatan kapitasi ------ */
   // rujukanDitolak = churn administratif jejaring (salah RS / bed / kasus FKTP).
+  // M4: teguran Dinkes (laporan bulanan defisit) & hasil akreditasi D60 ikut.
+  const efekAkreditasi =
+    state.akreditasi === 'paripurna' ? 1.5 : state.akreditasi === 'utama' ? 0.5 : state.akreditasi === 'madya' ? -1.5 : 0
   const manajemen = clamp(
     15 -
       0.5 * t.labTakRelevan -
       1 * t.antibiotikTanpaIndikasi -
       0.5 * t.rujukanDitolak -
-      (state.kapitasi < 10_000_000 ? 3 : 0),
+      1 * t.teguranDinkes -
+      (state.kapitasi < 10_000_000 ? 3 : 0) +
+      efekAkreditasi,
     0,
     15,
   )

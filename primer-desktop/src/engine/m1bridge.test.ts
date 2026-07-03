@@ -235,8 +235,10 @@ describe('M1.5 — KBK kapitasi bulanan', () => {
     const suratKbk = s.inbox.filter((m) => m.dari === 'BPJS Kesehatan')
     expect(suratKbk).toHaveLength(1)
     expect(suratKbk[0]!.judul).toContain('Kapitasi bulan ini')
-    // Kapitasi bertambah minimal 6jt×0.8 (pengali terburuk), dikurangi biaya lab 0 (tanpa main klinik).
-    expect(s.kapitasi).toBeGreaterThanOrEqual(sebelum + 4_800_000)
+    // Kapitasi bertambah minimal 6jt×0.8 (pengali terburuk) MINUS operasional
+    // bulanan M4.19 (2,5jt) — laporan bulanan kini satu paket dengan gajian KBK.
+    expect(s.kapitasi).toBeGreaterThanOrEqual(sebelum + 4_800_000 - 2_500_000)
+    expect(s.inbox.some((m) => m.judul.includes('Laporan keuangan bulanan'))).toBe(true)
   })
 })
 

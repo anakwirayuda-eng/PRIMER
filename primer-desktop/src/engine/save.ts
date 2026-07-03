@@ -63,9 +63,13 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   const tally = st['tally'] as Record<string, unknown>
   // Migrasi-lite: field tally baru diisi 0 untuk save dari versi lebih lama.
   if (tally['autoBermasalah'] === undefined) tally['autoBermasalah'] = 0
-  for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas', 'rujukanTepat', 'rujukanDitolak', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal'] as const) {
+  for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas', 'rujukanTepat', 'rujukanDitolak', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'rmLengkap', 'teguranDinkes'] as const) {
     if (tally[kunci] === undefined) tally[kunci] = 0
   }
+  // Migrasi-lite M4: gudang & buku kas untuk save pra-ekonomi. Stok kosong =
+  // tidak dilacak (gerbang stok lolos); backfill penuh dilakukan bila pack ada.
+  if (!objek(st['gudang'])) st['gudang'] = { stok: {}, pesanan: [] }
+  if (!objek(st['keuanganBulan'])) st['keuanganBulan'] = { belanjaObat: 0, belanjaPengadaan: 0 }
   if (typeof st['igdHariIni'] !== 'boolean') st['igdHariIni'] = false
   for (const nilai of Object.values(tally)) {
     if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) return null
@@ -94,6 +98,17 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (Array.isArray(klinik['antrian'])) {
     for (const p of klinik['antrian'] as Record<string, unknown>[]) {
       if (typeof p['rw'] !== 'number') p['rw'] = 1
+    }
+  }
+
+  // Backfill gudang M4 utk save lama: stok kosong diisi baseline 12/obat agar
+  // mekanik pengadaan hidup juga di save pra-M4 (butuh pack utk daftar obat).
+  if (pack) {
+    const gudang = st['gudang'] as { stok: Record<string, number> }
+    if (Object.keys(gudang.stok).length === 0) {
+      const stok: Record<string, number> = {}
+      for (const id of Object.keys(pack.obat)) stok[id] = 12
+      gudang.stok = stok
     }
   }
 

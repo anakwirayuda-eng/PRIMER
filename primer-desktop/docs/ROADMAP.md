@@ -118,16 +118,32 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
     kontrol, pancaroba → ISPA) + hari kesehatan nasional sebagai surat/event; kasus
     gigi dasar (port `DentalDiagnosisEngine` FDI/DMFT) opsional di ekor M3.
 
-## M4 — Ekonomi & Manajemen Bergigi
+## M4 — Ekonomi & Manajemen Bergigi ✅ (selesai 2026-07-03, 4/4 butir penuh)
 
-18. **Stok obat & pengadaan**: inventaris menipis, pemesanan supplier ber-lead-time,
-    stok habis = terapi terbatas (port disederhanakan — tanpa ERP-feel lama).
-19. **Laporan bulanan kapitasi**: pemasukan (kapitasi×KBK) − operasional; defisit
-    berbuntut teguran Dinkes (Manajemen).
-20. **Akreditasi D60**: visitasi yang mengaudit REKAM MEDISMU sendiri (kelengkapan
-    SOAP dari action-log) — temuan desk-sim yang disepakati juri.
-21. **Stamina/burnout lanjutan**: aktivitas pemulihan akhir pekan (sederhana, 1 pilihan
-    per Minggu), burnout memengaruhi kualitas auto-resolve.
+> Keputusan triangulasi: M4 TIDAK dipotong (rekomendasi DeepThink ditolak user).
+> 143 test hijau (+14 `m4ekonomi.test.ts`), verifikasi visual panel Gudang &
+> Pemulihan di preview.
+
+18. ✅ **Stok obat & pengadaan**: gudang melacak stok semua obat (awal 12/item —
+    fast mover terkuras ~2 pekan); resep mengonsumsi stok saat disposisi; stok 0
+    MEMBLOKIR resep (chip HABIS di formularium → pemain pilih alternatif terapi);
+    `PESAN_OBAT` 5-50 unit, lead time 3 hari, panel Gudang Obat di Meja Kerja
+    sore menampilkan yang menipis (≤5) + pesanan dalam pengiriman; surat farmasi
+    saat kiriman tiba & saat stok pertama kali menipis. Save lama: stok kosong =
+    tidak dilacak, backfill 12/obat saat load dgn pack.
+19. ✅ **Laporan bulanan kapitasi**: tiap gajian KBK (D31/D61) operasional
+    Rp 2,5 jt terpotong + surat Bendahara merinci pemasukan/belanja obat/
+    pengadaan/saldo; saldo < Rp 8 jt → surat TEGURAN Dinkes + tally
+    `teguranDinkes` (−1 manajemen per teguran); buku kas bulanan di-reset.
+20. ✅ **Akreditasi D60**: tally `rmLengkap` menghitung encounter dgn SOAP utuh
+    (4 fase ≥50); D50 surat pemberitahuan visitasi; D60 hasil dari rasio
+    rmLengkap/totalPasien → PARIPURNA ≥75% (+1.5 manajemen) / UTAMA ≥55%
+    (+0.5) / MADYA (−1.5) — mengaudit rekam medis yang benar-benar kamu tulis.
+21. ✅ **Stamina/burnout lanjutan**: aksi `PEMULIHAN` tiap hari ke-7 (blok siang,
+    memakai slot lapangan): istirahat total (burnout −12) / olahraga (−9 +
+    stamina +1 besok) / silaturahmi desa (−6, trust +1 semua binaan ber-arc
+    hidup); burnout kini menumpulkan insting auto-resolve (peluang pasien
+    terlewat bermasalah 0.25 → 0.45 pada burnout 100).
 
 ## M4.5 — Mode Ujian 30-Hari (keputusan triangulasi DeepThink Q1, 2026-07-03)
 

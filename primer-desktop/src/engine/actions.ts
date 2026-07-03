@@ -63,4 +63,8 @@ export type Action =
   | { type: 'RJP_IGD'; berkualitas: boolean } // pilihan Kode Biru
   | { type: 'DISPOSISI_IGD'; jenis: 'rujuk' | 'pulang'; rumahSakitId?: string }
 
+  /* -- M4: ekonomi & manajemen bergigi ------------------------------------------ */
+  | { type: 'PESAN_OBAT'; obatId: string; jumlah: number } // pengadaan, lead time 3 hari
+  | { type: 'PEMULIHAN'; jenis: 'istirahat' | 'olahraga' | 'keluarga' } // akhir pekan
+
 export type ActionType = Action['type']

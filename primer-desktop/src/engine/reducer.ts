@@ -52,6 +52,12 @@ export const COOLDOWN_POSYANDU = 30
 export const BIAYA_STAMINA_KEGIATAN = 2
 /** Kapasitas roster keluarga binaan (M3c: 8 → 16 seiring 16 keluarga bernama). */
 export const MAKS_BINAAN = 16
+/** M4.18 — lead time pengadaan obat (hari). */
+export const LEAD_TIME_OBAT = 3
+/** M4.19 — biaya operasional bulanan Puskesmas (listrik, ATK, BBM ambulans...). */
+export const OPERASIONAL_BULANAN = 2_500_000
+/** M4.19 — ambang kas: di bawah ini laporan bulanan berbuntut teguran Dinkes. */
+export const AMBANG_TEGURAN_KAS = 8_000_000
 
 /** PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
  * menekan droplet/kronis-terdeteksi. Diekspor agar UI (Lokakarya "Triase
@@ -153,6 +159,17 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
     case 'HAPUS_EDUKASI': {
       const enc = s.klinik.aktif
       if (!enc) return err(s, 'Tidak ada pasien aktif.')
+      // M4.18 — gerbang stok: obat habis tak bisa diresepkan. Entri undefined =
+      // tidak dilacak (save lama) → lolos, mekanik hanya aktif utk stok terlacak.
+      if (action.type === 'TAMBAH_OBAT') {
+        const sisa = s.gudang.stok[action.obatId]
+        if (sisa !== undefined && sisa <= 0) {
+          return err(
+            s,
+            `Stok ${pack.obat[action.obatId]?.nama ?? action.obatId} HABIS — pesan lewat Gudang Obat (tiba 3 hari) atau pilih terapi alternatif.`,
+          )
+        }
+      }
       const kasus = pack.kasus[enc.pasien.kasusId]
       if (!kasus) return err(s, `Kasus ${enc.pasien.kasusId} tidak ditemukan.`)
       const rng = new Rng(s.seed, 'klinik', s.hari, s.log.length)
@@ -223,13 +240,25 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       if (nilai.antibiotikTanpaIndikasi) t.antibiotikTanpaIndikasi += 1
       t.labTakRelevan += nilai.labTakRelevan
 
-      // Ekonomi ringkas: BPJS bakar HPP obat, umum bayar harga jual
+      // Ekonomi ringkas: BPJS bakar HPP obat, umum bayar harga jual.
+      // M4.18/19: resep mengonsumsi stok gudang + tercatat di buku kas bulanan.
       let kapitasi = s.kapitasi
+      const stokBaru = { ...s.gudang.stok }
+      let belanjaObat = s.keuanganBulan.belanjaObat
       for (const obatId of encFinal.resep) {
         const o = pack.obat[obatId]
         if (!o) continue
         kapitasi += encFinal.pasien.bpjs ? -o.hargaBeli : o.hargaJual
+        if (encFinal.pasien.bpjs) belanjaObat += o.hargaBeli
+        if (stokBaru[obatId] !== undefined) stokBaru[obatId] = Math.max(0, stokBaru[obatId]! - 1)
       }
+      // M4.20 — rekam medis lengkap (bahan akreditasi D60): semua fase SOAP ≥50.
+      const rmLengkap =
+        nilai.skorAnamnesis >= 50 &&
+        nilai.skorPemeriksaan >= 50 &&
+        nilai.skorTerapi >= 50 &&
+        nilai.skorEdukasi >= 50
+      if (rmLengkap) t.rmLengkap += 1
 
       // Dex (Leitner-lite). "Menguasai" = diagnosis benar DAN disposisi tepat —
       // untuk kasus rujukan, kompetensinya memang "kenali & rujuk" (M3.13).
@@ -424,6 +453,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
         state: {
           ...s,
           kapitasi,
+          gudang: { ...s.gudang, stok: stokBaru },
+          keuanganBulan: { ...s.keuanganBulan, belanjaObat },
           tally: t,
           dex,
           jadwal,
@@ -777,6 +808,84 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       }
     }
 
+    /* -- M4: ekonomi & manajemen bergigi ---------------------------------------- */
+
+    case 'PESAN_OBAT': {
+      const obat = pack.obat[action.obatId]
+      if (!obat) return err(s, 'Obat tidak dikenal.')
+      if (s.gudang.stok[action.obatId] === undefined)
+        return err(s, 'Obat ini tidak dilacak gudang.')
+      const jumlah = Math.round(action.jumlah)
+      if (jumlah < 5 || jumlah > 50) return err(s, 'Jumlah pengadaan 5-50 unit per pesanan.')
+      const biaya = obat.hargaBeli * jumlah
+      if (s.kapitasi < biaya)
+        return err(s, `Kas tidak cukup — butuh Rp ${biaya.toLocaleString('id-ID')}.`)
+      if (s.gudang.pesanan.some((p) => p.obatId === action.obatId))
+        return err(s, `${obat.nama} sudah dalam pengiriman — tunggu tiba dulu.`)
+      const pesanan = {
+        id: `pesan_${s.hari}_${action.obatId}`,
+        obatId: action.obatId,
+        jumlah,
+        tibaHari: s.hari + LEAD_TIME_OBAT,
+        biaya,
+      }
+      return {
+        state: {
+          ...s,
+          kapitasi: s.kapitasi - biaya,
+          gudang: { ...s.gudang, pesanan: [...s.gudang.pesanan, pesanan] },
+          keuanganBulan: {
+            ...s.keuanganBulan,
+            belanjaPengadaan: s.keuanganBulan.belanjaPengadaan + biaya,
+          },
+        },
+        events: [],
+      }
+    }
+
+    case 'PEMULIHAN': {
+      // M4.21 — aktivitas pemulihan akhir pekan: tiap hari ke-7, memakai slot siang.
+      if (s.hari % 7 !== 0) return err(s, 'Pemulihan hanya di akhir pekan (tiap hari ke-7).')
+      if (s.blok !== 'siang') return err(s, 'Pemulihan mengisi blok siang.')
+      if (s.kegiatan || s.kunjungan || s.igd) return err(s, 'Sedang ada urusan berjalan.')
+      if (s.lapanganTerpakai || s.hasilKunjunganHariIni)
+        return err(s, 'Slot siang hari ini sudah terpakai.')
+
+      let burnout = s.burnout
+      let keluarga = s.desa.keluarga
+      const flags = { ...s.flags }
+      let narasi: string
+      if (action.jenis === 'istirahat') {
+        burnout = Math.max(0, burnout - 12)
+        narasi = 'Tidur siang panjang, teh hangat, dan tidak satu pun formulir. Kepala terasa ringan.'
+      } else if (action.jenis === 'olahraga') {
+        burnout = Math.max(0, burnout - 9)
+        flags['bonusStaminaBesok'] = true
+        narasi = 'Lari pagi keliling sawah sampai berkeringat. Besok badanmu punya tenaga ekstra.'
+      } else {
+        burnout = Math.max(0, burnout - 6)
+        // Silaturahmi: mampir tanpa agenda ke keluarga binaan — trust naik tipis.
+        keluarga = { ...keluarga }
+        for (const id of s.desa.binaan) {
+          const kel = keluarga[id]
+          if (kel && !kel.arcSelesai) keluarga[id] = { ...kel, trust: Math.min(10, kel.trust + 1) }
+        }
+        narasi = 'Keliling desa tanpa tas obat — cuma ngobrol dan minum teh. Warga melihatmu sebagai manusia, bukan seragam.'
+      }
+      return {
+        state: {
+          ...s,
+          burnout,
+          flags,
+          lapanganTerpakai: true,
+          pemulihanTerakhirHari: s.hari,
+          desa: { ...s.desa, keluarga },
+          layar: 'meja',
+        },
+        events: [{ type: 'PEMULIHAN_SELESAI', jenis: action.jenis, narasi }],
+      }
+    }
+
     default:
       return err(s, `Aksi tidak dikenal: ${(action as Action).type}`)
   }
@@ -885,11 +994,14 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
   if (s.blok === 'pagi') {
     // Sisa antrian di-auto-resolve oleh "instingmu" — dan yang bermasalah IKUT
     // menyeret akurasi (anti cherry-picking: melewatkan pasien bukan strategi gratis).
+    // M4.21: burnout menumpulkan insting — makin lelah, makin banyak yang lolos
+    // bermasalah (0.25 dasar → hingga 0.45 pada burnout 100).
     const sisa = s.klinik.antrian.length
     let bermasalah = 0
     if (sisa > 0) {
+      const pBermasalah = 0.25 + (s.burnout / 100) * 0.2
       const rng = new Rng(s.seed, 'auto', s.hari)
-      for (let i = 0; i < sisa; i++) if (rng.chance(0.25)) bermasalah += 1
+      for (let i = 0; i < sisa; i++) if (rng.chance(pBermasalah)) bermasalah += 1
     }
     return {
       state: {
@@ -927,7 +1039,10 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   const kelelahan = s.stamina === 0
   const burnout = Math.max(0, Math.min(100, s.burnout + (kelelahan ? 12 : -6)))
   const tally = { ...s.tally, hariKelelahan: s.tally.hariKelelahan + (kelelahan ? 1 : 0) }
-  const stamina = burnout >= 70 ? STAMINA_MAKS - 2 : burnout >= 40 ? STAMINA_MAKS - 1 : STAMINA_MAKS
+  let stamina = burnout >= 70 ? STAMINA_MAKS - 2 : burnout >= 40 ? STAMINA_MAKS - 1 : STAMINA_MAKS
+  // M4.21 — olahraga akhir pekan memberi tenaga ekstra keesokan hari.
+  const bonusStamina = s.flags['bonusStaminaBesok'] === true
+  if (bonusStamina) stamina += 1
 
   // Dex luntur (Leitner): bintang meluntur bila lama tak dilatih.
   // ★3 dibekukan — sekali benar-benar dikuasai, tidak dirampas waktu.
@@ -1134,21 +1249,114 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     )
   }
 
-  // KBK riil (M1.5): tiap awal bulan (hari 31, 61), kapitasi BPJS masuk dengan
-  // pengali Kapitasi Berbasis Komitmen dari IKS desa — kerja UKM terasa di dompet.
+  // KBK riil (M1.5) + LAPORAN BULANAN (M4.19): tiap awal bulan (hari 31, 61)
+  // kapitasi BPJS masuk ber-pengali KBK, biaya operasional dipotong, dan buku
+  // kas bulan lalu dilaporkan. Kas di bawah ambang → teguran Dinkes (Manajemen).
   let kapitasi = s.kapitasi
+  let keuanganBulan = s.keuanganBulan
   if (hari > 1 && hari % 30 === 1) {
     const rwBerdata = kaderHasil.rw.filter((r) => r.iks > 0)
     const iksDesa = rwBerdata.length > 0 ? rwBerdata.reduce((jml, r) => jml + r.iks, 0) / rwBerdata.length : 0
     const pengali = iksDesa > 0.8 ? 1.3 : iksDesa >= 0.5 ? 1.0 : 0.8
     const masukan = Math.round(6_000_000 * pengali)
-    kapitasi += masukan
+    kapitasi += masukan - OPERASIONAL_BULANAN
     suratBaru.push(
       buatSuratHarian(hari, suratBaru.length, {
         jenis: 'sistem',
         dari: 'BPJS Kesehatan',
         judul: `Kapitasi bulan ini: Rp ${masukan.toLocaleString('id-ID')} (KBK ×${pengali})`,
         isi: `Pembayaran kapitasi diterima. Pengali Kapitasi Berbasis Komitmen bulan ini ×${pengali} — ditentukan IKS desa binaanmu (${(iksDesa * 100).toFixed(0)}%). ${pengali < 1 ? 'IKS di bawah 0,5 memangkas pendapatan Puskesmas — kerja preventif di lapangan adalah kerja finansial juga.' : pengali > 1 ? 'IKS di atas 0,8 memberi bonus komitmen. Pertahankan.' : 'Naikkan IKS desa di atas 0,8 untuk pengali 1,3.'}`,
+      }),
+    )
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'sistem',
+        dari: 'Bendahara Puskesmas',
+        judul: `Laporan keuangan bulanan — saldo Rp ${kapitasi.toLocaleString('id-ID')}`,
+        isi:
+          `Rekap bulan lalu — Pemasukan kapitasi: Rp ${masukan.toLocaleString('id-ID')} (KBK ×${pengali}). ` +
+          `Belanja obat pasien JKN: Rp ${keuanganBulan.belanjaObat.toLocaleString('id-ID')}. ` +
+          `Pengadaan gudang: Rp ${keuanganBulan.belanjaPengadaan.toLocaleString('id-ID')}. ` +
+          `Operasional (listrik, ATK, BBM): Rp ${OPERASIONAL_BULANAN.toLocaleString('id-ID')}. ` +
+          `Saldo kas: Rp ${kapitasi.toLocaleString('id-ID')}. ${kapitasi < AMBANG_TEGURAN_KAS ? 'PERHATIAN: saldo di bawah ambang sehat — laporan ini diteruskan ke Dinkes.' : 'Kas sehat.'}`,
+      }),
+    )
+    if (kapitasi < AMBANG_TEGURAN_KAS) {
+      tally.teguranDinkes += 1
+      suratBaru.push(
+        buatSuratHarian(hari, suratBaru.length, {
+          jenis: 'teguran_kapus',
+          dari: 'Dinas Kesehatan Kabupaten',
+          judul: 'TEGURAN — kas Puskesmas di bawah ambang sehat',
+          isi: `Saldo kas Rp ${kapitasi.toLocaleString('id-ID')} berada di bawah ambang operasional aman (Rp ${AMBANG_TEGURAN_KAS.toLocaleString('id-ID')}). Periksa pola belanja obat & rujukan: stewardship yang buruk selalu tampak di pembukuan lebih dulu sebelum tampak di pasien. Teguran ini tercatat di penilaian manajemen.`,
+        }),
+      )
+    }
+    keuanganBulan = { belanjaObat: 0, belanjaPengadaan: 0 }
+  }
+
+  // M4.18 — pesanan obat tiba pagi ini: stok bertambah + surat penerimaan.
+  let gudang = s.gudang
+  const tiba = gudang.pesanan.filter((p) => p.tibaHari <= hari)
+  if (tiba.length > 0) {
+    const stokBaru = { ...gudang.stok }
+    for (const p of tiba) stokBaru[p.obatId] = (stokBaru[p.obatId] ?? 0) + p.jumlah
+    gudang = { stok: stokBaru, pesanan: gudang.pesanan.filter((p) => p.tibaHari > hari) }
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'sistem',
+        dari: 'Instalasi Farmasi',
+        judul: `Kiriman obat tiba — ${tiba.length} item`,
+        isi: `Pengadaan diterima pagi ini: ${tiba.map((p) => `${pack.obat[p.obatId]?.nama ?? p.obatId} ×${p.jumlah}`).join(', ')}. Stok gudang diperbarui.`,
+      }),
+    )
+  }
+  // Peringatan stok menipis — sekali saja saat pertama kali terjadi (anti-spam;
+  // pemantauan rutin lewat panel Gudang Obat di Meja Kerja).
+  if (!flags['suratStokMenipis']) {
+    const menipis = Object.entries(gudang.stok).filter(([, n]) => n <= 3)
+    if (menipis.length > 0) {
+      flags['suratStokMenipis'] = true
+      suratBaru.push(
+        buatSuratHarian(hari, suratBaru.length, {
+          jenis: 'teguran_kapus',
+          dari: 'Instalasi Farmasi',
+          judul: 'Stok obat menipis — mulai kelola gudang',
+          isi: `Beberapa obat tinggal ≤3 unit (${menipis.slice(0, 4).map(([id]) => pack.obat[id]?.nama ?? id).join(', ')}${menipis.length > 4 ? ', …' : ''}). Obat habis = terapi terbatas di poli. Pesan lewat panel Gudang Obat di Meja Kerja — kiriman supplier butuh ${LEAD_TIME_OBAT} hari. Dokter FKTP yang baik menghitung stok seperti menghitung dosis.`,
+        }),
+      )
+    }
+  }
+
+  // M4.20 — Akreditasi: pengumuman D50, visitasi D60 mengaudit REKAM MEDISMU
+  // sendiri (proporsi encounter dengan SOAP lengkap dari action-log/tally).
+  let akreditasi = s.akreditasi
+  if (hari === 50) {
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'sistem',
+        dari: 'Dinas Kesehatan Kabupaten',
+        judul: 'PEMBERITAHUAN — visitasi akreditasi hari ke-60',
+        isi: `Tim surveior akan menilai KELENGKAPAN REKAM MEDIS poli (anamnesis, pemeriksaan, terapi, edukasi — SOAP utuh, bukan sekadar diagnosis benar). Sepuluh hari lagi. Rekam medis yang kamu tulis sejak hari pertama adalah berkas ujiannya — tidak ada yang bisa dikebut semalam.`,
+      }),
+    )
+  }
+  if (hari === 60 && akreditasi === undefined) {
+    const rasio = tally.totalPasien > 0 ? tally.rmLengkap / tally.totalPasien : 0
+    akreditasi = rasio >= 0.75 ? 'paripurna' : rasio >= 0.55 ? 'utama' : 'madya'
+    const label = akreditasi.toUpperCase()
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: akreditasi === 'madya' ? 'teguran_kapus' : 'pujian_kapus',
+        dari: 'Ketua Tim Surveior Akreditasi',
+        judul: `HASIL AKREDITASI: ${label} (rekam medis lengkap ${(rasio * 100).toFixed(0)}%)`,
+        isi:
+          `Dari ${tally.totalPasien} pasien yang kamu tangani, ${tally.rmLengkap} rekam medisnya lengkap SOAP (${(rasio * 100).toFixed(0)}%). ` +
+          (akreditasi === 'paripurna'
+            ? 'Predikat PARIPURNA — dokumentasi klinismu layak jadi contoh puskesmas lain. Nilai manajemenmu terangkat.'
+            : akreditasi === 'utama'
+              ? 'Predikat UTAMA — solid, dengan ruang perbaikan pada kelengkapan edukasi & pemeriksaan.'
+              : 'Predikat MADYA — banyak rekam medis bolong. Rekam medis bukan formalitas: ia alat komunikasi antar-tenaga kesehatan dan pelindung hukummu sendiri. Nilai manajemen terpangkas.'),
       }),
     )
   }
@@ -1257,6 +1465,9 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
 
   for (const m of suratBaru) events.push({ type: 'SURAT_MASUK', surat: m })
 
+  // Bonus stamina olahraga (M4.21) hanya berlaku satu pagi.
+  if (bonusStamina) flags['bonusStaminaBesok'] = false
+
   return {
     state: {
       ...s,
@@ -1268,6 +1479,9 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       tally,
       dex,
       kapitasi,
+      gudang,
+      keuanganBulan,
+      ...(akreditasi !== undefined ? { akreditasi } : {}),
       jadwal: jadwalSisa,
       inbox: [...s.inbox, ...suratBaru],
       flags,

@@ -395,6 +395,10 @@ export interface SkorTally {
   /** Stabil tapi disposisi keliru (mis. kasus wajib-rujuk dipulangkan) — tidak dihargai skor. */
   igdSalahDisposisi: number
   igdMeninggal: number
+  /** M4.20 — Rekam medis lengkap (SOAP: semua fase ≥50) — pakan akreditasi D60. */
+  rmLengkap: number
+  /** M4.19 — Teguran Dinkes karena kas defisit di laporan bulanan. */
+  teguranDinkes: number
   /** Hari stamina habis total (pakan burnout/resiliensi). */
   hariKelelahan: number
   karmaTerjadi: number
@@ -491,6 +495,23 @@ export interface GameState {
 
   /** Kapitasi berjalan (Rp) — ekonomi ringkas slice. */
   kapitasi: number
+
+  /**
+   * M4.18 — Gudang obat: stok per obat id. Resep mengonsumsi stok saat
+   * disposisi; stok 0 memblokir TAMBAH_OBAT (pilih alternatif / pesan dulu).
+   * Obat tanpa entri = tidak dilacak (kompat save lama).
+   */
+  gudang: {
+    stok: Record<string, number>
+    /** Pengadaan berjalan — tiba di pagi hari `tibaHari` (lead time supplier). */
+    pesanan: { id: string; obatId: string; jumlah: number; tibaHari: number; biaya: number }[]
+  }
+  /** M4.19 — Buku kas bulan berjalan (reset tiap laporan bulanan D31/D61). */
+  keuanganBulan: { belanjaObat: number; belanjaPengadaan: number }
+  /** M4.20 — Hasil visitasi akreditasi D60 (dari kelengkapan rekam medis). */
+  akreditasi?: 'paripurna' | 'utama' | 'madya'
+  /** M4.21 — Hari pemulihan akhir pekan terakhir (sekali per pekan). */
+  pemulihanTerakhirHari?: number
 
   /** Refleksi malam yang ditulis pemain (per hari). */
   refleksi: Record<number, string>

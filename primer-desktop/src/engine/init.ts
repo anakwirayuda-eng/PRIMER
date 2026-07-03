@@ -47,6 +47,13 @@ function buatKeluargaState(id: string, pack: ContentPack): KeluargaState {
   }
 }
 
+/** M4.18 — stok awal gudang: 12 unit per obat formularium. */
+export function stokAwal(pack: ContentPack): Record<string, number> {
+  const stok: Record<string, number> = {}
+  for (const id of Object.keys(pack.obat)) stok[id] = 12
+  return stok
+}
+
 function suratSambutan(namaDokter: string): Surat[] {
   return [
     {
@@ -160,6 +167,8 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
       igdStabil: 0,
       igdSalahDisposisi: 0,
       igdMeninggal: 0,
+      rmLengkap: 0,
+      teguranDinkes: 0,
       hariKelelahan: 0,
       karmaTerjadi: 0,
       karmaDicegah: 0,
@@ -167,6 +176,10 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
     dex: {},
     log: [],
     kapitasi: 15_000_000,
+    // M4.18: stok awal seragam 12 per obat — fast mover (parasetamol, amoksisilin)
+    // terkuras dalam ~2 pekan → pemain belajar pengadaan; obat jarang awet.
+    gudang: { stok: stokAwal(pack), pesanan: [] },
+    keuanganBulan: { belanjaObat: 0, belanjaPengadaan: 0 },
     refleksi: {},
     flags: {},
     layar: 'meja',

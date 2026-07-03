@@ -506,6 +506,40 @@ export function MejaKerja() {
                 )}
               </div>
             )}
+
+            {/* M4.21 — Pemulihan akhir pekan: tiap hari ke-7, memakai slot siang. */}
+            {state.hari % 7 === 0 && !slotTerpakai && (
+              <div className="kartu mk__program">
+                <div className="judul-seksi">Akhir Pekan — Pemulihan Diri</div>
+                <p className="teks-xs teks-lembut">
+                  Burnout {state.burnout}/100. Dokter yang tumbang tidak menolong siapa-siapa —
+                  hari ini boleh untukmu sendiri (memakai slot lapangan).
+                </p>
+                <div className="baris mk__program-opsi">
+                  <button
+                    className="tombol"
+                    title="Burnout −12."
+                    onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'istirahat' })}
+                  >
+                    😴 Istirahat total
+                  </button>
+                  <button
+                    className="tombol"
+                    title="Burnout −9, besok stamina +1."
+                    onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'olahraga' })}
+                  >
+                    🏃 Olahraga
+                  </button>
+                  <button
+                    className="tombol"
+                    title="Burnout −6, trust seluruh keluarga binaan +1."
+                    onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'keluarga' })}
+                  >
+                    ☕ Silaturahmi desa
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -541,6 +575,65 @@ export function MejaKerja() {
                 <li key={i}>{c}</li>
               ))}
             </ul>
+
+            {/* M4.18 — Gudang Obat: stok menipis + pengadaan (admin sore hari). */}
+            {(() => {
+              const menipis = Object.entries(state.gudang.stok)
+                .filter(([, n]) => n <= 5)
+                .sort((a, b) => a[1] - b[1])
+              const dalamKirim = state.gudang.pesanan
+              if (menipis.length === 0 && dalamKirim.length === 0) return null
+              return (
+                <div className="kartu mk__program">
+                  <div className="judul-seksi">Gudang Obat</div>
+                  {menipis.length > 0 && (
+                    <div className="kolom" style={{ gap: 4 }}>
+                      {menipis.slice(0, 6).map(([id, n]) => {
+                        const o = PACK.obat[id]
+                        if (!o) return null
+                        const biaya = o.hargaBeli * 20
+                        const sedangDipesan = dalamKirim.some((p) => p.obatId === id)
+                        return (
+                          <div key={id} className="baris baris--antara">
+                            <span className="teks-xs">
+                              {o.nama}{' '}
+                              <span className={`chip ${n <= 0 ? 'chip--merah' : 'chip--kunyit'}`}>
+                                {n <= 0 ? 'HABIS' : `sisa ${n}`}
+                              </span>
+                            </span>
+                            <button
+                              className="tombol"
+                              disabled={sedangDipesan || state.kapitasi < biaya}
+                              title={
+                                sedangDipesan
+                                  ? 'Sedang dalam pengiriman.'
+                                  : state.kapitasi < biaya
+                                    ? 'Kas tidak cukup.'
+                                    : `Pesan 20 unit — Rp ${biaya.toLocaleString('id-ID')}, tiba 3 hari.`
+                              }
+                              onClick={() => dispatch({ type: 'PESAN_OBAT', obatId: id, jumlah: 20 })}
+                            >
+                              {sedangDipesan ? 'dikirim…' : `Pesan 20 (Rp ${Math.round(biaya / 1000)}k)`}
+                            </button>
+                          </div>
+                        )
+                      })}
+                      {menipis.length > 6 && (
+                        <span className="teks-xs teks-lembut">+{menipis.length - 6} item menipis lainnya.</span>
+                      )}
+                    </div>
+                  )}
+                  {dalamKirim.length > 0 && (
+                    <p className="teks-xs teks-lembut">
+                      🚚 Dalam pengiriman:{' '}
+                      {dalamKirim
+                        .map((p) => `${PACK.obat[p.obatId]?.nama ?? p.obatId} ×${p.jumlah} (tiba H${p.tibaHari})`)
+                        .join(' · ')}
+                    </p>
+                  )}
+                </div>
+              )
+            })()}
 
             <h3 className="mk__sub-judul mono">REFLEKSI HARI INI</h3>
             <textarea
