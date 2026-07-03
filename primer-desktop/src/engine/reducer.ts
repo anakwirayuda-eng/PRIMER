@@ -25,6 +25,8 @@ import {
   kartuKlb,
 } from './kegiatan'
 import { buatIgd, aksiIgd, rjpIgd, nilaiIgd } from './igd'
+import { hitungSkor } from './scoring'
+import { HARI_STASE } from './paketUjian'
 
 export interface HasilAdvance {
   state: GameState
@@ -987,6 +989,8 @@ function tambahBonusIks(rwList: GameState['desa']['rw'], nomor: number, bonus: n
  * ------------------------------------------------------------------------- */
 
 function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
+  if (s.tamat)
+    return err(s, `Stase sudah berakhir — skor terkunci (${s.tamat.grade}). Lihat Rapor & surat penutupmu.`)
   if (s.igd) return err(s, 'Pasien IGD menunggumu — nyawa dulu, jadwal belakangan.')
   if (s.kunjungan) return err(s, 'Selesaikan kunjungan dulu.')
   if (s.klinik.aktif) return err(s, 'Selesaikan pasien di ruang periksa dulu.')
@@ -1032,6 +1036,42 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
 
 function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   const hari = s.hari + 1
+
+  // M4.5 — AKHIR STASE: melewati hari terakhir mode ini mengunci skor.
+  // Ujian: D30 (instrumen dinilai). Karier: D90. Setelah tamat, LANJUTKAN
+  // ditolak; membaca surat/rapor/dex tetap boleh. Sinematik penutup = M5.
+  if (hari > HARI_STASE[s.mode]) {
+    const skor = hitungSkor(s)
+    const surat: Surat = {
+      id: `surat_tamat_${s.hari}`,
+      hari: s.hari,
+      jenis: 'sistem',
+      dari: s.mode === 'ujian' ? 'Koordinator Stase IKM' : 'dr. Harsono, Kepala Puskesmas',
+      judul:
+        s.mode === 'ujian'
+          ? `STASE UJIAN SELESAI — skor terkunci: ${skor.total.toFixed(1)} (${skor.grade})`
+          : `Sembilan puluh hari — terima kasih, Dokter`,
+      isi:
+        s.mode === 'ujian'
+          ? `${HARI_STASE.ujian} hari stase ujianmu selesai. Skor akhir terkunci: UKP ${skor.ukp.toFixed(1)}/35 · UKM ${skor.ukm.toFixed(1)}/35 · Manajemen ${skor.manajemen.toFixed(1)}/15 · Resiliensi ${skor.resiliensi.toFixed(1)}/15 — total ${skor.total.toFixed(1)} (${skor.gradeLabel}). ${s.paketUjian ? `Paket: ${s.paketUjian}. ` : ''}Hasil ini yang disetorkan ke kampus — tidak ada yang bisa diubah lagi, sebagaimana keputusan klinis yang sudah diambil.`
+          : `Stase 90 harimu di Sukamaju selesai dengan skor ${skor.total.toFixed(1)} (${skor.gradeLabel}). Desa ini akan mengingat dokternya — dan rapormu mencatatnya. Lihat Rapor untuk rincian empat dimensi.`,
+      dibaca: false,
+    }
+    return {
+      state: {
+        ...s,
+        tamat: { hari: s.hari, grade: skor.grade },
+        layar: 'meja',
+        klinik: { ...s.klinik, antrian: [], aktif: undefined },
+        kunjungan: undefined,
+        kegiatan: undefined,
+        igd: undefined,
+        inbox: [...s.inbox, surat],
+      },
+      events: [{ type: 'TAMAT', grade: skor.grade }, { type: 'SURAT_MASUK', surat }],
+    }
+  }
+
   const events: GameEvent[] = [{ type: 'HARI_BARU', hari }]
   const suratBaru: Surat[] = []
 
@@ -1391,12 +1431,15 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   }
   // Konten bisa berubah antar versi save — buang jadwal dengan kasus tak dikenal.
   const pasienKembaliValid = pasienKembali.filter((p) => pack.kasus[p.kasusId])
-  const rngDirector = new Rng(s.seed, 'director', hari)
+  // M4.5: kurikulum (kasus apa) dari seedKurikulum — sama per paket ujian;
+  // flavor (wajah pasien) dari seed per-mahasiswa (docs/M45_MODE_UJIAN.md).
+  const rngDirector = new Rng(s.seedKurikulum, 'director', hari)
   const antrianDirector = susunAntrianHarian(
     stateUntukDirector,
     pack,
     rngDirector,
     pasienKembaliValid.map((p) => p.kasusId),
+    new Rng(s.seed, 'director-flavor', hari),
   )
   const antrianKembali = pasienKembaliValid.map((p, i) =>
     buatPasienDariKasus(p.kasusId, pack, new Rng(s.seed, 'kembali', hari, i), {
@@ -1426,11 +1469,12 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     .filter((k) => k.startsWith('igdHari_'))
     .map((k) => Number(k.slice(8)))
     .reduce((maks, h) => Math.max(maks, h), 0)
-  const rngIgd = new Rng(s.seed, 'igd', hari)
+  // M4.5: kedatangan + pemilihan kasus IGD = kurikulum; identitas pasien = flavor.
+  const rngIgd = new Rng(s.seedKurikulum, 'igd', hari)
   const poolIgd = Object.values(pack.kasusIgd)
   if (hari >= 4 && poolIgd.length > 0 && hari - igdTerakhir >= 4 && rngIgd.chance(0.15)) {
     const kasusIgd = rngIgd.pick(poolIgd)
-    igd = buatIgd(kasusIgd, pack, rngIgd)
+    igd = buatIgd(kasusIgd, pack, new Rng(s.seed, 'igd-flavor', hari))
     igdHariIni = true
     flags[`igdHari_${hari}`] = true
     suratBaru.push(

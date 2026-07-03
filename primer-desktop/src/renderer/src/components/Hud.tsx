@@ -6,6 +6,7 @@
 import { useGame } from '../store'
 import { musimDariHari, type LayarGame } from '@engine/state'
 import { HARI_BUKA_PETA } from '@engine/reducer'
+import { HARI_STASE } from '@engine/paketUjian'
 import './Hud.css'
 
 const NAMA_BLOK = { pagi: 'PAGI — Klinik', siang: 'SIANG — Lapangan', sore: 'SORE — Meja Kerja' } as const
@@ -32,11 +33,16 @@ export function Hud() {
       <div className="hud__kiri">
         <div className="hud__hari mono">
           HARI <span className="hud__hari-angka">{state.hari}</span>
-          <span className="hud__hari-total">/90</span>
+          <span className="hud__hari-total">/{HARI_STASE[state.mode]}</span>
         </div>
         <div className="hud__blok">
           <span className="chip chip--daun">{NAMA_BLOK[state.blok]}</span>
           <span className="chip">{NAMA_MUSIM[musim]}</span>
+          {state.mode === 'ujian' && (
+            <span className="chip chip--merah" title={`Mode Ujian — ${state.paketUjian ?? 'paket'}; skor terkunci di hari ${HARI_STASE.ujian}.`}>
+              UJIAN
+            </span>
+          )}
         </div>
       </div>
 

@@ -3,12 +3,13 @@
  * Hari 1 dimulai di meja kerja dengan surat sambutan + antrian pagi pertama.
  */
 
-import type { GameState, KeluargaState, NilaiIndikator, Surat } from './state'
+import type { GameState, KeluargaState, ModeStase, NilaiIndikator, Surat } from './state'
 import type { ContentPack } from '@content/pack'
 import type { IndikatorPisPk, StatusIndikator } from '@content/types'
 import { Rng } from './core/rng'
 import { susunAntrianHarian } from './director'
 import { STAMINA_MAKS } from './reducer'
+import { HARI_STASE, pilihPaket } from './paketUjian'
 
 const SEMUA_INDIKATOR: IndikatorPisPk[] = [
   'kb',
@@ -54,15 +55,19 @@ export function stokAwal(pack: ContentPack): Record<string, number> {
   return stok
 }
 
-function suratSambutan(namaDokter: string): Surat[] {
+function suratSambutan(namaDokter: string, mode: ModeStase, namaPaket?: string): Surat[] {
+  const durasi = HARI_STASE[mode]
   return [
     {
       id: 'surat_1_0',
       hari: 1,
       jenis: 'sistem',
       dari: 'dr. Harsono, Kepala Puskesmas',
-      judul: 'Selamat datang di Sukamaju',
-      isi: `Dokter ${namaDokter}, selamat bergabung. Sembilan puluh hari ke depan, desa ini tanggung jawabmu: poli di pagi hari, pembinaan keluarga di siang hari, dan — percayalah — surat-surat yang tidak pernah habis. Mulailah dari klinik. Pasien pertamamu sudah menunggu. Satu nasihat dari saya: di sini, angka yang tidak kamu periksa sendiri adalah angka yang belum ada.`,
+      judul: mode === 'ujian' ? `Stase ujian dimulai — ${namaPaket ?? 'paket ujian'}` : 'Selamat datang di Sukamaju',
+      isi:
+        mode === 'ujian'
+          ? `Dokter ${namaDokter}, ini stase UJIAN: ${durasi} hari, dan skormu terkunci di hari terakhir untuk disetorkan ke kampus (${namaPaket ?? 'paket ujian'}). Aturannya sama dengan praktik sungguhan: poli pagi, lapangan siang, administrasi sore. Tidak ada ulangan dan tidak ada kunci jawaban — yang dinilai adalah caramu berpikir, tercatat di setiap keputusan. Mulailah dari klinik; pasien pertamamu sudah menunggu.`
+          : `Dokter ${namaDokter}, selamat bergabung. Sembilan puluh hari ke depan, desa ini tanggung jawabmu: poli di pagi hari, pembinaan keluarga di siang hari, dan — percayalah — surat-surat yang tidak pernah habis. Mulailah dari klinik. Pasien pertamamu sudah menunggu. Satu nasihat dari saya: di sini, angka yang tidak kamu periksa sendiri adalah angka yang belum ada.`,
       dibaca: false,
     },
     {
@@ -77,7 +82,18 @@ function suratSambutan(namaDokter: string): Surat[] {
   ]
 }
 
-export function buildInitialState(namaDokter: string, seed: number, pack: ContentPack): GameState {
+export function buildInitialState(
+  namaDokter: string,
+  seed: number,
+  pack: ContentPack,
+  opsi?: { mode?: ModeStase },
+): GameState {
+  // M4.5 — pemisahan seed (docs/M45_MODE_UJIAN.md): Karier byte-identik dgn
+  // perilaku lama (seedKurikulum = seed); Ujian memakai seed paket bersama.
+  const mode: ModeStase = opsi?.mode ?? 'karier'
+  const paket = mode === 'ujian' ? pilihPaket(seed) : undefined
+  const seedKurikulum = paket ? paket.seedKurikulum : seed
+
   const keluarga: Record<string, KeluargaState> = {}
   for (const id of Object.keys(pack.keluarga)) keluarga[id] = buatKeluargaState(id, pack)
 
@@ -127,6 +143,9 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
   const base: GameState = {
     versi: 1,
     seed,
+    mode,
+    seedKurikulum,
+    ...(paket ? { paketUjian: paket.id } : {}),
     namaDokter,
     hari: 1,
     blok: 'pagi',
@@ -138,7 +157,7 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
       autoHariIni: { jumlah: 0, bermasalah: 0 },
     },
     desa: { keluarga, kader, rw, binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } },
-    inbox: suratSambutan(namaDokter),
+    inbox: suratSambutan(namaDokter, mode, paket?.nama),
     jadwal: jadwalKarma,
     tally: {
       totalPasien: 0,
@@ -190,7 +209,14 @@ export function buildInitialState(namaDokter: string, seed: number, pack: Conten
     program: {},
   }
 
-  // Antrian hari pertama (bias 4A minggu pertama diatur Director)
-  const antrian = susunAntrianHarian(base, pack, new Rng(seed, 'director', 1))
+  // Antrian hari pertama (bias 4A minggu pertama diatur Director).
+  // M4.5: seleksi kasus dari seed KURIKULUM, wajah pasien dari seed flavor.
+  const antrian = susunAntrianHarian(
+    base,
+    pack,
+    new Rng(seedKurikulum, 'director', 1),
+    [],
+    new Rng(seed, 'director-flavor', 1),
+  )
   return { ...base, klinik: { ...base.klinik, antrian } }
 }

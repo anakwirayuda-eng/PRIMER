@@ -4,7 +4,7 @@
  */
 
 import { create } from 'zustand'
-import type { GameState } from '@engine/state'
+import type { GameState, ModeStase } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
 import { advance } from '@engine/reducer'
@@ -29,7 +29,7 @@ interface GameStore {
   eventTick: number
   sedangMemuat: boolean
 
-  mulaiGameBaru: (namaDokter: string) => void
+  mulaiGameBaru: (namaDokter: string, mode?: ModeStase) => void
   lanjutkanArsip: () => void
   muatAutosave: () => Promise<boolean>
   dispatch: (action: Action) => void
@@ -46,9 +46,10 @@ export const useGame = create<GameStore>((set, get) => ({
   eventTick: 0,
   sedangMemuat: false,
 
-  mulaiGameBaru: (namaDokter: string) => {
+  mulaiGameBaru: (namaDokter: string, mode: ModeStase = 'karier') => {
     const seed = hashSeed(namaDokter, Date.now())
-    const state = buildInitialState(namaDokter, seed, PACK)
+    // M4.5: mode 'ujian' memilih paket kurikulum dari seed (docs/M45_MODE_UJIAN.md).
+    const state = buildInitialState(namaDokter, seed, PACK, { mode })
     set({ state, arsip: null, lastEvents: [], eventTick: 0 })
     void get().simpan()
   },

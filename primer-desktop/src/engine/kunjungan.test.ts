@@ -579,6 +579,8 @@ function buatStateKader(): GameState {
   return {
     versi: 1,
     seed: 42,
+    mode: 'karier' as const,
+    seedKurikulum: 42,
     namaDokter: 'dr. Uji',
     hari: 2,
     blok: 'pagi',

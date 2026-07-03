@@ -7,6 +7,7 @@
 import { useState, type FormEvent } from 'react'
 import { useGame } from '../store'
 import { METADATA } from '@content/metadata'
+import type { ModeStase } from '@engine/state'
 import './TitleScreen.css'
 
 /** Tombol Keluar hanya relevan di jendela Electron (bukan preview browser). */
@@ -96,13 +97,16 @@ export function TitleScreen() {
   const mulaiGameBaru = useGame((s) => s.mulaiGameBaru)
   const lanjutkanArsip = useGame((s) => s.lanjutkanArsip)
   const [nama, setNama] = useState('')
+  // M4.5 — dua mode: Karier 90 hari (default, bebas nilai) vs Ujian 30 hari
+  // (satu-satunya yang dinilai formal; paket kurikulum dirotasi otomatis).
+  const [mode, setMode] = useState<ModeStase>('karier')
 
   const namaBersih = nama.trim()
 
   const mulaiStase = (e: FormEvent) => {
     e.preventDefault()
     if (namaBersih.length === 0) return
-    mulaiGameBaru(namaBersih)
+    mulaiGameBaru(namaBersih, mode)
   }
 
   return (
@@ -145,6 +149,27 @@ export function TitleScreen() {
               <label className="title__label judul-seksi" htmlFor="title-nama">
                 {arsip !== null ? 'Atau mulai stase baru' : 'Nama doktermu'}
               </label>
+              {/* M4.5 — pemilih mode stase */}
+              <div className="title__form-baris" role="radiogroup" aria-label="Mode stase">
+                <button
+                  type="button"
+                  className={`tombol ${mode === 'karier' ? 'tombol--utama' : ''}`}
+                  aria-pressed={mode === 'karier'}
+                  title="90 hari penuh — bebas nilai, semua fitur, progres santai."
+                  onClick={() => setMode('karier')}
+                >
+                  Karier · 90 hari
+                </button>
+                <button
+                  type="button"
+                  className={`tombol ${mode === 'ujian' ? 'tombol--utama' : ''}`}
+                  aria-pressed={mode === 'ujian'}
+                  title="30 hari — skor terkunci di akhir untuk disetor ke dosen. Paket soal dirotasi otomatis."
+                  onClick={() => setMode('ujian')}
+                >
+                  Ujian · 30 hari
+                </button>
+              </div>
               <div className="title__form-baris">
                 <span className="title__gelar mono">dr.</span>
                 <input

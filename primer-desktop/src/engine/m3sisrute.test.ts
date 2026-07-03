@@ -71,6 +71,8 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
   const s: GameState = {
     versi: 1,
     seed: 99,
+    mode: 'karier',
+    seedKurikulum: 99,
     namaDokter: 'Uji',
     hari: 20,
     blok: 'pagi',

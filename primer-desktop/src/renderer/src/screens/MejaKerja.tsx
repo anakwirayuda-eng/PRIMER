@@ -184,6 +184,17 @@ export function MejaKerja() {
   /* -- Langkah berikutnya (tombol LANJUTKAN besar, label dinamis) ---------------- */
 
   const cta = ((): Cta => {
+    // M4.5 — stase berakhir: skor terkunci, LANJUTKAN ditolak engine.
+    if (state.tamat) {
+      return {
+        label: `Stase Selesai — Grade ${state.tamat.grade}`,
+        sub:
+          state.mode === 'ujian'
+            ? 'Skor ujianmu terkunci dan siap disetorkan. Baca surat penutup & Rapor untuk rinciannya.'
+            : 'Sembilan puluh hari tuntas. Baca surat penutup & Rapor untuk rinciannya.',
+        aksi: () => dispatch({ type: 'PINDAH_LAYAR', layar: 'rapor' }),
+      }
+    }
     if (state.blok === 'pagi') {
       if (antrianN > 0 && state.stamina > 0) {
         return {

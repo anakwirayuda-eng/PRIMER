@@ -70,6 +70,11 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // tidak dilacak (gerbang stok lolos); backfill penuh dilakukan bila pack ada.
   if (!objek(st['gudang'])) st['gudang'] = { stok: {}, pesanan: [] }
   if (!objek(st['keuanganBulan'])) st['keuanganBulan'] = { belanjaObat: 0, belanjaPengadaan: 0 }
+  // Migrasi-lite M4.5: save lama = mode Karier dgn seed kurikulum = seed flavor.
+  if (st['mode'] !== 'karier' && st['mode'] !== 'ujian') st['mode'] = 'karier'
+  if (typeof st['seedKurikulum'] !== 'number' || !Number.isFinite(st['seedKurikulum'])) {
+    st['seedKurikulum'] = st['seed']
+  }
   if (typeof st['igdHariIni'] !== 'boolean') st['igdHariIni'] = false
   for (const nilai of Object.values(tally)) {
     if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) return null

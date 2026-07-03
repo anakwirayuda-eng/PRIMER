@@ -145,17 +145,25 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
     hidup); burnout kini menumpulkan insting auto-resolve (peluang pasien
     terlewat bermasalah 0.25 → 0.45 pada burnout 100).
 
-## M4.5 — Mode Ujian 30-Hari (keputusan triangulasi DeepThink Q1, 2026-07-03)
+## M4.5 — Mode Ujian 30-Hari ✅ (selesai 2026-07-03; desain: docs/M45_MODE_UJIAN.md)
 
-21b. **Mode Ujian**: layar judul menawarkan "Karier" (90 hari, bebas nilai) vs
-     "Ujian" (~30 hari/~8 jam, satu-satunya yang dinilai formal). Butuh (a)
-     pool 5-10 seed kurikulum terkurasi terpisah dari nama+timestamp mahasiswa,
-     (b) pemisahan seed konten (Director, sama per paket) vs seed flavor
-     (nama/RW pasien, per-mahasiswa) — perubahan arsitektur RNG, bukan cuma
-     penambahan mode, (c) kurasi subset kasus terpacing eksplisit (bukan
-     Director umum apa adanya). Spek lengkap + alasan penempatan setelah M4
-     ada di §Triangulasi M3b di atas. **Wajib**: rotasi seed (bukan satu seed
-     per angkatan) — mencegah kunci jawaban bocor via walkthrough grup.
+21b. ✅ **Mode Ujian**: dua seed dua tanggung jawab — `seedKurikulum` (APA yang
+     diujikan: Director + kedatangan/pemilihan IGD; sama per paket) vs `seed`
+     flavor (WAJAH pasien: nama/usia/RW/persona/BPJS + semua roll dadu;
+     per-mahasiswa). `susunAntrianHarian` menerima `rngFlavor` terpisah.
+     Pool **8 paket** (`paketUjian.ts`, `paket_a`-`h`) dirotasi otomatis dari
+     seed mahasiswa — walkthrough harus ditulis 8×, dan nama pasien tak bisa
+     jadi penanda. Layar judul: pemilih Karier 90 hari / Ujian 30 hari; HUD
+     `HARI x/30` + chip UJIAN; surat pembuka khusus ujian menyebut paket.
+     **Kunci skor**: melewati hari terakhir (`HARI_STASE`) → `tamat` + surat
+     rincian 4 dimensi + `LANJUTKAN` ditolak; kunci yang sama memberi D90
+     untuk Karier (M5.23 separuh jalan). Save lama termigrasi (karier,
+     seedKurikulum=seed); `mode`/`paketUjian` tercatat di state utk M6.
+     Dites: kasus identik + wajah beda per paket, paket beda = kurikulum beda,
+     pola IGD identik per paket, kunci D30/D90, roundtrip & migrasi save
+     (10 test `m45ujian.test.ts`). **Ditunda ke M5.22 (sesuai desain):**
+     kurasi pacing per-fase — Mode Ujian sementara memakai Director standar +
+     Curriculum Director (pity-timer 4A).
 
 ## M5 — Stase Penuh & Endgame
 

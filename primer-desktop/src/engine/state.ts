@@ -18,6 +18,9 @@ import type {
  * ------------------------------------------------------------------------- */
 
 export type Blok = 'pagi' | 'siang' | 'sore'
+
+/** M4.5 — mode stase: Karier 90 hari (bebas nilai) vs Ujian 30 hari (dinilai). */
+export type ModeStase = 'karier' | 'ujian'
 export type Musim = 'hujan' | 'pancaroba' | 'kemarau'
 
 /** Musim epidemiologis 3 babak (D1-30 hujan, D31-60 pancaroba, D61-90 kemarau). */
@@ -442,6 +445,20 @@ export interface GameState {
   stamina: number
   /** Burnout 0-100. */
   burnout: number
+
+  /**
+   * M4.5 — Mode stase: 'karier' (90 hari, bebas nilai) vs 'ujian' (30 hari,
+   * satu-satunya yang dinilai formal — kontrak untuk M6 dashboard dosen).
+   */
+  mode: ModeStase
+  /**
+   * M4.5 — Seed KURIKULUM: menyetir APA yang diujikan (Director + IGD).
+   * Karier: = seed. Ujian: seed paket (sama untuk semua mahasiswa 1 paket),
+   * sementara `seed` tetap per-mahasiswa (nama/persona pasien, roll dadu).
+   */
+  seedKurikulum: number
+  /** Id paket ujian ('paket_a'..'paket_h') — tercatat untuk laporan dosen. */
+  paketUjian?: string
 
   klinik: {
     /** Antrian pasien playable hari ini (kasus dipilih Director). */

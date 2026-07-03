@@ -115,12 +115,17 @@ function bobotKasus(k: KasusKlinis, state: GameState, berkluster: ReadonlySet<st
  * Hari 1-2: 2 pasien; hari 3+: 3 pasien. Tanpa duplikat kasus dalam satu hari.
  * Minggu 1: 92% pilihan dari pool 4A aman. Dijamin ≥1 kasus belum-pernah bila
  * masih ada yang tersedia (jaminan cakupan kurikulum).
+ *
+ * M4.5 (docs/M45_MODE_UJIAN.md): `rng` = seed KURIKULUM (memilih KASUS apa),
+ * `rngFlavor` = seed per-mahasiswa (mewujudkan WAJAH pasien: nama/usia/persona/
+ * BPJS + roll keluarga akrab). Default rngFlavor = rng → perilaku lama utuh.
  */
 export function susunAntrianHarian(
   state: GameState,
   pack: ContentPack,
   rng: Rng,
   kecuali: string[] = [],
+  rngFlavor: Rng = rng,
 ): PasienAktif[] {
   const jumlah = state.hari <= 2 ? 2 : 3
   // Kasus pasien-kembali/karma hari ini dikeluarkan dari kandidat —
@@ -207,7 +212,7 @@ export function susunAntrianHarian(
     }
   }
 
-  const antrian = terpilih.map((k) => buatPasienDariKasus(k.id, pack, rng))
+  const antrian = terpilih.map((k) => buatPasienDariKasus(k.id, pack, rngFlavor))
 
   // Karma loop arah POSITIF: keluarga binaan yang pernah dikunjungi sesekali
   // mengirim anggotanya ke poli — mereka mengenalmu, lebih terbuka (bonusTrust:
@@ -216,9 +221,9 @@ export function susunAntrianHarian(
     const kel = state.desa.keluarga[id]
     return kel !== undefined && kel.jumlahKunjungan > 0 && kel.trust >= 5
   })
-  if (binaanAkrab.length > 0 && antrian.length > 0 && rng.chance(0.35)) {
-    const keluargaId = rng.pick(binaanAkrab)
-    const idx = rng.int(0, antrian.length - 1)
+  if (binaanAkrab.length > 0 && antrian.length > 0 && rngFlavor.chance(0.35)) {
+    const keluargaId = rngFlavor.pick(binaanAkrab)
+    const idx = rngFlavor.int(0, antrian.length - 1)
     const pasien = antrian[idx]
     if (pasien) antrian[idx] = { ...pasien, keluargaId, bonusTrust: true }
   }
