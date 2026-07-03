@@ -294,6 +294,36 @@ anamnesis branching + axis penilaian konseling (KB).
     - Urutan paket M7-awal: O6 taksonomi (lebur kembar-konfusabel, ±30 topik
       ortogonal, metadata kategori + sinonim) → O1 tab + kategori kolapsibel
       → O4 baki prioritas-3.
+    - **Triase masukan DT ronde-2 (2026-07-03, "Tembok Ratapan Kognitif")** —
+      sebagian besar elaborasi verdikt yang sudah diterima (baki 3 slot,
+      cari, akordion); yang BARU & diadopsi ke spesifikasi O6/O1:
+      (a) **Diagnosis "Blok K" DITERIMA** — 9 label berawalan kata kerja K
+      (Kenali×4/Kompres×2/Kontrol×2/Kepatuhan) memaksa *reading* bukan
+      *scanning*; pembeda ada di EKOR kalimat → sumber slip-error.
+      (b) **Keyword front-loading DITERIMA dengan pagar**: verifikasi kode —
+      label lama SUDAH memuat nama diagnosis ("pencetus migrain", "Manuver
+      Epley", "diet purin") → pemindahan ke depan = informasi-netral, lolos
+      kriteria Q2 (scaffolding statis-universal, bukan reduksi dinamis).
+      PAGAR: tag kurung pakai TARGET/ORGAN/KONTEKS dulu ([Mata], [Demam],
+      [Kehamilan], [Tidur]); nama diagnosis hanya utk topik yang inheren
+      diagnosis-spesifik & sudah telanjang di label lama (migrain, Epley,
+      inhaler-asma). Jangan menambah tag diagnosis ke topik generik.
+      (c) **Akordion default-TERTUTUP DITERIMA dengan 2 syarat**: hasil cari
+      meng-auto-buka laci yang memuat kecocokan (cari tak boleh terhalang
+      laci), dan status buka/tutup diingat selama sesi (bukan state save).
+      Trade-off yang diterima sadar: paparan-luas topik utk pemula berkurang
+      — dikompensasi Buku Saku/edukasi pasca-encounter, bukan dgn membuka
+      semua laci.
+      (d) **Taksonomi DT DIKOREKSI**: "Higiene-Sanitasi digabung KIA" ditolak
+      (pasangan tak koheren klinis) — target 5-6 kategori ±5-8 topik: Gaya
+      Hidup & Aktivitas · Diet & Nutrisi · Kepatuhan & Kontrol · Higiene &
+      Pencegahan Infeksi · KIA · Tindakan Fisik & Khusus (jiwa/tidur melebur
+      ke Gaya Hidup atau Khusus saat implementasi, lihat jumlah akhirnya).
+      (e) Baki penuh → chip lain disabled + tombol X per slot (afordans
+      jelas); animasi "terbang" = juice opsional, wajib hormati
+      prefers-reduced-motion. (f) Retorika "nilai mahasiswa cacat" =
+      hiperbola (bobot edukasi 10%) tapi arahnya benar — validitas sumbu
+      edukasi memang rusak oleh strategi 4-sakti + slip-error UI.
 34c. **Audit total "bahasa pasien"** (permintaan playtest 2026-07-03, KERJAKAN
     DI M7 sebelum QA butir 36): telaah SEMUA string jawaban pasien — `jawab` +
     `variasi` 6 persona di 72 kasus (poli+IGD) + dialog kunjungan/wawancara —
