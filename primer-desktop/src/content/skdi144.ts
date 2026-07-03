@@ -132,9 +132,15 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   { id: 'normal_pregnancy', nama: 'Kehamilan Normal', icd10: 'Z34' },
   { id: 'complete_abortion', nama: 'Abortus Spontan Komplit', icd10: 'O03.9' },
   {
+    // ICD-10 harus D50.9 (defisiensi besi) agar COCOK dengan kasus yang
+    // ditautkan (anemia_defisiensi_bumil, icd10 D50.9). Sebelumnya O99.0
+    // ("anemia komplikasi kehamilan", generik) — menabrakkan nama dgn D50.9
+    // di daftar diagnosis banding kasus (dua opsi tampak identik). O99.0 kini
+    // bebas menampilkan nama distingtifnya sendiri ("Anemia dalam Kehamilan",
+    // lihat icd10.ts) sebagai distraktor "jawaban tak-spesifik".
     id: 'anemia_pregnancy',
     nama: 'Anemia Defisiensi Besi pada Kehamilan',
-    icd10: 'O99.0',
+    icd10: 'D50.9',
     kasusId: 'anemia_defisiensi_bumil',
   },
   { id: 'perineal_rupture_12', nama: 'Ruptur Perineum Tingkat 1–2', icd10: 'O70.0' },

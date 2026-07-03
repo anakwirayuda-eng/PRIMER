@@ -26,6 +26,23 @@ describe('namaDiagnosis — semua banding bernama', () => {
     }
     expect(telanjang).toEqual([])
   })
+
+  // Temuan playtest 2026-07-04: dua kode banding berbeda (D50.9 & O99.0) tampil
+  // NAMA IDENTIK di layar → pemain lihat opsi dobel, tak bisa membedakannya.
+  it('TIDAK ADA dua kode banding dalam satu kasus yang tampil nama sama', () => {
+    const tabrakan: string[] = []
+    for (const k of Object.values(PACK.kasus)) {
+      const perNama = new Map<string, string[]>()
+      for (const kode of k.diagnosisBanding) {
+        const nama = namaDiagnosis(kode, k)
+        perNama.set(nama, [...(perNama.get(nama) ?? []), kode])
+      }
+      for (const [nama, kodes] of perNama) {
+        if (kodes.length > 1) tabrakan.push(`${k.id}: "${nama}" ← ${kodes.join(', ')}`)
+      }
+    }
+    expect(tabrakan).toEqual([])
+  })
 })
 
 describe('pencarian obat toleran-ejaan', () => {
