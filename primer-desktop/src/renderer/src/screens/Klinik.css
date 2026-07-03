@@ -817,3 +817,84 @@
   flex-wrap: wrap;
   gap: var(--sp-1);
 }
+
+/* -- M7 34b: tab terapi + baki edukasi + laci kategori ---------------------------- */
+
+.klinik-deck__tab {
+  display: flex;
+  gap: var(--sp-1);
+  border-bottom: 2px solid var(--border-tegas);
+}
+
+.klinik-deck__tab-tombol {
+  padding: var(--sp-2) var(--sp-4);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--tinta-lembut);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  margin-bottom: -2px;
+}
+
+.klinik-deck__tab-tombol--aktif {
+  color: var(--daun-800);
+  background: var(--bg-card);
+  border-color: var(--border-tegas);
+  border-bottom: 2px solid var(--bg-card);
+}
+
+/* Baki "kertas memo" — 3 baris resep edukasi (O4). */
+.klinik-eduk__baki {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border-tegas);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-kertas);
+}
+
+.klinik-eduk__baki-hint { margin-bottom: var(--sp-1); }
+
+.klinik-eduk__slot {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 30px;
+  border-bottom: 1px solid var(--border-halus);
+}
+
+.klinik-eduk__slot--kosong { border-bottom-style: dashed; }
+.klinik-eduk__slot-no { color: var(--tinta-pudar); }
+.klinik-eduk__slot-hapus { padding: 0 var(--sp-2); color: var(--tinta-merah); }
+.klinik-eduk__slot-placeholder { font-style: italic; }
+
+/* Laci kategori (akordion, default tertutup — Hukum Hick). */
+.klinik-eduk__laci {
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.klinik-eduk__laci-kepala {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-sunken);
+  text-align: left;
+}
+
+.klinik-eduk__laci-kepala:hover .klinik-eduk__laci-judul { color: var(--daun-800); }
+.klinik-eduk__laci-panah { color: var(--tinta-pudar); font-size: var(--text-xs); }
+.klinik-eduk__laci-judul { font-weight: 700; }
+
+.klinik-eduk__laci .klinik-eduk { padding: var(--sp-2) var(--sp-3); }
+
+.klinik-eduk__chip:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

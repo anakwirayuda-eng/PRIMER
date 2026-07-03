@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { aksiKlinik, buatEncounter, nilaiEncounter } from './clinic'
+import { aksiKlinik, buatEncounter, nilaiEncounter, KAPASITAS_EDUKASI } from './clinic'
 import { Rng } from './core/rng'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
@@ -88,10 +88,10 @@ const LAB_MINI: Record<string, ItemLab> = {
 }
 
 const EDUKASI_MINI: Record<string, TopikEdukasi> = {
-  etika_batuk: { id: 'etika_batuk', nama: 'Etika batuk' },
-  istirahat_cukup: { id: 'istirahat_cukup', nama: 'Istirahat cukup' },
-  cuci_tangan: { id: 'cuci_tangan', nama: 'Cuci tangan pakai sabun' },
-  tanda_bahaya: { id: 'tanda_bahaya', nama: 'Tanda bahaya — kapan kembali' },
+  etika_batuk: { id: 'etika_batuk', nama: 'Etika batuk', kategori: 'higiene' },
+  istirahat_cukup: { id: 'istirahat_cukup', nama: 'Istirahat cukup', kategori: 'gaya_hidup' },
+  cuci_tangan: { id: 'cuci_tangan', nama: 'Cuci tangan pakai sabun', kategori: 'higiene' },
+  tanda_bahaya: { id: 'tanda_bahaya', nama: 'Tanda bahaya — kapan kembali', kategori: 'kepatuhan' },
 }
 
 /* ---------------------------------------------------------------------------
@@ -850,5 +850,89 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     const nilai = nilaiEncounter(enc, KASUS_RUJUK, PACK)
     // Semua field < 20 karakter; assessment menyebut ICD-10 → hanya +20.
     expect(nilai.sbarSkor).toBe(20)
+  })
+})
+
+/* ---------------------------------------------------------------------------
+ * M7 (34b/O4) — edukasi: kuota baki + skor prioritisasi
+ * ------------------------------------------------------------------------- */
+
+describe('M7 — kuota & prioritisasi edukasi', () => {
+  // Kasus komorbid tiruan: 4 topik wajib (> kapasitas 3).
+  const KASUS_KOMORBID: KasusKlinis = {
+    ...KASUS_FARINGITIS,
+    tatalaksana: {
+      ...KASUS_FARINGITIS.tatalaksana,
+      edukasi: ['etika_batuk', 'istirahat_cukup', 'cuci_tangan', 'tanda_bahaya'],
+    },
+  }
+
+  it('TAMBAH_EDUKASI ke-4 DITOLAK engine (kuota, bukan cuma UI)', () => {
+    const enc = buatEncounter(buatPasien())
+    const { enc: baru, events } = jalankan(
+      enc,
+      [
+        { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },
+        { type: 'TAMBAH_EDUKASI', edukasiId: 'istirahat_cukup' },
+        { type: 'TAMBAH_EDUKASI', edukasiId: 'cuci_tangan' },
+        { type: 'TAMBAH_EDUKASI', edukasiId: 'tanda_bahaya' }, // slot ke-4
+      ],
+      KASUS_KOMORBID,
+    )
+    expect(baru.edukasi).toHaveLength(KAPASITAS_EDUKASI)
+    expect(baru.edukasi).not.toContain('tanda_bahaya')
+    expect(events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+    // Coret satu → slot terbuka lagi (mengganti prioritas tetap bisa).
+    const { enc: ganti } = jalankan(
+      baru,
+      [
+        { type: 'HAPUS_EDUKASI', edukasiId: 'cuci_tangan' },
+        { type: 'TAMBAH_EDUKASI', edukasiId: 'tanda_bahaya' },
+      ],
+      KASUS_KOMORBID,
+    )
+    expect(ganti.edukasi).toEqual(['etika_batuk', 'istirahat_cukup', 'tanda_bahaya'])
+  })
+
+  it('kasus komorbid (wajib 4 > kapasitas 3): 3 benar = skor 100 — bukan 75', () => {
+    const enc = buatEncounter(buatPasien())
+    const { enc: main } = jalankan(
+      enc,
+      [
+        { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
+        { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },
+        { type: 'TAMBAH_EDUKASI', edukasiId: 'istirahat_cukup' },
+        { type: 'TAMBAH_EDUKASI', edukasiId: 'tanda_bahaya' },
+      ],
+      KASUS_KOMORBID,
+    )
+    const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_KOMORBID, PACK)
+    expect(nilai.skorEdukasi).toBe(100)
+  })
+
+  it('tembakan meleset dihukum 15/topik (slot kini berharga)', () => {
+    // Wajib 2 (etika_batuk, istirahat_cukup): 2 benar + 1 salah → 100 − 15 = 85.
+    const enc = buatEncounter(buatPasien())
+    const { enc: main } = jalankan(enc, [
+      { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
+      { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },
+      { type: 'TAMBAH_EDUKASI', edukasiId: 'istirahat_cukup' },
+      { type: 'TAMBAH_EDUKASI', edukasiId: 'tanda_bahaya' }, // tak relevan utk faringitis
+    ])
+    const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_FARINGITIS, PACK)
+    expect(nilai.skorEdukasi).toBe(85)
+  })
+
+  it('strategi "4 sakti" mati: 3 generik salah semua = 0 (dulu bisa ~90)', () => {
+    // Kasus wajib {etika_batuk, istirahat_cukup}; pemain menembak 3 topik lain.
+    const enc = buatEncounter(buatPasien())
+    const { enc: main } = jalankan(enc, [
+      { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
+      { type: 'TAMBAH_EDUKASI', edukasiId: 'cuci_tangan' },
+      { type: 'TAMBAH_EDUKASI', edukasiId: 'tanda_bahaya' },
+    ])
+    const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_FARINGITIS, PACK)
+    // 0 tercakup dari target 2, minus 2×15 → clamp 0.
+    expect(nilai.skorEdukasi).toBe(0)
   })
 })

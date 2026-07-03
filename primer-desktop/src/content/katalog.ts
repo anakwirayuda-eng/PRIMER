@@ -464,23 +464,82 @@ export const LAB: Record<string, ItemLab> = {
  * KATALOG TOPIK EDUKASI (18 topik)
  * ------------------------------------------------------------------------- */
 
+/**
+ * M7 (34b): keyword front-loading — pembeda di DEPAN label agar bisa dipindai,
+ * bukan dibaca utuh ("Blok K"). Pagar anti-bocor di doc TopikEdukasi.
+ * Merger: kepatuhan_kontrol_ptm dilebur ke kontrol_rutin (kembar sejati).
+ */
 export const EDUKASI: Record<string, TopikEdukasi> = {
-  kepatuhan_obat: { id: 'kepatuhan_obat', nama: 'Kepatuhan minum obat' },
-  diet_rendah_garam: { id: 'diet_rendah_garam', nama: 'Diet rendah garam' },
-  diet_dm: { id: 'diet_dm', nama: 'Pengaturan makan diabetes (3J)' },
-  cairan_oralit: { id: 'cairan_oralit', nama: 'Cara membuat & memberi oralit' },
-  tanda_bahaya: { id: 'tanda_bahaya', nama: 'Tanda bahaya — kapan harus kembali' },
-  psn_3m: { id: 'psn_3m', nama: 'PSN 3M Plus (berantas jentik)' },
-  kompres_demam: { id: 'kompres_demam', nama: 'Kompres hangat saat demam' },
-  etika_batuk: { id: 'etika_batuk', nama: 'Etika batuk & pakai masker' },
-  cuci_tangan: { id: 'cuci_tangan', nama: 'Cuci tangan pakai sabun (CTPS)' },
-  asi_eksklusif: { id: 'asi_eksklusif', nama: 'ASI eksklusif 6 bulan' },
-  gizi_seimbang: { id: 'gizi_seimbang', nama: 'Gizi seimbang (Isi Piringku)' },
-  berhenti_merokok: { id: 'berhenti_merokok', nama: 'Berhenti merokok' },
-  aktivitas_fisik: { id: 'aktivitas_fisik', nama: 'Aktivitas fisik 30 menit/hari' },
-  kontrol_rutin: { id: 'kontrol_rutin', nama: 'Kontrol rutin sesuai jadwal' },
-  minum_oat_tuntas: { id: 'minum_oat_tuntas', nama: 'Minum OAT tuntas 6 bulan + PMO' },
-  kebersihan_kulit: { id: 'kebersihan_kulit', nama: 'Kebersihan kulit & cuci seprai' },
-  hindari_alergen: { id: 'hindari_alergen', nama: 'Kenali & hindari pencetus alergi' },
-  istirahat_cukup: { id: 'istirahat_cukup', nama: 'Istirahat cukup & kelola stres' },
+  kepatuhan_obat: {
+    id: 'kepatuhan_obat', nama: 'Kepatuhan minum obat', kategori: 'kepatuhan',
+    sinonim: ['adherence', 'compliance', 'rutin minum obat'],
+  },
+  diet_rendah_garam: {
+    id: 'diet_rendah_garam', nama: 'Diet rendah garam', kategori: 'diet',
+    sinonim: ['natrium', 'sodium', 'asin'],
+  },
+  diet_dm: {
+    id: 'diet_dm', nama: 'Diet diabetes — 3J (jumlah, jadwal, jenis)', kategori: 'diet',
+    sinonim: ['gula', 'kencing manis', 'pengaturan makan'],
+  },
+  cairan_oralit: {
+    id: 'cairan_oralit', nama: 'Oralit — cara membuat & memberi', kategori: 'tindakan',
+    sinonim: ['ORS', 'rehidrasi', 'larutan gula garam'],
+  },
+  tanda_bahaya: {
+    id: 'tanda_bahaya', nama: 'Tanda bahaya — kapan harus segera kembali', kategori: 'kepatuhan',
+    sinonim: ['red flag', 'warning sign', 'kembali ke puskesmas'],
+  },
+  psn_3m: {
+    id: 'psn_3m', nama: 'PSN 3M Plus — berantas jentik', kategori: 'higiene',
+    sinonim: ['nyamuk', 'jumantik', 'menguras menutup mendaur'],
+  },
+  kompres_demam: {
+    id: 'kompres_demam', nama: '[Demam] Kompres hangat', kategori: 'tindakan',
+    sinonim: ['panas', 'antipiretik non obat'],
+  },
+  etika_batuk: {
+    id: 'etika_batuk', nama: 'Etika batuk & pakai masker', kategori: 'higiene',
+    sinonim: ['droplet', 'penularan napas'],
+  },
+  cuci_tangan: {
+    id: 'cuci_tangan', nama: 'Cuci tangan pakai sabun (CTPS)', kategori: 'higiene',
+    sinonim: ['hand hygiene', 'handwash'],
+  },
+  asi_eksklusif: {
+    id: 'asi_eksklusif', nama: '[Bayi] ASI eksklusif 6 bulan', kategori: 'kia',
+    sinonim: ['menyusui', 'laktasi', 'breastfeeding'],
+  },
+  gizi_seimbang: {
+    id: 'gizi_seimbang', nama: 'Gizi seimbang (Isi Piringku)', kategori: 'diet',
+    sinonim: ['nutrisi', 'makanan sehat'],
+  },
+  berhenti_merokok: {
+    id: 'berhenti_merokok', nama: 'Berhenti merokok', kategori: 'gaya_hidup',
+    sinonim: ['rokok', 'tembakau', 'smoking cessation'],
+  },
+  aktivitas_fisik: {
+    id: 'aktivitas_fisik', nama: 'Aktivitas fisik 30 menit/hari', kategori: 'gaya_hidup',
+    sinonim: ['olahraga', 'exercise', 'gerak'],
+  },
+  kontrol_rutin: {
+    id: 'kontrol_rutin', nama: 'Kontrol rutin sesuai jadwal & cegah komplikasi', kategori: 'kepatuhan',
+    sinonim: ['kontrol PTM', 'kontrol berkala', 'check up', 'follow up'],
+  },
+  minum_oat_tuntas: {
+    id: 'minum_oat_tuntas', nama: 'OAT tuntas 6 bulan + PMO', kategori: 'kepatuhan',
+    sinonim: ['TB', 'tuberkulosis', 'pengawas minum obat'],
+  },
+  kebersihan_kulit: {
+    id: 'kebersihan_kulit', nama: '[Kulit] Kebersihan kulit & pakaian', kategori: 'higiene',
+    sinonim: ['mandi', 'ganti baju'],
+  },
+  hindari_alergen: {
+    id: 'hindari_alergen', nama: '[Alergi] Kenali & hindari alergen pencetus', kategori: 'gaya_hidup',
+    sinonim: ['alergen', 'pencetus alergi'],
+  },
+  istirahat_cukup: {
+    id: 'istirahat_cukup', nama: 'Istirahat cukup', kategori: 'gaya_hidup',
+    sinonim: ['rest', 'kurangi beban kerja'],
+  },
 }

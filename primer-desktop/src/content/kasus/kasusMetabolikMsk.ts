@@ -255,7 +255,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       obatSalahUmum: [
         { id: 'natrium_diklofenak_50', alasan: 'Dislipidemia tidak nyeri; NSAID tidak ada indikasi dan justru menambah risiko kardiovaskular/ginjal.' },
       ],
-      edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'berhenti_merokok', 'kepatuhan_kontrol_ptm'],
+      edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'berhenti_merokok', 'kontrol_rutin'],
     },
     clue: 'Dislipidemia sering ASIMTOMATIK — jangan meremehkan hanya karena tak ada keluhan. Nilai risiko KV total (LDL tinggi + perokok + riwayat keluarga dini + TD tinggi). Terapi: perubahan gaya hidup WAJIB + statin (simvastatin malam hari). Cek SGOT/SGPT baseline. Simvastatin diminum malam (PPK PERKI / Kemenkes PTM).',
     konsekuensi: {
@@ -366,7 +366,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       obatSalahUmum: [
         { id: 'furosemid_40', alasan: 'Diuretik BUKAN untuk menurunkan berat badan — hanya mengurangi cairan sesaat, tidak menyentuh lemak, dan berisiko dehidrasi/gangguan elektrolit. Ini malpraktik pelangsing yang umum.' },
       ],
-      edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'kepatuhan_kontrol_ptm', 'higiene_tidur'],
+      edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'kontrol_rutin', 'higiene_tidur'],
     },
     clue: 'Obesitas: LINI UTAMA adalah intervensi gaya hidup — defisit kalori bertahap + aktivitas fisik 150 menit/minggu, target turun 5–10% BB dalam 6 bulan. Skrining komorbid (GDP, lipid, TD) & singkirkan hipotiroid (TSH). Farmakoterapi/bedah bukan ranah rutin FKTP. HINDARI diuretik/pencahar sebagai "pelangsing" (Pedoman PTM Kemenkes / PERKENI).',
     konsekuensi: {
@@ -844,7 +844,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         { id: 'prednison_5', alasan: 'Steroid oral mungkin meredakan sementara, tetapi memulai steroid jangka panjang di FKTP tanpa rujukan menutupi penyakit dan menunda DMARD — pengelolaan RA (metotreksat dll.) adalah ranah spesialis penyakit dalam/reumatologi.' },
         { id: 'allopurinol_100', alasan: 'Ini bukan gout (asam urat normal, poliartritis simetris sendi kecil, kaku pagi panjang) — allopurinol keliru total.' },
       ],
-      edukasi: ['peregangan_sendi', 'kepatuhan_kontrol_ptm', 'kontrol_rutin'],
+      edukasi: ['peregangan_sendi', 'kontrol_rutin'],
     },
     clue: 'Artritis reumatoid (SKDI 3A → RUJUK): poliartritis SIMETRIS sendi kecil (MCP/PIP/pergelangan) + kaku pagi >1 JAM + gejala sistemik + LED/anemia kronik. Berbeda dari OA (mekanik, kaku singkat, sendi besar/DIP). Di FKTP: kenali, beri analgetik/NSAID untuk kenyamanan, lalu RUJUK penyakit dalam untuk DMARD dini (metotreksat) — jendela emas cegah destruksi sendi (ACR/EULAR 2010).',
     konsekuensi: {
@@ -954,7 +954,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         { id: 'nifedipin_10', alasan: 'Nifedipin kerja cepat sublingual/kunyah DILARANG pada krisis hipertensi — penurunan TD tak terkendali & mendadak berisiko iskemia serebral/miokard/stroke. Turunkan BERTAHAP dengan oral kerja sedang.' },
         { id: 'furosemid_40', alasan: 'Diuretik agresif tidak tepat sebagai lini pertama urgensi tanpa overload cairan — berisiko hipovolemia; hanya bila ada edema paru/overload nyata.' },
       ],
-      edukasi: ['diet_rendah_garam', 'kepatuhan_obat', 'kepatuhan_kontrol_ptm', 'tanda_bahaya'],
+      edukasi: ['diet_rendah_garam', 'kepatuhan_obat', 'kontrol_rutin', 'tanda_bahaya'],
     },
     clue: 'HIPERTENSI URGENSI (SKDI 3B → RUJUK): TD ≥180/120 TANPA kerusakan organ target AKUT (tanpa nyeri dada iskemik, edema paru, defisit neurologis, ensefalopati). Prinsip: TURUNKAN BERTAHAP dengan obat ORAL (amlodipin/kaptopril), target ~25% dalam jam pertama / beberapa jam — JANGAN drop cepat (nifedipin sublingual dilarang). Rujuk penyakit dalam untuk evaluasi. Bila ADA kerusakan organ akut = EMERGENSI → IGD (PPK Hipertensi / JNC / PERKI).',
     konsekuensi: {

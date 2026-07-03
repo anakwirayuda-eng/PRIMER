@@ -9,10 +9,12 @@ import type {
   JenisKelamin,
   KasusKlinis,
   KategoriAnamnesis,
+  KategoriEdukasi,
   Obat,
   Persona,
   PertanyaanAnamnesis,
   RegionFisik,
+  TopikEdukasi,
 } from '@content/types'
 
 /* -- Label persona pasien ----------------------------------------------------- */
@@ -141,5 +143,33 @@ export function cocokObat(obat: Obat, kueri: string): boolean {
   const q = normalisasiNamaObat(kueri)
   if (q.length === 0) return true
   const korpus = [obat.nama, obat.id, obat.kelas, ...(obat.sinonim ?? [])]
+  return korpus.some((teks) => normalisasiNamaObat(teks).includes(q))
+}
+
+/* -- Edukasi pasien: laci kategori + pencarian (M7 34b) ------------------------------ */
+
+export const URUTAN_KATEGORI_EDUKASI: readonly KategoriEdukasi[] = [
+  'gaya_hidup',
+  'diet',
+  'kepatuhan',
+  'higiene',
+  'kia',
+  'tindakan',
+]
+
+export const LABEL_KATEGORI_EDUKASI: Record<KategoriEdukasi, string> = {
+  gaya_hidup: 'Gaya Hidup & Aktivitas',
+  diet: 'Diet, Nutrisi & Cairan',
+  kepatuhan: 'Kepatuhan & Kontrol',
+  higiene: 'Higiene & Pencegahan Infeksi',
+  kia: 'Ibu & Anak (KIA)',
+  tindakan: 'Tindakan Fisik & Teknik Khusus',
+}
+
+/** Cocokkan kueri terhadap topik edukasi (nama+id+sinonim, fonetik yang sama). */
+export function cocokEdukasi(topik: TopikEdukasi, kueri: string): boolean {
+  const q = normalisasiNamaObat(kueri)
+  if (q.length === 0) return true
+  const korpus = [topik.nama, topik.id, ...(topik.sinonim ?? [])]
   return korpus.some((teks) => normalisasiNamaObat(teks).includes(q))
 }

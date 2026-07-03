@@ -55,6 +55,14 @@ const BOBOT_TERAPI = 0.2
 const BOBOT_PEMERIKSAAN = 0.1
 const BOBOT_EDUKASI = 0.1
 
+/**
+ * M7 (34b/O4, verdikt DeepThink): kapasitas baki edukasi per pasien.
+ * Konstruk berubah dari cakupan-set → prioritisasi: kasus dgn topik wajib > 3
+ * tetap bisa skor 100 (target = min(kapasitas, |wajib|)) — meredam protes
+ * "malpraktik by design" pada kasus komorbid.
+ */
+export const KAPASITAS_EDUKASI = 3
+
 /** Jumlah dimensi OLDCARTS yang mungkin dicakup anamnesis. */
 const TOTAL_DIMENSI_OLDCARTS = 9
 
@@ -246,6 +254,15 @@ export function aksiKlinik(
         return gagal(enc, `Topik edukasi '${action.edukasiId}' tidak ada di katalog.`)
       }
       if (enc.edukasi.includes(action.edukasiId)) return tanpaPerubahan(enc)
+      // M7 (34b/O4): kuota konseling — DITEGAKKAN DI ENGINE (bukan cuma UI)
+      // agar action-log/replay M6 konsisten. Memaksa prioritisasi: waktu
+      // konseling FKTP terbatas, bukan ceklis semua-yang-benar.
+      if (enc.edukasi.length >= KAPASITAS_EDUKASI) {
+        return gagal(
+          enc,
+          `Waktu konseling terbatas — maksimal ${KAPASITAS_EDUKASI} topik. Coret salah satu dulu bila ingin mengganti.`,
+        )
+      }
       return { enc: { ...enc, edukasi: [...enc.edukasi, action.edukasiId] }, events: [] }
     }
 
@@ -381,17 +398,17 @@ export function nilaiEncounter(
     idAlternatifSah.size > 0 && [...idAlternatifSah].some((id) => pack.obat[id]?.antibiotik === true)
   const antibiotikTanpaIndikasi = resepAdaAntibiotik && !indikasiAntibiotik
 
-  /* -- Edukasi: cakupan topik wajib − penalti shotgun --------------------------- */
-  // Mencentang semua topik bukan edukasi — itu kebisingan. Konsisten dengan
-  // fase lain: yang tidak relevan dihukum (anti "edukasi = ceklis formalitas").
+  /* -- Edukasi: PRIORITISASI (M7 34b/O4 — precision with opportunity cost) ------ */
+  // Konstruk lama (cakupan-set) melahirkan strategi degenerate "4 topik sakti"
+  // + shotgun. Kini baki maks KAPASITAS_EDUKASI (ditegakkan di TAMBAH_EDUKASI):
+  // target = min(kapasitas, |wajib|) → kasus komorbid wajib>3 tetap bisa 100;
+  // tembakan meleset dihukum lebih berat (15) karena tiap slot kini berharga.
   const edukasiWajib = kasus.tatalaksana.edukasi
   const edukasiTercakup = edukasiWajib.filter((id) => enc.edukasi.includes(id)).length
   const edukasiTakRelevan = enc.edukasi.filter((id) => !edukasiWajib.includes(id)).length
+  const edukasiTarget = Math.min(KAPASITAS_EDUKASI, edukasiWajib.length)
   const skorEdukasi = clamp(
-    Math.round(
-      100 * (edukasiWajib.length > 0 ? edukasiTercakup / edukasiWajib.length : 1) -
-        10 * edukasiTakRelevan,
-    ),
+    Math.round(100 * (edukasiTarget > 0 ? Math.min(1, edukasiTercakup / edukasiTarget) : 1) - 15 * edukasiTakRelevan),
     0,
     100,
   )

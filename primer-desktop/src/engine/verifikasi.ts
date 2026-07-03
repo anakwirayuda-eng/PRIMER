@@ -87,12 +87,21 @@ function fnv1a(teks: string): string {
 }
 
 /**
- * Sidik jari konten: id semua entitas yang mempengaruhi replay. Konten berubah
- * antar-versi build → replay bisa melenceng → verifier menolak MEMVONIS
+ * Revisi SEMANTIK engine — naikkan setiap kali aturan skor/replay berubah
+ * (dossier lama vs engine baru harus jatuh ke "tidak dapat diverifikasi",
+ * bukan divonis TIDAK SAH palsu). Riwayat: 1 = M6 awal; 2 = M7 kuota edukasi
+ * KAPASITAS_EDUKASI + formula prioritisasi min(3,|wajib|) − 15×salah.
+ */
+const REVISI_ENGINE = 2
+
+/**
+ * Sidik jari konten + revisi engine: semua yang mempengaruhi replay. Beda
+ * antar-build → replay bisa melenceng → verifier menolak MEMVONIS
  * (status tidak_dapat_diverifikasi), bukan memvonis TIDAK SAH.
  */
 export function sidikJariPack(pack: ContentPack): string {
   const daftar = [
+    'engine', String(REVISI_ENGINE),
     'kasus', ...Object.keys(pack.kasus).sort(),
     'igd', ...Object.keys(pack.kasusIgd).sort(),
     'obat', ...Object.keys(pack.obat).sort(),

@@ -20,6 +20,7 @@
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
 import { buildInitialState } from './init'
+import { KAPASITAS_EDUKASI } from './clinic'
 import { advance, HARI_REKAP_SLICE, STAMINA_MAKS } from './reducer'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
@@ -118,7 +119,9 @@ function tanganiPasienRajin(state: GameState): { state: GameState; penilaian: Pe
   for (const grup of kasus.tatalaksana.obatAlternatif ?? []) {
     if (grup[0]) s = run(s, { type: 'TAMBAH_OBAT', obatId: grup[0] }).state
   }
-  for (const edukasiId of kasus.tatalaksana.edukasi) {
+  // M7 (34b/O4): baki edukasi maks KAPASITAS_EDUKASI — dokter rajin memberi
+  // 3 topik wajib pertama (target skor = min(kapasitas, |wajib|) -> tetap 100).
+  for (const edukasiId of kasus.tatalaksana.edukasi.slice(0, KAPASITAS_EDUKASI)) {
     s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId }).state
   }
 

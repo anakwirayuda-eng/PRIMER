@@ -10,6 +10,7 @@
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
 import { buildInitialState } from './init'
+import { KAPASITAS_EDUKASI } from './clinic'
 import { advance } from './reducer'
 import type { Action } from './actions'
 import type { GameState } from './state'
@@ -65,7 +66,9 @@ function mainkanSatuPasien(): GameState {
   for (const grup of kasus.tatalaksana.obatAlternatif ?? []) {
     if (grup[0]) s = run(s, { type: 'TAMBAH_OBAT', obatId: grup[0] })
   }
-  for (const edukasiId of kasus.tatalaksana.edukasi) s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId })
+  for (const edukasiId of kasus.tatalaksana.edukasi.slice(0, KAPASITAS_EDUKASI)) {
+    s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId })
+  }
   s = run(s, { type: 'LANJUT_FASE' })
   s = run(
     s,

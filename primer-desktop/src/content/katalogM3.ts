@@ -102,27 +102,88 @@ export const LAB_M3: Record<string, ItemLab> = {
   tsh: { id: 'tsh', nama: 'TSH', biaya: 85000, nilaiNormal: '0,4-4,0 mIU/L', hasilBesok: true },
 }
 
+/**
+ * M7 (34b): front-loading + kategori — lihat catatan di katalog.ts.
+ * kepatuhan_kontrol_ptm DIHAPUS (kembar sejati kontrol_rutin — dilebur;
+ * sinonim "kontrol PTM" pindah ke sana); kasus pemakainya sudah diganti.
+ */
 export const EDUKASI_M3: Record<string, TopikEdukasi> = {
-  diet_purin: { id: 'diet_purin', nama: 'Diet rendah purin (batasi jeroan/seafood)' },
-  diet_lambung: { id: 'diet_lambung', nama: 'Pola makan sehat lambung (hindari pedas/asam/kopi)' },
-  posisi_tidur_gerd: { id: 'posisi_tidur_gerd', nama: 'Tinggikan kepala saat tidur, jangan langsung berbaring' },
-  latihan_bppv: { id: 'latihan_bppv', nama: 'Manuver Epley / latihan Brandt-Daroff' },
-  kompres_mata: { id: 'kompres_mata', nama: 'Kompres hangat kelopak mata & jaga higiene' },
-  jaga_kelembapan_kulit: { id: 'jaga_kelembapan_kulit', nama: 'Jaga kelembapan & hindari garuk' },
-  cuci_seprai_panas: { id: 'cuci_seprai_panas', nama: 'Rendam seprai/handuk air panas (skabies/kutu)' },
-  postur_ergonomi: { id: 'postur_ergonomi', nama: 'Postur & ergonomi angkat beban (nyeri punggung)' },
-  peregangan_sendi: { id: 'peregangan_sendi', nama: 'Peregangan & penguatan sendi ringan' },
-  manajemen_stres: { id: 'manajemen_stres', nama: 'Relaksasi & manajemen stres' },
-  higiene_tidur: { id: 'higiene_tidur', nama: 'Higiene tidur (jadwal, kurangi layar & kafein)' },
-  kenali_kambuh_jiwa: { id: 'kenali_kambuh_jiwa', nama: 'Kenali tanda kekambuhan & pentingnya kepatuhan' },
-  anc_rutin: { id: 'anc_rutin', nama: 'Pentingnya ANC rutin & tablet tambah darah' },
-  tanda_bahaya_kehamilan: { id: 'tanda_bahaya_kehamilan', nama: 'Tanda bahaya kehamilan (P4K)' },
-  minum_air_cukup: { id: 'minum_air_cukup', nama: 'Minum air cukup & tidak menahan kencing' },
-  cuci_tangan_makanan: { id: 'cuci_tangan_makanan', nama: 'Higiene makanan & air matang' },
-  hindari_pencetus_asma: { id: 'hindari_pencetus_asma', nama: 'Kenali & hindari pencetus (debu, dingin, asap)' },
-  hindari_pencetus_migrain: { id: 'hindari_pencetus_migrain', nama: 'Kenali & hindari pencetus migrain (kurang tidur, telat makan, stres, pencetus haid)' },
-  teknik_inhaler: { id: 'teknik_inhaler', nama: 'Teknik pakai inhaler yang benar' },
-  kepatuhan_kontrol_ptm: { id: 'kepatuhan_kontrol_ptm', nama: 'Kontrol rutin PTM & cegah komplikasi' },
+  diet_purin: {
+    id: 'diet_purin', nama: 'Diet rendah purin — batasi jeroan & seafood', kategori: 'diet',
+    sinonim: ['asam urat', 'gout'],
+  },
+  diet_lambung: {
+    id: 'diet_lambung', nama: '[Lambung] Hindari pedas, asam & kopi', kategori: 'diet',
+    sinonim: ['maag', 'dispepsia', 'gastritis'],
+  },
+  posisi_tidur_gerd: {
+    id: 'posisi_tidur_gerd', nama: '[Lambung] Tinggikan kepala tidur & jangan langsung berbaring', kategori: 'tindakan',
+    sinonim: ['refluks', 'GERD', 'head elevation'],
+  },
+  latihan_bppv: {
+    id: 'latihan_bppv', nama: 'Manuver Epley / latihan Brandt-Daroff', kategori: 'tindakan',
+    sinonim: ['vertigo', 'pusing berputar', 'reposisi kanalit'],
+  },
+  kompres_mata: {
+    id: 'kompres_mata', nama: '[Mata] Kompres hangat kelopak & jaga higiene', kategori: 'tindakan',
+    sinonim: ['hordeolum', 'timbilan', 'bintitan'],
+  },
+  jaga_kelembapan_kulit: {
+    id: 'jaga_kelembapan_kulit', nama: '[Kulit] Jaga kelembapan & hindari garuk', kategori: 'higiene',
+    sinonim: ['pelembap', 'moisturizer', 'emolien'],
+  },
+  cuci_seprai_panas: {
+    id: 'cuci_seprai_panas', nama: '[Skabies/kutu] Rendam seprai & handuk air panas', kategori: 'higiene',
+    sinonim: ['gudik', 'tungau', 'dekontaminasi'],
+  },
+  postur_ergonomi: {
+    id: 'postur_ergonomi', nama: '[Punggung] Postur & ergonomi angkat beban', kategori: 'tindakan',
+    sinonim: ['LBP', 'low back pain', 'cara mengangkat'],
+  },
+  peregangan_sendi: {
+    id: 'peregangan_sendi', nama: '[Sendi] Peregangan & penguatan ringan', kategori: 'tindakan',
+    sinonim: ['stretching', 'penguatan otot', 'latihan lutut'],
+  },
+  manajemen_stres: {
+    id: 'manajemen_stres', nama: '[Stres] Relaksasi & manajemen stres', kategori: 'gaya_hidup',
+    sinonim: ['napas dalam', 'relaksasi', 'coping'],
+  },
+  higiene_tidur: {
+    id: 'higiene_tidur', nama: '[Tidur] Higiene tidur — jadwal, kurangi layar & kafein', kategori: 'gaya_hidup',
+    sinonim: ['insomnia', 'sleep hygiene', 'susah tidur'],
+  },
+  kenali_kambuh_jiwa: {
+    id: 'kenali_kambuh_jiwa', nama: '[Jiwa] Kenali tanda kekambuhan dini', kategori: 'kepatuhan',
+    sinonim: ['relaps', 'gejala kambuh'],
+  },
+  anc_rutin: {
+    id: 'anc_rutin', nama: '[Kehamilan] ANC rutin & tablet tambah darah', kategori: 'kia',
+    sinonim: ['periksa hamil', 'antenatal', 'TTD'],
+  },
+  tanda_bahaya_kehamilan: {
+    id: 'tanda_bahaya_kehamilan', nama: '[Kehamilan] Tanda bahaya — P4K', kategori: 'kia',
+    sinonim: ['preeklamsia', 'perdarahan', 'persiapan persalinan'],
+  },
+  minum_air_cukup: {
+    id: 'minum_air_cukup', nama: 'Minum air cukup & jangan menahan kencing', kategori: 'diet',
+    sinonim: ['hidrasi', 'ISK', 'anyang-anyangan'],
+  },
+  cuci_tangan_makanan: {
+    id: 'cuci_tangan_makanan', nama: '[Makanan] Higiene makanan & air matang', kategori: 'higiene',
+    sinonim: ['jajan sembarangan', 'air mentah', 'food safety'],
+  },
+  hindari_pencetus_asma: {
+    id: 'hindari_pencetus_asma', nama: '[Napas] Hindari pencetus — debu, dingin, asap', kategori: 'gaya_hidup',
+    sinonim: ['asma', 'PPOK', 'tungau debu'],
+  },
+  hindari_pencetus_migrain: {
+    id: 'hindari_pencetus_migrain', nama: '[Migrain] Hindari pencetus — kurang tidur, telat makan, stres, haid', kategori: 'gaya_hidup',
+    sinonim: ['nyeri kepala sebelah', 'trigger'],
+  },
+  teknik_inhaler: {
+    id: 'teknik_inhaler', nama: '[Napas] Teknik pakai inhaler yang benar', kategori: 'tindakan',
+    sinonim: ['MDI', 'spacer', 'asma', 'semprot'],
+  },
 }
 
 export const TINDAKAN_M3: Record<string, Tindakan> = {

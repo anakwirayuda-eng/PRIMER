@@ -249,9 +249,21 @@ export interface ItemLab {
   hasilBesok?: boolean
 }
 
+/**
+ * M7 (verdikt DeepThink 34b): 38 chip alfabetis = "tembok ratapan kognitif".
+ * Kategori WAJIB (laci akordion UI); nama memakai keyword front-loading —
+ * PAGAR anti-bocor: tag kurung [Organ/Konteks] dulu; nama diagnosis HANYA
+ * bila sudah telanjang di label lama (informasi-netral, cuma pindah urutan).
+ */
+export type KategoriEdukasi = 'gaya_hidup' | 'diet' | 'kepatuhan' | 'higiene' | 'kia' | 'tindakan'
+
 export interface TopikEdukasi {
   id: string
   nama: string
+  /** Laci akordion UI — kontrak wajib agar topik baru tak lolos tanpa rumah. */
+  kategori: KategoriEdukasi
+  /** Sinonim pencarian (fonetik EN↔ID sudah ditangani normalisasi UI). */
+  sinonim?: string[]
 }
 
 export interface Tindakan {

@@ -460,7 +460,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         { id: 'salbutamol_2', alasan: 'SABA ORAL (tablet) BUKAN pilihan untuk eksaserbasi berat — onset lambat, efek samping sistemik (tremor, takikardia) lebih besar; bronkodilator harus rute INHALASI/NEBULISASI (GOLD).' },
         { id: 'kloramfenikol_250', alasan: 'Antibiotik yang tak tepat untuk eksaserbasi PPOK. Bila sputum purulen + gejala kardinal (indikasi antibiotik), pilih golongan yang sesuai — dan yang terpenting: jangan menunda rujukan saat SpO2 89% + tanda gagal napas.' },
       ],
-      edukasi: ['berhenti_merokok', 'teknik_inhaler', 'tanda_bahaya', 'kepatuhan_kontrol_ptm'],
+      edukasi: ['berhenti_merokok', 'teknik_inhaler', 'tanda_bahaya', 'kontrol_rutin'],
     },
     clue: 'Eksaserbasi PPOK (kriteria Anthonisen: sesak↑, volume sputum↑, purulensi sputum↑ — ketiganya ada → antibiotik terindikasi). SpO2 89% + tanda gagal napas (bingung, sianosis, otot bantu) = eksaserbasi BERAT. Bundel GOLD: O2 TERKONTROL (target SpO2 88–92%, hindari over-oksigenasi) + bronkodilator INHALASI/NEBULISASI (SABA ± SAMA) + KORTIKOSTEROID SISTEMIK + antibiotik (sputum purulen) — lalu RUJUK paru segera. SABA oral tak setara; jangan biarkan urusan obat menunda rujukan.',
     konsekuensi: {

@@ -1,16 +1,27 @@
 /**
- * DECK TERAPI — formularium dengan pencarian + checklist edukasi.
- * Firewall alergi engine memblokir resep kontraindikatif; UI menjatuhkan
- * stempel merah KONTRAINDIKASI (animasi stempel--jatuh) sebagai poka-yoke.
+ * DECK TERAPI — dua tab sejajar (M7 34b, verdikt DeepThink Q4: isolasi
+ * SPASIAL, bukan fase baru):
+ *   [Resep]   formularium + pencarian toleran-ejaan + firewall alergi.
+ *   [Edukasi] baki prioritas 3 slot (kuota ditegakkan ENGINE) + pencarian +
+ *             laci kategori akordion default tertutup (Hukum Hick; hasil cari
+ *             meng-auto-buka laci; status laci diingat selama sesi).
  */
 
 import { useMemo, useState } from 'react'
 import { PACK } from '@content/index'
 import { useGame } from '../../store'
+import type { KategoriEdukasi, TopikEdukasi } from '@content/types'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
-import { cocokObat, formatRupiah } from './util'
+import { KAPASITAS_EDUKASI } from '@engine/clinic'
+import {
+  cocokEdukasi,
+  cocokObat,
+  formatRupiah,
+  LABEL_KATEGORI_EDUKASI,
+  URUTAN_KATEGORI_EDUKASI,
+} from './util'
 
 interface Props {
   enc: EncounterState
@@ -19,8 +30,14 @@ interface Props {
   eventTick: number
 }
 
+/** Status buka/tutup laci diingat selama SESI app (bukan state save). */
+const laciSesi = new Set<KategoriEdukasi>()
+
 export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
+  const [tab, setTab] = useState<'resep' | 'edukasi'>('resep')
   const [cari, setCari] = useState('')
+  const [cariEduk, setCariEduk] = useState('')
+  const [, setLaciTick] = useState(0) // re-render saat laciSesi berubah
   // M4.18 — stok gudang tampil di formularium; habis = tombol resep terkunci.
   const stok = useGame((s) => s.state?.gudang.stok)
 
@@ -34,10 +51,24 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
       .sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
   }, [cari])
 
-  const daftarEdukasi = useMemo(
-    () => Object.values(PACK.edukasi).sort((a, b) => a.nama.localeCompare(b.nama, 'id')),
-    [],
-  )
+  // Topik edukasi per laci kategori (urutan tetap, nama front-loaded).
+  const topikPerKategori = useMemo(() => {
+    const peta = new Map<KategoriEdukasi, TopikEdukasi[]>()
+    for (const kat of URUTAN_KATEGORI_EDUKASI) peta.set(kat, [])
+    for (const t of Object.values(PACK.edukasi)) peta.get(t.kategori)?.push(t)
+    for (const daftar of peta.values()) daftar.sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
+    return peta
+  }, [])
+
+  const kueriEduk = cariEduk.trim()
+  const sedangCari = kueriEduk.length > 0
+  const bakiPenuh = enc.edukasi.length >= KAPASITAS_EDUKASI
+
+  const toggleLaci = (kat: KategoriEdukasi) => {
+    if (laciSesi.has(kat)) laciSesi.delete(kat)
+    else laciSesi.add(kat)
+    setLaciTick((n) => n + 1)
+  }
 
   // Firewall dari dispatch terakhir — stempel jatuh ulang tiap terpicu (key eventTick).
   let firewall: { obatId: string; golongan: string } | null = null
@@ -61,95 +92,200 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
           </div>
         )}
 
-        <div className="klinik-deck__grup">
-          <div className="judul-seksi">Formularium Puskesmas</div>
-          <input
-            className="klinik-cari"
-            type="text"
-            value={cari}
-            onChange={(e) => setCari(e.target.value)}
-            placeholder="Cari obat atau kelas terapi&hellip;"
-            aria-label="Cari obat"
-          />
-          <div className="klinik-obat">
-            {daftarObat.length === 0 ? (
-              <div className="klinik-lembar__kosong">Tidak ada obat yang cocok.</div>
-            ) : (
-              daftarObat.map((o) => {
-                const diresepkan = enc.resep.includes(o.id)
-                const sisa = stok?.[o.id]
-                const habis = sisa !== undefined && sisa <= 0
-                return (
-                  <div key={o.id} className="klinik-obat__baris">
-                    <div className="tumbuh">
-                      <div className="baris klinik-obat__judul">
-                        <span className="teks-kecil">{o.nama}</span>
-                        {o.antibiotik === true && (
-                          <span className="chip chip--kunyit">Antibiotik</span>
-                        )}
-                        {habis ? (
-                          <span className="chip chip--merah">HABIS</span>
-                        ) : sisa !== undefined && sisa <= 3 ? (
-                          <span className="chip chip--kunyit">sisa {sisa}</span>
-                        ) : null}
-                      </div>
-                      <div className="teks-xs teks-lembut">
-                        {o.sediaan} &middot; {o.kelas}
-                      </div>
-                    </div>
-                    <span className="mono teks-xs teks-lembut">{formatRupiah(o.hargaJual)}</span>
-                    <button
-                      className="tombol klinik-obat__tambah"
-                      onClick={() => dispatch({ type: 'TAMBAH_OBAT', obatId: o.id })}
-                      disabled={diresepkan || habis}
-                      title={
-                        diresepkan
-                          ? 'Sudah ada di resep.'
-                          : habis
-                            ? 'Stok habis — pesan lewat Gudang Obat (Meja Kerja) atau pilih alternatif.'
-                            : `Tambahkan ${o.nama} ke resep.`
-                      }
-                    >
-                      {diresepkan ? '✓' : habis ? '✕' : '+ Resep'}
-                    </button>
-                  </div>
-                )
-              })
-            )}
-          </div>
-          <span className="teks-xs teks-lembut">
-            Antibiotik tanpa indikasi tercatat oleh Dinkes (stewardship) &mdash; resepkan bijak.
-          </span>
+        {/* M7 34b — tab sejajar: edukasi tak lagi terkubur di dasar sumur scroll. */}
+        <div className="klinik-deck__tab" role="tablist" aria-label="Terapi">
+          <button
+            role="tab"
+            aria-selected={tab === 'resep'}
+            className={`klinik-deck__tab-tombol${tab === 'resep' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
+            onClick={() => setTab('resep')}
+          >
+            Resep ({enc.resep.length})
+          </button>
+          <button
+            role="tab"
+            aria-selected={tab === 'edukasi'}
+            className={`klinik-deck__tab-tombol${tab === 'edukasi' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
+            onClick={() => setTab('edukasi')}
+          >
+            Edukasi ({enc.edukasi.length}/{KAPASITAS_EDUKASI})
+          </button>
         </div>
 
-        <div className="klinik-deck__grup">
-          <div className="judul-seksi">Edukasi Pasien</div>
-          <div className="klinik-eduk">
-            {daftarEdukasi.map((t) => {
-              const dipilih = enc.edukasi.includes(t.id)
+        {tab === 'resep' && (
+          <div className="klinik-deck__grup">
+            <div className="judul-seksi">Formularium Puskesmas</div>
+            <input
+              className="klinik-cari"
+              type="text"
+              value={cari}
+              onChange={(e) => setCari(e.target.value)}
+              placeholder="Cari obat atau kelas terapi&hellip;"
+              aria-label="Cari obat"
+            />
+            <div className="klinik-obat">
+              {daftarObat.length === 0 ? (
+                <div className="klinik-lembar__kosong">Tidak ada obat yang cocok.</div>
+              ) : (
+                daftarObat.map((o) => {
+                  const diresepkan = enc.resep.includes(o.id)
+                  const sisa = stok?.[o.id]
+                  const habis = sisa !== undefined && sisa <= 0
+                  return (
+                    <div key={o.id} className="klinik-obat__baris">
+                      <div className="tumbuh">
+                        <div className="baris klinik-obat__judul">
+                          <span className="teks-kecil">{o.nama}</span>
+                          {o.antibiotik === true && (
+                            <span className="chip chip--kunyit">Antibiotik</span>
+                          )}
+                          {habis ? (
+                            <span className="chip chip--merah">HABIS</span>
+                          ) : sisa !== undefined && sisa <= 3 ? (
+                            <span className="chip chip--kunyit">sisa {sisa}</span>
+                          ) : null}
+                        </div>
+                        <div className="teks-xs teks-lembut">
+                          {o.sediaan} &middot; {o.kelas}
+                        </div>
+                      </div>
+                      <span className="mono teks-xs teks-lembut">{formatRupiah(o.hargaJual)}</span>
+                      <button
+                        className="tombol klinik-obat__tambah"
+                        onClick={() => dispatch({ type: 'TAMBAH_OBAT', obatId: o.id })}
+                        disabled={diresepkan || habis}
+                        title={
+                          diresepkan
+                            ? 'Sudah ada di resep.'
+                            : habis
+                              ? 'Stok habis — pesan lewat Gudang Obat (Meja Kerja) atau pilih alternatif.'
+                              : `Tambahkan ${o.nama} ke resep.`
+                        }
+                      >
+                        {diresepkan ? '✓' : habis ? '✕' : '+ Resep'}
+                      </button>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+            <span className="teks-xs teks-lembut">
+              Antibiotik tanpa indikasi tercatat oleh Dinkes (stewardship) &mdash; resepkan bijak.
+            </span>
+          </div>
+        )}
+
+        {tab === 'edukasi' && (
+          <div className="klinik-deck__grup">
+            {/* Baki prioritas — secarik memo dengan 3 baris (O4). */}
+            <div className="klinik-eduk__baki" aria-label="Resep edukasi terpilih">
+              <div className="judul-seksi">Resep Edukasi &mdash; maksimal {KAPASITAS_EDUKASI}</div>
+              <p className="teks-xs teks-lembut klinik-eduk__baki-hint">
+                Waktu konseling terbatas &mdash; pilih topik paling penting untuk pasien INI.
+                Kasus kompleks tetap dinilai penuh dari {KAPASITAS_EDUKASI} terbaikmu.
+              </p>
+              {Array.from({ length: KAPASITAS_EDUKASI }, (_, i) => {
+                const id = enc.edukasi[i]
+                const topik = id ? PACK.edukasi[id] : undefined
+                return (
+                  <div key={i} className={`klinik-eduk__slot${topik ? '' : ' klinik-eduk__slot--kosong'}`}>
+                    <span className="mono teks-xs klinik-eduk__slot-no">{i + 1}.</span>
+                    {topik ? (
+                      <>
+                        <span className="teks-kecil tumbuh">{topik.nama}</span>
+                        <button
+                          className="tombol tombol--senyap klinik-eduk__slot-hapus"
+                          onClick={() => dispatch({ type: 'HAPUS_EDUKASI', edukasiId: topik.id })}
+                          title="Coret dari resep edukasi."
+                          aria-label={`Hapus ${topik.nama}`}
+                        >
+                          ✕
+                        </button>
+                      </>
+                    ) : (
+                      <span className="teks-xs teks-lembut klinik-eduk__slot-placeholder">
+                        &mdash; belum diisi &mdash;
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            <input
+              className="klinik-cari"
+              type="text"
+              value={cariEduk}
+              onChange={(e) => setCariEduk(e.target.value)}
+              placeholder="Cari edukasi&hellip; (cth: inhaler, oralit, garam)"
+              aria-label="Cari topik edukasi"
+            />
+
+            {/* Laci kategori — default tertutup; mencari = laci relevan terbuka. */}
+            {URUTAN_KATEGORI_EDUKASI.map((kat) => {
+              const semua = topikPerKategori.get(kat) ?? []
+              const daftar = sedangCari ? semua.filter((t) => cocokEdukasi(t, kueriEduk)) : semua
+              if (sedangCari && daftar.length === 0) return null
+              const terbuka = sedangCari || laciSesi.has(kat)
+              const terpilihDiLaci = semua.filter((t) => enc.edukasi.includes(t.id)).length
               return (
-                <button
-                  key={t.id}
-                  className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
-                  onClick={() =>
-                    dispatch(
-                      dipilih
-                        ? { type: 'HAPUS_EDUKASI', edukasiId: t.id }
-                        : { type: 'TAMBAH_EDUKASI', edukasiId: t.id },
-                    )
-                  }
-                  title={dipilih ? 'Klik untuk membatalkan.' : `Sampaikan edukasi: ${t.nama}`}
-                >
-                  {dipilih ? '✓ ' : ''}
-                  {t.nama}
-                </button>
+                <div key={kat} className="klinik-eduk__laci">
+                  <button
+                    className="klinik-eduk__laci-kepala"
+                    aria-expanded={terbuka}
+                    onClick={() => toggleLaci(kat)}
+                  >
+                    <span className="klinik-eduk__laci-panah" aria-hidden="true">
+                      {terbuka ? '▾' : '▸'}
+                    </span>
+                    <span className="teks-kecil tumbuh klinik-eduk__laci-judul">
+                      {LABEL_KATEGORI_EDUKASI[kat]}
+                    </span>
+                    <span className="mono teks-xs teks-lembut">
+                      {terpilihDiLaci > 0 ? `${terpilihDiLaci}✓ · ` : ''}
+                      {semua.length}
+                    </span>
+                  </button>
+                  {terbuka && (
+                    <div className="klinik-eduk">
+                      {daftar.map((t) => {
+                        const dipilih = enc.edukasi.includes(t.id)
+                        const terkunci = bakiPenuh && !dipilih
+                        return (
+                          <button
+                            key={t.id}
+                            className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
+                            disabled={terkunci}
+                            onClick={() =>
+                              dispatch(
+                                dipilih
+                                  ? { type: 'HAPUS_EDUKASI', edukasiId: t.id }
+                                  : { type: 'TAMBAH_EDUKASI', edukasiId: t.id },
+                              )
+                            }
+                            title={
+                              dipilih
+                                ? 'Klik untuk membatalkan.'
+                                : terkunci
+                                  ? `Baki penuh (${KAPASITAS_EDUKASI}) — coret salah satu dulu.`
+                                  : `Sampaikan edukasi: ${t.nama}`
+                            }
+                          >
+                            {dipilih ? '✓ ' : ''}
+                            {t.nama}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
               )
             })}
+            <span className="teks-xs teks-lembut">
+              Edukasi yang tepat sasaran ikut dinilai; topik asal-centang mengurangi nilai.
+            </span>
           </div>
-          <span className="teks-xs teks-lembut">
-            Pilih topik yang relevan dengan kasus &mdash; edukasi termasuk komponen penilaian.
-          </span>
-        </div>
+        )}
       </div>
 
       <footer className="klinik-deck__footer">
