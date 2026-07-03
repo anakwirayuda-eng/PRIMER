@@ -241,10 +241,34 @@ anamnesis branching + axis penilaian konseling (KB).
     blok sore (CODEX P3), font kecil peta/kunjungan/dex (P3), headroom
     1200×760 + skala OS (P2 — diterima sbg batas desain, uji di lab FK).
 34b. **UX Edukasi Pasien** — tembok 38 chip (keluhan playtest + CODEX P2 panel
-    5758px). MENUNGGU verdikt DeepThink: dossier lengkap di
-    `docs/DEEPTHINK_EDUKASI_UX.md` (opsi O1–O6, Q1–Q6; kecondongan kami:
-    taksonomi konten + grup/cari/reposisi murni-UI di M7-awal, perubahan
-    konstruk skor pasca-playtest).
+    5758px). Dossier: `docs/DEEPTHINK_EDUKASI_UX.md`. **VERDIKT DEEPTHINK
+    DITERIMA 2026-07-03 dengan triase** (jawaban Q1–Q6 diarsip user di chat):
+    - **Diterima**: Q1 konstruk prioritisasi top-3 slot (O4) + Q3 kuota
+      menghancurkan strategi "4 sakti" via opportunity cost; Q2 kriteria
+      operasional anti-bocor "scaffolding statis-universal sah, reduksi
+      dinamis dari hidden-state = bocor" (O3 DITOLAK PERMANEN, O2-murni
+      ditolak); Q4 isolasi spasial tab `[Formularium | Edukasi (0/3)]`,
+      BUKAN fase baru; Q6 heuristik ambang ±15 item (≤15 flat deck sah,
+      >15 wajib hibrida kategori-akordion + cari + baki terpilih); formula
+      pengganti `clamp(100×tercakup/min(3,|wajib|) − 15×takRelevan, 0, 100)`
+      (kasus komorbid wajib>3 tetap bisa 100% — meredam protes "malpraktik");
+      framing UI "Waktu terbatas — pilih 3 edukasi paling kritis saat ini".
+    - **Q5 (timing) diterima substansinya, urutan disesuaikan**: konstruk
+      diubah SEBELUM instrumen dipakai menilai 50 mahasiswa (argumen
+      garbage-in-garbage-out benar; sikap lama kami "pasca-playtest" keliru
+      utk perubahan konstruk, tetap benar utk kalibrasi bobot penalti).
+      Eksekusi: M7-AWAL setelah M6 (arahan user), sebelum QA butir 36.
+    - **Dikoreksi dari verdikt** (catatan implementasi): (a) kuota 3 WAJIB
+      ditegakkan di ENGINE (`TAMBAH_EDUKASI` menolak slot ke-4), bukan cuma
+      UI — konsistensi action-log/replay M6; (b) usulan "interceptor
+      truncate aksi edukasi ke-4+ saat replay log lama" DITOLAK — memalsukan
+      sejarah; ganti dengan versioning save/skor (belum ada data mahasiswa
+      nyata, reset baseline pra-rilis lebih jujur & sederhana).
+    - **Pasca-playtest**: O5 (edukasi → drift/kepatuhan keluarga binaan,
+      "investasi dunia" Harvest Moon) + kalibrasi penalti.
+    - Urutan paket M7-awal: O6 taksonomi (lebur kembar-konfusabel, ±30 topik
+      ortogonal, metadata kategori + sinonim) → O1 tab + kategori kolapsibel
+      → O4 baki prioritas-3.
 34c. **Audit total "bahasa pasien"** (permintaan playtest 2026-07-03, KERJAKAN
     DI M7 sebelum QA butir 36): telaah SEMUA string jawaban pasien — `jawab` +
     `variasi` 6 persona di 72 kasus (poli+IGD) + dialog kunjungan/wawancara —
@@ -415,3 +439,16 @@ Blind spot DeepThink WAJIB dipenuhi sejak desain awal, bukan ditambal belakangan
 - **M6 (§26-27)** mengekspor skor dari Mode Ujian, bukan Mode Karier — perlu
   ditandai jelas di `GameState` (field mode) supaya dashboard dosen tak
   keliru menerima submission dari save Karier.
+
+---
+
+## Parkir diskusi (jangan dikerjakan/dibahas sebelum user membuka kembali)
+
+- **Variasi naratif per kasus** (user, 2026-07-03, "simpan dulu diskusi ini"):
+  history-taking tiap kasus saat ini satu skrip statis — DBD selalu bercerita
+  sama, diare selalu sama. Pertanyaan yang diparkir: perlukah tiap kasus punya
+  ≥2-3 varian presentasi (keluhan pembuka, kronologi, red-herring ringan,
+  persona×narasi) supaya pengulangan kasus di stase 90 hari tidak hafalan?
+  Kandidat "M khusus pengayaan storyline" — sentuh KONTEN & seed flavor,
+  bukan engine. Interaksi dgn Mode Ujian: varian harus dari seed flavor
+  (per-mahasiswa) agar paket tetap adil. Bahas ulang setelah M6/M7-awal.
