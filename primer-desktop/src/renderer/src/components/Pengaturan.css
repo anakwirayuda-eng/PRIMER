@@ -1,0 +1,87 @@
+/* PENGATURAN (M7.31) — tombol gigi melayang + modal preferensi. */
+
+.set-gigi {
+  position: fixed;
+  left: calc(var(--sp-3) + 42px); /* di kanan tombol bisu */
+  bottom: var(--sp-3);
+  z-index: var(--z-hud);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--bg-card);
+  color: var(--tinta-lembut);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-kertas);
+  cursor: pointer;
+  transition: color var(--durasi-cepat), border-color var(--durasi-cepat), transform var(--durasi-cepat);
+}
+
+.set-gigi:hover { color: var(--tinta); border-color: var(--border-tegas); transform: translateY(-1px) rotate(30deg); }
+.set-gigi:focus-visible { outline: 2px solid var(--daun-600); outline-offset: 2px; }
+
+.set-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: rgba(13, 21, 18, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+  animation: set-fade var(--durasi-normal) var(--ease-keluar);
+}
+
+@keyframes set-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.set-modal {
+  width: min(460px, 100%);
+  max-height: min(90vh, 620px);
+  overflow-y: auto;
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  box-shadow: var(--shadow-modal);
+}
+
+.set-baris {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+  font-size: var(--text-sm);
+  color: var(--tinta);
+}
+
+.set-baris input[type='range'] {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: var(--daun-700);
+}
+
+.set-baris > span:first-child { font-weight: 600; }
+.set-nilai { grid-row: 1; grid-column: 2; color: var(--tinta-lembut); }
+
+.set-baris--switch {
+  grid-template-columns: 1fr auto;
+}
+.set-baris--switch input[type='checkbox'] {
+  grid-column: 2;
+  grid-row: 1;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--daun-700);
+  cursor: pointer;
+}
+
+.set-segmen {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--sp-2);
+}
+.set-segmen .tombol { flex: 1; }
+
+.set-kaki { margin-top: var(--sp-2); }

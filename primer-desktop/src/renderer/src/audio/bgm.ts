@@ -11,6 +11,7 @@
 import { useEffect } from 'react'
 import { useGame } from '../store'
 import { isMuted, subscribeMute } from './synth'
+import { getPengaturan, subscribePengaturan } from '../settings'
 
 export type KonteksBgm = 'title' | 'pagi' | 'siang' | 'sore' | 'igd' | 'laporan'
 
@@ -24,7 +25,10 @@ const TRACK: Record<KonteksBgm, string> = {
   laporan: 'balamb_garden.mp3',
 }
 
-const VOLUME_BGM = 0.3
+/** Volume musik puncak = preferensi pemain × plafon 0.5 (musik latar, bukan depan). */
+function volumeMusik(): number {
+  return getPengaturan().volumeMusik * 0.5
+}
 const LANGKAH_FADE = 0.05
 const INTERVAL_FADE_MS = 90
 
@@ -60,7 +64,7 @@ function cobaPlay(el: HTMLAudioElement): void {
   el.play()
     .then(() => {
       // Play bisa berhasil BELAKANGAN (retry pasca-gesture) — pastikan volume naik.
-      fadeKe(VOLUME_BGM)
+      fadeKe(volumeMusik())
     })
     .catch(() => {
       // Autoplay diblokir (browser preview; Electron mengizinkan) — ulangi
@@ -93,7 +97,7 @@ export function gantiBgm(konteks: KonteksBgm): void {
     audio.volume = 0
     if (!isMuted()) {
       cobaPlay(audio)
-      fadeKe(VOLUME_BGM)
+      fadeKe(volumeMusik())
     }
   }
 
@@ -144,12 +148,18 @@ export function useBgm(): void {
       if (isMuted()) fadeKe(0, true)
       else {
         cobaPlay(audio)
-        fadeKe(VOLUME_BGM)
+        fadeKe(volumeMusik())
       }
     }
-    const lepas = subscribeMute(sinkronMute)
+    // Geser slider Volume Musik → sesuaikan volume live (tanpa restart lagu).
+    const sinkronVolume = (): void => {
+      if (audio && !audio.paused && !isMuted()) fadeKe(volumeMusik())
+    }
+    const lepasMute = subscribeMute(sinkronMute)
+    const lepasSet = subscribePengaturan(sinkronVolume)
     return () => {
-      lepas()
+      lepasMute()
+      lepasSet()
       disposeBgm()
     }
   }, [])

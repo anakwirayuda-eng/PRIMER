@@ -335,3 +335,14 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* Toggle manual dari Pengaturan (M7.31) — setara media-query di atas, tapi
+   dikendalikan pemain lewat kelas di <html>. */
+.kurangi-gerak *,
+.kurangi-gerak *::before,
+.kurangi-gerak *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}

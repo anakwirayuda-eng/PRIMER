@@ -8,9 +8,10 @@
  * variasi nada BGM justru diinginkan non-deterministik.
  */
 
+import { getPengaturan, subscribePengaturan } from '../settings'
+
 const KUNCI_MUTE = 'primer.audio.mute'
 const VOLUME_MASTER = 0.4
-const VOLUME_BGM = 0.05
 
 /** Tangga nada slendro (aproksimasi 5 nada per oktaf, ±240 sen per langkah). */
 const SLENDRO: readonly number[] = [261.63, 300.53, 345.19, 396.49, 455.4]
@@ -28,14 +29,25 @@ function nadaSlendro(indeks: number): number {
 interface MesinAudio {
   ctx: AudioContext
   master: GainNode
-  busBgm: GainNode
-  timerBgm: number | null
   bufferNoise: AudioBuffer
 }
 
 let mesin: MesinAudio | null = null
 let muted = bacaMuteTersimpan()
 const pendengarMute = new Set<() => void>()
+
+/** Target gain master SFX = 0 saat mute, else VOLUME_MASTER × volume pemain. */
+function gainSfxTarget(): number {
+  return muted ? 0 : VOLUME_MASTER * getPengaturan().volumeSfx
+}
+
+// Volume SFX ikut Pengaturan secara live.
+subscribePengaturan(() => {
+  if (!mesin) return
+  const t = mesin.ctx.currentTime
+  mesin.master.gain.cancelScheduledValues(t)
+  mesin.master.gain.setTargetAtTime(gainSfxTarget(), t, 0.04)
+})
 
 function bacaMuteTersimpan(): boolean {
   try {
@@ -73,27 +85,23 @@ export function initAudio(): void {
   const ctx = new Ctx()
 
   const master = ctx.createGain()
-  master.gain.value = muted ? 0 : VOLUME_MASTER
+  master.gain.value = gainSfxTarget()
   master.connect(ctx.destination)
-
-  const busBgm = ctx.createGain()
-  busBgm.gain.value = VOLUME_BGM
-  busBgm.connect(master)
 
   // Buffer derau putih 0,5 dtk — dipakai berulang untuk burst stempel/kokok.
   const bufferNoise = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.5), ctx.sampleRate)
   const data = bufferNoise.getChannelData(0)
   for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
 
-  mesin = { ctx, master, busBgm, timerBgm: null, bufferNoise }
+  mesin = { ctx, master, bufferNoise }
   if (ctx.state === 'suspended') void ctx.resume()
-  jadwalkanBgm()
+  // Catatan: BGM ambient synth lama DIMATIKAN sejak M7 — musik latar kini
+  // dari berkas (audio/bgm.ts). Fungsi jadwalkanBgm dipertahankan sbg cadangan.
 }
 
 /** Matikan seluruh mesin audio dengan rapi (dipanggil saat App di-unmount). */
 export function disposeAudio(): void {
   if (!mesin) return
-  if (mesin.timerBgm !== null) window.clearTimeout(mesin.timerBgm)
   try {
     mesin.master.disconnect()
   } catch {
@@ -118,7 +126,7 @@ export function setMuted(nilai: boolean): void {
   if (mesin) {
     const t = mesin.ctx.currentTime
     mesin.master.gain.cancelScheduledValues(t)
-    mesin.master.gain.setTargetAtTime(nilai ? 0 : VOLUME_MASTER, t, 0.04)
+    mesin.master.gain.setTargetAtTime(gainSfxTarget(), t, 0.04)
   }
   pendengarMute.forEach((fn) => fn())
 }
@@ -341,39 +349,4 @@ export function sfxSelesai(): void {
   if (!siapBunyi()) return
   suaraFm({ freq: nadaSlendro(4), durasi: 0.28, gain: 0.2, ratio: 2, index: 1.5 })
   suaraFm({ freq: nadaSlendro(2), durasi: 0.36, gain: 0.2, ratio: 2, index: 1.5, delay: 0.14 })
-}
-
-/* ---------------------------------------------------------------------------
- * BGM — ambient slendro sangat pelan, nada panjang jarang-jarang
- * ------------------------------------------------------------------------- */
-
-function jadwalkanBgm(): void {
-  if (!mesin) return
-
-  // Satu nada panjang di register rendah; kadang ditemani kempyung di atasnya.
-  const dasar = nadaSlendro(Math.floor(Math.random() * 5) - 5) // oktaf bawah
-  const durasi = 5 + Math.random() * 5
-  suaraFm({
-    freq: dasar,
-    durasi,
-    gain: 0.9,
-    ratio: 2,
-    index: 0.6,
-    attack: durasi * 0.35,
-    tujuan: mesin.busBgm
-  })
-  if (Math.random() < 0.4) {
-    suaraFm({
-      freq: dasar * 2,
-      durasi: durasi * 0.7,
-      gain: 0.35,
-      ratio: 3,
-      index: 0.4,
-      attack: durasi * 0.3,
-      delay: durasi * 0.25,
-      tujuan: mesin.busBgm
-    })
-  }
-
-  mesin.timerBgm = window.setTimeout(jadwalkanBgm, (4 + Math.random() * 6) * 1000)
 }
