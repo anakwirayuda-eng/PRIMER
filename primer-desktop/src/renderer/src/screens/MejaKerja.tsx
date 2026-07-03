@@ -92,6 +92,8 @@ interface Cta {
 export function MejaKerja() {
   const state = useGame((s) => s.state)!
   const dispatch = useGame((s) => s.dispatch)
+  const slots = useGame((s) => s.slots)
+  const simpanKeSlot = useGame((s) => s.simpanKeSlot)
 
   const [suratTerbukaId, setSuratTerbukaId] = useState<string | null>(null)
   const [draftRefleksi, setDraftRefleksi] = useState('')
@@ -190,9 +192,9 @@ export function MejaKerja() {
         label: `Stase Selesai — Grade ${state.tamat.grade}`,
         sub:
           state.mode === 'ujian'
-            ? 'Skor ujianmu terkunci dan siap disetorkan. Baca surat penutup & Rapor untuk rinciannya.'
-            : 'Sembilan puluh hari tuntas. Baca surat penutup & Rapor untuk rinciannya.',
-        aksi: () => dispatch({ type: 'PINDAH_LAYAR', layar: 'rapor' }),
+            ? 'Skor ujianmu terkunci dan siap disetorkan. Buka Laporan Akhir Stase.'
+            : 'Sembilan puluh hari tuntas. Buka Laporan Akhir Stase.',
+        aksi: () => dispatch({ type: 'PINDAH_LAYAR', layar: 'laporan' }),
       }
     }
     if (state.blok === 'pagi') {
@@ -645,6 +647,24 @@ export function MejaKerja() {
                 </div>
               )
             })()}
+
+            {/* M5.25 — arsip manual: 3 slot di samping autosave. */}
+            <div className="baris mk__program-opsi">
+              {(['slot1', 'slot2', 'slot3'] as const).map((slot) => {
+                const info = slots.find((x) => x.slot === slot)
+                return (
+                  <button
+                    key={slot}
+                    className="tombol"
+                    title={info ? `Timpa ${slot} (dr. ${info.namaDokter} · H${info.hari}).` : `Simpan ke ${slot}.`}
+                    onClick={() => void simpanKeSlot(slot)}
+                  >
+                    💾 {slot.replace('slot', 'Slot ')}
+                    {info ? ` (H${info.hari})` : ''}
+                  </button>
+                )
+              })}
+            </div>
 
             <h3 className="mk__sub-judul mono">REFLEKSI HARI INI</h3>
             <textarea

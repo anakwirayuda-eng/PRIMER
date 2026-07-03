@@ -9,12 +9,13 @@
  * Deterministik penuh: keacakan hanya dari Rng ber-seed.
  */
 
-import type { GameState, PasienAktif } from './state'
+import type { GameState, ModeStase, PasienAktif } from './state'
 import { musimDariHari } from './state'
 import type { ContentPack } from '@content/pack'
 import type { KasusKlinis, Persona } from '@content/types'
 import type { Rng } from './core/rng'
 import { clusterAktif } from './surveilans'
+import { HARI_STASE } from './paketUjian'
 
 // Re-export skor untuk UI: layar Rapor/MejaKerja mengimpor dari '@engine/director'.
 export { hitungSkor, ringkasanHarian } from './scoring'
@@ -85,7 +86,41 @@ function kasusAman(k: KasusKlinis): boolean {
   return k.skdi === '4A' && !k.harusDirujuk
 }
 
-function bobotKasus(k: KasusKlinis, state: GameState, berkluster: ReadonlySet<string>): number {
+/* ---------------------------------------------------------------------------
+ * KURVA 90 HARI (M5.22) — pacing per fase, PROPORSIONAL terhadap durasi mode
+ * (utang M4.5: mode Ujian 30 hari memakai kurva yang sama, dipadatkan 3×).
+ * Fase awal (≤1/3 durasi) = breathing; fase akhir (>2/3) = tekanan penuh.
+ * ------------------------------------------------------------------------- */
+
+/** Fase stase 0..1 — fraksi durasi mode yang sudah dijalani. */
+export function faseStase(hari: number, mode: ModeStase): number {
+  return hari / HARI_STASE[mode]
+}
+
+/**
+ * Jumlah pasien playable pagi ini. Hari 1-2 selalu 2 (onboarding);
+ * fase akhir naik ke 4 — poli penuh adalah ujian stamina yang sebenarnya.
+ */
+export function jumlahPasienHarian(hari: number, mode: ModeStase): number {
+  if (hari <= 2) return 2
+  return faseStase(hari, mode) > 2 / 3 ? 4 : 3
+}
+
+/**
+ * Peluang interrupt IGD per pagi (dipakai reducer): breathing 0.12 →
+ * tengah 0.15 → tekanan penuh 0.20.
+ */
+export function peluangIgd(hari: number, mode: ModeStase): number {
+  const f = faseStase(hari, mode)
+  return f > 2 / 3 ? 0.2 : f > 1 / 3 ? 0.15 : 0.12
+}
+
+function bobotKasus(
+  k: KasusKlinis,
+  state: GameState,
+  berkluster: ReadonlySet<string>,
+  kategoriTersentuh?: ReadonlySet<string>,
+): number {
   // Leitner-lite dari Dex: belum pernah ×3; lemah (★0-1) ×2; dikuasai (★3) ×0.5.
   const entri = state.dex[k.id]
   let bobot: number
@@ -107,6 +142,10 @@ function bobotKasus(k: KasusKlinis, state: GameState, berkluster: ReadonlySet<st
   const prevalensi = k.prevalensi ?? 'sedang'
   bobot *= prevalensi === 'tinggi' ? 3 : prevalensi === 'rendah' ? 0.6 : 1.5
 
+  // Jaminan cakupan kategori (M5.22): kategori SKDI yang belum pernah disentuh
+  // sama sekali diberi dorongan — kurikulum harus melebar, bukan cuma mendalam.
+  if (kategoriTersentuh && !kategoriTersentuh.has(k.kategori)) bobot *= 1.5
+
   return bobot
 }
 
@@ -127,7 +166,8 @@ export function susunAntrianHarian(
   kecuali: string[] = [],
   rngFlavor: Rng = rng,
 ): PasienAktif[] {
-  const jumlah = state.hari <= 2 ? 2 : 3
+  // Kurva pacing M5.22: 2 pasien saat onboarding → 3 → 4 di fase tekanan penuh.
+  const jumlah = jumlahPasienHarian(state.hari, state.mode)
   // Kasus pasien-kembali/karma hari ini dikeluarkan dari kandidat —
   // janji "tanpa duplikat kasus dalam satu hari" berlaku untuk SELURUH antrian.
   const semua = Object.values(pack.kasus).filter((k) => !kecuali.includes(k.id))
@@ -137,11 +177,20 @@ export function susunAntrianHarian(
   const poolAman = semua.filter(kasusAman)
   const terpilih: KasusKlinis[] = []
   const berkluster = new Set(clusterAktif(state).map((c) => c.kasusId))
+  // Cakupan kategori (M5.22): kategori yang sudah punya ≥1 entri Dex dianggap
+  // tersentuh; sisanya didorong bobotnya supaya kurikulum melebar.
+  const kategoriTersentuh = new Set<string>()
+  for (const id of Object.keys(state.dex)) {
+    const kat = pack.kasus[id]?.kategori
+    if (kat) kategoriTersentuh.add(kat)
+  }
 
   const pilihDari = (pool: KasusKlinis[]): KasusKlinis | undefined => {
     const kandidat = pool.filter((k) => !terpilih.some((t) => t.id === k.id))
     if (kandidat.length === 0) return undefined
-    return rng.weighted(kandidat.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster) })))
+    return rng.weighted(
+      kandidat.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster, kategoriTersentuh) })),
+    )
   }
 
   for (let i = 0; i < jumlah; i++) {
@@ -182,7 +231,7 @@ export function susunAntrianHarian(
           (k) => state.dex[k.id] === undefined && !terpilih.some((t) => t.id === k.id),
         )
         if (belumPernah.length > 0) {
-          const pengganti = rng.weighted(belumPernah.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster) })))
+          const pengganti = rng.weighted(belumPernah.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster, kategoriTersentuh) })))
           terpilih[terpilih.length - 1] = pengganti
         }
       }
@@ -202,7 +251,7 @@ export function susunAntrianHarian(
       if (!k?.harusDirujuk) continue
       const pengganti =
         nonRujuk.length > 0
-          ? rng.weighted(nonRujuk.map((c) => ({ item: c, bobot: bobotKasus(c, state, berkluster) })))
+          ? rng.weighted(nonRujuk.map((c) => ({ item: c, bobot: bobotKasus(c, state, berkluster, kategoriTersentuh) })))
           : undefined
       if (pengganti) {
         terpilih[i] = pengganti

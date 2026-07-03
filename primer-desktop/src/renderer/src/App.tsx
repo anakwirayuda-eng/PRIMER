@@ -14,6 +14,7 @@ import { Kegiatan } from './screens/Kegiatan'
 import { Igd } from './screens/Igd'
 import { DexSkdi } from './screens/DexSkdi'
 import { Rapor } from './screens/Rapor'
+import { LaporanAkhir } from './screens/LaporanAkhir'
 import { Hud } from './components/Hud'
 import { Toaster } from './components/Toaster'
 import { useAudio } from './audio/useAudio'
@@ -23,12 +24,15 @@ import './App.css'
 export default function App() {
   const state = useGame((s) => s.state)
   const muatAutosave = useGame((s) => s.muatAutosave)
+  const muatMetaDanSlot = useGame((s) => s.muatMetaDanSlot)
   useAudio()
 
   useEffect(() => {
-    // Coba lanjutkan autosave saat boot (layar judul tetap yang memutuskan).
+    // Coba lanjutkan autosave saat boot (layar judul tetap yang memutuskan);
+    // sekalian muat meta lintas-playthrough & daftar slot manual (M5.24/25).
     void muatAutosave()
-  }, [muatAutosave])
+    void muatMetaDanSlot()
+  }, [muatAutosave, muatMetaDanSlot])
 
   if (!state) {
     return (
@@ -51,6 +55,7 @@ export default function App() {
         {state.layar === 'igd' && <Igd />}
         {state.layar === 'dex' && <DexSkdi />}
         {state.layar === 'rapor' && <Rapor />}
+        {state.layar === 'laporan' && <LaporanAkhir />}
       </main>
       <Toaster />
       <MuteButton />

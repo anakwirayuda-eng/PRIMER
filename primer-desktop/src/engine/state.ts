@@ -432,7 +432,7 @@ export interface LogEntry {
  * ROOT STATE
  * ------------------------------------------------------------------------- */
 
-export type LayarGame = 'meja' | 'klinik' | 'peta' | 'kunjungan' | 'kegiatan' | 'igd' | 'dex' | 'rapor'
+export type LayarGame = 'meja' | 'klinik' | 'peta' | 'kunjungan' | 'kegiatan' | 'igd' | 'dex' | 'rapor' | 'laporan'
 
 export interface GameState {
   /** Versi skema save. */

@@ -96,6 +96,10 @@ export function TitleScreen() {
   const sedangMemuat = useGame((s) => s.sedangMemuat)
   const mulaiGameBaru = useGame((s) => s.mulaiGameBaru)
   const lanjutkanArsip = useGame((s) => s.lanjutkanArsip)
+  const slots = useGame((s) => s.slots)
+  const meta = useGame((s) => s.meta)
+  const muatDariSlot = useGame((s) => s.muatDariSlot)
+  const imporArsip = useGame((s) => s.imporArsip)
   const [nama, setNama] = useState('')
   // M4.5 — dua mode: Karier 90 hari (default, bebas nilai) vs Ujian 30 hari
   // (satu-satunya yang dinilai formal; paket kurikulum dirotasi otomatis).
@@ -203,6 +207,44 @@ export function TitleScreen() {
                 </p>
               )}
             </form>
+
+            {/* M5.25 — slot manual + impor arsip; M5.24 — jejak lintas-playthrough. */}
+            {(slots.length > 0 || meta !== null) && (
+              <div className="title__arsip">
+                {slots.map((info) => (
+                  <button
+                    key={info.slot}
+                    className="tombol title__slot"
+                    onClick={() => void muatDariSlot(info.slot)}
+                    title={`Muat arsip ${info.slot}.`}
+                  >
+                    📁 {info.slot.replace('slot', 'Slot ')}: dr. {info.namaDokter} · H{info.hari}
+                    {info.mode === 'ujian' ? ' · UJIAN' : ''}
+                    {info.tamat ? ' · tamat' : ''}
+                  </button>
+                ))}
+                {meta !== null && (
+                  <p className="teks-xs teks-lembut">
+                    🏅 {meta.badges.length}/9 badge · {Object.values(meta.dexKuasai).filter((b) => b >= 3).length} penyakit
+                    dikuasai · {meta.playthroughs} stase tuntas
+                  </p>
+                )}
+              </div>
+            )}
+            <label className="teks-xs teks-lembut title__impor">
+              Impor arsip JSON:{' '}
+              <input
+                type="file"
+                accept="application/json"
+                onChange={(e) => {
+                  const f = e.target.files?.[0]
+                  if (!f) return
+                  void f.text().then((json) => {
+                    if (!imporArsip(json)) window.alert('Arsip tidak valid atau dari versi yang tak dikenal.')
+                  })
+                }}
+              />
+            </label>
 
             {DI_ELECTRON && (
               <button

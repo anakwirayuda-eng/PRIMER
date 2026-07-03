@@ -229,3 +229,18 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+
+/* M5.24/25 — arsip slot & impor di layar judul */
+.title__arsip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px dashed var(--border-halus);
+}
+
+.title__slot { text-align: left; font-size: var(--text-sm); }
+
+.title__impor { display: block; margin-top: var(--sp-3); }
+.title__impor input { font-size: var(--text-xs); }

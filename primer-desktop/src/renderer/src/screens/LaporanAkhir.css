@@ -1,0 +1,104 @@
+.laporan {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-6);
+  background: radial-gradient(circle at 50% 0%, rgba(191, 144, 44, 0.1), transparent 55%);
+}
+
+.laporan__panel {
+  width: min(860px, 100%);
+  height: fit-content;
+  padding: var(--sp-6);
+  border-top: 4px solid var(--kunyit-600);
+}
+
+.laporan__kicker {
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  color: var(--tinta-lembut);
+}
+
+.laporan__judul {
+  font-size: var(--text-2xl);
+  margin: 2px 0;
+}
+
+.laporan__grade {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  margin: var(--sp-5) 0;
+}
+
+.laporan__stempel {
+  font-size: var(--text-xl);
+  padding: var(--sp-3) var(--sp-5);
+}
+
+.laporan__total {
+  font-size: var(--text-3xl, 2.2rem);
+  font-weight: 800;
+}
+
+.laporan__dimensi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+.laporan__dim { padding: var(--sp-3); }
+
+.laporan__isi { margin-top: var(--sp-5); animation: laporan-masuk 0.5s var(--ease-keluar) both; }
+
+.laporan__statistik {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  padding: var(--sp-3) 0;
+  border-top: 1px dashed var(--border-halus);
+  border-bottom: 1px dashed var(--border-halus);
+  color: var(--tinta-lembut);
+}
+
+.laporan__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: var(--sp-4) 0;
+}
+
+.laporan__badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-pill);
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.laporan__badge--raih {
+  opacity: 1;
+  filter: none;
+  border-color: var(--kunyit-600);
+  background: var(--kunyit-100);
+  animation: laporan-masuk 0.4s var(--ease-keluar) both;
+}
+
+.laporan__badge-ikon { font-size: 1.1rem; }
+
+.laporan__epilog { margin-top: var(--sp-4); }
+
+.laporan__kel { padding: var(--sp-3); margin-top: var(--sp-2); }
+
+.laporan__epilog-teks { line-height: 1.55; margin-top: 4px; }
+
+.laporan__aksi { margin-top: var(--sp-5); gap: var(--sp-3); }
+
+@keyframes laporan-masuk {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -12,7 +12,7 @@ import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter } from './clinic'
 import { buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm } from './kunjungan'
 import { prosesHarianKader } from './kader'
-import { susunAntrianHarian, buatPasienDariKasus } from './director'
+import { susunAntrianHarian, buatPasienDariKasus, peluangIgd } from './director'
 import { kasusMenular, pangkasSurveilans, hitungCluster } from './surveilans'
 import {
   buatKegiatan,
@@ -100,6 +100,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       // Guard unlock kurikuler
       if (action.layar === 'peta' && s.hari < HARI_BUKA_PETA) return err(s, 'Peta desa terbuka besok — hari ini fokus klinik dulu.')
       if (action.layar === 'kunjungan') return err(s, 'Kunjungan dimulai dari kartu keluarga di Peta Desa.')
+      if (action.layar === 'laporan' && !s.tamat) return err(s, 'Laporan Akhir terbit saat stase berakhir.')
       return { state: { ...s, layar: action.layar }, events: [] }
     }
 
@@ -1061,7 +1062,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       state: {
         ...s,
         tamat: { hari: s.hari, grade: skor.grade },
-        layar: 'meja',
+        layar: 'laporan',
         klinik: { ...s.klinik, antrian: [], aktif: undefined },
         kunjungan: undefined,
         kegiatan: undefined,
@@ -1470,9 +1471,10 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     .map((k) => Number(k.slice(8)))
     .reduce((maks, h) => Math.max(maks, h), 0)
   // M4.5: kedatangan + pemilihan kasus IGD = kurikulum; identitas pasien = flavor.
+  // M5.22: peluang naik per fase (0.12 → 0.15 → 0.20) — tekanan penuh di akhir.
   const rngIgd = new Rng(s.seedKurikulum, 'igd', hari)
   const poolIgd = Object.values(pack.kasusIgd)
-  if (hari >= 4 && poolIgd.length > 0 && hari - igdTerakhir >= 4 && rngIgd.chance(0.15)) {
+  if (hari >= 4 && poolIgd.length > 0 && hari - igdTerakhir >= 4 && rngIgd.chance(peluangIgd(hari, s.mode))) {
     const kasusIgd = rngIgd.pick(poolIgd)
     igd = buatIgd(kasusIgd, pack, new Rng(s.seed, 'igd-flavor', hari))
     igdHariIni = true

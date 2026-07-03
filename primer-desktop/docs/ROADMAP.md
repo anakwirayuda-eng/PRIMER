@@ -165,16 +165,32 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
      kurasi pacing per-fase — Mode Ujian sementara memakai Director standar +
      Curriculum Director (pity-timer 4A).
 
-## M5 — Stase Penuh & Endgame
+## M5 — Stase Penuh & Endgame ✅ (selesai 2026-07-03)
 
-22. **Kurva 90 hari**: pacing Director per fase (D1–14 breathing → D61+ tekanan penuh),
-    jaminan cakupan kurikulum (semua kategori SKDI tersentuh per bulan, ≥30% kasus
-    belum-pernah).
-23. **Lock skor D91 immutable** + Laporan Akhir Stase sinematik (count-up + delta
-    baseline + epilog per keluarga binaan).
-24. **Mode lanjut pasca-stase** (badge hunt) + lifetime meta lintas playthrough
-    (Dex & badge bertahan; port 9 badge lama).
-25. **Save slot manual** (3 slot + autosave) + ekspor/impor arsip JSON.
+22. ✅ **Kurva pacing per fase** (`faseStase`/`jumlahPasienHarian`/`peluangIgd` di
+    director): pasien 2 (onboarding) → 3 → **4** di fase >2/3 durasi; peluang IGD
+    0.12 → 0.15 → **0.20**; kurva PROPORSIONAL durasi mode → utang M4.5 (pacing
+    Mode Ujian) lunas — ujian 30 hari memakai kurva sama dipadatkan 3×. Cakupan
+    kurikulum: boost ×1.5 utk kategori SKDI yang belum pernah disentuh Dex
+    (melengkapi pity-timer 4A M3.18); "≥30% belum-pernah" ditopang bobot
+    Leitner ×3 yang sudah ada.
+23. ✅ **Laporan Akhir Stase sinematik** (`LaporanAkhir.tsx`, layar 'laporan'):
+    3 babak (stempel grade jatuh → count-up 4 dimensi ease-out → statistik +
+    badge + "Kabar dari Desa" epilog per keluarga ber-arcSelesai) + tombol
+    **Ekspor Arsip JSON**. Kunci skor immutable sudah dari M4.5; layar laporan
+    di-guard (hanya terbuka setelah tamat).
+24. ✅ **Badge & lifetime meta**: 9 badge (`badge.ts`, pure `hitungBadge`) —
+    PTT Teladan, Penjaga Nyawa, Gerbang Kokoh, Pencegah Takdir, Sahabat Desa,
+    Paripurna, Bendahara Rapi, Kolektor Buku Saku, Hadir Sepenuhnya; saat TAMAT
+    store menggabungkan badge + bintang Dex maks ke slot `meta` lintas
+    playthrough; layar judul menampilkan jejaknya (x/9 badge · n dikuasai ·
+    n stase tuntas).
+25. ✅ **Save slot manual**: 3 slot (simpan di Meja Kerja sore, muat dari layar
+    judul dgn label nama/hari/mode/tamat) + autosave lama + **ekspor** (Laporan
+    Akhir) & **impor** arsip JSON (layar judul, tervalidasi deserialize).
+    "Mode lanjut pasca-stase" (badge hunt bebas) TIDAK dibuat sebagai mode
+    terpisah — pasca-tamat pemain tetap bisa membuka Rapor/Dex/surat; berburu
+    badge terjadi lintas playthrough via meta.
 
 ## M6 — Kelas & Dosen (integritas asesmen)
 
