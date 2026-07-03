@@ -683,6 +683,16 @@ describe('nilaiEncounter — grade masuk akal', () => {
     expect(nilai.grade).toBe('D')
   })
 
+  it('sabar habis → jawaban ketus TIDAK dihitung sebagai informasi (CODEX: klik ≠ menggali data)', () => {
+    const enc = { ...buatEncounter(buatPasien()), sabar: 0 }
+    const hasil = aksiKlinik(enc, { type: 'TANYA', pertanyaanId: 'q_onset' }, KASUS_FARINGITIS, PACK, rngTest())
+    // Pasien menjawab (ketus) tapi pertanyaan tak tercatat — tak ada kredit esensial/OLDCARTS.
+    expect(hasil.events.some((e) => e.type === 'PASIEN_MENJAWAB')).toBe(true)
+    expect(hasil.enc.ditanya).not.toContain('q_onset')
+    const nilai = nilaiEncounter({ ...hasil.enc, disposisi: 'pulang' }, KASUS_FARINGITIS, PACK)
+    expect(nilai.skorAnamnesis).toBe(0)
+  })
+
   it('distraktor yang ditanya menggerus skor anamnesis', () => {
     const enc = buatEncounter(buatPasien())
     const bersih = jalankan(enc, [

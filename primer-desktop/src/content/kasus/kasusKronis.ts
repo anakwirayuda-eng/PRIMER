@@ -584,6 +584,13 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         jawab: 'Lengkap sampai usianya, Dok, ada di buku KIA.',
       },
       {
+        id: "om_alergi",
+        kategori: 'rpd',
+        tanya: "Apakah anak punya riwayat alergi obat, terutama antibiotik?",
+        jawab: "Tidak ada, Dok, selama ini minum obat tidak pernah bentol atau bengkak.",
+        esensial: true,
+      },
+      {
         id: 'dist_om_bab',
         kategori: 'rps',
         tanya: 'Apakah anak juga mengalami diare atau BAB cair?',
@@ -825,6 +832,13 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         kategori: 'sosial',
         tanya: 'Bagaimana berat badan dan asupan makan anak selama ini?',
         jawab: 'Beratnya agak kurang, makannya susah sejak bayi.',
+      },
+      {
+        id: "pn_alergi",
+        kategori: 'rpd',
+        tanya: "Anak ada riwayat alergi obat atau antibiotik sebelumnya?",
+        jawab: "Tidak pernah, Dok, obat dari bidan biasanya cocok semua.",
+        esensial: true,
       },
       {
         id: 'dist_pn_gatal',

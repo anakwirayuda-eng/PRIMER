@@ -171,6 +171,7 @@ export const OBAT: Record<string, Obat> = {
   antasida_doen: {
     id: 'antasida_doen',
     nama: 'Antasida DOEN',
+    sinonim: ['antacid','obat maag','aluminium magnesium hidroksida'],
     kelas: 'Antasida',
     sediaan: 'Tablet kunyah (Al(OH)3 200/Mg(OH)2 200)',
     hargaBeli: 150,
@@ -189,6 +190,7 @@ export const OBAT: Record<string, Obat> = {
   oralit: {
     id: 'oralit',
     nama: 'Oralit (Larutan Rehidrasi Oral)',
+    sinonim: ['ORS','oral rehydration salt','larutan gula garam'],
     kelas: 'Rehidrasi oral',
     sediaan: 'Serbuk sachet 200 mL',
     hargaBeli: 600,
@@ -243,6 +245,7 @@ export const OBAT: Record<string, Obat> = {
   ctm_4: {
     id: 'ctm_4',
     nama: 'Klorfeniramin Maleat (CTM) 4 mg',
+    sinonim: ['klorfeniramin','chlorpheniramine','chlorphenamine'],
     kelas: 'Antihistamin generasi 1',
     sediaan: 'Tablet 4 mg',
     hargaBeli: 100,
@@ -307,6 +310,7 @@ export const OBAT: Record<string, Obat> = {
   oat_kdt: {
     id: 'oat_kdt',
     nama: 'OAT KDT Kategori 1 (RHZE)',
+    sinonim: ['OAT','obat anti tuberkulosis','rifampisin isoniazid pirazinamid etambutol','FDC TB'],
     kelas: 'Anti-tuberkulosis (obat program)',
     sediaan: 'Paket KDT fase intensif, 28 blister',
     hargaBeli: 185000,
@@ -317,6 +321,7 @@ export const OBAT: Record<string, Obat> = {
   tablet_fe: {
     id: 'tablet_fe',
     nama: 'Tablet Tambah Darah (Fe)',
+    sinonim: ['tablet tambah darah','TTD','sulfas ferosus','ferrous sulfate','zat besi'],
     kelas: 'Suplemen besi',
     sediaan: 'Tablet salut (Fe 60 mg + asam folat 0,4 mg)',
     hargaBeli: 200,
@@ -326,6 +331,7 @@ export const OBAT: Record<string, Obat> = {
   asam_folat: {
     id: 'asam_folat',
     nama: 'Asam Folat 1 mg',
+    sinonim: ['folic acid','folat'],
     kelas: 'Suplemen vitamin',
     sediaan: 'Tablet 1 mg',
     hargaBeli: 100,

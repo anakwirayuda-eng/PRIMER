@@ -92,6 +92,14 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         tanya: 'Ada riwayat sakit ginjal atau kencing batu?',
         jawab: 'Tidak ada dok, kencing lancar.',
       },
+      {
+        id: 'q_alergi',
+        kategori: 'rpd',
+        tanya: 'Ada riwayat alergi obat? Terutama obat antinyeri seperti ibuprofen atau diklofenak?',
+        jawab: 'Iya dok, dulu pernah bentol-bentol seluruh badan dan bibir bengkak setelah minum obat nyeri dari warung — kata mantri itu alergi obat antinyeri.',
+        esensial: true,
+        oldcarts: ['penyerta'],
+      },
       // distraktor: golongan darah tidak menentukan tata laksana gout akut.
       {
         id: 'q_goldar',
@@ -210,6 +218,14 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         kategori: 'rps',
         tanya: 'Pernah nyeri dada saat aktivitas, atau sesak saat naik tangga?',
         jawab: 'Tidak dok, masih kuat naik tangga, tidak pernah nyeri dada.',
+        oldcarts: ['penyerta'],
+      },
+      {
+        id: 'q_alergi',
+        kategori: 'rpd',
+        tanya: 'Ada riwayat alergi atau reaksi tidak cocok terhadap obat? Termasuk obat kolesterol?',
+        jawab: 'Dulu pernah dikasih obat kolesterol dok, badan saya gatal-gatal kemerahan dan nyeri otot hebat sampai saya berhenti — kata dokternya saya tidak cocok golongan statin.',
+        esensial: true,
         oldcarts: ['penyerta'],
       },
       // distraktor: kebiasaan minum kopi bukan faktor tata laksana dislipidemia inti.
@@ -437,6 +453,14 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Maag kadang kambuh dok, dan tekanan darah suka tinggi.',
         oldcarts: ['penyerta'],
       },
+      {
+        id: 'q_alergi',
+        kategori: 'rpd',
+        tanya: 'Ada riwayat alergi obat, terutama obat antinyeri/rematik?',
+        jawab: 'Ada dok — obat rematik yang dulu bikin saya bentol-bentol dan sesak, kata dokter alergi obat antinyeri golongan NSAID.',
+        esensial: true,
+        oldcarts: ['penyerta'],
+      },
       // distraktor: riwayat operasi caesar tidak relevan dengan OA lutut.
       {
         id: 'q_operasi',
@@ -556,6 +580,13 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         kategori: 'rpd',
         tanya: 'Pernah jatuh keras, kecelakaan, atau ada riwayat kanker?',
         jawab: 'Tidak ada dok, tidak pernah jatuh keras, tidak ada riwayat kanker.',
+      },
+      {
+        id: "q_alergi",
+        kategori: 'rpd',
+        tanya: "Ada riwayat alergi obat, termasuk obat antinyeri?",
+        jawab: "Tidak ada dok, selama ini aman.",
+        esensial: true,
       },
       // distraktor: preferensi kasur tidak menentukan tata laksana LBP akut.
       {
@@ -778,6 +809,13 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         tanya: 'Ada keluarga dengan penyakit rematik atau autoimun?',
         jawab: 'Ibu saya juga jarinya bengkok-bengkok sejak tua dok.',
         oldcarts: ['penyerta'],
+      },
+      {
+        id: "q_alergi",
+        kategori: 'rpd',
+        tanya: "Ada riwayat alergi obat, terutama obat antinyeri/rematik?",
+        jawab: "Tidak ada dok, cuma maag saya suka kambuh kalau minum obat nyeri.",
+        esensial: true,
       },
       // distraktor: pekerjaan mengetik sering dikira penyebab; bukan penentu diagnosis RA.
       {
@@ -1122,6 +1160,14 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         tanya: 'Sering menahan kencing atau kurang minum? Bagaimana cara cebok?',
         jawab: 'Sering menahan pipis dok karena kerja, dan memang kurang minum air putih.',
         oldcarts: ['agravasi'],
+      },
+      {
+        id: 'q_alergi',
+        kategori: 'rpd',
+        tanya: 'Ada riwayat alergi obat? Terutama antibiotik golongan sulfa (kotrimoksazol)?',
+        jawab: 'Iya dok, waktu SMP pernah minum kotrimoksazol terus kulit saya melepuh kemerahan — sejak itu dibilang pantang obat sulfa.',
+        esensial: true,
+        oldcarts: ['penyerta'],
       },
       // distraktor: merek sabun cuci tidak menentukan tata laksana sistitis.
       {

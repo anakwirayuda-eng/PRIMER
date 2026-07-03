@@ -10,7 +10,7 @@ import { useGame } from '../../store'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
-import { formatRupiah } from './util'
+import { cocokObat, formatRupiah } from './util'
 
 interface Props {
   enc: EncounterState
@@ -24,13 +24,13 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
   // M4.18 — stok gudang tampil di formularium; habis = tombol resep terkunci.
   const stok = useGame((s) => s.state?.gudang.stok)
 
+  // Pencarian toleran-ejaan (playtest): "paracetamol/amoxicillin/cetirizine"
+  // (ejaan Inggris) tetap menemukan Parasetamol/Amoksisilin/Setirizin —
+  // normalisasi fonetik + cari juga di id & sinonim (lihat util.cocokObat).
   const daftarObat = useMemo(() => {
-    const q = cari.trim().toLowerCase()
+    const q = cari.trim()
     return Object.values(PACK.obat)
-      .filter(
-        (o) =>
-          q === '' || o.nama.toLowerCase().includes(q) || o.kelas.toLowerCase().includes(q),
-      )
+      .filter((o) => q === '' || cocokObat(o, q))
       .sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
   }, [cari])
 

@@ -227,6 +227,9 @@ export interface Obat {
   id: string
   nama: string
   kelas: string
+  /** Nama lain/ejaan Inggris/singkatan lazim — dipakai pencarian formularium
+   * (mis. CTM ← chlorpheniramine/klorfeniramin; tablet Fe ← tablet tambah darah). */
+  sinonim?: string[]
   /** Golongan alergi (utk firewall): 'penisilin' | 'nsaid' | 'sulfa' | ... */
   golonganAlergi?: string
   sediaan: string

@@ -855,6 +855,22 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Belum pernah dok, ini pertama kali mau tanya soal obat tidur.',
       },
       {
+        id: 'q_keselamatan',
+        kategori: 'rps',
+        tanya: 'Di tengah lelah dan susah tidur ini, pernah muncul pikiran menyakiti diri sendiri atau merasa hidup tidak berarti?',
+        jawab: 'Tidak sampai begitu dok. Capek dan jengkel iya, tapi tidak pernah kepikiran yang macam-macam.',
+        esensial: true,
+        oldcarts: ['penyerta'],
+      },
+      {
+        id: 'q_zat',
+        kategori: 'sosial',
+        tanya: 'Bagaimana dengan alkohol, rokok, atau minuman berenergi/obat-obatan supaya bisa tidur atau tetap terjaga?',
+        jawab: 'Alkohol tidak dok. Kopi memang banyak, dan kadang minuman berenergi kalau lembur — obat-obatan tidak pernah.',
+        esensial: true,
+        oldcarts: ['agravasi'],
+      },
+      {
         id: 'q_lingkungan',
         kategori: 'sosial',
         tanya: 'Merek kasur atau bantalnya apa?',

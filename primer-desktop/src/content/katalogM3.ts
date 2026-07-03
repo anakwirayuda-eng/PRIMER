@@ -32,7 +32,8 @@ export const OBAT_M3: Record<string, Obat> = {
   asiklovir_krim: { id: 'asiklovir_krim', nama: 'Asiklovir Krim 5%', kelas: 'antivirus topikal', sediaan: 'krim', hargaBeli: 4000, hargaJual: 8000, fornas: true },
   albendazol_400: { id: 'albendazol_400', nama: 'Albendazol 400 mg', kelas: 'antihelmintik', sediaan: 'tablet kunyah', hargaBeli: 500, hargaJual: 1100, fornas: true },
   pirantel_pamoat: { id: 'pirantel_pamoat', nama: 'Pirantel Pamoat 125 mg', kelas: 'antihelmintik', sediaan: 'tablet', hargaBeli: 400, hargaJual: 900, fornas: true },
-  dihidroartemisinin_piperakuin: { id: 'dihidroartemisinin_piperakuin', nama: 'DHP (Dihidroartemisinin-Piperakuin)', kelas: 'antimalaria ACT', sediaan: 'tablet', hargaBeli: 0, hargaJual: 0, fornas: true },
+  dihidroartemisinin_piperakuin: { id: 'dihidroartemisinin_piperakuin', nama: 'DHP (Dihidroartemisinin-Piperakuin)',
+    sinonim: ['DHP','ACT','artemisinin'], kelas: 'antimalaria ACT', sediaan: 'tablet', hargaBeli: 0, hargaJual: 0, fornas: true },
 
   // -- Kardiovaskular / metabolik --
   simvastatin_20: { id: 'simvastatin_20', nama: 'Simvastatin 20 mg', kelas: 'statin', sediaan: 'tablet', hargaBeli: 200, hargaJual: 500, fornas: true },
@@ -75,7 +76,8 @@ export const OBAT_M3: Record<string, Obat> = {
   kalsium_laktat: { id: 'kalsium_laktat', nama: 'Kalsium Laktat 500 mg', kelas: 'suplemen', sediaan: 'tablet', hargaBeli: 150, hargaJual: 400, fornas: true },
   metildopa_250: { id: 'metildopa_250', nama: 'Metildopa 250 mg', kelas: 'antihipertensi kehamilan', sediaan: 'tablet', hargaBeli: 400, hargaJual: 900, fornas: true },
   nifedipin_10: { id: 'nifedipin_10', nama: 'Nifedipin 10 mg', kelas: 'CCB', sediaan: 'tablet', hargaBeli: 200, hargaJual: 500, fornas: true },
-  mgso4_inj: { id: 'mgso4_inj', nama: 'Magnesium Sulfat 40% Injeksi', kelas: 'antikonvulsan preeklampsia', sediaan: 'ampul', hargaBeli: 8000, hargaJual: 15000, fornas: true },
+  mgso4_inj: { id: 'mgso4_inj', nama: 'Magnesium Sulfat 40% Injeksi',
+    sinonim: ['magnesium sulfat','magnesium sulfate','MgSO4'], kelas: 'antikonvulsan preeklampsia', sediaan: 'ampul', hargaBeli: 8000, hargaJual: 15000, fornas: true },
   vitamin_a_kapsul: { id: 'vitamin_a_kapsul', nama: 'Vitamin A 200.000 IU', kelas: 'suplemen', sediaan: 'kapsul', hargaBeli: 0, hargaJual: 0, fornas: true },
   garam_oralit_zinc: { id: 'garam_oralit_zinc', nama: 'Paket Oralit + Zinc (program)', kelas: 'rehidrasi', sediaan: 'sachet', hargaBeli: 0, hargaJual: 0, fornas: true },
 

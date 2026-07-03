@@ -330,6 +330,13 @@ export const KASUS_KULIT: KasusKlinis[] = [
         tanya: 'Bagaimana kebiasaan cuci tangan dan mandi anaknya?',
         jawab: 'Kadang lupa cuci tangan dok, main tanah terus langsung makan.',
       },
+      {
+        id: "q_alergi",
+        kategori: 'rpd',
+        tanya: "Anak ada riwayat alergi obat, terutama antibiotik?",
+        jawab: "Tidak ada dok, belum pernah bentol atau bengkak karena obat.",
+        esensial: true,
+      },
       // distraktor: golongan darah anak tidak relevan untuk impetigo.
       {
         id: 'q_goldar',

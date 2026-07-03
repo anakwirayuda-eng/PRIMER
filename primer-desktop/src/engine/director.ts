@@ -37,9 +37,10 @@ function pilihPersona(usia: number, rng: Rng): Persona {
 
 /**
  * Wujudkan satu pasien dari kasus: nama sesuai jenis kelamin, usia dalam rentang
- * demografi, persona berbobot (lansia/wali anak dipaksa usia), BPJS 70%,
- * alergiTrap 60% membawa alergi golongan tersebut. `override` untuk pasien
- * follow-up/karma (reducer yang mengisi).
+ * demografi, persona berbobot (lansia/wali anak dipaksa usia), BPJS 70%.
+ * Kasus ber-`alergiTrap` SELALU membawa alergi golongan tsb (bukan probabilistik) —
+ * jebakannya adalah inti pelajaran kasus, dan anamnesisnya menceritakan riwayat itu.
+ * `override` untuk pasien follow-up/karma (reducer yang mengisi).
  */
 export function buatPasienDariKasus(
   kasusId: string,

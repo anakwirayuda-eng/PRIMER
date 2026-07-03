@@ -141,11 +141,16 @@ export function aksiKlinik(
       if (ditanya.length >= AMBANG_PERTANYAAN_PANJANG) turun += PENALTI_PERTANYAAN_PANJANG
       const sabar = clamp(enc.sabar - turun, 0, SABAR_AWAL)
 
-      const teks = sabar <= 0 ? rng.pick(JAWABAN_KETUS) : jawabanUntuk(tanya, enc.pasien.persona)
+      // Sabar habis → jawaban ketus = TIDAK ada informasi klinis yang keluar.
+      // Pertanyaan itu tak dicatat sebagai "ditanya": mengklik tombol bukan
+      // sama dengan menggali data (temuan audit CODEX — kredit esensial/OLDCARTS
+      // hanya untuk jawaban sungguhan).
+      const jawabKetus = sabar <= 0
+      const teks = jawabKetus ? rng.pick(JAWABAN_KETUS) : jawabanUntuk(tanya, enc.pasien.persona)
       const events: GameEvent[] = [{ type: 'PASIEN_MENJAWAB', teks }]
       if (turun > 0 && sabar < AMBANG_SABAR_MENIPIS) events.push({ type: 'SABAR_MENIPIS' })
 
-      return { enc: { ...enc, ditanya, sabar }, events }
+      return { enc: { ...enc, ditanya: jawabKetus ? enc.ditanya : ditanya, sabar }, events }
     }
 
     /* -- Pemeriksaan ---------------------------------------------------------- */

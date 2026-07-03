@@ -208,6 +208,13 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Ibu saya dulu juga sering sakit kepala sebelah dok.',
       },
       {
+        id: "q_alergi",
+        kategori: 'rpd',
+        tanya: "Ada riwayat alergi obat, terutama obat antinyeri?",
+        jawab: "Tidak ada dok, obat nyeri biasa aman-aman saja.",
+        esensial: true,
+      },
+      {
         id: 'q_makanan_kesukaan',
         kategori: 'sosial',
         tanya: 'Makanan kesukaannya apa?',

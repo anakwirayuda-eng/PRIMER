@@ -4,10 +4,12 @@
  */
 
 import { PACK } from '@content/index'
+import { NAMA_ICD } from '@content/icd10'
 import type {
   JenisKelamin,
   KasusKlinis,
   KategoriAnamnesis,
+  Obat,
   Persona,
   PertanyaanAnamnesis,
   RegionFisik,
@@ -88,86 +90,56 @@ export function jawabanPasien(q: PertanyaanAnamnesis, persona: Persona): string 
 /* -- Nama diagnosis ramah ------------------------------------------------------------ */
 
 /**
- * Nama ICD-10 tambahan untuk diagnosis banding yang TIDAK termasuk daftar
- * SKDI-144 (mis. kasus 3B yang harus dirujuk, atau varian banding).
- * Sengaja diberi nama agar SEMUA pilihan banding tampil setara —
- * pemain tidak bisa menebak jawaban dari pilihan mana yang "punya nama".
+ * Nama ramah untuk kode ICD-10 pilihan diagnosis banding — SEMUA pilihan harus
+ * bernama setara (anti-bocor: pemain tak boleh menebak jawaban dari pilihan
+ * mana yang 'punya nama'). Berlapis: SKDI-144 -> nama kasus playable lain
+ * dengan ICD sama -> kamus content/icd10.ts -> fallback kode telanjang
+ * (pack.test.ts menjaga fallback ini tak pernah tampil di konten produksi).
  */
-const NAMA_ICD_TAMBAHAN: Record<string, string> = {
-  // Neurologi & gawat
-  I63: 'Stroke Iskemik (Infark Serebri)',
-  'I61.9': 'Perdarahan Intraserebral',
-  I61: 'Perdarahan Intraserebral',
-  I64: 'Stroke, tidak spesifik',
-  'G45.9': 'Transient Ischemic Attack (TIA)',
-  'E16.2': 'Hipoglikemia',
-  'R56.0': 'Kejang Demam',
-  // Infeksi & tropik
-  A90: 'Demam Dengue',
-  A91: 'Demam Berdarah Dengue (DBD)',
-  'A01.0': 'Demam Tifoid',
-  B54: 'Malaria',
-  A09: 'Diare & Gastroenteritis Infeksius',
-  'A08.0': 'Enteritis Rotavirus',
-  'K52.9': 'Kolitis Non-infektif',
-  'A15.0': 'TB Paru, konfirmasi BTA (+)',
-  'A16.2': 'TB Paru, tanpa konfirmasi bakteriologis',
-  B86: 'Skabies',
-  'B30.9': 'Konjungtivitis Viral',
-  'H10.0': 'Konjungtivitis Mukopurulen',
-  'H10.1': 'Konjungtivitis Alergika Akut',
-  'H10.9': 'Konjungtivitis, tidak spesifik',
-  // Respirasi
-  J00: 'Nasofaringitis Akut (Common Cold)',
-  'J02.9': 'Faringitis Akut',
-  'J03.9': 'Tonsilitis Akut',
-  'J06.9': 'ISPA Atas Akut, tidak spesifik',
-  'J18.9': 'Pneumonia, tidak spesifik',
-  'J15.9': 'Pneumonia Bakterial',
-  'J21.9': 'Bronkiolitis Akut',
-  'J20.9': 'Bronkitis Akut',
-  'J45.9': 'Asma Bronkial',
-  'J44.1': 'PPOK Eksaserbasi Akut',
-  // Kardio-metabolik
-  I10: 'Hipertensi Esensial',
-  'I11.9': 'Penyakit Jantung Hipertensif',
-  'I15.9': 'Hipertensi Sekunder',
-  'E11.9': 'Diabetes Melitus Tipe 2',
-  'E10.9': 'Diabetes Melitus Tipe 1',
-  'R73.0': 'Toleransi Glukosa Terganggu',
-  // Pencernaan
-  'K29.7': 'Gastritis',
-  'K21.9': 'GERD (Refluks Gastroesofagus)',
-  K30: 'Dispepsia Fungsional',
-  'K25.9': 'Ulkus Gaster',
-  'K26.9': 'Ulkus Duodenum',
-  // THT & hematologi & kulit
-  'H66.9': 'Otitis Media, tidak spesifik',
-  'H65.9': 'Otitis Media Efusi',
-  'H60.9': 'Otitis Eksterna',
-  'D50.9': 'Anemia Defisiensi Besi',
-  'D64.9': 'Anemia, tidak spesifik',
-  'D56.9': 'Talasemia',
-  'O99.0': 'Anemia dalam Kehamilan',
-  'L20.9': 'Dermatitis Atopik',
-  'L29.9': 'Pruritus, tidak spesifik',
-  'L30.9': 'Dermatitis, tidak spesifik',
-  'L23.9': 'Dermatitis Kontak Alergika',
-  'B35.9': 'Dermatofitosis (Tinea)',
-  'R50.9': 'Demam, tidak spesifik',
-  'B34.9': 'Infeksi Virus, tidak spesifik',
-}
+const namaKasusPerIcd: Map<string, string> = new Map(
+  Object.values(PACK.kasus).map((k) => [k.icd10, k.nama]),
+)
 
-/**
- * Nama ramah untuk kode ICD-10 pilihan diagnosis banding.
- * Prioritas: daftar SKDI-144 → suplemen di atas → nama kasus (bila kode
- * kebetulan milik kasus aktif) → tampilkan kodenya apa adanya.
- */
 export function namaDiagnosis(icd10: string, kasus: KasusKlinis): string {
   const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
   if (entri) return entri.nama
-  const tambahan = NAMA_ICD_TAMBAHAN[icd10]
-  if (tambahan) return tambahan
   if (icd10 === kasus.icd10) return kasus.nama
+  const dariKasusLain = namaKasusPerIcd.get(icd10)
+  if (dariKasusLain) return dariKasusLain
+  const tambahan = NAMA_ICD[icd10]
+  if (tambahan) return tambahan
   return `Kode ${icd10}`
+}
+
+/* -- Pencarian obat toleran-ejaan -------------------------------------------------- */
+
+/**
+ * Normalisasi fonetik EN↔ID untuk pencarian obat (temuan playtest: pemain
+ * mengetik "paracetamol/amoxicillin/cetirizine" — ejaan Inggris — dan tidak
+ * menemukan "Parasetamol/Amoksisilin/Setirizin"). Aturan transliterasi umum
+ * nama generik: ph→f, x→ks, c(e/i)→s, c→k, q→k, y→i, th→t; buang non-alfanumerik.
+ */
+export function normalisasiNamaObat(teks: string): string {
+  return teks
+    .toLowerCase()
+    .replace(/ph/g, 'f')
+    .replace(/th/g, 't')
+    .replace(/x/g, 'ks')
+    .replace(/c(?=[eiy])/g, 's')
+    .replace(/c/g, 'k')
+    .replace(/q/g, 'k')
+    .replace(/y/g, 'i')
+    .replace(/[^a-z0-9]/g, '')
+    .replace(/(.)\1+/g, '$1') // huruf ganda EN (ll/ss/tt) → tunggal ID
+}
+
+/**
+ * Cocokkan kueri pemain terhadap obat: nama Indonesia, id (ejaan Inggris),
+ * kelas terapi, dan sinonim — semuanya lewat normalisasi fonetik yang sama.
+ */
+export function cocokObat(obat: Obat, kueri: string): boolean {
+  const q = normalisasiNamaObat(kueri)
+  if (q.length === 0) return true
+  const korpus = [obat.nama, obat.id, obat.kelas, ...(obat.sinonim ?? [])]
+  return korpus.some((teks) => normalisasiNamaObat(teks).includes(q))
 }
