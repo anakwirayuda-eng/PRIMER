@@ -96,6 +96,23 @@ function gagal(enc: EncounterState, pesan: string): { enc: EncounterState; event
   return { enc, events: [{ type: 'ERROR_AKSI', pesan }] }
 }
 
+/**
+ * Phase-guard (CODEX audit 2026-07-04, temuan #2 §9): dulu SEMUA aksi diterima
+ * di fase manapun — UI-lah yang membatasi lewat rendering per-fase (DeckAksi),
+ * tapi engine sendiri tak menegakkannya. Dispatch manual (headless/DevTools)
+ * bisa mem-fase-lompat, mis. KOMIT_DIAGNOSIS langsung di fase anamnesis tanpa
+ * pernah lewat LANJUT_FASE. Skor tetap merefleksikan kerja yang dilewati
+ * (bukan exploit skor), tapi state jadi tak konsisten dgn invarian UI. Kini
+ * ditegakkan di engine: tiap aksi kategori hanya sah pada fase kanoniknya.
+ */
+function bukanFase(
+  enc: EncounterState,
+  diharapkan: FaseEncounter,
+): { enc: EncounterState; events: GameEvent[] } | null {
+  if (enc.fase === diharapkan) return null
+  return gagal(enc, `Belum waktunya — pasien ini sedang di tahap ${enc.fase}, bukan ${diharapkan}.`)
+}
+
 /* ---------------------------------------------------------------------------
  * buatEncounter — pasien baru duduk di ruang periksa
  * ------------------------------------------------------------------------- */
@@ -131,6 +148,8 @@ export function aksiKlinik(
     /* -- Anamnesis ----------------------------------------------------------- */
 
     case 'TANYA': {
+      const salahFase = bukanFase(enc, 'anamnesis')
+      if (salahFase) return salahFase
       const tanya = kasus.anamnesis.find((q) => q.id === action.pertanyaanId)
       if (!tanya) {
         return gagal(enc, `Pertanyaan '${action.pertanyaanId}' tidak ada pada kasus ini.`)
@@ -164,11 +183,15 @@ export function aksiKlinik(
     /* -- Pemeriksaan ---------------------------------------------------------- */
 
     case 'UKUR_VITAL': {
+      const salahFase = bukanFase(enc, 'pemeriksaan')
+      if (salahFase) return salahFase
       if (enc.vitalDiukur) return tanpaPerubahan(enc)
       return { enc: { ...enc, vitalDiukur: true }, events: [{ type: 'VITAL_TERUKUR' }] }
     }
 
     case 'PERIKSA': {
+      const salahFase = bukanFase(enc, 'pemeriksaan')
+      if (salahFase) return salahFase
       const entri = kasus.pemeriksaanFisik.find((t) => t.region === action.region)
       const temuan = entri ? entri.temuan : 'dalam batas normal'
       const diperiksa = enc.diperiksa.includes(action.region)
@@ -181,6 +204,8 @@ export function aksiKlinik(
     }
 
     case 'PESAN_LAB': {
+      const salahFase = bukanFase(enc, 'pemeriksaan')
+      if (salahFase) return salahFase
       // Duplikat → tolak diam-diam (tanpa biaya ganda, tanpa event).
       if (enc.labDipesan.includes(action.labId)) return tanpaPerubahan(enc)
       const item = pack.lab[action.labId]
@@ -210,6 +235,8 @@ export function aksiKlinik(
     /* -- Diagnosis ------------------------------------------------------------ */
 
     case 'KOMIT_DIAGNOSIS': {
+      const salahFase = bukanFase(enc, 'diagnosis')
+      if (salahFase) return salahFase
       return {
         enc: {
           ...enc,
@@ -223,6 +250,8 @@ export function aksiKlinik(
     /* -- Terapi ----------------------------------------------------------------- */
 
     case 'TAMBAH_OBAT': {
+      const salahFase = bukanFase(enc, 'terapi')
+      if (salahFase) return salahFase
       const obat = pack.obat[action.obatId]
       if (!obat) return gagal(enc, `Obat '${action.obatId}' tidak ada di formularium.`)
 
@@ -242,6 +271,8 @@ export function aksiKlinik(
     }
 
     case 'HAPUS_OBAT': {
+      const salahFase = bukanFase(enc, 'terapi')
+      if (salahFase) return salahFase
       if (!enc.resep.includes(action.obatId)) return tanpaPerubahan(enc)
       return {
         enc: { ...enc, resep: enc.resep.filter((id) => id !== action.obatId) },
@@ -250,6 +281,8 @@ export function aksiKlinik(
     }
 
     case 'TAMBAH_EDUKASI': {
+      const salahFase = bukanFase(enc, 'terapi')
+      if (salahFase) return salahFase
       if (!pack.edukasi[action.edukasiId]) {
         return gagal(enc, `Topik edukasi '${action.edukasiId}' tidak ada di katalog.`)
       }
@@ -267,6 +300,8 @@ export function aksiKlinik(
     }
 
     case 'HAPUS_EDUKASI': {
+      const salahFase = bukanFase(enc, 'terapi')
+      if (salahFase) return salahFase
       if (!enc.edukasi.includes(action.edukasiId)) return tanpaPerubahan(enc)
       return {
         enc: { ...enc, edukasi: enc.edukasi.filter((id) => id !== action.edukasiId) },

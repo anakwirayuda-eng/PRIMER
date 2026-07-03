@@ -117,7 +117,10 @@ function tanganiPasien(s0: GameState, p: ContentPack, disp: Action): GameState {
   let s = run(s0, { type: 'PANGGIL_PASIEN' }, p)
   const kasusId = s.klinik.aktif!.pasien.kasusId
   const icd = p.kasus[kasusId]!.icd10
-  s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: icd, jenis: 'tegak' }, p)
+  s = run(s, { type: 'LANJUT_FASE' }, p) // anamnesis → pemeriksaan
+  s = run(s, { type: 'LANJUT_FASE' }, p) // pemeriksaan → diagnosis
+  s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: icd, jenis: 'tegak' }, p) // → terapi
+  s = run(s, { type: 'LANJUT_FASE' }, p) // terapi → disposisi
   return run(s, disp, p)
 }
 

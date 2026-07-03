@@ -216,6 +216,12 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       // lalu rujuk" tak boleh diganti "rujuk tanpa bernalar" — confidence-tag di
       // bawah hanya bermakna bila pemain benar-benar sudah menegakkan sesuatu.
       if (!enc.diagnosis) return err(s, 'Komit diagnosis dulu sebelum menentukan disposisi (termasuk rujuk).')
+      // Phase-guard (CODEX audit 2026-07-04, temuan #2 §9): selaras dgn guard
+      // di clinic.ts — DISPOSISI hanya sah di fase disposisi, walau diagnosis
+      // sudah ada (mis. baru KOMIT_DIAGNOSIS, belum LANJUT_FASE dari terapi).
+      if (enc.fase !== 'disposisi') {
+        return err(s, `Selesaikan tahap terapi dulu — pasien ini masih di tahap ${enc.fase}.`)
+      }
       const kasus = pack.kasus[enc.pasien.kasusId]
       if (!kasus) return err(s, `Kasus ${enc.pasien.kasusId} tidak ditemukan.`)
 

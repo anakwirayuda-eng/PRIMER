@@ -8,7 +8,7 @@ import { aksiKlinik, buatEncounter, nilaiEncounter, KAPASITAS_EDUKASI } from './
 import { Rng } from './core/rng'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
-import type { EncounterState, PasienAktif } from './state'
+import type { EncounterState, FaseEncounter, PasienAktif } from './state'
 import type {
   ItemLab,
   KasusKlinis,
@@ -310,6 +310,16 @@ function jalankan(
   return { enc: sekarang, events }
 }
 
+/**
+ * Fast-forward encounter langsung ke fase tertentu (phase-guard CODEX audit
+ * 2026-07-04, temuan #2 §9) — dipakai test yang mau menguji perilaku SATU
+ * fase secara terisolasi, tanpa perlu menulis ulang LANJUT_FASE berulang di
+ * tiap test. Sah krn EncounterState cuma plain object, bukan enkapsulasi.
+ */
+function buatEncounterFase(pasien: PasienAktif, fase: EncounterState['fase']): EncounterState {
+  return { ...buatEncounter(pasien), fase }
+}
+
 function cariEvent<T extends GameEvent['type']>(
   events: GameEvent[],
   type: T,
@@ -459,7 +469,7 @@ describe('aksiKlinik — TANYA', () => {
 
 describe('aksiKlinik — pemeriksaan', () => {
   it('UKUR_VITAL menandai vital dan idempoten', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
     const pertama = aksiKlinik(enc, { type: 'UKUR_VITAL' }, KASUS_FARINGITIS, PACK, rngTest())
     expect(pertama.enc.vitalDiukur).toBe(true)
     expect(cariEvent(pertama.events, 'VITAL_TERUKUR')).toBeDefined()
@@ -468,7 +478,7 @@ describe('aksiKlinik — pemeriksaan', () => {
   })
 
   it('PERIKSA region terdaftar mengembalikan temuan kasus', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
     const { enc: baru, events } = aksiKlinik(
       enc,
       { type: 'PERIKSA', region: 'tht_mulut' },
@@ -482,7 +492,7 @@ describe('aksiKlinik — pemeriksaan', () => {
   })
 
   it('PERIKSA region tak terdaftar → "dalam batas normal"', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
     const { events } = aksiKlinik(
       enc,
       { type: 'PERIKSA', region: 'neurologis' },
@@ -495,7 +505,7 @@ describe('aksiKlinik — pemeriksaan', () => {
   })
 
   it('PESAN_LAB biasa langsung tersedia; hasilBesok TIDAK masuk labTersedia', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
     const { enc: baru, events } = jalankan(enc, [
       { type: 'PESAN_LAB', labId: 'darah_rutin' },
       { type: 'PESAN_LAB', labId: 'bta_sputum' },
@@ -510,7 +520,7 @@ describe('aksiKlinik — pemeriksaan', () => {
   })
 
   it('lab duplikat ditolak diam-diam (tanpa event, tanpa perubahan)', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
     const pertama = aksiKlinik(
       enc,
       { type: 'PESAN_LAB', labId: 'darah_rutin' },
@@ -553,7 +563,7 @@ describe('aksiKlinik — fase & diagnosis', () => {
   })
 
   it('KOMIT_DIAGNOSIS menyetel diagnosis, pindah ke terapi, dan mengeluarkan STEMPEL', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'diagnosis')
     const { enc: baru, events } = aksiKlinik(
       enc,
       { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'suspek' },
@@ -567,9 +577,46 @@ describe('aksiKlinik — fase & diagnosis', () => {
   })
 })
 
+/* ---------------------------------------------------------------------------
+ * Phase-guard (CODEX audit 2026-07-04, temuan #2 §9): tiap kategori aksi
+ * cuma sah pada fase kanoniknya — dispatch manual lompat-fase kini ditolak
+ * ERROR_AKSI, bukan diam-diam diterima, walau pemain memakai DevTools/API.
+ * ------------------------------------------------------------------------- */
+describe('aksiKlinik — phase-guard: aksi salah-fase ditolak', () => {
+  const kasusFase: { aksi: Action; sahDi: FaseEncounter }[] = [
+    { aksi: { type: 'TANYA', pertanyaanId: 'q_onset' }, sahDi: 'anamnesis' },
+    { aksi: { type: 'UKUR_VITAL' }, sahDi: 'pemeriksaan' },
+    { aksi: { type: 'PERIKSA', region: 'tht_mulut' }, sahDi: 'pemeriksaan' },
+    { aksi: { type: 'PESAN_LAB', labId: 'darah_rutin' }, sahDi: 'pemeriksaan' },
+    { aksi: { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'suspek' }, sahDi: 'diagnosis' },
+    { aksi: { type: 'TAMBAH_OBAT', obatId: 'paracetamol_500' }, sahDi: 'terapi' },
+    { aksi: { type: 'HAPUS_OBAT', obatId: 'paracetamol_500' }, sahDi: 'terapi' },
+    { aksi: { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' }, sahDi: 'terapi' },
+    { aksi: { type: 'HAPUS_EDUKASI', edukasiId: 'etika_batuk' }, sahDi: 'terapi' },
+  ]
+  const semuaFase: FaseEncounter[] = ['anamnesis', 'pemeriksaan', 'diagnosis', 'terapi', 'disposisi']
+
+  for (const { aksi, sahDi } of kasusFase) {
+    for (const fase of semuaFase.filter((f) => f !== sahDi)) {
+      it(`${aksi.type} ditolak ERROR_AKSI di fase ${fase} (hanya sah di ${sahDi})`, () => {
+        const enc = buatEncounterFase(buatPasien(), fase)
+        const { enc: baru, events } = aksiKlinik(enc, aksi, KASUS_FARINGITIS, PACK, rngTest())
+        expect(baru).toBe(enc) // state tak berubah sama sekali
+        expect(cariEvent(events, 'ERROR_AKSI')).toBeDefined()
+      })
+    }
+  }
+
+  it(`${'TANYA'} tetap diterima normal persis di fase sahnya`, () => {
+    const enc = buatEncounterFase(buatPasien(), 'anamnesis')
+    const { events } = aksiKlinik(enc, { type: 'TANYA', pertanyaanId: 'q_onset' }, KASUS_FARINGITIS, PACK, rngTest())
+    expect(cariEvent(events, 'ERROR_AKSI')).toBeUndefined()
+  })
+})
+
 describe('aksiKlinik — firewall alergi', () => {
   it('memblokir obat segolongan alergi pasien: resep tidak bertambah', () => {
-    const enc = buatEncounter(buatPasien({ alergi: ['penisilin'] }))
+    const enc = buatEncounterFase(buatPasien({ alergi: ['penisilin'] }), 'terapi')
     const { enc: baru, events } = aksiKlinik(
       enc,
       { type: 'TAMBAH_OBAT', obatId: 'amoxicillin_500' },
@@ -589,7 +636,7 @@ describe('aksiKlinik — firewall alergi', () => {
   })
 
   it('alternatif di luar golongan alergi tetap boleh diresepkan', () => {
-    const enc = buatEncounter(buatPasien({ alergi: ['penisilin'] }))
+    const enc = buatEncounterFase(buatPasien({ alergi: ['penisilin'] }), 'terapi')
     const { enc: baru } = jalankan(enc, [
       { type: 'TAMBAH_OBAT', obatId: 'amoxicillin_500' }, // diblokir
       { type: 'TAMBAH_OBAT', obatId: 'eritromisin_500' }, // lolos
@@ -600,7 +647,7 @@ describe('aksiKlinik — firewall alergi', () => {
   })
 
   it('HAPUS_OBAT dan TAMBAH/HAPUS_EDUKASI bekerja biasa', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'terapi')
     const { enc: baru } = jalankan(enc, [
       { type: 'TAMBAH_OBAT', obatId: 'paracetamol_500' },
       { type: 'TAMBAH_OBAT', obatId: 'ibuprofen_400' },
@@ -661,11 +708,13 @@ describe('nilaiEncounter — grade masuk akal', () => {
       { type: 'TANYA', pertanyaanId: 'q_demam' },
       { type: 'TANYA', pertanyaanId: 'q_batuk' },
       { type: 'TANYA', pertanyaanId: 'q_makan' },
+      { type: 'LANJUT_FASE' }, // anamnesis → pemeriksaan
       { type: 'UKUR_VITAL' },
       { type: 'PERIKSA', region: 'tht_mulut' },
       { type: 'PERIKSA', region: 'kepala_leher' },
       { type: 'PESAN_LAB', labId: 'darah_rutin' },
-      { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
+      { type: 'LANJUT_FASE' }, // pemeriksaan → diagnosis
+      { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' }, // → terapi (otomatis)
       { type: 'TAMBAH_OBAT', obatId: 'amoxicillin_500' },
       { type: 'TAMBAH_OBAT', obatId: 'paracetamol_500' },
       { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },
@@ -690,6 +739,8 @@ describe('nilaiEncounter — grade masuk akal', () => {
   it('permainan asal-asalan mendapat grade D', () => {
     const enc = buatEncounter(buatPasien())
     const { enc: main } = jalankan(enc, [
+      { type: 'LANJUT_FASE' }, // anamnesis → pemeriksaan, tanpa tanya apapun
+      { type: 'LANJUT_FASE' }, // pemeriksaan → diagnosis, tanpa periksa apapun
       { type: 'KOMIT_DIAGNOSIS', icd10: 'J00', jenis: 'tegak' }, // salah, tanpa anamnesis
       { type: 'TAMBAH_OBAT', obatId: 'ibuprofen_400' }, // di luar tatalaksana
     ])
@@ -725,7 +776,7 @@ describe('nilaiEncounter — grade masuk akal', () => {
   })
 
   it('tanpa vital, skor pemeriksaan tertahan di 50', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
     const { enc: main } = jalankan(enc, [
       { type: 'PERIKSA', region: 'tht_mulut' },
       { type: 'PERIKSA', region: 'kepala_leher' },
@@ -737,7 +788,7 @@ describe('nilaiEncounter — grade masuk akal', () => {
 
 describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
   it('antibiotik tanpa indikasi tercatat pada kasus viral', () => {
-    const enc = buatEncounter(buatPasien({ kasusId: 'ispa_mini' }))
+    const enc = buatEncounterFase(buatPasien({ kasusId: 'ispa_mini' }), 'diagnosis')
     const { enc: main } = jalankan(
       enc,
       [
@@ -766,7 +817,7 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
       },
     }
     const pack = { ...PACK, kasus: { ...PACK.kasus, alt_mini: KASUS_ALT } }
-    const enc = () => buatEncounter(buatPasien({ kasusId: 'alt_mini' }))
+    const enc = () => buatEncounterFase(buatPasien({ kasusId: 'alt_mini' }), 'terapi')
     const skor = (resep: string[]): number => {
       let e = enc()
       for (const obatId of resep) e = jalankan(e, [{ type: 'TAMBAH_OBAT', obatId }], KASUS_ALT).enc
@@ -791,7 +842,7 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
       tatalaksana: { obatBenar: [], obatAlternatif: [['amoxicillin_500', 'eritromisin_500']], edukasi: [] },
     }
     const pack = { ...PACK, kasus: { ...PACK.kasus, alt_ab_mini: KASUS_ALT } }
-    let e = buatEncounter(buatPasien({ kasusId: 'alt_ab_mini' }))
+    let e = buatEncounterFase(buatPasien({ kasusId: 'alt_ab_mini' }), 'terapi')
     e = jalankan(e, [{ type: 'TAMBAH_OBAT', obatId: 'amoxicillin_500' }], KASUS_ALT).enc
     const nilai = nilaiEncounter({ ...e, disposisi: 'pulang' }, KASUS_ALT, pack)
     expect(nilai.antibiotikTanpaIndikasi).toBe(false)
@@ -814,7 +865,7 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     }
     const pack = { ...PACK, kasus: { ...PACK.kasus, alt_ab_ganda_mini: KASUS_ALT } }
     const skor = (resep: string[]): number => {
-      let e = buatEncounter(buatPasien({ kasusId: 'alt_ab_ganda_mini' }))
+      let e = buatEncounterFase(buatPasien({ kasusId: 'alt_ab_ganda_mini' }), 'terapi')
       for (const obatId of resep) e = jalankan(e, [{ type: 'TAMBAH_OBAT', obatId }], KASUS_ALT).enc
       return nilaiEncounter({ ...e, disposisi: 'pulang' }, KASUS_ALT, pack).skorTerapi
     }
@@ -847,7 +898,7 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
   })
 
   it('lab tak relevan dihitung: relevan:false + lab di luar kasus', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
     const { enc: main } = jalankan(enc, [
       { type: 'PESAN_LAB', labId: 'darah_rutin' }, // relevan
       { type: 'PESAN_LAB', labId: 'bta_sputum' }, // relevan: false
@@ -915,7 +966,7 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
   }
 
   it('TAMBAH_EDUKASI ke-4 DITOLAK engine (kuota, bukan cuma UI)', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'terapi')
     const { enc: baru, events } = jalankan(
       enc,
       [
@@ -942,7 +993,7 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
   })
 
   it('kasus komorbid (wajib 4 > kapasitas 3): 3 benar = skor 100 — bukan 75', () => {
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'diagnosis')
     const { enc: main } = jalankan(
       enc,
       [
@@ -959,7 +1010,7 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
 
   it('tembakan meleset dihukum 15/topik (slot kini berharga)', () => {
     // Wajib 2 (etika_batuk, istirahat_cukup): 2 benar + 1 salah → 100 − 15 = 85.
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'diagnosis')
     const { enc: main } = jalankan(enc, [
       { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
       { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },
@@ -972,7 +1023,7 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
 
   it('strategi "4 sakti" mati: 3 generik salah semua = 0 (dulu bisa ~90)', () => {
     // Kasus wajib {etika_batuk, istirahat_cukup}; pemain menembak 3 topik lain.
-    const enc = buatEncounter(buatPasien())
+    const enc = buatEncounterFase(buatPasien(), 'diagnosis')
     const { enc: main } = jalankan(enc, [
       { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
       { type: 'TAMBAH_EDUKASI', edukasiId: 'cuci_tangan' },

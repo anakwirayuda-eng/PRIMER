@@ -185,7 +185,10 @@ describe('M1.2 — surveilans balik UKP→UKM', () => {
         const pasien = s.klinik.antrian[0]!
         const kasus = PACK.kasus[pasien.kasusId]!
         s = run(s, { type: 'PANGGIL_PASIEN' })
-        s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' })
+        s = run(s, { type: 'LANJUT_FASE' }) // anamnesis → pemeriksaan
+        s = run(s, { type: 'LANJUT_FASE' }) // pemeriksaan → diagnosis
+        s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' }) // → terapi
+        s = run(s, { type: 'LANJUT_FASE' }) // terapi → disposisi
         s = run(s, { type: 'DISPOSISI', jenis: kasus.harusDirujuk ? 'rujuk' : 'pulang' })
         expect(s.desa.surveilans.some((e) => e.kasusId === pasien.kasusId && e.rw === pasien.rw)).toBe(true)
         return
@@ -193,6 +196,23 @@ describe('M1.2 — surveilans balik UKP→UKM', () => {
       s = lewatiHari(s)
     }
     throw new Error('tidak menemukan kasus menular di antrian 10 hari — cek Director')
+  })
+})
+
+describe('reducer — DISPOSISI phase-guard (CODEX audit 2026-07-04, temuan #2 §9)', () => {
+  it('DISPOSISI ditolak bila fase belum disposisi, walau diagnosis sudah di-komit', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = run(s, { type: 'PANGGIL_PASIEN' })
+    s = run(s, { type: 'LANJUT_FASE' }) // anamnesis → pemeriksaan
+    s = run(s, { type: 'LANJUT_FASE' }) // pemeriksaan → diagnosis
+    const kasus = PACK.kasus[s.klinik.aktif!.pasien.kasusId]!
+    s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' }) // → terapi
+    // Masih di fase terapi (belum LANJUT_FASE ke disposisi) — DISPOSISI harus ditolak.
+    const sebelum = s
+    s = run(s, { type: 'DISPOSISI', jenis: 'pulang' })
+    expect(s.klinik.aktif).toBeDefined() // encounter belum selesai
+    expect(s.klinik.selesaiHariIni).toEqual(sebelum.klinik.selesaiHariIni)
+    expect(s.inbox).toEqual(sebelum.inbox)
   })
 })
 
