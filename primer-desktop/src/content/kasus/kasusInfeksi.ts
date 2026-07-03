@@ -448,10 +448,14 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['A01.0', 'A90', 'B54'],
     tatalaksana: {
-      obatBenar: ['kloramfenikol_250', 'paracetamol_500'],
-      obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Amoxicillin adalah alternatif, bukan lini pertama Puskesmas untuk tifoid; kloramfenikol/kotrimoksazol lebih diutamakan sesuai formularium.' },
-      ],
+      // Audit CODEX 2026-07-04: amoxicillin_500 DULU ada di obatSalahUmum
+      // (-25, "berbahaya") padahal clue sendiri menyebutnya alternatif sah —
+      // kontradiksi menghukum pemain utk pilihan yg narasi kasus akui benar.
+      // Kloramfenikol tetap default (lini pertama Fornas/PPK), tapi kini grup
+      // "pilih salah satu" bersama kotrimoksazol/amoksisilin (alternatif sah
+      // sesuai clue) — bukan wajib-tunggal, bukan pula dihukum berat.
+      obatBenar: ['paracetamol_500'],
+      obatAlternatif: [['kloramfenikol_250', 'cotrimoxazole_480', 'amoxicillin_500']],
       edukasi: ['kepatuhan_obat', 'istirahat_cukup', 'cuci_tangan', 'gizi_seimbang'],
     },
     clue: 'Demam stepladder (naik bertahap, puncak sore-malam) + lidah kotor + bradikardia relatif → tifoid. Lini pertama FKTP/Fornas: kloramfenikol (alternatif kotrimoksazol/amoksisilin; bila tersedia & sesuai antibiogram/derajat, sefiksim/seftriakson) — tekankan tuntas + istirahat total untuk cegah perforasi usus. Catatan: Widal tunggal punya angka positif-palsu tinggi, tegakkan dengan gambaran klinis + konteks endemis; kultur bila tersedia.',

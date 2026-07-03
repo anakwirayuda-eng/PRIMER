@@ -36,7 +36,11 @@ export const OBAT_M3: Record<string, Obat> = {
     sinonim: ['DHP','ACT','artemisinin'], kelas: 'antimalaria ACT', sediaan: 'tablet', hargaBeli: 0, hargaJual: 0, fornas: true },
 
   // -- Kardiovaskular / metabolik --
-  simvastatin_20: { id: 'simvastatin_20', nama: 'Simvastatin 20 mg', kelas: 'statin', sediaan: 'tablet', hargaBeli: 200, hargaJual: 500, fornas: true },
+  // golonganAlergi ditambahkan (audit CODEX 2026-07-04): mm_dislipidemia
+  // alergiTrap.kelas='statin' menghukum resep ini via SKOR saat alergi, tapi
+  // TANPA field ini firewall poka-yoke (clinic.ts TAMBAH_OBAT) tak pernah
+  // memblokirnya — pemain bisa meresepkan lolos tanpa peringatan kontraindikasi.
+  simvastatin_20: { id: 'simvastatin_20', nama: 'Simvastatin 20 mg', kelas: 'statin', golonganAlergi: 'statin', sediaan: 'tablet', hargaBeli: 200, hargaJual: 500, fornas: true },
   furosemid_40: { id: 'furosemid_40', nama: 'Furosemid 40 mg', kelas: 'diuretik loop', sediaan: 'tablet', hargaBeli: 150, hargaJual: 400, fornas: true },
   bisoprolol_5: { id: 'bisoprolol_5', nama: 'Bisoprolol 5 mg', kelas: 'beta-blocker', sediaan: 'tablet', hargaBeli: 300, hargaJual: 700, fornas: true },
   isosorbid_dinitrat_5: { id: 'isosorbid_dinitrat_5', nama: 'ISDN 5 mg (sublingual)', kelas: 'nitrat', sediaan: 'tablet sublingual', hargaBeli: 200, hargaJual: 500, fornas: true },

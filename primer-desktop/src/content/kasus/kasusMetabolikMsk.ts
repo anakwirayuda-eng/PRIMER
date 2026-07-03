@@ -123,7 +123,13 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['M10.9', 'M00.9', 'M06.9'],
     tatalaksana: {
-      obatBenar: ['natrium_diklofenak_50', 'kolkisin_500'],
+      // Audit CODEX 2026-07-04: obatBenar DULU mewajibkan diklofenak+kolkisin
+      // SEKALIGUS, padahal clue sendiri bilang "NSAID ATAU kolkisin" (pilih
+      // salah satu). Kini grup pilih-satu — kasus ini SELALU alergiTrap NSAID
+      // aktif (100%), jadi diklofenak tetap tak tercapai secara praktis
+      // (firewall alergi memblokirnya); kolkisin jadi satu-satunya slot valid.
+      obatBenar: [],
+      obatAlternatif: [['natrium_diklofenak_50', 'kolkisin_500']],
       obatSalahUmum: [
         { id: 'allopurinol_100', alasan: 'Di FKTP, default aman: JANGAN mulai allopurinol saat serangan akut (fluktuasi asam urat memperpanjang serangan); mulai urate-lowering 2–4 minggu setelah reda + titrasi ke target <6 mg/dL. Catatan ACR 2020: memulai ULT saat serangan sebenarnya boleh HANYA bila disertai profilaksis antiinflamasi & follow-up ketat — di luar cakupan penanganan akut FKTP ini. Bila pasien SUDAH rutin allopurinol, jangan dihentikan.' },
         { id: 'amoxicillin_500', alasan: 'Gout bukan infeksi bakteri; antibiotik tidak berperan. Bila curiga artritis septik, itu justru indikasi RUJUK, bukan antibiotik oral coba-coba.' },
@@ -141,7 +147,10 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     alergiTrap: {
       kelas: 'nsaid',
       obatTerlarang: ['natrium_diklofenak_50', 'ibuprofen_400', 'asam_mefenamat_500', 'meloksikam_15'],
-      alternatifBenar: ['kolkisin_500'],
+      // Kosong: kolkisin_500 sudah anggota grupAlternatif di atas — trap cukup
+      // menyaring diklofenak keluar dari grup itu (clinic.ts), tak perlu
+      // menambah alternatif baru (dulu duplikat kolkisin_500 di dua tempat).
+      alternatifBenar: [],
     },
   },
 
@@ -483,7 +492,11 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['M17.9', 'M10.9', 'M06.9'],
     tatalaksana: {
-      obatBenar: ['paracetamol_500', 'meloksikam_15'],
+      // Audit CODEX 2026-07-04: meloksikam DULU wajib bersama parasetamol,
+      // padahal clue bilang "parasetamol DULU, NSAID BILA PERLU" — eskalasi
+      // kondisional, bukan kombinasi wajib. Parasetamol sendiri sudah jawaban
+      // benar lengkap (NSAID pun tak tercapai — trap NSAID 100% aktif di kasus ini).
+      obatBenar: ['paracetamol_500'],
       obatSalahUmum: [
         { id: 'prednison_5', alasan: 'Kortikosteroid oral TIDAK diindikasikan untuk OA — OA bukan penyakit inflamasi sistemik; steroid rutin hanya menimbulkan efek samping (osteoporosis, gula naik) tanpa manfaat.' },
         { id: 'allopurinol_100', alasan: 'Ini bukan gout (asam urat normal, nyeri mekanik) — allopurinol tidak ada indikasinya.' },
@@ -501,7 +514,9 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     alergiTrap: {
       kelas: 'nsaid',
       obatTerlarang: ['meloksikam_15', 'ibuprofen_400', 'natrium_diklofenak_50', 'asam_mefenamat_500'],
-      alternatifBenar: ['paracetamol_500'],
+      // Kosong: parasetamol_500 sudah satu-satunya obatBenar — tak perlu
+      // menambah alternatif baru (dulu duplikat parasetamol_500 di dua tempat).
+      alternatifBenar: [],
     },
   },
 
@@ -609,7 +624,11 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['M54.5', 'M51.1', 'M54.4'],
     tatalaksana: {
-      obatBenar: ['natrium_diklofenak_50', 'paracetamol_500'],
+      // Audit CODEX 2026-07-04: NSAID+parasetamol DULU wajib sekaligus,
+      // padahal clue bilang "analgetik (parasetamol/NSAID)" — pilih salah
+      // satu, tanpa alergiTrap yg menetralkan (kasus ini bukan trap).
+      obatBenar: [],
+      obatAlternatif: [['natrium_diklofenak_50', 'paracetamol_500']],
       obatSalahUmum: [
         { id: 'tramadol_50', alasan: 'Opioid tidak diperlukan untuk LBP mekanik akut tanpa red flag — risiko ketergantungan & sedasi melebihi manfaat; analgetik sederhana + tetap aktif sudah cukup.' },
       ],
@@ -862,9 +881,12 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
    * (oral), JANGAN drop cepat, lalu rujuk. Bedakan dari emergensi.
    * ==================================================================== */
   {
+    // I16.0 (krisis hipertensi — urgensi), BUKAN I10 (hipertensi esensial tanpa
+    // krisis — audit CODEX 2026-07-04: kode lama mengaburkan diagnosis dgn
+    // hipertensi_esensial biasa; kode urgensi/krisis di ICD-10 memang I16.x).
     id: 'mm_hipertensi_urgensi',
     nama: 'Hipertensi Urgensi',
-    icd10: 'I10',
+    icd10: 'I16.0',
     skdi: '3B',
     kategori: 'kardiovaskular',
     fktp144: true,
@@ -949,7 +971,12 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['I10', 'I16.0', 'I16.9'],
     tatalaksana: {
-      obatBenar: ['amlodipine_10', 'captopril_25'],
+      // Audit CODEX 2026-07-04: amlodipin+kaptopril DULU wajib SEKALIGUS —
+      // bertentangan dgn poin ajar kasus sendiri ("JANGAN drop cepat"): dua
+      // antihipertensi oral bersamaan justru mempercepat penurunan TD.
+      // Klinis lazim: SATU agen oral dulu, bertahap. Kini grup pilih-satu.
+      obatBenar: [],
+      obatAlternatif: [['amlodipine_10', 'captopril_25']],
       obatSalahUmum: [
         { id: 'nifedipin_10', alasan: 'Nifedipin kerja cepat sublingual/kunyah DILARANG pada krisis hipertensi — penurunan TD tak terkendali & mendadak berisiko iskemia serebral/miokard/stroke. Turunkan BERTAHAP dengan oral kerja sedang.' },
         { id: 'furosemid_40', alasan: 'Diuretik agresif tidak tepat sebagai lini pertama urgensi tanpa overload cairan — berisiko hipovolemia; hanya bila ada edema paru/overload nyata.' },

@@ -43,6 +43,18 @@ describe('namaDiagnosis — semua banding bernama', () => {
     }
     expect(tabrakan).toEqual([])
   })
+
+  // Audit CODEX 2026-07-04: 27 kasus salah tampil label GENERIK skdi144 utk
+  // JAWABAN BENARNYA SENDIRI (mis. "Hipertensi Urgensi" tertampil "Hipertensi
+  // Esensial") krn urutan resolusi lama mengecek skdi144 sebelum kasus sendiri.
+  // Jawaban benar kasus WAJIB pakai nama presisinya sendiri, selalu.
+  it('jawaban benar kasus SELALU pakai nama kasus sendiri (bukan label skdi144)', () => {
+    const salah: string[] = []
+    for (const k of Object.values(PACK.kasus)) {
+      if (namaDiagnosis(k.icd10, k) !== k.nama) salah.push(`${k.id}: tampil "${namaDiagnosis(k.icd10, k)}" ≠ nama sendiri "${k.nama}"`)
+    }
+    expect(salah).toEqual([])
+  })
 })
 
 describe('pencarian obat toleran-ejaan', () => {

@@ -103,9 +103,15 @@ const namaKasusPerIcd: Map<string, string> = new Map(
 )
 
 export function namaDiagnosis(icd10: string, kasus: KasusKlinis): string {
+  // Jawaban BENAR kasus ini selalu pakai nama presisinya sendiri — DULUAN
+  // dari SKDI (audit 2026-07-04: skdi144 dicek lebih dulu membuat 27 kasus
+  // salah tampil label generik SKDI utk jawaban benarnya sendiri, mis.
+  // "Hipertensi Urgensi" tertampil "Hipertensi Esensial"). SKDI tetap prioritas
+  // utk kode LAIN (distraktor/banding) — nama kompetensi standar lebih pas
+  // di situ drpd nama spesifik kasus lain yg kebetulan sama kode.
+  if (icd10 === kasus.icd10) return kasus.nama
   const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
   if (entri) return entri.nama
-  if (icd10 === kasus.icd10) return kasus.nama
   const dariKasusLain = namaKasusPerIcd.get(icd10)
   if (dariKasusLain) return dariKasusLain
   const tambahan = NAMA_ICD[icd10]
