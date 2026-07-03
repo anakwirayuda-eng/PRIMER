@@ -37,7 +37,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         jawab: 'Hidung saya meler terus dok, ingusnya bening encer.',
         variasi: {
           polos: 'Ingusé mbrèbès terus dok, bening kayak air.',
-          terpelajar: 'Rinorea encer dok, sekretnya jernih, disertai hidung buntu bergantian.',
+          terpelajar: 'Ingus saya encer dan bening dok, dan hidung tersumbat bergantian kiri-kanan.',
           cemas: 'Duh dok, ingus saya nggak berhenti-berhenti, ini bahaya nggak ya?',
         },
         esensial: true,
@@ -58,7 +58,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         jawab: 'Cuma anget-anget aja dok, nggak sampai menggigil.',
         variasi: {
           polos: 'Sumer-sumer thok dok, ora sing panas banget.',
-          terpelajar: 'Subfebris saja dok, tidak pernah saya ukur di atas 38.',
+          terpelajar: 'Hangat-hangat saja dok, tidak pernah saya ukur sampai di atas 38.',
         },
         esensial: true,
         oldcarts: ['keparahan', 'penyerta'],
@@ -150,7 +150,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         jawab: 'Tenggorokan sakit banget dok, menelan kayak ada yang menyayat.',
         variasi: {
           polos: 'Gulu loro banget dok, nguntal wae perih.',
-          terpelajar: 'Odinofagia hebat dok, nyeri saat menelan makanan padat maupun cair.',
+          terpelajar: 'Nyeri sekali saat menelan dok, baik makanan padat maupun waktu minum.',
           cemas: 'Sakit sekali dok sampai saya takut makan, ini radang parah ya?',
         },
         esensial: true,
@@ -170,7 +170,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         tanya: 'Disertai batuk pilek?',
         jawab: 'Nggak batuk, nggak pilek dok. Cuma tenggorokannya.',
         variasi: {
-          terpelajar: 'Tidak ada batuk maupun rinorea dok, keluhan murni di tenggorokan.',
+          terpelajar: 'Tidak ada batuk maupun pilek dok, keluhannya murni di tenggorokan.',
         },
         esensial: true,
         oldcarts: ['penyerta'],
@@ -266,7 +266,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         jawab: 'Demam tinggi mendadak dok, langsung tinggi dari kemarin.',
         variasi: {
           polos: 'Panasé dadakan dok, langsung nemen kaya kesetrum.',
-          terpelajar: 'Demam tinggi onset akut dok, mendadak dan terus-menerus.',
+          terpelajar: 'Demamnya mendadak tinggi dok, langsung tinggi dan terus-menerus.',
           cemas: 'Panasnya tinggi banget dok, saya takut ini DBD seperti tetangga yang dirawat.',
         },
         esensial: true,
@@ -376,7 +376,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         jawab: 'Sudah 7 hari dok, naiknya bertahap, makin tinggi tiap sore-malam.',
         variasi: {
           polos: 'Wis seminggu dok, saya panasé nambah dhuwur sithik-sithik saben sore.',
-          terpelajar: 'Demam sekitar seminggu dok, pola stepladder — puncaknya sore hingga malam.',
+          terpelajar: 'Demam sekitar seminggu dok, makin hari makin tinggi, dan paling terasa sore sampai malam.',
           cemas: 'Panas terus dok seminggu nggak turun-turun, saya jadi lemas sekali.',
         },
         esensial: true,
@@ -599,7 +599,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         jawab: 'Sudah lebih dari tiga minggu dok, nggak sembuh-sembuh.',
         variasi: {
           polos: 'Wis luwih telung minggu dok, watuké ora mari-mari.',
-          terpelajar: 'Batuk kronik lebih dari tiga minggu dok, produktif, sempat berdahak.',
+          terpelajar: 'Batuk sudah lebih dari tiga minggu dok, berdahak, tidak sembuh-sembuh.',
           lansia: 'Sudah lama sekali Nak, batuk terus, tenaga saya habis dibuatnya.',
         },
         esensial: true,
@@ -710,7 +710,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         jawab: 'Gatal banget dok di sela-sela jari, pergelangan tangan, sama perut.',
         variasi: {
           polos: 'Gatelé pol dok neng sela-sela driji karo bangkèkan.',
-          terpelajar: 'Pruritus hebat dok, predileksi di sela jari, pergelangan, dan periumbilikal.',
+          terpelajar: 'Gatal sekali dok, terutama di sela-sela jari, pergelangan tangan, dan sekitar pusar.',
           cemas: 'Gatalnya nggak ketahan dok, saya takut menular ke keluarga saya.',
         },
         esensial: true,
@@ -812,7 +812,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         jawab: 'Mata merah dok, keluar kotoran kuning kental.',
         variasi: {
           polos: 'Mripaté abang dok, metu kotoran kuning kentel terus.',
-          terpelajar: 'Mata merah dengan sekret mukopurulen dok, terutama menumpuk pagi hari.',
+          terpelajar: 'Mata merah dengan kotoran kental kekuningan dok, terutama menumpuk waktu bangun pagi.',
           cemas: 'Merah banget dok, saya takut ini menular atau merusak penglihatan.',
         },
         esensial: true,

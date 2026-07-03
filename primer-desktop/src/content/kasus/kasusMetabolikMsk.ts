@@ -42,7 +42,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Pangkal jempol kaki kanan dok, bengkak merah mengkilap, nyerinya luar biasa sampai kesenggol selimut saja perih.',
         variasi: {
           polos: 'Jempol sikil kanan dok, abuh abang, lorone ora karu-karuan, kesrèmpèt kemul waé wis njerit.',
-          terpelajar: 'Nyeri monoartikular akut di sendi MTP-1 kanan dok, disertai eritema, edema, dan hangat — hipersensitif sekali disentuh.',
+          terpelajar: 'Nyeri mendadak di pangkal ibu jari kaki kanan dok, sendinya merah, bengkak, dan hangat — disentuh sedikit saja sakit sekali.',
           lansia: 'Ibu jari kaki saya ini Nak, bengkak besar semalam, sakitnya sampai tidak bisa tidur.',
         },
         esensial: true,
@@ -169,7 +169,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Sebenarnya tidak ada keluhan dok, cuma dari medical check-up kantor kolesterolnya tinggi, saya jadi khawatir.',
         variasi: {
           polos: 'Ora ana keluhan dok, mung wingi mriksa tekan kantor jaré kolesterolé dhuwur.',
-          terpelajar: 'Asimtomatik dok, temuan insidental dari skrining lipid berkala di tempat kerja — LDL saya tinggi.',
+          terpelajar: 'Tidak ada keluhan dok, ini ketahuan waktu pemeriksaan kolesterol rutin di kantor — kolesterol jahat saya tinggi.',
           cemas: 'Saya takut kena stroke dok, bapak saya dulu meninggal karena serangan jantung.',
         },
         esensial: true,
@@ -296,7 +296,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Cepat lelah dok, napas ngos-ngosan kalau naik tangga, dan lutut mulai terasa berat.',
         variasi: {
           polos: 'Gampang kesel dok, munggah undhak-undhakan waé wis menggeh-menggeh.',
-          terpelajar: 'Penurunan toleransi aktivitas dok, dyspnea on exertion ringan dan artralgia lutut mekanik.',
+          terpelajar: 'Saya jadi cepat capek dok, agak sesak kalau banyak bergerak, dan lutut nyeri saat dipakai.',
           cemas: 'Saya takut kena diabetes atau jantung dok, badan makin melar dan susah turun.',
         },
         esensial: true,
@@ -403,7 +403,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Kedua lutut dok, kanan lebih parah. Nyeri saat jalan jauh, naik-turun tangga, dan jongkok berdiri.',
         variasi: {
           polos: 'Dhengkul loro-lorone dok, sing tengen luwih loro, yèn munggah undhakan lan jèngkèng ngadeg lara banget.',
-          terpelajar: 'Nyeri mekanik lutut bilateral dok, terprovokasi weight-bearing dan mereda dengan istirahat.',
+          terpelajar: 'Kedua lutut nyeri dok, terutama saat menahan beban seperti berjalan atau naik tangga, dan reda kalau diistirahatkan.',
           lansia: 'Lutut saya ini Nak, kalau dibawa jalan ke pasar sakitnya bukan main, mau jongkok pun susah.',
         },
         esensial: true,
@@ -530,7 +530,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Sejak kemarin dok, habis angkat galon air posisinya salah. Pinggang bawah pegal dan nyeri kalau membungkuk.',
         variasi: {
           polos: 'Kawit wingi dok, sawisé ngangkat galon salah posisi. Boyoké lara yèn dienggo mbungkuk.',
-          terpelajar: 'Onset akut nyeri lumbal mekanik dok, dicetuskan gerakan mengangkat beban dengan postur fleksi.',
+          terpelajar: 'Nyeri pinggang muncul mendadak dok, terpicu saat saya mengangkat beban sambil membungkuk.',
           cemas: 'Sakit sekali dok, saya takut ini saraf kejepit atau tulang saya bergeser.',
         },
         esensial: true,
@@ -650,7 +650,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Otot dok, lengan, bahu, sama betis. Bukan di sendinya, tapi di dagingnya terasa pegal.',
         variasi: {
           polos: 'Awakku kesel kabèh dok, ototé sing loro, dudu sendiné.',
-          terpelajar: 'Nyeri muskular difus dok, di otot lengan-bahu-betis, tanpa keterlibatan sendi.',
+          terpelajar: 'Nyeri otot menyebar dok, di lengan, bahu, dan betis, tapi sendinya tidak ikut sakit.',
           lansia: 'Badan saya linu semua Nak, ototnya yang pegal.',
         },
         esensial: true,
@@ -766,7 +766,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Jari-jari kedua tangan dok, buku jari dan pergelangan, kanan-kiri sama-sama nyeri dan bengkak.',
         variasi: {
           polos: 'Ruas driji tangan loro-lorone dok, bengkak lan lara, tengen kiwa padha.',
-          terpelajar: 'Poliartritis simetris dok, mengenai sendi MCP dan PIP kedua tangan serta pergelangan.',
+          terpelajar: 'Banyak sendi nyeri dan bengkak dok, simetris di kedua tangan — buku-buku jari dan pergelangan.',
           cemas: 'Tangan saya makin kaku dok, saya takut nanti jari-jari saya bengkok tidak bisa dipakai kerja.',
         },
         esensial: true,
@@ -882,7 +882,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Kepala pusing berat dok, tengkuk kaku dan berat, tadi di apotek diukur tensinya 210 per 120.',
         variasi: {
           polos: 'Sirahé mumet banget dok, githoké kenceng, mau diukur tensiné dhuwur banget.',
-          terpelajar: 'Nyeri kepala oksipital hebat dok dengan kaku tengkuk, TD terukur 210/120 tanpa keluhan neurologis fokal.',
+          terpelajar: 'Nyeri kepala hebat di bagian belakang dok dengan tengkuk kaku, tensi saya terukur 210/120, tapi tidak ada kelemahan anggota gerak.',
           cemas: 'Tensi saya tinggi sekali dok, saya takut kena stroke seperti kakak saya.',
         },
         esensial: true,
@@ -992,7 +992,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Sesak dok, awalnya cuma kalau jalan jauh, sekarang jalan ke kamar mandi saja sudah ngos-ngosan.',
         variasi: {
           polos: 'Ambeganku seseg dok, saiki mlaku sithik waé wis menggeh-menggeh.',
-          terpelajar: 'Dispnea progresif dok, menurun toleransi latihannya dari NYHA II ke III dalam beberapa minggu.',
+          terpelajar: 'Sesak saya makin memberat dok, dulu masih kuat beraktivitas biasa, sekarang berjalan sedikit saja sudah sesak.',
           lansia: 'Napas saya berat sekali Nak, apalagi kalau berbaring, sampai harus duduk.',
         },
         esensial: true,
@@ -1109,7 +1109,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Perih dok waktu kencing, dan rasanya nggak tuntas, jadi bolak-balik ke WC tapi keluarnya sedikit.',
         variasi: {
           polos: 'Yèn nguyuh perih dok, anyang-anyangen, bola-bali menyang WC nanging metuné mung sithik.',
-          terpelajar: 'Disuria dengan urgensi dan frekuensi dok, sensasi tidak lampias saat berkemih.',
+          terpelajar: 'Perih saat buang air kecil dok, jadi sering dan buru-buru, dan rasanya tidak tuntas.',
           cemas: 'Sakit sekali dok waktu pipis, saya takut ini penyakit ginjal atau menular.',
         },
         esensial: true,

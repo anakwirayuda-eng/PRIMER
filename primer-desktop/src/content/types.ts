@@ -25,6 +25,16 @@ export type KategoriKasus =
 export type JenisKelamin = 'L' | 'P'
 
 /** Persona pasien — mengubah gaya bahasa jawaban anamnesis. */
+/**
+ * Persona penutur PASIEN. GAYA BAHASA (audit M7 34c — jargon dokter tak boleh
+ * bocor ke mulut pasien; dijaga bahasaPasien.test.ts):
+ * - polos: bahasa daerah/sehari-hari, lugu.
+ * - terpelajar: awam BERPENDIDIKAN (guru/pegawai) — artikulatif, presisi soal
+ *   waktu/pencetus, boleh istilah awam ("darah tinggi", "biduran", "asam urat"),
+ *   TAPI BUKAN sejawat: dilarang istilah Latin/klinis (wheal, eritematosa,
+ *   dispnea, epigastrium, onset, dermatom, McBurney, NYHA, monoartikular…).
+ * - skeptis/cemas/lansia/wali_anak: nada, tetap bahasa awam.
+ */
 export type Persona = 'polos' | 'terpelajar' | 'skeptis' | 'cemas' | 'lansia' | 'wali_anak'
 
 export type KategoriAnamnesis = 'keluhan_utama' | 'rps' | 'rpd' | 'rpk' | 'sosial'

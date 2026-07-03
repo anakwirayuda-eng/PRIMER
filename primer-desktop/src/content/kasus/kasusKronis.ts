@@ -41,7 +41,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['lokasi', 'karakter'],
         variasi: {
           polos: 'Tengkuk kenceng banget, mumet dok, kayak dibeban-i.',
-          terpelajar: 'Ada rasa tegang di area tengkuk disertai nyeri kepala di occipital, Dok.',
+          terpelajar: 'Ada rasa tegang di tengkuk disertai nyeri kepala di bagian belakang, Dok.',
           cemas: 'Kepala saya pusing terus, Dok, saya takut ini gejala stroke...',
         },
       },
@@ -54,7 +54,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['onset', 'durasi', 'waktu'],
         variasi: {
           polos: 'Wes telung dino iki dok, kambuhan.',
-          terpelajar: 'Kurang lebih tiga hari, intermiten, lebih berat saat bangun tidur.',
+          terpelajar: 'Kurang lebih tiga hari, hilang-timbul, lebih berat saat bangun tidur.',
           cemas: 'Baru tiga hari tapi rasanya makin sering, saya jadi susah tidur.',
         },
       },
@@ -74,7 +74,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['durasi'],
         variasi: {
           polos: 'Dulu tau tinggi dok, tapi ya wis, ora tau mriksa.',
-          terpelajar: 'Ya, terdiagnosis hipertensi dua tahun lalu, namun saya kurang patuh kontrol.',
+          terpelajar: 'Ya, dua tahun lalu saya didiagnosis darah tinggi, tapi kurang patuh kontrol.',
           cemas: 'Pernah dibilang tinggi, makanya saya khawatir sekarang tambah parah.',
         },
       },
@@ -168,7 +168,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['durasi', 'karakter', 'waktu'],
         variasi: {
           polos: 'Kencing terus dok, ngombe akeh tetep ngelak, awak lemes.',
-          terpelajar: 'Saya mengalami poliuria terutama nokturnal, disertai polidipsia dan mudah lelah, Dok.',
+          terpelajar: 'Saya jadi sering buang air kecil terutama malam hari, gampang haus, dan mudah lelah, Dok.',
           cemas: 'Kencing saya jadi sering banget, Dok, saya takut ini kencing manis seperti orang tua saya.',
         },
       },
@@ -181,7 +181,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['penyerta'],
         variasi: {
           polos: 'Iyo dok, mudhun 5 kilo, mangan malah tambah akeh.',
-          terpelajar: 'Ya, penurunan berat badan sekitar 5 kg dalam dua bulan meski asupan meningkat.',
+          terpelajar: 'Ya, berat badan saya turun sekitar 5 kg dalam dua bulan meski makan lebih banyak.',
           cemas: 'Berat saya turun terus, Dok, padahal makan banyak — saya jadi khawatir.',
         },
       },
@@ -207,7 +207,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['durasi'],
         variasi: {
           polos: 'Tau dicek pas ana bazar, jare rada dhuwur, tapi ora tak teruske.',
-          terpelajar: 'Pernah terdeteksi hiperglikemia saat skrining, namun tidak saya tindak lanjuti.',
+          terpelajar: 'Waktu pemeriksaan, gula darah saya pernah ketahuan tinggi, tapi tidak saya tindak lanjuti.',
           cemas: 'Dulu pernah dibilang agak tinggi, makanya sekarang saya takut sudah parah.',
         },
       },
@@ -286,7 +286,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['lokasi', 'karakter'],
         variasi: {
           polos: 'Kerasa perih nemen ning ulu ati dok, mules karo kembung.',
-          terpelajar: 'Ada sensasi terbakar di epigastrium disertai rasa penuh, Dok.',
+          terpelajar: 'Ada rasa terbakar di ulu hati disertai rasa penuh, Dok.',
           cemas: 'Perih sekali di ulu hati, Dok, jangan-jangan ini sakit lambung parah ya?',
         },
       },
@@ -299,7 +299,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['onset', 'durasi'],
         variasi: {
           polos: 'Wis rong minggu kambuhan dok, tambah perih nek weteng kosong.',
-          terpelajar: 'Sekitar dua minggu, intermiten, memberat saat lambung kosong dan stres.',
+          terpelajar: 'Sekitar dua minggu, hilang-timbul, memberat saat perut kosong dan stres.',
           cemas: 'Sudah dua minggu tidak sembuh-sembuh, Dok, saya takut ini luka lambung.',
         },
       },
@@ -404,7 +404,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['karakter', 'penyerta'],
         variasi: {
           polos: 'Ambekan sesek karo muni ngik-ngik dok, dodo rasane abot.',
-          terpelajar: 'Ada wheezing ekspiratoar dan rasa dada tertekan, Dok, bersifat episodik.',
+          terpelajar: 'Napas saya berbunyi ngik-ngik saat mengembuskan dan dada terasa tertekan, Dok, hilang-timbul.',
           cemas: 'Sesaknya bikin panik, Dok, rasanya seperti mau tercekik kalau malam.',
         },
       },
@@ -430,7 +430,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['waktu'],
         variasi: {
           polos: 'Umume bengi utawa arep subuh dok, kadang nganti tangi merga sesek.',
-          terpelajar: 'Predominan nokturnal menjelang dini hari, kadang membangunkan dari tidur.',
+          terpelajar: 'Lebih sering muncul malam menjelang dini hari, kadang sampai membangunkan saya dari tidur.',
           cemas: 'Paling parah malam hari, Dok, saya sering terbangun panik karena sesak.',
         },
       },
@@ -522,7 +522,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['lokasi', 'onset'],
         variasi: {
           polos: 'Wingi bengi nangis njerit-njerit dok, kupinge dicekeli terus.',
-          terpelajar: 'Sejak tadi malam ia mengeluh otalgia telinga kanan, rewel, dan sulit tidur.',
+          terpelajar: 'Sejak tadi malam ia mengeluh nyeri di telinga kanan, rewel, dan sulit tidur.',
           cemas: 'Dia nangis terus pegang telinga, Dok, saya takut ada apa-apa di dalam telinganya.',
         },
       },
@@ -535,7 +535,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['penyerta'],
         variasi: {
           polos: 'Iyo dok, wingi bengi awake panas, tak ukur 38,5.',
-          terpelajar: 'Ya, semalam febris, suhu aksila saya ukur 38,5 derajat.',
+          terpelajar: 'Ya, semalam demam, saya ukur di ketiak 38,5 derajat.',
           cemas: 'Panasnya tinggi sekali, Dok, sampai 38,5 — saya takut kejang.',
         },
       },
@@ -548,7 +548,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['onset'],
         variasi: {
           polos: 'Iyo dok, sadurunge ki pilek, irunge mampet.',
-          terpelajar: 'Ya, beberapa hari sebelumnya ada rinorea dan hidung tersumbat.',
+          terpelajar: 'Ya, beberapa hari sebelumnya ada pilek dan hidung tersumbat.',
           cemas: 'Sebelumnya dia pilek terus, Dok, apa ini akibat pileknya menjalar?',
         },
       },
@@ -646,7 +646,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['durasi', 'karakter'],
         variasi: {
           polos: 'Awak lemes dok, sirah kem-kemeng, ngadeg sithik wis kunang-kunang.',
-          terpelajar: 'Saya merasa lemas dan pusing berkunang-kunang, terutama saat perubahan posisi, Dok.',
+          terpelajar: 'Saya merasa lemas dan pusing berkunang-kunang, terutama saat berdiri dari duduk, Dok.',
           cemas: 'Saya takut kenapa-kenapa dengan bayi saya, Dok, badan lemas terus dan pucat.',
         },
       },
@@ -659,7 +659,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['penyerta'],
         variasi: {
           polos: 'Meteng sing kaping telu dok, umure kira-kira nem sasi.',
-          terpelajar: 'Ini gestasi ketiga, usia kehamilan sekitar 26 minggu, Dok.',
+          terpelajar: 'Ini kehamilan ketiga saya, usianya sekitar 26 minggu, Dok.',
           cemas: 'Ini anak ketiga, baru enam bulan, Dok — saya khawatir memengaruhi bayinya.',
         },
       },
@@ -684,7 +684,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         esensial: true,
         variasi: {
           polos: 'Dikeki bidan dok, tapi kerep lali, kadhang mumek dadi ora tak ombe.',
-          terpelajar: 'Diberi tablet tambah darah, namun kepatuhan saya rendah karena mual.',
+          terpelajar: 'Saya diberi tablet tambah darah, tapi jarang saya minum karena mual.',
           cemas: 'Dikasih sih, Dok, tapi bikin mual jadi sering tidak saya minum — apa bahaya?',
         },
       },
@@ -771,7 +771,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['onset', 'durasi'],
         variasi: {
           polos: 'Wis telung dino watuk dok, saiki ambekane cepet, dodone mlebu-mlebu.',
-          terpelajar: 'Sejak tiga hari batuk, kini takipnea disertai retraksi dinding dada, Dok.',
+          terpelajar: 'Sejak tiga hari batuk, sekarang napasnya cepat dan dadanya sampai tertarik ke dalam, Dok.',
           cemas: 'Napasnya ngos-ngosan cepat sekali, Dok, saya takut anak saya kenapa-kenapa!',
         },
       },
@@ -784,7 +784,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['penyerta'],
         variasi: {
           polos: 'Panase dhuwur telung dino dok, nganti 39, karo ndredheg.',
-          terpelajar: 'Febris tinggi tiga hari, mencapai 39 derajat disertai menggigil.',
+          terpelajar: 'Demam tinggi tiga hari, sampai 39 derajat disertai menggigil.',
           cemas: 'Panasnya tinggi terus tiga hari, Dok, sudah 39 lebih — saya panik.',
         },
       },
@@ -805,7 +805,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['penyerta'],
         variasi: {
           polos: 'Wis emoh nyusu dok, ngombe sithik, lambene mau sempet biru.',
-          terpelajar: 'Asupan menurun, menolak menyusu, dan sempat sianosis bibir ringan.',
+          terpelajar: 'Ia jadi malas makan, menolak menyusu, dan bibirnya sempat agak kebiruan.',
           cemas: 'Dia nggak mau minum, Dok, bibirnya tadi sempat kebiruan — saya takut sekali!',
         },
       },
@@ -899,7 +899,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['onset', 'karakter'],
         variasi: {
           polos: 'Bar tangi turu, lambene menceng, ngomonge pelo, tangane tengen ora iso digerakke.',
-          terpelajar: 'Onset mendadak saat bangun: parese fasial kanan, disartria, dan hemiparesis kanan, Dok.',
+          terpelajar: 'Muncul mendadak saat bangun tidur: wajah kanan mencong, bicara pelo, dan sisi kanan badan lemah, Dok.',
           cemas: 'Ibu saya mendadak lemas separuh badan dan bicaranya kacau, Dok, tolong cepat!',
         },
       },
@@ -912,7 +912,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['onset', 'waktu'],
         variasi: {
           polos: 'Wingi bengi sadurunge turu isih apik, subuh jam papat wis kaya ngene.',
-          terpelajar: 'Terakhir tampak normal semalam sebelum tidur; onset terdeteksi subuh pukul empat.',
+          terpelajar: 'Terakhir masih normal semalam sebelum tidur; ketahuan begini waktu subuh sekitar pukul empat.',
           cemas: 'Semalam masih sehat, Dok, subuh tadi sudah begini — apa masih bisa ditolong?',
         },
       },
@@ -939,7 +939,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         esensial: true,
         variasi: {
           polos: 'Ibu darah dhuwur wis suwe, tapi ora gelem ngombe obat, wedi ginjele rusak.',
-          terpelajar: 'Ibu hipertensi kronik namun menolak terapi karena khawatir gangguan ginjal.',
+          terpelajar: 'Ibu punya darah tinggi sudah lama tapi menolak berobat karena khawatir merusak ginjal.',
           cemas: 'Ibu darah tingginya lama, Dok, tapi selalu menolak obat — apa ini akibatnya?',
         },
       },

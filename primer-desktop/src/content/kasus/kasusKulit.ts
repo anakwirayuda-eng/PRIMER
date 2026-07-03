@@ -48,7 +48,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         jawab: 'Gatal dan merah dok di punggung tangan, kulitnya jadi kasar dan mengelupas.',
         variasi: {
           polos: 'Gatel abang dok neng gègèré tangan, kulité dadi kaya kelupas.',
-          terpelajar: 'Timbul plak eritematosa gatal dok di dorsum manus, disertai skuama dan sedikit erosi.',
+          terpelajar: 'Timbul bercak merah menebal yang gatal dok di punggung tangan, bersisik dan sedikit lecet.',
           cemas: 'Merah dan gatal terus dok, saya takut ini penyakit kulit menular yang parah.',
         },
         esensial: true,
@@ -60,7 +60,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         tanya: 'Sebelum muncul, tangannya kena bahan apa? Sabun, detergen, karet, atau logam?',
         jawab: 'Saya baru ganti sabun cuci piring dok, sejak itu tangan mulai gatal dan merah.',
         variasi: {
-          terpelajar: 'Sepertinya kontaktan detergen baru dok, reaksi timbul setelah beberapa hari pemakaian berulang.',
+          terpelajar: 'Sepertinya karena detergen baru dok, muncul setelah beberapa hari saya memakainya berulang.',
         },
         esensial: true,
         oldcarts: ['agravasi', 'onset'],
@@ -163,7 +163,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         jawab: 'Bulat melingkar dok di pinggang dan perut, gatal, pinggirnya kemerahan dan bersisik, tengahnya agak bersih.',
         variasi: {
           polos: 'Bunder kaya cincin dok neng bangkèkan, gatel, pinggiré abang mrintili.',
-          terpelajar: 'Lesi anular dok, tepi aktif eritematosa berskuama dengan central clearing, meluas sentrifugal.',
+          terpelajar: 'Bercaknya bulat seperti cincin dok, tepinya merah dan bersisik sementara tengahnya menyembuh, dan makin melebar.',
           cemas: 'Makin lebar terus dok bercaknya, saya takut ini menyebar ke seluruh badan.',
         },
         esensial: true,
@@ -191,7 +191,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         tanya: 'Sudah diobati sendiri? Pakai krim apa dan hasilnya bagaimana?',
         jawab: 'Saya beli krim di warung dok, katanya buat gatal. Awal reda tapi lalu malah makin lebar dan pinggirnya kabur.',
         variasi: {
-          terpelajar: 'Saya sempat pakai krim kombinasi berisi steroid dok — gatal reda sesaat tapi lesi justru meluas dan tepinya menjadi tidak jelas.',
+          terpelajar: 'Saya sempat pakai krim campuran yang ada steroidnya dok — gatal reda sebentar tapi bercaknya malah melebar dan tepinya jadi kabur.',
         },
         esensial: true,
         oldcarts: ['agravasi'],
@@ -400,7 +400,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         jawab: 'Bentol merah menonjol dok, gatal sekali, timbul di satu tempat lalu hilang, muncul lagi di tempat lain.',
         variasi: {
           polos: 'Bèntol-bèntol abang dok, gatel banget, mumbul-mumbul pindah-pindah.',
-          terpelajar: 'Muncul wheal eritematosa gatal dok, evanescent — tiap lesi hilang dalam beberapa jam lalu timbul di lokasi lain.',
+          terpelajar: 'Muncul bentol-bentol merah gatal dok — tiap bentol hilang dalam beberapa jam lalu timbul lagi di tempat lain.',
           cemas: 'Bentolnya nyebar cepet banget dok, saya takut ini alergi berat.',
         },
         esensial: true,
@@ -514,7 +514,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         jawab: 'Ada gerombolan lenting berair dok di pinggang kanan, hanya sebelah, nyeri seperti terbakar dan tertusuk.',
         variasi: {
           polos: 'Mbrintili banyu dok neng bangkèkan tengen thok, loro kaya kobong.',
-          terpelajar: 'Vesikel bergerombol unilateral dok di dermatom torakal kanan, didahului nyeri neuralgik seperti terbakar.',
+          terpelajar: 'Muncul lenting-lenting berair bergerombol dok hanya di sisi kanan dada mengikuti satu jalur, didahului nyeri seperti terbakar.',
           lansia: 'Sakit sekali Nak, nyerinya nyut-nyutan di pinggang kanan, lentingnya bergerombol cuma sebelah.',
         },
         esensial: true,
@@ -630,7 +630,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         jawab: 'Awalnya demam dan badan pegal dok, lalu muncul lenting berair mulai dari badan, menyebar ke wajah dan lengan.',
         variasi: {
           polos: 'Panas dhisik dok, terus mbrintili banyu wiwit awak, nyebar tekan rainé.',
-          terpelajar: 'Didahului demam dan malaise dok, lalu erupsi vesikel dimulai dari badan (sentripetal), menyebar sentrifugal.',
+          terpelajar: 'Didahului demam dan badan tidak enak dok, lalu muncul lenting-lenting berair mulai dari badan menyebar ke wajah dan tangan.',
           cemas: 'Lentingnya cepat sekali menyebar dok, saya takut ini berbahaya dan menular ke keluarga.',
         },
         esensial: true,
@@ -743,7 +743,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         jawab: 'Merah dan gatal dok di lipatan bawah payudara dan selangkangan, kadang perih dan basah, ada bau.',
         variasi: {
           polos: 'Abang gatel dok neng lempit-lempit, teles lan mambu.',
-          terpelajar: 'Plak eritematosa lembap dok di regio inframama dan inguinal, disertai maserasi dan rasa perih.',
+          terpelajar: 'Bercak merah lembap dok di lipatan bawah payudara dan selangkangan, kulitnya sampai lecet basah dan perih.',
           cemas: 'Makin lama makin lebar dan perih dok, saya jadi risih dan takut ini menular.',
         },
         esensial: true,
@@ -973,7 +973,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
         jawab: 'Benjolan kecil kasar dok di punggung jari, permukaannya berkutil-kutil, ada titik-titik hitam kecil di dalamnya.',
         variasi: {
           polos: 'Ana kutil kasar dok neng driji, ndhuwuré kasar ana titik ireng cilik.',
-          terpelajar: 'Papul verukosa hiperkeratotik dok dengan bintik hitam (kapiler trombosis) di permukaan, soliter menjadi multipel.',
+          terpelajar: 'Ada benjolan kecil kasar dan keras dok dengan bintik-bintik hitam di permukaannya, awalnya satu lalu jadi banyak.',
         },
         esensial: true,
         oldcarts: ['lokasi', 'karakter'],

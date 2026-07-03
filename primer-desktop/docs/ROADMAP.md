@@ -343,20 +343,17 @@ anamnesis branching + axis penilaian konseling (KB).
       prefers-reduced-motion. (f) Retorika "nilai mahasiswa cacat" =
       hiperbola (bobot edukasi 10%) tapi arahnya benar — validitas sumbu
       edukasi memang rusak oleh strategi 4-sakti + slip-error UI.
-34c. **Audit total "bahasa pasien"** (permintaan playtest 2026-07-03, KERJAKAN
-    DI M7 sebelum QA butir 36): telaah SEMUA string jawaban pasien — `jawab` +
-    `variasi` 6 persona di 72 kasus (poli+IGD) + dialog kunjungan/wawancara —
-    apakah masuk akal sebagai ucapan pasien sungguhan (register awam, bukan
-    jargon dokter). Contoh temuan pemicu: urtikaria `kasusKulit.ts:403` varian
-    `terpelajar` bicara "wheal eritematosa… evanescent" — persona terpelajar =
-    awam berpendidikan (menyebut "biduran", "kayak bentol digigit ulat, hilang
-    sendiri"), BUKAN kolega dermatologi. Heuristik audit: istilah Latin/Inggris
-    klinis (wheal, eritematosa, evanescent, dispnea, epigastrium, dsb.) hanya
-    boleh muncul di teks dokter (temuan fisik/clue/edukasi), tidak di mulut
-    pasien; kecurigaan ekstra pada varian `terpelajar` (paling rawan bocor) dan
-    jawaban hasil salin-tempel dari clue. Metode: sapu per-file konten (solo,
-    satu-satu), perbaiki in-place, lalu tambah catatan gaya di kontrak konten
-    (`types.ts` doc-comment `variasi`) agar konten baru tidak mengulang.
+34c. **Audit total "bahasa pasien"** ✅ **SELESAI 2026-07-03**: sapu solo
+    (mono, per-file) SEMUA ucapan pasien — `jawab` + `variasi` 6 persona di 72
+    kasus + dialog kunjungan. Skrip audit menemukan **79 pelanggaran, SEMUANYA
+    di persona `terpelajar`** (varian ini ditulis seperti sejawat: wheal
+    eritematosa evanescent, dispnea, epigastrium, onset, McBurney, NYHA,
+    monoartikular, dermatom, anhedonia…). Ke-79 ditulis ulang ke suara awam-
+    berpendidikan (tetap artikulatif/presisi, boleh "darah tinggi"/"biduran"/
+    "asam urat", tanpa Latin klinis). `jawab` dasar & persona lain sudah bersih;
+    dialog kunjungan bersih. Penutup: catatan gaya di `types.ts` (doc Persona)
+    + **guard test `bahasaPasien.test.ts`** (188 total) yang menggagalkan CI
+    bila konten baru menaruh jargon di ucapan pasien.
 35. **Layar Kredit & Tentang**: identitas ITS MEDICS + HKI (sudah di layar judul;
     duplikasi di menu Tentang).
 36. **QA akhir**: playtest 5–10 mahasiswa, profil adversarial diperluas (port 7 profil

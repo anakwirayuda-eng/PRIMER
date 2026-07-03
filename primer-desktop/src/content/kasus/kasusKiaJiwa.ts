@@ -40,7 +40,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Kontrol rutin dok, kandungan saya sekarang jalan lima bulan, alhamdulillah sehat.',
         variasi: {
           polos: 'Namung kontrol dok, wetengé wis limang sasi, ngrasa apik-apik waé.',
-          terpelajar: 'Kontrol antenatal rutin dok, usia gestasi sekitar 20 minggu, sejauh ini tanpa keluhan.',
+          terpelajar: 'Ini kontrol kehamilan rutin dok, usianya sekitar 20 minggu, sejauh ini tidak ada keluhan.',
           cemas: 'Mau periksa dok, ini hamil pertama saya jadi khawatir apa semua baik-baik saja.',
         },
         esensial: true,
@@ -154,7 +154,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Anyang-anyangan dok, kebelet terus tapi keluarnya sedikit dan perih.',
         variasi: {
           polos: 'Anyang-anyangen dok, arep pipis terus tapi metuné mung sithik lan perih.',
-          terpelajar: 'Disuria dan frekuensi meningkat dok, terasa perih di akhir berkemih.',
+          terpelajar: 'Perih saat buang air kecil dan jadi lebih sering dok, terutama terasa perih di akhir.',
           cemas: 'Sakit tiap pipis dok, saya takut ini membahayakan kandungan saya.',
         },
         esensial: true,
@@ -481,7 +481,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Iya dok, saya mau atur jarak anak, tapi bingung pilih yang mana dan takut mengganggu ASI.',
         variasi: {
           polos: 'Nggih dok, kula badhe KB, ning bingung milih sing pundi, wedi ganggu ASI.',
-          terpelajar: 'Saya ingin kontrasepsi jangka menengah dok, prioritas saya tidak mengganggu produksi ASI.',
+          terpelajar: 'Saya ingin KB untuk jangka menengah dok, yang penting tidak mengganggu ASI saya.',
           cemas: 'Saya takut hamil lagi terlalu cepat dok, tapi juga khawatir efek samping KB.',
         },
         esensial: true,
@@ -570,7 +570,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Saya khawatir terus dok, macam-macam saya pikirkan sampai dada berdebar dan susah santai.',
         variasi: {
           polos: 'Kula niki mikir terus dok, dhadha ndredheg, ora tau tenang atiné.',
-          terpelajar: 'Saya mengalami kecemasan yang sulit dikendalikan dok, disertai ketegangan otot dan sulit konsentrasi.',
+          terpelajar: 'Saya merasa cemas yang sulit saya kendalikan dok, badan jadi tegang dan susah berkonsentrasi.',
           cemas: 'Rasanya seperti ada yang mau terjadi terus dok, jantung berdebar, saya takut ini penyakit jantung.',
         },
         esensial: true,
@@ -684,7 +684,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Saya merasa sedih dan lesu terus dok, hal yang dulu menyenangkan sekarang terasa hambar.',
         variasi: {
           polos: 'Ati kula sedhih terus dok, males ngapa-ngapa, sing mbiyèn seneng saiki tawar.',
-          terpelajar: 'Saya mengalami mood depresif dan anhedonia dok, kehilangan minat pada aktivitas yang biasanya saya nikmati.',
+          terpelajar: 'Suasana hati saya murung terus-menerus dok, dan saya kehilangan minat pada hal-hal yang biasanya saya nikmati.',
           lansia: 'Rasanya hampa Nak, hidup terasa berat, saya sering menyendiri belakangan ini.',
         },
         esensial: true,
@@ -802,7 +802,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Susah memulai tidur dok, sudah di kasur tapi mata melek terus sampai jam dua pagi.',
         variasi: {
           polos: 'Angel turu dok, wis nglétak neng kasur ning mripat mêlèk terus tekan bengi.',
-          terpelajar: 'Terutama insomnia inisial dok, latensi tidur saya bisa lebih dari dua jam.',
+          terpelajar: 'Terutama susah memulai tidur dok, saya bisa berbaring lebih dari dua jam baru bisa terlelap.',
           lansia: 'Sudah tua ya Nak, tidur jadi susah, sering kebangun tengah malam terus tidak bisa lagi.',
         },
         esensial: true,
@@ -1036,7 +1036,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Demamnya datang dengan menggigil hebat dok, lalu berkeringat banyak, naik-turun begini beberapa hari.',
         variasi: {
           polos: 'Panasé teka karo krasa nggigil banget dok, banjur kringeten akèh, munggah-mudhun.',
-          terpelajar: 'Demam paroksismal dok, diawali menggigil, puncak panas, lalu diaforesis — pola periodik.',
+          terpelajar: 'Demamnya kambuh-kambuhan dok, diawali menggigil, lalu panas tinggi, kemudian berkeringat banyak — berulang dengan pola teratur.',
           cemas: 'Demamnya hebat sekali dok pakai menggigil, saya takut ini malaria berat.',
         },
         esensial: true,

@@ -42,7 +42,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Kepala rasanya berat dan pegal dok, seperti ada tali diikat kencang melingkari kepala.',
         variasi: {
           polos: 'Sirahé abot lan cengeng dok, kaya diubetké tali kenceng.',
-          terpelajar: 'Nyeri kepala bilateral dok, kualitasnya menekan seperti diikat, tidak berdenyut.',
+          terpelajar: 'Nyeri kepala di kedua sisi dok, rasanya menekan seperti diikat, tidak berdenyut.',
           cemas: 'Kepala saya berat terus dok, saya takut ini gejala tumor atau stroke.',
         },
         esensial: true,
@@ -156,7 +156,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Sebelah kanan dok, berdenyut cut-cut kencang, kadang pindah ke kiri di lain waktu.',
         variasi: {
           polos: 'Sirah sisih tengen dok, cenat-cenut kaya dithuthuk terus.',
-          terpelajar: 'Nyeri kepala unilateral berdenyut dok, intensitas sedang-berat, memberat dengan aktivitas.',
+          terpelajar: 'Nyeri kepala di satu sisi dan berdenyut dok, cukup berat, dan makin parah kalau saya beraktivitas.',
           cemas: 'Sakitnya luar biasa dok sebelah kepala, sampai saya nggak bisa ngapa-ngapain.',
         },
         esensial: true,
@@ -274,7 +274,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Berputar dok, seperti kamar ikut muter, sampai saya harus pegangan biar nggak jatuh.',
         variasi: {
           polos: 'Mumet mubeng dok, kamaré kaya melu muter, kudu nyekeli tembok.',
-          terpelajar: 'Vertigo rotatorik dok, sensasi lingkungan berputar, disertai rasa mau jatuh.',
+          terpelajar: 'Pusing berputar dok, rasanya sekeliling saya berputar, sampai serasa mau jatuh.',
           lansia: 'Puyeng muter Nak, kalau gerak kepala langsung nggliyeng, takut jatuh saya.',
         },
         esensial: true,
@@ -386,7 +386,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Sejak bangun tidur pagi tadi dok, tiba-tiba mulut miring ke kanan, yang kiri nggak bisa digerakkan.',
         variasi: {
           polos: 'Mulai esuk mau tangi turu dok, cangkemé mléngsé, sing kiwa ora iso obah.',
-          terpelajar: 'Onset akut pagi ini dok, kelemahan wajah sisi kiri, sudut mulut turun, mata sulit menutup.',
+          terpelajar: 'Muncul mendadak pagi ini dok, wajah sisi kiri lemah, sudut mulut turun, dan mata sulit menutup.',
           cemas: 'Wajah saya mencong mendadak dok, saya takut ini stroke, tolong dok.',
         },
         esensial: true,
@@ -491,7 +491,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         variasi: {
           wali_anak: 'Mendadak anak saya kaku lalu kejang-kejang seluruh badan dok, mulutnya berbusa, sekitar dua menit, setelah itu tidur lama dan bingung.',
           polos: 'Dumadakan kaku terus kelojotan sak awak dok, cangkemé mbrabak, banjur turu.',
-          terpelajar: 'Bangkitan tonik-klonik umum dok, sekitar dua menit, diikuti fase postiktal berupa bingung dan tidur.',
+          terpelajar: 'Kejang seluruh tubuh dok, kaku lalu mengejang sekitar dua menit, setelahnya bingung lalu tertidur.',
         },
         esensial: true,
         oldcarts: ['karakter', 'durasi'],
@@ -596,7 +596,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Gatal dok, gatalnya sampai pengen dikucek terus, kedua mata merah dan berair.',
         variasi: {
           polos: 'Gatel banget dok mripaté loro-loroné, pengin dikucek terus, abang lan mbrebes.',
-          terpelajar: 'Rasa gatal dominan dok pada kedua mata, disertai injeksi konjungtiva dan sekret serosa berair.',
+          terpelajar: 'Kedua mata terasa gatal sekali dok, merah, dan berair encer.',
           cemas: 'Merah dan gatal terus dok, saya khawatir ini infeksi menular yang parah.',
         },
         esensial: true,
@@ -706,7 +706,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Ada benjolan kecil merah di pinggir kelopak atas dok, nyeri kalau ditekan atau berkedip.',
         variasi: {
           polos: 'Ana bintit cilik abang neng pinggir tlapukan dok, loro yèn didemek.',
-          terpelajar: 'Benjolan eritematosa nyeri di margo palpebra superior dok, nyeri tekan (+).',
+          terpelajar: 'Ada benjolan merah yang nyeri di tepi kelopak mata atas dok, sakit kalau ditekan.',
           cemas: 'Kelopak saya bengkak dan sakit dok, saya takut ini tumor mata.',
         },
         esensial: true,
@@ -809,7 +809,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Telinga kanan terasa penuh dan buntu dok, pendengaran seperti tertutup, sudah beberapa hari.',
         variasi: {
           polos: 'Kuping tengen mampet lan budheg dok, kaya ketutupan.',
-          terpelajar: 'Rasa penuh dan penurunan pendengaran telinga kanan dok, tipe konduktif kesan saya.',
+          terpelajar: 'Telinga kanan terasa penuh dan pendengarannya menurun dok, seperti tersumbat.',
           lansia: 'Kupingé budheg Nak, suara jadi lirih, apa ini karena tua ya?',
         },
         esensial: true,
@@ -913,7 +913,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Dari lubang kanan dok, mulai setengah jam lalu, netes-netes ke depan belum berhenti.',
         variasi: {
           polos: 'Mimisan seka bolongan tengen dok, wis setengah jam durung mandheg.',
-          terpelajar: 'Perdarahan dari kavum nasi kanan dok, mengalir ke anterior, onset sekitar 30 menit.',
+          terpelajar: 'Darah keluar dari lubang hidung kanan dok, mengalir ke depan, sudah sekitar 30 menit.',
           cemas: 'Darahnya keluar terus dok, saya panik, ini bahaya nggak?',
         },
         esensial: true,
@@ -1020,7 +1020,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Hidung buntu berat dok, ingus kental kehijauan, dan wajah terasa nyeri penuh di pipi dan dahi.',
         variasi: {
           polos: 'Irungé mampet nemen dok, umbelé kentel ijo, rai loro nyut-nyutan.',
-          terpelajar: 'Obstruksi nasi + rinorea purulen + nyeri tekan wajah dok, terutama regio maksila dan frontal.',
+          terpelajar: 'Hidung tersumbat, ingus kental kekuningan, dan wajah nyeri kalau ditekan dok, terutama di pipi dan dahi.',
           cemas: 'Kepala dan wajah saya nyeri terus dok, sampai susah tidur, ini sinusitis parah ya?',
         },
         esensial: true,
@@ -1134,7 +1134,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Mata kanan saya mendadak sakit sekali dok sejak beberapa jam lalu, merah, dan penglihatan langsung buram berat.',
         variasi: {
           polos: 'Mripat tengen dumadakan lara nemen dok, abang, weruhé buram banget.',
-          terpelajar: 'Onset akut beberapa jam lalu dok: nyeri okular hebat mata kanan, mata merah, dan penurunan visus mendadak.',
+          terpelajar: 'Muncul mendadak beberapa jam lalu dok: mata kanan nyeri hebat, merah, dan penglihatannya tiba-tiba menurun.',
           lansia: 'Aduh Nak, mata kanan saya sakit luar biasa mendadak, gelap tak bisa lihat, kepala ikut pusing dan mual.',
         },
         esensial: true,

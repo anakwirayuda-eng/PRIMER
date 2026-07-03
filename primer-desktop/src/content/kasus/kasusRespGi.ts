@@ -42,7 +42,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Awalnya kering dok, sekarang mulai berdahak putih, batuknya sering sampai capek.',
         variasi: {
           polos: 'Mula-mula garing dok, saiki wis metu riaké putih, watuké kerep banget.',
-          terpelajar: 'Awalnya batuk kering dok, kini produktif dengan sputum mukoid keputihan.',
+          terpelajar: 'Awalnya batuk kering dok, sekarang berdahak, dahaknya kental keputihan.',
           cemas: 'Batuknya parah dok sampai dada sakit, ini nggak jadi paru-paru basah kan?',
         },
         esensial: true,
@@ -156,7 +156,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Bersin beruntun dok, kadang sampai belasan kali, ingusnya bening encer dan hidung gatal.',
         variasi: {
           polos: 'Wahing terus dok kaya mbledhos, umbelé bening, irungé gatel.',
-          terpelajar: 'Bersin paroksismal dok, rinorea serosa, disertai gatal hidung dan mata berair.',
+          terpelajar: 'Bersin beruntun dok, ingus encer bening, disertai hidung gatal dan mata berair.',
           cemas: 'Bersinnya nggak berhenti dok, ganggu banget kerja, ini kenapa ya sebenarnya?',
         },
         esensial: true,
@@ -271,7 +271,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Tenggorokan sakit banget dok, menelan ludah saja perih, terasa amandel membesar.',
         variasi: {
           polos: 'Gulu loro nemen dok, arep nguntal wae lara, amandelé gedhe.',
-          terpelajar: 'Odinofagia berat dok, disertai sensasi tonsil membesar dan suara sedikit sengau.',
+          terpelajar: 'Nyeri hebat saat menelan dok, terasa amandel membesar dan suara jadi sedikit sengau.',
           wali_anak: 'Anak saya nggak mau makan dok karena tenggorokannya sakit, amandelnya kelihatan besar dan ada bercak putih.',
         },
         esensial: true,
@@ -391,7 +391,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Biasanya sesak cuma kalau kerja berat dok, sekarang jalan sedikit saja sudah ngos-ngosan, malam susah tidur karena sesak.',
         variasi: {
           lansia: 'Ambeganku saya sesek nemen Nak, mlaku rong meter wae wis megap-megap, mambengi ora iso turu.',
-          terpelajar: 'Dispnea saya memberat bermakna dok, dari sebelumnya hanya saat aktivitas berat kini muncul dengan aktivitas ringan.',
+          terpelajar: 'Sesak saya memberat jelas dok, dulu hanya muncul saat aktivitas berat, sekarang aktivitas ringan pun sudah sesak.',
           cemas: 'Sesaknya makin parah dok, saya takut nggak kuat napas malam ini.',
         },
         esensial: true,
@@ -497,7 +497,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Di ulu hati naik ke dada tengah sampai pangkal tenggorokan dok, kadang mulut terasa asam pahit.',
         variasi: {
           polos: 'Neng ulu ati munggah nang dhadha dok, cangkemé krasa kecut.',
-          terpelajar: 'Sensasi terbakar retrosternal dok, disertai regurgitasi asam dan rasa pahit di mulut.',
+          terpelajar: 'Rasa terbakar di belakang tulang dada dok, disertai asam naik ke tenggorokan dan rasa pahit di mulut.',
           cemas: 'Dadanya panas dan sesak dok, saya takut ini jantung, tetangga saya kena serangan jantung gejalanya mirip.',
         },
         esensial: true,
@@ -612,7 +612,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Perih dan begah dok, cepat kenyang baru makan sedikit, kadang mual dan sendawa terus.',
         variasi: {
           polos: 'Ulu ati perih karo seneb dok, lagi mangan sithik wis wareg, kerep glegeken.',
-          terpelajar: 'Nyeri epigastrium disertai rasa penuh pascamakan dan cepat kenyang dok, sudah beberapa minggu.',
+          terpelajar: 'Nyeri ulu hati disertai rasa penuh setelah makan dan cepat kenyang dok, sudah beberapa minggu.',
           cemas: 'Perut saya nggak enak terus dok, jangan-jangan ini penyakit lambung berat atau kanker ya?',
         },
         esensial: true,
@@ -727,7 +727,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Cair sedikit-sedikit tapi sering dok, ada darah segar dan lendir, tiap habis BAB rasanya masih mau BAB lagi.',
         variasi: {
           polos: 'Ngising cuér nanging kerep dok, ana getih karo lendhir, sabubaré ngising isih pengin ngising manèh.',
-          terpelajar: 'Diare disertai darah dan mukus dok, volume sedikit tapi frekuen, disertai tenesmus.',
+          terpelajar: 'Mencret disertai darah dan lendir dok, sedikit-sedikit tapi sering, dan terasa selalu ingin ke belakang.',
           cemas: 'BAB saya berdarah dok, ini bahaya nggak? Saya takut usus saya kenapa-kenapa.',
         },
         esensial: true,
@@ -943,7 +943,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Menetes di akhir BAB dok, merah segar, menempel di kertas dan sedikit di kloset, nggak bercampur di dalam tinja.',
         variasi: {
           polos: 'Netes neng pungkasané ngising dok, abang seger, ora campur karo tinjané.',
-          terpelajar: 'Perdarahan segar menetes pascadefekasi dok, tidak bercampur feses, tanpa nyeri.',
+          terpelajar: 'Darah segar menetes setelah buang air besar dok, tidak bercampur tinja, dan tidak nyeri.',
           cemas: 'BAB saya berdarah dok, saya takut ini kanker usus seperti yang di internet.',
         },
         esensial: true,
@@ -1051,7 +1051,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Mulanya di ulu hati dan sekitar pusar dok, samar, lalu dalam sehari pindah dan menetap di perut kanan bawah, makin tajam.',
         variasi: {
           polos: 'Mulané neng ulu ati karo mubeng puser dok, banjur pindhah nang tengen ngisor, saya lara.',
-          terpelajar: 'Nyeri awalnya periumbilikal/epigastrik yang tumpul lalu migrasi ke kuadran kanan bawah (McBurney) dan menetap, dok.',
+          terpelajar: 'Awalnya nyeri tumpul di sekitar pusar dan ulu hati dok, lalu berpindah ke perut kanan bawah dan menetap di situ.',
           cemas: 'Sakitnya hebat sekali dok di kanan bawah, kalau bergerak atau batuk tambah sakit, ini kenapa?',
         },
         esensial: true,
