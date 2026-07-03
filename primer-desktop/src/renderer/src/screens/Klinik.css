@@ -449,6 +449,13 @@
   background: var(--daun-50);
 }
 
+/* CODEX P1 audit 2026-07-04: --daun-50 tak diremap gelap, sedang nama
+   diagnosis di atasnya memakai --tinta (diremap nyaris putih) → ~1.08:1. */
+[data-mode='malam'] .klinik-banding--aktif,
+[data-mode='malam'] .klinik-tinta-pilih__opsi--aktif {
+  background: rgba(62, 208, 164, 0.16);
+}
+
 .klinik-banding__radio {
   width: 14px;
   height: 14px;

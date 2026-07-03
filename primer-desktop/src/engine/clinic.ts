@@ -379,8 +379,25 @@ export function nilaiEncounter(
   const obatBerbahaya = (kasus.tatalaksana.obatSalahUmum ?? []).filter((o) =>
     enc.resep.includes(o.id),
   ).length
+  // Stewardship (audit CODEX 2026-07-04): grup alternatif "pilih salah satu"
+  // TIDAK selalu netral bila diisi lebih dari satu anggota — untuk analgesik/
+  // antihipertensi/antihistamin dua obat sekelas cuma redundan (aman, karenanya
+  // tak dihukum di atas). TAPI bila grup itu berisi ≥2 ANTIBIOTIK (mis. tifoid:
+  // kloramfenikol/kotrimoksazol/amoksisilin — satu infeksi cukup SATU lini),
+  // memberi lebih dari satu adalah polifarmasi antibiotik nyata: menaikkan
+  // biaya & tekanan resistensi tanpa manfaat tambahan. Beda kasus dari
+  // obatBerbahaya (obat yg memang kontraindikasi) — ini soal jumlah, bukan
+  // pilihan yang salah.
+  const antibiotikGandaDalamGrup = grupAlternatif.some((g) => {
+    const antibiotikDiresepkan = g.filter(
+      (id) => enc.resep.includes(id) && pack.obat[id]?.antibiotik === true,
+    )
+    return antibiotikDiresepkan.length > 1
+  })
   let skorTerapi = clamp(
-    Math.round(100 * rasioTerapi - 15 * obatDiLuar - 25 * obatBerbahaya),
+    Math.round(
+      100 * rasioTerapi - 15 * obatDiLuar - 25 * obatBerbahaya - (antibiotikGandaDalamGrup ? 20 : 0),
+    ),
     0,
     100,
   )

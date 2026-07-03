@@ -8,11 +8,14 @@
 
 import { useState } from 'react'
 import { useGame } from '../store'
-import { SKDI144 } from '@content/skdi144'
 import { PACK } from '@content/index'
 import './DexSkdi.css'
 
-const TOTAL_ENTRI = SKDI144.length
+// CODEX audit 2026-07-04: dulu memakai SKDI144 mentah (bukan PACK.skdi144),
+// jadi 23 entri yang kasusId-nya di-auto-tautkan lewat kecocokan ICD-10 di
+// index.ts (lihat skdi144Tertaut) tak pernah terbaca "dikenali" — progres Dex
+// mandek permanen di ??? walau kasusnya sudah ditangani.
+const TOTAL_ENTRI = PACK.skdi144.length
 
 /** Bintang penguasaan 0-3: ★ terisi kunyit, sisanya pudar. */
 function Bintang({ jumlah, besar = false }: { jumlah: number; besar?: boolean }) {
@@ -32,11 +35,11 @@ export function DexSkdi() {
   const state = useGame((s) => s.state)!
   const [pilihanId, setPilihanId] = useState<string | null>(null)
 
-  const jumlahDikenal = SKDI144.filter(
+  const jumlahDikenal = PACK.skdi144.filter(
     (e) => e.kasusId !== undefined && state.dex[e.kasusId] !== undefined,
   ).length
 
-  const terpilih = pilihanId !== null ? SKDI144.find((e) => e.id === pilihanId) : undefined
+  const terpilih = pilihanId !== null ? PACK.skdi144.find((e) => e.id === pilihanId) : undefined
   const dexTerpilih =
     terpilih?.kasusId !== undefined ? state.dex[terpilih.kasusId] : undefined
   const kasusTerpilih =
@@ -74,7 +77,7 @@ export function DexSkdi() {
         {/* ---- Grid 144 kartu (panel yang scroll) --------------------------- */}
         <div className="dexskdi__grid-wrap">
           <div className="dexskdi__grid">
-            {SKDI144.map((entri, i) => {
+            {PACK.skdi144.map((entri, i) => {
               const dex = entri.kasusId !== undefined ? state.dex[entri.kasusId] : undefined
               const diDesa = entri.kasusId !== undefined && dex === undefined
               const nomor = String(i + 1).padStart(3, '0')

@@ -7,6 +7,7 @@
 
 import { useGame } from '../store'
 import { hitungSkor } from '@engine/director'
+import { HARI_STASE } from '@engine/paketUjian'
 import type { Musim } from '@engine/state'
 import './Rapor.css'
 
@@ -112,7 +113,7 @@ export function Rapor() {
             <span className="judul-seksi">Rapor Stase — Dinas Kesehatan</span>
             <h1 className="rapor__judul">dr. {state.namaDokter}</h1>
             <p className="teks-kecil teks-lembut">
-              Puskesmas Desa Sukamaju · Hari ke-{state.hari} dari 90
+              Puskesmas Desa Sukamaju · Hari ke-{state.hari} dari {HARI_STASE[state.mode]}
             </p>
           </div>
           <div className="rapor__grade">
@@ -218,38 +219,52 @@ export function Rapor() {
             </table>
           </section>
 
-          <section className="kartu rapor-kal">
-            <span className="judul-seksi">Kalender Musim — 90 Hari</span>
-            <div className="rapor-kal__strip-wrap">
-              {STRIP_MUSIM.map((strip) => (
-                <div key={strip.musim} className={`rapor-kal__strip rapor-kal__strip--${strip.musim}`}>
-                  <span className="rapor-kal__label teks-xs teks-lembut mono">{strip.label}</span>
-                  <div className="rapor-kal__hari-grid">
-                    {Array.from({ length: 30 }, (_, i) => {
-                      const hariKe = strip.mulai + i
-                      const kelas =
-                        hariKe === state.hari
-                          ? ' rapor-kal__hari--kini'
-                          : hariKe < state.hari
-                            ? ' rapor-kal__hari--lewat'
-                            : ''
-                      return (
-                        <span
-                          key={hariKe}
-                          className={`rapor-kal__hari${kelas}`}
-                          title={hariKe === state.hari ? `Hari ${hariKe} — hari ini` : `Hari ${hariKe}`}
-                        />
-                      )
-                    })}
+          {state.mode === 'karier' ? (
+            <section className="kartu rapor-kal">
+              <span className="judul-seksi">Kalender Musim — 90 Hari</span>
+              <div className="rapor-kal__strip-wrap">
+                {STRIP_MUSIM.map((strip) => (
+                  <div key={strip.musim} className={`rapor-kal__strip rapor-kal__strip--${strip.musim}`}>
+                    <span className="rapor-kal__label teks-xs teks-lembut mono">{strip.label}</span>
+                    <div className="rapor-kal__hari-grid">
+                      {Array.from({ length: 30 }, (_, i) => {
+                        const hariKe = strip.mulai + i
+                        const kelas =
+                          hariKe === state.hari
+                            ? ' rapor-kal__hari--kini'
+                            : hariKe < state.hari
+                              ? ' rapor-kal__hari--lewat'
+                              : ''
+                        return (
+                          <span
+                            key={hariKe}
+                            className={`rapor-kal__hari${kelas}`}
+                            title={hariKe === state.hari ? `Hari ${hariKe} — hari ini` : `Hari ${hariKe}`}
+                          />
+                        )
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            <p className="teks-xs teks-lembut rapor-kal__disclaimer">
-              Skor dikunci permanen di Hari 91 — sampai saat itu, setiap keputusanmu masih
-              bisa mengubah rapor ini.
-            </p>
-          </section>
+                ))}
+              </div>
+              <p className="teks-xs teks-lembut rapor-kal__disclaimer">
+                Skor dikunci permanen di Hari {HARI_STASE.karier + 1} — sampai saat itu, setiap
+                keputusanmu masih bisa mengubah rapor ini.
+              </p>
+            </section>
+          ) : (
+            // CODEX audit 2026-07-04: kalender musim 3×30 hari khusus mode karier
+            // (90 hari) — tak berlaku utk stase ujian 30 hari, dulu tetap tampil
+            // "90 Hari"/"Hari 91" yang keliru & membingungkan peserta ujian.
+            <section className="kartu rapor-kal">
+              <span className="judul-seksi">Stase Ujian — {HARI_STASE.ujian} Hari</span>
+              <p className="teks-kecil teks-lembut">
+                Mode ujian tak memakai kalender musim karier. Skor dikunci permanen di Hari{' '}
+                {HARI_STASE.ujian + 1} — sampai saat itu, setiap keputusanmu masih bisa mengubah
+                rapor ini.
+              </p>
+            </section>
+          )}
         </div>
       </div>
     </div>

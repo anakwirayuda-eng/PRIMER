@@ -88,6 +88,11 @@
   animation: laporan-masuk 0.4s var(--ease-keluar) both;
 }
 
+/* CODEX P2 audit 2026-07-04: --kunyit-100 tak diremap gelap — lihat Klinik.css. */
+[data-mode='malam'] .laporan__badge--raih {
+  background: rgba(234, 165, 79, 0.16);
+}
+
 .laporan__badge-ikon { font-size: 1.1rem; }
 
 .laporan__epilog { margin-top: var(--sp-4); }

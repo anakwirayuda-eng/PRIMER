@@ -76,6 +76,12 @@
   background: var(--daun-50);
 }
 
+/* CODEX P2 audit 2026-07-04: --daun-50 tak diremap gelap — lihat Klinik.css. */
+[data-mode='malam'] .kunjungan-stepper__langkah--aktif,
+[data-mode='malam'] .kunjungan-intervensi--terpilih {
+  background: rgba(62, 208, 164, 0.16);
+}
+
 .kunjungan-stepper__langkah--lewat {
   color: var(--daun-700);
 }

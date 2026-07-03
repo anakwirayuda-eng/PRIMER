@@ -65,7 +65,11 @@ export function LaporanAkhir() {
   const res = useCountUp(skor.resiliensi, babak >= 1)
   const total = useCountUp(skor.total, babak >= 1)
 
-  const akurasi = t.totalPasien > 0 ? Math.round((t.diagnosisBenar / t.totalPasien) * 100) : 0
+  // CODEX audit 2026-07-04: dulu dihitung ulang di sini dari diagnosisBenar/
+  // totalPasien saja — beda dari formula resmi (scoring.ts) yang penyebutnya
+  // totalPasien+autoBermasalah (anti cherry-picking). Pakai skor.akurasiDiagnosis
+  // supaya angka di layar ini SELALU sama dgn yang menentukan UKP.
+  const akurasi = Math.round(skor.rincian.akurasiDiagnosis)
 
   // Epilog keluarga: binaan dulu (cerita penuh), lalu ringkasan sisanya.
   const keluargaCerita = Object.values(state.desa.keluarga)

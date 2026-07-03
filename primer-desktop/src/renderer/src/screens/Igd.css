@@ -122,6 +122,11 @@
   background: var(--daun-50);
 }
 
+/* CODEX P2 audit 2026-07-04: --daun-50 tak diremap gelap — lihat Klinik.css. */
+[data-mode='malam'] .igd__opsi--rjp {
+  background: rgba(62, 208, 164, 0.16);
+}
+
 .igd__respons {
   margin-top: var(--sp-4);
   padding: var(--sp-3) var(--sp-4);

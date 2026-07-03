@@ -253,6 +253,11 @@
   border: 1px solid var(--border-halus);
 }
 
+/* CODEX P1 audit 2026-07-04: --kunyit-100 tak diremap gelap — lihat Klinik.css. */
+[data-mode='malam'] .dexskdi-detail__clue-teks {
+  background: rgba(234, 165, 79, 0.16);
+}
+
 .dexskdi-detail__saran {
   border-top: 1px dashed var(--border-halus);
   padding-top: var(--sp-2);

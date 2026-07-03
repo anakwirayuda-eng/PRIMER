@@ -66,6 +66,17 @@
   background: var(--daun-50);
 }
 
+/* CODEX P1/P2 audit 2026-07-04: --daun-50 & --kunyit-600 tak diremap gelap,
+   sedang teks/latar pasangannya (--daun-800, --kertas-050) sudah diremap
+   terang utk mode malam — kombinasinya jatuh drastis (~1.5:1 dan ~2:1). */
+[data-mode='malam'] .hud__tab--aktif {
+  background: rgba(62, 208, 164, 0.16);
+}
+
+[data-mode='malam'] .hud__badge {
+  color: var(--malam-900);
+}
+
 .hud__tab--kunci {
   opacity: 0.5;
 }

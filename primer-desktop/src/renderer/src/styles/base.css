@@ -89,8 +89,12 @@ button {
 }
 
 /* -- Folder manila (map arsip) ---------------------------------------------- */
+/* CODEX P1 audit 2026-07-04: dulu hardcode --kertas-300 (selalu terang) —
+   di mode malam teks (--tinta diremap nyaris putih) jatuh ke rasio ~1.14:1
+   di atasnya. --bg-sunken adalah kertas-300 yang SAMA di mode siang tapi
+   sudah diremap gelap di mode malam — pakai itu supaya folder ikut gelap. */
 .folder {
-  background: var(--kertas-300);
+  background: var(--bg-sunken);
   border: 1px solid var(--border-tegas);
   border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
   position: relative;
@@ -103,7 +107,7 @@ button {
   left: 0;
   width: 34%;
   height: 13px;
-  background: var(--kertas-300);
+  background: var(--bg-sunken);
   border: 1px solid var(--border-tegas);
   border-bottom: none;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
