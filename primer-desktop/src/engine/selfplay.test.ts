@@ -168,7 +168,10 @@ function mainkanSampaiHari(
   seed: number,
   hariAkhir: number,
 ): { state: GameState; penilaian: PenilaianEncounter[]; staminaPagi: number[] } {
-  let s = buildInitialState('Tester', seed, PACK)
+  // tutorialAktif dimatikan: helper ini menguji tally 1:1 dgn tiap encounter
+  // yg dimainkan — encounter tutorial (DeepThink "onboarding railroaded")
+  // sengaja kebal tally, akan menggeser hitungan di sini.
+  let s = { ...buildInitialState('Tester', seed, PACK), tutorialAktif: false }
   const semuaPenilaian: PenilaianEncounter[] = []
   const staminaPagi: number[] = [s.stamina]
 

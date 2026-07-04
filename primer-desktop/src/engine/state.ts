@@ -530,6 +530,15 @@ export interface GameState {
    * (bukan mingguan) — memaksa mengorbankan area lain sepanjang bulan berjalan. */
   program: { fokus?: FokusProgram; rwFokus?: number; periodeDitetapkan?: number }
 
+  /**
+   * DeepThink "onboarding railroaded" (2026-07-04, keputusan user): true HANYA
+   * di stase baru sampai encounter pertama tuntas DISPOSISI. Selama aktif,
+   * encounter itu KEBAL skor (tally/dex/kapitasi/gudang/jadwal tak berubah)
+   * — pasien latihan pertama, bukan ujian. UI (Klinik.tsx) memakai ini +
+   * kasusId untuk menyalakan sorotan tutorial (lihat screens/klinik/tutorialKlinik.ts).
+   */
+  tutorialAktif: boolean
+
   inbox: Surat[]
   jadwal: JadwalItem[]
   tally: SkorTally

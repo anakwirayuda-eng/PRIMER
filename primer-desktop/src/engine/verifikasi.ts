@@ -121,9 +121,17 @@ function fnv1a(teks: string): string {
  * hitungSkor naik dari −2 ke −5/kejadian (guillotine gerbang kali-nol butuh
  * sampel≥3, cowboy dulu cuma potongan flat — berhenti-merujuk-total jauh
  * lebih murah drpd risiko guillotine) — dossier lama dgn tally.cowboy>0
- * mereplay ke UKP lebih rendah dari yang tercatat.
+ * mereplay ke UKP lebih rendah dari yang tercatat;
+ * 11 = keputusan user DeepThink "onboarding railroaded": GameState field baru
+ * `tutorialAktif` (true di stase BARU sampai DISPOSISI pertama tuntas) —
+ * encounter pertama kebal SEPENUHNYA (tally/dex/kapitasi/gudang/jadwal
+ * dikembalikan ke nilai sebelum encounter itu di reducer.ts case DISPOSISI).
+ * Dossier LAMA (sebelum field ini ada) di-backfill `tutorialAktif: false`
+ * oleh save.ts — tak retroaktif kebal — tapi REVISI naik krn semantik
+ * DISPOSISI pertama kini bisa berbeda dari yang tercatat bila field ini
+ * hilang/salah saat replay.
  */
-const REVISI_ENGINE = 10
+const REVISI_ENGINE = 11
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

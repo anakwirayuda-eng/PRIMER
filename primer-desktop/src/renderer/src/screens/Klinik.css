@@ -252,6 +252,37 @@
   text-align: center;
 }
 
+/* Tutorial (DeepThink "onboarding railroaded", keputusan user): banner
+   instruksi + sorotan tombol bersinar. Tunduk reduce-motion (gerbang global
+   base.css menetralkan animation). */
+.klinik-tutorial-banner {
+  background: var(--kunyit-100);
+  border: 1px solid var(--kunyit-600);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--kunyit-700);
+}
+
+[data-mode='malam'] .klinik-tutorial-banner {
+  background: rgba(234, 165, 79, 0.14);
+  color: var(--kunyit-700);
+}
+
+.klinik-sorot-tutorial {
+  animation: klinik-sorot-nyala 1.4s ease-in-out infinite;
+  outline: 3px solid var(--kunyit-600);
+  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes klinik-sorot-nyala {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 165, 79, 0.55); }
+  50% { box-shadow: 0 0 0 6px rgba(234, 165, 79, 0); }
+}
+
 .klinik-deck__grup {
   display: flex;
   flex-direction: column;

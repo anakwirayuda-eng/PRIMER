@@ -636,6 +636,7 @@ function buatStateKader(): GameState {
     prolanis: { roster: [] },
     posyanduRwTerakhir: {},
     program: {},
+    tutorialAktif: false,
   }
 }
 

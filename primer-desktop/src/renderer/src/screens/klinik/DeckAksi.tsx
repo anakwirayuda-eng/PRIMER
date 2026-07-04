@@ -12,6 +12,7 @@ import { DeckPemeriksaan } from './DeckPemeriksaan'
 import { DeckDiagnosis } from './DeckDiagnosis'
 import { DeckTerapi } from './DeckTerapi'
 import { DeckDisposisi } from './DeckDisposisi'
+import { BANNER_TUTORIAL } from './tutorialKlinik'
 
 interface Props {
   enc: EncounterState
@@ -19,6 +20,8 @@ interface Props {
   dispatch: (action: Action) => void
   lastEvents: GameEvent[]
   eventTick: number
+  /** DeepThink "onboarding railroaded" (keputusan user) — lihat Klinik.tsx. */
+  tutorialAktif: boolean
 }
 
 const LANGKAH: { fase: FaseEncounter; label: string }[] = [
@@ -29,8 +32,9 @@ const LANGKAH: { fase: FaseEncounter; label: string }[] = [
   { fase: 'disposisi', label: 'Disposisi' },
 ]
 
-export function DeckAksi({ enc, kasus, dispatch, lastEvents, eventTick }: Props) {
+export function DeckAksi({ enc, kasus, dispatch, lastEvents, eventTick, tutorialAktif }: Props) {
   const indexAktif = LANGKAH.findIndex((l) => l.fase === enc.fase)
+  const banner = tutorialAktif ? BANNER_TUTORIAL[enc.fase] : ''
 
   return (
     <section className="klinik-deck kertas" aria-label="Deck aksi klinik">
@@ -48,6 +52,8 @@ export function DeckAksi({ enc, kasus, dispatch, lastEvents, eventTick }: Props)
         ))}
       </ol>
 
+      {banner !== '' && <div className="klinik-tutorial-banner">{banner}</div>}
+
       {enc.fase === 'anamnesis' && (
         <DeckAnamnesis
           enc={enc}
@@ -55,14 +61,27 @@ export function DeckAksi({ enc, kasus, dispatch, lastEvents, eventTick }: Props)
           dispatch={dispatch}
           lastEvents={lastEvents}
           eventTick={eventTick}
+          tutorialAktif={tutorialAktif}
         />
       )}
-      {enc.fase === 'pemeriksaan' && <DeckPemeriksaan enc={enc} dispatch={dispatch} />}
-      {enc.fase === 'diagnosis' && <DeckDiagnosis enc={enc} kasus={kasus} dispatch={dispatch} />}
-      {enc.fase === 'terapi' && (
-        <DeckTerapi enc={enc} dispatch={dispatch} lastEvents={lastEvents} eventTick={eventTick} />
+      {enc.fase === 'pemeriksaan' && (
+        <DeckPemeriksaan enc={enc} dispatch={dispatch} tutorialAktif={tutorialAktif} />
       )}
-      {enc.fase === 'disposisi' && <DeckDisposisi enc={enc} dispatch={dispatch} />}
+      {enc.fase === 'diagnosis' && (
+        <DeckDiagnosis enc={enc} kasus={kasus} dispatch={dispatch} tutorialAktif={tutorialAktif} />
+      )}
+      {enc.fase === 'terapi' && (
+        <DeckTerapi
+          enc={enc}
+          dispatch={dispatch}
+          lastEvents={lastEvents}
+          eventTick={eventTick}
+          tutorialAktif={tutorialAktif}
+        />
+      )}
+      {enc.fase === 'disposisi' && (
+        <DeckDisposisi enc={enc} dispatch={dispatch} tutorialAktif={tutorialAktif} />
+      )}
     </section>
   )
 }

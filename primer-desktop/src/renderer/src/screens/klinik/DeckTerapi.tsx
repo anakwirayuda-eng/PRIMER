@@ -22,19 +22,26 @@ import {
   LABEL_KATEGORI_EDUKASI,
   URUTAN_KATEGORI_EDUKASI,
 } from './util'
+import { OBAT_PERTAMA_TUTORIAL } from './tutorialKlinik'
 
 interface Props {
   enc: EncounterState
   dispatch: (action: Action) => void
   lastEvents: GameEvent[]
   eventTick: number
+  /** DeepThink "onboarding railroaded" (keputusan user). */
+  tutorialAktif?: boolean
 }
 
 /** Status buka/tutup laci diingat selama SESI app (bukan state save). */
 const laciSesi = new Set<KategoriEdukasi>()
 
-export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
+export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif = false }: Props) {
   const [tab, setTab] = useState<'resep' | 'edukasi' | 'tindakan'>('resep')
+  // Sorotan: obat pertama sampai masuk resep, lalu tombol lanjut. Edukasi/
+  // Tindakan sengaja TAK disorot & terkunci (kasus tutorial cukup 1 obat).
+  const sorotObat = tutorialAktif && !enc.resep.includes(OBAT_PERTAMA_TUTORIAL)
+  const sorotLanjut = tutorialAktif && enc.resep.includes(OBAT_PERTAMA_TUTORIAL)
   const [cari, setCari] = useState('')
   const [cariEduk, setCariEduk] = useState('')
   const [, setLaciTick] = useState(0) // re-render saat laciSesi berubah
@@ -114,6 +121,8 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
             aria-selected={tab === 'edukasi'}
             className={`klinik-deck__tab-tombol${tab === 'edukasi' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
             onClick={() => setTab('edukasi')}
+            disabled={tutorialAktif}
+            title={tutorialAktif ? 'Kasus latihan ini cukup diselesaikan lewat tab Resep.' : undefined}
           >
             {/* Titik kunyit = pengingat baki masih kosong (playtest: tab tak terlihat).
                 Status milik pemain sendiri — bukan petunjuk isi kasus (anti-bocor). */}
@@ -127,6 +136,8 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
             aria-selected={tab === 'tindakan'}
             className={`klinik-deck__tab-tombol${tab === 'tindakan' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
             onClick={() => setTab('tindakan')}
+            disabled={tutorialAktif}
+            title={tutorialAktif ? 'Kasus latihan ini tak butuh tindakan.' : undefined}
           >
             Tindakan ({enc.tindakan.length})
           </button>
@@ -151,6 +162,8 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
                   const diresepkan = enc.resep.includes(o.id)
                   const sisa = stok?.[o.id]
                   const habis = sisa !== undefined && sisa <= 0
+                  const disorot = sorotObat && o.id === OBAT_PERTAMA_TUTORIAL
+                  const dikunci = tutorialAktif && !disorot
                   return (
                     <div key={o.id} className="klinik-obat__baris">
                       <div className="tumbuh">
@@ -171,9 +184,9 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
                       </div>
                       <span className="mono teks-xs teks-lembut">{formatRupiah(o.hargaJual)}</span>
                       <button
-                        className="tombol klinik-obat__tambah"
+                        className={`tombol klinik-obat__tambah${disorot ? ' klinik-sorot-tutorial' : ''}`}
                         onClick={() => dispatch({ type: 'TAMBAH_OBAT', obatId: o.id })}
-                        disabled={diresepkan || habis}
+                        disabled={diresepkan || habis || dikunci}
                         title={
                           diresepkan
                             ? 'Sudah ada di resep.'
@@ -343,12 +356,13 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
 
       <footer className="klinik-deck__footer">
         <button
-          className="tombol tombol--utama tombol--besar"
+          className={`tombol tombol--utama tombol--besar${sorotLanjut ? ' klinik-sorot-tutorial' : ''}`}
           onClick={() => dispatch({ type: 'LANJUT_FASE' })}
+          disabled={tutorialAktif && !sorotLanjut}
         >
           Selesai Terapi &mdash; ke Disposisi &rarr;
         </button>
-        {enc.edukasi.length === 0 ? (
+        {tutorialAktif ? null : enc.edukasi.length === 0 ? (
           <button className="teks-xs klinik-deck__footer-ingat" onClick={() => setTab('edukasi')}>
             💬 Pasien belum diedukasi &mdash; buka tab <strong>Edukasi (0/{KAPASITAS_EDUKASI})</strong>; konseling ikut dinilai.
           </button>

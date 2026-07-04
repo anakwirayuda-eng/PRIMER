@@ -7,9 +7,10 @@ import type { GameState, KeluargaState, ModeStase, NilaiIndikator, Surat } from 
 import type { ContentPack } from '@content/pack'
 import type { IndikatorPisPk, StatusIndikator } from '@content/types'
 import { Rng } from './core/rng'
-import { susunAntrianHarian } from './director'
+import { susunAntrianHarian, buatPasienDariKasus } from './director'
 import { STAMINA_MAKS } from './reducer'
 import { HARI_STASE, pilihPaket } from './paketUjian'
+import { KASUS_TUTORIAL } from './tutorial'
 
 const SEMUA_INDIKATOR: IndikatorPisPk[] = [
   'kb',
@@ -209,16 +210,31 @@ export function buildInitialState(
     prolanis: { roster: [] },
     posyanduRwTerakhir: {},
     program: {},
+    // DeepThink "onboarding railroaded" (keputusan user): tiap stase baru
+    // mulai dgn tutorial aktif — kebal skor sampai DISPOSISI pertama tuntas
+    // (lihat reducer.ts case 'DISPOSISI').
+    tutorialAktif: true,
   }
 
   // Antrian hari pertama (bias 4A minggu pertama diatur Director).
   // M4.5: seleksi kasus dari seed KURIKULUM, wajah pasien dari seed flavor.
-  const antrian = susunAntrianHarian(
+  let antrian = susunAntrianHarian(
     base,
     pack,
     new Rng(seedKurikulum, 'director', 1),
     [],
     new Rng(seed, 'director-flavor', 1),
   )
+  // Tutorial (keputusan user): pasien PERTAMA stase baru dipaksa jadi kasus
+  // ISPA dasar (KASUS_TUTORIAL) — konten paling sederhana, dipakai UI utk
+  // menyorot langkah demi langkah. Best-effort: fixture test dgn pack minimal
+  // (tanpa kasus ini) tetap jalan apa adanya — tutorialAktif tetap true (skor
+  // encounter pertama tetap kebal), cuma sorotan UI tak menyala.
+  if (antrian.length > 0 && pack.kasus[KASUS_TUTORIAL]) {
+    antrian = [
+      buatPasienDariKasus(KASUS_TUTORIAL, pack, new Rng(seed, 'director-flavor', 1)),
+      ...antrian.slice(1),
+    ]
+  }
   return { ...base, klinik: { ...base.klinik, antrian } }
 }

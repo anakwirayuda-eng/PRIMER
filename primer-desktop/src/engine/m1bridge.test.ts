@@ -177,7 +177,10 @@ describe('M1.2 — surveilans balik UKP→UKM', () => {
   })
 
   it('diagnosis menular di poli tercatat ke surveilans saat disposisi', () => {
-    let s = buildInitialState('Uji', SEED, PACK)
+    // tutorialAktif dimatikan: tes ini soal surveilans, bukan tutorial —
+    // encounter tutorial (DeepThink "onboarding railroaded") sengaja kebal
+    // skor/side-effect, akan mengacaukan pengecekan surveilans di bawah.
+    let s = { ...buildInitialState('Uji', SEED, PACK), tutorialAktif: false }
     // Cari hari yang antriannya memuat kasus menular; mainkan minimal lalu pulangkan.
     for (let percobaan = 0; percobaan < 10; percobaan++) {
       const idx = s.klinik.antrian.findIndex((p) => PACK.kasus[p.kasusId] && ['dengue_df', 'diare_akut_anak', 'ispa_common_cold', 'demam_tifoid', 'skabies', 'konjungtivitis_bakterial', 'tb_paru'].includes(p.kasusId))

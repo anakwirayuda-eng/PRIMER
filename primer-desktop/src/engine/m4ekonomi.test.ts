@@ -162,7 +162,9 @@ describe('M4.20 — akreditasi D60 dari kelengkapan rekam medis', () => {
   })
 
   it('encounter dgn semua fase ≥50 menambah tally rmLengkap', () => {
-    let s = buildInitialState('Uji', SEED, PACK)
+    // tutorialAktif dimatikan: encounter tutorial (DeepThink "onboarding
+    // railroaded") sengaja kebal tally — tes ini soal rmLengkap, bukan tutorial.
+    let s = { ...buildInitialState('Uji', SEED, PACK), tutorialAktif: false }
     s = run(s, { type: 'PANGGIL_PASIEN' })
     const kasus = PACK.kasus[s.klinik.aktif!.pasien.kasusId]!
     for (const q of kasus.anamnesis) {

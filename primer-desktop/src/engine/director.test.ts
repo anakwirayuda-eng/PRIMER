@@ -167,6 +167,7 @@ function buatState(override?: Partial<GameState>): GameState {
     prolanis: { roster: [] },
     posyanduRwTerakhir: {},
     program: {},
+    tutorialAktif: false,
     ...override,
   }
 }

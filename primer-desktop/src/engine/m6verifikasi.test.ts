@@ -45,13 +45,8 @@ const NAMA_UJI = 'Uji Verifikasi'
 const NIM_UJI = '011'
 const SEED_UJI = hashSeed('ujian', NIM_UJI)
 
-function mainkanSatuPasien(): GameState {
-  let s = buildInitialState(NAMA_UJI, SEED_UJI, PACK, { mode: 'ujian', nim: NIM_UJI })
-  s = run(s, { type: 'BACA_SURAT', suratId: 'surat_1_0' })
-  s = run(s, { type: 'PINDAH_LAYAR', layar: 'peta' }, true) // ditolak H1 — sengaja
-  s = run(s, { type: 'PINDAH_LAYAR', layar: 'klinik' })
-  s = run(s, { type: 'PANGGIL_PASIEN' })
-
+/** Tangani pasien AKTIF sampai tuntas disposisi (anamnesis lengkap, obat benar, dst). */
+function tanganiPasienAktif(s: GameState): GameState {
   const enc = s.klinik.aktif
   if (!enc) throw new Error('encounter tidak aktif')
   const kasus = PACK.kasus[enc.pasien.kasusId]
@@ -76,7 +71,7 @@ function mainkanSatuPasien(): GameState {
     s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId })
   }
   s = run(s, { type: 'LANJUT_FASE' })
-  s = run(
+  return run(
     s,
     kasus.harusDirujuk
       ? {
@@ -91,6 +86,25 @@ function mainkanSatuPasien(): GameState {
         }
       : { type: 'DISPOSISI', jenis: 'pulang' },
   )
+}
+
+/**
+ * Mainkan DUA pasien: yang PERTAMA adalah encounter tutorial (DeepThink
+ * "onboarding railroaded") — sengaja kebal tally by design, jadi ditangani
+ * & dilewati apa adanya; SEMUA pengecekan tally/replay di suite ini bertumpu
+ * pada pasien KEDUA (Hari 1 sudah 2 pasien di antrian — kurva pacing M5.22).
+ */
+function mainkanSatuPasien(): GameState {
+  let s = buildInitialState(NAMA_UJI, SEED_UJI, PACK, { mode: 'ujian', nim: NIM_UJI })
+  s = run(s, { type: 'BACA_SURAT', suratId: 'surat_1_0' })
+  s = run(s, { type: 'PINDAH_LAYAR', layar: 'peta' }, true) // ditolak H1 — sengaja
+  s = run(s, { type: 'PINDAH_LAYAR', layar: 'klinik' })
+
+  s = run(s, { type: 'PANGGIL_PASIEN' })
+  s = tanganiPasienAktif(s) // pasien #1 — tutorial, kebal tally by design
+
+  s = run(s, { type: 'PANGGIL_PASIEN' })
+  s = tanganiPasienAktif(s) // pasien #2 — skor SUNGGUHAN, dipakai semua tes di bawah
   return s
 }
 

@@ -160,6 +160,11 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     const nilai = keuanganSt[kunci]
     if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) keuanganSt[kunci] = 0
   }
+  // Tutorial (DeepThink "onboarding railroaded", keputusan user): save LAMA
+  // (field belum ada) TIDAK BOLEH retroaktif dapat tutorial — mahasiswa yang
+  // sudah main duluan bukan pemain baru. Hanya stase yg genuinely baru
+  // (init.ts) yang mengisi true.
+  if (typeof st['tutorialAktif'] !== 'boolean') st['tutorialAktif'] = false
   // Migrasi-lite M4.5: save lama = mode Karier dgn seed kurikulum = seed flavor.
   if (st['mode'] !== 'karier' && st['mode'] !== 'ujian') st['mode'] = 'karier'
   if (typeof st['seedKurikulum'] !== 'number' || !Number.isFinite(st['seedKurikulum'])) {

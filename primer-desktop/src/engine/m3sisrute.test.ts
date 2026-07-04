@@ -103,6 +103,7 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
     prolanis: { roster: [] },
     posyanduRwTerakhir: {},
     program: {},
+    tutorialAktif: false,
     ...o,
   }
   return s

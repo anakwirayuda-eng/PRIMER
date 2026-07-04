@@ -13,11 +13,18 @@ interface Props {
   enc: EncounterState
   kasus: KasusKlinis
   dispatch: (action: Action) => void
+  /** DeepThink "onboarding railroaded" (keputusan user). */
+  tutorialAktif?: boolean
 }
 
-export function DeckDiagnosis({ enc, kasus, dispatch }: Props) {
+export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: Props) {
   const [pilihan, setPilihan] = useState<string | null>(enc.diagnosis?.icd10 ?? null)
   const [jenis, setJenis] = useState<JenisDiagnosis>(enc.diagnosis?.jenis ?? 'suspek')
+  // Sorotan: kasus.icd10 selalu jawaban benar utk kasus tutorial (dipaksa
+  // KASUS_TUTORIAL oleh init.ts) — sorot opsi itu sampai dipilih, lalu
+  // sorot tombol stempel.
+  const sorotOpsi = tutorialAktif && pilihan !== kasus.icd10
+  const sorotStempel = tutorialAktif && pilihan === kasus.icd10
 
   // Anti-bocor jawaban: urutan konten menaruh jawaban benar di index 0 —
   // render SELALU terurut kode ICD-10 (ascending, deterministik).
@@ -33,11 +40,14 @@ export function DeckDiagnosis({ enc, kasus, dispatch }: Props) {
           <div className="judul-seksi">Diagnosis Banding</div>
           {banding.map((kode) => {
             const aktif = pilihan === kode
+            const disorot = sorotOpsi && kode === kasus.icd10
+            const dikunci = tutorialAktif && !disorot && !aktif
             return (
               <button
                 key={kode}
-                className={`klinik-banding${aktif ? ' klinik-banding--aktif' : ''}`}
+                className={`klinik-banding${aktif ? ' klinik-banding--aktif' : ''}${disorot ? ' klinik-sorot-tutorial' : ''}`}
                 onClick={() => setPilihan(kode)}
+                disabled={dikunci}
                 title="Pilih sebagai diagnosis kerja"
               >
                 <span className="klinik-banding__radio" aria-hidden="true" />
@@ -77,7 +87,7 @@ export function DeckDiagnosis({ enc, kasus, dispatch }: Props) {
 
       <footer className="klinik-deck__footer">
         <button
-          className="tombol tombol--utama tombol--besar"
+          className={`tombol tombol--utama tombol--besar${sorotStempel ? ' klinik-sorot-tutorial' : ''}`}
           onClick={() => {
             if (pilihan !== null) dispatch({ type: 'KOMIT_DIAGNOSIS', icd10: pilihan, jenis })
           }}

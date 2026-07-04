@@ -504,26 +504,44 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
 
       // Surveilans balik UKP→UKM (M1.2): diagnosis menular tercatat per RW —
       // pola di poli menyalakan sinyal di peta, apa pun disposisinya.
-      const desa = kasusMenular(kasus.id)
+      const desaBaru = kasusMenular(kasus.id)
         ? { ...s.desa, surveilans: [...s.desa.surveilans, { hari: s.hari, rw: encFinal.pasien.rw, kasusId: kasus.id }] }
         : s.desa
+
+      // Tutorial (DeepThink "onboarding railroaded", keputusan user): encounter
+      // PERTAMA stase baru KEBAL skor sepenuhnya — semua agregat scoring
+      // dikembalikan ke nilai SEBELUM encounter ini (bukan disunting parsial
+      // di tengah blok di atas, supaya logika normal di atas tetap 100% utuh
+      // & teruji; imun cukup satu titik di sini). Narasi tetap normal (patut
+      // muncul di debrief) — hanya skor/ekonomi/jurnal konsekuensi yg dibekukan.
+      // `tutorialAktif` SELALU dimatikan di sini (satu-kali, terlepas nilainya
+      // sebelum ini) — titik keluar tunggal case DISPOSISI.
+      const kebalTutorial = s.tutorialAktif
+      const tallyFinal = kebalTutorial ? s.tally : t
+      const dexFinal = kebalTutorial ? s.dex : dex
+      const kapitasiFinal = kebalTutorial ? s.kapitasi : kapitasi
+      const stokFinal = kebalTutorial ? s.gudang.stok : stokBaru
+      const belanjaObatFinal = kebalTutorial ? s.keuanganBulan.belanjaObat : belanjaObat
+      const jadwalFinal = kebalTutorial ? s.jadwal : jadwal
+      const desaFinal = kebalTutorial ? s.desa : desaBaru
 
       return {
         state: {
           ...s,
-          kapitasi,
-          gudang: { ...s.gudang, stok: stokBaru },
-          keuanganBulan: { ...s.keuanganBulan, belanjaObat },
-          tally: t,
-          dex,
-          jadwal,
-          desa,
+          kapitasi: kapitasiFinal,
+          gudang: { ...s.gudang, stok: stokFinal },
+          keuanganBulan: { ...s.keuanganBulan, belanjaObat: belanjaObatFinal },
+          tally: tallyFinal,
+          dex: dexFinal,
+          jadwal: jadwalFinal,
+          desa: desaFinal,
           klinik: {
             ...s.klinik,
             aktif: undefined,
             selesaiHariIni: [...s.klinik.selesaiHariIni, penilaianFinal],
           },
-          ...(suratSisrute ? { inbox: [...s.inbox, suratSisrute] } : {}),
+          ...(suratSisrute && !kebalTutorial ? { inbox: [...s.inbox, suratSisrute] } : {}),
+          tutorialAktif: false,
         },
         events,
       }

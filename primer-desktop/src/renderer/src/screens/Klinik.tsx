@@ -14,6 +14,7 @@ import { RuangTunggu } from './klinik/RuangTunggu'
 import { LembarPeriksa } from './klinik/LembarPeriksa'
 import { DeckAksi } from './klinik/DeckAksi'
 import { PanelHasil } from './klinik/PanelHasil'
+import { KASUS_TUTORIAL } from './klinik/tutorialKlinik'
 import './Klinik.css'
 
 export function Klinik() {
@@ -33,6 +34,11 @@ export function Klinik() {
 
   const enc = state.klinik.aktif
   const kasus = enc ? PACK.kasus[enc.pasien.kasusId] : undefined
+  // DeepThink "onboarding railroaded" (keputusan user): sorotan tutorial
+  // hanya menyala kalau tutorialAktif DAN pasien di layar ini memang kasus
+  // terpandunya (KASUS_TUTORIAL) — pasien lain (mis. giliran ke-2 di antrian
+  // Hari 1) tetap normal walau tutorialAktif belum tuntas.
+  const tutorialAktif = state.tutorialAktif && enc?.pasien.kasusId === KASUS_TUTORIAL
 
   const bolehPanggil =
     state.klinik.antrian.length > 0 && state.blok === 'pagi' && state.stamina >= 1
@@ -54,6 +60,7 @@ export function Klinik() {
             dispatch={dispatch}
             lastEvents={lastEvents}
             eventTick={eventTick}
+            tutorialAktif={tutorialAktif}
           />
         </div>
       ) : enc ? (

@@ -23,6 +23,8 @@ import './DeckDisposisi.css'
 interface Props {
   enc: EncounterState
   dispatch: (action: Action) => void
+  /** DeepThink "onboarding railroaded" (keputusan user). */
+  tutorialAktif?: boolean
 }
 
 const KOLOM_SBAR: { kunci: keyof SbarIsi; label: string; placeholder: string }[] = [
@@ -70,7 +72,7 @@ const LABEL_SPESIALIS: Record<SpesialisasiRs, string> = {
   paru: 'Paru',
 }
 
-export function DeckDisposisi({ enc, dispatch }: Props) {
+export function DeckDisposisi({ enc, dispatch, tutorialAktif = false }: Props) {
   const [modeRujuk, setModeRujuk] = useState(false)
   const [sbar, setSbar] = useState<SbarIsi>(SBAR_KOSONG)
 
@@ -145,7 +147,7 @@ export function DeckDisposisi({ enc, dispatch }: Props) {
           <div className="klinik-deck__grup">
             <div className="judul-seksi">Disposisi</div>
             <button
-              className="tombol tombol--utama tombol--besar"
+              className={`tombol tombol--utama tombol--besar${tutorialAktif ? ' klinik-sorot-tutorial' : ''}`}
               onClick={() => dispatch({ type: 'DISPOSISI', jenis: 'pulang' })}
               disabled={!punyaDiagnosis}
               title={
@@ -159,11 +161,13 @@ export function DeckDisposisi({ enc, dispatch }: Props) {
             <button
               className="tombol tombol--besar"
               onClick={() => dispatch({ type: 'DISPOSISI', jenis: 'observasi' })}
-              disabled={!punyaDiagnosis}
+              disabled={!punyaDiagnosis || tutorialAktif}
               title={
-                punyaDiagnosis
-                  ? 'Observasi di Puskesmas dulu sebelum pulang.'
-                  : alasanTanpaDiagnosis
+                tutorialAktif
+                  ? 'Kasus latihan ini cukup dipulangkan.'
+                  : punyaDiagnosis
+                    ? 'Observasi di Puskesmas dulu sebelum pulang.'
+                    : alasanTanpaDiagnosis
               }
             >
               OBSERVASI
@@ -171,11 +175,13 @@ export function DeckDisposisi({ enc, dispatch }: Props) {
             <button
               className="tombol tombol--kunyit tombol--besar"
               onClick={bukaFormRujuk}
-              disabled={!punyaDiagnosis}
+              disabled={!punyaDiagnosis || tutorialAktif}
               title={
-                punyaDiagnosis
-                  ? 'Buka form rujukan SISRUTE (SBAR 4 kolom + pemilih RS).'
-                  : alasanTanpaDiagnosis
+                tutorialAktif
+                  ? 'Kasus latihan ini tidak perlu dirujuk.'
+                  : punyaDiagnosis
+                    ? 'Buka form rujukan SISRUTE (SBAR 4 kolom + pemilih RS).'
+                    : alasanTanpaDiagnosis
               }
             >
               RUJUK &rarr;

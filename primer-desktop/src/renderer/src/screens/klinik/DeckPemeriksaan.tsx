@@ -9,13 +9,21 @@ import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import { FigurTubuh } from './FigurTubuh'
 import { LABEL_REGION, URUTAN_REGION, cocokLab, formatRupiah } from './util'
+import { REGION_PERTAMA_TUTORIAL } from './tutorialKlinik'
 
 interface Props {
   enc: EncounterState
   dispatch: (action: Action) => void
+  /** DeepThink "onboarding railroaded" (keputusan user). */
+  tutorialAktif?: boolean
 }
 
-export function DeckPemeriksaan({ enc, dispatch }: Props) {
+export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props) {
+  // Sorotan: vital dulu, lalu satu regio, lalu "Selesai Pemeriksaan". Lab
+  // sengaja TAK disorot & terkunci — kasus tutorial tak butuh lab sama sekali.
+  const sorotVital = tutorialAktif && !enc.vitalDiukur
+  const sorotRegion = tutorialAktif && enc.vitalDiukur && enc.diperiksa.length === 0
+  const sorotSelesai = tutorialAktif && enc.vitalDiukur && enc.diperiksa.length > 0
   // DeepThink (2026-07-04): daftar lab dulu satu-satunya tanpa pencarian di
   // antara 3 daftar pilihan klinik (Obat/Edukasi sudah punya) — pola sama.
   const [cariLab, setCariLab] = useState('')
@@ -33,7 +41,7 @@ export function DeckPemeriksaan({ enc, dispatch }: Props) {
         <div className="klinik-deck__grup">
           <div className="judul-seksi">Tanda Vital</div>
           <button
-            className={`tombol ${enc.vitalDiukur ? '' : 'tombol--utama'}`}
+            className={`tombol ${enc.vitalDiukur ? '' : 'tombol--utama'}${sorotVital ? ' klinik-sorot-tutorial' : ''}`}
             onClick={() => dispatch({ type: 'UKUR_VITAL' })}
             disabled={enc.vitalDiukur}
             title={
@@ -57,11 +65,14 @@ export function DeckPemeriksaan({ enc, dispatch }: Props) {
             <div className="klinik-regio">
               {URUTAN_REGION.map((r) => {
                 const sudah = enc.diperiksa.includes(r)
+                const disorot = sorotRegion && r === REGION_PERTAMA_TUTORIAL
+                const dikunci = tutorialAktif && !enc.vitalDiukur
                 return (
                   <button
                     key={r}
-                    className={`chip klinik-regio__chip${sudah ? ' klinik-regio__chip--sudah' : ''}`}
+                    className={`chip klinik-regio__chip${sudah ? ' klinik-regio__chip--sudah' : ''}${disorot ? ' klinik-sorot-tutorial' : ''}`}
                     onClick={() => dispatch({ type: 'PERIKSA', region: r })}
+                    disabled={dikunci}
                     title={sudah ? 'Sudah diperiksa — temuan tercatat di lembar.' : `Periksa ${LABEL_REGION[r]}`}
                   >
                     {sudah ? '✓ ' : ''}
@@ -104,11 +115,13 @@ export function DeckPemeriksaan({ enc, dispatch }: Props) {
                   <button
                     className="tombol klinik-lab__pesan"
                     onClick={() => dispatch({ type: 'PESAN_LAB', labId: item.id })}
-                    disabled={dipesan}
+                    disabled={dipesan || tutorialAktif}
                     title={
                       dipesan
                         ? 'Sudah dipesan.'
-                        : `Pesan ${item.nama} — biaya ${formatRupiah(item.biaya)} membebani kapitasi.`
+                        : tutorialAktif
+                          ? 'Kasus latihan ini tak butuh lab — lanjutkan tanpa memesan.'
+                          : `Pesan ${item.nama} — biaya ${formatRupiah(item.biaya)} membebani kapitasi.`
                     }
                   >
                     {dipesan ? '✓' : 'Pesan'}
@@ -125,8 +138,9 @@ export function DeckPemeriksaan({ enc, dispatch }: Props) {
 
       <footer className="klinik-deck__footer">
         <button
-          className="tombol tombol--utama tombol--besar"
+          className={`tombol tombol--utama tombol--besar${sorotSelesai ? ' klinik-sorot-tutorial' : ''}`}
           onClick={() => dispatch({ type: 'LANJUT_FASE' })}
+          disabled={tutorialAktif && !sorotSelesai}
         >
           Selesai Pemeriksaan &mdash; ke Diagnosis &rarr;
         </button>

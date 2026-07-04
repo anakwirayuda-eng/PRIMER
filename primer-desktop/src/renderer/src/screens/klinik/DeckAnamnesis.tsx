@@ -10,6 +10,7 @@ import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
 import type { KasusKlinis, KategoriAnamnesis, PertanyaanAnamnesis } from '@content/types'
 import { LABEL_KATEGORI, URUTAN_KATEGORI } from './util'
+import { ANAMNESIS_PERTAMA_TUTORIAL } from './tutorialKlinik'
 
 interface Props {
   enc: EncounterState
@@ -17,9 +18,14 @@ interface Props {
   dispatch: (action: Action) => void
   lastEvents: GameEvent[]
   eventTick: number
+  /** DeepThink "onboarding railroaded" (keputusan user). */
+  tutorialAktif?: boolean
 }
 
-export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick }: Props) {
+export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tutorialAktif = false }: Props) {
+  // Sorotan: pertanyaan pertama sampai ≥1 ditanya, lalu "Selesai Anamnesis".
+  const sorotPertanyaan = tutorialAktif && enc.ditanya.length === 0 ? ANAMNESIS_PERTAMA_TUTORIAL : null
+  const sorotSelesai = tutorialAktif && enc.ditanya.length > 0
   const perKategori = useMemo(() => {
     const peta = new Map<KategoriAnamnesis, PertanyaanAnamnesis[]>()
     for (const kat of URUTAN_KATEGORI) peta.set(kat, [])
@@ -76,12 +82,14 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick }: P
               <div className="judul-seksi">{LABEL_KATEGORI[kat]}</div>
               {daftar.map((q) => {
                 const sudah = enc.ditanya.includes(q.id)
+                const disorot = sorotPertanyaan === q.id
+                const dikunci = sorotPertanyaan !== null && !disorot
                 return (
                   <button
                     key={q.id}
-                    className={`klinik-tanya${sudah ? ' klinik-tanya--sudah' : ''}`}
+                    className={`klinik-tanya${sudah ? ' klinik-tanya--sudah' : ''}${disorot ? ' klinik-sorot-tutorial' : ''}`}
                     onClick={() => dispatch({ type: 'TANYA', pertanyaanId: q.id })}
-                    disabled={sudah}
+                    disabled={sudah || dikunci}
                     title={sudah ? 'Sudah ditanyakan — jawabannya tercatat di lembar.' : undefined}
                   >
                     <span>{q.tanya}</span>
@@ -96,8 +104,9 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick }: P
 
       <footer className="klinik-deck__footer">
         <button
-          className="tombol tombol--utama tombol--besar"
+          className={`tombol tombol--utama tombol--besar${sorotSelesai ? ' klinik-sorot-tutorial' : ''}`}
           onClick={() => dispatch({ type: 'LANJUT_FASE' })}
+          disabled={tutorialAktif && !sorotSelesai}
         >
           Selesai Anamnesis &mdash; ke Pemeriksaan &rarr;
         </button>

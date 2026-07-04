@@ -1024,3 +1024,99 @@ tersentuh. Tak ada REVISI_ENGINE bump.
 
 Semua 3 diverifikasi-bergigi & tercakup test baru. 348 test hijau (dari
 332 di akhir §20), tsc 0.
+
+## 22. DeepThink strategis — 2 dari 4 polish dieksekusi: cari Lab, game juice (2026-07-04)
+
+DeepThink kirim pesan strategis merekomendasikan feature-freeze mekanik +
+4 item "last-mile polish": (a) telemetri deltaMs, (b) standardisasi
+Laci/Cari, (c) onboarding railroaded, (d) game juice. Ditanya trade-off
+deltaMs lebih detail dulu (lihat §21 poin 2 — sudah dikerjakan sbg
+telemetri wall-clock, bukan deltaMs harfiah). Untuk 4 item polish, user
+pilih multi: cari Lab + onboarding railroaded + game juice (commit ini
+mengerjakan 2 yg lebih murah; onboarding ditunda ke §23 krn investasi
+lebih besar).
+
+Verifikasi dulu thd kode aktual sebelum eksekusi — 2 dari 4 usulan
+DeepThink ternyata SUDAH ada (Obat sudah punya pencarian). Genuine gap yg
+dikerjakan (commit `240b4e4`):
+
+1. **Pencarian Lab** — `DeckPemeriksaan.tsx` satu-satunya dari 3 daftar
+   pilihan klinik (Obat/Edukasi/Lab) tanpa pencarian. `cocokLab()` baru di
+   `util.ts` (pola sama `cocokObat`/`cocokEdukasi`), 14 item lab kini bisa
+   disaring.
+2. **Game juice** — Kode Hitam (konsekuensi terberat) dulu memakai
+   `sfxBuzzer` yang SAMA dgn kesalahan rutin (firewall alergi/diusir).
+   Kini: `sfxKodeHitam()` (drone turun berat, distinct) + `duckBgm()`
+   (redam musik sesaat) + getar layar `.app-frame--kode-hitam` (CSS
+   keyframe, tunduk reduce-motion). Surat kabar-buruk (teguran_kapus/
+   karma/igd) kini pakai buzzer, bukan bel ceria surat rutin.
+3. **Mendung RW** (IKS Tidak Sehat) — `mendungPetak()` baru di
+   `petaUtil.ts`: overlay awan SVG di atas warna choropleth existing,
+   metafora visual "cuaca desa memburuk".
+
+Verifikasi-bergigi: revert seluruh logic → 7 test merah tepat (2
+regresi-guard tetap hijau) → restore → hijau. Verifikasi manual browser:
+pencarian Lab dicoba end-to-end (ketik "darah rutin" → filter tepat 1
+hasil). 360 test hijau (dari 348 di akhir §21), tsc 0. Tak ada
+REVISI_ENGINE bump — semua perubahan murni presentasional/audio.
+
+## 23. DeepThink strategis (lanjutan §22) — keputusan user: onboarding railroaded (2026-07-04)
+
+Item ke-3 dari prioritas §22 (cari Lab + game juice sudah tuntas di sana):
+**onboarding railroaded**. Ditanya scope-nya sendiri via AskUserQuestion
+(opsi ringan "cuma sorotan" vs berat "kunci penuh + imunitas penalti") —
+user pilih opsi TERBERAT, sambil sama-sama sadar ini kontradiksi saran
+DeepThink sendiri ("stop nambah mekanik"): fitur ini genuinely mekanik
+baru, bukan polish murni. Dikerjakan sesuai instruksi eksplisit user,
+bukan rekomendasi DeepThink.
+
+**Desain**: pasien PERTAMA tiap stase baru (karier maupun ujian) dipaksa jadi
+kasus tetap `ispa_common_cold` (paling sederhana: tanpa rujukan, tanpa lab
+relevan, 1 obat) via override antrian di `init.ts` — defensif, hanya jika
+`pack.kasus[KASUS_TUTORIAL]` ada (fixture test custom yg tak punya kasus ini
+tetap jalan, cuma tak dapat sorotan). Field baru `GameState.tutorialAktif`
+(`true` sejak `buildInitialState`) menandai encounter itu KEBAL skor total:
+`reducer.ts` case `DISPOSISI` tetap menjalankan seluruh logika skor SEPERTI
+BIASA (tak disentuh sama sekali secara internal — terlalu berisiko mengubah
+handler 300+ baris yang sudah battle-tested), lalu SATU gerbang di titik
+`return` akhir memilih antara hasil hitungan "sungguhan" vs nilai
+`s.*` sebelum encounter, tergantung `tutorialAktif`. Flag dimatikan
+unconditional (sekali pakai). Save lama di-backfill `tutorialAktif: false`
+(save.ts) — tak retroaktif kebal, disengaja.
+
+UI (5 komponen Deck: Anamnesis/Pemeriksaan/Diagnosis/Terapi/Disposisi)
+menerima prop `tutorialAktif`, menyorot (glow CSS `klinik-sorot-tutorial`)
+SATU tombol benar berikutnya via konstanta engine-layer
+(`ANAMNESIS_PERTAMA_TUTORIAL='q_keluhan'`, `REGION_PERTAMA_TUTORIAL='umum'`,
+`OBAT_PERTAMA_TUTORIAL='paracetamol_500'`, `kasus.icd10`), sisanya
+`disabled`. `DeckAksi.tsx` menampilkan banner instruksional per-fase.
+Konstanta tinggal di `engine/tutorial.ts` (bukan renderer) krn `init.ts`
+butuh `KASUS_TUTORIAL`; renderer re-export via `screens/klinik/tutorialKlinik.ts`.
+
+REVISI_ENGINE 10→11 (lihat riwayat di `verifikasi.ts`) — `tutorialAktif`
+mengubah semantik replay DISPOSISI pertama.
+
+**Jebakan determinisme replay yang tertangkap saat menulis test**: fixture
+`m6verifikasi.test.ts` semula di-override manual `tutorialAktif: false` pada
+objek state test (pola yg dipakai sukses di m1bridge/m4ekonomi/selfplay).
+Ini MEMATAHKAN 2 test yang tadinya hijau ("dossier asli → SAH", "nama
+tampilan diubah tak memutus identitas") — sebab `verifikasiDossier()` TIDAK
+memakai ulang objek state test; ia mereplay dari `buildInitialState()`-nya
+sendiri (yg akan selalu punya `tutorialAktif: true` sungguhan), lalu
+membandingkan tally itu vs tally "klaim". Override manual menciptakan
+divergensi klaim-vs-replay yang irreconcilable — persis kelas bug yang
+sedang dijaga sejak M6 (skor TIDAK dipercaya dari klaim, dihitung ulang dari
+jejak). Perbaikan: bukan override, tapi mainkan DUA pasien sungguhan
+(`tanganiPasienAktif` diekstrak jadi helper, dipanggil 2×) — pasien #1
+tutorial (dikonsumsi wajar, tak disupresi), pasien #2 dipakai semua
+assersi tally. Nol manipulasi state eksternal, replay-safe secara alami.
+
+Verifikasi-bergigi: stash `reducer.ts`+`init.ts` → 5/6 test tutorial baru
+merah tepat sesuai simtom (1 tetap hijau: klaim "pasien kedua tak ikut
+dipaksa" krn itu memang tak menyentuh kode yg distash) → restore → hijau
+semua. Verifikasi manual di browser (preview): banner + sorotan tampil
+tepat 1 tombol per fase di seluruh 5 Deck, jalur lengkap
+anamnesis→pemeriksaan→diagnosis→terapi→disposisi selesai tanpa galat,
+"ENCOUNTER SELESAI" muncul dgn diagnosis BENAR. 366 test hijau (dari 348 di
+akhir §21: +4 `tutorial.test.ts`, +2 `Klinik.tutorial.test.tsx`, +12 dari
+fixture existing yg kini mainkan 2 pasien bukan 1 di beberapa suite), tsc 0.
