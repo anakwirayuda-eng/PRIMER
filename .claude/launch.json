@@ -7,6 +7,13 @@
       "runtimeArgs": ["vite", "--config", "vite.preview.config.ts"],
       "cwd": "primer-desktop",
       "port": 5199
+    },
+    {
+      "name": "primer-arena-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite"],
+      "cwd": "primer-arena",
+      "port": 5173
     }
   ]
 }

@@ -1,0 +1,255 @@
+:root {
+  color-scheme: dark;
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --panel-2: #263449;
+  --teks: #e2e8f0;
+  --redup: #94a3b8;
+  --aksen: #38bdf8;
+  --baik: #4ade80;
+  --buruk: #f87171;
+  --netral: #fbbf24;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--teks);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--aksen);
+  background: transparent;
+  color: var(--aksen);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+button:not(:disabled):hover {
+  background: var(--aksen);
+  color: var(--bg);
+}
+
+input {
+  font: inherit;
+  background: var(--panel-2);
+  border: 1px solid #334155;
+  color: var(--teks);
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.layar-tengah {
+  max-width: 480px;
+  margin: 3rem auto;
+  padding: 1.5rem;
+  background: var(--panel);
+  border-radius: 12px;
+}
+
+.subjudul {
+  color: var(--redup);
+}
+
+.form-join {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.form-join label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.pesan-error {
+  color: var(--buruk);
+}
+.pesan-peringatan {
+  color: var(--netral);
+}
+
+.grid-pod,
+.grid-kursi {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+.kartu-pod,
+.kartu-kursi,
+.tombol-rs {
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.label-diambil {
+  color: var(--redup);
+  font-size: 0.85em;
+}
+
+.tombol-kembali {
+  border: none;
+  color: var(--redup);
+  padding: 0.4rem 0;
+}
+
+.daftar-rekan {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.daftar-rekan li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-2);
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+}
+
+.tombol-kecil {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85em;
+}
+
+.pod-dashboard {
+  background: var(--panel-2);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.daftar-rs {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.kartu-rs {
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  border-left: 4px solid var(--aksen);
+}
+.kartu-rs--penuh {
+  border-left-color: var(--buruk);
+}
+.kartu-rs__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.label-kelas {
+  color: var(--redup);
+  font-size: 0.85em;
+}
+.kartu-rs__spesialisasi {
+  color: var(--redup);
+  font-size: 0.85em;
+  margin: 0.2rem 0 0.5rem;
+}
+
+.bar-bed {
+  height: 10px;
+  background: #0b1220;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.bar-bed__isi {
+  height: 100%;
+  background: var(--aksen);
+  transition: width 0.3s ease;
+}
+.bar-bed__label {
+  font-size: 0.85em;
+  color: var(--redup);
+  margin: 0.3rem 0 0;
+}
+
+.layar-puskesmas,
+.layar-gm {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.kartu-pasien-panel {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 1.2rem;
+}
+
+.kartu-pasien__keluhan {
+  font-size: 1.1em;
+  margin: 0.8rem 0;
+}
+.kartu-pasien__butuh {
+  color: var(--redup);
+}
+
+.label-kegawatan--rendah {
+  color: var(--baik);
+}
+.label-kegawatan--sedang {
+  color: var(--netral);
+}
+.label-kegawatan--tinggi {
+  color: var(--buruk);
+}
+
+.aksi-keputusan,
+.status-menunggu {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.label-atau {
+  color: var(--redup);
+  margin: 0.3rem 0 0;
+}
+.pilihan-rs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.umpan-balik {
+  margin-top: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  background: var(--panel-2);
+}
+.umpan-balik--baik {
+  border-left: 4px solid var(--baik);
+}
+.umpan-balik--buruk {
+  border-left: 4px solid var(--buruk);
+}
+.umpan-balik--netral {
+  border-left: 4px solid var(--netral);
+}
+
+.grid-pod-gm {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.panel-pod-gm {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 1rem;
+}
