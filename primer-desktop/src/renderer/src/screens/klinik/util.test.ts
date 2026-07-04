@@ -7,7 +7,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
-import { cocokObat, namaDiagnosis, normalisasiNamaObat } from './util'
+import { cocokLab, cocokObat, namaDiagnosis, normalisasiNamaObat } from './util'
 
 describe('namaDiagnosis — semua banding bernama', () => {
   it('kode dari screenshot playtest (M06.9, M54.5) kini bernama', () => {
@@ -86,5 +86,24 @@ describe('pencarian obat toleran-ejaan', () => {
 
   it('kueri ngawur tetap tidak mencocokkan apa pun', () => {
     expect(cocokObat(obat('paracetamol_500'), 'xyzzy')).toBe(false)
+  })
+})
+
+// DeepThink (2026-07-04): daftar lab dulu satu-satunya tanpa pencarian di
+// antara 3 daftar pilihan klinik — pola cocokLab meniru cocokObat/cocokEdukasi.
+describe('pencarian lab (DeepThink — konsistensi Laci/Cari)', () => {
+  const lab = (id: string) => PACK.lab[id]!
+
+  it('kueri kosong mencocokkan semua item', () => {
+    expect(cocokLab(lab('darah_rutin'), '')).toBe(true)
+  })
+
+  it('kueri sebagian nama menemukan item', () => {
+    expect(cocokLab(lab('darah_rutin'), 'darah rutin')).toBe(true)
+    expect(cocokLab(lab('widal'), 'widal')).toBe(true)
+  })
+
+  it('kueri ngawur tidak mencocokkan apa pun', () => {
+    expect(cocokLab(lab('darah_rutin'), 'xyzzy')).toBe(false)
   })
 })

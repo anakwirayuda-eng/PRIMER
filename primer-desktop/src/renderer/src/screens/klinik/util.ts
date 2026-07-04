@@ -6,6 +6,7 @@
 import { PACK } from '@content/index'
 import { NAMA_ICD } from '@content/icd10'
 import type {
+  ItemLab,
   JenisKelamin,
   KasusKlinis,
   KategoriAnamnesis,
@@ -177,5 +178,17 @@ export function cocokEdukasi(topik: TopikEdukasi, kueri: string): boolean {
   const q = normalisasiNamaObat(kueri)
   if (q.length === 0) return true
   const korpus = [topik.nama, topik.id, ...(topik.sinonim ?? [])]
+  return korpus.some((teks) => normalisasiNamaObat(teks).includes(q))
+}
+
+/**
+ * Cocokkan kueri terhadap item lab (nama+id, fonetik yang sama). DeepThink
+ * (2026-07-04): daftar lab dulu tanpa pencarian sama sekali — satu-satunya
+ * dari 3 daftar pilihan klinik (Obat/Edukasi/Lab) yang tak konsisten.
+ */
+export function cocokLab(item: ItemLab, kueri: string): boolean {
+  const q = normalisasiNamaObat(kueri)
+  if (q.length === 0) return true
+  const korpus = [item.nama, item.id]
   return korpus.some((teks) => normalisasiNamaObat(teks).includes(q))
 }

@@ -310,6 +310,21 @@ export function sfxBuzzer(): void {
   suaraFm({ freq: 207.65, durasi: 0.34, gain: 0.2, ratio: 1, index: 4, bentuk: 'square', attack: 0.004 })
 }
 
+/**
+ * Kode Hitam — konsekuensi paling berat di game ini (DeepThink "game juice",
+ * 2026-07-04): dulu memakai sfxBuzzer yang SAMA dengan kesalahan rutin
+ * (firewall alergi/diusir). Beban emosionalnya harus terasa beda: sapuan
+ * turun berat + drone disonan panjang + derau tumpul, jauh lebih lama &
+ * gelap drpd buzzer biasa.
+ */
+export function sfxKodeHitam(): void {
+  if (!siapBunyi()) return
+  sapuan(220, 55, 0.9, 0.3)
+  suaraFm({ freq: 55, durasi: 1.1, gain: 0.32, ratio: 1, index: 3, bentuk: 'sawtooth', attack: 0.02, delay: 0.1 })
+  suaraFm({ freq: 58.27, durasi: 1.1, gain: 0.24, ratio: 1, index: 3, bentuk: 'sawtooth', attack: 0.02, delay: 0.15 })
+  burstNoise(0.5, 0.28, 300, 0.05)
+}
+
 /** Arpeggio pentatonik naik — karma dicegah / encounter grade A. */
 export function sfxArpeggio(): void {
   if (!siapBunyi()) return

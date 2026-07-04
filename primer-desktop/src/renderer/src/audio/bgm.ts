@@ -118,6 +118,30 @@ export function gantiBgm(konteks: KonteksBgm): void {
   }
 }
 
+/**
+ * Redam BGM sesaat lalu kembali (DeepThink "game juice"): Kode Hitam butuh
+ * musik yang "menahan napas" sesaat, bukan terus berjalan datar di latar.
+ */
+export function duckBgm(msTurun: number, msTahan: number): void {
+  if (!audio || audio.paused) return
+  const target = volumeMusik()
+  hentikanFade()
+  const el = audio
+  const volumeSemula = el.volume
+  const langkahTurun = volumeSemula / Math.max(1, msTurun / INTERVAL_FADE_MS)
+  fadeTimer = window.setInterval(() => {
+    if (el.volume <= langkahTurun) {
+      el.volume = 0
+      hentikanFade()
+      window.setTimeout(() => {
+        if (!isMuted()) fadeKe(target)
+      }, msTahan)
+      return
+    }
+    el.volume -= langkahTurun
+  }, INTERVAL_FADE_MS)
+}
+
 export function disposeBgm(): void {
   hentikanFade()
   if (audio) {

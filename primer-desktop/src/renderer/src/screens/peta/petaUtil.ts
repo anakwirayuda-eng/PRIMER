@@ -87,6 +87,17 @@ export function warnaPetak(rw: RwState): string {
   return 'var(--tinta-merah)'
 }
 
+/**
+ * Mendung di atas petak (DeepThink "game juice", 2026-07-04): IKS "Tidak
+ * Sehat" (<0.5, klasifikasiIks) sudah beda warna, tapi warna saja mudah
+ * terlewat sekilas mata — tambah metafora visual "cuaca desa memburuk" yang
+ * lebih terasa. Hanya utk RW yg SUDAH tersurvei (abu-abu = belum ada data,
+ * bukan buruk).
+ */
+export function mendungPetak(rw: RwState): boolean {
+  return rw.kkTersurvei > 0 && rw.iks < 0.5
+}
+
 /* ---------------------------------------------------------------------------
  * Kosakata label
  * ------------------------------------------------------------------------- */

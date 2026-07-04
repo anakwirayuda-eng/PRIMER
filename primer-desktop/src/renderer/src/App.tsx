@@ -49,6 +49,19 @@ export default function App() {
   useAudio()
   useBgm()
 
+  // DeepThink "game juice" (2026-07-04): getar layar singkat saat Kode Hitam —
+  // konsekuensi paling berat butuh beban visual sepadan, bukan cuma teks surat.
+  const eventTick = useGame((s) => s.eventTick)
+  const [getarKodeHitam, setGetarKodeHitam] = useState(false)
+  useEffect(() => {
+    if (eventTick === 0) return
+    const kenaKodeHitam = useGame.getState().lastEvents.some((e) => e.type === 'KODE_HITAM')
+    if (!kenaKodeHitam) return
+    setGetarKodeHitam(true)
+    const t = window.setTimeout(() => setGetarKodeHitam(false), 500)
+    return () => window.clearTimeout(t)
+  }, [eventTick])
+
   useEffect(() => {
     // Coba lanjutkan autosave saat boot (layar judul tetap yang memutuskan);
     // sekalian muat meta lintas-playthrough & daftar slot manual (M5.24/25).
@@ -89,7 +102,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-frame" data-mode={mode}>
+    <div className={`app-frame${getarKodeHitam ? ' app-frame--kode-hitam' : ''}`} data-mode={mode}>
       <Hud />
       <main className="app-layar">
         {/* Boundary per-layar: crash render satu layar tak menjatuhkan HUD/Pengaturan,

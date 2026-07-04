@@ -30,6 +30,26 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Kode Hitam (DeepThink "game juice", 2026-07-04): getar layar singkat +
+   filter kelabu — beban visual sepadan konsekuensi paling berat di game
+   ini. Tunduk reduce-motion (gerbang global base.css menetralkan animation). */
+.app-frame--kode-hitam {
+  animation: getar-kode-hitam 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes getar-kode-hitam {
+  0%, 100% { transform: translate(0, 0); filter: grayscale(0); }
+  10% { transform: translate(-6px, 2px); filter: grayscale(0.6); }
+  20% { transform: translate(6px, -2px); }
+  30% { transform: translate(-5px, 1px); filter: grayscale(0.6); }
+  40% { transform: translate(5px, -1px); }
+  50% { transform: translate(-3px, 1px); filter: grayscale(0.3); }
+  60% { transform: translate(3px, -1px); }
+  70% { transform: translate(-2px, 0); filter: grayscale(0.15); }
+  80% { transform: translate(2px, 0); }
+  90% { transform: translate(-1px, 0); }
+}
+
 /* CODEX ronde-11 #3/#4 — jaring terakhir bila `layar` tak dikenal lolos sampai
    sini (seharusnya sudah dicegah save.ts). */
 .layar-tak-dikenal {

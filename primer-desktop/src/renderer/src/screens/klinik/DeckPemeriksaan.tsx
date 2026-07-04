@@ -3,12 +3,12 @@
  * form laboratorium (biaya membakar kapitasi; sebagian hasil datang besok).
  */
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { PACK } from '@content/index'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import { FigurTubuh } from './FigurTubuh'
-import { LABEL_REGION, URUTAN_REGION, formatRupiah } from './util'
+import { LABEL_REGION, URUTAN_REGION, cocokLab, formatRupiah } from './util'
 
 interface Props {
   enc: EncounterState
@@ -16,10 +16,15 @@ interface Props {
 }
 
 export function DeckPemeriksaan({ enc, dispatch }: Props) {
-  const daftarLab = useMemo(
-    () => Object.values(PACK.lab).sort((a, b) => a.nama.localeCompare(b.nama, 'id')),
-    [],
-  )
+  // DeepThink (2026-07-04): daftar lab dulu satu-satunya tanpa pencarian di
+  // antara 3 daftar pilihan klinik (Obat/Edukasi sudah punya) — pola sama.
+  const [cariLab, setCariLab] = useState('')
+  const daftarLab = useMemo(() => {
+    const q = cariLab.trim()
+    return Object.values(PACK.lab)
+      .filter((item) => q === '' || cocokLab(item, q))
+      .sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
+  }, [cariLab])
 
   return (
     <>
@@ -74,32 +79,44 @@ export function DeckPemeriksaan({ enc, dispatch }: Props) {
         {/* Laboratorium */}
         <div className="klinik-deck__grup">
           <div className="judul-seksi">Permintaan Laboratorium</div>
-          {daftarLab.map((item) => {
-            const dipesan = enc.labDipesan.includes(item.id)
-            return (
-              <div key={item.id} className="klinik-lab__baris">
-                <div className="tumbuh">
-                  <span className="teks-kecil">{item.nama}</span>
-                  {item.hasilBesok === true && (
-                    <span className="chip chip--kunyit klinik-lab__besok">hasil besok</span>
-                  )}
+          <input
+            className="klinik-cari"
+            type="text"
+            value={cariLab}
+            onChange={(e) => setCariLab(e.target.value)}
+            placeholder="Cari pemeriksaan lab&hellip;"
+            aria-label="Cari lab"
+          />
+          {daftarLab.length === 0 ? (
+            <div className="klinik-lembar__kosong">Tidak ada pemeriksaan lab yang cocok.</div>
+          ) : (
+            daftarLab.map((item) => {
+              const dipesan = enc.labDipesan.includes(item.id)
+              return (
+                <div key={item.id} className="klinik-lab__baris">
+                  <div className="tumbuh">
+                    <span className="teks-kecil">{item.nama}</span>
+                    {item.hasilBesok === true && (
+                      <span className="chip chip--kunyit klinik-lab__besok">hasil besok</span>
+                    )}
+                  </div>
+                  <span className="mono teks-xs teks-lembut">{formatRupiah(item.biaya)}</span>
+                  <button
+                    className="tombol klinik-lab__pesan"
+                    onClick={() => dispatch({ type: 'PESAN_LAB', labId: item.id })}
+                    disabled={dipesan}
+                    title={
+                      dipesan
+                        ? 'Sudah dipesan.'
+                        : `Pesan ${item.nama} — biaya ${formatRupiah(item.biaya)} membebani kapitasi.`
+                    }
+                  >
+                    {dipesan ? '✓' : 'Pesan'}
+                  </button>
                 </div>
-                <span className="mono teks-xs teks-lembut">{formatRupiah(item.biaya)}</span>
-                <button
-                  className="tombol klinik-lab__pesan"
-                  onClick={() => dispatch({ type: 'PESAN_LAB', labId: item.id })}
-                  disabled={dipesan}
-                  title={
-                    dipesan
-                      ? 'Sudah dipesan.'
-                      : `Pesan ${item.nama} — biaya ${formatRupiah(item.biaya)} membebani kapitasi.`
-                  }
-                >
-                  {dipesan ? '✓' : 'Pesan'}
-                </button>
-              </div>
-            )
-          })}
+              )
+            })
+          )}
           <span className="teks-xs teks-lembut">
             Biaya lab membakar kapitasi Puskesmas. Pesan yang terindikasi saja.
           </span>

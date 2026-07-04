@@ -11,6 +11,7 @@
 import { useEffect, useRef } from 'react'
 import { useGame } from '../store'
 import type { GameEvent } from '@engine/events'
+import type { JenisSurat } from '@engine/state'
 import {
   initAudio,
   disposeAudio,
@@ -18,10 +19,17 @@ import {
   sfxBlip,
   sfxBel,
   sfxBuzzer,
+  sfxKodeHitam,
   sfxArpeggio,
   sfxPagi,
   sfxSelesai
 } from './synth'
+import { duckBgm } from './bgm'
+
+// DeepThink "game juice" (2026-07-04): surat kabar-buruk (teguran/karma/IGD)
+// dulu memakai bel ceria yang SAMA dengan surat rutin — bobot emosionalnya
+// harus terasa beda begitu Kotak Masuk menyala.
+const JENIS_SURAT_BURUK = new Set<JenisSurat>(['teguran_kapus', 'karma', 'igd'])
 
 const JEDA_BLIP_MS = 60
 
@@ -63,15 +71,23 @@ function mainkan(ev: GameEvent, blipTerakhir: { current: number }): void {
     }
 
     case 'SURAT_MASUK':
-      sfxBel()
+      if (JENIS_SURAT_BURUK.has(ev.surat.jenis)) sfxBuzzer()
+      else sfxBel()
       break
 
     case 'FIREWALL_ALERGI':
     case 'KARMA_TERJADI':
-    case 'KODE_HITAM':
     case 'IGD_TIBA':
     case 'DIUSIR':
       sfxBuzzer()
+      break
+
+    case 'KODE_HITAM':
+      // Konsekuensi paling berat — sengaja BUKAN sfxBuzzer (dulu disamakan
+      // dgn kesalahan rutin). Duck BGM dulu supaya drone kematian terdengar
+      // jelas, bukan tenggelam di musik latar.
+      duckBgm(180, 900)
+      sfxKodeHitam()
       break
 
     case 'KARMA_DICEGAH':

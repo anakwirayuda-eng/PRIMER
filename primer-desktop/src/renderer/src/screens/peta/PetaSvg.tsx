@@ -6,7 +6,7 @@
  */
 
 import type { RwState } from '@engine/state'
-import { jalurOrganik, LABEL_JARAK, PETAK_RW, warnaPetak } from './petaUtil'
+import { jalurOrganik, LABEL_JARAK, mendungPetak, PETAK_RW, warnaPetak } from './petaUtil'
 
 interface Props {
   daftarRw: RwState[]
@@ -110,6 +110,15 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
                   !
                 </text>
                 <title>Ada keluarga yang perlu perhatian segera di RW ini.</title>
+              </g>
+            )}
+            {/* Mendung (DeepThink "game juice"): IKS Tidak Sehat dpt metafora
+                visual cuaca, bukan cuma warna — lebih terasa sekilas mata. */}
+            {mendungPetak(rw) && (
+              <g className="peta-mendung" aria-hidden="true">
+                <ellipse cx={bentuk.cx - 18} cy={bentuk.cy - 26} rx="26" ry="11" />
+                <ellipse cx={bentuk.cx + 14} cy={bentuk.cy - 30} rx="22" ry="10" />
+                <ellipse cx={bentuk.cx - 2} cy={bentuk.cy - 34} rx="20" ry="9" />
               </g>
             )}
           </g>
