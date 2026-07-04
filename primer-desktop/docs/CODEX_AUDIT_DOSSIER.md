@@ -867,3 +867,28 @@ browser: boot bersih ke Peta Desa hari 2 (konten asli, bukan mock), nol error
 konsol — day-15-kegiatan-aktif sendiri diverifikasi via engine+jsdom (bukan klik
 manual 40+ hari; trade-off disengaja, dicatat eksplisit ke user). 289 test hijau,
 tsc 0.
+
+## 17. RESPONS BUILDER — ronde audit ke-12 2026-07-04 (save.ts lanjutan + temuan region ganda)
+
+CODEX read-only lagi (baseline 289 test). Commit `074e24f`.
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | `flags=null`/`refleksi=null` tak divalidasi → THROW di hariBaru/render MejaKerja; `desa.kader='rusak'` (string) lolos objek-check → THROW di kader.ts sort; `prolanis.roster` entri non-shape lolos → narasi "undefined" ke pemain | ✅ FIX: flags/refleksi backfill `{}` (recovery); desa.kader tolak seperti rw/keluarga (entangled skor PIS-PK); prolanis.roster disaring per-shape |
+| 2 | `.find()` di clinic.ts (PERIKSA) DAN LembarPeriksa.tsx (SOAP-sheet) sama-sama cuma ambil entri pemeriksaanFisik PERTAMA saat kasus punya ≥2 entri region SAMA (BPPV/Bell's palsy/glaukoma/hordeolum/serumen dll, 16+ kasus) — entri kedua permanen tak terlihat, meski skoring tak terdampak | ✅ FIX: `temuanUntukRegion()` (exported clinic.ts) menggabung semua temuan region — dipakai di KEDUA titik (bukan cuma satu) |
+| 3 | `.klinik-regio__chip--sudah`/`.klinik-eduk__chip--dipilih` pakai `--daun-100` tanpa override malam → ~1.35:1 | ✅ FIX: pola persis `.klinik-banding--aktif` (rgba translusen, precedent 5x di file lain) |
+| 4 | skabies/mm_dislipidemia tanpa RPS esensial, kia_kb_konseling cuma 1 dimensi OLDCARTS | ⏸ dicatat, TIDAK diubah (judgment konten/klinis, bukan bug — sama pola dgn anamnesis rebalance yg sudah dijadwalkan) |
+| SKDI144 duplikat ICD (N76.0/B35.0/S00-S09) | CODEX sendiri: "bukan bug blocker", layak review taksonomi | ⏸ dicatat, tak diapa-apakan |
+
+Ditemukan SAMBIL kerja (di luar laporan CODEX, bukan bug yg sama): warna teks
+kedua chip di atas ternyata TAK resolve ke `--daun-800` yang dimaksud —
+`base.css .chip { color: var(--tinta-lembut) }` menang di cascade (spesifisitas
+sama, urutan bundle menang) — di KEDUA mode, bukan cuma malam. Terpisah dari
+kontras latar yang baru difix. **Di-spawn_task terpisah** (task_69f2c7e7),
+TIDAK difix di ronde ini (butuh investigasi urutan import/spesifisitas
+tersendiri, di luar scope temuan CODEX kali ini).
+
+Verifikasi-bergigi: revert save.ts → 4 test merah; revert clinic.ts → 4 test
+merah. Smoke browser: background rgba terkonfirmasi via preview_inspect
+(warna teks itu sendiri bukan bagian klaim CODEX #3, hanya insidental
+ditemukan). 297 test hijau, tsc 0.
