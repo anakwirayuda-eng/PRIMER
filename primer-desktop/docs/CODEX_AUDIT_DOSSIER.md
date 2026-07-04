@@ -848,3 +848,22 @@ mode ujian (submit-gating), nol error konsol. 279 test hijau, tsc 0.
 Sisa deprecation minor (belum diapa-apakan, bukan bug): `environmentMatchGlobs` deprecated
 di vitest.config.ts — warning, bukan breakage; migrasi ke `test.projects` ditunda (berisiko
 mengganggu split jsdom/node yang sudah jalan).
+
+## 16. RESPONS BUILDER — ronde audit ke-11 2026-07-04 (5 temuan; kegiatan lapangan bocor)
+
+CODEX read-only lagi (baseline 275 test). Commit `94722ad`.
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | Sesi kegiatan (posyandu/prolanis/KLB) aktif tak menahan navigasi: `PINDAH_LAYAR` tak guard `state.kegiatan`, HUD tak disable tab, `LANJUTKAN` tak menahannya — pemain klik tab HUD keluar lalu lanjut hari, sesi lenyap tanpa skor (`hariBaru` reset `kegiatan` tanpa syarat) | ✅ FIX: guard engine-authoritative di PINDAH_LAYAR + LANJUTKAN (pola sama kunjungan/klinik/igd) + Hud.tsx disable semua tab |
+| 2 | `lapanganTerpakai` baru true SETELAH kegiatan selesai, bukan saat mulai → celah ini (sebelum #1 ditutup) izinkan `MULAI_KUNJUNGAN` lolos SAMBIL kegiatan berjalan (serentak) | ✅ FIX: `MULAI_KUNJUNGAN` cek `s.kegiatan` (simetris `cekSlotKegiatan`) + cermin PetaDesa.tsx |
+| 3 | `desa.keluarga=null` lolos objek-check `desa` → THROW di hariBaru; entri `desa.rw` non-objek → THROW backfill bonusIks (strict-mode ESM); `layar` tak pernah divalidasi → App.tsx render kosong tanpa throw | ✅ FIX: `desa.keluarga` divalidasi (tolak spt tally korup); entri `desa.rw` non-objek → tolak seluruh save; `layar` tak dikenal dipulihkan derive dari sesi aktif (igd>kunjungan>kegiatan>klinik.aktif>'meja') — bukan asal 'meja', cegah kunci baru |
+| 4 | `Kegiatan.tsx`/`Igd.tsx` `return null` diam-diam saat sesi hilang — luput ErrorBoundary (no throw) | ✅ FIX: panel pemulihan (pesan+tombol) di kedua layar (Igd.tsx punya defek identik, dibereskan sekalian meski CODEX cuma flag Kegiatan) |
+| 5 | `environmentMatchGlobs` deprecated (vitest) | ⏸ dicatat, bukan bug, ditunda (sudah tercatat §15) |
+
+Verifikasi-bergigi: revert reducer.ts → 3 test merah; revert Hud.tsx → 1 test merah;
+revert save.ts → 5/6 test merah (1 non-regresi tetap hijau, sesuai harapan). Smoke
+browser: boot bersih ke Peta Desa hari 2 (konten asli, bukan mock), nol error
+konsol — day-15-kegiatan-aktif sendiri diverifikasi via engine+jsdom (bukan klik
+manual 40+ hari; trade-off disengaja, dicatat eksplisit ke user). 289 test hijau,
+tsc 0.
