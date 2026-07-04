@@ -250,11 +250,25 @@ const KASUS_RUJUK: KasusKlinis = {
   clue: 'Napas cepat + retraksi dinding dada pada balita = pneumonia berat: stabilisasi oksigen lalu rujuk (MTBS 2019).',
 }
 
+// Kasus dgn PROSEDUR wajib (CODEX #4): tatalaksana benarnya = tindakan, bukan
+// (hanya) obat. Reuse KASUS_VIRAL utk field valid, override id + tatalaksana.
+const KASUS_PROSEDUR: KasusKlinis = {
+  ...KASUS_VIRAL,
+  id: 'vertigo_mini',
+  nama: 'Vertigo Posisi',
+  tatalaksana: {
+    obatBenar: ['paracetamol_500'],
+    edukasi: ['istirahat_cukup'],
+    prosedur: ['reposisi_mini'],
+  },
+}
+
 const PACK = {
   kasus: {
     faringitis_mini: KASUS_FARINGITIS,
     ispa_mini: KASUS_VIRAL,
     pneumonia_mini: KASUS_RUJUK,
+    vertigo_mini: KASUS_PROSEDUR,
   } as Record<string, KasusKlinis>,
   kasusIgd: {},
   keluarga: {},
@@ -264,7 +278,10 @@ const PACK = {
   obat: OBAT_MINI,
   lab: LAB_MINI,
   edukasi: EDUKASI_MINI,
-  tindakan: {},
+  tindakan: {
+    reposisi_mini: { id: 'reposisi_mini', nama: 'Manuver reposisi', biaya: 25000 },
+    nebul_mini: { id: 'nebul_mini', nama: 'Nebulisasi', biaya: 40000 },
+  },
   skdi144: [],
   namaWarga: { pria: [], wanita: [], keluarga: [] },
 }
@@ -658,6 +675,61 @@ describe('aksiKlinik — firewall alergi', () => {
     ])
     expect(baru.resep).toEqual(['paracetamol_500'])
     expect(baru.edukasi).toEqual(['etika_batuk'])
+  })
+})
+
+describe('aksiKlinik + nilaiEncounter — prosedur/tindakan klinis (CODEX ronde-baru #4)', () => {
+  it('TAMBAH_TINDAKAN ditolak di luar fase terapi (phase-guard)', () => {
+    const enc = buatEncounterFase(buatPasien(), 'anamnesis')
+    const { enc: baru, events } = aksiKlinik(
+      enc,
+      { type: 'TAMBAH_TINDAKAN', tindakanId: 'reposisi_mini' },
+      KASUS_PROSEDUR,
+      PACK,
+      rngTest(),
+    )
+    expect(baru.tindakan).toEqual([])
+    expect(cariEvent(events, 'ERROR_AKSI')).toBeDefined()
+  })
+
+  it('TAMBAH/HAPUS_TINDAKAN bekerja di fase terapi', () => {
+    const enc = buatEncounterFase(buatPasien(), 'terapi')
+    const { enc: baru } = jalankan(
+      enc,
+      [
+        { type: 'TAMBAH_TINDAKAN', tindakanId: 'nebul_mini' },
+        { type: 'TAMBAH_TINDAKAN', tindakanId: 'reposisi_mini' },
+        { type: 'HAPUS_TINDAKAN', tindakanId: 'nebul_mini' },
+      ],
+      KASUS_PROSEDUR,
+    )
+    expect(baru.tindakan).toEqual(['reposisi_mini'])
+  })
+
+  // Terapi lengkap (obat+edukasi benar) yang HANYA berbeda pada tindakan,
+  // untuk mengisolasi kontribusi prosedur ke skorTerapi.
+  function terapiProsedur(tindakan: string[]): EncounterState {
+    const enc = buatEncounterFase(buatPasien({ kasusId: 'vertigo_mini' }), 'terapi')
+    return {
+      ...enc,
+      diagnosis: { icd10: KASUS_PROSEDUR.icd10, jenis: 'tegak' },
+      resep: [...KASUS_PROSEDUR.tatalaksana.obatBenar],
+      edukasi: KASUS_PROSEDUR.tatalaksana.edukasi.slice(0, KAPASITAS_EDUKASI),
+      tindakan,
+      disposisi: 'pulang',
+    }
+  }
+
+  it('melakukan prosedur wajib menaikkan skorTerapi vs tidak melakukannya', () => {
+    const tanpa = nilaiEncounter(terapiProsedur([]), KASUS_PROSEDUR, PACK)
+    const dengan = nilaiEncounter(terapiProsedur(['reposisi_mini']), KASUS_PROSEDUR, PACK)
+    expect(dengan.skorTerapi).toBeGreaterThan(tanpa.skorTerapi)
+  })
+
+  it('tindakan tak terindikasi (nebulisasi pada vertigo) menurunkan skorTerapi', () => {
+    const benar = nilaiEncounter(terapiProsedur(['reposisi_mini']), KASUS_PROSEDUR, PACK)
+    const salah = nilaiEncounter(terapiProsedur(['reposisi_mini', 'nebul_mini']), KASUS_PROSEDUR, PACK)
+    expect(salah.skorTerapi).toBeLessThan(benar.skorTerapi)
   })
 })
 

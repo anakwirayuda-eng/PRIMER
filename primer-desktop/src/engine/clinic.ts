@@ -129,6 +129,7 @@ export function buatEncounter(pasien: PasienAktif): EncounterState {
     labTersedia: [],
     resep: [],
     edukasi: [],
+    tindakan: [],
     firewallTerpicu: 0,
   }
 }
@@ -309,6 +310,26 @@ export function aksiKlinik(
       }
     }
 
+    case 'TAMBAH_TINDAKAN': {
+      const salahFase = bukanFase(enc, 'terapi')
+      if (salahFase) return salahFase
+      if (!pack.tindakan[action.tindakanId]) {
+        return gagal(enc, `Tindakan '${action.tindakanId}' tidak ada di katalog.`)
+      }
+      if (enc.tindakan.includes(action.tindakanId)) return tanpaPerubahan(enc)
+      return { enc: { ...enc, tindakan: [...enc.tindakan, action.tindakanId] }, events: [] }
+    }
+
+    case 'HAPUS_TINDAKAN': {
+      const salahFase = bukanFase(enc, 'terapi')
+      if (salahFase) return salahFase
+      if (!enc.tindakan.includes(action.tindakanId)) return tanpaPerubahan(enc)
+      return {
+        enc: { ...enc, tindakan: enc.tindakan.filter((id) => id !== action.tindakanId) },
+        events: [],
+      }
+    }
+
     /* -- Aksi lain bukan urusan klinik ------------------------------------------ */
 
     default:
@@ -407,8 +428,19 @@ export function nilaiEncounter(
   const obatDiLuar = enc.resep.filter(
     (id) => !obatBenar.includes(id) && !idAlternatifSah.has(id),
   ).length
-  const totalSlot = obatBenar.length + grupAlternatif.length
-  const rasioTerapi = totalSlot > 0 ? (benarDiresepkan + slotAltTerpenuhi) / totalSlot : 1
+  // Prosedur/tindakan klinis (CODEX ronde-baru #4): utk 4 kasus (BPPV→Epley,
+  // serumen→irigasi, epistaksis→tampon, PPOK-eksaserbasi→nebulisasi) tatalaksana
+  // BENARNYA adalah melakukan tindakan, bukan (hanya) obat. Tiap prosedur wajib =
+  // satu slot terapi; tindakan di luar rencana dihukum spt obat di luar (tindakan
+  // tak terindikasi = pemborosan/risiko). Kasus tanpa prosedur (68 lainnya): tak
+  // ada slot tambahan → skor tak berubah.
+  const prosedurBenar = kasus.tatalaksana.prosedur ?? []
+  const tindakanDilakukan = enc.tindakan ?? []
+  const prosedurTerpenuhi = prosedurBenar.filter((id) => tindakanDilakukan.includes(id)).length
+  const tindakanDiLuar = tindakanDilakukan.filter((id) => !prosedurBenar.includes(id)).length
+  const totalSlot = obatBenar.length + grupAlternatif.length + prosedurBenar.length
+  const rasioTerapi =
+    totalSlot > 0 ? (benarDiresepkan + slotAltTerpenuhi + prosedurTerpenuhi) / totalSlot : 1
   // Obat BERBAHAYA untuk kasus ini (obatSalahUmum, mis. NSAID pada dengue)
   // dihukum jauh lebih berat daripada sekadar "obat di luar tatalaksana".
   const obatBerbahaya = (kasus.tatalaksana.obatSalahUmum ?? []).filter((o) =>
@@ -431,7 +463,11 @@ export function nilaiEncounter(
   })
   let skorTerapi = clamp(
     Math.round(
-      100 * rasioTerapi - 15 * obatDiLuar - 25 * obatBerbahaya - (antibiotikGandaDalamGrup ? 20 : 0),
+      100 * rasioTerapi -
+        15 * obatDiLuar -
+        25 * obatBerbahaya -
+        (antibiotikGandaDalamGrup ? 20 : 0) -
+        15 * tindakanDiLuar,
     ),
     0,
     100,

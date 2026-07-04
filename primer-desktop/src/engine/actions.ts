@@ -29,6 +29,8 @@ export type Action =
   | { type: 'HAPUS_OBAT'; obatId: string }
   | { type: 'TAMBAH_EDUKASI'; edukasiId: string }
   | { type: 'HAPUS_EDUKASI'; edukasiId: string }
+  | { type: 'TAMBAH_TINDAKAN'; tindakanId: string }
+  | { type: 'HAPUS_TINDAKAN'; tindakanId: string }
   | {
       type: 'DISPOSISI'
       jenis: Disposisi

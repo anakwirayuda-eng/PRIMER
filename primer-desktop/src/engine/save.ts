@@ -157,6 +157,12 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (!Array.isArray(klinik['antrian'])) klinik['antrian'] = []
   if (!Array.isArray(klinik['selesaiHariIni'])) klinik['selesaiHariIni'] = []
   if (!objek(klinik['autoHariIni'])) klinik['autoHariIni'] = { jumlah: 0, bermasalah: 0 }
+  // Encounter aktif dari save pra-prosedur (#4) belum punya array tindakan →
+  // skoring terapi meng-iterasinya. Backfill ke kosong.
+  if (objek(klinik['aktif'])) {
+    const aktif = klinik['aktif'] as Record<string, unknown>
+    if (!Array.isArray(aktif['tindakan'])) aktif['tindakan'] = []
+  }
   // Pasien lama tanpa RW mendapat RW 1 (cukup untuk melanjutkan save lama).
   for (const p of klinik['antrian'] as unknown[]) {
     if (objek(p) && typeof p['rw'] !== 'number') p['rw'] = 1

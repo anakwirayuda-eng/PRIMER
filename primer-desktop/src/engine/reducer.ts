@@ -161,7 +161,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
     case 'TAMBAH_OBAT':
     case 'HAPUS_OBAT':
     case 'TAMBAH_EDUKASI':
-    case 'HAPUS_EDUKASI': {
+    case 'HAPUS_EDUKASI':
+    case 'TAMBAH_TINDAKAN':
+    case 'HAPUS_TINDAKAN': {
       const enc = s.klinik.aktif
       if (!enc) return err(s, 'Tidak ada pasien aktif.')
       // M4.18 — gerbang stok: obat habis tak bisa diresepkan. Entri undefined =

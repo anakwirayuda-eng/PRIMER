@@ -101,9 +101,12 @@ function fnv1a(teks: string): string {
  * dulu tak ter-hash (CODEX ronde-baru #2);
  * 6 = ikatan identitas ujian pindah dari NAMA ke NIM — dossier lama (seed
  * berbasis nama, tanpa NIM) harus jatuh ke "tidak dapat diverifikasi", bukan
- * divonis TIDAK SAH palsu oleh cek NIM baru (CODEX ronde-baru #5).
+ * divonis TIDAK SAH palsu oleh cek NIM baru (CODEX ronde-baru #5);
+ * 7 = prosedur klinis kini ternilai (skorTerapi memperhitungkan tindakan wajib
+ * + penalti tindakan di luar rencana) — jejak lama tanpa TAMBAH_TINDAKAN untuk
+ * 4 kasus prosedur mereplay ke skor terapi berbeda (CODEX ronde-baru #4).
  */
-const REVISI_ENGINE = 6
+const REVISI_ENGINE = 7
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

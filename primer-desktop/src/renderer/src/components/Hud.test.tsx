@@ -77,6 +77,7 @@ describe('<Hud />', () => {
             labTersedia: [],
             resep: [],
             edukasi: [],
+            tindakan: [],
             firewallTerpicu: 0,
           },
         },

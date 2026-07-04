@@ -95,6 +95,8 @@ export interface EncounterState {
   diagnosis?: { icd10: string; jenis: JenisDiagnosis }
   resep: string[]
   edukasi: string[]
+  /** Prosedur/tindakan klinis yang dilakukan (mis. nebulisasi, Epley, tampon). */
+  tindakan: string[]
   /** Percobaan resep yang diblokir firewall alergi (untuk telemetri pedagogis). */
   firewallTerpicu: number
   disposisi?: Disposisi

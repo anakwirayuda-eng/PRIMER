@@ -34,7 +34,7 @@ interface Props {
 const laciSesi = new Set<KategoriEdukasi>()
 
 export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
-  const [tab, setTab] = useState<'resep' | 'edukasi'>('resep')
+  const [tab, setTab] = useState<'resep' | 'edukasi' | 'tindakan'>('resep')
   const [cari, setCari] = useState('')
   const [cariEduk, setCariEduk] = useState('')
   const [, setLaciTick] = useState(0) // re-render saat laciSesi berubah
@@ -50,6 +50,13 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
       .filter((o) => q === '' || cocokObat(o, q))
       .sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
   }, [cari])
+
+  // Prosedur/tindakan klinis (CODEX #4) — daftar datar (item sedikit), pemain
+  // memilih yang terindikasi; tindakan tak relevan mengurangi skor terapi.
+  const daftarTindakan = useMemo(
+    () => Object.values(PACK.tindakan).sort((a, b) => a.nama.localeCompare(b.nama, 'id')),
+    [],
+  )
 
   // Topik edukasi per laci kategori (urutan tetap, nama front-loaded).
   const topikPerKategori = useMemo(() => {
@@ -114,6 +121,14 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
               <span className="klinik-deck__tab-titik" aria-hidden="true" />
             )}
             Edukasi ({enc.edukasi.length}/{KAPASITAS_EDUKASI})
+          </button>
+          <button
+            role="tab"
+            aria-selected={tab === 'tindakan'}
+            className={`klinik-deck__tab-tombol${tab === 'tindakan' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
+            onClick={() => setTab('tindakan')}
+          >
+            Tindakan ({enc.tindakan.length})
           </button>
         </div>
 
@@ -289,6 +304,39 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick }: Props) {
             <span className="teks-xs teks-lembut">
               Edukasi yang tepat sasaran ikut dinilai; topik asal-centang mengurangi nilai.
             </span>
+          </div>
+        )}
+
+        {tab === 'tindakan' && (
+          <div className="klinik-deck__grup">
+            <div className="judul-seksi">Prosedur / Tindakan Klinis</div>
+            <p className="teks-xs teks-lembut">
+              Sebagian kasus dituntaskan dengan TINDAKAN, bukan (hanya) obat &mdash; mis. nebulisasi
+              serangan asma/PPOK, manuver reposisi vertigo, irigasi serumen, tampon epistaksis.
+              Tindakan yang tak terindikasi ikut mengurangi nilai.
+            </p>
+            <div className="klinik-eduk">
+              {daftarTindakan.map((t) => {
+                const dipilih = enc.tindakan.includes(t.id)
+                return (
+                  <button
+                    key={t.id}
+                    className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
+                    onClick={() =>
+                      dispatch(
+                        dipilih
+                          ? { type: 'HAPUS_TINDAKAN', tindakanId: t.id }
+                          : { type: 'TAMBAH_TINDAKAN', tindakanId: t.id },
+                      )
+                    }
+                    title={dipilih ? 'Klik untuk membatalkan tindakan.' : `Lakukan tindakan: ${t.nama}`}
+                  >
+                    {dipilih ? '✓ ' : ''}
+                    {t.nama}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>
