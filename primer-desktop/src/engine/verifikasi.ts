@@ -98,9 +98,12 @@ function fnv1a(teks: string): string {
  * urutan aksi semacam itu;
  * 5 = sidik jari kini sensitif isi IGD (pilihan-benar/efek/disposisi), kader
  * (ketelitian/bias), dan RW (jarak/totalKk) — semua penentu skor/replay yang
- * dulu tak ter-hash (CODEX ronde-baru #2).
+ * dulu tak ter-hash (CODEX ronde-baru #2);
+ * 6 = ikatan identitas ujian pindah dari NAMA ke NIM — dossier lama (seed
+ * berbasis nama, tanpa NIM) harus jatuh ke "tidak dapat diverifikasi", bukan
+ * divonis TIDAK SAH palsu oleh cek NIM baru (CODEX ronde-baru #5).
  */
-const REVISI_ENGINE = 5
+const REVISI_ENGINE = 6
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -231,7 +234,9 @@ export async function susunDossier(
   const tanpaTtd: Omit<DossierMahasiswa, 'ttd'> = {
     format: FORMAT_DOSSIER,
     versi: VERSI_DOSSIER,
-    identitas: { namaDokter: state.namaDokter, ...(opsi.nim ? { nim: opsi.nim } : {}) },
+    // NIM diambil dari STATE (terikat seed sejak awal ujian) — bukan input bebas
+    // saat ekspor. Fallback opsi.nim hanya utk mode karier (label, tak dinilai).
+    identitas: { namaDokter: state.namaDokter, ...((state.nim ?? opsi.nim) ? { nim: state.nim ?? opsi.nim } : {}) },
     stase: {
       mode: state.mode,
       ...(state.paketUjian ? { paketUjian: state.paketUjian } : {}),
@@ -323,17 +328,17 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
     }
   }
 
-  /* 3b — IKATAN IDENTITAS (CODEX P1, mode UJIAN): seed ujian diturunkan
-     deterministik dari nama (store.mulaiGameBaru). Bila nama di dossier diubah
-     tapi seed tidak (atau sebaliknya), ikatan putus → identitas dipalsukan.
-     Menutup celah "ganti nama/NIM lalu hitung ulang HMAC" untuk ujian
-     (identitas yang DINILAI). Dijalankan SETELAH sidik jari cocok (build sama,
-     skema seed sama) agar dossier build lama jatuh ke "tidak dapat diverifikasi"
-     lebih dulu, bukan divonis TIDAK SAH palsu. Karier tak terikat (tak dinilai). */
-  if (d.stase.mode === 'ujian' && hashSeed('ujian', d.identitas.namaDokter) !== d.stase.seed) {
+  /* 3b — IKATAN IDENTITAS (CODEX, mode UJIAN): seed ujian diturunkan deterministik
+     dari NIM (store.mulaiGameBaru). NIM WAJIB ada & seed harus = hashSeed('ujian',
+     nim); bila NIM dihapus/diubah tapi seed tidak (atau sebaliknya), ikatan putus →
+     identitas dipalsukan / paket dipinjam dari NIM teman. Dijalankan SETELAH sidik
+     jari cocok (build sama, skema seed sama — REVISI_ENGINE bump utk perubahan ini)
+     agar dossier build lama (seed berbasis nama, tanpa NIM) jatuh ke "tidak dapat
+     diverifikasi" dulu, bukan divonis TIDAK SAH palsu. Karier tak terikat. */
+  if (d.stase.mode === 'ujian' && (!d.identitas.nim || hashSeed('ujian', d.identitas.nim) !== d.stase.seed)) {
     return {
       status: 'tidak_sah',
-      alasan: ['Identitas tidak konsisten: seed ujian tidak cocok dengan nama pada dossier (kemungkinan nama/NIM diubah setelah stase).'],
+      alasan: ['Identitas tidak konsisten: NIM pada dossier tidak cocok dengan seed ujian (NIM hilang atau diubah setelah stase).'],
       ringkasan,
     }
   }

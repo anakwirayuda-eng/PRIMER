@@ -105,6 +105,8 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     st['seedKurikulum'] = st['seed']
   }
   if (typeof st['igdHariIni'] !== 'boolean') st['igdHariIni'] = false
+  // NIM opsional (ikatan identitas ujian): buang bila bukan string.
+  if (st['nim'] !== undefined && typeof st['nim'] !== 'string') delete st['nim']
   // Migrasi-lite M6: save pra-jurnal-penuh → jejak kosong (dossier dari save
   // semacam ini berstatus "tidak dapat diverifikasi", bukan ditolak).
   if (!Array.isArray(st['jejak'])) st['jejak'] = []

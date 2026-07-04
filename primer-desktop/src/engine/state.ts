@@ -449,6 +449,12 @@ export interface GameState {
   versi: 1
   seed: number
   namaDokter: string
+  /**
+   * M4.5/CODEX — NIM: identitas MENGIKAT untuk mode ujian. Seed ujian diturunkan
+   * dari NIM (hashSeed('ujian', nim)) → paket per-mahasiswa terkendali & tak bisa
+   * ditukar dgn nama teman. Undefined di mode karier (tak dinilai).
+   */
+  nim?: string
   hari: number // 1..90
   blok: Blok
   /** Stamina 0-6 pip. */

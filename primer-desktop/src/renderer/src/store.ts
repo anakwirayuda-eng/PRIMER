@@ -50,7 +50,7 @@ interface GameStore {
   eventTick: number
   sedangMemuat: boolean
 
-  mulaiGameBaru: (namaDokter: string, mode?: ModeStase) => void
+  mulaiGameBaru: (namaDokter: string, mode?: ModeStase, nim?: string) => void
   lanjutkanArsip: () => void
   muatAutosave: () => Promise<boolean>
   dispatch: (action: Action) => void
@@ -83,15 +83,16 @@ export const useGame = create<GameStore>((set, get) => ({
   eventTick: 0,
   sedangMemuat: false,
 
-  mulaiGameBaru: (namaDokter: string, mode: ModeStase = 'karier') => {
-    // Anti-reroll paket (CODEX P1): di mode UJIAN seed diturunkan DETERMINISTIK
-    // dari nama/NIM saja — restart dgn identitas sama = paket & wajah pasien
-    // IDENTIK, jadi memulai ulang tak bisa dipakai "memancing" paket favorit
-    // (kunci walkthrough beredar per paket). Instruktur menetapkan identitas
-    // (NIM) → paket per mahasiswa terkendali & tak bisa diakali. Mode KARIER
-    // (tak dinilai) tetap memakai Date.now agar tiap main variatif.
-    const seed = mode === 'ujian' ? hashSeed('ujian', namaDokter) : hashSeed(namaDokter, Date.now())
-    const state = buildInitialState(namaDokter, seed, PACK, { mode })
+  mulaiGameBaru: (namaDokter: string, mode: ModeStase = 'karier', nim?: string) => {
+    // Anti-reroll + ikatan identitas (CODEX): di mode UJIAN seed diturunkan
+    // DETERMINISTIK dari NIM — restart dgn NIM sama = paket & wajah pasien
+    // IDENTIK, jadi memulai ulang tak bisa "memancing" paket favorit, DAN nama
+    // teman tak bisa dipinjam (paket terikat NIM, verifier menolak bila NIM di
+    // dossier tak cocok seed). Instruktur menetapkan NIM → paket per-mahasiswa
+    // terkendali. Mode KARIER (tak dinilai) tetap Date.now agar tiap main variatif.
+    const nimBersih = nim?.trim() || undefined
+    const seed = mode === 'ujian' ? hashSeed('ujian', nimBersih ?? namaDokter) : hashSeed(namaDokter, Date.now())
+    const state = buildInitialState(namaDokter, seed, PACK, { mode, ...(nimBersih ? { nim: nimBersih } : {}) })
     set({ state, arsip: null, lastEvents: [], eventTick: 0 })
     void get().simpan()
   },

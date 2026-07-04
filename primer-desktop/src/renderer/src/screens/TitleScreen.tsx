@@ -106,15 +106,20 @@ export function TitleScreen() {
   // M4.5 — dua mode: Karier 90 hari (default, bebas nilai) vs Ujian 30 hari
   // (satu-satunya yang dinilai formal; paket kurikulum dirotasi otomatis).
   const [mode, setMode] = useState<ModeStase>('karier')
+  // CODEX — NIM: identitas mengikat mode ujian (seed & verifier terikat NIM).
+  const [nim, setNim] = useState('')
   // M6.27 — hasil verifikasi dossier mahasiswa (panel dosen).
   const [hasilVerifikasi, setHasilVerifikasi] = useState<HasilVerifikasi | null>(null)
 
   const namaBersih = nama.trim()
+  const nimBersih = nim.trim()
+  // Mode ujian WAJIB NIM (identitas terikat); karier tidak.
+  const bolehMulai = namaBersih.length > 0 && (mode !== 'ujian' || nimBersih.length > 0)
 
   const mulaiStase = (e: FormEvent) => {
     e.preventDefault()
-    if (namaBersih.length === 0) return
-    mulaiGameBaru(namaBersih, mode)
+    if (!bolehMulai) return
+    mulaiGameBaru(namaBersih, mode, mode === 'ujian' ? nimBersih : undefined)
   }
 
   return (
@@ -193,18 +198,36 @@ export function TitleScreen() {
                 <button
                   type="submit"
                   className={`tombol tombol--besar ${arsip !== null ? '' : 'tombol--utama'}`}
-                  disabled={namaBersih.length === 0}
+                  disabled={!bolehMulai}
                   title={
                     namaBersih.length === 0
                       ? 'Isi nama doktermu dulu'
-                      : arsip !== null
-                        ? 'Memulai stase baru akan menimpa arsip lama'
-                        : 'Mulai Hari 1 di Puskesmas Sukamaju'
+                      : mode === 'ujian' && nimBersih.length === 0
+                        ? 'Isi NIM-mu dulu (identitas ujian)'
+                        : arsip !== null
+                          ? 'Memulai stase baru akan menimpa arsip lama'
+                          : 'Mulai Hari 1 di Puskesmas Sukamaju'
                   }
                 >
                   Mulai Stase
                 </button>
               </div>
+              {/* Mode ujian: NIM mengikat identitas — paket & verifikasi terkunci
+                  ke NIM ini, tak bisa ditukar nama teman. */}
+              {mode === 'ujian' && (
+                <div className="title__form-baris">
+                  <span className="title__gelar mono">NIM</span>
+                  <input
+                    id="title-nim"
+                    className="title__input"
+                    type="text"
+                    value={nim}
+                    maxLength={20}
+                    placeholder="nomor induk mahasiswa"
+                    onChange={(e) => setNim(e.target.value)}
+                  />
+                </div>
+              )}
               {arsip !== null && (
                 <p className="title__peringatan teks-xs teks-lembut">
                   Stase baru menimpa arsip dr. {arsip.namaDokter} (Hari {arsip.hari}).

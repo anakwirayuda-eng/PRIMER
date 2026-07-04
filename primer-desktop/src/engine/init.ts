@@ -86,7 +86,7 @@ export function buildInitialState(
   namaDokter: string,
   seed: number,
   pack: ContentPack,
-  opsi?: { mode?: ModeStase },
+  opsi?: { mode?: ModeStase; nim?: string },
 ): GameState {
   // M4.5 — pemisahan seed (docs/M45_MODE_UJIAN.md): Karier byte-identik dgn
   // perilaku lama (seedKurikulum = seed); Ujian memakai seed paket bersama.
@@ -147,6 +147,7 @@ export function buildInitialState(
     seedKurikulum,
     ...(paket ? { paketUjian: paket.id } : {}),
     namaDokter,
+    ...(opsi?.nim ? { nim: opsi.nim } : {}),
     hari: 1,
     blok: 'pagi',
     stamina: STAMINA_MAKS,

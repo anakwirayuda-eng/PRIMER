@@ -236,14 +236,21 @@ export function LaporanAkhir() {
             <div className="kartu laporan__dossier">
               <div className="judul-seksi">Setor ke Dosen — Dossier Mahasiswa</div>
               <div className="baris">
-                <input
-                  className="laporan__nim"
-                  type="text"
-                  value={nim}
-                  onChange={(e) => setNim(e.target.value)}
-                  placeholder="NIM (opsional)"
-                  aria-label="NIM mahasiswa"
-                />
+                {state.nim ? (
+                  // Ujian: NIM sudah terikat identitas sejak awal — tak bisa diubah.
+                  <span className="laporan__nim-terikat" aria-label="NIM mahasiswa">
+                    NIM <strong>{state.nim}</strong>
+                  </span>
+                ) : (
+                  <input
+                    className="laporan__nim"
+                    type="text"
+                    value={nim}
+                    onChange={(e) => setNim(e.target.value)}
+                    placeholder="NIM (opsional)"
+                    aria-label="NIM mahasiswa"
+                  />
+                )}
                 <button className="tombol tombol--utama" onClick={() => void eksporDossier()}>
                   Ekspor Dossier Mahasiswa
                 </button>

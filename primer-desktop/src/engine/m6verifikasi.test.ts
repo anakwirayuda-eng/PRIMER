@@ -40,12 +40,13 @@ function run(state: GameState, action: Action, izinkanError = false): GameState 
  * aksi yang DITOLAK engine (peta terkunci H1) — membuktikan aksi gagal ikut
  * terekam & replay mereproduksi penolakan yang sama.
  */
-// Seed ujian diturunkan sama seperti store (anti-reroll + ikatan identitas).
+// Seed ujian diturunkan dari NIM (anti-reroll + ikatan identitas — CODEX #5).
 const NAMA_UJI = 'Uji Verifikasi'
-const SEED_UJI = hashSeed('ujian', NAMA_UJI)
+const NIM_UJI = '011'
+const SEED_UJI = hashSeed('ujian', NIM_UJI)
 
 function mainkanSatuPasien(): GameState {
-  let s = buildInitialState(NAMA_UJI, SEED_UJI, PACK, { mode: 'ujian' })
+  let s = buildInitialState(NAMA_UJI, SEED_UJI, PACK, { mode: 'ujian', nim: NIM_UJI })
   s = run(s, { type: 'BACA_SURAT', suratId: 'surat_1_0' })
   s = run(s, { type: 'PINDAH_LAYAR', layar: 'peta' }, true) // ditolak H1 — sengaja
   s = run(s, { type: 'PINDAH_LAYAR', layar: 'klinik' })
@@ -141,15 +142,32 @@ describe('M6 — verifikasi dossier', () => {
     expect(hasil.status).toBe('tidak_sah')
   })
 
-  it('nama ujian DIPALSUKAN (seed dari nama lama) + ttd VALID → ikatan identitas putus → TIDAK SAH (CODEX P1)', async () => {
+  it('NIM ujian DIPALSUKAN (seed dari NIM lama) + ttd VALID → ikatan identitas putus → TIDAK SAH (CODEX #5)', async () => {
     const s = mainkanSatuPasien()
-    // Penyerang ganti nama tampilan tapi seed tetap (diturunkan dari nama asli);
-    // susunDossier menghasilkan ttd yang sah utk objek palsu ini (kunci di tangan).
-    const palsu: GameState = { ...s, namaDokter: 'Nama Palsu' }
+    // Penyerang mengaku NIM mahasiswa lain tapi seed tetap (diturunkan dari NIM
+    // asli); susunDossier menghasilkan ttd sah utk objek palsu ini (kunci di tangan).
+    const palsu: GameState = { ...s, nim: '999' }
     const dossier = await susunDossier(palsu, PACK, { versiApp: V_APP })
     const hasil = await verifikasiDossier(JSON.stringify(dossier), PACK, V_APP)
     expect(hasil.status).toBe('tidak_sah')
     expect(hasil.alasan.join(' ')).toMatch(/[Ii]dentitas/)
+  })
+
+  it('dossier ujian TANPA NIM → TIDAK SAH (identitas ujian wajib terikat NIM, CODEX #5)', async () => {
+    const s = mainkanSatuPasien()
+    const tanpaNim: GameState = { ...s, nim: undefined }
+    const dossier = await susunDossier(tanpaNim, PACK, { versiApp: V_APP })
+    const hasil = await verifikasiDossier(JSON.stringify(dossier), PACK, V_APP)
+    expect(hasil.status).toBe('tidak_sah')
+    expect(hasil.alasan.join(' ')).toMatch(/[Ii]dentitas|NIM/)
+  })
+
+  it('nama tampilan diubah TIDAK memutus identitas (nama kosmetik; NIM yang mengikat)', async () => {
+    const s = mainkanSatuPasien()
+    // Ganti nama saja (NIM & seed tetap) → tetap SAH: nama hanya display.
+    const dossier = await susunDossier({ ...s, namaDokter: 'Nama Lain' }, PACK, { versiApp: V_APP })
+    const hasil = await verifikasiDossier(JSON.stringify(dossier), PACK, V_APP)
+    expect(hasil.status).toBe('sah')
   })
 
   it('paketUjian DIPALSUKAN + ttd dihitung ulang → replay tak cocok → TIDAK SAH (CODEX P1)', async () => {
