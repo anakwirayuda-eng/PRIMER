@@ -1795,3 +1795,91 @@ duplikat, 2 negasi, 2 PanelHasil a11y), 36 file. Tak ada REVISI_ENGINE
 bump (semua fix menutup celah verifikasi/konten/a11y, nol perubahan
 semantik skor/replay utk state valid). Verifikasi browser end-to-end utk
 fix P3 aksesibilitas (satu-satunya yg observable visual/DOM).
+
+## 32. Follow-up sempit (verifier-completeness + a11y sweep) + CODEX ronde-17 (2026-07-05)
+
+Dua langkah pendek yang diminta user pasca-§31 ("small scoped follow-up"),
+lalu satu ronde CODEX baru masuk tepat setelahnya.
+
+**Verifier-completeness sweep**: menelusuri SEMUA field yang ditampilkan
+layar verifikasi dosen (`TitleScreen.tsx`) balik ke apa yang benar-benar
+dibanding `verifikasiDossier` — namaDokter/nim/mode/paketUjian/hari/tamat/
+seed/skorKlaim/skorReplay. Satu hipotesis diuji serius: bisakah `mode`/
+`seedKurikulum` dipalsukan (mis. ujian→karier) utk lolos gerbang ikatan
+NIM (yang cuma berlaku `mode==='ujian'`)? Ternyata TIDAK — `seedKurikulum`
+menentukan pasien apa yang di-generate director saat replay
+(`Rng(seedKurikulum,'director',1)`), jadi memalsukan field itu membuat
+replay men-generate pasien BEDA dari yang direkam `jejak`, otomatis
+menabrak perbandingan tally yang SUDAH ada. Tak ada celah kedua ditemukan
+— badge (§31) tetap satu-satunya lubang nyata.
+
+**A11y sweep**: grep semua 18 penggunaan `aria-hidden` di renderer — HANYA
+`PanelHasil.tsx` yang pernah memakai pola kondisional (`aria-hidden=
+{ekspresi}`); sisanya semua statis pada elemen dekoratif (ikon, radio
+dot, panah tab) dan sudah benar. Icon-only button (mute, gear pengaturan,
+✕ modal) semua sudah ber-`aria-label`. Tak ada perubahan kode — sweep
+bersih, mengonfirmasi bug §31 adalah kejadian tunggal bukan pola berulang.
+
+**CODEX ronde-17**: laporan BARU (beda dari §31), 3 temuan — semua
+diverifikasi thd kode SEBELUM bertindak:
+
+1. **STALE (bukan bug baru)** — "10 kasus `fktp144:true` masih belum
+   tertaut Dex". Angka ini benar scr matematis (18 unlinked-fktp144:true
+   dari §31 dikurangi 8 yang sudah diperbaiki ke `false` = 10 sisa), tapi
+   SEMUA 10 sudah diinvestigasi tuntas di §26/§30/§31: `dispepsia_
+   fungsional`/`mm_low_back_pain`/`mm_mialgia` bukan entri Daftar Penyakit
+   (kemungkinan Daftar Masalah); `kia_kb_konseling` masuk Daftar
+   Keterampilan Klinis, bukan Daftar Penyakit; `mata_konjungtivitis_
+   alergi` — SKDI 2012 cuma py SATU entri generik "Konjungtivitis" (4A),
+   sudah diklaim `conjunctivitis_bacterial`, arsitektur skdi144 tak
+   mendukung 2 kasus per entri; `kulit_dermatitis_kontak`/`mm_
+   osteoartritis_lutut`/`jiwa_gangguan_cemas`/`jiwa_depresi_ringan`/`tht_
+   rinosinusitis_akut` — self-report `skdi:'4A'` TERBUKTI KELIRU dibanding
+   dokumen resmi (dikonfirmasi ulang §30 langsung dari teks SKDI 2012).
+   **Keputusan yang masih menggantung** (bukan bug, keputusan kurikulum):
+   apakah 5 kasus terakhir itu perlu dikoreksi field `skdi`-nya sendiri
+   biar cocok dokumen resmi — sudah diflag sejak §26, user belum pernah
+   diminta memutuskan scr eksplisit.
+
+2. **PARTIALLY VALID** — "gap desain skoring manajemen non-obat" (klaim
+   umum CODEX, menyebut 3 kasus: `kia_kb_konseling`, `jiwa_depresi_
+   ringan`, `jiwa_insomnia`). Diverifikasi SATU-SATU (bukan pukul rata
+   spt §31 kemarin): `jiwa_depresi_ringan` (`manajemen_stres`/
+   `aktivitas_fisik`/`kontrol_rutin`) dan `jiwa_insomnia` (`higiene_
+   tidur`/`manajemen_stres`/`aktivitas_fisik`) topik edukasinya SUDAH
+   selaras dgn clue masing-masing — REJECTED utk keduanya, klaim CODEX
+   tak berlaku di sana. TAPI `kia_kb_konseling` ternyata **memang
+   bermasalah nyata**: clue-nya 100% soal PEMILIHAN METODE KB aman saat
+   menyusui (non-hormonal/progestin-only, hindari kombinasi estrogen),
+   tapi `tatalaksana.edukasi` lama (`asi_eksklusif`/`kontrol_rutin`/
+   `gizi_seimbang`) sama sekali generik pasca-persalinan — TAK SATUPUN
+   dari 69 topik edukasi di seluruh katalog menyentuh pemilihan metode KB.
+   Ini kelas bug PERSIS yang diburu M9.3 (clue menjanjikan X, tatalaksana
+   tak mencerminkannya) tapi di SUMBU BEDA (edukasi, bukan obat) yang
+   sweep M9.3 tak pernah cek. **Fix**: topik baru `kb_aman_menyusui`
+   ("[KB] Metode aman saat menyusui — hindari estrogen kombinasi",
+   kategori `kia`) ditambah ke `katalogM3.ts`, MENGGANTIKAN `gizi_
+   seimbang` (bukan cuma ditambah) di `kia_kb_konseling` — penting krn
+   `KAPASITAS_EDUKASI=3` pas dgn total wajib lama (3): kalau cuma
+   ditambah jadi 4 wajib, `edukasiTarget=min(3,4)=3` tetap tercapai
+   tanpa pernah menyentuh topik baru, jadi HARUS mengganti bukan menambah
+   agar topik krusial ini benar2 wajib dipilih. Verifikasi-bergigi: test
+   baru `nilaiEncounter` bandingkan 2-topik-lama vs +topik-baru → merah
+   tepat (`toContain` gagal) sebelum fix, hijau sesudah. Diverifikasi
+   browser: cari "estrogen" di tab Edukasi pasien manapun → laci "Ibu &
+   Anak (KIA)" tampilkan nama topik penuh, tanpa error konsol.
+   **REJECTED** klaim umum "butuh slot tindakan konseling/CBT-I baru
+   sbg mekanik terpisah" — `rasioTerapi=1` saat totalSlot=0 SUDAH benar
+   (obat di luar rencana tetap kena `obatDiLuar`/`obatBerbahaya` independen
+   dari totalSlot; "tak meresepkan apa-apa" utk kasus tanpa indikasi obat
+   memang tindakan BENAR, bukan celah) — mekanisme yang sudah ada
+   (`skorEdukasi` terpisah) cukup, SELAMA topik edukasi kasusnya sendiri
+   akurat (itulah kenapa fix di atas menyasar KONTEN, bukan ENGINE).
+
+3. **FIXED (dokumentasi)** — komentar `skdi144.ts:14-16` masih bilang
+   "15 dari 16 kasus slice" (peninggalan era vertical-slice M0/M1, sebelum
+   67 kasus & 46 tertaut hari ini) — diperbarui + ditaut ke §26/§30/§31.
+
+Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **387 test**
+(dari 386, +1), 36 file. Tak ada REVISI_ENGINE bump (konten/dokumentasi
+murni).

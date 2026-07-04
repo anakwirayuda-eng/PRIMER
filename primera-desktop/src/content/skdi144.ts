@@ -11,9 +11,14 @@
  *    `vulnus_laseratum` (T14.1)
  * Hasil: TEPAT 144 entri dengan id unik.
  *
- * `kasusId` menghubungkan entri ke kasus playable di vertical slice
- * (15 dari 16 kasus slice ada di daftar ini; stroke iskemik bukan penyakit
- * FKTP-144 sehingga tidak punya entri).
+ * `kasusId` menghubungkan entri ke kasus playable — auto-link via ICD-10
+ * persis (content/index.ts) atau manual di sini utk kompetensi gabungan/
+ * ICD lebih spesifik (lihat pack.test.ts utk daftar pengecualian sadar).
+ * Per 2026-07 (M9.2 + CODEX ronde-16): 46 dari 67 kasus playable tertaut;
+ * sisanya sengaja tak tertaut krn levelnya BUKAN 4A menurut dokumen resmi
+ * (skdi 2012 Lampiran-3 / Kepmenkes 1186/2022), atau bukan entri Daftar
+ * Penyakit (mis. Daftar Keterampilan Klinis) — lihat docs/CODEX_AUDIT_
+ * DOSSIER.md §26/§30/§31 utk rincian per-kasus.
  */
 
 export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: string }[] = [

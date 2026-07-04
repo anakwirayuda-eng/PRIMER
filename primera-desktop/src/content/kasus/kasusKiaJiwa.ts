@@ -543,7 +543,11 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: [],
       obatSalahUmum: [],
-      edukasi: ['asi_eksklusif', 'kontrol_rutin', 'gizi_seimbang'],
+      // CODEX (2026-07-05): gizi_seimbang diganti kb_aman_menyusui — poin ajar
+      // utama kasus ini (pemilihan metode KB aman saat menyusui) sebelumnya
+      // tak diuji topik edukasi manapun; asi_eksklusif & kontrol_rutin tetap
+      // relevan (konteks menyusui + jadwal kontrol pascapersalinan).
+      edukasi: ['asi_eksklusif', 'kontrol_rutin', 'kb_aman_menyusui'],
     },
     clue: 'Konseling KB pascapersalinan pada ibu MENYUSUI: pilihan aman = metode non-hormonal (IUD/AKDR, kondom) atau progestin-only (pil progestin, suntik DMPA 3 bulan, implan). HINDARI kontrasepsi kombinasi estrogen dalam 6 minggu pertama & selama menyusui dini (estrogen menurunkan produksi ASI + risiko trombosis). Konseling harus BERIMBANG (informed choice) — sesuaikan dengan rencana reproduksi & syarat medis (WHO MEC / Kemenkes BKKBN).',
   },

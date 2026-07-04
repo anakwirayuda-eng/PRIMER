@@ -183,4 +183,29 @@ describe('PACK — validasi silang id konten', () => {
     )
     expect(denganAntibiotik.skorTerapi).toBeGreaterThan(tanpaAntibiotik.skorTerapi)
   })
+
+  // CODEX (2026-07-05): clue kia_kb_konseling seluruhnya soal PEMILIHAN METODE
+  // KB aman saat menyusui (non-hormonal/progestin-only, hindari kombinasi
+  // estrogen) — tapi tatalaksana.edukasi lama (asi_eksklusif/kontrol_rutin/
+  // gizi_seimbang) sama sekali tak menyentuh KB, jadi poin ajar utama kasus
+  // ini tak pernah teruji mekanis. Topik `kb_aman_menyusui` ditambah & jadi
+  // WAJIB (bukan cuma opsional di atas kapasitas — kapasitas edukasi 3 pas
+  // dgn total wajib 3, jadi topik ini benar2 harus dipilih utk skor penuh).
+  it('kia_kb_konseling: topik edukasi menguji pemilihan metode KB aman-menyusui (bukan cuma topik generik pasca-persalinan)', () => {
+    const kasus = PACK.kasus['kia_kb_konseling']!
+    expect(kasus.tatalaksana.edukasi).toContain('kb_aman_menyusui')
+
+    const pasien = buatPasienDariKasus('kia_kb_konseling', PACK, new Rng(1, 'test'))
+    const tanpaTopikKb = nilaiEncounter(
+      { ...buatEncounter(pasien), edukasi: ['asi_eksklusif', 'kontrol_rutin'] },
+      kasus,
+      PACK,
+    )
+    const denganTopikKb = nilaiEncounter(
+      { ...buatEncounter(pasien), edukasi: ['asi_eksklusif', 'kontrol_rutin', 'kb_aman_menyusui'] },
+      kasus,
+      PACK,
+    )
+    expect(denganTopikKb.skorEdukasi).toBeGreaterThan(tanpaTopikKb.skorEdukasi)
+  })
 })

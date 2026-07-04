@@ -168,6 +168,16 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
     id: 'tanda_bahaya_kehamilan', nama: '[Kehamilan] Tanda bahaya — P4K', kategori: 'kia',
     sinonim: ['preeklamsia', 'perdarahan', 'persiapan persalinan'],
   },
+  // CODEX (2026-07-05): kia_kb_konseling clue-nya soal PEMILIHAN METODE aman
+  // (non-hormonal/progestin-only, hindari kombinasi estrogen saat menyusui),
+  // tapi tak ada satupun topik edukasi di seluruh katalog yang menguji poin
+  // ajar itu — kasus itu cuma pakai topik generik pasca-persalinan
+  // (asi_eksklusif/kontrol_rutin/gizi_seimbang) yang tak menyentuh KB sama
+  // sekali. Topik baru ini isi celah tsb.
+  kb_aman_menyusui: {
+    id: 'kb_aman_menyusui', nama: '[KB] Metode aman saat menyusui — hindari estrogen kombinasi', kategori: 'kia',
+    sinonim: ['kontrasepsi', 'keluarga berencana', 'progestin', 'IUD', 'AKDR'],
+  },
   minum_air_cukup: {
     id: 'minum_air_cukup', nama: 'Minum air cukup & jangan menahan kencing', kategori: 'diet',
     sinonim: ['hidrasi', 'ISK', 'anyang-anyangan'],
