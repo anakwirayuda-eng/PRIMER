@@ -164,6 +164,12 @@
   justify-content: center;
 }
 
+/* CODEX audit 2026-07-04 (ronde-6): --daun-600 diremap terang di mode malam
+   (spt .tombol--utama) — teks putih di atasnya jatuh ke ~1.9:1. */
+[data-mode='malam'] .kunjungan-hotspot--ketemu {
+  color: var(--malam-900);
+}
+
 .kunjungan-hotspot--ketemu::after {
   animation: none;
   opacity: 0;
@@ -306,6 +312,12 @@
   justify-content: center;
   border: 2px solid var(--daun-800);
   box-shadow: var(--shadow-kertas);
+}
+
+/* CODEX audit 2026-07-04 (ronde-6): --daun-700 diremap terang di mode malam
+   (spt .tombol--utama) — teks putih (inisial) di atasnya jadi tak terbaca. */
+[data-mode='malam'] .kunjungan-potret {
+  color: var(--malam-900);
 }
 
 .kunjungan-dialog__isi {

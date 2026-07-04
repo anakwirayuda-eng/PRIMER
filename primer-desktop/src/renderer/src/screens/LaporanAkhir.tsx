@@ -7,6 +7,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useGame } from '../store'
+import { usePengaturan } from '../usePengaturan'
 import { hitungSkor } from '@engine/director'
 import { hitungBadge, SEMUA_BADGE } from '@engine/badge'
 import { HARI_STASE } from '@engine/paketUjian'
@@ -15,11 +16,28 @@ import { susunDossier } from '@engine/verifikasi'
 import { PACK } from '@content/index'
 import './LaporanAkhir.css'
 
-/** Count-up sederhana: 0 → target dalam ~1,2 detik (ease-out). */
-function useCountUp(target: number, mulai: boolean): number {
+/**
+ * CODEX audit 2026-07-04 (ronde-6): CSS reduced-motion (`.kurangi-gerak` /
+ * `prefers-reduced-motion`) tak menyentuh requestAnimationFrame/setTimeout
+ * JS — layar ini tetap menjalankan count-up & jeda dramatis penuh. Gabungkan
+ * toggle manual (kurangiGerak) dengan sinyal OS.
+ */
+function useMotionDikurangi(): boolean {
+  const pengaturan = usePengaturan()
+  const osKurangi =
+    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
+  return pengaturan.kurangiGerak || osKurangi
+}
+
+/** Count-up sederhana: 0 → target dalam ~1,2 detik (ease-out). Lompat langsung bila gerak dikurangi. */
+function useCountUp(target: number, mulai: boolean, kurangiGerak: boolean): number {
   const [nilai, setNilai] = useState(0)
   useEffect(() => {
     if (!mulai) return
+    if (kurangiGerak) {
+      setNilai(target)
+      return
+    }
     let raf = 0
     const t0 = performance.now()
     const durasi = 1200
@@ -30,13 +48,16 @@ function useCountUp(target: number, mulai: boolean): number {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [target, mulai])
+  }, [target, mulai, kurangiGerak])
   return nilai
 }
 
+// CODEX audit 2026-07-04 (ronde-6): 'stempel--daun' tak pernah ada di base.css
+// (cuma hijau/merah/kunyit/biru) — grade B jatuh ke warna tak terdefinisi.
+// Samakan dgn WARNA_STEMPEL di Rapor.tsx (referensi yang sudah benar).
 const STEMPEL_GRADE: Record<string, string> = {
   A: 'stempel--hijau',
-  B: 'stempel--daun',
+  B: 'stempel--biru',
   C: 'stempel--kunyit',
   D: 'stempel--merah',
 }
@@ -44,26 +65,31 @@ const STEMPEL_GRADE: Record<string, string> = {
 export function LaporanAkhir() {
   const state = useGame((s) => s.state)!
   const dispatch = useGame((s) => s.dispatch)
+  const kurangiGerak = useMotionDikurangi()
   const [babak, setBabak] = useState(0) // 0 stempel → 1 dimensi → 2 sisanya
 
   useEffect(() => {
+    if (kurangiGerak) {
+      setBabak(2) // tampilkan semua babak langsung, tanpa jeda dramatis
+      return
+    }
     const t1 = setTimeout(() => setBabak(1), 900)
     const t2 = setTimeout(() => setBabak(2), 2300)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
     }
-  }, [])
+  }, [kurangiGerak])
 
   const skor = useMemo(() => hitungSkor(state), [state])
   const badges = useMemo(() => hitungBadge(state), [state])
   const t = state.tally
 
-  const ukp = useCountUp(skor.ukp, babak >= 1)
-  const ukm = useCountUp(skor.ukm, babak >= 1)
-  const mnj = useCountUp(skor.manajemen, babak >= 1)
-  const res = useCountUp(skor.resiliensi, babak >= 1)
-  const total = useCountUp(skor.total, babak >= 1)
+  const ukp = useCountUp(skor.ukp, babak >= 1, kurangiGerak)
+  const ukm = useCountUp(skor.ukm, babak >= 1, kurangiGerak)
+  const mnj = useCountUp(skor.manajemen, babak >= 1, kurangiGerak)
+  const res = useCountUp(skor.resiliensi, babak >= 1, kurangiGerak)
+  const total = useCountUp(skor.total, babak >= 1, kurangiGerak)
 
   // CODEX audit 2026-07-04: dulu dihitung ulang di sini dari diagnosisBenar/
   // totalPasien saja — beda dari formula resmi (scoring.ts) yang penyebutnya
