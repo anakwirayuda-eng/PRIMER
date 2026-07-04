@@ -147,6 +147,7 @@ export function buatEncounter(pasien: PasienAktif): EncounterState {
     resep: [],
     edukasi: [],
     tindakan: [],
+    ditanyaKetus: [],
     firewallTerpicu: 0,
   }
 }
@@ -173,29 +174,44 @@ export function aksiKlinik(
         return gagal(enc, `Pertanyaan '${action.pertanyaanId}' tidak ada pada kasus ini.`)
       }
 
-      // Pertanyaan berulang: pasien mengulang jawaban, tanpa menggeser state.
-      if (enc.ditanya.includes(tanya.id)) {
+      // Pertanyaan berulang (baik yg sudah dijawab sungguhan MAUPUN yg sudah
+      // pernah diklik saat ketus): pasien mengulang, tanpa menggeser state.
+      if (enc.ditanya.includes(tanya.id) || enc.ditanyaKetus.includes(tanya.id)) {
         const teks =
           enc.sabar <= 0 ? rng.pick(JAWABAN_KETUS) : jawabanUntuk(tanya, enc.pasien.persona)
         return { enc, events: [{ type: 'PASIEN_MENJAWAB', teks }] }
       }
 
-      const ditanya = [...enc.ditanya, tanya.id]
       let turun = 0
       if (adalahDistraktor(tanya)) turun += PENALTI_DISTRAKTOR
-      if (ditanya.length >= AMBANG_PERTANYAAN_PANJANG) turun += PENALTI_PERTANYAAN_PANJANG
+      // Ambang "pertanyaan panjang" pakai TOTAL klik (ketus atau tidak) — pasien
+      // sama lelahnya diinterogasi terlepas jawabannya informatif atau ketus.
+      if (enc.ditanya.length + enc.ditanyaKetus.length + 1 >= AMBANG_PERTANYAAN_PANJANG) {
+        turun += PENALTI_PERTANYAAN_PANJANG
+      }
       const sabar = clamp(enc.sabar - turun, 0, SABAR_AWAL)
 
       // Sabar habis → jawaban ketus = TIDAK ada informasi klinis yang keluar.
-      // Pertanyaan itu tak dicatat sebagai "ditanya": mengklik tombol bukan
-      // sama dengan menggali data (temuan audit CODEX — kredit esensial/OLDCARTS
-      // hanya untuk jawaban sungguhan).
+      // Pertanyaan itu TAK memberi kredit esensial/OLDCARTS (temuan audit CODEX
+      // — kredit hanya untuk jawaban sungguhan) — dicatat ke `ditanyaKetus`,
+      // BUKAN `ditanya`. TAPI klik distraktor tetaplah instingsi klinis buruk:
+      // `ditanyaKetus` tetap dihitung utk penalti distraktor di nilaiEncounter
+      // (DeepThink #2 — dulu klik distraktor pasca-ketus lolos tanpa penalti
+      // krn tak pernah tercatat di mana pun).
       const jawabKetus = sabar <= 0
       const teks = jawabKetus ? rng.pick(JAWABAN_KETUS) : jawabanUntuk(tanya, enc.pasien.persona)
       const events: GameEvent[] = [{ type: 'PASIEN_MENJAWAB', teks }]
       if (turun > 0 && sabar < AMBANG_SABAR_MENIPIS) events.push({ type: 'SABAR_MENIPIS' })
 
-      return { enc: { ...enc, ditanya: jawabKetus ? enc.ditanya : ditanya, sabar }, events }
+      return {
+        enc: {
+          ...enc,
+          ditanya: jawabKetus ? enc.ditanya : [...enc.ditanya, tanya.id],
+          ditanyaKetus: jawabKetus ? [...enc.ditanyaKetus, tanya.id] : enc.ditanyaKetus,
+          sabar,
+        },
+        events,
+      }
     }
 
     /* -- Pemeriksaan ---------------------------------------------------------- */
@@ -387,7 +403,14 @@ export function nilaiEncounter(
   for (const q of kasus.anamnesis) for (const d of q.oldcarts ?? []) dimensiTersedia.add(d)
   const denominatorOldcarts = Math.max(1, Math.min(dimensiTersedia.size, TOTAL_DIMENSI_OLDCARTS))
 
-  const distraktorDitanya = ditanyaQ.filter(adalahDistraktor).length
+  // DeepThink #2: klik distraktor SETELAH sabar habis (dicatat ke ditanyaKetus,
+  // bukan ditanya — supaya tak dapat kredit) tetaplah instingsi klinis buruk;
+  // tanpa ini mahasiswa bisa spam-klik semua distraktor sisa begitu pasien
+  // ngambek tanpa penalti tambahan sama sekali.
+  const distraktorKetus = enc.ditanyaKetus
+    .map((id) => petaTanya.get(id))
+    .filter((q): q is PertanyaanAnamnesis => q !== undefined && adalahDistraktor(q)).length
+  const distraktorDitanya = ditanyaQ.filter(adalahDistraktor).length + distraktorKetus
 
   const skorAnamnesis = clamp(
     Math.round(
@@ -477,30 +500,43 @@ export function nilaiEncounter(
     )
     return antibiotikDiresepkan.length > 1
   })
+  // Stewardship: antibiotik diresepkan padahal tatalaksana benar tidak memuatnya
+  // (obatBenar maupun grup alternatif yang sah). Dihitung SEBELUM skorTerapi
+  // (DeepThink #3) — sebelumnya cuma direkam ke tally, TAK PERNAH menyentuh
+  // skor terapi sendiri, jadi Amoksisilin serampangan sama ringannya skornya
+  // dgn Vitamin C berlebih. Antimicrobial stewardship butuh guillotine sendiri,
+  // BERTUMPUK di atas obatDiLuar (pola sama obatBerbahaya di atas — satu obat
+  // salah bisa kena dua kategori penalti sekaligus, itu memang disengaja).
+  const resepAdaAntibiotik = enc.resep.some((id) => pack.obat[id]?.antibiotik === true)
+  const indikasiAntibiotik =
+    obatBenar.some((id) => pack.obat[id]?.antibiotik === true) ||
+    idAlternatifSah.size > 0 && [...idAlternatifSah].some((id) => pack.obat[id]?.antibiotik === true)
+  const antibiotikTanpaIndikasi = resepAdaAntibiotik && !indikasiAntibiotik
   let skorTerapi = clamp(
     Math.round(
       100 * rasioTerapi -
         15 * obatDiLuar -
         25 * obatBerbahaya -
         (antibiotikGandaDalamGrup ? 20 : 0) -
-        15 * tindakanDiLuar,
+        15 * tindakanDiLuar -
+        (antibiotikTanpaIndikasi ? 25 : 0),
     ),
     0,
     100,
   )
   // Keputusan interim yang SAH: observasi sambil menunggu hasil lab besok
   // (mis. tunda OAT sampai BTA terkonfirmasi) tidak boleh dinilai gagal terapi.
+  // WAJIB lab itu RELEVAN dgn kasus (DeepThink #1) — tanpa ini mahasiswa bisa
+  // memesan lab APA SAJA ber-hasilBesok (mis. kultur darah utk panu) demi
+  // proteksi skor 70 gratis, tak peduli lab itu ada hubungannya dgn kasus atau
+  // tidak.
   const menungguLabBesok =
-    enc.disposisi === 'observasi' && enc.labDipesan.some((id) => pack.lab[id]?.hasilBesok)
+    enc.disposisi === 'observasi' &&
+    enc.labDipesan.some((id) => {
+      if (!pack.lab[id]?.hasilBesok) return false
+      return kasus.lab.find((l) => l.id === id)?.relevan === true
+    })
   if (menungguLabBesok && obatBerbahaya === 0) skorTerapi = Math.max(skorTerapi, 70)
-
-  // Stewardship: antibiotik diresepkan padahal tatalaksana benar tidak memuatnya
-  // (obatBenar maupun grup alternatif yang sah).
-  const resepAdaAntibiotik = enc.resep.some((id) => pack.obat[id]?.antibiotik === true)
-  const indikasiAntibiotik =
-    obatBenar.some((id) => pack.obat[id]?.antibiotik === true) ||
-    idAlternatifSah.size > 0 && [...idAlternatifSah].some((id) => pack.obat[id]?.antibiotik === true)
-  const antibiotikTanpaIndikasi = resepAdaAntibiotik && !indikasiAntibiotik
 
   /* -- Edukasi: PRIORITISASI (M7 34b/O4 — precision with opportunity cost) ------ */
   // Konstruk lama (cakupan-set) melahirkan strategi degenerate "4 topik sakti"
@@ -559,6 +595,14 @@ export function nilaiEncounter(
       assessment.includes(kasus.icd10.toLowerCase()) ||
       (enc.diagnosis !== undefined && assessment.includes(enc.diagnosis.icd10.toLowerCase()))
     if (menyebutDiagnosis) skor += 20
+    // Anti copy-paste (DeepThink #4): isi satu kolom lalu Ctrl+C/Ctrl+V ke
+    // keempat kolom S-B-A-R meloloskan panjang≥20 & angka tanpa berpikir klinis
+    // sama sekali. Hanya bandingkan kolom yg TERISI (non-kosong) — dua kolom
+    // kosong yang "sama" (keduanya "") bukan copy-paste, cuma belum diisi, dan
+    // sudah kena nol poin panjang di atas; jangan dihukum dua kali.
+    const isianTerisi = isian.map((t) => t.trim().toLowerCase()).filter((t) => t.length > 0)
+    const adaDuplikat = new Set(isianTerisi).size < isianTerisi.length
+    if (adaDuplikat) skor -= 50
     sbarSkor = clamp(skor, 0, 100)
   }
 

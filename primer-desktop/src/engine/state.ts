@@ -81,8 +81,16 @@ export interface SbarIsi {
 export interface EncounterState {
   pasien: PasienAktif
   fase: FaseEncounter
-  /** id pertanyaan yang sudah ditanya, berurutan. */
+  /** id pertanyaan yang sudah ditanya (dgn jawaban sungguhan), berurutan. */
   ditanya: string[]
+  /**
+   * id pertanyaan yang diklik SETELAH sabar habis (DeepThink #2) — jawaban
+   * ketus, TIDAK memberi kredit esensial/OLDCARTS (spt `ditanya`), tapi klik
+   * distraktor tetaplah instingsi buruk yang tetap dihukum di nilaiEncounter.
+   * Terpisah dari `ditanya` supaya kredit & penalti bisa dibedakan tanpa
+   * merusak fix "sabar-habis tak beri kredit anamnesis" yang sudah ada.
+   */
+  ditanyaKetus: string[]
   /** Gauge sabar pasien 0-100; turun saat pertanyaan tidak relevan. */
   sabar: number
   vitalDiukur: boolean

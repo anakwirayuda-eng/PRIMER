@@ -226,6 +226,9 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (objek(klinik['aktif'])) {
     const aktif = klinik['aktif'] as Record<string, unknown>
     if (!Array.isArray(aktif['tindakan'])) aktif['tindakan'] = []
+    // Encounter aktif dari save pra-ditanyaKetus (DeepThink #2) sama — nilaiEncounter
+    // meng-iterasinya utk penalti distraktor pasca-ketus.
+    if (!Array.isArray(aktif['ditanyaKetus'])) aktif['ditanyaKetus'] = []
   }
   // Pasien lama tanpa RW mendapat RW 1 (cukup untuk melanjutkan save lama).
   for (const p of klinik['antrian'] as unknown[]) {

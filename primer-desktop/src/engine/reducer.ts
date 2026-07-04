@@ -309,8 +309,15 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       let jadwal = s.jadwal
       let penilaianFinal: PenilaianEncounter = nilai
       const resepBerbahaya = (kasus.tatalaksana.obatSalahUmum ?? []).some((o) => encFinal.resep.includes(o.id))
+      // WAJIB lab itu RELEVAN dgn kasus (DeepThink #1, sinkron dgn clinic.ts) —
+      // tanpa ini "observasi" bisa dipakai sbg kedok memesan lab apa saja lalu
+      // dikecualikan dari konsekuensi tanpa alasan klinis nyata.
       const observasiMenungguLab =
-        action.jenis === 'observasi' && encFinal.labDipesan.some((id) => pack.lab[id]?.hasilBesok)
+        action.jenis === 'observasi' &&
+        encFinal.labDipesan.some((id) => {
+          if (!pack.lab[id]?.hasilBesok) return false
+          return kasus.lab.find((l) => l.id === id)?.relevan === true
+        })
       const pantasKonsekuensi =
         !nilai.diagnosisBenar || nilai.skorTerapi < 50 || resepBerbahaya || nilai.cowboy
       if (kasus.konsekuensi && pantasKonsekuensi && !observasiMenungguLab && action.jenis !== 'rujuk') {
@@ -325,6 +332,31 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
             pasienId: encFinal.pasien.id,
             kasusId: kasus.id,
             catatan: `${encFinal.pasien.nama} — ${kasus.konsekuensi.kondisiKembali}`,
+            nama: encFinal.pasien.nama,
+            usia: encFinal.pasien.usia,
+            jenisKelamin: encFinal.pasien.jenisKelamin,
+            rw: encFinal.pasien.rw,
+            ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+          },
+        ]
+        penilaianFinal = { ...nilai, konsekuensiDijadwalkan: true }
+      } else if (observasiMenungguLab) {
+        // DeepThink #1 (celah alur fatal): observasi-menunggu-lab sengaja
+        // dikecualikan dari konsekuensi (benar — itu keputusan interim yang
+        // sah), TAPI sebelumnya juga tak pernah dijadwalkan kembali SAMA
+        // SEKALI — hasil lab tiba di kotak masuk besok, pasiennya sendiri
+        // lenyap dari semesta game selamanya. Jadwalkan kembali BESOK PAGI
+        // pasti (bukan rentang kembaliHariMin/Max — itu utk memburuk, ini
+        // netral) utk evaluasi hasil, reuse flag/pesan debrief yang sama.
+        jadwal = [
+          ...jadwal,
+          {
+            id: `jadwal_evaluasi_${s.hari}_${encFinal.pasien.id}`,
+            hari: s.hari + 1,
+            jenis: 'pasien_kembali',
+            pasienId: encFinal.pasien.id,
+            kasusId: kasus.id,
+            catatan: `${encFinal.pasien.nama} — kembali untuk evaluasi hasil lab kemarin.`,
             nama: encFinal.pasien.nama,
             usia: encFinal.pasien.usia,
             jenisKelamin: encFinal.pasien.jenisKelamin,
@@ -1046,10 +1078,46 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
     // bermasalah (0.25 dasar → hingga 0.45 pada burnout 100).
     const sisa = s.klinik.antrian.length
     let bermasalah = 0
+    let jadwal = s.jadwal
     if (sisa > 0) {
       const pBermasalah = 0.25 + (s.burnout / 100) * 0.2
       const rng = new Rng(s.seed, 'auto', s.hari)
-      for (let i = 0; i < sisa; i++) if (rng.chance(pBermasalah)) bermasalah += 1
+      const rngKembali = new Rng(s.seed, 'auto-kembali', s.hari)
+      for (let i = 0; i < sisa; i++) {
+        if (!rng.chance(pBermasalah)) continue
+        bermasalah += 1
+        // DeepThink #5 (moral hazard "ghosting"): dulu "bermasalah" cuma angka
+        // statistik tak kasat mata (autoBermasalah menyeret akurasi lewat
+        // denominator) — min-maxer bisa menghitung men-skip pasien tak pasti
+        // LEBIH AMAN drpd periksa lalu risiko salah diagnosis yang PASTI
+        // menghukum. Wujudkan kelalaian itu secara fisik: pasien yang di-skip
+        // DAN bermasalah kembali besok dgn kondisi memburuk — reuse
+        // kasus.konsekuensi (kembaliHariMin/Max + kondisiKembali), gated sama
+        // spt jalur DISPOSISI (kasus tanpa konsekuensi = tak ada arc memburuk
+        // utk diwujudkan; tetap kena penalti statistik autoBermasalah saja).
+        const pasienSkip = s.klinik.antrian[i]
+        const kasusSkip = pasienSkip ? pack.kasus[pasienSkip.kasusId] : undefined
+        if (pasienSkip && kasusSkip?.konsekuensi) {
+          const jatuhTempo =
+            s.hari + rngKembali.int(kasusSkip.konsekuensi.kembaliHariMin, kasusSkip.konsekuensi.kembaliHariMax)
+          jadwal = [
+            ...jadwal,
+            {
+              id: `jadwal_terlantar_${s.hari}_${pasienSkip.id}`,
+              hari: jatuhTempo,
+              jenis: 'pasien_kembali',
+              pasienId: pasienSkip.id,
+              kasusId: pasienSkip.kasusId,
+              catatan: `${pasienSkip.nama} — kemarin dilewatkan di antrian. ${kasusSkip.konsekuensi.kondisiKembali}`,
+              nama: pasienSkip.nama,
+              usia: pasienSkip.usia,
+              jenisKelamin: pasienSkip.jenisKelamin,
+              rw: pasienSkip.rw,
+              ...(pasienSkip.keluargaId ? { keluargaId: pasienSkip.keluargaId } : {}),
+            },
+          ]
+        }
+      }
     }
     return {
       state: {
@@ -1057,6 +1125,7 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
         blok: 'siang',
         layar: s.hari >= HARI_BUKA_PETA ? 'peta' : 'meja',
         tally: { ...s.tally, autoBermasalah: s.tally.autoBermasalah + bermasalah },
+        jadwal,
         klinik: {
           ...s.klinik,
           antrian: [],

@@ -70,6 +70,7 @@ describe('<Hud />', () => {
             pasien,
             fase: 'anamnesis',
             ditanya: [],
+            ditanyaKetus: [],
             sabar: 100,
             vitalDiukur: false,
             diperiksa: [],

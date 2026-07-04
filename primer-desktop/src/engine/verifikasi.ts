@@ -104,9 +104,15 @@ function fnv1a(teks: string): string {
  * divonis TIDAK SAH palsu oleh cek NIM baru (CODEX ronde-baru #5);
  * 7 = prosedur klinis kini ternilai (skorTerapi memperhitungkan tindakan wajib
  * + penalti tindakan di luar rencana) — jejak lama tanpa TAMBAH_TINDAKAN untuk
- * 4 kasus prosedur mereplay ke skor terapi berbeda (CODEX ronde-baru #4).
+ * 4 kasus prosedur mereplay ke skor terapi berbeda (CODEX ronde-baru #4);
+ * 8 = triase DeepThink 5 blind spot: (a) menungguLabBesok/observasiMenungguLab
+ * kini wajib lab RELEVAN; (b) klik distraktor pasca-sabar-habis (ditanyaKetus)
+ * kini tetap kena penalti anamnesis; (c) antibiotikTanpaIndikasi kini memotong
+ * skorTerapi (−25), bukan cuma tercatat tally; (d) SBAR copy-paste antar kolom
+ * kini dihukum (−50); (e) pasien yang di-skip DAN bermasalah di antrian pagi
+ * kini bisa dijadwalkan kembali (jadwal baru → jejak lama mereplay beda).
  */
-const REVISI_ENGINE = 7
+const REVISI_ENGINE = 8
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

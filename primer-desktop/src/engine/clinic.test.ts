@@ -456,6 +456,62 @@ describe('aksiKlinik — TANYA', () => {
     expect(jawab?.teks).not.toBe(qDistraktor?.jawab)
   })
 
+  it('DeepThink #2: klik distraktor SETELAH sabar habis dicatat ke ditanyaKetus (bukan hilang tanpa jejak)', () => {
+    const enc: EncounterState = { ...buatEncounter(buatPasien()), sabar: 0 }
+    const { enc: baru } = aksiKlinik(
+      enc,
+      { type: 'TANYA', pertanyaanId: 'q_distraktor' },
+      KASUS_FARINGITIS,
+      PACK,
+      rngTest(),
+    )
+    // TIDAK dapat kredit (ditanya tetap kosong — pola lama tetap dipertahankan)...
+    expect(baru.ditanya).toEqual([])
+    // ...TAPI kini tercatat ke ditanyaKetus supaya nilaiEncounter bisa menghukumnya.
+    expect(baru.ditanyaKetus).toEqual(['q_distraktor'])
+  })
+
+  it('DeepThink #2: klik pertanyaan ESENSIAL setelah sabar habis TETAP tak dapat kredit (regresi thd fix lama)', () => {
+    const enc: EncounterState = { ...buatEncounter(buatPasien()), sabar: 0 }
+    const { enc: baru } = aksiKlinik(
+      enc,
+      { type: 'TANYA', pertanyaanId: 'q_onset' }, // esensial, BUKAN distraktor
+      KASUS_FARINGITIS,
+      PACK,
+      rngTest(),
+    )
+    expect(baru.ditanya).toEqual([]) // tak dapat kredit esensial/OLDCARTS
+    expect(baru.ditanyaKetus).toEqual(['q_onset']) // tapi tercatat (gate anti-spam repeat)
+  })
+
+  it('pertanyaan yg sudah diklik SAAT ketus, diklik ulang → tak berubah (gate anti-repeat berlaku juga utk ditanyaKetus)', () => {
+    let enc: EncounterState = { ...buatEncounter(buatPasien()), sabar: 0 }
+    enc = jalankan(enc, [{ type: 'TANYA', pertanyaanId: 'q_distraktor' }], KASUS_FARINGITIS).enc
+    expect(enc.ditanyaKetus).toEqual(['q_distraktor'])
+    const { enc: baru } = aksiKlinik(
+      enc,
+      { type: 'TANYA', pertanyaanId: 'q_distraktor' },
+      KASUS_FARINGITIS,
+      PACK,
+      rngTest(),
+    )
+    expect(baru.ditanyaKetus).toEqual(['q_distraktor']) // tak dobel
+    expect(baru.ditanya).toEqual([])
+  })
+
+  it('DeepThink #2: distraktor pasca-ketus tetap menghukum skorAnamnesis di nilaiEncounter — dulu lolos gratis', () => {
+    const dasar: EncounterState = { ...buatEncounter(buatPasien()), ditanya: ['q_onset'] }
+    const tanpaSpam = nilaiEncounter({ ...dasar, disposisi: 'pulang' }, KASUS_FARINGITIS, PACK)
+    // Sebelum fix: spam 3 distraktor pasca-ketus = GRATIS (tak pernah tercatat
+    // di mana pun) — skorAnamnesis identik dgn tanpa spam sama sekali.
+    const spamDistraktor = nilaiEncounter(
+      { ...dasar, ditanyaKetus: ['q_distraktor'], disposisi: 'pulang' },
+      KASUS_FARINGITIS,
+      PACK,
+    )
+    expect(spamDistraktor.skorAnamnesis).toBeLessThan(tanpaSpam.skorAnamnesis)
+  })
+
   it('pertanyaan duplikat tidak dicatat dua kali dan tidak menggerus sabar lagi', () => {
     const enc = buatEncounter(buatPasien())
     const { enc: baru } = jalankan(enc, [
@@ -910,6 +966,26 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     )
     const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_VIRAL, PACK)
     expect(nilai.antibiotikTanpaIndikasi).toBe(true)
+    // DeepThink #3: dulu antibiotikTanpaIndikasi cuma DICATAT (tally/Dinkes),
+    // TAK PERNAH memotong skorTerapi sendiri — Amoksisilin serampangan sama
+    // ringannya dgn Vitamin C berlebih. paracetamol_500 (obatBenar, 1/1 slot,
+    // 100%) + eritromisin_500 (obatDiLuar −15, DAN kini antibiotikTanpaIndikasi
+    // −25 — bertumpuk disengaja, pola sama obatBerbahaya) → 100−15−25 = 60.
+    expect(nilai.skorTerapi).toBe(60)
+  })
+
+  it('antibiotik tanpa indikasi memotong skorTerapi −25 (bertumpuk di atas obatDiLuar, DeepThink #3)', () => {
+    const KASUS_AB: KasusKlinis = { ...KASUS_VIRAL, id: 'ab_mini' }
+    const pack = { ...PACK, kasus: { ...PACK.kasus, ab_mini: KASUS_AB } }
+    const skor = (resep: string[]): number => {
+      let e = buatEncounterFase(buatPasien({ kasusId: 'ab_mini' }), 'terapi')
+      for (const obatId of resep) e = jalankan(e, [{ type: 'TAMBAH_OBAT', obatId }], KASUS_AB).enc
+      return nilaiEncounter({ ...e, disposisi: 'pulang' }, KASUS_AB, pack).skorTerapi
+    }
+    // Obat lain di luar tatalaksana (bukan antibiotik) — cuma −15.
+    expect(skor(['paracetamol_500', 'ibuprofen_400'])).toBe(85)
+    // Antibiotik tanpa indikasi — −15 (obatDiLuar) DAN −25 (stewardship) = −40.
+    expect(skor(['paracetamol_500', 'amoxicillin_500'])).toBe(60)
   })
 
   it('obatAlternatif: monoterapi benar dinilai penuh, polifarmasi sekelas tak berhadiah/berhukum', () => {
@@ -1018,6 +1094,36 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     expect(nilai.labTakRelevan).toBe(2)
   })
 
+  it('DeepThink #1: observasi + lab hasilBesok TAK RELEVAN tidak mendapat proteksi skor 70 gratis', () => {
+    // bta_sputum: hasilBesok:true TAPI relevan:false pada faringitis (fixture
+    // KASUS_FARINGITIS) — sebelum fix, memesan lab APA SAJA ber-hasilBesok lalu
+    // Observasi = skor 70 gratis tanpa terapi benar sama sekali.
+    const enc: EncounterState = {
+      ...buatEncounter(buatPasien()),
+      labDipesan: ['bta_sputum'],
+      disposisi: 'observasi',
+    }
+    const nilai = nilaiEncounter(enc, KASUS_FARINGITIS, PACK)
+    // Tanpa obat sama sekali: rasioTerapi 0/2 slot = 0 → skorTerapi 0, TIDAK
+    // di-floor ke 70 krn lab yg dipesan tak relevan dgn kasus ini.
+    expect(nilai.skorTerapi).toBe(0)
+  })
+
+  it('DeepThink #1: observasi + lab hasilBesok RELEVAN tetap dapat proteksi skor 70 (perilaku sah dipertahankan)', () => {
+    const KASUS_OBS: KasusKlinis = {
+      ...KASUS_FARINGITIS,
+      id: 'obs_mini',
+      lab: [{ id: 'bta_sputum', hasil: 'Menunggu hasil', flag: 'normal', relevan: true }],
+    }
+    const enc: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'obs_mini' })),
+      labDipesan: ['bta_sputum'],
+      disposisi: 'observasi',
+    }
+    const nilai = nilaiEncounter(enc, KASUS_OBS, PACK)
+    expect(nilai.skorTerapi).toBe(70)
+  })
+
   it('SBAR lengkap yang menyebut diagnosis dinilai 100; tanpa SBAR skor tidak ada', () => {
     const dasarPneumonia: EncounterState = {
       ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3, nama: 'Ade Bima' })),
@@ -1058,6 +1164,63 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     const nilai = nilaiEncounter(enc, KASUS_RUJUK, PACK)
     // Semua field < 20 karakter; assessment menyebut ICD-10 → hanya +20.
     expect(nilai.sbarSkor).toBe(20)
+  })
+
+  it('SBAR copy-paste (keempat kolom identik) dihukum −50 (DeepThink #4)', () => {
+    const teksSama = 'Pasien demam 3 hari 1234567890 kondisi umum stabil terpantau'
+    const enc: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3 })),
+      diagnosis: { icd10: 'J18.9', jenis: 'suspek' },
+      disposisi: 'rujuk',
+      sbar: {
+        situation: teksSama,
+        background: teksSama,
+        assessment: teksSama,
+        recommendation: teksSama,
+      },
+    }
+    const nilai = nilaiEncounter(enc, KASUS_RUJUK, PACK)
+    // Tanpa anti-copas: 4×20 (semua ≥20 char) = 80 — situation punya angka jadi
+    // LOLOS penalti −20 "tanpa data", tak menyebut diagnosis jadi tak dapat +20.
+    // Dgn fix anti-copas: 80 − 50 = 30.
+    expect(nilai.sbarSkor).toBe(30)
+  })
+
+  it('SBAR beda kata sedikit (bukan copy-paste identik) TIDAK kena hukuman copas', () => {
+    const enc: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3 })),
+      diagnosis: { icd10: 'J18.9', jenis: 'suspek' },
+      disposisi: 'rujuk',
+      sbar: {
+        situation: 'Anak laki-laki 3 tahun sesak napas sejak tadi malam.',
+        background: 'Demam 2 hari, batuk berdahak, belum pernah sesak.',
+        assessment: 'Suspek pneumonia berat (J18.9), RR meningkat.',
+        recommendation: 'Mohon penanganan lanjutan rawat inap segera.',
+      },
+    }
+    const nilai = nilaiEncounter(enc, KASUS_RUJUK, PACK)
+    expect(nilai.sbarSkor).toBe(100)
+  })
+
+  it('dua kolom SBAR sama-sama KOSONG bukan copy-paste — tak dihukum ganda (sudah nol dari panjang)', () => {
+    const enc: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3 })),
+      diagnosis: { icd10: 'J18.9', jenis: 'suspek' },
+      disposisi: 'rujuk',
+      sbar: {
+        // Sengaja TIDAK menyebut nama kasus/ICD-10 di sini — isolasi murni
+        // concern panjang+kosong, tanpa bonus diagnosis mengaburkan aritmetika.
+        situation: 'Anak laki-laki 3 tahun sesak napas RR 52, retraksi (+).',
+        background: '',
+        assessment: 'Kondisi memburuk perlu penanganan lanjutan segera.',
+        recommendation: '',
+      },
+    }
+    const nilai = nilaiEncounter(enc, KASUS_RUJUK, PACK)
+    // situation (≥20, ada angka → lolos penalti) +20; assessment (≥20, tak
+    // sebut diagnosis) +20; background/recommendation kosong = +0. Total 40.
+    // BUKAN 40−50 — dua kolom kosong "sama" tak boleh dianggap copas.
+    expect(nilai.sbarSkor).toBe(40)
   })
 })
 
