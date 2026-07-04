@@ -113,6 +113,23 @@ function bukanFase(
   return gagal(enc, `Belum waktunya — pasien ini sedang di tahap ${enc.fase}, bukan ${diharapkan}.`)
 }
 
+/**
+ * Gabungkan SEMUA temuan pemeriksaan fisik pada satu region (CODEX ronde-12):
+ * beberapa kasus (mis. BPPV, Bell's palsy, glaukoma akut, hordeolum, serumen)
+ * sengaja punya ≥2 entri `pemeriksaanFisik` dengan `region` yang SAMA (temuan
+ * berlapis di organ yang sama — mis. mata: TIO tinggi + visus turun). `.find()`
+ * lama cuma mengambil entri PERTAMA; karena UI cuma satu tombol/chip per
+ * region (tak ada cara memicu region yang sama dua kali dgn hasil berbeda),
+ * entri kedua PERMANEN tak terlihat pemain. Skoring tak terdampak (regionRelevan
+ * sudah dihitung sbg Set per-region, bukan per-entri) — ini murni soal konten
+ * klinis yang hilang. Gabung semua temuan region itu jadi satu narasi.
+ */
+export function temuanUntukRegion(kasus: KasusKlinis, region: string): string {
+  const entri = kasus.pemeriksaanFisik.filter((t) => t.region === region)
+  if (entri.length === 0) return 'dalam batas normal'
+  return entri.map((t) => t.temuan).join(' ')
+}
+
 /* ---------------------------------------------------------------------------
  * buatEncounter — pasien baru duduk di ruang periksa
  * ------------------------------------------------------------------------- */
@@ -193,8 +210,7 @@ export function aksiKlinik(
     case 'PERIKSA': {
       const salahFase = bukanFase(enc, 'pemeriksaan')
       if (salahFase) return salahFase
-      const entri = kasus.pemeriksaanFisik.find((t) => t.region === action.region)
-      const temuan = entri ? entri.temuan : 'dalam batas normal'
+      const temuan = temuanUntukRegion(kasus, action.region)
       const diperiksa = enc.diperiksa.includes(action.region)
         ? enc.diperiksa
         : [...enc.diperiksa, action.region]

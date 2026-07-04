@@ -406,6 +406,13 @@
   border-color: transparent;
 }
 
+/* CODEX ronde-12: --daun-100 (pastel terang) tak diremap gelap sementara
+   --daun-800 (teks) diremap mint terang di mode malam → ~1.35:1. Pola sama
+   .klinik-banding--aktif: tint translusen atas latar gelap, bukan pastel. */
+[data-mode='malam'] .klinik-regio__chip--sudah {
+  background: rgba(62, 208, 164, 0.16);
+}
+
 .klinik-lab__baris {
   display: flex;
   align-items: center;
@@ -586,6 +593,11 @@
   background: var(--daun-100);
   color: var(--daun-800);
   border-color: transparent;
+}
+
+/* CODEX ronde-12: pola sama .klinik-regio__chip--sudah di atas. */
+[data-mode='malam'] .klinik-eduk__chip--dipilih {
+  background: rgba(62, 208, 164, 0.16);
 }
 
 /* -- Disposisi -------------------------------------------------------------------- */

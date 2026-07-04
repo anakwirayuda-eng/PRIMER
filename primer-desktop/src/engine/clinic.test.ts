@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { aksiKlinik, buatEncounter, nilaiEncounter, KAPASITAS_EDUKASI } from './clinic'
+import { aksiKlinik, buatEncounter, nilaiEncounter, temuanUntukRegion, KAPASITAS_EDUKASI } from './clinic'
 import { Rng } from './core/rng'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
@@ -730,6 +730,44 @@ describe('aksiKlinik + nilaiEncounter — prosedur/tindakan klinis (CODEX ronde-
     const benar = nilaiEncounter(terapiProsedur(['reposisi_mini']), KASUS_PROSEDUR, PACK)
     const salah = nilaiEncounter(terapiProsedur(['reposisi_mini', 'nebul_mini']), KASUS_PROSEDUR, PACK)
     expect(salah.skorTerapi).toBeLessThan(benar.skorTerapi)
+  })
+})
+
+describe('temuanUntukRegion — gabung temuan region duplikat (CODEX ronde-12 #2)', () => {
+  // Pola konten nyata (BPPV/Bell's palsy/glaukoma/hordeolum/serumen): 1 kasus
+  // sengaja punya ≥2 entri pemeriksaanFisik pada region YANG SAMA (temuan
+  // berlapis). `.find()` lama cuma ambil entri pertama → entri kedua permanen
+  // tak terlihat (UI cuma 1 tombol/chip per region, tak ada cara memicu ulang).
+  const KASUS_DUPLIKAT_REGION: KasusKlinis = {
+    ...KASUS_FARINGITIS,
+    id: 'duplikat_mini',
+    pemeriksaanFisik: [
+      { region: 'mata', temuan: 'TIO teraba keras seperti batu.', relevan: true },
+      { region: 'mata', temuan: 'Visus turun drastis.', relevan: true },
+      { region: 'umum', temuan: 'Tampak kesakitan.', relevan: true },
+    ],
+  }
+
+  it('region dgn 1 entri: kembalikan temuan itu saja', () => {
+    expect(temuanUntukRegion(KASUS_DUPLIKAT_REGION, 'umum')).toBe('Tampak kesakitan.')
+  })
+
+  it('region dgn 2 entri: GABUNG keduanya, bukan cuma entri pertama', () => {
+    const hasil = temuanUntukRegion(KASUS_DUPLIKAT_REGION, 'mata')
+    expect(hasil).toContain('TIO teraba keras seperti batu.')
+    expect(hasil).toContain('Visus turun drastis.') // dulu hilang — CODEX ronde-12 #2
+  })
+
+  it('region tanpa entri: "dalam batas normal"', () => {
+    expect(temuanUntukRegion(KASUS_DUPLIKAT_REGION, 'abdomen')).toBe('dalam batas normal')
+  })
+
+  it('PERIKSA (aksiKlinik) memakai temuan gabungan, bukan entri pertama saja', () => {
+    const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
+    const { events } = aksiKlinik(enc, { type: 'PERIKSA', region: 'mata' }, KASUS_DUPLIKAT_REGION, PACK, rngTest())
+    const temuanEvent = cariEvent(events, 'TEMUAN_FISIK')
+    expect(temuanEvent?.temuan).toContain('TIO teraba keras seperti batu.')
+    expect(temuanEvent?.temuan).toContain('Visus turun drastis.')
   })
 })
 

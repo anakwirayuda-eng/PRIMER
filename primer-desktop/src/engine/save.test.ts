@@ -246,3 +246,51 @@ describe('deserialize — desa.keluarga/desa.rw/layar (CODEX ronde-11 #3)', () =
     expect(hasil.layar).toBe('dex')
   })
 })
+
+describe('deserialize — flags/refleksi/desa.kader/prolanis.roster (CODEX ronde-12 #1)', () => {
+  it('flags = null dipulihkan ke {} (bukan throw di hariBaru saat baca bonusStaminaBesok)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['flags'] = null
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.flags).toEqual({})
+    expect(() => advance(hasil, { type: 'LANJUTKAN' }, PACK)).not.toThrow()
+  })
+
+  it('refleksi = null dipulihkan ke {} (bukan crash render MejaKerja)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['refleksi'] = null
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.refleksi).toEqual({})
+  })
+
+  it('desa.kader = "rusak" (string) ditolak, bukan lolos lalu throw di kader.ts', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['kader'] = 'rusak'
+    })
+    expect(() => deserialize(json, PACK)).not.toThrow()
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('prolanis.roster berisi entri bukan-PesertaProlanis disaring, bukan meloloskan narasi "undefined"', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['prolanis'] = {
+        roster: [
+          'rusak',
+          { id: 'x' }, // parsial, kurang field
+          { id: 'p1', nama: 'Bu Tuti', usia: 55, jenisKelamin: 'P', rw: 1, jenis: 'ht', param: 150 },
+        ],
+      }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.prolanis.roster).toHaveLength(1)
+    expect(hasil.prolanis.roster[0]?.id).toBe('p1')
+  })
+})

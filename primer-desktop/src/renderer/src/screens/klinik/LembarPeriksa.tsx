@@ -7,6 +7,7 @@
 import { PACK } from '@content/index'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
+import { temuanUntukRegion } from '@engine/clinic'
 import type { KasusKlinis, TandaVital } from '@content/types'
 import {
   LABEL_PERSONA,
@@ -162,8 +163,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
           <div className="klinik-lembar__kosong">&mdash; belum ada regio yang diperiksa &mdash;</div>
         ) : (
           enc.diperiksa.map((r) => {
-            const temuan =
-              kasus.pemeriksaanFisik.find((t) => t.region === r)?.temuan ?? 'dalam batas normal'
+            const temuan = temuanUntukRegion(kasus, r)
             return (
               <div key={r} className="klinik-lembar__qa klinik-tinta">
                 <div className="klinik-lembar__tanya teks-xs teks-lembut">{LABEL_REGION[r]}</div>

@@ -59,6 +59,14 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // pada day-advance. Bukan field yang aman di-backfill parsial (arc/indikator/
   // roster binaan saling terkait) — tolak seluruh save spt tally korup.
   if (!objek((st['desa'] as Record<string, unknown>)['keluarga'])) return null
+  // desa.kader (CODEX ronde-12): sama seperti desa.keluarga/rw — `kader='rusak'`
+  // (string) lolos objek-check `desa`, lalu spread `{...kader}` memecah string
+  // jadi objek ber-key-karakter; `Object.values(kader).sort((a,b)=>a.rw-b.rw||
+  // a.id.localeCompare(...))` — komparator NaN jatuh ke fallback OR lalu THROW
+  // ("Cannot read properties of undefined, reading 'localeCompare'") krn tiap
+  // "entry" cuma sebuah karakter string. Struktur sama entangled dgn rw/keluarga
+  // (feed skor PIS-PK/IKS) — tolak, bukan backfill parsial.
+  if (!objek((st['desa'] as Record<string, unknown>)['kader'])) return null
   // layar (CODEX ronde-11 #3): tak pernah divalidasi — nilai asing lolos lalu
   // App.tsx (rangkaian `layar === X &&`, tanpa fallback) merender area utama
   // kosong TANPA throw (ErrorBoundary tak menangkap non-error). Bukan field
@@ -134,6 +142,13 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (typeof st['igdHariIni'] !== 'boolean') st['igdHariIni'] = false
   // NIM opsional (ikatan identitas ujian): buang bila bukan string.
   if (st['nim'] !== undefined && typeof st['nim'] !== 'string') delete st['nim']
+  // flags/refleksi (CODEX ronde-12): tak pernah divalidasi. `flags=null` → THROW
+  // ("Cannot read properties of null, reading 'bonusStaminaBesok'") di hariBaru;
+  // `refleksi=null` → crash render MejaKerja (`state.refleksi[hari]`). Keduanya
+  // TIDAK entangled dgn field lain (flags = boolean lepas, refleksi = jurnal
+  // teks bebas per-hari) — aman di-backfill ke kosong, bukan tolak seluruh save.
+  if (!objek(st['flags'])) st['flags'] = {}
+  if (!objek(st['refleksi'])) st['refleksi'] = {}
   // Migrasi-lite M6: save pra-jurnal-penuh → jejak kosong (dossier dari save
   // semacam ini berstatus "tidak dapat diverifikasi", bukan ditolak).
   if (!Array.isArray(st['jejak'])) st['jejak'] = []
@@ -169,6 +184,24 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // atas tapi tanpa roster → MULAI_PROLANIS THROW. Pastikan roster array.
   const prolanisSt = st['prolanis'] as Record<string, unknown>
   if (!Array.isArray(prolanisSt['roster'])) prolanisSt['roster'] = []
+  // Entri roster non-PesertaProlanis (CODEX ronde-12): array-check di atas cuma
+  // menjamin WRAPPER-nya array — entri semacam string lolos lalu kartuProlanis()
+  // (kegiatan.ts) merender narasi "undefined" ke pemain (p.param/p.jenis tak
+  // ada di primitif). Saring entri yang bukan objek berbentuk lengkap.
+  prolanisSt['roster'] = (prolanisSt['roster'] as unknown[]).filter(
+    (p) =>
+      objek(p) &&
+      typeof p['id'] === 'string' &&
+      typeof p['nama'] === 'string' &&
+      typeof p['usia'] === 'number' &&
+      Number.isFinite(p['usia']) &&
+      (p['jenisKelamin'] === 'L' || p['jenisKelamin'] === 'P') &&
+      typeof p['rw'] === 'number' &&
+      Number.isFinite(p['rw']) &&
+      (p['jenis'] === 'ht' || p['jenis'] === 'dm') &&
+      typeof p['param'] === 'number' &&
+      Number.isFinite(p['param']),
+  )
   if (typeof st['posyanduRwTerakhir'] !== 'object' || st['posyanduRwTerakhir'] === null) {
     st['posyanduRwTerakhir'] = {}
   }
