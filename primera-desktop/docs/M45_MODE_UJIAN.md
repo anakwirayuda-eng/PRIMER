@@ -115,3 +115,31 @@ perubahan arsitektur (tambah baris tabel).
 dosen WAJIB menolak submission `mode !== 'ujian'` dan mencantumkan paket pada
 laporan. Rekomputasi skor server-side (M6.26) dapat mereplay action-log
 terhadap `seedKurikulum + seed` yang tercatat.
+
+## 7. Tutorial encounter di mode Ujian (catatan pasca-fitur, 2026-07-04)
+
+Dokumen ini ditulis SEBELUM fitur tutorial "onboarding railroaded" ada
+(lihat `CODEX_AUDIT_DOSSIER.md` §23 utk desainnya) — bagian ini menutup
+tensi yang muncul belakangan, supaya audit berikutnya kutip sini, bukan
+re-derive dari nol.
+
+**Tensi**: pasien PERTAMA setiap stase baru (`buildInitialState`) dipaksa jadi
+kasus tutorial (`ispa_common_cold`) yang kebal skor sepenuhnya —
+`tutorialAktif: true` tanpa syarat mode, termasuk Ujian. Surat sambutan Ujian
+di atas (§ ini sendiri secara implisit, teks di `init.ts`) eksplisit bilang
+"yang dinilai adalah caramu berpikir, tercatat di SETIAP KEPUTUSAN" — klaim
+itu literal tidak benar utk pasien pertama.
+
+**Keputusan user (2026-07-04, `CODEX_AUDIT_DOSSIER.md` §25)**: **biarkan
+seragam** — tutorial tetap tampil di kedua mode, TANPA perubahan kode.
+Alasan: (a) berjaga-jaga bila mahasiswa memilih Ujian sbg sesi PERTAMA
+mereka tanpa pernah mencoba Karier dulu untuk belajar UI; (b) dampaknya kecil
+& seragam — cuma 1 pasien "gratis" di awal, sama-sama dialami SEMUA
+mahasiswa satu paket (tak menciptakan ketidakadilan ANTAR mahasiswa, beda
+dari isu keadilan yg jadi fokus §1-3 dokumen ini); (c) skor benar-benar
+dibekukan (bukan cuma ditampilkan beda), jadi tak ada celah integritas
+asesmen — hanya "kesempatan latihan gratis" yg identik utk semua peserta.
+
+**Status**: DITUTUP sbg keputusan desain final. Ronde audit berikutnya yg
+menemukan tensi ini TAK PERLU melaporkannya ulang sbg temuan baru — cukup
+kutip bagian ini.
