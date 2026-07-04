@@ -12,9 +12,20 @@ export function Igd() {
   const state = useGame((s) => s.state)!
   const dispatch = useGame((s) => s.dispatch)
   const igd = state.igd
-  if (!igd) return null
-  const kasus = PACK.kasusIgd[igd.kasusId]
-  if (!kasus) return null
+  // CODEX ronde-11 #4: pola sama Kegiatan.tsx — blank diam-diam tanpa throw
+  // luput ErrorBoundary. save.ts sudah memulihkan IGD dgn kasusId tak dikenal
+  // saat load, ini jaring terakhir bila tetap tercapai (mis. state in-memory).
+  if (!igd || !PACK.kasusIgd[igd.kasusId]) {
+    return (
+      <div className="layar-tak-dikenal">
+        <p>Sesi IGD tidak ditemukan.</p>
+        <button className="tombol" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'meja' })}>
+          Kembali ke Meja Kerja
+        </button>
+      </div>
+    )
+  }
+  const kasus = PACK.kasusIgd[igd.kasusId]!
 
   const stab = igd.stabilitas
   const nadaBar = stab > 60 ? '' : stab > 30 ? 'igd-bar--waspada' : 'igd-bar--bahaya'

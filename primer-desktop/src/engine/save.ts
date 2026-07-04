@@ -53,6 +53,33 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (!Array.isArray(st['inbox'])) return null
   if (!Array.isArray(st['jadwal'])) return null
   if (!Array.isArray(st['log'])) return null
+  // desa.keluarga (CODEX ronde-11 #3): objek-check di atas cuma menjamin `desa`
+  // sendiri objek — `desa.keluarga = null` lolos lalu THROW ("Cannot convert
+  // undefined or null to object") di reducer.ts saat `Object.entries(keluarga)`
+  // pada day-advance. Bukan field yang aman di-backfill parsial (arc/indikator/
+  // roster binaan saling terkait) — tolak seluruh save spt tally korup.
+  if (!objek((st['desa'] as Record<string, unknown>)['keluarga'])) return null
+  // layar (CODEX ronde-11 #3): tak pernah divalidasi — nilai asing lolos lalu
+  // App.tsx (rangkaian `layar === X &&`, tanpa fallback) merender area utama
+  // kosong TANPA throw (ErrorBoundary tak menangkap non-error). Bukan field
+  // skor-kritis → recovery, bukan tolak seluruh save. PENTING: jangan asal
+  // default ke 'meja' — bila sesi (igd/kunjungan/kegiatan/klinik.aktif) tetap
+  // aktif, HUD menahan navigasi (CODEX ronde-11 #1/#2 fix) sehingga 'meja'
+  // dgn sesi aktif TAK TERLIHAT jadi kunci permanen baru. Derive layar dari
+  // sesi yang genuinely aktif dulu, 'meja' hanya bila tak ada sesi apa pun.
+  const LAYAR_SAH = new Set(['meja', 'klinik', 'peta', 'kunjungan', 'kegiatan', 'igd', 'dex', 'rapor', 'laporan'])
+  if (typeof st['layar'] !== 'string' || !LAYAR_SAH.has(st['layar'])) {
+    const klinikSt = st['klinik'] as Record<string, unknown>
+    st['layar'] = objek(st['igd'])
+      ? 'igd'
+      : objek(st['kunjungan'])
+        ? 'kunjungan'
+        : objek(st['kegiatan'])
+          ? 'kegiatan'
+          : objek(klinikSt['aktif'])
+            ? 'klinik'
+            : 'meja'
+  }
 
   // Semua angka inti harus finite — save yang diedit tangan / korup sebagian
   // (NaN, Infinity, string) tidak boleh meracuni skor.
@@ -120,17 +147,21 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (typeof desa['drift'] !== 'object' || desa['drift'] === null) {
     desa['drift'] = { minggu: 1, jumlah: 0 }
   }
-  // Migrasi-lite M2: bonusIks per RW + state program/prolanis/lapangan.
-  if (Array.isArray(desa['rw'])) {
-    for (const r of desa['rw'] as Record<string, unknown>[]) {
-      if (typeof r['bonusIks'] !== 'number') r['bonusIks'] = 0
-    }
-  }
-  // desa.rw korup/kosong (CODEX ronde-baru #3): objek check di atas cuma menjamin
-  // `desa` itu objek — `desa.rw = {}` lolos lalu day-advance/scoring THROW saat
-  // memetakan RW. rw tak pernah sah-kosong; jatuhkan ke "tak ada autosave" (null)
-  // alih-alih membiarkan crash saat lanjut hari.
+  // desa.rw korup/kosong (CODEX ronde-baru #3): `desa.rw = {}` lolos objek-check
+  // `desa` lalu day-advance/scoring THROW saat memetakan RW. rw tak pernah
+  // sah-kosong; jatuhkan ke "tak ada autosave" (null). Dicek SEBELUM loop di
+  // bawah — urutan penting (pola sama gudang/klinik ronde sebelumnya).
   if (!Array.isArray(desa['rw']) || (desa['rw'] as unknown[]).length === 0) return null
+  // Entri desa.rw non-objek (CODEX ronde-11 #3): mis. string di antara entri sah
+  // — `r['bonusIks'] = 0` di bawah men-THROW ("Cannot create property ... on
+  // string") krn modul ESM berjalan strict-mode, assignment properti baru ke
+  // primitif dilarang. rw array tak boleh sebagian valid (kode lain berasumsi
+  // korespondensi RW 1..N lengkap) — entri korup apa pun = seluruh save ditolak.
+  if ((desa['rw'] as unknown[]).some((r) => !objek(r))) return null
+  // Migrasi-lite M2: bonusIks per RW + state program/prolanis/lapangan.
+  for (const r of desa['rw'] as Record<string, unknown>[]) {
+    if (typeof r['bonusIks'] !== 'number') r['bonusIks'] = 0
+  }
 
   if (typeof st['lapanganTerpakai'] !== 'boolean') st['lapanganTerpakai'] = false
   if (typeof st['prolanis'] !== 'object' || st['prolanis'] === null) st['prolanis'] = { roster: [] }

@@ -29,3 +29,15 @@
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* CODEX ronde-11 #3/#4 — jaring terakhir bila `layar` tak dikenal lolos sampai
+   sini (seharusnya sudah dicegah save.ts). */
+.layar-tak-dikenal {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--tinta-pudar, var(--tinta));
+}

@@ -41,7 +41,19 @@ export function Kegiatan() {
   }, [kg?.index])
 
   if (hasil) return <KartuHasil hasil={hasil} onTutup={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })} />
-  if (!kg || !kartu) return null
+  // CODEX ronde-11 #4: `layar==='kegiatan'` tanpa `state.kegiatan` (mis. save
+  // korup) dulu me-return null diam-diam — blank screen TANPA throw, luput dari
+  // ErrorBoundary. Beri jalan keluar eksplisit, bukan kosong.
+  if (!kg || !kartu) {
+    return (
+      <div className="layar-tak-dikenal">
+        <p>Sesi kegiatan lapangan tidak ditemukan.</p>
+        <button className="tombol" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })}>
+          Kembali ke Peta Desa
+        </button>
+      </div>
+    )
+  }
 
   const meta = JUDUL[kg.jenis] ?? { label: 'KEGIATAN', sub: '' }
   const pilihanObj = pilihanTerpilih ? kartu.pilihan.find((p) => p.id === pilihanTerpilih) : null

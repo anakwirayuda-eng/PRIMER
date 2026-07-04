@@ -103,6 +103,12 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       if (action.layar === 'peta' && s.hari < HARI_BUKA_PETA) return err(s, 'Peta desa terbuka besok — hari ini fokus klinik dulu.')
       if (action.layar === 'kunjungan') return err(s, 'Kunjungan dimulai dari kartu keluarga di Peta Desa.')
       if (action.layar === 'laporan' && !s.tamat) return err(s, 'Laporan Akhir terbit saat stase berakhir.')
+      // CODEX ronde-11 #1: sesi kegiatan lapangan (posyandu/prolanis/KLB) aktif
+      // tak menahan navigasi HUD — pemain bisa pindah layar lalu LANJUTKAN,
+      // membuat sesi lenyap tanpa skor (hariBaru mereset `kegiatan` tanpa
+      // syarat). Tegakkan di ENGINE (bukan cuma disable tombol HUD), mengikuti
+      // pola yang sama dgn kunjungan/klinik/IGD.
+      if (s.kegiatan) return err(s, 'Selesaikan kegiatan lapangan dulu.')
       return { state: { ...s, layar: action.layar }, events: [] }
     }
 
@@ -519,6 +525,12 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       // kunjungan lolos di siang yang sama (CODEX ronde-baru #1).
       if (s.lapanganTerpakai || s.hasilKunjunganHariIni)
         return err(s, 'Slot lapangan hari ini sudah terpakai.')
+      // CODEX ronde-11 #2: fix di atas menutup jalur SETELAH kegiatan selesai,
+      // tapi selama kegiatan MASIH BERJALAN `lapanganTerpakai` belum true (baru
+      // di-set saat selesaikanKegiatan) — kunjungan bisa mulai SAMBIL kegiatan
+      // aktif (kegiatan+kunjungan serentak). cekSlotKegiatan sudah cek ini utk
+      // arah sebaliknya (`s.kegiatan || s.kunjungan`); simetrikan di sini.
+      if (s.kegiatan) return err(s, 'Sedang ada kegiatan lapangan berjalan.')
       const kel = s.desa.keluarga[action.keluargaId]
       const kelContent = pack.keluarga[action.keluargaId]
       if (!kel || !kelContent) return err(s, 'Keluarga tidak dikenal.')
@@ -1022,6 +1034,10 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
   if (s.igd) return err(s, 'Pasien IGD menunggumu — nyawa dulu, jadwal belakangan.')
   if (s.kunjungan) return err(s, 'Selesaikan kunjungan dulu.')
   if (s.klinik.aktif) return err(s, 'Selesaikan pasien di ruang periksa dulu.')
+  // CODEX ronde-11 #1: jaring terakhir jika kegiatan tetap aktif via dispatch
+  // langsung (headless) — PINDAH_LAYAR sudah menahan lewat HUD, tapi LANJUTKAN
+  // tak boleh bergantung pada urutan aksi UI.
+  if (s.kegiatan) return err(s, 'Selesaikan kegiatan lapangan dulu.')
 
   if (s.blok === 'pagi') {
     // Sisa antrian di-auto-resolve oleh "instingmu" — dan yang bermasalah IKUT

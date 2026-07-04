@@ -88,4 +88,21 @@ describe('<Hud />', () => {
     expect(screen.getByRole('button', { name: /Rapor/ })).toBeDisabled()
     expect(screen.getByRole('button', { name: /Buku Saku/ })).toBeDisabled()
   })
+
+  it('semua tab terkunci saat kegiatan lapangan aktif (CODEX ronde-11 #1 — dulu tak dijaga sama sekali)', () => {
+    const state = pasangState()
+    useGame.setState({
+      state: {
+        ...state,
+        blok: 'siang',
+        layar: 'kegiatan',
+        kegiatan: { jenis: 'posyandu', rw: 1, kartu: [], index: 0, jawaban: [] },
+      },
+    })
+    render(<Hud />)
+    expect(screen.getByRole('button', { name: /Meja Kerja/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Klinik/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Rapor/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Buku Saku/ })).toBeDisabled()
+  })
 })

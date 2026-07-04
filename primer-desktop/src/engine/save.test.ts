@@ -186,3 +186,63 @@ describe('deserialize — sanitasi nested klinik/desa.rw/prolanis/program (CODEX
     expect(hasil.program.rwFokus).toBe(2)
   })
 })
+
+describe('deserialize — desa.keluarga/desa.rw/layar (CODEX ronde-11 #3)', () => {
+  it('desa.keluarga = null ditolak (bukan sekadar dibiarkan lolos lalu throw di LANJUTKAN)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['keluarga'] = null
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('desa.keluarga = array (bukan objek) juga ditolak', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['keluarga'] = []
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('entri desa.rw berupa string (bukan objek) ditolak, bukan throw saat backfill bonusIks', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      const desa = st['desa'] as Record<string, unknown>
+      const rw = desa['rw'] as unknown[]
+      desa['rw'] = ['entri_rusak', ...rw.slice(1)]
+    })
+    expect(() => deserialize(json, PACK)).not.toThrow()
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('layar tak dikenal dipulihkan ke "meja" bila tak ada sesi aktif', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['layar'] = 'layar_hantu_tak_dikenal'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.layar).toBe('meja')
+  })
+
+  it('layar tak dikenal + kegiatan MASIH aktif dipulihkan ke "kegiatan" (bukan "meja" — cegah kunci baru krn HUD menahan navigasi saat kegiatan aktif)', () => {
+    const s: GameState = {
+      ...buildInitialState('Uji', SEED, PACK),
+      kegiatan: { jenis: 'posyandu', rw: 1, kartu: [], index: 0, jawaban: [] },
+    }
+    const json = rusak(serialize(s), (st) => {
+      st['layar'] = 'layar_hantu_tak_dikenal'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.layar).toBe('kegiatan')
+  })
+
+  it('layar valid dipertahankan apa adanya', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['layar'] = 'dex'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.layar).toBe('dex')
+  })
+})

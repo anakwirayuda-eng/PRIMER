@@ -26,8 +26,21 @@ import { Onboarding, sudahOnboarding } from './components/Onboarding'
 import { usePengaturan } from './usePengaturan'
 import './App.css'
 
+const LAYAR_DIKENAL = new Set([
+  'meja',
+  'klinik',
+  'peta',
+  'kunjungan',
+  'kegiatan',
+  'igd',
+  'dex',
+  'rapor',
+  'laporan',
+])
+
 export default function App() {
   const state = useGame((s) => s.state)
+  const dispatch = useGame((s) => s.dispatch)
   const muatAutosave = useGame((s) => s.muatAutosave)
   const muatMetaDanSlot = useGame((s) => s.muatMetaDanSlot)
   const pengaturan = usePengaturan()
@@ -93,6 +106,18 @@ export default function App() {
             {state.layar === 'dex' && <DexSkdi />}
             {state.layar === 'rapor' && <Rapor />}
             {state.layar === 'laporan' && <LaporanAkhir />}
+            {/* CODEX ronde-11 #3/#4: rangkaian di atas tanpa fallback — `layar`
+                asing (save.ts kini menolaknya, tapi ini jaring terakhir) akan
+                merender area utama kosong TANPA throw, luput dari ErrorBoundary.
+                Beri jalan keluar eksplisit alih-alih diam kosong. */}
+            {!LAYAR_DIKENAL.has(state.layar) && (
+              <div className="layar-tak-dikenal">
+                <p>Layar tidak dikenal ({state.layar}).</p>
+                <button className="tombol" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'meja' })}>
+                  Kembali ke Meja Kerja
+                </button>
+              </div>
+            )}
           </div>
         </ErrorBoundary>
       </main>

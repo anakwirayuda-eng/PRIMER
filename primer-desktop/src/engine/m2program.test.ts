@@ -107,6 +107,37 @@ describe('M2 — unlock & guard', () => {
     expect(r.state.kunjungan).toBeUndefined()
     expect(r.state.layar).not.toBe('kunjungan')
   })
+
+  it('sesi kegiatan AKTIF (belum selesai) menahan PINDAH_LAYAR — tak boleh ditinggal via HUD (CODEX ronde-11 #1)', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
+    expect(s.kegiatan).toBeDefined() // sesi masih berjalan, belum dijawab
+    const r = ev(s, { type: 'PINDAH_LAYAR', layar: 'meja' })
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+    expect(r.state.layar).toBe('kegiatan') // TIDAK pindah
+    expect(r.state.kegiatan).toBeDefined() // sesi TIDAK lenyap
+  })
+
+  it('sesi kegiatan AKTIF menahan LANJUTKAN — jaring terakhir thd dispatch langsung (CODEX ronde-11 #1)', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
+    const r = ev(s, { type: 'LANJUTKAN' })
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+    expect(r.state.blok).toBe('siang') // TIDAK maju ke sore
+    expect(r.state.kegiatan).toBeDefined() // sesi TIDAK lenyap tanpa skor
+  })
+
+  it('sesi kegiatan AKTIF menahan MULAI_KUNJUNGAN — cegah kegiatan+kunjungan serentak (CODEX ronde-11 #2)', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
+    expect(s.lapanganTerpakai).toBe(false) // belum di-set — sesi masih berjalan
+    s = { ...s, stamina: 6 }
+    const r = ev(s, { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_santoso' })
+    const errEv = r.events.find((e) => e.type === 'ERROR_AKSI')
+    expect(errEv && 'pesan' in errEv ? errEv.pesan : '').toContain('kegiatan lapangan')
+    expect(r.state.kunjungan).toBeUndefined()
+    expect(r.state.kegiatan).toBeDefined() // keduanya TIDAK aktif bersamaan
+  })
 })
 
 describe('M2.7 — Posyandu menaikkan IKS RW', () => {
