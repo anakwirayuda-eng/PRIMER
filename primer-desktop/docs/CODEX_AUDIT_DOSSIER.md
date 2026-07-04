@@ -960,3 +960,32 @@ Tak ada file .tsx/.css tersentuh — murni engine, browser-verify dilewati.
 
 3 pertanyaan kebijakan (temuan 2#3, 2#4, bonus) diajukan ke user, tak
 diputuskan sepihak — lihat percakapan sesi ini utk jawabannya.
+
+## 20. RESPONS BUILDER — triase CODEX ronde-13 (save.ts NaN/entri korup + defense render + UX save) 2026-07-04
+
+Laporan CODEX baru (P1/P2/P3 + konten/UI), semua diverifikasi terhadap kode
+saat ini sebelum diputuskan. Commit fix: `e276812`.
+
+| # | Temuan | Prioritas | Status |
+|---|---|---|---|
+| 1 | Kunci tally (mis. `tegakBenar`) hilang SELURUHNYA lolos deserialize — `Object.values(tally)` cuma cek nilai kunci yg ADA, bukan yg hilang → `t.tegakBenar += 1` di reducer meracuni NaN permanen | P1 | ✅ FIX: daftar eksplisit `KUNCI_TALLY`, semua field SkorTally wajib finite ≥0 |
+| 2 | `dex.x = null` / `desa.keluarga.x = null` lolos container-check, THROW di hari baru (pelunturan bintang / follow-up mangkir) | P1 | ✅ FIX: validasi tiap entri, pola sama desa.rw — tolak seluruh save |
+| 3 | `hari` pecahan (1.5) & `seed` non-finite (`1e999`→`Infinity`) lolos validasi | P2 | ✅ FIX: `hari` wajib integer; `seed` wajib finite (konsisten dgn seedKurikulum) |
+| 4 | Render crash sesi aktif korup: `kg.kartu`/`kartu.pilihan` (Kegiatan.tsx), `igd.jawaban` (Igd.tsx), `kj.hotspotDitemukan` (Kunjungan.tsx) null — guard "sesi ada?" komponen induk tak menjangkau field nested | P2 | ✅ FIX: guard diperluas / null-check di titik akses masing-masing |
+| 5 | `SURAT_META[m.jenis]` surat berjenis asing (inbox tak divalidasi per-entri) crash `.chip` di MejaKerja.tsx | P2/P3 | ✅ FIX: helper `metaSurat()` dgn fallback |
+| 6 | `simpanKeSlot`/`muatDariSlot` tak melapor gagal — beda dgn autosave (`simpan()`) yg sudah try/catch, & beda dgn `imporArsip` yg sudah alert-on-fail | P3 | ✅ FIX: `simpanKeSlot` kini `Promise<boolean>` + try/catch; UI slot manual, muat-arsip, impor JSON kini alert saat gagal |
+| 7 | `DexSkdi.test.tsx` klik-entri makan 4,5-4,6s dari batas 5s (`userEvent` default `pointerEventsCheck` mahal di jsdom dgn 144 entri) | P1 (flake CI) | ✅ FIX: `pointerEventsCheck: 0` → turun ke ~1,6-2,3s |
+| — | Auto mode-malam hanya trigger `blok==='sore'`, bukan IGD/pagi | UI risk | ❌ TAK PERLU FIX: disengaja (identitas "Puskesmas Pagi"); override manual sudah ada sejak M7.31 (Pengaturan → Mode Tampilan) |
+| — | Opacity 0.45 tombol disabled "berisiko" di mode gelap | UI risk | ❌ TAK PERLU FIX: WCAG mengecualikan kontrol NONAKTIF dari syarat rasio kontras; dipakai seragam terang/gelap, sudah masuk cakupan pass kontras M7 (task #18) |
+| — | 3 ICD SKDI dobel (N76.0, B35.0, S00-S09) — defensible tapi disarankan explicit-allowlist | Konten, opsional | 📋 DICATAT, tak dieksekusi — hardening opsional, bukan bug (validasiPack bersih, sudah ada allowlist test utk 3 mismatch generik lain) |
+
+Verifikasi-bergigi: revert save.ts (5 fix sekaligus) → 5 test merah (5
+regresi-guard tetap hijau); revert 4 file render → 5 test komponen merah;
+revert store.ts → 3 test merah (termasuk kasus unhandled-rejection asli).
+332 test hijau (dari 317), tsc 0. Tak ada REVISI_ENGINE bump — semua fix
+defensif/UX (validasi save & guard render), tak mengubah semantik
+replay/skor utk state yang VALID.
+
+Tak ada pertanyaan kebijakan baru dari ronde ini — semua temuan P1/P2/P3
+jelas bug (fix) atau jelas bukan (reject dgn alasan terdokumentasi), tak ada
+trade-off desain yang perlu keputusan user.
