@@ -834,6 +834,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       if (!obat) return err(s, 'Obat tidak dikenal.')
       if (s.gudang.stok[action.obatId] === undefined)
         return err(s, 'Obat ini tidak dilacak gudang.')
+      // CODEX audit 2026-07-04 (temuan #3): NaN lolos perbandingan `< 5 || > 50`
+      // (perbandingan NaN SELALU false) — Math.round(NaN) tetap NaN lalu
+      // meracuni kapitasi/biaya/belanjaPengadaan. Cek finite dulu.
+      if (!Number.isFinite(action.jumlah)) return err(s, 'Jumlah pengadaan tidak valid.')
       const jumlah = Math.round(action.jumlah)
       if (jumlah < 5 || jumlah > 50) return err(s, 'Jumlah pengadaan 5-50 unit per pesanan.')
       const biaya = obat.hargaBeli * jumlah

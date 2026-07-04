@@ -70,6 +70,35 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // tidak dilacak (gerbang stok lolos); backfill penuh dilakukan bila pack ada.
   if (!objek(st['gudang'])) st['gudang'] = { stok: {}, pesanan: [] }
   if (!objek(st['keuanganBulan'])) st['keuanganBulan'] = { belanjaObat: 0, belanjaPengadaan: 0 }
+
+  // Sanitasi ISI gudang/keuanganBulan (CODEX audit 2026-07-04, temuan #1):
+  // pengecekan di atas cuma memastikan levelnya berupa objek — `gudang = {}`
+  // (objek valid, tanpa field `stok`) lolos lalu bikin `Object.keys(gudang.
+  // stok)` di backfill bawah ini THROW; `gudang.stok[id]` bukan angka lolos
+  // lalu meracuni Math.max/aritmetika jadi NaN saat obat diresepkan
+  // (reducer.ts). Harus jalan SEBELUM backfill di bawah, bukan sesudah.
+  const gudangSt = st['gudang'] as Record<string, unknown>
+  if (!objek(gudangSt['stok'])) gudangSt['stok'] = {}
+  const stokSt = gudangSt['stok'] as Record<string, unknown>
+  for (const [id, nilai] of Object.entries(stokSt)) {
+    if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) delete stokSt[id]
+  }
+  if (!Array.isArray(gudangSt['pesanan'])) gudangSt['pesanan'] = []
+  gudangSt['pesanan'] = (gudangSt['pesanan'] as unknown[]).filter(
+    (p) =>
+      objek(p) &&
+      typeof p['obatId'] === 'string' &&
+      typeof p['jumlah'] === 'number' &&
+      Number.isFinite(p['jumlah']) &&
+      typeof p['tibaHari'] === 'number' &&
+      Number.isFinite(p['tibaHari']),
+  )
+
+  const keuanganSt = st['keuanganBulan'] as Record<string, unknown>
+  for (const kunci of ['belanjaObat', 'belanjaPengadaan'] as const) {
+    const nilai = keuanganSt[kunci]
+    if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) keuanganSt[kunci] = 0
+  }
   // Migrasi-lite M4.5: save lama = mode Karier dgn seed kurikulum = seed flavor.
   if (st['mode'] !== 'karier' && st['mode'] !== 'ujian') st['mode'] = 'karier'
   if (typeof st['seedKurikulum'] !== 'number' || !Number.isFinite(st['seedKurikulum'])) {
@@ -139,6 +168,34 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
         isi: 'Kasus gawat darurat yang sedang berjalan tidak lagi tersedia di versi konten ini. Pasien dianggap sudah ditangani tim jaga lain — kamu bisa melanjutkan hari seperti biasa.',
         dibaca: false,
       })
+    }
+  }
+
+  // Pemulihan pasien klinik tak dikenal (CODEX audit 2026-07-04, temuan #2):
+  // sama seperti IGD di atas — bila pasien aktif di ruang periksa memakai
+  // kasusId yang sudah tak ada di pack, SETIAP aksi klinik (TANYA..DISPOSISI)
+  // dan bahkan LANJUTKAN akan menolak selamanya ("kasus tidak ditemukan" /
+  // "selesaikan pasien dulu") — soft-lock permanen tanpa jalan keluar. Buang
+  // pasien aktif & beri surat kompensasi, persis pola IGD.
+  if (pack && objek(st['klinik'])) {
+    const klinikAktif = (st['klinik'] as Record<string, unknown>)['aktif']
+    if (objek(klinikAktif)) {
+      const pasien = klinikAktif['pasien']
+      const kasusId = objek(pasien) ? pasien['kasusId'] : undefined
+      if (typeof kasusId !== 'string' || !pack.kasus[kasusId]) {
+        ;(st['klinik'] as Record<string, unknown>)['aktif'] = undefined
+        const hari = st['hari'] as number
+        const inbox = st['inbox'] as Record<string, unknown>[]
+        inbox.push({
+          id: `surat_pemulihan_klinik_${hari}_${inbox.length}`,
+          hari,
+          jenis: 'sistem',
+          dari: 'Sistem',
+          judul: 'Pasien di ruang periksa dipulihkan otomatis',
+          isi: 'Kasus yang sedang kamu tangani tidak lagi tersedia di versi konten ini. Pasien dianggap sudah dialihkan ke rekan sejawat — kamu bisa memanggil pasien berikutnya seperti biasa.',
+          dibaca: false,
+        })
+      }
     }
   }
 

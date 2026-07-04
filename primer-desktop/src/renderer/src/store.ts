@@ -67,6 +67,14 @@ interface GameStore {
 
 /** Momen ireversibel — progres mahasiswa suci, dan reload bukan tombol undo. */
 const EVENT_AUTOSAVE = new Set(['HARI_BARU', 'ENCOUNTER_SELESAI', 'KUNJUNGAN_SELESAI', 'BLOK_BERGANTI'])
+/**
+ * CODEX audit 2026-07-04 (temuan #4): aksi manajemen ini mengubah state nyata
+ * (uang, roster binaan, program UKM, refleksi) tapi biasanya `events: []` —
+ * jarang cukup sering utk perlu autosave per-aksi (spt TANYA/PERIKSA klinik),
+ * tapi cukup jarang & bermakna sampai hilangnya terasa seperti "undo by quit"
+ * kalau app ditutup sebelum event autosave besar berikutnya. Simpan langsung.
+ */
+const AKSI_AUTOSAVE = new Set(['PESAN_OBAT', 'TETAPKAN_PROGRAM', 'PILIH_BINAAN', 'LEPAS_BINAAN', 'TULIS_REFLEKSI'])
 
 export const useGame = create<GameStore>((set, get) => ({
   state: null,
@@ -114,7 +122,10 @@ export const useGame = create<GameStore>((set, get) => ({
     try {
       const { state, events } = advance(cur, action, PACK)
       set((prev) => ({ state, lastEvents: events, eventTick: prev.eventTick + 1 }))
-      if (events.some((e) => EVENT_AUTOSAVE.has(e.type))) void get().simpan()
+      const berhasil = !events.some((e) => e.type === 'ERROR_AKSI')
+      if (events.some((e) => EVENT_AUTOSAVE.has(e.type)) || (berhasil && AKSI_AUTOSAVE.has(action.type))) {
+        void get().simpan()
+      }
       // M5.24 — stase tamat: rekam badge & dex ke meta lintas-playthrough.
       if (events.some((e) => e.type === 'TAMAT')) void rekamMeta(state, set, get)
     } catch (e) {

@@ -88,6 +88,20 @@ describe('M4.18 — stok obat & pengadaan', () => {
     expect(ev(s, { type: 'PESAN_OBAT', obatId, jumlah: 3 }).events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
     expect(ev(s, { type: 'PESAN_OBAT', obatId, jumlah: 100 }).events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
   })
+
+  // Audit CODEX 2026-07-04 (ronde-8): perbandingan `jumlah < 5 || jumlah > 50`
+  // SELALU false utk NaN (perbandingan NaN tak pernah true) — Math.round(NaN)
+  // tetap NaN, lolos gerbang, lalu meracuni kapitasi/belanjaPengadaan jadi NaN.
+  it('jumlah pengadaan NaN ditolak, tidak meracuni kapitasi', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const obatId = Object.keys(PACK.obat)[0]!
+    const kasSebelum = s.kapitasi
+    const r = ev(s, { type: 'PESAN_OBAT', obatId, jumlah: NaN })
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+    expect(r.state.kapitasi).toBe(kasSebelum)
+    expect(Number.isFinite(r.state.kapitasi)).toBe(true)
+    expect(r.state.gudang.pesanan).toHaveLength(0)
+  })
 })
 
 describe('M4.19 — laporan bulanan & teguran Dinkes', () => {
