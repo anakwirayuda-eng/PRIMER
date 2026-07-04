@@ -989,3 +989,38 @@ replay/skor utk state yang VALID.
 Tak ada pertanyaan kebijakan baru dari ronde ini — semua temuan P1/P2/P3
 jelas bug (fix) atau jelas bukan (reject dgn alasan terdokumentasi), tak ada
 trade-off desain yang perlu keputusan user.
+
+## 21. Keputusan user atas 3 temuan FLAGGED §19 — cowboy, telemetri, acak-urutan (2026-07-04)
+
+Ketiga temuan yang di-flag di §19 (bukan diputuskan sepihak) dijawab user
+via AskUserQuestion, semua "kerjakan" — bukan "biarkan":
+
+**1. "Boikot Rujukan" — commit `5d09521`.** Dijelaskan dulu dgn contoh angka
+konkret: guillotine (rujukanTotal≥3) gerbang kali-nol (RRNS buruk sampel
+besar → UKP=0 total), sedangkan cowboy dulu cuma potongan flat −2/kejadian
+— boikot-total-setelah-2-salah lolos guillotine lalu cowboy-kan sisa kasus
+wajib-rujuk jauh lebih murah (UKP≈19,5 vs 0). User pilih: naikkan penalti
+cowboy (bukan ubah ambang sampel≥3, itu tetap proteksi sah). cowboy −2→−5.
+REVISI_ENGINE 9→10.
+
+**2. "Mesin Waktu Offline" (save-scumming) — commit `a9bf7bc`.** User pilih
+tambah telemetri wall-clock meski itu perubahan filosofi (engine sengaja
+deterministik murni). Desain ditulis dulu (`docs/TELEMETRI_WALLCLOCK.md`,
+pola M4.5/M6): log forensik TERPISAH dari save slot (`telemetri.jsonl`,
+append-only) — `Date.now()` HANYA di satu titik (store.ts, bukan engine).
+Deteksi hari-mundur/jejak-menyusut tanpa tanda sesi-baru → peringatan
+OPSIONAL di UI dosen (TitleScreen), berdampingan dgn (bukan mengganti)
+vonis SAH/TIDAK SAH `verifikasiDossier`. Tak ada REVISI_ENGINE bump — di
+luar GameState/replay/skor sepenuhnya.
+
+**3. Bonus UI acak-urutan jawaban — commit `d167e88`.** User pilih kerjakan
+sbg fitur baru. Scope: IGD (langkah keputusan turn-based) + Kegiatan
+lapangan (kartu posyandu/prolanis/KLB) — target paling rentan walkthrough
+"klik posisi ke-N". Reuse arsitektur dual-seed M4.5: `state.seed` (rngFlavor
+per-mahasiswa) mengacak urutan TAMPIL via `Rng.shuffle` (pola sama
+Kunjungan.tsx intervensiAcak, tapi ditambah seed per-siswa — yang lama cuma
+seed skenario, sama utk semua orang). Dispatch tetap by pilihanId, skor tak
+tersentuh. Tak ada REVISI_ENGINE bump.
+
+Semua 3 diverifikasi-bergigi & tercakup test baru. 348 test hijau (dari
+332 di akhir §20), tsc 0.
