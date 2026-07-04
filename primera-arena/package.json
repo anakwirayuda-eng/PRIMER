@@ -1,0 +1,30 @@
+{
+  "name": "primera-arena",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "PRIMERA Arena — kompetisi kelas real-time: setiap mahasiswa dokter Puskesmas, memperebutkan commons tempat tidur RS kabupaten yang sama (\"STEMI-ku merebut kasurmu\"). Fork arsitektur dari Sistema (game_jkn) — Vite+React+Supabase, tanpa server custom. Codebase TERPISAH dari primera-desktop (M8, ROADMAP.md).",
+  "author": "Anak Agung Bagus Wirayuda, MD, PhD",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0",
+    "vitest": "^3.0.0"
+  }
+}

@@ -5,14 +5,14 @@
       "name": "puskesmas-pagi-preview",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite", "--config", "vite.preview.config.ts"],
-      "cwd": "primer-desktop",
+      "cwd": "primera-desktop",
       "port": 5199
     },
     {
-      "name": "primer-arena-dev",
+      "name": "primera-arena-dev",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite"],
-      "cwd": "primer-arena",
+      "cwd": "primera-arena",
       "port": 5173
     }
   ]
