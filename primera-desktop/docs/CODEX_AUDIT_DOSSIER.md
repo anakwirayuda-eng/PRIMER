@@ -1172,7 +1172,7 @@ bersih). Deploy (exe/installer primera-desktop, Supabase primera-arena)
 DIBAHAS terpisah dgn user — lihat respons chat, bukan dossier ini (bukan
 keputusan desain engine).
 
-## 25. CODEX ronde-14 — triase 6 temuan tutorial+konten (2026-07-04, commit TBD)
+## 25. CODEX ronde-14 — triase 6 temuan tutorial+konten (2026-07-04, commit `2ce8608`)
 
 Laporan CODEX read-only baru, 6 temuan atas fitur tutorial (§23) + 2 temuan
 konten pra-eksisting tak terkait. **3 dari 6 STALE** — laporan CODEX
@@ -1246,3 +1246,15 @@ Pola penting utk audit berikutnya: **selalu cek nama folder di path yang
 disebut laporan** (`primer-desktop` vs `primera-desktop`) sbg sinyal cepat
 apakah laporan itu pra- atau pasca-rebrand §24 — perbedaan itu sendiri
 sudah cukup utk menduga snapshot lama sebelum baca detail lain.
+
+**Keputusan user atas 2 temuan flagged (2026-07-04)**:
+- **Temuan #6 (tutorial di mode ujian)**: user pilih **biarkan seragam** —
+  tutorial tetap tampil di kedua mode karier & ujian, tanpa perubahan kode.
+  Alasan: jaga-jaga mahasiswa yang langsung pilih Ujian tanpa pernah coba
+  Karier dulu; aman krn tak mengubah skor, cuma 1 pasien gratis di awal.
+  Ditutup — bukan bug, keputusan desain final.
+- **Temuan #5 (29/67 kasus tak tertaut Dex/SKDI144)**: user PUNYA dokumen
+  SKDI resmi (PDF) dan akan menyerahkannya utk dibaca — pemetaan 29 kasus
+  ke nomor kompetensi SKDI yang tepat akan ditentukan sendiri (bukan
+  ditanya satu-satu ke user, bukan pula heuristik longgar prefix ICD-10
+  yang berisiko salah-taut). Status: MENUNGGU dokumen, belum dikerjakan.
