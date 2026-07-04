@@ -9,21 +9,6 @@ import { useGame } from './store'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  interface Window {
-    primer: {
-      save: {
-        write: (slot: string, json: string) => Promise<boolean>
-        read: (slot: string) => Promise<string | null>
-        list: () => Promise<{ slot: string; mtimeMs: number; size: number }[]>
-        delete: (slot: string) => Promise<boolean>
-      }
-      appVersion: () => Promise<string>
-    }
-  }
-}
-
 function pasangPrimerStub(overrides?: Partial<Window['primer']['save']>) {
   window.primer = {
     save: {
@@ -32,6 +17,10 @@ function pasangPrimerStub(overrides?: Partial<Window['primer']['save']>) {
       list: async () => [],
       delete: async () => true,
       ...overrides,
+    },
+    telemetri: {
+      append: async () => true,
+      read: async () => [],
     },
     appVersion: async () => 'test',
   }

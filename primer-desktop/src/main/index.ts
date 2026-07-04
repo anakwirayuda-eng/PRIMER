@@ -66,6 +66,26 @@ function registerIpc(): void {
     return true
   })
 
+  // Telemetri wall-clock (DeepThink ronde-2, keputusan user — docs/TELEMETRI_WALLCLOCK.md):
+  // log append-only TERPISAH dari save slot manapun — memuat ulang backup save
+  // save-scum tidak memutar-balik log ini, jadi jadi jejak forensik independen
+  // utk dosen. SATU-SATUNYA tempat Date.now() boleh menyentuh persistensi game.
+  const TELEMETRI_FILE = () => join(app.getPath('userData'), 'telemetri.jsonl')
+
+  ipcMain.handle('telemetri:append', async (_e, baris: string) => {
+    await fs.appendFile(TELEMETRI_FILE(), baris.replace(/\n/g, ' ') + '\n', 'utf-8')
+    return true
+  })
+
+  ipcMain.handle('telemetri:read', async () => {
+    try {
+      const isi = await fs.readFile(TELEMETRI_FILE(), 'utf-8')
+      return isi.split('\n').filter((b) => b.trim().length > 0)
+    } catch {
+      return []
+    }
+  })
+
   ipcMain.handle('app:version', () => app.getVersion())
 }
 

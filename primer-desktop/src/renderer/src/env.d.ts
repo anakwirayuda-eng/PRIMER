@@ -8,6 +8,10 @@ interface Window {
       list: () => Promise<{ slot: string; mtimeMs: number; size: number }[]>
       delete: (slot: string) => Promise<boolean>
     }
+    telemetri: {
+      append: (baris: string) => Promise<boolean>
+      read: () => Promise<string[]>
+    }
     appVersion: () => Promise<string>
   }
 }

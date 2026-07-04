@@ -9,6 +9,7 @@ import { useGame } from '../store'
 import { METADATA } from '@content/metadata'
 import type { ModeStase } from '@engine/state'
 import { verifikasiDossier, type HasilVerifikasi } from '@engine/verifikasi'
+import { auditTelemetri } from '@engine/telemetriAudit'
 import { PACK } from '@content/index'
 import './TitleScreen.css'
 
@@ -110,6 +111,9 @@ export function TitleScreen() {
   const [nim, setNim] = useState('')
   // M6.27 — hasil verifikasi dossier mahasiswa (panel dosen).
   const [hasilVerifikasi, setHasilVerifikasi] = useState<HasilVerifikasi | null>(null)
+  // DeepThink ronde-2 — telemetri wall-clock: sinyal forensik terpisah,
+  // opsional, TIDAK memengaruhi status SAH/TIDAK SAH di atas.
+  const [peringatanTelemetri, setPeringatanTelemetri] = useState<string[] | null>(null)
 
   const namaBersih = nama.trim()
   const nimBersih = nim.trim()
@@ -297,6 +301,51 @@ export function TitleScreen() {
                 }}
               />
             </label>
+
+            {/* DeepThink ronde-2 — telemetri wall-clock: sinyal forensik
+                OPSIONAL, terpisah dari vonis SAH/TIDAK SAH di atas. */}
+            <label className="teks-xs teks-lembut title__impor">
+              Impor Log Telemetri (opsional, deteksi save-scumming):{' '}
+              <input
+                type="file"
+                accept="application/jsonl,text/plain,.jsonl"
+                onChange={(e) => {
+                  const f = e.target.files?.[0]
+                  if (!f) return
+                  e.target.value = ''
+                  void f
+                    .text()
+                    .then((isi) => {
+                      const baris = isi.split('\n').filter((b) => b.trim().length > 0)
+                      setPeringatanTelemetri(auditTelemetri(baris))
+                    })
+                    .catch(() => window.alert('Gagal membaca file log telemetri.'))
+                }}
+              />
+            </label>
+            {peringatanTelemetri !== null && (
+              <div className="kartu title__verifikasi" role="status">
+                <div className="baris baris--antara">
+                  <span className={`stempel ${peringatanTelemetri.length > 0 ? 'stempel--kunyit' : 'stempel--hijau'}`}>
+                    {peringatanTelemetri.length > 0 ? 'TELEMETRI: MENCURIGAKAN' : 'TELEMETRI: BERSIH'}
+                  </span>
+                  <button className="tombol tombol--senyap" onClick={() => setPeringatanTelemetri(null)}>
+                    Tutup
+                  </button>
+                </div>
+                {peringatanTelemetri.length > 0 ? (
+                  <ul className="title__verifikasi-alasan teks-xs">
+                    {peringatanTelemetri.map((p, i) => (
+                      <li key={i}>{p}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="teks-xs teks-lembut">
+                    Tak ada pola hari-mundur atau jurnal-menyusut di log ini — bukan bukti mutlak, hanya sinyal tambahan.
+                  </p>
+                )}
+              </div>
+            )}
             {hasilVerifikasi !== null && (
               <div className="kartu title__verifikasi" role="status">
                 <div className="baris baris--antara">

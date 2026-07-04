@@ -17,6 +17,7 @@ window.addEventListener('unhandledrejection', (e) => {
 // Fallback di luar Electron (preview browser / dev vite murni): simpan ke localStorage.
 if (typeof window.primer === 'undefined') {
   const key = (slot: string) => `primer.save.${slot}`
+  const KEY_TELEMETRI = 'primer.telemetri'
   window.primer = {
     save: {
       write: async (slot, json) => {
@@ -32,6 +33,14 @@ if (typeof window.primer === 'undefined') {
         localStorage.removeItem(key(slot))
         return true
       },
+    },
+    telemetri: {
+      append: async (baris) => {
+        const lama = localStorage.getItem(KEY_TELEMETRI) ?? ''
+        localStorage.setItem(KEY_TELEMETRI, lama + baris.replace(/\n/g, ' ') + '\n')
+        return true
+      },
+      read: async () => (localStorage.getItem(KEY_TELEMETRI) ?? '').split('\n').filter((b) => b.trim().length > 0),
     },
     appVersion: async () => 'browser-preview',
   }

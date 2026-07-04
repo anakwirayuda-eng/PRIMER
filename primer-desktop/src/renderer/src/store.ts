@@ -147,6 +147,16 @@ export const useGame = create<GameStore>((set, get) => ({
     } catch (e) {
       console.error('Gagal menyimpan:', e)
     }
+    // DeepThink ronde-2 — telemetri wall-clock (docs/TELEMETRI_WALLCLOCK.md):
+    // log forensik terpisah dari save slot, utk deteksi save-scumming oleh
+    // dosen. Best-effort murni — gagal tulis TIDAK BOLEH mengganggu gameplay.
+    try {
+      await window.primer.telemetri.append(
+        JSON.stringify({ t: Date.now(), hari: cur.hari, blok: cur.blok, jejakLen: cur.jejak.length }),
+      )
+    } catch (e) {
+      console.error('Gagal mencatat telemetri:', e)
+    }
   },
 
   /* -- M5.24/25 --------------------------------------------------------------- */
