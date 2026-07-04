@@ -71,11 +71,14 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
               jatuh ke grade D walau pemain 100% mengikuti sorotan. Skor
               sungguhan sudah kebal (reducer.ts); di sini cukup jangan
               menampilkan huruf/rincian yang menghukum utk latihan pertama. */}
-          <span className="klinik-hasil__grade-tutorial" aria-hidden={!tutorial}>
+          <span className="klinik-hasil__grade-tutorial">
             {tutorial ? (
-              '🎓'
+              <span aria-hidden="true">🎓</span>
             ) : (
-              <span className={`stempel stempel--jatuh klinik-hasil__grade ${WARNA_GRADE[hasil.grade]}`}>
+              <span
+                className={`stempel stempel--jatuh klinik-hasil__grade ${WARNA_GRADE[hasil.grade]}`}
+                aria-label={`Grade ${hasil.grade}`}
+              >
                 {hasil.grade}
               </span>
             )}

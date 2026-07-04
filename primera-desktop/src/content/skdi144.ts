@@ -163,8 +163,11 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
     // M9.2: Kepmenkes 1186/2022 gabungkan Hiperurisemia (E79.0) & Gout
     // Arthritis (M10) sbg SATU kompetensi 4A ("Hiperurisemia-Gout
     // Arthritis") — kasus gout ditautkan ke sini, bukan entri terpisah.
+    // CODEX ronde-16 P2: nama Dex disamakan persis dgn judul bab resmi
+    // (sebelumnya cuma "Hiperurisemia" — pemain yg tangani kasus gout tak
+    // melihat progres itu tercermin di nama entri yg unlock).
     id: 'hyperuricemia',
-    nama: 'Hiperurisemia',
+    nama: 'Hiperurisemia-Gout Arthritis',
     icd10: 'E79.0',
     kasusId: 'mm_gout_artritis_akut',
   },

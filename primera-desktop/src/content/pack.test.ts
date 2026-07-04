@@ -110,6 +110,48 @@ describe('PACK — validasi silang id konten', () => {
     expect(totalTertaut).toBe(46)
   })
 
+  // CODEX ronde-16 P2 (2026-07-04): field `fktp144` per-kasus ("termasuk daftar
+  // 144 penyakit wajib TUNTAS FKTP") secara definisi cuma berlaku utk kompetensi
+  // 4A — level 3A/3B eksplisit berarti BUKAN wajib-tuntas (butuh rujuk/rujuk
+  // sebagian). 8 kasus ditemukan `fktp144:true` padahal `skdi` sendiri 3A/3B —
+  // kontradiksi internal, independen dari dokumen otoritatif manapun (bukan soal
+  // SKDI 2012 vs Kepmenkes 1186/2022, murni dua field self-report yg saling
+  // bertentangan). Diperbaiki jadi `fktp144:false` (field ini tak dipakai runtime
+  // manapun — cuma metadata dokumentasi konten — jadi ini bukan bug fungsional,
+  // tapi tetap diperbaiki agar tak menyesatkan audit berikutnya).
+  it('fktp144:true hanya utk kasus berkompetensi 4A (bukan 3A/3B — kontradiksi internal)', () => {
+    const kontradiksi = Object.values(PACK.kasus)
+      .filter((k) => k.fktp144 === true && k.skdi !== '4A')
+      .map((k) => `${k.id}: skdi=${k.skdi}`)
+    expect(kontradiksi).toEqual([])
+  })
+
+  // CODEX ronde-16 P3: auto-link (index.ts) mencocokkan icd10 kasus↔skdi144
+  // PER-ENTRI independen — dua entri skdi144 ber-ICD10 SAMA bisa diam-diam
+  // tertaut ke KASUS YANG SAMA sekaligus begitu ada kasus baru dgn ICD tsb
+  // (belum ada kasus manapun yg pakai ketiga kode ini hari ini — makanya
+  // belum berdampak runtime, tapi ranjau tersembunyi utk konten mendatang).
+  // Allowlist di bawah = pasangan yang SUDAH diketahui & defensible; entri
+  // BARU yang tak sengaja duplikat ICD dgn entri lain akan GAGAL di sini.
+  it('ICD-10 duplikat antar-entri skdi144 didokumentasikan eksplisit (bukan drift diam-diam)', () => {
+    const ICD_DUPLIKAT_SENGAJA: Record<string, string> = {
+      'N76.0': 'vaginitis vs bacterial_vaginosis — BV adalah bentuk vaginitis bakterial, kode sama defensible',
+      'B35.0': 'tinea_capitis vs tinea_barbae — subtipe lokasi beda, spesies dermatofita sama',
+      'S00-S09': 'blunt_trauma vs sharp_trauma — rentang kode ICD trauma umum, bukan kode spesifik',
+    }
+    const perIcd = new Map<string, string[]>()
+    for (const e of PACK.skdi144) perIcd.set(e.icd10, [...(perIcd.get(e.icd10) ?? []), e.id])
+    const duplikat = [...perIcd.entries()].filter(([, ids]) => ids.length > 1)
+
+    const takDidokumentasi = duplikat.filter(([icd]) => !(icd in ICD_DUPLIKAT_SENGAJA)).map(([icd, ids]) => `${icd}: ${ids.join(', ')}`)
+    expect(takDidokumentasi).toEqual([])
+
+    // Duplikat yg TERDAFTAR tapi TAK LAGI ada di konten (mis. sudah diperbaiki)
+    // wajib dihapus dari allowlist ini juga — cegah allowlist membusuk diam-diam.
+    const sudahTakAda = Object.keys(ICD_DUPLIKAT_SENGAJA).filter((icd) => !perIcd.has(icd) || perIcd.get(icd)!.length < 2)
+    expect(sudahTakAda).toEqual([])
+  })
+
   // CODEX ronde-baru: clue ppok_eksaserbasi bilang "ketiganya ada → antibiotik
   // terindikasi" & obatSalahUmum menghukum kloramfenikol (antibiotik SALAH),
   // tapi tak ada satupun antibiotik BENAR di obatBenar/obatAlternatif — pemain

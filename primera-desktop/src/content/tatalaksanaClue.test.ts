@@ -22,22 +22,44 @@ import { PACK } from './index'
 const KATA_NEGASI = ['tidak', 'bukan', 'jangan', 'hindari', 'tanpa', 'tak perlu', 'tak butuh']
 const JENDELA = 45
 
-/** Ada kata negasi dlm jendela ±N karakter dari SETIAP kemunculan `kata`? */
+/**
+ * Ada kata negasi dlm jendela ±N karakter dari SETIAP kemunculan `kata`?
+ * (CODEX ronde-16 P3: dulu `return true` di kemunculan PERTAMA yang ternegasi
+ * — clue campuran "tidak X di awal, tapi nanti X wajib" lolos tanpa dicek krn
+ * berhenti sebelum sampai ke kemunculan kedua. Kini SEMUA kemunculan wajib
+ * ternegasi baru dianggap aman/di-skip; satu saja tanpa negasi = janji nyata.)
+ */
 function adaNegasiDekat(teksLower: string, kata: string, jendela: number): boolean {
   let idx = teksLower.indexOf(kata)
+  if (idx === -1) return false
   while (idx !== -1) {
     const mulai = Math.max(0, idx - jendela)
     const akhir = Math.min(teksLower.length, idx + kata.length + jendela)
     const sekitar = teksLower.slice(mulai, akhir)
-    if (KATA_NEGASI.some((n) => sekitar.includes(n))) return true
+    if (!KATA_NEGASI.some((n) => sekitar.includes(n))) return false
     idx = teksLower.indexOf(kata, idx + 1)
   }
-  return false
+  return true
 }
 
 function semuaObatTatalaksana(k: (typeof PACK.kasus)[string]): string[] {
   return [...k.tatalaksana.obatBenar, ...(k.tatalaksana.obatAlternatif ?? []).flat()]
 }
+
+describe('CODEX ronde-16 P3 — adaNegasiDekat wajib cek SEMUA kemunculan, bukan berhenti di yang pertama', () => {
+  // Bug lama: `return true` di kemunculan PERTAMA yang ternegasi, walau
+  // kemunculan KEDUA kata yang sama membuat janji sungguhan tanpa negasi —
+  // clue campuran ("tidak X di awal, tapi nanti X wajib") lolos tanpa dicek.
+  it('kemunculan kedua tanpa negasi TETAP terdeteksi (bukan berhenti di kemunculan pertama)', () => {
+    const teks = 'antibiotik tidak diperlukan di awal, tapi bila demam menetap, antibiotik wajib diberikan segera'
+    expect(adaNegasiDekat(teks, 'antibiotik', JENDELA)).toBe(false)
+  })
+
+  it('SEMUA kemunculan ternegasi → tetap true (perilaku lama yg benar terjaga)', () => {
+    const teks = 'antibiotik tidak diperlukan; ulangi, antibiotik juga tidak diindikasikan di sini'
+    expect(adaNegasiDekat(teks, 'antibiotik', JENDELA)).toBe(true)
+  })
+})
 
 describe('M9.3 — tatalaksana wajib mencerminkan janji `clue` (sapuan heuristik)', () => {
   it('clue sebut "antibiotik" (tanpa negasi di sekitarnya) → wajib ada antibiotik di obatBenar/obatAlternatif', () => {

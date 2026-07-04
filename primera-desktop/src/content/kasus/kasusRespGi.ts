@@ -376,7 +376,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     icd10: 'J44.1',
     skdi: '3B',
     kategori: 'respirasi',
-    fktp144: true,
+    // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
+    fktp144: false,
     harusDirujuk: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'paru',
@@ -1047,7 +1048,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     icd10: 'K35.80',
     skdi: '3B',
     kategori: 'pencernaan',
-    fktp144: true,
+    // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
+    fktp144: false,
     harusDirujuk: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'bedah',

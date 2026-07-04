@@ -1665,3 +1665,133 @@ per-kasus tanpa perlu bump manual).
 
 Dengan ini **M9 (M9.1+M9.2+M9.3+M9.4) selesai penuh** sesuai rencana yang
 disetujui user di awal sesi.
+
+## 31. CODEX ronde-16 — audit read-only atas state `08fa634` (2026-07-04)
+
+Ronde baru masuk TEPAT setelah M9 ditutup — user bertanya "kok masih ada
+lagi ya" (bug klaster yang sama terus muncul walau sudah M9). Laporan ini
+BEDA dari pola sebelumnya: bukan tutorial/SKDI/tatalaksana lagi, tapi area
+BARU (verifier dossier M6, metadata konten, aksesibilitas). 6 temuan,
+semua diverifikasi manual thd kode aktual sebelum bertindak — 4 FIXED, 1
+FIXED (kosmetik), 1 REJECTED dgn bukti.
+
+**[P1 FIXED] Verifier dossier tak pernah menghitung ulang `klaim.badge`**
+— `verifikasiDossier()` (verifikasi.ts) membandingkan tally/skor/hari/
+paket/tamat hasil replay vs klaim, TAPI TIDAK PERNAH memanggil
+`hitungBadge(akhir)` utk dibandingkan. Diverifikasi dulu apakah ini
+genuinely eksploitable atau cuma redundan dgn cek lain: `hitungBadge`
+bergantung tally (SUDAH dicek penuh) + skor.grade (SUDAH dicek) TAPI JUGA
+`desa.keluarga[].arcSelesai` (badge `sahabat_desa`), `state.dex[].bintang`
+(badge `kolektor_dex`), dan `state.akreditasi` (badge `paripurna`) — TIGA
+field yang TIDAK dicek di manapun lain dalam verifier. Artinya badge
+`kolektor_dex`/`sahabat_desa` bisa dipalsukan (state dimanipulasi sebelum
+`susunDossier` menandatangani ulang) tanpa terdeteksi sama sekali; hanya
+`paripurna` yg kebetulan aman krn `akreditasi` MEMANG ikut mempengaruhi
+`hitungSkor` (jadi tertangkap tak langsung lewat cek skor).
+
+Test merah dibuat dulu (`m6verifikasi.test.ts`): fabrikasi `state.dex`
+25-entri bintang3 (badge `kolektor_dex` palsu) yg tak mempengaruhi tally/
+skor sama sekali → sebelum fix, `verifikasiDossier` tetap vonis `sah`
+(gejala persis klaim CODEX). Fix: tambah `hitungBadge(akhir)` dibanding
+`d.klaim.badge` (sorted, krn urutan tak bermakna) di titik banding yang
+sama dgn tally/skor. Stash/restore mengonfirmasi merah tepat → hijau.
+23/23 test verifikasi lolos (+1 baru). Tak ada REVISI_ENGINE bump —
+`hitungBadge` sendiri tak berubah, utk dossier JUJUR yang sudah ada
+`hitungBadge(akhir)` akan selalu = `klaim.badge` (replay deterministik
+mereproduksi state yg sama); ini menutup celah verifikasi, bukan mengubah
+apa yang dianggap "benar".
+
+**[P2 FIXED] `fktp144` per-kasus kontradiksi internal dgn `skdi` sendiri**
+— CODEX bilang "21 kasus tak masuk progres Dex, 18 di antaranya
+`fktp144:true`" — diverifikasi: klaim benar scr angka, TAPI kesimpulan yg
+tersirat (harusnya masuk Dex) salah paham arsitektur. `fktp144` (field
+per-kasus, comment "termasuk daftar 144 penyakit wajib TUNTAS FKTP") sama
+sekali TAK dipakai di runtime manapun (grep: nol referensi di luar
+fixture test) — linking Dex sungguhan dikendalikan `skdi144.ts` +
+auto-link ICD-10 (index.ts), independen total dari field ini. Tapi
+ditemukan bug NYATA yg beda: 8 kasus (`ppok_eksaserbasi`,
+`apendisitis_akut`, `mm_hipertensi_urgensi`, `mm_gagal_jantung_kongestif`,
+`kia_preeklampsia_berat`, `kia_abortus_iminens`, `mm_artritis_reumatoid`,
+`jiwa_skizofrenia`) menyatakan `fktp144:true` padahal `skdi` mereka SENDIRI
+3A/3B — kontradiksi definisional (3A/3B = butuh rujuk = TAK MUNGKIN "wajib
+tuntas", independen dari dokumen otoritatif manapun, murni dua field
+self-report yang saling bertentangan). Diperbaiki `fktp144:false` utk
+ke-8. Test-first: `pack.test.ts` assert kontradiksi kosong, merah dgn 8
+pelanggar persis → fix per-file → hijau. Dicek juga 3 kasus 4A lain
+(`mata_konjungtivitis_alergi`, `kia_kb_konseling`, dan `tht_rinosinusitis_
+akut` yg sudah dikonfirmasi §30 bukan 4A) thd SKDI 2012 — konjungtivitis
+alergi TAK dapat entri Dex terpisah krn SKDI 2012 cuma py SATU entri
+generik "Konjungtivitis" (4A, sudah dipakai `conjunctivitis_bacterial`);
+KB konseling ternyata masuk daftar KETERAMPILAN klinis (lampiran lain),
+bukan Daftar Penyakit — keduanya correctly-excluded, bukan bug.
+
+**[P2 FIXED, kosmetik] Nama Dex "Hiperurisemia" tak cerminkan kompetensi
+gabungan** — sejak M9.2 menautkan `mm_gout_artritis_akut` ke entri
+`hyperuricemia`, nama tampilan Dex masih "Hiperurisemia" saja, padahal
+kompetensi resminya (dikonfirmasi §30 langsung dari teks Kepmenkes
+1186/2022) berjudul "Hiperurisemia-Gout Arthritis". Diganti persis sesuai
+judul bab resmi. Tak ada test/kode lain bergantung nama string ini
+(digrep, aman).
+
+**[P3 FIXED] `aria-hidden` kebalik di stempel grade `PanelHasil.tsx`** —
+`aria-hidden={!tutorial}` pada wrapper stempel berarti utk encounter
+NORMAL (mayoritas kasus), grade stamp (huruf besar A/B/C/D) DISEMBUNYIKAN
+dari screen reader, sementara ikon 🎓 dekoratif (tutorial) yg justru
+terekspos. Test merah dibuat (`PanelHasil.test.tsx`, cek atribut
+`aria-hidden` langsung via `container.querySelector`, bukan cuma teks DOM
+spt test lama yg tak bisa menangkap ini) → 2/2 merah persis. Fix:
+wrapper tak lagi `aria-hidden` sama sekali; emoji 🎓 (tutorial) dibungkus
+`<span aria-hidden="true">` sendiri (memang dekoratif, teks di sebelahnya
+sudah menjelaskan); stempel grade (normal) diberi `aria-label="Grade X"`
+eksplisit (bukan cuma huruf telanjang). Diverifikasi browser end-to-end:
+pasien tutorial → wrapper tak `aria-hidden`, 🎓 ber-`aria-hidden="true"`;
+pasien kedua (real) → wrapper tak `aria-hidden`, stempel `aria-label=
+"Grade D"` (dikonfirmasi via `preview_eval` baca `outerHTML` langsung,
+dua alur penuh via klik sungguhan bukan cuma unit test). 4/4 test lolos.
+
+**[P3 FIXED] `adaNegasiDekat` (tatalaksanaClue.test.ts) berhenti di
+kemunculan negasi PERTAMA** — komentar fungsi sendiri sudah menjanjikan
+"cek SETIAP kemunculan", tapi implementasi `return true` begitu SATU
+kemunculan kata kunci ternegasi, walau kemunculan LAIN kata yang sama tak
+ternegasi (janji nyata terlewat). Contoh gagal: clue campuran "antibiotik
+tidak diperlukan di awal, tapi... antibiotik wajib diberikan" — versi
+lama vonis "aman" (skip) krn berhenti di kemunculan pertama. Test merah
+dibuat dulu (2 kasus: campuran vs semua-ternegasi) → fix jadi "SEMUA
+kemunculan wajib ternegasi baru dianggap aman" (bukan OR pada kemunculan
+pertama) → hijau. CODEX sendiri mencatat tak ada kasus gameplay NYATA yg
+kena ini hari ini — dikonfirmasi benar (0 pelanggar di 3 test sweep lama
+setelah fix, konsisten dgn catatan CODEX).
+
+**[P3 FIXED, pagar preventif] ICD-10 duplikat antar-entri `skdi144.ts`
+tak didokumentasikan** — 3 pasangan (`vaginitis`/`bacterial_vaginosis`
+N76.0, `tinea_capitis`/`tinea_barbae` B35.0, `blunt_trauma`/`sharp_trauma`
+S00-S09) — auto-link (index.ts) mencocokkan ICD per-ENTRI independen,
+jadi kalau kelak ada kasus baru dgn salah satu kode ini, KEDUA entri
+skdi144 akan diam-diam tertaut ke kasus yg SAMA sekaligus (belum terjadi
+hari ini — nol kasus playable pakai ketiga kode ini, makanya CODEX sendiri
+bilang "belum berdampak runtime"). Ditambah test permanen dgn allowlist
+eksplisit (pola sama `GENERIK_SENGAJA`) yg menjaring ICD duplikat BARU yg
+tak didaftar, sekaligus menjaring kalau allowlist membusuk (entri
+terdaftar tapi duplikatnya sudah hilang dari konten). Diverifikasi-bergigi:
+sabotase sementara satu key allowlist → merah persis (nama pasangan
+duplikat di pesan) → restore → hijau.
+
+**[REJECTED, terverifikasi] "6 kasus slot terapi kosong" bukan bug** —
+`stroke_iskemik`, `mm_obesitas`, `kia_abortus_iminens`, `kia_kb_konseling`,
+`jiwa_depresi_ringan`, `jiwa_insomnia` diperiksa satu-satu (clue +
+harusDirujuk + skdi): SEMUA manajemen non-farmakologis yang memang lini
+pertama scr EBM (stroke akut FKTP = stabilisasi-rujuk tanpa obat penurun
+tensi; obesitas = intervensi gaya hidup dulu; abortus iminens = tirah
+baring+rujuk; KB konseling = edukasi murni; depresi ringan = keputusan
+sudah eksplisit dari ronde CODEX jauh sebelumnya, `obatBenar:[]` disengaja;
+insomnia = CBT-I lini pertama, bukan obat). Semua py `edukasi.length`
+2-4 (dimensi `skorEdukasi` SUDAH menilai modalitas non-farmakologis ini
+scr eksplisit) — CODEX sendiri menghedge temuan ini ("blindspot BILA
+ingin dinilai eksplisit", bukan klaim ada yg salah). Tak ada perubahan.
+
+Verifikasi total: `npm run typecheck` bersih, `npm test -- --run` → **386
+test** (dari 379 — +7 test baru: 1 badge, 1 fktp144-konsistensi, 1 ICD-
+duplikat, 2 negasi, 2 PanelHasil a11y), 36 file. Tak ada REVISI_ENGINE
+bump (semua fix menutup celah verifikasi/konten/a11y, nol perubahan
+semantik skor/replay utk state valid). Verifikasi browser end-to-end utk
+fix P3 aksesibilitas (satu-satunya yg observable visual/DOM).

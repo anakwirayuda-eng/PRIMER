@@ -770,7 +770,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     icd10: 'M06.9',
     skdi: '3A',
     kategori: 'muskuloskeletal',
-    fktp144: true,
+    // CODEX ronde-16 P2: 3A (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
+    fktp144: false,
     harusDirujuk: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'penyakit_dalam',
@@ -889,7 +890,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     icd10: 'I16.0',
     skdi: '3B',
     kategori: 'kardiovaskular',
-    fktp144: true,
+    // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
+    fktp144: false,
     harusDirujuk: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'penyakit_dalam',
@@ -1004,7 +1006,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     icd10: 'I50.0',
     skdi: '3B',
     kategori: 'kardiovaskular',
-    fktp144: true,
+    // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
+    fktp144: false,
     harusDirujuk: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'penyakit_dalam',

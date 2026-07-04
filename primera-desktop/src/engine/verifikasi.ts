@@ -417,6 +417,16 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
       `Skor hasil replay (${skorReplay.total} ${skorReplay.grade}) ≠ klaim (${d.klaim.skor.total} ${d.klaim.skor.grade}).`,
     )
   }
+  // CODEX ronde-16 P1: badge dulu HANYA disimpan dari klaim, tak pernah dihitung
+  // ulang thd hasil replay — kolektor_dex (state.dex) & sahabat_desa (arcSelesai
+  // keluarga) bergantung field yang TAK dipakai hitungSkor/tally, jadi lolos
+  // tanpa terdeteksi mekanisme banding lain manapun di atas.
+  const badgeReplay = [...hitungBadge(akhir)].sort()
+  if (stringifyKanonik(badgeReplay) !== stringifyKanonik([...d.klaim.badge].sort())) {
+    alasan.push(
+      `Daftar badge hasil replay (${badgeReplay.join(', ') || '—'}) ≠ klaim (${[...d.klaim.badge].sort().join(', ') || '—'}).`,
+    )
+  }
 
   if (alasan.length > 0) return { status: 'tidak_sah', alasan, ringkasan }
   return { status: 'sah', alasan: [], ringkasan }

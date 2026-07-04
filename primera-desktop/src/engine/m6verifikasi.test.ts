@@ -14,7 +14,7 @@ import { KAPASITAS_EDUKASI } from './clinic'
 import { advance } from './reducer'
 import { hashSeed } from './core/rng'
 import type { Action } from './actions'
-import type { GameState } from './state'
+import type { GameState, DexEntry } from './state'
 import {
   susunDossier,
   verifikasiDossier,
@@ -291,6 +291,25 @@ describe('M6 — verifikasi dossier', () => {
     expect(stringifyKanonik({ b: 1, a: { d: [2, { z: 1, y: 2 }], c: 3 } })).toBe(
       stringifyKanonik({ a: { c: 3, d: [2, { y: 2, z: 1 }] }, b: 1 }),
     )
+  })
+
+  // CODEX ronde-16 (2026-07-04) P1: hitungBadge(state) dipanggil saat ekspor tapi
+  // hasilnya TAK PERNAH dihitung ulang & dibanding saat verifikasi — hanya
+  // tally/skor/hari/paket/tamat yg dibanding. `kolektor_dex` (≥25 dex bintang≥3)
+  // & `sahabat_desa` (≥5 arc keluarga berhasil) bergantung field (`state.dex`,
+  // `desa.keluarga.arcSelesai`) yang TAK dipakai hitungSkor maupun tally — jadi
+  // bisa dipalsukan tanpa terdeteksi mekanisme replay yang ADA sebelum fix ini.
+  it('klaim.badge dipalsukan (kolektor_dex tanpa dex sungguhan) → replay hitung ulang badge → TIDAK SAH (CODEX ronde-16 P1)', async () => {
+    const s = mainkanSatuPasien()
+    const dexPalsu: Record<string, DexEntry> = {}
+    for (let i = 0; i < 25; i++) {
+      dexPalsu[`palsu_${i}`] = { kasusId: `palsu_${i}`, ditangani: 3, benar: 3, bintang: 3, terakhirHari: s.hari }
+    }
+    const palsu: GameState = { ...s, dex: dexPalsu }
+    const dossier = await susunDossier(palsu, PACK, { versiApp: V_APP, nim: '011' }) // ttd VALID (dex ikut ditandatangani penyerang)
+    const hasil = await verifikasiDossier(JSON.stringify(dossier), PACK, V_APP)
+    expect(hasil.status).toBe('tidak_sah')
+    expect(hasil.alasan.join(' ')).toMatch(/[Bb]adge/)
   })
 
   it('dossier dgn identitas berbeda tidak bisa saling tukar ttd (anti salin punya teman)', async () => {

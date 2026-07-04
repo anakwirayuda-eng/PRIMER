@@ -54,4 +54,28 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     expect(screen.getByText(/tak memengaruhi skor|tak mempengaruhi skor/i)).toBeInTheDocument()
     expect(screen.getByText(HASIL_DASAR.clue)).toBeInTheDocument()
   })
+
+  // CODEX ronde-16 P3: wrapper stempel grade dulu pakai aria-hidden={!tutorial}
+  // — kebalik, membuat grade SUNGGUHAN (kasus normal, mayoritas encounter)
+  // malah disembunyikan dari screen reader, sementara ikon 🎓 dekoratif
+  // (tutorial) yang justru terekspos.
+  it('CODEX ronde-16 P3: stempel grade normal TAK boleh aria-hidden (screen reader wajib bisa baca)', () => {
+    const { container } = render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
+    )
+    const bungkus = container.querySelector('.klinik-hasil__grade-tutorial')
+    expect(bungkus?.getAttribute('aria-hidden')).not.toBe('true')
+  })
+
+  it('CODEX ronde-16 P3: ikon 🎓 tutorial ditandai aria-hidden (dekoratif, teks di sebelahnya sudah menjelaskan)', () => {
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, tutorialLatihan: true }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+    expect(screen.getByText('🎓').getAttribute('aria-hidden')).toBe('true')
+  })
 })
