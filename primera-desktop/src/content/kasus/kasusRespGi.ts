@@ -454,7 +454,18 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // GOLD: bronkodilator inhalasi/nebul + KORTIKOSTEROID SISTEMIK adalah pilar
       // eksaserbasi; SABA ORAL (tablet) TIDAK setara & tak dianjurkan untuk
       // eksaserbasi berat (dipindah ke obatSalahUmum). Nebulisasi = prosedur.
-      obatAlternatif: [['salbutamol_inhaler'], ['prednison_5']],
+      // CODEX: clue kasus ini eksplisit bilang "ketiganya ada → antibiotik
+      // terindikasi" (Anthonisen) & obatSalahUmum sudah menghukum kloramfenikol
+      // sbg antibiotik SALAH — tapi tak ada slot antibiotik BENAR sampai
+      // ditambah di sini. GOLD 2025: aminopenisilin+klavulanat, makrolida, atau
+      // tetrasiklin (doksisiklin) sama-sama pilihan lini pertama utk eksaserbasi
+      // purulen — grup "pilih salah satu" (bukan wajib kombinasi, satu infeksi
+      // cukup satu lini, sama spt pola tifoid kloramfenikol/kotrimoksazol/amoksisilin).
+      obatAlternatif: [
+        ['salbutamol_inhaler'],
+        ['prednison_5'],
+        ['amoxiclav_625', 'azitromisin_500', 'doksisiklin_100'],
+      ],
       prosedur: ['nebulisasi'],
       obatSalahUmum: [
         { id: 'salbutamol_2', alasan: 'SABA ORAL (tablet) BUKAN pilihan untuk eksaserbasi berat — onset lambat, efek samping sistemik (tremor, takikardia) lebih besar; bronkodilator harus rute INHALASI/NEBULISASI (GOLD).' },

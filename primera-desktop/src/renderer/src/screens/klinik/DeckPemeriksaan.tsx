@@ -61,12 +61,21 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
             <FigurTubuh
               diperiksa={enc.diperiksa}
               onPeriksa={(region) => dispatch({ type: 'PERIKSA', region })}
+              terkunci={
+                tutorialAktif
+                  ? (region) => !(sorotRegion && region === REGION_PERTAMA_TUTORIAL)
+                  : undefined
+              }
             />
             <div className="klinik-regio">
               {URUTAN_REGION.map((r) => {
                 const sudah = enc.diperiksa.includes(r)
                 const disorot = sorotRegion && r === REGION_PERTAMA_TUTORIAL
-                const dikunci = tutorialAktif && !enc.vitalDiukur
+                // CODEX: dulu cuma `!enc.vitalDiukur` — begitu vital terukur SEMUA
+                // chip regio kebuka (bukan hanya regio target), lubang yg sama
+                // spt figur tubuh SVG di bawah. Kunci = terkunci KECUALI ini
+                // persis regio yang sedang disorot.
+                const dikunci = tutorialAktif && !disorot
                 return (
                   <button
                     key={r}

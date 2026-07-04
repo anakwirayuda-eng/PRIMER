@@ -135,6 +135,14 @@ export interface PenilaianEncounter {
   clue: string
   /** Konsekuensi terjadwal? (id jadwal bila salah tatalaksana berbuntut) */
   konsekuensiDijadwalkan: boolean
+  /**
+   * CODEX: encounter tutorial (imun skor, lihat reducer.ts case DISPOSISI)
+   * tetap menghitung skorAnamnesis/Pemeriksaan/Terapi/Edukasi & grade APA
+   * ADANYA dari jalur tuntunan minimal — bisa jatuh ke grade D meski pemain
+   * 100% mengikuti sorotan. Field ini menandai debrief agar UI (PanelHasil)
+   * menyembunyikan rincian skor yang menghukum & tampilkan framing netral.
+   */
+  tutorialLatihan?: boolean
 }
 
 /* ---------------------------------------------------------------------------

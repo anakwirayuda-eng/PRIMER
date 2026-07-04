@@ -529,9 +529,20 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       // meski dex/inbox sungguhan dibekukan barusan. Pangkas KEDUA event itu
       // saat kebal (bukan cuma inbox-nya) — ENCOUNTER_SELESAI/STEMPEL tetap
       // lolos, itu narasi debrief yang memang harus tetap muncul.
-      const eventsFinal = kebalTutorial
-        ? events.filter((e) => e.type !== 'DEX_BERTAMBAH' && e.type !== 'SURAT_MASUK')
-        : events
+      // CODEX (ronde lanjutan): tuntunan tutorial hanya menyorot jalur MINIMAL
+      // (1 pertanyaan, 1 regio, tanpa edukasi) — skor SOAP mentah dari jalur
+      // itu bisa jatuh ke grade D walau pemain 100% mengikuti sorotan. Tandai
+      // `tutorialLatihan` di penilaian yg ditampilkan agar PanelHasil.tsx
+      // menyembunyikan rincian skor yg menghukum, bukan mengubah skor itu
+      // sendiri (tetap dihitung apa adanya, tetap dibekukan seperti biasa).
+      const penilaianTampil: PenilaianEncounter = kebalTutorial
+        ? { ...penilaianFinal, tutorialLatihan: true }
+        : penilaianFinal
+      const eventsFinal = (
+        kebalTutorial
+          ? events.filter((e) => e.type !== 'DEX_BERTAMBAH' && e.type !== 'SURAT_MASUK')
+          : events
+      ).map((e) => (e.type === 'ENCOUNTER_SELESAI' ? { ...e, penilaian: penilaianTampil } : e))
 
       return {
         state: {
@@ -546,7 +557,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
           klinik: {
             ...s.klinik,
             aktif: undefined,
-            selesaiHariIni: [...s.klinik.selesaiHariIni, penilaianFinal],
+            selesaiHariIni: [...s.klinik.selesaiHariIni, penilaianTampil],
           },
           ...(suratSisrute && !kebalTutorial ? { inbox: [...s.inbox, suratSisrute] } : {}),
           tutorialAktif: false,

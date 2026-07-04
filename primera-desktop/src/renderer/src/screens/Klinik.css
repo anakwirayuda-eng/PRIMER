@@ -381,8 +381,14 @@
   cursor: pointer;
 }
 
-.klinik-figur__hot:hover .klinik-figur__siluet {
+.klinik-figur__hot:hover:not(.klinik-figur__hot--terkunci) .klinik-figur__siluet {
   fill: var(--daun-100);
+}
+
+/* CODEX: kunci visual utk regio non-target selama tutorial — klik diabaikan
+   di komponen, tapi kursor & hover jangan menjanjikan sesuatu yang tak terjadi. */
+.klinik-figur__hot--terkunci {
+  cursor: default;
 }
 
 .klinik-figur__hot--sudah .klinik-figur__siluet {
@@ -398,7 +404,7 @@
   transition: opacity var(--durasi-cepat);
 }
 
-.klinik-figur__hot:hover .klinik-figur__zona {
+.klinik-figur__hot:hover:not(.klinik-figur__hot--terkunci) .klinik-figur__zona {
   opacity: 0.32;
 }
 

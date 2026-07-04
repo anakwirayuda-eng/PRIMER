@@ -29,6 +29,8 @@ const LABEL_GRADE: Record<PenilaianEncounter['grade'], string> = {
 }
 
 export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Props) {
+  const tutorial = hasil.tutorialLatihan === true
+
   const barisSkor: { label: string; nilai: number }[] = [
     { label: 'Anamnesis', nilai: hasil.skorAnamnesis },
     { label: 'Pemeriksaan', nilai: hasil.skorPemeriksaan },
@@ -64,13 +66,26 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
         aria-label="Hasil encounter"
       >
         <div className="klinik-hasil__atas">
-          <span className={`stempel stempel--jatuh klinik-hasil__grade ${WARNA_GRADE[hasil.grade]}`}>
-            {hasil.grade}
+          {/* CODEX: pasien tutorial dituntun lewat jalur MINIMAL (1 pertanyaan,
+              1 regio, tanpa edukasi) — skor SOAP mentah dari jalur itu bisa
+              jatuh ke grade D walau pemain 100% mengikuti sorotan. Skor
+              sungguhan sudah kebal (reducer.ts); di sini cukup jangan
+              menampilkan huruf/rincian yang menghukum utk latihan pertama. */}
+          <span className="klinik-hasil__grade-tutorial" aria-hidden={!tutorial}>
+            {tutorial ? (
+              '🎓'
+            ) : (
+              <span className={`stempel stempel--jatuh klinik-hasil__grade ${WARNA_GRADE[hasil.grade]}`}>
+                {hasil.grade}
+              </span>
+            )}
           </span>
           <div className="tumbuh">
             <div className="judul-seksi">Encounter Selesai</div>
             <div className="klinik-hasil__nama">{hasil.pasienNama}</div>
-            <div className="teks-kecil teks-lembut">{LABEL_GRADE[hasil.grade]}</div>
+            <div className="teks-kecil teks-lembut">
+              {tutorial ? 'Latihan pertama tuntas — ini tak memengaruhi skor.' : LABEL_GRADE[hasil.grade]}
+            </div>
           </div>
         </div>
 
@@ -86,7 +101,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
             {hasil.jenisDiagnosis === 'tegak' ? 'TEGAK' : 'SUSPEK'}
           </span>
         </div>
-        {!hasil.diagnosisBenar && (
+        {!tutorial && !hasil.diagnosisBenar && (
           <p className="teks-kecil teks-lembut klinik-hasil__kalibrasi">
             {hasil.jenisDiagnosis === 'tegak'
               ? 'Stempel TEGAK pada diagnosis keliru menggerus kalibrasimu dalam-dalam. Bila ragu, jujurlah dengan SUSPEK.'
@@ -94,32 +109,36 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
           </p>
         )}
 
-        <div className="klinik-hasil__skor">
-          {barisSkor.map(({ label, nilai }) => (
-            <div key={label} className="klinik-hasil__skor-baris">
-              <span className="teks-kecil klinik-hasil__skor-label">{label}</span>
-              <div className="meter tumbuh">
-                <div
-                  className={`meter__isi${
-                    nilai < 55 ? ' meter__isi--bahaya' : nilai < 70 ? ' meter__isi--waspada' : ''
-                  }`}
-                  style={{ width: `${nilai}%` }}
-                />
+        {!tutorial && (
+          <div className="klinik-hasil__skor">
+            {barisSkor.map(({ label, nilai }) => (
+              <div key={label} className="klinik-hasil__skor-baris">
+                <span className="teks-kecil klinik-hasil__skor-label">{label}</span>
+                <div className="meter tumbuh">
+                  <div
+                    className={`meter__isi${
+                      nilai < 55 ? ' meter__isi--bahaya' : nilai < 70 ? ' meter__isi--waspada' : ''
+                    }`}
+                    style={{ width: `${nilai}%` }}
+                  />
+                </div>
+                <span className="mono teks-xs">{nilai}</span>
               </div>
-              <span className="mono teks-xs">{nilai}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        <div className="klinik-hasil__flags">
-          {bendera.map((b) => (
-            <span key={b.teks} className={`chip ${b.kelas}`}>
-              {b.teks}
-            </span>
-          ))}
-        </div>
+        {!tutorial && (
+          <div className="klinik-hasil__flags">
+            {bendera.map((b) => (
+              <span key={b.teks} className={`chip ${b.kelas}`}>
+                {b.teks}
+              </span>
+            ))}
+          </div>
+        )}
 
-        {hasil.konsekuensiDijadwalkan && (
+        {!tutorial && hasil.konsekuensiDijadwalkan && (
           <p className="klinik-hasil__konsekuensi">
             Perjalanan penyakit ini belum tentu selesai. Awasi kotak masukmu beberapa hari ke
             depan.

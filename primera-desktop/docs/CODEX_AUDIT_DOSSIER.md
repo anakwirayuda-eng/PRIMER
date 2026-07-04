@@ -1351,4 +1351,111 @@ Ringkasan status: 45/67 tertaut (dari 38), 11 correctly-excluded (rujuk/
 level rendah, sah), 5 kasus dgn self-report level SALAH (didokumentasikan,
 tak diubah), 3+1 kasus tak terverifikasi tanpa dokumen 144-FKTP asli, 1
 kasus butuh keputusan arsitektur `kasusId` array. Tak ada REVISI_ENGINE
+bump (Dex/SKDI144 di luar kontrak skor/replay M6).
+
+## 27. CODEX ronde-15 — triase 8 temuan lanjutan (2026-07-04)
+
+Laporan CODEX baru, read-only, 8 temuan. **3 CONFIRMED & DIPERBAIKI**, **2
+STALE** (sudah beres di ronde-14, §25-26), **2 REJECTED-WITH-REASONING**
+(salah paham desain / kode mati di luar cakupan), **1 SUDAH DIPUTUSKAN**
+user sebelumnya (§25, tak perlu aksi baru).
+
+1. **CONFIRMED & DIPERBAIKI — PPOK eksaserbasi, clue minta antibiotik tapi
+   tak ada slot antibiotik benar.** `kasusRespGi.ts` clue eksplisit: "ketiganya
+   ada (Anthonisen) → antibiotik terindikasi", `obatSalahUmum` sudah
+   menghukum kloramfenikol sbg antibiotik SALAH — tapi `obatBenar`/
+   `obatAlternatif` tak punya SATUPUN antibiotik BENAR, jadi pemain bisa
+   full-score terapi tanpa memberi antibiotik yang justru diminta clue-nya
+   sendiri. Fix: tambah grup alternatif ketiga `['amoxiclav_625',
+   'azitromisin_500', 'doksisiklin_100']` (3 pilihan lini pertama GOLD 2025
+   utk eksaserbasi purulen, "pilih salah satu" sama seperti pola tifoid).
+   Verifikasi-bergigi: test baru (`pack.test.ts`) merah tepat sebelum fix,
+   hijau sesudah; stash/restore kasusRespGi.ts mengonfirmasi ulang.
+   `sidikJariPack` meng-hash `tatalaksana` → dossier lama otomatis
+   terdeteksi beda konten saat replay (bukan disalahi diam-diam), tak perlu
+   REVISI_ENGINE bump.
+
+2. **CONFIRMED & DIPERBAIKI (lebih luas dari laporan) — kunci tutorial
+   pemeriksaan bisa dilompati, DUA jalur bukan satu.** CODEX cuma
+   melaporkan `FigurTubuh.tsx` (figur SVG) yang tak menerima info kunci
+   sama sekali. Investigasi lebih dalam menemukan `DeckPemeriksaan.tsx`
+   SENDIRI juga bocor: `dikunci = tutorialAktif && !enc.vitalDiukur` cuma
+   mengunci SEMUA chip regio SEBELUM vital diukur — begitu vital terukur,
+   SEMUA 10 chip regio kebuka sekaligus (bukan cuma regio target), lubang
+   yang SAMA persis dgn figur SVG, cuma di komponen berbeda. Fix: formula
+   dikoreksi jadi `tutorialAktif && !disorot` (terkunci KECUALI regio yang
+   sedang disorot — konsisten sepanjang SEMUA tahap tutorial, bukan cuma
+   gerbang "vital sudah/belum"), plus `FigurTubuh` diberi prop `terkunci`
+   opsional yg mengabaikan klik pada regio non-target + CSS kunci visual
+   (cursor default, hover dinetralkan via `:not()`). Verifikasi-bergigi: 3
+   test baru (`Klinik.tutorial.test.tsx`) — semua-terkunci sebelum vital,
+   hanya-target-terbuka sesudah vital, klik SVG non-target tak mendispatch
+   PERIKSA — merah tepat sebelum fix, hijau sesudah; stash/restore
+   mengonfirmasi ulang. Verifikasi browser end-to-end: 10/10 chip & 10/10
+   region SVG terkunci sebelum vital; tepat 1/10 terbuka (chip DAN SVG)
+   sesudah vital.
+
+3. **CONFIRMED & DIPERBAIKI — debrief tutorial tetap tampil grade D
+   "Perlu pembinaan" walau pemain 100% mengikuti sorotan.** Tuntunan
+   tutorial sengaja minimal (1 pertanyaan, 1 regio, tanpa edukasi) — skor
+   SOAP MENTAH dari jalur itu (dihitung apa adanya oleh `nilaiEncounter`,
+   terlepas dari imunitas state) jatuh ke grade D. State sungguhan SUDAH
+   kebal (reducer.ts, §23), tapi `PanelHasil.tsx` menampilkan penilaian
+   MENTAH itu — kontradiksi dgn maksud desain "kunci penuh + imunitas
+   penalti" (harus terasa 100% aman, bukan seperti gagal). Fix: field baru
+   `PenilaianEncounter.tutorialLatihan?: boolean`, di-set di reducer.ts pada
+   `penilaianTampil` (di titik gerbang `kebalTutorial` yang sama, dipatch
+   ke `events` ENCOUNTER_SELESAI DAN `klinik.selesaiHariIni` sekaligus —
+   sebelumnya event & log historis pakai objek `nilai`/`penilaianFinal`
+   yang beda referensi tapi kontennya sama). `PanelHasil.tsx` menyembunyikan
+   huruf grade + rincian 4 skor SOAP + bendera penalti saat
+   `tutorialLatihan`, ganti dgn ikon 🎓 + teks "Latihan pertama tuntas —
+   ini tak memengaruhi skor." — diagnosis BENAR/SUSPEK & mutiara klinis EBM
+   TETAP tampil (nilai pedagogis, bukan penalti). Verifikasi-bergigi: test
+   baru (`PanelHasil.test.tsx`, unit langsung di komponen presentasional)
+   merah→hijau; stash/restore mengonfirmasi. Verifikasi browser: debrief
+   pasien tutorial kini tampil 🎓 + pesan netral, bukan huruf D.
+
+4. **STALE — mode ujian ikut dapat tutorial.** Sudah diputuskan user di
+   §25: "biarkan seragam", ditutup sbg keputusan final, bukan bug. Tak ada
+   aksi baru.
+
+5. **STALE — Dex/SKDI "26/29 belum termap".** Angka CODEX (26 FKTP144 +
+   29 total) adalah snapshot SEBELUM ronde-14 (§26, commit `ba8c09d`) yang
+   sudah menautkan 7 kasus. Angka aktual sekarang: **22 tak tertaut** dari
+   67 (45 sudah tertaut) — dikonfirmasi ulang via skrip fresh. Sisa 22 sudah
+   dikategorikan detail di §26 (11 correctly-excluded, 5 self-report keliru,
+   3+1 tak terverifikasi, 1 arsitektur `kasusId` array) — tak perlu triase
+   ulang.
+
+6. **REJECTED-WITH-REASONING — "metadata EBM (`guideline`) tak konsisten,
+   10 kasus tanpa itu".** Salah paham desain dua-lapis yang disengaja:
+   `clue` (WAJIB, semua 67 kasus) adalah pembawa universal rujukan EBM
+   free-text di debrief (`clue` di-tag komentar types.ts sbg "Mutiara klinis
+   ber-tag guideline") — `konsekuensi.guideline` adalah field TERSTRUKTUR
+   tambahan, HANYA relevan utk kasus yang punya arc konsekuensi (dipakai
+   generator narasi follow-up), bukan satu-satunya tempat sumber EBM hidup.
+   Diverifikasi: `skabies` (salah satu dari 10 kasus "tanpa guideline")
+   TETAP punya clue lengkap dgn sitasi ("...OBATI SEMUA KONTAK SERUMAH
+   serentak + cuci seprai/handuk air panas (CDC/IACS)."). `validasiPack`
+   sudah benar TIDAK mewajibkan `guideline` krn itu opsional-kontekstual,
+   bukan celah cakupan.
+
+7. **STALE/SUDAH DITINJAU 2× — duplikat ICD SKDI144 (N76.0/B35.0/
+   S00-S09).** Temuan yang SAMA persis sudah tercatat di dossier ini DUA
+   kali sebelumnya (baris 881 & 980, ronde-ronde CODEX lampau) — kedua kali
+   simpulannya sama: "bukan bug blocker, hardening opsional (explicit-
+   allowlist), tak dieksekusi". Tak ada info baru dari CODEX kali ini.
+
+8. **REJECTED — root test runner (`npm test` di root worktree, bukan
+   `primera-desktop/`) gagal.** Root `package.json` name: `"primer-game"`
+   — proyek WEB LAMA yang eksplisit ditinggalkan (lihat memori sesi:
+   redesign total ke Puskesmas Pagi, "user menyerah pada UKM/peta/kunjungan
+   rumah lama"). `src/store/useGameStore.js` & sensus test yang CODEX
+   sebut adalah bagian kode MATI, tak dikembangkan lagi, di luar cakupan
+   proyek aktif (`primera-desktop/`+`primera-arena/`). Tak dieksekusi.
+
+Verifikasi keseluruhan: 374 test hijau, tsc 0 — 3 fix ronde ini menambah
+1 test PPOK (`pack.test.ts`), 3 test lock-pemeriksaan
+(`Klinik.tutorial.test.tsx`), dan file baru `PanelHasil.test.tsx` (2 test).
 bump (linking Dex/SKDI144 tak masuk kontrak skor/replay M6).

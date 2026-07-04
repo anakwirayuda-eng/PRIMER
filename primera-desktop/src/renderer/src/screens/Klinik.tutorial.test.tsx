@@ -5,12 +5,12 @@
  * terkunci (disabled) selama sorotan aktif.
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { useGame } from '../store'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
 import { Klinik } from './Klinik'
-import { KASUS_TUTORIAL } from './klinik/tutorialKlinik'
+import { KASUS_TUTORIAL, REGION_PERTAMA_TUTORIAL } from './klinik/tutorialKlinik'
 
 function pasang(): void {
   window.primer = {
@@ -47,5 +47,45 @@ describe('<Klinik /> — sorotan tutorial encounter pertama', () => {
     const selesai = screen.getByRole('button', { name: /Selesai Anamnesis/ })
     expect(selesai.className).toMatch(/klinik-sorot-tutorial/)
     expect((selesai as HTMLButtonElement).disabled).toBe(false)
+  })
+
+  // CODEX: DeckPemeriksaan/FigurTubuh cuma mengunci chip regio berdasar
+  // "vital sudah diukur?" (bukan "apakah ini regio yang disorot?"), dan
+  // FigurTubuh (SVG figur tubuh) sama sekali tak menerima info kunci —
+  // pemain bisa klik regio SEMBARANG lewat gambar figur, melompati alur.
+  it('SEBELUM vital diukur: semua chip regio terkunci (bukan cuma tergantung vital)', () => {
+    pasang()
+    useGame.getState().dispatch({ type: 'TANYA', pertanyaanId: 'q_keluhan' })
+    useGame.getState().dispatch({ type: 'LANJUT_FASE' })
+    render(<Klinik />)
+    const chipRegio = screen.getAllByRole('button').filter((b) => b.className.includes('klinik-regio__chip'))
+    expect(chipRegio.length).toBeGreaterThan(1)
+    expect(chipRegio.every((b) => (b as HTMLButtonElement).disabled)).toBe(true)
+  })
+
+  it('SETELAH vital diukur: HANYA chip regio target yang terbuka, sisanya tetap terkunci', () => {
+    pasang()
+    useGame.getState().dispatch({ type: 'TANYA', pertanyaanId: 'q_keluhan' })
+    useGame.getState().dispatch({ type: 'LANJUT_FASE' })
+    useGame.getState().dispatch({ type: 'UKUR_VITAL' })
+    render(<Klinik />)
+    const chipRegio = screen.getAllByRole('button').filter((b) => b.className.includes('klinik-regio__chip'))
+    const terbuka = chipRegio.filter((b) => !(b as HTMLButtonElement).disabled)
+    expect(terbuka).toHaveLength(1)
+    expect(terbuka[0]?.className).toMatch(/klinik-sorot-tutorial/)
+  })
+
+  it('figur tubuh (SVG): klik regio BUKAN target tak boleh mendispatch PERIKSA', () => {
+    pasang()
+    useGame.getState().dispatch({ type: 'TANYA', pertanyaanId: 'q_keluhan' })
+    useGame.getState().dispatch({ type: 'LANJUT_FASE' })
+    useGame.getState().dispatch({ type: 'UKUR_VITAL' })
+    const { container } = render(<Klinik />)
+    const zonaBukanTarget = container.querySelector(
+      `.klinik-figur__hot:not([data-region="${REGION_PERTAMA_TUTORIAL}"])`,
+    )
+    expect(zonaBukanTarget).toBeTruthy()
+    fireEvent.click(zonaBukanTarget!)
+    expect(useGame.getState().state?.klinik.aktif?.diperiksa).toHaveLength(0)
   })
 })

@@ -8,6 +8,9 @@ import { describe, expect, it } from 'vitest'
 import { PACK } from './index'
 import { validasiPack } from './pack'
 import { NAMA_ICD } from './icd10'
+import { buatEncounter, nilaiEncounter } from '../engine/clinic'
+import { buatPasienDariKasus } from '../engine/director'
+import { Rng } from '../engine/core/rng'
 
 describe('PACK — validasi silang id konten', () => {
   it('tidak punya masalah drift (obat/lab/edukasi/tindakan/RS/karma/IGD)', () => {
@@ -88,5 +91,37 @@ describe('PACK — validasi silang id konten', () => {
     for (const id of tertautBaru) expect(linked.has(id)).toBe(true)
     const totalTertaut = kasusIds.filter((id) => linked.has(id)).length
     expect(totalTertaut).toBe(45)
+  })
+
+  // CODEX ronde-baru: clue ppok_eksaserbasi bilang "ketiganya ada → antibiotik
+  // terindikasi" & obatSalahUmum menghukum kloramfenikol (antibiotik SALAH),
+  // tapi tak ada satupun antibiotik BENAR di obatBenar/obatAlternatif — pemain
+  // bisa full-score terapi TANPA memberi antibiotik yang justru diminta clue.
+  it('ppok_eksaserbasi: antibiotik kini jadi slot terapi (bukan opsional yg terlewat)', () => {
+    const kasus = PACK.kasus['ppok_eksaserbasi']!
+    const semuaObatTatalaksana = [
+      ...kasus.tatalaksana.obatBenar,
+      ...(kasus.tatalaksana.obatAlternatif ?? []).flat(),
+    ]
+    const adaAntibiotik = semuaObatTatalaksana.some((id) => PACK.obat[id]?.antibiotik === true)
+    expect(adaAntibiotik).toBe(true)
+
+    const pasien = buatPasienDariKasus('ppok_eksaserbasi', PACK, new Rng(1, 'test'))
+    const tanpaAntibiotik = nilaiEncounter(
+      { ...buatEncounter(pasien), resep: ['salbutamol_inhaler', 'prednison_5'], tindakan: ['nebulisasi'] },
+      kasus,
+      PACK,
+    )
+    const antibiotikBenar = semuaObatTatalaksana.find((id) => PACK.obat[id]?.antibiotik === true)!
+    const denganAntibiotik = nilaiEncounter(
+      {
+        ...buatEncounter(pasien),
+        resep: ['salbutamol_inhaler', 'prednison_5', antibiotikBenar],
+        tindakan: ['nebulisasi'],
+      },
+      kasus,
+      PACK,
+    )
+    expect(denganAntibiotik.skorTerapi).toBeGreaterThan(tanpaAntibiotik.skorTerapi)
   })
 })
