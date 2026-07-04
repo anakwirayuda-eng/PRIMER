@@ -242,7 +242,11 @@ export function TitleScreen() {
                   <button
                     key={info.slot}
                     className="tombol title__slot"
-                    onClick={() => void muatDariSlot(info.slot)}
+                    onClick={() =>
+                      void muatDariSlot(info.slot).then((ok) => {
+                        if (!ok) window.alert('Gagal memuat arsip — file rusak, tidak ditemukan, atau dari versi yang tak dikenal.')
+                      })
+                    }
                     title={`Muat arsip ${info.slot}.`}
                   >
                     📁 {info.slot.replace('slot', 'Slot ')}: dr. {info.namaDokter} · H{info.hari}
@@ -266,9 +270,12 @@ export function TitleScreen() {
                 onChange={(e) => {
                   const f = e.target.files?.[0]
                   if (!f) return
-                  void f.text().then((json) => {
-                    if (!imporArsip(json)) window.alert('Arsip tidak valid atau dari versi yang tak dikenal.')
-                  })
+                  void f
+                    .text()
+                    .then((json) => {
+                      if (!imporArsip(json)) window.alert('Arsip tidak valid atau dari versi yang tak dikenal.')
+                    })
+                    .catch(() => window.alert('Gagal membaca file arsip.'))
                 }}
               />
             </label>

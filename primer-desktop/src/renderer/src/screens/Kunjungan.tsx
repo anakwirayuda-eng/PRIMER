@@ -111,7 +111,9 @@ export function Kunjungan() {
     return new Rng(hashSeed('intervensi', skenario.id)).shuffle(skenario.intervensi)
   }, [skenario])
 
-  if (!kj || !kelContent || !skenario) {
+  // CODEX ronde-13: `kj.hotspotDitemukan` korup (bukan array) crash `.includes`
+  // di bawah bila lolos guard tanpa cek ini.
+  if (!kj || !kelContent || !skenario || !Array.isArray(kj.hotspotDitemukan)) {
     return (
       <div className="kunjungan-root kunjungan-root--kosong tengah">
         <div className="kartu kolom" style={{ alignItems: 'center' }}>

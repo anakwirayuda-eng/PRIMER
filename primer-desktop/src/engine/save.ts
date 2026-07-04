@@ -42,14 +42,29 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // Cek versi skema state + tipe dasar. Bukan validasi penuh — cukup untuk
   // menolak save korup/asing tanpa memfosilkan seluruh bentuk state di sini.
   if (st['versi'] !== 1) return null
-  if (typeof st['hari'] !== 'number' || !Number.isFinite(st['hari'])) return null
+  // hari harus bilangan BULAT (CODEX ronde-13) — sebelumnya cuma dicek finite,
+  // jadi `hari=1.5` lolos lalu unlock/event berbasis hari genap (mis. `hari %
+  // 30`, `hari >= HARI_BUKA_POSYANDU`) berjalan di pecahan yang tak pernah
+  // terjadi lewat gameplay normal.
+  if (typeof st['hari'] !== 'number' || !Number.isInteger(st['hari'])) return null
   if (st['blok'] !== 'pagi' && st['blok'] !== 'siang' && st['blok'] !== 'sore') return null
-  if (typeof st['seed'] !== 'number') return null
+  // seed non-finite (CODEX ronde-13): `seedKurikulum` di bawah sudah dicek
+  // finite saat migrasi-lite — `seed` sendiri di sini terlewat, jadi
+  // `1e999`→`Infinity` lolos lalu meracuni Rng (mulberry32) dgn seed tak
+  // terhingga, dan JSON.stringify(Infinity) jadi `null` saat re-serialize.
+  if (typeof st['seed'] !== 'number' || !Number.isFinite(st['seed'])) return null
   if (typeof st['namaDokter'] !== 'string') return null
   if (!objek(st['klinik'])) return null
   if (!objek(st['desa'])) return null
   if (!objek(st['tally'])) return null
   if (!objek(st['dex'])) return null
+  // dex entri korup (CODEX ronde-13): container-check di atas cuma menjamin
+  // `dex` sendiri objek — entri semacam `dex.x = null` lolos lalu pelunturan
+  // bintang (reducer.ts, hari baru) THROW ("Cannot read properties of null,
+  // reading 'bintang'") krn `Object.entries(dex)` mengiterasi nilai apa
+  // adanya. Sama pola desa.rw di bawah — tolak seluruh save bila ada entri
+  // korup, bukan backfill parsial.
+  if (Object.values(st['dex'] as Record<string, unknown>).some((e) => !objek(e))) return null
   if (!Array.isArray(st['inbox'])) return null
   if (!Array.isArray(st['jadwal'])) return null
   if (!Array.isArray(st['log'])) return null
@@ -59,6 +74,17 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // pada day-advance. Bukan field yang aman di-backfill parsial (arc/indikator/
   // roster binaan saling terkait) — tolak seluruh save spt tally korup.
   if (!objek((st['desa'] as Record<string, unknown>)['keluarga'])) return null
+  // desa.keluarga entri korup (CODEX ronde-13): sama pola dex di atas —
+  // container-check barusan cuma menjamin `keluarga` sendiri objek, entri
+  // semacam `keluarga.x = null` lolos lalu follow-up mangkir (reducer.ts,
+  // hari baru) THROW saat baca `kel.followUpHari`. Tolak seluruh save,
+  // konsisten dgn desa.rw/kader di bawah.
+  if (
+    Object.values((st['desa'] as Record<string, unknown>)['keluarga'] as Record<string, unknown>).some(
+      (e) => !objek(e),
+    )
+  )
+    return null
   // desa.kader (CODEX ronde-12): sama seperti desa.keluarga/rw — `kader='rusak'`
   // (string) lolos objek-check `desa`, lalu spread `{...kader}` memecah string
   // jadi objek ber-key-karakter; `Object.values(kader).sort((a,b)=>a.rw-b.rw||
@@ -152,7 +178,24 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // Migrasi-lite M6: save pra-jurnal-penuh → jejak kosong (dossier dari save
   // semacam ini berstatus "tidak dapat diverifikasi", bukan ditolak).
   if (!Array.isArray(st['jejak'])) st['jejak'] = []
-  for (const nilai of Object.values(tally)) {
+  // Kunci tally HILANG SELURUHNYA (CODEX ronde-13): loop lama
+  // `Object.values(tally)` cuma memvalidasi nilai kunci yang ADA — kunci
+  // yang hilang total (mis. `tegakBenar` tak pernah di-set) lolos sbg
+  // `undefined`, lalu reducer.ts (`t.tegakBenar += 1`) mengubahnya jadi NaN
+  // permanen begitu disentuh, dan hitungSkor mewarisi NaN ke skor total.
+  // Backfill migrasi-lite di atas sudah mengisi field BARU (autoBermasalah dkk)
+  // — pengecekan di bawah ini menjamin SEMUA kunci SkorTally ada sbg angka
+  // finite ≥0, bukan cuma yang kebetulan hadir di objek.
+  const KUNCI_TALLY = [
+    'totalPasien', 'diagnosisBenar', 'tegakBenar', 'tegakSalah', 'suspekBenar', 'suspekSalah',
+    'rujukanTotal', 'rujukanNonSpesialistik', 'rujukanTepat', 'rujukanDitolak', 'cowboy',
+    'antibiotikTanpaIndikasi', 'labTakRelevan', 'miTepat', 'miTotal', 'kunjunganBerhasil',
+    'kunjunganTotal', 'kunjunganDiusir', 'apathy', 'autoBermasalah', 'posyanduSesi',
+    'prolanisSesi', 'klbTuntas', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'rmLengkap',
+    'teguranDinkes', 'hariKelelahan', 'karmaTerjadi', 'karmaDicegah',
+  ] as const
+  for (const kunci of KUNCI_TALLY) {
+    const nilai = tally[kunci]
     if (typeof nilai !== 'number' || !Number.isFinite(nilai) || nilai < 0) return null
   }
 

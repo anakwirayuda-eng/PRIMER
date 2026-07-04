@@ -294,3 +294,60 @@ describe('deserialize — flags/refleksi/desa.kader/prolanis.roster (CODEX ronde
     expect(hasil.prolanis.roster[0]?.id).toBe('p1')
   })
 })
+
+describe('deserialize — kunci tally hilang & entri nested null (CODEX ronde-13)', () => {
+  it('tally.tegakBenar hilang seluruhnya (bukan cuma nilai salah) ditolak — bukan lolos jadi NaN', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      delete (st['tally'] as Record<string, unknown>)['tegakBenar']
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('tally.hariKelelahan hilang seluruhnya ditolak (bukan diam-diam NaN saat +=)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      delete (st['tally'] as Record<string, unknown>)['hariKelelahan']
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('dex.x = null ditolak, bukan lolos lalu throw saat pelunturan bintang di hari baru', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = { ...s, dex: { ...s.dex, kasus_hantu: null as never } }
+    const json = serialize(s)
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('desa.keluarga.x = null ditolak, bukan lolos lalu throw saat cek follow-up mangkir', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = { ...s, desa: { ...s.desa, keluarga: { ...s.desa.keluarga, keluarga_hantu: null as never } } }
+    const json = serialize(s)
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('dex/desa.keluarga VALID (tanpa entri korup) tetap lolos apa adanya', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = serialize(s)
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.dex).toEqual(s.dex)
+    expect(hasil.desa.keluarga).toEqual(s.desa.keluarga)
+  })
+
+  it('hari pecahan (mis. 1.5) ditolak — hari harus bilangan bulat', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['hari'] = 1.5
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('seed non-finite (mis. dari JSON 1e999 → Infinity) ditolak', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['seed'] = Infinity
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+})

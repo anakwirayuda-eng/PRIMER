@@ -154,7 +154,9 @@ function ResponsTerakhir({
   langkahIndex: number
   jawaban: { langkahId: string; pilihanId: string; benar: boolean }[]
 }) {
-  if (langkahIndex === 0 || jawaban.length === 0) return null
+  // CODEX ronde-13: `igd.jawaban` bisa korup (bukan array) meski `igd` sendiri
+  // lolos guard bail-out di komponen induk — cegah crash `.length`/indexing.
+  if (langkahIndex === 0 || !Array.isArray(jawaban) || jawaban.length === 0) return null
   const terakhir = jawaban[jawaban.length - 1]
   if (!terakhir) return null
   const kasus = PACK.kasusIgd[kasusId]

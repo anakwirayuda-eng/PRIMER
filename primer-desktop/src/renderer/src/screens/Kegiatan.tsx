@@ -26,7 +26,10 @@ export function Kegiatan() {
   const tickRef = useRef(-1)
 
   const kg = state.kegiatan
-  const kartu = kg?.kartu[kg.index]
+  // CODEX ronde-13: `kg.kartu` bisa korup (mis. null) meski `kg` sendiri ada —
+  // indexing langsung di sini crash SEBELUM guard `!kg || !kartu` di bawah
+  // sempat jalan. Array.isArray dulu, baru index.
+  const kartu = kg && Array.isArray(kg.kartu) ? kg.kartu[kg.index] : undefined
 
   // Sesi selesai → reducer memindah layar ke peta; sambut dengan kartu hasil.
   useEffect(() => {
@@ -44,7 +47,9 @@ export function Kegiatan() {
   // CODEX ronde-11 #4: `layar==='kegiatan'` tanpa `state.kegiatan` (mis. save
   // korup) dulu me-return null diam-diam — blank screen TANPA throw, luput dari
   // ErrorBoundary. Beri jalan keluar eksplisit, bukan kosong.
-  if (!kg || !kartu) {
+  // CODEX ronde-13: `kartu.pilihan` korup (bukan array) crash di `.find`/`.map`
+  // bawah bila lolos sampai sini — masukkan ke guard yang sama.
+  if (!kg || !kartu || !Array.isArray(kartu.pilihan)) {
     return (
       <div className="layar-tak-dikenal">
         <p>Sesi kegiatan lapangan tidak ditemukan.</p>

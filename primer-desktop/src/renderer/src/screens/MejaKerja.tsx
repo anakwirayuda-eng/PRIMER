@@ -47,6 +47,13 @@ const SURAT_META: Record<JenisSurat, { label: string; chip: string }> = {
   tutorial: { label: 'Panduan', chip: 'chip--biru' },
 }
 
+// CODEX ronde-13: `m.jenis` asing (save korup — inbox tak pernah divalidasi
+// per-entri di save.ts) bikin `SURAT_META[jenis]` undefined → crash `.chip`.
+// Fallback aman, bukan throw.
+function metaSurat(jenis: JenisSurat): { label: string; chip: string } {
+  return SURAT_META[jenis] ?? { label: 'Surat', chip: '' }
+}
+
 const LABEL_PERSONA: Record<Persona, string> = {
   polos: 'Polos',
   terpelajar: 'Terpelajar',
@@ -288,8 +295,8 @@ export function MejaKerja() {
             </button>
             <div className="mk__surat-kertas kertas">
               <div className="baris baris--antara mk__surat-meta">
-                <span className={`chip ${SURAT_META[suratTerbuka.jenis].chip}`}>
-                  {SURAT_META[suratTerbuka.jenis].label}
+                <span className={`chip ${metaSurat(suratTerbuka.jenis).chip}`}>
+                  {metaSurat(suratTerbuka.jenis).label}
                 </span>
                 <span className="mono teks-xs teks-lembut">Hari {suratTerbuka.hari}</span>
               </div>
@@ -325,7 +332,7 @@ export function MejaKerja() {
                 onClick={() => bukaSurat(m)}
               >
                 <div className="baris baris--antara">
-                  <span className={`chip ${SURAT_META[m.jenis].chip}`}>{SURAT_META[m.jenis].label}</span>
+                  <span className={`chip ${metaSurat(m.jenis).chip}`}>{metaSurat(m.jenis).label}</span>
                   <span className="mono teks-xs teks-lembut">Hari {m.hari}</span>
                 </div>
                 <span className="mk__surat-item-judul">
@@ -657,7 +664,11 @@ export function MejaKerja() {
                     key={slot}
                     className="tombol"
                     title={info ? `Timpa ${slot} (dr. ${info.namaDokter} · H${info.hari}).` : `Simpan ke ${slot}.`}
-                    onClick={() => void simpanKeSlot(slot)}
+                    onClick={() =>
+                      void simpanKeSlot(slot).then((ok) => {
+                        if (!ok) window.alert('Gagal menyimpan — periksa ruang disk atau izin folder save.')
+                      })
+                    }
                   >
                     💾 {slot.replace('slot', 'Slot ')}
                     {info ? ` (H${info.hari})` : ''}

@@ -49,7 +49,11 @@ describe('<DexSkdi /> — auto-tautan ICD dikenali', () => {
     render(<DexSkdi />)
 
     const { default: userEvent } = await import('@testing-library/user-event')
-    const user = userEvent.setup()
+    // CODEX ronde-13: pointerEventsCheck default (EachApiCall) jalan getComputedStyle
+    // di rantai leluhur setiap langkah pointer — mahal di jsdom dgn 144 entri Dex,
+    // bikin test ini rutin memakan 4,5-4,6s dari batas 5s (rawan timeout di CI lebih
+    // lambat). Kita tak menguji visibility pointer-events di sini — matikan cek itu.
+    const user = userEvent.setup({ pointerEventsCheck: 0 })
     await user.click(screen.getByRole('button', { name: new RegExp(entri.nama) }))
 
     expect(screen.getByText('Ditangani')).toBeInTheDocument()

@@ -60,7 +60,7 @@ interface GameStore {
   meta: MetaLifetime | null
   slots: InfoSlot[]
   muatMetaDanSlot: () => Promise<void>
-  simpanKeSlot: (slot: SlotManual) => Promise<void>
+  simpanKeSlot: (slot: SlotManual) => Promise<boolean>
   muatDariSlot: (slot: SlotManual) => Promise<boolean>
   imporArsip: (json: string) => boolean
 }
@@ -180,9 +180,18 @@ export const useGame = create<GameStore>((set, get) => ({
 
   simpanKeSlot: async (slot) => {
     const cur = get().state
-    if (!cur) return
-    await window.primer.save.write(slot, serialize(cur))
+    if (!cur) return false
+    // CODEX ronde-13: dulu tak dibungkus try/catch — gagal tulis (disk penuh/
+    // izin ditolak) jadi unhandled rejection, tombol "Simpan" diam-diam tak
+    // berefek tanpa pesan apa pun. Pola sama `simpan()` autosave di atas.
+    try {
+      await window.primer.save.write(slot, serialize(cur))
+    } catch (e) {
+      console.error('Gagal menyimpan ke slot manual:', e)
+      return false
+    }
     await get().muatMetaDanSlot()
+    return true
   },
 
   muatDariSlot: async (slot) => {
