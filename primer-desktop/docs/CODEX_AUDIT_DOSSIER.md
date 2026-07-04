@@ -779,3 +779,28 @@ dikembalikan ke versi fix:
 mau memperluas cakupan #8): tulis test serupa utk layar besar lain
 (Klinik/Kunjungan/LaporanAkhir) — pola & harness sudah berdiri, tinggal
 diulang per layar.
+
+## 13. RESPONS BUILDER — ronde audit ke-7 2026-07-04 (bug hunt pasca phase-guard)
+
+CODEX mengaudit ulang setelah §12 (phase-guard + harness), read-only, dan
+mengembalikan 10 temuan. Commit `be3f08d` (engine/integritas) + `c972992` (UI):
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | `PESAN_LAB` yang ditolak phase-guard tetap membakar kapitasi & membuat jadwal hasil lab | ✅ FIX P1 KRITIS: reducer.ts mengecek `enc.labDipesan` (state SEBELUM aksiKlinik), bukan `hasil.enc.labDipesan` (SESUDAH) — penolakan clinic.ts tak pernah terlihat. Repro CODEX (3× PESAN_LAB fase salah → kapitasi tetap berubah) direproduksi persis via git-stash-lalu-test sebelum fix, lalu dipastikan hijau sesudah |
+| 2 | Test m3sisrute masih merah pasca phase-guard | ⏸ BASI: sudah 8/8 pass di HEAD — CODEX mengaudit snapshot sebelum commit `8b76c25` selesai, bukan kode ter-commit |
+| 3 | `REVISI_ENGINE` tak naik walau phase-guard mengubah semantik replay | ✅ FIX: 3→4, histori dicatat |
+| 4 | `sidikJariPack` tak sensitif thd pemeriksaanFisik/oldcarts/distraktor/rumahSakit/arc keluarga — probe CODEX menunjukkan hash tak berubah walau field itu diubah | ✅ FIX: semua field itu kini ikut di-hash. 4 test regresi baru, masing-masing dibuktikan merah dulu terhadap versi lama |
+| 5 | Prosedur klinis (Epley/serumen/tampon/nebulisasi) belum playable/scored | ⏸ DIAKUI, sudah tercatat §11/§12 — perlu desain UI+engine baru, bukan tambalan |
+| 6 | `obatAlternatif` cuma menghukum polifarmasi ANTIBIOTIK; kombo amlodipin+kaptopril (hipertensi urgensi) masih bebas penalti | ⏸ DITOLAK dgn alasan (sudah dijawab §11 #2): kombo dua antihipertensi oral bertahap klinis wajar, beda dari antibiotik stacking tanpa manfaat tambahan — bukan bug, keputusan desain sengaja |
+| 7 | Identitas ujian nama-only, NIM opsional | ⏸ DITUNDA (sudah tercatat §11/§12): keputusan kebijakan, bukan bug kode |
+| 8 | LaporanAkhir grade B pakai `stempel--daun`, kelas yang tak ada di CSS | ✅ FIX: disamakan dgn `WARNA_STEMPEL` di Rapor.tsx (B → `stempel--biru`) |
+| 9 | Reduced motion (toggle + OS) tak menghentikan `requestAnimationFrame`/`setTimeout` di LaporanAkhir | ✅ FIX: `useMotionDikurangi()` (gabung toggle manual + `prefers-reduced-motion`) — count-up lompat ke target, babak lompat ke akhir tanpa jeda dramatis |
+| 10 | Sisa kontras gelap: `.kunjungan-hotspot--ketemu` & `.kunjungan-potret` (~1.9:1) | ✅ FIX: pola sama `.tombol--utama` — teks gelap saat latar `--daun-600/700` diremap terang |
+
+Verifikasi: setiap fix P1 (#1, #3, #4) dan #8/#9/#10 diverifikasi dgn
+git-stash-kembalikan-versi-lama → pastikan test/computed-style memang gagal
+sesuai klaim CODEX → kembalikan fix → pastikan hijau lagi (bukan cuma
+"test baru lolos", tapi benar-benar dibuktikan test itu punya taring).
+9 test baru (5 engine + 4 sidik jari). 252 test hijau, tsc 0, build+pack OK,
+exe di-redeploy ke D:\Games.
