@@ -1120,3 +1120,54 @@ anamnesis→pemeriksaan→diagnosis→terapi→disposisi selesai tanpa galat,
 "ENCOUNTER SELESAI" muncul dgn diagnosis BENAR. 366 test hijau (dari 348 di
 akhir §21: +4 `tutorial.test.ts`, +2 `Klinik.tutorial.test.tsx`, +12 dari
 fixture existing yg kini mainkan 2 pasien bukan 1 di beberapa suite), tsc 0.
+
+## 24. Rebrand resmi: PRIMER → PRIMERA v1.0 (2026-07-04, commit `f3f916b`)
+
+Instruksi eksplisit user: proyek ini sekarang resmi **PRIMERA v1.0 — Primary
+Care Simulator & Arena**, menyatukan `primer-desktop` (simulator single-
+player, sekarang code-complete) dengan `primer-arena` (versi battle kelas,
+M8) di bawah satu identitas — nama "Arena" langsung menjelaskan huruf "A".
+Ditanya scope (AskUserQuestion): user pilih opsi TERBERAT — bukan cuma
+string tampilan, tapi juga rename folder proyek.
+
+**Dikerjakan**: `git mv primer-desktop primera-desktop` + `git mv
+primer-arena primera-arena` (riwayat git terjaga sbg rename, bukan
+delete+add — `git log --follow`/`blame` tetap utuh); `.claude/launch.json`
+cwd disesuaikan; `package.json` kedua proyek (name/description); versi
+primera-desktop **0.1.0-slice → 1.0.0** (mature, main harian, kini "v1.0"
+sungguhan) — primera-arena TETAP 0.1.0 (masih vertical-slice, Supabase
+belum dibuat, bukan v1.0 sungguhan meski satu keluarga produk); build
+config `productName`+`nsis.shortcutName` → "PRIMERA - Puskesmas Pagi";
+string tampilan in-app (TitleScreen h1, window title Electron, `<title>`
+kedua proyek, TentangModal, disklaimerMedis, komentar header CSS,
+JoinScreen/GMConsole Arena, localStorage resume-key Arena — aman diubah
+krn Arena belum pernah dideploy, nol data pemain nyata).
+
+**Sengaja TIDAK diubah** (identifier data/legal, beda kelas dari branding):
+`metadata.ts` `judulTerdaftar`/`haki` — nama & nomor pencatatan HKI
+(EC002026019623, Kemenkumham RI) yg SUNGGUHAN terdaftar tetap "PRIMER:
+Primary Care Manager Simulator" verbatim; hanya `judul` (merek tampilan)
+yg jadi PRIMERA, ditampilkan berdampingan di TentangModal (nama besar +
+cetak-kecil registrasi asli) — pola yg sama sekali tak perlu diubah krn
+struktur data sudah memisahkan keduanya sejak awal. `FORMAT_DOSSIER`/
+`KUNCI_TTD` (verifikasi.ts) — tag format file & bahan derivasi kunci HMAC
+yg persisten di tiap dossier mahasiswa yg diekspor; ini kontrak data
+setara REVISI_ENGINE, BUKAN string kosmetik — mengubahnya akan
+membatalkan verifikasi dossier lama tanpa alasan fungsional. Hanya pesan
+error prosa (bahasa manusia, bukan tag format) yg diperbarui. `PRIMER_DEV`/
+`PRIMER_SHOT` (env var internal developer, main/index.ts) — tak
+user-facing, dibiarkan. Dossier historis ini sendiri & DEEPTHINK_EDUKASI_UX.md
+— catatan kronologis, sengaja TAK ditulis ulang agar akurat sesuai nama yg
+berlaku saat tiap keputusan lampau dibuat.
+
+Verifikasi: typecheck+test suite BERSIH kedua proyek pasca-rename
+(primera-desktop 366/366, primera-arena 6/6 — folder rename nol dampak krn
+semua import relatif); `package-lock.json` disinkron ulang (`npm install
+--package-lock-only`); verifikasi browser live kedua proyek (title tab +
+H1 + disclaimer primera-desktop, JoinScreen+tab title primera-arena) —
+ketemu 1 miss di ronde pertama (`primera-arena/index.html <title>` masih
+"PRIMER Arena", terlewat dari grep pertama krn regex lookahead yg dipakai
+tak didukung ripgrep default — diperbaiki, grep ulang polos konfirmasi
+bersih). Deploy (exe/installer primera-desktop, Supabase primera-arena)
+DIBAHAS terpisah dgn user — lihat respons chat, bukan dossier ini (bukan
+keputusan desain engine).
