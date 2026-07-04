@@ -89,6 +89,23 @@ function createWindow(): void {
 
   win.on('ready-to-show', () => win.show())
 
+  // Self-heal renderer yang MATI LEVEL-PROSES (OOM/GPU/crash native) — beda dari
+  // exception JS yang sudah ditangkap dispatch/ErrorBoundary. Di mesin lab tua tanpa
+  // pengawas, jendela putih permanen = stasiun mati; muat ulang otomatis memulihkan
+  // dari autosave. Guard 4 detik mencegah loop reload bila crash langsung berulang.
+  let terakhirReload = 0
+  win.webContents.on('render-process-gone', (_e, details) => {
+    console.error('[render-process-gone]', details.reason, details.exitCode)
+    if (details.reason === 'clean-exit' || win.isDestroyed()) return
+    const sekarang = Date.now()
+    if (sekarang - terakhirReload < 4000) {
+      console.error('[render-process-gone] crash beruntun — tidak auto-reload lagi (hindari loop)')
+      return
+    }
+    terakhirReload = sekarang
+    win.reload()
+  })
+
   // Kunci DevTools di produksi (CODEX P1): blokir pintasan F12/Ctrl+Shift+I/J/C
   // dan tolak permintaan buka DevTools. Di DEV, biarkan agar bisa debug.
   if (!DEV) {

@@ -17,6 +17,7 @@ import { Rapor } from './screens/Rapor'
 import { LaporanAkhir } from './screens/LaporanAkhir'
 import { Hud } from './components/Hud'
 import { Toaster } from './components/Toaster'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { useAudio } from './audio/useAudio'
 import { useBgm } from './audio/bgm'
 import { MuteButton } from './audio/MuteButton'
@@ -78,17 +79,22 @@ export default function App() {
     <div className="app-frame" data-mode={mode}>
       <Hud />
       <main className="app-layar">
-        <div className="app-transisi" key={state.layar}>
-          {state.layar === 'meja' && <MejaKerja />}
-          {state.layar === 'klinik' && <Klinik />}
-          {state.layar === 'peta' && <PetaDesa />}
-          {state.layar === 'kunjungan' && <Kunjungan />}
-          {state.layar === 'kegiatan' && <Kegiatan />}
-          {state.layar === 'igd' && <Igd />}
-          {state.layar === 'dex' && <DexSkdi />}
-          {state.layar === 'rapor' && <Rapor />}
-          {state.layar === 'laporan' && <LaporanAkhir />}
-        </div>
+        {/* Boundary per-layar: crash render satu layar tak menjatuhkan HUD/Pengaturan,
+            dan `key={state.layar}` me-remount saat pindah layar → pulih otomatis
+            begitu mahasiswa menavigasi keluar lewat HUD. */}
+        <ErrorBoundary judul={state.layar} variant="layar" key={state.layar}>
+          <div className="app-transisi">
+            {state.layar === 'meja' && <MejaKerja />}
+            {state.layar === 'klinik' && <Klinik />}
+            {state.layar === 'peta' && <PetaDesa />}
+            {state.layar === 'kunjungan' && <Kunjungan />}
+            {state.layar === 'kegiatan' && <Kegiatan />}
+            {state.layar === 'igd' && <Igd />}
+            {state.layar === 'dex' && <DexSkdi />}
+            {state.layar === 'rapor' && <Rapor />}
+            {state.layar === 'laporan' && <LaporanAkhir />}
+          </div>
+        </ErrorBoundary>
       </main>
       <Toaster />
       <MuteButton />
