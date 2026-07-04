@@ -892,3 +892,30 @@ Verifikasi-bergigi: revert save.ts → 4 test merah; revert clinic.ts → 4 test
 merah. Smoke browser: background rgba terkonfirmasi via preview_inspect
 (warna teks itu sendiri bukan bagian klaim CODEX #3, hanya insidental
 ditemukan). 297 test hijau, tsc 0.
+
+## 18. RESPONS BUILDER — triase DeepThink kode 2026-07-04 (5 blind spot skoring & flow)
+
+Ini triase pertama DeepThink terhadap KODE (bukan strategi/design) — sebelumnya
+DeepThink hanya mereview dokumen desain. Tetap dicatat di dossier yang sama
+demi satu jejak audit kontinu. Commit `7a373e1`.
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | `menungguLabBesok` tak cek RELEVANSI lab (bisa pesan lab apa saja demi proteksi skor 70); DAN reducer.ts mengecualikan observasi-menunggu-lab dari SEMUA jadwal kembali — pasien LENYAP permanen dari game | ✅ FIX: wajib lab relevan di clinic.ts+reducer.ts (sinkron); jadwalkan kembali besok pagi utk evaluasi hasil (netral) |
+| 2 | Klik distraktor SETELAH sabar habis tak tercatat di `ditanya` (disengaja, cegah kredit palsu) tapi jadi lolos TANPA penalti apa pun — spam gratis | ✅ FIX: field baru `ditanyaKetus` — distraktor pasca-ketus tetap dihukum, esensial pasca-ketus tetap tanpa kredit (fix lama dipertahankan) |
+| 3 | `antibiotikTanpaIndikasi` dihitung tapi cuma masuk tally, tak pernah memotong `skorTerapi` sendiri | ✅ FIX: −25 di formula skorTerapi, bertumpuk di atas obatDiLuar (pola sama obatBerbahaya) |
+| 4 | SBAR: isi 1 kolom lalu copy-paste ke 4 kolom S-B-A-R meloloskan panjang+angka tanpa berpikir klinis | ✅ FIX (dgn koreksi): deteksi duplikat antar kolom TERISI saja → −50; dua kolom kosong "sama" bukan copas |
+| 5 | Pasien di-skip di antrian pagi lalu "bermasalah" cuma angka statistik (autoBermasalah) — min-maxer bisa hitung skip lebih aman drpd periksa & berisiko salah | ✅ FIX: pasien skip+bermasalah (kasus punya konsekuensi) dijadwalkan kembali dgn kondisi memburuk — kelalaian jadi nyata |
+
+Dua koreksi terhadap kode yang diusulkan DeepThink (bukan sekadar tempel apa
+adanya): (a) fix #2 semula diusulkan `ditanya` SELALU bertambah (fix satu-baris)
+— ini AKAN meregresi fix CODEX sebelumnya (esensial pasca-ketus dapat kredit
+palsu lagi); dipakai desain 2-array agar penalti & kredit bisa dibedakan tanpa
+regresi. (b) fix #4 semula `isianUnik.size < isian.length` tanpa filter kosong
+— akan menghukum GANDA mahasiswa yang sekadar belum isi 2 kolom (bukan copas);
+ditambah filter hanya bandingkan kolom terisi.
+
+REVISI_ENGINE 7→8. Verifikasi-bergigi: revert clinic.ts → 8 test merah (4
+regresi-guard tetap hijau by design, bukti fix tak overreach); revert
+reducer.ts → 3 test merah (1 regresi-guard hijau). 311 test hijau, tsc 0.
+Tak ada file .tsx/.css tersentuh — murni engine, browser-verify dilewati.
