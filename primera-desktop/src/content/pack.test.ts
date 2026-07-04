@@ -47,7 +47,21 @@ describe('PACK — validasi silang id konten', () => {
   // yang mismatch (mis. kode SIBLING beda penyakit seperti otitis H65.0 vs
   // H66.0 yang sudah diperbaiki) akan GAGAL agar ditinjau.
   it('skdi144.kasusId ↔ icd10 cocok dgn kasus (kecuali kode kompetensi generik)', () => {
-    const GENERIK_SENGAJA = new Set(['conjunctivitis_bacterial', 'tb_pulmonary', 'dm_type2'])
+    const GENERIK_SENGAJA = new Set([
+      'conjunctivitis_bacterial',
+      'tb_pulmonary',
+      'dm_type2',
+      // CODEX ronde-14 §5 (2026-07-04) — tertaut manual setelah verifikasi
+      // thd dokumen SKDI resmi (Perkonsil 11/2012) mengonfirmasi SEMUA 4A,
+      // kompetensi SAMA dgn kasus, kasus cuma pakai ICD-10 lebih spesifik:
+      'dysentery', // A03 (parent) vs kasus disentri_basiler A03.9
+      'hemorrhoid_12', // I84 (kode SKDI umum) vs kasus hemoroid_grade1 K64.0
+      'migraine', // G43.9 (unspesifik) vs kasus saraf_migrain G43.0 (tanpa aura)
+      'vertigo_bppv', // R42 (simtom umum) vs kasus saraf_vertigo_bppv H81.1 (BPPV spesifik)
+      'normal_pregnancy', // Z34 vs kasus kia_anc_kehamilan_normal Z34.0 (trimester)
+      'malaria_vivax', // B54 (unspesifik) vs kasus kia_malaria_falsiparum B50.9 (spesies)
+      'uti', // N39.0 vs kasus kia_isk_kehamilan O23.4 (ISK DALAM kehamilan, penyakit sama)
+    ])
     const mismatch = PACK.skdi144
       .filter((e): e is typeof e & { kasusId: string } => e.kasusId !== undefined)
       .filter((e) => !GENERIK_SENGAJA.has(e.id))
@@ -57,5 +71,22 @@ describe('PACK — validasi silang id konten', () => {
       })
       .map((e) => `${e.id}: ${e.icd10} ≠ kasus ${PACK.kasus[e.kasusId]!.icd10}`)
     expect(mismatch).toEqual([])
+  })
+
+  it('CODEX ronde-14 §5: 7 kasus tambahan kini tertaut Dex/SKDI144 (38→45 dari 67 playable)', () => {
+    const kasusIds = Object.keys(PACK.kasus)
+    const linked = new Set(PACK.skdi144.filter((e) => e.kasusId).map((e) => e.kasusId))
+    const tertautBaru = [
+      'disentri_basiler',
+      'hemoroid_grade1',
+      'saraf_migrain',
+      'saraf_vertigo_bppv',
+      'kia_anc_kehamilan_normal',
+      'kia_malaria_falsiparum',
+      'kia_isk_kehamilan',
+    ]
+    for (const id of tertautBaru) expect(linked.has(id)).toBe(true)
+    const totalTertaut = kasusIds.filter((id) => linked.has(id)).length
+    expect(totalTertaut).toBe(45)
   })
 })

@@ -22,9 +22,9 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   { id: 'tetanus', nama: 'Tetanus', icd10: 'A35' },
   { id: 'hiv_uncomplicated', nama: 'HIV/AIDS Tanpa Komplikasi', icd10: 'Z21' },
   { id: 'tension_headache', nama: 'Nyeri Kepala Tipe Tegang', icd10: 'G44.2' },
-  { id: 'migraine', nama: 'Migren', icd10: 'G43.9' },
+  { id: 'migraine', nama: 'Migren', icd10: 'G43.9', kasusId: 'saraf_migrain' },
   { id: 'bells_palsy', nama: "Bell's Palsy", icd10: 'G51.0' },
-  { id: 'vertigo_bppv', nama: 'Vertigo (BPPV)', icd10: 'R42' },
+  { id: 'vertigo_bppv', nama: 'Vertigo (BPPV)', icd10: 'R42', kasusId: 'saraf_vertigo_bppv' },
   { id: 'somatoform', nama: 'Gangguan Somatoform', icd10: 'F45' },
   { id: 'insomnia', nama: 'Insomnia', icd10: 'F51.0' },
 
@@ -114,11 +114,11 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   { id: 'schistosomiasis', nama: 'Skistosomiasis', icd10: 'B65.9' },
   { id: 'taeniasis', nama: 'Taeniasis', icd10: 'B68.9' },
   { id: 'hepatitis_a', nama: 'Hepatitis A', icd10: 'B15' },
-  { id: 'dysentery', nama: 'Disentri Basiler, Disentri Amuba', icd10: 'A03' },
+  { id: 'dysentery', nama: 'Disentri Basiler, Disentri Amuba', icd10: 'A03', kasusId: 'disentri_basiler' },
 
   // === SISTEM GINJAL & SALURAN KEMIH (6) ===
-  { id: 'hemorrhoid_12', nama: 'Hemoroid Grade 1–2', icd10: 'I84' },
-  { id: 'uti', nama: 'Infeksi Saluran Kemih', icd10: 'N39.0' },
+  { id: 'hemorrhoid_12', nama: 'Hemoroid Grade 1–2', icd10: 'I84', kasusId: 'hemoroid_grade1' },
+  { id: 'uti', nama: 'Infeksi Saluran Kemih', icd10: 'N39.0', kasusId: 'kia_isk_kehamilan' },
   { id: 'gonorrhea', nama: 'Gonore', icd10: 'A54.9' },
   { id: 'pyelonephritis', nama: 'Pielonefritis Tanpa Komplikasi', icd10: 'N10' },
   { id: 'phimosis', nama: 'Fimosis', icd10: 'N47.1' },
@@ -131,7 +131,7 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   { id: 'vaginitis', nama: 'Vaginitis', icd10: 'N76.0' },
   { id: 'bacterial_vaginosis', nama: 'Vaginosis Bakterialis', icd10: 'N76.0' }, // BV = bentuk vaginitis bakterial, kode sama defensible
   { id: 'salpingitis', nama: 'Salpingitis', icd10: 'N70' },
-  { id: 'normal_pregnancy', nama: 'Kehamilan Normal', icd10: 'Z34' },
+  { id: 'normal_pregnancy', nama: 'Kehamilan Normal', icd10: 'Z34', kasusId: 'kia_anc_kehamilan_normal' },
   { id: 'complete_abortion', nama: 'Abortus Spontan Komplit', icd10: 'O03.9' },
   {
     // ICD-10 harus D50.9 (defisiensi besi) agar COCOK dengan kasus yang
@@ -166,7 +166,7 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   { id: 'anemia_deficiency', nama: 'Anemia Defisiensi Besi', icd10: 'D50' },
   { id: 'lymphadenitis', nama: 'Limfadenitis', icd10: 'I88' },
   { id: 'dengue_df', nama: 'Demam Dengue, DHF', icd10: 'A90', kasusId: 'dengue_df' },
-  { id: 'malaria_vivax', nama: 'Malaria', icd10: 'B54' },
+  { id: 'malaria_vivax', nama: 'Malaria', icd10: 'B54', kasusId: 'kia_malaria_falsiparum' },
   { id: 'leptospirosis', nama: 'Leptospirosis Tanpa Komplikasi', icd10: 'A27.9' },
   { id: 'anaphylaxis', nama: 'Reaksi Anafilaktik', icd10: 'T78.2' },
 

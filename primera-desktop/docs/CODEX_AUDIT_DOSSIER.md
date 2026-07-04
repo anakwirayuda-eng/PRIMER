@@ -1258,3 +1258,97 @@ sudah cukup utk menduga snapshot lama sebelum baca detail lain.
   ke nomor kompetensi SKDI yang tepat akan ditentukan sendiri (bukan
   ditanya satu-satu ke user, bukan pula heuristik longgar prefix ICD-10
   yang berisiko salah-taut). Status: MENUNGGU dokumen, belum dikerjakan.
+
+## 26. Temuan #5 dieksekusi — audit 29 kasus vs dokumen SKDI resmi (2026-07-04)
+
+User memberi PDF resmi: **Standar Kompetensi Dokter Indonesia, Konsil
+Kedokteran Indonesia, Edisi Kedua 2012** (`SKDI_Perkonsil_11_maret_131.pdf`,
+100 halaman). **Temuan metodologi penting SEBELUM triase**: dokumen ini
+BUKAN sumber yang sama dgn "KMK No. HK.01.07/MENKES/1186/2022" yang
+disebut di header `skdi144.ts` sbg asal daftar 144 — SKDI 2012 adalah
+kerangka kompetensi UMUM lintas semua level (1/2/3A/3B/4A, ~700+ penyakit,
+target KELULUSAN dokter), sedangkan 144-FKTP adalah daftar KURASI lebih
+baru & lebih sempit (penyakit yang secara PRAKTIK wajib tuntas di
+Puskesmas). Dua dokumen berbeda tujuan → level kompetensi di SKDI 2012
+TIDAK otomatis = "termasuk/tidak dalam 144", tapi tetap sumber otoritatif
+utk mengecek level kompetensi akademis tiap penyakit (dipakai sbg bukti
+pendukung, bukan sbg daftar 144 itu sendiri — keterbatasan ini didisclosekan
+eksplisit, bukan dipoles seolah pasti).
+
+Ekstraksi teks PDF via PyMuPDF (Python `fitz`, poppler tak terpasang di
+mesin ini) → `Lampiran-3 Daftar Penyakit` (baris 3162-6433 hasil ekstrak).
+Silang-cek 29 kasus (nama, ICD-10 kasus, `skdi`/`harusDirujuk` self-report)
+vs entri resmi:
+
+**7 kasus — DITAUTKAN sekarang (commit ini)**: penyakit SAMA dgn entri
+skdi144.ts yang SUDAH ada, kasus cuma pakai ICD-10 lebih spesifik dari kode
+generik entri lama — kompetensi 4A dikonfirmasi PDF utk semua:
+`disentri_basiler`→`dysentery`(A03.9 vs A03), `hemoroid_grade1`→
+`hemorrhoid_12`(K64.0 vs I84 — CATATAN terpisah: I84 kode SKDI yg benar,
+K64 tampak seperti kode ICD-11 nyasar, tapi di luar cakup linking ini),
+`saraf_migrain`→`migraine`(G43.0 vs G43.9), `saraf_vertigo_bppv`→
+`vertigo_bppv`(H81.1 vs R42 — H81.1 sebenarnya kode yg LEBIH tepat dari
+R42 simtomatik generik entri lama, tapi tak diubah krn di luar cakup),
+`kia_anc_kehamilan_normal`→`normal_pregnancy`(Z34.0 vs Z34),
+`kia_malaria_falsiparum`→`malaria_vivax`(B50.9 vs B54 unspesifik),
+`kia_isk_kehamilan`→`uti`(O23.4 vs N39.0 — ISK dalam kehamilan = penyakit
+sama, kehamilan cuma konteks). Ditambahkan ke allowlist
+`GENERIK_SENGAJA` (pack.test.ts) dgn komentar per-item. Test baru
+`pack.test.ts` mengunci total tertaut 38→**45** dari 67 playable.
+Verifikasi-bergigi: stash skdi144.ts → test merah tepat → restore → hijau.
+368 test (dari 367), tsc 0.
+
+**11 kasus — TETAP TAK TERTAUT, dgn TEMUAN SAMPINGAN penting**: 15 dari 29
+kasus semula memang level <4A/wajib-rujuk (stroke_iskemik dkk, SUDAH
+dikonfirmasi §25 lewat `skdi`/`harusDirujuk` self-report). Tapi audit PDF
+ini MENEMUKAN **5 kasus yang self-report levelnya SENDIRI ternyata KELIRU**
+dibanding dokumen resmi — bukan cuma "belum tertaut", tapi salah label:
+- `kulit_dermatitis_kontak` (self-report 4A) — PDF: "Dermatitis kontak
+  alergika" = **3A**, bukan 4A.
+- `tht_rinosinusitis_akut` (self-report 4A) — PDF: "Sinusitis" = **3A**
+  (varian akut spesifik malah level 2).
+- `mm_osteoartritis_lutut` (self-report 4A) — PDF: "Artritis,
+  osteoarthritis" (satu entri gabungan) = **3A**.
+- `jiwa_gangguan_cemas` (self-report 4A) — PDF: "Gangguan cemas
+  menyeluruh" = **3A**.
+- `jiwa_depresi_ringan` (self-report 4A) — PDF: "Depresi endogen, episode
+  tunggal dan rekuran" = **level 2** (bahkan bukan 3A — cuma "mengenali
+  dan merujuk", TANPA penatalaksanaan awal sama sekali).
+
+**PENTING — bukan berarti 5 kasus ini otomatis SALAH tatalaksana dalam
+game**: level SKDI 2012 mengukur kompetensi LULUSAN (akademis, konservatif),
+bukan standar praktik FKTP riil 2020-an (mis. integrasi kesehatan jiwa
+Puskesmas menjadikan GAD/depresi ringan lazim ditangani mandiri di
+lapangan meski akademis "cuma" level 2-3A). Ini DIDOKUMENTASIKAN sbg
+temuan utk diketahui user (apakah `harusDirujuk`/`skdi` kasus tsb perlu
+dikoreksi, keputusan klinis user, BUKAN saya putuskan sepihak) — TAK
+diubah kode kasusnya di commit ini (di luar cakup temuan #5 linking).
+
+**3 kasus — TIDAK DITEMUKAN di Daftar Penyakit SKDI sama sekali**:
+`dispepsia_fungsional`, `mm_low_back_pain`, `mm_mialgia` — ketiganya
+kemungkinan diklasifikasi sbg "Daftar Masalah" (keluhan/simtom) bukan
+"Daftar Penyakit" (diagnosis definitif) di taksonomi SKDI (mis. "Nyeri
+pinggang" & "Gangguan otot, nyeri otot" muncul di Lampiran-1 Daftar
+Masalah, bukan Lampiran-3). `mm_gout_artritis_akut` juga tak ketemu
+eksplisit (kemungkinan tergabung dlm entri "Artritis, osteoarthritis"
+umum, sama spt osteoartritis di atas). Tak bisa dipastikan tanpa dokumen
+144-FKTP asli (Kepmenkes 1186/2022) yang TIDAK dimiliki sesi ini.
+
+**1 kasus — pertanyaan arsitektur, bukan linking**: `kia_kb_konseling`
+(Konseling KB) bukan "penyakit" sama sekali — ini LAYANAN preventif/
+konseling, di luar cakupan Dex berbasis-penyakit sepenuhnya; tak relevan
+dicarikan entri SKDI144.
+
+**1 kasus — kompetensi sudah dipakai kasus lain**: `mata_konjungtivitis_alergi`
+(H10.1) — slot 144 "Konjungtivitis" (H10.9) sudah tertaut ke
+`konjungtivitis_bakterial`. `kasusId` bertipe `string` tunggal (bukan
+array) — kalau mau kedua varian (bakterial & alergika) sama-sama
+memberi kredit Dex utk SATU kompetensi "Konjungtivitis", perlu ubah tipe
+jadi `string[]` (perubahan arsitektur kecil, di luar cakup commit ini,
+diserahkan ke user apakah worth dikerjakan).
+
+Ringkasan status: 45/67 tertaut (dari 38), 11 correctly-excluded (rujuk/
+level rendah, sah), 5 kasus dgn self-report level SALAH (didokumentasikan,
+tak diubah), 3+1 kasus tak terverifikasi tanpa dokumen 144-FKTP asli, 1
+kasus butuh keputusan arsitektur `kasusId` array. Tak ada REVISI_ENGINE
+bump (linking Dex/SKDI144 tak masuk kontrak skor/replay M6).
