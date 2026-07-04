@@ -96,4 +96,33 @@ describe('Tutorial "onboarding railroaded" — imunitas skor', () => {
     expect(s.tally.totalPasien).toBe(1)
     expect(s.tally.diagnosisBenar).toBe(1)
   })
+
+  it('DISPOSISI pasien PERTAMA (tutorial) TAK memancarkan event DEX_BERTAMBAH/SURAT_MASUK palsu (CODEX)', () => {
+    // state benar-benar dibekukan (test di atas), TAPI toaster membaca events,
+    // bukan state — event yg tak difilter akan bilang "Buku Saku diperbarui"
+    // walau s.dex tak berubah sama sekali. Jalankan langkah terakhir manual
+    // (bukan tanganiPasienAktif) supaya bisa memeriksa `events` hasil DISPOSISI.
+    let s = buildInitialState('Uji Tutorial', 42, PACK)
+    s = run(s, { type: 'PANGGIL_PASIEN' })
+    const enc = s.klinik.aktif!
+    const kasus = PACK.kasus[enc.pasien.kasusId]!
+    for (const q of kasus.anamnesis) {
+      if (q.distraktor === true) continue
+      s = run(s, { type: 'TANYA', pertanyaanId: q.id })
+    }
+    s = run(s, { type: 'LANJUT_FASE' })
+    s = run(s, { type: 'UKUR_VITAL' })
+    for (const t of kasus.pemeriksaanFisik) if (t.relevan) s = run(s, { type: 'PERIKSA', region: t.region })
+    s = run(s, { type: 'LANJUT_FASE' })
+    s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' })
+    for (const obatId of kasus.tatalaksana.obatBenar) s = run(s, { type: 'TAMBAH_OBAT', obatId })
+    s = run(s, { type: 'LANJUT_FASE' })
+    const hasil = advance(s, { type: 'DISPOSISI', jenis: 'pulang' }, PACK)
+
+    expect(hasil.events.some((e) => e.type === 'DEX_BERTAMBAH')).toBe(false)
+    expect(hasil.events.some((e) => e.type === 'SURAT_MASUK')).toBe(false)
+    // ENCOUNTER_SELESAI tetap ada — debrief narasi TETAP muncul, hanya
+    // notifikasi skor palsu yang dipangkas.
+    expect(hasil.events.some((e) => e.type === 'ENCOUNTER_SELESAI')).toBe(true)
+  })
 })

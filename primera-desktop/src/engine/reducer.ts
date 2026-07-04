@@ -524,6 +524,14 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       const belanjaObatFinal = kebalTutorial ? s.keuanganBulan.belanjaObat : belanjaObat
       const jadwalFinal = kebalTutorial ? s.jadwal : jadwal
       const desaFinal = kebalTutorial ? s.desa : desaBaru
+      // CODEX: DEX_BERTAMBAH/SURAT_MASUK dipancarkan tanpa syarat di atas —
+      // toaster (Toaster.tsx) akan bilang "Buku Saku diperbarui"/"Surat baru"
+      // meski dex/inbox sungguhan dibekukan barusan. Pangkas KEDUA event itu
+      // saat kebal (bukan cuma inbox-nya) — ENCOUNTER_SELESAI/STEMPEL tetap
+      // lolos, itu narasi debrief yang memang harus tetap muncul.
+      const eventsFinal = kebalTutorial
+        ? events.filter((e) => e.type !== 'DEX_BERTAMBAH' && e.type !== 'SURAT_MASUK')
+        : events
 
       return {
         state: {
@@ -543,7 +551,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
           ...(suratSisrute && !kebalTutorial ? { inbox: [...s.inbox, suratSisrute] } : {}),
           tutorialAktif: false,
         },
-        events,
+        events: eventsFinal,
       }
     }
 

@@ -1171,3 +1171,78 @@ tak didukung ripgrep default — diperbaiki, grep ulang polos konfirmasi
 bersih). Deploy (exe/installer primera-desktop, Supabase primera-arena)
 DIBAHAS terpisah dgn user — lihat respons chat, bukan dossier ini (bukan
 keputusan desain engine).
+
+## 25. CODEX ronde-14 — triase 6 temuan tutorial+konten (2026-07-04, commit TBD)
+
+Laporan CODEX read-only baru, 6 temuan atas fitur tutorial (§23) + 2 temuan
+konten pra-eksisting tak terkait. **3 dari 6 STALE** — laporan CODEX
+menyebut path `primer-desktop/...` (nama folder SEBELUM rebrand §24) dan
+menjelaskan simtom yang persis cocok dengan status "kepotong tadi" di
+tengah sesi sebelumnya (prop belum ditambah, file belum di-commit, CSS
+belum ditulis) — CODEX jelas mengaudit checkout/snapshot dari titik itu,
+BUKAN state saat ini. Diverifikasi ulang satu per satu thd kode aktual:
+
+1. **STALE** — `tutorialAktif` prop hilang di `DeckTerapi`/`DeckDisposisi`
+   Props → diverifikasi ADA di kedua file (`tutorialAktif?: boolean`,
+   commit `b1bbf9e`). `npm run typecheck` bersih, 0 error.
+2. **STALE** — `tutorial.ts`/`tutorialKlinik.ts` untracked → `git ls-files`
+   konfirmasi KEDUANYA tracked, `git status` bersih.
+3. **STALE** — CSS `.klinik-sorot-tutorial`/`.klinik-tutorial-banner` tak
+   ada → diverifikasi ADA di `Klinik.css:258,273` termasuk varian
+   `[data-mode='malam']`.
+4. **CONFIRMED, DIPERBAIKI** — imunitas tutorial membekukan STATE
+   (`dex`/`inbox`) tapi TIDAK memfilter `events` yang dipancarkan di
+   `reducer.ts` case DISPOSISI: `DEX_BERTAMBAH` (baris 303) dan
+   `SURAT_MASUK` (baris 501) dipancarkan TANPA SYARAT sebelum gerbang
+   imunitas (`kebalTutorial`, baris 519) sempat dihitung. `Toaster.tsx`
+   membaca `events`, bukan state — jadi toast "Buku Saku diperbarui (★1)"
+   MUNCUL sungguhan meski `s.dex` tak berubah sama sekali. **Bukti
+   independen**: gejala ini SUDAH terlihat sendiri di verifikasi browser
+   §23 sebelumnya ("Buku Saku diperbarui (★1)" muncul di snapshot), tapi
+   waktu itu tak disadari sebagai bug krn fokus verifikasi ada di
+   sorotan/lock UI, bukan toast. Fix: filter `eventsFinal` di titik
+   gerbang yang sama (`kebalTutorial ? events.filter(e => e.type !==
+   'DEX_BERTAMBAH' && e.type !== 'SURAT_MASUK') : events`) — `STEMPEL`/
+   `ENCOUNTER_SELESAI` tetap lolos (debrief narasi memang harus tetap
+   tampil, sudah benar by design). Events TIDAK masuk kontrak M6 replay
+   (`grep events verifikasi.ts` kosong) — tak ada REVISI_ENGINE bump.
+   Verifikasi-bergigi: test baru merah tepat (`expect(...DEX_BERTAMBAH...
+   ).toBe(false)` gagal dgn `true`) → fix → hijau; ulang stash/restore
+   reducer.ts → merah/hijau lagi. Verifikasi browser end-to-end: mainkan
+   pasien tutorial penuh sampai PULANGKAN, `document.body.innerText.
+   includes('Buku Saku diperbarui')` → `false` (dulu `true`). 367 test
+   (dari 366 — +1 `tutorial.test.ts`), tsc 0.
+5. **CONFIRMED (skrip verifikasi ditulis, angka akurat), FLAGGED KE
+   USER** — 29 dari 67 kasus playable TAK tertaut entri `skdi144`
+   (auto-link `content/index.ts:62` hanya cocok ICD-10 PERSIS; 29 kasus
+   ini kodenya lebih spesifik/beda dari entri SKDI144 manapun). Akibat:
+   Dex/Buku Saku (`DexSkdi.tsx`, hanya menghitung entri BER-`kasusId`)
+   tak pernah menunjukkan progres utk 29 kompetensi ini meski sudah
+   ditangani berkali-kali — contoh dikonfirmasi: `stroke_iskemik`,
+   `ppok_eksaserbasi`, `apendisitis_akut`, `jiwa_skizofrenia`, dll (daftar
+   lengkap di respons chat). BUKAN bug dari fitur tutorial — pra-eksisting
+   sejak M7, tak disentuh sesi ini. TAK difix langsung: perbaikan
+   sungguhan butuh keputusan KURIKULUM (kasus mana map ke nomor
+   kompetensi SKDI mana), bukan sekadar kode — mekanisme SUDAH mendukung
+   override manual (`if (entri.kasusId) return entri` di baris 61), yang
+   belum ada adalah SIAPA yang mengisi 29 pemetaan itu. Diserahkan ke
+   user sbg keputusan konten terpisah, bukan diputuskan sepihak.
+6. **CONFIRMED, FLAGGED KE USER** — mode `ujian` (30 hari, "setiap
+   keputusan dinilai" per surat sambutan `init.ts`) IKUT dapat pasien
+   tutorial kebal-skor di hari pertama, sama seperti karier —
+   `buildInitialState` set `tutorialAktif: true` tanpa syarat mode.
+   Ini bukan bug (tak ada crash/korupsi data), tapi TENSION desain:
+   surat sambutan ujian eksplisit bilang "yang dinilai adalah caramu
+   berpikir, TERCATAT DI SETIAP KEPUTUSAN" — klaim ini secara harfiah
+   salah untuk pasien pertama. Opsi yg mungkin (belum dipilih): (a)
+   biarkan seragam kedua mode (aman kalau mahasiswa bisa langsung pilih
+   ujian tanpa pernah main karier dulu), (b) tutorial HANYA di karier,
+   ujian selalu langsung dinilai penuh, (c) biarkan tutorial di ujian tapi
+   ubah teks surat sambutan mengakui pengecualian pasien pertama. Ini
+   keputusan fairness/naratif akademik (game ini dipakai utk nilai
+   sungguhan ~50 mahasiswa FK September 2026) — diserahkan ke user.
+
+Pola penting utk audit berikutnya: **selalu cek nama folder di path yang
+disebut laporan** (`primer-desktop` vs `primera-desktop`) sbg sinyal cepat
+apakah laporan itu pra- atau pasca-rebrand §24 — perbedaan itu sendiri
+sudah cukup utk menduga snapshot lama sebelum baca detail lain.
