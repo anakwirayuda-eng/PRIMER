@@ -919,3 +919,44 @@ REVISI_ENGINE 7→8. Verifikasi-bergigi: revert clinic.ts → 8 test merah (4
 regresi-guard tetap hijau by design, bukti fix tak overreach); revert
 reducer.ts → 3 test merah (1 regresi-guard hijau). 311 test hijau, tsc 0.
 Tak ada file .tsx/.css tersentuh — murni engine, browser-verify dilewati.
+
+## 19. RESPONS BUILDER — triase DeepThink ronde-2, 2 laporan gabungan (10 temuan) 2026-07-04
+
+Dua laporan DeepThink berturut-turut (masing-masing 5 "blind spot"), semua
+diverifikasi terhadap kode SAAT INI (bukan diterima mentah) sebelum diputuskan
+FIX/STALE/REJECTED/FLAGGED. Commit fix: `4af90f0`.
+
+**Laporan 1 (5 temuan):**
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | "Polifarmasi Halal": stacking NSAID/analgesik dalam satu grup `obatAlternatif` lolos penalti + naikkan kapitasi | ❌ REJECTED: audit penuh semua grup `obatAlternatif` konten nyata — tiap grup 2-item memasangkan kelas obat BERBEDA (kombinasi terapi sah), satu-satunya grup 3-item semua-antibiotik sudah dicek existing. Nol instance exploitable di konten nyata. |
+| 2 | "Lubang Hitam Observasi": pasien lenyap pasca observasi+lab-besok | ⏸️ STALE: sudah fix di `7a373e1` (§18 #1) |
+| 3 | "Triase Anggaran Harian": `TETAPKAN_PROGRAM` lock cuma cek `fokus`, `rwFokus` bisa diganti harian | ✅ FIX: guard kini cek fokus DAN rwFokus (lihat commit di atas) |
+| 4 | "Hukum Kemalasan LANJUTKAN": pasien di-skip cuma statistik | ⏸️ STALE: sudah fix di `7a373e1` (§18 #5) |
+| 5 | "Eksploitasi SBAR Copy-Paste" | ⏸️ STALE: sudah fix di `7a373e1` (§18 #4) |
+
+Plus pujian `director.ts` pity-timer — tak ada aksi, sudah dianggap solid.
+
+**Laporan 2 (5 temuan + 1 bonus):**
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | "Hukum Bilangan Kecil": `rasioKunjungan`/`kualitasMi` pakai `Math.max(1,total)` — 1 kunjungan sukses = rasio 100% selamanya | ✅ FIX: lantai `EKSPEKTASI_KUNJUNGAN_KARIER`(24)/`_UJIAN`(8) sbg penyebut (lihat commit) |
+| 2 | "Arbitrase Akurasi via Lab Shotgunning": pesan semua lab menjamin akurasi diagnosis krn penalti cuma di Manajemen (dimensi kecil) | ❌ REJECTED (misconceived): `diagnosisBenar` dihitung dari kecocokan ICD yg dikomit vs `diagnosisBanding`/rencana kasus — TIDAK bergantung mekanis pada jumlah lab dipesan. Lab shotgun menambah `labTakRelevan` (penalti Manajemen) tapi tak menaikkan akurasi sama sekali. |
+| 3 | "Boikot Rujukan": berhenti merujuk setelah 2 kesalahan menghindari guillotine `rujukanTotal≥3`, cuma kena penalti cowboy linear yg lebih kecil | 🚩 FLAGGED: tegangan nyata dgn keputusan desain eksplisit (guillotine butuh sampel ≥3 demi proteksi sampel-kecil — lihat §18 area terkait). Analisis order-2: interaksi `nilai.cowboy` × `pantasKonsekuensi` melemahkan klaim "boikot selalu lebih aman" drpd analisis scoring.ts-terisolasi DeepThink, tapi tegangan desainnya tetap sah. Perlu keputusan user: perketat cowboy-linear, atau terima trade-off sbg harga proteksi sampel-kecil? |
+| 4 | "Mesin Waktu Offline": save-file backup/restore exploit; DeepThink usulkan telemetri wall-clock deltaMs | 🚩 FLAGGED: pertanyaan arsitektur — engine ini sengaja deterministik (tanpa wall-clock/Math.random) demi replay verifier (§ M6). Menambah wall-clock telemetry adalah perubahan filosofi, bukan bug fix. Perlu keputusan user. |
+| 5 | "Subsidi Kepengecutan": stempel SUSPEK dgn kredit parsial utk diagnosis salah-tapi-berlindung dituduh mendorong hedging permanen | ❌ REJECTED: dihitung ambang break-even akurasi (~80%) scr aljabar — ini "kalibrasi epistemik" yg DISENGAJA (TEGAK/SUSPEK dual-stamp menghargai kejujuran kepercayaan diri diagnostik, bukan bug). Fitur berfungsi sesuai desain. |
+| Bonus | UI answer-shuffle pakai `rngFlavor` utk gagalkan walkthrough WhatsApp mekanis | 🚩 FLAGGED: fitur baru substansial (bukan bug fix), perlu sign-off scope dari user. |
+
+REVISI_ENGINE 8→9 (kedua fix mengubah semantik replay/skor — dossier lama
+kini bisa mereplay ke ERROR_AKSI atau UKM berbeda, harus jatuh ke "tidak
+dapat diverifikasi", bukan TIDAK SAH palsu).
+
+Verifikasi-bergigi: revert reducer.ts → 1 test rwFokus-lock merah (1
+regresi-guard tetap hijau); revert scoring.ts → 3 test lantai-kunjungan
+merah (1 regresi-guard "volume tinggi" tetap hijau). 317 test hijau, tsc 0.
+Tak ada file .tsx/.css tersentuh — murni engine, browser-verify dilewati.
+
+3 pertanyaan kebijakan (temuan 2#3, 2#4, bonus) diajukan ke user, tak
+diputuskan sepihak — lihat percakapan sesi ini utk jawabannya.
