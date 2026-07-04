@@ -11,6 +11,21 @@ function clamp(nilai: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, nilai))
 }
 
+/**
+ * DeepThink ronde-2 (Hukum Bilangan Kecil): `rasioKunjungan`/`kualitasMi` lama
+ * pakai `Math.max(1, total)` sbg penyebut — mahasiswa yang kunjungan SEKALI lalu
+ * berhasil mengunci rasio 100% SELAMANYA dgn usaha nyaris nol, setara dgn yang
+ * kunjungan 20× dan gagal 2. Pola sama persis `guillotineAktif = rujukanTotal>=3`
+ * di bawah (proteksi sampel-kecil sudah ada utk metrik LAIN di file yang sama) —
+ * di sini didifusikan (bukan on/off) krn rasio, bukan ambang tunggal: penyebut
+ * dinaikkan ke EKSPEKTASI beban kerja wajar, jadi kunjungan sedikit (walau
+ * 100% berhasil) tetap dihitung proporsional thd yang "seharusnya" dikerjakan.
+ * Angka estimasi dari konten nyata (16 keluarga × ~2-3 langkah arc / roster) —
+ * bisa dikalibrasi ulang, ini konstanta keseimbangan spt yang lain di file ini.
+ */
+const EKSPEKTASI_KUNJUNGAN_KARIER = 24
+const EKSPEKTASI_KUNJUNGAN_UJIAN = 8
+
 function gradeDariTotal(total: number): { grade: Skor4Dimensi['grade']; gradeLabel: string } {
   if (total >= 85) return { grade: 'A', gradeLabel: 'PTT Teladan' }
   if (total >= 70) return { grade: 'B', gradeLabel: 'Kompeten' }
@@ -58,8 +73,10 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const rwBerdata = state.desa.rw.filter((r) => r.iks > 0)
   const iksDesa =
     rwBerdata.length > 0 ? rwBerdata.reduce((jml, r) => jml + r.iks, 0) / rwBerdata.length : 0
-  const kualitasMi = t.miTotal > 0 ? (t.miTepat / t.miTotal) * 100 : 0
-  const rasioKunjungan = t.kunjunganBerhasil / Math.max(1, t.kunjunganTotal)
+  const ekspektasiKunjungan =
+    state.mode === 'ujian' ? EKSPEKTASI_KUNJUNGAN_UJIAN : EKSPEKTASI_KUNJUNGAN_KARIER
+  const kualitasMi = (t.miTepat / Math.max(ekspektasiKunjungan, t.miTotal)) * 100
+  const rasioKunjungan = t.kunjunganBerhasil / Math.max(ekspektasiKunjungan, t.kunjunganTotal)
   const ukm = clamp(
     (0.5 * iksDesa + 0.25 * rasioKunjungan + 0.25 * (kualitasMi / 100)) * 35 -
       2 * t.apathy -

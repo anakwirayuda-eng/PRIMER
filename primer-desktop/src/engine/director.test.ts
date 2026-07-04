@@ -413,10 +413,12 @@ describe('hitungSkor — profil adversarial', () => {
 
   it('apathy 10× menggerus UKM (−2 per kejadian)', () => {
     const tallyDasar = {
-      kunjunganTotal: 10,
-      kunjunganBerhasil: 10,
-      miTotal: 10,
-      miTepat: 10,
+      // ≥ EKSPEKTASI_KUNJUNGAN_KARIER (24) — di ambang/atas ekspektasi wajar,
+      // supaya baseline tetap 100% rasio (tes ini soal apathy, bukan floor).
+      kunjunganTotal: 24,
+      kunjunganBerhasil: 24,
+      miTotal: 24,
+      miTepat: 24,
     }
     const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8), buatRw(2, 0)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
     const rajin = hitungSkor(buatState({ desa, tally: buatTally(tallyDasar) }))
@@ -449,7 +451,7 @@ describe('hitungSkor — profil adversarial', () => {
     expect(cowboy.ukp).toBeCloseTo(35 - 6)
 
     const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
-    const tallyUkm = { kunjunganTotal: 10, kunjunganBerhasil: 10, miTotal: 10, miTepat: 10 }
+    const tallyUkm = { kunjunganTotal: 24, kunjunganBerhasil: 24, miTotal: 24, miTepat: 24 }
     const karma = hitungSkor(
       buatState({ desa, tally: buatTally({ ...tallyUkm, karmaTerjadi: 2, karmaDicegah: 1 }) }),
     )
@@ -476,10 +478,12 @@ describe('hitungSkor — profil adversarial', () => {
           totalPasien: 10,
           diagnosisBenar: 10,
           tegakBenar: 10,
-          kunjunganTotal: 4,
-          kunjunganBerhasil: 4,
-          miTotal: 12,
-          miTepat: 12,
+          // ≥ EKSPEKTASI_KUNJUNGAN_KARIER (24) — skor "sempurna" harus
+          // memenuhi ekspektasi beban kerja wajar, bukan cuma rasio kecil.
+          kunjunganTotal: 24,
+          kunjunganBerhasil: 24,
+          miTotal: 24,
+          miTepat: 24,
         }),
       }),
     )

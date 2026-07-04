@@ -8,10 +8,10 @@
 import { describe, expect, it } from 'vitest'
 import type { ContentPack } from '@content/pack'
 import type { KasusKlinis } from '@content/types'
-import type { GameState } from './state'
+import type { GameState, RwState, SkorTally } from './state'
 import type { Action } from './actions'
 import { advance } from './reducer'
-import { buatPasienDariKasus } from './director'
+import { buatPasienDariKasus, hitungSkor } from './director'
 import { Rng } from './core/rng'
 
 function kasus(id: string, o?: Partial<KasusKlinis>): KasusKlinis {
@@ -200,5 +200,80 @@ describe('DeepThink #5 — ghosting antrian pagi: pasien diskip+bermasalah kini 
     s = run(s, { type: 'LANJUTKAN' }, p)
     expect(s.tally.autoBermasalah).toBeGreaterThan(0)
     expect(s.jadwal.some((j) => j.id.startsWith('jadwal_terlantar_'))).toBe(false)
+  })
+})
+
+/* ---------------------------------------------------------------------------
+ * DeepThink ronde-2 — Hukum Bilangan Kecil (scoring.ts kunjungan/MI floor)
+ * ------------------------------------------------------------------------- */
+
+function tallyKosong(override?: Partial<SkorTally>): SkorTally {
+  return {
+    totalPasien: 0, diagnosisBenar: 0, tegakBenar: 0, tegakSalah: 0, suspekBenar: 0, suspekSalah: 0,
+    rujukanTotal: 0, rujukanNonSpesialistik: 0, rujukanTepat: 0, rujukanDitolak: 0, cowboy: 0,
+    antibiotikTanpaIndikasi: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
+    kunjunganTotal: 0, kunjunganDiusir: 0, apathy: 0, autoBermasalah: 0, posyanduSesi: 0,
+    prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdSalahDisposisi: 0, igdMeninggal: 0, rmLengkap: 0,
+    teguranDinkes: 0, hariKelelahan: 0, karmaTerjadi: 0, karmaDicegah: 0,
+    ...override,
+  }
+}
+
+function rwSatu(iks: number): RwState {
+  return { nomor: 1, nama: 'RW 1', jarak: 'dekat', totalKk: 25, kkTersurvei: iks > 0 ? 10 : 0, iks, bonusIks: 0 }
+}
+
+describe('DeepThink ronde-2 — Hukum Bilangan Kecil: rasioKunjungan/kualitasMi punya lantai ekspektasi', () => {
+  it('sekali kunjungan sukses TIDAK LAGI mengunci rasio 100% permanen (mode karier)', () => {
+    const p = pack([kasus('flu')])
+    const s = baseState(p, {
+      mode: 'karier',
+      desa: { keluarga: {}, kader: {}, rw: [rwSatu(0.8)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } },
+      tally: tallyKosong({ kunjunganTotal: 1, kunjunganBerhasil: 1, miTotal: 1, miTepat: 1 }),
+    })
+    const skor = hitungSkor(s)
+    // Sebelum fix: 1/Math.max(1,1) = 100%. Sekarang: 1/24 ≈ 4.2%.
+    expect(skor.rincian.kualitasMi).toBeCloseTo((1 / 24) * 100, 1)
+  })
+
+  it('dokter rajin (18 sukses dari 20 kunjungan) mengalahkan dokter sekali-sukses — bukan lagi seri', () => {
+    const p = pack([kasus('flu')])
+    const desa = { keluarga: {}, kader: {}, rw: [rwSatu(0.8)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
+    const sekaliSukses = hitungSkor(
+      baseState(p, { mode: 'karier', desa, tally: tallyKosong({ kunjunganTotal: 1, kunjunganBerhasil: 1 }) }),
+    )
+    const rajinTapiAdaGagal = hitungSkor(
+      baseState(p, { mode: 'karier', desa, tally: tallyKosong({ kunjunganTotal: 20, kunjunganBerhasil: 18 }) }),
+    )
+    // Klaim DeepThink: keduanya "setara" di formula lama (Math.max(1,total)).
+    // Dengan lantai ekspektasi, volume+konsistensi yang menang telak.
+    expect(rajinTapiAdaGagal.ukm).toBeGreaterThan(sekaliSukses.ukm)
+  })
+
+  it('mode ujian pakai lantai lebih rendah (8) — beban wajar 30 hari beda dari karier 90 hari', () => {
+    const p = pack([kasus('flu')])
+    const desa = { keluarga: {}, kader: {}, rw: [rwSatu(0.8)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
+    const delapanKunjunganUjian = hitungSkor(
+      baseState(p, { mode: 'ujian', desa, tally: tallyKosong({ kunjunganTotal: 8, kunjunganBerhasil: 8 }) }),
+    )
+    const delapanKunjunganKarier = hitungSkor(
+      baseState(p, { mode: 'karier', desa, tally: tallyKosong({ kunjunganTotal: 8, kunjunganBerhasil: 8 }) }),
+    )
+    expect(delapanKunjunganUjian.rincian.iksDesa).toBeCloseTo(delapanKunjunganKarier.rincian.iksDesa)
+    // 8 kunjungan = ekspektasi PENUH di ujian (rasio 1) tapi cuma sebagian di karier (8/24).
+    expect(delapanKunjunganUjian.ukm).toBeGreaterThan(delapanKunjunganKarier.ukm)
+  })
+
+  it('volume TINGGI (di atas ekspektasi) dgn hasil sempurna tetap dapat rasio penuh (tak dihukum ganda)', () => {
+    const p = pack([kasus('flu')])
+    const desa = { keluarga: {}, kader: {}, rw: [rwSatu(1)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
+    const s = baseState(p, {
+      mode: 'karier',
+      desa,
+      tally: tallyKosong({ kunjunganTotal: 30, kunjunganBerhasil: 30, miTotal: 30, miTepat: 30 }),
+    })
+    const skor = hitungSkor(s)
+    expect(skor.rincian.kualitasMi).toBeCloseTo(100)
+    expect(skor.ukm).toBeCloseTo(35)
   })
 })

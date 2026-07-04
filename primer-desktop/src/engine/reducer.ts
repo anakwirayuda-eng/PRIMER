@@ -765,8 +765,15 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       // tanpa ongkos oportunitas nyata — pemain bisa "menutupi" semua ancaman
       // bergantian tiap pekan alih-alih benar-benar memilih & mengorbankan).
       const periodeIni = Math.ceil(s.hari / 30)
-      if (s.program.periodeDitetapkan === periodeIni && s.program.fokus !== action.fokus) {
-        return err(s, 'Fokus program bulan ini sudah ditetapkan di Lokakarya Mini — baru bisa diganti bulan depan.')
+      // DeepThink ronde-2: guard lama cuma cek `fokus` — mempertahankan fokus
+      // yang sama sambil mengganti `rwFokus` TIAP HARI lolos tanpa ditolak,
+      // membiarkan pemain micromanage target bonusIks harian antar-RW. Itu
+      // membunuh esensi "kunci sebulan, korbankan RW lain" — kunci juga rwFokus.
+      if (
+        s.program.periodeDitetapkan === periodeIni &&
+        (s.program.fokus !== action.fokus || s.program.rwFokus !== action.rwFokus)
+      ) {
+        return err(s, 'Fokus program & lokasi RW bulan ini sudah ditetapkan di Lokakarya Mini — baru bisa diganti bulan depan.')
       }
       return {
         state: {

@@ -110,9 +110,15 @@ function fnv1a(teks: string): string {
  * kini tetap kena penalti anamnesis; (c) antibiotikTanpaIndikasi kini memotong
  * skorTerapi (−25), bukan cuma tercatat tally; (d) SBAR copy-paste antar kolom
  * kini dihukum (−50); (e) pasien yang di-skip DAN bermasalah di antrian pagi
- * kini bisa dijadwalkan kembali (jadwal baru → jejak lama mereplay beda).
+ * kini bisa dijadwalkan kembali (jadwal baru → jejak lama mereplay beda);
+ * 9 = triase DeepThink ronde-2: (a) TETAPKAN_PROGRAM kini mengunci rwFokus
+ * SEKALIGUS fokus (dulu cuma fokus, rwFokus bisa diganti harian) — jejak lama
+ * yang menukar rwFokus dalam periode terkunci kini mereplay ke ERROR_AKSI; (b)
+ * hitungSkor kini pakai lantai EKSPEKTASI_KUNJUNGAN (24 karier / 8 ujian) sbg
+ * penyebut rasioKunjungan/kualitasMi, bukan Math.max(1,total) — dossier lama
+ * dgn kunjungan sedikit mereplay ke UKM lebih rendah dari yang tercatat.
  */
-const REVISI_ENGINE = 8
+const REVISI_ENGINE = 9
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

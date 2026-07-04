@@ -259,6 +259,24 @@ describe('M2.10 — Program Wilayah: Triase Anggaran BULANAN (DeepThink Q4)', ()
     expect(r.state.program.fokus).toBe('skrining')
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
   })
+
+  it('fokus SAMA tapi rwFokus BEDA di periode terkunci → ditolak (DeepThink ronde-2: Triase Anggaran Harian)', () => {
+    // Sebelum fix: guard cuma cek `fokus`, jadi micromanage rwFokus tiap hari
+    // (target bonusIks) lolos tanpa dianggap pelanggaran kunci bulanan.
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
+    expect(s.program.rwFokus).toBe(1)
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 2 })
+    expect(r.state.program.rwFokus).toBe(1) // tak berubah
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+  })
+
+  it('menetapkan fokus DAN rwFokus yang SAMA lagi tidak dianggap pelanggaran kunci', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+  })
 })
 
 /* -- util lokal -------------------------------------------------------------- */
