@@ -4,18 +4,31 @@
  * Semua aturan di engine; layar hanya menyetir & memberi juice.
  */
 
+import { useMemo } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
+import { acakUrutan } from '../utils/acakUrutan'
 import './Igd.css'
 
 export function Igd() {
   const state = useGame((s) => s.state)!
   const dispatch = useGame((s) => s.dispatch)
   const igd = state.igd
+  const kasusMaybe = igd ? PACK.kasusIgd[igd.kasusId] : undefined
+  const langkahMaybe = igd && kasusMaybe ? kasusMaybe.langkah[igd.langkahIndex] : undefined
+  // DeepThink ronde-2 bonus (keputusan user): urutan pilihan diacak per-
+  // mahasiswa (rngFlavor = state.seed) supaya walkthrough "klik posisi ke-2"
+  // tak lagi seragam lintas-siswa. Hook dipanggil TANPA SYARAT (aturan hook)
+  // — di atas guard "sesi ditemukan?" di bawah, bukan sesudahnya.
+  const pilihanAcak = useMemo(
+    () =>
+      langkahMaybe ? acakUrutan(langkahMaybe.pilihan, state.seed, igd?.kasusId ?? '', langkahMaybe.id) : [],
+    [langkahMaybe, state.seed, igd?.kasusId],
+  )
   // CODEX ronde-11 #4: pola sama Kegiatan.tsx — blank diam-diam tanpa throw
   // luput ErrorBoundary. save.ts sudah memulihkan IGD dgn kasusId tak dikenal
   // saat load, ini jaring terakhir bila tetap tercapai (mis. state in-memory).
-  if (!igd || !PACK.kasusIgd[igd.kasusId]) {
+  if (!igd || !kasusMaybe) {
     return (
       <div className="layar-tak-dikenal">
         <p>Sesi IGD tidak ditemukan.</p>
@@ -25,11 +38,11 @@ export function Igd() {
       </div>
     )
   }
-  const kasus = PACK.kasusIgd[igd.kasusId]!
+  const kasus = kasusMaybe
 
   const stab = igd.stabilitas
   const nadaBar = stab > 60 ? '' : stab > 30 ? 'igd-bar--waspada' : 'igd-bar--bahaya'
-  const langkah = kasus.langkah[igd.langkahIndex]
+  const langkah = langkahMaybe
 
   return (
     <div className="igd">
@@ -78,7 +91,7 @@ export function Igd() {
             </div>
             <p className="igd__narasi">{langkah.narasi}</p>
             <div className="igd__pilihan">
-              {langkah.pilihan.map((p) => (
+              {pilihanAcak.map((p) => (
                 <button
                   key={p.id}
                   className="igd__opsi"

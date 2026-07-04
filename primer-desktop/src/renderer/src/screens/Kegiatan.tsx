@@ -4,9 +4,10 @@
  * Semua aturan (skor, drift, bridge) di engine — layar hanya menyetir sesi.
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import type { HasilKegiatan } from '@engine/kegiatan'
+import { acakUrutan } from '../utils/acakUrutan'
 import './Kegiatan.css'
 
 const JUDUL: Record<string, { label: string; sub: string }> = {
@@ -42,6 +43,14 @@ export function Kegiatan() {
   useEffect(() => {
     setPilihanTerpilih(null)
   }, [kg?.index])
+
+  // DeepThink ronde-2 bonus (keputusan user): urutan pilihan diacak per-
+  // mahasiswa (rngFlavor = state.seed) — walkthrough "klik posisi ke-2" tak
+  // lagi seragam lintas-siswa. Hook TANPA SYARAT, sebelum guard di bawah.
+  const pilihanAcak = useMemo(
+    () => (kartu && Array.isArray(kartu.pilihan) ? acakUrutan(kartu.pilihan, state.seed, kartu.id) : []),
+    [kartu, state.seed],
+  )
 
   if (hasil) return <KartuHasil hasil={hasil} onTutup={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })} />
   // CODEX ronde-11 #4: `layar==='kegiatan'` tanpa `state.kegiatan` (mis. save
@@ -81,7 +90,7 @@ export function Kegiatan() {
           <p className="kegiatan__narasi">{kartu.narasi}</p>
 
           <div className="kegiatan__pilihan">
-            {kartu.pilihan.map((p) => {
+            {pilihanAcak.map((p) => {
               const dipilih = pilihanTerpilih === p.id
               const nadaKelas = dipilih ? (p.benar ? 'kegiatan__opsi--benar' : 'kegiatan__opsi--salah') : ''
               return (
