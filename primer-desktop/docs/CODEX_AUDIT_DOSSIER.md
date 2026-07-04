@@ -822,3 +822,29 @@ Verifikasi: git-stash-kembalikan-versi-lama utk save.ts+reducer.ts →
 pastikan 6 test save.test.ts baru + 1 test m4ekonomi.test.ts baru gagal
 persis sesuai klaim CODEX → kembalikan fix → hijau lagi. 259 test hijau,
 tsc 0, build+pack OK, exe di-redeploy ke D:\Games.
+
+## 15. RESPONS BUILDER — ronde audit ke-10 2026-07-04 (5 temuan; 2 keputusan desain user)
+
+CODEX mengaudit lagi read-only (baseline 259 test). Semua 5 temuan NYATA & ditriage.
+Untuk #4 & #5 (bukan bug tapi keputusan scope/kebijakan) user memilih via AskUserQuestion:
+"wire prosedur jadi mekanik ternilai" + "ikat NIM sekarang". Commit `055feac` (#1-3),
+`994c458` (#5), `8ed8d19` (#4).
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | Slot lapangan siang bisa dipakai 2×: `MULAI_KUNJUNGAN` cuma cek `hasilKunjunganHariIni`, tak cek `lapanganTerpakai` (di-set kegiatan) → posyandu/prolanis/KLB LALU kunjungan lolos di siang sama | ✅ FIX: guard `lapanganTerpakai \|\| hasilKunjunganHariIni` di reducer + cermin PetaDesa.tsx (cekSlotKegiatan sudah benar) |
+| 2 | Sidik jari dossier tak sensitif isi IGD (cuma daftar ID), kader (ketelitian/bias), RW (jarak/totalKk) — padahal semua penentu skor/replay | ✅ FIX: hash isi IGD (pilihan-benar/efek/disposisi) + kader + RW; REVISI_ENGINE 4→5 |
+| 3 | `deserialize` masih loloskan nested rusak: `klinik={}`/`antrian=null` → LANJUTKAN throw; `desa.rw={}` → day-advance throw; `prolanis={}` → MULAI_PROLANIS throw; `program.fokus` invalid → throw | ✅ FIX: backfill klinik.antrian/selesaiHariIni/autoHariIni; prolanis.roster; buang program.fokus tak dikenal; desa.rw korup → tolak null (no-autosave bersih) |
+| 4 | Prosedur klinis (field mati, 4 kasus) tak playable/scored | ✅ WIRE (keputusan user): aksi TAMBAH/HAPUS_TINDAKAN + EncounterState.tindakan + skoring (slot terapi + penalti tindakan di luar) + tab "Tindakan" di DeckTerapi; REVISI_ENGINE 6→7 |
+| 5 | Identitas ujian nama-only, NIM opsional | ✅ IKAT (keputusan user): seed ujian = hashSeed('ujian', nim), GameState.nim, TitleScreen wajib NIM, verifier cek NIM; REVISI_ENGINE 5→6 |
+
+Verifikasi: tiap fix git-stash-bergigi (revert → test merah persis gejala → pop → hijau).
+#1 teeth halus: pakai keluarga_santoso (visitable) + stamina penuh + assert pesan "Slot
+lapangan" agar bukan green-palsu dari alasan lain. #4 test pakai fixture mock lokal
+(clinic.test.ts sengaja tanpa konten nyata) — tambah KASUS_PROSEDUR + tindakan mock.
+Smoke browser: tab Tindakan render di terapi (8 chip, toggle+counter), field NIM muncul di
+mode ujian (submit-gating), nol error konsol. 279 test hijau, tsc 0.
+
+Sisa deprecation minor (belum diapa-apakan, bukan bug): `environmentMatchGlobs` deprecated
+di vitest.config.ts — warning, bukan breakage; migrasi ke `test.projects` ditunda (berisiko
+mengganggu split jsdom/node yang sudah jalan).
