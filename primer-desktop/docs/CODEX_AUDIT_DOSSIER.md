@@ -804,3 +804,21 @@ sesuai klaim CODEX → kembalikan fix → pastikan hijau lagi (bukan cuma
 "test baru lolos", tapi benar-benar dibuktikan test itu punya taring).
 9 test baru (5 engine + 4 sidik jari). 252 test hijau, tsc 0, build+pack OK,
 exe di-redeploy ke D:\Games.
+
+## 14. RESPONS BUILDER — ronde audit ke-9 2026-07-04 (save/load defensif)
+
+CODEX mengaudit save/load & ekonomi setelah §13, read-only. Commit `b7fb115`:
+
+| # | Temuan | Status |
+|---|---|---|
+| 1 | `save.ts` cuma cek LEVEL-ATAS `gudang`/`keuanganBulan` sbg objek — isinya bisa tetap rusak (`gudang={}` throw di backfill; `gudang.stok[id]="banyak"` → NaN saat resep; `keuanganBulan={}` → NaN belanjaObat) | ✅ FIX: sanitasi ISI (bukan cuma bentuk) sebelum backfill lama jalan — entri rusak dibuang, field keuangan direset 0 |
+| 2 | `klinik.aktif` dgn kasusId yg sudah hilang dari pack → soft-lock permanen (semua aksi klinik + LANJUTKAN gagal, tanpa jalan keluar) | ✅ FIX: pola sama persis dgn pemulihan IGD yang sudah ada — dibuang otomatis + surat kompensasi saat deserialize |
+| 3 | `PESAN_OBAT`: perbandingan `< 5 \|\| > 50` selalu false utk NaN — lolos gerbang, meracuni kapitasi | ✅ FIX: tambah `Number.isFinite()` sebelum `Math.round` |
+| 4 | Aksi manajemen (PESAN_OBAT/TETAPKAN_PROGRAM/PILIH_BINAAN/LEPAS_BINAAN/TULIS_REFLEKSI) tak memicu autosave (events:[]) — bisa hilang kalau app ditutup sebelum event autosave besar berikutnya | ✅ FIX: `AKSI_AUTOSAVE` berbasis action.type utk aksi jarang-tapi-bermakna ini |
+| 5 | Prosedur klinis belum playable/scored | ⏸ DIAKUI, sudah tercatat §11/§12/§13 |
+| 6 | Identitas ujian/NIM belum benar-benar terikat | ⏸ DITUNDA, sudah tercatat §11/§12/§13 — keputusan kebijakan |
+
+Verifikasi: git-stash-kembalikan-versi-lama utk save.ts+reducer.ts →
+pastikan 6 test save.test.ts baru + 1 test m4ekonomi.test.ts baru gagal
+persis sesuai klaim CODEX → kembalikan fix → hijau lagi. 259 test hijau,
+tsc 0, build+pack OK, exe di-redeploy ke D:\Games.
