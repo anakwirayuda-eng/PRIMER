@@ -159,7 +159,15 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   { id: 'vitamin_deficiency', nama: 'Defisiensi Vitamin', icd10: 'E50-E56' },
   { id: 'mineral_deficiency', nama: 'Defisiensi Mineral', icd10: 'E58-E61' },
   { id: 'dyslipidemia', nama: 'Dislipidemia', icd10: 'E78.5' },
-  { id: 'hyperuricemia', nama: 'Hiperurisemia', icd10: 'E79.0' },
+  {
+    // M9.2: Kepmenkes 1186/2022 gabungkan Hiperurisemia (E79.0) & Gout
+    // Arthritis (M10) sbg SATU kompetensi 4A ("Hiperurisemia-Gout
+    // Arthritis") — kasus gout ditautkan ke sini, bukan entri terpisah.
+    id: 'hyperuricemia',
+    nama: 'Hiperurisemia',
+    icd10: 'E79.0',
+    kasusId: 'mm_gout_artritis_akut',
+  },
   { id: 'obesity', nama: 'Obesitas', icd10: 'E66.9' },
 
   // === SISTEM HEMATOLOGI & IMUNOLOGI (6) ===

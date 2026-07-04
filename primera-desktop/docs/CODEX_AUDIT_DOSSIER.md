@@ -1573,3 +1573,95 @@ menangkapnya (merah tepat dgn `pelanggar: ['ppok_eksaserbasi']`),
 kembalikan (diff kosong dikonfirmasi via `git diff`). 378 test (dari 375
 — +3 test baru), tsc 0. Tak ada REVISI_ENGINE bump (test murni, nol
 perubahan kode produksi).
+
+## 30. M9.2 — audit SKDI/ICD-10 thd dokumen OTORITATIF Kepmenkes 1186/2022 (2026-07-04)
+
+Blocker sejak §26/§28 akhirnya lepas: user memberi PDF resmi Kepmenkes
+No. HK.01.07/MENKES/1186/2022 ("Panduan Praktik Klinis Bagi Dokter di
+Fasilitas Pelayanan Kesehatan Tingkat Pertama", 1379 halaman) — dokumen
+INI, bukan SKDI 2012 umum yang dibaca §26, yang jadi rujukan kurasi
+"144 penyakit FKTP" yang mendasari `skdi144.ts`. Diekstrak via PyMuPDF ke
+teks (poppler tak tersedia di mesin ini) utk digrep.
+
+**Sasaran audit**: 22 kasus playable yang MASIH tak tertaut Dex/SKDI144
+sisa dari §26 (38→45 dari 67), dicek satu-per-satu thd bab per-penyakit
+Kepmenkes 1186/2022 (tiap bab bertag "No. ICPC-2 / No. ICD-10 / Tingkat
+Kemampuan").
+
+**Hasil #1 — `mm_gout_artritis_akut` (M10.9) kini TERTAUT** ke entri
+`hyperuricemia` (E79.0) yang SUDAH ADA di `skdi144.ts` (sebelumnya tanpa
+`kasusId`): bab Kepmenkes 1186/2022 menggabungkan "Hiperurisemia-Gout
+Arthritis" sbg SATU kompetensi 4A (E79.0 + M10) — bukan dua entri
+terpisah. Fix murni linking (tambah `kasusId` ke entri lama, TAK
+menambah entri baru — TEPAT 144 terjaga), + `pack.test.ts` allowlist
+`GENERIK_SENGAJA` (kode kompetensi E79.0 generik vs kasus M10.9 lebih
+spesifik) + test baru total tertaut 46 (dari 45).
+
+**Hasil #2 — Rinosinusitis, diusulkan lalu DIBATALKAN (koreksi penting,
+dipicu langsung oleh user)**: Kepmenkes 1186/2022 punya bab "Rinosinusitis
+Akut" bertag "Tingkat Kemampuan 4A" — sepintas terlihat sbg entri
+ke-145 yang hilang dari `skdi144.ts` (144 entri tetap, tak ada
+Rinosinusitis). Diajukan ke user via AskUserQuestion sbg "tambah 145
+(Recommended)" vs "biarkan 144". **User menolak reasoning ini dan
+meminta verifikasi hitung ulang yang sebenarnya** ("kok aneh gak 144
+... ini kan matematika dasar lo claude, ayolah") — bukan menerima/menolak
+opsi, tapi mengoreksi metodologi.
+
+Verifikasi ulang yang benar (dikerjakan langsung, bukan diasumsikan):
+1. Hitung mentah semua occurrence "Tingkat Kemampuan 4A" di seluruh
+   Kepmenkes 1186/2022 → hanya **110-111**, BUKAN 144 — membuktikan
+   struktur bab dokumen ini TAK memetakan 1:1 ke "144 penyakit" (sebagian
+   bab menggabungkan >1 penyakit sekaligus, spt kasus gout di atas).
+2. Kembali ke SKDI 2012 (Perkonsil 11/2012) — sumber yang literally
+   DIKUTIP Kepmenkes 1186/2022 sendiri di halaman 8 sbg asal angka
+   "144 dari 736" — dan hitung PERSIS baris Daftar Penyakit (Lampiran-3)
+   yang berakhiran murni "4A": hasilnya **TEPAT 144**. Ini konfirmasi
+   `skdi144.ts` sudah benar sejak awal; SKDI 2012 Lampiran-3, BUKAN
+   Kepmenkes 1186/2022, adalah sumber otoritatif utk "apakah penyakit X
+   satu dari 144".
+3. Cek Sinusitis scr spesifik di SKDI 2012 asli: entri #93-96 levelnya
+   3A/2/2/3A — TAK ADA yang 4A. Kesimpulan: Rinosinusitis Akut BUKAN
+   bagian dari 144 yang asli; tag "4A" di Kepmenkes 1186/2022 adalah
+   penilaian klinis 2022 yang lebih baru & TERPISAH dari daftar 144
+   SKDI 2012 — dua dokumen ini py tujuan berbeda (kurasi FKTP 2022 vs
+   kompetensi lulusan 2012) dan TAK bisa saling menggantikan sbg sumber
+   "144" tsb.
+4. Proposal 145 dibatalkan sepenuhnya — tak ada kode yang sempat diubah
+   (baru tahap pertanyaan), jadi tak ada revert yang diperlukan. Exclusion
+   `tht_rinosinusitis_akut` dari §26/§27 dikonfirmasi tetap BENAR.
+5. Cross-check fix gout (#1 di atas) thd standar rigor yang sama:
+   Hiperurisemia = entri #31 di Daftar Penyakit SKDI 2012 asli, dikonfirmasi
+   4A di sana juga — fix ini TETAP BENAR, tak perlu direvert.
+
+**Hasil #3 — re-konfirmasi 7 exclusion §26 lainnya** thd dokumen
+Kepmenkes 1186/2022 yang kini tersedia (`dispepsia_fungsional`,
+`mm_low_back_pain`, `mm_mialgia`, `kulit_dermatitis_kontak`,
+`mm_osteoartritis_lutut`, `jiwa_gangguan_cemas`, `jiwa_depresi_ringan`):
+semua tetap correctly-excluded — baik krn tak muncul sbg bab
+tersendiri (dispepsia/LBP/mialgia — kemungkinan Daftar Masalah/simtom,
+bukan Daftar Penyakit) maupun krn level kompetensinya scr resmi bukan 4A
+di kedua dokumen (bukan cuma di SKDI 2012, dikonfirmasi ulang di
+Kepmenkes 1186/2022 jg).
+
+**Pelajaran metodologi penting (bukan cuma utk M9, utk SEMUA audit
+konten SKDI ke depan)**: dua dokumen resmi yang MEMBAHAS kompetensi
+sama sekali TIDAK otomatis interchangeable sbg sumber utk klaim
+angka spesifik ("apakah X termasuk 144 penyakit ini") — walau salah
+satu MENGUTIP yang lain sbg rujukan scope. Selalu hitung EXACT count
+thd sumber yang literally didefinisikan sbg otoritatif utk klaim
+tsb (di sini: SKDI 2012 Lampiran-3, bukan Kepmenkes 1186/2022 independen),
+BUKAN infer dari dokumen yang sekadar terkait/mengutip. Kesalahan yang
+nyaris terjadi di sini murni krn saya berhenti di 1 sinyal ("ada tag 4A
+di dokumen baru") tanpa hitung total scr menyeluruh dulu — koreksi user
+persis menunjuk ini.
+
+Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **379
+test** (dari 378 — +1 test M9.2), 36 file test. Verifikasi browser:
+mulai stase baru, buka Buku Saku (Dex), konfirmasi "0/144" (denominator
+144 tetap utuh, layar render normal pasca link gout-hiperurisemia). Tak
+ada REVISI_ENGINE bump (konten/linking murni, di luar kontrak skor/replay
+M6 — `sidikJariPack` sudah otomatis sensitif thd perubahan `tatalaksana`
+per-kasus tanpa perlu bump manual).
+
+Dengan ini **M9 (M9.1+M9.2+M9.3+M9.4) selesai penuh** sesuai rencana yang
+disetujui user di awal sesi.

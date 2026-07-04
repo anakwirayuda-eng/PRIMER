@@ -64,6 +64,10 @@ describe('PACK — validasi silang id konten', () => {
       'normal_pregnancy', // Z34 vs kasus kia_anc_kehamilan_normal Z34.0 (trimester)
       'malaria_vivax', // B54 (unspesifik) vs kasus kia_malaria_falsiparum B50.9 (spesies)
       'uti', // N39.0 vs kasus kia_isk_kehamilan O23.4 (ISK DALAM kehamilan, penyakit sama)
+      // M9.2 (2026-07-04) — tertaut manual setelah verifikasi thd dokumen
+      // OTORITATIF Kepmenkes 1186/2022 (bukan cuma SKDI umum 2012): kompetensi
+      // "Hiperurisemia-Gout Arthritis" digabung SATU (E79.0 + M10) di sana.
+      'hyperuricemia', // E79.0 vs kasus mm_gout_artritis_akut M10.9 — kompetensi gabungan resmi
     ])
     const mismatch = PACK.skdi144
       .filter((e): e is typeof e & { kasusId: string } => e.kasusId !== undefined)
@@ -89,8 +93,21 @@ describe('PACK — validasi silang id konten', () => {
       'kia_isk_kehamilan',
     ]
     for (const id of tertautBaru) expect(linked.has(id)).toBe(true)
+    // Total tumbuh lagi di ronde M9.2 (lihat test berikut) — cek per-kasus di
+    // atas cukup di sini, total keseluruhan diverifikasi test M9.2 di bawah.
+    expect(kasusIds.filter((id) => linked.has(id)).length).toBeGreaterThanOrEqual(45)
+  })
+
+  // M9.2 — audit terhadap dokumen OTORITATIF (Kepmenkes 1186/2022, bukan cuma
+  // SKDI umum 2012 §26) mengonfirmasi "Hiperurisemia-Gout Arthritis" adalah
+  // SATU kompetensi 4A gabungan (E79.0 + M10) — kasus gout tautkan ke entri
+  // hyperuricemia yang SUDAH ada (bukan entri baru, jaga TEPAT 144).
+  it('M9.2: mm_gout_artritis_akut kini tertaut ke entri hyperuricemia (Kepmenkes 1186/2022: "Hiperurisemia-Gout Arthritis" 4A)', () => {
+    const kasusIds = Object.keys(PACK.kasus)
+    const linked = new Set(PACK.skdi144.filter((e) => e.kasusId).map((e) => e.kasusId))
+    expect(linked.has('mm_gout_artritis_akut')).toBe(true)
     const totalTertaut = kasusIds.filter((id) => linked.has(id)).length
-    expect(totalTertaut).toBe(45)
+    expect(totalTertaut).toBe(46)
   })
 
   // CODEX ronde-baru: clue ppok_eksaserbasi bilang "ketiganya ada → antibiotik
