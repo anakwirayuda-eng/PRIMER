@@ -89,3 +89,78 @@ describe('<Klinik /> — sorotan tutorial encounter pertama', () => {
     expect(useGame.getState().state?.klinik.aktif?.diperiksa).toHaveLength(0)
   })
 })
+
+// M9.1 — invarian MENYELURUH pengganti test titik-per-titik: di tiap langkah
+// sepanjang tutorial (bukan cuma anamnesis-awal & pemeriksaan seperti di atas),
+// TEPAT SATU tombol di region "Deck aksi klinik" boleh aktif. Ditulis setelah
+// investigasi solo (bukan CODEX) menemukan 2 celah baru yang luput dari test
+// per-titik lama: DeckAnamnesis melepas kunci SEMUA pertanyaan lain begitu 1
+// sudah ditanya (bukan cuma menyalakan "Selesai"), dan DeckDiagnosis tak
+// pernah mengunci toggle TEGAK/SUSPEK sama sekali. Regresi apa pun di Deck
+// manapun (termasuk yang belum ada hari ini) akan tertangkap generik di sini,
+// tanpa perlu tahu dulu titik mana yang bocor. Didorong lewat KLIK (bukan
+// dispatch mentah) persis seperti pemain sungguhan — beberapa transisi
+// (diagnosis/terapi) bergantung pada `useState` lokal komponen yg tak
+// terjangkau dispatch langsung.
+function tombolAktifDiDeck(): HTMLButtonElement[] {
+  const deck = screen.getByRole('region', { name: 'Deck aksi klinik' })
+  return [...deck.querySelectorAll('button')].filter(
+    (b) => !(b as HTMLButtonElement).disabled,
+  ) as HTMLButtonElement[]
+}
+
+/** Klik tombol yang sedang disorot di dalam region Deck aksi. */
+function klikSorot(): void {
+  const deck = screen.getByRole('region', { name: 'Deck aksi klinik' })
+  const tombol = deck.querySelector('button.klinik-sorot-tutorial')
+  expect(tombol).toBeTruthy()
+  fireEvent.click(tombol!)
+}
+
+describe('<Klinik /> — invarian menyeluruh: tepat 1 tombol aktif per langkah tutorial', () => {
+  it('anamnesis → pemeriksaan → diagnosis → terapi → disposisi: tak pernah >1 tombol aktif sekaligus', () => {
+    pasang()
+    render(<Klinik />)
+
+    // 1. Anamnesis — pertanyaan target
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+    // 2. Anamnesis — HANYA "Selesai Anamnesis"; pertanyaan LAIN yg belum
+    //    ditanya harus tetap terkunci (celah yg ditemukan investigasi M9).
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+
+    // 3. Pemeriksaan — "Ukur Tanda Vital"
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+    // 4. Pemeriksaan — chip regio target (SVG diverifikasi terpisah di atas)
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+    // 5. Pemeriksaan — "Selesai Pemeriksaan"
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+
+    // 6. Diagnosis — opsi banding target (TEGAK/SUSPEK harus terkunci di
+    //    sini — celah lain yg ditemukan investigasi M9).
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+    // 7. Diagnosis — "Stempelkan Diagnosis"
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+
+    // 8. Terapi — obat target
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+    // 9. Terapi — "Selesai Terapi"
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    klikSorot()
+
+    // 10. Disposisi — HANYA "PULANGKAN" (OBSERVASI/RUJUK harus terkunci;
+    //     kasus tutorial selalu harusDirujuk:false).
+    expect(tombolAktifDiDeck()).toHaveLength(1)
+    const pulangkan = screen
+      .getByRole('region', { name: 'Deck aksi klinik' })
+      .querySelector('button.klinik-sorot-tutorial')
+    expect(pulangkan?.textContent).toMatch(/PULANGKAN/)
+  })
+})

@@ -1458,4 +1458,74 @@ user sebelumnya (§25, tak perlu aksi baru).
 Verifikasi keseluruhan: 374 test hijau, tsc 0 — 3 fix ronde ini menambah
 1 test PPOK (`pack.test.ts`), 3 test lock-pemeriksaan
 (`Klinik.tutorial.test.tsx`), dan file baru `PanelHasil.test.tsx` (2 test).
-bump (linking Dex/SKDI144 tak masuk kontrak skor/replay M6).
+
+## 28. M9.1 — investigasi solo pola bug berulang, tutup kunci tutorial menyeluruh (2026-07-04)
+
+User mengamati tiga ronde CODEX beruntun (§25-27) terus menemukan bug di
+klaster yang SAMA (kunci UI tutorial, SKDI/ICD-10, tatalaksana vs clue) dan
+bertanya apakah perlu milestone tersendiri (M9) utk audit sekali-jalan
+alih-alih tambal-sulam per-ronde. Rencana M9 disetujui (4 sub-inisiatif:
+M9.1 kunci tutorial, M9.2 audit SKDI otoritatif, M9.3 sapuan tatalaksana
+vs clue, M9.4 dokumentasi tensi mode-ujian) — bagian ini melaporkan **M9.1**,
+dikerjakan pertama krn mandiri (tanpa dependensi eksternal).
+
+**Investigasi solo (bukan CODEX) sebelum menulis kode**: membaca 5 komponen
+Deck (Anamnesis/Pemeriksaan/Diagnosis/Terapi/Disposisi) sejajar menemukan
+akar masalah — TIAP komponen menulis ULANG logika "kunci semua kecuali
+target" sendiri-sendiri dengan variabel & kondisi sedikit beda, dan TIDAK
+ADA satu test yang memverifikasi invarian itu di SELURUH layar Klinik
+sekaligus. Ditemukan **2 celah baru SEBELUM implementasi** (belum pernah
+dilaporkan CODEX):
+- `DeckDiagnosis.tsx`: toggle TEGAK/SUSPEK tak pernah dikunci sama sekali.
+- `DeckDisposisi.tsx`: tombol PULANGKAN cuma bergantung `!punyaDiagnosis`,
+  benar krn KEBETULAN `KASUS_TUTORIAL` selalu `harusDirujuk:false` — bukan
+  krn gerbang eksplisit, asumsi implisit yang rapuh.
+
+**Metodologi baru**: satu test invarian MENYELURUH (bukan per-titik) di
+`Klinik.tutorial.test.tsx` — mem-play seluruh alur (anamnesis→pemeriksaan→
+diagnosis→terapi→disposisi) via KLIK (bukan dispatch mentah, krn diagnosis/
+terapi bergantung `useState` lokal komponen), assert TEPAT 1 tombol aktif
+di region "Deck aksi klinik" di SETIAP langkah. Test ini sendiri, LEBIH DARI
+2 celah yang diduga, menemukan **5 total** (ditulis merah dulu, dibenahi
+satu-satu sampai hijau — bukan hipotesis di atas kertas):
+
+1. **`DeckAnamnesis.tsx`** — begitu 1 pertanyaan ditanya, `sorotPertanyaan`
+   jadi `null` (persyaratan minimal terpenuhi), dan formula lama
+   `sorotPertanyaan !== null && !disorot` jadi vakum-benar utk SEMUA
+   pertanyaan lain (bukan cuma "Selesai" yg menyala) — 8 tombol aktif
+   sekaligus, bukan 1. Fix: `tutorialAktif && !disorot`.
+2. **`DeckDiagnosis.tsx`** — toggle TEGAK/SUSPEK sama sekali tak dikunci.
+   Fix: dikunci `disabled={tutorialAktif}` kedua tombol, `jenis` di-default
+   paksa ke `'tegak'` selama tutorial (bukan `'suspek'` spt biasanya).
+3. **`DeckDiagnosis.tsx`** (celah kedua, KELAS SAMA persis dgn #1) — opsi
+   banding yg SUDAH dipilih tetap bisa diklik ulang (`!aktif` di formula
+   lama jadi satu-satunya penjaga begitu `sorotOpsi` vakum jadi false).
+   Fix: `tutorialAktif && !disorot` (drop `&& !aktif`).
+4. **`DeckDisposisi.tsx`** — PULANGKAN diberi gerbang eksplisit
+   `disabled={!punyaDiagnosis || (tutorialAktif && kasus.harusDirujuk)}`
+   (perlu meneruskan prop `kasus` baru dari `DeckAksi.tsx`, sebelumnya tak
+   diteruskan).
+5. **`DeckTerapi.tsx`** — tab "Resep" (default aktif) tak pernah dikunci
+   sama sekali (Edukasi/Tindakan sudah, Resep terlewat) — secara fungsional
+   tak berbahaya (klik ulang tab yg sudah aktif = no-op) tapi tetap
+   melanggar invarian "tepat 1 aktif". Fix: `disabled={tutorialAktif}`.
+
+Verifikasi-bergigi: stash SEMUA 5 file produksi sekaligus → test invarian
+merah tepat (8 tombol aktif di langkah anamnesis-kedua, cocok simtom #1)
+→ restore → hijau. Verifikasi browser end-to-end penuh: TEGAK/SUSPEK
+terkunci, opsi banding terpilih ikut terkunci, tab Resep/Edukasi/Tindakan
+bertiga terkunci, PULANGKAN aktif sementara OBSERVASI/RUJUK terkunci,
+debrief akhir menampilkan stempel TEGAK (sesuai default paksa baru) +
+framing 🎓 latihan. 375 test (dari 374 — +1 test invarian menyeluruh
+menggantikan kebutuhan test titik-per-titik tambahan ke depan), tsc 0.
+Tak ada REVISI_ENGINE bump (murni UI/presentasi tutorial, di luar kontrak
+skor/replay M6 — imunitas skor sendiri sudah diverifikasi terpisah §23).
+
+**Pelajaran metodologi utk M9.2-M9.4**: investigasi manual (baca kode
+sejajar) MENEMUKAN pola & 2 celah sebelum test ditulis, tapi test invarian
+generik MENEMUKAN 3 celah tambahan yang investigasi manual sendiri
+terlewat. Kombinasi keduanya (bukan salah satu saja) yang efektif — pola
+ini kemungkinan berlaku juga utk M9.2 (audit SKDI) & M9.3 (sapuan
+tatalaksana): investigasi manual dulu utk memahami akar masalah, LALU
+tulis pemeriksaan otomatis yang cakupannya lebih luas dari yang bisa
+diverifikasi manual satu-satu.

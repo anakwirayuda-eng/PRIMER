@@ -16,12 +16,13 @@ import { useMemo, useState } from 'react'
 import { PACK } from '@content/index'
 import type { EncounterState, SbarIsi } from '@engine/state'
 import type { Action } from '@engine/actions'
-import type { RumahSakit, SpesialisasiRs } from '@content/types'
+import type { KasusKlinis, RumahSakit, SpesialisasiRs } from '@content/types'
 import { formatRupiah } from './util'
 import './DeckDisposisi.css'
 
 interface Props {
   enc: EncounterState
+  kasus: KasusKlinis
   dispatch: (action: Action) => void
   /** DeepThink "onboarding railroaded" (keputusan user). */
   tutorialAktif?: boolean
@@ -72,7 +73,7 @@ const LABEL_SPESIALIS: Record<SpesialisasiRs, string> = {
   paru: 'Paru',
 }
 
-export function DeckDisposisi({ enc, dispatch, tutorialAktif = false }: Props) {
+export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: Props) {
   const [modeRujuk, setModeRujuk] = useState(false)
   const [sbar, setSbar] = useState<SbarIsi>(SBAR_KOSONG)
 
@@ -149,7 +150,11 @@ export function DeckDisposisi({ enc, dispatch, tutorialAktif = false }: Props) {
             <button
               className={`tombol tombol--utama tombol--besar${tutorialAktif ? ' klinik-sorot-tutorial' : ''}`}
               onClick={() => dispatch({ type: 'DISPOSISI', jenis: 'pulang' })}
-              disabled={!punyaDiagnosis}
+              // M9.1: dulu cuma `!punyaDiagnosis` — benar krn KEBETULAN
+              // KASUS_TUTORIAL selalu harusDirujuk:false, bukan krn diperiksa
+              // eksplisit. Gerbang literal supaya benar walau kasus tutorial
+              // berubah nanti (bukan asumsi implisit yang rapuh).
+              disabled={!punyaDiagnosis || (tutorialAktif && kasus.harusDirujuk)}
               title={
                 punyaDiagnosis
                   ? 'Pulangkan pasien dengan resep & edukasi.'

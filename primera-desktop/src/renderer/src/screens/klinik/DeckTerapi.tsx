@@ -113,6 +113,11 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
             aria-selected={tab === 'resep'}
             className={`klinik-deck__tab-tombol${tab === 'resep' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
             onClick={() => setTab('resep')}
+            // M9.1: dulu tak dikunci sama sekali — tab ini memang sudah aktif
+            // default & klik ulang tak berefek, tapi tetap terhitung "aktif
+            // bisa diklik" & melanggar invarian kunci-penuh. Dikunci spt
+            // kedua tab lain (satu-satunya tab tercapai selama tutorial).
+            disabled={tutorialAktif}
           >
             Resep ({enc.resep.length})
           </button>

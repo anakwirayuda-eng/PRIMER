@@ -80,7 +80,7 @@ export function DeckAksi({ enc, kasus, dispatch, lastEvents, eventTick, tutorial
         />
       )}
       {enc.fase === 'disposisi' && (
-        <DeckDisposisi enc={enc} dispatch={dispatch} tutorialAktif={tutorialAktif} />
+        <DeckDisposisi enc={enc} kasus={kasus} dispatch={dispatch} tutorialAktif={tutorialAktif} />
       )}
     </section>
   )

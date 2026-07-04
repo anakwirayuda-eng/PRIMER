@@ -83,7 +83,12 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
               {daftar.map((q) => {
                 const sudah = enc.ditanya.includes(q.id)
                 const disorot = sorotPertanyaan === q.id
-                const dikunci = sorotPertanyaan !== null && !disorot
+                // M9.1: dulu `sorotPertanyaan !== null && !disorot` — begitu
+                // pertanyaan pertama ditanya, sorotPertanyaan jadi null &
+                // "!disorot" jadi vakum-benar utk SEMUA pertanyaan lain,
+                // jadi kebuka semua (bukan cuma "Selesai" yg menyala).
+                // Terkunci KECUALI ini persis pertanyaan yg disorot.
+                const dikunci = tutorialAktif && !disorot
                 return (
                   <button
                     key={q.id}

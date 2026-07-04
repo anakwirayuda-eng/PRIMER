@@ -19,7 +19,13 @@ interface Props {
 
 export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: Props) {
   const [pilihan, setPilihan] = useState<string | null>(enc.diagnosis?.icd10 ?? null)
-  const [jenis, setJenis] = useState<JenisDiagnosis>(enc.diagnosis?.jenis ?? 'suspek')
+  // M9.1: toggle TEGAK/SUSPEK tak pernah dikunci sebelumnya — pemain bisa
+  // klik SUSPEK meski tutorial menuntun jalur TEGAK (kasus tutorial selalu
+  // 100% pasti, TEGAK adalah pelajaran yang tepat). Dikunci ke 'tegak' & tak
+  // bisa diubah selama tutorial.
+  const [jenis, setJenis] = useState<JenisDiagnosis>(
+    tutorialAktif ? 'tegak' : (enc.diagnosis?.jenis ?? 'suspek'),
+  )
   // Sorotan: kasus.icd10 selalu jawaban benar utk kasus tutorial (dipaksa
   // KASUS_TUTORIAL oleh init.ts) — sorot opsi itu sampai dipilih, lalu
   // sorot tombol stempel.
@@ -41,7 +47,12 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
           {banding.map((kode) => {
             const aktif = pilihan === kode
             const disorot = sorotOpsi && kode === kasus.icd10
-            const dikunci = tutorialAktif && !disorot && !aktif
+            // M9.1: dulu `&& !aktif` membiarkan opsi yg SUDAH dipilih tetap
+            // aktif-diklik (sama spt celah DeckAnamnesis) — begitu pilihan
+            // benar terpilih, sorotOpsi jadi false utk SEMUA opsi, "!aktif"
+            // jadi satu-satunya penjaga tersisa dan gagal mengunci opsi yg
+            // barusan dipilih. Terkunci KECUALI ini persis yg disorot.
+            const dikunci = tutorialAktif && !disorot
             return (
               <button
                 key={kode}
@@ -66,6 +77,7 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
             <button
               className={`klinik-tinta-pilih__opsi${jenis === 'tegak' ? ' klinik-tinta-pilih__opsi--aktif' : ''}`}
               onClick={() => setJenis('tegak')}
+              disabled={tutorialAktif}
             >
               <span className="stempel stempel--hijau">TEGAK</span>
               <span className="teks-xs teks-lembut">
@@ -75,6 +87,7 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
             <button
               className={`klinik-tinta-pilih__opsi${jenis === 'suspek' ? ' klinik-tinta-pilih__opsi--aktif' : ''}`}
               onClick={() => setJenis('suspek')}
+              disabled={tutorialAktif}
             >
               <span className="stempel stempel--biru">SUSPEK</span>
               <span className="teks-xs teks-lembut">
