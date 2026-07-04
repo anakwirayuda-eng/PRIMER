@@ -1529,3 +1529,47 @@ ini kemungkinan berlaku juga utk M9.2 (audit SKDI) & M9.3 (sapuan
 tatalaksana): investigasi manual dulu utk memahami akar masalah, LALU
 tulis pemeriksaan otomatis yang cakupannya lebih luas dari yang bisa
 diverifikasi manual satu-satu.
+
+## 29. M9.3 — sapuan heuristik tatalaksana vs `clue`, permanen (2026-07-04)
+
+Lanjutan rencana M9 (§28): sapuan seluruh 67 kasus playable mencari pola
+YANG SAMA dgn bug PPOK (`ppok_eksaserbasi`, §27) — `clue` (teks bebas EBM)
+menjanjikan tatalaksana yang tak tercermin struktural. Skrip eksploratif
+(dibuang setelah dipakai) mencari 3 pola kata kunci: "antibiotik",
+"kortikosteroid/steroid sistemik/oral", dan frasa rujuk-kuat ("rujuk
+segera", "wajib rujuk", dst.) — dgn deteksi negasi PROXIMITY (jendela ±45
+karakter di sekitar kata kunci, bukan cuma frasa exact) supaya "antibiotik
+TIDAK diindikasikan" tak salah-tangkap sbg janji yang harus dipenuhi.
+
+**Ronde 1 (frasa negasi exact-match sempit)**: 4 kandidat palsu ditemukan
+(`asma_ringan`, `apendisitis_akut`, `kulit_veruka_vulgaris`,
+`mata_konjungtivitis_alergi`) — semua ternyata negasi dgn kata order
+berbeda dari list awal (mis. "Antibiotik rutin **tidak** diindikasikan"
+— negasi SESUDAH kata kunci, bukan sebelum). Diperbaiki jadi deteksi
+proximity dua-arah.
+
+**Ronde 2 (proximity, kata kunci antibiotik + rujuk-kuat)**: **0 kandidat**
+— PPOK memang satu-satunya instance kelas ini di seluruh 67 kasus.
+
+**Ronde 3 (kata kunci steroid sistemik)**: 1 kandidat palsu
+(`ppok_eksaserbasi` sendiri!) — ternyata bug di SKRIP saya sendiri (cek
+`kelas.includes('kortikosteroid')` case-sensitive, padahal katalog
+menyimpan `'Kortikosteroid sistemik'` berhuruf besar). Diperbaiki
+(`.toLowerCase()`), hasil jadi bersih (0) — `prednison_5` yg sudah
+ditambahkan §27 memang sudah memenuhi janji clue.
+
+**Hasil**: sapuan BERSIH di seluruh 3 pola — PPOK adalah satu-satunya
+instance kelas bug ini, sudah diperbaiki §27. Diubah dari skrip sekali-
+pakai jadi **test permanen** `src/content/tatalaksanaClue.test.ts` (3
+`it()`, satu per pola) — kasus BARU yang menulis clue serupa tanpa
+tatalaksana yang cocok akan gagal otomatis di sini, tanpa menunggu ronde
+audit berikutnya menemukannya manual (persis tujuan M9: pagar permanen,
+bukan tambal reaktif).
+
+Verifikasi-bergigi khusus: krn fix PPOK sudah ter-commit sebelumnya (tak
+ada lagi utk di-stash), celah disimulasikan manual — hapus grup
+antibiotik dari `kasusRespGi.ts` sementara, konfirmasi test BARU ini
+menangkapnya (merah tepat dgn `pelanggar: ['ppok_eksaserbasi']`),
+kembalikan (diff kosong dikonfirmasi via `git diff`). 378 test (dari 375
+— +3 test baru), tsc 0. Tak ada REVISI_ENGINE bump (test murni, nol
+perubahan kode produksi).
