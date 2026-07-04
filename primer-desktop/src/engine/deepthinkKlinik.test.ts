@@ -277,3 +277,43 @@ describe('DeepThink ronde-2 — Hukum Bilangan Kecil: rasioKunjungan/kualitasMi 
     expect(skor.ukm).toBeCloseTo(35)
   })
 })
+
+/* ---------------------------------------------------------------------------
+ * DeepThink ronde-2 — Boikot Rujukan (cowboy −2 → −5, keputusan user)
+ * ------------------------------------------------------------------------- */
+
+describe('DeepThink ronde-2 — Boikot Rujukan: cowboy dinaikkan supaya berhenti-merujuk bukan lagi strategi murah', () => {
+  it('boikot (rujukanTotal<3, lolos guillotine, lalu cowboy-kan 6 kasus wajib-rujuk) tak lagi jauh lebih murah drpd guillotine crash', () => {
+    const p = pack([kasus('flu')])
+    // Path A: merujuk banyak (≥3) dgn RRNS buruk → guillotine aktif & menghancurkan UKP.
+    const pathA = hitungSkor(
+      baseState(p, {
+        tally: tallyKosong({
+          totalPasien: 60, diagnosisBenar: 54, tegakBenar: 54,
+          rujukanTotal: 10, rujukanNonSpesialistik: 4,
+        }),
+      }),
+    )
+    expect(pathA.rincian.guillotine).toBe(0)
+    expect(pathA.ukp).toBe(0)
+
+    // Path B: berhenti merujuk di bawah ambang 3 (lolos guillotine SEPENUHNYA
+    // meski RRNS 100% di sampel kecil), lalu 6 kasus wajib-rujuk berikutnya
+    // ditangani sendiri (cowboy) alih-alih dirujuk.
+    const pathB = hitungSkor(
+      baseState(p, {
+        tally: tallyKosong({
+          totalPasien: 60, diagnosisBenar: 54, tegakBenar: 54,
+          rujukanTotal: 2, rujukanNonSpesialistik: 2, cowboy: 6,
+        }),
+      }),
+    )
+    expect(pathB.rincian.guillotine).toBe(1) // sampel <3 → guillotine tak aktif
+
+    // Sebelum fix (cowboy −2): pathB.ukp ≈ 19,5 — jauh lebih baik dari pathA=0,
+    // insentif nyata utk boikot. Sesudah fix (−5): jarak menyempit drastis,
+    // boikot tak lagi strategi yang jelas menguntungkan.
+    expect(pathB.ukp).toBeLessThan(10)
+    expect(pathB.ukp - pathA.ukp).toBeLessThan(10)
+  })
+})

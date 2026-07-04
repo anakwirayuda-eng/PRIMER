@@ -60,9 +60,17 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   // dihargai (bukan dihukum — pasien tetap selamat); Kode Hitam = luka besar.
   const efekIgd =
     Math.min(2, t.igdStabil * 0.5) - 0.5 * t.igdSalahDisposisi - 3 * t.igdMeninggal
+  // DeepThink ronde-2 ("Boikot Rujukan"): guillotine adalah gerbang kali-nol
+  // (all-or-nothing) begitu rujukanTotal≥3 — RRNS 100% di sampel kecil (2)
+  // LOLOS penuh (guillotine=1), sedangkan cowboy dulu cuma potongan flat -2.
+  // Itu bikin "berhenti merujuk total setelah 2 kesalahan lalu cowboy-kan
+  // semua kasus wajib-rujuk berikutnya" jauh lebih murah drpd tetap merujuk
+  // dgn risiko guillotine — insentif terbalik dari yang dimaksud. Dinaikkan
+  // ke -5/kejadian (dari -2) supaya boikot tak lagi strategi dominan, tanpa
+  // mengubah ambang proteksi-sampel-kecil rujukanTotal≥3 itu sendiri.
   const ukp = clamp(
     ((0.75 * akurasi * 100 + 0.25 * kalibrasi) / 100) * 35 * guillotine -
-      2 * t.cowboy +
+      5 * t.cowboy +
       bonusRujukanTepat +
       efekIgd,
     0,

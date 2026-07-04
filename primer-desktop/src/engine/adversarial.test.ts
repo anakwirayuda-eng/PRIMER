@@ -60,7 +60,8 @@ function tanganiPasien(state: GameState, profil: Profil): GameState {
   s = step(s, { type: 'LANJUT_FASE' }) // → disposisi
 
   // koboi_tangani_semua: "dokter pahlawan" yang menangani SEMUA kasus, termasuk
-  // yang wajib-rujuk (memicu tally cowboy −2). rujuk_semua: sebaliknya.
+  // yang wajib-rujuk (memicu tally cowboy −5, dinaikkan dari −2 DeepThink
+  // ronde-2 "Boikot Rujukan"). rujuk_semua: sebaliknya.
   const rujuk =
     profil === 'rujuk_semua' ? true : profil === 'koboi_tangani_semua' ? false : kasus.harusDirujuk
   s = step(s, {
@@ -92,7 +93,7 @@ describe('ADVERSARIAL — main jujur mengungguli strategi curang (M7.36)', () =>
   const SEED = 12345
   const jujur = mainkan('jujur', SEED)
 
-  it('koboi tangani-semua (tolak rujuk kasus wajib-rujuk) < jujur — tally cowboy −2', () => {
+  it('koboi tangani-semua (tolak rujuk kasus wajib-rujuk) < jujur — tally cowboy −5', () => {
     const koboi = mainkan('koboi_tangani_semua', SEED)
     expect(jujur.ukp).toBeGreaterThan(koboi.ukp)
   })

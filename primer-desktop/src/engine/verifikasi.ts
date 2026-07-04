@@ -116,9 +116,14 @@ function fnv1a(teks: string): string {
  * yang menukar rwFokus dalam periode terkunci kini mereplay ke ERROR_AKSI; (b)
  * hitungSkor kini pakai lantai EKSPEKTASI_KUNJUNGAN (24 karier / 8 ujian) sbg
  * penyebut rasioKunjungan/kualitasMi, bukan Math.max(1,total) — dossier lama
- * dgn kunjungan sedikit mereplay ke UKM lebih rendah dari yang tercatat.
+ * dgn kunjungan sedikit mereplay ke UKM lebih rendah dari yang tercatat;
+ * 10 = keputusan user DeepThink ronde-2 "Boikot Rujukan": penalti cowboy di
+ * hitungSkor naik dari −2 ke −5/kejadian (guillotine gerbang kali-nol butuh
+ * sampel≥3, cowboy dulu cuma potongan flat — berhenti-merujuk-total jauh
+ * lebih murah drpd risiko guillotine) — dossier lama dgn tally.cowboy>0
+ * mereplay ke UKP lebih rendah dari yang tercatat.
  */
-const REVISI_ENGINE = 9
+const REVISI_ENGINE = 10
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

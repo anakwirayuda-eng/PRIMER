@@ -448,7 +448,8 @@ describe('hitungSkor — profil adversarial', () => {
         tally: buatTally({ totalPasien: 10, diagnosisBenar: 10, tegakBenar: 10, cowboy: 3 }),
       }),
     )
-    expect(cowboy.ukp).toBeCloseTo(35 - 6)
+    // DeepThink ronde-2 "Boikot Rujukan": cowboy dinaikkan dari −2 ke −5/kejadian.
+    expect(cowboy.ukp).toBeCloseTo(35 - 15)
 
     const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
     const tallyUkm = { kunjunganTotal: 24, kunjunganBerhasil: 24, miTotal: 24, miTepat: 24 }
