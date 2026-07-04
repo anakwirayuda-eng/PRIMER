@@ -197,6 +197,41 @@ describe('M6 — verifikasi dossier', () => {
     expect(sidikJariPack(PACK)).not.toBe(sidikJariPack({ ...PACK, skdi144: PACK.skdi144.slice(0, -1) }))
   })
 
+  // Audit CODEX 2026-07-04 (ronde-6): probe menunjukkan hash TAK berubah
+  // walau pemeriksaanFisik/oldcarts/distraktor/rumahSakit/arc keluarga diubah —
+  // padahal semua itu memengaruhi skor replay. Kini harus ikut berubah.
+  it('sidikJariPack kini sensitif terhadap pemeriksaanFisik (relevan flag)', () => {
+    const kasusId = Object.keys(PACK.kasus)[0]!
+    const kasus = PACK.kasus[kasusId]!
+    const pfDiubah = kasus.pemeriksaanFisik.map((t, i) => (i === 0 ? { ...t, relevan: !t.relevan } : t))
+    const packDiubah = { ...PACK, kasus: { ...PACK.kasus, [kasusId]: { ...kasus, pemeriksaanFisik: pfDiubah } } }
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
+  })
+
+  it('sidikJariPack kini sensitif terhadap oldcarts/distraktor per pertanyaan anamnesis', () => {
+    const kasusId = Object.keys(PACK.kasus)[0]!
+    const kasus = PACK.kasus[kasusId]!
+    const anamnesisDiubah = kasus.anamnesis.map((q, i) => (i === 0 ? { ...q, distraktor: !q.distraktor } : q))
+    const packDiubah = { ...PACK, kasus: { ...PACK.kasus, [kasusId]: { ...kasus, anamnesis: anamnesisDiubah } } }
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
+  })
+
+  it('sidikJariPack kini sensitif terhadap daftar rumahSakit (SISRUTE)', () => {
+    const rsDiubah = PACK.rumahSakit.map((r, i) => (i === 0 ? { ...r, bedDasar: r.bedDasar + 1 } : r))
+    const packDiubah = { ...PACK, rumahSakit: rsDiubah }
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
+  })
+
+  it('sidikJariPack kini sensitif terhadap isi arc keluarga binaan (bukan cuma daftar ID)', () => {
+    const keluargaId = Object.keys(PACK.keluarga)[0]!
+    const keluarga = PACK.keluarga[keluargaId]!
+    const packDiubah = {
+      ...PACK,
+      keluarga: { ...PACK.keluarga, [keluargaId]: { ...keluarga, ekonomi: keluarga.ekonomi === 'miskin' ? 'rentan' : 'miskin' } },
+    }
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah as typeof PACK))
+  })
+
   it('stringifyKanonik kebal urutan properti', () => {
     expect(stringifyKanonik({ b: 1, a: { d: [2, { z: 1, y: 2 }], c: 3 } })).toBe(
       stringifyKanonik({ a: { c: 3, d: [2, { y: 2, z: 1 }] }, b: 1 }),

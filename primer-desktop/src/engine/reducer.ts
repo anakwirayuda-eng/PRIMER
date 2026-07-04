@@ -181,9 +181,17 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       const hasil = aksiKlinik(enc, action, kasus, pack, rng)
       let next: GameState = { ...s, klinik: { ...s.klinik, aktif: hasil.enc } }
 
-      // Lab "besok": jadwalkan hasil + biaya. Guard duplikat: clinic menolak
-      // pesanan ganda diam-diam — reducer tidak boleh tetap membakar biaya.
-      if (action.type === 'PESAN_LAB' && !enc.labDipesan.includes(action.labId)) {
+      // Lab "besok": jadwalkan hasil + biaya. Guard duplikat DAN phase-guard
+      // (CODEX audit 2026-07-04): clinic menolak pesanan ganda diam-diam ATAU
+      // menolak ERROR_AKSI bila fase salah — kedua kasus, reducer tidak boleh
+      // tetap membakar biaya/jadwal. Cek hasil.enc (state SETELAH aksiKlinik),
+      // bukan enc (state SEBELUM) — kalau ditolak, hasil.enc === enc (tak
+      // berubah) sehingga labId tetap tak ada di labDipesan.
+      if (
+        action.type === 'PESAN_LAB' &&
+        !enc.labDipesan.includes(action.labId) &&
+        hasil.enc.labDipesan.includes(action.labId)
+      ) {
         const item = pack.lab[action.labId]
         if (item) {
           // BPJS membakar kapitasi; pasien umum membayar retribusi ke kas.

@@ -92,9 +92,12 @@ function fnv1a(teks: string): string {
  * (dossier lama vs engine baru harus jatuh ke "tidak dapat diverifikasi",
  * bukan divonis TIDAK SAH palsu). Riwayat: 1 = M6 awal; 2 = M7 kuota edukasi
  * KAPASITAS_EDUKASI + formula prioritisasi min(3,|wajib|) − 15×salah;
- * 3 = sidik jari konten sensitif-isi + ikatan identitas ujian (CODEX P1).
+ * 3 = sidik jari konten sensitif-isi + ikatan identitas ujian (CODEX P1);
+ * 4 = phase-guard klinik (CODEX #2 §9) — aksi lompat-fase yang dulu diterima
+ * kini ditolak ERROR_AKSI, mengubah hasil replay utk jejak lama yang memuat
+ * urutan aksi semacam itu.
  */
-const REVISI_ENGINE = 3
+const REVISI_ENGINE = 4
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -106,6 +109,13 @@ const REVISI_ENGINE = 3
  * ISI yang menentukan skor ikut di-hash: per-kasus (icd10/harusDirujuk/prb/
  * tatalaksana/alergiTrap/lab/anamnesis-esensial), per-obat (harga/golongan
  * alergi/antibiotik/kelas), per-lab, IGD, dan pemetaan skdi144.
+ *
+ * CODEX audit 2026-07-04 (ronde-6): versi sebelumnya masih tak sensitif
+ * terhadap pemeriksaanFisik (region+relevan → skorPemeriksaan), oldcarts/
+ * distraktor per pertanyaan (bukan cuma esensial → skorAnamnesis), daftar
+ * rumahSakit (spesialisasi/bed/jarak → SISRUTE nilai rujukan), dan isi arc
+ * keluarga binaan (hambatan/intervensi/dialog → skor kunjungan UKM). Probe
+ * CODEX: mengubah field itu tak mengubah hash — kini semua ikut di-hash.
  */
 export function sidikJariPack(pack: ContentPack): string {
   const kasus = Object.values(pack.kasus)
@@ -118,7 +128,10 @@ export function sidikJariPack(pack: ContentPack): string {
         trap: k.alergiTrap ?? null,
         tx: k.tatalaksana,
         lab: k.lab,
-        esensial: k.anamnesis.filter((q) => q.esensial).map((q) => q.id).sort(),
+        pf: [...k.pemeriksaanFisik].sort((a, b) => a.region.localeCompare(b.region)).map((t) => ({ region: t.region, relevan: t.relevan })),
+        anamnesis: [...k.anamnesis]
+          .sort((a, b) => a.id.localeCompare(b.id))
+          .map((q) => ({ id: q.id, esensial: q.esensial ?? false, distraktor: q.distraktor ?? false, oldcarts: [...(q.oldcarts ?? [])].sort() })),
       }),
     )
   const obat = Object.values(pack.obat)
@@ -130,6 +143,12 @@ export function sidikJariPack(pack: ContentPack): string {
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((l) => stringifyKanonik({ id: l.id, biaya: l.biaya, besok: l.hasilBesok ?? false }))
   const igd = Object.keys(pack.kasusIgd).sort()
+  const rumahSakit = [...pack.rumahSakit]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((r) => stringifyKanonik({ id: r.id, kelas: r.kelas, jarak: r.jarakMenit, spesialisasi: [...r.spesialisasi].sort(), bed: r.bedDasar }))
+  const keluarga = Object.values(pack.keluarga)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((k) => stringifyKanonik({ id: k.id, ekonomi: k.ekonomi, indikator: k.indikatorAwal, arc: k.arc }))
   const skdi = [...pack.skdi144]
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((e) => `${e.id}:${e.icd10}:${(e as { kasusId?: string }).kasusId ?? ''}`)
@@ -139,8 +158,9 @@ export function sidikJariPack(pack: ContentPack): string {
     'obat', ...obat,
     'lab', ...lab,
     'igd', ...igd,
+    'rs', ...rumahSakit,
     'edukasi', ...Object.keys(pack.edukasi).sort(),
-    'keluarga', ...Object.keys(pack.keluarga).sort(),
+    'keluarga', ...keluarga,
     'skdi', ...skdi,
   ]
   return fnv1a(daftar.join('|'))

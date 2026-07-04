@@ -214,6 +214,27 @@ describe('reducer — DISPOSISI phase-guard (CODEX audit 2026-07-04, temuan #2 �
     expect(s.klinik.selesaiHariIni).toEqual(sebelum.klinik.selesaiHariIni)
     expect(s.inbox).toEqual(sebelum.inbox)
   })
+
+  // Audit CODEX 2026-07-04 (ronde-6): reducer men-cek `enc.labDipesan` (state
+  // SEBELUM aksiKlinik) utk memutuskan billing/jadwal, bukan `hasil.enc`
+  // (SESUDAH) — jadi PESAN_LAB yang ditolak phase-guard (fase bukan
+  // pemeriksaan) tetap membakar kapitasi & membuat jadwal hasil lab, padahal
+  // labDipesan sendiri tetap kosong. Efek tanpa sebab: pemain "didenda" utk
+  // aksi yang menurut UI/engine tidak pernah terjadi.
+  it('PESAN_LAB yang ditolak phase-guard TIDAK membakar kapitasi atau membuat jadwal', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = run(s, { type: 'PANGGIL_PASIEN' })
+    expect(s.klinik.aktif!.fase).toBe('anamnesis') // belum ke pemeriksaan
+    const kapitasiSebelum = s.kapitasi
+    const jadwalSebelum = s.jadwal.length
+
+    const { state: setelah, events } = advance(s, { type: 'PESAN_LAB', labId: 'hba1c' }, PACK)
+
+    expect(events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+    expect(setelah.klinik.aktif!.labDipesan).toEqual([])
+    expect(setelah.kapitasi).toBe(kapitasiSebelum)
+    expect(setelah.jadwal).toHaveLength(jadwalSebelum)
+  })
 })
 
 describe('M1.3 — drift keluarga rawan (memburuk, bukan membaik)', () => {
