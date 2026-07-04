@@ -85,7 +85,7 @@ export function PetaDesa() {
     if (state.hari < HARI_BUKA_KUNJUNGAN)
       return { alasan: `Kunjungan rumah terbuka mulai hari ke-${HARI_BUKA_KUNJUNGAN}.`, biaya }
     if (state.blok !== 'siang') return { alasan: 'Kunjungan rumah hanya bisa dilakukan di blok siang.', biaya }
-    if (state.hasilKunjunganHariIni)
+    if (state.lapanganTerpakai || state.hasilKunjunganHariIni)
       return { alasan: 'Slot lapangan hari ini sudah terpakai — lanjutkan ke sore.', biaya }
     if (state.stamina < biaya)
       return { alasan: `Butuh ${biaya} stamina untuk perjalanan ke ${rwProfil ? rwProfil.nama : `RW ${content.rw}`}.`, biaya }

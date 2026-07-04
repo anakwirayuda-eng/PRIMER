@@ -95,9 +95,12 @@ function fnv1a(teks: string): string {
  * 3 = sidik jari konten sensitif-isi + ikatan identitas ujian (CODEX P1);
  * 4 = phase-guard klinik (CODEX #2 §9) — aksi lompat-fase yang dulu diterima
  * kini ditolak ERROR_AKSI, mengubah hasil replay utk jejak lama yang memuat
- * urutan aksi semacam itu.
+ * urutan aksi semacam itu;
+ * 5 = sidik jari kini sensitif isi IGD (pilihan-benar/efek/disposisi), kader
+ * (ketelitian/bias), dan RW (jarak/totalKk) — semua penentu skor/replay yang
+ * dulu tak ter-hash (CODEX ronde-baru #2).
  */
-const REVISI_ENGINE = 4
+const REVISI_ENGINE = 5
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -142,7 +145,32 @@ export function sidikJariPack(pack: ContentPack): string {
   const lab = Object.values(pack.lab)
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((l) => stringifyKanonik({ id: l.id, biaya: l.biaya, besok: l.hasilBesok ?? false }))
-  const igd = Object.keys(pack.kasusIgd).sort()
+  // CODEX ronde-baru #2: IGD sebelumnya di-hash hanya dari daftar ID → mengubah
+  // pilihan-benar/efek-stabilitas/disposisi tak mengubah hash, padahal semua itu
+  // menyetir skor IGD. Kini isi penentu skor ikut di-hash.
+  const igd = Object.values(pack.kasusIgd)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((k) =>
+      stringifyKanonik({
+        id: k.id,
+        disposisi: k.disposisiBenar,
+        spesialis: k.spesialisRujukan ?? null,
+        stab: k.stabilitasAwal,
+        langkah: k.langkah.map((l) => ({
+          id: l.id,
+          pilihan: l.pilihan.map((p) => ({ id: p.id, benar: p.benar, efek: p.efekStabilitas })),
+        })),
+      }),
+    )
+  // CODEX ronde-baru #2: kader (ketelitian/bias) & RW (jarak/totalKk) memengaruhi
+  // akurasi data IKS + skor UKM + biaya perjalanan pada replay — sebelumnya sama
+  // sekali tak ikut sidik jari.
+  const kader = [...pack.kader]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((k) => stringifyKanonik({ id: k.id, rw: k.rw, ketelitian: k.ketelitian, bias: [...k.bias].sort() }))
+  const rw = [...pack.rw]
+    .sort((a, b) => a.nomor - b.nomor)
+    .map((r) => stringifyKanonik({ nomor: r.nomor, jarak: r.jarak, totalKk: r.totalKk }))
   const rumahSakit = [...pack.rumahSakit]
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((r) => stringifyKanonik({ id: r.id, kelas: r.kelas, jarak: r.jarakMenit, spesialisasi: [...r.spesialisasi].sort(), bed: r.bedDasar }))
@@ -158,6 +186,8 @@ export function sidikJariPack(pack: ContentPack): string {
     'obat', ...obat,
     'lab', ...lab,
     'igd', ...igd,
+    'kader', ...kader,
+    'rw', ...rw,
     'rs', ...rumahSakit,
     'edukasi', ...Object.keys(pack.edukasi).sort(),
     'keluarga', ...keluarga,

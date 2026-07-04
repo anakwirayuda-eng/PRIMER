@@ -124,18 +124,40 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
       if (typeof r['bonusIks'] !== 'number') r['bonusIks'] = 0
     }
   }
+  // desa.rw korup/kosong (CODEX ronde-baru #3): objek check di atas cuma menjamin
+  // `desa` itu objek — `desa.rw = {}` lolos lalu day-advance/scoring THROW saat
+  // memetakan RW. rw tak pernah sah-kosong; jatuhkan ke "tak ada autosave" (null)
+  // alih-alih membiarkan crash saat lanjut hari.
+  if (!Array.isArray(desa['rw']) || (desa['rw'] as unknown[]).length === 0) return null
+
   if (typeof st['lapanganTerpakai'] !== 'boolean') st['lapanganTerpakai'] = false
   if (typeof st['prolanis'] !== 'object' || st['prolanis'] === null) st['prolanis'] = { roster: [] }
+  // prolanis.roster (CODEX ronde-baru #3): `prolanis = {}` lolos check objek di
+  // atas tapi tanpa roster → MULAI_PROLANIS THROW. Pastikan roster array.
+  const prolanisSt = st['prolanis'] as Record<string, unknown>
+  if (!Array.isArray(prolanisSt['roster'])) prolanisSt['roster'] = []
   if (typeof st['posyanduRwTerakhir'] !== 'object' || st['posyanduRwTerakhir'] === null) {
     st['posyanduRwTerakhir'] = {}
   }
   if (typeof st['program'] !== 'object' || st['program'] === null) st['program'] = {}
-  // Pasien lama tanpa RW mendapat RW 1 (cukup untuk melanjutkan save lama).
+  // program.fokus (CODEX ronde-baru #3): fokus tak dikenal + surveilans aktif →
+  // TARGET_KASUS_PROGRAM[fokus] undefined lalu `.includes` THROW di day-advance.
+  // Buang fokus (+rwFokus) invalid → dianggap belum menetapkan program.
+  const programSt = st['program'] as Record<string, unknown>
+  if (programSt['fokus'] !== undefined && !['psn', 'phbs', 'skrining'].includes(programSt['fokus'] as string)) {
+    delete programSt['fokus']
+    delete programSt['rwFokus']
+  }
+  // klinik nested (CODEX ronde-baru #3): `klinik = {}` / `antrian = null` lolos
+  // objek check di atas tapi LANJUTKAN & debrief THROW saat mengiterasi antrian/
+  // selesaiHariIni. Backfill array/objek wajib ke default aman.
   const klinik = st['klinik'] as Record<string, unknown>
-  if (Array.isArray(klinik['antrian'])) {
-    for (const p of klinik['antrian'] as Record<string, unknown>[]) {
-      if (typeof p['rw'] !== 'number') p['rw'] = 1
-    }
+  if (!Array.isArray(klinik['antrian'])) klinik['antrian'] = []
+  if (!Array.isArray(klinik['selesaiHariIni'])) klinik['selesaiHariIni'] = []
+  if (!objek(klinik['autoHariIni'])) klinik['autoHariIni'] = { jumlah: 0, bermasalah: 0 }
+  // Pasien lama tanpa RW mendapat RW 1 (cukup untuk melanjutkan save lama).
+  for (const p of klinik['antrian'] as unknown[]) {
+    if (objek(p) && typeof p['rw'] !== 'number') p['rw'] = 1
   }
 
   // Backfill gudang M4 utk save lama: stok kosong diisi baseline 12/obat agar

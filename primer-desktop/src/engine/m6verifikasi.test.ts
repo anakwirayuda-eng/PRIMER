@@ -232,6 +232,29 @@ describe('M6 — verifikasi dossier', () => {
     expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah as typeof PACK))
   })
 
+  // Audit CODEX ronde-baru #2: probe menunjukkan hash TAK berubah walau isi IGD
+  // (pilihan-benar/efek/disposisi), kader (ketelitian/bias), atau RW (jarak/
+  // totalKk) diubah — padahal semua penentu skor/replay. Kini harus ikut berubah.
+  it('sidikJariPack kini sensitif terhadap isi IGD (pilihan-benar/efek/disposisi)', () => {
+    const igdId = Object.keys(PACK.kasusIgd)[0]!
+    const kasus = PACK.kasusIgd[igdId]!
+    const langkahDiubah = kasus.langkah.map((l, i) =>
+      i === 0 ? { ...l, pilihan: l.pilihan.map((p, j) => (j === 0 ? { ...p, benar: !p.benar } : p)) } : l,
+    )
+    const packDiubah = { ...PACK, kasusIgd: { ...PACK.kasusIgd, [igdId]: { ...kasus, langkah: langkahDiubah } } }
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
+  })
+
+  it('sidikJariPack kini sensitif terhadap kader (ketelitian/bias)', () => {
+    const kaderDiubah = PACK.kader.map((k, i) => (i === 0 ? { ...k, ketelitian: k.ketelitian + 1 } : k))
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack({ ...PACK, kader: kaderDiubah }))
+  })
+
+  it('sidikJariPack kini sensitif terhadap RW (jarak/totalKk)', () => {
+    const rwDiubah = PACK.rw.map((r, i) => (i === 0 ? { ...r, totalKk: r.totalKk + 1 } : r))
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack({ ...PACK, rw: rwDiubah }))
+  })
+
   it('stringifyKanonik kebal urutan properti', () => {
     expect(stringifyKanonik({ b: 1, a: { d: [2, { z: 1, y: 2 }], c: 3 } })).toBe(
       stringifyKanonik({ a: { c: 3, d: [2, { y: 2, z: 1 }] }, b: 1 }),

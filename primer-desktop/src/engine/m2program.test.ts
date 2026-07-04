@@ -88,6 +88,25 @@ describe('M2 — unlock & guard', () => {
     const r = ev(s, { type: 'MULAI_POSYANDU', rw: 2 })
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true) // slot habis
   })
+
+  it('slot lapangan TUNGGAL: setelah Posyandu, kunjungan rumah ikut ditolak (CODEX ronde-baru #1)', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
+    s = selesaikanSemuaBenar(s)
+    expect(s.lapanganTerpakai).toBe(true)
+    // Isolasi guard SLOT: (a) keluarga_santoso adalah keluarga yang BISA dikunjungi
+    // di hari 15 (keluarga_wulan sudah krisis/arcSelesai, akan ditolak dgn alasan
+    // LAIN → green palsu); (b) stamina dipenuhi agar bukan "kurang stamina" yang
+    // menolak. Dengan begitu satu-satunya yang bisa menolak = lapanganTerpakai.
+    // Sebelum fix: MULAI_KUNJUNGAN cuma cek hasilKunjunganHariIni (masih kosong)
+    // → kunjungan santoso MULAI, memakai slot siang kedua kali di hari yang sama.
+    s = { ...s, stamina: 6 }
+    const r = ev(s, { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_santoso' })
+    const errEv = r.events.find((e) => e.type === 'ERROR_AKSI')
+    expect(errEv && 'pesan' in errEv ? errEv.pesan : '').toContain('Slot lapangan')
+    expect(r.state.kunjungan).toBeUndefined()
+    expect(r.state.layar).not.toBe('kunjungan')
+  })
 })
 
 describe('M2.7 — Posyandu menaikkan IKS RW', () => {

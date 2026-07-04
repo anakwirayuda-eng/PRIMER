@@ -511,7 +511,12 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       if (s.hari < HARI_BUKA_KUNJUNGAN) return err(s, 'Kunjungan rumah terbuka di hari ke-3.')
       if (s.blok !== 'siang') return err(s, 'Kunjungan rumah dilakukan di blok siang.')
       if (s.kunjungan) return err(s, 'Sedang dalam kunjungan.')
-      if (s.hasilKunjunganHariIni) return err(s, 'Slot lapangan hari ini sudah terpakai.')
+      // Slot lapangan siang TUNGGAL: kunjungan ATAU kegiatan (posyandu/prolanis/
+      // KLB), bukan keduanya. cekSlotKegiatan sudah benar mengecek keduanya; di
+      // sini `lapanganTerpakai` (di-set kegiatan) sempat terlewat → kegiatan lalu
+      // kunjungan lolos di siang yang sama (CODEX ronde-baru #1).
+      if (s.lapanganTerpakai || s.hasilKunjunganHariIni)
+        return err(s, 'Slot lapangan hari ini sudah terpakai.')
       const kel = s.desa.keluarga[action.keluargaId]
       const kelContent = pack.keluarga[action.keluargaId]
       if (!kel || !kelContent) return err(s, 'Keluarga tidak dikenal.')

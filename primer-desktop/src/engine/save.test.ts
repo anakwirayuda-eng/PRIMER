@@ -115,3 +115,74 @@ describe('deserialize — pemulihan pasien klinik tak dikenal (temuan #2)', () =
     expect(hasil.inbox.some((m) => m.judul.includes('dipulihkan otomatis'))).toBe(false)
   })
 })
+
+describe('deserialize — sanitasi nested klinik/desa.rw/prolanis/program (CODEX ronde-baru #3)', () => {
+  it('klinik = {} (tanpa antrian) dipulihkan ke bentuk aman, LANJUTKAN tidak throw', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['klinik'] = {}
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.klinik.antrian).toEqual([])
+    expect(hasil.klinik.selesaiHariIni).toEqual([])
+    expect(() => advance(hasil, { type: 'LANJUTKAN' }, PACK)).not.toThrow()
+  })
+
+  it('klinik.antrian = null dipulihkan ke array kosong', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['klinik'] as Record<string, unknown>)['antrian'] = null
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.klinik.antrian).toEqual([])
+  })
+
+  it('desa.rw = {} (bukan array) ditolak sebagai save tak terpulihkan (null), bukan throw nanti', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['rw'] = {}
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('desa.rw = [] (array kosong) juga ditolak (null)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['rw'] = []
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('prolanis = {} (tanpa roster) dipulihkan ke roster kosong', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['prolanis'] = {}
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.prolanis.roster).toEqual([])
+  })
+
+  it('program.fokus tak dikenal dibuang (dianggap belum menetapkan program)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['program'] = { fokus: 'tidak_valid', rwFokus: 3 }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.program.fokus).toBeUndefined()
+    expect(hasil.program.rwFokus).toBeUndefined()
+  })
+
+  it('program.fokus valid dipertahankan apa adanya', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['program'] = { fokus: 'psn', rwFokus: 2 }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.program.fokus).toBe('psn')
+    expect(hasil.program.rwFokus).toBe(2)
+  })
+})
