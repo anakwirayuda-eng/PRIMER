@@ -2215,3 +2215,70 @@ konten) merah (undefined) sblm tagging → hijau sesudah; test PanelHasil
 teks topik kritis, restore, konfirmasi HIJAU. `npm run typecheck` bersih.
 `npm test -- --run` → **407 test**, 37 file, semua hijau (dari 395 §36
 + 3 clinic + 6 pack + 2 PanelHasil + 1 sidikJariPack).
+
+## 38. Bug LIVE ketiga — toast Toaster menutupi/mengunci tombol modal & scene (2026-07-06)
+
+User menemukan (screenshot langsung dari game): toast "Surat baru: ..."
+menimpa teks dialog kunjungan rumah, membuatnya sulit terbaca — dan
+melaporkan pola ini "acapkali" terjadi ("ada tombolisasi dll yang
+saling bertumpuk/bertindihan dan mengganggu navigasi"). Diminta
+diperiksa & dicarikan solusi; audit UI/UX serupa diminta dimasukkan
+ke lingkup M10 ke depan (dicatat di memori, lihat bawah).
+
+**Akar masalah, dikonfirmasi via kode SEBELUM menyentuh apa pun:**
+`Toaster.tsx` (notifikasi event global — Dex bertambah, surat masuk,
+dst.) di-render `position:fixed; bottom/right` dgn `z-index:
+var(--z-toast)=400` — LEBIH TINGGI dari `--z-modal=300`. Konkretnya:
+`DEX_BERTAMBAH` (toast "Buku Saku diperbarui") dipancarkan reducer.ts
+di SETIAP `DISPOSISI` (`reducer.ts:314`) — yaitu TEPAT PADA SAAT
+`PanelHasil` (modal debrief encounter) terbuka, HAMPIR SETIAP encounter
+klinik. Tombol "Pasien Berikutnya →" PanelHasil duduk di pojok
+kanan-bawah modal (`.klinik-hasil__aksi`, spacer `.tumbuh` mendorong
+ke kanan) — geometri PERSIS bertabrakan dgn area render toast
+(`bottom:var(--sp-5); right:var(--sp-5)`), dan modal (`max-width:
+min(920px,92vw)`, centered) pada lebar window wajar menyisakan margin
+kanan yg jatuh persis di rentang horizontal toast. Toast juga tak
+py `pointer-events:none` — artinya bila posisinya kebetulan menimpa
+sebuah tombol (modal ATAU scene, mis. "Mulai Berbincang →" Kunjungan),
+klik pemain akan tertangkap toast (elemen teratas di titik itu),
+BUKAN tombol di baliknya — bukan sekadar gangguan visual, tapi
+literal memblokir progres bermain.
+
+**Fix (2 baris CSS, sengaja minimal, keduanya independen):**
+1. `tokens.css`: `--z-toast` turun dari 400 → **250** (di bawah
+   `--z-modal=300`, tetap di atas `--z-hud=100`/`--z-drawer=200`) —
+   toast kini SELALU tertutup/teredam oleh backdrop modal yg sedang
+   terbuka, bukan menimpanya.
+2. `Toaster.css`: tambah `pointer-events: none` pada `.toaster` — toast
+   TAK PERNAH punya `onClick` (murni informatif, dicek di Toaster.tsx),
+   jadi ini tanpa kompromi fungsional: klik pada titik manapun yg
+   *kebetulan* ditimpa toast kini otomatis diteruskan ke elemen di
+   baliknya, di scene ATAU modal manapun — bukan hanya kasus PanelHasil
+   yg diverifikasi konkret.
+
+**Verifikasi-bergigi via browser SUNGGUHAN** (harness `puskesmas-pagi-
+preview` @ `vite.preview.config.ts`, sudah ada dari sesi sebelumnya
+— renderer murni tanpa shell Electron, port 5199): dimainkan end-to-
+end lewat store Zustand asli (`TANYA`→`LANJUT_FASE`→`PERIKSA`→
+`KOMIT_DIAGNOSIS`→`TAMBAH_OBAT`→`TAMBAH_EDUKASI`→`DISPOSISI`) atas
+kasus `kulit_dermatitis_kontak` sungguhan dari `PACK` — dikonfirmasi
+`DEX_BERTAMBAH` MEMANG dipancarkan bersamaan `ENCOUNTER_SELESAI`
+persis seperti dianalisis. Setelah fix: `getComputedStyle` pada
+`.toaster` sungguhan mengonfirmasi `pointerEvents:'none'` DAN
+`--z-toast` token bernilai `'250'` (bukan cache lama). Dipaksa kasus
+terburuk (toast diposisikan PERSIS di atas tombol "Pasien Berikutnya")
+dan `document.elementFromPoint()` + `MouseEvent` sungguhan pada titik
+itu dikonfirmasi mendarat di TOMBOL, bukan toast — screenshot
+mengonfirmasi tombol bersih tak tertutup visual sama sekali (toast
+kini teredam di balik backdrop modal). Ini melampaui verifikasi CSS
+biasa di codebase ini (jsdom tak memproses CSS asli, jadi fix CSS
+murni historisnya diverifikasi via alasan kode + playtest user) —
+sesi ini kebetulan menemukan harness preview browser yg sudah
+dikonfigurasi lebih awal, memungkinkan bukti empiris langsung.
+`npm run typecheck` bersih (perubahan CSS-only, tanpa TS tersentuh).
+
+Scope disengaja SEMPIT: fix ini menutup SATU pola konkret & terverifikasi
+(Toaster vs modal/scene manapun). Audit lebih luas utk pola
+"tombolisasi bertumpuk" LAIN di layar lain (yg belum tentu ada, belum
+diperiksa) sengaja TIDAK dikerjakan sekarang — user eksplisit minta
+ini masuk lingkup M10 ke depan (dicatat di memori sesi).

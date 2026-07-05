@@ -101,8 +101,13 @@
   /* -- Lapisan -------------------------------------------------------------- */
   --z-hud: 100;
   --z-drawer: 200;
+  /* Toast di BAWAH modal (bukan di atas spt semula) — toast murni informatif
+     & tak boleh menutupi tombol modal aktif (mis. "Pasien Berikutnya" di
+     PanelHasil, yg nyaris SELALU tampil bersamaan dgn toast DEX_BERTAMBAH
+     stlh tiap encounter). Modal terbuka kini menimpa/meredupkan toast lewat
+     backdrop-nya, bukan sebaliknya — laporan user 2026-07-06. */
+  --z-toast: 250;
   --z-modal: 300;
-  --z-toast: 400;
 }
 
 /* -- Mode Malam (jaga malam / IGD) ------------------------------------------ */

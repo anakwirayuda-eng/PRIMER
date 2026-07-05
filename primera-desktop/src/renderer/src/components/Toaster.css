@@ -7,6 +7,12 @@
   gap: var(--sp-2);
   z-index: var(--z-toast);
   max-width: 380px;
+  /* Toast murni informatif (tak pernah py onClick) — laporan user 2026-07-06:
+     toast acapkali kebetulan bertumpuk pas di atas tombol aktif (mis. "Pasien
+     Berikutnya" PanelHasil, yg nyaris SELALU tampil bersamaan dgn toast
+     DEX_BERTAMBAH stlh tiap encounter). pointer-events:none menjamin toast
+     TAK PERNAH mencegat klik yg ditujukan utk elemen di baliknya, apa pun itu. */
+  pointer-events: none;
 }
 
 .toast {
