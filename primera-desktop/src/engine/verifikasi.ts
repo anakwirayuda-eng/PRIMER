@@ -138,9 +138,22 @@ function fnv1a(teks: string): string {
  * `pack.tindakan` (id+biaya) — sebelumnya kategori konten ini TAK TERSENTUH
  * sama sekali oleh sidik jari, celah yang jadi genuinely berbahaya begitu
  * `biaya`-nya score-affecting (sebelum rev ini, biaya memang belum
- * mempengaruhi replay apa pun, jadi bukan lubang aktif sampai sekarang).
+ * mempengaruhi replay apa pun, jadi bukan lubang aktif sampai sekarang);
+ * 13 = triangulasi DeepThink (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md,
+ * O1): kasus kini bisa punya `tatalaksana.edukasiKritis` (subset topik wajib
+ * yg non-negotiable) — melewatkan satu saja meng-cap skorEdukasi ke 50,
+ * meniru pola vitalDiukur→skorPemeriksaan. Jejak lama yang menyelesaikan
+ * kasus edukasiKritis (dengue_df/tb_paru/diare_akut_anak/hipertensi_esensial/
+ * dm_tipe2) TANPA topik itu mereplay ke skorEdukasi (dan grade) lebih rendah
+ * dari yang tercatat. Bump SEKALIGUS dengan perubahan formula (bukan
+ * ditunda ke akhir milestone) krn REVISI_ENGINE sudah ter-hash ke
+ * `sidikJariPack` — menunda bump berarti fingerprint build lama & baru
+ * IDENTIK walau semantik skor berbeda, membuka celah dossier jujur lama
+ * divonis TIDAK SAH (bukan "tidak dapat diverifikasi") persis kegagalan yg
+ * mekanisme ini dirancang mencegah. Field opsional & jarang: kasus tanpa
+ * `edukasiKritis` (mayoritas) mereplay identik, tak terpengaruh bump ini.
  */
-const REVISI_ENGINE = 12
+const REVISI_ENGINE = 13
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

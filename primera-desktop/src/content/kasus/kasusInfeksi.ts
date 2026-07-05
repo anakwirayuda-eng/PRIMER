@@ -343,6 +343,10 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         { id: 'amoxicillin_500', alasan: 'Dengue adalah infeksi virus; antibiotik tidak berperan dan hanya menambah beban obat.' },
       ],
       edukasi: ['tanda_bahaya', 'psn_3m', 'cairan_oralit', 'kompres_demam', 'istirahat_cukup'],
+      // DeepThink triangulasi (2026-07-05): konsekuensi.narasi kasus ini
+      // eksplisit sebut "melewatkan edukasi tanda bahaya" sbg jalur ke
+      // DSS/perdarahan — tak boleh disubsidi topik suportif (kompres/istirahat).
+      edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Demam dengue: antipiretik HANYA paracetamol — HINDARI ibuprofen/aspirin/NSAID (risiko perdarahan). Kunci tata laksana adalah hidrasi & pemantauan tanda bahaya (WHO Dengue Guidelines; Kemenkes).',
     konsekuensi: {
@@ -569,6 +573,9 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         { id: 'amoxicillin_500', alasan: 'Bukan indikasi pada diare akut non-disentri; fokus pada rehidrasi oral, bukan antibiotik.' },
       ],
       edukasi: ['cairan_oralit', 'cuci_tangan', 'tanda_bahaya', 'gizi_seimbang'],
+      // DeepThink triangulasi (2026-07-05): konsekuensi.narasi kasus ini eksplisit
+      // — rehidrasi tak diedukasi benar → dehidrasi memberat jadi syok hipovolemik.
+      edukasiKritis: ['cairan_oralit'],
     },
     clue: 'Tata laksana diare akut anak (LINTAS DIARE Kemenkes): ORALIT tiap BAB cair + ZINC 20 mg selama 10–14 hari, teruskan ASI/makan. TANPA antibiotik pada diare cair tanpa darah. Waspadai tanda dehidrasi berat.',
     konsekuensi: {
@@ -681,6 +688,9 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         { id: 'ambroxol_30', alasan: 'Mukolitik hanya simtomatik; tidak boleh menjadi "terapi" utama yang menunda mulainya OAT.' },
       ],
       edukasi: ['minum_oat_tuntas', 'etika_batuk', 'kontrol_rutin', 'kepatuhan_obat'],
+      // DeepThink triangulasi (2026-07-05): OAT DOTS wajib TUNTAS 6 bulan —
+      // putus obat adalah jalur klinis #1 ke MDR-TB, klinis lain tak sebanding.
+      edukasiKritis: ['minum_oat_tuntas'],
     },
     clue: 'Batuk >2 minggu + BB turun + keringat malam + kontak TB = terduga TB. Konfirmasi BTA sputum (hasil besok) → mulai OAT KDT program DOTS, TUNTAS 6 bulan. TB paru adalah kompetensi 4A — DITANGANI di Puskesmas, bukan dirujuk. Skrining kontak serumah.',
     konsekuensi: {

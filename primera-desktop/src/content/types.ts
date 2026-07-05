@@ -113,6 +113,16 @@ export interface Tatalaksana {
   prosedur?: string[]
   /** Topik edukasi wajib (id dari katalog edukasi). */
   edukasi: string[]
+  /**
+   * DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md):
+   * subset dari `edukasi` yang TAK BOLEH dilewatkan pada kasus ini —
+   * melewatkan satu saja meng-cap `skorEdukasi` ke ceiling rendah, berapa
+   * pun cakupan topik lain (pola sama `vitalDiukur→skorPemeriksaan`,
+   * clinic.ts). Opsional & jarang: hanya kasus yang py topik SECARA JELAS
+   * lebih kritis dari sisanya (mis. tanda bahaya dengue, kepatuhan OAT TB)
+   * perlu ditandai — kasus tanpa field ini berperilaku identik spt semula.
+   */
+  edukasiKritis?: string[]
 }
 
 export interface KonsekuensiKlinis {

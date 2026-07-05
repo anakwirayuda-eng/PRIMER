@@ -190,6 +190,7 @@ function buatPenilaian(override?: Partial<PenilaianEncounter>): PenilaianEncount
     grade: 'A',
     clue: 'Clue uji EBM.',
     konsekuensiDijadwalkan: false,
+    edukasiKritisTerlewat: [],
     ...override,
   }
 }

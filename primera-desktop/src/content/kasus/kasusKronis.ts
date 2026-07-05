@@ -132,6 +132,9 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         { id: 'paracetamol_500', alasan: 'Hanya meredakan nyeri kepala, tidak menurunkan tekanan darah; bukan terapi hipertensi.' },
       ],
       edukasi: ['diet_rendah_garam', 'aktivitas_fisik', 'kepatuhan_obat', 'kontrol_rutin', 'berhenti_merokok'],
+      // DeepThink triangulasi (2026-07-05): konsekuensi.narasi kasus ini eksplisit
+      // — obat dihentikan sendiri krn takut efek samping → krisis hipertensi.
+      edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'JNC-8: target TD <140/90 mmHg (usia <60 th). Lini pertama CCB/tiazid/ACEI — di Puskesmas amlodipin lazim. Hipertensi "silent killer", sering asimptomatik; skrining kerusakan organ target (jantung, ginjal, mata) wajib.',
     konsekuensi: {
@@ -258,6 +261,9 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         { id: 'glibenclamide_5', alasan: 'Sulfonilurea bukan lini pertama dan berisiko hipoglikemia; mulai metformin dulu (PERKENI 2021).' },
       ],
       edukasi: ['diet_dm', 'aktivitas_fisik', 'kepatuhan_obat', 'kontrol_rutin'],
+      // DeepThink triangulasi (2026-07-05): PERKENI — kepatuhan obat adalah tema
+      // sentral manajemen DM kronis; putus obat → komplikasi mikro/makrovaskular.
+      edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'PERKENI 2021: diagnosis DM bila GDP ≥126, GDS ≥200 + gejala klasik (poliuri, polidipsi, polifagi, BB turun), atau HbA1c ≥6,5%. Lini pertama metformin + modifikasi gaya hidup. Kelola di FKTP kecuali ada komplikasi akut/berat.',
   },

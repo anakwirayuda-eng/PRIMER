@@ -288,4 +288,37 @@ describe('PACK — validasi silang id konten', () => {
     }
     expect(masalah).toEqual([])
   })
+
+  // DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md):
+  // validasiPack menolak edukasiKritis yg BUKAN anggota edukasi wajib —
+  // celah logika senyap (kritis tak akan pernah "tercakup" krn tak pernah
+  // diperiksa terhadap enc.edukasi lewat edukasiWajib sama sekali).
+  it('edukasiKritis WAJIB subset dari edukasi (validasiPack)', () => {
+    const kasusUji = PACK.kasus['dengue_df']!
+    const rusak = { ...PACK, kasus: { ...PACK.kasus, dengue_df: { ...kasusUji, tatalaksana: { ...kasusUji.tatalaksana, edukasiKritis: ['topik_tak_ada_di_wajib'] } } } }
+    expect(validasiPack(rusak)).toContain("Kasus dengue_df: edukasiKritis 'topik_tak_ada_di_wajib' bukan anggota edukasi wajib kasus ini")
+  })
+
+  // DeepThink triangulasi (2026-07-05) — batch 1 kasus yang ditag edukasiKritis,
+  // diverifikasi thd clue/konsekuensi masing2 sebelum ditandai (bukan tebakan):
+  // dengue_df (tanda_bahaya — konsekuensi eksplisit sebut DSS/perdarahan),
+  // tb_paru (minum_oat_tuntas — konsekuensi eksplisit sebut TB-RO/penularan),
+  // diare_akut_anak (cairan_oralit — konsekuensi eksplisit sebut syok
+  // hipovolemik bila rehidrasi tak diedukasi), hipertensi_esensial &
+  // dm_tipe2 (kepatuhan_obat — penyakit kronis asimtomatik "silent killer",
+  // kegagalan klasik krn pasien berhenti obat sendiri saat merasa membaik).
+  // pneumonia_balita & "asma_bronkial_eksaserbasi" (usulan awal DeepThink)
+  // SENGAJA tak ditag: yg pertama wajib-nya cuma 3 topik (tak kena celah,
+  // target=wajib=3 sudah menuntut semua), yg kedua tak ada di katalog sama
+  // sekali (tak ada kasus asma pediatrik/eksaserbasi di 67 kasus).
+  it.each([
+    ['dengue_df', 'tanda_bahaya'],
+    ['tb_paru', 'minum_oat_tuntas'],
+    ['diare_akut_anak', 'cairan_oralit'],
+    ['hipertensi_esensial', 'kepatuhan_obat'],
+    ['dm_tipe2', 'kepatuhan_obat'],
+  ])('%s: edukasiKritis berisi %s', (kasusId, topikKritis) => {
+    const kasus = PACK.kasus[kasusId]!
+    expect(kasus.tatalaksana.edukasiKritis).toContain(topikKritis)
+  })
 })

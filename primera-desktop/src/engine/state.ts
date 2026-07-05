@@ -143,6 +143,14 @@ export interface PenilaianEncounter {
    * menyembunyikan rincian skor yang menghukum & tampilkan framing netral.
    */
   tutorialLatihan?: boolean
+  /**
+   * DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md, O6):
+   * id topik `edukasiKritis` yang TERLEWAT (kosong bila tak ada/semua
+   * tercakup). Debrief adalah instrumen *formative assessment* pasca-skor-
+   * terkunci (bukan feedback instan saat memilih) — transparansi di sini
+   * konsisten preseden `clue`/rincian skor yang sudah tampil post-hoc.
+   */
+  edukasiKritisTerlewat: string[]
 }
 
 /* ---------------------------------------------------------------------------

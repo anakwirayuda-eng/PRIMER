@@ -4,6 +4,7 @@
  */
 
 import type { PenilaianEncounter } from '@engine/state'
+import { PACK } from '@content/index'
 
 interface Props {
   hasil: PenilaianEncounter
@@ -139,6 +140,20 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
               </span>
             ))}
           </div>
+        )}
+
+        {/* DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md, O6):
+            debrief adalah formative assessment PASCA-skor-terkunci — sebut
+            eksplisit topik edukasiKritis yang terlewat, bukan cuma angka
+            skorEdukasi yg di-cap, supaya pemain paham APA yg harus diperbaiki. */}
+        {!tutorial && hasil.edukasiKritisTerlewat.length > 0 && (
+          <p className="klinik-hasil__edukasi-kritis">
+            Topik edukasi non-negotiable terlewat:{' '}
+            {hasil.edukasiKritisTerlewat
+              .map((id) => PACK.edukasi[id]?.nama ?? id)
+              .join(', ')}
+            . Skor Edukasi di-cap krn ini klinis kritis, tak bisa disubsidi topik lain.
+          </p>
         )}
 
         {!tutorial && hasil.konsekuensiDijadwalkan && (

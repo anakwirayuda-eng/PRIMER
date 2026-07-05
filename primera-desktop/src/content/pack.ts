@@ -66,6 +66,14 @@ export function validasiPack(pack: ContentPack): string[] {
     for (const e of k.tatalaksana.edukasi) {
       if (!pack.edukasi[e]) masalah.push(`Kasus ${k.id}: edukasi '${e}' tidak ada di katalog`)
     }
+    // DeepThink triangulasi (2026-07-05): edukasiKritis WAJIB subset murni dari
+    // edukasi wajib — kritis yg bukan bagian wajib tak pernah bisa "tercakup"
+    // (celah logika senyap, bukan sekadar id yatim).
+    for (const ek of k.tatalaksana.edukasiKritis ?? []) {
+      if (!k.tatalaksana.edukasi.includes(ek)) {
+        masalah.push(`Kasus ${k.id}: edukasiKritis '${ek}' bukan anggota edukasi wajib kasus ini`)
+      }
+    }
     for (const p of k.tatalaksana.prosedur ?? []) {
       if (!pack.tindakan[p]) masalah.push(`Kasus ${k.id}: tindakan '${p}' tidak ada di katalog`)
     }

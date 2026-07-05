@@ -755,6 +755,12 @@
   font-style: italic;
 }
 
+.klinik-hasil__edukasi-kritis {
+  color: var(--tinta-merah);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
 .klinik-hasil__clue {
   padding: var(--sp-4);
   display: flex;

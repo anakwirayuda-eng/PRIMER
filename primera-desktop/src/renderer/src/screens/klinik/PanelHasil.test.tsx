@@ -27,6 +27,7 @@ const HASIL_DASAR: PenilaianEncounter = {
   grade: 'D',
   clue: 'ISPA viral self-limiting, simtomatik saja.',
   konsekuensiDijadwalkan: false,
+  edukasiKritisTerlewat: [],
 }
 
 describe('<PanelHasil /> — encounter tutorial vs normal', () => {
@@ -77,5 +78,26 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
       />,
     )
     expect(screen.getByText('🎓').getAttribute('aria-hidden')).toBe('true')
+  })
+
+  // DeepThink triangulasi (2026-07-05, O6): debrief harus sebut EKSPLISIT
+  // topik edukasiKritis yang terlewat, bukan cuma angka skor yg di-cap.
+  it('edukasiKritisTerlewat terisi: nama topik kritis tampil di debrief', () => {
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, edukasiKritisTerlewat: ['tanda_bahaya'] }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+    expect(screen.getByText(/Tanda bahaya — kapan harus segera kembali/)).toBeInTheDocument()
+  })
+
+  it('edukasiKritisTerlewat kosong: pesan topik kritis tak tampil', () => {
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
+    )
+    expect(screen.queryByText(/non-negotiable terlewat/)).not.toBeInTheDocument()
   })
 })

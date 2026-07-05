@@ -547,11 +547,21 @@ export function nilaiEncounter(
   const edukasiTercakup = edukasiWajib.filter((id) => enc.edukasi.includes(id)).length
   const edukasiTakRelevan = enc.edukasi.filter((id) => !edukasiWajib.includes(id)).length
   const edukasiTarget = Math.min(KAPASITAS_EDUKASI, edukasiWajib.length)
-  const skorEdukasi = clamp(
+  let skorEdukasi = clamp(
     Math.round(100 * (edukasiTarget > 0 ? Math.min(1, edukasiTercakup / edukasiTarget) : 1) - 15 * edukasiTakRelevan),
     0,
     100,
   )
+  // DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md, O1):
+  // "wajib>3 tetap bisa 100" (komentar di atas) diam-diam mengizinkan topik yg
+  // KLINIS PALING KRITIS terlewat (mis. tanda bahaya dengue) selama 3 topik
+  // LAIN terpenuhi. `edukasiKritis` (opsional, jarang) menandai topik yg tak
+  // boleh negotiable — dilewatkan satu saja → cap ceiling, meniru pola
+  // `vitalDiukur→skorPemeriksaan` di atas persis (§`vitalDiukur` bawah).
+  const edukasiKritisTerlewat = (kasus.tatalaksana.edukasiKritis ?? []).filter(
+    (id) => !enc.edukasi.includes(id),
+  )
+  if (edukasiKritisTerlewat.length > 0) skorEdukasi = Math.min(skorEdukasi, 50)
 
   /* -- Disposisi: gatekeeper SKDI ---------------------------------------------- */
   // PRB (M3.13): pasien rujuk-balik sudah distabilkan RS — kontrol & pulangkan
@@ -636,5 +646,6 @@ export function nilaiEncounter(
     clue: kasus.clue,
     // Reducer yang memutuskan & mengisi penjadwalan konsekuensi.
     konsekuensiDijadwalkan: false,
+    edukasiKritisTerlewat,
   }
 }

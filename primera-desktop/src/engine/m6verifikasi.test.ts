@@ -297,6 +297,24 @@ describe('M6 — verifikasi dossier', () => {
     expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
   })
 
+  // DeepThink triangulasi (2026-07-05, rev 13): `tx: k.tatalaksana` di atas
+  // sudah hash SELURUH objek tatalaksana wholesale — `edukasiKritis` baru
+  // otomatis tercakup tanpa perlu field-hash terpisah. Test ini menjaga
+  // asumsi itu tetap benar (bukan sekadar diasumsikan) jika struktur hash
+  // kasus berubah di masa depan.
+  it('sidikJariPack sensitif terhadap edukasiKritis (subset topik non-negotiable)', () => {
+    const kasusId = Object.keys(PACK.kasus)[0]!
+    const k = PACK.kasus[kasusId]!
+    const packDiubah = {
+      ...PACK,
+      kasus: {
+        ...PACK.kasus,
+        [kasusId]: { ...k, tatalaksana: { ...k.tatalaksana, edukasiKritis: [...k.tatalaksana.edukasi] } },
+      },
+    }
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
+  })
+
   // CODEX M10 (2026-07-05): dulu cuma daftar ID edukasi yg di-hash — ubah
   // nama/kategori/sinonim topik TAK mengubah fingerprint sama sekali.
   it('sidikJariPack kini sensitif terhadap isi topik edukasi (nama/kategori/sinonim)', () => {

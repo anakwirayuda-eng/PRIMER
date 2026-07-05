@@ -1306,4 +1306,67 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
     // 0 tercakup dari target 2, minus 2×15 → clamp 0.
     expect(nilai.skorEdukasi).toBe(0)
   })
+
+  // DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md): kasus
+  // wajib>3 dulu bisa skor 100 melewatkan topik PALING kritis (dengue tanda
+  // bahaya, TB kepatuhan OAT, dst.) — `edukasiKritis` menutup celah ini dgn
+  // cap ceiling, meniru pola `vitalDiukur→skorPemeriksaan` yg sudah ada.
+  describe('edukasiKritis — cap ceiling saat topik non-negotiable dilewatkan', () => {
+    const KASUS_KRITIS: KasusKlinis = {
+      ...KASUS_FARINGITIS,
+      tatalaksana: {
+        ...KASUS_FARINGITIS.tatalaksana,
+        edukasi: ['etika_batuk', 'istirahat_cukup', 'cuci_tangan', 'tanda_bahaya'],
+        edukasiKritis: ['tanda_bahaya'],
+      },
+    }
+
+    it('3 topik benar TAPI melewatkan topik kritis → skor di-cap 50 (bukan 100)', () => {
+      const enc = buatEncounterFase(buatPasien(), 'diagnosis')
+      const { enc: main } = jalankan(
+        enc,
+        [
+          { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'istirahat_cukup' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'cuci_tangan' },
+        ],
+        KASUS_KRITIS,
+      )
+      const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_KRITIS, PACK)
+      expect(nilai.skorEdukasi).toBe(50)
+    })
+
+    it('topik kritis dipilih (+2 lain) → skor tetap 100, tak di-cap', () => {
+      const enc = buatEncounterFase(buatPasien(), 'diagnosis')
+      const { enc: main } = jalankan(
+        enc,
+        [
+          { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'tanda_bahaya' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'istirahat_cukup' },
+        ],
+        KASUS_KRITIS,
+      )
+      const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_KRITIS, PACK)
+      expect(nilai.skorEdukasi).toBe(100)
+    })
+
+    it('kasus TANPA edukasiKritis (KASUS_KOMORBID) tak terpengaruh — perilaku lama utuh', () => {
+      const enc = buatEncounterFase(buatPasien(), 'diagnosis')
+      const { enc: main } = jalankan(
+        enc,
+        [
+          { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'istirahat_cukup' },
+          { type: 'TAMBAH_EDUKASI', edukasiId: 'cuci_tangan' },
+        ],
+        KASUS_KOMORBID,
+      )
+      const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_KOMORBID, PACK)
+      expect(nilai.skorEdukasi).toBe(100)
+    })
+  })
 })

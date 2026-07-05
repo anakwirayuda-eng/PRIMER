@@ -2133,3 +2133,85 @@ test** (dari 393, +2: karma-demografi invarian, sidikJariPack-edukasi),
 completeness murni). 2 dari 4 temuan (edukasi>3-topik, 2 dari 3 karma
 mismatch) DISENGAJA belum ditutup — butuh keputusan user (scope besar
 atau konten baru), dikomunikasikan eksplisit, bukan ditambal diam-diam.
+
+## 37. DeepThink triangulasi — `edukasiKritis` implementasi (2026-07-05)
+
+Menindaklanjuti §36's "SUDAH DIKETAHUI, belum dikerjakan": menulis
+`docs/DEEPTHINK_EDUKASI_KRITIS.md` (dossier 6 pertanyaan strategis),
+lalu men-triase verdict DeepThink yg dikembalikan user thd kode aktual
+sebelum implementasi — pola sama seperti setiap ronde CODEX sesi ini.
+
+**Koreksi thd verdict DeepThink (diverifikasi sebelum implementasi):**
+- **Daftar batch-1 (6 kasus) berisi 2 entri tak valid.** `pneumonia_
+  balita` memang ada, TAPI cuma py 3 topik edukasi wajib
+  (`KAPASITAS_EDUKASI=3` = seluruh wajib) — pemain SECARA MATEMATIS tak
+  bisa skip satupun & tetap 100%, jadi bug ini tak menyentuhnya sama
+  sekali. `"asma_bronkial_eksaserbasi"` TIDAK PERNAH ADA di kodebase
+  (grep seluruh `kasus/*.ts` nihil; satu-satunya kasus asma adalah
+  `asma_ringan`, dewasa 15-40, ID berbeda) — DeepThink berhalusinasi
+  nama kasus ini. Batch diperkecil ke **5 kasus terverifikasi**:
+  `dengue_df`, `tb_paru`, `diare_akut_anak`, `hipertensi_esensial`,
+  `dm_tipe2` — masing2 dicek py >3 topik wajib (baru rentan bug) DAN
+  py teks `konsekuensi.narasi`/EBM yg eksplisit menunjuk 1 topik
+  tunggal paling kritis.
+- **Klaim Q5 "`obatBerbahaya` pola yg sama dgn `vitalDiukur` cap" keliru.**
+  Verifikasi `clinic.ts`: `obatBerbahaya` adalah **penalti linear per-
+  instance** (`25 * obatBerbahaya` dikurangkan dari `skorTerapi`), BUKAN
+  hard ceiling cap spt `vitalDiukur → min(skorPemeriksaan, 50)`. Tak
+  membatalkan rekomendasi O1 (yg memang menunjuk `vitalDiukur`, bukan
+  `obatBerbahaya`, sbg preseden pola) — tapi klaim "Terapi sudah py pola
+  fatal-flaw yg sama" tidak akurat sbg pernyataan berdiri sendiri.
+- **Risiko "fairness antar-paket ujian" (§3) bersifat spekulatif,
+  ditest empiris.** Simulasi 8 paket × 30 hari (skrip sekali-pakai,
+  dihapus stlh dipakai) menunjukkan variasi NYATA tapi SEDANG (9-16
+  kemunculan gabungan 5 kasus per paket) — bukan skenario dramatis
+  "15 vs 2" yg dispekulasikan. Semua 5 kasus batch-1 berstatus
+  `prevalensi:'tinggi'` (bobot ×3 di RNG director), jadi muncul
+  berulang di paket manapun — meredam ketimpangan secara alami.
+- **Q6 ("tunda REVISI_ENGINE bump ke akhir milestone") ditolak,
+  dgn alasan teknis.** `REVISI_ENGINE` di-hash LANGSUNG ke dalam
+  `sidikJariPack` (`verifikasi.ts:143` area) — menunda bump berarti
+  fingerprint build lama & baru IDENTIK walau semantik skor berbeda,
+  membuka celah dossier JUJUR lama divonis **TIDAK SAH** (bukan "tidak
+  dapat diverifikasi") persis kegagalan yg mekanisme REVISI_ENGINE
+  dirancang mencegah. Precedent 12 riwayat rev sebelumnya: SEMUA bump
+  terjadi di commit YANG SAMA dgn perubahan semantik, tak ada preseden
+  bump tertunda. Bump dilakukan SEKARANG (rev 12→13), menyimpang dari
+  saran literal DeepThink demi integritas mekanisme itu sendiri.
+
+**Diimplementasi (O1 + O6, setelah triase di atas):**
+- `types.ts`: `Tatalaksana.edukasiKritis?: string[]` — subset opsional
+  dari `edukasi` wajib; kasus tanpa field ini (mayoritas, 62/67)
+  berperilaku identik spt sebelumnya.
+- `clinic.ts` (`nilaiEncounter`): topik `edukasiKritis` yg terlewat →
+  `skorEdukasi` di-cap `min(skorEdukasi, 50)`, meniru pola
+  `vitalDiukur→skorPemeriksaan` PERSIS. Ditambah field balik
+  `edukasiKritisTerlewat: string[]` di return `PenilaianEncounter`.
+- `state.ts`: `PenilaianEncounter.edukasiKritisTerlewat: string[]`
+  (wajib) — 2 situs konstruksi objek literal (`director.test.ts`,
+  `PanelHasil.test.tsx` fixture) diupdate, terdeteksi via typecheck.
+- `pack.ts` (`validasiPack`): guard baru — `edukasiKritis` WAJIB subset
+  murni dari `edukasi` (kritis yg bukan anggota wajib tak pernah bisa
+  "tercakup", celah logika senyap kalau tak dicegah).
+- Konten ditandai (dgn justifikasi per-kasus dari `konsekuensi.narasi`
+  atau guideline EBM, bukan tebakan): `dengue_df→tanda_bahaya` (DSS),
+  `diare_akut_anak→cairan_oralit` (syok hipovolemik, tekstual eksplisit
+  di `konsekuensi.narasi`), `tb_paru→minum_oat_tuntas` (jalur ke MDR-TB),
+  `hipertensi_esensial→kepatuhan_obat` (krisis hipertensi, tekstual
+  eksplisit), `dm_tipe2→kepatuhan_obat` (PERKENI, komplikasi kronis).
+- `PanelHasil.tsx` (O6): debrief kini menyebut EKSPLISIT nama topik
+  kritis yg terlewat (via `PACK.edukasi[id].nama`), bukan cuma angka
+  skor yg di-cap — konsisten dgn debrief sbg formative assessment
+  PASCA-skor-terkunci (preseden `clue`/rincian skor yg sudah post-hoc).
+- `verifikasi.ts`: `REVISI_ENGINE` 12→13 (lihat justifikasi Q6 di atas).
+  `sidikJariPack` TAK butuh perubahan kode terpisah — `tx: k.tatalaksana`
+  sudah hash seluruh objek wholesale, `edukasiKritis` otomatis tercakup;
+  dikonfirmasi (bukan diasumsikan) via test baru di `m6verifikasi.test.ts`.
+
+Verifikasi-bergigi: test clinic.ts (3 baru) merah→hijau sblm/sesudah
+formula fix; test pack.ts (6 baru: 1 validasi-subset + 5 `it.each`
+konten) merah (undefined) sblm tagging → hijau sesudah; test PanelHasil
+(2 baru) — stash `PanelHasil.tsx`, konfirmasi MERAH persis pd assertion
+teks topik kritis, restore, konfirmasi HIJAU. `npm run typecheck` bersih.
+`npm test -- --run` → **407 test**, 37 file, semua hijau (dari 395 §36
++ 3 clinic + 6 pack + 2 PanelHasil + 1 sidikJariPack).
