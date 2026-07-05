@@ -11,6 +11,8 @@ import type { Action } from './actions'
 import { advance, LEAD_TIME_OBAT, OPERASIONAL_BULANAN, AMBANG_TEGURAN_KAS } from './reducer'
 import { buildInitialState } from './init'
 import { hitungSkor } from './scoring'
+import { buatPasienDariKasus } from './director'
+import { Rng } from './core/rng'
 
 const SEED = 4242
 
@@ -190,6 +192,36 @@ describe('M4.20 — akreditasi D60 dari kelengkapan rekam medis', () => {
         : {}),
     })
     expect(s.tally.rmLengkap).toBe(1)
+  })
+})
+
+// CODEX (2026-07-05): katalog tindakan (nebulisasi, Epley, dst.) punya `biaya`,
+// tapi reducer DISPOSISI dulu hanya melooping `encFinal.resep` (obat) untuk
+// memotong kapitasi — `encFinal.tindakan` (prosedur) sama sekali tak disentuh,
+// jadi prosedur gratis/tak terlihat di kas walau sudah jadi mekanik ternilai
+// sejak CODEX ronde-10.
+describe('M4.22 — tindakan/prosedur klinis kini ikut membebani kapitasi', () => {
+  it('melakukan prosedur (nebulisasi, ppok_eksaserbasi) memotong kapitasi sesuai biaya katalog', () => {
+    const kasus = PACK.kasus['ppok_eksaserbasi']!
+    expect(kasus.tatalaksana.prosedur).toEqual(['nebulisasi'])
+    const biayaNebulisasi = PACK.tindakan['nebulisasi']!.biaya
+
+    let s = buildInitialState('Uji', SEED, PACK)
+    const pasien = buatPasienDariKasus('ppok_eksaserbasi', PACK, new Rng(1, 'x'))
+    s = { ...s, tutorialAktif: false, klinik: { ...s.klinik, antrian: [pasien] } }
+    s = run(s, { type: 'PANGGIL_PASIEN' })
+    const kapitasiSebelum = s.kapitasi
+
+    s = run(s, { type: 'LANJUT_FASE' }) // → pemeriksaan
+    s = run(s, { type: 'LANJUT_FASE' }) // → diagnosis
+    s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' })
+    s = run(s, { type: 'TAMBAH_TINDAKAN', tindakanId: 'nebulisasi' })
+    s = run(s, { type: 'LANJUT_FASE' }) // → disposisi
+    const bpjs = s.klinik.aktif!.pasien.bpjs
+    s = run(s, { type: 'DISPOSISI', jenis: 'rujuk', sbar: { situation: 'x', background: 'x', assessment: 'x', recommendation: 'x' } })
+
+    const selisih = bpjs ? -biayaNebulisasi : biayaNebulisasi
+    expect(s.kapitasi).toBe(kapitasiSebelum + selisih)
   })
 })
 

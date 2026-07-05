@@ -1102,7 +1102,10 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         { id: 'natrium_diklofenak_50', alasan: 'NSAID DIKONTRAINDIKASIKAN pada gagal jantung — menahan natrium/air memperberat kongesti dan memperburuk fungsi ginjal. Jangan diberikan untuk keluhan pegal apa pun di sini.' },
         { id: 'bisoprolol_5', alasan: 'Beta-blocker BERMANFAAT jangka panjang, tapi JANGAN dimulai saat dekompensasi akut/kongesti (memperburuk curah jantung sesaat) — inisiasi dilakukan setelah stabil, oleh spesialis. Di FKTP fokus stabilisasi + rujuk.' },
       ],
-      edukasi: ['diet_rendah_garam', 'minum_air_cukup', 'kepatuhan_obat', 'tanda_bahaya'],
+      // CODEX (2026-07-05): minum_air_cukup (sinonim ISK/hidrasi, anjuran
+      // MINUM LEBIH BANYAK) diganti restriksi_cairan_gagal_jantung — CHF
+      // butuh restriksi cairan, kebalikan dari topik lama.
+      edukasi: ['diet_rendah_garam', 'restriksi_cairan_gagal_jantung', 'kepatuhan_obat', 'tanda_bahaya'],
     },
     clue: 'GAGAL JANTUNG KONGESTIF (SKDI 3B → RUJUK): sesak progresif + ortopnea + PND + edema tungkai + JVP↑ + S3 gallop + ronki basal (kriteria Framingham). Di FKTP: STABILISASI — posisi setengah duduk, oksigen, furosemid (dekongesti), ISDN bila TD memadai — lalu RUJUK penyakit dalam untuk ekokardiografi & terapi definitif (ACE-I/beta-blocker dititrasi). JANGAN mulai beta-blocker saat dekompensasi; HINDARI NSAID (PPK Gagal Jantung / PERKI / ESC).',
     konsekuensi: {

@@ -287,6 +287,16 @@ describe('M6 — verifikasi dossier', () => {
     expect(sidikJariPack(PACK)).not.toBe(sidikJariPack({ ...PACK, rw: rwDiubah }))
   })
 
+  // CODEX (2026-07-05, rev 12): pack.tindakan dulu SAMA SEKALI tak tersentuh
+  // sidik jari — kini score-affecting (biaya prosedur memotong kapitasi),
+  // jadi wajib ikut di-hash spt obat/lab.
+  it('sidikJariPack kini sensitif terhadap isi tindakan (biaya prosedur klinis)', () => {
+    const tindakanId = Object.keys(PACK.tindakan)[0]!
+    const t = PACK.tindakan[tindakanId]!
+    const packDiubah = { ...PACK, tindakan: { ...PACK.tindakan, [tindakanId]: { ...t, biaya: t.biaya + 1000 } } }
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
+  })
+
   it('stringifyKanonik kebal urutan properti', () => {
     expect(stringifyKanonik({ b: 1, a: { d: [2, { z: 1, y: 2 }], c: 3 } })).toBe(
       stringifyKanonik({ a: { c: 3, d: [2, { y: 2, z: 1 }] }, b: 1 }),

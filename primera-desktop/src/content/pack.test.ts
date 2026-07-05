@@ -208,4 +208,15 @@ describe('PACK — validasi silang id konten', () => {
     )
     expect(denganTopikKb.skorEdukasi).toBeGreaterThan(tanpaTopikKb.skorEdukasi)
   })
+
+  // CODEX (2026-07-05): mm_gagal_jantung_kongestif dulu wajib topik
+  // `minum_air_cukup` (sinonim ISK/hidrasi — anjuran minum LEBIH BANYAK),
+  // padahal manajemen gagal jantung justru butuh RESTRIKSI cairan —
+  // mismatch internal antara clue (dekongesti/hati-hati cairan) dan topik
+  // edukasi wajibnya sendiri. Diganti `restriksi_cairan_gagal_jantung`.
+  it('mm_gagal_jantung_kongestif: topik edukasi tak lagi menyuruh "minum air cukup" (kebalikan restriksi cairan CHF)', () => {
+    const kasus = PACK.kasus['mm_gagal_jantung_kongestif']!
+    expect(kasus.tatalaksana.edukasi).not.toContain('minum_air_cukup')
+    expect(kasus.tatalaksana.edukasi).toContain('restriksi_cairan_gagal_jantung')
+  })
 })

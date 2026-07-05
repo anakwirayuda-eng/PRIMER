@@ -279,6 +279,17 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
         if (encFinal.pasien.bpjs) belanjaObat += o.hargaBeli
         if (stokBaru[obatId] !== undefined) stokBaru[obatId] = Math.max(0, stokBaru[obatId]! - 1)
       }
+      // CODEX (2026-07-05): prosedur/tindakan klinis (nebulisasi, Epley, dst.)
+      // punya `biaya` di katalog sejak jadi mekanik ternilai (CODEX ronde-10),
+      // tapi sebelum ini tak pernah dipotong dari kapitasi — gratis/tak
+      // terlihat di kas walau sudah membebani skor terapi. Katalog tindakan
+      // cuma py SATU field biaya (beda dari obat yg beli/jual terpisah) —
+      // BPJS membebani kapitasi Puskesmas, umum bayar retribusi (pola sama).
+      for (const tindakanId of encFinal.tindakan) {
+        const td = pack.tindakan[tindakanId]
+        if (!td) continue
+        kapitasi += encFinal.pasien.bpjs ? -td.biaya : td.biaya
+      }
       // M4.20 — rekam medis lengkap (bahan akreditasi D60): semua fase SOAP ≥50.
       const rmLengkap =
         nilai.skorAnamnesis >= 50 &&

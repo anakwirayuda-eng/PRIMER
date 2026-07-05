@@ -1883,3 +1883,77 @@ diverifikasi thd kode SEBELUM bertindak:
 Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **387 test**
 (dari 386, +1), 36 file. Tak ada REVISI_ENGINE bump (konten/dokumentasi
 murni).
+
+## 33. CODEX ronde-18 — 5 temuan multidimensi, 3 dikerjakan + 1 diverifikasi jadi M10 (2026-07-05)
+
+Ronde baru (beda lagi dari §32), dipicu pertanyaan strategis user: "apa
+masih ada bangunan yang layak M10 sendiri?" Semua 5 temuan diverifikasi
+dulu thd kode sebelum diputuskan skala responsnya.
+
+**[FIXED] Prosedur/tindakan klinis tak dibebankan ke kapitasi** —
+katalog tindakan (nebulisasi 40rb, Epley 25rb, dst.) punya `biaya` sejak
+jadi mekanik ternilai (CODEX ronde-10), tapi `reducer.ts` case DISPOSISI
+cuma looping `encFinal.resep` (obat) utk memotong kapitasi — `encFinal.
+tindakan` tak pernah disentuh. Prosedur jadi gratis & tak terlihat di kas
+maupun ringkasan biaya UI (`DeckDisposisi.tsx` cuma tampilkan lab+obat).
+Fix: loop tindakan ditambah (pola sama obat — BPJS membebani kapitasi,
+umum bayar retribusi; tindakan cuma py SATU field `biaya`, beda dari obat
+yg beli/jual terpisah) + baris "Tindakan" ditambah ke ringkasan biaya UI.
+Test-first (`m4ekonomi.test.ts` M4.22): drive `ppok_eksaserbasi`→
+`nebulisasi` via `buatPasienDariKasus` + reducer sungguhan sampai
+DISPOSISI, merah tepat (kapitasi tak berubah) → hijau. **REVISI_ENGINE
+11→12** — jejak lama dgn TAMBAH_TINDAKAN kini mereplay ke kapitasi (dan
+skor Manajemen via ambang kas) berbeda dari yang tercatat.
+
+**[FIXED, bareng rev 12] `sidikJariPack` tak pernah hash `pack.tindakan`**
+— beda dari obat/lab yang sudah hash isi, katalog tindakan SAMA SEKALI
+tak tersentuh sidik jari (bukan cuma "hash ID doang" spt edukasi — nol
+sentuhan). Sebelum fix billing di atas, ini belum jadi lubang AKTIF krn
+`biaya` belum score-affecting; begitu billing diperbaiki, field ini jadi
+genuinely tak terlindungi. Ditambah hash isi (`id`+`biaya`) di titik yang
+sama dgn obat/lab. Test baru: ubah `biaya` satu tindakan → fingerprint
+berubah.
+
+**[FIXED, konten] `mm_gagal_jantung_kongestif` pakai topik edukasi
+`minum_air_cukup`** (sinonim ISK/hidrasi — anjuran MINUM LEBIH BANYAK)
+padahal manajemen gagal jantung kongestif justru butuh RESTRIKSI cairan
+(kebalikan) — mismatch internal antara clue sendiri (dekongesti/hati-hati
+cairan) dan topik edukasi wajibnya. Diganti topik baru `restriksi_cairan_
+gagal_jantung` ("Batasi cairan & pantau berat badan harian"). Kelas bug
+yang SAMA persis dgn `kia_kb_konseling` §32 (clue vs edukasi mismatch) —
+makin menguatkan bahwa sumbu ini (bukan cuma obat) perlu perhatian.
+
+**[STALE]** "metadata SKDI masih menggantung" — sama persis dgn item
+terbuka §26/§30/§31/§32: 5 kasus self-report `skdi:'4A'` yang terbukti
+keliru dibanding dokumen resmi, belum ada keputusan eksplisit user apakah
+field itu perlu dikoreksi. Tak ada aksi baru — sudah dicatat berulang.
+
+**[DIVERIFIKASI, direkomendasikan jadi M10]** "Edukasi >3 topik wajib bisa
+full-score walau melewatkan topik paling kritis" — probe CODEX (dengue_df
+skor 100 tanpa `tanda_bahaya`+`cairan_oralit`; tb_paru skor 100 tanpa
+`minum_oat_tuntas`) dikonfirmasi AKURAT: formula `edukasiTarget = min(
+KAPASITAS_EDUKASI(3), edukasiWajib.length)` di `clinic.ts:549` memang
+menilai penuh dari topik MANA SAJA, tanpa membedakan topik yang klinis
+kritis (tanda bahaya, kepatuhan obat) dari yang suportif (istirahat,
+kompres). Ini KEPUTUSAN SADAR era M7 ("kasus komorbid wajib>3 tetap bisa
+100" — komentar kode sendiri), bukan oversight — tapi audit skala penuh
+menemukan **32 dari 67 kasus (48%) py edukasiWajib.length > 3**, jauh
+lebih luas dari yang diasumsikan saat M7. Efek cross-cutting terverifikasi
+konkret: `skorEdukasi` masuk `rmLengkap` (rekam medis lengkap, ambang ≥50)
+yang menentukan `state.akreditasi`, yang lalu masuk dimensi Manajemen
+`hitungSkor` — jadi gaming pola ini BUKAN cuma kosmetik "Edukasi" per-
+encounter, ikut menggelembungkan skor Manajemen keseluruhan. **Tak
+ditemukan** dampak langsung ke peta/UKM (dugaan awal user) — dimensi UKM
+digerakkan `kunjungan`/kader/RW, jalur terpisah dari edukasi klinik.
+Memperbaiki ini dgn benar (bukan tambal satu kasus) butuh: field konten
+baru (mis. `edukasiKritis?: string[]` per-kasus), formula skor baru yang
+membedakan wajib-kritis vs wajib-suportif, REVISI_ENGINE bump, DAN
+keputusan kurikulum per-kasus utk semua 32 kasus (topik mana yang benar2
+tak-bisa-dilewatkan). Direkomendasikan sbg M10 tersendiri, TIDAK dikerjakan
+sesi ini (skala 32-kasus + keputusan desain butuh persetujuan user
+eksplisit dulu, bukan tambal reaktif).
+
+Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **390 test**
+(dari 387, +3: M4.22 billing, sidikJariPack tindakan, gagal-jantung
+konten), 36 file. **REVISI_ENGINE 11→12**. Browser: ringkasan biaya
+DeckDisposisi kini tampilkan baris "Tindakan", nol error konsol.

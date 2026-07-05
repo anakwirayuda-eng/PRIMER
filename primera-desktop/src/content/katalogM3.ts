@@ -178,6 +178,14 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
     id: 'kb_aman_menyusui', nama: '[KB] Metode aman saat menyusui — hindari estrogen kombinasi', kategori: 'kia',
     sinonim: ['kontrasepsi', 'keluarga berencana', 'progestin', 'IUD', 'AKDR'],
   },
+  // CODEX (2026-07-05): mm_gagal_jantung_kongestif dulu pakai `minum_air_cukup`
+  // (sinonim ISK/hidrasi — anjuran MINUM LEBIH BANYAK), padahal gagal jantung
+  // butuh RESTRIKSI cairan (kebalikan) — mismatch internal antara clue (yang
+  // menyuruh dekongesti/hati-hati cairan) dan topik edukasi wajibnya sendiri.
+  restriksi_cairan_gagal_jantung: {
+    id: 'restriksi_cairan_gagal_jantung', nama: '[Jantung] Batasi cairan & pantau berat badan harian', kategori: 'diet',
+    sinonim: ['gagal jantung', 'fluid restriction', 'edema', 'timbang badan'],
+  },
   minum_air_cukup: {
     id: 'minum_air_cukup', nama: 'Minum air cukup & jangan menahan kencing', kategori: 'diet',
     sinonim: ['hidrasi', 'ISK', 'anyang-anyangan'],

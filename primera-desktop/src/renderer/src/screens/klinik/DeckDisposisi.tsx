@@ -87,6 +87,10 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
     if (!o) return total
     return total + (enc.pasien.bpjs ? o.hargaBeli : o.hargaJual)
   }, 0)
+  // CODEX (2026-07-05): prosedur/tindakan (nebulisasi, Epley, dst.) sudah
+  // membebani kapitasi sejak reducer diperbaiki — ringkasan biaya di sini
+  // sebelumnya cuma lab+obat, jadi tak cocok dgn kas sungguhan.
+  const biayaTindakan = enc.tindakan.reduce((total, id) => total + (PACK.tindakan[id]?.biaya ?? 0), 0)
 
   const sbarLengkap = KOLOM_SBAR.every(({ kunci }) => sbar[kunci].trim().length > 0)
 
@@ -131,9 +135,13 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
               <span>Obat ({enc.resep.length} item)</span>
               <span className="mono">{formatRupiah(biayaObat)}</span>
             </div>
+            <div className="baris baris--antara teks-kecil">
+              <span>Tindakan ({enc.tindakan.length} item)</span>
+              <span className="mono">{formatRupiah(biayaTindakan)}</span>
+            </div>
             <div className="baris baris--antara klinik-billing__total">
               <span>Total</span>
-              <span className="mono">{formatRupiah(biayaLab + biayaObat)}</span>
+              <span className="mono">{formatRupiah(biayaLab + biayaObat + biayaTindakan)}</span>
             </div>
             <span className="teks-xs teks-lembut">
               {enc.pasien.bpjs

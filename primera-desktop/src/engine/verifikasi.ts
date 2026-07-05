@@ -129,9 +129,18 @@ function fnv1a(teks: string): string {
  * Dossier LAMA (sebelum field ini ada) di-backfill `tutorialAktif: false`
  * oleh save.ts — tak retroaktif kebal — tapi REVISI naik krn semantik
  * DISPOSISI pertama kini bisa berbeda dari yang tercatat bila field ini
- * hilang/salah saat replay.
+ * hilang/salah saat replay;
+ * 12 = CODEX (2026-07-05): prosedur/tindakan klinis (nebulisasi, Epley, dst.)
+ * kini ikut memotong kapitasi sesuai `biaya` katalog saat DISPOSISI (dulu
+ * gratis walau sudah jadi mekanik ternilai sejak rev 7) — jejak lama dgn
+ * TAMBAH_TINDAKAN mereplay ke kapitasi (dan skor Manajemen via ambang kas)
+ * berbeda dari yang tercatat. Sekaligus `sidikJariPack` kini hash isi
+ * `pack.tindakan` (id+biaya) — sebelumnya kategori konten ini TAK TERSENTUH
+ * sama sekali oleh sidik jari, celah yang jadi genuinely berbahaya begitu
+ * `biaya`-nya score-affecting (sebelum rev ini, biaya memang belum
+ * mempengaruhi replay apa pun, jadi bukan lubang aktif sampai sekarang).
  */
-const REVISI_ENGINE = 11
+const REVISI_ENGINE = 12
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -211,6 +220,12 @@ export function sidikJariPack(pack: ContentPack): string {
   const skdi = [...pack.skdi144]
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((e) => `${e.id}:${e.icd10}:${(e as { kasusId?: string }).kasusId ?? ''}`)
+  // CODEX (2026-07-05, rev 12): `pack.tindakan` dulu SAMA SEKALI tak tersentuh
+  // sidik jari (beda dari obat/lab yg sudah hash isi) — kini score-affecting
+  // sejak biaya prosedur ikut memotong kapitasi, jadi wajib ikut di-hash.
+  const tindakan = Object.values(pack.tindakan)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((t) => stringifyKanonik({ id: t.id, biaya: t.biaya }))
   const daftar = [
     'engine', String(REVISI_ENGINE),
     'kasus', ...kasus,
@@ -221,6 +236,7 @@ export function sidikJariPack(pack: ContentPack): string {
     'rw', ...rw,
     'rs', ...rumahSakit,
     'edukasi', ...Object.keys(pack.edukasi).sort(),
+    'tindakan', ...tindakan,
     'keluarga', ...keluarga,
     'skdi', ...skdi,
   ]
