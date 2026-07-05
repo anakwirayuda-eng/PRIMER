@@ -43,6 +43,11 @@ describe('<DexSkdi /> — auto-tautan ICD dikenali', () => {
     expect(screen.getAllByText('???').length).toBeGreaterThan(0)
   })
 
+  // CODEX M10 (2026-07-05): meski pointerEventsCheck:0 (ronde-13) menurunkan
+  // durasi tipikal ke ~1,6-2,3s terisolasi, run suite PENUH (37 file paralel)
+  // pernah benar-benar timeout di batas 5000ms default krn kontensi resource
+  // antar worker — bukan regresi logika (file ini sendiri selalu hijau cepat
+  // saat direrun terisolasi). Timeout eksplisit dilonggarkan sbg headroom.
   it('klik entri yang dikenali membuka panel Catatan Penyakit', async () => {
     const entri = PACK.skdi144.find((e) => e.id === ENTRI_AUTO_TAUTAN)!
     pasangState({ [entri.kasusId!]: { ditangani: 2, benar: 1, bintang: 2, terakhirHari: 5 } })
@@ -58,5 +63,5 @@ describe('<DexSkdi /> — auto-tautan ICD dikenali', () => {
 
     expect(screen.getByText('Ditangani')).toBeInTheDocument()
     expect(screen.getByText('2×')).toBeInTheDocument()
-  })
+  }, 15000)
 })

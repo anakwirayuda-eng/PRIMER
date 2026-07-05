@@ -297,6 +297,15 @@ describe('M6 — verifikasi dossier', () => {
     expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
   })
 
+  // CODEX M10 (2026-07-05): dulu cuma daftar ID edukasi yg di-hash — ubah
+  // nama/kategori/sinonim topik TAK mengubah fingerprint sama sekali.
+  it('sidikJariPack kini sensitif terhadap isi topik edukasi (nama/kategori/sinonim)', () => {
+    const edukasiId = Object.keys(PACK.edukasi)[0]!
+    const e = PACK.edukasi[edukasiId]!
+    const packDiubah = { ...PACK, edukasi: { ...PACK.edukasi, [edukasiId]: { ...e, nama: `${e.nama} (diubah)` } } }
+    expect(sidikJariPack(PACK)).not.toBe(sidikJariPack(packDiubah))
+  })
+
   it('stringifyKanonik kebal urutan properti', () => {
     expect(stringifyKanonik({ b: 1, a: { d: [2, { z: 1, y: 2 }], c: 3 } })).toBe(
       stringifyKanonik({ a: { c: 3, d: [2, { y: 2, z: 1 }] }, b: 1 }),

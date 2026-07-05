@@ -896,7 +896,12 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     prevalensi: 'rendah',
     spesialisRujukan: 'penyakit_dalam',
     keluhanUtama: 'Kepala saya pusing berat dan tengkuk kaku dok, tadi diukur tensinya sangat tinggi.',
-    demografi: { usiaMin: 45, usiaMax: 70 },
+    // CODEX M10 (2026-07-05): usiaMax 70 kena tabrakan dgn karma Mbah Lastri
+    // (usia 71, keluarga/desaE.ts) — pasien warga sungguhan yg dijadwalkan
+    // jatuh sakit via arc-nya jadi di luar rentang demografi kasus ini
+    // sendiri. Dilonggarkan ke 80 (hipertensi urgensi lansia >70 realistis
+    // secara klinis, tak ada alasan medis membatasi di 70 tepat).
+    demografi: { usiaMin: 45, usiaMax: 80 },
     vital: { td: '210/120', nadi: 92, rr: 20, suhu: 36.7, spo2: 98 },
     anamnesis: [
       {

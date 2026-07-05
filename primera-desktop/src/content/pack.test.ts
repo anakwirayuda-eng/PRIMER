@@ -246,4 +246,46 @@ describe('PACK — validasi silang id konten', () => {
     expect(PACK.lab['mikroskopis_gram_koh']).toBeDefined()
     expect(PACK.lab['mikroskopis_gram_koh']!.nama).toContain('Gram/KOH')
   })
+
+  // CODEX M10 (2026-07-05): jembatan karma (UKM→UKP) meng-inject nama/usia/
+  // jenisKelamin anggota keluarga SUNGGUHAN ke kasusId yg dijadwalkan penulis
+  // konten (init.ts:104-125) — kalau usia anggota itu tak masuk rentang
+  // demografi kasusnya, pasien yg muncul di poli jadi tak masuk akal (bayi 3
+  // bulan didiagnosis via kasus demografi 3-5 tahun, dst). Probe MENYELURUH
+  // (bukan cuma titik yg CODEX temukan manual) atas SEMUA keluarga ber-karma.
+  it('karma (UKM→UKP): usia anggota yg dijadwalkan cocok demografi kasusId-nya', () => {
+    // Ditemukan CODEX, TERVERIFIKASI real, TAPI perbaikan yg benar butuh
+    // konten baru (kasus pediatrik) atau keputusan penulis — bukan tambal
+    // numerik yg malah merusak isi kasus dewasa yg sudah divalidasi EBM.
+    // Didaftar di sini spy regresi lain tak numpang lolos diam-diam.
+    const DIKETAHUI_BELUM_DIPERBAIKI = new Set([
+      // Nayla (bayi 3 bulan, usia:0) → diare_akut_anak (demografi 3-5 THN) —
+      // konten kasus (popok/jajan di sekolah) ditulis utk balita, bukan
+      // bayi — widen demografi akan merusak akurasi kasus balita yg sudah
+      // ada. Butuh kasus diare-bayi baru ATAU karma dialihkan (keputusan
+      // penulis, bukan tambal mekanis).
+      'keluarga_yani:diare_akut_anak',
+      // Dimas (usia 7, kondisi asma_anak) → asma_ringan (demografi 15-40,
+      // anamnesis first-person dewasa "napas SAYA...") — tak ada kasus asma
+      // pediatrik di katalog. Sama: butuh konten baru, bukan tambal numerik.
+      'keluarga_gunawan:asma_ringan',
+    ])
+    const masalah: string[] = []
+    for (const [keluargaId, kel] of Object.entries(PACK.keluarga)) {
+      const karma = kel.arc.kunjungan[0]?.karma
+      if (!karma) continue
+      const anggota = kel.anggota[karma.anggotaIndex]
+      const kasus = PACK.kasus[karma.kasusId]
+      if (!anggota || !kasus) continue // dijaga test lain (index/kasusId valid)
+      const cocokUsia = anggota.usia >= kasus.demografi.usiaMin && anggota.usia <= kasus.demografi.usiaMax
+      const cocokGender = !kasus.demografi.jenisKelamin || kasus.demografi.jenisKelamin === anggota.jenisKelamin
+      if (!cocokUsia || !cocokGender) {
+        const kunci = `${keluargaId}:${karma.kasusId}`
+        if (!DIKETAHUI_BELUM_DIPERBAIKI.has(kunci)) {
+          masalah.push(`${kunci} — ${anggota.nama} usia ${anggota.usia}/${anggota.jenisKelamin} vs demografi kasus ${JSON.stringify(kasus.demografi)}`)
+        }
+      }
+    }
+    expect(masalah).toEqual([])
+  })
 })

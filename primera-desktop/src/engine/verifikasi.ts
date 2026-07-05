@@ -226,6 +226,16 @@ export function sidikJariPack(pack: ContentPack): string {
   const tindakan = Object.values(pack.tindakan)
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((t) => stringifyKanonik({ id: t.id, biaya: t.biaya }))
+  // CODEX M10 (2026-07-05): edukasi dulu cuma hash daftar ID, bukan isi
+  // (nama/kategori/sinonim) — beda dari obat yg sudah hash `kelas` walau
+  // field itu sendiri tak dipakai formula skor (konvensi codebase ini:
+  // hash lebih dari yg strict-diperlukan skor demi kelengkapan audit).
+  // Tak perlu REVISI_ENGINE bump: nama/kategori/sinonim topik edukasi
+  // TAK memengaruhi skorEdukasi sama sekali (murni ID membership) — ini
+  // menutup blindspot audit konten, bukan mengubah semantik replay/skor.
+  const edukasi = Object.values(pack.edukasi)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((t) => stringifyKanonik({ id: t.id, nama: t.nama, kategori: t.kategori, sinonim: [...(t.sinonim ?? [])].sort() }))
   const daftar = [
     'engine', String(REVISI_ENGINE),
     'kasus', ...kasus,
@@ -235,7 +245,7 @@ export function sidikJariPack(pack: ContentPack): string {
     'kader', ...kader,
     'rw', ...rw,
     'rs', ...rumahSakit,
-    'edukasi', ...Object.keys(pack.edukasi).sort(),
+    'edukasi', ...edukasi,
     'tindakan', ...tindakan,
     'keluarga', ...keluarga,
     'skdi', ...skdi,

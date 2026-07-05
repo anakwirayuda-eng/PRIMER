@@ -2062,3 +2062,74 @@ otomatis (scroll/viewport nyata; kebetulan penamaan yang membingungkan
 manusia tapi tak "salah" scr teknis). Memperkuat pelajaran §34: playtest
 manusia tetap perlu, di luar apa pun yang audit otomatis/browser-preview
 bisa jangkau.
+
+## 36. CODEX ronde M10 (pertama) — thd `docs/M10_AUDIT_BRIEF.md` (2026-07-05)
+
+Ronde pertama menjalankan brief M10 (§ terakhir). 4 temuan, semua
+diverifikasi thd kode aktual sebelum bertindak — brief BEKERJA (CODEX
+tak mengulang satu pun item di daftar "DO NOT RE-REPORT"-nya).
+
+**[SUDAH DIKETAHUI, bukan temuan baru] Skor edukasi >3 topik**
+(`clinic.ts:541`, 32/67 kasus) — CODEX menambah 3 contoh konkret baru
+(`dengue_df` bisa skip `tanda_bahaya`, `tb_paru` bisa skip `minum_oat_
+tuntas`, `diare_akut_anak` bisa skip `cairan_oralit`) dgn reasoning
+klinis per-kasus — nilai tambah nyata utk scoping nanti, TAPI ini bukan
+temuan baru scr substansi (sudah dikonfirmasi §33, sudah jadi butir
+utama M10 sejak awal). Belum dikerjakan — tetap butuh keputusan desain
+(field `edukasiKritis?` baru + formula + REVISI_ENGINE bump + keputusan
+kurikulum per-kasus utk 32 kasus) sebelum bisa di-tambal, scope terlalu
+besar utk triase reaktif.
+
+**[FIXED sebagian, P2] Karma (jembatan UKM→UKP) inject demografi yg
+tak cocok kasusId-nya di 3 keluarga** — persis pertanyaan yang diajukan
+brief §4.2 (belum diverifikasi lanjut saat itu), kini terjawab dgn 3
+instance konkret:
+- `keluarga_yani` → Nayla (bayi 3 bulan, `usia:0`) dijadwalkan ke
+  `diare_akut_anak` (demografi 3-5 TAHUN). Diverifikasi: konten kasus
+  ini (popok, "jajan es dan gorengan di depan sekolah") ditulis KHUSUS
+  utk balita — melebarkan demografi ke bayi akan merusak akurasi kasus
+  yg sudah ada utk balita. **TIDAK diperbaiki** — butuh kasus diare-bayi
+  baru atau karma dialihkan, keputusan konten bukan tambal numerik.
+- `keluarga_gunawan` → Dimas (usia 7, `kondisi:['asma_anak']`)
+  dijadwalkan ke `asma_ringan` (demografi 15-40, anamnesis first-person
+  dewasa "napas SAYA..."). Diverifikasi: TAK ADA kasus asma pediatrik di
+  katalog sama sekali (grep seluruh `kasus/*.ts`). **TIDAK diperbaiki**
+  — sama, butuh konten baru.
+- `keluarga_lastri` → Mbah Lastri (usia 71) dijadwalkan ke `mm_
+  hipertensi_urgensi` (demografi 45-70). Beda kelas dari 2 di atas — ini
+  murni batas numerik 1 tahun, KONTEN kasus (anamnesis dewasa/lansia
+  first-person) tak keberatan usia 71. **DIPERBAIKI**: `usiaMax` 70→80
+  (hipertensi urgensi lansia >70 tahun realistis secara klinis, tak ada
+  alasan medis membatasi tepat di 70).
+
+Ditambah **test invarian MENYELURUH** (bukan cuma titik yg CODEX
+laporkan manual — pola sama M9.1): `pack.test.ts` kini mengecek SEMUA
+keluarga ber-karma, bukan cuma 3 yg dilaporkan — memvalidasi usia+jenis
+kelamin anggota yg dijadwalkan vs demografi kasusId-nya, dgn allowlist
+eksplisit `DIKETAHUI_BELUM_DIPERBAIKI` utk 2 kasus yang butuh konten baru
+(pola sama `GENERIK_SENGAJA`) — regresi/kasus baru manapun yg tak
+terdaftar akan GAGAL otomatis.
+
+**[FIXED, P3] `DexSkdi.test.tsx` timeout flaky di suite penuh** — CODEX
+benar: file ini sendiri selalu hijau cepat (~1,2-1,6s) saat direrun
+terisolasi, TAPI run suite PENUH (37 file, kemungkinan kontensi resource
+antar-worker paralel) pernah benar2 memicu timeout di batas 5000ms
+default — bukan regresi logika (fix `pointerEventsCheck:0` ronde-13
+tetap bekerja), murni risiko timing di bawah beban. Timeout eksplisit
+dilonggarkan ke 15000ms utk test ini sbg headroom.
+
+**[FIXED, P3] `sidikJariPack` belum hash isi topik edukasi**
+(`nama`/`kategori`/`sinonim`) — cuma daftar ID (beda dari obat yg sudah
+hash `kelas` walau field itu sendiri tak dipakai formula skor manapun —
+konvensi codebase ini memang hash lebih dari yg strict-perlu skor demi
+kelengkapan audit). Ditambah hash isi topik edukasi, konsisten dgn
+precedent obat. Tak perlu REVISI_ENGINE bump: field ini tak pernah
+memengaruhi `skorEdukasi` (murni ID membership) — menutup blindspot
+audit, bukan mengubah semantik replay/skor.
+
+Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **395
+test** (dari 393, +2: karma-demografi invarian, sidikJariPack-edukasi),
+37 file. Tak ada REVISI_ENGINE bump (semua fix konten/verifier-
+completeness murni). 2 dari 4 temuan (edukasi>3-topik, 2 dari 3 karma
+mismatch) DISENGAJA belum ditutup — butuh keputusan user (scope besar
+atau konten baru), dikomunikasikan eksplisit, bukan ditambal diam-diam.
