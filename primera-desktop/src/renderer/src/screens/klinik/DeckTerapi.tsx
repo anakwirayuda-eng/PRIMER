@@ -7,7 +7,7 @@
  *             meng-auto-buka laci; status laci diingat selama sesi).
  */
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { PACK } from '@content/index'
 import { useGame } from '../../store'
 import type { KategoriEdukasi, TopikEdukasi } from '@content/types'
@@ -42,6 +42,14 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   // Tindakan sengaja TAK disorot & terkunci (kasus tutorial cukup 1 obat).
   const sorotObat = tutorialAktif && !enc.resep.includes(OBAT_PERTAMA_TUTORIAL)
   const sorotLanjut = tutorialAktif && enc.resep.includes(OBAT_PERTAMA_TUTORIAL)
+  // Bug live (2026-07-05): formularium terurut alfabetis & panjang (~69 item)
+  // — target sorotan ("Paracetamol", huruf P) sering jauh di bawah viewport
+  // awal tanpa indikasi apa pun utk scroll. jsdom tak menangkap ini (tak ada
+  // scroll sungguhan), cuma kelihatan saat manusia main langsung.
+  useEffect(() => {
+    if (tab !== 'resep' || !sorotObat) return
+    document.querySelector('.klinik-obat .klinik-sorot-tutorial')?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  }, [tab, sorotObat])
   const [cari, setCari] = useState('')
   const [cariEduk, setCariEduk] = useState('')
   const [, setLaciTick] = useState(0) // re-render saat laciSesi berubah

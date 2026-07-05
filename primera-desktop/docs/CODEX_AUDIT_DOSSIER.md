@@ -1957,3 +1957,48 @@ Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **390 test**
 (dari 387, +3: M4.22 billing, sidikJariPack tindakan, gagal-jantung
 konten), 36 file. **REVISI_ENGINE 11→12**. Browser: ringkasan biaya
 DeckDisposisi kini tampilkan baris "Tindakan", nol error konsol.
+
+## 34. Bug LIVE ditemukan user main langsung di build desktop (2026-07-05)
+
+Beda dari 34 entri sebelumnya (semua audit read-only CODEX): ini ditemukan
+user main SUNGGUHAN via `npm run dev` (jendela Electron nyata, bukan
+preview browser otomatis) — banner tutorial fase Terapi bilang "Tambahkan
+obat yang menyala ke resep", tapi user tak bisa menemukan obat mana yang
+menyala di layar. Tanya balik: "mana obat yang menyala?"
+
+**Akar masalah**: target sorotan tutorial adalah `paracetamol_500`
+(`OBAT_PERTAMA_TUTORIAL`, `engine/tutorial.ts`), tapi formularium
+(`DeckTerapi.tsx`) terurut ALFABETIS dan panjang (~69 obat) — "Paracetamol"
+(huruf P) jauh di bawah viewport awal yang cuma menampilkan obat berhuruf
+A. Tak ada `scrollIntoView` atau indikasi visual apa pun bahwa target ada
+di bawah — CSS glow (`.klinik-sorot-tutorial`) sudah benar diterapkan ke
+tombol yang tepat, tapi kalau tak kelihatan di layar, glow itu tak berguna.
+
+**Kenapa lolos semua test/audit sebelumnya**: jsdom (lingkungan test
+komponen) tak mengimplementasikan scroll/layout sungguhan — test invarian
+M9.1 yang mem-verifikasi "tepat 1 tombol aktif" tak pernah butuh mengecek
+APAKAH tombol itu kelihatan di viewport, cuma apakah `disabled`-nya benar.
+Kelas bug ini (offscreen tanpa scroll) HANYA kelihatan saat manusia main
+di layar sungguhan dgn ukuran viewport terbatas — bukti nyata kenapa
+verifikasi browser otomatis (preview tools) masih belum cukup gantikan
+playtest manusia utk sebagian kelas bug UX.
+
+Fix: `useEffect` baru di `DeckTerapi.tsx` — begitu tab Resep aktif & obat
+target belum masuk resep (`sorotObat`), `document.querySelector('.klinik-
+obat .klinik-sorot-tutorial')?.scrollIntoView({block:'center', behavior:
+'smooth'})`. Test-first: `DeckTerapi.test.tsx` baru, render komponen dgn
+`tutorialAktif=true`, assert `scrollIntoView` terpanggil (di-mock via
+`vi.fn()` krn jsdom tak implementasikan method ini sama sekali — merah
+persis "not called" sebelum fix, hijau sesudah). Efek samping: perlu stub
+global `Element.prototype.scrollIntoView` di `vitest.setup.ts` (dijaga
+`typeof Element !== 'undefined'` krn file ini juga dimuat test .test.ts
+di environment NODE tanpa DOM) — TANPA ini, test lain yang merender
+`DeckTerapi` dgn tutorial aktif (mis. `Klinik.tutorial.test.tsx` M9.1)
+ikut gagal krn jsdom throw "not implemented" begitu `scrollIntoView`
+sungguhan dipanggil tanpa mock.
+
+Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **391 test**
+(dari 390, +1), 37 file. Diverifikasi via HMR di jendela Electron yang
+sama yang dipakai user main (`npm run dev`, bukan cuma preview browser).
+Tak ada REVISI_ENGINE bump (UI/presentasi tutorial murni, di luar kontrak
+skor/replay).
