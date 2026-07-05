@@ -2002,3 +2002,63 @@ Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **391 test**
 sama yang dipakai user main (`npm run dev`, bukan cuma preview browser).
 Tak ada REVISI_ENGINE bump (UI/presentasi tutorial murni, di luar kontrak
 skor/replay).
+
+## 35. Bug LIVE kedua — lab "Asam Urat" beri hasil generik pada kasus gout (2026-07-05)
+
+Ditemukan user LAGI sambil main (setelah §34) — kali ini di layar Lembar
+Periksa: kasus `mm_gout_artritis_akut` (podagra klasik: MTP-1 edema/eritema/
+nyeri) tapi hasil lab "Asam Urat" muncul `[normal]` — "Dalam batas normal,
+tidak ada temuan bermakna." User curiga ini salah (asam urat SEHARUSNYA
+tinggi pada gout) dan tanya balik utk dicek, bukan diterima mentah.
+
+**Akar masalah dikonfirmasi read-only dulu** thd kode: kasus ini py entri
+lab `asam_urat_darah` dgn narasi spesifik — "Asam urat 9.2 mg/dL (tinggi).
+Catatan: kadar dapat normal saat serangan akut, diagnosis tetap klinis."
+(`kasusMetabolikMsk.ts:120` — CATATAN ini sendiri sudah EBM-akurat: asam
+urat SERUM memang bisa normal/rendah saat serangan akut gout, klasik
+diajarkan di kedokteran, jadi kasusnya SUDAH benar secara klinis). Tapi
+katalog lab (`katalog.ts`) py entri KEDUA, `asam_urat` ("Asam Urat" —
+tanpa "Darah"), YATIM (grep: nol kasus manapun mereferensikannya di array
+`lab`-nya) — near-duplikat nama yg gampang salah pilih saat pesan lab.
+Mekanisme fallback (`reducer.ts:1299`, dipakai utk SEMUA lab yg dipesan
+tapi tak relevan/tak ada di kasus): "Hasil pemeriksaan {nama}: dalam batas
+rujukan — tidak menunjukkan kelainan bermakna untuk kasus ini." — persis
+cocok gejala yg dilihat user. User memesan `asam_urat` (bukan `asam_urat_
+darah`), sistem KERJA SESUAI DESAIN (anti-shotgun: lab tak-relevan dpt
+pesan generik ini) — TAPI karena kedua entri nyaris identik nama, ini jadi
+JEBAKAN bukan cuma "salah pesan lab lain" biasa (spt Kolesterol utk kasus
+gout, yg jelas beda & tak membingungkan).
+
+**Diperluas jadi audit orphan lab menyeluruh** (bukan cuma tambal 1
+instance): skrip sementara `Object.values(PACK.kasus).lab[].id` vs
+`Object.keys(PACK.lab)` → **2 entri yatim total**: `asam_urat` (di atas)
+dan `mikroskopis_bta` (nama tampilan "Mikroskopis Gram/KOH" — SAMA SEKALI
+tak terkait BTA). Ditemukan tambahan: `cocokLab` (util.ts) mencocokkan
+query pencarian thd `nama` DAN `id` — jadi mencari "BTA" (mis. utk kasus
+TB, entri sungguhan `bta_sputum`) ikut menjaring `mikroskopis_bta` yang
+tak relevan, murni krn id-nya kebetulan mengandung substring "bta" walau
+namanya tak menyebutnya sama sekali.
+
+**Fix**: `asam_urat` DIHAPUS dari katalog.ts (100% redundan dgn
+`asam_urat_darah`, bukan kasus "2 kode beda kompetensi digabung sengaja"
+spt duplikat ICD skdi144 — di sini benar-benar sama, tak layak allowlist).
+`mikroskopis_bta` → `mikroskopis_gram_koh` (id diganti biar tak nyangkut
+pencarian "BTA", nama & isi entri tetap sama). Test-first: 2 test baru di
+`pack.test.ts` (assert entri lama hilang, entri benar ada) — merah tepat
+sebelum fix (entri lama masih ada), hijau sesudah.
+
+Verifikasi: `npm run typecheck` bersih, `npm test -- --run` → **393 test**
+(dari 391, +2), 37 file. Diverifikasi via HMR di jendela Electron yang
+sama (`npm run dev`) — perubahan konten ter-propagate (log HMR cascade
+`@content/index` ke seluruh layar yg mengimpornya). Tak ada REVISI_ENGINE
+bump (konten katalog murni, tak mengubah semantik skor — narasi/flag lab
+per-kasus yg menentukan skor tak tersentuh, cuma entri KATALOG yatim yg
+dihapus/di-rename).
+
+**Pola sesi ini yang layak dicatat**: dua bug BERUNTUN (§34, §35) kali ini
+ditemukan lewat GAMEPLAY SUNGGUHAN (user main di `npm run dev`), bukan
+audit CODEX read-only — keduanya kelas bug yang TAK TERJANGKAU test
+otomatis (scroll/viewport nyata; kebetulan penamaan yang membingungkan
+manusia tapi tak "salah" scr teknis). Memperkuat pelajaran §34: playtest
+manusia tetap perlu, di luar apa pun yang audit otomatis/browser-preview
+bisa jangkau.

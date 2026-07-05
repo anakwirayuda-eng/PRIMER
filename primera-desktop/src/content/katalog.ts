@@ -434,12 +434,11 @@ export const LAB: Record<string, ItemLab> = {
     biaya: 15000,
     nilaiNormal: 'A/B/AB/O, Rh(+/−)',
   },
-  asam_urat: {
-    id: 'asam_urat',
-    nama: 'Asam Urat',
-    biaya: 20000,
-    nilaiNormal: 'Pria 3,5–7,0 mg/dL; wanita 2,6–6,0 mg/dL',
-  },
+  // Bug live (2026-07-05): entri `asam_urat` (generik, tak dipakai kasus
+  // manapun) DIHAPUS — near-duplikat `asam_urat_darah` (katalogM3.ts, dipakai
+  // mm_gout_artritis_akut) dgn nama nyaris identik, gampang salah pilih saat
+  // pesan lab (dapat hasil generik "normal" ketimbang narasi kasus 9.2 tinggi).
+  // Jangan tambah lagi entri "Asam Urat" generik — pakai asam_urat_darah.
   kolesterol: {
     id: 'kolesterol',
     nama: 'Kolesterol Total',

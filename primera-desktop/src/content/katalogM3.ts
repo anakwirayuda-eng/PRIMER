@@ -100,7 +100,11 @@ export const LAB_M3: Record<string, ItemLab> = {
   fungsi_ginjal: { id: 'fungsi_ginjal', nama: 'Ureum/Kreatinin', biaya: 45000, nilaiNormal: 'Kreatinin 0,6-1,2 mg/dL' },
   sgot_sgpt: { id: 'sgot_sgpt', nama: 'SGOT/SGPT', biaya: 45000, nilaiNormal: '< 40 U/L' },
   igm_dengue: { id: 'igm_dengue', nama: 'IgM/IgG Anti-Dengue', biaya: 120000, nilaiNormal: 'Negatif', hasilBesok: true },
-  mikroskopis_bta: { id: 'mikroskopis_bta', nama: 'Mikroskopis Gram/KOH', biaya: 25000, nilaiNormal: 'Sesuai klinis' },
+  // Bug live (2026-07-05): id lama `mikroskopis_bta` mengandung substring
+  // "bta" walau namanya ("Mikroskopis Gram/KOH") tak terkait BTA sama sekali
+  // — cocokLab (util.ts) mencocokkan query jg thd `id`, jadi mencari "BTA"
+  // (mis. utk bta_sputum, kasus TB) ikut menjaring entri tak-relevan ini.
+  mikroskopis_gram_koh: { id: 'mikroskopis_gram_koh', nama: 'Mikroskopis Gram/KOH', biaya: 25000, nilaiNormal: 'Sesuai klinis' },
   ekg: { id: 'ekg', nama: 'EKG 12 Sadapan', biaya: 40000, nilaiNormal: 'Irama sinus, tanpa iskemia' },
   proteinuria: { id: 'proteinuria', nama: 'Protein Urin (dipstik)', biaya: 10000, nilaiNormal: 'Negatif' },
   tsh: { id: 'tsh', nama: 'TSH', biaya: 85000, nilaiNormal: '0,4-4,0 mIU/L', hasilBesok: true },

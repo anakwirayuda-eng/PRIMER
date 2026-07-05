@@ -219,4 +219,31 @@ describe('PACK — validasi silang id konten', () => {
     expect(kasus.tatalaksana.edukasi).not.toContain('minum_air_cukup')
     expect(kasus.tatalaksana.edukasi).toContain('restriksi_cairan_gagal_jantung')
   })
+
+  // Bug live (2026-07-05): user main mm_gout_artritis_akut, pesan lab "Asam
+  // Urat" (bukan "Asam Urat Darah" yg dipakai kasus ini di lab-nya sendiri)
+  // dan dapat hasil generik "dalam batas normal" — padahal narasi kasus
+  // sendiri bilang 9.2 mg/dL TINGGI (dgn catatan penting "kadar dapat normal
+  // saat serangan akut, diagnosis tetap klinis"). Root cause: katalog lab py
+  // DUA entri near-duplicate utk konsep SAMA (asam urat serum) — `asam_urat`
+  // YATIM (tak dipakai kasus manapun) muncul berdampingan dgn `asam_urat_
+  // darah` yg sungguhan dipakai, gampang salah pilih krn nama nyaris identik.
+  // Dihapus krn 100% redundan (bukan pengecualian layak allowlist spt duplikat
+  // ICD skdi144 — di sana dua kode MEMANG beda penyakit yg sengaja digabung).
+  it('lab "asam_urat" (near-duplikat asam_urat_darah, yatim) sudah dihapus', () => {
+    expect(PACK.lab['asam_urat']).toBeUndefined()
+    expect(PACK.lab['asam_urat_darah']).toBeDefined()
+  })
+
+  // Ditemukan sekalian saat audit di atas: `mikroskopis_bta` (nama tampilan
+  // "Mikroskopis Gram/KOH", TAK terkait BTA sama sekali) py id yg mengandung
+  // substring "bta" — `cocokLab` (util.ts) mencocokkan query jg thd `id`,
+  // bukan cuma `nama`, jadi mencari "BTA" (mis. utk kasus TB, bta_sputum)
+  // ikut menjaring entri tak-relevan ini krn kebetulan id-nya nyerempet.
+  // Juga yatim (tak dipakai kasus manapun) — id diganti biar tak nyangkut.
+  it('lab mikroskopis Gram/KOH tak lagi ber-id mengandung "bta" (nyangkut di pencarian BTA sputum TB)', () => {
+    expect(PACK.lab['mikroskopis_bta']).toBeUndefined()
+    expect(PACK.lab['mikroskopis_gram_koh']).toBeDefined()
+    expect(PACK.lab['mikroskopis_gram_koh']!.nama).toContain('Gram/KOH')
+  })
 })
