@@ -349,6 +349,9 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon berlebihan untuk tonsilitis streptokokus komunitas dan memicu resistensi; lini pertama tetap penisilin/amoxicillin.' },
       ],
       edukasi: ['kepatuhan_obat', 'kompres_demam', 'istirahat_cukup', 'minum_air_cukup'],
+      // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — antibiotik
+      // tak tuntas → demam rematik/komplikasi jantung (pola sama faringitis_akut).
+      edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Tonsilitis bakterial (Streptokokus): demam tinggi, tonsil membesar + eksudat, KGB servikal nyeri, TANPA batuk-pilek. Lini pertama amoxicillin 10 hari (cegah demam rematik); bila ALERGI PENISILIN → makrolida (azitromisin/eritromisin). Red flag abses peritonsil/obstruksi (trismus, uvula terdorong, ngiler, stridor) → rujuk.',
     alergiTrap: {
@@ -810,6 +813,9 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         { id: 'metronidazol_500', alasan: 'Metronidazol untuk disentri AMEBA; pada disentri basiler (Shigella) yang tepat adalah antibiotik seperti siprofloksasin. Feses di sini tidak menunjukkan trofozoit ameba.' },
       ],
       edukasi: ['cairan_oralit', 'cuci_tangan_makanan', 'tanda_bahaya', 'cuci_tangan'],
+      // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit sebut
+      // dehidrasi memberat — rehidrasi oralit topik yang tak boleh dilewatkan.
+      edukasiKritis: ['cairan_oralit'],
     },
     clue: 'Disentri BASILER (Shigella): diare sedikit-sedikit tapi sering, DARAH + lendir, demam, tenesmus, leukosit feses banyak. Beri antibiotik (siprofloksasin) + rehidrasi oralit + zinc; JANGAN beri antimotilitas (loperamid). Bedakan disentri AMEBA (trofozoit di feses) → metronidazol. Kontras dengan diare akut cair non-disentri yang TANPA antibiotik (Kemenkes; WHO).',
     konsekuensi: {

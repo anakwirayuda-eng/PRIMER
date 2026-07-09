@@ -227,6 +227,9 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon bukan lini pertama faringitis streptokokus dan berlebihan untuk kasus komunitas 4A — memicu resistensi.' },
       ],
       edukasi: ['kepatuhan_obat', 'kompres_demam', 'istirahat_cukup', 'cuci_tangan'],
+      // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — antibiotik
+      // tak tuntas 10 hari → demam rematik/komplikasi jantung.
+      edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Skor Centor tinggi (demam, eksudat tonsil, KGB servikal nyeri, tanpa batuk) → faringitis Streptokokus Grup A. Lini pertama amoxicillin; bila alergi penisilin, ganti makrolida (eritromisin).',
     alergiTrap: {
@@ -461,6 +464,9 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       obatBenar: ['paracetamol_500'],
       obatAlternatif: [['kloramfenikol_250', 'cotrimoxazole_480', 'amoxicillin_500']],
       edukasi: ['kepatuhan_obat', 'istirahat_cukup', 'cuci_tangan', 'gizi_seimbang'],
+      // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — antibiotik
+      // tak tuntas → perforasi usus/perdarahan minggu ke-3.
+      edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Demam stepladder (naik bertahap, puncak sore-malam) + lidah kotor + bradikardia relatif → tifoid. Lini pertama FKTP/Fornas: kloramfenikol (alternatif kotrimoksazol/amoksisilin; bila tersedia & sesuai antibiogram/derajat, sefiksim/seftriakson) — tekankan tuntas + istirahat total untuk cegah perforasi usus. Catatan: Widal tunggal punya angka positif-palsu tinggi, tegakkan dengan gambaran klinis + konteks endemis; kultur bila tersedia.',
     konsekuensi: {

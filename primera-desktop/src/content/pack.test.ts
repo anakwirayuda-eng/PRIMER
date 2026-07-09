@@ -289,6 +289,40 @@ describe('PACK — validasi silang id konten', () => {
     expect(masalah).toEqual([])
   })
 
+  // CODEX M10 ronde-2 (2026-07-06): `karma?` bertipe SkenarioKunjungan (types.ts)
+  // — TIDAK dibatasi structural ke kunjungan[0], dan test invarian demografi
+  // di atas pun cuma cek `kunjungan[0]?.karma` (pola sama). TAPI `init.ts`
+  // (`jadwalKarma`) HANYA membaca `content.arc.kunjungan[0]` — karma di posisi
+  // lain akan lolos validasiPack (well-formed) namun TAK PERNAH dijadwalkan,
+  // celah senyap murni krn asimetri validator-vs-engine. Saat ini 0 instance
+  // (9 karma real semua di index 0) — ini pagar preventif utk konten masa depan,
+  // bukan bug aktif. validasiPack HARUS menolak karma di kunjungan[i] utk i>0.
+  it('karma di kunjungan SELAIN indeks-0 ditolak validasiPack (init.ts cuma proses index 0)', () => {
+    const kelId = 'keluarga_wulan'
+    const kel = PACK.keluarga[kelId]!
+    const kasusIdValid = Object.keys(PACK.kasus)[0]!
+    const rusak = {
+      ...PACK,
+      keluarga: {
+        ...PACK.keluarga,
+        [kelId]: {
+          ...kel,
+          arc: {
+            ...kel.arc,
+            kunjungan: kel.arc.kunjungan.map((sk, i) =>
+              i === 1
+                ? { ...sk, karma: { kasusId: kasusIdValid, anggotaIndex: 0, jatuhTempoHari: 10, narasi: 'uji' } }
+                : sk,
+            ),
+          },
+        },
+      },
+    }
+    expect(validasiPack(rusak)).toContain(
+      `Keluarga ${kelId}: karma di kunjungan[1] tak akan pernah dijadwalkan (init.ts hanya memproses arc.kunjungan[0])`,
+    )
+  })
+
   // DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md):
   // validasiPack menolak edukasiKritis yg BUKAN anggota edukasi wajib —
   // celah logika senyap (kritis tak akan pernah "tercakup" krn tak pernah
@@ -311,12 +345,35 @@ describe('PACK — validasi silang id konten', () => {
   // SENGAJA tak ditag: yg pertama wajib-nya cuma 3 topik (tak kena celah,
   // target=wajib=3 sudah menuntut semua), yg kedua tak ada di katalog sama
   // sekali (tak ada kasus asma pediatrik/eksaserbasi di 67 kasus).
+  //
+  // Batch 2 (CODEX M10 ronde-2, 2026-07-06, docs §40) — 6 dari 8 kandidat
+  // CODEX diterima, tiap satu diverifikasi thd konsekuensi.narasi masing2
+  // sebelum ditandai: faringitis_akut & tonsilitis_akut & demam_tifoid &
+  // kia_isk_kehamilan (kepatuhan_obat — konsekuensi eksplisit sebut demam
+  // rematik/perforasi usus/pielonefritis bila antibiotik tak dituntaskan),
+  // mm_gagal_jantung_kongestif (restriksi_cairan_gagal_jantung — topik
+  // KHAS-CHF vs 3 topik lain yg generik, selaras fix §33), disentri_basiler
+  // (cairan_oralit — konsekuensi eksplisit sebut dehidrasi memberat).
+  // ppok_eksaserbasi DITOLAK (CODEX sendiri beri label "kandidat sedang"):
+  // konsekuensinya ("tidak segera dirujuk... gagal napas") murni soal
+  // KETERLAMBATAN RUJUKAN dokter, bukan kegagalan edukasi pasien manapun
+  // — tak ada topik yg jadi trigger tekstual outcome buruknya, beda kelas
+  // dari 6 kasus lain di sini. kulit_morbili DITERIMA (tanda_bahaya):
+  // kondisiKembali eksplisit "napas cepat, tarikan dinding dada" — persis
+  // red flag pneumonia yg tanda_bahaya ajarkan orang tua kenali di rumah.
   it.each([
     ['dengue_df', 'tanda_bahaya'],
     ['tb_paru', 'minum_oat_tuntas'],
     ['diare_akut_anak', 'cairan_oralit'],
     ['hipertensi_esensial', 'kepatuhan_obat'],
     ['dm_tipe2', 'kepatuhan_obat'],
+    ['faringitis_akut', 'kepatuhan_obat'],
+    ['tonsilitis_akut', 'kepatuhan_obat'],
+    ['demam_tifoid', 'kepatuhan_obat'],
+    ['kia_isk_kehamilan', 'kepatuhan_obat'],
+    ['mm_gagal_jantung_kongestif', 'restriksi_cairan_gagal_jantung'],
+    ['disentri_basiler', 'cairan_oralit'],
+    ['kulit_morbili', 'tanda_bahaya'],
   ])('%s: edukasiKritis berisi %s', (kasusId, topikKritis) => {
     const kasus = PACK.kasus[kasusId]!
     expect(kasus.tatalaksana.edukasiKritis).toContain(topikKritis)

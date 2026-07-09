@@ -1111,6 +1111,10 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       // MINUM LEBIH BANYAK) diganti restriksi_cairan_gagal_jantung — CHF
       // butuh restriksi cairan, kebalikan dari topik lama.
       edukasi: ['diet_rendah_garam', 'restriksi_cairan_gagal_jantung', 'kepatuhan_obat', 'tanda_bahaya'],
+      // CODEX M10 ronde-2 (2026-07-06): restriksi cairan adalah topik KHAS-CHF
+      // (beda dari 3 topik lain yg generik penyakit kronis) — kegagalan klasik
+      // readmisi CHF di dunia nyata adalah pasien tak membatasi cairan di rumah.
+      edukasiKritis: ['restriksi_cairan_gagal_jantung'],
     },
     clue: 'GAGAL JANTUNG KONGESTIF (SKDI 3B → RUJUK): sesak progresif + ortopnea + PND + edema tungkai + JVP↑ + S3 gallop + ronki basal (kriteria Framingham). Di FKTP: STABILISASI — posisi setengah duduk, oksigen, furosemid (dekongesti), ISDN bila TD memadai — lalu RUJUK penyakit dalam untuk ekokardiografi & terapi definitif (ACE-I/beta-blocker dititrasi). JANGAN mulai beta-blocker saat dekompensasi; HINDARI NSAID (PPK Gagal Jantung / PERKI / ESC).',
     konsekuensi: {

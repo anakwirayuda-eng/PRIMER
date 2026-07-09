@@ -104,8 +104,18 @@ export function validasiPack(pack: ContentPack): string[] {
     }
   }
   for (const kel of Object.values(pack.keluarga)) {
-    for (const sk of kel.arc.kunjungan) {
+    kel.arc.kunjungan.forEach((sk, idx) => {
       if (sk.karma) {
+        // CODEX M10 ronde-2 (2026-07-06): `karma?` bertipe SkenarioKunjungan
+        // tak dibatasi structural ke kunjungan[0], tapi `init.ts` (jadwalKarma)
+        // HANYA membaca `arc.kunjungan[0]` — karma di posisi lain lolos
+        // validasi well-formed (kasusId/anggotaIndex valid) namun TAK PERNAH
+        // dijadwalkan runtime. Tutup celah senyap ini di sumbernya.
+        if (idx > 0) {
+          masalah.push(
+            `Keluarga ${kel.id}: karma di kunjungan[${idx}] tak akan pernah dijadwalkan (init.ts hanya memproses arc.kunjungan[0])`,
+          )
+        }
         if (!pack.kasus[sk.karma.kasusId]) {
           masalah.push(`Keluarga ${kel.id}: karma kasus '${sk.karma.kasusId}' tidak ada`)
         }
@@ -113,7 +123,7 @@ export function validasiPack(pack: ContentPack): string[] {
           masalah.push(`Keluarga ${kel.id}: karma anggotaIndex ${sk.karma.anggotaIndex} di luar jangkauan`)
         }
       }
-    }
+    })
   }
   return masalah
 }

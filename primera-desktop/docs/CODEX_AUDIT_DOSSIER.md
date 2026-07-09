@@ -2351,3 +2351,76 @@ Verifikasi: typecheck bersih; `npm test -- --run` → **411 test** (dari
 presentasional, nol semantik skor/replay). Layar kegiatan/IGD tak
 di-sweep khusus utk tombol melayang — temuan 2 menghapus tombol
 melayang dari SEMUA layar in-game sekaligus, termasuk keduanya.
+
+## 40. CODEX ronde-2 (thd brief `M10_AUDIT_BRIEF_R2.md`) — 2 temuan, keduanya diterima sebagian (2026-07-06)
+
+Ronde pertama CODEX menjalankan brief R2 (§39 sebelumnya). Dua temuan,
+semua diverifikasi thd kode aktual sebelum ditindak (baca file:baris
+persis, konfirmasi kutipan cocok) — brief BEKERJA (nol re-report dari
+DO-NOT-RE-REPORT §36-39).
+
+**[P2, DITERIMA 6/8 + 1 dikoreksi] Kasus lain skor Edukasi 100% walau
+lewatkan topik yang konsekuensinya sendiri sebut kritis.** CODEX
+mengusulkan 8 kandidat perluasan `edukasiKritis` (§37). Diverifikasi
+satu-satu thd `konsekuensi.narasi` (bukan diterima mentah):
+
+- **6 diterima langsung** (konsekuensi eksplisit menamai kegagalan
+  edukasi sbg trigger tekstual): `faringitis_akut`→`kepatuhan_obat`
+  ("antibiotik tak dituntaskan 10 hari → demam rematik"),
+  `tonsilitis_akut`→`kepatuhan_obat` (pola identik),
+  `demam_tifoid`→`kepatuhan_obat` ("tak dituntaskan → perforasi usus"),
+  `kia_isk_kehamilan`→`kepatuhan_obat` ("tak tuntas → pielonefritis/
+  kontraksi prematur" — risiko janin, bukan cuma ibu),
+  `disentri_basiler`→`cairan_oralit` ("dehidrasi memberat...mengancam
+  jiwa"), `kulit_morbili`→`tanda_bahaya` (`kondisiKembali` eksplisit
+  "napas cepat, tarikan dinding dada" — red flag pneumonia persis yg
+  `tanda_bahaya` ajarkan).
+- **1 diterima dgn nuansa**: `mm_gagal_jantung_kongestif`→
+  `restriksi_cairan_gagal_jantung`. Konsekuensi teksnya sendiri
+  sebenarnya berbicara soal dekongesti+rujuk (aksi KLINIS), BUKAN
+  kegagalan edukasi pasien secara langsung — beda kelas dari 6 di atas.
+  Tetap ditandai krn `restriksi_cairan` adalah topik KHAS-CHF (vs 3
+  topik lain yg generik penyakit kronis manapun) dan kegagalan readmisi
+  CHF di dunia nyata memang klasik disebabkan pasien tak membatasi
+  cairan di rumah — penalaran klinis independen, bukan makna tekstual
+  konsekuensi.narasi.
+- **1 DITOLAK**: `ppok_eksaserbasi` — CODEX sendiri melabelinya "kandidat
+  sedang" (bukan kuat), dan setelah dibaca ulang, alasannya jelas:
+  konsekuensinya ("tidak segera dirujuk...gagal napas hiperkapnik")
+  murni soal KETERLAMBATAN RUJUKAN DOKTER (disposisi, bukan patient
+  self-care) — tak satu pun dari 4 topik edukasinya (berhenti_merokok/
+  teknik_inhaler/tanda_bahaya/kontrol_rutin) jadi trigger tekstual
+  outcome buruknya. Mekanik `edukasiKritis` menilai kegagalan EDUKASI
+  PASIEN, bukan keterlambatan keputusan dokter — beda sumbu sama sekali.
+- **Usulan tambahan CODEX** (topik edukasi baru utk "wajib lapor PD3I"
+  pada `kulit_morbili`) DITOLAK sbg category error: pelaporan surveilans
+  PD3I adalah kewajiban REGULATORIS petugas kesehatan (lapor ke dinkes),
+  bukan sesuatu yg diajarkan KE PASIEN/keluarga — tak pernah cocok masuk
+  `tatalaksana.edukasi` (yg semuanya topik utk pasien) sama sekali,
+  independen dari ada/tidaknya celah `edukasiKritis`.
+
+7 kasus ditandai (6 diterima + 1 bernuansa), REVISI_ENGINE **TIDAK** perlu
+bump — formula cap-50 sudah ada sejak §37, ini murni konten baru mengisi
+mekanik lama (sama seperti menambah kasus baru ke pack, bukan mengubah
+semantik skor).
+
+**[P3, DITERIMA PENUH] Karma di kunjungan selain indeks-0 lolos
+validasi tapi tak pernah dijadwalkan — footgun konten masa depan.**
+`karma?` (types.ts, field pada `SkenarioKunjungan`) secara tipe tak
+dibatasi ke kunjungan pertama, dan `validasiPack` (pack.ts, SEBELUM fix)
+memvalidasi kasusId/anggotaIndex di SEMUA posisi kunjungan — tapi
+`init.ts` (`jadwalKarma`) HANYA membaca `arc.kunjungan[0]`. Saat ini 0
+instance aktif (dikonfirmasi: 9 karma real semua di index 0 — termasuk
+`keluarga_wulan` yg sempat disangka index 1 saat menyusun test, tapi
+ternyata karma-nya tetap di dalam objek `kunjungan[0]` yg panjang).
+Bukan bug aktif, tapi jebakan senyap murni bagi penulis konten masa
+depan: taruh karma di kunjungan ke-2/3 → lolos validasi → diam-diam
+tak pernah terjadi di gameplay. Fix: `validasiPack` kini menolak eksplisit
+karma di `kunjungan[i]` untuk `i>0` dgn pesan yg menjelaskan KENAPA
+(bukan cuma "invalid"). Tak ada REVISI_ENGINE bump (guard konten,
+bukan perubahan skor/replay).
+
+Verifikasi-bergigi: 8 assertion baru (7 `it.each` edukasiKritis + 1 test
+karma-posisi) merah persis sblm fix (undefined/[] kosong) → hijau
+sesudah. `npm run typecheck` bersih. `npm test -- --run` → **419 test**
+(dari 411), 38 file, hijau.

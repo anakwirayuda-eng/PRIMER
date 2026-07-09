@@ -232,6 +232,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         { id: 'cotrimoxazole_480', alasan: 'Sulfa dihindari terutama trimester 1 & akhir (risiko kernikterus/defek tabung saraf); bukan pilihan aman rutin pada bumil.' },
       ],
       edukasi: ['minum_air_cukup', 'tanda_bahaya_kehamilan', 'kepatuhan_obat', 'cuci_tangan'],
+      // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — ISK tak
+      // tuntas → pielonefritis akut/kontraksi prematur (risiko janin, bukan cuma ibu).
+      edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'ISK pada kehamilan WAJIB diobati (bahkan bakteriuria asimtomatik) karena berisiko pielonefritis & persalinan prematur (PPK/WHO). Antibiotik aman: beta-laktam (sefiksim/amoksisilin). HINDARI fluorokuinolon, tetrasiklin, dan sulfa. Tuntaskan 7 hari + hidrasi cukup.',
     konsekuensi: {

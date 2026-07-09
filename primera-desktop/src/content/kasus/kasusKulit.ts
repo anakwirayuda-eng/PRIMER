@@ -1156,6 +1156,9 @@ export const KASUS_KULIT: KasusKlinis[] = [
         { id: 'dexamethasone_05', alasan: 'Kortikosteroid tidak berperan pada campak tanpa komplikasi dan justru menekan imun; tata laksana utama suportif + vitamin A.' },
       ],
       edukasi: ['gizi_seimbang', 'istirahat_cukup', 'tanda_bahaya', 'cairan_oralit'],
+      // CODEX M10 ronde-2 (2026-07-06): kondisiKembali eksplisit "napas cepat,
+      // tarikan dinding dada" — persis red flag pneumonia yg tanda_bahaya ajarkan.
+      edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Morbili: trias 3C (Cough, Coryza, Conjunctivitis) + KOPLIK SPOTS → ruam makulopapular SEFALOKAUDAL. Beri VITAMIN A DUA DOSIS (hari-1 & hari-2, dosis sesuai usia) + suportif (antipiretik, cairan, gizi). TANPA antibiotik rutin. Pantau komplikasi (pneumonia, diare, ensefalitis). WAJIB dilaporkan (surveilans PD3I) & lengkapi imunisasi kontak (Kemenkes/WHO).',
     konsekuensi: {
