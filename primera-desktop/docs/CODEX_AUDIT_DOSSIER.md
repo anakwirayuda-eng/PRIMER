@@ -2485,3 +2485,40 @@ kembali — dicatat sbg kandidat, bukan dikerjakan sekarang.
 M10.a kini benar2 tuntas dua ronde (empiris §39 + sudut lanjutan §41);
 sisa dimensi-4 yang murni level-sumber sudah diserahkan ke CODEX via
 brief R2 (dan ronde-2 CODEX §40 memang tak menemukan layering baru).
+
+## 42. CODEX ronde-3 (M10.a) — Onboarding satu2nya kartu dialog tanpa batas tinggi/overflow (2026-07-06)
+
+**[P3, DITERIMA & DIPERBAIKI]** CODEX menemukan `.onb-kartu` (Onboarding,
+satu2nya gerbang wajib Hari 1) adalah SATU-SATUNYA kartu dialog
+fixed-overlay tanpa `max-height`+`overflow` — beda dari `.modal`
+(base.css), `.set-modal` (Pengaturan), `.tentang-modal` (TentangModal)
+yang semua sudah scroll-safe. Krn `html/body` dikunci `overflow:hidden`
+global ("game desktop: satu viewport, tanpa scroll dokumen"), TIDAK ADA
+fallback scroll dokumen — kalau kartu Onboarding melebihi viewport,
+tombol Lewati/Lanjut/Mulai bisa terkunci di luar jangkauan TANPA jalan
+scroll manapun. Ini SUDAH tepat sasaran §41 — ronde M10.a sebelumnya
+menguji skala teks 140% di HUD/Klinik/Dex tapi SENGAJA melewati
+Onboarding (alasan yg dicatat saat itu keliru: "render order", bukan
+"scroll-safety" — CODEX menangkap sudut yg genuinely terlewat).
+
+Diverifikasi EMPIRIS (bukan cuma dibaca), termasuk mereproduksi kondisi
+overflow sungguhan: viewport 1200×340 + `ukuranTeks:1.4` (maksimum
+M7.31) + kartu ke-5 (paragraf terpanjang, "Tuntas di sini, atau rujuk")
+→ `kartu.scrollHeight` (486) > `clientHeight` (304), tombol "Lanjut"
+terkonfirmasi START di luar area kartu yg terlihat SEBELUM fix. Fix:
+`.onb-kartu` diberi `max-height: min(90vh, 620px); overflow-y: auto;`
+— pola PERSIS `.set-modal`/`.tentang-modal`. Setelah fix, kondisi
+overflow YANG SAMA direproduksi ulang: scroll kartu ke bawah membuat
+tombol terlihat & `MouseEvent` sungguhan berhasil pindah ke kartu
+berikutnya, dan alur penuh sampai "Mulai" (menutup onboarding +
+`localStorage` tersimpan) terkonfirmasi bekerja. Di ukuran normal
+(1200×760, teks 100%) kartu tak overflow sama sekali — nol regresi
+visual.
+
+Pagar baru: `lapisan.test.ts` — satu test generik memeriksa SEMUA 4
+kelas kartu dialog (`.modal`/`.set-modal`/`.tentang-modal`/`.onb-kartu`)
+punya `max-height`+`overflow(-y)`, bukan cuma Onboarding — modal ke-5
+di masa depan yang lupa pola ini otomatis tertangkap. Verifikasi-bergigi:
+merah persis pada assertion `.onb-kartu` sblm fix, hijau stlh; stash/pop
+dikonfirmasi ulang. Tak ada REVISI_ENGINE bump (CSS murni). `npm test
+-- --run` → **420 test** (dari 419), typecheck bersih.

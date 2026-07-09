@@ -58,4 +58,26 @@ describe('invarian lapisan UI (M10.a)', () => {
     expect(hud).toMatch(/<MuteButton dok \/>/)
     expect(hud).toMatch(/<Pengaturan dok \/>/)
   })
+
+  // CODEX M10.a ronde-3 (2026-07-06): html/body dikunci overflow:hidden global
+  // ("game desktop: satu viewport, tanpa scroll dokumen" — base.css) — TIDAK
+  // ADA scroll fallback di level dokumen. Setiap kartu dialog fixed-overlay
+  // (modal/set-modal/tentang-modal) karenanya WAJIB batasi tinggi sendiri +
+  // overflow-y:auto, kalau tidak konten yg melebihi viewport (teks panjang,
+  // skala teks besar M7.31, layar pendek) mengunci tombol lanjut/tutup di
+  // luar jangkauan TANPA jalan scroll manapun. `.onb-kartu` (Onboarding, satu2
+  // gerbang wajib Hari 1) SEMPAT jadi satu-satunya yg luput dari pola ini.
+  it('setiap kartu dialog fixed-overlay membatasi tinggi + overflow (tak ada scroll dokumen fallback)', () => {
+    const kartu = [
+      { file: '../styles/base.css', sel: '.modal' },
+      { file: '../components/Pengaturan.css', sel: '.set-modal' },
+      { file: '../components/TentangModal.css', sel: '.tentang-modal' },
+      { file: '../components/Onboarding.css', sel: '.onb-kartu' },
+    ]
+    for (const { file, sel } of kartu) {
+      const isi = blok(baca(file), sel)
+      expect(isi, `${sel} butuh max-height`).toMatch(/max-height:/)
+      expect(isi, `${sel} butuh overflow(-y):(auto|scroll)`).toMatch(/overflow(-y)?:\s*(auto|scroll)/)
+    }
+  })
 })

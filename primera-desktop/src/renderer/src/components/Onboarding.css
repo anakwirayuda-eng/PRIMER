@@ -16,6 +16,14 @@
 
 .onb-kartu {
   width: min(460px, 100%);
+  /* CODEX M10.a ronde-3 (2026-07-06): satu2nya kartu dialog fixed-overlay yg
+     dulu tanpa batas tinggi — html/body dikunci overflow:hidden global (base.css,
+     "tanpa scroll dokumen"), jadi tanpa ini teks panjang/skala teks besar (M7.31)
+     /layar pendek bisa mengunci tombol Lewati/Lanjut/Mulai di luar jangkauan
+     TANPA jalan scroll manapun. Pola disamakan dgn .modal/.set-modal/.tentang-modal.
+  */
+  max-height: min(90vh, 620px);
+  overflow-y: auto;
   padding: var(--sp-6) var(--sp-5) var(--sp-5);
   text-align: center;
   display: flex;
