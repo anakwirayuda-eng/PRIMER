@@ -2424,3 +2424,64 @@ Verifikasi-bergigi: 8 assertion baru (7 `it.each` edukasiKritis + 1 test
 karma-posisi) merah persis sblm fix (undefined/[] kosong) → hijau
 sesudah. `npm run typecheck` bersih. `npm test -- --run` → **419 test**
 (dari 411), 38 file, hijau.
+
+## 41. M10.a ronde-2 — sudut lanjutan layering, satu per satu (2026-07-06)
+
+Melengkapi §39 (yang menguji 6 layar utama pada keadaan default): user
+minta M10.a diteruskan "satu per satu berbagai sudut". Metodologi
+DIPERKUAT dari §39 — bukan lagi cek titik manual, tapi **probe
+menyeluruh per layar**: (a) inventaris SEMUA elemen `fixed`/`absolute`
+yang benar2 ter-render (computed style, bukan grep sumber), (b) untuk
+SETIAP elemen interaktif yang tampak (button/input/select/a),
+`elementFromPoint` di titik tengahnya WAJIB mengenai dirinya sendiri —
+elemen yang "dicuri" elemen lain otomatis terdaftar, (c) saat overlay
+terbuka, scope probe = elemen DI DALAM overlay teratas saja (konten
+latar yang tertutup backdrop modal adalah PERILAKU BENAR, bukan
+temuan — pelajaran interpretasi ronde ini), (d) cek scroll horizontal
+dokumen. Semua di window minimum 1200×760, game dimainkan sungguhan
+lewat store (hari 15, IGD interrupt diselesaikan di jalan).
+
+Sudut yang diperiksa & hasil:
+
+- **IGD (sesi aktif)** — hanya 2 `hud__badge` (absolute, jinak, di
+  dalam tab); nol tombol tertutup. BERSIH.
+- **Kegiatan (sesi posyandu aktif, 4 kartu)** — 1 badge; nol tertutup;
+  prolanis/KLB berbagi layar+CSS yang sama sehingga satu varian cukup
+  utk audit layering. BERSIH.
+- **MejaKerja + Lokakarya Mini (`mk__rekap`, auto-buka hari 15)** —
+  dalam-modal nol tertutup. Temuan metodologis penting: probe naif
+  awalnya melaporkan 7 elemen "tertutup" — SEMUANYA konten latar di
+  belakang backdrop modal (tombol program PSN 3M dkk milik layar meja,
+  bukan milik modal) = false-positive kelas "modal bekerja sebagaimana
+  mestinya". Probe direvisi (scope dalam-overlay) sebelum menyimpulkan.
+- **MejaKerja + surat terbuka** — surat dibaca INLINE (bukan modal);
+  nol tertutup di kedua keadaan. BERSIH.
+- **Pengaturan + TentangModal BERTUMPUK** (dua overlay `z-modal` sama,
+  urutan DOM menentukan) — Tentang di-render setelah `set-overlay` →
+  terkonfirmasi paint di atas (hit-test tengah modal kena
+  `.tentang-modal`); dalam-modal nol tertutup di KEDUA lapis. BERSIH.
+- **PanelHasil (debrief klinik)** — dalam-modal nol tertutup (§38 baru
+  menguji vs toast; ini melengkapi sisi dalam-modalnya). BERSIH.
+- **Skala teks 140%** (`ukuranTeks:1.4`, maksimum M7.31; riwayat: skala
+  font pernah bikin overlay HKI TitleScreen bermasalah, CODEX ronde-4)
+  — root 22.4px terkonfirmasi; HUD melebar ke 86px (wrap 2 baris,
+  rapi); mute+gigi dok TETAP di dalam bilah HUD; nol scroll horizontal;
+  probe klinik & dex nol tertutup. BERSIH. Skala dikembalikan ke 100%
+  setelah uji.
+- **Dilewati dgn alasan eksplisit**: kunjungan di 140% (fix z-index
+  hotspot §39 scale-independent — tombol di ATAS kartu berapa pun
+  ukuran teks); LaporanAkhir (nol elemen fixed/absolute di CSS-nya —
+  tak ada lapisan utk bertabrakan); Onboarding (overlay tunggal
+  di-render TERAKHIR di App.tsx by design sbg gerbang hari-1, §39).
+
+**Hasil: NOL temuan baru.** Dua fix §38-39 (toast z-index/pointer-events,
+hotspot z-index, dok mute/gigi) terkonfirmasi menahan semua sudut ini.
+Tak ada perubahan kode — ronde verifikasi murni, didokumentasikan
+supaya ronde audit berikutnya (CODEX/DeepThink/solo) tak mengulang
+sudut yang sama. Probe menyeluruh (b) di atas layak diangkat jadi
+utilitas e2e permanen bila playwright harness (test:e2e) diaktifkan
+kembali — dicatat sbg kandidat, bukan dikerjakan sekarang.
+
+M10.a kini benar2 tuntas dua ronde (empiris §39 + sudut lanjutan §41);
+sisa dimensi-4 yang murni level-sumber sudah diserahkan ke CODEX via
+brief R2 (dan ronde-2 CODEX §40 memang tak menemukan layering baru).
