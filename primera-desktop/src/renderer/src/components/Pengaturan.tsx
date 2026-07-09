@@ -17,7 +17,10 @@ const MODE_LABEL: Record<ModeMalam, string> = {
   malam: 'Gelap',
 }
 
-export function Pengaturan() {
+// M10.a (2026-07-06): prop `dok` — gigi in-flow di bilah HUD, bukan melayang
+// (versi melayang menimpa & menelan klik konten kiri-bawah, mis. kartu Dex).
+// Default tetap melayang utk TitleScreen yang tanpa HUD.
+export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
   const [buka, setBuka] = useState(false)
   const [tentang, setTentang] = useState(false)
   const p = usePengaturan()
@@ -27,7 +30,7 @@ export function Pengaturan() {
     <>
       <button
         type="button"
-        className="set-gigi"
+        className={`set-gigi${dok ? ' set-gigi--dok' : ''}`}
         onClick={() => setBuka(true)}
         aria-label="Buka Pengaturan"
         title="Pengaturan"

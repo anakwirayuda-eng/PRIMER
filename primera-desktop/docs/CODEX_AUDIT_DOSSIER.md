@@ -2282,3 +2282,72 @@ Scope disengaja SEMPIT: fix ini menutup SATU pola konkret & terverifikasi
 "tombolisasi bertumpuk" LAIN di layar lain (yg belum tentu ada, belum
 diperiksa) sengaja TIDAK dikerjakan sekarang — user eksplisit minta
 ini masuk lingkup M10 ke depan (dicatat di memori sesi).
+
+## 39. M10.a — sapuan layering UI/UX sistematis, dimensi 4 M10 (2026-07-06)
+
+M10 resmi dimulai (greenlight user, mono-agentic, CODEX menyusul dari
+belakang). Urutan yang dipilih: M10.a layering UI/UX dulu — dimensi yang
+CODEX (auditor read-only, tak bisa menjalankan game) paling lemah,
+sementara harness browser `puskesmas-pagi-preview` sudah siap dari §38.
+
+**Metode**: inventaris SEMUA `position:fixed/absolute` + `z-index` di
+renderer (grep menyeluruh, 18 titik), triase jinak vs berisiko, lalu
+verifikasi empiris tiap kandidat di ukuran window Electron MINIMUM
+1200×760 (`main/index.ts` minWidth/minHeight) via hit-test
+`document.elementsFromPoint` pada game yang benar2 dimainkan lewat
+store Zustand asli — bukan tebakan geometri di atas kertas.
+
+**Temuan 1 (P1, memblokir konten): kartu Catatan Observasi menelan
+klik hotspot kunjungan.** `.kunjungan-temuan` (absolute kanan-atas,
+lebar min(280px,34%), TUMBUH ke bawah per temuan — sampai 91% tinggi
+scene dgn 3 temuan) di-render SETELAH lapis hotspot → menimpa hotspot
+ber-x tinggi. Empiris di 1200×760: `wulan_k1` — temukan 3 hotspot kiri
+dulu (urutan yang wajar), lalu `wk1_h3` (x88/y55, panci rebusan jamu —
+temuan yang justru paling sentral utk hambatan-motivasi Bu Wulan)
+hit-test ke `<p>` DI DALAM kartu, bukan tombol: TAK BISA DIKLIK sama
+sekali. Konten ber-x≥75 ada di semua file desa (x=88/85/82/80/78...) —
+kelas bug, bukan titik. Fix: `z-index:1` pada `.kunjungan-hotspot`
+(tombol terangkat di atas kartu; kartu tetap scrollable di luar titik
+36px; denyut yang tampak "di atas kertas" = sinyal jujur masih ada
+temuan). Diverifikasi: hit-test balik ke BUTTON + `MouseEvent` sungguhan
+pada titik yang tadinya terblokir sukses mendaftarkan `KLIK_HOTSPOT`.
+
+**Temuan 2 (P2, zona-mati klik): tombol melayang mute+gigi menimpa
+kartu Dex.** Sapuan 6 layar (meja/klinik/peta/dex/rapor/kunjungan) di
+1200×760: di Buku Saku, KEDUA tombol fixed kiri-bawah (z-hud 100)
+duduk PERSIS di atas `dexskdi-kartu` yang bisa diklik — dua zona mati
+34px. Layar lain hanya tertimpa visual (teks/section non-interaktif).
+Akar masalah struktural: tombol melayang `position:fixed` di atas SEMUA
+layar — layar apa pun yang kontennya interaktif sampai pojok kiri-bawah
+pasti kena, sekarang atau nanti. Fix menutup KELAS-nya: mute+gigi
+DIDOK ke bilah HUD (prop `dok` + varian CSS `--dok` position:static,
+render di ujung `hud__kanan`) — HUD selalu ada di semua layar in-game;
+TitleScreen (tanpa HUD, pojok kosong) tetap versi melayang. Diverifikasi
+browser: floating=0 in-game, dok di dalam rect HUD, klik gigi membuka
+modal & mute toggle `aria-pressed` normal, titik pojok yang dulu
+tertelan kini hit-test ke kartu Dex; TitleScreen tetap `position:fixed`.
+
+**Titik lain diperiksa & jinak**: `.klinik-sorot-tutorial` (z:1
+relative, glow), `.folder::before` / `.dexskdi-kartu__pin` (dekorasi),
+badge HUD, lapisan dekoratif TitleScreen, `.kunjungan-scene--redup::
+after` (sudah pointer-events:none), overlay modal/onboarding/pengaturan
+(z-modal seragam, urutan DOM menentukan — Onboarding di-render terakhir
+di App, benar krn dia gerbang hari-1). Token `--z-drawer` yatim (tak
+dipakai siapa pun) — dibiarkan, bukan bug.
+
+**Pagar permanen baru**: `src/renderer/src/styles/lapisan.test.ts` (4
+test) — jsdom tak memproses CSS (alasan kelas bug ini selalu lolos
+suite), jadi pagar bekerja di LEVEL SUMBER (pola tatalaksanaClue.test.ts):
+urutan token z (hud<drawer<toast<modal), `.toaster` pointer-events:none
+(§38), `.kunjungan-hotspot` z-index, varian `--dok` + kehadiran
+`<MuteButton dok />`/`<Pengaturan dok />` di Hud.tsx (kalau dicabut dari
+HUD tanpa sadar, versi melayang TIDAK kembali otomatis — pemain
+kehilangan akses audio/pengaturan in-game). Verifikasi-bergigi: stash
+7 file fix → 2 assertion terikat-fix MERAH persis (2 assertion §38 yang
+sudah committed tetap hijau) → pop → hijau semua.
+
+Verifikasi: typecheck bersih; `npm test -- --run` → **411 test** (dari
+407, +4 lapisan), 38 file, hijau. Tak ada REVISI_ENGINE bump (murni
+presentasional, nol semantik skor/replay). Layar kegiatan/IGD tak
+di-sweep khusus utk tombol melayang — temuan 2 menghapus tombol
+melayang dari SEMUA layar in-game sekaligus, termasuk keduanya.

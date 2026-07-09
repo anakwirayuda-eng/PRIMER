@@ -1,14 +1,17 @@
 /**
- * MuteButton — tombol kecil melayang di pojok kiri bawah untuk membisukan
- * seluruh audio. Status persist di localStorage (ditangani synth.ts).
- * Dipasang di App oleh integrator: `<MuteButton />`.
+ * MuteButton — tombol kecil untuk membisukan seluruh audio. Status persist
+ * di localStorage (ditangani synth.ts). Dua penempatan:
+ * - default: melayang pojok kiri bawah (TitleScreen, yang tanpa HUD);
+ * - `dok`: in-flow di dalam bilah HUD (M10.a 2026-07-06 — versi melayang
+ *   menimpa & MENELAN klik konten kiri-bawah layar, empiris: kartu Dex
+ *   di Buku Saku pada window minimum 1200×760).
  */
 
 import { useSyncExternalStore } from 'react'
 import { initAudio, isMuted, toggleMute, subscribeMute } from './synth'
 import './MuteButton.css'
 
-export function MuteButton() {
+export function MuteButton({ dok = false }: { dok?: boolean } = {}) {
   const bisu = useSyncExternalStore(subscribeMute, isMuted)
 
   const klik = (): void => {
@@ -20,7 +23,7 @@ export function MuteButton() {
   return (
     <button
       type="button"
-      className={`mute-tombol${bisu ? ' mute-tombol--bisu' : ''}`}
+      className={`mute-tombol${bisu ? ' mute-tombol--bisu' : ''}${dok ? ' mute-tombol--dok' : ''}`}
       onClick={klik}
       aria-pressed={bisu}
       aria-label={bisu ? 'Nyalakan suara' : 'Matikan suara'}

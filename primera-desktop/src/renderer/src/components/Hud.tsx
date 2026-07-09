@@ -7,6 +7,8 @@ import { useGame } from '../store'
 import { musimDariHari, type LayarGame } from '@engine/state'
 import { HARI_BUKA_PETA } from '@engine/reducer'
 import { HARI_STASE } from '@engine/paketUjian'
+import { MuteButton } from '../audio/MuteButton'
+import { Pengaturan } from './Pengaturan'
 import './Hud.css'
 
 const NAMA_BLOK = { pagi: 'PAGI — Klinik', siang: 'SIANG — Lapangan', sore: 'SORE — Meja Kerja' } as const
@@ -76,6 +78,12 @@ export function Hud() {
         <div className="hud__dana mono" title="Dana Puskesmas (kapitasi BPJS)">
           Rp {Math.round(state.kapitasi / 1000).toLocaleString('id-ID')}k
         </div>
+        {/* M10.a (2026-07-06): mute+gigi DIDOK ke HUD — versi melayang pojok
+            kiri-bawah menimpa & menelan klik konten layar (empiris: kartu Dex
+            di Buku Saku, window minimum 1200×760). TitleScreen (tanpa HUD)
+            tetap memakai versi melayang. */}
+        <MuteButton dok />
+        <Pengaturan dok />
       </div>
     </header>
   )

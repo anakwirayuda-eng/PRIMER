@@ -135,8 +135,8 @@ export default function App() {
         </ErrorBoundary>
       </main>
       <Toaster />
-      <MuteButton />
-      <Pengaturan />
+      {/* M10.a: mute+gigi kini didok di dalam <Hud /> (bukan melayang) —
+          versi melayang hanya utk TitleScreen di atas, yang tanpa HUD. */}
       {!onboardingSelesai && state.hari === 1 && state.blok === 'pagi' && (
         <Onboarding onSelesai={() => setOnboardingSelesai(true)} />
       )}

@@ -46,6 +46,14 @@
   background: var(--bg-sunken);
 }
 
+/* M10.a: varian dok — in-flow di bilah HUD, bukan melayang di atas konten. */
+.mute-tombol--dok {
+  position: static;
+  box-shadow: none;
+  width: 30px;
+  height: 30px;
+}
+
 .mute-ikon {
   display: block;
 }

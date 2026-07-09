@@ -128,6 +128,14 @@
 .kunjungan-hotspot {
   position: absolute;
   transform: translate(-50%, -50%);
+  /* M10.a (2026-07-06): kartu .kunjungan-temuan (absolute kanan-atas, tumbuh
+     ke bawah per temuan) di-render SETELAH lapis hotspot → menimpa & MENELAN
+     klik hotspot ber-x tinggi (empiris: wulan_k1 wk1_h3 x88/y55 tak bisa
+     diklik di window minimum 1200×760 setelah 3 temuan kiri ditemukan).
+     Angkat tombol di atas kartu — kartu tetap scrollable di luar titik 36px
+     ini, dan denyut yang tampak "di atas kertas" jadi sinyal jujur bahwa
+     masih ada temuan di balik catatan. */
+  z-index: 1;
   width: 36px;
   height: 36px;
   border-radius: 50%;

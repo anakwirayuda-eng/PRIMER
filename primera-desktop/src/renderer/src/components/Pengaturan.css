@@ -22,6 +22,14 @@
 .set-gigi:hover { color: var(--tinta); border-color: var(--border-tegas); transform: translateY(-1px) rotate(30deg); }
 .set-gigi:focus-visible { outline: 2px solid var(--daun-600); outline-offset: 2px; }
 
+/* M10.a: varian dok — in-flow di bilah HUD, bukan melayang di atas konten. */
+.set-gigi--dok {
+  position: static;
+  box-shadow: none;
+  width: 30px;
+  height: 30px;
+}
+
 .set-overlay {
   position: fixed;
   inset: 0;
