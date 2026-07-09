@@ -540,3 +540,92 @@ Blind spot DeepThink WAJIB dipenuhi sejak desain awal, bukan ditambal belakangan
   Kandidat "M khusus pengayaan storyline" — sentuh KONTEN & seed flavor,
   bukan engine. Interaksi dgn Mode Ujian: varian harus dari seed flavor
   (per-mahasiswa) agar paket tetap adil. Bahas ulang setelah M6/M7-awal.
+  **→ Diformalkan 2026-07-05 jadi M11 butir 4, lihat notulensi M9-M12 di bawah.**
+
+---
+
+## Notulensi M9–M12 (dicatat 2026-07-06)
+
+Ringkasan status milestone lanjutan pasca-M8. Narasi & bukti kerja penuh
+tiap ronde ada di `CODEX_AUDIT_DOSSIER.md` (§1-38 dan seterusnya) — bagian
+ini cuma peta status + pointer, bukan pengganti dossier itu.
+
+### M9 — Audit & Hardening: pola bug berulang ✅ (selesai 2026-07-04)
+
+User mengamati 3 ronde CODEX beruntun menemukan bug di klaster yang SAMA
+(kunci tutorial, SKDI/ICD-10, tatalaksana-vs-clue) dan minta audit
+sekali-jalan alih-alih tambal reaktif per-ronde. 4 sub-bagian, semua
+selesai: **M9.1** kunci tutorial (investigasi manual + test invarian
+menyeluruh menemukan 5 celah, bukan cuma 2 yang diduga awal — pola
+"manual + otomatis saling melengkapi, bukan salah satu saja"); **M9.2**
+audit SKDI thd Kepmenkes 1186/2022 (dokumen otoritatif ASLI utk "144
+FKTP", beda dari SKDI 2012 umum yg dipakai sblmnya); **M9.3** sapuan
+heuristik tatalaksana-vs-clue, dipermanenkan jadi `tatalaksanaClue.test.ts`;
+**M9.4** dokumentasi tensi tutorial-di-mode-ujian. Detail: dossier §28-30.
+
+### M10 — Audit konsistensi menyeluruh (didefinisikan 2026-07-05, BELUM SELESAI)
+
+Beda kelas dari M9 (M9 = satu klaster bug spesifik yg berulang; M10 =
+audit SISTEMATIS atas segala kemungkinan inkonsistensi/bug/hal terlupa,
+krn ronde CODEX terus-menerus menemukan KATEGORI baru di area yg belum
+pernah diperiksa dgn lensa ini). 4 dimensi:
+1. Konsistensi pipeline penyakit penuh (pemeriksaan→diagnosis→
+   tatalaksana→edukasi) utk SEMUA 67 kasus sekaligus, bukan per-stage.
+2. Integritas jembatan UKP↔UKM (klinik ↔ kunjungan rumah/kader/RW/
+   posyandu/prolanis).
+3. Konsistensi state NPC/warga lintas subsistem (identitas yg sama
+   jangan terlihat berbeda tergantung subsistem mana yg terakhir sentuh).
+4. **(ditambahkan 2026-07-06)** Konsistensi layering UI/UX — elemen
+   melayang/fixed (toast, modal, tombol scene) yg saling bertumpuk/
+   bertindihan & mengganggu navigasi (contoh sudah ditemukan+ditambal:
+   toast Toaster menimpa tombol PanelHasil/dialog Kunjungan — dossier §38).
+
+Brief `M10_AUDIT_BRIEF.md` sudah ditulis & dipakai 1 ronde CODEX (dossier
+§36: karma-demografi + sidikJariPack edukasi). Item yg lahir dari ronde
+itu sudah dikerjakan (`edukasiKritis` §37, fix Toaster §38), tapi audit
+M10 SISTEMATIS penuh (semua 4 dimensi, sekaligus, bukan reaktif per-ronde)
+masih **BELUM dimulai**.
+
+### M11 — Enrichment & polish (didefinisikan 2026-07-05, BELUM DIMULAI)
+
+Beda dari M10 (M10 = audit yg RUSAK; M11 = menambah yg BAGUS — bukan
+memperbaiki, tapi memperkaya). Menyerap item lama "Variasi naratif per
+kasus" di atas (jadi butir 4 di bawah). Cakupan:
+1. Catatan nuansa EBM (temuan klasik yg bisa normal/atipikal saat akut —
+   spt asam urat bisa normal saat serangan gout akut, kasus asli ide ini).
+2. Variasi storyline (belum spesifik).
+3. Polish visual (belum spesifik saat didefinisikan — kini bercabang
+   jadi M12 di bawah, krn user mau sesuatu jauh lebih konkret & besar).
+4. Variasi presentasi kasus yg SAMA antar-replay (anamnesis/pemeriksaan
+   bervariasi, biar kasus yg sering muncul di stase 90 hari tak hafalan)
+   — ini persis "Variasi naratif per kasus" 2026-07-03 di atas.
+5. Variasi kasus sisi UKM (kunjungan/kader/posyandu), bukan cuma klinik.
+6. Eksplisit terbuka utk variasi lain yg belum terpikirkan.
+
+**Belum dikerjakan.** Catatan arsitektur penting: butir 4 BISA butuh
+mekanik pemilihan-varian baru di director (bukan cuma tambahan konten
+statis) — kalau ternyata begitu, WAJIB di-flag ke user sbg lift lebih
+besar drpd sisa M11 SEBELUM mulai kerja, bukan diam-diam diperluas.
+
+### M12 — Full aesthetic pass (didefinisikan 2026-07-06, TERBARU, BELUM DIMULAI)
+
+Dijadwalkan SETELAH M10 & M11 selesai. Mengganti visual generik "ruang
+tamu itu-itu saja" (satu ilustrasi dipakai ulang utk SEMUA 16 keluarga
+binaan tanpa variasi) dgn aset digenerate (warga/NPC, scene per-keluarga
+/RW), gaya visual novel ala Telltale/RPG-Maker (kotak dialog + potret
+karakter + ilustrasi scene). `Kunjungan.tsx` (4-babak: observasi hotspot
+→ wawancara dialog box → diagnosis COM-B → resep sosial) SUDAH berbentuk
+persis begini strukturnya — jadi M12 pada dasarnya asset-swap + polish
+framing, BUKAN rewrite engine.
+
+**Tradeoff terbuka, belum diputuskan:** sumber aset — AI-gen dgn gaya
+visual terkunci/konsisten (risiko: konsistensi gaya lintas puluhan
+generate berbeda) vs asset pack RPG-Maker/VN berlisensi (konsisten
+out-of-the-box, tapi terikat gaya & lisensi komersial paket tsb). Ini
+tradeoff SEJENIS dgn lisensi BGM Square Enix yg sudah kena sebelumnya
+(lihat `CATATAN_LISENSI.txt` — koleksi pribadi, WAJIB ganti sebelum
+distribusi installer ke mahasiswa) — waspada gaya "Telltale/RPG-Maker"
+jangan sampai terlalu meniru gaya/aset game berhakcipta spesifik.
+
+**Status ketiganya (M10 lanjutan, M11, M12): murni pencatatan scope —
+tunggu greenlight eksplisit user per-milestone sebelum mulai kerja.**
