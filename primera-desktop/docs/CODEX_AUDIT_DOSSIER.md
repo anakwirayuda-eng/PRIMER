@@ -3504,3 +3504,46 @@ sebelum memvonis "confirmed", jangan simpulkan dari satu field/baris tanpa cek s
 
 **Sisa 13 P2/P3 (nomor #10-18/#20 aksesibilitas/kontras, #22-25 UX misc, polish P3 lain) belum
 diperbaiki** — dilanjutkan batch berikutnya, prioritas: keyboard/focus → kontras → polish.
+
+## 58. Batch-4 CODEX — klaster Peta Desa: keyboard nav + label + warna DIPERBAIKI (2026-07-10, commit `80aaac1`)
+
+Melanjutkan §57, klaster peta desa (3 dari 13 sisa P2/P3):
+
+- **#10 — petak RW `<g onClick>` polos tak terjangkau keyboard** — tak ada di tab order, tak ada
+  semantik aktivasi; satu-satunya jalur lain (tombol roster) cuma mencakup keluarga yang SUDAH
+  binaan, jadi keyboard-only tak bisa memulai eksplorasi RW baru sama sekali. Fix: `PetaSvg.tsx`
+  tiap petak RW dapat `role="button"` + `tabIndex={0}` + `aria-label` deskriptif (nomor, nama
+  dusun, jarak, IKS/status tersurvei) + `onKeyDown` (Enter/Space memicu `onPilih`, sama pola tombol
+  native). `PetaDesa.css` tambah `:focus-visible` ring pada `.peta-petak__bidang` (SVG `<g>` tak
+  dapat outline browser bawaan yang layak, harus digambar manual pada elemen anak).
+- **#11 — label RW bertabrakan dgn tetangga di zoom normal** — label lama `"RW N · Nama Dusun
+  Panjang"` pada RW berdekatan (mis. RW6/RW8) tumpang-tindih scara visual. Fix: label VISUAL
+  disederhanakan jadi `"RW N"` saja; nama dusun lengkap tetap ada di `aria-label`/`<title>`
+  (hover/screen reader) dan panel detail kanan (`PetaDesa.tsx:202`, sudah menampilkan nama penuh
+  sebelum fix ini).
+- **#12 — warna choropleth peta tak cocok klasifikasi resmi 3-kelas** — `warnaPetak()` lama pakai
+  5 pita warna manual (>0.8/≥0.65/≥0.5/≥0.35/else) yg TAK SINKRON dgn `klasifikasiIks()`
+  (`engine/pispk.ts`, 3 kelas: sehat/pra_sehat/tidak_sehat) yang dipakai legenda peta & chip
+  klasifikasi panel detail RW — akibatnya RW "Pra-Sehat" (0.65-0.8) bisa tampak HIJAU (mirip
+  "Sehat"), RW "Tidak Sehat" (0.35-0.5) bisa tampak KUNYIT (mirip "Pra-Sehat"). Fix: `petaUtil.ts`
+  `warnaPetak()` kini memanggil `klasifikasiIks()` langsung dan map 1:1 ke 3 warna legenda — satu
+  sumber kebenaran, tak ada lagi skala warna kedua yang bisa drift.
+
+**Test-first**: `PetaSvg.test.tsx` baru (5 test: role/tabIndex/aria-label, Enter memicu `onPilih`,
+Space memicu `onPilih`, label visual hanya "RW N", nama lengkap tetap di aria-label) + `petaUtil.
+test.ts` (+4 test: zona pra-sehat bukan hijau, zona tidak-sehat bukan kunyit, regresi sehat/belum-
+tersurvei, sapuan 0.00-1.00 tiap 0.01 assert `warnaPetak` selalu cocok `klasifikasiIks`). Semua
+dikonfirmasi MERAH sebelum fix (`git stash` file produksi, re-run, `git stash pop`) — termasuk
+sapuan gagal tepat di iks≈0.35 (batas pita 5-warna lama) sebelum fix. 564/564 test hijau + typecheck
+bersih sesudah.
+
+**Diverifikasi visual di browser** (ekstensi Chrome MCP, save Hari 2 mode malam): Tab dari tombol
+mute mendarat di petak RW 1 dgn ring fokus biru-putus terlihat jelas di sekeliling bentuk petak;
+`document.activeElement` mengonfirmasi `<g role="button" aria-label="RW 1 — Kampung Kauman (jarak
+dekat). IKS agregat 71.">`; Enter membuka panel detail RW 1 menampilkan "IKS agregat 71 · Pra-Sehat"
+— warna kunyit di peta cocok dgn label kelas di panel; label visual pada semua 8 petak tampil
+"RW N" tanpa nama dusun, tanpa tabrakan antar-petak berdekatan.
+
+**Sisa 10 P2/P3** (dialog-konten #13/#14, nama-kontrol #15, aria-state #16-18, kontras-darkmode
+#20/#22, ux-misc #23-25, polish P3) — dilanjutkan batch berikutnya, prioritas sama: keyboard/focus
+→ kontras → polish. §57's #21b tetap OPEN sbg keputusan-desain (bukan bug), tak dihitung dlm sisa.
