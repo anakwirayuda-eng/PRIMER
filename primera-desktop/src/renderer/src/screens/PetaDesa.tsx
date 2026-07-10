@@ -167,7 +167,7 @@ export function PetaDesa() {
                     key={id}
                     className={`peta-roster-item ${rwTerpilih === content.rw ? 'peta-roster-item--aktif' : ''}`}
                     onClick={() => setRwTerpilih(content.rw)}
-                    title={`Keluarga ${content.namaKeluarga} — RW ${content.rw}. Klik untuk membuka RW-nya.`}
+                    title={`${content.namaKeluarga} — RW ${content.rw}. Klik untuk membuka RW-nya.`}
                   >
                     {karmaTerlihat(kel) && <span className="peta-roster-item__karma" aria-label="perlu perhatian" />}
                     <span className="peta-roster-item__nama">{content.namaKeluarga}</span>
@@ -306,7 +306,7 @@ export function PetaDesa() {
               {hasilKunjungan.diusir ? 'DIPERSILAKAN PULANG' : hasilKunjungan.berhasil ? 'KUNJUNGAN BERHASIL' : 'BELUM BERHASIL'}
             </span>
             <div className="peta-hasil__judul">
-              Keluarga {keluargaHasil ? keluargaHasil.namaKeluarga : hasilKunjungan.keluargaId}
+              {keluargaHasil ? keluargaHasil.namaKeluarga : hasilKunjungan.keluargaId}
             </div>
             <p className="peta-hasil__narasi">{hasilKunjungan.narasiPenutup}</p>
             <div className="baris" style={{ justifyContent: 'center' }}>

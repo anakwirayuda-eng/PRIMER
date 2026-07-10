@@ -73,7 +73,9 @@ export function KartuKeluarga({
   return (
     <article className={`peta-keluarga kartu ${karmaTampak ? 'peta-keluarga--karma' : ''}`}>
       <div className="baris baris--antara">
-        <div className="peta-keluarga__nama">Keluarga {content.namaKeluarga}</div>
+        {/* M10: content.namaKeluarga SUDAH berisi prefix "Keluarga " (mis. 'Keluarga
+            Bu Marni') — jangan ditambah literal lagi (dulu jadi "Keluarga Keluarga X"). */}
+        <div className="peta-keluarga__nama">{content.namaKeluarga}</div>
         <div className="baris peta-keluarga__chipbaris">
           {karmaTampak && (
             <span

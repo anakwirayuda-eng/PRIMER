@@ -410,7 +410,7 @@ export function MejaKerja() {
                 {saranKunjungan.map((s) => (
                   <div key={s.keluargaId} className={`kartu mk__saran-item ${s.darurat ? 'mk__saran-item--darurat' : ''}`}>
                     <div className="baris baris--antara">
-                      <span className="mk__saran-nama">Keluarga {s.nama}</span>
+                      <span className="mk__saran-nama">{s.nama}</span>
                       <span className="baris mk__pasien-chip">
                         {s.binaan && <span className="chip chip--daun">Binaan</span>}
                         {s.darurat && <span className="chip chip--merah">PERLU PERHATIAN</span>}
@@ -463,7 +463,7 @@ export function MejaKerja() {
                     {saranKunjungan.map((s) => (
                       <div key={s.keluargaId} className={`kartu mk__saran-item ${s.darurat ? 'mk__saran-item--darurat' : ''}`}>
                         <div className="baris baris--antara">
-                          <span className="mk__saran-nama">Keluarga {s.nama}</span>
+                          <span className="mk__saran-nama">{s.nama}</span>
                           <span className="baris mk__pasien-chip">
                             {s.binaan && <span className="chip chip--daun">Binaan</span>}
                             {s.darurat && <span className="chip chip--merah">PERLU PERHATIAN</span>}

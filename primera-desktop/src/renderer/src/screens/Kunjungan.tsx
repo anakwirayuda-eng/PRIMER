@@ -127,7 +127,7 @@ export function Kunjungan() {
   }
 
   const kepala = kelContent.anggota.find((a) => a.peran === 'kepala') ?? kelContent.anggota[0]
-  const namaWarga = kepala ? kepala.nama : `Keluarga ${kelContent.namaKeluarga}`
+  const namaWarga = kepala ? kepala.nama : kelContent.namaKeluarga
   const nodeAktif = skenario.dialog[kj.dialogIndex]
   const wawancaraTuntas = kj.dialogIndex >= skenario.dialog.length
   const temuan = skenario.hotspot.filter((h) => kj.hotspotDitemukan.includes(h.id))
@@ -160,7 +160,7 @@ export function Kunjungan() {
         <div className="kunjungan-header__info">
           <div className="kunjungan-header__judul">{skenario.judul}</div>
           <div className="baris teks-xs teks-lembut">
-            <span>Keluarga {kelContent.namaKeluarga}</span>
+            <span>{kelContent.namaKeluarga}</span>
             <span className="chip">RW {kelContent.rw}</span>
             <span className="chip">Kunjungan ke-{nomorKunjunganArc(kj.skenarioId, kelContent.arc.kunjungan)}</span>
           </div>
