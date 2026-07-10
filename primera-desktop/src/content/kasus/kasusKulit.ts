@@ -243,7 +243,11 @@ export const KASUS_KULIT: KasusKlinis[] = [
         { id: 'hidrokortison_krim', alasan: 'Sama seperti betametason — kortikosteroid tunggal memperparah tinea. Tanpa antijamur, lesi jamur justru berkembang.' },
         { id: 'amoxicillin_500', alasan: 'Tinea disebabkan jamur dermatofita, bukan bakteri — antibiotik tidak berperan.' },
       ],
-      edukasi: ['jaga_kelembapan_kulit', 'kebersihan_kulit', 'cuci_seprai_panas'],
+      // M10.c (dossier §47): jaga_kelembapan_kulit (MELEMBAPKAN) diganti
+      // jaga_area_kering — clue "jaga area tetap kering", konsekuensi bahkan
+      // sebut "kelembapan yg tak dikoreksi memicu kekambuhan": topik lama
+      // menyuruh persis penyebab kambuh.
+      edukasi: ['jaga_area_kering', 'kebersihan_kulit', 'cuci_seprai_panas'],
     },
     clue: 'Tinea korporis: plak ANULAR, tepi aktif berskuama + central clearing → ANTIJAMUR (ketokonazol/mikonazol topikal 2-4 minggu; griseofulvin oral bila luas/rekalsitran). JANGAN steroid tunggal — betametason tanpa antijamur menimbulkan TINEA INKOGNITO (lesi meluas & menyamar). Jaga area tetap kering (PPK Perdoski).',
     konsekuensi: {
@@ -821,7 +825,9 @@ export const KASUS_KULIT: KasusKlinis[] = [
         { id: 'betametason_krim', alasan: 'Steroid topikal tunggal pada kandidiasis meredakan radang sesaat tapi memperluas infeksi jamur (mirip tinea inkognito). Kandidiasis butuh ANTIJAMUR, bukan steroid.' },
         { id: 'amoxicillin_500', alasan: 'Kandidiasis disebabkan jamur Candida, bukan bakteri; antibiotik justru menekan flora normal dan bisa memperburuk pertumbuhan Candida.' },
       ],
-      edukasi: ['jaga_kelembapan_kulit', 'kebersihan_kulit', 'diet_dm'],
+      // M10.c (dossier §47): jaga_kelembapan_kulit → jaga_area_kering — clue
+      // "JAGA AREA KERING (tepuk kering)"; jamur subur di lembap (pola sama tinea).
+      edukasi: ['jaga_area_kering', 'kebersihan_kulit', 'diet_dm'],
     },
     clue: 'Kandidiasis intertriginosa: plak merah LEMBAP di lipatan + LESI SATELIT (papulopustul di luar tepi) → antijamur topikal (mikonazol/ketokonazol) + JAGA AREA KERING (tepuk kering, pakaian menyerap). Selidiki faktor predisposisi: DM, obesitas, kelembapan. Cek gula darah (PPK Perdoski).',
     konsekuensi: {

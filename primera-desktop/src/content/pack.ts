@@ -53,6 +53,48 @@ export function validasiPack(pack: ContentPack): string[] {
       for (const o of [...k.alergiTrap.obatTerlarang, ...k.alergiTrap.alternatifBenar]) {
         if (!pack.obat[o]) masalah.push(`Kasus ${k.id}: alergiTrap obat '${o}' tidak ada di formularium`)
       }
+      // M10.c (dossier §47) — 3 invariant integritas trap (hari ini 0 pelanggaran,
+      // pagar utk konten masa depan). Semantik engine (clinic.ts): firewall
+      // memblokir resep by golonganAlergi KELAS; standar emas bergeser
+      // (obatBenar − obatTerlarang + alternatifBenar) saat pasien kena trap.
+      const kelasTrap = k.alergiTrap.kelas.toLowerCase()
+      for (const id of k.alergiTrap.obatTerlarang) {
+        const o = pack.obat[id]
+        // (a) obatTerlarang wajib sekelas trap — kalau tidak, firewall TAK
+        // memblokirnya padahal standar emas menganggapnya terlarang.
+        if (o && (o.golonganAlergi ?? '').toLowerCase() !== kelasTrap) {
+          masalah.push(`Kasus ${k.id}: alergiTrap obatTerlarang '${id}' tak ber-golonganAlergi '${k.alergiTrap.kelas}' (firewall tak akan memblokirnya)`)
+        }
+      }
+      const kandidatBenar = [...k.tatalaksana.obatBenar, ...(k.tatalaksana.obatAlternatif ?? []).flat()]
+      for (const id of kandidatBenar) {
+        const o = pack.obat[id]
+        // (b) obat benar/alternatif yang sekelas trap WAJIB terdaftar di
+        // obatTerlarang — kalau tidak, saat trap menyala slot itu MUSTAHIL
+        // dipenuhi (firewall memblokir resepnya, slot tetap dituntut skor).
+        if (o && (o.golonganAlergi ?? '').toLowerCase() === kelasTrap && !k.alergiTrap.obatTerlarang.includes(id)) {
+          masalah.push(`Kasus ${k.id}: obat benar/alternatif '${id}' sekelas trap '${k.alergiTrap.kelas}' tapi tak ada di obatTerlarang (slot mustahil saat trap menyala)`)
+        }
+      }
+      for (const id of k.alergiTrap.alternatifBenar) {
+        const o = pack.obat[id]
+        // (c) alternatifBenar tak boleh sekelas trap — alternatif yang
+        // diblokir firewall-nya sendiri bukan alternatif.
+        if (o && (o.golonganAlergi ?? '').toLowerCase() === kelasTrap) {
+          masalah.push(`Kasus ${k.id}: alergiTrap alternatifBenar '${id}' justru sekelas trap '${k.alergiTrap.kelas}'`)
+        }
+      }
+    }
+    // M10.c (dossier §47): sanity rentang konsekuensi — min wajib ≤ max & ≥ 0.
+    // (max > durasi stase TIDAK divalidasi di sini: itu keputusan desain
+    // realisme kronis yang sedang menunggu keputusan user, bukan drift.)
+    if (k.konsekuensi) {
+      if (k.konsekuensi.kembaliHariMin > k.konsekuensi.kembaliHariMax) {
+        masalah.push(`Kasus ${k.id}: konsekuensi kembaliHariMin ${k.konsekuensi.kembaliHariMin} > kembaliHariMax ${k.konsekuensi.kembaliHariMax}`)
+      }
+      if (k.konsekuensi.kembaliHariMin < 0) {
+        masalah.push(`Kasus ${k.id}: konsekuensi kembaliHariMin negatif`)
+      }
     }
     for (const l of k.lab) {
       if (!pack.lab[l.id]) masalah.push(`Kasus ${k.id}: lab '${l.id}' tidak ada di katalog`)

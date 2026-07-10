@@ -2772,3 +2772,100 @@ baru kembali sesudahnya). Tak ada tindakan; tak ada perubahan kode.
 Dicatat di sini semata agar ronde berikutnya (atau CODEX sendiri bila
 diminta ulang) tak bingung melihat laporan identik muncul dua kali —
 lihat §44 utk detail fix+verifikasi lengkap.
+
+## 47. M10.c — sapuan konsistensi pipeline 67 kasus (dimensi 1) (2026-07-06)
+
+Dimensi terakhir M10, dikerjakan HIBRID (user izinkan multi-agent terbatas):
+3 agent pembaca membagi 7 file kasus (infeksi+kronis / respgi+kulit /
+saraf+msk+kia) utk 5 sumbu yg butuh penilaian klinis-tekstual (edukasi-vs-
+clue, flag relevan, kandidat edukasiKritis, vital-vs-demografi, konsistensi
+fakta antar-persona); Claude sendiri mengerjakan sapuan DETERMINISTIK
+sekali-jalan (skrip throwaway) utk yg bisa di-script (ICD tabrakan,
+integritas alergiTrap, rentang konsekuensi, near-duplicate katalog). SEMUA
+temuan agent DIVERIFIKASI manual thd kode aktual sebelum fix — disiplin
+sama laporan CODEX (agent = alat baca, bukan sumber kebenaran).
+
+### Sapuan deterministik (Claude) — 1 fix + 2 pagar
+
+**[P2 FIXED] Obat yatim `garam_oralit_zinc` ("Paket Oralit + Zinc (program)")**
+— kelas bug SAMA lab asam_urat (§35), sisi obat: nol referensi kasus/engine
+DAN kembaran `oralit`+`zinc_20` yg dipakai kasus diare. Lebih berbahaya dari
+sekadar yatim: clue diare eksplisit "ORALIT + ZINC" → paket gabungan tampak
+pilihan PALING benar di pencarian, tapi meresepkannya dihitung obat-di-luar
+(−15). Dihapus, dijaga test.
+
+**[Pagar] validasiPack + 3 invariant alergiTrap** (hari ini 0 pelanggaran di
+6 kasus trap — pagar konten depan): (a) obatTerlarang wajib sekelas trap
+(kalau tidak, firewall tak memblokirnya); (b) obat benar/alternatif sekelas
+trap wajib ada di obatTerlarang (kalau tidak, slot mustahil dipenuhi saat
+trap nyala — firewall memblokir resepnya, skor tetap menuntut); (c)
+alternatifBenar tak boleh sekelas trap (alternatif yg diblokir firewall
+sendiri). Plus guard rentang konsekuensi (min≤max, min≥0). Semua diuji via
+pack rusak buatan (merah→hijau).
+
+**Diaudit BERSIH (deterministik)**: nol ICD tabrakan kasus-vs-kasus, nol
+alergiTrap melanggar, nol konsekuensi terbalik, nol vital gross-outlier
+(anak/dewasa norma masuk akal), nol skdi-vs-harusDirujuk kontradiksi
+internal. Katalog near-duplicate lain (paracetamol/sirup, amoxicillin/
+klavulanat, amlodipin 5/10, dst) = varian sediaan SAH (bukan yatim), tak
+disentuh.
+
+### Sapuan agent (3 pembaca) — 10 fix konten clue-vs-edukasi + 1 persona
+
+Pola dominan (kelas bug kia_kb_konseling/CHF §32/§33): kasus memakai topik
+edukasi yg NAMA/maknanya off-target atau KONTRADIKTIF dgn clue, krn katalog
+tak py topik presisi & penulis meraih topik generik terdekat. 6 topik baru
+dibuat (pola kb_aman_menyusui/restriksi_cairan: konsep inti clue tanpa
+padanan → entri baru), 10 kasus diperbaiki:
+
+- **KONTRADIKSI langsung (kelas CHF)**: tinea_korporis & kandidiasis_kutis
+  `jaga_kelembapan_kulit` (MELEMBAPKAN) vs clue "jaga area KERING" —
+  konsekuensi tinea bahkan sebut "kelembapan tak dikoreksi memicu kekambuhan"
+  (topik lama menyuruh persis penyebab kambuh) → `jaga_area_kering` (baru).
+  konjungtivitis_alergi `kompres_mata` bernama "Kompres HANGAT" (hordeolum)
+  vs clue "kompres DINGIN" → `kompres_dingin_mata` (baru).
+- **OFF-TARGET (topik salah domain)**: rinitis_alergi `jaga_kelembapan_kulit`
+  (topik KULIT di kasus HIDUNG) → dibuang; rinosinusitis `minum_air_cukup`
+  (identitas ISK "jangan menahan kencing") → `bilas_salin_hidung` (baru);
+  malaria `psn_3m` (PSN 3M jentik Aedes/DBD — vektor & metode SALAH, malaria
+  = Anopheles/kelambu) → `cegah_malaria_kelambu` (baru); bells_palsy
+  `kompres_mata` (hangat) → `proteksi_kornea` (baru, clue "air mata buatan +
+  tutup mata saat tidur").
+- **TOPIK PRESISI TERSEDIA TAPI TAK DIPAKAI**: skabies clue KAPITAL "OBATI
+  SEMUA KONTAK SERUMAH" + "cuci seprai air panas" tapi pakai `cuci_tangan`
+  (lemah utk tungau) → `obati_kontak_serumah` (baru) + `cuci_seprai_panas`
+  (sudah ada, bertag [Skabies/kutu]!); asma clue eksplisit "ajarkan teknik
+  inhaler" + KEDUA obat inhaler tapi `teknik_inhaler` (SUDAH ADA) absen →
+  ditambahkan; gastritis `gizi_seimbang` (generik) → `diet_lambung` (sudah ada).
+- **2 edukasiKritis baru** (naik 12→14 total): asma_ringan→`teknik_inhaler`
+  (teknik salah = obat tak sampai paru, terapi GINA tak bekerja sama sekali —
+  penalaran kelas mm_gagal_jantung), rinosinusitis→`tanda_bahaya`
+  (konsekuensi eksplisit komplikasi orbita/intrakranial "gawat").
+- **1 fix konsistensi persona**: jiwa_insomnia variasi lansia dulu "sering
+  kebangun tengah malam" (insomnia MAINTENANCE) padahal baku+2 persona lain
+  = "susah MEMULAI tidur" (ONSET) — variasi mengubah SUBTIPE klinis (fakta
+  anamnesis), bukan sekadar gaya bahasa. Diselaraskan ke onset.
+
+**Ditolak/diverifikasi-bersih dari laporan agent** (tak semua diterima):
+- `gizi_seimbang`/`minum_air_cukup` pada bbrp kasus demam/napas (bronkitis,
+  tonsilitis, hemoroid) — komponen hidrasi wajar klinis, TIDAK kontradiktif
+  (beda dari CHF) → dibiarkan.
+- `dm_tipe2` edukasiKritis tanpa anchor konsekuensi.narasi — pilihan topik
+  tetap defensibel (PERKENI), justifikasi via clue umum → dibiarkan.
+- pneumonia sianosis `relevan:false`, asma rinitis-alergi `relevan:false`,
+  diare mukosa-kering `relevan:false` — semua severity/dehidrasi SUDAH
+  dikredit di entri lain (umum/kulit/toraks relevan:true), jadi inkonsistensi
+  KATEGORISASI minor tanpa dampak skor → tak diubah (keyakinan agent rendah,
+  konfirmasi).
+- herpes zoster & rinosinusitis warna-ingus variasi persona (dada/pinggang,
+  hijau/kuning) — longgar tapi tak mengubah fakta klinis penentu → tak diubah.
+
+REVISI_ENGINE 14→15 (perubahan daftar `tatalaksana.edukasi` 10 kasus +
+2 edukasiKritis baru → skorEdukasi replay bergeser utk jejak lama). Verifikasi-
+bergigi: 15 assertion konten baru + 3 assertion validasiPack + 1 orphan +
+1 persona MERAH persis sblm fix (stash 7 file → 15 merah; pop → hijau).
+`npm run typecheck` bersih; `npm test -- --run` → **456 test** (dari 439),
+41 file, hijau — termasuk soak 90-hari & verifier M6 dgn semantik baru.
+
+**M10 (semua 4 dimensi) kini TUNTAS**: §36-47 — pipeline (dim 1, §47),
+bridge/NPC (dim 2+3, §43), UI/UX layering (dim 4, §38-46).

@@ -382,7 +382,10 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         { id: 'ibuprofen_400', alasan: 'NSAID mengiritasi mukosa lambung dan memperberat gastritis — justru pemicu.' },
         { id: 'amoxicillin_500', alasan: 'Antibiotik tidak diindikasikan tanpa bukti infeksi H. pylori (tes napas/feses/serologi).' },
       ],
-      edukasi: ['kepatuhan_obat', 'gizi_seimbang', 'tanda_bahaya'],
+      // M10.c (dossier §47): gizi_seimbang (Isi Piringku, generik) diganti
+      // diet_lambung — clue "modifikasi gaya hidup + waspadai NSAID/jamu pemicu";
+      // inti ajar dispepsia = hindari pemicu (pedas/asam/kopi), bukan gizi umum.
+      edukasi: ['kepatuhan_obat', 'diet_lambung', 'tanda_bahaya'],
     },
     clue: 'Dispepsia tanpa tanda alarm (usia <40 th, tanpa muntah darah/BAB hitam/BB turun/anemia/disfagia) → terapi empiris PPI 4 minggu + modifikasi gaya hidup, bukan langsung endoskopi (Konsensus Nasional Dispepsia PGI). Waspadai NSAID & jamu pegal sebagai pemicu.',
   },
@@ -500,7 +503,13 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         { id: 'amoxicillin_500', alasan: 'Asma bukan infeksi bakteri; antibiotik tidak diindikasikan tanpa tanda infeksi.' },
         { id: 'salbutamol_2', alasan: 'SABA oral kurang efektif dan lebih banyak efek samping (tremor, berdebar) dibanding inhalasi.' },
       ],
-      edukasi: ['hindari_alergen', 'kepatuhan_obat', 'kontrol_rutin'],
+      // M10.c (dossier §47): clue eksplisit "ajarkan teknik inhaler" + KEDUA
+      // obatBenar adalah inhaler, tapi teknik_inhaler absen. hindari_alergen
+      // generik diganti hindari_pencetus_asma ("kendalikan pencetus, asap
+      // rokok rumah!"). teknik_inhaler jadi edukasiKritis: teknik salah = obat
+      // tak sampai paru → terapi GINA-nya sendiri tak bekerja.
+      edukasi: ['teknik_inhaler', 'hindari_pencetus_asma', 'kepatuhan_obat', 'kontrol_rutin'],
+      edukasiKritis: ['teknik_inhaler'],
     },
     clue: 'GINA 2019+: gejala ≥2×/minggu + terbangun malam = asma PERSISTEN, bukan sekadar intermiten. Kunci pembaruan GINA: SABA-tunggal TIDAK lagi dianjurkan pada asma mana pun — setiap pasien butuh terapi mengandung ICS. Beri pengendali ICS (budesonid inhalasi) + reliever (salbutamol inhalasi/ICS-formoterol), kendalikan pencetus (asap rokok rumah!), ajarkan teknik inhaler, nilai kontrol tiap kunjungan. Antibiotik rutin tidak diindikasikan.',
   },

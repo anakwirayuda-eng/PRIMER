@@ -247,6 +247,112 @@ describe('PACK — validasi silang id konten', () => {
     expect(PACK.lab['mikroskopis_gram_koh']!.nama).toContain('Gram/KOH')
   })
 
+  // M10.c (2026-07-06, dossier §47): kelas bug SAMA dgn asam_urat di atas,
+  // sisi OBAT — `garam_oralit_zinc` ("Paket Oralit + Zinc (program)") yatim
+  // (nol referensi kasus/engine) dan kembaran `oralit`+`zinc_20` yg sungguhan
+  // dipakai kasus diare. Lebih berbahaya dari sekadar yatim: clue diare
+  // eksplisit bilang "ORALIT tiap BAB cair + ZINC 20 mg" — paket gabungan ini
+  // justru tampak pilihan PALING benar di pencarian "oralit", tapi
+  // meresepkannya dihitung obat-di-luar-tatalaksana (−15). Dihapus.
+  it('obat "garam_oralit_zinc" (paket yatim, kembaran oralit+zinc_20) sudah dihapus', () => {
+    expect(PACK.obat['garam_oralit_zinc']).toBeUndefined()
+    expect(PACK.obat['oralit']).toBeDefined()
+    expect(PACK.obat['zinc_20']).toBeDefined()
+  })
+
+  // M10.c (dossier §47): 3 invariant integritas alergiTrap di validasiPack
+  // (audit hari ini: 0 pelanggaran di 6 kasus trap — ini pagar konten depan).
+  // Uji tiap cabang via pack rusak buatan di atas kasus trap nyata
+  // (faringitis_akut: kelas penisilin, terlarang amoxicillin_500).
+  it('validasiPack menolak 3 kelas pelanggaran integritas alergiTrap', () => {
+    const kasusUji = PACK.kasus['faringitis_akut']!
+    // (a) obatTerlarang tak sekelas trap (paracetamol bukan penisilin)
+    const rusakA = { ...PACK, kasus: { ...PACK.kasus, faringitis_akut: { ...kasusUji, alergiTrap: { ...kasusUji.alergiTrap!, obatTerlarang: ['paracetamol_500'] } } } }
+    expect(validasiPack(rusakA).some((m) => m.includes("obatTerlarang 'paracetamol_500' tak ber-golonganAlergi"))).toBe(true)
+    // (b) obat benar sekelas trap tapi tak ada di obatTerlarang
+    const rusakB = { ...PACK, kasus: { ...PACK.kasus, faringitis_akut: { ...kasusUji, alergiTrap: { ...kasusUji.alergiTrap!, obatTerlarang: ['amoxicillin_sirup'] } } } }
+    expect(validasiPack(rusakB).some((m) => m.includes("'amoxicillin_500' sekelas trap") && m.includes('slot mustahil'))).toBe(true)
+    // (c) alternatifBenar justru sekelas trap
+    const rusakC = { ...PACK, kasus: { ...PACK.kasus, faringitis_akut: { ...kasusUji, alergiTrap: { ...kasusUji.alergiTrap!, alternatifBenar: ['amoxicillin_sirup'] } } } }
+    expect(validasiPack(rusakC).some((m) => m.includes("alternatifBenar 'amoxicillin_sirup' justru sekelas trap"))).toBe(true)
+  })
+
+  // M10.c (dossier §47) — triase temuan agent pembaca, tiap butir diverifikasi
+  // manual thd clue/konsekuensi sebelum dikunci di sini:
+  // (1) tinea & kandidiasis dulu pakai `jaga_kelembapan_kulit` (MELEMBAPKAN)
+  //     padahal clue keduanya eksplisit "jaga area KERING" — konsekuensi tinea
+  //     bahkan bilang "kelembapan yang tidak dikoreksi memicu kekambuhan":
+  //     topik lama menyuruh persis hal yang narasi sebut penyebab kambuh.
+  //     Topik baru `jaga_area_kering` dibuat (pola kb_aman_menyusui/restriksi
+  //     _cairan: konsep inti clue tanpa padanan katalog → entri baru).
+  // (2) skabies: clue KAPITAL "OBATI SEMUA KONTAK SERUMAH" + "cuci seprai/
+  //     handuk air panas" — topik `cuci_seprai_panas` SUDAH ADA (bertag
+  //     [Skabies/kutu]!) tapi tak dipakai; kontak-serumah tanpa padanan →
+  //     topik baru `obati_kontak_serumah`. `cuci_tangan` (lemah utk tungau)
+  //     diganti.
+  // (3) asma_ringan: clue eksplisit "ajarkan teknik inhaler" + KEDUA obat
+  //     benar adalah inhaler, tapi topik `teknik_inhaler` absen; `hindari_
+  //     alergen` generik diganti `hindari_pencetus_asma` (persis "kendalikan
+  //     pencetus (asap rokok rumah!)" di clue). teknik_inhaler jadi
+  //     edukasiKritis: teknik salah = obat tak pernah sampai paru — terapi
+  //     GINA-nya sendiri tak bekerja (penalaran klinis kelas mm_gagal_jantung).
+  // (4) gastritis: `gizi_seimbang` (Isi Piringku, generik) diganti
+  //     `diet_lambung` ([Lambung] Hindari pedas, asam & kopi) — persis
+  //     "modifikasi gaya hidup + waspadai pemicu" di clue.
+  // (5) rinitis_alergi: `jaga_kelembapan_kulit` (topik KULIT utk kasus hidung)
+  //     dibuang — salah sasaran, 4→3 topik.
+  // Batch agent-3 (saraf/mata/tht + kia/jiwa), tiap butir diverifikasi manual:
+  // (6) konjungtivitis_alergi: kompres_mata bernama "Kompres HANGAT" (hordeolum)
+  //     — bertentangan clue "kompres DINGIN"; topik baru kompres_dingin_mata.
+  // (7) saraf_bells_palsy: kompres_mata off-target — clue WAJIB "proteksi
+  //     kornea: air mata buatan + tutup mata"; topik baru proteksi_kornea.
+  // (8) tht_rinosinusitis_akut: minum_air_cukup ber-identitas ISK ("jangan
+  //     menahan kencing") di kasus hidung — clue "bilas salin"; topik baru
+  //     bilas_salin_hidung. tanda_bahaya jadi edukasiKritis (komplikasi orbita).
+  // (9) kia_malaria_falsiparum: psn_3m = PSN 3M jentik Aedes/DBD, vektor SALAH
+  //     (malaria = Anopheles/kelambu); topik baru cegah_malaria_kelambu.
+  it.each([
+    ['kulit_tinea_korporis', 'jaga_area_kering', 'jaga_kelembapan_kulit'],
+    ['kulit_kandidiasis_kutis', 'jaga_area_kering', 'jaga_kelembapan_kulit'],
+    ['skabies', 'cuci_seprai_panas', 'cuci_tangan'],
+    ['asma_ringan', 'teknik_inhaler', 'hindari_alergen'],
+    ['gastritis', 'diet_lambung', 'gizi_seimbang'],
+    ['rinitis_alergi', 'cuci_seprai_panas', 'jaga_kelembapan_kulit'],
+    ['mata_konjungtivitis_alergi', 'kompres_dingin_mata', 'kompres_mata'],
+    ['saraf_bells_palsy', 'proteksi_kornea', 'kompres_mata'],
+    ['tht_rinosinusitis_akut', 'bilas_salin_hidung', 'minum_air_cukup'],
+    ['kia_malaria_falsiparum', 'cegah_malaria_kelambu', 'psn_3m'],
+  ])('%s: edukasi memuat %s dan TIDAK memuat %s (clue-vs-edukasi M10.c)', (kasusId, wajibAda, wajibTiada) => {
+    const kasus = PACK.kasus[kasusId]!
+    expect(kasus.tatalaksana.edukasi).toContain(wajibAda)
+    expect(kasus.tatalaksana.edukasi).not.toContain(wajibTiada)
+  })
+
+  it('skabies: topik baru obati_kontak_serumah dipakai (inti clue tanpa padanan katalog lama)', () => {
+    expect(PACK.edukasi['obati_kontak_serumah']).toBeDefined()
+    expect(PACK.kasus['skabies']!.tatalaksana.edukasi).toContain('obati_kontak_serumah')
+  })
+
+  // M10.c (dossier §47): variasi persona hanya boleh beda GAYA BAHASA, bukan
+  // mengubah FAKTA klinis. jiwa_insomnia q_keluhan menanyakan subtipe (onset/
+  // maintenance/early-waking); baku+2 persona = ONSET ("susah MEMULAI tidur"),
+  // tapi variasi lansia dulu "sering kebangun tengah malam" = MAINTENANCE
+  // (subtipe beda = fakta anamnesis berubah). Kini semua konsisten onset.
+  it('jiwa_insomnia: variasi lansia konsisten subtipe ONSET (bukan maintenance)', () => {
+    const q = PACK.kasus['jiwa_insomnia']!.anamnesis.find((a) => a.id === 'q_keluhan')!
+    const lansia = q.variasi?.lansia ?? ''
+    // konsisten dgn baku "susah memulai tidur" — tak boleh menyebut pola
+    // kebangun-tengah-malam yg menggeser subtipe.
+    expect(lansia).toMatch(/mulai tidur|memulai tidur/i)
+    expect(lansia).not.toMatch(/kebangun tengah malam|terbangun/i)
+  })
+
+  it('validasiPack menolak rentang konsekuensi terbalik/negatif', () => {
+    const kasusUji = PACK.kasus['dengue_df']!
+    const rusak = { ...PACK, kasus: { ...PACK.kasus, dengue_df: { ...kasusUji, konsekuensi: { ...kasusUji.konsekuensi!, kembaliHariMin: 9, kembaliHariMax: 3 } } } }
+    expect(validasiPack(rusak).some((m) => m.includes('kembaliHariMin 9 > kembaliHariMax 3'))).toBe(true)
+  })
+
   // CODEX M10 (2026-07-05): jembatan karma (UKM→UKP) meng-inject nama/usia/
   // jenisKelamin anggota keluarga SUNGGUHAN ke kasusId yg dijadwalkan penulis
   // konten (init.ts:104-125) — kalau usia anggota itu tak masuk rentang
@@ -394,6 +500,11 @@ describe('PACK — validasi silang id konten', () => {
     ['mm_gagal_jantung_kongestif', 'restriksi_cairan_gagal_jantung'],
     ['disentri_basiler', 'cairan_oralit'],
     ['kulit_morbili', 'tanda_bahaya'],
+    // M10.c: clue eksplisit "ajarkan teknik inhaler" + kedua obatBenar inhaler
+    // — teknik salah = obat tak sampai paru, terapi GINA tak bekerja sama sekali.
+    ['asma_ringan', 'teknik_inhaler'],
+    // M10.c: konsekuensi.narasi eksplisit komplikasi orbita/intrakranial "gawat".
+    ['tht_rinosinusitis_akut', 'tanda_bahaya'],
   ])('%s: edukasiKritis berisi %s', (kasusId, topikKritis) => {
     const kasus = PACK.kasus[kasusId]!
     expect(kasus.tatalaksana.edukasiKritis).toContain(topikKritis)

@@ -163,9 +163,20 @@ function fnv1a(teks: string): string {
  * hilirnya bergeser. Jejak lama dgn pasien kembali/karma/prolanis mereplay
  * ke kapitasi (dan skor Manajemen via ambang kas) yang bisa berbeda dari
  * yang tercatat — dossier build lama harus jatuh ke "tidak dapat
- * diverifikasi", bukan divonis TIDAK SAH palsu.
+ * diverifikasi", bukan divonis TIDAK SAH palsu;
+ * 15 = M10.c (2026-07-06, dossier §47) sapuan konsistensi pipeline: daftar
+ * `tatalaksana.edukasi` ~10 kasus diubah (topik off-target/kontradiktif clue
+ * diganti topik tepat — mis. tinea/kandidiasis jaga_kelembapan→jaga_area_kering,
+ * konjungtivitis kompres hangat→dingin, malaria psn_3m→kelambu) DAN 2 kasus
+ * dapat `edukasiKritis` baru (asma_ringan→teknik_inhaler, rinosinusitis→
+ * tanda_bahaya). skorEdukasi = cakupan topik-pemain ∩ daftar-wajib, jadi
+ * mengubah keanggotaan daftar wajib MENGUBAH skor replay utk jejak lama
+ * (topik yg dulu masuk-wajib kini tidak, & sebaliknya); edukasiKritis
+ * meng-cap skorEdukasi ke 50 bila terlewat. Jejak lama pada ke-12 kasus itu
+ * mereplay ke skorEdukasi/grade berbeda — dossier build lama harus jatuh ke
+ * "tidak dapat diverifikasi", bukan divonis TIDAK SAH palsu.
  */
-const REVISI_ENGINE = 14
+const REVISI_ENGINE = 15
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

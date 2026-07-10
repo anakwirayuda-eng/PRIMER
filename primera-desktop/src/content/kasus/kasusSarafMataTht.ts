@@ -452,7 +452,10 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         { id: 'asiklovir_400', alasan: 'Antivirus SENDIRIAN tidak dianjurkan pada Bell\'s palsy tanpa bukti herpes zoster; manfaat utama dari kortikosteroid dini. Antivirus hanya kombinasi pada kasus berat/Ramsay Hunt.' },
         { id: 'amoxicillin_500', alasan: 'Bell\'s palsy bukan infeksi bakteri — antibiotik tidak berperan.' },
       ],
-      edukasi: ['kepatuhan_obat', 'kompres_mata', 'kontrol_rutin'],
+      // M10.c (dossier §47): kompres_mata (hangat, hordeolum) off-target —
+      // clue WAJIB "proteksi kornea: air mata buatan + tutup mata saat tidur"
+      // (mata tak bisa menutup pd Bell's). Diganti proteksi_kornea.
+      edukasi: ['kepatuhan_obat', 'proteksi_kornea', 'kontrol_rutin'],
     },
     clue: 'Bell\'s palsy = parese N.VII PERIFER akut: DAHI IKUT LUMPUH (bedakan dari stroke/sentral yang dahinya terhindar karena persarafan bilateral). Kortikosteroid dini (prednison, mulai <72 jam) memperbaiki prognosis. WAJIB proteksi kornea: air mata buatan + tutup mata saat tidur karena mata tak bisa menutup. Skrining vesikel (Ramsay Hunt) & tanda sentral (PPK PERDOSSI/AAN).',
     konsekuensi: {
@@ -669,7 +672,10 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         { id: 'kloramfenikol_tetes_mata', alasan: 'Konjungtivitis ALERGI bukan infeksi bakteri — antibiotik topikal tidak berefek pada gatal/alergi dan bukan indikasi; kuncinya antihistamin + hindari alergen.' },
         { id: 'dexamethasone_05', alasan: 'Steroid tetes mata TIDAK boleh diresepkan sembarangan di FKTP untuk mata merah — risiko glaukoma steroid, katarak, dan memperparah bila ada herpes kornea.' },
       ],
-      edukasi: ['hindari_alergen', 'kompres_mata', 'cuci_tangan'],
+      // M10.c (dossier §47): kompres_mata = "Kompres HANGAT" (hordeolum),
+      // bertentangan langsung dgn clue "kompres DINGIN" utk konjungtivitis
+      // alergi (pola bug sama CHF/air). Diganti kompres_dingin_mata.
+      edukasi: ['hindari_alergen', 'kompres_dingin_mata', 'cuci_tangan'],
     },
     clue: 'Konjungtivitis alergi: gejala DOMINAN GATAL, BILATERAL, sekret SEROSA berair (bukan mukopurulen), visus NORMAL, sering ada latar atopi/rinitis alergi. Terapi: antihistamin (oral/topikal) + air mata buatan + kompres dingin + HINDARI ALERGEN. Jangan beri antibiotik (bukan bakteri) atau steroid sembarangan (risiko glaukoma/katarak) — AAO PPP.',
     konsekuensi: {
@@ -1095,7 +1101,13 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon bukan lini pertama rinosinusitis bakterial komunitas; amoksisilin(-klavulanat) yang diutamakan. Kuinolon dicadangkan untuk kasus khusus.' },
         { id: 'dexamethasone_05', alasan: 'Kortikosteroid oral sistemik tidak rutin diberikan pada rinosinusitis akut tanpa komplikasi; steroid INTRANASAL yang berperan, bukan steroid oral sembarangan.' },
       ],
-      edukasi: ['minum_air_cukup', 'etika_batuk', 'kontrol_rutin', 'tanda_bahaya'],
+      // M10.c (dossier §47): minum_air_cukup ber-identitas ISK ("jangan menahan
+      // kencing") — off-target di kasus HIDUNG; diganti bilas_salin_hidung
+      // (clue "bilas salin sebagai penunjang"). tanda_bahaya jadi edukasiKritis:
+      // konsekuensi.narasi eksplisit komplikasi orbita/intrakranial "gawat" →
+      // mengenali red flag = penentu keselamatan.
+      edukasi: ['bilas_salin_hidung', 'etika_batuk', 'kontrol_rutin', 'tanda_bahaya'],
+      edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Rinosinusitis akut MAYORITAS VIRAL & self-limiting. Curiga BAKTERIAL bila: gejala >10 hari tanpa perbaikan, ATAU "double sickening" (membaik lalu memburuk), ATAU berat (demam ≥39, nyeri wajah/ingus purulen berat) — baru beri antibiotik (amoksisilin ± klavulanat). Dekongestan + analgetik + bilas salin sebagai penunjang. Waspadai red flag komplikasi orbita/intrakranial → rujuk (EPOS/PPK PERHATI-KL).',
     konsekuensi: {

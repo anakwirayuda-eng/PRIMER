@@ -805,7 +805,10 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         { id: 'ketokonazol_krim', alasan: 'Skabies disebabkan tungau Sarcoptes scabiei, bukan jamur — antijamur topikal tidak berefek. Skabisida (permetrin 5%) yang tepat.' },
         { id: 'amoxicillin_500', alasan: 'Antibiotik hanya diperlukan bila ada infeksi sekunder (impetiginisasi); pada skabies tanpa komplikasi tidak diindikasikan.' },
       ],
-      edukasi: ['kebersihan_kulit', 'cuci_tangan'],
+      // M10.c (dossier §47): cuci_tangan (lemah utk tungau) diganti — clue
+      // KAPITAL "OBATI SEMUA KONTAK SERUMAH" + "cuci seprai/handuk air panas".
+      // Keduanya kini eksplisit; kontak-serumah adalah pilar cegah reinfestasi.
+      edukasi: ['obati_kontak_serumah', 'cuci_seprai_panas', 'kebersihan_kulit'],
     },
     clue: 'Skabies: gatal MEMBERAT MALAM + burrow/kanalikuli di sela jari/pergelangan/umbilikus + riwayat kontak erat (asrama). Permetrin 5% dioleskan seluruh tubuh, ULANGI 1 minggu; OBATI SEMUA KONTAK SERUMAH serentak + cuci seprai/handuk air panas (CDC/IACS).',
   },

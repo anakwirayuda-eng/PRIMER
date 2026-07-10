@@ -83,7 +83,12 @@ export const OBAT_M3: Record<string, Obat> = {
   mgso4_inj: { id: 'mgso4_inj', nama: 'Magnesium Sulfat 40% Injeksi',
     sinonim: ['magnesium sulfat','magnesium sulfate','MgSO4'], kelas: 'antikonvulsan preeklampsia', sediaan: 'ampul', hargaBeli: 8000, hargaJual: 15000, fornas: true },
   vitamin_a_kapsul: { id: 'vitamin_a_kapsul', nama: 'Vitamin A 200.000 IU', kelas: 'suplemen', sediaan: 'kapsul', hargaBeli: 0, hargaJual: 0, fornas: true },
-  garam_oralit_zinc: { id: 'garam_oralit_zinc', nama: 'Paket Oralit + Zinc (program)', kelas: 'rehidrasi', sediaan: 'sachet', hargaBeli: 0, hargaJual: 0, fornas: true },
+  // M10.c (2026-07-06, dossier §47): `garam_oralit_zinc` ("Paket Oralit +
+  // Zinc (program)") DIHAPUS — yatim (nol referensi kasus/engine) DAN kembaran
+  // `oralit`+`zinc_20` yg dipakai kasus diare. Clue diare eksplisit "ORALIT +
+  // ZINC" → paket ini justru tampak pilihan paling benar di pencarian, tapi
+  // meresepkannya dihitung obat-di-luar (−15). Kelas bug sama lab asam_urat
+  // (§35). Dijaga test pack.test.ts.
 
   // -- Tambahan hasil audit medis M3 --
   laktulosa_syr: { id: 'laktulosa_syr', nama: 'Laktulosa Sirup', kelas: 'laksatif osmotik/pelunak tinja', sediaan: 'sirup', hargaBeli: 9000, hargaJual: 17000, fornas: true },
@@ -136,13 +141,52 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
     id: 'kompres_mata', nama: '[Mata] Kompres hangat kelopak & jaga higiene', kategori: 'tindakan',
     sinonim: ['hordeolum', 'timbilan', 'bintitan'],
   },
+  // M10.c (dossier §47): kompres mata DINGIN (konjungtivitis alergi) — konsep
+  // KEBALIKAN kompres_mata (hangat, hordeolum); clue konjungtivitis eksplisit
+  // "kompres dingin". Topik terpisah agar tak salah pilih di pencarian "mata".
+  kompres_dingin_mata: {
+    id: 'kompres_dingin_mata', nama: '[Mata] Kompres DINGIN & air mata buatan', kategori: 'tindakan',
+    sinonim: ['konjungtivitis alergi', 'mata merah gatal', 'cold compress'],
+  },
+  // M10.c (dossier §47): proteksi kornea Bell's palsy (lagoftalmus) — bukan
+  // kompres hangat; clue "air mata buatan + tutup mata saat tidur".
+  proteksi_kornea: {
+    id: 'proteksi_kornea', nama: '[Mata] Lindungi kornea — air mata buatan & tutup mata saat tidur', kategori: 'tindakan',
+    sinonim: ['bells palsy', 'lagoftalmus', 'mata tak menutup', 'lubrikasi'],
+  },
+  // M10.c (dossier §47): bilas salin hidung (rinosinusitis) — clue "bilas
+  // salin"; menggantikan minum_air_cukup (topik ber-identitas ISK, off-target).
+  bilas_salin_hidung: {
+    id: 'bilas_salin_hidung', nama: '[Hidung] Bilas/cuci hidung dengan larutan salin', kategori: 'tindakan',
+    sinonim: ['sinusitis', 'rinosinusitis', 'nasal irrigation', 'cuci hidung'],
+  },
   jaga_kelembapan_kulit: {
     id: 'jaga_kelembapan_kulit', nama: '[Kulit] Jaga kelembapan & hindari garuk', kategori: 'higiene',
     sinonim: ['pelembap', 'moisturizer', 'emolien'],
   },
+  // M10.c (dossier §47): jaga area KERING (tinea/kandidiasis) — jamur subur di
+  // lembap; clue keduanya eksplisit "jaga area kering". KEBALIKAN dari
+  // jaga_kelembapan_kulit (melembapkan, utk eksim) yg dulu salah dipakai.
+  jaga_area_kering: {
+    id: 'jaga_area_kering', nama: '[Kulit] Jaga area tetap KERING (jamur)', kategori: 'higiene',
+    sinonim: ['tinea', 'kandidiasis', 'jamur kulit', 'tepuk kering'],
+  },
   cuci_seprai_panas: {
     id: 'cuci_seprai_panas', nama: '[Skabies/kutu] Rendam seprai & handuk air panas', kategori: 'higiene',
     sinonim: ['gudik', 'tungau', 'dekontaminasi'],
+  },
+  // M10.c (dossier §47): obati SEMUA kontak serumah serentak (skabies) — clue
+  // KAPITAL "OBATI SEMUA KONTAK SERUMAH"; tanpa ini reinfestasi ping-pong.
+  obati_kontak_serumah: {
+    id: 'obati_kontak_serumah', nama: '[Skabies] Obati SEMUA kontak serumah serentak', kategori: 'higiene',
+    sinonim: ['skabies', 'gudik', 'kontak erat', 'serentak'],
+  },
+  // M10.c (dossier §47): cegah malaria — kelambu berinsektisida & repelen
+  // (vektor Anopheles); menggantikan psn_3m (PSN 3M = jentik Aedes/DBD,
+  // vektor & metode SALAH utk malaria).
+  cegah_malaria_kelambu: {
+    id: 'cegah_malaria_kelambu', nama: '[Malaria] Tidur pakai kelambu berinsektisida & repelen', kategori: 'gaya_hidup',
+    sinonim: ['malaria', 'anopheles', 'kelambu', 'nyamuk malam'],
   },
   postur_ergonomi: {
     id: 'postur_ergonomi', nama: '[Punggung] Postur & ergonomi angkat beban', kategori: 'tindakan',

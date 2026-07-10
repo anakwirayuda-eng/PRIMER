@@ -235,7 +235,10 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         { id: 'amoxicillin_500', alasan: 'Rinitis alergi bukan infeksi bakteri — antibiotik tidak berperan. Sekret jernih tanpa demam menyingkirkan sinusitis bakterial.' },
         { id: 'pseudoefedrin_30', alasan: 'Dekongestan ORAL bukan terapi utama rinitis alergi; efek sistemiknya (menaikkan tekanan darah, insomnia, palpitasi) berbahaya, terutama pada hipertensi. Rinitis medikamentosa justru rebound dekongestan TOPIKAL (oksimetazolin), bukan oral.' },
       ],
-      edukasi: ['hindari_alergen', 'cuci_seprai_panas', 'jaga_kelembapan_kulit', 'tanda_bahaya'],
+      // M10.c (dossier §47): jaga_kelembapan_kulit (topik KULIT/eksim) dibuang
+      // dari kasus HIDUNG — salah sasaran, pemain dapat kredit topik tak relevan.
+      // hindari_alergen + cuci_seprai_panas (kontrol tungau debu) sudah tepat.
+      edukasi: ['hindari_alergen', 'cuci_seprai_panas', 'tanda_bahaya'],
     },
     clue: 'Rinitis alergi: bersin serial + rinorea ENCER JERNIH + gatal hidung/mata, dipicu debu/pagi, TANPA demam, riwayat atopi keluarga. Terapi lini pertama antihistamin non-sedatif (loratadin/setirizin) + kontrol lingkungan (ARIA/PPK IDI). Bedakan dari common cold (durasi lebih lama, gatal menonjol, tanpa demam).',
     konsekuensi: {

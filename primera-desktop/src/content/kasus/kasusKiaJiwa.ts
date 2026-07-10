@@ -812,7 +812,11 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         variasi: {
           polos: 'Angel turu dok, wis nglétak neng kasur ning mripat mêlèk terus tekan bengi.',
           terpelajar: 'Terutama susah memulai tidur dok, saya bisa berbaring lebih dari dua jam baru bisa terlelap.',
-          lansia: 'Sudah tua ya Nak, tidur jadi susah, sering kebangun tengah malam terus tidak bisa lagi.',
+          // M10.c (dossier §47): variasi lansia dulu "sering kebangun tengah
+          // malam" = insomnia MAINTENANCE, padahal baku & 2 persona lain =
+          // insomnia ONSET ("susah memulai tidur"). Variasi hanya boleh beda
+          // GAYA BAHASA, bukan mengubah subtipe klinis (fakta anamnesis).
+          lansia: 'Sudah tua ya Nak, susah sekali mulai tidur, sudah rebahan lama mata masih melek terus.',
         },
         esensial: true,
         oldcarts: ['karakter'],
@@ -1117,7 +1121,10 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         { id: 'ciprofloxacin_500', alasan: 'Antibiotik bukan terapi malaria (parasit, bukan bakteri) — menunda ACT yang menyelamatkan nyawa.' },
         { id: 'cotrimoxazole_480', alasan: 'Bukan antimalaria; keliru mengobati demam sebagai infeksi bakteri tanpa memeriksa RDT.' },
       ],
-      edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'psn_3m'],
+      // M10.c (dossier §47): psn_3m = PSN 3M (berantas JENTIK Aedes/DBD di
+      // wadah rumah) — vektor & metode SALAH utk malaria (vektor Anopheles,
+      // gigit malam; pasien "jarang pakai kelambu"). Diganti cegah_malaria_kelambu.
+      edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'cegah_malaria_kelambu'],
     },
     clue: 'Malaria falsiparum: demam periodik + menggigil + splenomegali + riwayat dari daerah endemis (Papua/NTT). KONFIRMASI dengan RDT/mikroskopis SEBELUM terapi. Lini pertama Kemenkes: ACT = DHP (Dihidroartemisinin-Piperakuin) 3 hari + primakuin dosis tunggal (gametosidal). JANGAN pakai klorukin untuk falsiparum — resisten luas di Indonesia. Kenali tanda MALARIA BERAT (penurunan kesadaran, kejang, ikterik, gagal ginjal, hipoglikemia) → rujuk (Pedoman Tata Laksana Malaria Kemenkes).',
     konsekuensi: {
