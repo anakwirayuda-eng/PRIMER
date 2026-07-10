@@ -3471,7 +3471,36 @@ sebelum memvonis "confirmed", jangan simpulkan dari satu field/baris tanpa cek s
   `.dexskdi-kartu__pin`) diganti dari `9px`/`10px` mati ke `0.5625rem`/`0.625rem` (nilai identik
   di 100%, tapi kini ikut skala slider "Ukuran Teks").
 
-**Sisa 16 P2/P3 (nomor #6-resize-utama, #7-8 debrief-hilang, #10-18/#20 aksesibilitas/kontras,
-#22-25 UX misc, polish P3 lain) belum diperbaiki** — dilanjutkan batch berikutnya, prioritas
-mengikuti urutan yang direkomendasikan laporan sendiri: resize/reflow → hasil/debrief hilang →
-keyboard/focus → kontras → polish.
+**Batch-3 (resize/reflow #6 utama + debrief-hilang #7/#8), diverifikasi live di browser preview:**
+- **#6 utama — grid `.mk` clipping senyap saat viewport sempit** — `MejaKerja.css` `.mk` diganti
+  dari `overflow:hidden` penuh jadi `overflow-y:hidden; overflow-x:auto` — dites langsung di browser
+  (resize ke 500px lebar): `scrollWidth 624 > clientWidth 500` kini muncul scrollbar horizontal,
+  bukan potongan senyap tanpa jalan keluar.
+- **#6 utama — garis-buku textarea refleksi tak sinkron dgn line-height saat teks diskalakan** —
+  `repeating-linear-gradient` interval diganti dari px mati (27px/28px) ke `calc(1.3em - 1px)/1.3em`
+  (matching line-height aktual dari `.tulis-tangan` yang menang cascade) — dites: pada 100% garis
+  di 25-26px (=line-height 26px), pada 140% di 35.4-36.4px (=line-height 36.4px), selalu presisi sinkron.
+- **#7c — feedback IGD lenyap seketika saat transisi ke kode_biru/disposisi** — `ResponsTerakhir`
+  dipindah dari dalam blok fase==='langkah' ke luar ketiga blok fase, sehingga tetap dirender lintas
+  transisi. **Bonus temuan tersembunyi**: memindahkan ini mengaktifkan bug laten — guard lama
+  `langkahIndex === 0` (dulu selalu redundan dgn `jawaban.length===0` selama komponen HANYA dirender
+  di fase langkah) jadi AKTIF KELIRU utk fase kode_biru yang dipicu tepat di langkah pertama (langkahIndex
+  tetap 0 di jalur itu, igd.ts:50) — guard itu dihapus, cukup andalkan `jawaban.length`.
+- **#7a/#7b — sudah dinilai TIDAK perlu fix** (sesuai temuan verifikasi "sudah-benar-berbeda"):
+  penutupan PanelHasil via Escape/backdrop SENGAJA (per kebijakan `useFocusTrap.ts` sendiri — modal
+  wajib-selesai tak diberi `onEscape`, PanelHasil BUKAN kelas itu); dan `PenilaianEncounter` lengkap
+  genuinely PERSISTEN via `state.klinik.selesaiHariIni` + sudah ditampilkan ulang di Debrief Malam —
+  klaim "lastEvents reset saat reload" akurat tapi menyesatkan soal dampaknya (data utuh, cuma
+  affordance buka-ulang MODAL yang hilang, bukan datanya).
+- **#8 — DIPUTUSKAN tidak perlu fix**: mekanisme sebenarnya (bukan cuma transkrip chat, tapi SELURUH
+  progres kunjungan hilang bila crash mid-sesi) memang benar, TAPI ini konsisten dgn pola desain yang
+  SAMA dipakai encounter klinik (`EVENT_AUTOSAVE` cuma memuat event PENUTUP — `ENCOUNTER_SELESAI`/
+  `KUNJUNGAN_SELESAI` — bukan tiap langkah kecil), bukan gap unik kunjungan. Jalur pemicu (crash proses
+  — satu-satunya jalur reload nyata di app produksi) genuinely jarang & recovery-nya ringan (ulangi
+  1 kunjungan rumah, bukan kehilangan hari/stase). Tak diubah — konsisten > "fix" yang justru membuat
+  kunjungan beda perlakuan dari encounter klinik tanpa alasan kuat.
+
+555/555 test hijau, typecheck bersih.
+
+**Sisa 13 P2/P3 (nomor #10-18/#20 aksesibilitas/kontras, #22-25 UX misc, polish P3 lain) belum
+diperbaiki** — dilanjutkan batch berikutnya, prioritas: keyboard/focus → kontras → polish.

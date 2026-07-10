@@ -9,7 +9,14 @@
   grid-template-columns: minmax(300px, 360px) minmax(0, 1fr) minmax(260px, 300px);
   gap: var(--sp-4);
   padding: var(--sp-4);
-  overflow: hidden;
+  overflow-y: hidden;
+  /* CODEX audit UI/UX 2026-07-10 (#6): dulu `overflow: hidden` penuh — saat
+     viewport efektif menyempit di bawah total minimum 3 kolom (mis. OS zoom/
+     high-DPI ekstrem, atau resize teks 140%), kolom tengah (minmax(0,1fr))
+     mengecil ke 0 duluan lalu sisanya terpotong SENYAP tanpa scrollbar.
+     overflow-x:auto memberi jalan gulir horizontal sbg jaring terakhir,
+     tanpa mengubah filosofi "satu viewport" di ukuran normal. */
+  overflow-x: auto;
   /* Permukaan meja: kertas teduh dengan serat halus dari token */
   background:
     repeating-linear-gradient(90deg, transparent 0 46px, rgba(38, 49, 44, 0.025) 46px 48px),
@@ -278,12 +285,16 @@
   min-height: 96px;
   resize: vertical;
   padding: var(--sp-3);
+  /* CODEX audit UI/UX 2026-07-10 (#6): interval garis-buku dulu px mati
+     (27px/28px) sementara line-height sesungguhnya (dari .tulis-tangan yang
+     digabung di className, menang di cascade) adalah 1.3em relatif — garis
+     dekoratif jadi makin tak sinkron dgn baris teks saat "Ukuran Teks" di
+     Pengaturan diubah. Interval kini ikut skala yang sama (1.3em). */
   background:
-    repeating-linear-gradient(0deg, transparent 0 27px, var(--border-halus) 27px 28px),
+    repeating-linear-gradient(0deg, transparent 0 calc(1.3em - 1px), var(--border-halus) calc(1.3em - 1px) 1.3em),
     var(--bg-card);
   border: 1px solid var(--border-halus);
   border-radius: var(--radius-md);
-  line-height: 28px;
   outline: none;
 }
 

@@ -101,7 +101,6 @@ export function Igd() {
                 </button>
               ))}
             </div>
-            <ResponsTerakhir kasusId={igd.kasusId} langkahIndex={igd.langkahIndex} jawaban={igd.jawaban} />
           </div>
         )}
 
@@ -152,6 +151,13 @@ export function Igd() {
             </div>
           </div>
         )}
+
+        {/* CODEX audit UI/UX 2026-07-10 (#7c): dulu hanya dirender di dalam
+            blok fase==='langkah' — begitu jawaban TERAKHIR memicu transisi ke
+            kode_biru/disposisi, feedback benar/keliru pilihan itu lenyap
+            seketika (fase berubah pada render yang sama). Dipindah ke luar
+            ketiga blok fase supaya tetap terlihat sesaat setelah transisi. */}
+        <ResponsTerakhir kasusId={igd.kasusId} jawaban={igd.jawaban} />
       </div>
     </div>
   )
@@ -160,16 +166,23 @@ export function Igd() {
 /** Umpan balik pilihan terakhir (dibaca dari jawaban tercatat + konten). */
 function ResponsTerakhir({
   kasusId,
-  langkahIndex,
   jawaban,
 }: {
   kasusId: string
-  langkahIndex: number
   jawaban: { langkahId: string; pilihanId: string; benar: boolean }[]
 }) {
   // CODEX ronde-13: `igd.jawaban` bisa korup (bukan array) meski `igd` sendiri
   // lolos guard bail-out di komponen induk — cegah crash `.length`/indexing.
-  if (langkahIndex === 0 || !Array.isArray(jawaban) || jawaban.length === 0) return null
+  // CODEX audit UI/UX 2026-07-10 (#7c): guard `langkahIndex === 0` yang dulu
+  // di sini SELALU berbarengan dgn `jawaban.length === 0` selama komponen ini
+  // cuma dirender di fase 'langkah' (langkahIndex naik SEBELUM fase berganti,
+  // igd.ts:45) — jadi redundan, bukan pengaman genuin. Begitu komponen ini
+  // ikut dirender di fase kode_biru (igd.ts:50 SENGAJA tak menaikkan
+  // langkahIndex saat itu), guard itu jadi AKTIF KELIRU: kode biru yang
+  // dipicu tepat di langkah pertama (langkahIndex tetap 0) akan menyembunyikan
+  // feedback yang justru paling penting (pilihan yang menghabiskan stabilitas).
+  // Cukup andalkan jawaban.length, yang sudah cukup & selalu akurat.
+  if (!Array.isArray(jawaban) || jawaban.length === 0) return null
   const terakhir = jawaban[jawaban.length - 1]
   if (!terakhir) return null
   const kasus = PACK.kasusIgd[kasusId]
