@@ -171,7 +171,9 @@ button {
   color: var(--kertas-050);
 }
 
-.tombol--utama:hover { background: var(--daun-600); }
+/* CODEX audit UI/UX 2026-07-10 (#20a): --daun-600 di bawah teks putih
+   3.087:1, gagal AA — --daun-800 lolos (≈7.7:1). */
+.tombol--utama:hover { background: var(--daun-800); }
 
 .tombol--bahaya {
   background: var(--tinta-merah);
@@ -185,7 +187,9 @@ button {
   color: var(--kertas-050);
 }
 
-.tombol--kunyit:hover { background: var(--kunyit-600); }
+/* CODEX audit UI/UX 2026-07-10 (#20a): --kunyit-600 di bawah teks putih
+   2.829:1, gagal AA — --kunyit-800 lolos (≈7.85:1). */
+.tombol--kunyit:hover { background: var(--kunyit-800); }
 
 .tombol--senyap {
   border-color: transparent;
@@ -215,7 +219,10 @@ button {
   letter-spacing: 0.04em;
   border: 1px solid var(--border-halus);
   background: var(--bg-sunken);
-  color: var(--tinta-lembut);
+  /* CODEX audit UI/UX 2026-07-10 (#20b): --tinta-lembut di sini 4.197:1,
+     gagal AA teks kecil-bold — --tinta lolos (≈9.93:1). Varian --chip-*
+     lain sudah lolos, tak disentuh. */
+  color: var(--tinta);
 }
 
 .chip--daun { background: var(--daun-100); color: var(--daun-800); border-color: transparent; }
@@ -364,4 +371,22 @@ button {
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
+}
+
+/* CODEX audit UI/UX 2026-07-10 (Polish#2b): Windows High Contrast (forced-colors)
+   mengabaikan warna kustom kita — tanpa border eksplisit, elemen interaktif
+   berlatar `background: none`/token warna jadi tak berbatas & fokus jadi tak
+   terlihat. Kosmetik murni: media query hanya aktif saat OS memaksa mode ini. */
+@media (forced-colors: active) {
+  button,
+  .tombol,
+  .chip,
+  input,
+  textarea {
+    border: 1px solid ButtonText;
+  }
+
+  :focus-visible {
+    outline: 2px solid Highlight;
+  }
 }

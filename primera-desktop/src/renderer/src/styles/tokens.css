@@ -138,6 +138,13 @@
   --daun-800: #5fe0bd;
   --daun-700: #3ed0a4;
   --daun-600: #34d0a6;
+  /* Review workflow Batch-7 (kontras-dan-chip-css, tinggi): --kunyit-800 dulu
+     TAK diremap di sini (tak seperti daun-800/700/600 & kunyit-700/600) —
+     begitu dipakai sbg latar/teks baru (tombol--kunyit:hover, klinik-hasil__ebm
+     judul-seksi), keduanya jatuh ke nilai TERANG mode-siang (#7a410c) di atas
+     latar gelap → kontras runtuh (~2.3:1). Lebih terang dari kunyit-700/600
+     spy tetap terbedakan (pola sama daun-800 > daun-700/600 di blok ini). */
+  --kunyit-800: #f5c478;
   --kunyit-700: #eaa54f;
   --kunyit-600: #eaa54f;
   --tinta-merah: #ef8478;

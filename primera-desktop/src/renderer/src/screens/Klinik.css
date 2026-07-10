@@ -619,6 +619,10 @@
 .klinik-eduk__chip {
   cursor: pointer;
   transition: background var(--durasi-cepat);
+  /* CODEX audit UI/UX 2026-07-10 (Polish#1): satu-satunya varian chip yang
+     benar-benar klik — target-size WCAG 2.5.8 butuh ≥24px, tinggi efektif
+     semula ~18-20px. Skop khusus selector ini, `.chip` dasar tak ikut. */
+  min-height: 24px;
 }
 
 .klinik-eduk__chip:hover {
@@ -781,14 +785,18 @@
   margin-top: var(--sp-2);
   border-left: 4px solid var(--kunyit-700);
 }
+/* CODEX audit UI/UX 2026-07-10 (#20c): heading di dalam .folder (--bg-sunken)
+   — --kunyit-700/--daun-700 gagal/pas-pasan AA (~4.48:1 / 3.433:1) di latar
+   itu. --kunyit-800/--daun-800 lolos. border-left-color TIDAK diubah (dekorasi
+   garis tepi, bukan teks, tak kena syarat kontras teks). */
 .klinik-hasil__ebm .judul-seksi {
-  color: var(--kunyit-700);
+  color: var(--kunyit-800);
 }
 .klinik-hasil__realita {
   border-left-color: var(--daun-700);
 }
 .klinik-hasil__realita .judul-seksi {
-  color: var(--daun-700);
+  color: var(--daun-800);
 }
 
 .klinik-hasil__aksi {

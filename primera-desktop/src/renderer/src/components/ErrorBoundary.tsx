@@ -10,7 +10,13 @@ interface Props {
 }
 interface State {
   error: Error | null
+  /** CODEX audit UI/UX 2026-07-10 (#22a): hitung retry KUMULATIF per kemunculan
+   * boundary ini (bukan berturut-turut — tak direset walau retry sempat sembuh
+   * lalu crash lain terjadi) agar tak boot-loop diam tanpa jalan keluar. */
+  percobaan: number
 }
+
+const BATAS_PERCOBAAN = 2
 
 /**
  * Jaring render-phase. `dispatch()` di store SUDAH menangkap error ENGINE, tapi
@@ -22,9 +28,9 @@ interface State {
  * boot-loop bila state autosave yang termuat justru pemicunya).
  */
 export class ErrorBoundary extends Component<Props, State> {
-  override state: State = { error: null }
+  override state: State = { error: null, percobaan: 0 }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return { error }
   }
 
@@ -32,57 +38,68 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error('[ErrorBoundary]', this.props.judul ?? '', error, info.componentStack)
   }
 
-  private cobaLagi = () => this.setState({ error: null })
+  private cobaLagi = () => this.setState((s) => ({ error: null, percobaan: s.percobaan + 1 }))
 
   private keJudul = () => {
     // Kosongkan state di memori → App kembali ke TitleScreen. Disk TIDAK disentuh,
     // jadi simpanan tetap ada; bila state termuat yang memicu crash, mahasiswa bisa
     // memulai stase baru alih-alih terjebak boot-loop.
     useGame.setState((s) => ({ state: null, lastEvents: [], eventTick: s.eventTick + 1 }))
-    this.setState({ error: null })
+    // CODEX audit UI/UX 2026-07-10 (#22b): `arsip` sudah null saat crash mid-sesi (semua
+    // jalur masuk game menguraskannya) — muat ulang dari disk agar tombol "Lanjutkan"
+    // di TitleScreen kembali muncul, bukan hilang sampai app di-restart.
+    void useGame.getState().muatAutosave()
+    this.setState({ error: null, percobaan: 0 })
   }
 
   override render() {
     if (!this.state.error) return this.props.children
     const penuh = this.props.variant !== 'layar'
+    const percobaanHabis = this.state.percobaan >= BATAS_PERCOBAAN
     return (
       <div
-        data-mode="pagi"
+        // CODEX audit UI/UX 2026-07-10 (#21): hanya paksa mode terang utk shell penuh
+        // (dipasang sebelum App menentukan mode apa pun) — variant 'layar' mewarisi
+        // data-mode leluhur, spt komponen kartu lain, agar tak mengambang terang di
+        // atas backdrop malam (mis. sesi jaga-malam IGD).
+        data-mode={penuh ? 'pagi' : undefined}
         style={{
           minHeight: penuh ? '100vh' : '60vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '2rem',
-          background: penuh ? 'linear-gradient(160deg, #FDF3E0, #FAF6EF)' : 'transparent',
-          color: '#3a2f26',
+          background: penuh ? 'linear-gradient(160deg, var(--kertas-200), var(--kertas-100))' : 'transparent',
+          color: 'var(--tinta)',
           fontFamily: "'Segoe UI', system-ui, sans-serif",
         }}
       >
         <div
           style={{
             maxWidth: 520,
-            background: '#FFFDF8',
-            border: '1px solid #e7dcc8',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-halus)',
             borderRadius: 14,
             padding: '1.75rem 2rem',
-            boxShadow: '0 8px 30px rgba(80, 60, 30, 0.12)',
+            boxShadow: 'var(--shadow-kartu)',
           }}
         >
-          <h1 style={{ margin: '0 0 0.5rem', fontSize: '1.35rem', color: '#7a4a12' }}>
+          <h1 style={{ margin: '0 0 0.5rem', fontSize: '1.35rem', color: 'var(--kunyit-800)' }}>
             Maaf, terjadi kendala tak terduga
           </h1>
-          <p style={{ margin: '0 0 1.1rem', lineHeight: 1.6, color: '#5c4d3e' }}>
+          <p style={{ margin: '0 0 1.1rem', lineHeight: 1.6, color: 'var(--tinta-lembut)' }}>
             Permainan menemui kesalahan saat menampilkan layar. Kemajuan terakhir Anda
             biasanya sudah tersimpan otomatis. Pilih salah satu:
           </p>
-          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-            <button
-              onClick={this.cobaLagi}
-              style={{ ...tombolGaya, background: '#96500f', color: '#fff', borderColor: '#96500f' }}
-            >
-              Coba tampilkan lagi
-            </button>
+          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            {!percobaanHabis && (
+              <button
+                onClick={this.cobaLagi}
+                style={{ ...tombolGaya, background: 'var(--kunyit-700)', borderColor: 'var(--kunyit-800)', color: 'var(--kertas-050)' }}
+              >
+                Coba tampilkan lagi
+              </button>
+            )}
             <button onClick={() => window.location.reload()} style={tombolGaya}>
               Muat ulang permainan
             </button>
@@ -90,7 +107,12 @@ export class ErrorBoundary extends Component<Props, State> {
               Kembali ke layar judul
             </button>
           </div>
-          <details style={{ marginTop: '1.2rem', color: '#8a7a68' }}>
+          {percobaanHabis && (
+            <p style={{ margin: '0.6rem 0 0', fontSize: '0.8rem', color: 'var(--tinta-pudar)' }}>
+              Sudah dicoba beberapa kali — gunakan salah satu opsi lain di atas.
+            </p>
+          )}
+          <details style={{ marginTop: '1.2rem', color: 'var(--tinta-pudar)' }}>
             <summary style={{ cursor: 'pointer', fontSize: '0.85rem' }}>Detail teknis (untuk pelaporan)</summary>
             <pre
               style={{
@@ -99,7 +121,11 @@ export class ErrorBoundary extends Component<Props, State> {
                 marginTop: '0.5rem',
                 maxHeight: 160,
                 overflow: 'auto',
-                color: '#6b5c4a',
+                color: 'var(--tinta-lembut)',
+                // CODEX audit UI/UX 2026-07-10 (#22c): body global mematikan user-select
+                // demi rasa game — stack trace di sini justru harus bisa disalin ke laporan.
+                userSelect: 'text',
+                WebkitUserSelect: 'text',
               }}
             >
               {String(this.state.error?.stack ?? this.state.error)}
@@ -116,7 +142,7 @@ const tombolGaya: React.CSSProperties = {
   cursor: 'pointer',
   padding: '0.55rem 1rem',
   borderRadius: 8,
-  border: '1px solid #c9b48f',
-  background: '#fff',
-  color: '#5c4d3e',
+  border: '1px solid var(--border-tegas)',
+  background: 'var(--bg-card)',
+  color: 'var(--tinta)',
 }
