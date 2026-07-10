@@ -10,6 +10,7 @@ import { setPengaturan, PENGATURAN_DEFAULT, type ModeMalam } from '../settings'
 import { usePengaturan } from '../usePengaturan'
 import { useFocusTrap } from '../useFocusTrap'
 import { useRadioGroup } from '../useRadioGroup'
+import { resetOnboarding } from './Onboarding'
 import { TentangModal } from './TentangModal'
 import './Pengaturan.css'
 
@@ -104,7 +105,15 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
               <button className="tombol tombol--senyap" onClick={() => setPengaturan({ ...PENGATURAN_DEFAULT })}>
                 Kembalikan Default
               </button>
-              <button className="tombol" onClick={() => setTentang(true)}>Tentang &amp; Kredit</button>
+              <div className="baris">
+                {/* CODEX audit UI/UX 2026-07-10 (#24a): reset localStorage saja —
+                    Onboarding baru muncul lagi sesi berikutnya (App membaca
+                    sudahOnboarding() sekali sbg initial state saat mount). */}
+                <button className="tombol tombol--senyap" onClick={() => { resetOnboarding(); setBuka(false) }}>
+                  Tampilkan panduan lagi
+                </button>
+                <button className="tombol" onClick={() => setTentang(true)}>Tentang &amp; Kredit</button>
+              </div>
             </div>
           </div>
         </div>

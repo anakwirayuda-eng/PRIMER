@@ -83,6 +83,21 @@ export function Rapor() {
   const guillotineAman = r.guillotine >= 1
   const potonganGuillotine = Math.round((1 - r.guillotine) * 100)
 
+  // CODEX audit UI/UX 2026-07-10 (#23): gradeDariTotal menstempel A-D tanpa
+  // syarat "ada cukup data" — Hari 1 pagi (tally nol) tapi manajemen/resiliensi
+  // mulai dari default tinggi (kapitasi awal, burnout=0) → total bisa jatuh ke
+  // 'D — Perlu Pembinaan' walau belum ada aktivitas sama sekali.
+  const punyaAktivitas =
+    t.totalPasien > 0 ||
+    t.kunjunganTotal > 0 ||
+    t.posyanduSesi > 0 ||
+    t.prolanisSesi > 0 ||
+    t.klbTuntas > 0 ||
+    t.igdStabil > 0 ||
+    t.igdSalahDisposisi > 0 ||
+    t.igdMeninggal > 0 ||
+    t.autoBermasalah > 0
+
   const barisTally: { label: string; nilai: string }[] = [
     { label: 'Pasien ditangani', nilai: `${t.totalPasien}` },
     { label: 'Diagnosis benar', nilai: `${t.diagnosisBenar}` },
@@ -117,9 +132,15 @@ export function Rapor() {
             </p>
           </div>
           <div className="rapor__grade">
-            <span className={`stempel ${WARNA_STEMPEL[skor.grade]} rapor__grade-stempel`}>
-              {skor.grade} — {skor.gradeLabel}
-            </span>
+            {punyaAktivitas ? (
+              <span className={`stempel ${WARNA_STEMPEL[skor.grade]} rapor__grade-stempel`}>
+                {skor.grade} — {skor.gradeLabel}
+              </span>
+            ) : (
+              <span className="rapor__grade-stempel teks-lembut">
+                Belum ada data — kembali setelah menangani pasien
+              </span>
+            )}
             <span className="rapor__total mono">
               {koma(skor.total)}
               <span className="rapor__total-maks">/100</span>

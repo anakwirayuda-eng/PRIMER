@@ -85,14 +85,19 @@ export function Toaster() {
   if (toasts.length === 0) return null
 
   return (
-    // M10 §49: role=status + aria-live — toast keselamatan (KONTRAINDIKASI
-    // alergi, Kode Hitam, IGD tiba, ERROR_AKSI) dulu tak diumumkan ke pembaca
-    // layar sama sekali. `assertive` krn sebagian bersifat peringatan; `atomic`
-    // agar tiap toast dibacakan utuh. aria-hidden pada wrapper visual? tidak —
-    // justru ini SATU-SATUNYA live-region gameplay.
-    <div className="toaster" role="status" aria-live="assertive" aria-atomic="true">
+    // CODEX audit UI/UX 2026-07-10 (#25): role/aria-live/aria-atomic dipasang
+    // per-toast (bukan di wrapper) — wrapper membungkus hingga 4 toast
+    // sekaligus, jadi aria-atomic di situ membuat pembaca layar berpotensi
+    // membacakan ULANG seluruh isi wrapper tiap mutasi, bukan cuma toast baru.
+    <div className="toaster">
       {toasts.map((t) => (
-        <div key={t.id} className={`toast toast--${t.nada} kertas${t.keluar ? ' toast--keluar' : ''}`}>
+        <div
+          key={t.id}
+          className={`toast toast--${t.nada} kertas${t.keluar ? ' toast--keluar' : ''}`}
+          role="status"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
           {t.teks}
         </div>
       ))}

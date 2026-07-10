@@ -27,6 +27,19 @@ function tandaiSelesai(): void {
   }
 }
 
+// CODEX audit UI/UX 2026-07-10 (#24a): dipakai Pengaturan ("Tampilkan panduan
+// lagi") — slot kedua/ketiga (MejaKerja) yang baru mulai karier tak pernah
+// lihat Onboarding karena kunci ini global per-instalasi, bukan per-slot.
+// Efek baru terlihat setelah reload — App membaca sudahOnboarding() sekali
+// sbg initial state saat mount, jadi reset di sini tak langsung memicu render.
+export function resetOnboarding(): void {
+  try {
+    window.localStorage.removeItem(KUNCI)
+  } catch {
+    /* abaikan */
+  }
+}
+
 interface Kartu {
   ikon: string
   judul: string
@@ -96,8 +109,11 @@ export function Onboarding({ onSelesai }: { onSelesai: () => void }) {
         </div>
 
         <div className="baris baris--antara onb-kaki">
-          <button className="tombol tombol--senyap" onClick={tutup}>Lewati</button>
-          <div className="baris">
+          {/* CODEX audit UI/UX 2026-07-10 (#24b): grup Kembali/Lanjut didahulukan
+              di DOM supaya useFocusTrap (querySelectorAll, ikut urutan DOM) fokus
+              awal ke CTA progresi, bukan "Lewati". Posisi visual tetap sama
+              (Lewati kiri, grup kanan) lewat CSS order di Onboarding.css. */}
+          <div className="baris onb-grup-lanjut">
             {i > 0 && (
               <button className="tombol" onClick={() => setI((n) => n - 1)}>Kembali</button>
             )}
@@ -107,6 +123,7 @@ export function Onboarding({ onSelesai }: { onSelesai: () => void }) {
               <button className="tombol tombol--utama" onClick={() => setI((n) => n + 1)}>Lanjut</button>
             )}
           </div>
+          <button className="tombol tombol--senyap onb-lewati" onClick={tutup}>Lewati</button>
         </div>
       </div>
     </div>

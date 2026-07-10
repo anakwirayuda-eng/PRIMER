@@ -85,3 +85,13 @@
 .onb-kaki {
   margin-top: var(--sp-2);
 }
+
+/* CODEX audit UI/UX 2026-07-10 (#24b): DOM ditukar (grup Lanjut duluan, utk
+   fokus awal — lihat Onboarding.tsx) tapi visual tetap Lewati-kiri/grup-kanan. */
+.onb-lewati {
+  order: 1;
+}
+
+.onb-grup-lanjut {
+  order: 2;
+}
