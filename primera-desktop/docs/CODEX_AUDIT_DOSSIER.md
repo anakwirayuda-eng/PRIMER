@@ -3384,3 +3384,31 @@ menyapu 67 kasus untuk kandidat mutiaraEbm/catatanRealita bertingkat keyakinan +
 disiplin: hasil = dokumen keputusan untuk adjudikasi Dr. Wirayuda; TIDAK diterapkan otomatis.
 
 Commit: `5766355` (5 file, 145 insertion, 516/516 test hijau, typecheck bersih).
+
+
+## 56. DeepThink triase diterima PENUH → milestone M10.5/M11a diformalkan (2026-07-10)
+
+DeepThink me-review dossier `DEEPTHINK_TRIANGULASI_M11.md` (8 pertanyaan strategis pasca dua
+audit besar: 118 kandidat pengayaan M11 + 14 temuan CODEX terverifikasi). Dr. Wirayuda menerima
+peta jalannya PENUH. Keputusan kunci:
+
+- **M10.5 "Fidelitas Engine & Medis"** = SEMUA item ber-REVISI / koreksi keselamatan-medis →
+  Golden Master TUNGGAL akhir Agustus 2026 → SATU `REVISI_ENGINE` bump → hard-freeze mesin skor
+  saat semester mulai. **M11a "Pengayaan Live-Ops"** = display murni, silent patch pasca-Sept.
+- Dosis obat (Q1 O2/O3) DITOLAK — pertahankan abstraksi tanpa-dosis (O1), dokumentasikan sbg
+  batasan simulasi disengaja.
+- Rencana lengkap + inventaris 14 temuan (dipilah jalur cepat-P0 / desain-engine / keputusan-medis
+  / mekanis-aman) + tabel firewall alergi (Q1a) + 5 keputusan skoring (P1.6/P1.7/P1.9/C.1/C.8) +
+  temuan Q7 terkoreksi + urutan Golden Master: **`docs/M10_5_FIDELITAS.md`** (sumber tunggal M10.5).
+
+**4 quick-win Fase-1 dimulai (perintah user):** (a) Q1a firewall alergi — tabel 11 antibiotik
+disodorkan utk adjudikasi; terbukti AMAN (alergiTrap kasus saat ini hanya nsaid/penisilin/statin/
+sulfa → tag kelas baru tak bisa memblokir obat benar mana pun; +tag mengubah sidikJariPack tapi
+TANPA REVISI bump). (b) Q7 otonomi — hasil baca kode: kedua arc (Dewi/Karsa) ternyata depiksi
+SENGAJA hambatan nyata (game mem-problem-kan, bukan endorse); titik genuinely lintas-batas HANYA
+`desaF:995` (Fe Bu Painah "lewat persetujuan suami" — membundel obat pribadi dgn izin pasangan).
+(c) Q8 audit ICD-10 67 kasus — workflow multi-agen `audit-icd10-satusehat` jalan (vs WHO ICD-10
+2010/SATUSEHAT). (d) 5 keputusan skoring — dok keputusan disiapkan di M10_5_FIDELITAS §3.
+
+**Blind spot DeepThink (dicatat):** saat memaksa eskalasi kasus gawat (Q2), kalibrasi ulang
+Referral Guillotine SERENTAK — jangan tebas mahasiswa yang merujuk BENAR per EBM terbaru.
