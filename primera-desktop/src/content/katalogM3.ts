@@ -21,9 +21,9 @@ export const OBAT_M3: Record<string, Obat> = {
   cefadroxil_500: { id: 'cefadroxil_500', nama: 'Sefadroksil 500 mg', kelas: 'antibiotik sefalosporin', golonganAlergi: 'sefalosporin', sediaan: 'kapsul', hargaBeli: 600, hargaJual: 1300, fornas: true, antibiotik: true },
   cefixime_100: { id: 'cefixime_100', nama: 'Sefiksim 100 mg', kelas: 'antibiotik sefalosporin', golonganAlergi: 'sefalosporin', sediaan: 'kapsul', hargaBeli: 900, hargaJual: 1900, fornas: true, antibiotik: true },
   azitromisin_500: { id: 'azitromisin_500', nama: 'Azitromisin 500 mg', kelas: 'antibiotik makrolida', golonganAlergi: 'makrolida', sediaan: 'tablet', hargaBeli: 1500, hargaJual: 3000, fornas: true, antibiotik: true },
-  doksisiklin_100: { id: 'doksisiklin_100', nama: 'Doksisiklin 100 mg', kelas: 'antibiotik tetrasiklin', sediaan: 'kapsul', hargaBeli: 400, hargaJual: 900, fornas: true, antibiotik: true },
-  metronidazol_500: { id: 'metronidazol_500', nama: 'Metronidazol 500 mg', kelas: 'antibiotik-antiprotozoa', sediaan: 'tablet', hargaBeli: 300, hargaJual: 700, fornas: true, antibiotik: true },
-  tiamfenikol_500: { id: 'tiamfenikol_500', nama: 'Tiamfenikol 500 mg', kelas: 'antibiotik', sediaan: 'kapsul', hargaBeli: 500, hargaJual: 1100, fornas: true, antibiotik: true },
+  doksisiklin_100: { id: 'doksisiklin_100', nama: 'Doksisiklin 100 mg', kelas: 'antibiotik tetrasiklin', golonganAlergi: 'tetrasiklin', sediaan: 'kapsul', hargaBeli: 400, hargaJual: 900, fornas: true, antibiotik: true },
+  metronidazol_500: { id: 'metronidazol_500', nama: 'Metronidazol 500 mg', kelas: 'antibiotik-antiprotozoa', golonganAlergi: 'nitroimidazol', sediaan: 'tablet', hargaBeli: 300, hargaJual: 700, fornas: true, antibiotik: true },
+  tiamfenikol_500: { id: 'tiamfenikol_500', nama: 'Tiamfenikol 500 mg', kelas: 'antibiotik', golonganAlergi: 'amfenikol', sediaan: 'kapsul', hargaBeli: 500, hargaJual: 1100, fornas: true, antibiotik: true },
 
   // -- Antijamur / antivirus / antiparasit --
   griseofulvin_500: { id: 'griseofulvin_500', nama: 'Griseofulvin 500 mg', kelas: 'antijamur sistemik', sediaan: 'tablet', hargaBeli: 700, hargaJual: 1500, fornas: true },
@@ -64,7 +64,7 @@ export const OBAT_M3: Record<string, Obat> = {
   karbamazepin_200: { id: 'karbamazepin_200', nama: 'Karbamazepin 200 mg', kelas: 'antiepilepsi', sediaan: 'tablet', hargaBeli: 300, hargaJual: 700, fornas: true },
 
   // -- Mata / THT / kulit --
-  gentamisin_tetes_mata: { id: 'gentamisin_tetes_mata', nama: 'Gentamisin Tetes Mata 0,3%', kelas: 'antibiotik mata', sediaan: 'tetes mata', hargaBeli: 4000, hargaJual: 8000, fornas: true, antibiotik: true },
+  gentamisin_tetes_mata: { id: 'gentamisin_tetes_mata', nama: 'Gentamisin Tetes Mata 0,3%', kelas: 'antibiotik mata', golonganAlergi: 'aminoglikosida', sediaan: 'tetes mata', hargaBeli: 4000, hargaJual: 8000, fornas: true, antibiotik: true },
   timolol_tetes_mata: { id: 'timolol_tetes_mata', nama: 'Timolol Tetes Mata 0,5%', kelas: 'antiglaukoma', sediaan: 'tetes mata', hargaBeli: 9000, hargaJual: 18000, fornas: true },
   air_mata_buatan: { id: 'air_mata_buatan', nama: 'Air Mata Buatan (Hipromelosa)', kelas: 'lubrikan mata', sediaan: 'tetes mata', hargaBeli: 6000, hargaJual: 12000, fornas: true },
   oksimetazolin_spray: { id: 'oksimetazolin_spray', nama: 'Oksimetazolin Semprot Hidung', kelas: 'dekongestan topikal', sediaan: 'semprot hidung', hargaBeli: 7000, hargaJual: 14000, fornas: true },
@@ -77,7 +77,7 @@ export const OBAT_M3: Record<string, Obat> = {
   // kutil). `asam_salisilat_bedak` DIHAPUS (yatim + decoy pencarian "salisilat"
   // pd kasus veruka; pola bug §47 garam_oralit_zinc).
   asam_salisilat_kolodion: { id: 'asam_salisilat_kolodion', nama: 'Asam Salisilat 17% Kolodion', kelas: 'keratolitik topikal', sediaan: 'cairan olesan', hargaBeli: 8000, hargaJual: 15000, fornas: true },
-  gentamisin_krim: { id: 'gentamisin_krim', nama: 'Gentamisin Krim 0,1%', kelas: 'antibiotik topikal', sediaan: 'krim', hargaBeli: 4000, hargaJual: 8000, fornas: true, antibiotik: true },
+  gentamisin_krim: { id: 'gentamisin_krim', nama: 'Gentamisin Krim 0,1%', kelas: 'antibiotik topikal', golonganAlergi: 'aminoglikosida', sediaan: 'krim', hargaBeli: 4000, hargaJual: 8000, fornas: true, antibiotik: true },
   // M10 Batch-3 (C.2, riset IDSA 2014/Perdoski): mupirosin = antibiotik topikal
   // LINI PERTAMA impetigo terlokalisir (dulu kasus pakai gentamisin, non-guideline).
   mupirosin_krim: { id: 'mupirosin_krim', nama: 'Mupirosin Krim 2%', kelas: 'antibiotik topikal', sediaan: 'krim', hargaBeli: 12000, hargaJual: 22000, fornas: true, antibiotik: true },
@@ -101,7 +101,7 @@ export const OBAT_M3: Record<string, Obat> = {
   // -- Tambahan hasil audit medis M3 --
   laktulosa_syr: { id: 'laktulosa_syr', nama: 'Laktulosa Sirup', kelas: 'laksatif osmotik/pelunak tinja', sediaan: 'sirup', hargaBeli: 9000, hargaJual: 17000, fornas: true },
   diazepam_rektal_10: { id: 'diazepam_rektal_10', nama: 'Diazepam Rektal 10 mg', kelas: 'antikonvulsan (rescue bangkitan)', sediaan: 'rektal tube', hargaBeli: 12000, hargaJual: 22000, fornas: true },
-  nitrofurantoin_100: { id: 'nitrofurantoin_100', nama: 'Nitrofurantoin 100 mg', kelas: 'antibiotik saluran kemih', sediaan: 'kapsul', hargaBeli: 600, hargaJual: 1300, fornas: true, antibiotik: true },
+  nitrofurantoin_100: { id: 'nitrofurantoin_100', nama: 'Nitrofurantoin 100 mg', kelas: 'antibiotik saluran kemih', golonganAlergi: 'nitrofuran', sediaan: 'kapsul', hargaBeli: 600, hargaJual: 1300, fornas: true, antibiotik: true },
   primakuin_15: { id: 'primakuin_15', nama: 'Primakuin 15 mg', kelas: 'antimalaria gametosidal', sediaan: 'tablet', hargaBeli: 0, hargaJual: 0, fornas: true },
   ezetimibe_10: { id: 'ezetimibe_10', nama: 'Ezetimibe 10 mg', kelas: 'penghambat absorpsi kolesterol', sediaan: 'tablet', hargaBeli: 1500, hargaJual: 3000, fornas: true },
 }
