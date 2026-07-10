@@ -192,7 +192,7 @@ export function Kunjungan() {
         <RumahIlustrasi />
 
         <div className="kunjungan-hotspot-lapis">
-          {skenario.hotspot.map((h) => {
+          {skenario.hotspot.map((h, i) => {
             const ketemu = kj.hotspotDitemukan.includes(h.id)
             if (!ketemu && kj.fase !== 'observasi') return null
             return (
@@ -203,7 +203,13 @@ export function Kunjungan() {
                 onClick={() => dispatch({ type: 'KLIK_HOTSPOT', hotspotId: h.id })}
                 disabled={ketemu || kj.fase !== 'observasi'}
                 title={ketemu ? h.label : 'Ada yang menarik perhatianmu di sini'}
-                aria-label={ketemu ? h.label : 'Amati lebih dekat'}
+                // CODEX audit UI/UX 2026-07-10 (#13): dulu SEMUA hotspot yang
+                // belum ditemukan berbagi aria-label literal identik — keyboard/
+                // screen-reader tak bisa membedakan 5 titik sama sekali (padahal
+                // pemain sighted sudah bisa, dari posisi x/y visual). Tambah
+                // urutan/posisi (info yang sudah publik secara visual) TANPA
+                // membocorkan identitas objek (h.label/h.narasi tetap disembunyikan).
+                aria-label={ketemu ? h.label : `Amati lebih dekat (titik ${i + 1} dari ${skenario.hotspot.length})`}
               >
                 {ketemu ? '✓' : ''}
               </button>
@@ -250,7 +256,12 @@ export function Kunjungan() {
               <Potret nama={namaWarga} />
               <div className="kunjungan-dialog__isi">
                 {dokterTerakhir && (
-                  <p className="kunjungan-dialog__gema teks-xs teks-lembut">Kamu: “{dokterTerakhir}”</p>
+                  // CODEX audit UI/UX 2026-07-10 (#14): PilihanDialog.teks di
+                  // SELURUH 246 entri konten sudah membawa tanda kutip lurus
+                  // sendiri di kontennya — bungkus “ ” di sini bikin kutip
+                  // ganda bersarang. Render apa adanya, konten yang menentukan
+                  // kutipnya sendiri.
+                  <p className="kunjungan-dialog__gema teks-xs teks-lembut">Kamu: {dokterTerakhir}</p>
                 )}
                 <div className="kunjungan-dialog__nama mono">{namaWarga}</div>
                 <p className="kunjungan-dialog__teks">“{responsAktif}”</p>
@@ -280,7 +291,8 @@ export function Kunjungan() {
                   <span className="chip kunjungan-pilihan__gaya">
                     {GAYA_INFO[p.gaya].simbol} {GAYA_INFO[p.gaya].label}
                   </span>
-                  <span className="kunjungan-pilihan__teks">“{p.teks}”</span>
+                  {/* #14 (sama alasan di atas): p.teks sudah berkutip sendiri. */}
+                  <span className="kunjungan-pilihan__teks">{p.teks}</span>
                 </button>
               ))}
             </div>
