@@ -156,9 +156,14 @@ export function KartuKeluarga({
             </button>
           ) : (
             <button
+              // CODEX audit UI/UX 2026-07-10 (#17): aria-disabled dipakai (bukan
+              // disabled native) supaya title/aria-label tombol tetap terjangkau
+              // Tab/screen reader saat roster penuh — guard efek dipindah ke onClick.
               className="tombol"
-              onClick={onBinaan}
-              disabled={rosterPenuh}
+              onClick={() => {
+                if (!rosterPenuh) onBinaan()
+              }}
+              aria-disabled={rosterPenuh}
               title={rosterPenuh ? 'Roster binaan penuh — lepas satu keluarga dulu.' : 'Masukkan ke roster keluarga binaan.'}
               aria-label={`Jadikan ${content.namaKeluarga} binaan`}
             >
@@ -167,8 +172,10 @@ export function KartuKeluarga({
           )}
           <button
             className="tombol tombol--utama"
-            onClick={onKunjungi}
-            disabled={alasanKunjungan !== null}
+            onClick={() => {
+              if (alasanKunjungan === null) onKunjungi()
+            }}
+            aria-disabled={alasanKunjungan !== null}
             title={alasanKunjungan ?? `Berangkat kunjungan rumah — memakai ${biayaStamina} stamina.`}
             aria-label={`Kunjungi ${content.namaKeluarga}`}
           >

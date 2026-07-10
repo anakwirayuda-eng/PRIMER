@@ -103,7 +103,7 @@ describe('<Klinik /> — sorotan tutorial encounter pertama', () => {
 // (diagnosis/terapi) bergantung pada `useState` lokal komponen yg tak
 // terjangkau dispatch langsung.
 function tombolAktifDiDeck(): HTMLButtonElement[] {
-  const deck = screen.getByRole('region', { name: 'Deck aksi klinik' })
+  const deck = screen.getByRole('region', { name: /^Deck aksi klinik/ })
   return [...deck.querySelectorAll('button')].filter(
     (b) => !(b as HTMLButtonElement).disabled,
   ) as HTMLButtonElement[]
@@ -111,7 +111,7 @@ function tombolAktifDiDeck(): HTMLButtonElement[] {
 
 /** Klik tombol yang sedang disorot di dalam region Deck aksi. */
 function klikSorot(): void {
-  const deck = screen.getByRole('region', { name: 'Deck aksi klinik' })
+  const deck = screen.getByRole('region', { name: /^Deck aksi klinik/ })
   const tombol = deck.querySelector('button.klinik-sorot-tutorial')
   expect(tombol).toBeTruthy()
   fireEvent.click(tombol!)
@@ -159,7 +159,7 @@ describe('<Klinik /> — invarian menyeluruh: tepat 1 tombol aktif per langkah t
     //     kasus tutorial selalu harusDirujuk:false).
     expect(tombolAktifDiDeck()).toHaveLength(1)
     const pulangkan = screen
-      .getByRole('region', { name: 'Deck aksi klinik' })
+      .getByRole('region', { name: /^Deck aksi klinik/ })
       .querySelector('button.klinik-sorot-tutorial')
     expect(pulangkan?.textContent).toMatch(/PULANGKAN/)
   })

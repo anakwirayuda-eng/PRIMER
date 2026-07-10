@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from 'react'
 import { PACK } from '@content/index'
 import { useGame } from '../../store'
+import { useMotionDikurangi } from '../../useMotionDikurangi'
 import type { KategoriEdukasi, TopikEdukasi } from '@content/types'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
@@ -59,10 +60,13 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   // — target sorotan ("Paracetamol", huruf P) sering jauh di bawah viewport
   // awal tanpa indikasi apa pun utk scroll. jsdom tak menangkap ini (tak ada
   // scroll sungguhan), cuma kelihatan saat manusia main langsung.
+  const kurangiGerak = useMotionDikurangi()
   useEffect(() => {
     if (tab !== 'resep' || !sorotObat) return
-    document.querySelector('.klinik-obat .klinik-sorot-tutorial')?.scrollIntoView({ block: 'center', behavior: 'smooth' })
-  }, [tab, sorotObat])
+    document
+      .querySelector('.klinik-obat .klinik-sorot-tutorial')
+      ?.scrollIntoView({ block: 'center', behavior: kurangiGerak ? 'auto' : 'smooth' })
+  }, [tab, sorotObat, kurangiGerak])
   const [cari, setCari] = useState('')
   const [cariEduk, setCariEduk] = useState('')
   const [, setLaciTick] = useState(0) // re-render saat laciSesi berubah
@@ -337,6 +341,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                             key={t.id}
                             className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
                             disabled={terkunci}
+                            aria-pressed={dipilih}
                             onClick={() =>
                               dispatch(
                                 dipilih
@@ -383,6 +388,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                   <button
                     key={t.id}
                     className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
+                    aria-pressed={dipilih}
                     onClick={() =>
                       dispatch(
                         dipilih

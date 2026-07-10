@@ -6,9 +6,10 @@
  * sopan-klinis arsip Puskesmas.
  */
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
+import { normalisasiNamaObat } from './klinik/util'
 import './DexSkdi.css'
 
 // CODEX audit 2026-07-04: dulu memakai SKDI144 mentah (bukan PACK.skdi144),
@@ -16,6 +17,13 @@ import './DexSkdi.css'
 // index.ts (lihat skdi144Tertaut) tak pernah terbaca "dikenali" — progres Dex
 // mandek permanen di ??? walau kasusnya sudah ditangani.
 const TOTAL_ENTRI = PACK.skdi144.length
+
+// CODEX audit UI/UX 2026-07-10 (Polish#3a): nomor katalog harus tetap
+// mengikuti posisi ASLI di PACK.skdi144, bukan posisi di hasil pencarian —
+// dihitung sekali di sini, bukan dari index hasil .filter().
+const NOMOR_ENTRI = new Map(
+  PACK.skdi144.map((entri, i) => [entri.id, String(i + 1).padStart(3, '0')]),
+)
 
 /** Bintang penguasaan 0-3: ★ terisi kunyit, sisanya pudar. */
 function Bintang({ jumlah, besar = false }: { jumlah: number; besar?: boolean }) {
@@ -34,10 +42,22 @@ function Bintang({ jumlah, besar = false }: { jumlah: number; besar?: boolean })
 export function DexSkdi() {
   const state = useGame((s) => s.state)!
   const [pilihanId, setPilihanId] = useState<string | null>(null)
+  const [cari, setCari] = useState('')
 
   const jumlahDikenal = PACK.skdi144.filter(
     (e) => e.kasusId !== undefined && state.dex[e.kasusId] !== undefined,
   ).length
+
+  // Reuse pola cariLab/daftarLab/cocokLab (DeckPemeriksaan.tsx) — normalisasi
+  // toleran-ejaan yang sama, bukan pencocokan case-insensitive baru.
+  const daftarSkdi = useMemo(() => {
+    const q = normalisasiNamaObat(cari)
+    if (q === '') return PACK.skdi144
+    return PACK.skdi144.filter(
+      (entri) =>
+        normalisasiNamaObat(entri.nama).includes(q) || normalisasiNamaObat(entri.icd10).includes(q),
+    )
+  }, [cari])
 
   const terpilih = pilihanId !== null ? PACK.skdi144.find((e) => e.id === pilihanId) : undefined
   const dexTerpilih =
@@ -76,54 +96,72 @@ export function DexSkdi() {
       <div className="dexskdi__isi">
         {/* ---- Grid 144 kartu (panel yang scroll) --------------------------- */}
         <div className="dexskdi__grid-wrap">
-          <div className="dexskdi__grid">
-            {PACK.skdi144.map((entri, i) => {
-              const dex = entri.kasusId !== undefined ? state.dex[entri.kasusId] : undefined
-              const diDesa = entri.kasusId !== undefined && dex === undefined
-              const nomor = String(i + 1).padStart(3, '0')
+          <input
+            type="text"
+            className="dexskdi__cari"
+            value={cari}
+            onChange={(e) => setCari(e.target.value)}
+            placeholder="Cari penyakit atau kode ICD-10…"
+            aria-label="Cari SKDI"
+          />
+          {daftarSkdi.length === 0 ? (
+            <p className="teks-kecil teks-lembut">Tidak ada entri yang cocok.</p>
+          ) : (
+            <div className="dexskdi__grid">
+              {daftarSkdi.map((entri) => {
+                const dex = entri.kasusId !== undefined ? state.dex[entri.kasusId] : undefined
+                const diDesa = entri.kasusId !== undefined && dex === undefined
+                const nomor = NOMOR_ENTRI.get(entri.id)!
 
-              if (dex === undefined) {
+                if (dex === undefined) {
+                  return (
+                    <button
+                      key={entri.id}
+                      className={`dexskdi-kartu dexskdi-kartu--siluet${diDesa ? ' dexskdi-kartu--desa' : ''}`}
+                      disabled
+                      title={
+                        diDesa
+                          ? 'Penyakit ini ada di desamu — tangani pasiennya di klinik untuk mengenalinya'
+                          : 'Belum dikenali — entri terbuka setelah kamu menangani kasusnya'
+                      }
+                    >
+                      <span className="dexskdi-kartu__nomor mono">{nomor}</span>
+                      <span className="dexskdi-kartu__siluet mono">???</span>
+                      {diDesa && (
+                        <span className="dexskdi-kartu__pin" aria-label="Ada di desa ini">
+                          ●
+                        </span>
+                      )}
+                    </button>
+                  )
+                }
+
                 return (
                   <button
                     key={entri.id}
-                    className={`dexskdi-kartu dexskdi-kartu--siluet${diDesa ? ' dexskdi-kartu--desa' : ''}`}
-                    disabled
-                    title={
-                      diDesa
-                        ? 'Penyakit ini ada di desamu — tangani pasiennya di klinik untuk mengenalinya'
-                        : 'Belum dikenali — entri terbuka setelah kamu menangani kasusnya'
-                    }
+                    className={`dexskdi-kartu dexskdi-kartu--terisi${pilihanId === entri.id ? ' dexskdi-kartu--aktif' : ''}`}
+                    onClick={() => setPilihanId(entri.id)}
+                    // Review Batch-7 (koreksi #16f): kartu ini bukan toggle
+                    // button — klik ulang pada kartu yang sudah "aktif" TAK
+                    // meng-un-set-nya (tutup hanya lewat tombol "Tutup ✕"
+                    // panel detail terpisah). aria-current lebih tepat drpd
+                    // aria-pressed utk menandai "kartu mana yang sedang dilihat".
+                    aria-current={pilihanId === entri.id ? 'true' : undefined}
+                    title={`${entri.nama} — klik untuk membuka catatan`}
                   >
                     <span className="dexskdi-kartu__nomor mono">{nomor}</span>
-                    <span className="dexskdi-kartu__siluet mono">???</span>
-                    {diDesa && (
-                      <span className="dexskdi-kartu__pin" aria-label="Ada di desa ini">
-                        ●
+                    <span className="dexskdi-kartu__nama">{entri.nama}</span>
+                    <span className="dexskdi-kartu__meta">
+                      <Bintang jumlah={dex.bintang} />
+                      <span className="dexskdi-kartu__hari mono" title="Terakhir kali ditangani">
+                        H{dex.terakhirHari}
                       </span>
-                    )}
+                    </span>
                   </button>
                 )
-              }
-
-              return (
-                <button
-                  key={entri.id}
-                  className={`dexskdi-kartu dexskdi-kartu--terisi${pilihanId === entri.id ? ' dexskdi-kartu--aktif' : ''}`}
-                  onClick={() => setPilihanId(entri.id)}
-                  title={`${entri.nama} — klik untuk membuka catatan`}
-                >
-                  <span className="dexskdi-kartu__nomor mono">{nomor}</span>
-                  <span className="dexskdi-kartu__nama">{entri.nama}</span>
-                  <span className="dexskdi-kartu__meta">
-                    <Bintang jumlah={dex.bintang} />
-                    <span className="dexskdi-kartu__hari mono" title="Terakhir kali ditangani">
-                      H{dex.terakhirHari}
-                    </span>
-                  </span>
-                </button>
-              )
-            })}
-          </div>
+              })}
+            </div>
+          )}
         </div>
 
         {/* ---- Panel detail (kartu arsip) ------------------------------------ */}

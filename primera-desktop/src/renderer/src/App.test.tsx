@@ -58,3 +58,36 @@ describe('<App /> — getar Kode Hitam', () => {
     expect(document.querySelector('.app-frame')!.className).not.toMatch(/kode-hitam/)
   })
 })
+
+describe('<App /> — fokus pindah layar (CODEX audit UI/UX 2026-07-10 #18)', () => {
+  afterEach(() => {
+    cleanup()
+  })
+
+  it('berpindah layar memindahkan fokus programatik ke <main> (bukan hilang ke body)', () => {
+    pasang()
+    render(<App />)
+    const main = document.querySelector('main.app-layar')!
+
+    act(() => {
+      useGame.setState((s) => ({ state: s.state ? { ...s.state, layar: 'klinik' } : s.state }))
+    })
+
+    expect(document.activeElement).toBe(main)
+  })
+
+  it('<main> mendapat aria-label yang menyebut nama layar aktif', () => {
+    pasang()
+    render(<App />)
+    act(() => {
+      useGame.setState((s) => ({ state: s.state ? { ...s.state, layar: 'klinik' } : s.state }))
+    })
+    const main = document.querySelector('main.app-layar')!
+    expect(main.getAttribute('aria-label')).toMatch(/Klinik/)
+  })
+
+  it('tidak crash saat state awalnya null (layar judul)', () => {
+    useGame.setState({ state: null, arsip: null, lastEvents: [], eventTick: 0 })
+    expect(() => render(<App />)).not.toThrow()
+  })
+})

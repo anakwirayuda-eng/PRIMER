@@ -5,7 +5,7 @@
  * kasusnya sudah ditangani. Test ini akan MERAH lagi bila regresi terulang.
  */
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { useGame } from '../store'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
@@ -64,4 +64,43 @@ describe('<DexSkdi /> — auto-tautan ICD dikenali', () => {
     expect(screen.getByText('Ditangani')).toBeInTheDocument()
     expect(screen.getByText('2×')).toBeInTheDocument()
   }, 15000)
+})
+
+// CODEX audit UI/UX 2026-07-10 (#16f + Polish#3a): kartu terisi tak expose
+// status "aktif" ke assistive tech, dan 144 entri dirender tanpa pencarian.
+describe('<DexSkdi /> — aria-current kartu & pencarian entri (koreksi review Batch-7)', () => {
+  beforeEach(() => {
+    pasangState()
+  })
+
+  it('kartu terisi mendapat aria-current="true" setelah diklik (bukan aria-pressed — bukan toggle button)', async () => {
+    const entri = PACK.skdi144.find((e) => e.id === ENTRI_AUTO_TAUTAN)!
+    pasangState({ [entri.kasusId!]: { ditangani: 1, benar: 1, bintang: 1, terakhirHari: 1 } })
+    render(<DexSkdi />)
+
+    const tombol = screen.getByRole('button', { name: new RegExp(entri.nama) })
+    expect(tombol).not.toHaveAttribute('aria-current')
+
+    const { default: userEvent } = await import('@testing-library/user-event')
+    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    await user.click(tombol)
+
+    expect(tombol).toHaveAttribute('aria-current', 'true')
+  }, 15000)
+
+  it('mengetik di pencarian menyaring grid ke entri yang cocok saja', () => {
+    // Fixture nyata (bukan tebakan): entri pertama & kedua di PACK.skdi144,
+    // namanya sudah dipastikan tak tumpang tindih (Kejang Demam vs Tetanus).
+    const target = PACK.skdi144[0]!
+    const lain = PACK.skdi144[1]!
+    render(<DexSkdi />)
+
+    expect(screen.getAllByText(/^\d{3}$/)).toHaveLength(PACK.skdi144.length)
+
+    fireEvent.change(screen.getByLabelText('Cari SKDI'), { target: { value: target.nama } })
+
+    expect(screen.getAllByText(/^\d{3}$/).length).toBeLessThan(PACK.skdi144.length)
+    expect(screen.getByText(String(1).padStart(3, '0'))).toBeInTheDocument()
+    expect(screen.queryByText(String(2).padStart(3, '0'))).not.toBeInTheDocument()
+  })
 })

@@ -3,7 +3,7 @@
  * Layar diambil dari state.layar (engine yang menentukan; UI hanya menampilkan).
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGame } from './store'
 import { TitleScreen } from './screens/TitleScreen'
 import { MejaKerja } from './screens/MejaKerja'
@@ -37,6 +37,20 @@ const LAYAR_DIKENAL = new Set([
   'rapor',
   'laporan',
 ])
+
+// CODEX audit UI/UX 2026-07-10 (#18): label manusiawi utk pengumuman screen-reader
+// saat fokus pindah layar — independen dari `tabs` di Hud.tsx (itu komponen, bukan util).
+const LABEL_LAYAR: Record<string, string> = {
+  meja: 'Meja Kerja',
+  klinik: 'Klinik',
+  peta: 'Peta Desa',
+  kunjungan: 'Kunjungan',
+  kegiatan: 'Kegiatan',
+  igd: 'IGD',
+  dex: 'Buku Saku',
+  rapor: 'Rapor',
+  laporan: 'Laporan Akhir',
+}
 
 export default function App() {
   const state = useGame((s) => s.state)
@@ -77,6 +91,24 @@ export default function App() {
     root.classList.toggle('kurangi-gerak', pengaturan.kurangiGerak)
   }, [pengaturan.ukuranTeks, pengaturan.kurangiGerak])
 
+  // CODEX audit UI/UX 2026-07-10 (#18): key={state.layar} pada ErrorBoundary di
+  // bawah me-remount seluruh subtree saat pindah layar — tombol "Kembali" dsb
+  // yg ada DI DALAM layar lenyap, fokus jatuh ke <body> tanpa konteks bagi
+  // keyboard/screen-reader. Pindahkan fokus ke <main> itu sendiri tiap ganti layar.
+  // Review workflow Batch-7: DeckAksi.tsx (klinik/DeckAksi.tsx) punya useEffect
+  // SEJENIS yg fokus ke <section>-nya tiap `enc.fase` berganti. React menjalankan
+  // effect ANAK sebelum effect INDUK dalam commit yang sama — bila state.layar
+  // DAN enc.fase kebetulan berubah bersamaan, fokus <main> ini akan MENIMPA
+  // fokus DeckAksi. Saat ini TAK bisa terjadi (Hud.tsx mengunci semua tab lain
+  // selama state.klinik.aktif terisi, dan tiap transisi layar ke/dari 'klinik'
+  // menjamin klinik.aktif undefined tepat di titik itu) — tapi implisit, tak
+  // dijamin test/komentar mana pun selain ini. Waspadai bila M11/lanjutan
+  // mengubah invarian itu.
+  const mainRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    mainRef.current?.focus({ preventScroll: true })
+  }, [state?.layar])
+
   // Mode gelap: auto (sore=malam) bisa di-override paksa siang/malam (CODEX P3).
   const mode =
     pengaturan.modeMalam === 'malam'
@@ -104,7 +136,12 @@ export default function App() {
   return (
     <div className={`app-frame${getarKodeHitam ? ' app-frame--kode-hitam' : ''}`} data-mode={mode}>
       <Hud />
-      <main className="app-layar">
+      <main
+        className="app-layar"
+        ref={mainRef}
+        tabIndex={-1}
+        aria-label={LABEL_LAYAR[state.layar] ?? state.layar}
+      >
         {/* Boundary per-layar: crash render satu layar tak menjatuhkan HUD/Pengaturan,
             dan `key={state.layar}` me-remount saat pindah layar → pulih otomatis
             begitu mahasiswa menavigasi keluar lewat HUD. */}

@@ -104,3 +104,35 @@ describe('<Kunjungan /> — kutip-bersarang teks dialog dihapus (#14)', () => {
     expect(await screen.findByText(`Kamu: ${pilihanPertama.teks}`)).toBeInTheDocument()
   })
 })
+
+describe('<Kunjungan /> — aria-current stepper babak (#16c)', () => {
+  it('hanya langkah babak aktif yang punya aria-current="step"', () => {
+    pasangKunjungan({ fase: 'observasi' })
+    render(<Kunjungan />)
+    const langkah = Array.from(document.querySelectorAll('.kunjungan-stepper__langkah'))
+    expect(langkah).toHaveLength(4)
+    expect(langkah[0]!.getAttribute('aria-current')).toBe('step')
+    langkah.slice(1).forEach((el) => expect(el.getAttribute('aria-current')).toBeNull())
+  })
+})
+
+describe('<Kunjungan /> — role=radio kartu intervensi resep sosial (#16d, dikoreksi review Batch-7)', () => {
+  it('kartu intervensi role=radio dalam radiogroup, aria-checked semua false sebelum dipilih, lalu hanya yang diklik jadi "true"', async () => {
+    pasangKunjungan({ fase: 'resep_sosial' })
+    render(<Kunjungan />)
+    expect(document.querySelector('.kunjungan-resep__baris')).toHaveAttribute('role', 'radiogroup')
+    const kartu = Array.from(document.querySelectorAll('.kunjungan-intervensi'))
+    expect(kartu.length).toBeGreaterThan(0)
+    kartu.forEach((el) => {
+      expect(el.getAttribute('role')).toBe('radio')
+      expect(el.getAttribute('aria-checked')).toBe('false')
+    })
+
+    const user = userEvent.setup()
+    await user.click(kartu[0]!)
+
+    const kartuSesudah = Array.from(document.querySelectorAll('.kunjungan-intervensi'))
+    expect(kartuSesudah[0]!.getAttribute('aria-checked')).toBe('true')
+    kartuSesudah.slice(1).forEach((el) => expect(el.getAttribute('aria-checked')).toBe('false'))
+  })
+})

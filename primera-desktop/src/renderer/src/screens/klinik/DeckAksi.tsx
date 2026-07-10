@@ -3,6 +3,7 @@
  * Fase dibaca dari state (engine yang menentukan alur, UI hanya menampilkan).
  */
 
+import { useEffect, useRef } from 'react'
 import type { EncounterState, FaseEncounter } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
@@ -35,9 +36,26 @@ const LANGKAH: { fase: FaseEncounter; label: string }[] = [
 export function DeckAksi({ enc, kasus, dispatch, lastEvents, eventTick, tutorialAktif }: Props) {
   const indexAktif = LANGKAH.findIndex((l) => l.fase === enc.fase)
   const banner = tutorialAktif ? BANNER_TUTORIAL[enc.fase] : ''
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // CODEX audit UI/UX 2026-07-10 (#18): Deck anak di-unmount total tiap
+  // pergantian fase (tombol yg tadi diklik lenyap dari DOM) — fokus jatuh ke
+  // <body> tanpa konteks. Pindahkan ke section ini, tanpa scroll-jump.
+  // Review workflow Batch-7: App.tsx punya useEffect SEJENIS (fokus ke <main>
+  // tiap state.layar berganti) — lihat komentar silang-referensi di sana utk
+  // risiko effect induk menimpa effect anak ini bila layar & fase kebetulan
+  // berubah bersamaan (saat ini tak bisa terjadi, tapi implisit).
+  useEffect(() => {
+    sectionRef.current?.focus({ preventScroll: true })
+  }, [enc.fase])
 
   return (
-    <section className="klinik-deck kertas" aria-label="Deck aksi klinik">
+    <section
+      ref={sectionRef}
+      className="klinik-deck kertas"
+      aria-label={`Deck aksi klinik — ${LANGKAH[indexAktif]?.label ?? ''}`}
+      tabIndex={-1}
+    >
       <ol className="klinik-deck__stepper">
         {LANGKAH.map((l, i) => (
           <li
@@ -45,6 +63,7 @@ export function DeckAksi({ enc, kasus, dispatch, lastEvents, eventTick, tutorial
             className={`klinik-deck__step${i === indexAktif ? ' klinik-deck__step--aktif' : ''}${
               indexAktif >= 0 && i < indexAktif ? ' klinik-deck__step--lewat' : ''
             }`}
+            aria-current={i === indexAktif ? 'step' : undefined}
           >
             <span className="klinik-deck__step-nomor mono">{i + 1}</span>
             <span className="klinik-deck__step-label">{l.label}</span>

@@ -66,6 +66,7 @@ export function Hud() {
           <button
             key={t.layar}
             className={`hud__tab ${state.layar === t.layar ? 'hud__tab--aktif' : ''} ${t.terkunci ? 'hud__tab--kunci' : ''}`}
+            aria-current={state.layar === t.layar ? 'page' : undefined}
             onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: t.layar })}
             disabled={
               state.layar === 'kunjungan' ||

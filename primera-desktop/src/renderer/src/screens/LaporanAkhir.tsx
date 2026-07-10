@@ -7,7 +7,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useGame } from '../store'
-import { usePengaturan } from '../usePengaturan'
+import { useMotionDikurangi } from '../useMotionDikurangi'
 import { hitungSkor } from '@engine/director'
 import { hitungBadge, SEMUA_BADGE } from '@engine/badge'
 import { HARI_STASE } from '@engine/paketUjian'
@@ -15,19 +15,6 @@ import { serialize } from '@engine/save'
 import { susunDossier } from '@engine/verifikasi'
 import { PACK } from '@content/index'
 import './LaporanAkhir.css'
-
-/**
- * CODEX audit 2026-07-04 (ronde-6): CSS reduced-motion (`.kurangi-gerak` /
- * `prefers-reduced-motion`) tak menyentuh requestAnimationFrame/setTimeout
- * JS — layar ini tetap menjalankan count-up & jeda dramatis penuh. Gabungkan
- * toggle manual (kurangiGerak) dengan sinyal OS.
- */
-function useMotionDikurangi(): boolean {
-  const pengaturan = usePengaturan()
-  const osKurangi =
-    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
-  return pengaturan.kurangiGerak || osKurangi
-}
 
 /** Count-up sederhana: 0 → target dalam ~1,2 detik (ease-out). Lompat langsung bila gerak dikurangi. */
 function useCountUp(target: number, mulai: boolean, kurangiGerak: boolean): number {

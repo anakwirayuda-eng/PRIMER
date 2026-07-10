@@ -121,3 +121,18 @@ describe('<Hud />', () => {
     expect(screen.getByRole('button', { name: /Buku Saku/ })).toBeDisabled()
   })
 })
+
+describe('<Hud /> — aria-current tab aktif (CODEX audit UI/UX 2026-07-10, #16a)', () => {
+  beforeEach(() => {
+    pasangState()
+  })
+
+  it('tab yang cocok dengan state.layar punya aria-current="page", tab lain tidak punya atribut itu sama sekali', () => {
+    const state = pasangState()
+    useGame.setState({ state: { ...state, layar: 'meja' } })
+    render(<Hud />)
+
+    expect(screen.getByRole('button', { name: /Meja Kerja/ })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('button', { name: /Klinik/ })).not.toHaveAttribute('aria-current')
+  })
+})

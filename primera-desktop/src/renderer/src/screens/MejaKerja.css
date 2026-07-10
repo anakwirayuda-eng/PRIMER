@@ -306,11 +306,6 @@
   color: var(--tinta-pudar);
 }
 
-.mk__tidur {
-  margin-top: var(--sp-2);
-  align-self: flex-start;
-}
-
 /* ================= KANAN — LANGKAH BERIKUTNYA ================= */
 
 .mk__langkah-panel {

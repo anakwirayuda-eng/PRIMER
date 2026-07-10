@@ -15,6 +15,7 @@ import type { Hambatan, PilihanDialog } from '@content/types'
 import { PACK } from '@content/index'
 import { hashSeed, Rng } from '@engine/core/rng'
 import { RumahIlustrasi } from './kunjungan/RumahIlustrasi'
+import { useRadioGroup } from '../useRadioGroup'
 import './Kunjungan.css'
 
 /* ---------------------------------------------------------------------------
@@ -117,6 +118,17 @@ export function Kunjungan() {
     if (!skenario) return []
     return new Rng(hashSeed('intervensi', skenario.id)).shuffle(skenario.intervensi)
   }, [skenario])
+  // CODEX audit UI/UX review (workflow Batch-7): single-select murni (SATU
+  // resep sosial), aria-pressed keliru dipakai sebelumnya — kartu yang sudah
+  // aria-pressed="true" tak pernah ter-un-press oleh klik ulang, ciri BUKAN
+  // toggle button. Pola sama persis MejaKerja.tsx Program Wilayah (role+
+  // aria-checked saja, fallback '' agar tak ada kartu ke-checked keliru
+  // sebelum ada pilihan).
+  const intervensiRadio = useRadioGroup<string>(
+    intervensiAcak.map((k) => k.id),
+    intervensiPilihan ?? '',
+    (id) => setIntervensiPilihan(id),
+  )
 
   // CODEX ronde-13: `kj.hotspotDitemukan` korup (bukan array) crash `.includes`
   // di bawah bila lolos guard tanpa cek ini.
@@ -179,6 +191,7 @@ export function Kunjungan() {
               className={`kunjungan-stepper__langkah ${
                 i === babakIndex ? 'kunjungan-stepper__langkah--aktif' : ''
               } ${i < babakIndex || kj.fase === 'selesai' ? 'kunjungan-stepper__langkah--lewat' : ''}`}
+              aria-current={i === babakIndex ? 'step' : undefined}
             >
               <span className="kunjungan-stepper__angka mono">{i + 1}</span>
               <span className="kunjungan-stepper__label">{b.label}</span>
@@ -366,10 +379,14 @@ export function Kunjungan() {
 
         {kj.fase === 'resep_sosial' && (
           <div className="kunjungan-resep">
-            <div className="kunjungan-resep__baris">
-              {intervensiAcak.map((k) => (
+            <div className="kunjungan-resep__baris" role="radiogroup" aria-label="Pilihan resep sosial">
+              {intervensiAcak.map((k) => {
+                const { role, 'aria-checked': ariaChecked } = intervensiRadio.radioProps(k.id)
+                return (
                 <button
                   key={k.id}
+                  role={role}
+                  aria-checked={ariaChecked}
                   className={`kunjungan-intervensi kartu kartu--klik ${
                     intervensiPilihan === k.id ? 'kunjungan-intervensi--terpilih' : ''
                   }`}
@@ -378,7 +395,8 @@ export function Kunjungan() {
                   <b>{k.nama}</b>
                   <p className="teks-kecil teks-lembut">{k.deskripsi}</p>
                 </button>
-              ))}
+                )
+              })}
             </div>
             <div className="baris baris--antara">
               <span className="teks-kecil teks-lembut">

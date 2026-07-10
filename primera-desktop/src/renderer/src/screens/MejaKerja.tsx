@@ -24,7 +24,10 @@ import { clusterAktif } from '@engine/surveilans'
 import { PACK } from '@content/index'
 import { karmaTerlihat } from './peta/petaUtil'
 import { useFocusTrap } from '../useFocusTrap'
+import { useRadioGroup } from '../useRadioGroup'
 import './MejaKerja.css'
+
+const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
 
 const LABEL_PROGRAM: Record<FokusProgram, string> = {
   psn: 'PSN 3M (vektor DBD)',
@@ -190,6 +193,17 @@ export function MejaKerja() {
     simpanRefleksi()
     dispatch({ type: 'LANJUTKAN' })
   }
+
+  // CODEX audit UI/UX 2026-07-10 (#16e): single-select dengan opsi bisa
+  // TERKUNCI individual (lihat useRadioGroup.ts baris 10-14) — role+aria-checked
+  // saja, tanpa groupProps/roving penuh (lock membuat roving degenerate). `''`
+  // sbg fallback (pola sama DeckDisposisi rsTerpilih): belum ada fokus dipilih
+  // → tak satu pun opsi boleh aria-checked="true".
+  const programRadio = useRadioGroup<string>(
+    OPSI_PROGRAM,
+    state.program.fokus ?? '',
+    (f) => dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f as FokusProgram }),
+  )
 
   /* -- Langkah berikutnya (tombol LANJUTKAN besar, label dinamis) ---------------- */
 
@@ -513,13 +527,16 @@ export function MejaKerja() {
                   Lokakarya Mini berikutnya.
                   {state.program.fokus ? ` Fokus kini: ${LABEL_PROGRAM[state.program.fokus]}.` : ' Belum ada fokus ditetapkan.'}
                 </p>
-                <div className="baris mk__program-opsi">
-                  {(['psn', 'phbs', 'skrining'] as const).map((f) => {
+                <div className="baris mk__program-opsi" role="radiogroup" aria-label="Program Wilayah bulanan">
+                  {OPSI_PROGRAM.map((f) => {
                     const periodeIni = Math.ceil(state.hari / 30)
                     const terkunci = state.program.periodeDitetapkan === periodeIni && state.program.fokus !== f
+                    const { role, 'aria-checked': ariaChecked } = programRadio.radioProps(f)
                     return (
                       <button
                         key={f}
+                        role={role}
+                        aria-checked={ariaChecked}
                         className={`tombol ${state.program.fokus === f ? 'tombol--utama' : ''}`}
                         disabled={terkunci}
                         title={terkunci ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.' : undefined}
@@ -699,10 +716,6 @@ export function MejaKerja() {
               rows={4}
               placeholder="Apa yang kamu pelajari hari ini? Tulis dengan jujur — catatan ini untukmu sendiri."
             />
-
-            <button className="tombol tombol--utama tombol--besar mk__tidur" onClick={tidur}>
-              Tidur — Akhiri Hari {state.hari}
-            </button>
           </div>
         )}
       </section>
