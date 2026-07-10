@@ -259,3 +259,79 @@ memodelkan dx presumtif-klinis FKTP — bahkan bisa jadi bahan `catatanRealita`/
 (nuansa "correct drug properly administered" = pelajaran koding bagus). Semua keputusan
 dokter. Kode ICD ikut `sidikJariPack` → mengubahnya butuh masuk gelombang M10.5 (bukan
 REVISI bump, tapi pack-hash bergeser).
+
+## 7. Adjudikasi DeepThink (jawaban diterima 2026-07-10) + triase Claude
+
+DeepThink menjawab 8 pertanyaan `DEEPTHINK_M10_5.md`. Semua [Kuat]. Claude
+memverifikasi klaim feasibility ke kode aktual sebelum meratifikasi. Ringkas:
+
+| Q | Rekomendasi DeepThink | Triase Claude (terverifikasi) |
+|---|---|---|
+| Q1 (P1.6) | **O-B** (bobot proses ke UKP, khusus Ujian) | ⚠ **FORK** — lihat §7a. Mode-awareness SUDAH ada (`scoring.ts:85` cabang `state.mode==='ujian'`) → O-B & O-C dua-duanya feasible. Blind-spot deflasi (DeepThink sendiri) justru condong ke O-C yang lebih ringan. Keputusan dokter. |
+| Q2 (P1.7) | **O-B** (gate tes konfirmasi, <10 kasus) | ✅ ACCEPT. Reuse pola cap `vitalDiukur`/`edukasiKritis`. |
+| Q3 (P1.9) | **O-B** (edukasiKritis → rmLengkap=false) | ✅ ACCEPT. Operator AND murah (`reducer.ts:314-318`). |
+| Q4 (C.1) | **O-B** (stabilisasi mekanik bernilai, cap bila lewat) | ✅ ACCEPT, gabung jalur P0. Landasan SKDI 3B kuat. |
+| Q5 (C.8) | **O-A** (firewall + sentilan debrief, TANPA gerbang baru) | ✅ ACCEPT — ini rem anti-checklist-fatigue. |
+| Q6 (#2 karma) | **Opsi (a)** (MI-berhasil + WAJIB pilih "Rujuk/Eskalasi SEKARANG" utk batalkan karma) | ✅ ACCEPT — feasibility DIVERIFIKASI, lihat §7b. |
+| Q7 (guillotine) | sinkron `harusDirujuk` biner (bukan rework mesin) | ✅ ACCEPT + **right-size** §7c — lingkupnya lebih kecil dari dugaan. |
+| Q8 (urutan) | Golden Master TUNGGAL eksternal; #10+Q1 isolasi minggu-1 timebox | ✅ ACCEPT. |
+
+### 7a. FORK Q1 — O-B vs O-C (satu-satunya keputusan tersisa)
+DeepThink pilih O-B (rombak formula UKP Mode-Ujian, bobotkan grade proses). Tapi
+**blind-spot yang DeepThink sendiri angkat = "deflasi skor global"** (§7d) justru
+argumen kuat utk O-C: O-B menambah tekanan deflasi PALING besar (grade proses
+langsung menekan UKP), sedangkan O-C (turunkan ambang hari-akreditasi utk Ujian
+→ `rmLengkap` yang SUDAH ada berpengaruh) menambah lebih sedikit. Verifikasi:
+`scoring.ts:85` sudah bercabang `state.mode==='ujian'` → keduanya feasible tanpa
+mekanik baru. **Rekomendasi Claude: mulai O-C (lebih ringan, reuse jalur), naikkan
+ke O-B HANYA bila self-play (§7d) menunjukkan outcome-gaming tetap dominan.**
+Argumen O-B (DeepThink): granularitas kualitas penalaran lebih tinggi, O-C "biner/
+eksploitatif". Keduanya sah — **keputusan Dr. Wirayuda.**
+
+### 7b. Q6 feasibility DIVERIFIKASI (kekhawatiran DeepThink sendiri)
+DeepThink ragu arsitektur `desa.ts`+reducer bisa menyuntik aksi medis ke babak
+naratif. **Cek kode:** `selesaikanKunjungan` (`kunjungan.ts:273`) hitung
+`berhasil = !diusir && hipotesisBenar && intervensiCocok`; `Intervensi.cocokUntuk`
+sudah ada. Karma dibatalkan di `reducer.ts:729` saat `berhasil`. Menambah opsi
+"Rujuk/Eskalasi SEKARANG" = cukup 1 intervensi baru di arc + flag (mis.
+`aksiEskalasi?: boolean`); gerbang karma jadi `berhasil && eskalasiDipilih`.
+**Perubahan MODERAT (reducer.ts:729 + konten arc), BUKAN refactor rantai-event
+rumit** yang DeepThink takutkan. Sistem intervensi memang sudah dirancang utk
+pilihan bercabang — menyuntik satu pilihan medis tak melawan arsitekturnya.
+
+### 7c. Q7 right-sized (lebih kecil dari dugaan DeepThink)
+**Cek kode:** guillotine hanya melihat `rujukanNonSpesialistik` yang dihitung
+PER-ENCOUNTER POLI (`clinic.ts:595`, diakumulasi `reducer.ts:270` dari poli saja).
+Storyline/UKM/kunjungan TAK memberi makan tally ini. → Fix P0 yang hidup di
+storyline (Asih preeklampsia = keluarga arc; Lastri stroke = storyline) **TAK
+menyentuh guillotine sama sekali**. Kerja Q7 = audit HANYA kasus POLI yang
+klasifikasi `harusDirujuk`-nya berubah (segelintir; `stroke_iskemik`/
+`mm_hipertensi_urgensi` poli SUDAH 3B harusDirujuk). Jadi ini audit-data mungil,
+mengonfirmasi (& mengecilkan) kesimpulan DeepThink "bukan rework mesin".
+
+### 7d. Blind-spot DEFLASI SKOR — DIELEVASI jadi langkah wajib Golden Master
+DeepThink benar & ini terverifikasi konkret: ambang grade HARD-CODED di
+`scoring.ts:30-33` (**A≥85 · B≥70 · C≥55 "Lulus" · D<55**). Menumpuk penalti
+Q1-Q4 bisa menerjunkan speedrunner dari A ke C/D → tuduhan "game nge-bug/tak adil".
+**Jembatan dgn prinsip "jangan rebalance tanpa data":** harness self-play/soak
+SUDAH ADA (`selfplay.test.ts`, `soak.test.ts`). **Langkah wajib SEBELUM freeze
+Golden Master:** jalankan profil adversarial (speedrunner, teliti, ceroboh) pasca
+semua penalti → UKUR pergeseran distribusi grade → kalibrasi ambang A/B/C/D
+dengan data SINTETIS itu (bukan buta), ATAU komunikasikan standar baru eksplisit
+di tutorial Hari-1. Ini bukan opsional; ini gerbang rilis.
+
+### 7e. Yang DeepThink benar & JANGAN diubah (dicatat)
+Disiplin mendaur-ulang pola "cap skor" (`vitalDiukur→maks 50`) alih-alih membangun
+infrastruktur hukuman baru dari nol utk Q2/Q4 — matikan scope-creep, jaga
+kestabilan regresi. Dipertahankan sbg prinsip M10.5.
+
+**Urutan kerja M10.5 final (sintesis DeepThink + triase):**
+1. Minggu-1 (operasi berisiko, timebox+rollback): #10 forced-AND (`clinic.ts:494`)
+   + Q1 (O-C dulu, atau O-B bila diputuskan). Isolasi 530+ test hijau.
+2. Minggu-2 (P0 keselamatan + data): Q4 stabilisasi + Q6 eskalasi-pasca-MI + audit
+   Q7 harusDirujuk poli (paralel).
+3. Minggu-3 (disiplin klinis): Q2 gate konfirmasi + Q3 edukasiKritis→rmLengkap.
+   Q5 = firewall saja (sudah) + sentilan debrief.
+4. Minggu-4 (Golden Master): **self-play deflasi + kalibrasi ambang (§7d, WAJIB)**
+   → SATU bump `REVISI_ENGINE=18` → hard-freeze. Keputusan medis (#4/#5/#12) +
+   ICD I16.0 (§6a) masuk gelombang ini juga.
