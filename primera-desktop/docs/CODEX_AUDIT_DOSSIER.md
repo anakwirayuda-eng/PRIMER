@@ -3124,3 +3124,111 @@ temuan di atas — SEMUA CONFIRMED oleh Claude, NOL yang perlu verifikasi lanjut
 ITEMS menunggu keputusan fix**. Beberapa (apendisitis, hordeolum) py 2 opsi fix yg saling
 eksklusif (ubah konten vs ubah clue) yg butuh keputusan, bukan tambal mekanis — cocok didiskusikan
 dgn user sebelum eksekusi massal.
+
+## 50. Fix batch §49 — 21 temuan sapuan multiagen DIPERBAIKI (2026-07-10, commit `4e79ffe`)
+
+User: "semua Sapuan M10 multiagen sebelumnya tolong di fix ya se enak, se comfortable,
+se esensial dan sekreatif mungkin". Seluruh 21 temuan §49 diperbaiki solo (workflow verifikasi
+CODEX terpisah tetap jalan di latar). Test-first + verifikasi-bergigi. **476 test** (dari 463,
++13 baru di `m10sweep49.test.ts`), typecheck bersih. **REVISI_ENGINE 15→16**.
+
+### Integritas (P1)
+`sidikJariPack` per-kasus kini meng-hash 6 field yang dibaca LIVE saat replay (demografi,
+prevalensi, kategori, skdi, konsekuensi, spesialisRujukan) + `keluarga.anggota/rw/jarakMenit`
+(menutup §48#1 sekalian). Test membuktikan: ubah prevalensi/demografi/spesialisRujukan/nama-anggota
+→ hash berubah. Ini juga otomatis menutup **CODEX P1.3** (DUP_49) dari ronde verifikasi paralel.
+
+### Mekanik baru
+- **`obatOpsional`** (types.ts): obat sah-tapi-tak-wajib (clue "opsional"). Semantik skor
+  (clinic.ts): tak buka slot terapi, tak dihitung obat-di-luar, tak picu antibiotik-tanpa-indikasi.
+  Hordeolum kasus perdana — terapi konservatif (kompres tanpa antibiotik) dulu rasioTerapi 0,
+  kini 100 (test membuktikan). `validasiPack` menjaga disjoint-set + `tatalaksanaClue.test`
+  diperluas mengakui obatOpsional (guard "clue janji antibiotik" tak lagi false-positive hordeolum).
+- **KLB pola `kontak`** (kegiatan.ts): skabies & konjungtivitis_bakterial dapat aksi benar
+  "obati kontak serumah + dekontaminasi" (dulu jatuh ke droplet: masker/etika batuk utk wabah
+  tungau). Distraktor ditukar (fogging/isolasi). Guard regresi: ISPA tetap droplet.
+
+### Konten (P2)
+apendisitis +prosedur `pasang_infus` (clue wajibkan jalur IV, dulu −15 tindakan-di-luar);
+faringitis darah_rutin relevan false→true (samakan sister-case tonsilitis, hapus penalti arbitrer);
+epistaksis usiaMin 12→35 (premis HT kronik dewasa); konjungtivitis/skabies/serumen TD diturunkan
+ke nilai normal lintas-usia (105/68, 108/70); malaria variasi "pola teratur" dihapus (kontradiksi
+q_pola), rinosinusitis ingus "kekuningan"→"kehijauan" (samakan q_ingus).
+
+### Identitas & patch-safety
+surat hasil_lab kini bawa NAMA pasien (dulu selalu "pasien kemarin"; dua lab sehari → dua surat
+identik); karma_igd guard `pack.kasus[kasusId]` — bila kasus di-rename patch, efek karma tak
+meledak tanpa korban (jejak yatim).
+
+### A11y (P3)
+`useRadioGroup` hook (role=radio + aria-checked + roving tabindex + navigasi panah) → TitleScreen
+(menutup **CODEX A.5** parsial) + Pengaturan (menutup **known-#11**) dgn roving penuh, + DeckDisposisi
+RS. DeckDiagnosis banding/tinta dapat role=radio+aria-checked TANPA roving (sengaja: hindari bypass
+kunci tutorial via panah). FigurTubuh SVG `aria-hidden` (chip DeckPemeriksaan sudah jalur keyboard
+penuh — hindari 20 tabstop utk 10 aksi; keputusan LEBIH BAIK dari fixHint agent yang tak sadar chip
+paralel). Toaster `role=status`+`aria-live=assertive` (menutup **CODEX A.2** parsial — sisa: timer
+toast basi). font-noscale→rem: label SVG peta (+§48#13 sekalian), angka stepper Kunjungan, badge/
+gembok HUD (ikut skala teks 90-140%, diverifikasi browser 13→18.2px @140%). Defense-in-depth:
+`validasiPack` menjaga `icd10 ∈ diagnosisBanding`.
+
+**Diverifikasi browser**: radiogroup roving+panah bekerja, SVG font menskala, peta utuh 17 label.
+FigurTubuh/Toaster/Deck via test+baca-kode.
+
+**M10 §49 TUNTAS.** Sisa OPEN: temuan CODEX ronde-verifikasi (lihat §51) — mayoritas butuh
+adjudikasi user (medis/desain), tidak auto-fix.
+
+## 51. CODEX full-sweep M10 (ronde-verifikasi) — 37 temuan ditriase via workflow verifikasi, BELUM difix (2026-07-10)
+
+CODEX menjalankan full-sweep M10 (a/b/c + save/replay/scoring/impor) di snapshot `8066704`,
+melaporkan 37 temuan. Diverifikasi via Workflow: 37 agent skeptis (satu per temuan) membaca kode
+aktual + dedup thd §48/§49/known-13, lalu sintesis. **Verdict**: 12 CONFIRMED_BARU, 19
+PERLU_ADJUDIKASI (fakta-kode benar, vonis "bug" butuh keputusan medis/desain manusia), 3 DUP
+(P1.3→§49, B.3→§48#5, A.7→§48#9), 3 REFUTED (B.2 bonusTrust by-design §43; B.8 IGD granular
+by-design; C.13 gout — nuansa ACR justru SUDAH ada di clue, klaim tak akurat). Catatan penting:
+NOL P1 di antara CONFIRMED_BARU — keempat celah save-integrity (P1.1/2/4/5) dikoreksi verifier ke
+P2 (bersyarat/self-heal); satu-satunya P1 tersisa (P1.6 "ujian tak menilai proses klinis") =
+PERLU_ADJUDIKASI (murni keputusan edukator).
+
+### 3 batch fix (rekomendasi sintesis)
+
+**Batch 1 — MEKANIS-AMAN** (robustness/kontradiksi internal, bisa langsung; TAK butuh vonis
+medis/desain): `B.5` guard `jadwal:[null]` di save.ts:69 (pola sama dex/keluarga/rw); `B.6`
+recovery `st.kunjungan` yatim di deserialize (pola st.igd/klinik); `A.2` Toaster timer per-toast
+(sekarang satu timer bersama → event baru batalkan dismissal batch sebelumnya, toast bisa menetap
+selamanya) — CATATAN: bagian `role=status` A.2 SUDAH difix di §50, sisa timer-nya di sini; `A.5`
+DeckTerapi lengkapi pola WAI-ARIA Tabs (role=tab ada, tapi nol tabpanel/aria-controls/roving/
+panah); `C.11-gout` PF string "serangan pertama"→"saat ini" (anamnesis sebut serangan sebelumnya);
+`C.3-tinea` mikonazol→obatAlternatif (clue namai sbg sah, dulu −15).
+
+**Batch 2 — BUTUH-KEPUTUSAN-DESAIN** (engineering/UX, usul opsi A/B ke user dulu): `P1.1`
+autosave melewatkan outcome ireversibel (KODE_HITAM/DISPOSISI_IGD/KEGIATAN_SELESAI/PEMULIHAN/TAMAT
+tak di EVENT_AUTOSAVE — quit-setelah-outcome bisa batalkan kematian IGD/hasil kegiatan di Ujian
+ternilai; + double-meta playthroughs); `P1.2` autosave race pada `autosave.json.tmp` bersama tanpa
+serialisasi per-slot; `P1.4` sidikJariPack sort per-id tapi `susunAntrianHarian` baca
+`Object.values` tanpa sort (refactor urutan key ubah RNG tanpa ubah hash); `P1.5` skor MI
+campur-satuan (miTotal per-pilihan-dialog, floor pakai target kunjungan 8/24 → 1 kunjungan sempurna
+= 50% target Ujian); `C.6` fakta anamnesis statis tak ikut demografi (apendisitis-L ditanya haid,
+DM-L jawab "keputihan", tifoid-10th "waktu SMA"); `A.1` fokus jatuh ke body pasca aksi + balon
+jawaban nol aria-live (DeckAnamnesis/IGD/Kegiatan/Kunjungan); `A.3` `--tinta-pudar` gagal kontras
+AA (3.3-4.34 siang, 4.11 malam <4.5:1) pada teks 0.72rem; `A.4` RumahIlustrasi SVG terang di mode
+malam (--kertas-050/200/300 tak diremap); `A.6` tagline TitleScreen "Sembilan puluh hari" abai mode
+Ujian-30 + tab Peta locked-but-enabled; `B.1` Prolanis tak ikut drift JKN runtime; `B.4` stok obat
+BPJS tampak dibebankan 2× (arus kas); `B.7` verifier bisa beku pd dossier besar (cap ukuran input);
+`C.9` konsekuensi 90-180 hari (dislipidemia/obesitas) tak pernah muncul dlm karier 90 hari.
+
+**Batch 3 — BUTUH-PENILAIAN-MEDIS (Dr. Wirayuda)** (auditor & Claude TAK boleh vonis; fakta-kode
+solid, keputusan klinis milik user): `P1.6` ujian nilai proses klinis?; `P1.7`/`C.7` gate
+tes-konfirmasi utk skor diagnosis (malaria/TB/DM)?; `P1.8` floor terapi dengue observasi-lab
+prematur pantas kebal-konsekuensi? (WHO: pilih tes per hari-onset); `P1.9` edukasiKritis terlewat
+boleh tetap rmLengkap?; `C.1` wajibkan stabilisasi hands-on kasus rujuk berat?; `C.2`
+tinea/impetigo wajib kombinasi topikal+sistemik (AND)?; `C.4` **primakuin + gender-acak + nol
+skrining hamil** (Kemenkes: primakuin kontraindikasi hamil) — POTENSI SALAH-AJAR, jangan sentuh
+tanpa dokter; `C.5` clue urgensi kutip target 25% jam-pertama (PNPK: itu utk emergency) — potensi
+teaching-error; `C.8` alergi jadi kriteria rmLengkap wajib? (40/61 kasus tanpa pertanyaan alergi);
+`C.10` edisi ICD target (K35.80 CM vs K35.8/9 WHO); `C.11-disentri/veruka` zinc dewasa, bedak
+salisilat 2%; `C.12` abortus iminens tirah baring (Cochrane/NICE — kandidat M11).
+
+**Peringatan sintesis**: tiap edit konten (Batch 1 C.3/C.11, Batch 3 apa pun) menggeser
+`sidikJariPack` tx-hash → koordinasikan dgn bump REVISI_ENGINE. Batch 3 JANGAN diubah tanpa
+persetujuan medis eksplisit. **Semua 37 didokumentasikan sbg OPEN** menunggu keputusan user per-batch;
+detail per-temuan + reasoning verifier tersimpan di task output `w1fx200z3`.
