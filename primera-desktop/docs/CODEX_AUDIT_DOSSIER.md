@@ -3596,3 +3596,40 @@ fix IGD di §57 Batch-3.
 
 **Sisa 8 P2/P3** (nama-kontrol #15, aria-state #16-18, kontras-darkmode #20/#22, ux-misc #23-25,
 polish P3) — lanjut batch berikutnya.
+
+## 60. Batch-6 CODEX — nama kontrol jelas di 4 kartu berulang DIPERBAIKI (2026-07-10, commit `57e33e4`)
+
+Melanjutkan §59, klaster nama-kontrol (#15, satu-satunya finding grup ini):
+
+- **#15 — 4 kontrol berulang berbagi accessible name generik** — tombol Pesan lab
+  (`DeckPemeriksaan.tsx:136`), +Resep obat (`DeckTerapi.tsx:236`), coret resep (`LembarPeriksa.tsx:
+  248-254`, TANPA nama obat bahkan di `title`), dan aksi kartu keluarga Lepas/Jadikan Binaan/Kunjungi
+  (`KartuKeluarga.tsx:143-163`, tak menyebut `content.namaKeluarga` sama sekali) semua memakai teks
+  visible identik di setiap baris/kartu sejenis — nama objek (lab/obat/keluarga) hanya ada di `title`
+  hover atau teks node saudara, bukan di accessible name tombol itu sendiri. Screen reader/scan cepat
+  tak bisa membedakan kontrol sejenis di layar yang sama.
+  Fix (aditif, teks visible pendek TIDAK diubah — layout kompak utuh):
+  - `DeckPemeriksaan.tsx`: `aria-label={dipesan ? `${item.nama} sudah dipesan` : `Pesan ${item.nama}`}`.
+  - `DeckTerapi.tsx`: `aria-label` 3-cabang (`Tambah ${o.nama} ke resep` / `${o.nama} sudah di resep` /
+    `${o.nama} stok habis`).
+  - `LembarPeriksa.tsx`: `title` yang tadinya statis "Coret dari resep" DIGANTI sekaligus dgn
+    `aria-label`, keduanya kini `Coret ${o?.nama ?? id} dari resep`.
+  - `KartuKeluarga.tsx`: `aria-label` pada ketiga tombol menyebut `content.namaKeluarga`.
+
+**Test-first**: 4 file test (`DeckPemeriksaan.test.tsx` baru, `LembarPeriksa.test.tsx` baru,
+`KartuKeluarga.test.tsx` baru, `DeckTerapi.test.tsx` diperluas) — 8 test baru total, pakai konten
+`PACK` asli + `buatEncounter`/`buatPasienDariKasus`/`buildInitialState` (bukan mock). Dikonfirmasi
+MERAH dulu (`git stash` 4 file produksi sekaligus, 7/8 gagal PERSIS di titik yang diubah — 1 test lama
+yang tak bergantung fix tetap hijau, membuktikan stash tak merusak apa pun di luar target), HIJAU
+sesudah `stash pop`. 576/576 suite penuh + typecheck bersih.
+
+**Diverifikasi browser** (HMR live, Hari 3, encounter "Daeng Kanang"): aria-label lab "Pesan Asam Urat
+Darah"/"Pesan BTA Sputum (sewaktu-pagi)" dkk tampil benar di tab Pemeriksaan; setelah menambah "Air
+Mata Buatan (Hipromelosa)" ke resep di tab Terapi, tombol tambah berubah jadi aria-label "Air Mata
+Buatan (Hipromelosa) sudah di resep" dan tombol coret di Lembar Periksa menampilkan "Coret Air Mata
+Buatan (Hipromelosa) dari resep" pada `title` maupun `aria-label`. `KartuKeluarga.tsx` tak sempat
+direplay live (di luar alur poli yang sedang berjalan) — diverifikasi via 2 test component dgn konten
+asli sbg gantinya.
+
+**Sisa 7 P2/P3** (aria-state #16-18, kontras-darkmode #20/#22, ux-misc #23-25, polish P3) — lanjut
+batch berikutnya.
