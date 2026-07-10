@@ -185,6 +185,22 @@ export interface KasusKlinis {
   tatalaksana: Tatalaksana
   /** Mutiara klinis ber-tag guideline, muncul di debrief. */
   clue: string
+  /**
+   * M11 (2026-07-10): lapisan pengayaan EBM — muncul di debrief sebagai kotak
+   * TERPISAH dari clue. Murni pedagogis: TIDAK memengaruhi skor & TIDAK ikut
+   * sidik jari (aman diedit tanpa REVISI_ENGINE, langsung menjangkau save lama).
+   * `mutiaraEbm`: "temuan klasik yang bisa MENYESATKAN" — mis. leukosit normal
+   * tak menyingkirkan apendisitis dini; NS1 negatif tak menyingkirkan dengue.
+   * (Contoh perintis M11: asam urat bisa normal saat serangan gout akut.)
+   */
+  mutiaraEbm?: string
+  /**
+   * M11: catatan "idealis vs realita FKTP Indonesia" — game sengaja idealis
+   * (semua obat/alat tersedia) demi mengajarkan breadth EBM; catatan ini
+   * membuat pemain SADAR celah dgn realita Puskesmas (mis. kolkisin gout
+   * jarang distok). Juga murni display, tak berdampak skor/hash.
+   */
+  catatanRealita?: string
   konsekuensi?: KonsekuensiKlinis
   /** Sebagian pasien kasus ini membawa alergi yang menjebak terapi standar. */
   alergiTrap?: { kelas: string; obatTerlarang: string[]; alternatifBenar: string[] }

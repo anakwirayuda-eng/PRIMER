@@ -137,6 +137,10 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['diet_purin', 'minum_air_cukup', 'kontrol_rutin'],
     },
     clue: 'Serangan gout AKUT (monoartritis MTP-1, onset malam, pemicu tinggi purin) → redakan radang dulu dengan NSAID (natrium diklofenak) ATAU kolkisin. ATURAN EMAS: JANGAN mulai allopurinol saat serangan; bila pasien sudah rutin allopurinol JANGAN dihentikan. Mulai/titrasi urate-lowering 2–4 minggu setelah reda, target asam urat <6 mg/dL (PPK PAPDI / ACR 2020).',
+    // M11 (perintis lapisan pengayaan — dari ide asal user): mutiara "temuan
+    // bisa menyesatkan" + catatan realita FKTP.
+    mutiaraEbm: 'Kadar asam urat serum bisa NORMAL bahkan RENDAH saat serangan akut (asam urat berpindah ke sendi/mengendap) — hasil normal TIDAK menyingkirkan gout. Diagnosis serangan akut tetap KLINIS (monoartritis MTP-1 mendadak, merah-nyeri hebat); baku emas = kristal MSU di cairan sendi.',
+    catatanRealita: 'Kolkisin sering TAK selalu tersedia di semua Puskesmas — bila kosong, NSAID (natrium diklofenak) adalah tumpuan analgesik antiradang akut yang hampir selalu ada. Kenali keduanya: tahu obat "buku" DAN obat yang realistis di rak FKTP-mu.',
     konsekuensi: {
       narasi: 'Bila allopurinol dimulai saat serangan akut, nyeri justru berkepanjangan dan pasien menganggap obat "tidak cocok" lalu berhenti — kontrol jangka panjang gagal.',
       kembaliHariMin: 2,

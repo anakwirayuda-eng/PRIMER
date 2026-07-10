@@ -32,6 +32,8 @@ const LABEL_GRADE: Record<PenilaianEncounter['grade'], string> = {
 
 export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Props) {
   const tutorial = hasil.tutorialLatihan === true
+  // M11: kasus utk lapisan pengayaan (mutiaraEbm/catatanRealita) — murni display.
+  const kasus = PACK.kasus[hasil.kasusId]
 
   const barisSkor: { label: string; nilai: number }[] = [
     { label: 'Anamnesis', nilai: hasil.skorAnamnesis },
@@ -175,6 +177,22 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
           <div className="judul-seksi">Mutiara Klinis (EBM)</div>
           <p className="teks-kecil">{hasil.clue}</p>
         </div>
+
+        {/* M11: lapisan pengayaan — mutiara EBM "temuan bisa menyesatkan" +
+            catatan realita FKTP. Dibaca langsung dari PACK (murni display, tak
+            lewat engine/skor). Muncul hanya bila kasus menyediakannya. */}
+        {kasus?.mutiaraEbm && (
+          <div className="folder klinik-hasil__ebm">
+            <div className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</div>
+            <p className="teks-kecil">{kasus.mutiaraEbm}</p>
+          </div>
+        )}
+        {kasus?.catatanRealita && (
+          <div className="folder klinik-hasil__realita">
+            <div className="judul-seksi">🏥 Realita FKTP</div>
+            <p className="teks-kecil">{kasus.catatanRealita}</p>
+          </div>
+        )}
 
         <div className="baris klinik-hasil__aksi">
           <button className="tombol tombol--senyap" onClick={() => onSelesai(false)}>
