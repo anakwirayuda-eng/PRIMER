@@ -90,6 +90,13 @@ export function Kunjungan() {
   const [dokterTerakhir, setDokterTerakhir] = useState<string | null>(null)
   const [intervensiPilihan, setIntervensiPilihan] = useState<string | null>(null)
   const tickTerproses = useRef(-1)
+  // M10 Batch-2 (CODEX A.1): saat respons warga tampil, tombol-tombol pilihan
+  // dialog di-unmount → fokus keyboard jatuh ke <body>. Pindahkan ke tombol
+  // "Lanjut →" (satu-satunya aksi berikutnya).
+  const lanjutRef = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    if (responsAktif !== null) lanjutRef.current?.focus()
+  }, [responsAktif])
 
   // Tangkap ucapan warga dari event engine. Respons bohong TIDAK dibedakan —
   // sengaja: field `bohong` tidak pernah dibaca di layar ini.
@@ -238,7 +245,8 @@ export function Kunjungan() {
 
         {kj.fase === 'wawancara' && responsAktif && (
           <div className="kunjungan-wawancara">
-            <div className="kunjungan-dialog kertas">
+            {/* M10 Batch-2 (A.1): live region — respons warga diumumkan SR. */}
+            <div className="kunjungan-dialog kertas" role="status" aria-live="polite">
               <Potret nama={namaWarga} />
               <div className="kunjungan-dialog__isi">
                 {dokterTerakhir && (
@@ -247,7 +255,7 @@ export function Kunjungan() {
                 <div className="kunjungan-dialog__nama mono">{namaWarga}</div>
                 <p className="kunjungan-dialog__teks">“{responsAktif}”</p>
               </div>
-              <button className="tombol tombol--utama" onClick={() => setResponsAktif(null)}>
+              <button ref={lanjutRef} className="tombol tombol--utama" onClick={() => setResponsAktif(null)}>
                 Lanjut →
               </button>
             </div>

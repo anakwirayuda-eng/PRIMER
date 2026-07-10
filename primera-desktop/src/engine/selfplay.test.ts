@@ -493,8 +493,12 @@ describe('selfplay: kunjungan rumah keluarga_wulan (hari 3 siang)', () => {
     expect(s.tally.kunjunganBerhasil).toBe(1)
     expect(s.tally.kunjunganDiusir).toBe(0)
     expect(s.tally.apathy).toBe(0)
-    expect(s.tally.miTotal).toBe(kunjungan.skenario.dialog.length)
-    expect(s.tally.miTepat).toBe(kunjungan.skenario.dialog.length)
+    // M10 Batch-2 (CODEX P1.5): satuan MI kini per-KUNJUNGAN (bukan per-pilihan
+    // dialog) — satu kunjungan sempurna (MI 100) = miTotal 1, miTepat 1.0.
+    // Sejalan floor EKSPEKTASI_KUNJUNGAN di scoring.ts yang berdenominasi
+    // kunjungan (dulu 1 kunjungan 4-pilihan = 4/8 target Ujian = salah satuan).
+    expect(s.tally.miTotal).toBe(1)
+    expect(s.tally.miTepat).toBe(1)
   })
 
   it('kunjungan berhasil MENCEGAH karma: jadwal D+6 dibatalkan, karmaAktif lepas', () => {

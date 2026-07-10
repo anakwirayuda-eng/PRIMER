@@ -4,7 +4,7 @@
  * sebagai balon bicara (termasuk jawaban ketus saat sabar habis).
  */
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
@@ -30,17 +30,31 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
     const peta = new Map<KategoriAnamnesis, PertanyaanAnamnesis[]>()
     for (const kat of URUTAN_KATEGORI) peta.set(kat, [])
     for (const q of kasus.anamnesis) {
+      // M10 Batch-2 (CODEX C.6): pertanyaan spesifik-gender (mis. riwayat haid)
+      // disembunyikan bila tak cocok jenis kelamin pasien — skor anamnesis
+      // (clinic.ts) mengecualikannya dari denominator dgn aturan yang sama.
+      if (q.hanyaUntuk !== undefined && q.hanyaUntuk !== enc.pasien.jenisKelamin) continue
       const daftar = peta.get(q.kategori)
       if (daftar) daftar.push(q)
       else peta.set(q.kategori, [q])
     }
     return peta
-  }, [kasus])
+  }, [kasus, enc.pasien.jenisKelamin])
 
   let jawabanTerakhir: string | null = null
   for (const e of lastEvents) {
     if (e.type === 'PASIEN_MENJAWAB') jawabanTerakhir = e.teks
   }
+
+  // M10 Batch-2 (CODEX A.1): setelah pertanyaan diklik, tombolnya jadi
+  // disabled → fokus keyboard JATUH ke <body> (hilang dari alur). Pindahkan
+  // fokus ke balon jawaban (tabIndex -1) — pembaca layar membacakan jawaban
+  // (aria-live) dan Tab berikutnya lanjut dari posisi logis, bukan dari nol.
+  const balonRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (jawabanTerakhir !== null) balonRef.current?.focus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventTick])
 
   const sabar = enc.sabar
   const kelasSabar =
@@ -66,9 +80,9 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
           )}
         </div>
 
-        {/* Balon jawaban terakhir */}
+        {/* Balon jawaban terakhir — live region + target fokus pasca-klik (A.1) */}
         {jawabanTerakhir !== null && (
-          <div key={eventTick} className="klinik-balon">
+          <div key={eventTick} ref={balonRef} className="klinik-balon" role="status" aria-live="polite" tabIndex={-1}>
             &ldquo;{jawabanTerakhir}&rdquo;
           </div>
         )}

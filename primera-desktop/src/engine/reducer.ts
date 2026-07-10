@@ -273,16 +273,30 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       if (nilai.antibiotikTanpaIndikasi) t.antibiotikTanpaIndikasi += 1
       t.labTakRelevan += nilai.labTakRelevan
 
-      // Ekonomi ringkas: BPJS bakar HPP obat, umum bayar harga jual.
-      // M4.18/19: resep mengonsumsi stok gudang + tercatat di buku kas bulanan.
+      // Ekonomi obat (M10 Batch-2, CODEX B.4): kas keluar utk obat terjadi di
+      // PENGADAAN (PESAN_OBAT memotong kapitasi + belanjaPengadaan). Dulu
+      // penyerahan ke pasien BPJS memotong hargaBeli LAGI → biaya dobel utk
+      // satu unit obat yang sama. Kini: dispense dari STOK = nol kas (biayanya
+      // sudah dibayar saat pengadaan); dispense saat stok HABIS = beli darurat
+      // di luar (tetap −hargaBeli — backstop anti-eksploit krn meresepkan tak
+      // digerbang stok, sekaligus realistis: obat kosong tetap harus diadakan).
+      // Pasien umum tetap membayar hargaJual (retribusi masuk kas).
       let kapitasi = s.kapitasi
       const stokBaru = { ...s.gudang.stok }
       let belanjaObat = s.keuanganBulan.belanjaObat
       for (const obatId of encFinal.resep) {
         const o = pack.obat[obatId]
         if (!o) continue
-        kapitasi += encFinal.pasien.bpjs ? -o.hargaBeli : o.hargaJual
-        if (encFinal.pasien.bpjs) belanjaObat += o.hargaBeli
+        const adaStok = (stokBaru[obatId] ?? 0) > 0
+        if (encFinal.pasien.bpjs) {
+          if (!adaStok) {
+            kapitasi -= o.hargaBeli
+            belanjaObat += o.hargaBeli // buku kas: hanya pembelian darurat
+          }
+        } else {
+          kapitasi += o.hargaJual
+          if (!adaStok) kapitasi -= o.hargaBeli // umum pun butuh unit fisik
+        }
         if (stokBaru[obatId] !== undefined) stokBaru[obatId] = Math.max(0, stokBaru[obatId]! - 1)
       }
       // CODEX (2026-07-05): prosedur/tindakan klinis (nebulisasi, Epley, dst.)
@@ -693,12 +707,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
         t.kunjunganTotal += 1
         if (hasil.berhasil) t.kunjunganBerhasil += 1
         if (hasil.diusir) t.kunjunganDiusir += 1
-        const totalPilihan = hasilAksi.kj.pilihanDiambil.length
         // Apathy: kunjungan tanpa satu pun substansi — nol teknik MI yang tepat
         // DAN nol temuan terverifikasi. Klik-kosong dihukum, sesuai GDD anti-min-max.
         if (hasil.kualitasMi === 0 && hasil.indikatorTerverifikasi.length === 0) t.apathy += 1
-        t.miTotal += totalPilihan
-        t.miTepat += Math.round((hasil.kualitasMi / 100) * totalPilihan)
+        // M10 Batch-2 (CODEX P1.5): satuan MI = KUNJUNGAN, bukan pilihan-dialog.
+        // Dulu miTotal/miTepat berakumulasi per-PILIHAN (4/kunjungan) sementara
+        // floor pembagi skor (EKSPEKTASI_KUNJUNGAN, scoring.ts) berdenominasi
+        // KUNJUNGAN → satu kunjungan sempurna = 4/8 = 50% target Ujian, bukan
+        // 1/8 = 12.5%. Kini: miTotal += 1 per kunjungan, miTepat += kualitas
+        // kunjungan (0..1, pecahan sah — validasi save hanya menuntut finite≥0).
+        // Bebas konstanta ajaib & tak terikat bentuk konten (jumlah pilihan per
+        // skenario boleh berubah tanpa menggeser semantik skor).
+        t.miTotal += 1
+        t.miTepat += hasil.kualitasMi / 100
 
         // Bridge bertingkat (M1.1): nasib jadwal karma keluarga ini mengikuti
         // gradasi hasil — berhasil membatalkan, partial menunda jam pasir,
@@ -778,12 +799,27 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
       if (berikut !== undefined && s.hari < berikut) {
         return err(s, `Sesi Prolanis bulan ini sudah dilakukan — sesi berikutnya hari ke-${berikut}.`)
       }
+      // M10 Batch-2 (CODEX B.1 + §48#4 Bu Marni): Prolanis = program BPJS —
+      // kartu sesi HANYA utk peserta yang JKN keluarganya AKTIF saat ini
+      // (runtime, bukan snapshot statis D30). Keluarga berkartu-mati (drift
+      // atau bawaan cerita, kelas Bu Marni) tersaring keluar; begitu arc/
+      // kunjungan memperbaiki JKN-nya (statusSebenarnya → 'ya'), ia otomatis
+      // ikut sesi berikutnya — nol migrasi, param drift tetap tersimpan di
+      // roster. Hanya 'tidak' eksplisit yang menyaring (konservatif).
+      const jknAktif = (p: (typeof s.prolanis.roster)[number]): boolean => {
+        if (!p.keluargaId) return true
+        const kel = s.desa.keluarga[p.keluargaId]
+        return kel?.indikator.jkn?.statusSebenarnya !== 'tidak'
+      }
+      const pesertaAktif = s.prolanis.roster.filter(jknAktif)
+      if (pesertaAktif.length === 0)
+        return err(s, 'Tidak ada peserta ber-JKN aktif bulan ini — bantu keluarga mengurus kepesertaan dulu.')
       return {
         state: {
           ...s,
           stamina: s.stamina - BIAYA_STAMINA_KEGIATAN,
           layar: 'kegiatan',
-          kegiatan: buatKegiatan('prolanis', kartuProlanis(s.prolanis.roster)),
+          kegiatan: buatKegiatan('prolanis', kartuProlanis(pesertaAktif)),
         },
         events: [],
       }
@@ -1082,7 +1118,11 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
     const jadwalBaru = [...next.jadwal]
     const roster = s.prolanis.roster.map((p) => {
       const jwb = hasil.jawaban.find((j) => j.kartuId === `prol_${p.id}`)
-      const pBaru = driftProlanis(p, jwb?.benar ?? false, rng)
+      // M10 Batch-2 (CODEX B.1): peserta TANPA kartu sesi ini (tersaring JKN
+      // nonaktif di MULAI_PROLANIS) tak boleh di-drift — dulu jwb undefined
+      // dianggap "salah" → param memburuk padahal ia tak pernah diberi kartu.
+      if (!jwb) return p
+      const pBaru = driftProlanis(p, jwb.benar, rng)
       // 2x tak terkontrol berturut → komplikasi bernama muncul di poli (bridge).
       if (pBaru.takTerkontrolBerturut >= 2) {
         const kasusId = pBaru.jenis === 'ht' ? 'stroke_iskemik' : 'dm_tipe2'
@@ -1538,7 +1578,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         judul: `Laporan keuangan bulanan — saldo Rp ${kapitasi.toLocaleString('id-ID')}`,
         isi:
           `Rekap bulan lalu — Pemasukan kapitasi: Rp ${masukan.toLocaleString('id-ID')} (KBK ×${pengali}). ` +
-          `Belanja obat pasien JKN: Rp ${keuanganBulan.belanjaObat.toLocaleString('id-ID')}. ` +
+          `Belanja obat darurat (stok kosong): Rp ${keuanganBulan.belanjaObat.toLocaleString('id-ID')}. ` +
           `Pengadaan gudang: Rp ${keuanganBulan.belanjaPengadaan.toLocaleString('id-ID')}. ` +
           `Operasional (listrik, ATK, BBM): Rp ${OPERASIONAL_BULANAN.toLocaleString('id-ID')}. ` +
           `Saldo kas: Rp ${kapitasi.toLocaleString('id-ID')}. ${kapitasi < AMBANG_TEGURAN_KAS ? 'PERHATIAN: saldo di bawah ambang sehat — laporan ini diteruskan ke Dinkes.' : 'Kas sehat.'}`,

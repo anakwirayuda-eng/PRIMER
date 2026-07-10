@@ -427,7 +427,9 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         id: 'q_riwayat',
         kategori: 'rpd',
         tanya: 'Pernah kena tifus sebelumnya?',
-        jawab: 'Waktu SMA pernah sekali dok.',
+        // M10 Batch-2 (CODEX C.6): "waktu SMA" janggal utk pasien anak yang
+        // di-roll di ujung bawah demografi — dinetralkan ke rentang waktu.
+        jawab: 'Beberapa tahun lalu pernah sekali dok.',
       },
       {
         id: 'q_jajan',

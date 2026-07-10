@@ -58,7 +58,10 @@ export function Hud() {
               state.layar === 'kunjungan' ||
               Boolean(state.igd) ||
               Boolean(state.kegiatan) ||
-              Boolean(state.klinik.aktif && t.layar !== 'klinik')
+              Boolean(state.klinik.aktif && t.layar !== 'klinik') ||
+              // M10 Batch-2 (CODEX A.6): tab terkunci (Peta pra-hari-buka)
+              // dulu hanya BERGAYA terkunci tapi tetap bisa diklik.
+              Boolean(t.terkunci)
             }
             title={t.terkunci ? 'Terbuka besok' : undefined}
           >

@@ -383,14 +383,22 @@ export function nilaiEncounter(
   const jenisDiagnosis: JenisDiagnosis = enc.diagnosis?.jenis ?? 'suspek'
 
   /* -- Anamnesis: cakupan esensial + kedalaman OLDCARTS − penalti distraktor --- */
-  const petaTanya = new Map(kasus.anamnesis.map((q) => [q.id, q]))
+  // M10 Batch-2 (CODEX C.6): pertanyaan ber-`hanyaUntuk` yang tak cocok gender
+  // pasien TIDAK berlaku utk encounter ini — keluar dari denominator esensial
+  // & dimensi-tersedia (pasien apendisitis laki-laki tak wajib — dan tak
+  // bisa — ditanya haid terakhir), dan bila toh tertanya (jejak lama/headless)
+  // tak diberi kredit apa pun.
+  const berlaku = (q: PertanyaanAnamnesis): boolean =>
+    q.hanyaUntuk === undefined || q.hanyaUntuk === enc.pasien.jenisKelamin
+  const anamnesisBerlaku = kasus.anamnesis.filter(berlaku)
+  const petaTanya = new Map(anamnesisBerlaku.map((q) => [q.id, q]))
   const ditanyaQ: PertanyaanAnamnesis[] = []
   for (const id of enc.ditanya) {
     const q = petaTanya.get(id)
     if (q) ditanyaQ.push(q)
   }
 
-  const totalEsensial = kasus.anamnesis.filter((q) => q.esensial === true).length
+  const totalEsensial = anamnesisBerlaku.filter((q) => q.esensial === true).length
   const esensialDitanya = ditanyaQ.filter((q) => q.esensial === true).length
   const rasioEsensial = totalEsensial > 0 ? esensialDitanya / totalEsensial : 1
 
@@ -400,7 +408,7 @@ export function nilaiEncounter(
   // Denominator kedalaman = dimensi yang BENAR-BENAR tersedia di kasus ini —
   // pemain teliti harus bisa mencapai 100, bukan mentok 87 karena konten.
   const dimensiTersedia = new Set<string>()
-  for (const q of kasus.anamnesis) for (const d of q.oldcarts ?? []) dimensiTersedia.add(d)
+  for (const q of anamnesisBerlaku) for (const d of q.oldcarts ?? []) dimensiTersedia.add(d)
   const denominatorOldcarts = Math.max(1, Math.min(dimensiTersedia.size, TOTAL_DIMENSI_OLDCARTS))
 
   // DeepThink #2: klik distraktor SETELAH sabar habis (dicatat ke ditanyaKetus,

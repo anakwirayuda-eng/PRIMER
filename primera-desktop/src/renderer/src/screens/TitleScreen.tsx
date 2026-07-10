@@ -147,10 +147,12 @@ export function TitleScreen() {
         <p className="title__kicker mono">KEMENTERIAN KESEHATAN · SIMULASI STASE IKM</p>
         <h1 className="title__judul">PRIMERA</h1>
         <p className="title__sub mono">— PUSKESMAS PAGI —</p>
+        {/* M10 Batch-2 (CODEX A.6): tagline mengikuti mode terpilih — dulu
+            hardcoded "Sembilan puluh hari" walau Ujian·30 hari dipilih. */}
         <p className="title__tagline">
-          Sembilan puluh hari menjadi dokter penanggung jawab Desa Sukamaju.
-          Poli di pagi hari, keluarga binaan di siang hari, dan surat-surat yang
-          tidak pernah habis.
+          {mode === 'ujian' ? 'Tiga puluh hari' : 'Sembilan puluh hari'} menjadi
+          dokter penanggung jawab Desa Sukamaju. Poli di pagi hari, keluarga
+          binaan di siang hari, dan surat-surat yang tidak pernah habis.
         </p>
 
         {sedangMemuat ? (

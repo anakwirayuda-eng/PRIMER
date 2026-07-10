@@ -34,6 +34,14 @@ export interface MetaLifetime {
   badges: string[]
   /** kasusId → bintang tertinggi yang pernah dicapai lintas playthrough. */
   dexKuasai: Record<string, number>
+  /**
+   * M10 Batch-2 (CODEX P1.1): sidik stase (`seed:seedKurikulum`) yang SUDAH
+   * direkam tamat — playthroughs tak boleh dobel bila TAMAT terpicu ulang
+   * (mis. arsip pra-tamat lama diimpor lalu dimainkan sampai tamat lagi).
+   * Badges/dexKuasai memang idempoten (Set/max), hanya counter yang rawan.
+   * Opsional: meta lama tanpa field ini tetap sah (dianggap kosong).
+   */
+  staseTamat?: string[]
 }
 
 interface GameStore {
@@ -65,16 +73,30 @@ interface GameStore {
   imporArsip: (json: string) => boolean
 }
 
-/** Momen ireversibel — progres mahasiswa suci, dan reload bukan tombol undo. */
-const EVENT_AUTOSAVE = new Set(['HARI_BARU', 'ENCOUNTER_SELESAI', 'KUNJUNGAN_SELESAI', 'BLOK_BERGANTI'])
+/**
+ * Momen ireversibel — progres mahasiswa suci, dan reload bukan tombol undo.
+ * M10 Batch-2 (CODEX P1.1, dossier §53): KEGIATAN_SELESAI / KODE_HITAM /
+ * PEMULIHAN_SELESAI / TAMAT dulu TAK terdaftar — quit setelah outcome bisa
+ * MEMBATALKAN kematian pasien IGD, hasil kegiatan UKM, bahkan stase tamat
+ * (vektor curang nyata di mode Ujian ternilai; asimetri telanjang: saudaranya
+ * KUNJUNGAN_SELESAI & ENCOUNTER_SELESAI sudah lama terdaftar).
+ * (Di-export utk test pin-konfigurasi.)
+ */
+export const EVENT_AUTOSAVE = new Set([
+  'HARI_BARU', 'ENCOUNTER_SELESAI', 'KUNJUNGAN_SELESAI', 'BLOK_BERGANTI',
+  'KEGIATAN_SELESAI', 'KODE_HITAM', 'PEMULIHAN_SELESAI', 'TAMAT',
+])
 /**
  * CODEX audit 2026-07-04 (temuan #4): aksi manajemen ini mengubah state nyata
  * (uang, roster binaan, program UKM, refleksi) tapi biasanya `events: []` —
  * jarang cukup sering utk perlu autosave per-aksi (spt TANYA/PERIKSA klinik),
  * tapi cukup jarang & bermakna sampai hilangnya terasa seperti "undo by quit"
  * kalau app ditutup sebelum event autosave besar berikutnya. Simpan langsung.
+ * M10 Batch-2 (P1.1): + DISPOSISI_IGD — outcome IGD (stabil/salah-disposisi)
+ * ireversibel; dipin di level AKSI krn event STEMPEL-nya dipakai bersama
+ * diagnosis klinik biasa (ambigu di level event).
  */
-const AKSI_AUTOSAVE = new Set(['PESAN_OBAT', 'TETAPKAN_PROGRAM', 'PILIH_BINAAN', 'LEPAS_BINAAN', 'TULIS_REFLEKSI'])
+export const AKSI_AUTOSAVE = new Set(['PESAN_OBAT', 'TETAPKAN_PROGRAM', 'PILIH_BINAAN', 'LEPAS_BINAAN', 'TULIS_REFLEKSI', 'DISPOSISI_IGD'])
 
 export const useGame = create<GameStore>((set, get) => ({
   state: null,
@@ -235,10 +257,16 @@ async function rekamMeta(
     for (const [id, d] of Object.entries(state.dex)) {
       dexKuasai[id] = Math.max(dexKuasai[id] ?? 0, d.bintang)
     }
+    // M10 Batch-2 (P1.1): idempotensi counter — stase yang SAMA (seed identik)
+    // tamat dua kali (arsip lama diimpor & dimainkan ulang) tak menambah
+    // playthroughs lagi; badge/dex tetap di-merge (idempoten by-design).
+    const sidikStase = `${state.seed}:${state.seedKurikulum}`
+    const sudahDirekam = (lama.staseTamat ?? []).includes(sidikStase)
     const meta: MetaLifetime = {
-      playthroughs: lama.playthroughs + 1,
+      playthroughs: sudahDirekam ? lama.playthroughs : lama.playthroughs + 1,
       badges: [...new Set([...lama.badges, ...badgesBaru])],
       dexKuasai,
+      staseTamat: sudahDirekam ? (lama.staseTamat ?? []) : [...(lama.staseTamat ?? []), sidikStase],
     }
     await window.primer.save.write(SLOT_META, JSON.stringify(meta))
     set({ meta })

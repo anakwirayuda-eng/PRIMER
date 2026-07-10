@@ -28,14 +28,34 @@ async function ensureSaveDir(): Promise<string> {
   return dir
 }
 
+// M10 Batch-2 (CODEX P1.2, dossier §53): renderer memanggil save:write
+// fire-and-forget — dua autosave beruntun (mis. ENCOUNTER_SELESAI lalu
+// BLOK_BERGANTI) dulu berlomba pada SATU `${file}.tmp`: writeFile saling
+// klobber + rename kedua bisa ENOENT + snapshot LAMA bisa menang (tulis
+// pertama rename TERAKHIR). Fix dua lapis: (a) antrean promise PER-SLOT —
+// tulisan slot yang sama dieksekusi berurutan (ordering terjamin, tulisan
+// terakhir = pemenang); (b) nama tmp unik ber-counter — kalaupun ada jalur
+// konkuren lain di masa depan, tmp tak pernah dishare.
+const antreanTulis = new Map<string, Promise<void>>()
+let tmpCounter = 0
+
 function registerIpc(): void {
   ipcMain.handle('save:write', async (_e, slot: string, json: string) => {
-    const dir = await ensureSaveDir()
-    const file = join(dir, `${sanitizeSlot(slot)}.json`)
-    const tmp = `${file}.tmp`
-    // Tulis atomik: tmp dulu, lalu rename — save korup = progres mahasiswa hilang.
-    await fs.writeFile(tmp, json, 'utf-8')
-    await fs.rename(tmp, file)
+    const kunci = sanitizeSlot(slot)
+    const kerja = async (): Promise<void> => {
+      const dir = await ensureSaveDir()
+      const file = join(dir, `${kunci}.json`)
+      const tmp = `${file}.${++tmpCounter}.tmp`
+      // Tulis atomik: tmp dulu, lalu rename — save korup = progres mahasiswa hilang.
+      await fs.writeFile(tmp, json, 'utf-8')
+      await fs.rename(tmp, file)
+    }
+    // Rantai di belakang tulisan slot yang sama; error tulisan sebelumnya
+    // TIDAK boleh memblokir antrean (catch → lanjut).
+    const sebelumnya = antreanTulis.get(kunci) ?? Promise.resolve()
+    const giliran = sebelumnya.catch(() => {}).then(kerja)
+    antreanTulis.set(kunci, giliran)
+    await giliran
     return true
   })
 

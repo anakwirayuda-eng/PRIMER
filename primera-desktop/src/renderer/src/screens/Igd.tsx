@@ -177,7 +177,8 @@ function ResponsTerakhir({
   const pilihan = langkah?.pilihan.find((p) => p.id === terakhir.pilihanId)
   if (!pilihan) return null
   return (
-    <div className={`igd__respons ${pilihan.benar ? 'igd__respons--benar' : 'igd__respons--salah'}`}>
+    // M10 Batch-2 (CODEX A.1): live region — respons langkah IGD diumumkan SR.
+    <div className={`igd__respons ${pilihan.benar ? 'igd__respons--benar' : 'igd__respons--salah'}`} role="status" aria-live="polite">
       <span className="stempel stempel--kecil">{pilihan.benar ? 'TEPAT' : 'KELIRU'}</span>
       <p>{pilihan.respons}</p>
     </div>

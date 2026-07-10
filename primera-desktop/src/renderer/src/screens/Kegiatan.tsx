@@ -107,7 +107,8 @@ export function Kegiatan() {
           </div>
 
           {pilihanObj && (
-            <div className={`kegiatan__respons ${pilihanObj.benar ? 'kegiatan__respons--benar' : 'kegiatan__respons--salah'}`}>
+            /* M10 Batch-2 (CODEX A.1): live region — respons kartu diumumkan SR. */
+            <div className={`kegiatan__respons ${pilihanObj.benar ? 'kegiatan__respons--benar' : 'kegiatan__respons--salah'}`} role="status" aria-live="polite">
               <span className="stempel stempel--kecil">{pilihanObj.benar ? 'TEPAT' : 'KELIRU'}</span>
               <p>{pilihanObj.respons}</p>
               <button

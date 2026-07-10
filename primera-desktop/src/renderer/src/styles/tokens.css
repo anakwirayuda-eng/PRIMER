@@ -34,7 +34,10 @@
   /* -- Tinta & teks -------------------------------------------------------- */
   --tinta: #26312c; /* teks utama di kertas — tinta pulpen hitam-kehijauan */
   --tinta-lembut: #5b6a62; /* teks sekunder */
-  --tinta-pudar: #6e7a70; /* placeholder, disabled — tetap ≥4:1 krn dipakai juga utk hint/legenda */
+  /* M10 Batch-2 (CODEX A.3): #6e7a70 terukur 3.3-4.34:1 pd permukaan kertas —
+     GAGAL AA (4.5:1) padahal dipakai sbg teks nyata 0.72rem (hint/legenda).
+     Digelapkan ke #5e6b62 (≈5.1:1 di kertas-050), tetap sekeluarga hue tinta. */
+  --tinta-pudar: #5e6b62;
   --tinta-merah: #b3382c; /* stempel merah — bahaya, alergi, gawat */
   --tinta-biru: #2b5a8a; /* pulpen biru — catatan, link, info */
 
@@ -118,7 +121,9 @@
   --bg-sunken: #0a100d;
   --tinta: #e6ede8;
   --tinta-lembut: #9fb0a6;
-  --tinta-pudar: #7d8f84;
+  /* M10 Batch-2 (CODEX A.3): #7d8f84 terukur 4.11:1 di kartu malam (<4.5) —
+     diterangkan ke #93a79b (≈5.4:1 di malam-700). */
+  --tinta-pudar: #93a79b;
   --border-halus: rgba(230, 237, 232, 0.1);
   --border-tegas: rgba(230, 237, 232, 0.24);
   --border-tinta: rgba(230, 237, 232, 0.45);

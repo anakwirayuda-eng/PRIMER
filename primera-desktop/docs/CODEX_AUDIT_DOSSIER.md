@@ -3260,3 +3260,58 @@ B.5/B.6 = save-validation, A.2/A.5 = UI — semua non-scoring-formula).
 
 **Batch 2 (butuh-keputusan-desain) & Batch 3 (butuh-penilaian-medis) tetap OPEN** menunggu
 keputusan user per-item (lihat §51).
+
+## 53. CODEX Batch-2 (keputusan desain) DIPERBAIKI — 13 item, keputusan didelegasikan (2026-07-10)
+
+User: "silakan kamu putuskan yang paling optimal, paling user-oriented di masa depan, paling
+sustainable-resilien utk jangka panjang. Mono agentic." Semua 13 item Batch-2 selesai solo,
+test-first. **502 test** (dari 484, +18), typecheck bersih. **REVISI_ENGINE 16→17** (5
+perubahan semantik replay, terdokumentasi di verifikasi.ts). Keputusan per-item:
+
+- **P1.1 autosave outcome**: EVENT_AUTOSAVE += KEGIATAN_SELESAI/KODE_HITAM/PEMULIHAN_SELESAI/
+  TAMAT; AKSI_AUTOSAVE += DISPOSISI_IGD (level-aksi, event STEMPEL ambigu dgn diagnosis
+  klinik). rekamMeta idempoten via staseTamat[] (sidik seed:seedKurikulum) — playthroughs tak
+  dobel. Kedua set di-export + test pin-konfigurasi. Menutup vektor curang quit-undo di Ujian.
+- **P1.2 race autosave**: antrean promise PER-SLOT di main process + nama tmp unik ber-counter.
+  Ordering terjamin (tulisan terakhir menang), kontrak fire-and-forget renderer tak berubah.
+- **P1.4 order-dependence**: kandidat Director di-SORT by id — determinisme thd ISI pack, bukan
+  bentuk penulisannya. (Ambang test prevalensi m3sisrute dilonggarkan 2x -> 1.8x: realisasi
+  draw bergeser; invarian "jauh lebih sering" tetap, empiris 355 vs 187 = 1.9x.)
+- **P1.5 satuan MI**: tally per-KUNJUNGAN (miTotal+=1; miTepat+=kualitas 0..1, pecahan sah) —
+  konsisten dgn floor EKSPEKTASI_KUNJUNGAN, nol konstanta ajaib, kebal perubahan bentuk konten.
+  1 kunjungan sempurna kini 12.5% target Ujian (dulu 50%).
+- **C.6 fakta-vs-demografi**: mekanik BARU hanyaUntuk 'L'/'P' pd PertanyaanAnamnesis — UI
+  menyembunyikan & skor mengecualikan dari denominator bila gender pasien tak cocok. Konten:
+  apendisitis q_haid -> P; DM "keputihan" -> dinetralkan "gatal selangkangan/lipatan" (tanda
+  klasik DM lintas gender — poin ajar dipertahankan utk semua); tifoid "waktu SMA" ->
+  "beberapa tahun lalu". Mekanik vs teks dipilih per-kasus: apakah PERTANYAANNYA inheren
+  ber-gender atau cuma jawabannya.
+- **B.1 Prolanis-JKN runtime**: kartu sesi hanya utk peserta ber-JKN aktif saat MULAI_PROLANIS
+  (hanya 'tidak' eksplisit menyaring); tanpa-kartu TIDAK di-drift (dulu dianggap salah ->
+  memburuk); roster+param persisten. SEKALIGUS menutup §48#4 Bu Marni: tersaring saat kartu
+  mati, otomatis ikut lagi begitu arc perbaiki JKN — nol migrasi save.
+- **B.4 kas obat dobel**: kas keluar = saat PENGADAAN. Dispense BPJS dari stok = nol kas;
+  stok HABIS = beli darurat -hargaBeli (backstop anti-eksploit + realistis). Umum: +hargaJual
+  (stok habis: -hargaBeli juga). Label laporan -> "Belanja obat darurat (stok kosong)".
+- **B.7 verifier freeze**: cap 8 MB di pintu masuk (dossier sah ~ratusan KB, >10x headroom) ->
+  tidak_dapat_diverifikasi cepat. Test: <2 detik utk berkas 8.1 MB.
+- **C.9 konsekuensi tak terjangkau**: dislipidemia & obesitas 90-180 -> 45-80 hari (konvensi
+  kompresi-waktu game spt Prolanis bulanan; horizon nyata bertahun -> kandidat EBM-nuance M11).
+- **A.1 fokus/live-region**: DeckAnamnesis balon jawaban role=status aria-live + tabIndex -1
+  + menerima fokus pasca-klik (dulu fokus jatuh ke body); Kunjungan respons ber-aria-live +
+  fokus ke "Lanjut"; IGD & Kegiatan live-region (fokus tak hilang di sana: tombol persisten).
+- **A.3 kontras**: tinta-pudar siang #6e7a70 -> #5e6b62 (~5.1:1), malam #7d8f84 -> #93a79b
+  (~5.4:1). Pagar HIDUP: test menghitung rasio WCAG langsung dari hex tokens.css (>=4.5
+  kedua mode) — regresi token masa depan tertangkap otomatis.
+- **A.4 rumah terang di malam**: filter brightness(0.8) saturate(0.9) pd .kunjungan-rumah di
+  mode malam — ilustrasi = karya utuh (interior siang), meredupkan lembut > bedah token.
+- **A.6 polish**: tagline TitleScreen reaktif mode ("Tiga puluh hari..." saat Ujian —
+  diverifikasi live) + tab Peta terkunci kini benar-benar disabled.
+
+Test baru: m10batch2.test.ts (12), store.test.tsx (+2 pin autosave), modeMalam.test.ts (+2
+kontras WCAG komputasional). 2 test lama diperbarui utk semantik baru (selfplay MI-unit;
+m3sisrute ambang) — keduanya berkomentar alasan.
+
+**Sisa OPEN dari ronde CODEX: hanya Batch-3** (12 item butuh penilaian medis Dr. Wirayuda —
+primakuin/skrining hamil, target HT urgensi, gate tes-konfirmasi, alergi-vs-rmLengkap, edisi
+ICD, dll; lihat §51).

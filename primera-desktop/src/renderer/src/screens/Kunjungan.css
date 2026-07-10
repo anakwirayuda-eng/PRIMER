@@ -503,3 +503,12 @@
   box-shadow: 0 0 0 2px var(--daun-100), var(--shadow-kartu);
   background: var(--daun-50);
 }
+
+/* M10 Batch-2 (CODEX A.4): ilustrasi rumah memakai palet kertas terang yang
+   SENGAJA tak diremap mode malam (interior siang hari — kunjungan = blok
+   siang). Tapi sbg panel terang BESAR di tengah UI gelap ia menyilaukan.
+   Keputusan: redupkan lembut via filter (bukan bedah token per-warna spt
+   peta §45) — seni tetap koheren, murah, reversibel. */
+[data-mode='malam'] .kunjungan-rumah {
+  filter: brightness(0.8) saturate(0.9);
+}

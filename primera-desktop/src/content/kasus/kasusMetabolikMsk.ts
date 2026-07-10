@@ -269,8 +269,13 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     clue: 'Dislipidemia sering ASIMTOMATIK — jangan meremehkan hanya karena tak ada keluhan. Nilai risiko KV total (LDL tinggi + perokok + riwayat keluarga dini + TD tinggi). Terapi: perubahan gaya hidup WAJIB + statin (simvastatin malam hari). Cek SGOT/SGPT baseline. Simvastatin diminum malam (PPK PERKI / Kemenkes PTM).',
     konsekuensi: {
       narasi: 'Bila diabaikan karena "tidak ada keluhan", akumulasi plak aterosklerosis berjalan diam-diam menuju infark miokard atau stroke.',
-      kembaliHariMin: 90,
-      kembaliHariMax: 180,
+      // M10 Batch-2 (CODEX C.9): 90-180 hari TAK PERNAH terjangkau dlm stase
+      // 90 hari (karier) apalagi 30 (ujian) — konsekuensi jadi teks mati.
+      // Dikompresi ke 45-80 mengikuti konvensi kompresi-waktu game yang sama
+      // dgn Prolanis "bulanan" (realita: horizon dislipidemia bertahun —
+      // kandidat catatan EBM-nuance M11).
+      kembaliHariMin: 45,
+      kembaliHariMax: 80,
       kondisiKembali: 'Pasien kembali untuk kontrol dengan LDL tetap tinggi karena tidak minum obat dan gaya hidup tak berubah; TD makin tinggi.',
       guideline: 'Pedoman PTM Kemenkes / PERKI Dislipidemia — statin + modifikasi gaya hidup berbasis risiko KV.',
     },
@@ -380,8 +385,10 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     clue: 'Obesitas: LINI UTAMA adalah intervensi gaya hidup — defisit kalori bertahap + aktivitas fisik 150 menit/minggu, target turun 5–10% BB dalam 6 bulan. Skrining komorbid (GDP, lipid, TD) & singkirkan hipotiroid (TSH). Farmakoterapi/bedah bukan ranah rutin FKTP. HINDARI diuretik/pencahar sebagai "pelangsing" (Pedoman PTM Kemenkes / PERKENI).',
     konsekuensi: {
       narasi: 'Tanpa modifikasi gaya hidup, obesitas berlanjut ke diabetes tipe 2, hipertensi, dislipidemia, dan OSA — beban komorbid menumpuk.',
-      kembaliHariMin: 90,
-      kembaliHariMax: 180,
+      // M10 Batch-2 (CODEX C.9): dikompresi 90-180 → 45-80 (lihat catatan
+      // dislipidemia — konvensi kompresi-waktu game; realita bertahun).
+      kembaliHariMin: 45,
+      kembaliHariMax: 80,
       kondisiKembali: 'Pasien kembali dengan gula darah puasa yang sudah masuk kriteria diabetes dan tekanan darah menetap tinggi.',
       guideline: 'Pedoman PTM Kemenkes / PERKENI — manajemen berat badan berbasis gaya hidup.',
     },

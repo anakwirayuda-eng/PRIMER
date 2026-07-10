@@ -176,7 +176,13 @@ export function susunAntrianHarian(
   const jumlah = jumlahPasienHarian(state.hari, state.mode)
   // Kasus pasien-kembali/karma hari ini dikeluarkan dari kandidat —
   // janji "tanpa duplikat kasus dalam satu hari" berlaku untuk SELURUH antrian.
-  const semua = Object.values(pack.kasus).filter((k) => !kecuali.includes(k.id))
+  // M10 Batch-2 (CODEX P1.4): SORT by id — Object.values mengikuti urutan
+  // insersi key perakitan pack; refactor tak-berbahaya (menyusun ulang file
+  // kasus) dulu bisa mengubah hasil rng.weighted TANPA mengubah sidik jari
+  // (yang menyortir). Kandidat kini deterministik thd ISI pack, bukan bentuknya.
+  const semua = Object.values(pack.kasus)
+    .filter((k) => !kecuali.includes(k.id))
+    .sort((a, b) => a.id.localeCompare(b.id))
   if (semua.length === 0) return []
 
   const mingguPertama = state.hari <= 7

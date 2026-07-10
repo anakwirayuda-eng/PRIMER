@@ -51,3 +51,46 @@ describe('mode-malam: kanvas SELALU-TERANG tak boleh mewarisi remap gelap (dossi
     expect(luput, `token luput dikunci-ulang: ${luput.join(', ')}`).toEqual([])
   })
 })
+
+describe('M10 Batch-2 (CODEX A.3) — kontras AA --tinta-pudar dihitung dari tokens.css', () => {
+  // Hitung rasio kontras WCAG langsung dari hex di tokens.css — pagar hidup:
+  // siapa pun yang menggeser token gelap/terang akan langsung ketahuan bila
+  // jatuh di bawah 4.5:1 (teks kecil dipakai nyata utk hint/legenda).
+  function lum(hex: string): number {
+    const n = hex.replace('#', '')
+    const [r, g, b] = [0, 2, 4].map((i) => {
+      const c = parseInt(n.slice(i, i + 2), 16) / 255
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+    }) as [number, number, number]
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+  function rasio(a: string, b: string): number {
+    const [l1, l2] = [lum(a), lum(b)].sort((x, y) => y - x) as [number, number]
+    return (l1 + 0.05) / (l2 + 0.05)
+  }
+  function token(css: string, nama: string, dariIndex = 0): string {
+    // Parser polos (tanpa RegExp dinamis): cari tiap deklarasi `--nama:` lalu
+    // ambil hex 6 digit pertama setelahnya.
+    const kunci = `--${nama}:`
+    const semua: string[] = []
+    let i = css.indexOf(kunci)
+    while (i !== -1) {
+      const potong = css.slice(i + kunci.length, i + kunci.length + 24)
+      const m = potong.match(/#[0-9a-fA-F]{6}/)
+      if (m) semua.push(m[0])
+      i = css.indexOf(kunci, i + kunci.length)
+    }
+    if (semua.length <= dariIndex) throw new Error(`token --${nama}[${dariIndex}] tak ditemukan`)
+    return semua[dariIndex]!
+  }
+  const css = readFileSync(resolve(__dirname, './tokens.css'), 'utf8')
+
+  it('siang: tinta-pudar vs kertas-050 ≥ 4.5:1', () => {
+    expect(rasio(token(css, 'tinta-pudar', 0), token(css, 'kertas-050', 0))).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('malam: tinta-pudar vs malam-700 (bg-card) ≥ 4.5:1', () => {
+    // Deklarasi kedua tinta-pudar (blok [data-mode=malam]) vs malam-700.
+    expect(rasio(token(css, 'tinta-pudar', 1), token(css, 'malam-700', 0))).toBeGreaterThanOrEqual(4.5)
+  })
+})

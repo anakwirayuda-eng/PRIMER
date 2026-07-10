@@ -175,6 +175,20 @@ function fnv1a(teks: string): string {
  * meng-cap skorEdukasi ke 50 bila terlewat. Jejak lama pada ke-12 kasus itu
  * mereplay ke skorEdukasi/grade berbeda — dossier build lama harus jatuh ke
  * "tidak dapat diverifikasi", bukan divonis TIDAK SAH palsu;
+ * 17 = M10 Batch-2 (2026-07-10, CODEX ronde-verifikasi, dossier §53): LIMA
+ * perubahan semantik replay sekaligus — (a) kandidat antrian Director kini
+ * di-SORT by id (dulu urutan insersi key pack; refactor susunan file bisa
+ * mengubah hasil rng.weighted tanpa mengubah sidik jari); (b) satuan skor MI
+ * jadi per-KUNJUNGAN (miTotal+=1, miTepat+=kualitas 0..1 — dulu per-pilihan
+ * dialog sehingga floor EKSPEKTASI_KUNJUNGAN salah satuan, 1 kunjungan
+ * sempurna = 50% target Ujian padahal maksudnya 12.5%); (c) anamnesis
+ * ber-`hanyaUntuk` (gender-gate, mis. q_haid apendisitis) keluar dari
+ * denominator skor utk pasien yang tak cocok; (d) kartu sesi Prolanis hanya
+ * utk peserta ber-JKN aktif runtime + peserta tanpa kartu tak di-drift;
+ * (e) arus kas obat: dispense dari stok = nol kas (biaya sudah dibayar saat
+ * pengadaan; dulu BPJS dobel-charge), stok kosong = beli darurat −hargaBeli.
+ * Jejak lama mereplay ke antrian/skor berbeda → dossier lama jatuh ke
+ * "tidak dapat diverifikasi";
  * 16 = M10 §49 fix-round (2026-07-10): (a) mekanik BARU `obatOpsional` —
  * obat sah-tapi-tak-wajib TIDAK membuka slot terapi, tak dihitung obat-di-luar,
  * tak memicu antibiotik-tanpa-indikasi (clinic.ts; hordeolum kasus perdana:
@@ -186,7 +200,7 @@ function fnv1a(teks: string): string {
  * juga menggeser replay, tapi itu tercakup sidik jari pack (tx/lab/demografi
  * kini di-hash) — bump ini utk perubahan SEMANTIK ENGINE yg tak terlihat pack.
  */
-const REVISI_ENGINE = 16
+const REVISI_ENGINE = 17
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -403,6 +417,18 @@ export function replayJejak(dossier: Pick<DossierMahasiswa, 'identitas' | 'stase
 }
 
 export async function verifikasiDossier(json: string, pack: ContentPack, versiApp: string): Promise<HasilVerifikasi> {
+  /* 0 — cap ukuran (M10 Batch-2, CODEX B.7): canonicalization + replay bekerja
+     proporsional thd ukuran input; berkas raksasa/berbahaya dulu bisa
+     MEMBEKUKAN verifier di mesin dosen SEBELUM HMAC sempat menolaknya.
+     Dossier sah stase 90 hari ≈ ratusan KB — 8 MB sudah >10× headroom. */
+  const MAKS_UKURAN_DOSSIER = 8_000_000
+  if (json.length > MAKS_UKURAN_DOSSIER) {
+    return {
+      status: 'tidak_dapat_diverifikasi',
+      alasan: [`Berkas terlalu besar (${(json.length / 1_000_000).toFixed(1)} MB > ${MAKS_UKURAN_DOSSIER / 1_000_000} MB) — bukan dossier stase yang wajar.`],
+    }
+  }
+
   /* 1 — bentuk */
   let mentah: unknown
   try {

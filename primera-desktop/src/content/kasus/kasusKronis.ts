@@ -191,8 +191,12 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       {
         id: 'dm_luka',
         kategori: 'rps',
-        tanya: 'Ada luka yang sulit sembuh atau sering gatal di area kelamin?',
-        jawab: 'Belum ada luka, tapi memang sering gatal dan keputihan, Dok.',
+        // M10 Batch-2 (CODEX C.6): jawaban dinetralkan gender — "keputihan"
+        // janggal dari pasien DM laki-laki (demografi me-roll keduanya). Gatal
+        // lipatan/selangkangan (kandidiasis intertriginosa) = tanda klasik DM
+        // yang berlaku utk semua pasien.
+        tanya: 'Ada luka yang sulit sembuh atau sering gatal di area lipatan kulit?',
+        jawab: 'Belum ada luka, tapi memang sering gatal di selangkangan dan lipatan kulit, Dok.',
         oldcarts: ['penyerta'],
       },
       {

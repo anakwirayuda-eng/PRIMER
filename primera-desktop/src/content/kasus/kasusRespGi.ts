@@ -1106,9 +1106,13 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       {
         id: 'q_haid',
         kategori: 'rps',
-        tanya: 'Untuk perempuan: haid terakhir kapan dan teratur? (menyingkirkan penyebab kandungan)',
+        // M10 Batch-2 (CODEX C.6): hanyaUntuk 'P' — dulu pasien apendisitis
+        // LAKI-LAKI pun ditanya haid (& menjawabnya). Kini pertanyaan hanya
+        // muncul & dihitung skor utk pasien perempuan.
+        tanya: 'Haid terakhir kapan dan teratur? (menyingkirkan penyebab kandungan)',
         jawab: 'Haid teratur dok, terakhir dua minggu lalu, tidak ada keputihan atau perdarahan tak biasa.',
         oldcarts: ['penyerta'],
+        hanyaUntuk: 'P',
       },
       {
         id: 'q_riwayat',

@@ -54,6 +54,14 @@ export interface PertanyaanAnamnesis {
   distraktor?: boolean
   /** Petunjuk dimensi OLDCARTS yang dicakup (untuk skoring kedalaman). */
   oldcarts?: ('onset' | 'lokasi' | 'durasi' | 'karakter' | 'agravasi' | 'radiasi' | 'waktu' | 'keparahan' | 'penyerta')[]
+  /**
+   * M10 Batch-2 (CODEX C.6): pertanyaan spesifik-gender (mis. riwayat haid utk
+   * menyingkirkan kehamilan) — hanya dirender & dihitung dlm skor anamnesis
+   * bila jenis kelamin pasien yang di-roll cocok. Tanpa ini, pasien apendisitis
+   * LAKI-LAKI ditanya haid terakhir & jawabannya tampil janggal. Kosong =
+   * berlaku utk semua pasien (perilaku lama).
+   */
+  hanyaUntuk?: 'L' | 'P'
 }
 
 export type RegionFisik =

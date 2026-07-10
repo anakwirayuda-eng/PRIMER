@@ -53,3 +53,17 @@ describe('simpanKeSlot — melapor sukses/gagal (CODEX ronde-13)', () => {
     expect(ok).toBe(false)
   })
 })
+
+describe('M10 Batch-2 (CODEX P1.1) — konfigurasi autosave mencakup outcome ireversibel', () => {
+  it('EVENT_AUTOSAVE memuat KEGIATAN_SELESAI/KODE_HITAM/PEMULIHAN_SELESAI/TAMAT', async () => {
+    const { EVENT_AUTOSAVE } = await import('./store')
+    for (const ev of ['HARI_BARU', 'ENCOUNTER_SELESAI', 'KUNJUNGAN_SELESAI', 'BLOK_BERGANTI', 'KEGIATAN_SELESAI', 'KODE_HITAM', 'PEMULIHAN_SELESAI', 'TAMAT']) {
+      expect(EVENT_AUTOSAVE.has(ev), ev).toBe(true)
+    }
+  })
+
+  it('AKSI_AUTOSAVE memuat DISPOSISI_IGD (outcome IGD dipin di level aksi)', async () => {
+    const { AKSI_AUTOSAVE } = await import('./store')
+    expect(AKSI_AUTOSAVE.has('DISPOSISI_IGD')).toBe(true)
+  })
+})
