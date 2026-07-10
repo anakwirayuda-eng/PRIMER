@@ -7,7 +7,7 @@
  *             meng-auto-buka laci; status laci diingat selama sesi).
  */
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type KeyboardEvent } from 'react'
 import { PACK } from '@content/index'
 import { useGame } from '../../store'
 import type { KategoriEdukasi, TopikEdukasi } from '@content/types'
@@ -38,6 +38,19 @@ const laciSesi = new Set<KategoriEdukasi>()
 
 export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif = false }: Props) {
   const [tab, setTab] = useState<'resep' | 'edukasi' | 'tindakan'>('resep')
+  // M10 §49 (CODEX A.5): lengkapi pola WAI-ARIA Tabs — dulu role=tab+aria-selected
+  // ada tapi nol tabpanel/aria-controls/roving-tabindex/navigasi-panah. Panah
+  // kiri/kanan memindah tab (aktivasi otomatis); tiap tab mengontrol panelnya.
+  const TABS = ['resep', 'edukasi', 'tindakan'] as const
+  const onTabKey = (e: KeyboardEvent): void => {
+    const arah = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+    if (arah === 0 || tutorialAktif) return
+    e.preventDefault()
+    const i = TABS.indexOf(tab)
+    const next = TABS[(i + arah + TABS.length) % TABS.length]!
+    setTab(next)
+    document.getElementById(`terapi-tab-${next}`)?.focus()
+  }
   // Sorotan: obat pertama sampai masuk resep, lalu tombol lanjut. Edukasi/
   // Tindakan sengaja TAK disorot & terkunci (kasus tutorial cukup 1 obat).
   const sorotObat = tutorialAktif && !enc.resep.includes(OBAT_PERTAMA_TUTORIAL)
@@ -118,7 +131,11 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
         <div className="klinik-deck__tab" role="tablist" aria-label="Terapi">
           <button
             role="tab"
+            id="terapi-tab-resep"
             aria-selected={tab === 'resep'}
+            aria-controls="terapi-panel-resep"
+            tabIndex={tab === 'resep' ? 0 : -1}
+            onKeyDown={onTabKey}
             className={`klinik-deck__tab-tombol${tab === 'resep' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
             onClick={() => setTab('resep')}
             // M9.1: dulu tak dikunci sama sekali — tab ini memang sudah aktif
@@ -131,7 +148,11 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
           </button>
           <button
             role="tab"
+            id="terapi-tab-edukasi"
             aria-selected={tab === 'edukasi'}
+            aria-controls="terapi-panel-edukasi"
+            tabIndex={tab === 'edukasi' ? 0 : -1}
+            onKeyDown={onTabKey}
             className={`klinik-deck__tab-tombol${tab === 'edukasi' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
             onClick={() => setTab('edukasi')}
             disabled={tutorialAktif}
@@ -146,7 +167,11 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
           </button>
           <button
             role="tab"
+            id="terapi-tab-tindakan"
             aria-selected={tab === 'tindakan'}
+            aria-controls="terapi-panel-tindakan"
+            tabIndex={tab === 'tindakan' ? 0 : -1}
+            onKeyDown={onTabKey}
             className={`klinik-deck__tab-tombol${tab === 'tindakan' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
             onClick={() => setTab('tindakan')}
             disabled={tutorialAktif}
@@ -157,7 +182,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
         </div>
 
         {tab === 'resep' && (
-          <div className="klinik-deck__grup">
+          <div className="klinik-deck__grup" role="tabpanel" id="terapi-panel-resep" aria-labelledby="terapi-tab-resep">
             <div className="judul-seksi">Formularium Puskesmas</div>
             <input
               className="klinik-cari"
@@ -222,7 +247,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
         )}
 
         {tab === 'edukasi' && (
-          <div className="klinik-deck__grup">
+          <div className="klinik-deck__grup" role="tabpanel" id="terapi-panel-edukasi" aria-labelledby="terapi-tab-edukasi">
             {/* Baki prioritas — secarik memo dengan 3 baris (O4). */}
             <div className="klinik-eduk__baki" aria-label="Resep edukasi terpilih">
               <div className="judul-seksi">Resep Edukasi &mdash; maksimal {KAPASITAS_EDUKASI}</div>
@@ -334,7 +359,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
         )}
 
         {tab === 'tindakan' && (
-          <div className="klinik-deck__grup">
+          <div className="klinik-deck__grup" role="tabpanel" id="terapi-panel-tindakan" aria-labelledby="terapi-tab-tindakan">
             <div className="judul-seksi">Prosedur / Tindakan Klinis</div>
             <p className="teks-xs teks-lembut">
               Sebagian kasus dituntaskan dengan TINDAKAN, bukan (hanya) obat &mdash; mis. nebulisasi

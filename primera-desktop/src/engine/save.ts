@@ -67,6 +67,18 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (Object.values(st['dex'] as Record<string, unknown>).some((e) => !objek(e))) return null
   if (!Array.isArray(st['inbox'])) return null
   if (!Array.isArray(st['jadwal'])) return null
+  // M10 §49 (CODEX B.5): array-check di atas cuma menjamin WRAPPER-nya array —
+  // entri `jadwal:[null]` (atau non-objek, atau `hari` non-numerik) lolos lalu
+  // day-advance (`for (const j of s.jadwal)` → `j.hari > hari`) THROW keras.
+  // Pola sama dex/keluarga korup: entri jadwal menyetir pasien-kembali/hasil-
+  // lab/karma (scoring-adjacent) — tolak seluruh save bila ada entri cacat,
+  // bukan backfill parsial (menyembunyikan tampering/korupsi).
+  if (
+    (st['jadwal'] as unknown[]).some(
+      (j) => !objek(j) || typeof (j as Record<string, unknown>)['hari'] !== 'number' || !Number.isFinite((j as Record<string, unknown>)['hari']),
+    )
+  )
+    return null
   if (!Array.isArray(st['log'])) return null
   // desa.keluarga (CODEX ronde-11 #3): objek-check di atas cuma menjamin `desa`
   // sendiri objek — `desa.keluarga = null` lolos lalu THROW ("Cannot convert
@@ -341,6 +353,35 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
           dibaca: false,
         })
       }
+    }
+  }
+
+  // Pemulihan kunjungan tak dikenal (M10 §49, CODEX B.6): pola SAMA igd/klinik
+  // di atas — bila keluarga ATAU skenario kunjungan aktif sudah tak ada di pack
+  // (rename/hapus konten antar-versi), LANJUTKAN menolak selamanya ("Selesaikan
+  // kunjungan dulu", reducer.ts) sementara layar Kunjungan hanya bisa PINDAH_LAYAR
+  // (tak mengosongkan st.kunjungan) → soft-lock hari tak bisa maju. Buang
+  // kunjungan aktif + betulkan layar bila masih 'kunjungan' + surat kompensasi.
+  if (pack && objek(st['kunjungan'])) {
+    const kj = st['kunjungan'] as Record<string, unknown>
+    const keluargaId = kj['keluargaId']
+    const skenarioId = kj['skenarioId']
+    const kel = typeof keluargaId === 'string' ? pack.keluarga[keluargaId] : undefined
+    const skenarioAda = kel && typeof skenarioId === 'string' && kel.arc.kunjungan.some((s) => s.id === skenarioId)
+    if (!skenarioAda) {
+      st['kunjungan'] = undefined
+      if (st['layar'] === 'kunjungan') st['layar'] = 'peta'
+      const hari = st['hari'] as number
+      const inbox = st['inbox'] as Record<string, unknown>[]
+      inbox.push({
+        id: `surat_pemulihan_kunjungan_${hari}_${inbox.length}`,
+        hari,
+        jenis: 'sistem',
+        dari: 'Sistem',
+        judul: 'Kunjungan rumah dipulihkan otomatis',
+        isi: 'Keluarga atau skenario kunjungan yang sedang berjalan tidak lagi tersedia di versi konten ini. Kunjungan dianggap selesai — kamu bisa melanjutkan hari seperti biasa.',
+        dibaca: false,
+      })
     }
   }
 

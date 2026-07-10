@@ -112,7 +112,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     pemeriksaanFisik: [
       { region: 'ekstremitas', temuan: 'Sendi MTP-1 kanan: edema, eritema mengkilap, teraba hangat, sangat nyeri tekan (podagra). ROM terbatas karena nyeri.', relevan: true },
       { region: 'umum', temuan: 'Compos mentis, tampak kesakitan saat kaki bergerak. Habitus overweight.', relevan: true },
-      { region: 'kulit', temuan: 'Tidak tampak tofus di aurikula/olekranon pada serangan pertama ini; kulit di atas sendi tegang.', relevan: true },
+      { region: 'kulit', temuan: 'Tidak tampak tofus di aurikula/olekranon saat ini; kulit di atas sendi tegang.', relevan: true },
       { region: 'jantung', temuan: 'S1/S2 reguler, murmur (-).', relevan: false },
       { region: 'abdomen', temuan: 'Datar, supel, nyeri tekan epigastrium (-).', relevan: false },
     ],

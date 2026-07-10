@@ -3,7 +3,7 @@
  * Membaca lastEvents dari store; tidak menyimpan state game apa pun.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
 import type { GameEvent } from '@engine/events'
 import './Toaster.css'
@@ -50,6 +50,11 @@ export function Toaster() {
   const lastEvents = useGame((s) => s.lastEvents)
   const eventTick = useGame((s) => s.eventTick)
   const [toasts, setToasts] = useState<Toast[]>([])
+  // M10 §49 (CODEX A.2): dulu SATU timer per-effect di-clearTimeout saat effect
+  // re-run (event berikutnya) — jadi penghapusan batch SEBELUMNYA dibatalkan &
+  // toast lama menetap SELAMANYA. Kini tiap batch punya timer sendiri yang
+  // hidup sampai tuntas; ref hanya utk membersihkan sisa timer saat unmount.
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
 
   useEffect(() => {
     const baru = lastEvents.map(eventKeToast).filter((t): t is Toast => t !== null)
@@ -57,9 +62,15 @@ export function Toaster() {
     setToasts((prev) => [...prev, ...baru].slice(-4))
     const timer = setTimeout(() => {
       setToasts((prev) => prev.filter((t) => !baru.some((b) => b.id === t.id)))
+      timers.current = timers.current.filter((x) => x !== timer)
     }, 4200)
-    return () => clearTimeout(timer)
+    timers.current.push(timer)
+    // SENGAJA tanpa cleanup di sini — timer batch ini tak boleh dibatalkan oleh
+    // datangnya batch berikutnya.
   }, [eventTick]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Bersihkan semua timer tertunda HANYA saat unmount (cegah setState-after-unmount).
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
   if (toasts.length === 0) return null
 

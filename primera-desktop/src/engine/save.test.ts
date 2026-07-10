@@ -351,3 +351,64 @@ describe('deserialize — kunci tally hilang & entri nested null (CODEX ronde-13
     expect(deserialize(json, PACK)).toBeNull()
   })
 })
+
+describe('deserialize — M10 §49 CODEX B.5/B.6 (jadwal korup + kunjungan yatim)', () => {
+  it('B.5: jadwal:[null] ditolak (bukan crash j.hari saat day-advance)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['jadwal'] = [null]
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('B.5: jadwal dgn entri hari non-numerik ditolak', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['jadwal'] = [{ id: 'x', jenis: 'hasil_lab', hari: 'besok' }]
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('B.5: jadwal valid (init dgn entri karma) tetap lolos utuh (regresi guard)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const hasil = deserialize(serialize(s), PACK)
+    expect(hasil).not.toBeNull()
+    expect(hasil!.jadwal).toEqual(s.jadwal)
+    expect(hasil!.jadwal.every((j) => typeof j.hari === 'number')).toBe(true)
+  })
+
+  it('B.6: kunjungan aktif dgn keluargaId tak dikenal → dipulihkan (bukan soft-lock)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['kunjungan'] = { keluargaId: 'keluarga_hantu', skenarioId: 'x', fase: 'observasi', hotspotDitemukan: [], dialogIndex: 0, pilihanDiambil: [], trustDelta: 0, konfrontasiBeruntun: 0, diusir: false }
+      st['layar'] = 'kunjungan'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.kunjungan).toBeUndefined()
+    expect(hasil.layar).not.toBe('kunjungan')
+    expect(hasil.inbox.some((m) => m.id.startsWith('surat_pemulihan_kunjungan_'))).toBe(true)
+  })
+
+  it('B.6: kunjungan aktif dgn skenarioId tak dikenal (keluarga ada) → dipulihkan', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const kelId = Object.keys(PACK.keluarga)[0]!
+    const json = rusak(serialize(s), (st) => {
+      st['kunjungan'] = { keluargaId: kelId, skenarioId: 'skenario_hantu', fase: 'observasi', hotspotDitemukan: [], dialogIndex: 0, pilihanDiambil: [], trustDelta: 0, konfrontasiBeruntun: 0, diusir: false }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kunjungan).toBeUndefined()
+  })
+
+  it('B.6: kunjungan aktif SAH (keluarga+skenario valid) tetap utuh (regresi guard)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const kelId = Object.keys(PACK.keluarga)[0]!
+    const skenId = PACK.keluarga[kelId]!.arc.kunjungan[0]!.id
+    const json = rusak(serialize(s), (st) => {
+      st['kunjungan'] = { keluargaId: kelId, skenarioId: skenId, fase: 'observasi', hotspotDitemukan: [], dialogIndex: 0, pilihanDiambil: [], trustDelta: 0, konfrontasiBeruntun: 0, diusir: false }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kunjungan).not.toBeUndefined()
+    expect(hasil.kunjungan!.keluargaId).toBe(kelId)
+  })
+})

@@ -48,6 +48,26 @@ describe('M10 §49 — obatOpsional (hordeolum)', () => {
   })
 })
 
+describe('M10 §49 Batch-1 (CODEX C.3/C.11) — konten', () => {
+  it('C.3 tinea: mikonazol jadi alternatif sah topikal (bukan obat-di-luar −15)', () => {
+    const tinea = PACK.kasus['kulit_tinea_korporis']!
+    const grup = tinea.tatalaksana.obatAlternatif ?? []
+    const adaGrupTopikal = grup.some((g) => g.includes('ketokonazol_krim') && g.includes('mikonazol_krim'))
+    expect(adaGrupTopikal).toBe(true)
+    // Meresepkan mikonazol (yg clue sahkan) tak dihukum sbg obat-di-luar.
+    const dgnMikonazol = nilaiEncounter(encFor('kulit_tinea_korporis', ['mikonazol_krim', 'griseofulvin_500']), tinea, PACK)
+    const dgnKetokonazol = nilaiEncounter(encFor('kulit_tinea_korporis', ['ketokonazol_krim', 'griseofulvin_500']), tinea, PACK)
+    expect(dgnMikonazol.skorTerapi).toBe(dgnKetokonazol.skorTerapi)
+    expect(dgnMikonazol.skorTerapi).toBe(100)
+  })
+
+  it('C.11 gout: PF tak lagi kontradiktif "serangan pertama" (anamnesis sebut serangan lalu)', () => {
+    const gout = PACK.kasus['mm_gout_artritis_akut']!
+    const pfKulit = gout.pemeriksaanFisik.find((p) => p.region === 'kulit')!
+    expect(pfKulit.temuan).not.toMatch(/serangan pertama/i)
+  })
+})
+
 describe('M10 §49 — apendisitis prosedur pasang_infus', () => {
   const apx = PACK.kasus['apendisitis_akut']!
   it('pasang_infus jadi prosedur benar (clue anjurkan jalur IV)', () => {

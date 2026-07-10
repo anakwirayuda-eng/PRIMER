@@ -237,7 +237,12 @@ export const KASUS_KULIT: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B35.4', 'L23.9', 'L20.9'],
     tatalaksana: {
-      obatBenar: ['ketokonazol_krim', 'griseofulvin_500'],
+      // M10 §49 (CODEX C.3): antijamur topikal = pilih-salah-satu ketokonazol
+      // ATAU mikonazol — clue eksplisit menyebut KEDUANYA setara ("ketokonazol/
+      // mikonazol topikal"). Dulu hanya ketokonazol di obatBenar → meresepkan
+      // mikonazol (yang clue-nya sendiri sahkan) dihukum −15 sbg obat-di-luar.
+      obatBenar: ['griseofulvin_500'],
+      obatAlternatif: [['ketokonazol_krim', 'mikonazol_krim']],
       obatSalahUmum: [
         { id: 'betametason_krim', alasan: 'JEBAKAN KLASIK: steroid topikal tunggal (betametason) pada tinea menekan radang sesaat TAPI menekan imun lokal → jamur meluas & menyamar (TINEA INKOGNITO), tepi lesi kabur, sulit diobati. Tinea butuh ANTIJAMUR, bukan steroid.' },
         { id: 'hidrokortison_krim', alasan: 'Sama seperti betametason — kortikosteroid tunggal memperparah tinea. Tanpa antijamur, lesi jamur justru berkembang.' },
