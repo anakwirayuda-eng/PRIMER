@@ -3006,3 +3006,121 @@ Giliran ini murni triase + dokumentasi (sesuai permintaan: siapkan dossier total
 di atas (12 CONFIRMED + 1 PLAUSIBLE-belum-live-verified) adalah **OPEN ITEMS** untuk ronde
 perbaikan berikutnya — lihat `M10_TOTAL_AUDIT_BRIEF.md` utk daftar lengkap + konteks CODEX
 audit lanjutan.
+
+## 49. Sapuan M10 multiagen (12 lensa + verifikasi adversarial) — 21 temuan unik, SEMUA diverifikasi ulang manual, BELUM diperbaiki (2026-07-10)
+
+User mengizinkan multiagentics utk ronde ini ("boleh multiagentics tapi hanya beberapa" bukan
+lagi berlaku ketat — user eksplisit bilang "boleh multiagentics ... cari dari berbagai sisi
+multi dimensi multi perspektif secara teliti"). Dijalankan via Workflow: **12 agent finder**
+(masing-masing lensa berbeda: clue-vs-therapy, exam/lab/vital, konsekuensi/dxBanding/alergiTrap,
+persona-vs-fakta, identity-attach, materialization-bypass, fingerprint-gap, baked-vs-live
+patch-reachability, keyboard-a11y-nonmodal, layering/font-scale, aria-semantics, replay-
+determinism) → **tiap temuan diverifikasi agent SKEPTIS terpisah** (default REFUTED kecuali
+terbukti; cek by-design; cek duplikat thd 13 known + DO-NOT-RE-REPORT) → sintesis dedup+ranking.
+Hasil mentah: 38 temuan, 30 lolos verifikasi adversarial (0 plausible-only, 6 refuted, 2
+duplicate), dedup jadi **21 unik** (1 P1, 9 P2, 11 P3; 9 dibuang saat dedup — 8 dari klaster
+fingerprint-gap yg sama akar, 1 radiogroup TitleScreen dilaporkan dobel).
+
+**Claude memverifikasi ULANG semua 21 secara manual thd kode aktual** (bukan percaya sintesis
+agent) — P1 + seluruh 9 P2 dibaca penuh langsung; 6 dari 11 P3 dibaca langsung (DeckDiagnosis
+icd10-guard, DeckDisposisi/TitleScreen/FigurTubuh instance-baru, 3 font-size px), sisanya
+diterima dgn confidence lebih rendah krn cocok pola kelas yg SUDAH diverifikasi kuat di tempat
+lain (mis. rinosinusitis persona-warna sama kelasnya dgn malaria persona-periodisitas yg sudah
+dibaca penuh). **Semua 21 CONFIRMED — nol yang saya tolak setelah baca ulang**, tingkat akurasi
+lebih tinggi dari ronde CODEX biasa (kemungkinan krn lapis verifikasi adversarial ganda: agent
+skeptis + saya).
+
+### P1 (1) — celah fingerprint SISTEMIK di sisi kasus poli
+
+`sidikJariPack` per-kasus (verifikasi.ts:203-214) hash `{id, icd, rujuk, trap, tx, lab, pf,
+anamnesis}` — **melewatkan 6 field top-level yg terbukti dibaca LIVE saat replay**: `demografi`
+(director.ts:56,59 — roll usia/gender, menggeser stream RNG director-flavor→bpjs→kapitasi→skor
+Manajemen), `prevalensi` (director.ts:148 `bobotKasus` — bobot RNG seleksi antrian harian),
+`konsekuensi.kembaliHariMin/Max` (reducer.ts:337,1182 — jadwal pasien_kembali via `rng.int`),
+`spesialisRujukan` (reducer.ts:400,406-407,450,466 — pencocokan RS SISRUTE→rujukanDitolak/
+rujukanTepat→skor). Bukti ini KEALPAAN bukan desain: `kasusIgd.spesialisRujukan` (verifikasi.ts:233)
+dan `rumahSakit.spesialisasi` (verifikasi.ts:252) SUDAH di-hash utk perbandingan SISRUTE yg SAMA
+— sisi kasus poli-nya tidak. Kelas identik known-#1 (keluarga.anggota/rw) — brief §2#1 eksplisit
+minta hunt ini, dan ketemu. Edit konten ke salah satu 6 field TANPA bump REVISI_ENGINE →
+fingerprint identik → verifier lolos gate → replay menyimpang → dossier jujur bisa divonis
+`tidak_sah` palsu. **Diverifikasi Claude langsung** (baca verifikasi.ts:199-274 + grep pemakaian
+tiap field di director.ts/reducer.ts) — akurat.
+
+### P2 (9) — didominasi konten menghukum/tak mengkredit tindakan klinis BENAR
+
+1. **Apendisitis: clue anjurkan "pasang jalur IV" tapi scoring hukum `pasang_infus` sbg
+   tindakanDiLuar (−15)** (kasusRespGi.ts:1137-1145, clinic.ts:476-521). `tatalaksana` tanpa
+   field `prosedur` → `prosedurBenar=[]`; `pasang_infus` (katalogM3.ts:265) real tindakan tapi
+   otomatis masuk `tindakanDiLuar` bila dilakukan → `-15`. Mahasiswa yg PATUH clue dihukum aktif.
+2. **Hordeolum: clue bilang antibiotik topikal "opsional" + terapi utama kompres hangat, tapi
+   `obatBenar` cuma 1 slot (antibiotiknya) → rasioTerapi 0 bila tak diresepkan**
+   (kasusSarafMataTht.ts:776-783, `totalSlot=1`). Menghukum stewardship yg direward di kasus lain.
+3. **Faringitis darah_rutin `relevan:false` vs tonsilitis (sister-case identik) `relevan:true`**
+   (kasusInfeksi.ts:221 vs kasusRespGi.ts:345) — leukositosis sama, flag beda → penalti
+   `labTakRelevan` arbitrer antara dua kasus setara secara klinis.
+4. **Malaria: variasi persona "terpelajar" bilang demam "pola teratur" kontradiksi q_pola baku
+   "tidak teratur betul"** (kasusKiaJiwa.ts:1053 vs 1071) — periodisitas = fakta pembeda spesies,
+   berubah krn persona (kelas sama fix insomnia-lansia M10.c, instance baru sumbu "pola gejala").
+5. **KLB skabies/konjungtivitis (kontak) diajarkan respons droplet (masker/etika batuk) sbg
+   benar** (kegiatan.ts:232-236) — `polaDariKasus` default ke 'droplet' utk apa pun selain
+   dengue/diare/tifoid; komentar sendiri sadar "skabies (kontak)" tapi kartu tetap droplet-spesifik.
+6. **Epistaksis usiaMin:12 + TD 150/90 "hipertensi kronik, obat sering putus" — inkoheren utk
+   anak 12-14** (kasusSarafMataTht.ts:912,948,977) — kontradiksi langsung klaim M10.c §47
+   "nol vital gross-outlier" (lolos krn cek ujung dewasa, buta ujung usia-12).
+7. **Konjungtivitis usiaMin:5 + TD 118/76 dilabel "tanda vital dalam batas normal"**
+   (kasusInfeksi.ts:829-830,900) — hipertensif utk balita, counterexample kedua klaim M10.c.
+8. **Surat hasil lab tindak-lanjut tak pernah sebut nama pasien** (reducer.ts:213-220 producer
+   tanpa field nama/catatan → 1321 konsumen fallback `?? "pasien kemarin"` SELALU terpicu). Dua
+   lab besok di hari sama → dua surat berjudul identik, tautan hasil↔pasien putus. Beda dari
+   known-#5 (No.RM) — ini artefak SURAT, bukan pasien. `reachesOldSaves: butuh-migrasi`.
+9. **Jadwal karma_igd di-bake sekali di init.ts:104-125 dari `pack.keluarga` — rename `kasusId`
+   di masa depan bikin korban tak pernah datang TAPI efek karma (tally, surat, arcSelesai:'gagal')
+   sudah terjadi lebih dulu** (reducer.ts:1345-1369 jalan sebelum filter `pasienKembaliValid`
+   di 1644 diam-diam buang entrinya). `save.ts` py recovery rename utk IGD/klinik-aktif (300/325)
+   tapi NOL utk jadwal karma. `reachesOldSaves: butuh-migrasi`.
+
+### P3 (11) — a11y berulang (pola copy-paste) + font-noscale + 1 defense-in-depth
+
+Kelas **aria-role-mismatch/keyboard-a11y** muncul di ≥6 komponen: `TitleScreen.tsx:170`
+(radiogroup+aria-pressed, instance kedua persis known-#11), `DeckDisposisi.tsx:262` (SISRUTE
+picker aria-pressed TANPA wrapper role sama sekali — lebih parah dari #11),
+`DeckDiagnosis.tsx:57-96` (diagnosis banding + toggle tinta TEGAK/SUSPEK nol state ARIA sama
+sekali, hanya CSS), `FigurTubuh.tsx:48-122` (10 `<g onClick>` mouse-only, instance kedua persis
+known-#8 PetaSvg — dimitigasi P2→P3 krn `DeckPemeriksaan.tsx` py chip `<button>` cermin yg
+tetap keyboard-accessible). Kelas **font-noscale** (instance baru di luar known-#13):
+`PetaDesa.css:60,67,79` (cartouche+seru+sub-label, selector TERPISAH dari fix #13 di baris 49 —
+fix #13 TAK menyentuh ini), `Kunjungan.css:69` (angka stepper 12px), `Hud.css:98,108` (badge
+11px). Baru: **`Toaster.tsx:67` nol `aria-live`/`role=status`** — toast keselamatan
+(KONTRAINDIKASI alergi, Kode Hitam, IGD tiba) tak diumumkan screen reader, kelas sama known-#12
+tapi taruhan lebih tinggi (konfirmasi langsung: kode dibaca ulang di §terkait). **Defense-in-depth**:
+`DeckDiagnosis.tsx` nol guard `kasus.icd10 ∈ diagnosisBanding` (validasiPack tak cek ini) — 0
+pelanggaran di 67 kasus HARI INI, tapi kealpaan penulis di masa depan bisa bikin skorDiagnosis
+mustahil/softlock tutorial tanpa terdeteksi. Dua instance vital-vs-demografi tambahan berdampak
+lebih kecil (skabies/serumen_prop, kasusInfeksi.ts:725 — TD dewasa tapi tak diskor, murni
+naratif) dan satu persona-changes-fact tambahan (rinosinusitis warna ingus kuning-vs-hijau,
+kasusSarafMataTht.ts:1029 — dampak Dx rendah, kuning&hijau sama-sama mukopurulen).
+
+### Pola lintas-temuan (nilai lebih dari instance tunggal)
+
+1. **fingerprint-gap sistemik** — separuh field score-affecting di-hash, separuh tidak, konsisten
+   di berbagai kategori pack (keluarga known-#1, kasus §49-P1) — kealpaan berulang, bukan sekali.
+2. **clue-vs-therapy meluas ke prosedur/tindakan & arah opsional-vs-wajib** — guard permanen
+   `tatalaksanaClue.test` HANYA scan kata kunci obat (antibiotik/steroid/rujuk), buta prosedur.
+3. **vital-vs-demografi: sapuan deterministik M10.c hanya tangkap gross-outlier, buta ujung usia
+   band** — 4+ situs (epistaksis/konjungtivitis/skabies/serumen) semua di usia anak termuda yg
+   diizinkan demografinya, dgn narasi/vital dewasa.
+4. **a11y copy-paste**: aria-pressed-bukan-radio dan `<g onClick>` mouse-only masing2 muncul di
+   ≥3 komponen independen — pola arsitektural (tim menyalin dari 1 komponen ke komponen lain),
+   bukan kebetulan.
+5. **"bersih" itu bersyarat pada METODOLOGI sapuan** — M10.a/b/c berkali-kali klaim "nol temuan"
+   di suatu sudut, lalu ronde independen berikutnya (dgn lensa BEDA) menemukan celah nyata di
+   sudut yg SAMA. Pola ini sekarang terjadi ≥5× (M9→M10 lahir, M10.a ronde-4, brief M10.b, §48,
+   §49 ini) — cukup konsisten utk dianggap properti proyek ini, bukan kebetulan.
+
+### Yang BELUM difix
+
+Giliran ini SEKALI LAGI murni audit + triase (permintaan user: sapuan dulu, "diteliti"). 21
+temuan di atas — SEMUA CONFIRMED oleh Claude, NOL yang perlu verifikasi lanjut — adalah **OPEN
+ITEMS menunggu keputusan fix**. Beberapa (apendisitis, hordeolum) py 2 opsi fix yg saling
+eksklusif (ubah konten vs ubah clue) yg butuh keputusan, bukan tambal mekanis — cocok didiskusikan
+dgn user sebelum eksekusi massal.
