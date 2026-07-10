@@ -2627,3 +2627,86 @@ berbeda, dossier lama wajib jatuh ke "tidak dapat diverifikasi").
 `npm run typecheck` bersih; `npm test -- --run` = **428 test** (dari
 420), 39 file, hijau — termasuk soak 90-hari & verifier M6 dgn
 semantik baru.
+
+## 44. M10.a ronde-4 — kebocoran fokus keyboard tembus modal/overlay (2026-07-06)
+
+**[P2, DITERIMA & DIPERBAIKI]** CODEX menemukan: sapuan M10.a (§39/§41)
+kuat utk pointer/mouse (hit-testing) tapi TAK PERNAH menguji jalur
+KEYBOARD. `Onboarding` (gerbang wajib Hari 1) tak py `autoFocus`,
+focus-trap, atau `aria-modal` — dan `Hud` (berisi navigasi
+layar+mute+gigi Pengaturan sejak M10.a §39) tetap dirender TANPA
+`disabled` tambahan saat Onboarding terbuka (guard `disabled` HUD sama
+sekali tak tahu soal Onboarding, krn Onboarding murni state React lokal
+App.tsx, bukan bagian `GameState`).
+
+**Diverifikasi EMPIRIS sebelum menyentuh kode** (browser sungguhan,
+bukan cuma baca sumber): tombol "Klinik" di HUD, saat Onboarding
+terbuka menutupinya TOTAL secara visual, tetap `document.activeElement`
+via `.focus()` (`fokusDapat:true`, `disabledAttr:false`) DAN `.click()`
+sungguhan memindahkan `state.layar` 'meja'→'klinik' diam-diam di
+belakang overlay. Diperdalam: gigi Pengaturan (didok ke HUD sejak §39)
+jugaTeraktivasi via fokus+klik yg sama, membuka `.set-overlay` KEDUA
+bertumpuk dgn `.onb-overlay` — skenario nested-modal membingungkan yg
+CUMA bisa dipicu keyboard, tak pernah lewat mouse (M10.a §39/§41 sudah
+membuktikan mouse aman).
+
+**Temuan kedua [P3, diterima]: 7 titik modal/overlay tak konsisten
+semantik ARIA.** 4 titik (Onboarding/Pengaturan/Tentang/PanelHasil)
+py `role="dialog"` TANPA `aria-modal`; 3 titik (MejaKerja rekap+lokmin,
+PetaDesa hasil-kunjungan) TANPA `role="dialog"` sama sekali.
+
+**Fix — hook `useFocusTrap` baru** (`src/renderer/src/useFocusTrap.ts`),
+dipasang di SEMUA 7 titik + `role="dialog"`+`aria-modal="true"`
+konsisten di semua titik:
+- Jebak Tab/Shift+Tab dalam kontainer modal (capture-phase keydown di
+  `document`, menyalip SEBELUM browser memindah fokus native ke latar).
+- Fokus awal otomatis ke elemen focusable pertama di dalam modal saat
+  mount — menutup akar masalah literal CODEX ("Tab pertama masuk ke
+  HUD"): begitu Onboarding mount, fokus SUDAH di "Lewati" sebelum
+  pemain sempat menekan Tab sama sekali.
+- Fokus dikembalikan ke elemen sebelumnya saat modal ditutup.
+- `onEscape` OPSIONAL — modal wajib-diselesaikan (Rekap/Lokmin
+  MejaKerja, satu tombol "Lanjutkan Stase →", TANPA backdrop-dismiss)
+  SENGAJA tak diberi `onEscape`: menghormati desain "harus selesai",
+  bukan menambah jalan keluar yg penulis sengaja tiadakan. 5 titik lain
+  (semua py backdrop-dismiss existing) diberi `onEscape` yg sama persis
+  dgn aksi backdrop-klik-nya.
+- BUKAN `inert`: Pengaturan (& MuteButton) hidup NESTED di dalam pohon
+  `Hud` sejak §39 (didok, bukan portal ke root) — menandai leluhur
+  `inert` akan ikut mematikan modal ITU SENDIRI. Trap berbasis
+  event-listener portable independen dari kedalaman nesting.
+- **Kasus nested tunggal ditangani eksplisit**: Pengaturan→TentangModal
+  (satu-satunya 2 modal yg bisa hidup bersamaan di codebase ini) — trap
+  Pengaturan NONAKTIF selama `tentang` true (`buka && !tentang`), krn
+  dua trap aktif bersamaan akan rebutan wrap-Tab. Tak digeneralisasi ke
+  multi-level modal stack (tak dibutuhkan di tempat lain).
+
+**Batasan verifikasi, didisclosekan jujur**: `.focus()`+`.click()`
+IMPERATIF via script (bukan Tab key sungguhan) tetap bisa memaksa fokus
+ke elemen latar — trap tak bisa & tak dirancang mencegah itu (setara
+`inert` diperlukan utk itu, dan tabrakan struktural di atas mencegahnya
+di sesi ini). TAPI itu bukan vektor yg bisa dipicu manusia menekan Tab
+sungguhan — verifikasi browser dgn `KeyboardEvent('keydown',{key:'Tab'})`
+sungguhan (menembus listener capture-phase produksi yg sama, bukan
+`.focus()` manual) mengonfirmasi: fokus yg TERLANJUR di luar modal
+ditarik balik ke "Lewati" pada Tab BERIKUTNYA — dan fokus-awal-otomatis
+berarti skenario "Tab pertama masuk HUD" literal CODEX kini mustahil
+(fokus sudah di dalam modal SEBELUM Tab pertama ditekan). Escape
+sungguhan dikonfirmasi menutup Onboarding + tersimpan localStorage.
+
+Pagar baru: `useFocusTrap.test.tsx` (8 test — BEDA dari bug layering
+§38/39/42 yg murni CSS-painting/tak bisa diuji jsdom, kebocoran
+KEYBOARD adalah perilaku DOM/event murni yg jsdom implementasikan
+PENUH, jadi diuji SUNGGUHAN via RTL+userEvent nyata, bukan cuma grep
+sumber): fokus-awal, Tab-wrap maju/mundur, celah-asli (fokus dipaksa
+keluar lalu Tab menariknya balik), Escape dgn/tanpa `onEscape`,
+trap-nonaktif (dipakai Pengaturan saat Tentang terbuka), restore-fokus
+saat tutup. Verifikasi-bergigi: stub no-op sementara → 6/8 merah persis
+→ restore → hijau. Plus `lapisan.test.ts` diperluas (generic, 7 titik):
+role="dialog"+aria-modal berdampingan di semua modal — pola sama §42
+(cek KELAS, bukan instans; titik ke-8 di masa depan yg lupa pola ini
+otomatis tertangkap).
+
+`npm run typecheck` bersih; `npm test -- --run` → **437 test** (dari
+428), 40 file, hijau. Tak ada REVISI_ENGINE bump (murni UI/aksesibilitas,
+nol semantik skor/replay).

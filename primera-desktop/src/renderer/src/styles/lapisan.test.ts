@@ -80,4 +80,33 @@ describe('invarian lapisan UI (M10.a)', () => {
       expect(isi, `${sel} butuh overflow(-y):(auto|scroll)`).toMatch(/overflow(-y)?:\s*(auto|scroll)/)
     }
   })
+
+  // CODEX M10.a ronde-4 (2026-07-06, dossier §44): 7 titik modal/overlay
+  // semula tak konsisten — 3 (MejaKerja x2, PetaDesa) TANPA role="dialog"
+  // sama sekali, 4 lainnya py role="dialog" tapi TANPA aria-modal. Keduanya
+  // WAJIB hadir berdampingan (pola dialog modal WAI-ARIA) di SEMUA 7 titik —
+  // pagar generik spy titik ke-8 di masa depan tak lolos dgn pola lama.
+  it('semua 7 titik modal/overlay: role="dialog" + aria-modal="true" berdampingan', () => {
+    // Penanda = literal `ref={...}` yang dipasang sendiri saat fix (unik per
+    // titik, tak bentrok dgn teks/komentar lain — beda dari string judul yg
+    // ternyata muncul lagi duluan di komentar/prosa sebelum JSX modalnya).
+    const titik = [
+      { file: '../components/Onboarding.tsx', tanda: 'ref={ref}' },
+      { file: '../components/Pengaturan.tsx', tanda: 'ref={ref}' },
+      { file: '../components/TentangModal.tsx', tanda: 'ref={ref}' },
+      { file: '../screens/klinik/PanelHasil.tsx', tanda: 'ref={ref}' },
+      { file: '../screens/MejaKerja.tsx', tanda: 'ref={refRekap}' },
+      { file: '../screens/MejaKerja.tsx', tanda: 'ref={refLokmin}' },
+      { file: '../screens/PetaDesa.tsx', tanda: 'ref={refHasilKunjungan}' },
+    ]
+    for (const { file, tanda } of titik) {
+      const src = baca(file)
+      const idx = src.indexOf(tanda)
+      expect(idx, `${file}: penanda '${tanda}' tak ditemukan`).toBeGreaterThan(-1)
+      // Jendela ±400 char SETELAH penanda ref — atribut dialog menyusul di JSX.
+      const jendela = src.slice(idx, idx + 400)
+      expect(jendela, `${file} (${tanda}): butuh role="dialog"`).toMatch(/role="dialog"/)
+      expect(jendela, `${file} (${tanda}): butuh aria-modal="true"`).toMatch(/aria-modal="true"/)
+    }
+  })
 })

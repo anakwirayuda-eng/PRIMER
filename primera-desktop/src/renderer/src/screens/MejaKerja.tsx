@@ -23,6 +23,7 @@ import type { FokusProgram } from '@engine/state'
 import { clusterAktif } from '@engine/surveilans'
 import { PACK } from '@content/index'
 import { karmaTerlihat } from './peta/petaUtil'
+import { useFocusTrap } from '../useFocusTrap'
 import './MejaKerja.css'
 
 const LABEL_PROGRAM: Record<FokusProgram, string> = {
@@ -274,6 +275,14 @@ export function MejaKerja() {
   const tampilkanLokmin =
     !tampilkanRekap && Boolean(state.flags['lokmin31'] || state.flags['lokmin61']) && !state.flags['lokminDitutup']
   const skorLokmin = tampilkanLokmin ? hitungSkor(state) : null
+
+  // CODEX M10.a ronde-4 (dossier §44): kedua modal ini WAJIB-diselesaikan by
+  // design (satu tombol "Lanjutkan Stase →", tanpa backdrop-dismiss) — trap
+  // fokus TANPA `onEscape` menghormati itu; Escape tak boleh jadi jalan keluar
+  // yang penulis sengaja tiadakan. tampilkanRekap/tampilkanLokmin mutually
+  // exclusive (lihat guard di atas), aman dipasang berdampingan.
+  const refRekap = useFocusTrap<HTMLDivElement>(tampilkanRekap)
+  const refLokmin = useFocusTrap<HTMLDivElement>(tampilkanLokmin)
 
   /* ------------------------------------------------------------------------- */
 
@@ -737,7 +746,7 @@ export function MejaKerja() {
       {/* ================= MODAL REKAP SLICE (Hari 8) ================= */}
       {skorRekap && (
         <div className="overlay">
-          <div className="modal mk__rekap">
+          <div ref={refRekap} className="modal mk__rekap" role="dialog" aria-modal="true" aria-label="Rapor Pekan Pertama">
             <h2 className="judul-seksi">Rapor Pekan Pertama — dr. {state.namaDokter}</h2>
 
             <div className="mk__rekap-atas">
@@ -817,7 +826,7 @@ export function MejaKerja() {
       {/* ================= LOKAKARYA MINI (Hari 31/61) ================= */}
       {skorLokmin && (
         <div className="overlay">
-          <div className="modal mk__rekap">
+          <div ref={refLokmin} className="modal mk__rekap" role="dialog" aria-modal="true" aria-label="Lokakarya Mini — Evaluasi Bulan Ini">
             <h2 className="judul-seksi">Lokakarya Mini — Evaluasi Bulan Ini</h2>
             <div className="mk__rekap-atas">
               <span className={`stempel ${STEMPEL_GRADE[skorLokmin.grade] ?? 'stempel--kunyit'} stempel--jatuh mk__rekap-grade`}>

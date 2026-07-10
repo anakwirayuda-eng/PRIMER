@@ -5,6 +5,7 @@
 
 import type { PenilaianEncounter } from '@engine/state'
 import { PACK } from '@content/index'
+import { useFocusTrap } from '../../useFocusTrap'
 
 interface Props {
   hasil: PenilaianEncounter
@@ -58,12 +59,19 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
       kelas: hasil.sbarSkor >= 60 ? 'chip--daun' : 'chip--kunyit',
     })
 
+  // CODEX M10.a ronde-4 (dossier §44): tanpa jebak fokus, tombol HUD di
+  // belakang (navigasi layar dkk) tetap Tab-able & ter-aktivasi walau modal
+  // debrief ini menutupinya total secara visual.
+  const ref = useFocusTrap<HTMLDivElement>(true, () => onSelesai(false))
+
   return (
     <div className="overlay" onClick={() => onSelesai(false)}>
       <div
+        ref={ref}
         className="modal klinik-hasil"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
+        aria-modal="true"
         aria-label="Hasil encounter"
       >
         <div className="klinik-hasil__atas">

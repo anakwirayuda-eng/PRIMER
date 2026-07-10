@@ -23,6 +23,7 @@ import { PetaSvg } from './peta/PetaSvg'
 import { KartuKeluarga } from './peta/KartuKeluarga'
 import { karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta/petaUtil'
 import { clusterAktif } from '@engine/surveilans'
+import { useFocusTrap } from '../useFocusTrap'
 import './PetaDesa.css'
 
 export function PetaDesa() {
@@ -34,6 +35,9 @@ export function PetaDesa() {
   const [rwTerpilih, setRwTerpilih] = useState<number | null>(null)
   const [hasilKunjungan, setHasilKunjungan] = useState<HasilKunjungan | null>(null)
   const tickTerproses = useRef(-1)
+  // CODEX M10.a ronde-4 (dossier §44): backdrop sudah dismissible via klik —
+  // Escape disamakan dgn itu.
+  const refHasilKunjungan = useFocusTrap<HTMLDivElement>(hasilKunjungan !== null, () => setHasilKunjungan(null))
 
   // Kunjungan selesai → reducer memindah layar ke sini; sambut dengan kartu hasil.
   useEffect(() => {
@@ -282,7 +286,14 @@ export function PetaDesa() {
       {/* ---------------- Kartu hasil kunjungan (toast besar) ---------------- */}
       {hasilKunjungan && (
         <div className="overlay" onClick={() => setHasilKunjungan(null)}>
-          <div className="modal peta-hasil" onClick={(e) => e.stopPropagation()}>
+          <div
+            ref={refHasilKunjungan}
+            className="modal peta-hasil"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Hasil kunjungan"
+            onClick={(e) => e.stopPropagation()}
+          >
             <span
               className={`stempel stempel--jatuh ${
                 hasilKunjungan.diusir

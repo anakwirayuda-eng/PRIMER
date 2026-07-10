@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react'
+import { useFocusTrap } from '../useFocusTrap'
 import './Onboarding.css'
 
 const KUNCI = 'primer.onboarding.selesai'
@@ -74,10 +75,15 @@ export function Onboarding({ onSelesai }: { onSelesai: () => void }) {
     tandaiSelesai()
     onSelesai()
   }
+  // CODEX M10.a ronde-4 (dossier §44): jebak fokus — tombol HUD di belakang
+  // (navigasi layar, mute, gigi Pengaturan) sebelumnya tetap ter-Tab & ter-
+  // aktivasi walau tertutup total secara visual. "Lewati" = jalan keluar
+  // eksplisit yg sudah ada → Escape aman disamakan dgn itu.
+  const ref = useFocusTrap<HTMLDivElement>(true, tutup)
 
   return (
     <div className="onb-overlay">
-      <div className="onb-kartu kertas" role="dialog" aria-label="Panduan hari pertama">
+      <div ref={ref} className="onb-kartu kertas" role="dialog" aria-modal="true" aria-label="Panduan hari pertama">
         <div className="onb-ikon" aria-hidden="true">{kartu.ikon}</div>
         <div className="onb-kredit mono">dr. HARSONO · KEPALA PUSKESMAS</div>
         <h2 className="onb-judul">{kartu.judul}</h2>

@@ -8,6 +8,7 @@
 import { useState } from 'react'
 import { setPengaturan, PENGATURAN_DEFAULT, type ModeMalam } from '../settings'
 import { usePengaturan } from '../usePengaturan'
+import { useFocusTrap } from '../useFocusTrap'
 import { TentangModal } from './TentangModal'
 import './Pengaturan.css'
 
@@ -25,6 +26,10 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
   const [tentang, setTentang] = useState(false)
   const p = usePengaturan()
   const persen = (n: number) => `${Math.round(n * 100)}%`
+  // CODEX M10.a ronde-4 (dossier §44): trap NONAKTIF saat `tentang` terbuka —
+  // TentangModal (di atasnya, DOM-order sama z-modal) yang wajib pegang fokus
+  // saat itu; dua trap aktif bersamaan akan rebutan ke mana Tab dibungkus.
+  const ref = useFocusTrap<HTMLDivElement>(buka && !tentang, () => setBuka(false))
 
   return (
     <>
@@ -43,7 +48,7 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
 
       {buka && (
         <div className="set-overlay" onClick={() => setBuka(false)}>
-          <div className="set-modal kertas" role="dialog" aria-label="Pengaturan" onClick={(e) => e.stopPropagation()}>
+          <div ref={ref} className="set-modal kertas" role="dialog" aria-modal="true" aria-label="Pengaturan" onClick={(e) => e.stopPropagation()}>
             <div className="baris baris--antara">
               <h2 className="judul-seksi">Pengaturan</h2>
               <button className="tombol tombol--senyap" onClick={() => setBuka(false)} aria-label="Tutup">✕</button>

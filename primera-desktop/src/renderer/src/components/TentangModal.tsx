@@ -5,13 +5,17 @@
  */
 
 import { METADATA } from '@content/metadata'
+import { useFocusTrap } from '../useFocusTrap'
 import './TentangModal.css'
 
 export function TentangModal({ onTutup }: { onTutup: () => void }) {
   const h = METADATA.haki
+  // CODEX M10.a ronde-4 (dossier §44): topmost saat terbuka (di atas modal
+  // Pengaturan yg menahan trap-nya sendiri selama ini aktif — lihat Pengaturan.tsx).
+  const ref = useFocusTrap<HTMLDivElement>(true, onTutup)
   return (
     <div className="set-overlay" onClick={onTutup}>
-      <div className="tentang-modal kertas" role="dialog" aria-label="Tentang PRIMERA" onClick={(e) => e.stopPropagation()}>
+      <div ref={ref} className="tentang-modal kertas" role="dialog" aria-modal="true" aria-label="Tentang PRIMERA" onClick={(e) => e.stopPropagation()}>
         <div className="baris baris--antara">
           <h2 className="judul-seksi">Tentang &amp; Kredit</h2>
           <button className="tombol tombol--senyap" onClick={onTutup} aria-label="Tutup">✕</button>
