@@ -151,9 +151,21 @@ function fnv1a(teks: string): string {
  * IDENTIK walau semantik skor berbeda, membuka celah dossier jujur lama
  * divonis TIDAK SAH (bukan "tidak dapat diverifikasi") persis kegagalan yg
  * mekanisme ini dirancang mencegah. Field opsional & jarang: kasus tanpa
- * `edukasiKritis` (mayoritas) mereplay identik, tak terpengaruh bump ini.
+ * `edukasiKritis` (mayoritas) mereplay identik, tak terpengaruh bump ini;
+ * 14 = M10.b (2026-07-06, dossier §43) identitas pasien-kembali UTUH:
+ * (a) jadwal pasien_kembali kini membawa `bpjs`+`persona` asli (dulu di-roll
+ * ulang tiap kembali — bpjs mengubah arah pembayaran lab/obat → kapitasi →
+ * skor Manajemen); (b) pasien karma membawa bpjs dari indikator JKN
+ * keluarganya saat karma menyala; (c) komplikasi prolanis selalu bpjs:true
+ * (Prolanis = program BPJS); (d) `buatPasienDariKasus` menghitung persona
+ * dari usia EFEKTIF (override ?? roll) — konsumsi RNG pilihPersona berubah
+ * utk pasien inject lintas ambang usia (<15/≥60) sehingga roll bpjs/rw
+ * hilirnya bergeser. Jejak lama dgn pasien kembali/karma/prolanis mereplay
+ * ke kapitasi (dan skor Manajemen via ambang kas) yang bisa berbeda dari
+ * yang tercatat — dossier build lama harus jatuh ke "tidak dapat
+ * diverifikasi", bukan divonis TIDAK SAH palsu.
  */
-const REVISI_ENGINE = 13
+const REVISI_ENGINE = 14
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

@@ -3,15 +3,23 @@
  * Beragam etnis Nusantara (Jawa, Sunda, Bali, Batak, Minang, Bugis, Betawi,
  * Madura, Ambon, Papua, Dayak, Tionghoa) supaya desa terasa hidup dan majemuk.
  * Dipakai `buatPasienDariKasus` (director) sesuai jenis kelamin kasus.
+ *
+ * M10.b (2026-07-06, dossier §43): pool pria/wanita WAJIB disjoint dari nama
+ * anggota keluarga binaan (desaA-F) — dulu 17 nama tumpang tindih (termasuk
+ * identitas karma "Lastri"/"Painem") sehingga pasien acak bisa bernama persis
+ * anggota binaan aktif. Dijaga test `pack.test.ts` — kalau menambah nama di
+ * sini ATAU anggota keluarga baru, test itu yang memberi tahu bila bentrok.
+ * Pool `keluarga` (marga) TIDAK dipakai runtime mana pun saat ini (data mati,
+ * dibiarkan utk kebutuhan masa depan) — tak tercakup guard.
  */
 
 export const NAMA_WARGA: { pria: string[]; wanita: string[]; keluarga: string[] } = {
   pria: [
     'Budi',
     'Agus',
-    'Slamet',
-    'Joko',
-    'Bambang',
+    'Tarjo',
+    'Gilang',
+    'Ramli',
     'Tono',
     'Wahyu',
     'Dedi',
@@ -41,24 +49,24 @@ export const NAMA_WARGA: { pria: string[]; wanita: string[]; keluarga: string[] 
     'Petrus',
     'Yakobus',
     'Ahong',
-    'Hendra',
+    'Sadikin',
     'Wira',
     'Galih',
-    'Eko',
+    'Kusnadi',
     'Sugeng',
     'Paiman',
     'Karta',
     'Dullah',
   ],
   wanita: [
-    'Siti',
-    'Sri',
-    'Wati',
+    'Juminten',
+    'Suparti',
+    'Rukmini',
     'Ningsih',
-    'Sumiati',
-    'Painem',
-    'Lastri',
-    'Endang',
+    'Darsih',
+    'Nurlela',
+    'Hasanah',
+    'Mimin',
     'Euis',
     'Nyai',
     'Icih',
@@ -66,7 +74,7 @@ export const NAMA_WARGA: { pria: string[]; wanita: string[]; keluarga: string[] 
     'Ketut Sari',
     'Wayan Rini',
     'Nyoman Padmi',
-    'Aminah',
+    'Enok',
     'Fatimah',
     'Halimah',
     'Nurhayati',
@@ -75,7 +83,7 @@ export const NAMA_WARGA: { pria: string[]; wanita: string[]; keluarga: string[] 
     'Butet',
     'Rosmaida',
     'Sondang',
-    'Rahmi',
+    'Odah',
     'Yusnita',
     'Andi Tenri',
     'Daeng Kanang',
@@ -86,9 +94,9 @@ export const NAMA_WARGA: { pria: string[]; wanita: string[]; keluarga: string[] 
     'Fransina',
     'Aling',
     'Melati',
-    'Dewi',
-    'Ratna',
-    'Lestari',
+    'Narti',
+    'Sulami',
+    'Warsiti',
     'Sartika',
     'Murni',
     'Kartini',

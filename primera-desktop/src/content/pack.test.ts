@@ -289,6 +289,26 @@ describe('PACK — validasi silang id konten', () => {
     expect(masalah).toEqual([])
   })
 
+  // M10.b (2026-07-06, dossier §43): pool NAMA_WARGA (generator pasien acak)
+  // WAJIB disjoint dari nama anggota keluarga binaan — tanpa guard ini pasien
+  // acak klinik bisa bernama persis anggota binaan aktif ("Joko"/"Dewi"/
+  // "Lastri" vs Mbah Lastri) → dua "orang" tak berhubungan berbagi identitas
+  // di mata pemain. Ditemukan 17 tabrakan saat audit (termasuk identitas
+  // karma Mbah Lastri & Mbah Painem). Pool marga `namaWarga.keluarga` TIDAK
+  // dicek: mati (tak dipakai runtime mana pun — hanya pria/wanita yg dipakai
+  // buatPasienDariKasus).
+  it('pool NAMA_WARGA disjoint dari nama anggota keluarga binaan (identitas NPC unik)', () => {
+    const pool = new Set([...PACK.namaWarga.pria, ...PACK.namaWarga.wanita])
+    const inti = (n: string) => n.replace(/^(Bu|Pak|Mbah|Mas|Mbak|Nn\.?|Ny\.?|Tn\.?)\s+/i, '')
+    const tabrakan: string[] = []
+    for (const kel of Object.values(PACK.keluarga)) {
+      for (const a of kel.anggota) {
+        if (pool.has(a.nama) || pool.has(inti(a.nama))) tabrakan.push(`${kel.id}: ${a.nama}`)
+      }
+    }
+    expect(tabrakan).toEqual([])
+  })
+
   // CODEX M10 ronde-2 (2026-07-06): `karma?` bertipe SkenarioKunjungan (types.ts)
   // — TIDAK dibatasi structural ke kunjungan[0], dan test invarian demografi
   // di atas pun cuma cek `kunjungan[0]?.karma` (pola sama). TAPI `init.ts`

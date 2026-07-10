@@ -8,6 +8,7 @@ import type { Action } from './actions'
 import type { GameEvent } from './events'
 import type { FokusProgram, GameState, PenilaianEncounter, PesertaProlanis, Surat } from './state'
 import type { ContentPack } from '@content/pack'
+import type { Persona } from '@content/types'
 import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter } from './clinic'
 import { buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm } from './kunjungan'
@@ -347,6 +348,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
             usia: encFinal.pasien.usia,
             jenisKelamin: encFinal.pasien.jenisKelamin,
             rw: encFinal.pasien.rw,
+            // M10.b §43: bawa bpjs+persona — orang yg sama tak boleh berganti
+            // status pembiayaan/suara saat kembali (dulu di-roll ulang).
+            bpjs: encFinal.pasien.bpjs,
+            persona: encFinal.pasien.persona,
             ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
           },
         ]
@@ -372,6 +377,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
             usia: encFinal.pasien.usia,
             jenisKelamin: encFinal.pasien.jenisKelamin,
             rw: encFinal.pasien.rw,
+            bpjs: encFinal.pasien.bpjs,
+            persona: encFinal.pasien.persona,
             ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
           },
         ]
@@ -415,6 +422,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
                 usia: encFinal.pasien.usia,
                 jenisKelamin: encFinal.pasien.jenisKelamin,
                 rw: encFinal.pasien.rw,
+                // M10.b §43: identitas utuh (bpjs/persona) + keluargaId yg
+                // dulu HILANG di 4 situs SISRUTE (putus tautan binaan).
+                bpjs: encFinal.pasien.bpjs,
+                persona: encFinal.pasien.persona,
+                ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
               },
             ]
             suratSisrute = {
@@ -440,6 +452,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
                 usia: encFinal.pasien.usia,
                 jenisKelamin: encFinal.pasien.jenisKelamin,
                 rw: encFinal.pasien.rw,
+                bpjs: encFinal.pasien.bpjs,
+                persona: encFinal.pasien.persona,
+                ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
               },
             ]
             suratSisrute = {
@@ -465,6 +480,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
                 usia: encFinal.pasien.usia,
                 jenisKelamin: encFinal.pasien.jenisKelamin,
                 rw: encFinal.pasien.rw,
+                bpjs: encFinal.pasien.bpjs,
+                persona: encFinal.pasien.persona,
+                ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
               },
             ]
             suratSisrute = {
@@ -496,6 +514,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
                 usia: encFinal.pasien.usia,
                 jenisKelamin: encFinal.pasien.jenisKelamin,
                 rw: encFinal.pasien.rw,
+                bpjs: encFinal.pasien.bpjs,
+                persona: encFinal.pasien.persona,
+                ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
                 prb: true,
               },
             ]
@@ -1071,6 +1092,10 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
             usia: p.usia,
             jenisKelamin: p.jenisKelamin,
             rw: p.rw,
+            // M10.b §43: Prolanis adalah program BPJS — pesertanya per definisi
+            // ber-JKN aktif; dulu 30% komplikasinya datang sbg pasien umum.
+            bpjs: true,
+            ...(p.keluargaId ? { keluargaId: p.keluargaId } : {}),
           })
         }
         return { ...pBaru, takTerkontrolBerturut: 0 }
@@ -1168,6 +1193,8 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
               usia: pasienSkip.usia,
               jenisKelamin: pasienSkip.jenisKelamin,
               rw: pasienSkip.rw,
+              bpjs: pasienSkip.bpjs,
+              persona: pasienSkip.persona,
               ...(pasienSkip.keluargaId ? { keluargaId: pasienSkip.keluargaId } : {}),
             },
           ]
@@ -1271,6 +1298,9 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     jenisKelamin?: 'L' | 'P'
     keluargaId?: string
     rw?: number
+    /** M10.b §43: identitas utuh — lihat komentar JadwalItem (state.ts). */
+    bpjs?: boolean
+    persona?: Persona
     prb?: boolean
   }
   const pasienKembali: PasienJatuhTempo[] = []
@@ -1308,6 +1338,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
         ...(j.keluargaId ? { keluargaId: j.keluargaId } : {}),
         ...(j.rw !== undefined ? { rw: j.rw } : {}),
+        ...(j.bpjs !== undefined ? { bpjs: j.bpjs } : {}),
+        ...(j.persona ? { persona: j.persona } : {}),
         ...(j.prb ? { prb: true } : {}),
       })
     } else if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId) {
@@ -1319,6 +1351,11 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         const { karmaAktif: _lewat, ...kelGagal } = kel
         keluargaMap = { ...keluargaMap, [j.keluargaId]: { ...kelGagal, arcSelesai: 'gagal' } }
         tally.karmaTerjadi += 1
+        // M10.b §43: status BPJS pasien karma dari indikator JKN keluarganya
+        // SAAT karma menyala (bukan roll 70%) — keluarga berkartu-mati (kelas
+        // cerita Bu Marni) anggotanya datang sbg pasien umum; dan bila arc
+        // sempat memperbaiki JKN sebelum karma jatuh tempo, itu pun terhormati.
+        const jknKeluarga = kel.indikator.jkn?.statusSebenarnya
         pasienKembali.push({
           kasusId: j.kasusId,
           catatan: j.catatan ?? '',
@@ -1327,6 +1364,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           ...(j.nama ? { nama: j.nama } : {}),
           ...(j.usia !== undefined ? { usia: j.usia } : {}),
           ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
+          ...(jknKeluarga === 'ya' || jknKeluarga === 'tidak' ? { bpjs: jknKeluarga === 'ya' } : {}),
         })
         suratBaru.push(
           buatSuratHarian(hari, suratBaru.length, {
@@ -1622,6 +1660,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       ...(p.jenisKelamin ? { jenisKelamin: p.jenisKelamin } : {}),
       ...(p.keluargaId ? { keluargaId: p.keluargaId } : {}),
       ...(p.rw !== undefined ? { rw: p.rw } : {}),
+      ...(p.bpjs !== undefined ? { bpjs: p.bpjs } : {}),
+      ...(p.persona ? { persona: p.persona } : {}),
       ...(p.prb ? { prb: true } : {}),
     }),
   )
@@ -1767,6 +1807,8 @@ function bentukRosterProlanis(pack: ContentPack, rng: Rng): PesertaProlanis[] {
         usia: a.usia,
         jenisKelamin: a.jenisKelamin,
         rw: kel.rw,
+        // M10.b §43: komplikasi prolanis harus bisa dirunut ke keluarganya.
+        keluargaId: kel.id,
         jenis,
         // Mulai tak terkontrol (butuh intervensi) — itulah gunanya program.
         param: jenis === 'ht' ? rng.int(150, 175) : rng.int(210, 280),

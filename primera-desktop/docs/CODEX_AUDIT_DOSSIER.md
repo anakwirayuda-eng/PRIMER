@@ -2522,3 +2522,108 @@ di masa depan yang lupa pola ini otomatis tertangkap. Verifikasi-bergigi:
 merah persis pada assertion `.onb-kartu` sblm fix, hijau stlh; stash/pop
 dikonfirmasi ulang. Tak ada REVISI_ENGINE bump (CSS murni). `npm test
 -- --run` → **420 test** (dari 419), typecheck bersih.
+
+## 43. M10.b — audit bridge UKP↔UKM + konsistensi identitas NPC/warga (2026-07-06)
+
+Dimensi 2+3 M10, dikerjakan mono. Metode: telusuri SEMUA jalur "orang
+yang sama muncul lagi" end-to-end di kode (9 situs penjadwalan
+`pasien_kembali` + karma + prolanis + PRB + kader), verifikasi tiap
+klaim thd kode aktual, temuan diuji test-first sebelum di-fix.
+
+### Temuan (5, semua di-fix — commit ini, REVISI_ENGINE 13→14)
+
+**F1 [P2] Pasien yang KEMBALI di-roll ulang bpjs & persona-nya.**
+Seluruh 9 situs penjadwalan membawa nama/usia/JK/rw (dijaga sejak M1)
+tapi TIDAK `bpjs` & `persona` — `buatPasienDariKasus` me-roll ulang
+keduanya saat pasien kembali: orang yang sama bisa berganti status
+pembiayaan antar-kunjungan (umum bayar retribusi ke kas vs BPJS
+membakar kapitasi — dampak skor Manajemen via ambang kas) dan berganti
+"suara" (persona menyetir variasi dialog anamnesis). Fix: `JadwalItem`
++`bpjs?`+`persona?`, dibawa di semua situs, diteruskan sampai override
+`buatPasienDariKasus`.
+
+**F2 [P2] Persona pasien inject dihitung dari usia roll yang DIBUANG.**
+`buatPasienDariKasus` me-roll usia dari demografi kasus, hitung
+persona, BARU merge override: pasien karma/prolanis (usia inject
+sungguhan dari konten keluarga) mendapat persona dari usia acak yang
+tak pernah dipakai. Terbukti empiris di test: Bu Wulan (58, karma
+stroke) mendapat persona 'lansia' dari roll demografi stroke_iskemik
+>=60. Fix: `pilihPersona(override?.usia ?? usia, rng)` — persona dari
+usia EFEKTIF; override.persona (pasien kembali, F1) tetap menang.
+
+**F3 [P3] 4 situs SISRUTE (boomerang/tolak-spesialis/tolak-bed/PRB)
+membuang `keluargaId`** — beda dari situs konsekuensi/terlantar/karma
+yang membawanya; anggota binaan yang dirujuk kehilangan tautan
+keluarganya saat kembali. Ditambah roster prolanis kini menyimpan
+`keluargaId` (field baru opsional, save-compat) — komplikasi prolanis
+bisa dirunut balik ke keluarga binaan. Catatan jujur: `keluargaId`
+pada pasien klinik saat ini TIDAK dibaca UI/skor mana pun (kartu
+konteks keluarga adalah fitur PRIMER web lama, bukan primera-desktop)
+— ini konsistensi identitas + fondasi masa depan, bukan gameplay aktif.
+
+**F4 [P2-desain] bpjs pasien karma & prolanis mengabaikan realitas
+keluarganya.** Karma: keluarga berkartu-JKN-mati (indikator `jkn:
+'tidak'`, kelas cerita Bu Marni) anggotanya bisa datang sbg pasien BPJS
+(roll 70%). Fix: bpjs pasien karma dari `indikator.jkn.statusSebenarnya`
+keluarga SAAT karma menyala — arc yang sempat memperbaiki JKN sebelum
+jatuh tempo pun terhormati. Prolanis: program BPJS by definition, tapi
+30% komplikasinya datang sbg pasien umum — kini selalu `bpjs: true`.
+
+**F5 [P3] Pool NAMA_WARGA tumpang tindih 17 nama dgn anggota keluarga
+binaan** (termasuk identitas karma "Lastri"/"Painem", dan 10 nama polos
+identik: Joko/Dewi/Siti/...) — pasien acak klinik bisa bernama persis
+anggota binaan aktif, dua "orang" tak berhubungan berbagi identitas.
+Tak ada guard; murni untung-untungan RNG (jawaban utk pertanyaan brief
+R1 §5.5). Fix: 17 nama pool diganti (pool tetap 42/42), + guard
+permanen di pack.test.ts (pool vs nama-anggota, dgn & tanpa honorifik,
+WAJIB disjoint). Guard langsung membuktikan nilainya: pengganti pertama
+saya ('Tumini') ternyata bentrok dgn "Bu Tumini" keluarga_slamet —
+tertangkap test, diganti 'Warsiti'. Pool marga `namaWarga.keluarga`
+TIDAK disentuh: data mati (tak dipakai runtime mana pun), didokumentasi.
+
+### Yang diaudit & BERSIH (jangan re-audit tanpa alasan baru)
+
+- **Karma tak dobel-hitung**: daftar kasus pasien-kembali diteruskan
+  ke `susunAntrianHarian` sbg `kecuali` (dikeluarkan dari kandidat
+  director), BUKAN ditambahkan dua kali.
+- **Override identitas survive ke UI**: `{...dasar, ...override}` di
+  buatPasienDariKasus — nama/usia/JK/rw/keluargaId inject utuh sampai
+  antrian/encounter (kecuali persona/bpjs, F1/F2 di atas — kini fixed).
+- **kader.ts**: bias SELALU salah di indikatornya + teledor
+  (100-ketelitian)% di sisanya — mekanik persis label; IKS RW
+  diagregasi ulang HARIAN dari state keluarga terkini (bukan snapshot);
+  kader punya kehadiran naratif (surat harian + slip bias 40% +
+  persona 30%) — menjawab brief R1 §5.3.
+- **KBK**: pengali (0.8/1.0/1.3) dihitung saat tutup-bulan dari
+  `desa.rw` TERKINI. (Brief R1 menyebut "x0.5-x1.3" — angka aktual
+  0.8/1.0/1.3; brief yang tak akurat, bukan kode.)
+- **`AnggotaKeluarga.kondisi[]` BUKAN metadata mati** (pertanyaan
+  terbuka brief R1/R2): dibaca `bentukRosterProlanis` — anggota
+  ber-kondisi hipertensi/dm membentuk roster Prolanis. Jembatan
+  keluarga-prolanis-komplikasi-poli memakai identitas anggota
+  SUNGGUHAN.
+- **PRB hanya terjadwal pada rujukan DITERIMA** (cabang `diterima`
+  SISRUTE) — status PRB konsisten dgn riwayat rujukan nyata.
+- **rmLengkap** hanya dari encounter klinik — by design (kunjungan
+  rumah tak punya konsep SOAP-lengkap), didokumentasikan.
+- **Kredit Dex utk encounter kedua** (pasien kembali ditangani ulang):
+  jalur DISPOSISI meng-update dex tanpa syarat — konsisten.
+- **`karma_igd` adalah misnomer historis**: jenis jadwal bernama
+  `_igd` tapi pasiennya masuk ANTRIAN KLINIK pagi (surat "menunggumu
+  di antrian pagi ini" konsisten dgn perilaku) — bukan bug, dicatat
+  supaya audit berikutnya tak bingung.
+- **Diterima sbg gap kecil yang disengaja**: `bonusTrust` tidak dibawa
+  saat pasien kembali (display-only, nol dampak skor).
+
+Verifikasi-bergigi: 8 test baru (file baru `m10bridge.test.ts`: 7 —
+identitas konsekuensi-kembali penuh, karma jkn-bpjs + persona dewasa,
+roster prolanis keluargaId, 3x persona-override, 1 regresi non-override;
++1 guard pool nama di pack.test.ts) MERAH persis sebelum fix (stash
+5 file fix = 7 merah; pop = hijau semua). REVISI_ENGINE 13-14 (bpjs
+mengubah arah pembayaran lab/obat -> kapitasi -> Manajemen; konsumsi
+RNG pilihPersona bergeser utk pasien inject lintas ambang usia — jejak
+lama dgn pasien kembali/karma/prolanis bisa mereplay ke kapitasi
+berbeda, dossier lama wajib jatuh ke "tidak dapat diverifikasi").
+`npm run typecheck` bersih; `npm test -- --run` = **428 test** (dari
+420), 39 file, hijau — termasuk soak 90-hari & verifier M6 dgn
+semantik baru.

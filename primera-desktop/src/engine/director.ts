@@ -57,7 +57,12 @@ export function buatPasienDariKasus(
   const daftarNama = jenisKelamin === 'L' ? pack.namaWarga.pria : pack.namaWarga.wanita
   const nama = daftarNama.length > 0 ? rng.pick(daftarNama) : 'Warga Sukamaju'
   const usia = rng.int(kasus.demografi.usiaMin, kasus.demografi.usiaMax)
-  const persona = pilihPersona(usia, rng)
+  // M10.b (dossier §43): persona WAJIB dari usia EFEKTIF — pasien inject
+  // (karma/prolanis/PRB) membawa usia sungguhan via override, tapi dulu
+  // persona dihitung dari roll demografi yang lantas DIBUANG merge override:
+  // Mbah Lastri 71 th bisa bicara dgn suara 'polos' dewasa (atau sebaliknya).
+  // override.persona (bila ada, mis. pasien kembali) tetap menang saat merge.
+  const persona = pilihPersona(override?.usia ?? usia, rng)
   // Kasus ber-alergiTrap SELALU membawa alerginya: dialog anamnesisnya menceritakan
   // riwayat alergi itu, dan jebakannya justru inti pelajaran kasus tersebut.
   const alergi = kasus.alergiTrap ? [kasus.alergiTrap.kelas] : []

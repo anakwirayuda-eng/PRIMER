@@ -282,6 +282,12 @@ export interface PesertaProlanis {
   usia: number
   jenisKelamin: JenisKelamin
   rw: number
+  /**
+   * M10.b: keluarga binaan asal peserta — komplikasi prolanis yang berujung
+   * di poli harus bisa dirunut balik ke keluarganya (jembatan UKM→UKP utuh).
+   * Opsional demi kompatibilitas save lama (roster pra-M10.b tanpa field ini).
+   */
+  keluargaId?: string
   jenis: 'ht' | 'dm'
   /** Parameter kontrol: sistolik (ht) atau GDS (dm). */
   param: number
@@ -383,6 +389,14 @@ export interface JadwalItem {
   usia?: number
   jenisKelamin?: 'L' | 'P'
   rw?: number
+  /**
+   * M10.b (dossier §43): identitas pasien kembali harus UTUH — bpjs (ekonomi:
+   * umum bayar retribusi ke kas, BPJS membakar kapitasi) & persona (suara
+   * anamnesis) dulu TAK dibawa → di-roll ulang tiap kembali, orang yang sama
+   * bisa berganti status pembiayaan & gaya bicara antar-kunjungan.
+   */
+  bpjs?: boolean
+  persona?: Persona
   /** Pasien kembali sebagai kontrol Program Rujuk Balik (M3.13). */
   prb?: boolean
 }
