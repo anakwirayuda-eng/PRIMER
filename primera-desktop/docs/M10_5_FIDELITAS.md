@@ -212,3 +212,50 @@ menyangkut kebenaran nilai/etik lebih baik diputuskan bersama gelombang M10.5.
 sampai mahasiswa yang merujuk BENAR (per EBM terbaru) justru ditebas penalti rujukan
 krn DB SKDI 4A/3B belum di-update. Batas "tuntas-mandiri vs rujuk" harus digeser
 bersamaan di Fase 2.
+
+## 6. Q8 — Audit ICD-10 67 kasus + 5 IGD (SELESAI 2026-07-10)
+
+Workflow `audit-icd10-satusehat` (8 auditor, WebSearch vs WHO ICD-10 2010).
+**154 kode diperiksa, 147 tepat (95%).** Sangat bersih. Rincian 7 temuan:
+
+### 6a. SATU kode genuinely keliru (CM-only) — butuh keputusan konten
+- **`mm_hipertensi_urgensi` icd10 `I16.0`** (keyakinan TINGGI, = konfirmasi CODEX
+  #11). Kategori **I16 (Hypertensive crisis) TIDAK ADA di WHO ICD-10 2010** — murni
+  tambahan ICD-10-CM AS (efektif FY2018). WHO 2010 blok hipertensi berhenti di I15.
+  Komentar kode di `kasusMetabolikMsk.ts:896-898` ("audit CODEX 2026-07-04" yg
+  mengubah I10→I16.0 dgn alasan "kode urgensi/krisis di ICD-10 memang I16.x") BENAR
+  utk CM tapi SALAH utk WHO 2010 — justru I10 lama sudah benar.
+  - **Ganjalan:** WHO 2010 TAK punya kode urgensi/krisis terpisah → hipertensi
+    urgensi = **I10** (sama dgn `hipertensi_esensial`; I10 WHO mencakup malignant/
+    berat). Dua kasus akan berbagi I10.
+  - **Kenapa itu OK & terkelola:** kedua kasus SUDAH dibedakan oleh `skdi`/
+    `harusDirujuk` (urgensi=3B rujuk, esensial=4A tuntas), BUKAN oleh kode ICD.
+    `pack.test.ts` (`ICD_DUPLIKAT_SENGAJA`) sudah menyediakan mekanisme
+    men-dokumentasi-kan duplikat ICD yang disengaja — jadi ini didukung, bukan
+    melawan invarian.
+  - **Rencana fix (butuh OK dokter + 1 keputusan):** (1) icd10 I16.0→I10; (2)
+    diagnosisBanding [I10,I16.0,I16.9] → buang I16.x (CM-only) & ganti dgn pembanding
+    WHO nyata — **PILIHAN DDx ini keputusan dokter** (mis. I11.9 hypertensive heart
+    disease? I15 secondary? atau cukup sisakan pembanding non-hipertensi); (3)
+    daftarkan I10 di `ICD_DUPLIKAT_SENGAJA` + alasan; (4) perbaiki komentar
+    menyesatkan di baris 896-898.
+
+### 6b. Enam "kurang-spesifik" — OPSIONAL, rekomendasi condong BIARKAN
+Semua keyakinan SEDANG; auditor sendiri menegaskan kode 3-karakter saat ini LAZIM &
+DITERIMA di FKTP Indonesia (PPK Kemenkes/daftar 144/BPJS), dan beberapa justru LEBIH
+tepat utk diagnosis presumtif-klinis tanpa lab (= realita FKTP yang PRIMERA modelkan):
+| Kasus | Sekarang | Saran | Catatan |
+|---|---|---|---|
+| `faringitis_akut` | J02.9 | J02.0 (streptococcal) | J02.9 sah bila strep presumtif klinis (tanpa RADT/kultur) |
+| `tonsilitis_akut` | J03.9 | J03.0 (streptococcal) | idem — sah bila belum ada konfirmasi lab |
+| `diare_akut_anak` | A09 | A09.0 | A09 bare = kategori (WHO 2010 pecah A09.0/.9); tapi A09 lazim FKTP |
+| `disentri_basiler` (DDx) | A09 | A09.9 | kode DDx saja, dampak kecil |
+| `apendisitis_akut` (DDx) | A09 | A09.9 | kode DDx saja, dampak kecil |
+| `igd_syok_anafilaksis` | T78.2 | T88.6 | T78.2 sah utk anafilaksis generik; T88.6 lebih tepat KARENA dipicu obat (suntik antibiotik). Refinement bermakna klinis — **layak dipertimbangkan** |
+
+**Rekomendasi:** wajib fix hanya 6a (I16.0). Utk 6b: BIARKAN J02.9/J03.9/A09 (sengaja
+memodelkan dx presumtif-klinis FKTP — bahkan bisa jadi bahan `catatanRealita`/clue M11a
+"kenapa unspecified sah di FKTP"); pertimbangkan T88.6 utk anafilaksis-dipicu-obat
+(nuansa "correct drug properly administered" = pelajaran koding bagus). Semua keputusan
+dokter. Kode ICD ikut `sidikJariPack` → mengubahnya butuh masuk gelombang M10.5 (bukan
+REVISI bump, tapi pack-hash bergeser).
