@@ -810,7 +810,12 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['A03.9', 'A06.0', 'A09'],
     tatalaksana: {
-      obatBenar: ['ciprofloxacin_500', 'oralit', 'zinc_20'],
+      // M10 Batch-3 (C.11a, riset WHO/UNICEF + LINTAS DIARE Kemenkes): zinc =
+      // terapi baku hanya pada ANAK <5 th; pasien ini DEWASA (15-50). zinc
+      // dipindah dari obatBenar (wajib) ke obatOpsional — tak dituntut & tak
+      // dihukum (harmless), tapi tak lagi mengajarkan zinc rutin utk dewasa.
+      obatBenar: ['ciprofloxacin_500', 'oralit'],
+      obatOpsional: ['zinc_20'],
       obatSalahUmum: [
         { id: 'loperamid_2', alasan: 'Antimotilitas DILARANG pada diare berdarah/disentri invasif — menahan patogen & toksin, memicu megakolon toksik dan memperpanjang penyakit.' },
         { id: 'metronidazol_500', alasan: 'Metronidazol untuk disentri AMEBA; pada disentri basiler (Shigella) yang tepat adalah antibiotik seperti siprofloksasin. Feses di sini tidak menunjukkan trofozoit ameba.' },
@@ -820,7 +825,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // dehidrasi memberat — rehidrasi oralit topik yang tak boleh dilewatkan.
       edukasiKritis: ['cairan_oralit'],
     },
-    clue: 'Disentri BASILER (Shigella): diare sedikit-sedikit tapi sering, DARAH + lendir, demam, tenesmus, leukosit feses banyak. Beri antibiotik (siprofloksasin) + rehidrasi oralit + zinc; JANGAN beri antimotilitas (loperamid). Bedakan disentri AMEBA (trofozoit di feses) → metronidazol. Kontras dengan diare akut cair non-disentri yang TANPA antibiotik (Kemenkes; WHO).',
+    clue: 'Disentri BASILER (Shigella): diare sedikit-sedikit tapi sering, DARAH + lendir, demam, tenesmus, leukosit feses banyak. Beri antibiotik (siprofloksasin) + rehidrasi oralit; JANGAN beri antimotilitas (loperamid). Zinc = terapi baku hanya untuk anak <5 tahun (bukan dewasa). Bedakan disentri AMEBA (trofozoit di feses) → metronidazol. Kontras dengan diare akut cair non-disentri yang TANPA antibiotik (Kemenkes; WHO).',
     konsekuensi: {
       narasi: 'Bila diberi antimotilitas atau tidak diberi antibiotik yang tepat, risiko dehidrasi memberat, penyebaran, dan pada anak/lansia dapat mengancam jiwa.',
       kembaliHariMin: 2,
@@ -1054,7 +1059,10 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
   {
     id: 'apendisitis_akut',
     nama: 'Apendisitis Akut',
-    icd10: 'K35.80',
+    // M10 Batch-3 (C.10): K35.80 adalah kode ICD-10-CM (Amerika) yang TAK ADA
+    // di WHO ICD-10. Indonesia terikat WHO ICD-10 (Permenkes 76/2016, INA-CBG)
+    // → apendisitis akut = K35.8 (WHO revisi 2016). Standar game: WHO ICD-10 2016.
+    icd10: 'K35.8',
     skdi: '3B',
     kategori: 'pencernaan',
     // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
@@ -1133,7 +1141,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       { id: 'urinalisis', hasil: 'Leukosit/eritrosit urin minimal, nitrit (-) — membantu menyingkirkan ISK/kolik ureter.', flag: 'normal', relevan: true },
       { id: 'tes_kehamilan', hasil: 'Negatif (pada pasien perempuan usia subur) — menyingkirkan kehamilan ektopik.', flag: 'normal', relevan: true },
     ],
-    diagnosisBanding: ['K35.80', 'N83.2', 'A09'],
+    diagnosisBanding: ['K35.8', 'N83.2', 'A09'],
     tatalaksana: {
       // Analgesia adekuat DIANJURKAN pra-rujukan — mitos "analgesik menutupi tanda
       // apendisitis" sudah TERBANTAH (Cochrane CD005660; WSES 2020). Parasetamol

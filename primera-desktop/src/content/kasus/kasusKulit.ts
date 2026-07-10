@@ -237,12 +237,15 @@ export const KASUS_KULIT: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B35.4', 'L23.9', 'L20.9'],
     tatalaksana: {
-      // M10 §49 (CODEX C.3): antijamur topikal = pilih-salah-satu ketokonazol
-      // ATAU mikonazol — clue eksplisit menyebut KEDUANYA setara ("ketokonazol/
-      // mikonazol topikal"). Dulu hanya ketokonazol di obatBenar → meresepkan
-      // mikonazol (yang clue-nya sendiri sahkan) dihukum −15 sbg obat-di-luar.
-      obatBenar: ['griseofulvin_500'],
+      // M10 §49 (C.3): antijamur topikal = pilih-salah-satu ketokonazol ATAU
+      // mikonazol (clue sahkan keduanya). M10 Batch-3 (C.2, riset Perdoski/EBM):
+      // utk lesi tinea TERBATAS, topikal = LINI PERTAMA & cukup; griseofulvin
+      // oral hanya BILA luas/rekalsitran (persis kata clue). Karena itu oral
+      // dipindah dari WAJIB → obatOpsional: topikal-saja = skor penuh, oral tak
+      // dihukum tapi tak dituntut (dulu griseofulvin wajib melawan clue-nya sendiri).
+      obatBenar: [],
       obatAlternatif: [['ketokonazol_krim', 'mikonazol_krim']],
+      obatOpsional: ['griseofulvin_500'],
       obatSalahUmum: [
         { id: 'betametason_krim', alasan: 'JEBAKAN KLASIK: steroid topikal tunggal (betametason) pada tinea menekan radang sesaat TAPI menekan imun lokal → jamur meluas & menyamar (TINEA INKOGNITO), tepi lesi kabur, sulit diobati. Tinea butuh ANTIJAMUR, bukan steroid.' },
         { id: 'hidrokortison_krim', alasan: 'Sama seperti betametason — kortikosteroid tunggal memperparah tinea. Tanpa antijamur, lesi jamur justru berkembang.' },
@@ -367,14 +370,20 @@ export const KASUS_KULIT: KasusKlinis[] = [
     ],
     diagnosisBanding: ['L01.0', 'B00.9', 'L20.9'],
     tatalaksana: {
-      obatBenar: ['gentamisin_krim', 'cefadroxil_500'],
+      // M10 Batch-3 (C.2, riset IDSA 2014/Perdoski/IDAI): impetigo TERLOKALISIR
+      // (kasus ini: krusta madu di wajah anak) → LINI PERTAMA = mupirosin topikal
+      // SAJA (dulu gentamisin, non-guideline). Antibiotik oral (cefadroxil) hanya
+      // BILA luas/multipel → obatOpsional (tak wajib, tak dihukum). Dulu keduanya
+      // wajib sekaligus (over-treatment utk lesi terbatas).
+      obatBenar: ['mupirosin_krim'],
+      obatOpsional: ['cefadroxil_500'],
       obatSalahUmum: [
         { id: 'hidrokortison_krim', alasan: 'Impetigo adalah infeksi bakteri (Staphylococcus/Streptococcus). Kortikosteroid menekan imun lokal dan memperburuk infeksi, bukan mengobatinya.' },
         { id: 'ketokonazol_krim', alasan: 'Bukan jamur — krusta madu khas bakteri. Antijamur tidak berefek.' },
       ],
       edukasi: ['kebersihan_kulit', 'cuci_tangan', 'cuci_seprai_panas'],
     },
-    clue: 'Impetigo krustosa: KRUSTA MADU (honey-colored) di wajah anak. Terlokalisir → antibiotik topikal (gentamisin/mupirosin); LUAS/multipel → antibiotik oral anti-Staph (cefadroxil; eritromisin bila alergi penisilin). Rendam & lepaskan krusta, potong kuku, cuci tangan (PPK Perdoski/IDAI).',
+    clue: 'Impetigo krustosa: KRUSTA MADU (honey-colored) di wajah anak. Terlokalisir → LINI PERTAMA mupirosin topikal (IDSA/Perdoski); LUAS/multipel → tambah antibiotik oral anti-Staph (cefadroxil; eritromisin bila alergi penisilin). Rendam & lepaskan krusta, potong kuku, cuci tangan (PPK Perdoski/IDAI).',
     konsekuensi: {
       narasi: 'Bila tidak diobati dan digaruk terus, lesi menyebar (autoinokulasi) dan menular ke anak lain; strain nefritogenik Streptococcus berisiko memicu glomerulonefritis akut pascastreptokokus.',
       kembaliHariMin: 5,
@@ -1045,7 +1054,9 @@ export const KASUS_KULIT: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B07', 'L82', 'D23.9'],
     tatalaksana: {
-      obatBenar: ['asam_salisilat_bedak'],
+      // M10 Batch-3 (C.11c): sediaan keratolitik yang benar utk kutil =
+      // asam salisilat konsentrasi tinggi (kolodion 17%), bukan bedak 2%.
+      obatBenar: ['asam_salisilat_kolodion'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Veruka disebabkan Human Papillomavirus (HPV), bukan bakteri — antibiotik tidak berperan sama sekali.' },
         { id: 'ketokonazol_krim', alasan: 'Bukan jamur — antijamur tidak berefek pada kutil viral. Terapi keratolitik (asam salisilat) atau bedah minor.' },

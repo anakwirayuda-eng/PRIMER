@@ -3315,3 +3315,41 @@ m3sisrute ambang) — keduanya berkomentar alasan.
 **Sisa OPEN dari ronde CODEX: hanya Batch-3** (12 item butuh penilaian medis Dr. Wirayuda —
 primakuin/skrining hamil, target HT urgensi, gate tes-konfirmasi, alergi-vs-rmLengkap, edisi
 ICD, dll; lihat §51).
+
+## 54. M10 Batch-3 (keputusan medis) — implementasi hasil riset (2026-07-10)
+
+Setelah riset multi-agen (dokumen keputusan `docs/M10_BATCH3_MEDIS.md`), Dr. Wirayuda memutuskan.
+Diimplementasikan: **all-3 fix faktual + C.4 opsi B + C.2 & C.12; C.8 → M11; 4 item desain
+(P1.6/P1.7/P1.9/C.1) → M11.** Test-first, **512 test** (dari 502, +10 di `m10batch3.test.ts`),
+typecheck bersih. TANPA REVISI_ENGINE bump (semua perubahan konten tercakup pack tx/anamnesis-hash
++ reuse mekanik `obatOpsional`/`hanyaUntuk` yang sudah ada — dossier lama otomatis
+"tidak_dapat_diverifikasi", tak ada semantik engine baru).
+
+- **C.5 (game-salah)** — clue HT urgensi: hapus "target ~25% dalam jam pertama" (itu angka
+  EMERGENSI); ganti "turunkan PERLAHAN oral 24–48 jam, kontrol ~1 minggu" + kontras eksplisit
+  "≤25% jam pertama = target EMERGENSI, BUKAN urgensi" (ACC/AHA 2017, ESC/ESH 2023, InaSH-PERHI).
+- **C.10 (game-salah)** — apendisitis `K35.80` (ICD-10-CM Amerika) → **K35.8** (WHO ICD-10 2016,
+  yang diikat Indonesia via Permenkes 76/2016) di icd10 + diagnosisBanding.
+- **C.11c (game-salah)** — veruka: katalog `asam_salisilat_bedak` (Bedak Salisilat 2% = produk
+  miliaria) DIHAPUS (yatim+decoy, pola §47), diganti `asam_salisilat_kolodion` (Asam Salisilat 17%
+  Kolodion) sbg obatBenar.
+- **C.11a (game-salah)** — disentri basiler (pasien DEWASA 15–50): `zinc_20` dipindah obatBenar →
+  `obatOpsional` (zinc = terapi baku hanya anak <5, WHO/UNICEF/LINTAS DIARE); clue ditambah "zinc
+  hanya untuk anak <5". Antibiotik disentri (sudah benar) dipertahankan.
+- **C.4 (keselamatan, opsi B)** — malaria: tambah anamnesis esensial `q_kehamilan`
+  (`hanyaUntuk:'P'` — reuse mekanik Batch-2) → skrining kehamilan hanya muncul/dihitung utk pasien
+  perempuan; clue ditambah kontraindikasi primakuin pada hamil & bayi <6 bln + "G6PD tak wajib
+  dites utk dosis tunggal falsiparum" (WHO 2023/2025 + Buku Saku Malaria Kemenkes 2023).
+- **C.2 (kondisional)** — tinea: `griseofulvin_500` oral dipindah obatBenar → `obatOpsional`
+  (topikal = lini pertama lesi terbatas; oral hanya bila luas — sesuai clue); topikal-saja kini
+  skor penuh. Impetigo: `gentamisin_krim` → `mupirosin_krim` (lini pertama IDSA 2014/Perdoski;
+  katalog +mupirosin_krim), `cefadroxil_500` oral → obatOpsional (hanya bila luas).
+- **C.12 (kondisional)** — abortus iminens: "tirah baring" → "istirahat wajar/pembatasan aktivitas
+  (BUKAN tirah baring total — tak terbukti, Cochrane CD003576/POGI; risiko VTE)"; konsekuensi.narasi
+  diubah dari kausalitas "aktivitas→keguguran" ke natural history (kelainan kromosom); +konseling
+  "keguguran umumnya bukan akibat aktivitas ibu". Inti (rujuk USG) dipertahankan.
+- **P1.8 (game-benar)** — tak diubah (timing tes dengue sudah akurat).
+
+**Dipindah ke M11** (dossier tak ubah kode): C.8 (mekanik keselamatan skrining alergi) + 4 item
+desain/skoring P1.6/P1.7/P1.9/C.1. **Seluruh ronde CODEX audit M10 (§48–§54) kini TUNTAS** di sisi
+M10; sisanya adalah pekerjaan M11 yang terdokumentasi.

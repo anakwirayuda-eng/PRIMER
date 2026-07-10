@@ -452,13 +452,19 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       ],
       edukasi: ['tanda_bahaya_kehamilan', 'istirahat_cukup'],
     },
-    clue: 'Abortus IMINENS: perdarahan pervaginam pada kehamilan <20 minggu dengan ostium uteri TERTUTUP dan janin masih hidup. Tata laksana FKTP: tirah baring, hindari aktivitas berat & koitus, lalu RUJUK untuk USG konfirmasi viabilitas janin dan evaluasi lanjut oleh SpOG. Waspadai progresi ke abortus insipiens/inkomplit (perdarahan hebat, ostium terbuka) — kegawatan (PPK/PNPK Perdarahan Kehamilan Muda).',
+    // M10 Batch-3 (C.12, riset Cochrane CD003576/ACOG/NICE + POGI): tirah baring
+    // TIDAK terbukti mencegah keguguran (tirah baring lama malah risiko VTE);
+    // POGI eksplisit "tirah baring tak memberi hasil lebih baik". Kausalitas
+    // "aktivitas berat → keguguran" juga tak didukung bukti. Reframe: pembatasan
+    // aktivitas wajar (bukan tirah baring total) + pelvic rest saat perdarahan;
+    // inti tetap RUJUK USG. konsekuensi diubah ke natural history (bukan menyalahkan ibu).
+    clue: 'Abortus IMINENS: perdarahan pervaginam pada kehamilan <20 minggu dengan ostium uteri TERTUTUP dan janin masih hidup. Tata laksana FKTP: istirahat wajar & pembatasan aktivitas berat (BUKAN tirah baring total — tak terbukti mencegah keguguran, Cochrane/POGI; tirah baring lama berisiko trombosis), pelvic rest bila perdarahan aktif, lalu RUJUK untuk USG konfirmasi viabilitas janin & evaluasi SpOG. Waspadai progresi ke abortus insipiens/inkomplit (perdarahan hebat, ostium terbuka) — kegawatan. Konseling: keguguran umumnya BUKAN akibat aktivitas ibu (PPK/PNPK Perdarahan Kehamilan Muda).',
     konsekuensi: {
-      narasi: 'Bila tidak dievaluasi dan tetap beraktivitas berat, ancaman keguguran dapat berlanjut menjadi abortus inkomplit dengan perdarahan hebat yang mengancam nyawa ibu.',
+      narasi: 'Sebagian ancaman keguguran memang berprogresi (sering karena kelainan kromosom/embrio, terlepas dari aktivitas) — bila TIDAK dirujuk & dievaluasi USG, progresi ke abortus inkomplit dengan perdarahan hebat dapat terlewat tanpa penanganan.',
       kembaliHariMin: 1,
       kembaliHariMax: 5,
       kondisiKembali: 'Pasien kembali dengan perdarahan banyak bergumpal, mulas hebat, dan keluar jaringan — abortus inkomplit yang butuh kuretase.',
-      guideline: 'PPK Dokter FKTP — abortus iminens: tirah baring + rujuk USG; kenali tanda abortus inkomplit.',
+      guideline: 'PPK Dokter FKTP + POGI/Cochrane — abortus iminens: pembatasan aktivitas wajar (tirah baring total tak terbukti) + RUJUK USG; kenali tanda abortus inkomplit.',
     },
   },
 
@@ -1086,6 +1092,19 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         oldcarts: ['penyerta'],
       },
       {
+        // M10 Batch-3 (C.4, opsi B dokter): skrining kehamilan WAJIB sebelum
+        // primakuin — primakuin KONTRAINDIKASI MUTLAK pada kehamilan (WHO 2023/
+        // 2025 + Buku Saku Malaria Kemenkes 2023). hanyaUntuk 'P' → hanya muncul
+        // & dihitung skor utk pasien perempuan (tak janggal utk laki-laki).
+        id: 'q_kehamilan',
+        kategori: 'rpd',
+        tanya: 'Kapan haid terakhir — ada kemungkinan sedang hamil?',
+        jawab: 'Haid terakhir dua minggu lalu dok, teratur, sepertinya tidak hamil.',
+        esensial: true,
+        oldcarts: ['penyerta'],
+        hanyaUntuk: 'P',
+      },
+      {
         id: 'q_bahaya',
         kategori: 'rps',
         tanya: 'Ada penurunan kesadaran, kejang, sesak, atau sangat lemas sampai tidak bisa berdiri?',
@@ -1131,7 +1150,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       // gigit malam; pasien "jarang pakai kelambu"). Diganti cegah_malaria_kelambu.
       edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'cegah_malaria_kelambu'],
     },
-    clue: 'Malaria falsiparum: demam periodik + menggigil + splenomegali + riwayat dari daerah endemis (Papua/NTT). KONFIRMASI dengan RDT/mikroskopis SEBELUM terapi. Lini pertama Kemenkes: ACT = DHP (Dihidroartemisinin-Piperakuin) 3 hari + primakuin dosis tunggal (gametosidal). JANGAN pakai klorukin untuk falsiparum — resisten luas di Indonesia. Kenali tanda MALARIA BERAT (penurunan kesadaran, kejang, ikterik, gagal ginjal, hipoglikemia) → rujuk (Pedoman Tata Laksana Malaria Kemenkes).',
+    clue: 'Malaria falsiparum: demam periodik + menggigil + splenomegali + riwayat dari daerah endemis (Papua/NTT). KONFIRMASI dengan RDT/mikroskopis SEBELUM terapi. Lini pertama Kemenkes: ACT = DHP (Dihidroartemisinin-Piperakuin) 3 hari + primakuin dosis tunggal 0,25 mg/kgBB (gametosidal). SINGKIRKAN KEHAMILAN pada perempuan usia subur: primakuin KONTRAINDIKASI pada hamil & bayi <6 bln (beri DHP saja) — tes G6PD tidak diwajibkan untuk dosis tunggal falsiparum. JANGAN pakai klorukin untuk falsiparum — resisten luas di Indonesia. Kenali tanda MALARIA BERAT (penurunan kesadaran, kejang, ikterik, gagal ginjal, hipoglikemia) → rujuk (Pedoman Tata Laksana Malaria Kemenkes).',
     konsekuensi: {
       narasi: 'Bila diberi klorokuin (yang sudah resisten) atau antibiotik, parasitemia terus meningkat dan dapat berkembang menjadi malaria serebral, gagal organ, hingga kematian.',
       kembaliHariMin: 1,

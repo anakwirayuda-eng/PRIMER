@@ -71,8 +71,16 @@ export const OBAT_M3: Record<string, Obat> = {
   pseudoefedrin_30: { id: 'pseudoefedrin_30', nama: 'Pseudoefedrin 30 mg', kelas: 'dekongestan oral', sediaan: 'tablet', hargaBeli: 200, hargaJual: 500, fornas: true },
   loratadin_10: { id: 'loratadin_10', nama: 'Loratadin 10 mg', kelas: 'antihistamin non-sedatif', sediaan: 'tablet', hargaBeli: 250, hargaJual: 600, fornas: true },
   karbogliserin_tetes: { id: 'karbogliserin_tetes', nama: 'Karbogliserin Tetes Telinga 10%', kelas: 'serumenolitik', sediaan: 'tetes telinga', hargaBeli: 5000, hargaJual: 10000, fornas: true },
-  asam_salisilat_bedak: { id: 'asam_salisilat_bedak', nama: 'Bedak Salisilat 2%', kelas: 'keratolitik topikal', sediaan: 'bedak', hargaBeli: 3000, hargaJual: 6000, fornas: true },
+  // M10 Batch-3 (C.11c, riset Perdoski/Cochrane): sediaan keratolitik veruka
+  // yang BENAR = asam salisilat konsentrasi tinggi (kolodion 17% / plester 40%),
+  // BUKAN bedak salisilat 2% (produk miliaria — konsentrasi & bentuk salah utk
+  // kutil). `asam_salisilat_bedak` DIHAPUS (yatim + decoy pencarian "salisilat"
+  // pd kasus veruka; pola bug §47 garam_oralit_zinc).
+  asam_salisilat_kolodion: { id: 'asam_salisilat_kolodion', nama: 'Asam Salisilat 17% Kolodion', kelas: 'keratolitik topikal', sediaan: 'cairan olesan', hargaBeli: 8000, hargaJual: 15000, fornas: true },
   gentamisin_krim: { id: 'gentamisin_krim', nama: 'Gentamisin Krim 0,1%', kelas: 'antibiotik topikal', sediaan: 'krim', hargaBeli: 4000, hargaJual: 8000, fornas: true, antibiotik: true },
+  // M10 Batch-3 (C.2, riset IDSA 2014/Perdoski): mupirosin = antibiotik topikal
+  // LINI PERTAMA impetigo terlokalisir (dulu kasus pakai gentamisin, non-guideline).
+  mupirosin_krim: { id: 'mupirosin_krim', nama: 'Mupirosin Krim 2%', kelas: 'antibiotik topikal', sediaan: 'krim', hargaBeli: 12000, hargaJual: 22000, fornas: true, antibiotik: true },
   betametason_krim: { id: 'betametason_krim', nama: 'Betametason Valerat Krim 0,1%', kelas: 'kortikosteroid topikal', sediaan: 'krim', hargaBeli: 3500, hargaJual: 7000, fornas: true },
   kalamin_losion: { id: 'kalamin_losion', nama: 'Losio Kalamin', kelas: 'antipruritus topikal', sediaan: 'losion', hargaBeli: 4000, hargaJual: 8000, fornas: true },
 

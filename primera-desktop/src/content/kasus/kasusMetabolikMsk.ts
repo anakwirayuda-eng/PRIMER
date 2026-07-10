@@ -997,7 +997,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       ],
       edukasi: ['diet_rendah_garam', 'kepatuhan_obat', 'kontrol_rutin', 'tanda_bahaya'],
     },
-    clue: 'HIPERTENSI URGENSI (SKDI 3B → RUJUK): TD ≥180/120 TANPA kerusakan organ target AKUT (tanpa nyeri dada iskemik, edema paru, defisit neurologis, ensefalopati). Prinsip: TURUNKAN BERTAHAP dengan obat ORAL (amlodipin/kaptopril), target ~25% dalam jam pertama / beberapa jam — JANGAN drop cepat (nifedipin sublingual dilarang). Rujuk penyakit dalam untuk evaluasi. Bila ADA kerusakan organ akut = EMERGENSI → IGD (PPK Hipertensi / JNC / PERKI).',
+    clue: 'HIPERTENSI URGENSI (SKDI 3B → RUJUK): TD ≥180/120 TANPA kerusakan organ target AKUT (tanpa nyeri dada iskemik, edema paru, defisit neurologis, ensefalopati). Prinsip: TURUNKAN PERLAHAN dengan obat ORAL (amlodipin/kaptopril) dalam 24–48 jam, TANPA target persen-per-jam — jangan drop cepat (nifedipin sublingual dilarang), kontrol ulang ~1 minggu. Rujuk penyakit dalam untuk evaluasi. Bila ADA kerusakan organ akut = EMERGENSI → IGD (obat IV, turunkan ≤25% pada jam pertama). Catatan: "≤25% jam pertama" adalah target EMERGENSI, BUKAN urgensi (ACC/AHA 2017; ESC/ESH 2023; InaSH-PERHI).',
     konsekuensi: {
       narasi: 'Penurunan TD terlalu cepat (nifedipin sublingual) dapat memicu hipoperfusi otak/jantung dan justru menyebabkan stroke iskemik atau infark — sebaliknya membiarkan tanpa rujuk berisiko progres ke emergensi.',
       kembaliHariMin: 1,
