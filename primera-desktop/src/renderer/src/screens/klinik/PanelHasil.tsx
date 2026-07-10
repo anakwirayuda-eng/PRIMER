@@ -193,6 +193,15 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
             <p className="teks-kecil">{kasus.catatanRealita}</p>
           </div>
         )}
+        {/* M11.5: lapisan otoritas ke-3 — panduan RESMI Kemenkes (PPK
+            1186/2022), terpisah dari clue (EBM internasional) & realita. Sama
+            kelas display-only. Muncul hanya bila kasus menyediakannya. */}
+        {kasus?.panduanResmi && (
+          <div className="folder klinik-hasil__panduan">
+            <div className="judul-seksi">📜 Panduan Resmi Kemenkes</div>
+            <p className="teks-kecil">{kasus.panduanResmi}</p>
+          </div>
+        )}
 
         <div className="baris klinik-hasil__aksi">
           <button className="tombol tombol--senyap" onClick={() => onSelesai(false)}>

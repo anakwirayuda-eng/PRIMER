@@ -201,6 +201,19 @@ export interface KasusKlinis {
    * jarang distok). Juga murni display, tak berdampak skor/hash.
    */
   catatanRealita?: string
+  /**
+   * M11.5 (2026-07-11): lapisan ke-3 debrief — panduan RESMI Kemenkes (PPK
+   * 1186/2022 / PNPK) sbg lapisan otoritas TERSENDIRI, terpisah dari
+   * `clue` (EBM-terkini/internasional) & `catatanRealita` (realita lapangan).
+   * Pedagogis: sadarkan pemain bahwa pedoman resmi FKTP yang MENGIKAT mereka
+   * kadang BERBEDA dari EBM internasional (mis. PPK meresepkan flumetolon
+   * (steroid ringan) utk konjungtivitis alergi, sementara AAO lebih hati-hati),
+   * plus kriteria rujukan RESMI yg jadi kompetensi gatekeeper FKTP. Diisi
+   * SELEKTIF — hanya kasus yg panduan resminya menambah nilai (divergensi /
+   * kriteria rujukan penting), bukan semua kasus (cegah wall-of-text debrief).
+   * Sama kelas dgn 2 field di atas: murni display, TAK di-hash/TAK skor.
+   */
+  panduanResmi?: string
   konsekuensi?: KonsekuensiKlinis
   /** Sebagian pasien kasus ini membawa alergi yang menjebak terapi standar. */
   alergiTrap?: { kelas: string; obatTerlarang: string[]; alternatifBenar: string[] }

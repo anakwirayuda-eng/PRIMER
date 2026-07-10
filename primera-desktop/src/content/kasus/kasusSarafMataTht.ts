@@ -678,6 +678,12 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       edukasi: ['hindari_alergen', 'kompres_dingin_mata', 'cuci_tangan'],
     },
     clue: 'Konjungtivitis alergi: gejala DOMINAN GATAL, BILATERAL, sekret SEROSA berair (bukan mukopurulen), visus NORMAL, sering ada latar atopi/rinitis alergi. Terapi: antihistamin (oral/topikal) + air mata buatan + kompres dingin + HINDARI ALERGEN. Jangan beri antibiotik (bukan bakteri) atau steroid sembarangan (risiko glaukoma/katarak) — AAO PPP.',
+    // M11.5 (2026-07-11): lapisan panduan RESMI Kemenkes, perintis field.
+    // Divergensi terverifikasi ke sumber (docs/references/ppk1186/, entri 38):
+    // PPK 1186/2022 utk konjungtivitis alergi = "Flumetolon tetes mata 2×/hari
+    // selama 2 minggu" — flumetolon = kortikosteroid topikal ringan; jadi
+    // pedoman resmi FKTP JUSTRU mengizinkan steroid, beda dari clue (AAO).
+    panduanResmi: 'PPK Kemenkes 1186/2022 justru mencantumkan flumetolon (tetes mata STEROID ringan) 2×/hari selama 2 minggu sbg tata laksana resmi FKTP — berbeda dari kehati-hatian AAO di atas yang menghindari steroid. Kriteria rujukan resmi: bila timbul komplikasi kornea atau tak ada respons pengobatan.',
     konsekuensi: {
       narasi: 'Bila alergen tidak dihindari dan mata terus dikucek, terjadi kekambuhan berulang, iritasi kronik, dan risiko infeksi sekunder akibat garukan.',
       kembaliHariMin: 7,

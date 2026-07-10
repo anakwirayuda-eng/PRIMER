@@ -777,7 +777,8 @@
    nada waspada) + catatan realita FKTP (daun, nada membumi). Sejajar gaya
    .klinik-hasil__clue tapi dengan pita aksen kiri agar terbedakan. */
 .klinik-hasil__ebm,
-.klinik-hasil__realita {
+.klinik-hasil__realita,
+.klinik-hasil__panduan {
   padding: var(--sp-4);
   display: flex;
   flex-direction: column;
@@ -797,6 +798,15 @@
 }
 .klinik-hasil__realita .judul-seksi {
   color: var(--daun-800);
+}
+/* M11.5 — lapisan panduan RESMI Kemenkes: aksen biru (tinta-biru = "dokumen
+   resmi/regulasi", beda dari kunyit=waspada-EBM & daun=realita). tinta-biru
+   lolos AA di --bg-sunken kedua mode (terang 5.27:1, gelap 8.66:1). */
+.klinik-hasil__panduan {
+  border-left-color: var(--tinta-biru);
+}
+.klinik-hasil__panduan .judul-seksi {
+  color: var(--tinta-biru);
 }
 
 .klinik-hasil__aksi {

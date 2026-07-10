@@ -1,11 +1,13 @@
 /**
- * TEST — M11 Fase-1: lapisan pengayaan debrief (mutiaraEbm + catatanRealita).
+ * TEST — M11 Fase-1 + M11.5: lapisan pengayaan debrief.
  *
- * Dua field display BARU pada KasusKlinis:
+ * TIGA field display pada KasusKlinis (semua murni display, non-skor, non-hash):
  *   - mutiaraEbm     — mutiara "temuan bisa menyesatkan" (EBM nuance)
  *   - catatanRealita — catatan "idealis vs realita FKTP Indonesia"
+ *   - panduanResmi   — panduan RESMI Kemenkes (PPK 1186/2022, M11.5) sbg lapisan
+ *                      otoritas ke-3 (divergensi PPK-vs-EBM + kriteria rujukan)
  *
- * INVARIAN KUNCI (kenapa tak butuh bump REVISI_ENGINE): keduanya MURNI display,
+ * INVARIAN KUNCI (kenapa tak butuh bump REVISI_ENGINE): ketiganya MURNI display,
  * dibaca langsung dari PACK oleh PanelHasil, TAK ikut sidikJariPack & TAK
  * menyentuh skor. Test ini mengunci janji itu — bila kelak seseorang keliru
  * memasukkannya ke hash, test merah memaksa keputusan REVISI sadar (mencegah
@@ -37,6 +39,17 @@ describe('M11 Fase-1 — perintis gout menanam mutiaraEbm + catatanRealita', () 
   })
 })
 
+describe('M11.5 — perintis konjungtivitis alergi menanam panduanResmi (divergensi PPK-vs-EBM)', () => {
+  const konjungtivitis = PACK.kasus['mata_konjungtivitis_alergi']!
+  it('kasus perintis menyediakan panduanResmi yg menyebut PPK & divergensi steroid', () => {
+    expect(konjungtivitis.panduanResmi).toBeTruthy()
+    // Panduan resmi PPK 1186/2022 justru mencantumkan flumetolon (steroid ringan)
+    // — beda dari kehati-hatian AAO di clue. Sitasi PPK eksplisit.
+    expect(konjungtivitis.panduanResmi).toMatch(/PPK|1186/)
+    expect(konjungtivitis.panduanResmi).toMatch(/flumetolon|steroid/i)
+  })
+})
+
 describe('M11 Fase-1 — field pengayaan TAK ikut sidik jari (tak perlu bump REVISI)', () => {
   it('mengubah mutiaraEbm/catatanRealita tak menggeser sidikJariPack', () => {
     const dasar = sidikJariPack(PACK)
@@ -51,6 +64,7 @@ describe('M11 Fase-1 — field pengayaan TAK ikut sidik jari (tak perlu bump REV
           ...gout,
           mutiaraEbm: 'TEKS PENGAYAAN BERBEDA TOTAL — seharusnya tak mengubah hash.',
           catatanRealita: 'Realita lain sama sekali — juga tak boleh mengubah hash.',
+          panduanResmi: 'Panduan resmi berbeda total — juga tak boleh mengubah hash.',
         },
       },
     }
@@ -80,6 +94,30 @@ describe('M11 Fase-1 — field pengayaan TAK menyentuh skor', () => {
     const tanpa = nilaiEncounter(encFor('mm_gout_artritis_akut', resep), goutPolos, PACK)
     expect(dgn.skorTerapi).toBe(tanpa.skorTerapi)
     expect(dgn.skorAnamnesis).toBe(tanpa.skorAnamnesis)
+    expect(dgn.grade).toBe(tanpa.grade)
+  })
+})
+
+describe('M11.5 — panduanResmi TAK menyentuh skor & TAK ikut sidik jari', () => {
+  it('menghapus panduanResmi konjungtivitis tak menggeser sidikJariPack', () => {
+    const dasar = sidikJariPack(PACK)
+    const k = PACK.kasus['mata_konjungtivitis_alergi']!
+    const { panduanResmi: _p, ...kPolos } = k
+    const packPolos: ContentPack = {
+      ...PACK,
+      kasus: { ...PACK.kasus, mata_konjungtivitis_alergi: kPolos },
+    }
+    expect(sidikJariPack(packPolos)).toBe(dasar)
+  })
+
+  it('skor konjungtivitis identik dengan/ tanpa panduanResmi', () => {
+    const k = PACK.kasus['mata_konjungtivitis_alergi']!
+    const resep = ['loratadin_10', 'air_mata_buatan']
+    const dgn = nilaiEncounter(encFor('mata_konjungtivitis_alergi', resep), k, PACK)
+    const kPolos = { ...k }
+    delete (kPolos as { panduanResmi?: string }).panduanResmi
+    const tanpa = nilaiEncounter(encFor('mata_konjungtivitis_alergi', resep), kPolos, PACK)
+    expect(dgn.skorTerapi).toBe(tanpa.skorTerapi)
     expect(dgn.grade).toBe(tanpa.grade)
   })
 })
