@@ -3547,3 +3547,52 @@ dekat). IKS agregat 71.">`; Enter membuka panel detail RW 1 menampilkan "IKS agr
 **Sisa 10 P2/P3** (dialog-konten #13/#14, nama-kontrol #15, aria-state #16-18, kontras-darkmode
 #20/#22, ux-misc #23-25, polish P3) — dilanjutkan batch berikutnya, prioritas sama: keyboard/focus
 → kontras → polish. §57's #21b tetap OPEN sbg keputusan-desain (bukan bug), tak dihitung dlm sisa.
+
+## 59. Batch-5 CODEX — klaster dialog-konten Kunjungan: aria-label hotspot + kutip ganda DIPERBAIKI (2026-07-10, commit `e2048fe`)
+
+Melanjutkan §58, klaster dialog-konten (2 dari 10 sisa P2/P3):
+
+- **#13 — hotspot belum-ditemukan berbagi SATU aria-label identik** — `Kunjungan.tsx:206` selalu
+  hardcode `'Amati lebih dekat'` utk kelima hotspot yang belum diklik, tak dibedakan berdasarkan
+  posisi/urutan. Ini memang sengaja meniru pola anti-bocor-jawaban (identitas objek `h.label`/
+  `h.narasi` tak boleh bocor sebelum diklik), TAPI pengaburan identitas tak mengharuskan pengaburan
+  LOKASI juga — pemain sighted sudah bisa membedakan kelima hotspot dari posisi visual (x/y),
+  sedangkan keyboard/screen-reader sama sekali tak bisa (5 tombol benar-benar tak terbedakan sampai
+  diklik satu-satu membabi-buta). Fix: tambah index `i` ke `.map()`, aria-label jadi `` `Amati lebih
+  dekat (titik ${i+1} dari ${skenario.hotspot.length})` `` saat belum ditemukan — info urutan yang
+  SUDAH publik dari posisi visual, tanpa membocorkan identitas objek sama sekali.
+- **#14 — kutip ganda bersarang di teks dialog** — `Kunjungan.tsx` membungkus `p.teks`/`dokterTerakhir`
+  dengan tanda kutip “ ” tambahan di 2 titik (gema "Kamu: ..." baris 253, tombol pilihan baris 283),
+  padahal `PilihanDialog.teks` di KONTEN sudah membawa tanda kutip lurus sendiri di awal/akhir string
+  (mis. `'"Jadi Ibu berhenti minum obat..."'`). Klaim CODEX asli ("58 pilihan, 2 file") diverifikasi
+  jauh di bawah kenyataan: audit ulang menghitung SEMUA 246 entri `PilihanDialog.teks` di keenam file
+  `src/content/keluarga/desa{A-F}.ts` — 246/246 (100%) sudah berkutip (239 langsung, 7 sisanya berkutip
+  setelah keterangan-panggung dalam kurung) — CODEX-nya sendiri kemungkinan hanya menangkap pola
+  satu-baris literal, melewatkan gaya penulisan multi-baris bersambung yang dominan di desaA/C/D/E/F.
+  Fix: render `{p.teks}`/`{dokterTerakhir}` polos tanpa bungkus “ ” tambahan — konten yang menentukan
+  kutipnya sendiri.
+- **SENGAJA TIDAK diubah**: baris 256 (`responsAktif`, sumber field `respons`/`responsBohong`, BUKAN
+  `teks`) tetap dibungkus “ ” seperti semula. Audit independen atas 270 entri `respons`/`responsBohong`
+  di seluruh 6 file desa menemukan field ini KELAS BERBEDA: hanya 129/270 (48%) berawalan kutip, 141
+  sisanya narasi-campur-dialog (mis. `'Wajah Bu Wulan mengeras. Ia menuang teh... "Ya... Dokter kan
+  belajarnya begitu." Ia mengalihkan pandangan ke jendela.'` — quote HANYA di tengah, bukan di batas
+  string). Menyamaratakan fix `teks` ke `respons` berisiko regresi utk 141 entri itu, dan finding CODEX
+  #14 yang diverifikasi eksplisit hanya menghitung `teks` — di luar cakupan yang diaudit, jadi tak
+  disentuh sesi ini (kandidat audit terpisah bila diperlukan nanti).
+
+**Test-first**: `Kunjungan.test.tsx` baru (5 test, pakai konten `PACK` asli + store/dispatch asli via
+`buildInitialState`+`useGame.setState` — bukan mock, mengikuti pola `Igd.responsTerakhir.test.tsx`):
+3 test aria-label (unik per-hotspot, tak membocorkan identitas, hotspot-sudah-ditemukan tetap pakai
+label asli) + 2 test kutip (tombol pilihan render `p.teks` apa adanya, gema "Kamu: ..." tanpa kutip
+tambahan setelah klik nyata via `userEvent` + dispatch `PILIH_DIALOG` sungguhan). Dikonfirmasi MERAH
+dulu (3/5 gagal persis di title label-unik + 2 test kutip; 2 test lain incidentally sudah lolos krn
+tak bergantung fix), HIJAU sesudah. 569/569 suite penuh + typecheck bersih.
+
+**Verifikasi browser**: TIDAK dilakukan sesi ini — kunjungan hanya bisa dimulai pada periode "siang"
+(gate waktu-hari, gerbang di luar bug ini), dan save aktif sedang di fase "sore"; mencapai siang
+butuh menuntaskan antrean 3 pasien poli pagi terlebih dulu (tak terkait bug). Diverifikasi via tier
+component-test dgn konten & store ASLI (bukan mock) sbg gantinya — pola sama yg dipakai memverifikasi
+fix IGD di §57 Batch-3.
+
+**Sisa 8 P2/P3** (nama-kontrol #15, aria-state #16-18, kontras-darkmode #20/#22, ux-misc #23-25,
+polish P3) — lanjut batch berikutnya.
