@@ -42,6 +42,22 @@ describe('invarian lapisan UI (M10.a)', () => {
     expect(blok(baca('../components/Toaster.css'), '.toaster')).toMatch(/pointer-events:\s*none/)
   })
 
+  it('.toaster di ATAS (bukan bawah) — jauh dari zona tombol aksi (laporan live user 3×)', () => {
+    // Toast di bawah-kanan berulang kali menutupi tombol "Lanjut/Pasien
+    // Berikutnya/Tulis Resep". Kini di atas: `top` ada, `bottom` TIDAK.
+    const isi = blok(baca('../components/Toaster.css'), '.toaster')
+    expect(isi).toMatch(/top:/)
+    expect(isi).not.toMatch(/bottom:/)
+  })
+
+  it('toast punya fase keluar (mengabur) — bukan pop hilang mendadak', () => {
+    const css = baca('../components/Toaster.css')
+    expect(css).toMatch(/\.toast--keluar\s*\{/)
+    expect(css).toMatch(/@keyframes toast-keluar/)
+    // Toaster.tsx menandai `keluar` sebelum menghapus (dua fase timer).
+    expect(baca('../components/Toaster.tsx')).toMatch(/toast--keluar/)
+  })
+
   it('.kunjungan-hotspot terangkat di atas kartu temuan (z-index)', () => {
     // Kartu .kunjungan-temuan di-render SETELAH lapis hotspot → tanpa z-index
     // hotspot ber-x tinggi tertimpa & tak bisa diklik (empiris wulan_k1 wk1_h3).

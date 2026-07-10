@@ -12,7 +12,12 @@ interface Toast {
   id: number
   teks: string
   nada: 'info' | 'sukses' | 'bahaya'
+  /** Fase keluar: memicu animasi mengabur sebelum benar-benar dihapus. */
+  keluar?: boolean
 }
+
+const TOAST_TAHAN = 3800 // ms tampil penuh sebelum mulai mengabur
+const TOAST_MENGABUR = 450 // ms durasi animasi keluar (samakan Toaster.css)
 
 function eventKeToast(e: GameEvent): Toast | null {
   const id = Math.random()
@@ -60,13 +65,18 @@ export function Toaster() {
     const baru = lastEvents.map(eventKeToast).filter((t): t is Toast => t !== null)
     if (baru.length === 0) return
     setToasts((prev) => [...prev, ...baru].slice(-4))
-    const timer = setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => !baru.some((b) => b.id === t.id)))
-      timers.current = timers.current.filter((x) => x !== timer)
-    }, 4200)
-    timers.current.push(timer)
-    // SENGAJA tanpa cleanup di sini — timer batch ini tak boleh dibatalkan oleh
-    // datangnya batch berikutnya.
+    const cocok = (t: Toast) => baru.some((b) => b.id === t.id)
+    // Dua fase: (1) tandai `keluar` → animasi mengabur (Toaster.css); (2) hapus
+    // dari daftar setelah animasi tuntas. Tiap batch punya timernya sendiri —
+    // TAK dibatalkan oleh datangnya batch berikutnya (bug lama A.2).
+    const tFade = setTimeout(() => {
+      setToasts((prev) => prev.map((t) => (cocok(t) ? { ...t, keluar: true } : t)))
+    }, TOAST_TAHAN)
+    const tHapus = setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => !cocok(t)))
+      timers.current = timers.current.filter((x) => x !== tFade && x !== tHapus)
+    }, TOAST_TAHAN + TOAST_MENGABUR)
+    timers.current.push(tFade, tHapus)
   }, [eventTick]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Bersihkan semua timer tertunda HANYA saat unmount (cegah setState-after-unmount).
@@ -82,7 +92,7 @@ export function Toaster() {
     // justru ini SATU-SATUNYA live-region gameplay.
     <div className="toaster" role="status" aria-live="assertive" aria-atomic="true">
       {toasts.map((t) => (
-        <div key={t.id} className={`toast toast--${t.nada} kertas`}>
+        <div key={t.id} className={`toast toast--${t.nada} kertas${t.keluar ? ' toast--keluar' : ''}`}>
           {t.teks}
         </div>
       ))}
