@@ -3232,3 +3232,31 @@ salisilat 2%; `C.12` abortus iminens tirah baring (Cochrane/NICE — kandidat M1
 `sidikJariPack` tx-hash → koordinasikan dgn bump REVISI_ENGINE. Batch 3 JANGAN diubah tanpa
 persetujuan medis eksplisit. **Semua 37 didokumentasikan sbg OPEN** menunggu keputusan user per-batch;
 detail per-temuan + reasoning verifier tersimpan di task output `w1fx200z3`.
+
+## 52. CODEX Batch-1 (mekanis-aman) DIPERBAIKI — 6 fix (2026-07-10, commit setelah §51)
+
+User: "Batch 1 — aman-mekanis hajar dulu sampai habis". Seluruh 6 item Batch-1 (dari triase §51)
+diperbaiki solo, test-first. **484 test** (dari 476, +8), typecheck bersih. TANPA REVISI_ENGINE
+bump (konten C.3/C.11 tercakup pack tx-hash → dossier lama otomatis "tidak_dapat_diverifikasi";
+B.5/B.6 = save-validation, A.2/A.5 = UI — semua non-scoring-formula).
+
+- **B.5** (save.ts): guard entri `jadwal` — `[null]`/hari-non-numerik ditolak (dulu lolos
+  `Array.isArray` lalu crash `j.hari` di day-advance). Pola dex/keluarga. Test: 3 (tolak null,
+  tolak hari non-numerik, valid-init lolos utuh).
+- **B.6** (save.ts): recovery `st.kunjungan` yatim — keluarga/skenario aktif hilang pasca-update
+  konten dulu bikin LANJUTKAN menolak selamanya (soft-lock hari tak maju; layar Kunjungan hanya
+  bisa PINDAH_LAYAR tanpa mengosongkan st.kunjungan). Kini dibuang + surat kompensasi + betulkan
+  layar. Pola igd/klinik (save.ts:300/325). Test: 3 (keluarga-hantu, skenario-hantu, valid-utuh).
+- **A.2** (Toaster): timer per-batch — dulu SATU timer di-`clearTimeout` saat effect re-run
+  (event baru) → penghapusan batch SEBELUMNYA batal → toast menetap selamanya. Kini ref timer,
+  cleanup HANYA saat unmount. (bagian `role=status` sudah di §50.)
+- **A.5** (DeckTerapi): lengkapi WAI-ARIA Tabs — `id`+`aria-controls`+roving-tabindex+navigasi-panah
+  + `role=tabpanel`/`aria-labelledby` pada 3 panel (dulu role=tab+aria-selected ada tapi nol sisanya).
+- **C.11** (gout): PF "serangan pertama ini"→"saat ini" (anamnesis q_riwayat sebut serangan
+  setahun lalu — kontradiksi internal).
+- **C.3** (tinea): antijamur topikal jadi grup pilih-salah-satu `[ketokonazol|mikonazol]` — clue
+  namai keduanya setara, dulu mikonazol (yg clue sahkan) dihukum −15 obat-di-luar. Test: skor
+  mikonazol == ketokonazol == 100.
+
+**Batch 2 (butuh-keputusan-desain) & Batch 3 (butuh-penilaian-medis) tetap OPEN** menunggu
+keputusan user per-item (lihat §51).
