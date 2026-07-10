@@ -5,6 +5,7 @@
 
 import type { KeluargaState, RwState } from '@engine/state'
 import type { IndikatorPisPk } from '@content/types'
+import { klasifikasiIks } from '@engine/pispk'
 
 /* ---------------------------------------------------------------------------
  * Gerbang provenance karma — pilar "setiap angka diperoleh".
@@ -78,12 +79,20 @@ export function jalurOrganik(b: BentukPetak): string {
  * Warna choropleth — gradasi Daun → Kunyit → Merah dari token (tanpa warna baru).
  * ------------------------------------------------------------------------- */
 
+/**
+ * CODEX audit UI/UX 2026-07-10 (#12): dulu 5 pita warna manual (daun-600/
+ * daun-500/kunyit-600/kunyit-700/tinta-merah) yg TAK COCOK dgn klasifikasi
+ * resmi 3-kelas (klasifikasiIks, engine/pispk.ts) yg dipakai legenda peta &
+ * chip klasifikasi panel detail RW — RW "Pra-Sehat" (0.65-0.8) bisa tampak
+ * HIJAU (mirip "Sehat"), RW "Tidak Sehat" (0.35-0.5) bisa tampak KUNYIT
+ * (mirip "Pra-Sehat"). Panggil klasifikasi resmi yg sama, map 1:1 ke 3 warna
+ * legenda — warna peta & label kelas kini SELALU konsisten utk RW yang sama.
+ */
 export function warnaPetak(rw: RwState): string {
   if (rw.kkTersurvei <= 0) return 'var(--kertas-400)' // abu-abu: belum ada data
-  if (rw.iks > 0.8) return 'var(--daun-600)'
-  if (rw.iks >= 0.65) return 'var(--daun-500)'
-  if (rw.iks >= 0.5) return 'var(--kunyit-600)'
-  if (rw.iks >= 0.35) return 'var(--kunyit-700)'
+  const kelas = klasifikasiIks(rw.iks)
+  if (kelas === 'sehat') return 'var(--daun-600)'
+  if (kelas === 'pra_sehat') return 'var(--kunyit-600)'
   return 'var(--tinta-merah)'
 }
 

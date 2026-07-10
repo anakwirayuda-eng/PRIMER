@@ -77,18 +77,31 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
         const bentuk = PETAK_RW[rw.nomor]
         if (!bentuk) return null
         const aktif = terpilih === rw.nomor
+        const labelPetak =
+          `RW ${rw.nomor} — ${rw.nama} (jarak ${LABEL_JARAK[rw.jarak]}). ` +
+          (rw.kkTersurvei > 0
+            ? `IKS agregat ${(rw.iks * 100).toFixed(0)}.`
+            : 'Belum tersurvei kader — datanya masih abu-abu.')
         return (
           <g
             key={rw.nomor}
             className={`peta-petak ${aktif ? 'peta-petak--aktif' : ''}`}
             onClick={() => onPilih(rw.nomor)}
+            // CODEX audit UI/UX 2026-07-10 (#10): <g onClick> polos tak masuk
+            // tab order & tak punya semantik aktivasi — keyboard-only tak
+            // bisa menjangkau/memicu petak RW sama sekali (satu-satunya jalan
+            // lain, tombol roster, cuma mencakup keluarga yang SUDAH binaan).
+            role="button"
+            tabIndex={0}
+            aria-label={labelPetak}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onPilih(rw.nomor)
+              }
+            }}
           >
-            <title>
-              {`RW ${rw.nomor} — ${rw.nama} (jarak ${LABEL_JARAK[rw.jarak]}). ` +
-                (rw.kkTersurvei > 0
-                  ? `IKS agregat ${(rw.iks * 100).toFixed(0)}.`
-                  : 'Belum tersurvei kader — datanya masih abu-abu.')}
-            </title>
+            <title>{labelPetak}</title>
             <path
               className="peta-petak__bidang"
               d={jalurOrganik(bentuk)}
@@ -97,8 +110,13 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
               stroke={aktif ? 'var(--tinta)' : 'var(--border-tinta)'}
               strokeWidth={aktif ? 3 : 1.5}
             />
+            {/* CODEX audit UI/UX 2026-07-10 (#11): label dulu menyertakan nama
+                dusun penuh ("RW N · Nama Dusun Panjang"), yg pada RW berdekatan
+                (mis. RW6/RW8) bertabrakan dgn sub-label RW tetangga di zoom
+                normal. Nama lengkap tetap ada di <title>/aria-label (hover)
+                dan panel detail kanan begitu RW diklik — cukup nomor di sini. */}
             <text x={bentuk.cx} y={bentuk.cy - 4} textAnchor="middle" className="peta-label">
-              {`RW ${rw.nomor} · ${rw.nama}`}
+              {`RW ${rw.nomor}`}
             </text>
             <text x={bentuk.cx} y={bentuk.cy + 13} textAnchor="middle" className="peta-label peta-label--sub">
               {`KK tersurvei ${rw.kkTersurvei}/${rw.totalKk}`}

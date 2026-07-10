@@ -30,6 +30,15 @@
   cursor: pointer;
 }
 
+/* CODEX audit UI/UX 2026-07-10 (#10): petak kini role=button+tabIndex, beri
+   indikator fokus terlihat utk navigasi keyboard (SVG <g> tak dapat outline
+   browser bawaan yang layak, gambar manual di bidang dalamnya). */
+.peta-petak:focus-visible .peta-petak__bidang {
+  stroke: var(--focus, #2b6cb0);
+  stroke-width: 3px;
+  stroke-dasharray: 4 2;
+}
+
 .peta-petak__bidang {
   transition:
     filter var(--durasi-cepat) var(--ease-keluar),
