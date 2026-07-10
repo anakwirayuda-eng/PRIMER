@@ -228,7 +228,13 @@ describe('deserialize — desa.keluarga/desa.rw/layar (CODEX ronde-11 #3)', () =
   it('layar tak dikenal + kegiatan MASIH aktif dipulihkan ke "kegiatan" (bukan "meja" — cegah kunci baru krn HUD menahan navigasi saat kegiatan aktif)', () => {
     const s: GameState = {
       ...buildInitialState('Uji', SEED, PACK),
-      kegiatan: { jenis: 'posyandu', rw: 1, kartu: [], index: 0, jawaban: [] },
+      kegiatan: {
+        jenis: 'posyandu',
+        rw: 1,
+        kartu: [{ id: 'k1', judul: 'X', narasi: 'Y', pilihan: [{ id: 'p1', label: 'A', benar: true, respons: 'ok' }] }],
+        index: 0,
+        jawaban: [],
+      },
     }
     const json = rusak(serialize(s), (st) => {
       st['layar'] = 'layar_hantu_tak_dikenal'
@@ -410,5 +416,108 @@ describe('deserialize — M10 §49 CODEX B.5/B.6 (jadwal korup + kunjungan yatim
     const hasil = deserialize(json, PACK)!
     expect(hasil.kunjungan).not.toBeUndefined()
     expect(hasil.kunjungan!.keluargaId).toBe(kelId)
+  })
+})
+
+describe('deserialize — pemulihan kegiatan korup & IGD langkahIndex di luar batas (CODEX audit UI/UX 2026-07-10, temuan #1)', () => {
+  it('kegiatan.kartu kosong (index di luar batas) dipulihkan, bukan soft-lock (PINDAH_LAYAR ditolak selamanya)', () => {
+    const s: GameState = {
+      ...buildInitialState('Uji', SEED, PACK),
+      hari: 2, // >= HARI_BUKA_PETA, agar PINDAH_LAYAR ke 'peta' di bawah tidak ditolak guard kurikuler yang tak terkait
+      layar: 'kegiatan',
+      kegiatan: { jenis: 'posyandu', rw: 1, kartu: [], index: 0, jawaban: [] },
+    }
+    const json = serialize(s)
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.kegiatan).toBeUndefined()
+    expect(hasil.layar).not.toBe('kegiatan')
+    expect(hasil.inbox.some((m) => m.id.startsWith('surat_pemulihan_kegiatan_'))).toBe(true)
+
+    // Konfirmasi: sebelum fix, reducer.ts:112 menolak PINDAH_LAYAR selama
+    // s.kegiatan truthy tanpa peduli validitasnya — dead-end permanen.
+    const setelahPindah = advance(hasil, { type: 'PINDAH_LAYAR', layar: 'peta' }, PACK)
+    expect(setelahPindah.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+    expect(setelahPindah.state.layar).toBe('peta')
+  })
+
+  it('kegiatan.kartu[index].pilihan bukan array dipulihkan, bukan soft-lock', () => {
+    const s: GameState = {
+      ...buildInitialState('Uji', SEED, PACK),
+      kegiatan: {
+        jenis: 'posyandu',
+        rw: 1,
+        kartu: [{ id: 'k1', judul: 'X', narasi: 'Y', pilihan: 'rusak' as unknown as never }],
+        index: 0,
+        jawaban: [],
+      },
+    }
+    const json = serialize(s)
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kegiatan).toBeUndefined()
+    expect(hasil.inbox.some((m) => m.id.startsWith('surat_pemulihan_kegiatan_'))).toBe(true)
+  })
+
+  it('kegiatan aktif SAH (kartu+pilihan valid) tetap utuh (regresi guard)', () => {
+    const s: GameState = {
+      ...buildInitialState('Uji', SEED, PACK),
+      kegiatan: {
+        jenis: 'posyandu',
+        rw: 1,
+        kartu: [{ id: 'k1', judul: 'X', narasi: 'Y', pilihan: [{ id: 'p1', label: 'A', benar: true, respons: 'ok' }] }],
+        index: 0,
+        jawaban: [],
+      },
+    }
+    const json = serialize(s)
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kegiatan).not.toBeUndefined()
+    expect(hasil.kegiatan!.kartu).toHaveLength(1)
+    expect(hasil.inbox.some((m) => m.id.startsWith('surat_pemulihan_kegiatan_'))).toBe(false)
+  })
+
+  it('igd.langkahIndex melebihi panjang kasus.langkah dipulihkan (bukan badan kosong+HUD terkunci)', () => {
+    const kasusId = Object.keys(PACK.kasusIgd)[0]!
+    const jumlahLangkah = PACK.kasusIgd[kasusId]!.langkah.length
+    const s: GameState = {
+      ...buildInitialState('Uji', SEED, PACK),
+      igd: {
+        kasusId,
+        pasienNama: 'Uji',
+        usia: 30,
+        jenisKelamin: 'L',
+        rw: 1,
+        fase: 'langkah',
+        langkahIndex: jumlahLangkah + 5, // di luar batas
+        stabilitas: 80,
+        jawaban: [],
+      },
+    }
+    const json = serialize(s)
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.igd).toBeUndefined()
+    expect(hasil.inbox.some((m) => m.id.startsWith('surat_pemulihan_igd_'))).toBe(true)
+  })
+
+  it('igd.langkahIndex valid (dalam batas) tetap utuh (regresi guard)', () => {
+    const kasusId = Object.keys(PACK.kasusIgd)[0]!
+    const s: GameState = {
+      ...buildInitialState('Uji', SEED, PACK),
+      igd: {
+        kasusId,
+        pasienNama: 'Uji',
+        usia: 30,
+        jenisKelamin: 'L',
+        rw: 1,
+        fase: 'langkah',
+        langkahIndex: 0,
+        stabilitas: 80,
+        jawaban: [],
+      },
+    }
+    const json = serialize(s)
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.igd).not.toBeUndefined()
+    expect(hasil.igd!.langkahIndex).toBe(0)
   })
 })

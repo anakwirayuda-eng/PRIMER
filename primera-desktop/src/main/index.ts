@@ -63,8 +63,15 @@ function registerIpc(): void {
     const dir = await ensureSaveDir()
     try {
       return await fs.readFile(join(dir, `${sanitizeSlot(slot)}.json`), 'utf-8')
-    } catch {
-      return null
+    } catch (e) {
+      // CODEX audit UI/UX 2026-07-10 (#2): dulu SEMUA error (ENOENT/EACCES/
+      // disk rusak) disamakan jadi null — pemanggil memperlakukan null sbg
+      // "save memang tak ada", bukan "gagal baca", sehingga game diam-diam
+      // berjalan seolah save baru padahal sebenarnya save ADA tapi gagal
+      // dibaca. Hanya file-tak-ada (ENOENT) yang sah dianggap null; error
+      // lain dilempar agar pemanggil (store.ts) bisa membedakan & melapor.
+      if ((e as NodeJS.ErrnoException).code === 'ENOENT') return null
+      throw e
     }
   })
 
@@ -204,4 +211,18 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
+})
+
+// CODEX audit UI/UX 2026-07-10 (#2): tanpa ini, menutup aplikasi bisa
+// mendahului write/rename yang masih tertunda di `antreanTulis` (mis. tulisan
+// terakhir belum sempat rename dari file .tmp) — progres terbaru bisa hilang.
+// `catch(() => {})` per-promise: satu tulisan gagal tak boleh menahan quit.
+app.on('before-quit', (e) => {
+  const tertunda = [...antreanTulis.values()]
+  if (tertunda.length === 0) return
+  e.preventDefault()
+  Promise.allSettled(tertunda.map((p) => p.catch(() => {}))).then(() => {
+    antreanTulis.clear()
+    app.quit()
+  })
 })

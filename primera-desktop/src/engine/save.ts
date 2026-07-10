@@ -309,10 +309,21 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // Pemulihan IGD tak dikenal (CODEX P2): bila kasus IGD yang aktif sudah tak
   // ada di pack (rename/hapus konten antar-versi), jangan biarkan save macet
   // permanen — hapus IGD aktif & beri surat kompensasi.
+  // CODEX audit UI/UX 2026-07-10 (#1c): kasusId bisa MASIH valid tapi
+  // langkahIndex sudah di luar batas kasus.langkah (mis. konten kasus
+  // dipangkas antar-versi) — Igd.tsx hanya merender blok fase==='langkah'
+  // bila langkah[langkahIndex] ada, jadi badan layar kosong (tanpa tombol)
+  // sementara Hud.tsx mengunci semua tab HUD selama state.igd truthy. Cek
+  // bounds-nya juga, bukan cuma keberadaan kasusId.
   if (pack && objek(st['igd'])) {
     const igd = st['igd'] as Record<string, unknown>
     const kasusId = igd['kasusId']
-    if (typeof kasusId !== 'string' || !pack.kasusIgd[kasusId]) {
+    const kasusIgd = typeof kasusId === 'string' ? pack.kasusIgd[kasusId] : undefined
+    const langkahIndex = igd['langkahIndex']
+    const langkahValid =
+      igd['fase'] !== 'langkah' ||
+      (kasusIgd && typeof langkahIndex === 'number' && Number.isInteger(langkahIndex) && langkahIndex >= 0 && langkahIndex < kasusIgd.langkah.length)
+    if (!kasusIgd || !langkahValid) {
       st['igd'] = undefined
       const hari = st['hari'] as number
       const inbox = st['inbox'] as Record<string, unknown>[]
@@ -323,6 +334,36 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
         dari: 'Sistem',
         judul: 'Pasien IGD dipulihkan otomatis',
         isi: 'Kasus gawat darurat yang sedang berjalan tidak lagi tersedia di versi konten ini. Pasien dianggap sudah ditangani tim jaga lain — kamu bisa melanjutkan hari seperti biasa.',
+        dibaca: false,
+      })
+    }
+  }
+
+  // Pemulihan kegiatan lapangan korup (CODEX audit UI/UX 2026-07-10, #1a):
+  // Kegiatan.tsx sudah punya guard defensif (kartu/pilihan bukan bentuk yang
+  // diharapkan → layar "tak dikenal"), tapi tombol kembalinya dispatch
+  // PINDAH_LAYAR yang DITOLAK reducer.ts selama `s.kegiatan` truthy — tak
+  // peduli isinya valid atau korup. Tanpa pemulihan di sini, itu dead-end
+  // permanen persis pola igd/kunjungan di atas. Bersihkan sebelum sempat
+  // dipakai render, meniru pola yang sama.
+  if (pack && objek(st['kegiatan'])) {
+    const kg = st['kegiatan'] as Record<string, unknown>
+    const kartu = kg['kartu']
+    const index = kg['index']
+    const kartuAktif = Array.isArray(kartu) && typeof index === 'number' ? (kartu[index] as unknown) : undefined
+    const kartuValid = objek(kartuAktif) && Array.isArray(kartuAktif['pilihan'])
+    if (!kartuValid) {
+      st['kegiatan'] = undefined
+      if (st['layar'] === 'kegiatan') st['layar'] = 'peta'
+      const hari = st['hari'] as number
+      const inbox = st['inbox'] as Record<string, unknown>[]
+      inbox.push({
+        id: `surat_pemulihan_kegiatan_${hari}_${inbox.length}`,
+        hari,
+        jenis: 'sistem',
+        dari: 'Sistem',
+        judul: 'Kegiatan lapangan dipulihkan otomatis',
+        isi: 'Sesi kegiatan lapangan yang sedang berjalan tidak lagi tersedia di versi konten ini. Sesi dianggap sudah dituntaskan kader — kamu bisa melanjutkan hari seperti biasa.',
         dibaca: false,
       })
     }

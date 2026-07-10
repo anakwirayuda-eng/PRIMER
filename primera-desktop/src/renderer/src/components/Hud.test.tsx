@@ -90,6 +90,20 @@ describe('<Hud />', () => {
     expect(screen.getByRole('button', { name: /Buku Saku/ })).toBeDisabled()
   })
 
+  it('indikator "Gagal menyimpan" tampil saat statusSimpan === "gagal" (CODEX audit UI/UX 2026-07-10, #2)', () => {
+    pasangState()
+    useGame.setState({ statusSimpan: 'gagal' })
+    render(<Hud />)
+    expect(screen.getByText(/Gagal menyimpan/)).toBeInTheDocument()
+  })
+
+  it('indikator "Gagal menyimpan" TIDAK tampil saat statusSimpan idle/menyimpan', () => {
+    pasangState()
+    useGame.setState({ statusSimpan: 'idle' })
+    render(<Hud />)
+    expect(screen.queryByText(/Gagal menyimpan/)).not.toBeInTheDocument()
+  })
+
   it('semua tab terkunci saat kegiatan lapangan aktif (CODEX ronde-11 #1 — dulu tak dijaga sama sekali)', () => {
     const state = pasangState()
     useGame.setState({

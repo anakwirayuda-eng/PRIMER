@@ -127,6 +127,10 @@ export function TitleScreen() {
   const mulaiStase = (e: FormEvent) => {
     e.preventDefault()
     if (!bolehMulai) return
+    // CODEX audit UI/UX 2026-07-10 (#3): dulu langsung menimpa arsip lama
+    // tanpa konfirmasi — salah klik atau Enter di input nama (form submit
+    // standar HTML) cukup utk menghapus progres tersimpan.
+    if (arsip !== null && !window.confirm(`Mulai stase baru akan menimpa arsip dr. ${arsip.namaDokter} (Hari ${arsip.hari}). Lanjutkan?`)) return
     mulaiGameBaru(namaBersih, mode, mode === 'ujian' ? nimBersih : undefined)
   }
 
@@ -280,6 +284,16 @@ export function TitleScreen() {
                 onChange={(e) => {
                   const f = e.target.files?.[0]
                   if (!f) return
+                  // CODEX audit UI/UX 2026-07-10 (#3): impor JSON menimpa
+                  // autosave seketika (imporArsip -> simpan()) tanpa jeda —
+                  // salah pilih file cukup utk menghapus progres tersimpan.
+                  if (
+                    arsip !== null &&
+                    !window.confirm(`Mengimpor arsip akan menimpa arsip dr. ${arsip.namaDokter} (Hari ${arsip.hari}). Lanjutkan?`)
+                  ) {
+                    e.target.value = ''
+                    return
+                  }
                   void f
                     .text()
                     .then((json) => {

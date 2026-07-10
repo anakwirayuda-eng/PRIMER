@@ -17,6 +17,7 @@ const NAMA_MUSIM = { hujan: 'Musim Hujan', pancaroba: 'Pancaroba', kemarau: 'Kem
 export function Hud() {
   const state = useGame((s) => s.state)
   const dispatch = useGame((s) => s.dispatch)
+  const statusSimpan = useGame((s) => s.statusSimpan)
   if (!state) return null
 
   const musim = musimDariHari(state.hari)
@@ -43,6 +44,18 @@ export function Hud() {
           {state.mode === 'ujian' && (
             <span className="chip chip--merah" title={`Mode Ujian — ${state.paketUjian ?? 'paket'}; skor terkunci di hari ${HARI_STASE.ujian}.`}>
               UJIAN
+            </span>
+          )}
+          {/* CODEX audit UI/UX 2026-07-10 (#2): autosave dulu gagal sepenuhnya
+              diam-diam (cuma console.error) — pemain tak pernah tahu progres
+              berhenti tersimpan. */}
+          {statusSimpan === 'gagal' && (
+            <span
+              className="chip chip--merah"
+              role="status"
+              title="Autosave terakhir gagal tersimpan — periksa ruang disk atau izin folder save. Progresmu di sesi ini masih aman di memori, tapi belum aman bila aplikasi ditutup."
+            >
+              ⚠ Gagal menyimpan
             </span>
           )}
         </div>

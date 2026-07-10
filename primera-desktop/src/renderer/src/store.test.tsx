@@ -54,6 +54,71 @@ describe('simpanKeSlot — melapor sukses/gagal (CODEX ronde-13)', () => {
   })
 })
 
+describe('muatDariSlot — memuat slot manual JADI autosave aktif (CODEX audit UI/UX 2026-07-10, #4)', () => {
+  beforeEach(() => {
+    useGame.setState({ state: buildInitialState('Uji Store', 1, PACK) })
+  })
+
+  it('setelah memuat dari slot manual, autosave ikut ditulis (bukan hanya state in-memory)', async () => {
+    const ditulis: { slot: string; json: string }[] = []
+    const sSlot = buildInitialState('Dari Slot', 2, PACK)
+    const { serialize } = await import('@engine/save')
+    pasangPrimerStub({
+      read: async (slot: string) => (slot === 'slot1' ? serialize(sSlot) : null),
+      write: async (slot: string, json: string) => {
+        ditulis.push({ slot, json })
+        return true
+      },
+    })
+    const ok = await useGame.getState().muatDariSlot('slot1')
+    expect(ok).toBe(true)
+    // Sebelum fix: muatDariSlot cuma `set(...)` in-memory, tak pernah menulis
+    // autosave — menutup app sebelum aksi lain memicu autosave berikutnya
+    // membuat boot berikutnya membaca save LAMA, bukan sesi yang baru dimuat.
+    expect(ditulis.some((d) => d.slot === 'autosave')).toBe(true)
+  })
+})
+
+describe('statusSimpan — melapor gagal-simpan, bukan diam-diam (CODEX audit UI/UX 2026-07-10, #2)', () => {
+  beforeEach(() => {
+    useGame.setState({ state: buildInitialState('Uji Store', 1, PACK), statusSimpan: 'idle' })
+  })
+
+  it('simpan() sukses → statusSimpan "idle"', async () => {
+    pasangPrimerStub({ write: async () => true })
+    await useGame.getState().simpan()
+    expect(useGame.getState().statusSimpan).toBe('idle')
+  })
+
+  it('simpan() gagal (write reject) → statusSimpan "gagal"', async () => {
+    pasangPrimerStub({
+      write: async () => {
+        throw new Error('ENOSPC: no space left on device')
+      },
+    })
+    await useGame.getState().simpan()
+    expect(useGame.getState().statusSimpan).toBe('gagal')
+  })
+
+  it('muatAutosave() — read reject (bukan "file tak ada") → statusSimpan "gagal", mengembalikan false (bukan unhandled rejection)', async () => {
+    pasangPrimerStub({
+      read: async () => {
+        throw new Error('EACCES: permission denied')
+      },
+    })
+    const ok = await useGame.getState().muatAutosave()
+    expect(ok).toBe(false)
+    expect(useGame.getState().statusSimpan).toBe('gagal')
+  })
+
+  it('muatAutosave() — read null (memang belum ada save) TIDAK dianggap gagal', async () => {
+    pasangPrimerStub({ read: async () => null })
+    const ok = await useGame.getState().muatAutosave()
+    expect(ok).toBe(false)
+    expect(useGame.getState().statusSimpan).toBe('idle')
+  })
+})
+
 describe('M10 Batch-2 (CODEX P1.1) — konfigurasi autosave mencakup outcome ireversibel', () => {
   it('EVENT_AUTOSAVE memuat KEGIATAN_SELESAI/KODE_HITAM/PEMULIHAN_SELESAI/TAMAT', async () => {
     const { EVENT_AUTOSAVE } = await import('./store')

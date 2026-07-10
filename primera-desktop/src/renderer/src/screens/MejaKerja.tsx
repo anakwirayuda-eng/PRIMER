@@ -673,11 +673,15 @@ export function MejaKerja() {
                     key={slot}
                     className="tombol"
                     title={info ? `Timpa ${slot} (dr. ${info.namaDokter} · H${info.hari}).` : `Simpan ke ${slot}.`}
-                    onClick={() =>
+                    onClick={() => {
+                      // CODEX audit UI/UX 2026-07-10 (#3): dulu tombol slot
+                      // langsung menimpa arsip lama di slot itu tanpa jeda —
+                      // title tooltip saja tak mencegah klik.
+                      if (info && !window.confirm(`Timpa ${slot} (dr. ${info.namaDokter} · Hari ${info.hari})? Arsip lama di slot ini akan hilang.`)) return
                       void simpanKeSlot(slot).then((ok) => {
                         if (!ok) window.alert('Gagal menyimpan — periksa ruang disk atau izin folder save.')
                       })
-                    }
+                    }}
                   >
                     💾 {slot.replace('slot', 'Slot ')}
                     {info ? ` (H${info.hari})` : ''}

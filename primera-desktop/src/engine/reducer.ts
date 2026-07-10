@@ -1100,7 +1100,15 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
   const hasil = nilaiKegiatan(kg)
   const events: GameEvent[] = [{ type: 'KEGIATAN_SELESAI', hasil }]
   const tally = { ...s.tally }
-  let next: GameState = { ...s, kegiatan: undefined, lapanganTerpakai: true, layar: 'peta' }
+  // CODEX audit UI/UX 2026-07-10 (#5): TIDAK memindah layar ke 'peta' di sini
+  // — dulu itu membuat React unmount Kegiatan.tsx pada render yang sama saat
+  // event KEGIATAN_SELESAI diterbitkan, jadi KartuHasil (stempel nada baik/
+  // cukup/kurang + narasi pedagogis) tak pernah sempat dirender. `layar` tetap
+  // 'kegiatan' (kekal dari `...s`) — Kegiatan.tsx sendiri yang merender
+  // KartuHasil begitu event ini ditangkap, lalu tombol "Kembali ke Peta Desa"
+  // di kartu itu yang men-dispatch PINDAH_LAYAR (kini lolos krn s.kegiatan
+  // sudah undefined di bawah).
+  let next: GameState = { ...s, kegiatan: undefined, lapanganTerpakai: true }
 
   if (hasil.jenis === 'posyandu' && hasil.rw !== undefined) {
     tally.posyanduSesi += 1

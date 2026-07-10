@@ -89,6 +89,36 @@ describe('M2 — unlock & guard', () => {
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true) // slot habis
   })
 
+  it('layar TETAP "kegiatan" setelah sesi selesai, agar KartuHasil sempat dirender (CODEX audit UI/UX 2026-07-10, #5)', () => {
+    let s = siangHari(HARI_BUKA_POSYANDU)
+    s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
+    expect(s.layar).toBe('kegiatan')
+    const r = ev(s, { type: 'JAWAB_KEGIATAN', kartuId: s.kegiatan!.kartu[0]!.id, pilihanId: s.kegiatan!.kartu[0]!.pilihan[0]!.id })
+    // Jawab semua kartu sisanya via helper, tapi cek titik SEBELUM kartu terakhir dulu:
+    let cur = r.state
+    while (cur.kegiatan && cur.kegiatan.kartu[cur.kegiatan.index + 1]) {
+      const kg = cur.kegiatan
+      const kartu = kg.kartu[kg.index]!
+      cur = run(cur, { type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: kartu.pilihan[0]!.id })
+    }
+    // Kartu TERAKHIR: sesi selesai (kegiatan jadi undefined), KEGIATAN_SELESAI
+    // terbit — layar HARUS tetap 'kegiatan' (bukan lompat ke 'peta') supaya
+    // Kegiatan.tsx tak ter-unmount sebelum sempat menangkap event & merender
+    // KartuHasil.
+    const kgTerakhir = cur.kegiatan!
+    const kartuTerakhir = kgTerakhir.kartu[kgTerakhir.index]!
+    const selesai = ev(cur, { type: 'JAWAB_KEGIATAN', kartuId: kartuTerakhir.id, pilihanId: kartuTerakhir.pilihan[0]!.id })
+    expect(selesai.state.kegiatan).toBeUndefined()
+    expect(selesai.state.layar).toBe('kegiatan')
+    expect(selesai.events.some((e) => e.type === 'KEGIATAN_SELESAI')).toBe(true)
+
+    // Tombol "Kembali ke Peta Desa" di KartuHasil lalu men-dispatch ini —
+    // kini lolos krn s.kegiatan sudah undefined (reducer.ts:112 tak menahan).
+    const kembali = ev(selesai.state, { type: 'PINDAH_LAYAR', layar: 'peta' })
+    expect(kembali.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+    expect(kembali.state.layar).toBe('peta')
+  })
+
   it('slot lapangan TUNGGAL: setelah Posyandu, kunjungan rumah ikut ditolak (CODEX ronde-baru #1)', () => {
     let s = siangHari(HARI_BUKA_POSYANDU)
     s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })

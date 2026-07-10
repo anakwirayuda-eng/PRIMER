@@ -3412,3 +3412,58 @@ SENGAJA hambatan nyata (game mem-problem-kan, bukan endorse); titik genuinely li
 
 **Blind spot DeepThink (dicatat):** saat memaksa eskalasi kasus gawat (Q2), kalibrasi ulang
 Referral Guillotine SERENTAK — jangan tebas mahasiswa yang merujuk BENAR per EBM terbaru.
+
+## 57. Audit UI/UX read-only (HEAD 6ee5932) — verifikasi 30 temuan, Batch-1 P1 DIPERBAIKI (2026-07-10)
+
+CODEX audit read-only UI/UX menyerahkan 25 temuan bernomor (6 P1 + 19 P2) + 5 item P3 polish.
+Diverifikasi via workflow 10-agen paralel (baca kode langsung, bukan percaya laporan mentah) —
+hasil: **24 confirmed, 5 sudah-benar-tapi-detail-berbeda dari klaim, 2 butuh-keputusan-desain
+(bukan bug)**. Nol false-positive murni. Detail lengkap tiap verdict: `docs/references/
+codex_verify_full.json`. Prinsip verifikasi (pelajaran sesi-sesi sebelumnya): baca cukup luas
+sebelum memvonis "confirmed", jangan simpulkan dari satu field/baris tanpa cek sibling/efek lain.
+
+**Batch-1 (P1, klaster save/dead-end) — DIPERBAIKI test-first, 550/550 test hijau + typecheck bersih:**
+1. **Kegiatan lapangan korup mengunci navigasi** — `save.ts` tak punya blok pemulihan utk
+   `kegiatan` (beda dari igd/kunjungan yang sudah ada); `reducer.ts:112` menolak PINDAH_LAYAR
+   selama `s.kegiatan` truthy tanpa cek validitas → dead-end permanen bila kartu/pilihan korup.
+   Fix: tambah blok pemulihan kegiatan di `save.ts` (pola sama igd/kunjungan) + surat kompensasi
+   `surat_pemulihan_kegiatan_*`.
+2. **IGD `langkahIndex` di luar batas → badan kosong + HUD terkunci** — kasusId bisa valid tapi
+   index melebihi `kasus.langkah.length` (versi konten berubah); `Igd.tsx` hanya render fase
+   'langkah' bila `langkah[index]` ada. Fix: perluas pemulihan IGD `save.ts` cek bounds juga.
+3. **3 jalur overwrite tanpa konfirmasi** (mulai stase baru, impor JSON, timpa slot manual) — semua
+   langsung dispatch tanpa jeda; Enter di form nama pun submit HTML biasa. Fix: `window.confirm()`
+   sebelum ketiganya (TitleScreen.tsx ×2, MejaKerja.tsx ×1) — HANYA muncul bila memang ada arsip
+   yang akan tertimpa (tak mengganggu kasus save-kosong).
+4. **`muatDariSlot` tak memicu autosave** — beda dari `imporArsip` yg sudah benar; sesi baru dimuat
+   cuma hidup in-memory, tutup app sebelum aksi lain memicu autosave = boot berikut baca save lama.
+   Fix: `void get().simpan()` setelah `set(...)`, konsisten dgn `imporArsip`.
+5. **`KartuHasil` kegiatan praktis tak pernah tampil** — `selesaikanKegiatan` pindah `layar:'peta'`
+   DALAM transisi state yang sama dgn event `KEGIATAN_SELESAI`; React unmount `Kegiatan.tsx` before
+   useEffect-nya sempat menangkap event. Fix: hapus `layar:'peta'` dari reducer — layar tetap
+   'kegiatan' sampai pemain klik "Kembali" di `KartuHasil` sendiri (yang kini berhasil krn
+   `s.kegiatan` sudah `undefined`).
+6. **Autosave gagal 100% diam-diam** — `simpan()` cuma `console.error`; `save:read` menyamakan
+   SEMUA error (ENOENT/EACCES/disk rusak) jadi null (gagal-baca disamakan "memang belum ada save");
+   tak ada `before-quit` menunggu antrean tulis. Fix 3 lapis: (a) `statusSimpan` state baru
+   ('idle'/'menyimpan'/'gagal') + indikator "⚠ Gagal menyimpan" di Hud; (b) `save:read` main
+   process bedakan ENOENT (null, sah) vs error lain (throw, ditangkap+dilaporkan renderer);
+   (c) `app.on('before-quit')` menunggu `Promise.allSettled(antreanTulis)` sebelum benar-benar quit.
+   Catatan: perubahan main/index.ts tak punya test otomatis (tak ada harness test utk proses main
+   Electron di codebase ini) — diverifikasi via typecheck + baca-ulang manual, bukan test-first
+   penuh spt sisi renderer/engine.
+
+**2 item ditandai butuh-keputusan-desain (BUKAN bug, tak diauto-fix):**
+- **#9 Keputusan besar tanpa konfirmasi** (kunci Program Wilayah bulanan, PULANGKAN/OBSERVASI) —
+  ternyata mekanik SENGAJA (M2.10/DeepThink Q4: "tanpa kunci sebulan penuh, program cuma daftar
+  centang tanpa ongkos oportunitas nyata"), sudah didokumentasikan & sudah ada teks peringatan
+  permanen di UI. Bukan diperbaiki.
+- **#21b Kanvas peta tak ikut mode malam** — SENGAJA ("kartu pos abadi siang hari", didokumentasikan
+  di `PetaDesa.css:206-229`), tapi alasan pembanding "sama seperti TitleScreen" kurang pas (TitleScreen
+  fullscreen tanpa chrome gelap bersebelahan, peta disisipkan di shell gelap) — DeepThink/Dr. Wirayuda
+  perlu memutuskan eksplisit apakah dipertahankan atau dikasih varian temaram.
+
+**Sisa 18 P2/P3 (nomor #6-resize-detail, #7-8 debrief-hilang, #10-20 aksesibilitas/kontras,
+#22-25 UX misc, polish P3) belum diperbaiki** — akan dilanjutkan batch berikutnya, prioritas
+mengikuti urutan yang direkomendasikan laporan sendiri: resize/reflow → hasil/debrief hilang →
+keyboard/focus → kontras → polish.

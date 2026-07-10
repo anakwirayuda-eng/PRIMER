@@ -57,6 +57,13 @@ interface GameStore {
   /** Counter naik tiap dispatch — dependency murah untuk useEffect juice. */
   eventTick: number
   sedangMemuat: boolean
+  /**
+   * CODEX audit UI/UX 2026-07-10 (#2): autosave dulu gagal SEPENUHNYA diam-diam
+   * (cuma console.error) — pemain tak pernah tahu progresnya berhenti tersimpan.
+   * 'gagal' dipakai Hud.tsx utk indikator kecil; direset ke 'idle' begitu
+   * simpanan berikutnya berhasil.
+   */
+  statusSimpan: 'idle' | 'menyimpan' | 'gagal'
 
   mulaiGameBaru: (namaDokter: string, mode?: ModeStase, nim?: string) => void
   lanjutkanArsip: () => void
@@ -104,6 +111,7 @@ export const useGame = create<GameStore>((set, get) => ({
   lastEvents: [],
   eventTick: 0,
   sedangMemuat: false,
+  statusSimpan: 'idle',
 
   mulaiGameBaru: (namaDokter: string, mode: ModeStase = 'karier', nim?: string) => {
     // Anti-reroll + ikatan identitas (CODEX): di mode UJIAN seed diturunkan
@@ -128,7 +136,19 @@ export const useGame = create<GameStore>((set, get) => ({
   muatAutosave: async () => {
     set({ sedangMemuat: true })
     try {
-      const json = await window.primer.save.read(SLOT_AUTOSAVE)
+      // CODEX audit UI/UX 2026-07-10 (#2): save:read kini bisa REJECT utk
+      // error selain "file tak ada" (mis. izin ditolak) — dulu semua error
+      // disamakan jadi null di main process, di sini pun tak ada catch
+      // eksplisit, jadi jadi unhandled rejection diam-diam. Tangkap & laporkan
+      // lewat statusSimpan (dipakai bersama indikator gagal-simpan di Hud).
+      let json: string | null
+      try {
+        json = await window.primer.save.read(SLOT_AUTOSAVE)
+      } catch (e) {
+        console.error('Gagal membaca autosave:', e)
+        set({ statusSimpan: 'gagal' })
+        return false
+      }
       if (!json) return false
       const arsip = deserialize(json, PACK)
       if (!arsip) return false
@@ -164,10 +184,13 @@ export const useGame = create<GameStore>((set, get) => ({
   simpan: async () => {
     const cur = get().state
     if (!cur) return
+    set({ statusSimpan: 'menyimpan' })
     try {
       await window.primer.save.write(SLOT_AUTOSAVE, serialize(cur))
+      set({ statusSimpan: 'idle' })
     } catch (e) {
       console.error('Gagal menyimpan:', e)
+      set({ statusSimpan: 'gagal' })
     }
     // DeepThink ronde-2 — telemetri wall-clock (docs/TELEMETRI_WALLCLOCK.md):
     // log forensik terpisah dari save slot, utk deteksi save-scumming oleh
@@ -227,11 +250,25 @@ export const useGame = create<GameStore>((set, get) => ({
   },
 
   muatDariSlot: async (slot) => {
-    const json = await window.primer.save.read(slot)
+    // CODEX audit UI/UX 2026-07-10 (#2): save:read kini bisa reject utk error
+    // selain "file tak ada" — pola sama muatAutosave di atas.
+    let json: string | null
+    try {
+      json = await window.primer.save.read(slot)
+    } catch (e) {
+      console.error('Gagal membaca slot manual:', e)
+      return false
+    }
     if (!json) return false
     const st = deserialize(json, PACK)
     if (!st) return false
     set({ state: st, arsip: null, lastEvents: [], eventTick: 0 })
+    // CODEX audit UI/UX 2026-07-10 (#4): tanpa ini, sesi yang baru dimuat
+    // hanya hidup in-memory — autosave di disk tetap berisi save LAMA sampai
+    // aksi lain kebetulan memicunya. Menutup app sebelum itu membuat boot
+    // berikutnya membaca save lama, bukan sesi yang barusan dimuat. Pola sama
+    // imporArsip di bawah, yang sudah benar.
+    void get().simpan()
     return true
   },
 
