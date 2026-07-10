@@ -1042,6 +1042,10 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['gizi_seimbang', 'minum_air_cukup', 'aktivitas_fisik', 'tanda_bahaya'],
     },
     clue: 'Hemoroid interna grade 1: hematokezia segar TANPA nyeri, menetes/di kertas pascadefekasi, benjolan BELUM prolaps. Tata laksana KONSERVATIF: tinggi serat + cukup air + hindari mengejan lama + pelunak tinja; bukan indikasi bedah. WAJIB colok dubur & waspadai red flag keganasan (usia >45–50, BB turun, anemia, perubahan pola BAB, riwayat keluarga kanker kolorektal) → pertimbangkan rujukan/kolonoskopi (PPK IDI).',
+    // M11 Bagian B13 (DeepThink 2026-07-10, REVISI: anoskop murah & tersedia
+    // — "jarang dipakai", bukan "tak tersedia"; FOBT kini mulai via Cek
+    // Kesehatan Gratis, bukan lagi murni "belum digulirkan").
+    catatanRealita: 'Kolonoskopi hanya di RS rujukan; anoskop sederhana & murah tapi sering tak dipakai; FOBT baru mulai digulirkan lewat skrining Cek Kesehatan Gratis, belum merata. Akibatnya perdarahan rektal kerap hanya "diamati" karena rujukan terkendala antrean/jarak/biaya — diagnosis grade 1 bertumpu pada colok dubur.',
     konsekuensi: {
       narasi: 'Bila sembelit dan mengejan tidak diperbaiki, hemoroid dapat berkembang ke derajat lebih tinggi (prolaps); mengabaikan colok dubur berisiko melewatkan keganasan pada perdarahan rektal.',
       kembaliHariMin: 30,

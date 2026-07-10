@@ -459,6 +459,10 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     // aktivitas wajar (bukan tirah baring total) + pelvic rest saat perdarahan;
     // inti tetap RUJUK USG. konsekuensi diubah ke natural history (bukan menyalahkan ibu).
     clue: 'Abortus IMINENS: perdarahan pervaginam pada kehamilan <20 minggu dengan ostium uteri TERTUTUP dan janin masih hidup. Tata laksana FKTP: istirahat wajar & pembatasan aktivitas berat (BUKAN tirah baring total — tak terbukti mencegah keguguran, Cochrane/POGI; tirah baring lama berisiko trombosis), pelvic rest bila perdarahan aktif, lalu RUJUK untuk USG konfirmasi viabilitas janin & evaluasi SpOG. Waspadai progresi ke abortus insipiens/inkomplit (perdarahan hebat, ostium terbuka) — kegawatan. Konseling: keguguran umumnya BUKAN akibat aktivitas ibu (PPK/PNPK Perdarahan Kehamilan Muda).',
+    // M11 Bagian B3 (DeepThink 2026-07-10, REVISI: "belum terbukti" terlalu
+    // absolut — bukti didrogesteron ORAL genuinely campuran, beda dari
+    // progesteron VAGINAL/PRISM yang hanya menolong subgrup riwayat keguguran).
+    catatanRealita: 'Realita: progestin oral (alilestrenol/didrogesteron) rutin diresepkan untuk abortus iminens di Indonesia, meski buktinya CAMPURAN — didrogesteron oral menurunkan angka abortus di sejumlah meta-analisis, tapi luaran lahir-hidup tak konsisten, dan progesteron vaginal (PRISM) hanya menolong subgrup dengan riwayat keguguran. Inti tatalaksana FKTP tetap: RUJUK USG.',
     konsekuensi: {
       narasi: 'Sebagian ancaman keguguran memang berprogresi (sering karena kelainan kromosom/embrio, terlepas dari aktivitas) — bila TIDAK dirujuk & dievaluasi USG, progresi ke abortus inkomplit dengan perdarahan hebat dapat terlewat tanpa penanganan.',
       kembaliHariMin: 1,
@@ -784,6 +788,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['manajemen_stres', 'aktivitas_fisik', 'higiene_tidur', 'kontrol_rutin'],
     },
     clue: 'Depresi RINGAN: ≥2 minggu mood depresif + anhedonia + gejala penyerta (tidur, nafsu makan, energi turun) dengan fungsi MASIH cukup terjaga. WAJIB skrining risiko bunuh diri di tiap kunjungan. Lini pertama mhGAP/NICE: PSIKOEDUKASI + konseling suportif/aktivasi perilaku + aktivitas fisik + active monitoring — antidepresan TIDAK rutin untuk depresi ringan, tambahkan SSRI (fluoksetin) HANYA bila gejala menetap/mengganggu fungsi. Singkirkan hipotiroid & riwayat manik (bipolar). Kontrol berkala; rujuk bila memberat/ada risiko bunuh diri (mhGAP WHO / PPK Jiwa FKTP).',
+    // M11 Bagian B4 (DeepThink 2026-07-10, REVISI MINOR: akar masalah bukan
+    // "kontrol sulit" tapi ketiadaan SDM/layanan psikologi itu sendiri).
+    catatanRealita: 'Idealnya (mhGAP/NICE) depresi ringan: aktivasi perilaku + active monitoring dulu, obat tak rutin. Realita: hanya ~40% Puskesmas punya layanan jiwa (psikolog klinis baru diwajibkan PMK 19/2024), psikiater langka — psikoterapi terstruktur sering tak bisa dijalankan, antidepresan jadi fallback. Bila meresepkan, WAJIB sertakan rencana kontrol & skrining bunuh diri.',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat penenang tanpa konseling dan tanpa skrining bunuh diri, gejala dapat memberat menjadi depresi sedang-berat dengan risiko keselamatan.',
       kembaliHariMin: 14,
@@ -1151,6 +1158,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'cegah_malaria_kelambu'],
     },
     clue: 'Malaria falsiparum: demam periodik + menggigil + splenomegali + riwayat dari daerah endemis (Papua/NTT). KONFIRMASI dengan RDT/mikroskopis SEBELUM terapi. Lini pertama Kemenkes: ACT = DHP (Dihidroartemisinin-Piperakuin) 3 hari + primakuin dosis tunggal 0,25 mg/kgBB (gametosidal). SINGKIRKAN KEHAMILAN pada perempuan usia subur: primakuin KONTRAINDIKASI pada hamil & bayi <6 bln (beri DHP saja) — tes G6PD tidak diwajibkan untuk dosis tunggal falsiparum. JANGAN pakai klorukin untuk falsiparum — resisten luas di Indonesia. Kenali tanda MALARIA BERAT (penurunan kesadaran, kejang, ikterik, gagal ginjal, hipoglikemia) → rujuk (Pedoman Tata Laksana Malaria Kemenkes).',
+    // M11 Bagian B5 (DeepThink 2026-07-10, TERIMA apa adanya — insight
+    // distribusi komoditas program vertikal, tak menyinggung clue sama sekali).
+    catatanRealita: 'Malaria impor: pasien pulang dari Papua/NTT kerap berobat di Puskesmas Jawa/Bali non-endemis yang tak menstok RDT & ACT (DHP)/primakuin — logistik dialokasikan ke daerah endemis. Curigai demam + riwayat perjalanan; siapkan jalur rujukan & lapor e-SISMAL.',
     konsekuensi: {
       narasi: 'Bila diberi klorokuin (yang sudah resisten) atau antibiotik, parasitemia terus meningkat dan dapat berkembang menjadi malaria serebral, gagal organ, hingga kematian.',
       kembaliHariMin: 1,

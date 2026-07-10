@@ -639,6 +639,12 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'kompres_demam'],
     },
     clue: 'OMA (AAP/WHO): diagnosis butuh membran timpani menonjol (bulging) + tanda inflamasi akut. Amoksisilin dosis tinggi (80–90 mg/kg/hari) lini pertama + analgesik untuk nyeri. Tetes antibiotik hanya bila ada perforasi/otorea. Watchful waiting dapat dipertimbangkan pada kasus ringan usia >2 th.',
+    // M11 Bagian B6 (DeepThink 2026-07-10, REVISI: dosis lapangan yg lebih
+    // rendah tak boleh disebut "gagal" — masih efektif utk strain peka).
+    // Sekaligus sisipan riwayat-pedoman (Opsi 2, §2 dossier
+    // DEEPTHINK_M11_BAGIAN_B) — AAP menaikkan dosis 2013 krn resistensi,
+    // genuinely pergeseran guideline temporal, bukan sekadar typo lama.
+    catatanRealita: "Otoskop yang berfungsi tak selalu tersedia — kriteria 'bulging' (AAP) kerap jadi terkaan klinis. Dosis pun berevolusi: AAP naikkan ke 80–90 mg/kg/hari (2013) khusus menutup pneumokokus resisten-penisilin; di lapangan dosis sering menyusut ke ~40–50 mg/kg — masih memadai untuk strain peka, berisiko pada yang resisten.",
   },
 
   /* ======================================================================

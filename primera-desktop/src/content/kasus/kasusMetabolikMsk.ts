@@ -271,6 +271,13 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'berhenti_merokok', 'kontrol_rutin'],
     },
     clue: 'Dislipidemia sering ASIMTOMATIK — jangan meremehkan hanya karena tak ada keluhan. Nilai risiko KV total (LDL tinggi + perokok + riwayat keluarga dini + TD tinggi). Terapi: perubahan gaya hidup WAJIB + statin (simvastatin malam hari). Cek SGOT/SGPT baseline. Simvastatin diminum malam (PPK PERKI / Kemenkes PTM).',
+    // M11 Bagian B11 (DeepThink 2026-07-10, REFRAME bukan tolak — kasus ini
+    // fit-nya buruk utk FH: LDL kasus di bawah ambang, pola CAMPURAN khas
+    // metabolik. Dibingkai jadi kontras/ambang-picu, bukan diagnosis kasus ini).
+    mutiaraEbm: 'LDL ≥190 mg/dL yang TERISOLASI + riwayat jantung dini keluarga bukan sekadar "kolesterol gaya hidup" — curigai Hiperkolesterolemia Familial (FH, ~1:250) & rujuk skrining kaskade keluarga. Pola CAMPURAN seperti kasus ini (TG tinggi, HDL rendah, obesitas) justru condong ke dislipidemia metabolik, bukan FH.',
+    // M11 Bagian B12 (DeepThink 2026-07-10, REVISI MINOR: atorvastatin
+    // sebenarnya ADA di Fornas dengan restriksi, bukan "tak masuk stok" mutlak).
+    catatanRealita: 'Di praktik FKTP, statin yang tersedia lazimnya hanya simvastatin (intensitas sedang); atorvastatin/rosuvastatin intensitas tinggi ada di Fornas tapi jarang ada di rak Puskesmas. Pemantauan ulang lipid/SGOT-SGPT sering terlewat, dan pasien kerap putus obat karena merasa "tak ada keluhan".',
     konsekuensi: {
       narasi: 'Bila diabaikan karena "tidak ada keluhan", akumulasi plak aterosklerosis berjalan diam-diam menuju infark miokard atau stroke.',
       // M10 Batch-2 (CODEX C.9): 90-180 hari TAK PERNAH terjangkau dlm stase

@@ -474,6 +474,10 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Demam stepladder (naik bertahap, puncak sore-malam) + lidah kotor + bradikardia relatif → tifoid. Lini pertama FKTP/Fornas: kloramfenikol (alternatif kotrimoksazol/amoksisilin; bila tersedia & sesuai antibiogram/derajat, sefiksim/seftriakson) — tekankan tuntas + istirahat total untuk cegah perforasi usus. Catatan: Widal tunggal punya angka positif-palsu tinggi, tegakkan dengan gambaran klinis + konteks endemis; kultur bila tersedia.',
+    // M11 Bagian B1 (DeepThink 2026-07-10, REVISI dari draft verifikator): sisipan
+    // riwayat-pedoman (Opsi 2, §2 dossier DEEPTHINK_M11_BAGIAN_B) — HANYA dipakai
+    // di kasus yang genuinely py bukti pergeseran guideline temporal terverifikasi.
+    catatanRealita: 'Kultur darah baku-emas tak tersedia di Puskesmas. Pedoman ini sendiri berevolusi: resistensi MDR di Asia Selatan mendorong WHO global bergeser ke seftriakson/kuinolon — tapi S. typhi Indonesia umumnya MASIH sensitif kloramfenikol, jadi Fornas mempertahankannya krn efikasi lokal, bukan ketinggalan zaman. WAJIB tuntas + pantau hematologik.',
     konsekuensi: {
       narasi: 'Bila antibiotik tidak dituntaskan atau pasien tetap beraktivitas berat, risiko perforasi usus dan perdarahan saluran cerna pada minggu ke-3.',
       kembaliHariMin: 7,
@@ -924,6 +928,9 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasi: ['cuci_tangan', 'kebersihan_kulit'],
     },
     clue: 'Konjungtivitis bakterial: mata merah + sekret MUKOPURULEN + kelopak lengket pagi, TANPA nyeri hebat/silau/penurunan visus. Antibiotik topikal (kloramfenikol tetes), self-limiting 5–7 hari. Nyeri hebat + fotofobia + visus TURUN = red flag keratitis → rujuk (AAO PPP).',
+    // M11 Bagian B2 (DeepThink 2026-07-10, REVISI: koreksi status hukum —
+    // steroid mata BUKAN obat bebas, beda dgn tetrahydrozoline/Insto).
+    catatanRealita: 'Tetes mata steroid (mis. Cendo Xitrol) sebenarnya OBAT KERAS wajib resep — bukan obat warung — tapi penegakan lemah bikin pasien kerap swamedikasi sendiri. Berbahaya: steroid topikal memperberat keratitis herpes yang tak dikenali & memicu glaukoma pada pemakaian kronik. Beda dengan tetrahydrozoline (Insto) yang memang bebas.',
     konsekuensi: {
       narasi: 'Bila higiene tangan tidak diedukasi, infeksi cepat menular ke mata sebelah dan anggota keluarga; pemberian steroid keliru dapat memicu ulkus kornea.',
       kembaliHariMin: 3,
