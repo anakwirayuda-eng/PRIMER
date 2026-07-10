@@ -411,6 +411,31 @@ ini sudah cukup terjadi secara implisit lewat kerja triase yg sudah
 berjalan (§2b), dan menambah field/tag formal untuk ini hanya birokrasi
 tanpa manfaat nyata?
 
+**Q6b — usul konkret dari Dr. Wirayuda (2026-07-10): jadikan taksonomi ini
+KONTEN yang tampil ke pemain, bukan cuma label internal.** GDD.md:71 sudah
+lama menjanjikan **Debrief Malam** (ringkasan akhir-hari, terpisah dari
+debrief per-kasus) menampilkan "guideline yang seharusnya dibuka" — janji
+itu belum pernah diwujudkan penuh (implementasi saat ini, `scoring.ts:145-
+181`, cuma mengutip ulang `clue` lama utk kasus yang salah). Usul: format
+"dulu vs sekarang vs realita-lapangan vs ideal, lengkap sitasi" (persis
+taksonomi 3-arah di atas + rujukan) disisipkan di Debrief Malam (momen
+REFLEKTIF, bukan real-time — beda kelas dari debrief per-kasus yg harus
+tetap ringkas) dan/atau di `clue` itu sendiri. Bahan mentahnya SEBAGIAN
+BESAR sudah ada: tiap 118 kandidat §2a py `catatanFinal`+`sitasi`+
+`catatanVerifikator` (sering sudah menjelaskan APA yg berubah & kenapa);
+21 kandidat `kontradiksiClue` malah sudah py pasangan dulu(=`clue` lama)/
+sekarang(=`catatanFinal`) siap pakai TANPA riset tambahan. **Risiko yg
+perlu ditimbang:** proyek ini py sejarah masalah "tembok teks" (dossier
+DeepThink EDUKASI_UX, 38-tombol-edukasi) — Debrief Malam BOLEH lebih dalam
+drpd debrief per-kasus, tapi hari dgn 5+ kasus bermasalah bisa kebanjiran
+esai penuh tiap malam bila tanpa batasan (mis. cap 1-2 kasus paling
+signifikan per malam, sisanya ringkas+tautan). **Pertanyaan tambahan:**
+apakah usul ini (taksonomi jadi KONTEN pemain via Debrief Malam) sebaiknya
+digabung ke keputusan Q6 di atas (jawaban Q6 otomatis menentukan APAKAH ada
+konten utk disisipkan), atau perlu pertimbangan desain UX terpisah (kapan
+"lebih dalam" berubah jadi "kebanyakan", mengingat Debrief Malam sudah py
+banyak elemen lain: grade, kasus kritis, refleksi tulisan tangan)?
+
 ### Q7 — Pola otonomi naratif (temuan #9): kejadian tunggal atau gejala sistemik di 16 arc keluarga?
 
 **Fakta:** KB Dewi (`desaB.ts:1499`) & zat besi Karsa (`desaF.ts:995`)
