@@ -11,28 +11,165 @@
 
 ---
 
-## 0. KONTEKS 90 DETIK
+## 0. KONTEKS PRIMERA — BACA DARI NOL
 
-PRIMERA = game desktop Electron, *"Football Manager-nya kedokteran komunitas
-dengan hati Harvest Moon"*. Pemain = dokter fresh-grad, stase 90 hari (atau
-Mode Ujian 30 hari) di Puskesmas desa. Pemakai target: ±50 mahasiswa FK
-Indonesia yang **DINILAI dari skor game** (redeploy ±September 2026) →
-integritas pedagogis & asesmen adalah kepentingan produk, bukan hiasan.
-Dev = solo (Dr. Wirayuda) + agen AI (Claude).
+> Dossier-dossier DeepThink sebelumnya (M3b, dst.) mengasumsikan kontinuitas
+> sesi. **Dossier ini TIDAK** — kamu tak punya riwayat percakapan PRIMER
+> manapun. Bagian 0a–0f di bawah dimaksudkan supaya §1–§3 bisa dijawab tanpa
+> menebak istilah. Bila tetap ada singkatan/istilah asing yang lolos, itu
+> celah dossier ini, bukan sesuatu yang harus kamu asumsikan maknanya.
 
-**Status:** M0–M9 selesai. M10 (audit konsistensi total, §48–§55 di
-`CODEX_AUDIT_DOSSIER.md`) baru saja **DITUTUP TUNTAS** — 6 ronde CODEX +
-sapuan multi-agen, semua ditriase & diperbaiki. M11 (pengayaan & polish) baru
-**DIMULAI**: Fase-1 (lapisan display `mutiaraEbm`/`catatanRealita`, tak
-memengaruhi skor) sudah ditanam. Lalu **dua hal besar mendarat bersamaan hari
-ini** (§2) yang mengubah bentuk M11 secara mendasar — itulah alasan dossier
-ini ditulis SEKARANG, bukan menunggu M11 "selesai" dulu.
+### 0a. Apa ini, siapa pemainnya, kenapa taruhannya tinggi
 
-**Hierarki prioritas yang mengikat sejak dossier M3b** (jangan dibalik saat
-menilai): *integritas pedagogis > integritas asesmen/anti-forgery > retensi >
-kompetisi > fun kasual.* Sebagian besar tensi §3 di bawah ini pada dasarnya
-adalah pertanyaan "di titik mana hierarki ini berbenturan dengan realitas
-solo-dev + tenggat".
+PRIMERA ("Puskesmas Pagi") = game desktop Electron (TypeScript+React),
+*"Football Manager-nya kedokteran komunitas dengan hati Harvest Moon"*.
+Pemain berperan sbg dokter fresh-graduate yang ditugaskan ke SATU Puskesmas
+(FKTP — lihat glosarium §0f) desa fiktif Indonesia, selama **stase 90 hari**
+("Karier": tiap hari dibagi 3 blok waktu bermain) atau **Mode Ujian 30
+hari** (subset kasus, seed deterministik — dipakai sbg jalur asesmen utama
+krn stase 90-hari penuh terlalu panjang utk jadwal rotasi klinik nyata).
+
+**Target pemakai: ±50 mahasiswa Fakultas Kedokteran Indonesia, redeploy
+±September 2026, DINILAI dari skor game mereka** — bukan sekadar dimainkan
+utk hiburan. Karena itu integritas pedagogis (mengajarkan hal yang BENAR)
+dan integritas asesmen (skor tak bisa dipalsukan) adalah kepentingan PRODUK
+inti. Developer: SATU dokter (Dr. Wirayuda, juga penulis sebagian besar
+konten klinis) dibantu agen AI (Claude) yang menulis kode & konten atas
+arahannya — konteks ini penting krn membatasi berapa banyak yang REALISTIS
+bisa dikerjakan sebelum Sept.
+
+### 0b. Loop permainan inti
+
+**Sisi klinik (UKP — Upaya Kesehatan Perorangan, "poli" Puskesmas):**
+mayoritas waktu bermain. Tiap "pasien" = satu `KasusKlinis` (67 kasus poli
++ 5 kasus IGD darurat-interupsi) dipilih sistem "Director" berbobot
+epidemiologi (kasus sering muncul ×3, jarang ×0.6, meniru distribusi
+kunjungan Puskesmas nyata). Alur SATU encounter: **Anamnesis** (tanya
+gejala; sebagian jawaban sengaja jadi distraktor/jebakan) → **Pemeriksaan
+Fisik** (pilih regio tubuh relevan) → **Lab** (opsional; sebagian hasil
+baru keluar "besok") → **Diagnosis** (pilih ICD-10 + stempel **TEGAK**
+[yakin penuh] atau **SUSPEK** [masih ragu] — kejujuran epistemik dinilai
+terpisah dari benar/salahnya diagnosis) → **Tatalaksana** (resep dari
+katalog ~97 obat + tindakan/prosedur) → **Edukasi** (pilih topik dari
+daftar wajib kasus itu, dibatasi "baki" 3 slot) → **Disposisi** (tuntas
+mandiri di FKTP, ATAU rujuk berjenjang ke RS via SISRUTE — merujuk kasus
+yang SEHARUSNYA bisa ditangani sendiri kena penalti "Referral Guillotine").
+Encounter berakhir dgn **debrief**: stempel grade A–D + rincian skor per
+sub-dimensi (anamnesis/pemeriksaan/terapi/edukasi) + `clue` (mutiara EBM
+tertulis) + (baru, M11 — lihat §1) `mutiaraEbm`/`catatanRealita`.
+
+**Sisi masyarakat (UKM — Upaya Kesehatan Masyarakat):** pemain juga
+mengelola **16 "keluarga binaan"** (pasien berulang dgn arc cerita
+multi-kunjungan; contoh yg disebut §2–3: keluarga Asih, Dewi, Karsa,
+Santoso, Lastri, Ketut — tersebar di file `desaA.ts`–`desaF.ts`, 1 file per
+"desa"/klaster keluarga) via **kunjungan rumah**: tiap kunjungan
+berstruktur beberapa "babak" (hotspot yg digali utk info → pilihan dialog
+dinilai kualitas teknik wawancara-motivasi ["MI"] → intervensi yg dipilih
+pemain → hasil `berhasil` / `partial` / `gagal` / `diusir`). Data awal
+keluarga dilaporkan **kader** (relawan kesehatan desa; datanya kadang bias/
+tak akurat — pemain harus verifikasi sendiri). Program berkala berjalan di
+latar: **Posyandu** (pos layanan balita bulanan — gizi/imunisasi),
+**Prolanis** (program BPJS utk penyakit kronis stabil), **KLB** (Kejadian
+Luar Biasa = wabah), **Lokakarya Mini** (rapat koordinasi lintas-program
+Puskesmas bulanan).
+
+**Jembatan UKM→UKP ("karma_igd"):** sejumlah keluarga binaan punya risiko
+klinis terjadwal di latar (mis. keluarga dgn preeklampsia atau hipertensi
+tak terkendali) — bila tak ditangani via kunjungan rumah dlm tenggat
+tertentu, risiko itu "jatuh tempo" jadi kasus IGD darurat sungguhan.
+Kunjungan yg `berhasil` MEMBATALKAN risiko itu SEPENUHNYA (mekanisme
+persis relevan di Q2); `partial`/`gagal` menggeser tenggatnya.
+
+### 0c. Skor & integritas asesmen (kenapa `REVISI_ENGINE` di §1 penting)
+
+Skor akhir stase = 4 dimensi berbobot (masih berlaku persis di kode saat
+ini): **UKP 35 · UKM 35 · Manajemen 15 · Resiliensi 15** (Manajemen =
+kesehatan ekonomi Puskesmas/kapitasi + stewardship lab-antibiotik;
+Resiliensi = kelelahan/burnout pemain sendiri). Tiap aksi pemain dicatat
+sbg **action-log** (bukan cuma skor akhir tersimpan) — ini memungkinkan
+**replay**: sistem "M6 — Kelas & Dosen" membaca ulang jurnal aksi
+mahasiswa & MENGHITUNG ULANG skornya dari nol, membandingkan dgn skor yg
+diklaim mahasiswa saat mengekspor **"Dossier Mahasiswa"** (file ber-HMAC/
+checksum) — ini pertahanan utama anti-kecurangan (mengedit save-file
+manual). Karena replay bergantung pada LOGIKA skor yg PERSIS SAMA saat main
+vs saat verifikasi, mengubah logika (bukan cuma konten) MEMAKSA
+`REVISI_ENGINE` naik (mekanismenya di §1 poin 1).
+
+### 0d. Riwayat ringkas M0–M11 (biar §2 "M10 tuntas, M11 baru mulai" tak muncul dari udara kosong)
+
+M0–M5: loop harian penuh, 60+ konten klinik, ekonomi Puskesmas, endgame
+90-hari. M6: sistem kelas/dosen (§0c). M7: polish UX (edukasi,
+aksesibilitas, onboarding). M8: prototipe multipemain terpisah ("Arena",
+proyek beda, belum aktif). M9: audit-hardening (kunci tutorial, SKDI,
+tatalaksana-vs-clue). **M10** (baru TUNTAS hari ini): audit konsistensi
+TOTAL — 6 ronde CODEX (auditor kode/medis eksternal, read-only, terpisah
+dari DeepThink) + sapuan multi-agen, semua temuan ditriase & diperbaiki,
+dicatat `CODEX_AUDIT_DOSSIER.md` §48–§55. **M11** (baru DIMULAI): user
+mendefinisikannya eksplisit sbg "pengayaan & polish" — beda kelas dari M10
+("audit utk yg salah/tak-konsisten"). Lalu **dua audit besar mendarat
+BERSAMAAN hari ini** (§2) yg menantang batas definisi itu — itulah alasan
+dossier ini ditulis SEKARANG, bukan menunggu M11 "selesai" dulu.
+
+### 0e. Hierarki prioritas yang mengikat (jangan dibalik saat menilai)
+
+*Integritas pedagogis > integritas asesmen/anti-forgery > retensi >
+kompetisi > fun kasual.* Ditetapkan sejak dossier M3b (triangulasi
+DeepThink pertama proyek ini), belum pernah dicabut. Sebagian besar tensi
+§3 di bawah pada dasarnya adalah pertanyaan "di titik mana hierarki ini
+berbenturan dgn realitas solo-dev + tenggat".
+
+### 0f. Glosarium istilah (rujuk balik ke sini bila §1–§3 memakai istilah yg belum jelas)
+
+**Sistem kesehatan Indonesia** (dipakai sbg latar realita, bukan istilah
+buatan proyek):
+- **FKTP** — Fasilitas Kesehatan Tingkat Pertama; Puskesmas = FKTP milik
+  pemerintah, gerbang PERTAMA sistem kesehatan sebelum rujuk ke RS.
+- **SKDI** — Standar Kompetensi Dokter Indonesia. Level **4A** = dokter
+  FKTP WAJIB tuntas MANDIRI; **3B** = diagnosis+stabilisasi awal+WAJIB
+  rujuk; **3A** = diagnosis+rujuk (tak boleh coba tangani sendiri).
+- **Kepmenkes 144-FKTP** — daftar RESMI 144 penyakit yg wajib dikuasai
+  tuntas dokter FKTP (lebih spesifik dari SKDI umum). Dokumen resminya
+  BELUM ada di tangan tim (lihat Q8/§0d-M9.2).
+- **SATUSEHAT** — platform data kesehatan nasional Kemenkes; menetapkan
+  kode **WHO ICD-10 2010** sbg standar resmi, BUKAN ICD-10-CM (versi AS —
+  ini sumber salah satu temuan §2b).
+- **BPJS/JKN** — asuransi kesehatan nasional Indonesia.
+- **Kapitasi** — model pembayaran FKTP: dibayar TETAP per-kepala warga
+  terdaftar per-bulan, bukan per-layanan.
+- **SISRUTE / PRB** — Sistem Rujukan Terintegrasi (rujuk-berjenjang
+  digital ke RS) / Program Rujuk Balik (pasien kronis stabil dikembalikan
+  ke FKTP dgn obat tetap dari RS).
+
+**Mekanik & kode PRIMERA:**
+- **`PACK` / `KasusKlinis`** — seluruh konten statis game (kasus, obat,
+  lab, keluarga, IGD) dimuat sbg satu objek `PACK`; tiap kasus klinik
+  adalah satu `KasusKlinis`.
+- **`clue`** — mutiara EBM (kalimat ajaran klinis) yg tampil di debrief
+  tiap kasus sejak awal proyek. `mutiaraEbm`/`catatanRealita` (§1) adalah
+  DUA field BARU M11 yg tampil di kotak terpisah, bukan pengganti `clue`.
+- **`REVISI_ENGINE` / `sidikJariPack`** — lihat §0c & §1 poin 1.
+- **Pola "cap skor"** (`vitalDiukur→skorPemeriksaan`, `edukasiKritis→
+  skorEdukasi`) — bila elemen WAJIB tertentu terlewat, skor dimensi itu
+  di-plafon (mis. maks 50) apa pun kelengkapan bagian lain.
+- **M9.2** — sub-inisiatif M9 (audit SKDI/ICD sistemik) yg DIRENCANAKAN
+  tapi terhambat krn dokumen Kepmenkes 144-FKTP resmi tak di tangan saat
+  itu — preseden langsung utk Q8.
+- **P1.6 / P1.7 / P1.9 / C.1 / C.8** (disebut di Q5) — 5 temuan/keputusan
+  DESAIN (bukan bug) dari ronde audit M10 sebelumnya, dipindah ke antrian
+  M11 krn perlu keputusan pedagogis:
+  - **P1.6** — apakah Mode Ujian seharusnya menilai PROSES klinis
+    (anamnesis/PF/terapi/edukasi), bukan cuma hasil-akhir
+    (diagnosis/disposisi)?
+  - **P1.7/C.7** — apakah tes konfirmasi yg `clue` SENDIRI sebut wajib
+    (mis. RDT malaria, BTA TB) seharusnya MENGUNCI skor diagnosis bila
+    dilewati?
+  - **P1.9** — apakah topik edukasi kritis yg terlewat seharusnya JUGA
+    menggagalkan status "rekam medis lengkap" (`rmLengkap`), bukan cuma
+    cap skor edukasi?
+  - **C.1** — apakah stabilisasi tangan-pertama (oksigen, infus) sblm
+    rujuk pasien gawat seharusnya jadi mekanik BERNILAI, bukan opsional?
+  - **C.8** — mekanik keselamatan skrining-alergi tambahan (rincian
+    penuh belum ada, baru sebatas judul temuan).
 
 ## 1. PRINSIP MENGIKAT (konsistensi — jangan diputar ulang tanpa alasan)
 
@@ -63,8 +200,7 @@ solo-dev + tenggat".
 
 ## 2. APA YANG BARU TERJADI (dua audit besar, dalam 24 jam yang sama)
 
-### 2a. M11 Fase-2 — riset pengayaan (workflow `m11-pengayaan-riset`, 7 finder
-+ verifikasi web per-kandidat)
+### 2a. M11 Fase-2 — riset pengayaan (workflow `m11-pengayaan-riset`, 7 finder + verifikasi web per-kandidat)
 
 **118 kandidat** `mutiaraEbm`/`catatanRealita` menyapu **63/67 kasus**. 104
 keyakinan tinggi, 14 sedang. **21 ditandai `kontradiksiClue`** — verifikator
@@ -89,8 +225,7 @@ nyata, sudah diverifikasi web independen):
 Dokumen lengkap: `docs/M11_FASE2_RISET_PENGAYAAN.md` + artefak interaktif
 (belum diadjudikasi Dr. Wirayuda saat dossier ini ditulis).
 
-### 2b. Ronde verifikasi CODEX independen (workflow `codex-ronde-verifikasi`,
-23 agen, terhadap laporan CODEX read-only commit `6e1b2bcc`)
+### 2b. Ronde verifikasi CODEX independen (workflow `codex-ronde-verifikasi`, 23 agen, terhadap laporan CODEX read-only commit `6e1b2bcc`)
 
 **Semua 14 temuan sistemik CODEX terverifikasi benar** — 8 dikonfirmasi
 penuh, 6 sebagian benar, **NOL yang basi/keliru** (termasuk dua angka presisi
@@ -133,8 +268,7 @@ cairan+kriteria usia dengue syok — semua nyata).
 
 ## 3. PETA PERSIMPANGAN — PERTANYAAN STRATEGIS
 
-### Q1 — Fidelitas resep: model dosis atau tidak? (temuan #1, akar dari
-banyak temuan lain)
+### Q1 — Fidelitas resep: model dosis atau tidak? (temuan #1, akar dari banyak temuan lain)
 
 **Fakta:** `Obat` (types.ts:281) tak punya field dosis/rute/frekuensi/
 durasi; `demografi` pasien (types.ts:178) tak punya berat badan; `resep`
@@ -167,12 +301,11 @@ non-antibiotik yang relevan). **Q1a:** apakah ini layak jadi "quick win"
 independen dikerjakan sekarang, terlepas dari keputusan O1/O2/O3?
 
 **Pertanyaan:** Mana dari O1/O2/O3 yang paling konsisten dgn hierarki
-prioritas §0 (integritas pedagogis) TANPA mengorbankan kelayakan solo-dev
+prioritas §0e (integritas pedagogis) TANPA mengorbankan kelayakan solo-dev
 menjelang Sept? Bila O3, kelas obat/kasus mana yang PALING berhak masuk
 tahap pertama?
 
-### Q2 — Klaster "keselamatan klinis" (temuan #2, #3, #6, #8): tarik keluar
-dari M11 "pengayaan", jadi jalur cepat tersendiri?
+### Q2 — Klaster "keselamatan klinis" (temuan #2, #3, #6, #8): tarik keluar dari M11 "pengayaan", jadi jalur cepat tersendiri?
 
 **Fakta:** Beberapa temuan bukan sekadar "kurang lengkap" — game secara
 AKTIF mengajarkan refleks yang salah/berbahaya ke mahasiswa yang akan jadi
@@ -195,8 +328,7 @@ keselamatan") dan diproses sbg jalur cepat TERSENDIRI, diprioritaskan DI
 ATAS sisa pekerjaan M11 lain — meski itu berarti M11 "resmi" secara timeline
 terlihat lebih lambat selesai?
 
-### Q3 — Re-skop M11: pisah jadi M11a (pengayaan murni, sudah jalan) vs
-M10.5/M11b (koreksi & desain-engine, akan butuh REVISI)?
+### Q3 — Re-skop M11: pisah jadi M11a (pengayaan murni, sudah jalan) vs M10.5/M11b (koreksi & desain-engine, akan butuh REVISI)?
 
 **Fakta:** M11 didefinisikan pengguna sbg "pengayaan & polish", TANPA
 implikasi REVISI_ENGINE (§1.4). Tapi separuh dari 14 temuan CODEX (5 dari
@@ -236,8 +368,7 @@ supaya mahasiswa SELALU mulai dgn semantik final, dan TAK ADA bump lagi
 setelah kelas berjalan? Atau strategi "bump kapan pun siap, mahasiswa
 paham versi bisa berubah" tetap dapat diterima asalkan dikomunikasikan?
 
-### Q5 — Sekuensing di bawah tenggat: apa yg WAJIB utk Sept, apa yg aman
-ditunda?
+### Q5 — Sekuensing di bawah tenggat: apa yg WAJIB utk Sept, apa yg aman ditunda?
 
 **Fakta, seluruh permukaan kerja yg kini diketahui, per hari ini:**
 (a) M11 Fase-2: 118 kandidat pengayaan (murni display, aman kapan saja);
@@ -246,7 +377,7 @@ ditunda?
 (d) sisa scope M11 yg BELUM disentuh sama sekali: variasi storyline,
 polish visual, mekanik variasi presentasi-penyakit (butuh desain director
 baru), variasi kasus UKM, + 5 item mekanik-skoring pindahan dari M10 Batch-3
-(P1.6/P1.7/P1.9/C.1/C.8);
+(P1.6/P1.7/P1.9/C.1/C.8 — definisi tiap kode ada di glosarium §0f);
 (e) M12 (pass estetika penuh, dijadwalkan SETELAH M10/M11);
 (f) pertimbangan cross-platform/mobile (di-flag terpisah, belum dikerjakan).
 
@@ -260,8 +391,7 @@ tak menyesatkan saat 50 mahasiswa dinilai) vs "aman-ditunda-pasca-Sept"
 Anda mengurutkan (a)-(f) di atas? Item mana yg secara jujur TAK BISA
 ditunda meski itu berarti mengorbankan item lain?
 
-### Q6 — "Idealis vs realita FKTP" vs "sekadar ketinggalan zaman": perlu
-taksonomi 3 arah yang eksplisit?
+### Q6 — "Idealis vs realita FKTP" vs "sekadar ketinggalan zaman": perlu taksonomi 3 arah yang eksplisit?
 
 **Fakta:** M11 item asal (pengayaan) lahir dari premis "PRIMERA SENGAJA
 menggambarkan FKTP ideal, `catatanRealita` menjembatani ke realita" (mis.
@@ -281,8 +411,7 @@ ini sudah cukup terjadi secara implisit lewat kerja triase yg sudah
 berjalan (§2b), dan menambah field/tag formal untuk ini hanya birokrasi
 tanpa manfaat nyata?
 
-### Q7 — Pola otonomi naratif (temuan #9): kejadian tunggal atau gejala
-sistemik di 16 arc keluarga?
+### Q7 — Pola otonomi naratif (temuan #9): kejadian tunggal atau gejala sistemik di 16 arc keluarga?
 
 **Fakta:** KB Dewi (`desaB.ts:1499`) & zat besi Karsa (`desaF.ts:995`)
 sama-sama membingkai keberhasilan/kepatuhan sbg butuh IZIN suami, bukan
