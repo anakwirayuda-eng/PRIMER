@@ -2754,3 +2754,21 @@ bergigi: stash fix → 2/2 merah persis → restore → hijau.
 
 `npm run typecheck` bersih; `npm test -- --run` → **439 test** (dari
 437), 41 file, hijau. Tak ada REVISI_ENGINE bump (CSS murni).
+
+## 46. CODEX ronde-5 — laporan STALE (kebocoran fokus, sudah fixed §44) (2026-07-06)
+
+CODEX kembali melaporkan temuan yang PERSIS SAMA (kata-per-kata, file:baris
+sama) dgn §44 — "Onboarding tanpa focus-trap/aria-modal, HUD Tab-able di
+belakangnya; 3 modal tanpa role=dialog". Diverifikasi thd kode AKTUAL
+sebelum menjawab (bukan diasumsikan stale): `grep` mengonfirmasi
+`useFocusTrap` SUDAH terpasang & `role="dialog" aria-modal="true"` SUDAH
+ada di seluruh 7 titik yang disebut (Onboarding.tsx:82, MejaKerja.tsx:
+284-285/749/829, PetaDesa.tsx:40/292-293) — commit `e2ffeca` (§44) SUDAH
+ada di riwayat cabang ini, 3 commit sebelum HEAD saat ronde ini masuk.
+
+**Kesimpulan: STALE murni** — CODEX mengaudit snapshot SEBELUM commit
+`e2ffeca` mendarat (kemungkinan audit dimulai sblm fix di-commit, laporan
+baru kembali sesudahnya). Tak ada tindakan; tak ada perubahan kode.
+Dicatat di sini semata agar ronde berikutnya (atau CODEX sendiri bila
+diminta ulang) tak bingung melihat laporan identik muncul dua kali —
+lihat §44 utk detail fix+verifikasi lengkap.
