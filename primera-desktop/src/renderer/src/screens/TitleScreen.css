@@ -262,6 +262,21 @@
 .title__impor { display: block; margin-top: var(--sp-3); }
 .title__impor input { font-size: var(--text-xs); }
 
+/* Polish#3b (CODEX audit UI/UX 2026-07-10): tombol "Choose File" bawaan OS
+   disamakan dgn .tombol dasar (base.css) — kontrol native mentah sebelumnya
+   tampak asing di tengah bahasa desain app. */
+.title__impor input[type='file']::file-selector-button {
+  margin-right: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  border: 1px solid var(--border-tegas);
+  background: var(--bg-card);
+  color: var(--tinta);
+  cursor: pointer;
+}
+
 /* -- M6.27: panel hasil verifikasi dossier (dosen) --------------------------------- */
 .title__verifikasi {
   display: flex;
