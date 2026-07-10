@@ -232,6 +232,16 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                               ? 'Stok habis — pesan lewat Gudang Obat (Meja Kerja) atau pilih alternatif.'
                               : `Tambahkan ${o.nama} ke resep.`
                         }
+                        // CODEX audit UI/UX 2026-07-10 (#15): sama seperti tombol
+                        // Pesan lab — accessible name tombol ini sama di SETIAP
+                        // baris obat ("+ Resep"/"✓"/"✕"), nama obat cuma di title.
+                        aria-label={
+                          diresepkan
+                            ? `${o.nama} sudah di resep`
+                            : habis
+                              ? `${o.nama} stok habis`
+                              : `Tambah ${o.nama} ke resep`
+                        }
                       >
                         {diresepkan ? '✓' : habis ? '✕' : '+ Resep'}
                       </button>

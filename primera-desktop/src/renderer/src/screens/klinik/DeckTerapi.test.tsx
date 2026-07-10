@@ -9,7 +9,7 @@
  * scroll/viewport sungguhan — cuma kelihatan saat manusia main langsung.
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { DeckTerapi } from './DeckTerapi'
 import { buatEncounter } from '@engine/clinic'
 import { buatPasienDariKasus } from '@engine/director'
@@ -30,5 +30,25 @@ describe('<DeckTerapi /> — sorotan tutorial harus scroll ke tampilan (bug live
     )
 
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled()
+  })
+})
+
+describe('<DeckTerapi /> — aria-label tombol tambah obat bernama (CODEX audit UI/UX 2026-07-10, #15)', () => {
+  it('tombol "+ Resep" tiap baris obat punya aria-label yang menyebut nama obat itu sendiri', () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const enc = buatEncounter(pasien)
+    render(<DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />)
+
+    const contohObat = Object.values(PACK.obat)[0]!
+    expect(screen.getByRole('button', { name: `Tambah ${contohObat.nama} ke resep` })).toBeInTheDocument()
+  })
+
+  it('obat yang sudah di resep aria-label-nya berubah (bukan tetap generik "+ Resep")', () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const contohObat = Object.values(PACK.obat)[0]!
+    const enc = { ...buatEncounter(pasien), resep: [contohObat.id] }
+    render(<DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />)
+
+    expect(screen.getByRole('button', { name: `${contohObat.nama} sudah di resep` })).toBeInTheDocument()
   })
 })

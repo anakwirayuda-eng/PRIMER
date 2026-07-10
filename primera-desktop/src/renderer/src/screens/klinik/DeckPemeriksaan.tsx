@@ -132,6 +132,12 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
                           ? 'Kasus latihan ini tak butuh lab — lanjutkan tanpa memesan.'
                           : `Pesan ${item.nama} — biaya ${formatRupiah(item.biaya)} membebani kapitasi.`
                     }
+                    // CODEX audit UI/UX 2026-07-10 (#15): teks visible tombol ini
+                    // ("Pesan"/"✓") sama di SETIAP baris lab — nama lab hanya ada
+                    // di title (hover) & teks node saudara, bukan di accessible
+                    // name tombolnya sendiri. Screen reader/scan cepat tak bisa
+                    // membedakan baris mana yang mana.
+                    aria-label={dipesan ? `${item.nama} sudah dipesan` : `Pesan ${item.nama}`}
                   >
                     {dipesan ? '✓' : 'Pesan'}
                   </button>

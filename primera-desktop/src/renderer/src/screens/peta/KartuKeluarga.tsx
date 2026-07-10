@@ -139,8 +139,19 @@ export function KartuKeluarga({
           {kel.arcSelesai === 'gagal' && <span className="chip chip--merah">ARC GAGAL</span>}
         </div>
         <div className="baris">
+          {/* CODEX audit UI/UX 2026-07-10 (#15): ketiga tombol aksi kartu ini
+              dulu punya teks visible generik yg sama di SETIAP kartu keluarga
+              ("Lepas"/"Jadikan Binaan"/"Kunjungi (...)") — nama keluarga hanya
+              dirender di elemen judul kartu (baris 78), bukan di dalam tombol
+              itu sendiri. Screen reader yg menavigasi per-kontrol (bukan per-
+              kartu) tak bisa membedakan kartu mana yang mana. */}
           {binaan ? (
-            <button className="tombol tombol--senyap" onClick={onLepas} title="Keluarkan dari roster binaan.">
+            <button
+              className="tombol tombol--senyap"
+              onClick={onLepas}
+              title="Keluarkan dari roster binaan."
+              aria-label={`Lepas ${content.namaKeluarga} dari roster binaan`}
+            >
               Lepas
             </button>
           ) : (
@@ -149,6 +160,7 @@ export function KartuKeluarga({
               onClick={onBinaan}
               disabled={rosterPenuh}
               title={rosterPenuh ? 'Roster binaan penuh — lepas satu keluarga dulu.' : 'Masukkan ke roster keluarga binaan.'}
+              aria-label={`Jadikan ${content.namaKeluarga} binaan`}
             >
               Jadikan Binaan
             </button>
@@ -158,6 +170,7 @@ export function KartuKeluarga({
             onClick={onKunjungi}
             disabled={alasanKunjungan !== null}
             title={alasanKunjungan ?? `Berangkat kunjungan rumah — memakai ${biayaStamina} stamina.`}
+            aria-label={`Kunjungi ${content.namaKeluarga}`}
           >
             Kunjungi (siang · {biayaStamina} pip)
           </button>

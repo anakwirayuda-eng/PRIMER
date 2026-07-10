@@ -248,7 +248,12 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
                 <button
                   className="tombol tombol--senyap klinik-lembar__coret"
                   onClick={() => dispatch({ type: 'HAPUS_OBAT', obatId: id })}
-                  title="Coret dari resep"
+                  title={`Coret ${o?.nama ?? id} dari resep`}
+                  // CODEX audit UI/UX 2026-07-10 (#15): tombol ini dulu HANYA
+                  // berisi simbol "✕" dgn title statis "Coret dari resep" —
+                  // nama obat tak disebut sama sekali (bahkan di title), jadi
+                  // tak terbedakan dari baris resep lain sama sekali.
+                  aria-label={`Coret ${o?.nama ?? id} dari resep`}
                 >
                   &#10005;
                 </button>

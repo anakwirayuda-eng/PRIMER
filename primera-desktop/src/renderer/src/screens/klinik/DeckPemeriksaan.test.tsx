@@ -1,0 +1,33 @@
+/**
+ * TEST — DeckPemeriksaan: tombol "Pesan" lab dapat aria-label bernama
+ * (CODEX audit UI/UX 2026-07-10, #15). Sebelum fix: SEMUA baris lab berbagi
+ * accessible name identik ("Pesan"/"✓") — nama lab hanya di title (hover),
+ * tak terbedakan lewat navigasi per-kontrol (screen reader/scan cepat).
+ */
+import { describe, expect, it } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { DeckPemeriksaan } from './DeckPemeriksaan'
+import { buatEncounter } from '@engine/clinic'
+import { buatPasienDariKasus } from '@engine/director'
+import { Rng } from '@engine/core/rng'
+import { PACK } from '@content/index'
+
+describe('<DeckPemeriksaan /> — aria-label tombol Pesan lab bernama (#15)', () => {
+  it('tombol "Pesan" tiap baris lab punya aria-label yang menyebut nama lab itu sendiri', () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const enc = buatEncounter(pasien)
+    render(<DeckPemeriksaan enc={enc} dispatch={() => {}} />)
+
+    const contohLab = Object.values(PACK.lab)[0]!
+    expect(screen.getByRole('button', { name: `Pesan ${contohLab.nama}` })).toBeInTheDocument()
+  })
+
+  it('lab yang sudah dipesan aria-label-nya berubah (bukan tetap generik)', () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const contohLab = Object.values(PACK.lab)[0]!
+    const enc = { ...buatEncounter(pasien), labDipesan: [contohLab.id] }
+    render(<DeckPemeriksaan enc={enc} dispatch={() => {}} />)
+
+    expect(screen.getByRole('button', { name: `${contohLab.nama} sudah dipesan` })).toBeInTheDocument()
+  })
+})
