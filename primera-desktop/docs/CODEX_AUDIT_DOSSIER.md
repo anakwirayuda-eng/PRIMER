@@ -2869,3 +2869,140 @@ bergigi: 15 assertion konten baru + 3 assertion validasiPack + 1 orphan +
 
 **M10 (semua 4 dimensi) kini TUNTAS**: §36-47 — pipeline (dim 1, §47),
 bridge/NPC (dim 2+3, §43), UI/UX layering (dim 4, §38-46).
+
+## 48. CODEX ronde-baru (audit M10 total, 2 subagent) — 13 temuan, semua ditriase, BELUM diperbaiki (2026-07-09)
+
+CODEX menjalankan audit read-only dibantu 2 subagent di HEAD `2002f28` (SEBELUM komit `080b465`
+M10.c selesai — laporan sendiri mencatat worktree berubah oleh proses lain selama audit
+berjalan; ini menjelaskan "444 lulus, 6 gagal" yang dilaporkan — itu snapshot M10.c
+PERTENGAHAN-edit, BUKAN kegagalan riil. Status sekarang: 456/456 lulus, typecheck bersih).
+Semua 13 temuan diverifikasi Claude satu-satu thd kode aktual (baca file:baris langsung,
+bukan percaya ringkasan). Berikut verdict — **SEMUA CONFIRMED masih OPEN, belum ada
+perbaikan dibuat** (giliran ini murni triase + dokumentasi, fix menyusul ronde berikutnya).
+
+### P1 — CONFIRMED (4/4)
+
+1. **Fingerprint keluarga tak mencakup `anggota[]`/`rw`** — verifikasi.ts:253-255
+   hash keluarga hanya `{id, ekonomi, indikator, arc}`; `KeluargaBinaan.anggota`/`rw` (types.ts:330,334)
+   sama sekali tak ikut. Ganti nama/usia/kondisi/JK anggota atau RW keluarga TAK mengubah
+   fingerprint padahal keduanya menyetir identitas karma, roster Prolanis (`bentukRosterProlanis`
+   membaca `kel.anggota`/`kel.rw` LANGSUNG dari `pack.keluarga`), dan bridge surveilans RW.
+   CONFIRMED — celah integritas dossier nyata.
+
+2. **Save tak simpan provenance revisi engine** — save.ts:11 amplop cuma
+   `{v:1, state}`, `v` adalah versi SKEMA save (migrasi field), BUKAN `REVISI_ENGINE` (versi
+   semantik skor). Save yang dimulai di rev-N, dilanjutkan setelah app update ke rev-N+1, lalu
+   diekspor: `susunDossier` men-cap fingerprint rev-N+1 (kode YANG SEDANG JALAN), tapi sebagian
+   `jejak` terekam saat rev-N. Berbeda dari kasus "dossier lama diverifikasi verifier baru" (yang
+   sudah ditangani — jatuh ke tidak_dapat_diverifikasi): ini save yang STRADDLE dua revisi lalu
+   diekspor FRESH, sehingga verifier tak py cara mendeteksi itu straddle. CONFIRMED — celah desain
+   nyata tapi sempit (butuh app UPDATE di tengah satu save berjalan, bukan tiap REVISI_ENGINE bump
+   dalam sejarah dev).
+
+3. **Bridge positif bikin "anggota keluarga" fiktif + RW acak** — director.ts:270-284
+   `susunAntrianHarian` menempel `{keluargaId, bonusTrust:true}` ke pasien yang SUDAH dibuat acak
+   (nama/usia/RW/bpjs semua dari roll `buatPasienDariKasus` independen) — bukan pasien yang
+   benar2 berasal dari `kel.anggota`. UI melabeli "Keluarga binaanmu" (RuangTunggu.tsx:84)
+   seolah identitas warga sungguhan. Bila kasus menular, RW ACAK ini masuk surveilans
+   (reducer.ts:540) — kluster UKM bisa menyala di RW yang bukan RW
+   keluarga sungguhan. CONFIRMED — kontradiksi dgn seluruh premis M10.b (identitas NPC harus
+   konsisten): jalur INI tak pernah disentuh sapuan M10.b krn bukan situs `jenis:'pasien_kembali'`.
+
+4. **Bu Marni auto-Prolanis walau JKN nonaktif** — desaE.ts:358
+   (`kondisi:['dm_tipe2']`) + desaE.ts:371 (`jkn:'tidak'`)
+   + arc `mk1_i1` (desaE.ts:622) eksplisit narasi "jadwalkan
+   Bu Marni masuk Prolanis BEGITU KARTU AKTIF" (mengasumsikan gate). Tapi `bentukRosterProlanis`
+   (reducer.ts:1795-1819) membangun roster dari `pack.keluarga`
+   (konten statis) murni berdasar `kondisi` ht/dm — nol pembacaan `indikatorAwal.jkn` atau status
+   arc runtime. Bu Marni masuk roster Prolanis sejak `MULAI_PROLANIS` pertama, sebelum arc-nya
+   selesai. CONFIRMED — kontradiksi konten-vs-mekanik, dan secara pedagogis salah (Prolanis
+   adalah program BPJS, peserta non-JKN mustahil terdaftar di realita).
+
+### P2 — CONFIRMED (4/4 dari kode; #9 tetap hipotesis)
+
+5. **No. RM berubah tiap pasien kembali** — director.ts:71
+   `buatPasienDariKasus` selalu bikin `id: p_${kasusId}_${rng.int(1000,9999)}` BARU. `JadwalItem.pasienId`
+   (state.ts:383) memang ada dan DIISI di 4 situs penjadwalan
+   (reducer.ts:218/344/373/1189), tapi interface lokal `PasienJatuhTempo` (reducer.ts:1293-1305)
+   TAK punya field itu, dan konversi jadwal→pasienKembali (reducer.ts:1332-1344) tak pernah
+   membacanya — id lama tak pernah diteruskan ke override. UI menyebutnya "No. RM"
+   (LembarPeriksa.tsx:67) — dalam
+   realita, nomor rekam medis WAJIB stabil per-pasien seumur hidup. CONFIRMED.
+
+6. **Persona NPC tak stabil lintas karma/Prolanis** — jalur karma (reducer.ts:1359-1368)
+   dan materialisasi komplikasi Prolanis (reducer.ts:1085-1099)
+   SAMA-SAMA tak pernah menyertakan `persona` saat push ke jadwal/pasienKembali — beda dari 8
+   situs `pasien_kembali` LAIN yang M10.b (§43) sudah perbaiki utk field ini. Karena `buatPasienDariKasus`
+   re-roll `pilihPersona(usia, rng)` bila `override.persona` kosong, NPC bernama yang sama (mis.
+   peserta Prolanis atau korban karma) bisa bicara dgn persona BERBEDA tiap kemunculan. CONFIRMED
+   — celah SISA persis di domain yang M10.b klaim tuntas, luput krn karma/Prolanis materialize
+   lewat jalur push langsung yang beda dari sisa 8 situs yang disapu.
+
+7. **Pak Musa (DM+HT) direduksi jadi HT saja** — desaB.ts:517
+   `kondisi:['dm_tipe2','hipertensi_esensial']` (KEDUANYA). `bentukRosterProlanis`
+   (reducer.ts:1800-1803): `const jenis = ht ? 'ht' : 'dm'` — ht
+   dicek LEBIH DULU, jadi komorbid apa pun yg py hipertensi otomatis jatuh ke 'ht', DM-nya lenyap
+   dari mekanik (kartu Prolanis selamanya cuma lacak SBP, tak pernah GDS/metformin/HbA1c walau
+   narasi arc menekankan itu). CONFIRMED — bug pemilihan kondisi (urutan cek `? :`), bukan cuma
+   kelemahan cakupan string-match yg sudah diketahui M10.b §2.4.
+
+8. **Pemilihan RW Peta Desa mouse-only** — PetaSvg.tsx:81-85
+   `<g onClick>` polos: tanpa `tabIndex`, `role="button"`, atau handler Enter/Space. Instruksi
+   layar saat roster kosong cuma "Klik petak RW" (PetaDesa.tsx:159).
+   CONFIRMED — pemain keyboard-only tak bisa memulai UKM sama sekali dari peta (beda kelas dari
+   fokus-trap M10.a yang menjaga MODAL; ini soal kontrol utama layar yang TAK PERNAH `focusable`).
+
+9. **Hipotesis scroll-ke-bawah modal panjang** — useFocusTrap.ts:36
+   `.focus()` tanpa `{preventScroll:true}` memang benar secara kode (scroll-into-view adalah
+   default browser). CODEX SENDIRI menandai ini "hipotesis kuat, perlu browser live" — belum
+   Claude verifikasi runtime (butuh mensimulasikan Rekap/Lokmin/PanelHasil dgn window kecil +
+   ukuran teks 140%). **BELUM DIVERIFIKASI LANGSUNG** — status tetap PLAUSIBLE, bukan CONFIRMED,
+   sampai ada pengecekan browser nyata.
+
+### P3 — CONFIRMED (3/4), 1 REJECTED sebagian
+
+10. **Restore-focus PanelHasil tak efektif** — useFocusTrap.ts:30
+    (`fokusSebelumnya.current = document.activeElement`) dieksekusi di dalam efek PanelHasil, yang
+    mount PERSIS di commit React yang SAMA dgn unmount tombol DISPOSISI pemicunya (`state.klinik.aktif`
+    jadi `undefined` & `hasil` jadi terisi dalam satu dispatch — Klinik.tsx:28-36).
+    Elemen fokus dibuang dari DOM men-shift `document.activeElement` ke `document.body` SEBELUM efek
+    PanelHasil sempat membaca — restore-on-close jadi no-op (mengembalikan fokus ke body, bukan ke
+    tombol asal). CONFIRMED, severity rendah (degradasi anggun, tak merusak fungsi).
+
+11. **Radiogroup pakai tombol `aria-pressed`, bukan `role="radio"` + navigasi panah** —
+    Pengaturan.tsx:80-88 `role="radiogroup"`
+    membungkus `<button aria-pressed>` — mismatch semantik ARIA (radiogroup sungguhan butuh
+    `role="radio"`+`aria-checked`+navigasi panah kiri/kanan, bukan toggle-button). CONFIRMED,
+    P3 murni (screen reader tetap bisa mengaktifkan tiap tombol, cuma pola navigasi tak sesuai
+    ekspektasi APG).
+    Setengah lain temuan #11 ("Pengaturan tak dibuat `inert` saat Tentang di atasnya") —
+    **REJECTED-WITH-REASONING**: `useFocusTrap.ts` baris 10-13 SUDAH mendokumentasikan eksplisit
+    kenapa `inert` sengaja dihindari (modal nested dlm pohon HUD, bukan portal — inert leluhur
+    akan ikut mematikan modal itu sendiri). Ini tradeoff desain YANG SUDAH dipikirkan & ditulis,
+    bukan kealpaan. Diakui sbg keterbatasan terdokumentasi, tak perlu fix.
+
+12. **Onboarding: fokus awal ke "Lewati", tanpa `aria-live`/`aria-current`** —
+    Onboarding.tsx:99 tombol "Lewati" adalah
+    elemen focusable PERTAMA di DOM (baris 98-108, sebelum Kembali/Lanjut/Mulai) — `useFocusTrap`
+    memfokuskannya otomatis saat kartu dibuka, jadi keyboard/screen-reader user default diarahkan
+    ke tombol SKIP, bukan tombol lanjut (aksi primer/diharapkan). Tak ada `aria-live`/`aria-current`
+    saat `i` berubah — pergantian kartu tak diumumkan ke pembaca layar. CONFIRMED.
+
+13. **Label peta SVG `13px` absolut, tak ikut ukuran teks 90-140%** —
+    PetaDesa.css:49 `font-size:13px` (px, bukan
+    `em`/`rem`). Pengaturan ukuran teks skala `root.style.fontSize` (App.tsx:76)
+    — HANYA memengaruhi elemen `rem`-relative; SVG `<text>` dgn px absolut tak ikut. CONFIRMED,
+    P3 kosmetik.
+
+### Sudah Bersih — diverifikasi ulang, akurat
+
+Jumlah situs `jenis:'pasien_kembali'` = 8, `jenis:'karma_igd'` = 1 (dikonfirmasi grep ulang,
+cocok persis klaim CODEX). 7 modal fokus/Escape/backdrop, layering HUD/drawer/toast/modal,
+kontras Peta siang/malam (§38-46) tetap benar — tak ada regresi baru ditemukan di area itu.
+
+### Yang BELUM difix
+
+Giliran ini murni triase + dokumentasi (sesuai permintaan: siapkan dossier total dulu). 13 temuan
+di atas (12 CONFIRMED + 1 PLAUSIBLE-belum-live-verified) adalah **OPEN ITEMS** untuk ronde
+perbaikan berikutnya — lihat `M10_TOTAL_AUDIT_BRIEF.md` utk daftar lengkap + konteks CODEX
+audit lanjutan.
