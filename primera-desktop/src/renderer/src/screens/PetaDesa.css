@@ -198,6 +198,31 @@
   background: rgba(62, 208, 164, 0.16);
 }
 
+/* User playtest 2026-07-06 (screenshot mode malam): kanvas peta SVG (kertas-
+   050/daun-50/kertas-200/400 — "kartu pos" kertas, spt TitleScreen selalu
+   'pagi') SENGAJA tak ikut gelap, TAPI token bersama yang dipakai teks/petak
+   di dalamnya (--tinta, --daun-600/800, --kunyit-600/700, --tinta-merah/biru,
+   --border-halus/tegas) DIREMAP TERANG di mode malam utk latar gelap di
+   tempat LAIN — kombinasi "teks terang + kanvas kertas tetap terang" bikin
+   kontras kolaps (label RW & cartouche "DESA SUKAMAJU · 8 RW" nyaris tak
+   terbaca). Kunci ulang ke nilai mode-terang KHUSUS di dalam kanvas peta —
+   pola sama TitleScreen (paksa satu sub-pohon UI tetap konsisten sendiri). */
+[data-mode='malam'] .peta-svg {
+  --tinta: #26312c;
+  --tinta-lembut: #5b6a62;
+  --tinta-pudar: #6e7a70;
+  --daun-600: #16a37f;
+  --daun-700: #0d8465;
+  --daun-800: #0a5c47;
+  --kunyit-600: #d9822b;
+  --kunyit-700: #96500f;
+  --tinta-merah: #b3382c;
+  --tinta-biru: #2b5a8a;
+  --border-halus: rgba(38, 49, 44, 0.12);
+  --border-tegas: rgba(38, 49, 44, 0.28);
+  --border-tinta: rgba(38, 49, 44, 0.55);
+}
+
 .peta-roster-item__nama {
   font-weight: 600;
 }

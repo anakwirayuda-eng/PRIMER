@@ -2710,3 +2710,47 @@ otomatis tertangkap).
 `npm run typecheck` bersih; `npm test -- --run` → **437 test** (dari
 428), 40 file, hijau. Tak ada REVISI_ENGINE bump (murni UI/aksesibilitas,
 nol semantik skor/replay).
+
+## 45. Bug live ketiga — peta desa kontras kolaps di mode malam (2026-07-06)
+
+User main langsung (screenshot mode malam layar Peta Desa): kartu pos SVG
+choropleth py teks nyaris tak terbaca — "DESA SUKAMAJU · 8 RW" (cartouche)
+& label tiap petak RW ("RW 1 · Kampung Kenanga" dkk) tampil pudar/nyaris
+menyatu dgn latar.
+
+**Root cause, dikonfirmasi thd tokens.css sebelum menyentuh apa pun**:
+kanvas SVG peta (`--kertas-050`/`--daun-50`/`--daun-100`/`--kertas-200`/400
+— "kartu pos kertas") SENGAJA tak py varian gelap (pola sama TitleScreen
+selalu 'pagi', identitas visual tetap), TAPI 10 token BERSAMA yg dipakai
+teks/aksen di dalamnya (`--tinta`, `--tinta-lembut`, `--tinta-pudar`,
+`--daun-600/700/800`, `--kunyit-600/700`, `--tinta-merah`, `--tinta-biru`,
+`--border-halus/tegas/tinta`) DIREMAP TERANG di `[data-mode='malam']` utk
+konteks lain (HUD/klinik, latar sungguhan gelap). Kombinasi "teks
+terang-utk-gelap + kanvas kertas yg tetap terang" → kontras kolaps —
+KELAS bug yg SAMA persis dgn `.peta-roster-item--aktif` (CODEX P2 audit
+2026-07-04, sudah ditambal) tapi luput di kanvas SVG-nya sendiri sampai
+user menemukannya main langsung.
+
+**Fix**: `[data-mode='malam'] .peta-svg { ...kunci ulang 10 token ke nilai
+mode-terang... }` (PetaDesa.css) — custom property CSS di-redeklarasi
+pada elemen `<svg className="peta-svg">` itu sendiri; SEMUA `var(--x)`
+dipakai elemen di dalamnya (rect/polygon/path/text/circle) resolve ke
+nilai yg dikunci ulang ini, tanpa menyentuh `warnaPetak()`/JSX sama sekali.
+Diverifikasi EMPIRIS (bukan cuma baca sumber): `getComputedStyle` pada
+`.peta-cartouche`/`.peta-label`/`.peta-petak__bidang` sungguhan
+dikonfirmasi TETAP resolve ke nilai mode-terang PERSIS (`rgb(10,92,71)`
+dkk) walau `data-mode="malam"` aktif di `.app-frame`; toggle balik ke
+'pagi' dikonfirmasi tak berubah (nol regresi).
+
+**Pagar generik baru** (`modeMalam.test.ts`, BUKAN 3 assertion titik
+tapi 1 invarian KELAS): parse SEMUA token yg diremap `[data-mode='malam']`
+tokens.css, parse SEMUA `var(--x)` dipakai PetaSvg.tsx, assert tiap
+irisannya WAJIB terkunci-ulang di `.peta-svg`. Test ini LANGSUNG
+membuktikan nilainya: draft fix pertama saya cuma mengunci 10 dari 13
+token yg sebenarnya perlu — `--tinta-pudar` (stroke sungai), `--border-
+tinta` (outline petak nonaktif), `--daun-700` (ikon rumah Puskesmas)
+luput dari pembacaan manual, tertangkap test SEBELUM commit. Verifikasi-
+bergigi: stash fix → 2/2 merah persis → restore → hijau.
+
+`npm run typecheck` bersih; `npm test -- --run` → **439 test** (dari
+437), 41 file, hijau. Tak ada REVISI_ENGINE bump (CSS murni).
