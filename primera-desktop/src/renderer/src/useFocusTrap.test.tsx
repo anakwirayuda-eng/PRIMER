@@ -9,7 +9,7 @@
  * "Klinik" tetap `document.activeElement` via `.focus()` dan `state.layar`
  * berubah via `.click()` walau Onboarding overlay menutupinya total.
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { useRef, useState } from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -31,6 +31,26 @@ function Harness({ aktif, onEscape }: { aktif: boolean; onEscape?: () => void })
     </div>
   )
 }
+
+describe('useFocusTrap — preventScroll (CODEX audit UI/UX 2026-07-10, #19)', () => {
+  it('fokus awal dipanggil dengan { preventScroll: true } — modal overflow-y:auto tak ter-scroll saat dibuka', () => {
+    const spy = vi.spyOn(HTMLElement.prototype, 'focus')
+    render(<Harness aktif={true} />)
+    expect(spy).toHaveBeenCalledWith({ preventScroll: true })
+    spy.mockRestore()
+  })
+
+  it('fokus wrap Tab (elemen terakhir → pertama) juga preventScroll', async () => {
+    const user = userEvent.setup()
+    render(<Harness aktif={true} />)
+    const spy = vi.spyOn(HTMLElement.prototype, 'focus')
+    screen.getByText('Dalam Dua').focus()
+    spy.mockClear()
+    await user.tab()
+    expect(spy).toHaveBeenCalledWith({ preventScroll: true })
+    spy.mockRestore()
+  })
+})
 
 describe('useFocusTrap (M10.a ronde-4)', () => {
   it('saat aktif: fokus awal jatuh ke elemen focusable PERTAMA di dalam modal', () => {

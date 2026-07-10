@@ -3463,7 +3463,15 @@ sebelum memvonis "confirmed", jangan simpulkan dari satu field/baris tanpa cek s
   fullscreen tanpa chrome gelap bersebelahan, peta disisipkan di shell gelap) — DeepThink/Dr. Wirayuda
   perlu memutuskan eksplisit apakah dipertahankan atau dikasih varian temaram.
 
-**Sisa 18 P2/P3 (nomor #6-resize-detail, #7-8 debrief-hilang, #10-20 aksesibilitas/kontras,
-#22-25 UX misc, polish P3) belum diperbaiki** — akan dilanjutkan batch berikutnya, prioritas
+**Batch-2 (2 fix mekanis-aman tambahan, sama sesi):**
+- **#19 Modal panjang tergulir ke bawah** — `useFocusTrap.ts` fokus awal (+ wrap Tab) kini pakai
+  `.focus({ preventScroll: true })` — modal `overflow-y:auto` (Onboarding dkk) tak lagi ter-scroll
+  ke tombol paling bawah begitu dibuka.
+- **#6/P3 text-xs Dex tak ikut skala teks** — `DexSkdi.css` dua label (`.dexskdi__legenda-pin`,
+  `.dexskdi-kartu__pin`) diganti dari `9px`/`10px` mati ke `0.5625rem`/`0.625rem` (nilai identik
+  di 100%, tapi kini ikut skala slider "Ukuran Teks").
+
+**Sisa 16 P2/P3 (nomor #6-resize-utama, #7-8 debrief-hilang, #10-18/#20 aksesibilitas/kontras,
+#22-25 UX misc, polish P3 lain) belum diperbaiki** — dilanjutkan batch berikutnya, prioritas
 mengikuti urutan yang direkomendasikan laporan sendiri: resize/reflow → hasil/debrief hilang →
 keyboard/focus → kontras → polish.

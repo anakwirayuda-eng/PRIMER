@@ -62,7 +62,10 @@
 
 .dexskdi__legenda-pin {
   color: var(--kunyit-600);
-  font-size: 9px;
+  /* CODEX audit UI/UX 2026-07-10 (#6/P3): px mati tak ikut skala "Ukuran
+     Teks" di Pengaturan (root font-size %) — ganti ke rem senilai sama
+     pada 100% agar ikut membesar saat slider digeser. */
+  font-size: 0.5625rem;
 }
 
 /* -- Isi: grid + panel detail -------------------------------------------------- */
@@ -181,7 +184,8 @@
   top: var(--sp-2);
   right: var(--sp-2);
   color: var(--kunyit-600);
-  font-size: 10px;
+  /* CODEX audit UI/UX 2026-07-10 (#6/P3): sama seperti .dexskdi__legenda-pin. */
+  font-size: 0.625rem;
   line-height: 1;
 }
 

@@ -32,8 +32,13 @@ export function useFocusTrap<T extends HTMLElement>(aktif: boolean, onEscape?: (
     const fokusable = () => Array.from(kontainer?.querySelectorAll<HTMLElement>(SELECTOR_FOCUSABLE) ?? [])
     // Fokus awal: elemen focusable pertama di dalam modal (bukan kontainer
     // itu sendiri — kontainer biasanya bukan interaktif).
+    // CODEX audit UI/UX 2026-07-10 (#19): tanpa preventScroll, .focus() bisa
+    // men-scroll modal yang overflow-y:auto ke posisi elemen focusable pertama
+    // — kalau itu tombol di bagian BAWAH kartu (mis. Onboarding: "Lewati"
+    // terletak setelah ikon/judul/isi), modal langsung ter-scroll ke bawah
+    // saat dibuka, menyembunyikan isi dari pandangan.
     const daftarAwal = fokusable()
-    ;(daftarAwal[0] ?? kontainer)?.focus()
+    ;(daftarAwal[0] ?? kontainer)?.focus({ preventScroll: true })
 
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && onEscape) {
@@ -54,15 +59,15 @@ export function useFocusTrap<T extends HTMLElement>(aktif: boolean, onEscape?: (
       // ke konten latar di belakang overlay.
       if (!kontainer.contains(aktifSaatIni)) {
         e.preventDefault()
-        ;(e.shiftKey ? terakhir : pertama).focus()
+        ;(e.shiftKey ? terakhir : pertama).focus({ preventScroll: true })
         return
       }
       if (e.shiftKey && aktifSaatIni === pertama) {
         e.preventDefault()
-        terakhir.focus()
+        terakhir.focus({ preventScroll: true })
       } else if (!e.shiftKey && aktifSaatIni === terakhir) {
         e.preventDefault()
-        pertama.focus()
+        pertama.focus({ preventScroll: true })
       }
     }
     // Capture phase: tangkap Tab SEBELUM browser memindahkan fokus secara
