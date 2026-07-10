@@ -992,7 +992,8 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                 'Sesi konseling KB BERDUA di Puskesmas (bukan istri sendirian): bahasa "pengaturan jarak" ' +
                 'bukan "berhenti", pilihan metode yang di tangan mereka, plus obrolan santai dengan Pak ' +
                 'Modin yang anaknya tiga dan istrinya sehat — "KB-ne wong alim yo ono, Kang." Tablet tambah ' +
-                'darah Bu Painah diresepkan ulang LEWAT persetujuan Pak Karsa.',
+                'darah Bu Painah tetap diresepkan ulang sebagai pengobatan anemianya sendiri — itu haknya, ' +
+                'bukan bahan tawar; yang dirundingkan berdua cukup soal KB-nya.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Mereka datang berdua naik motor butut — Pak Karsa yang memboncengkan, Pak Karsa pula yang ' +
