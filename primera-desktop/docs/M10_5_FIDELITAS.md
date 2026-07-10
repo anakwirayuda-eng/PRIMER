@@ -267,7 +267,7 @@ memverifikasi klaim feasibility ke kode aktual sebelum meratifikasi. Ringkas:
 
 | Q | Rekomendasi DeepThink | Triase Claude (terverifikasi) |
 |---|---|---|
-| Q1 (P1.6) | **O-B** (bobot proses ke UKP, khusus Ujian) | ⚠ **FORK** — lihat §7a. Mode-awareness SUDAH ada (`scoring.ts:85` cabang `state.mode==='ujian'`) → O-B & O-C dua-duanya feasible. Blind-spot deflasi (DeepThink sendiri) justru condong ke O-C yang lebih ringan. Keputusan dokter. |
+| Q1 (P1.6) | O-B (bobot proses ke UKP) | ✅ **DIPUTUSKAN: O-C dulu** (Dr. Wirayuda 2026-07-10) — turunkan ambang hari-akreditasi Mode-Ujian, reuse `rmLengkap`, deflasi minimal. Naik ke O-B hanya bila self-play tunjukkan outcome-gaming tetap dominan. Mode-awareness sudah ada (`scoring.ts:85`). |
 | Q2 (P1.7) | **O-B** (gate tes konfirmasi, <10 kasus) | ✅ ACCEPT. Reuse pola cap `vitalDiukur`/`edukasiKritis`. |
 | Q3 (P1.9) | **O-B** (edukasiKritis → rmLengkap=false) | ✅ ACCEPT. Operator AND murah (`reducer.ts:314-318`). |
 | Q4 (C.1) | **O-B** (stabilisasi mekanik bernilai, cap bila lewat) | ✅ ACCEPT, gabung jalur P0. Landasan SKDI 3B kuat. |
@@ -286,7 +286,8 @@ langsung menekan UKP), sedangkan O-C (turunkan ambang hari-akreditasi utk Ujian
 mekanik baru. **Rekomendasi Claude: mulai O-C (lebih ringan, reuse jalur), naikkan
 ke O-B HANYA bila self-play (§7d) menunjukkan outcome-gaming tetap dominan.**
 Argumen O-B (DeepThink): granularitas kualitas penalaran lebih tinggi, O-C "biner/
-eksploitatif". Keduanya sah — **keputusan Dr. Wirayuda.**
+eksploitatif". **KEPUTUSAN Dr. Wirayuda (2026-07-10): O-C dulu.** O-B tetap di meja
+sebagai eskalasi bersyarat bila data self-play (§7d) menunjukkan outcome-gaming bertahan.
 
 ### 7b. Q6 feasibility DIVERIFIKASI (kekhawatiran DeepThink sendiri)
 DeepThink ragu arsitektur `desa.ts`+reducer bisa menyuntik aksi medis ke babak
@@ -327,7 +328,7 @@ kestabilan regresi. Dipertahankan sbg prinsip M10.5.
 
 **Urutan kerja M10.5 final (sintesis DeepThink + triase):**
 1. Minggu-1 (operasi berisiko, timebox+rollback): #10 forced-AND (`clinic.ts:494`)
-   + Q1 (O-C dulu, atau O-B bila diputuskan). Isolasi 530+ test hijau.
+   + Q1 **O-C** (turunkan ambang akreditasi Mode-Ujian). Isolasi 530+ test hijau.
 2. Minggu-2 (P0 keselamatan + data): Q4 stabilisasi + Q6 eskalasi-pasca-MI + audit
    Q7 harusDirujuk poli (paralel).
 3. Minggu-3 (disiplin klinis): Q2 gate konfirmasi + Q3 edukasiKritis→rmLengkap.
