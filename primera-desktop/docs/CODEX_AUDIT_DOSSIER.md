@@ -3353,3 +3353,34 @@ typecheck bersih. TANPA REVISI_ENGINE bump (semua perubahan konten tercakup pack
 **Dipindah ke M11** (dossier tak ubah kode): C.8 (mekanik keselamatan skrining alergi) + 4 item
 desain/skoring P1.6/P1.7/P1.9/C.1. **Seluruh ronde CODEX audit M10 (§48–§54) kini TUNTAS** di sisi
 M10; sisanya adalah pekerjaan M11 yang terdokumentasi.
+
+
+## 55. M11 Fase-1 — lapisan pengayaan debrief (mutiaraEbm + catatanRealita) (2026-07-10)
+
+Awal eksekusi M11 (user: "silakan lanjut ke M11 to the max, boleh multi agentics").
+Dibangun lapisan display BARU di PanelHasil debrief, DUA field opsional pada `KasusKlinis`:
+
+- **`mutiaraEbm?`** — mutiara "temuan klasik yang bisa MENYESATKAN" (jebakan EBM: lab
+  false-negative, presentasi atipikal, mimicker). Kotak kunyit "💡 Waspada — Temuan Bisa
+  Menyesatkan".
+- **`catatanRealita?`** — catatan "idealis vs realita FKTP Indonesia" (obat tak masuk
+  Fornas/sering kosong, alat/lab tak tersedia, realita rujukan). Kotak daun "🏥 Realita FKTP".
+
+**Invarian kunci (kenapa TANPA bump REVISI_ENGINE):** keduanya MURNI display — dibaca
+langsung dari PACK oleh komponen, TIDAK memengaruhi skor & TIDAK ikut `sidikJariPack`.
+Aman diedit tanpa REVISI, langsung menjangkau save lama & dossier lama tetap sah. Kelasnya
+sama dengan `clue` (yang juga tak di-hash). Dijaga `src/engine/m11pengayaan.test.ts`: mutasi
+& penghapusan kedua field TAK menggeser sidik jari dan TAK menyentuh skor — bila kelak keliru
+dimasukkan ke hash, test merah memaksa keputusan REVISI sadar (mencegah kelas bug §49 P1
+"field display diam-diam menggeser replay").
+
+Kasus **perintis**: `mm_gout_artritis_akut` — mutiaraEbm (asam urat serum bisa NORMAL/rendah
+saat serangan akut, diagnosis tetap klinis) + catatanRealita (kolkisin tak selalu ada di rak
+Puskesmas → NSAID/natrium diklofenak tumpuan). Ini menjawab ide asal user (colchicine gout).
+
+**Riset konten (in-flight):** Workflow multi-agen `m11-pengayaan-riset` (7 finder per-file →
+verifikasi WebSearch per kandidat vs guideline WHO/Kemenkes/PPK/Fornas + konteks FKTP nyata)
+menyapu 67 kasus untuk kandidat mutiaraEbm/catatanRealita bertingkat keyakinan + sitasi. Sesuai
+disiplin: hasil = dokumen keputusan untuk adjudikasi Dr. Wirayuda; TIDAK diterapkan otomatis.
+
+Commit: `5766355` (5 file, 145 insertion, 516/516 test hijau, typecheck bersih).
