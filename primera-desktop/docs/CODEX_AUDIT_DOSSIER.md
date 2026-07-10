@@ -3633,3 +3633,58 @@ asli sbg gantinya.
 
 **Sisa 7 P2/P3** (aria-state #16-18, kontras-darkmode #20/#22, ux-misc #23-25, polish P3) — lanjut
 batch berikutnya.
+
+## 61. Batch-7 CODEX — SISA 7 P2/P3 SELESAI, audit UI/UX 30-temuan (2026-07-10 s/d 2026-07-11) TUNTAS
+
+Dikerjakan via workflow paralel (14 paket fix, satu agen per file yang tak tumpang tindih) + review
+adversarial 3-lensa (korektnes ARIA, risiko-regresi/konsistensi, kontras WCAG) sebelum commit —
+pendekatan berbeda dari Batch 1-6 (solo sekuensial) krn skala (14 file lepas file) memungkinkan
+paralelisasi aman. Review menemukan 2 REGRESI nyata sebelum sempat ter-commit, keduanya diperbaiki:
+(a) `aria-pressed` dipakai keliru utk kartu single-select murni di Kunjungan.tsx/DexSkdi.tsx (bukan
+toggle button — klik ulang tak meng-un-press), dikoreksi ke pola `role=radio`+`aria-checked` (sama
+konvensi `useRadioGroup` yg batch INI SENDIRI baru pakai benar di MejaKerja.tsx) / `aria-current`; (b)
+`--kunyit-800` token baru dipakai fix kontras tapi TAK diremap di blok `[data-mode='malam']` tokens.css
+— membuat mode gelap LEBIH BURUK drpd sebelum fix (~2.3:1, gagal AA parah), ditambahkan remap
+`#f5c478` + 3 test baru mengunci kontras mode-malam. Detail lengkap tiap fix: 4 commit terpisah per
+tema (lihat commit log `git log --oneline` "Batch 7a-7d").
+
+**Batch 7a — aria-state (#16a-g, #17, #18)**, commit `5871151`: aria-current pada tab HUD + 2 stepper
+(Kunjungan/DeckAksi); fokus keyboard dipindah ke `<main>`/`<section>` (bukan `<body>`) tiap
+layar/fase berganti (Deck anak di-unmount total tiap transisi fase, tombol yg tadi diklik lenyap
+tanpa jejak fokus); Program Wilayah (MejaKerja) & kartu intervensi (Kunjungan, dikoreksi review) jadi
+`role=radio`+`aria-checked`; kartu Dex (dikoreksi review) & chip edukasi/tindakan (DeckTerapi, sudah
+benar dari awal) dapat `aria-current`/`aria-pressed` sesuai semantiknya masing-masing; KartuKeluarga
+`disabled` native → `aria-disabled`+guard onClick (title/aria-label kini terjangkau keyboard). Riders
+yang ikut satu file yg sama: P3 tombol "Tidur" duplikat MejaKerja dihapus; Polish#2a reduced-motion utk
+scrollIntoView tutorial (hook baru `useMotionDikurangi.ts`, diekstrak dari LaporanAkhir.tsx); Polish#3a
+pencarian ditambah ke Dex (144 entri).
+
+**Batch 7b — kontras WCAG AA + ErrorBoundary (#20, #21-partial, #22)**, commit `6685e85`: hover
+tombol-utama/kunyit & `.chip` dasar & 2 heading `.judul-seksi` di atas `.folder` diganti ke shade token
+lebih gelap (lolos AA, dihitung ulang dari hex asli); `@media (forced-colors: active)` baru; chip klik
+Edukasi/Tindakan dapat `min-height:24px` (target-size). ErrorBoundary: `data-mode="pagi"` tak lagi
+dipaksa pada varian `layar` (mewarisi tema leluhur); semua warna hex hardcode → token; retry dibatasi
+2× (cegah boot-loop diam); `keJudul` kini panggil ulang `muatAutosave()` (tombol "Lanjutkan" tak lagi
+hilang keliru pasca crash-recovery); stack trace kini bisa diseleksi/disalin.
+
+**Batch 7c — ux-misc (#23, #24, #25)**, commit `f45a6cd`: Rapor Hari-1 (tally nol) tak lagi tampilkan
+stempel grade A-D prematur, diganti badge netral "belum ada data"; Onboarding dapat tombol replay
+manual di Pengaturan + urutan fokus awal diperbaiki (CTA progresi, bukan "Lewati"); Toaster live-region
+dipindah dari wrapper bersama ke tiap toast individual (aria-atomic tak lagi salah-sasaran).
+
+**Batch 7d — polish (Polish#3b)**, commit `3534023`: 3 file-input TitleScreen dapat styling
+`::file-selector-button` selaras `.tombol` (sebelumnya kontrol OS mentah tak konsisten).
+
+**Verifikasi**: test-first penuh di semua 14 paket (TDD tanpa git-stash — ditulis dulu thd kode lama
+lalu diperbaiki, krn 14 agen berjalan paralel di direktori kerja git yang SAMA, git-stash konkuren akan
+bentrok); 621/621 suite penuh + typecheck bersih SETELAH kedua regresi review dikoreksi. Diverifikasi
+visual langsung di browser (server dev sempat mati di tengah sesi — di-restart via `preview_start`,
+kemungkinan penyebab: proses lama ditinggal terlalu lama tanpa aktivitas): kontras `--kunyit-800` mode
+gelap dikonfirmasi via `getComputedStyle` (`#f5c478`, bukan `#7a410c` yg bocor), Program Wilayah
+`role=radiogroup`+`role=radio`+`aria-checked` dikonfirmasi via DOM query langsung, tombol "Tidur"
+duplikat dikonfirmasi hilang (hanya 1 tombol tersisa di panel debrief sore), tombol "Tampilkan panduan
+lagi" & styling file-input TitleScreen dikonfirmasi tampil.
+
+**Ini menuntaskan SELURUH 30 temuan audit CODEX UI/UX read-only 2026-07-10** (§57-61): 6 P1 (Batch-1),
+19 P2 + 5 P3 (Batch-2 s/d 7d), 2 keputusan-desain dibiarkan (Program Wilayah lock, peta mode-malam —
+§57), nol temuan tersisa yang belum ditriase atau diperbaiki.
