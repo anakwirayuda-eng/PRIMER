@@ -773,7 +773,13 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     lab: [],
     diagnosisBanding: ['H00.0', 'H00.1', 'H01.0'],
     tatalaksana: {
-      obatBenar: ['kloramfenikol_tetes_mata'],
+      // M10 §49: terapi utama hordeolum = kompres hangat + higiene (edukasi);
+      // antibiotik topikal OPSIONAL (clue: "antibiotik topikal opsional").
+      // Dulu jadi satu-satunya obatBenar → mahasiswa yg konservatif-benar
+      // (kompres saja) dapat rasioTerapi 0. Kini obatOpsional: boleh diberi
+      // (tak dihukum) atau tidak (tak kehilangan slot).
+      obatBenar: [],
+      obatOpsional: ['kloramfenikol_tetes_mata'],
       obatSalahUmum: [
         { id: 'dexamethasone_05', alasan: 'Hordeolum adalah infeksi bakteri akut kelenjar kelopak — steroid tidak diindikasikan dan berisiko memperparah/menutupi infeksi.' },
         { id: 'ciprofloxacin_500', alasan: 'Antibiotik oral sistemik berlebihan untuk hordeolum tanpa komplikasi; cukup kompres hangat + higiene ± antibiotik topikal. Oral hanya bila menjadi selulitis preseptal.' },
@@ -805,8 +811,10 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'tinggi',
     keluhanUtama: 'Telinga kanan saya terasa buntu dan pendengaran berkurang dok, apalagi habis kena air.',
+    // M10 §49: TD 108/70 normal lintas band 8-60 (serumen prop segala usia) —
+    // 120/78 sebelumnya di ambang pra-hipertensi utk ujung anak.
     demografi: { usiaMin: 8, usiaMax: 60 },
-    vital: { td: '120/78', nadi: 76, rr: 18, suhu: 36.6, spo2: 99 },
+    vital: { td: '108/70', nadi: 76, rr: 18, suhu: 36.6, spo2: 99 },
     anamnesis: [
       {
         id: 'q_keluhan',
@@ -909,7 +917,12 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Hidung saya mimisan dok, sudah keluar darah dari lubang kanan sejak setengah jam lalu belum berhenti.',
-    demografi: { usiaMin: 12, usiaMax: 55 },
+    // M10 §49: usiaMin 12→35. Seluruh kasus dibangun di atas premis HT esensial
+    // kronik "obat sering putus" (q_darahtinggi) + TD 150/90 sbg faktor pemberat
+    // — mustahil/tak koheren pd anak 12-14 th (150/90 = HT berat >persentil-99,
+    // bukan "aggravator"). Epistaksis anterior pd anak biasanya trauma-digital,
+    // bukan hipertensi; band ini spesifik cerita dewasa-hipertensif.
+    demografi: { usiaMin: 35, usiaMax: 55 },
     vital: { td: '150/90', nadi: 90, rr: 18, suhu: 36.7, spo2: 99 },
     anamnesis: [
       {
@@ -1026,7 +1039,9 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         jawab: 'Hidung buntu berat dok, ingus kental kehijauan, dan wajah terasa nyeri penuh di pipi dan dahi.',
         variasi: {
           polos: 'Irungé mampet nemen dok, umbelé kentel ijo, rai loro nyut-nyutan.',
-          terpelajar: 'Hidung tersumbat, ingus kental kekuningan, dan wajah nyeri kalau ditekan dok, terutama di pipi dan dahi.',
+          // M10 §49: warna ingus disamakan "kehijauan" dgn jawab baku + polos +
+          // q_ingus (dulu "kekuningan" → kontradiksi warna dlm satu playthrough).
+          terpelajar: 'Hidung tersumbat, ingus kental kehijauan, dan wajah nyeri kalau ditekan dok, terutama di pipi dan dahi.',
           cemas: 'Kepala dan wajah saya nyeri terus dok, sampai susah tidur, ini sinusitis parah ya?',
         },
         esensial: true,

@@ -463,9 +463,15 @@ export function nilaiEncounter(
   const idAlternatifSah = new Set(grupAlternatif.flat())
   const slotAltTerpenuhi = grupAlternatif.filter((g) => g.some((id) => enc.resep.includes(id))).length
   const benarDiresepkan = obatBenar.filter((id) => enc.resep.includes(id)).length
-  // Obat di luar = bukan obatBenar DAN bukan anggota grup alternatif yang sah.
+  // M10 §49: obat OPSIONAL (clue bilang boleh-tidak-boleh, mis. antibiotik
+  // topikal hordeolum) — bukan slot (tak meresepkan tak menurunkan rasio),
+  // dan meresepkannya BUKAN obat-di-luar. Sebelum ini, hordeolum menghukum
+  // justru mahasiswa yang paling patuh clue (kompres hangat tanpa antibiotik
+  // → rasioTerapi 0 karena "slot" antibiotiknya kosong).
+  const idOpsional = new Set(kasus.tatalaksana.obatOpsional ?? [])
+  // Obat di luar = bukan obatBenar, bukan anggota grup alternatif, bukan opsional.
   const obatDiLuar = enc.resep.filter(
-    (id) => !obatBenar.includes(id) && !idAlternatifSah.has(id),
+    (id) => !obatBenar.includes(id) && !idAlternatifSah.has(id) && !idOpsional.has(id),
   ).length
   // Prosedur/tindakan klinis (CODEX ronde-baru #4): utk 4 kasus (BPPV→Epley,
   // serumen→irigasi, epistaksis→tampon, PPOK-eksaserbasi→nebulisasi) tatalaksana
@@ -507,7 +513,12 @@ export function nilaiEncounter(
   // dgn Vitamin C berlebih. Antimicrobial stewardship butuh guillotine sendiri,
   // BERTUMPUK di atas obatDiLuar (pola sama obatBerbahaya di atas — satu obat
   // salah bisa kena dua kategori penalti sekaligus, itu memang disengaja).
-  const resepAdaAntibiotik = enc.resep.some((id) => pack.obat[id]?.antibiotik === true)
+  // M10 §49: antibiotik OPSIONAL yang diresepkan tak boleh memicu penalti
+  // stewardship — clue kasusnya sendiri yang menyebutnya sah (mis. kloramfenikol
+  // tetes hordeolum). Antibiotik lain di luar sanksi kasus tetap dihitung.
+  const resepAdaAntibiotik = enc.resep.some(
+    (id) => !idOpsional.has(id) && pack.obat[id]?.antibiotik === true,
+  )
   const indikasiAntibiotik =
     obatBenar.some((id) => pack.obat[id]?.antibiotik === true) ||
     idAlternatifSah.size > 0 && [...idAlternatifSah].some((id) => pack.obat[id]?.antibiotik === true)

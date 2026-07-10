@@ -44,9 +44,14 @@
   filter: drop-shadow(0 3px 6px rgba(38, 49, 44, 0.3));
 }
 
+/* M10 §49 + §48#13: font-size teks SVG peta dipindah dari px absolut ke rem
+   agar ikut skala Pengaturan ukuran teks 90-140% (App.tsx set root font-size;
+   hanya rem/em yang ikut). rem di SVG <text> didukung browser modern &
+   resolve ke root — sesuai tujuan aksesibilitas (setelan teks besar →
+   label peta ikut membesar). 13px≈0.8125rem, 11px≈0.6875rem. */
 .peta-label {
   font-family: var(--font-mono);
-  font-size: 13px; /* CODEX P3: label peta 11px sulit dibaca — dinaikkan */
+  font-size: 0.8125rem;
   font-weight: 700;
   fill: var(--tinta);
   paint-order: stroke;
@@ -57,14 +62,14 @@
 }
 
 .peta-label--sub {
-  font-size: 11px; /* CODEX P3: sub-label 9.5px → 11px */
+  font-size: 0.6875rem;
   font-weight: 600;
   fill: var(--tinta-lembut);
 }
 
 .peta-cartouche {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   fill: var(--daun-800);
@@ -76,7 +81,7 @@
 
 .peta-karma__seru {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 800;
   fill: var(--kertas-050);
   pointer-events: none;

@@ -6,6 +6,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { useGame } from '../store'
+import { useRadioGroup } from '../useRadioGroup'
 import { METADATA } from '@content/metadata'
 import type { ModeStase } from '@engine/state'
 import { verifikasiDossier, type HasilVerifikasi } from '@engine/verifikasi'
@@ -107,6 +108,9 @@ export function TitleScreen() {
   // M4.5 — dua mode: Karier 90 hari (default, bebas nilai) vs Ujian 30 hari
   // (satu-satunya yang dinilai formal; paket kurikulum dirotasi otomatis).
   const [mode, setMode] = useState<ModeStase>('karier')
+  // M10 §49: pola radiogroup benar (role=radio + aria-checked + roving tabindex
+  // + navigasi panah) — dulu `<button aria-pressed>` di dalam radiogroup.
+  const modeRadio = useRadioGroup<ModeStase>(['karier', 'ujian'], mode, setMode)
   // CODEX — NIM: identitas mengikat mode ujian (seed & verifier terikat NIM).
   const [nim, setNim] = useState('')
   // M6.27 — hasil verifikasi dossier mahasiswa (panel dosen).
@@ -167,11 +171,11 @@ export function TitleScreen() {
                 {arsip !== null ? 'Atau mulai stase baru' : 'Nama doktermu'}
               </label>
               {/* M4.5 — pemilih mode stase */}
-              <div className="title__form-baris" role="radiogroup" aria-label="Mode stase">
+              <div className="title__form-baris" {...modeRadio.groupProps} aria-label="Mode stase">
                 <button
                   type="button"
                   className={`tombol ${mode === 'karier' ? 'tombol--utama' : ''}`}
-                  aria-pressed={mode === 'karier'}
+                  {...modeRadio.radioProps('karier')}
                   title="90 hari penuh — bebas nilai, semua fitur, progres santai."
                   onClick={() => setMode('karier')}
                 >
@@ -180,7 +184,7 @@ export function TitleScreen() {
                 <button
                   type="button"
                   className={`tombol ${mode === 'ujian' ? 'tombol--utama' : ''}`}
-                  aria-pressed={mode === 'ujian'}
+                  {...modeRadio.radioProps('ujian')}
                   title="30 hari — skor terkunci di akhir untuk disetor ke dosen. Paket soal dirotasi otomatis."
                   onClick={() => setMode('ujian')}
                 >

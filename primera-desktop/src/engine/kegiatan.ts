@@ -227,12 +227,20 @@ export function kartuProlanis(peserta: PesertaProlanis[]): KartuKegiatan[] {
  * Kartu disesuaikan jenis kluster (vektor / air-makanan / droplet).
  * ------------------------------------------------------------------------- */
 
-type PolaKlb = 'vektor' | 'air_makanan' | 'droplet'
+type PolaKlb = 'vektor' | 'air_makanan' | 'droplet' | 'kontak'
 
 function polaDariKasus(kasusId: string): PolaKlb {
   if (kasusId === 'dengue_df') return 'vektor'
   if (kasusId === 'diare_akut_anak' || kasusId === 'demam_tifoid') return 'air_makanan'
-  return 'droplet' // ispa, tb, konjungtivitis, skabies (kontak) → tangani generik droplet/kontak
+  // M10 §49 (2026-07-10): skabies & konjungtivitis menular lewat KONTAK
+  // (tungau/sekret via tangan-benda), BUKAN droplet — dulu jatuh ke default
+  // droplet sehingga kartu KLB mengajarkan masker/etika batuk sbg jawaban
+  // benar utk wabah tungau. Pengendalian kontak yg benar: obati kasus + SEMUA
+  // kontak erat serentak, dekontaminasi linen/benda, higiene tangan.
+  // Hanya skabies & konjungtivitis_bakterial yang jadi kluster kontak
+  // (AMBANG_CLUSTER, surveilans.ts) — konjungtivitis alergi tak menular.
+  if (kasusId === 'skabies' || kasusId === 'konjungtivitis_bakterial') return 'kontak'
+  return 'droplet' // ispa, tb → transmisi droplet/airborne
 }
 
 export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string): KartuKegiatan[] {
@@ -242,7 +250,16 @@ export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string): Ka
       ? { id: 'a', label: 'PSN 3M Plus + larvasidasi; fogging hanya bila ada penularan aktif', benar: true, respons: 'Tepat. Fogging membunuh nyamuk dewasa sesaat; PSN memutus siklus di sumbernya.' }
       : pola === 'air_makanan'
         ? { id: 'a', label: 'Amankan sumber air & sanitasi, distribusi oralit/klorinasi, edukasi CTPS', benar: true, respons: 'Benar. Putus rute fekal-oral di sumbernya + cegah dehidrasi.' }
-        : { id: 'a', label: 'Etika batuk/masker, ventilasi, temukan & obati kasus + kontak', benar: true, respons: 'Tepat. Kurangi transmisi droplet + putus rantai lewat penemuan kasus.' }
+        : pola === 'kontak'
+          ? { id: 'a', label: 'Obati kasus + SEMUA kontak serumah serentak; dekontaminasi linen/handuk/barang pribadi; higiene tangan', benar: true, respons: 'Tepat. Penularan kontak diputus dgn mengobati serentak (cegah ping-pong) + dekontaminasi benda, bukan masker.' }
+          : { id: 'a', label: 'Etika batuk/masker, ventilasi, temukan & obati kasus + kontak', benar: true, respons: 'Tepat. Kurangi transmisi droplet + putus rantai lewat penemuan kasus.' }
+  // M10 §49: distraktor pola-kontak ditukar agar "masker/etika batuk" (jawaban
+  // benar utk droplet) TIDAK muncul sbg opsi salah generik yang justru mengajar
+  // respons droplet di wabah tungau — untuk kontak, distraktornya fogging/isolasi.
+  const distraktorAksi =
+    pola === 'kontak'
+      ? { id: 'b', label: 'Fogging wilayah + isolasi ketat rumah terdampak', benar: false, respons: 'Fogging utk nyamuk, bukan tungau/sekret; isolasi berlebihan. Kontak diputus dgn pengobatan serentak + dekontaminasi.' }
+      : { id: 'b', label: 'Obati yang sakit saja, tanpa tindakan wilayah', benar: false, respons: 'Kuratif tanpa pengendalian sumber = kasus baru terus bermunculan. Inti KLB ada di wilayah.' }
 
   return [
     {
@@ -287,15 +304,7 @@ export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string): Ka
       id: 'klb_aksi',
       judul: 'KLB — Tindakan Pengendalian',
       narasi: `Sumber teridentifikasi. Aksi pengendalian utama untuk ${namaKasus}?`,
-      pilihan: [
-        aksiBenar,
-        {
-          id: 'b',
-          label: 'Obati yang sakit saja, tanpa tindakan wilayah',
-          benar: false,
-          respons: 'Kuratif tanpa pengendalian sumber = kasus baru terus bermunculan. Inti KLB ada di wilayah.',
-        },
-      ],
+      pilihan: [aksiBenar, distraktorAksi],
     },
   ]
 }

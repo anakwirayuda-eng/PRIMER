@@ -1050,7 +1050,12 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Demamnya datang dengan menggigil hebat dok, lalu berkeringat banyak, naik-turun begini beberapa hari.',
         variasi: {
           polos: 'Panasé teka karo krasa nggigil banget dok, banjur kringeten akèh, munggah-mudhun.',
-          terpelajar: 'Demamnya kambuh-kambuhan dok, diawali menggigil, lalu panas tinggi, kemudian berkeringat banyak — berulang dengan pola teratur.',
+          // M10 §49: variasi terpelajar dulu bilang "pola teratur" — kontradiksi
+          // dgn q_pola baku "tidak teratur betul". Periodisitas = fakta pembeda
+          // spesies (falciparum ireguler), variasi persona hanya boleh beda gaya
+          // bahasa. Diselaraskan: sebut siklus menggigil-panas-keringat TANPA
+          // klaim keteraturan.
+          terpelajar: 'Demamnya kambuh-kambuhan dok, diawali menggigil, lalu panas tinggi, kemudian berkeringat banyak.',
           cemas: 'Demamnya hebat sekali dok pakai menggigil, saya takut ini malaria berat.',
         },
         esensial: true,

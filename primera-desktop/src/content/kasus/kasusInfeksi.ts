@@ -218,7 +218,10 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       { region: 'abdomen', temuan: 'Datar, supel, nyeri tekan (-).', relevan: false },
     ],
     lab: [
-      { id: 'darah_rutin', hasil: 'Leukosit 13.500/µL dengan dominasi netrofil (leukositosis).', flag: 'tinggi', relevan: false },
+      // M10 §49: relevan disamakan dgn saudara klinisnya tonsilitis (relevan:true) —
+      // faringotonsilitis streptokokus entitas sama; dulu satu-satunya outlier
+      // relevan:false → penalti labTakRelevan arbitrer utk aksi identik.
+      { id: 'darah_rutin', hasil: 'Leukosit 13.500/µL dengan dominasi netrofil (leukositosis) — mendukung infeksi bakteri.', flag: 'tinggi', relevan: true },
     ],
     diagnosisBanding: ['J02.9', 'J03.9', 'J06.9'],
     tatalaksana: {
@@ -721,8 +724,10 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     fktp144: true,
     harusDirujuk: false,
     keluhanUtama: 'Gatal sekali dok, terutama malam hari, di sela-sela jari tangan.',
+    // M10 §49: TD normalisasi lintas-usia (band mulai 8 th) — 105/68 masuk akal
+    // utk anak maupun dewasa muda; skabies penyakit segala usia (kluster keluarga).
     demografi: { usiaMin: 8, usiaMax: 30 },
-    vital: { td: '120/80', nadi: 80, rr: 18, suhu: 36.7 },
+    vital: { td: '105/68', nadi: 80, rr: 18, suhu: 36.7 },
     anamnesis: [
       {
         id: 'q_keluhan',
@@ -826,8 +831,11 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     fktp144: true,
     harusDirujuk: false,
     keluhanUtama: 'Mata saya merah dok, keluar kotoran kuning kental terus.',
+    // M10 §49: TD 118/76 hipertensif utk balita (band mulai usia 5). Diturunkan
+    // ke 105/68 yg normal lintas seluruh band 5-45 (konjungtivitis bakteri lazim
+    // di anak) — "tanda vital normal" kini akurat berapa pun usia yg di-roll.
     demografi: { usiaMin: 5, usiaMax: 45 },
-    vital: { td: '118/76', nadi: 78, rr: 18, suhu: 36.8 },
+    vital: { td: '105/68', nadi: 78, rr: 18, suhu: 36.8 },
     anamnesis: [
       {
         id: 'q_keluhan',

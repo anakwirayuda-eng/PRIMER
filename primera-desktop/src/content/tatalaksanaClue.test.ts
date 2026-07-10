@@ -43,7 +43,15 @@ function adaNegasiDekat(teksLower: string, kata: string, jendela: number): boole
 }
 
 function semuaObatTatalaksana(k: (typeof PACK.kasus)[string]): string[] {
-  return [...k.tatalaksana.obatBenar, ...(k.tatalaksana.obatAlternatif ?? []).flat()]
+  // M10 §49: obatOpsional ikut — guard ini mendeteksi janji clue yang TAK
+  // tercermin STRUKTURAL di mana pun. Obat opsional TETAP dapat diresepkan
+  // pemain (tab terapi menampilkannya), jadi "antibiotik topikal opsional"
+  // pada hordeolum sudah tercermin & bukan pelanggaran spt ppok (yg NOL slot).
+  return [
+    ...k.tatalaksana.obatBenar,
+    ...(k.tatalaksana.obatAlternatif ?? []).flat(),
+    ...(k.tatalaksana.obatOpsional ?? []),
+  ]
 }
 
 describe('CODEX ronde-16 P3 — adaNegasiDekat wajib cek SEMUA kemunculan, bukan berhenti di yang pertama', () => {

@@ -49,6 +49,26 @@ export function validasiPack(pack: ContentPack): string[] {
     for (const o of k.tatalaksana.obatSalahUmum ?? []) {
       if (!pack.obat[o.id]) masalah.push(`Kasus ${k.id}: obatSalahUmum '${o.id}' tidak ada di formularium`)
     }
+    // M10 §49: integritas obatOpsional — wajib ada di formularium DAN disjoint
+    // dari obatBenar/alternatif/salahUmum (satu obat satu semantik skor;
+    // tumpang-tindih = ambigu: wajib sekaligus opsional, atau opsional
+    // sekaligus dihukum).
+    for (const id of k.tatalaksana.obatOpsional ?? []) {
+      if (!pack.obat[id]) masalah.push(`Kasus ${k.id}: obatOpsional '${id}' tidak ada di formularium`)
+      if (k.tatalaksana.obatBenar.includes(id) || (k.tatalaksana.obatAlternatif ?? []).flat().includes(id)) {
+        masalah.push(`Kasus ${k.id}: obatOpsional '${id}' juga terdaftar sbg obat wajib/alternatif (semantik ganda)`)
+      }
+      if ((k.tatalaksana.obatSalahUmum ?? []).some((s) => s.id === id)) {
+        masalah.push(`Kasus ${k.id}: obatOpsional '${id}' juga terdaftar di obatSalahUmum (opsional sekaligus dihukum)`)
+      }
+    }
+    // M10 §49 (defense-in-depth): jawaban benar WAJIB jadi salah satu opsi —
+    // DeckDiagnosis membangun pilihan SEMATA dari diagnosisBanding; icd10 kasus
+    // yang tak tercantum = skorDiagnosis mustahil utk semua pemain (dan softlock
+    // keras bila kasus tutorial). Hari ini 0 pelanggaran; pagar utk masa depan.
+    if (!k.diagnosisBanding.includes(k.icd10)) {
+      masalah.push(`Kasus ${k.id}: icd10 '${k.icd10}' tidak ada di diagnosisBanding — diagnosis benar mustahil dipilih`)
+    }
     if (k.alergiTrap) {
       for (const o of [...k.alergiTrap.obatTerlarang, ...k.alergiTrap.alternatifBenar]) {
         if (!pack.obat[o]) masalah.push(`Kasus ${k.id}: alergiTrap obat '${o}' tidak ada di formularium`)

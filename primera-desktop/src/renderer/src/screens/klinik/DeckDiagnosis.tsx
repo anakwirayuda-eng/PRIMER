@@ -42,7 +42,12 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
   return (
     <>
       <div className="klinik-deck__isi">
-        <div className="klinik-deck__grup">
+        {/* M10 §49: role=radio + aria-checked pada interaksi BERSKOR (dulu state
+            terpilih hanya via CSS, nol semantik ARIA — lebih parah dari
+            aria-pressed). Roving/panah SENGAJA tak dipakai di sini: opsi bisa
+            di-disable saat tutorial, dan handler panah akan mem-bypass kunci
+            itu (memilih via keyboard tanpa lewat onClick ber-disabled). */}
+        <div className="klinik-deck__grup" role="radiogroup" aria-label="Diagnosis banding">
           <div className="judul-seksi">Diagnosis Banding</div>
           {banding.map((kode) => {
             const aktif = pilihan === kode
@@ -56,6 +61,8 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
             return (
               <button
                 key={kode}
+                role="radio"
+                aria-checked={aktif}
                 className={`klinik-banding${aktif ? ' klinik-banding--aktif' : ''}${disorot ? ' klinik-sorot-tutorial' : ''}`}
                 onClick={() => setPilihan(kode)}
                 disabled={dikunci}
@@ -73,8 +80,10 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
 
         <div className="klinik-deck__grup">
           <div className="judul-seksi">Tinta Stempel</div>
-          <div className="klinik-tinta-pilih">
+          <div className="klinik-tinta-pilih" role="radiogroup" aria-label="Tinta stempel diagnosis">
             <button
+              role="radio"
+              aria-checked={jenis === 'tegak'}
               className={`klinik-tinta-pilih__opsi${jenis === 'tegak' ? ' klinik-tinta-pilih__opsi--aktif' : ''}`}
               onClick={() => setJenis('tegak')}
               disabled={tutorialAktif}
@@ -85,6 +94,8 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
               </span>
             </button>
             <button
+              role="radio"
+              aria-checked={jenis === 'suspek'}
               className={`klinik-tinta-pilih__opsi${jenis === 'suspek' ? ' klinik-tinta-pilih__opsi--aktif' : ''}`}
               onClick={() => setJenis('suspek')}
               disabled={tutorialAktif}

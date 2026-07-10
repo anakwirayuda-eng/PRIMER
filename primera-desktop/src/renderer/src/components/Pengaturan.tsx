@@ -9,8 +9,11 @@ import { useState } from 'react'
 import { setPengaturan, PENGATURAN_DEFAULT, type ModeMalam } from '../settings'
 import { usePengaturan } from '../usePengaturan'
 import { useFocusTrap } from '../useFocusTrap'
+import { useRadioGroup } from '../useRadioGroup'
 import { TentangModal } from './TentangModal'
 import './Pengaturan.css'
+
+const MODE_URUT: ModeMalam[] = ['auto', 'siang', 'malam']
 
 const MODE_LABEL: Record<ModeMalam, string> = {
   auto: 'Otomatis',
@@ -30,6 +33,8 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
   // TentangModal (di atasnya, DOM-order sama z-modal) yang wajib pegang fokus
   // saat itu; dua trap aktif bersamaan akan rebutan ke mana Tab dibungkus.
   const ref = useFocusTrap<HTMLDivElement>(buka && !tentang, () => setBuka(false))
+  // M10 §49: radiogroup mode tampilan — role=radio + aria-checked + panah.
+  const modeRadio = useRadioGroup<ModeMalam>(MODE_URUT, p.modeMalam, (m) => setPengaturan({ modeMalam: m }))
 
   return (
     <>
@@ -77,11 +82,11 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
 
             <div className="set-baris">
               <span>Mode Tampilan</span>
-              <div className="set-segmen" role="radiogroup" aria-label="Mode tampilan">
-                {(['auto', 'siang', 'malam'] as ModeMalam[]).map((m) => (
+              <div className="set-segmen" {...modeRadio.groupProps} aria-label="Mode tampilan">
+                {MODE_URUT.map((m) => (
                   <button key={m} type="button"
                     className={`tombol ${p.modeMalam === m ? 'tombol--utama' : ''}`}
-                    aria-pressed={p.modeMalam === m}
+                    {...modeRadio.radioProps(m)}
                     onClick={() => setPengaturan({ modeMalam: m })}>
                     {MODE_LABEL[m]}
                   </button>

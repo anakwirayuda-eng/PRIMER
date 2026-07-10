@@ -64,7 +64,12 @@ export function Toaster() {
   if (toasts.length === 0) return null
 
   return (
-    <div className="toaster">
+    // M10 §49: role=status + aria-live — toast keselamatan (KONTRAINDIKASI
+    // alergi, Kode Hitam, IGD tiba, ERROR_AKSI) dulu tak diumumkan ke pembaca
+    // layar sama sekali. `assertive` krn sebagian bersifat peringatan; `atomic`
+    // agar tiap toast dibacakan utuh. aria-hidden pada wrapper visual? tidak —
+    // justru ini SATU-SATUNYA live-region gameplay.
+    <div className="toaster" role="status" aria-live="assertive" aria-atomic="true">
       {toasts.map((t) => (
         <div key={t.id} className={`toast toast--${t.nada} kertas`}>
           {t.teks}

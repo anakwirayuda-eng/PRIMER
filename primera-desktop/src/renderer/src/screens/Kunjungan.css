@@ -62,11 +62,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  /* M10 §49: font + lingkaran ke rem/em agar menskala BERSAMA dgn setelan
+     ukuran teks (dulu 12px absolut → angka babak tak ikut membesar, dan
+     lingkaran fixed 20px). em pd width/height mengikat lingkaran ke font. */
+  width: 1.7em;
+  height: 1.7em;
   border-radius: 50%;
   border: 1.5px solid currentColor;
-  font-size: 12px; /* CODEX P3: angka stepper 10px → 12px */
+  font-size: 0.75rem;
   font-weight: 800;
 }
 

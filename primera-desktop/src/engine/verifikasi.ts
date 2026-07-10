@@ -174,9 +174,19 @@ function fnv1a(teks: string): string {
  * (topik yg dulu masuk-wajib kini tidak, & sebaliknya); edukasiKritis
  * meng-cap skorEdukasi ke 50 bila terlewat. Jejak lama pada ke-12 kasus itu
  * mereplay ke skorEdukasi/grade berbeda — dossier build lama harus jatuh ke
- * "tidak dapat diverifikasi", bukan divonis TIDAK SAH palsu.
+ * "tidak dapat diverifikasi", bukan divonis TIDAK SAH palsu;
+ * 16 = M10 §49 fix-round (2026-07-10): (a) mekanik BARU `obatOpsional` —
+ * obat sah-tapi-tak-wajib TIDAK membuka slot terapi, tak dihitung obat-di-luar,
+ * tak memicu antibiotik-tanpa-indikasi (clinic.ts; hordeolum kasus perdana:
+ * dulu rasioTerapi bisa 0 utk terapi konservatif yang benar); (b) KLB kasus
+ * KONTAK (skabies/konjungtivitis) dapat pola kartu sendiri (kegiatan.ts) —
+ * dulu jatuh ke kartu droplet (masker/etika batuk utk wabah tungau); jawaban
+ * benar/salah kartu KLB bergeser utk jejak lama. Konten batch §49 (apendisitis
+ * +prosedur pasang_infus, faringitis relevan-flag, epistaksis demografi, dst)
+ * juga menggeser replay, tapi itu tercakup sidik jari pack (tx/lab/demografi
+ * kini di-hash) — bump ini utk perubahan SEMANTIK ENGINE yg tak terlihat pack.
  */
-const REVISI_ENGINE = 15
+const REVISI_ENGINE = 16
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -211,6 +221,21 @@ export function sidikJariPack(pack: ContentPack): string {
         anamnesis: [...k.anamnesis]
           .sort((a, b) => a.id.localeCompare(b.id))
           .map((q) => ({ id: q.id, esensial: q.esensial ?? false, distraktor: q.distraktor ?? false, oldcarts: [...(q.oldcarts ?? [])].sort() })),
+        // M10 §49 P1 (2026-07-10): 6 field ini dibaca LIVE saat replay tapi dulu
+        // tak di-hash — edit salah satunya mempertahankan sidik jari sementara
+        // antrian/skor replay bergeser (probe CODEX independen: ubah prevalensi
+        // saja → hash tetap, skor replay 65/C→30/D) → dossier jujur divonis
+        // tidak_sah PALSU. demografi→roll usia/gender (director), prevalensi/
+        // kategori/skdi→bobotKasus seleksi antrian, konsekuensi→rng jadwal
+        // pasien_kembali, spesialisRujukan→kecocokan RS SISRUTE→rujukanTepat.
+        // (Asimetri telanjang sblmnya: spesialisRujukan IGD & spesialisasi RS
+        // SUDAH di-hash utk perbandingan SISRUTE yang sama persis.)
+        demografi: k.demografi,
+        prevalensi: k.prevalensi ?? 'sedang',
+        kategori: k.kategori,
+        skdi: k.skdi,
+        konsekuensi: k.konsekuensi ?? null,
+        spesialis: k.spesialisRujukan ?? null,
       }),
     )
   const obat = Object.values(pack.obat)
@@ -252,7 +277,22 @@ export function sidikJariPack(pack: ContentPack): string {
     .map((r) => stringifyKanonik({ id: r.id, kelas: r.kelas, jarak: r.jarakMenit, spesialisasi: [...r.spesialisasi].sort(), bed: r.bedDasar }))
   const keluarga = Object.values(pack.keluarga)
     .sort((a, b) => a.id.localeCompare(b.id))
-    .map((k) => stringifyKanonik({ id: k.id, ekonomi: k.ekonomi, indikator: k.indikatorAwal, arc: k.arc }))
+    // §48#1 (CODEX, 2026-07-09): anggota[] menyetir identitas karma & roster
+    // Prolanis (bentukRosterProlanis baca nama/usia/JK/kondisi LANGSUNG dari
+    // pack), rw menyetir surveilans/bridge wilayah, jarakMenit menyetir biaya
+    // stamina kunjungan — semua dulu tak di-hash: ganti nama/usia/kondisi
+    // anggota TAK mengubah sidik jari padahal replay berubah.
+    .map((k) =>
+      stringifyKanonik({
+        id: k.id,
+        ekonomi: k.ekonomi,
+        indikator: k.indikatorAwal,
+        arc: k.arc,
+        rw: k.rw,
+        jarak: k.jarakMenit,
+        anggota: k.anggota.map((a) => ({ nama: a.nama, usia: a.usia, jk: a.jenisKelamin, peran: a.peran, kondisi: [...(a.kondisi ?? [])].sort() })),
+      }),
+    )
   const skdi = [...pack.skdi144]
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((e) => `${e.id}:${e.icd10}:${(e as { kasusId?: string }).kasusId ?? ''}`)

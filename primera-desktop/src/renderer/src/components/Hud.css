@@ -90,22 +90,25 @@
   position: absolute;
   top: 0;
   right: 2px;
-  min-width: 18px;
-  height: 18px;
+  /* M10 §49: badge (jumlah surat/antrian) & gembok ke rem/em agar angka
+     konten ikut skala ukuran teks (dulu 11px + kotak 18px absolut → tak
+     membesar di setelan 140%). em pada min-width/height mengikat kotak ke font. */
+  min-width: 1.6em;
+  height: 1.6em;
   border-radius: var(--radius-pill);
   background: var(--kunyit-600);
   color: var(--kertas-050);
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 800;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 5px;
+  padding: 0 0.45em;
 }
 
 .hud__gembok {
   margin-left: 4px;
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 .hud__kanan {

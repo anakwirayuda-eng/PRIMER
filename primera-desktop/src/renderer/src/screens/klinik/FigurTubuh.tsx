@@ -41,8 +41,13 @@ export function FigurTubuh({ diperiksa, onPeriksa, terkunci }: Props) {
     <svg
       className="klinik-figur"
       viewBox="0 0 220 360"
-      role="img"
-      aria-label="Figur tubuh pasien — klik regio untuk memeriksa"
+      // M10 §49: figur SVG = lapis visual mouse-only DI ATAS chip regio
+      // (DeckPemeriksaan) yang SUDAH jadi jalur keyboard/SR lengkap utk 10 regio
+      // yang sama (tombol berlabel + status disabled). Menambah 10 tabstop <g>
+      // di sini = 20 kontrol utk 10 aksi identik (beban keyboard ganda). Jadi
+      // figur di-aria-hidden: klik-mouse pd gambar tetap jalan, tapi AT & Tab
+      // memakai chip sbg satu-satunya sumber semantik.
+      aria-hidden="true"
     >
       {/* Siluet dasar (klik = Keadaan Umum) */}
       <g className={kelas('umum')} data-region="umum" onClick={() => klik('umum')}>

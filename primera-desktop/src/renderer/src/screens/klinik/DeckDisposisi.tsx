@@ -18,6 +18,7 @@ import type { EncounterState, SbarIsi } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { KasusKlinis, RumahSakit, SpesialisasiRs } from '@content/types'
 import { formatRupiah } from './util'
+import { useRadioGroup } from '../../useRadioGroup'
 import './DeckDisposisi.css'
 
 interface Props {
@@ -113,6 +114,13 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
   const rsDefault = rsUrut[0]?.id
   const [rumahSakitId, setRumahSakitId] = useState<string | undefined>(rsDefault)
   const rsTerpilih = rumahSakitId ?? rsDefault
+  // M10 §49: pemilih RS = radiogroup benar (dulu <button aria-pressed> tanpa
+  // wrapper role). Persis satu terpilih → semantik radio, bukan toggle.
+  const rsRadio = useRadioGroup<string>(
+    rsUrut.map((r) => r.id),
+    rsTerpilih ?? '',
+    (id) => setRumahSakitId(id),
+  )
 
   const bukaFormRujuk = () => {
     // Segarkan default saat form dibuka (kasus/antrian mungkin sudah berganti).
@@ -245,7 +253,7 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
               )}
             </span>
 
-            <div className="sisrute-rs">
+            <div className="sisrute-rs" {...rsRadio.groupProps} aria-label="Pilih rumah sakit tujuan rujukan">
               {rsUrut.map((rs) => {
                 const cocok =
                   spesialisDibutuhkan !== undefined &&
@@ -263,7 +271,7 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
                     key={rs.id}
                     type="button"
                     className={kelasKartu}
-                    aria-pressed={dipilih}
+                    {...rsRadio.radioProps(rs.id)}
                     onClick={() => setRumahSakitId(rs.id)}
                   >
                     <div className="sisrute-rs__kepala">

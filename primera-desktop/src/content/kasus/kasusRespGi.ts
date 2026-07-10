@@ -1136,6 +1136,10 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // aman; hindari NSAID pada perut akut (risiko GI/perdarahan bila perforasi/bedah).
       obatBenar: [],
       obatAlternatif: [['paracetamol_500']],
+      // M10 §49: clue mewajibkan "PUASAKAN, pasang jalur IV, RUJUK BEDAH" —
+      // stabilisasi pra-rujukan 3B. Tanpa slot prosedur, memasang infus (yang
+      // clue-nya sendiri anjurkan) dulu dihukum −15 sbg tindakan-di-luar.
+      prosedur: ['pasang_infus'],
       obatSalahUmum: [
         { id: 'natrium_diklofenak_50', alasan: 'Untuk perut akut yang mungkin dioperasi, HINDARI NSAID (risiko iritasi/perdarahan GI & gangguan hemostasis peri-operatif) — pilih parasetamol. Catatan EBM: analgesia TIDAK menutupi tanda/menunda diagnosis (Cochrane), jadi nyeri tetap boleh diredakan; yang salah adalah memilih NSAID, bukan memberi analgesia.' },
         { id: 'amoxicillin_500', alasan: 'Apendisitis akut adalah kasus BEDAH — antibiotik ORAL di FKTP tidak menyembuhkan & jangan sampai menunda rujukan. Antibiotik parenteral peri-operatif adalah bagian standar tata laksana DI RS rujukan.' },

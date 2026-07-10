@@ -217,6 +217,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack): Ha
                   labId: action.labId,
                   pasienId: enc.pasien.id,
                   kasusId: enc.pasien.kasusId,
+                  // M10 §49: bawa NAMA pasien — konsumen (hariBaru) dulu selalu
+                  // jatuh ke fallback "pasien kemarin" krn field ini kosong;
+                  // dua lab hasilBesok di hari sama → dua surat berjudul identik.
+                  nama: enc.pasien.nama,
+                  catatan: enc.pasien.nama,
                 },
               ],
             }
@@ -1342,7 +1347,14 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.persona ? { persona: j.persona } : {}),
         ...(j.prb ? { prb: true } : {}),
       })
-    } else if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId) {
+    } else if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId && pack.kasus[j.kasusId]) {
+      // M10 §49: guard `pack.kasus[j.kasusId]` — jadwal karma di-BAKE sekali di
+      // init dari pack; bila patch me-rename/hapus kasusId karma, dulu efek
+      // karma (tally.karmaTerjadi, surat "keluarga dibawa", arcSelesai:'gagal',
+      // event) tetap MELEDAK padahal korbannya lantas disaring keluar di
+      // pasienKembaliValid → jejak yatim (surat menjanjikan pasien yg tak
+      // pernah tiba). Kini bila kasus tak ada, seluruh blok karma dilewati:
+      // konsekuensi yg tak bisa dimaterialisasi tak boleh menghukum pemain.
       const kelContent = pack.keluarga[j.keluargaId]
       const kel = keluargaMap[j.keluargaId]
       if (kelContent && kel && kel.arcSelesai !== 'berhasil') {

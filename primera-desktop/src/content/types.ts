@@ -107,6 +107,17 @@ export interface Tatalaksana {
    * benar & mencegah "hadiah" untuk polifarmasi obat sekelas.
    */
   obatAlternatif?: string[][]
+  /**
+   * M10 §49 (2026-07-10): obat yang SAH tapi TIDAK wajib — clue menyebutnya
+   * "opsional" (mis. antibiotik topikal hordeolum: terapi utamanya kompres
+   * hangat, antibiotik boleh-tidak-boleh). Semantik skor: TIDAK membuka slot
+   * terapi (tak meresepkan ≠ kehilangan rasio), dan meresepkannya TIDAK
+   * dihukum sebagai obat-di-luar ATAU antibiotik-tanpa-indikasi. Beda dari
+   * `obatAlternatif` (grup = satu slot WAJIB pilih-salah-satu) — sebelum field
+   * ini ada, satu-satunya cara memodelkan "opsional" adalah menjadikannya
+   * wajib (menghukum konservatif yang benar) atau membiarkannya dihukum -15.
+   */
+  obatOpsional?: string[]
   /** Jebakan umum: obat yang tampak masuk akal tapi salah, dengan alasan pedagogis. */
   obatSalahUmum?: { id: string; alasan: string }[]
   /** Prosedur/tindakan yang tepat (id dari katalog tindakan). */
