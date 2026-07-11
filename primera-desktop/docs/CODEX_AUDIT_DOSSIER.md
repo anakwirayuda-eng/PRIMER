@@ -3808,32 +3808,30 @@ ditempel dokter ke chat). Claude men-triase tiap rekomendasi terhadap kode SAAT 
   ke dokter sebelum benar-benar dipercaya utk Golden Master — smoke-test ini bukan pengganti QA manual
   penuh.
 
-**DITAHAN — konflik ditemukan saat triase, BUTUH keputusan dokter (bukan sekadar re-run kode):**
-- **CODEX#16 (floor skor terapi 70)** — DeepThink pilih O-B (`enc.resep.length > 0`); Claude awalnya
-  menerapkan `rasioTerapi > 0` (menutup blind-spot yg DeepThink SENDIRI tandai: resep asal-asalan tak
-  boleh lolos). **Keduanya GAGAL test yg sudah ada**: `clinic.test.ts` — "DeepThink #1: observasi + lab
-  hasilBesok RELEVAN tetap dapat proteksi skor 70 (perilaku sah dipertahankan)" — kasus SINTETIS generik
-  dgn `resep=[]` yg secara SENGAJA diverifikasi div ronde DeepThink SEBELUMNYA sbg perilaku legitimate
-  ("menunda terapi definitif sambil menunggu konfirmasi lab, mis. tunda OAT sampai BTA" — komentar
-  `clinic.ts:554-559`). Investigasi lanjut: kasus real `demam_tifoid` (`kasusInfeksi.ts:376`) memang
-  match salah satu dari 5 kasus "exploitable" CODEX#16 — `widal` (hasilBesok:true) + `obatBenar` cuma
-  `['paracetamol_500']` (bukan antibiotik!) + grup alternatif antibiotik SATU-dari-tiga. Secara klinis:
-  **TB menunggu BTA sebelum OAT = textbook-benar** (floor legitimate); **Tifoid menunggu Widal sebelum
-  antibiotik JUSTRU dipertanyakan** — Widal lambat/tak sensitif-spesifik, praktik umum memulai antibiotik
-  empiris begitu klinis dicurigai, bukan menunggu serologi. Kode LAMA (fix#17-audit-CODEX) sudah
-  membuktikan hal serupa: legitimasi "tunggu vs tuntaskan" berbeda PER-PENYAKIT, bukan generik per-jenis
-  lab. **Reverted ke kode asli** (`if (menungguLabBesok && obatBerbahaya === 0)`, tanpa syarat resep) —
-  keputusan mana penyakit yg layak floor "tunggu tanpa terapi" vs mana yg exploit murni BUKAN keputusan
-  teknik, perlu penilaian klinis dokter per-kasus (kandidat: field baru per-kasus/per-lab semacam
-  `bolehTundaTerapi?: boolean`, bukan gerbang generik `rasioTerapi`/`resep.length`).
-- **Addendum Q6/Asih (formula `berhasil` generik)** — DeepThink pilih "Jalur Generik: perbaiki akar
-  formula di `kunjungan.ts` untuk seluruh 16 keluarga tanpa allowlist" — tapi TIDAK menspesifikasi
-  MEKANISME konkret (field baru? syarat `kualitasMi`? kartu eskalasi per-arc?). `M10_5_FIDELITAS.md:412`
-  sendiri sudah mencatat blocker mekanisme ini SEBELUM ronde ini ("kartu ke-4 terpisah tak akan
-  berfungsi krn kunjungan single-select") — DeepThink menjawab pertanyaan SCOPE (generik vs allowlist,
-  terjawab: generik), TAPI pertanyaan MEKANISME (bagaimana caranya secara konkret) masih terbuka. Belum
-  ada kode yg ditulis — REVISI_ENGINE-bearing, menyentuh skor 16 keluarga, terlalu berisiko utk ditebak
-  sendiri tanpa spesifikasi.
+**DITAHAN saat triase awal, KEMUDIAN DISELESAIKAN setelah dokter memberi keputusan klinis/mekanisme
+(sama sesi, commit terpisah) — bukan blind-execute DeepThink, tapi juga bukan macet permanen:**
+- **CODEX#16 (floor skor terapi 70) — SELESAI.** DeepThink pilih O-B (`enc.resep.length > 0`); Claude
+  awalnya menerapkan `rasioTerapi > 0` (menutup blind-spot yg DeepThink SENDIRI tandai). **Keduanya GAGAL
+  test yg sudah ada** ("DeepThink #1: observasi + lab hasilBesok RELEVAN tetap dapat proteksi skor 70")
+  — kasus SINTETIS generik dgn `resep=[]` yg SENGAJA diverifikasi ronde DeepThink SEBELUMNYA sbg perilaku
+  legitimate (tunda OAT sampai BTA). Dokter memutuskan: **hanya TB yg layak floor** (BTA-sebelum-OAT =
+  textbook-benar); Tifoid (Widal lambat/tak akurat, praktik umum mulai antibiotik empiris), Dengue
+  (suportif, bukan antibiotik-ditunda), DM/GAD (HbA1c/TSH bukan gerbang tunda-terapi) TIDAK layak.
+  Diimplementasi via field baru `ItemLab.bolehTundaTerapi?: boolean` (`types.ts`) — hanya `bta_sputum`
+  di-set `true` (`katalog.ts`); `clinic.ts` floor kini cek `pack.lab[id]?.bolehTundaTerapi` (bukan
+  `hasilBesok` generik). `sidikJariPack` (`verifikasi.ts`) diupdate ikut hash field baru ini —
+  **REVISI_ENGINE 20→21**. Test baru: widal (relevan+hasilBesok, TANPA bolehTundaTerapi) tak lagi
+  floor ke 70; bta_sputum tetap floor (regresi lama terjaga).
+- **Addendum Q6/Asih (formula `berhasil` generik) — SELESAI.** DeepThink jawab SCOPE (Jalur Generik,
+  bukan allowlist) tapi tak menspesifikasi MEKANISME. Dokter memutuskan: **syarat `kualitasMi >= 50`**
+  ditambahkan ke formula `berhasil` (`kunjungan.ts`, konstanta `AMBANG_KUALITAS_MI_BERHASIL`) — dipilih
+  drpd opsi "tag eskalasi per-kartu" krn `kualitasMi` SUDAH dihitung (tak perlu konten kartu baru),
+  langsung menutup celah asli CODEX#4 (berhasil murni tebakan struktural, kualitas dialog MI diabaikan).
+  `hipotesisBenar && intervensiCocok` TAPI `kualitasMi<50` kini jatuh ke `tingkat:'partial'` (bukan
+  penalti penuh 'gagal' — struktur sudah benar, cuma dialognya asal-tebak). Berlaku ke SEMUA 16 keluarga
+  (formula bersama, sesuai keputusan generik) — **REVISI_ENGINE bump SAMA** dgn #16 (21, satu batch).
+  Test baru: hipotesis+kartu benar + 0/3 dialog tepat → `berhasil=false, tingkat='partial'` (dulu:
+  `berhasil=true`).
 
 **DIPUTUSKAN, NOL KODE (adjudikasi DeepThink diterima, dicatat sbg keputusan final — tak perlu
 dibahas ulang):** CODEX#6 (diare — biarkan naratif, O-C), CODEX#2c (PRIMER_DEV — terima risiko, O-C),
@@ -3841,5 +3839,6 @@ CODEX#3c (anti-joki — proctoring fisik saja, O-B), CODEX#13b (Prolanis komorbi
 terdokumentasi, O-A), CODEX#30b (code signing — tolak sertifikat + instruksi lab, O-B+O-C), CODEX#31b
 (rotasi log — abaikan, O-A).
 
-**Verifikasi**: 652/652 test + typecheck bersih setelah SELURUH perubahan di atas. `npm audit`: 0
-kerentanan (naik dari 1 high-severity sebelum sesi ini).
+**Verifikasi**: 654/654 test + typecheck bersih setelah SELURUH perubahan di atas (termasuk #16 dan
+Addendum Q6, diselesaikan sesi yang sama setelah dokter memutuskan). `npm audit`: 0 kerentanan (naik
+dari 1 high-severity sebelum sesi ini). **REVISI_ENGINE 20→21.**

@@ -323,6 +323,17 @@ export interface ItemLab {
   nilaiNormal: string
   /** Hasil baru tersedia besok pagi (BTA, Widal, kultur) — keputusan interim. */
   hasilBesok?: boolean
+  /**
+   * Fix #16 (adjudikasi dokter 2026-07-11, ronde CODEX-31): apakah menunda
+   * SEMUA terapi sambil menunggu hasil lab ini adalah praktik klinis yang
+   * SAH (bukan celah skor). Beda per-penyakit, bukan generik per-`hasilBesok`
+   * — mis. TB menunda OAT sampai BTA/TCM terkonfirmasi = textbook-benar,
+   * tapi Tifoid menunda antibiotik sampai Widal (lambat, kurang akurat)
+   * BUKAN praktik yang dianjurkan (mulai empiris begitu dicurigai klinis).
+   * Hanya lab dengan flag `true` yang boleh memicu floor skorTerapi 70 di
+   * `clinic.ts` saat `disposisi==='observasi'` + nol resep.
+   */
+  bolehTundaTerapi?: boolean
 }
 
 /**

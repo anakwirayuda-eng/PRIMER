@@ -226,6 +226,16 @@ export function aksiKunjungan(
   }
 }
 
+// Fix Addendum Q6/Asih (adjudikasi dokter+DeepThink 2026-07-11, ronde CODEX-31,
+// "Jalur Generik"): `berhasil` dulu murni tebakan struktural (hipotesis+kartu
+// cocok) — kualitas dialog MI (`kualitasMi`, sudah dihitung, TAK pernah dipakai
+// di formula ini) sama sekali tak berpengaruh. Berlaku ke seluruh 16 keluarga
+// (bukan allowlist per-keluarga) krn semuanya berbagi tipe Hambatan/Intervensi
+// yang identik — lihat DEEPTHINK_CODEX31_KEPUTUSAN.md Addendum. Ambang 50 =
+// separuh pilihan dialog minimal "tepat" (OARS/MI benar), bukan sekadar
+// menebak kategori lalu asal klik lewat dialog.
+const AMBANG_KUALITAS_MI_BERHASIL = 50
+
 /**
  * Merekonstruksi seluruh penilaian kunjungan dari id yang tersimpan + skenario.
  * `kel` adalah state keluarga SEBELUM hasil diterapkan (trust awal kunjungan) —
@@ -265,23 +275,27 @@ export function selesaikanKunjungan(
   // Hotspot mengalahkan kebohongan: yang sudah kamu LIHAT tidak bisa dibohongi.
   const indikatorDibohongi = unik(ungkapBohong).filter((i) => !indikatorTerverifikasi.includes(i))
 
+  const totalPilihan = kj.pilihanDiambil.length
+  const kualitasMi = totalPilihan === 0 ? 0 : Math.round((100 * tepat) / totalPilihan)
+
   const kartu = kj.intervensiDipilih
     ? skenario.intervensi.find((i) => i.id === kj.intervensiDipilih)
     : undefined
   const intervensiCocok = kartu?.cocokUntuk.includes(skenario.hambatanSebenarnya) ?? false
   const hipotesisBenar = kj.hipotesis === skenario.hambatanSebenarnya
-  const berhasil = !kj.diusir && hipotesisBenar && intervensiCocok
+  const berhasil =
+    !kj.diusir && hipotesisBenar && intervensiCocok && kualitasMi >= AMBANG_KUALITAS_MI_BERHASIL
 
   // Bridge bertingkat (M1.1): partial = tidak diusir & TEPAT SALAH SATU dari
   // {hipotesis, intervensi} — kamu menyentuh keluarga ini tapi belum menggerakkan.
+  // Fix Addendum Q6: hipotesis+kartu benar TAPI kualitasMi di bawah ambang juga
+  // jatuh ke 'partial' (bukan 'gagal') — struktur sudah ditebak benar, yang
+  // kurang adalah kualitas dialognya, bukan penalti penuh spt salah total.
   const tingkat: 'berhasil' | 'partial' | 'gagal' = berhasil
     ? 'berhasil'
     : !kj.diusir && (hipotesisBenar || intervensiCocok)
       ? 'partial'
       : 'gagal'
-
-  const totalPilihan = kj.pilihanDiambil.length
-  const kualitasMi = totalPilihan === 0 ? 0 : Math.round((100 * tepat) / totalPilihan)
 
   const hasil: HasilKunjunganLengkap = {
     keluargaId: kj.keluargaId,

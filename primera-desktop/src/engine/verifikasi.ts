@@ -212,7 +212,11 @@ function fnv1a(teks: string): string {
 // tetap balita-saja) via Rng(seedKurikulum,'posyandu',hari,rw). Kartu Posyandu
 // hardcoded di kegiatan.ts, TAK tercakup sidikJariPack (spt kartuKlb, catatan
 // 16) — jejak lama mereplay ke kartu/skor/bonusIks berbeda tanpa bump ini.
-const REVISI_ENGINE = 20
+// Fix #16 (adjudikasi dokter 2026-07-11, ronde CODEX-31): floor skorTerapi 70
+// (observasi + lab besok) kini butuh `bolehTundaTerapi` per-lab, bukan cuma
+// `hasilBesok` — hanya BTA (TB) yg sah, Widal/IgM-dengue/HbA1c/TSH tidak lagi
+// memicu floor gratis. Mengubah replay skor kasus terkait secara langsung.
+const REVISI_ENGINE = 21
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -271,7 +275,16 @@ export function sidikJariPack(pack: ContentPack): string {
     )
   const lab = Object.values(pack.lab)
     .sort((a, b) => a.id.localeCompare(b.id))
-    .map((l) => stringifyKanonik({ id: l.id, biaya: l.biaya, besok: l.hasilBesok ?? false }))
+    .map((l) =>
+      stringifyKanonik({
+        id: l.id,
+        biaya: l.biaya,
+        besok: l.hasilBesok ?? false,
+        // Fix #16 (adjudikasi dokter 2026-07-11): menentukan floor skorTerapi
+        // 70 — mengubah replay/skor bila diedit, wajib ikut hash.
+        tunda: l.bolehTundaTerapi ?? false,
+      }),
+    )
   // CODEX ronde-baru #2: IGD sebelumnya di-hash hanya dari daftar ID → mengubah
   // pilihan-benar/efek-stabilitas/disposisi tak mengubah hash, padahal semua itu
   // menyetir skor IGD. Kini isi penentu skor ikut di-hash.

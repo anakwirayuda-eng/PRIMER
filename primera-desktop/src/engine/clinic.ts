@@ -557,10 +557,18 @@ export function nilaiEncounter(
   // memesan lab APA SAJA ber-hasilBesok (mis. kultur darah utk panu) demi
   // proteksi skor 70 gratis, tak peduli lab itu ada hubungannya dgn kasus atau
   // tidak.
+  // Fix #16 (adjudikasi dokter 2026-07-11, ronde CODEX-31): `hasilBesok` SAJA
+  // tidak cukup — "menunda SEMUA terapi sambil menunggu" cuma sah utk lab yg
+  // eksplisit ditandai `bolehTundaTerapi` (mis. BTA sebelum OAT), BUKAN utk
+  // tiap lab ber-hasilBesok (Widal/IgM-dengue/HbA1c/TSH: berdasar penilaian
+  // dokter, mulai terapi empiris/suportif justru yg dianjurkan, bukan
+  // menunggu) — tanpa ini, 5 kasus (Tifoid/TB/Dengue/DM/GAD) bisa dapat
+  // floor 70 gratis meski nol resep, padahal narasi kasus (mis. Tifoid)
+  // eksplisit memperingatkan bahaya menunda antibiotik.
   const menungguLabBesok =
     enc.disposisi === 'observasi' &&
     enc.labDipesan.some((id) => {
-      if (!pack.lab[id]?.hasilBesok) return false
+      if (!pack.lab[id]?.bolehTundaTerapi) return false
       return kasus.lab.find((l) => l.id === id)?.relevan === true
     })
   if (menungguLabBesok && obatBerbahaya === 0) skorTerapi = Math.max(skorTerapi, 70)

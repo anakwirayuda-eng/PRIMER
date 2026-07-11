@@ -407,11 +407,18 @@ keharusan struktural "sekarang".
   hari-0 (murni logika, nol dampak observable) · [#12c] konsistensi teks
   debrief apendisitis (3 lokasi, tak sentuh skor) · [#7b] hapus formula DBP
   arbitrer di narasi Prolanis (kosmetik, tak sentuh skor).
+- ✅ **[#2] Asih storyline — SELESAI 2026-07-11** (ronde CODEX-31 Addendum
+  Q6). SCOPE: DeepThink pilih Jalur Generik (formula bersama, bukan
+  allowlist Asih-saja) — berlaku ke seluruh 16 keluarga. MEKANISME (blocker
+  lama: kartu ke-4 terpisah tak jalan krn kunjungan single-select) dijawab
+  dokter: syarat `kualitasMi >= 50` ditambahkan ke formula `berhasil`
+  (`kunjungan.ts`, `AMBANG_KUALITAS_MI_BERHASIL`) — hipotesis+kartu benar
+  TAPI dialog MI asal-tebak (kualitasMi rendah) kini jatuh ke `tingkat:
+  'partial'`, bukan otomatis `berhasil`. Tak perlu konten kartu baru.
+  REVISI_ENGINE 20→21 (bersamaan dgn fix #16 lab-floor, sesi sama). Detail:
+  `docs/CODEX_AUDIT_DOSSIER.md` §63, `docs/DEEPTHINK_CODEX31_KEPUTUSAN.md`.
 - 🔴 Masih perlu KEPUTUSAN Dr. Wirayuda (artifact Bagian D, bagian
-  "Tambahan"): **[#2] Asih storyline** — Q6 Opsi-a ternyata butuh keputusan
-  MEKANISME (bukan cuma ya/tidak): kartu ke-4 terpisah tak akan berfungsi
-  krn kunjungan single-select; + keputusan SCOPE (gerbang karma generik
-  dipakai 8 arc lain, semua atau allowlist Asih-saja?) · **[#14] kalibrasi
+  "Tambahan"): **[#14] kalibrasi
   severity edukasiKritis→konsekuensi** (15 kasus, blanket vs per-kasus) ·
   **[#7c] asimetri rujukan Prolanis DM vs HT** (opsi exempt-gerbang vs
   kasus-DM-baru vs transparansi-saja) · **[#4a] ANC gol.darah** (distraktor

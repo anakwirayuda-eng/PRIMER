@@ -96,12 +96,25 @@ const LAB_MINI: Record<string, ItemLab> = {
     biaya: 35000,
     nilaiNormal: 'Negatif',
     hasilBesok: true,
+    // Fix #16 (adjudikasi dokter 2026-07-11): TB menunda OAT sampai BTA
+    // terkonfirmasi = praktik SAH, satu-satunya lab yg boleh memicu floor
+    // skorTerapi 70 tanpa resep sama sekali.
+    bolehTundaTerapi: true,
   },
   gds: {
     id: 'gds',
     nama: 'Gula Darah Sewaktu',
     biaya: 15000,
     nilaiNormal: '< 200 mg/dL',
+  },
+  widal: {
+    id: 'widal',
+    nama: 'Uji Widal',
+    biaya: 30000,
+    nilaiNormal: 'Titer O dan H < 1/160',
+    // hasilBesok:true TAPI bolehTundaTerapi TIDAK di-set (Fix #16) — menunda
+    // antibiotik tifoid sampai Widal bukan praktik yg dianjurkan secara klinis.
+    hasilBesok: true,
   },
 }
 
@@ -1122,6 +1135,26 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     }
     const nilai = nilaiEncounter(enc, KASUS_OBS, PACK)
     expect(nilai.skorTerapi).toBe(70)
+  })
+
+  it('Fix #16 (adjudikasi dokter 2026-07-11): lab ber-hasilBesok TAPI TANPA bolehTundaTerapi (mis. Widal) TIDAK memicu floor 70 — hanya BTA (TB) yg sah ditunggu tanpa terapi sama sekali', () => {
+    const KASUS_OBS_WIDAL: KasusKlinis = {
+      ...KASUS_FARINGITIS,
+      id: 'obs_widal_mini',
+      lab: [{ id: 'widal', hasil: 'Menunggu hasil', flag: 'normal', relevan: true }],
+    }
+    const enc: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'obs_widal_mini' })),
+      labDipesan: ['widal'],
+      disposisi: 'observasi',
+    }
+    const nilai = nilaiEncounter(enc, KASUS_OBS_WIDAL, PACK)
+    // widal: hasilBesok:true tapi bolehTundaTerapi TIDAK di-set — secara
+    // klinis menunda antibiotik tifoid sampai Widal bukan praktik yg
+    // dianjurkan (Widal lambat/kurang akurat; mulai empiris begitu
+    // dicurigai). Nol resep → rasioTerapi 0/2 slot → skorTerapi 0, TIDAK
+    // di-floor ke 70.
+    expect(nilai.skorTerapi).toBe(0)
   })
 
   it('SBAR lengkap yang menyebut diagnosis dinilai 100; tanpa SBAR skor tidak ada', () => {

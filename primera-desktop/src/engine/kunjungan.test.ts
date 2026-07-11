@@ -305,6 +305,31 @@ describe('gerbang kejujuran', () => {
     expect(kelBaru.indikator.jamban_sehat.sumber).toBe('dokter')
   })
 
+  it('Fix Addendum Q6/Asih (adjudikasi dokter 2026-07-11): hipotesis+kartu BENAR tapi kualitasMi di bawah ambang (dialog asal tebak) → berhasil=false, tingkat=partial', () => {
+    const kel = buatKel(5)
+    const r = jalankan(
+      buatKunjungan(kel.id, SKENARIO),
+      [
+        { type: 'LANJUT_BABAK' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p1_edukasi' }, // tepat:false
+        { type: 'PILIH_DIALOG', pilihanId: 'p2_netral' }, // tepat:false
+        { type: 'PILIH_DIALOG', pilihanId: 'p3_netral' }, // tepat:false
+        { type: 'LANJUT_BABAK' },
+        { type: 'KOMIT_HAMBATAN', hipotesis: 'kesempatan' }, // BENAR
+        { type: 'PILIH_INTERVENSI', intervensiId: 'i_arisan' }, // cocok
+      ],
+      kel,
+    )
+    const hasil = selesaikanKunjungan(r.kj, SKENARIO, kel)
+    // 0/3 pilihan tepat → kualitasMi 0, di bawah AMBANG_KUALITAS_MI_BERHASIL (50)
+    // — struktur (hipotesis+kartu) benar TAPI dialognya murni asal-tebak, jadi
+    // TIDAK lagi otomatis "berhasil" (beda dari sebelum fix Addendum Q6).
+    expect(hasil.kualitasMi).toBe(0)
+    expect(hasil.hipotesisBenar).toBe(true)
+    expect(hasil.berhasil).toBe(false)
+    expect(hasil.tingkat).toBe('partial')
+  })
+
   it('hotspot mengalahkan kebohongan: yang terlihat mata tidak bisa dibohongi', () => {
     const kel = kelJambanBohong(2)
     const r = jalankan(

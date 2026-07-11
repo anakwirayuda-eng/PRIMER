@@ -400,6 +400,10 @@ export const LAB: Record<string, ItemLab> = {
     biaya: 25000,
     nilaiNormal: 'Negatif',
     hasilBesok: true,
+    // Fix #16 (adjudikasi dokter 2026-07-11): menunda OAT sampai BTA/TCM
+    // terkonfirmasi adalah praktik SAH (textbook), beda dari widal/igm_dengue/
+    // hba1c/tsh di mana menunggu-tanpa-terapi tak dianjurkan/kurang relevan.
+    bolehTundaTerapi: true,
   },
   gds: {
     id: 'gds',
