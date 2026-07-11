@@ -6,7 +6,12 @@ import { promises as fs } from 'fs'
 // tanpa konsol, mahasiswa tak bisa mem-bypass UI (dispatch aksi lompat-fase)
 // atau mengutak-atik state sebelum ekspor dossier. Dibuka hanya bila
 // PRIMER_DEV=1 (untuk pengembang), TIDAK di build kelas.
-const DEV = !!process.env['ELECTRON_RENDERER_URL'] || process.env['PRIMER_DEV'] === '1'
+// Fix #2 (audit CODEX 2026-07-11): ELECTRON_RENDERER_URL HANYA relevan di
+// build TAK-dipaket (app.isPackaged===false, dev-server vite) — dulu env var
+// polos ini saja bisa membuka DevTools bahkan di installer kelas yang sudah
+// dipaket (siapa saja yang set env var itu sebelum menjalankan .exe). PRIMER_DEV
+// tetap berfungsi apa adanya (escape hatch pengembang yang disengaja).
+const DEV = (!app.isPackaged && !!process.env['ELECTRON_RENDERER_URL']) || process.env['PRIMER_DEV'] === '1'
 
 // ---------------------------------------------------------------------------
 // PRIMERA: Puskesmas Pagi — Electron main process
@@ -38,6 +43,8 @@ async function ensureSaveDir(): Promise<string> {
 // konkuren lain di masa depan, tmp tak pernah dishare.
 const antreanTulis = new Map<string, Promise<void>>()
 let tmpCounter = 0
+// Fix #31d: rantai promise telemetri, ditunggu before-quit spt antreanTulis di atas.
+let telemetriPending: Promise<void> = Promise.resolve()
 
 function registerIpc(): void {
   ipcMain.handle('save:write', async (_e, slot: string, json: string) => {
@@ -106,8 +113,17 @@ function registerIpc(): void {
   // utk dosen. SATU-SATUNYA tempat Date.now() boleh menyentuh persistensi game.
   const TELEMETRI_FILE = () => join(app.getPath('userData'), 'telemetri.jsonl')
 
+  // Fix #31d (audit CODEX 2026-07-11): dulu appendFile lepas-tangan (fire-and-
+  // forget) — beda dgn save:write yang masuk antreanTulis & ditunggu before-quit.
+  // Menutup app tepat saat baris terakhir belum selesai ditulis bisa membuang
+  // entri forensik. Sekarang dirantai + ditunggu before-quit sama spt save.
   ipcMain.handle('telemetri:append', async (_e, baris: string) => {
-    await fs.appendFile(TELEMETRI_FILE(), baris.replace(/\n/g, ' ') + '\n', 'utf-8')
+    const tulis = async (): Promise<void> => {
+      await fs.appendFile(TELEMETRI_FILE(), baris.replace(/\n/g, ' ') + '\n', 'utf-8')
+    }
+    const giliran = telemetriPending.catch(() => {}).then(tulis)
+    telemetriPending = giliran
+    await giliran
     return true
   })
 
@@ -137,7 +153,10 @@ function createWindow(): void {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false,
+      // Fix #2d (audit CODEX 2026-07-11): preload hanya pakai contextBridge+
+      // ipcRenderer.invoke (lihat preload/index.ts) — sepenuhnya kompatibel
+      // sandbox, tak ada alasan mempertahankan sandbox:false.
+      sandbox: true,
     },
   })
 
@@ -209,7 +228,26 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  if (process.env['ELECTRON_RENDERER_URL']) {
+  // Fix #2e (audit CODEX 2026-07-11): tanpa guard ini, renderer bisa dialihkan
+  // (mis. via bug/link tak terduga) ke URL luar mana pun sambil tetap membawa
+  // preload bridge (save/telemetri) yang sama — situs asing lalu punya akses
+  // baca/tulis/hapus save. Hanya izinkan file lokal (produksi) atau dev-server
+  // vite yang memang dipakai sesi ini (dev, tak-dipaket).
+  win.webContents.on('will-navigate', (e, url) => {
+    const devUrl = !app.isPackaged ? process.env['ELECTRON_RENDERER_URL'] : undefined
+    const sah = devUrl ? url.startsWith(devUrl) : url.startsWith('file://')
+    if (!sah) e.preventDefault()
+  })
+
+  // Fix #2f (audit CODEX 2026-07-11): tolak semua permintaan izin browser
+  // (kamera/mikrofon/lokasi/notifikasi/dst) — game ini tak pernah butuh satu
+  // pun, jadi permintaan semacam itu hanya bisa datang dari konten tak terduga.
+  win.webContents.session.setPermissionRequestHandler((_wc, _permission, callback) => callback(false))
+
+  // Fix #2a (audit CODEX 2026-07-11): ELECTRON_RENDERER_URL HANYA dihormati
+  // pada build tak-dipaket (dev, dijalankan via `electron-vite dev`) — build
+  // produksi/installer SELALU load file lokal, apa pun isi env var ini.
+  if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
     win.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
     win.loadFile(join(__dirname, '../renderer/index.html'))
@@ -256,8 +294,9 @@ if (!app.requestSingleInstanceLock()) {
   // antivirus), allSettled bisa TAK PERNAH selesai → app tak pernah keluar
   // (perlu force-kill). Timeout menjamin quit tetap terjadi.
   app.on('before-quit', (e) => {
-    const tertunda = [...antreanTulis.values()]
-    if (tertunda.length === 0) return
+    // Fix #31d: telemetriPending ikut ditunggu di sini sekarang, sama spt
+    // tulisan save — satu titik flush-on-quit, bukan dua mekanisme berbeda.
+    const tertunda = [...antreanTulis.values(), telemetriPending]
     e.preventDefault()
     const semua = Promise.allSettled(tertunda.map((p) => p.catch(() => {})))
     const batasWaktu = new Promise<void>((res) => setTimeout(res, 5000))

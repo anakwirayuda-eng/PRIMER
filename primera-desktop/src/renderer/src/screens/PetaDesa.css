@@ -71,9 +71,10 @@
 }
 
 .peta-label--sub {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   fill: var(--tinta-lembut);
+  stroke-width: 1.5px;
 }
 
 .peta-cartouche {

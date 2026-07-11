@@ -228,7 +228,10 @@ export const KASUS_IGD: KasusIgd[] = [
       },
       {
         id: 'd2',
-        narasi: 'Setelah bolus, nadi mulai teraba lebih kuat. Pasien mengeluh nyeri kepala hebat.',
+        // Fix #21 (audit CODEX 2026-07-11): d1 sudah dikoreksi ke infus 5-10
+        // mL/kgBB/jam (BUKAN bolus) — narasi ini masih menyebut "bolus" &
+        // berkontradiksi langsung dgn tindakan d1 yang sekarang diajarkan.
+        narasi: 'Setelah infus kristaloid berjalan, nadi mulai teraba lebih kuat. Pasien mengeluh nyeri kepala hebat.',
         pilihan: [
           { id: 'a', label: 'Parasetamol untuk nyeri/demam, lanjut pantau tanda vital & tetesan', benar: true, efekStabilitas: 18, respons: 'Tepat — hanya parasetamol yang aman pada dengue; lanjutkan infus kristaloid dgn evaluasi berkala (TD/nadi/perfusi), turunkan laju bertahap sesuai perbaikan — jangan pertahankan laju awal terus-menerus.' },
           { id: 'b', label: 'Beri ibuprofen/asam mefenamat untuk nyerinya', benar: false, efekStabilitas: -25, respons: 'BERBAHAYA — NSAID meningkatkan risiko perdarahan pada dengue. Hanya parasetamol.' },

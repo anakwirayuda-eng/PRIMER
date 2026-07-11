@@ -175,6 +175,14 @@ export interface KasusKlinis {
   spesialisRujukan?: SpesialisasiRs
   /** Kalimat keluhan pembuka pasien. */
   keluhanUtama: string
+  // Fix #18 (audit CODEX 2026-07-11): 10 kasus (anak/kondisi yg membatasi
+  // bicara — epilepsi, skizofrenia, stroke, dst.) menulis keluhanUtama dari
+  // sudut pandang WALI/PENDAMPING (mis. "Anak saya tiba-tiba...", "Ibu saya
+  // tiba-tiba bicaranya pelo...") tapi UI menampilkannya seolah ucapan
+  // PASIEN sendiri. Flag ini menambah label atribusi — TAK mengubah teks
+  // keluhan/klinis/skor, murni perbaikan tampilan.
+  /** true bila keluhanUtama dituturkan wali/pendamping, bukan pasien sendiri. */
+  keluhanUtamaOlehPendamping?: boolean
   demografi: { usiaMin: number; usiaMax: number; jenisKelamin?: JenisKelamin }
   vital: TandaVital
   anamnesis: PertanyaanAnamnesis[]

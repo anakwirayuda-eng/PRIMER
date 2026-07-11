@@ -483,6 +483,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     prevalensi: 'rendah',
     spesialisRujukan: 'saraf',
     keluhanUtama: 'Anak saya kejang lagi dok, ini sudah yang ketiga kali dalam dua bulan, seluruh badan kaku lalu kelojotan.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 12, usiaMax: 30 },
     vital: { td: '116/74', nadi: 92, rr: 20, suhu: 36.8, spo2: 98 },
     anamnesis: [

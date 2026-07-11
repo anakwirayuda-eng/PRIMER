@@ -3,7 +3,7 @@ rem =====================================================
 rem   PRIMER - Puskesmas Pagi  :  tombol start game
 rem   Klik dua kali file ini untuk bermain.
 rem =====================================================
-set "EXE=%~dp0dist\win-unpacked\PRIMER - Puskesmas Pagi.exe"
+set "EXE=%~dp0dist\win-unpacked\PRIMERA - Puskesmas Pagi.exe"
 
 if exist "%EXE%" (
   start "" "%EXE%"

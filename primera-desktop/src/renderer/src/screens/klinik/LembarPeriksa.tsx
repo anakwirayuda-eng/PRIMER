@@ -114,7 +114,12 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
         <div className="judul-seksi">S &mdash; Subjektif (Anamnesis)</div>
         <div className="klinik-lembar__qa">
           <div className="klinik-lembar__tanya teks-xs teks-lembut">Keluhan utama</div>
-          <div className="tulis-tangan">&ldquo;{kasus.keluhanUtama}&rdquo;</div>
+          <div className="tulis-tangan">
+            {kasus.keluhanUtamaOlehPendamping && (
+              <span className="teks-xs teks-lembut">Dituturkan pendamping: </span>
+            )}
+            &ldquo;{kasus.keluhanUtama}&rdquo;
+          </div>
         </div>
         {enc.ditanya.length === 0 ? (
           <div className="klinik-lembar__kosong">&mdash; belum ada kutipan anamnesis &mdash;</div>

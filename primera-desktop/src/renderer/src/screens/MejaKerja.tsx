@@ -403,6 +403,9 @@ export function MejaKerja() {
                       </span>
                     </div>
                     <p className="mk__pasien-keluhan">
+                      {PACK.kasus[p.kasusId]?.keluhanUtamaOlehPendamping && (
+                        <span className="teks-xs teks-lembut">Dituturkan pendamping: </span>
+                      )}
                       “{PACK.kasus[p.kasusId]?.keluhanUtama ?? 'Keluhan akan jelas di ruang periksa.'}”
                     </p>
                   </div>

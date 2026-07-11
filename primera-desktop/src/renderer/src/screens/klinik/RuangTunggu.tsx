@@ -64,6 +64,9 @@ export function RuangTunggu({ state, dispatch }: Props) {
                     </span>
                   </div>
                   <div className="klinik-tunggu__keluhan teks-kecil">
+                    {kasus?.keluhanUtamaOlehPendamping && (
+                      <span className="teks-xs teks-lembut">Dituturkan pendamping: </span>
+                    )}
                     &ldquo;{kasus?.keluhanUtama ?? 'Datang dengan keluhan yang belum jelas.'}&rdquo;
                   </div>
                   {p.followUpDari !== undefined && (

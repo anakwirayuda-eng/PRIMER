@@ -963,6 +963,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     prevalensi: 'rendah',
     spesialisRujukan: 'jiwa',
     keluhanUtama: 'Anak saya sering bicara sendiri dan bilang ada suara yang mengancam dia, dok.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 18, usiaMax: 35 },
     vital: { td: '118/76', nadi: 84, rr: 18, suhu: 36.6, spo2: 99 },
     anamnesis: [

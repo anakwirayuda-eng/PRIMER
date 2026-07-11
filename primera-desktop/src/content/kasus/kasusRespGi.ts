@@ -859,6 +859,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Anak saya perutnya sering sakit dok, nafsu makan kurang, dan kemarin keluar cacing waktu BAB.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 4, usiaMax: 10 },
     vital: { td: '95/65', nadi: 92, rr: 22, suhu: 36.8 },
     anamnesis: [

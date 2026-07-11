@@ -47,6 +47,13 @@ export function buatPasienDariKasus(
   pack: ContentPack,
   rng: Rng,
   override?: Partial<PasienAktif>,
+  // Fix #28b (audit CODEX 2026-07-11): tanpa parameter ini, dua pasien di
+  // antrian HARI YANG SAMA bisa kebetulan dapat nama sama (mis. dua "Narti")
+  // — daftar namaWarga tak sebesar itu & tak ada guard anti-tabrakan sesama
+  // pasien (guard yg ADA hanya cegah bentrok dgn nama anggota keluarga
+  // binaan, beda scope). Opsional agar backward-compatible (pemanggil follow-
+  // up/karma/prolanis satu-pasien tak perlu peduli).
+  namaTerpakai?: Set<string>,
 ): PasienAktif {
   const kasus = pack.kasus[kasusId]
   if (!kasus) {
@@ -55,7 +62,15 @@ export function buatPasienDariKasus(
 
   const jenisKelamin = kasus.demografi.jenisKelamin ?? (rng.chance(0.5) ? 'L' : 'P')
   const daftarNama = jenisKelamin === 'L' ? pack.namaWarga.pria : pack.namaWarga.wanita
-  const nama = daftarNama.length > 0 ? rng.pick(daftarNama) : 'Warga Sukamaju'
+  let nama = daftarNama.length > 0 ? rng.pick(daftarNama) : 'Warga Sukamaju'
+  if (namaTerpakai && daftarNama.length > namaTerpakai.size) {
+    let percobaan = 0
+    while (namaTerpakai.has(nama) && percobaan < 20) {
+      nama = rng.pick(daftarNama)
+      percobaan++
+    }
+  }
+  namaTerpakai?.add(nama)
   const usia = rng.int(kasus.demografi.usiaMin, kasus.demografi.usiaMax)
   // M10.b (dossier §43): persona WAJIB dari usia EFEKTIF — pasien inject
   // (karma/prolanis/PRB) membawa usia sungguhan via override, tapi dulu
@@ -273,7 +288,11 @@ export function susunAntrianHarian(
     }
   }
 
-  const antrian = terpilih.map((k) => buatPasienDariKasus(k.id, pack, rngFlavor))
+  // Fix #28b: satu Set dipakai bersama utk seluruh antrian hari ini, supaya
+  // dua pasien (mis. dua kasus berbeda dgn jenis kelamin sama) tak kebetulan
+  // dapat nama sama persis.
+  const namaTerpakaiHariIni = new Set<string>()
+  const antrian = terpilih.map((k) => buatPasienDariKasus(k.id, pack, rngFlavor, undefined, namaTerpakaiHariIni))
 
   // Karma loop arah POSITIF: keluarga binaan yang pernah dikunjungi sesekali
   // mengirim anggotanya ke poli — mereka mengenalmu, lebih terbuka (bonusTrust:
@@ -286,7 +305,13 @@ export function susunAntrianHarian(
     const keluargaId = rngFlavor.pick(binaanAkrab)
     const idx = rngFlavor.int(0, antrian.length - 1)
     const pasien = antrian[idx]
-    if (pasien) antrian[idx] = { ...pasien, keluargaId, bonusTrust: true }
+    // Fix #14 (audit CODEX 2026-07-11, bagian aman/tanpa trade-off): pasien
+    // ditempeli `keluargaId` tapi RW-nya tetap hasil roll acak sebelumnya —
+    // bisa mismatch dgn RW keluarga binaan yg sebenarnya. Nama/usia/jenis-
+    // kelamin SENGAJA tak disentuh di sini (memaksa kecocokan penuh = ubah
+    // aturan seleksi kasus, keputusan desain terpisah — lihat dossier M10.5).
+    const rwKeluarga = pack.keluarga[keluargaId]?.rw
+    if (pasien) antrian[idx] = { ...pasien, keluargaId, bonusTrust: true, ...(rwKeluarga !== undefined ? { rw: rwKeluarga } : {}) }
   }
 
   return antrian

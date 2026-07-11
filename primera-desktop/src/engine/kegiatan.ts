@@ -39,7 +39,11 @@ const POOL_LANGKAH2: KartuKegiatan[] = [
     pilihan: [
       {
         id: 'a',
-        label: 'Catat "berat turun" (BGM), rujuk konseling gizi + telusuri penyebab',
+        // Fix #12a (audit CODEX 2026-07-11): label lama salah pakai "BGM" (Bawah
+        // Garis Merah — kondisi TERPISAH, lebih berat, di bawah garis merah KMS)
+        // utk penurunan SATU pita — respons di bawah sudah benar pakai istilah
+        // "weight faltering", hanya labelnya yang keliru.
+        label: 'Catat "berat turun/tidak naik" (alarm growth faltering — beda dari BGM/bawah garis merah), rujuk konseling gizi + telusuri penyebab',
         benar: true,
         respons:
           'Tepat. Berat turun melewati garis pita = alarm (weight faltering). Jangan ' +
@@ -97,11 +101,16 @@ const POOL_LANGKAH2: KartuKegiatan[] = [
     pilihan: [
       {
         id: 'a',
-        label: 'Catat obesitas sentral + hipertensi, edukasi GERMAS + arahkan skrining lanjut',
+        // Fix #12b (audit CODEX 2026-07-11): satu pengukuran TD kader tak cukup
+        // menegakkan diagnosis hipertensi (butuh >=2x pengukuran hari berbeda) —
+        // label lama langsung "hipertensi" berkontradiksi dgn instruksi labelnya
+        // sendiri "arahkan skrining lanjut" (kalau sudah tegak, ngapain skrining lagi).
+        label: 'Catat obesitas sentral + tersangka hipertensi (perlu konfirmasi ulang), edukasi GERMAS + arahkan skrining lanjut',
         benar: true,
         respons:
-          'Tepat. Lingkar perut >90cm (pria) + TD ≥140/90 = obesitas sentral & ' +
-          'hipertensi — faktor risiko PTM yang perlu ditindaklanjuti, bukan "biasa".',
+          'Tepat. Lingkar perut >90cm (pria) + TD ≥140/90 = obesitas sentral & tersangka ' +
+          'hipertensi — tegakkan diagnosis butuh ≥2 pengukuran hari berbeda, tapi tetap ' +
+          'tindak lanjuti sekarang, bukan dianggap "biasa".',
       },
       {
         id: 'b',

@@ -505,6 +505,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'tinggi',
     keluhanUtama: 'Anak saya mencret-mencret dok, sudah lebih dari lima kali sejak pagi.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 3, usiaMax: 5 },
     vital: { td: '90/60', nadi: 110, rr: 24, suhu: 37.8 },
     anamnesis: [
@@ -601,8 +602,16 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     // instruksi Rencana Terapi A (tanpa-dehidrasi) — sering keliru diterapkan
     // pulang-langsung pada anak yang sebenarnya sudah dehidrasi ringan-sedang.
     mutiaraEbm: '"Oralit tiap kali BAB cair" adalah instruksi Rencana Terapi A (TANPA dehidrasi) — sering keliru diterapkan langsung-pulang pada anak yang sebenarnya SUDAH menunjukkan tanda dehidrasi ringan-sedang. Kuncinya: volume terhitung (75 mL/kgBB) + observasi 3–4 jam di faskes dulu, baru boleh pulang bila membaik.',
+    // Catatan mekanik (audit CODEX 2026-07-11, agar tak disalahartikan audit
+    // berikutnya sbg sudah tergerbang): "observasi 3-4 jam lalu NILAI ULANG"
+    // adalah instruksi klinis nyata (LINTAS DIARE Kemenkes/WHO) — TEKS SAJA.
+    // Engine saat ini tak membedakan disposisi 'observasi' dari 'pulang' utk
+    // kasus non-rujuk (clinic.ts) & skorTerapi murni dari resep, bukan dari
+    // observasi/waktu — klik PULANGKAN langsung setelah resep benar tetap
+    // skor penuh. Gate observasi sungguhan = mekanik baru (REVISI-touching),
+    // ditahan sampai scope M13/M14/M10.5b diputuskan eksplisit.
     konsekuensi: {
-      narasi: 'Memulangkan anak dehidrasi ringan-sedang tanpa observasi rehidrasi 3–4 jam di Puskesmas dulu meningkatkan risiko perburukan ke dehidrasi berat/syok hipovolemik di rumah; pemberian antibiotik tak perlu justru berisiko memperpanjang keluhan.',
+      narasi: 'Terapi yang tidak sesuai (dosis oralit/zinc salah, atau justru diberi antibiotik yang tak perlu) meningkatkan risiko dehidrasi anak ini memberat menjadi syok hipovolemik.',
       kembaliHariMin: 2,
       kembaliHariMax: 4,
       kondisiKembali: 'Anak kembali dengan mata sangat cekung, malas minum, dan lemas — dehidrasi berat yang perlu rehidrasi intravena/rujukan.',

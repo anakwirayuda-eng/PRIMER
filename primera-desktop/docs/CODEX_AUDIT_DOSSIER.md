@@ -3688,3 +3688,83 @@ lagi" & styling file-input TitleScreen dikonfirmasi tampil.
 **Ini menuntaskan SELURUH 30 temuan audit CODEX UI/UX read-only 2026-07-10** (§57-61): 6 P1 (Batch-1),
 19 P2 + 5 P3 (Batch-2 s/d 7d), 2 keputusan-desain dibiarkan (Program Wilayah lock, peta mode-malam —
 §57), nol temuan tersisa yang belum ditriase atau diperbaiki.
+
+## 62. Audit CODEX read-only baru (HEAD `d325766`) — 31 temuan, dibagi tugas dgn dokter (2026-07-11)
+
+Dokter mengerjakan sendiri 17 temuan PNPK + 5 item M10.5 secara paralel; sesi ini menggarap laporan
+CODEX 31-temuan (Temuan Kritis #1-6, UKM&Kebijakan #7-15, UKP&Konten #16-22, UI/UX #23-28,
+Rilis&Reliabilitas #29-31) — hanya bagian yang murni mekanis/tanpa trade-off klinis-desain dikerjakan
+langsung; sisanya (keputusan lisensi musik, hardening Electron lanjutan, filosofi anti-cheat,
+model-data Prolanis/KBK, rubrik skor sbar/lab-lantai) dikembalikan ke dokter sbg keputusan, beberapa
+di antaranya sudah tumpang-tindih dgn `M10_5_FIDELITAS.md` (Q6/Asih, #7c DM-Prolanis) — diarahkan ke
+dok yg sama, bukan tiket baru.
+
+Diverifikasi lewat workflow paralel (10 klaster + adversarial-verify pada 5 klaster berisiko tinggi:
+security-legal, karma-mi, diare-planB, surveilans-KLB, ukp-konten-2), lalu didigest satu agen pembaca
+transkrip penuh krn keluaran workflow (~1.1 jt token) tak muat dibaca langsung — digest itu jadi
+referensi eksekusi.
+
+**Fix mekanis-aman yang DIPERBAIKI (tanpa keputusan desain/medis baru):**
+- **#1 (lisensi BGM)** — `scripts/check-bgm-license.js` baru: gerbang `pack`/`dist` gagal kecuali
+  `ALLOW_UNLICENSED_BGM=1` selama 7 file OST Square Enix masih ada di `public/bgm/` (keputusan
+  ganti/lisensi tetap milik dokter — ini cuma pagar agar tak ke-ship diam-diam).
+- **#2 (hardening Electron)** — `main/index.ts`: `DEV` kini juga men-gate `app.isPackaged` (build
+  produksi tak lagi bisa nyasar ke URL dev); `sandbox: true`; guard `will-navigate` (blokir navigasi ke
+  origin luar file://); `setPermissionRequestHandler` tolak semua permintaan native (kamera/mic/dll);
+  `loadURL`/`loadFile` di-gate eksplisit oleh `app.isPackaged`.
+- **#31d (telemetri sebelum quit)** — `telemetriPending` promise-chain: `before-quit` kini menunggu
+  tulisan telemetri yang sedang jalan, bukan cuma save-game.
+- **#17 (antibiotik tanpa indikasi lolos deteksi)** — `engine/clinic.ts`: deteksi diubah dari level-KASUS
+  (meleset jika kasus punya *sembarang* antibiotik di jawaban benar) ke level-OBAT-per-resep.
+- **#19a (gerbang SBAR UI tak sinkron nilai skor)** — `DeckDisposisi.tsx`: ambang tombol submit disamakan
+  eksplisit (`AMBANG_SBAR_ISI = 20`) dgn ambang skor yg sudah dipakai `clinic.ts`.
+- **#21 (regresi narasi dengue non-bolus)** — `content/igd.ts`: narasi d2 disamakan dgn d1 (infus
+  kristaloid, bukan "bolus") — sisa dari fix sesi sebelumnya yg belum menjalar ke d2.
+- **#22 (invarian fase save rusak tak terdeteksi)** — `engine/save.ts`: validasi baru — `fase` harus
+  salah satu dari 6 nilai `FaseEncounter` sah DAN `diagnosis` wajib ada bila fase
+  terapi/disposisi/selesai; jika tidak, `klinik.aktif` dipulihkan + surat kompensasi (pola sama blok
+  pemulihan igd/kunjungan/kegiatan yg sudah ada).
+- **#12a/#12b (label Posyandu menyesatkan)** — `engine/kegiatan.ts`: BGM vs gagal-tumbuh dibedakan
+  eksplisit; TD tunggal kader tak lagi diklaim "hipertensi" pasti, jadi "tersangka (perlu konfirmasi)".
+- **#5b (karma partial tak pernah kedaluwarsa)** — `state.ts`+`reducer.ts`: `karmaAktif.partialDitunda`
+  + `BATAS_PARTIAL_KARMA = 2` — penundaan +3 hari kini berhenti setelah 2×, tak bisa ditunda selamanya.
+- **#11b (drift menimpa data terverifikasi dokter)** — `reducer.ts`: kandidat drift kini disaring
+  `sumber === 'kader'` (bukan `!== 'belum'`), shg data berlabel `'dokter'` tak lagi ikut di-drift.
+- **#12c (bonus IKS lantai 0.02 di skor nol)** — `reducer.ts`: formula `0.04 * skor` (lantai dihapus —
+  sesi Posyandu skor nol tak lagi dapat bonus).
+- **#14/#28b (tabrakan nama pasien harian + rw keluarga karma tak ikut)** — `engine/director.ts`:
+  generator antrian harian kini hindari nama kembar (set `namaTerpakaiHariIni`, max 20 percobaan); blok
+  karma-bridge kini ikut mewariskan `rw` keluarga (bukan cuma `keluargaId`/`bonusTrust`) — identitas
+  nama/usia/JK SENGAJA tak disentuh (butuh keputusan match-identitas penuh, dicatat sbg technical debt,
+  bukan bug).
+- **#29a (exe launcher salah nama)** — `MULAI PRIMER.bat`: `PRIMER - ...exe` → `PRIMERA - ...exe` (cocok
+  `productName` electron-builder aktual).
+- **#18 (atribusi ucapan wali/pendamping tampak seolah pasien)** — `content/types.ts` field baru
+  `keluhanUtamaOlehPendamping?: boolean`; label "Dituturkan pendamping:" dirender kondisional di 3 layar
+  (`RuangTunggu`, `LembarPeriksa`, `MejaKerja`); di-set `true` pada 10 kasus anak/kondisi pembatas-bicara
+  (diare, impetigo, pedikulosis, campak, OMA, pneumonia balita, askariasis, epilepsi, skizofrenia,
+  stroke) — teks keluhan/klinis/skor TAK berubah, murni label tampilan.
+- **#23/#25b (label peta desa kekecilan & buram)** — `PetaDesa.css` `.peta-label--sub`: 0.6875rem→0.75rem
+  + `stroke-width: 1.5px` (halo 3px yg diwarisi dari `.peta-label` induk proporsinya kebesaran utk teks
+  sekecil ini, bikin buram).
+- **#26b/#27 (file-picker native berbahasa Inggris + 2 alat dosen menempel)** — `TitleScreen.tsx`: 3
+  `<input type="file">` kini disembunyikan visual (`.title__file-input-tersembunyi`, pola
+  visually-hidden standar — tetap fungsional & fokus-keyboard via `<label>` pembungkus), nama file
+  bawaan browser ("No file chosen") diganti span Indonesia sendiri yg di-update `onChange`; pemisah
+  `<hr>` bertitik ditambah antara blok Verifikasi Dossier & Impor Telemetri.
+
+**Verifikasi CLEAN — dilaporkan CODEX tapi TERBUKTI TAK BERMASALAH setelah re-cek adversarial**
+(termasuk 3 titik regresi-dugaan dari fix sesi sebelumnya: common-cold/bronkitis ambroxol,
+penamaan ICD `mm_hipertensi_urgensi`, TB TCM/HIV — semua bersih, bukan regresi).
+
+**#24 dikoreksi**: bukan temuan/defek, melainkan catatan LULUS dari CODEX sendiri (kontras dark-mode
+teruji, terendah ~4.66:1) — tak perlu ronde verifikasi tambahan.
+
+**Belum dieksekusi (keputusan/risiko lebih tinggi, dikembalikan ke dokter)**: bump versi Electron
+`^37.2.0`→`^38.8.6` (devDependency) — melompat major version, butuh smoke-test manual (window/DevTools
+lock/save-IPC) yg tak bisa diverifikasi headless di sesi ini; keputusan lisensi musik pengganti;
+sisa hardening yg berimplikasi UX (mis. anti-cheat lanjutan); model-data Prolanis/KBK (tumpang-tindih
+`M10_5_FIDELITAS.md` #7c); rubrik skor sbar/lab-lantai.
+
+**Verifikasi**: 652/652 test + typecheck bersih setelah SELURUH fix mekanis di atas (dua kali checkpoint
+selama pengerjaan, lalu sekali final).

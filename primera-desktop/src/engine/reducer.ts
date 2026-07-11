@@ -61,6 +61,9 @@ export const LEAD_TIME_OBAT = 3
 export const OPERASIONAL_BULANAN = 2_500_000
 /** M4.19 — ambang kas: di bawah ini laporan bulanan berbuntut teguran Dinkes. */
 export const AMBANG_TEGURAN_KAS = 8_000_000
+/** Fix #5b (audit CODEX 2026-07-11) — batas berapa kali hasil kunjungan
+ * 'partial' boleh menunda karma keluarga sebelum jatuh tempo asli berlaku. */
+export const BATAS_PARTIAL_KARMA = 2
 
 /** PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
  * menekan droplet/kronis-terdeteksi. Diekspor agar UI (Lokakarya "Triase
@@ -768,12 +771,27 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           t.karmaDicegah += 1
           events.push({ type: 'KARMA_DICEGAH', narasi: `Krisis di keluarga ${kelContent.namaKeluarga} berhasil dicegah.` })
         } else if (adaKarma && hasil.tingkat === 'partial') {
-          jadwal = jadwal.map((j) =>
-            j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId ? { ...j, hari: j.hari + 3 } : j,
-          )
-          kelBaru = kelBaru.karmaAktif
-            ? { ...kelBaru, karmaAktif: { ...kelBaru.karmaAktif, jatuhTempoHari: kelBaru.karmaAktif.jatuhTempoHari + 3 } }
-            : kelBaru
+          // Fix #5b (audit CODEX 2026-07-11): sebelumnya penundaan +3 hari tak
+          // berbatas — deterministik bisa diulang selamanya (pilih hipotesis
+          // benar + kartu salah tiap kunjungan) utk menunda karma tanpa akhir.
+          // Setelah BATAS_PARTIAL_KARMA kali tertunda, jadwal karma TIDAK lagi
+          // digeser — jatuh tempo asli berlaku, memaksa penyelesaian nyata.
+          const sudahTertunda = kelBaru.karmaAktif?.partialDitunda ?? 0
+          if (sudahTertunda < BATAS_PARTIAL_KARMA) {
+            jadwal = jadwal.map((j) =>
+              j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId ? { ...j, hari: j.hari + 3 } : j,
+            )
+            kelBaru = kelBaru.karmaAktif
+              ? {
+                  ...kelBaru,
+                  karmaAktif: {
+                    ...kelBaru.karmaAktif,
+                    jatuhTempoHari: kelBaru.karmaAktif.jatuhTempoHari + 3,
+                    partialDitunda: sudahTertunda + 1,
+                  },
+                }
+              : kelBaru
+          }
         } else if (adaKarma && hasil.tingkat === 'gagal') {
           jadwal = jadwal.map((j) =>
             j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId
@@ -1155,7 +1173,11 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
   if (hasil.jenis === 'posyandu' && hasil.rw !== undefined) {
     tally.posyanduSesi += 1
     // Kualitas posyandu → bonus IKS RW (gizi & imunisasi terangkat).
-    const bonus = 0.02 + 0.04 * hasil.skor
+    // Fix #12c (audit CODEX 2026-07-11): floor 0,02 dulu tetap diberikan
+    // walau skor sesi = 0 (semua jawaban salah) — tak ada gerbang performa,
+    // beda dari mekanik sejenis (Respons KLB mensyaratkan skor>=0.66 dulu
+    // baru dianggap tuntas). Kini linear murni: nol usaha = nol bonus.
+    const bonus = 0.04 * hasil.skor
     next = {
       ...next,
       posyanduRwTerakhir: { ...next.posyanduRwTerakhir, [String(hasil.rw)]: s.hari },
@@ -1527,8 +1549,15 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       kelBaru = { ...kel, ttm: mundurTtm(kel.ttm) }
       apaYangMemburuk = 'niat berubah mereka mengendur'
     } else {
+      // Fix #11b (audit CODEX 2026-07-11): kandidat dulu termasuk sumber
+      // 'dokter' — drift MENGUBAH nilai tapi TAK menyentuh field `sumber`,
+      // jadi UI tetap berlabel "diverifikasi dokter" walau nilainya sudah
+      // berubah diam-diam via drift acak, bukan pemeriksaan dokter yang baru.
+      // Dibatasi ke sumber 'kader' (data lapangan yang memang bisa berubah/
+      // usang tanpa kunjungan dokter) — data ber-label 'dokter' kini stabil
+      // sampai benar-benar diperiksa ulang.
       const kandidat = Object.entries(kel.indikator).filter(
-        ([, n]) => n.sumber !== 'belum' && n.statusSebenarnya === 'ya' && n.status !== 'na',
+        ([, n]) => n.sumber === 'kader' && n.statusSebenarnya === 'ya' && n.status !== 'na',
       )
       if (kandidat.length === 0) continue
       const [indId] = rngDrift.pick(kandidat)

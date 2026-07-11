@@ -93,7 +93,12 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
   // sebelumnya cuma lab+obat, jadi tak cocok dgn kas sungguhan.
   const biayaTindakan = enc.tindakan.reduce((total, id) => total + (PACK.tindakan[id]?.biaya ?? 0), 0)
 
-  const sbarLengkap = KOLOM_SBAR.every(({ kunci }) => sbar[kunci].trim().length > 0)
+  // Fix #19a (audit CODEX 2026-07-11): gate submit dulu cuma cek non-kosong
+  // (length>0, 1 karakter lolos) — tak selaras ambang kualitas SBAR sungguhan
+  // di clinic.ts (sbarSkor menghitung tiap kolom >=20 karakter). Disamakan
+  // supaya gate UI mencerminkan standar isi minimal yang sebenarnya dinilai.
+  const AMBANG_SBAR_ISI = 20
+  const sbarLengkap = KOLOM_SBAR.every(({ kunci }) => sbar[kunci].trim().length >= AMBANG_SBAR_ISI)
 
   /* Spesialisasi yang DIBUTUHKAN kasus aktif (bila kasus wajib-rujuk). */
   const spesialisDibutuhkan: SpesialisasiRs | undefined =
@@ -330,7 +335,7 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
               disabled={!sbarLengkap || rsTerpilih === undefined}
               title={
                 !sbarLengkap
-                  ? 'Isi keempat kolom SBAR dulu.'
+                  ? `Isi keempat kolom SBAR dengan cukup detail dulu (minimal ${AMBANG_SBAR_ISI} karakter/kolom).`
                   : rsTerpilih === undefined
                     ? 'Pilih satu RS tujuan.'
                     : 'Kirim rujukan ke RS terpilih melalui SISRUTE.'

@@ -183,7 +183,11 @@ export interface KeluargaState {
   /** Follow-up terjadwal (hari). */
   followUpHari?: number
   /** Keluarga berisiko yang diabaikan bisa memburuk (karma). */
-  karmaAktif?: { jadwalId: string; jatuhTempoHari: number }
+  // Fix #5b (audit CODEX 2026-07-11): partialDitunda menghitung berapa kali
+  // hasil 'partial' sudah menunda karma ini — tanpa batas, pemain bisa
+  // deterministik memilih hipotesis-benar+kartu-salah tiap kunjungan utk
+  // menunda karma tanpa akhir. Dibatasi BATAS_PARTIAL_KARMA (reducer.ts).
+  karmaAktif?: { jadwalId: string; jatuhTempoHari: number; partialDitunda?: number }
   /** Arc selesai (berhasil/gagal) — menentukan epilog. */
   arcSelesai?: 'berhasil' | 'gagal'
 }

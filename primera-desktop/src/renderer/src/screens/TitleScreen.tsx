@@ -123,6 +123,14 @@ export function TitleScreen() {
   // DeepThink ronde-2 — telemetri wall-clock: sinyal forensik terpisah,
   // opsional, TIDAK memengaruhi status SAH/TIDAK SAH di atas.
   const [peringatanTelemetri, setPeringatanTelemetri] = useState<string[] | null>(null)
+  // Fix #26b (audit CODEX 2026-07-11): teks nama-file bawaan browser pada
+  // <input type="file"> ("No file chosen" dsb.) tak mengikuti bahasa
+  // Indonesia app dan tak bisa distyle. Tampilkan nama file terpilih lewat
+  // span sendiri (input aslinya disembunyikan visual, tetap fungsional &
+  // fokus-keyboard via .title__file-input-tersembunyi).
+  const [namaFileArsip, setNamaFileArsip] = useState<string | null>(null)
+  const [namaFileDossier, setNamaFileDossier] = useState<string | null>(null)
+  const [namaFileTelemetri, setNamaFileTelemetri] = useState<string | null>(null)
 
   const namaBersih = nama.trim()
   const nimBersih = nim.trim()
@@ -299,13 +307,16 @@ export function TitleScreen() {
             )}
             <label className="teks-xs teks-lembut title__impor">
               Impor arsip JSON:{' '}
+              <span className="title__file-tampil">{namaFileArsip ?? 'Belum ada berkas dipilih'}</span>
               <input
                 type="file"
+                className="title__file-input-tersembunyi"
                 accept="application/json"
                 onChange={(e) => {
                   const input = e.target
                   const f = input.files?.[0]
                   if (!f) return
+                  setNamaFileArsip(f.name)
                   // CODEX M14 #24: tolak berkas raksasa sebelum dibaca ke memori.
                   if (f.size > MAKS_UKURAN_IMPOR) {
                     window.alert('Berkas terlalu besar — bukan arsip stase yang wajar.')
@@ -340,12 +351,15 @@ export function TitleScreen() {
             {/* M6.27 — verifikasi dossier mahasiswa (untuk dosen, offline). */}
             <label className="teks-xs teks-lembut title__impor">
               Verifikasi Dossier — untuk dosen:{' '}
+              <span className="title__file-tampil">{namaFileDossier ?? 'Belum ada berkas dipilih'}</span>
               <input
                 type="file"
+                className="title__file-input-tersembunyi"
                 accept="application/json"
                 onChange={(e) => {
                   const f = e.target.files?.[0]
                   if (!f) return
+                  setNamaFileDossier(f.name)
                   e.target.value = ''
                   if (f.size > MAKS_UKURAN_IMPOR) {
                     window.alert('Berkas dossier terlalu besar — bukan dossier stase yang wajar.')
@@ -359,16 +373,25 @@ export function TitleScreen() {
               />
             </label>
 
+            {/* Fix #27 (audit CODEX 2026-07-11): pemisah visual antar dua alat
+                dosen yang tadinya menempel tanpa jeda (Verifikasi Dossier vs
+                Impor Telemetri) — mudah tertukar krn keduanya sama-sama
+                <label> teks-xs beruntun. */}
+            <hr className="title__impor-pisah" />
+
             {/* DeepThink ronde-2 — telemetri wall-clock: sinyal forensik
                 OPSIONAL, terpisah dari vonis SAH/TIDAK SAH di atas. */}
             <label className="teks-xs teks-lembut title__impor">
               Impor Log Telemetri (opsional, deteksi save-scumming):{' '}
+              <span className="title__file-tampil">{namaFileTelemetri ?? 'Belum ada berkas dipilih'}</span>
               <input
                 type="file"
+                className="title__file-input-tersembunyi"
                 accept="application/jsonl,text/plain,.jsonl"
                 onChange={(e) => {
                   const f = e.target.files?.[0]
                   if (!f) return
+                  setNamaFileTelemetri(f.name)
                   e.target.value = ''
                   if (f.size > MAKS_UKURAN_IMPOR) {
                     window.alert('Berkas log telemetri terlalu besar.')

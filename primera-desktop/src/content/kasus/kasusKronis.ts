@@ -530,6 +530,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     fktp144: true,
     harusDirujuk: false,
     keluhanUtama: 'Anak saya rewel dan menarik-narik telinganya sambil menangis, Dok, semalam demam.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 2, usiaMax: 8 },
     vital: { nadi: 96, rr: 22, suhu: 38.3 },
     anamnesis: [
@@ -785,6 +786,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     spesialisRujukan: 'anak',
     prevalensi: 'rendah',
     keluhanUtama: 'Anak saya sesak, napasnya cepat dan tarikan dadanya ke dalam, panas tinggi tiga hari, Dok.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 1, usiaMax: 4 },
     vital: { nadi: 130, rr: 55, suhu: 38.8, spo2: 93 },
     anamnesis: [
@@ -913,6 +915,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     spesialisRujukan: 'saraf',
     prevalensi: 'rendah',
     keluhanUtama: 'Ibu saya tiba-tiba bicaranya pelo dan lengan kanannya lemas sejak subuh tadi, Dok — kami langsung membawanya ke sini.',
+    keluhanUtamaOlehPendamping: true,
     // usiaMax 68→78 (fix M1/#3, triase DeepThink 2026-07-11): karma Mbah Lastri
     // (usia 71, keluarga/desaE.ts) kini di-reroute ke kasus ini (lihat komentar
     // di desaE.ts) — pack.test.ts menegakkan demografi kasus HARUS mencakup usia

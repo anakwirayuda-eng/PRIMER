@@ -284,6 +284,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Anak saya ada koreng kuning di sekitar hidung dan mulut dok, makin banyak.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 3, usiaMax: 10 },
     vital: { td: '95/60', nadi: 96, rr: 22, suhu: 37.2 },
     anamnesis: [
@@ -882,6 +883,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Anak saya gatal-gatal di kepala terus dok, ada kutu dan telurnya di rambut.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 5, usiaMax: 12, jenisKelamin: 'P' },
     vital: { td: '100/65', nadi: 88, rr: 20, suhu: 36.6 },
     anamnesis: [
@@ -1103,6 +1105,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Anak saya demam tinggi beberapa hari, mata merah dan batuk-pilek, lalu muncul ruam merah dari wajah dok.',
+    keluhanUtamaOlehPendamping: true,
     demografi: { usiaMin: 1, usiaMax: 8 },
     vital: { td: '95/60', nadi: 110, rr: 26, suhu: 39.0 },
     anamnesis: [

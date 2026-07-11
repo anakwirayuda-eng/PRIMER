@@ -418,6 +418,36 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     }
   }
 
+  // Fix #22 (audit CODEX 2026-07-11): pemulihan kasusId-asing di atas TAK
+  // memvalidasi invariant fase↔diagnosis — save yang di-tamper/korup bisa
+  // mendarat di fase 'terapi'/'disposisi' TANPA `diagnosis` tercatat. Tak ada
+  // aksi utk mundur fase (LANJUT_FASE hanya maju), jadi ini hard-lock permanen.
+  // Pola sama persis dgn pemulihan igd/kunjungan/kegiatan di atas.
+  if (objek(st['klinik'])) {
+    const klinikAktif2 = (st['klinik'] as Record<string, unknown>)['aktif']
+    if (objek(klinikAktif2)) {
+      const FASE_KLINIK_SAH = new Set(['anamnesis', 'pemeriksaan', 'diagnosis', 'terapi', 'disposisi', 'selesai'])
+      const fase = klinikAktif2['fase']
+      const faseValid = typeof fase === 'string' && FASE_KLINIK_SAH.has(fase)
+      const faseButuhDiagnosis = fase === 'terapi' || fase === 'disposisi' || fase === 'selesai'
+      const diagnosisAda = objek(klinikAktif2['diagnosis'])
+      if (!faseValid || (faseButuhDiagnosis && !diagnosisAda)) {
+        ;(st['klinik'] as Record<string, unknown>)['aktif'] = undefined
+        const hari = st['hari'] as number
+        const inbox = st['inbox'] as Record<string, unknown>[]
+        inbox.push({
+          id: `surat_pemulihan_klinik_fase_${hari}_${inbox.length}`,
+          hari,
+          jenis: 'sistem',
+          dari: 'Sistem',
+          judul: 'Pasien di ruang periksa dipulihkan otomatis',
+          isi: 'Data tahap pemeriksaan pasien yang sedang kamu tangani tidak konsisten. Pasien dianggap sudah dialihkan ke rekan sejawat — kamu bisa memanggil pasien berikutnya seperti biasa.',
+          dibaca: false,
+        })
+      }
+    }
+  }
+
   // Pemulihan kunjungan tak dikenal (M10 §49, CODEX B.6): pola SAMA igd/klinik
   // di atas — bila keluarga ATAU skenario kunjungan aktif sudah tak ada di pack
   // (rename/hapus konten antar-versi), LANJUTKAN menolak selamanya ("Selesaikan

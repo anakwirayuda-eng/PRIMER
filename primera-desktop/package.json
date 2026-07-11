@@ -14,8 +14,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "pack": "electron-vite build && electron-builder --win --dir",
-    "dist": "electron-vite build && electron-builder --win nsis"
+    "check:bgm-license": "node scripts/check-bgm-license.js",
+    "pack": "npm run check:bgm-license && electron-vite build && electron-builder --win --dir",
+    "dist": "npm run check:bgm-license && electron-vite build && electron-builder --win nsis"
   },
   "build": {
     "appId": "id.ac.its.medics.primer",

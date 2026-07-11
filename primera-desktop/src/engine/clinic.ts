@@ -524,13 +524,21 @@ export function nilaiEncounter(
   // M10 §49: antibiotik OPSIONAL yang diresepkan tak boleh memicu penalti
   // stewardship — clue kasusnya sendiri yang menyebutnya sah (mis. kloramfenikol
   // tetes hordeolum). Antibiotik lain di luar sanksi kasus tetap dihitung.
-  const resepAdaAntibiotik = enc.resep.some(
-    (id) => !idOpsional.has(id) && pack.obat[id]?.antibiotik === true,
+  // Fix #17 (audit CODEX 2026-07-11): versi lama cek "apakah KASUS INI py
+  // antibiotik apa pun di jawaban benar" (kasus-level) — bukan "apakah
+  // antibiotik YANG DIRESEPKAN pemain itu sendiri ada di jawaban benar"
+  // (obat-level). Akibatnya kasus yg obatBenar-nya memuat SATU antibiotik
+  // (mis. amoksisilin utk faringitis) meloloskan antibiotik LAIN yg salah
+  // (mis. siprofloksasin) dari penalti stewardship — asal bukan kasus
+  // "tanpa-antibiotik-sama-sekali". Sekarang dicek per-obat yg diresepkan.
+  const antibiotikSalahDiresepkan = enc.resep.some(
+    (id) =>
+      !idOpsional.has(id) &&
+      pack.obat[id]?.antibiotik === true &&
+      !obatBenar.includes(id) &&
+      !idAlternatifSah.has(id),
   )
-  const indikasiAntibiotik =
-    obatBenar.some((id) => pack.obat[id]?.antibiotik === true) ||
-    idAlternatifSah.size > 0 && [...idAlternatifSah].some((id) => pack.obat[id]?.antibiotik === true)
-  const antibiotikTanpaIndikasi = resepAdaAntibiotik && !indikasiAntibiotik
+  const antibiotikTanpaIndikasi = antibiotikSalahDiresepkan
   let skorTerapi = clamp(
     Math.round(
       100 * rasioTerapi -
