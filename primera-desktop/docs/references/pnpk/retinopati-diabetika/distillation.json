@@ -1,0 +1,43 @@
+{
+  "judul": "PNPK 2023 - Tata Laksana Retinopati Diabetika",
+  "pdfUrl": "https://kemkes.go.id/app_asset/file_content_download/16998447006551925ccaae04.63843720.pdf",
+  "halamanSumber": "https://kemkes.go.id/id/pnpk-2023---tata-laksana-retinopati-diabetika",
+  "nomorSK": "HK.01.07/MENKES/1914/2023",
+  "tanggalTerbit": "Ditetapkan di Jakarta, 25 Agustus 2023 (ditandatangani Menteri Kesehatan Budi G. Sadikin). Disusun berdasarkan surat pengusulan Perhimpunan Dokter Spesialis Mata Indonesia (PERDAMI) No. 041/Perd.XVI/Sek/02/2023 tanggal 7 Februari 2023.",
+  "gagal": false,
+  "epidemiologiIndonesia": "Di Indonesia, Retinopati Diabetika (RD) adalah komplikasi kedua terbanyak akibat Diabetes Melitus (DM) setelah nefropati. Prevalensi RD di Indonesia tercatat 43,1% — lebih tinggi dari prevalensi global (34,6%) — dengan angka sight-threatening RD sebesar 26,1%. Secara global, 75% pasien yang telah menderita DM selama 20 tahun mengalami RD, dan RD adalah penyebab 4,8% dari seluruh kebutaan dunia (WHO). Tahun 2000 Indonesia memiliki sekitar 8 juta penyandang DM, diproyeksikan menjadi lebih dari 21 juta pada 2030, sehingga beban RD juga akan meningkat tajam. Skrining awal dan kontrol teratur diperkirakan dapat mencegah hingga 90% kebutaan akibat RD, namun PNPK ini secara eksplisit mencatat tantangan struktural Indonesia: keterbatasan jumlah dokter umum maupun spesialis mata serta sarana deteksi dini (funduskopi, foto fundus, OCT, FFA) yang umumnya hanya tersedia di faskes sekunder/tersier (termasuk RS mata khusus) dan terpusat di kota besar; kondisi geografis kepulauan mempersulit akses masyarakat di pulau-pulau kecil/daerah terpencil; serta tata laksana DM di FKTP Indonesia pada praktiknya belum sepenuhnya sesuai konsensus PERKENI, termasuk lemahnya deteksi dini RD.",
+  "presentasiKhasFKTP": {
+    "gejalaKlinis": "RD bersifat asimtomatik pada tahap awal (belum ada gangguan pada makula/media penglihatan) — inilah alasan utama skrining proaktif diperlukan, bukan menunggu keluhan. Gejala baru muncul pada tahap lanjut: penglihatan buram, floaters, penglihatan mendadak terhalang (curiga perdarahan vitreus), flashes, tirai bayangan (curiga ablasio retina), dan nyeri pada/sekitar mata (curiga glaukoma neovaskular akibat PDR lanjut).",
+    "pemeriksaanAwalYangBisaDilakukanDokterUmum": "Ketajaman visual (kartu Snellen), slit lamp biomicroscopy (skrining katarak/neovaskularisasi iris), tekanan intraokular, dan funduskopi pupil lebar (evaluasi polus posterior, retina perifer, edema makula, NVD/NVE, tanda NPDR berat, perdarahan vitreous/preretinal).",
+    "jadwalSkriningFunduskopiRutinPadaDM": {
+      "dmTipe2": "Skrining DILAKUKAN SEGERA saat pertama kali terdiagnosis DM tipe 2 (tidak menunggu gejala mata) — ini poin paling relevan untuk kasus dm_tipe2 PRIMERA yang sudah ada.",
+      "dmTipe1": "Skrining dilakukan setelah 5 tahun terdiagnosis DM tipe 1.",
+      "kehamilanDenganDM": "Skrining segera setelah konsepsi atau pada awal trimester pertama, untuk penyandang DM tipe 1 maupun tipe 2 yang hamil.",
+      "followUpRutin": "Minimal 1 kali per tahun pada penyandang DM tanpa RD; pada penyandang RD, interval follow-up mengikuti derajat keparahan RD (makin berat, makin sering).",
+      "siapaYangBolehMenyaring": "Skrining/deteksi awal dapat dilakukan oleh dokter spesialis mata ATAU dokter umum yang memiliki kompetensi pemeriksaan segmen posterior dengan funduskopi — relevan langsung untuk dokter FKTP/Puskesmas. (Level of evidence IV, Rekomendasi C)."
+    }
+  },
+  "tatalaksanaLiniPertama": {
+    "kontrolSistemikRanahFKTP": [
+      "Kontrol glikemik optimal: HbA1c < 7%, atau gula darah puasa 80-130 mg/dl, atau gula darah 2 jam post-prandial 140-180 mg/dl (level evidence B).",
+      "Kontrol tekanan darah: diastolik ≤ 90 mmHg dan sistolik ≤ 140 mmHg.",
+      "Kontrol dislipidemia: LDL ≤ 100, trigliserida ≤ 150, HDL laki-laki ≥ 40 dan perempuan ≥ 50 (level evidence B-C).",
+      "Terapi statin untuk dislipidemia (kecuali kontraindikasi), dengan pertimbangan tambahan fenofibrat pada DM tipe 2.",
+      "Catatan: seluruh poin di atas SUDAH menjadi bagian tata laksana kronis DM tipe 2 standar — bukan tindakan baru di luar kompetensi FKTP."
+    ],
+    "tataLaksanaSpesialistikMata": [
+      "NPDR ringan-sedang: tidak ada indikasi terapi spesifik mata; fokus pada kontrol sistemik DM (risiko progresi turun dengan kontrol gula darah/TD/lipid intensif).",
+      "NPDR berat/sangat berat: pertimbangkan terapi laser scatter/pan-retina dini pada kondisi tertentu (usia tua dengan DM tipe 2, retina sulit dipantau, riwayat operasi katarak, mata sebelah sudah PDR, dll).",
+      "PDR (Proliferative Diabetic Retinopathy): terapi standar adalah fotokoagulasi laser pan-retina (level evidence Ib, Rekomendasi A); injeksi anti-VEGF (ranibizumab) dapat digunakan sebagai adjuvant, terbukti non-inferior terhadap laser PRP dalam studi Protocol S.",
+      "Advanced PDR: vitrektomi sebagai terapi utama (level evidence Ib, Rekomendasi A), terutama bila ada perdarahan vitreous masif/lama atau ablasio retina traksional yang mengancam makula.",
+      "Edema Makula Diabetika (EMD): untuk EMD sentral, injeksi anti-VEGF intravitreal (ranibizumab first-line, alternatif bevacizumab/aflibercept/brolucizumab/faricimab) adalah lini pertama, terbukti superior dibanding laser fotokoagulasi makula. EMD non-sentral diterapi dengan laser fokal/grid. Steroid intravitreal (triamcinolone) merupakan alternatif, terutama pada mata pseudofakik (level evidence Ib, Rekomendasi A)."
+    ]
+  },
+  "kriteriaRujukan": [
+    "Pasien DM tipe 2 yang baru terdiagnosis, DM tipe 1 yang sudah >5 tahun, atau DM (tipe 1/2) yang sedang hamil — jika FKTP/dokter umum setempat tidak memiliki kompetensi atau alat funduskopi pupil lebar — dirujuk untuk skrining RD ke layanan yang memiliki dokter spesialis mata.",
+    "Semua temuan RD kategori berat/sangat berat (NPDR berat-sangat berat), seluruh kasus PDR, dan seluruh kasus EMD dirujuk ke dokter spesialis mata (idealnya subspesialis vitreoretina) untuk tata laksana definitif (laser fotokoagulasi, injeksi anti-VEGF/steroid intravitreal, atau vitrektomi) — semua modalitas ini berada di luar kompetensi dan alat FKTP.",
+    "Tanda-tanda vision-threatening yang butuh rujukan segera/cito: penurunan visus mendadak, floaters/flashes baru, tirai bayangan (curiga ablasio retina), nyeri mata hebat (curiga glaukoma neovaskular) — pada pasien dengan riwayat DM.",
+    "PNPK secara eksplisit mencatat bahwa fasilitas/alat deteksi dini dan tata laksana RD 'tidak dapat dilakukan di fasilitas kesehatan layanan primer' dan umumnya hanya tersedia di faskes sekunder-tersier termasuk RS mata khusus — menegaskan bahwa peran FKTP/Puskesmas dalam RD adalah skrining dasar + edukasi + rujukan terjadwal, bukan tata laksana."
+  ],
+  "potensiKasusBaru": "Retinopati Diabetika BUKAN kandidat kuat untuk menjadi kasus penyakit baru yang berdiri sendiri di PRIMERA, karena hampir seluruh tata laksana definitifnya (laser fotokoagulasi, injeksi anti-VEGF/steroid intravitreal, vitrektomi) eksplisit berada di luar kompetensi dan alat FKTP/Puskesmas — PNPK sendiri menyatakan fasilitas ini 'tidak dapat dilakukan di fasilitas kesehatan layanan primer'. Peran dokter FKTP dalam RD sebatas: (1) mengenali bahwa RD sering asimtomatik sehingga skrining harus proaktif bukan reaktif, (2) menjadwalkan skrining funduskopi sesuai kriteria PNPK (segera saat DM tipe 2 baru terdiagnosis, 5 tahun setelah DM tipe 1, atau segera saat hamil dengan DM, lalu follow-up tahunan), dan (3) mengenali red-flag visual (penurunan visus mendadak, floaters/flashes, tirai bayangan, nyeri mata) sebagai indikasi rujukan ke spesialis mata. Karena itu, konten ini jauh lebih tepat menjadi ENRICHMENT pada kasus dm_tipe2 yang sudah ada di PRIMERA — misalnya: item checklist/dialog 'kapan terakhir funduskopi/periksa mata?' sebagai bagian edukasi komplikasi kronis DM, cabang skenario di mana pasien DM tipe 2 baru menyampaikan gejala mata (lalu pemain dinilai dari ketepatan mengenali kebutuhan rujukan, bukan mencoba mengobati sendiri), atau mutiaraEbm/catatanRealita (pola M11 Fase-1 yang sudah berjalan) tentang pentingnya skrining mata tahunan sebagai bagian follow-up DM kronis jangka panjang. Ini selaras dengan setting FKTP PRIMERA (Puskesmas Pagi) yang server-authoritative — pemain sebagai dokter Puskesmas idealnya dinilai dari deteksi dini dan keputusan rujukan yang tepat waktu, bukan dari detail teknis terapi vitreoretina yang di luar lingkup praktiknya."
+}

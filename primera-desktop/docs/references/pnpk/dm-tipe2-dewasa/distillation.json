@@ -1,0 +1,92 @@
+{
+  "judul": "PNPK 2020 - Tata Laksana Diabetes Melitus Tipe 2 Dewasa",
+  "pdfUrl": "https://kemkes.go.id/app_asset/file_content_download/17001182206555becc967274.44607200.pdf",
+  "halamanSumber": "https://kemkes.go.id/id/pnpk-2020---tata-laksana-diabetes-melitus-tipe-2-dewasa",
+  "nomorSK": "Keputusan Menteri Kesehatan RI Nomor HK.01.07/MENKES/603/2020 tentang Pedoman Nasional Pelayanan Kedokteran Tata Laksana Diabetes Melitus Tipe 2 Dewasa",
+  "tanggalTerbit": "Ditetapkan di Jakarta, 31 Agustus 2020 (ditandatangani Menkes Terawan Agus Putranto). Catatan: watermark 'RANCANGAN' muncul di halaman pertama salinan PDF resmi, namun dokumen ini adalah versi final yang diterbitkan dan diunduh dari domain resmi kemkes.go.id.",
+  "catatanEkstraksi": "Diekstrak penuh (183 halaman, ~344.000 karakter) dari PDF resmi via PyMuPDF. Distilasi di bawah difokuskan pada kompetensi dokter umum di FKTP/Puskesmas (PPK I) — bagian prosedur spesialistik/subspesialistik (mis. detail bedah vaskular, laser retina, dialisis) dipangkas kecuali relevan sebagai pemicu rujukan.",
+  "ringkasanLiniPertama": "Diagnosis DM tipe 2 (salah satu terpenuhi): GDP >=126 mg/dL (puasa >=8 jam); atau glukosa plasma 2 jam TTGO (beban 75 g) >=200 mg/dL; atau glukosa plasma sewaktu >=200 mg/dL disertai gejala klasik (poliuria, polidipsia, polifagia, penurunan BB tak jelas sebabnya); atau HbA1c >=6,5% (metode NGSP/DCCT). Prediabetes: GDP 100-125 mg/dL (GPT), dan/atau glukosa 2 jam TTGO 140-199 mg/dL (TGT), dan/atau HbA1c 5,7-6,4%. Skrining pada dewasa >45 tahun tanpa faktor risiko, atau lebih muda dengan IMT >=23 kg/m2 plus >=1 faktor risiko (riwayat keluarga DM, hipertensi, dislipidemia HDL rendah/TG tinggi, riwayat kardio-serebrovaskular, PCOS, aktivitas fisis kurang, kondisi resistensi insulin). PNPK menegaskan: kasus DM tipe 2 sederhana tanpa penyulit dapat dikelola tuntas oleh dokter umum di FKTP; dokter umum adalah 'ujung tombak' pelayanan DM di layanan primer. Tata laksana dimulai dari modifikasi gaya hidup (terapi gizi medik + aktivitas fisis >=150 menit/minggu intensitas sedang) bersamaan dengan farmakoterapi bila diperlukan. Algoritma umum: HbA1c awal <7,5% -> mulai monoterapi oral (metformin lini pertama). HbA1c >=7,5%, atau monoterapi 3 bulan gagal capai target (<7%) -> kombinasi 2 obat mekanisme berbeda. Kombinasi 2 obat 3 bulan gagal -> kombinasi 3 obat. HbA1c >9% tanpa dekompensasi metabolik/penurunan BB cepat -> boleh langsung kombinasi 2-3 obat oral. HbA1c >9% DENGAN dekompensasi metabolik (gejala hiperglikemia jelas, penurunan BB cepat, ketonuria) atau glukosa darah >=300 mg/dL -> insulin harus segera dipertimbangkan/dimulai. Target umum: HbA1c <7% (individual, bisa lebih ketat 6,5% pada pasien muda/tanpa komorbid/tanpa risiko hipoglikemia, atau lebih longgar ~8% pada lansia/harapan hidup terbatas/riwayat hipoglikemia berat/komorbid banyak). Target lain: GD preprandial 80-130 mg/dL, GD 1-2 jam PP <180 mg/dL, TD <140/90 mmHg, LDL <100 mg/dL (<70 bila risiko KV sangat tinggi), HDL pria >40/wanita >50 mg/dL, trigliserida <150 mg/dL, IMT 18,5-22,9 kg/m2. Regimen dievaluasi tiap 3-6 bulan; intensifikasi terapi tidak boleh ditunda bila target tidak tercapai. Statin: usia <40 tahun dengan ASCVD atau usia >40 tahun dengan ASCVD -> statin + target LDL <70 (tambah ezetimibe bila LDL tetap tinggi meski statin dosis maksimal toleran); usia >40 tanpa ASCVD tapi ada faktor risiko (LDL>=100, hipertensi, merokok, PGK, albuminuria, riwayat keluarga PJK dini) -> pertimbangkan statin. Aspirin dosis 75-162 mg/hari sebagai strategi pencegahan (klopidogrel 75 mg/hari sebagai pengganti bila intoleran aspirin). Edukasi mandiri wajib: pengaturan gizi, aktivitas fisis, pengenalan gejala hipoglikemia dan cara mengatasi, perawatan kaki sehari-hari, pentingnya kepatuhan obat dan kontrol berkala.",
+  "dosisKunci": [
+    {
+      "obat": "Metformin",
+      "catatan": "Lini pertama untuk mayoritas kasus DM tipe 2 (rekomendasi A). Efektif, aman, murah; menurunkan HbA1c ~1-1,3%; dapat menurunkan berat badan; menurunkan risiko kardiovaskular & mortalitas. Sediaan immediate-release 2x/hari atau extended-release 1x/hari; mulai dosis rendah lalu titrasi perlahan untuk kurangi efek samping GI; berikan setelah makan.",
+      "penyesuaianGinjal": "LFG 60-90 mL/menit/1,73m2: hingga 2000 mg/hari. LFG 45-60: hingga 1000 mg/hari. LFG 30-45: hingga 500 mg/hari. LFG <30 mL/menit/1,73m2: KONTRAINDIKASI.",
+      "efekSampingKunci": "Gangguan gastrointestinal (paling umum); defisiensi vitamin B12 pada pemakaian jangka panjang (cek berkala terutama bila ada anemia/neuropati perifer); risiko asidosis laktat perlu diperhatikan pada gangguan hati berat, kecenderungan hipoksemia (PPOK, sepsis, syok, gagal jantung NYHA III-IV) meski data Cochrane pada >70.000 pasien/tahun tidak menemukan peningkatan kasus asidosis laktat."
+    },
+    {
+      "obat": "Sulfonilurea (glibenklamid, glimepirid, gliklazid)",
+      "catatan": "Insulin secretagogue; penurunan HbA1c ~0,4-1,2%. Bisa jadi lini pertama bila ada intoleransi metformin, atau pada pasien tanpa kelebihan berat badan dengan riwayat keluarga DM tipe 2 kuat. Risiko hipoglikemia tertinggi pada glibenklamid (25,6%), lalu glimepirid (16,8%), gliklazid (14,0%) — pertimbangkan pilih gliklazid/glimepirid bila risiko hipoglikemia jadi perhatian, terutama pada lansia atau gangguan ginjal (perlu penyesuaian dosis)."
+    },
+    {
+      "obat": "Insulin basal (memulai terapi insulin di FKTP)",
+      "catatan": "Kombinasi OAD + insulin basal (kerja menengah/panjang) malam menjelang tidur adalah pendekatan umum. Dosis awal insulin basal: 10 unit sekitar jam 22.00, evaluasi dari GDP esok hari, titrasi bertahap. Bila GD sepanjang hari tetap tidak terkendali walau sudah insulin basal, tambahkan insulin prandial."
+    },
+    {
+      "obat": "Indikasi mulai insulin (bukan OAD lagi)",
+      "catatan": "Insulin harus dipertimbangkan/dimulai bila: ada tanda katabolisme (penurunan BB), gejala hiperglikemia jelas, HbA1c >9% (77,4 mmol/mol), atau glukosa darah >=300 mg/dL (16,7 mmol/L)."
+    },
+    {
+      "obat": "Aspirin / Klopidogrel (pencegahan kardiovaskular)",
+      "catatan": "Aspirin 75-162 mg/hari sebagai strategi pencegahan pada pasien DM berisiko kardiovaskular. Klopidogrel 75 mg/hari sebagai pengganti bila intoleransi aspirin."
+    },
+    {
+      "obat": "ACE-inhibitor / ARB (nefropati diabetik)",
+      "catatan": "Direkomendasikan pada pasien DM dengan hipertensi + rasio albumin-kreatinin urin (ACR) 30-299 mg/g, ATAU tanpa hipertensi namun ACR >300 mg/g atau LFG <60 mL/menit/1,73m2. Pantau kreatinin & kalium serum berkala selama terapi. TIDAK dianjurkan untuk pencegahan primer pada pasien dengan TD normal, ACR normal (<30 mg/g), dan LFG normal."
+    }
+  ],
+  "kriteriaRujukan": {
+    "rujukSegeraKeRSDaruratKegawatan": "Pada keadaan emergensi dengan dekompensasi metabolik berat — misalnya ketoasidosis diabetik, hiperosmolar hiperglikemik non-ketotik, kondisi penyakit berat, penurunan berat badan cepat, atau adanya ketonuria — harus SEGERA dirujuk ke pelayanan kesehatan sekunder/tersier (dokumen eksplisit menyebut ini di Bab III tata laksana khusus).",
+    "dariPPK_I_ke_PPK_II_dokterSpesialisPenyakitDalam_SalahSatuBerikut": [
+      "Setelah 3 bulan terapi OAD (tunggal/kombinasi) masih GDP >80 mg/dL, GDPP >140 mg/dL, atau HbA1c >6,5% (catatan: angka target di teks Bab VII ini kemungkinan salah ketik dari dokumen asli — target umum PNPK sendiri adalah GDP 80-130 mg/dL & HbA1c <7%; gunakan judgement klinis, dasarnya adalah TIDAK MENCAPAI TARGET setelah 3 bulan terapi)",
+      "Monoterapi OAD 3 bulan belum capai target",
+      "Terapi kombinasi OAD 3 bulan belum capai target",
+      "Dislipidemia yang tidak terkendali",
+      "Hipertensi yang tidak terkendali",
+      "Anemia",
+      "Komplikasi kronis (retinopati, nefropati)",
+      "Usia lanjut",
+      "Kehamilan",
+      "Krisis hiperglikemia",
+      "Hipoglikemia yang tidak teratasi / tidak membaik setelah tata laksana medis awal",
+      "Infeksi kaki berat (ulkus, selulitis, abses)",
+      "TB paru atau infeksi paru lainnya"
+    ],
+    "dariPPK_I_ke_PPK_III_subspesialisEndokrin_SalahSatuBerikut": [
+      "Diabetes dengan tanda unstable angina",
+      "Hipoglikemia tidak teratasi setelah tata laksana medis",
+      "Komplikasi akut (ketoasidosis, hiperosmolar hiperglikemik non-ketotik) setelah tindakan awal",
+      "Retinopati/nefropati diabetik atau komplikasi kronis lain yang tidak terkendali",
+      "Kegagalan capai target setelah 3 bulan OAD tunggal/kombinasi",
+      "Dislipidemia/hipertensi/anemia/infeksi tidak terkendali dalam 3 bulan",
+      "Kehamilan dengan gula darah tak terkontrol dalam 3 bulan",
+      "Infeksi kaki (ulkus/selulitis/abses) tidak teratasi dalam 7 hari"
+    ],
+    "rujukBalikKePPK_I_bilaSalahSatu": [
+      "Setelah 3 bulan GDP <80 mg/dL, GDPP <140 mg/dL, atau HbA1c <6,5% tercapai dan stabil",
+      "Target tercapai dengan OAD tunggal atau kombinasi",
+      "Komplikasi kronis terkendali selama 3 bulan",
+      "Kehamilan dengan DM sudah terkontrol 3 bulan",
+      "Hipoglikemia sudah teratasi",
+      "Infeksi kaki sudah teratasi dan gula darah terkontrol"
+    ],
+    "kriteriaSpesifikOrganLain": {
+      "mata": "Segera rujuk ke dokter spesialis mata bila ditemukan edema makula, retinopati diabetik nonproliferatif berat, atau retinopati diabetik proliferatif (semua derajat).",
+      "ginjal": "Segera rujuk untuk terapi pengganti ginjal (dialisis/transplantasi) bila LFG <30 mL/menit/1,73m2. Pada LFG <60 mL/menit/1,73m2, segera evaluasi & tata laksana komplikasi penyakit ginjal kronis (bisa melibatkan konsultasi spesialis).",
+      "kakiDiabetik": "Ulkus derajat 3 (osteomielitis/abses), derajat 4-5 (gangren) pada klasifikasi kaki diabetes, atau infeksi kaki derajat berat (dengan tanda respons inflamasi sistemik: suhu >39C atau <36C, frekuensi napas tinggi, leukositosis/leukopenia) memerlukan rujukan segera / tata laksana agresif tingkat lanjut."
+    }
+  },
+  "redFlags": [
+    "Ketoasidosis diabetik (KAD) atau tanda mengarah ke sana: dehidrasi berat, napas cepat/dalam (Kussmaul), mual-muntah, nyeri perut, ketonuria/ketonemia, kesadaran menurun — rujuk segera ke layanan sekunder/tersier.",
+    "Hiperosmolar hiperglikemik non-ketotik (HHNK): glukosa darah sangat tinggi, dehidrasi berat, perubahan status mental tanpa ketosis signifikan — rujuk segera.",
+    "Penurunan berat badan cepat yang tidak dapat dijelaskan disertai hiperglikemia — curiga defisiensi insulin berat, dekompensasi metabolik, rujuk/mulai insulin segera.",
+    "Glukosa darah >=300 mg/dL atau HbA1c >9% dengan gejala hiperglikemia jelas atau tanda katabolisme — indikasi mulai insulin, tidak cukup hanya OAD.",
+    "Hipoglikemia derajat 3 (perubahan mental dan/atau gangguan fisis yang butuh bantuan orang lain) atau hipoglikemia berulang/tidak teratasi dengan tata laksana medis awal — rujuk.",
+    "Tanda hipoglikemia otonom (berkeringat, gemetar, jantung berdebar, rasa lapar) dan neuroglikopenia (bingung, pandangan kabur, kejang, koma) harus dikenali segera — derajat 1: GD <70 hingga >=54 mg/dL; derajat 2: GD <54 mg/dL; derajat 3: gangguan mental/fisis berat.",
+    "Infeksi kaki diabetik berat (ulkus dalam dengan osteomielitis/abses, atau gangren) atau infeksi dengan tanda respons sistemik (demam tinggi/hipotermia, takipnea, leukositosis/leukopenia berat) — risiko sepsis, perlu rujukan/tata laksana agresif segera.",
+    "Retinopati diabetik proliferatif atau edema makula — risiko kehilangan penglihatan, rujuk segera ke spesialis mata.",
+    "LFG <30 mL/menit/1,73m2 — risiko gagal ginjal terminal, rujuk untuk terapi pengganti ginjal.",
+    "Unstable angina pada pasien DM — kegawatan kardiovaskular, rujuk ke spesialis/subspesialis segera.",
+    "Kehamilan dengan DM/DM gestasional yang gula darahnya tidak terkontrol — risiko komplikasi ibu-janin, perlu rujukan dan pemantauan lebih ketat."
+  ],
+  "catatanFktp": "Dokumen ini secara eksplisit dan berulang menyatakan peran sentral dokter umum/FKTP: (1) Bab I Pendahuluan — 'peran dokter umum menjadi sangat penting sebagai ujung tombak di pelayanan kesehatan primer. Kasus DM sederhana tanpa penyulit dapat dikelola dengan tuntas oleh dokter umum di pelayanan kesehatan primer.' (2) Tujuan pedoman eksplisit mencakup 'pengembangan sistem pelayanan kesehatan DM tipe 2 di tingkat layanan primer dan rujukan yang komprehensif dan terintegrasi di setiap fasilitas', serta standarisasi penapisan/pemeriksaan/pengelolaan & penyediaan obat-alat kesehatan 'pada fasilitas pelayanan kesehatan primer dan rujukan'. (3) Bab VI eksplisit membagi peran per jenjang: PPK I/FKTP (dokter umum) menegakkan diagnosis, memulai tata laksana gaya hidup + OAD lini pertama/kombinasi, melakukan pemantauan berkala, dan merujuk sesuai kriteria di atas; PPK II (dokter spesialis penyakit dalam, di FKRTL) mengelola kasus yang gagal target OAD atau ada komplikasi sedang; PPK III (subspesialis endokrin-metabolik-diabetes) menangani kasus kompleks/refrakter. (4) Bab VII 'Sistem Rujukan Pengelolaan Pasien DM Tipe 2' berisi skema rujukan dua-arah (rujuk & rujuk balik) berbasis Peraturan Menkes No. 1 Tahun 2012 tentang sistem rujukan pelayanan kesehatan perorangan — kasus yang sudah teratasi optimal WAJIB dirujuk balik ke FKTP perujuk untuk kontrol jangka panjang. (5) Pedoman disusun mengacu konsensus PERKENI yang telah dilatihkan ke ribuan dokter umum se-Indonesia (bekerja sama dengan WHO/WDF/Steno Diabetes Center/ADA) — mengonfirmasi bahwa algoritma tata laksana dasar (gaya hidup + metformin lini pertama + intensifikasi bertahap) memang didesain applicable & dilatihkan untuk dokter umum di layanan primer, bukan hanya untuk spesialis."
+}

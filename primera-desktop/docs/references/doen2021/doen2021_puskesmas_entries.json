@@ -1,0 +1,1999 @@
+[
+ {
+  "kelas": "1. ANALGESIK, ANTIPIRETIK, ANTIINFLAMASI NONSTEROID, ANTIPIRAI",
+  "subKelas": "1.1 ANALGESIK NARKOTIK",
+  "generik": "kodein",
+  "sediaan": [
+   "tab 10 mg",
+   "tab 20 mg"
+  ]
+ },
+ {
+  "kelas": "1. ANALGESIK, ANTIPIRETIK, ANTIINFLAMASI NONSTEROID, ANTIPIRAI",
+  "subKelas": "1.2 ANALGESIK NON NARKOTIK",
+  "generik": "ibuprofen",
+  "sediaan": [
+   "tab 200 mg",
+   "tab 400 mg",
+   "susp 100 mg/5 mL",
+   "susp 200 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "1. ANALGESIK, ANTIPIRETIK, ANTIINFLAMASI NONSTEROID, ANTIPIRAI",
+  "subKelas": "1.2 ANALGESIK NON NARKOTIK",
+  "generik": "natrium diklofenak",
+  "sediaan": [
+   "tab sal enterik 25 mg",
+   "tab sal enterik 50 mg"
+  ]
+ },
+ {
+  "kelas": "1. ANALGESIK, ANTIPIRETIK, ANTIINFLAMASI NONSTEROID, ANTIPIRAI",
+  "subKelas": "1.2 ANALGESIK NON NARKOTIK",
+  "generik": "parasetamol",
+  "sediaan": [
+   "tab 500 mg",
+   "sir 120 mg/5 mL",
+   "drops 100 mg/mL"
+  ]
+ },
+ {
+  "kelas": "1. ANALGESIK, ANTIPIRETIK, ANTIINFLAMASI NONSTEROID, ANTIPIRAI",
+  "subKelas": "1.3 ANTIPIRAI",
+  "generik": "alopurinol",
+  "sediaan": [
+   "tab 100 mg",
+   "tab 300 mg"
+  ]
+ },
+ {
+  "kelas": "1. ANALGESIK, ANTIPIRETIK, ANTIINFLAMASI NONSTEROID, ANTIPIRAI",
+  "subKelas": "1.3 ANTIPIRAI",
+  "generik": "kolkisin",
+  "sediaan": [
+   "tab 500 mcg"
+  ]
+ },
+ {
+  "kelas": "2. ANESTETIK",
+  "subKelas": "2.1 ANESTETIK LOKAL",
+  "generik": "etil klorida",
+  "sediaan": [
+   "spray 100 mL"
+  ]
+ },
+ {
+  "kelas": "2. ANESTETIK",
+  "subKelas": "2.1 ANESTETIK LOKAL",
+  "generik": "lidokain",
+  "sediaan": [
+   "inj 2%",
+   "gel 2% (Puskesmas Perawatan)",
+   "spray topikal 10%"
+  ]
+ },
+ {
+  "kelas": "2. ANESTETIK",
+  "subKelas": "2.2 ANESTETIK UMUM dan OKSIGEN",
+  "generik": "oksigen",
+  "sediaan": [
+   "ih, gas dalam tabung"
+  ]
+ },
+ {
+  "kelas": "2. ANESTETIK",
+  "subKelas": "2.3 OBAT untuk PROSEDUR PRE OPERATIF",
+  "generik": "atropin",
+  "sediaan": [
+   "inj 0,25 mg/mL (i.v./s.k.)"
+  ]
+ },
+ {
+  "kelas": "2. ANESTETIK",
+  "subKelas": "2.3 OBAT untuk PROSEDUR PRE OPERATIF",
+  "generik": "diazepam",
+  "sediaan": [
+   "inj 5 mg/mL"
+  ]
+ },
+ {
+  "kelas": "3. ANTIALERGI dan OBAT untuk ANAFILAKSIS",
+  "subKelas": null,
+  "generik": "deksametason",
+  "sediaan": [
+   "inj 5 mg/mL"
+  ]
+ },
+ {
+  "kelas": "3. ANTIALERGI dan OBAT untuk ANAFILAKSIS",
+  "subKelas": null,
+  "generik": "difenhidramin",
+  "sediaan": [
+   "inj 10 mg/mL (i.v./i.m.)"
+  ]
+ },
+ {
+  "kelas": "3. ANTIALERGI dan OBAT untuk ANAFILAKSIS",
+  "subKelas": null,
+  "generik": "epinefrin (adrenalin)",
+  "sediaan": [
+   "inj 1 mg/mL"
+  ]
+ },
+ {
+  "kelas": "3. ANTIALERGI dan OBAT untuk ANAFILAKSIS",
+  "subKelas": null,
+  "generik": "klorfeniramin",
+  "sediaan": [
+   "tab 4 mg"
+  ]
+ },
+ {
+  "kelas": "3. ANTIALERGI dan OBAT untuk ANAFILAKSIS",
+  "subKelas": null,
+  "generik": "loratadin",
+  "sediaan": [
+   "tab 10 mg"
+  ]
+ },
+ {
+  "kelas": "3. ANTIALERGI dan OBAT untuk ANAFILAKSIS",
+  "subKelas": null,
+  "generik": "setirizin",
+  "sediaan": [
+   "tab 10 mg",
+   "sir 5 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "4. ANTIDOT dan OBAT LAIN untuk KERACUNAN",
+  "subKelas": "4.1 KHUSUS",
+  "generik": "atropin",
+  "sediaan": [
+   "inj 0,25 mg/mL (i.v.)"
+  ]
+ },
+ {
+  "kelas": "4. ANTIDOT dan OBAT LAIN untuk KERACUNAN",
+  "subKelas": "4.1 KHUSUS",
+  "generik": "kalsium glukonat",
+  "sediaan": [
+   "inj 10%"
+  ]
+ },
+ {
+  "kelas": "4. ANTIDOT dan OBAT LAIN untuk KERACUNAN",
+  "subKelas": "4.1 KHUSUS",
+  "generik": "natrium bikarbonat",
+  "sediaan": [
+   "tab 500 mg"
+  ]
+ },
+ {
+  "kelas": "4. ANTIDOT dan OBAT LAIN untuk KERACUNAN",
+  "subKelas": "4.1 KHUSUS",
+  "generik": "natrium tiosulfat",
+  "sediaan": [
+   "inj 25% (i.v.)"
+  ]
+ },
+ {
+  "kelas": "4. ANTIDOT dan OBAT LAIN untuk KERACUNAN",
+  "subKelas": "4.2 UMUM",
+  "generik": "magnesium sulfat",
+  "sediaan": [
+   "serb"
+  ]
+ },
+ {
+  "kelas": "5. ANTIEPILEPSI � ANTIKONVULSI",
+  "subKelas": null,
+  "generik": "diazepam",
+  "sediaan": [
+   "enema 5 mg/2,5 mL",
+   "enema 10 mg/2,5 mL",
+   "inj 5 mg/mL"
+  ]
+ },
+ {
+  "kelas": "5. ANTIEPILEPSI � ANTIKONVULSI",
+  "subKelas": null,
+  "generik": "fenitoin",
+  "sediaan": [
+   "kaps 100 mg",
+   "inj 50 mg/mL"
+  ]
+ },
+ {
+  "kelas": "5. ANTIEPILEPSI � ANTIKONVULSI",
+  "subKelas": null,
+  "generik": "fenobarbital",
+  "sediaan": [
+   "tab 30 mg",
+   "tab 100 mg",
+   "inj 50 mg/mL"
+  ]
+ },
+ {
+  "kelas": "5. ANTIEPILEPSI � ANTIKONVULSI",
+  "subKelas": null,
+  "generik": "karbamazepin",
+  "sediaan": [
+   "tab 200 mg",
+   "sir 100 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "5. ANTIEPILEPSI � ANTIKONVULSI",
+  "subKelas": null,
+  "generik": "magnesium sulfat",
+  "sediaan": [
+   "inj 20% (i.v.)",
+   "inj 40% (i.v.)"
+  ]
+ },
+ {
+  "kelas": "5. ANTIEPILEPSI � ANTIKONVULSI",
+  "subKelas": null,
+  "generik": "valproat",
+  "sediaan": [
+   "tab lepas lambat 250 mg",
+   "tab lepas lambat 500 mg",
+   "tab salut enterik 250 mg",
+   "sir 250 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.1.1 Antelmintik Intestinal",
+  "generik": "albendazol",
+  "sediaan": [
+   "tab 400 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.1.1 Antelmintik Intestinal",
+  "generik": "mebendazol",
+  "sediaan": [
+   "tab 100 mg",
+   "tab 500 mg",
+   "sir 100 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.1.1 Antelmintik Intestinal",
+  "generik": "pirantel pamoat",
+  "sediaan": [
+   "tab 250 mg",
+   "susp 125 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.1.2 Antifilaria",
+  "generik": "dietilkarbamazin",
+  "sediaan": [
+   "tab 100 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.1.3 Antisistosoma",
+  "generik": "prazikuantel",
+  "sediaan": [
+   "tab 600 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.1 Beta Laktam",
+  "generik": "amoksisilin",
+  "sediaan": [
+   "tab 250 mg",
+   "tab 500 mg",
+   "sir kering 125 mg/5 mL",
+   "sir kering 250 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.1 Beta Laktam",
+  "generik": "ampisilin",
+  "sediaan": [
+   "inj 250 mg (i.m./i.v.) (Puskesmas",
+   "Perawatan)",
+   "inj 1.000 mg (i.v.) (Puskesmas",
+   "Perawatan)"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.1 Beta Laktam",
+  "generik": "benzatin benzil penisilin",
+  "sediaan": [
+   "inj 1,2 juta IU/mL (i.m.)",
+   "inj 2,4 juta IU/mL (i.m.)",
+   "fenoksimetil penisilin (penisilin V) tab 250 mg",
+   "tab 500 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.1 Beta Laktam",
+  "generik": "prokain benzilpenisilin",
+  "sediaan": [
+   "inj 3 juta IU (i.m.)"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.1 Beta Laktam",
+  "generik": "sefadroksil",
+  "sediaan": [
+   "kaps 250 mg",
+   "kaps 500 mg",
+   "sir kering 125 mg/5 mL",
+   "sir kering 250 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.2.1 Tetrasiklin",
+  "generik": "doksisiklin",
+  "sediaan": [
+   "kaps 100 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.2.1 Tetrasiklin",
+  "generik": "tetrasiklin",
+  "sediaan": [
+   "kaps 250 mg",
+   "kaps 500 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.2.2 Kloramfenikol",
+  "generik": "kloramfenikol",
+  "sediaan": [
+   "kaps 250 mg",
+   "susp 125 mg/5 mL",
+   "inj 1.000 mg (Puskesmas Perawatan)"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.2.3 Sulfametoksazol-Trimetoprim",
+  "generik": "kotrimoksazol",
+  "sediaan": [
+   "tab 400/80 mg",
+   "tab 800/160 mg",
+   "susp 200/40 mg per 5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.2.4 Makrolid",
+  "generik": "eritromisin",
+  "sediaan": [
+   "tab/kaps 250 mg",
+   "tab/kaps 500 mg",
+   "sir kering 200 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.2.6 Kuinolon",
+  "generik": "siprofloksasin",
+  "sediaan": [
+   "tab 500 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.2.2.7 Lain-Lain",
+  "generik": "metronidazol",
+  "sediaan": [
+   "tab 250 mg",
+   "tab 500 mg",
+   "susp 125 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.1 Antilepra",
+  "generik": "dapson",
+  "sediaan": [
+   "tab 100 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.1 Antilepra",
+  "generik": "klofazimin",
+  "sediaan": [
+   "kaps dalam minyak 100 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.1 Antilepra",
+  "generik": "rifampisin",
+  "sediaan": [
+   "kaps 300 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "isoniazid",
+  "sediaan": [
+   "tab 100 mg",
+   "tab 300 mg",
+   "OAT KDT Kategori I",
+   "Paduan dalam Bentuk Kombinasi",
+   "Dosis Tetap (KDT/FDC) untuk",
+   "Dewasa terdiri dari:",
+   "4KDT/FDC mengandung :          tab"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin 150 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid 75 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "c. pirazinamid 400 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "d. etambutol 275 mg",
+  "sediaan": [
+   "2KDT/FDC mengandung:           tab"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin 150 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid 150 mg",
+  "sediaan": [
+   "OAT KDT Kategori 2                 tab",
+   "Paduan dalam Bentuk Kombinasi      tab",
+   "tab",
+   "Dosis Tetap                        serb inj",
+   "(KDT/FDC) untuk Dewasa terdiri     tab",
+   "tab",
+   "dari:"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "blister",
+  "sediaan": [
+   "4KDT/FDC mengandung :"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "blister",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin 150 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "sach",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid",
+  "sediaan": [
+   "75 mg               sach",
+   "serb inj 1.000 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "c. pirazinamid 400 mg",
+  "sediaan": [
+   "tab 125 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "d. etambutol 275 mg",
+  "sediaan": [
+   "2KDT/FDC mengandung:"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin 150 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid 150 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "etambutol 400 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "streptomisin 1.000 mg",
+  "sediaan": [
+   "OAT KDT Kategori Anak",
+   "Paduan dalam Bentuk Kombinasi",
+   "Dosis Tetap (KDT/FDC) untuk",
+   "Anak terdiri dari:",
+   "3KDT/FDC mengandung :"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin 75 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid 50 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "c. pirazinamid 150 mg",
+  "sediaan": [
+   "2KDT/FDC mengandung :"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin 75 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid 50 mg",
+  "sediaan": [
+   "OAT Kombipak Kategori 1",
+   "Paduan dalam bentuk paket",
+   "Kombipak untuk dewasa terdiri",
+   "dari:",
+   "Kombipak II terdiri dari:"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin kapl 450 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid tab 300 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "c. pirazinamid tab 500 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "d. etambutol tab 250 mg",
+  "sediaan": [
+   "Kombipak III terdiri dari:"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin kapl 450 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid tab 300 mg",
+  "sediaan": [
+   "OAT Kombipak Kategori Anak",
+   "Paduan dalam bentuk paket",
+   "Kombipak untuk anak terdiri dari:",
+   "Kombipak A terdiri dari:"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifamisin kapl 75 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid tab 100 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "c. pirazinamid tab 200 mg",
+  "sediaan": [
+   "Kombipak B terdiri dari:"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "a. rifampisin kapl 75 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "b. isoniazid tab 100 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.3.2 Antituberkulosis (Hanya Untuk Program)",
+  "generik": "streptomisin",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.4 ANTIFUNGI",
+  "generik": "griseofulvin",
+  "sediaan": [
+   "tab 250 mg",
+   "tab 500 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.4 ANTIFUNGI",
+  "generik": "ketokonazol",
+  "sediaan": [
+   "tab 200 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.4 ANTIFUNGI",
+  "generik": "nistatin",
+  "sediaan": [
+   "tab 500.000 IU",
+   "susp 100.000 IU/mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.5.1 Antiamubiasis dan Antigiardiasis",
+  "generik": "metronidazol",
+  "sediaan": [
+   "tab 250 mg",
+   "tab 500 mg",
+   "susp 125 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.5.2 Antimalaria (Hanya Untuk Program)",
+  "generik": "artesunat",
+  "sediaan": [
+   "inj 60 mg (i.v./i.m.)",
+   "kombinasi KDT/FDC            tab",
+   "mengandung:"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.5.2 Antimalaria (Hanya Untuk Program)",
+  "generik": "a. dihidroartemisinin 40 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.5.2 Antimalaria (Hanya Untuk Program)",
+  "generik": "b. piperakuin",
+  "sediaan": [
+   "320 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.5.2 Antimalaria (Hanya Untuk Program)",
+  "generik": "doksisiklin",
+  "sediaan": [
+   "kaps 100 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.5.2 Antimalaria (Hanya Untuk Program)",
+  "generik": "kuinin",
+  "sediaan": [
+   "tab 200 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.5.2 Antimalaria (Hanya Untuk Program)",
+  "generik": "primakuin",
+  "sediaan": [
+   "tab 15 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.1 Antiherpes",
+  "generik": "asiklovir",
+  "sediaan": [
+   "tab 200 mg",
+   "tab 400 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.1 Nucleoside Reverse Transcriptase Inhibitor (NRTI)",
+  "generik": "a. tenofovir 300 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.1 Nucleoside Reverse Transcriptase Inhibitor (NRTI)",
+  "generik": "b. emtrisitabin 200 mg",
+  "sediaan": [
+   "kombinasi KDT/FDC            tab",
+   "mengandung:"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.1 Nucleoside Reverse Transcriptase Inhibitor (NRTI)",
+  "generik": "a. zidovudin 300 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.1 Nucleoside Reverse Transcriptase Inhibitor (NRTI)",
+  "generik": "b. lamivudin 150 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.1 Nucleoside Reverse Transcriptase Inhibitor (NRTI)",
+  "generik": "lamivudin",
+  "sediaan": [
+   "tab 150 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.1 Nucleoside Reverse Transcriptase Inhibitor (NRTI)",
+  "generik": "tenofovir",
+  "sediaan": [
+   "tab 300 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.1 Nucleoside Reverse Transcriptase Inhibitor (NRTI)",
+  "generik": "zidovudin",
+  "sediaan": [
+   "kaps 100 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.2 Non-Nucleoside Reverse Transcriptase Inhibitor (NNRTI)",
+  "generik": "efavirenz",
+  "sediaan": [
+   "tab/kaps 200 mg",
+   "tab/kaps 600 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.2 Non-Nucleoside Reverse Transcriptase Inhibitor (NNRTI)",
+  "generik": "nevirapin",
+  "sediaan": [
+   "tab 200 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.3 Nucleoside Reverse Transcriptase Inhibitor (NRTI) + Non-",
+  "generik": "a. tenofovir 300 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.3 Nucleoside Reverse Transcriptase Inhibitor (NRTI) + Non-",
+  "generik": "b. lamivudin 300 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.3 Nucleoside Reverse Transcriptase Inhibitor (NRTI) + Non-",
+  "generik": "c. efavirenz 600 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.4 Protease Inhibitor",
+  "generik": "a. lopinavir 200 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.4 Protease Inhibitor",
+  "generik": "b. ritonavir 50 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.5 Integrase Inhibitor",
+  "generik": "dolutegravir",
+  "sediaan": [
+   "tab 50 mg"
+  ]
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.6 Nucleoside Reverse Transcriptase Inhibitor (NRTI) +Integrase",
+  "generik": "a. tenofovir 300 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.6 Nucleoside Reverse Transcriptase Inhibitor (NRTI) +Integrase",
+  "generik": "b. lamivudin 300 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "6. ANTIINFEKSI",
+  "subKelas": "6.6.2.6 Nucleoside Reverse Transcriptase Inhibitor (NRTI) +Integrase",
+  "generik": "c. dolutegravir 50 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "7. ANTIMIGREN",
+  "subKelas": null,
+  "generik": "a. ergotamin 1 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "7. ANTIMIGREN",
+  "subKelas": null,
+  "generik": "b. kafein 50 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "8. ANTINEOPLASTIK, IMUNOSUPRESAN dan OBAT untuk TERAPI PALIATIF",
+  "subKelas": "8.1 HORMON dan ANTIHORMON",
+  "generik": "deksametason",
+  "sediaan": [
+   "inj 5 mg/mL (Puskesmas Perawatan)"
+  ]
+ },
+ {
+  "kelas": "10. OBAT yang MEMPENGARUHI DARAH",
+  "subKelas": "10.1 ANTIANEMIA",
+  "generik": "asam folat",
+  "sediaan": [
+   "tab 0,4 mg",
+   "tab 1 mg"
+  ]
+ },
+ {
+  "kelas": "10. OBAT yang MEMPENGARUHI DARAH",
+  "subKelas": "10.1 ANTIANEMIA",
+  "generik": "ferro sulfat",
+  "sediaan": [
+   "tab sal selaput 300 mg",
+   "sir 150 mg/5 mL",
+   "(Hanya Untuk Program)             tab sal",
+   "kombinasi KDT/FDC",
+   "mengandung:",
+   "a. Fe sulfat/Fe fumarat/Fe"
+  ]
+ },
+ {
+  "kelas": "10. OBAT yang MEMPENGARUHI DARAH",
+  "subKelas": "10.1 ANTIANEMIA",
+  "generik": "glukonat (setara dengan 60 mg",
+  "sediaan": [
+   "Fe elemental)",
+   "b. asam folat 0,4 mg",
+   "sianokobalamin (vitamin B12)      tab 50 mcg"
+  ]
+ },
+ {
+  "kelas": "12. DIAGNOSTIK",
+  "subKelas": "12.2 TES MATA",
+  "generik": "natrium fluoresein",
+  "sediaan": [
+   "tts mata 2%"
+  ]
+ },
+ {
+  "kelas": "12. DIAGNOSTIK",
+  "subKelas": "12.2 TES MATA",
+  "generik": "tropikamid",
+  "sediaan": [
+   "tts mata 0,5%",
+   "tts mata 1%"
+  ]
+ },
+ {
+  "kelas": "12. DIAGNOSTIK",
+  "subKelas": "12.3 TES KULIT",
+  "generik": "tuberkulin protein purified",
+  "sediaan": [
+   "inj 2 TU /0,1 mL"
+  ]
+ },
+ {
+  "kelas": "12. DIAGNOSTIK",
+  "subKelas": "12.3 TES KULIT",
+  "generik": "derivative",
+  "sediaan": []
+ },
+ {
+  "kelas": "13. ANTISEPTIK dan DISINFEKTAN",
+  "subKelas": "13.1 ANTISEPTIK",
+  "generik": "hidrogen peroksida",
+  "sediaan": [
+   "cairan 3%"
+  ]
+ },
+ {
+  "kelas": "13. ANTISEPTIK dan DISINFEKTAN",
+  "subKelas": "13.1 ANTISEPTIK",
+  "generik": "klorheksidin",
+  "sediaan": [
+   "lar 15%"
+  ]
+ },
+ {
+  "kelas": "13. ANTISEPTIK dan DISINFEKTAN",
+  "subKelas": "13.1 ANTISEPTIK",
+  "generik": "povidon iodin",
+  "sediaan": [
+   "lar 100 mg/mL"
+  ]
+ },
+ {
+  "kelas": "13. ANTISEPTIK dan DISINFEKTAN",
+  "subKelas": "13.2 DISINFEKTAN",
+  "generik": "kalsium hipoklorit",
+  "sediaan": [
+   "serb"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.1 ANTISEPTIK dan BAHAN untuk PERAWATAN SALURAN AKAR GIGI",
+  "generik": "eugenol",
+  "sediaan": [
+   "cairan"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.1 ANTISEPTIK dan BAHAN untuk PERAWATAN SALURAN AKAR GIGI",
+  "generik": "formokresol",
+  "sediaan": [
+   "cairan"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.1 ANTISEPTIK dan BAHAN untuk PERAWATAN SALURAN AKAR GIGI",
+  "generik": "gutta percha dan paper points",
+  "sediaan": [
+   "15 mm � 40 mm",
+   "45 mm � 80 mm"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.1 ANTISEPTIK dan BAHAN untuk PERAWATAN SALURAN AKAR GIGI",
+  "generik": "kalsium hidroksida",
+  "sediaan": [
+   "bubuk, pasta",
+   "klorfenol kamfer mentol (CHKM) cairan"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.1 ANTISEPTIK dan BAHAN untuk PERAWATAN SALURAN AKAR GIGI",
+  "generik": "klorheksidin",
+  "sediaan": [
+   "lar 0,2%"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.1 ANTISEPTIK dan BAHAN untuk PERAWATAN SALURAN AKAR GIGI",
+  "generik": "natrium hipoklorit",
+  "sediaan": [
+   "cairan konsentrat 5%"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.1 ANTISEPTIK dan BAHAN untuk PERAWATAN SALURAN AKAR GIGI",
+  "generik": "pasta pengisi saluran akar",
+  "sediaan": [
+   "pasta"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.1 ANTISEPTIK dan BAHAN untuk PERAWATAN SALURAN AKAR GIGI",
+  "generik": "povidon iodin",
+  "sediaan": [
+   "lar obat kumur 1%"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.2 ANTIFUNGI OROFARINGEAL",
+  "generik": "nistatin",
+  "sediaan": [
+   "susp 100.000 IU/mL"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.3 OBAT untuk PENCEGAHAN KARIES",
+  "generik": "fluor",
+  "sediaan": [
+   "tab 1 mg"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.3 OBAT untuk PENCEGAHAN KARIES",
+  "generik": "sediaan topikal",
+  "sediaan": []
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.4 BAHAN TUMPAT",
+  "generik": "bahan tumpatan sementara",
+  "sediaan": [
+   "lar, serb",
+   "glass ionomer ART (Atraumatic  serb",
+   "Restorative Treatment)         lar"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.4 BAHAN TUMPAT",
+  "generik": "cocoa butter 5 g",
+  "sediaan": []
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.4 BAHAN TUMPAT",
+  "generik": "komposit resin",
+  "sediaan": [
+   "set"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.5 PREPARAT LAINNYA             inj 2 mL",
+  "generik": "anestetik lokal gigi kombinasi    kertas warna penanda oklusi",
+  "sediaan": [
+   "KDT/FDC mengandung:",
+   "a. lidokain HCl 2%",
+   "b. epinefrin 1 : 80.000"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.5 PREPARAT LAINNYA             inj 2 mL",
+  "generik": "articulating paper",
+  "sediaan": [
+   "etil klorida                      spray 100 mL",
+   "lidokain                          inj 2%",
+   "salep 5%",
+   "pasta devitalisasi (non arsen)    spray topikal 10%"
+  ]
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.5 PREPARAT LAINNYA             inj 2 mL",
+  "generik": "pasta",
+  "sediaan": []
+ },
+ {
+  "kelas": "14. OBAT dan BAHAN untuk GIGI dan MULUT",
+  "subKelas": "14.5 PREPARAT LAINNYA             inj 2 mL",
+  "generik": "surgical ginggival pack           pasta",
+  "sediaan": []
+ },
+ {
+  "kelas": "15. DIURETIK",
+  "subKelas": null,
+  "generik": "furosemid                         tab 40 mg",
+  "sediaan": [
+   "manitol                           inf 20% (Puskesmas Perawatan)"
+  ]
+ },
+ {
+  "kelas": "15. DIURETIK",
+  "subKelas": null,
+  "generik": "spironolakton                     tab 25 mg",
+  "sediaan": []
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.2.1 Antidiabetes, Oral",
+  "generik": "glimepirid                        tab 1 mg",
+  "sediaan": [
+   "tab 2 mg",
+   "tab 3 mg",
+   "tab 4 mg"
+  ]
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.2.1 Antidiabetes, Oral",
+  "generik": "glipizid                          tab 5 mg",
+  "sediaan": [
+   "tab 10 mg"
+  ]
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.2.1 Antidiabetes, Oral",
+  "generik": "metformin                         tab 500 mg",
+  "sediaan": [
+   "tab 850 mg"
+  ]
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.3.4.1 Kontrasepsi, Oral",
+  "generik": "a. levonorgestrel 150 mcg",
+  "sediaan": []
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.3.4.1 Kontrasepsi, Oral",
+  "generik": "b. etinilestradiol 30 mcg",
+  "sediaan": []
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.3.4.3 Kontrasepsi, Implan",
+  "generik": "levonorgestrel",
+  "sediaan": [
+   "implan 2 rods, @ 75 mg (3-4 tahun)"
+  ]
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.5 KORTIKOSTEROID",
+  "generik": "hidrokortison",
+  "sediaan": [
+   "inj 100 mg"
+  ]
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.5 KORTIKOSTEROID",
+  "generik": "metilprednisolon",
+  "sediaan": [
+   "inj 125 mg (Puskesmas Perawatan)"
+  ]
+ },
+ {
+  "kelas": "16. HORMON, OBAT ENDOKRIN LAIN dan KONTRASEPSI",
+  "subKelas": "16.5 KORTIKOSTEROID",
+  "generik": "prednison",
+  "sediaan": [
+   "tab 5 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.1 ANTIANGINA",
+  "generik": "gliseril trinitrat",
+  "sediaan": [
+   "tab 0,5 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.1 ANTIANGINA",
+  "generik": "isosorbid dinitrat",
+  "sediaan": [
+   "tab 5 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.2 ANTIARITMIA",
+  "generik": "propranolol",
+  "sediaan": [
+   "tab 10 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.3 ANTIHIPERTENSI",
+  "generik": "amlodipin",
+  "sediaan": [
+   "tab 5 mg",
+   "tab 10 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.3 ANTIHIPERTENSI",
+  "generik": "bisoprolol",
+  "sediaan": [
+   "tab 2,5 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.3 ANTIHIPERTENSI",
+  "generik": "hidroklorotiazid",
+  "sediaan": [
+   "tab 25 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.3 ANTIHIPERTENSI",
+  "generik": "kaptopril",
+  "sediaan": [
+   "tab 12,5 mg",
+   "tab 25 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.3 ANTIHIPERTENSI",
+  "generik": "lisinopril",
+  "sediaan": [
+   "tab 5 mg",
+   "tab 10 mg",
+   "tab 20 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.3 ANTIHIPERTENSI",
+  "generik": "metildopa",
+  "sediaan": [
+   "tab 250 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.4 ANTIAGREGASI PLATELET",
+  "generik": "asam asetilsalisilat (asetosal)",
+  "sediaan": [
+   "tab 80 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.6 OBAT untuk GAGAL JANTUNG",
+  "generik": "furosemid",
+  "sediaan": [
+   "tab 40 mg",
+   "inj 10 mg/mL (i.v./i.m.) (Puskesmas",
+   "Perawatan)"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.6 OBAT untuk GAGAL JANTUNG",
+  "generik": "kaptopril",
+  "sediaan": [
+   "tab 12,5 mg",
+   "tab 25 mg"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.7 OBAT untuk SYOK KARDIOGENIK dan SEPSIS",
+  "generik": "epinefrin (adrenalin)",
+  "sediaan": [
+   "inj 1 mg/mL (Puskesmas Perawatan)"
+  ]
+ },
+ {
+  "kelas": "17. OBAT KARDIOVASKULER",
+  "subKelas": "17.8 ANTIHIPERLIPIDEMIA",
+  "generik": "simvastatin",
+  "sediaan": [
+   "tab 10 mg",
+   "tab 20 mg",
+   "tab 40 mg"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.1 ANTIAKNE",
+  "generik": "asam retinoat",
+  "sediaan": [
+   "krim 0,05%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.2 ANTIBAKTERI",
+  "generik": "perak sulfadiazin",
+  "sediaan": [
+   "krim 1%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.3 ANTIFUNGI",
+  "generik": "ketokonazol",
+  "sediaan": [
+   "krim 2%",
+   "scalp sol 2%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.3 ANTIFUNGI",
+  "generik": "mikonazol",
+  "sediaan": [
+   "serb 2%",
+   "krim 2%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.3 ANTIFUNGI",
+  "generik": "nistatin",
+  "sediaan": [
+   "tab vaginal 100.000 IU"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.4 ANTIINFLAMASI dan ANTIPRURITIK",
+  "generik": "betametason",
+  "sediaan": [
+   "krim 0,1%",
+   "salep 0,1%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.4 ANTIINFLAMASI dan ANTIPRURITIK",
+  "generik": "hidrokortison",
+  "sediaan": [
+   "krim 2,5%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.4 ANTIINFLAMASI dan ANTIPRURITIK",
+  "generik": "mometason furoat",
+  "sediaan": [
+   "krim 0,1%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.5 ANTISKABIES dan ANTIPEDIKULOSIS",
+  "generik": "permetrin",
+  "sediaan": [
+   "krim 5%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.5 ANTISKABIES dan ANTIPEDIKULOSIS",
+  "generik": "salep 2-4",
+  "sediaan": [
+   "salep"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.7 KERATOLITIK",
+  "generik": "asam salisilat",
+  "sediaan": [
+   "salep 5%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.7 KERATOLITIK",
+  "generik": "liquor carbonis detergens",
+  "sediaan": [
+   "lar 5%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.8 LAIN-LAIN",
+  "generik": "bedak salisil",
+  "sediaan": [
+   "serb 2%"
+  ]
+ },
+ {
+  "kelas": "18. OBAT TOPIKAL untuk KULIT",
+  "subKelas": "18.8 LAIN-LAIN",
+  "generik": "urea",
+  "sediaan": [
+   "krim 10%"
+  ]
+ },
+ {
+  "kelas": "20. LARUTAN ELEKTROLIT, NUTRISI dan LAIN-LAIN",
+  "subKelas": "20.1 ORAL",
+  "generik": "garam oralit",
+  "sediaan": [
+   "serb"
+  ]
+ },
+ {
+  "kelas": "20. LARUTAN ELEKTROLIT, NUTRISI dan LAIN-LAIN",
+  "subKelas": "20.1 ORAL",
+  "generik": "kalium klorida",
+  "sediaan": [
+   "tab lepas lambat 600 mg"
+  ]
+ },
+ {
+  "kelas": "20. LARUTAN ELEKTROLIT, NUTRISI dan LAIN-LAIN",
+  "subKelas": "20.1 ORAL",
+  "generik": "natrium bikarbonat",
+  "sediaan": [
+   "tab 500 mg"
+  ]
+ },
+ {
+  "kelas": "20. LARUTAN ELEKTROLIT, NUTRISI dan LAIN-LAIN",
+  "subKelas": "20.3 LAIN � LAIN",
+  "generik": "air untuk injeksi",
+  "sediaan": [
+   "cairan inj"
+  ]
+ },
+ {
+  "kelas": "21. OBAT untuk MATA",
+  "subKelas": "21.1 ANESTETIK LOKAL",
+  "generik": "tetrakain",
+  "sediaan": [
+   "tts mata 0,5%"
+  ]
+ },
+ {
+  "kelas": "21. OBAT untuk MATA",
+  "subKelas": "21.2 ANTIMIKROBA                salep mata 0,3%",
+  "generik": "gentamisin",
+  "sediaan": [
+   "tts mata 0,3%"
+  ]
+ },
+ {
+  "kelas": "21. OBAT untuk MATA",
+  "subKelas": "21.2 ANTIMIKROBA                salep mata 0,3%",
+  "generik": "kloramfenikol",
+  "sediaan": [
+   "tts mata 0,5%",
+   "tts mata 1%",
+   "salep mata 1%"
+  ]
+ },
+ {
+  "kelas": "21. OBAT untuk MATA",
+  "subKelas": "21.2 ANTIMIKROBA                salep mata 0,3%",
+  "generik": "oksitetrasiklin",
+  "sediaan": [
+   "salep mata 1%"
+  ]
+ },
+ {
+  "kelas": "21. OBAT untuk MATA",
+  "subKelas": "21.4 MIOTIK DAN ANTIGLAUKOMA",
+  "generik": "asetazolamid",
+  "sediaan": [
+   "tab 250 mg"
+  ]
+ },
+ {
+  "kelas": "21. OBAT untuk MATA",
+  "subKelas": "21.4 MIOTIK DAN ANTIGLAUKOMA",
+  "generik": "pilokarpin",
+  "sediaan": [
+   "tts mata 2%"
+  ]
+ },
+ {
+  "kelas": "21. OBAT untuk MATA",
+  "subKelas": "21.4 MIOTIK DAN ANTIGLAUKOMA",
+  "generik": "timolol",
+  "sediaan": [
+   "tts mata 0,25%",
+   "tts mata 0,5%"
+  ]
+ },
+ {
+  "kelas": "22. OKSITOSIK",
+  "subKelas": null,
+  "generik": "metilergometrin",
+  "sediaan": [
+   "tab 0,125 mg",
+   "inj 0,2 mg/mL"
+  ]
+ },
+ {
+  "kelas": "22. OKSITOSIK",
+  "subKelas": null,
+  "generik": "oksitosin",
+  "sediaan": [
+   "inj 10 IU/mL"
+  ]
+ },
+ {
+  "kelas": "23. PSIKOFARMAKA",
+  "subKelas": "23.1 ANTIANSIETAS",
+  "generik": "diazepam",
+  "sediaan": [
+   "tab 2 mg",
+   "tab 5 mg",
+   "inj 5 mg/mL"
+  ]
+ },
+ {
+  "kelas": "23. PSIKOFARMAKA",
+  "subKelas": "23.1 ANTIANSIETAS",
+  "generik": "lorazepam",
+  "sediaan": [
+   "tab 0,5 mg",
+   "tab 1 mg",
+   "tab 2 mg"
+  ]
+ },
+ {
+  "kelas": "23. PSIKOFARMAKA",
+  "subKelas": "23.2 ANTIDEPRESI",
+  "generik": "amitriptilin",
+  "sediaan": [
+   "tab 25 mg"
+  ]
+ },
+ {
+  "kelas": "23. PSIKOFARMAKA",
+  "subKelas": "23.4 ANTIPSIKOTIK",
+  "generik": "haloperidol",
+  "sediaan": [
+   "tab 1,5 mg",
+   "tab 2 mg",
+   "tab 5 mg",
+   "drops 2 mg/mL",
+   "inj 5 mg/mL (i.m.)"
+  ]
+ },
+ {
+  "kelas": "23. PSIKOFARMAKA",
+  "subKelas": "23.4 ANTIPSIKOTIK",
+  "generik": "klorpromazin",
+  "sediaan": [
+   "tab 25 mg",
+   "inj 5 mg/mL (i.m.)"
+  ]
+ },
+ {
+  "kelas": "23. PSIKOFARMAKA",
+  "subKelas": "23.7 OBAT untuk PROGRAM RUMATAN METADON (HANYA UNTUK PROGRAM)",
+  "generik": "metadon",
+  "sediaan": [
+   "sir 50 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.1 ANTASIDA dan ANTIULKUS",
+  "generik": "antasida",
+  "sediaan": [
+   "tab kunyah"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.1 ANTASIDA dan ANTIULKUS",
+  "generik": "omeprazol",
+  "sediaan": [
+   "kaps 20 mg",
+   "inj 40 mg"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.1 ANTASIDA dan ANTIULKUS",
+  "generik": "ranitidin",
+  "sediaan": [
+   "tab 150 mg"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.2 ANTIEMETIK",
+  "generik": "dimenhidrinat",
+  "sediaan": [
+   "tab 50 mg"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.2 ANTIEMETIK",
+  "generik": "domperidon",
+  "sediaan": [
+   "tab 10 mg",
+   "sir 5 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.2 ANTIEMETIK",
+  "generik": "klorpromazin",
+  "sediaan": [
+   "tab 25 mg",
+   "inj 5 mg/mL (i.m.)"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.2 ANTIEMETIK",
+  "generik": "metoklopramid",
+  "sediaan": [
+   "inj 5 mg/mL"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.3 ANTIHEMOROID",
+  "generik": "a. bismut subgalat",
+  "sediaan": []
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.3 ANTIHEMOROID",
+  "generik": "b. heksaklorofen",
+  "sediaan": []
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.3 ANTIHEMOROID",
+  "generik": "c. lidokain",
+  "sediaan": []
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.3 ANTIHEMOROID",
+  "generik": "d. seng oksida",
+  "sediaan": []
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.4 ANTISPASMODIK",
+  "generik": "atropin",
+  "sediaan": [
+   "inj 0,25 mg/mL (i.v./s.k.)"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.4 ANTISPASMODIK",
+  "generik": "hiosin butilbromid",
+  "sediaan": [
+   "tab 10 mg"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.5 OBAT untuk DIARE",
+  "generik": "garam oralit",
+  "sediaan": [
+   "serb"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.5 OBAT untuk DIARE",
+  "generik": "zinc",
+  "sediaan": [
+   "tab dispersible 20 mg",
+   "sir 20 mg/5 mL"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.6 KATARTIK",
+  "generik": "bisakodil",
+  "sediaan": [
+   "tab sal 5 mg",
+   "sup 5 mg",
+   "sup 10 mg"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.6 KATARTIK",
+  "generik": "gliserin",
+  "sediaan": [
+   "obat luar 100 mg/mL"
+  ]
+ },
+ {
+  "kelas": "25. OBAT untuk SALURAN CERNA",
+  "subKelas": "25.6 KATARTIK",
+  "generik": "laktulosa",
+  "sediaan": [
+   "sir 3,335 g/5 mL"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": null,
+  "generik": "aminofilin",
+  "sediaan": [
+   "tab 150 mg"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": null,
+  "generik": "budesonid",
+  "sediaan": [
+   "tab 200 mg",
+   "inj 24 mg/mL (Puskesmas"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": null,
+  "generik": "epinefrin (adrenalin)",
+  "sediaan": [
+   "Perawatan)"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": null,
+  "generik": "metilprednisolon",
+  "sediaan": [
+   "cairan ih 0,25 mg/mL"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": null,
+  "generik": "prednison",
+  "sediaan": [
+   "cairan ih 0,5 mg/mL"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": null,
+  "generik": "salbutamol",
+  "sediaan": [
+   "inj 1 mg/mL",
+   "inj 125 mg"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": null,
+  "generik": "terbutalin",
+  "sediaan": [
+   "tab 5 mg",
+   "tab 2 mg",
+   "cairan ih 1 mg/mL",
+   "inj 0,5 mg/mL (s.k/i.v.)"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": "26.2 ANTITUSIF",
+  "generik": "kodein",
+  "sediaan": [
+   "tab 10 mg"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": "26.3 EKSPEKTORAN",
+  "generik": "n-asetil sistein",
+  "sediaan": [
+   "kaps 200 mg"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": "26.4 OBAT untuk PENYAKIT PARU OBSTRUKSI KRONIS",
+  "generik": "ipratropium bromida",
+  "sediaan": [
+   "aerosol 0,02 mg/dosis",
+   "cairan ih 0,025% (Puskesmas",
+   "Perawatan)",
+   "kombinasi KDT/FDC                  cairan ih",
+   "mengandung:",
+   "a. ipratropium bromida 0,5 mg"
+  ]
+ },
+ {
+  "kelas": "26. OBAT untuk SALURAN NAPAS 26. 1 ANTIASMA",
+  "subKelas": "26.4 OBAT untuk PENYAKIT PARU OBSTRUKSI KRONIS",
+  "generik": "b. salbutamol",
+  "sediaan": [
+   "2,5 mg"
+  ]
+ },
+ {
+  "kelas": "27. OBAT yang MEMPENGARUHI SISTEM IMUN",
+  "subKelas": "27.1 SERUM dan IMUNOGLOBULIN",
+  "generik": "human tetanus immunoglobulin",
+  "sediaan": [
+   "inj 250 IU ( i.m.)",
+   "serum anti bisa ular:              inj (i.v./i.m)",
+   "A.B.U.I (khusus ular dari luar",
+   "Papua)",
+   "A.B.U.II (khusus ular dari Papua) inj (i.v./i.m)"
+  ]
+ },
+ {
+  "kelas": "27. OBAT yang MEMPENGARUHI SISTEM IMUN",
+  "subKelas": "27.1 SERUM dan IMUNOGLOBULIN",
+  "generik": "serum antirabies",
+  "sediaan": [
+   "inj 150 - 400 IU/mL",
+   "serum antidifteri (A.D.S)          inj 10.000 IU (Hanya Untuk Program)",
+   "serum antitetanus (A.T.S)          Untuk pencegahan:",
+   "inj 1.500 IU/mL (i.m.)",
+   "inj 5.000 IU/mL (i.m.)",
+   "Untuk pengobatan:",
+   "inj 10.000 IU/mL (i.m./i.v.)",
+   "inj 20.000 IU/mL (i.m./i.v.)"
+  ]
+ },
+ {
+  "kelas": "28. OBAT untuk TELINGA, HIDUNG dan TENGGOROK",
+  "subKelas": null,
+  "generik": "hidrogen peroksida",
+  "sediaan": [
+   "cairan 3%"
+  ]
+ },
+ {
+  "kelas": "28. OBAT untuk TELINGA, HIDUNG dan TENGGOROK",
+  "subKelas": null,
+  "generik": "karbogliserin",
+  "sediaan": [
+   "tts telinga 10%"
+  ]
+ },
+ {
+  "kelas": "28. OBAT untuk TELINGA, HIDUNG dan TENGGOROK",
+  "subKelas": null,
+  "generik": "lidokain",
+  "sediaan": [
+   "spray topikal 10%"
+  ]
+ },
+ {
+  "kelas": "28. OBAT untuk TELINGA, HIDUNG dan TENGGOROK",
+  "subKelas": null,
+  "generik": "oksimetazolin",
+  "sediaan": [
+   "tts hidung 0,025%",
+   "semprot hidung 0,050%",
+   "29.VITAMIN dan MINERAL             tab 50 mg",
+   "asam askorbat (vitamin C)",
+   "tab 250 mg"
+  ]
+ },
+ {
+  "kelas": "28. OBAT untuk TELINGA, HIDUNG dan TENGGOROK",
+  "subKelas": null,
+  "generik": "kalsium glukonat",
+  "sediaan": []
+ },
+ {
+  "kelas": "28. OBAT untuk TELINGA, HIDUNG dan TENGGOROK",
+  "subKelas": null,
+  "generik": "kalsium karbonat",
+  "sediaan": [
+   "FORMULASI"
+  ]
+ },
+ {
+  "kelas": "28. OBAT untuk TELINGA, HIDUNG dan TENGGOROK",
+  "subKelas": null,
+  "generik": "kalsium laktat (kalk)",
+  "sediaan": [
+   "(Bentuk Sediaan dan Kekuatan)",
+   "(Hanya Untuk Program)       inj 10%",
+   "kombinasi KDT/FDC           tab 500 mg",
+   "mengandung:                 tab 500 mg",
+   "a. Fe sulfat/Fe fumarat/    tab sal",
+   "Fe glukonat 60 mg        tab 10 mg",
+   "b. asam folat 0,4 mg        tab 25 mg",
+   "piridoksin (vitamin B6)     inj 50 mg/mL",
+   "kaps lunak 100.000 IU",
+   "retinol (vitamin A)         kaps lunak 200.000 IU",
+   "tab 50 mg",
+   "tiamin (vitamin B1)",
+   "MENTERI KESEHATAN",
+   "REPUBLIK INDONESIA,"
+  ]
+ },
+ {
+  "kelas": "28. OBAT untuk TELINGA, HIDUNG dan TENGGOROK",
+  "subKelas": null,
+  "generik": "ttd.",
+  "sediaan": [
+   "BUDI G. SADIKIN"
+  ]
+ }
+]

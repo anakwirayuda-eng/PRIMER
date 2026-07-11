@@ -1,0 +1,339 @@
+SUMBER & CATATAN AKUISISI
+=========================
+Dokumen target: "Buku Panduan Keterampilan Dasar Kader Bidang Kesehatan" (Kemenkes RI,
+25 Keterampilan Dasar Kader Posyandu), start URL:
+https://jpg-indonesia.net/2023/11/buku-panduan-keterampilan-dasar-kader-bidang-kesehatan/
+-> URL ini mengembalikan HTTP 404 saat diakses (halaman sudah dihapus/dipindah dari
+   situs Jaringan Pangan & Gizi Indonesia). Tidak ditemukan versi arsip yang bisa diakses
+   (web.archive.org diblokir tool fetch di lingkungan ini).
+
+PDF resmi Kemenkes/Dinkes TIDAK berhasil diunduh setelah >5 percobaan pada domain
+berbeda (semua gagal dengan 404/403/503, dicoba dgn curl langsung + user-agent browser):
+  - dinkes.babelprov.go.id/.../25%20KECAKAPAN%20KADER.pdf -> 404
+  - promkes.kemkes.go.id/pub/files/files43996Kurmod_Kader_Posyandu.pdf -> 503 (halaman error)
+  - siakpel.kemkes.go.id/upload/akreditasi_kurikulum/kurikulum-...pdf -> 404
+  - pusatkrisis.kemkes.go.id/download/.../Buku_Pegangan_Kader_1.pdf -> 200 tapi isinya
+    HTML "HALAMAN TIDAK DITEMUKAN" (404 Kemenkes), bukan PDF asli
+  - ayosehat.kemkes.go.id (Kurikulum Pelatihan Keterampilan Dasar bagi Kader Posyandu)
+    -> file di-gate di balik form pendaftaran (nama, medsos, email), tidak ada URL file langsung
+  - puskesmassiwalan.pekalongankab.go.id/.../buku-panduan-keterampilan-dasar-kader-posyandu
+    -> 404
+  - promkes.kemkes.go.id/buku-panduan-orientasi-kader-posyandu -> 503
+
+Karena PDF primer tidak bisa diakses, riset ini disusun dari SUMBER SEKUNDER/TERSIER
+yang paling dapat dipercaya & saling mengoreksi:
+
+(A) https://kesmas-id.com/mengenal-25-keterampilan-dasar-kader-posyandu-bidang-kesehatan/
+    - Artikel Promkes Puskesmas Gunungtanjung (Dinkes Kab. Tasikmalaya), ditulis oleh
+      Insan Tsabita, DIREVIEW oleh "Nita Nur Arifin, S.K.M — Programer Promkes
+      Puskesmas Gunungtanjung" (kredensial tenaga kesehatan riil, bukan blog anonim).
+      Mengutip pedoman Kemenkes secara eksplisit. Teks di bawah adalah HASIL EKSTRAKSI
+      LITERAL dari HTML mentah (bukan ringkasan model kecil) — paling dekat dengan kutipan
+      asli yang tersedia untuk riset ini.
+
+(B) FAQ terstruktur (JSON-LD, auto-extracted dari isi dokumen PDF asli 117 halaman) yang
+    ditemukan tertanam di halaman Scribd untuk dokumen "Buku Panduan Keterampilan Dasar
+    Kader Bidang Kesehatan (1)" (uploader: Musripin Panabali):
+    https://www.scribd.com/document/690972952/Buku-Panduan-Keterampilan-Dasar-Kader-Bidang-Kesehatan-1
+    Metadata dokumen (schema.org/MediaObject) mengonfirmasi: 117 halaman, deskripsi
+    "25 keterampilan dasar bagi kader posyandu meliputi pengelolaan posyandu, layanan untuk
+    ibu hamil, bayi dan balita, anak sekolah, dewasa dan lanjut usia" — cocok dengan dokumen
+    target. FAQ ini disusun otomatis dari isi dokumen asli sehingga memuat detail yang TIDAK
+    ada di sumber (A), dikutip verbatim di bawah.
+
+(C) Dua ringkasan turunan (SlideShare) yang dipakai untuk cross-check jumlah item per
+    kelompok siklus hidup (karena sumber A tampaknya kurang 1 item — lihat catatan
+    rekonsiliasi di akhir file):
+    - https://www.slideshare.net/slideshow/full-versi-materi-pelatihan-25-keterampilan-kader-pdf/271598914
+    - https://www.slideshare.net/slideshow/buku-panduan-keterampilan-dasar-kader-pptx/272116669
+
+=========================================================
+(A) TEKS LITERAL — kesmas-id.com (ekstraksi HTML mentah)
+=========================================================
+
+Mengenal 25 Keterampilan Dasar Kader Posyandu Bidang Kesehatan
+(Insan Tsabita, Oktober 23, 2024 — direview oleh Nita Nur Arifin, S.K.M,
+Programer Promkes Puskesmas Gunungtanjung, Kab. Tasikmalaya, Jawa Barat)
+
+Kementerian Kesehatan RI telah menyusun pedoman 25 Keterampilan Dasar Kader Posyandu
+Bidang Kesehatan. Pedoman ini disusun sebagai bahan pendukung untuk melatih Kader
+Posyandu agar memiliki berbagai keterampilan. Hal ini sebagai salah satu bentuk
+implementasi Transformasi Kesehatan Layanan Primer.
+
+Kementerian Kesehatan RI telah menetapkan tiga fokus integrasi pelayanan primer untuk
+meningkatkan angka kesehatan. Pertama, siklus hidup yang berfokus pada penguatan promosi
+dan pencegahan. Kedua, mendekatkan pelayanan melalui jejaring, termasuk memperkuat
+promosi dan pencegahan serta resiliensi terhadap pandemi. Ketiga, memperkuat pemantauan
+wilayah setempat.
+
+Dalam prosesnya, Kader Posyandu akan melalui tiga tahapan pembinaan yang terdiri dari
+pelatihan, penilaian dan pemberian Tanda Kecakapan Kader (TKK). Kader Posyandu yang
+memiliki poin TKK sesuai kualifikasi akan dilombakan pada tingkat kecamatan hingga
+tingkat provinsi.
+
+Selain TKK, Kementerian Kesehatan RI juga memberikan penghargaan pada Kader Posyandu
+yang berprestasi. Penghargaan dan pemenang lomba kader berprestasi, akan diberikan saat
+acara Jambore Kader Posyandu yang berlangsung pada Hari Kesehatan Nasional.
+
+-- 5 Skill Dasar yang Harus Dikuasai Kader --
+Terdapat lima aspek keterampilan dasar kader Posyandu yang didasarkan pada siklus hidup
+manusia. Aspek tersebut memiliki berbagai poin kecakapan yang harus dikuasai kader.
+Aspek tersebut ialah:
+
+1. Keterampilan Dasar Pengelolaan Posyandu
+   - Menjelaskan paket layanan posyandu untuk seluruh siklus hidup
+   - Melakukan pencatatan dan pelaporan
+   - Melakukan kunjungan rumah
+   - Melakukan komunikasi efektif
+
+2. Keterampilan Dasar Bayi dan Balita
+   - Menjelaskan penggunaan buku KIA bagian balita
+   - Melakukan penyuluhan ASI eksklusif dan MP ASI kaya protein hewani sesuai umur
+   - Melakukan penimbangan berat badan dan pengukuran panjang atau tinggi badan, lingkar
+     kepala, dan lengan atas
+   - Menjelaskan hasil pengukuran berat dan tinggi badan normal atau kurang serta tindak
+     lanjutnya
+   - Menjelaskan stimulasi perkembangan, manfaat vitamin A, dan konsumsi obat cacing
+     sesuai umur
+   - Menjelaskan layanan imunisasi rutin lengkap dan PD3I (Hepatitis, Difteri, Campak,
+     Rubela, Diare)
+   - Menjelaskan pemantauan tanda bahaya bayi dan balita
+
+3. Keterampilan Dasar Ibu Hamil, Menyusui
+   - Menjelaskan penggunaan Buku KIA bagian ibu hamil dan nifas
+   - Melakukan penyuluhan Isi Piringku ibu hamil dan ibu menyusui
+   - Menjelaskan pemeriksaan ibu hamil dan ibu nifas
+   - Menjelaskan bahwa ibu hamil perlu memantau berat badan, lingkar lengan, dan tekanan
+     darah dengan kurva buku KIA
+   - Menjelaskan anjuran minum TTD (Tablet Tambah Darah) setiap hari selama hamil
+   - Menjelaskan pemantauan tanda bahaya ibu hamil dan ibu nifas
+
+4. Keterampilan Dasar Usia Sekolah dan Usia Remaja
+   - Melakukan penyuluhan Isi Piringku dan aktivitas fisik
+   - Menjelaskan program pencegahan anemia (TTD dan skrining Hb remaja putri)
+   - Melakukan penyuluhan bahaya merokok dan NAPZA, dan kehamilan remaja
+   [Catatan rekonsiliasi: sumber SlideShare cross-check menambahkan item ke-4 di
+    kelompok ini: "Melakukan penyuluhan keluarga berencana" — lihat catatan akhir file.
+    Kelompok ini di sumber (A) hanya berjumlah 3 item, membuat total jadi 24, bukan 25.]
+
+5. Keterampilan Dasar Usia Dewasa dan Lansia
+   - Melakukan penyuluhan Germas (Isi Piringku, aktivitas fisik dan cek kesehatan)
+   - Menjelaskan penyakit terbanyak (obesitas, hipertensi, diabetes, stroke, kanker,
+     penyakit paru obstruktif kronis/PPOK, TBC, diare, kesehatan jiwa, geriatri)
+   - Melakukan deteksi dini usia dewasa dan lansia dengan pengukuran lingkar perut dan
+     tekanan darah (obesitas, hipertensi)
+   - Melakukan deteksi dini usia dewasa dan lansia dengan kuesioner (PPOK, TBC, kesehatan
+     jiwa, geriatri dan diabetes)
+
+Pelatihan kader Posyandu dilakukan melalui pelatihan terakreditasi maupun workshop atau
+orientasi. Tenaga kesehatan Puskesmas dan Dinas Kesehatan bertanggung jawab sebagai
+fasilitator pelatihan.
+
+-- Tanda Kecakapan Kader (TKK) --
+Pada tahap ini, hasil pelatihan 25 Keterampilan Dasar Kader akan diuji saat melakukan
+praktik lapangan. Tenaga kesehatan Puskesmas bertanggung jawab untuk menguji keterampilan
+kader menggunakan daftar tilik yang dapat diakses melalui situs Kemenkes
+(link.kemkes.go.id/DaftarTilik).
+
+Kader yang belum memenuhi aspek penilaian akan diberi bimbingan, kemudian diuji kembali
+hingga lulus uji keterampilan. Kader yang telah lulus uji akan mendapatkan TKK saat
+Musyawarah Perencanaan Pembangunan (Musrenbang), Mini Lokakarya Puskesmas, Pertemuan
+Posyandu, atau pada forum pertemuan lainnya.
+
+-- Tingkatan Keterampilan Kader --
+Keterampilan Kader Posyandu hasil dari uji 25 Keterampilan Dasar Kader, digolongkan
+dalam tiga tingkatan. Tanda bukti keterampilan kader dibuktikan dengan sertifikat yang
+disahkan oleh Direktorat Peningkatan Mutu Tenaga kesehatan. Kader juga akan mendapatkan
+pin sesuai dengan tingkatan keterampilan yang berhasil diperoleh.
+
+Tingkatan kader dan keterampilannya:
+1. Kader Purwa — Kader menguasai tiga kelompok keterampilan yang terdiri dari dua
+   keterampilan dasar dan satu keterampilan dasar pilihan. Dua keterampilan dasar yang
+   wajib dikuasai ialah Pengelolaan Posyandu dan Layanan Bayi & Balita.
+2. Kader Madya — Kader wajib menguasai empat kelompok keterampilan. Tiga keterampilan
+   dasar wajib, terdiri dari Pengelolaan Posyandu, Layanan Bayi & Balita, serta Layanan
+   Ibu Hamil & Ibu Menyusui, lalu ditambah dengan satu keterampilan dasar pilihan.
+3. Kader Utama — Kader utama wajib menguasai seluruh kelompok keterampilan (kelima
+   kelompok).
+
+============================================================
+(B) FAQ TERSTRUKTUR — diekstrak dari JSON-LD halaman Scribd
+    (auto-generated dari isi PDF asli 117 halaman, dikutip verbatim)
+============================================================
+
+Metadata dokumen (schema.org/MediaObject):
+"Buku panduan ini memberikan pedoman tentang 25 keterampilan dasar bagi kader posyandu
+meliputi pengelolaan posyandu, layanan untuk ibu hamil, bayi dan balita, anak sekolah,
+dewasa dan lanjut usia. Panduan ini bertujuan meningkatkan kapasitas kader dalam
+memberikan layanan kesehatan dasar di posyandu sesuai siklus hidup."
+(inLanguage: id, 117 halaman, author kredit upload: Musripin Panabali)
+
+Q: Bagaimana cara deteksi dini penyakit umum yang dilakukan posyandu untuk usia dewasa
+   dan lansia, dan apa manfaatnya bagi kesehatan masyarakat?
+A: Deteksi dini penyakit umum pada posyandu untuk dewasa dan lansia dilakukan dengan
+   pengukuran lingkar perut, tekanan darah, serta penggunaan kuesioner untuk penyakit
+   seperti PPOK dan diabetes. Deteksi ini penting untuk identifikasi dini risiko
+   kesehatan, memungkinkan perawatan tepat waktu, dan mencegah komplikasi lebih lanjut.
+   Ini berkontribusi pada peningkatan kesehatan masyarakat secara keseluruhan dengan
+   mengurangi beban penyakit.
+
+Q: Apa peran Buku KIA dalam pelayanan posyandu untuk ibu hamil dan balita?
+A: Buku KIA berperan sebagai alat untuk mencatat dan memantau perkembangan kesehatan
+   ibu hamil dan balita. Buku tersebut mencakup panduan penggunaan, penimbangan,
+   pengukuran, plotting hasil, serta informasi tentang imunisasi dan makanan tambahan.
+   Tenaga kesehatan mencatat setiap interaksi layanan kesehatan agar pemantauan
+   kesehatan dapat dilakukan secara berkelanjutan.
+
+Q: Bagaimana penilaian keterampilan kader dilakukan di posyandu dan apa implikasinya
+   bagi kader yang berprestasi?
+A: Penilaian keterampilan kader dilakukan di posyandu oleh tenaga kesehatan puskesmas
+   menggunakan daftar tilik yang menilai pengelolaan posyandu secara komprehensif.
+   Kader yang memenuhi standar keterampilan akan diberi Tanda Keterampilan Kader (TKK),
+   sebuah pengakuan yang memberikan motivasi dan memperkuat komitmen kader terhadap
+   tugas mereka. Ini juga meningkatkan kredibilitas kader di mata masyarakat.
+
+Q: Apa saja langkah yang dilakukan untuk mendeteksi tanda bahaya bayi dan balita, dan
+   bagaimana antisipasi yang bisa diambil jika tanda tersebut ditemukan?
+A: Deteksi tanda bahaya bayi dan balita melibatkan pemantauan secara rutin terhadap
+   parameter kesehatan yang dapat diukur seperti berat badan, tinggi badan, dan lingkar
+   kepala. Jika tanda bahaya seperti demam tinggi, susah bernapas, atau kehilangan berat
+   badan ditemukan, kader akan memberikan penyuluhan dan MERUJUK KE LAYANAN KESEHATAN
+   YANG LEBIH TINGGI untuk tindakan lebih lanjut. Antisipasi ini penting untuk mencegah
+   komplikasi kesehatan lebih lanjut.
+
+Q: Bagaimana pelaksanaan posyandu dapat mendukung Gerakan Masyarakat Sehat (Germas)
+   melalui program penyuluhan?
+A: Pelaksanaan posyandu mendukung Germas melalui program penyuluhan yang fokus pada
+   pola hidup sehat, seperti 'Isi Piringku', aktivitas fisik, serta cek kesehatan rutin.
+   Program ini meningkatkan kesadaran masyarakat tentang pentingnya menjaga kesehatan
+   dan mencegah penyakit. Posyandu sebagai pusat informasi dan layanan kesehatan tingkat
+   pertama memainkan peran kunci dalam mendiseminasikan informasi kesehatan yang tepat.
+
+Q: Mengapa pelatihan kader utama mengharuskan penguasaan kelima kelompok keterampilan,
+   dan bagaimana ini meningkatkan kualitas layanan posyandu?
+A: Pelatihan kader utama mengharuskan penguasaan kelima kelompok keterampilan agar
+   dapat memberikan layanan posyandu yang komprehensif untuk semua siklus hidup. Dengan
+   demikian, kader dapat menangani berbagai masalah kesehatan di semua kelompok umur,
+   meningkatkan efektivitas dan kualitas layanan posyandu. Hal ini juga memastikan bahwa
+   setiap program kesehatan dapat dilaksanakan dan dipantau dengan baik.
+
+Q: Apa saja keterampilan dasar yang harus dikuasai oleh seorang kader posyandu dan
+   bagaimana peranannya dalam pelayanan kesehatan masyarakat?
+A: Keterampilan dasar yang harus dikuasai oleh seorang kader posyandu mencakup layanan
+   dasar bagi ibu hamil, menyusui, bayi, balita, anak usia sekolah, remaja, dewasa, dan
+   lanjut usia. Selain itu, kader harus menguasai komunikasi efektif dan pengelolaan
+   posyandu. Kader juga dilatih untuk melakukan pencatatan, pelaporan, dan kunjungan
+   rumah. Dalam pelayanan kesehatan masyarakat, peran kader penting sebagai UJUNG TOMBAK
+   DETEKSI DINI DAN PENYULUHAN, terutama terkait gizi, imunisasi, dan kesehatan
+   lingkungan.
+
+Q: Bagaimana metode-metode pelatihan diterapkan untuk meningkatkan kapasitas kader
+   posyandu dalam menangani masalah kesehatan?
+A: Metode pelatihan untuk meningkatkan kapasitas kader posyandu meliputi ceramah,
+   simulasi, bermain peran, dan praktek lapangan. Melalui ceramah interaktif, peserta
+   mendapatkan pemahaman teori yang kemudian dipraktikkan melalui simulasi dan bermain
+   peran. Praktek lapangan memberi pengalaman langsung dalam penanganan masalah
+   kesehatan. Evaluasi hasil belajar dilakukan oleh tenaga kesehatan di puskesmas
+   melalui uji keterampilan kader dengan daftar tilik.
+
+Q: Bagaimana komunikasi efektif antara kader posyandu dan masyarakat dapat tercipta,
+   dan seberapa penting faktor ini dalam menjalankan tugas sehari-hari seorang kader?
+A: Komunikasi efektif antara kader posyandu dan masyarakat dapat tercipta melalui
+   TEKNIK SAJI (Salam, Ajak Bicara, Jelaskan, dan Bantu). Ini penting untuk memastikan
+   bahwa informasi kesehatan disampaikan dengan jelas dan dimengerti masyarakat,
+   sehingga meningkatkan partisipasi dalam program kesehatan dan mendukung perubahan
+   perilaku sehat. Tanpa komunikasi yang efektif, program kesehatan mungkin tidak
+   diterima dengan baik oleh masyarakat.
+
+Q: Apa pentingnya pelaksanaan kunjungan rumah oleh kader posyandu dan bagaimana
+   langkah-langkah yang dilakukan selama kunjungan ini?
+A: Pelaksanaan kunjungan rumah oleh kader posyandu penting untuk mendeteksi masalah
+   kesehatan di lingkungan keluarga dan memberikan penyuluhan kesehatan langsung.
+   Selama kunjungan, kader melakukan wawancara, memeriksa catatan kesehatan, memberikan
+   informasi edukasi, dan melaporkan temuan ke PUSKESMAS ATAU PUSTU. Ini membantu
+   memastikan tindak lanjut masalah kesehatan secara komprehensif.
+
+===================================================================
+(C) CATATAN REKONSILIASI JUMLAH ITEM PER KELOMPOK (kenapa 24 vs 25)
+===================================================================
+Sumber (A) — kesmas-id.com — menghasilkan total 4+7+6+3+4 = 24 item (bukan 25), karena
+kelompok "Usia Sekolah dan Usia Remaja" hanya memuat 3 bullet.
+
+Dua ringkasan SlideShare independen (dibuat oleh AI dari isi PDF/PPTX yang berbeda,
+bukan dari kesmas-id.com) SAMA-SAMA menambahkan 1 item ke-4 pada kelompok ini:
+"Melakukan penyuluhan keluarga berencana" (family planning education) — menjadikan
+kelompok Usia Sekolah/Remaja berjumlah 4 item, sehingga total keseluruhan menjadi
+4 + 7 + 6 + 4 + 4 = 25. Ini konsisten dengan angka "25" yang disebut berulang kali di
+semua sumber (judul, TKK, metadata Scribd, FAQ).
+
+KESIMPULAN KERJA (best-effort reconstruction, BUKAN kutipan verbatim dari PDF asli
+yang tidak berhasil diakses):
+
+1. Pengelolaan Posyandu — 4 keterampilan
+   1. Menjelaskan paket layanan posyandu untuk seluruh siklus hidup
+   2. Melakukan pencatatan dan pelaporan
+   3. Melakukan kunjungan rumah
+   4. Melakukan komunikasi efektif (teknik SAJI: Salam, Ajak bicara, Jelaskan, Bantu)
+
+2. Bayi dan Balita — 7 keterampilan
+   5. Menjelaskan penggunaan buku KIA bagian balita
+   6. Melakukan penyuluhan ASI eksklusif dan MP-ASI kaya protein hewani sesuai umur
+   7. Melakukan penimbangan berat badan dan pengukuran panjang/tinggi badan, lingkar
+      kepala, dan lingkar lengan atas
+   8. Menjelaskan hasil pengukuran (normal/kurang) dan tindak lanjutnya
+   9. Menjelaskan stimulasi perkembangan, manfaat vitamin A, dan obat cacing sesuai umur
+   10. Menjelaskan layanan imunisasi rutin lengkap dan PD3I (Hepatitis, Difteri, Campak,
+       Rubela, Diare)
+   11. Menjelaskan/memantau tanda bahaya bayi dan balita (-> rujuk bila ditemukan)
+
+3. Ibu Hamil dan Menyusui — 6 keterampilan
+   12. Menjelaskan penggunaan Buku KIA bagian ibu hamil dan nifas
+   13. Melakukan penyuluhan Isi Piringku ibu hamil dan ibu menyusui
+   14. Menjelaskan pemeriksaan ibu hamil dan ibu nifas
+   15. Menjelaskan pemantauan berat badan, lingkar lengan, tekanan darah dengan kurva
+       buku KIA
+   16. Menjelaskan anjuran minum TTD (Tablet Tambah Darah) setiap hari selama hamil
+   17. Menjelaskan/memantau tanda bahaya ibu hamil dan nifas (-> rujuk bila ditemukan)
+
+4. Usia Sekolah dan Remaja — 4 keterampilan
+   18. Melakukan penyuluhan Isi Piringku dan aktivitas fisik
+   19. Menjelaskan program pencegahan anemia (TTD dan skrining Hb remaja putri)
+   20. Melakukan penyuluhan bahaya merokok, NAPZA, dan kehamilan remaja
+   21. Melakukan penyuluhan keluarga berencana (item rekonstruksi, lihat catatan di atas)
+
+5. Usia Dewasa dan Lansia — 4 keterampilan
+   22. Melakukan penyuluhan Germas (Isi Piringku, aktivitas fisik, cek kesehatan rutin)
+   23. Menjelaskan penyakit terbanyak (obesitas, hipertensi, diabetes, stroke, kanker,
+       PPOK, TBC, diare, kesehatan jiwa, geriatri)
+   24. Melakukan deteksi dini dengan pengukuran lingkar perut dan tekanan darah
+       (obesitas, hipertensi)
+   25. Melakukan deteksi dini dengan kuesioner (PPOK, TBC, kesehatan jiwa, geriatri,
+       diabetes)
+
+CATATAN KEPERCAYAAN: Item 1-20, 22-25 dikuatkan verbatim/hampir-verbatim oleh sumber
+(A) yang literal (bukan hasil ringkasan AI) DAN kredensial (direview tenaga Promkes
+Puskesmas). Item 21 ("keluarga berencana") adalah rekonstruksi dari cross-check dua
+ringkasan AI independen (SlideShare) yang tidak bisa diverifikasi kata-per-kata karena
+PDF asli tidak berhasil diunduh — beri prioritas rendah/tinjau ulang bila menemukan
+salinan PDF resmi di kemudian hari.
+
+===================================================================
+IMPLIKASI KEWENANGAN KADER (untuk mekanik delegasiKegiatan / bias-ketelitian)
+===================================================================
+Pola yang konsisten di seluruh sumber:
+- Kader BOLEH: menjelaskan/edukasi (KIA, ASI, MP-ASI, Isi Piringku, TTD, Germas, bahaya
+  rokok/NAPZA), MENGUKUR dengan alat sederhana non-invasif (timbangan, pita LiLA,
+  tensimeter, kuesioner skrining PPOK/TBC/jiwa/geriatri/diabetes, lingkar perut/kepala),
+  MENCATAT & MELAPORKAN (buku KIA, pencatatan-pelaporan posyandu), MELAKUKAN kunjungan
+  rumah, dan MERUJUK bila menemukan tanda bahaya atau hasil abnormal.
+- Kader TIDAK BOLEH (implisit, di luar 25 keterampilan): menegakkan diagnosis,
+  menyuntik/memberi imunisasi sendiri, meresepkan obat (TTD/obat TB/obat hipertensi
+  disebut sebagai "anjuran minum"/"obat" yang dijelaskan kader tapi diberikan oleh
+  nakes), atau menangani kasus dengan tanda bahaya (itu wilayah rujukan ke Puskesmas/
+  Pustu/bidan/nakes).
+- Penilaian keterampilan kader sendiri bersifat BERJENJANG & DIUJI oleh nakes Puskesmas
+  memakai "daftar tilik" (checklist) — kader BUKAN otoritas penuh, kompetensinya
+  bertingkat (Purwa/Madya/Utama) dan diverifikasi oleh tenaga kesehatan.
+- Sumber bias/human-error yang disebut eksplisit dalam FAQ: kader melakukan pengukuran
+  ("dapat diukur") dan bisa keliru — makanya ada jenjang sertifikasi & uji ulang bagi
+  yang "belum memenuhi aspek penilaian".

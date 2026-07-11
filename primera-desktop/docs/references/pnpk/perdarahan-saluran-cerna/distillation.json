@@ -1,0 +1,71 @@
+{
+  "judul": "PNPK 2023 - Tata Laksana Perdarahan Saluran Cerna",
+  "pdfUrl": "https://kemkes.go.id/app_asset/file_content_download/1704938290659f4b329345f4.01717160.pdf",
+  "halamanSumber": "https://kemkes.go.id/id/pnpk-2023---tata-laksana-perdarahan-saluran-cerna-",
+  "nomorSK": "HK.01.07/MENKES/2162/2023",
+  "tanggalTerbit": "Ditetapkan di Jakarta pada tanggal 4 Desember 2023 (ditandatangani Menteri Kesehatan Budi G. Sadikin); diunggah di situs JDIH/kemkes.go.id pada 29 Desember 2023",
+  "ringkasanLiniPertama": "Dokumen membagi perdarahan saluran cerna menjadi PSCA (perdarahan saluran cerna atas, proksimal ligamentum Treitz) dan PSCB (distal ligamentum Treitz), masing-masing dengan bab terpisah untuk dewasa dan anak. Peran FKTP menurut dokumen ini secara eksplisit adalah RESUSITASI AWAL, BUKAN diagnosis definitif atau terapi endoskopik/bedah. Langkah lini pertama di FKTP: (1) Nilai status hemodinamik segera (nadi, TD, kesadaran, capillary refill, produksi urin) - resusitasi wajib dilakukan di FKTP untuk memastikan hemodinamik stabil sebelum dirujuk, berupa cairan IV (kristaloid/koloid) dan oksigen. (2) Pemasangan NGT dapat segera dilakukan oleh tenaga medis di FKTP pada perdarahan yang diduga masih berlangsung disertai gangguan hemodinamik, untuk mencegah aspirasi, dekompresi, dan menilai derajat perdarahan - namun tidak wajib pada semua pasien; pasien dipuasakan bila perdarahan masih berlangsung. (3) PPI pra-endoskopi direkomendasikan (Rekomendasi IA) untuk PSCA khususnya non-varises dan dapat/sebaiknya dimulai sebelum rujukan bila tersedia, baik IV maupun oral. (4) Semua pasien dengan instabilitas hemodinamik atau perdarahan aktif (hematemesis, hematokezia, aspirat NGT merah segar) perlu dirujuk untuk perawatan intensif dengan pemantauan ketat. (5) Endoskopi (gold standard diagnosis PSCA, Rekomendasi IA) dan kolonoskopi (modalitas utama PSCB, Rekomendasi Ia) TIDAK tersedia/dilakukan di FKTP - ini domain fasilitas rujukan. (6) Stratifikasi risiko dengan skor Blatchford dan Rockall (Rekomendasi IIb) membantu menentukan kebutuhan rawat inap/rujukan vs rawat jalan; skor Blatchford 0 berarti risiko sangat rendah (>99% sensitivitas tidak perlu intervensi), skor Rockall >=8 risiko tinggi. Pada anak dipakai skor Sheffield (cutoff 24) untuk prediksi kebutuhan hemostasis endoskopik. (7) Eradikasi H. pylori direkomendasikan pada semua pasien PSCA (Rekomendasi Ib) mengikuti Konsensus Nasional Dispepsia & H. pylori 2021, relevan untuk tata laksana lanjutan/kontrol pasca-rujukan di FKTP. (8) Untuk penyakit hati kronis dengan perdarahan, Vitamin K diperbolehkan; laktulosa dan antibiotik non-absorbable (neomisin/colistin) dipakai mencegah ensefalopati hepatikum akibat amonia.",
+  "dosisKunci": {
+    "dewasa": [
+      "PPI IV (pra-endoskopi, Rekomendasi IA): bolus 80 mg esomeprazole/pantoprazole/omeprazole, dilanjutkan infus kontinu 8 mg/jam selama 72 jam. Jika endoskopi baru dilakukan setelah 12 jam, dosis kedua PPI IV diberikan 12 jam kemudian (mis. esomeprazole 40 mg / pantoprazole 40 mg)",
+      "PPI oral (alternatif bila sediaan IV tidak tersedia): esomeprazole 40 mg per oral 2x/hari ATAU omeprazole 20 mg/hari, diberikan selama 8 minggu",
+      "Prokinetik pra-endoskopi: eritromisin 250 mg IV selama 20-30 menit (CATATAN: eritromisin IV belum tersedia di Indonesia menurut dokumen ini); alternatif metoklopramid 10 mg IV, diberikan 30-120 menit sebelum endoskopi",
+      "Obat vasoaktif untuk perdarahan varises (level rujukan/spesialis, dicantumkan untuk konteks): somatostatin bolus 250 mcg + infus 250 mcg selama 12-24 jam; octreotide bolus IV 50 mcg + infus 50 mcg/jam; vasopresin 10 unit/jam bersama nitrogliserin (cegah insufisiensi koroner)",
+      "Ambang transfusi PRC: mulai bila Hb <=7,0 g/dL, kecuali perdarahan masif berlanjut atau komorbid berat (penyakit jantung koroner, hemodinamik tidak stabil, usia lanjut) maka transfusi lebih dini. Hb minimal 8 g/dL untuk endoskopi diagnostik, 10 g/dL bila akan dilakukan terapi endoskopi",
+      "Transfusi trombosit bila trombosit <50.000 disertai perdarahan mengancam jiwa",
+      "FFP bila PT/aPTT >1,5x normal; alternatif 4-F Prothrombin Complex Concentrate (PCC); pada pengguna warfarin dengan perdarahan aktif/INR >2,5: PCC + Vitamin K (FFP jika PCC tidak tersedia)",
+      "Asam traneksamat: BUKAN rekomendasi terapi rutin PSCA (tidak menurunkan risiko perdarahan berulang meski disebut dapat menurunkan mortalitas pada sebagian data)"
+    ],
+    "anak": [
+      "PPI IV - Omeprazol/Esomeprazol: BB <40 kg: 0,5-1 mg/kgBB/hari (1-2x/hari); BB >40 kg: 20-40 mg (1-2x/hari)",
+      "H2RA - Ranitidin: 1 mg/kgBB bolus, dilanjutkan 2-4 mg/kgBB/hari infus kontinu, ATAU bolus 3-5 mg/kgBB/hari terbagi 3 dosis",
+      "PPI oral pencegahan - Omeprazol/Esomeprazol: BB <40 kg: 0,5-1 mg/kgBB/hari (1-2x/hari); BB >40 kg: 20-40 mg (1-2x/hari); atau H2RA 2-4 mg/kgBB/hari terbagi 2-3 dosis",
+      "Sukralfat (proteksi mukosa oral): 40-80 mg/kgBB/hari terbagi 4 dosis (maksimum 1000 mg/dosis)",
+      "Octreotide (perdarahan varises anak): bolus IV 1 mcg/kgBB (maksimal 50 mcg), dilanjutkan 1-4 mcg/kgBB/jam; bila perdarahan terkontrol, dosis diturunkan 50% tiap 12 jam hingga 25% dosis awal baru dihentikan. Efek samping: bradikardia, hiperglikemia",
+      "Vasopresin (anak): 0,002-0,005 unit/kgBB/menit tiap 12 jam, diturunkan dalam 24-48 jam (maksimum 0,2 unit/menit). Efek samping: vasokonstriksi perifer, risiko gagal ginjal",
+      "Propranolol (cegah perdarahan variseal berulang, turunkan tekanan portal): dosis awal 0,6-0,8 mg/kgBB/hari terbagi 2-4 dosis, dinaikkan tiap 3-7 hari (maksimum 8 mg/kgBB/hari), target penurunan nadi awal minimal 25%",
+      "Laktulosa (penyakit hati kronis, cegah ensefalopati hepatikum): 0,5-1 mL/kgBB 2-4x/hari, dikombinasi antibiotik non-absorbable (neomisin, colistin)",
+      "Eradikasi H. pylori anak (triple therapy 14 hari, hanya jika terbukti endoskopik + infeksi H.pylori) dosis pagi/sore menurut berat badan: PPI (Omeprazol/Esomeprazol) 15-24kg=20/20mg, 25-34kg=30/30mg, >35kg=40/40mg; Amoksisilin 15-24kg=500/500mg, 25-34kg=750/750mg, >35kg=1000/1000mg; Klaritromisin 15-24kg=250/250mg, 25-34kg=500/250mg, >35kg=500/500mg; Metronidazol 15-24kg=250/250mg, 25-34kg=500/250mg, >35kg=500/500mg; dilanjutkan PPI 2-4 minggu setelah triple therapy"
+    ]
+  },
+  "kriteriaRujukan": {
+    "PSCA_dewasa": [
+      "Perdarahan yang tidak berhenti dengan penanganan awal di layanan primer",
+      "Semua pasien yang dicurigai atau memiliki riwayat mengalami PSCA memerlukan modalitas diagnostik lanjutan (endoskopi saluran cerna) untuk mengevaluasi sumber perdarahan -> rujuk ke fasilitas kesehatan dengan fasilitas lebih lengkap"
+    ],
+    "PSCB_dewasa": [
+      "Perdarahan yang tidak berhenti dengan penanganan awal di layanan primer",
+      "Semua pasien yang dicurigai mengalami PSCB memerlukan modalitas diagnostik lanjutan (endoskopi/kolonoskopi) -> rujuk ke fasilitas kesehatan dengan fasilitas lebih lengkap",
+      "Catatan tambahan dari bagian diagnosis: pasien dengan perdarahan hemoroid yang teridentifikasi via sigmoidoskopi tetap dirujuk ke ahli bedah kolorektal untuk evaluasi dan pengobatan lanjut"
+    ],
+    "PSCA_anak": [
+      "Perdarahan yang tidak berhenti dengan penanganan awal",
+      "Semua pasien yang dicurigai atau memiliki riwayat mengalami PSCA memerlukan modalitas diagnostik lanjutan (endoskopi) -> rujuk ke fasilitas lebih lengkap"
+    ],
+    "PSCB_anak": [
+      "Nyeri abdomen akut atau kecurigaan intususepsi -> rujuk ke radiologi dan bedah",
+      "Diare berdarah -> rujuk untuk evaluasi IBD atau diare infeksi",
+      "Perdarahan saluran cerna bawah yang berlangsung terus-menerus (intermiten atau persisten) -> rujuk untuk evaluasi polip, kolitis, divertikulum Meckel, dll., tergantung frekuensi, gejala penyerta, dan durasi",
+      "Anemia berat atau gangguan perdarahan akibat koagulopati -> rujuk ke hematologi",
+      "Modalitas diagnostik FKTP tidak memadai untuk menegakkan diagnosis definitif",
+      "Catatan umum dokumen: rujukan dilakukan bila FKTP tidak memiliki SDM atau sarana-prasarana yang memadai"
+    ],
+    "alatBantuTriaseRujukan": "Skor Blatchford dan Rockall (Rekomendasi IIb) direkomendasikan sebagai sistem stratifikasi risiko perdarahan berulang dan kematian. Skor Blatchford 0 = risiko sangat rendah (>99% sensitivitas untuk tidak memerlukan intervensi/rawat inap - berpotensi rawat jalan dengan kontrol). Skor Blatchford >=1 = risiko tinggi. Skor Rockall <=2 = risiko rendah, 3-7 = risiko sedang, >=8 = risiko tinggi (perlu rawat intensif). Pada anak dipakai skor Sheffield, cutoff 24 untuk kebutuhan hemostasis endoskopik."
+  },
+  "redFlags": [
+    "Hematemesis (muntah darah segar atau warna 'ampas kopi'/coffee-ground)",
+    "Melena (BAB hitam lengket berbau khas) - terutama bila disertai gangguan hemodinamik",
+    "Hematokezia (BAB darah segar/merah maroon), khususnya bila volume besar dan disertai instabilitas hemodinamik - menandakan kemungkinan perdarahan masif",
+    "Tanda syok/hipovolemia: takikardia saat istirahat, hipotensi (sistolik <90-100 mmHg), hipotensi ortostatik, waktu pengisian kapiler memanjang, produksi urin rendah, bibir kering, vena jugularis kolaps, penurunan kesadaran",
+    "Sinkop akibat anemia akut",
+    "Stigmata penyakit hati kronis/sirosis (ikterik, asites, splenomegali) -> curiga sumber varises esofagus, prognosis buruk dan risiko perdarahan ulang tinggi",
+    "Nyeri perut hebat disertai defans muskuler/nyeri tekan lepas -> curiga perforasi (misalnya ulkus peptikum perforasi) yang memerlukan rujukan bedah segera",
+    "Riwayat pemakaian NSAID, antiplatelet, atau antikoagulan (warfarin/DOAC) pada pasien dengan perdarahan aktif",
+    "Trombositopenia berat (<50.000) disertai perdarahan yang mengancam jiwa",
+    "Koagulopati (PT/aPTT memanjang >1,5x normal, atau INR >2,5 pada pengguna warfarin)",
+    "Pada anak: tanda syok, penurunan kesadaran, HR >20x di atas rerata HR normal usia, waktu pengisian kapiler memanjang, penurunan Hb >2 g/dL (komponen skor Sheffield untuk kebutuhan tindakan hemostatik endoskopik segera)",
+    "Pada anak: nyeri abdomen akut dengan kecurigaan intususepsi - kegawatan bedah",
+    "Aspirat NGT berwarna merah segar dalam jumlah banyak -> indikasi endoskopi segera dan sebaiknya rawat di unit intensif (berbeda dengan aspirat seperti ampas kopi yang cukup rawat inap + evaluasi endoskopi dalam 24-48 jam)"
+  ],
+  "catatanFktp": "Dokumen ini secara eksplisit menyebut FKTP (fasilitas kesehatan tingkat pertama) beberapa kali dengan peran yang jelas dan terbatas: (1) 'Resusitasi wajib dilakukan di fasilitas kesehatan tingkat pertama (FKTP) untuk memastikan pasien memiliki hemodinamik yang stabil sebelum dirujuk ke fasilitas kesehatan lanjutan jika diperlukan. Resusitasi yang dapat dilakukan di FKTP meliputi pemberian cairan intravena (cairan kristaloid atau koloid) dan pemberian oksigen.' (2) 'Pemasangan NGT dapat segera dilakukan oleh tenaga medis di FKTP yang bertujuan untuk mencegah aspirasi, dekompresi, dan menilai perdarahan sehingga tidak diperlukan pada semua pasien dengan perdarahan.' Selain dua peran teknis tersebut, dokumen secara umum menyasar 'fasilitas pelayanan kesehatan tingkat primer, sekunder, dan tersier' sebagai target pedoman (Bab I Tujuan Khusus & Sasaran) dan menyatakan tujuannya memberi 'rekomendasi berbasis bukti bagi fasilitas pelayanan kesehatan tingkat primer, sekunder, dan tersier serta penentu kebijakan untuk penyusunan protokol setempat atau Panduan Praktik Klinis (PPK) dengan melakukan adaptasi sesuai PNPK.' Poin kunci untuk PRIMER: dokumen ini TIDAK memberi kewenangan diagnostik/terapi endoskopik atau bedah ke FKTP - endoskopi/kolonoskopi eksplisit menjadi gold standard yang dilakukan di fasilitas rujukan. Kriteria rujukan yang dicantumkan sangat generik ('perdarahan tidak berhenti dengan penanganan awal' dan 'perlu modalitas diagnostik lanjutan') untuk PSCA/PSCB dewasa, namun lebih rinci untuk PSCB anak (nyeri abdomen akut/intususepsi, diare berdarah, perdarahan persisten, anemia berat/koagulopati, keterbatasan sarana diagnostik)."
+}
