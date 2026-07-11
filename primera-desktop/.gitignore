@@ -3,3 +3,8 @@ out/
 dist/
 *.log
 .DS_Store
+
+# Data riset mentah hasil scraping (PPK 1186/PNPK/UKM) — ±105 MB, dipakai untuk
+# workflow riset M11.5/M13 (bukan dependensi runtime/build game). Disimpan lokal,
+# TIDAK dimasukkan ke histori git (regenerable; menghindari bloat permanen).
+docs/references/

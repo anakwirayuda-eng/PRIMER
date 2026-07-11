@@ -1029,9 +1029,11 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     id: 'tht_rinosinusitis_akut',
     nama: 'Rinosinusitis Akut',
     icd10: 'J01.9',
-    skdi: '4A',
+    // M9.2 follow-up (2026-07-11): self-report '4A' keliru — PPK/SKDI 2012
+    // Lampiran-3 "Sinusitis" = 3A (dossier §26/§32).
+    skdi: '3A',
     kategori: 'tht',
-    fktp144: true,
+    fktp144: false,
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Hidung saya buntu berat dan wajah terasa nyeri/penuh di sekitar pipi dan dahi dok.',

@@ -414,9 +414,11 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     id: 'mm_osteoartritis_lutut',
     nama: 'Osteoartritis Lutut',
     icd10: 'M17.9',
-    skdi: '4A',
+    // M9.2 follow-up (2026-07-11): self-report '4A' keliru — PPK/SKDI 2012
+    // Lampiran-3 "Artritis, osteoarthritis" (entri gabungan) = 3A (dossier §26/§32).
+    skdi: '3A',
     kategori: 'muskuloskeletal',
-    fktp144: true,
+    fktp144: false,
     harusDirujuk: false,
     prevalensi: 'tinggi',
     keluhanUtama: 'Lutut saya nyeri dok, terutama kalau jalan jauh atau naik-turun tangga.',

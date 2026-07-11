@@ -126,6 +126,40 @@ describe('PACK — validasi silang id konten', () => {
     expect(kontradiksi).toEqual([])
   })
 
+  // M9.2 follow-up (2026-07-11): audit §26/§32 CODEX_AUDIT_DOSSIER.md menemukan 5
+  // kasus yang self-report `skdi:'4A'`-nya SENDIRI keliru dibanding dokumen resmi
+  // (SKDI 2012 Lampiran-3 / Kepmenkes 1186/2022) — didokumentasikan sejak M9 tapi
+  // sempat "menggantung" (dr. Wirayuda belum diminta memutuskan scr eksplisit).
+  // Dikoreksi setelah dr. Wirayuda meninjau ulang audit & mengonfirmasi eksekusi.
+  // `fktp144` ikut jadi false (bukan 4A → bukan bagian 144 wajib-tuntas, sesuai
+  // invarian test di atas). Level PPK/SKDI resmi per kasus:
+  //   - kulit_dermatitis_kontak: "Dermatitis kontak alergika" = 3A
+  //   - tht_rinosinusitis_akut: "Sinusitis" = 3A (catatan: dokumen audit menyisakan
+  //     sedikit ambiguitas apakah varian AKUT spesifik malah level 2 — 3A dipakai
+  //     krn itu match resmi yang terverifikasi, bukan tebakan)
+  //   - mm_osteoartritis_lutut: "Artritis, osteoarthritis" (entri gabungan) = 3A
+  //   - jiwa_gangguan_cemas: "Gangguan cemas menyeluruh" = 3A
+  //   - jiwa_depresi_ringan: "Depresi endogen, episode tunggal & rekuran" = 2
+  //     (bukan 3A — cuma "mengenali & merujuk", tanpa penatalaksanaan awal sama sekali)
+  // `skdi` ikut di-hash sidikJariPack (verifikasi.ts) & dipakai runtime Director
+  // (kasusAman/bias-4A-minggu-1) — bukan field kosmetik murni, maka REVISI_ENGINE
+  // ikut naik bersama fix ini.
+  it('M9.2 follow-up: 5 kasus dgn skdi self-report keliru sudah dikoreksi ke level resmi', () => {
+    const levelResmi: Record<string, string> = {
+      kulit_dermatitis_kontak: '3A',
+      tht_rinosinusitis_akut: '3A',
+      mm_osteoartritis_lutut: '3A',
+      jiwa_gangguan_cemas: '3A',
+      jiwa_depresi_ringan: '2',
+    }
+    for (const [id, level] of Object.entries(levelResmi)) {
+      const k = PACK.kasus[id]
+      expect(k, `kasus ${id} harus ada di PACK`).toBeTruthy()
+      expect(k?.skdi, `${id}.skdi`).toBe(level)
+      expect(k?.fktp144, `${id}.fktp144`).toBe(false)
+    }
+  })
+
   // CODEX ronde-16 P3: auto-link (index.ts) mencocokkan icd10 kasus↔skdi144
   // PER-ENTRI independen — dua entri skdi144 ber-ICD10 SAMA bisa diam-diam
   // tertaut ke KASUS YANG SAMA sekaligus begitu ada kasus baru dgn ICD tsb

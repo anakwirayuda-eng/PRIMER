@@ -164,6 +164,90 @@ menghukum resep tanpa cek alergi?
 - *Rekomendasi condong:* tundukkan ke bawah Q1a — firewall (mencegah resep alergi)
   + kemungkinan gerbang "sudahkah tanya alergi" sbg satu paket keselamatan.
 
+## 3a. Perluasan Q7 (Referral Guillotine) — "rujukan terjustifikasi" (DeepThink, 2026-07-10)
+
+**Sumber baru terverifikasi:** Kepmenkes 1186/2022 halaman 13 (dibaca langsung, bukan
+dipercaya mentah) memuat kriteria rujukan **TACC** (Time-Age-Complication-Comorbidity)
++ poin (e): *"kondisi fasilitas pelayanan juga dapat menjadi dasar bagi dokter untuk
+melakukan rujukan demi menjamin keberlangsungan penatalaksanaan dengan persetujuan
+pasien."* Ini prinsip UMUM (bab pendahuluan, berlaku semua penyakit), bukan properti
+satu kasus.
+
+**Fakta kode terverifikasi:** guillotine saat ini murni boolean statis —
+`rujukanNonSpesialistik = disposisi==='rujuk' && !kasus.harusDirujuk` — nol
+pengecualian. DeepThink usul "tag kasus 4A tertentu di database"; **koreksi**: krn
+prinsipnya umum (bukan per-penyakit), implementasi setia ke dokumen bukan tag statis,
+tapi **mekanisme "rujukan terjustifikasi"**: pemain mendeklarasikan alasan (komplikasi/
+komorbid/keterbatasan fasilitas) saat merujuk kasus 4A, tercatat (sesuai Diktum
+KEENAM/KETUJUH — "harus tercantum dalam rekam medis"), dan itu yang membebaskan dari
+guillotine — bukan flag hardcode developer per-kasus. **Digabung ke Q7, bukan hack
+terpisah.** Butuh: field/aksi baru "justifikasi rujukan" + skor tak menghukum bila
+terjustifikasi & alasannya konsisten dgn kondisi kasus (komplikasi/komorbid nyata ada
+di skenario). REVISI bump (ubah gerbang skor).
+
+## 3b. Koreksi medikolegal — PPK Kemenkes BUKAN "hukum mutlak" anti-EBM
+
+DeepThink sempat mengusulkan menjawab protes mahasiswa dgn "PPK = hukum, EBM tak
+berlaku." **Ini keliru & bertentangan dgn dokumen yang sama.** Diktum KEENAM & KETUJUH
+KMK 1186/2022 (dibaca langsung): *"Modifikasi terhadap pelaksanaan PPK Dokter dapat
+dilakukan... berdasarkan keadaan tertentu... meliputi keadaan khusus pasien,
+kedaruratan, keterbatasan sumber daya, dan **perkembangan ilmu kedokteran dan
+teknologi berbasis bukti (evidence based)**."* Kemenkes sendiri MENGIZINKAN deviasi
+ber-EBM, asal beralasan & terdokumentasi.
+
+**Framing yang benar utk skor & tutorial Hari-1:** PPK = baku DEFAULT; deviasi
+EBM-justified + terdokumentasi = SAH (bukan "PPK selalu menang"). Ini juga
+memperbaiki mitigasi disonansi-kognitif (M11a): bukan "catatan realita murni bekal
+mental, bukan kunci jawaban", tapi *"skor dinilai berdasar PPK sbg baku; menyimpang
+boleh BILA beralasan klinis kuat & terdokumentasi — realita lapangan salah satu alasan
+sah, bukan alasan otomatis untuk berbeda dari PPK."*
+
+## 3c. Penempatan 3-lapis (EBM Terkini / Panduan Resmi Kemenkes / Realita Lapangan)
+
+**Keputusan:** UKP (per-kasus klinik) → tambahkan kotak ke-3 "📜 Panduan Resmi
+Kemenkes" ke `PanelHasil` (debrief per-encounter) yang SUDAH punya 2 kotak
+(`mutiaraEbm`/`catatanRealita`) — bukan Debrief Malam terpisah. Alasan: `PanelHasil`
+sudah per-pasien satu-satu (tak pernah ditumpuk), jadi menambah 1 kotak ke kartu yang
+sudah ada adalah jalur termurah & paling konsisten dgn arsitektur, bukan membangun
+mekanisme baru. UKM (populasi, PMK 6/2024 SPM) → kandidat gamifikasi "quest" terpisah
+di Kegiatan/Lokakarya Mini — **butuh telemetri BARU** (cakupan per-indikator: %
+hipertensi/DM/ODGJ/TB terlayani), krn `iksDesa`/`posyanduSesi` yang ada sekarang tak
+granular per-indikator SPM. Masuk M11 lanjutan, bukan quick-win.
+
+Field baru M11a: `panduanResmi?: string` (paralel dgn `mutiaraEbm`/`catatanRealita`,
+sama-sama TAK di-hash/TAK pengaruhi skor, sitasi eksplisit "KMK 1186/2022").
+
+## 3d. Cross-check menyeluruh PPK 1186/2022 — SELESAI 2026-07-10, 7 temuan genuine
+
+Workflow `ppk1186-crosscheck`: ekstrak 1379 halaman PDF (PyMuPDF, 1.83 juta karakter),
+parse 167 entri penyakit, fuzzy-match 59/67 kasus PRIMERA ke entri PPK, 8 agen
+cross-check tiap kasus vs rentang halaman PPK yang cocok. Hasil mentah: 72 diproses,
+59 cocok entri, verdict ICD 47 cocok/14 tak-cocok/11 n-a, verdict tatalaksana 35
+cocok/17 beda/7 primera-lebih-luas/13 n-a.
+
+**Bug metodologi tertangkap sendiri sebelum dilaporkan**: 3 temuan paling mengkhawatirkan
+("obatBenar kosong/hilang" pada demam_tifoid, kulit_tinea_korporis, kulit_urtikaria_akut)
+ternyata SEMUA false positive — payload cross-check yang saya susun sendiri hanya
+menyertakan field `obatBenar`, tak menyertakan `obatAlternatif`/`obatOpsional` tempat
+obat-obat itu sebenarnya berada (sudah diverifikasi langsung ke kode sumber: benar,
+tidak ada bug). **Pelajaran utk dump data tatalaksana PRIMERA di masa depan: selalu
+sertakan ketiga field kebutuhan-obat, jangan cuma obatBenar.**
+
+Setelah menyaring false-positive & kasus PRIMERA-lebih-spesifik-dari-kode-umum-PPK
+(bukan masalah), tersisa **7 temuan genuine**: mata_konjungtivitis_alergi (steroid
+vs tanpa-steroid — benturan PPK vs EBM internasional AAO, paling signifikan),
+otitis_media_akut (dosis amoksisilin standar-PPK vs tinggi-AAP), anemia_defisiensi_bumil
+(dosis asam folat), kulit_pedikulosis_kapitis (durasi aplikasi + strategi kontak
+serumah), demam_tifoid (wording hierarki lini-1/lini-2 di clue), hemoroid_grade1
+(ICD I84 WHO vs K64.0 CM-style), apendisitis_akut (ICD K35.9 vs K35.8 PPK).
+
+Ketujuhnya digabung sbg "Bagian C" ke artifact shortlist konsolidasi yang sudah ada
+(34→41 item): `https://claude.ai/code/artifact/9c7df187-9996-4f0d-9097-2756f97a6a5f`
+(+ `docs/M11_SHORTLIST_41.pdf`). Data ekstraksi PPK (fulltext/entries/page-boundaries/
+match) disimpan permanen di `docs/references/ppk1186/` — PDF sumber sendiri TIDAK
+disimpan di repo (hanya upload user), perlu diunggah ulang bila ekstraksi ulang
+diperlukan. AWAITING keputusan Dr. Wirayuda per item (via artifact shortlist).
+
 ## 4. Q7 — Otonomi naratif (temuan #9): temuan lebih halus dari dugaan
 
 **Hasil baca kode (bukan asumsi):** kedua arc yang ditandai CODEX ternyata
@@ -336,3 +420,50 @@ kestabilan regresi. Dipertahankan sbg prinsip M10.5.
 4. Minggu-4 (Golden Master): **self-play deflasi + kalibrasi ambang (§7d, WAJIB)**
    → SATU bump `REVISI_ENGINE=18` → hard-freeze. Keputusan medis (#4/#5/#12) +
    ICD I16.0 (§6a) masuk gelombang ini juga.
+
+## 8. Cross-check 31 PNPK Kemenkes (Tier 1+2) — SELESAI 2026-07-10, 17 temuan "berbeda"
+
+Workflow `pnpk-crosscheck` (61 agen, 30/31 dokumen berhasil diproses — 1 gagal genuinely
+krn file PDF yang di-hosting Kemenkes sendiri salah unggah/tertukar, lihat catatan di bawah).
+46 finding total: 16 cocok, 5 primera-lebih-luas (aman, tak perlu aksi), 6 tak-relevan,
+2 tidak-ditemukan-di-kode, **17 berbeda (butuh keputusan/tinjau)**. Detail penuh tiap finding
+(termasuk sitasi persis & kutipan kode) di `docs/references/pnpk/crosscheck_full.json`
+(semua) dan `crosscheck_berbeda.json` (17 yang actionable saja).
+
+**Temuan operasional menarik (bukan bug proses kita)**: PDF resmi Kemenkes untuk "PNPK 2021
+Tata Laksana Gagal Jantung" ternyata isinya SALAH — badan Lampiran (~206rb karakter) adalah
+teks PNPK Diabetes Melitus Tipe 2, bukan Gagal Jantung (diverifikasi 2 mirror independen,
+MD5 identik, tanda tangan Menkes berbeda di akhir Lampiran). Bukan diproses lebih lanjut —
+tak ada dasar utk distilasi/cross-check yang valid dari file yang salah ini.
+
+**7 dari 17 "berbeda" adalah Tier-1** (kasus SPESIFIK sudah ada, isinya berbeda dari PNPK):
+- `hipertensi_esensial` vs PNPK Hipertensi 2021 [TINGGI] — kasus pakai monoterapi amlodipine
+  utk TD 160/95 (Derajat 2), padahal PNPK mewajibkan KOMBINASI 2 obat sejak awal utk Derajat
+  2/3 kecuali lansia-frail/Derajat-1-risiko-rendah. `clue`/`konsekuensi.guideline` kasus ini
+  malah menyitir JNC-8 + Permenkes 5/2014 — PNPK 2021 tak disebut sama sekali sbg rujukan.
+- `dm_tipe2` vs PNPK DM2 2020 [SEDANG] — HbA1c 8,9% (≥7,5%, ambang PNPK utk kombinasi 2 obat),
+  tapi kasus hanya definisikan metformin monoterapi (`obatAlternatif`/`obatOpsional` memang
+  kosong, bukan salah baca sibling field).
+- `mm_isk_bawah` vs PNPK ISK 2025 [SEDANG] — pilihan antibiotik lini pertama sistitis.
+- `kia_isk_kehamilan` vs PNPK ISK 2025 [TINGGI] — durasi terapi ISK kehamilan.
+- `jiwa_skizofrenia` vs PNPK Skizofrenia 2025 [SEDANG] — episode psikotik pertama.
+- `jiwa_gangguan_cemas` vs PNPK Kedokteran Jiwa 2015 [SEDANG] — diagnosis/alur/prinsip sudah
+  sesuai, obat spesifik yang dikodekan yang beda.
+- `mm_gagal_jantung_kongestif` vs PNPK Angina Pectoris Stabil 2023 [TINGGI] — ISDN diresepkan
+  tanpa ada pengecekan riwayat inhibitor PDE5 (interaksi hipotensi berat) di manapun di kasus.
+
+**10 sisanya Tier-2** (gap/latar, bukan kasus spesifik yang salah — lebih ke arah "PRIMERA
+belum punya konten soal X sama sekali"): PNPK Nyeri (kerangka nyeri kronik lintas-kasus belum
+ada), Sepsis dewasa+anak (PRIMERA tak punya modul pengenalan sepsis sbg entitas lintas-etiologi
+di luar IGD-spesifik), Trauma (2 finding — modul IGD sudah oke arsitektur stabilitas, tapi
+mekanisme rujukan SISRUTE bisa lebih detail), Sindroma Koroner Akut [RENDAH], Angina Pectoris
+Stabil (2 finding — 1 soal EKG "gelombang Q lama" gagal_jantung, 1 soal verapamil/diltiazem
+sama sekali tak ada di katalog obat), Batu Saluran Kemih (PRIMERA nol konten ttg ini),
+Perdarahan Saluran Cerna (poin actionable soal red-flag rujuk, bukan diagnosis dispepsia/GERD
+yg sudah benar), Osteoporosis (nol konten skrining faktor risiko/rujuk BMD).
+
+**Status: SEMUA 17 murni tercatat, belum ada yang diputuskan/diimplementasikan.** Rencana
+sama seperti PPK1186 (§3d): gabungkan ke artifact shortlist konsolidasi (41 item saat ini)
+sbg "Bagian D", TAPI belum dieksekusi — menunggu Dr. Wirayuda siap melakukan satu putaran
+adjudikasi (beliau menyatakan lelah 2026-07-10, riset dilanjutkan tanpa menunggu, tapi
+konsolidasi UI ditahan dulu sampai diminta).

@@ -627,5 +627,182 @@ tradeoff SEJENIS dgn lisensi BGM Square Enix yg sudah kena sebelumnya
 distribusi installer ke mahasiswa) — waspada gaya "Telltale/RPG-Maker"
 jangan sampai terlalu meniru gaya/aset game berhakcipta spesifik.
 
-**Status ketiganya (M10 lanjutan, M11, M12): murni pencatatan scope —
-tunggu greenlight eksplisit user per-milestone sebelum mulai kerja.**
+### M13 — Kembalikan skala penuh 144/225 kasus (diformalkan 2026-07-11, BELUM DIJADWALKAN)
+
+Aspirasi "target full-fledged" yang ditulis di revisi 2026-07-02 dokumen ini +
+`KONTEN_BALANCE.md` (144 penyakit 4A + ~60 rujukan + ~20 IGD ≈ 225 kasus,
+port dari repo lama) sempat backlog tanpa milestone resmi selama M4-M12 —
+tak pernah dijadwalkan ulang di satu pun milestone lanjutan. Diformalkan di
+sini pasca-audit 2026-07-11 (dipicu kekhawatiran user soal kemungkinan
+regresi konten) yang mengonfirmasi: **tidak ada regresi** — 67 kasus
+checkpoint M3 tetap utuh tak berkurang sepanjang seluruh histori git, angka
+144 selalu berarti dua hal berbeda (katalog referensi Dex "144 siluet,
+sebagian terisi" SEJAK desain awal, vs aspirasi kasus-playable-penuh yang
+ditulis user sendiri) — murni target jangka panjang yang belum diaktifkan,
+bukan sesuatu yang pernah dibangun lalu hilang. Detail investigasi penuh:
+dossier CODEX_AUDIT_DOSSIER.md (workflow audit 144-vs-67, 2026-07-11).
+
+**Scope:** dari 67 kasus saat ini (50×4A + 7×3A + 9×3B + 1×level-2 —
+pasca-koreksi M9.2 follow-up 2026-07-11, lihat `pack.test.ts`) menuju target
+penuh **144 penyakit 4A playable + ~60 kasus wajib-rujuk (3A/3B/2) + ~20 IGD
+≈ 225 kasus total** — perlu **~152 kasus baru**. Aset porting dari repo lama
+(`D:\Dev\PRIMER\src\`, 253 kasus rawat jalan + ~34 IGD) tersedia utk
+mempercepat, TAPI repo lama itu persis yang punya insiden P0 ICD-translation-
+poisoning (lihat memory `project_primer_clinical_risks.md`) — porting WAJIB
+diverifikasi ulang per kasus terhadap ICD-10/dosis/kompetensi resmi, bukan
+blind-copy dari dataset yang sudah pernah terbukti tak bisa dipercaya mentah.
+
+**Sengaja disequenc-kan SETELAH Golden Master** (akhir Agustus 2026,
+`M10_5_FIDELITAS.md`) — menulis ~152 kasus ber-akurasi-medis dalam window
+menuju Golden Master akan membebani tenggat redeploy September. Pola sama
+dengan M11a (live-ops konten pasca-freeze skor).
+
+**Sub-scope B — Variasi epidemiologi regional (dicatat 2026-07-11, dari 3
+dokumen riset yang diserahkan user: "Profil Kesehatan Nusantara 2023",
+"Indonesia Precision Health Atlas", "Lanskap Epidemiologi Regional
+Indonesia 2024-2026").** Catatan kualitas sumber: dokumen ketiga (docx)
+punya 42 sitasi tertelusur (Kemenkes/jurnal/PubMed) — sumber paling
+dipercaya. Dua dokumen pertama (PDF gaya-infografis) TIDAK punya daftar
+pustaka sama sekali setelah dibaca penuh 15 halaman masing-masing — cukup
+utk arah/prioritas brainstorming, TAPI angka spesifik dari situ wajib
+diverifikasi ulang ke sumber resmi sebelum masuk literal ke `clue`/dosis
+kasus manapun (disiplin grounding yang sama dgn PPK 1186/M11.5).
+
+Ide konkret, dari yang paling murah/pas mekanik existing sampai yang perlu
+keputusan sadar:
+- **Rotasi Regional Mode Ujian** — 8 paket rotasi (`paketUjian.ts`) diberi
+  bobot kasus & flavor teks per 3-zona epidemiologi (Zona 1 urban/industri:
+  PTM-DM-dengue dominan; Zona 2 transisi/pertanian: hipertensi+zoonosis/
+  malaria-hutan; Zona 3 timur/kepulauan: stunting/AKI-AKB/malaria/kusta) —
+  penambahan data ke Director yang sudah ada, bukan mesin baru.
+- **KLB via surat masuk** — pola inbox/kalender-musim yang sudah ada bisa
+  memicu Program Wilayah baru bertema KLB nyata (PIN Polio pasca-cVDPV2,
+  PSN 3M Plus pasca-lonjakan DBD 3x lipat).
+- **Funnel ANC bocor sbg konten kunjungan bumil risti** — arc 3-babak bumil
+  risti yang sudah ada dapat cabang baru: bumil "gugur" antar K1(86,7%)→
+  K4(68,1%)→K6 USG(17,6%), mengajarkan continuity-of-care.
+- **MPASI/stunting sbg pengayaan Posyandu/kader** — mekanik kader/posyandu
+  yang sudah ada ditambah konten "kualitas MPASI lokal" jendela kritis
+  6-23 bulan (stunting NTT 37,9% vs Bali 7,2%).
+- **Kandidat kasus baru M13** (butuh riset PPK/SKDI spt kasus lain):
+  filariasis (kaki gajah), rabies (kasus IGD gawat — protokol VAR/SAR),
+  HFMD/Flu Singapura (kategori KIA/anak).
+- **Mpox — FLAGGED, bukan diputuskan sepihak**: data nyata & dramatis
+  (96,6% laki-laki, 67,2% terkait aktivitas seksual 21 hari pra-lesi) tapi
+  konten kesehatan-seksual sensitif dgn populasi berisiko spesifik — perlu
+  keputusan sadar dr. Wirayuda soal nada/kehati-hatian penulisan SEBELUM
+  dikerjakan, bukan diasumsikan aman untuk diproses seperti kasus biasa.
+
+Dossier lengkap utk DeepThink: `docs/DEEPTHINK_M13_SKALA_PENUH.md`.
+
+### M14 — Integritas Backend & Aksesibilitas (diformalkan 2026-07-11, BELUM DIJADWALKAN)
+
+Lahir dari pengamatan user: audit CODEX bug-hunt terbaru (read-only, HEAD
+`baee64a`) menyorot klaster masalah yang SAMA persis berulang — save/
+autosave, penilaian pasca-tamat, telemetri, verifier — dan user minta
+milestone tersendiri agar tak terus "kesandung" pola yang sama. 25 temuan
+CODEX (10 P1, 15 P2) diverifikasi PENUH via workflow 8-agen (baca kode
+sungguhan + jalankan test/probe, bukan percaya laporan mentah) — hasil:
+**22/25 confirmed, 2/25 detail meleset (gap nyata tapi angka/framing laporan
+tak akurat), 1/25 butuh keputusan manusia (bukan bug).** Tingkat konfirmasi
+ini jauh lebih tinggi dari ronde CODEX sebelumnya di proyek ini — bukan
+alasan utk lengah, justru sinyal bahwa klaster ini genuinely rapuh.
+
+**P1 — integritas skor/save/verifier (SEMUA 10 CONFIRMED, prioritas
+tertinggi, tumpang tindih mandat M10.5):**
+1. Skor pasca-tamat belum benar-benar terkunci — hanya aksi LANJUTKAN yang
+   dicegah; `PESAN_OBAT` (memengaruhi kapitasi→skor Manajemen) dan aksi
+   lain tetap bisa dijalankan setelah tamat. Verifier ikut memvonis SAH
+   krn replay deterministik mereproduksi manipulasi itu apa adanya.
+2. Tak ada `requestSingleInstanceLock()` — dua instance app (mis. di lab
+   komputer kelas) bisa rebutan menulis file save yang sama.
+3. `save:read` tak menunggu tulisan yang sedang berjalan utk slot yang
+   sama — race baca-saat-tulis bisa memulihkan snapshot basi.
+4. **Regresi**: "Muat Slot" menimpa autosave TANPA `window.confirm()` —
+   jalur ke-4 yang terlewat dari 3 jalur yang sudah dibentengi CODEX §57.
+5. Load/impor tak punya request-ownership — klik dua slot berurutan,
+   promise yang selesai belakangan menang (bukan niat klik terakhir).
+6. Autosave korup/tak-kompatibel terlihat seperti "tidak ada save" —
+   `deserialize()` yang return null tak pernah menandai status gagal.
+7. Validasi recovery save masih meloloskan 5 kondisi hard-lock/corrupt
+   konkret (dibuktikan via skrip probe, bukan dugaan) — IGD fase asing,
+   IGD-vs-layar kontradiktif, Kegiatan pilihan/jawaban kosong, entri
+   inbox/antrian `null` (yang terakhir menjatuhkan SELURUH UI, bukan cuma
+   satu layar, krn di luar ErrorBoundary per-layar).
+8. Meta korup tertentu (`dexKuasai: null`) memicu boot-loop tanpa jalan
+   pulih — crash berulang di boot/reset/reload krn `ErrorBoundary` tak
+   pernah menyentuh field `meta`.
+9. **Verifier bisa dibekukan** — tiap `advance()` menyalin ulang SELURUH
+   log/jejak (O(n²)); pembatas dossier cuma byte-size (8MB), tak ada batas
+   jumlah entri — dossier kecil ber-ratusan-ribu aksi trivial (kunci HMAC
+   tertanam client-side, jadi bisa ditandatangani sendiri secara "sah")
+   bisa membekukan proses verifikasi dosen.
+10. Verifikasi dua dossier berurutan bisa menampilkan vonis file yang
+    SALAH — tak ada token request/busy-state/nama-file di hasil.
+
+**P2 — save reliability, a11y, UX (15 item, confirmed kecuali dicatat):**
+11. Hasil Kegiatan tak persisten (autosave simpan `layar:'kegiatan'` tapi
+    `kegiatan` sudah undefined) — kehilangan kartu hasil, BUKAN kehilangan
+    skor (skor sudah terterapkan duluan).
+12. Recovery proses belum tahan crash beruntun; `before-quit` tanpa
+    timeout bisa membuat app tak pernah keluar bila file-write hang.
+13. "Tampilkan panduan lagi" tak benar-benar berfungsi lintas-sesi (cuma
+    hapus localStorage, tak reset state React) — test yang ada berbagi
+    blind spot yang sama (tak menguji render App/restart).
+14. Fokus modal masih bermasalah di 3 titik (Onboarding ditimpa `<main>`,
+    tombol Tutup PanelHasil jadi focus-pertama+`preventScroll` shg tak
+    kelihatan, transisi fase Kunjungan/Kegiatan/IGD tak refocus).
+15. Radiogroup Kunjungan & Program cuma pakai "kulit" ARIA dari
+    `useRadioGroup` (buang tabIndex/data-radio/onKeyDown) — panah
+    keyboard tak berfungsi.
+16. 8 tombol RW peta hilang dari accessibility tree krn berada di dalam
+    `svg role="img"` (aturan WAI-ARIA presentational-children) — celah
+    struktural yang tak terdeteksi test jsdom (butuh browser/axe-core
+    sungguhan utk verifikasi lanjutan).
+17. Reflow 200% memotong HUD (dua sisi `min-width:300px` tanpa jaring
+    scroll horizontal).
+18. 3 pasangan warna gagal kontras 3:1 (tombol retry ErrorBoundary mode
+    malam ~2.03:1, focus border klinik ~2.83:1, badge/chip animasi ~2:1).
+19. *(detail meleset)* `aria-disabled` KartuKeluarga SUDAH diperbaiki
+    CODEX §57 (fokus/screen-reader sudah benar) — gap yang TERSISA murni
+    visual: tak ada CSS `[aria-disabled]`, jadi tombol nonaktif tetap
+    tampak 100% aktif.
+20. 3 feedback salah konteks (Rapor "belum ada data" tapi tetap tampilkan
+    ~30/100; Dex search bisa pertahankan detail entri yang sudah tersaring
+    keluar; IGD pasca-RJP-sukses masih tampilkan TEPAT/KELIRU milik
+    langkah sebelum Kode Biru).
+21. *(detail meleset, BUKAN temuan baru)* Kunjungan `respons`/
+    `responsBohong` tanpa kutip — ini re-deskripsi gap yang SUDAH
+    diketahui & sengaja dideferred di CODEX §57. Angka yang dikutip
+    laporan (105/48/13) diam-diam mengecualikan `responsBohong` dari basis
+    270 — angka gabungan yang benar 129/50/15 (matching audit §57
+    sebelumnya), bukan 105/48/13.
+22. Toaster: semua toast `aria-live="assertive"` tanpa diferensiasi
+    urgensi; batch Kode Hitam memancarkan 2 live-region sekaligus yang
+    berpotensi saling menyela; tak ada pause/dismiss/riwayat.
+23. *(butuh keputusan manusia, BUKAN bug)* `panduanResmi`/`mutiaraEbm`/
+    `catatanRealita` M11.5 cuma bisa dibaca sekali per-encounter (Escape/
+    backdrop menutup modal, konsisten dgn kebijakan modal lain di game
+    ini) — perlu keputusan produk dr. Wirayuda: apakah ketiganya perlu
+    dipersist (mis. masuk permanen ke Buku Saku per-kasus), atau memang
+    selaras filosofi "formative feedback in-the-moment".
+24. Impor file tanpa batas ukuran; properti asing pada save ikut
+    tersimpan tanpa disaring; satu input (Impor Arsip JSON, bukan
+    seluruhnya) tak mereset value saat impor gagal.
+25. Telemetri bisa false-positive save-scumming — tak ada sessionId/NIM/
+    seed pembeda, satu file global lintas semua slot/sesi/pemain di satu
+    instalasi OS.
+
+**Rekomendasi sequencing (belum diputuskan user, BUKAN keputusan final):**
+10 item P1 di atas SEMUANYA adalah bug integritas skor/replay/save — persis
+mandat `M10_5_FIDELITAS.md` ("SEMUA perbaikan yang mengubah semantik
+skor/replay"). Given severity (skor bisa dimanipulasi pasca-tamat, verifier
+bisa dibekukan dosen, save bisa korup diam-diam) dan tenggat Golden Master
+yang sama-sama akhir Agustus, kandidat kuat: **lebur P1 ke dalam kerja aktif
+M10.5** (bukan tunggu M14 dijadwalkan terpisah), sementara 15 item P2 (a11y/
+UX/reliability non-skor) tetap jadi M14 dgn timeline lebih longgar. Ini
+BELUM diputuskan user — jangan mulai eksekusi P1 sebagai "otomatis masuk
+M10.5" tanpa konfirmasi eksplisit.
+
+**Status kelimanya (M10 lanjutan, M11, M12, M13, M14): murni pencatatan
+scope — tunggu greenlight eksplisit user per-milestone sebelum mulai kerja.**
