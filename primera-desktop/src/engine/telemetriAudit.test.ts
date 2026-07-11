@@ -10,6 +10,10 @@ function baris(t: number, hari: number, jejakLen: number, blok = 'pagi'): string
   return JSON.stringify({ t, hari, blok, jejakLen })
 }
 
+function barisSesi(t: number, hari: number, jejakLen: number, sesi: string, blok = 'pagi'): string {
+  return JSON.stringify({ t, hari, blok, jejakLen, sesi })
+}
+
 describe('auditTelemetri', () => {
   it('progres normal (hari naik, jejak naik) → tanpa peringatan', () => {
     const log = [baris(1000, 1, 2), baris(2000, 2, 8), baris(3000, 3, 15)]
@@ -44,5 +48,25 @@ describe('auditTelemetri', () => {
   it('log kosong atau satu baris → tanpa peringatan (tak ada dasar bandingan)', () => {
     expect(auditTelemetri([])).toEqual([])
     expect(auditTelemetri([baris(1000, 1, 0)])).toEqual([])
+  })
+
+  it('CODEX M14 #25: dua SESI berbeda selang-seling → hari mundur lintas-sesi TIDAK dicurigai', () => {
+    // Komputer bergantian: pemain A (hari 20) lalu pemain B (hari 3) di file
+    // global yang sama — dulu terbaca "hari mundur 20→3". Dgn partisi sesi, tiap
+    // sesi diaudit sendiri (naik monoton) → nol peringatan.
+    const log = [
+      barisSesi(1000, 18, 100, 'A'),
+      barisSesi(2000, 3, 12, 'B'),
+      barisSesi(3000, 20, 110, 'A'),
+      barisSesi(4000, 4, 16, 'B'),
+    ]
+    expect(auditTelemetri(log)).toEqual([])
+  })
+
+  it('CODEX M14 #25: hari mundur DALAM sesi yang sama tetap terdeteksi', () => {
+    const log = [barisSesi(1000, 8, 60, 'A'), barisSesi(2000, 5, 62, 'A')]
+    const peringatan = auditTelemetri(log)
+    expect(peringatan.length).toBeGreaterThan(0)
+    expect(peringatan[0]).toMatch(/[Hh]ari mundur/)
   })
 })

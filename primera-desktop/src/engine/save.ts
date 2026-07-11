@@ -66,6 +66,11 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // korup, bukan backfill parsial.
   if (Object.values(st['dex'] as Record<string, unknown>).some((e) => !objek(e))) return null
   if (!Array.isArray(st['inbox'])) return null
+  // Entri inbox non-objek (CODEX M14 #7): `inbox:[null]` lolos array-check di atas
+  // lalu Hud.tsx (`.filter(m => !m.dibaca)`) THROW — dan karena <Hud/> dirender
+  // di LUAR ErrorBoundary per-layar, ini menjatuhkan SELURUH UI, bukan satu layar.
+  // Surat = pesan (bukan skor-kritis) → saring entri korup, bukan tolak save.
+  st['inbox'] = (st['inbox'] as unknown[]).filter(objek)
   if (!Array.isArray(st['jadwal'])) return null
   // M10 §49 (CODEX B.5): array-check di atas cuma menjamin WRAPPER-nya array —
   // entri `jadwal:[null]` (atau non-objek, atau `hari` non-numerik) lolos lalu
@@ -279,6 +284,10 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // selesaiHariIni. Backfill array/objek wajib ke default aman.
   const klinik = st['klinik'] as Record<string, unknown>
   if (!Array.isArray(klinik['antrian'])) klinik['antrian'] = []
+  // Entri antrian non-objek (CODEX M14 #7): `antrian:[null]` lolos array-check
+  // lalu RuangTunggu.tsx (`antrian[0].nama`) THROW saat pagi & stamina cukup.
+  // Saring entri korup (per-layar ErrorBoundary menangkap, tapi tetap tak boleh).
+  klinik['antrian'] = (klinik['antrian'] as unknown[]).filter(objek)
   if (!Array.isArray(klinik['selesaiHariIni'])) klinik['selesaiHariIni'] = []
   if (!objek(klinik['autoHariIni'])) klinik['autoHariIni'] = { jumlah: 0, bermasalah: 0 }
   // Encounter aktif dari save pra-prosedur (#4) belum punya array tindakan →
@@ -320,10 +329,16 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     const kasusId = igd['kasusId']
     const kasusIgd = typeof kasusId === 'string' ? pack.kasusIgd[kasusId] : undefined
     const langkahIndex = igd['langkahIndex']
+    // CODEX M14 #7: fase IGD di luar enum (mis. 'asing') dulu LOLOS krn cek
+    // bounds hanya berlaku saat fase==='langkah' — Igd.tsx tak merender blok
+    // fase manapun → badan kosong + Hud mengunci semua tab (hard-lock). Validasi
+    // fase sbg enum eksplisit dulu.
+    const FASE_IGD_SAH = new Set(['langkah', 'kode_biru', 'disposisi'])
+    const faseValid = typeof igd['fase'] === 'string' && FASE_IGD_SAH.has(igd['fase'])
     const langkahValid =
       igd['fase'] !== 'langkah' ||
       (kasusIgd && typeof langkahIndex === 'number' && Number.isInteger(langkahIndex) && langkahIndex >= 0 && langkahIndex < kasusIgd.langkah.length)
-    if (!kasusIgd || !langkahValid) {
+    if (!kasusIgd || !faseValid || !langkahValid) {
       st['igd'] = undefined
       const hari = st['hari'] as number
       const inbox = st['inbox'] as Record<string, unknown>[]
@@ -348,10 +363,16 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // dipakai render, meniru pola yang sama.
   if (pack && objek(st['kegiatan'])) {
     const kg = st['kegiatan'] as Record<string, unknown>
+    // CODEX M14 #7: `jawaban:null` tak pernah dicek → JAWAB_KEGIATAN THROW
+    // (spread null). Backfill ke [] spt igd.jawaban/ditanyaKetus.
+    if (!Array.isArray(kg['jawaban'])) kg['jawaban'] = []
     const kartu = kg['kartu']
     const index = kg['index']
     const kartuAktif = Array.isArray(kartu) && typeof index === 'number' ? (kartu[index] as unknown) : undefined
-    const kartuValid = objek(kartuAktif) && Array.isArray(kartuAktif['pilihan'])
+    // CODEX M14 #7: kartu dgn `pilihan:[]` (nol pilihan) = dead-end utk kegiatan
+    // tanpa jalur delegasi (klb/prolanis) — perlakukan sbg korup & pulihkan.
+    // Kartu sah selalu punya ≥1 pilihan (tombol delegasi = tambahan, bukan pengganti).
+    const kartuValid = objek(kartuAktif) && Array.isArray(kartuAktif['pilihan']) && kartuAktif['pilihan'].length > 0
     if (!kartuValid) {
       st['kegiatan'] = undefined
       if (st['layar'] === 'kegiatan') st['layar'] = 'peta'
@@ -424,6 +445,31 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
         dibaca: false,
       })
     }
+  }
+
+  // CODEX M14 #7: kontradiksi layar-vs-sesi. `layar:'dex'` (sah sendiri, jadi
+  // lolos derive di atas) SEMENTARA igd/kunjungan/kegiatan masih aktif → Hud
+  // mengunci navigasi tapi layar bukan layar sesi tsb → pemain terjebak. Setelah
+  // SEMUA pemulihan di atas (yang mungkin sudah membuang sesi korup), paksa layar
+  // mengikuti sesi pemblokir yang genuinely masih aktif.
+  if (objek(st['igd'])) st['layar'] = 'igd'
+  else if (objek(st['kunjungan'])) st['layar'] = 'kunjungan'
+  else if (objek(st['kegiatan'])) st['layar'] = 'kegiatan'
+
+  // CODEX M14 #24: buang properti top-level ASING sebelum dikembalikan. Dulu
+  // `st as GameState` mempertahankan field tak dikenal (save diedit tangan / dari
+  // versi lain) yang lalu ikut ter-round-trip ke autosave. Whitelist = kunci
+  // GameState (state.ts) — WAJIB disinkron bila interface bertambah field.
+  const KUNCI_STATE_SAH = new Set([
+    'versi', 'seed', 'namaDokter', 'nim', 'hari', 'blok', 'stamina', 'burnout',
+    'mode', 'seedKurikulum', 'paketUjian', 'klinik', 'desa', 'kunjungan',
+    'hasilKunjunganHariIni', 'kegiatan', 'hasilKegiatanTerakhir', 'igd', 'igdHariIni', 'lapanganTerpakai',
+    'prolanis', 'posyanduRwTerakhir', 'program', 'tutorialAktif', 'inbox', 'jadwal',
+    'tally', 'dex', 'log', 'jejak', 'kapitasi', 'gudang', 'keuanganBulan',
+    'akreditasi', 'pemulihanTerakhirHari', 'refleksi', 'flags', 'layar', 'tamat',
+  ])
+  for (const kunci of Object.keys(st)) {
+    if (!KUNCI_STATE_SAH.has(kunci)) delete st[kunci]
   }
 
   return st as unknown as GameState

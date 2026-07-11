@@ -549,7 +549,11 @@ describe('serialize / deserialize', () => {
       stamina: 2,
       burnout: 24,
       kapitasi: 12_345_678,
-      layar: 'klinik',
+      // CODEX M14 #7: layar HARUS konsisten dgn sesi aktif — fixture ini punya
+      // `kunjungan` aktif, jadi layar-nya 'kunjungan' (bukan 'klinik'). Kombinasi
+      // layar-non-sesi + sesi aktif = soft-lock yang kini direkonsiliasi
+      // deserialize, jadi roundtrip-nya sengaja tak identik utk state kontradiktif.
+      layar: 'kunjungan',
       klinik: {
         antrian: [buatPasienDariKasus('flu', pack, new Rng(9, 'rt'))],
         selesaiHariIni: [buatPenilaian({ jenisDiagnosis: 'suspek', grade: 'B' })],

@@ -76,7 +76,10 @@ const WARNA_STEMPEL: Record<'A' | 'B' | 'C' | 'D', string> = {
 
 export function Rapor() {
   const state = useGame((s) => s.state)!
-  const skor = hitungSkor(state)
+  // CODEX M14 #1: pasca-tamat pakai snapshot beku state.tamat.skor (bukan live)
+  // supaya angka Rapor & LaporanAkhir konsisten & tak bisa berubah setelah
+  // skor terkunci. Saat main (tamat undefined) tetap live.
+  const skor = state.tamat?.skor ?? hitungSkor(state)
   const t = state.tally
   const r = skor.rincian
 
@@ -141,10 +144,15 @@ export function Rapor() {
                 Belum ada data — kembali setelah menangani pasien
               </span>
             )}
-            <span className="rapor__total mono">
-              {koma(skor.total)}
-              <span className="rapor__total-maks">/100</span>
-            </span>
+            {/* CODEX M14 #20: dulu total ~30/100 tetap tampil di samping "Belum
+                ada data" (default Manajemen/Resiliensi 15+15) — membingungkan.
+                Sembunyikan angka total selagi belum ada aktivitas. */}
+            {punyaAktivitas && (
+              <span className="rapor__total mono">
+                {koma(skor.total)}
+                <span className="rapor__total-maks">/100</span>
+              </span>
+            )}
           </div>
         </header>
 

@@ -94,9 +94,14 @@ function SiluetPuskesmas() {
   )
 }
 
+/** CODEX M14 #24: batas ukuran impor — save/log wajar ≪ beberapa MB; berkas
+ *  raksasa dibaca utuh ke memori tanpa guna & bisa jadi vektor DoS. */
+const MAKS_UKURAN_IMPOR = 8_000_000
+
 export function TitleScreen() {
   // Autosave dimuat ke `arsip` TANPA masuk game — layar judul yang memutuskan.
   const arsip = useGame((s) => s.arsip)
+  const arsipKorup = useGame((s) => s.arsipKorup)
   const sedangMemuat = useGame((s) => s.sedangMemuat)
   const mulaiGameBaru = useGame((s) => s.mulaiGameBaru)
   const lanjutkanArsip = useGame((s) => s.lanjutkanArsip)
@@ -131,6 +136,9 @@ export function TitleScreen() {
     // tanpa konfirmasi — salah klik atau Enter di input nama (form submit
     // standar HTML) cukup utk menghapus progres tersimpan.
     if (arsip !== null && !window.confirm(`Mulai stase baru akan menimpa arsip dr. ${arsip.namaDokter} (Hari ${arsip.hari}). Lanjutkan?`)) return
+    // CODEX M14 #6: ada autosave TAPI tak terbaca (rusak/versi lama) — jangan
+    // menimpanya diam-diam. Peringatkan sebelum menghapusnya.
+    if (arsip === null && arsipKorup && !window.confirm('Ada autosave yang tidak bisa dibaca (mungkin rusak atau dari versi lama). Mulai stase baru akan menimpanya permanen. Lanjutkan?')) return
     mulaiGameBaru(namaBersih, mode, mode === 'ujian' ? nimBersih : undefined)
   }
 
@@ -170,6 +178,14 @@ export function TitleScreen() {
               >
                 Lanjutkan — dr. {arsip.namaDokter} · Hari {arsip.hari}
               </button>
+            )}
+
+            {/* CODEX M14 #6: autosave ADA tapi tak terbaca — dulu tampak seperti
+                "belum pernah main", pemain bisa mulai baru & menimpanya diam2. */}
+            {arsip === null && arsipKorup && (
+              <p className="title__peringatan teks-kecil" role="alert" style={{ color: 'var(--kunyit-800)' }}>
+                ⚠ Ada penyimpanan otomatis yang tidak bisa dibaca (mungkin rusak atau dari versi lama). Memulai stase baru akan menimpanya.
+              </p>
             )}
 
             <form className="title__form" onSubmit={mulaiStase}>
@@ -256,11 +272,16 @@ export function TitleScreen() {
                   <button
                     key={info.slot}
                     className="tombol title__slot"
-                    onClick={() =>
+                    onClick={() => {
+                      // CODEX M14 #4: memuat slot mengganti sesi & menimpa
+                      // autosave — jalur ke-4 yang dulu terlewat dari konfirmasi
+                      // timpa (mulai-baru/impor sudah dibentengi). Peringatkan
+                      // bila ada arsip belum-dimasuki yang akan tertimpa.
+                      if (arsip !== null && !window.confirm(`Memuat ${info.slot.replace('slot', 'Slot ')} akan menimpa arsip dr. ${arsip.namaDokter} (Hari ${arsip.hari}). Lanjutkan?`)) return
                       void muatDariSlot(info.slot).then((ok) => {
                         if (!ok) window.alert('Gagal memuat arsip — file rusak, tidak ditemukan, atau dari versi yang tak dikenal.')
                       })
-                    }
+                    }}
                     title={`Muat arsip ${info.slot}.`}
                   >
                     📁 {info.slot.replace('slot', 'Slot ')}: dr. {info.namaDokter} · H{info.hari}
@@ -282,8 +303,15 @@ export function TitleScreen() {
                 type="file"
                 accept="application/json"
                 onChange={(e) => {
-                  const f = e.target.files?.[0]
+                  const input = e.target
+                  const f = input.files?.[0]
                   if (!f) return
+                  // CODEX M14 #24: tolak berkas raksasa sebelum dibaca ke memori.
+                  if (f.size > MAKS_UKURAN_IMPOR) {
+                    window.alert('Berkas terlalu besar — bukan arsip stase yang wajar.')
+                    input.value = ''
+                    return
+                  }
                   // CODEX audit UI/UX 2026-07-10 (#3): impor JSON menimpa
                   // autosave seketika (imporArsip -> simpan()) tanpa jeda —
                   // salah pilih file cukup utk menghapus progres tersimpan.
@@ -291,7 +319,7 @@ export function TitleScreen() {
                     arsip !== null &&
                     !window.confirm(`Mengimpor arsip akan menimpa arsip dr. ${arsip.namaDokter} (Hari ${arsip.hari}). Lanjutkan?`)
                   ) {
-                    e.target.value = ''
+                    input.value = ''
                     return
                   }
                   void f
@@ -300,6 +328,11 @@ export function TitleScreen() {
                       if (!imporArsip(json)) window.alert('Arsip tidak valid atau dari versi yang tak dikenal.')
                     })
                     .catch(() => window.alert('Gagal membaca file arsip.'))
+                    // CODEX M14 #24: reset value SELALU (juga saat gagal) agar
+                    // memilih file yang sama lagi tetap memicu change.
+                    .finally(() => {
+                      input.value = ''
+                    })
                 }}
               />
             </label>
@@ -314,6 +347,10 @@ export function TitleScreen() {
                   const f = e.target.files?.[0]
                   if (!f) return
                   e.target.value = ''
+                  if (f.size > MAKS_UKURAN_IMPOR) {
+                    window.alert('Berkas dossier terlalu besar — bukan dossier stase yang wajar.')
+                    return
+                  }
                   void f.text().then(async (json) => {
                     const versiApp = await window.primer.appVersion()
                     setHasilVerifikasi(await verifikasiDossier(json, PACK, versiApp))
@@ -333,6 +370,10 @@ export function TitleScreen() {
                   const f = e.target.files?.[0]
                   if (!f) return
                   e.target.value = ''
+                  if (f.size > MAKS_UKURAN_IMPOR) {
+                    window.alert('Berkas log telemetri terlalu besar.')
+                    return
+                  }
                   void f
                     .text()
                     .then((isi) => {

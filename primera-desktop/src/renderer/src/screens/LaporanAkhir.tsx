@@ -68,7 +68,12 @@ export function LaporanAkhir() {
     }
   }, [kurangiGerak])
 
-  const skor = useMemo(() => hitungSkor(state), [state])
+  // CODEX M14 #1: pakai snapshot BEKU dari state.tamat (dihitung saat stase
+  // berakhir), BUKAN hitungSkor(state) live — agar bila state termutasi
+  // pasca-tamat (mis. save lama sebelum guard reducer), stempel/label/total tak
+  // pernah tercampur nilai lama-vs-baru. Fallback ke live utk save lama tanpa
+  // snapshot (aman: guard reducer cegah mutasi pasca-tamat pada save baru).
+  const skor = useMemo(() => state.tamat?.skor ?? hitungSkor(state), [state])
   const badges = useMemo(() => hitungBadge(state), [state])
   const t = state.tally
 

@@ -544,6 +544,14 @@ export interface GameState {
 
   /** Sesi kegiatan lapangan aktif (M2): posyandu/prolanis/klb. */
   kegiatan?: KegiatanState
+  /**
+   * CODEX M14 #11: hasil kegiatan lapangan terakhir (untuk KartuHasil). Dulu
+   * hasil hanya hidup di event + local React state → reload menampilkan "sesi
+   * tidak ditemukan" (autosave menyimpan layar:'kegiatan' tapi kegiatan:undefined).
+   * Dipersist di sini (pola sama hasilKunjunganHariIni) agar bertahan reload.
+   * Murni display (deterministik dari sesi) — tak di-hash, tak butuh REVISI.
+   */
+  hasilKegiatanTerakhir?: import('./kegiatan').HasilKegiatan
 
   /** Sesi IGD aktif (M3.14): gawat darurat turn-based. */
   igd?: IgdState
@@ -606,8 +614,15 @@ export interface GameState {
   /** Layar yang sedang dilihat (UI state ikut disimpan agar resume mulus). */
   layar: LayarGame
 
-  /** Game selesai? (D90 lock / slice: D7 rekap) */
-  tamat?: { hari: number; grade: string }
+  /**
+   * Game selesai? (D90 lock / slice: D7 rekap). `skor` = snapshot BEKU 4 dimensi
+   * saat tamat (M10.5/CODEX M14 #1) — LaporanAkhir/Rapor pakai ini, BUKAN
+   * hitungSkor(state) live, agar stempel/label/total tak bisa tercampur nilai
+   * lama-vs-baru bila state termutasi pasca-tamat. Opsional utk kompat save lama
+   * (tamat tanpa skor → jatuh ke hitungSkor live, aman krn guard reducer cegah
+   * mutasi pasca-tamat pada save baru).
+   */
+  tamat?: { hari: number; grade: string; skor?: Skor4Dimensi }
 }
 
 /* ---------------------------------------------------------------------------

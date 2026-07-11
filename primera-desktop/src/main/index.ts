@@ -60,9 +60,16 @@ function registerIpc(): void {
   })
 
   ipcMain.handle('save:read', async (_e, slot: string) => {
+    const kunci = sanitizeSlot(slot)
+    // CODEX M14 #3: tunggu tulisan slot yang SAMA yang masih berjalan sebelum
+    // membaca. Tanpa ini, bila renderer reload/crash saat autosave belum selesai
+    // rename dari .tmp, read bisa dapat snapshot LAMA — pemain lanjut dari state
+    // basi lalu autosave berikutnya menimpa snapshot yang sebenarnya lebih baru.
+    // (antreanTulis = state modul in-process; bertahan lintas win.reload().)
+    await (antreanTulis.get(kunci) ?? Promise.resolve()).catch(() => {})
     const dir = await ensureSaveDir()
     try {
-      return await fs.readFile(join(dir, `${sanitizeSlot(slot)}.json`), 'utf-8')
+      return await fs.readFile(join(dir, `${kunci}.json`), 'utf-8')
     } catch (e) {
       // CODEX audit UI/UX 2026-07-10 (#2): dulu SEMUA error (ENOENT/EACCES/
       // disk rusak) disamakan jadi null — pemanggil memperlakukan null sbg
@@ -147,6 +154,17 @@ function createWindow(): void {
     const sekarang = Date.now()
     if (sekarang - terakhirReload < 4000) {
       console.error('[render-process-gone] crash beruntun — tidak auto-reload lagi (hindari loop)')
+      // CODEX M14 #12: jangan tinggalkan jendela putih/mati diam. Tampilkan
+      // pesan pemulihan sederhana (progres tersimpan di autosave, aman) agar
+      // pemain tahu harus menutup & membuka ulang, bukan mengira game hang.
+      const pesan = `<!doctype html><html lang="id"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<body style="margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#FAF6EF;color:#26312c;font-family:system-ui,Segoe UI,sans-serif;text-align:center">
+<div style="max-width:34rem;padding:2rem">
+<h1 style="font-size:1.4rem;margin:0 0 .75rem">Permainan perlu dimuat ulang</h1>
+<p style="line-height:1.6;color:#4c5a68">Terjadi gangguan teknis yang berulang. <b>Progresmu aman tersimpan otomatis.</b> Tutup jendela ini lalu buka kembali PRIMERA untuk melanjutkan dari penyimpanan terakhir.</p>
+</div></body></html>`
+      if (!win.isDestroyed()) win.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(pesan))
       return
     }
     terakhirReload = sekarang
@@ -198,31 +216,54 @@ function createWindow(): void {
   }
 }
 
-app.whenReady().then(() => {
-  // Buang menu aplikasi bawaan (juga menghapus akselerator DevTools/reload
-  // dari menu) di produksi — game kelas tak butuh menu bar.
-  if (!DEV) Menu.setApplicationMenu(null)
-  registerIpc()
-  createWindow()
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+// CODEX M14 #2: single-instance lock. Dua instance app (mis. ikon di-double-
+// click dua kali di lab, atau autoupdate relaunch) berbagi disk save yang sama
+// TAPI `antreanTulis`/`tmpCounter` bersifat per-proses — dua proses bisa menulis
+// `${slot}.json.1.tmp` yang sama lalu rename saling menimpa tanpa urutan
+// terjamin, merusak autosave/slot/meta. Lock: instance kedua langsung keluar;
+// instance pertama difokuskan agar pemain tahu game sudah berjalan.
+if (!app.requestSingleInstanceLock()) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    const win = BrowserWindow.getAllWindows()[0]
+    if (win) {
+      if (win.isMinimized()) win.restore()
+      win.focus()
+    }
   })
-})
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
-})
-
-// CODEX audit UI/UX 2026-07-10 (#2): tanpa ini, menutup aplikasi bisa
-// mendahului write/rename yang masih tertunda di `antreanTulis` (mis. tulisan
-// terakhir belum sempat rename dari file .tmp) — progres terbaru bisa hilang.
-// `catch(() => {})` per-promise: satu tulisan gagal tak boleh menahan quit.
-app.on('before-quit', (e) => {
-  const tertunda = [...antreanTulis.values()]
-  if (tertunda.length === 0) return
-  e.preventDefault()
-  Promise.allSettled(tertunda.map((p) => p.catch(() => {}))).then(() => {
-    antreanTulis.clear()
-    app.quit()
+  app.whenReady().then(() => {
+    // Buang menu aplikasi bawaan (juga menghapus akselerator DevTools/reload
+    // dari menu) di produksi — game kelas tak butuh menu bar.
+    if (!DEV) Menu.setApplicationMenu(null)
+    registerIpc()
+    createWindow()
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    })
   })
-})
+
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit()
+  })
+
+  // CODEX audit UI/UX 2026-07-10 (#2): tanpa ini, menutup aplikasi bisa
+  // mendahului write/rename yang masih tertunda di `antreanTulis` (mis. tulisan
+  // terakhir belum sempat rename dari file .tmp) — progres terbaru bisa hilang.
+  // `catch(() => {})` per-promise: satu tulisan gagal tak boleh menahan quit.
+  // CODEX M14 #12: race dgn timeout 5 detik — kalau fs hang (disk jaringan/lock
+  // antivirus), allSettled bisa TAK PERNAH selesai → app tak pernah keluar
+  // (perlu force-kill). Timeout menjamin quit tetap terjadi.
+  app.on('before-quit', (e) => {
+    const tertunda = [...antreanTulis.values()]
+    if (tertunda.length === 0) return
+    e.preventDefault()
+    const semua = Promise.allSettled(tertunda.map((p) => p.catch(() => {})))
+    const batasWaktu = new Promise<void>((res) => setTimeout(res, 5000))
+    Promise.race([semua, batasWaktu]).then(() => {
+      antreanTulis.clear()
+      app.quit()
+    })
+  })
+}

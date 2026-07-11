@@ -200,7 +200,14 @@ function fnv1a(teks: string): string {
  * juga menggeser replay, tapi itu tercakup sidik jari pack (tx/lab/demografi
  * kini di-hash) — bump ini utk perubahan SEMANTIK ENGINE yg tak terlihat pack.
  */
-const REVISI_ENGINE = 17
+// M9.2 follow-up (2026-07-11): koreksi field `skdi` 5 kasus (self-report
+// keliru vs SKDI 2012/PPK 1186 resmi) — skdi ikut di-hash pack (verifikasi.ts
+// baris ~250) & dipakai runtime Director (kasusAman/bias-4A), bukan kosmetik.
+// M10.5/M14 (2026-07-11): guard aksi pasca-tamat di reducer (skor terkunci)
+// mengubah semantik replay — aksi mutasi pasca-tamat kini DITOLAK saat replay,
+// sehingga dossier lama (REVISI 18) yang tak punya guard jatuh ke
+// "tidak_dapat_diverifikasi" (sidik jari beda), bukan divonis salah.
+const REVISI_ENGINE = 19
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -405,13 +412,16 @@ function objek(nilai: unknown): nilai is Record<string, unknown> {
   return typeof nilai === 'object' && nilai !== null && !Array.isArray(nilai)
 }
 
-/** Replay penuh: state awal deterministik + fold advance atas seluruh jejak. */
+/** Replay penuh: state awal deterministik + fold advance atas seluruh jejak.
+ *  Memakai mode replay (advance arg ke-4 = true) → append log/jejak in-place O(1)
+ *  amortized, cegah O(n^2) yang bisa membekukan verifier (CODEX M14 #9). Aman krn
+ *  state di sini dimiliki eksklusif oleh loop ini. */
 export function replayJejak(dossier: Pick<DossierMahasiswa, 'identitas' | 'stase' | 'jejak'>, pack: ContentPack): GameState {
   let state = buildInitialState(dossier.identitas.namaDokter, dossier.stase.seed, pack, {
     mode: dossier.stase.mode,
   })
   for (const aksi of dossier.jejak) {
-    state = advance(state, aksi as Action, pack).state
+    state = advance(state, aksi as Action, pack, true).state
   }
   return state
 }
@@ -458,6 +468,21 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
     hari: d.stase.hari,
     tamat: d.stase.tamat !== undefined,
     skorKlaim: d.klaim.skor,
+  }
+
+  /* 1b — cap JUMLAH entri jejak (CODEX M14 #9): batas byte (§0) tak cukup —
+     ratusan ribu aksi trivial (mis. TUTUP_REKAP ~20 byte) muat di bawah 8 MB
+     namun replay-nya bisa berlarut. Stase 90 hari yang rajin ≈ belasan ribu
+     aksi; 200k = >5× headroom, di atasnya jelas bukan stase wajar. Ditolak DI
+     SINI (sebelum HMAC & replay) agar input jahat tak sempat membuat verifier
+     dosen berlarut/hang. */
+  const MAKS_ENTRI_JEJAK = 200_000
+  if (d.jejak.length > MAKS_ENTRI_JEJAK) {
+    return {
+      status: 'tidak_dapat_diverifikasi',
+      alasan: [`Jejak aksi terlalu panjang (${d.jejak.length.toLocaleString('id')} aksi > ${MAKS_ENTRI_JEJAK.toLocaleString('id')}) — bukan stase yang wajar.`],
+      ringkasan,
+    }
   }
 
   /* 2 — tanda tangan */

@@ -58,6 +58,21 @@ interface GameStore {
   eventTick: number
   sedangMemuat: boolean
   /**
+   * CODEX M14 #5: token generasi operasi muat/impor sesi. Tiap operasi
+   * pengganti-sesi (mulaiGameBaru/lanjutkanArsip/muatDariSlot/imporArsip)
+   * menaikkannya; operasi ASINKRON (muatDariSlot) hanya menerapkan hasilnya bila
+   * token masih terbaru saat selesai — mencegah "promise terakhir menang" (klik
+   * dua slot beruntun / mulai game saat file masih dibaca) menimpa sesi aktif.
+   */
+  muatToken: number
+  /**
+   * CODEX M14 #6: autosave ADA di disk tapi gagal di-deserialize (rusak/versi
+   * asing). Beda dari "belum pernah main" (arsip null tanpa flag ini) — Title
+   * memberi peringatan & mulai-stase-baru ikut minta konfirmasi agar file lama
+   * tak tertimpa diam-diam.
+   */
+  arsipKorup: boolean
+  /**
    * CODEX audit UI/UX 2026-07-10 (#2): autosave dulu gagal SEPENUHNYA diam-diam
    * (cuma console.error) — pemain tak pernah tahu progresnya berhenti tersimpan.
    * 'gagal' dipakai Hud.tsx utk indikator kecil; direset ke 'idle' begitu
@@ -112,6 +127,8 @@ export const useGame = create<GameStore>((set, get) => ({
   eventTick: 0,
   sedangMemuat: false,
   statusSimpan: 'idle',
+  muatToken: 0,
+  arsipKorup: false,
 
   mulaiGameBaru: (namaDokter: string, mode: ModeStase = 'karier', nim?: string) => {
     // Anti-reroll + ikatan identitas (CODEX): di mode UJIAN seed diturunkan
@@ -123,18 +140,18 @@ export const useGame = create<GameStore>((set, get) => ({
     const nimBersih = nim?.trim() || undefined
     const seed = mode === 'ujian' ? hashSeed('ujian', nimBersih ?? namaDokter) : hashSeed(namaDokter, Date.now())
     const state = buildInitialState(namaDokter, seed, PACK, { mode, ...(nimBersih ? { nim: nimBersih } : {}) })
-    set({ state, arsip: null, lastEvents: [], eventTick: 0 })
+    set((p) => ({ state, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, muatToken: p.muatToken + 1 }))
     void get().simpan()
   },
 
   lanjutkanArsip: () => {
     const arsip = get().arsip
     if (!arsip) return
-    set({ state: arsip, arsip: null, lastEvents: [], eventTick: 0 })
+    set((p) => ({ state: arsip, arsip: null, lastEvents: [], eventTick: 0, muatToken: p.muatToken + 1 }))
   },
 
   muatAutosave: async () => {
-    set({ sedangMemuat: true })
+    set({ sedangMemuat: true, arsipKorup: false })
     try {
       // CODEX audit UI/UX 2026-07-10 (#2): save:read kini bisa REJECT utk
       // error selain "file tak ada" (mis. izin ditolak) — dulu semua error
@@ -151,7 +168,14 @@ export const useGame = create<GameStore>((set, get) => ({
       }
       if (!json) return false
       const arsip = deserialize(json, PACK)
-      if (!arsip) return false
+      if (!arsip) {
+        // CODEX M14 #6: file ADA tapi tak terbaca (rusak/versi asing) — tandai
+        // agar Title memperingatkan & mulai-baru minta konfirmasi, bukan diam
+        // lalu menimpanya tanpa peringatan.
+        console.error('Autosave ada tapi gagal di-deserialize (rusak/versi asing).')
+        set({ arsipKorup: true })
+        return false
+      }
       set({ arsip })
       return true
     } finally {
@@ -185,9 +209,11 @@ export const useGame = create<GameStore>((set, get) => ({
     const cur = get().state
     if (!cur) return
     set({ statusSimpan: 'menyimpan' })
+    let sukses = false
     try {
       await window.primer.save.write(SLOT_AUTOSAVE, serialize(cur))
       set({ statusSimpan: 'idle' })
+      sukses = true
     } catch (e) {
       console.error('Gagal menyimpan:', e)
       set({ statusSimpan: 'gagal' })
@@ -195,9 +221,14 @@ export const useGame = create<GameStore>((set, get) => ({
     // DeepThink ronde-2 — telemetri wall-clock (docs/TELEMETRI_WALLCLOCK.md):
     // log forensik terpisah dari save slot, utk deteksi save-scumming oleh
     // dosen. Best-effort murni — gagal tulis TIDAK BOLEH mengganggu gameplay.
+    // CODEX M14 #25: (a) HANYA catat bila save BERHASIL — entri setelah save
+    // gagal tak merepresentasikan state tersimpan → false-positive; (b) sertakan
+    // `sesi` (seed:seedKurikulum) agar audit tak membandingkan lintas sesi/slot/
+    // pemain berbeda di file telemetri global.
+    if (!sukses) return
     try {
       await window.primer.telemetri.append(
-        JSON.stringify({ t: Date.now(), hari: cur.hari, blok: cur.blok, jejakLen: cur.jejak.length }),
+        JSON.stringify({ t: Date.now(), sesi: `${cur.seed}:${cur.seedKurikulum}`, hari: cur.hari, blok: cur.blok, jejakLen: cur.jejak.length }),
       )
     } catch (e) {
       console.error('Gagal mencatat telemetri:', e)
@@ -213,7 +244,16 @@ export const useGame = create<GameStore>((set, get) => ({
       const metaJson = await window.primer.save.read(SLOT_META)
       if (metaJson) {
         const m = JSON.parse(metaJson) as MetaLifetime
-        if (typeof m.playthroughs === 'number' && Array.isArray(m.badges)) set({ meta: m })
+        if (typeof m.playthroughs === 'number' && Array.isArray(m.badges)) {
+          // CODEX M14 #8: `dexKuasai` dulu tak divalidasi — `dexKuasai:null`
+          // lolos lalu TitleScreen `Object.values(meta.dexKuasai)` THROW →
+          // boot-loop tanpa pemulihan (ErrorBoundary tak menyentuh meta).
+          // Backfill ke {} bila bentuknya salah, bukan menerima meta korup.
+          if (typeof m.dexKuasai !== 'object' || m.dexKuasai === null || Array.isArray(m.dexKuasai)) {
+            m.dexKuasai = {}
+          }
+          set({ meta: m })
+        }
       }
     } catch {
       /* meta korup → mulai kosong */
@@ -250,6 +290,11 @@ export const useGame = create<GameStore>((set, get) => ({
   },
 
   muatDariSlot: async (slot) => {
+    // CODEX M14 #5: klaim token generasi di AWAL — bila operasi muat/impor lain
+    // menyusul sebelum read ini selesai, hasil kita jadi usang & TIDAK diterapkan
+    // (mencegah slot lama menimpa sesi yang lebih baru).
+    const tok = get().muatToken + 1
+    set({ muatToken: tok })
     // CODEX audit UI/UX 2026-07-10 (#2): save:read kini bisa reject utk error
     // selain "file tak ada" — pola sama muatAutosave di atas.
     let json: string | null
@@ -262,7 +307,8 @@ export const useGame = create<GameStore>((set, get) => ({
     if (!json) return false
     const st = deserialize(json, PACK)
     if (!st) return false
-    set({ state: st, arsip: null, lastEvents: [], eventTick: 0 })
+    if (get().muatToken !== tok) return false // disusul operasi lebih baru — batal
+    set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, muatToken: p.muatToken }))
     // CODEX audit UI/UX 2026-07-10 (#4): tanpa ini, sesi yang baru dimuat
     // hanya hidup in-memory — autosave di disk tetap berisi save LAMA sampai
     // aksi lain kebetulan memicunya. Menutup app sebelum itu membuat boot
@@ -275,7 +321,9 @@ export const useGame = create<GameStore>((set, get) => ({
   imporArsip: (json) => {
     const st = deserialize(json, PACK)
     if (!st) return false
-    set({ state: st, arsip: null, lastEvents: [], eventTick: 0 })
+    // CODEX M14 #5: impor sinkron — naikkan token agar muatDariSlot asinkron
+    // yang mungkin masih berjalan (klik slot lalu impor) tak menimpa hasil impor.
+    set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, muatToken: p.muatToken + 1 }))
     void get().simpan()
     return true
   },

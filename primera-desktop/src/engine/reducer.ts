@@ -80,10 +80,22 @@ function err(state: GameState, pesan: string): HasilAdvance {
   return { state, events: [{ type: 'ERROR_AKSI', pesan }] }
 }
 
-function catat(state: GameState, action: Action, detail?: string): GameState {
+function catat(state: GameState, action: Action, detail?: string, replay = false): GameState {
   const entry = { hari: state.hari, blok: state.blok, aksi: action.type, ...(detail ? { detail } : {}) }
   // M6: jejak = jurnal aksi PENUH (payload utuh) — aksi yang ditolak pun ikut
   // dicatat supaya replay mereproduksi penolakan yang sama (verifikasi.ts).
+  if (replay) {
+    // Verifier replay (CODEX M14 #9): state dimiliki EKSKLUSIF oleh loop replay
+    // (tak dibagi ke React/Zustand), jadi append in-place aman & mengubah
+    // spread O(n)/call → O(1) amortized — cegah O(n^2) yang bisa membekukan
+    // verifier utk jejak raksasa. log.length TETAP tumbuh identik dgn playthrough
+    // asli (dipakai sbg penghitung RNG/ID di aksi klinik & IGD), jadi determinisme
+    // replay TIDAK berubah. HANYA aktif saat replay=true; gameplay normal tak
+    // tersentuh (jalur immutable di bawah).
+    state.log.push(entry)
+    state.jejak.push(action)
+    return state
+  }
   return { ...state, log: [...state.log, entry], jejak: [...state.jejak, action] }
 }
 
@@ -91,8 +103,25 @@ function catat(state: GameState, action: Action, detail?: string): GameState {
  * ADVANCE
  * ------------------------------------------------------------------------- */
 
-export function advance(state: GameState, action: Action, pack: ContentPack): HasilAdvance {
-  const s = catat(state, action)
+/**
+ * Aksi yang tetap boleh dijalankan SETELAH stase TAMAT — murni navigasi/baca
+ * (laporan/rapor/Buku Saku/surat). LANJUTKAN dibiarkan lolos ke handler-nya
+ * sendiri (pesan spesifik "skor terkunci"). Selain ini, semua aksi yang bisa
+ * mengubah kapitasi/tally/dex/program/roster DITOLAK pasca-tamat (CODEX M14 #1).
+ */
+const AKSI_PASCA_TAMAT: ReadonlySet<Action['type']> = new Set(['PINDAH_LAYAR', 'BACA_SURAT', 'LANJUTKAN'])
+
+export function advance(state: GameState, action: Action, pack: ContentPack, replay = false): HasilAdvance {
+  const s = catat(state, action, undefined, replay)
+
+  // M10.5 (integritas skor, CODEX M14 #1): sekali stase TAMAT, skor terkunci.
+  // Hanya navigasi & baca yang diizinkan; sisanya ditolak agar tak bisa
+  // dimanipulasi pasca-tamat. Konsekuensi verifier: dossier yang jejaknya memuat
+  // mutasi pasca-tamat akan direplay ULANG dgn guard ini → mutasi tereproduksi
+  // sbg penolakan → skor hasil replay tak cocok klaim → vonis TIDAK SAH.
+  if (s.tamat && !AKSI_PASCA_TAMAT.has(action.type)) {
+    return err(s, 'Stase sudah berakhir — skor terkunci. Hanya laporan, rapor, Buku Saku, dan surat yang bisa dibuka.')
+  }
 
   switch (action.type) {
     case 'MULAI_GAME':
@@ -1108,7 +1137,9 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
   // KartuHasil begitu event ini ditangkap, lalu tombol "Kembali ke Peta Desa"
   // di kartu itu yang men-dispatch PINDAH_LAYAR (kini lolos krn s.kegiatan
   // sudah undefined di bawah).
-  let next: GameState = { ...s, kegiatan: undefined, lapanganTerpakai: true }
+  // CODEX M14 #11: persist hasil agar KartuHasil bertahan reload (layar tetap
+  // 'kegiatan' sampai pemain menutup, tapi state.kegiatan sudah undefined).
+  let next: GameState = { ...s, kegiatan: undefined, lapanganTerpakai: true, hasilKegiatanTerakhir: hasil }
 
   if (hasil.jenis === 'posyandu' && hasil.rw !== undefined) {
     tally.posyanduSesi += 1
@@ -1308,7 +1339,9 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     return {
       state: {
         ...s,
-        tamat: { hari: s.hari, grade: skor.grade },
+        // Snapshot BEKU 4 dimensi (CODEX M14 #1) — jadi acuan tunggal
+        // LaporanAkhir/Rapor pasca-tamat, tak bisa tercampur nilai live.
+        tamat: { hari: s.hari, grade: skor.grade, skor },
         layar: 'laporan',
         klinik: { ...s.klinik, antrian: [], aktif: undefined },
         kunjungan: undefined,

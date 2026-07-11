@@ -78,6 +78,46 @@ describe('<TitleScreen /> — konfirmasi timpa arsip saat mulai stase baru', () 
   })
 })
 
+describe('<TitleScreen /> — konfirmasi timpa arsip saat MUAT SLOT (CODEX M14 #4)', () => {
+  it('arsip ADA + BATAL konfirmasi → slot TIDAK dibaca (arsip utuh)', async () => {
+    pasangPrimerStub()
+    const bacaSlot = vi.fn(async () => null)
+    window.primer.save.read = bacaSlot
+    const arsipLama = buildInitialState('Dr. Lama', 1, PACK)
+    useGame.setState({
+      arsip: arsipLama, state: null, meta: null, sedangMemuat: false,
+      slots: [{ slot: 'slot1', namaDokter: 'Dr. Slot', hari: 5, mode: 'karier', tamat: false }],
+    })
+    vi.spyOn(window, 'confirm').mockReturnValue(false)
+    render(<TitleScreen />)
+    const user = userEvent.setup()
+
+    await user.click(screen.getByRole('button', { name: /Slot 1/ }))
+
+    expect(window.confirm).toHaveBeenCalled()
+    expect(bacaSlot).not.toHaveBeenCalled() // muat dibatalkan sebelum baca
+    expect(useGame.getState().arsip).toBe(arsipLama)
+  })
+
+  it('TANPA arsip → muat slot langsung (tanpa konfirmasi gratis)', async () => {
+    pasangPrimerStub()
+    const bacaSlot = vi.fn(async () => null)
+    window.primer.save.read = bacaSlot
+    useGame.setState({
+      arsip: null, state: null, meta: null, sedangMemuat: false,
+      slots: [{ slot: 'slot1', namaDokter: 'Dr. Slot', hari: 5, mode: 'karier', tamat: false }],
+    })
+    const confirmSpy = vi.spyOn(window, 'confirm')
+    render(<TitleScreen />)
+    const user = userEvent.setup()
+
+    await user.click(screen.getByRole('button', { name: /Slot 1/ }))
+
+    expect(confirmSpy).not.toHaveBeenCalled()
+    expect(bacaSlot).toHaveBeenCalledWith('slot1') // langsung mencoba muat
+  })
+})
+
 describe('<TitleScreen /> — konfirmasi timpa arsip saat impor JSON', () => {
   it('arsip ADA + user BATAL konfirmasi → imporArsip TIDAK terpanggil (arsip tetap utuh)', async () => {
     pasangPrimerStub()
