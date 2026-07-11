@@ -1344,7 +1344,15 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
             'teka-teki berikutnya: sudah minum atau belum, dobel atau bolong — pertanyaan harian yang ' +
             'dijawab sendirian oleh ingatan yang makin sering kalah.',
           karma: {
-            kasusId: 'mm_hipertensi_urgensi',
+            // Fix M1/#3 (triase DeepThink 2026-07-11, verifikasi ganda): narasi
+            // karma ini sendiri menulis tanda fokal (bicara pelo + "dunia
+            // berputar") pada TD krisis 208/118 — BE-FAST positif, bukan
+            // sekadar hipertensi urgensi tanpa kerusakan organ akut. Kasus lama
+            // (mm_hipertensi_urgensi) MENYANGKAL persis gejala ini ("bicara
+            // jelas", "tidak ada defisit fokal"). Reroute ke kasus stroke yang
+            // sudah benar (pola sama dgn karma Bu Wulan/desaA.ts), bukan
+            // menulis kasus baru — demografi override (director.ts) aman.
+            kasusId: 'stroke_iskemik',
             anggotaIndex: 0,
             jatuhTempoHari: 44,
             narasi:

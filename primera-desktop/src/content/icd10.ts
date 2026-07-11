@@ -76,6 +76,8 @@ export const NAMA_ICD: Record<string, string> = {
   /* -- Kardio-metabolik ------------------------------------------------------ */
   I10: 'Hipertensi Esensial',
   'I11.9': 'Penyakit Jantung Hipertensif',
+  'I12.9': 'Penyakit Ginjal Hipertensif',
+  'I13.9': 'Penyakit Jantung dan Ginjal Hipertensif',
   'I15.9': 'Hipertensi Sekunder',
   'I16.0': 'Krisis Hipertensi — Urgensi',
   'I16.9': 'Krisis Hipertensi, tidak spesifik',

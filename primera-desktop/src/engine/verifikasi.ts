@@ -207,7 +207,12 @@ function fnv1a(teks: string): string {
 // mengubah semantik replay — aksi mutasi pasca-tamat kini DITOLAK saat replay,
 // sehingga dossier lama (REVISI 18) yang tak punya guard jatuh ke
 // "tidak_dapat_diverifikasi" (sidik jari beda), bukan divonis salah.
-const REVISI_ENGINE = 19
+// M10.5/D5 (2026-07-11): migrasi Posyandu ILP "5 Langkah" — kartuPosyandu()
+// kini menarik 1 kartu per Langkah 2/3/4 dari pool 12-kartu (dulu: dek 4-kartu
+// tetap balita-saja) via Rng(seedKurikulum,'posyandu',hari,rw). Kartu Posyandu
+// hardcoded di kegiatan.ts, TAK tercakup sidikJariPack (spt kartuKlb, catatan
+// 16) — jejak lama mereplay ke kartu/skor/bonusIks berbeda tanpa bump ini.
+const REVISI_ENGINE = 20
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

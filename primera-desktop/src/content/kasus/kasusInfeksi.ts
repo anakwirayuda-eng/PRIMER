@@ -110,7 +110,11 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['J00', 'J06.9', 'J02.9'],
     tatalaksana: {
-      obatBenar: ['paracetamol_500', 'ctm_4', 'ambroxol_30'],
+      // Fix G3 (triase DeepThink 2026-07-11): pasien ini eksplisit BELUM batuk
+      // ("cuma tenggorokan gatal sedikit", q_batuk) — ambroxol (mukolitik)
+      // hanya berindikasi pada batuk produktif, jadi tak boleh jadi slot wajib.
+      obatBenar: ['paracetamol_500', 'ctm_4'],
+      obatOpsional: ['ambroxol_30'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Common cold adalah infeksi virus swasirna; antibiotik tidak mengubah perjalanan penyakit dan memicu resistensi (Kemenkes, PPRA).' },
       ],
@@ -592,9 +596,13 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       // — rehidrasi tak diedukasi benar → dehidrasi memberat jadi syok hipovolemik.
       edukasiKritis: ['cairan_oralit'],
     },
-    clue: 'Tata laksana diare akut anak (LINTAS DIARE Kemenkes): ORALIT tiap BAB cair + ZINC 20 mg selama 10–14 hari, teruskan ASI/makan. TANPA antibiotik pada diare cair tanpa darah. Waspadai tanda dehidrasi berat.',
+    clue: 'Anak ini dehidrasi RINGAN-SEDANG (rewel, mata cekung, haus/minum lahap, turgor kembali agak lambat = kriteria Rencana Terapi B, BUKAN sekadar tanpa-dehidrasi). Tata laksana (LINTAS DIARE Kemenkes/WHO): ORALIT 75 mL/kgBB diberikan SEDIKIT-SEDIKIT selama 3–4 JAM DI PUSKESMAS (perkiraan tanpa BB: <1th ±300mL, 1–5th ±600mL), lalu NILAI ULANG hidrasi — membaik → pulang lanjut oralit tiap BAB cair + ZINC 20 mg 10–14 hari (Rencana Terapi A) + teruskan ASI/makan; memburuk → Rencana Terapi C (IV/rujuk). TANPA antibiotik pada diare cair tanpa darah.',
+    // Fix M1/#6a (triase DeepThink 2026-07-11): "oralit tiap BAB cair" adalah
+    // instruksi Rencana Terapi A (tanpa-dehidrasi) — sering keliru diterapkan
+    // pulang-langsung pada anak yang sebenarnya sudah dehidrasi ringan-sedang.
+    mutiaraEbm: '"Oralit tiap kali BAB cair" adalah instruksi Rencana Terapi A (TANPA dehidrasi) — sering keliru diterapkan langsung-pulang pada anak yang sebenarnya SUDAH menunjukkan tanda dehidrasi ringan-sedang. Kuncinya: volume terhitung (75 mL/kgBB) + observasi 3–4 jam di faskes dulu, baru boleh pulang bila membaik.',
     konsekuensi: {
-      narasi: 'Bila rehidrasi tidak diedukasi dengan benar, dehidrasi dapat memberat menjadi syok hipovolemik; pemberian antibiotik tak perlu justru berisiko memperpanjang keluhan.',
+      narasi: 'Memulangkan anak dehidrasi ringan-sedang tanpa observasi rehidrasi 3–4 jam di Puskesmas dulu meningkatkan risiko perburukan ke dehidrasi berat/syok hipovolemik di rumah; pemberian antibiotik tak perlu justru berisiko memperpanjang keluhan.',
       kembaliHariMin: 2,
       kembaliHariMax: 4,
       kondisiKembali: 'Anak kembali dengan mata sangat cekung, malas minum, dan lemas — dehidrasi berat yang perlu rehidrasi intravena/rujukan.',
@@ -707,7 +715,16 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       // putus obat adalah jalur klinis #1 ke MDR-TB, klinis lain tak sebanding.
       edukasiKritis: ['minum_oat_tuntas'],
     },
-    clue: 'Batuk >2 minggu + BB turun + keringat malam + kontak TB = terduga TB. Konfirmasi BTA sputum (hasil besok) → mulai OAT KDT program DOTS, TUNTAS 6 bulan. TB paru adalah kompetensi 4A — DITANGANI di Puskesmas, bukan dirujuk. Skrining kontak serumah.',
+    clue: 'Batuk >2 minggu + BB turun + keringat malam + kontak TB = terduga TB. Konfirmasi bakteriologis (baku emas terkini: TCM/Xpert MTB-RIF; BTA sputum sbg alternatif) → mulai OAT KDT program DOTS, TUNTAS 6 bulan. Tawarkan skrining HIV pada semua pasien TB. TB paru adalah kompetensi 4A — DITANGANI di Puskesmas, bukan dirujuk. Skrining kontak serumah.',
+    // Fix M1/#8 (triase DeepThink 2026-07-11, keputusan Dr. Wirayuda: "teks
+    // dulu, mekanik nanti"): TCM (Xpert MTB-RIF) adalah baku emas lini-pertama
+    // pedoman TB terkini, BTA kini lebih berperan di pemantauan pengobatan —
+    // tapi katalog LAB game belum punya item TCM/HIV terpisah (nambahnya
+    // menyentuh field ternilai, ditahan dulu sampai keputusan scope M13/M14).
+    // Ini fix TEKS-saja: hasil bta_sputum tetap dipakai sbg proksi konfirmasi
+    // bakteriologis (lab/tatalaksana TIDAK berubah), murni menaikkan akurasi
+    // pengetahuan yang diajarkan clue + mutiaraEbm.
+    mutiaraEbm: 'TCM (Tes Cepat Molekuler/Xpert MTB-RIF) kini jadi baku emas pemeriksaan bakteriologis TB LINI PERTAMA — BTA mikroskopis saja tak lagi representasi standar diagnosis terkini (BTA kini lebih berperan di pemantauan pengobatan bulan ke-2/5/6). Semua pasien TB, terduga maupun terkonfirmasi, juga sebaiknya ditawari skrining HIV.',
     konsekuensi: {
       narasi: 'Bila OAT tidak dituntaskan atau ditunda dengan antibiotik biasa, terjadi penularan ke balita serumah dan risiko TB resisten obat (TB-RO).',
       kembaliHariMin: 14,

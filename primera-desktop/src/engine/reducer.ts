@@ -382,7 +382,13 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         !nilai.diagnosisBenar || nilai.skorTerapi < 50 || resepBerbahaya || nilai.cowboy
       if (kasus.konsekuensi && pantasKonsekuensi && !observasiMenungguLab && action.jenis !== 'rujuk') {
         const rng = new Rng(s.seed, 'konsekuensi', s.hari, kasus.id)
-        const jatuhTempo = s.hari + rng.int(kasus.konsekuensi.kembaliHariMin, kasus.konsekuensi.kembaliHariMax)
+        // Fix #14 (triase DeepThink 2026-07-11, terverifikasi ganda): satu-satunya
+        // titik baca s.jadwal ada di hariBaru() (dipanggil pasca-transisi hari),
+        // jadi kembaliHariMin:0 secara mekanis IDENTIK dgn kembaliHariMin:1 —
+        // "hari ini juga" tak pernah bisa terealisasi. Math.max(1,...) menghapus
+        // cabang mati yg menyesatkan TANPA mengubah hari kemunculan pasien mana
+        // pun (murni logika, nol dampak observable — dikonfirmasi via audit+sanggahan).
+        const jatuhTempo = s.hari + Math.max(1, rng.int(kasus.konsekuensi.kembaliHariMin, kasus.konsekuensi.kembaliHariMax))
         jadwal = [
           ...jadwal,
           {
@@ -809,12 +815,17 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (terakhir !== undefined && s.hari - terakhir < COOLDOWN_POSYANDU) {
         return err(s, `Posyandu RW ${action.rw} baru digelar — jadwalnya bulanan (tiap 30 hari).`)
       }
+      // Fix D5 (migrasi ILP, triase DeepThink 2026-07-11): kartuPosyandu() kini
+      // menarik 1 kartu per Langkah 2/3/4 dari pool 12-kartu lintas-siklus-hidup
+      // (dulu: dek 4-kartu tetap balita-saja). Rng dari seedKurikulum (BUKAN
+      // seed flavor) — sama spt rngDirector, agar kurikulum Posyandu identik
+      // lintas mahasiswa 1 paket ujian (adil), hanya bervariasi per RW+hari.
       return {
         state: {
           ...s,
           stamina: s.stamina - BIAYA_STAMINA_KEGIATAN,
           layar: 'kegiatan',
-          kegiatan: buatKegiatan('posyandu', kartuPosyandu(), { rw: action.rw }),
+          kegiatan: buatKegiatan('posyandu', kartuPosyandu(new Rng(s.seedKurikulum, 'posyandu', s.hari, action.rw)), { rw: action.rw }),
         },
         events: [],
       }

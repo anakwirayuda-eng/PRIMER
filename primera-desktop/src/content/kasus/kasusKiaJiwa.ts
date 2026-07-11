@@ -695,6 +695,23 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     skdi: '2',
     kategori: 'jiwa',
     fktp144: false,
+    // Fix M7 (triase DeepThink 2026-07-11, keputusan Dr. Wirayuda — "kunci
+    // false + dokumentasi"): label skdi=2 di atas SECARA HARFIAH berarti
+    // "diagnosis lalu rujuk" (tanpa tatalaksana awal). harusDirujuk:false di
+    // sini TETAP BENAR — bukan pengecualian diam-diam — karena presentasi
+    // kasus ini genuinely ringan (skrining bunuh diri NEGATIF, fungsi kerja
+    // masih terjaga, tanpa psikosis/riwayat manik, penyebab organik
+    // disingkirkan) sesuai mhGAP WHO/NICE NG222: depresi ringan-tanpa-risiko
+    // memang direkomendasikan psikoedukasi+aktivasi perilaku di FKTP, BUKAN
+    // rujuk otomatis — selaras realita ~40% Puskesmas tanpa layanan jiwa
+    // (lihat catatanRealita di bawah). SYARAT GATING INI MUTLAK utk false:
+    // bila kelak dibuat varian "Depresi Ringan DENGAN risiko" (skrining
+    // bunuh-diri positif/rencana/niat, ATAU fungsi hancur, ATAU ada fitur
+    // psikotik/manik) — kasus itu WAJIB harusDirujuk:true, TERLEPAS label
+    // SKDI-nya sama. Presentasi klinis menentukan; level SKDI adalah plafon
+    // kurikulum, bukan gerbang rujuk otomatis (pola sama dgn kulit_dermatitis
+    // _kontak/tht_rinosinusitis_akut/mm_osteoartritis_lutut/jiwa_gangguan
+    // _cemas — 4 kasus 3A lain yg diaudit bersamaan & sama2 dikonfirmasi false).
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Beberapa minggu ini saya murung terus dok, tidak semangat menjalani hari.',

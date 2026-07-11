@@ -134,9 +134,11 @@ describe('PACK — validasi silang id konten', () => {
   // `fktp144` ikut jadi false (bukan 4A → bukan bagian 144 wajib-tuntas, sesuai
   // invarian test di atas). Level PPK/SKDI resmi per kasus:
   //   - kulit_dermatitis_kontak: "Dermatitis kontak alergika" = 3A
-  //   - tht_rinosinusitis_akut: "Sinusitis" = 3A (catatan: dokumen audit menyisakan
-  //     sedikit ambiguitas apakah varian AKUT spesifik malah level 2 — 3A dipakai
-  //     krn itu match resmi yang terverifikasi, bukan tebakan)
+  //   - tht_rinosinusitis_akut: "Sinusitis" = 3A (DIKONFIRMASI 2026-07-11, teks
+  //     SKDI 2012 Lampiran-3 penuh dibaca langsung: entri #93 "Sinusitis" generik
+  //     = 3A; #94/#95 "Sinusitis frontal/maksilaris akut" level-2 adalah entri
+  //     situs-TUNGGAL-terkonfirmasi, beda kompetensi dari sindrom klinis
+  //     multi-sinus tanpa pencitraan yg diajarkan kasus ini — bukan ambiguitas lagi)
   //   - mm_osteoartritis_lutut: "Artritis, osteoarthritis" (entri gabungan) = 3A
   //   - jiwa_gangguan_cemas: "Gangguan cemas menyeluruh" = 3A
   //   - jiwa_depresi_ringan: "Depresi endogen, episode tunggal & rekuran" = 2

@@ -46,8 +46,13 @@ Temuan yang membuat game AKTIF mengajarkan refleks berbahaya — prioritas TERTI
   DITOLAK (O1).
 - **#7** — Prolanis: GDS<200 tunggal "terkontrol", DBP=0,62×SBP, rujukan bisa
   terblokir walau drift gawat (`kegiatan.ts:135`).
-- **#10** — terapi kondisional dipaksa AND (`clinic.ts:494`). ⚠ DeepThink menandai
-  ini paling berisiko *cascade failure* pada 516 test — estimasi waktu bisa meleset.
+- **#10** — ✅ SELESAI 2026-07-11 (turun kasta dari "operasi engine" ke sapuan
+  konten): mekanisme AND di `clinic.ts:494` terverifikasi disengaja/by-design
+  (`types.ts:107-109`), bukan bug. Audit G3 menyisir seluruh kasus multi-obat —
+  2 kandidat baru dipindah ke `obatOpsional` (common cold/ambroxol, dispepsia/
+  antasida), 1 kandidat (CHF/ISDN) GUGUR (data vital kasus itu sendiri
+  memenuhi syarat kondisional). Angka "516 test" basi — 647/652 hijau,
+  premis *cascade failure* tak terjadi.
 - **#14** — konsekuensi tak ikuti kegagalan edukasi; konsekuensi hari-0 telat proses.
 
 ### 1c. Keputusan-medis (adjudikasi Dr. Wirayuda, lalu konten)
@@ -87,9 +92,9 @@ kebenaran; nol perubahan skor. (Dikawal test firewall.)
 | `metronidazol_500` | nitroimidazol | `nitroimidazol` | jelas |
 | `kloramfenikol_250` | amfenikol | `amfenikol` | jelas |
 | `kloramfenikol_tetes_mata` | amfenikol | `amfenikol` | jelas |
-| `tiamfenikol_500` | amfenikol (analog kloramfenikol) | `amfenikol` | silang-reaksi masuk akal; **cek dokter** |
-| `mupirosin_krim` | antibiotik topikal (mupirosin) | **— (biarkan kosong?)** | topikal, tak ada kelas silang-reaksi sistemik bermakna. **Keputusan dokter.** |
-| `oat_kdt` | kombinasi INH+RIF+PZA+EMB | **— (biarkan kosong?)** | produk kombinasi; satu kelas alergi menyesatkan. **Keputusan dokter.** |
+| `tiamfenikol_500` | amfenikol (analog kloramfenikol) | `amfenikol` | ✅ SUDAH DITERAPKAN (dikonfirmasi 2026-07-11, `katalogM3.ts`) |
+| `mupirosin_krim` | antibiotik topikal (mupirosin) | ✅ dibiarkan kosong | ✅ SUDAH DITERAPKAN (dikonfirmasi 2026-07-11) |
+| `oat_kdt` | kombinasi INH+RIF+PZA+EMB | ✅ dibiarkan kosong | ✅ SUDAH DITERAPKAN (dikonfirmasi 2026-07-11) |
 
 **Non-antibiotik: SUDAH lengkap.** nsaid (3 obat), statin (1), sulfa (1), makrolida,
 penisilin, sefalosporin sudah tertag. `furosemid_40` (loop, turunan sulfonamida)
@@ -248,6 +253,29 @@ match) disimpan permanen di `docs/references/ppk1186/` — PDF sumber sendiri TI
 disimpan di repo (hanya upload user), perlu diunggah ulang bila ekstraksi ulang
 diperlukan. AWAITING keputusan Dr. Wirayuda per item (via artifact shortlist).
 
+## 3e. PNPK Kemenkes (31 dokumen, di luar PPK 1186) — 17 temuan "Bagian D" (2026-07-11)
+
+Cross-check terpisah (workflow `pnpk-crosscheck`, `docs/references/pnpk/
+crosscheck_berbeda.json`) menghasilkan **7 temuan Tier-1** (divergensi konkret pada
+kasus yang SUDAH ada: `hipertensi_esensial` monoterapi vs wajib-kombinasi Derajat-2,
+`dm_tipe2` HbA1c 8,9% masih monoterapi, `mm_isk_bawah` kotrimoksazol vs lini-kuat
+nitrofurantoin/fosfomisin, `kia_isk_kehamilan` durasi 7hr vs PNPK 3hr, `jiwa_
+skizofrenia` inisiasi antipsikotik FKTP vs mandat PNPK-2025 di FPKTL, `jiwa_
+gangguan_cemas` fluoksetin vs tabel lini-pertama PNPK, `mm_gagal_jantung_kongestif`
+×2 — interaksi ISDN+PDE5-inhibitor tak termodelkan + nuansa silent-MI) + **10
+temuan Tier-2** (celah cakupan tanpa kasus sama sekali: nyeri-kronik/opioid,
+sepsis dewasa+anak, trauma, komunikasi-rujukan, angina/CCB-nonDHP, batu-saluran-
+kemih, perdarahan-GI-aktif, osteoporosis).
+
+**Digabung sbg "Bagian D"** ke artifact adjudikasi baru (pola sama persis dgn
+Bagian A/B/C — kartu per-temuan + radio Setuju/Perlu-Edit/Tolak/Nanti tersimpan
+localStorage + tombol ekspor ringkasan):
+`https://claude.ai/code/artifact/48d8547b-f117-4287-ab75-e9af0a05929c`.
+Tier-1 = keputusan protokol klinis nyata (mengedit kunci-jawaban ternilai) — TIDAK
+diterapkan sepihak, menunggu adjudikasi Dr. Wirayuda per-item sama seperti Bagian
+C. Tier-2 = bukan bug, murni referensi cakupan kandidat M13 (tak mendesak Golden
+Master). AWAITING keputusan Dr. Wirayuda.
+
 ## 4. Q7 — Otonomi naratif (temuan #9): temuan lebih halus dari dugaan
 
 **Hasil baca kode (bukan asumsi):** kedua arc yang ditandai CODEX ternyata
@@ -285,7 +313,8 @@ menyangkut kebenaran nilai/etik lebih baik diputuskan bersama gelombang M10.5.
 2. **Fase 2 — M10.5 "Operasi Mesin Inti" (Agustus):** P0 keselamatan (§1a) · 4
    temuan desain-engine (#7/#10/#14 + firewall) · 5 keputusan skoring (§3, keputusan
    HARUS sudah rampung) · keputusan medis (§1c). Pertahankan O1 (tanpa dosis).
-3. **Fase 3 — Golden Master (akhir Agustus):** satukan semua, 516+ test hijau, **SATU
+3. **Fase 3 — Golden Master (akhir Agustus):** satukan semua, 647+ test hijau
+   (angka "516" di draf awal basi — 647 terverifikasi 2026-07-11), **SATU
    `REVISI_ENGINE` bump final**, hard-freeze `reducer.ts`/`clinic.ts`/`scoring.ts`.
 4. **Fase 4 — M11a Live-Ops (Sept dst):** 118 mutiara pengayaan, Debrief Malam
    old-vs-new (Q6b), polish visual/M12, variasi cerita — silent patch, TAK sentuh
@@ -296,6 +325,106 @@ menyangkut kebenaran nilai/etik lebih baik diputuskan bersama gelombang M10.5.
 sampai mahasiswa yang merujuk BENAR (per EBM terbaru) justru ditebas penalti rujukan
 krn DB SKDI 4A/3B belum di-update. Batas "tuntas-mandiri vs rujuk" harus digeser
 bersamaan di Fase 2.
+
+## 5b. Router Ember pra/pasca-freeze — per-FIELD, diverifikasi 2026-07-11
+
+Triase jawaban DeepThink (memo strategis 2026-07-11) menemukan klaimnya "semua
+koreksi PPK/PNPK aman pasca-freeze" **REFUTED** oleh kode nyata (workflow adversarial
+baca `clinic.ts`/`verifikasi.ts`/`kegiatan.ts`) — detail penuh di memori
+`project_primer_freeze_bucket_router.md`. Aturan yang benar, per-FIELD bukan
+per-"ini kan teks":
+
+**Ember Merah (WAJIB tuntas SEBELUM freeze — field ini ternilai + ter-hash
+`sidikJariPack`):** `tatalaksana.*` (obatBenar/obatAlternatif/obatOpsional/
+obatSalahUmum/prosedur/edukasi/edukasiKritis) · `icd10` · `harusDirujuk` ·
+`alergiTrap` · `skdi` (bukan lewat scorer per-encounter, tapi menyetir `bobotKasus`
+seleksi antrian director + tetap ter-hash) · menambah kasus BARU (menggeser draw
+RNG Director untuk seed yang sama).
+
+**Ember Hijau (aman pasca-freeze, silent-patch semester berjalan):**
+`panduanResmi`/`catatanRealita`/`mutiaraEbm` (murni display, absen dari hash) ·
+teks `clue` (naratif debrief saja, tak dibaca skor) · nama/kategori/sinonim
+katalog edukasi.
+
+**Kasus tepi:** `diagnosisBanding` tak ter-hash & bukan kunci mekanis (skor = match
+icd10), replay-safe secara teknis — tapi mengubah set distraktor menggeser
+kesulitan lintas-kohort → perlakukan Ember Merah bila materiil.
+
+**Dampak konkret ke backlog adjudikasi §1c/PPK-C/PNPK-D:** temuan mana pun yang
+menulis ulang obat lini-1/ICD-ternilai/keputusan-rujuk (mis. HT monoterapi→kombinasi
+2-obat, DM2 metformin→kombinasi, dosis/pilihan OMA) **WAJIB Ember Merah** — TIDAK
+aman ditunda ke September seperti sempat diusulkan. Hanya temuan yang murni menambah
+`panduanResmi`/`catatanRealita` boleh Ember Hijau. Alasannya dua: (1) kunci-jawaban
+bergeser tengah-semester → mahasiswa main minggu-2 vs minggu-8 dinilai beda kunci;
+(2) `sidikJariPack` berubah → dossier/save lama jatuh "tidak dapat diverifikasi".
+
+**Posyandu-ILP (nuansa serupa):** dek `kartuPosyandu()` hidup di `kegiatan.ts`
+(BUKAN salah satu dari 3 file beku, TAK ada di `scoring.ts`). Relabel murni
+"Meja"→"Langkah" (id kartu/pilihan/flag-benar tetap) = replay identik = Ember
+Hijau, aman ditunda. Mengubah id kartu/jumlah kartu (4→5)/jawaban-benar = skor
+replay bergeser = Ember Merah + bump `REVISI_ENGINE` manual (dek ini di luar
+`sidikJariPack`, precedent kartuKlb §49). Jadi ini keputusan SCOPE, bukan
+keharusan struktural "sekarang".
+
+**Status checklist per 2026-07-11** (dari dossier triangulasi lengkap,
+`DEEPTHINK_TRIANGULASI_LENGKAP_2026-07-11.md`):
+
+- ✅ **SELESAI & terverifikasi 2026-07-11** (647/647 test hijau, tsc bersih):
+  [M6] ICD `mm_hipertensi_urgensi` I16.0→I13.9 (kode CM-only diganti WHO real,
+  diagnosisBanding+kamus ICD ikut diperbarui) · [M9] firewall alergi dikonfirmasi
+  sudah diterapkan (tiamfenikol/mupirosin/oat_kdt, tak ada yg tertunda) · [M8]
+  level SKDI `tht_rinosinusitis_akut` dikonfirmasi 3A (teks SKDI 2012 Lampiran-3
+  dibaca langsung, ambiguitas lama ditutup) · [M1]#3 kontradiksi karma Lastri
+  (stroke vs hipertensi-urgensi) — di-reroute ke `stroke_iskemik`, demografi
+  usiaMax 68→78 disesuaikan · [M1]#6a diare Plan-B (clue+mutiaraEbm) · [M1]#6b
+  dengue cairan kompensata vs dekompensata (clue+opsi d1/d2) · [M1]#6d
+  anafilaksis DIKONFIRMASI sudah benar (epinefrin lini-1, steroid adjuvant
+  eksplisit — tanpa perubahan) · [G3] 2 dari 3 kandidat obatBenar→obatOpsional
+  (common cold/ambroxol, dispepsia/antasida; CHF/ISDN GUGUR — tetap obatBenar,
+  data vital kasus itu sendiri memenuhi syarat) · [M1]#8 TB TCM/HIV (keputusan
+  Dr. Wirayuda: "teks dulu, mekanik nanti" — clue+mutiaraEbm sebut TCM sbg
+  baku-emas, katalog lab tak disentuh) · **[M1]#6c asma-ipratropium** (keputusan
+  Dr. Wirayuda: "sesuai konteks FKTP + PPK terbaru" — dicek langsung ke PPK
+  1186/2022: NOL mention ipratropium, kriteria rujuk eksplisit "serangan
+  sedang-berat", bundel FKTP = O2+bronkodilator+steroid lalu rujuk = PERSIS
+  yg sudah diajarkan kasus ini. Skor TIDAK diubah — ipratropium/GINA
+  disurfacekan sbg `mutiaraEbm` idealis-vs-lokal, bukan syarat wajib).
+  **→ SEMUA 6 sub-temuan [M1] P0 keselamatan kini TUNTAS.**
+  **[M7]** `jiwa_depresi_ringan` harusDirujuk dikunci `false` + didokumentasikan
+  eksplisit (gating criteria) — keputusan Dr. Wirayuda "kunci false + dokumentasi".
+  **[D5] Posyandu ILP "5 Langkah" — MIGRASI PENUH SELESAI 2026-07-11**: pool
+  12-kartu (Langkah 2/3/4 masing-masing 3-4 opsi lintas siklus-hidup
+  balita/bumil/remaja/produktif-lansia + Langkah 5 Validasi Data tetap), 1
+  kartu ditarik per Langkah 2/3/4 tiap sesi via `Rng(seedKurikulum,'posyandu',
+  hari,rw)` (deterministik+adil lintas paket ujian), Langkah 1 dilebur narasi.
+  `REVISI_ENGINE` 19→20 (dek hardcoded di kegiatan.ts, di luar `sidikJariPack`,
+  precedent kartuKlb §49). 5 test baru (struktur/determinisme/variasi/cakupan
+  -pool/integrasi-RW) + 647 lama tetap hijau (652 total), tsc bersih.
+- ✅ **SELESAI tambahan 2026-07-11** (652/652 hijau, tsc bersih): [G1] audit
+  sweep guillotine SELESAI — bersih, nol kandidat baru di luar yg sudah
+  diperbaiki (sanggahan menemukan 1 overclaim kecil di rumusan ringkasan,
+  substansi tetap benar) · [#14] fix minimal `Math.max(1,...)` konsekuensi
+  hari-0 (murni logika, nol dampak observable) · [#12c] konsistensi teks
+  debrief apendisitis (3 lokasi, tak sentuh skor) · [#7b] hapus formula DBP
+  arbitrer di narasi Prolanis (kosmetik, tak sentuh skor).
+- 🔴 Masih perlu KEPUTUSAN Dr. Wirayuda (artifact Bagian D, bagian
+  "Tambahan"): **[#2] Asih storyline** — Q6 Opsi-a ternyata butuh keputusan
+  MEKANISME (bukan cuma ya/tidak): kartu ke-4 terpisah tak akan berfungsi
+  krn kunjungan single-select; + keputusan SCOPE (gerbang karma generik
+  dipakai 8 arc lain, semua atau allowlist Asih-saja?) · **[#14] kalibrasi
+  severity edukasiKritis→konsekuensi** (15 kasus, blanket vs per-kasus) ·
+  **[#7c] asimetri rujukan Prolanis DM vs HT** (opsi exempt-gerbang vs
+  kasus-DM-baru vs transparansi-saja) · **[#4a] ANC gol.darah** (distraktor
+  -5/-10 utk komponen 10T resmi — wajar atau kelewat keras?) · **[#4c] ANC
+  folat dobel** (tablet_fe sudah+folat, tapi asam_folat jg diwajibkan AND —
+  pilih salah satu, keputusan tercepat dari 5 item). [M2] §1c sisanya
+  (#4b/e/f — HIV/sifilis/HBsAg gap konten, ambang Hb-rujuk, MgSO4-dosis
+  sudah sesuai kebijakan O1 tanpa-dosis) · subset PPK-C(7)/PNPK-D(17) yang
+  mengubah obat/ICD/rujuk · [G2] self-play deflasi grade (tunggu semua
+  adjudikasi medis di atas kelar, krn ikut menggeser skor).
+- 🟢 Aman ditunda September (M11a/M13, tunggu greenlight milestone):
+  panduanResmi Phase-B murni-display · 118 sisa mutiara pengayaan · Debrief
+  Malam cap-3 [D1] · M12 aesthetic · M13 konten baru.
 
 ## 6. Q8 — Audit ICD-10 67 kasus + 5 IGD (SELESAI 2026-07-10)
 

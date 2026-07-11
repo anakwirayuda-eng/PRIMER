@@ -14,118 +14,325 @@ import type {
 import type { Rng } from './core/rng'
 
 /* ---------------------------------------------------------------------------
- * POSYANDU — 5 meja disederhanakan jadi 4 keputusan klinis inti.
- * (Meja 1 pendaftaran & Meja 5 pelayanan dilebur ke narasi.)
+ * POSYANDU — migrasi ILP "5 Langkah" (Fix D5, triase DeepThink 2026-07-11,
+ * keputusan Dr. Wirayuda: migrasi PENUH, bukan relabel). Riset: KMK
+ * HK.01.07/MENKES/2015/2023 (Juknis ILP) + "25 Keterampilan Dasar Kader
+ * Posyandu" (Kemenkes) — Posyandu ILP melayani SEMUA siklus hidup (bumil,
+ * balita, remaja, usia produktif-lansia), bukan balita-saja spt 5-meja lama.
+ *
+ * Pool 12 kartu (4 per Langkah 2/3/4 sisi keputusan-klinis + 1 Langkah 5),
+ * satu kartu ditarik per Langkah 2/3/4 tiap sesi (rng-seeded per RW+hari,
+ * dari seedKurikulum agar adil lintas mahasiswa paket ujian sama) + Langkah 5
+ * selalu tampil — total 4 kartu/sesi (jumlah sama dgn deck lama), tapi
+ * kontennya berotasi lintas kelompok sasaran antar-kunjungan RW/bulan (hindari
+ * hafalan & cakupan-balita-saja). Langkah 1 (Pendaftaran) tetap dilebur ke
+ * narasi (tak perlu kartu keputusan).
  * ------------------------------------------------------------------------- */
 
-export function kartuPosyandu(): KartuKegiatan[] {
-  return [
+const POOL_LANGKAH2: KartuKegiatan[] = [
+  {
+    id: 'posy_timbang',
+    judul: 'Langkah 2 — Penimbangan & Pengukuran (Balita)',
+    narasi:
+      'An. Kadek, 18 bulan. Bulan lalu 9,1 kg; hari ini 8,7 kg. Ibunya bilang anaknya ' +
+      'sempat diare seminggu. Di KMS, titik bulan ini turun memotong satu pita warna.',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Catat "berat turun" (BGM), rujuk konseling gizi + telusuri penyebab',
+        benar: true,
+        respons:
+          'Tepat. Berat turun melewati garis pita = alarm (weight faltering). Jangan ' +
+          'ditunda — cari penyebab (asupan, infeksi) dan pantau ketat bulan depan.',
+      },
+      {
+        id: 'b',
+        label: 'Anggap wajar karena baru sakit, timbang lagi bulan depan saja',
+        benar: false,
+        respons:
+          'Berbahaya. Faltering setelah sakit justru butuh intervensi aktif, bukan ' +
+          'menunggu — di sinilah stunting bermula bila dibiarkan.',
+      },
+      {
+        id: 'c',
+        label: 'Langsung diagnosis gizi buruk & rujuk RS',
+        benar: false,
+        respons:
+          'Berlebihan. Belum ada tanda gizi buruk (BB/TB, edema, tanda klinis). ' +
+          'Over-rujuk membebani keluarga & sistem — nilai dulu status gizinya.',
+      },
+    ],
+  },
+  {
+    id: 'posy_ukur_bumil',
+    judul: 'Langkah 2 — Penimbangan & Pengukuran (Ibu Hamil)',
+    narasi:
+      'Bu Marni, hamil trimester 2. LILA diukur 22 cm. Berat badan naik lambat sejak ' +
+      'awal kehamilan.',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Catat KEK (LILA <23,5cm), rujuk ANC terpadu/gizi + PMT ibu hamil',
+        benar: true,
+        respons:
+          'Tepat. LILA <23,5cm = Kurang Energi Kronis — faktor risiko BBLR & stunting ' +
+          'bayi yang belum lahir. Perlu PMT bumil + pemantauan ANC lebih ketat.',
+      },
+      {
+        id: 'b',
+        label: 'Anggap wajar karena "memang ibu hamil biasanya begini"',
+        benar: false,
+        respons:
+          'Berbahaya. KEK bumil meningkatkan risiko BBLR & stunting bayi — jangan ' +
+          'dianggap normal, ini jendela cegah stunting SEBELUM bayi lahir.',
+      },
+    ],
+  },
+  {
+    id: 'posy_ukur_lansia',
+    judul: 'Langkah 2 — Penimbangan & Pengukuran (Usia Produktif-Lansia)',
+    narasi:
+      'Pak Slamet, 58 tahun. Lingkar perut 102 cm, tensi 150/95 saat diukur kader. ' +
+      'Mengaku "sudah biasa begini sejak dulu, Dok".',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Catat obesitas sentral + hipertensi, edukasi GERMAS + arahkan skrining lanjut',
+        benar: true,
+        respons:
+          'Tepat. Lingkar perut >90cm (pria) + TD ≥140/90 = obesitas sentral & ' +
+          'hipertensi — faktor risiko PTM yang perlu ditindaklanjuti, bukan "biasa".',
+      },
+      {
+        id: 'b',
+        label: 'Anggap wajar karena usia, cukup catat tanpa tindak lanjut',
+        benar: false,
+        respons:
+          'PTM sering luput krn dianggap "wajar tua" — padahal usia ini justru paling ' +
+          'penting untuk deteksi dini sebelum komplikasi (stroke/jantung/ginjal).',
+      },
+    ],
+  },
+  {
+    id: 'posy_ukur_remaja',
+    judul: 'Langkah 2 — Penimbangan & Pengukuran (Remaja)',
+    narasi:
+      'Dewi, siswi SMP 14 tahun, terlihat pucat dan mengaku sering lemas & pusing saat ' +
+      'pelajaran olahraga.',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Catat kecurigaan anemia, tawarkan TTD mingguan remaja putri + edukasi gizi',
+        benar: true,
+        respons:
+          'Tepat. Anemia remaja putri lazim (kebutuhan zat besi naik saat menstruasi ' +
+          'mulai teratur) — TTD mingguan mencegah efeknya berlanjut ke kehamilan kelak.',
+      },
+      {
+        id: 'b',
+        label: 'Anggap capek biasa karena olahraga, tak perlu tindak lanjut',
+        benar: false,
+        respons:
+          'Melewatkan tanda anemia remaja putri = kehilangan jendela cegah anemia ' +
+          'kehamilan bertahun-tahun kemudian.',
+      },
+    ],
+  },
+]
+
+const POOL_LANGKAH3: KartuKegiatan[] = [
+  {
+    id: 'posy_kms',
+    judul: 'Langkah 3 — Pencatatan & Pemeriksaan (Buku KIA Balita)',
+    narasi: 'Ibu An. Kadek bertanya, "Dok, garis anak saya di bawah garis merah artinya apa?"',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Jelaskan posisi di KMS + rencana tindak lanjut dengan bahasa sederhana',
+        benar: true,
+        respons: 'Bagus. KMS adalah alat komunikasi dengan ibu, bukan sekadar arsip.',
+      },
+      {
+        id: 'b',
+        label: 'Cukup bilang "nanti diurus petugas", lanjut ke anak berikutnya',
+        benar: false,
+        respons: 'Kesempatan edukasi hilang. Ibu yang paham KMS = kader gizi di rumahnya sendiri.',
+      },
+    ],
+  },
+  {
+    id: 'posy_catat_bumil',
+    judul: 'Langkah 3 — Pencatatan & Pemeriksaan (Kohort Ibu Hamil)',
+    narasi:
+      'Hasil ANC bumil trimester 3 dicatat di kohort: TD 140/90, protein urin +1. Ibu ' +
+      'bertanya, "Dok, kenapa saya ditulis risiko tinggi?"',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Jelaskan tanda preeklampsia + rencana kontrol lebih sering/rujuk bila memberat',
+        benar: true,
+        respons:
+          'Tepat. TD tinggi + proteinuria di kehamilan = kecurigaan preeklampsia — ibu ' +
+          'berhak paham & tahu kapan harus segera kembali (sakit kepala hebat, pandangan kabur).',
+      },
+      {
+        id: 'b',
+        label: 'Bilang "nanti dijelaskan dokter lain", lanjut ke bumil berikutnya',
+        benar: false,
+        respons: 'Kesempatan edukasi tanda bahaya hilang — ibu pulang tanpa tahu kenapa harus waspada.',
+      },
+    ],
+  },
+  {
+    id: 'posy_kuesioner_lansia',
+    judul: 'Langkah 3 — Pencatatan & Pemeriksaan (Skrining Lansia)',
+    narasi:
+      'Kuesioner skrining lansia Bu Ijah (70 th) menunjukkan skor risiko jatuh TINGGI ' +
+      '(riwayat jatuh 1x tahun ini, jalan sempoyongan).',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Tindak lanjuti: edukasi pencegahan jatuh (rumah aman, alas kaki) + rujuk bila perlu',
+        benar: true,
+        respons:
+          'Tepat. Skor risiko jatuh tinggi bukan sekadar angka kuesioner — tindak ' +
+          'lanjuti sebelum jatuh sungguhan terjadi (patah tulang panggul lansia = ancaman nyawa).',
+      },
+      {
+        id: 'b',
+        label: 'Simpan hasil kuesioner, tak ada tindakan karena "cuma skrining"',
+        benar: false,
+        respons: 'Skrining tanpa tindak lanjut = alat yang percuma — risiko jatuh tinggi butuh aksi sekarang.',
+      },
+    ],
+  },
+]
+
+const POOL_LANGKAH4: KartuKegiatan[] = [
+  {
+    id: 'posy_imunisasi',
+    judul: 'Langkah 4 — Pelayanan & Penyuluhan (Imunisasi Balita)',
+    narasi:
+      'An. Putu, 9 bulan, jadwalnya campak (MR). Ibunya bilang anaknya sedang batuk pilek ' +
+      'ringan tanpa demam. Vaksin di termos masih dalam rentang suhu 2–8°C.',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Tetap berikan MR — ISPA ringan tanpa demam bukan kontraindikasi',
+        benar: true,
+        respons:
+          'Benar. Menunda imunisasi karena batuk-pilek ringan adalah "kesempatan yang ' +
+          'hilang" (missed opportunity) — anak keburu terpapar campak.',
+      },
+      {
+        id: 'b',
+        label: 'Tunda sampai anak benar-benar sehat',
+        benar: false,
+        respons:
+          'Keliru — ini penyebab utama cakupan imunisasi rendah. Sakit ringan tanpa ' +
+          'demam tinggi bukan alasan menunda.',
+      },
+      {
+        id: 'c',
+        label: 'Berikan, tapi vaksin sempat ditaruh di suhu ruang tadi',
+        benar: false,
+        respons:
+          'Cold chain putus = vaksin rusak & tak berefek. Untung di soal ini termos ' +
+          'masih 2–8°C — rantai dingin adalah nyawa vaksin.',
+      },
+    ],
+  },
+  {
+    id: 'posy_penyuluhan',
+    judul: 'Langkah 4 — Pelayanan & Penyuluhan (Ibu Balita)',
+    narasi: 'Sekelompok ibu menunggu. Topik apa yang paling berdampak untuk sesi singkat ini?',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'ASI eksklusif + MPASI adekuat (menyasar akar faltering hari ini)',
+        benar: true,
+        respons: 'Tepat sasaran — penyuluhan paling kuat bila menjawab masalah nyata yang baru terlihat.',
+      },
+      {
+        id: 'b',
+        label: 'Ceramah umum panjang tentang semua penyakit',
+        benar: false,
+        respons: 'Terlalu luas = tidak ada yang nempel. Fokus satu pesan yang bisa langsung dipakai.',
+      },
+    ],
+  },
+  {
+    id: 'posy_penyuluhan_remaja',
+    judul: 'Langkah 4 — Pelayanan & Penyuluhan (Remaja)',
+    narasi: 'Sekelompok remaja SMP hadir di sesi Posyandu Remaja bulan ini. Topik penyuluhan apa yang paling relevan?',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'Bahaya rokok/NAPZA + kesehatan reproduksi & pencegahan kehamilan remaja',
+        benar: true,
+        respons:
+          'Tepat — materi wajib Posyandu Remaja. Usia rentan mulai terpapar rokok/NAPZA ' +
+          '& butuh info reproduksi yang benar, bukan dari sumber keliru.',
+      },
+      {
+        id: 'b',
+        label: 'Materi umum soal imunisasi balita (tak relevan kelompok ini)',
+        benar: false,
+        respons: 'Salah sasaran — kelompok remaja butuh materi sesuai tahap hidup mereka, bukan materi balita.',
+      },
+    ],
+  },
+  {
+    id: 'posy_penyuluhan_produktif_lansia',
+    judul: 'Langkah 4 — Pelayanan & Penyuluhan (Usia Produktif-Lansia)',
+    narasi:
+      'Sesi penyuluhan untuk kelompok usia produktif-lansia. Tadi di Langkah 2, ' +
+      'beberapa peserta terdeteksi lingkar perut besar & tensi tinggi. Topik apa yang paling berdampak?',
+    pilihan: [
+      {
+        id: 'a',
+        label: 'GERMAS + kenali tanda PTM (hipertensi/DM/obesitas) sesuai temuan tadi',
+        benar: true,
+        respons: 'Tepat sasaran — penyuluhan paling kuat bila menjawab temuan nyata hari itu, bukan topik acak.',
+      },
+      {
+        id: 'b',
+        label: 'Ceramah umum semua penyakit tanpa kaitan temuan hari itu',
+        benar: false,
+        respons: 'Terlalu luas, tak menempel — sama seperti kesalahan penyuluhan balita: fokus 1 pesan relevan.',
+      },
+    ],
+  },
+]
+
+const KARTU_VALIDASI_DATA: KartuKegiatan = {
+  id: 'posy_validasi_data',
+  judul: 'Langkah 5 — Validasi & Sinkronisasi Data',
+  narasi:
+    'Sinyal internet di balai RW jelek hari ini. Kader mengusulkan, "Nanti saja Dok, ' +
+    'saya input semua datanya belakangan kalau sinyal bagus."',
+  pilihan: [
     {
-      id: 'posy_timbang',
-      judul: 'Meja 2 — Penimbangan',
-      narasi:
-        'An. Kadek, 18 bulan. Bulan lalu 9,1 kg; hari ini 8,7 kg. Ibunya bilang anaknya ' +
-        'sempat diare seminggu. Di KMS, titik bulan ini turun memotong satu pita warna.',
-      pilihan: [
-        {
-          id: 'a',
-          label: 'Catat "berat turun" (BGM), rujuk konseling gizi + telusuri penyebab',
-          benar: true,
-          respons:
-            'Tepat. Berat turun melewati garis pita = alarm (weight faltering). Jangan ' +
-            'ditunda — cari penyebab (asupan, infeksi) dan pantau ketat bulan depan.',
-        },
-        {
-          id: 'b',
-          label: 'Anggap wajar karena baru sakit, timbang lagi bulan depan saja',
-          benar: false,
-          respons:
-            'Berbahaya. Faltering setelah sakit justru butuh intervensi aktif, bukan ' +
-            'menunggu — di sinilah stunting bermula bila dibiarkan.',
-        },
-        {
-          id: 'c',
-          label: 'Langsung diagnosis gizi buruk & rujuk RS',
-          benar: false,
-          respons:
-            'Berlebihan. Belum ada tanda gizi buruk (BB/TB, edema, tanda klinis). ' +
-            'Over-rujuk membebani keluarga & sistem — nilai dulu status gizinya.',
-        },
-      ],
+      id: 'a',
+      label: 'Validasi & catat manual dulu (kohort/Buku KIA), input digital menyusul — jangan tunda tanpa batas',
+      benar: true,
+      respons:
+        'Tepat. Validasi data tetap jalan manual dulu — data digital (ASIK/e-Kohort) ' +
+        'menyusul begitu sinyal ada, bukan alasan menunda pencatatan sama sekali.',
     },
     {
-      id: 'posy_kms',
-      judul: 'Meja 3 — Pengisian KMS',
-      narasi:
-        'Ibu An. Kadek bertanya, "Dok, garis anak saya di bawah garis merah artinya apa?"',
-      pilihan: [
-        {
-          id: 'a',
-          label: 'Jelaskan posisi di KMS + rencana tindak lanjut dengan bahasa sederhana',
-          benar: true,
-          respons: 'Bagus. KMS adalah alat komunikasi dengan ibu, bukan sekadar arsip.',
-        },
-        {
-          id: 'b',
-          label: 'Cukup bilang "nanti diurus petugas", lanjut ke anak berikutnya',
-          benar: false,
-          respons: 'Kesempatan edukasi hilang. Ibu yang paham KMS = kader gizi di rumahnya sendiri.',
-        },
-      ],
+      id: 'b',
+      label: 'Setuju tunda tanpa batas waktu, "nanti kalau sempat"',
+      benar: false,
+      respons:
+        'Data yang ditunda tanpa batas sering hilang/terlupa — integritas data Posyandu ' +
+        'penting untuk pemantauan program & rujukan berikutnya.',
     },
-    {
-      id: 'posy_imunisasi',
-      judul: 'Meja 4 — Imunisasi',
-      narasi:
-        'An. Putu, 9 bulan, jadwalnya campak (MR). Ibunya bilang anaknya sedang batuk pilek ' +
-        'ringan tanpa demam. Vaksin di termos masih dalam rentang suhu 2–8°C.',
-      pilihan: [
-        {
-          id: 'a',
-          label: 'Tetap berikan MR — ISPA ringan tanpa demam bukan kontraindikasi',
-          benar: true,
-          respons:
-            'Benar. Menunda imunisasi karena batuk-pilek ringan adalah "kesempatan yang ' +
-            'hilang" (missed opportunity) — anak keburu terpapar campak.',
-        },
-        {
-          id: 'b',
-          label: 'Tunda sampai anak benar-benar sehat',
-          benar: false,
-          respons:
-            'Keliru — ini penyebab utama cakupan imunisasi rendah. Sakit ringan tanpa ' +
-            'demam tinggi bukan alasan menunda.',
-        },
-        {
-          id: 'c',
-          label: 'Berikan, tapi vaksin sempat ditaruh di suhu ruang tadi',
-          benar: false,
-          respons:
-            'Cold chain putus = vaksin rusak & tak berefek. Untung di soal ini termos ' +
-            'masih 2–8°C — rantai dingin adalah nyawa vaksin.',
-        },
-      ],
-    },
-    {
-      id: 'posy_penyuluhan',
-      judul: 'Meja 5 — Penyuluhan',
-      narasi: 'Sekelompok ibu menunggu. Topik apa yang paling berdampak untuk sesi singkat ini?',
-      pilihan: [
-        {
-          id: 'a',
-          label: 'ASI eksklusif + MPASI adekuat (menyasar akar faltering hari ini)',
-          benar: true,
-          respons: 'Tepat sasaran — penyuluhan paling kuat bila menjawab masalah nyata yang baru terlihat.',
-        },
-        {
-          id: 'b',
-          label: 'Ceramah umum panjang tentang semua penyakit',
-          benar: false,
-          respons: 'Terlalu luas = tidak ada yang nempel. Fokus satu pesan yang bisa langsung dipakai.',
-        },
-      ],
-    },
-  ]
+  ],
+}
+
+export function kartuPosyandu(rng: Rng): KartuKegiatan[] {
+  return [rng.pick(POOL_LANGKAH2), rng.pick(POOL_LANGKAH3), rng.pick(POOL_LANGKAH4), KARTU_VALIDASI_DATA]
 }
 
 /* ---------------------------------------------------------------------------
@@ -140,7 +347,13 @@ export function kartuProlanis(peserta: PesertaProlanis[]): KartuKegiatan[] {
         id: `prol_${p.id}`,
         pesertaId: p.id,
         judul: `Prolanis HT — ${p.nama} (${p.usia} th)`,
-        narasi: `Tekanan darah hari ini ${p.param}/${Math.round(p.param * 0.62)} mmHg. ${
+        // Fix #7b (triase DeepThink 2026-07-11): "DBP = 0,62×SBP" adalah angka
+        // arbitrer buatan (bukan rumus fisiologis nyata — rasio SBP:DBP tak tetap
+        // antar-pasien), murni kosmetik narasi (tak dipakai driftProlanis/scoring).
+        // Opsi "randomize dgn rentang pulse-pressure" ditolak sanggahan (tetap
+        // memfabrikasi klaim fisiologi, cuma dibungkus lebih rapi) — dihapus saja,
+        // tampilkan SBP tunggal (basis param/terkontrol yang sesungguhnya).
+        narasi: `Tekanan darah sistolik hari ini ${p.param} mmHg. ${
           terkontrol ? 'Rutin minum amlodipin.' : 'Mengaku obat sering lupa diminum, suka makan asin.'
         }`,
         pilihan: terkontrol

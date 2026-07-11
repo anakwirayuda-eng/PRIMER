@@ -9,6 +9,8 @@ import type { GameState } from './state'
 import type { Action } from './actions'
 import { advance } from './reducer'
 import { buildInitialState } from './init'
+import { kartuPosyandu } from './kegiatan'
+import { Rng } from './core/rng'
 import {
   HARI_BUKA_POSYANDU,
   HARI_BUKA_PROLANIS,
@@ -178,6 +180,55 @@ describe('M2.7 — Posyandu menaikkan IKS RW', () => {
     s = selesaikanSemuaBenar(s)
     const bonusSesudah = s.desa.rw.find((r) => r.nomor === 3)!.bonusIks
     expect(bonusSesudah).toBeGreaterThan(bonusSebelum)
+  })
+})
+
+describe('D5 — Posyandu ILP "5 Langkah" (migrasi 2026-07-11): pool 12-kartu, 1 per Langkah 2/3/4 + Langkah 5 tetap', () => {
+  const ID_LANGKAH2 = ['posy_timbang', 'posy_ukur_bumil', 'posy_ukur_lansia', 'posy_ukur_remaja']
+  const ID_LANGKAH3 = ['posy_kms', 'posy_catat_bumil', 'posy_kuesioner_lansia']
+  const ID_LANGKAH4 = ['posy_imunisasi', 'posy_penyuluhan', 'posy_penyuluhan_remaja', 'posy_penyuluhan_produktif_lansia']
+
+  it('kartuPosyandu(rng) selalu 4 kartu: satu dari tiap pool Langkah 2/3/4 + posy_validasi_data (Langkah 5)', () => {
+    const kartu = kartuPosyandu(new Rng(1, 'test'))
+    expect(kartu).toHaveLength(4)
+    expect(ID_LANGKAH2).toContain(kartu[0]!.id)
+    expect(ID_LANGKAH3).toContain(kartu[1]!.id)
+    expect(ID_LANGKAH4).toContain(kartu[2]!.id)
+    expect(kartu[3]!.id).toBe('posy_validasi_data')
+  })
+
+  it('deterministik: seed sama → tarikan kartu sama persis (replay-safe)', () => {
+    const a = kartuPosyandu(new Rng(777, 'posyandu', 15, 3))
+    const b = kartuPosyandu(new Rng(777, 'posyandu', 15, 3))
+    expect(a.map((k) => k.id)).toEqual(b.map((k) => k.id))
+  })
+
+  it('bervariasi lintas RW/hari: tak selalu menarik kartu Langkah-2 yang sama (cakupan lintas siklus-hidup)', () => {
+    const terlihat = new Set<string>()
+    for (let rw = 1; rw <= 30; rw++) {
+      terlihat.add(kartuPosyandu(new Rng(999, 'posyandu', rw * 7, rw))[0]!.id)
+    }
+    expect(terlihat.size).toBeGreaterThan(1)
+  })
+
+  it('semua 12 kartu pool valid, unik, & tercapai (id lengkap sesuai desain — tak ada yg orphan/salah ketik)', () => {
+    const semuaId = new Set<string>()
+    for (let i = 0; i < 300; i++) {
+      for (const k of kartuPosyandu(new Rng(i, 'posyandu', i, i % 8))) semuaId.add(k.id)
+    }
+    expect(semuaId).toEqual(
+      new Set([...ID_LANGKAH2, ...ID_LANGKAH3, ...ID_LANGKAH4, 'posy_validasi_data']),
+    )
+  })
+
+  it('MULAI_POSYANDU: RW berbeda bisa menarik kartu Langkah-2 berbeda (kurikulum bervariasi per RW, bukan rng beku)', () => {
+    const s = siangHari(HARI_BUKA_POSYANDU)
+    const terlihat = new Set<string>()
+    for (let rw = 1; rw <= 8; rw++) {
+      const r = ev(s, { type: 'MULAI_POSYANDU', rw })
+      if (r.state.kegiatan) terlihat.add(r.state.kegiatan.kartu[0]!.id)
+    }
+    expect(terlihat.size).toBeGreaterThan(1)
   })
 })
 

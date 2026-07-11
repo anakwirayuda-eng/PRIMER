@@ -8,8 +8,12 @@
  * Poin ajar kunci batch ini:
  *  - Bronkitis akut viral → TANPA antibiotik (self-limiting).
  *  - GERD & dispepsia fungsional → hindari over-endoskopi; terapi empiris + gaya hidup.
- *  - Apendisitis akut → McBurney (+) → rujuk bedah. JANGAN beri analgetik/antibiotik
- *    yang menutupi tanda peritoneal sebelum penilaian bedah.
+ *  - Apendisitis akut → McBurney (+) → rujuk bedah SEGERA. Analgesia adekuat
+ *    (parasetamol) DIANJURKAN pra-rujuk (mitos "analgesik menutupi tanda" sudah
+ *    terbantah, Cochrane CD005660/WSES 2020) — yang wajib dihindari adalah
+ *    MENUNDA rujukan atau antibiotik oral yang menunda diagnosis definitif.
+ *    (Fix #12c, triase DeepThink 2026-07-11: komentar ini sempat tak ikut
+ *    diperbarui saat clue/obatSalahUmum kasus sudah dikoreksi 2026-07-03.)
  *
  * Dua kasus wajib-rujuk: `ppok_eksaserbasi` (spesialisRujukan: paru) dan
  * `apendisitis_akut` (spesialisRujukan: bedah).
@@ -703,7 +707,12 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['K30', 'K21.9', 'K29.7'],
     tatalaksana: {
-      obatBenar: ['omeprazole_20', 'antasida_doen'],
+      // Fix G3 (triase DeepThink 2026-07-11): clue sendiri menulis "PPI/antasida"
+      // (notasi alternatif) — konvensi file ini sendiri (lihat kasus GERD di
+      // atas) memakai obatAlternatif/obatOpsional utk pola ini, bukan AND wajib.
+      // Antasida = simtomatik PRN, PPI = terapi definitif berdiri sendiri.
+      obatBenar: ['omeprazole_20'],
+      obatOpsional: ['antasida_doen'],
       obatSalahUmum: [
         { id: 'asam_mefenamat_500', alasan: 'NSAID justru salah satu penyebab dispepsia/ulkus — memberikannya untuk "nyeri" ulu hati memperparah keluhan. Hentikan NSAID, bukan menambah.' },
         { id: 'amoxicillin_500', alasan: 'Antibiotik hanya sebagai bagian rejimen eradikasi H. pylori BILA terbukti/terindikasi, bukan diberikan tunggal empiris pada dispepsia fungsional.' },
@@ -1164,11 +1173,17 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     },
     clue: 'Apendisitis akut: nyeri BERPINDAH periumbilikal → McBurney + anoreksia/mual + nyeri lepas (Blumberg)/defans + demam ringan + leukositosis (skor Alvarado tinggi). Kompetensi 3B → PUASAKAN, pasang jalur IV, beri ANALGESIA ADEKUAT (parasetamol — mitos "analgesik menutupi tanda" sudah terbantah, Cochrane/WSES; hindari NSAID pada perut akut), dan RUJUK BEDAH segera. Jangan biarkan antibiotik oral menunda rujukan. Singkirkan kehamilan ektopik (β-hCG) pada perempuan usia subur.',
     konsekuensi: {
-      narasi: 'Menunda rujukan atau memberi analgetik/antibiotik yang menutupi gejala berisiko perforasi apendiks → peritonitis generalisata dan sepsis yang mengancam jiwa.',
+      // Fix #12c (triase DeepThink 2026-07-11): teks ini masih menyandingkan
+      // "analgetik" setara "antibiotik" sbg penyebab risiko — berkontradiksi dgn
+      // clue/obatSalahUmum di atas yg SUDAH dikoreksi (analgesia adekuat DIANJURKAN,
+      // bukan risiko). Klausa analgetik dibuang, risiko nyata (tunda rujuk/antibiotik
+      // menutupi diagnosis) dipertahankan — murni konsistensi teks debrief, tak
+      // menyentuh obatBenar/obatAlternatif/skor.
+      narasi: 'Menunda rujukan, atau memberi antibiotik oral yang menunda diagnosis definitif, berisiko perforasi apendiks → peritonitis generalisata dan sepsis yang mengancam jiwa.',
       kembaliHariMin: 0,
       kembaliHariMax: 2,
       kondisiKembali: 'Pasien kembali dengan nyeri seluruh perut, perut papan (defans generalisata), demam tinggi, dan takikardia — peritonitis akibat apendiks perforasi.',
-      guideline: 'PPK IDI Apendisitis Akut / prinsip perut akut — rujuk bedah; hindari analgetik yang menutupi tanda peritoneal.',
+      guideline: 'PPK IDI Apendisitis Akut / prinsip perut akut — rujuk bedah segera; analgesia adekuat dianjurkan (Cochrane/WSES), hindari menunda rujukan.',
     },
   },
 ]

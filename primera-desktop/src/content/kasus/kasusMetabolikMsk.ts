@@ -902,12 +902,16 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
    * (oral), JANGAN drop cepat, lalu rujuk. Bedakan dari emergensi.
    * ==================================================================== */
   {
-    // I16.0 (krisis hipertensi — urgensi), BUKAN I10 (hipertensi esensial tanpa
-    // krisis — audit CODEX 2026-07-04: kode lama mengaburkan diagnosis dgn
-    // hipertensi_esensial biasa; kode urgensi/krisis di ICD-10 memang I16.x).
+    // Fix M6 (triase DeepThink 2026-07-11): I16.x adalah kode ICD-10-CM (AS),
+    // TIDAK ada di WHO ICD-10 2010 yg dipakai Kemenkes/BPJS Indonesia — audit
+    // CODEX 2026-07-04 sebelumnya salah mengira I16.0 adalah kode krisis
+    // hipertensi WHO. Vignette kasus ini (LVH kronik + nefropati kronik TANPA
+    // gagal jantung/ginjal akut) match persis I13.9 (penyakit jantung DAN
+    // ginjal hipertensif, tak dirinci) — kode WHO real yg menangkap kerusakan
+    // organ ganda kronik yg sudah ditulis di PF/lab kasus ini.
     id: 'mm_hipertensi_urgensi',
     nama: 'Hipertensi Urgensi',
-    icd10: 'I16.0',
+    icd10: 'I13.9',
     skdi: '3B',
     kategori: 'kardiovaskular',
     // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
@@ -996,7 +1000,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       { id: 'fungsi_ginjal', hasil: 'Ureum/kreatinin sedikit meningkat (kesan nefropati hipertensi kronik).', flag: 'tinggi', relevan: true },
       { id: 'urinalisis', hasil: 'Proteinuria +1 — kerusakan organ target kronik ginjal.', flag: 'abnormal', relevan: true },
     ],
-    diagnosisBanding: ['I10', 'I16.0', 'I16.9'],
+    diagnosisBanding: ['I13.9', 'I11.9', 'I12.9'],
     tatalaksana: {
       // Audit CODEX 2026-07-04: amlodipin+kaptopril DULU wajib SEKALIGUS —
       // bertentangan dgn poin ajar kasus sendiri ("JANGAN drop cepat"): dua

@@ -780,12 +780,11 @@ tertinggi, tumpang tindih mandat M10.5):**
 22. Toaster: semua toast `aria-live="assertive"` tanpa diferensiasi
     urgensi; batch Kode Hitam memancarkan 2 live-region sekaligus yang
     berpotensi saling menyela; tak ada pause/dismiss/riwayat.
-23. *(butuh keputusan manusia, BUKAN bug)* `panduanResmi`/`mutiaraEbm`/
-    `catatanRealita` M11.5 cuma bisa dibaca sekali per-encounter (Escape/
-    backdrop menutup modal, konsisten dgn kebijakan modal lain di game
-    ini) — perlu keputusan produk dr. Wirayuda: apakah ketiganya perlu
-    dipersist (mis. masuk permanen ke Buku Saku per-kasus), atau memang
-    selaras filosofi "formative feedback in-the-moment".
+23. ✅ *(RESOLVED 2026-07-11)* `panduanResmi`/`mutiaraEbm`/`catatanRealita`
+    M11.5 dulu cuma bisa dibaca sekali per-encounter — Dr. Wirayuda
+    memutuskan **persist ke Buku Saku per-kasus**; kini ketiganya render
+    permanen di panel detail `DexSkdi.tsx` (dibaca langsung dari PACK,
+    display-only, tak sentuh skor/sidik-jari).
 24. Impor file tanpa batas ukuran; properti asing pada save ikut
     tersimpan tanpa disaring; satu input (Impor Arsip JSON, bukan
     seluruhnya) tak mereset value saat impor gagal.
@@ -793,16 +792,14 @@ tertinggi, tumpang tindih mandat M10.5):**
     seed pembeda, satu file global lintas semua slot/sesi/pemain di satu
     instalasi OS.
 
-**Rekomendasi sequencing (belum diputuskan user, BUKAN keputusan final):**
-10 item P1 di atas SEMUANYA adalah bug integritas skor/replay/save — persis
-mandat `M10_5_FIDELITAS.md` ("SEMUA perbaikan yang mengubah semantik
-skor/replay"). Given severity (skor bisa dimanipulasi pasca-tamat, verifier
-bisa dibekukan dosen, save bisa korup diam-diam) dan tenggat Golden Master
-yang sama-sama akhir Agustus, kandidat kuat: **lebur P1 ke dalam kerja aktif
-M10.5** (bukan tunggu M14 dijadwalkan terpisah), sementara 15 item P2 (a11y/
-UX/reliability non-skor) tetap jadi M14 dgn timeline lebih longgar. Ini
-BELUM diputuskan user — jangan mulai eksekusi P1 sebagai "otomatis masuk
-M10.5" tanpa konfirmasi eksplisit.
+**Sequencing — ✅ DIPUTUSKAN & DIEKSEKUSI 2026-07-11** ("yes P1 dilebur
+masuk M10.5... selesaikan sekarang", lalu "P1 dan P2 juga selesaikan aja
+sekarang"): semua 10 item P1 + 14/15 item P2 di atas sudah diimplementasikan
+langsung (tak menunggu M14 terpisah) — `REVISI_ENGINE` 18→19, 647 test
+hijau, tsc bersih, build OK. Hanya 2 item P2 TETAP deferred (bukan lagi
+"belum diputuskan", tapi sengaja ditunda): #20c (banner IGD pasca-ROSC,
+butuh REVISI-touching `nilaiIgd`, dinilai tak sepadan) & #21 (kutip dialog
+Kunjungan, defer lama dari §57).
 
 **Status kelimanya (M10 lanjutan, M11, M12, M13, M14): murni pencatatan
 scope — tunggu greenlight eksplisit user per-milestone sebelum mulai kerja.**

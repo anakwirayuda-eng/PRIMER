@@ -913,7 +913,12 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     spesialisRujukan: 'saraf',
     prevalensi: 'rendah',
     keluhanUtama: 'Ibu saya tiba-tiba bicaranya pelo dan lengan kanannya lemas sejak subuh tadi, Dok — kami langsung membawanya ke sini.',
-    demografi: { usiaMin: 55, usiaMax: 68, jenisKelamin: 'P' },
+    // usiaMax 68→78 (fix M1/#3, triase DeepThink 2026-07-11): karma Mbah Lastri
+    // (usia 71, keluarga/desaE.ts) kini di-reroute ke kasus ini (lihat komentar
+    // di desaE.ts) — pack.test.ts menegakkan demografi kasus HARUS mencakup usia
+    // anggota keluarga penjadwal karma, bukan cuma override runtime director.ts.
+    // Stroke iskemik usia 70an memang sangat lazim secara klinis (bukan hack).
+    demografi: { usiaMin: 55, usiaMax: 78, jenisKelamin: 'P' },
     vital: { td: '190/100', nadi: 88, rr: 20, suhu: 36.7, gds: 138 },
     anamnesis: [
       {

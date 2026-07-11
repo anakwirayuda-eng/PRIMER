@@ -1,0 +1,289 @@
+<title>PRIMERA — Bagian D: 17 Temuan PNPK Kemenkes</title>
+<style>
+:root{
+  --bg:#f7f5f0; --bg-card:#ffffff; --ink:#2b2620; --ink-soft:#6b6355; --border:#e2ddd0;
+  --accent:#8a3324; --accent-soft:#f4e6e0; --tinggi:#a3372a; --sedang:#b8842a; --rendah:#7d8570;
+  --tier1:#8a3324; --tier2:#5b6b73; --setuju:#3d7a4f; --edit:#b8842a; --tolak:#a3372a; --nanti:#6b6355;
+  --code-bg:#f0ece2;
+}
+:root[data-theme="dark"]{
+  --bg:#1c1a17; --bg-card:#28251f; --ink:#e8e2d5; --ink-soft:#a89e8c; --border:#3a352c;
+  --accent:#d97a63; --accent-soft:#3a2620; --tinggi:#e08070; --sedang:#e0b26a; --rendah:#9aa38c;
+  --code-bg:#211f1a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1c1a17; --bg-card:#28251f; --ink:#e8e2d5; --ink-soft:#a89e8c; --border:#3a352c;
+    --accent:#d97a63; --accent-soft:#3a2620; --tinggi:#e08070; --sedang:#e0b26a; --rendah:#9aa38c;
+    --code-bg:#211f1a;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Georgia',serif;line-height:1.55;}
+.wrap{max-width:920px;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+h1{font-size:1.7rem;margin:0 0 .3rem;text-wrap:balance}
+.sub{color:var(--ink-soft);font-family:system-ui,sans-serif;font-size:.95rem;max-width:70ch}
+.meta-bar{display:flex;gap:.75rem;flex-wrap:wrap;margin:1.5rem 0 2rem;font-family:system-ui,sans-serif;font-size:.85rem}
+.pill{background:var(--bg-card);border:1px solid var(--border);border-radius:999px;padding:.35rem .9rem;color:var(--ink-soft)}
+.section-title{font-size:1.25rem;margin:2.5rem 0 .5rem;border-bottom:2px solid var(--accent);padding-bottom:.4rem}
+.section-note{font-family:system-ui,sans-serif;font-size:.88rem;color:var(--ink-soft);margin-bottom:1.25rem;max-width:72ch}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.4rem;margin-bottom:1.1rem}
+.card--tier1{border-left:5px solid var(--tier1)}
+.card--tier2{border-left:5px solid var(--tier2)}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
+.kasus-id{font-family:'Courier New',monospace;font-size:.82rem;background:var(--code-bg);padding:.15rem .5rem;border-radius:5px;color:var(--accent)}
+.pnpk-title{font-family:system-ui,sans-serif;font-size:.78rem;color:var(--ink-soft)}
+.keyakinan{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:.2rem .55rem;border-radius:5px}
+.keyakinan--tinggi{background:color-mix(in srgb, var(--tinggi) 18%, transparent);color:var(--tinggi)}
+.keyakinan--sedang{background:color-mix(in srgb, var(--sedang) 18%, transparent);color:var(--sedang)}
+.keyakinan--rendah{background:color-mix(in srgb, var(--rendah) 18%, transparent);color:var(--rendah)}
+.ringkas{margin:.6rem 0}
+details{margin:.5rem 0}
+summary{cursor:pointer;font-family:system-ui,sans-serif;font-size:.82rem;color:var(--accent);font-weight:600}
+.detail-teks{font-size:.92rem;margin-top:.5rem;color:var(--ink-soft)}
+.sitasi{font-size:.85rem;font-style:italic;color:var(--ink-soft);border-left:3px solid var(--border);padding-left:.7rem;margin:.6rem 0}
+.decision-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem;font-family:system-ui,sans-serif}
+.decision-btn{border:1px solid var(--border);background:var(--bg);color:var(--ink);padding:.4rem .85rem;border-radius:7px;font-size:.82rem;cursor:pointer;transition:.15s}
+.decision-btn:hover{border-color:var(--accent)}
+.decision-btn.active[data-v="setuju"]{background:var(--setuju);color:#fff;border-color:var(--setuju)}
+.decision-btn.active[data-v="edit"]{background:var(--edit);color:#fff;border-color:var(--edit)}
+.decision-btn.active[data-v="tolak"]{background:var(--tolak);color:#fff;border-color:var(--tolak)}
+.decision-btn.active[data-v="nanti"]{background:var(--nanti);color:#fff;border-color:var(--nanti)}
+textarea.catatan{width:100%;margin-top:.6rem;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif;font-size:.85rem;padding:.5rem;min-height:2.4rem;resize:vertical}
+.tier2-item{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+.tier2-item .txt{flex:1;min-width:260px}
+.export-bar{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--border);padding:1rem 1.25rem;display:flex;justify-content:center;gap:.8rem;font-family:system-ui,sans-serif}
+.export-btn{background:var(--accent);color:#fff;border:none;padding:.6rem 1.4rem;border-radius:8px;font-size:.9rem;cursor:pointer;font-weight:600}
+.export-btn:hover{opacity:.9}
+.progress{font-size:.82rem;color:var(--ink-soft);align-self:center}
+.overflow-x{overflow-x:auto}
+@media (max-width:600px){.card-head{flex-direction:column;align-items:flex-start}}
+</style>
+
+<div class="wrap">
+  <h1>Bagian D — 17 Temuan Cross-Check PNPK Kemenkes</h1>
+  <p class="sub">Lanjutan dari Bagian A (21 koreksi clue) / Bagian B (13 nuansa) / Bagian C (7 temuan PPK 1186/2022). Workflow <code>pnpk-crosscheck</code> menyilangkan 67 kasus PRIMERA terhadap 31 dokumen PNPK Kemenkes resmi. 7 temuan Tier-1 di bawah adalah divergensi konkret pada kasus yang SUDAH ada di game — perlu keputusan Setuju/Edit/Tolak Anda per-item, sama seperti Bagian A/B/C. 10 temuan Tier-2 adalah celah cakupan (belum ada kasusnya sama sekali) — kandidat backlog M13, bukan bug pada konten yang sudah ada.</p>
+
+  <div class="meta-bar">
+    <span class="pill">7 Tier-1 (kasus existing)</span>
+    <span class="pill">10 Tier-2 (celah cakupan → M13)</span>
+    <span class="pill" id="progressPill">0/7 diputuskan</span>
+  </div>
+
+  <div class="section-title">Tier 1 — Divergensi pada kasus yang sudah ada (perlu keputusan per-item)</div>
+  <p class="section-note">Semua ini adalah kasus yang SUDAH dimainkan mahasiswa — perubahan di sini mengedit kunci-jawaban (obatBenar/tatalaksana/durasi). Router freeze-bucket: field ini ternilai + ter-hash <code>sidikJariPack</code> → WAJIB pra-freeze bila disetujui.</p>
+
+  <div id="tier1"></div>
+
+  <div class="section-title">Tier 2 — Celah cakupan (belum ada kasusnya, kandidat M13)</div>
+  <p class="section-note">Bukan bug pada konten yang ada — ini penyakit/skenario yang PNPK anggap penting untuk FKTP tapi PRIMERA belum punya kasusnya sama sekali. Tidak mendesak untuk Golden Master; dicatat sebagai referensi backlog M13 (152 kasus baru).</p>
+
+  <div id="tier2"></div>
+
+  <div class="section-title">Tambahan — 5 item M10.5 lain yang genuinely butuh keputusan (2026-07-11)</div>
+  <p class="section-note">Ditemukan saat menyapu sisa Ember Merah M10.5 (Asih storyline §1a-2, Prolanis §1b-7, konsekuensi-edukasi §1b-14, ANC §1c-4). Semua sudah diverifikasi ganda (audit + sanggahan independen) — bukan bug sederhana, masing-masing genuinely butuh keputusan protokol/desain Anda.</p>
+
+  <div id="tambahan"></div>
+
+  <div class="export-bar">
+    <span class="progress" id="progressText"></span>
+    <button class="export-btn" onclick="eksporRingkasan()">📋 Salin Ringkasan Keputusan</button>
+  </div>
+</div>
+
+<script>
+const TIER1 = [
+  {
+    id: 'hipertensi_esensial',
+    pnpk: 'PNPK 2021 — Tata Laksana Hipertensi Dewasa',
+    keyakinan: 'tinggi',
+    ringkas: 'Kasus TD 160/95 + obesitas + dislipidemia berat = Derajat 2 PNPK. PNPK 2021: Derajat 2/3 WAJIB mulai LANGSUNG kombinasi 2 obat (kecuali lansia-frail/derajat-1-risiko-rendah). Game: obatBenar hanya amlodipine_5 tunggal (tak ada obatAlternatif/obatOpsional). Clue kasus menyitir JNC-8 + Permenkes 5/2014, bukan PNPK 2021 — target TD juga lebih longgar (JNC-8 generik vs PNPK 120-129/<80 usia<60th).',
+    detail: 'File: kasusKronis.ts baris 22-147. Tabel 2 PNPK: Derajat 2 = TDS 160-179/TDD 100-109. Bab III: "obat segera + gaya hidup simultan (I-A)"; "mulai LANGSUNG kombinasi 2 obat (idealnya single-pill combination)... kecuali lansia frail atau derajat 1 risiko rendah (TDS<150) boleh monoterapi". Pasien BUKAN lansia-frail/derajat-1 → PNPK mengharuskan kombinasi (RAS-bloker+CCB, atau +tiazid) sejak awal. Komentar header file bahkan eksplisit menyitir "JNC-8, PERKENI 2021, GINA, IMCI/WHO, PERDOSSI, Permenkes" — PNPK Hipertensi 2021 TIDAK disebut sama sekali sbg rujukan kasus ini.',
+  },
+  {
+    id: 'dm_tipe2',
+    pnpk: 'PNPK 2020 — Tata Laksana DM Tipe 2 Dewasa',
+    keyakinan: 'sedang',
+    ringkas: 'HbA1c 8,9% (≥7,5% = ambang PNPK utk mulai kombinasi 2 OAD). Game: obatBenar hanya metformin_500 tunggal, sulfonilurea malah masuk obatSalahUmum. Clue tak menyinggung ambang HbA1c 7,5%.',
+    detail: 'File: kasusKronis.ts baris 152-273. Algoritma PNPK: "HbA1c<7,5% → monoterapi (metformin lini pertama); HbA1c≥7,5% atau monoterapi 3bln gagal → kombinasi 2 obat mekanisme berbeda". Pasien HbA1c 8,9% (bukan >9% dgn dekompensasi, jadi belum wajib insulin) — seharusnya kombinasi sejak kunjungan ini. ICD10/SKDI/harusDirujuk/topik edukasi sudah sesuai PNPK; hanya pilihan regimen yg divergen. Keyakinan sedang krn ini nuansa algoritma bertingkat yg sering disederhanakan di materi kedokteran umum Indonesia.',
+  },
+  {
+    id: 'mm_isk_bawah',
+    pnpk: 'PNPK 2025 — Tata Laksana Infeksi Saluran Kemih',
+    keyakinan: 'sedang',
+    ringkas: 'PNPK 2025 menandai fosfomisin/pivmecillinam/nitrofurantoin sbg "rekomendasi KUAT" (berbintang) lini-pertama sistitis wanita — kotrimoksazol TIDAK berbintang (sejajar ciprofloxacin yg justru game anggap salah). Game jadikan kotrimoksazol satu-satunya obatBenar; nitrofurantoin cuma alternatif via alergiTrap alergi-sulfa.',
+    detail: 'File: kasusMetabolikMsk.ts kasus ke-10. Tabel dosis PNPK: "*Fosfomisin trometamol 3g dosis tunggal; *Nitrofurantoin 50-100mg 4x/hari 5 hari; TMP-SMX 160/800mg 2x/hari 3 hari (tanpa bintang); Ciprofloxacin (tanpa bintang)". Inkonsistensi: game menghukum ciprofloxacin sbg "bukan lini pertama" tapi mengganjar kotrimoksazol yg sama-sama tanpa bintang rekomendasi-kuat. Bagian yg SUDAH cocok: durasi 3 hari, ICD10 N30.0, SKDI 4A, alur singkirkan kehamilan/pielonefritis.',
+  },
+  {
+    id: 'kia_isk_kehamilan',
+    pnpk: 'PNPK 2025 — Tata Laksana Infeksi Saluran Kemih',
+    keyakinan: 'tinggi',
+    ringkas: 'Durasi terapi sistitis-pada-kehamilan: game bilang "tuntaskan 7 hari", PNPK 2025 eksplisit "KEHAMILAN (sistitis, 3 hari)".',
+    detail: 'File: kasusKiaJiwa.ts kasus ke-2. PNPK: "KEHAMILAN (sistitis, 3 hari): penisilin/sefalosporin/fosfomisin/nitrofurantoin (hindari akhir kehamilan/def.G6PD); trimethoprim (hindari trimester 1); sulfonamid (hindari trimester akhir)." Pilihan obat game (cefixime_100) & alasan obatSalahUmum (pemisahan risiko trimetoprim vs sulfonamid per-trimester) SUDAH presisi sesuai PNPK — murni durasi (7→3 hari) yang divergen.',
+  },
+  {
+    id: 'jiwa_skizofrenia',
+    pnpk: 'PNPK 2025 — Tata Laksana Skizofrenia',
+    keyakinan: 'sedang',
+    ringkas: 'Episode psikotik PERTAMA (bukan kegawatan). PNPK 2025: inisiasi antipsikotik episode-pertama WAJIB di FPKTL/psikiatri, BUKAN FKTP — peran FKTP cuma kontinuitas-terapi (pasien sudah stabil, PRB). Game: dokter FKTP mulai haloperidol_5 sendiri sbg jawaban benar.',
+    detail: 'File: kasusKiaJiwa.ts baris 926-1033. Kriteria rujuk-awal derajat-A PNPK eksplisit mencantumkan "diagnosis tidak jelas" & "potensi kekerasan diri/orang lain" sbg alasan RUJUK, bukan alasan mulai obat sendiri. Kasus ini: onset>6bln, belum pernah diobati, agitasi ringan-sedang (bukan agitasi/kekerasan berat = kriteria kegawatan yg TIDAK terpenuhi). Bagian lain sudah selaras: harusDirujuk=true, ICD10 F20.0, diagnosisBanding, obatSalahUmum (diazepam/fluoksetin) semua beralasan benar. Guideline yg disitasi kasus ("PPK Jiwa FKTP/UU 18/2014") juga bukan PNPK 2025 — indikasi konten ditulis sblm PNPK 2025 terbit.',
+  },
+  {
+    id: 'jiwa_gangguan_cemas',
+    pnpk: 'PNPK 2015 — Kedokteran Jiwa (Bab Ansietas Menyeluruh)',
+    keyakinan: 'sedang',
+    ringkas: 'Tabel 8 PNPK: lini pertama GAD = Escitalopram/Sertralin/Venlafaksin-XR — fluoksetin TIDAK disebut. Game: obatBenar hanya fluoksetin_20. Diazepam ditandai salah (alasan "hanya krisis"), padahal PNPK memasukkannya sbg lini KEDUA (bukan kontraindikasi mutlak).',
+    detail: 'Diagnosis GAD/F41.1, alur eksklusi organik (TSH+EKG), prinsip "SSRI lini pertama hindari benzo jangka panjang" sudah sesuai semangat PNPK. Tapi tanpa obatAlternatif/obatOpsional, meresepkan sertralin (justru named lini-pertama PNPK) TAK dikreditkan benar oleh engine. Kehati-hatian PRIMERA thd benzo jangka-panjang tetap masuk akal klinis luas — ini beda tabel dosis spesifik, bukan kesalahan medis besar.',
+  },
+  {
+    id: 'mm_gagal_jantung_kongestif',
+    pnpk: 'PNPK 2023 Angina Pectoris Stabil + PNPK 2019 SKA',
+    keyakinan: 'tinggi (PDE5) / rendah (silent-MI)',
+    ringkas: 'DUA temuan terpisah pada kasus sama: (1) ISDN diresepkan tanpa cek riwayat pemakaian inhibitor PDE5 (sildenafil/tadalafil) — interaksi KONTRAINDIKASI ABSOLUT (hipotensi berat/kolaps), tak ada satupun anamnesis/obat PDE5 di katalog utk memodelkan ini. (2) [rendah] EKG dibingkai "Q lama" + nyeri dada dilunakkan — celah nuansa SKA-atipikal-lansia/silent-MI-presipitan-GJK, bukan kesalahan pada skenario tunggal yg sudah difiksasi.',
+    detail: 'Nitrat+PDE5-inhibitor → hipotensi berat/kolaps adalah red-flag eksplisit PNPK Angina 2023. Dicek: TAK ADA entri obat PDE5-inhibitor di katalog manapun (katalog.ts/katalogM3.ts) — jadi interaksi ini SECARA STRUKTURAL tak bisa dimodelkan via obatSalahUmum (mekanisme itu cuma menghukum pilihan-obat salah, bukan obat-benar dikombinasi faktor-pasien-tersembunyi). Perlu pola baru semacam alergiTrap tapi utk interaksi-obat-jalan, ATAU anamnesis esensial baru "sedang pakai obat kuat/prostat?" — ini keputusan ENGINE (field baru), bukan cuma keputusan konten.',
+  },
+]
+
+const TIER2 = [
+  { judul: 'Nyeri kronik/opioid stewardship', catatan: 'Tak ada kasus yg ajarkan kapan BERHENTI eskalasi analgesik sendiri & rujuk (nyeri kronik >3-6bln, kebutuhan opioid kuat). Semua kasus nyeri PRIMERA = akut swasirna.' },
+  { judul: 'Sepsis dewasa', catatan: 'Modul IGD (5 skenario: anafilaksis/kejang-demam/asma/hipoglikemia/dengue) nol skenario "curiga sepsis + qSOFA positif" — padahal ISK/tifoid/pneumonia yg ADA di game bisa berkembang ke sepsis.' },
+  { judul: 'Sepsis anak — risiko transfer-negatif', catatan: 'igd_dengue_syok (benar) mengajarkan "jangan buru-buru antibiotik" utk syok DENGUE — tapi tanpa kasus kontras sepsis-anak (butuh antibiotik <1jam), mahasiswa bisa over-generalisasi. Bukan bug di kasus dengue itu sendiri.' },
+  { judul: 'Trauma', catatan: 'Modul IGD nol skenario trauma (fraktur/luka bakar/cedera servikal/ATLS). skdi144 bahkan daftar "Tetanus" 4A tanpa kasusId.' },
+  { judul: 'Komunikasi rujukan (SISRUTE)', catatan: 'PNPK Trauma: dokter WAJIB telepon langsung dokter penerima sebelum/selama pengiriman. SISRUTE game diabstraksikan sbg sistem elektronik otomatis — kemungkinan sengaja disederhanakan, keyakinan sedang.' },
+  { judul: 'Angina/CCB non-dihidropiridin', catatan: 'Verapamil/diltiazem tak ada di katalog obat sama sekali — red-flag "hindari kombinasi beta-blocker+CCB-non-DHP (bradikardia/blok AV)" tak bisa diajarkan krn obatnya sendiri tak eksis.' },
+  { judul: 'Batu saluran kemih', catatan: 'Nol konten (kolik renal/ureter, red-flag pionefrosis/obstruksi-ginjal-soliter) — PNPK sebut ini ~75% keluhan genitourinari FKTP.' },
+  { judul: 'Perdarahan saluran cerna aktif', catatan: 'Kasus dispepsia/GERD yg ada semua "tanpa alarm" (by design). Tak ada skenario pasien AKTIF berdarah yg butuh resusitasi-lalu-rujuk (PPI IV, NGT, skor Blatchford/Rockall).' },
+  { judul: 'Osteoporosis', catatan: 'Nol skrining faktor-risiko/kriteria-rujuk-DXA — padahal PNPK sebut ini peran UTAMA FKTP (prevalensi lansia perempuan ~23-53%). Kalsium/vitamin-D tak ada di katalog edukasi.' },
+  { judul: 'CHF/SKA silent-MI nuansa', catatan: '(duplikat entri Tier-1 CHF di atas, keyakinan rendah) — celah pengajaran "presentasi SKA atipikal lansia" pada kasus CHF yg sudah difiksasi kondisinya.' },
+]
+
+const TAMBAHAN = [
+  {
+    id: 'asih_eskalasi_scope',
+    pnpk: '§1a-2 — Storyline Asih (karma preeklampsia)',
+    keyakinan: 'tinggi',
+    ringkas: 'Keputusan lama "Q6 Opsi-a" (MI-berhasil WAJIB disertai pilih "Rujuk/Eskalasi SEKARANG" utk batalkan karma) BELUM diimplementasi — dan ternyata TIDAK sesederhana rencana awal. Mekanisme kunjungan cuma single-select 1 kartu/kunjungan: menambah kartu ke-4 terpisah tak akan berfungsi (kartu itu tak akan "cocok" hambatan COM-B, jadi `berhasil` selalu false saat dipilih). Perlu keputusan MEKANISME, bukan cuma "iya/tidak".',
+    detail: 'Opsi mekanisme: (A) tandai kartu jawaban-benar yg SUDAH ada (mis. ak1_i1 "kemitraan dukun-bidan") sbg aksiEskalasi:true — tapi ini keputusan protokol: menegaskan itu SATU-SATUNYA jawaban benar preeklampsia-berat, bukan opsional. (B) bangun sumbu keputusan independen baru di UI kunjungan (scope lebih besar dari "1 file+1 flag"). SCOPE tambahan: gerbang karma di reducer.ts bersifat GENERIK dipakai 8 arc lain (stroke_iskemik, jiwa_skizofrenia, diare_akut_anak, anemia_defisiensi_bumil, demam_tifoid, dm_tipe2, asma_ringan, +Lastri yg sudah diperbaiki terpisah) — bila gerbang diubah tanpa kartu aksiEskalasi di ke-8 arc itu, karma mereka jadi TAK PERNAH bisa dibatalkan (regresi balance). Perlu pilih: terapkan ke SEMUA 8 arc sekaligus, atau allowlist scope ke kasusId tertentu dulu (mis. hanya Asih, krn itu yg P0). Juga ada keputusan minor: "berhasil-tanpa-eskalasi" diperlakukan sbg partial (tunda 3hr) atau gagal (percepat)?',
+  },
+  {
+    id: 'edukasi_kritis_konsekuensi',
+    pnpk: '§1b-14 — Konsekuensi vs kegagalan edukasi kritis',
+    keyakinan: 'tinggi',
+    ringkas: 'Bug nyata: melewatkan edukasiKritis (mis. "minum OAT tuntas") saat ini HANYA memotong skorEdukasi (maks -5 poin dari nilaiTotal krn bobot 10%) — TIDAK memicu "pasien kembali memburuk" sekalipun kontennya sendiri (16 kasus lintas 7 file) mengasumsikan itu. TAPI menyamaratakan semua 15 topik edukasiKritis ke satu kondisi global akan menaikkan severity-nya jadi SETARA diagnosis-salah/resep-berbahaya/cowboy — padahal "lupa 1 dari 4 topik edukasi TB" vs "restriksi cairan gagal jantung terlewat" tak selalu sepadan secara klinis.',
+    detail: 'Pertanyaan adjudikasi: apakah SEMUA 15 kasus ber-edukasiKritis harus memicu konsekuensi penuh bila terlewat, atau hanya subset berisiko-tinggi (mis. kepatuhan OAT TB krn implikasi MDR-TB) sementara lainnya cukup dihukum via skor seperti sekarang? Fix teknis 1-baris sudah siap (`pantasKonsekuensi` di reducer.ts tinggal tambah kondisi `edukasiKritisTerlewat.length>0`) — tapi TIDAK diterapkan tanpa jawaban pertanyaan ini dulu, krn efeknya blanket ke 15 kasus sekaligus.',
+  },
+  {
+    id: 'dm_prolanis_rujuk',
+    pnpk: '§1b-7c — Asimetri rujukan Prolanis DM vs HT',
+    keyakinan: 'tinggi',
+    ringkas: 'Bug struktural terverifikasi: jalur komplikasi Prolanis DM (2× GDS tak-terkontrol berturut) selalu reuse kasus dasar dm_tipe2 (harusDirujuk:false) krn TAK ADA kasus komplikasi-DM lain di pack — beda dgn jalur HT yg reuse stroke_iskemik (harusDirujuk:true, benar). Akibat: pasien Prolanis DM SETIAP kali "gagal kontrol berturut" tetap TAK BISA dirujuk (selalu ditolak "kompetensi FKTP"), padahal narasi bilang gula darahnya "liar".',
+    detail: 'Dua opsi diperiksa, KEDUANYA ternyata menyembunyikan keputusan klinis (bukan cuma bugfix kode netral): (A) exempt gerbang harusDirujuk utk kasus asal-Prolanis — diam-diam mengubah kapan rujuk DM dianggap benar tanpa data klinis baru yg terlihat mahasiswa. (B) buat kasus baru dm_komplikasi_berat/ketoasidosis dgn skdi/harusDirujuk sendiri — perlu keputusan konten klinis penuh (vital/ICD/kompetensi). Opsi netral-klinis yg benar2 aman: sekadar menampilkan severity (GDS makin tinggi) di `catatan` narasi TANPA mengubah gerbang rujuk — transparansi info, bukan mengubah benar/salah. Pilih salah satu arah sebelum dieksekusi.',
+  },
+  {
+    id: 'anc_goldarah_distraktor',
+    pnpk: '§1c-4a — ANC: golongan darah ditandai "distraktor"',
+    keyakinan: 'sedang',
+    ringkas: 'Golongan darah adalah komponen 10T ANC resmi Kemenkes, tapi di kasus ANC normal ditandai `distraktor:true` — bukan cuma "diabaikan", tapi tiap kali mahasiswa menanyakannya kena PENALTI -5 skor anamnesis DAN -10 sabar pasien (setara ditanya hal tak relevan sama sekali).',
+    detail: 'Pertanyaan: apakah menanyakan golongan darah pada kunjungan ANC rutin trimester-2-normal memang layak dihukum setara "basa-basi shotgun" (krn tak mengubah tata laksana kunjungan INI), atau itu komponen standar yg semestinya netral (tak esensial tapi juga tak dihukum)? Fix (bila disetujui): hapus flag distraktor dari item anamnesis itu — mekanis sepele, tapi menyentuh field yg ter-hash sidikJariPack (anamnesis.distraktor), jadi tetap kartu keputusan bukan silent-fix.',
+  },
+  {
+    id: 'anc_folat_dobel',
+    pnpk: '§1c-4c — ANC: folat dobel-hitung (tablet_fe + asam_folat)',
+    keyakinan: 'tinggi',
+    ringkas: 'Cepat diputuskan: `tablet_fe` di katalog SUDAH kombinasi Fe 60mg+folat 0,4mg (produk TTD program Kemenkes asli), tapi `obatBenar` di 2 kasus (ANC normal + anemia bumil) mewajibkan `tablet_fe` DAN `asam_folat` (folat tunggal 1mg) sekaligus (dinilai AND) — mengajarkan folat diberi 2× (0,4+1=1,4mg/hari) sbg "jawaban lengkap".',
+    detail: 'Dua opsi perbaikan (pilih salah satu, keduanya sama-sama valid secara farmakologis): (i) hapus `asam_folat` dari obatBenar kedua kasus krn tablet_fe sudah cukup — kasus ANC normal & anemia bumil cukup 1 obat. (ii) ubah deskripsi `tablet_fe` di katalog jadi Fe-murni-tanpa-folat, supaya kombinasi keduanya jadi valid. Ini yg paling cepat diputuskan dari 5 item tambahan — murni pilih (i) atau (ii).',
+  },
+]
+
+const KEY = 'primera_bagianD_decisions_v1'
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {} }catch(e){ return {} } }
+function save(d){ localStorage.setItem(KEY, JSON.stringify(d)) }
+let state = load()
+
+function renderTier1(){
+  const el = document.getElementById('tier1')
+  el.innerHTML = TIER1.map((t,i) => {
+    const dec = state[t.id] || {}
+    return '<div class="card card--tier1">'
+      + '<div class="card-head"><span class="kasus-id">' + t.id + '</span>'
+      + '<span class="keyakinan keyakinan--' + t.keyakinan.split(' ')[0].replace(/[()]/g,'') + '">keyakinan ' + t.keyakinan + '</span></div>'
+      + '<div class="pnpk-title">' + t.pnpk + '</div>'
+      + '<p class="ringkas">' + t.ringkas + '</p>'
+      + '<details><summary>Detail lengkap & sitasi</summary><p class="detail-teks">' + t.detail + '</p></details>'
+      + '<div class="decision-row">'
+      + ['setuju','edit','tolak','nanti'].map(v => '<button class="decision-btn' + (dec.v===v?' active':'') + '" data-v="'+v+'" onclick="pilih(\''+t.id+'\',\''+v+'\')">' + ({setuju:'✅ Setuju',edit:'✏️ Perlu Edit',tolak:'❌ Tolak',nanti:'⏳ Nanti'}[v]) + '</button>').join('')
+      + '</div>'
+      + '<textarea class="catatan" placeholder="Catatan (opsional)..." onchange="catat(\''+t.id+'\',this.value)">' + (dec.catatan||'') + '</textarea>'
+      + '</div>'
+  }).join('')
+}
+
+function renderTier2(){
+  const el = document.getElementById('tier2')
+  el.innerHTML = TIER2.map((t,i) => {
+    const id = 't2_' + i
+    const dec = state[id] || {}
+    return '<div class="card card--tier2"><div class="tier2-item"><div class="txt"><strong>' + t.judul + '</strong><br><span class="detail-teks">' + t.catatan + '</span></div>'
+      + '<div class="decision-row" style="margin-top:0">'
+      + ['masuk-m13','abaikan'].map(v => '<button class="decision-btn' + (dec.v===v?' active':'') + '" data-v="'+v+'" onclick="pilih(\''+id+'\',\''+v+'\')">' + ({['masuk-m13']:'📌 Masuk agenda M13','abaikan':'— Abaikan'}[v]) + '</button>').join('')
+      + '</div></div></div>'
+  }).join('')
+}
+
+function renderTambahan(){
+  const el = document.getElementById('tambahan')
+  el.innerHTML = TAMBAHAN.map((t,i) => {
+    const dec = state[t.id] || {}
+    return '<div class="card card--tier1">'
+      + '<div class="card-head"><span class="kasus-id">' + t.id + '</span>'
+      + '<span class="keyakinan keyakinan--' + t.keyakinan.split(' ')[0].replace(/[()]/g,'') + '">keyakinan ' + t.keyakinan + '</span></div>'
+      + '<div class="pnpk-title">' + t.pnpk + '</div>'
+      + '<p class="ringkas">' + t.ringkas + '</p>'
+      + '<details><summary>Detail lengkap & opsi</summary><p class="detail-teks">' + t.detail + '</p></details>'
+      + '<div class="decision-row">'
+      + ['setuju','edit','tolak','nanti'].map(v => '<button class="decision-btn' + (dec.v===v?' active':'') + '" data-v="'+v+'" onclick="pilih(\''+t.id+'\',\''+v+'\')">' + ({setuju:'✅ Setuju',edit:'✏️ Perlu Edit',tolak:'❌ Tolak',nanti:'⏳ Nanti'}[v]) + '</button>').join('')
+      + '</div>'
+      + '<textarea class="catatan" placeholder="Catatan / opsi pilihan (A/B/i/ii)..." onchange="catat(\''+t.id+'\',this.value)">' + (dec.catatan||'') + '</textarea>'
+      + '</div>'
+  }).join('')
+}
+
+function pilih(id, v){
+  state[id] = state[id] || {}
+  state[id].v = state[id].v === v ? undefined : v
+  save(state)
+  renderTier1(); renderTier2(); renderTambahan(); updateProgress()
+}
+function catat(id, txt){
+  state[id] = state[id] || {}
+  state[id].catatan = txt
+  save(state)
+}
+function updateProgress(){
+  const n = TIER1.filter(t => state[t.id] && state[t.id].v).length
+  const nT = TAMBAHAN.filter(t => state[t.id] && state[t.id].v).length
+  document.getElementById('progressPill').textContent = n + '/7 Tier-1 · ' + nT + '/5 Tambahan diputuskan'
+  document.getElementById('progressText').textContent = n + ' dari 7 Tier-1, ' + nT + ' dari 5 Tambahan sudah diputuskan'
+}
+function eksporRingkasan(){
+  const label = {setuju:'SETUJU',edit:'PERLU EDIT',tolak:'TOLAK',nanti:'NANTI', 'masuk-m13':'MASUK AGENDA M13', abaikan:'ABAIKAN'}
+  let out = 'BAGIAN D — Keputusan 17 Temuan PNPK (' + new Date().toISOString().slice(0,10) + ')\n\n=== TIER 1 ===\n'
+  TIER1.forEach(t => {
+    const d = state[t.id] || {}
+    out += '- ' + t.id + ': ' + (d.v ? label[d.v] : 'belum diputuskan') + (d.catatan ? ' — ' + d.catatan : '') + '\n'
+  })
+  out += '\n=== TIER 2 ===\n'
+  TIER2.forEach((t,i) => {
+    const d = state['t2_'+i] || {}
+    out += '- ' + t.judul + ': ' + (d.v ? label[d.v] : 'belum diputuskan') + '\n'
+  })
+  out += '\n=== TAMBAHAN (5 item M10.5 lain) ===\n'
+  TAMBAHAN.forEach(t => {
+    const d = state[t.id] || {}
+    out += '- ' + t.id + ': ' + (d.v ? label[d.v] : 'belum diputuskan') + (d.catatan ? ' — ' + d.catatan : '') + '\n'
+  })
+  navigator.clipboard.writeText(out).then(() => alert('Ringkasan disalin ke clipboard.'))
+}
+
+renderTier1(); renderTier2(); renderTambahan(); updateProgress()
+</script>

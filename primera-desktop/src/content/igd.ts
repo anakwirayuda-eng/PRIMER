@@ -110,7 +110,16 @@ export const KASUS_IGD: KasusIgd[] = [
     stabilitasAwal: 50,
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'paru',
-    clue: 'Asma berat (bicara sepatah, RR>30, SpO2<90, otot bantu napas): O2 + NEBULISASI salbutamol (± ipratropium) segera + KORTIKOSTEROID sistemik. Nilai respons; tak membaik → rujuk. Silent chest = tanda henti napas mengancam (GINA/PDPI).',
+    // Fix M1/#6c (triase DeepThink 2026-07-11, arahan Dr. Wirayuda: "sesuai
+    // konteks FKTP + PPK terbaru"): dicek langsung ke docs/references/ppk1186/
+    // — PPK 1186/2022 (pedoman FKTP resmi) NOL mention ipratropium; kriteria
+    // rujuknya eksplisit "serangan akut sedang dan berat", bundel pra-rujuk
+    // FKTP cuma O2+bronkodilator kerja-cepat+steroid sistemik (persis s1/s2/s3
+    // kasus ini). GINA internasional menganjurkan tambah ipratropium, tapi itu
+    // MELAMPAUI standar FKTP Indonesia — skor TAK diubah (salbutamol tunggal
+    // tetap benar). KasusIgd tak punya field mutiaraEbm (beda dari KasusKlinis
+    // biasa) — lapisan idealis-vs-lokal dilebur langsung ke clue di bawah.
+    clue: 'Asma berat (bicara sepatah, RR>30, SpO2<90, otot bantu napas) = kriteria RUJUK menurut PPK FKTP (serangan sedang-berat). Sambil menyiapkan rujukan: O2 + NEBULISASI beta-2 kerja cepat (salbutamol) segera + KORTIKOSTEROID sistemik — bundel stabilisasi pra-rujuk PPK 1186/2022, yang TIDAK mencantumkan ipratropium (GINA internasional menganjurkannya sbg tambahan bila tersedia, tapi bukan syarat FKTP). Nilai respons; tak membaik penuh → rujuk (jangan tunggu sampai gagal napas). Silent chest = tanda henti napas mengancam (GINA/PDPI).',
     langkah: [
       {
         id: 's1',
@@ -201,13 +210,18 @@ export const KASUS_IGD: KasusIgd[] = [
     stabilitasAwal: 48,
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'anak',
-    clue: 'Fase kritis dengue (demam turun H4-6 + tanda syok: akral dingin, nadi cepat-lemah, tekanan nadi ≤20 mmHg) = DSS. RESUSITASI CAIRAN KRISTALOID segera (bolus 10-20 mL/kg), pantau ketat, rujuk. JANGAN beri NSAID/aspirin (risiko perdarahan) — parasetamol saja (WHO/Kemenkes DBD).',
+    // Fix M1/#6b (triase DeepThink 2026-07-11): TD 90/80 = tekanan nadi 10mmHg
+    // (≤20mmHg) MASIH TERUKUR → syok TERKOMPENSATA, bukan dekompensata. Bolus
+    // cepat 10-20mL/kg/<30menit direservasi utk syok dekompensata (TD tak
+    // terukur) — dipakai pd syok terkompensata berisiko fluid overload/edema
+    // paru (WHO Dengue Guidelines 2009/2011; PAPDI Protokol 5 DSS Dewasa).
+    clue: 'Fase kritis dengue (demam turun H4-6 + tanda syok: akral dingin, nadi cepat-lemah, tekanan nadi ≤20 mmHg, TD MASIH TERUKUR) = DSS TERKOMPENSASI. RESUSITASI: kristaloid (RL/NaCl 0,9%) 5-10 mL/kgBB/JAM infus selama 1 jam (BUKAN bolus cepat — bolus 10-20 mL/kg/15-30 menit hanya utk syok DEKOMPENSATA/TD tak terukur), evaluasi ulang berkala & titrasi turun bertahap sesuai perfusi. JANGAN NSAID/aspirin — parasetamol saja (WHO Dengue Guidelines 2009/2011; PAPDI Protokol 5).',
     langkah: [
       {
         id: 'd1',
         narasi: 'Akral dingin, tekanan nadi menyempit (90/80), CRT >3 detik. Tindakan pertama?',
         pilihan: [
-          { id: 'a', label: 'Pasang infus, bolus cairan kristaloid 10-20 mL/kg', benar: true, efekStabilitas: 25, respons: 'Tepat — DSS adalah syok hipovolemik akibat kebocoran plasma. Resusitasi cairan menyelamatkan nyawa.' },
+          { id: 'a', label: 'Pasang infus, kristaloid 5-10 mL/kgBB/jam (infus 1 jam) — syok terkompensasi', benar: true, efekStabilitas: 25, respons: 'Tepat — DSS TERKOMPENSASI (TD 90/80 masih terukur, nadi teraba meski lemah) ditangani infus kristaloid 5-10 mL/kgBB/jam, BUKAN bolus cepat. Bolus 10-20 mL/kg dalam <30 menit direservasi utk syok DEKOMPENSATA (TD tak terukur) — dipakai berlebihan berisiko fluid overload/edema paru.' },
           { id: 'b', label: 'Beri antibiotik IV untuk infeksinya', benar: false, efekStabilitas: -22, respons: 'Dengue adalah virus — antibiotik tidak berguna & menunda resusitasi cairan yang vital.' },
           { id: 'c', label: 'Beri transfusi darah segera', benar: false, efekStabilitas: -18, respons: 'Belum tentu perlu darah dulu; masalah utama adalah kebocoran plasma → butuh kristaloid. Transfusi hanya bila perdarahan bermakna.' },
         ],
@@ -216,7 +230,7 @@ export const KASUS_IGD: KasusIgd[] = [
         id: 'd2',
         narasi: 'Setelah bolus, nadi mulai teraba lebih kuat. Pasien mengeluh nyeri kepala hebat.',
         pilihan: [
-          { id: 'a', label: 'Parasetamol untuk nyeri/demam, lanjut pantau tanda vital & tetesan', benar: true, efekStabilitas: 18, respons: 'Tepat — hanya parasetamol yang aman pada dengue; pantau ketat respons cairan.' },
+          { id: 'a', label: 'Parasetamol untuk nyeri/demam, lanjut pantau tanda vital & tetesan', benar: true, efekStabilitas: 18, respons: 'Tepat — hanya parasetamol yang aman pada dengue; lanjutkan infus kristaloid dgn evaluasi berkala (TD/nadi/perfusi), turunkan laju bertahap sesuai perbaikan — jangan pertahankan laju awal terus-menerus.' },
           { id: 'b', label: 'Beri ibuprofen/asam mefenamat untuk nyerinya', benar: false, efekStabilitas: -25, respons: 'BERBAHAYA — NSAID meningkatkan risiko perdarahan pada dengue. Hanya parasetamol.' },
         ],
       },
