@@ -451,6 +451,26 @@ describe('PACK — validasi silang id konten', () => {
     expect(tabrakan).toEqual([])
   })
 
+  // Fix #11 (audit CODEX 2026-07-11): skenario TERAKHIR tiap arc keluarga harus
+  // menarget SUPERSET dari union target semua skenario sebelumnya — indikator
+  // yg jadi fokus kunjungan awal tak boleh "hilang" begitu saja di kunjungan
+  // lanjutan (arc Yani kehilangan pantau_tumbuh_kembang di skenario ke-2, luput
+  // krn tak ada pagar otomatis). Pagar ini menangkap seluruh kelas bug ini,
+  // bukan cuma instance yg sudah ditemukan.
+  it('skenario terakhir tiap arc keluarga menarget superset dari skenario sebelumnya', () => {
+    const masalah: string[] = []
+    for (const kel of Object.values(PACK.keluarga)) {
+      const { kunjungan } = kel.arc
+      if (kunjungan.length < 2) continue
+      const targetSebelumnya = new Set(kunjungan.slice(0, -1).flatMap((sk) => sk.target))
+      const targetAkhir = new Set(kunjungan[kunjungan.length - 1]!.target)
+      for (const ind of targetSebelumnya) {
+        if (!targetAkhir.has(ind)) masalah.push(`${kel.id}: skenario akhir kehilangan target '${ind}'`)
+      }
+    }
+    expect(masalah).toEqual([])
+  })
+
   // CODEX M10 ronde-2 (2026-07-06): `karma?` bertipe SkenarioKunjungan (types.ts)
   // — TIDAK dibatasi structural ke kunjungan[0], dan test invarian demografi
   // di atas pun cuma cek `kunjungan[0]?.karma` (pola sama). TAPI `init.ts`

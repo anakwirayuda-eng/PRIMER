@@ -301,6 +301,107 @@ describe('deserialize — flags/refleksi/desa.kader/prolanis.roster (CODEX ronde
   })
 })
 
+describe('deserialize — desa.binaan/surveilans/kader entri & keluarga.indikator (audit CODEX 2026-07-11 #5)', () => {
+  it('desa.binaan = null (bukan array) ditolak, bukan lolos lalu throw di director.ts/reducer.ts', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['binaan'] = null
+    })
+    expect(() => deserialize(json, PACK)).not.toThrow()
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('desa.binaan berisi entri non-string ditolak', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['binaan'] = [123, 'keluarga_x']
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('desa.surveilans berisi entri null ditolak, bukan lolos lalu throw di pangkasSurveilans', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['surveilans'] = [null]
+    })
+    expect(() => deserialize(json, PACK)).not.toThrow()
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('desa.surveilans berisi entri dgn hari non-numerik ditolak', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['surveilans'] = [{ hari: 'tiga', rw: 1, kasusId: 'flu' }]
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('desa.surveilans dgn entri valid tetap lolos', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      ;(st['desa'] as Record<string, unknown>)['surveilans'] = [{ hari: 3, rw: 1, kasusId: 'flu' }]
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.desa.surveilans).toHaveLength(1)
+  })
+
+  it('desa.kader berisi entri null ditolak, bukan lolos lalu throw di kader.ts saat sort', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      const desa = st['desa'] as Record<string, unknown>
+      const kader = desa['kader'] as Record<string, unknown>
+      desa['kader'] = { ...kader, kader_rusak: null }
+    })
+    expect(() => deserialize(json, PACK)).not.toThrow()
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('desa.kader berisi entri dgn rw non-numerik ditolak', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      const desa = st['desa'] as Record<string, unknown>
+      const kader = desa['kader'] as Record<string, unknown>
+      desa['kader'] = { ...kader, kader_rusak: { id: 'kader_rusak', rw: 'satu' } }
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('keluarga[id].indikator hilang (bukan objek) ditolak, bukan lolos lalu throw di hitungIksKeluarga', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      const desa = st['desa'] as Record<string, unknown>
+      desa['keluarga'] = {
+        keluarga_x: { id: 'keluarga_x', trust: 3, ttm: 'prekontemplasi', arcIndex: 0, jumlahKunjungan: 0 },
+      }
+    })
+    expect(() => deserialize(json, PACK)).not.toThrow()
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+
+  it('keluarga[id].indikator kehilangan salah satu dari 12 kunci PIS-PK kanonik ditolak', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      const desa = st['desa'] as Record<string, unknown>
+      const indikatorParsial = {
+        kb: { status: 'ya', statusSebenarnya: 'ya', sumber: 'belum', hariData: 0 },
+        // 11 kunci lain SENGAJA hilang.
+      }
+      desa['keluarga'] = {
+        keluarga_x: {
+          id: 'keluarga_x',
+          trust: 3,
+          ttm: 'prekontemplasi',
+          arcIndex: 0,
+          jumlahKunjungan: 0,
+          indikator: indikatorParsial,
+        },
+      }
+    })
+    expect(deserialize(json, PACK)).toBeNull()
+  })
+})
+
 describe('deserialize — kunci tally hilang & entri nested null (CODEX ronde-13)', () => {
   it('tally.tegakBenar hilang seluruhnya (bukan cuma nilai salah) ditolak — bukan lolos jadi NaN', () => {
     const s = buildInitialState('Uji', SEED, PACK)

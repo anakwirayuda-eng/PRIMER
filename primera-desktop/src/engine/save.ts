@@ -7,6 +7,7 @@
 
 import type { GameState } from './state'
 import type { ContentPack } from '@content/pack'
+import { SEMUA_INDIKATOR_PISPK } from './pispk'
 
 const VERSI_SAVE = 1 as const
 
@@ -102,6 +103,24 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     )
   )
     return null
+  // keluarga[id].indikator (audit CODEX 2026-07-11 #5): entri-is-objek di atas
+  // cuma menjamin keluarga itu sendiri objek — `indikator` hilang/bukan objek,
+  // atau salah satu dari 12 kunci PIS-PK kanonik hilang, lolos lalu
+  // hitungIksKeluarga (pispk.ts, `kel.indikator[ind].sumber`) THROW ("Cannot
+  // read properties of undefined, reading 'sumber'") tiap kali IKS dihitung —
+  // dipanggil rutin (peta desa, rapor, day-advance). Sama pola entangled spt
+  // tally/dex: tolak seluruh save, bukan backfill parsial (indikator saling
+  // mengunci formula IKS).
+  if (
+    Object.values(
+      (st['desa'] as Record<string, unknown>)['keluarga'] as Record<string, unknown>,
+    ).some((e) => {
+      const ind = (e as Record<string, unknown>)['indikator']
+      if (!objek(ind)) return true
+      return SEMUA_INDIKATOR_PISPK.some((kunci) => !objek(ind[kunci]))
+    })
+  )
+    return null
   // desa.kader (CODEX ronde-12): sama seperti desa.keluarga/rw — `kader='rusak'`
   // (string) lolos objek-check `desa`, lalu spread `{...kader}` memecah string
   // jadi objek ber-key-karakter; `Object.values(kader).sort((a,b)=>a.rw-b.rw||
@@ -110,6 +129,21 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // "entry" cuma sebuah karakter string. Struktur sama entangled dgn rw/keluarga
   // (feed skor PIS-PK/IKS) — tolak, bukan backfill parsial.
   if (!objek((st['desa'] as Record<string, unknown>)['kader'])) return null
+  // desa.kader entri korup (audit CODEX 2026-07-11 #5): container-check barusan
+  // cuma menjamin `kader` sendiri objek — entri semacam `kader.x = null` (atau
+  // `rw` non-numerik) lolos lalu kader.ts (`Object.values(kader).sort((a,b)=>
+  // a.rw-b.rw||a.id.localeCompare(b.id))`) THROW pada entri korup itu sendiri
+  // (bukan cuma saat container-nya string). Pola sama desa.keluarga di atas.
+  if (
+    Object.values((st['desa'] as Record<string, unknown>)['kader'] as Record<string, unknown>).some(
+      (e) =>
+        !objek(e) ||
+        typeof (e as Record<string, unknown>)['id'] !== 'string' ||
+        typeof (e as Record<string, unknown>)['rw'] !== 'number' ||
+        !Number.isFinite((e as Record<string, unknown>)['rw']),
+    )
+  )
+    return null
   // layar (CODEX ronde-11 #3): tak pernah divalidasi — nilai asing lolos lalu
   // App.tsx (rangkaian `layar === X &&`, tanpa fallback) merender area utama
   // kosong TANPA throw (ErrorBoundary tak menangkap non-error). Bukan field
@@ -224,6 +258,24 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // Migrasi-lite M1: surveilans & drift untuk save pra-bridge.
   const desa = st['desa'] as Record<string, unknown>
   if (!Array.isArray(desa['surveilans'])) desa['surveilans'] = []
+  // desa.surveilans entri korup (audit CODEX 2026-07-11 #5): array-check di atas
+  // cuma menjamin wrapper-nya array — entri non-objek atau `hari` non-numerik
+  // lolos lalu pangkasSurveilans (surveilans.ts, `hariIni - e.hari < JENDELA`)
+  // THROW pada entri null/`e.hari` string. Dipanggil rutin (deteksi klaster
+  // KLB tiap day-advance) — pola sama jadwal di atas: tolak seluruh save.
+  if (
+    (desa['surveilans'] as unknown[]).some(
+      (e) => !objek(e) || typeof e['hari'] !== 'number' || !Number.isFinite(e['hari']),
+    )
+  )
+    return null
+  // desa.binaan (audit CODEX 2026-07-11 #5): TIDAK PERNAH divalidasi sebelum ini
+  // — `desa.binaan = null` (atau objek non-array) lolos objek-check `desa` lalu
+  // director.ts (`.filter`) / reducer.ts (`.includes`, `.length`, spread
+  // `[...binaan]`) THROW. Roster binaan dipakai tiap day-advance & tiap
+  // pembukaan peta desa — tolak seluruh save, konsisten dgn desa.rw/kader.
+  if (!Array.isArray(desa['binaan']) || (desa['binaan'] as unknown[]).some((id) => typeof id !== 'string'))
+    return null
   if (typeof desa['drift'] !== 'object' || desa['drift'] === null) {
     desa['drift'] = { minggu: 1, jumlah: 0 }
   }

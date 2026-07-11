@@ -4,7 +4,7 @@
  * WOW pagi yang tenang: gradient fajar CSS + matahari lembut + siluet puskesmas SVG.
  */
 
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { useGame } from '../store'
 import { useRadioGroup } from '../useRadioGroup'
 import { METADATA } from '@content/metadata'
@@ -120,6 +120,11 @@ export function TitleScreen() {
   const [nim, setNim] = useState('')
   // M6.27 — hasil verifikasi dossier mahasiswa (panel dosen).
   const [hasilVerifikasi, setHasilVerifikasi] = useState<HasilVerifikasi | null>(null)
+  // Fix #8 (audit CODEX 2026-07-11): tanpa token, memilih dossier B sebelum
+  // verifikasi dossier A selesai (baca file + hash + replay, tak instan) bisa
+  // membuat hasil A yang telat resolve MENIMPA hasil B di layar — dosen
+  // melihat vonis utk berkas yang salah. Token dibandingkan sebelum commit.
+  const tokenVerifikasiRef = useRef(0)
   // DeepThink ronde-2 — telemetri wall-clock: sinyal forensik terpisah,
   // opsional, TIDAK memengaruhi status SAH/TIDAK SAH di atas.
   const [peringatanTelemetri, setPeringatanTelemetri] = useState<string[] | null>(null)
@@ -365,10 +370,25 @@ export function TitleScreen() {
                     window.alert('Berkas dossier terlalu besar — bukan dossier stase yang wajar.')
                     return
                   }
-                  void f.text().then(async (json) => {
-                    const versiApp = await window.primer.appVersion()
-                    setHasilVerifikasi(await verifikasiDossier(json, PACK, versiApp))
-                  })
+                  // Fix #8: token unik per pemilihan file + bersihkan hasil lama
+                  // SEKARANG (bukan tunggu hasil baru) — mencegah vonis berkas
+                  // sebelumnya nyangkut di layar selama verifikasi berjalan.
+                  const token = ++tokenVerifikasiRef.current
+                  setHasilVerifikasi(null)
+                  void f
+                    .text()
+                    .then(async (json) => {
+                      const versiApp = await window.primer.appVersion()
+                      const hasil = await verifikasiDossier(json, PACK, versiApp)
+                      // Hasil verifikasi lain (dossier dipilih ulang) sudah menyusul —
+                      // jangan timpa dgn hasil telat ini (fix #8).
+                      if (tokenVerifikasiRef.current !== token) return
+                      setHasilVerifikasi(hasil)
+                    })
+                    .catch(() => {
+                      if (tokenVerifikasiRef.current !== token) return
+                      window.alert('Gagal membaca file dossier.')
+                    })
                 }}
               />
             </label>

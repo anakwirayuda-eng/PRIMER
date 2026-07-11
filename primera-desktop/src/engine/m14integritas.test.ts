@@ -89,7 +89,12 @@ describe('M14 #9 — verifier tolak jejak raksasa sebelum replay', () => {
       versi: VERSI_DOSSIER,
       identitas: { namaDokter: 'Penyerang' },
       stase: { mode: 'karier', seed: 1, seedKurikulum: 1, hari: 1 },
-      klaim: { skor: {}, tally: {}, badge: [] },
+      // Fix #7 (audit CODEX 2026-07-11): verifikasiDossier kini memvalidasi
+      // bentuk klaim.skor (total/grade) SEBELUM cap jejak — skor placeholder
+      // harus berbentuk minimal-valid di sini agar tes ini tetap menguji
+      // gerbang jejak-raksasa yang jadi fokusnya, bukan tersandung gerbang
+      // struktur yang lebih awal.
+      klaim: { skor: { total: 0, grade: 'D' }, tally: {}, badge: [] },
       jejak: jejakRaksasa,
       lingkungan: { versiApp: V_APP, sidikJariPack: 'x' },
       ttd: 'dummy',
@@ -107,7 +112,12 @@ describe('M14 #9 — verifier tolak jejak raksasa sebelum replay', () => {
       versi: VERSI_DOSSIER,
       identitas: { namaDokter: 'Uji' },
       stase: { mode: 'karier', seed: 1, seedKurikulum: 1, hari: 1 },
-      klaim: { skor: {}, tally: {}, badge: [] },
+      // Fix #7 (audit CODEX 2026-07-11): verifikasiDossier kini memvalidasi
+      // bentuk klaim.skor (total/grade) SEBELUM cap jejak — skor placeholder
+      // harus berbentuk minimal-valid di sini agar tes ini tetap menguji
+      // gerbang jejak-raksasa yang jadi fokusnya, bukan tersandung gerbang
+      // struktur yang lebih awal.
+      klaim: { skor: { total: 0, grade: 'D' }, tally: {}, badge: [] },
       jejak: new Array(5).fill({ type: 'TUTUP_REKAP' }),
       lingkungan: { versiApp: V_APP, sidikJariPack: 'x' },
       ttd: 'dummy',

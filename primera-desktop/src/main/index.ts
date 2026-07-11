@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell, Menu } from 'electron'
 import { join } from 'path'
+import { pathToFileURL } from 'url'
 import { promises as fs } from 'fs'
 
 // Build produksi: kunci DevTools & pintasannya. Integritas asesmen (CODEX P1):
@@ -45,6 +46,16 @@ const antreanTulis = new Map<string, Promise<void>>()
 let tmpCounter = 0
 // Fix #31d: rantai promise telemetri, ditunggu before-quit spt antreanTulis di atas.
 let telemetriPending: Promise<void> = Promise.resolve()
+// Fix #1 (audit CODEX 2026-07-11, regresi dari fix #31d): dulu ada guard
+// `if (tertunda.length===0) return` yg membuat panggilan before-quit KEDUA
+// (dipicu app.quit() di bawah, setelah antreanTulis.clear()) lolos tanpa
+// preventDefault. Guard itu terhapus tanpa sengaja saat telemetriPending
+// ditambahkan ke array tertunda — dan krn telemetriPending tak pernah
+// kosong/null, array itu kini TAK PERNAH panjang 0, jadi guard lama pun
+// sudah tak relevan lagi walau dikembalikan mentah. Tanpa guard sama sekali:
+// before-quit -> preventDefault -> app.quit() -> before-quit -> preventDefault
+// -> ... siklus tanpa henti, app TAK PERNAH benar-benar keluar.
+let sedangKeluar = false
 
 function registerIpc(): void {
   ipcMain.handle('save:write', async (_e, slot: string, json: string) => {
@@ -233,9 +244,16 @@ function createWindow(): void {
   // preload bridge (save/telemetri) yang sama — situs asing lalu punya akses
   // baca/tulis/hapus save. Hanya izinkan file lokal (produksi) atau dev-server
   // vite yang memang dipakai sesi ini (dev, tak-dipaket).
+  // Fix #17 (audit CODEX 2026-07-11): `url.startsWith('file://')` mengizinkan
+  // navigasi ke file LOKAL MANA PUN (mis. `file:///etc/passwd`, atau `file://`
+  // apa pun di disk pengguna) selama skema-nya cocok — preload bridge yang
+  // sama tetap terpasang di sana. Persempit ke exact-match thd satu-satunya
+  // berkas renderer yang sah dimuat (sama dgn yang dipakai `win.loadFile` di
+  // bawah), bukan sekadar skema URL-nya.
+  const rendererUrl = pathToFileURL(join(__dirname, '../renderer/index.html')).href
   win.webContents.on('will-navigate', (e, url) => {
     const devUrl = !app.isPackaged ? process.env['ELECTRON_RENDERER_URL'] : undefined
-    const sah = devUrl ? url.startsWith(devUrl) : url.startsWith('file://')
+    const sah = devUrl ? url.startsWith(devUrl) : url === rendererUrl
     if (!sah) e.preventDefault()
   })
 
@@ -294,6 +312,8 @@ if (!app.requestSingleInstanceLock()) {
   // antivirus), allSettled bisa TAK PERNAH selesai → app tak pernah keluar
   // (perlu force-kill). Timeout menjamin quit tetap terjadi.
   app.on('before-quit', (e) => {
+    if (sedangKeluar) return // panggilan kedua (dipicu app.quit() di bawah) — biarkan lolos
+    sedangKeluar = true
     // Fix #31d: telemetriPending ikut ditunggu di sini sekarang, sama spt
     // tulisan save — satu titik flush-on-quit, bukan dua mekanisme berbeda.
     const tertunda = [...antreanTulis.values(), telemetriPending]

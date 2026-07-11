@@ -1137,6 +1137,28 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     expect(nilai.skorTerapi).toBe(70)
   })
 
+  it('Fix #2 (audit CODEX 2026-07-11): resep ANTIBIOTIK SALAH (tanpa indikasi) + observasi + lab bolehTundaTerapi TETAP tak dapat floor 70 — stewardship tak boleh terhapus floor', () => {
+    const KASUS_OBS_AB: KasusKlinis = {
+      ...KASUS_FARINGITIS,
+      id: 'obs_antibiotik_salah_mini',
+      lab: [{ id: 'bta_sputum', hasil: 'Menunggu hasil', flag: 'normal', relevan: true }],
+    }
+    const enc: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'obs_antibiotik_salah_mini' })),
+      labDipesan: ['bta_sputum'],
+      disposisi: 'observasi',
+      resep: ['eritromisin_500'], // antibiotik, TAPI bukan obatBenar/alternatif sah kasus ini
+    }
+    const nilai = nilaiEncounter(enc, KASUS_OBS_AB, PACK)
+    // menungguLabBesok=true (bta_sputum bolehTundaTerapi) + obatBerbahaya=0
+    // (eritromisin tak terdaftar di obatSalahUmum) — DULU floor tetap 70.
+    // Kini floor JUGA mensyaratkan !antibiotikTanpaIndikasi — resep antibiotik
+    // salah menggagalkan floor, skorTerapi tetap rendah (mentah: 0 rasio -15
+    // obatDiLuar -25 antibiotikTanpaIndikasi, clamp ke 0).
+    expect(nilai.antibiotikTanpaIndikasi).toBe(true)
+    expect(nilai.skorTerapi).toBe(0)
+  })
+
   it('Fix #16 (adjudikasi dokter 2026-07-11): lab ber-hasilBesok TAPI TANPA bolehTundaTerapi (mis. Widal) TIDAK memicu floor 70 — hanya BTA (TB) yg sah ditunggu tanpa terapi sama sekali', () => {
     const KASUS_OBS_WIDAL: KasusKlinis = {
       ...KASUS_FARINGITIS,

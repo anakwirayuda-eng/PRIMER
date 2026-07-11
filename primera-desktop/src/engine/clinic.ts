@@ -571,7 +571,16 @@ export function nilaiEncounter(
       if (!pack.lab[id]?.bolehTundaTerapi) return false
       return kasus.lab.find((l) => l.id === id)?.relevan === true
     })
-  if (menungguLabBesok && obatBerbahaya === 0) skorTerapi = Math.max(skorTerapi, 70)
+  // Fix #2 (audit CODEX 2026-07-11): floor ini dulu cuma cek `obatBerbahaya
+  // === 0` — TIDAK memeriksa `antibiotikTanpaIndikasi`, yg dihitung tepat di
+  // atas (baris ~534-541) dan sudah dipotong -25 dari skorTerapi mentah.
+  // Akibatnya resep antibiotik SALAH yg kebetulan tak terdaftar di
+  // obatSalahUmum kasus (mis. siprofloksasin pada kasus TB, bukan oat_kdt)
+  // tetap lolos floor 70 — MENGHAPUS efek penalti stewardship yg seharusnya
+  // sudah menjatuhkan skor. Ditambahkan syarat eksplisit di sini.
+  if (menungguLabBesok && obatBerbahaya === 0 && !antibiotikTanpaIndikasi) {
+    skorTerapi = Math.max(skorTerapi, 70)
+  }
 
   /* -- Edukasi: PRIORITISASI (M7 34b/O4 — precision with opportunity cost) ------ */
   // Konstruk lama (cakupan-set) melahirkan strategi degenerate "4 topik sakti"

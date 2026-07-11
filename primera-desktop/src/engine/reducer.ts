@@ -375,10 +375,18 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // WAJIB lab itu RELEVAN dgn kasus (DeepThink #1, sinkron dgn clinic.ts) —
       // tanpa ini "observasi" bisa dipakai sbg kedok memesan lab apa saja lalu
       // dikecualikan dari konsekuensi tanpa alasan klinis nyata.
+      // Fix #3 (audit CODEX 2026-07-11): syarat ini TERTINGGAL saat clinic.ts
+      // diperketat ke `bolehTundaTerapi` (fix #16) — dulu sama-sama pakai
+      // `hasilBesok` generik. Akibatnya pasien Tifoid yg diobservasi tanpa
+      // antibiotik (Widal: hasilBesok=true, TAPI bolehTundaTerapi TIDAK
+      // di-set) sudah benar skorTerapi≈0 (fix #16 clinic.ts), tapi di sini
+      // MASIH lolos dari konsekuensi perforasi — dua gerbang jadi tak
+      // sinkron. Disamakan skarang: hanya lab ber-bolehTundaTerapi (BTA/TB)
+      // yg mengecualikan dari konsekuensi negatif.
       const observasiMenungguLab =
         action.jenis === 'observasi' &&
         encFinal.labDipesan.some((id) => {
-          if (!pack.lab[id]?.hasilBesok) return false
+          if (!pack.lab[id]?.bolehTundaTerapi) return false
           return kasus.lab.find((l) => l.id === id)?.relevan === true
         })
       const pantasKonsekuensi =

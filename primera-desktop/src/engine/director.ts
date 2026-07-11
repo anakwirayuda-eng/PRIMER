@@ -313,9 +313,17 @@ export function susunAntrianHarian(
     // penentu pemilihan kasus — hanya identitas pasien yg disesuaikan
     // sesudahnya). Tak ada yg cocok → tetap fallback ke roll acak lama.
     const kasus = pasien ? pack.kasus[pasien.kasusId] : undefined
+    // Fix #4 (audit CODEX 2026-07-11): pencocokan usia SAJA tak cukup — kasus
+    // ber-demografi.jenisKelamin tetap (mis. bumil, HANYA 'P') bisa ditimpa
+    // jadi anggota keluarga laki-laki yg kebetulan usianya cocok. Fallback
+    // "tak ada yg cocok → tetap roll lama" sudah ada, jadi menambah syarat
+    // gender di sini tak menimbulkan regresi — cuma lebih sering fallback.
     const anggotaCocok = kasus
       ? kontenKeluarga?.anggota.find(
-          (a) => a.usia >= kasus.demografi.usiaMin && a.usia <= kasus.demografi.usiaMax,
+          (a) =>
+            a.usia >= kasus.demografi.usiaMin &&
+            a.usia <= kasus.demografi.usiaMax &&
+            (!kasus.demografi.jenisKelamin || a.jenisKelamin === kasus.demografi.jenisKelamin),
         )
       : undefined
     if (pasien && kontenKeluarga) {

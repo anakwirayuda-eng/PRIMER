@@ -60,6 +60,11 @@ function pack(kasusList: KasusKlinis[]): ContentPack {
         biaya: 20000,
         nilaiNormal: 'Normal',
         hasilBesok: true,
+        // Fix #3 (audit CODEX 2026-07-11): reducer.ts kini mensyaratkan
+        // bolehTundaTerapi (sinkron dgn clinic.ts fix #16), bukan cuma
+        // hasilBesok — fixture ini menguji MEKANISME "lab sah ditunggu"
+        // secara generik, jadi perlu flag ini utk tetap mewakili skenario itu.
+        bolehTundaTerapi: true,
       },
       lab_besok_tak_relevan: {
         id: 'lab_besok_tak_relevan',

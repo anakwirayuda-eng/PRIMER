@@ -224,6 +224,65 @@ describe('M6 — verifikasi dossier', () => {
     expect((await verifikasiDossier('{"format":"lain"}', PACK, V_APP)).status).toBe('tidak_dapat_diverifikasi')
   })
 
+  describe('Fix #7 (audit CODEX 2026-07-11): validasi struktur klaim.skor/klaim.badge/stase.mode/stase.hari', () => {
+    it('klaim.skor hilang → TIDAK DAPAT DIVERIFIKASI, bukan THROW baca d.klaim.skor.total', async () => {
+      const s = mainkanSatuPasien()
+      const dossier = await susunDossier(s, PACK, { versiApp: V_APP })
+      const rusak = JSON.parse(JSON.stringify(dossier)) as Record<string, unknown>
+      const klaim = rusak['klaim'] as Record<string, unknown>
+      delete klaim['skor']
+      let hasil: Awaited<ReturnType<typeof verifikasiDossier>>
+      await expect(async () => {
+        hasil = await verifikasiDossier(JSON.stringify(rusak), PACK, V_APP)
+      }).not.toThrow()
+      expect(hasil!.status).toBe('tidak_dapat_diverifikasi')
+      expect(hasil!.alasan.join(' ')).toMatch(/[Ss]truktur/)
+    })
+
+    it('klaim.badge bukan array → TIDAK DAPAT DIVERIFIKASI, bukan THROW spread [...d.klaim.badge]', async () => {
+      const s = mainkanSatuPasien()
+      const dossier = await susunDossier(s, PACK, { versiApp: V_APP })
+      const rusak = JSON.parse(JSON.stringify(dossier)) as Record<string, unknown>
+      const klaim = rusak['klaim'] as Record<string, unknown>
+      klaim['badge'] = 'bukan_array'
+      let hasil: Awaited<ReturnType<typeof verifikasiDossier>>
+      await expect(async () => {
+        hasil = await verifikasiDossier(JSON.stringify(rusak), PACK, V_APP)
+      }).not.toThrow()
+      expect(hasil!.status).toBe('tidak_dapat_diverifikasi')
+    })
+
+    it('stase.hari bukan angka → TIDAK DAPAT DIVERIFIKASI', async () => {
+      const s = mainkanSatuPasien()
+      const dossier = await susunDossier(s, PACK, { versiApp: V_APP })
+      const rusak = JSON.parse(JSON.stringify(dossier)) as Record<string, unknown>
+      const stase = rusak['stase'] as Record<string, unknown>
+      stase['hari'] = 'tiga'
+      const hasil = await verifikasiDossier(JSON.stringify(rusak), PACK, V_APP)
+      expect(hasil.status).toBe('tidak_dapat_diverifikasi')
+    })
+
+    it('stase.mode bukan string → TIDAK DAPAT DIVERIFIKASI', async () => {
+      const s = mainkanSatuPasien()
+      const dossier = await susunDossier(s, PACK, { versiApp: V_APP })
+      const rusak = JSON.parse(JSON.stringify(dossier)) as Record<string, unknown>
+      const stase = rusak['stase'] as Record<string, unknown>
+      stase['mode'] = 42
+      const hasil = await verifikasiDossier(JSON.stringify(rusak), PACK, V_APP)
+      expect(hasil.status).toBe('tidak_dapat_diverifikasi')
+    })
+
+    it('klaim.tally hilang → TIDAK DAPAT DIVERIFIKASI', async () => {
+      const s = mainkanSatuPasien()
+      const dossier = await susunDossier(s, PACK, { versiApp: V_APP })
+      const rusak = JSON.parse(JSON.stringify(dossier)) as Record<string, unknown>
+      const klaim = rusak['klaim'] as Record<string, unknown>
+      delete klaim['tally']
+      const hasil = await verifikasiDossier(JSON.stringify(rusak), PACK, V_APP)
+      expect(hasil.status).toBe('tidak_dapat_diverifikasi')
+    })
+  })
+
   it('sidikJariPack stabil terhadap urutan kunci & sensitif terhadap isi', () => {
     expect(sidikJariPack(PACK)).toBe(sidikJariPack({ ...PACK }))
     expect(sidikJariPack(PACK)).not.toBe(sidikJariPack({ ...PACK, skdi144: PACK.skdi144.slice(0, -1) }))

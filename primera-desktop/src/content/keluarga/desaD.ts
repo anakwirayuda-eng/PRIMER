@@ -963,7 +963,11 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
             'Kunjungan kedua, dua minggu sebelum Bu Yani kembali kerja. Kardus botol formula itu kini ' +
             'di meja, segelnya sudah disobek separuh. "Bukannya saya menyerah, Dok," katanya buru-buru. ' +
             '"Tapi kerja konveksi itu dari jam tujuh sampai jam empat. Nayla minum apa selama itu?"',
-          target: ['asi_eksklusif'],
+          // Fix #11 (audit CODEX 2026-07-11): skenario terakhir arc HARUS superset
+          // target skenario pertama (pola konsisten di 15 arc lain) — sebelumnya
+          // cuma 'asi_eksklusif', kehilangan 'pantau_tumbuh_kembang' yg sudah
+          // ditarget di yani_k1 (KMS/faltering growth tetap tema aktif di sini).
+          target: ['asi_eksklusif', 'pantau_tumbuh_kembang'],
           hambatanSebenarnya: 'kesempatan',
           petunjukHambatan:
             'Keyakinan ASI-nya sudah pulih dan nenek sudah jadi sekutu — kini masalahnya struktural: jam ' +

@@ -216,7 +216,14 @@ function fnv1a(teks: string): string {
 // (observasi + lab besok) kini butuh `bolehTundaTerapi` per-lab, bukan cuma
 // `hasilBesok` — hanya BTA (TB) yg sah, Widal/IgM-dengue/HbA1c/TSH tidak lagi
 // memicu floor gratis. Mengubah replay skor kasus terkait secara langsung.
-const REVISI_ENGINE = 21
+// Audit CODEX 2026-07-11 (HEAD 7a74ed7), 3 fix sekaligus (satu batch):
+// #2 — floor skorTerapi kini juga mensyaratkan !antibiotikTanpaIndikasi (dulu
+// resep antibiotik salah yg tak terdaftar obatSalahUmum tetap lolos floor 70).
+// #3 — reducer.ts pengecualian-konsekuensi disamakan ke `bolehTundaTerapi`
+// (dulu masih pakai `hasilBesok` generik, tertinggal dari fix #16 clinic.ts).
+// #9 — hanyaUntuk (gender-gate anamnesis) kini ikut sidik jari (lihat hash
+// anamnesis di atas) — dulu score-affecting tapi tak ter-hash.
+const REVISI_ENGINE = 22
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -250,7 +257,19 @@ export function sidikJariPack(pack: ContentPack): string {
         pf: [...k.pemeriksaanFisik].sort((a, b) => a.region.localeCompare(b.region)).map((t) => ({ region: t.region, relevan: t.relevan })),
         anamnesis: [...k.anamnesis]
           .sort((a, b) => a.id.localeCompare(b.id))
-          .map((q) => ({ id: q.id, esensial: q.esensial ?? false, distraktor: q.distraktor ?? false, oldcarts: [...(q.oldcarts ?? [])].sort() })),
+          .map((q) => ({
+            id: q.id,
+            esensial: q.esensial ?? false,
+            distraktor: q.distraktor ?? false,
+            oldcarts: [...(q.oldcarts ?? [])].sort(),
+            // Fix #9 (audit CODEX 2026-07-11): hanyaUntuk (gender-gate) SUDAH
+            // score-affecting sejak M10 Batch-2 (clinic.ts `berlaku`, menyaring
+            // anamnesisBerlaku yg membentuk denominator skorAnamnesis) tapi tak
+            // pernah ikut di-hash — edit gate ini bisa mengubah replay skor
+            // pasien lintas-gender TANPA mengubah sidik jari, berisiko dossier
+            // jujur divonis TIDAK SAH palsu (bukan tidak_dapat_diverifikasi).
+            hanyaUntuk: q.hanyaUntuk ?? null,
+          })),
         // M10 §49 P1 (2026-07-10): 6 field ini dibaca LIVE saat replay tapi dulu
         // tak di-hash — edit salah satunya mempertahankan sidik jari sementara
         // antrian/skor replay bergeser (probe CODEX independen: ubah prevalensi
@@ -471,8 +490,18 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
     return { status: 'tidak_dapat_diverifikasi', alasan: [`Versi dossier tak dikenal (${String(mentah['versi'])}).`] }
   }
   const d = mentah as unknown as DossierMahasiswa
+  // Fix #7 (audit CODEX 2026-07-11): validasi lama cuma cek `d.stase`/`d.klaim`
+  // sendiri objek — `d.stase.mode`/`d.stase.hari`/`d.klaim.skor`/`d.klaim.badge`
+  // tak dicek sama sekali, jadi dossier ber-`klaim.skor` hilang lolos ke sini
+  // lalu THROW ("Cannot read properties of undefined, reading 'total'") di
+  // pesan alasan §5 bawah, dan `klaim.badge` bukan array THROW saat spread
+  // (`[...d.klaim.badge]`). Berkas asing/tangan-diedit harus jatuh ke
+  // "tidak_dapat_diverifikasi" DI SINI, bukan meng-crash verifier dosen.
   if (!objek(d.identitas) || typeof d.identitas.namaDokter !== 'string' || !objek(d.stase) ||
-      typeof d.stase.seed !== 'number' || !objek(d.klaim) || !Array.isArray(d.jejak) ||
+      typeof d.stase.seed !== 'number' || typeof d.stase.mode !== 'string' ||
+      typeof d.stase.hari !== 'number' || !objek(d.klaim) || !objek(d.klaim.skor) ||
+      typeof d.klaim.skor.total !== 'number' || typeof d.klaim.skor.grade !== 'string' ||
+      !objek(d.klaim.tally) || !Array.isArray(d.klaim.badge) || !Array.isArray(d.jejak) ||
       !objek(d.lingkungan) || typeof d.ttd !== 'string') {
     return { status: 'tidak_dapat_diverifikasi', alasan: ['Struktur dossier tidak lengkap.'] }
   }

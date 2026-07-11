@@ -11,7 +11,10 @@ import { acakUrutan } from '../utils/acakUrutan'
 import './Kegiatan.css'
 
 const JUDUL: Record<string, { label: string; sub: string }> = {
-  posyandu: { label: 'POSYANDU', sub: 'Sistem 5 Meja — balita & imunisasi' },
+  // Fix #15 (audit CODEX 2026-07-11): label lama "Sistem 5 Meja — balita &
+  // imunisasi" tersisa dari sebelum migrasi Posyandu ke ILP "5 Langkah"
+  // (seluruh siklus hidup, bukan cuma balita) — teks UI tak ikut update.
+  posyandu: { label: 'POSYANDU', sub: 'ILP 5 Langkah — seluruh siklus hidup' },
   prolanis: { label: 'PROLANIS', sub: 'Pemantauan penyakit kronis bulanan' },
   klb: { label: 'RESPONS KLB', sub: 'Penyelidikan & pengendalian wabah' },
 }
@@ -164,8 +167,14 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
           {hasil.benar}/{hasil.total} keputusan tepat · {persen}%
         </div>
         <p className="teks-kecil teks-lembut">
+          {/* Fix #15 (audit CODEX 2026-07-11): narasi lama TANPA syarat skor —
+              sesi yang keputusannya semua salah (skor 0) tetap mengklaim "IKS
+              membaik", padahal engine tak menerangkut apa pun ke wilayah bila
+              tak ada keputusan tepat. Pola sama cabang KLB di bawah. */}
           {hasil.jenis === 'posyandu' &&
-            'Kualitas posyandu terangkut ke IKS wilayah — gizi & imunisasi RW ini membaik sedikit demi sedikit.'}
+            (hasil.skor > 0
+              ? 'Kualitas posyandu terangkut ke IKS wilayah — gizi & imunisasi RW ini membaik sedikit demi sedikit.'
+              : 'Sesi posyandu ini belum menyumbang perbaikan apa pun — tak ada keputusan tepat yang terangkut ke IKS wilayah.')}
           {hasil.jenis === 'prolanis' &&
             'Parameter tiap peserta bergerak menurut keputusanmu. Yang dua bulan berturut tak terkontrol akan berujung di poli — pantau bulan depan.'}
           {hasil.jenis === 'klb' &&

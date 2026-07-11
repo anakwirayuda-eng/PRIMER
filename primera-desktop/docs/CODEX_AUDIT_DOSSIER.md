@@ -3842,3 +3842,95 @@ terdokumentasi, O-A), CODEX#30b (code signing — tolak sertifikat + instruksi l
 **Verifikasi**: 654/654 test + typecheck bersih setelah SELURUH perubahan di atas (termasuk #16 dan
 Addendum Q6, diselesaikan sesi yang sama setelah dokter memutuskan). `npm audit`: 0 kerentanan (naik
 dari 1 high-severity sebelum sesi ini). **REVISI_ENGINE 20→21.**
+
+## 64. Audit CODEX read-only baru (HEAD `7a74ed7`) — 18 temuan, 11 DIPERBAIKI + regresi terkunci (2026-07-11)
+
+CODEX audit ronde baru di HEAD `7a74ed7` (setelah §63): 1 P0, 10 P1, 7 P2 — 18 total. Tiap klaim
+diverifikasi ulang thd kode aktual (disiplin baku: CODEX pernah meleset detail) sebelum eksekusi;
+dokter mendelegasikan verify-then-fix via paste laporan, tanpa instruksi verbal tambahan (pola sesi
+yang sudah mapan). Prioritas yang diminta dokter: #1–#5, lalu #7–#11 dan #17–#18.
+
+**DIPERBAIKI (11 item, kode + test regresi, 675/675 test + typecheck bersih):**
+- **#1 (P0, quit-loop regresi)** — `main/index.ts`: guard `sedangKeluar` hilang tak sengaja saat
+  `telemetriPending` ditambah ke array `tertunda` (commit sebelumnya) — array itu jadi tak-pernah-
+  kosong, jadi guard lama `if (tertunda.length===0) return` tak lagi berfungsi. Ditambah flag
+  `sedangKeluar` eksplisit + early-return, memulihkan semantik guard.
+- **#2 (P1, celah stewardship antibiotik pada floor skor terapi)** — `clinic.ts`: floor skor-terapi
+  70 (dari #16 sesi sebelumnya, §63) TIDAK mensyaratkan `!antibiotikTanpaIndikasi` — resep antibiotik
+  salah + observasi + lab `bolehTundaTerapi` masih lolos floor. Ditambah syarat. Test baru:
+  observasi+eritromisin-salah+bta_sputum → `antibiotikTanpaIndikasi=true`, `skorTerapi` TETAP 0
+  (floor tak berlaku).
+- **#3 (P1, gerbang konsekuensi tak sinkron dgn gerbang skor)** — `reducer.ts` `observasiMenungguLab`
+  masih pakai `hasilBesok` generik, padahal `clinic.ts` sudah diperketat ke `bolehTundaTerapi` (#16,
+  §63) — pasien Widal/Tifoid bisa lolos KONSEKUENSI (dijadwalkan balik tanpa karma) meski skornya
+  sudah benar dihukum. Disamakan ke `bolehTundaTerapi`. Fixture test `deepthinkKlinik.test.ts`
+  (`lab_besok_relevan`) diberi `bolehTundaTerapi: true` eksplisit (mewakili mekanisme generik lama).
+- **#4 (P1, identity bridge abaikan gender)** — `director.ts` `anggotaCocok` (karma-bridge positif,
+  #14 §63) cuma cocokkan usia — kasus ber-`demografi.jenisKelamin` (mis. bumil, HANYA 'P') bisa
+  ditimpa jadi anggota keluarga laki-laki yg usianya kebetulan cocok. Diverifikasi independen via 2
+  agen adversarial: **85 pasangan tak cocok** (match presis klaim CODEX). Ditambah syarat gender
+  (fallback ke roll lama tetap ada bila tak ada yg cocok gender+usia). Test baru
+  (`director.test.ts`): kasus bumil (P, 20-35) + keluarga hanya beranggota laki-laki cocok-usia →
+  identitas TAK ditimpa across 200 seed.
+- **#5 (P1, 4 celah validasi nested-null save.ts)** — `save.ts` tak memvalidasi (a) `desa.binaan`
+  sama sekali (bisa `null`/non-array → THROW di `director.ts`/`reducer.ts`), (b) entri
+  `desa.surveilans[]` (entri non-objek/`hari` non-numerik → THROW di `pangkasSurveilans`), (c) entri
+  `desa.kader{}` (entri korup → THROW saat sort di `kader.ts`), (d) `keluarga[id].indikator` (field
+  hilang/kunci PIS-PK kurang → THROW di `hitungIksKeluarga`). Keempatnya ditambah validasi
+  reject-whole-save, pola sama `dex`/`desa.keluarga`/`desa.rw` yg sudah ada. 9 test regresi baru.
+- **#7 (P1, validasi struktur dossier tak lengkap)** — `verifikasi.ts` `verifikasiDossier`: cek
+  struktur lama cuma pastikan `d.stase`/`d.klaim` sendiri objek — `d.klaim.skor` hilang/`d.klaim.badge`
+  bukan array lolos lalu THROW (`d.klaim.skor.total` / spread `[...d.klaim.badge]`) saat menyusun
+  pesan alasan atau replay-banding. Ditambah cek `stase.mode`/`stase.hari`/`klaim.skor.total`/
+  `klaim.skor.grade`/`klaim.tally`/`Array.isArray(klaim.badge)`. 5 test regresi baru
+  (`m6verifikasi.test.ts`). Fixture `m14integritas.test.ts` (2 tes cap-jejak-raksasa) diupdate —
+  placeholder `skor:{}` kini `skor:{total:0,grade:'D'}` supaya tetap menguji gerbang jejak, bukan
+  tersandung gerbang struktur yg lebih ketat.
+- **#8 (P1, race condition pemilihan file dossier)** — `TitleScreen.tsx`: memilih dossier B sebelum
+  verifikasi dossier A selesai bisa membuat hasil A yg telat resolve menimpa hasil B di layar (dosen
+  melihat vonis berkas salah). Ditambah token counter (`useRef`) + `.catch()` yg tadinya hilang di
+  handler ini (satu-satunya dari 3 `<input type="file">` di layar ini tanpa penangan gagal-baca). 1
+  test regresi baru (`TitleScreen.dossierRace.test.tsx`, mock `verifikasiDossier` dgn resolve-order
+  terbalik).
+- **#9 (P1, sidik jari tak hash `hanyaUntuk`)** — `verifikasi.ts` `sidikJariPack`: field
+  `anamnesis[].hanyaUntuk` (gerbang tampilan pertanyaan bersyarat) tak ikut di-hash — perubahan
+  konten di field ini tak memicu penolakan dossier versi-beda. Ditambah ke objek hash.
+- **#11 (P2, Arc Keluarga Yani kehilangan target indikator)** — `desaD.ts`: skenario terakhir arc
+  Yani (`yani_k2`) cuma menarget `['asi_eksklusif']`, padahal skenario pertama (`yani_k1`) sudah
+  menarget `['asi_eksklusif','pantau_tumbuh_kembang']` — pola di 15 arc lain adalah skenario akhir
+  SUPERSET skenario awal. Ditambah `pantau_tumbuh_kembang` balik ke target akhir. **Pagar baru**:
+  test `pack.test.ts` generik yg mengecek invarian ini di SELURUH arc keluarga (bukan cuma instance
+  Yani) — menangkap seluruh kelas bug ini ke depan.
+- **#15 (P2, teks UI Posyandu basi + narasi tanpa syarat skor)** — `Kegiatan.tsx`: (a) label sub
+  "Sistem 5 Meja — balita & imunisasi" tersisa dari sebelum migrasi Posyandu ke ILP "5 Langkah" (M11,
+  seluruh siklus hidup) — diupdate ke "ILP 5 Langkah — seluruh siklus hidup"; (b) narasi hasil
+  Posyandu ("gizi & imunisasi RW ini membaik") tampil TANPA SYARAT skor (bahkan skor 0/semua salah)
+  — pola beda dari cabang KLB di bawahnya yg sudah bersyarat. Dibuat bersyarat `hasil.skor > 0`. 3
+  test regresi baru (`Kegiatan.hasilPosyandu.test.tsx`).
+- **#17 (P2, guard `will-navigate` Electron terlalu longgar)** — `main/index.ts`: guard produksi
+  cuma cek `url.startsWith('file://')` — mengizinkan navigasi ke file LOKAL MANA PUN di disk
+  (skema cocok, path apa saja) sambil tetap membawa preload bridge save/telemetri yg sama.
+  Dipersempit ke exact-match thd satu-satunya berkas renderer yang sah dimuat
+  (`pathToFileURL(join(__dirname,'../renderer/index.html')).href`, sama persis dgn yg dipakai
+  `win.loadFile`). Tak ada test — repo ini belum punya harness test proses-main (tak ada mock
+  `electron` di vitest config); diverifikasi via code review + typecheck.
+
+**BUTUH KEPUTUSAN DOKTER (dikonfirmasi valid, BELUM difix — trade-off desain/gameplay, bukan bug
+mekanis):**
+- **#6** — info-leak save-scumming mode ujian (pacing/UX trade-off).
+- **#10** — celah bypass roster `desa.binaan` (3 arah remediasi berbeda, keputusan desain game).
+- **#12** — grade akhir kunjungan mengabaikan disposisi (pola desain lama yg sudah mapan; mungkin
+  layak mitigasi UI-saja yg murah, tapi tetap trade-off, bukan bug jelas).
+- **#13** — follow-up terjadwal tak benar-benar ditegakkan (trade-off pacing/realisme).
+- **#14** — hasil lab tertunda tak terbawa ke encounter berikutnya (penambahan fitur signifikan,
+  bukan bug — di luar scope batch mekanis ini).
+
+**DIKONFIRMASI, NOL AKSI (sudah benar / sudah diputuskan sebelumnya / bukan isu kode):**
+- **#16** — glare peta mode-malam: SUDAH DIPUTUSKAN sesi sebelumnya, tak ada perubahan lanjutan.
+- **#18** — installer basi di folder deploy: catatan proses-build (redeploy manual), bukan isu kode.
+
+**Verifikasi**: 675/675 test (naik dari 654 — 21 test regresi baru: 9 save.ts, 5 verifikasi.ts, 1
+race-condition TitleScreen, 1 director.ts gender, 1 clinic.ts antibiotik-floor, 3 Kegiatan.tsx, 1
+pack.test.ts invarian arc) + typecheck bersih. `npm audit`: 0 kerentanan (tak berubah dari §63).
+**REVISI_ENGINE 21→22** (bundel #2 antibiotik-floor-gap + #3 reducer-sync + #9 hanyaUntuk-hash —
+ketiganya memengaruhi replay/skor, dibundel satu bump per disiplin proyek).
