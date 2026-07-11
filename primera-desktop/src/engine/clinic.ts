@@ -612,7 +612,14 @@ export function nilaiEncounter(
     if (!entri || !entri.relevan) labTakRelevan += 1
   }
 
-  /* -- SBAR (hanya bila merujuk dan mengisi form) -------------------------------- */
+  /* -- SBAR (hanya bila merujuk dan mengisi form; MURNI KOSMETIK) ---------------- */
+  // Fix #19b (adjudikasi DeepThink 2026-07-11, ronde CODEX-31, opsi O-C):
+  // sbarSkor TERBUKTI tidak pernah masuk nilaiTotal/tally/konsekuensi apa pun
+  // (chip tampilan saja, PanelHasil.tsx) — mempertahankan penalti anti-cheat
+  // keras (wajib-data-numerik, -50 copy-paste) untuk angka yang taruhannya
+  // NOL adalah UX buruk (stres artifisial tanpa dampak nyata). Dilucuti jadi
+  // indikator kelengkapan+kualitas murni: panjang tiap kolom + bonus sebut
+  // diagnosis — tanpa gerbang punitif.
   let sbarSkor: number | undefined
   if (disposisi === 'rujuk' && enc.sbar) {
     const isian = [
@@ -623,23 +630,12 @@ export function nilaiEncounter(
     ]
     let skor = 0
     for (const teks of isian) if (teks.trim().length >= 20) skor += 20
-    // S harus memuat DATA — angka vital/pemeriksaan yang benar-benar diukur,
-    // bukan padding administratif. (Panjang saja tidak cukup.)
-    if (enc.sbar.situation.trim().length >= 20 && !/\d/.test(enc.sbar.situation)) skor -= 20
     const assessment = enc.sbar.assessment.toLowerCase()
     const menyebutDiagnosis =
       assessment.includes(kasus.nama.toLowerCase()) ||
       assessment.includes(kasus.icd10.toLowerCase()) ||
       (enc.diagnosis !== undefined && assessment.includes(enc.diagnosis.icd10.toLowerCase()))
     if (menyebutDiagnosis) skor += 20
-    // Anti copy-paste (DeepThink #4): isi satu kolom lalu Ctrl+C/Ctrl+V ke
-    // keempat kolom S-B-A-R meloloskan panjang≥20 & angka tanpa berpikir klinis
-    // sama sekali. Hanya bandingkan kolom yg TERISI (non-kosong) — dua kolom
-    // kosong yang "sama" (keduanya "") bukan copy-paste, cuma belum diisi, dan
-    // sudah kena nol poin panjang di atas; jangan dihukum dua kali.
-    const isianTerisi = isian.map((t) => t.trim().toLowerCase()).filter((t) => t.length > 0)
-    const adaDuplikat = new Set(isianTerisi).size < isianTerisi.length
-    if (adaDuplikat) skor -= 50
     sbarSkor = clamp(skor, 0, 100)
   }
 

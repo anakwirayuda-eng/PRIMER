@@ -6,6 +6,7 @@
 import type { KeluargaState, RwState } from '@engine/state'
 import type { IndikatorPisPk } from '@content/types'
 import { klasifikasiIks } from '@engine/pispk'
+import { HARI_BUKA_KUNJUNGAN } from '@engine/reducer'
 
 /* ---------------------------------------------------------------------------
  * Gerbang provenance karma — pilar "setiap angka diperoleh".
@@ -15,10 +16,15 @@ import { klasifikasiIks } from '@engine/pispk'
  * Peringatan karma hanya boleh TAMPIL bila dokter benar-benar punya data
  * keluarga itu (≥1 indikator ber-sumber dokter/kader). Tanpa data, dokter
  * tidak mungkin tahu ada yang memburuk — UI tidak boleh membocorkannya.
- * Murni gerbang tampilan: engine tetap menjalankan karma di baliknya.
+ * Fix #28a (adjudikasi DeepThink 2026-07-11, ronde CODEX-31): juga digerbang
+ * `hari >= HARI_BUKA_KUNJUNGAN` — sebelumnya indikator ini bisa tampil sejak
+ * Hari 1 padahal tombol Kunjungi baru aktif Hari 3, membocorkan "aksi yang
+ * belum tersedia" (dibaca pemain sbg UI bug, bukan tensi naratif). Murni
+ * gerbang tampilan: engine tetap menjalankan karma di baliknya.
  */
-export function karmaTerlihat(kel: KeluargaState): boolean {
+export function karmaTerlihat(kel: KeluargaState, hari: number): boolean {
   if (!kel.karmaAktif) return false
+  if (hari < HARI_BUKA_KUNJUNGAN) return false
   return Object.values(kel.indikator).some((n) => n.sumber !== 'belum')
 }
 

@@ -305,13 +305,30 @@ export function susunAntrianHarian(
     const keluargaId = rngFlavor.pick(binaanAkrab)
     const idx = rngFlavor.int(0, antrian.length - 1)
     const pasien = antrian[idx]
-    // Fix #14 (audit CODEX 2026-07-11, bagian aman/tanpa trade-off): pasien
-    // ditempeli `keluargaId` tapi RW-nya tetap hasil roll acak sebelumnya —
-    // bisa mismatch dgn RW keluarga binaan yg sebenarnya. Nama/usia/jenis-
-    // kelamin SENGAJA tak disentuh di sini (memaksa kecocokan penuh = ubah
-    // aturan seleksi kasus, keputusan desain terpisah — lihat dossier M10.5).
-    const rwKeluarga = pack.keluarga[keluargaId]?.rw
-    if (pasien) antrian[idx] = { ...pasien, keluargaId, bonusTrust: true, ...(rwKeluarga !== undefined ? { rw: rwKeluarga } : {}) }
+    const kontenKeluarga = pack.keluarga[keluargaId]
+    // Fix #14 (adjudikasi DeepThink 2026-07-11, ronde CODEX-31, opsi O-B
+    // best-effort): RW selalu ditimpa RW keluarga asli. Nama/usia/jenisKelamin
+    // HANYA ditimpa dari anggota keluarga sungguhan bila ada yg usianya cocok
+    // rentang demografi kasus yg SUDAH terpilih (kurikulum/epidemiologi tetap
+    // penentu pemilihan kasus — hanya identitas pasien yg disesuaikan
+    // sesudahnya). Tak ada yg cocok → tetap fallback ke roll acak lama.
+    const kasus = pasien ? pack.kasus[pasien.kasusId] : undefined
+    const anggotaCocok = kasus
+      ? kontenKeluarga?.anggota.find(
+          (a) => a.usia >= kasus.demografi.usiaMin && a.usia <= kasus.demografi.usiaMax,
+        )
+      : undefined
+    if (pasien && kontenKeluarga) {
+      antrian[idx] = {
+        ...pasien,
+        keluargaId,
+        bonusTrust: true,
+        rw: kontenKeluarga.rw,
+        ...(anggotaCocok
+          ? { nama: anggotaCocok.nama, usia: anggotaCocok.usia, jenisKelamin: anggotaCocok.jenisKelamin }
+          : {}),
+      }
+    }
   }
 
   return antrian

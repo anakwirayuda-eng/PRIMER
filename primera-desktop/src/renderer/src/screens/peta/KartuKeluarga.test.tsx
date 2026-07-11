@@ -28,6 +28,7 @@ describe('<KartuKeluarga /> — aria-label tombol aksi bernama keluarga (#15)', 
       <KartuKeluarga
         content={content}
         kel={kel}
+        hari={3}
         binaan={false}
         rosterPenuh={false}
         alasanKunjungan={null}
@@ -47,6 +48,7 @@ describe('<KartuKeluarga /> — aria-label tombol aksi bernama keluarga (#15)', 
       <KartuKeluarga
         content={content}
         kel={kel}
+        hari={3}
         binaan={true}
         rosterPenuh={false}
         alasanKunjungan={null}
@@ -68,6 +70,7 @@ describe('<KartuKeluarga /> — tombol nonaktif tetap focusable via aria-disable
       <KartuKeluarga
         content={content}
         kel={kel}
+        hari={3}
         binaan={false}
         rosterPenuh={true}
         alasanKunjungan={null}
@@ -92,6 +95,7 @@ describe('<KartuKeluarga /> — tombol nonaktif tetap focusable via aria-disable
       <KartuKeluarga
         content={content}
         kel={kel}
+        hari={3}
         binaan={false}
         rosterPenuh={true}
         alasanKunjungan={null}
@@ -114,6 +118,7 @@ describe('<KartuKeluarga /> — tombol nonaktif tetap focusable via aria-disable
       <KartuKeluarga
         content={content}
         kel={kel}
+        hari={3}
         binaan={false}
         rosterPenuh={false}
         alasanKunjungan={null}
@@ -136,6 +141,7 @@ describe('<KartuKeluarga /> — tombol nonaktif tetap focusable via aria-disable
       <KartuKeluarga
         content={content}
         kel={kel}
+        hari={3}
         binaan={false}
         rosterPenuh={false}
         alasanKunjungan="Stamina tidak cukup."
@@ -160,6 +166,7 @@ describe('<KartuKeluarga /> — tombol nonaktif tetap focusable via aria-disable
       <KartuKeluarga
         content={content}
         kel={kel}
+        hari={3}
         binaan={false}
         rosterPenuh={false}
         alasanKunjungan="Stamina tidak cukup."
@@ -182,6 +189,7 @@ describe('<KartuKeluarga /> — tombol nonaktif tetap focusable via aria-disable
       <KartuKeluarga
         content={content}
         kel={kel}
+        hari={3}
         binaan={false}
         rosterPenuh={false}
         alasanKunjungan={null}

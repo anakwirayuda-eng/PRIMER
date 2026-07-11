@@ -12,6 +12,7 @@ import { karmaTerlihat, LABEL_EKONOMI, LABEL_INDIKATOR, LABEL_KLASIFIKASI, SIMBO
 interface Props {
   content: KeluargaBinaan
   kel: KeluargaState
+  hari: number
   binaan: boolean
   rosterPenuh: boolean
   /** Alasan tombol Kunjungi dinonaktifkan; null = boleh berangkat. */
@@ -55,6 +56,7 @@ function HatiTrust({ trust }: { trust: number }) {
 export function KartuKeluarga({
   content,
   kel,
+  hari,
   binaan,
   rosterPenuh,
   alasanKunjungan,
@@ -68,7 +70,7 @@ export function KartuKeluarga({
   const kepala = content.anggota.find((a) => a.peran === 'kepala') ?? content.anggota[0]
   const totalKunjunganArc = content.arc.kunjungan.length
   // Gerbang provenance: peringatan karma hanya bila dokter sudah punya data keluarga ini.
-  const karmaTampak = karmaTerlihat(kel)
+  const karmaTampak = karmaTerlihat(kel, hari)
 
   return (
     <article className={`peta-keluarga kartu ${karmaTampak ? 'peta-keluarga--karma' : ''}`}>

@@ -1648,8 +1648,12 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       buatSuratHarian(hari, suratBaru.length, {
         jenis: 'sistem',
         dari: 'BPJS Kesehatan',
-        judul: `Kapitasi bulan ini: Rp ${masukan.toLocaleString('id-ID')} (KBK ×${pengali})`,
-        isi: `Pembayaran kapitasi diterima. Pengali Kapitasi Berbasis Komitmen bulan ini ×${pengali} — ditentukan IKS desa binaanmu (${(iksDesa * 100).toFixed(0)}%). ${pengali < 1 ? 'IKS di bawah 0,5 memangkas pendapatan Puskesmas — kerja preventif di lapangan adalah kerja finansial juga.' : pengali > 1 ? 'IKS di atas 0,8 memberi bonus komitmen. Pertahankan.' : 'Naikkan IKS desa di atas 0,8 untuk pengali 1,3.'}`,
+        // Fix #10 (adjudikasi DeepThink 2026-07-11, ronde CODEX-31, opsi O-C):
+        // label sebelumnya menyiratkan ini formula KBK BPJS riil (3-indikator:
+        // AK/RRNS/RPPT) padahal murni proksi rata-rata IKS desa (PIS-PK) —
+        // teks-saja, TAK menyentuh matematika pengali/masukan.
+        judul: `Kapitasi bulan ini: Rp ${masukan.toLocaleString('id-ID')} (proksi PIS-PK ×${pengali})`,
+        isi: `Pembayaran kapitasi diterima. Pengali proksi IKS-PIS-PK bulan ini ×${pengali} — ditentukan IKS desa binaanmu (${(iksDesa * 100).toFixed(0)}%), BUKAN formula KBK BPJS riil (Angka Kontak/Rasio Rujukan/Rasio Prolanis). ${pengali < 1 ? 'IKS di bawah 0,5 memangkas pendapatan Puskesmas — kerja preventif di lapangan adalah kerja finansial juga.' : pengali > 1 ? 'IKS di atas 0,8 memberi bonus komitmen. Pertahankan.' : 'Naikkan IKS desa di atas 0,8 untuk pengali 1,3.'}`,
       }),
     )
     suratBaru.push(
@@ -1658,7 +1662,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         dari: 'Bendahara Puskesmas',
         judul: `Laporan keuangan bulanan — saldo Rp ${kapitasi.toLocaleString('id-ID')}`,
         isi:
-          `Rekap bulan lalu — Pemasukan kapitasi: Rp ${masukan.toLocaleString('id-ID')} (KBK ×${pengali}). ` +
+          `Rekap bulan lalu — Pemasukan kapitasi: Rp ${masukan.toLocaleString('id-ID')} (proksi PIS-PK ×${pengali}). ` +
           `Belanja obat darurat (stok kosong): Rp ${keuanganBulan.belanjaObat.toLocaleString('id-ID')}. ` +
           `Pengadaan gudang: Rp ${keuanganBulan.belanjaPengadaan.toLocaleString('id-ID')}. ` +
           `Operasional (listrik, ATK, BBM): Rp ${OPERASIONAL_BULANAN.toLocaleString('id-ID')}. ` +

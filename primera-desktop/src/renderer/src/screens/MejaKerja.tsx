@@ -147,7 +147,7 @@ export function MejaKerja() {
       // Gerbang provenance: peringatan karma hanya bila dokter sudah punya
       // data keluarga ini — dan tanpa hitung mundur presisi (dokter tidak
       // tahu kapan; ia hanya mendengar kabar dari kader).
-      if (karmaTerlihat(kel) && kel.karmaAktif) {
+      if (karmaTerlihat(kel, state.hari) && kel.karmaAktif) {
         alasan = 'Kader mendengar kondisinya memburuk — prioritaskan'
         prioritas = Math.max(0, kel.karmaAktif.jatuhTempoHari - state.hari)
         darurat = true

@@ -1166,7 +1166,7 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     expect(nilai.sbarSkor).toBe(20)
   })
 
-  it('SBAR copy-paste (keempat kolom identik) dihukum −50 (DeepThink #4)', () => {
+  it('SBAR copy-paste (keempat kolom identik) TAK dihukum — Fix #19b, murni kosmetik (adjudikasi DeepThink 2026-07-11)', () => {
     const teksSama = 'Pasien demam 3 hari 1234567890 kondisi umum stabil terpantau'
     const enc: EncounterState = {
       ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3 })),
@@ -1180,10 +1180,11 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
       },
     }
     const nilai = nilaiEncounter(enc, KASUS_RUJUK, PACK)
-    // Tanpa anti-copas: 4×20 (semua ≥20 char) = 80 — situation punya angka jadi
-    // LOLOS penalti −20 "tanpa data", tak menyebut diagnosis jadi tak dapat +20.
-    // Dgn fix anti-copas: 80 − 50 = 30.
-    expect(nilai.sbarSkor).toBe(30)
+    // sbarSkor terbukti tak pernah masuk nilaiTotal/tally/konsekuensi apa pun —
+    // chip tampilan murni. Penalti anti-cheat (copy-paste −50, wajib-data −20)
+    // dilucuti (stres artifisial tanpa taruhan nyata): 4×20 (semua ≥20 char) =
+    // 80, tak menyebut diagnosis jadi tak dapat +20 bonus.
+    expect(nilai.sbarSkor).toBe(80)
   })
 
   it('SBAR beda kata sedikit (bukan copy-paste identik) TIDAK kena hukuman copas', () => {

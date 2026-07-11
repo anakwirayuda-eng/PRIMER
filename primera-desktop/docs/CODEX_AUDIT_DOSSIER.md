@@ -3768,3 +3768,78 @@ sisa hardening yg berimplikasi UX (mis. anti-cheat lanjutan); model-data Prolani
 
 **Verifikasi**: 652/652 test + typecheck bersih setelah SELURUH fix mekanis di atas (dua kali checkpoint
 selama pengerjaan, lalu sekali final).
+
+## 63. DeepThink adjudikasi 13 keputusan sisa (docs/DEEPTHINK_CODEX31_KEPUTUSAN.md) — dieksekusi sebagian (2026-07-11)
+
+DeepThink menjawab seluruh 13 item + Addendum Q6/Asih dengan tag [Kuat]/[Sedang] (memo lengkap
+ditempel dokter ke chat). Claude men-triase tiap rekomendasi terhadap kode SAAT INI sebelum eksekusi
+(disiplin baku proyek) — dua konflik nyata ditemukan dan DITAHAN, sisanya dieksekusi langsung.
+
+**DIEKSEKUSI (kode berubah, 652/652 test + typecheck bersih, `npm audit`: 0 kerentanan):**
+- **CODEX#14 (O-B, best-effort match)** — `director.ts` blok karma-bridge positif (binaanAkrab): RW
+  SELALU ditimpa RW keluarga asli (sudah dari sesi sebelumnya); nama/usia/jenisKelamin kini ditimpa
+  dari anggota keluarga sungguhan HANYA bila ada yg usianya cocok rentang demografi kasus yg sudah
+  terpilih — kurikulum/epidemiologi tetap penentu pemilihan kasus. Bridge negatif (`karma_igd`, di
+  `reducer.ts:1464-1494`) TERNYATA sudah benar sejak awal (identitas dari `content.anggota` via
+  `init.ts`) — DeepThink minta cakupan ke jalur negatif juga, tapi verifikasi menunjukkan tak ada yg
+  perlu diubah di sana.
+- **CODEX#28a (O-B, gating tampilan)** — `karmaTerlihat(kel, hari)` di `petaUtil.ts` kini juga
+  mensyaratkan `hari >= HARI_BUKA_KUNJUNGAN`; signature + 4 pemanggil diupdate (`PetaDesa.tsx` ×2,
+  `KartuKeluarga.tsx` — prop `hari` baru, `MejaKerja.tsx`). Test `KartuKeluarga.test.tsx` (8 render)
+  diupdate menambahkan prop `hari={3}`.
+- **CODEX#10 (O-C, label-saja)** — `reducer.ts` notifikasi kapitasi bulanan: "KBK ×N" → "proksi PIS-PK
+  ×N", teks isi eksplisit menyebut ini BUKAN formula KBK BPJS riil (AK/RRNS/RPPT). Matematika
+  pengali/masukan TAK disentuh.
+- **CODEX#19b (O-C, lucuti anti-cheat)** — `clinic.ts` `sbarSkor`: dihapus penalti -20 "wajib data
+  numerik" dan -50 "copy-paste antar-kolom" (sudah terbukti #19b: skor ini tak pernah masuk
+  `nilaiTotal`/tally/konsekuensi apa pun, murni chip `PanelHasil.tsx`) — dipertahankan hanya
+  panjang≥20/kolom + bonus sebut-diagnosis. Test copy-paste (`clinic.test.ts`) diupdate: ekspektasi
+  30→80 (refleksi "tak lagi dihukum").
+- **CODEX#30a (O-A→ditingkatkan)** — `package.json` `electron`: `^37.2.0`→`^43.1.0`. **PENTING**: draf
+  CODEX/DeepThink menyasar `^38.8.6` ("menutup CVE HIGH terdekat, lompatan minimal") — tapi `npm audit`
+  yg dijalankan ULANG sesi ini menunjukkan rentang kerentanan sebenarnya `<=39.8.4` (advisory BARU:
+  use-after-free offscreen paint/texture callback, crash clipboard.readImage, window.open target
+  scoping), bukan `<38.8.6` seperti tercatat di dossier lama. `^38.8.6` TERPASANG dan DIUJI dulu →
+  `npm audit` MASIH melapor 1 high-severity → di-upgrade lagi ke `^43.1.0` (rilis stabil terbaru saat
+  itu) → `npm audit`: **0 kerentanan**. Smoke-test: `npm run pack` sukses, `.exe` dijalankan via
+  PowerShell `Start-Process`, window termuat benar ("PRIMERA: Puskesmas Pagi"), 4 proses (main+
+  renderer+GPU+utility) semua `Responding:True` selama 5 detik, shutdown bersih (semua proses exit
+  saat main di-`Stop-Process`). Klik-tuntas manual (F12-lock, save/load IPC sungguhan) TETAP disarankan
+  ke dokter sebelum benar-benar dipercaya utk Golden Master — smoke-test ini bukan pengganti QA manual
+  penuh.
+
+**DITAHAN — konflik ditemukan saat triase, BUTUH keputusan dokter (bukan sekadar re-run kode):**
+- **CODEX#16 (floor skor terapi 70)** — DeepThink pilih O-B (`enc.resep.length > 0`); Claude awalnya
+  menerapkan `rasioTerapi > 0` (menutup blind-spot yg DeepThink SENDIRI tandai: resep asal-asalan tak
+  boleh lolos). **Keduanya GAGAL test yg sudah ada**: `clinic.test.ts` — "DeepThink #1: observasi + lab
+  hasilBesok RELEVAN tetap dapat proteksi skor 70 (perilaku sah dipertahankan)" — kasus SINTETIS generik
+  dgn `resep=[]` yg secara SENGAJA diverifikasi div ronde DeepThink SEBELUMNYA sbg perilaku legitimate
+  ("menunda terapi definitif sambil menunggu konfirmasi lab, mis. tunda OAT sampai BTA" — komentar
+  `clinic.ts:554-559`). Investigasi lanjut: kasus real `demam_tifoid` (`kasusInfeksi.ts:376`) memang
+  match salah satu dari 5 kasus "exploitable" CODEX#16 — `widal` (hasilBesok:true) + `obatBenar` cuma
+  `['paracetamol_500']` (bukan antibiotik!) + grup alternatif antibiotik SATU-dari-tiga. Secara klinis:
+  **TB menunggu BTA sebelum OAT = textbook-benar** (floor legitimate); **Tifoid menunggu Widal sebelum
+  antibiotik JUSTRU dipertanyakan** — Widal lambat/tak sensitif-spesifik, praktik umum memulai antibiotik
+  empiris begitu klinis dicurigai, bukan menunggu serologi. Kode LAMA (fix#17-audit-CODEX) sudah
+  membuktikan hal serupa: legitimasi "tunggu vs tuntaskan" berbeda PER-PENYAKIT, bukan generik per-jenis
+  lab. **Reverted ke kode asli** (`if (menungguLabBesok && obatBerbahaya === 0)`, tanpa syarat resep) —
+  keputusan mana penyakit yg layak floor "tunggu tanpa terapi" vs mana yg exploit murni BUKAN keputusan
+  teknik, perlu penilaian klinis dokter per-kasus (kandidat: field baru per-kasus/per-lab semacam
+  `bolehTundaTerapi?: boolean`, bukan gerbang generik `rasioTerapi`/`resep.length`).
+- **Addendum Q6/Asih (formula `berhasil` generik)** — DeepThink pilih "Jalur Generik: perbaiki akar
+  formula di `kunjungan.ts` untuk seluruh 16 keluarga tanpa allowlist" — tapi TIDAK menspesifikasi
+  MEKANISME konkret (field baru? syarat `kualitasMi`? kartu eskalasi per-arc?). `M10_5_FIDELITAS.md:412`
+  sendiri sudah mencatat blocker mekanisme ini SEBELUM ronde ini ("kartu ke-4 terpisah tak akan
+  berfungsi krn kunjungan single-select") — DeepThink menjawab pertanyaan SCOPE (generik vs allowlist,
+  terjawab: generik), TAPI pertanyaan MEKANISME (bagaimana caranya secara konkret) masih terbuka. Belum
+  ada kode yg ditulis — REVISI_ENGINE-bearing, menyentuh skor 16 keluarga, terlalu berisiko utk ditebak
+  sendiri tanpa spesifikasi.
+
+**DIPUTUSKAN, NOL KODE (adjudikasi DeepThink diterima, dicatat sbg keputusan final — tak perlu
+dibahas ulang):** CODEX#6 (diare — biarkan naratif, O-C), CODEX#2c (PRIMER_DEV — terima risiko, O-C),
+CODEX#3c (anti-joki — proctoring fisik saja, O-B), CODEX#13b (Prolanis komorbid — utang teknis
+terdokumentasi, O-A), CODEX#30b (code signing — tolak sertifikat + instruksi lab, O-B+O-C), CODEX#31b
+(rotasi log — abaikan, O-A).
+
+**Verifikasi**: 652/652 test + typecheck bersih setelah SELURUH perubahan di atas. `npm audit`: 0
+kerentanan (naik dari 1 high-severity sebelum sesi ini).

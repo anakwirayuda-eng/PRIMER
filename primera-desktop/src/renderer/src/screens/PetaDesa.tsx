@@ -54,7 +54,7 @@ export function PetaDesa() {
   // (gerbang provenance — lihat karmaTerlihat).
   const karmaRw = new Set<number>()
   for (const [id, kel] of Object.entries(state.desa.keluarga)) {
-    if (karmaTerlihat(kel)) {
+    if (karmaTerlihat(kel, state.hari)) {
       const c = PACK.keluarga[id]
       if (c) karmaRw.add(c.rw)
     }
@@ -169,7 +169,7 @@ export function PetaDesa() {
                     onClick={() => setRwTerpilih(content.rw)}
                     title={`${content.namaKeluarga} — RW ${content.rw}. Klik untuk membuka RW-nya.`}
                   >
-                    {karmaTerlihat(kel) && <span className="peta-roster-item__karma" aria-label="perlu perhatian" />}
+                    {karmaTerlihat(kel, state.hari) && <span className="peta-roster-item__karma" aria-label="perlu perhatian" />}
                     <span className="peta-roster-item__nama">{content.namaKeluarga}</span>
                     <span className="chip">{iks === null ? 'IKS ?' : `IKS ${(iks * 100).toFixed(0)}`}</span>
                   </button>
@@ -267,6 +267,7 @@ export function PetaDesa() {
                       key={content.id}
                       content={content}
                       kel={kel}
+                      hari={state.hari}
                       binaan={state.desa.binaan.includes(content.id)}
                       rosterPenuh={state.desa.binaan.length >= MAKS_BINAAN}
                       alasanKunjungan={info.alasan}
