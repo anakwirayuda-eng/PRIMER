@@ -82,8 +82,16 @@ function cobaPlay(el: HTMLAudioElement): void {
     })
 }
 
+// Fix (dokter, 2026-07-11, audit CODEX #1): musik dimatikan sementara — 7
+// file OST di public/bgm/ (sudah dihapus dari repo) tak berlisensi distribusi
+// (Square Enix, lihat CATATAN_LISENSI.txt) dan musik latar bukan esensial.
+// Nonaktifkan pemutaran di sini (bukan menghapus TRACK/hook) agar mudah
+// dinyalakan ulang begitu musik pengganti berlisensi tersedia.
+const BGM_NONAKTIF_SEMENTARA = true
+
 /** Ganti musik sesuai konteks; no-op bila track sama. */
 export function gantiBgm(konteks: KonteksBgm): void {
+  if (BGM_NONAKTIF_SEMENTARA) return
   const berkas = TRACK[konteks]
   if (berkas === trackAktif) return
   trackAktif = berkas

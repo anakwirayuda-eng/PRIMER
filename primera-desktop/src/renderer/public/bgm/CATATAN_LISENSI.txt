@@ -1,9 +1,18 @@
-CATATAN LISENSI MUSIK LATAR (BGM) — WAJIB DIBACA SEBELUM DISTRIBUSI
+CATATAN LISENSI MUSIK LATAR (BGM) — DINONAKTIFKAN SEMENTARA (2026-07-11)
 ====================================================================
 
-Berkas musik di folder ini adalah koleksi pribadi pengembang yang
-dipindahkan dari repo lama (public/audio) atas permintaan pengembang,
-untuk pemakaian pribadi selama pengembangan/playtest internal:
+Ketujuh berkas musik yang dulu ada di folder ini SUDAH DIHAPUS dari repo
+(audit CODEX #1, keputusan dokter: "musik matikan dulu aja sementara, toh
+gak esensial"). Playback BGM dinonaktifkan di kode (lihat flag
+`BGM_NONAKTIF_SEMENTARA` di src/renderer/src/audio/bgm.ts) — SFX/alarm
+TIDAK terpengaruh. Folder ini sengaja dibiarkan kosong (bukan dihapus)
+supaya jalur `bgm/<berkas>` di TRACK tetap valid begitu musik pengganti
+berlisensi tersedia.
+
+Berkas lama (untuk referensi bila musik pengganti dicari nanti) adalah
+koleksi pribadi pengembang yang dipindahkan dari repo lama (public/audio)
+atas permintaan pengembang, untuk pemakaian pribadi selama pengembangan/
+playtest internal — TIDAK ADA lisensi distribusi, karenanya dihapus:
 
   arni_home / arni_another        — OST Chrono Cross (Yasunori Mitsuda)
   guldove_home / guldove_another  — OST Chrono Cross (Yasunori Mitsuda)
