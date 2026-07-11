@@ -59,7 +59,11 @@ export function DexSkdi() {
     )
   }, [cari])
 
-  const terpilih = pilihanId !== null ? PACK.skdi144.find((e) => e.id === pilihanId) : undefined
+  // CODEX M14 #20: cari dari daftar TERFILTER, bukan PACK penuh — dulu memilih
+  // entri lalu mengetik pencarian yang menyaringnya keluar tetap menampilkan
+  // detail entri lama di panel kanan. Kini detail ikut hasil pencarian (muncul
+  // lagi bila pencarian dikosongkan — pilihan tak hilang, hanya tersembunyi).
+  const terpilih = pilihanId !== null ? daftarSkdi.find((e) => e.id === pilihanId) : undefined
   const dexTerpilih =
     terpilih?.kasusId !== undefined ? state.dex[terpilih.kasusId] : undefined
   const kasusTerpilih =
@@ -204,6 +208,31 @@ export function DexSkdi() {
                 <div className="dexskdi-detail__clue">
                   <span className="judul-seksi">Mutiara Klinis</span>
                   <p className="dexskdi-detail__clue-teks tulis-tangan">{kasusTerpilih.clue}</p>
+                </div>
+              )}
+
+              {/* CODEX M14 #23 (keputusan Dr. Wirayuda): lapisan debrief M11.5
+                  (mutiaraEbm / catatanRealita / panduanResmi) dipersist ke Buku
+                  Saku — dulu hanya bisa dibaca SEKALI di modal PanelHasil, kini
+                  bisa dibuka ulang kapan saja per kasus. Murni display, dibaca
+                  langsung dari PACK (sama kelas dgn clue) — TAK menyentuh skor/
+                  sidik jari. Muncul hanya bila kasus menyediakannya. */}
+              {kasusTerpilih?.mutiaraEbm && (
+                <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--ebm">
+                  <span className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</span>
+                  <p className="teks-kecil">{kasusTerpilih.mutiaraEbm}</p>
+                </div>
+              )}
+              {kasusTerpilih?.catatanRealita && (
+                <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--realita">
+                  <span className="judul-seksi">🏥 Realita FKTP</span>
+                  <p className="teks-kecil">{kasusTerpilih.catatanRealita}</p>
+                </div>
+              )}
+              {kasusTerpilih?.panduanResmi && (
+                <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--panduan">
+                  <span className="judul-seksi">📜 Panduan Resmi Kemenkes</span>
+                  <p className="teks-kecil">{kasusTerpilih.panduanResmi}</p>
                 </div>
               )}
 

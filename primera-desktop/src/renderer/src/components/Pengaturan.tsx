@@ -106,10 +106,18 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
                 Kembalikan Default
               </button>
               <div className="baris">
-                {/* CODEX audit UI/UX 2026-07-10 (#24a): reset localStorage saja —
-                    Onboarding baru muncul lagi sesi berikutnya (App membaca
-                    sudahOnboarding() sekali sbg initial state saat mount). */}
-                <button className="tombol tombol--senyap" onClick={() => { resetOnboarding(); setBuka(false) }}>
+                {/* CODEX M14 #13: reset localStorage (agar sesi berikutnya juga
+                    lihat) DAN pancarkan event global agar App menampilkan
+                    Onboarding SEKETIKA, melewati gerbang hari===1/pagi — tombol
+                    ini dulu tak berefek dalam sesi berjalan/pasca Hari 1. */}
+                <button
+                  className="tombol tombol--senyap"
+                  onClick={() => {
+                    resetOnboarding()
+                    window.dispatchEvent(new CustomEvent('primer-onboarding-replay'))
+                    setBuka(false)
+                  }}
+                >
                   Tampilkan panduan lagi
                 </button>
                 <button className="tombol" onClick={() => setTentang(true)}>Tentang &amp; Kredit</button>

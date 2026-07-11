@@ -102,7 +102,9 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.45;
+    /* CODEX M14 #18: lantai 0.45 menekan teks chip karma (chip--merah) ke ~2:1
+       di titik terendah denyut. Naikkan ke 0.65 agar tetap ≥3:1 sepanjang animasi. */
+    opacity: 0.65;
   }
 }
 

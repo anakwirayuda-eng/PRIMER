@@ -19,6 +19,10 @@ function pasang(): void {
     telemetri: { append: async () => true, read: async () => [] },
     appVersion: async () => 'test',
   }
+  // CODEX M14 #14a: tandai onboarding SELESAI — tanpa ini, state Hari 1 pagi
+  // memunculkan modal Onboarding yang (dgn benar) menahan fokus-<main> otomatis,
+  // mengganggu test fokus/getar yang bukan tentang onboarding.
+  window.localStorage.setItem('primer.onboarding.selesai', '1')
   useGame.setState({ state: buildInitialState('Uji App', 1, PACK), arsip: null, lastEvents: [], eventTick: 0 })
 }
 

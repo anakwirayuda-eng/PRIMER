@@ -685,8 +685,10 @@
 
 .klinik-sbar__isian:focus {
   outline: none;
-  border-color: var(--kunyit-600);
-  box-shadow: 0 0 0 1px var(--kunyit-600);
+  /* CODEX M14 #18: --kunyit-600 vs --bg-card = 2.83:1 (gagal AA non-text 3:1).
+     --kunyit-800 lolos di kedua mode. */
+  border-color: var(--kunyit-800);
+  box-shadow: 0 0 0 1px var(--kunyit-800);
 }
 
 /* ============================================================================

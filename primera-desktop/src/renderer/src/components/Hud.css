@@ -9,13 +9,20 @@
   border-right: none;
   border-top: none;
   z-index: var(--z-hud);
+  /* CODEX M14 #17: root menyembunyikan overflow global; pada reflow 200%
+     (lebar efektif ~600px) sisi kiri/kanan yg dulu min-width:300px memeras
+     nav tengah sampai terpotong senyap. Beri scroll-x darurat di sini agar
+     nav tak pernah hilang (WCAG Reflow). */
+  overflow-x: auto;
 }
 
 .hud__kiri {
   display: flex;
   align-items: center;
   gap: var(--sp-4);
-  min-width: 300px;
+  /* CODEX M14 #17: min-width:0 (bukan 300px) agar sisi menyerah ruang ke nav
+     saat sempit; di lebar normal tetap lapang (flex tak menyusut bila muat). */
+  min-width: 0;
 }
 
 .hud__hari {
@@ -42,6 +49,8 @@
 .hud__nav {
   display: flex;
   gap: var(--sp-1);
+  /* CODEX M14 #17: nav tengah = navigasi inti, tak boleh diperas lebih dulu. */
+  flex-shrink: 0;
 }
 
 .hud__tab {
@@ -115,7 +124,8 @@
   display: flex;
   align-items: center;
   gap: var(--sp-4);
-  min-width: 300px;
+  /* CODEX M14 #17: lihat .hud__kiri — menyerah ruang ke nav saat sempit. */
+  min-width: 0;
   justify-content: flex-end;
 }
 

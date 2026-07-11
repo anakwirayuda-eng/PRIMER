@@ -98,6 +98,13 @@ export function Kunjungan() {
   useEffect(() => {
     if (responsAktif !== null) lanjutRef.current?.focus()
   }, [responsAktif])
+  // CODEX M14 #14c: pergantian BABAK (observasi→wawancara→diagnosis→resep) meng-
+  // unmount set tombol babak sebelumnya → fokus jatuh ke <body>. Pindahkan ke
+  // root (pola DeckAksi). Tak bentrok dgn efek responsAktif di atas (pemicu beda).
+  const rootRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (responsAktif === null) rootRef.current?.focus({ preventScroll: true })
+  }, [kj?.fase]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Tangkap ucapan warga dari event engine. Respons bohong TIDAK dibedakan —
   // sengaja: field `bohong` tidak pernah dibaca di layar ini.
@@ -173,7 +180,7 @@ export function Kunjungan() {
       : kj.fase
 
   return (
-    <div className="kunjungan-root">
+    <div className="kunjungan-root" ref={rootRef} tabIndex={-1}>
       {/* ---------------- Header: keluarga + stepper babak ---------------- */}
       <header className="kunjungan-header kertas">
         <div className="kunjungan-header__info">
@@ -380,13 +387,14 @@ export function Kunjungan() {
         {kj.fase === 'resep_sosial' && (
           <div className="kunjungan-resep">
             <div className="kunjungan-resep__baris" role="radiogroup" aria-label="Pilihan resep sosial">
-              {intervensiAcak.map((k) => {
-                const { role, 'aria-checked': ariaChecked } = intervensiRadio.radioProps(k.id)
-                return (
+              {intervensiAcak.map((k) => (
+                // CODEX M14 #15: spread props radiogroup PENUH (tabIndex/data-radio/
+                // onKeyDown), bukan cuma role+aria-checked — kartu resep sosial tak
+                // pernah terkunci, jadi roving tabindex + navigasi panah harus aktif
+                // (pola W3C radiogroup). Dulu semua tombol jadi tab-stop & panah mati.
                 <button
                   key={k.id}
-                  role={role}
-                  aria-checked={ariaChecked}
+                  {...intervensiRadio.radioProps(k.id)}
                   className={`kunjungan-intervensi kartu kartu--klik ${
                     intervensiPilihan === k.id ? 'kunjungan-intervensi--terpilih' : ''
                   }`}
@@ -395,8 +403,7 @@ export function Kunjungan() {
                   <b>{k.nama}</b>
                   <p className="teks-kecil teks-lembut">{k.deskripsi}</p>
                 </button>
-                )
-              })}
+              ))}
             </div>
             <div className="baris baris--antara">
               <span className="teks-kecil teks-lembut">

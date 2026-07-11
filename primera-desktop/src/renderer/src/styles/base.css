@@ -164,6 +164,12 @@ button {
 .tombol:hover { border-color: var(--border-tinta); transform: translateY(-1px); }
 .tombol:active { transform: translateY(0); }
 .tombol:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+/* CODEX M14 #19: tombol yang di-gate lewat aria-disabled (bukan disabled native
+   — mis. KartuKeluarga, agar tetap focusable/terbaca screen reader) dulu TAMPAK
+   100% aktif (masih hover/pointer) walau klik diabaikan. Samakan tampilannya
+   dgn :disabled dan matikan efek hover. */
+.tombol[aria-disabled='true'] { opacity: 0.45; cursor: not-allowed; transform: none; }
+.tombol[aria-disabled='true']:hover { border-color: var(--border-halus); transform: none; }
 
 .tombol--utama {
   background: var(--daun-700);

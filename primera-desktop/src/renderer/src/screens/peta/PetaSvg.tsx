@@ -29,7 +29,12 @@ const POHON: { x: number; y: number; r: number }[] = [
 
 export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
   return (
-    <svg className="peta-svg" viewBox="0 0 760 560" role="img" aria-label="Peta Desa Sukamaju">
+    // CODEX M14 #16: role="group" (BUKAN "img"). role="img" bersifat ATOMIK —
+    // aturan WAI-ARIA "presentational children" memaksa SEMUA descendant jadi
+    // presentational, sehingga 8 tombol RW (role="button") hilang dari
+    // accessibility tree meski keyboard DOM jalan. "group" mempertahankan label
+    // peta TAPI membiarkan anak interaktif tetap ter-ekspos.
+    <svg className="peta-svg" viewBox="0 0 760 560" role="group" aria-label="Peta Desa Sukamaju">
       <defs>
         <pattern id="peta-sawah" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(6)">
           <rect width="14" height="14" fill="var(--daun-100)" />
@@ -143,8 +148,8 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
         )
       })}
 
-      {/* Puskesmas — rumah kecil bersalib hijau di dekat jembatan */}
-      <g className="peta-puskesmas">
+      {/* Puskesmas — rumah kecil bersalib hijau di dekat jembatan (dekoratif). */}
+      <g className="peta-puskesmas" aria-hidden="true">
         <title>Puskesmas Sukamaju — titik berangkatmu setiap pagi.</title>
         <rect x="374" y="296" width="40" height="26" rx="2" fill="var(--kertas-050)" stroke="var(--tinta)" strokeWidth="1.5" />
         <polygon points="370,297 394,282 418,297" fill="var(--daun-700)" />

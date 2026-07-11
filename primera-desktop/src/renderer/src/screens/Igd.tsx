@@ -4,7 +4,7 @@
  * Semua aturan di engine; layar hanya menyetir & memberi juice.
  */
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
 import { acakUrutan } from '../utils/acakUrutan'
@@ -14,6 +14,12 @@ export function Igd() {
   const state = useGame((s) => s.state)!
   const dispatch = useGame((s) => s.dispatch)
   const igd = state.igd
+  // CODEX M14 #14c: tiap pergantian fase (langkah→kode_biru→disposisi) set tombol
+  // berganti total — fokus jatuh ke <body>. Pindahkan ke panel ini (pola DeckAksi).
+  const panelRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    panelRef.current?.focus({ preventScroll: true })
+  }, [igd?.fase])
   const kasusMaybe = igd ? PACK.kasusIgd[igd.kasusId] : undefined
   const langkahMaybe = igd && kasusMaybe ? kasusMaybe.langkah[igd.langkahIndex] : undefined
   // DeepThink ronde-2 bonus (keputusan user): urutan pilihan diacak per-
@@ -46,7 +52,7 @@ export function Igd() {
 
   return (
     <div className="igd">
-      <div className="igd__panel kertas">
+      <div className="igd__panel kertas" ref={panelRef} tabIndex={-1}>
         {/* Header pasien + stabilitas */}
         <div className="igd__kepala">
           <div>
@@ -156,7 +162,13 @@ export function Igd() {
             blok fase==='langkah' — begitu jawaban TERAKHIR memicu transisi ke
             kode_biru/disposisi, feedback benar/keliru pilihan itu lenyap
             seketika (fase berubah pada render yang sama). Dipindah ke luar
-            ketiga blok fase supaya tetap terlihat sesaat setelah transisi. */}
+            ketiga blok fase supaya tetap terlihat sesaat setelah transisi.
+            CODEX M14 #20 (DEFER): pasca-ROSC (kode_biru→disposisi via RJP)
+            banner ini masih milik langkah SEBELUM Kode Biru — menyesatkan. Fix
+            bersihnya (entri jawaban RJP sintetis) menyentuh nilaiIgd (skor
+            `jawaban.filter(benar)`) → butuh REVISI_ENGINE, tak sepadan utk
+            banner transien; blanket-hide di disposisi merusak jalur NORMAL
+            (langkah→disposisi tanpa kode biru) yang §7c memang mau tampilkan. */}
         <ResponsTerakhir kasusId={igd.kasusId} jawaban={igd.jawaban} />
       </div>
     </div>

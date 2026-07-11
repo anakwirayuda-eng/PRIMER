@@ -530,13 +530,18 @@ export function MejaKerja() {
                 <div className="baris mk__program-opsi" role="radiogroup" aria-label="Program Wilayah bulanan">
                   {OPSI_PROGRAM.map((f) => {
                     const periodeIni = Math.ceil(state.hari / 30)
-                    const terkunci = state.program.periodeDitetapkan === periodeIni && state.program.fokus !== f
-                    const { role, 'aria-checked': ariaChecked } = programRadio.radioProps(f)
+                    // CODEX M14 #15: grup terkunci = fokus bulan ini sudah ditetapkan
+                    // (opsi lain disabled). Saat BELUM terkunci, beri props radiogroup
+                    // PENUH (roving tabindex + navigasi panah, pola W3C). Saat terkunci,
+                    // roving ke opsi disabled degenerate → cukup role+aria-checked.
+                    const grupTerkunci = state.program.periodeDitetapkan === periodeIni
+                    const terkunci = grupTerkunci && state.program.fokus !== f
+                    const rp = programRadio.radioProps(f)
+                    const propsRadio = grupTerkunci ? { role: rp.role, 'aria-checked': rp['aria-checked'] } : rp
                     return (
                       <button
                         key={f}
-                        role={role}
-                        aria-checked={ariaChecked}
+                        {...propsRadio}
                         className={`tombol ${state.program.fokus === f ? 'tombol--utama' : ''}`}
                         disabled={terkunci}
                         title={terkunci ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.' : undefined}

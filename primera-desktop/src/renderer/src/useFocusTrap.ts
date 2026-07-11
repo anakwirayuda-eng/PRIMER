@@ -20,7 +20,11 @@ import { useEffect, useRef } from 'react'
 const SELECTOR_FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-export function useFocusTrap<T extends HTMLElement>(aktif: boolean, onEscape?: () => void) {
+export function useFocusTrap<T extends HTMLElement>(
+  aktif: boolean,
+  onEscape?: () => void,
+  opsi?: { fokusKontainer?: boolean },
+) {
   const ref = useRef<T>(null)
   const fokusSebelumnya = useRef<HTMLElement | null>(null)
 
@@ -37,8 +41,13 @@ export function useFocusTrap<T extends HTMLElement>(aktif: boolean, onEscape?: (
     // — kalau itu tombol di bagian BAWAH kartu (mis. Onboarding: "Lewati"
     // terletak setelah ikon/judul/isi), modal langsung ter-scroll ke bawah
     // saat dibuka, menyembunyikan isi dari pandangan.
+    // CODEX M14 #14b: opsi `fokusKontainer` — modal yang elemen focusable
+    // PERTAMA-nya destruktif (mis. PanelHasil "Tutup") memfokuskan KONTAINER
+    // (role=dialog + aria-label, kontainer wajib tabIndex=-1) alih-alih tombol,
+    // agar Enter saat modal baru terbuka tak sengaja menutup debrief.
     const daftarAwal = fokusable()
-    ;(daftarAwal[0] ?? kontainer)?.focus({ preventScroll: true })
+    if (opsi?.fokusKontainer) kontainer?.focus({ preventScroll: true })
+    else (daftarAwal[0] ?? kontainer)?.focus({ preventScroll: true })
 
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && onEscape) {

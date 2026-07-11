@@ -91,11 +91,17 @@ export function Toaster() {
     // membacakan ULANG seluruh isi wrapper tiap mutasi, bukan cuma toast baru.
     <div className="toaster">
       {toasts.map((t) => (
+        // CODEX M14 #22: aria-live per NADA — dulu SEMUA toast 'assertive'
+        // (termasuk info spt "Surat baru"/"Buku Saku diperbarui"), saling menyela
+        // pengumuman screen reader; batch Kode Hitam bahkan memancarkan 2 region
+        // assertive serentak. Kini hanya 'bahaya' yang assertive (role=alert);
+        // info/sukses jadi polite (role=status) — mis. SURAT_MASUK yang menyertai
+        // KODE_HITAM kini polite, tak lagi bentrok assertive dgn kode hitam itu.
         <div
           key={t.id}
           className={`toast toast--${t.nada} kertas${t.keluar ? ' toast--keluar' : ''}`}
-          role="status"
-          aria-live="assertive"
+          role={t.nada === 'bahaya' ? 'alert' : 'status'}
+          aria-live={t.nada === 'bahaya' ? 'assertive' : 'polite'}
           aria-atomic="true"
         >
           {t.teks}

@@ -64,13 +64,17 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
   // CODEX M10.a ronde-4 (dossier §44): tanpa jebak fokus, tombol HUD di
   // belakang (navigasi layar dkk) tetap Tab-able & ter-aktivasi walau modal
   // debrief ini menutupinya total secara visual.
-  const ref = useFocusTrap<HTMLDivElement>(true, () => onSelesai(false))
+  // CODEX M14 #14b: fokus awal ke KONTAINER dialog (bukan tombol "Tutup" yang
+  // kebetulan focusable pertama & destruktif) — cegah Enter saat modal baru
+  // terbuka tak sengaja menutup debrief tanpa dibaca.
+  const ref = useFocusTrap<HTMLDivElement>(true, () => onSelesai(false), { fokusKontainer: true })
 
   return (
     <div className="overlay" onClick={() => onSelesai(false)}>
       <div
         ref={ref}
         className="modal klinik-hasil"
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"

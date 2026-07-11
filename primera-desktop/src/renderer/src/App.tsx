@@ -60,6 +60,19 @@ export default function App() {
   const pengaturan = usePengaturan()
   // M7.30 — onboarding sekali per-instalasi, hanya Hari 1 blok pagi.
   const [onboardingSelesai, setOnboardingSelesai] = useState(sudahOnboarding)
+  // CODEX M14 #13: "Tampilkan panduan lagi" dulu HANYA menghapus localStorage —
+  // tak mengubah state React ini, jadi tak berefek dalam sesi berjalan, dan
+  // gerbang hari===1/pagi memblokirnya bahkan setelah restart bila pemain sudah
+  // lewat Hari 1. Paksa tampil via event global, melewati gerbang hari/blok.
+  const [paksaOnboarding, setPaksaOnboarding] = useState(false)
+  useEffect(() => {
+    const tampilkan = () => {
+      setOnboardingSelesai(false)
+      setPaksaOnboarding(true)
+    }
+    window.addEventListener('primer-onboarding-replay', tampilkan)
+    return () => window.removeEventListener('primer-onboarding-replay', tampilkan)
+  }, [])
   useAudio()
   useBgm()
 
@@ -104,10 +117,16 @@ export default function App() {
   // menjamin klinik.aktif undefined tepat di titik itu) — tapi implisit, tak
   // dijamin test/komentar mana pun selain ini. Waspadai bila M11/lanjutan
   // mengubah invarian itu.
+  // CODEX M14 #14a: jangan curi fokus ke <main> saat modal Onboarding aktif —
+  // efek INDUK ini dulu menimpa fokus awal Onboarding (efek ANAK jalan lebih
+  // dulu dlm commit yang sama), membuat fokus jatuh ke latar di belakang dialog.
+  const onboardingTampil =
+    paksaOnboarding || (!onboardingSelesai && state?.hari === 1 && state?.blok === 'pagi')
   const mainRef = useRef<HTMLElement>(null)
   useEffect(() => {
+    if (onboardingTampil) return
     mainRef.current?.focus({ preventScroll: true })
-  }, [state?.layar])
+  }, [state?.layar, onboardingTampil])
 
   // Mode gelap: auto (sore=malam) bisa di-override paksa siang/malam (CODEX P3).
   const mode =
@@ -174,8 +193,13 @@ export default function App() {
       <Toaster />
       {/* M10.a: mute+gigi kini didok di dalam <Hud /> (bukan melayang) —
           versi melayang hanya utk TitleScreen di atas, yang tanpa HUD. */}
-      {!onboardingSelesai && state.hari === 1 && state.blok === 'pagi' && (
-        <Onboarding onSelesai={() => setOnboardingSelesai(true)} />
+      {onboardingTampil && (
+        <Onboarding
+          onSelesai={() => {
+            setOnboardingSelesai(true)
+            setPaksaOnboarding(false)
+          }}
+        />
       )}
     </div>
   )

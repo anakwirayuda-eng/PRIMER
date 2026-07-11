@@ -95,7 +95,13 @@ export class ErrorBoundary extends Component<Props, State> {
             {!percobaanHabis && (
               <button
                 onClick={this.cobaLagi}
-                style={{ ...tombolGaya, background: 'var(--kunyit-700)', borderColor: 'var(--kunyit-800)', color: 'var(--kertas-050)' }}
+                // CODEX M14 #18: dulu bg=--kunyit-700 + teks=--kertas-050. Token
+                // kunyit MEMBALIK terang↔gelap antar-mode sedangkan kertas-050
+                // tetap terang → di mode malam (variant 'layar') jadi terang-di-
+                // terang (2.03:1, gagal AA). Pakai bg/teks adaptif tombolGaya
+                // (lolos AA kedua mode, sama tombol lain) + tekankan via border
+                // kunyit + tebal — emphasis tanpa mengorbankan kontras teks.
+                style={{ ...tombolGaya, borderColor: 'var(--kunyit-700)', borderWidth: 2, fontWeight: 700 }}
               >
                 Coba tampilkan lagi
               </button>

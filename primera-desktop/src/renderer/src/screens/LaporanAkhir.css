@@ -76,7 +76,9 @@
   padding: 4px 10px;
   border: 1px solid var(--border-halus);
   border-radius: var(--radius-pill);
-  opacity: 0.35;
+  /* CODEX M14 #18: opacity 0.35 menekan teks badge belum-diraih ke ~2:1.
+     Naikkan ke 0.6 (lantai) agar tetap terbaca (≥3:1) tapi jelas "belum diraih". */
+  opacity: 0.6;
   filter: grayscale(1);
 }
 

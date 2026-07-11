@@ -104,3 +104,30 @@ describe('<DexSkdi /> — aria-current kartu & pencarian entri (koreksi review B
     expect(screen.queryByText(String(2).padStart(3, '0'))).not.toBeInTheDocument()
   })
 })
+
+// CODEX M14 #23 (keputusan Dr. Wirayuda): lapisan debrief M11.5 (mutiaraEbm/
+// catatanRealita/panduanResmi) dipersist ke Buku Saku — kini bisa dibaca ulang
+// per kasus, bukan sekali-baca di modal PanelHasil.
+describe('<DexSkdi /> — lapisan debrief M11.5 dipersist per kasus (#23)', () => {
+  it('kasus tertangani dgn lapisan M11.5 menampilkannya di panel Catatan Penyakit', async () => {
+    // Cari entri skdi144 yg kasusId-nya menyediakan salah satu lapisan M11.5.
+    const entri = PACK.skdi144.find((e) => {
+      const k = e.kasusId ? PACK.kasus[e.kasusId] : undefined
+      return !!k && !!(k.mutiaraEbm || k.catatanRealita || k.panduanResmi)
+    })
+    expect(entri, 'butuh ≥1 kasus tertaut Dex dgn lapisan M11.5').toBeDefined()
+    const kasus = PACK.kasus[entri!.kasusId!]!
+
+    pasangState({ [entri!.kasusId!]: { ditangani: 1, benar: 1, bintang: 1, terakhirHari: 1 } })
+    render(<DexSkdi />)
+
+    const { default: userEvent } = await import('@testing-library/user-event')
+    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    await user.click(screen.getByRole('button', { name: (n: string) => n.includes(entri!.nama) }))
+
+    // Lapisan yang tersedia harus muncul verbatim (dibaca langsung dari PACK).
+    if (kasus.mutiaraEbm) expect(screen.getByText(kasus.mutiaraEbm)).toBeInTheDocument()
+    if (kasus.catatanRealita) expect(screen.getByText(kasus.catatanRealita)).toBeInTheDocument()
+    if (kasus.panduanResmi) expect(screen.getByText(kasus.panduanResmi)).toBeInTheDocument()
+  }, 15000)
+})

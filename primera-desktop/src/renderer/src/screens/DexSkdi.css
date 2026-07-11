@@ -267,6 +267,31 @@
   padding-top: var(--sp-2);
 }
 
+/* CODEX M14 #23: lapisan debrief M11.5 dipersist di Buku Saku — aksen kiri
+   selaras PanelHasil (Klinik.css): kunyit=waspada-EBM, daun=realita,
+   tinta-biru=panduan resmi. Ketiganya lolos AA di --bg-sunken kedua mode. */
+.dexskdi-detail__lapisan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-sunken);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--kunyit-700);
+}
+.dexskdi-detail__lapisan--realita {
+  border-left-color: var(--daun-700);
+}
+.dexskdi-detail__lapisan--realita .judul-seksi {
+  color: var(--daun-700);
+}
+.dexskdi-detail__lapisan--panduan {
+  border-left-color: var(--tinta-biru);
+}
+.dexskdi-detail__lapisan--panduan .judul-seksi {
+  color: var(--tinta-biru);
+}
+
 .dexskdi-detail--kosong {
   gap: var(--sp-3);
 }

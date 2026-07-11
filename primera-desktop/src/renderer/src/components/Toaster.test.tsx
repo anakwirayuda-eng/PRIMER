@@ -29,8 +29,25 @@ describe('<Toaster /> — aria-live per-toast (CODEX audit UI/UX 2026-07-10 #25)
     expect(wrapper.hasAttribute('aria-atomic')).toBe(false)
 
     const toast = document.querySelector('.toast')!
+    // CODEX M14 #22: toast INFO (DEX_BERTAMBAH) kini polite (role=status),
+    // bukan assertive — tak lagi menyela pengumuman screen reader.
     expect(toast.getAttribute('role')).toBe('status')
-    expect(toast.getAttribute('aria-live')).toBe('assertive')
+    expect(toast.getAttribute('aria-live')).toBe('polite')
     expect(toast.getAttribute('aria-atomic')).toBe('true')
+  })
+
+  it('CODEX M14 #22: toast BAHAYA tetap assertive (role=alert)', () => {
+    render(<Toaster />)
+    act(() => {
+      // eventTick BEDA dari test sebelumnya — store singleton persist lintas
+      // test, effect Toaster hanya jalan bila eventTick berubah.
+      useGame.setState({
+        lastEvents: [{ type: 'ERROR_AKSI', pesan: 'Gawat!' }],
+        eventTick: 2,
+      })
+    })
+    const toast = document.querySelector('.toast--bahaya')!
+    expect(toast.getAttribute('role')).toBe('alert')
+    expect(toast.getAttribute('aria-live')).toBe('assertive')
   })
 })

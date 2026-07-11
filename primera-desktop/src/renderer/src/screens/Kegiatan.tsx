@@ -44,6 +44,13 @@ export function Kegiatan() {
     setPilihanTerpilih(null)
   }, [kg?.index])
 
+  // CODEX M14 #14c: pindah kartu meng-unmount tombol sebelumnya → fokus jatuh ke
+  // <body>. Pindahkan ke panel (pola DeckAksi). Dipasang ref di bawah.
+  const panelRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    panelRef.current?.focus({ preventScroll: true })
+  }, [kg?.index])
+
   // DeepThink ronde-2 bonus (keputusan user): urutan pilihan diacak per-
   // mahasiswa (rngFlavor = state.seed) — walkthrough "klik posisi ke-2" tak
   // lagi seragam lintas-siswa. Hook TANPA SYARAT, sebelum guard di bawah.
@@ -52,7 +59,13 @@ export function Kegiatan() {
     [kartu, state.seed],
   )
 
-  if (hasil) return <KartuHasil hasil={hasil} onTutup={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })} />
+  // CODEX M14 #11: tampilkan KartuHasil dari hasil live (event) ATAU hasil
+  // terpersist (state.hasilKegiatanTerakhir, bertahan reload) — HANYA saat tak
+  // ada sesi aktif (`!kg`), agar sesi BARU tak tertutup hasil sesi lama yg masih
+  // tersimpan. state-based = sinkron saat render → tak flash fallback "tak ada sesi".
+  const hasilTampil = hasil ?? state.hasilKegiatanTerakhir
+  if (hasilTampil && !kg)
+    return <KartuHasil hasil={hasilTampil} onTutup={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })} />
   // CODEX ronde-11 #4: `layar==='kegiatan'` tanpa `state.kegiatan` (mis. save
   // korup) dulu me-return null diam-diam — blank screen TANPA throw, luput dari
   // ErrorBoundary. Beri jalan keluar eksplisit, bukan kosong.
@@ -74,7 +87,7 @@ export function Kegiatan() {
 
   return (
     <div className="kegiatan">
-      <div className="kegiatan__panel kertas">
+      <div className="kegiatan__panel kertas" ref={panelRef} tabIndex={-1}>
         <div className="kegiatan__kepala">
           <div>
             <div className="kegiatan__label mono">{meta.label}</div>
