@@ -1121,7 +1121,7 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
       justifikasiRujukValid: ['komplikasi'],
     }
 
-    it('deklarasi justifikasi VALID (cocok kasus) → rujukanNonSpesialistik dibatalkan', () => {
+    it('deklarasi justifikasi VALID (cocok kasus) → rujukanNonSpesialistik dibatalkan DAN disposisiTepat true', () => {
       const enc: EncounterState = {
         ...buatEncounter(buatPasien()),
         diagnosis: { icd10: 'J02.9', jenis: 'tegak' },
@@ -1130,9 +1130,13 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
       }
       const nilai = nilaiEncounter(enc, KASUS_TACC, PACK)
       expect(nilai.rujukanNonSpesialistik).toBe(false)
+      // CODEX audit (2026-07-12, temuan #4): dulu §3a HANYA membebaskan tally
+      // RRNS — disposisiTepat (dibaca Dex/reducer) tak tahu soal justifikasi,
+      // jadi rujukan yg justru valid tetap tercatat "disposisi keliru".
+      expect(nilai.disposisiTepat).toBe(true)
     })
 
-    it('deklarasi TAK COCOK (komorbid, bukan komplikasi) → TETAP dihukum rujukanNonSpesialistik', () => {
+    it('deklarasi TAK COCOK (komorbid, bukan komplikasi) → TETAP dihukum rujukanNonSpesialistik DAN disposisiTepat false', () => {
       const enc: EncounterState = {
         ...buatEncounter(buatPasien()),
         diagnosis: { icd10: 'J02.9', jenis: 'tegak' },
@@ -1141,6 +1145,7 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
       }
       const nilai = nilaiEncounter(enc, KASUS_TACC, PACK)
       expect(nilai.rujukanNonSpesialistik).toBe(true)
+      expect(nilai.disposisiTepat).toBe(false)
     })
 
     it('kasus TANPA justifikasiRujukValid sama sekali → deklarasi apapun tak membantu (anti-bypass trivial)', () => {
@@ -1582,8 +1587,8 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
   })
 
   // M10.5 Q2 (2026-07-12): TB/malaria tak boleh didiagnosis/diterapi presumtif
-  // tanpa lab konfirmasi dipesan (BTA/TCM, RDT) — cap ceiling meniru pola
-  // `vitalDiukur→skorPemeriksaan` yang sudah ada.
+  // tanpa lab konfirmasi TERSEDIA hasilnya (BTA/TCM, RDT) — cap ceiling meniru
+  // pola `vitalDiukur→skorPemeriksaan` yang sudah ada.
   describe('konfirmasiWajib — cap ceiling saat lab konfirmasi tak dipesan', () => {
     const KASUS_KONFIRMASI: KasusKlinis = {
       ...KASUS_FARINGITIS,
@@ -1601,15 +1606,32 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
       expect(nilai.skorPemeriksaan).toBe(50)
     })
 
-    it('lab konfirmasi dipesan → skor tetap 100, tak di-cap', () => {
-      const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
-      const { enc: main } = jalankan(enc, [
-        { type: 'UKUR_VITAL' },
-        { type: 'PERIKSA', region: 'tht_mulut' },
-        { type: 'PERIKSA', region: 'kepala_leher' },
-        { type: 'PESAN_LAB', labId: 'bta_sputum' },
-      ])
-      const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_KONFIRMASI, PACK)
+    // CODEX audit (2026-07-12, temuan #3): cek lama pakai labDipesan (baru
+    // DIPESAN), sedangkan bta_sputum sendiri `hasilBesok:true` — memesan lalu
+    // LANGSUNG menegakkan diagnosis presumtif di kunjungan yang sama dulu
+    // tetap mengangkat cap. Kini harus TETAP di-cap 50 sampai hasil benar2
+    // tersedia (labTersedia), bukan sekadar "sudah dipesan".
+    it('lab konfirmasi DIPESAN tapi hasil BELUM tersedia (hasilBesok) → skor TETAP di-cap 50', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien()),
+        vitalDiukur: true,
+        diperiksa: ['tht_mulut', 'kepala_leher'],
+        labDipesan: ['bta_sputum'],
+        labTersedia: [],
+      }
+      const nilai = nilaiEncounter({ ...enc, disposisi: 'pulang' }, KASUS_KONFIRMASI, PACK)
+      expect(nilai.skorPemeriksaan).toBe(50)
+    })
+
+    it('lab konfirmasi hasilnya SUDAH tersedia → skor tetap 100, tak di-cap', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien()),
+        vitalDiukur: true,
+        diperiksa: ['tht_mulut', 'kepala_leher'],
+        labDipesan: ['bta_sputum'],
+        labTersedia: ['bta_sputum'],
+      }
+      const nilai = nilaiEncounter({ ...enc, disposisi: 'pulang' }, KASUS_KONFIRMASI, PACK)
       expect(nilai.skorPemeriksaan).toBe(100)
     })
 

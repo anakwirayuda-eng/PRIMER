@@ -36,6 +36,7 @@ function bereskanIgd(state: GameState): GameState {
       const l = kasus.langkah[s.igd.langkahIndex]!
       s = run(s, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: (l.pilihan.find((p) => p.benar) ?? l.pilihan[0]!).id })
     } else if (s.igd.fase === 'kode_biru') s = run(s, { type: 'RJP_IGD', berkualitas: true })
+    else if (s.igd.fase === 'pasca_rosc') s = run(s, { type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' })
     else if (s.igd.fase === 'disposisi') s = run(s, { type: 'DISPOSISI_IGD', jenis: kasus.disposisiBenar })
     else break
   }

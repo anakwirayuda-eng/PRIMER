@@ -111,6 +111,10 @@ export function Rapor() {
       nilai: `${t.rujukanTotal} (${t.rujukanNonSpesialistik})`,
     },
     { label: 'Kasus rujukan ditahan (cowboy)', nilai: `${t.cowboy}` },
+    // CODEX audit (2026-07-12, temuan #1/#13B): dulu nol jejak di rapor —
+    // konsisten dgn pola transparansi debrief pasca-skor-terkunci di sini.
+    { label: 'Obat berbahaya diresepkan', nilai: `${t.obatBerbahaya}` },
+    { label: 'Percobaan resep diblokir firewall alergi', nilai: `${t.firewallTerpicu}` },
     { label: 'Antibiotik tanpa indikasi', nilai: `${t.antibiotikTanpaIndikasi}` },
     { label: 'Lab tak relevan', nilai: `${t.labTakRelevan}` },
     {

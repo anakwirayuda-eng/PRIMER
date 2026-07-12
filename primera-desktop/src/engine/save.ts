@@ -178,6 +178,14 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas', 'rujukanTepat', 'rujukanDitolak', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'rmLengkap', 'teguranDinkes'] as const) {
     if (tally[kunci] === undefined) tally[kunci] = 0
   }
+  // CODEX audit (2026-07-12, temuan #1/#13B): field tally baru — save dari
+  // sebelum fix ini (SEMUA save yang ada) belum punya kedua kunci ini sama
+  // sekali, jadi wajib backfill di sini persis pola migrasi-lite di atas,
+  // SEBELUM pengecekan exhaustive KUNCI_TALLY di bawah (yang kalau tidak
+  // akan menolak SELURUH save lama krn `undefined` bukan `number`).
+  for (const kunci of ['obatBerbahaya', 'firewallTerpicu'] as const) {
+    if (tally[kunci] === undefined) tally[kunci] = 0
+  }
   // Migrasi-lite M4: gudang & buku kas untuk save pra-ekonomi. Stok kosong =
   // tidak dilacak (gerbang stok lolos); backfill penuh dilakukan bila pack ada.
   if (!objek(st['gudang'])) st['gudang'] = { stok: {}, pesanan: [] }
@@ -245,7 +253,7 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   const KUNCI_TALLY = [
     'totalPasien', 'diagnosisBenar', 'tegakBenar', 'tegakSalah', 'suspekBenar', 'suspekSalah',
     'rujukanTotal', 'rujukanNonSpesialistik', 'rujukanTepat', 'rujukanDitolak', 'cowboy',
-    'antibiotikTanpaIndikasi', 'labTakRelevan', 'miTepat', 'miTotal', 'kunjunganBerhasil',
+    'antibiotikTanpaIndikasi', 'obatBerbahaya', 'firewallTerpicu', 'labTakRelevan', 'miTepat', 'miTotal', 'kunjunganBerhasil',
     'kunjunganTotal', 'kunjunganDiusir', 'apathy', 'autoBermasalah', 'posyanduSesi',
     'prolanisSesi', 'klbTuntas', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'rmLengkap',
     'teguranDinkes', 'hariKelelahan', 'karmaTerjadi', 'karmaDicegah',
@@ -385,7 +393,10 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     // bounds hanya berlaku saat fase==='langkah' — Igd.tsx tak merender blok
     // fase manapun → badan kosong + Hud mengunci semua tab (hard-lock). Validasi
     // fase sbg enum eksplisit dulu.
-    const FASE_IGD_SAH = new Set(['langkah', 'kode_biru', 'disposisi'])
+    // CODEX audit (2026-07-12, temuan #2): 'pasca_rosc' ditambahkan — save di
+    // fase baru ini dulu akan dianggap KORUP (fase di luar enum) dan igd
+    // dibuang paksa begitu game di-load ulang.
+    const FASE_IGD_SAH = new Set(['langkah', 'kode_biru', 'pasca_rosc', 'disposisi'])
     const faseValid = typeof igd['fase'] === 'string' && FASE_IGD_SAH.has(igd['fase'])
     const langkahValid =
       igd['fase'] !== 'langkah' ||

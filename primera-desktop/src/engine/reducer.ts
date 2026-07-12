@@ -32,7 +32,7 @@ import {
   kartuProlanis,
   kartuKlb,
 } from './kegiatan'
-import { buatIgd, aksiIgd, rjpIgd, nilaiIgd, AMBANG_STABIL_RUJUK } from './igd'
+import { buatIgd, aksiIgd, rjpIgd, stabilisasiLanjutanIgd, nilaiIgd, AMBANG_STABIL_RUJUK } from './igd'
 import { hitungSkor } from './scoring'
 import { HARI_STASE } from './paketUjian'
 
@@ -331,6 +331,12 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       }
       if (nilai.cowboy) t.cowboy += 1
       if (nilai.antibiotikTanpaIndikasi) t.antibiotikTanpaIndikasi += 1
+      // CODEX audit (2026-07-12, temuan #1/#13B): dulu obatBerbahaya/
+      // firewallTerpicu tak punya field di PenilaianEncounter sama sekali —
+      // tally (dan lewat itu skor.total formal) tak bisa membacanya. Kini
+      // ditally persis pola cowboy/antibiotikTanpaIndikasi di atas.
+      if (nilai.obatBerbahaya) t.obatBerbahaya += 1
+      if (nilai.firewallTerpicu) t.firewallTerpicu += 1
       t.labTakRelevan += nilai.labTakRelevan
 
       // Ekonomi obat (M10 Batch-2, CODEX B.4): kas keluar utk obat terjadi di
@@ -521,7 +527,13 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             !kasus.spesialisRujukan || rs.spesialisasi.includes(kasus.spesialisRujukan)
           const bedTersedia = rngRs.chance(Math.min(0.95, 0.5 + rs.bedDasar * 0.06))
 
-          if (!kasus.harusDirujuk || encFinal.pasien.prb) {
+          // CODEX audit (2026-07-12, temuan #4): dulu `!kasus.harusDirujuk`
+          // saja — mengabaikan `nilai.rujukanNonSpesialistik` (yg sudah
+          // memperhitungkan justifikasi §3a valid). Rujukan yg justru
+          // TERJUSTIFIKASI (mis. komplikasi nyata) tetap ditolak SISRUTE,
+          // didemaster Dex, dan dikirimi surat teguran RRNS yg keliru.
+          // Reuse nilai yg sudah dihitung clinic.ts, bukan re-derive di sini.
+          if ((!kasus.harusDirujuk && nilai.rujukanNonSpesialistik) || encFinal.pasien.prb) {
             // Ditolak: kompetensi FKTP. Pasien dipulangkan RS, kembali besok.
             t.rujukanDitolak += 1
             jadwal = [
@@ -580,55 +592,27 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               isi: `Balasan SISRUTE: kami tidak memiliki layanan ${kasus.spesialisRujukan?.replace(/_/g, ' ')} untuk ${kasus.nama}. Pasien kembali besok — pilih RS tujuan yang menyediakan spesialisasi itu (periksa jejaring SISRUTE sebelum mengirim).`,
               dibaca: false,
             }
-          } else if (!bedTersedia) {
-            t.rujukanDitolak += 1
-            jadwal = [
-              ...jadwal,
-              {
-                id: `jadwal_tolakbed_${s.hari}_${encFinal.pasien.id}`,
-                hari: s.hari + 1,
-                jenis: 'pasien_kembali',
-                kasusId: kasus.id,
-                catatan: `${encFinal.pasien.nama} — bed ${rs.nama} penuh; rujuk ulang (coba RS lain)`,
-                nama: encFinal.pasien.nama,
-                usia: encFinal.pasien.usia,
-                jenisKelamin: encFinal.pasien.jenisKelamin,
-                rw: encFinal.pasien.rw,
-                bpjs: encFinal.pasien.bpjs,
-                persona: encFinal.pasien.persona,
-                ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
-              },
-            ]
-            suratSisrute = {
-              id: `surat_sisrute_${s.hari}_${s.log.length}`,
-              hari: s.hari,
-              jenis: 'kabar_warga',
-              dari: rs.nama,
-              judul: `Bed penuh — rujukan ${encFinal.pasien.nama} tertunda`,
-              isi: `Balasan SISRUTE: seluruh bed ${rs.nama} terisi hari ini. Pasien kembali besok — pertimbangkan RS lain di jejaring (kapasitas lebih besar biasanya lebih jauh; itulah trade-off rujukan).`,
-              dibaca: false,
-            }
           } else {
-            // DITERIMA oleh jejaring — tapi confidence-tag (bonus skor) hanya untuk
-            // rujukan yang juga BENAR secara diagnosis (CODEX P1): RS menerima
-            // pasien gawat apa pun, itu bukan bukti penalaran klinis pemain tepat.
+            // CODEX audit (2026-07-12, temuan #9): keputusan MERUJUK di titik
+            // ini SUDAH benar secara klinis (lolos gerbang harusDirujuk +
+            // spesialisCocok di atas) — bed RNG (`rngRs` di atas `s.seed`,
+            // sengaja personal/anti-hafalan sesuai M45_MODE_UJIAN.md §2) TAK
+            // BOLEH lagi menentukan rujukanTepat/rujukanDitolak: dua siswa dgn
+            // keputusan identik bisa dpt skor formal beda (65.0 vs 64.5,
+            // diverifikasi reproduksi) murni dari keberuntungan bed. Confidence-
+            // tag kini murni fungsi ketepatan klinis, independen dari
+            // bedTersedia — bed penuh cuma menunda narasi, tak menghukum tally.
             if (nilai.diagnosisBenar) t.rujukanTepat += 1
-            // Fix CODEX-25 #4: PRB (rujuk balik) HANYA utk kasus KRONIS-STABIL
-            // eligible (`bisaPrb`, 9 kelompok Perpres JKN) — dulu SEMUA rujukan
-            // diterima dijadwalkan kembali sbg PRB, jadi apendisitis/preeklampsia/
-            // pneumonia akut pun "kontrol PRB" 7-12 hari kemudian (keliru: pasien
-            // akut dikelola tuntas di RS, tak jadi pasien PRB). Kasus akut kini
-            // tak menjadwalkan kembali sama sekali.
-            if (kasus.bisaPrb === true) {
-              const rngPrb = new Rng(s.seed, 'prb', s.hari, encFinal.pasien.id)
+
+            if (!bedTersedia) {
               jadwal = [
                 ...jadwal,
                 {
-                  id: `jadwal_prb_${s.hari}_${encFinal.pasien.id}`,
-                  hari: s.hari + rngPrb.int(7, 12),
+                  id: `jadwal_tolakbed_${s.hari}_${encFinal.pasien.id}`,
+                  hari: s.hari + 1,
                   jenis: 'pasien_kembali',
                   kasusId: kasus.id,
-                  catatan: `${encFinal.pasien.nama} — kontrol PRB: pulang dari ${rs.nama} dengan surat rujuk balik, lanjutkan terapi di FKTP`,
+                  catatan: `${encFinal.pasien.nama} — bed ${rs.nama} penuh; rujuk ulang (coba RS lain)`,
                   nama: encFinal.pasien.nama,
                   usia: encFinal.pasien.usia,
                   jenisKelamin: encFinal.pasien.jenisKelamin,
@@ -636,20 +620,57 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                   bpjs: encFinal.pasien.bpjs,
                   persona: encFinal.pasien.persona,
                   ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
-                  prb: true,
                 },
               ]
-            }
-            suratSisrute = {
-              id: `surat_sisrute_${s.hari}_${s.log.length}`,
-              hari: s.hari,
-              jenis: 'pujian_kapus',
-              dari: rs.nama,
-              judul: `Rujukan DITERIMA — ${encFinal.pasien.nama}`,
-              isi: kasus.bisaPrb === true
-                ? `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Setelah stabil, ia akan dipulangkan dengan surat rujuk balik (PRB) — kontrol lanjutannya kembali menjadi tanggung jawab FKTP-mu. Rujukan berjenjang bekerja dua arah.`
-                : `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Kasus ini ditangani tuntas di layanan rujukan — terima kasih atas rujukan tepat waktumu.`,
-              dibaca: false,
+              suratSisrute = {
+                id: `surat_sisrute_${s.hari}_${s.log.length}`,
+                hari: s.hari,
+                jenis: 'kabar_warga',
+                dari: rs.nama,
+                judul: `Bed penuh — rujukan ${encFinal.pasien.nama} tertunda`,
+                isi: `Balasan SISRUTE: seluruh bed ${rs.nama} terisi hari ini. Keputusan merujukmu sudah tepat — ini murni soal kapasitas jejaring, bukan penilaian atas keputusanmu. Pasien kembali besok; pertimbangkan RS lain (kapasitas lebih besar biasanya lebih jauh; itulah trade-off rujukan).`,
+                dibaca: false,
+              }
+            } else {
+              // DITERIMA oleh jejaring.
+              // Fix CODEX-25 #4: PRB (rujuk balik) HANYA utk kasus KRONIS-STABIL
+              // eligible (`bisaPrb`, 9 kelompok Perpres JKN) — dulu SEMUA rujukan
+              // diterima dijadwalkan kembali sbg PRB, jadi apendisitis/preeklampsia/
+              // pneumonia akut pun "kontrol PRB" 7-12 hari kemudian (keliru: pasien
+              // akut dikelola tuntas di RS, tak jadi pasien PRB). Kasus akut kini
+              // tak menjadwalkan kembali sama sekali.
+              if (kasus.bisaPrb === true) {
+                const rngPrb = new Rng(s.seed, 'prb', s.hari, encFinal.pasien.id)
+                jadwal = [
+                  ...jadwal,
+                  {
+                    id: `jadwal_prb_${s.hari}_${encFinal.pasien.id}`,
+                    hari: s.hari + rngPrb.int(7, 12),
+                    jenis: 'pasien_kembali',
+                    kasusId: kasus.id,
+                    catatan: `${encFinal.pasien.nama} — kontrol PRB: pulang dari ${rs.nama} dengan surat rujuk balik, lanjutkan terapi di FKTP`,
+                    nama: encFinal.pasien.nama,
+                    usia: encFinal.pasien.usia,
+                    jenisKelamin: encFinal.pasien.jenisKelamin,
+                    rw: encFinal.pasien.rw,
+                    bpjs: encFinal.pasien.bpjs,
+                    persona: encFinal.pasien.persona,
+                    ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+                    prb: true,
+                  },
+                ]
+              }
+              suratSisrute = {
+                id: `surat_sisrute_${s.hari}_${s.log.length}`,
+                hari: s.hari,
+                jenis: 'pujian_kapus',
+                dari: rs.nama,
+                judul: `Rujukan DITERIMA — ${encFinal.pasien.nama}`,
+                isi: kasus.bisaPrb === true
+                  ? `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Setelah stabil, ia akan dipulangkan dengan surat rujuk balik (PRB) — kontrol lanjutannya kembali menjadi tanggung jawab FKTP-mu. Rujukan berjenjang bekerja dua arah.`
+                  : `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Kasus ini ditangani tuntas di layanan rujukan — terima kasih atas rujukan tepat waktumu.`,
+                dibaca: false,
+              }
             }
           }
           events.push({ type: 'SURAT_MASUK', surat: suratSisrute })
@@ -1091,8 +1112,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       }
       return {
         state: { ...s, igd: igdBaru },
-        events: [{ type: 'KARMA_DICEGAH', narasi: 'ROSC — sirkulasi kembali! Pasien selamat, segera disposisi.' }],
+        events: [{ type: 'KARMA_DICEGAH', narasi: 'ROSC — sirkulasi kembali! Sirkulasi kembali, tapi stabilitas masih rendah.' }],
       }
+    }
+
+    // CODEX audit (2026-07-12, temuan #2): titik keputusan pasca-ROSC — dulu
+    // tak ada, ROSC langsung lompat ke disposisi dgn stabilitas terkunci 25
+    // (selalu di bawah AMBANG_STABIL_RUJUK), membuat rujukan BENAR selalu
+    // mati dalam perjalanan. Lihat `stabilisasiLanjutanIgd` (igd.ts).
+    case 'STABILISASI_LANJUTAN_IGD': {
+      const igd = s.igd
+      if (!igd || igd.fase !== 'pasca_rosc') return err(s, 'Tidak dalam fase stabilisasi lanjutan.')
+      const igdBaru = stabilisasiLanjutanIgd(igd, action.pilihanId)
+      return { state: { ...s, igd: igdBaru }, events: [] }
     }
 
     case 'DISPOSISI_IGD': {

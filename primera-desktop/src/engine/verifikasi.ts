@@ -330,7 +330,64 @@ function fnv1a(teks: string): string {
 //      kapitasi ikut skor (manajemen: kapitasi<10jt → -3) → score-affecting.
 // Kedua formula murni fungsi tally/state (bukan field kasus baru) — tak ada
 // entri sidikJariPack baru, tapi replay skor lama BERBEDA dgn kode baru ini.
-const REVISI_ENGINE = 27
+//
+// REVISI 28 (2026-07-13 — respons audit CODEX atas Golden Master REVISI 27,
+// diverifikasi 8-agen reproduksi langsung sebelum diterima; lihat
+// docs/DEEPTHINK_M10_5_SISA.md/memori proyek utk konteks penuh). 8 fix, semua
+// score/replay-affecting:
+//   #1/#13B  `obatBerbahaya`/`firewallTerpicu` (clinic.ts/reducer.ts/
+//        scoring.ts): dulu obat berbahaya BENAR-BENAR diresepkan (obatSalahUmum/
+//        interaksiTrap) & percobaan resep diblokir firewall alergi SAMA
+//        SEKALI tak tersambung ke tally/skor formal — cuma variabel lokal
+//        (capGrade per-encounter) / badge UI murni. Reproduksi: skor "aman"
+//        vs "bahaya" identik 65.0/65.0. Kini `t.obatBerbahaya`/
+//        `t.firewallTerpicu` (SkorTally baru) memotong UKP (-3/-1 per
+//        kejadian, pola igdMeninggal).
+//   #3   `konfirmasiWajib` (clinic.ts): cek dulu `labDipesan` (baru dipesan,
+//        BELUM tentu ada hasil) — kini `labTersedia`, sinkron dgn mekanisme
+//        `hasilBesok` yg sudah ada.
+//   #4   TACC §3a (clinic.ts/reducer.ts): `justifikasiValid` dulu HANYA
+//        membebaskan tally rujukanNonSpesialistik — disposisiTepat (dibaca
+//        Dex/SISRUTE) tak tahu soal justifikasi, jadi rujukan yg VALID tetap
+//        ditolak SISRUTE + didemaster Dex + surat DITOLAK keliru. Kini
+//        disposisiTepat & gerbang SISRUTE reuse `nilai.rujukanNonSpesialistik`
+//        yg sama. Konten: `justifikasiRujukValid` dicabut dari mm_isk_bawah
+//        (vignette sendiri eksplisit menyingkirkan komplikasi — CVA negatif,
+//        subfebris — sudah tercakup sidikJariPack `justifikasi`, tak perlu
+//        entri baru).
+//   #6   Karma jatuhTempo floor (init.ts): lantai `1` sendirian bisa
+//        mendarat SEBELUM HARI_BUKA_KUNJUNGAN (kunjungan belum buka) — Bu
+//        Wulan 100% guaranteed-unpreventable tiap mode Ujian. Lantai kini
+//        `HARI_BUKA_KUNJUNGAN+1`.
+//   #8   IKS jitter + double-count (kader.ts): `proporsiBaseline` dulu
+//        di-reroll TIAP HARI (RNG reseed per-hari) walau kkTersurvei sudah
+//        plateau — iks RW hanyut ±0.02-0.03/hari murni noise, bisa melompati
+//        ambang pengali kapitasi 0.20/0.30 tanpa aksi pemain. Kini di-roll
+//        SEKALI per RW (`RwState.proporsiBaselineRoll`, field baru). Sekaligus
+//        `totalKk` per RW SUDAH mencakup 2 keluarga binaan/RW sbg subset
+//        (bukan tambahan) — plafon survei statistik kini `totalKk - binaan`,
+//        bukan `totalKk` mentah, supaya `totalKeluarga` tak dobel-hitung.
+//   #9   SISRUTE bed-roll (reducer.ts): bed-availability RNG (`s.seed`,
+//        sengaja personal/anti-hafalan per M45_MODE_UJIAN.md §2) dulu
+//        MENENTUKAN rujukanTepat/rujukanDitolak — dua siswa dgn keputusan
+//        identik bisa dpt skor beda (65.0 vs 64.5) murni dari keberuntungan
+//        bed. Kini rujukanTepat/rujukanDitolak murni fungsi ketepatan klinis
+//        (harusDirujuk+spesialisCocok); bed penuh cuma menunda narasi
+//        (`pasien_kembali`), tak lagi menghukum tally.
+//   #2   IGD pasca-ROSC (igd.ts/reducer.ts/state.ts, fase baru 'pasca_rosc'
+//        + aksi baru STABILISASI_LANJUTAN_IGD): ROSC dulu LANGSUNG ke
+//        disposisi dgn stabilitas terkunci 25 (selalu di bawah
+//        AMBANG_STABIL_RUJUK=50) — rujukan BENAR (disposisiBenar SEMUA kasus
+//        IGD='rujuk') SELALU mati dalam perjalanan, dead-end deterministik.
+//        Kini titik keputusan nyata: evaluasi ulang ABCDE/monitor/O2 (+30
+//        stabilitas, benar) vs langsung rujuk (skip, stabilitas tetap 25,
+//        risiko lama bertahan).
+// Semua field tally baru (obatBerbahaya, firewallTerpicu) murni derivasi
+// tally/state — tak ada entri sidikJariPack baru utk itu. `pasca_rosc`/
+// `proporsiBaselineRoll` adalah field STATE (bukan konten pack), juga tak
+// menyentuh sidikJariPack. Replay dossier lama (REVISI ≤27) BERBEDA dgn kode
+// ini di semua 8 titik di atas — bump wajib.
+const REVISI_ENGINE = 28
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

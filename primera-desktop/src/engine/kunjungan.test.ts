@@ -707,6 +707,8 @@ function buatStateKader(): GameState {
     rujukanTepat: 0, rujukanDitolak: 0,
       cowboy: 0,
       antibiotikTanpaIndikasi: 0,
+      obatBerbahaya: 0,
+      firewallTerpicu: 0,
       labTakRelevan: 0,
       miTepat: 0,
       miTotal: 0,
@@ -801,9 +803,42 @@ describe('prosesHarianKader (scout)', () => {
         desa: { ...state.desa, keluarga: r.keluarga, rw: r.rw, kader: r.kader },
       }
     }
-    expect(state.desa.rw[0]!.kkTersurvei).toBe(25) // cap totalKk
+    // CODEX audit (2026-07-12, temuan #8 Bagian B): plafon survei STATISTIK
+    // kini totalKk DIKURANGI keluarga binaan bernama (fam1, sudah didata
+    // individual) — 25-1=24, bukan totalKk mentah (dulu bikin totalKeluarga
+    // dobel-hitung fam1 begitu survei statistik penuh).
+    expect(state.desa.rw[0]!.kkTersurvei).toBe(24) // cap totalKk - binaan
     // Data keluarga tetap dari hari pertama pengisian (hariData 2), tidak diflip-flip.
     expect(state.desa.keluarga['fam1']!.indikator.jamban_sehat.hariData).toBe(2)
     expect(state.desa.keluarga['fam1']!.indikator.tidak_merokok.status).toBe('ya')
+  })
+
+  // CODEX audit (2026-07-12, temuan #8 Bagian A): dulu `proporsiBaseline`
+  // di-roll ULANG tiap hari (RNG reseed per-hari) walau kkTersurvei sudah
+  // plateau (nol data baru) — iks RW hanyut ±0.02-0.03/hari murni dari
+  // noise, bisa melompati ambang pengali kapitasi 0.20/0.30 tanpa aksi
+  // pemain. Test ini mengunci: begitu di-roll SEKALI, iks TIDAK berubah lagi
+  // lintas hari selama kkTersurvei tak bertambah.
+  it('CODEX #8: iks RW TIDAK hanyut lintas hari begitu survei statistik plateau (nol data baru)', () => {
+    let state = buatStateKader()
+    const pack = buatPackKader()
+    // Jalankan sampai kkTersurvei mentok di plafon (25-1=24) — beberapa hari
+    // pertama genuinely menambah data baru.
+    for (let hari = 2; hari <= 16; hari++) {
+      const r = prosesHarianKader({ ...state, hari }, pack, new Rng(42, 'kader', hari))
+      state = { ...state, desa: { ...state.desa, keluarga: r.keluarga, rw: r.rw, kader: r.kader } }
+    }
+    expect(state.desa.rw[0]!.kkTersurvei).toBe(24)
+    const iksSetelahPlateau = state.desa.rw[0]!.iks
+    const rollSetelahPlateau = state.desa.rw[0]!.proporsiBaselineRoll
+
+    // 10 hari LAGI, sudah plateau — nol KK statistik baru, nol keluarga baru.
+    for (let hari = 17; hari <= 26; hari++) {
+      const r = prosesHarianKader({ ...state, hari }, pack, new Rng(42, 'kader', hari))
+      state = { ...state, desa: { ...state.desa, keluarga: r.keluarga, rw: r.rw, kader: r.kader } }
+      // iks & roll HARUS byte-identik tiap hari pasca-plateau — bukan cuma di akhir.
+      expect(state.desa.rw[0]!.iks).toBe(iksSetelahPlateau)
+      expect(state.desa.rw[0]!.proporsiBaselineRoll).toBe(rollSetelahPlateau)
+    }
   })
 })

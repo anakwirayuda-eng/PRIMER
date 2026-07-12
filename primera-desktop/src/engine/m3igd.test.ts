@@ -80,8 +80,11 @@ describe('M3.14 — alur IGD', () => {
     s = run(s, { type: 'AKSI_IGD', langkahId: l0.id, pilihanId: salah.id })
     expect(s.igd?.fase).toBe('kode_biru')
 
+    // CODEX fix #2 (2026-07-13, temuan #2): ROSC kini singgah di 'pasca_rosc'
+    // (bukan langsung 'disposisi') — titik keputusan stabilisasi-lanjutan
+    // yang dulu dijanjikan komentar kode tapi tak pernah dibangun.
     const sSukses = run({ ...s }, { type: 'RJP_IGD', berkualitas: true })
-    expect(sSukses.igd?.fase).toBe('disposisi')
+    expect(sSukses.igd?.fase).toBe('pasca_rosc')
     expect(sSukses.igd?.stabilitas).toBe(25)
 
     const sBuruk = run({ ...s }, { type: 'RJP_IGD', berkualitas: false })
@@ -92,14 +95,24 @@ describe('M3.14 — alur IGD', () => {
   })
 
   describe('M10.5 Q4/Q-E — rujuk prematur (stabilitas<50) setara Kode Hitam', () => {
-    it('ROSC (stabilitas 25) lalu langsung DIRUJUK → memburuk, ditally igdMeninggal (bukan igdStabil)', () => {
+    // CODEX audit (2026-07-12, temuan #2): dulu ROSC → SEGERA disposisi, jadi
+    // rujukan BENAR (disposisiBenar SEMUA kasus IGD='rujuk') SELALU mati
+    // dalam perjalanan — dead-end deterministik tanpa jalur selamat. Kini ada
+    // titik keputusan 'pasca_rosc' (stabilisasiLanjutanIgd): skip stabilisasi
+    // (langsung_rujuk) mempertahankan risiko lama; stabilisasi benar
+    // (ulang_abcde) membuka jalur selamat yang dulu tak eksis sama sekali.
+    it('ROSC lalu SKIP stabilisasi lanjutan (langsung_rujuk) → rujuk prematur, memburuk (igdMeninggal)', () => {
       let s: GameState = base(igdKasus(KASUS, 10))
       const l0 = PACK.kasusIgd[KASUS]!.langkah[0]!
       const salah = l0.pilihan.find((p) => !p.benar)!
       s = run(s, { type: 'AKSI_IGD', langkahId: l0.id, pilihanId: salah.id })
       s = run(s, { type: 'RJP_IGD', berkualitas: true })
-      expect(s.igd?.fase).toBe('disposisi')
+      expect(s.igd?.fase).toBe('pasca_rosc')
       expect(s.igd?.stabilitas).toBe(25)
+
+      s = run(s, { type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'langsung_rujuk' })
+      expect(s.igd?.fase).toBe('disposisi')
+      expect(s.igd?.stabilitas).toBe(25) // TAK naik — skip stabilisasi lanjutan
 
       s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
       expect(s.tally.igdMeninggal).toBe(1)
@@ -109,7 +122,26 @@ describe('M3.14 — alur IGD', () => {
       expect(s.inbox.some((m) => m.judul.includes('KODE HITAM') && m.judul.includes('perjalanan'))).toBe(true)
     })
 
-    it('stabilitas ≥ ambang (50) DAN dirujuk pada kasus wajib-rujuk → tetap igdStabil seperti biasa', () => {
+    it('ROSC lalu stabilisasi lanjutan BENAR (ulang_abcde) → stabilitas naik ≥ambang → rujuk SELAMAT (igdStabil)', () => {
+      let s: GameState = base(igdKasus(KASUS, 10))
+      const l0 = PACK.kasusIgd[KASUS]!.langkah[0]!
+      const salah = l0.pilihan.find((p) => !p.benar)!
+      s = run(s, { type: 'AKSI_IGD', langkahId: l0.id, pilihanId: salah.id })
+      s = run(s, { type: 'RJP_IGD', berkualitas: true })
+      expect(s.igd?.stabilitas).toBe(25)
+
+      s = run(s, { type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' })
+      expect(s.igd?.fase).toBe('disposisi')
+      expect(s.igd?.stabilitas).toBe(55) // 25+30, melewati AMBANG_STABIL_RUJUK=50
+
+      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+      expect(s.tally.igdMeninggal).toBe(0)
+      expect(s.tally.igdStabil).toBe(1)
+      expect(s.igd).toBeUndefined()
+      expect(s.inbox.some((m) => m.judul.includes('DITERIMA') || m.dari.includes('Harsono'))).toBe(true)
+    })
+
+    it('stabilitas ≥ ambang (50) DAN dirujuk pada kasus wajib-rujuk → tetap igdStabil seperti biasa (tanpa Kode Biru)', () => {
       let s = base(igdKasus(KASUS))
       const kasus = PACK.kasusIgd[KASUS]!
       for (const l of kasus.langkah) s = run(s, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: l.pilihan.find((p) => p.benar)!.id })
@@ -117,6 +149,13 @@ describe('M3.14 — alur IGD', () => {
       s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
       expect(s.tally.igdStabil).toBe(1)
       expect(s.tally.igdMeninggal).toBe(0)
+    })
+
+    it('STABILISASI_LANJUTAN_IGD di luar fase pasca_rosc ditolak — tak bisa dipanggil sembarang waktu', () => {
+      const s = base(igdKasus(KASUS)) // fase 'langkah', bukan 'pasca_rosc'
+      const hasil = advance(s, { type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' }, PACK)
+      expect(hasil.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
+      expect(hasil.state.igd?.fase).toBe('langkah') // tak berubah
     })
   })
 

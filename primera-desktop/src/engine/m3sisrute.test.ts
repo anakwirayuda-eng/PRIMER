@@ -45,7 +45,7 @@ function kasus(id: string, o?: Partial<KasusKlinis>): KasusKlinis {
   }
 }
 
-function pack(kasusList: KasusKlinis[]): ContentPack {
+function pack(kasusList: KasusKlinis[], rsTambahan?: ContentPack['rumahSakit']): ContentPack {
   const kasusMap: Record<string, KasusKlinis> = {}
   for (const k of kasusList) kasusMap[k.id] = k
   return {
@@ -57,6 +57,7 @@ function pack(kasusList: KasusKlinis[]): ContentPack {
     rumahSakit: [
       { id: 'rs_saraf', nama: 'RSUD Saraf', kelas: 'C', jarakMenit: 40, spesialisasi: ['saraf'], bedDasar: 8 },
       { id: 'rs_kecil', nama: 'RS Kecil', kelas: 'D', jarakMenit: 15, spesialisasi: ['anak'], bedDasar: 0 },
+      ...(rsTambahan ?? []),
     ],
     obat: {},
     lab: {},
@@ -85,7 +86,7 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
     tally: {
       totalPasien: 0, diagnosisBenar: 0, tegakBenar: 0, tegakSalah: 0, suspekBenar: 0, suspekSalah: 0,
       rujukanTotal: 0, rujukanNonSpesialistik: 0, rujukanTepat: 0, rujukanDitolak: 0, cowboy: 0,
-      antibiotikTanpaIndikasi: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
+      antibiotikTanpaIndikasi: 0, obatBerbahaya: 0, firewallTerpicu: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
       kunjunganTotal: 0, kunjunganDiusir: 0, apathy: 0, autoBermasalah: 0, posyanduSesi: 0,
       prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdSalahDisposisi: 0, igdMeninggal: 0, rmLengkap: 0, teguranDinkes: 0, hariKelelahan: 0, karmaTerjadi: 0, karmaDicegah: 0,
     },
@@ -158,6 +159,56 @@ describe('M3.13 — SISRUTE berjenjang', () => {
     expect(s.jadwal.some((j) => j.jenis === 'pasien_kembali' && j.hari === 21)).toBe(true)
   })
 
+  // CODEX audit (2026-07-12, temuan #9): SISRUTE bed-roll (`rngRs` di atas
+  // `s.seed`, sengaja personal/anti-hafalan sesuai M45_MODE_UJIAN.md §2) dulu
+  // MENENTUKAN rujukanTepat/rujukanDitolak — dua siswa dgn keputusan identik
+  // bisa dpt skor formal beda (65.0 vs 64.5, diverifikasi reproduksi) murni
+  // dari keberuntungan bed. Sweep beberapa seed (bed kadang tersedia, kadang
+  // penuh — RS fixture `bedDasar:0` → chance persis 0.5) dan pastikan
+  // INVARIAN tally bertahan lepas dari hasil RNG: keputusan klinis benar
+  // (stroke wajib-rujuk, RS spesialis cocok) → rujukanTepat SELALU 1,
+  // rujukanDitolak SELALU 0 — apa pun hasil lempar koin bed.
+  it('CODEX #9: rujukanTepat/rujukanDitolak TIDAK bergantung hasil RNG bed — hanya ketepatan klinis', () => {
+    const rsKecilTapiCocok = {
+      id: 'rs_saraf_kecil',
+      nama: 'RSUD Saraf Kecil',
+      kelas: 'D' as const,
+      jarakMenit: 50,
+      spesialisasi: ['saraf' as const],
+      bedDasar: 0,
+    }
+    const p = pack([kasus('stroke')], [rsKecilTapiCocok])
+    let bedTersediaSetidaknyaSekali = false
+    let bedPenuhSetidaknyaSekali = false
+    for (const seed of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) {
+      let s = baseState(p, {
+        seed,
+        klinik: {
+          antrian: [buatPasienDariKasus('stroke', p, new Rng(1, 'x'))],
+          selesaiHariIni: [],
+          autoHariIni: { jumlah: 0, bermasalah: 0 },
+        },
+      })
+      s = tanganiPasien(s, p, {
+        type: 'DISPOSISI',
+        jenis: 'rujuk',
+        rumahSakitId: 'rs_saraf_kecil',
+        sbar: { situation: 'a'.repeat(25), background: 'b'.repeat(25), assessment: 'stroke', recommendation: 'c'.repeat(25) },
+      })
+      expect(s.tally.rujukanTepat).toBe(1)
+      expect(s.tally.rujukanDitolak).toBe(0)
+      const suratBedPenuh = s.inbox.some((m) => m.judul.includes('Bed penuh'))
+      const suratDiterima = s.inbox.some((m) => m.judul.includes('DITERIMA'))
+      expect(suratBedPenuh || suratDiterima).toBe(true)
+      if (suratBedPenuh) bedPenuhSetidaknyaSekali = true
+      if (suratDiterima) bedTersediaSetidaknyaSekali = true
+    }
+    // Sanity: fixture ini genuinely menghasilkan KEDUA outcome lintas seed —
+    // kalau tidak, invarian di atas tak benar-benar teruji terhadap variasi RNG.
+    expect(bedTersediaSetidaknyaSekali).toBe(true)
+    expect(bedPenuhSetidaknyaSekali).toBe(true)
+  })
+
   it('merujuk kasus FKTP (bukan wajib-rujuk) → DITOLAK boomerang + teguran', () => {
     const p = pack([kasus('ispa', { harusDirujuk: false, skdi: '4A', spesialisRujukan: undefined, prevalensi: 'tinggi', konsekuensi: undefined })])
     let s = baseState(p, { klinik: { antrian: [buatPasienDariKasus('ispa', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } } })
@@ -165,6 +216,61 @@ describe('M3.13 — SISRUTE berjenjang', () => {
     expect(s.tally.rujukanDitolak).toBe(1)
     expect(s.inbox.some((m) => m.judul.includes('DITOLAK'))).toBe(true)
     expect(s.jadwal.some((j) => (j.catatan ?? '').includes('kompetensi FKTP'))).toBe(true)
+  })
+
+  // CODEX audit (2026-07-12, temuan #4): dulu §3a HANYA membebaskan tally
+  // rujukanNonSpesialistik di clinic.ts — SISRUTE (reducer.ts) masih re-derive
+  // sendiri dari `!kasus.harusDirujuk` mentah, jadi rujukan yg TERJUSTIFIKASI
+  // tetap ditolak RS, didemaster Dex, dan dikirimi surat "DITOLAK" yg keliru.
+  // Test ini mengeksekusi jalur REDUCER SESUNGGUHNYA (bukan cuma nilaiEncounter
+  // terisolasi) — persis blind-spot yg CODEX identifikasi.
+  it('CODEX #4: rujukan kasus FKTP dgn justifikasi TERVALIDASI → DITERIMA, bukan ditolak', () => {
+    const p = pack([
+      kasus('isk', {
+        harusDirujuk: false,
+        skdi: '4A',
+        spesialisRujukan: undefined,
+        prevalensi: 'tinggi',
+        konsekuensi: undefined,
+        justifikasiRujukValid: ['komplikasi'],
+      }),
+    ])
+    let s = baseState(p, { klinik: { antrian: [buatPasienDariKasus('isk', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } } })
+    s = tanganiPasien(s, p, {
+      type: 'DISPOSISI',
+      jenis: 'rujuk',
+      justifikasiRujuk: 'komplikasi',
+      sbar: { situation: 'x'.repeat(25), background: 'y'.repeat(25), assessment: 'isk', recommendation: 'z'.repeat(25) },
+    })
+    expect(s.tally.rujukanDitolak).toBe(0)
+    expect(s.tally.rujukanNonSpesialistik).toBe(0)
+    expect(s.inbox.some((m) => m.judul.includes('DITOLAK'))).toBe(false)
+    expect(s.jadwal.some((j) => (j.catatan ?? '').includes('kompetensi FKTP'))).toBe(false)
+    // Dex: diagnosis benar + disposisiTepat kini true utk rujukan terjustifikasi.
+    expect(s.dex['isk']?.bintang).toBeGreaterThan(0)
+  })
+
+  it('CODEX #4: rujukan kasus FKTP dgn justifikasi TAK COCOK → tetap ditolak seperti biasa', () => {
+    const p = pack([
+      kasus('isk2', {
+        harusDirujuk: false,
+        skdi: '4A',
+        spesialisRujukan: undefined,
+        prevalensi: 'tinggi',
+        konsekuensi: undefined,
+        justifikasiRujukValid: ['komplikasi'],
+      }),
+    ])
+    let s = baseState(p, { klinik: { antrian: [buatPasienDariKasus('isk2', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } } })
+    s = tanganiPasien(s, p, {
+      type: 'DISPOSISI',
+      jenis: 'rujuk',
+      justifikasiRujuk: 'komorbid',
+      sbar: { situation: 'x'.repeat(25), background: 'y'.repeat(25), assessment: 'isk2', recommendation: 'z'.repeat(25) },
+    })
+    expect(s.tally.rujukanDitolak).toBe(1)
+    expect(s.tally.rujukanNonSpesialistik).toBe(1)
+    expect(s.inbox.some((m) => m.judul.includes('DITOLAK'))).toBe(true)
   })
 })
 

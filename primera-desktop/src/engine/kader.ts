@@ -78,6 +78,13 @@ interface AktivitasKader {
   tambah: number
   /** Keluarga binaan yang datanya baru diisi hari ini. */
   keluargaDiisi: { id: string; nama: string }[]
+  /**
+   * CODEX audit (2026-07-12, temuan #8): plafon survei STATISTIK RW ini —
+   * `totalKk` dikurangi keluarga binaan (bernama, sudah didata individual
+   * lewat kunjungan dokter, BUKAN via survei kader) — dipakai utk pesan
+   * surat (bukan `rw.totalKk` mentah, yg akan tampak tak pernah tercapai).
+   */
+  kkStatistikMax: number
 }
 
 /**
@@ -104,15 +111,31 @@ export function prosesHarianKader(
   const daftarKader = Object.values(kader).sort((a, b) => a.rw - b.rw || a.id.localeCompare(b.id))
   const idKeluargaUrut = Object.keys(pack.keluarga).sort()
 
+  // CODEX audit (2026-07-12, temuan #8 Bagian B): `totalKk` per RW SUDAH
+  // mencakup keluarga binaan bernama sbg subset (RW_PROFIL desaB.ts: "200 KK
+  // ... konsisten dengan keluarga binaan") — bukan tambahan di luar itu.
+  // Survei STATISTIK kader hanya menyasar KK yang BELUM didata individual
+  // (binaan sudah didata lewat kunjungan dokter), jadi plafonnya harus
+  // `totalKk - binaan`, bukan `totalKk` mentah — selain itu `totalKeluarga
+  // = berdataBinaan + kkTersurvei` di bawah menghitung dobel 2 KK/RW yang
+  // sama begitu survei statistik penuh.
+  const binaanPerRw = new Map<number, number>()
+  for (const id of idKeluargaUrut) {
+    const p = pack.keluarga[id]
+    if (p) binaanPerRw.set(p.rw, (binaanPerRw.get(p.rw) ?? 0) + 1)
+  }
+
   const aktivitas: AktivitasKader[] = []
 
   for (const k of daftarKader) {
     const wilayah = rw.find((r) => r.nomor === k.rw)
     if (!wilayah) continue
 
-    // Survei 2-4 KK statistik per hari, mentok di totalKk.
+    // Survei 2-4 KK statistik per hari, mentok di totalKk DIKURANGI binaan
+    // (bukan totalKk mentah — lihat catatan Bagian B di atas).
+    const kkStatistikMax = Math.max(0, wilayah.totalKk - (binaanPerRw.get(k.rw) ?? 0))
     const target = rng.int(2, 4)
-    const tambah = Math.max(0, Math.min(target, wilayah.totalKk - wilayah.kkTersurvei))
+    const tambah = Math.max(0, Math.min(target, kkStatistikMax - wilayah.kkTersurvei))
     if (tambah > 0) {
       wilayah.kkTersurvei += tambah
       kader[k.id] = { ...k, kkTersurvei: k.kkTersurvei + tambah }
@@ -148,7 +171,7 @@ export function prosesHarianKader(
       keluargaDiisi.push({ id, nama: profil.namaKeluarga })
     }
 
-    aktivitas.push({ kader: kader[k.id] ?? k, rw: wilayah, tambah, keluargaDiisi })
+    aktivitas.push({ kader: kader[k.id] ?? k, rw: wilayah, tambah, keluargaDiisi, kkStatistikMax })
   }
 
   // Agregasi IKS RW (M10.5 #5, formula resmi Permenkes 39/2016): proporsi
@@ -163,9 +186,19 @@ export function prosesHarianKader(
       wilayah.iks = 0
       continue
     }
-    const proporsiBaseline = clamp01(
-      PROPORSI_SEHAT_JARAK[wilayah.jarak] + (rng.float() * 0.04 - 0.02),
-    )
+    // CODEX audit (2026-07-12, temuan #8 Bagian A): dulu di-roll ULANG setiap
+    // hari (RNG reseed per-hari `new Rng(s.seed,'kader',hari)`) walau
+    // `kkTersurvei` sudah plateau (nol data baru) — `iks` RW hanyut
+    // ±0.02-0.03/hari murni dari noise, bisa melompati ambang pengali
+    // kapitasi 0.20/0.30 (scoring.ts, reducer.ts) tanpa aksi pemain sama
+    // sekali. Kini di-roll SEKALI per RW (dipersist di RwState) lalu dipakai
+    // ulang selamanya — estimasi statistik yang stabil, bukan noise harian.
+    if (wilayah.proporsiBaselineRoll === undefined) {
+      wilayah.proporsiBaselineRoll = clamp01(
+        PROPORSI_SEHAT_JARAK[wilayah.jarak] + (rng.float() * 0.04 - 0.02),
+      )
+    }
+    const proporsiBaseline = wilayah.proporsiBaselineRoll
     let sehatBinaan = 0
     let berdataBinaan = 0
     for (const id of idKeluargaUrut) {
@@ -201,8 +234,12 @@ function buatSuratKader(a: AktivitasKader, pack: ContentPack, hari: number, rng:
   const bagian: string[] = [rng.pick(SALAM_PEMBUKA)]
 
   if (a.tambah > 0) {
+    // CODEX audit (2026-07-12, temuan #8): pakai `kkStatistikMax` (bukan
+    // `rw.totalKk` mentah) — keluarga binaan didata dokter langsung, bukan
+    // via buku survei kader, jadi buku kader tak pernah (dan tak seharusnya)
+    // mencapai `totalKk` penuh.
     bagian.push(
-      `Hari ini saya keliling ${a.tambah} rumah di ${a.rw.nama}. Total sudah ${a.rw.kkTersurvei} dari ${a.rw.totalKk} KK yang tercatat di buku saya.`,
+      `Hari ini saya keliling ${a.tambah} rumah di ${a.rw.nama}. Total sudah ${a.rw.kkTersurvei} dari ${a.kkStatistikMax} KK yang tercatat di buku saya.`,
     )
   } else {
     bagian.push(

@@ -8,7 +8,7 @@ import type { ContentPack } from '@content/pack'
 import type { IndikatorPisPk, StatusIndikator } from '@content/types'
 import { Rng } from './core/rng'
 import { susunAntrianHarian, buatPasienDariKasus } from './director'
-import { STAMINA_MAKS } from './reducer'
+import { STAMINA_MAKS, HARI_BUKA_KUNJUNGAN } from './reducer'
 import { HARI_STASE, pilihPaket } from './paketUjian'
 import { KASUS_TUTORIAL } from './tutorial'
 
@@ -112,7 +112,15 @@ export function buildInitialState(
     const skenarioPertama = content.arc.kunjungan[0]
     if (!skenarioPertama?.karma) continue
     const jadwalId = `jadwal_karma_${id}`
-    const jatuhTempo = Math.max(1, Math.round(skenarioPertama.karma.jatuhTempoHari * rasioMode))
+    // CODEX audit (2026-07-12, temuan #6): lantai `1` sendirian tak cukup —
+    // hasil scaling bisa mendarat SEBELUM kunjungan rumah bahkan terbuka
+    // (HARI_BUKA_KUNJUNGAN), membuat karma itu MUSTAHIL dicegah krn pemain
+    // belum sempat py kesempatan bertindak sama sekali. Lantai kini
+    // HARI_BUKA_KUNJUNGAN+1 — jendela intervensi minimal 1 hari selalu ada.
+    const jatuhTempo = Math.max(
+      HARI_BUKA_KUNJUNGAN + 1,
+      Math.round(skenarioPertama.karma.jatuhTempoHari * rasioMode),
+    )
     // Identitas anggota yang akan jatuh sakit — konsekuensi BERNAMA.
     const anggota = content.anggota[skenarioPertama.karma.anggotaIndex]
     jadwalKarma.push({
@@ -181,6 +189,8 @@ export function buildInitialState(
       rujukanDitolak: 0,
       cowboy: 0,
       antibiotikTanpaIndikasi: 0,
+      obatBerbahaya: 0,
+      firewallTerpicu: 0,
       labTakRelevan: 0,
       miTepat: 0,
       miTotal: 0,

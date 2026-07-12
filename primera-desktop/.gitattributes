@@ -1,0 +1,8 @@
+# CODEX audit (2026-07-12, temuan #10): tanpa file ini, working tree Windows
+# (core.autocrlf=true) menyimpan source sbg CRLF, tapi git blob (dan CI
+# ubuntu-latest) menyimpannya LF — freeze.test.ts (src/engine/freeze.test.ts)
+# menghitung SHA-256 dari isi file, jadi hash CRLF-lokal != hash LF-CI, dan
+# Golden Master freeze GAGAL PALSU begitu commit ini menyentuh CI Linux.
+# Baris ini memaksa semua teks di proyek ini disimpan LF di git (working tree
+# lokal boleh tetap CRLF bila autocrlf=true — git yang menormalkan saat commit).
+* text=auto eol=lf

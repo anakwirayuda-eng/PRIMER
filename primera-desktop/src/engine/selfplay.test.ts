@@ -73,6 +73,11 @@ function selesaikanIgdJikaAda(state: GameState): GameState {
       s = run(s, { type: 'AKSI_IGD', langkahId: langkah.id, pilihanId: benar.id }).state
     } else if (s.igd.fase === 'kode_biru') {
       s = run(s, { type: 'RJP_IGD', berkualitas: true }).state
+    } else if (s.igd.fase === 'pasca_rosc') {
+      // CODEX fix #2 (2026-07-13): dokter rajin re-evaluasi ABCDE lanjutan
+      // sebelum disposisi (pilihan benar) — bukan buru-buru merujuk pasien
+      // yg belum sungguh stabil.
+      s = run(s, { type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' }).state
     } else if (s.igd.fase === 'disposisi') {
       s = run(s, { type: 'DISPOSISI_IGD', jenis: kasus.disposisiBenar }).state
     } else break
@@ -111,12 +116,32 @@ function tanganiPasienRajin(state: GameState): { state: GameState; penilaian: Pe
   expect(s.klinik.aktif?.fase).toBe('diagnosis')
   s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' }).state
 
-  // TERAPI: semua obatBenar + SATU wakil tiap grup alternatif (firewall alergi
-  // boleh memblokir — bukan error) + edukasi wajib.
-  for (const obatId of kasus.tatalaksana.obatBenar) {
+  // TERAPI: semua obatBenar + SATU wakil tiap grup alternatif + edukasi wajib.
+  // CODEX audit (2026-07-12, temuan #13B): dokter rajin kini benar-benar
+  // MENGECEK alergi/interaksi pasien dulu (spt dokter sungguhan) — bukan
+  // meresepkan obatBenar mentah lalu MENGANDALKAN firewall diam-diam
+  // menangkap yg terlarang. Firewall kini punya konsekuensi skor nyata
+  // (capGrade #13B), jadi "boleh memblokir, bukan error" TIDAK lagi berlaku
+  // utk profil TELADAN — persis logika trap-adjustment nilaiEncounter (clinic.ts).
+  const trap = kasus.alergiTrap
+  const kenaTrap =
+    trap !== undefined && enc.pasien.alergi.some((a) => a.toLowerCase() === trap.kelas.toLowerCase())
+  const interaksi = kasus.interaksiTrap
+  const kenaInteraksi = interaksi !== undefined && enc.pasien.faktorRisiko.includes(interaksi.faktor)
+  const terlarangGabungan = [
+    ...(kenaTrap && trap ? trap.obatTerlarang : []),
+    ...(kenaInteraksi && interaksi ? interaksi.obatTerlarang : []),
+  ]
+  const obatBenarAman = [
+    ...kasus.tatalaksana.obatBenar.filter((id) => !terlarangGabungan.includes(id)),
+    ...(kenaTrap && trap ? trap.alternatifBenar : []),
+    ...(kenaInteraksi && interaksi ? interaksi.alternatifBenar : []),
+  ]
+  for (const obatId of obatBenarAman) {
     s = run(s, { type: 'TAMBAH_OBAT', obatId }).state
   }
-  for (const grup of kasus.tatalaksana.obatAlternatif ?? []) {
+  for (const grupMentah of kasus.tatalaksana.obatAlternatif ?? []) {
+    const grup = grupMentah.filter((id) => !terlarangGabungan.includes(id))
     if (grup[0]) s = run(s, { type: 'TAMBAH_OBAT', obatId: grup[0] }).state
   }
   // M7 (34b/O4): baki edukasi maks KAPASITAS_EDUKASI — dokter rajin memberi

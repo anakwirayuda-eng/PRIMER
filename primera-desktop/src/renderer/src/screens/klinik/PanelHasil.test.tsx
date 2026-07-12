@@ -23,6 +23,8 @@ const HASIL_DASAR: PenilaianEncounter = {
   rujukanNonSpesialistik: false,
   cowboy: false,
   antibiotikTanpaIndikasi: false,
+  obatBerbahaya: false,
+  firewallTerpicu: false,
   labTakRelevan: 0,
   grade: 'D',
   clue: 'ISPA viral self-limiting, simtomatik saja.',

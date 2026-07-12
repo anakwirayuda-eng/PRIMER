@@ -65,6 +65,17 @@ export type Action =
   /* -- IGD (M3.14): gawat darurat turn-based ------------------------------------ */
   | { type: 'AKSI_IGD'; langkahId: string; pilihanId: string }
   | { type: 'RJP_IGD'; berkualitas: boolean } // pilihan Kode Biru
+  | {
+      /**
+       * CODEX audit (2026-07-12, temuan #2): titik keputusan pasca-ROSC —
+       * `ulang_abcde` (benar, re-evaluasi ABCDE/monitor/O2 sebelum transportasi,
+       * +30 stabilitas) vs `langsung_rujuk` (godaan skip stabilisasi lanjutan,
+       * stabilitas TAK naik, risiko rujuk prematur di fase disposisi berikutnya
+       * tetap nyata bila lanjut memilih rujuk).
+       */
+      type: 'STABILISASI_LANJUTAN_IGD'
+      pilihanId: 'ulang_abcde' | 'langsung_rujuk'
+    }
   | { type: 'DISPOSISI_IGD'; jenis: 'rujuk' | 'pulang'; rumahSakitId?: string }
 
   /* -- M4: ekonomi & manajemen bergigi ------------------------------------------ */

@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
 import { acakUrutan } from '../utils/acakUrutan'
+import { AMBANG_STABIL_RUJUK } from '@engine/igd'
 import './Igd.css'
 
 export function Igd() {
@@ -62,8 +63,11 @@ export function Igd() {
             </div>
             {/* Nama diagnosis & ICD-10 disembunyikan selama pemain masih bernalar
                 (fase langkah/kode_biru) — baru terungkap di disposisi/debrief,
-                supaya keputusan dibangun dari keluhan & vital, bukan kunci jawaban. */}
-            {igd.fase === 'disposisi' ? (
+                supaya keputusan dibangun dari keluhan & vital, bukan kunci jawaban.
+                CODEX fix #2: pasca_rosc ikut mengungkap — tebak-tebakan sudah
+                usai begitu Kode Biru selesai, stabilisasi lanjutan bukan lagi
+                soal diagnosis-tersembunyi. */}
+            {igd.fase === 'disposisi' || igd.fase === 'pasca_rosc' ? (
               <div className="teks-xs teks-lembut">{kasus.nama} · ICD-10 {kasus.icd10}</div>
             ) : (
               <div className="teks-xs teks-lembut">Kasus gawat darurat — kenali dari keluhan &amp; tanda vital</div>
@@ -129,12 +133,47 @@ export function Igd() {
           </div>
         )}
 
+        {/* Fase: pasca-ROSC — stabilisasi lanjutan (CODEX fix #2, 2026-07-13).
+            Titik keputusan yang dulu dijanjikan komentar engine tapi tak
+            pernah dibangun — tanpa ini rujukan yang BENAR selalu mati dalam
+            perjalanan krn stabilitas terkunci 25 (di bawah AMBANG_STABIL_RUJUK). */}
+        {igd.fase === 'pasca_rosc' && (
+          <div className="igd__isi">
+            <div className="judul-seksi">ROSC — Stabilisasi Lanjutan</div>
+            <p className="igd__narasi">
+              Sirkulasi {igd.pasienNama} kembali — tapi "kembali" bukan "sembuh". Stabilitasnya masih
+              rendah ({igd.stabilitas}/100). Apa langkah berikutnya sebelum memutuskan disposisi?
+            </p>
+            <div className="igd__pilihan">
+              <button
+                className="igd__opsi igd__opsi--rjp"
+                onClick={() => dispatch({ type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' })}
+              >
+                Evaluasi ulang ABCDE + monitor + oksigen sebelum transportasi
+              </button>
+              <button
+                className="igd__opsi"
+                onClick={() => dispatch({ type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'langsung_rujuk' })}
+              >
+                Langsung siapkan rujukan — waktu mendesak, stabilisasi lanjutan bisa menunggu
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Fase: disposisi */}
         {igd.fase === 'disposisi' && (
           <div className="igd__isi">
-            <div className="judul-seksi">Pasien Stabil — Disposisi</div>
+            {/* CODEX fix #2: header/narasi dulu SELALU menyebut "Stabil" walau
+                stabilitas bisa serendah 25 (skip stabilisasi lanjutan) —
+                kini jujur soal status stabilitas sesungguhnya. */}
+            <div className="judul-seksi">
+              {igd.stabilitas >= AMBANG_STABIL_RUJUK ? 'Pasien Stabil — Disposisi' : 'Stabilitas Masih Rendah — Disposisi'}
+            </div>
             <p className="igd__narasi">
-              {igd.pasienNama} sudah tertangani dan stabil. Apa langkah berikutnya sesuai prinsip rujukan berjenjang?
+              {igd.stabilitas >= AMBANG_STABIL_RUJUK
+                ? `${igd.pasienNama} sudah tertangani dan stabil. Apa langkah berikutnya sesuai prinsip rujukan berjenjang?`
+                : `${igd.pasienNama} belum sepenuhnya stabil (${igd.stabilitas}/100) — transportasi jarak jauh berisiko nyata sebelum stabilisasi lanjutan tuntas.`}
             </p>
             <div className="igd__pilihan">
               <button

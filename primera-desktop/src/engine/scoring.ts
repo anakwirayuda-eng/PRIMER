@@ -68,9 +68,20 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   // dgn risiko guillotine — insentif terbalik dari yang dimaksud. Dinaikkan
   // ke -5/kejadian (dari -2) supaya boikot tak lagi strategi dominan, tanpa
   // mengubah ambang proteksi-sampel-kecil rujukanTotal≥3 itu sendiri.
+  // CODEX audit (2026-07-12, temuan #1/#13B): `obatBerbahaya` dulu variabel
+  // lokal `clinic.ts` — mengunci grade PER-ENCOUNTER (capGrade 54) tapi tak
+  // punya field tally sama sekali, jadi skor.total FORMAL (dibaca dari
+  // state.tally di sini) tak pernah bergerak walau resep NSAID-pada-dengue
+  // atau nitrat-pada-PDE5 setiap encounter — dibuktikan reproduksi: skor
+  // "aman" vs "bahaya" identik 65.0/65.0. Bobot -3/kejadian menyamai
+  // `igdMeninggal` (sama-sama risiko cedera langsung nyata pada pasien).
+  // `firewallTerpicu` (percobaan diblokir, obat TAK sampai pasien) dibobot
+  // lebih ringan (-1) — kelalaian cek alergi nyata, tapi bukan cedera nyata.
   const ukp = clamp(
     ((0.75 * akurasi * 100 + 0.25 * kalibrasi) / 100) * 35 * guillotine -
-      5 * t.cowboy +
+      5 * t.cowboy -
+      3 * t.obatBerbahaya -
+      1 * t.firewallTerpicu +
       bonusRujukanTepat +
       efekIgd,
     0,

@@ -144,6 +144,22 @@ export interface PenilaianEncounter {
   /** Menahan kasus yang seharusnya dirujuk. */
   cowboy: boolean
   antibiotikTanpaIndikasi: boolean
+  /**
+   * CODEX audit (2026-07-12, temuan #1): obat berbahaya (obatSalahUmum/
+   * interaksiTrap) BENAR-BENAR diresepkan — dulu cuma variabel lokal di
+   * `nilaiEncounter`, mengunci `capGrade` per-encounter tapi tak pernah
+   * menyentuh tally/skor formal. Beda dari `firewallTerpicu` di bawah:
+   * ini obat yang SAMPAI ke pasien.
+   */
+  obatBerbahaya: boolean
+  /**
+   * CODEX audit (2026-07-12, temuan #13B): percobaan resep kontraindikasi
+   * alergi yang diblokir firewall (poka-yoke, `clinic.ts` TAMBAH_OBAT) — obat
+   * TAK PERNAH sampai ke pasien, tapi sebelumnya nol konsekuensi formal sama
+   * sekali (murni badge UI). Root cause sama dgn `obatBerbahaya`: sinyal
+   * keselamatan tak tersambung ke `scoring.ts`.
+   */
+  firewallTerpicu: boolean
   labTakRelevan: number
   sbarSkor?: number // 0-100 bila merujuk
   /** Grade huruf ringkas untuk UI. */
@@ -233,6 +249,15 @@ export interface RwState {
   iks: number
   /** Bonus IKS persisten dari program/kegiatan lapangan (M2) — ikut dihitung kader. */
   bonusIks: number
+  /**
+   * CODEX audit (2026-07-12, temuan #8): estimasi proporsi KK statistik
+   * 'sehat' (`kader.ts`) di-roll SEKALI per RW lalu dipersist di sini —
+   * dulu di-reroll ULANG setiap hari (RNG reseed per-hari) walau
+   * `kkTersurvei` sudah plateau nol data baru, membuat `iks` hanyut
+   * ±0.02-0.03/hari murni dari noise dan bisa melompati ambang pengali
+   * kapitasi 0.20/0.30 tanpa aksi pemain. `undefined` = belum pernah di-roll.
+   */
+  proporsiBaselineRoll?: number
 }
 
 /* ---------------------------------------------------------------------------
@@ -344,7 +369,13 @@ export interface HasilKunjungan {
  * IGD (M3.14) — sesi gawat darurat turn-based
  * ------------------------------------------------------------------------- */
 
-export type FaseIgd = 'langkah' | 'kode_biru' | 'disposisi' | 'selesai'
+// CODEX audit (2026-07-12, temuan #2): `pasca_rosc` ditambahkan — dulu ROSC
+// (`rjpIgd` berkualitas:true) langsung lompat ke 'disposisi', padahal komentar
+// kode ITU SENDIRI (igd.ts) menjanjikan "stabilisasi lanjutan tetap berisiko
+// nyata", sesuatu yang tak pernah dibangun. Tanpa titik keputusan ini, rujukan
+// BENAR (disposisiBenar SEMUA kasus IGD = 'rujuk') selalu jatuh di bawah
+// AMBANG_STABIL_RUJUK dan mati dalam perjalanan — dead-end deterministik.
+export type FaseIgd = 'langkah' | 'kode_biru' | 'pasca_rosc' | 'disposisi' | 'selesai'
 
 export interface IgdState {
   kasusId: string
@@ -439,6 +470,10 @@ export interface SkorTally {
   rujukanDitolak: number
   cowboy: number
   antibiotikTanpaIndikasi: number
+  /** CODEX audit temuan #1 (2026-07-12): encounter dgn obat berbahaya BENAR-BENAR diresepkan. */
+  obatBerbahaya: number
+  /** CODEX audit temuan #13B (2026-07-12): encounter dgn percobaan resep kontraindikasi diblokir firewall. */
+  firewallTerpicu: number
   labTakRelevan: number
   /** MI: pilihan tepat / total pilihan di kunjungan. */
   miTepat: number

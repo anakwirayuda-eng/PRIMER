@@ -69,13 +69,41 @@ export function aksiIgd(igd: IgdState, kasus: KasusIgd, langkahId: string, pilih
  * scaling): mekanik keselamatan tak boleh bergantung nasib. Stabilitas pasca-
  * ROSC tetap RENDAH (25) — "kembali" bukan "sembuh"; rujuk sebelum stabilisasi
  * lanjutan tetap berisiko nyata (lihat AMBANG_STABIL_RUJUK di `nilaiIgd`).
+ *
+ * CODEX audit (2026-07-12, temuan #2): dulu langsung ke fase 'disposisi' —
+ * janji "stabilisasi lanjutan tetap berisiko nyata" di atas tak pernah
+ * ditagih jadi mekanik sungguhan, jadi rujukan BENAR (disposisiBenar SEMUA
+ * kasus IGD = 'rujuk') selalu jatuh di bawah AMBANG_STABIL_RUJUK dan mati
+ * dalam perjalanan, sedangkan pulang (SALAH) justru selamat — dead-end
+ * deterministik pada SETIAP kasus. Kini singgah dulu di 'pasca_rosc'
+ * (lihat `stabilisasiLanjutanIgd`) sebelum disposisi.
  */
 export function rjpIgd(igd: IgdState, berkualitas: boolean): IgdState {
   if (igd.fase !== 'kode_biru') return igd
   if (berkualitas) {
-    return { ...igd, stabilitas: 25, fase: 'disposisi' }
+    return { ...igd, stabilitas: 25, fase: 'pasca_rosc' }
   }
   return { ...igd, fase: 'selesai', hasil: 'meninggal' }
+}
+
+/**
+ * M10.5 CODEX audit (2026-07-12, temuan #2): titik keputusan pasca-ROSC yang
+ * ditagih dari komentar `rjpIgd` di atas. `ulang_abcde` (re-evaluasi ABCDE +
+ * monitor + oksigen sebelum transportasi — kompetensi stabilisasi nyata,
+ * BUKAN kelonggaran kosong) menaikkan stabilitas +30 (25→55, melewati
+ * `AMBANG_STABIL_RUJUK`=50). `langsung_rujuk` (godaan skip stabilisasi lanjutan
+ * krn "waktu mendesak") TIDAK menaikkan stabilitas — risiko rujuk prematur di
+ * fase disposisi berikutnya (nilaiIgd) tetap nyata bila lanjut memilih rujuk.
+ */
+export function stabilisasiLanjutanIgd(
+  igd: IgdState,
+  pilihanId: 'ulang_abcde' | 'langsung_rujuk',
+): IgdState {
+  if (igd.fase !== 'pasca_rosc') return igd
+  if (pilihanId === 'ulang_abcde') {
+    return { ...igd, stabilitas: Math.min(100, igd.stabilitas + 30), fase: 'disposisi' }
+  }
+  return { ...igd, fase: 'disposisi' }
 }
 
 /**

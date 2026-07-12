@@ -53,6 +53,8 @@ function beresIgd(state: GameState): GameState {
       s = coba(s, { type: 'AKSI_IGD', langkahId: langkah.id, pilihanId: benar.id })
     } else if (s.igd.fase === 'kode_biru') {
       s = coba(s, { type: 'RJP_IGD', berkualitas: true })
+    } else if (s.igd.fase === 'pasca_rosc') {
+      s = coba(s, { type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' })
     } else if (s.igd.fase === 'disposisi') {
       s = coba(s, { type: 'DISPOSISI_IGD', jenis: kasus.disposisiBenar })
     } else break

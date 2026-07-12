@@ -1197,11 +1197,13 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     kategori: 'metabolik',
     fktp144: true,
     harusDirujuk: false,
-    // M10.5 §3a (2026-07-12, TACC rujukan terjustifikasi): clue kasus ini
-    // sendiri membedakan sistitis "tanpa komplikasi" dari varian pielonefritis
-    // (demam tinggi + nyeri CVA) — bila presentasi bergeser ke sana, rujuk
-    // jadi terjustifikasi nyata, bukan kelonggaran kosong.
-    justifikasiRujukValid: ['komplikasi'],
+    // CODEX audit (2026-07-12, temuan #5): `justifikasiRujukValid:
+    // ['komplikasi']` DICABUT — vignette TETAP (tak ada varian per-instance,
+    // director.ts konfirmasi tak ada randomisasi vital/pemeriksaan per kasus),
+    // dan pemeriksaan fisik kasus ini SENDIRI eksplisit menyingkirkan
+    // komplikasi (CVA negatif bilateral, subfebris 37.4 — bukan demam tinggi).
+    // Membiarkan "komplikasi" tervalidasi di sini berarti membenarkan
+    // justifikasi yg bertentangan dgn data kasus itu sendiri.
     prevalensi: 'tinggi',
     keluhanUtama: 'Kalau kencing perih dan anyang-anyangan dok, bolak-balik ke kamar mandi tapi sedikit-sedikit.',
     demografi: { usiaMin: 18, usiaMax: 45, jenisKelamin: 'P' },

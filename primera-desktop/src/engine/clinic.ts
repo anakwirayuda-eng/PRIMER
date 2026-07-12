@@ -453,9 +453,13 @@ export function nilaiEncounter(
   // Tanpa tanda vital, pemeriksaan tidak pernah lengkap.
   if (!enc.vitalDiukur) skorPemeriksaan = Math.min(skorPemeriksaan, 50)
   // M10.5 Q2: kasus dgn konfirmasiWajib (TB: BTA/TCM; malaria: RDT) tak boleh
-  // didiagnosis/diterapi presumtif tanpa lab konfirmasi dipesan — cap sama
-  // persis vitalDiukur.
-  if (kasus.konfirmasiWajib && !enc.labDipesan.includes(kasus.konfirmasiWajib)) {
+  // didiagnosis/diterapi presumtif tanpa lab konfirmasi TERSEDIA hasilnya —
+  // cap sama persis vitalDiukur. CODEX audit (2026-07-12, temuan #3): cek
+  // sebelumnya pakai `labDipesan` (baru DIPESAN, belum tentu ada hasilnya —
+  // bta_sputum sendiri `hasilBesok:true`), jadi memesan lab lalu LANGSUNG
+  // menegakkan diagnosis presumtif di kunjungan yang sama tetap lolos cap.
+  // `labTersedia` memastikan hasil SUDAH ada sebelum cap terangkat.
+  if (kasus.konfirmasiWajib && !enc.labTersedia.includes(kasus.konfirmasiWajib)) {
     skorPemeriksaan = Math.min(skorPemeriksaan, 50)
   }
 
@@ -640,11 +644,6 @@ export function nilaiEncounter(
   // dengan obat lanjutan adalah jalur benar; merujuk ULANG = pemborosan berjenjang.
   const disposisi = enc.disposisi
   const prb = enc.pasien.prb === true
-  const disposisiTepat = prb
-    ? disposisi === 'pulang' || disposisi === 'observasi'
-    : kasus.harusDirujuk
-      ? disposisi === 'rujuk'
-      : disposisi === 'pulang' || disposisi === 'observasi'
   // M10.5 §3a (2026-07-12): TACC rujukan terjustifikasi — dokter boleh
   // mendeklarasikan alasan (komplikasi/komorbid/keterbatasan_fasilitas) saat
   // merujuk kasus `harusDirujuk:false`. Validity-check NYATA: deklarasi hanya
@@ -653,6 +652,16 @@ export function nilaiEncounter(
   const justifikasiValid =
     enc.justifikasiRujuk !== undefined &&
     (kasus.justifikasiRujukValid ?? []).includes(enc.justifikasiRujuk)
+  // CODEX audit (2026-07-12, temuan #4): §3a dulu SETENGAH-mekanik — hanya
+  // membebaskan `rujukanNonSpesialistik` (tally RRNS), tapi `disposisiTepat`
+  // (dibaca reducer utk SISRUTE/Dex/surat) tak pernah tahu soal justifikasi,
+  // jadi rujukan yg justru VALID tetap dianggap "disposisi keliru" di semua
+  // jalur lain. Cabang di-mirror persis rujukanNonSpesialistik di bawah.
+  const disposisiTepat = prb
+    ? disposisi === 'pulang' || disposisi === 'observasi'
+    : kasus.harusDirujuk
+      ? disposisi === 'rujuk'
+      : disposisi === 'pulang' || disposisi === 'observasi' || (disposisi === 'rujuk' && justifikasiValid)
   const rujukanNonSpesialistik = prb
     ? disposisi === 'rujuk'
     : disposisi === 'rujuk' && !kasus.harusDirujuk && !justifikasiValid
@@ -715,11 +724,19 @@ export function nilaiEncounter(
   //   cowboy (pasien wajib-rujuk dipulangkan)      → maks D (54)
   //   obat berbahaya/kontraindikasi absolut         → maks D (54) — bahaya nyawa
   //   antibiotik tanpa indikasi (stewardship)       → maks B (69)
+  //   percobaan resep kontraindikasi diblokir firewall → maks B (69) — nyaris,
+  //     tak sampai ke pasien, tapi kelalaian cek alergi tetap kelalaian nyata
   //   rujukanNonSpesialistik (boros, tak membahayakan pasien ini) → maks B (84)
   const capGrade: number[] = []
   if (cowboy) capGrade.push(54)
   if (obatBerbahaya > 0) capGrade.push(54)
   if (antibiotikTanpaIndikasi) capGrade.push(69)
+  // CODEX audit (2026-07-12, temuan #13B): firewall alergi yg tertrigger
+  // (resep diblokir sebelum sampai pasien) dulu NOL konsekuensi grade/skor —
+  // murni badge UI (LembarPeriksa.tsx). Cap lebih ringan drpd obatBerbahaya
+  // (54) krn bahaya tak pernah terjadi, tapi tetap didisiplinkan spt
+  // antibiotikTanpaIndikasi (stewardship/kewaspadaan, bukan cedera nyata).
+  if (enc.firewallTerpicu > 0) capGrade.push(69)
   if (rujukanNonSpesialistik) capGrade.push(84)
   if (capGrade.length > 0) nilaiTotal = Math.min(nilaiTotal, ...capGrade)
   const grade: PenilaianEncounter['grade'] =
@@ -738,6 +755,13 @@ export function nilaiEncounter(
     rujukanNonSpesialistik,
     cowboy,
     antibiotikTanpaIndikasi,
+    // CODEX audit (2026-07-12, temuan #1/#13B): dulu variabel lokal
+    // (obatBerbahaya) atau field EncounterState murni-UI (firewallTerpicu) —
+    // tak pernah terekspos di PenilaianEncounter, jadi reducer/tally/skor
+    // formal tak bisa membacanya sama sekali. Diekspos di sini persis pola
+    // cowboy/antibiotikTanpaIndikasi di atas.
+    obatBerbahaya: obatBerbahaya > 0,
+    firewallTerpicu: enc.firewallTerpicu > 0,
     labTakRelevan,
     ...(sbarSkor !== undefined ? { sbarSkor } : {}),
     grade,

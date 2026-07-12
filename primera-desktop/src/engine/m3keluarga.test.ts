@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
 import type { GameState, KeluargaState, HasilKunjungan } from './state'
 import type { Action } from './actions'
-import { advance, MAKS_BINAAN } from './reducer'
+import { advance, MAKS_BINAAN, HARI_BUKA_KUNJUNGAN } from './reducer'
 import { buildInitialState } from './init'
 import { terapkanHasil } from './kunjungan'
 
@@ -78,7 +78,10 @@ describe('M3c — konten 16 keluarga', () => {
 
     for (const jUjian of karmaUjian) {
       const jKarier = karmaKarier.find((j) => j.keluargaId === jUjian.keluargaId)!
-      expect(jUjian.hari).toBe(Math.max(1, Math.round(jKarier.hari / 3)))
+      // CODEX audit (2026-07-12, temuan #6): lantai kini HARI_BUKA_KUNJUNGAN+1
+      // (bukan cuma 1) — jendela intervensi minimal 1 hari selalu terjamin ada.
+      expect(jUjian.hari).toBe(Math.max(HARI_BUKA_KUNJUNGAN + 1, Math.round(jKarier.hari / 3)))
+      expect(jUjian.hari).toBeGreaterThan(HARI_BUKA_KUNJUNGAN)
       const kel = ujian.desa.keluarga[jUjian.keluargaId!]!
       expect(kel.karmaAktif!.jatuhTempoHari).toBe(jUjian.hari)
     }
