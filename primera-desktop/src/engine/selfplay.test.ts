@@ -221,7 +221,11 @@ function mainkanKunjunganTepat(
   const skenario = kelContent.arc.kunjungan[kelAwal.arcIndex]
   if (!skenario) throw new Error(`Arc ${keluargaId} sudah habis (arcIndex ${kelAwal.arcIndex})`)
 
-  let s = run(state, { type: 'MULAI_KUNJUNGAN', keluargaId }).state
+  // Fix #10 (audit CODEX 2026-07-11): MULAI_KUNJUNGAN kini wajib roster binaan.
+  let s = state.desa.binaan.includes(keluargaId)
+    ? state
+    : run(state, { type: 'PILIH_BINAAN', keluargaId }).state
+  s = run(s, { type: 'MULAI_KUNJUNGAN', keluargaId }).state
   expect(s.kunjungan?.fase).toBe('observasi')
 
   for (const h of skenario.hotspot) {

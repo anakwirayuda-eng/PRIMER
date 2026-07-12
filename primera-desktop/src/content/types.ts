@@ -225,6 +225,16 @@ export interface KasusKlinis {
   konsekuensi?: KonsekuensiKlinis
   /** Sebagian pasien kasus ini membawa alergi yang menjebak terapi standar. */
   alergiTrap?: { kelas: string; obatTerlarang: string[]; alternatifBenar: string[] }
+  /**
+   * Tier-1 #7 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): analog
+   * `alergiTrap` tapi utk INTERAKSI OBAT-JALAN (bukan alergi) — faktor risiko
+   * tersembunyi pasien (mis. sedang pakai PDE5-inhibitor) yang membuat obat
+   * tertentu KONTRAINDIKASI meski bukan alergi. `faktor` terungkap via
+   * anamnesis esensial (pola sama alergiTrap.kelas), lalu obat di
+   * `obatTerlarang` keluar dari obatBenar & jadi berbahaya bila tetap
+   * diresepkan; `alternatifBenar` (boleh kosong) masuk menggantikannya.
+   */
+  interaksiTrap?: { faktor: string; obatTerlarang: string[]; alternatifBenar: string[] }
 }
 
 /* ---------------------------------------------------------------------------
@@ -468,6 +478,16 @@ export interface KartuIntervensi {
   cocokUntuk: Hambatan[]
   /** Efek naratif bila dipilih. */
   hasilNarasi: string
+  /**
+   * Tambahan #1 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): menandai
+   * kartu ini sbg TINDAKAN ESKALASI wajib utk arc ber-karma keselamatan tinggi
+   * (mis. preeklampsia berat) — bila skenario punya ≥1 kartu ber-flag ini,
+   * `berhasil` (pembatalan karma penuh) HANYA sah bila kartu yg DIPILIH itu
+   * sendiri yg ber-flag ini, bukan sekadar kartu lain yg kebetulan cocok
+   * kategori hambatan yang sama. Opsional & jarang (baru dipakai arc Asih) —
+   * skenario tanpa kartu ber-flag ini berperilaku identik spt semula.
+   */
+  aksiEskalasi?: boolean
 }
 
 export interface SkenarioKunjungan {

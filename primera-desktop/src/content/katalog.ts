@@ -125,6 +125,19 @@ export const OBAT: Record<string, Obat> = {
     hargaJual: 300,
     fornas: true,
   },
+  // Bagian D Tier-1 #2 (audit CODEX 2026-07-11, adjudikasi PNPK/DOEN 2026-07-12):
+  // glibenklamid TIDAK ada di DOEN 2021 Puskesmas — sulfonilurea yg realistis
+  // tersedia (DOEN 2021) adalah glimepirid, juga lebih disukai PERKENI krn
+  // risiko hipoglikemia lebih rendah.
+  glimepirid_2: {
+    id: 'glimepirid_2',
+    nama: 'Glimepirid 2 mg',
+    kelas: 'Antidiabetik sulfonilurea',
+    sediaan: 'Tablet 2 mg',
+    hargaBeli: 200,
+    hargaJual: 400,
+    fornas: true,
+  },
   amlodipine_5: {
     id: 'amlodipine_5',
     nama: 'Amlodipin 5 mg',

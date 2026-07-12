@@ -126,7 +126,14 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     ],
     diagnosisBanding: ['I10', 'I11.9', 'I15.9', 'G44.2'],
     tatalaksana: {
+      // Bagian D Tier-1 #1 (audit CODEX 2026-07-11, adjudikasi PNPK 2021+DOEN
+      // 2026-07-12): TD 160/95 = Derajat 2 PNPK 2021, wajib kombinasi 2 obat
+      // sejak awal (bukan monoterapi). Kaptopril (ACEi) diutamakan drpd
+      // hidroklorotiazid krn pasien punya sindrom metabolik (obesitas+
+      // dislipidemia) — tiazid berisiko memperburuk profil lipid/glukosa;
+      // ACEi+CCB metabolically neutral. Keduanya realistis-DOEN 2021 Puskesmas.
       obatBenar: ['amlodipine_5'],
+      obatAlternatif: [['captopril_25', 'hct_25']],
       obatSalahUmum: [
         { id: 'ibuprofen_400', alasan: 'NSAID menaikkan tekanan darah dan mengganggu ginjal — hindari pada hipertensi.' },
         { id: 'paracetamol_500', alasan: 'Hanya meredakan nyeri kepala, tidak menurunkan tekanan darah; bukan terapi hipertensi.' },
@@ -260,9 +267,15 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     ],
     diagnosisBanding: ['E11.9', 'E10.9', 'E13.9', 'N39.0'],
     tatalaksana: {
-      obatBenar: ['metformin_500'],
+      // Bagian D Tier-1 #2 (audit CODEX 2026-07-11, adjudikasi PNPK/PPK1186+DOEN
+      // 2026-07-12): HbA1c 8,9% ≥ ambang PERKENI 7,5% (PPK1186 kategori kendali
+      // "Buruk" >8%) — wajib kombinasi 2 OAD mekanisme berbeda, bukan monoterapi.
+      // Sulfonilurea-nya glimepirid (BUKAN glibenklamid — glibenklamid tak ada
+      // di DOEN 2021 Puskesmas, tak realistis diresepkan; glimepirid nyata ada
+      // & risiko hipoglikemia lebih rendah).
+      obatBenar: ['metformin_500', 'glimepirid_2'],
       obatSalahUmum: [
-        { id: 'glibenclamide_5', alasan: 'Sulfonilurea bukan lini pertama dan berisiko hipoglikemia; mulai metformin dulu (PERKENI 2021).' },
+        { id: 'glibenclamide_5', alasan: 'Glibenklamid tidak ada di formularium esensial Puskesmas (DOEN 2021) — tidak realistis diresepkan di FKTP. Glimepirid setara secara klinis (sulfonilurea, risiko hipoglikemia lebih rendah) dan nyata tersedia.' },
       ],
       edukasi: ['diet_dm', 'aktivitas_fisik', 'kepatuhan_obat', 'kontrol_rutin'],
       // DeepThink triangulasi (2026-07-05): PERKENI — kepatuhan obat adalah tema
@@ -755,7 +768,11 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     ],
     diagnosisBanding: ['D50.9', 'O99.0', 'D56.9', 'D53.9'],
     tatalaksana: {
-      obatBenar: ['tablet_fe', 'asam_folat'],
+      // Tambahan #5 (audit CODEX 2026-07-11, adjudikasi 2026-07-12, opsi i):
+      // tablet_fe di katalog SUDAH kombinasi Fe 60mg+folat 0,4mg (produk TTD
+      // program Kemenkes asli) — mewajibkan asam_folat terpisah jg dobel-hitung
+      // folat (0,4+1=1,4mg/hari). tablet_fe sendiri sudah cukup.
+      obatBenar: ['tablet_fe'],
       obatSalahUmum: [
         { id: 'vitamin_b_kompleks', alasan: 'Bukan terapi utama anemia defisiensi besi; yang kurang adalah zat besi, bukan vitamin B kompleks.' },
       ],

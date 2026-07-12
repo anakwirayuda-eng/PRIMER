@@ -153,6 +153,29 @@ describe('DeepThink #1 — observasi + lab besok: lubang hitam ditutup', () => {
     expect(balik).toBeDefined()
     expect(balik?.hari).toBe(21)
     expect(balik?.catatan).toContain('evaluasi hasil lab')
+    // Fix #14 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): jadwal_evaluasi_
+    // kini membawa labId yg ditunggu, bukan cuma catatan flavor.
+    expect(balik?.labId).toBe('lab_besok_relevan')
+  })
+
+  it('Fix #14 (audit CODEX 2026-07-11): pasien yg kembali besok utk evaluasi PUNYA hasil lab kemarin langsung terlihat (labDipesan+labTersedia pra-isi)', () => {
+    const p = pack([kasus('flu', { lab: [{ id: 'lab_besok_relevan', hasil: 'Menunggu', flag: 'normal', relevan: true }] })])
+    let s = baseState(p, {
+      klinik: { antrian: [buatPasienDariKasus('flu', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } },
+    })
+    s = tanganiObservasi(s, p, 'lab_besok_relevan')
+    // Lewati ke hari berikutnya (pagi → siang → sore → pagi besok).
+    s = run(s, { type: 'LANJUTKAN' }, p)
+    s = run(s, { type: 'LANJUTKAN' }, p)
+    s = run(s, { type: 'LANJUTKAN' }, p)
+    expect(s.hari).toBe(21)
+    s = run(s, { type: 'PANGGIL_PASIEN' }, p)
+    expect(s.klinik.aktif).toBeDefined()
+    expect(s.klinik.aktif!.pasien.followUpDari).toContain('evaluasi hasil lab')
+    // Sebelum fix #14: labDipesan/labTersedia SELALU kosong di encounter baru
+    // — dokter harus memesan ulang lab yg SAMA persis utk melihat hasilnya.
+    expect(s.klinik.aktif!.labDipesan).toContain('lab_besok_relevan')
+    expect(s.klinik.aktif!.labTersedia).toContain('lab_besok_relevan')
   })
 
   it('lab TAK RELEVAN pending → TIDAK dapat proteksi observasi (reducer, simetris dgn clinic.ts)', () => {
@@ -175,6 +198,41 @@ describe('DeepThink #1 — observasi + lab besok: lubang hitam ditutup', () => {
     // Konsekuensi NEGATIF tetap terjadwal (bukan jalur netral jadwal_evaluasi_).
     expect(s.jadwal.some((j) => j.id.startsWith('jadwal_kembali_'))).toBe(true)
     expect(s.jadwal.some((j) => j.id.startsWith('jadwal_evaluasi_'))).toBe(false)
+  })
+})
+
+describe('Tambahan #2 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): edukasiKritis konsekuensi hanya minum_oat_tuntas', () => {
+  it('melewatkan minum_oat_tuntas MEMICU konsekuensi negatif meski diagnosis+terapi+disposisi sempurna', () => {
+    const p = pack([
+      kasus('tb', { tatalaksana: { obatBenar: [], edukasi: ['minum_oat_tuntas'], edukasiKritis: ['minum_oat_tuntas'] } }),
+    ])
+    let s = baseState(p, {
+      klinik: { antrian: [buatPasienDariKasus('tb', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } },
+    })
+    s = run(s, { type: 'PANGGIL_PASIEN' }, p)
+    s = run(s, { type: 'LANJUT_FASE' }, p) // anamnesis → pemeriksaan
+    s = run(s, { type: 'LANJUT_FASE' }, p) // pemeriksaan → diagnosis
+    s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: 'A00', jenis: 'tegak' }, p)
+    // TIDAK menambah edukasi apa pun — minum_oat_tuntas terlewat.
+    s = run(s, { type: 'LANJUT_FASE' }, p) // terapi → disposisi
+    s = run(s, { type: 'DISPOSISI', jenis: 'pulang' }, p)
+    expect(s.jadwal.some((j) => j.id.startsWith('jadwal_kembali_'))).toBe(true)
+  })
+
+  it('melewatkan topik edukasiKritis LAIN (bukan minum_oat_tuntas) TIDAK memicu konsekuensi negatif — hanya potong skor', () => {
+    const p = pack([
+      kasus('ht', { tatalaksana: { obatBenar: [], edukasi: ['kepatuhan_obat'], edukasiKritis: ['kepatuhan_obat'] } }),
+    ])
+    let s = baseState(p, {
+      klinik: { antrian: [buatPasienDariKasus('ht', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } },
+    })
+    s = run(s, { type: 'PANGGIL_PASIEN' }, p)
+    s = run(s, { type: 'LANJUT_FASE' }, p)
+    s = run(s, { type: 'LANJUT_FASE' }, p)
+    s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: 'A00', jenis: 'tegak' }, p)
+    s = run(s, { type: 'LANJUT_FASE' }, p)
+    s = run(s, { type: 'DISPOSISI', jenis: 'pulang' }, p)
+    expect(s.jadwal.some((j) => j.id.startsWith('jadwal_kembali_'))).toBe(false)
   })
 })
 

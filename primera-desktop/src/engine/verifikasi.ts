@@ -223,7 +223,32 @@ function fnv1a(teks: string): string {
 // (dulu masih pakai `hasilBesok` generik, tertinggal dari fix #16 clinic.ts).
 // #9 — hanyaUntuk (gender-gate anamnesis) kini ikut sidik jari (lihat hash
 // anamnesis di atas) — dulu score-affecting tapi tak ter-hash.
-const REVISI_ENGINE = 22
+// Batch CODEX-18 lanjutan + Bagian D PNPK + Tambahan (2026-07-12), SATU bump
+// utk seluruh perubahan semantik/skor sekaligus:
+// #10 — MULAI_KUNJUNGAN kini wajib roster desa.binaan (dulu bisa kunjungi
+// siapa pun tanpa pernah PILIH_BINAAN) — aksi yg dulu lolos kini DITOLAK.
+// #12 — grade per-encounter kini hard-cap (cowboy→maks D, RRNS→maks B), dulu
+// disposisi diabaikan total oleh formula nilaiTotal.
+// #13 — follow-up keluarga mangkir kini PERSIST & masuk pool drift mingguan
+// (dulu sekali-tembak: TTM mundur sekali lalu followUpHari dihapus).
+// #14 — pasien kembali dari observasi-menunggu-lab kini membawa hasil lab
+// (labDipesan/labTersedia pra-isi di buatEncounter) — dulu encounter baru
+// selalu kosong, lab yg sama harus dipesan ulang utk terlihat hasilnya.
+// interaksiTrap (Tier-1 #7, field baru KasusKlinis+PasienAktif.faktorRisiko) —
+// analog alergiTrap utk interaksi obat-jalan (mis. nitrat+PDE5-inhibitor),
+// menggeser obatBenar/obatBerbahaya sama seperti alergiTrap — wajib di-hash
+// (lihat `interaksi: k.interaksiTrap` di sidikJariPack bawah).
+// aksiEskalasi (Tambahan #1, field baru KartuIntervensi) — arc ber-karma
+// keselamatan tinggi (Asih) kini butuh kartu eskalasi spesifik utk `berhasil`
+// penuh, bukan sekadar kartu lain yg kebetulan cocok kategori hambatan sama.
+// Tambahan #2 — edukasiKritis `minum_oat_tuntas` kini memicu konsekuensi
+// penuh (pasien kembali memburuk), bukan cuma potong skorEdukasi.
+// Konten tatalaksana (Bagian D Tier-1, sudah tercakup sidik jari `tx` per-
+// kasus di bawah, dicatat di sini sbg bagian batch): hipertensi_esensial
+// (kombinasi wajib), dm_tipe2 (glimepirid, bukan glibenklamid), mm_isk_bawah
+// (siprofloksasin jadi utama), jiwa_gangguan_cemas (amitriptilin), ANC
+// (distraktor golongan darah dihapus, folat dobel-hitung dihapus).
+const REVISI_ENGINE = 23
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -252,6 +277,10 @@ export function sidikJariPack(pack: ContentPack): string {
         icd: k.icd10,
         rujuk: k.harusDirujuk ?? false,
         trap: k.alergiTrap ?? null,
+        // Tier-1 #7 (audit CODEX 2026-07-11): interaksiTrap score-affecting
+        // sama persis spt alergiTrap (menggeser obatBenar/obatBerbahaya) —
+        // wajib ikut hash sejak diperkenalkan, bukan ditambal belakangan.
+        interaksi: k.interaksiTrap ?? null,
         tx: k.tatalaksana,
         lab: k.lab,
         pf: [...k.pemeriksaanFisik].sort((a, b) => a.region.localeCompare(b.region)).map((t) => ({ region: t.region, relevan: t.relevan })),

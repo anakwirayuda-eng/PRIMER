@@ -44,6 +44,12 @@ export interface PasienAktif {
   bpjs: boolean
   /** Alergi yang dibawa pasien (golongan, mis. 'penisilin'). Tersembunyi sampai ditanya/RM. */
   alergi: string[]
+  /**
+   * Tier-1 #7 (audit CODEX 2026-07-11): faktor risiko INTERAKSI OBAT (bukan
+   * alergi) yang dibawa pasien, mis. 'pde5_inhibitor' — analog `alergi` tapi
+   * utk kasus ber-`interaksiTrap`. Tersembunyi sampai ditanya/anamnesis.
+   */
+  faktorRisiko: string[]
   /** RW tempat tinggal pasien — pakan surveilans balik UKP→UKM. */
   rw: number
   /** Kaitan ke keluarga binaan (karma loop dua arah). */
@@ -58,6 +64,14 @@ export interface PasienAktif {
    * merujuk ulang = pemborosan berjenjang.
    */
   prb?: boolean
+  /**
+   * Fix #14 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): id lab yg
+   * hasilnya SUDAH TERSEDIA saat pasien ini kembali utk evaluasi (dari
+   * observasi hari sebelumnya) — buatEncounter (clinic.ts) pra-isi
+   * labDipesan/labTersedia dari field ini, dokter langsung melihat hasilnya
+   * di LembarPeriksa tanpa perlu memesan ulang.
+   */
+  labSudahTersedia?: string
 }
 
 export type FaseEncounter =

@@ -3915,15 +3915,12 @@ yang sudah mapan). Prioritas yang diminta dokter: #1–#5, lalu #7–#11 dan #17
   `win.loadFile`). Tak ada test — repo ini belum punya harness test proses-main (tak ada mock
   `electron` di vitest config); diverifikasi via code review + typecheck.
 
-**BUTUH KEPUTUSAN DOKTER (dikonfirmasi valid, BELUM difix — trade-off desain/gameplay, bukan bug
-mekanis):**
-- **#6** — info-leak save-scumming mode ujian (pacing/UX trade-off).
-- **#10** — celah bypass roster `desa.binaan` (3 arah remediasi berbeda, keputusan desain game).
-- **#12** — grade akhir kunjungan mengabaikan disposisi (pola desain lama yg sudah mapan; mungkin
-  layak mitigasi UI-saja yg murah, tapi tetap trade-off, bukan bug jelas).
-- **#13** — follow-up terjadwal tak benar-benar ditegakkan (trade-off pacing/realisme).
-- **#14** — hasil lab tertunda tak terbawa ke encounter berikutnya (penambahan fitur signifikan,
-  bukan bug — di luar scope batch mekanis ini).
+**BUTUH KEPUTUSAN DOKTER — SEMUA SUDAH DIPUTUSKAN & DIEKSEKUSI (2026-07-12, lihat §65):**
+- **#6** — Opsi A: terima sbg keterbatasan bawaan (nol kode).
+- **#10** — Opsi A: wajibkan roster `desa.binaan` sebelum `MULAI_KUNJUNGAN`.
+- **#12** — Opsi A: hard-cap grade (cowboy→maks D, RRNS→maks B).
+- **#13** — Opsi B: eskalasi via pool drift (bukan sekali-tembak-lupa).
+- **#14** — Opsi A: bangun penuh (lab-carry-forward ke encounter berikutnya).
 
 **DIKONFIRMASI, NOL AKSI (sudah benar / sudah diputuskan sebelumnya / bukan isu kode):**
 - **#16** — glare peta mode-malam: SUDAH DIPUTUSKAN sesi sebelumnya, tak ada perubahan lanjutan.
@@ -3934,3 +3931,100 @@ race-condition TitleScreen, 1 director.ts gender, 1 clinic.ts antibiotik-floor, 
 pack.test.ts invarian arc) + typecheck bersih. `npm audit`: 0 kerentanan (tak berubah dari §63).
 **REVISI_ENGINE 21→22** (bundel #2 antibiotik-floor-gap + #3 reducer-sync + #9 hanyaUntuk-hash —
 ketiganya memengaruhi replay/skor, dibundel satu bump per disiplin proyek).
+
+## 65. Eksekusi keputusan #6/#10/#12/#13/#14 (§64) + Bagian D PNPK Kemenkes + Tambahan M10.5 (2026-07-12)
+
+Dokter memutuskan satu-per-satu (percakapan interaktif, bukan batch pasif) kelima item BUTUH-
+KEPUTUSAN §64, lalu mengalihkan ke adjudikasi 17 temuan cross-check PNPK Kemenkes ("Bagian D",
+[[project_primer_pnpk_crosscheck]]) dan 5 item Tambahan M10.5 lain yang butuh keputusan protokol
+([[project_primer_m10_5_fidelitas]]). Sesi ini menetapkan **aturan baku baru** ([[feedback_ebm_
+realistis_priority_rule]]): jawaban-benar (`obatBenar` dkk) harus EBM terkini yang DIBATASI
+ketersediaan realistis Puskesmas (cek DOEN 2021), baru fallback ke PPK1186/FKTP-scoped PNPK — sambil
+`clue`/`mutiaraEbm`/`catatanRealita`/`panduanResmi` TETAP APA ADANYA (bahan bacaan, bukan skor).
+Riset EBM-realistis via workflow 5-agen paralel (grounding thd DOEN+PPK1186) MEMBALIK 3 dari 5
+rekomendasi awal Claude sendiri — didokumentasikan jujur ke dokter sebelum eksekusi (lihat detail
+per-item di bawah).
+
+**#6 (info-leak save-scumming)** → Opsi A: diterima sbg keterbatasan bawaan aplikasi save-lokal
+single-player (konsisten dgn keputusan #3c "proctoring fisik saja" dossier §63). Nol kode.
+
+**#10 (bypass roster binaan)** → Opsi A: `MULAI_KUNJUNGAN` (reducer.ts) kini menolak keluarga yang
+belum ada di `desa.binaan`; `infoKunjungan()` (PetaDesa.tsx) cermin gerbang yg sama, tombol Kunjungi
+otomatis nonaktif dgn alasan jujur. 6 test lama (m1bridge/selfplay) diupdate menambah `PILIH_BINAAN`
+sebelum `MULAI_KUNJUNGAN` — bukan bug baru, fixture lama memang mengandalkan celah yg baru ditutup.
+2 test baru mengonfirmasi gerbang.
+
+**#12 (grade abaikan disposisi)** → Opsi A: `nilaiEncounter` (clinic.ts) kini hard-cap `nilaiTotal`
+SEBELUM derive grade — `cowboy` (gagal rujuk wajib) maks 54 (grade D), `rujukanNonSpesialistik`
+(rujuk berlebihan) maks 84 (grade B). 2 test baru mengonfirmasi kedua cap independen dari komponen
+skor lain (bukan kebetulan jatuh ke grade itu).
+
+**#13 (follow-up sekali-tembak)** → Opsi B: blok isolasi lama (kunjungan.ts follow-up mangkir →
+TTM mundur sekali + hapus `followUpHari`) DIHAPUS; follow-up mangkir (`hari > followUpHari+1`) kini
+jadi SALAH SATU syarat `rawan` di mekanisme drift M1.3 yg sudah ada (roster binaan / karma-aktif /
+follow-up-mangkir) — `followUpHari` TIDAK dihapus, tetap "rawan" & terus di-roll drift mingguan (cap
+2/minggu, 35%/hari) sampai benar-benar dikunjungi lagi. Test lama diupdate (window lebih lebar,
+stokastik bukan deterministik-1-hari); 2 test baru (#10) + assert persistence.
+
+**#14 (lab tak terbawa)** — awalnya diasumsikan perlu mekanisme baru besar, TERNYATA cukup ringan:
+`JadwalItem.labId` (state.ts) SUDAH ada (dipakai jenis `hasil_lab`) — tinggal diisi juga utk
+`jadwal_evaluasi_` (reducer.ts, `labMenunggu` diekstrak dari boolean lama), dibawa lewat
+`PasienJatuhTempo.labId` → `PasienAktif.labSudahTersedia` (field baru) → `buatEncounter` (clinic.ts)
+pra-isi `labDipesan`+`labTersedia` — **REUSE PENUH** kode render `LembarPeriksa.tsx` yg sudah baca
+`kasus.lab` dari `labTersedia`, nol UI baru. 2 test baru (jadwal bawa labId + encounter baru
+menampilkan hasil tanpa pesan ulang).
+
+**Tier-1 #7 (interaksi PDE5+nitrat, dari Bagian D)** — field baru `interaksiTrap` (KasusKlinis) +
+`faktorRisiko` (PasienAktif), ANALOG `alergiTrap` tapi utk interaksi obat-jalan bukan alergi (kelas
+semantik beda, mekanisme paralel di clinic.ts: obat terlarang keluar obatBenar, tetap-diresepkan
+dihukum sbg obatBerbahaya). Kasus `mm_gagal_jantung_kongestif` dibatasi laki-laki (skenario PDE5-
+inhibitor spesifik konteks itu) + anamnesis baru `q_obat_kuat` (ungkapan malu-malu, esensial). 3 test
+baru + pagar `pack.ts` (obat interaksiTrap wajib ada di formularium).
+
+**Bagian D Tier-1 (6 item konten, EBM-realistis-first — 3 dibalik dari rekomendasi awal setelah
+grounding DOEN/PPK1186):**
+- **hipertensi_esensial** — kombinasi wajib (PNPK 2021 Derajat-2): amlodipine+kaptopril (utama, netral
+  metabolik) ATAU amlodipine+HCT (alternatif sah), keduanya DOEN-real.
+- **dm_tipe2** — kombinasi metformin+**glimepirid** (BUKAN glibenklamid — glibenklamid tak ada di
+  DOEN 2021, glimepirid ada + risiko hipoglikemia lebih rendah). Entri katalog baru `glimepirid_2`.
+- **mm_isk_bawah** — **DIBALIK dari usulan awal** (nitrofurantoin) setelah cek DOEN: nitrofurantoin
+  JUGA tak ada di DOEN. Siprofloksasin jadi obatBenar (satu-satunya dari 4 opsi PPK1186 yg realistis-
+  DOEN DAN aman utk alergi-sulfa pasien ini) — sekaligus menutup kontradiksi lama (obatBenar dulu =
+  obat yg dilarang alergiTrap kasus itu sendiri).
+- **kia_isk_kehamilan** — durasi 7→3 hari TERNYATA murni teks `clue` (tak ada field durasi
+  terstruktur) — per aturan baku baru, TIDAK disentuh (bahan bacaan, bukan skor). Nol kode.
+- **jiwa_skizofrenia** — **DIBALIK TOTAL** dari usulan awal (kosongkan obatBenar/rujuk-murni):
+  PPK1186 (Tingkat Kemampuan 3A, dokumen scope-kompetensi FKTP resmi) justru MEMERINTAHKAN inisiasi
+  haloperidol/klorpromazin sebelum rujuk, termasuk kasus baru — menang atas PNPK spesialis krn ini
+  soal scope FKTP. **Kasus TIDAK diubah sama sekali.**
+- **jiwa_gangguan_cemas** — **DIBALIK dari usulan awal** (tambah SSRI baru): SSRI/SNRI apa pun
+  (termasuk fluoksetin yg SUDAH dipakai) tak ada di DOEN Puskesmas (psikofarmaka Puskesmas cuma 6
+  obat). PPK1186 menaruh amitriptilin SEJAJAR SSRI sbg lini pertama — obatBenar jadi `[amitriptilin_
+  25, fluoksetin_20]` (grup alternatif, PPK1186 memang menyebut keduanya interchangeable), diazepam
+  direklasifikasi jadi opsional (boleh kombinasi awal 2-4 minggu, bukan salah mutlak).
+
+**Bagian D Tier-2 (10 item)** → semua masuk agenda M13 (celah cakupan kasus baru), tak ada kode.
+
+**Tambahan M10.5 (5 item, semua "oke semua" per rekomendasi Claude):**
+- **Asih eskalasi** (Tambahan #1) — field baru `aksiEskalasi` (KartuIntervensi): skenario ber-kartu
+  ini mensyaratkan kartu ITU SENDIRI dipilih (bukan sekadar kartu lain yg cocok kategori hambatan
+  sama) utk `berhasil` penuh — kartu `ak1_i1` ("Gandeng Mbah Rah") ditandai. No-op utk konten SAAT
+  INI (kategori 1-kartu-per-hambatan di arc Asih sudah implisit mensyaratkan ini), tapi mekanisme
+  BENAR & future-proof; dibuktikan via fixture sintetis 2-kartu-sekategori di kunjungan.test.ts.
+- **edukasiKritis konsekuensi** (Tambahan #2) — hanya `minum_oat_tuntas` (risiko MDR-TB) memicu
+  konsekuensi penuh; 13 topik lain tetap cuma potong skor.
+- **Prolanis DM severity** (Tambahan #3) — opsi netral-klinis: catatan komplikasi kini tampilkan
+  angka GDS/TD sistolik SUNGGUHAN (`pBaru.param`), gerbang rujuk (`dm_tipe2` reuse) TIDAK diubah.
+- **ANC golongan darah** (Tambahan #4) — bukan distraktor (komponen 10T ANC resmi) — flag dihapus.
+- **ANC folat dobel** (Tambahan #5) — opsi (i): `asam_folat` dihapus dari `obatBenar` (tablet_fe
+  sudah kombinasi Fe+folat) di 2 kasus (ANC normal + anemia bumil) — blast radius lebih sempit drpd
+  opsi (ii) yg akan mengubah definisi `tablet_fe` dipakai kasus lain.
+
+**Bonus**: catatan edukasi TCM-vs-BTA ditambahkan ke `mutiaraEbm` kasus `tb_paru` (PNPK 2019: TCM
+lini-pertama HANYA di fasyankes ber-alat; BTA tetap SAH utk fasyankes tanpa TCM, bukan ketinggalan
+zaman) — menjawab pertanyaan dokter langsung, bukan temuan CODEX.
+
+**Verifikasi**: 689/689 test (naik dari 675 — 14 test regresi baru) + typecheck bersih. `npm audit`:
+0 kerentanan. **REVISI_ENGINE 22→23** (satu bump: #10/#12/#13/#14 + interaksiTrap + aksiEskalasi +
+edukasiKritis-scope + seluruh konten tatalaksana Bagian D Tier-1, semua score-affecting, dibundel
+per disiplin proyek — lihat rasional lengkap di komentar `verifikasi.ts`).

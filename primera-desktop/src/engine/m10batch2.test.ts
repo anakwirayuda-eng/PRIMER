@@ -122,6 +122,45 @@ describe('M10 Batch-2 B.1 — kartu Prolanis hanya utk peserta ber-JKN aktif', (
     expect(pA.param).toBe(paramAwalA) // dulu: dianggap "salah" → drift memburuk
     expect(pA.takTerkontrolBerturut).toBe(0)
   })
+
+  it('Tambahan #3 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): komplikasi Prolanis DM tetap reuse dm_tipe2 (gerbang rujuk TAK diubah), tapi catatan kini tampilkan GDS sungguhan', () => {
+    let s = stateDenganProlanis()
+    // pA (dm, keluarga A) perlu JKN AKTIF di test ini (beda dari premis test
+    // B.1 di atas yg sengaja menonaktifkannya) supaya dapat kartu sesi.
+    const [kelA] = Object.keys(s.desa.keluarga)
+    const kelStateA = s.desa.keluarga[kelA!]!
+    s = {
+      ...s,
+      desa: {
+        ...s.desa,
+        keluarga: {
+          ...s.desa.keluarga,
+          [kelA!]: { ...kelStateA, indikator: { ...kelStateA.indikator, jkn: { ...(kelStateA.indikator.jkn ?? { dilaporkan: 'ya' }), statusSebenarnya: 'ya' } } },
+        } as GameState['desa']['keluarga'],
+      },
+      prolanis: {
+        roster: s.prolanis.roster.map((p) =>
+          p.id === 'pA' ? { ...p, param: 190, takTerkontrolBerturut: 1 } : p,
+        ),
+      },
+    }
+    s = run(s, { type: 'MULAI_PROLANIS' })
+    let guard = 0
+    while (s.kegiatan && guard++ < 10) {
+      const kartu = s.kegiatan.kartu[s.kegiatan.index]!
+      // Jawab SALAH sengaja utk pA (satu-satunya peserta ber-kartu) — dorong
+      // takTerkontrolBerturut 1→2, memicu jembatan UKP.
+      const salah = kartu.pilihan.find((p) => !p.benar) ?? kartu.pilihan[0]!
+      s = run(s, { type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: salah.id })
+    }
+    const jadwalPA = s.jadwal.find((j) => j.id.startsWith('jadwal_prolanis_') && j.nama === 'A')
+    expect(jadwalPA).toBeDefined()
+    // Gerbang rujuk TAK diubah — tetap reuse dm_tipe2 (harusDirujuk:false).
+    expect(jadwalPA?.kasusId).toBe('dm_tipe2')
+    // Catatan kini menampilkan angka GDS sungguhan (transparansi info),
+    // bukan cuma frasa generik "gula darah liar tak terkendali".
+    expect(jadwalPA?.catatan).toMatch(/GDS terakhir \d+ mg\/dL/)
+  })
 })
 
 /* -- B.4: arus kas obat — dispense dari stok = nol kas (BPJS) ----------------- */

@@ -135,6 +135,12 @@ export function temuanUntukRegion(kasus: KasusKlinis, region: string): string {
  * ------------------------------------------------------------------------- */
 
 export function buatEncounter(pasien: PasienAktif): EncounterState {
+  // Fix #14 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): pasien kembali
+  // dari observasi-menunggu-lab membawa hasil yg SUDAH tersedia — pra-isi
+  // labDipesan+labTersedia agar LembarPeriksa.tsx (yg SUDAH bisa merender
+  // labTersedia dari kasus.lab) langsung menampilkannya, dokter tak perlu
+  // memesan ulang. Reuse penuh UI/skema yg ada, bukan mekanisme baru.
+  const labAwal = pasien.labSudahTersedia ? [pasien.labSudahTersedia] : []
   return {
     pasien,
     fase: 'anamnesis',
@@ -142,8 +148,8 @@ export function buatEncounter(pasien: PasienAktif): EncounterState {
     sabar: SABAR_AWAL,
     vitalDiukur: false,
     diperiksa: [],
-    labDipesan: [],
-    labTersedia: [],
+    labDipesan: labAwal,
+    labTersedia: labAwal,
     resep: [],
     edukasi: [],
     tindakan: [],
@@ -456,17 +462,28 @@ export function nilaiEncounter(
   const pasienKenaTrap =
     trap !== undefined &&
     enc.pasien.alergi.some((a) => a.toLowerCase() === trap.kelas.toLowerCase())
-  const obatBenar = pasienKenaTrap && trap
-    ? [
-        ...kasus.tatalaksana.obatBenar.filter((id) => !trap.obatTerlarang.includes(id)),
-        ...trap.alternatifBenar,
-      ]
-    : kasus.tatalaksana.obatBenar
+  // Tier-1 #7 (audit CODEX 2026-07-11): analog trap alergi di atas, tapi utk
+  // interaksi obat-jalan (mis. nitrat+PDE5-inhibitor) — faktor risiko
+  // tersembunyi, BUKAN alergi, jadi mekanismenya dipisah (kelas semantik
+  // beda) meski bentuknya paralel: obat terlarang keluar dari obatBenar,
+  // alternatif (bila ada) masuk menggantikannya.
+  const interaksi = kasus.interaksiTrap
+  const pasienKenaInteraksi =
+    interaksi !== undefined && enc.pasien.faktorRisiko.includes(interaksi.faktor)
+  const obatTerlarangGabungan = [
+    ...(pasienKenaTrap && trap ? trap.obatTerlarang : []),
+    ...(pasienKenaInteraksi && interaksi ? interaksi.obatTerlarang : []),
+  ]
+  const obatBenar = [
+    ...kasus.tatalaksana.obatBenar.filter((id) => !obatTerlarangGabungan.includes(id)),
+    ...(pasienKenaTrap && trap ? trap.alternatifBenar : []),
+    ...(pasienKenaInteraksi && interaksi ? interaksi.alternatifBenar : []),
+  ]
   // Kelompok alternatif "pilih salah satu" (mis. 2 antihistamin setara). Tiap
   // grup = satu slot; terpenuhi bila ≥1 anggota diresepkan. Bila pasien kena
-  // trap alergi, anggota terlarang dikeluarkan dari grup demi keamanan.
+  // trap alergi/interaksi, anggota terlarang dikeluarkan dari grup demi keamanan.
   const grupAlternatif = (kasus.tatalaksana.obatAlternatif ?? []).map((g) =>
-    pasienKenaTrap && trap ? g.filter((id) => !trap.obatTerlarang.includes(id)) : g,
+    g.filter((id) => !obatTerlarangGabungan.includes(id)),
   )
   const idAlternatifSah = new Set(grupAlternatif.flat())
   const slotAltTerpenuhi = grupAlternatif.filter((g) => g.some((id) => enc.resep.includes(id))).length
@@ -496,9 +513,14 @@ export function nilaiEncounter(
     totalSlot > 0 ? (benarDiresepkan + slotAltTerpenuhi + prosedurTerpenuhi) / totalSlot : 1
   // Obat BERBAHAYA untuk kasus ini (obatSalahUmum, mis. NSAID pada dengue)
   // dihukum jauh lebih berat daripada sekadar "obat di luar tatalaksana".
-  const obatBerbahaya = (kasus.tatalaksana.obatSalahUmum ?? []).filter((o) =>
-    enc.resep.includes(o.id),
-  ).length
+  // Tier-1 #7: obat terlarang interaksi (mis. nitrat pada pasien PDE5) yg
+  // TETAP diresepkan ikut dihitung sbg berbahaya — bukan cuma "obat di luar
+  // rencana", ini kontraindikasi absolut (hipotensi berat/kolaps).
+  const obatBerbahaya =
+    (kasus.tatalaksana.obatSalahUmum ?? []).filter((o) => enc.resep.includes(o.id)).length +
+    (pasienKenaInteraksi && interaksi
+      ? interaksi.obatTerlarang.filter((id) => enc.resep.includes(id)).length
+      : 0)
   // Stewardship (audit CODEX 2026-07-04): grup alternatif "pilih salah satu"
   // TIDAK selalu netral bila diisi lebih dari satu anggota — untuk analgesik/
   // antihipertensi/antihistamin dua obat sekelas cuma redundan (aman, karenanya
@@ -658,12 +680,21 @@ export function nilaiEncounter(
 
   /* -- Grade tertimbang ---------------------------------------------------------- */
   const skorDiagnosis = diagnosisBenar ? 100 : 0
-  const nilaiTotal =
+  let nilaiTotal =
     BOBOT_DIAGNOSIS * skorDiagnosis +
     BOBOT_ANAMNESIS * skorAnamnesis +
     BOBOT_TERAPI * skorTerapi +
     BOBOT_PEMERIKSAAN * skorPemeriksaan +
     BOBOT_EDUKASI * skorEdukasi
+  // Fix #12 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): grade dulu ABAI
+  // disposisi sepenuhnya — diagnosis+terapi sempurna tapi gagal merujuk pasien
+  // yg WAJIB dirujuk (cowboy) tetap bisa dapat A, meski disposisi disebut
+  // "gatekeeper SKDI" (komentar di atas). Hard-cap konsisten dgn severity:
+  // cowboy (disposisi paling berbahaya — pasien wajib-rujuk dipulangkan)
+  // memaksa grade maks D; rujukanNonSpesialistik (rujuk berlebihan, boros
+  // sistem tapi tak membahayakan pasien ini) memaksa grade maks B.
+  if (cowboy) nilaiTotal = Math.min(nilaiTotal, 54)
+  else if (rujukanNonSpesialistik) nilaiTotal = Math.min(nilaiTotal, 84)
   const grade: PenilaianEncounter['grade'] =
     nilaiTotal >= 85 ? 'A' : nilaiTotal >= 70 ? 'B' : nilaiTotal >= 55 ? 'C' : 'D'
 

@@ -82,6 +82,10 @@ export function PetaDesa() {
   function infoKunjungan(content: KeluargaBinaan, kel: KeluargaState): { alasan: string | null; biaya: number } {
     const rwProfil = PACK.rw.find((r) => r.nomor === content.rw)
     const biaya = BIAYA_STAMINA_KUNJUNGAN[rwProfil?.jarak ?? 'sedang']
+    // Fix #10: cermin gerbang roster reducer.ts — tombol Kunjungi jujur soal
+    // alasannya utk keluarga non-roster, bukan sekadar tak berfungsi diam-diam.
+    if (!state.desa.binaan.includes(content.id))
+      return { alasan: 'Jadikan binaan dulu sebelum berkunjung.', biaya }
     if (kel.arcSelesai === 'gagal')
       return { alasan: 'Krisis sudah terjadi — dampingi pemulihannya lewat klinik.', biaya }
     if (kel.arcIndex >= content.arc.kunjungan.length)

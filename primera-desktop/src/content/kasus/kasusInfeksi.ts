@@ -733,7 +733,13 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     // Ini fix TEKS-saja: hasil bta_sputum tetap dipakai sbg proksi konfirmasi
     // bakteriologis (lab/tatalaksana TIDAK berubah), murni menaikkan akurasi
     // pengetahuan yang diajarkan clue + mutiaraEbm.
-    mutiaraEbm: 'TCM (Tes Cepat Molekuler/Xpert MTB-RIF) kini jadi baku emas pemeriksaan bakteriologis TB LINI PERTAMA — BTA mikroskopis saja tak lagi representasi standar diagnosis terkini (BTA kini lebih berperan di pemantauan pengobatan bulan ke-2/5/6). Semua pasien TB, terduga maupun terkonfirmasi, juga sebaiknya ditawari skrining HIV.',
+    // Bagian D (adjudikasi 2026-07-12): nuansa TCM-vs-BTA diperjelas — bukan
+    // "BTA ketinggalan zaman", tapi PNPK 2019 sendiri membagi dua jalur resmi
+    // menurut ketersediaan alat (fasyankes dengan/tanpa TCM). TCM adalah alat
+    // JARINGAN (biasanya di Puskesmas rujukan/Labkesda/RS tertentu) — tak
+    // setiap Puskesmas punya mesinnya sendiri, jadi BTA tetap jalur SAH utk
+    // sebagian besar Puskesmas kita, bukan sekadar "terpaksa pakai yang lama".
+    mutiaraEbm: 'PNPK 2019 TB membagi dua jalur diagnosis resmi menurut ketersediaan alat: fasyankes DENGAN TCM (Tes Cepat Molekuler/Xpert MTB-RIF) — gunakan TCM sbg pemeriksaan awal lini pertama; fasyankes TANPA TCM — pakai mikroskopis BTA sputum (2 spesimen: sewaktu + pagi), jalur ini TETAP SAH menurut pedoman, bukan ketinggalan zaman. TCM adalah alat jaringan (biasanya di Puskesmas rujukan/Labkesda/RS tertentu, bukan tiap Puskesmas punya mesinnya sendiri) — kasus ini menggambarkan Puskesmas TANPA akses TCM, jalur realistis bagi banyak FKTP di Indonesia. BTA berperan lagi di pemantauan pengobatan (bulan ke-2/5/6) pada kedua jalur. Semua pasien TB, terduga maupun terkonfirmasi, juga sebaiknya ditawari skrining HIV.',
     konsekuensi: {
       narasi: 'Bila OAT tidak dituntaskan atau ditunda dengan antibiotik biasa, terjadi penularan ke balita serumah dan risiko TB resisten obat (TB-RO).',
       kembaliHariMin: 14,

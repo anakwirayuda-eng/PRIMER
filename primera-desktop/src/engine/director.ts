@@ -81,6 +81,9 @@ export function buatPasienDariKasus(
   // Kasus ber-alergiTrap SELALU membawa alerginya: dialog anamnesisnya menceritakan
   // riwayat alergi itu, dan jebakannya justru inti pelajaran kasus tersebut.
   const alergi = kasus.alergiTrap ? [kasus.alergiTrap.kelas] : []
+  // Tier-1 #7 (audit CODEX 2026-07-11): pola sama alergi di atas, tapi utk
+  // faktor risiko interaksi obat (mis. pemakaian PDE5-inhibitor tersembunyi).
+  const faktorRisiko = kasus.interaksiTrap ? [kasus.interaksiTrap.faktor] : []
 
   const dasar: PasienAktif = {
     id: `p_${kasusId}_${rng.int(1000, 9999)}`,
@@ -91,6 +94,7 @@ export function buatPasienDariKasus(
     kasusId,
     bpjs: rng.chance(0.7),
     alergi,
+    faktorRisiko,
     rw: rng.int(1, 8),
     bonusTrust: false,
   }

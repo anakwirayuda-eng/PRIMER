@@ -383,14 +383,27 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // MASIH lolos dari konsekuensi perforasi — dua gerbang jadi tak
       // sinkron. Disamakan skarang: hanya lab ber-bolehTundaTerapi (BTA/TB)
       // yg mengecualikan dari konsekuensi negatif.
-      const observasiMenungguLab =
-        action.jenis === 'observasi' &&
-        encFinal.labDipesan.some((id) => {
-          if (!pack.lab[id]?.bolehTundaTerapi) return false
-          return kasus.lab.find((l) => l.id === id)?.relevan === true
-        })
+      // Fix #14 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): dulu cuma
+      // boolean — tak ada cara menyambungkan hasil lab yg SEDANG ditunggu ke
+      // encounter pasien saat ia kembali besok (dua sistem terpisah total:
+      // surat kotak-masuk vs encounter baru). `labMenunggu` menyimpan ID-nya
+      // agar bisa dititipkan ke jadwal_evaluasi → dibawa ke encounter baru.
+      const labMenunggu = encFinal.labDipesan.find((id) => {
+        if (!pack.lab[id]?.bolehTundaTerapi) return false
+        return kasus.lab.find((l) => l.id === id)?.relevan === true
+      })
+      const observasiMenungguLab = action.jenis === 'observasi' && labMenunggu !== undefined
+      // Tambahan #2 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): melewatkan
+      // edukasiKritis DULU hanya memotong skorEdukasi (maks -5 poin, bobot
+      // 10%), tak pernah memicu "pasien kembali memburuk" walau 16 kasus lintas
+      // 7 file mengasumsikan itu. Menyamaratakan SEMUA 15 topik ke konsekuensi
+      // penuh dinilai berlebihan (lupa 1-dari-4 topik edukasi TB vs restriksi
+      // cairan gagal jantung tak sepadan severity-nya) — dibatasi HANYA
+      // `minum_oat_tuntas` (risiko MDR-TB nyata bila putus obat), 13 topik lain
+      // tetap cukup dihukum via skor spt sekarang.
       const pantasKonsekuensi =
-        !nilai.diagnosisBenar || nilai.skorTerapi < 50 || resepBerbahaya || nilai.cowboy
+        !nilai.diagnosisBenar || nilai.skorTerapi < 50 || resepBerbahaya || nilai.cowboy ||
+        nilai.edukasiKritisTerlewat.includes('minum_oat_tuntas')
       if (kasus.konsekuensi && pantasKonsekuensi && !observasiMenungguLab && action.jenis !== 'rujuk') {
         const rng = new Rng(s.seed, 'konsekuensi', s.hari, kasus.id)
         // Fix #14 (triase DeepThink 2026-07-11, terverifikasi ganda): satu-satunya
@@ -445,6 +458,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             bpjs: encFinal.pasien.bpjs,
             persona: encFinal.pasien.persona,
             ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+            // Fix #14: titipkan labId yg ditunggu — dibawa ke encounter baru
+            // besok lewat pasienKembali/antrianKembali (bawah), bukan lenyap
+            // ke surat kotak-masuk yg terputus dari mekanisme encounter.
+            ...(labMenunggu ? { labId: labMenunggu } : {}),
           },
         ]
         penilaianFinal = { ...nilai, konsekuensiDijadwalkan: true }
@@ -700,6 +717,15 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const kel = s.desa.keluarga[action.keluargaId]
       const kelContent = pack.keluarga[action.keluargaId]
       if (!kel || !kelContent) return err(s, 'Keluarga tidak dikenal.')
+      // Fix #10 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): dulu tak ada
+      // gerbang roster di sini sama sekali — pemain bisa langsung kunjungi
+      // keluarga MANAPUN & tuntaskan arc-nya (trust/indikator/badge penuh)
+      // tanpa pernah memakai satu slot binaan pun, sementara drift (penalti
+      // abai) HANYA berlaku ke keluarga ber-status binaan — insentifnya
+      // terbalik (skip roster = bebas risiko). Roster kini jadi syarat
+      // sungguhan utk kunjungan mana pun, bukan dekoratif.
+      if (!s.desa.binaan.includes(action.keluargaId))
+        return err(s, 'Keluarga ini belum jadi binaanmu — daftarkan dulu di peta desa sebelum berkunjung.')
       if (kel.arcSelesai === 'gagal')
         return err(s, 'Krisis sudah terjadi — dampingi pemulihan keluarga ini lewat klinik.')
       if (kel.arcSelesai === 'berhasil') return err(s, 'Arc keluarga ini sudah tuntas.')
@@ -1212,7 +1238,16 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
             hari: s.hari + rng.int(2, 6),
             jenis: 'pasien_kembali',
             kasusId,
-            catatan: `${p.nama} — ${pBaru.jenis === 'ht' ? 'hipertensi tak terkontrol berbulan-bulan' : 'gula darah liar tak terkendali'}`,
+            // Tambahan #3 (audit CODEX 2026-07-11, adjudikasi 2026-07-12, opsi
+            // netral-klinis): komplikasi Prolanis DM SELALU reuse dm_tipe2
+            // (harusDirujuk:false) — beda dari HT yg reuse stroke_iskemik
+            // (harusDirujuk:true, benar) — jadi pasien DM "gagal kontrol
+            // berturut" tak pernah bisa dirujuk lewat jalur ini apa pun
+            // separahnya. TANPA mengubah gerbang rujuk (itu keputusan klinis
+            // tersendiri, di luar cakupan fix mekanis ini), catatan kini
+            // menampilkan angka parameter SUNGGUHAN — transparansi info bagi
+            // pemain soal separah apa, bukan mengubah benar/salah gerbang.
+            catatan: `${p.nama} — ${pBaru.jenis === 'ht' ? `hipertensi tak terkontrol berbulan-bulan (TD sistolik terakhir ${pBaru.param} mmHg)` : `gula darah liar tak terkendali (GDS terakhir ${pBaru.param} mg/dL)`}`,
             nama: p.nama,
             usia: p.usia,
             jenisKelamin: p.jenisKelamin,
@@ -1429,6 +1464,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     bpjs?: boolean
     persona?: Persona
     prb?: boolean
+    /** Fix #14: labId hasil yg sudah tersedia, dibawa ke encounter baru. */
+    labId?: string
   }
   const pasienKembali: PasienJatuhTempo[] = []
   let keluargaMap = s.desa.keluarga
@@ -1468,6 +1505,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.bpjs !== undefined ? { bpjs: j.bpjs } : {}),
         ...(j.persona ? { persona: j.persona } : {}),
         ...(j.prb ? { prb: true } : {}),
+        ...(j.labId ? { labId: j.labId } : {}),
       })
     } else if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId && pack.kasus[j.kasusId]) {
       // M10 §49: guard `pack.kasus[j.kasusId]` — jadwal karma di-BAKE sekali di
@@ -1514,27 +1552,17 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     }
   }
 
-  // Follow-up mangkir (M1.4): janji kontrol yang lewat >1 hari = komitmen layu.
-  // TTM mundur satu tahap; kader mengabarkan — tidak ada pembusukan senyap.
-  for (const [id, kel] of Object.entries(keluargaMap)) {
-    if (kel.followUpHari === undefined || hari <= kel.followUpHari + 1) continue
-    const kelContent = pack.keluarga[id]
-    const { followUpHari: _lewat, ...tanpaJanji } = kel
-    keluargaMap = { ...keluargaMap, [id]: { ...tanpaJanji, ttm: mundurTtm(kel.ttm) } }
-    suratBaru.push(
-      buatSuratHarian(hari, suratBaru.length, {
-        jenis: 'kabar_warga',
-        dari: 'Kader RW ' + (kelContent?.rw ?? '?'),
-        judul: `${kelContent?.namaKeluarga ?? id} — janji kontrol terlewat`,
-        isi: `Dok, keluarga itu menunggu kunjungan lanjutan yang dijanjikan, tapi tidak ada yang datang. Semangat mereka yang kemarin mulai tumbuh sekarang kendur lagi. Perubahan perilaku itu seperti api kecil — kalau tidak dijaga, padam.`,
-        kaitKeluargaId: id,
-      }),
-    )
-  }
-
   // Drift keluarga rawan (M1.3 — versi DIBALIK dari bug lama: memburuk, bukan
   // membaik): keluarga berisiko yang ≥7 hari tak disentuh dokter bisa memburuk.
   // Maks 2 kejadian/pekan, SELALU diberitakan lewat surat kader.
+  // Fix #13 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): follow-up
+  // mangkir (M1.4) DULU jadi blok terpisah — TTM mundur SEKALI TEMBAK lalu
+  // `followUpHari` dihapus, tak ada eskalasi kalau keluarga terus diabaikan
+  // sesudahnya. Diperluas: janji follow-up yang >1 hari lewat kini jadi SALAH
+  // SATU syarat `rawan` di bawah — followUpHari TIDAK dihapus di sini (baru
+  // dibersihkan/diperbarui oleh kunjungan sungguhan lewat terapkanHasil,
+  // kunjungan.ts) jadi tetap "rawan" & terus di-roll drift mingguan (bukan
+  // diampuni sesudah satu kejadian) sampai dokter benar-benar berkunjung lagi.
   const mingguIni = Math.ceil(hari / 7)
   let drift = s.desa.drift.minggu === mingguIni ? { ...s.desa.drift } : { minggu: mingguIni, jumlah: 0 }
   const rngDrift = new Rng(s.seed, 'drift', hari)
@@ -1543,7 +1571,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     if (kel.arcSelesai) continue
     const kelContent = pack.keluarga[id]
     if (!kelContent) continue
-    const rawan = s.desa.binaan.includes(id) || kel.karmaAktif !== undefined
+    const followUpMangkir = kel.followUpHari !== undefined && hari > kel.followUpHari + 1
+    const rawan = s.desa.binaan.includes(id) || kel.karmaAktif !== undefined || followUpMangkir
     if (!rawan) continue
     const punyaData = Object.values(kel.indikator).some((n) => n.sumber !== 'belum')
     if (!punyaData) continue
@@ -1808,6 +1837,11 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       ...(p.bpjs !== undefined ? { bpjs: p.bpjs } : {}),
       ...(p.persona ? { persona: p.persona } : {}),
       ...(p.prb ? { prb: true } : {}),
+      // Fix #14 (audit CODEX 2026-07-11): hasil lab yg sudah tersedia dibawa
+      // ke encounter baru — buatEncounter (clinic.ts) pra-isi labDipesan/
+      // labTersedia dari field ini, jadi hasilnya langsung terlihat tanpa
+      // dokter perlu memesan ulang.
+      ...(p.labId ? { labSudahTersedia: p.labId } : {}),
     }),
   )
   const antrian = [...antrianKembali, ...antrianDirector]

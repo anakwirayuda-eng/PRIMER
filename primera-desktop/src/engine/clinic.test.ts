@@ -81,6 +81,24 @@ const OBAT_MINI: Record<string, Obat> = {
     hargaJual: 700,
     fornas: true,
   },
+  furosemid_mini: {
+    id: 'furosemid_mini',
+    nama: 'Furosemid (uji)',
+    kelas: 'diuretik',
+    sediaan: 'tablet',
+    hargaBeli: 200,
+    hargaJual: 400,
+    fornas: true,
+  },
+  isdn_mini: {
+    id: 'isdn_mini',
+    nama: 'ISDN (uji)',
+    kelas: 'nitrat',
+    sediaan: 'tablet sublingual',
+    hargaBeli: 200,
+    hargaJual: 500,
+    fornas: true,
+  },
 }
 
 const LAB_MINI: Record<string, ItemLab> = {
@@ -313,6 +331,7 @@ function buatPasien(override: Partial<PasienAktif> = {}): PasienAktif {
     kasusId: 'faringitis_mini',
     bpjs: true,
     alergi: [],
+    faktorRisiko: [],
     rw: 3,
     bonusTrust: false,
     ...override,
@@ -1096,6 +1115,42 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     expect(cowboy.rujukanNonSpesialistik).toBe(false)
   })
 
+  it('Fix #12 (audit CODEX 2026-07-11): disposisi cowboy memaksa grade maks D meski komponen lain sempurna', () => {
+    const encPneumonia: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3, nama: 'Ade Bima' })),
+      vitalDiukur: true,
+      diperiksa: ['toraks_paru'],
+      diagnosis: { icd10: 'J18.9', jenis: 'tegak' },
+      edukasi: ['tanda_bahaya'],
+      disposisi: 'pulang', // WAJIB dirujuk (harusDirujuk:true) tapi dipulangkan = cowboy
+    }
+    const nilai = nilaiEncounter(encPneumonia, KASUS_RUJUK, PACK)
+    expect(nilai.cowboy).toBe(true)
+    // Komponen lain sempurna (diagnosis benar, vital diukur, region relevan
+    // diperiksa, obatBenar kosong jadi rasioTerapi=1 default, edukasi penuh)
+    // — sebelum fix #12, grade tetap 'A' krn disposisi diabaikan total.
+    expect(nilai.grade).toBe('D')
+  })
+
+  it('Fix #12 (audit CODEX 2026-07-11): rujukan non-spesialistik memaksa grade maks B meski komponen lain sempurna', () => {
+    const encFaringitis: EncounterState = {
+      ...buatEncounter(buatPasien()),
+      ditanya: ['q_onset', 'q_demam', 'q_batuk'],
+      vitalDiukur: true,
+      diperiksa: ['tht_mulut', 'kepala_leher'],
+      diagnosis: { icd10: 'J02.9', jenis: 'tegak' },
+      resep: ['amoxicillin_500', 'paracetamol_500'],
+      edukasi: ['etika_batuk', 'istirahat_cukup'],
+      disposisi: 'rujuk', // kasus 4A (harusDirujuk:false) tapi dirujuk = RRNS
+    }
+    const nilai = nilaiEncounter(encFaringitis, KASUS_FARINGITIS, PACK)
+    expect(nilai.rujukanNonSpesialistik).toBe(true)
+    // Tanpa cap #12, komponen di atas cukup utk nilaiTotal >=85 ('A') —
+    // konfirmasi cap benar2 aktif menahannya, bukan kebetulan 'B' alami.
+    expect(nilai.grade).not.toBe('A')
+    expect(nilai.grade).toBe('B')
+  })
+
   it('lab tak relevan dihitung: relevan:false + lab di luar kasus', () => {
     const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
     const { enc: main } = jalankan(enc, [
@@ -1157,6 +1212,56 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     // obatDiLuar -25 antibiotikTanpaIndikasi, clamp ke 0).
     expect(nilai.antibiotikTanpaIndikasi).toBe(true)
     expect(nilai.skorTerapi).toBe(0)
+  })
+
+  describe('Tier-1 #7 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): interaksiTrap — nitrat+PDE5-inhibitor', () => {
+    const KASUS_INTERAKSI: KasusKlinis = {
+      ...KASUS_VIRAL,
+      id: 'chf_interaksi_mini',
+      tatalaksana: {
+        obatBenar: ['furosemid_mini', 'isdn_mini'],
+        edukasi: [],
+      },
+      interaksiTrap: {
+        faktor: 'pde5_inhibitor',
+        obatTerlarang: ['isdn_mini'],
+        alternatifBenar: [],
+      },
+    }
+
+    it('pasien TANPA faktor risiko: ISDN tetap obatBenar seperti biasa', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien({ kasusId: 'chf_interaksi_mini', faktorRisiko: [] })),
+        resep: ['furosemid_mini', 'isdn_mini'],
+      }
+      const nilai = nilaiEncounter(enc, KASUS_INTERAKSI, PACK)
+      expect(nilai.skorTerapi).toBe(100)
+    })
+
+    it('pasien BER-faktor risiko: ISDN keluar dari obatBenar & jadi berbahaya bila tetap diresepkan', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien({ kasusId: 'chf_interaksi_mini', faktorRisiko: ['pde5_inhibitor'] })),
+        resep: ['furosemid_mini', 'isdn_mini'],
+      }
+      const nilai = nilaiEncounter(enc, KASUS_INTERAKSI, PACK)
+      // Trap aktif → obatBenar efektif jadi hanya ['furosemid_mini'] (isdn_mini
+      // keluar). rasioTerapi 1/1=100 (furosemid_mini terpenuhi), TAPI isdn_mini
+      // yg tetap diresepkan kena DUA penalti bertumpuk: -15 obat-di-luar-
+      // tatalaksana + -25 obat-berbahaya (kontraindikasi absolut) = 100-15-25=60.
+      expect(nilai.antibiotikTanpaIndikasi).toBe(false) // bukan soal antibiotik
+      expect(nilai.skorTerapi).toBe(60)
+    })
+
+    it('pasien BER-faktor risiko yg TIDAK diresepkan ISDN (dokter menghindarinya): skor penuh, tak dihukum', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien({ kasusId: 'chf_interaksi_mini', faktorRisiko: ['pde5_inhibitor'] })),
+        resep: ['furosemid_mini'],
+      }
+      const nilai = nilaiEncounter(enc, KASUS_INTERAKSI, PACK)
+      // obatBenar efektif kini hanya furosemid_mini (isdn_mini keluar krn
+      // trap) — satu slot, terpenuhi penuh.
+      expect(nilai.skorTerapi).toBe(100)
+    })
   })
 
   it('Fix #16 (adjudikasi dokter 2026-07-11): lab ber-hasilBesok TAPI TANPA bolehTundaTerapi (mis. Widal) TIDAK memicu floor 70 — hanya BTA (TB) yg sah ditunggu tanpa terapi sama sekali', () => {

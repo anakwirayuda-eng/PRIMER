@@ -105,6 +105,15 @@ export function validasiPack(pack: ContentPack): string[] {
         }
       }
     }
+    // Tier-1 #7 (audit CODEX 2026-07-11): interaksiTrap — pagar dasar sama spt
+    // alergiTrap (obat wajib ada di formularium). Tanpa gerbang golonganAlergi
+    // (mekanisme beda: firewall id-langsung, bukan kelas-alergi) jadi 2
+    // invariant golongan alergiTrap tak berlaku di sini.
+    if (k.interaksiTrap) {
+      for (const o of [...k.interaksiTrap.obatTerlarang, ...k.interaksiTrap.alternatifBenar]) {
+        if (!pack.obat[o]) masalah.push(`Kasus ${k.id}: interaksiTrap obat '${o}' tidak ada di formularium`)
+      }
+    }
     // M10.c (dossier §47): sanity rentang konsekuensi — min wajib ≤ max & ≥ 0.
     // (max > durasi stase TIDAK divalidasi di sini: itu keputusan desain
     // realisme kronis yang sedang menunggu keputusan user, bukan drift.)

@@ -32,7 +32,7 @@ const KELAS_BARU = new Set(Object.values(TAG_BARU))
 function pasien(override: Partial<PasienAktif> = {}): PasienAktif {
   return {
     id: 'p_fw', nama: 'Uji Firewall', usia: 30, jenisKelamin: 'P', persona: 'polos',
-    kasusId: 'x', bpjs: true, alergi: [], rw: 1, bonusTrust: false, ...override,
+    kasusId: 'x', bpjs: true, alergi: [], faktorRisiko: [], rw: 1, bonusTrust: false, ...override,
   }
 }
 

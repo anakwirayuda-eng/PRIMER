@@ -317,6 +317,10 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                 'Mbah Rah, yang ternyata sudah lama lelah menanggung risiko sendirian, menepuk tangan Bu Asih: ' +
                 '"Aku tetap yang mijeti dan doakan kamu, Sih. Tapi sing nulungi lahiran, bu bidan — jaman wis beda." ' +
                 'Restu dari mulut itu bernilai seribu penyuluhan. Bu Asih mengangguk, matanya basah.',
+              // Tambahan #1: SATU-SATUNYA tindakan yg benar2 mengeskalasi Bu
+              // Asih ke pertolongan persalinan formal (preeklampsia berat =
+              // risiko nyawa, bukan sekadar hambatan perilaku biasa).
+              aksiEskalasi: true,
             },
             {
               id: 'ak1_i2',

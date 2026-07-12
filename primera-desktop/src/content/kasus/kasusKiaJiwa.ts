@@ -98,11 +98,13 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         jawab: 'Suami mendukung dok, rencananya mau bersalin di bidan dekat rumah.',
       },
       {
+        // Tambahan #4 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): golongan
+        // darah adalah komponen 10T ANC resmi Kemenkes — BUKAN basa-basi tak
+        // relevan, jadi tak layak dihukum setara distraktor.
         id: 'q_pekerjaan',
         kategori: 'sosial',
         tanya: 'Dulu golongan darahnya apa Bu?',
         jawab: 'B dok. Kenapa ya?',
-        distraktor: true,
       },
     ],
     pemeriksaanFisik: [
@@ -120,7 +122,10 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     ],
     diagnosisBanding: ['Z34.0', 'Z33', 'O26.9'],
     tatalaksana: {
-      obatBenar: ['tablet_fe', 'asam_folat'],
+      // Tambahan #5 (audit CODEX 2026-07-11, adjudikasi 2026-07-12, opsi i):
+      // tablet_fe SUDAH kombinasi Fe 60mg+folat 0,4mg — asam_folat terpisah
+      // dobel-hitung folat (0,4+1=1,4mg/hari). tablet_fe sendiri sudah cukup.
+      obatBenar: ['tablet_fe'],
       obatSalahUmum: [
         { id: 'paracetamol_500', alasan: 'Kehamilan normal bukan kondisi sakit — tidak perlu analgetik rutin. Fokus pada suplementasi & edukasi, bukan medikalisasi.' },
         { id: 'domperidon_10', alasan: 'Mual sudah reda; antiemetik tidak diindikasikan dan bukan bagian paket ANC standar.' },
@@ -671,11 +676,19 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     ],
     diagnosisBanding: ['F41.1', 'F41.0', 'E05.9'],
     tatalaksana: {
-      obatBenar: ['fluoksetin_20'],
-      obatSalahUmum: [
-        { id: 'diazepam_2', alasan: 'Benzodiazepin hanya untuk jangka SANGAT pendek/krisis — pada GAD kronik menimbulkan toleransi & ketergantungan. Lini utama: psikoterapi + SSRI.' },
-        { id: 'amitriptilin_25', alasan: 'TCA bukan lini pertama GAD (efek samping antikolinergik/kardiak); SSRI lebih aman dan direkomendasikan.' },
-      ],
+      // Bagian D Tier-1 #6 (audit CODEX 2026-07-11, adjudikasi PPK1186+DOEN
+      // 2026-07-12): SSRI/SNRI (fluoksetin termasuk) TIDAK ADA di DOEN 2021
+      // Puskesmas — hanya amitriptilin (TCA) yg realistis-tersedia sbg
+      // antidepresan FKTP. PPK1186 (entri F41.2 campuran cemas-depresi)
+      // menaruh fluoksetin/sertralin/amitriptilin/imipramin SEJAJAR sbg
+      // pilihan lini pertama — dimodelkan sbg grup alternatif (pilih salah
+      // satu), bukan amitriptilin menggantikan fluoksetin secara eksklusif.
+      // diazepam_2 direklasifikasi jadi opsional (PPK1186: boleh kombinasi
+      // awal 2-4 minggu bila cemas dominan/insomnia, lalu tapering) — bukan
+      // lagi "salah mutlak".
+      obatBenar: [],
+      obatAlternatif: [['amitriptilin_25', 'fluoksetin_20']],
+      obatOpsional: ['diazepam_2'],
       edukasi: ['manajemen_stres', 'higiene_tidur', 'aktivitas_fisik', 'kontrol_rutin'],
     },
     clue: 'GAD: kekhawatiran berlebihan sulit dikendalikan ≥6 bulan + gejala somatik (berdebar, otot tegang, mudah lelah, sulit tidur). SINGKIRKAN penyebab organik (hipertiroid → TSH; kafein berlebih). Lini pertama: psikoedukasi + relaksasi/CBT + SSRI (fluoksetin/sertralin). Benzodiazepin hanya jangka pendek. Kurangi kafein (PPDGJ/PPK Jiwa FKTP).',

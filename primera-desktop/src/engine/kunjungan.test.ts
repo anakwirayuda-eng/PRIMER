@@ -510,6 +510,79 @@ describe('diagnosis perilaku (COM-B)', () => {
 })
 
 /* ---------------------------------------------------------------------------
+ * Tambahan #1 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): aksiEskalasi
+ * ------------------------------------------------------------------------- */
+
+describe('aksiEskalasi (arc ber-karma keselamatan tinggi, mis. preeklampsia Asih)', () => {
+  // Dua kartu SAMA-SAMA cocok kategori 'kesempatan' — i_arisan (kartu lama,
+  // TANPA flag) vs i_arisan_formal (BER-flag aksiEskalasi:true). Menguji
+  // gerbang independen dari kebetulan 1-kartu-per-kategori di konten asli.
+  const SKENARIO_ESKALASI: SkenarioKunjungan = {
+    ...SKENARIO,
+    intervensi: [
+      ...SKENARIO.intervensi,
+      {
+        id: 'i_arisan_formal',
+        nama: 'Daftar formal ke bidan desa',
+        deskripsi: 'Tindakan eskalasi sungguhan — bukan sekadar arisan.',
+        cocokUntuk: ['kesempatan'],
+        hasilNarasi: 'Terdaftar resmi ke bidan.',
+        aksiEskalasi: true,
+      },
+    ],
+  }
+
+  function jalankanEskalasi(intervensiId: string): { kj: KunjunganState; kel: KeluargaState } {
+    const kel = kelJambanBohong(6)
+    let kj = buatKunjungan(kel.id, SKENARIO_ESKALASI)
+    for (const a of [
+      { type: 'LANJUT_BABAK' as const },
+      { type: 'PILIH_DIALOG' as const, pilihanId: 'p1_empati' },
+      { type: 'PILIH_DIALOG' as const, pilihanId: 'p2_ungkap' },
+      { type: 'PILIH_DIALOG' as const, pilihanId: 'p3_refleksi' },
+      { type: 'LANJUT_BABAK' as const },
+      { type: 'KOMIT_HAMBATAN' as const, hipotesis: 'kesempatan' as const },
+      { type: 'PILIH_INTERVENSI' as const, intervensiId },
+    ]) {
+      kj = aksiKunjungan(kj, a, SKENARIO_ESKALASI, kel).kj
+    }
+    return { kj, kel }
+  }
+
+  it('hipotesis+kategori benar TAPI kartu yg dipilih BUKAN aksiEskalasi → berhasil=false, tingkat=partial (bukan gagal)', () => {
+    const { kj, kel } = jalankanEskalasi('i_arisan') // kartu lama, cocok kategori, TANPA flag
+    const hasil = selesaikanKunjungan(kj, SKENARIO_ESKALASI, kel)
+    expect(hasil.berhasil).toBe(false)
+    expect(hasil.tingkat).toBe('partial')
+  })
+
+  it('hipotesis+kategori benar DAN kartu aksiEskalasi yg dipilih → berhasil=true seperti biasa', () => {
+    const { kj, kel } = jalankanEskalasi('i_arisan_formal')
+    const hasil = selesaikanKunjungan(kj, SKENARIO_ESKALASI, kel)
+    expect(hasil.berhasil).toBe(true)
+  })
+
+  it('skenario TANPA kartu aksiEskalasi sama sekali tak terpengaruh (regresi lama tetap berlaku)', () => {
+    const kel = kelJambanBohong(6)
+    const r = jalankan(
+      buatKunjungan(kel.id, SKENARIO),
+      [
+        { type: 'LANJUT_BABAK' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p2_ungkap' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p3_refleksi' },
+        { type: 'LANJUT_BABAK' },
+        { type: 'KOMIT_HAMBATAN', hipotesis: 'kesempatan' },
+        { type: 'PILIH_INTERVENSI', intervensiId: 'i_arisan' },
+      ],
+      kel,
+    )
+    const hasil = selesaikanKunjungan(r.kj, SKENARIO, kel)
+    expect(hasil.berhasil).toBe(true)
+  })
+})
+
+/* ---------------------------------------------------------------------------
  * PIS-PK: N/A tidak masuk IKS
  * ------------------------------------------------------------------------- */
 

@@ -64,7 +64,9 @@ function mainkanKunjungan(
   const skenario = content.arc.kunjungan[kel.arcIndex]
   if (!skenario) throw new Error('arc habis')
 
-  let cur = run(s, { type: 'MULAI_KUNJUNGAN', keluargaId })
+  // Fix #10 (audit CODEX 2026-07-11): MULAI_KUNJUNGAN kini wajib roster binaan.
+  let cur = s.desa.binaan.includes(keluargaId) ? s : run(s, { type: 'PILIH_BINAAN', keluargaId })
+  cur = run(cur, { type: 'MULAI_KUNJUNGAN', keluargaId })
   if (!cur.kunjungan) throw new Error('kunjungan gagal mulai (cek guard/blok)')
 
   // Observasi: temukan semua hotspot ber-indikator.
@@ -240,6 +242,28 @@ describe('reducer — DISPOSISI phase-guard (CODEX audit 2026-07-04, temuan #2 �
   })
 })
 
+describe('Fix #10 (audit CODEX 2026-07-11): MULAI_KUNJUNGAN wajib roster binaan', () => {
+  it('kunjungan ke keluarga NON-roster ditolak, bukan diam-diam berjalan', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = sampaiHari(s, 3) // HARI_BUKA_KUNJUNGAN
+    s = run(s, { type: 'LANJUTKAN' }) // pagi → siang
+    expect(s.desa.binaan.includes('keluarga_santoso')).toBe(false)
+    const sebelum = s
+    s = run(s, { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_santoso' })
+    expect(s.kunjungan).toBeUndefined()
+    expect(s.stamina).toBe(sebelum.stamina) // tak ada stamina terpakai
+  })
+
+  it('kunjungan ke keluarga yg SUDAH di-roster tetap bisa berjalan seperti biasa', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = run(s, { type: 'PILIH_BINAAN', keluargaId: 'keluarga_santoso' })
+    s = sampaiHari(s, 3)
+    s = run(s, { type: 'LANJUTKAN' }) // pagi → siang
+    s = run(s, { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_santoso' })
+    expect(s.kunjungan).toBeDefined()
+  })
+})
+
 describe('M1.3 — drift keluarga rawan (memburuk, bukan membaik)', () => {
   it('keluarga rawan ber-data yang diabaikan ≥7 hari memburuk + surat kader (cap 2/minggu)', () => {
     let s = buildInitialState('Uji', SEED, PACK)
@@ -254,19 +278,26 @@ describe('M1.3 — drift keluarga rawan (memburuk, bukan membaik)', () => {
 })
 
 describe('M1.4 — follow-up berkalender', () => {
-  it('kunjungan berhasil membuat janji follow-up; mangkir → TTM mundur + surat', () => {
+  it('kunjungan berhasil membuat janji follow-up; mangkir → jadi rawan, PERSIST (bukan sekali-tembak-lupa), akhirnya mundur via drift (Fix #13, audit CODEX 2026-07-11)', () => {
     let s = buildInitialState('Uji', SEED, PACK)
     s = sampaiSiang(s, 3)
     s = mainkanKunjungan(s, 'keluarga_wulan', { hipotesis: 'benar', intervensi: 'cocok' })
     const kel = s.desa.keluarga['keluarga_wulan']!
     expect(kel.ttm).toBe('kontemplasi')
     expect(kel.followUpHari).toBe(3 + 4)
-    // Mangkir: biarkan lewat jatuh tempo + 1.
+    // Mangkir: biarkan lewat jatuh tempo + 1. Sebelum fix #13, followUpHari
+    // dihapus sekali-tembak di sini dan TTM mundur deterministik hari ini
+    // juga. Sesudah fix #13: janji TETAP ADA (jadi keluarga 'rawan' yg terus
+    // di-roll drift mingguan), tak diampuni begitu terlewat sekali.
     s = sampaiHari(s, 9)
-    const kelSesudah = s.desa.keluarga['keluarga_wulan']!
-    expect(kelSesudah.followUpHari).toBeUndefined()
+    let kelSesudah = s.desa.keluarga['keluarga_wulan']!
+    expect(kelSesudah.followUpHari).toBe(7)
+    // Beri cukup hari utk roll drift (35%/hari, cap 2/minggu bersama keluarga
+    // rawan lain) benar2 kena — jendela lebar drpd pin 1 hari pasti (stokastik).
+    s = sampaiHari(s, 60)
+    kelSesudah = s.desa.keluarga['keluarga_wulan']!
     expect(kelSesudah.ttm).toBe('prekontemplasi')
-    expect(s.inbox.some((m) => m.judul.includes('janji kontrol terlewat'))).toBe(true)
+    expect(s.inbox.some((m) => m.judul.includes('kabar kurang baik'))).toBe(true)
   })
 })
 

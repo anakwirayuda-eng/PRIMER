@@ -283,8 +283,21 @@ export function selesaikanKunjungan(
     : undefined
   const intervensiCocok = kartu?.cocokUntuk.includes(skenario.hambatanSebenarnya) ?? false
   const hipotesisBenar = kj.hipotesis === skenario.hambatanSebenarnya
+  // Tambahan #1 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): arc ber-karma
+  // keselamatan tinggi (mis. preeklampsia berat, Asih) bisa punya kartu ber-
+  // flag aksiEskalasi — bila skenario punya ≥1 kartu semacam itu, `berhasil`
+  // (pembatalan karma PENUH) mensyaratkan kartu yg DIPILIH itu sendiri yg
+  // ber-flag, bukan sekadar kartu lain yg kebetulan cocok kategori hambatan
+  // yg sama. Skenario TANPA kartu aksiEskalasi (mayoritas arc) tak terpengaruh
+  // sama sekali (butuhEskalasi=false → gerbang ini selalu lolos, spt semula).
+  const butuhEskalasi = skenario.intervensi.some((i) => i.aksiEskalasi === true)
+  const eskalasiDipilih = kartu?.aksiEskalasi === true
   const berhasil =
-    !kj.diusir && hipotesisBenar && intervensiCocok && kualitasMi >= AMBANG_KUALITAS_MI_BERHASIL
+    !kj.diusir &&
+    hipotesisBenar &&
+    intervensiCocok &&
+    kualitasMi >= AMBANG_KUALITAS_MI_BERHASIL &&
+    (!butuhEskalasi || eskalasiDipilih)
 
   // Bridge bertingkat (M1.1): partial = tidak diusir & TEPAT SALAH SATU dari
   // {hipotesis, intervensi} — kamu menyentuh keluarga ini tapi belum menggerakkan.

@@ -1041,7 +1041,10 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     prevalensi: 'rendah',
     spesialisRujukan: 'penyakit_dalam',
     keluhanUtama: 'Saya sesak napas dok, makin berat kalau tidur telentang, dan kaki saya bengkak.',
-    demografi: { usiaMin: 55, usiaMax: 75 },
+    // Tier-1 #7 (audit CODEX 2026-07-11): dibatasi laki-laki krn skenario
+    // interaksi PDE5-inhibitor di bawah ditulis spesifik utk konteks itu
+    // (pertanyaan "obat kuat" tak masuk akal utk pasien perempuan).
+    demografi: { usiaMin: 55, usiaMax: 75, jenisKelamin: 'L' },
     vital: { td: '150/95', nadi: 108, rr: 26, suhu: 36.8, spo2: 92 },
     anamnesis: [
       {
@@ -1111,6 +1114,17 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         jawab: 'Empat dok, semua sudah berkeluarga.',
         distraktor: true,
       },
+      // Tier-1 #7 (audit CODEX 2026-07-11): faktor risiko tersembunyi —
+      // nitrat (ISDN) + PDE5-inhibitor = hipotensi berat/kolaps. Esensial
+      // krn menentukan aman-tidaknya ISDN, ditulis sensitif (pasien malu).
+      {
+        id: 'q_obat_kuat',
+        kategori: 'rpd',
+        tanya: 'Maaf sebelumnya Pak — apakah belakangan ini mengonsumsi obat kuat atau obat untuk prostat?',
+        jawab: 'Pelan-pelan, sambil menunduk: "...Iya dok, sesekali. Istri saya tidak tahu. Tolong jangan bilang-bilang."',
+        esensial: true,
+        oldcarts: ['penyerta'],
+      },
     ],
     pemeriksaanFisik: [
       { region: 'jantung', temuan: 'Iktus kordis bergeser ke lateral-inferior (kardiomegali), takikardia, S3 gallop (+), tekanan vena jugularis meningkat (JVP ↑).', relevan: true },
@@ -1147,6 +1161,16 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       kembaliHariMax: 3,
       kondisiKembali: 'Pasien kembali/dibawa dalam kondisi sesak hebat, tidak bisa berbaring sama sekali, berbuih dari mulut — edema paru akut mengancam jiwa.',
       guideline: 'PPK Gagal Jantung Kemenkes / PERKI / ESC HF — stabilisasi diuretik + rujuk, hindari NSAID & beta-blocker saat dekompensasi.',
+    },
+    // Tier-1 #7 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): nitrat+PDE5-
+    // inhibitor = kontraindikasi ABSOLUT (hipotensi berat/kolaps) — pasien ini
+    // SELALU membawa faktor risiko ini (terungkap via q_obat_kuat). ISDN
+    // keluar dari obatBenar & jadi berbahaya bila tetap diresepkan; tak ada
+    // alternatif pengganti spesifik (furosemid saja + rujuk tetap aman).
+    interaksiTrap: {
+      faktor: 'pde5_inhibitor',
+      obatTerlarang: ['isosorbid_dinitrat_5'],
+      alternatifBenar: [],
     },
   },
 
@@ -1257,9 +1281,21 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['N30.0', 'N39.0', 'N10'],
     tatalaksana: {
-      obatBenar: ['cotrimoxazole_480'],
+      // Bagian D Tier-1 #3 (audit CODEX 2026-07-11, adjudikasi PPK1186+DOEN
+      // 2026-07-12): dari 4 opsi resmi PPK1186 (kotrimoksazol/fluorokuinolon/
+      // amoxicillin-clavulanate/cefpodoxime), cuma kotrimoksazol & siprofloksasin
+      // yg realistis-DOEN 2021 Puskesmas — dan kotrimoksazol otomatis gugur krn
+      // pasien ini alergi sulfa (lihat q_alergi). Siprofloksasin jadi satu-
+      // satunya jawaban yg aman UNTUK pasien ini DAN realistis tersedia — ini
+      // sekaligus menutup kontradiksi lama (obatBenar dulu = obat yg dilarang
+      // alergiTrap kasus ini sendiri). alergiTrap dihapus krn tak lagi perlu
+      // "tukar" — jawaban benarnya sudah aman utk alergi sulfa sejak awal.
+      obatBenar: ['ciprofloxacin_500'],
       obatSalahUmum: [
-        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon sebaiknya DICADANGKAN (bukan lini pertama sistitis tanpa komplikasi) demi stewardship — pilih kotrimoksazol/nitrofurantoin dulu sesuai pola resistensi lokal.' },
+        {
+          id: 'cotrimoxazole_480',
+          alasan: 'Pasien alergi sulfa (riwayat melepuh kemerahan) — kotrimoksazol KONTRAINDIKASI mutlak, bukan sekadar "kurang ideal". PNPK 2025 pun tak membintanginya sbg pilihan utama.',
+        },
         { id: 'natrium_diklofenak_50', alasan: 'Bukan terapi utama; sistitis butuh antibiotik + hidrasi. Analgesik hanya penunjang, bukan pengganti antibiotik.' },
       ],
       edukasi: ['minum_air_cukup', 'cuci_tangan', 'kontrol_rutin'],
@@ -1272,10 +1308,15 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       kondisiKembali: 'Pasien kembali dengan demam tinggi menggigil dan nyeri pinggang hebat — telah menjadi pielonefritis akut.',
       guideline: 'PPK ISK Kemenkes / IDSA — sistitis tanpa komplikasi antibiotik singkat, fluorokuinolon dicadangkan.',
     },
+    // alergiTrap dipertahankan (alternatifBenar KOSONG, bukan dihapus total)
+    // supaya pasien.alergi=['sulfa'] tetap terisi (chip "Riwayat alergi" di
+    // LembarPeriksa.tsx konsisten dgn narasi q_alergi) — tanpa menambah
+    // obatBenar via swap (ciprofloxacin_500 sudah aman utk alergi sulfa sejak
+    // awal, alternatifBenar kosong mencegah dobel-hitung slot AND).
     alergiTrap: {
       kelas: 'sulfa',
       obatTerlarang: ['cotrimoxazole_480'],
-      alternatifBenar: ['nitrofurantoin_100'],
+      alternatifBenar: [],
     },
   },
 ]
