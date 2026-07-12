@@ -6,7 +6,14 @@
 
 import type { Action } from './actions'
 import type { GameEvent } from './events'
-import type { FokusProgram, GameState, PenilaianEncounter, PesertaProlanis, Surat } from './state'
+import type {
+  FokusProgram,
+  GameState,
+  ModeStase,
+  PenilaianEncounter,
+  PesertaProlanis,
+  Surat,
+} from './state'
 import type { ContentPack } from '@content/pack'
 import type { Persona } from '@content/types'
 import { Rng } from './core/rng'
@@ -64,6 +71,12 @@ export const AMBANG_TEGURAN_KAS = 8_000_000
 /** Fix #5b (audit CODEX 2026-07-11) — batas berapa kali hasil kunjungan
  * 'partial' boleh menunda karma keluarga sebelum jatuh tempo asli berlaku. */
 export const BATAS_PARTIAL_KARMA = 2
+
+/** Fix Q1/O-C (CODEX-31 §65, 2026-07-12) — hari pengumuman & visitasi
+ * akreditasi M4.20, diskalakan proporsional per mode (dulu literal
+ * hari===50/60, tak pernah nyala di mode Ujian yang tamat hari 30). */
+export const HARI_PENGUMUMAN_AKREDITASI: Record<ModeStase, number> = { karier: 50, ujian: 17 }
+export const HARI_VISITASI_AKREDITASI: Record<ModeStase, number> = { karier: 60, ujian: 20 }
 
 /** PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
  * menekan droplet/kronis-terdeteksi. Diekspor agar UI (Lokakarya "Triase
@@ -1753,20 +1766,26 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     }
   }
 
-  // M4.20 — Akreditasi: pengumuman D50, visitasi D60 mengaudit REKAM MEDISMU
-  // sendiri (proporsi encounter dengan SOAP lengkap dari action-log/tally).
+  // M4.20 — Akreditasi: pengumuman + visitasi mengaudit REKAM MEDISMU sendiri
+  // (proporsi encounter dengan SOAP lengkap dari action-log/tally). Karier
+  // (90 hari): D50 pengumuman / D60 visitasi. Fix Q1/O-C (CODEX-31 §65,
+  // 2026-07-12): dulu HANYA `hari===50`/`hari===60` literal — di mode Ujian
+  // (30 hari) gerbang ini TAK PERNAH nyala krn game sudah tamat sebelum hari
+  // 60. Hari diskalakan proporsional thd `HARI_STASE[mode]` (sama pola dgn
+  // `EKSPEKTASI_KUNJUNGAN_UJIAN` di scoring.ts) — mekanismenya sendiri
+  // (`rmLengkap` ratio → predikat) TAK diubah, reuse penuh sesuai keputusan.
   let akreditasi = s.akreditasi
-  if (hari === 50) {
+  if (hari === HARI_PENGUMUMAN_AKREDITASI[s.mode]) {
     suratBaru.push(
       buatSuratHarian(hari, suratBaru.length, {
         jenis: 'sistem',
         dari: 'Dinas Kesehatan Kabupaten',
-        judul: 'PEMBERITAHUAN — visitasi akreditasi hari ke-60',
-        isi: `Tim surveior akan menilai KELENGKAPAN REKAM MEDIS poli (anamnesis, pemeriksaan, terapi, edukasi — SOAP utuh, bukan sekadar diagnosis benar). Sepuluh hari lagi. Rekam medis yang kamu tulis sejak hari pertama adalah berkas ujiannya — tidak ada yang bisa dikebut semalam.`,
+        judul: `PEMBERITAHUAN — visitasi akreditasi hari ke-${HARI_VISITASI_AKREDITASI[s.mode]}`,
+        isi: `Tim surveior akan menilai KELENGKAPAN REKAM MEDIS poli (anamnesis, pemeriksaan, terapi, edukasi — SOAP utuh, bukan sekadar diagnosis benar). ${HARI_VISITASI_AKREDITASI[s.mode] - hari} hari lagi. Rekam medis yang kamu tulis sejak hari pertama adalah berkas ujiannya — tidak ada yang bisa dikebut semalam.`,
       }),
     )
   }
-  if (hari === 60 && akreditasi === undefined) {
+  if (hari === HARI_VISITASI_AKREDITASI[s.mode] && akreditasi === undefined) {
     const rasio = tally.totalPasien > 0 ? tally.rmLengkap / tally.totalPasien : 0
     akreditasi = rasio >= 0.75 ? 'paripurna' : rasio >= 0.55 ? 'utama' : 'madya'
     const label = akreditasi.toUpperCase()

@@ -151,6 +151,17 @@ describe('M4.20 — akreditasi D60 dari kelengkapan rekam medis', () => {
     expect(s.inbox.some((m) => m.judul.includes('HASIL AKREDITASI: PARIPURNA'))).toBe(true)
   })
 
+  it('Fix Q1/O-C: mode Ujian (30 hari) juga dapat pengumuman D17 + hasil D20, bukan cuma Karier', () => {
+    let s = buildInitialState('Uji', SEED, PACK, { mode: 'ujian' })
+    s = { ...s, tally: { ...s.tally, totalPasien: 10, rmLengkap: 8 } }
+    s = sampaiHari(s, 17)
+    expect(s.inbox.some((m) => m.judul.includes('visitasi akreditasi'))).toBe(true)
+    expect(s.akreditasi).toBeUndefined()
+    s = sampaiHari(s, 20)
+    expect(s.akreditasi).toBe('paripurna')
+    expect(s.inbox.some((m) => m.judul.includes('HASIL AKREDITASI: PARIPURNA'))).toBe(true)
+  })
+
   it('rekam medis bolong → MADYA + manajemen terpangkas; skor membedakan ketiganya', () => {
     const s = buildInitialState('Uji', SEED, PACK)
     // labTakRelevan 6 menurunkan basis manajemen di bawah cap 15 supaya

@@ -198,31 +198,49 @@ tapi belum dikonfirmasi.)
 > Ini utang fakta-klinis yang harus dilewati sebelum konten/freeze. Dicantumkan agar DeepThink paham beban &
 > bisa menilai *urutan/pengelompokan*, bukan memutus fakta.
 
-### [M1] §1a — temuan keselamatan klinis P0 (prioritas TERTINGGI).
-**#3 stroke:** `I63.9` di-lock tanpa imaging; Lastri (TD 208/118 + pelo) dipetakan ke *hipertensi urgensi*
-bukan *suspected stroke*. **#6 algoritma akut tak lengkap:** diare Plan B, laju cairan IGD dengue,
-ipratropium asma berat, steroid rutin anafilaksis. **#8 TB:** BTA-only (tanpa TCM/HIV); kontak anak tak bisa
-dipilih bersama intervensi utama. **Status:** menunggu adjudikasi; mekanik remediasi #6 menumpang C.1 (sudah
-diterima), tapi konten klinisnya belum.
+### [M1] §1a — temuan keselamatan klinis P0 (prioritas TERTINGGI). ✅ **SEMUA
+SELESAI** (dikonfirmasi tuntas di `M10_5_FIDELITAS.md` §5b, 2026-07-11/12 — dok ini
+basi di titik ini).
+**#3 stroke:** Lastri dipindah ke `stroke_iskemik`, demografi disesuaikan. **#6:**
+diare Plan-B & laju cairan dengue difix; ipratropium-asma & steroid-anafilaksis
+DIKONFIRMASI sudah benar per PPK1186 (tanpa perubahan skor, disurfacekan sbg
+`mutiaraEbm`). **#8 TB:** keputusan dokter "teks dulu, mekanik nanti" — catatan
+TCM-vs-BTA ditambahkan ke `mutiaraEbm`/`catatanRealita` (2026-07-12); mekanik
+konfirmasi-TCM-sbg-jalur-utama masih belum dibangun (lihat Q-baru soal ini di
+`DEEPTHINK_M13_SKALA_PENUH.md` §3c Q-terkait TB).
 
-### [M2] §1c — batch konten klinis.
-#4 ANC (gol. darah, HIV/sifilis/HBsAg, folat dobel, target 90 TTD, ambang rujuk Hb 8,5, dosis MgSO4); #5
-regimen tunggal DM/HT; #11 kode (Widal, GAS, K29.7); #12 "ajaran keliru" (zoster→PHN, OA/RA-vs-gout,
-analgesia apendisitis, clue gout/ULT). **Status:** dijadwalkan gelombang Golden Master (Minggu-4), belum
-diputus.
+### [M2] §1c — batch konten klinis. ⚠️ **SEBAGIAN selesai 2026-07-12**: #4a (gol.
+darah distraktor dicabut) + #4c (folat dobel dibereskan) DONE. Sisanya BELUM:
+#4b/e/f (HIV/sifilis/HBsAg gap konten, ambang rujuk Hb 8,5, dosis MgSO4 — MgSO4
+sendiri sudah sesuai kebijakan O1 tanpa-dosis, jadi non-issue) · #5 regimen
+tunggal DM/HT (SEBAGIAN tertutup via kombinasi `obatAlternatif` PNPK Bagian D
+2026-07-12, tapi cek ulang kecukupannya) · #11 kode Widal/GAS/K29.7 (belum
+disentuh) · #12 zoster→PHN/OA-RA-vs-gout/clue-gout-ULT (status TAK JELAS, tak
+muncul di checklist manapun sejak — perlu verifikasi apakah sudah masuk Bagian
+C/D atau memang belum pernah dibahas).
 
-### [M3] PPK 1186/2022 "Bagian C" — 7 temuan genuine.
-konjungtivitis-alergi (**steroid PPK vs tanpa-steroid AAO — paling signifikan**), dosis amoksisilin OMA,
-dosis asam folat anemia bumil, pedikulosis kapitis, demam tifoid, ICD hemoroid (I84 WHO vs K64.0),
-ICD apendisitis (K35.9 vs K35.8 PPK). **Status:** di artifact shortlist (41 item), menunggu adjudikasi
-per-item.
+### [M3] PPK 1186/2022 "Bagian C" — 7 temuan genuine. ⚠️ **STATUS TAK PASTI,
+JANGAN PERCAYA KLAIM "SUDAH DIADJUDIKASI" DI MEMORI MANAPUN TANPA VERIFIKASI**:
+dokter approve Bagian A(21)+C(7) penuh 2026-07-10, tapi commit history HANYA
+menunjukkan implementasi Bagian B (13 item, `d4b608f`) — tak ada commit terpisah
+utk A/C. Item konjungtivitis-alergi (**steroid PPK vs tanpa-steroid AAO — paling
+signifikan**) SUDAH tertangani via `panduanResmi` Phase-A (2 otoritas
+berdampingan, bukan ubah `obatBenar`). 6 sisanya (dosis amoksisilin OMA, dosis
+asam folat anemia bumil, pedikulosis kapitis, demam tifoid, ICD hemoroid I84-vs-
+K64.0, ICD apendisitis K35.9-vs-K35.8) BELUM diverifikasi satu-satu — dari aturan
+Ember-Merah/Hijau, cuma 2 kode ICD itu yang genuinely blocking freeze.
 
 ### [M4] PNPK Kemenkes "Bagian D" — 17 temuan "berbeda" (utang medis terbesar).
-7 Tier-1 kasus-spesifik: `hipertensi_esensial` (monoterapi vs PNPK 2021 **wajib kombinasi 2-obat** derajat-2),
-`dm_tipe2` (HbA1c 8,9% metformin-mono vs ambang kombinasi), `mm_gagal_jantung_kongestif` (ISDN tanpa cek
-interaksi PDE5), `mm_isk_bawah`, `kia_isk_kehamilan`, `jiwa_skizofrenia`, `jiwa_gangguan_cemas`; + 10 Tier-2
-gap konten baru (nyeri kronik, pengenalan sepsis, batu saluran kemih, osteoporosis, dst). **Status:** SEMUA
-17 tercatat, NOL diputuskan/diimplementasi; konsolidasi UI ditahan (user sempat kelelahan 2026-07-10).
+✅ **SELESAI 2026-07-12** (dok ini basi di titik ini — ditulis sebelum eksekusi).
+7 Tier-1 kasus-spesifik SEMUA diputuskan+diimplementasi (3 dari 5 rekomendasi
+awal Claude DIBALIK setelah digrounding ke DOEN/PPK1186 — lihat
+`CODEX_AUDIT_DOSSIER.md` §65): `hipertensi_esensial` (kombinasi via
+`obatAlternatif`), `dm_tipe2` (kombinasi metformin+glimepirid), `mm_gagal_
+jantung_kongestif` (mekanisme baru `interaksiTrap` PDE5-vs-nitrat), `mm_isk_
+bawah` (ciprofloxacin), `kia_isk_kehamilan` (no-op, clue-only, tak ada field
+durasi terstruktur), `jiwa_skizofrenia` (TIDAK diubah, PPK1186-scope menang atas
+PNPK-spesialis), `jiwa_gangguan_cemas` (amitriptilin via `obatAlternatif`). 10
+Tier-2 gap konten baru tetap backlog M13 (bukan bug, murni cakupan).
 
 ### [M5] M11.5 `panduanResmi` Phase-B — 50 kasus draf (20 "divergensi").
 Draf ter-grounding ke kutipan PPK per-item; menunggu Setuju/Edit/Tolak/Nanti per-kasus di artifact. Fokus:
@@ -230,11 +248,13 @@ Draf ter-grounding ke kutipan PPK per-item; menunggu Setuju/Edit/Tolak/Nanti per
 PPK bukan plafon absolut) — yang OPEN cuma adjudikasi per-kasus. 8 kasus tanpa entri PPK tetap
 tanpa-`panduanResmi` kecuali PNPK menutup.
 
-### [M6] ICD `mm_hipertensi_urgensi` I16.0 → I10 + pilihan diagnosisBanding.
-I16 (krisis hipertensi) TAK ADA di WHO ICD-10 2010 (CM-only). Fix→I10 butuh pilihan DDx pengganti (I11.9?
-I15? atau pembanding non-HT) karena WHO tak punya kode urgensi. Companion: 6 kode kurang-spesifik (condong
-BIARKAN), opsional T78.2→T88.6 anafilaksis-dipicu-obat (condong "pertimbangkan"). **Status:** menunggu OK
-dokter + 1 pilihan DDx.
+### [M6] ICD `mm_hipertensi_urgensi` I16.0 → I10 + pilihan diagnosisBanding. ✅
+**SUDAH DIFIX** (dok ini basi — ditulis sebelum eksekusi, tak diketahui sesi
+mana persis). Kode aktual (`kasusMetabolikMsk.ts:914`) pakai **I13.9**, BUKAN I10
+seperti rencana di sini — solusi lebih baik, menghindari duplikat-ICD dgn
+`hipertensi_esensial` sama sekali (bukan sekadar mendokumentasikannya via
+`ICD_DUPLIKAT_SENGAJA`). Companion: 6 kode kurang-spesifik + T78.2→T88.6 —
+status tak diverifikasi ulang sesi ini.
 
 ### [M7] `harusDirujuk` utk 5 kasus yang skdi-nya baru dikoreksi.
 5 kasus (dermatitis kontak, rinosinusitis akut, OA lutut, gangguan cemas, depresi ringan) skdi dikoreksi ke

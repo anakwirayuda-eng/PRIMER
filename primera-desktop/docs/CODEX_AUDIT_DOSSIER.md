@@ -4028,3 +4028,48 @@ zaman) — menjawab pertanyaan dokter langsung, bukan temuan CODEX.
 0 kerentanan. **REVISI_ENGINE 22→23** (satu bump: #10/#12/#13/#14 + interaksiTrap + aksiEskalasi +
 edukasiKritis-scope + seluruh konten tatalaksana Bagian D Tier-1, semua score-affecting, dibundel
 per disiplin proyek — lihat rasional lengkap di komentar `verifikasi.ts`).
+
+## 66. Lanjutan capstone M10.5: doc-cleanup + Q1/O-C fix + Q5/§3b nudge + soak-test adversarial G2 (2026-07-12)
+
+Kelanjutan langsung §65, sesi sama hari. Audit menyeluruh menemukan `M10_5_FIDELITAS.md` +
+`DEEPTHINK_TRIANGULASI_LENGKAP_2026-07-11.md` sudah basi di beberapa titik (menganggap item yg
+sudah selesai hari ini masih terbuka, dan sebaliknya §6a ICD sudah shipped `I13.9` padahal
+dokumen masih rencana `I10`) — diperbaiki, plus catatan status Bagian A(21)/C(7) yang ternyata
+**disetujui dokter 2026-07-10 tapi TAK ADA commit implementasi** (cuma Bagian B/13-item yg
+ter-commit `d4b608f`) — untungnya Bagian A murni `clue`-text (Ember Hijau, tak memblokir freeze
+per `project_primer_freeze_bucket_router`), dan Bagian C hanya 2/7 item (ICD hemoroid/apendisitis)
+genuinely Ember Merah.
+
+**Kerjaan kode murni (keputusan sudah final, tinggal eksekusi):**
+- **Q1/O-C** (`reducer.ts`): gerbang akreditasi (pengumuman+hasil) dulu literal `hari===50`/`===60`
+  — di mode Ujian (tamat hari 30) TAK PERNAH nyala. Diskalakan proporsional per mode:
+  `HARI_PENGUMUMAN_AKREDITASI`/`HARI_VISITASI_AKREDITASI` (Karier 50/60 tetap, Ujian 17/20 baru).
+  Test baru di `m4ekonomi.test.ts` (merah sebelum fix, hijau sesudah — diverifikasi via stash).
+- **Q5/C.8** (`PanelHasil.tsx`): sentilan kebiasaan cek-alergi ditambahkan (bukan gerbang baru,
+  sesuai O-A) — muncul hanya utk kasus ber-`alergiTrap`. Test baru di `PanelHasil.test.tsx`.
+- **§3b** (medikolegal — PPK Kemenkes baku default, BUKAN hukum mutlak anti-EBM): kalimat
+  ditempel ke kartu terapi Onboarding Hari-1 (`Onboarding.tsx`) + catatan di kotak "Panduan Resmi
+  Kemenkes" `PanelHasil.tsx` (mengutip Diktum VI/VII KMK 1186/2022). Test baru keduanya.
+
+**G2 — Baseline soak-test adversarial PERTAMA** (`src/engine/soakAdversarial.test.ts`, BARU): 3
+profil (speedrunner/teliti/ceroboh) × 2 mode × 2 seed, penuh sampai `tamat`. Draft pertama punya
+bug SENDIRI (bukan bug engine): menyamakan disposisi benar dgn `kasus.harusDirujuk` mentah tanpa
+mengecualikan pasien PRB (rujuk-balik) — merujuk-ulang PRB kena `rujukanNonSpesialistik`, membuat
+profil TELITI (100% diagnosis benar) sempat menunjukkan UKP=5.0/35 murni krn bug harness. Diperbaiki
+(cek `enc.pasien.prb` dulu). **Hasil baseline setelah fix**: Karier teliti≈76-78 (B), speedrunner≈74
+(B) — HAMPIR IDENTIK, sinyal awal relevan utk Q1 eskalasi O-C→O-B (belum terpicu, tapi juga belum
+tertutup krn Q2/Q3/Q4 belum turun); ceroboh jatuh ke 0.0 total (Referral Guillotine + hard-cap #12
+kompak menjenuhkan ke lantai — bekerja sesuai desain). Resiliensi 0.0/15 di semua run — artefak
+cakupan harness (tak menyentuh Kegiatan/Posyandu/Pemulihan), BUKAN temuan skor. Invarian
+`teliti ≥ speedrunner ≥ ceroboh` (rata-rata grade per-encounter) terpasang permanen sbg pagar
+regresi. Detail lengkap + tabel: `M10_5_FIDELITAS.md` §7f.
+
+**Verifikasi**: 707/707 test (naik dari 689 — 18 test baru: 1 Q1 fix, 4 Q5+§3b, 13 soak adversarial)
++ typecheck bersih. Tanpa REVISI_ENGINE bump (semua perubahan non-scored: fix pacing surat/UI-nudge/
+teks onboarding/test-only, tak menyentuh `tatalaksana`/`icd10`/`harusDirujuk`/`skdi`/`alergiTrap`).
+
+**Sisa M10.5 yang genuinely masih terbuka** (lihat `M10_5_FIDELITAS.md` §5b/§7e untuk daftar
+lengkap): ratifikasi final Q2/Q3, keputusan Q4 (stabilisasi) & §3a (rujukan terjustifikasi), 2 kode
+ICD Bagian C (hemoroid/apendisitis), M2 #11 (Widal/GAS/K29.7), M6 residual (6 kode + T78.2→T88.6),
+desaF:995 (Fe/KB), lalu soak-test FINAL (pasca semua di atas turun) + freeze-enforcement checksum +
+tag Golden Master.

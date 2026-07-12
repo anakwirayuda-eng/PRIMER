@@ -417,28 +417,45 @@ keharusan struktural "sekarang".
   'partial'`, bukan otomatis `berhasil`. Tak perlu konten kartu baru.
   REVISI_ENGINE 20→21 (bersamaan dgn fix #16 lab-floor, sesi sama). Detail:
   `docs/CODEX_AUDIT_DOSSIER.md` §63, `docs/DEEPTHINK_CODEX31_KEPUTUSAN.md`.
-- 🔴 Masih perlu KEPUTUSAN Dr. Wirayuda (artifact Bagian D, bagian
-  "Tambahan"): **[#14] kalibrasi
-  severity edukasiKritis→konsekuensi** (15 kasus, blanket vs per-kasus) ·
-  **[#7c] asimetri rujukan Prolanis DM vs HT** (opsi exempt-gerbang vs
-  kasus-DM-baru vs transparansi-saja) · **[#4a] ANC gol.darah** (distraktor
-  -5/-10 utk komponen 10T resmi — wajar atau kelewat keras?) · **[#4c] ANC
-  folat dobel** (tablet_fe sudah+folat, tapi asam_folat jg diwajibkan AND —
-  pilih salah satu, keputusan tercepat dari 5 item). [M2] §1c sisanya
-  (#4b/e/f — HIV/sifilis/HBsAg gap konten, ambang Hb-rujuk, MgSO4-dosis
-  sudah sesuai kebijakan O1 tanpa-dosis) · subset PPK-C(7)/PNPK-D(17) yang
-  mengubah obat/ICD/rujuk · [G2] self-play deflasi grade (tunggu semua
-  adjudikasi medis di atas kelar, krn ikut menggeser skor).
+- ✅ **[#14]/[#7c]/[#4a]/[#4c] SEMUA SELESAI 2026-07-12** (dossier
+  `CODEX_AUDIT_DOSSIER.md` §65): edukasiKritis-konsekuensi dipersempit ke
+  `minum_oat_tuntas` saja · Prolanis DM/HT asimetri dijawab via transparansi-
+  narasi (gerbang rujukan TIDAK diubah, disengaja) · ANC gol.darah distraktor
+  dicabut (komponen 10T resmi) · ANC folat dobel dibereskan (`asam_folat`
+  dicabut dari `obatBenar`, `tablet_fe` sudah cover).
+- ✅ **PNPK-D(17) SELESAI 2026-07-12**: 7 Tier-1 (protokol klinis, 3 dari 5
+  rekomendasi awal Claude DIBALIK setelah digrounding ke DOEN/PPK1186 — lihat
+  [[project_primer_pnpk_crosscheck]]) + 5 Tambahan di atas. Tier-2 (10 item)
+  tetap backlog M13 (celah cakupan, bukan bug).
+- ⚠️ **PPK-C(7) — STATUS TAK PASTI, PERLU VERIFIKASI ULANG** (jangan percaya
+  baris di atas maupun memori lama begitu saja): dokter approve Bagian A(21)+
+  C(7) penuh 2026-07-10, tapi cek commit history hanya menemukan implementasi
+  Bagian B (13 item, commit `d4b608f`) — TIDAK ada commit terpisah utk
+  Bagian A/C. Cek langsung kode `mata_konjungtivitis_alergi` (flagship item
+  Bagian C, steroid-vs-tidak): sudah tertangani via `panduanResmi` Phase-A
+  (menampilkan 2 otoritas berdampingan, bukan mengubah `obatBenar`) — TAPI 6
+  item Bagian C lainnya (dosis amoksisilin OMA, dosis asam folat anemia,
+  durasi pedikulosis, tifoid, ICD hemoroid I84-vs-K64.0, ICD apendisitis
+  K35.9-vs-K35.8) statusnya BELUM diverifikasi satu-satu. Dari aturan
+  Ember-Merah/Hijau ([[project_primer_freeze_bucket_router]]): HANYA 2 kode
+  ICD itu yang genuinely blocking freeze (Ember Merah); sisanya kemungkinan
+  besar clue/dosis-tak-terstruktur (Ember Hijau, non-blocking, pola sama spt
+  `kia_isk_kehamilan` durasi) — tapi ini ASUMSI belum diverifikasi kasus per
+  kasus. Bagian A (21 koreksi clue) murni Ember Hijau di semua kasus — TAK
+  memblokir freeze, aman dikerjakan kapan saja.
 - 🟢 Aman ditunda September (M11a/M13, tunggu greenlight milestone):
-  panduanResmi Phase-B murni-display · 118 sisa mutiara pengayaan · Debrief
-  Malam cap-3 [D1] · M12 aesthetic · M13 konten baru.
+  panduanResmi Phase-B murni-display (58 kasus, artifact
+  `https://claude.ai/code/artifact/fa1f4474-0395-4182-ac62-415ca16fb2f0`) ·
+  118 sisa mutiara pengayaan · Debrief Malam cap-3 [D1] · M12 aesthetic
+  (sekarang dijadwalkan SETELAH M13, dibalik 2026-07-12) · M13 konten baru.
 
 ## 6. Q8 — Audit ICD-10 67 kasus + 5 IGD (SELESAI 2026-07-10)
 
 Workflow `audit-icd10-satusehat` (8 auditor, WebSearch vs WHO ICD-10 2010).
 **154 kode diperiksa, 147 tepat (95%).** Sangat bersih. Rincian 7 temuan:
 
-### 6a. SATU kode genuinely keliru (CM-only) — butuh keputusan konten
+### 6a. SATU kode genuinely keliru (CM-only) — ✅ SUDAH DIFIX (kode pakai `I13.9`,
+bukan rencana `I10` di bawah — dokumen ini basi di titik ini, dikoreksi 2026-07-12)
 - **`mm_hipertensi_urgensi` icd10 `I16.0`** (keyakinan TINGGI, = konfirmasi CODEX
   #11). Kategori **I16 (Hypertensive crisis) TIDAK ADA di WHO ICD-10 2010** — murni
   tambahan ICD-10-CM AS (efektif FY2018). WHO 2010 blok hipertensi berhenti di I15.
@@ -459,6 +476,13 @@ Workflow `audit-icd10-satusehat` (8 auditor, WebSearch vs WHO ICD-10 2010).
     disease? I15 secondary? atau cukup sisakan pembanding non-hipertensi); (3)
     daftarkan I10 di `ICD_DUPLIKAT_SENGAJA` + alasan; (4) perbaiki komentar
     menyesatkan di baris 896-898.
+  - **RESOLUSI AKTUAL (ditemukan 2026-07-12, tak diketahui kapan persis
+    dieksekusi):** kode saat ini (`kasusMetabolikMsk.ts:914`) pakai **`I13.9`**
+    (Hypertensive heart AND renal disease, WHO 2010 valid) — solusi lebih baik
+    dari rencana I10 di atas, karena tak perlu berbagi kode dgn
+    `hipertensi_esensial` sama sekali (menghindari isu duplikat-ICD ini
+    seluruhnya, bukan sekadar mendokumentasikannya). Rencana di atas dibiarkan
+    sbg arsip historis — jangan dieksekusi ulang.
 
 ### 6b. Enam "kurang-spesifik" — OPSIONAL, rekomendasi condong BIARKAN
 Semua keyakinan SEDANG; auditor sendiri menegaskan kode 3-karakter saat ini LAZIM &
@@ -546,16 +570,78 @@ Disiplin mendaur-ulang pola "cap skor" (`vitalDiukur→maks 50`) alih-alih memba
 infrastruktur hukuman baru dari nol utk Q2/Q4 — matikan scope-creep, jaga
 kestabilan regresi. Dipertahankan sbg prinsip M10.5.
 
-**Urutan kerja M10.5 final (sintesis DeepThink + triase):**
+**Urutan kerja M10.5 final (sintesis DeepThink + triase):** ⚠️ status per-baris
+dikoreksi 2026-07-12 (REVISI_ENGINE sudah 23 sekarang, bukan satu bump tunggal
+"=18" seperti direncanakan di bawah — sudah naik bertahap 18→19→20→21→22→23 lewat
+banyak batch terpisah, bukan satu Minggu-4 pamungkas):
 1. Minggu-1 (operasi berisiko, timebox+rollback): #10 forced-AND (`clinic.ts:494`)
-   + Q1 **O-C** (turunkan ambang akreditasi Mode-Ujian). Isolasi 530+ test hijau.
-2. Minggu-2 (P0 keselamatan + data): Q4 stabilisasi + Q6 eskalasi-pasca-MI + audit
-   Q7 harusDirujuk poli (paralel).
-3. Minggu-3 (disiplin klinis): Q2 gate konfirmasi + Q3 edukasiKritis→rmLengkap.
-   Q5 = firewall saja (sudah) + sentilan debrief.
+   — **kemungkinan besar SELESAI** via mekanisme `obatOpsional` (komentar kode
+   "M10 §49" persis menjelaskan fix utk skenario forced-AND ini) tapi belum
+   diverifikasi eksplisit sbg penutup item #10 spesifik ini — cek sebelum
+   dianggap tuntas. Q1 **O-C** (turunkan ambang akreditasi Mode-Ujian) — ❌ **BELUM,
+   sedang dikerjakan sekarang** (`reducer.ts:1769` masih cuma cek `hari===60`,
+   tak pernah nyala di mode Ujian yg tamat hari 30).
+2. Minggu-2 (P0 keselamatan + data): Q4 stabilisasi — ❌ **BELUM, butuh keputusan
+   dokter** (bangun mekanisme oksigen/tindakan pra-rujuk atau skip). Q6
+   eskalasi-pasca-MI — ✅ **SELESAI** (Asih/preeklampsia, `aksiEskalasi` digeneralisasi
+   ke 16 keluarga, 2026-07-12). Audit Q7 harusDirujuk poli — status tak diverifikasi
+   ulang sesi ini.
+3. Minggu-3 (disiplin klinis): Q2 gate konfirmasi + Q3 edukasiKritis→rmLengkap —
+   ⚠️ **STATUS BENTROK, PERLU RATIFIKASI DOKTER**: badan teks §7 ini bilang "butuh
+   keputusan", tapi kalau ada tabel adjudikasi terpisah yg menandai ACCEPT, itu
+   perlu dikonfirmasi eksplisit ini ratifikasi final, bukan triase awal yg belum
+   disetujui. BELUM diimplementasi baik pun. Q5 = firewall saja (sudah) + sentilan
+   debrief — ❌ **teks nudge belum ditempel ke PanelHasil.tsx** (segera dikerjakan).
 4. Minggu-4 (Golden Master): **self-play deflasi + kalibrasi ambang (§7d, WAJIB)**
-   → SATU bump `REVISI_ENGINE=18` → hard-freeze. Keputusan medis (#4/#5/#12) +
-   ICD I16.0 (§6a) masuk gelombang ini juga.
+   — ❌ **BELUM ADA sama sekali**: `soak.test.ts` yang ada murni defensif
+   (anti-crash), `selfplay.test.ts` cuma 1 profil "dokter rajin" bukan 3 profil
+   adversarial (speedrunner/teliti/ceroboh) yg diminta di sini — **capstone
+   sebenarnya, sedang dibangun sekarang**. Freeze-enforcement (checksum test)
+   juga 0% ada di kode — freeze sejauh ini murni kebijakan dokumen, lihat
+   `project_primer_freeze_bucket_router` (memori proyek). Keputusan medis (#4/#5/#12) sudah
+   dieksekusi 2026-07-12; ICD I16.0 (§6a) sudah dieksekusi (jadi I13.9, bukan I10
+   spt rencana asli).
+
+### 7f. G2 — Baseline soak-test adversarial PERTAMA (2026-07-12)
+
+`src/engine/soakAdversarial.test.ts` dibangun: 3 profil (speedrunner/teliti/
+ceroboh), 2 mode × 2 seed, penuh sampai `tamat`. Cakupan: IGD (optimal, semua
+profil) + poli klinik (parameter penuh per-profil) + maks 1 kunjungan/hari.
+**TIDAK mencakup** Kegiatan/Posyandu/Prolanis/Pemulihan eksplisit (batasan sama
+dgn `soak.test.ts` lama) — Resiliensi karenanya 0.0/15 di SEMUA run, itu artefak
+cakupan harness, BUKAN temuan skor.
+
+**Bug ditemukan & diperbaiki DI HARNESS SENDIRI sebelum data dipercaya**: draft
+pertama menyamakan disposisi "benar" dgn `kasus.harusDirujuk` mentah, tanpa
+mengecualikan pasien PRB (rujuk-balik, M3.13) — merujuk-ulang pasien PRB
+terhitung `rujukanNonSpesialistik` (`clinic.ts:642-644`) walau `harusDirujuk`
+kasusnya true. Ini men-charge diri sendiri lewat Referral Guillotine
+(`scoring.ts:51-52`): profil TELITI (100% diagnosis benar, 100% kalibrasi TEGAK)
+sempat menunjukkan UKP=5.0/35 murni krn bug ini. Diperbaiki (cek `enc.pasien.prb`
+dulu), lalu diverifikasi ulang.
+
+**Hasil baseline SETELAH fix (REVISI_ENGINE 23, sebelum kalibrasi kategori-3
+manapun turun):**
+
+| Mode | Profil | UKP | UKM | Manajemen | Resiliensi | Total | Grade |
+|---|---|---:|---:|---:|---:|---:|---|
+| Karier | teliti | 35.0/35 | ~29.3/35 | 12-13/15 | 0/15 | ~76-78 | B |
+| Karier | speedrunner | 35.0/35 | ~29.2/35 | 9.5-10/15 | 0/15 | ~74 | B |
+| Karier | ceroboh | 0.0/35 | 0.0/35 | 0.0/15 | 0/15 | 0.0 | D |
+| Ujian | teliti | 35.0/35 | ~28.8/35 | 11.5-15/15 | 0/15 | tinggi | — |
+| Ujian | speedrunner | ~35.0/35 | ~25.5-28.5/35 | 11-11.5/15 | 0/15 | — | — |
+| Ujian | ceroboh | 0.0/35 | 0-1.5/35 | 0.0/15 | 0/15 | ~0 | D |
+
+**Bacaan awal (bukan kalibrasi final — G2 masih perlu keputusan kategori-3
+turun dulu, §7e di atas):** teliti vs speedrunner HAMPIR IDENTIK di Karier
+(±2-4 poin) — konsisten dgn Q1's kekhawatiran "speedrunner bisa lolos nyaris
+sama baik dgn teliti" (argumen utk Q1 eskalasi O-C→O-B BELUM terpicu di sini,
+tapi juga belum tertutup krn Q2/Q3/Q4 belum diimplementasi — soak final wajib
+diulang setelah itu turun). Ceroboh jatuh ke 0.0 total (guillotine + penalti
+lain kompak jenuh ke lantai) — Referral Guillotine + hard-cap #12 tampak
+bekerja sesuai desain (bukan sekadar terjun bebas tak terkendali). Invarian
+`teliti ≥ speedrunner ≥ ceroboh` (rata-rata grade per-encounter numerik)
+terpasang sbg pagar regresi permanen.
 
 ## 8. Cross-check 31 PNPK Kemenkes (Tier 1+2) — SELESAI 2026-07-10, 17 temuan "berbeda"
 

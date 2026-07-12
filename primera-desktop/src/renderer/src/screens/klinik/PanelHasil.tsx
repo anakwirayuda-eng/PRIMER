@@ -177,6 +177,19 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
           </p>
         )}
 
+        {/* Q5/C.8 (M10.5, keputusan O-A 2026-07-12): firewall alergi sudah
+            mencegah RESEP obat terlarang — sentilan ini menegaskan KEBIASAAN
+            bertanya riwayat alergi sendiri, tanpa gerbang/penalti skor baru.
+            Muncul hanya utk kasus ber-alergiTrap (di sinilah alerginya nyata). */}
+        {!tutorial && kasus?.alergiTrap && (
+          <p className="teks-kecil teks-lembut klinik-hasil__alergi-nudge">
+            Kasus ini menyimpan risiko alergi obat. Firewall permainan mencegahmu meresepkan yang
+            terlarang — tapi di Puskesmas sungguhan tak ada firewall. Menanyakan riwayat alergi
+            SEBELUM meresepkan (Permenkes 74/2016, pengkajian resep) adalah kebiasaan wajib, bukan
+            formalitas.
+          </p>
+        )}
+
         <div className="folder klinik-hasil__clue">
           <div className="judul-seksi">Mutiara Klinis (EBM)</div>
           <p className="teks-kecil">{hasil.clue}</p>
@@ -204,6 +217,13 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
           <div className="folder klinik-hasil__panduan">
             <div className="judul-seksi">📜 Panduan Resmi Kemenkes</div>
             <p className="teks-kecil">{kasus.panduanResmi}</p>
+            {/* §3b (M10.5, docs/M10_5_FIDELITAS.md): koreksi medikolegal — PPK
+                bukan "hukum mutlak anti-EBM". Diktum VI/VII KMK 1186/2022
+                sendiri mengizinkan deviasi ber-EBM yg terdokumentasi. */}
+            <p className="teks-kecil teks-lembut klinik-hasil__panduan-catatan">
+              Baku DEFAULT penilaian — menyimpang darinya tetap sah bila beralasan klinis kuat &
+              terdokumentasi (KMK 1186/2022 Diktum VI/VII), bukan sekadar beda pendapat.
+            </p>
           </div>
         )}
 

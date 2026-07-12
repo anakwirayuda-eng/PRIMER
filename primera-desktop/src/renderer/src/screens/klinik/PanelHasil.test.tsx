@@ -100,4 +100,45 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     )
     expect(screen.queryByText(/non-negotiable terlewat/)).not.toBeInTheDocument()
   })
+
+  // Q5/C.8 (M10.5, keputusan O-A 2026-07-12): sentilan alergi tanpa gerbang baru.
+  it('kasus ber-alergiTrap (mm_isk_bawah): sentilan kebiasaan cek alergi tampil', () => {
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, kasusId: 'mm_isk_bawah' }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+    expect(screen.getByText(/riwayat alergi/i)).toBeInTheDocument()
+  })
+
+  it('kasus tanpa alergiTrap (ispa_common_cold): sentilan alergi TAK tampil', () => {
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
+    )
+    expect(screen.queryByText(/riwayat alergi/i)).not.toBeInTheDocument()
+  })
+
+  // §3b (M10.5, keputusan medikolegal 2026-07-12): PPK = baku default, BUKAN
+  // hukum mutlak anti-EBM — catatan ini menempel di kotak Panduan Resmi.
+  it('kasus ber-panduanResmi (mata_konjungtivitis_alergi): catatan medikolegal §3b tampil', () => {
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, kasusId: 'mata_konjungtivitis_alergi' }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+    expect(screen.getByText(/Baku DEFAULT penilaian/i)).toBeInTheDocument()
+  })
+
+  it('kasus tanpa panduanResmi (ispa_common_cold): catatan medikolegal §3b TAK tampil', () => {
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
+    )
+    expect(screen.queryByText(/Baku DEFAULT penilaian/i)).not.toBeInTheDocument()
+  })
 })
