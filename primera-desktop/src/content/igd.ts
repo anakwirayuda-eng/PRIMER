@@ -11,7 +11,10 @@ export const KASUS_IGD: KasusIgd[] = [
   {
     id: 'igd_syok_anafilaksis',
     nama: 'Syok Anafilaksis',
-    icd10: 'T78.2',
+    // Veto-table §3b (M10.5, 2026-07-12, keputusan 8B): T78.2→T88.6 — pemicu
+    // di narasi (pembuka) adalah SUNTIKAN ANTIBIOTIK, jadi ini reaksi anafilaktik
+    // akibat OBAT (drug-induced), bukan anafilaksis idiopatik/tak-spesifik T78.2.
+    icd10: 'T88.6',
     skdi: '4A',
     pembuka:
       'Seorang perempuan digotong masuk, wajah bengkak dan bentol merah di sekujur tubuh. ' +

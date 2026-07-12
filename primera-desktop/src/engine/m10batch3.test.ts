@@ -1,6 +1,6 @@
 /**
  * TEST — M10 Batch-3 (keputusan medis Dr. Wirayuda, dossier §54, docs/
- * M10_BATCH3_MEDIS.md). Riset EBM+Indonesia → fix konten. Menguji: ICD K35.8,
+ * M10_BATCH3_MEDIS.md). Riset EBM+Indonesia → fix konten. Menguji: ICD K35.9,
  * sediaan salisilat veruka, zinc disentri dewasa, skrining hamil malaria
  * (hanyaUntuk), tinea topikal-saja, impetigo mupirosin, wording HT urgensi.
  */
@@ -16,13 +16,16 @@ function encFor(kasusId: string, resep: string[]): EncounterState {
   return { ...buatEncounter(pasien), resep }
 }
 
-describe('M10 Batch-3 C.10 — apendisitis ICD WHO (K35.8, bukan K35.80 CM)', () => {
+describe('M10 Batch-3 C.10 — apendisitis ICD WHO (K35.9, bukan K35.80 CM)', () => {
+  // M10.5 veto-table §3b keputusan 2B (2026-07-12): K35.8→K35.9 — "unspecified"
+  // lebih tepat utk dx presumtif-klinis FKTP tanpa temuan operatif spesifik.
   const apx = PACK.kasus['apendisitis_akut']!
-  it('icd10 = K35.8 (WHO ICD-10 2016)', () => {
-    expect(apx.icd10).toBe('K35.8')
+  it('icd10 = K35.9 (WHO ICD-10 2016, unspecified)', () => {
+    expect(apx.icd10).toBe('K35.9')
   })
-  it('tak ada sisa K35.80 di diagnosisBanding', () => {
-    expect(apx.diagnosisBanding).toContain('K35.8')
+  it('tak ada sisa K35.8/K35.80 di diagnosisBanding', () => {
+    expect(apx.diagnosisBanding).toContain('K35.9')
+    expect(apx.diagnosisBanding).not.toContain('K35.8')
     expect(apx.diagnosisBanding).not.toContain('K35.80')
   })
 })

@@ -143,7 +143,12 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       // — obat dihentikan sendiri krn takut efek samping → krisis hipertensi.
       edukasiKritis: ['kepatuhan_obat'],
     },
-    clue: 'JNC-8: target TD <140/90 mmHg (usia <60 th). Lini pertama CCB/tiazid/ACEI — di Puskesmas amlodipin lazim. Hipertensi "silent killer", sering asimptomatik; skrining kerusakan organ target (jantung, ginjal, mata) wajib.',
+    clue: 'JNC-8 (2014): target TD <140/90 mmHg (usia <60 th). Lini pertama CCB/tiazid/ACEI — di Puskesmas amlodipin lazim. Hipertensi "silent killer", sering asimptomatik; skrining kerusakan organ target (jantung, ginjal, mata) wajib. Kepmenkes HK.01.07/MENKES/303/2026 memperbarui: target awal tetap <140/90, DIPERKETAT ke <130/80 bila pasien mentoleransi (risiko kardiovaskular tinggi/komorbid) — bukan target tunggal-kaku utk semua pasien.',
+    // M10.5 keputusan #23 (2026-07-12, adopsi teks-ajar saja — Kepmenkes
+    // 303/2026 belum mewajibkan funduskopi/eGFR sbg pemeriksaan wajib di FKTP,
+    // jadi TIDAK ditambahkan sbg exam ternilai; murni memperkaya pemahaman).
+    mutiaraEbm: 'Target TD bukan angka tunggal-kaku: pedoman terbaru (Kepmenkes 303/2026) mengadopsi pendekatan bertahap — mulai <140/90, lalu diperketat ke <130/80 HANYA bila pasien mentoleransi tanpa efek samping (mis. hipotensi ortostatik), terutama pada risiko kardiovaskular tinggi. Target kaku "satu angka untuk semua" berisiko overtreatment pada lansia rentan.',
+    catatanRealita: 'Skrining kerusakan organ target idealnya mencakup funduskopi (retinopati hipertensi) dan eGFR (nefropati), tapi di banyak FKTP Indonesia oftalmoskop tak selalu tersedia & eGFR bergantung akses lab kreatinin — game ini tetap mengajarkan pentingnya evaluasi tsb tanpa mewajibkannya sbg pemeriksaan wajib/ternilai, mengikuti prinsip "EBM-realistis" (bukan Puskesmas-Eropa).',
     konsekuensi: {
       narasi: 'Merasa membaik setelah beberapa hari, obat dihentikan sendiri karena "takut ginjal rusak". Tekanan darah melonjak kembali tanpa gejala.',
       kembaliHariMin: 5,

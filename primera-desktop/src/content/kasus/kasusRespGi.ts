@@ -1077,9 +1077,12 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     id: 'apendisitis_akut',
     nama: 'Apendisitis Akut',
     // M10 Batch-3 (C.10): K35.80 adalah kode ICD-10-CM (Amerika) yang TAK ADA
-    // di WHO ICD-10. Indonesia terikat WHO ICD-10 (Permenkes 76/2016, INA-CBG)
-    // → apendisitis akut = K35.8 (WHO revisi 2016). Standar game: WHO ICD-10 2016.
-    icd10: 'K35.8',
+    // di WHO ICD-10. Indonesia terikat WHO ICD-10 (Permenkes 76/2016, INA-CBG).
+    // Veto-table §3b (M10.5, 2026-07-12, keputusan 2B): K35.8→K35.9 — "unspecified"
+    // lebih tepat utk dx presumtif-klinis FKTP (belum ada temuan operatif spesifik
+    // yg membedakan sub-tipe K35.2/.3/.8), sedangkan K35.8 "other specified"
+    // menyiratkan tipe atipikal tertentu. Standar game tetap WHO ICD-10 2016.
+    icd10: 'K35.9',
     skdi: '3B',
     kategori: 'pencernaan',
     // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
@@ -1158,7 +1161,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       { id: 'urinalisis', hasil: 'Leukosit/eritrosit urin minimal, nitrit (-) — membantu menyingkirkan ISK/kolik ureter.', flag: 'normal', relevan: true },
       { id: 'tes_kehamilan', hasil: 'Negatif (pada pasien perempuan usia subur) — menyingkirkan kehamilan ektopik.', flag: 'normal', relevan: true },
     ],
-    diagnosisBanding: ['K35.8', 'N83.2', 'A09'],
+    diagnosisBanding: ['K35.9', 'N83.2', 'A09'],
     tatalaksana: {
       // Analgesia adekuat DIANJURKAN pra-rujukan — mitos "analgesik menutupi tanda
       // apendisitis" sudah TERBANTAH (Cochrane CD005660; WSES 2020). Parasetamol

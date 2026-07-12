@@ -265,7 +265,17 @@ function fnv1a(teks: string): string {
 //       kluster/antrian replay.
 //   #22 ANC: golongan_darah relevan true, tes_kehamilan false (skorPemeriksaan,
 //       via `lab` hash). #25 DSS usiaMax 25→17 (demografi, via hash).
-const REVISI_ENGINE = 24
+//
+// REVISI 25 (M10.5 capstone Fase 1, veto-table §3b, 2026-07-12) — 2 rekode
+// ICD-10 yang menggeser `diagnosisBenar` (clinic.ts:388, enc.diagnosis.icd10
+// === kasus.icd10) utk kasus itu: apendisitis_akut K35.8→K35.9 (keputusan 2B:
+// "unspecified" lebih tepat utk dx presumtif-klinis FKTP tanpa temuan operatif
+// spesifik); igd_syok_anafilaksis T78.2→T88.6 (keputusan 8B: pemicu di narasi
+// adalah suntikan antibiotik, jadi drug-induced bukan T78.2 generik). Kedua
+// field sudah tercakup sidikJariPack (`icd`/IGD icd10 hash di bawah) — bump
+// ini murni utk menandai jejak lama yg diagnosisnya BENAR dgn kode lama kini
+// jatuh ke "tidak dapat diverifikasi", bukan divonis TIDAK SAH palsu.
+const REVISI_ENGINE = 25
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
