@@ -122,6 +122,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       edukasi: ['manajemen_stres', 'higiene_tidur', 'postur_ergonomi', 'peregangan_sendi'],
     },
     clue: 'TTH: nyeri bilateral, kualitas MENEKAN/diikat (bukan berdenyut), TANPA mual/fotofobia, pemeriksaan neurologis NORMAL. Cukup analgetik + manajemen stres + perbaikan tidur/postur. TIDAK ada indikasi CT-scan tanpa red flag (SNNOOP10) — neuroimaging pada TTH tipikal justru pemborosan (PPK PERDOSSI).',
+    panduanResmi: 'Di luar isu imaging, PPK 1186/2022 menekankan skrining kecemasan/depresi penyerta (diobati antidepresan Amitriptilin) dan membatasi analgesik kombinasi kafein/sedatif maksimal 2 hari/minggu dengan pengawasan dokter — sisi manajemen yang tak disorot clue.',
     konsekuensi: {
       narasi: 'Bila pemicu (stres, kurang tidur, postur) tidak dikelola atau pasien terlalu sering minum analgetik, keluhan menetap dan dapat berkembang menjadi medication-overuse headache.',
       kembaliHariMin: 14,
@@ -240,6 +241,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       edukasi: ['hindari_pencetus_migrain', 'higiene_tidur', 'manajemen_stres', 'kontrol_rutin'],
     },
     clue: 'Migrain tanpa aura (kriteria ICHD-3): nyeri unilateral + berdenyut + intensitas sedang-berat + diperberat aktivitas, disertai mual/muntah ATAU foto+fonofobia; neurologis normal. Terapi serangan: NSAID/parasetamol + antiemetik + istirahat ruang gelap. Bila ≥4 serangan/bulan pertimbangkan profilaksis (mis. amitriptilin/propranolol). Edukasi hindari pencetus migrain: kurang tidur, telat makan, stres, pencetus haid.',
+    panduanResmi: 'Game memakai ondansetron, tetapi PPK 1186/2022 memilih antiemetik metoklopramid/domperidon (dapat diberikan sejak fase prodromal). Pada tabel analgesik PPK, kombinasi aspirin 600–900 mg + metoklopramid ber-NNT terbaik (3,2), mengungguli parasetamol (5,2) dan ibuprofen (7,5).',
     konsekuensi: {
       narasi: 'Bila pencetus tidak dikenali dan pasien mengandalkan analgetik berlebihan, serangan makin sering dan berisiko kronis; opioid memperburuk siklus nyeri.',
       kembaliHariMin: 20,
@@ -458,6 +460,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       edukasi: ['kepatuhan_obat', 'proteksi_kornea', 'kontrol_rutin'],
     },
     clue: 'Bell\'s palsy = parese N.VII PERIFER akut: DAHI IKUT LUMPUH (bedakan dari stroke/sentral yang dahinya terhindar karena persarafan bilateral). Kortikosteroid dini (prednison, mulai <72 jam) memperbaiki prognosis. WAJIB proteksi kornea: air mata buatan + tutup mata saat tidur karena mata tak bisa menutup. Skrining vesikel (Ramsay Hunt) & tanda sentral (PPK PERDOSSI/AAN).',
+    panduanResmi: 'PPK 1186/2022 memerinci regimen resmi: prednison 1 mg/kgBB atau 60 mg/hari selama 6 hari lalu tapering hingga total 10 hari, dimulai pada fase awal 1-4 hari. PPK juga membolehkan menambah asiklovir 400 mg 5×/hari — antiviral yang tak disinggung clue.',
     konsekuensi: {
       narasi: 'Bila kortikosteroid terlambat dimulai, pemulihan bisa tak sempurna; bila proteksi kornea diabaikan, mata yang tak menutup berisiko keratitis paparan hingga ulkus kornea.',
       kembaliHariMin: 5,
@@ -797,6 +800,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       edukasi: ['kompres_mata', 'kebersihan_kulit', 'cuci_tangan'],
     },
     clue: 'Hordeolum (bintitan): benjolan NYERI di tepi kelopak, bola mata & visus NORMAL. Terapi utama: KOMPRES HANGAT 3-4x/hari + higiene kelopak; antibiotik topikal opsional. JANGAN dipencet/dipecah paksa (risiko sebar infeksi/selulitis). Bila jadi selulitis preseptal (demam, edema meluas, nyeri gerak bola mata) → antibiotik oral/rujuk (AAO).',
+    panduanResmi: 'Divergensi: clue/AAO menilai antibiotik hanya OPSIONAL (hordeolum self-limiting). PPK 1186/2022 justru rutin memberi antibiotik topikal (salep oksitetrasiklin/kloramfenikol tiap 8 jam) DITAMBAH eritromisin oral 500 mg. Inti sama: kompres hangat 4-6x/hari, jangan dipencet.',
     konsekuensi: {
       narasi: 'Bila dipencet paksa dan higiene diabaikan, infeksi dapat menyebar menjadi selulitis preseptal/orbita yang memerlukan antibiotik sistemik atau rujukan.',
       kembaliHariMin: 4,
@@ -903,6 +907,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       edukasi: ['kebersihan_kulit', 'tanda_bahaya'],
     },
     clue: 'Serumen prop: rasa penuh + tuli konduktif, membran timpani tertutup serumen. Tata laksana: EKSTRAKSI serumen (kuret/irigasi bila MT utuh); bila serumen KERAS lunakkan dulu dengan serumenolitik (karbogliserin) 3-5 hari lalu ekstraksi. JANGAN irigasi bila curiga perforasi/otitis. Edukasi STOP cotton bud (justru mendorong serumen makin dalam) — PPK PERHATI-KL.',
+    panduanResmi: 'PPK 1186/2022 memerinci serumenolitik resmi: tetes telinga Karbogliserin 10% ATAU H2O2 3% selama 3 hari untuk melunakkan serumen keras sebelum ekstraksi; irigasi air hangat dikhususkan bila serumen sudah terdorong terlalu dalam. Rujuk bila timbul komplikasi tindakan.',
     konsekuensi: {
       narasi: 'Bila diekstraksi paksa saat masih keras atau dikorek cotton bud lebih dalam, dapat melukai liang telinga/membran timpani; bila dibiarkan, pendengaran tetap terganggu.',
       kembaliHariMin: 5,
@@ -1137,6 +1142,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Rinosinusitis akut MAYORITAS VIRAL & self-limiting. Curiga BAKTERIAL bila: gejala >10 hari tanpa perbaikan, ATAU "double sickening" (membaik lalu memburuk), ATAU berat (demam ≥39, nyeri wajah/ingus purulen berat) — baru beri antibiotik (amoksisilin ± klavulanat). Dekongestan + analgetik + bilas salin sebagai penunjang. Waspadai red flag komplikasi orbita/intrakranial → rujuk (EPOS/PPK PERHATI-KL).',
+    panduanResmi: 'PPK 1186/2022 (EPOS) menambahkan KORTIKOSTEROID INTRANASAL sebagai langkah resmi — pada RSA pasca-viral (gejala >10 hari) dan bersama antibiotik pada RSA bakterial — yang tak disebut clue. Evaluasi bertahap: 10 hari (viral), 14 hari (pasca-viral), 48 jam (bakterial) sebelum rujuk THT.',
     konsekuensi: {
       narasi: 'Bila komplikasi orbita/intrakranial tidak dikenali (edema periorbita, gangguan visus, nyeri kepala hebat), infeksi dapat menyebar ke orbita atau otak — kondisi gawat.',
       kembaliHariMin: 3,
@@ -1242,6 +1248,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       edukasi: ['tanda_bahaya', 'kontrol_rutin'],
     },
     clue: 'GLAUKOMA AKUT SUDUT TERTUTUP = EMERGENSI OFTALMOLOGI. Tetrad kunci: mata merah + NYERI HEBAT + VISUS TURUN mendadak + pupil MID-DILATASI/lonjong + kornea keruh + bola mata KERAS (± mual-muntah, halo pelangi). RUJUK SEGERA ke spesialis mata (ancaman kebutaan permanen dalam jam). JANGAN beri STEROID; JANGAN beri MIDRIATIK/atropin (memperparah). Turunkan TIO pra-rujuk bila tersedia (beta-blocker topikal seperti timolol; asetazolamid). Awas: mual-muntah bisa menyesatkan ke diagnosis GI (PPK PERDAMI/AAO).',
+    panduanResmi: 'Divergensi kunci: clue/AAO tegas \'JANGAN beri steroid\', tetapi PPK 1186/2022 justru mencantumkan tetes mata kombinasi KORTIKOSTEROID + antibiotik (4-6x/hari) pada penanganan awal glaukoma akut, plus Asetazolamid 500 mg lalu 4x250 mg, Timolol 0,5%, KCl, & pembatasan cairan.',
     konsekuensi: {
       narasi: 'Bila salah didiagnosis sebagai mata merah biasa/gangguan lambung dan tidak dirujuk segera, tekanan intraokular yang sangat tinggi merusak saraf optik dalam hitungan jam hingga menyebabkan KEBUTAAN PERMANEN pada mata tersebut.',
       kembaliHariMin: 0,

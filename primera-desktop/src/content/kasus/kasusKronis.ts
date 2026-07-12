@@ -144,6 +144,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'JNC-8 (2014): target TD <140/90 mmHg (usia <60 th). Lini pertama CCB/tiazid/ACEI — di Puskesmas amlodipin lazim. Hipertensi "silent killer", sering asimptomatik; skrining kerusakan organ target (jantung, ginjal, mata) wajib. Kepmenkes HK.01.07/MENKES/303/2026 memperbarui: target awal tetap <140/90, DIPERKETAT ke <130/80 bila pasien mentoleransi (risiko kardiovaskular tinggi/komorbid) — bukan target tunggal-kaku utk semua pasien.',
+    panduanResmi: 'PPK 1186/2022 memberi kriteria rujukan resmi FKTP: hipertensi dengan komplikasi, resistensi, atau emergensi (sistol >180 mmHg). Untuk ibu hamil, ACE-I & ARB DILARANG — pilih metildopa/β-blocker/CCB; pada lansia mulai tiazid dosis rendah 12,5 mg/hari.',
     // M10.5 keputusan #23 (2026-07-12, adopsi teks-ajar saja — Kepmenkes
     // 303/2026 belum mewajibkan funduskopi/eGFR sbg pemeriksaan wajib di FKTP,
     // jadi TIDAK ditambahkan sbg exam ternilai; murni memperkaya pemahaman).
@@ -288,6 +289,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'PERKENI 2021: diagnosis DM bila GDP ≥126, GDS ≥200 + gejala klasik (poliuri, polidipsi, polifagi, BB turun), atau HbA1c ≥6,5%. Lini pertama metformin + modifikasi gaya hidup. Kelola di FKTP kecuali ada komplikasi akut/berat.',
+    panduanResmi: 'PPK 1186/2022 memerinci batas rujukan FKTP untuk DM tipe 2: dirujuk bila ada komplikasi, KONTROL GULA BURUK, atau infeksi berat. \'Kontrol gula buruk\' adalah pemicu rujuk resmi tersendiri (bukan sekadar \'komplikasi\') yang sering terlewat saat pasien tampak stabil.',
   },
 
   /* ======================================================================
@@ -410,6 +412,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasi: ['kepatuhan_obat', 'diet_lambung', 'tanda_bahaya'],
     },
     clue: 'Dispepsia tanpa tanda alarm (usia <40 th, tanpa muntah darah/BAB hitam/BB turun/anemia/disfagia) → terapi empiris PPI 4 minggu + modifikasi gaya hidup, bukan langsung endoskopi (Konsensus Nasional Dispepsia PGI). Waspadai NSAID & jamu pegal sebagai pemicu.',
+    panduanResmi: 'PPK 1186/2022 menetapkan kriteria rujuk gastritis yang tegas: bila 5 hari pengobatan belum membaik, ada komplikasi, atau muncul alarm symptoms. Terapi resmi mencakup PPI (omeprazol 20 mg 2x/hari), H2-blocker, atau antasida — bukan PPI empiris semata.',
   },
 
   /* ======================================================================
@@ -534,6 +537,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasiKritis: ['teknik_inhaler'],
     },
     clue: 'GINA 2019+: gejala ≥2×/minggu + terbangun malam = asma PERSISTEN, bukan sekadar intermiten. Kunci pembaruan GINA: SABA-tunggal TIDAK lagi dianjurkan pada asma mana pun — setiap pasien butuh terapi mengandung ICS. Beri pengendali ICS (budesonid inhalasi) + reliever (salbutamol inhalasi/ICS-formoterol), kendalikan pencetus (asap rokok rumah!), ajarkan teknik inhaler, nilai kontrol tiap kunjungan. Antibiotik rutin tidak diindikasikan.',
+    panduanResmi: 'Divergensi: clue/GINA 2019+ menolak SABA-tunggal pd asma apa pun (semua butuh ICS). Namun PPK 1186/2022 masih skema lama — asma intermiten \'tidak perlu\' pengontrol (SABA pelega saja), ICS baru mulai pd persisten ringan (200-400µg/hari). Pemain wajib tahu pedoman resmi ini tertinggal dari GINA.',
   },
 
   /* ======================================================================
@@ -658,6 +662,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'kompres_demam'],
     },
     clue: 'OMA (AAP/WHO): diagnosis butuh membran timpani menonjol (bulging) + tanda inflamasi akut. Amoksisilin dosis tinggi (80–90 mg/kg/hari) lini pertama + analgesik untuk nyeri. Tetes antibiotik hanya bila ada perforasi/otorea. Watchful waiting dapat dipertimbangkan pada kasus ringan usia >2 th.',
+    panduanResmi: 'PPK 1186/2022 mematok amoksisilin OMA anak 25-50 mg/kgBB/hari dibagi 3 dosis — jauh lebih rendah dari dosis tinggi 80-90 mg/kgBB/hari yang dianjurkan AAP di clue. Dokter FKTP terikat rentang resmi ini, meski AAP menaikkannya demi menutup pneumokokus resisten-penisilin.',
     // M11 Bagian B6 (DeepThink 2026-07-10, REVISI: dosis lapangan yg lebih
     // rendah tak boleh disebut "gagal" — masih efektif utk strain peka).
     // Sekaligus sisipan riwayat-pedoman (Opsi 2, §2 dossier
@@ -784,6 +789,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasi: ['gizi_seimbang', 'kepatuhan_obat', 'kontrol_rutin'],
     },
     clue: 'WHO & Permenkes No. 88/2014: anemia bumil bila Hb <11 g/dL. Anemia defisiensi besi (mikrositik hipokrom) → tablet tambah darah 60 mg besi elemental + 400 µg asam folat/hari, diminum bersama sumber vitamin C, hindari bersamaan teh/kopi. Cari sumber kehilangan (cacing tambang) dan evaluasi Hb ulang setelah 1 bulan.',
+    panduanResmi: 'Divergensi dosis: clue/TTD 1x/hari (60 mg besi + 400 µg folat) adalah dosis PROFILAKSIS. PPK 1186/2022 utk bumil yang SUDAH anemia mewajibkan tablet besi 3x SEHARI (±180 mg besi elemental/hari); rujuk bila tak membaik setelah 3 bulan suplementasi.',
     konsekuensi: {
       narasi: 'Tablet tambah darah tidak diminum karena mual dan lupa; anemia dibiarkan memberat di trimester lanjut.',
       kembaliHariMin: 5,
@@ -919,6 +925,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasi: ['tanda_bahaya', 'etika_batuk', 'kepatuhan_obat'],
     },
     clue: 'IMCI/WHO: pneumonia balita ditegakkan klinis dari napas cepat (RR ≥40x/menit usia 1–5 th). Tarikan dinding dada ke dalam (chest indrawing), sianosis, atau tolak minum = pneumonia BERAT → beri DOSIS PERTAMA antibiotik + oksigen, lalu RUJUK segera (SKDI 3B). Jangan tunda menunggu foto toraks.',
+    panduanResmi: 'PPK 1186/2022 (adopsi WHO) mempertegas ambang napas cepat per-usia: >50x/mnt (2 bln–1 th) vs >40x/mnt (>1–5 th), dan \'pneumonia berat\' = ada sesak/tarikan dinding dada → wajib dirawat + antibiotik. Dosis amoksisilin oral resmi rawat jalan 25 mg/kgBB.',
   },
 
   /* ======================================================================
@@ -1047,6 +1054,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasi: ['tanda_bahaya', 'kontrol_rutin', 'kepatuhan_obat'],
     },
     clue: 'Stroke = kegawatan "Time is Brain". Kenali FAST (Face-Arm-Speech-Time) dan SELALU cek gula darah (hipoglikemia adalah peniru stroke). Di FKTP: stabilkan jalan napas/pernapasan/sirkulasi, JANGAN turunkan TD agresif (<220/120 mmHg), RUJUK segera ke RS dengan CT-scan dalam window terapi (SKDI 3B, PERDOSSI). Hipertensi tak terkontrol adalah faktor risiko utama.',
+    panduanResmi: 'PPK 1186/2022 merinci stabilisasi pra-rujuk FKTP: posisi kepala-badan head-up 20–30°, infus NaCl/RL 500 ml/12 jam, cek gula darah jari, beri Dekstrose 50% 25 g IV bila hipoglikemia berat; SEMUA pasien stroke wajib segera dirujuk ke faskes sekunder yang punya spesialis saraf.',
     konsekuensi: {
       narasi: 'Buah dari hipertensi yang menolak diobati: penundaan rujukan memperkecil peluang pemulihan; setiap menit adalah jaringan otak yang hilang.',
       kembaliHariMin: 7,

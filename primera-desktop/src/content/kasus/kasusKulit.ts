@@ -131,6 +131,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['hindari_alergen', 'jaga_kelembapan_kulit', 'kebersihan_kulit'],
     },
     clue: 'Dermatitis kontak alergi: lesi terbatas pada AREA KONTAK, membaik saat kontaktan dihindari. Terapi utama = IDENTIFIKASI & HINDARI ALERGEN (mis. sarung tangan saat mencuci) + kortikosteroid topikal potensi ringan-sedang (hidrokortison) + antihistamin untuk gatal (PPK Perdoski).',
+    panduanResmi: 'Clue/game pakai hidrokortison + setirizin, tetapi PPK 1186/2022 justru meresepkan kortikosteroid topikal Desonid krim 0,05% (atau fluosinolon 0,025%) + antihistamin oral hidroksizin 2x25 mg atau loratadin 1x10 mg (maks 2 minggu). Rujuk untuk patch test bila tak membaik dalam 4 minggu.',
     konsekuensi: {
       narasi: 'Bila alergen terus terpapar, lesi menahun menjadi likenifikasi (kulit menebal, bergaris) dan mudah terinfeksi sekunder akibat garukan.',
       kembaliHariMin: 7,
@@ -260,6 +261,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['jaga_area_kering', 'kebersihan_kulit', 'cuci_seprai_panas'],
     },
     clue: 'Tinea korporis: plak ANULAR, tepi aktif berskuama + central clearing → ANTIJAMUR (ketokonazol/mikonazol topikal 2-4 minggu; griseofulvin oral bila luas/rekalsitran). JANGAN steroid tunggal — betametason tanpa antijamur menimbulkan TINEA INKOGNITO (lesi meluas & menyamar). Jaga area tetap kering (PPK Perdoski).',
+    panduanResmi: 'PPK 1186/2022 merinci dosis sistemik tinea luas/resisten: griseofulvin 0,5–1 g/hari (dewasa) atau 10–25 mg/kgBB/hari (anak); atau ketokonazol 200 mg, itrakonazol 100 mg, terbinafin 250 mg/hari selama 10–14 hari. Rujuk bila tak sembuh 10–14 hari atau ada imunodefisiensi.',
     konsekuensi: {
       narasi: 'Pemberian steroid topikal tanpa antijamur menyebabkan tinea inkognito: lesi meluas, tepi menghilang, sulit dikenali dan sembuh. Kelembapan yang tidak dikoreksi memicu kekambuhan berulang.',
       kembaliHariMin: 10,
@@ -387,6 +389,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['kebersihan_kulit', 'cuci_tangan', 'cuci_seprai_panas'],
     },
     clue: 'Impetigo krustosa: KRUSTA MADU (honey-colored) di wajah anak. Terlokalisir → LINI PERTAMA mupirosin topikal (IDSA/Perdoski); LUAS/multipel → tambah antibiotik oral anti-Staph (cefadroxil; eritromisin bila alergi penisilin). Rendam & lepaskan krusta, potong kuku, cuci tangan (PPK Perdoski/IDAI).',
+    panduanResmi: 'PPK 1186/2022: pada lesi bertutup krusta/pus, kompres terbuka PK 1/5.000 atau povidon iodin 7,5% (encer 10x) dulu; topikal asam fusidat 2% ATAU mupirosin 2% (2-3x/hari, 7-10 hari) saat krusta bersih. Asam fusidat = alternatif topikal resmi bila mupirosin kosong.',
     // M11 Bagian B7 (DeepThink 2026-07-10, REVISI: coret asam fusidat dari
     // daftar substitusi — obat itu juga umumnya bermerek, fokus gentamisin).
     catatanRealita: 'Mupirosin (lini pertama) umumnya sediaan bermerek dan sering tak distok Puskesmas. Substitusi realistis: salep gentamisin generik (paling sering ada di rak) atau langsung antibiotik oral anti-Staph (sefadroksil) — sesuaikan dengan stok Fornas/e-katalog setempat, jangan resepkan yang kosong.',
@@ -504,6 +507,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['hindari_alergen', 'tanda_bahaya'],
     },
     clue: 'Urtikaria akut: WHEAL yang berpindah & hilang <24 jam tanpa bekas → antihistamin H1 non-sedatif (cetirizine/loratadin) lini pertama. Cari & hindari pencetus. TANDA BAHAYA: angioedema bibir/lidah, sesak, suara serak = anafilaksis → tata darurat (adrenalin IM) & rujuk (PPK Perdoski/WAO).',
+    panduanResmi: 'Untuk angioedema/obstruksi napas, clue/WAO menganjurkan adrenalin INTRAMUSKULER, tetapi PPK 1186/2022 menuliskan epinefrin SUBKUTAN, dilanjutkan prednison 60–80 mg/hari selama 3 hari (turun 5–10 mg). Ketahui rute resmi yang mengikat, meski bukti mutakhir mengunggulkan IM.',
     konsekuensi: {
       narasi: 'Bila pencetus (mis. seafood) tidak dihindari dan tanda bahaya tidak diedukasi, paparan ulang bisa memicu angioedema laring/anafilaksis yang mengancam jalan napas.',
       kembaliHariMin: 1,
@@ -620,6 +624,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['kepatuhan_obat', 'kebersihan_kulit', 'tanda_bahaya'],
     },
     clue: 'Herpes zoster: vesikel bergerombol UNILATERAL dermatomal + nyeri neuralgik. ASIKLOVIR HARUS dimulai <72 JAM sejak ruam (asiklovir 5×800 mg/hari 7 hari; sediaan 400 mg → 2 tablet per dosis) untuk memangkas durasi & risiko NEURALGIA PASCAHERPETIK. Analgesik adekuat. Waspadai zoster oftalmikus (rujuk mata) (PPK Perdoski/CDC).',
+    panduanResmi: 'PPK 1186/2022 menyetujui asiklovir 5×800 mg/hari 7 hari (valasiklovir 3×1000 mg alternatif). Catatan divergen: PPK menyebut antivirus \'efektif 24 jam pertama\' — lebih ketat dari jendela <72 jam di clue. Rujuk bila bayi/anak/geriatri (imunokompromais), komplikasi, atau multifarmaka.',
     // M11 Bagian B8 (DeepThink 2026-07-10, REVISI: valasiklovir ADA di Fornas,
     // hambatannya restriksi tingkat-faskes bukan "tak masuk Fornas").
     catatanRealita: 'Regimen asiklovir 5×800 mg/hari (=10 tablet 400 mg/hari) membebani kepatuhan. Valasiklovir 3×1 g lebih ringkas & ada di Fornas, tapi restriksi tingkat faskes lanjutan/RS (bukan FKTP) plus lebih mahal — di Puskesmas tetap asiklovir 5×/hari. Kuncinya: alarm & jadwal minum, bukan ganti obat.',
@@ -974,6 +979,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['kebersihan_kulit', 'cuci_seprai_panas', 'cuci_tangan'],
     },
     clue: 'Pedikulosis kapitis: gatal kulit kepala + NITS melekat erat di batang rambut (beda dari ketombe). Permetrin krim (di Puskesmas tersedia sediaan 5%; standar ideal pedikulisida 1%) dioleskan merata ke rambut & kulit kepala, DIAMKAN 10 menit lalu bilas, ULANGI 7-10 hari (bunuh nimfa yang menetas). WAJIB: obati SEMUA KONTAK (serumah/sekelas) SERENTAK + sisir serit + rendam sisir/cuci topi-seprai-bantal air PANAS (≥60°C) (PPK Perdoski/CDC).',
+    panduanResmi: 'Divergensi: clue/CDC menyarankan permetrin dibilas ~10 menit & OBATI SEMUA kontak serentak. PPK 1186/2022 justru: permetrin 1% (cream rinse) DIBIARKAN 2 JAM, dan kontak keluarga/teman hanya DIPERIKSA — terapi cuma untuk yang TERBUKTI infestasi, bukan profilaksis massal.',
     konsekuensi: {
       narasi: 'Bila kontak serumah/sekelas tidak diobati serentak dan barang tidak dibersihkan, terjadi reinfestasi berulang (ping-pong); garukan menimbulkan infeksi sekunder pada kulit kepala.',
       kembaliHariMin: 10,
@@ -1080,6 +1086,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['kebersihan_kulit', 'cuci_tangan'],
     },
     clue: 'Veruka vulgaris (HPV): papul verukosa hiperkeratotik + BLACK DOTS (kapiler trombosis) + hilangnya dermatoglifik. Terapi: keratolitik asam salisilat topikal berulang, krioterapi, atau bedah minor; banyak SWASIRNA dalam 1-2 tahun. Jangan digigit/dicungkil (autoinokulasi). Bukan indikasi antibiotik/antijamur (PPK Perdoski).',
+    panduanResmi: 'PPK 1186/2022 memerinci bahan kaustik resmi: asam salisilat 20–40%, AgNO3 25%, atau asam trikloroasetat 50% — tak menyebut krioterapi. Prognosis resmi: 90% sembuh spontan dalam 5 tahun (clue: 1–2 tahun). Rujuk bila diagnosis belum tegak atau tindakan perlu anestesi/sedasi.',
     konsekuensi: {
       narasi: 'Kebiasaan mencungkil & menggigit menyebarkan kutil ke jari lain dan mulut (autoinokulasi); lesi bertambah banyak dan lebih sulit dituntaskan.',
       kembaliHariMin: 21,
@@ -1200,6 +1207,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Morbili: trias 3C (Cough, Coryza, Conjunctivitis) + KOPLIK SPOTS → ruam makulopapular SEFALOKAUDAL. Beri VITAMIN A DUA DOSIS (hari-1 & hari-2, dosis sesuai usia) + suportif (antipiretik, cairan, gizi). TANPA antibiotik rutin. Pantau komplikasi (pneumonia, diare, ensefalitis). WAJIB dilaporkan (surveilans PD3I) & lengkapi imunisasi kontak (Kemenkes/WHO).',
+    panduanResmi: 'PPK 1186/2022 memerinci dosis vitamin A 2 dosis PO menurut usia: <6 bln 50.000 IU; 6–11 bln 100.000 IU; >1 th 200.000 IU (bila ada tanda defisiensi, tambah dosis ke-3 pada 2–4 minggu). Untuk kontak rentan, vaksin campak efektif bila diberikan ≤3 hari pasca-paparan.',
     konsekuensi: {
       narasi: 'Tanpa vitamin A dan pemantauan, campak pada anak dapat berkomplikasi berat (pneumonia, diare-dehidrasi, ensefalitis, kebutaan akibat defisiensi vitamin A) — penyebab kematian campak.',
       kembaliHariMin: 3,

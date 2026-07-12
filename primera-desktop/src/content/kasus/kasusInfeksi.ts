@@ -242,6 +242,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Skor Centor tinggi (demam, eksudat tonsil, KGB servikal nyeri, tanpa batuk) → faringitis Streptokokus Grup A. Lini pertama amoxicillin; bila alergi penisilin, ganti makrolida (eritromisin).',
+    panduanResmi: 'Clue/EBM internasional cukup antibiotik untuk faringitis Streptokokus; PPK 1186/2022 justru menambah KORTIKOSTEROID rutin (Deksametason 3x0,5 mg/hari dewasa, 3 hari) untuk menekan inflamasi, di samping Amoksisilin 3x500 mg 6-10 hari atau Eritromisin 4x500 mg bila alergi penisilin.',
     alergiTrap: {
       kelas: 'penisilin',
       obatTerlarang: ['amoxicillin_500', 'amoxicillin_sirup'],
@@ -362,6 +363,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Demam dengue: antipiretik HANYA paracetamol — HINDARI ibuprofen/aspirin/NSAID (risiko perdarahan). Kunci tata laksana adalah hidrasi & pemantauan tanda bahaya (WHO Dengue Guidelines; Kemenkes).',
+    panduanResmi: 'PPK 1186/2022 membolehkan dengue/DBD tanpa syok dirawat jalan di FKTP dengan parasetamol 10–15 mg/kgBB/kali (hindari ibuprofen/asetosal). Kriteria rujuk resminya konkret: syok, anak tak dapat minum adekuat, atau keluarga tak mampu merawat di rumah — bukan sekadar \'pantau tanda bahaya\'.',
     konsekuensi: {
       narasi: 'Pemberian ibuprofen atau melewatkan edukasi tanda bahaya dapat berujung perdarahan atau syok dengue (DSS) yang mengancam jiwa.',
       kembaliHariMin: 2,
@@ -482,6 +484,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Demam stepladder (naik bertahap, puncak sore-malam) + lidah kotor + bradikardia relatif → tifoid. Lini pertama FKTP/Fornas: kloramfenikol (alternatif kotrimoksazol/amoksisilin; bila tersedia & sesuai antibiogram/derajat, sefiksim/seftriakson) — tekankan tuntas + istirahat total untuk cegah perforasi usus. Catatan: Widal tunggal punya angka positif-palsu tinggi, tegakkan dengan gambaran klinis + konteks endemis; kultur bila tersedia.',
+    panduanResmi: 'PPK 1186/2022 merinci lini pertama kloramfenikol dewasa 4×500 mg selama 10 hari, dengan syarat resmi yg sering terlupa: JANGAN beri bila leukosit <2000/mm³. Rujuk bila 5 hari terapi belum membaik, atau ada toxic typhoid/komplikasi/komorbid berat.',
     // M11 Bagian B1 (DeepThink 2026-07-10, REVISI dari draft verifikator): sisipan
     // riwayat-pedoman (Opsi 2, §2 dossier DEEPTHINK_M11_BAGIAN_B) — HANYA dipakai
     // di kasus yang genuinely py bukti pergeseran guideline temporal terverifikasi.
@@ -734,6 +737,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['minum_oat_tuntas'],
     },
     clue: 'Batuk >2 minggu + BB turun + keringat malam + kontak TB = terduga TB. Konfirmasi bakteriologis (baku emas terkini: TCM/Xpert MTB-RIF; BTA sputum sbg alternatif) → mulai OAT KDT program DOTS, TUNTAS 6 bulan. Tawarkan skrining HIV pada semua pasien TB. TB paru adalah kompetensi 4A — DITANGANI di Puskesmas, bukan dirujuk. Skrining kontak serumah.',
+    panduanResmi: 'PPK 1186/2022: paduan resmi Kategori 1 = 2HRZE/4H3R3 (6 bulan), OAT-KDT ditelan sekaligus dgn pengawas menelan obat (DOT). Meski TB paru kompetensi FKTP, PPK mewajibkan RUJUK bila suspek TB-MDR, BTA tetap (+) setelah pengobatan, atau TB dengan komplikasi/komorbid.',
     // Fix M1/#8 (triase DeepThink 2026-07-11, keputusan Dr. Wirayuda: "teks
     // dulu, mekanik nanti"): TCM (Xpert MTB-RIF) adalah baku emas lini-pertama
     // pedoman TB terkini, BTA kini lebih berperan di pemantauan pengobatan —
@@ -864,6 +868,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasi: ['obati_kontak_serumah', 'cuci_seprai_panas', 'kebersihan_kulit'],
     },
     clue: 'Skabies: gatal MEMBERAT MALAM + burrow/kanalikuli di sela jari/pergelangan/umbilikus + riwayat kontak erat (asrama). Permetrin 5% dioleskan seluruh tubuh, ULANGI 1 minggu; OBATI SEMUA KONTAK SERUMAH serentak + cuci seprai/handuk air panas (CDC/IACS).',
+    panduanResmi: 'PPK 1186/2022 menambah opsi resmi selain permetrin 5% (dioleskan seluruh tubuh, dibersihkan setelah 10 jam): salep 2-4 dioleskan 3 hari berturut-turut tiap habis mandi. Terapi wajib serentak seluruh kelompok; rujuk bila keluhan masih dirasakan >1 bulan pasca-terapi.',
   },
 
   /* ======================================================================
@@ -971,6 +976,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasi: ['cuci_tangan', 'kebersihan_kulit'],
     },
     clue: 'Konjungtivitis bakterial: mata merah + sekret MUKOPURULEN + kelopak lengket pagi, TANPA nyeri hebat/silau/penurunan visus. Antibiotik topikal (kloramfenikol tetes), self-limiting 5–7 hari. Nyeri hebat + fotofobia + visus TURUN = red flag keratitis → rujuk (AAO PPP).',
+    panduanResmi: 'PPK 1186/2022 memberi dosis resmi spesifik: kloramfenikol tetes 1 tetes 6x/hari ATAU salep mata 3x/hari selama 3 hari (clue hanya sebut \'kloramfenikol tetes\'). Kriteria rujukan resmi: bila komplikasi pada kornea atau tak ada respons perbaikan terhadap pengobatan.',
     // M11 Bagian B2 (DeepThink 2026-07-10, REVISI: koreksi status hukum —
     // steroid mata BUKAN obat bebas, beda dgn tetrahydrozoline/Insto).
     catatanRealita: 'Tetes mata steroid (mis. Cendo Xitrol) sebenarnya OBAT KERAS wajib resep — bukan obat warung — tapi penegakan lemah bikin pasien kerap swamedikasi sendiri. Berbahaya: steroid topikal memperberat keratitis herpes yang tak dikenali & memicu glaukoma pada pemakaian kronik. Beda dengan tetrahydrozoline (Insto) yang memang bebas.',

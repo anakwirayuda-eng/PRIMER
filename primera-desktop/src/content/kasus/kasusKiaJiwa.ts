@@ -137,6 +137,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['anc_rutin', 'tanda_bahaya_kehamilan', 'gizi_seimbang', 'kepatuhan_obat'],
     },
     clue: 'ANC normal: minimal 6x kunjungan (Kemenkes 2020) + tablet tambah darah (Fe 60 mg elemental) minimal 90 tablet + asam folat 400 mcg. Edukasi minum Fe malam hari/setelah makan untuk kurangi mual, jangan bersama teh/kopi. Kenali tanda bahaya P4K, JANGAN medikalisasi kehamilan sehat.',
+    panduanResmi: 'Divergensi: tabel PPK 1186/2022 masih memuat ANC minimal 4x (TM1:1, TM2:1, TM3:2) & folat 250 mcg, sedang kebijakan Kemenkes 2020 (clue) menaikkan jadi 6x — yang mutakhir mengikat. PPK juga mewajibkan skrining/imunisasi TT sesuai status, hal yang tak disebut clue.',
   },
 
   /* ======================================================================
@@ -356,6 +357,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['tanda_bahaya_kehamilan'],
     },
     clue: 'Preeklampsia BERAT: TD ≥160/110 + proteinuria + gejala berat (nyeri kepala hebat, gangguan visus, nyeri epigastrium, hiperrefleksia/klonus, trombositopenia, SGOT/SGPT naik). WAJIB stabilisasi MgSO4 (loading + maintenance) & kendalikan TD dengan nifedipin/metildopa lalu RUJUK ke SpOG. JANGAN dipulangkan — risiko eklampsia/HELLP mengancam nyawa ibu & janin (PNPK Preeklampsia Kemenkes/POGI).',
+    panduanResmi: 'PPK 1186/2022: MgSO4 loading 4 g IV pelan (20 menit) + rumatan 6 g/6 jam, dengan SYARAT wajib refleks patella (+), urin ≥0,5 ml/kgBB/jam, & Ca Glukonas 10% siap sebagai antidot toksisitas Mg — detail keamanan pemberian yang tak dirinci clue. (ACE-inhibitor/ARB kontraindikasi pada bumil.)',
     konsekuensi: {
       narasi: 'Bila tidak diberi MgSO4 dan tidak dirujuk, pasien berisiko kejang eklampsia, perdarahan otak, sindrom HELLP, dan kematian ibu serta janin dalam hitungan jam.',
       kembaliHariMin: 0,
@@ -468,6 +470,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     // aktivitas wajar (bukan tirah baring total) + pelvic rest saat perdarahan;
     // inti tetap RUJUK USG. konsekuensi diubah ke natural history (bukan menyalahkan ibu).
     clue: 'Abortus IMINENS: perdarahan pervaginam pada kehamilan <20 minggu dengan ostium uteri TERTUTUP dan janin masih hidup. Tata laksana FKTP: istirahat wajar & pembatasan aktivitas berat (BUKAN tirah baring total — tak terbukti mencegah keguguran, Cochrane/POGI; tirah baring lama berisiko trombosis), pelvic rest bila perdarahan aktif, lalu RUJUK untuk USG konfirmasi viabilitas janin & evaluasi SpOG. Waspadai progresi ke abortus insipiens/inkomplit (perdarahan hebat, ostium terbuka) — kegawatan. Konseling: keguguran umumnya BUKAN akibat aktivitas ibu (PPK/PNPK Perdarahan Kehamilan Muda).',
+    panduanResmi: 'Divergensi rujukan: clue/game mengarahkan RUJUK, tapi PPK 1186/2022 menatalaksana abortus IMINENS di FKTP: pertahankan kehamilan, \'tidak perlu pengobatan khusus\', hindari aktivitas berat/koitus, tablet tambah darah, pantau USG serial. RUJUK hanya bila progresi ke insipiens/inkomplit atau perdarahan banyak.',
     // M11 Bagian B3 (DeepThink 2026-07-10, REVISI: "belum terbukti" terlalu
     // absolut — bukti didrogesteron ORAL genuinely campuran, beda dari
     // progesteron VAGINAL/PRISM yang hanya menolong subgrup riwayat keguguran).
@@ -696,6 +699,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['manajemen_stres', 'higiene_tidur', 'aktivitas_fisik', 'kontrol_rutin'],
     },
     clue: 'GAD: kekhawatiran berlebihan sulit dikendalikan ≥6 bulan + gejala somatik (berdebar, otot tegang, mudah lelah, sulit tidur). SINGKIRKAN penyebab organik (hipertiroid → TSH; kafein berlebih). Lini pertama: psikoedukasi + relaksasi/CBT + SSRI (fluoksetin/sertralin). Benzodiazepin hanya jangka pendek. Kurangi kafein (PPDGJ/PPK Jiwa FKTP).',
+    panduanResmi: 'PPK 1186/2022 (entri FKTP terdekat: gangguan campuran cemas-depresi) memberi dosis resmi: fluoksetin 1x10-20 mg atau sertralin 1x25-50 mg/hari. Bila benzodiazepin dipakai utk cemas/insomnia, tappering-off setelah 2-4 minggu sementara antidepresan diteruskan 4-6 bulan.',
   },
 
   /* ======================================================================
@@ -962,6 +966,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['higiene_tidur', 'manajemen_stres', 'aktivitas_fisik'],
     },
     clue: 'Insomnia kronik: lini PERTAMA adalah higiene tidur + terapi perilaku (CBT-I) — jadwal tidur teratur, kurangi layar/kafein malam, hindari tidur siang panjang, tempat tidur hanya untuk tidur. Farmakoterapi (hipnotik) hanya jangka SANGAT pendek & selektif; benzodiazepin dihindari terutama pada lansia. Singkirkan penyebab sekunder (depresi/cemas, nyeri, OSA, hipertiroid) (PPK Jiwa FKTP / pedoman insomnia).',
+    panduanResmi: 'DIVERGENSI: clue/EBM menghindari benzodiazepin (terutama lansia) & utamakan CBT-I, tetapi PPK 1186/2022 justru meresepkan lorazepam 0,5–2 mg atau diazepam 2–5 mg malam hari — untuk lansia sekadar \'dosis minimal efektif\', bukan dihindari. Rujuk jiwa bila tak membaik 2 minggu.',
   },
 
   /* ======================================================================
@@ -1073,6 +1078,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['kenali_kambuh_jiwa', 'kepatuhan_obat', 'kontrol_rutin'],
     },
     clue: 'Skizofrenia: gejala psikotik (halusinasi auditorik, waham kejar/curiga, disorganisasi) ≥1 bulan + penurunan fungsi bermakna, tanpa penyebab organik/zat. SKDI 3A → dokter FKTP mengenali, boleh MULAI stabilisasi antipsikotik (mis. haloperidol) bila agitasi, lalu RUJUK ke SpKJ untuk penegakan & rencana terapi. Rangkul keluarga dengan bahasa yang manusiawi — pasien jiwa TIDAK boleh ditelantarkan/dipasung (indikator PIS-PK & UU Kesehatan Jiwa).',
+    panduanResmi: 'PPK 1186/2022 memerinci dosis resmi: Haloperidol oral 2-3x2-5 mg atau IM 5 mg untuk gaduh gelisah (maks 30 mg/hari, boleh + diazepam), antidot efek samping ekstrapiramidal Triheksifenidil 2-4x2 mg, plus kunjungan rumah untuk kepatuhan; rujuk kasus baru untuk konfirmasi setelah stabilisasi awal.',
     konsekuensi: {
       narasi: 'Bila tidak dirujuk dan keluarga dibiarkan tanpa panduan, gejala psikotik memberat, risiko membahayakan diri/orang lain meningkat, dan pasien berisiko dipasung atau ditelantarkan.',
       kembaliHariMin: 7,
@@ -1204,6 +1210,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'cegah_malaria_kelambu'],
     },
     clue: 'Malaria falsiparum: demam periodik + menggigil + splenomegali + riwayat dari daerah endemis (Papua/NTT). KONFIRMASI dengan RDT/mikroskopis SEBELUM terapi. Lini pertama Kemenkes: ACT = DHP (Dihidroartemisinin-Piperakuin) 3 hari + primakuin dosis tunggal 0,25 mg/kgBB (gametosidal). SINGKIRKAN KEHAMILAN pada perempuan usia subur: primakuin KONTRAINDIKASI pada hamil & bayi <6 bln (beri DHP saja) — tes G6PD tidak diwajibkan untuk dosis tunggal falsiparum. JANGAN pakai klorukin untuk falsiparum — resisten luas di Indonesia. Kenali tanda MALARIA BERAT (penurunan kesadaran, kejang, ikterik, gagal ginjal, hipoglikemia) → rujuk (Pedoman Tata Laksana Malaria Kemenkes).',
+    panduanResmi: 'Divergensi dosis: PPK 1186/2022 menulis primakuin falsiparum 0,75 mg/kgBB dosis tunggal, sedang Pedoman Tata Laksana Malaria Kemenkes (clue) memakai 0,25 mg/kgBB — yang mutakhir mengikat. PPK juga menetapkan artesunat/artemisinin 3,2 mg/kgBB IM/IV sebelum rujuk malaria berat.',
     // M11 Bagian B5 (DeepThink 2026-07-10, TERIMA apa adanya — insight
     // distribusi komoditas program vertikal, tak menyinggung clue sama sekali).
     catatanRealita: 'Malaria impor: pasien pulang dari Papua/NTT kerap berobat di Puskesmas Jawa/Bali non-endemis yang tak menstok RDT & ACT (DHP)/primakuin — logistik dialokasikan ke daerah endemis. Curigai demam + riwayat perjalanan; siapkan jalur rujukan & lapor e-SISMAL.',

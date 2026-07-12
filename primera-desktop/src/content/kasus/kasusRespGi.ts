@@ -245,6 +245,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['hindari_alergen', 'cuci_seprai_panas', 'tanda_bahaya'],
     },
     clue: 'Rinitis alergi: bersin serial + rinorea ENCER JERNIH + gatal hidung/mata, dipicu debu/pagi, TANPA demam, riwayat atopi keluarga. Terapi lini pertama antihistamin non-sedatif (loratadin/setirizin) + kontrol lingkungan (ARIA/PPK IDI). Bedakan dari common cold (durasi lebih lama, gatal menonjol, tanpa demam).',
+    panduanResmi: 'PPK 1186/2022 mencantumkan antihistamin generasi-1 (klorfeniramin/CTM, difenhidramin) SEJAJAR dengan generasi-2 (loratadin, cetirizin) — berbeda dari clue/ARIA yang memprioritaskan non-sedatif. PPK juga membolehkan kortikosteroid intranasal (mometason/flutikason) bila sumbatan hidung dominan.',
     konsekuensi: {
       narasi: 'Bila alergen tidak dihindari, keluhan kronik-kambuh dan dapat berkembang menjadi asma; pemakaian dekongestan oral rutin membebani jantung & tekanan darah tanpa mengatasi akar alergi.',
       kembaliHariMin: 14,
@@ -361,6 +362,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Tonsilitis bakterial (Streptokokus): demam tinggi, tonsil membesar + eksudat, KGB servikal nyeri, TANPA batuk-pilek. Lini pertama amoxicillin 10 hari (cegah demam rematik); bila ALERGI PENISILIN → makrolida (azitromisin/eritromisin). Red flag abses peritonsil/obstruksi (trismus, uvula terdorong, ngiler, stridor) → rujuk.',
+    panduanResmi: 'Clue cukup amoxicillin (makrolida bila alergi). PPK 1186/2022 menambah opsi Penisilin G Benzatin 50.000 U/kgBB IM dosis tunggal DAN Kortikosteroid rutin (Deksametason 3x0,5 mg dewasa, 3 hari) untuk menekan inflamasi — steroid rutin ini tak dianjurkan pedoman internasional.',
     alergiTrap: {
       kelas: 'penisilin',
       obatTerlarang: ['amoxicillin_500', 'amoxicillin_sirup', 'amoxiclav_625'],
@@ -488,6 +490,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['berhenti_merokok', 'teknik_inhaler', 'tanda_bahaya', 'kontrol_rutin'],
     },
     clue: 'Eksaserbasi PPOK (kriteria Anthonisen: sesak↑, volume sputum↑, purulensi sputum↑ — ketiganya ada → antibiotik terindikasi). SpO2 89% + tanda gagal napas (bingung, sianosis, otot bantu) = eksaserbasi BERAT. Bundel GOLD: O2 TERKONTROL (target SpO2 88–92%, hindari over-oksigenasi) + bronkodilator INHALASI/NEBULISASI (SABA ± SAMA) + KORTIKOSTEROID SISTEMIK + antibiotik (sputum purulen) — lalu RUJUK paru segera. SABA oral tak setara; jangan biarkan urusan obat menunda rujukan.',
+    panduanResmi: 'PPK 1186/2022 membatasi FKTP pada eksaserbasi PPOK RINGAN (sedang–berat wajib rujuk). Bila inhalasi tak tersedia, PPK membolehkan bronkodilator injeksi (aminofilin bolus 5 mg/kgBB; adrenalin 0,3 mg SC) — beda dari penekanan GOLD \'inhalasi saja\'. Kortikosteroid 30 mg/hari, maks 2 minggu, tanpa tapering.',
     konsekuensi: {
       narasi: 'Bila tidak segera dirujuk, eksaserbasi berat berlanjut ke gagal napas hiperkapnik (asidosis respiratorik) dan penurunan kesadaran yang mengancam jiwa.',
       kembaliHariMin: 0,
@@ -604,6 +607,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['posisi_tidur_gerd', 'diet_lambung', 'berhenti_merokok', 'tanda_bahaya'],
     },
     clue: 'GERD: heartburn retrosternal + regurgitasi asam, memberat setelah makan & berbaring, MEMBAIK saat aktivitas (kebalikan angina). Diagnosis klinis → terapi empiris PPI 4–8 minggu + modifikasi gaya hidup (tinggikan kepala saat tidur, jangan langsung berbaring, kurangi kopi/rokok/gorengan). Endoskopi HANYA bila ada alarm (disfagia, penurunan BB, anemia, hematemesis/melena, usia >45–50 onset baru) atau gagal terapi (PPK IDI). Nyeri dada atipik → singkirkan jantung dulu.',
+    panduanResmi: 'PPK 1186/2022 memformalkan \'PPI test\': omeprazol 2×20 mg atau lansoprazol 2×30 mg 7-14 hari; perbaikan 50-75% mengonfirmasi GERD, lanjut sampai 4 minggu, boleh + prokinetik domperidon 3×10 mg. Bila PPI kosong, ganti H2-blocker (ranitidin 150 mg/famotidin 20 mg).',
     konsekuensi: {
       narasi: 'Bila gaya hidup tidak diperbaiki dan diberi NSAID, refluks/gastritis memberat; sebaliknya over-endoskopi dini tanpa alarm membebani pasien dan sistem tanpa mengubah tata laksana awal.',
       kembaliHariMin: 14,
@@ -838,6 +842,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasiKritis: ['cairan_oralit'],
     },
     clue: 'Disentri BASILER (Shigella): diare sedikit-sedikit tapi sering, DARAH + lendir, demam, tenesmus, leukosit feses banyak. Beri antibiotik (siprofloksasin) + rehidrasi oralit; JANGAN beri antimotilitas (loperamid). Zinc = terapi baku hanya untuk anak <5 tahun (bukan dewasa). Bedakan disentri AMEBA (trofozoit di feses) → metronidazol. Kontras dengan diare akut cair non-disentri yang TANPA antibiotik (Kemenkes; WHO).',
+    panduanResmi: 'PPK 1186/2022 memerinci siprofloksasin disentri basiler 2×500 mg/hari cukup 3 hari, TAPI mengkontraindikasikannya pada anak & ibu hamil — untuk kelompok itu pakai azitromisin 1 g dosis tunggal atau sefiksim 400 mg. Poin keamanan/dosis yang tak disebut clue.',
     konsekuensi: {
       narasi: 'Bila diberi antimotilitas atau tidak diberi antibiotik yang tepat, risiko dehidrasi memberat, penyebaran, dan pada anak/lansia dapat mengancam jiwa.',
       kembaliHariMin: 2,
@@ -1055,6 +1060,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['gizi_seimbang', 'minum_air_cukup', 'aktivitas_fisik', 'tanda_bahaya'],
     },
     clue: 'Hemoroid interna grade 1: hematokezia segar TANPA nyeri, menetes/di kertas pascadefekasi, benjolan BELUM prolaps. Tata laksana KONSERVATIF: tinggi serat + cukup air + hindari mengejan lama + pelunak tinja; bukan indikasi bedah. WAJIB colok dubur & waspadai red flag keganasan (usia >45–50, BB turun, anemia, perubahan pola BAB, riwayat keluarga kanker kolorektal) → pertimbangkan rujukan/kolonoskopi (PPK IDI).',
+    panduanResmi: 'PPK 1186/2022 membatasi kompetensi FKTP HANYA pada hemoroid interna grade 1 (konservatif): serat 25-30 g/hari, air 6-8 gelas, HINDARI OAINS/NSAID + makanan pedas-berlemak. Grade 2, 3, 4 dan hemoroid eksterna WAJIB dirujuk ke layanan sekunder.',
     // M11 Bagian B13 (DeepThink 2026-07-10, REVISI: anoskop murah & tersedia
     // — "jarang dipakai", bukan "tak tersedia"; FOBT kini mulai via Cek
     // Kesehatan Gratis, bukan lagi murni "belum digulirkan").
@@ -1179,6 +1185,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['tanda_bahaya'],
     },
     clue: 'Apendisitis akut: nyeri BERPINDAH periumbilikal → McBurney + anoreksia/mual + nyeri lepas (Blumberg)/defans + demam ringan + leukositosis (skor Alvarado tinggi). Kompetensi 3B → PUASAKAN, pasang jalur IV, beri ANALGESIA ADEKUAT (parasetamol — mitos "analgesik menutupi tanda" sudah terbantah, Cochrane/WSES; hindari NSAID pada perut akut), dan RUJUK BEDAH segera. Jangan biarkan antibiotik oral menunda rujukan. Singkirkan kehamilan ektopik (β-hCG) pada perempuan usia subur.',
+    panduanResmi: 'PPK 1186/2022 menambah langkah pra-rujuk resmi selain puasa & cairan IV: posisi Fowler (anti-Trendelenburg) dan pasang pipa nasogastrik untuk mengosongkan lambung (kurangi distensi, cegah muntah). Diagnosis apendisitis akut = rujuk operasi cito ke layanan sekunder.',
     konsekuensi: {
       // Fix #12c (triase DeepThink 2026-07-11): teks ini masih menyandingkan
       // "analgetik" setara "antibiotik" sbg penyebab risiko — berkontradiksi dgn

@@ -137,6 +137,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['diet_purin', 'minum_air_cukup', 'kontrol_rutin'],
     },
     clue: 'Serangan gout AKUT (monoartritis MTP-1, onset malam, pemicu tinggi purin) → redakan radang dulu dengan NSAID (natrium diklofenak) ATAU kolkisin. ATURAN EMAS: JANGAN mulai allopurinol saat serangan; bila pasien sudah rutin allopurinol JANGAN dihentikan. Mulai/titrasi urate-lowering 2–4 minggu setelah reda, target asam urat <6 mg/dL (PPK PAPDI / ACR 2020).',
+    panduanResmi: 'PPK 1186/2022 menambah opsi resmi di luar clue: kortikosteroid sistemik jangka pendek (prednison 2–3×5 mg/hari, 3 hari) bila NSAID dan kolkisin tidak berespon baik. Dosis kolkisin resmi rendah 0,5–0,6 mg/hari (maks 6 mg), paling efektif pada 24 jam pertama serangan.',
     // M11 (perintis lapisan pengayaan — dari ide asal user): mutiara "temuan
     // bisa menyesatkan" + catatan realita FKTP.
     mutiaraEbm: 'Kadar asam urat serum bisa NORMAL bahkan RENDAH saat serangan akut (asam urat berpindah ke sendi/mengendap) — hasil normal TIDAK menyingkirkan gout. Diagnosis serangan akut tetap KLINIS (monoartritis MTP-1 mendadak, merah-nyeri hebat); baku emas = kristal MSU di cairan sendi.',
@@ -271,6 +272,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'berhenti_merokok', 'kontrol_rutin'],
     },
     clue: 'Dislipidemia sering ASIMTOMATIK — jangan meremehkan hanya karena tak ada keluhan. Nilai risiko KV total (LDL tinggi + perokok + riwayat keluarga dini + TD tinggi). Terapi: perubahan gaya hidup WAJIB + statin (simvastatin malam hari). Cek SGOT/SGPT baseline. Simvastatin diminum malam (PPK PERKI / Kemenkes PTM).',
+    panduanResmi: 'PPK 1186/2022 memakai kerangka NCEP-ATP III berbasis target LDL: <100 (risiko tinggi), <130 (multipel), <160 (rendah), dan baru mulai statin SETELAH 6 minggu terapi gaya hidup gagal. Dosis resmi simvastatin 5-40 mg malam hari.',
     // M11 Bagian B11 (DeepThink 2026-07-10, REFRAME bukan tolak — kasus ini
     // fit-nya buruk utk FH: LDL kasus di bawah ambang, pola CAMPURAN khas
     // metabolik. Dibingkai jadi kontras/ambang-picu, bukan diagnosis kasus ini).
@@ -394,6 +396,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'kontrol_rutin', 'higiene_tidur'],
     },
     clue: 'Obesitas: LINI UTAMA adalah intervensi gaya hidup — defisit kalori bertahap + aktivitas fisik 150 menit/minggu, target turun 5–10% BB dalam 6 bulan. Skrining komorbid (GDP, lipid, TD) & singkirkan hipotiroid (TSH). Farmakoterapi/bedah bukan ranah rutin FKTP. HINDARI diuretik/pencahar sebagai "pelangsing" (Pedoman PTM Kemenkes / PERKENI).',
+    panduanResmi: 'PPK 1186/2022 memberi batas kompetensi FKTP yang tegas: mulai defisit 300-500 kkal/hari (≈½-1 kg/minggu) + aktivitas 150 menit/minggu; bila modifikasi gaya hidup 3 BULAN tak memberi respons, rujuk ke SpPD untuk obat penurun BB — kriteria rujukan resmi yang tak dirinci clue.',
     konsekuensi: {
       narasi: 'Tanpa modifikasi gaya hidup, obesitas berlanjut ke diabetes tipe 2, hipertensi, dislipidemia, dan OSA — beban komorbid menumpuk.',
       // M10 Batch-2 (CODEX C.9): dikompresi 90-180 → 45-80 (lihat catatan
@@ -532,6 +535,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['peregangan_sendi', 'aktivitas_fisik', 'gizi_seimbang', 'postur_ergonomi'],
     },
     clue: 'Osteoartritis lutut: nyeri MEKANIK (memberat aktivitas, mereda istirahat) + kaku pagi SINGKAT (<30 menit) + krepitasi + usia lanjut, TANPA tanda inflamasi sistemik. Tata laksana: edukasi + latihan penguatan kuadrisep + turun BB + analgetik (parasetamol dulu, NSAID bila perlu; hati-hati lambung/ginjal/TD). Rontgen bukan syarat diagnosis (klinis cukup). Rujuk hanya bila kandidat operasi/sendi gagal (PPK / OARSI).',
+    panduanResmi: 'Divergensi: clue/OARSI menaruh parasetamol sbg analgetik lini pertama, tapi medikamentosa resmi PPK 1186/2022 hanya mencantumkan analgesik topikal + NSAID (COX-1/COX-2 meloksikam), TANPA menyebut parasetamol. PPK juga mewajibkan RUJUK bila curiga efusi sendi atau komplikasi terapi COX-1.',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat tanpa latihan & turunkan berat badan, kekuatan otot paha terus menurun, nyeri berulang, dan sendi makin cepat rusak.',
       kembaliHariMin: 21,
@@ -895,6 +899,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['peregangan_sendi', 'kontrol_rutin'],
     },
     clue: 'Artritis reumatoid (SKDI 3A → RUJUK): poliartritis SIMETRIS sendi kecil (MCP/PIP/pergelangan) + kaku pagi >1 JAM + gejala sistemik + LED/anemia kronik. Berbeda dari OA (mekanik, kaku singkat, sendi besar/DIP). Di FKTP: kenali, beri analgetik/NSAID untuk kenyamanan, lalu RUJUK penyakit dalam untuk DMARD dini (metotreksat) — jendela emas cegah destruksi sendi (ACR/EULAR 2010).',
+    panduanResmi: 'Clue/ACR-EULAR tekankan rujuk DINI untuk DMARD (metotreksat); PPK 1186/2022 tak sebut DMARD di FKTP — cukup NSAID (meloksikam 7,5–15 mg/hari) + steroid dosis rendah sbg bridging, dan rujukan resmi baru terpicu bila TAK membaik dengan NSAID+steroid atau ada komplikasi/deformitas.',
     konsekuensi: {
       narasi: 'Bila hanya diberi NSAID lalu dibiarkan tanpa DMARD, inflamasi sinovial terus mengikis tulang rawan dan tulang — dalam hitungan bulan-tahun terjadi deformitas permanen dan disabilitas.',
       kembaliHariMin: 30,
@@ -1169,6 +1174,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasiKritis: ['restriksi_cairan_gagal_jantung'],
     },
     clue: 'GAGAL JANTUNG KONGESTIF (SKDI 3B → RUJUK): sesak progresif + ortopnea + PND + edema tungkai + JVP↑ + S3 gallop + ronki basal (kriteria Framingham). Di FKTP: STABILISASI — posisi setengah duduk, oksigen, furosemid (dekongesti), ISDN bila TD memadai — lalu RUJUK penyakit dalam untuk ekokardiografi & terapi definitif (ACE-I/beta-blocker dititrasi). JANGAN mulai beta-blocker saat dekompensasi; HINDARI NSAID (PPK Gagal Jantung / PERKI / ESC).',
+    panduanResmi: 'PPK 1186/2022 memerinci stabilisasi gagal jantung akut di FKTP sebelum rujuk: oksigen 2–4 L/menit + furosemid injeksi 20–40 mg bolus IV, boleh diulang tiap jam hingga maksimal 600 mg/hari, lalu SEGERA RUJUK. Batasi cairan ≤1,5 L/hari (≤1 L bila berat).',
     konsekuensi: {
       narasi: 'Tanpa dekongesti & rujukan, kongesti paru memberat menuju edema paru akut; pemberian NSAID atau inisiasi beta-blocker saat basah dapat mempercepat dekompensasi fatal.',
       kembaliHariMin: 1,
@@ -1342,6 +1348,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['minum_air_cukup', 'cuci_tangan', 'kontrol_rutin'],
     },
     clue: 'ISK bawah / sistitis akut tanpa komplikasi (perempuan, disuria + frekuensi + urgensi, TANPA demam tinggi/nyeri pinggang/CVA negatif) → antibiotik lini pertama bergrade KUAT PNPK ISK 2025 adalah nitrofurantoin (bersama fosfomisin/pivmecillinam) — BUKAN kotrimoksazol/fluorokuinolon, keduanya dihemat utk indikasi lain. Banyak minum + jangan menahan kencing. WAJIB singkirkan kehamilan & pielonefritis (demam tinggi + nyeri ketok CVA = infeksi atas, alur berbeda).',
+    panduanResmi: 'Clue/IDSA menyarankan MENCADANGKAN fluorokuinolon. PPK 1186/2022 justru menaruh Fluorokuinolon sebagai pilihan lini pertama sederajat (bersama kotrimoksazol, amoksisilin-klavulanat, sefpodoksim) untuk ISK nonkomplikata 3 hari — pemain wajib sadar beda penekanan stewardship ini.',
     konsekuensi: {
       narasi: 'Bila tidak diobati adekuat atau tanda infeksi atas terlewat, sistitis dapat naik menjadi pielonefritis (demam tinggi, nyeri pinggang) yang lebih berat.',
       kembaliHariMin: 3,
