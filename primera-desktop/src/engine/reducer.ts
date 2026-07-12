@@ -55,14 +55,22 @@ export const BIAYA_STAMINA_KUNJUNGAN: Record<'dekat' | 'sedang' | 'terpencil', n
 // Diskalakan utk library 60+ kasus (guardrail KONTEN_BALANCE #3); ★3 = dikuasai
 // permanen dalam satu playthrough (tidak luntur).
 export const LUNTUR_BINTANG_HARI = 14
-export const HARI_BUKA_POSYANDU = 15
 /** M10.5 #15 (2026-07-12): diskalakan proporsional per mode, pola sama
  * Q1/O-C (HARI_PENGUMUMAN_AKREDITASI) — dulu literal D30/D45, tak pernah
  * nyala di mode Ujian yang tamat hari 30 (rasio 90 hari karier terjaga:
  * Prolanis 30/90=1/3 → 10; KLB 45/90=1/2 → 15). */
 export const HARI_BUKA_PROLANIS: Record<ModeStase, number> = { karier: 30, ujian: 10 }
 export const HARI_BUKA_KLB: Record<ModeStase, number> = { karier: 45, ujian: 15 }
-export const COOLDOWN_POSYANDU = 30
+/** CODEX audit pasca-GM (2026-07-13, temuan #8a): `HARI_BUKA_POSYANDU`/
+ * `COOLDOWN_POSYANDU` dulu angka DATAR (bukan `Record<ModeStase,...>` spt
+ * HARI_BUKA_PROLANIS/KLB di atas) — Posyandu tetap buka D15 & cooldown 30
+ * hari di mode Ujian juga, jadi RW paling banter dapat SATU sesi bonus
+ * IKS dalam stase 30-hari (vs ~3 di Karier 90-hari pd rasio yg sama) —
+ * padahal bonus ini score-relevant (langsung masuk `iksDesa`, scoring.ts).
+ * Diskalakan dgn rasio yg sama persis dgn HARI_BUKA_PROLANIS (30/90=1/3).
+ */
+export const HARI_BUKA_POSYANDU: Record<ModeStase, number> = { karier: 15, ujian: 5 }
+export const COOLDOWN_POSYANDU: Record<ModeStase, number> = { karier: 30, ujian: 10 }
 export const BIAYA_STAMINA_KEGIATAN = 2
 /** Kapasitas roster keluarga binaan (M3c: 8 → 16 seiring 16 keluarga bernama). */
 export const MAKS_BINAAN = 16
@@ -953,10 +961,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
     /* -- UKM: kegiatan lapangan terjadwal (M2) --------------------------------- */
 
     case 'MULAI_POSYANDU': {
-      const cek = cekSlotKegiatan(s, HARI_BUKA_POSYANDU, 'Posyandu')
+      const cek = cekSlotKegiatan(s, HARI_BUKA_POSYANDU[s.mode], 'Posyandu')
       if (cek) return err(s, cek)
       const terakhir = s.posyanduRwTerakhir[String(action.rw)]
-      if (terakhir !== undefined && s.hari - terakhir < COOLDOWN_POSYANDU) {
+      if (terakhir !== undefined && s.hari - terakhir < COOLDOWN_POSYANDU[s.mode]) {
         return err(s, `Posyandu RW ${action.rw} baru digelar — jadwalnya bulanan (tiap 30 hari).`)
       }
       // Fix D5 (migrasi ILP, triase DeepThink 2026-07-11): kartuPosyandu() kini
@@ -1058,7 +1066,18 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // DeepThink Q4: tanpa kunci sebulan penuh, "program" hanya daftar centang
       // tanpa ongkos oportunitas nyata — pemain bisa "menutupi" semua ancaman
       // bergantian tiap pekan alih-alih benar-benar memilih & mengorbankan).
-      const periodeIni = Math.ceil(s.hari / 30)
+      //
+      // CODEX audit pasca-GM (2026-07-13, temuan #8b): literal `/30` di sini
+      // tak ikut diskalakan saat SIKLUS_LAPORAN_BULANAN (yg menyalakan popup
+      // Lokakarya Mini ini) SUDAH diskalakan ke {ujian:10} — akibatnya di mode
+      // Ujian, `periodeIni` tetap 1 SEPANJANG stase 30-hari (Math.ceil(30/30)=1)
+      // walau Lokmin sendiri tampil lagi di hari 11 & 21. Kunci ini lantas
+      // TAK PERNAH lepas dalam satu stase Ujian, sementara UI (MejaKerja.tsx)
+      // eksplisit menjanjikan "baru bisa diganti bulan depan" / "sampai
+      // Lokakarya Mini berikutnya" — janji yg mustahil ditepati. Kini periodeIni
+      // mengikuti siklus Lokmin yg SAMA persis (bukan literal terpisah), jadi
+      // kunci genuinely lepas di tiap Lokmin sesuai yg dijanjikan UI.
+      const periodeIni = Math.ceil(s.hari / SIKLUS_LAPORAN_BULANAN[s.mode])
       // DeepThink ronde-2: guard lama cuma cek `fokus` — mempertahankan fokus
       // yang sama sambil mengganti `rwFokus` TIAP HARI lolos tanpa ditolak,
       // membiarkan pemain micromanage target bonusIks harian antar-RW. Itu
@@ -1405,7 +1424,13 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
     next = {
       ...next,
       jadwal: jadwalBaru,
-      prolanis: { ...s.prolanis, roster, sesiBerikutHari: s.hari + 30 },
+      // CODEX audit pasca-GM (2026-07-13, temuan #7): literal `+30` di sini tak
+      // ikut diskalakan saat HARI_BUKA_PROLANIS (ambang BUKA-nya) SUDAH
+      // diskalakan ke {ujian:10} — akibatnya sesi pertama yg legal (hari 10)
+      // mengunci `sesiBerikutHari` ke hari 40, yg TAK PERNAH tiba dlm stase
+      // 30-hari Ujian (HARI_STASE.ujian). Reuse HARI_BUKA_PROLANIS[s.mode]
+      // (rasio identik 1/3 yg sudah ditetapkan) sbg periode berulang jua.
+      prolanis: { ...s.prolanis, roster, sesiBerikutHari: s.hari + HARI_BUKA_PROLANIS[s.mode] },
     }
   } else if (hasil.jenis === 'klb' && hasil.rw !== undefined && hasil.kasusId !== undefined) {
     // Respons KLB tuntas: buang entri surveilans kluster itu (penularan diputus)
@@ -2060,7 +2085,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   if (hari === HARI_BUKA_PETA) flags['petaBaruTerbuka'] = true
   if (hari === HARI_BUKA_KUNJUNGAN) flags['kunjunganBaruTerbuka'] = true
   if (hari === HARI_REKAP_SLICE) flags['rekapSlice'] = true
-  if (hari === HARI_BUKA_POSYANDU) flags['posyanduBaruTerbuka'] = true
+  if (hari === HARI_BUKA_POSYANDU[s.mode]) flags['posyanduBaruTerbuka'] = true
   if (hari === HARI_BUKA_PROLANIS[s.mode]) flags['prolanisBaruTerbuka'] = true
   if (hari === HARI_BUKA_KLB[s.mode]) flags['klbBaruTerbuka'] = true
 

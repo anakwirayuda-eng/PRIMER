@@ -117,6 +117,22 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
     state.mode === 'ujian' ? EKSPEKTASI_KUNJUNGAN_UJIAN : EKSPEKTASI_KUNJUNGAN_KARIER
   const kualitasMi = (t.miTepat / Math.max(ekspektasiKunjungan, t.miTotal)) * 100
   const rasioKunjungan = t.kunjunganBerhasil / Math.max(ekspektasiKunjungan, t.kunjunganTotal)
+  // CODEX audit pasca-GM (2026-07-13, temuan #7): `prolanisSesi` (tally) tak
+  // pernah dibaca skor manapun — repro langsung: skor UKM byte-identik sebelum/
+  // sesudah sesi Prolanis dimainkan. Strategi optimal literal "jangan pernah
+  // buka Prolanis" (nol biaya stamina/slot, nol risiko drift/komplikasi, nol
+  // skor hilang) — anti-pola pedagogis utk program UKM andalan JKN. Suku baru
+  // ini membaca fraksi roster yang TERKONTROL (ambang param sama persis
+  // `driftProlanis`, kegiatan.ts) sbg state agregat (bukan tally mentah) —
+  // pola sejajar `iksDesa` di atas. Peserta yg tak pernah disesi tetap
+  // "tak terkontrol" (roster dibentuk dgn param awal di atas ambang), jadi
+  // mengabaikan Prolanis kini punya ongkos oportunitas nyata, bukan gratis.
+  const rosterProlanis = state.prolanis.roster
+  const rasioProlanisTerkontrol =
+    rosterProlanis.length > 0
+      ? rosterProlanis.filter((p) => (p.jenis === 'ht' ? p.param < 140 : p.param < 200)).length /
+        rosterProlanis.length
+      : 0
   // M10.5 Fase 3 (2026-07-12, soak-final kalibrasi): dulu `-2*karmaTerjadi +
   // 1*karmaDicegah` adalah HITUNGAN MENTAH tak terbatas — satu-satunya suku
   // UKM yang tak dinormalisasi rasio (beda dari rasioKunjungan/kualitasMi di
@@ -134,7 +150,11 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const denomKarma = Math.max(3, totalKarmaKasus)
   const efekKarma = (3 * t.karmaDicegah - 9 * t.karmaTerjadi) / denomKarma
   const ukm = clamp(
-    (0.5 * iksDesa + 0.25 * rasioKunjungan + 0.25 * (kualitasMi / 100)) * 35 -
+    (0.4 * iksDesa +
+      0.2 * rasioKunjungan +
+      0.2 * (kualitasMi / 100) +
+      0.2 * rasioProlanisTerkontrol) *
+      35 -
       2 * t.apathy +
       efekKarma,
     0,

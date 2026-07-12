@@ -459,6 +459,29 @@ describe('deserialize — kunci tally hilang & entri nested null (CODEX ronde-13
   })
 })
 
+describe('deserialize — CODEX audit pasca-GM (2026-07-13, temuan #12): tallyTermigrasi', () => {
+  it('kunci tally hilang (save versi lama) dibackfill 0 DAN dicatat di tallyTermigrasi', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      delete (st['tally'] as Record<string, unknown>)['posyanduSesi']
+      delete (st['tally'] as Record<string, unknown>)['obatBerbahaya']
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.tally.posyanduSesi).toBe(0)
+    expect(hasil.tally.obatBerbahaya).toBe(0)
+    expect(hasil.tallyTermigrasi).toEqual(
+      expect.arrayContaining(['posyanduSesi', 'obatBerbahaya']),
+    )
+  })
+
+  it('save UTUH (tak ada kunci tally hilang) tidak dapat tallyTermigrasi sama sekali', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const hasil = deserialize(serialize(s), PACK)!
+    expect(hasil.tallyTermigrasi).toBeUndefined()
+  })
+})
+
 describe('deserialize — M10 §49 CODEX B.5/B.6 (jadwal korup + kunjungan yatim)', () => {
   it('B.5: jadwal:[null] ditolak (bukan crash j.hari saat day-advance)', () => {
     const s = buildInitialState('Uji', SEED, PACK)

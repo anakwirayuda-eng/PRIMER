@@ -107,11 +107,21 @@ export function buildInitialState(
   // jatuh tempo SETELAH stase Ujian berakhir — jendela intervensi (kunjungan
   // dokter membatalkan karma) nyaris tak pernah benar-benar terbuka.
   const rasioMode = HARI_STASE[mode] / HARI_STASE.karier
-  const jadwalKarma = []
+  interface CalonKarma {
+    id: string
+    keluargaId: string
+    kasusId: string
+    catatan: string
+    rw: number
+    nama?: string
+    usia?: number
+    jenisKelamin?: 'L' | 'P'
+    hari: number
+  }
+  const calonKarma: CalonKarma[] = []
   for (const [id, content] of Object.entries(pack.keluarga)) {
     const skenarioPertama = content.arc.kunjungan[0]
     if (!skenarioPertama?.karma) continue
-    const jadwalId = `jadwal_karma_${id}`
     // CODEX audit (2026-07-12, temuan #6): lantai `1` sendirian tak cukup —
     // hasil scaling bisa mendarat SEBELUM kunjungan rumah bahkan terbuka
     // (HARI_BUKA_KUNJUNGAN), membuat karma itu MUSTAHIL dicegah krn pemain
@@ -123,19 +133,49 @@ export function buildInitialState(
     )
     // Identitas anggota yang akan jatuh sakit — konsekuensi BERNAMA.
     const anggota = content.anggota[skenarioPertama.karma.anggotaIndex]
-    jadwalKarma.push({
-      id: jadwalId,
-      hari: jatuhTempo,
-      jenis: 'karma_igd' as const,
+    calonKarma.push({
+      id: `jadwal_karma_${id}`,
       keluargaId: id,
       kasusId: skenarioPertama.karma.kasusId,
       catatan: skenarioPertama.karma.narasi,
       rw: content.rw,
       ...(anggota ? { nama: anggota.nama, usia: anggota.usia, jenisKelamin: anggota.jenisKelamin } : {}),
+      hari: jatuhTempo,
     })
-    const kel = keluarga[id]
+  }
+  // CODEX audit pasca-GM (2026-07-13, temuan #6): lantai per-keluarga di atas
+  // menjamin tiap keluarga SENDIRI punya jendela ≥1 hari — tapi tak mencegah
+  // BEBERAPA keluarga jatuh tempo di hari YANG SAMA (atau berdekatan), yang
+  // menabrak sumber daya scarce "1 slot kunjungan/kegiatan per hari"
+  // (`lapanganTerpakai`). Direproduksi: keluarga_wulan/yani/gunawan semua
+  // jatuh di hari 4-5 mode Ujian — bahkan pemain yg bermain SEMPURNA (kunjungi
+  // yg jatuh-tempo tercepat tiap hari sejak D3) dijamin kehilangan MINIMAL
+  // satu keluarga (pigeonhole: 3 keluarga berebut 2 slot di {hari3,hari4}).
+  // Fix: pass spacing-minimum monotonik setelah SEMUA jatuh tempo dihitung —
+  // urutkan lalu paksa tiap entri berikutnya ≥ entri sebelumnya+1. Urutan
+  // urgensi relatif (siapa jatuh tempo duluan) tetap terjaga; hanya jarak
+  // antar-entri yg dijamin ≥1 hari, menghapus tabrakan sekaligus.
+  calonKarma.sort((a, b) => a.hari - b.hari)
+  let hariMinBerikut = HARI_BUKA_KUNJUNGAN + 1
+  for (const c of calonKarma) {
+    c.hari = Math.max(c.hari, hariMinBerikut)
+    hariMinBerikut = c.hari + 1
+  }
+  const jadwalKarma = []
+  for (const c of calonKarma) {
+    jadwalKarma.push({
+      id: c.id,
+      hari: c.hari,
+      jenis: 'karma_igd' as const,
+      keluargaId: c.keluargaId,
+      kasusId: c.kasusId,
+      catatan: c.catatan,
+      rw: c.rw,
+      ...(c.nama ? { nama: c.nama, usia: c.usia, jenisKelamin: c.jenisKelamin } : {}),
+    })
+    const kel = keluarga[c.keluargaId]
     if (kel) {
-      keluarga[id] = { ...kel, karmaAktif: { jadwalId, jatuhTempoHari: jatuhTempo } }
+      keluarga[c.keluargaId] = { ...kel, karmaAktif: { jadwalId: c.id, jatuhTempoHari: c.hari } }
     }
   }
 

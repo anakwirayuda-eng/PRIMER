@@ -314,6 +314,61 @@ describe('susunAntrianHarian', () => {
     expect(munculLangka).toBe(200)
   })
 
+  // CODEX audit pasca-GM (2026-07-13, temuan #10a): kluster (`clusterAktif`,
+  // surveilans.ts) dihitung dari `state.desa.surveilans`, yang RW pasiennya
+  // diisi dari stream FLAVOR (pribadi per-mahasiswa) — bukan kurikulum. Di mode
+  // Ujian ini melanggar M45_MODE_UJIAN.md §3b ("bobot kasus identik per paket"):
+  // dua mahasiswa paket SAMA dgn keputusan klinis identik bisa dpt antrian
+  // kasus BERBEDA murni krn RW pasien-pasien sebelumnya (flavor) kebetulan
+  // mengelompok beda. Fix: bobot kluster (`bobotKasus`, ×2.5) digerbang OFF
+  // khusus mode Ujian — Karier tak punya kontrak ini, kluster tetap aktif di sana.
+  it('CODEX #10a (pasca-GM 2026-07-13): kluster surveilans (RW dari seed flavor) TIDAK mempengaruhi antrian di mode Ujian, TAPI tetap aktif di Karier', () => {
+    const pack = buatPack([
+      buatKasus('dengue_df', { kategori: 'infeksi' }),
+      buatKasus('lain_1'),
+      buatKasus('lain_2'),
+      buatKasus('lain_3'),
+    ])
+    const surveilansKluster = [
+      { hari: 10, rw: 3, kasusId: 'dengue_df' },
+      { hari: 11, rw: 3, kasusId: 'dengue_df' }, // RW SAMA → kluster aktif (ambang dengue_df=2)
+    ]
+    const surveilansSebar = [
+      { hari: 10, rw: 3, kasusId: 'dengue_df' },
+      { hari: 11, rw: 5, kasusId: 'dengue_df' }, // RW BEDA → tak berkluster
+    ]
+    const buatDesa = (surveilans: typeof surveilansKluster) => ({
+      keluarga: {}, kader: {}, rw: [], binaan: [], surveilans, drift: { minggu: 1, jumlah: 0 },
+    })
+
+    for (const mode of ['ujian', 'karier'] as const) {
+      let identikSemuaSeed = true
+      for (let seed = 0; seed < 50; seed++) {
+        const antrianKluster = susunAntrianHarian(
+          buatState({ mode, hari: 20, desa: buatDesa(surveilansKluster) }),
+          pack, new Rng(seed, 'd', 20), [], new Rng(seed, 'flavor', 20),
+        )
+        const antrianSebar = susunAntrianHarian(
+          buatState({ mode, hari: 20, desa: buatDesa(surveilansSebar) }),
+          pack, new Rng(seed, 'd', 20), [], new Rng(seed, 'flavor', 20),
+        )
+        if (antrianKluster.map((p) => p.kasusId).join(',') !== antrianSebar.map((p) => p.kasusId).join(',')) {
+          identikSemuaSeed = false
+          break
+        }
+      }
+      if (mode === 'ujian') {
+        // Fix: status kluster (murni turunan RW ber-seed-flavor) tak lagi boleh
+        // mengubah antrian kurikulum di mode Ujian, lintas seed mana pun.
+        expect(identikSemuaSeed).toBe(true)
+      } else {
+        // Karier tak punya kontrak "paket identik" — kluster memang SENGAJA
+        // tetap menaikkan bobot kasusnya (perilaku lama dipertahankan).
+        expect(identikSemuaSeed).toBe(false)
+      }
+    }
+  })
+
   it('Fix #4 (audit CODEX 2026-07-11): karma-bridge TIDAK menimpa identitas pasien bumil (demografi.jenisKelamin=P) jadi anggota keluarga laki-laki meski usianya cocok rentang', () => {
     const pack = buatPack([
       buatKasus('bumil_test', { demografi: { usiaMin: 20, usiaMax: 35, jenisKelamin: 'P' } }),
@@ -476,8 +531,12 @@ describe('hitungSkor — profil adversarial', () => {
     const apatis = hitungSkor(buatState({ desa, tally: buatTally({ ...tallyDasar, apathy: 10 }) }))
     // iksDesa = rata-rata rw ber-iks > 0 saja → 0.8
     expect(rajin.rincian.iksDesa).toBeCloseTo(0.8)
-    expect(rajin.ukm).toBeCloseTo(31.5)
-    expect(apatis.ukm).toBeCloseTo(11.5)
+    // CODEX audit pasca-GM (2026-07-13, temuan #7): UKM kini juga menimbang
+    // rasioProlanisTerkontrol (bobot 0.2) — roster kosong di sini (bukan fokus
+    // tes ini) → suku itu = 0, jadi 3 suku lama diskalakan 0.4/0.2/0.2 (dulu
+    // 0.5/0.25/0.25): (0.4*0.8+0.2*1+0.2*1)*35 = 25.2 (dulu 31.5).
+    expect(rajin.ukm).toBeCloseTo(25.2)
+    expect(apatis.ukm).toBeCloseTo(5.2)
     expect(apatis.ukm).toBeLessThan(rajin.ukm)
   })
 
@@ -509,7 +568,9 @@ describe('hitungSkor — profil adversarial', () => {
     )
     // M10.5 Fase 3 (2026-07-12): efekKarma rate-normalized+asimetris — denom
     // = max(3, 2+1) = 3; efekKarma = (3*1 - 9*2)/3 = -5 (dulu -2*2+1*1 = -3).
-    expect(karma.ukm).toBeCloseTo(31.5 - 5)
+    // CODEX audit pasca-GM (2026-07-13, temuan #7): base UKM turun 31.5→25.2
+    // sejajar tes apathy di atas (roster Prolanis kosong, bukan fokus tes ini).
+    expect(karma.ukm).toBeCloseTo(25.2 - 5)
   })
 
   it('Manajemen & Resiliensi: stewardship, kapitasi jebol, dan kelelahan dihukum', () => {
@@ -528,6 +589,14 @@ describe('hitungSkor — profil adversarial', () => {
     const sempurna = hitungSkor(
       buatState({
         desa: { keluarga: {}, kader: {}, rw: [buatRw(1, 1)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } },
+        // CODEX audit pasca-GM (2026-07-13, temuan #7): UKM kini juga menimbang
+        // kualitas roster Prolanis (bobot 0.2) — "sempurna" harus genuinely
+        // mencakup SEMUA komponen UKM (bukan cuma 3 dari 4) utk tetap total 100.
+        prolanis: {
+          roster: [
+            { id: 'p1', nama: 'Uji', usia: 55, jenisKelamin: 'L', rw: 1, jenis: 'ht', param: 120, takTerkontrolBerturut: 0 },
+          ],
+        },
         tally: buatTally({
           totalPasien: 10,
           diagnosisBenar: 10,

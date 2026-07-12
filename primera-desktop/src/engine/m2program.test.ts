@@ -11,8 +11,10 @@ import { advance } from './reducer'
 import { buildInitialState } from './init'
 import { kartuPosyandu } from './kegiatan'
 import { Rng } from './core/rng'
+import { hitungSkor } from './scoring'
 import {
   HARI_BUKA_POSYANDU,
+  COOLDOWN_POSYANDU,
   HARI_BUKA_PROLANIS,
   HARI_BUKA_KLB,
 } from './reducer'
@@ -58,6 +60,21 @@ function siangHari(target: number): GameState {
   return s
 }
 
+/** Sama seperti siangHari, tapi dgn mode eksplisit (utk uji lintas-mode). */
+function siangHariMode(target: number, mode: 'karier' | 'ujian'): GameState {
+  let s = buildInitialState('Uji', SEED, PACK, { mode })
+  while (s.hari < target) {
+    s = bereskanIgd(s)
+    s = run(s, { type: 'LANJUTKAN' }) // pagi → siang
+    s = run(s, { type: 'LANJUTKAN' }) // siang → sore
+    s = run(s, { type: 'LANJUTKAN' }) // sore → pagi besok
+  }
+  s = bereskanIgd(s)
+  s = run(s, { type: 'LANJUTKAN' }) // pagi → siang
+  expect(s.blok).toBe('siang')
+  return s
+}
+
 /** Selesaikan sesi kegiatan aktif dengan semua jawaban benar. */
 function selesaikanSemuaBenar(s0: GameState): GameState {
   let s = s0
@@ -80,12 +97,12 @@ describe('M2 — unlock & guard', () => {
   })
 
   it('Posyandu terbuka di hari 15 dan cooldown 30 hari ditegakkan', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
     expect(s.kegiatan?.jenis).toBe('posyandu')
     s = selesaikanSemuaBenar(s)
     expect(s.tally.posyanduSesi).toBe(1)
-    expect(s.posyanduRwTerakhir['1']).toBe(HARI_BUKA_POSYANDU)
+    expect(s.posyanduRwTerakhir['1']).toBe(HARI_BUKA_POSYANDU.karier)
     // Slot lapangan hari itu sudah terpakai.
     expect(s.lapanganTerpakai).toBe(true)
     const r = ev(s, { type: 'MULAI_POSYANDU', rw: 2 })
@@ -93,7 +110,7 @@ describe('M2 — unlock & guard', () => {
   })
 
   it('layar TETAP "kegiatan" setelah sesi selesai, agar KartuHasil sempat dirender (CODEX audit UI/UX 2026-07-10, #5)', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
     expect(s.layar).toBe('kegiatan')
     const r = ev(s, { type: 'JAWAB_KEGIATAN', kartuId: s.kegiatan!.kartu[0]!.id, pilihanId: s.kegiatan!.kartu[0]!.pilihan[0]!.id })
@@ -123,7 +140,7 @@ describe('M2 — unlock & guard', () => {
   })
 
   it('slot lapangan TUNGGAL: setelah Posyandu, kunjungan rumah ikut ditolak (CODEX ronde-baru #1)', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
     s = selesaikanSemuaBenar(s)
     expect(s.lapanganTerpakai).toBe(true)
@@ -142,7 +159,7 @@ describe('M2 — unlock & guard', () => {
   })
 
   it('sesi kegiatan AKTIF (belum selesai) menahan PINDAH_LAYAR — tak boleh ditinggal via HUD (CODEX ronde-11 #1)', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
     expect(s.kegiatan).toBeDefined() // sesi masih berjalan, belum dijawab
     const r = ev(s, { type: 'PINDAH_LAYAR', layar: 'meja' })
@@ -152,7 +169,7 @@ describe('M2 — unlock & guard', () => {
   })
 
   it('sesi kegiatan AKTIF menahan LANJUTKAN — jaring terakhir thd dispatch langsung (CODEX ronde-11 #1)', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
     const r = ev(s, { type: 'LANJUTKAN' })
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
@@ -161,7 +178,7 @@ describe('M2 — unlock & guard', () => {
   })
 
   it('sesi kegiatan AKTIF menahan MULAI_KUNJUNGAN — cegah kegiatan+kunjungan serentak (CODEX ronde-11 #2)', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'MULAI_POSYANDU', rw: 1 })
     expect(s.lapanganTerpakai).toBe(false) // belum di-set — sesi masih berjalan
     s = { ...s, stamina: 6 }
@@ -175,12 +192,26 @@ describe('M2 — unlock & guard', () => {
 
 describe('M2.7 — Posyandu menaikkan IKS RW', () => {
   it('sesi sempurna menambah bonusIks RW', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     const bonusSebelum = s.desa.rw.find((r) => r.nomor === 3)!.bonusIks
     s = run(s, { type: 'MULAI_POSYANDU', rw: 3 })
     s = selesaikanSemuaBenar(s)
     const bonusSesudah = s.desa.rw.find((r) => r.nomor === 3)!.bonusIks
     expect(bonusSesudah).toBeGreaterThan(bonusSebelum)
+  })
+
+  it('CODEX #8a (pasca-GM 2026-07-13): cooldown Posyandu diskalakan di mode Ujian (10 hari, bukan 30) — sesi ke-2 RW sama tak diblokir dlm stase 30-hari', () => {
+    let s = siangHariMode(HARI_BUKA_POSYANDU.ujian, 'ujian')
+    s = run(s, { type: 'MULAI_POSYANDU', rw: 3 })
+    expect(s.kegiatan?.jenis).toBe('posyandu')
+    s = selesaikanSemuaBenar(s)
+    expect(s.posyanduRwTerakhir['3']).toBe(HARI_BUKA_POSYANDU.ujian)
+    // Maju tepat COOLDOWN_POSYANDU.ujian (10) hari — di bawah cooldown Karier
+    // lama (30, yg masih akan menolak) tapi PAS di ambang cooldown Ujian baru.
+    s = siangDariState(s, s.hari + COOLDOWN_POSYANDU.ujian)
+    const r = ev(s, { type: 'MULAI_POSYANDU', rw: 3 })
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+    expect(r.state.kegiatan?.jenis).toBe('posyandu')
   })
 })
 
@@ -223,7 +254,7 @@ describe('D5 — Posyandu ILP "5 Langkah" (migrasi 2026-07-11): pool 12-kartu, 1
   })
 
   it('MULAI_POSYANDU: RW berbeda bisa menarik kartu Langkah-2 berbeda (kurikulum bervariasi per RW, bukan rng beku)', () => {
-    const s = siangHari(HARI_BUKA_POSYANDU)
+    const s = siangHari(HARI_BUKA_POSYANDU.karier)
     const terlihat = new Set<string>()
     for (let rw = 1; rw <= 8; rw++) {
       const r = ev(s, { type: 'MULAI_POSYANDU', rw })
@@ -269,6 +300,30 @@ describe('M2.8 — Prolanis roster & jembatan UKP', () => {
       (j) => j.jenis === 'pasien_kembali' && j.nama === target.nama && j.id.includes('prolanis'),
     )
     expect(adaKomplikasi).toBe(true)
+  })
+
+  it('CODEX #7 (pasca-GM 2026-07-13): cooldown sesi Prolanis diskalakan di mode Ujian (10 hari, bukan 30) — sesi ke-2 tak jatuh di luar stase', () => {
+    let s = siangHariMode(HARI_BUKA_PROLANIS.ujian, 'ujian')
+    s = run(s, { type: 'MULAI_PROLANIS' })
+    expect(s.kegiatan?.jenis).toBe('prolanis')
+    s = selesaikanSemuaBenar(s)
+    // Dulu literal `+30` (hari 40, tak pernah tiba dlm stase 30-hari Ujian).
+    expect(s.prolanis.sesiBerikutHari).toBe(HARI_BUKA_PROLANIS.ujian + HARI_BUKA_PROLANIS.ujian)
+  })
+
+  it('CODEX #7 (pasca-GM 2026-07-13): roster SEMUA terkontrol menghasilkan skor UKM lebih tinggi drpd roster SEMUA tak terkontrol (state lain identik)', () => {
+    const s = buildInitialState('Uji', SEED, PACK, { mode: 'ujian' })
+    const rosterTakTerkontrol: GameState['prolanis']['roster'] = [
+      { id: 'p1', nama: 'A', usia: 55, jenisKelamin: 'L', rw: 1, jenis: 'ht', param: 160, takTerkontrolBerturut: 0 },
+      { id: 'p2', nama: 'B', usia: 60, jenisKelamin: 'P', rw: 2, jenis: 'dm', param: 250, takTerkontrolBerturut: 0 },
+    ]
+    const rosterTerkontrol = rosterTakTerkontrol.map((p) => ({
+      ...p,
+      param: p.jenis === 'ht' ? 120 : 150,
+    }))
+    const skorTak = hitungSkor({ ...s, prolanis: { ...s.prolanis, roster: rosterTakTerkontrol } })
+    const skorKontrol = hitungSkor({ ...s, prolanis: { ...s.prolanis, roster: rosterTerkontrol } })
+    expect(skorKontrol.ukm).toBeGreaterThan(skorTak.ukm)
   })
 })
 
@@ -318,7 +373,7 @@ describe('M2.11 — Lokakarya Mini flag', () => {
 
 describe('M2.10 — Program Wilayah: Triase Anggaran BULANAN (DeepThink Q4)', () => {
   it('fokus terkunci sepanjang bulan yang sama — ganti ke fokus lain ditolak', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU) // hari > HARI_BUKA_PETA, blok siang
+    let s = siangHari(HARI_BUKA_POSYANDU.karier) // hari > HARI_BUKA_PETA, blok siang
     s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
     expect(s.program.fokus).toBe('psn')
     const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'phbs' })
@@ -327,14 +382,14 @@ describe('M2.10 — Program Wilayah: Triase Anggaran BULANAN (DeepThink Q4)', ()
   })
 
   it('menetapkan fokus yang SAMA lagi tidak dianggap pelanggaran kunci', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
     const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
   })
 
   it('bulan berikutnya (+30 hari) → fokus baru bisa ditetapkan', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
     s = siangDariState(s, s.hari + 30)
     const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'skrining' })
@@ -345,7 +400,7 @@ describe('M2.10 — Program Wilayah: Triase Anggaran BULANAN (DeepThink Q4)', ()
   it('fokus SAMA tapi rwFokus BEDA di periode terkunci → ditolak (DeepThink ronde-2: Triase Anggaran Harian)', () => {
     // Sebelum fix: guard cuma cek `fokus`, jadi micromanage rwFokus tiap hari
     // (target bonusIks) lolos tanpa dianggap pelanggaran kunci bulanan.
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
     expect(s.program.rwFokus).toBe(1)
     const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 2 })
@@ -354,9 +409,19 @@ describe('M2.10 — Program Wilayah: Triase Anggaran BULANAN (DeepThink Q4)', ()
   })
 
   it('menetapkan fokus DAN rwFokus yang SAMA lagi tidak dianggap pelanggaran kunci', () => {
-    let s = siangHari(HARI_BUKA_POSYANDU)
+    let s = siangHari(HARI_BUKA_POSYANDU.karier)
     s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
     const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
+    expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+  })
+
+  it('CODEX #8b (pasca-GM 2026-07-13): kunci Triase Anggaran genuinely lepas di hari 15 mode Ujian (formula lama /30 baru lepas hari 31 — tak pernah dlm stase 30-hari)', () => {
+    let s = siangHariMode(HARI_BUKA_POSYANDU.ujian, 'ujian') // hari 5
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    expect(s.program.fokus).toBe('psn')
+    s = siangDariState(s, 15)
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'skrining' })
+    expect(r.state.program.fokus).toBe('skrining')
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
   })
 })

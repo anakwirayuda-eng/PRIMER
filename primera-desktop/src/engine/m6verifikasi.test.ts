@@ -148,6 +148,22 @@ describe('M6 — verifikasi dossier', () => {
     expect(hasil.alasan.join(' ')).toMatch(/[Tt]ally/)
   })
 
+  it('CODEX #12 (pasca-GM 2026-07-13): tally beda dari replay TAPI ditandai tallyTermigrasi (save lama) → tidak dapat diverifikasi, bukan TIDAK SAH palsu', async () => {
+    const s = mainkanSatuPasien()
+    // Mismatch persis skenario tes di atas — bedanya di sini save.ts SUDAH
+    // menandai kunci itu sbg hasil migrasi-lite (backfill 0 dari save versi
+    // lama), jadi penyimpangan replay adalah bukti migrasi, bukan kecurangan.
+    const migrasi: GameState = {
+      ...s,
+      tally: { ...s.tally, diagnosisBenar: s.tally.diagnosisBenar + 5, totalPasien: s.tally.totalPasien + 5 },
+      tallyTermigrasi: ['diagnosisBenar', 'totalPasien'],
+    }
+    const dossier = await susunDossier(migrasi, PACK, { versiApp: V_APP })
+    const hasil = await verifikasiDossier(JSON.stringify(dossier), PACK, V_APP)
+    expect(hasil.status).toBe('tidak_dapat_diverifikasi')
+    expect(hasil.alasan.join(' ')).toMatch(/migrasi/i)
+  })
+
   it('jejak dipangkas (disposisi dihapus) + ttd dihitung ulang → TIDAK SAH', async () => {
     const s = mainkanSatuPasien()
     const dipangkas: GameState = { ...s, jejak: s.jejak.slice(0, -1) } // buang DISPOSISI

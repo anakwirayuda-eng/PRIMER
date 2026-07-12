@@ -232,7 +232,7 @@ export function PetaDesa() {
 
             {/* Kegiatan lapangan M2: Posyandu per RW + Respons KLB per kluster */}
             <div className="peta-kegiatan">
-              {state.hari >= HARI_BUKA_POSYANDU && (
+              {state.hari >= HARI_BUKA_POSYANDU[state.mode] && (
                 <button
                   className="tombol tombol--kunyit"
                   disabled={alasanKegiatanPosyandu(rwAktif.nomor) !== null}

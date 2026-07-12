@@ -100,20 +100,23 @@ function hashFile(relPath: string): string {
 
 /** Sha-256 hex per file (isi dinormalisasi LF), dikunci saat tag Golden Master. */
 const HASH_DIBEKUKAN: Record<string, string> = {
-  'reducer.ts': 'afd93a12c483a483cd6e9e811d9fc37bf6b02926cd3dca85018b516e2193171c',
+  // REVISI 30 (2026-07-13 — M10.6 leftover: #10a/#6/#8a/#8b/#7/#12, lihat
+  // verifikasi.ts) — 7 file diperbarui: reducer/director/init/scoring/
+  // verifikasi/state/save.ts.
+  'reducer.ts': 'd64da095c3240873fdbe2d8ee23d7bb3cd8dc1a1cef0b7d3e049889fa79db701',
   'clinic.ts': 'd29b8b2086f8b870360cf22e97757b19197376deecdcbaeceb1fa019e5f4f117',
-  'scoring.ts': 'b7f73f8591be2f1f86fcc23d152ba033d7c22698fbcf11c3cf0fabbbbcd7124d',
-  'director.ts': '400f168a3ecb381113fe252ef1d81c1c62d81edb3aca0e3141d124fb213d1812',
+  'scoring.ts': 'dd15cbf82fe3fe7127c9e4dbd4e775dade5d1588866c09c9d6a68b3a85110468',
+  'director.ts': '2341f215e815b298ea4a2de40cb87b73df5e22ab8e3eb96e7007f90d7ede5143',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': '519b7cfc4098fa2e4d6c0567875ba797d3074d14cbbe8b9a48afaf12704c09b4',
   'kader.ts': 'fff1c7c055d1526f1e9632e64a3f72939840412c0f148e201444d6a7353aa646',
-  'init.ts': '02d8caedf8761cdd6fedeb6050ff57126f05a44cc1dd8638b2603d624b328c3c',
+  'init.ts': 'd33f8f1eb3fca2bf0a5ae8144fc7ef522976e418395d57a5c82885f5af2e72c0',
   'kegiatan.ts': '61004bed15e5f8095214205aff69da6be55556d329552bc6a691cc0e4bf62d52',
   'kunjungan.ts': '4ec29cba2af05c8befec99921fe0cf8fc4d93950546c08121ded7f82efa66517',
   'paketUjian.ts': 'b7127ca427c24fea81a840f51d1933aa5eb4025384fdfac9857fa3498aa59e5d',
-  'verifikasi.ts': '7d29e6100b9aa926184da0f4fefedaf85e3fb501743f4cfbf516b20b24c181c1',
-  'state.ts': '010eb685faf8ade17057351ce28d4b850c613819be3cc34175acff30dbce8bec',
-  'save.ts': '8d1e0ff12dc9a81acfd22b9dd595d79b14431ad49b1bf4e63f7ddd1a40374409',
+  'verifikasi.ts': '12cf6c0ee836eeab5f633fd514f1871a6721c29ef46892c73ac2317c77fd9ce7',
+  'state.ts': '064d6ddd8750f629a4188ef6ef0baa1323f872ab6355b4b674aaf032cbefd3a7',
+  'save.ts': '9fa0c55934c190044001f993ca0a4798a56b87df5b8d78ab7e6d3113e05089cc',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '34bdfd80c9ebd2ae5a261118e9154cdfeb670b06b029e96013e2b26ef9a86a80',
 }

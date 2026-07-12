@@ -80,7 +80,13 @@ describe('M3c — konten 16 keluarga', () => {
       const jKarier = karmaKarier.find((j) => j.keluargaId === jUjian.keluargaId)!
       // CODEX audit (2026-07-12, temuan #6): lantai kini HARI_BUKA_KUNJUNGAN+1
       // (bukan cuma 1) — jendela intervensi minimal 1 hari selalu terjamin ada.
-      expect(jUjian.hari).toBe(Math.max(HARI_BUKA_KUNJUNGAN + 1, Math.round(jKarier.hari / 3)))
+      // CODEX audit pasca-GM (2026-07-13, temuan #6, lihat init.ts): pass
+      // spacing-minimum bisa mendorong `hari` LEBIH LAMBAT dari nilai scaling
+      // mentah (tak pernah lebih cepat) demi memecah tabrakan antar-keluarga
+      // — jadi ini kini batas BAWAH (>=), bukan lagi kesamaan persis (===).
+      expect(jUjian.hari).toBeGreaterThanOrEqual(
+        Math.max(HARI_BUKA_KUNJUNGAN + 1, Math.round(jKarier.hari / 3)),
+      )
       expect(jUjian.hari).toBeGreaterThan(HARI_BUKA_KUNJUNGAN)
       const kel = ujian.desa.keluarga[jUjian.keluargaId!]!
       expect(kel.karmaAktif!.jatuhTempoHari).toBe(jUjian.hari)
@@ -89,6 +95,21 @@ describe('M3c — konten 16 keluarga', () => {
     // sebelum fix, kebalikannya: mayoritas jatuh SETELAH hari 30.
     const dalamStase = karmaUjian.filter((j) => j.hari <= 30).length
     expect(dalamStase).toBeGreaterThanOrEqual(Math.ceil(karmaUjian.length * 0.8))
+  })
+
+  // CODEX audit pasca-GM (2026-07-13, temuan #6): lantai per-keluarga SENDIRI
+  // tak mencegah BEBERAPA keluarga jatuh tempo di hari yang SAMA, menabrak
+  // scarce "1 slot kunjungan/kegiatan per hari" (`lapanganTerpakai`) —
+  // keluarga_wulan/yani/gunawan semua jatuh hari 4-5 di mode Ujian, memaksa
+  // MINIMAL satu gagal walau pemain bermain sempurna (pigeonhole: 3 keluarga
+  // berebut 2 slot {hari3,hari4}). Fix: pass spacing-minimum monotonik.
+  it('CODEX #6 (pasca-GM 2026-07-13): tak ada dua karma_igd jatuh tempo di HARI YANG SAMA (mode Ujian maupun Karier)', () => {
+    for (const mode of ['ujian', 'karier'] as const) {
+      const s = buildInitialState('Uji', SEED, PACK, { mode })
+      const hariKarma = s.jadwal.filter((j) => j.jenis === 'karma_igd').map((j) => j.hari).sort((a, b) => a - b)
+      const hariUnik = new Set(hariKarma)
+      expect(hariUnik.size).toBe(hariKarma.length)
+    }
   })
 
   it('bumil risti (keluarga_asih) adalah arc 3-babak dengan karma preeklampsia', () => {

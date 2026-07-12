@@ -38,6 +38,8 @@ export interface DossierMahasiswa {
     seedKurikulum: number
     hari: number
     tamat?: GameState['tamat']
+    /** CODEX audit pasca-GM (2026-07-13, temuan #12) — lihat state.ts. */
+    tallyTermigrasi?: string[]
   }
   klaim: { skor: Skor4Dimensi; tally: SkorTally; badge: string[] }
   jejak: JejakAksi[]
@@ -423,7 +425,49 @@ function fnv1a(teks: string): string {
 // obatSalahUmum (bahaya tak butuh entri sidikJariPack terpisah — sudah
 // tercakup hash `tatalaksana` kasus yg memuatnya). Replay dossier lama
 // (REVISI ≤28) BERBEDA dgn kode ini di semua 4 titik di atas — bump wajib.
-const REVISI_ENGINE = 29
+//
+// REVISI 30 (2026-07-13 — M10.6 leftover: 5 temuan CODEX yg dideferkan dari
+// fix pass rev29, diverifikasi 11-agen sesi yg sama). Semua score/replay-
+// affecting:
+//   #10a RW-cluster fairness leak (director.ts): `bobotKasus` mengalikan
+//        bobot kasus ×2.5 bila RW-nya "berkluster" (surveilans) — kluster
+//        digelindingkan dari seed FLAVOR (per-mahasiswa), padahal kurikulum
+//        Ujian dijanjikan identik lintas paket (§3b M45_MODE_UJIAN.md). Kini
+//        `state.mode !== 'ujian' && berkluster.has(k.id)` — bonus kluster
+//        cuma aktif Karier; Ujian mengabaikannya sepenuhnya.
+//   #6   Karma pigeonhole (init.ts): tiap keluarga karma individual sudah
+//        dijamin ≥1 hari jendela (fix rev-sebelumnya), tapi TANPA jaminan
+//        antar-keluarga tak bertabrakan di hari yang sama (slot lapangan
+//        cuma 1/hari) — pigeonhole matematis memastikan ≥1 keluarga
+//        dikorbankan walau main sempurna. Kini pass minimum-spacing (sort +
+//        `Math.max(hari, minBerikut)`) sesudah floor per-keluarga.
+//   #8a/b Posyandu/Prolanis/Lokmin cadence Ujian (reducer.ts): `HARI_BUKA_
+//        POSYANDU`/`COOLDOWN_POSYANDU` & `sesiBerikutHari` Prolanis dulu
+//        angka DATAR (bukan Record<ModeStase,...> spt HARI_BUKA_PROLANIS
+//        yg sudah diskalakan) — Ujian cuma dapat ~1 sesi bonus IKS dlm
+//        stase 30-hari (vs ~3 di Karier), dan `TETAPKAN_PROGRAM`'s
+//        `periodeIni=hari/30` literal tak pernah lepas dlm satu stase Ujian
+//        walau UI menjanjikan "ganti bulan depan". Semua kini diskalakan
+//        1/3 sejajar HARI_BUKA_PROLANIS/SIKLUS_LAPORAN_BULANAN.
+//   #7   Prolanis skor-invisible (reducer.ts/scoring.ts): `prolanisSesi`
+//        tak pernah dibaca skor manapun — strategi optimal literal "jangan
+//        pernah buka Prolanis". Kini UKM punya suku `rasioProlanisTerkontrol`
+//        (bobot 0.2; iksDesa/rasioKunjungan/kualitasMi turun ke 0.4/0.2/0.2)
+//        + cooldown recurring diskalakan `HARI_BUKA_PROLANIS[mode]`.
+//   #12  Save-migrasi false-tamper (state.ts/save.ts/verifikasi.ts): tally
+//        yg dibackfill 0 oleh migrasi-lite save.ts (field belum ada di versi
+//        engine lama) bisa menyimpang dari hasil REPLAY di bawah engine
+//        SAAT INI, memvonis "tidak_sah" PALSU pada save jujur yg diteruskan
+//        pasca-update. Field baru `tallyTermigrasi?: string[]` (GameState)
+//        dicatat tiap backfill, disertakan (HMAC-covered) di dossier, dan
+//        `verifikasiDossier` jatuh ke "tidak_dapat_diverifikasi" bila
+//        terisi — SEBELUM banding tally §5.
+// Replay dossier lama (REVISI ≤29) BERBEDA dgn kode ini di titik #10a/#6/
+// #8a-b/#7 (kurikulum/jadwal/skor bergeser); #12 murni menambah field
+// opsional baru (dossier lama tanpa field ini tak terpengaruh) — bump tetap
+// wajib krn REVISI_ENGINE ter-hash ke sidikJariPack, dan #7 mengubah formula
+// skor UKM (klaim lama dgn field ini absen mereplay ke UKM berbeda).
+const REVISI_ENGINE = 30
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -647,6 +691,7 @@ export async function susunDossier(
       seedKurikulum: state.seedKurikulum,
       hari: state.hari,
       ...(state.tamat ? { tamat: state.tamat } : {}),
+      ...(state.tallyTermigrasi?.length ? { tallyTermigrasi: state.tallyTermigrasi } : {}),
     },
     klaim: { skor: hitungSkor(state), tally: state.tally, badge: hitungBadge(state) },
     jejak: state.jejak,
@@ -791,6 +836,23 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
     return {
       status: 'tidak_dapat_diverifikasi',
       alasan: ['Jejak aksi kosong (kemungkinan stase dimulai pada versi game sebelum jurnal penuh M6).'],
+      ringkasan,
+    }
+  }
+
+  /* 4b — TALLY TERMIGRASI (CODEX audit pasca-GM 2026-07-13, temuan #12): save
+     lama yang tally-nya di-backfill nol oleh save.ts (field belum ada di versi
+     engine sebelumnya) niscaya menyimpang dari hasil REPLAY di bawah bila
+     engine saat ini punya mekanik baru yang mengisi field itu — penyimpangan
+     itu bukti migrasi, bukan bukti curang. Jatuh ke "tidak dapat diverifikasi"
+     DI SINI (sebelum banding tally §5), persis prinsip file ini sendiri (lihat
+     komentar §3): lebih baik gagal-adil drpd memvonis TIDAK SAH palsu. */
+  if (d.stase.tallyTermigrasi?.length) {
+    return {
+      status: 'tidak_dapat_diverifikasi',
+      alasan: [
+        `Save ini berisi field tally yang dimigrasikan dari versi engine lebih lama (${d.stase.tallyTermigrasi.join(', ')}) — riwayat penuh tak bisa dibandingkan adil dengan hasil replay engine saat ini.`,
+      ],
       ringkasan,
     }
   }

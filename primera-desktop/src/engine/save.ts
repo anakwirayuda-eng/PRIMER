@@ -173,10 +173,31 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     if (typeof nilai !== 'number' || !Number.isFinite(nilai)) return null
   }
   const tally = st['tally'] as Record<string, unknown>
+  // CODEX audit pasca-GM (2026-07-13, temuan #12): setiap backfill migrasi-lite
+  // di bawah membuat `state.tally` (klaim live) menyimpang dari apa yang REPLAY
+  // dari jejak lama akan hasilkan di bawah engine SAAT INI (mis. field yang
+  // dulu 0 krn belum ada mekaniknya, replay skrg bisa hasilkan nonzero) — bila
+  // dossier diekspor sesudahnya, verifier membandingkan klaim (0, dari sini)
+  // vs hasil-replay (nonzero) lalu memvonis "tidak_sah" PALSU pada save jujur.
+  // Daftar kunci yg dibackfill di sesi load INI dicatat & disertakan (HMAC-
+  // covered) di dossier supaya verifier bisa jatuh ke "tidak dapat
+  // diverifikasi" alih-alih menuduh curang — lihat verifikasi.ts.
+  const tallyTermigrasi: string[] = Array.isArray(st['tallyTermigrasi'])
+    ? (st['tallyTermigrasi'] as unknown[]).filter((k): k is string => typeof k === 'string')
+    : []
+  const tandaiMigrasi = (kunci: string): void => {
+    if (!tallyTermigrasi.includes(kunci)) tallyTermigrasi.push(kunci)
+  }
   // Migrasi-lite: field tally baru diisi 0 untuk save dari versi lebih lama.
-  if (tally['autoBermasalah'] === undefined) tally['autoBermasalah'] = 0
+  if (tally['autoBermasalah'] === undefined) {
+    tally['autoBermasalah'] = 0
+    tandaiMigrasi('autoBermasalah')
+  }
   for (const kunci of ['posyanduSesi', 'prolanisSesi', 'klbTuntas', 'rujukanTepat', 'rujukanDitolak', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'rmLengkap', 'teguranDinkes'] as const) {
-    if (tally[kunci] === undefined) tally[kunci] = 0
+    if (tally[kunci] === undefined) {
+      tally[kunci] = 0
+      tandaiMigrasi(kunci)
+    }
   }
   // CODEX audit (2026-07-12, temuan #1/#13B): field tally baru — save dari
   // sebelum fix ini (SEMUA save yang ada) belum punya kedua kunci ini sama
@@ -184,11 +205,18 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // SEBELUM pengecekan exhaustive KUNCI_TALLY di bawah (yang kalau tidak
   // akan menolak SELURUH save lama krn `undefined` bukan `number`).
   for (const kunci of ['obatBerbahaya', 'firewallTerpicu'] as const) {
-    if (tally[kunci] === undefined) tally[kunci] = 0
+    if (tally[kunci] === undefined) {
+      tally[kunci] = 0
+      tandaiMigrasi(kunci)
+    }
   }
   // CODEX audit pasca-GM (2026-07-13, temuan #9 Part A): field tally baru
   // (igdKodeBiruTerjadi) — sama persis pola migrasi-lite di atas.
-  if (tally['igdKodeBiruTerjadi'] === undefined) tally['igdKodeBiruTerjadi'] = 0
+  if (tally['igdKodeBiruTerjadi'] === undefined) {
+    tally['igdKodeBiruTerjadi'] = 0
+    tandaiMigrasi('igdKodeBiruTerjadi')
+  }
+  if (tallyTermigrasi.length > 0) st['tallyTermigrasi'] = tallyTermigrasi
   // Migrasi-lite M4: gudang & buku kas untuk save pra-ekonomi. Stok kosong =
   // tidak dilacak (gerbang stok lolos); backfill penuh dilakukan bila pack ada.
   if (!objek(st['gudang'])) st['gudang'] = { stok: {}, pesanan: [] }
@@ -561,7 +589,7 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     'mode', 'seedKurikulum', 'paketUjian', 'klinik', 'desa', 'kunjungan',
     'hasilKunjunganHariIni', 'kegiatan', 'hasilKegiatanTerakhir', 'igd', 'igdHariIni', 'lapanganTerpakai',
     'prolanis', 'posyanduRwTerakhir', 'program', 'tutorialAktif', 'inbox', 'jadwal',
-    'tally', 'dex', 'log', 'jejak', 'kapitasi', 'gudang', 'keuanganBulan',
+    'tally', 'tallyTermigrasi', 'dex', 'log', 'jejak', 'kapitasi', 'gudang', 'keuanganBulan',
     'akreditasi', 'pemulihanTerakhirHari', 'refleksi', 'flags', 'layar', 'tamat',
   ])
   for (const kunci of Object.keys(st)) {

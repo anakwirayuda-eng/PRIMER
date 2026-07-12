@@ -334,6 +334,14 @@ describe('DeepThink ronde-2 — Hukum Bilangan Kecil: rasioKunjungan/kualitasMi 
     const s = baseState(p, {
       mode: 'karier',
       desa,
+      // CODEX audit pasca-GM (2026-07-13, temuan #7): UKM kini juga menimbang
+      // kualitas roster Prolanis (bobot 0.2) — "rasio penuh" di semua suku
+      // butuh roster terkontrol jua, bukan cuma iksDesa/kunjungan/MI.
+      prolanis: {
+        roster: [
+          { id: 'p1', nama: 'Uji', usia: 55, jenisKelamin: 'L', rw: 1, jenis: 'ht', param: 120, takTerkontrolBerturut: 0 },
+        ],
+      },
       tally: tallyKosong({ kunjunganTotal: 30, kunjunganBerhasil: 30, miTotal: 30, miTepat: 30 }),
     })
     const skor = hitungSkor(s)

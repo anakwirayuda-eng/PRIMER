@@ -161,7 +161,22 @@ function bobotKasus(
 
   // Surveilans balik (M1.2): kluster aktif menyalakan penularan — kasus yang
   // sedang berkluster lebih sering datang ke poli sampai wilayahnya dibereskan.
-  if (berkluster.has(k.id)) bobot *= 2.5
+  //
+  // CODEX audit pasca-GM (2026-07-13, temuan #10a): kluster (`clusterAktif`,
+  // surveilans.ts) dihitung dari `state.desa.surveilans`, yang RW-nya diisi
+  // dari stream FLAVOR (`rngFlavor`, pribadi per-mahasiswa — lihat komentar
+  // `susunAntrianHarian` di atas) — bukan stream kurikulum. Di mode Ujian, ini
+  // melanggar janji M45_MODE_UJIAN.md §3b ("bobot kasus identik per paket"):
+  // dua mahasiswa di paket SAMA dengan keputusan klinis IDENTIK bisa dapat
+  // antrian kasus BERBEDA murni krn RW pasien-pasien sebelumnya (flavor,
+  // pribadi) kebetulan mengelompok beda, mengaktifkan kluster berbeda.
+  // Direproduksi langsung: draw kurikulum identik, slot pertama berubah kasus
+  // semata krn status kluster berbeda. Karier TIDAK punya kontrak "paket
+  // identik" ini (tiap mahasiswa memang menjalani dunia sendiri), jadi bobot
+  // kluster tetap aktif di sana — hanya digerbang OFF di Ujian. `clusterAktif`
+  // sendiri TETAP dihitung & ditampilkan ke pemain (MejaKerja.tsx/PetaDesa.tsx)
+  // di kedua mode — ini murni soal bobot pemilihan kasus, bukan visibilitas.
+  if (state.mode !== 'ujian' && berkluster.has(k.id)) bobot *= 2.5
 
   // Epidemiologi FKTP nyata (guardrail KONTEN_BALANCE #1): top-diagnosis dominan.
   const prevalensi = k.prevalensi ?? 'sedang'

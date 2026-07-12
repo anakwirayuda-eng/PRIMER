@@ -672,6 +672,15 @@ export interface GameState {
   inbox: Surat[]
   jadwal: JadwalItem[]
   tally: SkorTally
+  /**
+   * CODEX audit pasca-GM (2026-07-13, temuan #12): kunci tally yang di-backfill
+   * `save.ts` migrasi-lite (save lama tanpa field ini di versi engine
+   * sebelumnya). Dossier yang membawa daftar ini dianggap TAK BISA
+   * diverifikasi ADIL (bukan tidak-sah) — replay-nya niscaya beda dari
+   * `klaim.tally` bila field yg dibackfill nol ternyata nonzero di bawah kode
+   * saat ini, dan itu bukan bukti kecurangan. Lihat verifikasi.ts.
+   */
+  tallyTermigrasi?: string[]
   dex: Record<string, DexEntry>
   log: LogEntry[]
   /** M6 — jurnal aksi penuh untuk replay-verifikasi (lihat JejakAksi). */

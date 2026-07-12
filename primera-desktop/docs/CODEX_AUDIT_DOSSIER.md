@@ -4128,3 +4128,71 @@ M13. Triple-eliminasi + OSA + common-cold-KLB-nuance = content-pass.
 **Verifikasi**: 709/709 test (naik dari 707 — 2 regresi baru: Dex-dijumpai, PRB-akut-tak-PRB) +
 typecheck bersih + `npm audit` 0. **REVISI_ENGINE 23→24** (satu bump: #1/#4/#9/#17/#18/#22/#25
 score/replay-affecting; rasional lengkap di komentar `verifikasi.ts`). Belum di-commit di titik ini.
+
+## 68. M10.6 leftover — 5 temuan CODEX pasca-GM yg dideferkan dari fix pass rev29 (2026-07-13)
+
+Lanjutan dari fix pass M10.6 (rev25→29, sudah ter-commit `7780293`, tag `golden-master-m10.5`
+di-repoint) — 5 dari ~10 temuan CODEX ronde pasca-GM sengaja ditunda ("nanggung, dihajar sampai
+habis" — instruksi user) krn butuh riset/verifikasi lebih dalam drpd batch utama. Semua diverifikasi
+via reproduksi kode langsung (11-agen sesi sebelumnya) sebelum diterima, bukan percaya nomor CODEX.
+
+**Fix dieksekusi batch ini, semua score/replay-affecting:**
+- **#10a** RW-cluster fairness leak (`director.ts`): `bobotKasus` mengalikan bobot ×2.5 bila RW
+  kasus itu "berkluster" (surveilans) — kluster digelindingkan dari seed FLAVOR (per-mahasiswa),
+  padahal kurikulum Ujian dijanjikan identik lintas paket (§3b `M45_MODE_UJIAN.md`). Dibuktikan
+  via reproduksi langsung: draw kurikulum identik, kasus pertama berubah murni krn status kluster
+  RW yg berasal dari riwayat pasien PRIBADI mahasiswa. Fix: bonus kluster kini `state.mode !==
+  'ujian'` — nonaktif total di Ujian, tetap aktif di Karier (tak ada janji "identik antar-mahasiswa"
+  di sana). Test baru `director.test.ts` (sweep 50 seed × 2 mode).
+- **#6** Karma pigeonhole (`init.ts`): floor per-keluarga (`HARI_BUKA_KUNJUNGAN+1`, fix rev-sebelumnya)
+  menjamin tiap keluarga individual ≥1 hari jendela, tapi TANPA menjamin antar-keluarga tak
+  bertabrakan hari yang sama (slot lapangan cuma 1/hari) — pigeonhole matematis: ≥3 keluarga
+  berjendela sama pasti mengorbankan ≥1 walau main sempurna. Dibuktikan: replay optimal 9 keluarga
+  karma tetap hasilkan `karmaTerjadi=1`. Fix: pass minimum-spacing (sort by hari, `Math.max(hari,
+  minBerikut)`) sesudah floor per-keluarga. Test baru `m3keluarga.test.ts` (tak ada 2 karma di hari
+  sama, mode Ujian maupun Karier).
+- **#8a/#8b** Posyandu/Prolanis/Lokmin cadence Ujian (`reducer.ts`): `HARI_BUKA_POSYANDU`/
+  `COOLDOWN_POSYANDU` masih angka DATAR (bukan `Record<ModeStase,...>` spt `HARI_BUKA_PROLANIS`
+  yg sudah diskalakan rev-sebelumnya) — Ujian cuma dapat ~1 sesi bonus IKS dlm stase 30-hari (vs
+  ~3 Karier), padahal bonus itu score-relevant (`iksDesa`). Sekaligus `TETAPKAN_PROGRAM`'s
+  `periodeIni=Math.ceil(hari/30)` literal tak pernah lepas dlm satu stase Ujian walau UI (`MejaKerja.
+  tsx`) menjanjikan "ganti bulan depan"/"sampai Lokakarya Mini berikutnya". Fix: keduanya diskalakan
+  1/3 sejajar `HARI_BUKA_PROLANIS`/`SIKLUS_LAPORAN_BULANAN`. Test baru `m2program.test.ts` (sesi
+  ke-2 RW sama tak diblokir dlm stase; kunci Triase Anggaran genuinely lepas hari 15).
+- **#7** Prolanis skor-invisible (`reducer.ts`/`scoring.ts`): `prolanisSesi` (tally) tak pernah
+  dibaca skor manapun — dibuktikan: skor UKM byte-identik sebelum/sesudah sesi Prolanis dimainkan.
+  Strategi optimal literal "jangan pernah buka Prolanis" (nol biaya/risiko/skor-hilang) — anti-pola
+  pedagogis utk program UKM andalan JKN. Sekaligus cooldown recurring `sesiBerikutHari:hari+30`
+  literal (tak ikut diskalakan spt ambang buka-nya). Fix: UKM kini punya suku
+  `rasioProlanisTerkontrol` (bobot 0.2; iksDesa/rasioKunjungan/kualitasMi turun 0.5/0.25/0.25 →
+  0.4/0.2/0.2/0.2) + cooldown recurring `HARI_BUKA_PROLANIS[mode]`. **3 test lama** (`director.test.
+  ts`/`deepthinkKlinik.test.ts`) direkalibrasi ke bobot baru (nilai UKM turun proporsional; test
+  "sempurna"/"rasio penuh" ditambah roster Prolanis terkontrol supaya semantik "perfect play=35"
+  tetap benar). Test baru `m2program.test.ts` (cooldown scaling + roster terkontrol>UKM lebih tinggi).
+- **#12** Save-migrasi false-tamper (`state.ts`/`save.ts`/`verifikasi.ts`): tally yg dibackfill 0
+  oleh migrasi-lite save.ts (field belum ada di versi engine lama) bisa menyimpang dari hasil
+  REPLAY engine SAAT INI — dibuktikan reproduksi: save lama diteruskan lalu diekspor sbg dossier
+  divonis "tidak_sah" PALSU (skor 65→62), padahal prinsip file `verifikasi.ts` sendiri menuntut
+  jatuh ke "tidak dapat diverifikasi" dulu. Fix: field baru `tallyTermigrasi?: string[]` dicatat
+  tiap backfill save.ts, disertakan (HMAC-covered) di dossier, dan `verifikasiDossier` jatuh ke
+  "tidak_dapat_diverifikasi" bila terisi — SEBELUM banding tally. Test baru `save.test.ts` (backfill
+  tercatat) + `m6verifikasi.test.ts` (tally beda+tertandai migrasi → tidak_dapat_diverifikasi, bukan
+  tidak_sah).
+
+**Ditambahkan sekaligus (bukan fix, pagar regresi baru):** `paketUjian.test.ts` (BARU) — dossier
+verifikasi sebelumnya menemukan "8 paket kurikulum setara" (klaim §3b `M45_MODE_UJIAN.md`) tak
+pernah diuji empiris lintas SELURUH 8 paket (hanya pasangan-seed-di-paket-sama). Tes baru memainkan
+1 stase Ujian penuh per paket (bot resilien), membandingkan total encounter/rasio rujukan/cakupan
+kategori dlm toleransi longgar (bukan identik persis) — kalibrasi diverifikasi thd spread nyata
+(~6% encounter, ~5.8pp rujukan, cakupan kategori identik 12/12 di semua 8 paket saat ini).
+
+**Verifikasi**: 756/756 test (naik dari 749 — 5 test baru utk 5 fix + 2 test baru package-equivalence,
+minus 3 test lama direkalibrasi bobot UKM) + typecheck bersih. **REVISI_ENGINE 29→30** (5 fix di
+atas semua score/replay-affecting; rasional lengkap di komentar `verifikasi.ts`). `HASH_DIBEKUKAN`
+(`freeze.test.ts`) diperbarui utk 7 file: `reducer.ts`/`director.ts`/`init.ts`/`scoring.ts`/
+`verifikasi.ts`/`state.ts`/`save.ts`. `paketUjian.test.ts` murni tes baru — tak menyentuh file
+frozen apa pun.
+
+**M11 (enrichment/EBM-nuance) masih menunggu**: sebagian besar gated pada adjudikasi dokter sendiri
+(artefak keputusan Fase-B `panduanResmi` 58 kasus, beberapa pertanyaan desain terbuka item 2-6) —
+bukan pekerjaan teknik murni yang bisa didorong searah tanpa keterlibatan user.
