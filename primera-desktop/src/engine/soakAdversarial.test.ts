@@ -176,10 +176,34 @@ function tanganiPasienProfil(
   const jenis = rng.chance(profil.diagnosisTegakProb) ? 'tegak' : 'suspek'
   s = coba(s, { type: 'KOMIT_DIAGNOSIS', icd10: icd10Dipakai, jenis })
 
-  for (const obatId of kasus.tatalaksana.obatBenar) {
+  // CODEX audit pasca-GM (2026-07-13, temuan #20): dulu meresepkan obatBenar
+  // MENTAH tanpa cek alergiTrap/interaksiTrap pasien — persis bug yg sudah
+  // diperbaiki di selfplay.test.ts "dokter rajin" (fix #1/#13B) tapi tak
+  // ikut ditambal di sini. Firewall alergi kini punya konsekuensi skor nyata
+  // (capGrade + UKP -1/kejadian), jadi profil TELITI/SPEEDRUNNER yg "benar
+  // secara resep" tapi buta-alergi terjebak firewall berkali-kali sepanjang
+  // stase penuh — cukup menjatuhkan UKP ke 0 (lantai clamp) meski >70% grade
+  // per-encounter A, mencemari baseline kalibrasi Golden Master. Filter di
+  // bawah persis logika trap-adjustment nilaiEncounter (clinic.ts).
+  const trap = kasus.alergiTrap
+  const kenaTrap =
+    trap !== undefined && enc.pasien.alergi.some((a) => a.toLowerCase() === trap.kelas.toLowerCase())
+  const interaksi = kasus.interaksiTrap
+  const kenaInteraksi = interaksi !== undefined && enc.pasien.faktorRisiko.includes(interaksi.faktor)
+  const terlarangGabungan = [
+    ...(kenaTrap && trap ? trap.obatTerlarang : []),
+    ...(kenaInteraksi && interaksi ? interaksi.obatTerlarang : []),
+  ]
+  const obatBenarAman = [
+    ...kasus.tatalaksana.obatBenar.filter((id) => !terlarangGabungan.includes(id)),
+    ...(kenaTrap && trap ? trap.alternatifBenar : []),
+    ...(kenaInteraksi && interaksi ? interaksi.alternatifBenar : []),
+  ]
+  for (const obatId of obatBenarAman) {
     if (rng.chance(profil.obatBenarFraction)) s = coba(s, { type: 'TAMBAH_OBAT', obatId })
   }
-  for (const grup of kasus.tatalaksana.obatAlternatif ?? []) {
+  for (const grupMentah of kasus.tatalaksana.obatAlternatif ?? []) {
+    const grup = grupMentah.filter((id) => !terlarangGabungan.includes(id))
     if (grup[0] && rng.chance(profil.obatAlternatifProb)) s = coba(s, { type: 'TAMBAH_OBAT', obatId: grup[0] })
   }
   for (const edukasiId of kasus.tatalaksana.edukasi.slice(0, KAPASITAS_EDUKASI)) {
@@ -350,6 +374,18 @@ describe('SOAK ADVERSARIAL — 3 profil (speedrunner/teliti/ceroboh), M10.5 §7d
           expect(skor.total).toBeLessThanOrEqual(100)
           expect(['A', 'B', 'C', 'D']).toContain(skor.grade)
           for (const p of penilaian) expect(['A', 'B', 'C', 'D']).toContain(p.grade)
+
+          // CODEX audit pasca-GM (2026-07-13, temuan #20): dulu tak ada lantai
+          // sama sekali — profil TELITI (harusnya baseline "dokter baik") bisa
+          // diam-diam terclamp UKP=0/grade D lewat bug harness (obatBenar
+          // mentah memicu firewall alergi berulang), dan suite tetap hijau
+          // krn assertion lama cuma cek "angka valid", bukan "masuk akal".
+          // Lantai longgar ini bukan angka kalibrasi resmi — cuma pagar
+          // regresi murah thd kelas bug "harness sendiri yg rusak, bukan
+          // engine", supaya gagal berisik kalau terulang.
+          if (profil.nama === 'teliti') {
+            expect(skor.ukp).toBeGreaterThanOrEqual(20)
+          }
 
           // Telemetri kalibrasi (dibaca manusia utk keputusan G2, bukan assertion kaku —
           // distribusi target BELUM ditetapkan, ini baseline pertama). Rincian 4

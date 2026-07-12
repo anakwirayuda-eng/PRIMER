@@ -1,11 +1,53 @@
 /**
  * FREEZE (M10.5 Q-D, Golden Master, 2026-07-12; diperluas 2026-07-13 per
- * CODEX audit temuan #10) — hash-lock 12 file yang menentukan replay/skor:
- * reducer.ts, clinic.ts, scoring.ts, director.ts, core/rng.ts, igd.ts,
- * kader.ts, init.ts, kegiatan.ts, kunjungan.ts, paketUjian.ts, verifikasi.ts.
- * Ini bukan pagar regresi biasa — ia SENGAJA GAGAL bila salah satu file
- * berubah walau cuma satu karakter, termasuk perubahan yang "kelihatannya
- * aman" (refactor, komentar, rename variabel lokal).
+ * CODEX audit temuan #10, lagi 2026-07-13 per audit CODEX pasca-GM temuan
+ * #19, dan lagi 2026-07-13 per fix pass M10.6 §2/§3/§9/§11) — hash-lock 16
+ * file yang menentukan replay/skor: reducer.ts, clinic.ts, scoring.ts,
+ * director.ts, core/rng.ts, igd.ts, kader.ts, init.ts, kegiatan.ts,
+ * kunjungan.ts, paketUjian.ts, verifikasi.ts, state.ts, save.ts, pispk.ts,
+ * surveilans.ts. Ini bukan pagar regresi biasa — ia SENGAJA GAGAL bila salah
+ * satu file berubah walau cuma satu karakter, termasuk perubahan yang
+ * "kelihatannya aman" (refactor, komentar, rename variabel lokal).
+ *
+ * M10.6 fix pass (2026-07-13, REVISI_ENGINE 28→29) — 4 unfreeze SEKALIGUS,
+ * semua score/replay-affecting sesuai bar yang sama ("apakah mengedit file
+ * INI SENDIRI mengubah output replay?"):
+ *  - clinic.ts (§2 obatSalahUmum severity + §3 konfirmasiWajib→capGrade):
+ *    obatSalahUmum kini punya tier kontraindikasi/nonPrimer dgn penalti
+ *    berbeda (skorTerapi berubah utk kasus ber-nonPrimer); konfirmasiWajib
+ *    tak terpenuhi kini meng-cap grade huruf (bukan cuma skorPemeriksaan).
+ *  - reducer.ts (§3 Dex kuasai gate + §9 igdKodeBiruTerjadi tally +
+ *    §11 bed-retry pasif): Dex "kuasai" kini butuh konfirmasiWajib terpenuhi;
+ *    Kode Biru ditally saat terjadi; jadwal bed-penuh (`bedRetry`) resolve
+ *    sendiri tanpa re-enter PANGGIL_PASIEN/DISPOSISI.
+ *  - scoring.ts (§9): `efekIgd` kini -0.5/kejadian Kode Biru, terlepas hasil
+ *    akhirnya — nyaris mati tak lagi skornya identik dgn manajemen mulus.
+ *  - state.ts (§9/§11): field tally baru `igdKodeBiruTerjadi` + field jadwal
+ *    baru `bedRetry`/`rumahSakitId`/`bedRetryKe` + `konfirmasiTakTerpenuhi`
+ *    pada PenilaianEncounter.
+ *  - init.ts (§9): backfill `igdKodeBiruTerjadi: 0` di tally awal.
+ *  - save.ts (§9): migrasi-lite `igdKodeBiruTerjadi` utk save versi lama +
+ *    ditambahkan ke KUNCI_TALLY exhaustive-check.
+ *
+ * CODEX audit pasca-GM (2026-07-13, temuan #19) — commit yang MEMPERLUAS
+ * freeze ke 12 file itu SENDIRI mengedit state.ts/actions.ts/save.ts sambil
+ * freeze tetap hijau (dibuktikan `git show --stat` atas commit itu). Diaudit
+ * satu per satu terhadap bar yang sama dipakai utk 7 file sebelumnya ("apakah
+ * mengedit file INI SENDIRI mengubah output replay?"):
+ *  - state.ts: LOLOS bar — `musimDariHari()` (dipanggil director.ts yg sudah
+ *    dibekukan) terbukti mengubah komposisi antrian kasus lintas batas hari
+ *    hujan/kemarau, murni dari perubahan di state.ts saja.
+ *  - save.ts: LOLOS bar — migrasi-lite tally menentukan `klaim.tally`
+ *    baseline yg diklaim dossier; terbukti bisa membalik status verifikasi
+ *    jujur "tidak_dapat_diverifikasi" jadi "tidak_sah" palsu (temuan #12).
+ *  - pispk.ts: LOLOS bar — formula IKS (`hitungIksKeluarga`/`klasifikasiIks`)
+ *    dipakai kader.ts yg sudah dibekukan; REVISI_ENGINE historis sudah
+ *    menganggap perubahan formula IKS sbg score-affecting (rev 26/27).
+ *  - surveilans.ts: LOLOS bar — `kasusMenular`/`hitungCluster` dipanggil
+ *    reducer.ts di jalur replay aktual.
+ *  - actions.ts: TIDAK lolos bar — murni tipe TypeScript (union `Action`),
+ *    nol kode runtime, dihapus compiler; logika aksi baru SELALU tinggal di
+ *    reducer.ts (yg sudah dibekukan). Sengaja TIDAK ditambahkan.
  *
  * KENAPA sekeras ini: begitu semester berjalan, mahasiswa menandatangani
  * Dossier HMAC yang direplay lawan build engine SAAT ITU (verifikasi.ts).
@@ -58,21 +100,25 @@ function hashFile(relPath: string): string {
 
 /** Sha-256 hex per file (isi dinormalisasi LF), dikunci saat tag Golden Master. */
 const HASH_DIBEKUKAN: Record<string, string> = {
-  'reducer.ts': '60cac9935b2c4ca65da53c70bb0298436bf114cd8996a3580188c09ebf2f317e',
-  'clinic.ts': '5a67e6dd6a4e73af83b6f9cf7e6638ea652844c4e78b2fccc9858787fb373606',
-  'scoring.ts': '87c04591b554c62cce71afae0ff7f4fe0f8c73fdbf220d780244ccec9f11e0b8',
+  'reducer.ts': 'afd93a12c483a483cd6e9e811d9fc37bf6b02926cd3dca85018b516e2193171c',
+  'clinic.ts': 'd29b8b2086f8b870360cf22e97757b19197376deecdcbaeceb1fa019e5f4f117',
+  'scoring.ts': 'b7f73f8591be2f1f86fcc23d152ba033d7c22698fbcf11c3cf0fabbbbcd7124d',
   'director.ts': '400f168a3ecb381113fe252ef1d81c1c62d81edb3aca0e3141d124fb213d1812',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': '519b7cfc4098fa2e4d6c0567875ba797d3074d14cbbe8b9a48afaf12704c09b4',
   'kader.ts': 'fff1c7c055d1526f1e9632e64a3f72939840412c0f148e201444d6a7353aa646',
-  'init.ts': 'ce06d32aced0adeffb38672199738080448c98fedd613165d424c3de016f02ca',
+  'init.ts': '02d8caedf8761cdd6fedeb6050ff57126f05a44cc1dd8638b2603d624b328c3c',
   'kegiatan.ts': '61004bed15e5f8095214205aff69da6be55556d329552bc6a691cc0e4bf62d52',
   'kunjungan.ts': '4ec29cba2af05c8befec99921fe0cf8fc4d93950546c08121ded7f82efa66517',
   'paketUjian.ts': 'b7127ca427c24fea81a840f51d1933aa5eb4025384fdfac9857fa3498aa59e5d',
-  'verifikasi.ts': '4f0b1c29f1182a62eb6f9a9109f1562604ab708c1bb1a573ccfe96693d518f97',
+  'verifikasi.ts': '7d29e6100b9aa926184da0f4fefedaf85e3fb501743f4cfbf516b20b24c181c1',
+  'state.ts': '010eb685faf8ade17057351ce28d4b850c613819be3cc34175acff30dbce8bec',
+  'save.ts': '8d1e0ff12dc9a81acfd22b9dd595d79b14431ad49b1bf4e63f7ddd1a40374409',
+  'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
+  'surveilans.ts': '34bdfd80c9ebd2ae5a261118e9154cdfeb670b06b029e96013e2b26ef9a86a80',
 }
 
-describe('GOLDEN MASTER FREEZE (M10.5 Q-D) — 12 file penentu replay/skor terkunci', () => {
+describe('GOLDEN MASTER FREEZE (M10.5 Q-D) — 16 file penentu replay/skor terkunci', () => {
   for (const [file, hashDiharapkan] of Object.entries(HASH_DIBEKUKAN)) {
     it(`${file} tak berubah sejak freeze`, () => {
       const hashSekarang = hashFile(file)

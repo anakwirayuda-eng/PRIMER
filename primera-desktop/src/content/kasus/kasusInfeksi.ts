@@ -118,7 +118,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       obatBenar: ['paracetamol_500', 'ctm_4'],
       obatOpsional: ['ambroxol_30'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Common cold adalah infeksi virus swasirna; antibiotik tidak mengubah perjalanan penyakit dan memicu resistensi (Kemenkes, PPRA).' },
+        { id: 'amoxicillin_500', alasan: 'Common cold adalah infeksi virus swasirna; antibiotik tidak mengubah perjalanan penyakit dan memicu resistensi (Kemenkes, PPRA).', bahaya: 'nonPrimer' },
       ],
       edukasi: ['istirahat_cukup', 'etika_batuk', 'cuci_tangan', 'kompres_demam'],
     },
@@ -234,7 +234,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['amoxicillin_500', 'paracetamol_500'],
       obatSalahUmum: [
-        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon bukan lini pertama faringitis streptokokus dan berlebihan untuk kasus komunitas 4A — memicu resistensi.' },
+        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon bukan lini pertama faringitis streptokokus dan berlebihan untuk kasus komunitas 4A — memicu resistensi.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kepatuhan_obat', 'kompres_demam', 'istirahat_cukup', 'cuci_tangan'],
       // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — antibiotik
@@ -352,8 +352,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['paracetamol_500', 'oralit'],
       obatSalahUmum: [
-        { id: 'ibuprofen_400', alasan: 'NSAID DILARANG pada dengue: menghambat fungsi trombosit dan mengiritasi mukosa lambung → memperparah risiko perdarahan. Antipiretik hanya paracetamol.' },
-        { id: 'amoxicillin_500', alasan: 'Dengue adalah infeksi virus; antibiotik tidak berperan dan hanya menambah beban obat.' },
+        { id: 'ibuprofen_400', alasan: 'NSAID DILARANG pada dengue: menghambat fungsi trombosit dan mengiritasi mukosa lambung → memperparah risiko perdarahan. Antipiretik hanya paracetamol.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Dengue adalah infeksi virus; antibiotik tidak berperan dan hanya menambah beban obat.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['tanda_bahaya', 'psn_3m', 'cairan_oralit', 'kompres_demam', 'istirahat_cukup'],
       // DeepThink triangulasi (2026-07-05): konsekuensi.narasi kasus ini
@@ -594,8 +594,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['oralit', 'zinc_20'],
       obatSalahUmum: [
-        { id: 'cotrimoxazole_480', alasan: 'Diare akut cair tanpa darah/lendir umumnya virus/self-limiting — antibiotik TIDAK diberikan rutin (memicu resistensi & tidak mempercepat sembuh).' },
-        { id: 'amoxicillin_500', alasan: 'Bukan indikasi pada diare akut non-disentri; fokus pada rehidrasi oral, bukan antibiotik.' },
+        { id: 'cotrimoxazole_480', alasan: 'Diare akut cair tanpa darah/lendir umumnya virus/self-limiting — antibiotik TIDAK diberikan rutin (memicu resistensi & tidak mempercepat sembuh).', bahaya: 'nonPrimer' },
+        { id: 'amoxicillin_500', alasan: 'Bukan indikasi pada diare akut non-disentri; fokus pada rehidrasi oral, bukan antibiotik.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['cairan_oralit', 'cuci_tangan', 'tanda_bahaya', 'gizi_seimbang'],
       // DeepThink triangulasi (2026-07-05): konsekuensi.narasi kasus ini eksplisit
@@ -725,8 +725,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['oat_kdt'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Batuk >2 minggu dengan hemoptisis bukan pneumonia biasa — antibiotik non-OAT menunda diagnosis TB dan berbahaya. Butuh OAT program DOTS.' },
-        { id: 'ambroxol_30', alasan: 'Mukolitik hanya simtomatik; tidak boleh menjadi "terapi" utama yang menunda mulainya OAT.' },
+        { id: 'amoxicillin_500', alasan: 'Batuk >2 minggu dengan hemoptisis bukan pneumonia biasa — antibiotik non-OAT menunda diagnosis TB dan berbahaya. Butuh OAT program DOTS.', bahaya: 'nonPrimer' },
+        { id: 'ambroxol_30', alasan: 'Mukolitik hanya simtomatik; tidak boleh menjadi "terapi" utama yang menunda mulainya OAT.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['minum_oat_tuntas', 'etika_batuk', 'kontrol_rutin', 'kepatuhan_obat'],
       // DeepThink triangulasi (2026-07-05): OAT DOTS wajib TUNTAS 6 bulan —
@@ -855,8 +855,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['permetrin_krim', 'cetirizine_10'],
       obatSalahUmum: [
-        { id: 'ketokonazol_krim', alasan: 'Skabies disebabkan tungau Sarcoptes scabiei, bukan jamur — antijamur topikal tidak berefek. Skabisida (permetrin 5%) yang tepat.' },
-        { id: 'amoxicillin_500', alasan: 'Antibiotik hanya diperlukan bila ada infeksi sekunder (impetiginisasi); pada skabies tanpa komplikasi tidak diindikasikan.' },
+        { id: 'ketokonazol_krim', alasan: 'Skabies disebabkan tungau Sarcoptes scabiei, bukan jamur — antijamur topikal tidak berefek. Skabisida (permetrin 5%) yang tepat.', bahaya: 'nonPrimer' },
+        { id: 'amoxicillin_500', alasan: 'Antibiotik hanya diperlukan bila ada infeksi sekunder (impetiginisasi); pada skabies tanpa komplikasi tidak diindikasikan.', bahaya: 'nonPrimer' },
       ],
       // M10.c (dossier §47): cuci_tangan (lemah utk tungau) diganti — clue
       // KAPITAL "OBATI SEMUA KONTAK SERUMAH" + "cuci seprai/handuk air panas".
@@ -965,8 +965,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['kloramfenikol_tetes_mata'],
       obatSalahUmum: [
-        { id: 'dexamethasone_05', alasan: 'Steroid TIDAK boleh diberikan sembarangan pada mata merah — bila ternyata ada keterlibatan kornea/herpes, steroid memperparah dan mengancam penglihatan.' },
-        { id: 'amoxicillin_500', alasan: 'Antibiotik oral tidak diperlukan untuk konjungtivitis bakterial ringan; cukup antibiotik topikal (tetes).' },
+        { id: 'dexamethasone_05', alasan: 'Steroid TIDAK boleh diberikan sembarangan pada mata merah — bila ternyata ada keterlibatan kornea/herpes, steroid memperparah dan mengancam penglihatan.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Antibiotik oral tidak diperlukan untuk konjungtivitis bakterial ringan; cukup antibiotik topikal (tetes).', bahaya: 'nonPrimer' },
       ],
       edukasi: ['cuci_tangan', 'kebersihan_kulit'],
     },

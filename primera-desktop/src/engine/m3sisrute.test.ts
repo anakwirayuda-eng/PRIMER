@@ -88,7 +88,7 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
       rujukanTotal: 0, rujukanNonSpesialistik: 0, rujukanTepat: 0, rujukanDitolak: 0, cowboy: 0,
       antibiotikTanpaIndikasi: 0, obatBerbahaya: 0, firewallTerpicu: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
       kunjunganTotal: 0, kunjunganDiusir: 0, apathy: 0, autoBermasalah: 0, posyanduSesi: 0,
-      prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdSalahDisposisi: 0, igdMeninggal: 0, rmLengkap: 0, teguranDinkes: 0, hariKelelahan: 0, karmaTerjadi: 0, karmaDicegah: 0,
+      prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdSalahDisposisi: 0, igdMeninggal: 0, igdKodeBiruTerjadi: 0, rmLengkap: 0, teguranDinkes: 0, hariKelelahan: 0, karmaTerjadi: 0, karmaDicegah: 0,
     },
     dex: {},
     log: [],
@@ -207,6 +207,76 @@ describe('M3.13 — SISRUTE berjenjang', () => {
     // kalau tidak, invarian di atas tak benar-benar teruji terhadap variasi RNG.
     expect(bedTersediaSetidaknyaSekali).toBe(true)
     expect(bedPenuhSetidaknyaSekali).toBe(true)
+  })
+
+  // CODEX audit pasca-GM (2026-07-13, temuan #11): jadwal bed-penuh dulu jadi
+  // 'pasien_kembali' generik — pasien yg SAMA muncul lagi di antrian esok
+  // sbg encounter PENUH, mengkredit totalPasien/rujukanTepat KEDUA kalinya
+  // utk satu keputusan klinis. Retry kini pasif (lihat `bedRetry` state.ts):
+  // tally tidak boleh naik lagi & antrian klinik tidak boleh kemasukan
+  // pasien baru, berapa pun hari yang berlalu sampai bed tersedia/dipaksa.
+  it('CODEX #11: retry bed-penuh pasif — tally & antrian klinik TIDAK bertambah di hari berikutnya', () => {
+    const rsKecilTapiCocok = {
+      id: 'rs_saraf_kecil',
+      nama: 'RSUD Saraf Kecil',
+      kelas: 'D' as const,
+      jarakMenit: 50,
+      spesialisasi: ['saraf' as const],
+      bedDasar: 0,
+    }
+    const p = pack([kasus('stroke')], [rsKecilTapiCocok])
+    const majuSatuHari = (s: GameState): GameState =>
+      run(run(run(s, { type: 'LANJUTKAN' }, p), { type: 'LANJUTKAN' }, p), { type: 'LANJUTKAN' }, p)
+
+    // Cari seed yang bed-nya PENUH di kunjungan awal (supaya jadwal bedRetry
+    // benar-benar terbentuk, bukan langsung diterima hari itu juga).
+    let sAwal: GameState | undefined
+    for (const seed of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) {
+      let coba = baseState(p, {
+        seed,
+        klinik: { antrian: [buatPasienDariKasus('stroke', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } },
+      })
+      coba = tanganiPasien(coba, p, {
+        type: 'DISPOSISI',
+        jenis: 'rujuk',
+        rumahSakitId: 'rs_saraf_kecil',
+        sbar: { situation: 'a'.repeat(25), background: 'b'.repeat(25), assessment: 'stroke', recommendation: 'c'.repeat(25) },
+      })
+      if (coba.inbox.some((m) => m.judul.includes('Bed penuh'))) {
+        sAwal = coba
+        break
+      }
+    }
+    expect(sAwal).toBeDefined()
+    let s = sAwal!
+    expect(s.tally.totalPasien).toBe(1)
+    expect(s.tally.rujukanTepat).toBe(1)
+    expect(s.jadwal.some((j) => j.bedRetry && j.rumahSakitId === 'rs_saraf_kecil')).toBe(true)
+
+    // Kontrol: state IDENTIK tapi TANPA jadwal bedRetry, dimajukan hari yang
+    // SAMA di setiap langkah — dipakai utk membuktikan jadwal bedRetry TIDAK
+    // menambah satu pasien pun ke antrian (dulu ia jadi 'pasien_kembali'
+    // generik yang MENAMBAH `antrianKembali` di atas antrian director normal
+    // — persis bug yang temuan #11 tunjuk).
+    let sKontrol: GameState = { ...s, jadwal: [] }
+
+    // Maju sampai jadwal bedRetry itu tuntas (diterima atau dipaksa terima) —
+    // dibatasi MAKS_RETRY_BED_PENUH+1 hari supaya tak jadi infinite loop bila
+    // logikanya salah.
+    for (let hari = 0; hari < 5 && s.jadwal.some((j) => j.bedRetry); hari++) {
+      s = majuSatuHari(s)
+      sKontrol = majuSatuHari(sKontrol)
+      // Retry pasif TIDAK PERNAH menaikkan tally — keputusan klinis sudah
+      // final di kunjungan pertama, bukan diulang sbg encounter baru.
+      expect(s.tally.totalPasien).toBe(1)
+      expect(s.tally.rujukanTepat).toBe(1)
+      // Retry pasif TIDAK PERNAH menambah pasien ke antrian klinik dibanding
+      // kontrol tanpa jadwal bedRetry sama sekali (director tetap mengisi
+      // antrian harian seperti biasa, di hari yang sama — itu bukan bug ini).
+      expect(s.klinik.antrian.length).toBe(sKontrol.klinik.antrian.length)
+    }
+    expect(s.jadwal.some((j) => j.bedRetry)).toBe(false)
+    expect(s.inbox.some((m) => m.judul.includes('akhirnya diterima'))).toBe(true)
   })
 
   it('merujuk kasus FKTP (bukan wajib-rujuk) → DITOLAK boomerang + teguran', () => {

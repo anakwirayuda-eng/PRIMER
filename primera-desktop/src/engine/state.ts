@@ -160,6 +160,15 @@ export interface PenilaianEncounter {
    * keselamatan tak tersambung ke `scoring.ts`.
    */
   firewallTerpicu: boolean
+  /**
+   * CODEX audit pasca-GM (2026-07-13, temuan #3): kasus dgn `konfirmasiWajib`
+   * (TB: BTA/TCM; malaria: RDT) yang didiagnosis/diterapi presumtif TANPA
+   * hasil lab konfirmasi tersedia — dulu hanya meng-cap `skorPemeriksaan`
+   * (bobot 10%, ≤5 poin dari nilaiTotal), tak pernah menyentuh capGrade huruf
+   * atau Dex "kuasai" (reducer.ts). Diekspos di sini persis pola
+   * obatBerbahaya/firewallTerpicu supaya kedua konsumen bisa menggerbangnya.
+   */
+  konfirmasiTakTerpenuhi: boolean
   labTakRelevan: number
   sbarSkor?: number // 0-100 bila merujuk
   /** Grade huruf ringkas untuk UI. */
@@ -451,6 +460,21 @@ export interface JadwalItem {
   persona?: Persona
   /** Pasien kembali sebagai kontrol Program Rujuk Balik (M3.13). */
   prb?: boolean
+  /**
+   * CODEX audit pasca-GM (2026-07-13, temuan #11): jadwal `pasien_kembali`
+   * KHUSUS bed-penuh (SISRUTE) — keputusan klinis SUDAH benar (rujuk, RS
+   * tepat, spesialisasi cocok), cuma kapasitas bed yang menahan. Beda dari
+   * pasien_kembali LAIN (boomerang FKTP, salah spesialisasi) yang genuinely
+   * butuh keputusan BARU dari dokter — bed-retry menyelesaikan diri sendiri
+   * secara pasif (re-roll bed di `hariBaru`, TANPA masuk antrian klinik lagi),
+   * supaya totalPasien/rujukanTepat/rmLengkap/Dex TIDAK ter-kredit dobel utk
+   * encounter yang sama. `rumahSakitId` menandai RS yang di-retry;
+   * `bedRetryKe` menghitung berapa kali sudah diulang (batas MAKS_RETRY_BED
+   * di reducer.ts, mencegah penundaan tanpa akhir bila nasib RNG buruk terus).
+   */
+  bedRetry?: boolean
+  rumahSakitId?: string
+  bedRetryKe?: number
 }
 
 /** Penghitung mentah — SATU-SATUNYA sumber skor. Diisi reducer, tak pernah UI. */
@@ -494,6 +518,18 @@ export interface SkorTally {
   /** Stabil tapi disposisi keliru (mis. kasus wajib-rujuk dipulangkan) — tidak dihargai skor. */
   igdSalahDisposisi: number
   igdMeninggal: number
+  /**
+   * CODEX audit pasca-GM (2026-07-13, temuan #9 Part A): kejadian Kode Biru
+   * (henti napas/jantung, `aksiIgd` transisi ke fase 'kode_biru') — dihitung
+   * SETIAP kali terjadi, terlepas dari hasil akhirnya (ROSC lalu stabil VS
+   * Kode Hitam, yg sudah kena `igdMeninggal` terpisah). Sebelum field ini,
+   * pasien yg selamat dari henti jantung (ROSC + stabilisasi lanjutan benar)
+   * skornya IDENTIK dgn pasien yg tak pernah mengalami Kode Biru sama sekali
+   * — `efekIgd` (scoring.ts) tak tahu bedanya. Nyaris mati tetap harus
+   * mencatat skor SEDIKIT di bawah manajemen mulus, walau tetap jauh di atas
+   * Kode Hitam.
+   */
+  igdKodeBiruTerjadi: number
   /** M4.20 — Rekam medis lengkap (SOAP: semua fase ≥50) — pakan akreditasi D60. */
   rmLengkap: number
   /** M4.19 — Teguran Dinkes karena kas defisit di laporan bulanan. */

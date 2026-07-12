@@ -387,7 +387,43 @@ function fnv1a(teks: string): string {
 // `proporsiBaselineRoll` adalah field STATE (bukan konten pack), juga tak
 // menyentuh sidikJariPack. Replay dossier lama (REVISI ≤27) BERBEDA dgn kode
 // ini di semua 8 titik di atas — bump wajib.
-const REVISI_ENGINE = 28
+//
+// REVISI 29 (2026-07-13 — fix pass M10.6, respons audit CODEX pasca-GM atas
+// tag rev28; diverifikasi 11-agen reproduksi+cross-check sebelum diterima).
+// 4 fix, semua score/replay-affecting:
+//   §2  obatSalahUmum severity (types.ts/7 file kasus/clinic.ts): SEMUA entri
+//       dulu dihukum sama rata (-25/cap-54/tally/UKP-3) padahal campuran —
+//       sebagian kontraindikasi nyawa (kotrimoksazol+alergi sulfa, NSAID pada
+//       dengue), sebagian cuma salah-sasaran/stewardship (ambroxol pada TB,
+//       vitamin B kompleks pada anemia) tanpa bahaya langsung. Field baru
+//       `bahaya?: 'kontraindikasi'|'nonPrimer'` (default hilang→nonPrimer);
+//       hanya 'kontraindikasi' tetap kena -25/cap-54/tally/UKP, 'nonPrimer'
+//       turun ke -15 (skorTerapi saja, spt obatDiLuar).
+//   §3  konfirmasiWajib→grade+Dex (clinic.ts/reducer.ts): cap dulu HANYA
+//       menyentuh skorPemeriksaan (bobot 10%, ≤5 poin dari nilaiTotal) — TB/
+//       malaria presumtif tanpa BTA/TCM/RDT tetap bisa grade A & Dex
+//       "dikuasai" penuh asal komponen lain sempurna. Kini capGrade (maks B/69)
+//       + Dex kuasai (`!konfirmasiTakTerpenuhi`, field baru PenilaianEncounter)
+//       ikut menggerbang.
+//   §9  IGD Kode Biru survival (state.ts/igd.ts→reducer.ts/scoring.ts): pasien
+//       yg selamat dari henti jantung (ROSC+stabilisasi benar) skornya dulu
+//       IDENTIK dgn manajemen mulus tanpa krisis sama sekali. Tally baru
+//       `igdKodeBiruTerjadi` (increment di `AKSI_IGD` saat transisi ke fase
+//       kode_biru) + `efekIgd` (scoring.ts) -0.5/kejadian, terlepas hasil akhir.
+//   §11 Bed-penuh retry (state.ts/reducer.ts): jadwal 'pasien_kembali' bed-
+//       penuh dulu generik — pasien yg SAMA muncul lagi sbg encounter PENUH
+//       esok hari, mengkredit totalPasien/rujukanTepat/rmLengkap/Dex KEDUA
+//       kalinya utk satu keputusan klinis yg sudah benar & sudah ditally.
+//       Field baru `bedRetry`/`rumahSakitId`/`bedRetryKe` (JadwalItem) menandai
+//       jalur pasif: `hariBaru` re-roll bed sendiri (maks MAKS_RETRY_BED_PENUH
+//       kali, lalu paksa-terima), tanpa pernah masuk `pasienKembali`/antrian
+//       klinik lagi.
+// Semua field baru (bahaya, konfirmasiTakTerpenuhi, igdKodeBiruTerjadi,
+// bedRetry/rumahSakitId/bedRetryKe) murni derivasi tally/state atau konten
+// obatSalahUmum (bahaya tak butuh entri sidikJariPack terpisah — sudah
+// tercakup hash `tatalaksana` kasus yg memuatnya). Replay dossier lama
+// (REVISI ≤28) BERBEDA dgn kode ini di semua 4 titik di atas — bump wajib.
+const REVISI_ENGINE = 29
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

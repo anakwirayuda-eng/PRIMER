@@ -125,8 +125,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['hidrokortison_krim', 'cetirizine_10'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Dermatitis kontak adalah reaksi inflamasi alergi, bukan infeksi bakteri. Antibiotik hanya diberikan bila jelas ada infeksi sekunder (pus, krusta madu).' },
-        { id: 'ketokonazol_krim', alasan: 'Bukan jamur — antijamur tidak berefek pada dermatitis kontak. Terapinya kortikosteroid topikal + hindari alergen.' },
+        { id: 'amoxicillin_500', alasan: 'Dermatitis kontak adalah reaksi inflamasi alergi, bukan infeksi bakteri. Antibiotik hanya diberikan bila jelas ada infeksi sekunder (pus, krusta madu).', bahaya: 'nonPrimer' },
+        { id: 'ketokonazol_krim', alasan: 'Bukan jamur — antijamur tidak berefek pada dermatitis kontak. Terapinya kortikosteroid topikal + hindari alergen.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['hindari_alergen', 'jaga_kelembapan_kulit', 'kebersihan_kulit'],
     },
@@ -249,9 +249,9 @@ export const KASUS_KULIT: KasusKlinis[] = [
       obatAlternatif: [['ketokonazol_krim', 'mikonazol_krim']],
       obatOpsional: ['griseofulvin_500'],
       obatSalahUmum: [
-        { id: 'betametason_krim', alasan: 'JEBAKAN KLASIK: steroid topikal tunggal (betametason) pada tinea menekan radang sesaat TAPI menekan imun lokal → jamur meluas & menyamar (TINEA INKOGNITO), tepi lesi kabur, sulit diobati. Tinea butuh ANTIJAMUR, bukan steroid.' },
-        { id: 'hidrokortison_krim', alasan: 'Sama seperti betametason — kortikosteroid tunggal memperparah tinea. Tanpa antijamur, lesi jamur justru berkembang.' },
-        { id: 'amoxicillin_500', alasan: 'Tinea disebabkan jamur dermatofita, bukan bakteri — antibiotik tidak berperan.' },
+        { id: 'betametason_krim', alasan: 'JEBAKAN KLASIK: steroid topikal tunggal (betametason) pada tinea menekan radang sesaat TAPI menekan imun lokal → jamur meluas & menyamar (TINEA INKOGNITO), tepi lesi kabur, sulit diobati. Tinea butuh ANTIJAMUR, bukan steroid.', bahaya: 'kontraindikasi' },
+        { id: 'hidrokortison_krim', alasan: 'Sama seperti betametason — kortikosteroid tunggal memperparah tinea. Tanpa antijamur, lesi jamur justru berkembang.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Tinea disebabkan jamur dermatofita, bukan bakteri — antibiotik tidak berperan.', bahaya: 'nonPrimer' },
       ],
       // M10.c (dossier §47): jaga_kelembapan_kulit (MELEMBAPKAN) diganti
       // jaga_area_kering — clue "jaga area tetap kering", konsekuensi bahkan
@@ -381,8 +381,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
       obatBenar: ['mupirosin_krim'],
       obatOpsional: ['cefadroxil_500'],
       obatSalahUmum: [
-        { id: 'hidrokortison_krim', alasan: 'Impetigo adalah infeksi bakteri (Staphylococcus/Streptococcus). Kortikosteroid menekan imun lokal dan memperburuk infeksi, bukan mengobatinya.' },
-        { id: 'ketokonazol_krim', alasan: 'Bukan jamur — krusta madu khas bakteri. Antijamur tidak berefek.' },
+        { id: 'hidrokortison_krim', alasan: 'Impetigo adalah infeksi bakteri (Staphylococcus/Streptococcus). Kortikosteroid menekan imun lokal dan memperburuk infeksi, bukan mengobatinya.', bahaya: 'kontraindikasi' },
+        { id: 'ketokonazol_krim', alasan: 'Bukan jamur — krusta madu khas bakteri. Antijamur tidak berefek.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kebersihan_kulit', 'cuci_tangan', 'cuci_seprai_panas'],
     },
@@ -498,8 +498,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
       // Antihistamin H1 gen-2 setara — beri SALAH SATU (setirizin ATAU loratadin).
       obatAlternatif: [['cetirizine_10', 'loratadin_10']],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Urtikaria akut umumnya reaksi hipersensitivitas (mis. makanan), bukan infeksi. Antibiotik tidak berperan dan justru bisa menjadi pencetus alergi baru.' },
-        { id: 'prednison_5', alasan: 'Kortikosteroid oral BUKAN lini pertama urtikaria akut ringan; cukup antihistamin H1 non-sedatif. Steroid hanya untuk kasus berat/refrakter jangka pendek.' },
+        { id: 'amoxicillin_500', alasan: 'Urtikaria akut umumnya reaksi hipersensitivitas (mis. makanan), bukan infeksi. Antibiotik tidak berperan dan justru bisa menjadi pencetus alergi baru.', bahaya: 'nonPrimer' },
+        { id: 'prednison_5', alasan: 'Kortikosteroid oral BUKAN lini pertama urtikaria akut ringan; cukup antihistamin H1 non-sedatif. Steroid hanya untuk kasus berat/refrakter jangka pendek.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['hindari_alergen', 'tanda_bahaya'],
     },
@@ -614,8 +614,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['asiklovir_400', 'paracetamol_500'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Herpes zoster disebabkan reaktivasi virus Varicella-zoster, bukan bakteri. Antibiotik hanya bila ada infeksi sekunder pada vesikel yang pecah.' },
-        { id: 'betametason_krim', alasan: 'Kortikosteroid topikal tidak mengatasi virus dan bisa memperluas lesi; terapi utama adalah antivirus sistemik dini + analgesik.' },
+        { id: 'amoxicillin_500', alasan: 'Herpes zoster disebabkan reaktivasi virus Varicella-zoster, bukan bakteri. Antibiotik hanya bila ada infeksi sekunder pada vesikel yang pecah.', bahaya: 'nonPrimer' },
+        { id: 'betametason_krim', alasan: 'Kortikosteroid topikal tidak mengatasi virus dan bisa memperluas lesi; terapi utama adalah antivirus sistemik dini + analgesik.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['kepatuhan_obat', 'kebersihan_kulit', 'tanda_bahaya'],
     },
@@ -730,8 +730,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['asiklovir_400', 'paracetamol_500', 'kalamin_losion'],
       obatSalahUmum: [
-        { id: 'ibuprofen_400', alasan: 'NSAID (ibuprofen) pada varisela dihindari — dikaitkan dengan peningkatan risiko infeksi kulit invasif (fasiitis nekrotikans) oleh Streptococcus. Antipiretik pilih paracetamol.' },
-        { id: 'amoxicillin_500', alasan: 'Varisela adalah infeksi virus; antibiotik hanya bila ada infeksi bakteri sekunder pada lesi yang pecah dan bernanah.' },
+        { id: 'ibuprofen_400', alasan: 'NSAID (ibuprofen) pada varisela dihindari — dikaitkan dengan peningkatan risiko infeksi kulit invasif (fasiitis nekrotikans) oleh Streptococcus. Antipiretik pilih paracetamol.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Varisela adalah infeksi virus; antibiotik hanya bila ada infeksi bakteri sekunder pada lesi yang pecah dan bernanah.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['istirahat_cukup', 'kebersihan_kulit', 'cuci_tangan', 'tanda_bahaya'],
     },
@@ -848,8 +848,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
       // Antijamur azol topikal setara — beri SALAH SATU (mikonazol ATAU ketokonazol).
       obatAlternatif: [['mikonazol_krim', 'ketokonazol_krim']],
       obatSalahUmum: [
-        { id: 'betametason_krim', alasan: 'Steroid topikal tunggal pada kandidiasis meredakan radang sesaat tapi memperluas infeksi jamur (mirip tinea inkognito). Kandidiasis butuh ANTIJAMUR, bukan steroid.' },
-        { id: 'amoxicillin_500', alasan: 'Kandidiasis disebabkan jamur Candida, bukan bakteri; antibiotik justru menekan flora normal dan bisa memperburuk pertumbuhan Candida.' },
+        { id: 'betametason_krim', alasan: 'Steroid topikal tunggal pada kandidiasis meredakan radang sesaat tapi memperluas infeksi jamur (mirip tinea inkognito). Kandidiasis butuh ANTIJAMUR, bukan steroid.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Kandidiasis disebabkan jamur Candida, bukan bakteri; antibiotik justru menekan flora normal dan bisa memperburuk pertumbuhan Candida.', bahaya: 'kontraindikasi' },
       ],
       // M10.c (dossier §47): jaga_kelembapan_kulit → jaga_area_kering — clue
       // "JAGA AREA KERING (tepuk kering)"; jamur subur di lembap (pola sama tinea).
@@ -968,8 +968,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['permetrin_krim'],
       obatSalahUmum: [
-        { id: 'ketokonazol_krim', alasan: 'Pedikulosis disebabkan kutu (parasit), bukan jamur — antijamur tidak berefek. Butuh pedikulisida permetrin (sediaan krim 5% Puskesmas dipakai untuk kulit kepala; standar ideal 1%).' },
-        { id: 'hidrokortison_krim', alasan: 'Steroid hanya meredakan gatal sesaat tanpa membunuh kutu; sumber masalah (kutu & telur) tetap ada dan menular.' },
+        { id: 'ketokonazol_krim', alasan: 'Pedikulosis disebabkan kutu (parasit), bukan jamur — antijamur tidak berefek. Butuh pedikulisida permetrin (sediaan krim 5% Puskesmas dipakai untuk kulit kepala; standar ideal 1%).', bahaya: 'nonPrimer' },
+        { id: 'hidrokortison_krim', alasan: 'Steroid hanya meredakan gatal sesaat tanpa membunuh kutu; sumber masalah (kutu & telur) tetap ada dan menular.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kebersihan_kulit', 'cuci_seprai_panas', 'cuci_tangan'],
     },
@@ -1074,8 +1074,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
       // asam salisilat konsentrasi tinggi (kolodion 17%), bukan bedak 2%.
       obatBenar: ['asam_salisilat_kolodion'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Veruka disebabkan Human Papillomavirus (HPV), bukan bakteri — antibiotik tidak berperan sama sekali.' },
-        { id: 'ketokonazol_krim', alasan: 'Bukan jamur — antijamur tidak berefek pada kutil viral. Terapi keratolitik (asam salisilat) atau bedah minor.' },
+        { id: 'amoxicillin_500', alasan: 'Veruka disebabkan Human Papillomavirus (HPV), bukan bakteri — antibiotik tidak berperan sama sekali.', bahaya: 'nonPrimer' },
+        { id: 'ketokonazol_krim', alasan: 'Bukan jamur — antijamur tidak berefek pada kutil viral. Terapi keratolitik (asam salisilat) atau bedah minor.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kebersihan_kulit', 'cuci_tangan'],
     },
@@ -1191,8 +1191,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['vitamin_a_kapsul', 'paracetamol_500'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Morbili adalah infeksi virus; antibiotik TIDAK diberikan rutin. Antibiotik hanya bila ada komplikasi bakteri (pneumonia, otitis media akut).' },
-        { id: 'dexamethasone_05', alasan: 'Kortikosteroid tidak berperan pada campak tanpa komplikasi dan justru menekan imun; tata laksana utama suportif + vitamin A.' },
+        { id: 'amoxicillin_500', alasan: 'Morbili adalah infeksi virus; antibiotik TIDAK diberikan rutin. Antibiotik hanya bila ada komplikasi bakteri (pneumonia, otitis media akut).', bahaya: 'nonPrimer' },
+        { id: 'dexamethasone_05', alasan: 'Kortikosteroid tidak berperan pada campak tanpa komplikasi dan justru menekan imun; tata laksana utama suportif + vitamin A.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['gizi_seimbang', 'istirahat_cukup', 'tanda_bahaya', 'cairan_oralit'],
       // CODEX M10 ronde-2 (2026-07-06): kondisiKembali eksplisit "napas cepat,

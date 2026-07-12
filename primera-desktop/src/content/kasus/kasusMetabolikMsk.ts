@@ -131,8 +131,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       obatBenar: [],
       obatAlternatif: [['natrium_diklofenak_50', 'kolkisin_500']],
       obatSalahUmum: [
-        { id: 'allopurinol_100', alasan: 'Di FKTP, default aman: JANGAN mulai allopurinol saat serangan akut (fluktuasi asam urat memperpanjang serangan); mulai urate-lowering 2–4 minggu setelah reda + titrasi ke target <6 mg/dL. Catatan ACR 2020: memulai ULT saat serangan sebenarnya boleh HANYA bila disertai profilaksis antiinflamasi & follow-up ketat — di luar cakupan penanganan akut FKTP ini. Bila pasien SUDAH rutin allopurinol, jangan dihentikan.' },
-        { id: 'amoxicillin_500', alasan: 'Gout bukan infeksi bakteri; antibiotik tidak berperan. Bila curiga artritis septik, itu justru indikasi RUJUK, bukan antibiotik oral coba-coba.' },
+        { id: 'allopurinol_100', alasan: 'Di FKTP, default aman: JANGAN mulai allopurinol saat serangan akut (fluktuasi asam urat memperpanjang serangan); mulai urate-lowering 2–4 minggu setelah reda + titrasi ke target <6 mg/dL. Catatan ACR 2020: memulai ULT saat serangan sebenarnya boleh HANYA bila disertai profilaksis antiinflamasi & follow-up ketat — di luar cakupan penanganan akut FKTP ini. Bila pasien SUDAH rutin allopurinol, jangan dihentikan.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Gout bukan infeksi bakteri; antibiotik tidak berperan. Bila curiga artritis septik, itu justru indikasi RUJUK, bukan antibiotik oral coba-coba.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['diet_purin', 'minum_air_cukup', 'kontrol_rutin'],
     },
@@ -266,7 +266,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['simvastatin_20'],
       obatSalahUmum: [
-        { id: 'natrium_diklofenak_50', alasan: 'Dislipidemia tidak nyeri; NSAID tidak ada indikasi dan justru menambah risiko kardiovaskular/ginjal.' },
+        { id: 'natrium_diklofenak_50', alasan: 'Dislipidemia tidak nyeri; NSAID tidak ada indikasi dan justru menambah risiko kardiovaskular/ginjal.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'berhenti_merokok', 'kontrol_rutin'],
     },
@@ -389,7 +389,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: [],
       obatSalahUmum: [
-        { id: 'furosemid_40', alasan: 'Diuretik BUKAN untuk menurunkan berat badan — hanya mengurangi cairan sesaat, tidak menyentuh lemak, dan berisiko dehidrasi/gangguan elektrolit. Ini malpraktik pelangsing yang umum.' },
+        { id: 'furosemid_40', alasan: 'Diuretik BUKAN untuk menurunkan berat badan — hanya mengurangi cairan sesaat, tidak menyentuh lemak, dan berisiko dehidrasi/gangguan elektrolit. Ini malpraktik pelangsing yang umum.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'kontrol_rutin', 'higiene_tidur'],
     },
@@ -420,10 +420,14 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     kategori: 'muskuloskeletal',
     fktp144: false,
     harusDirujuk: false,
-    // M10.5 §3a (2026-07-12, TACC rujukan terjustifikasi): clue kasus ini
-    // sendiri mengizinkan rujuk BILA "kandidat operasi/sendi gagal" (PPK/
-    // OARSI) — komplikasi sungguhan, bukan kelonggaran kosong.
-    justifikasiRujukValid: ['komplikasi'],
+    // CODEX audit pasca-GM (2026-07-13, temuan #13): `justifikasiRujukValid:
+    // ['komplikasi']` DICABUT — sama persis preseden mm_isk_bawah (§5). Vignette
+    // TETAP (tak ada varian per-instance), dan pemeriksaan fisik kasus ini
+    // SENDIRI cuma "ROM sedikit terbatas" + "efusi minimal" + "tanda inflamasi
+    // sistemik (-)" — bukan gejala berat yg membatasi fungsi, dan ini kunjungan
+    // PERTAMA (belum ada percobaan-gagal terapi farmakologis utk dicatat).
+    // Ambang rujuk PNPK/OARSI (kandidat operasi ATAU gagal terapi farmakologis
+    // terdokumentasi) tak pernah benar-benar terpenuhi oleh data kasus ini.
     prevalensi: 'tinggi',
     keluhanUtama: 'Lutut saya nyeri dok, terutama kalau jalan jauh atau naik-turun tangga.',
     demografi: { usiaMin: 55, usiaMax: 75, jenisKelamin: 'P' },
@@ -522,8 +526,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       // benar lengkap (NSAID pun tak tercapai — trap NSAID 100% aktif di kasus ini).
       obatBenar: ['paracetamol_500'],
       obatSalahUmum: [
-        { id: 'prednison_5', alasan: 'Kortikosteroid oral TIDAK diindikasikan untuk OA — OA bukan penyakit inflamasi sistemik; steroid rutin hanya menimbulkan efek samping (osteoporosis, gula naik) tanpa manfaat.' },
-        { id: 'allopurinol_100', alasan: 'Ini bukan gout (asam urat normal, nyeri mekanik) — allopurinol tidak ada indikasinya.' },
+        { id: 'prednison_5', alasan: 'Kortikosteroid oral TIDAK diindikasikan untuk OA — OA bukan penyakit inflamasi sistemik; steroid rutin hanya menimbulkan efek samping (osteoporosis, gula naik) tanpa manfaat.', bahaya: 'nonPrimer' },
+        { id: 'allopurinol_100', alasan: 'Ini bukan gout (asam urat normal, nyeri mekanik) — allopurinol tidak ada indikasinya.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['peregangan_sendi', 'aktivitas_fisik', 'gizi_seimbang', 'postur_ergonomi'],
     },
@@ -654,7 +658,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       obatBenar: [],
       obatAlternatif: [['natrium_diklofenak_50', 'paracetamol_500']],
       obatSalahUmum: [
-        { id: 'tramadol_50', alasan: 'Opioid tidak diperlukan untuk LBP mekanik akut tanpa red flag — risiko ketergantungan & sedasi melebihi manfaat; analgetik sederhana + tetap aktif sudah cukup.' },
+        { id: 'tramadol_50', alasan: 'Opioid tidak diperlukan untuk LBP mekanik akut tanpa red flag — risiko ketergantungan & sedasi melebihi manfaat; analgetik sederhana + tetap aktif sudah cukup.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['postur_ergonomi', 'aktivitas_fisik', 'peregangan_sendi'],
     },
@@ -768,8 +772,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       // Analgetik simtomatik setara — beri SALAH SATU (parasetamol ATAU NSAID).
       obatAlternatif: [['paracetamol_500', 'ibuprofen_400']],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Mialgia mekanik pasca-aktivitas bukan infeksi; antibiotik tidak ada indikasinya sama sekali.' },
-        { id: 'dexamethasone_05', alasan: 'Kortikosteroid untuk pegal otot biasa adalah overtreatment berbahaya — efek samping jauh melebihi manfaat pada keluhan swasirna.' },
+        { id: 'amoxicillin_500', alasan: 'Mialgia mekanik pasca-aktivitas bukan infeksi; antibiotik tidak ada indikasinya sama sekali.', bahaya: 'nonPrimer' },
+        { id: 'dexamethasone_05', alasan: 'Kortikosteroid untuk pegal otot biasa adalah overtreatment berbahaya — efek samping jauh melebihi manfaat pada keluhan swasirna.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['istirahat_cukup', 'peregangan_sendi', 'postur_ergonomi'],
     },
@@ -885,8 +889,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['meloksikam_15'],
       obatSalahUmum: [
-        { id: 'prednison_5', alasan: 'Steroid oral mungkin meredakan sementara, tetapi memulai steroid jangka panjang di FKTP tanpa rujukan menutupi penyakit dan menunda DMARD — pengelolaan RA (metotreksat dll.) adalah ranah spesialis penyakit dalam/reumatologi.' },
-        { id: 'allopurinol_100', alasan: 'Ini bukan gout (asam urat normal, poliartritis simetris sendi kecil, kaku pagi panjang) — allopurinol keliru total.' },
+        { id: 'prednison_5', alasan: 'Steroid oral mungkin meredakan sementara, tetapi memulai steroid jangka panjang di FKTP tanpa rujukan menutupi penyakit dan menunda DMARD — pengelolaan RA (metotreksat dll.) adalah ranah spesialis penyakit dalam/reumatologi.', bahaya: 'nonPrimer' },
+        { id: 'allopurinol_100', alasan: 'Ini bukan gout (asam urat normal, poliartritis simetris sendi kecil, kaku pagi panjang) — allopurinol keliru total.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['peregangan_sendi', 'kontrol_rutin'],
     },
@@ -1016,8 +1020,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       obatBenar: [],
       obatAlternatif: [['amlodipine_10', 'captopril_25']],
       obatSalahUmum: [
-        { id: 'nifedipin_10', alasan: 'Nifedipin kerja cepat sublingual/kunyah DILARANG pada krisis hipertensi — penurunan TD tak terkendali & mendadak berisiko iskemia serebral/miokard/stroke. Turunkan BERTAHAP dengan oral kerja sedang.' },
-        { id: 'furosemid_40', alasan: 'Diuretik agresif tidak tepat sebagai lini pertama urgensi tanpa overload cairan — berisiko hipovolemia; hanya bila ada edema paru/overload nyata.' },
+        { id: 'nifedipin_10', alasan: 'Nifedipin kerja cepat sublingual/kunyah DILARANG pada krisis hipertensi — penurunan TD tak terkendali & mendadak berisiko iskemia serebral/miokard/stroke. Turunkan BERTAHAP dengan oral kerja sedang.', bahaya: 'kontraindikasi' },
+        { id: 'furosemid_40', alasan: 'Diuretik agresif tidak tepat sebagai lini pertama urgensi tanpa overload cairan — berisiko hipovolemia; hanya bila ada edema paru/overload nyata.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['diet_rendah_garam', 'kepatuhan_obat', 'kontrol_rutin', 'tanda_bahaya'],
     },
@@ -1152,8 +1156,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['furosemid_40', 'isosorbid_dinitrat_5'],
       obatSalahUmum: [
-        { id: 'natrium_diklofenak_50', alasan: 'NSAID DIKONTRAINDIKASIKAN pada gagal jantung — menahan natrium/air memperberat kongesti dan memperburuk fungsi ginjal. Jangan diberikan untuk keluhan pegal apa pun di sini.' },
-        { id: 'bisoprolol_5', alasan: 'Beta-blocker BERMANFAAT jangka panjang, tapi JANGAN dimulai saat dekompensasi akut/kongesti (memperburuk curah jantung sesaat) — inisiasi dilakukan setelah stabil, oleh spesialis. Di FKTP fokus stabilisasi + rujuk.' },
+        { id: 'natrium_diklofenak_50', alasan: 'NSAID DIKONTRAINDIKASIKAN pada gagal jantung — menahan natrium/air memperberat kongesti dan memperburuk fungsi ginjal. Jangan diberikan untuk keluhan pegal apa pun di sini.', bahaya: 'kontraindikasi' },
+        { id: 'bisoprolol_5', alasan: 'Beta-blocker BERMANFAAT jangka panjang, tapi JANGAN dimulai saat dekompensasi akut/kongesti (memperburuk curah jantung sesaat) — inisiasi dilakukan setelah stabil, oleh spesialis. Di FKTP fokus stabilisasi + rujuk.', bahaya: 'kontraindikasi' },
       ],
       // CODEX (2026-07-05): minum_air_cukup (sinonim ISK/hidrasi, anjuran
       // MINUM LEBIH BANYAK) diganti restriksi_cairan_gagal_jantung — CHF
@@ -1298,38 +1302,59 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['N30.0', 'N39.0', 'N10'],
     tatalaksana: {
-      // Bagian D Tier-1 #3 (audit CODEX 2026-07-11, adjudikasi PPK1186+DOEN
-      // 2026-07-12): dari 4 opsi resmi PPK1186 (kotrimoksazol/fluorokuinolon/
-      // amoxicillin-clavulanate/cefpodoxime), cuma kotrimoksazol & siprofloksasin
-      // yg realistis-DOEN 2021 Puskesmas — dan kotrimoksazol otomatis gugur krn
-      // pasien ini alergi sulfa (lihat q_alergi). Siprofloksasin jadi satu-
-      // satunya jawaban yg aman UNTUK pasien ini DAN realistis tersedia — ini
-      // sekaligus menutup kontradiksi lama (obatBenar dulu = obat yg dilarang
-      // alergiTrap kasus ini sendiri). alergiTrap dihapus krn tak lagi perlu
-      // "tukar" — jawaban benarnya sudah aman utk alergi sulfa sejak awal.
-      obatBenar: ['ciprofloxacin_500'],
+      // CODEX audit pasca-GM (2026-07-13, temuan #1) — REVISI keputusan Bagian D
+      // Tier-1 #3 di atas, setelah PDF PNPK ISK 2025 resmi (Kepmenkes No.
+      // HK.01.07/MENKES/762/2025) diverifikasi langsung (diekstrak+dibaca utuh,
+      // dicek-silang 2-agen independen sebelum diterapkan — bukan diasumsikan
+      // dari klaim CODEX). Tabel Rekomendasi 13 (BAB IV, evidence grade KUAT,
+      // rekomendasi terkuat di dokumen ini) eksplisit: "Meresepkan fosfomicin
+      // trometamol, pivmecillinam atau nitrofurantoin sebagai pengobatan lini
+      // pertama untuk sistitis nonkomplikata pada wanita." — kotrimoksazol
+      // maupun siprofloksasin TIDAK ada di tabel rekomendasi bergrade ini (cuma
+      // muncul di daftar 12-opsi tanpa grade sebelumnya, dan siprofloksasin
+      // justru grade KUAT-nya dokumen ini untuk indikasi LAIN — pielonefritis,
+      // prostatitis kronis — bukan sistitis nonkomplikata wanita). Fosfomycin
+      // trometamol & pivmecillinam TIDAK ada di katalog obat game ini sama
+      // sekali (dicek eksplisit, nol entri) — nitrofurantoin_100 (SUDAH ada di
+      // katalog, fornas:true, golonganAlergi:'nitrofuran' — tak bentrok alergi
+      // sulfa pasien ini) jadi satu-satunya obat yg bisa mewakili rekomendasi
+      // KUAT ini di dalam game. Tak ada kontraindikasi nitrofurantoin yg
+      // relevan di sini (kontraindikasi dokumen: eGFR<30 & defisiensi G6PD/
+      // akhir kehamilan — pasien ini tidak hamil & tak ada penyakit ginjal).
+      // Siprofloksasin turun ke obatSalahUmum (nonPrimer, BUKAN kontraindikasi
+      // — bukan berbahaya utk pasien ini, cuma bukan pilihan bergrade-tertinggi
+      // utk indikasi ini; pola sama siprofloksasin di kasus lain repo ini —
+      // faringitis, hordeolum, rinosinusitis).
+      obatBenar: ['nitrofurantoin_100'],
       obatSalahUmum: [
         {
           id: 'cotrimoxazole_480',
-          alasan: 'Pasien alergi sulfa (riwayat melepuh kemerahan) — kotrimoksazol KONTRAINDIKASI mutlak, bukan sekadar "kurang ideal". PNPK 2025 pun tak membintanginya sbg pilihan utama.',
+          alasan: 'Pasien alergi sulfa (riwayat melepuh kemerahan) — kotrimoksazol KONTRAINDIKASI mutlak, bukan sekadar "kurang ideal". PNPK ISK 2025 pun tak membintanginya sbg lini pertama bergrade KUAT.',
+          bahaya: 'kontraindikasi',
         },
-        { id: 'natrium_diklofenak_50', alasan: 'Bukan terapi utama; sistitis butuh antibiotik + hidrasi. Analgesik hanya penunjang, bukan pengganti antibiotik.' },
+        {
+          id: 'ciprofloxacin_500',
+          alasan: 'Bukan dilarang utk pasien ini, tapi BUKAN lini pertama bergrade KUAT PNPK ISK 2025 utk sistitis nonkomplikata wanita (yg eksplisit hanya membintangi fosfomisin/pivmecillinam/nitrofurantoin) — fluorokuinolon sengaja dihemat (fluoroquinolone-sparing) utk indikasi lain (pielonefritis, ISK komplikata resisten) agar tak cepat resisten.',
+          bahaya: 'nonPrimer',
+        },
+        { id: 'natrium_diklofenak_50', alasan: 'Bukan terapi utama; sistitis butuh antibiotik + hidrasi. Analgesik hanya penunjang, bukan pengganti antibiotik.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['minum_air_cukup', 'cuci_tangan', 'kontrol_rutin'],
     },
-    clue: 'ISK bawah / sistitis akut tanpa komplikasi (perempuan, disuria + frekuensi + urgensi, TANPA demam tinggi/nyeri pinggang/CVA negatif) → antibiotik lini pertama (kotrimoksazol) 3 hari + banyak minum + jangan menahan kencing. WAJIB singkirkan kehamilan (ubah pilihan antibiotik) & pielonefritis (demam tinggi + nyeri ketok CVA = infeksi atas, alur berbeda). Cadangkan fluorokuinolon (PPK ISK / IDSA).',
+    clue: 'ISK bawah / sistitis akut tanpa komplikasi (perempuan, disuria + frekuensi + urgensi, TANPA demam tinggi/nyeri pinggang/CVA negatif) → antibiotik lini pertama bergrade KUAT PNPK ISK 2025 adalah nitrofurantoin (bersama fosfomisin/pivmecillinam) — BUKAN kotrimoksazol/fluorokuinolon, keduanya dihemat utk indikasi lain. Banyak minum + jangan menahan kencing. WAJIB singkirkan kehamilan & pielonefritis (demam tinggi + nyeri ketok CVA = infeksi atas, alur berbeda).',
     konsekuensi: {
       narasi: 'Bila tidak diobati adekuat atau tanda infeksi atas terlewat, sistitis dapat naik menjadi pielonefritis (demam tinggi, nyeri pinggang) yang lebih berat.',
       kembaliHariMin: 3,
       kembaliHariMax: 7,
       kondisiKembali: 'Pasien kembali dengan demam tinggi menggigil dan nyeri pinggang hebat — telah menjadi pielonefritis akut.',
-      guideline: 'PPK ISK Kemenkes / IDSA — sistitis tanpa komplikasi antibiotik singkat, fluorokuinolon dicadangkan.',
+      guideline: 'PNPK ISK 2025 (Kepmenkes No. HK.01.07/MENKES/762/2025), Tabel Rekomendasi 13 — nitrofurantoin/fosfomisin/pivmecillinam lini pertama sistitis nonkomplikata wanita, evidence grade Kuat; fluorokuinolon dihemat utk indikasi lain.',
     },
     // alergiTrap dipertahankan (alternatifBenar KOSONG, bukan dihapus total)
     // supaya pasien.alergi=['sulfa'] tetap terisi (chip "Riwayat alergi" di
     // LembarPeriksa.tsx konsisten dgn narasi q_alergi) — tanpa menambah
-    // obatBenar via swap (ciprofloxacin_500 sudah aman utk alergi sulfa sejak
-    // awal, alternatifBenar kosong mencegah dobel-hitung slot AND).
+    // obatBenar via swap (nitrofurantoin_100 sudah aman utk alergi sulfa sejak
+    // awal — golonganAlergi:'nitrofuran' tak beririsan dgn 'sulfa' — alternatifBenar
+    // kosong mencegah dobel-hitung slot AND).
     alergiTrap: {
       kelas: 'sulfa',
       obatTerlarang: ['cotrimoxazole_480'],

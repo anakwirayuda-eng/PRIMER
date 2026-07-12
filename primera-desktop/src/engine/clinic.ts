@@ -459,7 +459,16 @@ export function nilaiEncounter(
   // bta_sputum sendiri `hasilBesok:true`), jadi memesan lab lalu LANGSUNG
   // menegakkan diagnosis presumtif di kunjungan yang sama tetap lolos cap.
   // `labTersedia` memastikan hasil SUDAH ada sebelum cap terangkat.
-  if (kasus.konfirmasiWajib && !enc.labTersedia.includes(kasus.konfirmasiWajib)) {
+  //
+  // CODEX audit pasca-GM (2026-07-13, temuan #3): cap di atas HANYA menyentuh
+  // skorPemeriksaan (bobot 10%) — capGrade huruf & Dex "kuasai" (reducer.ts)
+  // sama sekali tak tahu soal ini, jadi diagnosis TB presumtif tanpa BTA/TCM
+  // tetap bisa dapat grade A penuh & Dex "dikuasai" asal komponen lain (yg
+  // bobotnya jauh lebih besar) sempurna. `konfirmasiTakTerpenuhi` diekspos di
+  // PenilaianEncounter supaya kedua konsumen itu bisa menggerbangnya sendiri.
+  const konfirmasiTakTerpenuhi =
+    kasus.konfirmasiWajib !== undefined && !enc.labTersedia.includes(kasus.konfirmasiWajib)
+  if (konfirmasiTakTerpenuhi) {
     skorPemeriksaan = Math.min(skorPemeriksaan, 50)
   }
 
@@ -526,8 +535,24 @@ export function nilaiEncounter(
   // Tier-1 #7: obat terlarang interaksi (mis. nitrat pada pasien PDE5) yg
   // TETAP diresepkan ikut dihitung sbg berbahaya — bukan cuma "obat di luar
   // rencana", ini kontraindikasi absolut (hipotensi berat/kolaps).
+  //
+  // CODEX audit pasca-GM (2026-07-13, temuan #2): obatSalahUmum dulu menghukum
+  // SEMUA entrinya sama rata (-25/cap-54/tally/UKP-3), padahal isinya campuran
+  // — sebagian benar kontraindikasi nyawa (kotrimoksazol pada alergi sulfa,
+  // NSAID pada dengue) tapi sebagian cuma salah-sasaran/tak-efektif/stewardship
+  // (ambroxol pada TB, vitamin B kompleks pada anemia) tanpa bahaya langsung.
+  // `bahaya` (types.ts) memisahkan keduanya; hanya entri 'kontraindikasi' yang
+  // tetap kena hukuman berat di bawah. Entri 'nonPrimer' (atau tak bertanda —
+  // default kompat-mundur) turun ke penalti selevel obatDiLuar (-15 di
+  // skorTerapi saja, TANPA cap/tally/UKP) — lihat obatNonPrimerDiresepkan.
+  const obatSalahDiresepkan = (kasus.tatalaksana.obatSalahUmum ?? []).filter((o) =>
+    enc.resep.includes(o.id),
+  )
+  const obatNonPrimerDiresepkan = obatSalahDiresepkan.filter(
+    (o) => o.bahaya !== 'kontraindikasi',
+  ).length
   const obatBerbahaya =
-    (kasus.tatalaksana.obatSalahUmum ?? []).filter((o) => enc.resep.includes(o.id)).length +
+    obatSalahDiresepkan.filter((o) => o.bahaya === 'kontraindikasi').length +
     (pasienKenaInteraksi && interaksi
       ? interaksi.obatTerlarang.filter((id) => enc.resep.includes(id)).length
       : 0)
@@ -576,6 +601,7 @@ export function nilaiEncounter(
       100 * rasioTerapi -
         15 * obatDiLuar -
         25 * obatBerbahaya -
+        15 * obatNonPrimerDiresepkan -
         (antibiotikGandaDalamGrup ? 20 : 0) -
         15 * tindakanDiLuar -
         (antibiotikTanpaIndikasi ? 25 : 0),
@@ -727,10 +753,17 @@ export function nilaiEncounter(
   //   percobaan resep kontraindikasi diblokir firewall → maks B (69) — nyaris,
   //     tak sampai ke pasien, tapi kelalaian cek alergi tetap kelalaian nyata
   //   rujukanNonSpesialistik (boros, tak membahayakan pasien ini) → maks B (84)
+  //   konfirmasiWajib tak terpenuhi (TB/malaria presumtif tanpa lab)  → maks B (69)
   const capGrade: number[] = []
   if (cowboy) capGrade.push(54)
   if (obatBerbahaya > 0) capGrade.push(54)
   if (antibiotikTanpaIndikasi) capGrade.push(69)
+  // CODEX audit pasca-GM (2026-07-13, temuan #3): lihat komentar
+  // `konfirmasiTakTerpenuhi` di atas — cap skorPemeriksaan saja tak cukup
+  // menggerbang grade huruf, jadi ditambahkan di sini SEJAJAR
+  // antibiotikTanpaIndikasi (sama-sama stewardship/kehati-hatian diagnostik,
+  // bukan cedera langsung pasien).
+  if (konfirmasiTakTerpenuhi) capGrade.push(69)
   // CODEX audit (2026-07-12, temuan #13B): firewall alergi yg tertrigger
   // (resep diblokir sebelum sampai pasien) dulu NOL konsekuensi grade/skor —
   // murni badge UI (LembarPeriksa.tsx). Cap lebih ringan drpd obatBerbahaya
@@ -762,6 +795,7 @@ export function nilaiEncounter(
     // cowboy/antibiotikTanpaIndikasi di atas.
     obatBerbahaya: obatBerbahaya > 0,
     firewallTerpicu: enc.firewallTerpicu > 0,
+    konfirmasiTakTerpenuhi,
     labTakRelevan,
     ...(sbarSkor !== undefined ? { sbarSkor } : {}),
     grade,

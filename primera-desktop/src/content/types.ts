@@ -126,8 +126,21 @@ export interface Tatalaksana {
    * wajib (menghukum konservatif yang benar) atau membiarkannya dihukum -15.
    */
   obatOpsional?: string[]
-  /** Jebakan umum: obat yang tampak masuk akal tapi salah, dengan alasan pedagogis. */
-  obatSalahUmum?: { id: string; alasan: string }[]
+  /**
+   * Jebakan umum: obat yang tampak masuk akal tapi salah, dengan alasan pedagogis.
+   *
+   * CODEX audit pasca-GM (2026-07-13, temuan #2): `bahaya` membedakan
+   * severity di dalam array ini — sebelum field ini ada, engine (clinic.ts)
+   * menghukum SETIAP entri dgn bobot sama (-25/tally/UKP/cap-54), padahal
+   * sebagiannya adalah risiko nyawa pasien ('kontraindikasi' — mis.
+   * kotrimoksazol pada alergi sulfa) dan sebagiannya cuma salah-sasaran/tak
+   * efektif/isu stewardship tanpa bahaya langsung ('nonPrimer' — mis.
+   * ambroxol pada TB, vitamin B kompleks pada anemia). Default hilang →
+   * 'nonPrimer' (kompatibilitas mundur; entri lama yg belum ditag tak
+   * tiba-tiba jadi lebih ringan ATAU lebih berat secara diam-diam — lihat
+   * clinic.ts utk arah penalti masing-masing).
+   */
+  obatSalahUmum?: { id: string; alasan: string; bahaya?: 'kontraindikasi' | 'nonPrimer' }[]
   /** Prosedur/tindakan yang tepat (id dari katalog tindakan). */
   prosedur?: string[]
   /** Topik edukasi wajib (id dari katalog edukasi). */

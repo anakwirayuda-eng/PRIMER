@@ -135,8 +135,8 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       obatBenar: ['amlodipine_5'],
       obatAlternatif: [['captopril_25', 'hct_25']],
       obatSalahUmum: [
-        { id: 'ibuprofen_400', alasan: 'NSAID menaikkan tekanan darah dan mengganggu ginjal — hindari pada hipertensi.' },
-        { id: 'paracetamol_500', alasan: 'Hanya meredakan nyeri kepala, tidak menurunkan tekanan darah; bukan terapi hipertensi.' },
+        { id: 'ibuprofen_400', alasan: 'NSAID menaikkan tekanan darah dan mengganggu ginjal — hindari pada hipertensi.', bahaya: 'kontraindikasi' },
+        { id: 'paracetamol_500', alasan: 'Hanya meredakan nyeri kepala, tidak menurunkan tekanan darah; bukan terapi hipertensi.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['diet_rendah_garam', 'aktivitas_fisik', 'kepatuhan_obat', 'kontrol_rutin', 'berhenti_merokok'],
       // DeepThink triangulasi (2026-07-05): konsekuensi.narasi kasus ini eksplisit
@@ -280,7 +280,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       // & risiko hipoglikemia lebih rendah).
       obatBenar: ['metformin_500', 'glimepirid_2'],
       obatSalahUmum: [
-        { id: 'glibenclamide_5', alasan: 'Glibenklamid tidak ada di formularium esensial Puskesmas (DOEN 2021) — tidak realistis diresepkan di FKTP. Glimepirid setara secara klinis (sulfonilurea, risiko hipoglikemia lebih rendah) dan nyata tersedia.' },
+        { id: 'glibenclamide_5', alasan: 'Glibenklamid tidak ada di formularium esensial Puskesmas (DOEN 2021) — tidak realistis diresepkan di FKTP. Glimepirid setara secara klinis (sulfonilurea, risiko hipoglikemia lebih rendah) dan nyata tersedia.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['diet_dm', 'aktivitas_fisik', 'kepatuhan_obat', 'kontrol_rutin'],
       // DeepThink triangulasi (2026-07-05): PERKENI — kepatuhan obat adalah tema
@@ -401,8 +401,8 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['omeprazole_20'],
       obatSalahUmum: [
-        { id: 'ibuprofen_400', alasan: 'NSAID mengiritasi mukosa lambung dan memperberat gastritis — justru pemicu.' },
-        { id: 'amoxicillin_500', alasan: 'Antibiotik tidak diindikasikan tanpa bukti infeksi H. pylori (tes napas/feses/serologi).' },
+        { id: 'ibuprofen_400', alasan: 'NSAID mengiritasi mukosa lambung dan memperberat gastritis — justru pemicu.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Antibiotik tidak diindikasikan tanpa bukti infeksi H. pylori (tes napas/feses/serologi).', bahaya: 'nonPrimer' },
       ],
       // M10.c (dossier §47): gizi_seimbang (Isi Piringku, generik) diganti
       // diet_lambung — clue "modifikasi gaya hidup + waspadai NSAID/jamu pemicu";
@@ -522,8 +522,8 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['salbutamol_inhaler', 'budesonide_inhaler'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Asma bukan infeksi bakteri; antibiotik tidak diindikasikan tanpa tanda infeksi.' },
-        { id: 'salbutamol_2', alasan: 'SABA oral kurang efektif dan lebih banyak efek samping (tremor, berdebar) dibanding inhalasi.' },
+        { id: 'amoxicillin_500', alasan: 'Asma bukan infeksi bakteri; antibiotik tidak diindikasikan tanpa tanda infeksi.', bahaya: 'nonPrimer' },
+        { id: 'salbutamol_2', alasan: 'SABA oral kurang efektif dan lebih banyak efek samping (tremor, berdebar) dibanding inhalasi.', bahaya: 'nonPrimer' },
       ],
       // M10.c (dossier §47): clue eksplisit "ajarkan teknik inhaler" + KEDUA
       // obatBenar adalah inhaler, tapi teknik_inhaler absen. hindari_alergen
@@ -652,8 +652,8 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['amoxicillin_sirup', 'paracetamol_sirup'],
       obatSalahUmum: [
-        { id: 'kloramfenikol_tetes_mata', alasan: 'Tetes mata bukan untuk telinga; OMA tanpa perforasi butuh antibiotik sistemik.' },
-        { id: 'cotrimoxazole_480', alasan: 'Bukan lini pertama OMA; amoksisilin dosis tinggi lebih tepat.' },
+        { id: 'kloramfenikol_tetes_mata', alasan: 'Tetes mata bukan untuk telinga; OMA tanpa perforasi butuh antibiotik sistemik.', bahaya: 'nonPrimer' },
+        { id: 'cotrimoxazole_480', alasan: 'Bukan lini pertama OMA; amoksisilin dosis tinggi lebih tepat.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'kompres_demam'],
     },
@@ -779,7 +779,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       // folat (0,4+1=1,4mg/hari). tablet_fe sendiri sudah cukup.
       obatBenar: ['tablet_fe'],
       obatSalahUmum: [
-        { id: 'vitamin_b_kompleks', alasan: 'Bukan terapi utama anemia defisiensi besi; yang kurang adalah zat besi, bukan vitamin B kompleks.' },
+        { id: 'vitamin_b_kompleks', alasan: 'Bukan terapi utama anemia defisiensi besi; yang kurang adalah zat besi, bukan vitamin B kompleks.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['gizi_seimbang', 'kepatuhan_obat', 'kontrol_rutin'],
     },
@@ -913,8 +913,8 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['amoxicillin_sirup', 'paracetamol_sirup'],
       obatSalahUmum: [
-        { id: 'salbutamol_inhaler', alasan: 'Bukan bronkospasme; pneumonia berat butuh antibiotik dan rujukan, bukan bronkodilator.' },
-        { id: 'cotrimoxazole_480', alasan: 'Bukan pilihan pra-rujukan utama; amoksisilin dosis pertama lebih tepat sebelum merujuk.' },
+        { id: 'salbutamol_inhaler', alasan: 'Bukan bronkospasme; pneumonia berat butuh antibiotik dan rujukan, bukan bronkodilator.', bahaya: 'nonPrimer' },
+        { id: 'cotrimoxazole_480', alasan: 'Bukan pilihan pra-rujukan utama; amoksisilin dosis pertama lebih tepat sebelum merujuk.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['tanda_bahaya', 'etika_batuk', 'kepatuhan_obat'],
     },
@@ -1041,8 +1041,8 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: [],
       obatSalahUmum: [
-        { id: 'captopril_25', alasan: 'Jangan turunkan tekanan darah cepat pada stroke iskemik akut (permisif hingga ~220/120) — menurunkan perfusi penumbra dan memperluas infark.' },
-        { id: 'amlodipine_5', alasan: 'Penurunan TD agresif fase akut membahayakan; prioritas adalah stabilisasi ABC dan rujukan cepat, bukan obat oral.' },
+        { id: 'captopril_25', alasan: 'Jangan turunkan tekanan darah cepat pada stroke iskemik akut (permisif hingga ~220/120) — menurunkan perfusi penumbra dan memperluas infark.', bahaya: 'kontraindikasi' },
+        { id: 'amlodipine_5', alasan: 'Penurunan TD agresif fase akut membahayakan; prioritas adalah stabilisasi ABC dan rujukan cepat, bukan obat oral.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['tanda_bahaya', 'kontrol_rutin', 'kepatuhan_obat'],
     },

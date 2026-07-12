@@ -121,8 +121,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['ambroxol_30', 'paracetamol_500'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Bronkitis akut pada dewasa sehat >90% viral & self-limiting; antibiotik tidak mempercepat sembuh dan memicu resistensi (PPK IDI; Kemenkes PPRA).' },
-        { id: 'azitromisin_500', alasan: 'Makrolida bukan indikasi bronkitis akut viral tanpa tanda pneumonia; peresepan rutin justru mendorong resistensi.' },
+        { id: 'amoxicillin_500', alasan: 'Bronkitis akut pada dewasa sehat >90% viral & self-limiting; antibiotik tidak mempercepat sembuh dan memicu resistensi (PPK IDI; Kemenkes PPRA).', bahaya: 'nonPrimer' },
+        { id: 'azitromisin_500', alasan: 'Makrolida bukan indikasi bronkitis akut viral tanpa tanda pneumonia; peresepan rutin justru mendorong resistensi.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['etika_batuk', 'istirahat_cukup', 'minum_air_cukup', 'tanda_bahaya'],
     },
@@ -236,8 +236,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // Antihistamin gen-2 setara — beri SALAH SATU (bukan keduanya sekaligus).
       obatAlternatif: [['loratadin_10', 'cetirizine_10']],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Rinitis alergi bukan infeksi bakteri — antibiotik tidak berperan. Sekret jernih tanpa demam menyingkirkan sinusitis bakterial.' },
-        { id: 'pseudoefedrin_30', alasan: 'Dekongestan ORAL bukan terapi utama rinitis alergi; efek sistemiknya (menaikkan tekanan darah, insomnia, palpitasi) berbahaya, terutama pada hipertensi. Rinitis medikamentosa justru rebound dekongestan TOPIKAL (oksimetazolin), bukan oral.' },
+        { id: 'amoxicillin_500', alasan: 'Rinitis alergi bukan infeksi bakteri — antibiotik tidak berperan. Sekret jernih tanpa demam menyingkirkan sinusitis bakterial.', bahaya: 'nonPrimer' },
+        { id: 'pseudoefedrin_30', alasan: 'Dekongestan ORAL bukan terapi utama rinitis alergi; efek sistemiknya (menaikkan tekanan darah, insomnia, palpitasi) berbahaya, terutama pada hipertensi. Rinitis medikamentosa justru rebound dekongestan TOPIKAL (oksimetazolin), bukan oral.', bahaya: 'kontraindikasi' },
       ],
       // M10.c (dossier §47): jaga_kelembapan_kulit (topik KULIT/eksim) dibuang
       // dari kasus HIDUNG — salah sasaran, pemain dapat kredit topik tak relevan.
@@ -352,8 +352,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['amoxicillin_500', 'paracetamol_500'],
       obatSalahUmum: [
-        { id: 'dexamethasone_05', alasan: 'Kortikosteroid oral bukan terapi utama tonsilitis bakterial dan tidak menggantikan antibiotik; pemberian rutin tak beralasan menutupi perjalanan penyakit.' },
-        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon berlebihan untuk tonsilitis streptokokus komunitas dan memicu resistensi; lini pertama tetap penisilin/amoxicillin.' },
+        { id: 'dexamethasone_05', alasan: 'Kortikosteroid oral bukan terapi utama tonsilitis bakterial dan tidak menggantikan antibiotik; pemberian rutin tak beralasan menutupi perjalanan penyakit.', bahaya: 'nonPrimer' },
+        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon berlebihan untuk tonsilitis streptokokus komunitas dan memicu resistensi; lini pertama tetap penisilin/amoxicillin.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kepatuhan_obat', 'kompres_demam', 'istirahat_cukup', 'minum_air_cukup'],
       // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — antibiotik
@@ -482,8 +482,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       ],
       prosedur: ['nebulisasi'],
       obatSalahUmum: [
-        { id: 'salbutamol_2', alasan: 'SABA ORAL (tablet) BUKAN pilihan untuk eksaserbasi berat — onset lambat, efek samping sistemik (tremor, takikardia) lebih besar; bronkodilator harus rute INHALASI/NEBULISASI (GOLD).' },
-        { id: 'kloramfenikol_250', alasan: 'Antibiotik yang tak tepat untuk eksaserbasi PPOK. Bila sputum purulen + gejala kardinal (indikasi antibiotik), pilih golongan yang sesuai — dan yang terpenting: jangan menunda rujukan saat SpO2 89% + tanda gagal napas.' },
+        { id: 'salbutamol_2', alasan: 'SABA ORAL (tablet) BUKAN pilihan untuk eksaserbasi berat — onset lambat, efek samping sistemik (tremor, takikardia) lebih besar; bronkodilator harus rute INHALASI/NEBULISASI (GOLD).', bahaya: 'nonPrimer' },
+        { id: 'kloramfenikol_250', alasan: 'Antibiotik yang tak tepat untuk eksaserbasi PPOK. Bila sputum purulen + gejala kardinal (indikasi antibiotik), pilih golongan yang sesuai — dan yang terpenting: jangan menunda rujukan saat SpO2 89% + tanda gagal napas.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['berhenti_merokok', 'teknik_inhaler', 'tanda_bahaya', 'kontrol_rutin'],
     },
@@ -598,8 +598,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // PPI setara — beri SALAH SATU (omeprazol atau lansoprazol), bukan dua PPI.
       obatAlternatif: [['omeprazole_20', 'lansoprazol_30']],
       obatSalahUmum: [
-        { id: 'natrium_diklofenak_50', alasan: 'NSAID mengiritasi mukosa lambung dan memperberat refluks/ulkus — kontraproduktif pada GERD. Jangan diberikan untuk "nyeri" ulu hati refluks.' },
-        { id: 'domperidon_10', alasan: 'Prokinetik boleh sebagai tambahan bila regurgitasi menonjol, tetapi BUKAN pengganti PPI dan tidak diberikan tunggal sebagai terapi utama GERD.' },
+        { id: 'natrium_diklofenak_50', alasan: 'NSAID mengiritasi mukosa lambung dan memperberat refluks/ulkus — kontraproduktif pada GERD. Jangan diberikan untuk "nyeri" ulu hati refluks.', bahaya: 'kontraindikasi' },
+        { id: 'domperidon_10', alasan: 'Prokinetik boleh sebagai tambahan bila regurgitasi menonjol, tetapi BUKAN pengganti PPI dan tidak diberikan tunggal sebagai terapi utama GERD.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['posisi_tidur_gerd', 'diet_lambung', 'berhenti_merokok', 'tanda_bahaya'],
     },
@@ -717,8 +717,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       obatBenar: ['omeprazole_20'],
       obatOpsional: ['antasida_doen'],
       obatSalahUmum: [
-        { id: 'asam_mefenamat_500', alasan: 'NSAID justru salah satu penyebab dispepsia/ulkus — memberikannya untuk "nyeri" ulu hati memperparah keluhan. Hentikan NSAID, bukan menambah.' },
-        { id: 'amoxicillin_500', alasan: 'Antibiotik hanya sebagai bagian rejimen eradikasi H. pylori BILA terbukti/terindikasi, bukan diberikan tunggal empiris pada dispepsia fungsional.' },
+        { id: 'asam_mefenamat_500', alasan: 'NSAID justru salah satu penyebab dispepsia/ulkus — memberikannya untuk "nyeri" ulu hati memperparah keluhan. Hentikan NSAID, bukan menambah.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Antibiotik hanya sebagai bagian rejimen eradikasi H. pylori BILA terbukti/terindikasi, bukan diberikan tunggal empiris pada dispepsia fungsional.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['diet_lambung', 'manajemen_stres', 'tanda_bahaya', 'higiene_tidur'],
     },
@@ -829,8 +829,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       obatBenar: ['ciprofloxacin_500', 'oralit'],
       obatOpsional: ['zinc_20'],
       obatSalahUmum: [
-        { id: 'loperamid_2', alasan: 'Antimotilitas DILARANG pada diare berdarah/disentri invasif — menahan patogen & toksin, memicu megakolon toksik dan memperpanjang penyakit.' },
-        { id: 'metronidazol_500', alasan: 'Metronidazol untuk disentri AMEBA; pada disentri basiler (Shigella) yang tepat adalah antibiotik seperti siprofloksasin. Feses di sini tidak menunjukkan trofozoit ameba.' },
+        { id: 'loperamid_2', alasan: 'Antimotilitas DILARANG pada diare berdarah/disentri invasif — menahan patogen & toksin, memicu megakolon toksik dan memperpanjang penyakit.', bahaya: 'kontraindikasi' },
+        { id: 'metronidazol_500', alasan: 'Metronidazol untuk disentri AMEBA; pada disentri basiler (Shigella) yang tepat adalah antibiotik seperti siprofloksasin. Feses di sini tidak menunjukkan trofozoit ameba.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['cairan_oralit', 'cuci_tangan_makanan', 'tanda_bahaya', 'cuci_tangan'],
       // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit sebut
@@ -942,8 +942,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // Antelmintik setara — beri SALAH SATU (albendazol ATAU pirantel), bukan dua.
       obatAlternatif: [['albendazol_400', 'pirantel_pamoat']],
       obatSalahUmum: [
-        { id: 'metronidazol_500', alasan: 'Metronidazol untuk protozoa (amuba/giardia), bukan cacing gelang. Antelmintik (albendazol/pirantel) yang tepat untuk askariasis.' },
-        { id: 'amoxicillin_500', alasan: 'Antibiotik tidak berperan pada infeksi cacing; nyeri perut di sini akibat cacing, bukan infeksi bakteri.' },
+        { id: 'metronidazol_500', alasan: 'Metronidazol untuk protozoa (amuba/giardia), bukan cacing gelang. Antelmintik (albendazol/pirantel) yang tepat untuk askariasis.', bahaya: 'nonPrimer' },
+        { id: 'amoxicillin_500', alasan: 'Antibiotik tidak berperan pada infeksi cacing; nyeri perut di sini akibat cacing, bukan infeksi bakteri.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['cuci_tangan_makanan', 'gizi_seimbang', 'cuci_tangan', 'tanda_bahaya'],
     },
@@ -1049,8 +1049,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['laktulosa_syr'],
       obatSalahUmum: [
-        { id: 'natrium_diklofenak_50', alasan: 'NSAID bukan terapi hemoroid grade 1 dan berisiko iritasi lambung; keluhan utamanya sembelit, bukan nyeri hebat. Fokus pelunak tinja & serat.' },
-        { id: 'ciprofloxacin_500', alasan: 'Tidak ada indikasi antibiotik pada hemoroid tanpa infeksi; peresepan hanya menambah risiko resistensi.' },
+        { id: 'natrium_diklofenak_50', alasan: 'NSAID bukan terapi hemoroid grade 1 dan berisiko iritasi lambung; keluhan utamanya sembelit, bukan nyeri hebat. Fokus pelunak tinja & serat.', bahaya: 'nonPrimer' },
+        { id: 'ciprofloxacin_500', alasan: 'Tidak ada indikasi antibiotik pada hemoroid tanpa infeksi; peresepan hanya menambah risiko resistensi.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['gizi_seimbang', 'minum_air_cukup', 'aktivitas_fisik', 'tanda_bahaya'],
     },
@@ -1173,8 +1173,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // clue-nya sendiri anjurkan) dulu dihukum −15 sbg tindakan-di-luar.
       prosedur: ['pasang_infus'],
       obatSalahUmum: [
-        { id: 'natrium_diklofenak_50', alasan: 'Untuk perut akut yang mungkin dioperasi, HINDARI NSAID (risiko iritasi/perdarahan GI & gangguan hemostasis peri-operatif) — pilih parasetamol. Catatan EBM: analgesia TIDAK menutupi tanda/menunda diagnosis (Cochrane), jadi nyeri tetap boleh diredakan; yang salah adalah memilih NSAID, bukan memberi analgesia.' },
-        { id: 'amoxicillin_500', alasan: 'Apendisitis akut adalah kasus BEDAH — antibiotik ORAL di FKTP tidak menyembuhkan & jangan sampai menunda rujukan. Antibiotik parenteral peri-operatif adalah bagian standar tata laksana DI RS rujukan.' },
+        { id: 'natrium_diklofenak_50', alasan: 'Untuk perut akut yang mungkin dioperasi, HINDARI NSAID (risiko iritasi/perdarahan GI & gangguan hemostasis peri-operatif) — pilih parasetamol. Catatan EBM: analgesia TIDAK menutupi tanda/menunda diagnosis (Cochrane), jadi nyeri tetap boleh diredakan; yang salah adalah memilih NSAID, bukan memberi analgesia.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Apendisitis akut adalah kasus BEDAH — antibiotik ORAL di FKTP tidak menyembuhkan & jangan sampai menunda rujukan. Antibiotik parenteral peri-operatif adalah bagian standar tata laksana DI RS rujukan.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['tanda_bahaya'],
     },

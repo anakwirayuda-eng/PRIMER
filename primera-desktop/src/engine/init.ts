@@ -205,6 +205,7 @@ export function buildInitialState(
       igdStabil: 0,
       igdSalahDisposisi: 0,
       igdMeninggal: 0,
+      igdKodeBiruTerjadi: 0,
       rmLengkap: 0,
       teguranDinkes: 0,
       hariKelelahan: 0,

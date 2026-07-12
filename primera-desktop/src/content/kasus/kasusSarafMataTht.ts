@@ -116,8 +116,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       // bukan keduanya sekaligus; TTH episodik cukup analgetik tunggal.
       obatAlternatif: [['paracetamol_500', 'ibuprofen_400']],
       obatSalahUmum: [
-        { id: 'amitriptilin_25', alasan: 'Amitriptilin adalah profilaksis untuk TTH KRONIK (>15 hari/bulan); pada TTH episodik cukup analgetik simtomatik + manajemen stres, jangan langsung antidepresan.' },
-        { id: 'tramadol_50', alasan: 'Opioid tidak diindikasikan pada TTH — berisiko ketergantungan dan medication-overuse headache; berlebihan untuk nyeri kepala primer ringan.' },
+        { id: 'amitriptilin_25', alasan: 'Amitriptilin adalah profilaksis untuk TTH KRONIK (>15 hari/bulan); pada TTH episodik cukup analgetik simtomatik + manajemen stres, jangan langsung antidepresan.', bahaya: 'nonPrimer' },
+        { id: 'tramadol_50', alasan: 'Opioid tidak diindikasikan pada TTH — berisiko ketergantungan dan medication-overuse headache; berlebihan untuk nyeri kepala primer ringan.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['manajemen_stres', 'higiene_tidur', 'postur_ergonomi', 'peregangan_sendi'],
     },
@@ -234,8 +234,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['ibuprofen_400', 'ondansetron_4'],
       obatSalahUmum: [
-        { id: 'tramadol_50', alasan: 'Opioid tidak dianjurkan untuk migrain akut — memicu medication-overuse headache dan menyamarkan pola nyeri; NSAID/parasetamol adalah lini pertama.' },
-        { id: 'amoxicillin_500', alasan: 'Migrain bukan infeksi; antibiotik sama sekali tidak berperan.' },
+        { id: 'tramadol_50', alasan: 'Opioid tidak dianjurkan untuk migrain akut — memicu medication-overuse headache dan menyamarkan pola nyeri; NSAID/parasetamol adalah lini pertama.', bahaya: 'nonPrimer' },
+        { id: 'amoxicillin_500', alasan: 'Migrain bukan infeksi; antibiotik sama sekali tidak berperan.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['hindari_pencetus_migrain', 'higiene_tidur', 'manajemen_stres', 'kontrol_rutin'],
     },
@@ -345,8 +345,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['betahistin_6'],
       obatSalahUmum: [
-        { id: 'flunarizin_5', alasan: 'Flunarizin lebih untuk profilaksis migren/vertigo vestibular sentral; pada BPPV terapi utamanya MANUVER REPOSISI (Epley), bukan mengandalkan obat penekan vestibular jangka panjang.' },
-        { id: 'amoxicillin_500', alasan: 'BPPV bukan infeksi telinga — antibiotik tidak berperan sama sekali.' },
+        { id: 'flunarizin_5', alasan: 'Flunarizin lebih untuk profilaksis migren/vertigo vestibular sentral; pada BPPV terapi utamanya MANUVER REPOSISI (Epley), bukan mengandalkan obat penekan vestibular jangka panjang.', bahaya: 'nonPrimer' },
+        { id: 'amoxicillin_500', alasan: 'BPPV bukan infeksi telinga — antibiotik tidak berperan sama sekali.', bahaya: 'nonPrimer' },
       ],
       prosedur: ['manuver_epley'],
       edukasi: ['latihan_bppv', 'tanda_bahaya'],
@@ -449,8 +449,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['prednison_5', 'air_mata_buatan'],
       obatSalahUmum: [
-        { id: 'asiklovir_400', alasan: 'Antivirus SENDIRIAN tidak dianjurkan pada Bell\'s palsy tanpa bukti herpes zoster; manfaat utama dari kortikosteroid dini. Antivirus hanya kombinasi pada kasus berat/Ramsay Hunt.' },
-        { id: 'amoxicillin_500', alasan: 'Bell\'s palsy bukan infeksi bakteri — antibiotik tidak berperan.' },
+        { id: 'asiklovir_400', alasan: 'Antivirus SENDIRIAN tidak dianjurkan pada Bell\'s palsy tanpa bukti herpes zoster; manfaat utama dari kortikosteroid dini. Antivirus hanya kombinasi pada kasus berat/Ramsay Hunt.', bahaya: 'nonPrimer' },
+        { id: 'amoxicillin_500', alasan: 'Bell\'s palsy bukan infeksi bakteri — antibiotik tidak berperan.', bahaya: 'nonPrimer' },
       ],
       // M10.c (dossier §47): kompres_mata (hangat, hordeolum) off-target —
       // clue WAJIB "proteksi kornea: air mata buatan + tutup mata saat tidur"
@@ -562,9 +562,9 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['diazepam_rektal_10'],
       obatSalahUmum: [
-        { id: 'karbamazepin_200', alasan: 'Pemilihan & titrasi OAE jangka panjang (mis. karbamazepin/valproat) adalah wewenang spesialis saraf setelah klasifikasi bangkitan + EEG; memulai OAE sendiri di FKTP tanpa penegakan tipe bangkitan tidak tepat. FKTP menstabilkan lalu MERUJUK.' },
-        { id: 'haloperidol_5', alasan: 'Antipsikotik justru MENURUNKAN ambang kejang dan tidak diindikasikan; salah kaprah menganggap kejang sebagai gangguan perilaku.' },
-        { id: 'diazepam_2', alasan: 'Diazepam TABLET oral 2 mg tidak dapat mengabortus bangkitan aktif (absorpsi lambat). Rescue bangkitan/status memakai diazepam REKTAL atau IV 5-10 mg — bukan tablet oral.' },
+        { id: 'karbamazepin_200', alasan: 'Pemilihan & titrasi OAE jangka panjang (mis. karbamazepin/valproat) adalah wewenang spesialis saraf setelah klasifikasi bangkitan + EEG; memulai OAE sendiri di FKTP tanpa penegakan tipe bangkitan tidak tepat. FKTP menstabilkan lalu MERUJUK.', bahaya: 'nonPrimer' },
+        { id: 'haloperidol_5', alasan: 'Antipsikotik justru MENURUNKAN ambang kejang dan tidak diindikasikan; salah kaprah menganggap kejang sebagai gangguan perilaku.', bahaya: 'kontraindikasi' },
+        { id: 'diazepam_2', alasan: 'Diazepam TABLET oral 2 mg tidak dapat mengabortus bangkitan aktif (absorpsi lambat). Rescue bangkitan/status memakai diazepam REKTAL atau IV 5-10 mg — bukan tablet oral.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'higiene_tidur', 'kontrol_rutin'],
     },
@@ -673,8 +673,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['loratadin_10', 'air_mata_buatan'],
       obatSalahUmum: [
-        { id: 'kloramfenikol_tetes_mata', alasan: 'Konjungtivitis ALERGI bukan infeksi bakteri — antibiotik topikal tidak berefek pada gatal/alergi dan bukan indikasi; kuncinya antihistamin + hindari alergen.' },
-        { id: 'dexamethasone_05', alasan: 'Steroid tetes mata TIDAK boleh diresepkan sembarangan di FKTP untuk mata merah — risiko glaukoma steroid, katarak, dan memperparah bila ada herpes kornea.' },
+        { id: 'kloramfenikol_tetes_mata', alasan: 'Konjungtivitis ALERGI bukan infeksi bakteri — antibiotik topikal tidak berefek pada gatal/alergi dan bukan indikasi; kuncinya antihistamin + hindari alergen.', bahaya: 'nonPrimer' },
+        { id: 'dexamethasone_05', alasan: 'Steroid tetes mata TIDAK boleh diresepkan sembarangan di FKTP untuk mata merah — risiko glaukoma steroid, katarak, dan memperparah bila ada herpes kornea.', bahaya: 'kontraindikasi' },
       ],
       // M10.c (dossier §47): kompres_mata = "Kompres HANGAT" (hordeolum),
       // bertentangan langsung dgn clue "kompres DINGIN" utk konjungtivitis
@@ -791,8 +791,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       obatBenar: [],
       obatOpsional: ['kloramfenikol_tetes_mata'],
       obatSalahUmum: [
-        { id: 'dexamethasone_05', alasan: 'Hordeolum adalah infeksi bakteri akut kelenjar kelopak — steroid tidak diindikasikan dan berisiko memperparah/menutupi infeksi.' },
-        { id: 'ciprofloxacin_500', alasan: 'Antibiotik oral sistemik berlebihan untuk hordeolum tanpa komplikasi; cukup kompres hangat + higiene ± antibiotik topikal. Oral hanya bila menjadi selulitis preseptal.' },
+        { id: 'dexamethasone_05', alasan: 'Hordeolum adalah infeksi bakteri akut kelenjar kelopak — steroid tidak diindikasikan dan berisiko memperparah/menutupi infeksi.', bahaya: 'kontraindikasi' },
+        { id: 'ciprofloxacin_500', alasan: 'Antibiotik oral sistemik berlebihan untuk hordeolum tanpa komplikasi; cukup kompres hangat + higiene ± antibiotik topikal. Oral hanya bila menjadi selulitis preseptal.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kompres_mata', 'kebersihan_kulit', 'cuci_tangan'],
     },
@@ -896,8 +896,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['karbogliserin_tetes'],
       obatSalahUmum: [
-        { id: 'kloramfenikol_tetes_mata', alasan: 'Salah sediaan/indikasi: serumen prop bukan infeksi. Bila serumen keras, gunakan serumenolitik (karbogliserin) untuk melunakkan, lalu ekstraksi — bukan antibiotik tetes.' },
-        { id: 'amoxicillin_500', alasan: 'Tidak ada infeksi bakteri pada serumen prop tanpa komplikasi — antibiotik oral tidak diindikasikan.' },
+        { id: 'kloramfenikol_tetes_mata', alasan: 'Salah sediaan/indikasi: serumen prop bukan infeksi. Bila serumen keras, gunakan serumenolitik (karbogliserin) untuk melunakkan, lalu ekstraksi — bukan antibiotik tetes.', bahaya: 'nonPrimer' },
+        { id: 'amoxicillin_500', alasan: 'Tidak ada infeksi bakteri pada serumen prop tanpa komplikasi — antibiotik oral tidak diindikasikan.', bahaya: 'nonPrimer' },
       ],
       prosedur: ['ekstraksi_serumen'],
       edukasi: ['kebersihan_kulit', 'tanda_bahaya'],
@@ -1008,8 +1008,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['oksimetazolin_spray'],
       obatSalahUmum: [
-        { id: 'amoxicillin_500', alasan: 'Epistaksis bukan infeksi; antibiotik tidak menghentikan perdarahan. (Antibiotik hanya relevan sebagai profilaksis bila tampon dipasang lama, bukan terapi utama.)' },
-        { id: 'ibuprofen_400', alasan: 'NSAID mengganggu fungsi trombosit dan dapat memperpanjang perdarahan — hindari pada pasien epistaksis.' },
+        { id: 'amoxicillin_500', alasan: 'Epistaksis bukan infeksi; antibiotik tidak menghentikan perdarahan. (Antibiotik hanya relevan sebagai profilaksis bila tampon dipasang lama, bukan terapi utama.)', bahaya: 'nonPrimer' },
+        { id: 'ibuprofen_400', alasan: 'NSAID mengganggu fungsi trombosit dan dapat memperpanjang perdarahan — hindari pada pasien epistaksis.', bahaya: 'kontraindikasi' },
       ],
       prosedur: ['tampon_epistaksis'],
       edukasi: ['kepatuhan_obat', 'kontrol_rutin', 'tanda_bahaya'],
@@ -1125,8 +1125,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['amoxiclav_625', 'pseudoefedrin_30', 'paracetamol_500'],
       obatSalahUmum: [
-        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon bukan lini pertama rinosinusitis bakterial komunitas; amoksisilin(-klavulanat) yang diutamakan. Kuinolon dicadangkan untuk kasus khusus.' },
-        { id: 'dexamethasone_05', alasan: 'Kortikosteroid oral sistemik tidak rutin diberikan pada rinosinusitis akut tanpa komplikasi; steroid INTRANASAL yang berperan, bukan steroid oral sembarangan.' },
+        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon bukan lini pertama rinosinusitis bakterial komunitas; amoksisilin(-klavulanat) yang diutamakan. Kuinolon dicadangkan untuk kasus khusus.', bahaya: 'nonPrimer' },
+        { id: 'dexamethasone_05', alasan: 'Kortikosteroid oral sistemik tidak rutin diberikan pada rinosinusitis akut tanpa komplikasi; steroid INTRANASAL yang berperan, bukan steroid oral sembarangan.', bahaya: 'nonPrimer' },
       ],
       // M10.c (dossier §47): minum_air_cukup ber-identitas ISK ("jangan menahan
       // kencing") — off-target di kasus HIDUNG; diganti bilas_salin_hidung
@@ -1236,8 +1236,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['timolol_tetes_mata'],
       obatSalahUmum: [
-        { id: 'dexamethasone_05', alasan: 'JEBAKAN KLASIK: mata merah TIDAK boleh otomatis diberi steroid. Pada glaukoma akut steroid tidak menurunkan TIO dan menunda rujukan; steroid keliru pada mata merah lain (herpes/ulkus) juga membahayakan penglihatan.' },
-        { id: 'kloramfenikol_tetes_mata', alasan: 'Ini BUKAN konjungtivitis: mata merah di sini disertai NYERI HEBAT + VISUS TURUN + pupil mid-dilatasi. Antibiotik tetes sama sekali tidak menangani tekanan bola mata yang tinggi — membuang waktu emas.' },
+        { id: 'dexamethasone_05', alasan: 'JEBAKAN KLASIK: mata merah TIDAK boleh otomatis diberi steroid. Pada glaukoma akut steroid tidak menurunkan TIO dan menunda rujukan; steroid keliru pada mata merah lain (herpes/ulkus) juga membahayakan penglihatan.', bahaya: 'kontraindikasi' },
+        { id: 'kloramfenikol_tetes_mata', alasan: 'Ini BUKAN konjungtivitis: mata merah di sini disertai NYERI HEBAT + VISUS TURUN + pupil mid-dilatasi. Antibiotik tetes sama sekali tidak menangani tekanan bola mata yang tinggi — membuang waktu emas.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['tanda_bahaya', 'kontrol_rutin'],
     },

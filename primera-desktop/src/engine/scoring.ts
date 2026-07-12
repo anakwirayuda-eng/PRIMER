@@ -56,10 +56,31 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   // Confidence-tagging (M3.13): merujuk kasus wajib-rujuk dengan TEPAT dihargai —
   // guillotine tidak boleh mengajarkan "jangan pernah merujuk".
   const bonusRujukanTepat = Math.min(3, t.rujukanTepat * 0.75)
-  // IGD (M3.14): stabil + disposisi TEPAT = bonus kecil; disposisi keliru = tak
-  // dihargai (bukan dihukum — pasien tetap selamat); Kode Hitam = luka besar.
+  // IGD (M3.14): stabil + disposisi TEPAT = bonus kecil; disposisi keliru
+  // (pasien selamat tapi diarahkan salah) = penalti ringan (-0.5, formula di
+  // bawah) — tak seberat Kode Hitam (-3) krn pasien tetap selamat, tapi tak
+  // nol juga: near-miss tetap dicatat, bukan cuma "tak dihargai".
+  //
+  // CODEX audit pasca-GM (2026-07-13, temuan #9 Part B, keputusan dr.
+  // Wirayuda): komentar di atas SEBELUMNYA keliru menyebut ini "tak dihukum"
+  // padahal `-0.5 * t.igdSalahDisposisi` di bawah sudah menghukumnya sejak
+  // sebelum sesi ini (persis sejajar bobot `igdKodeBiruTerjadi` yg baru
+  // ditambahkan §9 Part A) — jadi asimetri yg diaudit CODEX sebenarnya sudah
+  // tak ada di kode, hanya komentarnya yg menyesatkan. Diperbaiki di sini,
+  // tanpa perubahan formula (formula sudah benar).
+  //
+  // CODEX audit pasca-GM (2026-07-13, temuan #9 Part A): `igdKodeBiruTerjadi`
+  // menghukum RINGAN tiap kejadian henti napas/jantung, terlepas hasil akhir
+  // (ROSC+stabil ATAU Kode Hitam yg sudah kena -3 igdMeninggal terpisah) —
+  // dulu pasien yg nyaris mati lalu diselamatkan skornya IDENTIK dgn pasien
+  // yg manajemennya mulus tanpa Kode Biru sama sekali. -0.5/kejadian: cukup
+  // membedakan "selamat dari maut" dari "tak pernah krisis" tanpa menyaingi
+  // beratnya igdSalahDisposisi/igdMeninggal.
   const efekIgd =
-    Math.min(2, t.igdStabil * 0.5) - 0.5 * t.igdSalahDisposisi - 3 * t.igdMeninggal
+    Math.min(2, t.igdStabil * 0.5) -
+    0.5 * t.igdSalahDisposisi -
+    3 * t.igdMeninggal -
+    0.5 * t.igdKodeBiruTerjadi
   // DeepThink ronde-2 ("Boikot Rujukan"): guillotine adalah gerbang kali-nol
   // (all-or-nothing) begitu rujukanTotal≥3 — RRNS 100% di sampel kecil (2)
   // LOLOS penuh (guillotine=1), sedangkan cowboy dulu cuma potongan flat -2.

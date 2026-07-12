@@ -131,8 +131,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       // dobel-hitung folat (0,4+1=1,4mg/hari). tablet_fe sendiri sudah cukup.
       obatBenar: ['tablet_fe'],
       obatSalahUmum: [
-        { id: 'paracetamol_500', alasan: 'Kehamilan normal bukan kondisi sakit — tidak perlu analgetik rutin. Fokus pada suplementasi & edukasi, bukan medikalisasi.' },
-        { id: 'domperidon_10', alasan: 'Mual sudah reda; antiemetik tidak diindikasikan dan bukan bagian paket ANC standar.' },
+        { id: 'paracetamol_500', alasan: 'Kehamilan normal bukan kondisi sakit — tidak perlu analgetik rutin. Fokus pada suplementasi & edukasi, bukan medikalisasi.', bahaya: 'nonPrimer' },
+        { id: 'domperidon_10', alasan: 'Mual sudah reda; antiemetik tidak diindikasikan dan bukan bagian paket ANC standar.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['anc_rutin', 'tanda_bahaya_kehamilan', 'gizi_seimbang', 'kepatuhan_obat'],
     },
@@ -236,9 +236,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['cefixime_100', 'paracetamol_500'],
       obatSalahUmum: [
-        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon KONTRAINDIKASI pada kehamilan — risiko gangguan tulang rawan janin. Pilih beta-laktam yang aman (sefiksim).' },
-        { id: 'doksisiklin_100', alasan: 'Tetrasiklin KONTRAINDIKASI pada kehamilan — menyebabkan diskolorasi gigi & gangguan tulang janin.' },
-        { id: 'cotrimoxazole_480', alasan: 'Sulfa dihindari terutama trimester 1 & akhir (risiko kernikterus/defek tabung saraf); bukan pilihan aman rutin pada bumil.' },
+        { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon KONTRAINDIKASI pada kehamilan — risiko gangguan tulang rawan janin. Pilih beta-laktam yang aman (sefiksim).', bahaya: 'kontraindikasi' },
+        { id: 'doksisiklin_100', alasan: 'Tetrasiklin KONTRAINDIKASI pada kehamilan — menyebabkan diskolorasi gigi & gangguan tulang janin.', bahaya: 'kontraindikasi' },
+        { id: 'cotrimoxazole_480', alasan: 'Sulfa dihindari terutama trimester 1 & akhir (risiko kernikterus/defek tabung saraf); bukan pilihan aman rutin pada bumil.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['minum_air_cukup', 'tanda_bahaya_kehamilan', 'kepatuhan_obat', 'cuci_tangan'],
       // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — ISK tak
@@ -349,9 +349,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['mgso4_inj', 'nifedipin_10'],
       obatSalahUmum: [
-        { id: 'captopril_25', alasan: 'ACE-inhibitor KONTRAINDIKASI MUTLAK pada kehamilan (fetotoksik, gangguan ginjal janin). Antihipertensi bumil: nifedipin/metildopa/labetalol.' },
-        { id: 'furosemid_40', alasan: 'Diuretik TIDAK rutin pada preeklampsia — memperberat kontraksi volume plasma yang sudah menurun. Kecuali edema paru.' },
-        { id: 'diazepam_2', alasan: 'Antikonvulsan pilihan pada preeklampsia/eklampsia adalah MgSO4, BUKAN benzodiazepin (kalah efektif & menekan napas ibu/janin).' },
+        { id: 'captopril_25', alasan: 'ACE-inhibitor KONTRAINDIKASI MUTLAK pada kehamilan (fetotoksik, gangguan ginjal janin). Antihipertensi bumil: nifedipin/metildopa/labetalol.', bahaya: 'kontraindikasi' },
+        { id: 'furosemid_40', alasan: 'Diuretik TIDAK rutin pada preeklampsia — memperberat kontraksi volume plasma yang sudah menurun. Kecuali edema paru.', bahaya: 'kontraindikasi' },
+        { id: 'diazepam_2', alasan: 'Antikonvulsan pilihan pada preeklampsia/eklampsia adalah MgSO4, BUKAN benzodiazepin (kalah efektif & menekan napas ibu/janin).', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['tanda_bahaya_kehamilan'],
     },
@@ -456,8 +456,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: [],
       obatSalahUmum: [
-        { id: 'natrium_diklofenak_50', alasan: 'NSAID dihindari pada kehamilan (terutama trimester 3 → penutupan duktus arteriosus dini) dan tidak menghentikan ancaman keguguran; nyeri ringan cukup istirahat.' },
-        { id: 'ibuprofen_400', alasan: 'Sama seperti NSAID lain: tidak diindikasikan dan berisiko pada kehamilan. Tata laksana abortus iminens adalah tirah baring + evaluasi USG, bukan analgetik.' },
+        { id: 'natrium_diklofenak_50', alasan: 'NSAID dihindari pada kehamilan (terutama trimester 3 → penutupan duktus arteriosus dini) dan tidak menghentikan ancaman keguguran; nyeri ringan cukup istirahat.', bahaya: 'kontraindikasi' },
+        { id: 'ibuprofen_400', alasan: 'Sama seperti NSAID lain: tidak diindikasikan dan berisiko pada kehamilan. Tata laksana abortus iminens adalah tirah baring + evaluasi USG, bukan analgetik.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['tanda_bahaya_kehamilan', 'istirahat_cukup'],
     },
@@ -821,8 +821,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       // Fluoksetin bila diresepkan tidak salah, hanya bukan keharusan lini pertama.
       obatBenar: [],
       obatSalahUmum: [
-        { id: 'diazepam_2', alasan: 'Benzodiazepin tunggal TIDAK mengatasi depresi & berisiko ketergantungan — bukan antidepresan. Depresi butuh psikoterapi ± SSRI.' },
-        { id: 'amitriptilin_25', alasan: 'TCA efektif namun berbahaya bila overdosis (kardiotoksik) — kurang aman lini pertama untuk pasien dengan ide keputusasaan; bila memang perlu antidepresan, SSRI lebih dipilih.' },
+        { id: 'diazepam_2', alasan: 'Benzodiazepin tunggal TIDAK mengatasi depresi & berisiko ketergantungan — bukan antidepresan. Depresi butuh psikoterapi ± SSRI.', bahaya: 'nonPrimer' },
+        { id: 'amitriptilin_25', alasan: 'TCA efektif namun berbahaya bila overdosis (kardiotoksik) — kurang aman lini pertama untuk pasien dengan ide keputusasaan; bila memang perlu antidepresan, SSRI lebih dipilih.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['manajemen_stres', 'aktivitas_fisik', 'higiene_tidur', 'kontrol_rutin'],
     },
@@ -956,8 +956,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: [],
       obatSalahUmum: [
-        { id: 'diazepam_2', alasan: 'Benzodiazepin BUKAN lini pertama insomnia kronik & tidak untuk pemakaian rutin — toleransi, ketergantungan, jatuh pada lansia. Utamakan higiene tidur/CBT-I. Hipnotik hanya jangka sangat pendek bila perlu.' },
-        { id: 'amitriptilin_25', alasan: 'Tidak diindikasikan untuk insomnia primer tanpa depresi; efek antikolinergik & sedasi berlebih, berisiko pada lansia.' },
+        { id: 'diazepam_2', alasan: 'Benzodiazepin BUKAN lini pertama insomnia kronik & tidak untuk pemakaian rutin — toleransi, ketergantungan, jatuh pada lansia. Utamakan higiene tidur/CBT-I. Hipnotik hanya jangka sangat pendek bila perlu.', bahaya: 'nonPrimer' },
+        { id: 'amitriptilin_25', alasan: 'Tidak diindikasikan untuk insomnia primer tanpa depresi; efek antikolinergik & sedasi berlebih, berisiko pada lansia.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['higiene_tidur', 'manajemen_stres', 'aktivitas_fisik'],
     },
@@ -1067,8 +1067,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['haloperidol_5'],
       obatSalahUmum: [
-        { id: 'diazepam_2', alasan: 'Benzodiazepin hanya membantu agitasi sesaat, TIDAK mengobati psikosis. Terapi inti skizofrenia adalah antipsikotik — dan kasus ini WAJIB rujuk untuk konfirmasi & rencana jangka panjang.' },
-        { id: 'fluoksetin_20', alasan: 'Antidepresan bukan terapi psikosis; keliru menganggap ini gangguan mood. Diagnosis & regimen antipsikotik ditegakkan bersama SpKJ.' },
+        { id: 'diazepam_2', alasan: 'Benzodiazepin hanya membantu agitasi sesaat, TIDAK mengobati psikosis. Terapi inti skizofrenia adalah antipsikotik — dan kasus ini WAJIB rujuk untuk konfirmasi & rencana jangka panjang.', bahaya: 'nonPrimer' },
+        { id: 'fluoksetin_20', alasan: 'Antidepresan bukan terapi psikosis; keliru menganggap ini gangguan mood. Diagnosis & regimen antipsikotik ditegakkan bersama SpKJ.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kenali_kambuh_jiwa', 'kepatuhan_obat', 'kontrol_rutin'],
     },
@@ -1195,8 +1195,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['dihidroartemisinin_piperakuin', 'primakuin_15', 'paracetamol_500'],
       obatSalahUmum: [
-        { id: 'ciprofloxacin_500', alasan: 'Antibiotik bukan terapi malaria (parasit, bukan bakteri) — menunda ACT yang menyelamatkan nyawa.' },
-        { id: 'cotrimoxazole_480', alasan: 'Bukan antimalaria; keliru mengobati demam sebagai infeksi bakteri tanpa memeriksa RDT.' },
+        { id: 'ciprofloxacin_500', alasan: 'Antibiotik bukan terapi malaria (parasit, bukan bakteri) — menunda ACT yang menyelamatkan nyawa.', bahaya: 'nonPrimer' },
+        { id: 'cotrimoxazole_480', alasan: 'Bukan antimalaria; keliru mengobati demam sebagai infeksi bakteri tanpa memeriksa RDT.', bahaya: 'nonPrimer' },
       ],
       // M10.c (dossier §47): psn_3m = PSN 3M (berantas JENTIK Aedes/DBD di
       // wadah rumah) — vektor & metode SALAH utk malaria (vektor Anopheles,

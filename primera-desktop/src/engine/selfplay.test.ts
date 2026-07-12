@@ -110,6 +110,17 @@ function tanganiPasienRajin(state: GameState): { state: GameState; penilaian: Pe
     if (!t.relevan) continue
     s = run(s, { type: 'PERIKSA', region: t.region }).state
   }
+  // CODEX audit pasca-GM (2026-07-13, temuan #3): kasus konfirmasiWajib (TB
+  // BTA/TCM, malaria RDT) — dokter rajin memesan lab konfirmasi dulu bila
+  // hasilnya bisa didapat HARI YANG SAMA (RDT malaria bukan hasilBesok).
+  // BTA sputum (hasilBesok:true) di luar cakupan harness satu-kunjungan ini
+  // — profil ini tak pernah kembali besok utk pasien yang sama.
+  if (kasus.konfirmasiWajib) {
+    const labKonfirmasi = PACK.lab[kasus.konfirmasiWajib]
+    if (labKonfirmasi && labKonfirmasi.hasilBesok !== true) {
+      s = run(s, { type: 'PESAN_LAB', labId: kasus.konfirmasiWajib }).state
+    }
+  }
 
   // DIAGNOSIS: komit ICD-10 benar dengan stempel TEGAK.
   s = run(s, { type: 'LANJUT_FASE' }).state // pemeriksaan → diagnosis

@@ -186,6 +186,9 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   for (const kunci of ['obatBerbahaya', 'firewallTerpicu'] as const) {
     if (tally[kunci] === undefined) tally[kunci] = 0
   }
+  // CODEX audit pasca-GM (2026-07-13, temuan #9 Part A): field tally baru
+  // (igdKodeBiruTerjadi) — sama persis pola migrasi-lite di atas.
+  if (tally['igdKodeBiruTerjadi'] === undefined) tally['igdKodeBiruTerjadi'] = 0
   // Migrasi-lite M4: gudang & buku kas untuk save pra-ekonomi. Stok kosong =
   // tidak dilacak (gerbang stok lolos); backfill penuh dilakukan bila pack ada.
   if (!objek(st['gudang'])) st['gudang'] = { stok: {}, pesanan: [] }
@@ -255,7 +258,7 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     'rujukanTotal', 'rujukanNonSpesialistik', 'rujukanTepat', 'rujukanDitolak', 'cowboy',
     'antibiotikTanpaIndikasi', 'obatBerbahaya', 'firewallTerpicu', 'labTakRelevan', 'miTepat', 'miTotal', 'kunjunganBerhasil',
     'kunjunganTotal', 'kunjunganDiusir', 'apathy', 'autoBermasalah', 'posyanduSesi',
-    'prolanisSesi', 'klbTuntas', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'rmLengkap',
+    'prolanisSesi', 'klbTuntas', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'igdKodeBiruTerjadi', 'rmLengkap',
     'teguranDinkes', 'hariKelelahan', 'karmaTerjadi', 'karmaDicegah',
   ] as const
   for (const kunci of KUNCI_TALLY) {

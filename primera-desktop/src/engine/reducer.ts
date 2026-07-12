@@ -88,6 +88,12 @@ export const HARI_VISITASI_AKREDITASI: Record<ModeStase, number> = { karier: 60,
  * pemain tak pernah melihat siklus kapitasi/evaluasi berulang seperti karier. */
 export const SIKLUS_LAPORAN_BULANAN: Record<ModeStase, number> = { karier: 30, ujian: 10 }
 
+/** CODEX audit pasca-GM (2026-07-13, temuan #11): batas retry pasif bed-penuh
+ * SISRUTE (lihat `bedRetry` di state.ts) — mencegah pasien tertahan selamanya
+ * bila RNG bed terus jatuh buruk. Setelah MAKS_RETRY_BED_PENUH kali gagal,
+ * jejaring MEMAKSA terima (surat menjelaskan eskalasi), bukan menunda lagi. */
+export const MAKS_RETRY_BED_PENUH = 3
+
 /** PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
  * menekan droplet/kronis-terdeteksi. Diekspor agar UI (Lokakarya "Triase
  * Anggaran") bisa menunjukkan kluster mana yang TAK terdanai fokus berjalan. */
@@ -390,9 +396,17 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
 
       // Dex (Leitner-lite). "Menguasai" = diagnosis benar DAN disposisi tepat —
       // untuk kasus rujukan, kompetensinya memang "kenali & rujuk" (M3.13).
+      //
+      // CODEX audit pasca-GM (2026-07-13, temuan #3): kasus konfirmasiWajib
+      // (TB/malaria) yang didiagnosis presumtif TANPA BTA/TCM/RDT tersedia
+      // dulu tetap bisa "dikuasai" ★3 asal diagnosis&disposisi kebetulan benar
+      // — Dex jadi sertifikasi diagnostik palsu utk mahasiswa yg tak pernah
+      // benar-benar menunggu konfirmasi. KOMIT_DIAGNOSIS/TAMBAH_OBAT sendiri
+      // TETAP tak diblokir (soal disiplin lab, bukan gerbang keras spt cowboy
+      // wajib-rujuk) — hanya sinyal "kuasai" yang digerbang di sini.
       const dex = { ...s.dex }
       const lama = dex[kasus.id] ?? { kasusId: kasus.id, ditangani: 0, benar: 0, bintang: 0, terakhirHari: 0 }
-      const kuasai = nilai.diagnosisBenar && nilai.disposisiTepat
+      const kuasai = nilai.diagnosisBenar && nilai.disposisiTepat && !nilai.konfirmasiTakTerpenuhi
       const bintang = kuasai ? Math.min(3, lama.bintang + 1) : Math.max(0, lama.bintang - 1)
       dex[kasus.id] = {
         ...lama,
@@ -605,6 +619,14 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             if (nilai.diagnosisBenar) t.rujukanTepat += 1
 
             if (!bedTersedia) {
+              // CODEX audit pasca-GM (2026-07-13, temuan #11): dulu jadwal
+              // 'pasien_kembali' generik — pasien ini muncul LAGI di antrian
+              // esok hari sbg encounter PENUH (anamnesis→disposisi ulang),
+              // mengkredit totalPasien/rujukanTepat/rmLengkap/Dex KEDUA
+              // kalinya utk keputusan klinis yang SAMA (sudah benar, sudah
+              // ditally di atas). `bedRetry` menandai jadwal ini utk jalur
+              // pasif (hariBaru re-roll bed sendiri, lihat blok jadwal) —
+              // tak pernah masuk antrian klinik lagi.
               jadwal = [
                 ...jadwal,
                 {
@@ -612,7 +634,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                   hari: s.hari + 1,
                   jenis: 'pasien_kembali',
                   kasusId: kasus.id,
-                  catatan: `${encFinal.pasien.nama} — bed ${rs.nama} penuh; rujuk ulang (coba RS lain)`,
+                  catatan: `${encFinal.pasien.nama} — bed ${rs.nama} penuh; menunggu bed kosong`,
                   nama: encFinal.pasien.nama,
                   usia: encFinal.pasien.usia,
                   jenisKelamin: encFinal.pasien.jenisKelamin,
@@ -620,6 +642,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                   bpjs: encFinal.pasien.bpjs,
                   persona: encFinal.pasien.persona,
                   ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+                  bedRetry: true,
+                  rumahSakitId: rs.id,
+                  bedRetryKe: 0,
                 },
               ]
               suratSisrute = {
@@ -628,7 +653,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 jenis: 'kabar_warga',
                 dari: rs.nama,
                 judul: `Bed penuh — rujukan ${encFinal.pasien.nama} tertunda`,
-                isi: `Balasan SISRUTE: seluruh bed ${rs.nama} terisi hari ini. Keputusan merujukmu sudah tepat — ini murni soal kapasitas jejaring, bukan penilaian atas keputusanmu. Pasien kembali besok; pertimbangkan RS lain (kapasitas lebih besar biasanya lebih jauh; itulah trade-off rujukan).`,
+                isi: `Balasan SISRUTE: seluruh bed ${rs.nama} terisi hari ini. Keputusan merujukmu sudah tepat — ini murni soal kapasitas jejaring, bukan penilaian atas keputusanmu. Jejaring akan mencoba lagi begitu bed kosong; kamu tak perlu menangani pasien ini ulang.`,
                 dibaca: false,
               }
             } else {
@@ -1070,10 +1095,16 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
       const hasil = aksiIgd(igd, kasus, action.langkahId, action.pilihanId)
       const events: GameEvent[] = []
+      // CODEX audit pasca-GM (2026-07-13, temuan #9 Part A): ditally SEGERA
+      // saat Kode Biru terjadi (bukan menunggu hasil akhir RJP/disposisi) —
+      // lihat komentar `igdKodeBiruTerjadi` (state.ts) utk kenapa ini perlu
+      // terpisah dari igdMeninggal/igdStabil.
+      let tallyBaru = s.tally
       if (hasil.igd.fase === 'kode_biru') {
         events.push({ type: 'IGD_TIBA', narasi: 'KODE BIRU — pasien henti napas/jantung! Mulai RJP!' })
+        tallyBaru = { ...s.tally, igdKodeBiruTerjadi: s.tally.igdKodeBiruTerjadi + 1 }
       }
-      return { state: { ...s, igd: hasil.igd }, events }
+      return { state: { ...s, igd: hasil.igd, tally: tallyBaru }, events }
     }
 
     case 'RJP_IGD': {
@@ -1632,6 +1663,31 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
             : `Hasil pemeriksaan ${lab?.nama ?? j.labId}: dalam batas rujukan${lab?.nilaiNormal ? ` (${lab.nilaiNormal})` : ''} — tidak menunjukkan kelainan bermakna untuk kasus ini. Timbang indikasi sebelum memesan penunjang: pemeriksaan yang tak mengubah tata laksana adalah beban biaya bagi Puskesmas.`,
         }),
       )
+    } else if (j.jenis === 'pasien_kembali' && j.bedRetry && j.kasusId && j.rumahSakitId) {
+      // CODEX audit pasca-GM (2026-07-13, temuan #11): resolusi PASIF — tak
+      // pernah masuk `pasienKembali` (yang jadi encounter klinik penuh lagi).
+      // Keputusan klinis sudah tepat & sudah ditally di titik rujuk asli;
+      // di sini murni re-roll kapasitas bed, sampai diterima atau
+      // MAKS_RETRY_BED_PENUH tercapai (dipaksa terima).
+      const rs = pack.rumahSakit.find((r) => r.id === j.rumahSakitId)
+      const retryKe = (j.bedRetryKe ?? 0) + 1
+      const rngRetry = new Rng(s.seed, 'sisrute-retry', j.id, retryKe)
+      const rollBerhasil = !rs || rngRetry.chance(Math.min(0.95, 0.5 + rs.bedDasar * 0.06))
+      const dipaksaTerima = !rollBerhasil && retryKe >= MAKS_RETRY_BED_PENUH
+      if (rollBerhasil || dipaksaTerima) {
+        suratBaru.push(
+          buatSuratHarian(hari, suratBaru.length, {
+            jenis: 'kabar_warga',
+            dari: rs?.nama ?? 'RS rujukan',
+            judul: `Bed tersedia — ${j.nama ?? 'pasien'} akhirnya diterima`,
+            isi: dipaksaTerima
+              ? `${rs?.nama ?? 'RS rujukan'} memaksa menerima ${j.nama ?? 'pasien'} setelah ${retryKe} hari mengantre bed — jejaring tak boleh menahan rujukan yang sudah tepat selamanya. Tak ada tindakan lain yang perlu kamu ambil.`
+              : `${rs?.nama ?? 'RS rujukan'} kini punya bed kosong — ${j.nama ?? 'pasien'} yang kamu rujuk sudah diterima jejaring. Tak ada tindakan lain yang perlu kamu ambil.`,
+          }),
+        )
+      } else {
+        jadwalSisa.push({ ...j, hari: hari + 1, bedRetryKe: retryKe })
+      }
     } else if (j.jenis === 'pasien_kembali' && j.kasusId) {
       pasienKembali.push({
         kasusId: j.kasusId,
