@@ -24,6 +24,7 @@ import { MuteButton } from './audio/MuteButton'
 import { Pengaturan } from './components/Pengaturan'
 import { Onboarding, sudahOnboarding } from './components/Onboarding'
 import { usePengaturan } from './usePengaturan'
+import { adaKontrolInteraktifDifokus } from './utils/fokus'
 import './App.css'
 
 const LAYAR_DIKENAL = new Set([
@@ -108,15 +109,20 @@ export default function App() {
   // bawah me-remount seluruh subtree saat pindah layar — tombol "Kembali" dsb
   // yg ada DI DALAM layar lenyap, fokus jatuh ke <body> tanpa konteks bagi
   // keyboard/screen-reader. Pindahkan fokus ke <main> itu sendiri tiap ganti layar.
-  // Review workflow Batch-7: DeckAksi.tsx (klinik/DeckAksi.tsx) punya useEffect
-  // SEJENIS yg fokus ke <section>-nya tiap `enc.fase` berganti. React menjalankan
-  // effect ANAK sebelum effect INDUK dalam commit yang sama — bila state.layar
-  // DAN enc.fase kebetulan berubah bersamaan, fokus <main> ini akan MENIMPA
-  // fokus DeckAksi. Saat ini TAK bisa terjadi (Hud.tsx mengunci semua tab lain
-  // selama state.klinik.aktif terisi, dan tiap transisi layar ke/dari 'klinik'
-  // menjamin klinik.aktif undefined tepat di titik itu) — tapi implisit, tak
-  // dijamin test/komentar mana pun selain ini. Waspadai bila M11/lanjutan
-  // mengubah invarian itu.
+  // Review workflow Batch-7: DeckAksi.tsx (klinik/DeckAksi.tsx) punya efek fokus
+  // SEJENIS ke <section>-nya tiap `enc.fase` berganti — sejak bugfix 2026-07-13
+  // itu sudah jadi useLayoutEffect (bukan lagi useEffect biasa spt efek ini),
+  // yang JUSTRU membuat DeckAksi (anak) selalu lebih dulu drpd efek <main> ini
+  // (induk, tetap useEffect) — React selalu menjalankan SELURUH layout effect
+  // sebelum SELURUH passive effect, apa pun posisi pohonnya, jadi jaminan
+  // "anak dulu" di sini sekarang malah lebih kuat drpd sebelumnya (dulu cuma
+  // "anak dulu KARENA sama-sama passive effect di komit yang sama"). Bila
+  // state.layar DAN enc.fase kebetulan berubah bersamaan, fokus <main> ini
+  // akan MENIMPA fokus DeckAksi. Saat ini TAK bisa terjadi (Hud.tsx mengunci
+  // semua tab lain selama state.klinik.aktif terisi, dan tiap transisi layar
+  // ke/dari 'klinik' menjamin klinik.aktif undefined tepat di titik itu) —
+  // tapi implisit, tak dijamin test/komentar mana pun selain ini. Waspadai
+  // bila M11/lanjutan mengubah invarian itu.
   // CODEX M14 #14a: jangan curi fokus ke <main> saat modal Onboarding aktif —
   // efek INDUK ini dulu menimpa fokus awal Onboarding (efek ANAK jalan lebih
   // dulu dlm commit yang sama), membuat fokus jatuh ke latar di belakang dialog.
@@ -125,6 +131,10 @@ export default function App() {
   const mainRef = useRef<HTMLElement>(null)
   useEffect(() => {
     if (onboardingTampil) return
+    // Bugfix (2026-07-13): jangan curi fokus dari kontrol interaktif (mis.
+    // input pencarian DexSkdi) yang sudah dipakai pemain saat effect ini
+    // jalan — lihat fokus.ts & komentar sejenis di DeckAksi.tsx.
+    if (adaKontrolInteraktifDifokus(document.activeElement)) return
     mainRef.current?.focus({ preventScroll: true })
   }, [state?.layar, onboardingTampil])
 

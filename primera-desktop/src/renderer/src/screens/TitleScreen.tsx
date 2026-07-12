@@ -148,7 +148,11 @@ export function TitleScreen() {
     // CODEX audit UI/UX 2026-07-10 (#3): dulu langsung menimpa arsip lama
     // tanpa konfirmasi — salah klik atau Enter di input nama (form submit
     // standar HTML) cukup utk menghapus progres tersimpan.
-    if (arsip !== null && !window.confirm(`Mulai stase baru akan menimpa arsip dr. ${arsip.namaDokter} (Hari ${arsip.hari}). Lanjutkan?`)) return
+    // CODEX audit UI/UX 2026-07-13 (P2): teks lama "akan menimpa arsip" ambigu
+    // — bisa disalahartikan sebagai slot manual ikut tertimpa. Yang sebenarnya
+    // diganti hanya Autosave Aktif (lihat store.ts `simpan()`/SLOT_AUTOSAVE);
+    // slot 1/2/3 tak pernah disentuh operasi ini.
+    if (arsip !== null && !window.confirm(`Mulai stase baru akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — slot manual (1/2/3) tetap aman. Lanjutkan?`)) return
     // CODEX M14 #6: ada autosave TAPI tak terbaca (rusak/versi lama) — jangan
     // menimpanya diam-diam. Peringatkan sebelum menghapusnya.
     if (arsip === null && arsipKorup && !window.confirm('Ada autosave yang tidak bisa dibaca (mungkin rusak atau dari versi lama). Mulai stase baru akan menimpanya permanen. Lanjutkan?')) return
@@ -248,7 +252,7 @@ export function TitleScreen() {
                       : mode === 'ujian' && nimBersih.length === 0
                         ? 'Isi NIM-mu dulu (identitas ujian)'
                         : arsip !== null
-                          ? 'Memulai stase baru akan menimpa arsip lama'
+                          ? 'Memulai stase baru akan mengganti Autosave Aktif (slot manual tetap aman)'
                           : 'Mulai Hari 1 di Puskesmas Sukamaju'
                   }
                 >
@@ -273,7 +277,7 @@ export function TitleScreen() {
               )}
               {arsip !== null && (
                 <p className="title__peringatan teks-xs teks-lembut">
-                  Stase baru menimpa arsip dr. {arsip.namaDokter} (Hari {arsip.hari}).
+                  Stase baru mengganti Autosave Aktif dr. {arsip.namaDokter} (Hari {arsip.hari}) — slot manual tetap aman.
                 </p>
               )}
             </form>
@@ -290,7 +294,11 @@ export function TitleScreen() {
                       // autosave — jalur ke-4 yang dulu terlewat dari konfirmasi
                       // timpa (mulai-baru/impor sudah dibentengi). Peringatkan
                       // bila ada arsip belum-dimasuki yang akan tertimpa.
-                      if (arsip !== null && !window.confirm(`Memuat ${info.slot.replace('slot', 'Slot ')} akan menimpa arsip dr. ${arsip.namaDokter} (Hari ${arsip.hari}). Lanjutkan?`)) return
+                      // CODEX audit UI/UX 2026-07-13 (P2): teks lama tak
+                      // membedakan slot TUJUAN (yg dimuat, tak tersentuh) dari
+                      // Autosave Aktif (yg sebenarnya diganti) — pemain bisa
+                      // salah kira slot itu sendiri ikut tertimpa.
+                      if (arsip !== null && !window.confirm(`Memuat ${info.slot.replace('slot', 'Slot ')} akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — isi Slot 1/2/3 tetap aman. Lanjutkan?`)) return
                       void muatDariSlot(info.slot).then((ok) => {
                         if (!ok) window.alert('Gagal memuat arsip — file rusak, tidak ditemukan, atau dari versi yang tak dikenal.')
                       })
@@ -333,7 +341,7 @@ export function TitleScreen() {
                   // salah pilih file cukup utk menghapus progres tersimpan.
                   if (
                     arsip !== null &&
-                    !window.confirm(`Mengimpor arsip akan menimpa arsip dr. ${arsip.namaDokter} (Hari ${arsip.hari}). Lanjutkan?`)
+                    !window.confirm(`Mengimpor arsip akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — slot manual (1/2/3) tetap aman. Lanjutkan?`)
                   ) {
                     input.value = ''
                     return

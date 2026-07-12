@@ -3,7 +3,7 @@
  * Fase dibaca dari state (engine yang menentukan alur, UI hanya menampilkan).
  */
 
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import type { EncounterState, FaseEncounter } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
@@ -14,6 +14,7 @@ import { DeckDiagnosis } from './DeckDiagnosis'
 import { DeckTerapi } from './DeckTerapi'
 import { DeckDisposisi } from './DeckDisposisi'
 import { BANNER_TUTORIAL } from './tutorialKlinik'
+import { adaKontrolInteraktifDifokus } from '../../utils/fokus'
 
 interface Props {
   enc: EncounterState
@@ -45,7 +46,30 @@ export function DeckAksi({ enc, kasus, dispatch, lastEvents, eventTick, tutorial
   // tiap state.layar berganti) — lihat komentar silang-referensi di sana utk
   // risiko effect induk menimpa effect anak ini bila layar & fase kebetulan
   // berubah bersamaan (saat ini tak bisa terjadi, tapi implisit).
-  useEffect(() => {
+  // Bugfix (2026-07-13): useEffect biasa BARU jalan setelah paint — bila
+  // pemain sempat klik+ketik di kontrol baru (mis. "Cari obat" di
+  // DeckTerapi) pada jendela sempit antara paint & effect ini, fokus
+  // dicuri balik ke <section> dan keystroke lanjutan hilang (section
+  // bukan kontrol teks). useLayoutEffect mempersempit jendela itu (jalan
+  // sebelum paint), DAN guard adaKontrolInteraktifDifokus mencegah
+  // pencurian fokus bila kontrol interaktif sudah dipakai pemain saat
+  // effect ini jalan — itu yang benar-benar memperbaiki gejalanya.
+  // PERINGATAN (adversarial review 2026-07-13): mengubah efek ini jadi
+  // layout-effect membalik urutan lomba thd `DeckAnamnesis`'s efek fokus-
+  // balon-jawaban SENDIRI (masih useEffect biasa, dipicu `[eventTick]`).
+  // Dulu (sama-sama passive effect) DeckAksi (induk) SELALU menang krn
+  // React menjalankan efek anak dulu baru induk dlm commit yang sama —
+  // kini urutannya terbalik (layout effect SELALU mendahului passive
+  // effect, apa pun posisi pohonnya): bila `enc.fase` DAN `eventTick`
+  // pernah berubah dlm SATU commit yang sama, efek DeckAnamnesis akan
+  // menimpa fokus section ini. SAAT INI tak bisa terjadi — `TANYA`
+  // (clinic.ts) mensyaratkan fase SUDAH 'anamnesis' dan tak pernah
+  // mengubah `enc.fase` sendiri — tapi implisit, sama spt risiko App.tsx-
+  // vs-DeckAksi yg sudah didokumentasikan di App.tsx. Waspadai bila
+  // engine kelak membolehkan jawaban-pertanyaan & pergantian fase terjadi
+  // bersamaan.
+  useLayoutEffect(() => {
+    if (adaKontrolInteraktifDifokus(document.activeElement)) return
     sectionRef.current?.focus({ preventScroll: true })
   }, [enc.fase])
 
