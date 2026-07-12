@@ -44,9 +44,23 @@ export function DexSkdi() {
   const [pilihanId, setPilihanId] = useState<string | null>(null)
   const [cari, setCari] = useState('')
 
-  const jumlahDikenal = PACK.skdi144.filter(
-    (e) => e.kasusId !== undefined && state.dex[e.kasusId] !== undefined,
-  ).length
+  // Fix CODEX-25 #2/Q7 (jalur kritis DeepThink 2026-07-12): dulu HANYA satu
+  // metrik "dikenali" = entri dex ADA = pernah di-encounter — mahasiswa yg
+  // salah diagnosis 67× tetap lihat "67/67 dikenali". Kegagalan rubrik.
+  // Tiga tingkat kini (data sudah ADA di DexEntry, murni display — tak sentuh
+  // reducer/skor/save, jangkau save lama live):
+  //   DIJUMPAI      = pernah bertemu (dex ada, siluet terbuka)  — `ditangani≥1`
+  //   TERSERTIFIKASI = diagnosis+disposisi benar minimal 1×      — `benar≥1`
+  //   DIKUASAI      = ★3 (Leitner, bisa meluntur)               — `bintang≥3`
+  const entriDex = PACK.skdi144
+    .map((e) => (e.kasusId !== undefined ? state.dex[e.kasusId] : undefined))
+    .filter((d): d is NonNullable<typeof d> => d !== undefined)
+  const jumlahDijumpai = entriDex.length
+  const jumlahTersertifikasi = entriDex.filter((d) => d.benar >= 1).length
+  const jumlahDikuasai = entriDex.filter((d) => d.bintang >= 3).length
+  // Metrik "utama" = tersertifikasi (jujur: benar-benar pernah tepat), bukan
+  // sekadar berjumpa. Meter progres ikut ini.
+  const jumlahDikenal = jumlahTersertifikasi
 
   // Reuse pola cariLab/daftarLab/cocokLab (DeckPemeriksaan.tsx) — normalisasi
   // toleran-ejaan yang sama, bukan pencocokan case-insensitive baru.
@@ -81,18 +95,29 @@ export function DexSkdi() {
           </p>
         </div>
         <div className="dexskdi__progres">
-          <span className="chip chip--daun mono">{jumlahDikenal}/{TOTAL_ENTRI} dikenali</span>
+          <div className="dexskdi__tiga-tingkat">
+            <span className="chip chip--kunyit mono" title="Pernah kamu temui di klinik (benar atau salah)">
+              {jumlahDijumpai} dijumpai
+            </span>
+            <span className="chip chip--daun mono" title="Diagnosis DAN disposisi benar minimal sekali">
+              {jumlahTersertifikasi}/{TOTAL_ENTRI} tersertifikasi
+            </span>
+            <span className="chip chip--biru mono" title="Penguasaan penuh ★3 (bisa meluntur bila lama tak dilatih)">
+              {jumlahDikuasai} dikuasai ★
+            </span>
+          </div>
+          {/* Meter melacak TERSERTIFIKASI — capaian jujur, bukan sekadar berjumpa. */}
           <div className="meter dexskdi__meter">
             <div
               className="meter__isi"
-              style={{ width: `${(jumlahDikenal / TOTAL_ENTRI) * 100}%` }}
+              style={{ width: `${(jumlahTersertifikasi / TOTAL_ENTRI) * 100}%` }}
             />
           </div>
           <div className="dexskdi__legenda teks-xs teks-lembut">
             <span className="dexskdi__legenda-item">
               <span className="dexskdi__legenda-pin">●</span> ada di desa ini
             </span>
-            <span className="dexskdi__legenda-item mono">??? belum dikenali</span>
+            <span className="dexskdi__legenda-item mono">??? belum dijumpai</span>
           </div>
         </div>
       </header>
@@ -140,10 +165,13 @@ export function DexSkdi() {
                   )
                 }
 
+                // Fix CODEX-25 #2/Q7: kartu yg pernah dijumpai TAPI belum pernah
+                // benar (`benar===0`) ditandai beda — bukan "dikuasai palsu".
+                const belumTersertifikasi = dex.benar === 0
                 return (
                   <button
                     key={entri.id}
-                    className={`dexskdi-kartu dexskdi-kartu--terisi${pilihanId === entri.id ? ' dexskdi-kartu--aktif' : ''}`}
+                    className={`dexskdi-kartu dexskdi-kartu--terisi${belumTersertifikasi ? ' dexskdi-kartu--dijumpai' : ''}${pilihanId === entri.id ? ' dexskdi-kartu--aktif' : ''}`}
                     onClick={() => setPilihanId(entri.id)}
                     // Review Batch-7 (koreksi #16f): kartu ini bukan toggle
                     // button — klik ulang pada kartu yang sudah "aktif" TAK
@@ -151,12 +179,22 @@ export function DexSkdi() {
                     // panel detail terpisah). aria-current lebih tepat drpd
                     // aria-pressed utk menandai "kartu mana yang sedang dilihat".
                     aria-current={pilihanId === entri.id ? 'true' : undefined}
-                    title={`${entri.nama} — klik untuk membuka catatan`}
+                    title={
+                      belumTersertifikasi
+                        ? `${entri.nama} — sudah dijumpai tapi belum pernah kamu tegakkan dengan benar`
+                        : `${entri.nama} — klik untuk membuka catatan`
+                    }
                   >
                     <span className="dexskdi-kartu__nomor mono">{nomor}</span>
                     <span className="dexskdi-kartu__nama">{entri.nama}</span>
                     <span className="dexskdi-kartu__meta">
-                      <Bintang jumlah={dex.bintang} />
+                      {belumTersertifikasi ? (
+                        <span className="dexskdi-kartu__dijumpai-tag mono" title="Dijumpai — belum tersertifikasi">
+                          dijumpai
+                        </span>
+                      ) : (
+                        <Bintang jumlah={dex.bintang} />
+                      )}
                       <span className="dexskdi-kartu__hari mono" title="Terakhir kali ditangani">
                         H{dex.terakhirHari}
                       </span>
@@ -189,13 +227,25 @@ export function DexSkdi() {
                 <Bintang jumlah={dexTerpilih.bintang} besar />
               </div>
 
+              {/* Fix CODEX-25 #2/Q7: status tingkat eksplisit — dijumpai vs
+                  tersertifikasi vs dikuasai, bukan cuma "sudah dikenali". */}
+              <div className="baris dexskdi-detail__status">
+                {dexTerpilih.bintang >= 3 ? (
+                  <span className="chip chip--biru teks-xs">Dikuasai ★★★</span>
+                ) : dexTerpilih.benar >= 1 ? (
+                  <span className="chip chip--daun teks-xs">Tersertifikasi</span>
+                ) : (
+                  <span className="chip chip--kunyit teks-xs">Baru dijumpai — belum tepat</span>
+                )}
+              </div>
+
               <dl className="dexskdi-detail__tabel">
                 <div className="dexskdi-detail__baris">
                   <dt className="teks-lembut">Ditangani</dt>
                   <dd className="mono">{dexTerpilih.ditangani}×</dd>
                 </div>
                 <div className="dexskdi-detail__baris">
-                  <dt className="teks-lembut">Diagnosis benar</dt>
+                  <dt className="teks-lembut">Diagnosis + disposisi benar</dt>
                   <dd className="mono">{dexTerpilih.benar}×</dd>
                 </div>
                 <div className="dexskdi-detail__baris">

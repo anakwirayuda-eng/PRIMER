@@ -248,7 +248,24 @@ function fnv1a(teks: string): string {
 // (kombinasi wajib), dm_tipe2 (glimepirid, bukan glibenklamid), mm_isk_bawah
 // (siprofloksasin jadi utama), jiwa_gangguan_cemas (amitriptilin), ANC
 // (distraktor golongan darah dihapus, folat dobel-hitung dihapus).
-const REVISI_ENGINE = 23
+//
+// REVISI 24 (batch CODEX-25, 2026-07-12) — perubahan score/replay-affecting:
+//   #1  hard-cap grade utk obat berbahaya (≤54) & antibiotik-tanpa-indikasi
+//       (≤69), independen dari cap disposisi (clinic.ts).
+//   #4  PRB (rujuk balik) hanya utk kasus `bisaPrb` (5 kasus kronis-stabil) —
+//       kasus akut diterima RS TANPA menjadwalkan pasien kembali. Field baru
+//       `bisaPrb` ikut hash (lihat `bisaPrb` di sidikJariPack bawah).
+//   #9  7 pertanyaan distraktor infeksi kini ber-flag `distraktor:true`
+//       (menggeser skorAnamnesis & kesabaran; anamnesis ikut hash via `tx`?—
+//       tidak, tapi distraktor mengubah skor → dicatat, hash anamnesis-esensial
+//       tak berubah krn distraktor bukan esensial; efek murni skor runtime).
+//   #17 KLB pola 'airborne' terpisah utk tb_paru (kartuKlb hardcoded, di luar
+//       sidikJariPack — jawaban benar berubah → REVISI manual, precedent §49).
+//   #18 surveilans hanya mencatat deteksi BENAR (diagnosisBenar) — menggeser
+//       kluster/antrian replay.
+//   #22 ANC: golongan_darah relevan true, tes_kehamilan false (skorPemeriksaan,
+//       via `lab` hash). #25 DSS usiaMax 25→17 (demografi, via hash).
+const REVISI_ENGINE = 24
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -276,6 +293,10 @@ export function sidikJariPack(pack: ContentPack): string {
         id: k.id,
         icd: k.icd10,
         rujuk: k.harusDirujuk ?? false,
+        // Fix CODEX-25 #4 (2026-07-12): bisaPrb menentukan apakah rujukan diterima
+        // menjadwalkan pasien PRB kembali → menggeser antrian/tally hari berikut
+        // → wajib di-hash (replay-affecting, sama kelas dgn harusDirujuk).
+        bisaPrb: k.bisaPrb ?? false,
         trap: k.alergiTrap ?? null,
         // Tier-1 #7 (audit CODEX 2026-07-11): interaksiTrap score-affecting
         // sama persis spt alergiTrap (menggeser obatBenar/obatBerbahaya) —

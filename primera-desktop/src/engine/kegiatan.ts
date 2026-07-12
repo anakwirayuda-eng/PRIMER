@@ -153,7 +153,11 @@ const POOL_LANGKAH3: KartuKegiatan[] = [
   {
     id: 'posy_kms',
     judul: 'Langkah 3 — Pencatatan & Pemeriksaan (Buku KIA Balita)',
-    narasi: 'Ibu An. Kadek bertanya, "Dok, garis anak saya di bawah garis merah artinya apa?"',
+    // Fix CODEX-25 #16: dulu "An. Kadek" — bentrok dgn kartu posy_timbang (L2)
+    // yg menyebut An. Kadek justru TIDAK di bawah garis merah (weight faltering).
+    // Kartu ini anak BERBEDA (benar-benar di bawah garis merah) — ganti nama
+    // agar tak kontradiksi bila kedua kartu ditarik dalam sesi yang sama.
+    narasi: 'Ibu An. Komang bertanya, "Dok, garis anak saya di bawah garis merah artinya apa?"',
     pilihan: [
       {
         id: 'a',
@@ -254,13 +258,16 @@ const POOL_LANGKAH4: KartuKegiatan[] = [
   {
     id: 'posy_penyuluhan',
     judul: 'Langkah 4 — Pelayanan & Penyuluhan (Ibu Balita)',
-    narasi: 'Sekelompok ibu menunggu. Topik apa yang paling berdampak untuk sesi singkat ini?',
+    // Fix CODEX-25 #16: narasi/label dulu menyebut "akar faltering hari ini" —
+    // mengasumsikan kartu Langkah-2 yang ditarik pasti soal weight faltering
+    // (kartu ditarik acak-independen, ~37,5% sesi tak begitu). Dibuat mandiri.
+    narasi: 'Sekelompok ibu balita menunggu. Topik apa yang paling berdampak untuk sesi singkat ini?',
     pilihan: [
       {
         id: 'a',
-        label: 'ASI eksklusif + MPASI adekuat (menyasar akar faltering hari ini)',
+        label: 'ASI eksklusif + MPASI adekuat (fondasi 1000 Hari Pertama Kehidupan)',
         benar: true,
-        respons: 'Tepat sasaran — penyuluhan paling kuat bila menjawab masalah nyata yang baru terlihat.',
+        respons: 'Tepat sasaran — gizi 1000 HPK adalah pesan penyuluhan paling berdampak untuk kelompok ibu balita.',
       },
       {
         id: 'b',
@@ -294,19 +301,23 @@ const POOL_LANGKAH4: KartuKegiatan[] = [
   {
     id: 'posy_penyuluhan_produktif_lansia',
     judul: 'Langkah 4 — Pelayanan & Penyuluhan (Usia Produktif-Lansia)',
+    // Fix CODEX-25 #16: narasi dulu "Tadi di Langkah 2, beberapa peserta
+    // terdeteksi lingkar perut besar & tensi tinggi" — mengasumsikan kartu L2
+    // (padahal L2 pool balita, ditarik acak). Dibuat mandiri: PTM memang beban
+    // utama kelompok ini, tak perlu menyandarkan pada kartu lain.
     narasi:
-      'Sesi penyuluhan untuk kelompok usia produktif-lansia. Tadi di Langkah 2, ' +
-      'beberapa peserta terdeteksi lingkar perut besar & tensi tinggi. Topik apa yang paling berdampak?',
+      'Sesi penyuluhan untuk kelompok usia produktif-lansia — kelompok dengan beban ' +
+      'penyakit tidak menular (PTM) tertinggi. Topik apa yang paling berdampak?',
     pilihan: [
       {
         id: 'a',
-        label: 'GERMAS + kenali tanda PTM (hipertensi/DM/obesitas) sesuai temuan tadi',
+        label: 'GERMAS + kenali tanda PTM (hipertensi/DM/obesitas) & pentingnya skrining rutin',
         benar: true,
-        respons: 'Tepat sasaran — penyuluhan paling kuat bila menjawab temuan nyata hari itu, bukan topik acak.',
+        respons: 'Tepat sasaran — GERMAS + deteksi dini PTM adalah pesan paling berdampak untuk kelompok risiko ini.',
       },
       {
         id: 'b',
-        label: 'Ceramah umum semua penyakit tanpa kaitan temuan hari itu',
+        label: 'Ceramah umum semua penyakit tanpa fokus',
         benar: false,
         respons: 'Terlalu luas, tak menempel — sama seperti kesalahan penyuluhan balita: fokus 1 pesan relevan.',
       },
@@ -449,7 +460,7 @@ export function kartuProlanis(peserta: PesertaProlanis[]): KartuKegiatan[] {
  * Kartu disesuaikan jenis kluster (vektor / air-makanan / droplet).
  * ------------------------------------------------------------------------- */
 
-type PolaKlb = 'vektor' | 'air_makanan' | 'droplet' | 'kontak'
+type PolaKlb = 'vektor' | 'air_makanan' | 'droplet' | 'kontak' | 'airborne'
 
 function polaDariKasus(kasusId: string): PolaKlb {
   if (kasusId === 'dengue_df') return 'vektor'
@@ -462,7 +473,13 @@ function polaDariKasus(kasusId: string): PolaKlb {
   // Hanya skabies & konjungtivitis_bakterial yang jadi kluster kontak
   // (AMBANG_CLUSTER, surveilans.ts) — konjungtivitis alergi tak menular.
   if (kasusId === 'skabies' || kasusId === 'konjungtivitis_bakterial') return 'kontak'
-  return 'droplet' // ispa, tb → transmisi droplet/airborne
+  // Fix CODEX-25 #17 (2026-07-12): TB = AIRBORNE (droplet nuclei bertahan di
+  // udara), BUKAN droplet — pengendalian beda: investigasi kontak + TPT +
+  // ventilasi/pencahayaan (respirator N95 utk nakes), bukan sekadar masker
+  // bedah/etika batuk. Dulu tb_paru & ispa sama-sama 'droplet' → kartu KLB
+  // mengajar respons droplet generik utk wabah TB. (WHO: TB airborne.)
+  if (kasusId === 'tb_paru') return 'airborne'
+  return 'droplet' // ispa/pneumonia → transmisi droplet
 }
 
 export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string): KartuKegiatan[] {
@@ -474,14 +491,20 @@ export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string): Ka
         ? { id: 'a', label: 'Amankan sumber air & sanitasi, distribusi oralit/klorinasi, edukasi CTPS', benar: true, respons: 'Benar. Putus rute fekal-oral di sumbernya + cegah dehidrasi.' }
         : pola === 'kontak'
           ? { id: 'a', label: 'Obati kasus + SEMUA kontak serumah serentak; dekontaminasi linen/handuk/barang pribadi; higiene tangan', benar: true, respons: 'Tepat. Penularan kontak diputus dgn mengobati serentak (cegah ping-pong) + dekontaminasi benda, bukan masker.' }
-          : { id: 'a', label: 'Etika batuk/masker, ventilasi, temukan & obati kasus + kontak', benar: true, respons: 'Tepat. Kurangi transmisi droplet + putus rantai lewat penemuan kasus.' }
+          : pola === 'airborne'
+            ? { id: 'a', label: 'Investigasi kontak (skrining gejala + TCM/rontgen), TPT utk kontak eligible, perbaiki ventilasi & pencahayaan rumah, penemuan kasus aktif', benar: true, respons: 'Tepat. TB airborne: droplet nuclei bertahan di udara → kuncinya investigasi kontak + TPT + ventilasi, BUKAN sekadar masker bedah/etika batuk (itu memadai utk droplet, tak cukup utk airborne).' }
+            : { id: 'a', label: 'Etika batuk/masker, ventilasi, temukan & obati kasus bergejala', benar: true, respons: 'Tepat. Transmisi droplet (ISPA/pneumonia) diputus dgn etika batuk + ventilasi + penemuan kasus bergejala — kontak sehat tak perlu diobati (self-limiting).' }
   // M10 §49: distraktor pola-kontak ditukar agar "masker/etika batuk" (jawaban
   // benar utk droplet) TIDAK muncul sbg opsi salah generik yang justru mengajar
   // respons droplet di wabah tungau — untuk kontak, distraktornya fogging/isolasi.
+  // Fix CODEX-25 #17: distraktor airborne = "cukup masker bedah" (jebakan klasik
+  // TB — mengira TB sama dgn droplet biasa).
   const distraktorAksi =
     pola === 'kontak'
       ? { id: 'b', label: 'Fogging wilayah + isolasi ketat rumah terdampak', benar: false, respons: 'Fogging utk nyamuk, bukan tungau/sekret; isolasi berlebihan. Kontak diputus dgn pengobatan serentak + dekontaminasi.' }
-      : { id: 'b', label: 'Obati yang sakit saja, tanpa tindakan wilayah', benar: false, respons: 'Kuratif tanpa pengendalian sumber = kasus baru terus bermunculan. Inti KLB ada di wilayah.' }
+      : pola === 'airborne'
+        ? { id: 'b', label: 'Bagikan masker bedah ke warga & obati yang batuk saja', benar: false, respons: 'Masker bedah tak cukup utk airborne, dan tanpa investigasi kontak + TPT rantai penularan TB tetap jalan. Wabah TB butuh penelusuran kontak, bukan sekadar masker.' }
+        : { id: 'b', label: 'Obati yang sakit saja, tanpa tindakan wilayah', benar: false, respons: 'Kuratif tanpa pengendalian sumber = kasus baru terus bermunculan. Inti KLB ada di wilayah.' }
 
   return [
     {

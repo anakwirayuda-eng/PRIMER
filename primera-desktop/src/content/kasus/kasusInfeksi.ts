@@ -5,9 +5,10 @@
  * edukasi memakai katalog kanonik BUILD_SPECS. Akurasi klinis mengikuti guideline
  * nasional (Kemenkes/PNPK/PERKENI/WHO) — lihat setiap `clue` & `obatSalahUmum`.
  *
- * Catatan kontrak: tipe `PertanyaanAnamnesis` belum memiliki field `distraktor`,
- * sehingga pertanyaan pengecoh hanya ditandai lewat komentar `// distraktor` dan
- * dibiarkan non-esensial + tidak menyentuh dimensi diagnostik. Lihat concerns.
+ * Catatan kontrak: pertanyaan pengecoh ditandai `distraktor: true` (fix CODEX-25
+ * #9 2026-07-12 — dulu HANYA komentar `// distraktor` tanpa field, jadi engine
+ * memberi mereka gratis tak seperti file kasus lain; kesabaran pasien tak pernah
+ * tergerus & spam-semua jadi strategi bebas-risiko).
  */
 
 import type { KasusKlinis } from '../types'
@@ -94,6 +95,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       {
         id: 'q_goldar',
         kategori: 'sosial',
+        distraktor: true,
         tanya: 'Golongan darahnya apa Pak/Bu?',
         jawab: 'O dok. Emangnya kenapa ya?',
       },
@@ -210,6 +212,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       {
         id: 'q_es',
         kategori: 'sosial',
+        distraktor: true,
         tanya: 'Suka minum es atau makan gorengan?',
         jawab: 'Suka dok, tiap hari es teh manis.',
       },
@@ -447,6 +450,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       {
         id: 'q_rokok',
         kategori: 'sosial',
+        distraktor: true,
         tanya: 'Apakah merokok?',
         jawab: 'Nggak merokok dok.',
       },
@@ -570,6 +574,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       {
         id: 'q_anak_ke',
         kategori: 'sosial',
+        distraktor: true,
         tanya: 'Ini anak keberapa, Bu?',
         jawab: 'Anak kedua dok.',
       },
@@ -697,6 +702,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       {
         id: 'q_olahraga',
         kategori: 'sosial',
+        distraktor: true,
         tanya: 'Apakah rutin berolahraga?',
         jawab: 'Jarang dok, kerja saja sudah capek.',
       },
@@ -827,6 +833,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       {
         id: 'q_sabun',
         kategori: 'sosial',
+        distraktor: true,
         tanya: 'Pakai sabun mandi merek apa?',
         jawab: 'Sabun batang biasa dok.',
       },
@@ -936,6 +943,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       {
         id: 'q_kerja',
         kategori: 'sosial',
+        distraktor: true,
         tanya: 'Pekerjaannya apa?',
         jawab: 'Pedagang di pasar dok.',
       },

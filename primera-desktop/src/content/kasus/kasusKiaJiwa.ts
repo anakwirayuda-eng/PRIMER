@@ -116,9 +116,13 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     ],
     lab: [
       { id: 'hb', hasil: 'Hemoglobin 11,4 g/dL — normal untuk trimester 2 (batas ≥11).', flag: 'normal', relevan: true },
-      { id: 'tes_kehamilan', hasil: 'Positif (konfirmasi kehamilan; sudah diketahui).', flag: 'abnormal', relevan: true },
+      // Fix CODEX-25 #22: dua flag terbalik. Tes kehamilan pada bumil 20 mgg
+      // dgn TFU + DJJ 148 terdengar jelas = REDUNDAN (relevan:false → hukum
+      // stewardship ringan). Golongan darah = komponen 10T ANC resmi (Kemenkes)
+      // = RELEVAN (relevan:true). Dulu justru sebaliknya.
+      { id: 'tes_kehamilan', hasil: 'Positif (konfirmasi kehamilan; sudah jelas dari TFU & DJJ — tak perlu diulang).', flag: 'abnormal', relevan: false },
       { id: 'proteinuria', hasil: 'Protein urin negatif — tidak ada tanda preeklampsia.', flag: 'normal', relevan: true },
-      { id: 'golongan_darah', hasil: 'B, Rhesus positif.', flag: 'normal', relevan: false },
+      { id: 'golongan_darah', hasil: 'B, Rhesus positif.', flag: 'normal', relevan: true },
     ],
     diagnosisBanding: ['Z34.0', 'Z33', 'O26.9'],
     tatalaksana: {
@@ -973,6 +977,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     // CODEX ronde-16 P2: 3A (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
     fktp144: false,
     harusDirujuk: true,
+    // CODEX-25 #4: skizofrenia kelompok PRB — regimen antipsikotik ditegakkan
+    // spesialis, maintenance kembali ke FKTP (rujuk balik SAH).
+    bisaPrb: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'jiwa',
     keluhanUtama: 'Anak saya sering bicara sendiri dan bilang ada suara yang mengancam dia, dok.',
@@ -1151,7 +1158,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         id: 'q_bahaya',
         kategori: 'rps',
         tanya: 'Ada penurunan kesadaran, kejang, sesak, atau sangat lemas sampai tidak bisa berdiri?',
-        jawab: 'Tidak sampai begitu dok, masih sadar penuh dan bisa jalan walau lemas — mau menyingkirkan malaria berat.',
+        jawab: 'Tidak sampai begitu dok, masih sadar penuh dan bisa jalan walau memang badan lemas.',
         esensial: true,
         oldcarts: ['keparahan', 'penyerta'],
       },

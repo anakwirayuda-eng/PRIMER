@@ -132,6 +132,32 @@
   box-shadow: 0 0 0 2px var(--daun-100), var(--shadow-kertas);
 }
 
+/* Fix CODEX-25 #2/Q7: dijumpai-tapi-belum-tersertifikasi — dibedakan visual
+   dari kartu tersertifikasi (border putus-putus kunyit, tak "penuh"). */
+.dexskdi-kartu--dijumpai {
+  border-style: dashed;
+  border-color: var(--kunyit-600);
+}
+
+.dexskdi-kartu__dijumpai-tag {
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  color: var(--kunyit-600);
+  text-transform: uppercase;
+}
+
+/* Header tiga-tingkat: chip dijumpai/tersertifikasi/dikuasai berjajar. */
+.dexskdi__tiga-tingkat {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  justify-content: flex-end;
+}
+
+.dexskdi-detail__status {
+  margin-top: calc(-1 * var(--sp-1));
+}
+
 .dexskdi-kartu__nama {
   font-size: var(--text-sm);
   font-weight: 600;

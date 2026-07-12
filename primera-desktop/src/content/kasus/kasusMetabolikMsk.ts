@@ -917,6 +917,9 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
     fktp144: false,
     harusDirujuk: true,
+    // CODEX-25 #4: HT kelompok PRB — pasca-krisis distabilkan, maintenance HT
+    // stabil kembali ke FKTP (rujuk balik SAH).
+    bisaPrb: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'penyakit_dalam',
     keluhanUtama: 'Kepala saya pusing berat dan tengkuk kaku dok, tadi diukur tensinya sangat tinggi.',
@@ -1038,6 +1041,9 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
     fktp144: false,
     harusDirujuk: true,
+    // CODEX-25 #4: jantung kelompok PRB — pasca-stabilisasi, HF kronik
+    // maintenance kembali ke FKTP (rujuk balik SAH).
+    bisaPrb: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'penyakit_dalam',
     keluhanUtama: 'Saya sesak napas dok, makin berat kalau tidur telentang, dan kaki saya bengkak.',

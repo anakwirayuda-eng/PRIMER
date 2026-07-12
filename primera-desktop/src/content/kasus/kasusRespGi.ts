@@ -389,6 +389,9 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
     fktp144: false,
     harusDirujuk: true,
+    // CODEX-25 #4: PPOK kelompok PRB — pasca-eksaserbasi distabilkan, maintenance
+    // PPOK kronik kembali ke FKTP (rujuk balik SAH).
+    bisaPrb: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'paru',
     keluhanUtama: 'Sesak saya makin berat dok, dahak jadi banyak dan kuning kental, jalan ke kamar mandi saja ngos-ngosan.',

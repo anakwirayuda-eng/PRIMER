@@ -167,6 +167,16 @@ export interface KasusKlinis {
   /** Kasus yang seharusnya DIRUJUK (di luar kompetensi 4A / butuh stabilisasi-rujuk). */
   harusDirujuk: boolean
   /**
+   * Fix CODEX-25 #4: kasus ini eligible Program Rujuk Balik (PRB)? PRB (Perpres
+   * JKN + Permenkes) HANYA utk penyakit KRONIS-STABIL dari 9 kelompok (DM, HT,
+   * jantung, asma, PPOK, epilepsi, skizofrenia, SLE, stroke) yg sudah distabilkan
+   * spesialis lalu maintenance-nya dikembalikan ke FKTP. Kasus AKUT (apendisitis,
+   * preeklampsia, abortus, pneumonia, glaukoma akut) TIDAK pernah jadi pasien PRB.
+   * Dulu SEMUA rujukan diterima dijadwalkan kembali sbg PRB — keliru. Default
+   * false = tak ada kontrol PRB (pasien akut dikelola tuntas di RS).
+   */
+  bisaPrb?: boolean
+  /**
    * Bobot epidemiologi FKTP nyata (guardrail KONTEN_BALANCE #1): top-20 diagnosis
    * ≈80% kunjungan. tinggi ×3 · sedang ×1.5 (default) · rendah ×0.6.
    */

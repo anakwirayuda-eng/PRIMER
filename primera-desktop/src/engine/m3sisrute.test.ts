@@ -126,13 +126,26 @@ function tanganiPasien(s0: GameState, p: ContentPack, disp: Action): GameState {
 }
 
 describe('M3.13 — SISRUTE berjenjang', () => {
-  it('rujukan wajib + RS cocok + bed ada → DITERIMA + PRB terjadwal', () => {
-    const p = pack([kasus('stroke')])
+  it('rujukan wajib + RS cocok + bed ada + KRONIS-PRB → DITERIMA + PRB terjadwal', () => {
+    // Fix CODEX-25 #4: PRB hanya utk kasus `bisaPrb` (kronis-stabil). Fixture
+    // di-tag eksplisit utk menguji jalur penjadwalan PRB.
+    const p = pack([kasus('stroke', { bisaPrb: true })])
     let s = baseState(p, { klinik: { antrian: [buatPasienDariKasus('stroke', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } } })
     s = tanganiPasien(s, p, { type: 'DISPOSISI', jenis: 'rujuk', rumahSakitId: 'rs_saraf', sbar: { situation: 'Hemiparesis kanan mendadak, TD 180/100.', background: 'HT tak terkontrol.', assessment: 'Stroke iskemik akut (I63.9).', recommendation: 'Mohon rawat & CT scan.' } })
     expect(s.tally.rujukanTepat).toBe(1)
     expect(s.tally.rujukanDitolak).toBe(0)
     expect(s.jadwal.some((j) => j.prb === true)).toBe(true)
+    expect(s.inbox.some((m) => m.judul.includes('DITERIMA'))).toBe(true)
+  })
+
+  it('Fix CODEX-25 #4: rujukan AKUT (bukan bisaPrb) diterima → TIDAK menjadwalkan PRB', () => {
+    // Kasus akut (apendisitis/preeklampsia dst) tanpa `bisaPrb` — diterima RS,
+    // dikelola tuntas di sana, TIDAK kembali sbg pasien PRB 7-12 hari kemudian.
+    const p = pack([kasus('apendisitis')]) // default helper: bisaPrb tak di-set
+    let s = baseState(p, { klinik: { antrian: [buatPasienDariKasus('apendisitis', p, new Rng(1, 'x'))], selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } } })
+    s = tanganiPasien(s, p, { type: 'DISPOSISI', jenis: 'rujuk', rumahSakitId: 'rs_saraf', sbar: { situation: 'Nyeri perut kanan bawah akut, McBurney (+).', background: 'Onset 12 jam.', assessment: 'Apendisitis akut.', recommendation: 'Mohon laparotomi.' } })
+    expect(s.tally.rujukanTepat).toBe(1)
+    expect(s.jadwal.some((j) => j.prb === true)).toBe(false)
     expect(s.inbox.some((m) => m.judul.includes('DITERIMA'))).toBe(true)
   })
 

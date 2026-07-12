@@ -594,34 +594,42 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             // rujukan yang juga BENAR secara diagnosis (CODEX P1): RS menerima
             // pasien gawat apa pun, itu bukan bukti penalaran klinis pemain tepat.
             if (nilai.diagnosisBenar) t.rujukanTepat += 1
-            // PRB tetap terjadwal terlepas dari ketepatan diagnosis — pasien tetap
-            // harus kembali kontrol; hanya skor pengakuan yang dibedakan.
-            const rngPrb = new Rng(s.seed, 'prb', s.hari, encFinal.pasien.id)
-            jadwal = [
-              ...jadwal,
-              {
-                id: `jadwal_prb_${s.hari}_${encFinal.pasien.id}`,
-                hari: s.hari + rngPrb.int(7, 12),
-                jenis: 'pasien_kembali',
-                kasusId: kasus.id,
-                catatan: `${encFinal.pasien.nama} — kontrol PRB: pulang dari ${rs.nama} dengan surat rujuk balik, lanjutkan terapi di FKTP`,
-                nama: encFinal.pasien.nama,
-                usia: encFinal.pasien.usia,
-                jenisKelamin: encFinal.pasien.jenisKelamin,
-                rw: encFinal.pasien.rw,
-                bpjs: encFinal.pasien.bpjs,
-                persona: encFinal.pasien.persona,
-                ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
-                prb: true,
-              },
-            ]
+            // Fix CODEX-25 #4: PRB (rujuk balik) HANYA utk kasus KRONIS-STABIL
+            // eligible (`bisaPrb`, 9 kelompok Perpres JKN) — dulu SEMUA rujukan
+            // diterima dijadwalkan kembali sbg PRB, jadi apendisitis/preeklampsia/
+            // pneumonia akut pun "kontrol PRB" 7-12 hari kemudian (keliru: pasien
+            // akut dikelola tuntas di RS, tak jadi pasien PRB). Kasus akut kini
+            // tak menjadwalkan kembali sama sekali.
+            if (kasus.bisaPrb === true) {
+              const rngPrb = new Rng(s.seed, 'prb', s.hari, encFinal.pasien.id)
+              jadwal = [
+                ...jadwal,
+                {
+                  id: `jadwal_prb_${s.hari}_${encFinal.pasien.id}`,
+                  hari: s.hari + rngPrb.int(7, 12),
+                  jenis: 'pasien_kembali',
+                  kasusId: kasus.id,
+                  catatan: `${encFinal.pasien.nama} — kontrol PRB: pulang dari ${rs.nama} dengan surat rujuk balik, lanjutkan terapi di FKTP`,
+                  nama: encFinal.pasien.nama,
+                  usia: encFinal.pasien.usia,
+                  jenisKelamin: encFinal.pasien.jenisKelamin,
+                  rw: encFinal.pasien.rw,
+                  bpjs: encFinal.pasien.bpjs,
+                  persona: encFinal.pasien.persona,
+                  ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+                  prb: true,
+                },
+              ]
+            }
             suratSisrute = {
               id: `surat_sisrute_${s.hari}_${s.log.length}`,
               hari: s.hari,
               jenis: 'pujian_kapus',
               dari: rs.nama,
               judul: `Rujukan DITERIMA — ${encFinal.pasien.nama}`,
-              isi: `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Setelah stabil, ia akan dipulangkan dengan surat rujuk balik (PRB) — kontrol lanjutannya kembali menjadi tanggung jawab FKTP-mu. Rujukan berjenjang bekerja dua arah.`,
+              isi: kasus.bisaPrb === true
+                ? `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Setelah stabil, ia akan dipulangkan dengan surat rujuk balik (PRB) — kontrol lanjutannya kembali menjadi tanggung jawab FKTP-mu. Rujukan berjenjang bekerja dua arah.`
+                : `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Kasus ini ditangani tuntas di layanan rujukan — terima kasih atas rujukan tepat waktumu.`,
               dibaca: false,
             }
           }
@@ -630,8 +638,14 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       }
 
       // Surveilans balik UKP→UKM (M1.2): diagnosis menular tercatat per RW —
-      // pola di poli menyalakan sinyal di peta, apa pun disposisinya.
-      const desaBaru = kasusMenular(kasus.id)
+      // pola di poli menyalakan sinyal di peta.
+      // Fix CODEX-25 #18 (2026-07-12): dulu mencatat `kasus.id` (GROUND TRUTH)
+      // "apa pun disposisinya" — termasuk saat pemain SALAH diagnosis. Peta lalu
+      // menampilkan nama penyakit SEBENARNYA (⚠ KLUSTER X) → membocorkan jawaban
+      // sebelum pemain menegakkannya sendiri. Kini hanya deteksi BENAR yang
+      // menyalakan surveilans (realistis: PWS dibangun dari laporan diagnosis
+      // yang tepat; wabah tak terdeteksi memang tak muncul di peta).
+      const desaBaru = kasusMenular(kasus.id) && nilai.diagnosisBenar
         ? { ...s.desa, surveilans: [...s.desa.surveilans, { hari: s.hari, rw: encFinal.pasien.rw, kasusId: kasus.id }] }
         : s.desa
 

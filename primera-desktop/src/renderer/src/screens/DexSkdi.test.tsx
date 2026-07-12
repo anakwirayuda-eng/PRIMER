@@ -34,13 +34,28 @@ describe('<DexSkdi /> — auto-tautan ICD dikenali', () => {
     render(<DexSkdi />)
 
     expect(screen.getByText(entri.nama)).toBeInTheDocument()
-    expect(screen.getByText(`1/${PACK.skdi144.length} dikenali`)).toBeInTheDocument()
+    // Fix CODEX-25 #2/Q7: metrik utama = TERSERTIFIKASI (benar≥1), bukan "dikenali".
+    expect(screen.getByText(`1/${PACK.skdi144.length} tersertifikasi`)).toBeInTheDocument()
   })
 
   it('kasus yang belum pernah ditangani tampil siluet "???"', () => {
     render(<DexSkdi />)
-    expect(screen.getByText(`0/${PACK.skdi144.length} dikenali`)).toBeInTheDocument()
+    expect(screen.getByText(`0/${PACK.skdi144.length} tersertifikasi`)).toBeInTheDocument()
     expect(screen.getAllByText('???').length).toBeGreaterThan(0)
+  })
+
+  // Fix CODEX-25 #2/Q7 (jalur kritis DeepThink): REGRESI INTI — kasus yang
+  // pernah DIJUMPAI tapi TAK PERNAH benar (benar===0) TIDAK boleh terhitung
+  // tersertifikasi. Dulu "67/67 dikenali" muncul walau salah diagnosis 67×.
+  it('kasus dijumpai tapi belum pernah benar: dihitung dijumpai, BUKAN tersertifikasi', () => {
+    const entri = PACK.skdi144.find((e) => e.id === ENTRI_AUTO_TAUTAN)!
+    pasangState({ [entri.kasusId!]: { ditangani: 3, benar: 0, bintang: 0, terakhirHari: 4 } })
+    render(<DexSkdi />)
+
+    expect(screen.getByText('1 dijumpai')).toBeInTheDocument()
+    expect(screen.getByText(`0/${PACK.skdi144.length} tersertifikasi`)).toBeInTheDocument()
+    // Kartunya bertanda "dijumpai", bukan bintang penguasaan.
+    expect(screen.getByText('dijumpai', { selector: '.dexskdi-kartu__dijumpai-tag' })).toBeInTheDocument()
   })
 
   // CODEX M10 (2026-07-05): meski pointerEventsCheck:0 (ronde-13) menurunkan

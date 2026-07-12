@@ -4073,3 +4073,58 @@ lengkap): ratifikasi final Q2/Q3, keputusan Q4 (stabilisasi) & §3a (rujukan ter
 ICD Bagian C (hemoroid/apendisitis), M2 #11 (Widal/GAS/K29.7), M6 residual (6 kode + T78.2→T88.6),
 desaF:995 (Fe/KB), lalu soak-test FINAL (pasca semua di atas turun) + freeze-enforcement checksum +
 tag Golden Master.
+
+## 67. Triase + eksekusi audit CODEX-25 (25 temuan + UKM-depth) — HEAD `e2aba5b` (2026-07-12)
+
+CODEX ronde baru: 25 temuan + penilaian "UKM satu tahap di belakang UKP". Triase 8-agen
+memverifikasi tiap klaim ke KODE AKTUAL (bukan percaya nomor baris — CODEX audit `cdd4d55`,
+HEAD sudah `e2aba5b`). **Hasil: 18 dikonfirmasi bersih, 5 dgn catatan, #24 campuran; CODEX salah
+di 2 titik** (#14 magnitude ~3.5 bukan ~5; "12 kartu Posyandu rotasi" sebenarnya 11). Sub-klaim
+akreditasi #15 **basi** (sudah difix commit `e2aba5b` hari ini). Semua angka UKM-depth (16 keluarga/
+26 skenario/119 hotspot/82 dialog) diverifikasi PAS; diagnosis "UKM tertinggal" akurat & struktural.
+
+**DeepThink memo strategis (M13) diadjudikasi bersamaan** — arahan yg dipakai: Q7 (Dex 3-tingkat)
+= JALUR KRITIS pre-freeze (dieksekusi, lihat bawah); seluruh M13 (152 kasus/regional/KLB-inbox/
+Endurance-UI) = BRANKAS pasca-September (tak disentuh); Mpox = dihapus dari papan desain; pity-timer
+tetap state-based; 3-saluran petakan ke `bobotKasus` (tak bangun mesin baru).
+
+**Fix DIEKSEKUSI batch ini** ("hajar semua yg bisa"):
+- **#1 [P0]** hard-cap grade utk keselamatan OBAT (`clinic.ts`): dulu cap hanya disposisi (cowboy/
+  RRNS). Kini `obatBerbahaya>0`→maks D(54), `antibiotikTanpaIndikasi`→maks B(69), independen (min-
+  of-caps). Common cold+amoksisilin / dengue+ibuprofen / CHF+nitrat-PDE5 tak bisa lagi dapat A.
+- **#2/Q7 [P0, jalur kritis]** Dex 3-tingkat: **Dijumpai** (`ditangani≥1`) / **Tersertifikasi**
+  (`benar≥1`) / **Dikuasai** (`bintang≥3`). Ternyata data SUDAH ada di `DexEntry.benar` — murni
+  perubahan renderer `DexSkdi.tsx` (chip 3-tingkat, meter lacak tersertifikasi, kartu dijumpai-belum-
+  tepat ditandai beda, status eksplisit di panel). TAK sentuh reducer/save → jangkau save lama live,
+  TANPA REVISI bump utk item ini. Regresi guard: kasus `benar===0` tak boleh terhitung tersertifikasi.
+- **#4 [P0]** PRB gate: field baru `bisaPrb` (default false), tag 5 kasus kronis-stabil (skizofrenia,
+  HT-urgensi, CHF, PPOK, epilepsi — kelompok PRB resmi). Kasus AKUT (apendisitis/preeklampsia/
+  pneumonia/stroke/RA/glaukoma) tak lagi kembali sbg pasien PRB 7-12 hari. `bisaPrb` ikut hash.
+- **#9 [P1]** 7 pertanyaan distraktor `kasusInfeksi.ts` diberi `distraktor:true` (dulu cuma komentar
+  → gratis; spam-semua jadi strategi bebas-risiko + kesabaran pasien tak pernah tergerus).
+- **#17 [P1]** KLB pola `airborne` terpisah utk `tb_paru` (investigasi kontak+TPT+ventilasi, bukan
+  masker bedah generik droplet); respons droplet ISPA/pneumonia diperbaiki (kontak sehat tak diobati).
+- **#18 [P1]** surveilans hanya mencatat deteksi BENAR (`diagnosisBenar`) — dulu ground-truth "apa
+  pun disposisinya" bocorkan nama penyakit di peta sebelum pemain menegakkan.
+- **#16 [P1]** Posyandu: An. Kadek (L2, faltering tak-di-bawah-garis-merah) vs An. "Kadek" (L3,
+  di-bawah-garis-merah) → L3 diganti "An. Komang" (anak beda). Referensi "tadi di Langkah 2" di 2
+  kartu L4 dibuat mandiri (kartu ditarik acak-independen, ~37,5% sesi kontradiksi).
+- **#22 [P1, sebagian]** ANC: `golongan_darah` relevan false→true (komponen 10T), `tes_kehamilan`
+  true→false (redundan pd bumil 20mgg dgn DJJ). Triple-eliminasi HIV/sifilis/HepB = gap katalog →
+  content-pass (bukan batch ini).
+- **#25 [P2]** DSS usiaMax 25→17 (koheren dgn rujukan Sp.Anak); dialog malaria dibersihkan dari
+  bahasa meta-klinis. glibenklamid `fornas:true` DIPERTAHANKAN + komentar klarifikasi (CODEX
+  conflate Fornas≠DOEN — glibenklamid memang di Fornas/JKN, cuma bukan DOEN-Puskesmas). OSA-workup
+  obesitas = content-pass.
+
+**Sengaja TIDAK disentuh (butuh keputusan / vault / content-pass):** #3 (rujuk batalkan konsekuensi —
+mungkin simplifikasi disengaja, butuh keputusan), #5 (formula IKS resmi — ubah rubrik UKM, butuh go
++ sebaiknya bareng kalibrasi deflasi), #6 (kluster kehilangan RW — redesign director), #7/#8/#10/#13/
+#14/#19/#20/#21 (mekanik, butuh keputusan/lebih besar), #12 (jadwal nyangkut pasca-tamat), #15 (KLB/
+Prolanis/laporan/karma mode-unaware Ujian), #23 (hipertensi PNPK 2026 target 130/80 — freeze-sensitive
++ keputusan pedoman), #24-epistaksis (tak benar-benar kontradiksi), #24-anafilaksis (TERBANTAH), semua
+M13. Triple-eliminasi + OSA + common-cold-KLB-nuance = content-pass.
+
+**Verifikasi**: 709/709 test (naik dari 707 — 2 regresi baru: Dex-dijumpai, PRB-akut-tak-PRB) +
+typecheck bersih + `npm audit` 0. **REVISI_ENGINE 23→24** (satu bump: #1/#4/#9/#17/#18/#22/#25
+score/replay-affecting; rasional lengkap di komentar `verifikasi.ts`). Belum di-commit di titik ini.

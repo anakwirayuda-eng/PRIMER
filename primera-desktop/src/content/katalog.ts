@@ -123,6 +123,12 @@ export const OBAT: Record<string, Obat> = {
     sediaan: 'Tablet 5 mg',
     hargaBeli: 150,
     hargaJual: 300,
+    // fornas:true DISENGAJA (CODEX-25 #25 mengira ini kontradiksi — sebenarnya
+    // TIDAK): Fornas ≠ DOEN. Glibenklamid MEMANG di Formularium Nasional
+    // (ditanggung JKN), cuma TIDAK di DOEN 2021 Puskesmas — makanya dm_tipe2
+    // menandainya obatSalahUmum (tersedia & ditanggung, tapi bukan pilihan
+    // realistis-Puskesmas & risiko hipoglikemia tinggi). Distraktor realistis
+    // yang benar: player yang memilihnya dihukum, bukan karena obatnya "tak ada".
     fornas: true,
   },
   // Bagian D Tier-1 #2 (audit CODEX 2026-07-11, adjudikasi PNPK/DOEN 2026-07-12):

@@ -480,6 +480,9 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     kategori: 'saraf',
     fktp144: false,
     harusDirujuk: true,
+    // CODEX-25 #4: epilepsi kelompok PRB — regimen antiepilepsi ditegakkan
+    // spesialis, maintenance kembali ke FKTP (rujuk balik SAH).
+    bisaPrb: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'saraf',
     keluhanUtama: 'Anak saya kejang lagi dok, ini sudah yang ketiga kali dalam dua bulan, seluruh badan kaku lalu kelojotan.',

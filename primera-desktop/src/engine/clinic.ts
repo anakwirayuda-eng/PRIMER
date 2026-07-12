@@ -689,12 +689,25 @@ export function nilaiEncounter(
   // Fix #12 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): grade dulu ABAI
   // disposisi sepenuhnya — diagnosis+terapi sempurna tapi gagal merujuk pasien
   // yg WAJIB dirujuk (cowboy) tetap bisa dapat A, meski disposisi disebut
-  // "gatekeeper SKDI" (komentar di atas). Hard-cap konsisten dgn severity:
-  // cowboy (disposisi paling berbahaya — pasien wajib-rujuk dipulangkan)
-  // memaksa grade maks D; rujukanNonSpesialistik (rujuk berlebihan, boros
-  // sistem tapi tak membahayakan pasien ini) memaksa grade maks B.
-  if (cowboy) nilaiTotal = Math.min(nilaiTotal, 54)
-  else if (rujukanNonSpesialistik) nilaiTotal = Math.min(nilaiTotal, 84)
+  // "gatekeeper SKDI" (komentar di atas). Hard-cap konsisten dgn severity.
+  //
+  // Fix #1 (audit CODEX-25 2026-07-12): cap dulu HANYA menyangkut disposisi —
+  // keselamatan OBAT sama sekali lolos. Terapi cuma 20% bobot, jadi resep
+  // BERBAHAYA (nitrat pada pemakai PDE5, NSAID pada dengue) atau antibiotik
+  // tanpa indikasi masih bisa dapat A bila komponen lain sempurna — menggerus
+  // seluruh gerbang alergi/interaksi/ICD yang sudah dibangun. Cap keselamatan
+  // obat ditambahkan, SEJAJAR severity disposisi. Semua cap independen (satu
+  // encounter bisa kena >1) → ambil yang paling ketat, bukan else-if.
+  //   cowboy (pasien wajib-rujuk dipulangkan)      → maks D (54)
+  //   obat berbahaya/kontraindikasi absolut         → maks D (54) — bahaya nyawa
+  //   antibiotik tanpa indikasi (stewardship)       → maks B (69)
+  //   rujukanNonSpesialistik (boros, tak membahayakan pasien ini) → maks B (84)
+  const capGrade: number[] = []
+  if (cowboy) capGrade.push(54)
+  if (obatBerbahaya > 0) capGrade.push(54)
+  if (antibiotikTanpaIndikasi) capGrade.push(69)
+  if (rujukanNonSpesialistik) capGrade.push(84)
+  if (capGrade.length > 0) nilaiTotal = Math.min(nilaiTotal, ...capGrade)
   const grade: PenilaianEncounter['grade'] =
     nilaiTotal >= 85 ? 'A' : nilaiTotal >= 70 ? 'B' : nilaiTotal >= 55 ? 'C' : 'D'
 

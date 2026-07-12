@@ -205,7 +205,10 @@ export const KASUS_IGD: KasusIgd[] = [
     pembuka:
       'Seorang remaja lemas digotong, demam hari ke-5 yang tadi turun tapi kini tangannya dingin. ' +
       '"Tadinya sudah enakan, Dok, kok malah lemas begini?" Nadinya cepat dan lemah.',
-    demografi: { usiaMin: 8, usiaMax: 25 },
+    // Fix CODEX-25 #25: usiaMax dulu 25 (dewasa) padahal narasi "remaja" &
+    // rujukan ke spesialis ANAK — pasien 25 th ke Sp.A tidak koheren. Dipersempit
+    // ke rentang remaja (≤17) agar internal-konsisten dgn disposisi 'anak'.
+    demografi: { usiaMin: 8, usiaMax: 17 },
     vitalAwal: { td: '90/80', nadi: 128, rr: 24, spo2: 96, suhu: 37.2 },
     stabilitasAwal: 48,
     disposisiBenar: 'rujuk',
