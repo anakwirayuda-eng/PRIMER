@@ -309,7 +309,28 @@ function fnv1a(teks: string): string {
 //        nyala/jatuh-tempo dlm jendela 30 hari mode Ujian.
 // Semua field baru di atas score-affecting → wajib tercakup sidikJariPack
 // (lihat entri masing2 di bawah); dossier lama tanpa field ini mereplay beda.
-const REVISI_ENGINE = 26
+//
+// REVISI 27 (M10.5 Fase 3 — soak-final kalibrasi, 2026-07-12, workflow 5-agen
+// diagnose+cross-check) — 2 formula murni-engine (bukan konten kasus):
+//   1. UKM efekKarma (scoring.ts): dulu `-2*karmaTerjadi + 1*karmaDicegah`
+//      HITUNGAN MENTAH tak dinormalisasi (satu-satunya suku UKM begitu — beda
+//      dari rasioKunjungan/kualitasMi yg sudah dilindungi Hukum Bilangan Kecil
+//      via ekspektasiKunjungan). Kolam keluarga-karma TETAP (9) sementara mode
+//      Ujian cuma 1/3 kalender karier → pemain teladan bisa terjun +7→-16 MURNI
+//      krn mode, diverifikasi soak 15-seed (UKM 22→4 lintas mode HANYA dari
+//      suku ini). Kini `(3*karmaDicegah - 9*karmaTerjadi) / max(3, total)` —
+//      rasio+lantai-sampel-kecil+asimetris (hukum>hadiah, pola cowboy/
+//      guillotine), tak lagi berayun ekstrem antar-mode.
+//   2. KBK pengali (reducer.ts hariBaru): ambang lama iksDesa>0.8/>=0.5 MATEMATIS
+//      MUSTAHIL sejak formula IKS resmi (#5, REVISI 26) — ceiling absolut
+//      (semua 16 binaan 'sehat' + bonusIks maks di SETIAP RW sekaligus) cuma
+//      ~0.50, ceiling praktis (kunci TETAPKAN_PROGRAM 1 RW/bulan) ~0.25.
+//      Diverifikasi: 0 dari 3600 hari sampel (15 seed × 3 profil × 2 mode)
+//      pernah lolos dari tingkat 0.8x. Ambang baru: >=0.3→1.3x, >=0.2→1.0x.
+//      kapitasi ikut skor (manajemen: kapitasi<10jt → -3) → score-affecting.
+// Kedua formula murni fungsi tally/state (bukan field kasus baru) — tak ada
+// entri sidikJariPack baru, tapi replay skor lama BERBEDA dgn kode baru ini.
+const REVISI_ENGINE = 27
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

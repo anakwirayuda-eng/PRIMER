@@ -502,7 +502,9 @@ describe('hitungSkor — profil adversarial', () => {
     const karma = hitungSkor(
       buatState({ desa, tally: buatTally({ ...tallyUkm, karmaTerjadi: 2, karmaDicegah: 1 }) }),
     )
-    expect(karma.ukm).toBeCloseTo(31.5 - 4 + 1)
+    // M10.5 Fase 3 (2026-07-12): efekKarma rate-normalized+asimetris — denom
+    // = max(3, 2+1) = 3; efekKarma = (3*1 - 9*2)/3 = -5 (dulu -2*2+1*1 = -3).
+    expect(karma.ukm).toBeCloseTo(31.5 - 5)
   })
 
   it('Manajemen & Resiliensi: stewardship, kapitasi jebol, dan kelelahan dihukum', () => {

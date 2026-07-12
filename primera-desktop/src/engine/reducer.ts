@@ -1785,7 +1785,14 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   if (hari > 1 && hari % SIKLUS_LAPORAN_BULANAN[s.mode] === 1) {
     const rwBerdata = kaderHasil.rw.filter((r) => r.iks > 0)
     const iksDesa = rwBerdata.length > 0 ? rwBerdata.reduce((jml, r) => jml + r.iks, 0) / rwBerdata.length : 0
-    const pengali = iksDesa > 0.8 ? 1.3 : iksDesa >= 0.5 ? 1.0 : 0.8
+    // M10.5 Fase 3 (2026-07-12, soak-final kalibrasi): ambang lama (>0.8/>=0.5)
+    // dulu MATEMATIS MUSTAHIL sejak formula IKS resmi (#5) — ceiling realistis
+    // bahkan dgn seluruh keluarga binaan 'sehat' + bonusIks maks di SETIAP RW
+    // cuma ~0.50, dan throughput nyata (kunci TETAPKAN_PROGRAM 1 RW/bulan)
+    // membuat ceiling praktis karier ~0.25. Diverifikasi soak 15-seed: 0 dari
+    // 3600 hari sampel pernah lolos dari tingkat 0.8x. Ambang baru (0.20/0.30)
+    // digrounding perhitungan ceiling riil tsb — 3 tingkat genuinely reachable.
+    const pengali = iksDesa >= 0.3 ? 1.3 : iksDesa >= 0.2 ? 1.0 : 0.8
     const masukan = Math.round(6_000_000 * pengali)
     kapitasi += masukan - OPERASIONAL_BULANAN
     suratBaru.push(
@@ -1797,7 +1804,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         // AK/RRNS/RPPT) padahal murni proksi rata-rata IKS desa (PIS-PK) —
         // teks-saja, TAK menyentuh matematika pengali/masukan.
         judul: `Kapitasi bulan ini: Rp ${masukan.toLocaleString('id-ID')} (proksi PIS-PK ×${pengali})`,
-        isi: `Pembayaran kapitasi diterima. Pengali proksi IKS-PIS-PK bulan ini ×${pengali} — ditentukan IKS desa binaanmu (${(iksDesa * 100).toFixed(0)}%), BUKAN formula KBK BPJS riil (Angka Kontak/Rasio Rujukan/Rasio Prolanis). ${pengali < 1 ? 'IKS di bawah 0,5 memangkas pendapatan Puskesmas — kerja preventif di lapangan adalah kerja finansial juga.' : pengali > 1 ? 'IKS di atas 0,8 memberi bonus komitmen. Pertahankan.' : 'Naikkan IKS desa di atas 0,8 untuk pengali 1,3.'}`,
+        isi: `Pembayaran kapitasi diterima. Pengali proksi IKS-PIS-PK bulan ini ×${pengali} — ditentukan IKS desa binaanmu (${(iksDesa * 100).toFixed(0)}%), BUKAN formula KBK BPJS riil (Angka Kontak/Rasio Rujukan/Rasio Prolanis). ${pengali < 1 ? 'IKS di bawah 0,2 memangkas pendapatan Puskesmas — kerja preventif di lapangan adalah kerja finansial juga.' : pengali > 1 ? 'IKS di atas 0,3 memberi bonus komitmen. Pertahankan.' : 'Naikkan IKS desa di atas 0,3 untuk pengali 1,3.'}`,
       }),
     )
     suratBaru.push(

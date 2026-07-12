@@ -85,11 +85,26 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
     state.mode === 'ujian' ? EKSPEKTASI_KUNJUNGAN_UJIAN : EKSPEKTASI_KUNJUNGAN_KARIER
   const kualitasMi = (t.miTepat / Math.max(ekspektasiKunjungan, t.miTotal)) * 100
   const rasioKunjungan = t.kunjunganBerhasil / Math.max(ekspektasiKunjungan, t.kunjunganTotal)
+  // M10.5 Fase 3 (2026-07-12, soak-final kalibrasi): dulu `-2*karmaTerjadi +
+  // 1*karmaDicegah` adalah HITUNGAN MENTAH tak terbatas — satu-satunya suku
+  // UKM yang tak dinormalisasi rasio (beda dari rasioKunjungan/kualitasMi di
+  // atas, yang sudah dilindungi Hukum Bilangan Kecil via ekspektasiKunjungan).
+  // Kolam keluarga ber-karma TETAP (9) sementara mode Ujian (30 hari) hanya
+  // 1/3 kalender karier tanpa slot kunjungan/hari ikut dipadatkan — pemain
+  // teladan yg mustahil kejar throughput yg sama bisa terjun dari +7 ke -16
+  // murni krn mode, bukan kualitas keputusan (diverifikasi soak 15-seed:
+  // UKM turun ~22→~4 lintas mode HANYA dari suku ini). Kini rasio (dgn lantai
+  // sampel-kecil, spt pola EKSPEKTASI_KUNJUNGAN) + asimetris (hukum > hadiah,
+  // pola sama cowboy/guillotine) — tak lagi berayun ekstrem antar-mode, tapi
+  // negligensi total (0 dicegah dari N kasus) tetap dihukum berat (~-9), bukan
+  // digantikan angka simetris kecil yang melunakkan konsekuensi bernama ini.
+  const totalKarmaKasus = t.karmaDicegah + t.karmaTerjadi
+  const denomKarma = Math.max(3, totalKarmaKasus)
+  const efekKarma = (3 * t.karmaDicegah - 9 * t.karmaTerjadi) / denomKarma
   const ukm = clamp(
     (0.5 * iksDesa + 0.25 * rasioKunjungan + 0.25 * (kualitasMi / 100)) * 35 -
-      2 * t.apathy -
-      2 * t.karmaTerjadi +
-      1 * t.karmaDicegah,
+      2 * t.apathy +
+      efekKarma,
     0,
     35,
   )
