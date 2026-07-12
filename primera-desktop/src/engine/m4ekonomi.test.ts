@@ -204,6 +204,39 @@ describe('M4.20 — akreditasi D60 dari kelengkapan rekam medis', () => {
     })
     expect(s.tally.rmLengkap).toBe(1)
   })
+
+  // M10.5 Q3 (2026-07-12): topik edukasiKritis terlewat men-cap skorEdukasi ke
+  // 50 tepat (clinic.ts) — SEBELUM fix ini, rmLengkap hanya cek `>=50` sehingga
+  // encounter yg melewatkan topik non-negotiable tetap lolos dihitung "RM
+  // lengkap", padahal kelalaian itu persis yang edukasiKritis dirancang menandai.
+  it('topik edukasiKritis terlewat (skorEdukasi di-cap 50) TIDAK menambah tally rmLengkap', () => {
+    const kasus = PACK.kasus['hipertensi_esensial']!
+    expect(kasus.tatalaksana.edukasiKritis).toEqual(['kepatuhan_obat'])
+
+    let s = { ...buildInitialState('Uji', SEED, PACK), tutorialAktif: false }
+    const pasien = buatPasienDariKasus('hipertensi_esensial', PACK, new Rng(1, 'x'))
+    s = { ...s, klinik: { ...s.klinik, antrian: [pasien] } }
+    s = run(s, { type: 'PANGGIL_PASIEN' })
+    for (const q of kasus.anamnesis) {
+      if (q.distraktor === true) continue
+      s = run(s, { type: 'TANYA', pertanyaanId: q.id })
+    }
+    s = run(s, { type: 'LANJUT_FASE' })
+    s = run(s, { type: 'UKUR_VITAL' })
+    for (const t of kasus.pemeriksaanFisik) if (t.relevan) s = run(s, { type: 'PERIKSA', region: t.region })
+    s = run(s, { type: 'LANJUT_FASE' })
+    s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' })
+    for (const o of kasus.tatalaksana.obatBenar) s = run(s, { type: 'TAMBAH_OBAT', obatId: o })
+    // 3 topik non-kritis (mengisi KAPASITAS_EDUKASI=3 penuh, skorEdukasi raw
+    // 100%) TAPI 'kepatuhan_obat' (edukasiKritis) sengaja tak disentuh.
+    s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId: 'diet_rendah_garam' })
+    s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId: 'aktivitas_fisik' })
+    s = run(s, { type: 'TAMBAH_EDUKASI', edukasiId: 'kontrol_rutin' })
+    s = run(s, { type: 'LANJUT_FASE' })
+    s = run(s, { type: 'DISPOSISI', jenis: 'pulang' })
+
+    expect(s.tally.rmLengkap).toBe(0)
+  })
 })
 
 // CODEX (2026-07-05): katalog tindakan (nebulisasi, Epley, dst.) punya `biaya`,

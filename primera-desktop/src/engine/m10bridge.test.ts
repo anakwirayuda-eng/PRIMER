@@ -142,7 +142,7 @@ describe('M10.b — identitas pasien kembali (konsekuensi bernama SEUTUHNYA)', (
 
   it('roster prolanis membawa keluargaId — komplikasi bisa dirunut balik ke keluarga binaan', () => {
     let s = buildInitialState('dr. Uji', SEED, PACK)
-    s = sampaiHari(s, HARI_BUKA_PROLANIS)
+    s = sampaiHari(s, HARI_BUKA_PROLANIS.karier)
     expect(s.prolanis.roster.length).toBeGreaterThan(0)
     for (const p of s.prolanis.roster) {
       expect(p.keluargaId, `peserta ${p.nama} tanpa keluargaId`).toBeDefined()

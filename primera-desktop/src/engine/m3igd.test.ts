@@ -73,27 +73,51 @@ describe('M3.14 — alur IGD', () => {
     expect(s.igd?.fase).toBe('kode_biru')
   })
 
-  it('RJP berkualitas (seed menguntungkan) → ROSC → disposisi; buruk bisa Kode Hitam', () => {
-    // Cari seed di mana RJP berkualitas berhasil, dan satu di mana buruk gagal.
-    let sukses = false
-    let hitam = false
-    for (let seed = 0; seed < 20 && !(sukses && hitam); seed++) {
-      let s: GameState = { ...base(igdKasus(KASUS, 10)), seed }
+  it('M10.5 #14: RJP DETERMINISTIK — berkualitas SELALU ROSC (stabilitas 25), buruk SELALU Kode Hitam', () => {
+    let s: GameState = base(igdKasus(KASUS, 10))
+    const l0 = PACK.kasusIgd[KASUS]!.langkah[0]!
+    const salah = l0.pilihan.find((p) => !p.benar)!
+    s = run(s, { type: 'AKSI_IGD', langkahId: l0.id, pilihanId: salah.id })
+    expect(s.igd?.fase).toBe('kode_biru')
+
+    const sSukses = run({ ...s }, { type: 'RJP_IGD', berkualitas: true })
+    expect(sSukses.igd?.fase).toBe('disposisi')
+    expect(sSukses.igd?.stabilitas).toBe(25)
+
+    const sBuruk = run({ ...s }, { type: 'RJP_IGD', berkualitas: false })
+    expect(sBuruk.tally.igdMeninggal).toBe(1)
+    expect(sBuruk.igd).toBeUndefined()
+    expect(sBuruk.inbox.some((m) => m.judul.includes('KODE HITAM'))).toBe(true)
+    expect(sBuruk.burnout).toBeGreaterThan(0)
+  })
+
+  describe('M10.5 Q4/Q-E — rujuk prematur (stabilitas<50) setara Kode Hitam', () => {
+    it('ROSC (stabilitas 25) lalu langsung DIRUJUK → memburuk, ditally igdMeninggal (bukan igdStabil)', () => {
+      let s: GameState = base(igdKasus(KASUS, 10))
       const l0 = PACK.kasusIgd[KASUS]!.langkah[0]!
       const salah = l0.pilihan.find((p) => !p.benar)!
       s = run(s, { type: 'AKSI_IGD', langkahId: l0.id, pilihanId: salah.id })
-      if (s.igd?.fase !== 'kode_biru') continue
-      const sSukses = run({ ...s }, { type: 'RJP_IGD', berkualitas: true })
-      if (sSukses.igd?.fase === 'disposisi') sukses = true
-      const sBuruk = run({ ...s }, { type: 'RJP_IGD', berkualitas: false })
-      if (sBuruk.tally.igdMeninggal === 1 && sBuruk.igd === undefined) {
-        hitam = true
-        expect(sBuruk.inbox.some((m) => m.judul.includes('KODE HITAM'))).toBe(true)
-        expect(sBuruk.burnout).toBeGreaterThan(0)
-      }
-    }
-    expect(sukses).toBe(true)
-    expect(hitam).toBe(true)
+      s = run(s, { type: 'RJP_IGD', berkualitas: true })
+      expect(s.igd?.fase).toBe('disposisi')
+      expect(s.igd?.stabilitas).toBe(25)
+
+      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+      expect(s.tally.igdMeninggal).toBe(1)
+      expect(s.tally.igdStabil).toBe(0)
+      expect(s.tally.igdSalahDisposisi).toBe(0)
+      expect(s.igd).toBeUndefined()
+      expect(s.inbox.some((m) => m.judul.includes('KODE HITAM') && m.judul.includes('perjalanan'))).toBe(true)
+    })
+
+    it('stabilitas ≥ ambang (50) DAN dirujuk pada kasus wajib-rujuk → tetap igdStabil seperti biasa', () => {
+      let s = base(igdKasus(KASUS))
+      const kasus = PACK.kasusIgd[KASUS]!
+      for (const l of kasus.langkah) s = run(s, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: l.pilihan.find((p) => p.benar)!.id })
+      expect(s.igd!.stabilitas).toBeGreaterThanOrEqual(50)
+      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+      expect(s.tally.igdStabil).toBe(1)
+      expect(s.tally.igdMeninggal).toBe(0)
+    })
   })
 
   it('Kode Hitam menggerus UKP; pasien stabil memberi bonus kecil', () => {

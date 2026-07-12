@@ -420,6 +420,10 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     kategori: 'muskuloskeletal',
     fktp144: false,
     harusDirujuk: false,
+    // M10.5 §3a (2026-07-12, TACC rujukan terjustifikasi): clue kasus ini
+    // sendiri mengizinkan rujuk BILA "kandidat operasi/sendi gagal" (PPK/
+    // OARSI) — komplikasi sungguhan, bukan kelonggaran kosong.
+    justifikasiRujukValid: ['komplikasi'],
     prevalensi: 'tinggi',
     keluhanUtama: 'Lutut saya nyeri dok, terutama kalau jalan jauh atau naik-turun tangga.',
     demografi: { usiaMin: 55, usiaMax: 75, jenisKelamin: 'P' },
@@ -1193,6 +1197,11 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     kategori: 'metabolik',
     fktp144: true,
     harusDirujuk: false,
+    // M10.5 §3a (2026-07-12, TACC rujukan terjustifikasi): clue kasus ini
+    // sendiri membedakan sistitis "tanpa komplikasi" dari varian pielonefritis
+    // (demam tinggi + nyeri CVA) — bila presentasi bergeser ke sana, rujuk
+    // jadi terjustifikasi nyata, bukan kelonggaran kosong.
+    justifikasiRujukValid: ['komplikasi'],
     prevalensi: 'tinggi',
     keluhanUtama: 'Kalau kencing perih dan anyang-anyangan dok, bolak-balik ke kamar mandi tapi sedikit-sedikit.',
     demografi: { usiaMin: 18, usiaMax: 45, jenisKelamin: 'P' },

@@ -452,6 +452,12 @@ export function nilaiEncounter(
   )
   // Tanpa tanda vital, pemeriksaan tidak pernah lengkap.
   if (!enc.vitalDiukur) skorPemeriksaan = Math.min(skorPemeriksaan, 50)
+  // M10.5 Q2: kasus dgn konfirmasiWajib (TB: BTA/TCM; malaria: RDT) tak boleh
+  // didiagnosis/diterapi presumtif tanpa lab konfirmasi dipesan — cap sama
+  // persis vitalDiukur.
+  if (kasus.konfirmasiWajib && !enc.labDipesan.includes(kasus.konfirmasiWajib)) {
+    skorPemeriksaan = Math.min(skorPemeriksaan, 50)
+  }
 
   /* -- Terapi: cakupan obat benar − penalti obat di luar tatalaksana ----------- */
   // Jebakan alergi: bila pasien membawa alergi kelas yang dijebak kasus, standar
@@ -639,9 +645,17 @@ export function nilaiEncounter(
     : kasus.harusDirujuk
       ? disposisi === 'rujuk'
       : disposisi === 'pulang' || disposisi === 'observasi'
+  // M10.5 §3a (2026-07-12): TACC rujukan terjustifikasi — dokter boleh
+  // mendeklarasikan alasan (komplikasi/komorbid/keterbatasan_fasilitas) saat
+  // merujuk kasus `harusDirujuk:false`. Validity-check NYATA: deklarasi hanya
+  // menghitung bila ADA di `kasus.justifikasiRujukValid` — dropdown bebas yg
+  // tak cocok kasus TETAP dihukum, mencegah bypass trivial Referral Guillotine.
+  const justifikasiValid =
+    enc.justifikasiRujuk !== undefined &&
+    (kasus.justifikasiRujukValid ?? []).includes(enc.justifikasiRujuk)
   const rujukanNonSpesialistik = prb
     ? disposisi === 'rujuk'
-    : disposisi === 'rujuk' && !kasus.harusDirujuk
+    : disposisi === 'rujuk' && !kasus.harusDirujuk && !justifikasiValid
   const cowboy = !prb && kasus.harusDirujuk && disposisi !== 'rujuk'
 
   /* -- Lab tak relevan: dipesan tapi tidak terindikasi -------------------------- */

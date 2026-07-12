@@ -14,13 +14,21 @@ import type { GameState, KaderState, KeluargaState, NilaiIndikator, RwState, Sur
 import type { ContentPack } from '@content/pack'
 import type { IndikatorPisPk, StatusIndikator } from '@content/types'
 import type { Rng } from './core/rng'
-import { hitungIksKeluarga, SEMUA_INDIKATOR_PISPK } from './pispk'
+import { hitungIksKeluarga, klasifikasiIks, SEMUA_INDIKATOR_PISPK } from './pispk'
 
-/** Baseline IKS deterministik per jarak RW (KK statistik non-binaan). */
-const BASELINE_JARAK: Record<'dekat' | 'sedang' | 'terpencil', number> = {
-  dekat: 0.62,
-  sedang: 0.55,
-  terpencil: 0.45,
+/**
+ * Proporsi KK STATISTIK (bukan binaan) yang diasumsikan 'sehat' (IKS>0.8), per
+ * jarak RW. M10.5 keputusan #5 (2026-07-12): adopsi formula resmi Permenkes
+ * 39/2016 — IKS wilayah = (keluarga IKS>0.8) ÷ total keluarga, BUKAN rata-rata
+ * skor kontinu. Angka RENDAH ini digrounding riset riil (laporan puskesmas
+ * 2023: 0,6%-23% keluarga berkategori 'sehat', jauh di bawah rata-rata skor
+ * kontinu 0.45-0.62 yang dipakai baseline lama) — mayoritas keluarga riil
+ * jatuh di 'pra-sehat' (0.5-0.8), bukan lolos ambang 'sehat' (>0.8).
+ */
+const PROPORSI_SEHAT_JARAK: Record<'dekat' | 'sedang' | 'terpencil', number> = {
+  dekat: 0.2,
+  sedang: 0.12,
+  terpencil: 0.06,
 }
 
 /** Frasa ramah tiap indikator, untuk surat laporan. */
@@ -143,29 +151,37 @@ export function prosesHarianKader(
     aktivitas.push({ kader: kader[k.id] ?? k, rw: wilayah, tambah, keluargaDiisi })
   }
 
-  // Agregasi IKS RW: 0.5 × rata IKS keluarga ber-data + 0.5 × baseline jarak
-  // (jitter ±0.05) — hanya bila sudah ada KK tersurvei; selain itu 0 (abu-abu).
+  // Agregasi IKS RW (M10.5 #5, formula resmi Permenkes 39/2016): proporsi
+  // keluarga IKS>0.8 ('sehat') dari total keluarga yang sudah ada data —
+  // BUKAN rata-rata skor kontinu. Keluarga binaan (bernama) dihitung dari
+  // data indikator riil (hitungIksKeluarga+klasifikasiIks); KK statistik
+  // (jauh lebih banyak, tak dilacak individual) diestimasi via proporsi
+  // baseline per jarak RW (PROPORSI_SEHAT_JARAK, jitter kecil ±0.02). Hanya
+  // dihitung bila sudah ada KK tersurvei; selain itu 0 (abu-abu).
   for (const wilayah of rw) {
     if (wilayah.kkTersurvei <= 0) {
       wilayah.iks = 0
       continue
     }
-    const baseline = clamp01(BASELINE_JARAK[wilayah.jarak] + (rng.float() * 0.1 - 0.05))
-    const nilaiKeluarga: number[] = []
+    const proporsiBaseline = clamp01(
+      PROPORSI_SEHAT_JARAK[wilayah.jarak] + (rng.float() * 0.04 - 0.02),
+    )
+    let sehatBinaan = 0
+    let berdataBinaan = 0
     for (const id of idKeluargaUrut) {
       if (pack.keluarga[id]?.rw !== wilayah.nomor) continue
       const st = keluarga[id]
       if (!st) continue
       const iks = hitungIksKeluarga(st)
-      if (iks !== null) nilaiKeluarga.push(iks)
+      if (iks === null) continue
+      berdataBinaan += 1
+      if (klasifikasiIks(iks) === 'sehat') sehatBinaan += 1
     }
-    const rata =
-      nilaiKeluarga.length > 0
-        ? nilaiKeluarga.reduce((jumlah, x) => jumlah + x, 0) / nilaiKeluarga.length
-        : baseline
+    const totalKeluarga = berdataBinaan + wilayah.kkTersurvei
+    const totalSehat = sehatBinaan + proporsiBaseline * wilayah.kkTersurvei
     // Bonus program M2 (posyandu/KLB/program wilayah) menaikkan IKS RW secara
     // persisten — kegiatan lapangan terbayar di indikator, bukan angka hantu.
-    wilayah.iks = clamp01(0.5 * rata + 0.5 * baseline + wilayah.bonusIks)
+    wilayah.iks = clamp01(totalSehat / totalKeluarga + wilayah.bonusIks)
   }
 
   // Maksimal SATU surat laporan kader per hari.

@@ -245,7 +245,29 @@ export interface KasusKlinis {
    * diresepkan; `alternatifBenar` (boleh kosong) masuk menggantikannya.
    */
   interaksiTrap?: { faktor: string; obatTerlarang: string[]; alternatifBenar: string[] }
+  /**
+   * M10.5 Q2 (2026-07-12): id `lab` yang WAJIB dipesan (`enc.labDipesan`)
+   * sebelum diagnosis/terapi dianggap lengkap — analog persis `vitalDiukur`:
+   * tanpanya, skorPemeriksaan di-cap ke 50 (clinic.ts). Dipakai SANGAT
+   * selektif — hanya utk kasus yang pedomannya eksplisit melarang terapi
+   * presumtif tanpa konfirmasi parasitologis/bakteriologis (TB: BTA/TCM;
+   * malaria: RDT — WHO "test before treat" sejak 2010, program DOTS TB).
+   */
+  konfirmasiWajib?: string
+  /**
+   * M10.5 §3a (2026-07-12): kategori alasan yang SAH untuk merujuk kasus ini
+   * walau `harusDirujuk` false — dideklarasikan pemain saat DISPOSISI (lihat
+   * `JustifikasiRujuk` di action DISPOSISI). Deklarasi yang TIDAK ada di
+   * daftar ini (atau kasus tanpa daftar sama sekali) TETAP dihitung
+   * `rujukanNonSpesialistik` — validity-check nyata, bukan dropdown bebas yg
+   * trivial melewati Referral Guillotine (scoring.ts). Diisi SELEKTIF, hanya
+   * kasus yang narasinya (clue) sendiri sudah menyebut skenario eskalasi sah.
+   */
+  justifikasiRujukValid?: JustifikasiRujuk[]
 }
+
+/** M10.5 §3a: kategori alasan sah untuk rujukan di luar `harusDirujuk`. */
+export type JustifikasiRujuk = 'komplikasi' | 'komorbid' | 'keterbatasan_fasilitas'
 
 /* ---------------------------------------------------------------------------
  * IGD — kasus gawat darurat (M3.14): interrupt event turn-based.

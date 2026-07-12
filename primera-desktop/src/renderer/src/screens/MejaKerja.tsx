@@ -18,6 +18,7 @@ import {
   HARI_BUKA_PROLANIS,
   BIAYA_STAMINA_KEGIATAN,
   TARGET_KASUS_PROGRAM,
+  SIKLUS_LAPORAN_BULANAN,
 } from '@engine/reducer'
 import type { FokusProgram } from '@engine/state'
 import { clusterAktif } from '@engine/surveilans'
@@ -286,8 +287,14 @@ export function MejaKerja() {
   const tampilkanRekap = Boolean(state.flags['rekapSlice'])
   const skorRekap = tampilkanRekap ? hitungSkor(state) : null
   // Lokakarya Mini bulanan (M2.11) — rapor formatif + ghost rival dr. Ratih.
+  // M10.5 #15 (2026-07-12): hari trigger diskalakan per mode (reducer.ts) —
+  // cek flag dinamis, bukan literal 'lokmin31'/'lokmin61' (tak pernah nyala
+  // di mode Ujian yang kini memakai hari 11/21).
+  const siklusLokmin = SIKLUS_LAPORAN_BULANAN[state.mode]
   const tampilkanLokmin =
-    !tampilkanRekap && Boolean(state.flags['lokmin31'] || state.flags['lokmin61']) && !state.flags['lokminDitutup']
+    !tampilkanRekap &&
+    Boolean(state.flags[`lokmin${siklusLokmin + 1}`] || state.flags[`lokmin${siklusLokmin * 2 + 1}`]) &&
+    !state.flags['lokminDitutup']
   const skorLokmin = tampilkanLokmin ? hitungSkor(state) : null
 
   // CODEX M10.a ronde-4 (dossier §44): kedua modal ini WAJIB-diselesaikan by
@@ -497,7 +504,7 @@ export function MejaKerja() {
                   <button className="tombol tombol--utama" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })}>
                     Buka Peta Desa — pilih kunjungan / Posyandu / KLB →
                   </button>
-                  {state.hari >= HARI_BUKA_PROLANIS && state.prolanis.roster.length > 0 && (() => {
+                  {state.hari >= HARI_BUKA_PROLANIS[state.mode] && state.prolanis.roster.length > 0 && (() => {
                     const berikut = state.prolanis.sesiBerikutHari
                     const belumWaktunya = berikut !== undefined && state.hari < berikut
                     return (

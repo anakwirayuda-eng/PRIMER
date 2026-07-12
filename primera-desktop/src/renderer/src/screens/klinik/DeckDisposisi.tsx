@@ -16,10 +16,22 @@ import { useMemo, useState } from 'react'
 import { PACK } from '@content/index'
 import type { EncounterState, SbarIsi } from '@engine/state'
 import type { Action } from '@engine/actions'
-import type { KasusKlinis, RumahSakit, SpesialisasiRs } from '@content/types'
+import type { JustifikasiRujuk, KasusKlinis, RumahSakit, SpesialisasiRs } from '@content/types'
 import { formatRupiah } from './util'
 import { useRadioGroup } from '../../useRadioGroup'
 import './DeckDisposisi.css'
+
+/**
+ * M10.5 §3a (2026-07-12) TACC — label alasan rujukan di luar `harusDirujuk`.
+ * Tak menyorot mana yang "valid" utk kasus aktif — deklarasi tetap penilaian
+ * klinis pemain sendiri (validity-check nyata terjadi diam-diam di clinic.ts;
+ * lihat debrief PanelHasil utk tahu apakah deklarasinya cocok).
+ */
+const LABEL_JUSTIFIKASI: Record<JustifikasiRujuk, string> = {
+  komplikasi: 'Ada komplikasi di luar presentasi standar',
+  komorbid: 'Ada komorbid yang mempersulit tata laksana FKTP',
+  keterbatasan_fasilitas: 'Keterbatasan fasilitas/alat di Puskesmas ini',
+}
 
 interface Props {
   enc: EncounterState
@@ -77,6 +89,10 @@ const LABEL_SPESIALIS: Record<SpesialisasiRs, string> = {
 export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: Props) {
   const [modeRujuk, setModeRujuk] = useState(false)
   const [sbar, setSbar] = useState<SbarIsi>(SBAR_KOSONG)
+  const [justifikasiRujuk, setJustifikasiRujuk] = useState<JustifikasiRujuk | undefined>(undefined)
+  // §3a: opsi TACC hanya relevan bila kasus TIDAK wajib-rujuk (harusDirujuk
+  // false) — kasus wajib-rujuk sudah benar tanpa perlu justifikasi apa pun.
+  const tawarkanJustifikasi = !kasus.harusDirujuk
 
   const punyaDiagnosis = enc.diagnosis !== undefined
   const alasanTanpaDiagnosis =
@@ -130,6 +146,7 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
   const bukaFormRujuk = () => {
     // Segarkan default saat form dibuka (kasus/antrian mungkin sudah berganti).
     setRumahSakitId(rsDefault)
+    setJustifikasiRujuk(undefined)
     setModeRujuk(true)
   }
 
@@ -219,6 +236,40 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
           </div>
         ) : (
           <div className="klinik-deck__grup">
+            {/* -- §3a TACC: alasan rujukan (opsional, hanya kasus non-wajib) ----- */}
+            {tawarkanJustifikasi && (
+              <>
+                <div className="judul-seksi">Alasan Rujukan (opsional)</div>
+                <span className="teks-xs teks-lembut">
+                  Kasus ini biasanya tuntas di FKTP. Bila menurutmu ADA alasan klinis sungguhan
+                  untuk merujuk, pilih salah satu &mdash; deklarasi asal-asalan tetap dinilai apa
+                  adanya, bukan celah bebas dari rasio rujukanmu (RRNS).
+                </span>
+                <div className="klinik-deck__grup" style={{ gap: '0.4rem' }}>
+                  {(Object.keys(LABEL_JUSTIFIKASI) as JustifikasiRujuk[]).map((opsi) => (
+                    <label key={opsi} className="baris" style={{ gap: '0.5rem', alignItems: 'center' }}>
+                      <input
+                        type="radio"
+                        name="justifikasi-rujuk"
+                        checked={justifikasiRujuk === opsi}
+                        onChange={() => setJustifikasiRujuk(opsi)}
+                      />
+                      <span className="teks-kecil">{LABEL_JUSTIFIKASI[opsi]}</span>
+                    </label>
+                  ))}
+                  {justifikasiRujuk !== undefined && (
+                    <button
+                      type="button"
+                      className="tombol tombol--senyap teks-xs"
+                      onClick={() => setJustifikasiRujuk(undefined)}
+                    >
+                      Batalkan alasan
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+
             {/* -- Langkah 1: SBAR (dipertahankan) -------------------------------- */}
             <div className="judul-seksi">Rujukan SISRUTE &mdash; SBAR</div>
             {KOLOM_SBAR.map(({ kunci, label, placeholder }) => (
@@ -330,7 +381,13 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
             <button
               className="tombol tombol--kunyit tombol--besar"
               onClick={() =>
-                dispatch({ type: 'DISPOSISI', jenis: 'rujuk', sbar, rumahSakitId: rsTerpilih })
+                dispatch({
+                  type: 'DISPOSISI',
+                  jenis: 'rujuk',
+                  sbar,
+                  rumahSakitId: rsTerpilih,
+                  ...(justifikasiRujuk ? { justifikasiRujuk } : {}),
+                })
               }
               disabled={!sbarLengkap || rsTerpilih === undefined}
               title={

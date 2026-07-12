@@ -762,7 +762,7 @@ describe('prosesHarianKader (scout)', () => {
     expect(state.desa.rw[0]!.kkTersurvei).toBe(0)
   })
 
-  it('survei 2-4 KK/hari, IKS RW tercampur baseline, surat ber-id deterministik', () => {
+  it('survei 2-4 KK/hari, IKS RW formula resmi (proporsi sehat), surat ber-id deterministik', () => {
     const state = buatStateKader()
     const r = prosesHarianKader(state, buatPackKader(), new Rng(42, 'kader', 2))
 
@@ -772,10 +772,15 @@ describe('prosesHarianKader (scout)', () => {
     expect(rw1!.kkTersurvei).toBeLessThanOrEqual(4)
     expect(r.kader['k1']!.kkTersurvei).toBe(rw1!.kkTersurvei)
 
-    // IKS keluarga TERCATAT: ya(tidak_merokok bohong) + ya(jamban) + tidak(air) = 2/3;
-    // dicampur 50:50 baseline dekat 0.62 ± 0.05 → kisaran ~0.62-0.67.
-    expect(rw1!.iks).toBeGreaterThan(0.55)
-    expect(rw1!.iks).toBeLessThan(0.75)
+    // M10.5 #5: IKS keluarga TERCATAT fam1 = ya(tidak_merokok bohong)+ya(jamban)+
+    // tidak(air) = 2/3 ≈ 0.667 — DI BAWAH ambang 'sehat' (>0.8), jadi fam1 TIDAK
+    // menyumbang ke pembilang (sehatBinaan=0, berdataBinaan=1). Total IKS RW =
+    // (0 + proporsiBaseline(dekat≈0.18-0.22)×kkTersurvei) / (1+kkTersurvei) —
+    // dgn kkTersurvei 2-4, hasil berkisar ~0.10-0.18 (jauh lebih rendah dari
+    // formula rata-rata kontinu lama, sesuai realita riil proporsi 'Keluarga
+    // Sehat' yg rendah).
+    expect(rw1!.iks).toBeGreaterThan(0.1)
+    expect(rw1!.iks).toBeLessThan(0.2)
 
     // Maksimal 1 surat/hari dengan id kanonik surat_kader_{hari}_{kaderId}.
     expect(r.surat).toHaveLength(1)

@@ -4,7 +4,7 @@
  */
 
 import type { Disposisi, FokusProgram, JenisDiagnosis, LayarGame, SbarIsi } from './state'
-import type { RegionFisik } from '@content/types'
+import type { JustifikasiRujuk, RegionFisik } from '@content/types'
 
 export type Action =
   /* -- Alur waktu ---------------------------------------------------------- */
@@ -37,6 +37,8 @@ export type Action =
       sbar?: SbarIsi
       /** RS tujuan SISRUTE (M3.13). Kosong = sistem memilih RS terdekat yang cocok. */
       rumahSakitId?: string
+      /** M10.5 §3a: alasan rujukan di luar `harusDirujuk` (lihat validity-check di clinic.ts). */
+      justifikasiRujuk?: JustifikasiRujuk
     }
 
   /* -- UKM: peta & roster ----------------------------------------------------- */

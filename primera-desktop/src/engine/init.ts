@@ -101,16 +101,23 @@ export function buildInitialState(
   // Karma loop: krisis keluarga rawan TERJADWAL SEJAK HARI PERTAMA — kunjungan
   // yang berhasil membatalkannya. "Konsekuensi bernama" bukan hukuman acak;
   // ia jam pasir yang sudah berjalan sebelum dokter tahu.
+  // M10.5 #15 (2026-07-12): `jatuhTempoHari` dikonten dgn asumsi kalender
+  // karier 90-hari — diskalakan proporsional utk mode Ujian (30 hari, rasio
+  // 1/3), pola sama HARI_BUKA_PROLANIS/KLB. Tanpa ini SEBAGIAN BESAR karma
+  // jatuh tempo SETELAH stase Ujian berakhir — jendela intervensi (kunjungan
+  // dokter membatalkan karma) nyaris tak pernah benar-benar terbuka.
+  const rasioMode = HARI_STASE[mode] / HARI_STASE.karier
   const jadwalKarma = []
   for (const [id, content] of Object.entries(pack.keluarga)) {
     const skenarioPertama = content.arc.kunjungan[0]
     if (!skenarioPertama?.karma) continue
     const jadwalId = `jadwal_karma_${id}`
+    const jatuhTempo = Math.max(1, Math.round(skenarioPertama.karma.jatuhTempoHari * rasioMode))
     // Identitas anggota yang akan jatuh sakit — konsekuensi BERNAMA.
     const anggota = content.anggota[skenarioPertama.karma.anggotaIndex]
     jadwalKarma.push({
       id: jadwalId,
-      hari: skenarioPertama.karma.jatuhTempoHari,
+      hari: jatuhTempo,
       jenis: 'karma_igd' as const,
       keluargaId: id,
       kasusId: skenarioPertama.karma.kasusId,
@@ -120,7 +127,7 @@ export function buildInitialState(
     })
     const kel = keluarga[id]
     if (kel) {
-      keluarga[id] = { ...kel, karmaAktif: { jadwalId, jatuhTempoHari: skenarioPertama.karma.jatuhTempoHari } }
+      keluarga[id] = { ...kel, karmaAktif: { jadwalId, jatuhTempoHari: jatuhTempo } }
     }
   }
 

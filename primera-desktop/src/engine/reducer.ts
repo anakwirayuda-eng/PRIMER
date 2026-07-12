@@ -32,7 +32,7 @@ import {
   kartuProlanis,
   kartuKlb,
 } from './kegiatan'
-import { buatIgd, aksiIgd, rjpIgd, nilaiIgd } from './igd'
+import { buatIgd, aksiIgd, rjpIgd, nilaiIgd, AMBANG_STABIL_RUJUK } from './igd'
 import { hitungSkor } from './scoring'
 import { HARI_STASE } from './paketUjian'
 
@@ -56,8 +56,12 @@ export const BIAYA_STAMINA_KUNJUNGAN: Record<'dekat' | 'sedang' | 'terpencil', n
 // permanen dalam satu playthrough (tidak luntur).
 export const LUNTUR_BINTANG_HARI = 14
 export const HARI_BUKA_POSYANDU = 15
-export const HARI_BUKA_PROLANIS = 30
-export const HARI_BUKA_KLB = 45
+/** M10.5 #15 (2026-07-12): diskalakan proporsional per mode, pola sama
+ * Q1/O-C (HARI_PENGUMUMAN_AKREDITASI) — dulu literal D30/D45, tak pernah
+ * nyala di mode Ujian yang tamat hari 30 (rasio 90 hari karier terjaga:
+ * Prolanis 30/90=1/3 → 10; KLB 45/90=1/2 → 15). */
+export const HARI_BUKA_PROLANIS: Record<ModeStase, number> = { karier: 30, ujian: 10 }
+export const HARI_BUKA_KLB: Record<ModeStase, number> = { karier: 45, ujian: 15 }
 export const COOLDOWN_POSYANDU = 30
 export const BIAYA_STAMINA_KEGIATAN = 2
 /** Kapasitas roster keluarga binaan (M3c: 8 → 16 seiring 16 keluarga bernama). */
@@ -77,6 +81,12 @@ export const BATAS_PARTIAL_KARMA = 2
  * hari===50/60, tak pernah nyala di mode Ujian yang tamat hari 30). */
 export const HARI_PENGUMUMAN_AKREDITASI: Record<ModeStase, number> = { karier: 50, ujian: 17 }
 export const HARI_VISITASI_AKREDITASI: Record<ModeStase, number> = { karier: 60, ujian: 20 }
+
+/** M10.5 #15 (2026-07-12): siklus laporan bulanan KBK/kapitasi + Lokakarya
+ * Mini, diskalakan proporsional per mode (sama rasio HARI_BUKA_PROLANIS) —
+ * dulu literal 30 hari, hanya nyala SEKALI (D1) di mode Ujian 30-hari,
+ * pemain tak pernah melihat siklus kapitasi/evaluasi berulang seperti karier. */
+export const SIKLUS_LAPORAN_BULANAN: Record<ModeStase, number> = { karier: 30, ujian: 10 }
 
 /** PSN menekan vektor (DBD), PHBS menekan air-makanan (diare/tifoid), skrining
  * menekan droplet/kronis-terdeteksi. Diekspor agar UI (Lokakarya "Triase
@@ -292,7 +302,12 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const kasus = pack.kasus[enc.pasien.kasusId]
       if (!kasus) return err(s, `Kasus ${enc.pasien.kasusId} tidak ditemukan.`)
 
-      const encFinal = { ...enc, disposisi: action.jenis, ...(action.sbar ? { sbar: action.sbar } : {}) }
+      const encFinal = {
+        ...enc,
+        disposisi: action.jenis,
+        ...(action.sbar ? { sbar: action.sbar } : {}),
+        ...(action.justifikasiRujuk ? { justifikasiRujuk: action.justifikasiRujuk } : {}),
+      }
       const nilai = nilaiEncounter(encFinal, kasus, pack)
       const events: GameEvent[] = [
         { type: 'STEMPEL', jenis: action.jenis === 'rujuk' ? 'rujuk' : 'pulang' },
@@ -356,11 +371,15 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         kapitasi += encFinal.pasien.bpjs ? -td.biaya : td.biaya
       }
       // M4.20 — rekam medis lengkap (bahan akreditasi D60): semua fase SOAP ≥50.
+      // M10.5 Q3 (2026-07-12): topik edukasiKritis terlewat TAK BOLEH lolos jadi
+      // "RM lengkap" walau skorEdukasi≥50 (cap 50 dari clinic.ts kebetulan pas
+      // di ambang) — kelalaian topik non-negotiable bukan rekam medis lengkap.
       const rmLengkap =
         nilai.skorAnamnesis >= 50 &&
         nilai.skorPemeriksaan >= 50 &&
         nilai.skorTerapi >= 50 &&
-        nilai.skorEdukasi >= 50
+        nilai.skorEdukasi >= 50 &&
+        nilai.edukasiKritisTerlewat.length === 0
       if (rmLengkap) t.rmLengkap += 1
 
       // Dex (Leitner-lite). "Menguasai" = diagnosis benar DAN disposisi tepat —
@@ -911,7 +930,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
     }
 
     case 'MULAI_PROLANIS': {
-      const cek = cekSlotKegiatan(s, HARI_BUKA_PROLANIS, 'Prolanis')
+      const cek = cekSlotKegiatan(s, HARI_BUKA_PROLANIS[s.mode], 'Prolanis')
       if (cek) return err(s, cek)
       if (s.prolanis.roster.length === 0) return err(s, 'Belum ada peserta Prolanis terdaftar.')
       const berikut = s.prolanis.sesiBerikutHari
@@ -945,7 +964,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
     }
 
     case 'MULAI_KLB': {
-      const cek = cekSlotKegiatan(s, HARI_BUKA_KLB, 'Respons KLB')
+      const cek = cekSlotKegiatan(s, HARI_BUKA_KLB[s.mode], 'Respons KLB')
       if (cek) return err(s, cek)
       const cluster = hitungCluster(s.desa.surveilans, s.hari).find(
         (c) => c.rw === action.rw && c.kasusId === action.kasusId,
@@ -1041,8 +1060,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (!igd || igd.fase !== 'kode_biru') return err(s, 'Tidak dalam Kode Biru.')
       const kasus = pack.kasusIgd[igd.kasusId]
       if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
-      const rng = new Rng(s.seed, 'rjp', s.hari, igd.kasusId)
-      const igdBaru = rjpIgd(igd, action.berkualitas, rng)
+      const igdBaru = rjpIgd(igd, action.berkualitas)
 
       if (igdBaru.hasil === 'meninggal') {
         // Kode Hitam — konsekuensi bernama yang paling berat di game ini.
@@ -1083,6 +1101,38 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const kasus = pack.kasusIgd[igd.kasusId]
       if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
       const nilai = nilaiIgd({ ...igd, hasil: 'stabil' }, kasus, action.jenis)
+
+      // M10.5 Q4/Q-E (2026-07-12): rujuk saat stabilitas masih di bawah
+      // AMBANG_STABIL_RUJUK adalah rujukan PREMATUR — pasien memburuk/
+      // meninggal dalam perjalanan. Konsekuensi setara Kode Hitam (ditally
+      // igdMeninggal), bukan sekadar disposisi keliru — risikonya nyata.
+      if (nilai.hasil === 'memburuk') {
+        const t = { ...s.tally, igdMeninggal: s.tally.igdMeninggal + 1 }
+        const surat: Surat = {
+          id: `surat_igd_${s.hari}_${s.log.length}`,
+          hari: s.hari,
+          jenis: 'igd',
+          dari: 'Perawat jaga',
+          judul: `KODE HITAM — ${igd.pasienNama} meninggal dalam perjalanan`,
+          isi: `${igd.pasienNama} dirujuk saat stabilitas masih rendah (${igd.stabilitas}/100) — kondisinya memburuk dan tak tertolong sebelum tiba di RS rujukan. Pasien gawat WAJIB distabilkan dulu (stabilitas ≥${AMBANG_STABIL_RUJUK}) sebelum transportasi jarak jauh. ${kasus.clue}`,
+          dibaca: false,
+        }
+        return {
+          state: {
+            ...s,
+            igd: undefined,
+            tally: t,
+            burnout: Math.min(100, s.burnout + 15),
+            layar: 'meja',
+            inbox: [...s.inbox, surat],
+          },
+          events: [
+            { type: 'KODE_HITAM', narasi: `Kode Hitam. ${igd.pasienNama} meninggal dalam perjalanan — dirujuk sebelum stabil.` },
+            { type: 'SURAT_MASUK', surat },
+          ],
+        }
+      }
+
       // Disposisi keliru (pasien selamat tapi diarahkan salah) tidak boleh dihargai
       // sama seperti disposisi tepat — itu sebabnya CODEX menandai ini P1.
       const t = nilai.disposisiTepat
@@ -1423,7 +1473,37 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   // Ujian: D30 (instrumen dinilai). Karier: D90. Setelah tamat, LANJUTKAN
   // ditolak; membaca surat/rapor/dex tetap boleh. Sinematik penutup = M5.
   if (hari > HARI_STASE[s.mode]) {
-    const skor = hitungSkor(s)
+    // M10.5 #12 (2026-07-12): jadwal karma_igd yang masih PENDING saat stase
+    // tamat dulu diam-diam terlantar — blok "Proses jadwal jatuh tempo" di
+    // bawah TAK PERNAH tercapai lewat cabang ini (early return), jadi keluarga
+    // yang jendela-karmanya belum matang tapi dokter tak pernah menyelamatkan
+    // lolos tanpa konsekuensi apa pun hanya karena stase keburu habis. Force-
+    // evaluate SEKARANG (mutasi sama persis blok normal di bawah), sebelum
+    // skor dibekukan — tanpa surat/pasienKembali (tak ada lagi waktu bermain
+    // utk memprosesnya).
+    let tallyFlush = s.tally
+    let keluargaFlush = s.desa.keluarga
+    const jadwalSisaFlush: typeof s.jadwal = []
+    for (const j of s.jadwal) {
+      if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId && pack.kasus[j.kasusId]) {
+        const kelContent = pack.keluarga[j.keluargaId]
+        const kel = keluargaFlush[j.keluargaId]
+        if (kelContent && kel && kel.arcSelesai !== 'berhasil') {
+          const { karmaAktif: _lewat, ...kelGagal } = kel
+          keluargaFlush = { ...keluargaFlush, [j.keluargaId]: { ...kelGagal, arcSelesai: 'gagal' } }
+          tallyFlush = { ...tallyFlush, karmaTerjadi: tallyFlush.karmaTerjadi + 1 }
+          continue
+        }
+      }
+      jadwalSisaFlush.push(j)
+    }
+    const s0 = {
+      ...s,
+      tally: tallyFlush,
+      desa: { ...s.desa, keluarga: keluargaFlush },
+      jadwal: jadwalSisaFlush,
+    }
+    const skor = hitungSkor(s0)
     const surat: Surat = {
       id: `surat_tamat_${s.hari}`,
       hari: s.hari,
@@ -1441,16 +1521,16 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     }
     return {
       state: {
-        ...s,
+        ...s0,
         // Snapshot BEKU 4 dimensi (CODEX M14 #1) — jadi acuan tunggal
         // LaporanAkhir/Rapor pasca-tamat, tak bisa tercampur nilai live.
         tamat: { hari: s.hari, grade: skor.grade, skor },
         layar: 'laporan',
-        klinik: { ...s.klinik, antrian: [], aktif: undefined },
+        klinik: { ...s0.klinik, antrian: [], aktif: undefined },
         kunjungan: undefined,
         kegiatan: undefined,
         igd: undefined,
-        inbox: [...s.inbox, surat],
+        inbox: [...s0.inbox, surat],
       },
       events: [{ type: 'TAMAT', grade: skor.grade }, { type: 'SURAT_MASUK', surat }],
     }
@@ -1702,7 +1782,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   // kas bulan lalu dilaporkan. Kas di bawah ambang → teguran Dinkes (Manajemen).
   let kapitasi = s.kapitasi
   let keuanganBulan = s.keuanganBulan
-  if (hari > 1 && hari % 30 === 1) {
+  if (hari > 1 && hari % SIKLUS_LAPORAN_BULANAN[s.mode] === 1) {
     const rwBerdata = kaderHasil.rw.filter((r) => r.iks > 0)
     const iksDesa = rwBerdata.length > 0 ? rwBerdata.reduce((jml, r) => jml + r.iks, 0) / rwBerdata.length : 0
     const pengali = iksDesa > 0.8 ? 1.3 : iksDesa >= 0.5 ? 1.0 : 0.8
@@ -1822,7 +1902,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   // Prolanis roster (M2.8): dibentuk sekali saat program terbuka (D30) dari
   // warga binaan/desa ber-kondisi kronis (HT/DM). Deterministik dari konten.
   let prolanis = s.prolanis
-  if (hari === HARI_BUKA_PROLANIS && prolanis.roster.length === 0) {
+  if (hari === HARI_BUKA_PROLANIS[s.mode] && prolanis.roster.length === 0) {
     prolanis = { roster: bentukRosterProlanis(pack, new Rng(s.seed, 'prolanis-roster')), sesiBerikutHari: hari }
     suratBaru.push(
       buatSuratHarian(hari, suratBaru.length, {
@@ -1834,9 +1914,12 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     )
   }
 
-  // Lokakarya Mini (M2.11): rapat evaluasi bulanan D31/D61 — rapor formatif +
-  // ghost rival dr. Ratih (data statis, tanpa multiplayer).
-  if (hari === 31 || hari === 61) {
+  // Lokakarya Mini (M2.11): rapat evaluasi bulanan D31/D61 (karier) — rapor
+  // formatif + ghost rival dr. Ratih (data statis, tanpa multiplayer).
+  // M10.5 #15 (2026-07-12): diskalakan ke siklus laporan per mode — dulu
+  // literal 31/61, tak pernah nyala di mode Ujian 30-hari (D11/D21 kini).
+  const siklus = SIKLUS_LAPORAN_BULANAN[s.mode]
+  if (hari === siklus + 1 || hari === siklus * 2 + 1) {
     flags['lokminDitutup'] = false
     flags[`lokmin${hari}`] = true
   }
@@ -1883,8 +1966,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   if (hari === HARI_BUKA_KUNJUNGAN) flags['kunjunganBaruTerbuka'] = true
   if (hari === HARI_REKAP_SLICE) flags['rekapSlice'] = true
   if (hari === HARI_BUKA_POSYANDU) flags['posyanduBaruTerbuka'] = true
-  if (hari === HARI_BUKA_PROLANIS) flags['prolanisBaruTerbuka'] = true
-  if (hari === HARI_BUKA_KLB) flags['klbBaruTerbuka'] = true
+  if (hari === HARI_BUKA_PROLANIS[s.mode]) flags['prolanisBaruTerbuka'] = true
+  if (hari === HARI_BUKA_KLB[s.mode]) flags['klbBaruTerbuka'] = true
 
   // IGD interrupt (M3.14): sesekali pasien gawat tiba subuh — HARUS ditangani
   // sebelum poli buka. Maks 1/hari, mulai hari 4, jeda minimal 4 hari.

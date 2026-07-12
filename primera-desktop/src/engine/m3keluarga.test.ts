@@ -66,12 +66,64 @@ describe('M3c — konten 16 keluarga', () => {
     for (const j of karma) expect(j.nama).toBeTruthy()
   })
 
+  // M10.5 #15 (2026-07-12): jatuhTempoHari dikonten asumsi kalender karier
+  // 90-hari — tanpa diskalakan, SEBAGIAN BESAR jendela karma jatuh SETELAH
+  // stase Ujian (30 hari) berakhir, tak pernah benar-benar bisa dicegah.
+  it('mode Ujian: jatuhTempoHari karma diskalakan proporsional (rasio 1/3), mayoritas dlm 30 hari', () => {
+    const karier = buildInitialState('Uji', SEED, PACK)
+    const ujian = buildInitialState('Uji', SEED, PACK, { mode: 'ujian' })
+    const karmaKarier = karier.jadwal.filter((j) => j.jenis === 'karma_igd')
+    const karmaUjian = ujian.jadwal.filter((j) => j.jenis === 'karma_igd')
+    expect(karmaUjian).toHaveLength(karmaKarier.length)
+
+    for (const jUjian of karmaUjian) {
+      const jKarier = karmaKarier.find((j) => j.keluargaId === jUjian.keluargaId)!
+      expect(jUjian.hari).toBe(Math.max(1, Math.round(jKarier.hari / 3)))
+      const kel = ujian.desa.keluarga[jUjian.keluargaId!]!
+      expect(kel.karmaAktif!.jatuhTempoHari).toBe(jUjian.hari)
+    }
+    // Mayoritas (bukan sekadar satu-dua) harus jatuh tempo DI DALAM 30 hari —
+    // sebelum fix, kebalikannya: mayoritas jatuh SETELAH hari 30.
+    const dalamStase = karmaUjian.filter((j) => j.hari <= 30).length
+    expect(dalamStase).toBeGreaterThanOrEqual(Math.ceil(karmaUjian.length * 0.8))
+  })
+
   it('bumil risti (keluarga_asih) adalah arc 3-babak dengan karma preeklampsia', () => {
     const asih = PACK.keluarga['keluarga_asih']!
     expect(asih.arc.kunjungan).toHaveLength(3)
     expect(asih.arc.kunjungan[0]!.karma?.kasusId).toBe('kia_preeklampsia_berat')
     // Skoring risiko KIA hidup di konten kunjungan (Poedji Rochjati di K2).
     expect(JSON.stringify(asih.arc.kunjungan[1])).toContain('Poedji Rochjati')
+  })
+
+  // M10.5 #12 (2026-07-12): jadwal karma_igd yang MASIH PENDING (belum jatuh
+  // tempo/belum diproses) saat stase tamat dulu diam-diam terlantar — tak ada
+  // tally.karmaTerjadi, keluarga tak pernah arcSelesai:'gagal'. Fix: force-
+  // evaluate SEBELUM skor dibekukan.
+  it('karma_igd pending saat tamat (jadwal jatuh tempo > hari terakhir stase) tetap ditally, bukan lolos', () => {
+    let s = buildInitialState('Uji', SEED, PACK, { mode: 'ujian' })
+    const j = s.jadwal.find((x) => x.jenis === 'karma_igd')!
+    const keluargaId = j.keluargaId!
+    expect(s.desa.keluarga[keluargaId]!.karmaAktif).toBeDefined()
+    // Dorong jatuh-tempo jauh melewati hari terakhir stase Ujian (30) —
+    // tanpa fix, entri ini tak PERNAH tersentuh blok "Proses jadwal jatuh
+    // tempo" (early-return tamat mendahuluinya) dan lolos tanpa konsekuensi.
+    s = {
+      ...s,
+      hari: 30,
+      blok: 'sore',
+      jadwal: s.jadwal.map((x) => (x.id === j.id ? { ...x, hari: 99 } : x)),
+    }
+    // Catatan: dgn Ujian belum diskalakan (M10.5 #15, belum dikerjakan), BANYAK
+    // karma keluarga lain juga masih pending di hari 30 — flush memprosesnya
+    // SEMUA (bukan cuma satu ini), jadi assert longgar (>=) utk total, tapi
+    // KETAT utk keluarga yang sengaja didorong ini.
+    const karmaSebelum = s.tally.karmaTerjadi
+    const r = advance(s, { type: 'LANJUTKAN' }, PACK)
+    expect(r.state.tamat).toBeDefined()
+    expect(r.state.tally.karmaTerjadi).toBeGreaterThanOrEqual(karmaSebelum + 1)
+    expect(r.state.desa.keluarga[keluargaId]!.arcSelesai).toBe('gagal')
+    expect(r.state.jadwal.some((x) => x.id === j.id)).toBe(false)
   })
 })
 

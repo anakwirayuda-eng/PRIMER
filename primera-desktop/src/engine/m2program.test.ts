@@ -234,7 +234,7 @@ describe('D5 — Posyandu ILP "5 Langkah" (migrasi 2026-07-11): pool 12-kartu, 1
 
 describe('M2.8 — Prolanis roster & jembatan UKP', () => {
   it('roster terbentuk di hari 30 dari warga kronis', () => {
-    const s = siangHari(HARI_BUKA_PROLANIS)
+    const s = siangHari(HARI_BUKA_PROLANIS.karier)
     expect(s.prolanis.roster.length).toBeGreaterThan(0)
     // Semua peserta HT/DM, mulai tak terkontrol.
     for (const p of s.prolanis.roster) {
@@ -244,7 +244,7 @@ describe('M2.8 — Prolanis roster & jembatan UKP', () => {
   })
 
   it('dua sesi lalai berturut → peserta jadi pasien komplikasi bernama di poli', () => {
-    let s = siangHari(HARI_BUKA_PROLANIS)
+    let s = siangHari(HARI_BUKA_PROLANIS.karier)
     const target = s.prolanis.roster[0]!
     // Sesi 1: semua jawaban SALAH → parameter naik, takTerkontrol +1.
     s = run(s, { type: 'MULAI_PROLANIS' })
@@ -285,7 +285,7 @@ describe('M2.9 — Respons KLB memutus kluster', () => {
         ],
       },
     }
-    s = siangDariState(s, HARI_BUKA_KLB)
+    s = siangDariState(s, HARI_BUKA_KLB.karier)
     // Kluster masih ada? entri surveilans di-inject fresh tiap hari? Tidak —
     // kita inject ulang di hari KLB untuk memastikan kluster aktif saat aksi.
     s = {

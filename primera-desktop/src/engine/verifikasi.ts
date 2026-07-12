@@ -275,7 +275,41 @@ function fnv1a(teks: string): string {
 // field sudah tercakup sidikJariPack (`icd`/IGD icd10 hash di bawah) — bump
 // ini murni utk menandai jejak lama yg diagnosisnya BENAR dgn kode lama kini
 // jatuh ke "tidak dapat diverifikasi", bukan divonis TIDAK SAH palsu.
-const REVISI_ENGINE = 25
+//
+// REVISI 26 (M10.5 capstone Fase 2, 2026-07-12) — 7 mekanik skor/replay
+// sekaligus, SATU bump utk seluruh batch:
+//   #5   Formula IKS resmi Permenkes 39/2016 (kader.ts): proporsi keluarga
+//        IKS>0.8 ÷ total, BUKAN rata-rata skor kontinu lama — nilai wilayah.iks
+//        turun drastis & realistis (proporsi 'Keluarga Sehat' riil rendah).
+//        Menggeser UKM (iksDesa) & pengali KBK bulanan (reducer.ts hariBaru).
+//   Q2   `konfirmasiWajib` (field baru, tb_paru=bta_sputum, kia_malaria_
+//        falsiparum=malaria_rdt): cap skorPemeriksaan ke 50 bila lab konfirmasi
+//        tak dipesan sebelum diagnosis/terapi — pola persis vitalDiukur.
+//        Ikut sidikJariPack (`konfirmasi`).
+//   Q3   rmLengkap (akreditasi D60) kini juga mensyaratkan
+//        edukasiKritisTerlewat.length===0 — dulu bisa lolos "RM lengkap" walau
+//        topik non-negotiable terlewat (skorEdukasi kebetulan pas di cap 50).
+//   Q4/#14/Q-E  IGD: RJP kini DETERMINISTIK (rjpIgd, bukan rng.chance) —
+//        berkualitas SELALU ROSC, buruk SELALU Kode Hitam. Rujuk saat
+//        stabilitas<AMBANG_STABIL_RUJUK(50) = rujukan PREMATUR, hasil
+//        'memburuk' ditally SEKELAS igdMeninggal (bukan igdStabil/
+//        igdSalahDisposisi) — risiko transportasi pasien tak stabil nyata.
+//   §3a  TACC rujukan terjustifikasi: field baru `justifikasiRujukValid`
+//        (2 kasus ditag: mm_osteoartritis_lutut, mm_isk_bawah) + deklarasi
+//        pemain (`enc.justifikasiRujuk`) membatalkan rujukanNonSpesialistik
+//        HANYA bila cocok — validity-check nyata, bukan dropdown bebas.
+//        Ikut sidikJariPack (`justifikasi`).
+//   #12  jadwal karma_igd yang masih pending saat s.tamat di-set kini di-
+//        force-evaluate (tally.karmaTerjadi + arcSelesai:'gagal') SEBELUM
+//        skor dibekukan — dulu diam-diam terlantar (blok jadwal normal tak
+//        pernah tercapai lewat cabang tamat).
+//   #15  HARI_BUKA_PROLANIS/KLB, SIKLUS_LAPORAN_BULANAN (KBK+Lokakarya Mini),
+//        dan jatuhTempoHari karma (init.ts) kini diskalakan proporsional per
+//        mode (rasio 30/90) — dulu literal skala-karier, nyaris tak pernah
+//        nyala/jatuh-tempo dlm jendela 30 hari mode Ujian.
+// Semua field baru di atas score-affecting → wajib tercakup sidikJariPack
+// (lihat entri masing2 di bawah); dossier lama tanpa field ini mereplay beda.
+const REVISI_ENGINE = 26
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -312,6 +346,13 @@ export function sidikJariPack(pack: ContentPack): string {
         // sama persis spt alergiTrap (menggeser obatBenar/obatBerbahaya) —
         // wajib ikut hash sejak diperkenalkan, bukan ditambal belakangan.
         interaksi: k.interaksiTrap ?? null,
+        // M10.5 Q2 (2026-07-12): konfirmasiWajib meng-cap skorPemeriksaan
+        // (clinic.ts) sama persis vitalDiukur — score-affecting, wajib hash.
+        konfirmasi: k.konfirmasiWajib ?? null,
+        // M10.5 §3a (2026-07-12): justifikasiRujukValid menentukan apakah
+        // deklarasi TACC membatalkan rujukanNonSpesialistik (clinic.ts) —
+        // score-affecting (Referral Guillotine), wajib hash.
+        justifikasi: [...(k.justifikasiRujukValid ?? [])].sort(),
         tx: k.tatalaksana,
         lab: k.lab,
         pf: [...k.pemeriksaanFisik].sort((a, b) => a.region.localeCompare(b.region)).map((t) => ({ region: t.region, relevan: t.relevan })),

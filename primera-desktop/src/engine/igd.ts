@@ -64,22 +64,33 @@ export function aksiIgd(igd: IgdState, kasus: KasusIgd, langkahId: string, pilih
 
 /**
  * Kode Biru: RJP berkualitas (pilihan "kompresi 100-120x/menit, minim interupsi")
- * memberi peluang kembali 70%; pilihan salah → 25%. Deterministik dari rng.
+ * SELALU kembali (ROSC); RJP buruk SELALU gagal. M10.5 #14 (2026-07-12):
+ * deterministik, bukan dadu — pola sama #1 (hard-cap keselamatan) & #15 (day-
+ * scaling): mekanik keselamatan tak boleh bergantung nasib. Stabilitas pasca-
+ * ROSC tetap RENDAH (25) — "kembali" bukan "sembuh"; rujuk sebelum stabilisasi
+ * lanjutan tetap berisiko nyata (lihat AMBANG_STABIL_RUJUK di `nilaiIgd`).
  */
-export function rjpIgd(igd: IgdState, berkualitas: boolean, rng: Rng): IgdState {
+export function rjpIgd(igd: IgdState, berkualitas: boolean): IgdState {
   if (igd.fase !== 'kode_biru') return igd
-  const kembali = rng.chance(berkualitas ? 0.7 : 0.25)
-  if (kembali) {
-    // ROSC — pasien kembali, langsung fase disposisi dengan stabilitas rendah.
+  if (berkualitas) {
     return { ...igd, stabilitas: 25, fase: 'disposisi' }
   }
   return { ...igd, fase: 'selesai', hasil: 'meninggal' }
 }
 
+/**
+ * M10.5 Q4/Q-E (2026-07-12): ambang stabilitas minimum sebelum transportasi
+ * rujukan dianggap aman. Di bawah ini, merujuk (bukan menstabilkan dulu)
+ * adalah rujukan PREMATUR — setara meninggal dalam perjalanan, ditally
+ * sekelas Kode Hitam (bukan sekadar disposisi keliru) krn risikonya nyata:
+ * pasien gawat tak stabil yang ditransportasi jarak jauh bisa memburuk fatal.
+ */
+export const AMBANG_STABIL_RUJUK = 50
+
 export interface PenilaianIgd {
   kasusId: string
   pasienNama: string
-  hasil: 'stabil' | 'meninggal'
+  hasil: 'stabil' | 'meninggal' | 'memburuk'
   benar: number
   total: number
   disposisiTepat: boolean
@@ -88,13 +99,14 @@ export interface PenilaianIgd {
 
 export function nilaiIgd(igd: IgdState, kasus: KasusIgd, disposisi?: 'rujuk' | 'pulang'): PenilaianIgd {
   const benar = igd.jawaban.filter((j) => j.benar).length
+  const rujukPrematur = disposisi === 'rujuk' && igd.stabilitas < AMBANG_STABIL_RUJUK
   return {
     kasusId: kasus.id,
     pasienNama: igd.pasienNama,
-    hasil: igd.hasil ?? 'stabil',
+    hasil: rujukPrematur ? 'memburuk' : igd.hasil ?? 'stabil',
     benar,
     total: kasus.langkah.length,
-    disposisiTepat: disposisi !== undefined && disposisi === kasus.disposisiBenar,
+    disposisiTepat: !rujukPrematur && disposisi !== undefined && disposisi === kasus.disposisiBenar,
     clue: kasus.clue,
   }
 }

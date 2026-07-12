@@ -719,6 +719,9 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       { id: 'darah_rutin', hasil: 'Hb 10.8 (anemia ringan), LED meningkat, leukosit borderline.', flag: 'abnormal', relevan: false },
     ],
     diagnosisBanding: ['A15.0', 'J18.9', 'A16.2'],
+    // M10.5 Q2 (2026-07-12): OAT DOTS tak boleh dimulai presumtif tanpa
+    // konfirmasi bakteriologis (BTA/TCM) — WHO/program TB nasional.
+    konfirmasiWajib: 'bta_sputum',
     tatalaksana: {
       obatBenar: ['oat_kdt'],
       obatSalahUmum: [

@@ -7,6 +7,7 @@
 import type {
   IndikatorPisPk,
   JenisKelamin,
+  JustifikasiRujuk,
   Persona,
   RegionFisik,
   StatusIndikator,
@@ -123,6 +124,8 @@ export interface EncounterState {
   firewallTerpicu: number
   disposisi?: Disposisi
   sbar?: SbarIsi
+  /** M10.5 §3a: alasan rujukan di luar `harusDirujuk` (validity-check di clinic.ts). */
+  justifikasiRujuk?: JustifikasiRujuk
 }
 
 /** Penilaian satu encounter — dihitung engine saat disposisi, dari action-log. */

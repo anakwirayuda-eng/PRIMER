@@ -1115,6 +1115,56 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     expect(cowboy.rujukanNonSpesialistik).toBe(false)
   })
 
+  describe('§3a TACC (2026-07-12) — rujukan terjustifikasi, validity-check nyata', () => {
+    const KASUS_TACC: KasusKlinis = {
+      ...KASUS_FARINGITIS,
+      justifikasiRujukValid: ['komplikasi'],
+    }
+
+    it('deklarasi justifikasi VALID (cocok kasus) → rujukanNonSpesialistik dibatalkan', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien()),
+        diagnosis: { icd10: 'J02.9', jenis: 'tegak' },
+        disposisi: 'rujuk',
+        justifikasiRujuk: 'komplikasi',
+      }
+      const nilai = nilaiEncounter(enc, KASUS_TACC, PACK)
+      expect(nilai.rujukanNonSpesialistik).toBe(false)
+    })
+
+    it('deklarasi TAK COCOK (komorbid, bukan komplikasi) → TETAP dihukum rujukanNonSpesialistik', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien()),
+        diagnosis: { icd10: 'J02.9', jenis: 'tegak' },
+        disposisi: 'rujuk',
+        justifikasiRujuk: 'komorbid',
+      }
+      const nilai = nilaiEncounter(enc, KASUS_TACC, PACK)
+      expect(nilai.rujukanNonSpesialistik).toBe(true)
+    })
+
+    it('kasus TANPA justifikasiRujukValid sama sekali → deklarasi apapun tak membantu (anti-bypass trivial)', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien()),
+        diagnosis: { icd10: 'J02.9', jenis: 'tegak' },
+        disposisi: 'rujuk',
+        justifikasiRujuk: 'komplikasi',
+      }
+      const nilai = nilaiEncounter(enc, KASUS_FARINGITIS, PACK)
+      expect(nilai.rujukanNonSpesialistik).toBe(true)
+    })
+
+    it('tanpa deklarasi sama sekali (perilaku lama) → tetap dihukum seperti biasa', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien()),
+        diagnosis: { icd10: 'J02.9', jenis: 'tegak' },
+        disposisi: 'rujuk',
+      }
+      const nilai = nilaiEncounter(enc, KASUS_TACC, PACK)
+      expect(nilai.rujukanNonSpesialistik).toBe(true)
+    })
+  })
+
   it('Fix #12 (audit CODEX 2026-07-11): disposisi cowboy memaksa grade maks D meski komponen lain sempurna', () => {
     const encPneumonia: EncounterState = {
       ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3, nama: 'Ade Bima' })),
@@ -1528,6 +1578,50 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
       )
       const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_KOMORBID, PACK)
       expect(nilai.skorEdukasi).toBe(100)
+    })
+  })
+
+  // M10.5 Q2 (2026-07-12): TB/malaria tak boleh didiagnosis/diterapi presumtif
+  // tanpa lab konfirmasi dipesan (BTA/TCM, RDT) — cap ceiling meniru pola
+  // `vitalDiukur→skorPemeriksaan` yang sudah ada.
+  describe('konfirmasiWajib — cap ceiling saat lab konfirmasi tak dipesan', () => {
+    const KASUS_KONFIRMASI: KasusKlinis = {
+      ...KASUS_FARINGITIS,
+      konfirmasiWajib: 'bta_sputum',
+    }
+
+    it('vital diukur + region relevan lengkap TAPI lab konfirmasi tak dipesan → skor di-cap 50', () => {
+      const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
+      const { enc: main } = jalankan(enc, [
+        { type: 'UKUR_VITAL' },
+        { type: 'PERIKSA', region: 'tht_mulut' },
+        { type: 'PERIKSA', region: 'kepala_leher' },
+      ])
+      const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_KONFIRMASI, PACK)
+      expect(nilai.skorPemeriksaan).toBe(50)
+    })
+
+    it('lab konfirmasi dipesan → skor tetap 100, tak di-cap', () => {
+      const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
+      const { enc: main } = jalankan(enc, [
+        { type: 'UKUR_VITAL' },
+        { type: 'PERIKSA', region: 'tht_mulut' },
+        { type: 'PERIKSA', region: 'kepala_leher' },
+        { type: 'PESAN_LAB', labId: 'bta_sputum' },
+      ])
+      const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_KONFIRMASI, PACK)
+      expect(nilai.skorPemeriksaan).toBe(100)
+    })
+
+    it('kasus TANPA konfirmasiWajib (KASUS_FARINGITIS asli) tak terpengaruh — perilaku lama utuh', () => {
+      const enc = buatEncounterFase(buatPasien(), 'pemeriksaan')
+      const { enc: main } = jalankan(enc, [
+        { type: 'UKUR_VITAL' },
+        { type: 'PERIKSA', region: 'tht_mulut' },
+        { type: 'PERIKSA', region: 'kepala_leher' },
+      ])
+      const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_FARINGITIS, PACK)
+      expect(nilai.skorPemeriksaan).toBe(100)
     })
   })
 })

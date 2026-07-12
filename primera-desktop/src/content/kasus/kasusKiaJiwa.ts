@@ -1189,6 +1189,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       { id: 'gds', hasil: 'GDS 92 mg/dL — normal (memastikan tidak hipoglikemia, tanda malaria berat).', flag: 'normal', relevan: true },
     ],
     diagnosisBanding: ['B50.9', 'A90', 'A01.0'],
+    // M10.5 Q2 (2026-07-12): ACT tak boleh dimulai presumtif tanpa konfirmasi
+    // parasitologis (RDT) — WHO "test before treat" sejak 2010.
+    konfirmasiWajib: 'malaria_rdt',
     tatalaksana: {
       obatBenar: ['dihidroartemisinin_piperakuin', 'primakuin_15', 'paracetamol_500'],
       obatSalahUmum: [

@@ -242,7 +242,7 @@ export function PetaDesa() {
                   🍼 Gelar Posyandu
                 </button>
               )}
-              {state.hari >= HARI_BUKA_KLB &&
+              {state.hari >= HARI_BUKA_KLB[state.mode] &&
                 clusterRwAktif.map((c) => (
                   <button
                     key={c.kasusId}
