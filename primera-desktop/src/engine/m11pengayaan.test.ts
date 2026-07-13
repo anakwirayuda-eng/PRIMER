@@ -121,3 +121,67 @@ describe('M11.5 — panduanResmi TAK menyentuh skor & TAK ikut sidik jari', () =
     expect(dgn.grade).toBe(tanpa.grade)
   })
 })
+
+describe('M11 item 7 — realita FKTP tetap terukur, aman, dan ringkas', () => {
+  const catatan = Object.entries(PACK.kasus).flatMap(([id, kasus]) =>
+    kasus.catatanRealita ? [[id, kasus.catatanRealita] as const] : [],
+  )
+
+  it('mencakup 14 catatan lama yang diaudit ulang dan 5 gap prioritas baru', () => {
+    expect(catatan.length).toBeGreaterThanOrEqual(19)
+    expect(catatan.map(([id]) => id)).toEqual(expect.arrayContaining([
+      'demam_tifoid',
+      'konjungtivitis_bakterial',
+      'hipertensi_esensial',
+      'otitis_media_akut',
+      'hemoroid_grade1',
+      'kulit_pioderma_impetigo',
+      'kulit_herpes_zoster',
+      'kulit_varisela',
+      'kulit_kandidiasis_kutis',
+      'mm_gout_artritis_akut',
+      'mm_dislipidemia',
+      'kia_abortus_iminens',
+      'jiwa_depresi_ringan',
+      'kia_malaria_falsiparum',
+      'dengue_df',
+      'dm_tipe2',
+      'asma_ringan',
+      'kia_anc_kehamilan_normal',
+      'stroke_iskemik',
+    ]))
+
+    expect(PACK.kasus.dengue_df?.catatanRealita).toMatch(/serial.*(hematokrit|trombosit)/i)
+    expect(PACK.kasus.dm_tipe2?.catatanRealita).toMatch(/HbA1c.*jejaring/i)
+    expect(PACK.kasus.asma_ringan?.catatanRealita).toMatch(/ICS|controller/i)
+    expect(PACK.kasus.kia_anc_kehamilan_normal?.catatanRealita).toMatch(/PMK 6\/2024.*USG/i)
+    expect(PACK.kasus.stroke_iskemik?.catatanRealita).toMatch(/SISRUTE.*paralel/i)
+  })
+
+  it('setiap catatan muat sebagai debrief singkat, bukan kuliah tambahan', () => {
+    for (const [id, teks] of catatan) {
+      expect(teks, id).toBe(teks.trim())
+      expect(teks.length, id).toBeGreaterThan(0)
+      expect(teks.length, id).toBeLessThanOrEqual(420)
+    }
+  })
+
+  it('tidak menormalkan tebakan, substitusi improvisasi, atau klaim stok absolut', () => {
+    const seluruhTeks = catatan.map(([, teks]) => teks).join('\n')
+
+    expect(seluruhTeks).not.toMatch(/hampir selalu ada/i)
+    expect(seluruhTeks).not.toMatch(/langsung antibiotik oral/i)
+    expect(seluruhTeks).not.toMatch(/praktis tak tersedia di Indonesia/i)
+    expect(seluruhTeks).not.toMatch(/hanya ~40%/i)
+    expect(seluruhTeks).not.toMatch(/kriteria ['"]?bulging['"]?.*terkaan/i)
+  })
+
+  it('mengunci pagar keselamatan pada catatan berisiko tinggi', () => {
+    expect(PACK.kasus.kulit_pioderma_impetigo?.catatanRealita).toMatch(/tidak boleh otomatis/i)
+    expect(PACK.kasus.kulit_varisela?.catatanRealita).toMatch(/jangan memulai.*improvisasi/i)
+    expect(PACK.kasus.hipertensi_esensial?.catatanRealita).toMatch(/jangan mengarang/i)
+    expect(PACK.kasus.otitis_media_akut?.catatanRealita).toMatch(/jangan menebak/i)
+    expect(PACK.kasus.hemoroid_grade1?.catatanRealita).toMatch(/tidak membenarkan.*otomatis/i)
+    expect(PACK.kasus.kia_malaria_falsiparum?.catatanRealita).toMatch(/jangan terapi presumtif/i)
+  })
+})

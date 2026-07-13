@@ -390,9 +390,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
     },
     clue: 'Impetigo krustosa: KRUSTA MADU (honey-colored) di wajah anak. Terlokalisir → LINI PERTAMA mupirosin topikal (IDSA/Perdoski); LUAS/multipel → tambah antibiotik oral anti-Staph (cefadroxil; eritromisin bila alergi penisilin). Rendam & lepaskan krusta, potong kuku, cuci tangan (PPK Perdoski/IDAI).',
     panduanResmi: 'PPK 1186/2022: pada lesi bertutup krusta/pus, kompres terbuka PK 1/5.000 atau povidon iodin 7,5% (encer 10x) dulu; topikal asam fusidat 2% ATAU mupirosin 2% (2-3x/hari, 7-10 hari) saat krusta bersih. Asam fusidat = alternatif topikal resmi bila mupirosin kosong.',
-    // M11 Bagian B7 (DeepThink 2026-07-10, REVISI: coret asam fusidat dari
-    // daftar substitusi — obat itu juga umumnya bermerek, fokus gentamisin).
-    catatanRealita: 'Mupirosin (lini pertama) umumnya sediaan bermerek dan sering tak distok Puskesmas. Substitusi realistis: salep gentamisin generik (paling sering ada di rak) atau langsung antibiotik oral anti-Staph (sefadroksil) — sesuaikan dengan stok Fornas/e-katalog setempat, jangan resepkan yang kosong.',
+    catatanRealita: 'Fornas 1199/2025 menempatkan mupirosin di FPKTL dengan restriksi MRSA terkonfirmasi; game mengajarkan opsi EBM, bukan menjamin stok Puskesmas. Lesi terlokalisir tidak boleh otomatis dinaikkan ke antibiotik oral hanya karena obat topikal kosong. Ikuti formularium lokal, luas lesi, dan jalur akses/rujuk.',
     konsekuensi: {
       narasi: 'Bila tidak diobati dan digaruk terus, lesi menyebar (autoinokulasi) dan menular ke anak lain; strain nefritogenik Streptococcus berisiko memicu glomerulonefritis akut pascastreptokokus.',
       kembaliHariMin: 5,
@@ -625,9 +623,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
     },
     clue: 'Herpes zoster: vesikel bergerombol UNILATERAL dermatomal + nyeri neuralgik. ASIKLOVIR HARUS dimulai <72 JAM sejak ruam (asiklovir 5×800 mg/hari 7 hari; sediaan 400 mg → 2 tablet per dosis) untuk memangkas durasi & risiko NEURALGIA PASCAHERPETIK. Analgesik adekuat. Waspadai zoster oftalmikus (rujuk mata) (PPK Perdoski/CDC).',
     panduanResmi: 'PPK 1186/2022 menyetujui asiklovir 5×800 mg/hari 7 hari (valasiklovir 3×1000 mg alternatif). Catatan divergen: PPK menyebut antivirus \'efektif 24 jam pertama\' — lebih ketat dari jendela <72 jam di clue. Rujuk bila bayi/anak/geriatri (imunokompromais), komplikasi, atau multifarmaka.',
-    // M11 Bagian B8 (DeepThink 2026-07-10, REVISI: valasiklovir ADA di Fornas,
-    // hambatannya restriksi tingkat-faskes bukan "tak masuk Fornas").
-    catatanRealita: 'Regimen asiklovir 5×800 mg/hari (=10 tablet 400 mg/hari) membebani kepatuhan. Valasiklovir 3×1 g lebih ringkas & ada di Fornas, tapi restriksi tingkat faskes lanjutan/RS (bukan FKTP) plus lebih mahal — di Puskesmas tetap asiklovir 5×/hari. Kuncinya: alarm & jadwal minum, bukan ganti obat.',
+    catatanRealita: 'Fornas 1199/2025 menyediakan asiklovir oral di FPKTP, sedangkan valasiklovir berada di FPKTL. Regimen asiklovir 5×800 mg/hari berarti 10 tablet 400 mg/hari: cek kemampuan pasien mengikuti jadwal, bantu pengingat, dan jangan mengganti obat di luar kewenangan hanya demi jadwal lebih ringkas.',
     konsekuensi: {
       narasi: 'Bila antivirus terlambat (>72 jam) atau tidak diberikan, risiko neuralgia pascaherpetik (nyeri menahun berbulan-bulan) meningkat tajam, terutama pada lansia & pasien DM.',
       kembaliHariMin: 14,
@@ -741,9 +737,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['istirahat_cukup', 'kebersihan_kulit', 'cuci_tangan', 'tanda_bahaya'],
     },
     clue: 'Varisela: lesi POLIMORF (semua stadium bersamaan) distribusi sentripetal + demam. Asiklovir (5×800 mg/hari 7 hari) bermanfaat pada REMAJA/DEWASA/imunokompromais bila <24-72 jam onset ruam. Simtomatik + kalamin untuk gatal, potong kuku, HINDARI ibuprofen. Isolasi hingga semua lesi berkrusta; jauhi ibu hamil & imunokompromais (PPK Perdoski/CDC).',
-    // M11 Bagian B9 (DeepThink 2026-07-10, REVISI: jendela VZIG diperbarui ke
-    // 10 hari + tambah alternatif asiklovir profilaksis oral yang nyata ada di FKTP).
-    catatanRealita: 'VZIG untuk kontak rentan (mis. bumil) idealnya diberi dalam 10 hari pascapajanan, tapi praktis tak tersedia di Indonesia. Realistis: rujuk bumil terpajan ke SpOG; bila VZIG tak ada, asiklovir oral profilaksis (mulai hari ke-7–10) dapat dipertimbangkan — bukan sekadar tunggu-lihat.',
+    catatanRealita: 'VZIG bukan stok rutin Puskesmas. Kontak hamil, neonatus, atau imunokompromais memerlukan koordinasi/rujukan segera untuk penilaian dan profilaksis yang sensitif waktu; catat hari pajanan. Jangan memulai profilaksis asiklovir secara improvisasi tanpa protokol lokal atau arahan spesialis.',
     konsekuensi: {
       narasi: 'Digaruk berlebihan menyebabkan infeksi sekunder & jaringan parut; penularan ke ibu hamil dapat menimbulkan varisela kongenital/neonatal yang berat.',
       kembaliHariMin: 3,
@@ -861,9 +855,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['jaga_area_kering', 'kebersihan_kulit', 'diet_dm'],
     },
     clue: 'Kandidiasis intertriginosa: plak merah LEMBAP di lipatan + LESI SATELIT (papulopustul di luar tepi) → antijamur topikal (mikonazol/ketokonazol) + JAGA AREA KERING (tepuk kering, pakaian menyerap). Selidiki faktor predisposisi: DM, obesitas, kelembapan. Cek gula darah (PPK Perdoski).',
-    // M11 Bagian B10 (DeepThink 2026-07-10, TERIMA apa adanya — mengajarkan
-    // empati & ekspektasi rekurensi realistis, tak mengoreksi clue).
-    catatanRealita: "Lampu Wood (pembeda eritrasma-kandida) bukan alat standar Puskesmas, dan KOH pun jarang dikerjakan rutin — terapi kerap empiris. 'Jaga area kering' sulit dijalani pasien obesitas beriklim tropis; rekurensi tinggi selama BB, kelembapan, dan gula darah belum terkoreksi.",
+    catatanRealita: 'Lampu Wood tidak termasuk alat standar Puskesmas; KOH bergantung kemampuan laboratorium. Terapi empiris masuk akal hanya bila morfologi klasik. Lesi atipikal atau gagal terapi perlu evaluasi ulang/rujuk, bukan antijamur berulang tanpa batas; koreksi kelembapan, obesitas, dan hiperglikemia untuk menekan rekurensi.',
     konsekuensi: {
       narasi: 'Bila kelembapan & gula darah tidak dikendalikan, kandidiasis kambuh berulang dan meluas; hiperglikemia yang tak terkelola memperberat infeksi dan komplikasi lain.',
       kembaliHariMin: 10,

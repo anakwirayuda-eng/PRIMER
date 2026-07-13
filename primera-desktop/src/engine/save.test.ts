@@ -465,13 +465,17 @@ describe('deserialize — CODEX audit pasca-GM (2026-07-13, temuan #12): tallyTe
     const json = rusak(serialize(s), (st) => {
       delete (st['tally'] as Record<string, unknown>)['posyanduSesi']
       delete (st['tally'] as Record<string, unknown>)['obatBerbahaya']
+      delete (st['tally'] as Record<string, unknown>)['sumSkorProses']
+      delete (st['tally'] as Record<string, unknown>)['stabilisasiTerlewat']
     })
     const hasil = deserialize(json, PACK)!
     expect(hasil).not.toBeNull()
     expect(hasil.tally.posyanduSesi).toBe(0)
     expect(hasil.tally.obatBerbahaya).toBe(0)
+    expect(hasil.tally.sumSkorProses).toBe(0)
+    expect(hasil.tally.stabilisasiTerlewat).toBe(0)
     expect(hasil.tallyTermigrasi).toEqual(
-      expect.arrayContaining(['posyanduSesi', 'obatBerbahaya']),
+      expect.arrayContaining(['posyanduSesi', 'obatBerbahaya', 'sumSkorProses', 'stabilisasiTerlewat']),
     )
   })
 

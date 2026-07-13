@@ -364,6 +364,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     },
     clue: 'Demam dengue: antipiretik HANYA paracetamol — HINDARI ibuprofen/aspirin/NSAID (risiko perdarahan). Kunci tata laksana adalah hidrasi & pemantauan tanda bahaya (WHO Dengue Guidelines; Kemenkes).',
     panduanResmi: 'PPK 1186/2022 membolehkan dengue/DBD tanpa syok dirawat jalan di FKTP dengan parasetamol 10–15 mg/kgBB/kali (hindari ibuprofen/asetosal). Kriteria rujuk resminya konkret: syok, anak tak dapat minum adekuat, atau keluarga tak mampu merawat di rumah — bukan sekadar \'pantau tanda bahaya\'.',
+    catatanRealita: 'Hematology analyzer dan alat diagnostik belum ada di semua Puskesmas; NS1 juga bukan syarat tunggal. Rawat jalan aman hanya bila pemantauan klinis dan, sesuai fase/indikasi, serial hematokrit/trombosit dapat diakses. Bila keluarga atau jejaring tak mampu menjamin kontrol dan tanda bahaya, ambang rujuk harus turun; jangan beri rasa aman palsu dari satu hasil lab.',
     konsekuensi: {
       narasi: 'Pemberian ibuprofen atau melewatkan edukasi tanda bahaya dapat berujung perdarahan atau syok dengue (DSS) yang mengancam jiwa.',
       kembaliHariMin: 2,
@@ -485,10 +486,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     },
     clue: 'Demam stepladder (naik bertahap, puncak sore-malam) + lidah kotor + bradikardia relatif → tifoid. Lini pertama FKTP/Fornas: kloramfenikol (alternatif kotrimoksazol/amoksisilin; bila tersedia & sesuai antibiogram/derajat, sefiksim/seftriakson) — tekankan tuntas + istirahat total untuk cegah perforasi usus. Catatan: Widal tunggal punya angka positif-palsu tinggi, tegakkan dengan gambaran klinis + konteks endemis; kultur bila tersedia.',
     panduanResmi: 'PPK 1186/2022 merinci lini pertama kloramfenikol dewasa 4×500 mg selama 10 hari, dengan syarat resmi yg sering terlupa: JANGAN beri bila leukosit <2000/mm³. Rujuk bila 5 hari terapi belum membaik, atau ada toxic typhoid/komplikasi/komorbid berat.',
-    // M11 Bagian B1 (DeepThink 2026-07-10, REVISI dari draft verifikator): sisipan
-    // riwayat-pedoman (Opsi 2, §2 dossier DEEPTHINK_M11_BAGIAN_B) — HANYA dipakai
-    // di kasus yang genuinely py bukti pergeseran guideline temporal terverifikasi.
-    catatanRealita: 'Kultur darah baku-emas tak tersedia di Puskesmas. Pedoman ini sendiri berevolusi: resistensi MDR di Asia Selatan mendorong WHO global bergeser ke seftriakson/kuinolon — tapi S. typhi Indonesia umumnya MASIH sensitif kloramfenikol, jadi Fornas mempertahankannya krn efikasi lokal, bukan ketinggalan zaman. WAJIB tuntas + pantau hematologik.',
+    catatanRealita: 'Kultur darah bukan pemeriksaan rutin on-site dalam standar laboratorium Puskesmas. Bila diperlukan, gunakan jejaring spesimen/rujukan; jangan mengganti konfirmasi dengan Widal tunggal. Keterbatasan alat tidak mengubah kewajiban menilai derajat sakit, memantau respons, dan merujuk bila toksik, berkomplikasi, atau gagal membaik.',
     konsekuensi: {
       narasi: 'Bila antibiotik tidak dituntaskan atau pasien tetap beraktivitas berat, risiko perforasi usus dan perdarahan saluran cerna pada minggu ke-3.',
       kembaliHariMin: 7,
@@ -977,9 +975,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     },
     clue: 'Konjungtivitis bakterial: mata merah + sekret MUKOPURULEN + kelopak lengket pagi, TANPA nyeri hebat/silau/penurunan visus. Antibiotik topikal (kloramfenikol tetes), self-limiting 5–7 hari. Nyeri hebat + fotofobia + visus TURUN = red flag keratitis → rujuk (AAO PPP).',
     panduanResmi: 'PPK 1186/2022 memberi dosis resmi spesifik: kloramfenikol tetes 1 tetes 6x/hari ATAU salep mata 3x/hari selama 3 hari (clue hanya sebut \'kloramfenikol tetes\'). Kriteria rujukan resmi: bila komplikasi pada kornea atau tak ada respons perbaikan terhadap pengobatan.',
-    // M11 Bagian B2 (DeepThink 2026-07-10, REVISI: koreksi status hukum —
-    // steroid mata BUKAN obat bebas, beda dgn tetrahydrozoline/Insto).
-    catatanRealita: 'Tetes mata steroid (mis. Cendo Xitrol) sebenarnya OBAT KERAS wajib resep — bukan obat warung — tapi penegakan lemah bikin pasien kerap swamedikasi sendiri. Berbahaya: steroid topikal memperberat keratitis herpes yang tak dikenali & memicu glaukoma pada pemakaian kronik. Beda dengan tetrahydrozoline (Insto) yang memang bebas.',
+    catatanRealita: 'Pasien dapat datang setelah memakai tetes kombinasi yang kandungannya tidak ia pahami. Tanyakan merek/kandungan: tetes berisi steroid adalah obat resep dan jangan diulang pada mata merah yang belum jelas. Nyeri hebat, fotofobia, visus turun, atau kornea keruh harus memicu rujukan, bukan trial steroid.',
     konsekuensi: {
       narasi: 'Bila higiene tangan tidak diedukasi, infeksi cepat menular ke mata sebelah dan anggota keluarga; pemberian steroid keliru dapat memicu ulkus kornea.',
       kembaliHariMin: 3,

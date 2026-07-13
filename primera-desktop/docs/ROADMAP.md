@@ -586,7 +586,7 @@ itu sudah dikerjakan (`edukasiKritis` §37, fix Toaster §38), tapi audit
 M10 SISTEMATIS penuh (semua 4 dimensi, sekaligus, bukan reaktif per-ronde)
 masih **BELUM dimulai**.
 
-### M11 — Enrichment & polish (didefinisikan 2026-07-05, BELUM DIMULAI)
+### M11 — Enrichment & polish (inti terukur SELESAI 2026-07-13)
 
 Beda dari M10 (M10 = audit yg RUSAK; M11 = menambah yg BAGUS — bukan
 memperbaiki, tapi memperkaya). Menyerap item lama "Variasi naratif per
@@ -602,10 +602,13 @@ kasus" di atas (jadi butir 4 di bawah). Cakupan:
 5. Variasi kasus sisi UKM (kunjungan/kader/posyandu), bukan cuma klinik.
 6. Eksplisit terbuka utk variasi lain yg belum terpikirkan.
 
-**Belum dikerjakan.** Catatan arsitektur penting: butir 4 BISA butuh
-mekanik pemilihan-varian baru di director (bukan cuma tambahan konten
-statis) — kalau ternyata begitu, WAJIB di-flag ke user sbg lift lebih
-besar drpd sisa M11 SEBELUM mulai kerja, bukan diam-diam diperluas.
+**Status aktual:** butir 1 selesai (Fase 1/2 + `panduanResmi`), mekanik
+process-scoring/stabilisasi serta gating anamnesis ringan-plus selesai,
+dan lapisan "idealis vs realita FKTP" sudah diaudit 67/67
+(`M11_REALITA_FKTP_AUDIT_2026.md`). Butir 2–6 adalah pengayaan kreatif
+yang belum punya acceptance criterion; sengaja ditunda ke scope M13/M12
+dan bukan blocker. Butir 4 kemungkinan butuh generator/director baru,
+jadi wajib di-scope sebagai proyek tersendiri sebelum diimplementasikan.
 
 ### M12 — Full aesthetic pass (didefinisikan 2026-07-06, TERBARU, BELUM DIMULAI)
 

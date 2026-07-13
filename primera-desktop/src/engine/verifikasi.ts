@@ -467,7 +467,12 @@ function fnv1a(teks: string): string {
 // opsional baru (dossier lama tanpa field ini tak terpengaruh) — bump tetap
 // wajib krn REVISI_ENGINE ter-hash ke sidikJariPack, dan #7 mengubah formula
 // skor UKM (klaim lama dgn field ini absen mereplay ke UKM berbeda).
-const REVISI_ENGINE = 30
+// M11 P1.6/C.1: mutu proses SOAP masuk UKP dan stabilisasi pra-rujuk menjadi
+// gate ternilai. Save lama dimigrasikan secara eksplisit dan tidak divonis
+// tidak sah bila tally barunya belum pernah ada.
+// M11 adjudikasi pasca-verifikasi: stabilisasi pra-rujuk yang terlewat
+// dikoreksi dari cap B ke cap C karena risiko fisiologis selama transport.
+const REVISI_ENGINE = 32
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -507,6 +512,7 @@ export function sidikJariPack(pack: ContentPack): string {
         // M10.5 Q2 (2026-07-12): konfirmasiWajib meng-cap skorPemeriksaan
         // (clinic.ts) sama persis vitalDiukur — score-affecting, wajib hash.
         konfirmasi: k.konfirmasiWajib ?? null,
+        stabilisasi: k.stabilisasiWajib ?? null,
         // M10.5 §3a (2026-07-12): justifikasiRujukValid menentukan apakah
         // deklarasi TACC membatalkan rujukanNonSpesialistik (clinic.ts) —
         // score-affecting (Referral Guillotine), wajib hash.

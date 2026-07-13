@@ -77,6 +77,7 @@ function buatTally(override?: Partial<SkorTally>): SkorTally {
   return {
     totalPasien: 0,
     diagnosisBenar: 0,
+    sumSkorProses: 0,
     tegakBenar: 0,
     tegakSalah: 0,
     suspekBenar: 0,
@@ -88,6 +89,7 @@ function buatTally(override?: Partial<SkorTally>): SkorTally {
     antibiotikTanpaIndikasi: 0,
     obatBerbahaya: 0,
     firewallTerpicu: 0,
+    stabilisasiTerlewat: 0,
     labTakRelevan: 0,
     miTepat: 0,
     miTotal: 0,
@@ -191,6 +193,7 @@ function buatPenilaian(override?: Partial<PenilaianEncounter>): PenilaianEncount
     obatBerbahaya: false,
     firewallTerpicu: false,
     konfirmasiTakTerpenuhi: false,
+    stabilisasiTerlewat: false,
     labTakRelevan: 0,
     grade: 'A',
     clue: 'Clue uji EBM.',
@@ -491,6 +494,7 @@ describe('hitungSkor — profil adversarial', () => {
       tally: buatTally({
         totalPasien: 20,
         diagnosisBenar: 20,
+        sumSkorProses: 2_000,
         tegakBenar: 20,
         rujukanTotal: 10,
         rujukanNonSpesialistik: 3, // 30%
@@ -507,6 +511,7 @@ describe('hitungSkor — profil adversarial', () => {
       tally: buatTally({
         totalPasien: 20,
         diagnosisBenar: 20,
+        sumSkorProses: 2_000,
         tegakBenar: 20,
         rujukanTotal: 10,
         rujukanNonSpesialistik: 0,
@@ -555,7 +560,7 @@ describe('hitungSkor — profil adversarial', () => {
   it('cowboy dan karma mengurangi dimensi masing-masing', () => {
     const cowboy = hitungSkor(
       buatState({
-        tally: buatTally({ totalPasien: 10, diagnosisBenar: 10, tegakBenar: 10, cowboy: 3 }),
+        tally: buatTally({ totalPasien: 10, diagnosisBenar: 10, sumSkorProses: 1_000, tegakBenar: 10, cowboy: 3 }),
       }),
     )
     // DeepThink ronde-2 "Boikot Rujukan": cowboy dinaikkan dari −2 ke −5/kejadian.
@@ -600,6 +605,7 @@ describe('hitungSkor — profil adversarial', () => {
         tally: buatTally({
           totalPasien: 10,
           diagnosisBenar: 10,
+          sumSkorProses: 1_000,
           tegakBenar: 10,
           // ≥ EKSPEKTASI_KUNJUNGAN_KARIER (24) — skor "sempurna" harus
           // memenuhi ekspektasi beban kerja wajar, bukan cuma rasio kecil.

@@ -176,6 +176,7 @@ export function Rapor() {
                 waspada: !guillotineAman,
               },
               { label: 'Kalibrasi stempel (tegak/suspek)', nilai: `${koma(r.kalibrasi, 0)}%` },
+              { label: 'Mutu proses SOAP', nilai: `${koma(r.prosesKlinis, 0)}%` },
             ]}
           />
           <KartuDimensi

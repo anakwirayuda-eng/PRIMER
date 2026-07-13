@@ -219,6 +219,7 @@ export function buildInitialState(
     tally: {
       totalPasien: 0,
       diagnosisBenar: 0,
+      sumSkorProses: 0,
       tegakBenar: 0,
       tegakSalah: 0,
       suspekBenar: 0,
@@ -231,6 +232,7 @@ export function buildInitialState(
       antibiotikTanpaIndikasi: 0,
       obatBerbahaya: 0,
       firewallTerpicu: 0,
+      stabilisasiTerlewat: 0,
       labTakRelevan: 0,
       miTepat: 0,
       miTotal: 0,

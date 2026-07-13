@@ -169,6 +169,8 @@ export interface PenilaianEncounter {
    * obatBerbahaya/firewallTerpicu supaya kedua konsumen bisa menggerbangnya.
    */
   konfirmasiTakTerpenuhi: boolean
+  /** Tindakan stabilisasi wajib belum dilakukan sebelum pasien dirujuk. */
+  stabilisasiTerlewat: boolean
   labTakRelevan: number
   sbarSkor?: number // 0-100 bila merujuk
   /** Grade huruf ringkas untuk UI. */
@@ -481,6 +483,8 @@ export interface JadwalItem {
 export interface SkorTally {
   totalPasien: number
   diagnosisBenar: number
+  /** Jumlah rerata skor anamnesis, pemeriksaan, terapi, dan edukasi per encounter. */
+  sumSkorProses: number
   /** Kalibrasi epistemik stempel dua tinta. */
   tegakBenar: number
   tegakSalah: number
@@ -498,6 +502,8 @@ export interface SkorTally {
   obatBerbahaya: number
   /** CODEX audit temuan #13B (2026-07-12): encounter dgn percobaan resep kontraindikasi diblokir firewall. */
   firewallTerpicu: number
+  /** Encounter rujukan yang melewatkan tindakan stabilisasi wajib. */
+  stabilisasiTerlewat: number
   labTakRelevan: number
   /** MI: pilihan tepat / total pilihan di kunjungan. */
   miTepat: number
@@ -746,5 +752,6 @@ export interface Skor4Dimensi {
     iksDesa: number // 0-1
     kualitasMi: number // 0-100
     kalibrasi: number // 0-100 (stempel dua tinta)
+    prosesKlinis: number // 0-100 (rerata mutu anamnesis, pemeriksaan, terapi, edukasi)
   }
 }

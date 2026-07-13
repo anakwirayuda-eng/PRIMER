@@ -52,6 +52,11 @@ export interface PertanyaanAnamnesis {
   esensial?: boolean
   /** Distraktor: tidak relevan untuk kasus ini — menggerus kesabaran pasien. */
   distraktor?: boolean
+  /**
+   * Pertanyaan baru ditampilkan setelah semua id ini sudah dijawab. Khusus
+   * progressive disclosure di renderer; tidak mengubah skoring atau replay.
+   */
+  bukaSetelah?: string[]
   /** Petunjuk dimensi OLDCARTS yang dicakup (untuk skoring kedalaman). */
   oldcarts?: ('onset' | 'lokasi' | 'durasi' | 'karakter' | 'agravasi' | 'radiasi' | 'waktu' | 'keparahan' | 'penyerta')[]
   /**
@@ -267,6 +272,11 @@ export interface KasusKlinis {
    * malaria: RDT — WHO "test before treat" sejak 2010, program DOTS TB).
    */
   konfirmasiWajib?: string
+  /**
+   * Tindakan yang harus selesai sebelum pasien dengan disposisi rujuk dikirim.
+   * Dipakai selektif untuk stabilisasi yang jelas wajib pada vignette ini.
+   */
+  stabilisasiWajib?: string
   /**
    * M10.5 §3a (2026-07-12): kategori alasan yang SAH untuk merujuk kasus ini
    * walau `harusDirujuk` false — dideklarasikan pemain saat DISPOSISI (lihat

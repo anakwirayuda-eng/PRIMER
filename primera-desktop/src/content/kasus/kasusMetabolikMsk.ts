@@ -141,7 +141,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     // M11 (perintis lapisan pengayaan — dari ide asal user): mutiara "temuan
     // bisa menyesatkan" + catatan realita FKTP.
     mutiaraEbm: 'Kadar asam urat serum bisa NORMAL bahkan RENDAH saat serangan akut (asam urat berpindah ke sendi/mengendap) — hasil normal TIDAK menyingkirkan gout. Diagnosis serangan akut tetap KLINIS (monoartritis MTP-1 mendadak, merah-nyeri hebat); baku emas = kristal MSU di cairan sendi.',
-    catatanRealita: 'Kolkisin sering TAK selalu tersedia di semua Puskesmas — bila kosong, NSAID (natrium diklofenak) adalah tumpuan analgesik antiradang akut yang hampir selalu ada. Kenali keduanya: tahu obat "buku" DAN obat yang realistis di rak FKTP-mu.',
+    catatanRealita: 'Fornas 1199/2025 mencantumkan kolkisin dan NSAID di FPKTP, tetapi panduan RKO Kemenkes mengakui stok obat dapat kosong antardaerah. Bila kolkisin tidak ada, pilih antiinflamasi lain yang didukung pedoman setelah memeriksa kontraindikasi; jangan menganggap diklofenak universal atau memakai allopurinol sebagai pengganti terapi akut.',
     konsekuensi: {
       narasi: 'Bila allopurinol dimulai saat serangan akut, nyeri justru berkepanjangan dan pasien menganggap obat "tidak cocok" lalu berhenti — kontrol jangka panjang gagal.',
       kembaliHariMin: 2,
@@ -277,9 +277,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     // fit-nya buruk utk FH: LDL kasus di bawah ambang, pola CAMPURAN khas
     // metabolik. Dibingkai jadi kontras/ambang-picu, bukan diagnosis kasus ini).
     mutiaraEbm: 'LDL ≥190 mg/dL yang TERISOLASI + riwayat jantung dini keluarga bukan sekadar "kolesterol gaya hidup" — curigai Hiperkolesterolemia Familial (FH, ~1:250) & rujuk skrining kaskade keluarga. Pola CAMPURAN seperti kasus ini (TG tinggi, HDL rendah, obesitas) justru condong ke dislipidemia metabolik, bukan FH.',
-    // M11 Bagian B12 (DeepThink 2026-07-10, REVISI MINOR: atorvastatin
-    // sebenarnya ADA di Fornas dengan restriksi, bukan "tak masuk stok" mutlak).
-    catatanRealita: 'Di praktik FKTP, statin yang tersedia lazimnya hanya simvastatin (intensitas sedang); atorvastatin/rosuvastatin intensitas tinggi ada di Fornas tapi jarang ada di rak Puskesmas. Pemantauan ulang lipid/SGOT-SGPT sering terlewat, dan pasien kerap putus obat karena merasa "tak ada keluhan".',
+    catatanRealita: 'Fornas 1199/2025 mencantumkan simvastatin serta atorvastatin/rosuvastatin dengan restriksi tertentu di FPKTP; ketersediaan lokal tetap dapat berbeda. Pilih intensitas sesuai indikasi dan formularium aktual, lalu pastikan tindak lanjut lipid, efek samping, interaksi, dan kepatuhan, bukan menganggap pilihan berhenti pada simvastatin.',
     konsekuensi: {
       narasi: 'Bila diabaikan karena "tidak ada keluhan", akumulasi plak aterosklerosis berjalan diam-diam menuju infark miokard atau stroke.',
       // M10 Batch-2 (CODEX C.9): 90-180 hari TAK PERNAH terjangkau dlm stase

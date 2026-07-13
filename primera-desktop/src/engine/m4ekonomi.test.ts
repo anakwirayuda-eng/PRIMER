@@ -248,7 +248,7 @@ describe('M4.20 — akreditasi D60 dari kelengkapan rekam medis', () => {
 describe('M4.22 — tindakan/prosedur klinis kini ikut membebani kapitasi', () => {
   it('melakukan prosedur (nebulisasi, ppok_eksaserbasi) memotong kapitasi sesuai biaya katalog', () => {
     const kasus = PACK.kasus['ppok_eksaserbasi']!
-    expect(kasus.tatalaksana.prosedur).toEqual(['nebulisasi'])
+    expect(kasus.tatalaksana.prosedur).toContain('nebulisasi')
     const biayaNebulisasi = PACK.tindakan['nebulisasi']!.biaya
 
     let s = buildInitialState('Uji', SEED, PACK)

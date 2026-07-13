@@ -1,7 +1,7 @@
 /**
  * SCORING — SATU-SATUNYA formula skor 4 dimensi (GDD §7) + ringkasan debrief malam.
  * Membaca tally mentah dari state; tidak pernah menghitung ulang dari UI.
- * UKP 35 (akurasi × Referral Guillotine × kalibrasi stempel) · UKM 35 (IKS + MI −
+ * UKP 35 (outcome + mutu proses × Referral Guillotine) · UKM 35 (IKS + MI −
  * apathy/karma) · Manajemen 15 (stewardship + kapitasi) · Resiliensi 15 (burnout).
  */
 
@@ -40,7 +40,7 @@ function gradeDariTotal(total: number): { grade: Skor4Dimensi['grade']; gradeLab
 export function hitungSkor(state: GameState): Skor4Dimensi {
   const t = state.tally
 
-  /* -- UKP (0-35): akurasi diagnosis × Referral Guillotine × kalibrasi -------- */
+  /* -- UKP (0-35): outcome + proses × Referral Guillotine ---------------------- */
   // Anti cherry-picking: pasien yang dilewatkan lalu bermasalah ikut jadi
   // penyebut akurasi — melewatkan antrian bukan strategi gratis.
   const penyebutAkurasi = t.totalPasien + t.autoBermasalah
@@ -53,6 +53,11 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const totalDiagnosis = t.tegakBenar + t.tegakSalah + t.suspekBenar + t.suspekSalah
   const kalibrasi =
     ((t.tegakBenar + 0.9 * t.suspekBenar + 0.4 * t.suspekSalah) / Math.max(1, totalDiagnosis)) * 100
+  const prosesKlinis = t.totalPasien > 0 ? t.sumSkorProses / t.totalPasien : 0
+  const kualitasOutcome = 0.75 * akurasi * 100 + 0.25 * kalibrasi
+  // Outcome tetap dominan, tetapi proses SOAP yang sudah dinilai per pasien
+  // tidak lagi sekadar kosmetik di debrief. Bobot ini dikalibrasi via soak.
+  const kualitasGabungan = 0.7 * kualitasOutcome + 0.3 * prosesKlinis
   // Confidence-tagging (M3.13): merujuk kasus wajib-rujuk dengan TEPAT dihargai —
   // guillotine tidak boleh mengajarkan "jangan pernah merujuk".
   const bonusRujukanTepat = Math.min(3, t.rujukanTepat * 0.75)
@@ -99,10 +104,11 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   // `firewallTerpicu` (percobaan diblokir, obat TAK sampai pasien) dibobot
   // lebih ringan (-1) — kelalaian cek alergi nyata, tapi bukan cedera nyata.
   const ukp = clamp(
-    ((0.75 * akurasi * 100 + 0.25 * kalibrasi) / 100) * 35 * guillotine -
+    (kualitasGabungan / 100) * 35 * guillotine -
       5 * t.cowboy -
       3 * t.obatBerbahaya -
-      1 * t.firewallTerpicu +
+      1 * t.firewallTerpicu -
+      1 * t.stabilisasiTerlewat +
       bonusRujukanTepat +
       efekIgd,
     0,
@@ -199,6 +205,7 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
       iksDesa,
       kualitasMi,
       kalibrasi,
+      prosesKlinis,
     },
   }
 }

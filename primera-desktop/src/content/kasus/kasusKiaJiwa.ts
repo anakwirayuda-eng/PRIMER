@@ -138,6 +138,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     },
     clue: 'ANC normal: minimal 6x kunjungan (Kemenkes 2020) + tablet tambah darah (Fe 60 mg elemental) minimal 90 tablet + asam folat 400 mcg. Edukasi minum Fe malam hari/setelah makan untuk kurangi mual, jangan bersama teh/kopi. Kenali tanda bahaya P4K, JANGAN medikalisasi kehamilan sehat.',
     panduanResmi: 'Divergensi: tabel PPK 1186/2022 masih memuat ANC minimal 4x (TM1:1, TM2:1, TM3:2) & folat 250 mcg, sedang kebijakan Kemenkes 2020 (clue) menaikkan jadi 6x — yang mutakhir mengikat. PPK juga mewajibkan skrining/imunisasi TT sesuai status, hal yang tak disebut clue.',
+    catatanRealita: 'PMK 6/2024 menetapkan K6, sedikitnya dua kunjungan dokter pada TM1/TM3 termasuk USG, serta rujukan horizontal bila Puskesmas belum mampu. Jadi USG tidak harus tersedia setiap hari di gedung yang sama, tetapi komponennya tidak boleh hilang: jadwalkan/jejaringkan dan dokumentasikan hasilnya.',
   },
 
   /* ======================================================================
@@ -471,10 +472,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     // inti tetap RUJUK USG. konsekuensi diubah ke natural history (bukan menyalahkan ibu).
     clue: 'Abortus IMINENS: perdarahan pervaginam pada kehamilan <20 minggu dengan ostium uteri TERTUTUP dan janin masih hidup. Tata laksana FKTP: istirahat wajar & pembatasan aktivitas berat (BUKAN tirah baring total — tak terbukti mencegah keguguran, Cochrane/POGI; tirah baring lama berisiko trombosis), pelvic rest bila perdarahan aktif, lalu RUJUK untuk USG konfirmasi viabilitas janin & evaluasi SpOG. Waspadai progresi ke abortus insipiens/inkomplit (perdarahan hebat, ostium terbuka) — kegawatan. Konseling: keguguran umumnya BUKAN akibat aktivitas ibu (PPK/PNPK Perdarahan Kehamilan Muda).',
     panduanResmi: 'Divergensi rujukan: clue/game mengarahkan RUJUK, tapi PPK 1186/2022 menatalaksana abortus IMINENS di FKTP: pertahankan kehamilan, \'tidak perlu pengobatan khusus\', hindari aktivitas berat/koitus, tablet tambah darah, pantau USG serial. RUJUK hanya bila progresi ke insipiens/inkomplit atau perdarahan banyak.',
-    // M11 Bagian B3 (DeepThink 2026-07-10, REVISI: "belum terbukti" terlalu
-    // absolut — bukti didrogesteron ORAL genuinely campuran, beda dari
-    // progesteron VAGINAL/PRISM yang hanya menolong subgrup riwayat keguguran).
-    catatanRealita: 'Realita: progestin oral (alilestrenol/didrogesteron) rutin diresepkan untuk abortus iminens di Indonesia, meski buktinya CAMPURAN — didrogesteron oral menurunkan angka abortus di sejumlah meta-analisis, tapi luaran lahir-hidup tak konsisten, dan progesteron vaginal (PRISM) hanya menolong subgrup dengan riwayat keguguran. Inti tatalaksana FKTP tetap: RUJUK USG.',
+    catatanRealita: 'USG telah menjadi standar layanan kehamilan, tetapi ketersediaan dan jadwal operator belum seragam. Bila USG tidak tersedia saat itu, gunakan rujukan horizontal/jejaring untuk konfirmasi viabilitas; jangan menggantinya dengan progestin empiris. Stabilitas pasien dan banyaknya perdarahan tetap menentukan urgensi rujukan.',
     konsekuensi: {
       narasi: 'Sebagian ancaman keguguran memang berprogresi (sering karena kelainan kromosom/embrio, terlepas dari aktivitas) — bila TIDAK dirujuk & dievaluasi USG, progresi ke abortus inkomplit dengan perdarahan hebat dapat terlewat tanpa penanganan.',
       kembaliHariMin: 1,
@@ -831,9 +829,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['manajemen_stres', 'aktivitas_fisik', 'higiene_tidur', 'kontrol_rutin'],
     },
     clue: 'Depresi RINGAN: ≥2 minggu mood depresif + anhedonia + gejala penyerta (tidur, nafsu makan, energi turun) dengan fungsi MASIH cukup terjaga. WAJIB skrining risiko bunuh diri di tiap kunjungan. Lini pertama mhGAP/NICE: PSIKOEDUKASI + konseling suportif/aktivasi perilaku + aktivitas fisik + active monitoring — antidepresan TIDAK rutin untuk depresi ringan, tambahkan SSRI (fluoksetin) HANYA bila gejala menetap/mengganggu fungsi. Singkirkan hipotiroid & riwayat manik (bipolar). Kontrol berkala; rujuk bila memberat/ada risiko bunuh diri (mhGAP WHO / PPK Jiwa FKTP).',
-    // M11 Bagian B4 (DeepThink 2026-07-10, REVISI MINOR: akar masalah bukan
-    // "kontrol sulit" tapi ketiadaan SDM/layanan psikologi itu sendiri).
-    catatanRealita: 'Idealnya (mhGAP/NICE) depresi ringan: aktivasi perilaku + active monitoring dulu, obat tak rutin. Realita: hanya ~40% Puskesmas punya layanan jiwa (psikolog klinis baru diwajibkan PMK 19/2024), psikiater langka — psikoterapi terstruktur sering tak bisa dijalankan, antidepresan jadi fallback. Bila meresepkan, WAJIB sertakan rencana kontrol & skrining bunuh diri.',
+    catatanRealita: 'PMK 19/2024 memasukkan psikolog klinis dalam standar Puskesmas, tetapi pemenuhannya boleh bertahap sesuai kemampuan daerah; SDM primer juga belum merata. Jika psikoterapi terstruktur belum tersedia, lakukan intervensi psikososial yang kompeten, follow-up aktif, skrining bunuh diri, dan rujuk/telekonsultasi, bukan otomatis memberi obat.',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat penenang tanpa konseling dan tanpa skrining bunuh diri, gejala dapat memberat menjadi depresi sedang-berat dengan risiko keselamatan.',
       kembaliHariMin: 14,
@@ -1101,7 +1097,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     fktp144: true,
     harusDirujuk: false,
     prevalensi: 'rendah',
-    keluhanUtama: 'Demam menggigil naik-turun dok, saya baru pulang kerja dari Papua.',
+    keluhanUtama: 'Demam menggigil naik-turun dok, badan saya lemas sekali.',
     demografi: { usiaMin: 18, usiaMax: 50 },
     vital: { td: '110/70', nadi: 100, rr: 20, suhu: 39.2, spo2: 98 },
     anamnesis: [
@@ -1128,6 +1124,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         kategori: 'keluhan_utama',
         tanya: 'Belakangan ini bepergian ke daerah endemis malaria? Kapan pulang?',
         jawab: 'Iya dok, saya kerja proyek di Papua, baru pulang sekitar sepuluh hari lalu.',
+        bukaSetelah: ['q_keluhan'],
         esensial: true,
         oldcarts: ['onset', 'penyerta'],
       },
@@ -1211,9 +1208,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     },
     clue: 'Malaria falsiparum: demam periodik + menggigil + splenomegali + riwayat dari daerah endemis (Papua/NTT). KONFIRMASI dengan RDT/mikroskopis SEBELUM terapi. Lini pertama Kemenkes: ACT = DHP (Dihidroartemisinin-Piperakuin) 3 hari + primakuin dosis tunggal 0,25 mg/kgBB (gametosidal). SINGKIRKAN KEHAMILAN pada perempuan usia subur: primakuin KONTRAINDIKASI pada hamil & bayi <6 bln (beri DHP saja) — tes G6PD tidak diwajibkan untuk dosis tunggal falsiparum. JANGAN pakai klorukin untuk falsiparum — resisten luas di Indonesia. Kenali tanda MALARIA BERAT (penurunan kesadaran, kejang, ikterik, gagal ginjal, hipoglikemia) → rujuk (Pedoman Tata Laksana Malaria Kemenkes).',
     panduanResmi: 'Divergensi dosis: PPK 1186/2022 menulis primakuin falsiparum 0,75 mg/kgBB dosis tunggal, sedang Pedoman Tata Laksana Malaria Kemenkes (clue) memakai 0,25 mg/kgBB — yang mutakhir mengikat. PPK juga menetapkan artesunat/artemisinin 3,2 mg/kgBB IM/IV sebelum rujuk malaria berat.',
-    // M11 Bagian B5 (DeepThink 2026-07-10, TERIMA apa adanya — insight
-    // distribusi komoditas program vertikal, tak menyinggung clue sama sekali).
-    catatanRealita: 'Malaria impor: pasien pulang dari Papua/NTT kerap berobat di Puskesmas Jawa/Bali non-endemis yang tak menstok RDT & ACT (DHP)/primakuin — logistik dialokasikan ke daerah endemis. Curigai demam + riwayat perjalanan; siapkan jalur rujukan & lapor e-SISMAL.',
+    catatanRealita: 'Peta Jalan Eliminasi Malaria 2025-2045 menyesuaikan layanan dan logistik dengan endemisitas: seluruh fasyankes publik di kabupaten endemis tinggi/sedang, tetapi fasilitas yang ditunjuk di wilayah rendah/bebas. Pada malaria impor, segera hubungi jejaring untuk tes dan obat; jangan terapi presumtif, lalu laporkan sesuai surveilans.',
     konsekuensi: {
       narasi: 'Bila diberi klorokuin (yang sudah resisten) atau antibiotik, parasitemia terus meningkat dan dapat berkembang menjadi malaria serebral, gagal organ, hingga kematian.',
       kembaliHariMin: 1,

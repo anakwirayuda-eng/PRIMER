@@ -46,5 +46,6 @@ describe('<Rapor />', () => {
     const { gradeLabel } = hitungSkor(stateDenganPasien)
     expect(screen.queryByText(/belum ada data — kembali setelah menangani pasien/i)).not.toBeInTheDocument()
     expect(screen.getByText(new RegExp(gradeLabel))).toBeInTheDocument()
+    expect(screen.getByText('Mutu proses SOAP')).toBeInTheDocument()
   })
 })

@@ -698,6 +698,7 @@ function buatStateKader(): GameState {
     tally: {
       totalPasien: 0,
       diagnosisBenar: 0,
+      sumSkorProses: 0,
       tegakBenar: 0,
       tegakSalah: 0,
       suspekBenar: 0,
@@ -709,6 +710,7 @@ function buatStateKader(): GameState {
       antibiotikTanpaIndikasi: 0,
       obatBerbahaya: 0,
       firewallTerpicu: 0,
+      stabilisasiTerlewat: 0,
       labTakRelevan: 0,
       miTepat: 0,
       miTotal: 0,

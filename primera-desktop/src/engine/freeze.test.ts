@@ -100,23 +100,23 @@ function hashFile(relPath: string): string {
 
 /** Sha-256 hex per file (isi dinormalisasi LF), dikunci saat tag Golden Master. */
 const HASH_DIBEKUKAN: Record<string, string> = {
-  // REVISI 30 (2026-07-13 — M10.6 leftover: #10a/#6/#8a/#8b/#7/#12, lihat
-  // verifikasi.ts) — 7 file diperbarui: reducer/director/init/scoring/
-  // verifikasi/state/save.ts.
-  'reducer.ts': 'd64da095c3240873fdbe2d8ee23d7bb3cd8dc1a1cef0b7d3e049889fa79db701',
-  'clinic.ts': 'd29b8b2086f8b870360cf22e97757b19197376deecdcbaeceb1fa019e5f4f117',
-  'scoring.ts': 'dd15cbf82fe3fe7127c9e4dbd4e775dade5d1588866c09c9d6a68b3a85110468',
+  // REVISI 32 (2026-07-13 — M11 P1.6/C.1): mutu proses SOAP masuk UKP;
+  // stabilisasi pra-rujuk menjadi gate grade/Dex/tally, lalu cap-nya
+  // diadjudikasi dari B ke C karena risiko fisiologis selama transport.
+  'reducer.ts': 'f5c7ffaeb7f790f5b3eee7ef92f2aa3912b1ca6333c1c1cda177962c2bdb5307',
+  'clinic.ts': '55de3a23bb8c1024901848ba5f61c89590e9a0bcf526c32f7446f2d008aab3d2',
+  'scoring.ts': '146c3012075cad2e0fad60e2139f7efe04aeb8bea84ac5a1ffdafb676cc2e1d8',
   'director.ts': '2341f215e815b298ea4a2de40cb87b73df5e22ab8e3eb96e7007f90d7ede5143',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': '519b7cfc4098fa2e4d6c0567875ba797d3074d14cbbe8b9a48afaf12704c09b4',
   'kader.ts': 'fff1c7c055d1526f1e9632e64a3f72939840412c0f148e201444d6a7353aa646',
-  'init.ts': 'd33f8f1eb3fca2bf0a5ae8144fc7ef522976e418395d57a5c82885f5af2e72c0',
+  'init.ts': 'd9287b8481c90438b155be3ddd2e9bc97d00a328c376e17bbb749dd2933d1706',
   'kegiatan.ts': '61004bed15e5f8095214205aff69da6be55556d329552bc6a691cc0e4bf62d52',
   'kunjungan.ts': '4ec29cba2af05c8befec99921fe0cf8fc4d93950546c08121ded7f82efa66517',
   'paketUjian.ts': 'b7127ca427c24fea81a840f51d1933aa5eb4025384fdfac9857fa3498aa59e5d',
-  'verifikasi.ts': '12cf6c0ee836eeab5f633fd514f1871a6721c29ef46892c73ac2317c77fd9ce7',
-  'state.ts': '064d6ddd8750f629a4188ef6ef0baa1323f872ab6355b4b674aaf032cbefd3a7',
-  'save.ts': '9fa0c55934c190044001f993ca0a4798a56b87df5b8d78ab7e6d3113e05089cc',
+  'verifikasi.ts': '8b440d24a73865fe45d970d20a81b9eb390d8e485226142d28e5aa712058ee97',
+  'state.ts': 'fded63f8005b13765bfcb46baf37d93a0b2e3f78cafe3621f48e870f8fe8709e',
+  'save.ts': '6aa8a6be7f0bd4f655582233447486d9dff8744d287d61db8f46e79cc26a0553',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '34bdfd80c9ebd2ae5a261118e9154cdfeb670b06b029e96013e2b26ef9a86a80',
 }

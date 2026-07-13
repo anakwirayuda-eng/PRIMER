@@ -482,13 +482,14 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         ['prednison_5'],
         ['amoxiclav_625', 'azitromisin_500', 'doksisiklin_100'],
       ],
-      prosedur: ['nebulisasi'],
+      prosedur: ['nebulisasi', 'oksigen'],
       obatSalahUmum: [
         { id: 'salbutamol_2', alasan: 'SABA ORAL (tablet) BUKAN pilihan untuk eksaserbasi berat — onset lambat, efek samping sistemik (tremor, takikardia) lebih besar; bronkodilator harus rute INHALASI/NEBULISASI (GOLD).', bahaya: 'nonPrimer' },
         { id: 'kloramfenikol_250', alasan: 'Antibiotik yang tak tepat untuk eksaserbasi PPOK. Bila sputum purulen + gejala kardinal (indikasi antibiotik), pilih golongan yang sesuai — dan yang terpenting: jangan menunda rujukan saat SpO2 89% + tanda gagal napas.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['berhenti_merokok', 'teknik_inhaler', 'tanda_bahaya', 'kontrol_rutin'],
     },
+    stabilisasiWajib: 'oksigen',
     clue: 'Eksaserbasi PPOK (kriteria Anthonisen: sesak↑, volume sputum↑, purulensi sputum↑ — ketiganya ada → antibiotik terindikasi). SpO2 89% + tanda gagal napas (bingung, sianosis, otot bantu) = eksaserbasi BERAT. Bundel GOLD: O2 TERKONTROL (target SpO2 88–92%, hindari over-oksigenasi) + bronkodilator INHALASI/NEBULISASI (SABA ± SAMA) + KORTIKOSTEROID SISTEMIK + antibiotik (sputum purulen) — lalu RUJUK paru segera. SABA oral tak setara; jangan biarkan urusan obat menunda rujukan.',
     panduanResmi: 'PPK 1186/2022 membatasi FKTP pada eksaserbasi PPOK RINGAN (sedang–berat wajib rujuk). Bila inhalasi tak tersedia, PPK membolehkan bronkodilator injeksi (aminofilin bolus 5 mg/kgBB; adrenalin 0,3 mg SC) — beda dari penekanan GOLD \'inhalasi saja\'. Kortikosteroid 30 mg/hari, maks 2 minggu, tanpa tapering.',
     konsekuensi: {
@@ -1061,10 +1062,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     },
     clue: 'Hemoroid interna grade 1: hematokezia segar TANPA nyeri, menetes/di kertas pascadefekasi, benjolan BELUM prolaps. Tata laksana KONSERVATIF: tinggi serat + cukup air + hindari mengejan lama + pelunak tinja; bukan indikasi bedah. WAJIB colok dubur & waspadai red flag keganasan (usia >45–50, BB turun, anemia, perubahan pola BAB, riwayat keluarga kanker kolorektal) → pertimbangkan rujukan/kolonoskopi (PPK IDI).',
     panduanResmi: 'PPK 1186/2022 membatasi kompetensi FKTP HANYA pada hemoroid interna grade 1 (konservatif): serat 25-30 g/hari, air 6-8 gelas, HINDARI OAINS/NSAID + makanan pedas-berlemak. Grade 2, 3, 4 dan hemoroid eksterna WAJIB dirujuk ke layanan sekunder.',
-    // M11 Bagian B13 (DeepThink 2026-07-10, REVISI: anoskop murah & tersedia
-    // — "jarang dipakai", bukan "tak tersedia"; FOBT kini mulai via Cek
-    // Kesehatan Gratis, bukan lagi murni "belum digulirkan").
-    catatanRealita: 'Kolonoskopi hanya di RS rujukan; anoskop sederhana & murah tapi sering tak dipakai; FOBT baru mulai digulirkan lewat skrining Cek Kesehatan Gratis, belum merata. Akibatnya perdarahan rektal kerap hanya "diamati" karena rujukan terkendala antrean/jarak/biaya — diagnosis grade 1 bertumpu pada colok dubur.',
+    catatanRealita: 'Kolonoskopi bukan layanan Puskesmas, tetapi perdarahan rektal tetap perlu inspeksi, colok dubur, dan anoskopi bila tersedia. Keterbatasan alat atau antrean rujukan tidak membenarkan label hemoroid otomatis: anemia, penurunan BB, perubahan pola BAB, usia, dan riwayat keluarga berisiko harus dijaring dan dirujuk.',
     konsekuensi: {
       narasi: 'Bila sembelit dan mengejan tidak diperbaiki, hemoroid dapat berkembang ke derajat lebih tinggi (prolaps); mengabaikan colok dubur berisiko melewatkan keganasan pada perdarahan rektal.',
       kembaliHariMin: 30,

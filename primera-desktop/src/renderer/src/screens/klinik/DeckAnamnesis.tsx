@@ -40,6 +40,9 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
     }
     return peta
   }, [kasus, enc.pasien.jenisKelamin])
+  const pembukaTerjawab = (perKategori.get('keluhan_utama') ?? []).some((q) =>
+    enc.ditanya.includes(q.id),
+  )
 
   let jawabanTerakhir: string | null = null
   for (const e of lastEvents) {
@@ -90,11 +93,17 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
         {/* Kartu pertanyaan per kategori */}
         {URUTAN_KATEGORI.map((kat) => {
           const daftar = perKategori.get(kat) ?? []
-          if (daftar.length === 0) return null
+          // Mulai dari keluhan utama agar pertanyaan fokus tidak memberi tahu
+          // diagnosis sebelum pemain mendengar cerita pembuka pasien.
+          if (daftar.length === 0 || (kat !== 'keluhan_utama' && !pembukaTerjawab)) return null
+          const daftarTerbuka = daftar.filter(
+            (q) => q.bukaSetelah?.every((id) => enc.ditanya.includes(id)) ?? true,
+          )
+          if (daftarTerbuka.length === 0) return null
           return (
             <div key={kat} className="klinik-deck__grup">
               <div className="judul-seksi">{LABEL_KATEGORI[kat]}</div>
-              {daftar.map((q) => {
+              {daftarTerbuka.map((q) => {
                 const sudah = enc.ditanya.includes(q.id)
                 const disorot = sorotPertanyaan === q.id
                 // M9.1: dulu `sorotPertanyaan !== null && !disorot` — begitu

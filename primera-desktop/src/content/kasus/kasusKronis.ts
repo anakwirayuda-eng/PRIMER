@@ -149,7 +149,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     // 303/2026 belum mewajibkan funduskopi/eGFR sbg pemeriksaan wajib di FKTP,
     // jadi TIDAK ditambahkan sbg exam ternilai; murni memperkaya pemahaman).
     mutiaraEbm: 'Target TD bukan angka tunggal-kaku: pedoman terbaru (Kepmenkes 303/2026) mengadopsi pendekatan bertahap — mulai <140/90, lalu diperketat ke <130/80 HANYA bila pasien mentoleransi tanpa efek samping (mis. hipotensi ortostatik), terutama pada risiko kardiovaskular tinggi. Target kaku "satu angka untuk semua" berisiko overtreatment pada lansia rentan.',
-    catatanRealita: 'Skrining kerusakan organ target idealnya mencakup funduskopi (retinopati hipertensi) dan eGFR (nefropati), tapi di banyak FKTP Indonesia oftalmoskop tak selalu tersedia & eGFR bergantung akses lab kreatinin — game ini tetap mengajarkan pentingnya evaluasi tsb tanpa mewajibkannya sbg pemeriksaan wajib/ternilai, mengikuti prinsip "EBM-realistis" (bukan Puskesmas-Eropa).',
+    catatanRealita: 'EKG, chemistry analyzer, dan alat skrining lain sedang dipenuhi bertahap 2024-2028 dan belum ada di semua Puskesmas. Penilaian organ target tetap perlu: gunakan pemeriksaan yang tersedia, jejaringkan kreatinin/eGFR atau mata bila perlu, dan jangan mengarang hasil maupun menghapus indikasi rujuk hanya karena alat lokal terbatas.',
     konsekuensi: {
       narasi: 'Merasa membaik setelah beberapa hari, obat dihentikan sendiri karena "takut ginjal rusak". Tekanan darah melonjak kembali tanpa gejala.',
       kembaliHariMin: 5,
@@ -290,6 +290,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     },
     clue: 'PERKENI 2021: diagnosis DM bila GDP ≥126, GDS ≥200 + gejala klasik (poliuri, polidipsi, polifagi, BB turun), atau HbA1c ≥6,5%. Lini pertama metformin + modifikasi gaya hidup. Kelola di FKTP kecuali ada komplikasi akut/berat.',
     panduanResmi: 'PPK 1186/2022 memerinci batas rujukan FKTP untuk DM tipe 2: dirujuk bila ada komplikasi, KONTROL GULA BURUK, atau infeksi berat. \'Kontrol gula buruk\' adalah pemicu rujuk resmi tersendiri (bukan sekadar \'komplikasi\') yang sering terlewat saat pasien tampak stabil.',
+    catatanRealita: 'PoCT HbA1c dan chemistry analyzer belum dimiliki semua Puskesmas. HbA1c berguna untuk baseline/kontrol, tetapi ketiadaannya tidak boleh menunda diagnosis pada gejala klasik dengan kriteria glukosa yang terpenuhi. Gunakan tes tervalidasi yang tersedia dan jejaringkan HbA1c, kreatinin/eGFR, serta pemeriksaan komplikasi sesuai kebutuhan.',
   },
 
   /* ======================================================================
@@ -538,6 +539,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     },
     clue: 'GINA 2019+: gejala ≥2×/minggu + terbangun malam = asma PERSISTEN, bukan sekadar intermiten. Kunci pembaruan GINA: SABA-tunggal TIDAK lagi dianjurkan pada asma mana pun — setiap pasien butuh terapi mengandung ICS. Beri pengendali ICS (budesonid inhalasi) + reliever (salbutamol inhalasi/ICS-formoterol), kendalikan pencetus (asap rokok rumah!), ajarkan teknik inhaler, nilai kontrol tiap kunjungan. Antibiotik rutin tidak diindikasikan.',
     panduanResmi: 'Divergensi: clue/GINA 2019+ menolak SABA-tunggal pd asma apa pun (semua butuh ICS). Namun PPK 1186/2022 masih skema lama — asma intermiten \'tidak perlu\' pengontrol (SABA pelega saja), ICS baru mulai pd persisten ringan (200-400µg/hari). Pemain wajib tahu pedoman resmi ini tertinggal dari GINA.',
+    catatanRealita: 'Fornas 1199/2025 mencantumkan budesonid inhalasi dan ICS-formoterol di FPKTP, tetapi stok dan jenis device lokal dapat berbeda. Jangan biarkan kekosongan pengendali (controller) berubah menjadi SABA-tunggal permanen: cek teknik, carikan akses controller melalui formularium/jejaring, dan buat rencana tindak lanjut.',
   },
 
   /* ======================================================================
@@ -663,12 +665,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     },
     clue: 'OMA (AAP/WHO): diagnosis butuh membran timpani menonjol (bulging) + tanda inflamasi akut. Amoksisilin dosis tinggi (80–90 mg/kg/hari) lini pertama + analgesik untuk nyeri. Tetes antibiotik hanya bila ada perforasi/otorea. Watchful waiting dapat dipertimbangkan pada kasus ringan usia >2 th.',
     panduanResmi: 'PPK 1186/2022 mematok amoksisilin OMA anak 25-50 mg/kgBB/hari dibagi 3 dosis — jauh lebih rendah dari dosis tinggi 80-90 mg/kgBB/hari yang dianjurkan AAP di clue. Dokter FKTP terikat rentang resmi ini, meski AAP menaikkannya demi menutup pneumokokus resisten-penisilin.',
-    // M11 Bagian B6 (DeepThink 2026-07-10, REVISI: dosis lapangan yg lebih
-    // rendah tak boleh disebut "gagal" — masih efektif utk strain peka).
-    // Sekaligus sisipan riwayat-pedoman (Opsi 2, §2 dossier
-    // DEEPTHINK_M11_BAGIAN_B) — AAP menaikkan dosis 2013 krn resistensi,
-    // genuinely pergeseran guideline temporal, bukan sekadar typo lama.
-    catatanRealita: "Otoskop yang berfungsi tak selalu tersedia — kriteria 'bulging' (AAP) kerap jadi terkaan klinis. Dosis pun berevolusi: AAP naikkan ke 80–90 mg/kg/hari (2013) khusus menutup pneumokokus resisten-penisilin; di lapangan dosis sering menyusut ke ~40–50 mg/kg — masih memadai untuk strain peka, berisiko pada yang resisten.",
+    catatanRealita: 'Set THT lengkap adalah standar, tetapi pemenuhan alat nasional masih bertahap. Bila otoskop tidak ada/rusak atau membran timpani tak terlihat, jangan menebak bulging: dokumentasikan keterbatasan, atur evaluasi ulang/rujuk sesuai risiko. Dosis antibiotik mengikuti pedoman dan stewardship, bukan kebiasaan setempat.',
   },
 
   /* ======================================================================
@@ -918,12 +915,14 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     diagnosisBanding: ['J18.9', 'J21.9', 'J20.9', 'J45.9'],
     tatalaksana: {
       obatBenar: ['amoxicillin_sirup', 'paracetamol_sirup'],
+      prosedur: ['oksigen'],
       obatSalahUmum: [
         { id: 'salbutamol_inhaler', alasan: 'Bukan bronkospasme; pneumonia berat butuh antibiotik dan rujukan, bukan bronkodilator.', bahaya: 'nonPrimer' },
         { id: 'cotrimoxazole_480', alasan: 'Bukan pilihan pra-rujukan utama; amoksisilin dosis pertama lebih tepat sebelum merujuk.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['tanda_bahaya', 'etika_batuk', 'kepatuhan_obat'],
     },
+    stabilisasiWajib: 'oksigen',
     clue: 'IMCI/WHO: pneumonia balita ditegakkan klinis dari napas cepat (RR ≥40x/menit usia 1–5 th). Tarikan dinding dada ke dalam (chest indrawing), sianosis, atau tolak minum = pneumonia BERAT → beri DOSIS PERTAMA antibiotik + oksigen, lalu RUJUK segera (SKDI 3B). Jangan tunda menunggu foto toraks.',
     panduanResmi: 'PPK 1186/2022 (adopsi WHO) mempertegas ambang napas cepat per-usia: >50x/mnt (2 bln–1 th) vs >40x/mnt (>1–5 th), dan \'pneumonia berat\' = ada sesak/tarikan dinding dada → wajib dirawat + antibiotik. Dosis amoksisilin oral resmi rawat jalan 25 mg/kgBB.',
   },
@@ -1055,6 +1054,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     },
     clue: 'Stroke = kegawatan "Time is Brain". Kenali FAST (Face-Arm-Speech-Time) dan SELALU cek gula darah (hipoglikemia adalah peniru stroke). Di FKTP: stabilkan jalan napas/pernapasan/sirkulasi, JANGAN turunkan TD agresif (<220/120 mmHg), RUJUK segera ke RS dengan CT-scan dalam window terapi (SKDI 3B, PERDOSSI). Hipertensi tak terkontrol adalah faktor risiko utama.',
     panduanResmi: 'PPK 1186/2022 merinci stabilisasi pra-rujuk FKTP: posisi kepala-badan head-up 20–30°, infus NaCl/RL 500 ml/12 jam, cek gula darah jari, beri Dekstrose 50% 25 g IV bila hipoglikemia berat; SEMUA pasien stroke wajib segera dirujuk ke faskes sekunder yang punya spesialis saraf.',
+    catatanRealita: 'CT-scan bukan layanan Puskesmas dan integrasi SISRUTE masih bertahap. Aktivasi rujukan harus berjalan paralel dengan stabilisasi, pencatatan last-known-well, cek glukosa, dan transport; kendala aplikasi/jaringan bukan alasan menunggu. Gunakan jalur kontingensi lokal dan dokumentasikan komunikasi dengan fasilitas penerima.',
     konsekuensi: {
       narasi: 'Buah dari hipertensi yang menolak diobati: penundaan rujukan memperkecil peluang pemulihan; setiap menit adalah jaringan otak yang hilang.',
       kembaliHariMin: 7,

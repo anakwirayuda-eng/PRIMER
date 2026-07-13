@@ -471,6 +471,10 @@ export function nilaiEncounter(
   if (konfirmasiTakTerpenuhi) {
     skorPemeriksaan = Math.min(skorPemeriksaan, 50)
   }
+  const stabilisasiTerlewat =
+    enc.disposisi === 'rujuk' &&
+    kasus.stabilisasiWajib !== undefined &&
+    !enc.tindakan.includes(kasus.stabilisasiWajib)
 
   /* -- Terapi: cakupan obat benar − penalti obat di luar tatalaksana ----------- */
   // Jebakan alergi: bila pasien membawa alergi kelas yang dijebak kasus, standar
@@ -764,6 +768,9 @@ export function nilaiEncounter(
   // antibiotikTanpaIndikasi (sama-sama stewardship/kehati-hatian diagnostik,
   // bukan cedera langsung pasien).
   if (konfirmasiTakTerpenuhi) capGrade.push(69)
+  // Melewatkan stabilisasi berisiko selama transport meski arah rujukan benar;
+  // cap tier C, setara kelalaian konfirmasi klinis penting, bukan cowboy/cedera.
+  if (stabilisasiTerlewat) capGrade.push(69)
   // CODEX audit (2026-07-12, temuan #13B): firewall alergi yg tertrigger
   // (resep diblokir sebelum sampai pasien) dulu NOL konsekuensi grade/skor —
   // murni badge UI (LembarPeriksa.tsx). Cap lebih ringan drpd obatBerbahaya
@@ -796,6 +803,7 @@ export function nilaiEncounter(
     obatBerbahaya: obatBerbahaya > 0,
     firewallTerpicu: enc.firewallTerpicu > 0,
     konfirmasiTakTerpenuhi,
+    stabilisasiTerlewat,
     labTakRelevan,
     ...(sbarSkor !== undefined ? { sbarSkor } : {}),
     grade,

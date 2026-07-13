@@ -216,6 +216,12 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     tally['igdKodeBiruTerjadi'] = 0
     tandaiMigrasi('igdKodeBiruTerjadi')
   }
+  for (const kunci of ['sumSkorProses', 'stabilisasiTerlewat'] as const) {
+    if (tally[kunci] === undefined) {
+      tally[kunci] = 0
+      tandaiMigrasi(kunci)
+    }
+  }
   if (tallyTermigrasi.length > 0) st['tallyTermigrasi'] = tallyTermigrasi
   // Migrasi-lite M4: gudang & buku kas untuk save pra-ekonomi. Stok kosong =
   // tidak dilacak (gerbang stok lolos); backfill penuh dilakukan bila pack ada.
@@ -282,9 +288,9 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // — pengecekan di bawah ini menjamin SEMUA kunci SkorTally ada sbg angka
   // finite ≥0, bukan cuma yang kebetulan hadir di objek.
   const KUNCI_TALLY = [
-    'totalPasien', 'diagnosisBenar', 'tegakBenar', 'tegakSalah', 'suspekBenar', 'suspekSalah',
+    'totalPasien', 'diagnosisBenar', 'sumSkorProses', 'tegakBenar', 'tegakSalah', 'suspekBenar', 'suspekSalah',
     'rujukanTotal', 'rujukanNonSpesialistik', 'rujukanTepat', 'rujukanDitolak', 'cowboy',
-    'antibiotikTanpaIndikasi', 'obatBerbahaya', 'firewallTerpicu', 'labTakRelevan', 'miTepat', 'miTotal', 'kunjunganBerhasil',
+    'antibiotikTanpaIndikasi', 'obatBerbahaya', 'firewallTerpicu', 'stabilisasiTerlewat', 'labTakRelevan', 'miTepat', 'miTotal', 'kunjunganBerhasil',
     'kunjunganTotal', 'kunjunganDiusir', 'apathy', 'autoBermasalah', 'posyanduSesi',
     'prolanisSesi', 'klbTuntas', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'igdKodeBiruTerjadi', 'rmLengkap',
     'teguranDinkes', 'hariKelelahan', 'karmaTerjadi', 'karmaDicegah',

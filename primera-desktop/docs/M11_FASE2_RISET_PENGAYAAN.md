@@ -1,6 +1,8 @@
 # M11 Fase-2 — Hasil Riset Pengayaan (mutiaraEbm + catatanRealita)
 
-**Status: DOKUMEN KEPUTUSAN — belum diterapkan ke kode.** Dihasilkan oleh workflow multi-agen 
+> **ERRATUM 2026-07-13:** dokumen ini adalah arsip kandidat riset 2026-07-10, bukan sumber implementasi terkini untuk lapisan realita FKTP. Adjudikasi 67/67 terbaru ada di [`M11_REALITA_FKTP_AUDIT_2026.md`](./M11_REALITA_FKTP_AUDIT_2026.md). Fornas yang berlaku saat audit adalah **KMK HK.01.07/MENKES/1199/2025**; **KMK 730/2025 bukan Fornas**, melainkan nilai klaim harga obat Program Rujuk Balik. Jangan menyalin klaim stok, tingkat fasilitas, atau angka SDM dari dokumen lama ini tanpa verifikasi ulang.
+
+**Status: ARSIP RISET KANDIDAT — superseded untuk keputusan item 7.** Dihasilkan oleh workflow multi-agen
 `m11-pengayaan-riset` (7 finder per-file kasus → verifikasi WebSearch per-kandidat vs guideline 
 WHO/Kemenkes/PPK/Fornas + konteks FKTP nyata Indonesia). 118 kandidat, 63/67 kasus tercakup.
 

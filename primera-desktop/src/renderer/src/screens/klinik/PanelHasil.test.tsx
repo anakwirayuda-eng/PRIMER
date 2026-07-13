@@ -26,6 +26,7 @@ const HASIL_DASAR: PenilaianEncounter = {
   obatBerbahaya: false,
   firewallTerpicu: false,
   konfirmasiTakTerpenuhi: false,
+  stabilisasiTerlewat: false,
   labTakRelevan: 0,
   grade: 'D',
   clue: 'ISPA viral self-limiting, simtomatik saja.',
@@ -102,6 +103,18 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
       <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
     )
     expect(screen.queryByText(/non-negotiable terlewat/)).not.toBeInTheDocument()
+  })
+
+  it('stabilisasi pra-rujuk terlewat: alasan penurunan grade tampil jelas', () => {
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, stabilisasiTerlewat: true }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+    expect(screen.getByText('Stabilisasi pra-rujuk terlewat')).toBeInTheDocument()
   })
 
   // Q5/C.8 (M10.5, keputusan O-A 2026-07-12): sentilan alergi tanpa gerbang baru.

@@ -46,7 +46,7 @@ const SKOR_KOSONG = {
   total: 0,
   grade: 'D' as const,
   gradeLabel: '—',
-  rincian: { akurasiDiagnosis: 0, rrns: 0, guillotine: 1, iksDesa: 0, kualitasMi: 0, kalibrasi: 0 },
+  rincian: { akurasiDiagnosis: 0, rrns: 0, guillotine: 1, iksDesa: 0, kualitasMi: 0, kalibrasi: 0, prosesKlinis: 0 },
 }
 
 function buatHasil(namaDokter: string, status: HasilVerifikasi['status']): HasilVerifikasi {

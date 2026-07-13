@@ -47,6 +47,9 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
       ? { teks: 'Disposisi tepat', kelas: 'chip--daun' }
       : { teks: 'Disposisi keliru', kelas: 'chip--merah' },
   ]
+  if (hasil.stabilisasiTerlewat) {
+    bendera.push({ teks: 'Stabilisasi pra-rujuk terlewat', kelas: 'chip--merah' })
+  }
   if (hasil.rujukanNonSpesialistik)
     bendera.push({ teks: 'Rujukan non-spesialistik — menggerus RRNS', kelas: 'chip--merah' })
   if (hasil.cowboy)

@@ -351,7 +351,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // ditally persis pola cowboy/antibiotikTanpaIndikasi di atas.
       if (nilai.obatBerbahaya) t.obatBerbahaya += 1
       if (nilai.firewallTerpicu) t.firewallTerpicu += 1
+      if (nilai.stabilisasiTerlewat) t.stabilisasiTerlewat += 1
       t.labTakRelevan += nilai.labTakRelevan
+      t.sumSkorProses +=
+        (nilai.skorAnamnesis + nilai.skorPemeriksaan + nilai.skorTerapi + nilai.skorEdukasi) / 4
 
       // Ekonomi obat (M10 Batch-2, CODEX B.4): kas keluar utk obat terjadi di
       // PENGADAAN (PESAN_OBAT memotong kapitasi + belanjaPengadaan). Dulu
@@ -414,7 +417,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // wajib-rujuk) — hanya sinyal "kuasai" yang digerbang di sini.
       const dex = { ...s.dex }
       const lama = dex[kasus.id] ?? { kasusId: kasus.id, ditangani: 0, benar: 0, bintang: 0, terakhirHari: 0 }
-      const kuasai = nilai.diagnosisBenar && nilai.disposisiTepat && !nilai.konfirmasiTakTerpenuhi
+      const kuasai =
+        nilai.diagnosisBenar &&
+        nilai.disposisiTepat &&
+        !nilai.konfirmasiTakTerpenuhi &&
+        !nilai.stabilisasiTerlewat
       const bintang = kuasai ? Math.min(3, lama.bintang + 1) : Math.max(0, lama.bintang - 1)
       dex[kasus.id] = {
         ...lama,

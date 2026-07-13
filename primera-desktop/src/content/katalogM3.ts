@@ -270,6 +270,7 @@ export const TINDAKAN_M3: Record<string, Tindakan> = {
   insisi_abses: { id: 'insisi_abses', nama: 'Insisi & drainase abses', icd9: '86.04', biaya: 60000 },
   hecting_luka: { id: 'hecting_luka', nama: 'Penjahitan luka (hecting)', icd9: '86.59', biaya: 75000 },
   nebulisasi: { id: 'nebulisasi', nama: 'Nebulisasi bronkodilator', icd9: '93.94', biaya: 40000 },
+  oksigen: { id: 'oksigen', nama: 'Terapi oksigen sesuai target saturasi', icd9: '93.96', biaya: 35000 },
   pasang_infus: { id: 'pasang_infus', nama: 'Pemasangan infus + rehidrasi', icd9: '38.93', biaya: 50000 },
   ekstraksi_kuku: { id: 'ekstraksi_kuku', nama: 'Ekstraksi kuku (cantengan)', icd9: '86.23', biaya: 55000 },
   manuver_epley: { id: 'manuver_epley', nama: 'Manuver reposisi kanalit (Epley)', icd9: '93.99', biaya: 25000 },

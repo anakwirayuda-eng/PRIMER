@@ -33,7 +33,7 @@ Ini adalah **clone git penuh** (bukan symlink/worktree) dari repo utama, di-chec
 `codex-gpt56-experiment`. Sudah diverifikasi SEHAT sebelum diserahkan ke Anda:
 - `npm install` sudah dijalankan (476 package, 0 kerentanan).
 - `npm run typecheck` bersih.
-- `npx vitest run` → **767/767 test lolos**.
+- Baseline saat clone diserahkan: `npx vitest run` → **767/767 test lolos** (status terkini lihat §4).
 
 **Remote git** (`origin`) folder ini menunjuk ke GitHub sungguhan yang sama dengan proyek utama:
 `https://github.com/anakwirayuda-eng/PRIMER.git`. **JANGAN PERNAH push ke branch `master` atau
@@ -254,22 +254,28 @@ git — hanya diunggah user secara manual per sesi) atau minta Dr. Wirayuda ungg
 | M10 | ✅ SELESAI (semua 4 dimensi) | Audit konsistensi pipeline/bridge-UKP-UKM/NPC/UI-layering |
 | M10.5 "Fidelitas Engine & Medis" | ✅ SELESAI, Golden Master ter-tag | Freeze reducer/clinic/scoring, REVISI_ENGINE final di titik itu = 27→28 |
 | M10.6 (post-GM CODEX pass) | ✅ SELESAI PENUH | REVISI_ENGINE 28→29→30 |
-| M11 "EBM Nuance & Enrichment" | 🟡 SEBAGIAN — lihat §5.1 | Fase 1+2 + M11.5 (panduanResmi 58/58) selesai; item 2/3/4/5/6b/7 masih terbuka |
+| M11 "EBM Nuance & Enrichment" | ✅ INTI TERUKUR SELESAI | Fase 1+2, M11.5, process-scoring/stabilisasi, gating anamnesis, dan audit realita FKTP 67/67 selesai; item kreatif 2–6 sengaja ditunda |
 | M12 "Aesthetic Pass" | ⏸️ BELUM MULAI | Sengaja dijadwalkan SETELAH M13 (dibalik 2026-07-12) |
 | M13 "Full-Scale 144/225 Kasus" | ⏸️ BELUM MULAI | Diformalkan, sengaja dijadwalkan SEBELUM M12 tapi SESUDAH Golden Master (sudah lewat) |
 | M14 "Integritas Backend" | ✅ P1 selesai, 14/15 P2 selesai | 2 item P2 sengaja ditunda (§5.7) |
 
-**Total test saat ini: 767/767 hijau, `npm run typecheck` bersih, `npm audit` 0 kerentanan.**
+**Total test saat ini: 785/785 hijau, `npm run typecheck` bersih. Baseline `npm audit` saat clone diserahkan: 0 kerentanan.**
 
 ---
 
 ## 5. PEKERJAAN YANG BELUM SELESAI — INI YANG PALING PENTING UNTUK ANDA
 
-### 5.1 — M11 item 6b: P1.6 (process-scoring) + C.1 (mekanik stabilisasi) — DIDESAIN, BELUM DIKODE
+### 5.1 — M11 item 6b: P1.6 (process-scoring) + C.1 (mekanik stabilisasi) — SELESAI 2026-07-13
 
-Dr. Wirayuda menyetujui KEDUA item ini pada 2026-07-13 ("yes" untuk keduanya). Sesi Claude yang
-menulis dokumen ini SUDAH melakukan riset & desain, TAPI **belum sempat mengimplementasikan
-kode-nya** sebelum eksperimen ini dimulai. Ini prioritas #1 yang disarankan untuk Anda kerjakan.
+Status aktual mengalahkan arsip desain di bawah: formula UKP kini memakai **70% outcome + 30%
+proses**, tally/migrasi save sudah terpasang, dan stabilisasi oksigen pra-rujuk dinilai pada
+`pneumonia_balita` serta `ppok_eksaserbasi`. `mm_gagal_jantung_kongestif` sengaja dikecualikan
+karena SpO₂ 92% tidak memenuhi indikasi oksigen rutin; pengecualian dikunci tes. Cap
+`stabilisasiTerlewat` final = **69 (C)**, Dex mastery ikut digate, `REVISI_ENGINE` final putaran
+ini = **32**, dan hash freeze sudah diperbarui.
+
+<details>
+<summary>Arsip desain awal sebelum implementasi (bukan pekerjaan terbuka)</summary>
 
 **P1.6 — Skor proses klinis (bukan cuma outcome) masuk ke UKP.** Saat ini `hitungSkor()`
 (`scoring.ts`) dimensi UKP 100% berbasis OUTCOME (akurasi diagnosis+kalibrasi+guillotine+
@@ -372,7 +378,18 @@ sekali (`src/content/katalogM3.ts`, `TINDAKAN_M3`).
   tindakan oksigen baru benar-benar muncul & bisa diklik di tab Tindakan (`DeckTerapi.tsx` —
   render generik dari `PACK.tindakan`, harusnya otomatis muncul tanpa perlu ubah UI).
 
-### 5.2 — Celah "jembatan percakapan" anamnesis — DITEMUKAN 2026-07-13, BELUM DIPERBAIKI
+</details>
+
+### 5.2 — Celah "jembatan percakapan" anamnesis — SELESAI 2026-07-13
+
+Implementasi final memakai gate **ringan-plus**: kategori selain `keluhan_utama` baru terbuka
+setelah satu pembuka dijawab, lalu `bukaSetelah` dipakai selektif pada pertanyaan fokus yang
+genuinely perlu prasyarat. Kebocoran Papua pada `keluhanUtama` malaria sudah dihapus. Invariant
+67/67 mengunci pembuka yang kompatibel gender, prasyarat valid/urut, dan netralitas
+`sidikJariPack`; field ini tetap renderer-only dan tidak mengubah skor.
+
+<details>
+<summary>Arsip temuan sebelum perbaikan (bukan pekerjaan terbuka)</summary>
 
 **Temuan (dikonfirmasi ganda: laporan CODEX + audit independen 8-agen Claude, keduanya
 konvergen):**
@@ -443,10 +460,12 @@ keputusan yang SUDAH FINAL dari sesi sebelumnya: model abstraksi-tanpa-dosis (`r
 (`DEEPTHINK_M10_5_SISA.md` §6, ditandai "sudah final, tak perlu ditriangulasi ulang"). Jangan
 buka kembali keputusan itu tanpa alasan baru yang kuat.
 
-### 5.3 — Sisa M11 lain (item 2/3/4/5/6/7) — status per 2026-07-13
+</details>
 
-Dr. Wirayuda bilang sisa item ini "bisa dimasukkan ke tahap M13 nantinya" — artinya BOLEH
-ditunda, tapi tetap dicatat di sini supaya tidak hilang:
+### 5.3 — M11 item 7 selesai; item kreatif 2/3/4/5/6 ditunda terukur
+
+Yang tersisa bukan bug atau acceptance criterion terukur. Dr. Wirayuda bilang item ini "bisa
+dimasukkan ke tahap M13 nantinya"; jangan mengarang desainnya tanpa keputusan kreatif baru:
 
 - **Item 2 — Variasi storyline.** Belum dispesifikasi user sama sekali. JANGAN mereka-reka arah
   sendiri — ini butuh input kreatif Dr. Wirayuda dulu.
@@ -463,17 +482,12 @@ ditunda, tapi tetap dicatat di sini supaya tidak hilang:
   kunjungan-rumah/kader/posyandu/prolanis. Belum ada desain konkret.
 - **Item 6 — Ember terbuka.** "Variasi-variasi lain yang belum terpikirkan" — sengaja tak
   dianggap daftar tertutup.
-- **Item 7 — Lapisan kejujuran pedagogis "idealis vs realita FKTP".** Contoh konkret Dr.
-  Wirayuda: colchicine untuk gout akut benar secara EBM tapi jarang tersedia di Puskesmas nyata
-  Indonesia — game sengaja idealis (semua obat/alat tersedia) demi mengajarkan breadth EBM, tapi
-  perlu FITUR yang membuat pemain sadar gap ini tanpa mengganggu gameplay. **INSTRUKSI EKSPLISIT
-  Dr. Wirayuda yang WAJIB diikuti PERSIS, jangan dilewati**: sebelum menulis SATU KATA pun
-  konten untuk item ini, WAJIB lakukan riset web mendalam dulu soal realita Puskesmas Indonesia
-  masa kini (gap formularium/Fornas-vs-stok-nyata, friksi birokrasi rujukan/SISRUTE, realita
-  administratif BPJS/JKN, kekurangan staf/alat, kendala akses pedesaan) — JANGAN mengarang dari
-  asumsi/textbook generik/klaim usang. Ini tugas riset-lalu-konten, bukan tugas menulis-kreatif
-  murni. `mutiaraEbm`/`catatanRealita`/`panduanResmi` (field non-skor yang sudah ada) kemungkinan
-  jadi tempat tinggal alami untuk konten ini setelah diriset.
+- **Item 7 — Lapisan kejujuran pedagogis "idealis vs realita FKTP": SELESAI.** Audit sumber
+  primer 67/67 ada di `docs/M11_REALITA_FKTP_AUDIT_2026.md`: 14 catatan lama direvisi, 5 gap
+  bernilai tinggi ditambah, 1 kasus cukup di `mutiaraEbm`, dan 47 sengaja tidak diberi panel
+  agar debrief tidak overload. Fornas yang benar adalah KMK 1199/2025; KMK 730/2025 dikoreksi
+  sebagai dokumen nilai klaim PRB, bukan Fornas. Semua perubahan display-only dan dilindungi
+  invariant panjang, cakupan, keselamatan, skor, serta fingerprint.
 
 ### 5.4 — M13: ekspansi konten skala penuh (144/225 kasus) — DIFORMALKAN, BELUM MULAI
 
@@ -616,7 +630,7 @@ berkali-kali menyelamatkan proyek ini dari kesalahan):
    hijau. Ini pola yang dipakai KONSISTEN di seluruh riwayat proyek ini, jangan menyimpang.
 2. **Full suite + typecheck bersih SEBELUM menganggap apa pun selesai:**
    ```
-   npx vitest run          # harus 767/767 (atau lebih, kalau Anda menambah test)
+   npx vitest run          # harus 785/785 (atau lebih, kalau Anda menambah test)
    npm run typecheck        # tsc --noEmit, harus nol error
    ```
 3. **Kalau menyentuh salah satu 16 file frozen** → unfreeze-dance PENUH (§3), tanpa kecuali.
@@ -713,9 +727,11 @@ alasan baru yang konkret.)*
   meski sudah ada sejak lama; IGD post-ROSC dead-end; freeze cakupan kurang; CRLF/LF false-fail
   risk) — SEMUA 20 (9 gated fix utama + 11 lanjutan/leftover) sudah dieksekusi, REVISI_ENGINE
   28→29→30. **Tag `golden-master-m10.5` TIDAK PERNAH dipindah lagi setelah ini** (lihat §3 —
-  tag kini stale, REVISI_ENGINE aktual=30 adalah sumber kebenaran, bukan nama tag).
-- **M11**: lihat §5.1-5.3 untuk status detail — Fase 1 (mutiaraEbm/catatanRealita) + M11.5
-  (panduanResmi, lapisan debrief ke-3, 58/58 kasus selesai 2026-07-13) SELESAI; sisanya §5.1-5.3.
+  M10.6 berakhir di 30; setelah implementasi M11 terukur, REVISI_ENGINE aktual=32 adalah sumber
+  kebenaran, bukan nama tag).
+- **M11**: inti yang terukur SELESAI — Fase 1/2, M11.5, process-scoring/stabilisasi,
+  gating anamnesis ringan-plus, dan audit realita FKTP 67/67. Item kreatif 2–6 tetap tercatat
+  sebagai pengayaan opsional yang perlu scope/desain baru, bukan blocker M13.
 - **M14**: 25 temuan CODEX soal integritas save/autosave/telemetry/verifier/a11y. P1 (10 item,
   paling serius — skor pasca-tamat sebenarnya belum terkunci, race condition save, dsb) SELESAI.
   14/15 P2 selesai, 2 sengaja ditunda (§5.7).

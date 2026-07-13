@@ -97,9 +97,9 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
     inbox: [],
     jadwal: [],
     tally: {
-      totalPasien: 0, diagnosisBenar: 0, tegakBenar: 0, tegakSalah: 0, suspekBenar: 0, suspekSalah: 0,
+      totalPasien: 0, diagnosisBenar: 0, sumSkorProses: 0, tegakBenar: 0, tegakSalah: 0, suspekBenar: 0, suspekSalah: 0,
       rujukanTotal: 0, rujukanNonSpesialistik: 0, rujukanTepat: 0, rujukanDitolak: 0, cowboy: 0,
-      antibiotikTanpaIndikasi: 0, obatBerbahaya: 0, firewallTerpicu: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
+      antibiotikTanpaIndikasi: 0, obatBerbahaya: 0, firewallTerpicu: 0, stabilisasiTerlewat: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
       kunjunganTotal: 0, kunjunganDiusir: 0, apathy: 0, autoBermasalah: 0, posyanduSesi: 0,
       prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdSalahDisposisi: 0, igdMeninggal: 0, igdKodeBiruTerjadi: 0, rmLengkap: 0, teguranDinkes: 0, hariKelelahan: 0, karmaTerjadi: 0, karmaDicegah: 0,
     },
@@ -273,9 +273,9 @@ describe('DeepThink #5 — ghosting antrian pagi: pasien diskip+bermasalah kini 
 
 function tallyKosong(override?: Partial<SkorTally>): SkorTally {
   return {
-    totalPasien: 0, diagnosisBenar: 0, tegakBenar: 0, tegakSalah: 0, suspekBenar: 0, suspekSalah: 0,
+    totalPasien: 0, diagnosisBenar: 0, sumSkorProses: 0, tegakBenar: 0, tegakSalah: 0, suspekBenar: 0, suspekSalah: 0,
     rujukanTotal: 0, rujukanNonSpesialistik: 0, rujukanTepat: 0, rujukanDitolak: 0, cowboy: 0,
-    antibiotikTanpaIndikasi: 0, obatBerbahaya: 0, firewallTerpicu: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
+    antibiotikTanpaIndikasi: 0, obatBerbahaya: 0, firewallTerpicu: 0, stabilisasiTerlewat: 0, labTakRelevan: 0, miTepat: 0, miTotal: 0, kunjunganBerhasil: 0,
     kunjunganTotal: 0, kunjunganDiusir: 0, apathy: 0, autoBermasalah: 0, posyanduSesi: 0,
     prolanisSesi: 0, klbTuntas: 0, igdStabil: 0, igdSalahDisposisi: 0, igdMeninggal: 0, igdKodeBiruTerjadi: 0, rmLengkap: 0,
     teguranDinkes: 0, hariKelelahan: 0, karmaTerjadi: 0, karmaDicegah: 0,
