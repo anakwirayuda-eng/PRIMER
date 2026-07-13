@@ -106,6 +106,24 @@ describe('<DeckTerapi /> — aria-pressed chip edukasi & tindakan (CODEX audit U
   })
 })
 
+describe('<DeckTerapi /> — fokus kembali ke kotak cari sesudah tambah obat (bugfix 2026-07-13, "kena frozen lagi eh")', () => {
+  it('klik "+ Resep" memindahkan fokus ke input "Cari obat", bukan hilang ke <body>', () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const enc = buatEncounter(pasien)
+    const contohObat = Object.values(PACK.obat)[0]!
+
+    render(<DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />)
+
+    fireEvent.click(screen.getByRole('button', { name: `Tambah ${contohObat.nama} ke resep` }))
+
+    // Tombol ini akan `disabled` begitu enc.resep diperbarui (dispatch nyata di
+    // game asli) — disable memaksa fokus jatuh ke <body> (perilaku browser
+    // standar), dan keystroke lanjutan di "Cari obat" hilang tanpa jejak.
+    // Fokus HARUS sudah dipindah ke kotak cari SEBELUM itu terjadi.
+    expect(document.activeElement).toBe(screen.getByLabelText('Cari obat'))
+  })
+})
+
 describe('<DeckTerapi /> — reduced-motion menggantikan scrollIntoView smooth ke auto (CODEX audit UI/UX 2026-07-10, Polish#2a)', () => {
   beforeEach(() => {
     Element.prototype.scrollIntoView = vi.fn()

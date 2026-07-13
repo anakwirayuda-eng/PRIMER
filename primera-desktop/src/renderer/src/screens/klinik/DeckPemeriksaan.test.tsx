@@ -5,7 +5,7 @@
  * tak terbedakan lewat navigasi per-kontrol (screen reader/scan cepat).
  */
 import { describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { DeckPemeriksaan } from './DeckPemeriksaan'
 import { buatEncounter } from '@engine/clinic'
 import { buatPasienDariKasus } from '@engine/director'
@@ -29,5 +29,22 @@ describe('<DeckPemeriksaan /> — aria-label tombol Pesan lab bernama (#15)', ()
     render(<DeckPemeriksaan enc={enc} dispatch={() => {}} />)
 
     expect(screen.getByRole('button', { name: `${contohLab.nama} sudah dipesan` })).toBeInTheDocument()
+  })
+})
+
+describe('<DeckPemeriksaan /> — fokus kembali ke kotak "Cari lab" sesudah pesan lab (bugfix 2026-07-13, sekelas "kena frozen lagi eh")', () => {
+  it('klik "Pesan" memindahkan fokus ke input "Cari lab", bukan hilang ke <body>', () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const enc = buatEncounter(pasien)
+    const contohLab = Object.values(PACK.lab)[0]!
+
+    render(<DeckPemeriksaan enc={enc} dispatch={() => {}} />)
+
+    fireEvent.click(screen.getByRole('button', { name: `Pesan ${contohLab.nama}` }))
+
+    // Sama seperti "+ Resep" di DeckTerapi: tombol ini `disabled` begitu
+    // enc.labDipesan diperbarui (dispatch nyata) — disable memaksa fokus ke
+    // <body>. Fokus HARUS sudah dipindah ke kotak cari SEBELUM itu terjadi.
+    expect(document.activeElement).toBe(screen.getByLabelText('Cari lab'))
   })
 })

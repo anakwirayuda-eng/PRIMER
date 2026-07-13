@@ -7,7 +7,7 @@
  *             meng-auto-buka laci; status laci diingat selama sesi).
  */
 
-import { useEffect, useMemo, useState, type KeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { PACK } from '@content/index'
 import { useGame } from '../../store'
 import { useMotionDikurangi } from '../../useMotionDikurangi'
@@ -68,6 +68,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
       ?.scrollIntoView({ block: 'center', behavior: kurangiGerak ? 'auto' : 'smooth' })
   }, [tab, sorotObat, kurangiGerak])
   const [cari, setCari] = useState('')
+  const cariRef = useRef<HTMLInputElement>(null)
   const [cariEduk, setCariEduk] = useState('')
   const [, setLaciTick] = useState(0) // re-render saat laciSesi berubah
   // M4.18 — stok gudang tampil di formularium; habis = tombol resep terkunci.
@@ -189,6 +190,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
           <div className="klinik-deck__grup" role="tabpanel" id="terapi-panel-resep" aria-labelledby="terapi-tab-resep">
             <div className="judul-seksi">Formularium Puskesmas</div>
             <input
+              ref={cariRef}
               className="klinik-cari"
               type="text"
               value={cari}
@@ -227,7 +229,18 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                       <span className="mono teks-xs teks-lembut">{formatRupiah(o.hargaJual)}</span>
                       <button
                         className={`tombol klinik-obat__tambah${disorot ? ' klinik-sorot-tutorial' : ''}`}
-                        onClick={() => dispatch({ type: 'TAMBAH_OBAT', obatId: o.id })}
+                        onClick={() => {
+                          dispatch({ type: 'TAMBAH_OBAT', obatId: o.id })
+                          // Bugfix (2026-07-13, "kena frozen lagi eh"): tombol ini
+                          // langsung disabled sesudah TAMBAH_OBAT (diresepkan jadi
+                          // true) — disable memaksa fokus jatuh ke <body> (perilaku
+                          // browser standar utk kontrol yg kehilangan fokusable-nya),
+                          // dan keystroke berikutnya di "Cari obat" pun hilang tanpa
+                          // jejak, terasa spt input beku. Kembalikan fokus ke kotak
+                          // cari supaya pemain bisa langsung lanjut mengetik obat
+                          // berikutnya tanpa klik ulang.
+                          cariRef.current?.focus()
+                        }}
                         disabled={diresepkan || habis || dikunci}
                         title={
                           diresepkan

@@ -3,7 +3,7 @@
  * form laboratorium (biaya membakar kapitasi; sebagian hasil datang besok).
  */
 
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { PACK } from '@content/index'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
@@ -27,6 +27,7 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
   // DeepThink (2026-07-04): daftar lab dulu satu-satunya tanpa pencarian di
   // antara 3 daftar pilihan klinik (Obat/Edukasi sudah punya) — pola sama.
   const [cariLab, setCariLab] = useState('')
+  const cariLabRef = useRef<HTMLInputElement>(null)
   const daftarLab = useMemo(() => {
     const q = cariLab.trim()
     return Object.values(PACK.lab)
@@ -100,6 +101,7 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
         <div className="klinik-deck__grup">
           <div className="judul-seksi">Permintaan Laboratorium</div>
           <input
+            ref={cariLabRef}
             className="klinik-cari"
             type="text"
             value={cariLab}
@@ -123,7 +125,14 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
                   <span className="mono teks-xs teks-lembut">{formatRupiah(item.biaya)}</span>
                   <button
                     className="tombol klinik-lab__pesan"
-                    onClick={() => dispatch({ type: 'PESAN_LAB', labId: item.id })}
+                    onClick={() => {
+                      dispatch({ type: 'PESAN_LAB', labId: item.id })
+                      // Bugfix (2026-07-13): sama seperti "+ Resep" di DeckTerapi
+                      // ("kena frozen lagi eh") — tombol ini disabled sesudah
+                      // dipesan, memaksa fokus jatuh ke <body>. Kembalikan ke
+                      // kotak cari supaya pemain bisa lanjut mengetik lab berikutnya.
+                      cariLabRef.current?.focus()
+                    }}
                     disabled={dipesan || tutorialAktif}
                     title={
                       dipesan
