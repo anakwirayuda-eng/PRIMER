@@ -148,3 +148,30 @@ tidak berubah; verifikasi dokumen dilakukan lagi sebelum commit checkpoint.
 - Nayla (`desaD.ts:641`, bayi 3 bln) & Dimas (`desaE.ts:699`, 7 th) nyata;
   mismatch karma mereka terdokumentasi di `M10_AUDIT_BRIEF_R2.md` &
   `CODEX_AUDIT_DOSSIER.md`.
+
+## Implementasi M13-0A (2026-07-14)
+
+- Blueprint kanonik enam entitas diimplementasikan sebagai manifest authoring
+  terpisah dari draw/scoring runtime: 144 item katalog FKTP, 22 item klinis
+  tambahan (termasuk seluruh 17 kasus level 3A/3B/2), 12 objective PIS-PK,
+  67 archetype klinik, 5 archetype IGD, dan 26 skenario UKM.
+- **98** tetap angka raw-link kosong (`144-46`). Setelah adjudikasi semantik,
+  hanya **45/144** item punya archetype klinik yang sah untuk sertifikasi;
+  canonical certification gap = **99**. Selisih satu adalah
+  `pneumonia_balita`: archetype berat 3B tetap berbagi concept pneumonia,
+  tetapi mengkredit item klinis 3B sendiri dan secara eksplisit TIDAK
+  menyertifikasi `fktp144:pneumonia_bacterial` 4A.
+- Baris katalog yang memuat diagnosis berbeda tidak dipipihkan menjadi alias:
+  antara lain Hiperurisemia/Gout, disentri basiler/amuba, gastroenteritis-
+  kolera-giardiasis, ulkus aftosa/herpes, duh genital gonore/non-gonore,
+  furunkel/karbunkel, erupsi obat eksantematosa/fixed, dan laseratum/punctum.
+  Variasi spektrum/stadium/derajat yang masih satu konsep tetap satu concept.
+- Mastery dikunci tiga tingkat: dijumpai boleh agregat via concept;
+  tersertifikasi hanya dari edge `credits` klinik + diagnosis/disposisi benar;
+  dikuasai tetap per-archetype. IGD baseline punya concept tetapi nol credit
+  diagnostik karena flow-nya belum punya keputusan diagnosis/Dex.
+- Semua binding sumber sengaja berstatus `pending`: ini source placeholder
+  M13-0A, BUKAN klaim bahwa M13-0B sudah selesai.
+- Verifikasi: 12/12 test invariant M13-0A, full suite **72 file / 797 test**,
+  typecheck, dan production build lulus. `PACK`, `REVISI_ENGINE`,
+  `CONTENT_RELEASE`, serta `sidikJariPack` tidak diubah.

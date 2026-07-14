@@ -25,6 +25,7 @@ import { KASUS_KIA_JIWA } from './kasus/kasusKiaJiwa'
 import { KASUS_IGD } from './igd'
 import { SKDI144 } from './skdi144'
 import { NAMA_WARGA } from './nama'
+import { buildCurriculumBlueprint, validasiCurriculumBlueprint } from './curriculum'
 
 function byId<T extends { id: string }>(arr: T[]): Record<string, T> {
   const out: Record<string, T> = {}
@@ -78,12 +79,18 @@ export const PACK: ContentPack = {
   namaWarga: NAMA_WARGA,
 }
 
+/** M13-0A: manifest authoring kanonik; belum dipakai draw/scoring runtime. */
+export const CURRICULUM_BLUEPRINT = buildCurriculumBlueprint(PACK)
+
 // Fail-fast saat dev: drift id konten ketahuan sebelum sampai ke pemain (CODEX
 // P2 — sekadar console.warn tidak "fail-fast" sungguhan; lempar error di dev
 // supaya penulis konten tak bisa mengabaikannya). Test wajib di pack.test.ts
 // menjaring hal yang sama di CI terlepas dari mode DEV.
 if (import.meta.env?.DEV) {
-  const masalah = validasiPack(PACK)
+  const masalah = [
+    ...validasiPack(PACK),
+    ...validasiCurriculumBlueprint(CURRICULUM_BLUEPRINT, PACK),
+  ]
   if (masalah.length > 0) {
     throw new Error(`[PACK] ${masalah.length} masalah konten:\n${masalah.join('\n')}`)
   }
