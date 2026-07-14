@@ -1,0 +1,155 @@
+import type { SourceLifecycleStatus } from '../types'
+
+export interface M13AuthoringSource {
+  id: string
+  issuer: string
+  title: string
+  publicationDate: string
+  officialUrl?: string
+  localLocator?: string
+  population: string
+  facilityScope: string
+  limitation?: string
+  retrievedAt: string
+  lifecycleStatus: SourceLifecycleStatus
+  canonicalRegistryId?: string
+}
+
+/** Sources verified for the M13-1a draft review packet on 2026-07-15. */
+const M13_1A_SOURCE_DRAFTS: Omit<M13AuthoringSource, 'retrievedAt' | 'lifecycleStatus'>[] = [
+  {
+    id: 'skdi:kki-2012',
+    issuer: 'Konsil Kedokteran Indonesia',
+    title: 'Standar Kompetensi Dokter Indonesia 2012',
+    publicationDate: '2012-01-01',
+    localLocator: '../skdi_SKDI_2012.json',
+    population: 'Pendidikan dokter Indonesia; seluruh populasi klinis sesuai butir penyakit/keterampilan',
+    facilityScope: 'Kompetensi lulusan dokter dan batas tata laksana awal/rujukan',
+  },
+  {
+    id: 'who:imci-chart-booklet-2014',
+    issuer: 'World Health Organization',
+    title: 'Integrated Management of Childhood Illness - Chart Booklet',
+    publicationDate: '2014-03-01',
+    officialUrl: 'https://www.who.int/docs/default-source/mca-documents/imci-chart-booklet.pdf',
+    population: 'Anak sakit usia 2 bulan sampai 5 tahun, termasuk bayi 3 bulan dengan diare',
+    facilityScope: 'Fasilitas kesehatan tingkat pertama dan jejaring rujukan',
+  },
+  {
+    id: 'kemenkes:asma-fktp-2015',
+    issuer: 'Kementerian Kesehatan Republik Indonesia',
+    title: 'Pedoman Program Penanggulangan Asma di Fasilitas Pelayanan Kesehatan Tingkat Pertama',
+    publicationDate: '2015-01-01',
+    officialUrl: 'https://repository.kemkes.go.id/book/1251',
+    population: 'Anak dan dewasa dengan asma; bagian eksaserbasi akut dibedakan menurut usia/derajat',
+    facilityScope: 'FKTP',
+    limitation: 'Pedoman program 2015 dibaca bersama rekomendasi WHO 2026 dan Fornas aktif.',
+  },
+  {
+    id: 'who:childhood-asthma-2026',
+    issuer: 'World Health Organization',
+    title: 'WHO consolidated guidelines for the management of common childhood illness: asthma and bronchiolitis',
+    publicationDate: '2026-05-07',
+    officialUrl: 'https://www.who.int/publications/i/item/9789240122680',
+    population: 'Anak dan remaja dengan eksaserbasi asma; rekomendasi ipratropium mencakup kasus berat',
+    facilityScope: 'Fasilitas kesehatan, termasuk first-level care yang mampu menilai dan memantau respons',
+  },
+  {
+    id: 'fornas:kmk-1199-2025',
+    issuer: 'Kementerian Kesehatan Republik Indonesia',
+    title: 'Formularium Nasional',
+    publicationDate: '2025-12-31',
+    officialUrl: 'https://e-fornas.kemkes.go.id/api/download?column=pustaka&filename=KMK%20No.%20HK.01.07-MENKES-1199-2025%20ttg%20Formularium%20Nasional.pdf',
+    localLocator: 'docs/references/fornas1199/fornas1199_fulltext.txt',
+    canonicalRegistryId: 'fornas:kmk-1199-2025',
+    population: 'Semua populasi sesuai restriksi tiap entri obat',
+    facilityScope: 'Fasilitas JKN; kolom FPKTP/FPKTL dan restriksi harus dibaca per sediaan',
+  },
+  {
+    id: 'aao-hns:acute-otitis-externa-2014',
+    issuer: 'American Academy of Otolaryngology-Head and Neck Surgery Foundation',
+    title: 'Clinical Practice Guideline: Acute Otitis Externa',
+    publicationDate: '2014-02-03',
+    officialUrl: 'https://www.entnet.org/quality-practice/quality-products/clinical-practice-guidelines/aoe/',
+    population: 'Pasien usia >=2 tahun dengan otitis eksterna akut difus; draf dibatasi remaja/dewasa imunokompeten',
+    facilityScope: 'Layanan primer dan spesialistik',
+    limitation: 'Pedoman non-Indonesia tahun 2014; dipakai untuk prinsip terapi topikal, faktor pengubah, dan reassessment 48-72 jam, bukan menggantikan PPK/Fornas lokal.',
+  },
+  {
+    id: 'dailymed:acetic-acid-otic-2-2025',
+    issuer: 'U.S. National Library of Medicine / FDA labeling',
+    title: 'Acetic Acid Otic Solution USP, 2%',
+    publicationDate: '2025-02-10',
+    officialUrl: 'https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=f9b4d18b-25f3-604f-e053-6394a90a5531&type=display',
+    population: 'Pasien dengan infeksi superfisial liang telinga dan membran timpani utuh',
+    facilityScope: 'Label produk pembanding; bukan formularium atau protokol Indonesia',
+    limitation: 'Dipakai hanya untuk menguji kewajaran dosis dan kontraindikasi perforasi; produk serta durasi lokal wajib diadjudikasi dokter.',
+  },
+  {
+    id: 'pnpk:dm-tipe2-dewasa-302-2026',
+    issuer: 'Kementerian Kesehatan Republik Indonesia',
+    title: 'PNPK Tata Laksana Diabetes Melitus Tipe 2 Dewasa',
+    publicationDate: '2026-04-17',
+    officialUrl: 'https://keslan.kemkes.go.id/unduhan/fileunduhan1777518085_672976.pdf',
+    localLocator: 'docs/references/pnpk/dm-tipe2-dewasa-2026/fulltext.txt',
+    canonicalRegistryId: 'pnpk:dm-tipe2-dewasa-302-2026',
+    population: 'Dewasa dengan diabetes melitus tipe 2 dan hipoglikemia terkait terapi',
+    facilityScope: 'Lintas tingkat fasilitas; memuat tata laksana dan kriteria rujukan FKTP',
+  },
+  {
+    id: 'ppk:kmk-1186-2022',
+    issuer: 'Kementerian Kesehatan Republik Indonesia',
+    title: 'Panduan Praktik Klinis bagi Dokter di Fasilitas Pelayanan Kesehatan Tingkat Pertama',
+    publicationDate: '2022-07-13',
+    localLocator: 'docs/references/ppk1186/ppk1186_fulltext.txt',
+    population: 'Pasien yang dilayani dokter di FKTP',
+    facilityScope: 'FKTP',
+    limitation: 'Tautan PDF langsung JDIH yang pernah dipakai kini 404; artefak lokal harus dibaca bersama perubahan KMK 1936/2022 dan pedoman penyakit yang lebih baru.',
+  },
+  {
+    id: 'pnpk:trauma-132-2017',
+    issuer: 'Kementerian Kesehatan Republik Indonesia',
+    title: 'PNPK Tata Laksana Trauma',
+    publicationDate: '2017-04-04',
+    officialUrl: 'https://kemkes.go.id/id/media/list/pedoman/pedoman-nasional-pelayanan-kedokteran-pnpk/pnpk-2017',
+    localLocator: 'docs/references/pnpk/trauma/fulltext.txt',
+    population: 'Pasien trauma anak dan dewasa',
+    facilityScope: 'Pra-rumah sakit, Puskesmas/RS D, dan pusat trauma berjenjang',
+    limitation: 'Pedoman lintas fasilitas; dosis antibiotik lokal harus mengikuti protokol jejaring dan stok.',
+  },
+  {
+    id: 'pnpk:ska-675-2019',
+    issuer: 'Kementerian Kesehatan Republik Indonesia',
+    title: 'PNPK Tata Laksana Sindroma Koroner Akut',
+    publicationDate: '2019-10-17',
+    officialUrl: 'https://kemkes.go.id/id/media/list/pedoman/pedoman-nasional-pelayanan-kedokteran-pnpk/pnpk-2019',
+    localLocator: 'docs/references/pnpk/sindroma-koroner-akut/fulltext.txt',
+    population: 'Dewasa dengan dugaan sindrom koroner akut',
+    facilityScope: 'Kontak medis pertama sampai layanan reperfusi berjenjang',
+    limitation: 'Draf sengaja memakai SpO2 88% agar indikasi oksigen tidak bergantung pada ambang lama pedoman 2019.',
+  },
+  {
+    id: 'who:tobacco-cessation-2024',
+    issuer: 'World Health Organization',
+    title: 'WHO clinical treatment guideline for tobacco cessation in adults',
+    publicationDate: '2024-07-02',
+    officialUrl: 'https://www.who.int/publications/b/74755',
+    population: 'Orang dewasa pengguna tembakau, termasuk pengguna dengan ketergantungan dan pemicu pekerjaan',
+    facilityScope: 'Layanan klinis dan komunitas',
+  },
+  {
+    id: 'kemenkes:pis-pk-monitoring-2017',
+    issuer: 'Kementerian Kesehatan Republik Indonesia',
+    title: 'Pedoman Monitoring dan Evaluasi Pelaksanaan Program Indonesia Sehat dengan Pendekatan Keluarga',
+    publicationDate: '2017-01-01',
+    officialUrl: 'https://repository.kemkes.go.id/book/758',
+    population: 'Keluarga sasaran PIS-PK',
+    facilityScope: 'Puskesmas dan wilayah kerja; indikator keluarga tidak merokok',
+  },
+]
+
+export const M13_1A_SOURCES: M13AuthoringSource[] = M13_1A_SOURCE_DRAFTS.map((source) => ({
+  ...source,
+  retrievedAt: '2026-07-15',
+  lifecycleStatus: source.limitation ? 'active_with_limitation' : 'active',
+}))

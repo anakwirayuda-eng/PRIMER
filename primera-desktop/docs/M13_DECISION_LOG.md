@@ -294,3 +294,52 @@ tidak berubah; verifikasi dokumen dilakukan lagi sebelum commit checkpoint.
   Installer validasi berukuran 102.678.168 byte; SHA-256
   `469e382cb1caa1b5fa80bd9ddc2f21ff63cc5ec952795840ec517b5d958736ac`.
 - **Status milestone: exit terpenuhi; M13-1a belum dimulai.**
+
+## M13-1a authoring checkpoint - menunggu physician review (2026-07-15)
+
+- Draf authoring selesai untuk 6 poli + 1 IGD + 1 UKM: Nayla (diare bayi
+  dehidrasi berat), Dimas (eksaserbasi asma berat anak), hipoglikemia ringan,
+  benda asing hidung anak, otitis eksterna ringan, fraktur terbuka tibia,
+  IGD STEMI hipoksemik, dan kunjungan Gunawan K2 untuk relapse prevention.
+- Kandidat epistaksis awal dibatalkan setelah audit menemukan kasus epistaksis
+  sudah aktif. Penggantinya benda asing hidung menutup gap kurikulum nyata.
+- Sumber pediatrik dipisahkan eksplisit: WHO IMCI untuk Nayla; Kemenkes Asma
+  FKTP + WHO Childhood Asthma 2026 untuk Dimas. Otitis ditriangulasi antara
+  PPK lokal, Fornas, AAO-HNSF, dan label produk pembanding; perbedaan pilihan
+  agen tidak dinormalisasi diam-diam dan menjadi keputusan dokter.
+- Delapan `ContentReviewRecord` mengikat review envelope kanonik dengan
+  SHA-256: encounter, katalog/ICD, topology, policy mode/release, evidence,
+  metadata sumber, rewire, dan pertanyaan keputusan dokter. Daftar sumber
+  tiap record diturunkan dari evidence, bukan dipelihara manual. Semua status
+  `awaiting_physician_review`, semua evidence `pending`, dan tidak ada
+  `PhysicianSignoff` buatan.
+- Draf tetap di `src/content/curriculum/m13_1a/` dan tidak diimpor oleh
+  `src/content/index.ts`. `PACK`, `CONTENT_RELEASE`, pool Karier/Ujian, karma
+  Nayla/Dimas, serta dua exception mismatch lama tidak berubah.
+- Seluruh calon archetype/skenario berpolicy Karier-only dan release usulan
+  belum dikenal build aktif. Tiga item FKTP baru diproyeksikan menurunkan gap
+  sertifikasi 99 -> 96 hanya setelah aktivasi; gap aktif tetap 99.
+- Lima blocker aktivasi dicatat: engine hanya mengunci satu
+  `stabilisasiWajib` meski dua kasus memerlukan bundel; UI akan menulis Nayla
+  sebagai `0 tahun` karena usia runtime belum punya bulan; harga/biaya katalog
+  masih placeholder authoring dan belum dikalibrasi; teknik aman ekstraksi
+  benda asing belum dapat dibedakan engine dari blind probing; model rumah
+  sakit belum menyimpan kemampuan PCI/fibrinolisis untuk tujuan STEMI.
+- Review teknis kedua memperbaiki Plan C agar benar-benar menjadi tindakan
+  bernilai, menghapus nama persona dari dialog pasien acak, mengoreksi
+  diagnosis banding asma anak, mengunci penyesuaian sulfonilurea, menjadikan
+  pembersihan telinga kondisional, serta menambah irigasi/nuansa Fornas pada
+  fraktur. Distraktor IGD/UKM juga dinaikkan dari jawaban absurd menjadi
+  near-miss yang masuk akal.
+- Validator draf fail-closed terhadap collision/orphan katalog, key/id drift,
+  concept aktif tertimpa, contentRef ganda, ID archetype/skenario duplikat,
+  UKM yang sudah aktif, source/evidence yatim, drift registry kanonik, hash
+  drift, mode/release drift, dan sign-off palsu. Gate pra-aktivasi terpisah
+  sengaja tetap merah sampai blocker nol, evidence terminal, delapan sign-off
+  sah, dan hash aktual tetap cocok.
+- Paket keputusan dokter ada di `docs/M13_1A_PHYSICIAN_REVIEW_PACKET.md`.
+- Verifikasi checkpoint: authoring **15/15**, full suite **76 file / 845 test**,
+  freeze **17/17**, typecheck, production build, dan `git diff --check` lulus.
+- **Status milestone: belum exit dan belum aktif.** Langkah berikutnya adalah
+  physician review delapan payload serta penyelesaian/waiver blocker. Aktivasi,
+  bump release, rewire karma, dan M13-1b tetap dilarang pada checkpoint ini.

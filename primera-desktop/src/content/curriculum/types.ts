@@ -41,6 +41,52 @@ export interface PhysicianSignoff {
   note: string
 }
 
+export type ContentReviewFacet =
+  | EvidenceFacet
+  | 'narrative'
+  | 'pedagogy'
+  | 'dangerous-path'
+  | 'mode-release'
+
+export type ContentReviewStatus =
+  | 'draft'
+  | 'awaiting_physician_review'
+  | 'approved'
+  | 'approved_with_waiver'
+  | 'rejected'
+
+export type ReviewContentRef =
+  | EncounterContentRef
+  | { kind: 'ukm'; familyId: string; visitId: string }
+
+export interface TechnicalContentReview {
+  reviewer: string
+  credentials: string
+  reviewedAt: string
+  facets: ContentReviewFacet[]
+  decision: 'ready_for_physician_review' | 'revision_required'
+  note: string
+}
+
+/**
+ * Authoring-side audit trail for a content payload. This record is deliberately
+ * outside the runtime PACK; activation requires a separate release commit.
+ */
+export interface ContentReviewRecord {
+  id: string
+  contentRef: ReviewContentRef
+  author: string
+  authoredAt: string
+  basedOnContentRelease: string
+  proposedContentRelease: string
+  /** SHA-256 dari review envelope kanonik: konten, policy, evidence, sumber, katalog, release, dan rewire terkait. */
+  contentHash: string
+  sourceIds: string[]
+  status: ContentReviewStatus
+  technicalReview: TechnicalContentReview
+  physicianSignoff?: PhysicianSignoff
+}
+
 export interface EvidenceAudit {
   deltaId: string
   claimKind: ClinicalClaimKind
