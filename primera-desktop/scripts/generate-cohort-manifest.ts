@@ -5,6 +5,7 @@ import { basename, resolve } from 'node:path'
 import { PACK } from '../src/content/index'
 import { REVISI_ENGINE, sidikJariPack } from '../src/engine/verifikasi'
 import { susunCohortBuildManifest } from '../src/engine/cohortManifest'
+import { EXAM_BLUEPRINT } from '../src/engine/examBlueprint'
 
 function args(): Map<string, string> {
   const result = new Map<string, string>()
@@ -48,6 +49,7 @@ const manifest = susunCohortBuildManifest({
   appVersion: packageJson.version,
   engineRevision: REVISI_ENGINE,
   contentRelease: PACK.runtimeManifest.contentRelease,
+  examBlueprintVersion: EXAM_BLUEPRINT.blueprintVersion,
   sidikJariPack: sidikJariPack(PACK),
   installer: {
     file: basename(installerPath),

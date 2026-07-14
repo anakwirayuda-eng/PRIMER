@@ -259,3 +259,38 @@ tidak berubah; verifikasi dokumen dilakukan lagi sebelum commit checkpoint.
   commit SHA checkpoint. Artefak itu berlabel validasi teknis, bukan cohort
   mahasiswa; tanggal distribusi nyata tetap harus diisi operator.
 - **Status milestone: exit terpenuhi; M13-0D belum dimulai.**
+
+## M13-0D Constrained Exam Blueprint (2026-07-14)
+
+- `ExamBlueprint m13-0d-v1` mengunci 98 controlled clinic draws selama 30
+  hari, seluruh 67 kasus aktif sekurangnya sekali, dan tepat 5 IGD unik.
+- Delapan paket membawa pin blueprint + content release, memakai multiset
+  kasus yang sama dengan urutan berbeda. Anchor paket wajib unik, tier paparan
+  A, stabil, dan nonrujukan.
+- Kuota exact: tier A/B/C 49/33/16; severity stable/referral/stabilization
+  86/10/2; 12 rujukan; 12 safety trap; seluruh kuota kategori, eligibility
+  usia, dan eligibility gender divalidasi.
+- Controlled draw tidak lagi membaca Dex/Leitner, musim, kluster, daftar pasien
+  kembali, atau status keluarga binaan. Follow-up, karma, dan PRB tetap
+  dimainkan sebagai supplemental encounter di luar denominator 98.
+- Review pra-freeze menangkap dan menutup dua behavior leak: substitusi akibat
+  pasien kembali semula dapat mengubah ID kasus, dan bridge keluarga akrab
+  dapat mengubah demografi controlled patient berdasarkan progres UKM.
+- Cache jadwal kini memakai ID + seed + blueprint version + content release.
+  Runtime fail-closed bila policy drift, sedangkan validator/CI tetap fail-loud.
+- Matriks 8 paket x 32 flavor x 2 profil = **512 run** lulus dengan error nol,
+  invariant lintas flavor/bot, maximum same-slot share **5,10%**, dan seluruh
+  distribusi demografi di dalam toleransi yang dipra-deklarasikan.
+- Target Q17 spread skor <=2/100 tetap hipotesis kalibrasi, bukan acceptance
+  gate. Dampak supplemental workload tetap menunggu pilot manusia M13-1b.
+- `REVISI_ENGINE` 33 -> 34; blueprint dan pin paket masuk fingerprint;
+  `examBlueprint.ts` menjadi file Golden Master ke-17. `CONTENT_RELEASE` tetap
+  `m13-0c-2026-07-14` karena tidak ada perubahan materi medis/pool.
+- Manifest kohort naik ke schema 2 dan wajib membawa `examBlueprintVersion`.
+  CI membuat report simulasi setelah packaging agar artefak tidak terhapus.
+- Laporan lengkap: `docs/M13_0D_CONSTRAINED_EXAM_BLUEPRINT.md`.
+- Exit lokal lulus: **75 file / 830 test**, freeze **17/17**, typecheck,
+  simulasi 512-run, production build, lisensi BGM, dan smoke packaging NSIS.
+  Installer validasi berukuran 102.678.168 byte; SHA-256
+  `469e382cb1caa1b5fa80bd9ddc2f21ff63cc5ec952795840ec517b5d958736ac`.
+- **Status milestone: exit terpenuhi; M13-1a belum dimulai.**

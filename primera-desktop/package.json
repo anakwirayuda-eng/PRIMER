@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "check:bgm-license": "node scripts/check-bgm-license.js",
     "cohort:manifest": "vite-node --config vitest.config.ts scripts/generate-cohort-manifest.ts",
+    "exam:simulate": "vite-node --config vitest.config.ts scripts/simulate-exam-blueprint.ts",
     "pack": "npm run check:bgm-license && electron-vite build && electron-builder --win --dir",
     "dist": "npm run check:bgm-license && electron-vite build && electron-builder --win nsis"
   },

@@ -38,7 +38,8 @@ import {
 } from './kegiatan'
 import { buatIgd, aksiIgd, rjpIgd, stabilisasiLanjutanIgd, nilaiIgd, AMBANG_STABIL_RUJUK } from './igd'
 import { hitungSkor } from './scoring'
-import { HARI_STASE } from './paketUjian'
+import { HARI_STASE, paketUjianDariId } from './paketUjian'
+import { examIgdCaseIdForDay } from './examBlueprint'
 
 export interface HasilAdvance {
   state: GameState
@@ -2139,8 +2140,20 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   // M5.22: peluang naik per fase (0.12 → 0.15 → 0.20) — tekanan penuh di akhir.
   const rngIgd = new Rng(s.seedKurikulum, 'igd', hari)
   const poolIgd = daftarKasusIgdAktif(s, pack)
-  if (hari >= 4 && poolIgd.length > 0 && hari - igdTerakhir >= 4 && rngIgd.chance(peluangIgd(hari, s.mode))) {
-    const kasusIgd = rngIgd.pick(poolIgd)
+  const paketUjian = s.mode === 'ujian' ? paketUjianDariId(s.paketUjian) : undefined
+  const kasusIgdTerjadwal = paketUjian
+    ? pack.kasusIgd[examIgdCaseIdForDay(pack, paketUjian, hari) ?? '']
+    : undefined
+  const kasusIgdAcak =
+    s.mode !== 'ujian' &&
+    hari >= 4 &&
+    poolIgd.length > 0 &&
+    hari - igdTerakhir >= 4 &&
+    rngIgd.chance(peluangIgd(hari, s.mode))
+      ? rngIgd.pick(poolIgd)
+      : undefined
+  const kasusIgd = kasusIgdTerjadwal ?? kasusIgdAcak
+  if (kasusIgd) {
     igd = buatIgd(kasusIgd, pack, new Rng(s.seed, 'igd-flavor', hari))
     igdHariIni = true
     flags[`igdHari_${hari}`] = true

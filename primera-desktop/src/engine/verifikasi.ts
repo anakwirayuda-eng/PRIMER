@@ -19,6 +19,8 @@ import { advance } from './reducer'
 import { hitungSkor } from './scoring'
 import { hitungBadge } from './badge'
 import { hashSeed } from './core/rng'
+import { EXAM_BLUEPRINT } from './examBlueprint'
+import { PAKET_UJIAN } from './paketUjian'
 
 /* ---------------------------------------------------------------------------
  * Format dossier
@@ -475,7 +477,9 @@ function fnv1a(teks: string): string {
 // M13-0C (2026-07-14): CONTENT_RELEASE masuk save+dossier, manifest runtime
 // mengatur mode/release draw, IGD disortir, dan tie-break karma dibuat eksplisit.
 // Semua mengubah replay/seleksi sehingga Golden Master dibuka secara sadar.
-export const REVISI_ENGINE = 33
+// M13-0D (2026-07-14): Ujian memakai constrained blueprint 98 slot, pin paket,
+// dan jadwal IGD exact; Leitner/season tidak lagi mengubah soal antar-peserta.
+export const REVISI_ENGINE = 34
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -671,6 +675,27 @@ export function sidikJariPack(pack: ContentPack): string {
         credits: [...s.credits].sort(),
       }),
     )
+  const examBlueprintRuntime = stringifyKanonik({
+    blueprintVersion: EXAM_BLUEPRINT.blueprintVersion,
+    contentRelease: EXAM_BLUEPRINT.contentRelease,
+    durationDays: EXAM_BLUEPRINT.durationDays,
+    clinic: {
+      dailyCapacities: EXAM_BLUEPRINT.clinic.dailyCapacities,
+      caseCounts: EXAM_BLUEPRINT.clinic.caseCounts,
+      packageAnchors: EXAM_BLUEPRINT.clinic.packageAnchors,
+      quotas: EXAM_BLUEPRINT.clinic.quotas,
+      constraints: EXAM_BLUEPRINT.clinic.constraints,
+    },
+    igd: EXAM_BLUEPRINT.igd,
+  })
+  const examPackages = PAKET_UJIAN
+    .map((paket) => ({
+      id: paket.id,
+      seedKurikulum: paket.seedKurikulum,
+      blueprintVersion: paket.blueprintVersion,
+      contentRelease: paket.contentRelease,
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id))
   const daftar = [
     'engine', String(REVISI_ENGINE),
     'kasus', ...kasus,
@@ -687,6 +712,8 @@ export function sidikJariPack(pack: ContentPack): string {
     'runtime-release-order', stringifyKanonik(pack.runtimeManifest?.releaseOrder ?? [LEGACY_CONTENT_RELEASE]),
     'runtime-archetypes', ...runtimeArchetypes,
     'runtime-ukm', ...runtimeUkm,
+    'exam-blueprint', examBlueprintRuntime,
+    'exam-packages', stringifyKanonik(examPackages),
   ]
   return fnv1a(daftar.join('|'))
 }

@@ -14,11 +14,16 @@
  */
 
 import type { ModeStase } from './state'
+import { CONTENT_RELEASE } from '@content/pack'
+import { EXAM_BLUEPRINT_VERSION } from './examBlueprint'
 
 export interface PaketUjian {
   id: string
   nama: string
   seedKurikulum: number
+  /** Pin eksplisit: satu paket tidak boleh diam-diam pindah blueprint/rilis. */
+  blueprintVersion: string
+  contentRelease: string
 }
 
 export const PAKET_UJIAN: PaketUjian[] = [
@@ -30,11 +35,19 @@ export const PAKET_UJIAN: PaketUjian[] = [
   { id: 'paket_f', nama: 'Paket F', seedKurikulum: 129_853_741 },
   { id: 'paket_g', nama: 'Paket G', seedKurikulum: 560_711_489 },
   { id: 'paket_h', nama: 'Paket H', seedKurikulum: 343_976_215 },
-]
+].map((paket) => ({
+  ...paket,
+  blueprintVersion: EXAM_BLUEPRINT_VERSION,
+  contentRelease: CONTENT_RELEASE,
+}))
 
 /** Pilih paket deterministik dari seed flavor mahasiswa (terdistribusi merata). */
 export function pilihPaket(seedFlavor: number): PaketUjian {
   return PAKET_UJIAN[Math.abs(seedFlavor) % PAKET_UJIAN.length]!
+}
+
+export function paketUjianDariId(id: string | undefined): PaketUjian | undefined {
+  return id ? PAKET_UJIAN.find((paket) => paket.id === id) : undefined
 }
 
 /** Durasi stase per mode (hari terakhir yang dimainkan). */

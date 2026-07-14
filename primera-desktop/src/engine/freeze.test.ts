@@ -1,11 +1,12 @@
 /**
  * FREEZE (M10.5 Q-D, Golden Master, 2026-07-12; diperluas 2026-07-13 per
  * CODEX audit temuan #10, lagi 2026-07-13 per audit CODEX pasca-GM temuan
- * #19, dan lagi 2026-07-13 per fix pass M10.6 §2/§3/§9/§11) — hash-lock 16
+ * #19, lagi 2026-07-13 per fix pass M10.6 §2/§3/§9/§11, dan M13-0D pada
+ * 2026-07-14) — hash-lock 17
  * file yang menentukan replay/skor: reducer.ts, clinic.ts, scoring.ts,
  * director.ts, core/rng.ts, igd.ts, kader.ts, init.ts, kegiatan.ts,
  * kunjungan.ts, paketUjian.ts, verifikasi.ts, state.ts, save.ts, pispk.ts,
- * surveilans.ts. Ini bukan pagar regresi biasa — ia SENGAJA GAGAL bila salah
+ * surveilans.ts, examBlueprint.ts. Ini bukan pagar regresi biasa — ia SENGAJA GAGAL bila salah
  * satu file berubah walau cuma satu karakter, termasuk perubahan yang
  * "kelihatannya aman" (refactor, komentar, rename variabel lokal).
  *
@@ -99,28 +100,28 @@ function hashFile(relPath: string): string {
 
 /** Sha-256 hex per file (isi dinormalisasi LF), dikunci saat tag Golden Master. */
 const HASH_DIBEKUKAN: Record<string, string> = {
-  // REVISI 33 (2026-07-14 — M13-0C): identitas content release masuk
-  // save+dossier, runtime policy mengisolasi mode/release, IGD disortir,
-  // dan tie-break karma menjadi eksplisit.
-  'reducer.ts': '556950e90db303d0960aafb0eb97da2936bfab93bd1e45d73ddef322bb231df3',
+  // REVISI 34 (2026-07-14 — M13-0D): constrained blueprint mengunci 98
+  // controlled draws + 5 IGD, pin paket/rilis, dan isolasi behavior/flavor.
+  'reducer.ts': '433de3bbac51322691f8034228732146bedde15253ee75df0d6dd10ace3d121a',
   'clinic.ts': '55de3a23bb8c1024901848ba5f61c89590e9a0bcf526c32f7446f2d008aab3d2',
   'scoring.ts': '146c3012075cad2e0fad60e2139f7efe04aeb8bea84ac5a1ffdafb676cc2e1d8',
-  'director.ts': '01155a5250b7236872b79e510a992bdfb90b508c200a01b4c947630ace5a6361',
+  'director.ts': 'af94041409244096b901d052521f640723bed6dad47613aec835a1832890d0ee',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': '519b7cfc4098fa2e4d6c0567875ba797d3074d14cbbe8b9a48afaf12704c09b4',
   'kader.ts': 'fff1c7c055d1526f1e9632e64a3f72939840412c0f148e201444d6a7353aa646',
-  'init.ts': 'c3dad6275c8dfeca7627e49caa9de396134a7ef2b45a7c76cc0c53f82e299835',
+  'init.ts': '1c993f455e63d3ec9f37ae8843883e33e5a6b8afc702e10a97c1e73cfec4ee82',
   'kegiatan.ts': '61004bed15e5f8095214205aff69da6be55556d329552bc6a691cc0e4bf62d52',
   'kunjungan.ts': '4ec29cba2af05c8befec99921fe0cf8fc4d93950546c08121ded7f82efa66517',
-  'paketUjian.ts': 'b7127ca427c24fea81a840f51d1933aa5eb4025384fdfac9857fa3498aa59e5d',
-  'verifikasi.ts': 'f4326d00fa4667603a6c1e3b1de073dc052b546128b0e2ce2c9a7e4458444260',
+  'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
+  'verifikasi.ts': 'b79d8aa550d7b5ba59c08c1b64eaf80243377049e06daa87c70ebe11fa4e7e0c',
   'state.ts': '1b8ddce19ff60346ffa377788fc59422f4d8d48f89e3282feac522589fa7681e',
   'save.ts': '7ad199a80dfa85bcf7b2f6fa7d15ff231edcf174e63fb1232576b54d5092070c',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '34bdfd80c9ebd2ae5a261118e9154cdfeb670b06b029e96013e2b26ef9a86a80',
+  'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',
 }
 
-describe('GOLDEN MASTER FREEZE (M10.5 Q-D) — 16 file penentu replay/skor terkunci', () => {
+describe('GOLDEN MASTER FREEZE (M10.5 Q-D) — 17 file penentu replay/skor terkunci', () => {
   for (const [file, hashDiharapkan] of Object.entries(HASH_DIBEKUKAN)) {
     it(`${file} tak berubah sejak freeze`, () => {
       const hashSekarang = hashFile(file)

@@ -39,6 +39,7 @@ jobs:
           cache-dependency-path: primera-desktop/package-lock.json
       - run: npm ci
       - run: npm test
+      - run: npm run exam:simulate
       - run: npm run typecheck
       - run: npm run build
       - run: npm run check:bgm-license
@@ -59,6 +60,7 @@ jobs:
           cache-dependency-path: primera-desktop/package-lock.json
       - run: npm ci
       - run: npm run dist
+      - run: npm run exam:simulate
       - name: Generate cohort manifest
         shell: pwsh
         env:
@@ -77,3 +79,4 @@ jobs:
           path: |
             primera-desktop/dist/*.exe
             primera-desktop/dist/cohort-manifests/*.json
+            primera-desktop/dist/exam-blueprint/*.json

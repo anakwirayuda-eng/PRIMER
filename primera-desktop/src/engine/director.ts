@@ -15,7 +15,8 @@ import { encounterArchetypeAktif, type ContentPack } from '@content/pack'
 import type { KasusKlinis, Persona } from '@content/types'
 import type { Rng } from './core/rng'
 import { clusterAktif } from './surveilans'
-import { HARI_STASE } from './paketUjian'
+import { HARI_STASE, paketUjianDariId } from './paketUjian'
+import { examClinicCaseIdsForDay } from './examBlueprint'
 
 // Re-export skor untuk UI: layar Rapor/MejaKerja mengimpor dari '@engine/director'.
 export { hitungSkor, ringkasanHarian } from './scoring'
@@ -189,8 +190,21 @@ function bobotKasus(
   return bobot
 }
 
+function wujudkanAntrian(
+  terpilih: readonly KasusKlinis[],
+  pack: ContentPack,
+  rngFlavor: Rng,
+): PasienAktif[] {
+  const namaTerpakaiHariIni = new Set<string>()
+  return terpilih.map((kasus) =>
+    buatPasienDariKasus(kasus.id, pack, rngFlavor, undefined, namaTerpakaiHariIni),
+  )
+}
+
 /**
  * Susun antrian pasien playable pagi ini.
+ * Mode Ujian keluar lewat blueprint tetap; aturan bobot/pity di bawah hanya
+ * berlaku untuk Karier. Controlled draw tidak memakai status keluarga binaan.
  * Hari 1-2: 2 pasien; hari 3+: 3 pasien. Tanpa duplikat kasus dalam satu hari.
  * Minggu 1: 92% pilihan dari pool 4A aman. Dijamin ≥1 kasus belum-pernah bila
  * masih ada yang tersedia (jaminan cakupan kurikulum).
@@ -203,11 +217,22 @@ export function susunAntrianHarian(
   state: GameState,
   pack: ContentPack,
   rng: Rng,
-  kecuali: string[] = [],
+  kecuali: readonly string[] = [],
   rngFlavor: Rng = rng,
 ): PasienAktif[] {
   // Kurva pacing M5.22: 2 pasien saat onboarding → 3 → 4 di fase tekanan penuh.
   const jumlah = jumlahPasienHarian(state.hari, state.mode)
+  if (state.mode === 'ujian') {
+    const paket = paketUjianDariId(state.paketUjian)
+    if (!paket) return []
+    const terpilih = examClinicCaseIdsForDay(pack, paket, state.hari, kecuali)
+      .slice(0, jumlah)
+      .map((id) => pack.kasus[id])
+      .filter((kasus): kasus is KasusKlinis => kasus !== undefined)
+    // Controlled draw Ujian murni dari blueprint + flavor seed. Status binaan
+    // tidak boleh mengubah demografi; konsekuensinya hadir sebagai supplemental.
+    return wujudkanAntrian(terpilih, pack, rngFlavor)
+  }
   // Kasus pasien-kembali/karma hari ini dikeluarkan dari kandidat —
   // janji "tanpa duplikat kasus dalam satu hari" berlaku untuk SELURUH antrian.
   // M10 Batch-2 (CODEX P1.4): SORT by id — Object.values mengikuti urutan

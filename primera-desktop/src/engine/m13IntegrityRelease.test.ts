@@ -12,8 +12,9 @@ import { deserialize, serialize } from './save'
 import { susunAntrianHarian } from './director'
 import { Rng } from './core/rng'
 import { advance, daftarKasusIgdAktif } from './reducer'
-import { sidikJariPack, susunDossier, verifikasiDossier } from './verifikasi'
+import { REVISI_ENGINE, sidikJariPack, susunDossier, verifikasiDossier } from './verifikasi'
 import { susunCohortBuildManifest } from './cohortManifest'
+import { EXAM_BLUEPRINT_VERSION } from './examBlueprint'
 
 function denganArchetypes(
   ubah: (archetype: EncounterArchetype) => EncounterArchetype,
@@ -190,17 +191,21 @@ describe('M13-0C - manifest kohort', () => {
       cohortEnd: '2026-09-30',
       commitSha: '428fba9',
       appVersion: '1.0.0',
-      engineRevision: 33,
+      engineRevision: REVISI_ENGINE,
       contentRelease: CONTENT_RELEASE,
+      examBlueprintVersion: EXAM_BLUEPRINT_VERSION,
       sidikJariPack: sidikJariPack(PACK),
       installer: { file: 'primera.exe', bytes: 123, sha256: 'a'.repeat(64) },
       generatedAt: '2026-07-14T00:00:00.000Z',
     })
-    expect(manifest.schemaVersion).toBe(1)
+    expect(manifest.schemaVersion).toBe(2)
     expect(() => susunCohortBuildManifest({ ...manifest, cohortStart: '2026-10-01' })).toThrow(
       /setelah cohortEnd/,
     )
     expect(() => susunCohortBuildManifest({ ...manifest, cohortId: '../keluar' })).toThrow(/slug aman/)
+    expect(() => susunCohortBuildManifest({ ...manifest, examBlueprintVersion: ' ' })).toThrow(
+      /examBlueprintVersion/,
+    )
     expect(() => susunCohortBuildManifest({ ...manifest, cohortStart: '2026-02-31' })).toThrow(
       /YYYY-MM-DD/,
     )

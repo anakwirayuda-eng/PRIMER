@@ -7,6 +7,14 @@
 > walkthrough grup WhatsApp angkatan** bila seluruh angkatan memainkan urutan
 > pasien yang identik.
 
+> **Addendum M13-0D (2026-07-14):** kontrak adaptif historis pada bagian 2-5
+> telah digantikan oleh `ExamBlueprint m13-0d-v1`. Mode Ujian kini mengunci 98
+> controlled clinic draws dan 5 IGD per paket. Dex, musim, kluster, pasien
+> kembali, karma, PRB, serta status keluarga binaan tidak boleh mengubah draw
+> tersebut. Encounter konsekuensi tetap dimainkan sebagai supplemental di luar
+> denominator blueprint. Detail operasional dan hasil simulasi ada di
+> `docs/M13_0D_CONSTRAINED_EXAM_BLUEPRINT.md`.
+
 ---
 
 ## 1. Masalah

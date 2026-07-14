@@ -1,5 +1,5 @@
 export interface CohortBuildManifest {
-  schemaVersion: 1
+  schemaVersion: 2
   cohortId: string
   cohortStart: string
   cohortEnd: string
@@ -7,6 +7,7 @@ export interface CohortBuildManifest {
   appVersion: string
   engineRevision: number
   contentRelease: string
+  examBlueprintVersion: string
   sidikJariPack: string
   installer: {
     file: string
@@ -42,10 +43,11 @@ export function susunCohortBuildManifest(input: CohortBuildManifestInput): Cohor
     throw new Error('engineRevision wajib bilangan bulat positif')
   }
   if (!input.contentRelease.trim()) throw new Error('contentRelease wajib diisi')
+  if (!input.examBlueprintVersion.trim()) throw new Error('examBlueprintVersion wajib diisi')
   if (!input.sidikJariPack.trim()) throw new Error('sidikJariPack wajib diisi')
   if (!input.installer.file.trim() || input.installer.bytes <= 0 || !SHA256.test(input.installer.sha256)) {
     throw new Error('metadata installer tidak valid')
   }
   if (Number.isNaN(Date.parse(input.generatedAt))) throw new Error('generatedAt tidak valid')
-  return { schemaVersion: 1, ...input }
+  return { schemaVersion: 2, ...input }
 }

@@ -16,6 +16,7 @@ import { susunAntrianHarian, buatPasienDariKasus } from './director'
 import { STAMINA_MAKS, HARI_BUKA_KUNJUNGAN } from './reducer'
 import { HARI_STASE, pilihPaket } from './paketUjian'
 import { KASUS_TUTORIAL } from './tutorial'
+import { EXAM_BLUEPRINT_VERSION } from './examBlueprint'
 
 const SEMUA_INDIKATOR: IndikatorPisPk[] = [
   'kb',
@@ -99,6 +100,14 @@ export function buildInitialState(
   const mode: ModeStase = opsi?.mode ?? 'karier'
   const contentRelease = pack.runtimeManifest?.contentRelease ?? LEGACY_CONTENT_RELEASE
   const paket = mode === 'ujian' ? pilihPaket(seed) : undefined
+  if (
+    paket &&
+    (paket.blueprintVersion !== EXAM_BLUEPRINT_VERSION || paket.contentRelease !== contentRelease)
+  ) {
+    throw new Error(
+      `Paket Ujian ${paket.id} tidak cocok dengan blueprint/rilis build ini.`,
+    )
+  }
   const seedKurikulum = paket ? paket.seedKurikulum : seed
 
   const keluarga: Record<string, KeluargaState> = {}
