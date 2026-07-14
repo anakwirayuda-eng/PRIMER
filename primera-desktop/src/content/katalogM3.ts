@@ -111,6 +111,7 @@ export const LAB_M3: Record<string, ItemLab> = {
   profil_lipid: { id: 'profil_lipid', nama: 'Profil Lipid', biaya: 55000, nilaiNormal: 'LDL <100, HDL >40, TG <150' },
   hba1c: { id: 'hba1c', nama: 'HbA1c', biaya: 90000, nilaiNormal: '< 6,5%', hasilBesok: true },
   fungsi_ginjal: { id: 'fungsi_ginjal', nama: 'Ureum/Kreatinin', biaya: 45000, nilaiNormal: 'Kreatinin 0,6-1,2 mg/dL' },
+  elektrolit_serum: { id: 'elektrolit_serum', nama: 'Elektrolit Serum', biaya: 60000, nilaiNormal: 'Na 135-145; K 3,5-5,0 mmol/L; Ca 8,5-10,5 mg/dL' },
   sgot_sgpt: { id: 'sgot_sgpt', nama: 'SGOT/SGPT', biaya: 45000, nilaiNormal: '< 40 U/L' },
   igm_dengue: { id: 'igm_dengue', nama: 'IgM/IgG Anti-Dengue', biaya: 120000, nilaiNormal: 'Negatif', hasilBesok: true },
   // Bug live (2026-07-05): id lama `mikroskopis_bta` mengandung substring
@@ -211,6 +212,10 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
   higiene_tidur: {
     id: 'higiene_tidur', nama: '[Tidur] Higiene tidur — jadwal, kurangi layar & kafein', kategori: 'gaya_hidup',
     sinonim: ['insomnia', 'sleep hygiene', 'susah tidur'],
+  },
+  kenali_hipoglikemia: {
+    id: 'kenali_hipoglikemia', nama: '[Diabetes] Kenali & tangani awal hipoglikemia', kategori: 'kepatuhan',
+    sinonim: ['gula darah rendah', 'gemetar', 'keringat dingin', 'aturan 15-15'],
   },
   kenali_kambuh_jiwa: {
     id: 'kenali_kambuh_jiwa', nama: '[Jiwa] Kenali tanda kekambuhan dini', kategori: 'kepatuhan',

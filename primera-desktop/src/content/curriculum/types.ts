@@ -9,6 +9,52 @@ export type CurriculumDomain = 'ukp' | 'ukm'
 export type CurriculumReviewStatus = 'mapped' | 'needs_source_review' | 'reviewed'
 export type EvidenceReviewStatus = 'pending' | 'resolved' | 'accepted_with_limitation' | 'blocked'
 
+export type ClinicalClaimKind =
+  | 'diagnosis_threshold'
+  | 'red_flags'
+  | 'assessment'
+  | 'regimen'
+  | 'contraindication'
+  | 'disposition'
+  | 'follow_up'
+  | 'formulary'
+
+export type EvidenceFinding =
+  | 'aligned'
+  | 'content_conflict'
+  | 'source_conflict'
+  | 'source_limitation'
+  | 'coverage_gap'
+
+export type EvidenceMateriality = 'none' | 'minor' | 'material'
+
+export interface EvidenceReference {
+  source: string
+  locator: string
+}
+
+export interface PhysicianSignoff {
+  reviewer: string
+  credentials: string
+  signedAt: string
+  decision: 'approved' | 'approved_with_waiver'
+  note: string
+}
+
+export interface EvidenceAudit {
+  deltaId: string
+  claimKind: ClinicalClaimKind
+  claim: string
+  contentLocator: string
+  finding: EvidenceFinding
+  materiality: EvidenceMateriality
+  technicalReviewer: string
+  reviewedAt: string
+  proposedResolution: string
+  corroboratingEvidence?: EvidenceReference[]
+  physicianSignoff?: PhysicianSignoff
+}
+
 export interface ModePolicy {
   karier: boolean
   ujian: boolean
@@ -94,10 +140,14 @@ export type EvidenceSubject =
 export type EvidenceFacet =
   | 'membership'
   | 'skdi'
+  | 'anamnesis'
   | 'diagnosis'
+  | 'assessment'
   | 'regimen'
   | 'dose'
+  | 'contraindication'
   | 'disposition'
+  | 'follow-up'
   | 'formulary'
   | 'ukm-objective'
 
@@ -110,6 +160,69 @@ export interface EvidenceBinding {
   locator: string
   population?: string
   reviewStatus: EvidenceReviewStatus
+  audit?: EvidenceAudit
+}
+
+export type SourceLifecycleStatus =
+  | 'active'
+  | 'active_with_limitation'
+  | 'amends_active_baseline'
+  | 'superseded'
+
+export interface SourceArtifact {
+  path: string
+  sha256: string
+  bytes: number
+  format: 'text'
+}
+
+/** Metadata authoring pendamping; bukan entitas kanonik ketujuh dan bukan runtime PACK. */
+export interface SourceRegistryEntry {
+  id: string
+  issuer: string
+  documentNumber: string
+  title: string
+  publicationDate: string
+  effectiveDate: string
+  lifecycleStatus: SourceLifecycleStatus
+  supersedes?: string[]
+  supersededBy?: string[]
+  amends?: string[]
+  officialUrl: string
+  retrievedAt: string
+  population: string
+  facilityScope: string
+  localArtifact: SourceArtifact
+  sourceFileSha256: string
+  limitation?: string
+}
+
+export interface ClinicalClaimAuditSpec {
+  claimKind: ClinicalClaimKind
+  facet: EvidenceFacet
+  source: string
+  locator: string
+  claim: string
+  contentLocator: string
+  finding: EvidenceFinding
+  materiality: EvidenceMateriality
+  proposedResolution: string
+  corroboratingEvidence?: EvidenceReference[]
+}
+
+export interface DeltaAuditRecord {
+  id: string
+  caseId: string
+  archetypeId: EncounterArchetypeId
+  title: string
+  currentIcd10: string
+  population: string
+  reviewStatus: Extract<EvidenceReviewStatus, 'resolved' | 'accepted_with_limitation' | 'blocked'>
+  technicalReviewer: string
+  reviewedAt: string
+  claims: ClinicalClaimAuditSpec[]
+  blockers: string[]
+  physicianSignoff?: PhysicianSignoff
 }
 
 export interface CurriculumBlueprint {

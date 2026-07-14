@@ -175,3 +175,60 @@ tidak berubah; verifikasi dokumen dilakukan lagi sebelum commit checkpoint.
 - Verifikasi: 12/12 test invariant M13-0A, full suite **72 file / 797 test**,
   typecheck, dan production build lulus. `PACK`, `REVISI_ENGINE`,
   `CONTENT_RELEASE`, serta `sidikJariPack` tidak diubah.
+
+## M13-0B audit teknis pra-sign-off (2026-07-14)
+
+- Registry delapan sumber primer dibuat untuk PNPK HT 303/2026, DM2 302/2026,
+  Stroke 304/2026, Epilepsi Dewasa 274/2026, Epilepsi Anak 367/2017, PPK
+  1936/2022, Fornas 1199/2025, serta DOEN 6477/2021 sebagai sumber historis
+  yang sudah dicabut. Hash PDF dan full-text disimpan terpisah.
+- Anomali sumber tidak dinormalisasi diam-diam: PNPK Stroke bernomor 304/2026
+  tetapi halaman tanda tangan literal bertanggal 17 April 2025; status formal
+  PNPK Epilepsi Anak belum dapat dibuktikan final hanya dari ketiadaan pencabutan.
+- Empat delta menghasilkan 32 binding (8 facet per kasus). Semuanya terminal
+  `blocked`; binding baseline lain tetap `pending`.
+- Konflik material: assessment renal/kontraindikasi dan rujukan HT; tanda
+  katabolik vs oral-only/no-referral pada DM; subtipe stroke sebelum CT serta
+  cairan/antitrombotik pra-rujuk; populasi campur dan diazepam rektal wajib pada
+  epilepsi stabil pascakejang.
+- Koreksi adversarial formularium: Fornas aktif memuat diazepam enema 5/10 mg
+  pada FPKTP, sehingga masalah epilepsi adalah indikasi, bukan ketersediaan.
+  Fornas juga memuat glibenklamid; DOEN 2021 yang dikutip konten DM sudah tidak
+  berlaku dan p. 29-nya sendiri tetap memuat glibenklamid untuk Puskesmas.
+- Tidak ada konten medis runtime yang diubah pada tahap pra-sign-off ini. Gate
+  menolak status `resolved`/`accepted_with_limitation` tanpa physician sign-off.
+- Laporan adjudikasi lengkap: `docs/M13_0B_DELTA_AUDIT_2026.md`.
+- `docs/references/` di-ignore secara luas. Enam full-text baru sudah ada dan
+  terverifikasi lokal, tetapi harus di-`git add -f` saat checkpoint agar registry
+  tidak menunjuk artefak yang hilang pada clone baru.
+- **Status milestone: belum exit.** Langkah berikutnya adalah physician sign-off
+  atas paket resolusi, implementasi koreksi yang disetujui, lalu regresi penuh.
+- Baseline pra-sign-off lulus: full suite **73 file / 804 test**, typecheck,
+  production build, freeze/fingerprint **16/16**, dan `git diff --check`.
+  Baseline ini wajib diulang setelah perubahan medis runtime.
+
+## M13-0B physician adjudication dan exit (2026-07-14)
+
+- dr. Anak Agung Bagus Wirayuda, Dokter dan penanggung jawab klinis PRIMERA,
+  memberi sign-off tertulis 4/4 delta serta menyetujui waiver HT dan DM2.
+- Status final: HT dan DM2 `accepted_with_limitation`; stroke dan epilepsi
+  `resolved`. Seluruh 32 binding membawa physician sign-off; evidence gate
+  menghasilkan `ready: true`.
+- HT mendapat red-flag/kehamilan gate dan fungsi ginjal; kombinasi serta
+  no-referral pasien stabil dipertahankan dengan waiver konflik redaksi sumber.
+- DM dinormalisasi nonkatabolik, mendapat fungsi ginjal dan edukasi hipoglikemia
+  kritis. Glibenklamid tetap non-preferred `nonPrimer` karena risiko
+  hipoglikemia, bukan karena alasan palsu ketidaktersediaan.
+- Stroke menjadi `Suspek Stroke Akut`/I64 sampai CT; cairan hanya kondisional,
+  antitrombotik pra-pencitraan dilarang, dan target berangkat rujuk <=30 menit.
+- Epilepsi dibatasi dewasa 18-30, cue menatap dan diazepam rektal wajib dihapus,
+  elektrolit dasar ditambahkan, OAB tidak dimulai, dan archetype anak ditunda.
+- Verifikasi final: targeted curriculum/evidence **20/20**, targeted
+  pack/anamnesis/label **74/74**, full suite **73 file / 805 test**, typecheck,
+  production build, dan freeze **16/16** lulus.
+- `PACK` berubah sebelum infrastruktur `CONTENT_RELEASE` tersedia. Checkpoint 0B
+  development-only dan tidak boleh didistribusikan ke kohort; M13-0C wajib
+  menetapkan initial release + migrasi legacy sebelum aktivasi.
+- Keterbatasan non-blocking: stempel `TEGAK`/`SUSPEK` belum punya expected value
+  per archetype. Stroke sudah netral-subtipe lewat I64/narasi, tetapi confidence
+  stamp belum dipaksa scoring; tidak membuka `clinic.ts` di milestone 0B.

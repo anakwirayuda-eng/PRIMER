@@ -477,7 +477,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'saraf_epilepsi_kejang',
-    nama: 'Epilepsi (Bangkitan Umum Tonik-Klonik Berulang)',
+    nama: 'Epilepsi Dewasa (Bangkitan Tonik-Klonik Berulang)',
     icd10: 'G40.9',
     skdi: '3A',
     kategori: 'saraf',
@@ -488,18 +488,18 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     bisaPrb: true,
     prevalensi: 'rendah',
     spesialisRujukan: 'saraf',
-    keluhanUtama: 'Anak saya kejang lagi dok, ini sudah yang ketiga kali dalam dua bulan, seluruh badan kaku lalu kelojotan.',
+    keluhanUtama: 'Saudara saya kejang lagi, Dok. Ini sudah yang ketiga kali dalam dua bulan; seluruh badan kaku lalu kelojotan.',
     keluhanUtamaOlehPendamping: true,
-    demografi: { usiaMin: 12, usiaMax: 30 },
+    demografi: { usiaMin: 18, usiaMax: 30 },
     vital: { td: '116/74', nadi: 92, rr: 20, suhu: 36.8, spo2: 98 },
     anamnesis: [
       {
         id: 'q_keluhan',
         kategori: 'keluhan_utama',
         tanya: 'Coba ceritakan bagaimana kejangnya dari awal sampai selesai.',
-        jawab: 'Tiba-tiba dia diam menatap, lalu jatuh, badannya kaku terus kelojotan seluruh tubuh sekitar dua menit, mulut berbusa, dan ngompol.',
+        jawab: 'Tiba-tiba dia jatuh, badannya kaku lalu kelojotan seluruh tubuh sekitar dua menit, mulut berbusa, dan ngompol.',
         variasi: {
-          wali_anak: 'Mendadak anak saya kaku lalu kejang-kejang seluruh badan dok, mulutnya berbusa, sekitar dua menit, setelah itu tidur lama dan bingung.',
+          wali_anak: 'Mendadak saudara saya kaku lalu kejang-kejang seluruh badan, Dok, sekitar dua menit; setelah itu tidur lama dan bingung.',
           polos: 'Dumadakan kaku terus kelojotan sak awak dok, cangkemé mbrabak, banjur turu.',
           terpelajar: 'Kejang seluruh tubuh dok, kaku lalu mengejang sekitar dua menit, setelahnya bingung lalu tertidur.',
         },
@@ -559,25 +559,29 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     ],
     lab: [
       { id: 'gds', hasil: 'GDS 96 mg/dL — normal, menyingkirkan hipoglikemia sebagai penyebab bangkitan.', flag: 'normal', relevan: true },
+      { id: 'elektrolit_serum', hasil: 'Natrium 139 mmol/L, kalium 4,2 mmol/L, dan kalsium 9,1 mg/dL — tidak menunjuk gangguan metabolik akut.', flag: 'normal', relevan: true },
       { id: 'darah_rutin', hasil: 'Dalam batas normal; tidak menunjuk infeksi akut.', flag: 'normal', relevan: false },
     ],
     diagnosisBanding: ['G40.9', 'R56.8', 'G40.3'],
     tatalaksana: {
-      obatBenar: ['diazepam_rektal_10'],
+      obatBenar: [],
       obatSalahUmum: [
+        { id: 'diazepam_rektal_10', alasan: 'Diazepam rektal tersedia untuk rescue saat bangkitan masih aktif sesuai protokol, bukan diberikan rutin setelah episode dua menit telah berhenti dan pasien kembali stabil.', bahaya: 'nonPrimer' },
         { id: 'karbamazepin_200', alasan: 'Pemilihan & titrasi OAE jangka panjang (mis. karbamazepin/valproat) adalah wewenang spesialis saraf setelah klasifikasi bangkitan + EEG; memulai OAE sendiri di FKTP tanpa penegakan tipe bangkitan tidak tepat. FKTP menstabilkan lalu MERUJUK.', bahaya: 'nonPrimer' },
         { id: 'haloperidol_5', alasan: 'Antipsikotik justru MENURUNKAN ambang kejang dan tidak diindikasikan; salah kaprah menganggap kejang sebagai gangguan perilaku.', bahaya: 'kontraindikasi' },
-        { id: 'diazepam_2', alasan: 'Diazepam TABLET oral 2 mg tidak dapat mengabortus bangkitan aktif (absorpsi lambat). Rescue bangkitan/status memakai diazepam REKTAL atau IV 5-10 mg — bukan tablet oral.', bahaya: 'nonPrimer' },
+        { id: 'diazepam_2', alasan: 'Diazepam tablet oral tidak mengatasi bangkitan aktif dan tidak diindikasikan setelah episode singkat selesai. Rescue bangkitan berkepanjangan memakai rute cepat sesuai protokol, sambil menjaga jalan napas dan merujuk.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kepatuhan_obat', 'tanda_bahaya', 'higiene_tidur', 'kontrol_rutin'],
     },
-    clue: 'Bangkitan tak beralasan BERULANG (≥2 kali, jeda >24 jam, tanpa demam/pencetus akut) memenuhi definisi epilepsi → butuh EEG + pemilihan OAE jangka panjang oleh SPESIALIS SARAF. Peran FKTP: sediakan rescue bangkitan yang benar (diazepam REKTAL 10 mg, BUKAN tablet oral), pertolongan pertama aman, edukasi keluarga, lalu RUJUK. Jangan mulai OAE rumatan sendiri tanpa klasifikasi (PPK PERDOSSI).',
+    clue: 'Bangkitan tanpa provokasi berulang (≥2 kali, jeda >24 jam) mendukung epilepsi, tetapi tipe onset harus diklasifikasikan dengan cermat. Episode terakhir sudah berhenti setelah dua menit, sehingga tidak memerlukan benzodiazepin rescue sekarang. Bila bangkitan masih aktif >5 menit atau berulang tanpa pulih sadar, berikan rescue sesuai protokol, jaga ABC, dan rujuk segera. Untuk pasien stabil ini, edukasi keselamatan dan rujuk ke spesialis saraf; jangan memulai obat anti-bangkitan rumatan tanpa klasifikasi dan rencana terapi.',
+    panduanResmi: 'PNPK Epilepsi Dewasa 274/2026 menjadi acuan karena kasus dibatasi usia 18-30 tahun. Diagnosis dan terapi rumatan awal direncanakan melalui layanan spesialis; FKTP dapat melanjutkan pemantauan dan obat melalui rujuk balik. Diazepam enema 5/10 mg tercantum di Fornas FPKTP bila kejang, tetapi bukan jawaban wajib setelah bangkitan singkat telah berhenti.',
+    catatanRealita: 'GDS dan elektrolit dasar membantu menyingkirkan pencetus akut. Pemeriksaan renal/hepar atau pemeriksaan tambahan dilakukan sesuai konteks dan ketersediaan jejaring, tetapi tidak boleh menunda rujukan pasien stabil untuk klasifikasi bangkitan dan rencana terapi. Archetype anak 12-17 tahun ditunda sampai authoring terpisah dengan PNPK Anak dan pilihan rute rescue yang sesuai usia.',
     konsekuensi: {
       narasi: 'Bila tidak dirujuk untuk diagnosis dan OAE yang tepat, bangkitan berulang berisiko cedera (jatuh, tenggelam, kecelakaan) dan bila memanjang menjadi status epileptikus yang mengancam jiwa.',
       kembaliHariMin: 7,
       kembaliHariMax: 21,
       kondisiKembali: 'Pasien kembali diantar keluarga karena kejang berulang lebih sering, salah satunya berlangsung lama (>5 menit) hingga perlu penanganan gawat darurat.',
-      guideline: 'PPK PERDOSSI Epilepsi — bangkitan berulang dirujuk ke spesialis saraf untuk EEG & terapi OAE.',
+      guideline: 'Kepmenkes HK.01.07/MENKES/274/2026 tentang PNPK Tata Laksana Epilepsi Dewasa.',
     },
   },
 

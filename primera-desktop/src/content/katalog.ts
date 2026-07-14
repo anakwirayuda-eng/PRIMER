@@ -123,18 +123,14 @@ export const OBAT: Record<string, Obat> = {
     sediaan: 'Tablet 5 mg',
     hargaBeli: 150,
     hargaJual: 300,
-    // fornas:true DISENGAJA (CODEX-25 #25 mengira ini kontradiksi — sebenarnya
-    // TIDAK): Fornas ≠ DOEN. Glibenklamid MEMANG di Formularium Nasional
-    // (ditanggung JKN), cuma TIDAK di DOEN 2021 Puskesmas — makanya dm_tipe2
-    // menandainya obatSalahUmum (tersedia & ditanggung, tapi bukan pilihan
-    // realistis-Puskesmas & risiko hipoglikemia tinggi). Distraktor realistis
-    // yang benar: player yang memilihnya dihukum, bukan karena obatnya "tak ada".
+    // M13-0B (2026-07-14): Fornas 1199/2025 dan DOEN 6477/2021 historis
+    // sama-sama mencantumkan glibenklamid untuk FPKTP/Puskesmas. Pada dm_tipe2
+    // obat ini tetap non-preferred karena risiko hipoglikemia lebih tinggi,
+    // bukan karena dianggap tidak tersedia.
     fornas: true,
   },
-  // Bagian D Tier-1 #2 (audit CODEX 2026-07-11, adjudikasi PNPK/DOEN 2026-07-12):
-  // glibenklamid TIDAK ada di DOEN 2021 Puskesmas — sulfonilurea yg realistis
-  // tersedia (DOEN 2021) adalah glimepirid, juga lebih disukai PERKENI krn
-  // risiko hipoglikemia lebih rendah.
+  // M13-0B: glimepirid preferred pada slice DM karena risiko hipoglikemia
+  // lebih rendah; pilihan ini tidak menyiratkan glibenklamid absen dari Fornas.
   glimepirid_2: {
     id: 'glimepirid_2',
     nama: 'Glimepirid 2 mg',

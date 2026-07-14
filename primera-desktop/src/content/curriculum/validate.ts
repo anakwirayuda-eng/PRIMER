@@ -193,6 +193,18 @@ export function validasiCurriculumBlueprint(blueprint: CurriculumBlueprint, pack
     evidenceSubjects.set(subjectKey, (evidenceSubjects.get(subjectKey) ?? 0) + 1)
     if (!binding.source.trim()) masalah.push(`EvidenceBinding ${binding.id}: source kosong`)
     if (!binding.locator.trim()) masalah.push(`EvidenceBinding ${binding.id}: locator kosong`)
+    if (binding.audit) {
+      if (!binding.population?.trim()) masalah.push(`EvidenceBinding ${binding.id}: audit tanpa population`)
+      if (binding.reviewStatus === 'pending') masalah.push(`EvidenceBinding ${binding.id}: audit tidak boleh tetap pending`)
+      if (!binding.audit.deltaId.trim()) masalah.push(`EvidenceBinding ${binding.id}: deltaId kosong`)
+      if (!binding.audit.claim.trim()) masalah.push(`EvidenceBinding ${binding.id}: claim kosong`)
+      if (!binding.audit.contentLocator.trim()) masalah.push(`EvidenceBinding ${binding.id}: contentLocator kosong`)
+      if (!binding.audit.technicalReviewer.trim()) masalah.push(`EvidenceBinding ${binding.id}: technicalReviewer kosong`)
+      if (!binding.audit.proposedResolution.trim()) masalah.push(`EvidenceBinding ${binding.id}: proposedResolution kosong`)
+      if (binding.reviewStatus !== 'blocked' && !binding.audit.physicianSignoff) {
+        masalah.push(`EvidenceBinding ${binding.id}: ${binding.reviewStatus} tanpa physician sign-off`)
+      }
+    }
     if (binding.subject.kind === 'curriculum_item' && !itemIds.has(binding.subject.id)) {
       masalah.push(`EvidenceBinding ${binding.id}: CurriculumItem subject yatim '${binding.subject.id}'`)
     }

@@ -15,6 +15,7 @@
 export const NAMA_ICD: Record<string, string> = {
   /* -- Neurologi & gawat --------------------------------------------------- */
   I63: 'Stroke Iskemik (Infark Serebri)',
+  'I63.9': 'Stroke Iskemik (Infark Serebri), tidak spesifik',
   'I61.9': 'Perdarahan Intraserebral',
   I61: 'Perdarahan Intraserebral',
   I64: 'Stroke, tidak spesifik',

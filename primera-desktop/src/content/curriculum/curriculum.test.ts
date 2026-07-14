@@ -172,11 +172,15 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     expect(berhasil.masteredScenarioIds).toEqual([scenarioId])
   })
 
-  it('source registry belum diklaim selesai: seluruh binding baseline tetap pending utk M13-0B', () => {
+  it('M13-0B hanya men-terminalkan empat delta; binding baseline lain tetap pending', () => {
     expect(CURRICULUM_BLUEPRINT.evidenceBindings.length).toBeGreaterThan(0)
-    expect(
-      CURRICULUM_BLUEPRINT.evidenceBindings.every((binding) => binding.reviewStatus === 'pending'),
-    ).toBe(true)
+    const audited = CURRICULUM_BLUEPRINT.evidenceBindings.filter((binding) => binding.audit)
+    const baseline = CURRICULUM_BLUEPRINT.evidenceBindings.filter((binding) => !binding.audit)
+    expect(audited).toHaveLength(32)
+    expect(audited.filter((binding) => binding.reviewStatus === 'resolved')).toHaveLength(16)
+    expect(audited.filter((binding) => binding.reviewStatus === 'accepted_with_limitation')).toHaveLength(16)
+    expect(audited.every((binding) => binding.audit?.physicianSignoff)).toBe(true)
+    expect(baseline.every((binding) => binding.reviewStatus === 'pending')).toBe(true)
   })
 
   it('validator menangkap credit yatim, link lama belum direkonsiliasi, dan skenario UKM hilang', () => {

@@ -66,6 +66,14 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         oldcarts: ['penyerta'],
       },
       {
+        id: 'ht_red_flag',
+        kategori: 'rps',
+        tanya: 'Ada sesak berat mendadak, kelemahan satu sisi, wajah mencong, atau bicara pelo?',
+        jawab: 'Tidak ada, Dok. Napas biasa dan kedua tangan-kaki tetap kuat.',
+        esensial: true,
+        oldcarts: ['penyerta'],
+      },
+      {
         id: 'ht_riwayat',
         kategori: 'rpd',
         tanya: 'Apakah dulu pernah dikatakan tekanan darahnya tinggi?',
@@ -83,6 +91,14 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         kategori: 'rpd',
         tanya: 'Apakah rutin minum obat tekanan darah?',
         jawab: 'Tidak, Dok. Kalau pusing saja saya beli obat warung.',
+      },
+      {
+        id: 'ht_kehamilan',
+        kategori: 'rpd',
+        tanya: 'Apakah sedang hamil atau merencanakan kehamilan?',
+        jawab: 'Tidak sedang hamil dan tidak merencanakan kehamilan, Dok.',
+        esensial: true,
+        hanyaUntuk: 'P',
       },
       {
         id: 'ht_keluarga',
@@ -123,15 +139,14 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       { id: 'gdp', hasil: 'Gula darah puasa 108 mg/dL (batas normal atas).', flag: 'normal', relevan: true },
       { id: 'kolesterol', hasil: 'Kolesterol total 235, LDL 158, HDL 38, trigliserida 190 mg/dL — dislipidemia.', flag: 'tinggi', relevan: true },
       { id: 'urinalisis', hasil: 'Protein urin negatif, sedimen normal — belum ada tanda nefropati.', flag: 'normal', relevan: true },
+      { id: 'fungsi_ginjal', hasil: 'Kreatinin 0,9 mg/dL; eGFR 92 mL/menit/1,73 m2 — fungsi ginjal memadai untuk pilihan terapi saat ini.', flag: 'normal', relevan: true },
     ],
     diagnosisBanding: ['I10', 'I11.9', 'I15.9', 'G44.2'],
     tatalaksana: {
-      // Bagian D Tier-1 #1 (audit CODEX 2026-07-11, adjudikasi PNPK 2021+DOEN
-      // 2026-07-12): TD 160/95 = Derajat 2 PNPK 2021, wajib kombinasi 2 obat
-      // sejak awal (bukan monoterapi). Kaptopril (ACEi) diutamakan drpd
-      // hidroklorotiazid krn pasien punya sindrom metabolik (obesitas+
-      // dislipidemia) — tiazid berisiko memperburuk profil lipid/glukosa;
-      // ACEi+CCB metabolically neutral. Keduanya realistis-DOEN 2021 Puskesmas.
+      // M13-0B (2026-07-14): PNPK 303/2026 mendukung kombinasi awal untuk
+      // derajat 2. Fungsi ginjal dan status kehamilan kini tersedia sebelum
+      // ACE inhibitor/tiazid dinilai; elektrolit tidak dijadikan tes wajib
+      // pada slice FKTP ini sesuai physician waiver.
       obatBenar: ['amlodipine_5'],
       obatAlternatif: [['captopril_25', 'hct_25']],
       obatSalahUmum: [
@@ -143,8 +158,8 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       // — obat dihentikan sendiri krn takut efek samping → krisis hipertensi.
       edukasiKritis: ['kepatuhan_obat'],
     },
-    clue: 'JNC-8 (2014): target TD <140/90 mmHg (usia <60 th). Lini pertama CCB/tiazid/ACEI — di Puskesmas amlodipin lazim. Hipertensi "silent killer", sering asimptomatik; skrining kerusakan organ target (jantung, ginjal, mata) wajib. Kepmenkes HK.01.07/MENKES/303/2026 memperbarui: target awal tetap <140/90, DIPERKETAT ke <130/80 bila pasien mentoleransi (risiko kardiovaskular tinggi/komorbid) — bukan target tunggal-kaku utk semua pasien.',
-    panduanResmi: 'PPK 1186/2022 memberi kriteria rujukan resmi FKTP: hipertensi dengan komplikasi, resistensi, atau emergensi (sistol >180 mmHg). Untuk ibu hamil, ACE-I & ARB DILARANG — pilih metildopa/β-blocker/CCB; pada lansia mulai tiazid dosis rendah 12,5 mg/hari.',
+    clue: 'PNPK Hipertensi Dewasa 303/2026: pastikan teknik pengukuran TD benar, nilai kerusakan organ target dan faktor risiko, lalu mulai kombinasi dua kelas yang saling melengkapi pada hipertensi derajat 2. Target awal <140/90 mmHg dapat diperketat ke <130/80 bila ditoleransi. ACE-I/ARB dilarang pada kehamilan; fungsi ginjal perlu diketahui sebelum pemilihan ACE-I atau diuretik.',
+    panduanResmi: 'PNPK 303/2026 dan PPK 1936/2022 mendukung pengelolaan hipertensi stabil di FKTP. Daftar rujukan sumber memasukkan komorbiditas secara terlalu luas dan tidak selaras dengan algoritme tata laksana pada dokumen yang sama; berdasarkan physician waiver M13-0B, dislipidemia stabil tanpa kegawatan atau kerusakan organ akut tidak memicu rujuk otomatis. Rujuk bila ada emergensi, kerusakan organ akut, hipertensi resisten, atau kebutuhan di luar kapasitas FKTP.',
     // M10.5 keputusan #23 (2026-07-12, adopsi teks-ajar saja — Kepmenkes
     // 303/2026 belum mewajibkan funduskopi/eGFR sbg pemeriksaan wajib di FKTP,
     // jadi TIDAK ditambahkan sbg exam ternilai; murni memperkaya pemahaman).
@@ -192,13 +207,13 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         id: 'dm_bb',
         kategori: 'rps',
         tanya: 'Apakah berat badan turun belakangan ini padahal makan biasa?',
-        jawab: 'Iya, turun sekitar 5 kg dalam dua bulan padahal makan malah bertambah.',
+        jawab: 'Tidak turun bermakna, Dok; berat saya justru cenderung naik karena makan banyak.',
         esensial: true,
         oldcarts: ['penyerta'],
         variasi: {
-          polos: 'Iyo dok, mudhun 5 kilo, mangan malah tambah akeh.',
-          terpelajar: 'Ya, berat badan saya turun sekitar 5 kg dalam dua bulan meski makan lebih banyak.',
-          cemas: 'Berat saya turun terus, Dok, padahal makan banyak — saya jadi khawatir.',
+          polos: 'Ora mudhun dok, malah rada mundhak merga mangan akeh.',
+          terpelajar: 'Tidak ada penurunan berat badan bermakna; berat saya cenderung bertambah.',
+          cemas: 'Berat saya tidak turun, Dok, malah agak naik walau badan sering lemas.',
         },
       },
       {
@@ -259,7 +274,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       },
     ],
     pemeriksaanFisik: [
-      { region: 'umum', temuan: 'IMT 27 kg/m² (obesitas), tampak lemas, mukosa bibir agak kering.', relevan: true },
+      { region: 'umum', temuan: 'IMT 27 kg/m² (obesitas), tampak cukup, mukosa lembap, tanpa tanda dehidrasi atau dekompensasi akut.', relevan: true },
       { region: 'ekstremitas', temuan: 'Sensasi proteksi menurun pada kedua telapak kaki (uji monofilamen 10 g), pulsasi dorsalis pedis teraba, tidak ada ulkus.', relevan: true },
       { region: 'abdomen', temuan: 'Supel, bising usus normal, tidak ada nyeri tekan.', relevan: false },
       { region: 'kepala_leher', temuan: 'Konjungtiva tidak pucat, tidak ada pembesaran tiroid.', relevan: false },
@@ -270,26 +285,25 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       { id: 'urinalisis', hasil: 'Reduksi glukosa urin +++, keton negatif.', flag: 'abnormal', relevan: true },
       { id: 'kolesterol', hasil: 'LDL 148, trigliserida 210 mg/dL — dislipidemia penyerta.', flag: 'tinggi', relevan: true },
       { id: 'hba1c', hasil: 'HbA1c 8,9% (tinggi, target <7%) — kendali glikemik 3 bulan terakhir buruk, mengonfirmasi DM.', flag: 'tinggi', relevan: true },
+      { id: 'fungsi_ginjal', hasil: 'Kreatinin 0,9 mg/dL; eGFR 88 mL/menit/1,73 m2 — tidak ada pembatasan renal untuk metformin saat ini.', flag: 'normal', relevan: true },
     ],
     diagnosisBanding: ['E11.9', 'E10.9', 'E13.9', 'N39.0'],
     tatalaksana: {
-      // Bagian D Tier-1 #2 (audit CODEX 2026-07-11, adjudikasi PNPK/PPK1186+DOEN
-      // 2026-07-12): HbA1c 8,9% ≥ ambang PERKENI 7,5% (PPK1186 kategori kendali
-      // "Buruk" >8%) — wajib kombinasi 2 OAD mekanisme berbeda, bukan monoterapi.
-      // Sulfonilurea-nya glimepirid (BUKAN glibenklamid — glibenklamid tak ada
-      // di DOEN 2021 Puskesmas, tak realistis diresepkan; glimepirid nyata ada
-      // & risiko hipoglikemia lebih rendah).
+      // M13-0B (2026-07-14): PNPK 302/2026 mendukung kombinasi OAD pada
+      // HbA1c 8,9% bila pasien stabil dan nonkatabolik. Glimepirid dipilih
+      // sebagai sulfonilurea preferred; glibenklamid tetap tersedia di Fornas
+      // tetapi non-preferred karena risiko hipoglikemia lebih tinggi.
       obatBenar: ['metformin_500', 'glimepirid_2'],
       obatSalahUmum: [
-        { id: 'glibenclamide_5', alasan: 'Glibenklamid tidak ada di formularium esensial Puskesmas (DOEN 2021) — tidak realistis diresepkan di FKTP. Glimepirid setara secara klinis (sulfonilurea, risiko hipoglikemia lebih rendah) dan nyata tersedia.', bahaya: 'nonPrimer' },
+        { id: 'glibenclamide_5', alasan: 'Glibenklamid tercantum di Fornas FPKTP, tetapi non-preferred pada kasus ini karena risiko hipoglikemia lebih tinggi. Pilih glimepirid dan berikan edukasi hipoglikemia; penalti ini ringan, bukan label kontraindikasi atau tidak tersedia.', bahaya: 'nonPrimer' },
       ],
-      edukasi: ['diet_dm', 'aktivitas_fisik', 'kepatuhan_obat', 'kontrol_rutin'],
+      edukasi: ['diet_dm', 'kenali_hipoglikemia', 'kepatuhan_obat', 'aktivitas_fisik', 'kontrol_rutin'],
       // DeepThink triangulasi (2026-07-05): PERKENI — kepatuhan obat adalah tema
       // sentral manajemen DM kronis; putus obat → komplikasi mikro/makrovaskular.
-      edukasiKritis: ['kepatuhan_obat'],
+      edukasiKritis: ['kenali_hipoglikemia', 'kepatuhan_obat'],
     },
-    clue: 'PERKENI 2021: diagnosis DM bila GDP ≥126, GDS ≥200 + gejala klasik (poliuri, polidipsi, polifagi, BB turun), atau HbA1c ≥6,5%. Lini pertama metformin + modifikasi gaya hidup. Kelola di FKTP kecuali ada komplikasi akut/berat.',
-    panduanResmi: 'PPK 1186/2022 memerinci batas rujukan FKTP untuk DM tipe 2: dirujuk bila ada komplikasi, KONTROL GULA BURUK, atau infeksi berat. \'Kontrol gula buruk\' adalah pemicu rujuk resmi tersendiri (bukan sekadar \'komplikasi\') yang sering terlewat saat pasien tampak stabil.',
+    clue: 'PNPK DM Tipe 2 Dewasa 302/2026: diagnosis terpenuhi oleh gejala klasik dengan GDS ≥200 mg/dL, GDP ≥126 mg/dL, atau HbA1c ≥6,5% sesuai konteks. Pada pasien stabil tanpa ketonuria, dehidrasi, atau penurunan berat badan cepat, HbA1c 8,9% dapat ditangani dengan kombinasi OAD, modifikasi gaya hidup, dan pemantauan. Verifikasi fungsi ginjal sebelum metformin dan ajarkan pengenalan serta penanganan awal hipoglikemia saat memakai sulfonilurea.',
+    panduanResmi: 'PNPK 302/2026 dan PPK 1936/2022 membedakan pasien stabil yang dapat dikelola dengan OAD di FKTP dari dekompensasi metabolik, penurunan berat badan cepat, ketonuria, infeksi berat, atau komplikasi yang memerlukan rujukan. Kasus ini sengaja nonkatabolik dan fungsi ginjalnya memadai; evaluasi respons dan keselamatan obat tetap wajib.',
     catatanRealita: 'PoCT HbA1c dan chemistry analyzer belum dimiliki semua Puskesmas. HbA1c berguna untuk baseline/kontrol, tetapi ketiadaannya tidak boleh menunda diagnosis pada gejala klasik dengan kriteria glukosa yang terpenuhi. Gunakan tes tervalidasi yang tersedia dan jejaringkan HbA1c, kreatinin/eGFR, serta pemeriksaan komplikasi sesuai kebutuhan.',
   },
 
@@ -928,14 +942,14 @@ export const KASUS_KRONIS: KasusKlinis[] = [
   },
 
   /* ======================================================================
-   * 8. STROKE ISKEMIK — I63.9 · 3B · saraf · HARUS DIRUJUK
+   * 8. SUSPEK STROKE AKUT — I64 · 3B · saraf · HARUS DIRUJUK
    *    Kasus karma Bu Wulan: dibawa keluarga subuh, bicara pelo, lengan lemah.
    *    "Time is Brain" — stabilisasi & rujuk cepat; jangan turunkan TD agresif.
    * ==================================================================== */
   {
     id: 'stroke_iskemik',
-    nama: 'Stroke Iskemik Akut',
-    icd10: 'I63.9',
+    nama: 'Suspek Stroke Akut',
+    icd10: 'I64',
     skdi: '3B',
     kategori: 'saraf',
     fktp144: false,
@@ -1043,24 +1057,24 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       { id: 'darah_rutin', hasil: 'Dalam batas normal; tidak ada tanda infeksi berat.', flag: 'normal', relevan: true },
       { id: 'kolesterol', hasil: 'LDL tinggi bila diperiksa — faktor risiko, tetapi bukan penentu tindakan akut.', flag: 'tinggi', relevan: false },
     ],
-    diagnosisBanding: ['I63.9', 'I61.9', 'G45.9', 'E16.2'],
+    diagnosisBanding: ['I64', 'I63.9', 'I61.9', 'G45.9', 'E16.2'],
     tatalaksana: {
       obatBenar: [],
       obatSalahUmum: [
-        { id: 'captopril_25', alasan: 'Jangan turunkan tekanan darah cepat pada stroke iskemik akut (permisif hingga ~220/120) — menurunkan perfusi penumbra dan memperluas infark.', bahaya: 'kontraindikasi' },
-        { id: 'amlodipine_5', alasan: 'Penurunan TD agresif fase akut membahayakan; prioritas adalah stabilisasi ABC dan rujukan cepat, bukan obat oral.', bahaya: 'kontraindikasi' },
+        { id: 'captopril_25', alasan: 'Pada suspek stroke sebelum pencitraan, jangan menurunkan TD secara agresif tanpa indikasi emergensi lain atau protokol fasilitas penerima; penurunan mendadak dapat memperburuk perfusi serebral.', bahaya: 'kontraindikasi' },
+        { id: 'amlodipine_5', alasan: 'Obat oral bukan prioritas fase pra-pencitraan. Stabilkan ABC, cek glukosa, dokumentasikan last-known-well, dan rujuk segera tanpa penurunan TD agresif.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['tanda_bahaya', 'kontrol_rutin', 'kepatuhan_obat'],
     },
-    clue: 'Stroke = kegawatan "Time is Brain". Kenali FAST (Face-Arm-Speech-Time) dan SELALU cek gula darah (hipoglikemia adalah peniru stroke). Di FKTP: stabilkan jalan napas/pernapasan/sirkulasi, JANGAN turunkan TD agresif (<220/120 mmHg), RUJUK segera ke RS dengan CT-scan dalam window terapi (SKDI 3B, PERDOSSI). Hipertensi tak terkontrol adalah faktor risiko utama.',
-    panduanResmi: 'PPK 1186/2022 merinci stabilisasi pra-rujuk FKTP: posisi kepala-badan head-up 20–30°, infus NaCl/RL 500 ml/12 jam, cek gula darah jari, beri Dekstrose 50% 25 g IV bila hipoglikemia berat; SEMUA pasien stroke wajib segera dirujuk ke faskes sekunder yang punya spesialis saraf.',
-    catatanRealita: 'CT-scan bukan layanan Puskesmas dan integrasi SISRUTE masih bertahap. Aktivasi rujukan harus berjalan paralel dengan stabilisasi, pencatatan last-known-well, cek glukosa, dan transport; kendala aplikasi/jaringan bukan alasan menunggu. Gunakan jalur kontingensi lokal dan dokumentasikan komunikasi dengan fasilitas penerima.',
+    clue: 'Suspek stroke akut adalah kegawatan "Time is Brain". Kenali FAST dan selalu cek gula darah sebagai peniru stroke. Di FKTP: stabilkan ABC, catat last-known-well, jangan menurunkan TD agresif, serta jangan memberi antiplatelet atau antikoagulan sebelum pencitraan membedakan iskemik dan perdarahan. Aktifkan rujukan sambil stabilisasi dengan target keberangkatan paling lambat 30 menit.',
+    panduanResmi: 'PNPK Stroke 304/2026: CT kepala nonkontras diperlukan untuk menentukan subtipe. Pada fase pra-rumah sakit, berikan kristaloid hanya bila ada dehidrasi, pre-syok, atau syok; bukan cairan rutin untuk semua pasien. Hindari antiplatelet/antikoagulan dan penurunan TD agresif sebelum evaluasi rumah sakit, lalu rujuk segera.',
+    catatanRealita: 'CT-scan bukan layanan Puskesmas dan integrasi SISRUTE masih bertahap. Aktivasi rujukan harus berjalan paralel dengan stabilisasi, pencatatan last-known-well, cek glukosa, dan persiapan transport agar berangkat dalam <=30 menit; kendala aplikasi/jaringan bukan alasan menunggu. Gunakan jalur kontingensi lokal dan dokumentasikan komunikasi dengan fasilitas penerima.',
     konsekuensi: {
       narasi: 'Buah dari hipertensi yang menolak diobati: penundaan rujukan memperkecil peluang pemulihan; setiap menit adalah jaringan otak yang hilang.',
       kembaliHariMin: 7,
       kembaliHariMax: 14,
       kondisiKembali: 'Kembali dengan hemiparesis kanan menetap dan bicara yang belum pulih — kecacatan yang bisa dikurangi bila dirujuk lebih cepat.',
-      guideline: 'PERDOSSI: Panduan Praktik Klinis Neurologi — Stroke Iskemik Akut; window terapi reperfusi.',
+      guideline: 'Kepmenkes HK.01.07/MENKES/304/2026 tentang PNPK Tata Laksana Stroke.',
     },
   },
 ]

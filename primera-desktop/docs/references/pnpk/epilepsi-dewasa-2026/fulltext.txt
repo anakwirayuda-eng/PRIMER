@@ -1,0 +1,4289 @@
+
+===== PAGE 1 =====
+KEPUTUSAN MENTERI KESEHATAN REPUBLIK INDONESIA
+NOMOR HK.01.07/MENKES/274/2026
+TENTANG
+PEDOMAN NASIONAL PELAYANAN KLINIS
+TATA LAKSANA EPILEPSI PADA DEWASA
+DENGAN RAHMAT TUHAN YANG MAHA ESA
+MENTERI KESEHATAN REPUBLIK INDONESIA,
+Menimbang
+: a.
+bahwa penyelenggaraan pelayanan kesehatan harus
+dilakukan sesuai dengan standar pelayanan kesehatan
+yang
+disusun
+dalam
+bentuk
+Pedoman
+Nasional
+Pelayanan Klinis dan standar prosedur operasional;
+b.
+bahwa
+untuk
+memberikan
+acuan
+bagi
+fasilitas
+pelayanan kesehatan dalam penatalaksanaan epilepsi
+pada dewasa dan penyusunan standar prosedur
+operasional, perlu menetapkan pedoman nasional
+pelayanan klinis;
+c.
+bahwa
+berdasarkan
+pertimbangan
+sebagaimana
+dimaksud dalam huruf a dan huruf b perlu menetapkan
+Keputusan
+Menteri
+Kesehatan
+tentang
+Pedoman
+Nasional pelayanan Klinis Tata Laksana Epilepsi Pada
+Dewasa;
+Mengingat
+: 1.
+Undang-Undang Nomor 17 Tahun 2023 tentang
+Kesehatan (Lembaran Negara Republik Indonesia
+Tahun 2023 Nomor 105, Tambahan Lembaran Negara
+Republik Indonesia Nomor 6887);
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 2 =====
+- 2 -
+
+
+2.
+Peraturan Pemerintah Repulik Indonesia Nomor 28
+Tahun 2024 tentang Peraturan Pelaksanaan Undang-
+Undang Nomor 17 Tahun 2023 Tentang Kesehatan
+(Tambahan Lembaran Negara Republik Indonesia
+Nomor 6952);
+3.
+Peraturan Presiden Nomor 161 Tahun 2024 tentang
+Kementerian Kesehatan (Lembaran Negara Republik
+Indonesia Tahun 2024 Nomor 357);
+4.
+Peraturan Menteri Kesehatan Nomor 24 Tahun 2022
+tentang
+Rekam
+Medis
+(Berita
+Negara
+Republik
+Indonesia Tahun 2022 Nomor 829);
+5.
+Peraturan Menteri Kesehatan Nomor 21 Tahun 2024
+tentang
+Organisasi
+dan
+Tata
+Kerja
+Kementerian
+Kesehatan (Berita Negara Republik Indonesia Tahun
+2024 Nomor 1048) sebagaimana telah diubah dengan
+Peraturan Menteri Kesehatan Nomor 17 Tahun 2025
+tentang Perubahan atas Peraturan Menteri Kesehatan
+Nomor 21 Tahun 2024 tentang Organisasi dan Tata
+Kerja Kementerian Kesehatan (Berita Negara Republik
+Indonesia Tahun 2025 Nomor 1128);
+
+MEMUTUSKAN:
+Menetapkan
+: KEPUTUSAN MENTERI KESEHATAN TENTANG PEDOMAN
+NASIONAL PELAYANAN KLINIS TATA LAKSANA EPILEPSI
+PADA DEWASA.
+
+KESATU
+: Menetapkan Pedoman Nasional Pelayanan Klinis Tata
+Laksana Epilepsi Pada Dewasa yang selanjutnya disebut
+PNPK Epilepsi sebagaimana tercantum dalam Lampiran
+yang merupakan bagian tidak terpisahkan dari Keputusan
+Menteri ini.
+KEDUA
+: PNPK Epilepsi sebagaimana dimaksud dalam Diktum
+KESATU merupakan pedoman bagi dokter sebagai pembuat
+keputusan klinis di fasilitas pelayanan kesehatan, institusi
+pendidikan, tenaga medis dan tenaga kesehatan, pembuat
+kebijakan di Fasilitas Pelayanan Kesehatan, dan kelompok
+profesi terkait.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 3 =====
+- 3 -
+KETIGA
+: PNPK Epilepsi sebagaimana dimaksud dalam Diktum
+KESATU harus dijadikan acuan dalam penyusunan standar
+prosedur operasional di setiap fasilitas pelayanan kesehatan.
+KEEMPAT
+:  Kepatuhan terhadap PNPK Epilepsi sebagaimana dimaksud
+dalam Diktum KESATU bertujuan memberikan pelayanan
+kesehatan dengan upaya terbaik.
+KELIMA
+: Penyesuaian terhadap pelaksanaan PNPK Epilepsi dapat
+dilakukan oleh dokter hanya berdasarkan keadaan tertentu
+yang memaksa untuk kepentingan penderita dan dicatat
+dalam rekam medis.
+KEENAM
+: Menteri
+Kesehatan,
+gubernur,
+dan
+bupati/wali
+kota
+melakukan
+pembinaan
+dan
+pengawasan
+terhadap
+pelaksanaan PNPK Epilepsi dan dapat melibatkan organisasi
+profesi.
+KETUJUH
+: Keputusan Menteri ini mulai berlaku pada tanggal
+ditetapkan.
+Ditetapkan di Jakarta
+pada tanggal 30 Maret 2026
+MENTERI KESEHATAN
+REPUBLIK
+INDONESIA,
+ttd.
+BUDI G. SADIKIN
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 4 =====
+- 4 -
+
+
+LAMPIRAN
+KEPUTUSAN
+MENTERI
+KESEHATAN
+REPUBLIK INDONESIA
+NOMOR HK.01.07/MENKES/274/2026
+TENTANG
+PEDOMAN
+NASIONAL
+PELAYANAN
+KLINIS TATA LAKSANA EPILEPSI PADA
+DEWASA
+
+PEDOMAN NASIONAL PELAYANAN KLINIS TATA LAKSANA
+EPILEPSI PADA DEWASA
+
+BAB I
+PENDAHULUAN
+
+A. Latar Belakang
+Epilepsi merupakan salah satu kondisi kelainan neurologis kronik yang
+memiliki angka kejadian tinggi, dengan perkiraan 50 juta penderita secara
+global. Penyakit ini ditandai dengan kecenderungan untuk mengalami
+bangkitan
+epileptik
+yang
+berulang,
+disertai
+dengan
+konsekuensi
+neurobiologis, kognitif, psikologis, dan sosial. Berdasarkan definisi dari
+International League Against Epilepsy (ILAE), diagnosis epilepsi dapat
+ditegakkan apabila terdapat minimal dua bangkitan epileptik tanpa
+provokasi dengan jarak lebih dari 24 jam, atau satu bangkitan tanpa
+provokasi dengan risiko bangkitan berikutnya mencapai setidaknya 60%
+dalam 10 tahun, atau apabila telah ditegakkan diagnosis sindrom epilepsy.
+Bangkitan epileptik merupakan manifestasi tanda dan/atau gejala yang
+bersifat sesaat akibat aktivitas neuronal abnormal dan berlebihan di otak.
+Diperkirakan hingga 8% orang pernah mengalami satu kali bangkitan dalam
+hidupnya.
+Epilepsi memiliki insidensi dan prevalensi yang cukup tinggi,
+khususnya di negara berpendapatan rendah dan menengah. Menurut data
+WHO, di negara berpendapatan tinggi, insidensi epilepsi mencapai sekitar
+49 per 100.000 orang per tahun, sementara di negara berpendapatan rendah
+dan menengah dapat mencapai 139 per 100.000 orang. Faktor-faktor yang
+berkontribusi terhadap tingginya angka ini mencakup tingginya beban
+penyakit infeksi (seperti malaria dan tuberkulosis), kecelakaan lalu lintas,
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 5 =====
+- 5 -
+
+
+cedera saat persalinan, serta keterbatasan akses terhadap pelayanan
+kesehatan. Hampir 80% penderita epilepsi berasal dari negara-negara
+berkembang.
+Di kawasan Asia, prevalensi epilepsi bervariasi antara 1,5 hingga 14 per
+1.000 penduduk, bergantung pada metodologi survei di masing-masing
+negara. Di Asia Tenggara, prevalensi berkisar antara 4,4 hingga 7,8 per
+1.000 penduduk. Di Indonesia sendiri, data insidensi epilepsi yang pasti
+masih belum tersedia secara nasional, mengingat banyak kasus epilepsi
+yang tidak terdeteksi dan tidak tercatat di fasilitas pelayanan kesehatan.
+Namun, estimasi menunjukkan sekitar 1,5 juta penderita epilepsi di
+Indonesia, dengan prevalensi sekitar 0,5–0,6% dari populasi. Berdasarkan
+estimasi Global Burden of Disease (GBD), kematian akibat epilepsi secara
+global mencapai lebih dari 125.000 kasus per tahun. Di Indonesia, angka
+kematian akibat epilepsi diperkirakan mencapai sekitar 2,8 per 100.000
+penduduk per tahun. Angka ini dapat lebih tinggi mengingat keterbatasan
+pencatatan dan pelaporan. Kematian dapat disebabkan oleh status
+epileptikus, kecelakaan akibat kejang, serta sudden unexpected death in
+epilepsy (SUDEP).
+Penderita epilepsi, khususnya yang mengalami kejang berulang, tidak
+hanya menghadapi tantangan dari aspek neurologis, tetapi juga memiliki
+risiko lebih tinggi terhadap berbagai komorbiditas medis dan psikiatri,
+seperti gangguan mood (depresi, kecemasan), penyakit kardiovaskular,
+gangguan metabolik, dan gangguan tidur. Kondisi komorbid tersebut dapat
+memperberat beban penyakit, memperburuk kontrol kejang, meningkatkan
+angka rawat inap, serta mempercepat penurunan fungsi kognitif dan fisik,
+sehingga berdampak negatif terhadap kualitas dan harapan hidup
+penderita. Oleh karena itu, penatalaksanaan epilepsi perlu dilakukan secara
+holistik, melibatkan tenaga medis dan tenaga kesehatan yang kompeten,
+dengan memperhatikan penanganan komorbiditas yang menyertainya.
+Pedoman Nasional Praktik Klinis (PNPK) menjadi penting sebagai acuan
+berbasis bukti ilmiah dalam penanganan epilepsi bagi pasien dewasa di
+Indonesia
+
+
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 6 =====
+- 6 -
+
+
+B. Permasalahan
+Permasalahan utama dalam penanganan epilepsi di Indonesia meliputi:
+1. Peningkatan jumlah penderita epilepsi setiap tahunnya.
+2. Keterlambatan diagnosis akibat kurangnya pengetahuan dan sosialisasi
+kepada masyarakat, belum optimalnya kompetensi tenaga medis dan
+tenaga kesehatan, serta keterbatasan fasilitas pemeriksaan penunjang.
+3. Kesalahan diagnosis dan tata laksana yang tidak sesuai menyebabkan
+prognosis yang lebih buruk serta berdampak pada kondisi sosial dan
+ekonomi pasien beserta keluarganya.
+4. Belum optimalnya jaminan ketersediaan obat anti-epilepsi (OAE) di
+seluruh fasilitas pelayanan kesehatan, serta masih adanya stigma
+negatif
+terhadap
+penyandang
+epilepsi
+dan
+keluarganya
+yang
+memerlukan intervensi kebijakan dari pemerintah.
+C.  Tujuan
+1. Tujuan umum
+Meningkatkan kemampuan dan mutu pelayanan dalam tata laksana
+epilepsi di Indonesia.
+2.  Tujuan khusus:
+a. Meningkatkan kualitas pelayanan penanganan epilepsi yang
+terstandar secara nasional.
+b. Meningkatkan kompetensi tenaga medis dan tenaga kesehatan
+dalam penanganan epilepsi di fasilitas pelayanan kesehatan.
+c. Memberikan rekomendasi bagi fasilitas pelayanan kesehatan dalam
+menyusun protokol atau panduan praktik klinis epilepsi.
+d. Memberikan pedoman nasional penanganan epilepsi dewasa, mulai
+dari penilaian awal, penatalaksanaan di fasilitas pelayanan
+kesehatan, hingga terapi definitif dan sistem rujukan.
+
+D. Sasaran
+1. Tenaga medis dan tenaga kesehatan
+2. Pembuat kebijakan di Fasilitas Pelayanan Kesehatan
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 7 =====
+- 7 -
+
+
+BAB II
+METODOLOGI
+
+A. Penelusuran Kepustakaan
+Pedoman ini disusun berdasarkan tinjauan pustaka dari berbagai
+sumber, baik secara manual maupun elektronik, dengan menggunakan
+kata kunci penelusuran: "epilepsi", "sindrom epilepsi", dan "seizure".
+Penyusunan buku pedoman ini menggunakan rujukan dari konsensus
+organisasi internasional, seperti International League Against Epilepsy
+(ILAE), National Institute for Health and Care Excellence (NICE), serta
+sumber lainnya yang relevan.
+
+B. Kajian Telaah Kritis Pustaka
+Setiap bukti ilmiah yang diperoleh telah dilakukan telaah kritis oleh
+pakar dalam bidang epilepsi dan neurologi
+1. Bagaimana pendekatan diagnosis klinis (meliputi anamnesis dan
+pemeriksaan fisik) terhadap bangkitan epileptik dan epilepsi?
+2. Bagaimana peran pemeriksaan penunjang dalam menegakkan
+diagnosis bangkitan epileptik dan epilepsi?
+3. Bagaimana tata laksana apabila terjadi bangkitan epileptik dan
+epilepsi?
+4. Bagaimana
+pendekatan
+diagnosis
+klinis
+(anamnesis
+dan
+pemeriksaan fisik) pada status epileptikus konvulsif, status
+epileptikus non-konvulsif, dan status epileptikus refrakter?
+5. Bagaimana pemeriksaan penunjang dalam menegakkan diagnosis
+status epileptikus?
+6. Bagaimana tata laksana pasien dengan status epileptikus?
+
+C. Peringkat Bukti (Level of Evidence)
+Peringkat bukti adalah sistem pengelompokan bukti ilmiah
+berdasarkan kekuatannya untuk membantu pengambilan keputusan
+berbasis bukti. Peringkat ini digunakan untuk mengidentifikasi jenis
+penelitian yang paling dapat diandalkan dalam mendukung rekomendasi
+atau praktik klinis.
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 8 =====
+- 8 -
+
+
+Tabel 1. Peringkat bukti
+No
+Peringkat
+Bukti
+Keterangan
+1.  Kelas I
+Randomized controlled trial (RCT), atau meta
+analisis RCT, yang memenuhi 6 kriteria berikut :
+1. Terdapat variabel outcome primer : efficacy atau
+effectiveness
+2. Durasi terapi : ≥ 48 minggu dan terdapat
+informasi mengenai data bebas kejang ≥ 24
+minggu (efficacy) atau data retensi (effectiveness)
+≥ 48 minggu
+3. Desain penelitian : double blind
+4. Menunjukkan superioritas, atau jika tidak, besar
+sampel penelitian cukup untuk menunjukkan
+tidak
+adanya
+inferioritas
+atau
+tidak
+ada
+perburukan dengan perbedaan relatif lebih dari
+20% effectiveness/efficacy.
+5. Hasil penelitian : tidak dipengaruhi oleh jumlah
+kasus yang mendapat terapi kejang gawat darurat
+6. Analisis statistik yang baik
+2.  Kelas II
+Randomized controlled trial (RCT), atau meta analisis
+RCT, memenuhi semua kriteria pada kelas I,
+kecuali:
+1. Tidak tampak adanya superioritas dan besar
+sampel aktual
+penelitian
+cukup
+untuk
+menunjukkan
+bahwa
+tidak
+ada
+inferioritas
+dengan perbedaan relatif effectiveness/efficacy
+21-30%; atau
+2. Durasi terapi ≥ 24 minggu tetapi ≤ 48 minggu
+3.  Kelas III
+Randomized controlled trial (RCT), atau meta analisis
+RCT, akan tetapi tidak memenuhi kriteria kelas I dan
+kelas II (open label study atau penelitian double-blind
+dan terdeteksi tidak ada inferioritas > 30%).
+4.  Kelas IV
+Bukti
+dari
+non-randomized,
+prospektif,
+studi
+controlled atau noncontrolled, rangkaian kasus,
+laporan ahli.
+
+
+
+
+
+
+
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 9 =====
+- 9 -
+
+
+D. Derajat Rekomendasi
+Berdasarkan peringkat di atas dapat dibuat rekomendasi sebagai
+berikut:
+
+Tabel 2. Peringkat bukti
+No
+Peringkat
+Rekomendasi
+Keterangan
+1.
+A
+≥ 1 studi kelas I atau meta-analisis yang
+memenuhi kriteria kelas I dengan OR ≥ 2
+studi kelas II
+2.
+B
+1 studi kelas II atau meta-analisis yang
+memenuhi kriteria kelas II
+3.
+C
+≥ 2 studi kelas III double-blind atau open-
+label
+4.
+D
+1 studi kelas III double-blind atau open-label
+5.
+E
+≥ 1 studi kelas IV atau laporan komite ahli,
+atau opini klinisi berpengalaman atau tidak
+ada bukti klinis aplikasi langsung yang
+menjadi dasar rekomendasi.
+6.
+F
+ada bukti bahwa kurang efficacy atau
+effectiveness berdasarkan studi kelas I hingga
+IV atau berisiko signifikan justru akan
+memicu terjadinya kejang berdasarkan studi
+kelas I hingga IV
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 10 =====
+- 10 -
+
+
+BAB III
+HASIL DAN PEMBAHASAN
+
+Pembahasan mengenai klasifikasi epilepsi menggunakan International
+League Against Epilepsy (ILAE) tahun 2017 menetapkan tiga tingkatan
+diagnosis, yaitu bangkitan epileptik, epilepsi, dan sindrom epilepsi.
+Selanjutnya kita menggunakan pembaruan klasifikasi bangkitan epilepsi
+ILAE tahun 2025 dan pembaruan klasifikasi sindrom epilepsi ILAE tahun 2022.
+A. Bangkitan Epileptik
+1.  Definisi dan Klasifikasi
+Bangkitan epileptik (epileptic seizure) adalah tanda/gejala yang
+bersifat sesaat akibat aktivitas neuronal yang abnormal dan  berlebihan
+di otak, sedangkan bangkitan non epileptik merupakan tanda atau gejala
+yang bukan akibat dari aktivitas neuronal otak. Bangkitan non epileptik
+pada dewasa terbanyak adalah bangkitan psikogenik dan sinkop. Definisi
+istilah dalam epilepsi dapat dilihat pada tabel 3.
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 11 =====
+- 11 -
+
+
+Tabel 3. Definisi Istilah dalam Bangkitan Epileptik
+
+Awitan Fokal
+Bangkitan yang muncul terbatas dalam satu hemisfer
+Awitan Umum
+Bangkitan yang muncul secara bersama/serentak di
+kedua hemisfer
+Awitan tidak
+diketahui
+Bangkitan yang awitannya tidak diketahui fokal atau
+umum
+Sadar
+Menyadari diri atau lingkungannya
+Gangguan
+kesadaran
+Tidak menyadari akan diri atau lingkungannya
+Motorik
+Melibatkan otot dalam berbagai bentuk, dapat berupa
+peningkatan
+kontraksi
+otot
+(positif)
+sehingga
+menimbulkan gerakan atau berkurangnya kontraksi
+(negatif) sehingga menimbulkan  mengurangi Gerakan
+Otomatisme
+Aktivitas
+motorik
+yang
+terkoordinasi,
+sering
+menyerupai gerak volunter. Biasanya muncul dengan
+gangguan kesadaran sehingga setelahnya subjek
+tidak dapat mengingatnya
+Atonik
+
+Hilang atau berkurangnya tonus otot mendadak.
+Durasi 1-2 detik, dapat melibatkan kepala, tubuh,
+rahang, atau  otot anggota badan
+Klonik
+Gerak menyentak (jerking), berulang secara reguler dan
+melibatkan kelompok otot yang sama
+Spasme
+Epileptik
+Gerakan mendadak berupa fleksi, ekstensi, atau
+gabungan ekstensi dan fleksi otot proksimal dan otot
+tubuh. Gerakan berlangsung lebih lama dibanding
+mioklonik namun tidak selama bangkitan tonik.
+Bentuk seperti meringis, anggukan kepala, atau
+gerakan mata halus bisa terjadi namun lebih jarang.
+Epileptic spasm sering muncul berkelompok (cluster)
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 12 =====
+- 12 -
+
+
+Hiperkinetik
+Gerakan kaki seperti mengayuh (leg pedaling) atau
+memukul- mukul dengan gelisah (agitated thrashing)
+Mioklonik
+Gerakan involunter tiba-tiba, singkat (<100 milidetik)
+berupa kontraksi otot tunggal atau multipel pada
+anggota gerak proksimal, distal, atau aksial lebih
+singkat dibandingkan klonik
+Tonik
+Peningkatan kontraksi otot yang berlangsung beberapa
+detik sampai beberapa menit
+Non motorik
+Tidak atau sedikit sekali melibatkan kontraksi otot
+Otonomik
+Perubahan sistem saraf otonom yang melibatkan
+kardiovaskular, pupil, gastrointestinal, sudomotor,
+vasomotor, dan termoregulasi
+Behavior arrest  Henti aktivitas sesaat, freezing, imobilisasi
+Kognitif
+Berhubungan dengan proses berfikir dan fungsi
+kortikal, seperti bahasa, persepsi spasial, memori, dan
+praktis
+Emosional
+Menunjukkan
+emosi
+sebagai
+tanda
+awal
+yang
+menonjol, seperti rasa takut, sukacita spontan atau
+euforia, tertawa (gelastic), atau menangis (dacrystic)
+Sensoris
+Persepsi rasa yang tidak disebabkan oleh adanya
+stimulus yang sesuai/memadai dari lingkungan
+eksternal
+Tonik-klonik
+Bangkitan berurutan berupa tonik diikuti fase klonik
+Mioklonik-
+tonikklonik
+Bangkitan berurutan diawali bangkitan mioklonik
+diikuti dengan bangkitan tonik-klonik
+Mioklonikatonik  Bangkitan berurutan diawali bangkitan mioklonik
+diikuti  bangkitan atonik
+Absence typical
+Terhentinya aktivitas yang sedang dilakukan secara
+mendadak, tatapan kosong, dapat disertai deviasi
+mata ke atas. Biasanya pasien tidak berespon saat
+diajak bicara. Durasi bangkitan beberapa detik
+sampai setengah menit dengan pemulihan yang
+sangat cepat
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 13 =====
+- 13 -
+
+
+Klasifikasi bangkitan epileptik dibagi berdasarkan awitan
+seperti gambar 1 dibawah ini.
+
+
+
+Gambar 1. Klasifikasi Bangkitan Epileptik (ILAE, 2025)
+
+
+
+
+
+
+
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 14 =====
+- 14 -
+
+
+Tabel 4. Deskriptor untuk bangkitan fokal dan untuk bangkitan
+dengan onset tidak diketahui (fokal atau umum)
+
+
+Etiologi bangkitan dapat dikelompokkan menjadi dua, yaitu
+dari dalam otak dan dari luar otak, seperti tampak pada tabel 5.
+
+
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 15 =====
+- 15 -
+
+
+Tabel 5. Etiologi bangkitan
+DARI LUAR OTAK
+DARI DALAM OTAK
+• Demam
+• Hipo/hiperglikemia
+• Hipoksia
+• Hiponatremia
+• Ensefalopati metabolik
+• Alcohol or drug withdrawal
+• Penyalahgunaan obat
+(amfetamin, cocaine)
+• Obat obatan (aminofilin,
+fenotiasin, beberapa
+analgesik)
+• Stroke perdarahan
+• Stroke infark
+• Fraktur tengkorak (depressed)
+• Tumor SSP
+• Infeksi SSP
+• Malformasi vaskular
+• Displasia kortikal
+
+2. Diagnosis
+a. Anamnesis
+Anamnesis merupakan langkah awal yang krusial dalam evaluasi
+pasien dengan dugaan bangkitan epileptik.
+Anamnesis mencakup:
+1) Deskripsi Kejadian
+a) Waktu, tempat, dan situasi saat bangkitan terjadi.
+b) Gejala awal (sebelum bangkitan muncul): sensasi tidak biasa
+sebelum kehilangan kesadaran.
+c) Manifestasi motorik (gerakan tonik-klonik, automatisme, atau
+fokal).
+d) Posisi kepala, mata, mulut, lidah, tangan, tungkai, ngompol
+(kencing tidak disadari).
+e) Perubahan kesadaran atau perilaku.
+f)
+Durasi bangkitan.
+g) Respon setelah bangkitan (post-iktal): bingung, mengantuk, sakit
+kepala.
+h) Menentukan
+kesadaran
+(consciousness)
+pasien
+dengan
+menanyakan
+apakah
+pasien
+mengingat
+kejadian
+selama
+bangkitan serta dapat menjawab atau melakukan tugas yang
+diminta ketika bangkitan berlangsung.
+2) Frekuensi dan pola bangkitan.
+3) Sumber Informasi
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 16 =====
+- 16 -
+
+
+Wawancara saksi mata atau video saat terjadi bangkitan sangat
+penting karena pasien mungkin tidak mengingat kejadian.
+4) Riwayat Penyakit Sebelumnya:
+a) Trauma kepala, infeksi sistem saraf pusat, stroke, riwayat demam
+kejang masa kecil.
+b) Riwayat kejang sebelumnya.
+5) Riwayat Keluarga
+Adanya keluarga dengan epilepsi atau kejang.
+6) Pemicu Bangkitan
+Kurang tidur, stres, alkohol, cahaya terang (fotosensitivitas),
+menstruasi, demam.
+7) Riwayat Obat
+Kepatuhan pengobatan, efek samping, obat yang dapat menurunkan
+ambang kejang.
+b. Pemeriksaan Fisik
+Pemeriksaan fisik harus menyeluruh untuk mengidentifikasi
+etiologi dan komplikasi epilepsi
+1) Pemeriksaan Umum
+a) Tanda vital, status kesadaran.
+b) Tanda-tanda trauma, infeksi, atau kelainan sistemik tanda lahir.
+2) Pemeriksaan Neurologis
+a) Pemeriksaan fungsi saraf kranial.
+b) Motorik: kekuatan otot, tonus, refleks patologis.
+c) Sensorik.
+d) Koordinasi dan gaya berjalan.
+e) Pemeriksaan tanda lateralisasi atau defisit fokal postiktal.
+c. Penentuan Faktor Risiko
+Bangkitan tanpa provokasi pertama berisiko menjadi epilepsi
+apabila:
+1) Pasien dewasa dengan bangkitan tanpa provokasi pertama kali,
+harus diinformasikan peluang terjadinya bangkitan berulang dalam
+2 tahun setelah kejang pertama (level A).
+2) Risiko berulangnya bangkitan akan meningkat bila terdapat cedera
+otak sebelumnya atau stroke (level A), ditemukannya abnormalitas
+epileptiform pada gambaran EEG (level A), abnormalitas pada
+gambaran neuroimaging (level B).
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 17 =====
+- 17 -
+
+
+d. Pemeriksaan Penunjang
+Pemeriksaan penunjang membantu menegakkan diagnosis dan
+mengidentifikasi penyebab kejang:
+1) Elektroensefalografi (EEG)
+EEG
+merupakan
+pemeriksaan
+penunjang
+utama
+untuk
+bangkitan namun bukan syarat untuk diagnosis epilepsi pada
+kasus bangkitan epileptik yang pertama. EEG rutin minimal 30
+menit, dengan stimulasi (hiperventilasi, fotostimulasi).
+2) Neuroimaging
+Indikasi pemeriksaan neuroimaging pada bangkitan epileptik
+antara lain:
+a) Bangkitannya pertama kali dan:
+(1) Ada defisit neurologis fokal (sebelum atau setelah kejang).
+(2) Riwayat trauma kepala berat sebelumnya.
+(3) Onset kejang di usia <1 tahun atau >20 tahun.
+(4) Ada gangguan perkembangan atau penurunan kognitif.
+b) Hasil EEG menunjukkan aktivitas fokal yang mengarah pada
+disfungsi otak berat. Untuk mencocokkan lokasi bangkitan
+dengan lesi struktural.
+c) Pasien dengan kejang berulang tanpa penyebab metabolik atau
+toksik yang jelas.
+d) Adanya perubahan status mental yang menetap setelah kejang.
+3) CT Scan Kepala
+CT Scan kepala berguna sebagai modalitas radiologi pertama,
+terutama pada kondisi gawat darurat (trauma kepala, perdarahan
+otak, tumor otak)
+4) MRI Otak
+MRI kepala merupakan modalitas radiologi utama dapat
+digunakan untuk melihat kelainan struktural pada epilepsi fokal
+(sklerosis hipokampus, tumor, malformasi). Terdapat sequence
+khusus untuk  diagnosis epilepsi.
+5) Video EEG Monitoring
+Untuk klasifikasi bangkitan kompleks atau evaluasi pre-bedah.
+6) Laboratorium
+a) Darah lengkap dan elektrolit
+b) Deteksi infeksi selaput otak atau infeksi otak
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 18 =====
+- 18 -
+
+
+c) Deteksi  gangguan  metabolik  (hiponatremia, hipokalsemia)
+d) Gula darah sewaktu, fungsi ginjal (ureum, kreatinin), fungsi hati
+(SGOT,SGPT)
+e) Pemeriksaan kadar obat antiepilepsi jika pasien sudah dalam
+pengobatan yang adekuat.
+f)
+Toksikologi urin jika dicurigai intoksikasi.
+g) Pungsi lumbal (Bila dicurigai infeksi SSP akut)
+Untuk mendiagnosis bangkitan epileptik dapat digunakan alur
+yang tampak pada gambar 2.
+
+
+Gambar 2. Alur Diagnosis Bangkitan Epileptik
+
+Beberapa diagnosis banding epilepsi dapat dilihat pada tabel 5.
+
+
+
+Tabel 6.  Diagnosis banding epilepsi
+Dewasa
+Syncope
+Migraine
+Transient global amnesia
+Transient ischemic attacks
+Narkolepsi
+Paroxymal movement disorders
+Segala usia
+Penyebab metabolik, endokrin, dan toksik
+Distonia
+Aritmia jantung
+Delirium
+Psychogenic non epileptic seizure (PNES)
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 19 =====
+- 19 -
+
+
+Beberapa perbedaan antara bangkitan epilepsi dan non epilepsi
+yang sering ditemui dapat dilihat pada tabel 6 dan 7.
+
+Tabel 7. Perbedaan antara bangkitan epileptik dan sinkop
+Gambaran klinis
+Bangkitan
+epileptik
+Sinkop
+Faktor pencetus
+Kurang
+tidur,
+stimulasi
+fotik,
+hiperventilasi
+Berdiri lama, suhu
+lingkungan
+panas,
+tempat  yang ramai,
+belum
+makan,
+lingkungan
+yang
+tidak nyaman, nyeri
+Postur tubuh saat
+kejadian
+Bervariasi
+Berdiri.
+(jarang
+terjadi  saat  jalan
+atau berlari)
+Pucat
+dan
+berkeringat
+Jarang
+Khas
+Onset
+Mendadak
+Bertahap
+Hilangnya
+penglihatan/
+pendengaran
+Mendadak
+Bertahap
+Bagian lateral lidah
+tergigit
+Sering
+Jarang
+Kejang menghentak  Sering
+Jarang,
+kadang
+muncul
+hanya
+beberapa detik
+Inkontinensia
+Sering
+Jarang
+Tidak sadar
+Menit
+Detik
+Pemulihan
+sering kali lambat
+Cepat
+bila
+pada
+posisi supinasi
+Mengantuk setelah
+serangan
+Sering
+Jarang
+Aktivitas motorik
+Pola bangkitan
+khas (tonik, klonik,
+tonik-klonik)
+Myoclonic
+jerk
+(durasi
+singkat,
+pemulihan
+cepat)
+setelah sebelumnya
+pasien
+kehilangan
+postur
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 20 =====
+- 20 -
+
+
+Gambaran klinis
+Bangkitan
+epileptik
+Sinkop
+Gerakan lengan
+dan tungkai tidak
+sinkon
+Jarang
+Sering
+Gerakan ritmis
+pada pelvis
+Jarang
+Tidak pernah
+Opistotonus "arc de
+cercle"
+Sangat jarang
+Kadang-kadang
+(postur decerebrate)
+Refleks Cahaya
+Seringkali menurun  Normal
+Luka cedera
+Sering
+Jarang
+Serangan saat
+malam hari atau
+tidur
+Sering
+Jarang
+Faktor pencetus
+Kurang tidur,
+stimulasi fotik,
+hiperventilasi
+Berdiri lama, suhu
+lingkungan
+panas,
+tempat  yang ramai,
+belum
+makan,
+lingkungan
+yang
+tidak nyaman, nyeri
+Postur tubuh saat
+kejadian
+Bervariasi
+Berdiri.
+(jarang
+terjadi  saat  jalan
+atau berlari)
+Pucat dan
+berkeringat
+Jarang
+Khas
+Onset
+Mendadak
+Bertahap
+Hilangnya
+penglihatan/
+pendengaran
+Mendadak
+Bertahap
+
+Tabel 8. Perbedaan bangkitan epileptik dan PNES (Psychogenic
+Non epileptic Seizures)
+Gambaran klinis
+Bangkitan
+epileptik
+PNES
+Onset
+Mendadak
+Bertahap
+Kesadaran baik
+Jarang
+Sering
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 21 =====
+- 21 -
+
+
+Gambaran klinis
+Bangkitan
+epileptik
+PNES
+Posisi pelvis terangkat
+Jarang
+Sering
+Gerakan anggota gerak
+tidak sinkron
+Jarang
+Sering
+Tubuh berguling
+Jarang
+Sering
+Sianosis
+dapat terjadi
+Jarang
+Lidah tergigit
+Biasanya sisi
+lateral
+Ujung lidah
+Durasi
+detik atau menit   hingga beberapa
+menit
+Gaze aversion (menghindari
+tatapan mata)
+Jarang
+Sering
+Berusaha kuat menahan
+gerakan ekstremitas pasif
+atau membuka mata
+Jarang
+Sering
+Mengantuk postictal
+Sering
+Jarang
+Bisa diperintah
+Tidak bisa
+Dapat menuruti
+perintah
+Abnormalitas EEG iktal
+Dapat terjadi
+Normal
+Lingkungan
+Bisa terjadi
+dimanapun
+Sering kali
+hanya muncul
+pada situasi
+atau keberadaan
+orang tertentu
+Refleks Cahaya
+Seringkali
+menurun
+Normal
+Gejala memburuk dengan
+pemberian
+obat
+antiepilepsi
+Jarang
+Sering
+Serangan di depan dokter
+Jarang
+Sering
+Banyak keluhan fisik lain
+penyerta
+Jarang
+Sering
+Mata saat serangan
+Terbuka
+Tertutup
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 22 =====
+- 22 -
+
+
+3. Tata Laksana
+a.  Tata Laksana di Fasilitas Pelayanan Kesehatan Tingkat Pertama
+(FPKTP)
+1) Non Farmakologis
+Tata laksana non farmakologis ditujukan untuk edukasi
+pertolongan pertama pada bangkitan kejang, mencari dan
+mengatasi penyebab bangkitan kejang. Pertolongan pertama
+saat bangkitan:
+a) Menjaga jalan napas pasien dan mencegah adanya cedera
+kepala atau bagian tubuh lain akibat gerakan pasien saat
+bangkitan.
+b) Jangan menahan atau membatasi gerakan tubuh pasien.
+c) Miringkan tubuh pasien untuk mencegah aspirasi.
+d) Jauhkan benda tajam atau keras dari sekitar pasien.
+e) Jangan memasukkan benda ke dalam mulut.
+f)
+Catat durasi bangkitan.
+g) Jika bangkitan kejang >5 menit atau bangkitan kejang
+berulang tanpa sadar penuh, segera rujuk.
+2) Farmakologis
+Terapi farmakologis pada pasien dewasa, dalam 5 menit
+pertama berikan antikonvulsan (diazepam intravena 0,1
+mg/kgBB (5-10mg/dosis, maksimum 20 mg), dengan
+kecepatan maksimum 5mg/menit, bisa diulang 1 kali (level A)
+atau per rektal saat bangkitan kejang terjadi) sambil
+melakukan rujukan untuk penanganan lebih lanjut
+3) Penapisan dan Deteksi Dini
+Deteksi
+dini
+bangkitan
+penting
+untuk
+mencegah
+kecacatan dan keterlambatan tata laksana.
+b. Tata Laksana di Fasilitas Pelayanan Kesehatan Tingkat Lanjut
+(FPKTL)
+1) Non Farmakologis
+a) Edukasi pemeriksaan lanjutan yang perlu dilakukan
+untuk mencari penyebab bangkitan dan mengatasi
+penyebabnya
+b) Edukasi faktor risiko menjadi epilepsi di kemudian hari
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 23 =====
+- 23 -
+
+
+c) Edukasi terkait konsekuensi bila terdiagnosis epilepsi,
+maka pasien harus mengkonsumsi obat dalam jangka
+lama (minimal 3 tahun)
+2) Farmakologis
+Tata laksana ketika bangkitan epilepsi terjadi pada pasien
+dewasa, dalam 5 menit pertama berikan
+a) Diazepam iv, 0,1 mg/kgBB (5-10 mg/dosis, maksimum 20
+mg), dengan kecepatan maksimum 5mg/menit, bisa
+diulang 1 kali (level A), atau
+b) Midazolam im, 10 mg untuk BB>40kg, 5mg untuk
+BB13-40kg (level A)
+c) Lorazepam iv* (level A)
+d) Phenobarbital iv, 15mg/KgBB, dosis tunggal (level A)
+
+Tata laksana spesifik berdasarkan klasifikasi, termasuk
+bangkitan dengan epilepsi fokal melihat pemilihan dan
+penyesuaian Obat Antibangkitan (OAB) antara lain :
+a) Berdasarkan tipe bangkitan epilepsi
+b) Pemilihan OAB monoterapi atau politerapi sesuai kasus
+c) Penyesuaian dosis berdasarkan berat badan, usia, dan
+fungsi organ.
+
+c.  Indikasi Merujuk ke FPKTL
+Indikasi merujukan ke FPKTL, antara lain:
+1) Terdapat defisit neurologis fokal pasca-iktal
+2) Penurunan kesadaran yang menetap pasca-iktal
+3) Kejang disertai demam
+4) Trauma kepala
+5) Riwayat keganasan dengan kecurigaan metastase di otak
+6) Bangkitan
+disertai
+adanya
+riwayat
+penggunaan
+antikoagulan
+7) Bangkitan dengan kondisi/penyakit imunodefisiensi
+8) Bangkitan awitan fokal pada pasien yang tidak memiliki
+riwayat bangkitan sebelumnya
+9) Bangkitan terjadi pertama kali pada usia lebih dari 25 tahun
+tanpa riwayat bangkitan sebelumnya.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 24 =====
+- 24 -
+
+
+B. Epilepsi
+1. Definisi dan Klasifikasi
+Epilepsi adalah kelainan otak yang ditandai dengan  kecenderungan
+untuk menimbulkan bangkitan epileptik yang terus menerus, dengan
+konsekuensi neurobiologis, kognitif, psikologis, dan sosial (ILAE, 2014).
+Klasifikasi epilepsi telah mengalami pembaruan dimana klasifikasi
+terakhir yang masih dipakai di Indonesia adalah sesuai klasifikasi epilepsi
+ILAE tahun 2017. Klasifikasi tersebut mencakup hierarki diagnosis
+epilepsi dari jenis bangkitan, jenis epilepsi, dan jenis sindrom epilepsi
+serta mencakup komorbiditas dan etiologi (Gambar 3).
+
+Gambar 3. Klasifikasi epilepsi (ILAE, 2017)
+
+2. Diagnosis
+Epilepsi adalah suatu penyakit otak yang ditandai dengan salah satu
+kondisi/gejala berikut ini:
+a. Minimal terdapat dua bangkitan tanpa provokasi / dua bangkitan
+refleks*, dengan jarak waktu antar bangkitan pertama dan kedua lebih
+dari 24 jam.
+b. Terdapat satu bangkitan tanpa provokasi  atau satu bangkitan refleks
+(bangkitan yang muncul akibat induksi oleh faktor pencetus tertentu
+yang selalu sama seperti stimulasi visual, auditorik, somatosensation,
+dan somato motorik) dengan kemungkinan terjadinya bangkitan
+berulang dalam 10 tahun ke depan sama dengan bila terdapat 2
+bangkitan tanpa provokasi (minimal 60%) atau bangkitan refleks.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 25 =====
+- 25 -
+
+
+c. Sudah ditegakkan diagnosis sindrom epilepsi.
+Diagnosis epilepsi ditegakkan dengan didapatkan adanya bangkitan
+epileptik lebih dari 1 kali tanpa pemeriksaan penunjang.
+a. Anamnesis
+Auto dan allo-anamnesis dari orang tua atau saksi mata mengenai
+hal berikut:
+1)   Gejala dan tanda sebelum, selama, dan paska bangkitan:
+a) Sebelum bangkitan/gejala prodromal:
+Kondisi fisik dan psikis yang mengindikasikan akan terjadinya
+bangkitan, misalnya perubahan perilaku, perasaan lapar,
+berkeringat, hipotermi, mengantuk, menjadi sensitif, dan lain-
+lain.
+b) Selama bangkitan/iktal:
+(1) Apakah terdapat aura, gejala yang dirasakan pada awal
+bangkitan?
+(2) Bagaimana pola/bentuk bangkitan, mulai dari deviasi mata,
+gerakan kepala, gerakan tubuh, vokalisasi, otomatisasi,
+gerakan pada salah satu atau kedua lengan dan tungkai,
+bangkitan tonik/klonik, inkontinensia, lidah tergigit, pucat,
+berkeringat, dan lain-lain. Akan lebih baik bila keluarga
+dapat diminta untuk menirukan gerakan bangkitan atau
+merekam video saat bangkitan.
+(3) Apakah terdapat lebih dari satu pola bangkitan?
+(4) Apakah
+terdapat
+perubahan
+pola
+dari
+bangkitan
+sebelumnya?
+(5) Aktivitas
+penyandang
+saat
+waktu
+terjadi
+bangkitan:
+misalnya saat tidur, saat terjaga, bermain video game,
+berkemih, saat membaca, saat terkena kilatan lampu, atau
+kapan saja, dan lain-lain.
+c)   Pasca bangkitan/ post iktal:
+Bingung, langsung sadar, nyeri kepala, tidur, gaduh gelisah,
+Todd’s paresis, afasia, dll.
+2) Faktor pencetus: kelelahan, kurang tidur, hormonal, stress
+psikologis, alkohol.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 26 =====
+- 26 -
+
+
+3) Faktor lain: Usia awitan, durasi bangkitan, frekuensi bangkitan,
+interval terpanjang antar bangkitan, kesadaran antar bangkitan
+(apakah pasien kembali ke kesadaran semula setelah bangkitan).
+4) Terapi epilepsi sebelumnya dan respon terhadap obat anti
+bangkitan (OAB) sebelumnya: nama obat, dosis, jadwal minum,
+kepatuhan minum obat, dan kadar OAB dalam plasma (jika pernah
+diperiksa), dan kombinasi OAB.
+5) Penyakit yang diderita sekarang, riwayat penyakit neurologik,
+psikiatri maupun sistemik yang mungkin menjadi penyebab
+maupun komorbiditas.
+6) Riwayat epilepsi dan penyakit lain dalam keluarga.
+7) Riwayat saat berada dalam kandungan, kelahiran, dan tumbuh
+kembang.
+8) Riwayat bangkitan neonatal/ kejang deman.
+9) Riwayat trauma kepala, stroke, infeksi susunan saraf pusat (SSP),
+dan lain-lain.
+b. Pemeriksaan fisik
+1) Pemeriksaan Fisik Umum
+Untuk mencari tanda-tanda gangguan yang berkaitan dengan
+epilepsi, misalnya:
+a) Trauma kepala;
+b) Tanda-tanda infeksi;
+c) Kelainan kongenital;
+d) Kecanduan alkohol atau NAPZA;
+e) Kelainan pada kulit (neurofakomatosis);
+f)
+Tanda-tanda keganasan.
+2) Pemeriksaan Neurologis
+Untuk mencari tanda-tanda defisit neurologis fokal atau difus yang
+dapat berhubungan dengan epilepsi, seperti Jika dilakukan dalam
+beberapa menit setelah bangkitan maka akan tampak tanda pasca
+bangkitan terutama tanda fokal yang tidak jarang dapat menjadi
+petunjuk lokalisasi, seperti: Paresis Todd, Gangguan kesadaran
+pascaiktal, Afasia pascaiktal, dan kelainan / penyakit yang menjadi
+etiologi epilepsi, misalnya pasca stroke, infeksi SSP dan keganasan
+pada otak.
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 27 =====
+- 27 -
+
+
+c. Pemeriksaan penunjang
+1) Pemeriksaan elektro-ensefalografi (EEG)
+EEG abnormal bukan merupakan syarat untuk diagnosis
+epilepsi. Rekaman EEG merupakan pemeriksaan yang paling
+berguna pada dugaan suatu bangkitan untuk:
+a) Membantu menunjang diagnosis;
+b) Membantu penentuan jenis bangkitan maupun sindrom
+epilepsi;
+c) Membantu menentukan prognosis; dan
+d) Membantu menentukan penghentian OAB.
+2) Pemeriksaan pencitraan otak
+Pemeriksaan pencitraan otak dilakukan atas indikasi untuk
+mendeteksi lesi epileptogenik di otak. MRI beresolusi tinggi (minimal
+1,5 Tesla) dapat mendiagnosis secara noninvasif berbagai macam
+lesi patologik misalnya mesial temporal sclerosis, glioma, ganglioma,
+malformasi kavernosus, DNET (dysembryoplastic neuroepithelial
+tumor), tuberous sclerosis.
+Pada kasus epilepsi terdapat sequence khusus yang berbeda
+dari pemeriksaan MRI kepala rutin. MRI kepala pada kasus epilepsi
+yang fokus pada temporal lobe, yaitu pada hippocampus. Perbedaan
+yang paling mendasar terletak pada sequence dan jenis potongan
+yang digunakan dibanding dengan pemeriksaan MRI kepala rutin.
+Perbedaan antara sequence dan irisan khusus tersebut adalah
+adanya sequence coronal T2 FLAIR, Coronal Tl 3D FSPGR, dan
+Space interval nol. adapun irisan yang digunakan adalah axial yang
+sejajar dengan hippocampus dan potongan coronal yang tegak lurus
+pada hippocampus, serta penggunaan single voxel. Prosedur,
+sequence serta irisan khusus yg digunakan tersebut dilakukan agar
+dapat menghasilkan pemeriksaan serta image yang optimal agar
+dapat membantu dalam penegakan diagnosa.
+Functional brain imaging seperti Positron Emission Tomography
+(PET), Single Photon Emission Computed Tomography (SPECT) dan
+Magnetic
+Resonance
+Spectroscopy
+(MRS)
+bermanfaat
+dalam
+memberikan informasi tambahan mengenai dampak perubahan
+metabolik dan perubahan aliran darah regional di otak berkaitan
+dengan bangkitan.
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 28 =====
+- 28 -
+
+
+3) Pemeriksaan Laboratorium
+a) Pemeriksaan hematologi
+Pemeriksaan rutin mencakup hemoglobin, lekosit dan
+hitung jenis, hematokrit, trombosit, apusan darah tepi, fungsi
+hati (SGOT/SGPT), ureum, kreatinin. Pemeriksaan elektrolit
+(natrium, kalium, kalsium, magnesium), kadar gula darah
+sewaktu dan albumin sesuai indikasi medis. Pemeriksaan ini
+dilakukan pada:
+(1) Awal pengobatan sebagai salah satu acuan dalam pemilihan
+OAB;
+(2) Dua bulan setelah pemberian OAB untuk mendeteksi efek
+samping OAB;
+(3) Rutin diulang setiap tahun sekali untuk memonitor efek
+samping OAB, atau bila timbul gejala klinis akibat efek
+samping OAB.
+b) Pemeriksaan kadar OAB dalam plasma
+Pemeriksaan ini idealnya dilakukan untuk melihat  kadar OAB
+dalam plasma saat bangkitan belum terkontrol, meskipun
+sudah mencapai dosis terapi optimal atau untuk memonitor
+kepatuhan pasien.
+4) Pemeriksaan penunjang lainnya
+Dilakukan sesuai dengan indikasi misalnya:
+a) Punksi lumbal: menilai apakah ada infeksi pada selaput otak
+atau otak;
+b) EKG; dan
+c) Pemeriksaan genetik.
+3. Tata Laksana
+Tujuan utama terapi epilepsi adalah mengupayakan pasien epilepsi
+dapat hidup senormal mungkin, dan tercapainya kualitas hidup optimal
+untuk pasien epilepsi sesuai dengan perjalanan penyakit  dan disabilitas
+fisik maupun mental yang dimilikinya. Harapannya adalah bebas
+bangkitan, tanpa efek samping. Untuk tercapainya tujuan tadi diperlukan
+beberapa upaya, antara lain menghentikan bangkitan, mengurangi
+frekuensi bangkitan tanpa efek samping/dengan efek samping yang
+minimal, menurunkan angka kesakitan dan kematian. Terapi pada
+epilepsi dapat berupa terapi farmakologi dan non farmakologi.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 29 =====
+- 29 -
+
+
+a. Tata Laksana di Fasilitas Pelayanan Kesehatan Tingkat Pertama
+(FPKTP)
+1) Non Farmakologis
+Tata laksana non-farmakologi untuk epilepsi di fasilitas pelayanan
+kesehatan tingkat pertama melibatkan pendekatan yang berfokus
+pada edukasi pasien dan keluarga, perubahan gaya hidup, serta
+dukungan psikososial.
+a)  Edukasi Pasien dan Keluarga:
+(1) Memberikan
+informasi
+tentang
+epilepsi,
+termasuk
+penyebab, gejala, cara perawatan, prognosis, kepatuhan
+minum obat bangkitan
+(2) Epilepsi adalah penyakit neurologis yang dapat dikontrol
+dengan pengobatan teratur.
+(3) Tanda-tanda awal bangkitan dan mengajarkan langkah
+pertolongan pertama saat bangkitan.
+b)   Perubahan Gaya Hidup:
+Menghindari pencetus bangkitan
+c)   Dukungan Psikososial:
+Memberikan konseling untuk mengatasi stigma sosial yang
+sering dihadapi oleh pasien epilepsi.
+2) Farmakologis
+Setelah diagnosis epilepsi ditegakkan dan pasien diberikan
+penanganan awal kegawatdaruratan jika diperlukan, maka pasien
+segera dirujuk ke fasilitas pelayanan kesehatan tingkat lanjut.
+FPKTP dapat melanjutkan terapi obat antibangkitan yang
+telah diberikan dari FPKTL pada kasus epilepsi rujuk balik dengan
+bangkitan terkontrol, dengan memantau kepatuhan dan efek
+samping obat.
+3) Penapisan dan Deteksi Dini
+Penapisan dan deteksi dini epilepsi di fasilitas pelayanan
+kesehatan tingkat pertama bertujuan untuk mengidentifikasi
+pasien dengan risiko tinggi atau gejala awal epilepsi agar dapat
+segera ditangani. Deteksi dini bangkitan penting untuk mencegah
+kecacatan dan keterlambatan tata laksana.
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 30 =====
+- 30 -
+
+
+a)  Sasaran Populasi Deteksi Dini:
+(1) Anak dengan riwayat kejang demam kompleks atau
+keterlambatan perkembangan.
+(2) Pasien dengan riwayat trauma kepala, tumor otak,infeksi
+susunan saraf pusat (SSP), atau stroke.
+(3) Pasien dengan kehilangan kesadaran berulang yang tidak
+jelas penyebabnya.
+b) Tanda Awal yang Patut Diwaspadai:
+(1) Gerakan motorik berulang tanpa disadari oleh pasien.
+(2) Keluhan bengong tiba-tiba berulang.
+(3) Perubahan perilaku sesaat, berulang, stereotypi
+(4) Episode jatuh mendadak tanpa sebab.
+c) Langkah Deteksi Dini di FKTP:
+(1) Wawancara riwayat kejadian bangkitan secara
+sistematis.
+(2) Gunakan informasi dari saksi mata atau video
+saat bangkitan.
+(3) Catat pola dan frekuensi bangkitan.
+(4) Skrining
+gangguan
+neurologis
+melalui
+pemeriksaan fisik sederhana.
+(5) Pemeriksaan penunjang sederhana seperti darah
+rutin, fungsi hepar, fungsi ginjal, dan elektrolit.
+b.  Tata Laksana di Fasilitas Pelayanan Kesehatan Tingkat Lanjut (FPKTL)
+1) Non Farmakologis
+Tata laksana non-farmakologi epilepsi di fasilitas pelayanan
+kesehatan tingkat lanjut melibatkan pendekatan yang lebih
+komprehensif dengan pendekatan multidisiplin termasuk terapi
+psikologis, rehabilitasi, dan dukungan sosial. Berikut adalah
+beberapa langkah yang dapat dilakukan:
+a) Terapi Psikologis:
+(1) Konseling individu atau kelompok untuk membantu pasien
+mengelola stres, kecemasan, dan depresi yang sering
+terkait dengan epilepsi.
+(2) Terapi perilaku kognitif (CBT) untuk meningkatkan
+kualitas hidup pasien.
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 31 =====
+- 31 -
+
+
+
+b) Terapi Gizi:
+Terapi diet ketogenik, diet khusus tinggi lemak rendah
+karbohidrat dan protein sedang, merupakan alternatif untuk
+pasien
+epilepsi
+yang
+tidak
+merespon
+terhadap
+obat
+antibangkitan.
+c) Rehabilitasi Neurologis:
+(1) Program rehabilitasi untuk membantu pasien yang
+mengalami gangguan motorik atau kognitif akibat epilepsi.
+(2) Latihan fisik yang dirancang khusus untuk meningkatkan
+fungsi neurologis.
+2) Farmakologis
+Tata laksana farmakologi epilepsi di fasilitas pelayanan kesehatan
+tingkat lanjut melibatkan pendekatan yang lebih kompleks dan
+terfokus pada kebutuhan individu pasien.
+a) Pemilihan Obat Antibangkitan (OAB):
+(1) Obat-obatan anti epilepsi tergantung pada jenis bangkitan
+dan kondisi pasien.
+(2) Untuk kasus yang lebih kompleks, kombinasi OAE dapat
+dipertimbangkan.
+b) Monitoring Efek Samping:
+(1) Pemantauan ketat terhadap efek samping obat, seperti
+gangguan hati, ginjal, atau efek neuropsikiatri.
+(2) Pemeriksaan laboratorium berkala untuk memastikan
+keamanan terapi.
+c) Penyesuaian Regimen, Dosis dan Evaluasi Respons
+Terapi:
+(1) Dosis disesuaikan berdasarkan respons klinis pasien dan
+kadar obat dalam darah.
+(2) Jika pasien tidak merespon terapi, evaluasi ulang diagnosis
+dan pertimbangan untuk mengganti atau menambah OAE.
+d) Rujukan untuk Terapi Lanjutan:
+Jika terapi farmakologi tidak efektif, pasien dapat dirujuk untuk
+evaluasi lebih lanjut, seperti kemungkinan tindakan bedah
+epilepsi atau terapi stimulasi saraf.
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 32 =====
+- 32 -
+
+
+Terapi OAB di mulai dengan :
+a) OAB diberikan bila:
+(1) Diagnosis epilepsi sudah dipastikan; dan
+(2) Pasien dan/atau keluarganya setuju dan sudah menerima
+penjelasan tentang tujuan pengobatan, potensi efek
+samping terapi, interaksi obat, kepatuhan, teratogenisitas.
+b) Terapi OAB
+(1) Rujuk pasien ke dokter dengan kompetensi di bidang
+neurologi atau epilepsi untuk pemilihan OAB yang tepat.
+(2) Tindak lanjuti terapi sesuai rujukan balik. Bila obat tidak
+tersedia, maka dapat dirujuk kembali ke FPKTL.
+Prinsip Pemberian OAB
+(1) Terapi dimulai dengan monoterapi sesuai jenis bangkitan
+dengan mempertimbangkan biaya.
+(2) Pemberian
+OAB
+dimulai
+dengan
+dosis
+minimal
+dan
+ditingkatkan bertahap, sampai  dosis efektif tercapai atau
+timbul efek samping.
+(3) Bila pada pemberian OAB timbul efek samping yang tidak
+dapat ditoleransi, rujuk Kembali ke FPKTL.
+(4) Efek samping OAB perlu diperhatikan (Tabel 13).
+Pemilihan OAB bersifat individual, berdasarkan atas
+jenis bangkitan, jenis sindrom epilepsi, efek samping OAB
+yang mungkin terjadi, profil farmakologis, dan interaksi
+antara OAB.
+Tabel 9. Pilihan OAB pada dewasa berdasar tipe
+bangkitan (ILAE, 2013)
+Tipe bangkitan
+Level A
+Level B
+Level C
+Level D
+Dewasa dengan
+bangkitan fokal
+CBZ,
+LEV,
+PHT, ZNS
+VPA
+GBP, OXC, LTG, PB,
+TPM, VGB
+CZP, PRM
+Usia tua dengan
+bangkitan fokal
+GBP, LTG
+--
+CBZ
+TPM, VPA
+Dewasa dengan
+bangkitan
+--
+--
+CBZ, LTG, OXC,
+PB, PHT, TPM,
+VPA
+GBP,
+LEV,
+VGB
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 33 =====
+- 33 -
+
+
+Tipe bangkitan
+Level A
+Level B
+Level C
+Level D
+general tonik
+klonik
+
+CBZ : carbamazepine, CLB : clobazam, CZP : clonazepam, ESM: ethosuximide,
+GBP : gabapentin, LTG : lamotrigine, LEV : levetiracetam, OXC : oxcarbazepine,
+PHT: phenytoin, PB : phenobarbital, TPM : topiramate, VGB : vigabatrin, VPA :
+valproic acid, ZNS : zonisamide.
+Tabel 10. Dosis OAB untuk orang dewasa
+OAB
+Dosis awal
+(mg/hari)
+Dosis
+rumatan
+(mg/hari)
+Jumlah
+dosis/hari
+TITRASI OAB
+
+Carbamazepine
+400-600
+400-1600
+2-3X
+(CR 2X)
+Mulai 100/200 mg/hr ↑
+sampai target dlm 1-
+4 minggu
+Phenytoin
+
+200-300
+200-400
+1-2X
+Mulai 100 mg/hr ↑
+sampai target dlm 3-7
+hari
+Valproic acid
+400-500
+500-2500
+2-3X
+(CR 1-2X)
+Mulai 500 mg/hr ↑ bila
+perlu setelah 7 hari
+Phenobarbital
+50-100
+30-200
+1-2x
+Mulai 30-50 mg malam
+hari ↑ bila perlu setelah
+10-15 hari
+Primidon
+62,5
+500-1000
+2-3x
+Mulai 62,5 mg malam
+hari, naikkan bertahap
+Clonazepam
+1
+4
+1-2 x
+Mulai
+0,25
+mg/hr
+malam hari, ↑ 0,25
+mg/hrtiap minggu
+Clobazam
+10
+20-40
+1-2x
+Mulai
+5-10
+mg/hr
+malam hari, bila perlu
+↑ 5mg/hr tiap minggu
+sampai mencapai 40
+mg/hr
+Oxcarbazepine
+300-600
+600-2400
+2-3x
+Mulai 300 mg/hr ↑ 300
+mg/minggu
+sampai
+target
+Levetiracetam
+500
+1000-3000
+2x
+Mulai 500/ 1000 mg/hr
+↑ bila perlu setelah 2
+minggu
+Topiramate
+100
+100-400
+1-2x
+Mulai 25 mg/hr ↑ 25-
+50 mg/hr tiap 2 minggu
+Gabapentine
+900-1800
+900-3600
+2-3x
+Mulai 300-900 mg/hr
+↑ sampai target dalam
+5-10 hr
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 34 =====
+- 34 -
+
+
+OAB
+Dosis awal
+(mg/hari)
+Dosis
+rumatan
+(mg/hari)
+Jumlah
+dosis/hari
+TITRASI OAB
+
+Lamotrigine
+50-100
+50-200
+1-2x
+Mulai 25 mg/hr selama
+2 minggu ↑ sampai 50
+mg/hr
+selama
+2
+minggu,
+↑
+50mg/2
+minggu
+Zonisamid
+50
+200-600
+2x
+Mulai 200-400 mg/hr
+↑ sampai 1-2 minggu
+Pregabalin
+100-150
+150-600
+2-3x
+Mulai
+dosis
+100-150
+mg/hari,
+naikkan
+bertahap
+Eslikarbasepin
+400
+800-1200
+1x
+Mulai 400 mg/hr 1-2
+minggu, ↑ 400 mg/hr
+tiap 2 minggu
+Lacosamide
+100
+200-400
+2x
+Mulai
+2x50
+mg/hr
+selama 1 minggu, ↑
+100 mg/hr tiap minggu
+sampai target
+Perampanel
+2
+4-8, maks
+12
+1-2x
+Mulai 2 mg, ↑ 2 mg tiap
+2 minggu/lebih
+Retigabin
+300
+600-1200
+3x
+Mulai 300mg/hr, ↑ 150
+mg/hr
+tiap
+minggu
+sampai mencapai dosis
+yang diinginkan
+Rufinamid
+200
+400-1800
+2x
+Mulai 200 mg/hr, ↑
+400mg/hr tiap 2 hari
+sampai mencapai dosis
+rumatan
+Stiripentol
+50
+mg/kg/hr
+4 g
+(maksimum)
+2-3x
+Mulai dosis awal dan
+tingkatkan bertahap
+Tiagabin
+4-5 mg/hr 15-32 mg/hr
+(30-56
+mg/hr pada
+komedikasi
+induktor
+enzim)
+2-4x
+Mulai 4-5 mg/hr, ↑ 4-5
+mg/hr tiap minggu
+Vigabatrin
+500-1000
+1000-3000
+2x
+Mulai
+dosis
+awal
+tingkatkan bertahap
+CR: controlled release. Waktu paruh tertera di atas adalah pada penyandang
+yang tidak menggunakan enzyme inducers.
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 35 =====
+- 35 -
+
+
+Tabel 11. Profil farmakokinetik OAB
+Obat
+Absorbsi
+(%)
+Tmax
+(jam)
+Waktu
+steady
+state
+(hari)
+T1/2
+(jam)
+Ikatan
+Protein
+plasma
+(%)
+Rentang
+referensi
+(μg/mL)
+Eliminasi (%)
+Keterangan
+Mekanisme
+kerja
+Metabolisme
+hati
+Eksresi
+ginjal
+
+Carbamazepine
+75-85
+4–8
+2–4
+5–50
+75
+4-12
+Menghambat
+kanal natrium
+90
+<5
+Fenomena
+autoinduksi
+(+).
+Monitor
+kadar
+obat
+dapat
+membantu
+optimasi
+terapi
+Klobasam
+>95
+1-3
+2-7
+10-30
+85
+0,03-0,3
+Potensiasi
+inhibisi GABA-A
+90
+<5
+Tidak
+perlu
+monitor
+kadar obat
+Klonasepam
+>80
+1-4
+2-10
+12-56
+86
+0,02-0,07
+Potensiasi
+inhibisi GABA-A
+Hati
+Eksresi
+ginjal
+<1%
+Tidak
+perlu
+monitor
+kadar obat
+Eslikarbasepin
+asetat*
+>90
+2-3
+4-5
+13-24
+30
+30
+3-35
+33
+67
+
+Ethosuximide*
+>90
+1-4
+8-12
+20-60
+0
+40-100
+Menghambat
+kanal
+kalsium
+tipe
+T
+pada
+neuron talamus
+Hati
+Ekskresi
+ginjal
+
+Felbamate*
+>90
+2-6
+3-5
+10-22
+25
+30-60
+Mekanisme
+bervariasi
+(inhibisi
+kanal
+natrium
+dan
+kalsium voltage-
+gated, modulasi
+reseptor NMDA,
+potensiasi
+transmisi GABA-
+ergik)
+50
+50
+Penggunaan
+sangat
+terbatas
+karena risiko
+anemia
+aplastik dan
+toksisitas
+hati
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 36 =====
+- 36 -
+
+
+Obat
+Absorbsi
+(%)
+Tmax
+(jam)
+Waktu
+steady
+state
+(hari)
+T1/2
+(jam)
+Ikatan
+Protein
+plasma
+(%)
+Rentang
+referensi
+(μg/mL)
+Eliminasi (%)
+Keterangan
+Mekanisme
+kerja
+Metabolisme
+hati
+Eksresi
+ginjal
+
+Gabapentin
+<60
+2-3
+1-2
+5-9c
+0
+2-20
+Modulasi
+neurotransmiter
+melalui
+ikatan
+dengan sub unit
+protein
+α2δ
+Ginjal
+kanal
+kalsium voltage-
+gated
+Tidak
+dimetabolisme
+100
+
+Lacosamid*
+100
+1-2
+2-3
+12-16
+<30
+10-20
+Meningkatkan
+inaktivasi kanal
+natrium
+tipe
+lambat
+30
+40
+
+Lamotrigine
+>95
+1-3
+3-7
+15-35
+55
+3-15
+Inhibisi
+kanal
+natrium
+dan
+kalsium voltage-
+gated
+80
+10
+Klirens
+meningkat
+pada
+anak
+dan
+kehamilan,
+menurun
+pada lansia
+Levetirasetam
+>95
+1-2
+1-2
+5-11
+0
+12-46
+Ikatan
+pada
+protein vesikular
+sinaptik SV2A
+25
+70
+
+Okskarbasepin
+100
+3-6
+2-3
+1-2,5
+40
+3-35
+Inhibisi
+kanal
+natrium
+dan
+kalsium (tipe N
+dan P)
+65
+30
+
+Fenobarbital
+>95
+0,5-4
+15-29
+70-
+130
+55
+10-40
+Meningkatkan
+pembukaan
+kanal klorida
+55
+25
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 37 =====
+- 37 -
+
+
+Obat
+Absorbsi
+(%)
+Tmax
+(jam)
+Waktu
+steady
+state
+(hari)
+T1/2
+(jam)
+Ikatan
+Protein
+plasma
+(%)
+Rentang
+referensi
+(μg/mL)
+Eliminasi (%)
+Keterangan
+Mekanisme
+kerja
+Metabolisme
+hati
+Eksresi
+ginjal
+
+Fenitoin
+100 (IM)
+4-12
+7-80
+(20)
+30-
+100c
+90
+10-20
+Inhibisi
+kanal
+natrium (voltage-
+dependent)
+90
+
+Laju
+metabolisme
+menurun
+seiring
+peningkatan
+konsentrasi
+obat
+(hubungan
+konsentrasi
+dan dosis non
+linear)
+<5
+
+Fraksi tidak
+terikat
+protein
+meningkat
+pada
+hipoalbumin
+, gagal ginjal
+dan
+komedikasi
+asam
+valproat
+Kadar obat
+serum
+sangat
+berguna
+dalam
+evaluasi efek
+klinis
+Perampanel
+100
+0,25-
+2
+14
+25-
+129
+95
+0,05-0,4
+Antagonis
+reseptor
+AMPA
+selektif
+non
+kompetitif
+70
+30
+
+Pregabalin
+90
+1-2
+1-2
+5-7
+0
+2-8
+GABA-ergik
+(ikatan
+dengan
+sub
+unit
+α2δ
+kanal
+kalsium
+voltage-gated)
+Tidak
+dimetabolisme
+100
+
+Primidon*
+>95
+2-6
+2,5-4
+5-20
+10
+5-10
+Meningkatkan
+pembukaan
+kanal klorida
+55
+25
+Efek
+terutama
+oleh
+metabolit
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 38 =====
+- 38 -
+
+
+Obat
+Absorbsi
+(%)
+Tmax
+(jam)
+Waktu
+steady
+state
+(hari)
+T1/2
+(jam)
+Ikatan
+Protein
+plasma
+(%)
+Rentang
+referensi
+(μg/mL)
+Eliminasi (%)
+Keterangan
+Mekanisme
+kerja
+Metabolisme
+hati
+Eksresi
+ginjal
+
+aktif
+(fenobarbital)
+Retigabin*
+60
+0,6-
+1,5
+1-2
+8-10
+80
+NE
+Aktivasi
+KCNA
+(Kv7)
+50-65
+20-30
+
+Rufinamid*
+85
+4-6
+1-2
+8-12
+30
+30-40
+Menghambat
+aksi
+potensial
+tergantung kanal
+natrium
+85
+<5
+
+Stiripentol*
+ND
+1-2
+<7
+4-13c
+99
+4-22
+Potensiasi GABA-
+ergik
+75
+25
+
+Tiagabin*
+100
+0,5-
+2,3
+1-2
+5-9
+96
+0,02-0,2
+Inhibisi reuptake
+GABA
+90
+<2
+
+Topiramat
+100
+2-4
+4-5
+10-30
+13-17
+5-20
+Mekanisme
+bervariasi
+(potensiasi
+GABA-ergik,
+inhibisi reseptor
+AMPA dan kanal
+kalsium, inhibisi
+lemah
+karbonik
+anhidrase)
+<25
+75
+
+Asam valproat
+>90
+1-10
+2-4
+5-16c
+90d
+40-100
+Mekanisme
+bervariasi
+(potensiasi
+inhibisi
+GABA-
+ergik, penurunan
+eksitasi
+glutamat)
+85
+<5
+Fraksi bebas
+meningkat
+pada
+gangguan
+ginjal,
+penyakit liver
+kronik,
+kehamilan,
+hipoalbumin
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 39 =====
+- 39 -
+
+
+Obat
+Absorbsi
+(%)
+Tmax
+(jam)
+Waktu
+steady
+state
+(hari)
+T1/2
+(jam)
+Ikatan
+Protein
+plasma
+(%)
+Rentang
+referensi
+(μg/mL)
+Eliminasi (%)
+Keterangan
+Mekanisme
+kerja
+Metabolisme
+hati
+Eksresi
+ginjal
+
+Vigabatrin*
+>50
+0,5-2
+1-2
+4-7
+0
+2-36
+Meningkatkan
+konsentrasi
+GABA
+dan
+meningkatkan
+transmisi GABA-
+ergik
+10
+90
+
+Zonisamid
+100%
+2-6
+10-15
+25-70
+50
+10-40
+Mekanisme
+bervariasi
+(inhibisi
+kanal
+natrium
+dan
+kanal
+kalsium
+tipe T, potensiasi
+transmisi GABA-
+ergik,
+inhibisi
+karbonik
+anhidrase)
+Hati
+Ekskresi
+ginjal
+dan
+metabolis
+me hati
+
+*belum ada di Indonesia saat ini
+
+
+
+
+
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 40 =====
+- 40 -
+
+
+Tabel 12. Interaksi farmakokinetik antar OAB
+
+OAB
+KEDUA
+OAB PERTAMA
+CBZ
+CLB
+CZP
+ESL-a
+ESM
+FBM
+GBP
+  LCM
+LTG
+LEV
+OXC
+CBZ
+AI
+CLB⇓
+DMCL
+B⇑
+CZP⇓
+ESL↓
+ESM⇓
+FBM⇓
+↔
+LCM    ↓
+LTG⇓
+LEV↓
+    H-OXC↓
+CLB
+CBZ↑
+—
+NA
+↔
+NA
+NA
+NA
+NA
+↔
+↔
+OXC↓
+
+CBZ-E↑
+
+
+
+
+
+
+
+
+
+
+CZP
+↔
+NA
+—
+NA
+NA
+↔
+NA
+NA
+↔
+↔
+NA
+ESL-a
+↔
+↔
+NA
+—
+NA
+NA
+↔
+NA
+LTG↓
+↔
+   NCCP
+ESM
+↔
+NA
+NA
+NA
+—
+NA
+NA
+NA
+↔
+↔
+NA
+FBM
+CBZ↓
+CBZ-E↑
+
+CLB⇓
+DMCL
+B⇑
+CZP↑
+?
+?
+—
+NA
+NA
+LTG↑
+↔
+↔
+GBP
+↔
+NA
+NA
+↔
+NA
+FBM↑
+—
+NA
+↔
+↔
+NA
+LCM
+↔
+NA
+↔
+NA
+NA
+NA
+↔
+—
+↔
+↔
+H-OXC↓
+LTG
+↔
+↔
+CZP↓
+↔
+↔
+↔
+NA
+↔
+—
+LEV↓
+↔
+LEV
+↔
+↔
+↔
+↔
+↔
+NA
+↔
+↔
+↔
+—
+NA
+OXC
+CBZ↓
+?
+?
+NCCP
+?
+?
+NA
+↔
+LTG↓
+LEV↓
+—
+PMP
+    ↔
+CLB↓
+↔
+?
+?
+?
+NA
+NA
+LTG↓
+↔
+ OXC↑
+PB
+CBZ⇓
+CLB⇑
+CZP⇓
+?
+ESM⇓
+↔
+↔
+LCM↓
+LTG⇓
+LEV↓
+   H-OXC↓
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 41 =====
+- 41 -
+
+
+OAB
+KEDUA
+OAB PERTAMA
+CBZ
+CLB
+CZP
+ESL-a
+ESM
+FBM
+GBP
+  LCM
+LTG
+LEV
+OXC
+DMCL
+B⇑
+PHT
+CBZ⇓
+CLB⇓
+DMCL
+B⇑
+CZP⇓
+ESL↓
+ESM⇓
+FBM⇓
+↔
+LCM↓
+LTG⇓
+LEV↓
+   H-OXC↓
+PGB
+↔
+NA
+NA
+NA
+NA
+NA
+↔
+NA
+↔
+↔
+NA
+PRM
+CBZ⇓
+?
+CZP⇓
+?
+ESM⇓
+?
+NA
+?
+LTG⇓
+↔
+?
+RFN*
+CBZ↓
+↔
+NA
+NA
+NA
+NA
+NA
+NA
+LTG↓
+NA
+NA
+STP*
+CBZ⇑
+CLB⇑
+DMCL
+B⇑
+?
+?
+ESM↑
+?
+NA
+NA
+?
+NA
+?
+TGB
+↔
+NA
+NA
+NA
+NA
+NA
+NA
+NA
+↔
+↔
+NA
+TPM
+↔
+?
+?
+ESL↓
+NA
+?
+NA
+↔
+↔
+↔
+↔
+VPA
+CBZ-E⇑
+VPA
+?
+↔
+ESM↑↓
+FBM↑
+↔
+↔
+LTG⇑
+↔
+↔
+VGB
+CBZ↑↓
+NA
+NA
+NA
+NA
+↔
+NA
+NA
+↔
+↔
+NA
+ZNS
+      ↔
+?
+?
+NA
+?
+?
+NA
+NA
+↔
+NA
+?
+
+CBZ = carbamazepine; CBZ-E = carbamazepine-10,11-epoxide (metabolit aktif CBZ); CLB = clobazam; CZP = clonazepam;
+DMCLB = N-desmethylclobazam (metabolit aktif CLB); ESLa = eslicarbazepine acetate; ESL = eslicarbazepine (metabolit aktif
+ESLa);  ESM = ethosuximide; FBM = felbamate; GBP = gabapentin; H-OXC = 10-hydroxy-oxcarbazepine (metabolit aktif  OXC);
+LCM = lacosamide; LEV = levetiracetam; LTG = lamotrigine; OXC = oxcarbazepine; PB = phenobarbital; PHT = phenytoin;
+PGB = pregabalin; PRM = primidone; RFN = rufinamide; STP = stiripentol; TGB = tiagabnie; TPM = topiramate; VPA = valproic acid;
+VGB = vigabatrin; ZNS = zonisamide. AI = autoinduction; NA= none anticipated; NCCP = not commonly co-prescribed.
+↔ = Tidak ada perubahan
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 42 =====
+- 42 -
+
+
+↓ = penurunan kadar plasma minor (atau inkonsisten)
+↑ = peningkatan kadar plasma minor (atau inkonsisten)
+⇓ = Penurunan kadar plasma bermakna
+⇑ = peningkatan kadar plasma bermakna
+* = Kadar obat bebas (aktif secara farmakologis) dapat meningkat
+** = efek metabolit aktif H-OXC tidak diketahui
+? = tidak diketahui, atau mungkin terjadi interaksi
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 43 =====
+- 43 -
+
+
+Tabel 13. Efek samping OAB
+OAB
+Efek samping terkait
+dosis
+Efek samping
+idiosinkrasi
+Carbamazepine Diplopia, dizzines, nyeri
+kepala, mual, diskinesia,
+drowsiness, neutropenia,
+hiponatremia,
+hipokalsemia, diskinesia
+orofasial, aritmia jantung,
+gangguan
+kognitif,
+hepatotoksik,
+gangguan
+metabolisme tulang
+Morbilliform
+rash,
+agranulositosis,
+anemia
+aplastik, hepatotoksisitas,
+fotosensitivitas,
+Stevens-
+Johnson syndrome (SJS),
+drug-related
+rash
+with
+eosinophilia and systemic
+symptom (DRESS),  toxic
+epidermal
+necrolysis
+(TEN),
+lupus-like
+syndrome,
+trombositopenia,
+pseudolymphoma,
+teratogen
+Klobazam
+Gangguan
+kognitif,
+inkoordinasi,
+astenia,
+gangguan
+mood
+dan
+perilaku,
+hipotonia,
+hipersalivasi,
+bronchorrhoea,
+peningkatan berat badan
+Ruam, blood dyscrasia
+Klonazepam
+Fatigue, sedasi, gangguan
+kognitif,
+astenia,
+gangguan
+
+mood
+dan
+perilaku,
+hipotonia,
+hipersalivasi, hypotonia
+Ruam, blood dyscrasia
+Gabapentin
+Somnolens,
+dizziness,
+ataksia, fatigue, diplopia,
+paraestesia,
+amnesia,
+mual, muntah, kenaikan
+berat badan, edema kaki
+non-pitting
+Reaksi
+hipersensitivitas
+(sangat jarang)
+Lamotrigin
+Mengantuk,
+diplopia,
+nyeri
+kepala,
+ataksia,
+insomnia, mual, muntah,
+astenia
+Ruam,
+SJS,
+TEN,
+gangguan
+fungsi
+hati,
+anemia
+aplastik,
+pansitopenia,
+kegagalan
+multi organ
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 44 =====
+- 44 -
+
+
+OAB
+Efek samping terkait
+dosis
+Efek samping
+idiosinkrasi
+Fenobarbital
+Sedasi, ataksia, dizziness,
+insomnia,
+hiperaktivitas
+(terutama
+anak),
+perubahan
+mood
+(terutama
+depresi),
+agresif, gangguan kognitif,
+impotensi,
+penurunan
+libido,
+defisiensi
+folat,
+defisiensi vitamin K dan
+vitamin D, osteomalasia,
+dupuytren
+contracture,
+frozen shoulder
+Ruam maculopapular  ,
+eksfoliasi,
+SJS,
+TEN,
+presipitasi
+SLE
+dan
+profiria
+intermiten akut
+Fenitoin
+Ataksia, dizziness, letargi,
+sedasi,
+nyeri
+kepala,
+disfungsi
+kognitif,
+diskinesia,
+ensefalopati
+akut,
+hiperplasia
+gusi,
+defisiensi
+folat,
+anemia
+megaloblastik,
+defisiensi
+vitamin
+K,
+penurunan
+imunoglobulin,
+depresi,
+hirsutisme,
+jerawat,
+neuropati
+perifer,
+osteomalasia,
+hipokalsemia, penurunan
+libido,
+perubahan
+jaringan
+ikat,
+miopati,
+efek teratogenic
+Blood dyscrasias, Lupus-
+like syndrome, penurunan
+IgA
+serum,
+pseudolimfoma, neuropati
+perifer, SJS, dupuytren’s
+contracture,
+hepatotoksisitas,
+teratogenik
+Asam valproate Tremor, sedasi, astenia,
+gejala ekstra piramidal,
+mual,
+muntah,
+hiperamonemia,
+peningkatan berat badan,
+sindroma
+polikistik
+ovarium,
+kerontokan
+rambut, gangguan platelet
+dan
+koagulasi,
+hepatotoksik,
+pankreatitis,
+efek
+teratogenic
+Ensefalopati, induksi SLE
+Topiramat
+Dizziness, ataksia, nyeri
+kepala,
+parestesia,
+tremor,
+somnolen,
+gangguan
+kognitif,
+confusion,
+agitasi,
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 45 =====
+- 45 -
+
+
+OAB
+Efek samping terkait
+dosis
+Efek samping
+idiosinkrasi
+amnesia, depresi, emosi
+labil,
+mual,
+diare,
+diplopia, penurunan berat
+badan, batu  ginjal
+Levetirasetam
+Somnolens,
+astenia,
+dizziness, ataksia, infeksi,
+gelisah, iritabel, gangguan
+perilaku dan psikiatrik
+Ruam
+dan
+reaksi
+hipersensitivitas (jarang)
+Okskarbazepin Diplopia,
+dizziness,
+ataksia,  somnolens, nyeri
+kepala,
+fatigue,
+hiponatermia,
+gangguan
+saluran cerna
+Ruam, SJS, DRESS, TEN,
+blood
+dyscrasia
+(lebih
+jarang
+dibanding
+carbamazepine)
+Pregabalin
+Dizziness,
+drowsiness,
+ataxia, peningkatan berat
+badan, gangguan visual,
+sulit konsentrasi, tremor,
+edema perifer
+
+Perampanel
+Somnolens,
+dizziness,
+fatigue,
+mual,
+jatuh,
+iritabel,
+agresif,
+peningkatan berat badan
+
+Zonisamid
+Somnolens,
+dizziness,
+ataksia,
+nyeri
+kepala,
+gangguan
+atensi,
+konsentrasi, dan memori,
+agitasi, iritabel, diplopia,
+confusion, depresi, mual,
+anoreksia,
+penurunan
+berat badan, batu ginjal,
+hipertermia, oligohidrosis
+Ruam
+kulit,
+blood
+dyscrasias
+
+c. Indikasi Merujuk ke FPKTL
+Indikasi merujuk pasien epilepsi ke FPKTL dilakukan apabila
+diperlukan penanganan lebih lanjut dan komprehensif. Indikasi
+tersebut antara lain:
+1) Diagnosis yang tidak jelas, memerlukan pemeriksaan lanjutan,
+dan penentuan sindrom epilepsi: Jika terdapat kesulitan dalam
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 46 =====
+- 46 -
+
+
+menentukan jenis epilepsi atau penyebab bangkitan, diperlukan
+pemeriksaan lanjutan seperti EEG atau pencitraan otak.
+2) Efek samping obat  yang memerlukan penyesuaian atau
+perubahan regimen.
+3) Komplikasi
+Neurologis:
+Pasien
+menunjukkan
+tanda-tanda
+gangguan neurologis lain yang memerlukan penanganan spesialis,
+misalnya defisit neurologis fokal, afasia pascaiktal, atau tanda-
+tanda peningkatan tekanan intrakranial.
+4) Epilepsi dengan bangkitan yang tidak terkontrol : Pasien tetap
+mengalami bangkitan epileptik meskipun sudah mendapatkan
+pengobatan yang sesuai di fasilitas pelayanan kesehatan tingkat
+pertama.
+5) Pertimbangan Terapi Lanjutan: Pasien yang mungkin memerlukan
+terapi seperti bedah epilepsi atau stimulasi saraf vagus.
+6) Epilepsi pada kondisi khusus (kehamilan, lansia, pertimbangan
+penghentian terapi obat antibangkitan)
+7) Epilepsi dengan komorbiditas
+
+C. Sindrom Epilepsi
+Sindrom epilepsi dapat muncul dengan awitan mulai usia neonatal, bayi,
+anak balita, dan dewasa. Pada pemaparan di bawah ini disampaikan sindrom
+epilepsi yang muncul pada usia dewasa.
+1. Definisi dan Klasifikasi
+Sindrom
+epilepsi
+mengacu
+pada
+sekelompok
+gejala
+yang
+menggabungkan tipe bangkitan, gambaran EEG, dan pencitraan otak
+yang terjadi bersamaan. Umumnya berhubungan dengan usia awitan,
+usia remisi, pemicu bangkitan, variasi diurnal, bahkan prognosis.
+Komorbiditas, seperti gangguan intelektual dan gangguan psikiatri dapat
+menyertai sindrom epilepsi.
+Klasifikasi sindrom epilepsi menurut ILAE tahun 2022 dengan onset
+usia yang bervariasi (Gambar 4).
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 47 =====
+- 47 -
+
+
+
+Gambar 4. Klasifikasi sindrom epilepsi dengan onset usia yang
+bervariasi (ILAE, 2022). Sindrom epilepsi yang dimulai pada usia yang
+bervariasi dikelompokkan berdasarkan jenis epilepsi dan apakah terkait
+dengan developmental (D) dan/atau epileptic encephalopathy (EE) atau
+penurunan progresivitas neurologi. Beberapa pasien dengan sindrom
+epilepsi fokal MTLE-HS, SHE, dan FFEVF dapat mengalami gangguan
+kognitif, neurologis, atau psikiatri yang terkait dengan etiologi atau epilepsi
+(D dan/atau EE). Semua pasien dengan PME yang sudah lanjut (sindrom
+epilepsi gabungan umum dan fokal) serta FIRES dan RS (sindrom epilepsi
+fokal) akan mengalami D dan/atau EE atau gangguan neurologis progresif.
+Sindrom epilepsi lain mungkin akan diidentifikasi di masa depan.
+
+Di bawah ini adalah sindrom epilepsi yang muncul mulai usia dewasa:
+a. Epilepsi Dengan Bangkitan Umum Tonik-Klonik Pada Saat Terjaga
+(GTCA)
+Usia awitan puncak pada dekade ke-2. Bangkitan tonik klonik
+umum terjadi 1-2 jam setelah bangun tidur. Frekuensi bangkitan
+jarang.
+Gambaran EEG:
+1) Interiktal: irama dasar normal. Saat bangun berupa gelombang
+paku atau polyspike-wave menyeluruh seperti pada JAE, durasi 3-
+4 detik, dapat diaktivasi oleh hiperventilasi. Photo Paroxysmal
+Response (PPR) dapat terjadi pada 25-30% kasus.
+2) Iktal: aktivitas cepat beramplitudo rendah menyeluruh didahului
+oleh gelombang paku ombak 3-4Hz.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 48 =====
+- 48 -
+
+
+b. Epilepsi Fokal pada Familial dengan Fokus yang Bervariasi (FFEVF)
+Usia awitan mulai dari usia 1 bulan sampai 52 tahun. Merupakan
+sindrom epilepsi fokal familial yang autosomal dominan. Manifestasi
+klinis berupa bangkitan fokal. Setiap individu keluarga yang terkena
+memiliki 1 bangkitan fokal yang berbeda (paling sering frontal atau
+temporal) dan tingkat keparahan yang berbeda satu dengan yang lain.
+Gambaran EEG berupa:
+1) Interiktal: gelombang epileptiform fokal dapat di  lobus frontal,
+temporal, sentroparietal, dan occipital.
+2) Iktal: Pola iktal fokal.
+c. Epilepsi dengan Gejala Auditorik (EAF)
+Awitan
+usia
+10–30
+tahun
+(0,5–54
+tahun).
+Terjadi
+pada
+remaja/dewasa tanpa riwayat antecedent. Manifestasi klinis dijumpai
+bangkitan fokal tanpa hilangnya kesadaran dengan gejala auditorik
+dan atau afasia reseptif. Kadang dapat dijumpai bangkitan fokal
+menjadi tonik klonik bilateral. Sebagian pasien melaporkan bangkitan
+dipresipitasi oleh bunyi spesifik. Kalainan ini bersifat autosomal
+dominant.
+Gambaran EEG berupa:
+1) Interiktal: Kebanyakan normal. Dapat tampak gelombang tajam
+ombak atau paku fokal (umumnya temporal) atau menyeluruh.
+Abnormalitas ini dapat  diaktivasi dengan hiperventilasi, deprivasi
+tidur dan tidur.
+2) Iktal: Jarang dilaporkan.
+d. Epilepsi Hipermotorik (Hiperkinetik) terkait Tidur (SHE)
+Dahulu dikenal sebagai Nocturnal Frontal Lobe Epilepsy (NFLE).
+Awitan pada 2 dekade pertama kehidupan, biasanya pada usia remaja
+(11–14 tahun). Manifestasi klinis berupa bangkitan motor yang terjadi
+secara klaster saat tidur, muncul tiba tiba dan berhenti tiba tiba.
+Dapat berupa gerakan mengayuh sepeda, melompat lompat,
+mengangkat pinggul, berjalan. Umumnya singkat (<2 menit)  tanpa
+gangguan kesadaran. Bentuk bangkitan stereotipik hiperkinetik atau
+asimetri distonik dan tonik motor  umumnya disertai gejala otonom
+(takhikardi, tahypneu, respirasi yang ireguler), vokalisasi dan rasa
+takut. Etiologi autosomal dominan genetik dan lesi struktural
+terutama Displasia Korteks Fokal.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 49 =====
+- 49 -
+
+
+Gambaran EEG:
+1) Interiktal: Irama dasar normal. EEG tidur tampak gelombang
+epiletogenik interiktal pada daerah frontal.
+2) Iktal: evolusi gelombang paku atau gelombang tajam, atau
+gelombang lambat yang ritmis, atau pendataran irama dasar pada
+daerah frontal. Dapat juga tampak artefak gerakan saja. EEG
+pascaictal
+menunjukkan
+perlambatan
+fokal.
+Video–EEG
+merupakan alat diagnostik terbaik.
+e. Epilepsi Lobus Temporal Mesial Familial (FMTLE)
+Awitan usia 3 sampai dengan 63 tahun. Manifestasi klinis berupa
+déjà vu, gangguan persepsi dan ilusi (visual atau auditori). Dapat juga
+berupa gangguan emosi (takut atau panik), gangguan sensorik atau
+otonom (sensasi epigastric, mual, muntah, takhikardia, berkeringat,
+wajah kemerahan atau pucat. Pasien dapat juga disertai dengan
+gangguan kesadaran maupun bangkitan fokal menjadi tonik klonik
+bilateral. Sebagian besar MRI normal, berespons baik dengan
+pengobatan. Anamnesis keluarga dengan epilepsi diperlukan, untuk
+mengidentifikasi sindrom ini.
+Sindrom Epilepsi ini terkait dengan gen DEPDC5, dengan
+pewarisan yang kompleks, terjadi saat remaja atau dewasa. Riwayat
+kejang demam jarang terjadi pada pasien dengan presentasi yang
+khas, tetapi dapat terjadi pada pasien dengan fenotipe yang lebih
+berat, dan sering kali resisten terhadap obat.  Riwayat Kejang demam
+dapat ditemukan pada  kasus berat yang resisten obat.
+Gambaran EEG Interiktal: Latar belakang EEG normal pada
+sekitar 60% pasien, dapat terlihat perlambatan di daerah temporal.
+Pada sepertiga pasien, gelombang tajam dapat terlihat di daerah
+temporal, biasanya di unilateral. Kemungkinan adanya kelainan EEG
+terlihat saat deprivasi tidur, mengantuk, dan saat tidur.
+2. Tata Laksana
+a. Tata Laksana di Fasilitas Pelayanan Kesehatan Tingkat Pertama
+(FPKTP)
+Bila dicurigai pasien menderita suatu sindrom epilepsi untuk segera
+dirujuk ke Fasilitas Pelayanan Kesehatan Tingkat Lanjut.
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 50 =====
+- 50 -
+
+
+b. Tata Laksana di Fasilitas Pelayanan Kesehatan Tingkat Lanjut (FPKTL)
+1) Non Farmakologis:
+Operasi pada kasus tertentu
+2) Farmakologis:
+Obat pilihan untuk beberapa jenis sindrom epilepsi tertentu. Pada
+sindrom epilepsi yang lain dapat menggunakan OAB untuk
+epilepsi fokal atau general seperti dalam tabel 13.
+Tabel 14. Terapi OAB berdasarkan sindrom epilepsi
+Sindrom
+Epilepsi
+Lini pertama
+Adjunctive
+Pertimbangkan
+saat dirujuk
+ke perawatan
+tersier
+Jangan
+diberikan
+(memperberat
+bangkitan)
+JAE
+Ethosuxi mide
+Lamotrigin
+Valproat
+Ethosuximide
+Lamotrigin
+Valproat
+Clobazam
+Clonazepam
+Levetiracetam
+Topiramat
+Zonisamide
+carbamazepine
+Gabapentin
+Oxcarbazepin
+Fenitoin
+Pregabalin
+Tiagabin
+Vigabatrin
+JME
+Lamotrigin
+Levetiracetam
+Valproat
+Topiramat
+Lamotrigin
+Levetiracetam
+Valproat
+Topiramat
+Clobazam
+Clonazepam
+Zonisamide
+carbamazepine
+Gabapentin
+Oxcarbazepin
+Fenitoin
+Pregabalin
+Tiagabin
+Vigabatrin
+GTCS
+Carbamazepine
+Lamotrigine
+Oxcarbaze pin
+Valproat
+
+
+
+JAE: juvenile absence epilepsy; JME: juvenile myoclonic epilepsy;
+GTCS: generalized tonic-clonic seizures
+
+3) Penapisan dan Deteksi Dini:
+Semiologi, EEG, dan pemeriksaan Genetik
+c. Indikasi Merujuk ke FPKTL
+1) Bila dicurigai pasien mengidap suatu sindrom
+2) Bila dicurigai terdapat sindrom pada salah satu keluarga
+d. Tata Laksana Pada Kondisi Khusus
+1) Status Epileptikus
+Status epileptikus merupakan keadaan kegawatdaruratan
+yang
+memerlukan
+penanganan
+dan
+terapi
+segera
+guna
+menghentikan bangkitan. Status epileptikus konvulsif memiliki
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 51 =====
+- 51 -
+
+
+potensi kerusakan otak yang cukup besar. Efek sistemik akibat SE
+konvulsif pada fase awal meliputi peningkatan denyut nadi,
+tekanan darah, dan kadar glukosa darah. Pada fase ini seringkali
+terjadi aritmia dan dapat berakibat fatal. Pada fase lanjut dapat
+terjadi hipertermia sampai melebihi 40o C sehingga dapat
+menyebabkan kerusakan otak dan prognosis memburuk. Selain
+itu dapat terjadi aritmia, hipotensi, dan edema paru berat yang
+dapat menyebabkan kematian. Mengingat komplikasi tersebut di
+atas, pengelolaan awal status epileptikus memiliki peran penting
+dalam mencegah kerusakan otak dan organ lain sehingga luaran
+pasien menjadi lebih baik.
+Pemberian bensodiazepine rektal merupakan terapi yang
+utama selama di perjalanan menuju rumah sakit. Segera panggil
+ambulans pada kondisi berikut :
+a) Bangkitan konvulsif tetap berlanjut 5 menit setelah obat
+emergensi diberikan.
+b) Penderita memiliki riwayat sering mengalami bangkitan
+serial/bangkitan konvulsif.
+c) Terdapat kesulitan monitor jalan napas, pernapasan, sirkulasi,
+atau tanda vital lain.
+
+Tabel 15. Definisi operasional t1 dan t2 pada status epileptikus
+Tipe SE
+Titik waktu
+t1
+Titik waktu
+t2
+SE tonik klonik
+5 menit
+30 menit
+SE fokal dengan gangguan kesadaran
+10 menit
+>60 menit
+SE lena (absence)
+10-15
+menit
+Tidak
+diketahui
+Catatan: Titik t1 adalah waktu saat tata laksana emergensi
+SE harus dimulai, titik t2 adalah waktu saat konsekuensi
+jangka panjang (kematian, cedera maupun perubahan
+jaringan pada neuron) dapat terjadi.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 52 =====
+- 52 -
+
+
+
+Gambar 5. Algoritma Tata Laksana Status Epileptikus Konvulsivus
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 53 =====
+- 53 -
+
+
+
+Gambar 6. Algoritma Tata laksana Status Epileptikus Non-Konvulsivus
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 54 =====
+- 54 -
+
+
+
+Gambar 7. Algoritma Tata laksana Status Epileptikus Refrakter
+
+Prognosis
+Prognosis luaran pasien SE dapat diprediksi dengan
+menggunakan sistem skoring Status Epilepticus
+Severity Score (STESS).
+Tabel 16. Status Epilepticus Severity Score (STESS)
+
+Gambaran Klinis
+STESS
+Kesadaran
+Sadar
+atau
+somnolen/confused
+0
+Sopor atau Koma
+1
+Tipe
+bangkitan
+terparah
+(bila
+ada
+beberapa
+bentuk
+bangkitan)
+Parsial
+sederhana,
+parsial kompleks, lena,
+myoklonik
+0
+Konvulsivus umum
+1
+SENK disertai koma
+2
+Usia
+<65 tahun
+0
+≥ 65 tahun
+2
+Riwayat
+bangkitan
+sebelumnya
+Iya
+0
+Tidak
+atau
+tidak
+diketahui
+1
+Total
+0-6
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 55 =====
+- 55 -
+
+
+Interpretasi skor STESS:
+Skor 0-2 = prognosis baik,
+Skor 3-6 = prognosis buruk.
+
+2) Epilepsi pada Lanjut Usia
+Tata laksana epilepsi pada lanjut usia yang harus diperhatikan
+antara lain:
+a)
+tipe kejang fokal lebih banyak dijumpai, kadang atipikal
+b)
+penyebab sering sekunder akibat stroke, tumor, demensia,
+cedera kepala, gangguan metabolic
+c)
+Obat yang direkomendasi : levetirasetam, lamotrigine,
+valproat. Obat fenitoin tidak disarankan (gangguan kognitif)
+d)
+dosis obat mulai dari rendah, start low go slow
+3) Epilepsi dengan Kondisi Khusus dengan Obesitas Tata laksana
+epilepsi pada kondisi khusus dengan obesitas yang harus
+diperhatikan antara lain:
+a)
+obat diutamakan monoterapi
+b)
+obat yang disarankan : topiramat, zonisamide, lamotrigine
+dan levetirasetam.  Hindari obat valproat, carbamazepine dan
+gabapentin/ pregabalin
+c)
+dosis obat disesuaikan fungsi hati dan ginjal
+4) Epilepsi dengan Gangguan Jiwa
+a)
+Beberapa obat anti bangkitan seperti fenobarbital, topiramat,
+gabapentine, vigabatrin, levetirasetam, dan zonisamide
+memiliki efek negatif terhadap mood.
+b)
+Obat anti bangkitan yang memiliki efek mood stabilizing
+adalah carbamazepine, lamotrigine, valproate.
+c)
+Pada pasien dengan ansietas obat anti bangkitan yang dipilih
+adalah benzodiazepine, valproate, pregabalin, gabapentin;
+sedangkan yang dihindari adalah levetirasetam.
+d)
+Pasien dengan psikosis obat anti bangktan yang digunakan
+lamotrigine, valproate, okskarbazepin, sedangkan yang
+dihindari levetirasetam, topiramate, anetosuksimid.
+5) Epilepsi dengan Gangguan Hepar
+Tata
+laksana
+epilepsi
+dengan
+gangguan
+hepar
+perlu
+memperhatikan hal-hal sebagai berikut:
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 56 =====
+- 56 -
+
+
+a) Pemberian
+Benzodiazepine
+dapat
+memicu
+ensefalopati
+hepatikum, maka hanya dapat digunakan apabila benar-
+benar diperlukan dan dengan dosis lebih rendah.
+b)
+Diperlukan kewaspadaan pada penggunaan fenitoin
+karena
+berpotensi
+menimbulkan
+intoksikasi
+akibat
+peningkatan fraksi bebas fenitoin.
+6) Epilepsi dengan Gangguan Renal
+Tata
+laksana
+epilepsi
+dengan
+gangguan
+renal
+perlu
+memperhatikan hal-hal sebagai berikut:
+a)
+Pemberian Levetiracetam tidak direkomendasikan.
+b)
+Setelah hemodialisis, kadar obat akan menurun, sehingga
+diperlukan penambahan dosis.
+c)
+Topiramat dan zonisamid tidak boleh digunakan pada pasien
+yang terdapat nefrolitiasis atau kecenderungan terjadi
+nefrolitiasis.
+7) Epilepsi dengan Gangguan Kardiovaskular
+Tata laksana epilepsi dengan gangguan kardiovaskuler perlu
+memperhatikan hal-hal sebagai berikut:
+a)
+Pemberian
+fenitoin
+untuk
+penatalaksanaan
+bangkitan
+epilepsi fase akut merupakan kontra indikasi pada pasien
+gangguan jantung berat serta AV blok derajat 2 dan 3.
+b)
+Benzodiazepine dapat digunakan dengan monitoring fungsi
+respirasi.
+8) Epilepsi dengan Gangguan Respiratorik
+Tata laksana epilepsi dengan gangguan respiratorik perlu
+memperhatikan hal-hal sebagai berikut:
+a)
+Penggunaan OAB golongan barbiturate dan benzodiazepine
+harus dihindari karena berpotensi menginduksi depresi
+napas. Pada anak-anak, benzodiazepine juga berpotensi
+meningkatkan sekresi bronchial.
+b)
+OAB
+enzyme-inducer
+mengurangi
+konsentrasi
+teofilin,
+sebaliknya teofilin menurunkan kadar carbamazepine dan
+fenitoin.
+9) Epilepsi dengan Gangguan Muskuloskeletal
+Gangguan densitas tulang erat kaitannya dengan penggunaan
+OAB jangka panjang terutama OAB enzymeinducer seperti fenitoin,
+carbamazepine, dan fenobarbital, usia tua, serta menopause.
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 57 =====
+- 57 -
+
+
+10) Epilepsi dengan Gangguan Tiroid
+Tata
+laksana
+epilepsi
+dengan
+gangguan
+tiroid
+perlu
+memperhatikan hal-hal sebagai berikut:
+a)
+OAB enzyme-inducer dapat menurunkan kadar tiroksin total
+dan bebas. Valproate dapat meningkatkan hormone tiroksin
+(TSH), namun reversibel. Oxkarbazepin dan topiramat dapat
+menurunkan hormone tiroid.
+b)
+Penggunaan non-enzyme-inducer lebih aman pada pasien
+gangguan tiroid.
+11) Epilepsi dengan Gangguan Demensia
+Tata
+laksana
+epilepsi
+dengan
+gangguan
+demensia
+perlu
+memperhatikan hal-hal sebagai berikut:
+a)
+Mengendalikan
+bangkitan
+dengan
+obat
+yang
+tidak
+memperburuk kognisi
+b)
+obat yang disarankan Levetirasetam, lamotrigine, gabapentin,
+lacosamide
+c)
+obat yang dihindari : fenobarbital, fenitoin, topiramate dan
+valproate
+12) Epilepsi dengan Katamenial
+Tata laksana epilepsi dengan katamenial perlu memperhatikan
+hal-hal sebagai berikut:
+a)
+Merupakan epilepsi yang diperburuk dengan siklus hormonal
+(menstruasi)
+b)
+Bisa muncul saat perimenstruasi, ovulasi maupun fase luteal
+pendek
+c)
+Gunakan OAB yang tidak terpengaruh kadar estrogen seperti
+Levetirasetam
+d)
+Terapi hormon tambahan seperti progesterone mikronisasi
+oral, kontrasepsi hormonal.
+e)
+Dapat diberikan sebagai obat tambahan saat rawan terjadi
+bangkitan:
+(1)
+clobazam 10-20 mg/hari (saat 2 hari pre sd 3 hari pasca
+menstruasi),
+(2)
+asetazolamide 250-500 mg/ hari  (saat fase luteal akhir)
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 58 =====
+- 58 -
+
+
+13) Epilepsi dengan Kehamilan
+Tata laksana epilepsi dengan kehamilan perlu memperhatikan hal-
+hal sebagai berikut:
+a)
+Bangkitan umum tonik klonik saat hamil berisiko terjadinya
+hipoksia janin, abraptio plasenta, hingga kematian janin.
+Sedangkan OAB dapat berisiko terjadinya efek samping
+berupa cacat bawaan janin (teratogenik).
+b)
+Obat OAB yang dianjurkan : lamotrigine, levetirasetam dan
+carbamazepine.
+c)
+Obat yang dihindari :  valproate, fenobarbital, fenitoin.
+d)
+Pencegahan kecacatan diberikan Asam folat 4-5 mg / hari,
+dimulai pada 1-3 bulan sebelum hamil dan dilanjutkan
+selama kehamilan,
+14) Epilepsi Refrakter
+Epilepsi Refrakter adalah kegagalan untuk mencapai keadaan
+bebas kejang secara berkelanjutan dengan pemberian dua obat
+antiepilepsi yang ditoleransi dan dipilih secara tepat dan diminum
+secara rutin dan terjadwal (apakah sebagai monoterapi atau dalam
+kombinasi)
+Salah satu upaya tata laksana epilepsi refrakter adalah tindakan
+bedah epilepsi dengan memperhatikan kontra indikasi.
+
+Tabel 17. Kontraindikasi absolut dan relatif bedah
+epilepsi
+Kontraindikasi Absolut
+Kontraindikasi Relatif
+Latar
+belakang
+penyakit
+degeneratif atau gangguan
+metabolik
+Tidak patuh minum OAB
+Sindrom epilepsi benigna
+
+ Priskosis interiktal
+Zona epileptogenik bilateral
+atau difus
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 59 =====
+- 59 -
+
+
+
+Gambar 8. Alur Tata laksana Bedah pada Epilepsi Refrakter
+
+Evaluasi khusus dalam pembedahan epilepsi refrakter meliputi
+dengan cara menentukan ada atau tidaknya lesi intra kranial.
+Tindakan pembedahan pada kasus epilepsi refrakter dibedakan
+menjadi bedah resektif, bedah paliatif dan pemasangan implan
+neuromodulasi.
+a)
+Bedah Resektif Epilepsi
+Tindakan bedah resektif dilakukan jika terdapat kesesuaian
+antara semiologi, video EEG dan imaging (MRI) yang
+terlokalisir pada area otak. Tindakan ini dapat berupa reseksi
+Temporal dan Extra-Temporal.
+Reseksi temporal dapat berupa:
+(1) Anterior-temporal lobectomy (Grade 1B);
+(2) amygdala-hippocampectomy (Grade 1B); dan
+(3) Selective amygdala-Hippocampectomy  (Grade 1B).
+Reseksi extra-temporal dapat berupa:
+(1) Lesionectomy (Grade 2B);
+(2) Lobectomy (Frontal; Parietal; Occipital) (Grade 1B);
+(3) Multi-lobar resection (frontal-temporal) (Grade 2B);
+(4) frontal-parietal; temporo-occipital) (Grade 3A);
+(5) Hemispherotomy (Grade 1B);
+(6) Thermocoagulation pada kasus Hypothalamic hamartoma
+(Grade 3B)
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 60 =====
+- 60 -
+
+
+b)
+Bedah Paliatif
+Prosedur bedah paliatif dilakukan pada kasus sindrom
+epilepsi atau epilepsi refrakter dengan zona epileptogenik
+meliputi seluruh hemisfer otak atau salah satu hemisfer, atau
+pada kasus dimana zona epileptogenik berasal dari area
+eloquent otak.
+Prosedur diskoneksi ini dapat berupa:
+(1) Multiple subpial transection;
+(2) Corpus callosotomy (Grade 1B);
+(3) Hemispherotomy (Grade 1B),
+c)
+Pemasangan implan neuromodulasi
+Neuromodulasi dapat berupa:
+(1) Vagus Nerve Stimulation (VNS) (Grade 2C); dan
+(2) Deep Brain Stimulation (DBS) (Grade 2C).
+Pasien dengan epilepsi lobus temporal dan lokasi zona
+epileptogenik
+pada
+amygdala
+dan
+hipokampus
+merupakan
+kandidat
+yang
+baik
+untuk
+dikerjakan
+tindakan pembedahan resektif dan memiliki luaran yang
+lebih baik dibandingkan dengan medikamentosa.
+Prediktor preoperatif yang penting dari manifestasi bebas
+kejang setelah tindakan pembedahan resektif pada
+epilepsi lobus temporal mesial yang meliputi:
+(a) Terdapat lesi fokal otak pada MRI (magnetic resonance
+imaging).
+(b) Terdapat sklerosis temporal mesial unilateral pada
+lobus temporal sebagai manifestasi sumber kejang.
+(c) Terdapat
+abnormalitas
+PET
+(positron
+emission
+tomography) yang terlokalisir pada lobus temporal,
+meskipun gambaran MRI normal.
+(d) Data
+EEG
+(electroencephalography)
+menunjukan
+kesesuaiaan lokasi onset iktal dan interiktal.
+Tindakan pembedahan pada epilepsi refrakter juga perlu
+memperhatikan komplikasi tindakan operasi, antara lain:
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 61 =====
+- 61 -
+
+
+a) Komplikasi medis dan neurologi:
+(1) Minor (gejala menghilang dalam 3 bulan) meliputi kebocoran
+LCS, infeksi, aseptik meningitis, DVT, emboli paru,
+pneumonia, hematom intrakranial, gangguan metabolik
+(2) Mayor (gejala menghilang lebih dari 3 bulan), meliputi:
+(a) hidrosefalus, abses intra kranial;
+(b) reseksi ekstra temporal sering terjadi: gangguan lapang
+pandang (13%), hemianopia (2%), dan afasia (4%)
+b) Komplikasi neuropsikologi dan psikiatri:
+(1) Lobektomi Temporal anterior
+(a) Gangguan memori verbal pada reseksi sisi kiri
+sebesar 44% dan sisi kanan 20%
+(b) Gangguan memori visuospasial (20%)
+(c) Gangguan penamaan (34%) pada sisi kiri
+(d) Fluensi verbal dapat meningkat (27%)
+(2) Gangguan distimik interiktal (18%), psikosis (1%)
+
+
+
+
+
+
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 62 =====
+- 62 -
+
+
+BAB IV
+RANGKUMAN PERINGKAT BUKTI DAN DERAJAT
+REKOMENDASI
+
+A. Rekomendasi dan peringkat bukti tata laksana saat terjadi bangkitan
+epileptik
+1. Menjaga jalan napas pasien dan mencegah adanya cedera kepala atau
+bagian tubuh lain akibat gerakan pasien saat bangkitan. Pasien
+diposisikan miring
+2. Pada pasien dewasa, dalam 5 menit pertama berikan
+a) Diazepam IV, 0,1 mg/kgBB (5-10mg/dosis, maksimum 20 mg),
+dengan kecepatan maksimum 5mg/menit, bisa diulang 1 kali (level
+A), atau
+b) Midazolam IM, 10 mg untuk BB>40kg, 5mg untuk BB 13-40kg (level
+A)
+c) Lorazepam IV* (level A, belum tersedia di Indonesia)
+d) Phenobarbital IV, 15mg/KgBB, dosis tunggal (level A)
+e) Pada pasien eklampsia berikan Magnesium Sulfat (MgSO4) 4 mg
+intravena selama 10 menit atau MgSO4 4 mg intramuskuler pada
+masing-masing gluteus kanan dan kiri.
+B. Rekomendasi dan peringkat bukti tata laksana bangkitan tanpa provokasi
+pertama pada dewasa
+1. Pasien dewasa dengan bangkitan tanpa provokasi pertama kali, harus
+diinformasikan peluang terjadinya bangkitan berulang dalam 2 tahun
+setelah kejang pertama (level A).
+2. Risiko berulangnya bangkitan akan meningkat bila terdapat cedera otak
+sebelumnya
+atau
+stroke
+(level
+A),
+ditemukannya
+abnormalitas
+epileptiform pada gambaran EEG (level A), abnormalitas pada gambaran
+neuroimaging (level B).
+3. Pasien diinformasikan mengenai efek samping OAB dapat terjadi sekitar
+7-31% (level B) dan efek samping ini sebagian besar bersifat ringan dan
+reversibel.
+C. Rekomendasi dan Peringkat Bukti Tata Laksana pada Epilepsi dengan
+Kondisi Khusus
+1. Epilepsi lanjut usia
+a. Pilihan OAB yang direkomendasikan pada usia lanjut adalah
+gabapentin (level A), lamotrigin (level A), carbamazepine (level
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 63 =====
+- 63 -
+
+
+C), Topiramat (Level D), Asam Valproat (Level D). (ILAE 2013)
+b. Diperlukan pemantauan efek samping secara berkala yang
+mungkin meningkat saat pemberian.
+2. Epilepsi pada wanita
+a. Terdapat
+beberapa
+terapi
+yang
+direkomendasikan
+dalam
+penanganan epilepsi katamenial, yaitu:
+1) Tambahkan OAB yang bekerja cepat seperti klobazam.  Dosis
+klobazam 20-30 mg/hari diberikan 10 hari selama periode
+menstruasi; (Rekomendasi level B)
+2) Asetazolamid, dosis 250-500 mg per hari, diberikan pada 5 –
+7 hari sebelum dan selama menstrurasi; (Rekomendasi level
+C) dan
+3) Terapi
+hormon
+menggunakan
+progesterone,
+metabolit
+progesteron dan antagonis estrogen. (Kelas III, Level D)
+b. Pada wanita dengan epilepsi yang sedang merencanakan
+kehamilan direkomendasikan untuk:
+1) Berikan
+penyuluhan
+kepada
+setiap
+perempuan
+yang
+menggunakan OAB dalam masa reproduksi tentang berbagai
+risiko dan keuntungan akibat penggunaan OAB terhadap
+kehamilan dan janin. (Level B)
+2) OAB diberikan dalam dosis optimal sebelum konsepsi (bila
+memungkinkan periksa kadar obat dalam darah sebagai basis
+pengukuran) (Level B)
+3) Bila memungkinkan ganti ke OAB yang kurang teratogenik,
+dan dosis efektif harus tercapai sekurangkurangnya 6 bulan
+sebelum konsepsi (Level B)
+4) Hindari penggunaan OAB politerapi (Level A)
+5) Apabila memungkinkan, hindari penggunaan asam valproat.
+Apabila terpaksa digunakan, berikan dosis terkecil (kurang
+dari 750 mg) dan gunakan bentuk lepas lambat (Level A)
+6) Suplementasi
+asam
+folat
+dengan
+dosis
+>0.4mg/hari
+diperlukan untuk menurunkan risiko terjadinya defek tuba
+neural, Autism spectrum disorder (ASD), dan
+Malformasi kongenital mayor (Level B)
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 64 =====
+- 64 -
+
+
+c. Pada wanita dengan epilepsi yang sedang hamil:
+1) Bila mengalami bebas bangkitan minimal 9 bulan sebelum
+kehamilan, kemungkinan besar (84-92%) akan tetap bebas
+bangkitan selama kehamilannya
+2) Jenis OAB yang sedang digunakan jangan diganti bila
+tujuannya hanya untuk mengurangi risiko teratogenik
+(Level B)
+3) Pada pengguna asam valproat atau OAB politerapi dianjurkan
+untuk dilakukan:
+(a)
+Pemeriksaan
+kadar
+alfa-fetoprotein
+serum
+dan
+asetilkolinesterase dalam cairan amnion (pada minggu
+14-16 kehamilan); (Level B) dan
+(b)
+pemeriksaan
+ultrasonografi
+(pada
+minggu
+16-20
+kehamilan). (Level B)
+4) Apabila terdapat abnormalitas pada pemeriksaan di atas,
+merupakan bahan pertimbangan untuk tidak meneruskan
+kehamilan
+5) Kadar OAB diperiksa awal trimester dan pada bulan terakhir
+kehamilan (Level B)
+6) Dosis OAB dapat dinaikkan apabila kadar OAB turun di
+bawah
+kadar
+OAB
+sebelum
+kehamilan,
+atau
+sesuai
+kebutuhan klinik (Level B)
+7) Suplementasi
+asam
+folat
+dengan
+dosis
+>0.4mg/hari
+diperlukan untuk menurunkan risiko terjadinya efek tuba
+neural, Autism spectrum disorder (ASD), dan Malformasi
+kongenital mayor (Level B)
+d. Pada wanita dengan epilepsi yang akan melahirkan:
+1) Sebaiknya dilakukan di klinik atau rumah sakit dengan
+fasilitas untuk perawatan intensif untuk ibu dan neonatus
+(Level C)
+2) Persalinan dapat dilakukan secara normal per vaginam
+dengan persalinan tanpa nyeri dengan epidural analgesia
+(Kelas II)
+3) Vitamin K 1 mg intramuskular diberikan pada neonatus saat
+dilahirkan oleh ibu yang menggunakan OAB penginduksi-
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 65 =====
+- 65 -
+
+
+enzim untuk mengurangi risiko terjadinya perdarahan (Level
+B)
+e. Pada wanita dengan epilepsi yang sedang menyusui :
+1) Semua OAB terdapat pada air susu ibu (ASI) walaupun dalam
+proporsi yang berbeda-beda (Level C)
+2) OAB yang relatif aman untuk menyusui adalah fenitoin, asam
+valproat, dan carbamazepine. OAB dengan profil keamanan
+sedang meliputi lamotrigin, okskarbasepin, levetiracetam,
+topiramat, gabapentin, pregabaalin, vigabatrin, dan tiagabine.
+OAB dengan kemungkinan berisiko saat menyusui adalah
+fenobarbital,
+primidon,
+benzodiazepine,
+etosuksimid,
+zonisamid, dan felbamat (Level B)
+3. Epilepsi dan Neuromodulasi
+a. Bedah epilepsi ditujukan pada epilepsi resisten obat atau dengan
+indikasi tertentu dengan tujuan reseksi ataupun paliatif
+(diskoneksi dan/atau modulasi)
+b. Neuromodiulasi (Vagal nerve stimulation dan Deep brain
+stimulation) dapat dilakukan sebagai terapi ajutiv pada pasien
+epilepsi fokal ataupun umum yang mengalami resisten obat dan
+bukan kandidat bedah epilepsi (level C)
+4. Sudden Unexpected Death in Epilepsy (SUDEP)
+a. Sebaiknya diberitahukan kepada orang tua anak, dan orang
+dewasa dengan epilepsi tentang adanya risiko yang kecil dari
+SUDEP (yaitu di luar negeri pada anak 1 : 4.500, dan dewasa 1 :
+1.000 kejadiannya setiap tahun) (Rekomendasi Level B).
+b. Bagi orang dengan epilepsi yang mengalami terus menerus
+bangkitan umum tonik klonik, maka harus terus dikelola terapi
+epilepsi secara aktif, untuk mengurangi kejadian bangkitan dan
+risiko SUDEP, sambil mempertimbangkan pilihan pasien serta
+risiko dan manfaat dari setiap terapi yang baru (Rekomendasi
+Level B).
+c. Bagi orang dengan bangkitan umum tonik klonik, dan bangkitan
+nokturnal yang sering dapat dapat disarankan bagi pasien
+tertentu, dan keluarga (jika diizinkan pasien tsb. dan kondisi
+psikososialnya),
+untuk
+menggunakan
+pengawasan
+atau
+pencegahan pada malam hari/ saat tidur, seperti penggunaan
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 66 =====
+- 66 -
+
+
+alat pendengar jarak jauh, untuk mengurangi risiko SUDEP
+(Rekomendasi Level C).
+d. Sebaiknya diberitahukan kepada orang dengan epilepsi bahwa
+bebas bangkitan, khususnya bebas dari bangkitan umum tonik
+klonik (yang lebih mungkin terjadi dengan kepatuhan terhadap
+pengobatan), sangat terkait dengan penurunan risiko SUDEP
+(Rekomendasi Level B).
+e. Faktor risiko berikut berkaitan dengan peningkatan risiko
+SUDEP: bangkitan nokturnal, obat anti bangkitan (OAB) tertentu,
+pemakaian Lamotrigin pada wanita dengan epilepsi, belum
+pernah mendapat OAB, jumlah OAB yang digunakan, epilepsi
+ekstra temporal, disabilitas intelektual, jenis kelamin pria,
+pemakaian obat ansiolitik (Peringkat Bukti Lemah Kelas 4, dan
+Tidak Ada Rekomendasi).
+f.
+Faktor
+risiko
+berikut
+berkaitan/
+mempengaruhi
+SUDEP:
+frekuensi bangkitan dengan tipe bangkitan, epilepsi refrakter,
+mono atau politerapi, OAB tertentu dalam rentang normal atau
+di bawah dan di atas rentang normal (carbamazepine, fenitoin,
+atau sodium valproat), obat psikotropik, kesehatan mental,
+kelainan paru, penggunaan alkohol, Lamotrigin pada pasien
+epilepsi refrakter, jenis OAB yang sering berubah, sedang
+dilakukan prosedur reseksi pada bedah epilepsi, stimulasi nervus
+vagus lebih dari 2 tahun, penyebab epilepsi (idiopatik atau
+localization-related, lesi struktural di magnetic resonance
+imaging, lama menderita epilepsi, usia saat onset epilepsi, dan
+postictal electroencephalogram suppression (Peringkat Bukti
+Lemah/Conflicting).
+
+
+
+
+
+
+
+
+
+
+
+
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id
+
+===== PAGE 67 =====
+- 67 -
+
+
+BAB V
+PENUTUP
+
+Pedoman Nasional Pelayanan Klinis (PNPK) disusun sebagai acuan
+standar dalam pelayanan epilepsi berbasis bukti ilmiah Penyusunan PNPK ini
+melibatkan para pakar epilepsi nasional dan mengacu pada panduan
+internasional, seperti International League Against Epilepsy (ILAE) dan National
+Institute for Health and Care Excellence (NICE).
+Dokumen ini mencakup prinsip-prinsip penanganan epilepsi mulai dari
+definisi, klasifikasi, diagnosis, tata laksana bangkitan epileptik, epilepsi, status
+epileptikus, serta penanganan pada kondisi khusus. Diagnosis klinis berbasis
+anamnesis dan pemeriksaan fisik tetap menjadi dasar utama, dengan dukungan
+pemeriksaan EEG, pencitraan otak, dan laboratorium.
+Prinsip
+tata
+laksana
+epilepsi
+menitikberatkan
+pada
+pendekatan
+individual, dimulai dari monoterapi OAB yang disesuaikan dengan jenis
+bangkitan dan komorbiditas pasien, pemantauan efek samping obat, serta
+pengelolaan epilepsi resistan obat dengan pendekatan farmakologis lanjutan,
+non-farmakologis, maupun pembedahan.
+Penanganan epilepsi pada populasi khusus seperti perempuan, lansia,
+dan pasien dengan komorbiditas turut dibahas secara komprehensif. Selain
+aspek klinis, pedoman ini juga menekankan pentingnya pemahaman terhadap
+sindrom epilepsi yang memiliki karakteristik klinis dan penatalaksanaan
+khusus.
+Implementasi pedoman ini membutuhkan dukungan lintas sektor,
+edukasi berkelanjutan bagi tenaga medis dan tenaga kesehatan, serta komitmen
+dalam penyediaan obat dan fasilitas pemeriksaan pendukung secara merata di
+seluruh wilayah Indonesia.
+
+
+MENTERI KESEHATAN
+REPUBLIK INDONESIA,
+
+
+ttd.
+
+
+  BUDI G. SADIKIN
+KEMENTERIAN KESEHATAN
+jdih.kemkes.go.id

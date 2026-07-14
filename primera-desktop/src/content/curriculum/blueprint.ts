@@ -12,6 +12,7 @@ import type {
   ReleasePolicy,
   UkmScenario,
 } from './types'
+import { buildM13DeltaEvidenceBindings } from './m13DeltaAudit'
 
 export const FKTP144_CATALOG_ID = 'fktp144-1186-2022'
 export const EXISTING_CLINICAL_CATALOG_ID = 'existing-clinical-baseline-2026-07-14'
@@ -365,7 +366,11 @@ export function buildCurriculumBlueprint(pack: ContentPack): CurriculumBlueprint
     }
   })
 
+  const m13DeltaBindings = buildM13DeltaEvidenceBindings()
+  const m13AuditedArchetypeIds = new Set(m13DeltaBindings.map((binding) => binding.subject.id))
+
   for (const archetype of encounterArchetypes) {
+    if (m13AuditedArchetypeIds.has(archetype.id)) continue
     const kasus = archetype.contentRef.kind === 'clinic'
       ? pack.kasus[archetype.contentRef.id]
       : pack.kasusIgd[archetype.contentRef.id]
@@ -381,6 +386,7 @@ export function buildCurriculumBlueprint(pack: ContentPack): CurriculumBlueprint
       reviewStatus: 'pending',
     })
   }
+  evidenceBindings.push(...m13DeltaBindings)
 
   for (const scenario of ukmScenarios) {
     evidenceBindings.push({
