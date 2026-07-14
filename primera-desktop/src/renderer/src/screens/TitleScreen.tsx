@@ -10,6 +10,7 @@ import { useRadioGroup } from '../useRadioGroup'
 import { METADATA } from '@content/metadata'
 import type { ModeStase } from '@engine/state'
 import { verifikasiDossier, type HasilVerifikasi } from '@engine/verifikasi'
+import { serialize } from '@engine/save'
 import { auditTelemetri } from '@engine/telemetriAudit'
 import { PACK } from '@content/index'
 import './TitleScreen.css'
@@ -136,11 +137,25 @@ export function TitleScreen() {
   const [namaFileArsip, setNamaFileArsip] = useState<string | null>(null)
   const [namaFileDossier, setNamaFileDossier] = useState<string | null>(null)
   const [namaFileTelemetri, setNamaFileTelemetri] = useState<string | null>(null)
+  const arsipRilisSesuai =
+    arsip !== null && arsip.contentRelease === PACK.runtimeManifest.contentRelease
 
   const namaBersih = nama.trim()
   const nimBersih = nim.trim()
   // Mode ujian WAJIB NIM (identitas terikat); karier tidak.
   const bolehMulai = namaBersih.length > 0 && (mode !== 'ujian' || nimBersih.length > 0)
+
+  const eksporArsipBedaRilis = () => {
+    if (!arsip || arsipRilisSesuai) return
+    const blob = new Blob([serialize(arsip)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const tautan = document.createElement('a')
+    tautan.href = url
+    const namaAman = arsip.namaDokter.replace(/[<>:"/\\|?*\x00-\x1f\s]+/g, '_')
+    tautan.download = `primer_arsip_${namaAman}_H${arsip.hari}.json`
+    tautan.click()
+    URL.revokeObjectURL(url)
+  }
 
   const mulaiStase = (e: FormEvent) => {
     e.preventDefault()
@@ -188,13 +203,26 @@ export function TitleScreen() {
           <p className="title__memuat teks-lembut">Membuka arsip stase…</p>
         ) : (
           <div className="title__aksi">
-            {arsip !== null && (
+            {arsip !== null && arsipRilisSesuai && (
               <button
                 className="tombol tombol--utama tombol--besar title__lanjut"
                 onClick={() => lanjutkanArsip()}
               >
                 Lanjutkan — dr. {arsip.namaDokter} · Hari {arsip.hari}
               </button>
+            )}
+
+            {arsip !== null && !arsipRilisSesuai && (
+              <div className="title__peringatan teks-kecil" role="alert" style={{ color: 'var(--kunyit-800)' }}>
+                <p>
+                  Arsip dr. {arsip.namaDokter} berasal dari rilis {arsip.contentRelease} dan tidak dapat
+                  dilanjutkan pada rilis {PACK.runtimeManifest.contentRelease}. Arsip tetap tersimpan sampai
+                  kamu memilih memulai stase baru.
+                </p>
+                <button type="button" className="tombol" onClick={eksporArsipBedaRilis}>
+                  Ekspor Arsip Lama
+                </button>
+              </div>
             )}
 
             {/* CODEX M14 #6: autosave ADA tapi tak terbaca — dulu tampak seperti
@@ -289,6 +317,7 @@ export function TitleScreen() {
                   <button
                     key={info.slot}
                     className="tombol title__slot"
+                    disabled={!info.compatible}
                     onClick={() => {
                       // CODEX M14 #4: memuat slot mengganti sesi & menimpa
                       // autosave — jalur ke-4 yang dulu terlewat dari konfirmasi
@@ -303,11 +332,16 @@ export function TitleScreen() {
                         if (!ok) window.alert('Gagal memuat arsip — file rusak, tidak ditemukan, atau dari versi yang tak dikenal.')
                       })
                     }}
-                    title={`Muat arsip ${info.slot}.`}
+                    title={
+                      info.compatible
+                        ? `Muat arsip ${info.slot}.`
+                        : `Arsip ${info.slot} berasal dari rilis ${info.contentRelease} dan hanya dapat dibuka dengan build yang sama.`
+                    }
                   >
                     📁 {info.slot.replace('slot', 'Slot ')}: dr. {info.namaDokter} · H{info.hari}
                     {info.mode === 'ujian' ? ' · UJIAN' : ''}
                     {info.tamat ? ' · tamat' : ''}
+                    {!info.compatible ? ' · rilis lama' : ''}
                   </button>
                 ))}
                 {meta !== null && (
@@ -349,7 +383,7 @@ export function TitleScreen() {
                   void f
                     .text()
                     .then((json) => {
-                      if (!imporArsip(json)) window.alert('Arsip tidak valid atau dari versi yang tak dikenal.')
+                      if (!imporArsip(json)) window.alert('Arsip tidak valid atau berasal dari rilis konten yang berbeda.')
                     })
                     .catch(() => window.alert('Gagal membaca file arsip.'))
                     // CODEX M14 #24: reset value SELALU (juga saat gagal) agar

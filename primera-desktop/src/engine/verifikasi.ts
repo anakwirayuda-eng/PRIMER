@@ -11,7 +11,7 @@
  * di Electron renderer maupun Node ≥18 (vitest).
  */
 
-import type { ContentPack } from '@content/pack'
+import { LEGACY_CONTENT_RELEASE, type ContentPack } from '@content/pack'
 import type { GameState, JejakAksi, Skor4Dimensi, SkorTally } from './state'
 import type { Action } from './actions'
 import { buildInitialState } from './init'
@@ -43,7 +43,7 @@ export interface DossierMahasiswa {
   }
   klaim: { skor: Skor4Dimensi; tally: SkorTally; badge: string[] }
   jejak: JejakAksi[]
-  lingkungan: { versiApp: string; sidikJariPack: string }
+  lingkungan: { versiApp: string; sidikJariPack: string; contentRelease: string }
   /** HMAC-SHA256 hex atas stringifyKanonik(dossier tanpa field ttd). */
   ttd: string
 }
@@ -472,7 +472,10 @@ function fnv1a(teks: string): string {
 // tidak sah bila tally barunya belum pernah ada.
 // M11 adjudikasi pasca-verifikasi: stabilisasi pra-rujuk yang terlewat
 // dikoreksi dari cap B ke cap C karena risiko fisiologis selama transport.
-const REVISI_ENGINE = 32
+// M13-0C (2026-07-14): CONTENT_RELEASE masuk save+dossier, manifest runtime
+// mengatur mode/release draw, IGD disortir, dan tie-break karma dibuat eksplisit.
+// Semua mengubah replay/seleksi sehingga Golden Master dibuka secara sadar.
+export const REVISI_ENGINE = 33
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -635,6 +638,39 @@ export function sidikJariPack(pack: ContentPack): string {
   const edukasi = Object.values(pack.edukasi)
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((t) => stringifyKanonik({ id: t.id, nama: t.nama, kategori: t.kategori, sinonim: [...(t.sinonim ?? [])].sort() }))
+  // M13-0C: proyeksi manifest ini sekarang menyetir draw, eligibility, dan
+  // credit. CONTENT_RELEASE sendiri diverifikasi terpisah; field keputusan
+  // berikut tetap wajib masuk fingerprint agar replay tidak ambigu.
+  const runtimeArchetypes = [...(pack.runtimeManifest?.encounterArchetypes ?? [])]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((a) =>
+      stringifyKanonik({
+        id: a.id,
+        conceptId: a.conceptId,
+        contentRef: a.contentRef,
+        channel: a.channel,
+        severityDegree: a.severityDegree,
+        targetFktp: a.targetFktp,
+        prevalensi: a.prevalensi,
+        modePolicy: a.modePolicy,
+        releasePolicy: a.releasePolicy,
+        credits: [...a.credits].sort(),
+        excludedCredits: [...(a.excludedCredits ?? [])]
+          .sort((x, y) => x.itemId.localeCompare(y.itemId)),
+        creditRationale: a.creditRationale ?? null,
+      }),
+    )
+  const runtimeUkm = [...(pack.runtimeManifest?.ukmScenarios ?? [])]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((s) =>
+      stringifyKanonik({
+        id: s.id,
+        contentRef: s.contentRef,
+        modePolicy: s.modePolicy,
+        releasePolicy: s.releasePolicy,
+        credits: [...s.credits].sort(),
+      }),
+    )
   const daftar = [
     'engine', String(REVISI_ENGINE),
     'kasus', ...kasus,
@@ -648,6 +684,9 @@ export function sidikJariPack(pack: ContentPack): string {
     'tindakan', ...tindakan,
     'keluarga', ...keluarga,
     'skdi', ...skdi,
+    'runtime-release-order', stringifyKanonik(pack.runtimeManifest?.releaseOrder ?? [LEGACY_CONTENT_RELEASE]),
+    'runtime-archetypes', ...runtimeArchetypes,
+    'runtime-ukm', ...runtimeUkm,
   ]
   return fnv1a(daftar.join('|'))
 }
@@ -701,7 +740,11 @@ export async function susunDossier(
     },
     klaim: { skor: hitungSkor(state), tally: state.tally, badge: hitungBadge(state) },
     jejak: state.jejak,
-    lingkungan: { versiApp: opsi.versiApp, sidikJariPack: sidikJariPack(pack) },
+    lingkungan: {
+      versiApp: opsi.versiApp,
+      sidikJariPack: sidikJariPack(pack),
+      contentRelease: state.contentRelease,
+    },
   }
   const ttd = await hmacHex(stringifyKanonik(tanpaTtd))
   return { ...tanpaTtd, ttd }
@@ -768,7 +811,8 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
       typeof d.stase.hari !== 'number' || !objek(d.klaim) || !objek(d.klaim.skor) ||
       typeof d.klaim.skor.total !== 'number' || typeof d.klaim.skor.grade !== 'string' ||
       !objek(d.klaim.tally) || !Array.isArray(d.klaim.badge) || !Array.isArray(d.jejak) ||
-      !objek(d.lingkungan) || typeof d.ttd !== 'string') {
+      !objek(d.lingkungan) || typeof d.lingkungan.versiApp !== 'string' ||
+      typeof d.lingkungan.sidikJariPack !== 'string' || typeof d.ttd !== 'string') {
     return { status: 'tidak_dapat_diverifikasi', alasan: ['Struktur dossier tidak lengkap.'] }
   }
 
@@ -809,7 +853,26 @@ export async function verifikasiDossier(json: string, pack: ContentPack, versiAp
     }
   }
 
-  /* 3 — sidik jari konten */
+  /* 3 — identitas rilis, sebelum sidik jari dan replay. Dossier pra-0C yang
+     tidak punya field ini dipetakan ke baseline legacy tanpa mengubah objek
+     yang sudah diverifikasi HMAC-nya. Mismatch selalu netral. */
+  const releaseDossier =
+    typeof d.lingkungan.contentRelease === 'string'
+      ? d.lingkungan.contentRelease
+      : LEGACY_CONTENT_RELEASE
+  const releaseKini = pack.runtimeManifest?.contentRelease ?? LEGACY_CONTENT_RELEASE
+  if (releaseDossier !== releaseKini) {
+    return {
+      status: 'tidak_dapat_diverifikasi',
+      alasan: [
+        `Rilis konten berbeda (dossier: ${releaseDossier}; verifikator: ${releaseKini}). ` +
+          'Gunakan build kohort yang sama dengan yang dipakai mahasiswa.',
+      ],
+      ringkasan,
+    }
+  }
+
+  /* 3a — sidik jari konten */
   const sidikKini = sidikJariPack(pack)
   if (d.lingkungan.sidikJariPack !== sidikKini) {
     return {

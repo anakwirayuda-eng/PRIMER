@@ -18,6 +18,7 @@ import {
 } from '@engine/reducer'
 import type { HasilKunjungan, KeluargaState } from '@engine/state'
 import type { KeluargaBinaan } from '@content/types'
+import { ukmScenarioAktif } from '@content/pack'
 import { PACK } from '@content/index'
 import { PetaSvg } from './peta/PetaSvg'
 import { KartuKeluarga } from './peta/KartuKeluarga'
@@ -90,6 +91,12 @@ export function PetaDesa() {
       return { alasan: 'Krisis sudah terjadi — dampingi pemulihannya lewat klinik.', biaya }
     if (kel.arcIndex >= content.arc.kunjungan.length)
       return { alasan: 'Seluruh kunjungan keluarga ini sudah tuntas.', biaya }
+    const skenario = content.arc.kunjungan[kel.arcIndex]
+    if (
+      !skenario ||
+      !ukmScenarioAktif(PACK, content.id, skenario.id, state.mode, state.contentRelease)
+    )
+      return { alasan: 'Skenario ini tidak tersedia pada mode stase ini.', biaya }
     if (state.hari < HARI_BUKA_KUNJUNGAN)
       return { alasan: `Kunjungan rumah terbuka mulai hari ke-${HARI_BUKA_KUNJUNGAN}.`, biaya }
     if (state.blok !== 'siang') return { alasan: 'Kunjungan rumah hanya bisa dilakukan di blok siang.', biaya }

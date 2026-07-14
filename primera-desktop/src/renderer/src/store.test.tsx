@@ -8,6 +8,8 @@ import { describe, expect, it, beforeEach } from 'vitest'
 import { useGame } from './store'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
+import { LEGACY_CONTENT_RELEASE } from '@content/pack'
+import { serialize } from '@engine/save'
 
 function pasangPrimerStub(overrides?: Partial<Window['primer']['save']>) {
   window.primer = {
@@ -62,7 +64,6 @@ describe('muatDariSlot — memuat slot manual JADI autosave aktif (CODEX audit U
   it('setelah memuat dari slot manual, autosave ikut ditulis (bukan hanya state in-memory)', async () => {
     const ditulis: { slot: string; json: string }[] = []
     const sSlot = buildInitialState('Dari Slot', 2, PACK)
-    const { serialize } = await import('@engine/save')
     pasangPrimerStub({
       read: async (slot: string) => (slot === 'slot1' ? serialize(sSlot) : null),
       write: async (slot: string, json: string) => {
@@ -76,6 +77,24 @@ describe('muatDariSlot — memuat slot manual JADI autosave aktif (CODEX audit U
     // autosave — menutup app sebelum aksi lain memicu autosave berikutnya
     // membuat boot berikutnya membaca save LAMA, bukan sesi yang baru dimuat.
     expect(ditulis.some((d) => d.slot === 'autosave')).toBe(true)
+  })
+
+  it('slot beda CONTENT_RELEASE ditolak tanpa menimpa sesi atau autosave aktif', async () => {
+    const aktif = buildInitialState('Tetap Aktif', 3, PACK)
+    const legacy = { ...buildInitialState('Slot Lama', 4, PACK), contentRelease: LEGACY_CONTENT_RELEASE }
+    const ditulis: string[] = []
+    useGame.setState({ state: aktif })
+    pasangPrimerStub({
+      read: async () => serialize(legacy),
+      write: async (slot) => {
+        ditulis.push(slot)
+        return true
+      },
+    })
+
+    expect(await useGame.getState().muatDariSlot('slot1')).toBe(false)
+    expect(useGame.getState().state).toBe(aktif)
+    expect(ditulis).toEqual([])
   })
 })
 
@@ -116,6 +135,16 @@ describe('statusSimpan — melapor gagal-simpan, bukan diam-diam (CODEX audit UI
     const ok = await useGame.getState().muatAutosave()
     expect(ok).toBe(false)
     expect(useGame.getState().statusSimpan).toBe('idle')
+  })
+
+  it('autosave beda CONTENT_RELEASE tetap dimuat sebagai arsip netral, bukan sesi aktif', async () => {
+    const legacy = { ...buildInitialState('Arsip Lama', 5, PACK), contentRelease: LEGACY_CONTENT_RELEASE }
+    useGame.setState({ state: null, arsip: null, statusSimpan: 'idle' })
+    pasangPrimerStub({ read: async () => serialize(legacy) })
+
+    expect(await useGame.getState().muatAutosave()).toBe(true)
+    expect(useGame.getState().state).toBeNull()
+    expect(useGame.getState().arsip?.contentRelease).toBe(LEGACY_CONTENT_RELEASE)
   })
 })
 

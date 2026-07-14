@@ -3,8 +3,8 @@
  * Semua file konten diimpor di sini; validasi silang berjalan saat boot (dev).
  */
 
-import type { ContentPack } from './pack'
-import { validasiPack } from './pack'
+import type { ContentCatalog, RuntimeContentPack } from './pack'
+import { CONTENT_RELEASE, CONTENT_RELEASE_ORDER, validasiPack } from './pack'
 import type { KasusKlinis, KeluargaBinaan } from './types'
 import { KASUS_INFEKSI } from './kasus/kasusInfeksi'
 import { KASUS_KRONIS } from './kasus/kasusKronis'
@@ -64,7 +64,7 @@ const skdi144Tertaut = SKDI144.map((entri) => {
   return kasusCocok ? { ...entri, kasusId: kasusCocok.id } : entri
 })
 
-export const PACK: ContentPack = {
+const CONTENT_CATALOG: ContentCatalog = {
   kasus: kasusById,
   kasusIgd: byId(KASUS_IGD),
   keluarga: byId(semuaKeluarga),
@@ -79,8 +79,23 @@ export const PACK: ContentPack = {
   namaWarga: NAMA_WARGA,
 }
 
-/** M13-0A: manifest authoring kanonik; belum dipakai draw/scoring runtime. */
-export const CURRICULUM_BLUEPRINT = buildCurriculumBlueprint(PACK)
+/** M13-0A: manifest authoring kanonik lengkap, termasuk evidence registry. */
+export const CURRICULUM_BLUEPRINT = buildCurriculumBlueprint(CONTENT_CATALOG)
+
+/**
+ * M13-0C: runtime hanya membawa proyeksi keputusan draw/credit. Evidence dan
+ * metadata authoring tetap di CURRICULUM_BLUEPRINT, di luar jalur game.
+ */
+export const PACK: RuntimeContentPack = {
+  ...CONTENT_CATALOG,
+  runtimeManifest: {
+    schemaVersion: 1,
+    contentRelease: CONTENT_RELEASE,
+    releaseOrder: [...CONTENT_RELEASE_ORDER],
+    encounterArchetypes: CURRICULUM_BLUEPRINT.encounterArchetypes,
+    ukmScenarios: CURRICULUM_BLUEPRINT.ukmScenarios,
+  },
+}
 
 // Fail-fast saat dev: drift id konten ketahuan sebelum sampai ke pemain (CODEX
 // P2 — sekadar console.warn tidak "fail-fast" sungguhan; lempar error di dev

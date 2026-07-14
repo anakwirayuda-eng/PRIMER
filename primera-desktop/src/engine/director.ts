@@ -11,7 +11,7 @@
 
 import type { GameState, ModeStase, PasienAktif } from './state'
 import { musimDariHari } from './state'
-import type { ContentPack } from '@content/pack'
+import { encounterArchetypeAktif, type ContentPack } from '@content/pack'
 import type { KasusKlinis, Persona } from '@content/types'
 import type { Rng } from './core/rng'
 import { clusterAktif } from './surveilans'
@@ -215,7 +215,11 @@ export function susunAntrianHarian(
   // kasus) dulu bisa mengubah hasil rng.weighted TANPA mengubah sidik jari
   // (yang menyortir). Kandidat kini deterministik thd ISI pack, bukan bentuknya.
   const semua = Object.values(pack.kasus)
-    .filter((k) => !kecuali.includes(k.id))
+    .filter(
+      (k) =>
+        !kecuali.includes(k.id) &&
+        encounterArchetypeAktif(pack, 'clinic', k.id, state.mode, state.contentRelease),
+    )
     .sort((a, b) => a.id.localeCompare(b.id))
   if (semua.length === 0) return []
 

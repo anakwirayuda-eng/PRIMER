@@ -6,7 +6,7 @@
  */
 
 import type { GameState } from './state'
-import type { ContentPack } from '@content/pack'
+import { LEGACY_CONTENT_RELEASE, type ContentPack } from '@content/pack'
 import { SEMUA_INDIKATOR_PISPK } from './pispk'
 
 const VERSI_SAVE = 1 as const
@@ -55,6 +55,11 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // terhingga, dan JSON.stringify(Infinity) jadi `null` saat re-serialize.
   if (typeof st['seed'] !== 'number' || !Number.isFinite(st['seed'])) return null
   if (typeof st['namaDokter'] !== 'string') return null
+  // M13-0C: identitas rilis bukan tally dan tidak boleh memakai tandaiMigrasi.
+  // Save pra-0C dipetakan eksplisit ke baseline legacy agar UI dapat
+  // mengarsipkannya secara netral tanpa pernah melanjutkannya di build baru.
+  if (st['contentRelease'] === undefined) st['contentRelease'] = LEGACY_CONTENT_RELEASE
+  if (typeof st['contentRelease'] !== 'string' || st['contentRelease'].length === 0) return null
   if (!objek(st['klinik'])) return null
   if (!objek(st['desa'])) return null
   if (!objek(st['tally'])) return null
@@ -591,7 +596,7 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // versi lain) yang lalu ikut ter-round-trip ke autosave. Whitelist = kunci
   // GameState (state.ts) — WAJIB disinkron bila interface bertambah field.
   const KUNCI_STATE_SAH = new Set([
-    'versi', 'seed', 'namaDokter', 'nim', 'hari', 'blok', 'stamina', 'burnout',
+    'versi', 'contentRelease', 'seed', 'namaDokter', 'nim', 'hari', 'blok', 'stamina', 'burnout',
     'mode', 'seedKurikulum', 'paketUjian', 'klinik', 'desa', 'kunjungan',
     'hasilKunjunganHariIni', 'kegiatan', 'hasilKegiatanTerakhir', 'igd', 'igdHariIni', 'lapanganTerpakai',
     'prolanis', 'posyanduRwTerakhir', 'program', 'tutorialAktif', 'inbox', 'jadwal',

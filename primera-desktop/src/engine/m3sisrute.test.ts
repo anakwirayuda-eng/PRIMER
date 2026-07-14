@@ -71,6 +71,7 @@ function pack(kasusList: KasusKlinis[], rsTambahan?: ContentPack['rumahSakit']):
 function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
   const s: GameState = {
     versi: 1,
+    contentRelease: 'legacy-baseline',
     seed: 99,
     mode: 'karier',
     seedKurikulum: 99,

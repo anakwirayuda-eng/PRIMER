@@ -10,6 +10,8 @@ import { useGame } from '../store'
 import { TitleScreen } from './TitleScreen'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
+import { LEGACY_CONTENT_RELEASE } from '@content/pack'
+import { serialize } from '@engine/save'
 
 function pasangPrimerStub() {
   window.primer = {
@@ -78,6 +80,27 @@ describe('<TitleScreen /> — konfirmasi timpa arsip saat mulai stase baru', () 
   })
 })
 
+describe('<TitleScreen /> — arsip beda CONTENT_RELEASE', () => {
+  it('tetap terlihat sebagai arsip tetapi tidak dapat dilanjutkan atau diimpor', () => {
+    pasangPrimerStub()
+    const legacy = {
+      ...buildInitialState('Dr. Arsip Lama', 7, PACK),
+      contentRelease: LEGACY_CONTENT_RELEASE,
+    }
+    useGame.setState({ arsip: legacy, state: null, slots: [], meta: null, sedangMemuat: false })
+    render(<TitleScreen />)
+
+    expect(screen.queryByRole('button', { name: /Lanjutkan/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveTextContent(/berasal dari rilis legacy-baseline/i)
+
+    useGame.getState().lanjutkanArsip()
+    expect(useGame.getState().state).toBeNull()
+    expect(useGame.getState().arsip).toBe(legacy)
+    expect(useGame.getState().imporArsip(serialize(legacy))).toBe(false)
+    expect(useGame.getState().state).toBeNull()
+  })
+})
+
 describe('<TitleScreen /> — konfirmasi timpa arsip saat MUAT SLOT (CODEX M14 #4)', () => {
   it('arsip ADA + BATAL konfirmasi → slot TIDAK dibaca (arsip utuh)', async () => {
     pasangPrimerStub()
@@ -86,7 +109,7 @@ describe('<TitleScreen /> — konfirmasi timpa arsip saat MUAT SLOT (CODEX M14 #
     const arsipLama = buildInitialState('Dr. Lama', 1, PACK)
     useGame.setState({
       arsip: arsipLama, state: null, meta: null, sedangMemuat: false,
-      slots: [{ slot: 'slot1', namaDokter: 'Dr. Slot', hari: 5, mode: 'karier', tamat: false }],
+      slots: [{ slot: 'slot1', namaDokter: 'Dr. Slot', hari: 5, mode: 'karier', tamat: false, contentRelease: PACK.runtimeManifest.contentRelease, compatible: true }],
     })
     vi.spyOn(window, 'confirm').mockReturnValue(false)
     render(<TitleScreen />)
@@ -105,7 +128,7 @@ describe('<TitleScreen /> — konfirmasi timpa arsip saat MUAT SLOT (CODEX M14 #
     window.primer.save.read = bacaSlot
     useGame.setState({
       arsip: null, state: null, meta: null, sedangMemuat: false,
-      slots: [{ slot: 'slot1', namaDokter: 'Dr. Slot', hari: 5, mode: 'karier', tamat: false }],
+      slots: [{ slot: 'slot1', namaDokter: 'Dr. Slot', hari: 5, mode: 'karier', tamat: false, contentRelease: PACK.runtimeManifest.contentRelease, compatible: true }],
     })
     const confirmSpy = vi.spyOn(window, 'confirm')
     render(<TitleScreen />)

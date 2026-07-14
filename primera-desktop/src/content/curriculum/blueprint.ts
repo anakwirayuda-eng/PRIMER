@@ -1,4 +1,4 @@
-import type { ContentPack } from '../pack'
+import { LEGACY_CONTENT_RELEASE, type ContentCatalog } from '../pack'
 import type { IndikatorPisPk, KasusIgd, KasusKlinis } from '../types'
 import type {
   ClinicalConcept,
@@ -17,7 +17,6 @@ import { buildM13DeltaEvidenceBindings } from './m13DeltaAudit'
 export const FKTP144_CATALOG_ID = 'fktp144-1186-2022'
 export const EXISTING_CLINICAL_CATALOG_ID = 'existing-clinical-baseline-2026-07-14'
 export const PIS_PK_CATALOG_ID = 'pis-pk-39-2016'
-export const LEGACY_CONTENT_RELEASE = 'legacy-baseline'
 
 interface ClinicArchetypeSpec {
   conceptId: string
@@ -198,7 +197,7 @@ function assertExactKeys(label: string, expected: string[], actual: string[]): v
   }
 }
 
-function catalogConcepts(entry: ContentPack['skdi144'][number]): ClinicalConcept[] {
+function catalogConcepts(entry: ContentCatalog['skdi144'][number]): ClinicalConcept[] {
   return CATALOG_CONCEPT_OVERRIDES[entry.id] ?? [{ id: `concept:${entry.id}`, diagnosis: entry.nama }]
 }
 
@@ -221,7 +220,7 @@ function populationOf(kasus: KasusKlinis | KasusIgd): string {
   return `usia=${kasus.demografi.usiaMin}-${kasus.demografi.usiaMax} tahun${gender}`
 }
 
-export function buildCurriculumBlueprint(pack: ContentPack): CurriculumBlueprint {
+export function buildCurriculumBlueprint(pack: ContentCatalog): CurriculumBlueprint {
   assertExactKeys('Kasus klinik', Object.keys(pack.kasus).sort(), Object.keys(CLINIC_ARCHETYPE_SPEC).sort())
   assertExactKeys('Kasus IGD', Object.keys(pack.kasusIgd).sort(), Object.keys(IGD_CONCEPT_BY_ID).sort())
 

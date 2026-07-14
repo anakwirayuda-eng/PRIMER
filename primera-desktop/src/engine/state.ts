@@ -585,6 +585,8 @@ export type LayarGame = 'meja' | 'klinik' | 'peta' | 'kunjungan' | 'kegiatan' | 
 export interface GameState {
   /** Versi skema save. */
   versi: 1
+  /** Identitas konten build; save beda rilis hanya boleh dibaca sebagai arsip. */
+  contentRelease: string
   seed: number
   namaDokter: string
   /**

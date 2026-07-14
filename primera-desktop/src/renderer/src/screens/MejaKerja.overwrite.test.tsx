@@ -64,7 +64,7 @@ describe('<MejaKerja /> — konfirmasi timpa slot arsip manual', () => {
     const s = soreHariIni()
     useGame.setState({
       state: s,
-      slots: [{ slot: 'slot1', namaDokter: 'Dr. Lama', hari: 5, mode: 'karier', tamat: false }],
+      slots: [{ slot: 'slot1', namaDokter: 'Dr. Lama', hari: 5, mode: 'karier', tamat: false, contentRelease: PACK.runtimeManifest.contentRelease, compatible: true }],
       meta: null,
       arsip: null,
       sedangMemuat: false,
@@ -90,7 +90,7 @@ describe('<MejaKerja /> — konfirmasi timpa slot arsip manual', () => {
     const s = soreHariIni()
     useGame.setState({
       state: s,
-      slots: [{ slot: 'slot1', namaDokter: 'Dr. Lama', hari: 5, mode: 'karier', tamat: false }],
+      slots: [{ slot: 'slot1', namaDokter: 'Dr. Lama', hari: 5, mode: 'karier', tamat: false, contentRelease: PACK.runtimeManifest.contentRelease, compatible: true }],
       meta: null,
       arsip: null,
       sedangMemuat: false,

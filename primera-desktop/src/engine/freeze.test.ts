@@ -74,11 +74,10 @@
  *
  * CARA UNFREEZE (sengaja manual, bukan `--update-snapshot`):
  *   1. Ubah file yang perlu diubah.
- *   2. Jalankan skrip di bawah komentar ini (cara cepat: jalankan file test
+ *   2. Bump `REVISI_ENGINE` (verifikasi.ts) dan selesaikan migrasi/test terkait.
+ *   3. Jalankan skrip di bawah komentar ini (cara cepat: jalankan file test
  *      ini, baca pesan error yang menyertakan hash BARU, salin ke
  *      `HASH_DIBEKUKAN`).
- *   3. Bump `REVISI_ENGINE` (verifikasi.ts) — perubahan salah satu file
- *      ini HAMPIR PASTI score/replay-affecting.
  *   4. Dokumentasikan alasan unfreeze di commit message + memori proyek.
  * Freeze TIDAK dimaksudkan mencegah perubahan selamanya — ia memaksa
  * perubahan lewat langkah sadar di atas, bukan lolos diam-diam.
@@ -100,23 +99,23 @@ function hashFile(relPath: string): string {
 
 /** Sha-256 hex per file (isi dinormalisasi LF), dikunci saat tag Golden Master. */
 const HASH_DIBEKUKAN: Record<string, string> = {
-  // REVISI 32 (2026-07-13 — M11 P1.6/C.1): mutu proses SOAP masuk UKP;
-  // stabilisasi pra-rujuk menjadi gate grade/Dex/tally, lalu cap-nya
-  // diadjudikasi dari B ke C karena risiko fisiologis selama transport.
-  'reducer.ts': 'f5c7ffaeb7f790f5b3eee7ef92f2aa3912b1ca6333c1c1cda177962c2bdb5307',
+  // REVISI 33 (2026-07-14 — M13-0C): identitas content release masuk
+  // save+dossier, runtime policy mengisolasi mode/release, IGD disortir,
+  // dan tie-break karma menjadi eksplisit.
+  'reducer.ts': '556950e90db303d0960aafb0eb97da2936bfab93bd1e45d73ddef322bb231df3',
   'clinic.ts': '55de3a23bb8c1024901848ba5f61c89590e9a0bcf526c32f7446f2d008aab3d2',
   'scoring.ts': '146c3012075cad2e0fad60e2139f7efe04aeb8bea84ac5a1ffdafb676cc2e1d8',
-  'director.ts': '2341f215e815b298ea4a2de40cb87b73df5e22ab8e3eb96e7007f90d7ede5143',
+  'director.ts': '01155a5250b7236872b79e510a992bdfb90b508c200a01b4c947630ace5a6361',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': '519b7cfc4098fa2e4d6c0567875ba797d3074d14cbbe8b9a48afaf12704c09b4',
   'kader.ts': 'fff1c7c055d1526f1e9632e64a3f72939840412c0f148e201444d6a7353aa646',
-  'init.ts': 'd9287b8481c90438b155be3ddd2e9bc97d00a328c376e17bbb749dd2933d1706',
+  'init.ts': 'c3dad6275c8dfeca7627e49caa9de396134a7ef2b45a7c76cc0c53f82e299835',
   'kegiatan.ts': '61004bed15e5f8095214205aff69da6be55556d329552bc6a691cc0e4bf62d52',
   'kunjungan.ts': '4ec29cba2af05c8befec99921fe0cf8fc4d93950546c08121ded7f82efa66517',
   'paketUjian.ts': 'b7127ca427c24fea81a840f51d1933aa5eb4025384fdfac9857fa3498aa59e5d',
-  'verifikasi.ts': '8b440d24a73865fe45d970d20a81b9eb390d8e485226142d28e5aa712058ee97',
-  'state.ts': 'fded63f8005b13765bfcb46baf37d93a0b2e3f78cafe3621f48e870f8fe8709e',
-  'save.ts': '6aa8a6be7f0bd4f655582233447486d9dff8744d287d61db8f46e79cc26a0553',
+  'verifikasi.ts': 'f4326d00fa4667603a6c1e3b1de073dc052b546128b0e2ce2c9a7e4458444260',
+  'state.ts': '1b8ddce19ff60346ffa377788fc59422f4d8d48f89e3282feac522589fa7681e',
+  'save.ts': '7ad199a80dfa85bcf7b2f6fa7d15ff231edcf174e63fb1232576b54d5092070c',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '34bdfd80c9ebd2ae5a261118e9154cdfeb670b06b029e96013e2b26ef9a86a80',
 }

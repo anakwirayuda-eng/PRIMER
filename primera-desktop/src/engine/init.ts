@@ -4,7 +4,12 @@
  */
 
 import type { GameState, KeluargaState, ModeStase, NilaiIndikator, Surat } from './state'
-import type { ContentPack } from '@content/pack'
+import {
+  encounterArchetypeAktif,
+  LEGACY_CONTENT_RELEASE,
+  ukmScenarioAktif,
+  type ContentPack,
+} from '@content/pack'
 import type { IndikatorPisPk, StatusIndikator } from '@content/types'
 import { Rng } from './core/rng'
 import { susunAntrianHarian, buatPasienDariKasus } from './director'
@@ -92,6 +97,7 @@ export function buildInitialState(
   // M4.5 — pemisahan seed (docs/M45_MODE_UJIAN.md): Karier byte-identik dgn
   // perilaku lama (seedKurikulum = seed); Ujian memakai seed paket bersama.
   const mode: ModeStase = opsi?.mode ?? 'karier'
+  const contentRelease = pack.runtimeManifest?.contentRelease ?? LEGACY_CONTENT_RELEASE
   const paket = mode === 'ujian' ? pilihPaket(seed) : undefined
   const seedKurikulum = paket ? paket.seedKurikulum : seed
 
@@ -122,6 +128,8 @@ export function buildInitialState(
   for (const [id, content] of Object.entries(pack.keluarga)) {
     const skenarioPertama = content.arc.kunjungan[0]
     if (!skenarioPertama?.karma) continue
+    if (!ukmScenarioAktif(pack, id, skenarioPertama.id, mode, contentRelease)) continue
+    if (!encounterArchetypeAktif(pack, 'clinic', skenarioPertama.karma.kasusId, mode, contentRelease)) continue
     // CODEX audit (2026-07-12, temuan #6): lantai `1` sendirian tak cukup —
     // hasil scaling bisa mendarat SEBELUM kunjungan rumah bahkan terbuka
     // (HARI_BUKA_KUNJUNGAN), membuat karma itu MUSTAHIL dicegah krn pemain
@@ -155,7 +163,7 @@ export function buildInitialState(
   // urutkan lalu paksa tiap entri berikutnya ≥ entri sebelumnya+1. Urutan
   // urgensi relatif (siapa jatuh tempo duluan) tetap terjaga; hanya jarak
   // antar-entri yg dijamin ≥1 hari, menghapus tabrakan sekaligus.
-  calonKarma.sort((a, b) => a.hari - b.hari)
+  calonKarma.sort((a, b) => a.hari - b.hari || a.id.localeCompare(b.id))
   let hariMinBerikut = HARI_BUKA_KUNJUNGAN + 1
   for (const c of calonKarma) {
     c.hari = Math.max(c.hari, hariMinBerikut)
@@ -198,6 +206,7 @@ export function buildInitialState(
 
   const base: GameState = {
     versi: 1,
+    contentRelease,
     seed,
     mode,
     seedKurikulum,
@@ -290,7 +299,11 @@ export function buildInitialState(
   // menyorot langkah demi langkah. Best-effort: fixture test dgn pack minimal
   // (tanpa kasus ini) tetap jalan apa adanya — tutorialAktif tetap true (skor
   // encounter pertama tetap kebal), cuma sorotan UI tak menyala.
-  if (antrian.length > 0 && pack.kasus[KASUS_TUTORIAL]) {
+  if (
+    antrian.length > 0 &&
+    pack.kasus[KASUS_TUTORIAL] &&
+    encounterArchetypeAktif(pack, 'clinic', KASUS_TUTORIAL, mode, contentRelease)
+  ) {
     antrian = [
       buatPasienDariKasus(KASUS_TUTORIAL, pack, new Rng(seed, 'director-flavor', 1)),
       ...antrian.slice(1),

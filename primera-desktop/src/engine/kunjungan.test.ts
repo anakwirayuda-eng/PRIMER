@@ -676,6 +676,7 @@ function buatStateKader(): GameState {
   }
   return {
     versi: 1,
+    contentRelease: 'legacy-baseline',
     seed: 42,
     mode: 'karier' as const,
     seedKurikulum: 42,

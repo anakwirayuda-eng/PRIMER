@@ -27,6 +27,13 @@ export interface InfoSlot {
   hari: number
   mode: ModeStase
   tamat: boolean
+  contentRelease: string
+  compatible: boolean
+}
+
+/** Save beda rilis tetap terbaca sebagai arsip, tetapi tidak boleh dimainkan. */
+export function rilisArsipKompatibel(state: GameState): boolean {
+  return state.contentRelease === PACK.runtimeManifest.contentRelease
 }
 
 export interface MetaLifetime {
@@ -146,7 +153,7 @@ export const useGame = create<GameStore>((set, get) => ({
 
   lanjutkanArsip: () => {
     const arsip = get().arsip
-    if (!arsip) return
+    if (!arsip || !rilisArsipKompatibel(arsip)) return
     set((p) => ({ state: arsip, arsip: null, lastEvents: [], eventTick: 0, muatToken: p.muatToken + 1 }))
   },
 
@@ -265,7 +272,15 @@ export const useGame = create<GameStore>((set, get) => ({
         if (!json) continue
         const st = deserialize(json, PACK)
         if (!st) continue
-        slots.push({ slot, namaDokter: st.namaDokter, hari: st.hari, mode: st.mode, tamat: st.tamat !== undefined })
+        slots.push({
+          slot,
+          namaDokter: st.namaDokter,
+          hari: st.hari,
+          mode: st.mode,
+          tamat: st.tamat !== undefined,
+          contentRelease: st.contentRelease,
+          compatible: rilisArsipKompatibel(st),
+        })
       } catch {
         /* slot korup → lewati */
       }
@@ -306,7 +321,7 @@ export const useGame = create<GameStore>((set, get) => ({
     }
     if (!json) return false
     const st = deserialize(json, PACK)
-    if (!st) return false
+    if (!st || !rilisArsipKompatibel(st)) return false
     if (get().muatToken !== tok) return false // disusul operasi lebih baru — batal
     set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, muatToken: p.muatToken }))
     // CODEX audit UI/UX 2026-07-10 (#4): tanpa ini, sesi yang baru dimuat
@@ -320,7 +335,7 @@ export const useGame = create<GameStore>((set, get) => ({
 
   imporArsip: (json) => {
     const st = deserialize(json, PACK)
-    if (!st) return false
+    if (!st || !rilisArsipKompatibel(st)) return false
     // CODEX M14 #5: impor sinkron — naikkan token agar muatDariSlot asinkron
     // yang mungkin masih berjalan (klik slot lalu impor) tak menimpa hasil impor.
     set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, muatToken: p.muatToken + 1 }))

@@ -15,8 +15,32 @@ import type {
   TopikEdukasi,
   Tindakan,
 } from './types'
+import type {
+  EncounterArchetype,
+  ModePolicy,
+  ReleasePolicy,
+  UkmScenario,
+} from './curriculum/types'
 
-export interface ContentPack {
+/** Save lama tanpa identitas rilis selalu dipetakan ke baseline ini. */
+export const LEGACY_CONTENT_RELEASE = 'legacy-baseline'
+
+/** Rilis konten aktif. Berubah hanya pada batas kohort, bukan di tengah stase. */
+export const CONTENT_RELEASE = 'm13-0c-2026-07-14'
+
+/** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
+export const CONTENT_RELEASE_ORDER = [LEGACY_CONTENT_RELEASE, CONTENT_RELEASE] as const
+
+export interface RuntimeCurriculumManifest {
+  schemaVersion: 1
+  contentRelease: string
+  releaseOrder: string[]
+  encounterArchetypes: EncounterArchetype[]
+  ukmScenarios: UkmScenario[]
+}
+
+/** Katalog konten mentah yang dipakai untuk menyusun blueprint authoring. */
+export interface ContentCatalog {
   kasus: Record<string, KasusKlinis>
   /** Kasus gawat darurat IGD (M3.14) — pool interrupt event. */
   kasusIgd: Record<string, KasusIgd>
@@ -34,9 +58,173 @@ export interface ContentPack {
   namaWarga: { pria: string[]; wanita: string[]; keluarga: string[] }
 }
 
+/** PACK runtime: katalog ditambah proyeksi keputusan kurikulum yang kecil. */
+export interface ContentPack extends ContentCatalog {
+  /** Opsional hanya untuk fixture engine terisolasi; PACK produksi wajib punya. */
+  runtimeManifest?: RuntimeCurriculumManifest
+}
+
+export interface RuntimeContentPack extends ContentPack {
+  runtimeManifest: RuntimeCurriculumManifest
+}
+
+function indeksRilis(releaseOrder: readonly string[], releaseId: string): number {
+  return releaseOrder.indexOf(releaseId)
+}
+
+/** Fail-closed bila policy merujuk id rilis yang tidak dikenal build ini. */
+export function releasePolicyAktif(
+  policy: ReleasePolicy,
+  currentRelease: string,
+  releaseOrder: readonly string[],
+): boolean {
+  const current = indeksRilis(releaseOrder, currentRelease)
+  const introduced = indeksRilis(releaseOrder, policy.introducedIn)
+  if (current < 0 || introduced < 0 || introduced > current) return false
+  if (!policy.retiredAfter) return true
+  const retiredAfter = indeksRilis(releaseOrder, policy.retiredAfter)
+  return retiredAfter >= 0 && current <= retiredAfter
+}
+
+function modePolicyAktif(policy: ModePolicy, mode: 'karier' | 'ujian'): boolean {
+  return policy[mode]
+}
+
+export function encounterArchetypeAktif(
+  pack: ContentPack,
+  kind: 'clinic' | 'igd',
+  contentId: string,
+  mode: 'karier' | 'ujian',
+  contentRelease: string,
+): boolean {
+  const manifest = pack.runtimeManifest
+  if (!manifest) return true
+  const archetype = manifest.encounterArchetypes.find(
+    (item) => item.contentRef.kind === kind && item.contentRef.id === contentId,
+  )
+  return Boolean(
+    archetype &&
+      archetype.channel === kind &&
+      modePolicyAktif(archetype.modePolicy, mode) &&
+      releasePolicyAktif(archetype.releasePolicy, contentRelease, manifest.releaseOrder),
+  )
+}
+
+export function ukmScenarioAktif(
+  pack: ContentPack,
+  familyId: string,
+  visitId: string,
+  mode: 'karier' | 'ujian',
+  contentRelease: string,
+): boolean {
+  const manifest = pack.runtimeManifest
+  if (!manifest) return true
+  const scenario = manifest.ukmScenarios.find(
+    (item) => item.contentRef.familyId === familyId && item.contentRef.visitId === visitId,
+  )
+  return Boolean(
+    scenario &&
+      modePolicyAktif(scenario.modePolicy, mode) &&
+      releasePolicyAktif(scenario.releasePolicy, contentRelease, manifest.releaseOrder),
+  )
+}
+
 /** Guard kecil: validasi silang id konten saat boot (fail-fast, anti-drift). */
 export function validasiPack(pack: ContentPack): string[] {
   const masalah: string[] = []
+  const manifest = pack.runtimeManifest
+  if (!manifest) {
+    masalah.push('Runtime manifest tidak tersedia')
+    return masalah
+  }
+  const urutanRilis = manifest.releaseOrder
+  if (new Set(urutanRilis).size !== urutanRilis.length) {
+    masalah.push('Runtime manifest: releaseOrder memuat id duplikat')
+  }
+  if (!urutanRilis.includes(manifest.contentRelease)) {
+    masalah.push(`Runtime manifest: contentRelease '${manifest.contentRelease}' tidak ada di releaseOrder`)
+  }
+
+  const archetypeRefs = new Set<string>()
+  for (const archetype of manifest.encounterArchetypes) {
+    const ref = `${archetype.contentRef.kind}:${archetype.contentRef.id}`
+    if (archetypeRefs.has(ref)) masalah.push(`Runtime manifest: contentRef archetype duplikat '${ref}'`)
+    archetypeRefs.add(ref)
+    if (archetype.channel !== archetype.contentRef.kind) {
+      masalah.push(`Runtime manifest ${archetype.id}: channel tidak cocok dengan contentRef`)
+    }
+    if (archetype.contentRef.kind === 'clinic') {
+      const kasus = pack.kasus[archetype.contentRef.id]
+      if (!kasus) {
+        masalah.push(`Runtime manifest ${archetype.id}: kasus klinik tidak ada`)
+      } else {
+        const prevalensi = kasus.prevalensi ?? 'sedang'
+        const target = kasus.harusDirujuk
+          ? kasus.stabilisasiWajib
+            ? 'stabilize_then_refer'
+            : 'refer'
+          : 'manage_at_fktp'
+        if (archetype.prevalensi !== prevalensi) {
+          masalah.push(`Runtime manifest ${archetype.id}: prevalensi drift dari kasus klinik`)
+        }
+        if (archetype.targetFktp !== target) {
+          masalah.push(`Runtime manifest ${archetype.id}: targetFktp drift dari kasus klinik`)
+        }
+      }
+    }
+    if (archetype.contentRef.kind === 'igd') {
+      const kasus = pack.kasusIgd[archetype.contentRef.id]
+      if (!kasus) {
+        masalah.push(`Runtime manifest ${archetype.id}: kasus IGD tidak ada`)
+      } else {
+        const target = kasus.disposisiBenar === 'rujuk'
+          ? 'stabilize_then_refer'
+          : 'stabilize_then_discharge'
+        if (archetype.prevalensi !== 'not_modeled') {
+          masalah.push(`Runtime manifest ${archetype.id}: prevalensi IGD wajib not_modeled`)
+        }
+        if (archetype.targetFktp !== target) {
+          masalah.push(`Runtime manifest ${archetype.id}: targetFktp drift dari kasus IGD`)
+        }
+      }
+    }
+    if (!urutanRilis.includes(archetype.releasePolicy.introducedIn)) {
+      masalah.push(`Runtime manifest ${archetype.id}: introducedIn tidak dikenal`)
+    }
+    if (archetype.releasePolicy.retiredAfter && !urutanRilis.includes(archetype.releasePolicy.retiredAfter)) {
+      masalah.push(`Runtime manifest ${archetype.id}: retiredAfter tidak dikenal`)
+    }
+  }
+  for (const id of Object.keys(pack.kasus)) {
+    if (!archetypeRefs.has(`clinic:${id}`)) masalah.push(`Runtime manifest: kasus klinik '${id}' tanpa archetype`)
+  }
+  for (const id of Object.keys(pack.kasusIgd)) {
+    if (!archetypeRefs.has(`igd:${id}`)) masalah.push(`Runtime manifest: kasus IGD '${id}' tanpa archetype`)
+  }
+
+  const scenarioRefs = new Set<string>()
+  for (const scenario of manifest.ukmScenarios) {
+    const ref = `${scenario.contentRef.familyId}:${scenario.contentRef.visitId}`
+    if (scenarioRefs.has(ref)) masalah.push(`Runtime manifest: contentRef UKM duplikat '${ref}'`)
+    scenarioRefs.add(ref)
+    const family = pack.keluarga[scenario.contentRef.familyId]
+    if (!family?.arc.kunjungan.some((visit) => visit.id === scenario.contentRef.visitId)) {
+      masalah.push(`Runtime manifest ${scenario.id}: skenario UKM tidak ada`)
+    }
+    if (!urutanRilis.includes(scenario.releasePolicy.introducedIn)) {
+      masalah.push(`Runtime manifest ${scenario.id}: introducedIn tidak dikenal`)
+    }
+    if (scenario.releasePolicy.retiredAfter && !urutanRilis.includes(scenario.releasePolicy.retiredAfter)) {
+      masalah.push(`Runtime manifest ${scenario.id}: retiredAfter tidak dikenal`)
+    }
+  }
+  for (const family of Object.values(pack.keluarga)) {
+    for (const visit of family.arc.kunjungan) {
+      const ref = `${family.id}:${visit.id}`
+      if (!scenarioRefs.has(ref)) masalah.push(`Runtime manifest: skenario UKM '${ref}' tanpa policy`)
+    }
+  }
+
   for (const k of Object.values(pack.kasus)) {
     for (const o of k.tatalaksana.obatBenar) {
       if (!pack.obat[o]) masalah.push(`Kasus ${k.id}: obat '${o}' tidak ada di formularium`)

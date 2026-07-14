@@ -1,0 +1,79 @@
+name: PRIMERA Desktop
+
+on:
+  push:
+    paths:
+      - 'primera-desktop/**'
+      - '.github/workflows/primera-desktop.yml'
+  pull_request:
+    paths:
+      - 'primera-desktop/**'
+      - '.github/workflows/primera-desktop.yml'
+  workflow_dispatch:
+    inputs:
+      cohort_id:
+        description: 'ID kohort untuk arsip build'
+        required: true
+        type: string
+      cohort_start:
+        description: 'Tanggal mulai kohort (YYYY-MM-DD)'
+        required: true
+        type: string
+      cohort_end:
+        description: 'Tanggal selesai kohort (YYYY-MM-DD)'
+        required: true
+        type: string
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: primera-desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: primera-desktop/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run check:bgm-license
+
+  archive-cohort-build:
+    if: github.event_name == 'workflow_dispatch'
+    needs: verify
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: primera-desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: primera-desktop/package-lock.json
+      - run: npm ci
+      - run: npm run dist
+      - name: Generate cohort manifest
+        shell: pwsh
+        env:
+          COHORT_ID: ${{ inputs.cohort_id }}
+          COHORT_START: ${{ inputs.cohort_start }}
+          COHORT_END: ${{ inputs.cohort_end }}
+        run: |
+          $installer = Get-ChildItem -Path dist -Filter '*.exe' | Select-Object -First 1
+          if (-not $installer) { throw 'Installer NSIS tidak ditemukan di dist/' }
+          npm run cohort:manifest -- --installer "$($installer.FullName)" --cohort-id "$env:COHORT_ID" --cohort-start "$env:COHORT_START" --cohort-end "$env:COHORT_END"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: primera-${{ inputs.cohort_id }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            primera-desktop/dist/*.exe
+            primera-desktop/dist/cohort-manifests/*.json

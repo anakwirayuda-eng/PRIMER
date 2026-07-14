@@ -14,7 +14,11 @@ import type {
   PesertaProlanis,
   Surat,
 } from './state'
-import type { ContentPack } from '@content/pack'
+import {
+  encounterArchetypeAktif,
+  ukmScenarioAktif,
+  type ContentPack,
+} from '@content/pack'
 import type { Persona } from '@content/types'
 import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter } from './clinic'
@@ -838,6 +842,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (kel.arcSelesai === 'berhasil') return err(s, 'Arc keluarga ini sudah tuntas.')
       const skenario = kelContent.arc.kunjungan[kel.arcIndex]
       if (!skenario) return err(s, 'Arc keluarga ini sudah selesai.')
+      if (!ukmScenarioAktif(pack, kelContent.id, skenario.id, s.mode, s.contentRelease))
+        return err(s, 'Skenario ini tidak aktif untuk mode atau rilis stase ini.')
       const rwProfil = pack.rw.find((r) => r.nomor === kelContent.rw)
       const biaya = BIAYA_STAMINA_KUNJUNGAN[rwProfil?.jarak ?? 'sedang']
       if (s.stamina < biaya) return err(s, `Butuh ${biaya} stamina untuk perjalanan ke RW ${kelContent.rw}.`)
@@ -1561,6 +1567,15 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
   return hariBaru(s, pack)
 }
 
+/** Pool IGD kanonik: policy-filtered lalu diurutkan sebelum rng.pick(). */
+export function daftarKasusIgdAktif(s: GameState, pack: ContentPack) {
+  return Object.values(pack.kasusIgd)
+    .filter((kasus) =>
+      encounterArchetypeAktif(pack, 'igd', kasus.id, s.mode, s.contentRelease),
+    )
+    .sort((a, b) => a.id.localeCompare(b.id))
+}
+
 function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   const hari = s.hari + 1
 
@@ -1580,7 +1595,13 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     let keluargaFlush = s.desa.keluarga
     const jadwalSisaFlush: typeof s.jadwal = []
     for (const j of s.jadwal) {
-      if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId && pack.kasus[j.kasusId]) {
+      if (
+        j.jenis === 'karma_igd' &&
+        j.keluargaId &&
+        j.kasusId &&
+        pack.kasus[j.kasusId] &&
+        encounterArchetypeAktif(pack, 'clinic', j.kasusId, s.mode, s.contentRelease)
+      ) {
         const kelContent = pack.keluarga[j.keluargaId]
         const kel = keluargaFlush[j.keluargaId]
         if (kelContent && kel && kel.arcSelesai !== 'berhasil') {
@@ -1734,7 +1755,13 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.prb ? { prb: true } : {}),
         ...(j.labId ? { labId: j.labId } : {}),
       })
-    } else if (j.jenis === 'karma_igd' && j.keluargaId && j.kasusId && pack.kasus[j.kasusId]) {
+    } else if (
+      j.jenis === 'karma_igd' &&
+      j.keluargaId &&
+      j.kasusId &&
+      pack.kasus[j.kasusId] &&
+      encounterArchetypeAktif(pack, 'clinic', j.kasusId, s.mode, s.contentRelease)
+    ) {
       // M10 §49: guard `pack.kasus[j.kasusId]` — jadwal karma di-BAKE sekali di
       // init dari pack; bila patch me-rename/hapus kasusId karma, dulu efek
       // karma (tally.karmaTerjadi, surat "keluarga dibawa", arcSelesai:'gagal',
@@ -2058,7 +2085,11 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     desa: { ...stateSementara.desa, keluarga: keluargaMap, rw: rwSetelahProgram, kader: kaderHasil.kader, surveilans },
   }
   // Konten bisa berubah antar versi save — buang jadwal dengan kasus tak dikenal.
-  const pasienKembaliValid = pasienKembali.filter((p) => pack.kasus[p.kasusId])
+  const pasienKembaliValid = pasienKembali.filter(
+    (p) =>
+      pack.kasus[p.kasusId] &&
+      encounterArchetypeAktif(pack, 'clinic', p.kasusId, s.mode, s.contentRelease),
+  )
   // M4.5: kurikulum (kasus apa) dari seedKurikulum — sama per paket ujian;
   // flavor (wajah pasien) dari seed per-mahasiswa (docs/M45_MODE_UJIAN.md).
   const rngDirector = new Rng(s.seedKurikulum, 'director', hari)
@@ -2107,7 +2138,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   // M4.5: kedatangan + pemilihan kasus IGD = kurikulum; identitas pasien = flavor.
   // M5.22: peluang naik per fase (0.12 → 0.15 → 0.20) — tekanan penuh di akhir.
   const rngIgd = new Rng(s.seedKurikulum, 'igd', hari)
-  const poolIgd = Object.values(pack.kasusIgd)
+  const poolIgd = daftarKasusIgdAktif(s, pack)
   if (hari >= 4 && poolIgd.length > 0 && hari - igdTerakhir >= 4 && rngIgd.chance(peluangIgd(hari, s.mode))) {
     const kasusIgd = rngIgd.pick(poolIgd)
     igd = buatIgd(kasusIgd, pack, new Rng(s.seed, 'igd-flavor', hari))

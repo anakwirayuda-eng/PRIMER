@@ -232,3 +232,30 @@ tidak berubah; verifikasi dokumen dilakukan lagi sebelum commit checkpoint.
 - Keterbatasan non-blocking: stempel `TEGAK`/`SUSPEK` belum punya expected value
   per archetype. Stroke sudah netral-subtipe lewat I64/narasi, tetapi confidence
   stamp belum dipaksa scoring; tidak membuka `clinic.ts` di milestone 0B.
+
+## M13-0C Integrity Release (2026-07-14)
+
+- Initial `CONTENT_RELEASE` ditetapkan ke `m13-0c-2026-07-14`; save tanpa
+  field dipetakan ke konstanta `legacy-baseline` lewat migrasi khusus yang
+  tidak menyentuh `tallyTermigrasi`.
+- Save beda rilis dipertahankan sebagai arsip netral: Continue, impor, dan
+  muat slot diblokir; ekspor JSON lama tetap tersedia sebelum mulai-baru.
+- `contentRelease` masuk HMAC dossier dan dibandingkan sebelum fingerprint/
+  replay. Mismatch menghasilkan `tidak_dapat_diverifikasi`.
+- Blueprint 0A diproyeksikan ke runtime `PACK`; mode/release policy kini
+  mengunci clinic director, tutorial, karma/pasien kembali, IGD, dan UKM.
+- Pool IGD di-sort sebelum RNG; tie hari karma memakai secondary key `id`.
+- Fingerprint mencakup seluruh field keputusan runtime M13. `CONTENT_RELEASE`
+  tetap mekanisme terpisah dari fingerprint.
+- CI desktop Windows dan generator manifest kohort + SHA-256 installer
+  ditambahkan. Artifact CI 90 hari wajib disalin ke arsip institusional tahan
+  lama sebelum distribusi cohort.
+- `MAKS_BINAAN` tetap 16; tidak ada keluarga atau konten medis baru di 0C.
+- `REVISI_ENGINE` 32 -> 33; laporan rinci ada di
+  `docs/M13_0C_INTEGRITY_RELEASE.md`.
+- Exit lokal lulus: **74 file / 820 test**, freeze **16/16**, typecheck,
+  production build, pemeriksaan lisensi BGM, dan smoke packaging NSIS.
+- Setelah checkpoint, generator dijalankan terhadap installer final dengan
+  commit SHA checkpoint. Artefak itu berlabel validasi teknis, bukan cohort
+  mahasiswa; tanggal distribusi nyata tetap harus diisi operator.
+- **Status milestone: exit terpenuhi; M13-0D belum dimulai.**
