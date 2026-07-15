@@ -26,13 +26,15 @@ import type {
 export const LEGACY_CONTENT_RELEASE = 'legacy-baseline'
 
 /** Rilis konten aktif. Berubah hanya pada batas kohort, bukan di tengah stase. */
-export const CONTENT_RELEASE = 'm13-1a-pilot-2026-07-15'
+export const LAB_CONTENT_RELEASE = 'm13-lab-fullfledge-2026-07-16'
+export const CONTENT_RELEASE = LAB_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
   LEGACY_CONTENT_RELEASE,
   'm13-0c-2026-07-14',
-  CONTENT_RELEASE,
+  'm13-1a-pilot-2026-07-15',
+  LAB_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {

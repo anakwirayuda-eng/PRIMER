@@ -1,4 +1,4 @@
-import { LEGACY_CONTENT_RELEASE, type ContentCatalog } from '../pack'
+import { LAB_CONTENT_RELEASE, LEGACY_CONTENT_RELEASE, type ContentCatalog } from '../pack'
 import type { IndikatorPisPk, KasusIgd, KasusKlinis } from '../types'
 import type {
   ClinicalConcept,
@@ -13,6 +13,9 @@ import type {
   UkmScenario,
 } from './types'
 import { buildM13DeltaEvidenceBindings } from './m13DeltaAudit'
+import {
+  LAB_BATCH_1_ARCHETYPE_SPECS,
+} from '../lab/batch1'
 
 export const FKTP144_CATALOG_ID = 'fktp144-1186-2022'
 export const EXISTING_CLINICAL_CATALOG_ID = 'existing-clinical-baseline-2026-07-14'
@@ -24,7 +27,7 @@ interface ClinicArchetypeSpec {
   excludedCredits?: ExcludedCredit[]
 }
 
-const CLINIC_ARCHETYPE_SPEC: Record<string, ClinicArchetypeSpec> = {
+const BASE_CLINIC_ARCHETYPE_SPEC: Record<string, ClinicArchetypeSpec> = {
   anemia_defisiensi_bumil: { conceptId: 'concept:anemia_pregnancy', credits: ['fktp144:anemia_pregnancy'] },
   apendisitis_akut: { conceptId: 'concept:apendisitis_akut', credits: ['clinical:apendisitis_akut'] },
   askariasis: { conceptId: 'concept:ascariasis', credits: ['fktp144:ascariasis'] },
@@ -103,6 +106,11 @@ const CLINIC_ARCHETYPE_SPEC: Record<string, ClinicArchetypeSpec> = {
   tonsilitis_akut: { conceptId: 'concept:tonsillitis_acute', credits: ['fktp144:tonsillitis_acute'] },
 }
 
+const CLINIC_ARCHETYPE_SPEC: Record<string, ClinicArchetypeSpec> = {
+  ...BASE_CLINIC_ARCHETYPE_SPEC,
+  ...LAB_BATCH_1_ARCHETYPE_SPECS,
+}
+
 const CATALOG_CONCEPT_OVERRIDES: Record<string, ClinicalConcept[]> = {
   acute_gastroenteritis: [
     { id: 'concept:acute_gastroenteritis', diagnosis: 'Gastroenteritis akut' },
@@ -175,12 +183,18 @@ export const PIS_PK_OBJECTIVE_IDS = Object.keys(UKM_OBJECTIVE_LABELS) as Indikat
 const IGD_CREDIT_RATIONALE =
   'Flow IGD saat ini tidak memiliki keputusan diagnosis dan tidak menulis Dex; archetype hanya dapat menandai konsep dijumpai, bukan menyertifikasi item.'
 
-function currentModePolicy(): ModePolicy {
-  return { karier: true, ujian: true }
+function currentModePolicy(kasus?: KasusKlinis): ModePolicy {
+  return kasus?.activationStatus === 'lab_prototype_unadjudicated'
+    ? { karier: true, ujian: false }
+    : { karier: true, ujian: true }
 }
 
-function legacyReleasePolicy(): ReleasePolicy {
-  return { introducedIn: LEGACY_CONTENT_RELEASE }
+function releasePolicyFor(kasus?: KasusKlinis): ReleasePolicy {
+  return {
+    introducedIn: kasus?.activationStatus === 'lab_prototype_unadjudicated'
+      ? LAB_CONTENT_RELEASE
+      : LEGACY_CONTENT_RELEASE,
+  }
 }
 
 function compareIds(a: { id: string }, b: { id: string }): number {
@@ -293,8 +307,8 @@ export function buildCurriculumBlueprint(pack: ContentCatalog): CurriculumBluepr
         severityDegree: severityForClinic(kasus),
         targetFktp: targetForClinic(kasus),
         prevalensi: kasus.prevalensi ?? 'sedang',
-        modePolicy: currentModePolicy(),
-        releasePolicy: legacyReleasePolicy(),
+        modePolicy: currentModePolicy(kasus),
+        releasePolicy: releasePolicyFor(kasus),
         credits: [...spec.credits],
         excludedCredits: spec.excludedCredits?.map((credit) => ({ ...credit })),
       }
@@ -312,7 +326,7 @@ export function buildCurriculumBlueprint(pack: ContentCatalog): CurriculumBluepr
       targetFktp: targetForIgd(kasus),
       prevalensi: 'not_modeled',
       modePolicy: currentModePolicy(),
-      releasePolicy: legacyReleasePolicy(),
+      releasePolicy: releasePolicyFor(),
       credits: [],
       excludedCredits: relatedItems.map((itemId) => ({ itemId, reason: IGD_CREDIT_RATIONALE })),
       creditRationale: IGD_CREDIT_RATIONALE,
@@ -327,7 +341,7 @@ export function buildCurriculumBlueprint(pack: ContentCatalog): CurriculumBluepr
         id: `ukm:${keluarga.id}:${scenario.id}`,
         contentRef: { familyId: keluarga.id, visitId: scenario.id },
         modePolicy: currentModePolicy(),
-        releasePolicy: legacyReleasePolicy(),
+        releasePolicy: releasePolicyFor(),
         credits: scenario.target.map((target) => `ukm:pis-pk:${target}`),
       })
     }

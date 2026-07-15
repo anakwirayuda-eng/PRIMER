@@ -30,6 +30,8 @@ import {
   aktifkanBlueprintM13_1A,
   aktifkanKatalogM13_1A,
 } from './curriculum/m13_1a/activation'
+import { LAB_BATCH_1_CASES } from './lab/batch1'
+import { EDUKASI_LAB, LAB_LAB, OBAT_LAB, TINDAKAN_LAB } from './lab/catalog'
 
 function byId<T extends { id: string }>(arr: T[]): Record<string, T> {
   const out: Record<string, T> = {}
@@ -48,6 +50,7 @@ const semuaKasusDasar: KasusKlinis[] = [
   ...KASUS_SARAF_MATA_THT,
   ...KASUS_METABOLIK_MSK,
   ...KASUS_KIA_JIWA,
+  ...LAB_BATCH_1_CASES,
 ]
 const semuaKeluargaDasar: KeluargaBinaan[] = [
   ...KELUARGA_DESA_A,
@@ -75,10 +78,10 @@ const BASE_CONTENT_CATALOG: ContentCatalog = {
   kader: KADER_PROFIL,
   rw: RW_PROFIL,
   rumahSakit: RUMAH_SAKIT,
-  obat: { ...OBAT, ...OBAT_M3 },
-  lab: { ...LAB, ...LAB_M3 },
-  edukasi: { ...EDUKASI, ...EDUKASI_M3 },
-  tindakan: TINDAKAN_M3,
+  obat: { ...OBAT, ...OBAT_M3, ...OBAT_LAB },
+  lab: { ...LAB, ...LAB_M3, ...LAB_LAB },
+  edukasi: { ...EDUKASI, ...EDUKASI_M3, ...EDUKASI_LAB },
+  tindakan: { ...TINDAKAN_M3, ...TINDAKAN_LAB },
   skdi144: skdi144Tertaut,
   namaWarga: NAMA_WARGA,
 }

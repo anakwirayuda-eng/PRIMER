@@ -110,7 +110,7 @@ describe('PACK — validasi silang id konten', () => {
     expect(linked.has('hipoglikemia_ringan_dewasa')).toBe(true)
     expect(linked.has('benda_asing_hidung_anak')).toBe(true)
     expect(linked.has('otitis_eksterna_akut_ringan')).toBe(true)
-    expect(totalTertaut).toBe(49)
+    expect(totalTertaut).toBe(66)
   })
 
   // CODEX ronde-16 P2 (2026-07-04): field `fktp144` per-kasus ("termasuk daftar

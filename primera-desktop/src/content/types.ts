@@ -189,6 +189,12 @@ export interface KasusKlinis {
   icd10: string
   skdi: Skdi
   kategori: KategoriKasus
+  /**
+   * Konten ekspansi cepat yang hanya diaktifkan pada clone lab. Status ini
+   * sengaja eksplisit agar prototipe tidak dapat disalahartikan sebagai kasus
+   * yang sudah melewati adjudikasi klinis produksi.
+   */
+  activationStatus?: 'lab_prototype_unadjudicated'
   /** Termasuk daftar 144 penyakit wajib tuntas FKTP. */
   fktp144: boolean
   /** Kasus yang seharusnya DIRUJUK (di luar kompetensi 4A / butuh stabilisasi-rujuk). */

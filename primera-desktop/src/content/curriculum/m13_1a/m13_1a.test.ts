@@ -6,6 +6,7 @@ import { CURRICULUM_BLUEPRINT, PACK } from '../../index'
 import {
   CONTENT_RELEASE,
   CONTENT_RELEASE_ORDER,
+  LAB_CONTENT_RELEASE,
   LEGACY_CONTENT_RELEASE,
   encounterArchetypeAktif,
   releasePolicyAktif,
@@ -143,11 +144,12 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
   })
 
   it('aktif hanya di Career: PACK, release, karma, dan isolasi mode konsisten', () => {
-    expect(CONTENT_RELEASE).toBe(M13_1A_PROPOSED_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(LAB_CONTENT_RELEASE)
     expect(CONTENT_RELEASE_ORDER).toEqual([
       LEGACY_CONTENT_RELEASE,
       M13_1A_BASE_CONTENT_RELEASE,
       M13_1A_PROPOSED_CONTENT_RELEASE,
+      LAB_CONTENT_RELEASE,
     ])
     for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) expect(PACK.kasus[kasus.id], kasus.id).toEqual(kasus)
     for (const kasus of M13_1A_AUTHORING_MANIFEST.igdCases) expect(PACK.kasusIgd[kasus.id], kasus.id).toEqual(kasus)
@@ -483,7 +485,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
   })
 
   it('item kurikulum baru aktif tanpa kredit palsu atau relasi yatim', () => {
-    expect(CURRICULUM_BLUEPRINT.encounterArchetypes).toHaveLength(79)
+    expect(CURRICULUM_BLUEPRINT.encounterArchetypes).toHaveLength(104)
     expect(CURRICULUM_BLUEPRINT.ukmScenarios).toHaveLength(27)
     for (const item of M13_1A_AUTHORING_MANIFEST.newCurriculumItems) {
       expect(CURRICULUM_BLUEPRINT.curriculumItems).toContainEqual(item)

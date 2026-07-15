@@ -1,0 +1,71 @@
+import { describe, expect, it } from 'vitest'
+import { CURRICULUM_BLUEPRINT, PACK } from '../index'
+import {
+  CONTENT_RELEASE,
+  LAB_CONTENT_RELEASE,
+  encounterArchetypeAktif,
+  validasiPack,
+} from '../pack'
+import { validasiCurriculumBlueprint } from '../curriculum'
+import { LAB_BATCH_1_ARCHETYPE_SPECS, LAB_BATCH_1_CASES } from './batch1'
+
+describe('M13 lab full-fledge - batch 1', () => {
+  it('mengaktifkan tepat 25 encounter nyata: 18 tuntas FKTP dan 7 rujuk', () => {
+    expect(LAB_BATCH_1_CASES).toHaveLength(25)
+    expect(LAB_BATCH_1_CASES.filter((item) => item.fktp144)).toHaveLength(18)
+    expect(LAB_BATCH_1_CASES.filter((item) => item.harusDirujuk)).toHaveLength(7)
+    expect(Object.keys(LAB_BATCH_1_ARCHETYPE_SPECS)).toHaveLength(25)
+
+    for (const kasus of LAB_BATCH_1_CASES) {
+      expect(PACK.kasus[kasus.id], kasus.id).toEqual(kasus)
+      expect(kasus.activationStatus, kasus.id).toBe('lab_prototype_unadjudicated')
+      expect(kasus.diagnosisBanding, kasus.id).toContain(kasus.icd10)
+      expect(kasus.anamnesis[0], kasus.id).toMatchObject({
+        id: 'q_keluhan',
+        kategori: 'keluhan_utama',
+        esensial: true,
+      })
+      for (const pertanyaan of kasus.anamnesis.slice(1)) {
+        expect(pertanyaan.bukaSetelah, `${kasus.id}/${pertanyaan.id}`).toContain('q_keluhan')
+      }
+    }
+  })
+
+  it('Career-only dan benar-benar tidak masuk pool Ujian', () => {
+    expect(CONTENT_RELEASE).toBe(LAB_CONTENT_RELEASE)
+    for (const kasus of LAB_BATCH_1_CASES) {
+      expect(
+        encounterArchetypeAktif(PACK, 'clinic', kasus.id, 'karier', CONTENT_RELEASE),
+        kasus.id,
+      ).toBe(true)
+      expect(
+        encounterArchetypeAktif(PACK, 'clinic', kasus.id, 'ujian', CONTENT_RELEASE),
+        kasus.id,
+      ).toBe(false)
+    }
+  })
+
+  it('setiap kasus 4A mengkredit item FKTP dan setiap rujukan punya item level sendiri', () => {
+    for (const kasus of LAB_BATCH_1_CASES) {
+      const archetype = CURRICULUM_BLUEPRINT.encounterArchetypes.find(
+        (item) => item.contentRef.kind === 'clinic' && item.contentRef.id === kasus.id,
+      )
+      expect(archetype, kasus.id).toBeDefined()
+      if (kasus.fktp144) {
+        expect(archetype!.credits, kasus.id).toHaveLength(1)
+        expect(archetype!.credits[0], kasus.id).toMatch(/^fktp144:/)
+      } else {
+        expect(archetype!.credits, kasus.id).toEqual([`clinical:${kasus.id}`])
+        const item = CURRICULUM_BLUEPRINT.curriculumItems.find(
+          (candidate) => candidate.id === `clinical:${kasus.id}`,
+        )
+        expect(item?.skdiLevel, kasus.id).toBe(kasus.skdi)
+      }
+    }
+  })
+
+  it('lolos kedua validator tanpa pengecualian lab', () => {
+    expect(validasiPack(PACK)).toEqual([])
+    expect(validasiCurriculumBlueprint(CURRICULUM_BLUEPRINT, PACK)).toEqual([])
+  })
+})

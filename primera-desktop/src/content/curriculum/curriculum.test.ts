@@ -16,11 +16,11 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     const summary = ringkasanCakupanKurikulum(CURRICULUM_BLUEPRINT)
     expect(summary).toEqual({
       fktp144Total: 144,
-      fktp144WithCertifyingClinicArchetype: 48,
-      fktp144WithoutCertifyingClinicArchetype: 96,
-      additionalClinicalItems: 25,
+      fktp144WithCertifyingClinicArchetype: 66,
+      fktp144WithoutCertifyingClinicArchetype: 78,
+      additionalClinicalItems: 32,
       ukmObjectives: 12,
-      clinicArchetypes: 73,
+      clinicArchetypes: 98,
       igdArchetypes: 6,
       ukmScenarios: 27,
     })
@@ -39,7 +39,7 @@ describe('M13-0A — canonical curriculum blueprint', () => {
 
   it('setiap kasus level 3A/3B/2 punya item tersendiri dengan level yang tetap utuh', () => {
     const non4A = Object.values(PACK.kasus).filter((kasus) => kasus.skdi !== '4A')
-    expect(non4A).toHaveLength(19)
+    expect(non4A).toHaveLength(26)
     for (const kasus of non4A) {
       const archetype = CURRICULUM_BLUEPRINT.encounterArchetypes.find(
         (candidate) => candidate.contentRef.kind === 'clinic' && candidate.contentRef.id === kasus.id,

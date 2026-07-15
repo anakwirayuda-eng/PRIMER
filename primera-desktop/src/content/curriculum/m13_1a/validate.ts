@@ -78,7 +78,12 @@ export function validasiM13AuthoringManifest(
   )
 
   const reviewComplete = manifest.activationStatus !== 'awaiting_physician_review'
-  const activated = activePack.runtimeManifest?.contentRelease === manifest.proposedContentRelease
+  // Rilis pilot tetap dianggap sudah aktif bila build kini berada pada rilis
+  // yang lebih baru. Kesamaan dengan contentRelease hanya benar saat 1a baru
+  // pertama kali diaktifkan dan menjadi asumsi usang setelah ekspansi lab.
+  const activated = activePack.runtimeManifest?.releaseOrder.includes(
+    manifest.proposedContentRelease,
+  ) === true
   tambah(
     activated
       ? manifest.activationStatus !== 'activated_pending_playtest'
