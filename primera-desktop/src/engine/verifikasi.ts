@@ -479,7 +479,11 @@ function fnv1a(teks: string): string {
 // Semua mengubah replay/seleksi sehingga Golden Master dibuka secara sadar.
 // M13-0D (2026-07-14): Ujian memakai constrained blueprint 98 slot, pin paket,
 // dan jadwal IGD exact; Leitner/season tidak lagi mengubah soal antar-peserta.
-export const REVISI_ENGINE = 34
+// M13-1a (2026-07-15): pilot Career-only diaktifkan dengan usia bayi dalam
+// bulan, bundel stabilisasi wajib, tindakan berbahaya terstruktur, migrasi tally,
+// serta validasi tujuan IGD berdasarkan kapabilitas reperfusi. Semua menyentuh
+// replay/scoring/save sehingga revisi engine dibump secara eksplisit.
+export const REVISI_ENGINE = 35
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -586,6 +590,8 @@ export function sidikJariPack(pack: ContentPack): string {
         id: k.id,
         disposisi: k.disposisiBenar,
         spesialis: k.spesialisRujukan ?? null,
+        kapabilitas: [...(k.kapabilitasRujukanSalahSatu ?? [])].sort(),
+        demografi: k.demografi,
         stab: k.stabilitasAwal,
         langkah: k.langkah.map((l) => ({
           id: l.id,
@@ -604,7 +610,7 @@ export function sidikJariPack(pack: ContentPack): string {
     .map((r) => stringifyKanonik({ nomor: r.nomor, jarak: r.jarak, totalKk: r.totalKk }))
   const rumahSakit = [...pack.rumahSakit]
     .sort((a, b) => a.id.localeCompare(b.id))
-    .map((r) => stringifyKanonik({ id: r.id, kelas: r.kelas, jarak: r.jarakMenit, spesialisasi: [...r.spesialisasi].sort(), bed: r.bedDasar }))
+    .map((r) => stringifyKanonik({ id: r.id, kelas: r.kelas, jarak: r.jarakMenit, spesialisasi: [...r.spesialisasi].sort(), kapabilitas: [...(r.kapabilitas ?? [])].sort(), bed: r.bedDasar }))
   const keluarga = Object.values(pack.keluarga)
     .sort((a, b) => a.id.localeCompare(b.id))
     // §48#1 (CODEX, 2026-07-09): anggota[] menyetir identitas karma & roster

@@ -54,6 +54,19 @@ function semuaObatTatalaksana(k: (typeof PACK.kasus)[string]): string[] {
   ]
 }
 
+function punyaAntibiotikStruktural(k: (typeof PACK.kasus)[string]): boolean {
+  const adaObatAntibiotik = semuaObatTatalaksana(k).some((id) => PACK.obat[id]?.antibiotik === true)
+  if (adaObatAntibiotik) return true
+
+  // Sebagian kegawatan tidak boleh dikunci ke satu vial universal. Untuk kasus
+  // seperti fraktur terbuka, answer-key memakai tindakan protokol antibiotik
+  // jejaring; itu tetap pemenuhan struktural, bukan sekadar janji di clue.
+  return (k.tatalaksana.prosedur ?? []).some((id) => {
+    const tindakan = PACK.tindakan[id]
+    return /antibiotik/i.test(`${id} ${tindakan?.nama ?? ''}`)
+  })
+}
+
 describe('CODEX ronde-16 P3 — adaNegasiDekat wajib cek SEMUA kemunculan, bukan berhenti di yang pertama', () => {
   // Bug lama: `return true` di kemunculan PERTAMA yang ternegasi, walau
   // kemunculan KEDUA kata yang sama membuat janji sungguhan tanpa negasi —
@@ -76,10 +89,15 @@ describe('M9.3 — tatalaksana wajib mencerminkan janji `clue` (sapuan heuristik
       const clueLower = k.clue.toLowerCase()
       if (!clueLower.includes('antibiotik')) continue
       if (adaNegasiDekat(clueLower, 'antibiotik', JENDELA)) continue
-      const adaAntibiotik = semuaObatTatalaksana(k).some((id) => PACK.obat[id]?.antibiotik === true)
-      if (!adaAntibiotik) pelanggar.push(k.id)
+      if (!punyaAntibiotikStruktural(k)) pelanggar.push(k.id)
     }
     expect(pelanggar).toEqual([])
+  })
+
+  it('tindakan protokol antibiotik jejaring dihitung sebagai pemenuhan struktural', () => {
+    const fraktur = PACK.kasus.fraktur_terbuka_tibia_stabil!
+    expect(fraktur.tatalaksana.prosedur).toContain('antibiotik_parenteral_fraktur_protokol')
+    expect(punyaAntibiotikStruktural(fraktur)).toBe(true)
   })
 
   it('clue sebut "kortikosteroid/steroid sistemik/oral" (tanpa negasi) → wajib ada steroid sistemik (bukan topikal saja)', () => {

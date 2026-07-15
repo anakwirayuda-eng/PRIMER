@@ -8,6 +8,7 @@ import { PACK } from '@content/index'
 import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import { temuanUntukRegion } from '@engine/clinic'
+import { formatUsia } from '@engine/usia'
 import type { KasusKlinis, TandaVital } from '@content/types'
 import {
   LABEL_PERSONA,
@@ -73,7 +74,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
           <div>
             <div className="klinik-lembar__nama">{p.nama}</div>
             <div className="teks-kecil teks-lembut">
-              {p.usia} tahun &middot; {labelJk(p.jenisKelamin)}
+              {formatUsia(p.usia, p.usiaBulan)} &middot; {labelJk(p.jenisKelamin)}
             </div>
           </div>
           <div className="baris klinik-lembar__chips">

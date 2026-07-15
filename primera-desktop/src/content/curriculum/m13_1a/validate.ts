@@ -3,6 +3,8 @@ import type { KasusKlinis } from '../../types'
 import { NAMA_ICD } from '../../icd10'
 import { buildCurriculumBlueprint } from '../blueprint'
 import { M13_SOURCE_REGISTRY } from '../sourceRegistry'
+import { validasiClinicalGroundingPolicy } from '../clinicalGroundingPolicy'
+import type { PhysicianSignoff } from '../types'
 import type { M13AuthoringManifest } from './manifest'
 import {
   M13_1A_REVIEW_PAYLOADS,
@@ -28,6 +30,13 @@ function semuaObat(kasus: KasusKlinis): string[] {
   ]
 }
 
+function semuaTindakan(kasus: KasusKlinis): string[] {
+  return [
+    ...(kasus.tatalaksana.prosedur ?? []),
+    ...(kasus.tatalaksana.tindakanSalahUmum ?? []).map((item) => item.id),
+  ]
+}
+
 function tanggalIso(value: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`))
 }
@@ -36,8 +45,21 @@ function samaSetString(a: string[], b: string[]): boolean {
   return JSON.stringify([...new Set(a)].sort()) === JSON.stringify([...new Set(b)].sort())
 }
 
+function samaStruktural(a: unknown, b: unknown): boolean {
+  return JSON.stringify(a) === JSON.stringify(b)
+}
+
 function contentRefKey(ref: { kind: 'clinic' | 'igd'; id: string }): string {
   return `${ref.kind}:${ref.id}`
+}
+
+function validasiIsiPhysicianSignoff(prefix: string, signoff: PhysicianSignoff): string[] {
+  const masalah: string[] = []
+  if (!signoff.reviewer.trim()) masalah.push(`${prefix}: reviewer physician kosong`)
+  if (!signoff.credentials.trim()) masalah.push(`${prefix}: credentials physician kosong`)
+  if (!tanggalIso(signoff.signedAt)) masalah.push(`${prefix}: tanggal physician sign-off tidak valid`)
+  if (!signoff.note.trim()) masalah.push(`${prefix}: catatan physician sign-off kosong`)
+  return masalah
 }
 
 export function validasiM13AuthoringManifest(
@@ -49,9 +71,26 @@ export function validasiM13AuthoringManifest(
     if (condition) masalah.push(message)
   }
 
-  tambah(manifest.activationStatus !== 'awaiting_physician_review', 'activationStatus bukan awaiting_physician_review')
-  tambah(manifest.basedOnContentRelease !== activePack.runtimeManifest?.contentRelease, 'baseline draft berbeda dari CONTENT_RELEASE aktif')
-  tambah(activePack.runtimeManifest?.releaseOrder.includes(manifest.proposedContentRelease) === true, 'proposed release sudah masuk runtime releaseOrder')
+  masalah.push(
+    ...validasiClinicalGroundingPolicy(manifest.clinicalGroundingPolicy).map(
+      (issue) => `clinical grounding policy: ${issue}`,
+    ),
+  )
+
+  const reviewComplete = manifest.activationStatus !== 'awaiting_physician_review'
+  const activated = activePack.runtimeManifest?.contentRelease === manifest.proposedContentRelease
+  tambah(
+    activated
+      ? manifest.activationStatus !== 'activated_pending_playtest'
+      : manifest.basedOnContentRelease !== activePack.runtimeManifest?.contentRelease,
+    activated ? 'status manifest belum menandai aktivasi pilot' : 'baseline draft berbeda dari CONTENT_RELEASE aktif',
+  )
+  tambah(
+    activated
+      ? activePack.runtimeManifest?.releaseOrder.includes(manifest.proposedContentRelease) !== true
+      : activePack.runtimeManifest?.releaseOrder.includes(manifest.proposedContentRelease) === true,
+    activated ? 'proposed release belum masuk runtime releaseOrder' : 'proposed release sudah masuk runtime releaseOrder',
+  )
   tambah(manifest.clinicCases.length !== 6, `jumlah clinic draft ${manifest.clinicCases.length}, seharusnya 6`)
   tambah(manifest.igdCases.length !== 1, `jumlah IGD draft ${manifest.igdCases.length}, seharusnya 1`)
   tambah(manifest.ukmDrafts.length !== 1, `jumlah UKM draft ${manifest.ukmDrafts.length}, seharusnya 1`)
@@ -77,7 +116,7 @@ export function validasiM13AuthoringManifest(
     ...Object.keys(manifest.proposedIcd10Entries),
   ])
   const obatDipakai = new Set(manifest.clinicCases.flatMap(semuaObat))
-  const tindakanDipakai = new Set(manifest.clinicCases.flatMap((kasus) => kasus.tatalaksana.prosedur ?? []))
+  const tindakanDipakai = new Set(manifest.clinicCases.flatMap(semuaTindakan))
   const edukasiDipakai = new Set(manifest.clinicCases.flatMap((kasus) => kasus.tatalaksana.edukasi))
   const icdDipakai = new Set([
     ...manifest.clinicCases.flatMap((kasus) => [kasus.icd10, ...kasus.diagnosisBanding]),
@@ -86,26 +125,26 @@ export function validasiM13AuthoringManifest(
 
   for (const [id, item] of Object.entries(manifest.proposedCatalog.obat)) {
     tambah(item.id !== id, `katalog obat draft key '${id}' tidak sama dengan item.id '${item.id}'`)
-    tambah(Boolean(activePack.obat[id]), `katalog obat draft menimpa id aktif '${id}'`)
+    tambah(activated ? !samaStruktural(activePack.obat[id], item) : Boolean(activePack.obat[id]), activated ? `katalog obat aktif '${id}' drift dari manifest` : `katalog obat draft menimpa id aktif '${id}'`)
     tambah(!obatDipakai.has(id), `katalog obat draft yatim '${id}'`)
   }
   for (const [id, item] of Object.entries(manifest.proposedCatalog.tindakan)) {
     tambah(item.id !== id, `katalog tindakan draft key '${id}' tidak sama dengan item.id '${item.id}'`)
-    tambah(Boolean(activePack.tindakan[id]), `katalog tindakan draft menimpa id aktif '${id}'`)
+    tambah(activated ? !samaStruktural(activePack.tindakan[id], item) : Boolean(activePack.tindakan[id]), activated ? `katalog tindakan aktif '${id}' drift dari manifest` : `katalog tindakan draft menimpa id aktif '${id}'`)
     tambah(!tindakanDipakai.has(id), `katalog tindakan draft yatim '${id}'`)
   }
   for (const [id, item] of Object.entries(manifest.proposedCatalog.edukasi)) {
     tambah(item.id !== id, `katalog edukasi draft key '${id}' tidak sama dengan item.id '${item.id}'`)
-    tambah(Boolean(activePack.edukasi[id]), `katalog edukasi draft menimpa id aktif '${id}'`)
+    tambah(activated ? !samaStruktural(activePack.edukasi[id], item) : Boolean(activePack.edukasi[id]), activated ? `katalog edukasi aktif '${id}' drift dari manifest` : `katalog edukasi draft menimpa id aktif '${id}'`)
     tambah(!edukasiDipakai.has(id), `katalog edukasi draft yatim '${id}'`)
   }
   for (const id of Object.keys(manifest.proposedIcd10Entries)) {
-    tambah(Object.prototype.hasOwnProperty.call(NAMA_ICD, id), `label ICD draft menimpa label aktif '${id}'`)
+    tambah(!activated && Object.prototype.hasOwnProperty.call(NAMA_ICD, id), `label ICD draft menimpa label aktif '${id}'`)
     tambah(!icdDipakai.has(id), `label ICD draft yatim '${id}'`)
   }
 
   for (const kasus of manifest.clinicCases) {
-    tambah(Boolean(activePack.kasus[kasus.id]), `clinic draft '${kasus.id}' sudah aktif di PACK`)
+    tambah(activated ? !samaStruktural(activePack.kasus[kasus.id], kasus) : Boolean(activePack.kasus[kasus.id]), activated ? `clinic aktif '${kasus.id}' drift dari manifest` : `clinic draft '${kasus.id}' sudah aktif di PACK`)
     const spec = specs.get(kasus.id)
     if (!spec) continue
     const [min, max] = budget[spec.authoringTier]
@@ -123,19 +162,31 @@ export function validasiM13AuthoringManifest(
       }
     }
     for (const id of semuaObat(kasus)) tambah(!obatIds.has(id), `${kasus.id}: obat yatim '${id}'`)
-    for (const id of kasus.tatalaksana.prosedur ?? []) tambah(!tindakanIds.has(id), `${kasus.id}: tindakan yatim '${id}'`)
+    for (const id of semuaTindakan(kasus)) tambah(!tindakanIds.has(id), `${kasus.id}: tindakan yatim '${id}'`)
     for (const id of kasus.tatalaksana.edukasi) tambah(!edukasiIds.has(id), `${kasus.id}: edukasi yatim '${id}'`)
     for (const id of kasus.lab.map((item) => item.id)) tambah(!labIds.has(id), `${kasus.id}: lab yatim '${id}'`)
     for (const icd10 of kasus.diagnosisBanding) {
       tambah(icd10 !== kasus.icd10 && !knownIcdNames.has(icd10), `${kasus.id}: diagnosis banding '${icd10}' tidak punya nama UI`)
     }
     for (const id of kasus.tatalaksana.edukasiKritis ?? []) tambah(!kasus.tatalaksana.edukasi.includes(id), `${kasus.id}: edukasi kritis '${id}' bukan subset edukasi`)
-    tambah(Boolean(kasus.stabilisasiWajib && !kasus.tatalaksana.prosedur?.includes(kasus.stabilisasiWajib)), `${kasus.id}: stabilisasiWajib tidak ada di prosedur`)
+    for (const id of kasus.stabilisasiWajib ?? []) {
+      tambah(!kasus.tatalaksana.prosedur?.includes(id), `${kasus.id}: stabilisasiWajib '${id}' tidak ada di prosedur`)
+    }
+    for (const item of kasus.tatalaksana.tindakanSalahUmum ?? []) {
+      tambah(kasus.tatalaksana.prosedur?.includes(item.id) === true, `${kasus.id}: tindakan '${item.id}' sekaligus benar dan salah`)
+    }
+    const bulanMin = kasus.demografi.usiaBulanMin
+    const bulanMax = kasus.demografi.usiaBulanMax
+    tambah((bulanMin === undefined) !== (bulanMax === undefined), `${kasus.id}: rentang usia bulan harus lengkap`)
+    tambah(Boolean(bulanMin !== undefined && (bulanMin < 0 || bulanMin > 11)), `${kasus.id}: usiaBulanMin di luar 0-11`)
+    tambah(Boolean(bulanMax !== undefined && (bulanMax < 0 || bulanMax > 11)), `${kasus.id}: usiaBulanMax di luar 0-11`)
+    tambah(Boolean(bulanMin !== undefined && bulanMax !== undefined && bulanMin > bulanMax), `${kasus.id}: usiaBulanMin lebih besar dari usiaBulanMax`)
+    tambah(Boolean(bulanMin !== undefined && (kasus.demografi.usiaMin !== 0 || kasus.demografi.usiaMax !== 0)), `${kasus.id}: usia bulan hanya sah untuk pasien <1 tahun`)
     tambah(kasus.harusDirujuk && !kasus.spesialisRujukan, `${kasus.id}: rujuk wajib tanpa spesialis tujuan`)
   }
 
   for (const kasus of manifest.igdCases) {
-    tambah(Boolean(activePack.kasusIgd[kasus.id]), `IGD draft '${kasus.id}' sudah aktif di PACK`)
+    tambah(activated ? !samaStruktural(activePack.kasusIgd[kasus.id], kasus) : Boolean(activePack.kasusIgd[kasus.id]), activated ? `IGD aktif '${kasus.id}' drift dari manifest` : `IGD draft '${kasus.id}' sudah aktif di PACK`)
     tambah(kasus.disposisiBenar === 'rujuk' && !kasus.spesialisRujukan, `${kasus.id}: IGD rujuk tanpa spesialis tujuan`)
     for (const langkah of kasus.langkah) {
       tambah(langkah.pilihan.filter((pilihan) => pilihan.benar).length !== 1, `${kasus.id}/${langkah.id}: harus tepat satu pilihan benar`)
@@ -146,19 +197,29 @@ export function validasiM13AuthoringManifest(
   const newItemIds = new Set(manifest.newCurriculumItems.map((item) => item.id))
   const archetypeIds = new Set(manifest.encounterArchetypes.map((item) => item.id))
   const scenarioIds = new Set(manifest.ukmScenarios.map((item) => item.id))
-  const activeBlueprint = buildCurriculumBlueprint(activePack)
-  const activeConceptIds = new Set(activeBlueprint.clinicalConcepts.map((item) => item.id))
-  const activeItemIds = new Set(activeBlueprint.curriculumItems.map((item) => item.id))
+  const activeBlueprint = activated ? undefined : buildCurriculumBlueprint(activePack)
+  const activeConceptIds = new Set(activeBlueprint?.clinicalConcepts.map((item) => item.id) ?? [])
+  const activeItemIds = new Set(
+    activeBlueprint?.curriculumItems.map((item) => item.id) ?? [
+      ...activePack.skdi144.map((item) => `fktp144:${item.id}`),
+      ...Object.values(activePack.kasus)
+        .filter((item) => item.skdi !== '4A')
+        .map((item) => `clinical:${item.id}`),
+      ...newItemIds,
+    ],
+  )
   for (const id of duplikat(manifest.clinicalConcepts.map((item) => item.id))) masalah.push(`clinical concept id duplikat '${id}'`)
   for (const id of duplikat(manifest.newCurriculumItems.map((item) => item.id))) masalah.push(`curriculum item id duplikat '${id}'`)
   for (const id of duplikat(manifest.encounterArchetypes.map((item) => item.id))) masalah.push(`encounter archetype id duplikat '${id}'`)
   for (const id of duplikat(manifest.ukmScenarios.map((item) => item.id))) masalah.push(`UKM scenario id duplikat '${id}'`)
   const activeArchetypeIds = new Set(activePack.runtimeManifest?.encounterArchetypes.map((item) => item.id) ?? [])
   const activeScenarioIds = new Set(activePack.runtimeManifest?.ukmScenarios.map((item) => item.id) ?? [])
-  for (const id of conceptIds) tambah(activeConceptIds.has(id), `clinical concept draft menimpa id aktif '${id}'`)
-  for (const id of newItemIds) tambah(activeItemIds.has(id), `curriculum item draft menimpa id aktif '${id}'`)
-  for (const id of archetypeIds) tambah(activeArchetypeIds.has(id), `encounter archetype draft menimpa id aktif '${id}'`)
-  for (const id of scenarioIds) tambah(activeScenarioIds.has(id), `UKM scenario draft menimpa id aktif '${id}'`)
+  if (!activated) {
+    for (const id of conceptIds) tambah(activeConceptIds.has(id), `clinical concept draft menimpa id aktif '${id}'`)
+    for (const id of newItemIds) tambah(activeItemIds.has(id), `curriculum item draft menimpa id aktif '${id}'`)
+    for (const id of archetypeIds) tambah(activeArchetypeIds.has(id), `encounter archetype draft menimpa id aktif '${id}'`)
+    for (const id of scenarioIds) tambah(activeScenarioIds.has(id), `UKM scenario draft menimpa id aktif '${id}'`)
+  }
   const contentRefs = manifest.encounterArchetypes.map((item) => contentRefKey(item.contentRef))
   for (const ref of duplikat(contentRefs)) masalah.push(`encounter contentRef duplikat '${ref}'`)
   for (const kasus of manifest.clinicCases) {
@@ -197,8 +258,10 @@ export function validasiM13AuthoringManifest(
       `${draft.familyId}/${draft.scenario.id}: harus punya tepat satu UKM scenario policy`,
     )
     tambah(
-      activePack.keluarga[draft.familyId]?.arc.kunjungan.some((item) => item.id === draft.scenario.id) === true,
-      `${draft.familyId}/${draft.scenario.id}: kunjungan UKM sudah aktif`,
+      activePack.keluarga[draft.familyId]?.arc.kunjungan.some((item) => item.id === draft.scenario.id) !== activated,
+      activated
+        ? `${draft.familyId}/${draft.scenario.id}: kunjungan UKM belum aktif`
+        : `${draft.familyId}/${draft.scenario.id}: kunjungan UKM sudah aktif`,
     )
   }
   for (const relation of manifest.itemConcepts) {
@@ -241,10 +304,62 @@ export function validasiM13AuthoringManifest(
     tambah(!sourceIds.has(binding.source), `${binding.id}: source yatim '${binding.source}'`)
     tambah(!binding.locator.trim(), `${binding.id}: locator kosong`)
     tambah(!binding.population?.trim(), `${binding.id}: population kosong`)
-    tambah(binding.reviewStatus !== 'pending', `${binding.id}: reviewStatus harus pending sebelum sign-off`)
+    if (reviewComplete) {
+      tambah(
+        !['resolved', 'accepted_with_limitation'].includes(binding.reviewStatus),
+        `${binding.id}: reviewStatus belum terminal setelah sign-off`,
+      )
+    } else {
+      tambah(binding.reviewStatus !== 'pending', `${binding.id}: reviewStatus harus pending sebelum sign-off`)
+    }
     if (binding.subject.kind === 'curriculum_item') tambah(!newItemIds.has(binding.subject.id), `${binding.id}: curriculum item subject yatim`)
     if (binding.subject.kind === 'encounter_archetype') tambah(!archetypeIds.has(binding.subject.id), `${binding.id}: archetype subject yatim`)
     if (binding.subject.kind === 'ukm_scenario') tambah(!scenarioIds.has(binding.subject.id), `${binding.id}: UKM subject yatim`)
+
+    const governance = binding.governance
+    tambah(
+      binding.audit?.finding === 'source_conflict' &&
+        binding.audit.materiality === 'material' &&
+        !governance,
+      `${binding.id}: konflik material tidak punya governance floor/supersesi/resource`,
+    )
+    if (governance) {
+      tambah(governance.policyId !== manifest.clinicalGroundingPolicy.id, `${binding.id}: policyId governance drift`)
+      tambah(governance.floorSources.length === 0, `${binding.id}: floorSources governance kosong`)
+      tambah(governance.supersedingSources.length === 0, `${binding.id}: supersedingSources governance kosong`)
+      tambah(governance.resourceSources.length === 0, `${binding.id}: resourceSources governance kosong`)
+      tambah(!governance.implementationNote.trim(), `${binding.id}: implementationNote governance kosong`)
+      for (const reference of [
+        ...governance.floorSources,
+        ...governance.supersedingSources,
+        ...governance.resourceSources,
+      ]) {
+        tambah(!sourceIds.has(reference.source), `${binding.id}: governance source yatim '${reference.source}'`)
+        tambah(!reference.locator.trim(), `${binding.id}: governance locator kosong untuk '${reference.source}'`)
+      }
+    }
+    for (const reference of binding.audit?.corroboratingEvidence ?? []) {
+      tambah(!sourceIds.has(reference.source), `${binding.id}: audit source yatim '${reference.source}'`)
+      tambah(!reference.locator.trim(), `${binding.id}: audit locator kosong untuk '${reference.source}'`)
+    }
+    const auditSignoff = binding.audit?.physicianSignoff
+    if (reviewComplete && binding.audit?.materiality === 'material') {
+      tambah(!auditSignoff, `${binding.id}: konflik material belum punya physician sign-off`)
+      if (auditSignoff) {
+        masalah.push(...validasiIsiPhysicianSignoff(binding.id, auditSignoff))
+        tambah(
+          auditSignoff.decision === 'approved' && binding.reviewStatus !== 'resolved',
+          `${binding.id}: keputusan audit approved tidak cocok reviewStatus '${binding.reviewStatus}'`,
+        )
+        tambah(
+          auditSignoff.decision === 'approved_with_waiver' &&
+            binding.reviewStatus !== 'accepted_with_limitation',
+          `${binding.id}: keputusan audit waiver tidak cocok reviewStatus '${binding.reviewStatus}'`,
+        )
+      }
+    } else if (!reviewComplete) {
+      tambah(Boolean(auditSignoff), `${binding.id}: physician sign-off audit tidak boleh ada pada draft`)
+    }
   }
   for (const id of [...newItemIds, ...archetypeIds, ...scenarioIds]) {
     tambah(!manifest.evidenceBindings.some((binding) => binding.subject.id === id), `${id}: tidak punya evidence binding`)
@@ -254,8 +369,28 @@ export function validasiM13AuthoringManifest(
   const actualReviewIds = manifest.reviewRecords.map((record) => record.id).sort()
   tambah(JSON.stringify(expectedReviewIds) !== JSON.stringify(actualReviewIds), 'reviewRecords tidak menutup tepat 8 payload review')
   for (const record of manifest.reviewRecords) {
-    tambah(record.status !== 'awaiting_physician_review', `${record.id}: status review bukan awaiting_physician_review`)
-    tambah(Boolean(record.physicianSignoff), `${record.id}: physician sign-off tidak boleh dipalsukan pada draft`)
+    if (reviewComplete) {
+      tambah(
+        !['approved', 'approved_with_waiver'].includes(record.status),
+        `${record.id}: status review belum terminal-approved`,
+      )
+      tambah(!record.physicianSignoff, `${record.id}: physician sign-off belum ada`)
+      if (record.physicianSignoff) {
+        masalah.push(...validasiIsiPhysicianSignoff(record.id, record.physicianSignoff))
+        tambah(
+          record.physicianSignoff.decision === 'approved' && record.status !== 'approved',
+          `${record.id}: decision approved tidak cocok status '${record.status}'`,
+        )
+        tambah(
+          record.physicianSignoff.decision === 'approved_with_waiver' &&
+            record.status !== 'approved_with_waiver',
+          `${record.id}: decision waiver tidak cocok status '${record.status}'`,
+        )
+      }
+    } else {
+      tambah(record.status !== 'awaiting_physician_review', `${record.id}: status review bukan awaiting_physician_review`)
+      tambah(Boolean(record.physicianSignoff), `${record.id}: physician sign-off tidak boleh dipalsukan pada draft`)
+    }
     tambah(record.basedOnContentRelease !== manifest.basedOnContentRelease, `${record.id}: baseline release drift`)
     tambah(record.proposedContentRelease !== manifest.proposedContentRelease, `${record.id}: proposed release drift`)
     tambah(!/^[0-9a-f]{64}$/i.test(record.contentHash) || /^0{64}$/.test(record.contentHash), `${record.id}: contentHash belum dibekukan`)
@@ -273,7 +408,7 @@ export function validasiM13AuthoringManifest(
     const anggota = keluarga?.anggota[rewire.memberIndex]
     const target = manifest.clinicCases.find((kasus) => kasus.id === rewire.toCaseId)
     tambah(!keluarga, `karma rewire: keluarga '${rewire.familyId}' tidak ada`)
-    tambah(kunjungan?.karma?.kasusId !== rewire.fromCaseId || kunjungan.karma.anggotaIndex !== rewire.memberIndex, `karma rewire ${rewire.familyId}/${rewire.visitId}: origin runtime drift`)
+    tambah(kunjungan?.karma?.kasusId !== (activated ? rewire.toCaseId : rewire.fromCaseId) || kunjungan.karma.anggotaIndex !== rewire.memberIndex, `karma rewire ${rewire.familyId}/${rewire.visitId}: runtime drift`)
     tambah(!target, `karma rewire ${rewire.familyId}/${rewire.visitId}: target '${rewire.toCaseId}' tidak ada`)
     tambah(Boolean(anggota && target && (anggota.usia < target.demografi.usiaMin || anggota.usia > target.demografi.usiaMax)), `karma rewire ${rewire.familyId}/${rewire.visitId}: usia anggota tidak cocok target`)
     tambah(Boolean(anggota && target?.demografi.jenisKelamin && anggota.jenisKelamin !== target.demografi.jenisKelamin), `karma rewire ${rewire.familyId}/${rewire.visitId}: gender anggota tidak cocok target`)
@@ -300,6 +435,21 @@ export function evaluasiKesiapanAktivasiM13(
   for (const binding of manifest.evidenceBindings) {
     if (binding.reviewStatus === 'pending') issues.push(`${binding.id}: evidence masih pending`)
     if (binding.reviewStatus === 'blocked') issues.push(`${binding.id}: evidence diblokir`)
+    if (binding.audit?.materiality === 'material' && !binding.audit.physicianSignoff) {
+      issues.push(`${binding.id}: konflik material belum punya physician sign-off`)
+    }
+    if (
+      binding.audit?.physicianSignoff?.decision === 'approved' &&
+      binding.reviewStatus !== 'resolved'
+    ) {
+      issues.push(`${binding.id}: keputusan audit approved tidak cocok reviewStatus '${binding.reviewStatus}'`)
+    }
+    if (
+      binding.audit?.physicianSignoff?.decision === 'approved_with_waiver' &&
+      binding.reviewStatus !== 'accepted_with_limitation'
+    ) {
+      issues.push(`${binding.id}: keputusan audit waiver tidak cocok reviewStatus '${binding.reviewStatus}'`)
+    }
   }
 
   for (const record of manifest.reviewRecords) {

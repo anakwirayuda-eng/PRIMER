@@ -14,6 +14,7 @@ export const M13_1A_IGD_DRAFTS: KasusIgd[] = [
     stabilitasAwal: 48,
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'penyakit_dalam',
+    kapabilitasRujukanSalahSatu: ['pci_primer_24_7', 'fibrinolisis_stemi'],
     clue:
       'Nyeri dada tipikal >20 menit + elevasi ST anterior adalah STEMI sampai terbukti lain. Lakukan ABC, monitor, akses IV, EKG 12 sadapan dalam <=10 menit, dan oksigen karena SpO2 88% (bukan rutin pada pasien normoksemik). Beri aspirin kunyah 160-320 mg bila tidak alergi/perdarahan aktif, lalu aktifkan transfer emergensi ke jejaring reperfusi tanpa menunggu troponin atau hilangnya nyeri.',
     langkah: [

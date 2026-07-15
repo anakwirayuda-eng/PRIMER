@@ -100,22 +100,23 @@ function hashFile(relPath: string): string {
 
 /** Sha-256 hex per file (isi dinormalisasi LF), dikunci saat tag Golden Master. */
 const HASH_DIBEKUKAN: Record<string, string> = {
-  // REVISI 34 (2026-07-14 — M13-0D): constrained blueprint mengunci 98
-  // controlled draws + 5 IGD, pin paket/rilis, dan isolasi behavior/flavor.
-  'reducer.ts': '433de3bbac51322691f8034228732146bedde15253ee75df0d6dd10ace3d121a',
-  'clinic.ts': '55de3a23bb8c1024901848ba5f61c89590e9a0bcf526c32f7446f2d008aab3d2',
-  'scoring.ts': '146c3012075cad2e0fad60e2139f7efe04aeb8bea84ac5a1ffdafb676cc2e1d8',
-  'director.ts': 'af94041409244096b901d052521f640723bed6dad47613aec835a1832890d0ee',
+  // REVISI 35 (2026-07-15 - M13-1a): pilot Career-only menambah usia
+  // bulan, bundel stabilisasi, tindakan berbahaya, dan routing RS berbasis
+  // kapabilitas. Ujian tetap terisolasi oleh modePolicy.
+  'reducer.ts': 'cc0a06cdefcc1e99bd0dbab04589aac07734afa64068f10194720c8a5bdb2b94',
+  'clinic.ts': 'd15325f895f1aae97aae02a99ce7ca0d2d9a33b9a0c33b62f06195be54035be7',
+  'scoring.ts': '34f08bd47df35dda58e6043892c80061a9d39515ce385ca1a8d46a74f6bba81c',
+  'director.ts': '2dd1a65bd524210426dba145a0775b88a4502377c015518f128e03b00c8d483a',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
-  'igd.ts': '519b7cfc4098fa2e4d6c0567875ba797d3074d14cbbe8b9a48afaf12704c09b4',
+  'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
   'kader.ts': 'fff1c7c055d1526f1e9632e64a3f72939840412c0f148e201444d6a7353aa646',
-  'init.ts': '1c993f455e63d3ec9f37ae8843883e33e5a6b8afc702e10a97c1e73cfec4ee82',
+  'init.ts': '19b2d372c730406a14ac96afc3497fc8e8f418b0694271a5bff1df41ad778afb',
   'kegiatan.ts': '61004bed15e5f8095214205aff69da6be55556d329552bc6a691cc0e4bf62d52',
   'kunjungan.ts': '4ec29cba2af05c8befec99921fe0cf8fc4d93950546c08121ded7f82efa66517',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
-  'verifikasi.ts': 'b79d8aa550d7b5ba59c08c1b64eaf80243377049e06daa87c70ebe11fa4e7e0c',
-  'state.ts': '1b8ddce19ff60346ffa377788fc59422f4d8d48f89e3282feac522589fa7681e',
-  'save.ts': '7ad199a80dfa85bcf7b2f6fa7d15ff231edcf174e63fb1232576b54d5092070c',
+  'verifikasi.ts': '0ecf9877286bcc513046cca9bdcd02ab6c0291ee9acc332e72200d857384892a',
+  'state.ts': 'ea874e2a503621d7dd28077e2cad21c6921c03ecab0fe5c0632bddf837748a89',
+  'save.ts': '8c75672d5ff27efa243ce2f87d3ad92ff22c5c851f010566e1c4090b43449c8a',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '34bdfd80c9ebd2ae5a261118e9154cdfeb670b06b029e96013e2b26ef9a86a80',
   'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',

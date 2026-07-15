@@ -489,7 +489,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       ],
       edukasi: ['berhenti_merokok', 'teknik_inhaler', 'tanda_bahaya', 'kontrol_rutin'],
     },
-    stabilisasiWajib: 'oksigen',
+    stabilisasiWajib: ['oksigen'],
     clue: 'Eksaserbasi PPOK (kriteria Anthonisen: sesak↑, volume sputum↑, purulensi sputum↑ — ketiganya ada → antibiotik terindikasi). SpO2 89% + tanda gagal napas (bingung, sianosis, otot bantu) = eksaserbasi BERAT. Bundel GOLD: O2 TERKONTROL (target SpO2 88–92%, hindari over-oksigenasi) + bronkodilator INHALASI/NEBULISASI (SABA ± SAMA) + KORTIKOSTEROID SISTEMIK + antibiotik (sputum purulen) — lalu RUJUK paru segera. SABA oral tak setara; jangan biarkan urusan obat menunda rujukan.',
     panduanResmi: 'PPK 1186/2022 membatasi FKTP pada eksaserbasi PPOK RINGAN (sedang–berat wajib rujuk). Bila inhalasi tak tersedia, PPK membolehkan bronkodilator injeksi (aminofilin bolus 5 mg/kgBB; adrenalin 0,3 mg SC) — beda dari penekanan GOLD \'inhalasi saja\'. Kortikosteroid 30 mg/hari, maks 2 minggu, tanpa tapering.',
     konsekuensi: {

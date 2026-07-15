@@ -209,7 +209,7 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // sekali, jadi wajib backfill di sini persis pola migrasi-lite di atas,
   // SEBELUM pengecekan exhaustive KUNCI_TALLY di bawah (yang kalau tidak
   // akan menolak SELURUH save lama krn `undefined` bukan `number`).
-  for (const kunci of ['obatBerbahaya', 'firewallTerpicu'] as const) {
+  for (const kunci of ['obatBerbahaya', 'tindakanBerbahaya', 'firewallTerpicu'] as const) {
     if (tally[kunci] === undefined) {
       tally[kunci] = 0
       tandaiMigrasi(kunci)
@@ -295,7 +295,7 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   const KUNCI_TALLY = [
     'totalPasien', 'diagnosisBenar', 'sumSkorProses', 'tegakBenar', 'tegakSalah', 'suspekBenar', 'suspekSalah',
     'rujukanTotal', 'rujukanNonSpesialistik', 'rujukanTepat', 'rujukanDitolak', 'cowboy',
-    'antibiotikTanpaIndikasi', 'obatBerbahaya', 'firewallTerpicu', 'stabilisasiTerlewat', 'labTakRelevan', 'miTepat', 'miTotal', 'kunjunganBerhasil',
+    'antibiotikTanpaIndikasi', 'obatBerbahaya', 'tindakanBerbahaya', 'firewallTerpicu', 'stabilisasiTerlewat', 'labTakRelevan', 'miTepat', 'miTotal', 'kunjunganBerhasil',
     'kunjunganTotal', 'kunjunganDiusir', 'apathy', 'autoBermasalah', 'posyanduSesi',
     'prolanisSesi', 'klbTuntas', 'igdStabil', 'igdSalahDisposisi', 'igdMeninggal', 'igdKodeBiruTerjadi', 'rmLengkap',
     'teguranDinkes', 'hariKelelahan', 'karmaTerjadi', 'karmaDicegah',

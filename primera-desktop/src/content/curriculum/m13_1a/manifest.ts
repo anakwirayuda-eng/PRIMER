@@ -19,6 +19,8 @@ import { M13_1A_PHYSICIAN_DECISIONS_REQUIRED } from './reviewQuestions'
 import { M13_1A_REVIEW_RECORDS } from './reviewRecords'
 import { M13_1A_SOURCES } from './sources'
 import { M13_1A_UKM_DRAFTS } from './ukmDraft'
+import { CLINICAL_GROUNDING_POLICY } from '../clinicalGroundingPolicy'
+import { M13_1A_CLINICAL_RECONCILIATION } from './clinicalReconciliation'
 
 export { M13_1A_BASE_CONTENT_RELEASE, M13_1A_PROPOSED_CONTENT_RELEASE } from './constants'
 export {
@@ -36,6 +38,10 @@ export {
 } from './reviewQuestions'
 
 export type M13AuthoringTier = 'A' | 'B' | 'C'
+export type M13AuthoringActivationStatus =
+  | 'awaiting_physician_review'
+  | 'physician_review_complete'
+  | 'activated_pending_playtest'
 
 export interface M13ClinicDraftSpec {
   caseId: string
@@ -54,17 +60,20 @@ export const M13_1A_CLINIC_SPECS: M13ClinicDraftSpec[] = [
 
 export { M13_1A_PROPOSED_ICD10_ENTRIES } from './icdDraft'
 
-export const M13_1A_ACTIVATION_BLOCKERS = [
-  'Engine saat ini hanya dapat memberi cap stabilisasiTerlewat untuk satu stabilisasiWajib per kasus, sedangkan Dimas dan fraktur terbuka memerlukan bundel beberapa tindakan. Sebelum aktivasi, putuskan perluasan engine atau waiver scoring yang eksplisit.',
-  'Usia pasien runtime disimpan sebagai tahun bulat. Nayla berusia 3 bulan akan tampil sebagai 0 tahun di header pasien kecuali ditambah representasi/display usia bulan atau override yang ikut diverifikasi.',
-  'Harga obat dan biaya tindakan pada katalog draf adalah placeholder authoring, bukan klaim harga pengadaan. Kalibrasikan terhadap ekonomi game dan sumber lokal sebelum aktivasi.',
-  'Tindakan ekstraksi benda asing masih generik; engine belum dapat membedakan teknik aman dari blind probing atau menjepit benda bulat dari depan. Tambahkan dangerous-action gate atau waiver pedagogis sebelum aktivasi.',
-  'Data rumah sakit hanya memodelkan spesialisasi, bukan kemampuan PCI/fibrinolisis. IGD STEMI tidak boleh aktif sampai tujuan jejaring reperfusi dapat diverifikasi atau diberi gate khusus.',
+export const M13_1A_RESOLVED_ACTIVATION_BLOCKERS = [
+  { id: 'bundle-stabilisasi', resolution: 'stabilisasiWajib menjadi array; regimen dosis-akut dinilai sebagai tindakan protokol bernama' },
+  { id: 'usia-bayi', resolution: 'usiaBulan dipersist dan dirender sebagai bulan pada seluruh permukaan pasien' },
+  { id: 'ekonomi-resource', resolution: 'biaya dikalibrasi sebagai parameter simulasi; vignette menyatakan kesiapan resource dan graceful degradation' },
+  { id: 'dangerous-action', resolution: 'tindakanSalahUmum berbahaya masuk skor, cap grade, tally, Dex, konsekuensi, dan debrief' },
+  { id: 'jejaring-reperfusi', resolution: 'RS dan kasus IGD memodelkan kapabilitas PCI primer/fibrinolisis serta routing tervalidasi' },
 ] as const
+
+export const M13_1A_ACTIVATION_BLOCKERS = [] as const
 
 export const M13_1A_AUTHORING_MANIFEST = {
   schemaVersion: 1 as const,
-  activationStatus: 'awaiting_physician_review' as const,
+  clinicalGroundingPolicy: CLINICAL_GROUNDING_POLICY,
+  activationStatus: 'activated_pending_playtest' as M13AuthoringActivationStatus,
   basedOnContentRelease: M13_1A_BASE_CONTENT_RELEASE,
   proposedContentRelease: M13_1A_PROPOSED_CONTENT_RELEASE,
   clinicCases: M13_1A_CLINIC_DRAFTS,
@@ -87,6 +96,8 @@ export const M13_1A_AUTHORING_MANIFEST = {
   proposedKarmaRewires: M13_1A_PROPOSED_KARMA_REWIRES,
   proposedIcd10Entries: M13_1A_PROPOSED_ICD10_ENTRIES,
   physicianDecisionsRequired: M13_1A_PHYSICIAN_DECISIONS_REQUIRED,
+  clinicalReconciliation: M13_1A_CLINICAL_RECONCILIATION,
+  resolvedActivationBlockers: M13_1A_RESOLVED_ACTIVATION_BLOCKERS,
   activationBlockers: M13_1A_ACTIVATION_BLOCKERS,
 }
 

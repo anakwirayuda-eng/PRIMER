@@ -26,10 +26,14 @@ import type {
 export const LEGACY_CONTENT_RELEASE = 'legacy-baseline'
 
 /** Rilis konten aktif. Berubah hanya pada batas kohort, bukan di tengah stase. */
-export const CONTENT_RELEASE = 'm13-0c-2026-07-14'
+export const CONTENT_RELEASE = 'm13-1a-pilot-2026-07-15'
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
-export const CONTENT_RELEASE_ORDER = [LEGACY_CONTENT_RELEASE, CONTENT_RELEASE] as const
+export const CONTENT_RELEASE_ORDER = [
+  LEGACY_CONTENT_RELEASE,
+  'm13-0c-2026-07-14',
+  CONTENT_RELEASE,
+] as const
 
 export interface RuntimeCurriculumManifest {
   schemaVersion: 1
@@ -336,6 +340,29 @@ export function validasiPack(pack: ContentPack): string[] {
     for (const p of k.tatalaksana.prosedur ?? []) {
       if (!pack.tindakan[p]) masalah.push(`Kasus ${k.id}: tindakan '${p}' tidak ada di katalog`)
     }
+    for (const item of k.tatalaksana.tindakanSalahUmum ?? []) {
+      if (!pack.tindakan[item.id]) masalah.push(`Kasus ${k.id}: tindakan salah '${item.id}' tidak ada di katalog`)
+      if (k.tatalaksana.prosedur?.includes(item.id)) {
+        masalah.push(`Kasus ${k.id}: tindakan '${item.id}' sekaligus benar dan salah`)
+      }
+    }
+    for (const id of k.stabilisasiWajib ?? []) {
+      if (!k.tatalaksana.prosedur?.includes(id)) {
+        masalah.push(`Kasus ${k.id}: stabilisasiWajib '${id}' bukan prosedur benar`)
+      }
+    }
+    const bulanMin = k.demografi.usiaBulanMin
+    const bulanMax = k.demografi.usiaBulanMax
+    if ((bulanMin === undefined) !== (bulanMax === undefined)) {
+      masalah.push(`Kasus ${k.id}: rentang usia bulan harus lengkap`)
+    } else if (bulanMin !== undefined && bulanMax !== undefined) {
+      if (bulanMin < 0 || bulanMax > 11 || bulanMin > bulanMax) {
+        masalah.push(`Kasus ${k.id}: rentang usia bulan tidak valid`)
+      }
+      if (k.demografi.usiaMin !== 0 || k.demografi.usiaMax !== 0) {
+        masalah.push(`Kasus ${k.id}: usia bulan hanya sah untuk pasien <1 tahun`)
+      }
+    }
     // Rujukan berjenjang: kasus wajib-rujuk harus tahu spesialisasi tujuannya,
     // dan minimal satu RS di jejaring menyediakannya.
     if (k.harusDirujuk) {
@@ -359,6 +386,17 @@ export function validasiPack(pack: ContentPack): string[] {
         masalah.push(`IGD ${k.id}: disposisiBenar rujuk tapi tanpa spesialisRujukan`)
       } else if (!pack.rumahSakit.some((rs) => rs.spesialisasi.includes(k.spesialisRujukan!))) {
         masalah.push(`IGD ${k.id}: tidak ada RS dengan spesialisasi '${k.spesialisRujukan}'`)
+      }
+      const kapabilitas = k.kapabilitasRujukanSalahSatu ?? []
+      if (
+        kapabilitas.length > 0 &&
+        !pack.rumahSakit.some(
+          (rs) =>
+            (!k.spesialisRujukan || rs.spesialisasi.includes(k.spesialisRujukan)) &&
+            kapabilitas.some((item) => rs.kapabilitas?.includes(item)),
+        )
+      ) {
+        masalah.push(`IGD ${k.id}: tidak ada RS dengan kapabilitas rujukan yang disyaratkan`)
       }
     }
   }

@@ -28,6 +28,7 @@ import { hitungSkor } from './scoring'
 import { KAPASITAS_EDUKASI } from './clinic'
 import { HARI_STASE } from './paketUjian'
 import { Rng } from './core/rng'
+import { rumahSakitCocokUntukIgd } from './igd'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
 import type { GameState, ModeStase, PenilaianEncounter } from './state'
@@ -46,6 +47,7 @@ interface Profil {
   diagnosisTegakProb: number
   obatBenarFraction: number
   obatAlternatifProb: number
+  tindakanFraction: number
   edukasiFraction: number
   disposisiCorrectProb: number
   kunjunganKualitas: 'teladan' | 'cepat' | 'acak'
@@ -61,6 +63,7 @@ const SPEEDRUNNER: Profil = {
   diagnosisTegakProb: 0.9,
   obatBenarFraction: 1,
   obatAlternatifProb: 1,
+  tindakanFraction: 1,
   edukasiFraction: 0.1,
   disposisiCorrectProb: 1,
   kunjunganKualitas: 'cepat',
@@ -76,6 +79,7 @@ const TELITI: Profil = {
   diagnosisTegakProb: 1,
   obatBenarFraction: 1,
   obatAlternatifProb: 1,
+  tindakanFraction: 1,
   edukasiFraction: 1,
   disposisiCorrectProb: 1,
   kunjunganKualitas: 'teladan',
@@ -91,6 +95,7 @@ const CEROBOH: Profil = {
   diagnosisTegakProb: 0.7,
   obatBenarFraction: 0.6,
   obatAlternatifProb: 0.5,
+  tindakanFraction: 0.6,
   edukasiFraction: 0.3,
   disposisiCorrectProb: 0.7,
   kunjunganKualitas: 'acak',
@@ -137,7 +142,17 @@ function beresIgd(state: GameState): GameState {
     } else if (s.igd.fase === 'pasca_rosc') {
       s = coba(s, { type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' })
     } else if (s.igd.fase === 'disposisi') {
-      s = coba(s, { type: 'DISPOSISI_IGD', jenis: kasus.disposisiBenar })
+      const rumahSakit =
+        kasus.disposisiBenar === 'rujuk'
+          ? PACK.rumahSakit
+              .filter((rs) => rumahSakitCocokUntukIgd(kasus, rs))
+              .sort((a, b) => a.jarakMenit - b.jarakMenit || a.id.localeCompare(b.id))[0]
+          : undefined
+      s = coba(s, {
+        type: 'DISPOSISI_IGD',
+        jenis: kasus.disposisiBenar,
+        ...(rumahSakit ? { rumahSakitId: rumahSakit.id } : {}),
+      })
     } else break
   }
   return s
@@ -205,6 +220,11 @@ function tanganiPasienProfil(
   for (const grupMentah of kasus.tatalaksana.obatAlternatif ?? []) {
     const grup = grupMentah.filter((id) => !terlarangGabungan.includes(id))
     if (grup[0] && rng.chance(profil.obatAlternatifProb)) s = coba(s, { type: 'TAMBAH_OBAT', obatId: grup[0] })
+  }
+  for (const tindakanId of kasus.tatalaksana.prosedur ?? []) {
+    if (rng.chance(profil.tindakanFraction)) {
+      s = coba(s, { type: 'TAMBAH_TINDAKAN', tindakanId })
+    }
   }
   for (const edukasiId of kasus.tatalaksana.edukasi.slice(0, KAPASITAS_EDUKASI)) {
     if (rng.chance(profil.edukasiFraction)) s = coba(s, { type: 'TAMBAH_EDUKASI', edukasiId })

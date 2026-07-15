@@ -11,11 +11,19 @@ import {
   validasiM13EvidenceAudit,
 } from '.'
 
+const M13_0B_DELTA_IDS = new Set(M13_DELTA_AUDITS.map((audit) => audit.id))
+const M13_0B_BLUEPRINT = {
+  ...CURRICULUM_BLUEPRINT,
+  evidenceBindings: CURRICULUM_BLUEPRINT.evidenceBindings.filter(
+    (binding) => !binding.audit || M13_0B_DELTA_IDS.has(binding.audit.deltaId),
+  ),
+}
+
 describe('M13-0B - source registry dan delta audit 2026', () => {
   it('registry dan empat audit lintas-facet lolos validator', () => {
     expect(
       validasiM13EvidenceAudit(
-        CURRICULUM_BLUEPRINT,
+        M13_0B_BLUEPRINT,
         PACK,
         M13_SOURCE_REGISTRY,
         M13_DELTA_AUDITS,
@@ -86,7 +94,9 @@ describe('M13-0B - source registry dan delta audit 2026', () => {
   })
 
   it('binding audit menggantikan placeholder dan mengikuti adjudikasi physician 4/4', () => {
-    const auditedBindings = CURRICULUM_BLUEPRINT.evidenceBindings.filter((binding) => binding.audit)
+    const auditedBindings = CURRICULUM_BLUEPRINT.evidenceBindings.filter(
+      (binding) => binding.audit && M13_0B_DELTA_IDS.has(binding.audit.deltaId),
+    )
     expect(auditedBindings).toHaveLength(32)
     const expectedStatus = {
       hipertensi_esensial: 'accepted_with_limitation',

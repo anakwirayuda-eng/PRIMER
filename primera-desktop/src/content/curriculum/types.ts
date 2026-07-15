@@ -197,6 +197,18 @@ export type EvidenceFacet =
   | 'formulary'
   | 'ukm-objective'
 
+export interface EvidenceGovernanceContext {
+  policyId: string
+  floorSources: EvidenceReference[]
+  supersedingSources: EvidenceReference[]
+  resourceSources: EvidenceReference[]
+  gracefulDegradation:
+    | 'verified_available'
+    | 'variable_or_unverified'
+    | 'unavailable_or_outside_scope'
+  implementationNote: string
+}
+
 export interface EvidenceBinding {
   id: string
   subject: EvidenceSubject
@@ -207,6 +219,7 @@ export interface EvidenceBinding {
   population?: string
   reviewStatus: EvidenceReviewStatus
   audit?: EvidenceAudit
+  governance?: EvidenceGovernanceContext
 }
 
 export type SourceLifecycleStatus =

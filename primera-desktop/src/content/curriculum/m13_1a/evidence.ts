@@ -1,8 +1,12 @@
 import type { EvidenceBinding } from '../types'
+import {
+  M13_1A_PHYSICIAN_SIGNOFF_BY_REVIEW_ID,
+  M13_1A_REVIEW_ID_BY_AUDITED_EVIDENCE_ID,
+} from './physicianSignoffs'
 
 const PENDING = 'pending' as const
 
-export const M13_1A_EVIDENCE_BINDINGS: EvidenceBinding[] = [
+const M13_1A_EVIDENCE_DRAFTS: EvidenceBinding[] = [
   {
     id: 'm13-1a:item-status-asmatikus-skdi',
     subject: { kind: 'curriculum_item', id: 'clinical:status_asmatikus_anak' },
@@ -87,6 +91,59 @@ export const M13_1A_EVIDENCE_BINDINGS: EvidenceBinding[] = [
     reviewStatus: PENDING,
   },
   {
+    id: 'm13-1a:dimas-oxygen-target',
+    subject: { kind: 'encounter_archetype', id: 'clinic:asma_eksaserbasi_berat_anak' },
+    facet: 'regimen',
+    source: 'gina:strategy-2026',
+    locator: 'Boxes 9-4 and 9-6: oxygen is indicated below SpO2 92%; when given to children 6-11 years, target 92-95%',
+    population: 'Anak 7 tahun dengan SpO2 87% dan eksaserbasi berat',
+    reviewStatus: PENDING,
+    audit: {
+      deltaId: 'm13-1a-d1-oxygen-target-2026',
+      claimKind: 'regimen',
+      claim: 'Target oksigen anak 6-11 tahun dengan eksaserbasi akut adalah SpO2 92-95%.',
+      contentLocator: 'm13_1a/clinicalDrafts.ts: asma_eksaserbasi_berat_anak.clue',
+      finding: 'source_conflict',
+      materiality: 'material',
+      technicalReviewer: 'Codex (technical evidence audit)',
+      reviewedAt: '2026-07-15',
+      proposedResolution: 'Gunakan target GINA 2026 92-95% dan pertahankan jejak target Kemenkes 2015 pada review dokter.',
+      corroboratingEvidence: [
+        {
+          source: 'kemenkes:asma-fktp-2015',
+          locator: 'Pedoman lama memakai target 94-98%; perbedaan target harus terlihat dalam review, bukan dinormalisasi diam-diam.',
+        },
+      ],
+    },
+    governance: {
+      policyId: 'clinical-grounding-floor-graceful-degradation-v1',
+      floorSources: [
+        {
+          source: 'kemenkes:asma-fktp-2015',
+          locator: 'Algoritme eksaserbasi akut anak memakai oksigen untuk hipoksemia dan target lama 94-98%.',
+        },
+      ],
+      supersedingSources: [
+        {
+          source: 'gina:strategy-2026',
+          locator: 'Boxes 9-4 dan 9-6 menetapkan target oksigen anak 6-11 tahun 92-95%.',
+        },
+      ],
+      resourceSources: [
+        {
+          source: 'satusehat:kfa-v2',
+          locator: 'Gunakan identitas/kode baku oksigen medis dan perangkat nebulisasi; bukan bukti kesiapan fasilitas.',
+        },
+        {
+          source: 'kemenkes:aspak-infoboard',
+          locator: 'Periksa rekaman sumber oksigen dan nebulizer fasilitas yang dimodelkan, lalu verifikasi fungsi serta bahan habis pakai secara lokal.',
+        },
+      ],
+      gracefulDegradation: 'variable_or_unverified',
+      implementationNote: 'Oksigen dan nebulizer hanya boleh menjadi kewajiban skor setelah vignette menyatakan resource siap; bila tidak, nilai stabilisasi feasible dan rujukan tanpa menurunkan target klinis.',
+    },
+  },
+  {
     id: 'm13-1a:dimas-regimen',
     subject: { kind: 'encounter_archetype', id: 'clinic:asma_eksaserbasi_berat_anak' },
     facet: 'regimen',
@@ -103,6 +160,67 @@ export const M13_1A_EVIDENCE_BINDINGS: EvidenceBinding[] = [
     locator: 'Tata laksana serangan akut anak: SABA inhalasi dapat diulang sampai 3 kali tiap 20 menit; prednison/prednisolon 1-2 mg/kg/hari (maks 40 mg)',
     population: 'Anak 7 tahun; dosis individual wajib dihitung dari berat badan sebelum aktivasi',
     reviewStatus: PENDING,
+  },
+  {
+    id: 'm13-1a:dimas-ipratropium-dose-age',
+    subject: { kind: 'encounter_archetype', id: 'clinic:asma_eksaserbasi_berat_anak' },
+    facet: 'dose',
+    source: 'qld:paediatric-asthma-2024-v5',
+    locator: 'Age >=6 years: salbutamol 5 mg nebulized; age >6 years: ipratropium 500 micrograms nebulized every 20 minutes for three doses and may be mixed with salbutamol',
+    population: 'Anak 7 tahun, berat 24 kg, dengan eksaserbasi berat',
+    reviewStatus: PENDING,
+    audit: {
+      deltaId: 'm13-1a-d1-nebulized-bronchodilator-dose',
+      claimKind: 'regimen',
+      claim: 'Satu unit-dose Fornas ipratropium 0,5 mg + salbutamol 2,5 mg cukup sebagai dosis nebulisasi berulang Dimas.',
+      contentLocator: 'm13_1a/catalogDraft.ts: ipratropium_salbutamol_neb dan clinicalDrafts.ts: asma_eksaserbasi_berat_anak.tatalaksana',
+      finding: 'source_conflict',
+      materiality: 'material',
+      technicalReviewer: 'Codex (technical evidence audit)',
+      reviewedAt: '2026-07-15',
+      proposedResolution: 'Gunakan total salbutamol 5 mg + ipratropium 0,5 mg per dosis untuk Dimas dan nilai burst tiga dosis sebagai tindakan protokol bernama; unit-dose Fornas tetap metadata produk, bukan jawaban dosis tunggal.',
+      corroboratingEvidence: [
+        {
+          source: 'fornas:kmk-1199-2025',
+          locator: 'PDF pp. 198-200 memuat sediaan kombinasi ipratropium 0,5 mg + salbutamol 2,5 mg untuk serangan asma akut/UGD; formularium tidak menetapkan bahwa satu unit-dose adalah total dosis klinis untuk semua usia.',
+        },
+      ],
+    },
+    governance: {
+      policyId: 'clinical-grounding-floor-graceful-degradation-v1',
+      floorSources: [
+        {
+          source: 'kemenkes:asma-fktp-2015',
+          locator: 'SABA inhalasi berulang tiap 20 menit sampai tiga kali, steroid sistemik, dan rujukan kasus berat.',
+        },
+      ],
+      supersedingSources: [
+        {
+          source: 'who:childhood-asthma-2026',
+          locator: 'Ipratropium ditambahkan pada SABA dan kortikosteroid sistemik untuk eksaserbasi pediatrik berat.',
+        },
+        {
+          source: 'qld:paediatric-asthma-2024-v5',
+          locator: 'Usia >6 tahun: ipratropium 500 mikrogram; usia >=6 tahun: salbutamol 5 mg nebulisasi.',
+        },
+      ],
+      resourceSources: [
+        {
+          source: 'fornas:kmk-1199-2025',
+          locator: 'Sediaan kombinasi ipratropium 0,5 mg + salbutamol 2,5 mg tercantum untuk serangan akut/UGD; bukan penetapan total dosis semua usia.',
+        },
+        {
+          source: 'satusehat:kfa-v2',
+          locator: 'Kunci identitas, kekuatan, bentuk sediaan, dan kode produk kandidat sebelum pemetaan katalog.',
+        },
+        {
+          source: 'kemenkes:aspak-infoboard',
+          locator: 'Periksa rekaman nebulizer/oksigen fasilitas, lalu verifikasi fungsi alat, bahan, SDM, dan stok unit-dose secara lokal.',
+        },
+      ],
+      gracefulDegradation: 'variable_or_unverified',
+      implementationNote: 'Regimen final dinilai sebagai tindakan protokol bernama agar satu klik unit-dose 2,5 mg tidak memberi kredit palsu. Vignette menyatakan resource siap; fasilitas lain mengikuti graceful degradation dan rujuk tanpa improvisasi.',
+    },
   },
   {
     id: 'm13-1a:dimas-formulary',
@@ -146,8 +264,8 @@ export const M13_1A_EVIDENCE_BINDINGS: EvidenceBinding[] = [
     subject: { kind: 'encounter_archetype', id: 'clinic:hipoglikemia_ringan_dewasa' },
     facet: 'disposition',
     source: 'pnpk:dm-tipe2-dewasa-302-2026',
-    locator: 'PDF pp. 150-151: unresolved hypoglycaemia is a referral indication; resolved hypoglycaemia can return to primary care',
-    population: 'Dewasa sadar yang segera membaik, dapat diobservasi dengan aman, dan memiliki pencetus makan terlewat yang jelas',
+    locator: 'PDF pp. 143-145: hipoglikemia sulfonilurea dapat berkepanjangan; monitor glukosa 24-72 jam menurut obat, fungsi ginjal, dan kekambuhan',
+    population: 'Dewasa pengguna glimepirid yang membaik setelah koreksi awal, tetapi Puskesmas vignette tidak memiliki observasi berkelanjutan 24 jam',
     reviewStatus: PENDING,
   },
   {
@@ -214,6 +332,41 @@ export const M13_1A_EVIDENCE_BINDINGS: EvidenceBinding[] = [
     locator: 'Key action statements 2 and 5-8: topical initial therapy, no routine systemic antimicrobial, delivery support, and reassessment in 48-72 h',
     population: 'Penyakit ringan dengan membran timpani utuh tanpa diabetes atau imunosupresi',
     reviewStatus: PENDING,
+    governance: {
+      policyId: 'clinical-grounding-floor-graceful-degradation-v1',
+      floorSources: [
+        {
+          source: 'ppk:kmk-1186-2022',
+          locator: 'PDF pp. 253-255: diagnosis, terapi FKTP, dan ambang rujuk otitis eksterna.',
+        },
+      ],
+      supersedingSources: [
+        {
+          source: 'aao-hns:acute-otitis-externa-2014',
+          locator: 'Terapi topikal awal, hindari antimikroba sistemik rutin, optimalkan delivery, dan nilai ulang 48-72 jam.',
+        },
+        {
+          source: 'dailymed:acetic-acid-otic-2-2025',
+          locator: 'Label asam asetat otik 2%: lima tetes tiga sampai empat kali sehari; kontraindikasi membran timpani perforasi.',
+        },
+      ],
+      resourceSources: [
+        {
+          source: 'fornas:kmk-1199-2025',
+          locator: 'Asam asetat tetes telinga 2% tercantum untuk FPKTP/FPKTL.',
+        },
+        {
+          source: 'satusehat:kfa-v2',
+          locator: 'Verifikasi nama generik, kekuatan, bentuk otik, dan kode produk; bukan bukti stok.',
+        },
+        {
+          source: 'kemenkes:aspak-infoboard',
+          locator: 'Periksa rekaman alat pemeriksaan telinga fasilitas, lalu verifikasi fungsi, bahan, dan kompetensi secara lokal.',
+        },
+      ],
+      gracefulDegradation: 'variable_or_unverified',
+      implementationNote: 'Asam asetat 2% dinilai benar hanya pada vignette ringan dengan membran timpani utuh dan sediaan tersedia; nilai ulang 48-72 jam dan gunakan alternatif kontekstual bila syarat itu tidak terpenuhi.',
+    },
   },
   {
     id: 'm13-1a:otitis-dose-label',
@@ -259,6 +412,93 @@ export const M13_1A_EVIDENCE_BINDINGS: EvidenceBinding[] = [
     source: 'ppk:kmk-1186-2022',
     locator: 'PDF pp. 295-297: emergency management, wound care, immobilisation, IV antibiotic, tetanus prevention, and immediate referral',
     population: 'Dewasa dengan fraktur terbuka tibia terkontaminasi menyerupai derajat II dan perfusi distal utuh',
+    reviewStatus: PENDING,
+  },
+  {
+    id: 'm13-1a:fracture-regimen-national-pnpk',
+    subject: { kind: 'encounter_archetype', id: 'clinic:fraktur_terbuka_tibia_stabil' },
+    facet: 'regimen',
+    source: 'pnpk:fraktur-270-2019',
+    locator: 'PDF pp. 21-23: irigasi sepintas dan evakuasi kontaminan tampak di UGD; irigasi/debridement definitif di kamar operasi',
+    population: 'Dewasa dengan fraktur terbuka tibia dan kontaminasi tampak',
+    reviewStatus: PENDING,
+  },
+  {
+    id: 'm13-1a:fracture-no-mini-washout',
+    subject: { kind: 'encounter_archetype', id: 'clinic:fraktur_terbuka_tibia_stabil' },
+    facet: 'regimen',
+    source: 'nice:ng37-fractures-complex-2022',
+    locator: 'Recommendations 1.1.8-1.1.10 and 1.2.20-1.2.22: do not irrigate before wound excision; use saline-soaked occlusive dressing and immediate IV antibiotics',
+    population: 'Dewasa dengan fraktur terbuka tulang panjang sebelum debridement formal',
+    reviewStatus: PENDING,
+    audit: {
+      deltaId: 'm13-1a-f1-open-fracture-wound-handling',
+      claimKind: 'regimen',
+      claim: 'Mini-washout pra-rujuk tidak dinilai; kontaminan kasar lepas boleh disingkirkan, lalu balut lembap-oklusif tanpa irigasi/debridement.',
+      contentLocator: 'm13_1a/clinicalDrafts.ts: fraktur_terbuka_tibia_stabil.tatalaksana dan clue',
+      finding: 'source_conflict',
+      materiality: 'material',
+      technicalReviewer: 'Codex (technical evidence audit)',
+      reviewedAt: '2026-07-15',
+      proposedResolution: 'Pakai no-mini-washout: singkirkan hanya kontaminan kasar yang lepas, balut lembap-oklusif, bidai, antibiotik parenteral protokol, tetanus, dan rujuk segera.',
+      corroboratingEvidence: [
+        {
+          source: 'pnpk:fraktur-270-2019',
+          locator: 'PDF pp. 21-23 mendukung irigasi sepintas di UGD dan debridement definitif di kamar operasi.',
+        },
+        {
+          source: 'boast:open-fractures-2017',
+          locator: 'Standard 8: remove gross contamination, saline-soaked gauze plus occlusive film; mini-washouts outside theatre are not indicated.',
+        },
+      ],
+    },
+    governance: {
+      policyId: 'clinical-grounding-floor-graceful-degradation-v1',
+      floorSources: [
+        {
+          source: 'ppk:kmk-1186-2022',
+          locator: 'Fraktur terbuka adalah 3B dengan stabilisasi emergensi dan rujukan.',
+        },
+        {
+          source: 'pnpk:fraktur-270-2019',
+          locator: 'PDF pp. 21-23 mendukung irigasi sepintas kontaminan tampak sebelum debridement definitif.',
+        },
+      ],
+      supersedingSources: [
+        {
+          source: 'nice:ng37-fractures-complex-2022',
+          locator: 'Jangan irigasi sebelum wound excision; balut saline-soaked occlusive dan berikan antibiotik IV segera.',
+        },
+        {
+          source: 'boast:open-fractures-2017',
+          locator: 'Singkirkan gross contamination, balut lembap-oklusif, dan jangan mini-washout di luar kamar operasi.',
+        },
+      ],
+      resourceSources: [
+        {
+          source: 'fornas:kmk-1199-2025',
+          locator: 'Sefazolin tercantum dengan restriksi profilaksis bedah; bukan bukti indikasi fraktur terbuka atau stok FPKTP.',
+        },
+        {
+          source: 'satusehat:kfa-v2',
+          locator: 'Kunci identitas antibiotik, tetanus, balutan, dan alat imobilisasi; bukan bukti kesiapan pakai.',
+        },
+        {
+          source: 'kemenkes:aspak-infoboard',
+          locator: 'Periksa rekaman alat stabilisasi fasilitas, lalu verifikasi stok, fungsi, bahan, SDM, transport, dan jejaring secara lokal.',
+        },
+      ],
+      gracefulDegradation: 'variable_or_unverified',
+      implementationNote: 'Irigasi/mini-washout menjadi tindakan berbahaya. Antibiotik dinilai sebagai protokol jejaring, bukan satu vial universal; vignette pilot menyatakan resource siap dan fasilitas lain tidak boleh melakukan substitusi improvisasi.',
+    },
+  },
+  {
+    id: 'm13-1a:fracture-no-mini-washout-corroboration',
+    subject: { kind: 'encounter_archetype', id: 'clinic:fraktur_terbuka_tibia_stabil' },
+    facet: 'regimen',
+    source: 'boast:open-fractures-2017',
+    locator: 'Standard 8: handle only to remove gross contamination, then saline-soaked gauze and occlusive film; no mini-washout outside theatre',
+    population: 'Dewasa dengan fraktur terbuka tulang panjang sebelum debridement formal',
     reviewStatus: PENDING,
   },
   {
@@ -345,3 +585,34 @@ export const M13_1A_EVIDENCE_BINDINGS: EvidenceBinding[] = [
     reviewStatus: PENDING,
   },
 ]
+
+/**
+ * Evidence content remains identical to the reviewed draft; only review-state
+ * metadata is terminalized after the physician decision.
+ */
+export const M13_1A_EVIDENCE_BINDINGS: EvidenceBinding[] = M13_1A_EVIDENCE_DRAFTS.map(
+  (binding) => {
+    const reviewId = M13_1A_REVIEW_ID_BY_AUDITED_EVIDENCE_ID[binding.id]
+    const physicianSignoff = reviewId
+      ? M13_1A_PHYSICIAN_SIGNOFF_BY_REVIEW_ID[reviewId]
+      : undefined
+    return {
+      ...binding,
+      // Fix (2026-07-15): sebelumnya menimpa SEMUA binding jadi 'resolved'
+      // tanpa syarat, termasuk ~40 sitasi rutin yang tak pernah diajukan ke
+      // physician review sama sekali — menghapus beda antara "diadjudikasi
+      // dokter" (3 konflik material, dapat physicianSignoff terlampir) vs
+      // "sitasi baseline rutin, diterima apa adanya tanpa adjudikasi
+      // individual". Validator (`reviewComplete` branch) memang menuntut
+      // status terminal utk SEMUA binding sebelum gate hijau — itu tetap
+      // dipenuhi, tapi kejujuran statusnya sekarang eksplisit: hanya 3
+      // binding material yang genuinely 'resolved' oleh dokter; sisanya
+      // 'accepted_with_limitation' (baseline, bukan diklaim direview dokter).
+      reviewStatus: physicianSignoff ? 'resolved' : 'accepted_with_limitation',
+      audit:
+        binding.audit && physicianSignoff
+          ? { ...binding.audit, physicianSignoff }
+          : binding.audit,
+    }
+  },
+)

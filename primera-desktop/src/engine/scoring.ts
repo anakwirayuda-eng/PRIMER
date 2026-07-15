@@ -107,6 +107,7 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
     (kualitasGabungan / 100) * 35 * guillotine -
       5 * t.cowboy -
       3 * t.obatBerbahaya -
+      3 * t.tindakanBerbahaya -
       1 * t.firewallTerpicu -
       1 * t.stabilisasiTerlewat +
       bonusRujukanTepat +
@@ -245,6 +246,11 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
     if (p.antibiotikTanpaIndikasi) {
       catatan.push(
         `Antibiotik untuk ${p.pasienNama} tidak terindikasi — catatan stewardship ini sampai ke Dinkes.`,
+      )
+    }
+    if (p.tindakanBerbahaya) {
+      catatan.push(
+        `Tindakan pada ${p.pasienNama} berbahaya dan seharusnya tidak dilakukan. Baca kembali batas aman prosedurnya.`,
       )
     }
     if (p.konsekuensiDijadwalkan) {

@@ -6,17 +6,32 @@
  */
 
 import type { IgdState } from './state'
-import type { KasusIgd } from '@content/types'
+import type { KasusIgd, RumahSakit } from '@content/types'
 import type { Rng } from './core/rng'
 import type { ContentPack } from '@content/pack'
+
+/** Kecocokan tujuan IGD: spesialisasi dan, bila dinyatakan kasus, kapabilitas waktu-kritis. */
+export function rumahSakitCocokUntukIgd(kasus: KasusIgd, rumahSakit: RumahSakit): boolean {
+  const spesialisCocok =
+    !kasus.spesialisRujukan || rumahSakit.spesialisasi.includes(kasus.spesialisRujukan)
+  const butuh = kasus.kapabilitasRujukanSalahSatu ?? []
+  const kapabilitasCocok =
+    butuh.length === 0 || butuh.some((item) => rumahSakit.kapabilitas?.includes(item))
+  return spesialisCocok && kapabilitasCocok
+}
 
 export function buatIgd(kasus: KasusIgd, pack: ContentPack, rng: Rng): IgdState {
   const jenisKelamin = kasus.demografi.jenisKelamin ?? (rng.chance(0.5) ? 'L' : 'P')
   const daftarNama = jenisKelamin === 'L' ? pack.namaWarga.pria : pack.namaWarga.wanita
+  const usiaBulan =
+    kasus.demografi.usiaBulanMin !== undefined && kasus.demografi.usiaBulanMax !== undefined
+      ? rng.int(kasus.demografi.usiaBulanMin, kasus.demografi.usiaBulanMax)
+      : undefined
   return {
     kasusId: kasus.id,
     pasienNama: daftarNama.length > 0 ? rng.pick(daftarNama) : 'Warga',
     usia: rng.int(kasus.demografi.usiaMin, kasus.demografi.usiaMax),
+    ...(usiaBulan !== undefined ? { usiaBulan } : {}),
     jenisKelamin,
     rw: rng.int(1, 8),
     fase: 'langkah',

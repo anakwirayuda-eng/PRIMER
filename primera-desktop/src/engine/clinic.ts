@@ -473,8 +473,7 @@ export function nilaiEncounter(
   }
   const stabilisasiTerlewat =
     enc.disposisi === 'rujuk' &&
-    kasus.stabilisasiWajib !== undefined &&
-    !enc.tindakan.includes(kasus.stabilisasiWajib)
+    (kasus.stabilisasiWajib ?? []).some((id) => !enc.tindakan.includes(id))
 
   /* -- Terapi: cakupan obat benar − penalti obat di luar tatalaksana ----------- */
   // Jebakan alergi: bila pasien membawa alergi kelas yang dijebak kasus, standar
@@ -531,6 +530,10 @@ export function nilaiEncounter(
   const tindakanDilakukan = enc.tindakan ?? []
   const prosedurTerpenuhi = prosedurBenar.filter((id) => tindakanDilakukan.includes(id)).length
   const tindakanDiLuar = tindakanDilakukan.filter((id) => !prosedurBenar.includes(id)).length
+  const tindakanSalahDilakukan = (kasus.tatalaksana.tindakanSalahUmum ?? []).filter((item) =>
+    tindakanDilakukan.includes(item.id),
+  )
+  const tindakanBerbahaya = tindakanSalahDilakukan.some((item) => item.bahaya === 'berbahaya')
   const totalSlot = obatBenar.length + grupAlternatif.length + prosedurBenar.length
   const rasioTerapi =
     totalSlot > 0 ? (benarDiresepkan + slotAltTerpenuhi + prosedurTerpenuhi) / totalSlot : 1
@@ -608,6 +611,7 @@ export function nilaiEncounter(
         15 * obatNonPrimerDiresepkan -
         (antibiotikGandaDalamGrup ? 20 : 0) -
         15 * tindakanDiLuar -
+        (tindakanBerbahaya ? 25 : 0) -
         (antibiotikTanpaIndikasi ? 25 : 0),
     ),
     0,
@@ -753,14 +757,15 @@ export function nilaiEncounter(
   // encounter bisa kena >1) → ambil yang paling ketat, bukan else-if.
   //   cowboy (pasien wajib-rujuk dipulangkan)      → maks D (54)
   //   obat berbahaya/kontraindikasi absolut         → maks D (54) — bahaya nyawa
-  //   antibiotik tanpa indikasi (stewardship)       → maks B (69)
-  //   percobaan resep kontraindikasi diblokir firewall → maks B (69) — nyaris,
+  //   antibiotik tanpa indikasi (stewardship)       → maks C (69)
+  //   percobaan resep kontraindikasi diblokir firewall → maks C (69) — nyaris,
   //     tak sampai ke pasien, tapi kelalaian cek alergi tetap kelalaian nyata
   //   rujukanNonSpesialistik (boros, tak membahayakan pasien ini) → maks B (84)
-  //   konfirmasiWajib tak terpenuhi (TB/malaria presumtif tanpa lab)  → maks B (69)
+  //   konfirmasiWajib tak terpenuhi (TB/malaria presumtif tanpa lab)  → maks C (69)
   const capGrade: number[] = []
   if (cowboy) capGrade.push(54)
   if (obatBerbahaya > 0) capGrade.push(54)
+  if (tindakanBerbahaya) capGrade.push(54)
   if (antibiotikTanpaIndikasi) capGrade.push(69)
   // CODEX audit pasca-GM (2026-07-13, temuan #3): lihat komentar
   // `konfirmasiTakTerpenuhi` di atas — cap skorPemeriksaan saja tak cukup
@@ -801,6 +806,7 @@ export function nilaiEncounter(
     // formal tak bisa membacanya sama sekali. Diekspos di sini persis pola
     // cowboy/antibiotikTanpaIndikasi di atas.
     obatBerbahaya: obatBerbahaya > 0,
+    tindakanBerbahaya,
     firewallTerpicu: enc.firewallTerpicu > 0,
     konfirmasiTakTerpenuhi,
     stabilisasiTerlewat,

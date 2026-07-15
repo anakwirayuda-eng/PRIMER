@@ -54,11 +54,17 @@ export function validasiCurriculumBlueprint(blueprint: CurriculumBlueprint, pack
   }
 
   for (const kasus of Object.values(pack.kasus).filter((candidate) => candidate.skdi !== '4A')) {
-    const item = blueprint.curriculumItems.find((candidate) => candidate.id === `clinical:${kasus.id}`)
-    if (!item) {
-      masalah.push(`CurriculumItem: kasus ${kasus.id} level ${kasus.skdi} belum punya item klinis tersendiri`)
-    } else if (item.skdiLevel !== kasus.skdi) {
-      masalah.push(`CurriculumItem ${item.id}: level ${item.skdiLevel ?? '-'} tidak sama dengan kasus ${kasus.skdi}`)
+    const archetype = blueprint.encounterArchetypes.find(
+      (candidate) => candidate.contentRef.kind === 'clinic' && candidate.contentRef.id === kasus.id,
+    )
+    const creditedClinicalItems = (archetype?.credits ?? [])
+      .map((itemId) => blueprint.curriculumItems.find((candidate) => candidate.id === itemId))
+      .filter((item): item is NonNullable<typeof item> => Boolean(item?.id.startsWith('clinical:')))
+    if (creditedClinicalItems.length === 0) {
+      masalah.push(`CurriculumItem: kasus ${kasus.id} level ${kasus.skdi} belum mengkredit item klinis tersendiri`)
+    } else if (!creditedClinicalItems.some((item) => item.skdiLevel === kasus.skdi)) {
+      const creditedLevels = creditedClinicalItems.map((item) => `${item.id}=${item.skdiLevel ?? '-'}`).join(', ')
+      masalah.push(`CurriculumItem: kasus ${kasus.id} level ${kasus.skdi} tidak cocok dengan credit ${creditedLevels}`)
     }
   }
 

@@ -26,6 +26,10 @@ import { KASUS_IGD } from './igd'
 import { SKDI144 } from './skdi144'
 import { NAMA_WARGA } from './nama'
 import { buildCurriculumBlueprint, validasiCurriculumBlueprint } from './curriculum'
+import {
+  aktifkanBlueprintM13_1A,
+  aktifkanKatalogM13_1A,
+} from './curriculum/m13_1a/activation'
 
 function byId<T extends { id: string }>(arr: T[]): Record<string, T> {
   const out: Record<string, T> = {}
@@ -36,7 +40,7 @@ function byId<T extends { id: string }>(arr: T[]): Record<string, T> {
   return out
 }
 
-const semuaKasus: KasusKlinis[] = [
+const semuaKasusDasar: KasusKlinis[] = [
   ...KASUS_INFEKSI,
   ...KASUS_KRONIS,
   ...KASUS_RESPIRASI_GI,
@@ -45,7 +49,7 @@ const semuaKasus: KasusKlinis[] = [
   ...KASUS_METABOLIK_MSK,
   ...KASUS_KIA_JIWA,
 ]
-const semuaKeluarga: KeluargaBinaan[] = [
+const semuaKeluargaDasar: KeluargaBinaan[] = [
   ...KELUARGA_DESA_A,
   ...KELUARGA_DESA_B,
   ...KELUARGA_DESA_C,
@@ -54,20 +58,20 @@ const semuaKeluarga: KeluargaBinaan[] = [
   ...KELUARGA_DESA_F,
 ]
 
-const kasusById = byId(semuaKasus)
+const kasusDasarById = byId(semuaKasusDasar)
 
 // Tautkan Dex 144 ke kasus playable via kecocokan ICD-10 (agar penulis kasus
 // tidak perlu menyentuh skdi144.ts — anti-konflik antar penulis konten).
 const skdi144Tertaut = SKDI144.map((entri) => {
   if (entri.kasusId) return entri
-  const kasusCocok = semuaKasus.find((k) => k.icd10 === entri.icd10)
+  const kasusCocok = semuaKasusDasar.find((k) => k.icd10 === entri.icd10)
   return kasusCocok ? { ...entri, kasusId: kasusCocok.id } : entri
 })
 
-const CONTENT_CATALOG: ContentCatalog = {
-  kasus: kasusById,
+const BASE_CONTENT_CATALOG: ContentCatalog = {
+  kasus: kasusDasarById,
   kasusIgd: byId(KASUS_IGD),
-  keluarga: byId(semuaKeluarga),
+  keluarga: byId(semuaKeluargaDasar),
   kader: KADER_PROFIL,
   rw: RW_PROFIL,
   rumahSakit: RUMAH_SAKIT,
@@ -79,8 +83,11 @@ const CONTENT_CATALOG: ContentCatalog = {
   namaWarga: NAMA_WARGA,
 }
 
-/** M13-0A: manifest authoring kanonik lengkap, termasuk evidence registry. */
-export const CURRICULUM_BLUEPRINT = buildCurriculumBlueprint(CONTENT_CATALOG)
+const BASE_CURRICULUM_BLUEPRINT = buildCurriculumBlueprint(BASE_CONTENT_CATALOG)
+const CONTENT_CATALOG = aktifkanKatalogM13_1A(BASE_CONTENT_CATALOG)
+
+/** M13-0A + M13-1a: manifest authoring kanonik lengkap, termasuk evidence registry. */
+export const CURRICULUM_BLUEPRINT = aktifkanBlueprintM13_1A(BASE_CURRICULUM_BLUEPRINT)
 
 /**
  * M13-0C: runtime hanya membawa proyeksi keputusan draw/credit. Evidence dan

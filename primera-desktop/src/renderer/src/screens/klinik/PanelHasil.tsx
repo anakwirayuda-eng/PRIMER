@@ -56,6 +56,8 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
     bendera.push({ teks: 'Kasus rujukan ditahan sendiri', kelas: 'chip--merah' })
   if (hasil.obatBerbahaya)
     bendera.push({ teks: 'Obat berbahaya diresepkan', kelas: 'chip--merah' })
+  if (hasil.tindakanBerbahaya)
+    bendera.push({ teks: 'Tindakan berbahaya dilakukan', kelas: 'chip--merah' })
   if (hasil.firewallTerpicu)
     bendera.push({ teks: 'Percobaan resep kontraindikasi diblokir firewall', kelas: 'chip--kunyit' })
   if (hasil.antibiotikTanpaIndikasi)

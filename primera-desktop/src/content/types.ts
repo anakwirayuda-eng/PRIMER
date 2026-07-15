@@ -148,6 +148,15 @@ export interface Tatalaksana {
   obatSalahUmum?: { id: string; alasan: string; bahaya?: 'kontraindikasi' | 'nonPrimer' }[]
   /** Prosedur/tindakan yang tepat (id dari katalog tindakan). */
   prosedur?: string[]
+  /**
+   * Tindakan yang tampak masuk akal tetapi salah. Tindakan berbahaya mencapai
+   * pasien (berbeda dari firewall resep), sehingga mendapat cap keselamatan.
+   */
+  tindakanSalahUmum?: {
+    id: string
+    alasan: string
+    bahaya?: 'berbahaya' | 'nonPrimer'
+  }[]
   /** Topik edukasi wajib (id dari katalog edukasi). */
   edukasi: string[]
   /**
@@ -211,7 +220,14 @@ export interface KasusKlinis {
   // keluhan/klinis/skor, murni perbaikan tampilan.
   /** true bila keluhanUtama dituturkan wali/pendamping, bukan pasien sendiri. */
   keluhanUtamaOlehPendamping?: boolean
-  demografi: { usiaMin: number; usiaMax: number; jenisKelamin?: JenisKelamin }
+  demografi: {
+    usiaMin: number
+    usiaMax: number
+    jenisKelamin?: JenisKelamin
+    /** Rentang bulan dipakai bila pasien belum genap satu tahun. */
+    usiaBulanMin?: number
+    usiaBulanMax?: number
+  }
   vital: TandaVital
   anamnesis: PertanyaanAnamnesis[]
   pemeriksaanFisik: TemuanFisik[]
@@ -276,7 +292,7 @@ export interface KasusKlinis {
    * Tindakan yang harus selesai sebelum pasien dengan disposisi rujuk dikirim.
    * Dipakai selektif untuk stabilisasi yang jelas wajib pada vignette ini.
    */
-  stabilisasiWajib?: string
+  stabilisasiWajib?: string[]
   /**
    * M10.5 §3a (2026-07-12): kategori alasan yang SAH untuk merujuk kasus ini
    * walau `harusDirujuk` false — dideklarasikan pemain saat DISPOSISI (lihat
@@ -322,7 +338,13 @@ export interface KasusIgd {
   skdi: Skdi
   /** Narasi kedatangan dramatis. */
   pembuka: string
-  demografi: { usiaMin: number; usiaMax: number; jenisKelamin?: JenisKelamin }
+  demografi: {
+    usiaMin: number
+    usiaMax: number
+    jenisKelamin?: JenisKelamin
+    usiaBulanMin?: number
+    usiaBulanMax?: number
+  }
   vitalAwal: TandaVital
   /** Stabilitas awal 0-100 (biasanya 45-60 — genting tapi tertolong). */
   stabilitasAwal: number
@@ -330,6 +352,8 @@ export interface KasusIgd {
   /** Disposisi benar setelah stabil. */
   disposisiBenar: 'rujuk' | 'pulang'
   spesialisRujukan?: SpesialisasiRs
+  /** Minimal satu kapabilitas ini wajib tersedia di RS tujuan. */
+  kapabilitasRujukanSalahSatu?: KapabilitasRs[]
   clue: string
 }
 
@@ -348,6 +372,8 @@ export type SpesialisasiRs =
   | 'jiwa'
   | 'paru'
 
+export type KapabilitasRs = 'pci_primer_24_7' | 'fibrinolisis_stemi'
+
 export interface RumahSakit {
   id: string
   nama: string
@@ -356,6 +382,8 @@ export interface RumahSakit {
   /** Jarak tempuh ambulans (menit) — pertimbangan kasus emergensi. */
   jarakMenit: number
   spesialisasi: SpesialisasiRs[]
+  /** Kapabilitas layanan waktu-kritis yang relevan untuk routing rujukan. */
+  kapabilitas?: KapabilitasRs[]
   /** Kapasitas dasar bed rujukan/hari (ketersediaan riil di-roll harian). */
   bedDasar: number
 }

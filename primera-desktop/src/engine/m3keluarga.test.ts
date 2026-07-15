@@ -6,6 +6,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
+import { encounterArchetypeAktif, ukmScenarioAktif } from '@content/pack'
 import type { GameState, KeluargaState, HasilKunjungan } from './state'
 import type { Action } from './actions'
 import { advance, MAKS_BINAAN, HARI_BUKA_KUNJUNGAN } from './reducer'
@@ -74,7 +75,21 @@ describe('M3c — konten 16 keluarga', () => {
     const ujian = buildInitialState('Uji', SEED, PACK, { mode: 'ujian' })
     const karmaKarier = karier.jadwal.filter((j) => j.jenis === 'karma_igd')
     const karmaUjian = ujian.jadwal.filter((j) => j.jenis === 'karma_igd')
-    expect(karmaUjian).toHaveLength(karmaKarier.length)
+    const keluargaLayakUjian = new Set(
+      Object.values(PACK.keluarga)
+        .filter((keluarga) => {
+          const skenario = keluarga.arc.kunjungan[0]
+          return Boolean(
+            skenario?.karma &&
+              ukmScenarioAktif(PACK, keluarga.id, skenario.id, 'ujian', ujian.contentRelease) &&
+              encounterArchetypeAktif(PACK, 'clinic', skenario.karma.kasusId, 'ujian', ujian.contentRelease),
+          )
+        })
+        .map((keluarga) => keluarga.id),
+    )
+    expect(new Set(karmaUjian.map((j) => j.keluargaId))).toEqual(keluargaLayakUjian)
+    expect(karmaUjian.map((j) => j.keluargaId)).not.toContain('keluarga_yani')
+    expect(karmaUjian.map((j) => j.keluargaId)).not.toContain('keluarga_gunawan')
 
     for (const jUjian of karmaUjian) {
       const jKarier = karmaKarier.find((j) => j.keluargaId === jUjian.keluargaId)!

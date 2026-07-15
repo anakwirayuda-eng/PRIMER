@@ -16,13 +16,13 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     const summary = ringkasanCakupanKurikulum(CURRICULUM_BLUEPRINT)
     expect(summary).toEqual({
       fktp144Total: 144,
-      fktp144WithCertifyingClinicArchetype: 45,
-      fktp144WithoutCertifyingClinicArchetype: 99,
-      additionalClinicalItems: 22,
+      fktp144WithCertifyingClinicArchetype: 48,
+      fktp144WithoutCertifyingClinicArchetype: 96,
+      additionalClinicalItems: 25,
       ukmObjectives: 12,
-      clinicArchetypes: 67,
-      igdArchetypes: 5,
-      ukmScenarios: 26,
+      clinicArchetypes: 73,
+      igdArchetypes: 6,
+      ukmScenarios: 27,
     })
   })
 
@@ -39,13 +39,16 @@ describe('M13-0A — canonical curriculum blueprint', () => {
 
   it('setiap kasus level 3A/3B/2 punya item tersendiri dengan level yang tetap utuh', () => {
     const non4A = Object.values(PACK.kasus).filter((kasus) => kasus.skdi !== '4A')
-    expect(non4A).toHaveLength(17)
+    expect(non4A).toHaveLength(19)
     for (const kasus of non4A) {
-      const item = CURRICULUM_BLUEPRINT.curriculumItems.find(
-        (candidate) => candidate.id === `clinical:${kasus.id}`,
+      const archetype = CURRICULUM_BLUEPRINT.encounterArchetypes.find(
+        (candidate) => candidate.contentRef.kind === 'clinic' && candidate.contentRef.id === kasus.id,
       )
-      expect(item, kasus.id).toBeDefined()
-      expect(item?.skdiLevel, kasus.id).toBe(kasus.skdi)
+      const clinicalCredits = (archetype?.credits ?? [])
+        .filter((itemId) => itemId.startsWith('clinical:'))
+        .map((itemId) => CURRICULUM_BLUEPRINT.curriculumItems.find((item) => item.id === itemId))
+      expect(clinicalCredits.length, kasus.id).toBeGreaterThan(0)
+      expect(clinicalCredits.some((item) => item?.skdiLevel === kasus.skdi), kasus.id).toBe(true)
     }
   })
 
@@ -55,7 +58,7 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     )
     expect(objectives).toHaveLength(12)
     const objectiveIds = new Set(objectives.map((item) => item.id))
-    expect(CURRICULUM_BLUEPRINT.ukmScenarios).toHaveLength(26)
+    expect(CURRICULUM_BLUEPRINT.ukmScenarios).toHaveLength(27)
     for (const scenario of CURRICULUM_BLUEPRINT.ukmScenarios) {
       expect(scenario.credits.length, scenario.id).toBeGreaterThan(0)
       expect(scenario.credits.every((itemId) => objectiveIds.has(itemId)), scenario.id).toBe(true)
@@ -105,6 +108,7 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     expect(conceptsOf('fktp144:acute_gastroenteritis')).toEqual([
       'concept:acute_gastroenteritis',
       'concept:cholera',
+      'concept:gastroenteritis_bayi_dehidrasi_berat',
       'concept:giardiasis',
     ])
     expect(conceptsOf('fktp144:genital_discharge')).toContain('concept:gonorrhea')
@@ -120,10 +124,10 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     const igd = CURRICULUM_BLUEPRINT.encounterArchetypes.filter(
       (archetype) => archetype.channel === 'igd',
     )
-    expect(igd).toHaveLength(5)
+    expect(igd).toHaveLength(6)
     for (const archetype of igd) {
       expect(archetype.credits, archetype.id).toEqual([])
-      expect(archetype.creditRationale, archetype.id).toMatch(/tidak memiliki keputusan diagnosis/i)
+      expect(archetype.creditRationale, archetype.id).toMatch(/tidak.*(?:diagnosis|diagnostik)/i)
       expect(archetype.excludedCredits?.length, archetype.id).toBeGreaterThan(0)
     }
   })
@@ -174,13 +178,27 @@ describe('M13-0A — canonical curriculum blueprint', () => {
 
   it('M13-0B hanya men-terminalkan empat delta; binding baseline lain tetap pending', () => {
     expect(CURRICULUM_BLUEPRINT.evidenceBindings.length).toBeGreaterThan(0)
-    const audited = CURRICULUM_BLUEPRINT.evidenceBindings.filter((binding) => binding.audit)
-    const baseline = CURRICULUM_BLUEPRINT.evidenceBindings.filter((binding) => !binding.audit)
+    const m13_1a = CURRICULUM_BLUEPRINT.evidenceBindings.filter((binding) =>
+      binding.id.startsWith('m13-1a:'),
+    )
+    const audited = CURRICULUM_BLUEPRINT.evidenceBindings.filter(
+      (binding) => binding.audit && !binding.id.startsWith('m13-1a:'),
+    )
+    const baseline = CURRICULUM_BLUEPRINT.evidenceBindings.filter(
+      (binding) => !binding.audit && !binding.id.startsWith('m13-1a:'),
+    )
     expect(audited).toHaveLength(32)
     expect(audited.filter((binding) => binding.reviewStatus === 'resolved')).toHaveLength(16)
     expect(audited.filter((binding) => binding.reviewStatus === 'accepted_with_limitation')).toHaveLength(16)
     expect(audited.every((binding) => binding.audit?.physicianSignoff)).toBe(true)
     expect(baseline.every((binding) => binding.reviewStatus === 'pending')).toBe(true)
+    expect(m13_1a.length).toBeGreaterThan(30)
+    expect(
+      m13_1a.every((binding) =>
+        ['resolved', 'accepted_with_limitation'].includes(binding.reviewStatus),
+      ),
+    ).toBe(true)
+    expect(m13_1a.filter((binding) => binding.audit)).toHaveLength(3)
   })
 
   it('validator menangkap credit yatim, link lama belum direkonsiliasi, dan skenario UKM hilang', () => {

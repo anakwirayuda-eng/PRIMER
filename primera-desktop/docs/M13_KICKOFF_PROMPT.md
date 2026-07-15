@@ -1,11 +1,14 @@
-# M13 KICKOFF PROMPT (rev 4.2.1) — Curriculum & Release Program
+# M13 KICKOFF PROMPT (rev 4.2.3) — Curriculum & Release Program
 
 > Dokumen KEPUTUSAN AKTIF: schema, milestone, gate, dan aturan kerja M13.
 > Riwayat revisi lengkap + jejak audit 5 ronde (CODEX×5, DeepThink×1, semua
 > temuan diverifikasi independen ke kode/regulasi sebelum diadopsi) ada di
 > `M13_DECISION_LOG.md` — pindahan dari §0-0.2 rev lama supaya kickoff ini
-> tetap ringkas. Rev 4.2.1 adalah errata hasil audit CODEX ronde-5 dan
-> menjadi source of truth M13 pada checkpoint ini bersama decision log.
+> tetap ringkas. Rev 4.2.2 menambahkan kebijakan klinis universal yang
+> ditetapkan dr. Wirayuda pada 2026-07-15. Rev 4.2.3 menambahkan keputusan
+> scope resource M13-RP1: baseline naratif berlaku sekarang, sedangkan
+> simulasi readiness fasilitas ditunda. Dokumen ini bersama decision log
+> menjadi source of truth M13 pada checkpoint ini.
 
 ## 0. M10.5 — CLOSED
 
@@ -23,17 +26,48 @@ Lima keputusan. Revisi hanya lewat §15 (Change control).
 
 | Sumber | Menjawab pertanyaan apa |
 |---|---|
-| Guideline spesialis/PNPK TERKINI, **sesuai kelompok usia pasien** (§3) | Regimen tatalaksana (dosis, protokol) |
-| PPK FKTP 1186/2022 **+ amandemen 1936/2022** (keduanya wajib dicek, §3) | Scope kompetensi FKTP **DAN** regimen praktis level-FKTP (PPK bukan cuma dokumen scope) |
+| PPK FKTP dan PNPK/aturan Kemenkes **aktif paling baru**, sesuai topik, usia, dan populasi (§3). Per 2026-07-15, baseline umum FKTP adalah 1186/2022 + amandemen 1936/2022 sampai ada pengganti formal | **Floor/ambang bawah** klinis Indonesia: scope FKTP, regimen, keselamatan, dan disposisi yang dinyatakan sumber |
+| Guideline primer/sintesis EBM mutakhir yang lebih kuat dan applicable | Dapat menaikkan standar di atas floor, dengan syarat supersesi di bawah |
 | SKDI 2012 | Plafon kompetensi kurikulum murni (bukan protokol) |
-| Fornas AKTIF — **KMK 1199/2025** (efektif 1 April 2026, SUDAH berlaku). **DOEN 2021 TERCABUT** — jangan dipakai rujukan dosis | Akses/restriksi JKN (formularium/reimbursement) |
+| Fornas AKTIF — **KMK 1199/2025** (efektif 1 April 2026). DOEN 2021 sudah dicabut; fungsi daftar obat esensial kini terintegrasi dalam Fornas, sedangkan dokumen DOEN lama hanya konteks historis | Status formularium, obat esensial terpilih, dan restriksi JKN; **bukan** bukti stok atau dosis klinis |
+| **KFA SATUSEHAT** | Kode, identitas, dan nomenklatur obat/alkes; **bukan** bukti stok fasilitas |
+| **ASPAK** | Rekaman sarana/prasarana/alkes per fasilitas; **bukan** bukti real-time bahwa alat berfungsi, bahan habis pakai dan SDM tersedia |
+| Verifikasi lokal fasilitas/jejaring | Kebenaran operasional: stok/kedaluwarsa, fungsi alat, bahan, kompetensi SDM, transport, dan tujuan rujukan |
 | SOP lokal & corpus `docs/references/` | Operasional — titik AWAL pencarian, bukan bukti kemutakhiran |
 
-Kalau dua sumber yang sama-sama relevan berbeda (mis. PNPK vs PPK FKTP),
-JANGAN pilih diam-diam: catat keduanya di `EvidenceBinding`, tandai domain
-konflik, lalu adjudikasi eksplisit. Konflik yang material terhadap keselamatan,
-dosis, atau disposisi memblokir aktivasi sampai selesai atau mendapat waiver
-tertulis dr. Wirayuda.
+**Prinsip floor + graceful degradation (ditetapkan dr. Wirayuda
+2026-07-15; lihat `M13_DECISION_LOG.md`)**: baseline Kemenkes adalah batas
+bawah, bukan ceiling. EBM yang lebih baru atau lebih kuat boleh digunakan
+bila applicable terhadap populasi/setting/outcome, baseline dan pembanding
+sama-sama dicantumkan di `EvidenceBinding`, alasan pemilihan ditulis, dan
+konflik material mendapat physician adjudication. Adaptasi resource tidak
+boleh mengubah diagnosis atau menyamarkan standar ideal.
+
+Tiga jalur implementasi wajib:
+
+1. **Terverifikasi tersedia** — standar terbaik yang feasible boleh diajarkan
+   dan dinilai sebagai kewajiban.
+2. **Bervariasi/belum terverifikasi** — tampilkan standar ideal, verifikasi
+   cepat, lalu gunakan alternatif yang didukung sumber/SOP atau stabilisasi
+   sambil rujuk. Resource yang vignette tidak nyatakan tersedia tidak boleh
+   menjadi jebakan skor.
+3. **Tidak tersedia/di luar scope** — nilai stabilisasi, komunikasi, dan
+   disposisi aman; jelaskan terapi ideal sebagai feedback. Jangan mengarang
+   substitusi obat/prosedur dan jangan menunda tindakan time-critical.
+
+Definisi mesin authoring yang mengikat aturan ini ada di
+`src/content/curriculum/clinicalGroundingPolicy.ts`. Setiap review materi baru
+wajib memasukkan `policy.id` dan payload kebijakan ke envelope yang di-hash.
+Setiap `EvidenceBinding` yang memilih atau menguji supersesi EBM juga wajib
+memiliki `governance`: `floorSources`, `supersedingSources`, `resourceSources`,
+status graceful-degradation, dan catatan implementasi. Konflik material tanpa
+struktur ini ditolak validator.
+
+Kalau dua sumber yang sama-sama relevan berbeda (mis. PNPK vs PPK FKTP, atau
+EBM-baru vs PPK-floor), JANGAN pilih diam-diam: catat keduanya di
+`EvidenceBinding`, tandai domain konflik, lalu adjudikasi eksplisit. Konflik
+yang material terhadap keselamatan, dosis, atau disposisi memblokir
+aktivasi sampai selesai atau mendapat waiver tertulis dr. Wirayuda.
 
 ### Keputusan 2 — Model kurikulum 6-entitas (dikoreksi dari rev 4.1/4.2)
 
@@ -132,6 +166,33 @@ encounter / derajat keparahan / target tindakan FKTP — kini terwujud
 struktural di entitas Keputusan 2. Preseden penting: kasus berskdi 3A/3B/2
 dgn `harusDirujuk:false` adalah keputusan sengaja (`kasusKiaJiwa.ts:730-734`)
 — SKDI bukan gerbang rujuk otomatis.
+
+### Amandemen scope M13-RP1 — baseline resource tanpa engine baru
+
+Disetujui langsung oleh dr. Anak Agung Bagus Wirayuda pada 2026-07-15 setelah
+triangulasi ASPAK, regulasi, Rifaskes, lore, dan arsitektur runtime:
+
+- `sukamaju_middle_v1` berlaku sebagai baseline naratif/authoring: Puskesmas
+  perdesaan nonrawat inap, core service layak, dengan alat khusus, kesiapan
+  emergensi, SDM, transport, dan jejaring dinyatakan bila relevan;
+- **Resource Tier A-D** pada laporan ASPAK adalah checklist editorial. Ini
+  berbeda dari **authoring Tier A/B/C** pada §12b;
+- resource Tier C yang diperlukan sebagai jawaban benar wajib dinyatakan
+  tersedia sebelum keputusan dinilai; resource yang tidak diinformasikan
+  tidak boleh menjadi hidden penalty;
+- `FacilityResourceProfile`, lima status readiness dinamis, downtime, dan
+  invariant resource runtime **tidak disetujui sebagai scope M13-1a** dan
+  bukan entitas kurikulum ketujuh;
+- kasus IGD lama tidak di-retrofit atau di-gate pada M13-1a. Asumsi resource
+  lama masuk utang audit disclosure, bukan blocker pilot;
+- fitur engine resource hanya boleh dibuka kembali sebagai RFC/milestone
+  tersendiri sesudah M13-1b bila playtest menemukan kebingungan resource,
+  hidden penalty, atau kebutuhan gameplay regional/facility-management yang
+  berulang.
+
+Keputusan ini tidak mengaktifkan delapan draf M13-1a, tidak menggantikan
+physician sign-off N1-U1, dan tidak memerlukan bump `CONTENT_RELEASE` atau
+`REVISI_ENGINE`.
 
 ## 2. M13-0A — Canonical Curriculum Blueprint
 
@@ -248,6 +309,11 @@ dipromosikan menjadi gate.
 
 ## 6. M13-1a — Authoring Slice (Nayla + Dimas)
 
+**Status 2026-07-15: selesai dan aktif sebagai pilot Career-only.** Delapan
+payload sudah mendapat physician sign-off, kontradiksi pasca-sign-off telah
+direkonsiliasi, lima blocker runtime ditutup, dan Ujian tetap terisolasi.
+Gerbang berikutnya adalah M13-1b; bukan adjudikasi ulang M13-1a.
+
 **Entry**: M13-0C penuh (BUKAN 0D — Career-only). **Exit**: 6 poli + 1 IGD
 + 1 UKM (`SkenarioKunjungan`) ditulis dan terhubung ke item/objective;
 `ContentReviewRecord` mencatat author, reviewer, tanggal, facet yang direview,
@@ -325,7 +391,9 @@ referensi valid, `EvidenceBinding` terminal, dan `ContentReviewRecord` yang
 masih cocok dgn hash/release konten; (c) tidak ada material defect terbuka;
 (d) test mode/release isolation + determinisme hijau; (e) kontrak fairness
 M13-0D dijalankan ulang pada pool FINAL dan lulus; (f) manifest build tiap
-cohort + installer hash tersimpan. Completion bukan sekadar hitung baris.
+cohort + installer hash tersimpan; (g) seluruh kasus klinis aktif sudah
+diaudit terhadap `CLINICAL_GROUNDING_POLICY`, termasuk klaim resource-sensitive
+dan status graceful degradation-nya. Completion bukan sekadar hitung baris.
 
 ## 12. Metodologi kerja (M13-1a dst.)
 
@@ -423,6 +491,8 @@ validasi. Jangan blokir M13-1/2 dgn angka ini.
 - **Historical-pack runtime** (melanjutkan save lintas rilis di build baru)
   — di luar scope M13 (Keputusan 3).
 - **Ekstraksi kartu kegiatan UKM ke content pack** — ditunda (§4).
+- **`FacilityResourceProfile` dan simulasi readiness fasilitas dinamis** —
+  ditunda menurut M13-RP1; Resource Tier A-D tetap checklist editorial.
 
 ## 15. Change control setelah Decision Lock
 

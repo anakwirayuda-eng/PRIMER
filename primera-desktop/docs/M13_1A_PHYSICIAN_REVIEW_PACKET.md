@@ -1,14 +1,21 @@
 # M13-1a Physician Review Packet
 
-Tanggal draf: 2026-07-15
+Tanggal draf dan adjudikasi: 2026-07-15
 Baseline aktif: `m13-0c-2026-07-14`
-Rilis usulan setelah persetujuan: `m13-1a-pilot-2026-07-15`
-Status: **DRAF AUTHORING, BELUM AKTIF, BELUM PHYSICIAN SIGN-OFF**
+Rilis usulan saat aktivasi: `m13-1a-pilot-2026-07-15`
+Status: **SUPERSEDED - 8/8 APPROVED, REKONSILIASI SELESAI, AKTIF CAREER-ONLY**
 
-## 1. Batas gate
+> Pembaruan 2026-07-15: bagian "belum aktif" di bawah adalah snapshot gate
+> pra-aktivasi dan dipertahankan sebagai audit trail. Kelima blocker teknis
+> telah ditutup, review hash direkonsiliasi, dan rilis
+> `m13-1a-pilot-2026-07-15` kini aktif hanya di mode Karier. Mode Ujian tetap
+> terisolasi. Status operatif ada di bagian terbaru `M13_DECISION_LOG.md`.
 
-Checkpoint ini menyiapkan 6 kasus poli, 1 IGD, dan 1 skenario UKM untuk
-review. Konten sengaja belum diimpor ke `PACK`.
+## 1. Batas gate (snapshot historis pra-aktivasi)
+
+Checkpoint ini memuat 6 kasus poli, 1 IGD, dan 1 skenario UKM yang telah
+direview dokter. Konten sengaja belum diimpor ke `PACK` karena lima blocker
+aktivasi teknis masih terbuka.
 
 Yang belum dilakukan:
 
@@ -16,13 +23,36 @@ Yang belum dilakukan:
 - tidak ada perubahan pool Karier atau Ujian;
 - karma Nayla dan Dimas belum di-rewire;
 - dua exception mismatch karma di `pack.test.ts` belum dihapus;
-- tidak ada `PhysicianSignoff` yang diisi oleh Codex;
 - M13-1b belum dimulai.
+
+`PhysicianSignoff` di bawah berasal dari keputusan eksplisit dr. Anak Agung
+Bagus Wirayuda pada 2026-07-15. Codex hanya mencatat keputusan itu ke ledger;
+Codex tidak bertindak sebagai physician reviewer.
 
 Persetujuan M13-0B tidak otomatis berlaku untuk materi baru ini. Bila konten,
 katalog, topology kurikulum, policy mode/release, evidence, metadata sumber,
 rewire, atau pertanyaan keputusan direvisi setelah review, hash envelope
 berubah dan versi yang baru harus direview kembali.
+
+Seluruh envelope kini juga mengikat `CLINICAL_GROUNDING_POLICY` versi
+`clinical-grounding-floor-graceful-degradation-v1`: PPK/PNPK/aturan Kemenkes
+aktif terbaru adalah floor; EBM yang lebih baik boleh menaikkan standar dengan
+jejak konflik dan physician adjudication; implementasi serta scoring mengikuti
+graceful degradation berdasarkan resource yang benar-benar diverifikasi.
+Fornas, KFA, dan ASPAK tidak diperlakukan sebagai bukti stok siap pakai.
+Untuk Dimas, otitis eksterna, dan fraktur terbuka, jejak itu juga hadir secara
+terstruktur di `EvidenceBinding.governance`: sumber floor, sumber EBM pembanding,
+sumber resource, status `variable_or_unverified`, dan catatan implementasinya.
+Konflik material tanpa struktur tersebut gagal validator.
+
+**Batas scope resource M13-RP1 (disetujui dr. Wirayuda, 2026-07-15):**
+`sukamaju_middle_v1` adalah baseline naratif/authoring dan Resource Tier A-D
+adalah checklist editorial, bukan mekanik engine. Untuk slice ini, resource
+khusus yang menjadi prasyarat jawaban benar harus dinyatakan tersedia sebelum
+pilihan dinilai. Tidak ada `FacilityResourceProfile`, downtime dinamis, atau
+resource gate baru pada M13-1a; kasus IGD lama juga tidak di-retrofit di
+milestone ini. Keputusan tersebut menjadi batas resource bagi adjudikasi N1-U1
+yang dicatat pada bagian 7.
 
 ## 2. Ringkasan slice
 
@@ -73,7 +103,7 @@ Jalur benar draf:
 
 - berat badan 24 kg, SpO2 87%, bicara kata demi kata, retraksi, respons singkat
   setelah pelega di rumah;
-- oksigen dengan target SpO2 94-98%;
+- oksigen terkontrol dengan target SpO2 92-95% sesuai GINA 2026;
 - nebulisasi SABA + ipratropium setiap 20 menit sampai tiga kali pada jam
   pertama;
 - prednison/prednisolon 1-2 mg/kgBB/hari, maksimum 40 mg, selama 3-5 hari;
@@ -84,11 +114,17 @@ antibiotik tanpa bukti infeksi bakteri, atau menganggap silent chest sebagai
 perbaikan.
 
 Katalog draf memakai unit-dose ipratropium 0,5 mg + salbutamol 2,5 mg untuk
-anak 24 kg. Angka ini ditampilkan untuk adjudikasi, belum dianggap regimen
-lokal yang disetujui.
+anak 24 kg. Queensland Paediatric Asthma v5 mendukung ipratropium 0,5 mg tiap
+20 menit sampai tiga dosis untuk usia >6 tahun, tetapi sumber yang sama memakai
+salbutamol 5 mg nebulisasi untuk usia >=6 tahun. Fornas memuat unit-dose
+kombinasi tersebut, namun tidak menetapkan bahwa satu unit-dose adalah total
+dosis klinis untuk semua usia. Jadi komponen salbutamol 2,5 mg versus total
+5 mg adalah konflik dosis material yang diputuskan dokter pada bagian 7. Keduanya juga
+tidak membuktikan stok lokal; vignette harus menyatakan oksigen, nebulizer,
+bahan habis pakai, SDM, dan transport tersedia.
 
 **Keputusan D1 (teks kanonik):**
-> Dimas: setujui dosis/interval nebulisasi pediatrik, target oksigen, steroid sistemik, serta status 3B tanpa kredit asma stabil 4A.
+> Dimas: adjudikasi target SpO2 92-95% (GINA 2026), ipratropium 0,5 mg tiap 20 menit x3, dan total dosis SABA karena unit-dose Fornas berisi salbutamol 2,5 mg sedangkan sumber pediatrik usia >=6 tahun memakai 5 mg; lalu setujui steroid, rujuk, serta status 3B tanpa kredit asma stabil 4A.
 
 ### C. Hipoglikemia ringan pada dewasa dengan DM2
 
@@ -154,9 +190,10 @@ kontraindikasi perforasi.
 Jalur benar draf:
 
 - primary survey dan kontrol perdarahan tanpa mendorong fragmen masuk;
-- irigasi singkat dengan NaCl untuk membuang kontaminan lepas, tanpa
-  debridement atau manipulasi fragmen;
-- balut steril, dokumentasi neurovaskular sebelum-sesudah bidai, akses IV;
+- singkirkan hanya kontaminan kasar yang lepas tanpa probing, irigasi,
+  debridement, atau manipulasi fragmen;
+- balut dengan kasa steril dibasahi NaCl dan lapisan oklusif bila tersedia,
+  dokumentasi neurovaskular sebelum-sesudah bidai, akses IV;
 - analgesia sesuai kondisi dan protokol;
 - antibiotik parenteral dini dan profilaksis tetanus sesuai riwayat;
 - rujuk segera untuk debridement/fiksasi; radiologi FKTP tidak menunda transfer.
@@ -164,11 +201,17 @@ Jalur benar draf:
 Dangerous path yang dikunci: manipulasi fragmen, membuka balutan berulang,
 antibiotik oral sebagai substitusi, atau transfer tanpa imobilisasi.
 
-Fornas mencantumkan sefazolin dengan restriksi profilaksis bedah; entri itu
-tidak sendirinya membuktikan regimen fraktur terbuka atau stok rutin FKTP.
+PNPK Fraktur 270/2019 dan PPK 1186/2022 mendukung pembersihan/irigasi sepintas
+kontaminan tampak sebelum debridement definitif. NICE NG37 (diperbarui 2022)
+dan BOAST melarang irigasi/mini-washout di luar kamar operasi. Draf mengikuti
+no-mini-washout dan mempertahankan jejak konflik tersebut di evidence audit.
+Fornas mencantumkan sefazolin dengan restriksi profilaksis bedah;
+Fornas, KFA, atau ASPAK tidak sendirian membuktikan indikasi maupun stok rutin
+FKTP. Alternatif antibiotik tidak boleh diimprovisasi tanpa sumber atau SOP
+jejaring yang terverifikasi.
 
 **Keputusan F1 (teks kanonik):**
-> Fraktur terbuka: adjudikasi irigasi pra-rujuk, analgesia, dosis/cakupan antibiotik, profilaksis tetanus, dan dasar ketersediaan sefazolin di FKTP.
+> Fraktur terbuka: adjudikasi no-mini-washout terhadap konflik PNPK 270/2019 vs NICE/BOAST, balut lembap-oklusif, analgesia, antibiotik/tetanus, dan deklarasi resource FKTP/jejaring.
 
 ### G. IGD STEMI anterior dengan hipoksemia
 
@@ -220,11 +263,17 @@ Field engine `stabilisasiWajib` saat ini hanya dapat memberi cap
 nebulisasi; fraktur terbuka memerlukan balut steril, bidai, akses IV, antibiotik,
 dan profilaksis tetanus.
 
+Selain itu, resep runtime hanya menyimpan ID obat tanpa dosis/kuantitas. Pada
+Dimas, satu unit-dose kombinasi berisi salbutamol 2,5 mg dapat dinilai benar,
+padahal adjudikasi D1 menetapkan total salbutamol nebulisasi 5 mg. Gate ini
+belum boleh dianggap selesai sebelum bundel stabilisasi dan semantik dosis
+tersebut dapat dinilai atau memiliki kontrol fail-safe eksplisit.
+
 Sebelum aktivasi harus dipilih salah satu:
 
-1. perluas engine agar dapat mengunci bundel stabilisasi; atau
-2. beri waiver scoring tertulis yang menjelaskan tindakan mana yang menjadi
-   gate cap dan bagaimana tindakan penting lain tetap dinilai.
+1. perluas engine agar dapat mengunci bundel stabilisasi dan dosis; atau
+2. buat kontrol fail-safe tertulis dan teruji yang menjelaskan gate cap,
+   pemenuhan dosis, serta cara tindakan penting lain tetap dinilai.
 
 Checkpoint authoring boleh disimpan dengan blocker ini; aktivasi tidak boleh.
 
@@ -240,8 +289,9 @@ mismatch pediatrik tidak menghasilkan demografi yang janggal.
 
 Harga obat dan biaya tindakan pada katalog draf adalah placeholder authoring
 untuk memenuhi schema. Nilainya bukan klaim harga pengadaan. Harga beli/jual,
-biaya tindakan, dampak margin, dan akses stok perlu dikalibrasi terhadap
-ekonomi game serta konteks lokal sebelum aktivasi.
+biaya tindakan, dan dampak margin perlu dikalibrasi. Setiap obat/alat yang
+dinilai wajib dipetakan ke Fornas/KFA/ASPAK lalu diverifikasi lokal, atau
+vignette harus mendeklarasikan availability dan jalur graceful degradation.
 
 ### 4.4 Teknik ekstraksi benda asing
 
@@ -259,15 +309,23 @@ dan waiver yang tertulis.
 
 ## 5. Evidence dan keterbatasan
 
-Semua `EvidenceBinding` masih `pending` sampai physician review. Populasi anak
-ditulis eksplisit dan tidak diturunkan dari regimen dewasa.
+Semua `EvidenceBinding` kini `resolved` sesuai delapan keputusan `approved`.
+Tiga audit konflik material membawa physician sign-off eksplisit. Populasi
+anak ditulis eksplisit dan tidak diturunkan dari regimen dewasa.
 
 Sumber inti:
 
 - [WHO IMCI Chart Booklet](https://www.who.int/docs/default-source/mca-documents/imci-chart-booklet.pdf)
 - [Kemenkes Pedoman Asma FKTP](https://repository.kemkes.go.id/book/1251)
 - [WHO Childhood Asthma 2026](https://www.who.int/publications/i/item/9789240122680)
+- [GINA Strategy Report 2026](https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf)
+- [Queensland Paediatric Asthma v5](https://www.childrens.health.qld.gov.au/for-health-professionals/queensland-paediatric-emergency-care-qpec/queensland-paediatric-clinical-guidelines/asthma)
 - [Fornas KMK 1199/2025](https://e-fornas.kemkes.go.id/api/download?column=pustaka&filename=KMK%20No.%20HK.01.07-MENKES-1199-2025%20ttg%20Formularium%20Nasional.pdf)
+- [PNPK Fraktur KMK 270/2019](https://www.kemkes.go.id/app_asset/file_content_download/17001196726555c478e59fc5.31771765.pdf)
+- [NICE NG37 Complex Fractures](https://www.nice.org.uk/guidance/ng37/chapter/recommendations)
+- [BOAST Open Fractures](https://www.boa.ac.uk/resource/boast-4-pdf.html)
+- [ASPAK Kemenkes](https://aspak.kemkes.go.id/aplikasi/infoboard)
+- [KFA SATUSEHAT API](https://satusehat.kemkes.go.id/platform/docs/id/master-data/kfa/rest-api-kfa/apis/api-kfa-v2/)
 - [AAO-HNSF Acute Otitis Externa](https://www.entnet.org/quality-practice/quality-products/clinical-practice-guidelines/aoe/)
 - [DailyMed Acetic Acid Otic 2%](https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=f9b4d18b-25f3-604f-e053-6394a90a5531&type=display)
 - [WHO Tobacco Cessation 2024](https://www.who.int/publications/b/74755)
@@ -281,41 +339,56 @@ pernah dipakai sudah 404. Ini dicatat sebagai limitation, bukan disembunyikan.
 
 Hash adalah SHA-256 dari envelope kanonik yang mengikat encounter, entri
 katalog/ICD, topology kurikulum, policy Karier-only dan release, evidence,
-metadata sumber, rewire terkait, serta pertanyaan keputusan dokter.
+metadata sumber, kebijakan grounding klinis universal, rewire terkait, serta
+pertanyaan keputusan dokter. Status terminal dan tanda tangan adalah hasil
+review, sehingga dikeluarkan dari snapshot pra-keputusan yang di-hash. Delapan
+hash berikut tetap identik setelah sign-off dicatat.
 
 | Review record | SHA-256 |
 |---|---|
-| Nayla | `cdc51dfbacadd4d492bb1ade9b204dde55818e2618d119e20fc0abccfad4b837` |
-| Dimas | `5c28241f0aa7c21c7ba3bc6475269bd713e460c5d837a8c03bb01ae7bc870e47` |
-| Hipoglikemia | `5c19eef81c940516d799d672173096a4b84a8dcacfcaf05c96c074c57f48fc0b` |
-| Benda asing hidung | `4142a03601011b687cb611caf43ee73af9c0d42e58dd520cf4fbe8936968fccf` |
-| Otitis eksterna | `8c73ae002f2c27ad6e5f12c0cdb0497efd518895862aa7fd5b25d9d691d67ae8` |
-| Fraktur terbuka | `cdb66765c7b058c1e4a21ccf454af10e4269c2032c15e497da5c151ecfc41bf5` |
-| IGD STEMI | `84fdcb454c6c5448e2b712cfa165aff94c813e1e837026029ce5b03bb01769cb` |
-| UKM Gunawan K2 | `b8d83a47768efd0bc0c25324fd44c58172f71156c3c2628883c1e88cb331092d` |
+| Nayla | `7f507c16697683f1d09b03fad2d64c2cd2ee9430ba083e76efd987024343a499` |
+| Dimas | `cd9891a3213ed541396d746bd60f33b05795a7b6bdc52b3d367fe2d72ba18bab` |
+| Hipoglikemia | `1efa8b66bfab8fcb45e5d7641af9bd0dfd1dfe13ec242bff6dad0f2c3fd24bc5` |
+| Benda asing hidung | `c1a1118fb3454c1024f4b4017fc6cd8fd90a77f69eba642b8c86a4eccadd2b0c` |
+| Otitis eksterna | `135af2d38d1535bbc1fd14369bdeb21b43aec1f44081539966acda43126cb582` |
+| Fraktur terbuka | `9146723a1ebbf938a5e143e681581b915e30f5bb75b61f5bfebc805e544688da` |
+| IGD STEMI | `8a16306299a7196caad193c65cb3d4ce27831373a70e5922465155ca3d12aa30` |
+| UKM Gunawan K2 | `4a36c4ff0a0ef1296fc6e2609948228381bfd0c30c8e794f4030d4c87249e922` |
 
-## 7. Cara memberi keputusan
+## 7. Physician adjudication record
 
-Untuk tiap N1, D1, H1, B1, O1, F1, I1, dan U1, pilih salah satu:
+- Reviewer: **dr. Anak Agung Bagus Wirayuda**
+- Kredensial: **Dokter; penanggung jawab klinis PRIMERA**
+- Tanggal: **2026-07-15**
+- Hasil: **8/8 `approved`; tidak ada waiver konten**
 
-- `approved`;
-- `approved_with_waiver` disertai alasan dan batasannya; atau
-- `revision_required` disertai koreksi yang diminta.
+| ID | Status | Resolusi yang disetujui |
+|---|---|---|
+| N1 | `approved` | Plan C bayi dinilai komposit dan dimulai sambil menyiapkan rujukan. Bila IV tidak segera berhasil, ikuti cabang WHO menurut akses terapi IV terdekat, kemampuan minum, dan kompetensi NGT; jangan menetapkan batas upaya IV arbitrer atau memaksa oralit pada bayi letargis. |
+| D1 | `approved` | Target SpO2 92-95%; ipratropium 0,5 mg tiap 20 menit sampai tiga dosis; total salbutamol nebulisasi 5 mg per dosis untuk usia 7 tahun. Unit-dose Fornas 0,5/2,5 mg bukan bukti total SABA atau stok siap. Steroid dini, terapi sambil rujuk, status 3B, dan tanpa kredit asma stabil 4A dipertahankan. |
+| H1 | `approved` | Koreksi glukosa dan evaluasi serial, makanan setelah pulih, lalu hold/kurangi sulfonilurea berdasarkan review. Dosis berikut tidak otomatis dilanjutkan; rujuk bila tidak membaik, berulang, kesadaran turun, atau pemantauan tidak aman. Tidak ada durasi observasi arbitrer. |
+| B1 | `approved` | Satu upaya terencana dengan teknik sesuai bentuk dan alat. Blind probing, front-grasping benda bulat, serta percobaan berulang dilarang; kegagalan atau kondisi tidak aman menjadi stop rule dan rujukan. |
+| O1 | `approved` | Asam asetat otik 2%, 5 tetes 3-4 kali/hari, hanya bila membran timpani utuh. Nilai ulang 48-72 jam dan lanjutkan selama masih terindikasi menurut respons/protokol lokal tanpa durasi kaku arbitrer. Agen PPK tetap alternatif kontekstual; antibiotik sistemik tidak rutin. |
+| F1 | `approved` | No-mini-washout: singkirkan hanya kontaminan kasar yang lepas tanpa probing/irigasi; balut lembap-oklusif, dokumentasi neurovaskular, bidai, analgesia, antibiotik parenteral dini, tetanus sesuai riwayat, lalu rujuk segera. Tidak ada substitusi improvisasi. |
+| I1 | `approved` | EKG <=10 menit, aspirin kunyah 160-320 mg setelah skrining kontraindikasi, oksigen karena SpO2 88%, monitoring, komunikasi, dan transfer terpantau. P2Y12, antikoagulan, nitrat, serta pemilihan PCI/fibrinolisis sengaja di luar skor slice dan mengikuti protokol jejaring; blocker tujuan reperfusi tetap terbuka. |
+| U1 | `approved` | Fokus K2 tetap opportunity/relapse prevention. Asesmen ketergantungan, withdrawal, dan kelayakan farmakoterapi ditautkan ke UBM tetapi tidak wajib dimainkan/diberi skor di kunjungan ini. Kantuk berat ditangani dengan menepi dan beristirahat. |
 
-`revision_required` tidak dibuat sebagai sign-off terminal. Konten diperbaiki,
-hash berubah, lalu diajukan kembali. Reviewer, kredensial, tanggal, keputusan,
-dan catatan baru boleh diisi setelah keputusan nyata diberikan.
+Persetujuan ini berlaku pada delapan hash di bagian 6. Perubahan berikutnya pada
+materi yang masuk envelope mengubah hash dan memerlukan review baru. Persetujuan
+ini juga tidak menghapus satu pun blocker teknis di bagian 4.
 
 ## 8. Checklist aktivasi setelah review
 
-- [ ] Delapan keputusan konten selesai dan hash masih cocok.
+- [x] Delapan keputusan konten selesai dan hash masih cocok.
 - [ ] Blocker bundel stabilisasi diselesaikan atau mendapat waiver eksplisit.
 - [ ] Usia Nayla ditampilkan sebagai 3 bulan, bukan 0 tahun.
 - [ ] Harga/biaya placeholder dikalibrasi dan ditinjau dampak gameplay-nya.
+- [ ] Resource yang dinilai dinyatakan tersedia/terverifikasi atau mempunyai
+      graceful degradation tanpa substitusi improvisasi.
 - [ ] Teknik ekstraksi aman dapat dinilai atau mendapat waiver pedagogis.
 - [ ] Tujuan STEMI memodelkan kemampuan reperfusi atau mendapat keputusan
       scope/waiver eksplisit.
-- [ ] Semua binding terkait menjadi terminal sesuai keputusan.
+- [x] Semua binding terkait menjadi terminal sesuai keputusan.
 - [ ] Draf diimpor ke katalog, `PACK`, blueprint, dan keluarga yang tepat.
 - [ ] Karma Nayla/Dimas di-rewire dan dua exception lama dihapus.
 - [ ] Seluruh archetype/skenario baru `karier=true`, `ujian=false`.
@@ -327,14 +400,15 @@ dan catatan baru boleh diisi setelah keputusan nyata diberikan.
 M13-1b baru boleh dimulai setelah aktivasi yang disetujui dan tetap memerlukan
 playtest manusia serta keputusan zero-material-defect terpisah.
 
-## 9. Verifikasi checkpoint draf
+## 9. Verifikasi pasca-adjudikasi
 
-- authoring invariant: **15/15**;
-- full suite: **76 file / 845 test**;
+- authoring invariant: **19/19**;
+- full suite: **77 file / 851 test**;
 - freeze Golden Master: **17/17** di dalam full suite;
+- delapan hash review envelope: cocok dengan hash pra-sign-off;
 - TypeScript typecheck: lulus;
 - production build: lulus;
 - `git diff --check`: lulus.
 
-Hasil ini membuktikan integritas draf dan non-aktivasi, bukan persetujuan
-klinis. Build aktif masih memakai 67 kasus lama dan release M13-0C.
+Physician approval materi telah tercatat, tetapi hasil ini belum membuktikan
+kesiapan aktivasi. Build aktif masih memakai 67 kasus lama dan release M13-0C.

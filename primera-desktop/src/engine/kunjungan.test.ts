@@ -710,6 +710,7 @@ function buatStateKader(): GameState {
       cowboy: 0,
       antibiotikTanpaIndikasi: 0,
       obatBerbahaya: 0,
+      tindakanBerbahaya: 0,
       firewallTerpicu: 0,
       stabilisasiTerlewat: 0,
       labTakRelevan: 0,

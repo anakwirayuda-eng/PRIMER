@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   CONTENT_RELEASE,
   LEGACY_CONTENT_RELEASE,
+  encounterArchetypeAktif,
   releasePolicyAktif,
   type RuntimeContentPack,
 } from '@content/pack'
@@ -74,9 +75,13 @@ describe('M13-0C - isolasi mode dan determinisme draw', () => {
       ...PACK,
       kasusIgd: Object.fromEntries(Object.entries(PACK.kasusIgd).reverse()),
     }
+    const expectedUjian = Object.keys(PACK.kasusIgd)
+      .filter((id) => encounterArchetypeAktif(PACK, 'igd', id, 'ujian', state.contentRelease))
+      .sort()
     expect(daftarKasusIgdAktif(state, reversed).map((k) => k.id)).toEqual(
-      Object.keys(PACK.kasusIgd).sort(),
+      expectedUjian,
     )
+    expect(expectedUjian).not.toContain('igd_stemi_anterior_hipoksemik')
 
     const inactive = denganArchetypes((a) =>
       a.channel === 'igd' ? { ...a, modePolicy: { ...a.modePolicy, ujian: false } } : a,

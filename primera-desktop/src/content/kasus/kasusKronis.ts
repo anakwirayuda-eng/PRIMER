@@ -936,7 +936,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       ],
       edukasi: ['tanda_bahaya', 'etika_batuk', 'kepatuhan_obat'],
     },
-    stabilisasiWajib: 'oksigen',
+    stabilisasiWajib: ['oksigen'],
     clue: 'IMCI/WHO: pneumonia balita ditegakkan klinis dari napas cepat (RR ≥40x/menit usia 1–5 th). Tarikan dinding dada ke dalam (chest indrawing), sianosis, atau tolak minum = pneumonia BERAT → beri DOSIS PERTAMA antibiotik + oksigen, lalu RUJUK segera (SKDI 3B). Jangan tunda menunggu foto toraks.',
     panduanResmi: 'PPK 1186/2022 (adopsi WHO) mempertegas ambang napas cepat per-usia: >50x/mnt (2 bln–1 th) vs >40x/mnt (>1–5 th), dan \'pneumonia berat\' = ada sesak/tarikan dinding dada → wajib dirawat + antibiotik. Dosis amoksisilin oral resmi rawat jalan 25 mg/kgBB.',
   },

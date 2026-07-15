@@ -8,7 +8,8 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
 import { acakUrutan } from '../utils/acakUrutan'
-import { AMBANG_STABIL_RUJUK } from '@engine/igd'
+import { AMBANG_STABIL_RUJUK, rumahSakitCocokUntukIgd } from '@engine/igd'
+import { formatUsia } from '@engine/usia'
 import './Igd.css'
 
 export function Igd() {
@@ -46,6 +47,9 @@ export function Igd() {
     )
   }
   const kasus = kasusMaybe
+  const rsRujukan = [...PACK.rumahSakit]
+    .filter((rumahSakit) => rumahSakitCocokUntukIgd(kasus, rumahSakit))
+    .sort((a, b) => a.jarakMenit - b.jarakMenit)[0]
 
   const stab = igd.stabilitas
   const nadaBar = stab > 60 ? '' : stab > 30 ? 'igd-bar--waspada' : 'igd-bar--bahaya'
@@ -59,7 +63,7 @@ export function Igd() {
           <div>
             <div className="igd__label mono">⛑ INSTALASI GAWAT DARURAT</div>
             <div className="igd__pasien">
-              {igd.pasienNama} · {igd.usia} th · {igd.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
+              {igd.pasienNama} · {formatUsia(igd.usia, igd.usiaBulan)} · {igd.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
             </div>
             {/* Nama diagnosis & ICD-10 disembunyikan selama pemain masih bernalar
                 (fase langkah/kode_biru) — baru terungkap di disposisi/debrief,
@@ -178,17 +182,18 @@ export function Igd() {
             <div className="igd__pilihan">
               <button
                 className="igd__opsi"
+                disabled={!rsRujukan}
                 onClick={() =>
                   dispatch({
                     type: 'DISPOSISI_IGD',
                     jenis: 'rujuk',
-                    ...(kasus.spesialisRujukan
-                      ? { rumahSakitId: [...PACK.rumahSakit].filter((r) => r.spesialisasi.includes(kasus.spesialisRujukan!)).sort((a, b) => a.jarakMenit - b.jarakMenit)[0]?.id }
-                      : {}),
+                    ...(rsRujukan ? { rumahSakitId: rsRujukan.id } : {}),
                   })
                 }
               >
-                Rujuk ke RS (dengan surat + stabilisasi berjalan)
+                {rsRujukan
+                  ? `Rujuk ke ${rsRujukan.nama} (${rsRujukan.jarakMenit} menit)`
+                  : 'Jejaring rujukan yang sesuai tidak tersedia'}
               </button>
               <button className="igd__opsi" onClick={() => dispatch({ type: 'DISPOSISI_IGD', jenis: 'pulang' })}>
                 Observasi lalu pulangkan dari Puskesmas

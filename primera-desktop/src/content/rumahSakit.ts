@@ -29,6 +29,7 @@ export const RUMAH_SAKIT: RumahSakit[] = [
     kelas: 'C',
     jarakMenit: 45,
     spesialisasi: ['penyakit_dalam', 'bedah', 'anak', 'obgyn', 'saraf', 'mata'],
+    kapabilitas: ['fibrinolisis_stemi'],
     bedDasar: 6,
   },
   {
@@ -37,6 +38,7 @@ export const RUMAH_SAKIT: RumahSakit[] = [
     kelas: 'B',
     jarakMenit: 90,
     spesialisasi: ['penyakit_dalam', 'bedah', 'anak', 'obgyn', 'saraf', 'mata', 'tht', 'jiwa', 'paru'],
+    kapabilitas: ['pci_primer_24_7'],
     bedDasar: 8,
   },
 ]

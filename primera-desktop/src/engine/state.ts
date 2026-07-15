@@ -39,6 +39,8 @@ export interface PasienAktif {
   id: string
   nama: string
   usia: number
+  /** Usia bulan untuk bayi <1 tahun; `usia` tetap 0 demi kompatibilitas save. */
+  usiaBulan?: number
   jenisKelamin: JenisKelamin
   persona: Persona
   kasusId: string
@@ -152,6 +154,8 @@ export interface PenilaianEncounter {
    * ini obat yang SAMPAI ke pasien.
    */
   obatBerbahaya: boolean
+  /** Tindakan invasif/teknik berbahaya benar-benar dilakukan pada pasien. */
+  tindakanBerbahaya: boolean
   /**
    * CODEX audit (2026-07-12, temuan #13B): percobaan resep kontraindikasi
    * alergi yang diblokir firewall (poka-yoke, `clinic.ts` TAMBAH_OBAT) — obat
@@ -392,6 +396,7 @@ export interface IgdState {
   kasusId: string
   pasienNama: string
   usia: number
+  usiaBulan?: number
   jenisKelamin: JenisKelamin
   rw: number
   fase: FaseIgd
@@ -450,6 +455,7 @@ export interface JadwalItem {
   /** Identitas pasien yang kembali — "konsekuensi bernama" butuh nama yang sama. */
   nama?: string
   usia?: number
+  usiaBulan?: number
   jenisKelamin?: 'L' | 'P'
   rw?: number
   /**
@@ -500,6 +506,8 @@ export interface SkorTally {
   antibiotikTanpaIndikasi: number
   /** CODEX audit temuan #1 (2026-07-12): encounter dgn obat berbahaya BENAR-BENAR diresepkan. */
   obatBerbahaya: number
+  /** Encounter dengan tindakan berbahaya yang benar-benar dilakukan. */
+  tindakanBerbahaya: number
   /** CODEX audit temuan #13B (2026-07-12): encounter dgn percobaan resep kontraindikasi diblokir firewall. */
   firewallTerpicu: number
   /** Encounter rujukan yang melewatkan tindakan stabilisasi wajib. */

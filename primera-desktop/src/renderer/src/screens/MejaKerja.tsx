@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useGame } from '../store'
 import type { JenisSurat, Surat } from '@engine/state'
 import type { Persona } from '@content/types'
+import { formatUsia } from '@engine/usia'
 import { hitungSkor, ringkasanHarian } from '@engine/director'
 import { hitungIksKeluarga } from '@engine/pispk'
 import {
@@ -398,7 +399,7 @@ export function MejaKerja() {
                         <span className="mono teks-xs teks-lembut">{i + 1}.</span> {p.nama}
                         <span className="teks-kecil teks-lembut">
                           {' '}
-                          · {p.usia} th · {p.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
+                          · {formatUsia(p.usia, p.usiaBulan)} · {p.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
                         </span>
                       </span>
                       <span className="baris mk__pasien-chip">

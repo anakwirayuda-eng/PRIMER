@@ -6,6 +6,10 @@ import type {
   EvidenceBinding,
   UkmScenario,
 } from '../types'
+import {
+  CLINICAL_GROUNDING_POLICY,
+  type ClinicalGroundingPolicy,
+} from '../clinicalGroundingPolicy'
 import type { KasusKlinis, Obat, Tindakan, TopikEdukasi } from '../../types'
 import { M13_1A_EDUKASI_DRAFT, M13_1A_OBAT_DRAFT, M13_1A_TINDAKAN_DRAFT } from './catalogDraft'
 import { M13_1A_CLINIC_DRAFTS } from './clinicalDrafts'
@@ -71,6 +75,13 @@ function semuaReferensiObat(kasus: KasusKlinis): string[] {
   ]
 }
 
+function semuaReferensiTindakan(kasus: KasusKlinis): string[] {
+  return [
+    ...(kasus.tatalaksana.prosedur ?? []),
+    ...(kasus.tatalaksana.tindakanSalahUmum ?? []).map((item) => item.id),
+  ]
+}
+
 interface ReviewCatalog {
   obat: Record<string, Obat>
   tindakan: Record<string, Tindakan>
@@ -85,9 +96,10 @@ interface ReviewTopology {
 }
 
 export interface M13ReviewEnvelope {
-  schemaVersion: 2
+  schemaVersion: 3
   reviewId: string
   kind: 'clinic' | 'igd' | 'ukm'
+  clinicalGroundingPolicy: ClinicalGroundingPolicy
   release: {
     basedOn: string
     proposed: string
@@ -127,10 +139,24 @@ function evidenceFor(policyId: string, topology: ReviewTopology): EvidenceBindin
     ...topology.newCurriculumItems.map((item) => item.id),
   ])
   return urutId(M13_1A_EVIDENCE_BINDINGS.filter((binding) => subjectIds.has(binding.subject.id)))
+    .map((binding) => {
+      if (!binding.audit) return { ...binding, reviewStatus: 'pending' }
+      const audit = { ...binding.audit }
+      delete audit.physicianSignoff
+      return { ...binding, reviewStatus: 'pending', audit }
+    })
 }
 
 function sourceMetadataFor(bindings: EvidenceBinding[]): M13AuthoringSource[] {
-  const ids = new Set(bindings.map((binding) => binding.source))
+  const ids = new Set(
+    bindings.flatMap((binding) => [
+      binding.source,
+      ...(binding.audit?.corroboratingEvidence ?? []).map((reference) => reference.source),
+      ...(binding.governance?.floorSources ?? []).map((reference) => reference.source),
+      ...(binding.governance?.supersedingSources ?? []).map((reference) => reference.source),
+      ...(binding.governance?.resourceSources ?? []).map((reference) => reference.source),
+    ]),
+  )
   return urutId(M13_1A_SOURCES.filter((source) => ids.has(source.id)))
 }
 
@@ -151,9 +177,10 @@ function reviewEnvelope(input: {
 }): M13ReviewEnvelope {
   const evidenceBindings = evidenceFor(input.runtimePolicy.id, input.curriculumTopology)
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     reviewId: input.reviewId,
     kind: input.kind,
+    clinicalGroundingPolicy: CLINICAL_GROUNDING_POLICY,
     release: {
       basedOn: M13_1A_BASE_CONTENT_RELEASE,
       proposed: M13_1A_PROPOSED_CONTENT_RELEASE,
@@ -183,7 +210,7 @@ const clinicPayloads = M13_1A_CLINIC_DRAFTS.map((kasus) => {
       content: kasus,
       proposedCatalog: {
         obat: pilihEntri(M13_1A_OBAT_DRAFT, semuaReferensiObat(kasus)),
-        tindakan: pilihEntri(M13_1A_TINDAKAN_DRAFT, kasus.tatalaksana.prosedur ?? []),
+        tindakan: pilihEntri(M13_1A_TINDAKAN_DRAFT, semuaReferensiTindakan(kasus)),
         edukasi: pilihEntri(M13_1A_EDUKASI_DRAFT, kasus.tatalaksana.edukasi),
         icd10: pilihEntri(M13_1A_PROPOSED_ICD10_ENTRIES, [kasus.icd10, ...kasus.diagnosisBanding]),
       },
@@ -245,7 +272,9 @@ const ukmPayloads = M13_1A_UKM_DRAFTS.map((draft) => {
 
 /**
  * Envelope review kanonik. Hash-nya mengikat konten, katalog/ICD, topology,
- * policy mode-release, evidence, metadata sumber, rewire, dan pertanyaan dokter.
+ * policy mode-release, evidence pra-keputusan, metadata sumber, rewire, dan
+ * pertanyaan dokter. Status terminal serta sign-off adalah hasil review dan
+ * sengaja tidak mengubah payload yang sudah ditandatangani.
  */
 export const M13_1A_REVIEW_PAYLOADS: Record<string, M13ReviewEnvelope> = Object.fromEntries([
   ...clinicPayloads,

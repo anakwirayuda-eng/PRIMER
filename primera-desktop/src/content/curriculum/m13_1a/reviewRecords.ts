@@ -10,23 +10,31 @@ import {
   igdReviewId,
   ukmReviewId,
 } from './reviewPayloads'
+import { M13_1A_PHYSICIAN_SIGNOFF_BY_REVIEW_ID } from './physicianSignoffs'
 
 const TECHNICAL_REVIEWER = 'Codex (technical authoring audit)'
 const TECHNICAL_CREDENTIALS = 'AI coding agent; bukan physician reviewer'
 
 /** SHA-256 JSON.stringify(review envelope kanonik), dihitung setelah technical review. */
 export const M13_1A_REVIEW_HASHES: Record<string, string> = {
-  'm13-1a-review-clinic-diare_akut_bayi_dehidrasi_berat': 'cdc51dfbacadd4d492bb1ade9b204dde55818e2618d119e20fc0abccfad4b837',
-  'm13-1a-review-clinic-asma_eksaserbasi_berat_anak': '5c28241f0aa7c21c7ba3bc6475269bd713e460c5d837a8c03bb01ae7bc870e47',
-  'm13-1a-review-clinic-hipoglikemia_ringan_dewasa': '5c19eef81c940516d799d672173096a4b84a8dcacfcaf05c96c074c57f48fc0b',
-  'm13-1a-review-clinic-benda_asing_hidung_anak': '4142a03601011b687cb611caf43ee73af9c0d42e58dd520cf4fbe8936968fccf',
-  'm13-1a-review-clinic-otitis_eksterna_akut_ringan': '8c73ae002f2c27ad6e5f12c0cdb0497efd518895862aa7fd5b25d9d691d67ae8',
-  'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil': 'cdb66765c7b058c1e4a21ccf454af10e4269c2032c15e497da5c151ecfc41bf5',
-  'm13-1a-review-igd-igd_stemi_anterior_hipoksemik': '84fdcb454c6c5448e2b712cfa165aff94c813e1e837026029ce5b03bb01769cb',
-  'm13-1a-review-ukm-keluarga_gunawan-gunawan_k2': 'b8d83a47768efd0bc0c25324fd44c58172f71156c3c2628883c1e88cb331092d',
+  'm13-1a-review-clinic-diare_akut_bayi_dehidrasi_berat': '0348ca09a7ab95c381af9b21d6321e30c19da9b35dc2fa788d26d8f711b7ddd0',
+  // Hash Nayla, asma, dan fraktur di-refresh 2026-07-15 (post-signoff): clue
+  // Nayla, catatanRealita Dimas, dan panduanResmi fraktur direkonsiliasi thd physicianSignoff yang
+  // sudah ada (bukan keputusan klinis baru — lihat physicianSignoffs.ts) —
+  // envelope berubah krn kontennya berubah, sesuai aturan hash-di-bagian-6.
+  'm13-1a-review-clinic-asma_eksaserbasi_berat_anak': '5c81d35ff3bfca14d41f934b624a96d912a5c3038a68ee3c6ccc3ced73f9b762',
+  'm13-1a-review-clinic-hipoglikemia_ringan_dewasa': 'a588ec8d26d7a365aa6a061f60b64b198d71becc8797e684c02e3d81bf3f96ba',
+  'm13-1a-review-clinic-benda_asing_hidung_anak': '3d684ef2da6606685568b3a051f251915a6990bfc10b31f584b64ecb6a3d497f',
+  'm13-1a-review-clinic-otitis_eksterna_akut_ringan': 'de4c265f093d6d303be9aac966e6fdf88f066f560b7ea660ae2b230130da2411',
+  'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil': '59716bc25f10783fdf30ca69a301e75ecd096abf0086bc4f12d083863e0f5e24',
+  'm13-1a-review-igd-igd_stemi_anterior_hipoksemik': 'fcb978e12e49f9e955bc6203b9e6d4845dea07537801e0640a28040fd1be4f02',
+  'm13-1a-review-ukm-keluarga_gunawan-gunawan_k2': '4a36c4ff0a0ef1296fc6e2609948228381bfd0c30c8e794f4030d4c87249e922',
 }
 
 function technicalReview(facets: ContentReviewFacet[], note: string) {
+  // Snapshot ini sengaja merekam checkpoint teknis pra-sign-off. Karena itu
+  // note historisnya dapat menyebut kebutuhan review meski record induk kini
+  // sudah approved dan membawa physicianSignoff terminal.
   return {
     reviewer: TECHNICAL_REVIEWER,
     credentials: TECHNICAL_CREDENTIALS,
@@ -43,6 +51,8 @@ function baseRecord(
   facets: ContentReviewFacet[],
   note: string,
 ): ContentReviewRecord {
+  const physicianSignoff = M13_1A_PHYSICIAN_SIGNOFF_BY_REVIEW_ID[id]
+  if (!physicianSignoff) throw new Error(`M13-1a: physician sign-off '${id}' tidak ada`)
   return {
     id,
     contentRef,
@@ -52,8 +62,9 @@ function baseRecord(
     proposedContentRelease: M13_1A_PROPOSED_CONTENT_RELEASE,
     contentHash: M13_1A_REVIEW_HASHES[id] ?? '',
     sourceIds: M13_1A_REVIEW_SOURCE_IDS[id] ?? [],
-    status: 'awaiting_physician_review',
+    status: 'approved',
     technicalReview: technicalReview(facets, note),
+    physicianSignoff,
   }
 }
 
@@ -68,7 +79,7 @@ export const M13_1A_REVIEW_RECORDS: ContentReviewRecord[] = [
     clinicReviewId('asma_eksaserbasi_berat_anak'),
     { kind: 'clinic', id: 'asma_eksaserbasi_berat_anak' },
     ['narrative', 'anamnesis', 'assessment', 'regimen', 'dose', 'formulary', 'disposition', 'pedagogy', 'dangerous-path', 'mode-release'],
-    'Draft menutup mismatch Dimas; dosis berbasis berat badan dan bundel stabilisasi anak wajib diputuskan dokter sebelum aktivasi.',
+    'Draft menutup mismatch Dimas; target GINA 2026, dosis ipratropium berbasis usia, konflik total salbutamol unit-dose, dan bundel stabilisasi anak wajib diputuskan dokter sebelum aktivasi.',
   ),
   baseRecord(
     clinicReviewId('hipoglikemia_ringan_dewasa'),
@@ -92,7 +103,7 @@ export const M13_1A_REVIEW_RECORDS: ContentReviewRecord[] = [
     clinicReviewId('fraktur_terbuka_tibia_stabil'),
     { kind: 'clinic', id: 'fraktur_terbuka_tibia_stabil' },
     ['narrative', 'anamnesis', 'assessment', 'regimen', 'dose', 'formulary', 'disposition', 'pedagogy', 'dangerous-path', 'mode-release'],
-    'Draft mengikat balut steril, bidai, antibiotik parenteral, profilaksis tetanus, dan rujuk; regimen serta realitas stok FKTP perlu adjudikasi dokter.',
+    'Draft memakai no-mini-washout tetapi mempertahankan konflik PNPK versus NICE/BOAST; antibiotik, tetanus, dan realitas resource FKTP perlu adjudikasi dokter.',
   ),
   baseRecord(
     igdReviewId('igd_stemi_anterior_hipoksemik'),

@@ -7,6 +7,7 @@
 import { PACK } from '@content/index'
 import type { GameState } from '@engine/state'
 import type { Action } from '@engine/actions'
+import { formatUsia } from '@engine/usia'
 import { labelJk } from './util'
 
 interface Props {
@@ -60,7 +61,7 @@ export function RuangTunggu({ state, dispatch }: Props) {
                   <div className="baris">
                     <span className="klinik-tunggu__nama">{p.nama}</span>
                     <span className="teks-xs teks-lembut">
-                      {p.usia} th &middot; {labelJk(p.jenisKelamin)}
+                      {formatUsia(p.usia, p.usiaBulan)} &middot; {labelJk(p.jenisKelamin)}
                     </span>
                   </div>
                   <div className="klinik-tunggu__keluhan teks-kecil">

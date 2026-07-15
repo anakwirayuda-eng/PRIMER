@@ -24,6 +24,7 @@ const HASIL_DASAR: PenilaianEncounter = {
   cowboy: false,
   antibiotikTanpaIndikasi: false,
   obatBerbahaya: false,
+  tindakanBerbahaya: false,
   firewallTerpicu: false,
   konfirmasiTakTerpenuhi: false,
   stabilisasiTerlewat: false,
@@ -115,6 +116,18 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
       />,
     )
     expect(screen.getByText('Stabilisasi pra-rujuk terlewat')).toBeInTheDocument()
+  })
+
+  it('tindakan berbahaya: alasan cap grade tampil jelas', () => {
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, tindakanBerbahaya: true }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+    expect(screen.getByText('Tindakan berbahaya dilakukan')).toBeInTheDocument()
   })
 
   // Q5/C.8 (M10.5, keputusan O-A 2026-07-12): sentilan alergi tanpa gerbang baru.

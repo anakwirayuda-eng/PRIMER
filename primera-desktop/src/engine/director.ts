@@ -73,6 +73,10 @@ export function buatPasienDariKasus(
   }
   namaTerpakai?.add(nama)
   const usia = rng.int(kasus.demografi.usiaMin, kasus.demografi.usiaMax)
+  const usiaBulan =
+    kasus.demografi.usiaBulanMin !== undefined && kasus.demografi.usiaBulanMax !== undefined
+      ? rng.int(kasus.demografi.usiaBulanMin, kasus.demografi.usiaBulanMax)
+      : undefined
   // M10.b (dossier §43): persona WAJIB dari usia EFEKTIF — pasien inject
   // (karma/prolanis/PRB) membawa usia sungguhan via override, tapi dulu
   // persona dihitung dari roll demografi yang lantas DIBUANG merge override:
@@ -90,6 +94,7 @@ export function buatPasienDariKasus(
     id: `p_${kasusId}_${rng.int(1000, 9999)}`,
     nama,
     usia,
+    ...(usiaBulan !== undefined ? { usiaBulan } : {}),
     jenisKelamin,
     persona,
     kasusId,

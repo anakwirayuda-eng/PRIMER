@@ -15,6 +15,54 @@
 | 4.1 | 2026-07-13 | Koreksi 9 temuan rev 4 | Diaudit CODEX #4: 7 blocker (6 confirmed, 1 partial) + koreksi lain |
 | 4.2 | 2026-07-14 | Model 6-entitas, frozen-build-per-cohort, mode isolation, doc split | Diaudit CODEX #5: 3 blocker Decision Lock + gate milestone tersisa |
 | 4.2.1 | 2026-07-14 | Errata checkpoint: catalog-scoped items, dossier release, UKM evidence, closure gates | **Aktif** — source of truth M13 |
+| 4.2.2 | 2026-07-15 | Formalisasi prinsip floor+graceful-degradation (Keputusan 1) + sumber ASPAK/KFA | **Aktif** — amandemen governance, bukan revisi struktural |
+| 4.2.3 | 2026-07-15 | M13-RP1: baseline resource naratif diterima; simulasi readiness engine ditunda | **Aktif** — batas scope M13-1a |
+
+## Governance — prinsip floor + graceful degradation (ditetapkan dr. Wirayuda, 2026-07-15)
+
+dr. Anak Agung Bagus Wirayuda, dokter dan penanggung jawab klinis PRIMERA,
+menetapkan aturan universal berikut secara langsung. Aturan ini berlaku untuk
+SELURUH game, bukan hanya delapan payload M13-1a:
+
+> PPK dan/atau PNPK serta aturan/instruksi Kemenkes aktif terbaru menjadi
+> baseline/ambang bawah. EBM yang lebih baru atau lebih baik boleh digunakan
+> dengan referensi eksplisit, lalu diterapkan secara bijak melalui graceful
+> degradation sesuai ketersediaan obat, alat, SDM, dan jejaring FKTP Indonesia.
+
+Operasionalisasinya:
+
+- baseline Kemenkes tetap dicantumkan ketika EBM lain menaikkan standar;
+- applicability populasi/setting/outcome dan alasan pemilihan wajib tertulis;
+- konflik material safety/dosis/disposisi tetap memerlukan physician
+  adjudication atau waiver sebelum aktivasi;
+- Fornas 1199/2025 membuktikan status/restriksi formularium JKN, bukan stok;
+- KFA membuktikan kode/identitas/nomenklatur produk, bukan stok fasilitas;
+- ASPAK menghimpun rekaman sarana/prasarana/alkes per fasilitas, tetapi tidak
+  sendirian membuktikan ketersediaan real-time, fungsi alat, bahan habis pakai,
+  maintenance, atau SDM kompeten;
+- stok, kedaluwarsa, fungsi, bahan, SDM, transport, dan kapabilitas tujuan
+  rujukan harus diverifikasi pada fasilitas/jejaring yang dimodelkan;
+- DOEN 2021 hanya konteks historis karena dicabut oleh KMK 2197/2023;
+  fungsi daftar obat esensial kini dibaca melalui Fornas aktif yang
+  mengintegrasikan obat esensial nasional;
+- resource yang tidak tersedia tidak mengubah kebenaran klinis: game menilai
+  stabilisasi feasible dan disposisi aman, bukan improvisasi tanpa sumber.
+
+Kebijakan ini diformalkan sebagai objek tervalidasi
+`CLINICAL_GROUNDING_POLICY` dan diikat ke setiap review envelope M13-1a.
+Kasus supersesi mengikat floor, sumber pengganti, Fornas/KFA/ASPAK yang relevan,
+status graceful-degradation, dan catatan implementasi langsung pada
+`EvidenceBinding.governance`; validator menolak konflik material yang kehilangan
+salah satu lapisan tersebut.
+Penerapan pertama merevisi D1 (target oksigen GINA 2026; dosis ipratropium
+tetap berbasis usia dan Fornas) serta F1 (no-mini-washout, dengan konflik
+PNPK Fraktur 270/2019 versus NICE/BOAST dicatat, bukan disembunyikan).
+Keduanya tetap `pending` dan belum memperoleh sign-off kasus. Amandemen ini
+tidak mengubah lima Decision Lock lain atau mengaktifkan materi M13-1a.
+Pada checkpoint ini, binding mekanis baru diterapkan ke delapan review envelope
+M13-1a; ini BUKAN klaim bahwa seluruh konten aktif lama sudah diaudit ulang.
+M13-5 kini mewajibkan audit retrospektif seluruh kasus aktif sebelum program
+dapat dinyatakan complete.
 
 ## Insiden yang menjadi preseden change-control
 
@@ -343,3 +391,141 @@ tidak berubah; verifikasi dokumen dilakukan lagi sebelum commit checkpoint.
 - **Status milestone: belum exit dan belum aktif.** Langkah berikutnya adalah
   physician review delapan payload serta penyelesaian/waiver blocker. Aktivasi,
   bump release, rewire karma, dan M13-1b tetap dilarang pada checkpoint ini.
+
+## M13-RP1 — baseline resource Puskesmas dan batas scope engine (2026-07-15)
+
+dr. Anak Agung Bagus Wirayuda, dokter dan penanggung jawab klinis PRIMERA,
+menyetujui secara eksplisit keputusan M13-RP1 setelah laporan ASPAK dan triase
+arsitektur diperiksa. Keputusan:
+
+1. `sukamaju_middle_v1` diterima sebagai baseline naratif dan authoring.
+2. Resource Tier A-D diterima sebagai checklist editorial, bukan state runtime;
+   taksonomi ini berbeda dari authoring Tier A/B/C untuk kedalaman kasus.
+3. Pada M13-1a, resource Tier C yang menjadi prasyarat jawaban benar harus
+   dideklarasikan tersedia sebelum pilihan dinilai. Tidak ada hidden penalty.
+4. `FacilityResourceProfile`, status `ready`/`present_not_ready`/
+   `scheduled_or_shared`/`unavailable`/`unknown`, downtime dinamis, dan
+   invariant resource runtime ditunda sampai sesudah M13-1b dan hanya boleh
+   masuk lewat RFC/milestone engine tersendiri.
+5. Kasus IGD lama tidak di-gate ulang selama M13-1a. Asumsi resource existing
+   dicatat sebagai utang audit disclosure, bukan blocker pilot.
+6. Scope engine hanya dibuka kembali bila playtest menemukan kebingungan
+   resource, hidden penalty, atau kebutuhan gameplay regional/facility-
+   management yang berulang.
+
+Dasar verifikasi:
+
+- lore existing menempatkan PONED sebagai jejaring berjarak sekitar satu jam
+  (`desaC.ts:649-653`), bukan kapabilitas Sukamaju;
+- kasus OA/LBP existing tidak mengasumsikan radiologi rutin
+  (`kasusMetabolikMsk.ts:535,667`);
+- `KasusIgd` dan `aksiIgd` belum memiliki resource gate; kelima kasus IGD
+  mengasumsikan resource tindakannya tersedia;
+- model enam entitas M13 tidak memuat `FacilityResourceProfile`;
+- laporan riset yang mendasari keputusan tersedia di
+  `docs/M13_ASPAK_PUSKESMAS_RESOURCE_BASELINE.md` serta deliverable keputusan
+  `docs/M13_ASPAK_PUSKESMAS_RESOURCE_BASELINE_v1.1.{docx,pdf}`.
+
+Konsekuensi change-control: keputusan ini dokumenter/editorial saja. Tidak ada
+perubahan `PACK`, scoring, save, fingerprint, `CONTENT_RELEASE`, atau
+`REVISI_ENGINE`. Pada saat M13-RP1 dicatat, delapan `ContentReviewRecord` masih
+`awaiting_physician_review`; perubahan status berikutnya dicatat pada bagian
+adjudikasi N1-U1 di bawah. M13-1a belum aktif.
+
+## M13-1a physician adjudication N1-U1 (2026-07-15)
+
+dr. Anak Agung Bagus Wirayuda, dokter dan penanggung jawab klinis PRIMERA,
+memberikan keputusan eksplisit untuk menyetujui seluruh delapan payload M13-1a.
+Ledger mencatat **8/8 `approved`**, tanpa `approved_with_waiver` pada konten:
+
+| ID | Keputusan klinis yang dikunci |
+|---|---|
+| N1 | Plan C bayi sebagai tindakan komposit; stabilisasi berjalan sambil rujuk; cabang IV/NGT/transfer mengikuti WHO tanpa batas upaya IV arbitrer. |
+| D1 | Target SpO2 92-95%; ipratropium 0,5 mg tiap 20 menit x3; total salbutamol nebulisasi 5 mg untuk usia 7 tahun; steroid dini, rujuk sambil terapi, dan kredit tetap 3B. |
+| H1 | Rule of 15, makanan setelah pulih, review/hold atau pengurangan sulfonilurea, tidak otomatis memberi dosis berikut, dan rujuk bila tidak stabil atau berulang. |
+| B1 | Satu upaya ekstraksi aman menurut bentuk, larangan blind probing/front-grasping benda bulat, serta stop rule dan rujukan eksplisit. |
+| O1 | Asam asetat 2% 5 tetes 3-4 kali/hari bila membran timpani utuh; reassessment 48-72 jam; durasi berdasarkan indikasi/respons, bukan angka kaku arbitrer. |
+| F1 | No-mini-washout, balut lembap-oklusif, neurovaskular, bidai, analgesia, antibiotik parenteral dini, tetanus sesuai riwayat, dan rujuk segera tanpa substitusi improvisasi. |
+| I1 | EKG cepat, aspirin, oksigen terindikasi, monitoring dan transfer jejaring reperfusi; terapi antitrombotik lanjutan/nitrat/strategi reperfusi sengaja di luar skor slice. |
+| U1 | Opportunity dan relapse prevention menjadi fokus K2; asesmen ketergantungan/withdrawal/farmakoterapi ditautkan ke UBM tetapi tidak wajib dimainkan atau dinilai pada kunjungan ini. |
+
+Implementasi governance:
+
+- reviewer: `dr. Anak Agung Bagus Wirayuda`;
+- kredensial: `Dokter; penanggung jawab klinis PRIMERA`;
+- tanggal sign-off: `2026-07-15`;
+- seluruh `ContentReviewRecord.status` menjadi `approved`;
+- seluruh `EvidenceBinding.reviewStatus` menjadi `resolved`;
+- tiga konflik material (target oksigen Dimas, dosis bronkodilator Dimas, dan
+  no-mini-washout fraktur) membawa physician sign-off eksplisit;
+- snapshot hash menormalisasi hanya metadata pasca-keputusan, sehingga delapan
+  SHA-256 tetap mengikat payload klinis pra-keputusan yang sama persis.
+
+Persetujuan konten **bukan persetujuan aktivasi**. Lima blocker tetap terbuka:
+bundel stabilisasi dan representasi dosis Dimas, tampilan usia bulan Nayla,
+kalibrasi ekonomi/resource,
+representasi teknik ekstraksi benda asing, dan kapabilitas tujuan reperfusi
+STEMI. Karena itu `PACK`, karma, pool Karier/Ujian, `CONTENT_RELEASE`,
+`REVISI_ENGINE`, save, serta fingerprint belum berubah; M13-1b belum boleh
+dimulai.
+
+## M13-1a rekonsiliasi kontradiksi dan aktivasi Career-only (2026-07-15)
+
+Bagian ini **mensupersesi status operatif** pada checkpoint authoring dan
+adjudikasi di atas tanpa menghapus audit trail-nya. dr. Anak Agung Bagus
+Wirayuda menegaskan bahwa seluruh keputusan N1-U1 memang keputusan beliau,
+sekaligus mengungkap bahwa beberapa rumusan menjadi kontradiktif karena
+kelelahan dan cognitive overload. Untuk clone lab ini, beliau mendelegasikan
+penemuan serta fiksasi kontradiksi kepada Codex dengan prioritas hasil akhir
+yang dapat dimainkan; adjudikasi bolak-balik dihentikan kecuali muncul konflik
+material baru atau gerbang yang sungguh memerlukan manusia.
+
+Rekonsiliasi operatif yang dikunci:
+
+- N1: Plan C dimulai segera sambil menyiapkan rujukan; antibiotik empiris tidak
+  rutin untuk diare cair tanpa darah; bayi 3 bulan tampil dan tersimpan sebagai
+  `3 bulan`, bukan `0 tahun`.
+- D1: target SpO2 92-95%, salbutamol total 5 mg + ipratropium 0,5 mg tiap 20
+  menit sampai tiga siklus, steroid dini, dan rujuk sambil terapi melalui
+  tindakan protokol komposit.
+- H1: hipoglikemia terkait glimepiride dikoreksi dan dinilai ulang, dosis
+  sulfonilurea berikutnya ditahan, lalu dirujuk hari yang sama karena Sukamaju
+  tidak memiliki observasi memadai untuk risiko kekambuhan berkepanjangan.
+- B1: positive pressure/parent's kiss menjadi upaya awal yang dinilai; blind
+  probing/front-grasping benda bulat adalah tindakan berbahaya dengan stop rule.
+- O1: asam asetat otik 2% hanya pada membran timpani utuh, dengan reassessment
+  48-72 jam dan rujuk bila gagal/komplikasi.
+- F1: no-mini-washout; balut, bidai, akses IV, antibiotik parenteral sesuai
+  protokol jejaring, tetanus, lalu rujuk segera. Irigasi/probing menjadi tindakan
+  berbahaya, bukan near-miss netral.
+- I1: tujuan rujukan STEMI harus memiliki fibrinolisis atau PCI primer 24/7;
+  transfer tidak menunggu troponin.
+- U1: kunjungan UKM tetap fokus pada opportunity, trigger, dan relapse
+  prevention tanpa membebani satu encounter dengan seluruh terapi berhenti
+  merokok.
+
+Lima blocker teknis ditutup melalui dukungan bundel `stabilisasiWajib`, usia
+bulan end-to-end, tindakan protokol/resource eksplisit tanpa hidden penalty,
+`tindakanSalahUmum` beserta konsekuensi/skor, dan kapabilitas jejaring RS untuk
+reperfusi. Slice 6 poli + 1 IGD + 1 UKM masuk `PACK` pada
+`CONTENT_RELEASE = m13-1a-pilot-2026-07-15`; karma Nayla/Dimas direwire dan
+semua archetype baru berpolicy Karier-only. Pool Ujian tetap tidak berubah.
+
+**Status operatif: M13-1a selesai; M13-1b adalah satu-satunya gerbang berikut.**
+M13-1b memerlukan playtest manusia/proxy, uji dangerous-path, catatan usability,
+dan keputusan zero-material-defect. Bot, unit test, atau audit AI tidak boleh
+menggantikan gerbang manusia tersebut.
+
+Verifikasi final pada working tree yang sama:
+
+- full suite: **78 file / 858 test lulus**;
+- Golden Master freeze: **17/17 lulus**, `REVISI_ENGINE = 35`;
+- TypeScript `tsc --noEmit`: lulus;
+- `electron-vite build`: lulus;
+- pemeriksaan lisensi BGM + packaging Windows `electron-builder --win --dir`:
+  lulus;
+- executable smoke artifact:
+  `dist/win-unpacked/PRIMERA - Puskesmas Pagi.exe`;
+- SHA-256 executable:
+  `9775289E8E625A94493B90BDAC0E1B3A9175D29182291EA88980544FF0D8CD7C`;
+- `git diff --check`: lulus.

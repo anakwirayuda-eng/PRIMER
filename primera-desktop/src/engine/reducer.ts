@@ -36,7 +36,15 @@ import {
   kartuProlanis,
   kartuKlb,
 } from './kegiatan'
-import { buatIgd, aksiIgd, rjpIgd, stabilisasiLanjutanIgd, nilaiIgd, AMBANG_STABIL_RUJUK } from './igd'
+import {
+  buatIgd,
+  aksiIgd,
+  rjpIgd,
+  stabilisasiLanjutanIgd,
+  nilaiIgd,
+  rumahSakitCocokUntukIgd,
+  AMBANG_STABIL_RUJUK,
+} from './igd'
 import { hitungSkor } from './scoring'
 import { HARI_STASE, paketUjianDariId } from './paketUjian'
 import { examIgdCaseIdForDay } from './examBlueprint'
@@ -355,6 +363,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // tally (dan lewat itu skor.total formal) tak bisa membacanya. Kini
       // ditally persis pola cowboy/antibiotikTanpaIndikasi di atas.
       if (nilai.obatBerbahaya) t.obatBerbahaya += 1
+      if (nilai.tindakanBerbahaya) t.tindakanBerbahaya += 1
       if (nilai.firewallTerpicu) t.firewallTerpicu += 1
       if (nilai.stabilisasiTerlewat) t.stabilisasiTerlewat += 1
       t.labTakRelevan += nilai.labTakRelevan
@@ -426,7 +435,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         nilai.diagnosisBenar &&
         nilai.disposisiTepat &&
         !nilai.konfirmasiTakTerpenuhi &&
-        !nilai.stabilisasiTerlewat
+        !nilai.stabilisasiTerlewat &&
+        !nilai.tindakanBerbahaya
       const bintang = kuasai ? Math.min(3, lama.bintang + 1) : Math.max(0, lama.bintang - 1)
       dex[kasus.id] = {
         ...lama,
@@ -474,7 +484,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // `minum_oat_tuntas` (risiko MDR-TB nyata bila putus obat), 13 topik lain
       // tetap cukup dihukum via skor spt sekarang.
       const pantasKonsekuensi =
-        !nilai.diagnosisBenar || nilai.skorTerapi < 50 || resepBerbahaya || nilai.cowboy ||
+        !nilai.diagnosisBenar || nilai.skorTerapi < 50 || resepBerbahaya || nilai.tindakanBerbahaya || nilai.cowboy ||
         nilai.edukasiKritisTerlewat.includes('minum_oat_tuntas')
       if (kasus.konsekuensi && pantasKonsekuensi && !observasiMenungguLab && action.jenis !== 'rujuk') {
         const rng = new Rng(s.seed, 'konsekuensi', s.hari, kasus.id)
@@ -496,6 +506,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             catatan: `${encFinal.pasien.nama} — ${kasus.konsekuensi.kondisiKembali}`,
             nama: encFinal.pasien.nama,
             usia: encFinal.pasien.usia,
+            ...(encFinal.pasien.usiaBulan !== undefined ? { usiaBulan: encFinal.pasien.usiaBulan } : {}),
             jenisKelamin: encFinal.pasien.jenisKelamin,
             rw: encFinal.pasien.rw,
             // M10.b §43: bawa bpjs+persona — orang yg sama tak boleh berganti
@@ -525,6 +536,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             catatan: `${encFinal.pasien.nama} — kembali untuk evaluasi hasil lab kemarin.`,
             nama: encFinal.pasien.nama,
             usia: encFinal.pasien.usia,
+            ...(encFinal.pasien.usiaBulan !== undefined ? { usiaBulan: encFinal.pasien.usiaBulan } : {}),
             jenisKelamin: encFinal.pasien.jenisKelamin,
             rw: encFinal.pasien.rw,
             bpjs: encFinal.pasien.bpjs,
@@ -580,6 +592,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 catatan: `${encFinal.pasien.nama} — dikembalikan ${rs.nama}: kasus kompetensi FKTP, mohon dituntaskan di Puskesmas`,
                 nama: encFinal.pasien.nama,
                 usia: encFinal.pasien.usia,
+                ...(encFinal.pasien.usiaBulan !== undefined ? { usiaBulan: encFinal.pasien.usiaBulan } : {}),
                 jenisKelamin: encFinal.pasien.jenisKelamin,
                 rw: encFinal.pasien.rw,
                 // M10.b §43: identitas utuh (bpjs/persona) + keluargaId yg
@@ -610,6 +623,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 catatan: `${encFinal.pasien.nama} — ${rs.nama} tak punya layanan ${kasus.spesialisRujukan?.replace(/_/g, ' ')}; rujuk ulang ke RS yang tepat`,
                 nama: encFinal.pasien.nama,
                 usia: encFinal.pasien.usia,
+                ...(encFinal.pasien.usiaBulan !== undefined ? { usiaBulan: encFinal.pasien.usiaBulan } : {}),
                 jenisKelamin: encFinal.pasien.jenisKelamin,
                 rw: encFinal.pasien.rw,
                 bpjs: encFinal.pasien.bpjs,
@@ -657,6 +671,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                   catatan: `${encFinal.pasien.nama} — bed ${rs.nama} penuh; menunggu bed kosong`,
                   nama: encFinal.pasien.nama,
                   usia: encFinal.pasien.usia,
+                  ...(encFinal.pasien.usiaBulan !== undefined ? { usiaBulan: encFinal.pasien.usiaBulan } : {}),
                   jenisKelamin: encFinal.pasien.jenisKelamin,
                   rw: encFinal.pasien.rw,
                   bpjs: encFinal.pasien.bpjs,
@@ -696,6 +711,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                     catatan: `${encFinal.pasien.nama} — kontrol PRB: pulang dari ${rs.nama} dengan surat rujuk balik, lanjutkan terapi di FKTP`,
                     nama: encFinal.pasien.nama,
                     usia: encFinal.pasien.usia,
+                    ...(encFinal.pasien.usiaBulan !== undefined ? { usiaBulan: encFinal.pasien.usiaBulan } : {}),
                     jenisKelamin: encFinal.pasien.jenisKelamin,
                     rw: encFinal.pasien.rw,
                     bpjs: encFinal.pasien.bpjs,
@@ -1196,7 +1212,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (!igd || igd.fase !== 'disposisi') return err(s, 'Pasien belum siap disposisi.')
       const kasus = pack.kasusIgd[igd.kasusId]
       if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
-      const nilai = nilaiIgd({ ...igd, hasil: 'stabil' }, kasus, action.jenis)
+      const rs = action.rumahSakitId
+        ? pack.rumahSakit.find((item) => item.id === action.rumahSakitId)
+        : undefined
+      const tujuanCocok =
+        action.jenis !== 'rujuk' ||
+        (rs
+          ? rumahSakitCocokUntukIgd(kasus, rs)
+          : (kasus.kapabilitasRujukanSalahSatu ?? []).length === 0)
+      const nilaiDasar = nilaiIgd({ ...igd, hasil: 'stabil' }, kasus, action.jenis)
+      const nilai = {
+        ...nilaiDasar,
+        disposisiTepat: nilaiDasar.disposisiTepat && tujuanCocok,
+      }
 
       // M10.5 Q4/Q-E (2026-07-12): rujuk saat stabilitas masih di bawah
       // AMBANG_STABIL_RUJUK adalah rujukan PREMATUR — pasien memburuk/
@@ -1234,9 +1262,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const t = nilai.disposisiTepat
         ? { ...s.tally, igdStabil: s.tally.igdStabil + 1 }
         : { ...s.tally, igdSalahDisposisi: s.tally.igdSalahDisposisi + 1 }
-      const rsNama = action.rumahSakitId
-        ? pack.rumahSakit.find((r) => r.id === action.rumahSakitId)?.nama ?? 'RS rujukan'
-        : 'RS rujukan'
+      const rsNama = rs?.nama ?? 'RS rujukan'
       // Prinsip SISRUTE: kasus EMERGENSI stabil selalu diterima jejaring.
       const surat: Surat = {
         id: `surat_igd_${s.hari}_${s.log.length}`,
@@ -1248,7 +1274,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           : `IGD: disposisi ${igd.pasienNama} keliru`,
         isi: nilai.disposisiTepat
           ? `${igd.pasienNama} stabil dan ${action.jenis === 'rujuk' ? `diterima ${rsNama}` : 'dipulangkan dengan observasi'}. ${kasus.clue}`
-          : `${igd.pasienNama} selamat, tapi disposisimu keliru — ${kasus.disposisiBenar === 'rujuk' ? `kasus ${kasus.nama} pasca-stabilisasi wajib DIRUJUK, bukan dipulangkan. Untung keluarganya membawanya ke RS sendiri.` : `kasus ini dapat dituntaskan dengan observasi di Puskesmas — merujuk semuanya membebani jejaring.`} ${kasus.clue}`,
+          : `${igd.pasienNama} selamat, tapi disposisimu keliru — ${action.jenis === 'rujuk' && !tujuanCocok ? `${rsNama} tidak memenuhi spesialisasi/kapabilitas waktu-kritis yang dibutuhkan ${kasus.nama}. Pilih tujuan jejaring yang sesuai.` : kasus.disposisiBenar === 'rujuk' ? `kasus ${kasus.nama} pasca-stabilisasi wajib DIRUJUK, bukan dipulangkan. Untung keluarganya membawanya ke RS sendiri.` : `kasus ini dapat dituntaskan dengan observasi di Puskesmas — merujuk semuanya membebani jejaring.`} ${kasus.clue}`,
         dibaca: false,
       }
       return {
@@ -1681,6 +1707,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     catatan?: string
     nama?: string
     usia?: number
+    usiaBulan?: number
     jenisKelamin?: 'L' | 'P'
     keluargaId?: string
     rw?: number
@@ -1748,6 +1775,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.catatan ? { catatan: j.catatan } : {}),
         ...(j.nama ? { nama: j.nama } : {}),
         ...(j.usia !== undefined ? { usia: j.usia } : {}),
+        ...(j.usiaBulan !== undefined ? { usiaBulan: j.usiaBulan } : {}),
         ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
         ...(j.keluargaId ? { keluargaId: j.keluargaId } : {}),
         ...(j.rw !== undefined ? { rw: j.rw } : {}),
@@ -1790,6 +1818,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           rw: kelContent.rw,
           ...(j.nama ? { nama: j.nama } : {}),
           ...(j.usia !== undefined ? { usia: j.usia } : {}),
+          ...(j.usiaBulan !== undefined ? { usiaBulan: j.usiaBulan } : {}),
           ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
           ...(jknKeluarga === 'ya' || jknKeluarga === 'tidak' ? { bpjs: jknKeluarga === 'ya' } : {}),
         })
@@ -2106,6 +2135,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       followUpDari: p.catatan ?? 'follow-up',
       ...(p.nama ? { nama: p.nama } : {}),
       ...(p.usia !== undefined ? { usia: p.usia } : {}),
+      ...(p.usiaBulan !== undefined ? { usiaBulan: p.usiaBulan } : {}),
       ...(p.jenisKelamin ? { jenisKelamin: p.jenisKelamin } : {}),
       ...(p.keluargaId ? { keluargaId: p.keluargaId } : {}),
       ...(p.rw !== undefined ? { rw: p.rw } : {}),

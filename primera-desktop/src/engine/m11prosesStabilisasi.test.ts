@@ -78,7 +78,7 @@ function tanganiPneumonia(pakaiOksigen: boolean): GameState {
   const dasar = PACK.kasus['pneumonia_balita']!
   const kasus = {
     ...dasar,
-    stabilisasiWajib: 'oksigen',
+    stabilisasiWajib: ['oksigen'],
     tatalaksana: {
       ...dasar.tatalaksana,
       prosedur: [...new Set([...(dasar.tatalaksana.prosedur ?? []), 'oksigen'])],
@@ -166,7 +166,7 @@ describe('M11 C.1 - stabilisasi pra-rujuk ternilai', () => {
     const dasar = PACK.kasus['pneumonia_balita']!
     const kasus = {
       ...dasar,
-      stabilisasiWajib: 'oksigen',
+      stabilisasiWajib: ['oksigen'],
       tatalaksana: {
         ...dasar.tatalaksana,
         prosedur: [...new Set([...(dasar.tatalaksana.prosedur ?? []), 'oksigen'])],
@@ -197,8 +197,8 @@ describe('M11 C.1 - stabilisasi pra-rujuk ternilai', () => {
 
   it('konten hanya mewajibkan oksigen pada vignette yang ter-grounding jelas', () => {
     expect(PACK.tindakan['oksigen']).toMatchObject({ icd9: '93.96' })
-    expect(PACK.kasus['pneumonia_balita']?.stabilisasiWajib).toBe('oksigen')
-    expect(PACK.kasus['ppok_eksaserbasi']?.stabilisasiWajib).toBe('oksigen')
+    expect(PACK.kasus['pneumonia_balita']?.stabilisasiWajib).toEqual(['oksigen'])
+    expect(PACK.kasus['ppok_eksaserbasi']?.stabilisasiWajib).toEqual(['oksigen'])
     // SpO2 92% pada gagal jantung bukan hipoksemia <90%; oksigen rutin bukan gate EBM.
     expect(PACK.kasus['mm_gagal_jantung_kongestif']?.stabilisasiWajib).toBeUndefined()
   })
@@ -207,8 +207,10 @@ describe('M11 C.1 - stabilisasi pra-rujuk ternilai', () => {
     for (const kasus of Object.values(PACK.kasus)) {
       if (!kasus.stabilisasiWajib) continue
       expect(kasus.harusDirujuk, kasus.id).toBe(true)
-      expect(PACK.tindakan[kasus.stabilisasiWajib], kasus.id).toBeDefined()
-      expect(kasus.tatalaksana.prosedur, kasus.id).toContain(kasus.stabilisasiWajib)
+      for (const tindakanId of kasus.stabilisasiWajib) {
+        expect(PACK.tindakan[tindakanId], kasus.id).toBeDefined()
+        expect(kasus.tatalaksana.prosedur, kasus.id).toContain(tindakanId)
+      }
     }
 
     const pneumonia = PACK.kasus['pneumonia_balita']!
@@ -220,5 +222,44 @@ describe('M11 C.1 - stabilisasi pra-rujuk ternilai', () => {
       },
     }
     expect(sidikJariPack(tanpaGate)).not.toBe(sidikJariPack(PACK))
+  })
+
+  it('bundel stabilisasi M13 baru lulus hanya bila seluruh tindakan wajib dilakukan', () => {
+    const dimas = PACK.kasus['asma_eksaserbasi_berat_anak']!
+    expect(dimas.stabilisasiWajib).toEqual(['oksigen', 'nebulisasi_burst_asma_anak'])
+
+    const sebagian = nilaiEncounter(encounterLengkap(dimas, ['oksigen']), dimas, PACK)
+    const lengkap = nilaiEncounter(
+      encounterLengkap(dimas, ['oksigen', 'nebulisasi_burst_asma_anak']),
+      dimas,
+      PACK,
+    )
+
+    expect(sebagian.stabilisasiTerlewat).toBe(true)
+    expect(sebagian.grade).toBe('C')
+    expect(lengkap.stabilisasiTerlewat).toBe(false)
+    expect(lengkap.grade).toBe('A')
+  })
+
+  it('tindakan berbahaya aktif memicu flag dan cap D walau langkah lain benar', () => {
+    const kasus = PACK.kasus['benda_asing_hidung_anak']!
+    const tindakanBenar = ['ekstraksi_benda_hidung_tekanan_positif']
+    const aman = {
+      ...encounterLengkap(kasus, tindakanBenar),
+      disposisi: 'pulang' as const,
+      sbar: undefined,
+    }
+    const berbahaya = {
+      ...aman,
+      tindakan: [...tindakanBenar, 'ekstraksi_benda_hidung_blind_probing'],
+    }
+
+    const nilaiAman = nilaiEncounter(aman, kasus, PACK)
+    const nilaiBerbahaya = nilaiEncounter(berbahaya, kasus, PACK)
+
+    expect(nilaiAman.tindakanBerbahaya).toBe(false)
+    expect(nilaiAman.grade).toBe('A')
+    expect(nilaiBerbahaya.tindakanBerbahaya).toBe(true)
+    expect(nilaiBerbahaya.grade).toBe('D')
   })
 })
