@@ -13,9 +13,7 @@ import type {
   UkmScenario,
 } from './types'
 import { buildM13DeltaEvidenceBindings } from './m13DeltaAudit'
-import {
-  LAB_BATCH_1_ARCHETYPE_SPECS,
-} from '../lab/batch1'
+import { LAB_ALL_ARCHETYPE_SPECS } from '../lab'
 
 export const FKTP144_CATALOG_ID = 'fktp144-1186-2022'
 export const EXISTING_CLINICAL_CATALOG_ID = 'existing-clinical-baseline-2026-07-14'
@@ -108,7 +106,7 @@ const BASE_CLINIC_ARCHETYPE_SPEC: Record<string, ClinicArchetypeSpec> = {
 
 const CLINIC_ARCHETYPE_SPEC: Record<string, ClinicArchetypeSpec> = {
   ...BASE_CLINIC_ARCHETYPE_SPEC,
-  ...LAB_BATCH_1_ARCHETYPE_SPECS,
+  ...LAB_ALL_ARCHETYPE_SPECS,
 }
 
 const CATALOG_CONCEPT_OVERRIDES: Record<string, ClinicalConcept[]> = {

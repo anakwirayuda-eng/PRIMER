@@ -33,6 +33,31 @@ GI atas; Fornas KMK 1199/2025.
 | `lab_perdarahan_gi_atas` | PPK lama memuat NGT/lavage dan PPI; NICE tidak menjadikan PPI pra-endoskopi sebagai langkah universal | ABC, akses IV/cairan terukur, oksigen karena hipoksemia, dan transfer; PPI/lavage tidak menjadi blocker |
 | `lab_abses_peritonsil` | Antibiotik oral tidak aman bila jalan napas terancam atau pasien tidak dapat menelan | Vignette eksplisit masih dapat menelan dan tanpa stridor; amoksisilin-klavulanat pra-rujuk dinilai benar, drainase buta dinilai berbahaya |
 
+## Batch 2-3 - 2026-07-16
+
+**Aktivasi:** 78 kasus poli SKDI-4A baru (39 + 39). Seluruh 144 baris katalog
+FKTP kini tertaut satu-ke-satu ke 144 kasus playable unik di mode Karier;
+total pool poli Karier menjadi 176 kasus. Pool Ujian tetap tidak berubah.
+
+**Sumber utama:** PPK Dokter FKTP KMK 1186/2022 beserta amandemennya; PNPK
+terkait; Fornas KMK 1199/2025; pedoman program Kemenkes; WHO untuk EBM yang
+lebih baru. Status obat program atau pengadaan lokal disebut eksplisit dan
+tidak disamarkan sebagai ketersediaan Fornas.
+
+| ID | Konflik material | Keputusan prototipe |
+|---|---|---|
+| `lab_kejang_demam_sederhana` | Antipiretik memperbaiki kenyamanan tetapi tidak mencegah kekambuhan kejang demam | Parasetamol dibuat opsional; pertolongan kejang dan safety-net tetap kritis |
+| `lab_gonore_uretritis_pria`, `lab_sindrom_duh_genital_servisitis` | Regimen gonore PPK lama sudah tertinggal oleh rekomendasi WHO 2024 dan pola resistensi | Seftriakson 1 g IM dosis tunggal; doksisiklin ditambahkan bila klamidia belum disingkirkan |
+| `lab_fimosis_patologis_ringan` | Katalog lama hanya punya betametason 0,1%, sedangkan PPK menyebut 0,05% | Tambah sediaan 0,05%; tidak menukar konsentrasi diam-diam |
+| `lab_defisiensi_mineral_zinc` | Zinc dispersibel Fornas ditujukan untuk diare anak, bukan dugaan defisiensi zinc dewasa | Diet dan evaluasi penyebab menjadi inti; suplementasi spesifik melalui jejaring bila terkonfirmasi |
+| `lab_kusta_pausibasiler` | MDT adalah pasokan program; komposisi regimen nasional dapat berbeda dari WHO terbaru, dan keterlibatan saraf dapat mengubah klasifikasi | Vignette PB dibuat dua lesi, BTA negatif, tanpa keterlibatan saraf; gunakan blister program aktif dan jangan merakit regimen bebas dari stok umum |
+| `lab_ruptur_perineum_derajat_1` | Draf awal menyebut derajat 2 tetapi memakai ICD O70.0 (derajat 1) | Skenario direkonsiliasi menjadi robekan derajat 1 dengan rembesan aktif; otot dan sfingter utuh |
+| `lab_tinea_kapitis_anak`, `lab_limfadenitis_servikal_akut`, `lab_ektima_tungkai` | Sediaan dewasa 500-625 mg tidak layak menjadi satu-satunya pilihan untuk pasien anak | Gunakan griseofulvin 125 mg dan sefadroksil sirup 125 mg/5 mL yang tercantum Fornas |
+| `lab_pedikulosis_pubis` | PPK lama memakai benzil benzoat 25%; EBM menerima permetrin 1%, tetapi Fornas hanya memuat krim 5% | Losio 1% tersedia lewat pengadaan lokal dalam vignette; konsentrasi tidak disubstitusi diam-diam |
+| `lab_tinea_unguium_terkonfirmasi` | Terbinafin tidak tersedia pada tingkat FKTP di Fornas, sedangkan griseofulvin tersedia | Gunakan griseofulvin setelah konfirmasi dan pemeriksaan keamanan yang relevan |
+| `lab_eritrasma_lipat_paha` | Tetrasiklin topikal PPK dan eritromisin topikal tidak tersedia di katalog/Fornas FKTP | Lesi terbatas memakai mupirosin topikal yang tersedia; hindari antibiotik sistemik otomatis |
+| `lab_dermatitis_kontak_iritan_tangan`, `lab_dermatitis_atopik_ringan`, `lab_dermatitis_numularis`, `lab_dermatitis_popok_iritan`, `lab_akne_vulgaris_ringan`, `lab_hidradenitis_supuratif_hurley1`, `lab_dermatitis_perioral` | Beberapa pilihan topikal EBM tidak tercantum sebagai item Fornas | Skenario menyebut pengadaan lokal/OTC; pilihan non-Fornas wajib memiliki catatan availability dan tidak memicu substitusi antibiotik sistemik |
+
 ## Sumber Daring
 
 - Kemenkes, PNPK Pneumonia Dewasa 2023:
@@ -49,3 +74,9 @@ GI atas; Fornas KMK 1199/2025.
   https://www.who.int/news-room/fact-sheets/detail/taeniasis-cysticercosis
 - NICE CG141, acute upper GI bleeding:
   https://www.nice.org.uk/guidance/cg141/chapter/Recommendations
+- Kemenkes, Fornas KMK 1199/2025 (berlaku 1 April 2026):
+  https://e-fornas.kemkes.go.id/guest/landing
+- WHO, Leprosy fact sheet, 23 January 2026:
+  https://www.who.int/news-room/fact-sheets/detail/leprosy
+- WHO, updated gonorrhoea/chlamydia/syphilis recommendations, 2024:
+  https://www.who.int/publications/i/item/9789240090767

@@ -30,8 +30,14 @@ import {
   aktifkanBlueprintM13_1A,
   aktifkanKatalogM13_1A,
 } from './curriculum/m13_1a/activation'
-import { LAB_BATCH_1_CASES } from './lab/batch1'
+import { LAB_ALL_CASES, LAB_CASE_ID_BY_FKTP_ITEM } from './lab'
 import { EDUKASI_LAB, LAB_LAB, OBAT_LAB, TINDAKAN_LAB } from './lab/catalog'
+import {
+  EDUKASI_LAB_EXPANSION,
+  LAB_LAB_EXPANSION,
+  OBAT_LAB_EXPANSION,
+  TINDAKAN_LAB_EXPANSION,
+} from './lab/catalogExpansion'
 
 function byId<T extends { id: string }>(arr: T[]): Record<string, T> {
   const out: Record<string, T> = {}
@@ -50,7 +56,7 @@ const semuaKasusDasar: KasusKlinis[] = [
   ...KASUS_SARAF_MATA_THT,
   ...KASUS_METABOLIK_MSK,
   ...KASUS_KIA_JIWA,
-  ...LAB_BATCH_1_CASES,
+  ...LAB_ALL_CASES,
 ]
 const semuaKeluargaDasar: KeluargaBinaan[] = [
   ...KELUARGA_DESA_A,
@@ -66,6 +72,8 @@ const kasusDasarById = byId(semuaKasusDasar)
 // Tautkan Dex 144 ke kasus playable via kecocokan ICD-10 (agar penulis kasus
 // tidak perlu menyentuh skdi144.ts — anti-konflik antar penulis konten).
 const skdi144Tertaut = SKDI144.map((entri) => {
+  const kasusLabId = LAB_CASE_ID_BY_FKTP_ITEM[entri.id]
+  if (kasusLabId) return { ...entri, kasusId: kasusLabId }
   if (entri.kasusId) return entri
   const kasusCocok = semuaKasusDasar.find((k) => k.icd10 === entri.icd10)
   return kasusCocok ? { ...entri, kasusId: kasusCocok.id } : entri
@@ -78,10 +86,10 @@ const BASE_CONTENT_CATALOG: ContentCatalog = {
   kader: KADER_PROFIL,
   rw: RW_PROFIL,
   rumahSakit: RUMAH_SAKIT,
-  obat: { ...OBAT, ...OBAT_M3, ...OBAT_LAB },
-  lab: { ...LAB, ...LAB_M3, ...LAB_LAB },
-  edukasi: { ...EDUKASI, ...EDUKASI_M3, ...EDUKASI_LAB },
-  tindakan: { ...TINDAKAN_M3, ...TINDAKAN_LAB },
+  obat: { ...OBAT, ...OBAT_M3, ...OBAT_LAB, ...OBAT_LAB_EXPANSION },
+  lab: { ...LAB, ...LAB_M3, ...LAB_LAB, ...LAB_LAB_EXPANSION },
+  edukasi: { ...EDUKASI, ...EDUKASI_M3, ...EDUKASI_LAB, ...EDUKASI_LAB_EXPANSION },
+  tindakan: { ...TINDAKAN_M3, ...TINDAKAN_LAB, ...TINDAKAN_LAB_EXPANSION },
   skdi144: skdi144Tertaut,
   namaWarga: NAMA_WARGA,
 }

@@ -102,7 +102,7 @@ describe('PACK — validasi silang id konten', () => {
   // SKDI umum 2012 §26) mengonfirmasi "Hiperurisemia-Gout Arthritis" adalah
   // SATU kompetensi 4A gabungan (E79.0 + M10) — kasus gout tautkan ke entri
   // hyperuricemia yang SUDAH ada (bukan entri baru, jaga TEPAT 144).
-  it('M13-1a: tautan SKDI mencakup gout dan tiga kasus 4A pilot baru', () => {
+  it('M13 lab: seluruh 144 entri SKDI/FKTP tertaut ke kasus playable', () => {
     const kasusIds = Object.keys(PACK.kasus)
     const linked = new Set(PACK.skdi144.filter((e) => e.kasusId).map((e) => e.kasusId))
     expect(linked.has('mm_gout_artritis_akut')).toBe(true)
@@ -110,7 +110,7 @@ describe('PACK — validasi silang id konten', () => {
     expect(linked.has('hipoglikemia_ringan_dewasa')).toBe(true)
     expect(linked.has('benda_asing_hidung_anak')).toBe(true)
     expect(linked.has('otitis_eksterna_akut_ringan')).toBe(true)
-    expect(totalTertaut).toBe(66)
+    expect(totalTertaut).toBe(144)
   })
 
   // CODEX ronde-16 P2 (2026-07-04): field `fktp144` per-kasus ("termasuk daftar

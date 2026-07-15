@@ -121,6 +121,7 @@ describe('M9.3 — tatalaksana wajib mencerminkan janji `clue` (sapuan heuristik
       'rujuk segera',
       'segera rujuk',
       'wajib rujuk',
+      'wajib dirujuk',
       'harus dirujuk',
       'harus rujuk',
       'rujuk cito',

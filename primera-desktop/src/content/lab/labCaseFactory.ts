@@ -1,7 +1,13 @@
 import type {
   KasusKlinis,
   KategoriAnamnesis,
+  KategoriKasus,
+  PemeriksaanLab,
   PertanyaanAnamnesis,
+  RegionFisik,
+  SpesialisasiRs,
+  TandaVital,
+  Tatalaksana,
 } from '../types'
 
 type Oldcarts = NonNullable<PertanyaanAnamnesis['oldcarts']>
@@ -56,4 +62,103 @@ export function buatKasusLab(spec: LabCaseSpec): KasusKlinis {
     activationStatus: 'lab_prototype_unadjudicated',
     anamnesis,
   }
+}
+
+type PertanyaanRingkas = readonly [
+  id: string,
+  kategori: Exclude<KategoriAnamnesis, 'keluhan_utama'>,
+  tanya: string,
+  jawab: string,
+  esensial?: boolean,
+  hanyaUntuk?: 'L' | 'P',
+]
+type FisikRingkas = readonly [region: RegionFisik, temuan: string, relevan?: boolean]
+type LabRingkas = readonly [
+  id: string,
+  hasil: string,
+  flag: PemeriksaanLab['flag'],
+  relevan?: boolean,
+]
+
+export interface FktpLabSpec {
+  id: string
+  nama: string
+  icd10: string
+  kategori: KategoriKasus
+  keluhanUtama: string
+  keluhanUtamaOlehPendamping?: boolean
+  usia: readonly [min: number, max: number]
+  jenisKelamin?: 'L' | 'P'
+  usiaBulan?: readonly [min: number, max: number]
+  vital: TandaVital
+  pembuka: readonly [tanya: string, jawab: string]
+  pertanyaan: readonly PertanyaanRingkas[]
+  fisik: readonly FisikRingkas[]
+  lab?: readonly LabRingkas[]
+  diagnosisBanding: string[]
+  tatalaksana: Tatalaksana
+  clue: string
+  panduanResmi?: string
+  catatanRealita?: string
+  prevalensi?: 'tinggi' | 'sedang' | 'rendah'
+  harusDirujuk?: boolean
+  spesialisRujukan?: SpesialisasiRs
+  stabilisasiWajib?: string[]
+  konfirmasiWajib?: string
+}
+
+/**
+ * Bentuk authoring padat untuk ekspansi katalog 4A. Hasilnya tetap memakai
+ * kontrak KasusKlinis lengkap; ringkasan ini hanya menghapus boilerplate yang
+ * identik pada puluhan kasus lab.
+ */
+export function buatKasusFktpLab(spec: FktpLabSpec): KasusKlinis {
+  return buatKasusLab({
+    id: spec.id,
+    nama: spec.nama,
+    icd10: spec.icd10,
+    skdi: '4A',
+    kategori: spec.kategori,
+    fktp144: true,
+    harusDirujuk: spec.harusDirujuk ?? false,
+    prevalensi: spec.prevalensi ?? 'rendah',
+    spesialisRujukan: spec.spesialisRujukan,
+    keluhanUtama: spec.keluhanUtama,
+    keluhanUtamaOlehPendamping: spec.keluhanUtamaOlehPendamping,
+    demografi: {
+      usiaMin: spec.usia[0],
+      usiaMax: spec.usia[1],
+      jenisKelamin: spec.jenisKelamin,
+      usiaBulanMin: spec.usiaBulan?.[0],
+      usiaBulanMax: spec.usiaBulan?.[1],
+    },
+    vital: spec.vital,
+    pembuka: { tanya: spec.pembuka[0], jawab: spec.pembuka[1] },
+    pertanyaan: spec.pertanyaan.map(([id, kategori, tanya, jawab, esensial, hanyaUntuk]) => ({
+      id,
+      kategori,
+      tanya,
+      jawab,
+      esensial,
+      hanyaUntuk,
+    })),
+    pemeriksaanFisik: spec.fisik.map(([region, temuan, relevan = true]) => ({
+      region,
+      temuan,
+      relevan,
+    })),
+    lab: (spec.lab ?? []).map(([id, hasil, flag, relevan = true]) => ({
+      id,
+      hasil,
+      flag,
+      relevan,
+    })),
+    diagnosisBanding: spec.diagnosisBanding,
+    tatalaksana: spec.tatalaksana,
+    clue: spec.clue,
+    panduanResmi: spec.panduanResmi,
+    catatanRealita: spec.catatanRealita,
+    stabilisasiWajib: spec.stabilisasiWajib,
+    konfirmasiWajib: spec.konfirmasiWajib,
+  })
 }

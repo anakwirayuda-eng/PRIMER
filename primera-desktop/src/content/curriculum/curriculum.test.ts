@@ -16,11 +16,11 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     const summary = ringkasanCakupanKurikulum(CURRICULUM_BLUEPRINT)
     expect(summary).toEqual({
       fktp144Total: 144,
-      fktp144WithCertifyingClinicArchetype: 66,
-      fktp144WithoutCertifyingClinicArchetype: 78,
+      fktp144WithCertifyingClinicArchetype: 144,
+      fktp144WithoutCertifyingClinicArchetype: 0,
       additionalClinicalItems: 32,
       ukmObjectives: 12,
-      clinicArchetypes: 98,
+      clinicArchetypes: 176,
       igdArchetypes: 6,
       ukmScenarios: 27,
     })
@@ -202,8 +202,9 @@ describe('M13-0A — canonical curriculum blueprint', () => {
   })
 
   it('validator menangkap credit yatim, link lama belum direkonsiliasi, dan skenario UKM hilang', () => {
+    const pneumoniaCaseId = PACK.skdi144.find((entry) => entry.id === 'pneumonia_bacterial')!.kasusId!
     const pneumoniaIndex = CURRICULUM_BLUEPRINT.encounterArchetypes.findIndex(
-      (archetype) => archetype.id === 'clinic:pneumonia_balita',
+      (archetype) => archetype.contentRef.kind === 'clinic' && archetype.contentRef.id === pneumoniaCaseId,
     )
     const rusakArchetypes = [...CURRICULUM_BLUEPRINT.encounterArchetypes]
     rusakArchetypes[pneumoniaIndex] = {
@@ -217,8 +218,8 @@ describe('M13-0A — canonical curriculum blueprint', () => {
       ukmScenarios: CURRICULUM_BLUEPRINT.ukmScenarios.slice(1),
     }
     const masalah = validasiCurriculumBlueprint(rusak, PACK)
-    expect(masalah).toContain("EncounterArchetype clinic:pneumonia_balita: credit item yatim 'item:tidak-ada'")
-    expect(masalah.some((item) => item.includes('pneumonia_bacterial->pneumonia_balita') && item.includes('belum diputuskan'))).toBe(true)
+    expect(masalah).toContain(`EncounterArchetype clinic:${pneumoniaCaseId}: credit item yatim 'item:tidak-ada'`)
+    expect(masalah.some((item) => item.includes(`pneumonia_bacterial->${pneumoniaCaseId}`) && item.includes('belum diputuskan'))).toBe(true)
     expect(masalah.some((item) => item.startsWith('UkmScenario contentRef:') && item.includes('belum dimodelkan'))).toBe(true)
   })
 })

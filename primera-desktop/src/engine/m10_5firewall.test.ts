@@ -46,12 +46,11 @@ describe('M10.5 Q1a — 9 antibiotik dapat golonganAlergi, 2 tepi dibiarkan koso
     expect(PACK.obat['mupirosin_krim']?.golonganAlergi).toBeUndefined()
     expect(PACK.obat['oat_kdt']?.golonganAlergi).toBeUndefined()
   })
-  it('firewall antibiotik: 17/19 bertag (sisanya mupirosin+oat_kdt disengaja)', () => {
+  it('firewall antibiotik: semua bertag kecuali mupirosin+oat_kdt yang disengaja', () => {
     const ab = Object.values(PACK.obat).filter((o) => o.antibiotik)
     const bertag = ab.filter((o) => o.golonganAlergi)
-    expect(ab.length).toBe(19)
-    expect(bertag.length).toBe(17)
     const takBertag = ab.filter((o) => !o.golonganAlergi).map((o) => o.id).sort()
+    expect(bertag.length).toBe(ab.length - 2)
     expect(takBertag).toEqual(['mupirosin_krim', 'oat_kdt'])
   })
 })

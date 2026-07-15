@@ -81,7 +81,8 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     },
     pertanyaan: [
       { id: 'q_napas', kategori: 'rps', tanya: 'Ada sesak, nyeri dada, atau bibir kebiruan?', jawab: 'Tidak ada, Dok.', esensial: true },
-      { id: 'q_risiko', kategori: 'rpd', tanya: 'Sedang hamil, punya penyakit kronis, atau daya tahan tubuh lemah?', jawab: 'Tidak ada.', esensial: true },
+      { id: 'q_risiko', kategori: 'rpd', tanya: 'Punya penyakit kronis atau daya tahan tubuh lemah?', jawab: 'Tidak ada.', esensial: true },
+      { id: 'q_hamil', kategori: 'rpd', tanya: 'Apakah sedang hamil?', jawab: 'Tidak.', hanyaUntuk: 'P' },
       { id: 'q_kontak', kategori: 'sosial', tanya: 'Ada orang sekitar dengan keluhan serupa?', jawab: 'Tiga rekan kerja juga mendadak demam dan batuk minggu ini.', esensial: true },
       { id: 'q_lama', kategori: 'rps', tanya: 'Demamnya sudah berapa lama dan apakah terus memburuk?', jawab: 'Baru satu hari dan masih bisa makan serta minum.', oldcarts: ['durasi', 'keparahan'] },
     ],
@@ -410,7 +411,8 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       oldcarts: ['onset', 'lokasi', 'agravasi', 'durasi'],
     },
     pertanyaan: [
-      { id: 'q_komplikasi', kategori: 'rps', tanya: 'Ada sakit kepala berat, kaku kuduk, nyeri perut, atau nyeri dan bengkak pada testis?', jawab: 'Tidak ada.', esensial: true },
+      { id: 'q_komplikasi', kategori: 'rps', tanya: 'Ada sakit kepala berat, kaku kuduk, atau nyeri perut hebat?', jawab: 'Tidak ada.', esensial: true },
+      { id: 'q_orchitis', kategori: 'rps', tanya: 'Ada nyeri atau bengkak pada testis?', jawab: 'Tidak ada.', esensial: true, hanyaUntuk: 'L' },
       { id: 'q_nanah', kategori: 'rps', tanya: 'Ada rasa nanah di mulut atau demam tinggi menggigil?', jawab: 'Tidak.', esensial: true },
       { id: 'q_kontak', kategori: 'sosial', tanya: 'Ada teman atau keluarga dengan bengkak serupa?', jawab: 'Teman satu kelas tidak masuk karena pipinya juga bengkak.', esensial: true },
       { id: 'q_imunisasi', kategori: 'rpd', tanya: 'Apakah pernah mendapat imunisasi MMR?', jawab: 'Orang tua tidak yakin pernah mendapat MMR.' },
@@ -423,7 +425,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     lab: [],
     diagnosisBanding: ['B26', 'K11.2', 'L04.0'],
     tatalaksana: {
-      obatBenar: ['paracetamol_500'],
+      obatBenar: ['paracetamol_sirup'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Tidak ada tanda parotitis bakterial; mumps adalah infeksi virus.', bahaya: 'nonPrimer' },
       ],
@@ -530,7 +532,8 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     pertanyaan: [
       { id: 'q_dehidrasi', kategori: 'rps', tanya: 'Masih bisa minum dan berkemih? Ada sangat haus, lemas, atau pusing saat berdiri?', jawab: 'Masih bisa minum sedikit dan tadi pagi masih kencing.', esensial: true },
       { id: 'q_invasif', kategori: 'rps', tanya: 'Ada darah atau lendir pada tinja, demam tinggi, atau nyeri perut menetap?', jawab: 'Tidak ada darah, hanya mulas sebelum BAB.', esensial: true },
-      { id: 'q_risiko', kategori: 'rpd', tanya: 'Sedang hamil, usia lanjut, atau punya gangguan ginjal dan daya tahan tubuh?', jawab: 'Tidak ada.', esensial: true },
+      { id: 'q_risiko', kategori: 'rpd', tanya: 'Punya gangguan ginjal atau daya tahan tubuh lemah?', jawab: 'Tidak ada.', esensial: true },
+      { id: 'q_hamil', kategori: 'rpd', tanya: 'Apakah sedang hamil?', jawab: 'Tidak.', hanyaUntuk: 'P' },
       { id: 'q_makanan', kategori: 'sosial', tanya: 'Makanan disimpan lama pada suhu ruang?', jawab: 'Katanya nasi kotak sudah dibuat sejak pagi dan baru dimakan sore.' },
     ],
     pemeriksaanFisik: [
@@ -573,9 +576,9 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     },
     pertanyaan: [
       { id: 'q_tanah', kategori: 'sosial', tanya: 'Sering bekerja atau berjalan tanpa alas kaki di tanah lembap?', jawab: 'Saya bekerja di kebun dan sering tanpa alas kaki.', esensial: true },
-      { id: 'q_perdarahan', kategori: 'rps', tanya: 'Ada muntah darah, BAB hitam pekat, haid sangat banyak, atau perdarahan lain?', jawab: 'Tidak ada perdarahan yang terlihat.', esensial: true },
+      { id: 'q_perdarahan', kategori: 'rps', tanya: 'Ada muntah darah, BAB hitam pekat, atau perdarahan lain?', jawab: 'Tidak ada perdarahan yang terlihat.', esensial: true },
       { id: 'q_gizi', kategori: 'sosial', tanya: 'Bagaimana pola makan dan penggunaan jamban di rumah?', jawab: 'Makan seadanya dan jamban keluarga masih dekat kebun.', esensial: true },
-      { id: 'q_hamil', kategori: 'rpd', tanya: 'Apakah sedang hamil?', jawab: 'Tidak.', hanyaUntuk: 'P' },
+      { id: 'q_reproduksi', kategori: 'rpd', tanya: 'Apakah sedang hamil atau haid sangat banyak?', jawab: 'Tidak.', hanyaUntuk: 'P' },
     ],
     pemeriksaanFisik: [
       { region: 'umum', temuan: 'Konjungtiva pucat, tidak ikterik, status gizi cukup.', relevan: true },
