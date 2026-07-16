@@ -126,7 +126,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // 14 kasus infeksi lab kini bisa berkluster → komposisi KLB & bobot Director
   // bergeser pada jejak yang menyentuhnya. Kanal IGD baca activationStatus
   // (blueprint) — tak menyentuh file beku. Detail di verifikasi.ts REVISI 39.
-  'reducer.ts': 'f03d9a4f43607987207119b0299dd14a2aefb2dbb7ff2881a4b9c97fa8a63b67',
+  'reducer.ts': '62b7c4661ca4e150ebb5f0703c1b46e935a203b302425a95268145fa5732244b',
   'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
   'scoring.ts': 'c1b5de6fc2c194e8b8a70b8d802a29980002ee2059ea487821e9e59fc0540d8d',
   'director.ts': 'fa4c269cd001eb2e019f18507ac5e024ff38784bb6181cfa41cb5f87cd1a340d',
@@ -135,12 +135,12 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
   'init.ts': '19b2d372c730406a14ac96afc3497fc8e8f418b0694271a5bff1df41ad778afb',
   'kegiatan.ts': 'c2f0bddb9d8e1b3a3a4f60cd04c79be9d6d447c6db58c147f873f67e6d6d6b06',
-  'kunjungan.ts': 'b7288526abd342b909b94905c6040907d5c78854a5d2545f0a0c829362321eb2',
+  'kunjungan.ts': '3ef25d708ac555fd285f92156e251ad2740e89de20cb1ab82934d0543e2016c9',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '6805f86c1c7526f585ed34e8c1c78c5a3cd92add51a7911d6ad0f39067262ecd',
-  'state.ts': '3224553d62b71b27924c63749b6253ca5a240d05f7bcaccac9ab195c9b32a4b6',
+  'verifikasi.ts': 'd2b614d549b53ad7f67ab0c2820640a4129aeb4780d217dd3a576cf17e5d546a',
+  'state.ts': 'dad22996be1da89cd68aca8a80ee89e5f2c810a1b199918322edf1628e77e14d',
   'save.ts': '8c75672d5ff27efa243ce2f87d3ad92ff22c5c851f010566e1c4090b43449c8a',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',

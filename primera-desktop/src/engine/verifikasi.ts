@@ -548,7 +548,21 @@ function fnv1a(teks: string): string {
 // pertanyaan yang jawabannya di-override varian — `jawabanUntuk()` (clinic.ts)
 // memprioritaskan `variasi[persona]` di atas `jawab`, jadi tanpa gugur ini
 // persona ber-variasi tetap mengucapkan isi dasar yang kontradiktif dgn
-// vital/temuan varian, dan jawaban varian tak pernah terdengar.
+// vital/temuan varian, dan jawaban varian tak pernah terdengar. Gelombang
+// yang sama (pra-rilis rev 41), M11 #5 B1 (2026-07-17): padanan mekanik di
+// sisi UKM — `SkenarioKunjungan.varianKunjungan?` (types.ts, tanpa field
+// ground-truth: hambatanSebenarnya/target/petunjukHambatan/karma/indikator
+// hotspot/gaya-efekTrust-tepat-ungkap pilihan dialog SAMA SEKALI tak ada di
+// tipe varian). `buatKunjungan` (kunjungan.ts) kini menerima `rng` &
+// memilih `varianId` sekali via `rng.pick(['_dasar', ...ids])` (stream
+// `kunjungan-varian` turunan `s.seed`, bukan `s.seedKurikulum` — alasan sama
+// #4). `skenarioEfektif(skenario, varianId)` fungsi merge murni baru,
+// dipanggil reducer.ts (2 titik: MULAI_KUNJUNGAN pilih varian, aksi
+// lanjutan menerapkannya via `kj.varianId`) & Kunjungan.tsx (1 titik
+// render). `KunjunganState.varianId?` (state.ts) menyimpannya seumur
+// kunjungan. Replay lama TAK BERUBAH (0 keluarga existing punya
+// varianKunjungan) — bump krn reducer/kunjungan/state tersentuh (verifikasi.ts
+// sendiri juga, krn REVISI_ENGINE hidup di situ).
 export const REVISI_ENGINE = 41
 
 /**
@@ -696,6 +710,13 @@ export function sidikJariPack(pack: ContentPack): string {
         id: k.id,
         ekonomi: k.ekonomi,
         indikator: k.indikatorAwal,
+        // `arc: k.arc` sudah wholesale (bukan daftar field terpilih spt kasus
+        // klinik di bawah) — M11 #5 B1 `varianKunjungan` (id-nya menyetir
+        // rng.pick di buatKunjungan, replay-affecting) OTOMATIS ikut ter-hash
+        // tanpa entri terpisah. Beda dari kasus klinik: `panduanResmi` sisi
+        // UKM (M11 Decision #2) IKUT ter-hash lewat wholesale ini (tak
+        // dikecualikan spt panduanResmi/clue UKP) — konvensi pre-existing
+        // arc keluarga, bukan keputusan baru hari ini.
         arc: k.arc,
         rw: k.rw,
         jarak: k.jarakMenit,

@@ -1,6 +1,7 @@
 import type { ContentPack } from '../../pack'
 import type { KasusKlinis } from '../../types'
 import { NAMA_ICD } from '../../icd10'
+import { VARIAN_TINGKAT_A } from '../../varianTingkatAData'
 import { buildCurriculumBlueprint } from '../blueprint'
 import { M13_SOURCE_REGISTRY } from '../sourceRegistry'
 import { validasiClinicalGroundingPolicy } from '../clinicalGroundingPolicy'
@@ -47,6 +48,18 @@ function samaSetString(a: string[], b: string[]): boolean {
 
 function samaStruktural(a: unknown, b: unknown): boolean {
   return JSON.stringify(a) === JSON.stringify(b)
+}
+
+/**
+ * M11 #4 (2026-07-16): PACK memasang lapisan varian Tingkat-A
+ * (varianTingkatA.ts) di atas kasus manifest bila terdaftar di
+ * VARIAN_TINGKAT_A. Kosmetik terjamin struktural (tipe varian tak punya
+ * field kunci-jawaban) — bukan drift yang perlu re-review physician,
+ * jadi dibandingkan thd bentuk tervarian, bukan draft mentah.
+ */
+function denganVarianTingkatA(kasus: KasusKlinis): KasusKlinis {
+  const varian = VARIAN_TINGKAT_A[kasus.id]
+  return varian ? { ...kasus, varianPresentasi: varian } : kasus
 }
 
 function contentRefKey(ref: { kind: 'clinic' | 'igd'; id: string }): string {
@@ -149,7 +162,7 @@ export function validasiM13AuthoringManifest(
   }
 
   for (const kasus of manifest.clinicCases) {
-    tambah(activated ? !samaStruktural(activePack.kasus[kasus.id], kasus) : Boolean(activePack.kasus[kasus.id]), activated ? `clinic aktif '${kasus.id}' drift dari manifest` : `clinic draft '${kasus.id}' sudah aktif di PACK`)
+    tambah(activated ? !samaStruktural(activePack.kasus[kasus.id], denganVarianTingkatA(kasus)) : Boolean(activePack.kasus[kasus.id]), activated ? `clinic aktif '${kasus.id}' drift dari manifest` : `clinic draft '${kasus.id}' sudah aktif di PACK`)
     const spec = specs.get(kasus.id)
     if (!spec) continue
     const [min, max] = budget[spec.authoringTier]

@@ -12,6 +12,7 @@ import {
   releasePolicyAktif,
   ukmScenarioAktif,
 } from '../../pack'
+import { VARIAN_TINGKAT_A } from '../../varianTingkatAData'
 import {
   M13_1A_AUTHORING_MANIFEST,
   M13_1A_BASE_CONTENT_RELEASE,
@@ -26,6 +27,13 @@ import {
 
 function caseById(id: string) {
   return M13_1A_AUTHORING_MANIFEST.clinicCases.find((kasus) => kasus.id === id)!
+}
+
+/** PACK memuat kasus + lapisan varian Tingkat-A (M11 #4, varianTingkatA.ts)
+ * bila terdaftar di VARIAN_TINGKAT_A — manifest authoring sendiri tak
+ * membawa lapisan itu, jadi dibandingkan dengan bentuk tervarian. */
+function denganVarian<T extends { id: string }>(kasus: T): T {
+  return VARIAN_TINGKAT_A[kasus.id] ? { ...kasus, varianPresentasi: VARIAN_TINGKAT_A[kasus.id] } : kasus
 }
 
 function actualReviewHashes(): Record<string, string> {
@@ -52,7 +60,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
     expect(M13_1A_AUTHORING_MANIFEST.clinicSpecs.filter((item) => item.role === 'representative')).toHaveLength(4)
     expect(new Set(M13_1A_AUTHORING_MANIFEST.clinicSpecs.filter((item) => item.role === 'representative').map((item) => item.authoringTier))).toEqual(new Set(['A', 'B', 'C']))
     for (const draft of M13_1A_AUTHORING_MANIFEST.clinicCases) {
-      expect(PACK.kasus[draft.id], draft.id).toEqual(draft)
+      expect(PACK.kasus[draft.id], draft.id).toEqual(denganVarian(draft))
     }
     expect(
       M13_1A_AUTHORING_MANIFEST.clinicSpecs
@@ -151,7 +159,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
       M13_1A_PROPOSED_CONTENT_RELEASE,
       LAB_CONTENT_RELEASE,
     ])
-    for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) expect(PACK.kasus[kasus.id], kasus.id).toEqual(kasus)
+    for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) expect(PACK.kasus[kasus.id], kasus.id).toEqual(denganVarian(kasus))
     for (const kasus of M13_1A_AUTHORING_MANIFEST.igdCases) expect(PACK.kasusIgd[kasus.id], kasus.id).toEqual(kasus)
     expect(PACK.keluarga.keluarga_gunawan?.arc.kunjungan.some((item) => item.id === 'gunawan_k2')).toBe(true)
 

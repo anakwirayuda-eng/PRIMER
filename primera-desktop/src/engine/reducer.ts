@@ -38,7 +38,7 @@ import {
 import type { Persona } from '@content/types'
 import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter, kasusEfektif } from './clinic'
-import { arcKunjunganAktif, buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm } from './kunjungan'
+import { arcKunjunganAktif, buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm, skenarioEfektif } from './kunjungan'
 import { prosesHarianKader } from './kader'
 import { susunAntrianHarian, buatPasienDariKasus, peluangIgd } from './director'
 import { ambangKlusterPack, kasusMenular, pangkasSurveilans, hitungCluster } from './surveilans'
@@ -922,7 +922,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const rwProfil = pack.rw.find((r) => r.nomor === kelContent.rw)
       const biaya = BIAYA_STAMINA_KUNJUNGAN[rwProfil?.jarak ?? 'sedang']
       if (s.stamina < biaya) return err(s, `Butuh ${biaya} stamina untuk perjalanan ke RW ${kelContent.rw}.`)
-      const kj = buatKunjungan(action.keluargaId, skenario)
+      // M11 #5 B1: varian dipilih dari stream personal s.seed (bukan
+      // seedKurikulum) — Tingkat-A tak bisa mengubah ground-truth kunjungan,
+      // jadi tak perlu adil lintas paket-mate Mode Ujian (sama alasan #4 UKP).
+      const rngVarian = new Rng(s.seed, 'kunjungan-varian', s.hari, action.keluargaId)
+      const kj = buatKunjungan(action.keluargaId, skenario, rngVarian)
       return {
         state: { ...s, stamina: s.stamina - biaya, layar: 'kunjungan', kunjungan: kj },
         events: [],
@@ -939,8 +943,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const kelContent = pack.keluarga[kj.keluargaId]
       const kel = s.desa.keluarga[kj.keluargaId]
       if (!kelContent || !kel) return err(s, 'Keluarga tidak dikenal.')
-      const skenario = kelContent.arc.kunjungan.find((x) => x.id === kj.skenarioId)
-      if (!skenario) return err(s, 'Skenario hilang.')
+      const skenarioDasar = kelContent.arc.kunjungan.find((x) => x.id === kj.skenarioId)
+      if (!skenarioDasar) return err(s, 'Skenario hilang.')
+      const skenario = skenarioEfektif(skenarioDasar, kj.varianId)
 
       const hasilAksi = aksiKunjungan(kj, action, skenario, kel)
       let next: GameState = { ...s, kunjungan: hasilAksi.kj }

@@ -14,7 +14,7 @@ import type { BabakKunjunganFase } from '@engine/state'
 import type { Hambatan, PilihanDialog } from '@content/types'
 import { PACK } from '@content/index'
 import { hashSeed, Rng } from '@engine/core/rng'
-import { arcKunjunganAktif } from '@engine/kunjungan'
+import { arcKunjunganAktif, skenarioEfektif } from '@engine/kunjungan'
 import { acakUrutan } from '../utils/acakUrutan'
 import { RumahIlustrasi } from './kunjungan/RumahIlustrasi'
 import { useRadioGroup } from '../useRadioGroup'
@@ -93,7 +93,8 @@ export function Kunjungan() {
 
   const kj = state.kunjungan
   const kelContent = kj ? PACK.keluarga[kj.keluargaId] : undefined
-  const skenario = kj && kelContent ? kelContent.arc.kunjungan.find((sk) => sk.id === kj.skenarioId) : undefined
+  const skenarioDasar = kj && kelContent ? kelContent.arc.kunjungan.find((sk) => sk.id === kj.skenarioId) : undefined
+  const skenario = skenarioDasar ? skenarioEfektif(skenarioDasar, kj?.varianId) : undefined
 
   /** Catatan percakapan lokal (untuk rekap babak 3) + respons yang sedang tampil. */
   const [riwayat, setRiwayat] = useState<Ucapan[]>([])

@@ -469,6 +469,44 @@ export function validasiPack(pack: ContentPack): string[] {
           masalah.push(`Keluarga ${kel.id}: karma anggotaIndex ${sk.karma.anggotaIndex} di luar jangkauan`)
         }
       }
+      // M11 #5 B1 (2026-07-17): pagar varianKunjungan — persis pola pagar
+      // varianPresentasi UKP (§ loop kasus di atas). Tanpa ini, id
+      // hotspot/dialog/pilihan yang typo diam-diam diabaikan skenarioEfektif
+      // (kunjungan.ts), jadi bagian varian itu tak pernah berubah tanpa
+      // peringatan.
+      if (sk.varianKunjungan?.length) {
+        const idHotspotAda = new Set(sk.hotspot.map((h) => h.id))
+        const idDialogAda = new Set(sk.dialog.map((d) => d.id))
+        const idPilihanAda = new Set(sk.dialog.flatMap((d) => d.pilihan.map((p) => p.id)))
+        const idVarianTerpakai = new Set<string>()
+        for (const v of sk.varianKunjungan) {
+          if (v.id === '_dasar') {
+            masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': varianKunjungan id '_dasar' terpakai — id itu milik presentasi dasar implisit`)
+          }
+          if (idVarianTerpakai.has(v.id)) {
+            masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': varianKunjungan id '${v.id}' duplikat`)
+          }
+          idVarianTerpakai.add(v.id)
+          for (const idH of Object.keys(v.hotspotBerubah ?? {})) {
+            if (!idHotspotAda.has(idH)) {
+              masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': varian '${v.id}' hotspotBerubah mengacu id '${idH}' yang tak ada`)
+            }
+          }
+          for (const idD of Object.keys(v.dialogNarasiBerubah ?? {})) {
+            if (!idDialogAda.has(idD)) {
+              masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': varian '${v.id}' dialogNarasiBerubah mengacu id node '${idD}' yang tak ada`)
+            }
+          }
+          for (const idP of Object.keys(v.pilihanBerubah ?? {})) {
+            if (!idPilihanAda.has(idP)) {
+              masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': varian '${v.id}' pilihanBerubah mengacu id pilihan '${idP}' yang tak ada`)
+            }
+          }
+          if (!v.pembuka && !v.hotspotBerubah && !v.dialogNarasiBerubah && !v.pilihanBerubah && !v.penutupBerhasil && !v.penutupGagal) {
+            masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': varian '${v.id}' tak mengubah apa pun — identik dgn presentasi dasar, hapus atau isi bedanya`)
+          }
+        }
+      }
     })
   }
   return masalah

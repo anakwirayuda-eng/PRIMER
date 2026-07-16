@@ -669,6 +669,37 @@ export interface KartuIntervensi {
   aksiEskalasi?: boolean
 }
 
+/**
+ * Varian presentasi Tingkat-A untuk kunjungan rumah (M11 #5 B1, 2026-07-17)
+ * — padanan `VarianPresentasiTingkatA` (UKP) di sisi UKM. Kosmetik MURNI:
+ * mengganti kalimat/detail permukaan sebuah kunjungan supaya replay 90 hari
+ * tak terasa identik, TANPA PERNAH mengubah ground-truth pedagogis kunjungan
+ * itu. Struktural mustahil menyentuh: `hambatanSebenarnya`, `target`,
+ * `petunjukHambatan`, `karma`, posisi/`indikator` hotspot, atau
+ * `gaya`/`efekTrust`/`tepat`/`ungkap.indikator`/`ungkap.ambangTrust` pilihan
+ * dialog — field-field itu SAMA SEKALI tak ada di tipe ini. Presentasi dasar
+ * (field level-atas skenario) tetap jadi varian ke-0 implisit ('_dasar');
+ * array ini HANYA varian tambahan.
+ */
+export interface VarianKunjunganTingkatA {
+  id: string
+  /** Override narasi pembuka kedatangan. */
+  pembuka?: string
+  /** id hotspot -> label/narasi pengganti (id HARUS sudah ada; x/y & indikator tak tersentuh). */
+  hotspotBerubah?: Record<string, { label?: string; narasi?: string }>
+  /** id node dialog -> narasi situasi pengganti (id HARUS sudah ada). */
+  dialogNarasiBerubah?: Record<string, string>
+  /**
+   * id pilihan dialog -> respons warga pengganti (id HARUS sudah ada).
+   * `responsBohong` HANYA berlaku bila pilihan itu punya `ungkap` — murni
+   * mengganti KALIMAT bohongnya, bukan ambang/indikator gerbang kejujuran.
+   */
+  pilihanBerubah?: Record<string, { respons?: string; responsBohong?: string }>
+  /** Override narasi penutup bila kunjungan berhasil / gagal. */
+  penutupBerhasil?: string
+  penutupGagal?: string
+}
+
 export interface SkenarioKunjungan {
   id: string
   judul: string
@@ -708,6 +739,8 @@ export interface SkenarioKunjungan {
     jatuhTempoHari: number
     narasi: string
   }
+  /** M11 #5 B1 (2026-07-17): varian presentasi Tingkat-A opsional. */
+  varianKunjungan?: VarianKunjunganTingkatA[]
 }
 
 export interface ArcKeluarga {

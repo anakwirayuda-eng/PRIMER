@@ -18,7 +18,7 @@ import type {
 } from '../content/types'
 import { Rng } from './core/rng'
 import { hitungIksKeluarga, klasifikasiIks, SEMUA_INDIKATOR_PISPK } from './pispk'
-import { aksiKunjungan, buatKunjungan, selesaikanKunjungan, terapkanHasil } from './kunjungan'
+import { aksiKunjungan, buatKunjungan, selesaikanKunjungan, skenarioEfektif, terapkanHasil } from './kunjungan'
 import { prosesHarianKader } from './kader'
 
 /* ---------------------------------------------------------------------------
@@ -28,6 +28,11 @@ import { prosesHarianKader } from './kader'
 const RESPONS_JUJUR =
   'Sebenarnya belum ada, Dok. Tanahnya sempit, uangnya belum kumpul. Kami masih ke sungai.'
 const RESPONS_BOHONG = 'Ada kok, Dok, di belakang. Cuma sedang diperbaiki, jadi jangan dilihat dulu ya.'
+
+/** M11 #5 B1: buatKunjungan kini butuh Rng utk memilih varianId (tak dipakai
+ * kasus tanpa varianKunjungan — SKENARIO/SKENARIO_ESKALASI di bawah tak
+ * mendeklarasikannya, jadi rng ini murni memenuhi kontrak fungsi). */
+const rngTest = new Rng(1, 'test')
 
 const SKENARIO: SkenarioKunjungan = {
   id: 'sk_jamban',
@@ -235,6 +240,146 @@ function wargaBicara(events: GameEvent[]): Extract<GameEvent, { type: 'WARGA_BIC
 }
 
 /* ---------------------------------------------------------------------------
+ * skenarioEfektif — varian presentasi Tingkat-A (M11 #5 B1, 2026-07-17)
+ * ------------------------------------------------------------------------- */
+
+const SKENARIO_BER_VARIAN: SkenarioKunjungan = {
+  ...SKENARIO,
+  varianKunjungan: [
+    {
+      id: 'sore_hari',
+      pembuka: 'Senja mulai turun; Pak Raharjo baru pulang menambal jaring, tangannya masih bau amis.',
+      hotspotBerubah: { h_dapur: { narasi: 'Tungku sudah dingin, sisa nasi sore digantung di para-para.' } },
+      dialogNarasiBerubah: { n1: 'Pak Raharjo menyeka keringat, lampu teplok baru dinyalakan istrinya.' },
+      pilihanBerubah: { p2_ungkap: { respons: 'Sore ini belum sempat, Dok — nanti kalau air surut baru ke sana.' } },
+      penutupBerhasil: 'Lampu teplok dinyalakan lebih terang saat kamu pamit. "Datang lagi ya, Dok," kata Bu Raharjo.',
+    },
+    { id: 'gerbang_diganti', pilihanBerubah: { p2_ungkap: { responsBohong: 'Sudah lama ada kok, Dok, dari saya kecil malah.' } } },
+  ],
+}
+
+describe('skenarioEfektif', () => {
+  it('tanpa varianId (undefined) — kembalikan skenario dasar APA ADANYA (referensi identik)', () => {
+    expect(skenarioEfektif(SKENARIO_BER_VARIAN, undefined)).toBe(SKENARIO_BER_VARIAN)
+  })
+
+  it("varianId '_dasar' eksplisit — sama seperti undefined", () => {
+    expect(skenarioEfektif(SKENARIO_BER_VARIAN, '_dasar')).toBe(SKENARIO_BER_VARIAN)
+  })
+
+  it('varianId tak dikenal — jatuh kembali ke dasar, bukan error', () => {
+    expect(skenarioEfektif(SKENARIO_BER_VARIAN, 'tak_ada_ini')).toBe(SKENARIO_BER_VARIAN)
+  })
+
+  it('varian mengganti pembuka', () => {
+    expect(skenarioEfektif(SKENARIO_BER_VARIAN, 'sore_hari').pembuka).toBe(
+      'Senja mulai turun; Pak Raharjo baru pulang menambal jaring, tangannya masih bau amis.',
+    )
+  })
+
+  it('varian mengganti narasi SATU hotspot — hotspot lain & indikator/x/y tak berubah', () => {
+    const efektif = skenarioEfektif(SKENARIO_BER_VARIAN, 'sore_hari')
+    const dapur = efektif.hotspot.find((h) => h.id === 'h_dapur')!
+    expect(dapur.narasi).toBe('Tungku sudah dingin, sisa nasi sore digantung di para-para.')
+    expect(dapur.x).toBe(28)
+    expect(dapur.y).toBe(42)
+    const belakang = efektif.hotspot.find((h) => h.id === 'h_belakang')!
+    expect(belakang).toEqual(SKENARIO.hotspot.find((h) => h.id === 'h_belakang'))
+  })
+
+  it('varian mengganti narasi SATU node dialog — node lain & pilihan-nya tak berubah', () => {
+    const efektif = skenarioEfektif(SKENARIO_BER_VARIAN, 'sore_hari')
+    const n1 = efektif.dialog.find((d) => d.id === 'n1')!
+    expect(n1.narasi).toBe('Pak Raharjo menyeka keringat, lampu teplok baru dinyalakan istrinya.')
+    expect(n1.pilihan).toEqual(SKENARIO.dialog.find((d) => d.id === 'n1')!.pilihan)
+    const n3 = efektif.dialog.find((d) => d.id === 'n3')!
+    expect(n3).toEqual(SKENARIO.dialog.find((d) => d.id === 'n3'))
+  })
+
+  it('varian mengganti respons SATU pilihan — gaya/efekTrust/tepat/ungkap.indikator/ambangTrust tak berubah', () => {
+    const efektif = skenarioEfektif(SKENARIO_BER_VARIAN, 'sore_hari')
+    const n2 = efektif.dialog.find((d) => d.id === 'n2')!
+    const p2 = n2.pilihan.find((p) => p.id === 'p2_ungkap')!
+    expect(p2.respons).toBe('Sore ini belum sempat, Dok — nanti kalau air surut baru ke sana.')
+    expect(p2.gaya).toBe('refleksi')
+    expect(p2.efekTrust).toBe(1)
+    expect(p2.tepat).toBe(true)
+    expect(p2.ungkap).toEqual({ indikator: 'jamban_sehat', ambangTrust: 5, responsBohong: RESPONS_BOHONG })
+    // Pilihan lain di node yang sama tak tersentuh.
+    const p2Netral = n2.pilihan.find((p) => p.id === 'p2_netral')!
+    expect(p2Netral).toEqual(SKENARIO.dialog.find((d) => d.id === 'n2')!.pilihan.find((p) => p.id === 'p2_netral'))
+  })
+
+  it('varian mengganti HANYA responsBohong (gerbang kejujuran) — respons jujur & ambang tak berubah', () => {
+    const efektif = skenarioEfektif(SKENARIO_BER_VARIAN, 'gerbang_diganti')
+    const p2 = efektif.dialog.find((d) => d.id === 'n2')!.pilihan.find((p) => p.id === 'p2_ungkap')!
+    expect(p2.ungkap?.responsBohong).toBe('Sudah lama ada kok, Dok, dari saya kecil malah.')
+    expect(p2.respons).toBe(RESPONS_JUJUR)
+    expect(p2.ungkap?.ambangTrust).toBe(5)
+    expect(p2.ungkap?.indikator).toBe('jamban_sehat')
+  })
+
+  it('varian mengganti penutup', () => {
+    expect(skenarioEfektif(SKENARIO_BER_VARIAN, 'sore_hari').penutupBerhasil).toBe(
+      'Lampu teplok dinyalakan lebih terang saat kamu pamit. "Datang lagi ya, Dok," kata Bu Raharjo.',
+    )
+    expect(skenarioEfektif(SKENARIO_BER_VARIAN, 'sore_hari').penutupGagal).toBe(SKENARIO.penutupGagal)
+  })
+
+  /**
+   * REGRESI — jaminan STRUKTURAL Tingkat-A: ground-truth pedagogis kunjungan
+   * tak PERNAH berubah oleh varian mana pun (padanan test kunci-jawaban UKP).
+   */
+  it('ground-truth (target/hambatan/petunjuk/intervensi/karma) TAK PERNAH berubah oleh varian mana pun', () => {
+    for (const id of ['sore_hari', 'gerbang_diganti']) {
+      const efektif = skenarioEfektif(SKENARIO_BER_VARIAN, id)
+      expect(efektif.target).toBe(SKENARIO_BER_VARIAN.target)
+      expect(efektif.hambatanSebenarnya).toBe(SKENARIO_BER_VARIAN.hambatanSebenarnya)
+      expect(efektif.petunjukHambatan).toBe(SKENARIO_BER_VARIAN.petunjukHambatan)
+      expect(efektif.intervensi).toBe(SKENARIO_BER_VARIAN.intervensi)
+      expect(efektif.karma).toBe(SKENARIO_BER_VARIAN.karma)
+    }
+  })
+
+  it('skenario TANPA varianKunjungan sama sekali — skenarioEfektif selalu identitas', () => {
+    expect(skenarioEfektif(SKENARIO, undefined)).toBe(SKENARIO)
+    expect(skenarioEfektif(SKENARIO, 'apa_saja')).toBe(SKENARIO)
+  })
+})
+
+/* ---------------------------------------------------------------------------
+ * buatKunjungan — pemilihan varianId (RNG)
+ * ------------------------------------------------------------------------- */
+
+describe('buatKunjungan — varianId', () => {
+  it('skenario TANPA varianKunjungan — varianId selalu undefined', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const kj = buatKunjungan('fam_raharjo', SKENARIO, new Rng(seed, 'kunjungan-varian'))
+      expect(kj.varianId).toBeUndefined()
+    }
+  })
+
+  it('skenario BER-varianKunjungan — ketiga hasil (_dasar + 2 varian) muncul dalam 100 percobaan', () => {
+    const hasil = new Set<string | undefined>()
+    for (let seed = 0; seed < 100; seed++) {
+      const kj = buatKunjungan('fam_raharjo', SKENARIO_BER_VARIAN, new Rng(seed, 'kunjungan-varian', seed))
+      hasil.add(kj.varianId)
+    }
+    expect(hasil).toEqual(new Set(['_dasar', 'sore_hari', 'gerbang_diganti']))
+  })
+
+  it('deterministik utk seed sama, bervariasi lintas seed', () => {
+    const kj1a = buatKunjungan('fam_raharjo', SKENARIO_BER_VARIAN, new Rng(7, 'kunjungan-varian'))
+    const kj1b = buatKunjungan('fam_raharjo', SKENARIO_BER_VARIAN, new Rng(7, 'kunjungan-varian'))
+    expect(kj1a.varianId).toBe(kj1b.varianId)
+    const varianLintasSeed = new Set(
+      Array.from({ length: 20 }, (_, seed) => buatKunjungan('fam_raharjo', SKENARIO_BER_VARIAN, new Rng(seed, 'kunjungan-varian')).varianId),
+    )
+    expect(varianLintasSeed.size).toBeGreaterThan(1)
+  })
+})
+
+/* ---------------------------------------------------------------------------
  * Gerbang kejujuran — dua sisi
  * ------------------------------------------------------------------------- */
 
@@ -242,7 +387,7 @@ describe('gerbang kejujuran', () => {
   it('trust cukup → warga jujur, indikator terverifikasi BENAR', () => {
     const kel = kelJambanBohong(6)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' }, // +2 → trust efektif 8
@@ -279,7 +424,7 @@ describe('gerbang kejujuran', () => {
   it('trust rendah → warga bohong, indikator tercatat SALAH', () => {
     const kel = kelJambanBohong(2)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_edukasi' }, // +0 → trust efektif 2
@@ -308,7 +453,7 @@ describe('gerbang kejujuran', () => {
   it('Fix Addendum Q6/Asih (adjudikasi dokter 2026-07-11): hipotesis+kartu BENAR tapi kualitasMi di bawah ambang (dialog asal tebak) → berhasil=false, tingkat=partial', () => {
     const kel = buatKel(5)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_edukasi' }, // tepat:false
@@ -333,7 +478,7 @@ describe('gerbang kejujuran', () => {
   it('hotspot mengalahkan kebohongan: yang terlihat mata tidak bisa dibohongi', () => {
     const kel = kelJambanBohong(2)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'KLIK_HOTSPOT', hotspotId: 'h_belakang' }, // lihat sendiri: tak ada jamban
         { type: 'LANJUT_BABAK' },
@@ -362,7 +507,7 @@ describe('konfrontasi & diusir', () => {
   it('dua konfrontasi beruntun → diusir, kunjungan hangus', () => {
     const kel = buatKel(5)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_konfrontasi' },
@@ -388,7 +533,7 @@ describe('konfrontasi & diusir', () => {
   it('konfrontasi yang diselingi pilihan lain TIDAK mengusir (beruntun ter-reset)', () => {
     const kel = buatKel(5)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_konfrontasi' },
@@ -411,7 +556,7 @@ describe('diagnosis perilaku (COM-B)', () => {
   it('hipotesis salah → gagal walau intervensi kebetulan cocok', () => {
     const kel = kelJambanBohong(6)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'KLIK_HOTSPOT', hotspotId: 'h_belakang' },
         { type: 'LANJUT_BABAK' },
@@ -442,7 +587,7 @@ describe('diagnosis perilaku (COM-B)', () => {
   it('intervensi salah sasaran → gagal walau hipotesis benar', () => {
     const kel = kelJambanBohong(6)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' },
@@ -462,7 +607,7 @@ describe('diagnosis perilaku (COM-B)', () => {
   it('kualitas MI = proporsi pilihan tepat', () => {
     const kel = kelJambanBohong(6)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' }, // tepat
@@ -487,7 +632,7 @@ describe('diagnosis perilaku (COM-B)', () => {
       kunjunganTerakhir: 4,
     }
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' },
@@ -539,7 +684,7 @@ describe('aksiEskalasi (arc ber-karma keselamatan tinggi, mis. preeklampsia Asih
 
   function jalankanEskalasi(intervensiId: string): { kj: KunjunganState; kel: KeluargaState } {
     const kel = kelJambanBohong(6)
-    let kj = buatKunjungan(kel.id, SKENARIO_ESKALASI)
+    let kj = buatKunjungan(kel.id, SKENARIO_ESKALASI, rngTest)
     for (const a of [
       { type: 'LANJUT_BABAK' as const },
       { type: 'PILIH_DIALOG' as const, pilihanId: 'p1_empati' },
@@ -570,7 +715,7 @@ describe('aksiEskalasi (arc ber-karma keselamatan tinggi, mis. preeklampsia Asih
   it('skenario TANPA kartu aksiEskalasi sama sekali tak terpengaruh (regresi lama tetap berlaku)', () => {
     const kel = kelJambanBohong(6)
     const r = jalankan(
-      buatKunjungan(kel.id, SKENARIO),
+      buatKunjungan(kel.id, SKENARIO, rngTest),
       [
         { type: 'LANJUT_BABAK' },
         { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' },

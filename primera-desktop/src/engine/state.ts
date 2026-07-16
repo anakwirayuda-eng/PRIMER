@@ -318,6 +318,12 @@ export interface KunjunganState {
   diusir: boolean
   hipotesis?: 'kapabilitas' | 'kesempatan' | 'motivasi'
   intervensiDipilih?: string
+  /**
+   * M11 #5 B1 (2026-07-17): varian presentasi Tingkat-A dipilih SEKALI saat
+   * kunjungan dibuat (`buatKunjungan`), bertahan seumur kunjungan itu.
+   * undefined/'_dasar' = presentasi dasar. Padanan `PasienAktif.varianId`.
+   */
+  varianId?: string
 }
 
 /* ---------------------------------------------------------------------------

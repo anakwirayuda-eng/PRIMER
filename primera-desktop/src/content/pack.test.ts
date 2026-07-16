@@ -875,3 +875,86 @@ describe('lapisan varian Tingkat-A terpasang ke PACK', () => {
     })
   })
 })
+
+/**
+ * validasiPack — varianKunjungan Tingkat A (M11 #5 B1, 2026-07-17): padanan
+ * persis guard varianPresentasi UKP di atas, utk sisi UKM. Dipakai PACK real
+ * (bukan pack sintetis) — keluarga_wulan/kunjungan[0] sudah punya hotspot/
+ * dialog/pilihan riil utk direferensikan, dan sudah lolos runtimeManifest.
+ */
+describe('validasiPack — varianKunjungan Tingkat A (M11 #5 B1: guard id/hotspot/dialog/pilihan)', () => {
+  const KEL_ID = 'keluarga_wulan'
+
+  function packDenganVarianKunjungan(
+    varian: NonNullable<import('./types').SkenarioKunjungan['varianKunjungan']>,
+  ): ContentPack {
+    const kel = PACK.keluarga[KEL_ID]!
+    return {
+      ...PACK,
+      keluarga: {
+        ...PACK.keluarga,
+        [KEL_ID]: {
+          ...kel,
+          arc: {
+            ...kel.arc,
+            kunjungan: kel.arc.kunjungan.map((sk, i) => (i === 0 ? { ...sk, varianKunjungan: varian } : sk)),
+          },
+        },
+      },
+    }
+  }
+
+  it('kunjungan TANPA varianKunjungan — tak ada masalah terkait varian', () => {
+    expect(validasiPack(PACK).some((m) => m.includes('varianKunjungan'))).toBe(false)
+  })
+
+  it('varian valid (id hotspot/dialog/pilihan SUDAH ADA) — tak ada masalah', () => {
+    const pack = packDenganVarianKunjungan([
+      { id: 'sore', hotspotBerubah: { wk1_h1: { narasi: 'Uji.' } }, dialogNarasiBerubah: { wk1_d1: 'Uji.' }, pilihanBerubah: { wk1_d1_a: { respons: 'Uji.' } } },
+    ])
+    expect(validasiPack(pack)).toEqual([])
+  })
+
+  it('hotspotBerubah mengacu id yang TAK ADA — ditolak', () => {
+    const pack = packDenganVarianKunjungan([{ id: 'salah', hotspotBerubah: { tak_ada: { narasi: 'x' } } }])
+    expect(validasiPack(pack)).toContain(
+      `Keluarga ${KEL_ID} kunjungan 'wulan_k1': varian 'salah' hotspotBerubah mengacu id 'tak_ada' yang tak ada`,
+    )
+  })
+
+  it('dialogNarasiBerubah mengacu id node yang TAK ADA — ditolak', () => {
+    const pack = packDenganVarianKunjungan([{ id: 'salah', dialogNarasiBerubah: { tak_ada: 'x' } }])
+    expect(validasiPack(pack)).toContain(
+      `Keluarga ${KEL_ID} kunjungan 'wulan_k1': varian 'salah' dialogNarasiBerubah mengacu id node 'tak_ada' yang tak ada`,
+    )
+  })
+
+  it('pilihanBerubah mengacu id pilihan yang TAK ADA — ditolak', () => {
+    const pack = packDenganVarianKunjungan([{ id: 'salah', pilihanBerubah: { tak_ada: { respons: 'x' } } }])
+    expect(validasiPack(pack)).toContain(
+      `Keluarga ${KEL_ID} kunjungan 'wulan_k1': varian 'salah' pilihanBerubah mengacu id pilihan 'tak_ada' yang tak ada`,
+    )
+  })
+
+  it("id varian '_dasar' — ditolak", () => {
+    const pack = packDenganVarianKunjungan([{ id: '_dasar', pembuka: 'x' }])
+    expect(validasiPack(pack)).toContain(
+      `Keluarga ${KEL_ID} kunjungan 'wulan_k1': varianKunjungan id '_dasar' terpakai — id itu milik presentasi dasar implisit`,
+    )
+  })
+
+  it('id varian duplikat — ditolak', () => {
+    const pack = packDenganVarianKunjungan([
+      { id: 'x', pembuka: 'satu' },
+      { id: 'x', pembuka: 'dua' },
+    ])
+    expect(validasiPack(pack)).toContain(`Keluarga ${KEL_ID} kunjungan 'wulan_k1': varianKunjungan id 'x' duplikat`)
+  })
+
+  it('varian kosong (tak mengubah apa pun) — ditolak', () => {
+    const pack = packDenganVarianKunjungan([{ id: 'kosong' }])
+    expect(validasiPack(pack)).toContain(
+      `Keluarga ${KEL_ID} kunjungan 'wulan_k1': varian 'kosong' tak mengubah apa pun — identik dgn presentasi dasar, hapus atau isi bedanya`,
+    )
+  })
+})

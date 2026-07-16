@@ -19,8 +19,9 @@
 import type { Action } from './actions'
 import type { GameEvent } from './events'
 import type { HasilKunjungan, KeluargaState, KunjunganState, ModeStase, NilaiIndikator } from './state'
-import type { IndikatorPisPk, KeluargaBinaan, PilihanDialog, SkenarioKunjungan, TahapTtm } from '@content/types'
+import type { IndikatorPisPk, KeluargaBinaan, NodeDialog, PilihanDialog, SkenarioKunjungan, TahapTtm } from '@content/types'
 import { ukmScenarioAktif, type ContentPack } from '@content/pack'
+import type { Rng } from './core/rng'
 
 /**
  * Hasil kunjungan diperkaya daftar indikator yang DIBOHONGKAN warga.
@@ -112,13 +113,77 @@ function petaPilihan(skenario: SkenarioKunjungan): Map<string, PilihanDialog> {
 }
 
 /* ---------------------------------------------------------------------------
+ * skenarioEfektif — terapkan varian presentasi Tingkat-A (M11 #5 B1, 2026-07-17)
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Satu-satunya titik yang boleh menerapkan `varianKunjungan` — SETIAP tempat
+ * yang membaca konten narasi (pembuka/hotspot/dialog/penutup) dari sebuah
+ * kunjungan AKTIF wajib memanggil ini alih-alih membaca skenario mentah dari
+ * PACK, supaya kartu keluarga, ruang kunjungan, dan debrief selalu menunjukkan
+ * presentasi yang SAMA untuk satu kunjungan. Padanan persis `kasusEfektif`
+ * (clinic.ts) di sisi UKP.
+ *
+ * Aman dipanggil tanpa `varianId` (undefined/'_dasar') — mengembalikan
+ * `skenario` apa adanya, referensi identik, sehingga skenario tanpa
+ * `varianKunjungan` sama sekali nol overhead.
+ */
+export function skenarioEfektif(skenario: SkenarioKunjungan, varianId: string | undefined): SkenarioKunjungan {
+  if (!varianId || varianId === '_dasar') return skenario
+  const v = skenario.varianKunjungan?.find((item) => item.id === varianId)
+  if (!v) return skenario
+
+  const dialogBerubah = v.dialogNarasiBerubah || v.pilihanBerubah
+  const dialog: NodeDialog[] = dialogBerubah
+    ? skenario.dialog.map((node) => ({
+        ...node,
+        ...(v.dialogNarasiBerubah?.[node.id] !== undefined ? { narasi: v.dialogNarasiBerubah[node.id]! } : {}),
+        ...(v.pilihanBerubah
+          ? {
+              pilihan: node.pilihan.map((p) => {
+                const ubah = v.pilihanBerubah![p.id]
+                if (!ubah) return p
+                return {
+                  ...p,
+                  ...(ubah.respons !== undefined ? { respons: ubah.respons } : {}),
+                  ...(ubah.responsBohong !== undefined && p.ungkap
+                    ? { ungkap: { ...p.ungkap, responsBohong: ubah.responsBohong } }
+                    : {}),
+                }
+              }),
+            }
+          : {}),
+      }))
+    : skenario.dialog
+
+  return {
+    ...skenario,
+    ...(v.pembuka ? { pembuka: v.pembuka } : {}),
+    ...(v.hotspotBerubah
+      ? {
+          hotspot: skenario.hotspot.map((h) =>
+            v.hotspotBerubah![h.id] ? { ...h, ...v.hotspotBerubah![h.id] } : h,
+          ),
+        }
+      : {}),
+    ...(dialogBerubah ? { dialog } : {}),
+    ...(v.penutupBerhasil ? { penutupBerhasil: v.penutupBerhasil } : {}),
+    ...(v.penutupGagal ? { penutupGagal: v.penutupGagal } : {}),
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Kontrak engine
  * ------------------------------------------------------------------------- */
 
-export function buatKunjungan(keluargaId: string, skenario: SkenarioKunjungan): KunjunganState {
+export function buatKunjungan(keluargaId: string, skenario: SkenarioKunjungan, rng: Rng): KunjunganState {
+  const varianId = skenario.varianKunjungan?.length
+    ? rng.pick(['_dasar', ...skenario.varianKunjungan.map((v) => v.id)])
+    : undefined
   return {
     keluargaId,
     skenarioId: skenario.id,
+    ...(varianId !== undefined ? { varianId } : {}),
     fase: 'observasi',
     hotspotDitemukan: [],
     dialogIndex: 0,
