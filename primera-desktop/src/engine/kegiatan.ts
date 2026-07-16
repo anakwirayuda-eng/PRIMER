@@ -530,7 +530,26 @@ function polaDariKasus(kasusId: string): PolaKlb {
   return 'droplet' // ispa/pneumonia → transmisi droplet
 }
 
-export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string): KartuKegiatan[] {
+/**
+ * M11 UKM Decision #5 B2 (2026-07-17): pool narasi utk 2 kartu KLB yang
+ * SELALU identik apa pun kasusnya (klb_verif/klb_5w1h — beda dari klb_aksi
+ * yang sudah struktural bervariasi lewat `pola`). Pilihan/benar/respons
+ * TETAP satu (tak digandakan) — hanya narasi pembuka yang dirotasi, sama
+ * disiplin dgn D3-lite Prolanis: replay/skor tak tersentuh.
+ */
+const NARASI_KLB_VERIF: readonly ((namaKasus: string, namaRw: string) => string)[] = [
+  (n, rw) => `Sinyal kluster ${n} di ${rw}. Langkah PERTAMA seorang dokter Puskesmas?`,
+  (n, rw) => `Laporan kader pagi ini: beberapa warga ${rw} mengeluh gejala serupa — ${n} dicurigai. Langkah PERTAMA seorang dokter Puskesmas?`,
+  (n, rw) => `Bidan desa menelepon: jumlah kasus ${n} di ${rw} terasa lebih banyak dari biasanya bulan ini. Langkah PERTAMA seorang dokter Puskesmas?`,
+]
+
+const NARASI_KLB_5W1H: readonly string[] = [
+  'Kamu turun ke lapangan. Data apa yang paling kritis dikumpulkan lebih dulu?',
+  'Sebelum menyusun laporan ke Dinkes, data apa yang paling kritis dikumpulkan lebih dulu?',
+  'Tim surveilans sudah siap turun bersamamu. Data apa yang paling kritis dikumpulkan lebih dulu?',
+]
+
+export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string, rng: Rng): KartuKegiatan[] {
   const pola = polaDariKasus(kasusId)
   const aksiBenar =
     pola === 'vektor'
@@ -558,7 +577,7 @@ export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string): Ka
     {
       id: 'klb_verif',
       judul: 'KLB — Verifikasi & Definisi Kasus',
-      narasi: `Sinyal kluster ${namaKasus} di ${namaRw}. Langkah PERTAMA seorang dokter Puskesmas?`,
+      narasi: rng.pick(NARASI_KLB_VERIF)(namaKasus, namaRw),
       pilihan: [
         {
           id: 'a',
@@ -577,7 +596,7 @@ export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string): Ka
     {
       id: 'klb_5w1h',
       judul: 'KLB — Penyelidikan Epidemiologi (5W1H)',
-      narasi: 'Kamu turun ke lapangan. Data apa yang paling kritis dikumpulkan lebih dulu?',
+      narasi: rng.pick(NARASI_KLB_5W1H),
       pilihan: [
         {
           id: 'a',

@@ -1154,7 +1154,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           ...s,
           stamina: s.stamina - BIAYA_STAMINA_KEGIATAN,
           layar: 'kegiatan',
-          kegiatan: buatKegiatan('klb', kartuKlb(action.kasusId, namaKasus, namaRw), {
+          kegiatan: buatKegiatan('klb', kartuKlb(action.kasusId, namaKasus, namaRw, new Rng(s.seed, 'klb-narasi', s.hari)), {
             rw: action.rw,
             kasusId: action.kasusId,
           }),

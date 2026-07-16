@@ -570,7 +570,11 @@ function fnv1a(teks: string): string {
 // resmi Prolanis BPJS (konsultasi/edukasi-klub/reminder/home-visit) — pilihan/
 // benar/respons (satu-satunya yang score-affecting) TIDAK BERUBAH sama sekali,
 // jadi replay/skor lama identik; bump krn kegiatan.ts+reducer.ts (call site)
-// tersentuh secara tekstual.
+// tersentuh secara tekstual. Gelombang yang sama, M11 #5 B2 (2026-07-17):
+// `kartuKlb` juga kini menerima `rng`, merotasi narasi pembuka klb_verif &
+// klb_5w1h (2 kartu yang SEBELUMNYA selalu identik apa pun kasusnya) lewat
+// pool 3 varian masing-masing — pilihan/benar/respons tak tersentuh sama
+// sekali (klb_aksi, yang sudah bervariasi via `pola`, juga tak tersentuh).
 export const REVISI_ENGINE = 41
 
 /**

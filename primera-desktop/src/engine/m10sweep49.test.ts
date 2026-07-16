@@ -87,7 +87,7 @@ describe('M10 §49 — apendisitis prosedur pasang_infus', () => {
 
 describe('M10 §49 — KLB pola kontak', () => {
   it('skabies: aksi pengendalian benar = obati kontak serumah + dekontaminasi (bukan masker/etika batuk)', () => {
-    const kartu = kartuKlb('skabies', 'Skabies', 'RW 3')
+    const kartu = kartuKlb('skabies', 'Skabies', 'RW 3', new Rng(1, 'test'))
     const aksi = kartu.find((k) => k.id === 'klb_aksi')!
     const benar = aksi.pilihan.find((p) => p.benar)!
     expect(benar.label.toLowerCase()).toMatch(/kontak serumah|dekontaminasi/)
@@ -95,15 +95,57 @@ describe('M10 §49 — KLB pola kontak', () => {
   })
 
   it('konjungtivitis_bakterial: sama — pola kontak, bukan droplet', () => {
-    const kartu = kartuKlb('konjungtivitis_bakterial', 'Konjungtivitis', 'RW 2')
+    const kartu = kartuKlb('konjungtivitis_bakterial', 'Konjungtivitis', 'RW 2', new Rng(1, 'test'))
     const benar = kartu.find((k) => k.id === 'klb_aksi')!.pilihan.find((p) => p.benar)!
     expect(benar.label.toLowerCase()).not.toMatch(/etika batuk|masker/)
   })
 
   it('ISPA tetap droplet (regresi guard): masker/etika batuk masih benar', () => {
-    const kartu = kartuKlb('ispa_common_cold', 'ISPA', 'RW 1')
+    const kartu = kartuKlb('ispa_common_cold', 'ISPA', 'RW 1', new Rng(1, 'test'))
     const benar = kartu.find((k) => k.id === 'klb_aksi')!.pilihan.find((p) => p.benar)!
     expect(benar.label.toLowerCase()).toMatch(/etika batuk|masker/)
+  })
+})
+
+/**
+ * M11 UKM Decision #5 B2 (2026-07-17): pool narasi klb_verif/klb_5w1h —
+ * pilihan/benar/respons (score-affecting) HARUS identik lintas seed;
+ * hanya narasi pembuka yang boleh berotasi.
+ */
+describe('kartuKlb — rotasi naratif B2 (pilihan/skor tak berubah lintas seed)', () => {
+  it('pilihan identik lintas seed utk klb_verif & klb_5w1h', () => {
+    const kartuSeed = Array.from({ length: 8 }, (_, seed) => kartuKlb('ispa_common_cold', 'ISPA', 'RW 1', new Rng(seed, 'uji-klb')))
+    const acuanVerif = kartuSeed[0]!.find((k) => k.id === 'klb_verif')!.pilihan
+    const acuan5w1h = kartuSeed[0]!.find((k) => k.id === 'klb_5w1h')!.pilihan
+    for (const kartu of kartuSeed) {
+      expect(kartu.find((k) => k.id === 'klb_verif')!.pilihan).toEqual(acuanVerif)
+      expect(kartu.find((k) => k.id === 'klb_5w1h')!.pilihan).toEqual(acuan5w1h)
+    }
+  })
+
+  it('narasi klb_verif & klb_5w1h berotasi lintas seed (bukan konstan)', () => {
+    const narasiVerif = new Set(
+      Array.from({ length: 12 }, (_, seed) => kartuKlb('ispa_common_cold', 'ISPA', 'RW 1', new Rng(seed, 'uji-klb')).find((k) => k.id === 'klb_verif')!.narasi),
+    )
+    const narasi5w1h = new Set(
+      Array.from({ length: 12 }, (_, seed) => kartuKlb('ispa_common_cold', 'ISPA', 'RW 1', new Rng(seed, 'uji-klb')).find((k) => k.id === 'klb_5w1h')!.narasi),
+    )
+    expect(narasiVerif.size).toBeGreaterThan(1)
+    expect(narasi5w1h.size).toBeGreaterThan(1)
+  })
+
+  it('deterministik utk seed sama', () => {
+    const a = kartuKlb('ispa_common_cold', 'ISPA', 'RW 1', new Rng(5, 'uji-klb'))
+    const b = kartuKlb('ispa_common_cold', 'ISPA', 'RW 1', new Rng(5, 'uji-klb'))
+    expect(a.find((k) => k.id === 'klb_verif')!.narasi).toBe(b.find((k) => k.id === 'klb_verif')!.narasi)
+  })
+
+  it('klb_aksi (sudah bervariasi via pola) tak tersentuh mekanisme rotasi baru', () => {
+    const kartuSeed = Array.from({ length: 6 }, (_, seed) => kartuKlb('ispa_common_cold', 'ISPA', 'RW 1', new Rng(seed, 'uji-klb')))
+    const acuan = kartuSeed[0]!.find((k) => k.id === 'klb_aksi')!
+    for (const kartu of kartuSeed) {
+      expect(kartu.find((k) => k.id === 'klb_aksi')!).toEqual(acuan)
+    }
   })
 })
 
