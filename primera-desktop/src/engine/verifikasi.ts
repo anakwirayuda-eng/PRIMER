@@ -562,7 +562,9 @@ function fnv1a(teks: string): string {
 // render). `KunjunganState.varianId?` (state.ts) menyimpannya seumur
 // kunjungan. Replay lama TAK BERUBAH (0 keluarga existing punya
 // varianKunjungan) — bump krn reducer/kunjungan/state tersentuh (verifikasi.ts
-// sendiri juga, krn REVISI_ENGINE hidup di situ).
+// sendiri juga, krn REVISI_ENGINE hidup di situ). Gelombang yang sama:
+// `KartuKegiatan.sumber?` (state.ts) ditambahkan — slot sitasi UKM Decision
+// #2, display-only, menyentuh state.ts saja krn tipe itu hidup di sana.
 export const REVISI_ENGINE = 41
 
 /**

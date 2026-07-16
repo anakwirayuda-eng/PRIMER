@@ -34,6 +34,7 @@ import {
 } from './curriculum/m13_1a/activation'
 import { LAB_ALL_CASES, LAB_CASE_ID_BY_FKTP_ITEM } from './lab'
 import { terapkanVarianTingkatA } from './varianTingkatA'
+import { terapkanVarianKunjunganTingkatA } from './varianKunjunganTingkatA'
 import { EDUKASI_LAB, LAB_LAB, OBAT_LAB, TINDAKAN_LAB } from './lab/catalog'
 import {
   EDUKASI_LAB_EXPANSION,
@@ -108,7 +109,9 @@ const BASE_CURRICULUM_BLUEPRINT = buildCurriculumBlueprint(BASE_CONTENT_CATALOG)
 // Varian Tingkat-A dipasang SETELAH aktivasi M13-1a supaya kasus hasil
 // aktivasi ikut terjangkau; blueprint tidak membaca varianPresentasi jadi
 // urutan thd buildCurriculumBlueprint tak berpengaruh.
-const CONTENT_CATALOG = terapkanVarianTingkatA(aktifkanKatalogM13_1A(BASE_CONTENT_CATALOG))
+const CONTENT_CATALOG = terapkanVarianKunjunganTingkatA(
+  terapkanVarianTingkatA(aktifkanKatalogM13_1A(BASE_CONTENT_CATALOG)),
+)
 
 /** M13-0A + M13-1a: manifest authoring kanonik lengkap, termasuk evidence registry. */
 export const CURRICULUM_BLUEPRINT = aktifkanBlueprintM13_1A(BASE_CURRICULUM_BLUEPRINT)

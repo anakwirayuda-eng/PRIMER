@@ -139,8 +139,8 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': 'd2b614d549b53ad7f67ab0c2820640a4129aeb4780d217dd3a576cf17e5d546a',
-  'state.ts': 'dad22996be1da89cd68aca8a80ee89e5f2c810a1b199918322edf1628e77e14d',
+  'verifikasi.ts': '8135611c0c61faa744ba0c9b631aa9203dc97ec227ad255bf6128713d43afc47',
+  'state.ts': '6bde61e1fe34e3929289abcb2c72ad9691c5c879e8c7c75627dc462430410a1f',
   'save.ts': '8c75672d5ff27efa243ce2f87d3ad92ff22c5c851f010566e1c4090b43449c8a',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',

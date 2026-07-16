@@ -247,9 +247,17 @@ memenuhi maksud aslinya (kasus APA yang muncul tetap 100% adil lintas
 paket — hanya "wajah kosmetik"-nya yang boleh beda, dan itu memang sudah
 jadi kontrak `rngFlavor` sejak awal, bukan pelanggaran baru).
 
-### 9c. BELUM dikerjakan — fase konten
+### 9c. SELESAI (2026-07-17) — fase konten
 
-Cakupan §7 (top-10/15 kasus `prevalensi: 'tinggi'`, 2 varian per kasus)
-belum ditulis. Rencana: fan-out multi-agen (Workflow) dengan verifikasi
-adversarial plausibilitas klinis per varian, menyusul instruksi
-"ultracode" sesi ini — BELUM dimulai per penulisan bagian ini.
+Cakupan diperluas atas persetujuan user dari "top-10" menjadi **semua 41
+kasus `prevalensi: 'tinggi'`** ("semua 41"). Workflow `m11-varian-tingkat-a`
+(draf per-kasus → 2 lensa verifikasi adversarial [stabilitas diagnosis-
+disposisi + koherensi internal] → 1 ronde perbaikan) dijalankan penuh:
+**39 kasus lolos penuh, 1 sebagian, 1 gagal total** — 40 kasus/79 varian
+terpasang ke `varianTingkatAData.ts`, semua lolos `validasiPack` tanpa
+pengecualian. Ringkasan lengkap per-kasus (termasuk rasional klinis &
+varian yang dibuang): `docs/M11_VARIAN_TINGKAT_A_HASIL.md`. Commit
+`7d1d8ce`, REVISI_ENGINE 41.
+
+**Item #4 Tingkat A kini genuinely FULLY CLOSED** (mekanik + konten).
+Tingkat B tetap tak disentuh sama sekali.

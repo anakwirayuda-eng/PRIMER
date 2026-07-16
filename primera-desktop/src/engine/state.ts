@@ -348,6 +348,12 @@ export interface KartuKegiatan {
   pilihan: PilihanKegiatan[]
   /** Kaitan peserta Prolanis (untuk efek parameter pasca-sesi). */
   pesertaId?: string
+  /**
+   * M11 Decision #2 (2026-07-16): sitasi pedoman resmi kartu ini — sejajar
+   * `KasusKlinis.panduanResmi` (UKP) / `SkenarioKunjungan.panduanResmi`
+   * (UKM kunjungan). Display-only.
+   */
+  sumber?: string
 }
 
 export interface KegiatanState {
