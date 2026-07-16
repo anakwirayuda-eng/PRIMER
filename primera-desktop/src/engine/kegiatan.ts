@@ -384,9 +384,28 @@ export function prolanisTerkendali(jenis: 'ht' | 'dm', param: number): boolean {
   return param < AMBANG_TERKENDALI_PROLANIS[jenis]
 }
 
-export function kartuProlanis(peserta: PesertaProlanis[]): KartuKegiatan[] {
+/**
+ * M11 UKM Decision #3, opsi D3-lite (2026-07-17): granularitas NARATIF
+ * Prolanis — pilihan/benar/respons TETAP identik (replay/skor tak berubah),
+ * hanya bingkai narasi kartu yang dirotasi lewat 4 kanal resmi Panduan
+ * Prolanis BPJS (Konsultasi/Edukasi Klub-Duta PROLANIS/Reminder SMS/Home
+ * Visit) — memutus kesan "1 kartu generik" tiap sesi tanpa membangun
+ * mekanik 4-kanal baru (ditolak dlm dokumen keputusan: menggandakan
+ * investasi ke struktur yang sedang di-sunset ILP, lihat riset UKM
+ * docs/UKM_SUMBER_RISET_M11.md).
+ */
+const KANAL_PROLANIS: readonly ((narasi: string) => string)[] = [
+  (n) => n,
+  (n) =>
+    `Sesi edukasi Klub Prolanis bulan ini, dipandu Duta PROLANIS. ${n} Catatan realita: BPJS masih menjalankan Prolanis lewat 4 kanal resmi (konsultasi/edukasi klub/reminder SMS/home visit); kerangka ILP 2023 meleburnya ke Klaster Dewasa-Lansia — di lapangan keduanya berjalan berdampingan.`,
+  (n) => `Reminder SMS jadwal kontrol sudah terkirim minggu lalu. ${n}`,
+  (n) => `Kunjungan rumah bulan ini utk pemantauan lebih dekat. ${n}`,
+]
+
+export function kartuProlanis(peserta: PesertaProlanis[], rng: Rng): KartuKegiatan[] {
   return peserta.map((p) => {
     const terkontrol = prolanisTerkendali(p.jenis, p.param)
+    const bingkaiKanal = rng.pick(KANAL_PROLANIS)
     if (p.jenis === 'ht') {
       return {
         id: `prol_${p.id}`,
@@ -398,9 +417,11 @@ export function kartuProlanis(peserta: PesertaProlanis[]): KartuKegiatan[] {
         // Opsi "randomize dgn rentang pulse-pressure" ditolak sanggahan (tetap
         // memfabrikasi klaim fisiologi, cuma dibungkus lebih rapi) — dihapus saja,
         // tampilkan SBP tunggal (basis param/terkontrol yang sesungguhnya).
-        narasi: `Tekanan darah sistolik hari ini ${p.param} mmHg. ${
-          terkontrol ? 'Rutin minum amlodipin.' : 'Mengaku obat sering lupa diminum, suka makan asin.'
-        }`,
+        narasi: bingkaiKanal(
+          `Tekanan darah sistolik hari ini ${p.param} mmHg. ${
+            terkontrol ? 'Rutin minum amlodipin.' : 'Mengaku obat sering lupa diminum, suka makan asin.'
+          }`,
+        ),
         pilihan: terkontrol
           ? [
               {
@@ -444,9 +465,11 @@ export function kartuProlanis(peserta: PesertaProlanis[]): KartuKegiatan[] {
       id: `prol_${p.id}`,
       pesertaId: p.id,
       judul: `Prolanis DM — ${p.nama} (${p.usia} th)`,
-      narasi: `Gula darah puasa ${p.param} mg/dL. ${
-        terkontrol ? 'Patuh metformin, rajin jalan pagi.' : 'Mengeluh sering haus & kesemutan, jarang olahraga.'
-      }`,
+      narasi: bingkaiKanal(
+        `Gula darah puasa ${p.param} mg/dL. ${
+          terkontrol ? 'Patuh metformin, rajin jalan pagi.' : 'Mengeluh sering haus & kesemutan, jarang olahraga.'
+        }`,
+      ),
       pilihan: terkontrol
         ? [
             {

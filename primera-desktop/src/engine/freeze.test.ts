@@ -126,7 +126,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // 14 kasus infeksi lab kini bisa berkluster → komposisi KLB & bobot Director
   // bergeser pada jejak yang menyentuhnya. Kanal IGD baca activationStatus
   // (blueprint) — tak menyentuh file beku. Detail di verifikasi.ts REVISI 39.
-  'reducer.ts': '62b7c4661ca4e150ebb5f0703c1b46e935a203b302425a95268145fa5732244b',
+  'reducer.ts': 'e155a4592c3fab9a2b5ff7c521b14a77f6694fac504f71e13cdad46018215904',
   'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
   'scoring.ts': 'c1b5de6fc2c194e8b8a70b8d802a29980002ee2059ea487821e9e59fc0540d8d',
   'director.ts': 'fa4c269cd001eb2e019f18507ac5e024ff38784bb6181cfa41cb5f87cd1a340d',
@@ -134,12 +134,12 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
   'init.ts': '19b2d372c730406a14ac96afc3497fc8e8f418b0694271a5bff1df41ad778afb',
-  'kegiatan.ts': 'c2f0bddb9d8e1b3a3a4f60cd04c79be9d6d447c6db58c147f873f67e6d6d6b06',
+  'kegiatan.ts': '91ba3f8c1ace80883991de819775bc741027712cb019b30cf1966728aaf97396',
   'kunjungan.ts': '3ef25d708ac555fd285f92156e251ad2740e89de20cb1ab82934d0543e2016c9',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '8135611c0c61faa744ba0c9b631aa9203dc97ec227ad255bf6128713d43afc47',
+  'verifikasi.ts': 'cb984718173001d92856b9d742daadd82fc16834654ce68b9fdbda4c25a6ae26',
   'state.ts': '6bde61e1fe34e3929289abcb2c72ad9691c5c879e8c7c75627dc462430410a1f',
   'save.ts': '8c75672d5ff27efa243ce2f87d3ad92ff22c5c851f010566e1c4090b43449c8a',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',

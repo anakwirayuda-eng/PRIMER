@@ -84,7 +84,7 @@ describe('#12 — Prolanis DM berskala GDP (kontrol RPPT <130 mg/dL)', () => {
     expect(AMBANG_TERKENDALI_PROLANIS.ht).toBe(140)
 
     // (b) kartu: narasi tak boleh mengklaim terkendali pada GDP 150.
-    const kartu = kartuProlanis([p150])[0]!
+    const kartu = kartuProlanis([p150], new Rng(1, 'test'))[0]!
     expect(kartu.narasi.toLowerCase()).not.toContain('terkendali baik')
 
     // (c) skor: roster berisi satu peserta GDP 150 → rasio terkontrol 0, bukan 1.
@@ -96,6 +96,49 @@ describe('#12 — Prolanis DM berskala GDP (kontrol RPPT <130 mg/dL)', () => {
 
     // (d) drift setuju: 150 memburuk → counter naik (tak kontradiksi dgn (b)/(c)).
     expect(driftProlanis(p150, false, new Rng(7, 'uji-konsisten')).takTerkontrolBerturut).toBe(1)
+  })
+})
+
+/**
+ * M11 UKM Decision #3, opsi D3-lite (2026-07-17): rotasi naratif 4 kanal
+ * Prolanis. Invarian kunci: pilihan/benar/respons (skor) TAK BOLEH berubah
+ * lintas kanal — hanya narasi kartu yang boleh berotasi.
+ */
+describe('kartuProlanis — rotasi naratif D3-lite (pilihan/skor tak berubah lintas kanal)', () => {
+  const pesertaHt: PesertaProlanis = {
+    id: 'p_uji_ht', nama: 'Uji', usia: 60, jenisKelamin: 'L', rw: 1,
+    keluargaId: 'k_uji', jenis: 'ht', param: 150, takTerkontrolBerturut: 0,
+  }
+
+  it('pilihan (id/benar/respons) identik lintas seed — hanya narasi yang berotasi', () => {
+    const kartuSeed = Array.from({ length: 8 }, (_, seed) => kartuProlanis([pesertaHt], new Rng(seed, 'uji-kanal'))[0]!)
+    const acuan = kartuSeed[0]!.pilihan
+    for (const k of kartuSeed) {
+      expect(k.pilihan).toEqual(acuan)
+      expect(k.judul).toBe(kartuSeed[0]!.judul)
+      // Narasi klinis dasar (nilai param) tetap ada sbg substring apa pun kanalnya.
+      expect(k.narasi).toContain('150')
+    }
+  })
+
+  it('narasi berotasi lintas kanal (bukan konstan)', () => {
+    const narasiUnik = new Set(
+      Array.from({ length: 12 }, (_, seed) => kartuProlanis([pesertaHt], new Rng(seed, 'uji-kanal'))[0]!.narasi),
+    )
+    expect(narasiUnik.size).toBeGreaterThan(1)
+  })
+
+  it('deterministik utk seed+hari sama', () => {
+    const a = kartuProlanis([pesertaHt], new Rng(3, 'uji-kanal'))[0]!
+    const b = kartuProlanis([pesertaHt], new Rng(3, 'uji-kanal'))[0]!
+    expect(a.narasi).toBe(b.narasi)
+  })
+
+  it('kanal Edukasi Klub menyertakan catatan tensi ILP-vs-BPJS eksplisit', () => {
+    const punyaTensi = Array.from({ length: 12 }, (_, seed) =>
+      kartuProlanis([pesertaHt], new Rng(seed, 'uji-kanal'))[0]!.narasi,
+    ).some((n) => n.includes('ILP 2023'))
+    expect(punyaTensi).toBe(true)
   })
 })
 

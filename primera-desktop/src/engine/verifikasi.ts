@@ -565,6 +565,12 @@ function fnv1a(teks: string): string {
 // sendiri juga, krn REVISI_ENGINE hidup di situ). Gelombang yang sama:
 // `KartuKegiatan.sumber?` (state.ts) ditambahkan — slot sitasi UKM Decision
 // #2, display-only, menyentuh state.ts saja krn tipe itu hidup di sana.
+// Gelombang yang sama, UKM Decision #3 opsi D3-lite (2026-07-17): `kartuProlanis`
+// (kegiatan.ts) kini menerima `rng` dan merotasi BINGKAI narasi lewat 4 kanal
+// resmi Prolanis BPJS (konsultasi/edukasi-klub/reminder/home-visit) — pilihan/
+// benar/respons (satu-satunya yang score-affecting) TIDAK BERUBAH sama sekali,
+// jadi replay/skor lama identik; bump krn kegiatan.ts+reducer.ts (call site)
+// tersentuh secara tekstual.
 export const REVISI_ENGINE = 41
 
 /**

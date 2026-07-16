@@ -1134,7 +1134,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           ...s,
           stamina: s.stamina - BIAYA_STAMINA_KEGIATAN,
           layar: 'kegiatan',
-          kegiatan: buatKegiatan('prolanis', kartuProlanis(pesertaAktif)),
+          kegiatan: buatKegiatan('prolanis', kartuProlanis(pesertaAktif, new Rng(s.seed, 'prolanis-narasi', s.hari))),
         },
         events: [],
       }
