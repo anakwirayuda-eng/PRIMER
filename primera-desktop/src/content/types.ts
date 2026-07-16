@@ -646,6 +646,18 @@ export interface KartuIntervensi {
    * (audit CODEX UKM 2026-07-16 #10). */
   catatanPedagogis?: string
   /**
+   * M11 Decision #2 + adopsi SAJI/Pinkesga (2026-07-16): sitasi pedoman
+   * resmi yang melandasi kartu ini — display-only, non-hash, sejajar
+   * `SkenarioKunjungan.panduanResmi`.
+   */
+  sumber?: string
+  /**
+   * Nama paket Pinkesga resmi (leaflet bertarget-masalah, Permenkes
+   * 39/2016) yang melandasi intervensi ini, bila ada padanannya —
+   * display-only, murni informasional.
+   */
+  pinkesga?: string
+  /**
    * Tambahan #1 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): menandai
    * kartu ini sbg TINDAKAN ESKALASI wajib utk arc ber-karma keselamatan tinggi
    * (mis. preeklampsia berat) — bila skenario punya ≥1 kartu ber-flag ini,
@@ -677,6 +689,15 @@ export interface SkenarioKunjungan {
   /** Narasi penutup bila kunjungan berhasil / gagal. */
   penutupBerhasil: string
   penutupGagal: string
+  /**
+   * M11 Decision #2 (2026-07-16): sitasi pedoman resmi utk kunjungan ini —
+   * sejajar `KasusKlinis.panduanResmi` di sisi UKP (display-only, dibaca
+   * langsung dari PACK, TAK masuk sidikJariPack/REVISI, sama spt clue/
+   * mutiaraEbm/catatanRealita). Konten pengisi: Permenkes 39/2016 (SAJI),
+   * Panduan Posyandu Kemenkes 2023, dst. — lihat
+   * docs/UKM_SUMBER_RISET_M11.md.
+   */
+  panduanResmi?: string
   /** Konsekuensi klinis bila keluarga diabaikan (karma loop UKM→UKP). */
   karma?: {
     /** Kasus klinis yang muncul di antrian saat jatuh tempo. */

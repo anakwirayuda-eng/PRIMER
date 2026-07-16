@@ -24,11 +24,19 @@ import './Kunjungan.css'
  * Kosakata tampilan
  * ------------------------------------------------------------------------- */
 
-const BABAK: { fase: BabakKunjunganFase; label: string }[] = [
-  { fase: 'observasi', label: 'Salam & Observasi' },
-  { fase: 'wawancara', label: 'Wawancara' },
-  { fase: 'diagnosis_perilaku', label: 'Diagnosis Perilaku' },
-  { fase: 'resep_sosial', label: 'Resep Sosial' },
+/**
+ * M11 adopsi SAJI (Permenkes 39/2016, "M11 Lanjutan" Bagian E, 2026-07-16):
+ * `sajiLabel` murni menandai babak dgn nomenklatur metode resmi kunjungan
+ * rumah PIS-PK — display-only, tak mengubah `BabakKunjunganFase` (state.ts,
+ * beku) ataupun urutan/logika babak sama sekali. Babak 3+4 game (diagnosis
+ * perilaku, resep sosial) sama-sama masuk huruf J (Jelaskan & Bantu) SAJI;
+ * huruf I (Ingatkan) belum punya babak game tersendiri (lihat Fase E-2).
+ */
+const BABAK: { fase: BabakKunjunganFase; label: string; sajiLabel: string }[] = [
+  { fase: 'observasi', label: 'Salam & Observasi', sajiLabel: 'S — Salam' },
+  { fase: 'wawancara', label: 'Wawancara', sajiLabel: 'A — Ajak Bicara' },
+  { fase: 'diagnosis_perilaku', label: 'Diagnosis Perilaku', sajiLabel: 'J — Jelaskan & Bantu' },
+  { fase: 'resep_sosial', label: 'Resep Sosial', sajiLabel: 'J — Jelaskan & Bantu' },
 ]
 
 const GAYA_INFO: Record<PilihanDialog['gaya'], { label: string; simbol: string }> = {
@@ -219,6 +227,7 @@ export function Kunjungan() {
                 i === babakIndex ? 'kunjungan-stepper__langkah--aktif' : ''
               } ${i < babakIndex || kj.fase === 'selesai' ? 'kunjungan-stepper__langkah--lewat' : ''}`}
               aria-current={i === babakIndex ? 'step' : undefined}
+              title={`Metode SAJI (Permenkes 39/2016): ${b.sajiLabel}`}
             >
               <span className="kunjungan-stepper__angka mono">{i + 1}</span>
               <span className="kunjungan-stepper__label">{b.label}</span>
