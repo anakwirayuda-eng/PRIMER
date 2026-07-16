@@ -112,3 +112,86 @@ dimainkan (yang justru menggagalkan tujuan "merasakan full-fledge"):
 `dist/`; full suite hijau; `M13_LAB_DECISION_LEDGER.md` terisi jujur; user
 menginstal, memainkan game full-fledge, dan menarik pelajaran untuk siklus
 pengembangan berikutnya di repo produksi. Itu saja. Tidak ada gerbang lain.
+
+---
+
+## 7. RONDE BERIKUTNYA (ditetapkan 2026-07-16 pasca-audit 4-dimensi Claude)
+
+Audit independen (inventaris + kualitas konten + integrasi sistem + UI/UX,
+semua temuan ber-file:line) atas commit `b91cd52` menetapkan urutan batch
+berikut. Aturan §3-§5 tetap berlaku penuh.
+
+### Batch 4 — Tuntaskan kuota encounter (gap terbesar)
+
+Posisi sekarang: poli 176 (4A=150 ✅ 144/144 katalog tertaut; 3B=15; 3A=10;
+2=1), IGD=6. Target: ~60 kasus tier-rujuk + ~20 IGD.
+
+- **+~34 kasus wajib-rujuk (3A/3B/2)**: pilih dari daftar rujuk-FKTP nyata
+  (apendisitis akut sudah ada; tambah mis. hernia inkarserata, kolesistitis,
+  PID berat, retensio urin, glaukoma akut, katarak matur, otitis media
+  komplikata, fraktur tertutup reposisi, hipertiroid krisis-pending, CKD
+  st.3-4, gagal jantung dekompensasi, efusi/empiema, apendisitis anak, KET
+  suspek, plasenta previa, dst. — porting shell repo lama dipersilakan).
+  Ingat cap paparan: director maks 1 kasus rujuk/pagi, jadi pool rujuk besar
+  aman utk balance.
+- **+~14 kasus IGD** menuju ~20 (kejang status, trauma kepala, luka bakar
+  luas, KAD, stroke window, PPH, asfiksia neonatal, tenggelam, keracunan
+  organofosfat, gigitan ular, dst.). Pola `igd_stemi` (kapabilitas RS tujuan)
+  boleh direplikasi.
+
+### Batch 5 — Pengayaan 103 prototipe (gap "feel" terbesar)
+
+Audit kuantitatif lab-vs-orisinal: pertanyaan anamnesis median 4 vs 8;
+variasi persona **0% vs 95.9%** (0 vs 281 entri); pertanyaan distraktor
+**0% vs 76.7%**; `obatSalahUmum` 21.4% vs 95.9%; `konsekuensi` (pasien
+kembali) **1% vs 84.9%**; 74/103 kasus lab tanpa SATU PUN pengayaan.
+Akibat nyata: pasien lab bersuara datar & seragam, klik-semua-anamnesis jadi
+strategi optimal tanpa hukuman, fase resep nyaris tanpa jebakan, dan salah
+tatalaksana tak pernah berbuntut. Lapisan referensi (clue/panduanResmi/
+catatanRealita) justru sudah setara-atau-lebih — yang hampa lapisan
+INTERAKTIF-nya.
+
+Per kasus lab, urutan dampak (kerjakan per kluster, boleh disicil lintas
+batch):
+1. +1-2 pertanyaan **distraktor** (`distraktor: true`);
+2. +1-2 **obatSalahUmum** ber-tag `bahaya` + alasan pedagogis;
+3. +**konsekuensi** utk kasus yang salah-kelola-nya bermakna klinis;
+4. +**variasi persona** minimal (cemas/polos/lansia) di pertanyaan pembuka;
+5. +1-2 pertanyaan anamnesis substantif (OLDCARTS) bila masih <5.
+
+Prasyarat teknis: `FktpLabSpec` di `labCaseFactory.ts` BELUM mengekspos
+`distraktor`/`variasi`/`obatSalahUmum`(sudah? cek)/`konsekuensi`/`bisaPrb` —
+perluas dulu factory-nya, jangan tulis manual per-kasus.
+
+### Batch 6 — Integrasi sistem + 4 fix UI kecil
+
+Kasus lab saat ini cuma warga penuh di draw Karier + Dex; TERISOLASI dari
+sistem longitudinal (temuan ber-file:line):
+- `surveilans.ts:24-33` `AMBANG_CLUSTER` = daftar 8 id hardcoded → 13 kasus
+  infeksi lab tak pernah membentuk kluster/KLB. Ubah jadi flag di kasus
+  (mis. `menular` + pola), atau tambahkan kasus lab layak-kluster ke daftar.
+- `reducer.ts:702` PRB via flag `bisaPrb` → 0/103 kasus lab punya (factory
+  tak mengekspos). Kasus kronis-stabil lab wajib bisa PRB.
+- `konsekuensi` hanya 1/103 (lihat Batch 5 #3).
+- Karma/arc keluarga & Prolanis (roster dari `keluarga.anggota.kondisi`,
+  komplikasi hardcoded `reducer.ts:1433`) — biarkan utk sekarang (butuh
+  desain cerita), catat saja di ledger.
+
+UI (semua kecil, dampak playtest langsung):
+1. `DexSkdi.tsx:142` pin "● ada di desa ini" kini menempel di SEMUA 144
+   siluet (dulu diskriminatif saat hanya 45 tertaut) → jadi noise
+   menyesatkan. Hapus legendanya atau repurpose.
+2. `.dexskdi__cari` (DexSkdi.tsx:130) tak punya CSS sama sekali (mencolok di
+   mode malam) dan ikut ter-scroll — beri gaya spt `.klinik-cari`
+   (Klinik.css:560-574) + `position: sticky`.
+3. Jadikan 3 chip progres Dex (dijumpai/tersertifikasi/dikuasai,
+   DexSkdi.tsx:58-60) sebagai filter klik — pertanyaan utama pemain di 144
+   baris adalah "mana yang belum".
+4. Header `src/content/skdi144.ts` masih menulis "46 dari 67 kasus playable
+   tertaut" — basi, kini 144/144.
+
+Yang TIDAK perlu dikerjakan (sudah diaudit, terbantah/aman): 3 opsi
+diagnosis kasus lab BUKAN regresi (67 kasus orisinal pun 88% ber-3 opsi;
+posisi jawaban netral ~35%); `activationStatus` tidak bocor ke UI pemain;
+antrian 2-4 pasien/hari independen dari ukuran pool; tak ada angka
+hardcoded stale di renderer.

@@ -114,7 +114,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
       <section className="klinik-lembar__seksi">
         <div className="judul-seksi">S &mdash; Subjektif (Anamnesis)</div>
         <div className="klinik-lembar__qa">
-          <div className="klinik-lembar__tanya teks-xs teks-lembut">Keluhan utama</div>
+          <div className="klinik-lembar__tanya teks-kecil teks-lembut">Keluhan utama</div>
           <div className="tulis-tangan">
             {kasus.keluhanUtamaOlehPendamping && (
               <span className="teks-xs teks-lembut">Dituturkan pendamping: </span>
@@ -130,7 +130,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             if (!q) return null
             return (
               <div key={id} className="klinik-lembar__qa klinik-tinta">
-                <div className="klinik-lembar__tanya teks-xs teks-lembut">{q.tanya}</div>
+                <div className="klinik-lembar__tanya teks-kecil teks-lembut">{q.tanya}</div>
                 <div className="tulis-tangan">&ldquo;{jawabanPasien(q, p.persona)}&rdquo;</div>
               </div>
             )
@@ -172,7 +172,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             const temuan = temuanUntukRegion(kasus, r)
             return (
               <div key={r} className="klinik-lembar__qa klinik-tinta">
-                <div className="klinik-lembar__tanya teks-xs teks-lembut">{LABEL_REGION[r]}</div>
+                <div className="klinik-lembar__tanya teks-kecil teks-lembut">{LABEL_REGION[r]}</div>
                 <div className="tulis-tangan">{temuan}</div>
               </div>
             )
@@ -191,7 +191,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
               return (
                 <div key={id} className="klinik-lembar__qa klinik-tinta">
                   <div className="baris">
-                    <span className="klinik-lembar__tanya teks-xs teks-lembut">
+                    <span className="klinik-lembar__tanya teks-kecil teks-lembut">
                       {item?.nama ?? id}
                     </span>
                     {flag && <span className={`chip ${flag.kelas}`}>{flag.label}</span>}
@@ -204,7 +204,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             })}
             {labMenunggu.map((id) => (
               <div key={id} className="klinik-lembar__qa klinik-tinta baris">
-                <span className="klinik-lembar__tanya teks-xs teks-lembut">
+                <span className="klinik-lembar__tanya teks-kecil teks-lembut">
                   {PACK.lab[id]?.nama ?? id}
                 </span>
                 <span className="chip chip--kunyit">hasil besok pagi</span>

@@ -52,6 +52,14 @@
   color: var(--kunyit-700);
 }
 
+/* Hierarki heading 2 tingkat: judul panel (anak langsung) sedikit lebih besar;
+   judul kartu di dalam .mk__program/.mk__lokmin-rival tetap kecil. */
+.mk__panel > .judul-seksi,
+.mk__inbox-header .judul-seksi {
+  font-size: var(--text-sm);
+  color: var(--tinta);
+}
+
 /* ================= KIRI — KOTAK MASUK ================= */
 
 .mk__inbox {
@@ -442,4 +450,28 @@
 .mk__lokmin-rival {
   border-left: 4px solid var(--kunyit-600);
   margin: var(--sp-3) 0;
+}
+
+/* Panel "ongkos oportunitas" Lokmin: aksen merah (biaya), bukan kunyit. */
+.mk__lokmin-ongkos {
+  border-left-color: var(--tinta-merah);
+}
+
+/* Daftar stok gudang: rapatkan baris (dulu gap inline 4px). */
+.mk__gudang-daftar {
+  gap: var(--sp-1);
+}
+
+/* Judul modal rekap/lokmin: satu tingkat di atas judul panel. */
+.mk__rekap > .judul-seksi {
+  font-size: var(--text-md);
+  letter-spacing: var(--lacak-label);
+  color: var(--tinta);
+}
+
+/* Serat meja mode malam: struktur sama dgn mode terang (.mk), tint dibalik. */
+[data-mode='malam'] .mk {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(230, 237, 232, 0.02) 46px 48px),
+    var(--bg-app);
 }

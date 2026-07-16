@@ -90,7 +90,7 @@ export function Kegiatan() {
 
   return (
     <div className="kegiatan">
-      <div className="kegiatan__panel kertas" ref={panelRef} tabIndex={-1}>
+      <div className={`kegiatan__panel kertas kegiatan__panel--${kg.jenis}`} ref={panelRef} tabIndex={-1}>
         <div className="kegiatan__kepala">
           <div>
             <div className="kegiatan__label mono">{meta.label}</div>
@@ -122,31 +122,35 @@ export function Kegiatan() {
             })}
           </div>
 
-          {pilihanObj && (
-            /* M10 Batch-2 (CODEX A.1): live region — respons kartu diumumkan SR. */
-            <div className={`kegiatan__respons ${pilihanObj.benar ? 'kegiatan__respons--benar' : 'kegiatan__respons--salah'}`} role="status" aria-live="polite">
-              <span className="stempel stempel--kecil">{pilihanObj.benar ? 'TEPAT' : 'KELIRU'}</span>
-              <p>{pilihanObj.respons}</p>
-              <button
-                className="tombol tombol--utama"
-                onClick={() =>
-                  dispatch({ type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: pilihanObj.id })
-                }
-              >
-                {kg.index + 1 >= kg.kartu.length ? 'Tutup Sesi →' : 'Kartu Berikutnya →'}
-              </button>
-            </div>
-          )}
+          {/* Batch-6 estetika: slot ber-min-height — panel tumbuh hanya ke
+              bawah saat respons muncul, tak recenter/lompat per kartu. */}
+          <div className="kegiatan__slot-aksi">
+            {pilihanObj && (
+              /* M10 Batch-2 (CODEX A.1): live region — respons kartu diumumkan SR. */
+              <div className={`kegiatan__respons ${pilihanObj.benar ? 'kegiatan__respons--benar' : 'kegiatan__respons--salah'}`} role="status" aria-live="polite">
+                <span className="stempel stempel--kecil">{pilihanObj.benar ? 'TEPAT' : 'KELIRU'}</span>
+                <p>{pilihanObj.respons}</p>
+                <button
+                  className="tombol tombol--utama"
+                  onClick={() =>
+                    dispatch({ type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: pilihanObj.id })
+                  }
+                >
+                  {kg.index + 1 >= kg.kartu.length ? 'Tutup Sesi →' : 'Kartu Berikutnya →'}
+                </button>
+              </div>
+            )}
 
-          {kg.jenis === 'posyandu' && pilihanTerpilih === null && (
-            <button
-              className="tombol tombol--senyap kegiatan__delegasi"
-              onClick={() => dispatch({ type: 'DELEGASI_KEGIATAN' })}
-              title="Serahkan sisa meja ke kader. Cepat, tapi kader manusia — sekitar 20% keputusan bisa keliru."
-            >
-              Delegasikan sisa meja ke kader (risiko ~20% keliru)
-            </button>
-          )}
+            {kg.jenis === 'posyandu' && pilihanTerpilih === null && (
+              <button
+                className="tombol tombol--senyap kegiatan__delegasi"
+                onClick={() => dispatch({ type: 'DELEGASI_KEGIATAN' })}
+                title="Serahkan sisa meja ke kader. Cepat, tapi kader manusia — sekitar 20% keputusan bisa keliru."
+              >
+                Delegasikan sisa meja ke kader (risiko ~20% keliru)
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

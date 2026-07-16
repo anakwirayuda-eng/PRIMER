@@ -78,6 +78,24 @@ describe('PACK — validasi silang id konten', () => {
       })
       .map((e) => `${e.id}: ${e.icd10} ≠ kasus ${PACK.kasus[e.kasusId]!.icd10}`)
     expect(mismatch).toEqual([])
+
+    // Audit CODEX 2026-07-16 (#5) menghitung 11 perbedaan kode katalog↔kasus dan
+    // meminta "rationale + test eksplisit". Allowlist di atas SUDAH memberi
+    // keduanya (tiap entri ber-komentar alasan) — angka 11 itu memang seluruhnya
+    // keputusan sadar, bukan drift. Yang BELUM dijaga: allowlist bisa membusuk —
+    // entri yang tautannya sudah diperbaiki tetap tinggal di sini dan diam-diam
+    // memberi izin untuk mismatch BARU yang kebetulan ber-id sama. Kunci juga
+    // arah sebaliknya: tiap id di allowlist WAJIB benar-benar masih mismatch.
+    const yatim = [...GENERIK_SENGAJA].filter((id) => {
+      const entri = PACK.skdi144.find((e) => e.id === id)
+      if (!entri?.kasusId) return true
+      const kasus = PACK.kasus[entri.kasusId]
+      return !kasus || kasus.icd10 === entri.icd10
+    })
+    expect(
+      yatim,
+      'entri allowlist ini sudah tak mismatch (atau tautannya hilang) — hapus dari GENERIK_SENGAJA agar tak jadi izin diam-diam',
+    ).toEqual([])
   })
 
   it('CODEX ronde-14 §5: 7 kasus tambahan kini tertaut Dex/SKDI144 (38→45 dari 67 playable)', () => {
@@ -567,5 +585,115 @@ describe('PACK — validasi silang id konten', () => {
   ])('%s: edukasiKritis berisi %s', (kasusId, topikKritis) => {
     const kasus = PACK.kasus[kasusId]!
     expect(kasus.tatalaksana.edukasiKritis).toContain(topikKritis)
+  })
+})
+
+/**
+ * REGRESI — audit CODEX 2026-07-16 (#3, "representasi dosis anak belum aman"):
+ * `kulit_morbili` (usia 1-8) MEWAJIBKAN `paracetamol_500` sebagai jawaban benar.
+ * Tablet 500 mg adalah unit DEWASA; dosis anak 10-15 mg/kg/kali (WHO), sehingga
+ * balita 10 kg hanya butuh ~seperempat tablet. Menerima "tablet 500 mg" sebagai
+ * BENAR mengajarkan kebiasaan tak aman — apalagi game ini belum memodelkan berat
+ * badan/fraksi tablet, jadi pemain tak pernah dipaksa memikirkan takaran.
+ *
+ * Pagar: untuk kasus anak kecil (usiaMax <= 8), sediaan padat dewasa TIDAK BOLEH
+ * menjadi `obatBenar` bila padanan sirup anaknya ADA di formularium. Pelajaran
+ * dosis dipindah ke pilihan SEDIAAN (sirup dapat ditakar, tablet tidak).
+ * Kasus anak yang lebih besar (mis. 5-12) boleh menerima keduanya lewat
+ * `obatAlternatif` — di rentang itu tablet memang masuk akal.
+ */
+describe('Sediaan anak — kasus balita tak boleh mewajibkan tablet dewasa (CODEX #3)', () => {
+  const PADANAN_ANAK: Record<string, string> = {
+    paracetamol_500: 'paracetamol_sirup',
+    amoxicillin_500: 'amoxicillin_sirup',
+    cefadroxil_500: 'cefadroxil_sirup_125',
+  }
+
+  it('tiap kasus usiaMax<=8: obatBenar bebas sediaan padat dewasa yang punya padanan sirup', () => {
+    const pelanggar: string[] = []
+    for (const k of Object.values(PACK.kasus)) {
+      if (k.demografi.usiaMax > 8) continue
+      for (const obat of k.tatalaksana.obatBenar) {
+        const sirup = PADANAN_ANAK[obat]
+        if (sirup && PACK.obat[sirup]) {
+          pelanggar.push(`${k.id} (usia ${k.demografi.usiaMin}-${k.demografi.usiaMax}): obatBenar '${obat}' → pakai '${sirup}'`)
+        }
+      }
+    }
+    expect(pelanggar).toEqual([])
+  })
+
+  it('morbili: sirup anak yang benar, tablet dewasa jadi jebakan sediaan', () => {
+    const morbili = PACK.kasus['kulit_morbili']!
+    expect(morbili.tatalaksana.obatBenar).toContain('paracetamol_sirup')
+    expect(morbili.tatalaksana.obatBenar).not.toContain('paracetamol_500')
+    const jebakan = morbili.tatalaksana.obatSalahUmum?.find((o) => o.id === 'paracetamol_500')
+    expect(jebakan, 'tablet dewasa wajib jadi obatSalahUmum bersuara mengajar').toBeTruthy()
+    expect(jebakan!.alasan).toMatch(/mg\/kg|takar|sirup/i)
+  })
+})
+
+/**
+ * REGRESI — audit CODEX 2026-07-16 (#1, "distraktor anamnesis terlalu generik"):
+ * satu pertanyaan distraktor yang sama sempat ditempel ke PULUHAN kasus lintas
+ * kategori — "Apakah sering haus dan banyak kencing?" di 35 kasus (termasuk
+ * mata, kulit, obstetri, trauma) dan "Apakah ada nyeri dada atau berdebar?" di
+ * 34 kasus. Akibatnya anamnesis terasa tak nyambung dan pemain dihukum secara
+ * ARTIFISIAL (kesabaran pasien tergerus) untuk pertanyaan yang memang tak masuk
+ * akal ditanyakan di kasus itu.
+ *
+ * Distraktor yang benar bersifat DIFFERENTIAL-DRIVEN: masuk akal ditanyakan
+ * pada kasus INI (mengejar salah satu bandingnya / mitos klinis lazim) tetapi
+ * ternyata tak mengubah keputusan. Karena itu ia TIDAK BISA dipakai ulang di
+ * banyak kasus yang berbeda — pemakaian ulang berlebihan = tanda template.
+ *
+ * Ambang 6: pertanyaan yang benar-benar netral-lintas-kasus (mis. status
+ * merokok) wajar dipakai beberapa kali; puluhan kali TIDAK.
+ */
+describe('Distraktor differential-driven, bukan template massal (CODEX #1)', () => {
+  const AMBANG_PAKAI_ULANG = 6
+
+  it('tak ada satu teks distraktor pun yang dipakai di >=6 kasus', () => {
+    const perTeks = new Map<string, string[]>()
+    for (const kasus of Object.values(PACK.kasus)) {
+      for (const q of kasus.anamnesis) {
+        if (!q.distraktor) continue
+        if (!perTeks.has(q.tanya)) perTeks.set(q.tanya, [])
+        perTeks.get(q.tanya)!.push(kasus.id)
+      }
+    }
+    const template = [...perTeks.entries()]
+      .filter(([, kasusIds]) => kasusIds.length >= AMBANG_PAKAI_ULANG)
+      .map(([tanya, kasusIds]) => `${kasusIds.length}x "${tanya}" → ${kasusIds.slice(0, 4).join(', ')}…`)
+    expect(
+      template,
+      'distraktor dipakai ulang massal — ganti dgn pertanyaan yang mengejar banding kasus masing-masing',
+    ).toEqual([])
+  })
+
+  it('empat teks generik lama benar-benar punah', () => {
+    // Cocokkan TEMA, bukan string persis. Verifikasi ronde ini sendiri sempat
+    // memakai grep 4 frasa harfiah dan LOLOS palsu: tiga distraktor generik
+    // selamat semata karena beda kata ("keluarga dengan penyakit jantung" tanpa
+    // "bawaan"; "nyeri sendi atau kaku pagi" bukan "berpindah"). Pagar yang
+    // mencocokkan kalimat persis hanya menjaga copy-paste, bukan kelas bugnya.
+    const TEMA_GENERIK: { nama: string; pola: RegExp }[] = [
+      { nama: 'poliuria-polidipsia', pola: /(haus|hausnya).*(kencing|kemih)|(kencing|kemih).*(haus|sering haus)/i },
+      { nama: 'keluhan jantung', pola: /nyeri dada.*(berdebar|debar)|berdebar.*nyeri dada/i },
+      { nama: 'riwayat jantung keluarga', pola: /keluarga.*penyakit jantung|penyakit jantung.*keluarga/i },
+      { nama: 'artralgia migran', pola: /nyeri sendi.*(berpindah|kaku pagi)|kaku pagi.*nyeri sendi/i },
+    ]
+    const sisa: string[] = []
+    for (const kasus of Object.values(PACK.kasus)) {
+      for (const q of kasus.anamnesis) {
+        if (!q.distraktor) continue
+        const kena = TEMA_GENERIK.find((t) => t.pola.test(q.tanya))
+        if (kena) sisa.push(`${kasus.id}:${q.id} → tema "${kena.nama}": "${q.tanya}"`)
+      }
+    }
+    expect(
+      sisa,
+      'distraktor generik lama muncul lagi (mungkin dgn kata berbeda) — ganti dgn pertanyaan yang mengejar banding kasus ini',
+    ).toEqual([])
   })
 })

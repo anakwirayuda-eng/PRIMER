@@ -11,18 +11,19 @@ import { hitungIksKeluarga, klasifikasiIks } from '@engine/pispk'
 import {
   BIAYA_STAMINA_KUNJUNGAN,
   BIAYA_STAMINA_KEGIATAN,
+  COOLDOWN_POSYANDU,
   HARI_BUKA_KUNJUNGAN,
   HARI_BUKA_POSYANDU,
   HARI_BUKA_KLB,
   MAKS_BINAAN,
 } from '@engine/reducer'
+import { arcKunjunganAktif } from '@engine/kunjungan'
 import type { HasilKunjungan, KeluargaState } from '@engine/state'
 import type { KeluargaBinaan } from '@content/types'
-import { ukmScenarioAktif } from '@content/pack'
 import { PACK } from '@content/index'
 import { PetaSvg } from './peta/PetaSvg'
 import { KartuKeluarga } from './peta/KartuKeluarga'
-import { karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta/petaUtil'
+import { formatIks, karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta/petaUtil'
 import { clusterAktif } from '@engine/surveilans'
 import { useFocusTrap } from '../useFocusTrap'
 import './PetaDesa.css'
@@ -68,7 +69,7 @@ export function PetaDesa() {
     )
 
   // Sinyal kluster surveilans (M1.2): diagnosis menular di poli → peringatan wilayah.
-  const semuaCluster = clusterAktif(state)
+  const semuaCluster = clusterAktif(state, PACK)
   const clusterRwAktif = rwTerpilih === null ? [] : semuaCluster.filter((c) => c.rw === rwTerpilih)
 
   const rwAktif = rwTerpilih === null ? undefined : state.desa.rw.find((r) => r.nomor === rwTerpilih)
@@ -89,14 +90,12 @@ export function PetaDesa() {
       return { alasan: 'Jadikan binaan dulu sebelum berkunjung.', biaya }
     if (kel.arcSelesai === 'gagal')
       return { alasan: 'Krisis sudah terjadi — dampingi pemulihannya lewat klinik.', biaya }
-    if (kel.arcIndex >= content.arc.kunjungan.length)
+    // Audit CODEX UKM 2026-07-16 #1: progres arc dihitung atas daftar TERSARING
+    // mode-policy (arcKunjunganAktif, cermin MULAI_KUNJUNGAN reducer) — bukan
+    // panjang arc mentah yang bisa memuat skenario Career-only (buntu di Ujian).
+    const arcAktif = arcKunjunganAktif(PACK, content, state.mode, state.contentRelease)
+    if (kel.arcIndex >= arcAktif.length)
       return { alasan: 'Seluruh kunjungan keluarga ini sudah tuntas.', biaya }
-    const skenario = content.arc.kunjungan[kel.arcIndex]
-    if (
-      !skenario ||
-      !ukmScenarioAktif(PACK, content.id, skenario.id, state.mode, state.contentRelease)
-    )
-      return { alasan: 'Skenario ini tidak tersedia pada mode stase ini.', biaya }
     if (state.hari < HARI_BUKA_KUNJUNGAN)
       return { alasan: `Kunjungan rumah terbuka mulai hari ke-${HARI_BUKA_KUNJUNGAN}.`, biaya }
     if (state.blok !== 'siang') return { alasan: 'Kunjungan rumah hanya bisa dilakukan di blok siang.', biaya }
@@ -118,8 +117,10 @@ export function PetaDesa() {
   }
   function alasanKegiatanPosyandu(rw: number): string | null {
     const terakhir = state.posyanduRwTerakhir[String(rw)]
-    if (terakhir !== undefined && state.hari - terakhir < 30)
-      return `Posyandu RW ${rw} baru digelar — jadwalnya bulanan.`
+    // Audit CODEX UKM 2026-07-16: cooldown per mode (Ujian 10 hari), bukan literal 30.
+    const cooldown = COOLDOWN_POSYANDU[state.mode]
+    if (terakhir !== undefined && state.hari - terakhir < cooldown)
+      return `Posyandu RW ${rw} baru digelar — jadwal berikutnya ${cooldown} hari sejak sesi terakhir.`
     return alasanSlotLapangan(BIAYA_STAMINA_KEGIATAN)
   }
   function alasanKegiatanKlb(): string | null {
@@ -154,7 +155,7 @@ export function PetaDesa() {
           </span>
           <span className="peta-legenda__pisah" />
           <span className="mono" title="Provenance data indikator: hanya yang kamu verifikasi sendiri yang pasti benar.">
-            ✓ dokter · ~ kader · ? belum ada data
+            ✓ dokter · ~ kader · ? belum ada data · ⧗ dijanjikan warga — menunggu verifikasi outcome
           </span>
         </div>
       </section>
@@ -182,7 +183,7 @@ export function PetaDesa() {
                   >
                     {karmaTerlihat(kel, state.hari) && <span className="peta-roster-item__karma" aria-label="perlu perhatian" />}
                     <span className="peta-roster-item__nama">{content.namaKeluarga}</span>
-                    <span className="chip">{iks === null ? 'IKS ?' : `IKS ${(iks * 100).toFixed(0)}`}</span>
+                    <span className="chip">{iks === null ? 'IKS ?' : `IKS ${formatIks(iks)}`}</span>
                   </button>
                 )
               })}
@@ -192,7 +193,7 @@ export function PetaDesa() {
 
         {rwTerpilih === null || !rwAktif ? (
           <div className="peta-petunjuk kertas tengah">
-            <div className="kolom" style={{ alignItems: 'center', textAlign: 'center' }}>
+            <div className="kolom">
               <span className="peta-petunjuk__ikon" aria-hidden>
                 ⌖
               </span>
@@ -220,14 +221,14 @@ export function PetaDesa() {
                 </span>
                 {rwAktif.kkTersurvei > 0 ? (
                   <span className={`chip ${LABEL_KLASIFIKASI[klasifikasiIks(rwAktif.iks)].chip}`}>
-                    IKS agregat {(rwAktif.iks * 100).toFixed(0)} · {LABEL_KLASIFIKASI[klasifikasiIks(rwAktif.iks)].label}
+                    IKS agregat {formatIks(rwAktif.iks)} · {LABEL_KLASIFIKASI[klasifikasiIks(rwAktif.iks)].label}
                   </span>
                 ) : (
                   <span className="chip">belum ada data — kader belum sampai ke sini</span>
                 )}
               </div>
               {clusterRwAktif.length > 0 && (
-                <div className="baris teks-xs" style={{ flexWrap: 'wrap' }}>
+                <div className="baris teks-xs peta-detail__cluster">
                   {clusterRwAktif.map((c) => (
                     <span key={c.kasusId} className="chip chip--merah" title="Kluster surveilans: beberapa kasus penyakit sama dari RW ini tercatat di poli dalam 14 hari — kunjungi wilayahnya.">
                       ⚠ KLUSTER {(PACK.kasus[c.kasusId]?.nama ?? c.kasusId).toUpperCase()} — {c.jumlah} kasus/14 hr
@@ -258,7 +259,9 @@ export function PetaDesa() {
                     title={alasanKegiatanKlb() ?? 'Turun ke lapangan menyelidiki & mengendalikan kluster ini.'}
                     onClick={() => dispatch({ type: 'MULAI_KLB', rw: rwAktif.nomor, kasusId: c.kasusId })}
                   >
-                    🚨 Respons KLB {PACK.kasus[c.kasusId]?.nama ?? c.kasusId}
+                    {/* Audit CODEX UKM 2026-07-16 #13: sinyal kluster BELUM tentu KLB —
+                        label pra-kegiatan jujur soal langkah verifikasi dulu. */}
+                    🚨 Verifikasi &amp; Respons Sinyal KLB {PACK.kasus[c.kasusId]?.nama ?? c.kasusId}
                   </button>
                 ))}
             </div>
@@ -321,7 +324,7 @@ export function PetaDesa() {
               {keluargaHasil ? keluargaHasil.namaKeluarga : hasilKunjungan.keluargaId}
             </div>
             <p className="peta-hasil__narasi">{hasilKunjungan.narasiPenutup}</p>
-            <div className="baris" style={{ justifyContent: 'center' }}>
+            <div className="baris baris--tengah">
               <span className="chip chip--biru">
                 {hasilKunjungan.indikatorTerverifikasi.length} indikator terverifikasi ✓
               </span>

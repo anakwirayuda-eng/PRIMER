@@ -139,7 +139,7 @@
 }
 
 .rapor-tally__tabel td {
-  padding: var(--sp-1) 0;
+  padding: var(--sp-2) 0;
   border-bottom: 1px dashed var(--border-halus);
   vertical-align: baseline;
 }
@@ -191,7 +191,7 @@
 .rapor-kal__hari-grid {
   display: grid;
   grid-template-columns: repeat(30, minmax(0, 1fr));
-  gap: 3px;
+  gap: var(--sp-1);
 }
 
 .rapor-kal__hari {
@@ -214,13 +214,15 @@
   animation: rapor-kal-denyut 1.8s var(--ease-keluar) infinite;
 }
 
+/* Denyut via ketebalan ring (bukan transform scale) — sel yang membesar dulu
+   menimpa sel tetangga di grid rapat. */
 @keyframes rapor-kal-denyut {
   0%,
   100% {
-    transform: scale(1);
+    box-shadow: 0 0 0 2px var(--tinta);
   }
   50% {
-    transform: scale(1.25);
+    box-shadow: 0 0 0 3px var(--tinta);
   }
 }
 

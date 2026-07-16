@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeTheme, shell, Menu } from 'electron'
 import { join } from 'path'
 import { pathToFileURL } from 'url'
 import { promises as fs } from 'fs'
@@ -157,8 +157,11 @@ function createWindow(): void {
     minWidth: 1200,
     minHeight: 760,
     show: false,
-    title: 'PRIMERA: Puskesmas Pagi',
-    backgroundColor: '#FAF6EF',
+    title: 'PRIMERA test-beta',
+    // Audit CODEX UX 2026-07-16 (P2 bright-start): pengguna sensitif cahaya
+    // dgn OS gelap dulu kena kilatan krem sebelum renderer termuat — warna
+    // pra-render kini ikut preferensi OS (malam-800 vs kertas-100).
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#14201c' : '#FAF6EF',
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

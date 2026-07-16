@@ -18,10 +18,13 @@ describe('M13-0A — canonical curriculum blueprint', () => {
       fktp144Total: 144,
       fktp144WithCertifyingClinicArchetype: 144,
       fktp144WithoutCertifyingClinicArchetype: 0,
-      additionalClinicalItems: 32,
+      // M13 Batch 4 (2026-07-16): +34 kasus poli tier-rujuk (clinical items
+      // 32→66, clinic archetypes 176→210) + 14 kasus IGD (6→20). Semua
+      // Career-only; 144 katalog FKTP tak berubah (batch4 fktp144:false).
+      additionalClinicalItems: 66,
       ukmObjectives: 12,
-      clinicArchetypes: 176,
-      igdArchetypes: 6,
+      clinicArchetypes: 210,
+      igdArchetypes: 20,
       ukmScenarios: 27,
     })
   })
@@ -39,7 +42,7 @@ describe('M13-0A — canonical curriculum blueprint', () => {
 
   it('setiap kasus level 3A/3B/2 punya item tersendiri dengan level yang tetap utuh', () => {
     const non4A = Object.values(PACK.kasus).filter((kasus) => kasus.skdi !== '4A')
-    expect(non4A).toHaveLength(26)
+    expect(non4A).toHaveLength(60) // M13 Batch 4: +34 kasus tier-rujuk (26→60)
     for (const kasus of non4A) {
       const archetype = CURRICULUM_BLUEPRINT.encounterArchetypes.find(
         (candidate) => candidate.contentRef.kind === 'clinic' && candidate.contentRef.id === kasus.id,
@@ -124,11 +127,24 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     const igd = CURRICULUM_BLUEPRINT.encounterArchetypes.filter(
       (archetype) => archetype.channel === 'igd',
     )
-    expect(igd).toHaveLength(6)
+    expect(igd).toHaveLength(20) // M13 Batch 4: +14 kasus IGD Career-only (6→20)
+    // Jaminan inti "tak ada sertifikasi diagnostik palsu" = credits kosong.
     for (const archetype of igd) {
       expect(archetype.credits, archetype.id).toEqual([])
       expect(archetype.creditRationale, archetype.id).toMatch(/tidak.*(?:diagnosis|diagnostik)/i)
-      expect(archetype.excludedCredits?.length, archetype.id).toBeGreaterThan(0)
+      // excludedCredits hanya WAJIB terisi bila concept-nya PUNYA item kurikulum
+      // yang bisa keliru dikredit. 5 kasus IGD baseline berbagi concept dengan
+      // item FKTP-144 (asthma/dengue/dst.) → wajib mengecualikannya. 14 kasus
+      // IGD Batch 4 memakai concept khas-IGD (status epileptikus, KAD, dst.)
+      // tanpa padanan kurikulum → tak ada yang perlu dikecualikan.
+      const punyaItemSekonsep = CURRICULUM_BLUEPRINT.itemConcepts.some(
+        (relation) => relation.conceptId === archetype.conceptId,
+      )
+      if (punyaItemSekonsep) {
+        expect(archetype.excludedCredits?.length, archetype.id).toBeGreaterThan(0)
+      } else {
+        expect(archetype.excludedCredits ?? [], archetype.id).toEqual([])
+      }
     }
   })
 

@@ -9,11 +9,27 @@ import type { GameEvent } from './events'
 import type {
   FokusProgram,
   GameState,
+  KeluargaState,
   ModeStase,
   PenilaianEncounter,
   PesertaProlanis,
   Surat,
 } from './state'
+import type { IndikatorPisPk } from '@content/types'
+import { SEMUA_INDIKATOR_PISPK } from './pispk'
+
+/**
+ * #5 (audit CODEX UKM 2026-07-16): domain indikator KIA yang diverifikasi
+ * langsung oleh posyandu berkualitas (penimbangan/pencatatan = pengumpulan
+ * data nyata, menggantikan tebakan kader).
+ */
+const INDIKATOR_KIA_POSYANDU: readonly IndikatorPisPk[] = [
+  'imunisasi_dasar',
+  'asi_eksklusif',
+  'pantau_tumbuh_kembang',
+  'persalinan_faskes',
+  'kb',
+]
 import {
   encounterArchetypeAktif,
   ukmScenarioAktif,
@@ -22,10 +38,10 @@ import {
 import type { Persona } from '@content/types'
 import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter } from './clinic'
-import { buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm } from './kunjungan'
+import { arcKunjunganAktif, buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm } from './kunjungan'
 import { prosesHarianKader } from './kader'
 import { susunAntrianHarian, buatPasienDariKasus, peluangIgd } from './director'
-import { kasusMenular, pangkasSurveilans, hitungCluster } from './surveilans'
+import { ambangKlusterPack, kasusMenular, pangkasSurveilans, hitungCluster } from './surveilans'
 import {
   buatKegiatan,
   jawabKegiatan,
@@ -84,6 +100,19 @@ export const HARI_BUKA_KLB: Record<ModeStase, number> = { karier: 45, ujian: 15 
  */
 export const HARI_BUKA_POSYANDU: Record<ModeStase, number> = { karier: 15, ujian: 5 }
 export const COOLDOWN_POSYANDU: Record<ModeStase, number> = { karier: 30, ujian: 10 }
+/**
+ * #4 outcome-window (audit CODEX UKM 2026-07-16): jeda antara JANJI warga (arc
+ * tamat) dan verifikasi outcome-nya. Skala mode sama dengan siklus lain (1/3).
+ */
+export const JENDELA_VERIFIKASI_JANJI: Record<ModeStase, number> = { karier: 14, ujian: 5 }
+/**
+ * Peluang janji perubahan perilaku DITEPATI, fungsi trust keluarga (0-10):
+ * trust tinggi (hubungan kuat) → hampir pasti ditepati; trust rendah → koin.
+ * Bukan hadiah cuma-cuma — hasil PIS-PK sungguhan bergantung pada relasi.
+ */
+export function peluangJanjiDitepati(trust: number): number {
+  return Math.max(0.35, Math.min(0.92, 0.35 + 0.055 * trust))
+}
 export const BIAYA_STAMINA_KEGIATAN = 2
 /** Kapasitas roster keluarga binaan (M3c: 8 → 16 seiring 16 keluarga bernama). */
 export const MAKS_BINAAN = 16
@@ -431,12 +460,23 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // wajib-rujuk) — hanya sinyal "kuasai" yang digerbang di sini.
       const dex = { ...s.dex }
       const lama = dex[kasus.id] ?? { kasusId: kasus.id, ditangani: 0, benar: 0, bintang: 0, terakhirHari: 0 }
+      // Audit CODEX 2026-07-16 #1: "dikuasai" dulu hanya menuntut diagnosis +
+      // disposisi + konfirmasi/stabilisasi/tindakan-aman — MENGABAIKAN
+      // keselamatan resep & terapi penyelamat nyawa, jadi pemain bisa menebak
+      // Dx+rujuk, memberi terapi berbahaya/melewatkan MgSO4, tetap dapat ★
+      // koleksi. Kini sinyal "kuasai" juga menuntut: tak ada obat berbahaya/
+      // kontraindikasi, tak ada antibiotik tanpa indikasi, firewall alergi tak
+      // tertrigger, dan terapi kritis tak terlewat. Konsisten dgn capGrade.
       const kuasai =
         nilai.diagnosisBenar &&
         nilai.disposisiTepat &&
         !nilai.konfirmasiTakTerpenuhi &&
         !nilai.stabilisasiTerlewat &&
-        !nilai.tindakanBerbahaya
+        !nilai.terapiKritisTerlewat &&
+        !nilai.tindakanBerbahaya &&
+        !nilai.obatBerbahaya &&
+        !nilai.antibiotikTanpaIndikasi &&
+        !nilai.firewallTerpicu
       const bintang = kuasai ? Math.min(3, lama.bintang + 1) : Math.max(0, lama.bintang - 1)
       dex[kasus.id] = {
         ...lama,
@@ -453,7 +493,16 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // hasil lab besok adalah keputusan interim yang SAH — tidak dihukum.
       let jadwal = s.jadwal
       let penilaianFinal: PenilaianEncounter = nilai
-      const resepBerbahaya = (kasus.tatalaksana.obatSalahUmum ?? []).some((o) => encFinal.resep.includes(o.id))
+      // Audit CODEX 2026-07-16 #4: dulu SEMUA obatSalahUmum (termasuk yang cuma
+      // `nonPrimer`, mis. vitamin B kompleks/antibiotik tak perlu) memicu
+      // "pasien kembali memburuk seolah terapi utama tak diberi" — kausalitas
+      // palsu (~93 kasus rentan). Scoring sudah membedakan kontraindikasi vs
+      // nonPrimer; konsekuensi kini ikut: HANYA `kontraindikasi` (bahaya nyawa
+      // nyata, mis. NSAID pada dengue) yang memburukkan pasien. Default
+      // (bahaya hilang) = nonPrimer → tidak memicu konsekuensi.
+      const resepBerbahaya = (kasus.tatalaksana.obatSalahUmum ?? []).some(
+        (o) => o.bahaya === 'kontraindikasi' && encFinal.resep.includes(o.id),
+      )
       // WAJIB lab itu RELEVAN dgn kasus (DeepThink #1, sinkron dgn clinic.ts) —
       // tanpa ini "observasi" bisa dipakai sbg kedok memesan lab apa saja lalu
       // dikecualikan dari konsekuensi tanpa alasan klinis nyata.
@@ -485,6 +534,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // tetap cukup dihukum via skor spt sekarang.
       const pantasKonsekuensi =
         !nilai.diagnosisBenar || nilai.skorTerapi < 50 || resepBerbahaya || nilai.tindakanBerbahaya || nilai.cowboy ||
+        nilai.terapiKritisTerlewat ||
         nilai.edukasiKritisTerlewat.includes('minum_oat_tuntas')
       if (kasus.konsekuensi && pantasKonsekuensi && !observasiMenungguLab && action.jenis !== 'rujuk') {
         const rng = new Rng(s.seed, 'konsekuensi', s.hari, kasus.id)
@@ -746,7 +796,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // sebelum pemain menegakkannya sendiri. Kini hanya deteksi BENAR yang
       // menyalakan surveilans (realistis: PWS dibangun dari laporan diagnosis
       // yang tepat; wabah tak terdeteksi memang tak muncul di peta).
-      const desaBaru = kasusMenular(kasus.id) && nilai.diagnosisBenar
+      const desaBaru = kasusMenular(kasus) && nilai.diagnosisBenar
         ? { ...s.desa, surveilans: [...s.desa.surveilans, { hari: s.hari, rw: encFinal.pasien.rw, kasusId: kasus.id }] }
         : s.desa
 
@@ -857,10 +907,12 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (kel.arcSelesai === 'gagal')
         return err(s, 'Krisis sudah terjadi — dampingi pemulihan keluarga ini lewat klinik.')
       if (kel.arcSelesai === 'berhasil') return err(s, 'Arc keluarga ini sudah tuntas.')
-      const skenario = kelContent.arc.kunjungan[kel.arcIndex]
+      // Audit CODEX UKM 2026-07-16 #1: indeks arc berjalan atas daftar
+      // TERSARING mode-policy (arcKunjunganAktif) — dulu skenario Career-only
+      // di tengah arc membuat arc buntu permanen di Ujian.
+      const arcAktif = arcKunjunganAktif(pack, kelContent, s.mode, s.contentRelease)
+      const skenario = arcAktif[kel.arcIndex]
       if (!skenario) return err(s, 'Arc keluarga ini sudah selesai.')
-      if (!ukmScenarioAktif(pack, kelContent.id, skenario.id, s.mode, s.contentRelease))
-        return err(s, 'Skenario ini tidak aktif untuk mode atau rilis stase ini.')
       const rwProfil = pack.rw.find((r) => r.nomor === kelContent.rw)
       const biaya = BIAYA_STAMINA_KUNJUNGAN[rwProfil?.jarak ?? 'sedang']
       if (s.stamina < biaya) return err(s, `Butuh ${biaya} stamina untuk perjalanan ke RW ${kelContent.rw}.`)
@@ -902,7 +954,37 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           hasil = { ...hasil, trustDelta: Math.floor(hasil.trustDelta / 2), armorAktif: true }
         }
 
-        let kelBaru = terapkanHasil(kel, hasil, skenario, s.hari, kelContent.arc.kunjungan.length)
+        // #1: panjang arc = jumlah skenario AKTIF utk mode ini (bukan mentah)
+        // — arc Gunawan di Ujian (K2 Career-only) tamat sah di K1.
+        let kelBaru = terapkanHasil(
+          kel, hasil, skenario, s.hari,
+          arcKunjunganAktif(pack, kelContent, s.mode, s.contentRelease).length,
+        )
+
+        // #4 outcome-window: bila arc baru saja tamat-berhasil, indikator target
+        // kini ber-sumber 'janji' (di terapkanHasil) — jadwalkan verifikasi
+        // outcome-nya. Deteksi dari state hasil (bukan flag internal): indikator
+        // yang baru jadi 'janji' hari ini. Dokter yang kelak memverifikasi
+        // langsung (kunjungan/hotspot) menimpanya jadi 'dokter' → verifikasi
+        // terjadwal ini melewatinya.
+        const indikatorJanjiBaru = SEMUA_INDIKATOR_PISPK.filter(
+          (ind) => kelBaru.indikator[ind].sumber === 'janji' && kelBaru.indikator[ind].hariData === s.hari,
+        )
+        if (indikatorJanjiBaru.length > 0) {
+          next = {
+            ...next,
+            jadwal: [
+              ...next.jadwal,
+              {
+                id: `janji_${kj.keluargaId}_${s.hari}`,
+                hari: s.hari + JENDELA_VERIFIKASI_JANJI[s.mode],
+                jenis: 'verifikasi_pispk',
+                keluargaId: kj.keluargaId,
+                indikatorJanji: indikatorJanjiBaru,
+              },
+            ],
+          }
+        }
 
         // Tally MI & kunjungan
         const t = { ...next.tally }
@@ -1050,7 +1132,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
     case 'MULAI_KLB': {
       const cek = cekSlotKegiatan(s, HARI_BUKA_KLB[s.mode], 'Respons KLB')
       if (cek) return err(s, cek)
-      const cluster = hitungCluster(s.desa.surveilans, s.hari).find(
+      const cluster = hitungCluster(s.desa.surveilans, s.hari, ambangKlusterPack(pack)).find(
         (c) => c.rw === action.rw && c.kasusId === action.kasusId,
       )
       if (!cluster) return err(s, 'Kluster itu tidak lagi aktif.')
@@ -1112,6 +1194,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // yang sama sambil mengganti `rwFokus` TIAP HARI lolos tanpa ditolak,
       // membiarkan pemain micromanage target bonusIks harian antar-RW. Itu
       // membunuh esensi "kunci sebulan, korbankan RW lain" — kunci juga rwFokus.
+      // Audit CODEX UKM 2026-07-16 #3: rwFokus kini WAJIB — dua efek program
+      // (bonus IKS + supresi surveilans) sama-sama per-RW; tanpa lokasi,
+      // program cuma label. UI mengirimkan pilihan RW bersama fokus.
+      if (action.rwFokus === undefined)
+        return err(s, 'Pilih RW fokus untuk program ini — efeknya bekerja per wilayah.')
       if (
         s.program.periodeDitetapkan === periodeIni &&
         (s.program.fokus !== action.fokus || s.program.rwFokus !== action.rwFokus)
@@ -1405,16 +1492,36 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
 
   if (hasil.jenis === 'posyandu' && hasil.rw !== undefined) {
     tally.posyanduSesi += 1
-    // Kualitas posyandu → bonus IKS RW (gizi & imunisasi terangkat).
-    // Fix #12c (audit CODEX 2026-07-11): floor 0,02 dulu tetap diberikan
-    // walau skor sesi = 0 (semua jawaban salah) — tak ada gerbang performa,
-    // beda dari mekanik sejenis (Respons KLB mensyaratkan skor>=0.66 dulu
-    // baru dianggap tuntas). Kini linear murni: nol usaha = nol bonus.
-    const bonus = 0.04 * hasil.skor
+    // #5 (audit CODEX UKM 2026-07-16): posyandu bukan lagi "kuis penambah angka
+    // IKS abstrak". Efek UTAMA-nya kini NYATA — sesi berkualitas (skor ≥0.5)
+    // MEMVERIFIKASI data KIA (imunisasi/ASI/tumbuh-kembang/persalinan/KB) yang
+    // dulu diisi kader: penimbangan & pencatatan langsung menggantikan tebakan
+    // kader jadi ground-truth dokter. Bonus IKS abstrak diperkecil drastis
+    // (0.04→0.012) jadi sekadar sentuhan, bukan mata uang hadiah utama.
+    const rwPosyandu = hasil.rw
+    let keluargaPy = next.desa.keluarga
+    if (hasil.skor >= 0.5) {
+      const terkoreksi: Record<string, KeluargaState> = { ...keluargaPy }
+      for (const [id, kel] of Object.entries(keluargaPy)) {
+        const kc = pack.keluarga[id]
+        if (!kc || kc.rw !== rwPosyandu) continue
+        const indikator = { ...kel.indikator }
+        let berubah = false
+        for (const ind of INDIKATOR_KIA_POSYANDU) {
+          const nilai = indikator[ind]
+          if (nilai.sumber !== 'kader' || nilai.statusSebenarnya === 'na') continue
+          indikator[ind] = { status: nilai.statusSebenarnya, statusSebenarnya: nilai.statusSebenarnya, sumber: 'dokter', hariData: s.hari }
+          berubah = true
+        }
+        if (berubah) terkoreksi[id] = { ...kel, indikator }
+      }
+      keluargaPy = terkoreksi
+    }
+    const bonus = 0.012 * hasil.skor
     next = {
       ...next,
       posyanduRwTerakhir: { ...next.posyanduRwTerakhir, [String(hasil.rw)]: s.hari },
-      desa: { ...next.desa, rw: tambahBonusIks(next.desa.rw, hasil.rw, bonus) },
+      desa: { ...next.desa, keluarga: keluargaPy, rw: tambahBonusIks(next.desa.rw, hasil.rw, bonus) },
     }
   } else if (hasil.jenis === 'prolanis') {
     tally.prolanisSesi += 1
@@ -1446,7 +1553,7 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
             // tersendiri, di luar cakupan fix mekanis ini), catatan kini
             // menampilkan angka parameter SUNGGUHAN — transparansi info bagi
             // pemain soal separah apa, bukan mengubah benar/salah gerbang.
-            catatan: `${p.nama} — ${pBaru.jenis === 'ht' ? `hipertensi tak terkontrol berbulan-bulan (TD sistolik terakhir ${pBaru.param} mmHg)` : `gula darah liar tak terkendali (GDS terakhir ${pBaru.param} mg/dL)`}`,
+            catatan: `${p.nama} — ${pBaru.jenis === 'ht' ? `hipertensi tak terkontrol berbulan-bulan (TD sistolik terakhir ${pBaru.param} mmHg)` : `gula darah liar tak terkendali (GDP terakhir ${pBaru.param} mg/dL)`}`,
             nama: p.nama,
             usia: p.usia,
             jenisKelamin: p.jenisKelamin,
@@ -1487,7 +1594,9 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
           surveilans: next.desa.surveilans.filter(
             (e) => !(e.rw === hasil.rw && e.kasusId === hasil.kasusId),
           ),
-          rw: tambahBonusIks(next.desa.rw, hasil.rw, 0.03),
+          // #5: bonus IKS abstrak diperkecil (0.03→0.012); nilai KLB kini di
+          // pemutusan penularan (surveilans dibersihkan, di atas), bukan angka.
+          rw: tambahBonusIks(next.desa.rw, hasil.rw, 0.012),
         },
       }
       events.push({ type: 'KARMA_DICEGAH', narasi: `Kluster ${pack.kasus[hasil.kasusId]?.nama ?? hasil.kasusId} di RW ${hasil.rw} berhasil ditanggulangi.` })
@@ -1833,6 +1942,46 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         )
         events.push({ type: 'KARMA_TERJADI', narasi: j.catatan ?? 'Sebuah pencegahan yang terlewat menjadi kasus klinis.' })
       }
+    } else if (j.jenis === 'verifikasi_pispk' && j.keluargaId && j.indikatorJanji) {
+      // #4 outcome-window (audit CODEX UKM 2026-07-16): jendela verifikasi janji
+      // perubahan perilaku tiba. Untuk tiap indikator yang MASIH ber-sumber
+      // 'janji' (belum diverifikasi langsung oleh dokter): ditepati (peluang
+      // fungsi trust) → jadi hasil terverifikasi permanen; ingkar → status balik
+      // ke sebenarnya (IKS optimis tadi terkoreksi turun) + surat.
+      const kel = keluargaMap[j.keluargaId]
+      const kelContent = pack.keluarga[j.keluargaId]
+      if (kel && kelContent) {
+        const rngJanji = new Rng(s.seed, 'verifikasi-janji', j.id)
+        const indikator = { ...kel.indikator }
+        const ingkar: IndikatorPisPk[] = []
+        for (const ind of j.indikatorJanji) {
+          const nilai = indikator[ind]
+          if (nilai.sumber !== 'janji') continue // sudah diverifikasi langsung
+          if (rngJanji.chance(peluangJanjiDitepati(kel.trust))) {
+            indikator[ind] = { status: 'ya', statusSebenarnya: 'ya', sumber: 'dokter', hariData: hari }
+          } else {
+            indikator[ind] = {
+              status: nilai.statusSebenarnya,
+              statusSebenarnya: nilai.statusSebenarnya,
+              sumber: 'dokter',
+              hariData: hari,
+            }
+            ingkar.push(ind)
+          }
+        }
+        keluargaMap = { ...keluargaMap, [j.keluargaId]: { ...kel, indikator } }
+        if (ingkar.length > 0) {
+          suratBaru.push(
+            buatSuratHarian(hari, suratBaru.length, {
+              jenis: 'kabar_warga',
+              dari: `Kader RW ${kelContent.rw}`,
+              judul: `${kelContent.namaKeluarga} — niat baik yang belum terwujud`,
+              isi: `Rencana yang disepakati keluarga ${kelContent.namaKeluarga} belum benar-benar berjalan; sebagian indikator kembali seperti semula. Perubahan perilaku butuh pendampingan berulang, bukan sekali janji — kunjungi lagi untuk mengokohkannya.`,
+              kaitKeluargaId: j.keluargaId,
+            }),
+          )
+        }
+      }
     }
   }
 
@@ -1856,13 +2005,29 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     const kelContent = pack.keluarga[id]
     if (!kelContent) continue
     const followUpMangkir = kel.followUpHari !== undefined && hari > kel.followUpHari + 1
-    const rawan = s.desa.binaan.includes(id) || kel.karmaAktif !== undefined || followUpMangkir
+    // Audit CODEX UKM 2026-07-16 #14: keluarga yang SUDAH pernah dikunjungi
+    // tetap tanggung jawabmu walau dilepas dari roster — dulu pola
+    // "daftarkan → kunjungi → lepas" membuat keluarga kebal drift gratis.
+    const rawan =
+      s.desa.binaan.includes(id) ||
+      kel.karmaAktif !== undefined ||
+      followUpMangkir ||
+      kel.jumlahKunjungan > 0
     if (!rawan) continue
     const punyaData = Object.values(kel.indikator).some((n) => n.sumber !== 'belum')
     if (!punyaData) continue
     const terakhirDisentuh = kel.kunjunganTerakhir ?? 0
     if (hari - terakhirDisentuh < 7) continue
-    if (!rngDrift.chance(0.35)) continue
+    // #5 (audit CODEX UKM 2026-07-16): PERISAI DRIFT — keluarga di RW fokus
+    // Program Wilayah lebih terlindungi (0.35→0.18). Ini nilai KONKRET program
+    // menggantikan bonus IKS abstrak: "fokuskan sebulan pada satu RW" nyata
+    // menahan kemerosotan keluarga di sana, bukan sekadar menaikkan angka.
+    const kelContentDrift = pack.keluarga[id]
+    const terlindungiProgram =
+      s.program.fokus !== undefined &&
+      s.program.rwFokus !== undefined &&
+      kelContentDrift?.rw === s.program.rwFokus
+    if (!rngDrift.chance(terlindungiProgram ? 0.18 : 0.35)) continue
 
     let kelBaru = kel
     let apaYangMemburuk: string
@@ -1924,21 +2089,27 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   if (s.program.fokus) {
     const fokus = s.program.fokus
     const targetKasus = TARGET_KASUS_PROGRAM[fokus]
-    const idxRedam = surveilans.findIndex(
-      (e) => targetKasus.includes(e.kasusId) && (s.program.rwFokus === undefined || e.rw === s.program.rwFokus),
-    )
+    // Audit CODEX UKM 2026-07-16 #3: tanpa rwFokus, supresi dulu berlaku
+    // GLOBAL (RW mana pun) — kini Program Wilayah tanpa lokasi tidak meredam
+    // apa-apa; efeknya eksplisit terikat ke RW fokus, sesuai namanya.
+    const idxRedam =
+      s.program.rwFokus === undefined
+        ? -1
+        : surveilans.findIndex(
+            (e) => targetKasus.includes(e.kasusId) && e.rw === s.program.rwFokus,
+          )
     if (idxRedam >= 0) surveilans = surveilans.filter((_, i) => i !== idxRedam)
-    if (s.program.rwFokus !== undefined) {
-      rwSetelahProgram = rwSetelahProgram.map((r) =>
-        r.nomor === s.program.rwFokus ? { ...r, bonusIks: Math.min(0.3, r.bonusIks + 0.004) } : r,
-      )
-    }
+    // #5 (audit CODEX UKM 2026-07-16): DULU program juga menyuntik +0.004 IKS/
+    // hari ke RW fokus — "mata uang hadiah" yang menaikkan skor tanpa menyentuh
+    // kesehatan keluarga. Dihapus: nilai program kini KONKRET — pemutusan
+    // penularan (surveilans di atas) + PERISAI DRIFT bagi keluarga RW fokus
+    // (di loop drift bawah membaca s.program.rwFokus). Tak ada angka abstrak.
   }
 
   // Surveilans (M1.2): deteksi KLUSTER BARU — pola di poli jadi kabar di peta
   // (satu surat per kluster per RW). Kluster ≥ambang juga membuka Respons KLB.
   const flags = { ...s.flags }
-  for (const c of hitungCluster(surveilans, hari)) {
+  for (const c of hitungCluster(surveilans, hari, ambangKlusterPack(pack))) {
     const kunciFlag = `cluster_${c.kasusId}_rw${c.rw}`
     if (flags[kunciFlag]) continue
     flags[kunciFlag] = true
@@ -2307,7 +2478,9 @@ function bentukRosterProlanis(pack: ContentPack, rng: Rng): PesertaProlanis[] {
         keluargaId: kel.id,
         jenis,
         // Mulai tak terkontrol (butuh intervensi) — itulah gunanya program.
-        param: jenis === 'ht' ? rng.int(150, 175) : rng.int(210, 280),
+        // #12 (audit CODEX UKM 2026-07-16): param DM = GULA DARAH PUASA —
+        // indikator kontrol RPPT Prolanis memakai GDP (target <130), bukan GDS.
+        param: jenis === 'ht' ? rng.int(150, 175) : rng.int(150, 240),
         takTerkontrolBerturut: 0,
       })
     }

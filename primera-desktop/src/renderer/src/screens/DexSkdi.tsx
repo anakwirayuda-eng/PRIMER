@@ -39,10 +39,16 @@ function Bintang({ jumlah, besar = false }: { jumlah: number; besar?: boolean })
   )
 }
 
+type FilterDex = 'semua' | 'belum' | 'dijumpai' | 'tersertifikasi' | 'dikuasai'
+
 export function DexSkdi() {
   const state = useGame((s) => s.state)!
   const [pilihanId, setPilihanId] = useState<string | null>(null)
   const [cari, setCari] = useState('')
+  // Dengan 144 entri, pertanyaan utama pemain adalah "mana yang belum saya
+  // tuntaskan" — chip progres di header kini merangkap filter klik.
+  const [filter, setFilter] = useState<FilterDex>('semua')
+  const toggleFilter = (f: FilterDex) => setFilter((cur) => (cur === f ? 'semua' : f))
 
   // Fix CODEX-25 #2/Q7 (jalur kritis DeepThink 2026-07-12): dulu HANYA satu
   // metrik "dikenali" = entri dex ADA = pernah di-encounter — mahasiswa yg
@@ -58,6 +64,7 @@ export function DexSkdi() {
   const jumlahDijumpai = entriDex.length
   const jumlahTersertifikasi = entriDex.filter((d) => d.benar >= 1).length
   const jumlahDikuasai = entriDex.filter((d) => d.bintang >= 3).length
+  const jumlahBelum = TOTAL_ENTRI - jumlahDijumpai
   // Metrik "utama" = tersertifikasi (jujur: benar-benar pernah tepat), bukan
   // sekadar berjumpa. Meter progres ikut ini.
   const jumlahDikenal = jumlahTersertifikasi
@@ -66,12 +73,30 @@ export function DexSkdi() {
   // toleran-ejaan yang sama, bukan pencocokan case-insensitive baru.
   const daftarSkdi = useMemo(() => {
     const q = normalisasiNamaObat(cari)
-    if (q === '') return PACK.skdi144
-    return PACK.skdi144.filter(
-      (entri) =>
-        normalisasiNamaObat(entri.nama).includes(q) || normalisasiNamaObat(entri.icd10).includes(q),
-    )
-  }, [cari])
+    let list = PACK.skdi144
+    if (q !== '') {
+      list = list.filter(
+        (entri) =>
+          normalisasiNamaObat(entri.nama).includes(q) || normalisasiNamaObat(entri.icd10).includes(q),
+      )
+    }
+    if (filter !== 'semua') {
+      list = list.filter((entri) => {
+        const dex = entri.kasusId !== undefined ? state.dex[entri.kasusId] : undefined
+        switch (filter) {
+          case 'belum':
+            return dex === undefined
+          case 'dijumpai':
+            return dex !== undefined
+          case 'tersertifikasi':
+            return dex !== undefined && dex.benar >= 1
+          case 'dikuasai':
+            return dex !== undefined && dex.bintang >= 3
+        }
+      })
+    }
+    return list
+  }, [cari, filter, state.dex])
 
   // CODEX M14 #20: cari dari daftar TERFILTER, bukan PACK penuh — dulu memilih
   // entri lalu mengetik pencarian yang menyaringnya keluar tetap menampilkan
@@ -96,15 +121,42 @@ export function DexSkdi() {
         </div>
         <div className="dexskdi__progres">
           <div className="dexskdi__tiga-tingkat">
-            <span className="chip chip--kunyit mono" title="Pernah kamu temui di klinik (benar atau salah)">
+            <button
+              type="button"
+              className={`chip mono dexskdi__filter${filter === 'belum' ? ' dexskdi__filter--aktif' : ''}`}
+              aria-pressed={filter === 'belum'}
+              onClick={() => toggleFilter('belum')}
+              title="Belum kamu jumpai — klik untuk menyaring hanya yang belum"
+            >
+              {jumlahBelum} belum
+            </button>
+            <button
+              type="button"
+              className={`chip chip--kunyit mono dexskdi__filter${filter === 'dijumpai' ? ' dexskdi__filter--aktif' : ''}`}
+              aria-pressed={filter === 'dijumpai'}
+              onClick={() => toggleFilter('dijumpai')}
+              title="Pernah kamu temui di klinik (benar atau salah) — klik untuk menyaring"
+            >
               {jumlahDijumpai} dijumpai
-            </span>
-            <span className="chip chip--daun mono" title="Diagnosis DAN disposisi benar minimal sekali">
+            </button>
+            <button
+              type="button"
+              className={`chip chip--daun mono dexskdi__filter${filter === 'tersertifikasi' ? ' dexskdi__filter--aktif' : ''}`}
+              aria-pressed={filter === 'tersertifikasi'}
+              onClick={() => toggleFilter('tersertifikasi')}
+              title="Diagnosis DAN disposisi benar minimal sekali — klik untuk menyaring"
+            >
               {jumlahTersertifikasi}/{TOTAL_ENTRI} tersertifikasi
-            </span>
-            <span className="chip chip--biru mono" title="Penguasaan penuh ★3 (bisa meluntur bila lama tak dilatih)">
+            </button>
+            <button
+              type="button"
+              className={`chip chip--biru mono dexskdi__filter${filter === 'dikuasai' ? ' dexskdi__filter--aktif' : ''}`}
+              aria-pressed={filter === 'dikuasai'}
+              onClick={() => toggleFilter('dikuasai')}
+              title="Penguasaan penuh ★3 (bisa meluntur bila lama tak dilatih) — klik untuk menyaring"
+            >
               {jumlahDikuasai} dikuasai ★
-            </span>
+            </button>
           </div>
           {/* Meter melacak TERSERTIFIKASI — capaian jujur, bukan sekadar berjumpa. */}
           <div className="meter dexskdi__meter">
@@ -114,10 +166,8 @@ export function DexSkdi() {
             />
           </div>
           <div className="dexskdi__legenda teks-xs teks-lembut">
-            <span className="dexskdi__legenda-item">
-              <span className="dexskdi__legenda-pin">●</span> ada di desa ini
-            </span>
             <span className="dexskdi__legenda-item mono">??? belum dijumpai</span>
+            <span className="dexskdi__legenda-item">Klik chip di atas untuk menyaring</span>
           </div>
         </div>
       </header>
@@ -125,42 +175,41 @@ export function DexSkdi() {
       <div className="dexskdi__isi">
         {/* ---- Grid 144 kartu (panel yang scroll) --------------------------- */}
         <div className="dexskdi__grid-wrap">
-          <input
-            type="text"
-            className="dexskdi__cari"
-            value={cari}
-            onChange={(e) => setCari(e.target.value)}
-            placeholder="Cari penyakit atau kode ICD-10…"
-            aria-label="Cari SKDI"
-          />
+          <div className="dexskdi__cari-wrap">
+            <input
+              type="text"
+              className="dexskdi__cari"
+              value={cari}
+              onChange={(e) => setCari(e.target.value)}
+              placeholder="Cari penyakit atau kode ICD-10…"
+              aria-label="Cari SKDI"
+            />
+            <p className="teks-xs teks-lembut mono dexskdi__hasil-hitung" aria-live="polite">
+              {daftarSkdi.length} dari {TOTAL_ENTRI} entri
+            </p>
+          </div>
           {daftarSkdi.length === 0 ? (
-            <p className="teks-kecil teks-lembut">Tidak ada entri yang cocok.</p>
+            <p className="teks-kecil teks-lembut dexskdi__kosong">Tidak ada entri yang cocok.</p>
           ) : (
             <div className="dexskdi__grid">
               {daftarSkdi.map((entri) => {
                 const dex = entri.kasusId !== undefined ? state.dex[entri.kasusId] : undefined
-                const diDesa = entri.kasusId !== undefined && dex === undefined
                 const nomor = NOMOR_ENTRI.get(entri.id)!
 
                 if (dex === undefined) {
+                  // Seluruh 144 entri kini punya kasus di desa (144/144 tertaut),
+                  // jadi penanda "ada di desa ini" tak lagi membedakan apa pun —
+                  // siluet cukup berarti "belum kamu jumpai".
                   return (
                     <button
                       key={entri.id}
-                      className={`dexskdi-kartu dexskdi-kartu--siluet${diDesa ? ' dexskdi-kartu--desa' : ''}`}
+                      className="dexskdi-kartu dexskdi-kartu--siluet"
                       disabled
-                      title={
-                        diDesa
-                          ? 'Penyakit ini ada di desamu — tangani pasiennya di klinik untuk mengenalinya'
-                          : 'Belum dikenali — entri terbuka setelah kamu menangani kasusnya'
-                      }
+                      aria-label={`Entri ${nomor} — belum dijumpai`}
+                      title="Belum dikenali — entri terbuka setelah kamu menangani kasusnya di klinik"
                     >
                       <span className="dexskdi-kartu__nomor mono">{nomor}</span>
                       <span className="dexskdi-kartu__siluet mono">???</span>
-                      {diDesa && (
-                        <span className="dexskdi-kartu__pin" aria-label="Ada di desa ini">
-                          ●
-                        </span>
-                      )}
                     </button>
                   )
                 }

@@ -23,6 +23,8 @@ import { KASUS_SARAF_MATA_THT } from './kasus/kasusSarafMataTht'
 import { KASUS_METABOLIK_MSK } from './kasus/kasusMetabolikMsk'
 import { KASUS_KIA_JIWA } from './kasus/kasusKiaJiwa'
 import { KASUS_IGD } from './igd'
+import { KASUS_IGD_LAB_1 } from './igdLab1'
+import { KASUS_IGD_LAB_2 } from './igdLab2'
 import { SKDI144 } from './skdi144'
 import { NAMA_WARGA } from './nama'
 import { buildCurriculumBlueprint, validasiCurriculumBlueprint } from './curriculum'
@@ -38,6 +40,12 @@ import {
   OBAT_LAB_EXPANSION,
   TINDAKAN_LAB_EXPANSION,
 } from './lab/catalogExpansion'
+import {
+  EDUKASI_LAB_BATCH4,
+  LAB_LAB_BATCH4,
+  OBAT_LAB_BATCH4,
+  TINDAKAN_LAB_BATCH4,
+} from './lab/catalogBatch4'
 
 function byId<T extends { id: string }>(arr: T[]): Record<string, T> {
   const out: Record<string, T> = {}
@@ -81,15 +89,16 @@ const skdi144Tertaut = SKDI144.map((entri) => {
 
 const BASE_CONTENT_CATALOG: ContentCatalog = {
   kasus: kasusDasarById,
-  kasusIgd: byId(KASUS_IGD),
+  // M13 Batch 4: +14 kasus IGD prototipe lab (Career-only via activationStatus).
+  kasusIgd: byId([...KASUS_IGD, ...KASUS_IGD_LAB_1, ...KASUS_IGD_LAB_2]),
   keluarga: byId(semuaKeluargaDasar),
   kader: KADER_PROFIL,
   rw: RW_PROFIL,
   rumahSakit: RUMAH_SAKIT,
-  obat: { ...OBAT, ...OBAT_M3, ...OBAT_LAB, ...OBAT_LAB_EXPANSION },
-  lab: { ...LAB, ...LAB_M3, ...LAB_LAB, ...LAB_LAB_EXPANSION },
-  edukasi: { ...EDUKASI, ...EDUKASI_M3, ...EDUKASI_LAB, ...EDUKASI_LAB_EXPANSION },
-  tindakan: { ...TINDAKAN_M3, ...TINDAKAN_LAB, ...TINDAKAN_LAB_EXPANSION },
+  obat: { ...OBAT, ...OBAT_M3, ...OBAT_LAB, ...OBAT_LAB_EXPANSION, ...OBAT_LAB_BATCH4 },
+  lab: { ...LAB, ...LAB_M3, ...LAB_LAB, ...LAB_LAB_EXPANSION, ...LAB_LAB_BATCH4 },
+  edukasi: { ...EDUKASI, ...EDUKASI_M3, ...EDUKASI_LAB, ...EDUKASI_LAB_EXPANSION, ...EDUKASI_LAB_BATCH4 },
+  tindakan: { ...TINDAKAN_M3, ...TINDAKAN_LAB, ...TINDAKAN_LAB_EXPANSION, ...TINDAKAN_LAB_BATCH4 },
   skdi144: skdi144Tertaut,
   namaWarga: NAMA_WARGA,
 }

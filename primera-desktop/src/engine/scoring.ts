@@ -6,6 +6,7 @@
  */
 
 import type { GameState, Skor4Dimensi } from './state'
+import { prolanisTerkendali } from './kegiatan'
 
 function clamp(nilai: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, nilai))
@@ -135,9 +136,13 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   // "tak terkontrol" (roster dibentuk dgn param awal di atas ambang), jadi
   // mengabaikan Prolanis kini punya ongkos oportunitas nyata, bukan gratis.
   const rosterProlanis = state.prolanis.roster
+  // Audit CODEX 2026-07-16: ambang di sini dulu SALINAN angka (<140/<200) yang
+  // mengambang dari `driftProlanis` setelah skala DM pindah GDS→GDP di rev 37 —
+  // skor menghitung GDP 150 sbg "terkendali" sementara progres penyakit tidak.
+  // Kini memanggil predikat kanonik yang sama dengan kartu & drift.
   const rasioProlanisTerkontrol =
     rosterProlanis.length > 0
-      ? rosterProlanis.filter((p) => (p.jenis === 'ht' ? p.param < 140 : p.param < 200)).length /
+      ? rosterProlanis.filter((p) => prolanisTerkendali(p.jenis, p.param)).length /
         rosterProlanis.length
       : 0
   // M10.5 Fase 3 (2026-07-12, soak-final kalibrasi): dulu `-2*karmaTerjadi +
@@ -269,6 +274,17 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
       catatan.push(`Kunjungan rumah berjalan baik. ${kunjungan.narasiPenutup}`)
     } else {
       catatan.push(`Kunjungan belum membuahkan hasil. ${kunjungan.narasiPenutup}`)
+    }
+    // Audit CODEX UKM 2026-07-16 #10: "rincian penilaian di debrief sore"
+    // kini janji yang DITEPATI — kualitas MI, ketepatan hipotesis COM-B,
+    // pergeseran trust, dan catatan penulis skenario utk pilihan yg meleset.
+    catatan.push(
+      `Rincian kunjungan: kualitas dialog MI ${kunjungan.kualitasMi}/100 · hipotesis hambatan ` +
+        `${kunjungan.hipotesisBenar ? 'TEPAT' : 'MELESET'} · trust ${kunjungan.trustDelta >= 0 ? '+' : ''}${kunjungan.trustDelta} · ` +
+        `${kunjungan.indikatorTerverifikasi.length} indikator terverifikasi.`,
+    )
+    for (const cat of kunjungan.catatanPedagogis ?? []) {
+      catatan.push(`Catatan pembimbing: ${cat}`)
     }
   }
 

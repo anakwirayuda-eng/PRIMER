@@ -156,8 +156,23 @@ export const LABEL_INDIKATOR: Record<IndikatorPisPk, { singkat: string; penuh: s
 }
 
 /** Simbol provenance data: ✓ diverifikasi dokter, ~ laporan kader, ? belum ada. */
-export const SIMBOL_SUMBER: Record<'dokter' | 'kader' | 'belum', string> = {
+export const SIMBOL_SUMBER: Record<'dokter' | 'kader' | 'belum' | 'janji', string> = {
   dokter: '✓',
   kader: '~',
   belum: '?',
+  // #4 outcome-window: warga BERJANJI berubah, outcome belum terverifikasi.
+  janji: '⧗',
+}
+
+/**
+ * Format IKS KANONIK — satu-satunya cara menampilkan skor IKS di seluruh UI.
+ * Audit CODEX UX 2026-07-16: format sempat tidak seragam (0-100 tanpa satuan
+ * di sebagian layar vs desimal koma 0,00 di layar lain) — dua kali ditambal
+ * di titik terpisah dan DUA TITIK LAIN tetap terlewat (PetaDesa.tsx roster +
+ * panel detail RW). Sentralisasi di sini supaya kelas bug ini tidak berulang
+ * ketiga kalinya; semua pemanggil WAJIB lewat fungsi ini, jangan `.toFixed`
+ * ad-hoc di komponen.
+ */
+export function formatIks(iks: number): string {
+  return iks.toFixed(2).replace('.', ',')
 }

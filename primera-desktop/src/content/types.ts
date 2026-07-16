@@ -169,6 +169,20 @@ export interface Tatalaksana {
    * perlu ditandai — kasus tanpa field ini berperilaku identik spt semula.
    */
   edukasiKritis?: string[]
+  /**
+   * Terapi PENYELAMAT NYAWA yang tak boleh dilewatkan (audit CODEX 2026-07-16,
+   * temuan #2). id = obat (dicek di `enc.resep`) ATAU prosedur (dicek di
+   * `enc.tindakan`). Melewatkan SATU saja → hard-cap grade ke D (54) di
+   * clinic.ts, dan memicu konsekuensi "pasien memburuk" — sebab intervensi ini
+   * yang membedakan hidup-mati (MgSO4 preeklampsia, dosis-1 antibiotik pneumonia
+   * berat, adrenalin anafilaksis, oksigen edema paru). Beda dari `obatBenar`
+   * biasa (cuma 20% bobot terapi, tanpa gate): field ini menjadikannya GERBANG.
+   * Beda dari `stabilisasiWajib` (prosedur-only): field ini boleh obat juga.
+   * Opsional & jarang — hanya untuk kasus gawat/rujuk berbasis stabilisasi.
+   * Setiap id WAJIB juga ada di obatBenar/obatAlternatif/obatOpsional/prosedur
+   * (ditegakkan validasiPack) supaya benar-benar bisa dipilih pemain.
+   */
+  terapiKritis?: string[]
 }
 
 export interface KonsekuensiKlinis {
@@ -214,6 +228,20 @@ export interface KasusKlinis {
    * ≈80% kunjungan. tinggi ×3 · sedang ×1.5 (default) · rendah ×0.6.
    */
   prevalensi?: 'tinggi' | 'sedang' | 'rendah'
+  /**
+   * M13 Batch 6 (2026-07-16): kasus ini MENULAR & layak dipantau surveilans —
+   * angkanya = jumlah kasus di SATU RW dalam jendela 14 hari yang dianggap
+   * "peningkatan bermakna secara epidemiologis" (Permenkes 1/2026; lihat
+   * `surveilans.ts`). Tanpa field ini kasus tak pernah dicatat surveilans.
+   *
+   * KENAPA di konten, bukan di engine: dulu ambang ini berupa daftar 8 id
+   * hardcoded di `surveilans.ts`, sehingga 13 kasus infeksi baru (batch lab)
+   * TAK PERNAH bisa membentuk kluster/KLB — penulis kasus tak punya cara
+   * mendaftarkannya tanpa membuka Golden Master. Kelas bug "registry engine
+   * mengambang dari konten" ini sudah berulang; menaruh deklarasinya pada
+   * kasus itu sendiri membuat kasus menular BARU otomatis terintegrasi.
+   */
+  ambangKluster?: number
   /** Spesialisasi RS yang dibutuhkan bila dirujuk (utk pemilihan RS SISRUTE). */
   spesialisRujukan?: SpesialisasiRs
   /** Kalimat keluhan pembuka pasien. */
@@ -342,6 +370,14 @@ export interface KasusIgd {
   nama: string
   icd10: string
   skdi: Skdi
+  /**
+   * Sama semantik dengan `KasusKlinis.activationStatus` (M13 Batch 4, kanal
+   * IGD): konten ekspansi lab yang BELUM diadjudikasi produksi. Blueprint
+   * memetakannya ke `modePolicy { karier: true, ujian: false }` — mode Ujian
+   * tetap terkunci pada 5 kasus IGD baseline (`examBlueprint.ts` exactEvents:5)
+   * apa pun besarnya pool Karier.
+   */
+  activationStatus?: 'lab_prototype_unadjudicated'
   /** Narasi kedatangan dramatis. */
   pembuka: string
   demografi: {
@@ -567,6 +603,9 @@ export interface KartuIntervensi {
   cocokUntuk: Hambatan[]
   /** Efek naratif bila dipilih. */
   hasilNarasi: string
+  /** Catatan penulis skenario bila kartu ini MELESET — ikut debrief sore
+   * (audit CODEX UKM 2026-07-16 #10). */
+  catatanPedagogis?: string
   /**
    * Tambahan #1 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): menandai
    * kartu ini sbg TINDAKAN ESKALASI wajib utk arc ber-karma keselamatan tinggi

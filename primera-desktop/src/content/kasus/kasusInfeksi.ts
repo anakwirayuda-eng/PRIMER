@@ -20,6 +20,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'ispa_common_cold',
+    // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
+    ambangKluster: 4,
     nama: 'ISPA — Common Cold (Nasofaringitis Akut)',
     icd10: 'J00',
     skdi: '4A',
@@ -263,6 +265,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'dengue_df',
+    // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
+    ambangKluster: 2,
     nama: 'Demam Dengue (DF)',
     icd10: 'A90',
     skdi: '4A',
@@ -380,6 +384,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'demam_tifoid',
+    // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
+    ambangKluster: 2,
     nama: 'Demam Tifoid',
     icd10: 'A01.0',
     skdi: '4A',
@@ -502,6 +508,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'diare_akut_anak',
+    // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
+    ambangKluster: 3,
     nama: 'Diare Akut pada Anak (Gastroenteritis Akut)',
     icd10: 'A09',
     skdi: '4A',
@@ -631,6 +639,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'tb_paru',
+    // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
+    ambangKluster: 2,
     nama: 'Tuberkulosis Paru',
     icd10: 'A15.0',
     skdi: '4A',
@@ -766,6 +776,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'skabies',
+    // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
+    ambangKluster: 3,
     nama: 'Skabies (Kudis)',
     icd10: 'B86',
     skdi: '4A',
@@ -875,6 +887,8 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'konjungtivitis_bakterial',
+    // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
+    ambangKluster: 3,
     nama: 'Konjungtivitis Bakterial',
     icd10: 'H10.0',
     skdi: '4A',

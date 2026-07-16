@@ -256,7 +256,7 @@ export function susunAntrianHarian(
   const mingguPertama = state.hari <= 7
   const poolAman = semua.filter(kasusAman)
   const terpilih: KasusKlinis[] = []
-  const berkluster = new Set(clusterAktif(state).map((c) => c.kasusId))
+  const berkluster = new Set(clusterAktif(state, pack).map((c) => c.kasusId))
   // Cakupan kategori (M5.22): kategori yang sudah punya ≥1 entri Dex dianggap
   // tersentuh; sisanya didorong bobotnya supaya kurikulum melebar.
   const kategoriTersentuh = new Set<string>()

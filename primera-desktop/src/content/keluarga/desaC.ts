@@ -256,8 +256,13 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   gaya: 'empati',
                   respons:
                     '"...Di sini saja? Tidak dibawa-bawa?" Bu Asih menimbang, lalu mengangguk. Tensi 150/95. ' +
-                    'Kaki bengkak. Usia 38. Anak keempat. Riwayat perdarahan. Kamu menuliskan angka-angka itu ' +
-                    'di buku KIA — halaman pertama yang akhirnya terisi.',
+                    'Kaki bengkak. Kamu memintanya duduk tenang dulu, lalu mengukur ulang — tetap tinggi. ' +
+                    'Dari tas kamu keluarkan stik protein urin; garisnya berubah samar: positif satu. ' +
+                    'Nyeri kepala hebat, pandangan kabur, nyeri ulu hati — belum ada, katanya, dan kamu mencatat ' +
+                    'kata "belum" itu baik-baik. Usia 38. Anak keempat. Riwayat perdarahan. Kamu menuliskan ' +
+                    'semuanya di buku KIA — halaman pertama yang akhirnya terisi — dengan satu garis bawah tebal: ' +
+                    'HARUS diperiksa bu bidan atau Puskesmas SEGERA, hari ini atau paling lambat besok. ' +
+                    'Bukan kontrol biasa.',
                   efekTrust: 2,
                   tepat: true,
                   ungkap: {
@@ -269,7 +274,10 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   },
                   catatanPedagogis:
                     'Menawarkan pemeriksaan TANPA syarat menyerahkan kendali pada pasien — dan pemeriksaan itu ' +
-                    'sendiri yang bicara: 150/95 + edema + usia + paritas = skor risiko yang tak bisa ditawar.',
+                    'sendiri yang bicara: 150/95 + edema + usia + paritas = skor risiko yang tak bisa ditawar. ' +
+                    'Ingat urutannya: hipertensi onset baru pada kehamilan ≥20 minggu + edema = evaluasi ' +
+                    'preeklampsia SEGERA — ulang ukur tensi, cek protein urin, tanyakan gejala berat — ' +
+                    'bukan sekadar menjadwalkan kontrol rutin.',
                 },
                 {
                   id: 'ak1_d3_b',
@@ -311,12 +319,22 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
               deskripsi:
                 'Temui Mbah Rah bersama bidan desa: ajak bermitra resmi (program kemitraan dukun-bidan) — ' +
                 'Mbah Rah tetap mendampingi doa & tradisi, bidan yang menolong persalinan, dan ceritakan ulang ' +
-                'kisah kakak Bu Asih: yang membunuhnya bukan rumah sakit, tapi datang TERLAMBAT ke rumah sakit.',
+                'kisah kakak Bu Asih: yang membunuhnya bukan rumah sakit, tapi datang TERLAMBAT ke rumah sakit. ' +
+                'Isi kemitraan yang pertama justru bukan soal hari-H: Bu Asih diantar periksa ke bu bidan atau ' +
+                'Puskesmas SEGERA — hari ini atau besok pagi — untuk evaluasi tekanan darah dan protein urin.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Mbah Rah, yang ternyata sudah lama lelah menanggung risiko sendirian, menepuk tangan Bu Asih: ' +
                 '"Aku tetap yang mijeti dan doakan kamu, Sih. Tapi sing nulungi lahiran, bu bidan — jaman wis beda." ' +
-                'Restu dari mulut itu bernilai seribu penyuluhan. Bu Asih mengangguk, matanya basah.',
+                'Restu dari mulut itu bernilai seribu penyuluhan. Bu Asih mengangguk, matanya basah. ' +
+                'Dan restu itu langsung berjalan: besok paginya Mbah Rah sendiri yang mengantar Bu Asih ke ' +
+                'bu bidan — tensi diukur ulang, protein urin dicek, jalur rujukan ke PONED disiapkan sejak ' +
+                'hari itu juga, bukan menunggu jadwal kontrol.',
+              catatanPedagogis:
+                'Intervensi sosial pada kasus berisiko nyawa hanya bermakna bila menyertakan eskalasi medis ' +
+                'segera. Kemitraan dukun-bidan di sini bukan sekadar restu untuk persalinan nanti — ' +
+                'ia adalah kendaraan yang membawa Bu Asih dievaluasi preeklampsia dalam hitungan hari, ' +
+                'bukan minggu.',
               // Tambahan #1: SATU-SATUNYA tindakan yg benar2 mengeskalasi Bu
               // Asih ke pertolongan persalinan formal (preeklampsia berat =
               // risiko nyawa, bukan sekadar hambatan perilaku biasa).
@@ -332,6 +350,10 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
               hasilNarasi:
                 'Kartu jaminan selesai dalam seminggu — dan bungkusan kain untuk Mbah Rah tetap di sudut kamar. ' +
                 'Biaya memang bukan soalnya hari ini; kepercayaan dan ketakutan itu yang belum tersentuh.',
+              catatanPedagogis:
+                'Kartu jaminan tidak mengukur tensi. Pada temuan 150/95 + edema di kehamilan 7 bulan, ' +
+                'mengurus administrasi tanpa mengeskalasi evaluasi medis SEGERA berarti membiarkan ' +
+                'jam preeklampsia terus berjalan — kartu ini saja tidak cukup.',
             },
             {
               id: 'ak1_i3',
@@ -344,12 +366,17 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                 'Undangan kelas ibu hamil tergeletak di meja bambu, belum disentuh. "Ngapain belajar-belajar, ' +
                 'wong sudah tiga kali lahiran," katanya pada kader. Pengetahuannya memang kurang — tapi bukan ' +
                 'itu yang membuatnya memilih dukun.',
+              catatanPedagogis:
+                'Kelas ibu hamil membangun pengetahuan dalam hitungan minggu — sedangkan 150/95 + edema ' +
+                'menuntut evaluasi preeklampsia dalam hitungan hari. Edukasi tidak menggantikan eskalasi ' +
+                'medis segera; kartu ini saja tidak cukup untuk temuan hari ini.',
             },
           ],
           penutupBerhasil:
             'Di teras, Bu Asih memegang buku KIA yang kini ada isinya. "Angka-angka tadi itu... beneran ' +
             'tinggi ya, Dok?" Untuk pertama kalinya, pertanyaannya bukan tentang Mbah Rah — tentang dirinya. ' +
-            '"Minggu depan datang lagi ya, Dok. Bawa bu bidan sekalian."',
+            '"Besok pagi saya ditunggu bu bidan, to? Iya, Dok, saya datang — katanya tensi sama air seninya ' +
+            'mau dicek lagi, tidak boleh ditunda-tunda."',
           penutupGagal:
             'Bungkusan kain untuk Mbah Rah masih di sudut kamar saat kamu pamit. Bu Asih melambaikan tangan ' +
             'dengan senyum yang sama seperti saat kamu datang — ramah, hangat, dan sama sekali tidak berubah. ' +

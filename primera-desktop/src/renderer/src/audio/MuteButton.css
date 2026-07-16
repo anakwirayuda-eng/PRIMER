@@ -1,5 +1,9 @@
 /* MuteButton — tombol bisu kecil melayang, pojok kiri bawah. */
 
+/* Batch-7: ukuran FAB tunggal — .set-gigi (Pengaturan.css) ikut token ini,
+   posisinya dihitung dari lebar tombol bisu; ubah sekali, keduanya selaras. */
+:root { --fab-uk: 34px; }
+
 .mute-tombol {
   position: fixed;
   left: var(--sp-3);
@@ -9,8 +13,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: var(--fab-uk);
+  height: var(--fab-uk);
   padding: 0;
 
   background: var(--bg-card);

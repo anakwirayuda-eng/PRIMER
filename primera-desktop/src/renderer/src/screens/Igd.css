@@ -1,18 +1,19 @@
 .igd {
   height: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: var(--sp-6);
   overflow: auto;
   background:
-    radial-gradient(circle at 50% 0%, rgba(179, 56, 44, 0.08), transparent 60%);
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--tinta-merah) 9%, transparent), transparent 60%);
 }
 
 .igd__panel {
   width: min(760px, 100%);
   padding: var(--sp-5);
   border-top: 4px solid var(--tinta-merah);
+  margin-block: min(8vh, var(--sp-8)) var(--sp-6);
 }
 
 .igd__kepala {
@@ -27,14 +28,14 @@
 .igd__label {
   font-size: var(--text-sm);
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--lacak-label);
   color: var(--tinta-merah);
 }
 
 .igd__pasien {
   font-size: var(--text-lg);
   font-weight: 700;
-  margin-top: 2px;
+  margin-top: var(--sp-1);
 }
 
 .igd__stab {
@@ -48,7 +49,7 @@
   background: var(--bg-sunken);
   border: 1px solid var(--border-halus);
   overflow: hidden;
-  margin: 4px 0;
+  margin: var(--sp-1) 0;
 }
 
 .igd-bar__isi {
@@ -72,10 +73,19 @@
 .igd__vital {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-4);
+  font-size: var(--text-sm);
+  gap: var(--sp-2);
   padding: var(--sp-2) 0;
   color: var(--tinta-lembut);
   border-bottom: 1px dashed var(--border-halus);
+}
+
+.igd__vital span {
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-halus);
+  padding: var(--sp-05) var(--sp-2);
+  border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 .igd__isi {
@@ -112,9 +122,14 @@
   transition: all var(--durasi-cepat) var(--ease-keluar);
 }
 
-.igd__opsi:hover {
+.igd__opsi:hover:not(:disabled) {
   border-color: var(--tinta-merah);
   transform: translateX(3px);
+}
+
+.igd__opsi:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .igd__opsi--rjp {
@@ -128,14 +143,14 @@
 }
 
 .igd__respons {
-  margin-top: var(--sp-4);
-  padding: var(--sp-3) var(--sp-4);
+  margin-block: var(--sp-3) 0;
+  padding: var(--sp-4);
   border-radius: var(--radius-md);
   border-left: 4px solid var(--daun-700);
   background: var(--bg-sunken);
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--sp-3);
   align-items: flex-start;
   animation: igd-masuk var(--durasi-normal) var(--ease-keluar) both;
 }
@@ -143,16 +158,13 @@
 .igd__respons p { font-size: var(--text-sm); line-height: 1.5; }
 .igd__respons--salah { border-left-color: var(--tinta-merah); }
 
-.igd__kodebiru {
-  animation: igd-denyut 1s ease-in-out infinite;
-}
-
 .igd__kodebiru-judul {
   font-size: var(--text-2xl);
   font-weight: 900;
   letter-spacing: 0.1em;
   color: var(--tinta-merah);
   text-align: center;
+  animation: igd-denyut 1s ease-in-out infinite;
 }
 
 @keyframes igd-denyut {

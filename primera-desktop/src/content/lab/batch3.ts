@@ -193,7 +193,11 @@ const DEFINITIONS: LabDefinition[] = [
       lab: [['tcm_spesimen_lesi', 'MTB terdeteksi; resistensi rifampisin tidak terdeteksi.', 'abnormal']],
       diagnosisBanding: ['A18.4', 'L04.0', 'C77.0'],
       tatalaksana: { obatBenar: [], edukasi: ['kepatuhan_obat', 'tanda_bahaya'] },
-      konfirmasiWajib: 'tcm_spesimen_lesi',
+      // Audit CODEX 2026-07-16 #3: dulu konfirmasiWajib='tcm_spesimen_lesi'
+      // (hasil BESOK) pada kasus WAJIB-RUJUK → no-win: rujuk hari-ini = cap C
+      // (hasil belum ada), observasi = cap D (menahan kasus wajib-rujuk).
+      // Skrofuloderma dirujuk atas dasar SUSPEK (kirim spesimen + rujuk
+      // terkoordinasi program TB), tak butuh hasil definitif dulu — gate dicabut.
       clue: 'Nodus dingin matted yang membentuk sinus kronis, gejala konstitusional, dan kontak TB mendukung skrofuloderma. Ambil spesimen lesi untuk pemeriksaan molekuler/histopatologi melalui jejaring dan tata laksana program TB; jangan mengarang regimen OAT atau memberi monoterapi empiris.',
       panduanResmi: PPK,
       catatanRealita: 'TCM lesi dan histopatologi tidak diasumsikan onsite; rujukan terkoordinasi adalah bagian jawaban, bukan kegagalan FKTP.',
@@ -202,7 +206,7 @@ const DEFINITIONS: LabDefinition[] = [
   {
     catalogId: 'leprosy',
     spec: {
-      id: 'lab_kusta_pausibasiler', nama: 'Kusta Pausibasiler Tanpa Reaksi', icd10: 'A30', kategori: 'kulit', prevalensi: 'rendah',
+      id: 'lab_kusta_pausibasiler', ambangKluster: 2, nama: 'Kusta Pausibasiler Tanpa Reaksi', icd10: 'A30', kategori: 'kulit', prevalensi: 'rendah',
       keluhanUtama: 'Ada dua bercak pucat yang mati rasa di lengan.', usia: [15, 65], vital: NORMAL,
       pembuka: ['Sejak kapan bercak ada dan apa yang berubah?', 'Enam bulan, tidak gatal, tetapi sentuhan dan panas kurang terasa.'],
       pertanyaan: [
@@ -222,7 +226,7 @@ const DEFINITIONS: LabDefinition[] = [
   {
     catalogId: 'syphilis_12',
     spec: {
-      id: 'lab_sifilis_primer', nama: 'Sifilis Primer', icd10: 'A51', kategori: 'kulit', prevalensi: 'rendah',
+      id: 'lab_sifilis_primer', ambangKluster: 3, nama: 'Sifilis Primer', icd10: 'A51', kategori: 'kulit', prevalensi: 'rendah',
       keluhanUtama: 'Ada luka di alat kelamin yang tidak sakit.', usia: [18, 55], vital: NORMAL,
       pembuka: ['Kapan luka muncul dan apakah ada keluhan lain?', 'Sepuluh hari lalu, satu luka bersih tidak nyeri; tiga minggu sebelumnya ada hubungan tanpa kondom.'],
       pertanyaan: [
@@ -243,7 +247,7 @@ const DEFINITIONS: LabDefinition[] = [
   {
     catalogId: 'tinea_capitis',
     spec: {
-      id: 'lab_tinea_kapitis_anak', nama: 'Tinea Kapitis Noninflamasi', icd10: 'B35.0', kategori: 'kulit', prevalensi: 'sedang',
+      id: 'lab_tinea_kapitis_anak', ambangKluster: 3, nama: 'Tinea Kapitis Noninflamasi', icd10: 'B35.0', kategori: 'kulit', prevalensi: 'sedang',
       keluhanUtama: 'Rambut anak saya patah-patah dan kulit kepala bersisik membentuk lingkaran.', keluhanUtamaOlehPendamping: true, usia: [4, 12], vital: { ...NORMAL, td: '100/64' },
       pembuka: ['Bagaimana kelainan kulit kepala bermula?', 'Tiga minggu bercak bersisik melebar dan rambut rontok pendek-pendek.'],
       pertanyaan: [

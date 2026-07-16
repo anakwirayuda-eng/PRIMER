@@ -483,7 +483,52 @@ function fnv1a(teks: string): string {
 // bulan, bundel stabilisasi wajib, tindakan berbahaya terstruktur, migrasi tally,
 // serta validasi tujuan IGD berdasarkan kapabilitas reperfusi. Semua menyentuh
 // replay/scoring/save sehingga revisi engine dibump secara eksplisit.
-export const REVISI_ENGINE = 35
+// Audit CODEX 2026-07-16 (#1/#2/#4): gerbang `terapiKritis` (cap D bila terapi
+// penyelamat nyawa dilewatkan), Dex "kuasai" kini menuntut keselamatan resep +
+// terapi kritis, dan konsekuensi hanya dipicu obat kontraindikasi (bukan
+// nonPrimer). Menyentuh clinic.ts/reducer.ts/state.ts → bump.
+// 37 (2026-07-16 — audit CODEX UKM): arc kunjungan mode-aware (arcKunjunganAktif,
+// Gunawan tak buntu di Ujian), TETAPKAN_PROGRAM wajib rwFokus + supresi
+// surveilans terikat RW, drift menjangkau keluarga yang pernah dikunjungi
+// (exploit roster mati), Prolanis DM pindah skala GDP (kontrol <130),
+// catatanPedagogis masuk HasilKunjungan/debrief, autosave langkah kunjungan.
+// 38 (2026-07-16 — audit CODEX UKM, 4 item desain): outcome-window PIS-PK
+// (janji→verifikasi tertunda, sumber 'janji'), ekonomi IKS di-reframe (posyandu
+// verifikasi data KIA nyata + bonus kecil, program = perisai drift bukan angka),
+// kader mengisi bertahap (kuota harian), ambang KLB di-ground ke Permenkes
+// 1/2026 + kalibrasi ISPA 5→4.
+// 39 (2026-07-16 — M13 Batch 4+6, ekspansi konten full-fledge):
+//   (a) SUMBER AMBANG KLUSTER PINDAH KE KONTEN. `AMBANG_CLUSTER` (8 id
+//       hardcoded di surveilans.ts) dihapus; ambang kini dideklarasikan
+//       `KasusKlinis.ambangKluster` & dibaca `ambangKlusterPack(pack)`.
+//       `kasusMenular` menerima kasus (bukan id), `hitungCluster` menerima peta
+//       ambang, `clusterAktif` menerima pack. Angka 8 kasus legacy dipindah
+//       APA ADANYA (dengue 2/tifoid 2/tb 2/pneumonia_balita 2/diare 3/skabies 3/
+//       konjungtivitis 3/ispa 4) sehingga jejak lama yg HANYA menyentuh 8 kasus
+//       itu mereplay identik — TETAPI 14 kasus infeksi lab kini ikut tercatat
+//       surveilans (dulu mustahil berkluster), jadi komposisi kluster/KLB &
+//       bobot Director bisa berbeda pada jejak yang menyentuhnya → replay
+//       berubah → bump.
+//   (b) Kanal IGD ikut membaca `activationStatus`: kasus IGD prototipe lab kini
+//       Career-only (modePolicy) — pool IGD Karier 6→20, Ujian tetap 5 exact.
+//   (c) +34 kasus poli tier-rujuk & +14 kasus IGD masuk PACK → sidik jari pack
+//       berubah; `bisaPrb`/`ambangKluster` kini diteruskan `buatKasusFktpLab`.
+// 40 (2026-07-16 — audit CODEX pasca-Batch4, temuan UKM "kontradiksi ambang
+// Prolanis DM"): saat skala DM pindah GDS→GDP di rev 37 (#12), HANYA
+// `driftProlanis` ikut ke ambang RPPT <130; `kartuProlanis` (kegiatan.ts) dan
+// `rasioProlanisTerkontrol` (scoring.ts) TERTINGGAL di ambang GDS lama <200.
+// Peserta DM ber-GDP 130-199 karena itu ditampilkan "terkendali" di kartu DAN
+// dihitung terkendali oleh skor UKM, sementara progres penyakit memperlakukannya
+// tak-terkendali (takTerkontrolBerturut naik) — kartu hijau sambil penyakit
+// memburuk diam-diam. Ketiganya kini memanggil satu predikat kanonik
+// `prolanisTerkendali()` (AMBANG_TERKENDALI_PROLANIS: ht 140 / dm 130, BPJS
+// RPPT). Skor UKM pada jejak lama dgn peserta DM di rentang 130-199 BERUBAH
+// (rasio terkontrol turun) → replay bergeser → bump wajib.
+// Konten (tak menyentuh file beku, tapi mengubah answer-key → sidik jari pack):
+// `kulit_morbili` (usia 1-8) tak lagi mewajibkan tablet dewasa paracetamol_500
+// — sediaan anak `paracetamol_sirup` jadi obatBenar, tablet 500 mg jadi jebakan
+// sediaan (nonPrimer); 89 distraktor anamnesis generik diganti differential-driven.
+export const REVISI_ENGINE = 40
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

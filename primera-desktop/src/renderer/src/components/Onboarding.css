@@ -30,16 +30,12 @@
   flex-direction: column;
   gap: var(--sp-3);
   box-shadow: var(--shadow-modal);
-  animation: onb-masuk var(--durasi-santai) var(--ease-pantul);
-}
-
-@keyframes onb-masuk {
-  from { opacity: 0; transform: translateY(14px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  /* Pakai keyframes modal-masuk global (base.css) — hapus duplikat onb-masuk. */
+  animation: modal-masuk var(--durasi-normal) var(--ease-pantul) both;
 }
 
 .onb-ikon {
-  font-size: 2.6rem;
+  font-size: var(--text-3xl);
   line-height: 1;
 }
 
@@ -64,14 +60,14 @@
 
 .onb-titik {
   display: flex;
-  gap: 6px;
+  gap: var(--sp-15);
   justify-content: center;
   margin: var(--sp-1) 0;
 }
 
 .onb-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--border-tegas);
   transition: background var(--durasi-cepat), transform var(--durasi-cepat);

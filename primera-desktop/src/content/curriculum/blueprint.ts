@@ -154,11 +154,52 @@ const CATALOG_CONCEPT_OVERRIDES: Record<string, ClinicalConcept[]> = {
 }
 
 const IGD_CONCEPT_BY_ID: Record<string, string> = {
+  // 5 baseline — concept-nya sudah lahir dari katalog FKTP-144.
   igd_asma_berat: 'concept:asthma',
   igd_dengue_syok: 'concept:dengue',
   igd_hipoglikemia: 'concept:hypoglycemia',
   igd_kejang_demam: 'concept:febrile_seizure',
   igd_syok_anafilaksis: 'concept:anaphylaxis',
+  // M13 Batch 4 (prototipe lab, Career-only) — concept-nya didaftarkan di
+  // IGD_ONLY_CONCEPTS karena tak ada padanannya di katalog 144.
+  igd_status_epileptikus: 'concept:status_epilepticus',
+  igd_cedera_kepala_sedang: 'concept:moderate_head_injury',
+  igd_luka_bakar_luas: 'concept:major_burn',
+  igd_ketoasidosis_diabetik: 'concept:diabetic_ketoacidosis',
+  igd_stroke_iskemik_window: 'concept:acute_ischemic_stroke_window',
+  igd_perdarahan_pascasalin: 'concept:postpartum_hemorrhage',
+  igd_asfiksia_neonatorum: 'concept:neonatal_asphyxia',
+  igd_tenggelam: 'concept:drowning',
+  igd_keracunan_organofosfat: 'concept:organophosphate_poisoning',
+  igd_gigitan_ular_berbisa: 'concept:venomous_snakebite',
+  igd_syok_sepsis: 'concept:septic_shock',
+  igd_eklampsia: 'concept:eclampsia',
+  igd_sumbatan_jalan_napas_anak: 'concept:pediatric_airway_obstruction',
+  igd_pneumotoraks_tension_trauma: 'concept:tension_pneumothorax',
+}
+
+/**
+ * Concept yang HANYA lahir lewat kanal IGD (M13 Batch 4). Katalog 144 dan kasus
+ * klinik standalone masing-masing sudah membuat concept-nya sendiri; kegawatan
+ * di bawah tak punya padanan di keduanya, jadi harus didaftarkan eksplisit —
+ * tanpa ini `validasiCurriculumBlueprint` menolak archetype-nya sebagai
+ * "concept tidak ada".
+ */
+const IGD_ONLY_CONCEPTS: Record<string, string> = {
+  'concept:status_epilepticus': 'Status Epileptikus',
+  'concept:moderate_head_injury': 'Cedera Kepala Sedang',
+  'concept:major_burn': 'Luka Bakar Luas',
+  'concept:diabetic_ketoacidosis': 'Ketoasidosis Diabetik',
+  'concept:acute_ischemic_stroke_window': 'Stroke Iskemik Akut dalam Jendela Terapi',
+  'concept:postpartum_hemorrhage': 'Perdarahan Pascasalin',
+  'concept:neonatal_asphyxia': 'Asfiksia Neonatorum',
+  'concept:drowning': 'Tenggelam',
+  'concept:organophosphate_poisoning': 'Keracunan Organofosfat',
+  'concept:venomous_snakebite': 'Gigitan Ular Berbisa',
+  'concept:septic_shock': 'Syok Sepsis',
+  'concept:eclampsia': 'Eklampsia',
+  'concept:pediatric_airway_obstruction': 'Sumbatan Jalan Napas Anak',
+  'concept:tension_pneumothorax': 'Pneumotoraks Tension Traumatik',
 }
 
 const UKM_OBJECTIVE_LABELS: Record<IndikatorPisPk, string> = {
@@ -181,13 +222,22 @@ export const PIS_PK_OBJECTIVE_IDS = Object.keys(UKM_OBJECTIVE_LABELS) as Indikat
 const IGD_CREDIT_RATIONALE =
   'Flow IGD saat ini tidak memiliki keputusan diagnosis dan tidak menulis Dex; archetype hanya dapat menandai konsep dijumpai, bukan menyertifikasi item.'
 
-function currentModePolicy(kasus?: KasusKlinis): ModePolicy {
+/**
+ * M13 Batch 4: kedua helper ini semula hanya menerima `KasusKlinis` sehingga
+ * kanal IGD selalu memanggilnya TANPA argumen — artinya setiap kasus IGD baru
+ * otomatis `ujian: true`. Dilonggarkan ke bentuk struktural supaya `KasusIgd`
+ * ikut terbaca: kasus IGD prototipe lab kini Career-only persis seperti
+ * saudaranya di kanal klinik, tanpa menyentuh 5 kasus IGD baseline.
+ */
+type BerstatusAktivasi = { activationStatus?: KasusKlinis['activationStatus'] }
+
+function currentModePolicy(kasus?: BerstatusAktivasi): ModePolicy {
   return kasus?.activationStatus === 'lab_prototype_unadjudicated'
     ? { karier: true, ujian: false }
     : { karier: true, ujian: true }
 }
 
-function releasePolicyFor(kasus?: KasusKlinis): ReleasePolicy {
+function releasePolicyFor(kasus?: BerstatusAktivasi): ReleasePolicy {
   return {
     introducedIn: kasus?.activationStatus === 'lab_prototype_unadjudicated'
       ? LAB_CONTENT_RELEASE
@@ -314,6 +364,13 @@ export function buildCurriculumBlueprint(pack: ContentCatalog): CurriculumBluepr
 
   for (const kasus of Object.values(pack.kasusIgd).sort(compareIds)) {
     const conceptId = IGD_CONCEPT_BY_ID[kasus.id]!
+    if (!conceptMap.has(conceptId)) {
+      const diagnosis = IGD_ONLY_CONCEPTS[conceptId]
+      if (!diagnosis) {
+        throw new Error(`Kasus IGD '${kasus.id}': concept '${conceptId}' tak lahir dari katalog manapun & tak terdaftar di IGD_ONLY_CONCEPTS`)
+      }
+      conceptMap.set(conceptId, { id: conceptId, diagnosis })
+    }
     const relatedItems = itemConcepts.filter((relation) => relation.conceptId === conceptId).map((relation) => relation.itemId)
     encounterArchetypes.push({
       id: `igd:${kasus.id}`,
@@ -323,8 +380,8 @@ export function buildCurriculumBlueprint(pack: ContentCatalog): CurriculumBluepr
       severityDegree: 'emergency',
       targetFktp: targetForIgd(kasus),
       prevalensi: 'not_modeled',
-      modePolicy: currentModePolicy(),
-      releasePolicy: releasePolicyFor(),
+      modePolicy: currentModePolicy(kasus),
+      releasePolicy: releasePolicyFor(kasus),
       credits: [],
       excludedCredits: relatedItems.map((itemId) => ({ itemId, reason: IGD_CREDIT_RATIONALE })),
       creditRationale: IGD_CREDIT_RATIONALE,

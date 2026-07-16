@@ -46,9 +46,14 @@ export const KASUS_IGD: KasusIgd[] = [
       {
         id: 'a3',
         narasi: 'TD mulai naik 100/70, saturasi 96%. Cairan sudah terpasang.',
+        // Audit CODEX 2026-07-16 #8: dulu jawaban benar = "beri antihistamin +
+        // kortikosteroid". RCUK 2021 mencabut rekomendasi rutin kortikosteroid
+        // & menegaskan antihistamin tak mengatasi ABC — prioritas pascastabilisasi
+        // adalah observasi + kesiapan adrenalin ulang + transfer.
         pilihan: [
-          { id: 'a', label: 'Beri antihistamin + kortikosteroid sebagai terapi tambahan, siapkan rujuk', benar: true, efekStabilitas: 15, respons: 'Tepat — antihistamin/steroid hanya TERAPI TAMBAHAN untuk gejala kulit setelah adrenalin & stabilisasi (bukti pencegah reaksi bifasik LEMAH — Resus Council UK/AAAAI). Kunci tetap adrenalin + observasi/rujuk.' },
-          { id: 'b', label: 'Pasien membaik, langsung pulangkan', benar: false, efekStabilitas: -20, respons: 'Bahaya — reaksi bifasik bisa muncul beberapa jam kemudian. Wajib observasi berkepanjangan/rujuk.' },
+          { id: 'a', label: 'Observasi ketat, siapkan adrenalin ulang bila reaksi kambuh, lalu rujuk untuk pemantauan reaksi bifasik', benar: true, efekStabilitas: 15, respons: 'Tepat — pascastabilisasi kuncinya monitoring + kesiapan adrenalin ulang (tiap 5-15 menit bila perlu) + transfer. RCUK 2021: kortikosteroid TIDAK lagi rutin; antihistamin hanya meredakan gejala kulit, bukan ABC.' },
+          { id: 'b', label: 'Andalkan kortikosteroid IV untuk mencegah reaksi bifasik', benar: false, efekStabilitas: -10, respons: 'Bukti steroid mencegah reaksi bifasik LEMAH — RCUK 2021 mencabut rekomendasi rutinnya. Ia bekerja lambat & tak menggantikan observasi + kesiapan adrenalin ulang.' },
+          { id: 'c', label: 'Pasien membaik, langsung pulangkan', benar: false, efekStabilitas: -20, respons: 'Bahaya — reaksi bifasik bisa muncul beberapa jam kemudian. Wajib observasi berkepanjangan/rujuk.' },
         ],
       },
     ],

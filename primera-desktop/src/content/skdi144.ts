@@ -14,11 +14,14 @@
  * `kasusId` menghubungkan entri ke kasus playable — auto-link via ICD-10
  * persis (content/index.ts) atau manual di sini utk kompetensi gabungan/
  * ICD lebih spesifik (lihat pack.test.ts utk daftar pengecualian sadar).
- * Per 2026-07 (M9.2 + CODEX ronde-16): 46 dari 67 kasus playable tertaut;
- * sisanya sengaja tak tertaut krn levelnya BUKAN 4A menurut dokumen resmi
- * (skdi 2012 Lampiran-3 / Kepmenkes 1186/2022), atau bukan entri Daftar
- * Penyakit (mis. Daftar Keterampilan Klinis) — lihat docs/CODEX_AUDIT_
- * DOSSIER.md §26/§30/§31 utk rincian per-kasus.
+ * Per 2026-07 (M13 lab full-fledge): SELURUH 144 baris katalog kini tertaut
+ * 1:1 ke kasus playable unik (144/144). Pool poli runtime lebih besar dari 144
+ * (mis. varian derajat & kasus non-fktp144), gabungan kasus orisinal +
+ * prototipe lab (activationStatus 'lab_prototype_unadjudicated', Career-only).
+ * Dulu hanya 46 baris tertaut; sisanya ditutup batch lab M13 (lihat
+ * docs/M13_LAB_DECISION_LEDGER.md). Sinkronitas 144/144 dikunci
+ * src/content/lab/fullCoverage.test.ts. (Angka komposisi tepat sengaja tak
+ * di-hardcode di komentar agar tak lekas basi.)
  */
 
 export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: string }[] = [

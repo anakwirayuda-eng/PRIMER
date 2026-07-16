@@ -32,12 +32,19 @@
   --malam-600: #2b4237;
 
   /* -- Tinta & teks -------------------------------------------------------- */
-  --tinta: #26312c; /* teks utama di kertas — tinta pulpen hitam-kehijauan */
-  --tinta-lembut: #5b6a62; /* teks sekunder */
+  /* Nilai SIANG dipecah jadi token mentah *-siang yang TIDAK pernah diremap
+     mode malam — utk blok "re-pin palet siang" (mis. kanvas .peta-svg saat
+     mode malam) supaya mereferensikan token, bukan menyalin hex yang bisa
+     basi diam-diam (terbukti basi di PetaDesa.css, sapuan 2026-07-16). */
+  --tinta-siang: #26312c; /* teks utama di kertas — tinta pulpen hitam-kehijauan */
+  --tinta-lembut-siang: #5b6a62; /* teks sekunder */
   /* M10 Batch-2 (CODEX A.3): #6e7a70 terukur 3.3-4.34:1 pd permukaan kertas —
-     GAGAL AA (4.5:1) padahal dipakai sbg teks nyata 0.72rem (hint/legenda).
+     GAGAL AA (4.5:1) padahal dipakai sbg teks nyata kecil (hint/legenda).
      Digelapkan ke #5e6b62 (≈5.1:1 di kertas-050), tetap sekeluarga hue tinta. */
-  --tinta-pudar: #5e6b62;
+  --tinta-pudar-siang: #5e6b62;
+  --tinta: var(--tinta-siang);
+  --tinta-lembut: var(--tinta-lembut-siang);
+  --tinta-pudar: var(--tinta-pudar-siang);
   --tinta-merah: #b3382c; /* stempel merah — bahaya, alergi, gawat */
   --tinta-biru: #2b5a8a; /* pulpen biru — catatan, link, info */
 
@@ -61,17 +68,43 @@
   --border-tegas: rgba(38, 49, 44, 0.28);
   --border-tinta: rgba(38, 49, 44, 0.55);
 
+  /* Wash/tint aksen lembut — dulu rgba/hex di-hardcode 19× di 9 file dan tiap
+     situs butuh override malam manual (pernah LUPA → teks tak terbaca malam,
+     Kegiatan.css). Kini satu token, malam otomatis benar (sapuan 2026-07-16). */
+  --wash-daun: var(--daun-50);
+  --wash-kunyit: var(--kunyit-100);
+  --wash-merah: #f6ddda;
+  --wash-biru: #dbe7f3;
+
+  /* Warna fokus keyboard bersama (daun-600 diremap terang di malam). */
+  --warna-fokus: var(--daun-600);
+
   /* -- Bayangan kertas ------------------------------------------------------ */
   --shadow-kertas: 0 1px 2px rgba(38, 49, 44, 0.08), 0 2px 8px rgba(38, 49, 44, 0.06);
   --shadow-kartu: 0 2px 4px rgba(38, 49, 44, 0.1), 0 8px 24px rgba(38, 49, 44, 0.1);
   --shadow-modal: 0 12px 48px rgba(13, 21, 18, 0.28);
+  /* Sapuan UI/UX 2026-07-16 — dua anak tangga elevasi baru utk "kertas
+     berlapis": angkat (antara kertas & kartu, dipakai hover kartu--klik) dan
+     cekung (permukaan sunken: meter, kotak vital). */
+  --shadow-angkat: 0 2px 3px rgba(38, 49, 44, 0.09), 0 5px 14px rgba(38, 49, 44, 0.08);
+  --shadow-cekung: inset 0 1px 3px rgba(38, 49, 44, 0.08);
+
+  /* Ring "terpilih/aktif" bersama — dulu 5 gaya berbeda antar layar (sapuan
+     UI/UX 2026-07-16); satu arti visual utk seluruh game. */
+  --ring-pilih: 0 0 0 2px var(--daun-700);
+  /* kunyit-700, BUKAN kunyit-600: indikator fokus/pilih non-teks butuh 3:1
+     (kunyit-600 vs bg-card cuma 2.83:1 — preseden M14 #18). */
+  --ring-waspada: 0 0 0 2px var(--kunyit-700);
 
   /* -- Tipografi ------------------------------------------------------------ */
-  --font-utama: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Cascadia Mono', 'Consolas', monospace;
-  --font-tulis: 'Caveat', 'Segoe Print', cursive; /* tulisan tangan — refleksi, catatan */
+  /* Stack font: satu-satunya sumber di fonts.css (nilai Variable yang benar2
+     di-bundle). Definisi duplikat di sini dihapus 2026-07-16 — dua sumber
+     kebenaran sempat menyimpan stack non-Variable yang menyesatkan. */
 
-  --text-xs: 0.72rem;
+  /* Lantai 12px (sapuan UI/UX 2026-07-16: 0.72rem=11.5px + font-size ad-hoc
+     10-11px di layar = rasa "penuh sesak"). DILARANG font-size ad-hoc di
+     bawah var(--text-xs); kunyit-600 dilarang utk teks < var(--text-md). */
+  --text-xs: 0.75rem;
   --text-sm: 0.84rem;
   --text-md: 1rem;
   --text-lg: 1.2rem;
@@ -79,8 +112,19 @@
   --text-2xl: 2rem;
   --text-3xl: 2.6rem;
 
+  /* Ritme vertikal bersama (dulu 12+ nilai line-height liar antar layar). */
+  --baris-rapat: 1.25;
+  --baris-normal: 1.5;
+  --baris-santai: 1.65;
+
+  /* Pelacakan huruf label bersama (dulu 17 nilai letter-spacing liar). */
+  --lacak-label: 0.14em;
+  --lacak-seksi: 0.18em;
+
   /* -- Ritme ---------------------------------------------------------------- */
+  --sp-05: 2px; /* langkah mikro — pengganti nilai liar 2-3px */
   --sp-1: 4px;
+  --sp-15: 6px; /* langkah mikro — pengganti nilai liar 6px */
   --sp-2: 8px;
   --sp-3: 12px;
   --sp-4: 16px;
@@ -129,6 +173,15 @@
   --border-tinta: rgba(230, 237, 232, 0.45);
   --shadow-kertas: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-kartu: 0 2px 4px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-angkat: 0 2px 3px rgba(0, 0, 0, 0.35), 0 5px 14px rgba(0, 0, 0, 0.3);
+  --shadow-cekung: inset 0 1px 3px rgba(0, 0, 0, 0.45);
+
+  /* Wash malam: latar gelap-transparan supaya teks aksen terang tetap kontras
+     (nilai persis yang dulu di-hardcode per-situs di base.css & file layar). */
+  --wash-daun: rgba(62, 208, 164, 0.16);
+  --wash-kunyit: rgba(234, 165, 79, 0.16);
+  --wash-merah: rgba(239, 132, 120, 0.16);
+  --wash-biru: rgba(131, 179, 222, 0.16);
 
   /* AKSEN mode malam (CODEX P2): versi terang agar terbaca sbg TEKS di atas
      panel gelap. Nilai pekat (daun-800 2.1:1, kunyit-700 2.75:1, merah/biru

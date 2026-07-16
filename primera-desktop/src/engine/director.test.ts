@@ -197,6 +197,7 @@ function buatPenilaian(override?: Partial<PenilaianEncounter>): PenilaianEncount
     firewallTerpicu: false,
     konfirmasiTakTerpenuhi: false,
     stabilisasiTerlewat: false,
+    terapiKritisTerlewat: false,
     labTakRelevan: 0,
     grade: 'A',
     clue: 'Clue uji EBM.',
@@ -330,7 +331,11 @@ describe('susunAntrianHarian', () => {
   // khusus mode Ujian — Karier tak punya kontrak ini, kluster tetap aktif di sana.
   it('CODEX #10a (pasca-GM 2026-07-13): kluster surveilans (RW dari seed flavor) TIDAK mempengaruhi antrian di mode Ujian, TAPI tetap aktif di Karier', () => {
     const pack = buatPack([
-      buatKasus('dengue_df', { kategori: 'infeksi' }),
+      // M13 Batch 6: ambang kluster kini dideklarasikan kasusnya sendiri
+      // (`ambangKluster`), bukan lagi daftar id hardcoded di surveilans.ts —
+      // jadi test-double `dengue_df` HARUS membawa ambangnya sendiri agar
+      // benar-benar berkluster. Angkanya sama dgn konten produksi (2).
+      buatKasus('dengue_df', { kategori: 'infeksi', ambangKluster: 2 }),
       buatKasus('lain_1'),
       buatKasus('lain_2'),
       buatKasus('lain_3'),

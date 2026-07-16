@@ -21,12 +21,26 @@ export interface LabQuestionSpec {
   distraktor?: boolean
   oldcarts?: Oldcarts
   hanyaUntuk?: 'L' | 'P'
+  /**
+   * M13 Batch 4 (2026-07-16): variasi suara per persona untuk jawaban. Factory
+   * sudah meneruskannya (`...item`) & `bahasaPasien.test.ts` mengujinya, tetapi
+   * tipe ringkas ini semula tak mendeklarasikannya — memaksa file batch4
+   * memakai shim tipe lokal. Diangkat ke sini supaya semua penulis kasus lab
+   * konsisten menulis variasi inline tanpa akrobat tipe.
+   */
+  variasi?: PertanyaanAnamnesis['variasi']
 }
 export type LabCaseSpec = Omit<KasusKlinis, 'activationStatus' | 'anamnesis'> & {
   pembuka: {
     tanya: string
     jawab: string
     oldcarts?: Oldcarts
+    /**
+     * M13 Batch 4: variasi suara persona untuk keluhan pembuka. Sebelumnya
+     * variasi pembuka HANYA bisa lewat lapisan enrichment (`variasiPembuka`);
+     * kini penulis kasus bisa menuliskannya inline pada kasus barunya.
+     */
+    variasi?: PertanyaanAnamnesis['variasi']
   }
   pertanyaan: LabQuestionSpec[]
 }
@@ -49,6 +63,7 @@ export function buatKasusLab(spec: LabCaseSpec): KasusKlinis {
       jawab: spec.pembuka.jawab,
       esensial: true,
       oldcarts: spec.pembuka.oldcarts ?? ['karakter', 'durasi'],
+      ...(spec.pembuka.variasi ? { variasi: spec.pembuka.variasi } : {}),
     },
     ...spec.pertanyaan.map((item) => ({
       ...item,
@@ -105,6 +120,16 @@ export interface FktpLabSpec {
   spesialisRujukan?: SpesialisasiRs
   stabilisasiWajib?: string[]
   konfirmasiWajib?: string
+  /**
+   * M13 Batch 6 (2026-07-16): dua field di bawah sebelumnya TIDAK diteruskan
+   * bentuk padat ini, sehingga 103 kasus lab terputus dari dua sistem
+   * longitudinal — nol di antaranya bisa membentuk kluster surveilans
+   * (`ambangKluster`) atau masuk kontrol PRB (`bisaPrb`), bukan karena
+   * keputusan klinis melainkan semata karena factory-nya bocor. Lihat
+   * `KasusKlinis` di types.ts untuk semantik keduanya.
+   */
+  ambangKluster?: number
+  bisaPrb?: boolean
 }
 
 /**
@@ -123,6 +148,8 @@ export function buatKasusFktpLab(spec: FktpLabSpec): KasusKlinis {
     harusDirujuk: spec.harusDirujuk ?? false,
     prevalensi: spec.prevalensi ?? 'rendah',
     spesialisRujukan: spec.spesialisRujukan,
+    ambangKluster: spec.ambangKluster,
+    bisaPrb: spec.bisaPrb,
     keluhanUtama: spec.keluhanUtama,
     keluhanUtamaOlehPendamping: spec.keluhanUtamaOlehPendamping,
     demografi: {

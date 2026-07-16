@@ -503,8 +503,13 @@ describe('diagnosis perilaku (COM-B)', () => {
     expect(hasil.berhasil).toBe(true)
     const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 8, 2)
     expect(kelBaru.ttm).toBe('aksi')
+    // #4 outcome-window (audit CODEX UKM 2026-07-16): arc tamat = warga BERJANJI
+    // berubah — indikator target `status:'ya'` (IKS naik optimis) tapi
+    // `statusSebenarnya` BELUM berubah (masih 'tidak' seperti sebelumnya) &
+    // sumber 'janji'. Reducer menjadwalkan verifikasi outcome tertunda.
     expect(kelBaru.indikator.jamban_sehat.status).toBe('ya')
-    expect(kelBaru.indikator.jamban_sehat.statusSebenarnya).toBe('ya')
+    expect(kelBaru.indikator.jamban_sehat.statusSebenarnya).toBe('tidak')
+    expect(kelBaru.indikator.jamban_sehat.sumber).toBe('janji')
     expect(kelBaru.arcSelesai).toBe('berhasil')
   })
 })
@@ -812,8 +817,14 @@ describe('prosesHarianKader (scout)', () => {
     // individual) — 25-1=24, bukan totalKk mentah (dulu bikin totalKeluarga
     // dobel-hitung fam1 begitu survei statistik penuh).
     expect(state.desa.rw[0]!.kkTersurvei).toBe(24) // cap totalKk - binaan
-    // Data keluarga tetap dari hari pertama pengisian (hariData 2), tidak diflip-flip.
-    expect(state.desa.keluarga['fam1']!.indikator.jamban_sehat.hariData).toBe(2)
+    // #8 staging (audit CODEX UKM 2026-07-16): kader mengisi maks 2 indikator
+    // 'belum' per keluarga per HARI (urutan SEMUA_INDIKATOR_PISPK). fam1 punya
+    // 3 'belum' non-na (tidak_merokok#8, air_bersih#10, jamban_sehat#11) → hari 2
+    // isi 2 pertama (tidak_merokok+air_bersih), hari 3 isi jamban_sehat. Sekali
+    // terisi, TIDAK diflip-flip di hari berikutnya (hariData stabil).
+    expect(state.desa.keluarga['fam1']!.indikator.tidak_merokok.hariData).toBe(2)
+    expect(state.desa.keluarga['fam1']!.indikator.air_bersih.hariData).toBe(2)
+    expect(state.desa.keluarga['fam1']!.indikator.jamban_sehat.hariData).toBe(3)
     expect(state.desa.keluarga['fam1']!.indikator.tidak_merokok.status).toBe('ya')
   })
 

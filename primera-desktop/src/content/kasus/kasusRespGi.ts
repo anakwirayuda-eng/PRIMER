@@ -235,6 +235,13 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       obatBenar: [],
       // Antihistamin gen-2 setara — beri SALAH SATU (bukan keduanya sekaligus).
       obatAlternatif: [['loratadin_10', 'cetirizine_10']],
+      // 2026-07-16 (sapuan clue-vs-struktur): panduanResmi kasus ini eksplisit
+      // menyebut PPK 1186/2022 menaruh CTM (gen-1) SEJAJAR gen-2 dan membolehkan
+      // steroid intranasal (flutikason) bila sumbatan dominan — tapi keduanya
+      // dulu tak bisa dipilih, jadi pemain yg meresepkan CTM (lini-pertama PPK)
+      // kena -15 "obat di luar". Dijadikan OPSIONAL: sah (tak dihukum) tetapi
+      // bukan slot ideal — gen-2 non-sedatif tetap jawaban yang dinilai penuh.
+      obatOpsional: ['ctm_4', 'flutikason_semprot_hidung'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Rinitis alergi bukan infeksi bakteri — antibiotik tidak berperan. Sekret jernih tanpa demam menyingkirkan sinusitis bakterial.', bahaya: 'nonPrimer' },
         { id: 'pseudoefedrin_30', alasan: 'Dekongestan ORAL bukan terapi utama rinitis alergi; efek sistemiknya (menaikkan tekanan darah, insomnia, palpitasi) berbahaya, terutama pada hipertensi. Rinitis medikamentosa justru rebound dekongestan TOPIKAL (oksimetazolin), bukan oral.', bahaya: 'kontraindikasi' },

@@ -2,21 +2,26 @@
 
 .set-gigi {
   position: fixed;
-  left: calc(var(--sp-3) + 42px); /* di kanan tombol bisu */
+  /* Batch-7: posisi & ukuran terkopel ke --fab-uk (MuteButton.css) — dulu
+     angka hardcode 42px yang diam-diam berasumsi lebar tombol bisu. */
+  left: calc(var(--sp-3) + var(--fab-uk) + var(--sp-2)); /* di kanan tombol bisu */
   bottom: var(--sp-3);
   z-index: var(--z-hud);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: var(--fab-uk);
+  height: var(--fab-uk);
   background: var(--bg-card);
   color: var(--tinta-lembut);
   border: 1px solid var(--border-halus);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-kertas);
   cursor: pointer;
-  transition: color var(--durasi-cepat), border-color var(--durasi-cepat), transform var(--durasi-cepat);
+  transition:
+    color var(--durasi-cepat) var(--ease-keluar),
+    border-color var(--durasi-cepat) var(--ease-keluar),
+    transform var(--durasi-cepat) var(--ease-keluar);
 }
 
 .set-gigi:hover { color: var(--tinta); border-color: var(--border-tegas); transform: translateY(-1px) rotate(30deg); }
@@ -30,22 +35,14 @@
   height: 30px;
 }
 
+/* Batch-7: scrim/blur/z/flex/animasi kini dari .overlay base.css (TSX pakai
+   `overlay set-overlay`) — di sini tinggal properti unik: padding tepi. */
 .set-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  background: rgba(13, 21, 18, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: var(--sp-4);
-  animation: set-fade var(--durasi-normal) var(--ease-keluar);
 }
 
-@keyframes set-fade { from { opacity: 0; } to { opacity: 1; } }
-
 .set-modal {
-  width: min(460px, 100%);
+  width: min(520px, 100%);
   max-height: min(90vh, 620px);
   overflow-y: auto;
   padding: var(--sp-5);
@@ -92,4 +89,9 @@
 }
 .set-segmen .tombol { flex: 1; }
 
-.set-kaki { margin-top: var(--sp-2); }
+.set-kaki {
+  margin-top: var(--sp-2);
+  flex-wrap: wrap;
+  row-gap: var(--sp-2);
+}
+.set-kaki .baris { flex-wrap: wrap; }

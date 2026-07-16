@@ -11,6 +11,7 @@ const PPK_FLOOR = 'PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaik
 export const LAB_BATCH_1_CASES: KasusKlinis[] = [
   buatKasusLab({
     id: 'lab_pneumonia_komunitas_dewasa',
+    ambangKluster: 3,
     nama: 'Pneumonia Komunitas Dewasa - Rawat Jalan',
     icd10: 'J18.9',
     skdi: '4A',
@@ -64,6 +65,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_influenza_tanpa_komplikasi',
+    ambangKluster: 4,
     nama: 'Influenza Tanpa Komplikasi',
     icd10: 'J11',
     skdi: '4A',
@@ -107,6 +109,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_pertusis_remaja',
+    ambangKluster: 2,
     nama: 'Pertusis pada Remaja',
     icd10: 'A37',
     skdi: '4A',
@@ -395,6 +398,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_parotitis_mumps',
+    ambangKluster: 3,
     nama: 'Parotitis Epidemika (Mumps)',
     icd10: 'B26',
     skdi: '4A',
@@ -514,6 +518,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_keracunan_makanan_ringan',
+    ambangKluster: 2,
     nama: 'Keracunan Makanan Ringan',
     icd10: 'T62',
     skdi: '4A',
@@ -559,6 +564,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_cacing_tambang',
+    ambangKluster: 4,
     nama: 'Infeksi Cacing Tambang',
     icd10: 'B76.0',
     skdi: '4A',
@@ -647,6 +653,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_skistosomiasis_sulteng',
+    ambangKluster: 2,
     nama: 'Skistosomiasis dari Fokus Endemis Sulawesi Tengah',
     icd10: 'B65.9',
     skdi: '4A',
@@ -731,6 +738,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_hepatitis_a_akut',
+    ambangKluster: 2,
     nama: 'Hepatitis A Akut Tanpa Gagal Hati',
     icd10: 'B15',
     skdi: '4A',
@@ -768,7 +776,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       obatSalahUmum: [
         { id: 'paracetamol_500', alasan: 'WHO 2026 menganjurkan menghindari obat yang tidak perlu dan dapat membebani hati, termasuk parasetamol, pada hepatitis A.', bahaya: 'nonPrimer' },
       ],
-      edukasi: ['cegah_hepatitis_a', 'istirahat_cukup', 'tanda_bahaya'],
+      edukasi: ['cegah_hepatitis_a', 'istirahat_cukup', 'minum_air_cukup', 'gizi_seimbang', 'tanda_bahaya'],
       edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Prodromal demam-mual diikuti ikterus, urine gelap, ALT/AST tinggi, dan IgM anti-HAV reaktif menegakkan hepatitis A akut. WHO 2026: tidak ada antivirus spesifik; fokus hidrasi, nutrisi, dan hindari obat tidak perlu yang membebani hati.',

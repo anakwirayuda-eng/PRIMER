@@ -172,7 +172,7 @@ export function LaporanAkhir() {
         {/* Babak 2: statistik + badge + epilog */}
         {babak >= 2 && (
           <div className="laporan__isi">
-            <div className="laporan__statistik mono teks-xs">
+            <div className="laporan__statistik mono">
               <span>Akurasi diagnosis {akurasi}%</span>
               <span>Rujukan tepat {t.rujukanTepat}</span>
               <span>Krisis dicegah {t.karmaDicegah}</span>

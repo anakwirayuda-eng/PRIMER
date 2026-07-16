@@ -13,6 +13,33 @@
  */
 
 export const NAMA_ICD: Record<string, string> = {
+  /* -- M13 Batch 4 full-fledge (kasus tier-rujuk) — banding tambahan ------ */
+  'B18.2': 'Hepatitis C Kronik',
+  C20: 'Neoplasma Ganas Rektum',
+  'C34.9': 'Neoplasma Ganas Bronkus/Paru, Tidak Spesifik',
+  'D25.9': 'Leiomioma Uterus, Tidak Spesifik',
+  'D50.0': 'Anemia Defisiensi Besi akibat Perdarahan Kronik',
+  'E11.2': 'Diabetes Melitus Tipe 2 dengan Komplikasi Ginjal',
+  E41: 'Marasmus Nutrisional',
+  'K25.5': 'Ulkus Lambung dengan Perforasi',
+  'K40.9': 'Hernia Inguinalis Tanpa Obstruksi/Gangren',
+  'K60.3': 'Fistula Anus',
+  'K64.5': 'Hemoroid Perianal (Trombosis)',
+  'K70.3': 'Sirosis Hati Alkoholik',
+  'K76.0': 'Perlemakan Hati (Fatty Liver)',
+  'K80.2': 'Batu Kandung Empedu Tanpa Kolesistitis',
+  'K85.9': 'Pankreatitis Akut, Tidak Spesifik',
+  'L03.1': 'Selulitis Tungkai',
+  'M86.9': 'Osteomielitis, Tidak Spesifik',
+  N23: 'Kolik Ginjal, Tidak Spesifik',
+  N40: 'Hiperplasia Prostat Jinak',
+  'O21.0': 'Hiperemesis Gravidarum Ringan',
+  'O45.9': 'Solusio Plasenta, Tidak Spesifik',
+  'O46.9': 'Perdarahan Antepartum, Tidak Spesifik',
+  'S30.1': 'Kontusio Dinding Perut',
+  'S36.0': 'Cedera Limpa',
+  'S52.6': 'Fraktur Ujung Bawah Radius dan Ulna',
+  'S63.5': 'Keseleo/Terkilir Pergelangan Tangan',
   /* -- M13 lab full-fledge batches 2-3 ----------------------------------- */
   'G00.9': 'Meningitis Bakterial, Tidak Spesifik',
   'F44.5': 'Kejang Disosiatif',

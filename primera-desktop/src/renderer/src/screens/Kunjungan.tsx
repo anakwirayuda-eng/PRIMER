@@ -14,6 +14,8 @@ import type { BabakKunjunganFase } from '@engine/state'
 import type { Hambatan, PilihanDialog } from '@content/types'
 import { PACK } from '@content/index'
 import { hashSeed, Rng } from '@engine/core/rng'
+import { arcKunjunganAktif } from '@engine/kunjungan'
+import { acakUrutan } from '../utils/acakUrutan'
 import { RumahIlustrasi } from './kunjungan/RumahIlustrasi'
 import { useRadioGroup } from '../useRadioGroup'
 import './Kunjungan.css'
@@ -89,6 +91,9 @@ export function Kunjungan() {
   const [riwayat, setRiwayat] = useState<Ucapan[]>([])
   const [responsAktif, setResponsAktif] = useState<string | null>(null)
   const [dokterTerakhir, setDokterTerakhir] = useState<string | null>(null)
+  // Audit CODEX UKM 2026-07-16 #6: gaya pilihan diungkap SETELAH memilih (di
+  // layar respons), bukan sebagai chip di tombol — simpan gaya terakhir dipilih.
+  const [gayaTerakhir, setGayaTerakhir] = useState<PilihanDialog['gaya'] | null>(null)
   const [intervensiPilihan, setIntervensiPilihan] = useState<string | null>(null)
   const tickTerproses = useRef(-1)
   // M10 Batch-2 (CODEX A.1): saat respons warga tampil, tombol-tombol pilihan
@@ -137,6 +142,15 @@ export function Kunjungan() {
     (id) => setIntervensiPilihan(id),
   )
 
+  // Audit CODEX UKM 2026-07-16 #6: anti-tebakan dialog — konten cenderung
+  // menaruh pilihan "tepat" di posisi tetap; acak urutan render deterministik
+  // per-pemain (pola sama Igd/Kegiatan; skor tetap by pilihanId, bukan indeks).
+  const dialogIndexAktif = kj?.dialogIndex ?? -1
+  const pilihanAcak = useMemo(() => {
+    const node = skenario && dialogIndexAktif >= 0 ? skenario.dialog[dialogIndexAktif] : undefined
+    return node ? acakUrutan(node.pilihan, state.seed, 'kunjungan-dialog', dialogIndexAktif) : []
+  }, [skenario, dialogIndexAktif, state.seed])
+
   // CODEX ronde-13: `kj.hotspotDitemukan` korup (bukan array) crash `.includes`
   // di bawah bila lolos guard tanpa cek ini.
   if (!kj || !kelContent || !skenario || !Array.isArray(kj.hotspotDitemukan)) {
@@ -162,6 +176,7 @@ export function Kunjungan() {
 
   function pilihDialog(p: PilihanDialog) {
     setDokterTerakhir(p.teks)
+    setGayaTerakhir(p.gaya)
     setRiwayat((r) => [...r, { peran: 'dokter', teks: p.teks }])
     dispatch({ type: 'PILIH_DIALOG', pilihanId: p.id })
   }
@@ -188,7 +203,12 @@ export function Kunjungan() {
           <div className="baris teks-xs teks-lembut">
             <span>{kelContent.namaKeluarga}</span>
             <span className="chip">RW {kelContent.rw}</span>
-            <span className="chip">Kunjungan ke-{nomorKunjunganArc(kj.skenarioId, kelContent.arc.kunjungan)}</span>
+            {/* Audit CODEX UKM 2026-07-16 #1: nomor urut dihitung atas arc TERSARING
+                mode-policy — konsisten dgn progres KartuKeluarga/PetaDesa. */}
+            <span className="chip">
+              Kunjungan ke-
+              {nomorKunjunganArc(kj.skenarioId, arcKunjunganAktif(PACK, kelContent, state.mode, state.contentRelease))}
+            </span>
           </div>
         </div>
         <ol className="kunjungan-stepper">
@@ -209,44 +229,51 @@ export function Kunjungan() {
 
       {/* ---------------- Panggung: interior rumah + hotspot ---------------- */}
       <div className={`kunjungan-scene ${kj.fase !== 'observasi' ? 'kunjungan-scene--redup' : ''}`}>
-        <RumahIlustrasi />
+        <div className="kunjungan-panggung">
+          <RumahIlustrasi />
 
-        <div className="kunjungan-hotspot-lapis">
-          {skenario.hotspot.map((h, i) => {
-            const ketemu = kj.hotspotDitemukan.includes(h.id)
-            if (!ketemu && kj.fase !== 'observasi') return null
-            return (
-              <button
-                key={h.id}
-                className={`kunjungan-hotspot ${ketemu ? 'kunjungan-hotspot--ketemu' : ''}`}
-                style={{ left: `${h.x}%`, top: `${h.y}%` }}
-                onClick={() => dispatch({ type: 'KLIK_HOTSPOT', hotspotId: h.id })}
-                disabled={ketemu || kj.fase !== 'observasi'}
-                title={ketemu ? h.label : 'Ada yang menarik perhatianmu di sini'}
-                // CODEX audit UI/UX 2026-07-10 (#13): dulu SEMUA hotspot yang
-                // belum ditemukan berbagi aria-label literal identik — keyboard/
-                // screen-reader tak bisa membedakan 5 titik sama sekali (padahal
-                // pemain sighted sudah bisa, dari posisi x/y visual). Tambah
-                // urutan/posisi (info yang sudah publik secara visual) TANPA
-                // membocorkan identitas objek (h.label/h.narasi tetap disembunyikan).
-                aria-label={ketemu ? h.label : `Amati lebih dekat (titik ${i + 1} dari ${skenario.hotspot.length})`}
-              >
-                {ketemu ? '✓' : ''}
-              </button>
-            )
-          })}
+          <div className="kunjungan-hotspot-lapis">
+            {skenario.hotspot.map((h, i) => {
+              const ketemu = kj.hotspotDitemukan.includes(h.id)
+              if (!ketemu && kj.fase !== 'observasi') return null
+              return (
+                <button
+                  key={h.id}
+                  className={`kunjungan-hotspot ${ketemu ? 'kunjungan-hotspot--ketemu' : ''}`}
+                  style={{ left: `${h.x}%`, top: `${h.y}%` }}
+                  onClick={() => dispatch({ type: 'KLIK_HOTSPOT', hotspotId: h.id })}
+                  disabled={ketemu || kj.fase !== 'observasi'}
+                  title={ketemu ? h.label : 'Ada yang menarik perhatianmu di sini'}
+                  // CODEX audit UI/UX 2026-07-10 (#13): dulu SEMUA hotspot yang
+                  // belum ditemukan berbagi aria-label literal identik — keyboard/
+                  // screen-reader tak bisa membedakan 5 titik sama sekali (padahal
+                  // pemain sighted sudah bisa, dari posisi x/y visual). Tambah
+                  // urutan/posisi (info yang sudah publik secara visual) TANPA
+                  // membocorkan identitas objek (h.label/h.narasi tetap disembunyikan).
+                  aria-label={ketemu ? h.label : `Amati lebih dekat (titik ${i + 1} dari ${skenario.hotspot.length})`}
+                >
+                  {ketemu ? '✓' : ''}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
-        {/* Catatan temuan observasi — tetap terlihat sampai wawancara usai */}
-        {temuan.length > 0 && kj.fase !== 'resep_sosial' && (
+        {/* Catatan temuan observasi — panel samping (sibling panggung, tak lagi
+            menutupi scene) — tetap terlihat sampai wawancara usai */}
+        {kj.fase !== 'resep_sosial' && (
           <aside className="kunjungan-temuan">
             <div className="kunjungan-temuan__judul mono">CATATAN OBSERVASI</div>
-            {temuan.map((h) => (
-              <div key={h.id} className="kunjungan-temuan__kartu kertas">
-                <b>{h.label}</b>
-                <p>{h.narasi}</p>
-              </div>
-            ))}
+            {temuan.length === 0 ? (
+              <span className="teks-xs teks-lembut">Belum ada temuan — amati ruangan pelan-pelan…</span>
+            ) : (
+              temuan.map((h) => (
+                <div key={h.id} className="kunjungan-temuan__kartu kertas">
+                  <b>{h.label}</b>
+                  <p>{h.narasi}</p>
+                </div>
+              ))
+            )}
           </aside>
         )}
       </div>
@@ -285,6 +312,13 @@ export function Kunjungan() {
                 )}
                 <div className="kunjungan-dialog__nama mono">{namaWarga}</div>
                 <p className="kunjungan-dialog__teks">“{responsAktif}”</p>
+                {/* #6: gaya diungkap DI SINI (pasca-pilih) — bahan refleksi MI,
+                    bukan kunci tebakan sebelum memilih. */}
+                {gayaTerakhir && (
+                  <p className="teks-xs teks-lembut">
+                    Gaya: {GAYA_INFO[gayaTerakhir].simbol} {GAYA_INFO[gayaTerakhir].label}
+                  </p>
+                )}
               </div>
               <button ref={lanjutRef} className="tombol tombol--utama" onClick={() => setResponsAktif(null)}>
                 Lanjut →
@@ -302,15 +336,13 @@ export function Kunjungan() {
               </div>
             </div>
             <div className="kunjungan-pilihan-baris">
-              {nodeAktif.pilihan.map((p) => (
-                <button
-                  key={p.id}
-                  className={`kunjungan-pilihan kartu kartu--klik kunjungan-pilihan--${p.gaya}`}
-                  onClick={() => pilihDialog(p)}
-                >
-                  <span className="chip kunjungan-pilihan__gaya">
-                    {GAYA_INFO[p.gaya].simbol} {GAYA_INFO[p.gaya].label}
-                  </span>
+              {/* Audit CODEX UKM 2026-07-16 #6: chip gaya (Empati/Refleksi/...)
+                  DISEMBUNYIKAN sebelum dipilih — dulu jadi kunci tebakan meta
+                  ("selalu klik yang berlabel Empati"). Kelas warna per-gaya juga
+                  dilepas (bocoran identitas yang sama lewat kode warna); gaya
+                  baru diungkap di layar respons setelah memilih. */}
+              {pilihanAcak.map((p) => (
+                <button key={p.id} className="kunjungan-pilihan kartu kartu--klik" onClick={() => pilihDialog(p)}>
                   {/* #14 (sama alasan di atas): p.teks sudah berkutip sendiri. */}
                   <span className="kunjungan-pilihan__teks">{p.teks}</span>
                 </button>
@@ -325,7 +357,7 @@ export function Kunjungan() {
               Perbincangan mereda. Gelas teh sudah setengah kosong — saatnya menimbang apa yang sebenarnya menahan
               keluarga ini.
             </p>
-            <div className="baris" style={{ justifyContent: 'flex-end' }}>
+            <div className="baris baris--kanan">
               <button className="tombol tombol--utama" onClick={() => dispatch({ type: 'LANJUT_BABAK' })}>
                 Ambil Kesimpulan →
               </button>
@@ -372,7 +404,7 @@ export function Kunjungan() {
               {KARTU_HAMBATAN.map((k) => (
                 <button
                   key={k.id}
-                  className="kunjungan-hambatan kartu kartu--klik"
+                  className={`kunjungan-hambatan kartu kartu--klik kunjungan-hambatan--${k.id}`}
                   onClick={() => dispatch({ type: 'KOMIT_HAMBATAN', hipotesis: k.id })}
                 >
                   <span className="kunjungan-hambatan__judul">{k.judul}</span>

@@ -125,7 +125,14 @@ export const EVENT_AUTOSAVE = new Set([
  * ireversibel; dipin di level AKSI krn event STEMPEL-nya dipakai bersama
  * diagnosis klinik biasa (ambigu di level event).
  */
-export const AKSI_AUTOSAVE = new Set(['PESAN_OBAT', 'TETAPKAN_PROGRAM', 'PILIH_BINAAN', 'LEPAS_BINAAN', 'TULIS_REFLEKSI', 'DISPOSISI_IGD'])
+// Audit CODEX UKM 2026-07-16 #15: langkah kunjungan rumah (hotspot/dialog/
+// hipotesis/intervensi) dulu TAK pernah di-autosave — crash/restart di tengah
+// kunjungan membuang seluruh progres babak. Aksi-aksinya jarang (belasan per
+// kunjungan) tapi tiap satunya bermakna; simpan per-langkah spt aksi manajemen.
+export const AKSI_AUTOSAVE = new Set([
+  'PESAN_OBAT', 'TETAPKAN_PROGRAM', 'PILIH_BINAAN', 'LEPAS_BINAAN', 'TULIS_REFLEKSI', 'DISPOSISI_IGD',
+  'MULAI_KUNJUNGAN', 'KLIK_HOTSPOT', 'PILIH_DIALOG', 'KOMIT_HAMBATAN', 'PILIH_INTERVENSI', 'LANJUT_BABAK',
+])
 
 export const useGame = create<GameStore>((set, get) => ({
   state: null,

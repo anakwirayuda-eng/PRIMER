@@ -22,7 +22,7 @@
 
 .laporan__judul {
   font-size: var(--text-2xl);
-  margin: 2px 0;
+  margin: var(--sp-1) 0;
 }
 
 .laporan__grade {
@@ -59,7 +59,15 @@
   padding: var(--sp-3) 0;
   border-top: 1px dashed var(--border-halus);
   border-bottom: 1px dashed var(--border-halus);
-  color: var(--tinta-lembut);
+  font-size: var(--text-sm);
+  color: var(--tinta);
+}
+
+.laporan__statistik > span {
+  padding: var(--sp-05) var(--sp-2);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-pill);
 }
 
 .laporan__badges {
@@ -72,8 +80,8 @@
 .laporan__badge {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
   border: 1px solid var(--border-halus);
   border-radius: var(--radius-pill);
   /* CODEX M14 #18: opacity 0.35 menekan teks badge belum-diraih ke ~2:1.
@@ -83,6 +91,7 @@
 }
 
 .laporan__badge--raih {
+  order: -1;
   opacity: 1;
   filter: none;
   border-color: var(--kunyit-600);
@@ -95,15 +104,22 @@
   background: rgba(234, 165, 79, 0.16);
 }
 
-.laporan__badge-ikon { font-size: 1.1rem; }
+.laporan__badge-ikon { font-size: var(--text-lg); }
 
 .laporan__epilog { margin-top: var(--sp-4); }
 
 .laporan__kel { padding: var(--sp-3); margin-top: var(--sp-2); }
 
-.laporan__epilog-teks { line-height: 1.55; margin-top: 4px; }
+.laporan__epilog-teks { line-height: 1.55; margin-top: var(--sp-1); }
 
 .laporan__aksi { margin-top: var(--sp-5); gap: var(--sp-3); }
+
+/* Tombol/isi baris boleh turun baris di panel sempit — jangan meluap. */
+.laporan__aksi,
+.laporan__dossier .baris {
+  flex-wrap: wrap;
+  row-gap: var(--sp-2);
+}
 
 @keyframes laporan-masuk {
   from { opacity: 0; transform: translateY(10px); }
@@ -116,6 +132,19 @@
   flex-direction: column;
   gap: var(--sp-2);
   text-align: left;
+}
+
+/* NIM terikat identitas (mode ujian) — tampil sebagai plakat mono, bukan input. */
+.laporan__nim-terikat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--bg-sunken);
+  border: 1px dashed var(--border-tegas);
+  border-radius: var(--radius-md);
 }
 
 .laporan__nim {

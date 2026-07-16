@@ -73,9 +73,21 @@
      Layar pendek: panel scroll internal, kredit legal tetap terlihat utuh. */
   margin-top: auto;
   margin-bottom: auto;
-  max-height: calc(100vh - 150px);
+  /* Batch-7: buang angka ajaib calc(100vh - 150px) — parent flex-column yang
+     meng-cap tinggi; min-height:0 mengizinkan flex item menyusut utk scroll. */
+  max-height: none;
+  min-height: 0;
   overflow-y: auto;
   animation: title-panel-masuk 700ms 250ms var(--ease-keluar) both;
+}
+
+/* Wow hero: kertas terangkat dari meja fajar + garis kunyit matahari terbit.
+   Selector digandakan .title__panel.kertas — main.tsx mengimpor App SEBELUM
+   base.css, jadi border/box-shadow .kertas (base.css) menang atas selector
+   satu-kelas di file layar; butuh spesifisitas lebih tinggi, bukan urutan. */
+.title__panel.kertas {
+  box-shadow: var(--shadow-kartu), 0 24px 64px rgba(6, 63, 49, 0.14);
+  border-top: 3px solid var(--kunyit-600);
 }
 
 @media (max-height: 820px) {
@@ -198,6 +210,11 @@
   text-align: center;
 }
 
+/* Batch-7: pengganti inline style color kunyit-800 di TSX. */
+.title__peringatan--kunyit {
+  color: var(--kunyit-800);
+}
+
 /* -- Kredit & HKI ---------------------------------------------------------------- */
 /* Teks legal WAJIB terbaca (CODEX P1) TANPA menabrak apa pun (playtest:
    "piye cara liatnya"): in-flow di dasar kolom flex (bukan absolute — dulu
@@ -206,7 +223,9 @@
 .title__kredit {
   position: relative;
   z-index: 1;
-  width: min(1100px, calc(100vw - var(--sp-5) * 2));
+  /* P0 Batch-7: clearance simetris 220px utk kluster tombol melayang kiri-bawah
+     (mute + gigi) — dulu var(--sp-5)*2 membuat baris kredit terselip di bawah FAB. */
+  width: min(1100px, calc(100vw - 220px));
   margin-bottom: var(--sp-2);
   text-align: center;
   font-size: var(--text-xs);
@@ -216,7 +235,7 @@
   pointer-events: none;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--sp-1);
   padding: var(--sp-2) var(--sp-4);
   background: rgba(6, 63, 49, 0.82); /* daun-900 */
   border-radius: var(--radius-md);
@@ -251,7 +270,7 @@
 .title__arsip {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--sp-15);
   margin-top: var(--sp-3);
   padding-top: var(--sp-3);
   border-top: 1px dashed var(--border-halus);
@@ -294,15 +313,25 @@
   border: 0;
 }
 
+/* Batch-7: gaya lama (border tegas + bg kartu + bold) terlalu berat utk
+   sekadar penampil nama file — kini pasif/dashed, menguat saat hover/fokus. */
 .title__file-tampil {
   display: inline-block;
   padding: var(--sp-2) var(--sp-4);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-tegas);
-  background: var(--bg-card);
-  color: var(--tinta);
-  font-weight: 600;
+  border: 1px dashed var(--border-halus);
+  background: transparent;
+  color: var(--tinta-lembut);
+  font-weight: 400;
   font-size: var(--text-sm);
+}
+
+.title__impor:hover { color: var(--tinta); }
+.title__impor:hover .title__file-tampil { border-color: var(--border-tegas); }
+.title__impor:focus-within {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 /* Fix #27 (audit CODEX 2026-07-11): pemisah visual antar alat dosen. */
@@ -311,6 +340,23 @@
   border: none;
   border-top: 1px dashed var(--border-halus);
 }
+
+/* Batch-7: alat dosen (verifikasi dossier + telemetri) dilipat dlm <details>
+   — default tertutup agar mahasiswa tak terdistraksi; marker kustom ▸/▾. */
+.title__alat-dosen {
+  margin-top: var(--sp-3);
+  border-top: 1px dashed var(--border-halus);
+  padding-top: var(--sp-3);
+}
+
+.title__alat-dosen > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.title__alat-dosen > summary::-webkit-details-marker { display: none; }
+.title__alat-dosen > summary::before { content: '▸ '; }
+.title__alat-dosen[open] > summary::before { content: '▾ '; }
 
 /* -- M6.27: panel hasil verifikasi dossier (dosen) --------------------------------- */
 .title__verifikasi {

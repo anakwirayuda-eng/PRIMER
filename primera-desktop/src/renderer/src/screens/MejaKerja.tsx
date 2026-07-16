@@ -110,6 +110,9 @@ export function MejaKerja() {
 
   const [suratTerbukaId, setSuratTerbukaId] = useState<string | null>(null)
   const [draftRefleksi, setDraftRefleksi] = useState('')
+  // Audit CODEX UKM 2026-07-16 #3: TETAPKAN_PROGRAM kini WAJIB membawa rwFokus
+  // (engine menolak tanpa RW). Pemilih RW lokal — default RW fokus tersimpan.
+  const [rwPilihan, setRwPilihan] = useState<number | undefined>(state.program.rwFokus)
 
   // Draf refleksi mengikuti hari berjalan (draft lokal, dispatch saat blur/tidur
   // agar action-log tidak dibanjiri satu aksi per ketukan).
@@ -204,8 +207,15 @@ export function MejaKerja() {
   const programRadio = useRadioGroup<string>(
     OPSI_PROGRAM,
     state.program.fokus ?? '',
-    (f) => dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f as FokusProgram }),
+    (f) => {
+      if (rwPilihan === undefined) return // #3: engine menolak tanpa rwFokus
+      dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f as FokusProgram, rwFokus: rwPilihan })
+    },
   )
+
+  // M10.5 #15: siklus laporan/program diskalakan per mode — jangan literal 30.
+  const periodeProgram = Math.ceil(state.hari / SIKLUS_LAPORAN_BULANAN[state.mode])
+  const programTerkunci = state.program.periodeDitetapkan === periodeProgram
 
   /* -- Langkah berikutnya (tombol LANJUTKAN besar, label dinamis) ---------------- */
 
@@ -502,7 +512,7 @@ export function MejaKerja() {
                 )}
 
                 <div className="baris mk__lapangan-aksi">
-                  <button className="tombol tombol--utama" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })}>
+                  <button className="tombol" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })}>
                     Buka Peta Desa — pilih kunjungan / Posyandu / KLB →
                   </button>
                   {state.hari >= HARI_BUKA_PROLANIS[state.mode] && state.prolanis.roster.length > 0 && (() => {
@@ -532,47 +542,77 @@ export function MejaKerja() {
             {/* Program wilayah agregat — Triase Anggaran bulanan, tak makan slot. */}
             {petaTerbuka && (
               <div className="kartu mk__program">
-                <div className="judul-seksi">Program Wilayah (bulanan — Triase Anggaran)</div>
+                <h3 className="judul-seksi">Program Wilayah (bulanan — Triase Anggaran)</h3>
                 <p className="teks-xs teks-lembut">
-                  Hanya SATU fokus terdanai sebulan penuh — pilih, lalu terima area lain berisiko sampai
-                  Lokakarya Mini berikutnya.
-                  {state.program.fokus ? ` Fokus kini: ${LABEL_PROGRAM[state.program.fokus]}.` : ' Belum ada fokus ditetapkan.'}
+                  Hanya SATU fokus terdanai sebulan penuh — pilih RW fokus dan programnya, lalu terima
+                  area lain berisiko sampai Lokakarya Mini berikutnya. Fokus sebulan pada satu RW
+                  melindungi keluarga di sana dari kemerosotan yang terjadi bila diabaikan — bukan sekadar angka.
+                  {state.program.fokus
+                    ? ` Fokus kini: ${LABEL_PROGRAM[state.program.fokus]}${
+                        state.program.rwFokus !== undefined ? ` — RW ${state.program.rwFokus}` : ''
+                      }.`
+                    : ' Belum ada fokus ditetapkan.'}
                 </p>
+                {/* Audit CODEX UKM 2026-07-16 #3: pemilih RW fokus — dana program
+                    diarahkan ke SATU RW; tanpa ini engine menolak TETAPKAN_PROGRAM. */}
+                <div className="baris mk__program-opsi" role="group" aria-label="Pilih RW fokus program">
+                  {PACK.rw.map((r) => (
+                    <button
+                      key={r.nomor}
+                      className={`tombol ${rwPilihan === r.nomor ? 'tombol--utama' : ''}`}
+                      aria-pressed={rwPilihan === r.nomor}
+                      disabled={programTerkunci}
+                      title={
+                        programTerkunci
+                          ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.'
+                          : `Arahkan dana program bulan ini ke RW ${r.nomor} — ${r.nama}.`
+                      }
+                      onClick={() => setRwPilihan(r.nomor)}
+                    >
+                      RW {r.nomor}
+                    </button>
+                  ))}
+                </div>
                 <div className="baris mk__program-opsi" role="radiogroup" aria-label="Program Wilayah bulanan">
                   {OPSI_PROGRAM.map((f) => {
-                    const periodeIni = Math.ceil(state.hari / 30)
                     // CODEX M14 #15: grup terkunci = fokus bulan ini sudah ditetapkan
                     // (opsi lain disabled). Saat BELUM terkunci, beri props radiogroup
                     // PENUH (roving tabindex + navigasi panah, pola W3C). Saat terkunci,
                     // roving ke opsi disabled degenerate → cukup role+aria-checked.
-                    const grupTerkunci = state.program.periodeDitetapkan === periodeIni
-                    const terkunci = grupTerkunci && state.program.fokus !== f
+                    const terkunci = programTerkunci && state.program.fokus !== f
                     const rp = programRadio.radioProps(f)
-                    const propsRadio = grupTerkunci ? { role: rp.role, 'aria-checked': rp['aria-checked'] } : rp
+                    const propsRadio = programTerkunci ? { role: rp.role, 'aria-checked': rp['aria-checked'] } : rp
                     return (
                       <button
                         key={f}
                         {...propsRadio}
                         className={`tombol ${state.program.fokus === f ? 'tombol--utama' : ''}`}
-                        disabled={terkunci}
-                        title={terkunci ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.' : undefined}
-                        onClick={() => dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f })}
+                        disabled={terkunci || rwPilihan === undefined}
+                        title={
+                          terkunci
+                            ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.'
+                            : rwPilihan === undefined
+                              ? 'Pilih RW fokus dulu.'
+                              : undefined
+                        }
+                        onClick={() => {
+                          if (rwPilihan !== undefined)
+                            dispatch({ type: 'TETAPKAN_PROGRAM', fokus: f, rwFokus: rwPilihan })
+                        }}
                       >
                         {LABEL_PROGRAM[f]}
                       </button>
                     )
                   })}
                 </div>
-                {state.program.periodeDitetapkan === Math.ceil(state.hari / 30) && (
-                  <p className="teks-xs teks-lembut">🔒 Terkunci untuk bulan ini.</p>
-                )}
+                {programTerkunci && <p className="teks-xs teks-lembut">🔒 Terkunci untuk bulan ini.</p>}
               </div>
             )}
 
             {/* M4.21 — Pemulihan akhir pekan: tiap hari ke-7, memakai slot siang. */}
             {state.hari % 7 === 0 && !slotTerpakai && (
               <div className="kartu mk__program">
-                <div className="judul-seksi">Akhir Pekan — Pemulihan Diri</div>
+                <h3 className="judul-seksi">Akhir Pekan — Pemulihan Diri</h3>
                 <p className="teks-xs teks-lembut">
                   Burnout {state.burnout}/100. Dokter yang tumbang tidak menolong siapa-siapa —
                   hari ini boleh untukmu sendiri (memakai slot lapangan).
@@ -647,9 +687,9 @@ export function MejaKerja() {
               if (menipis.length === 0 && dalamKirim.length === 0) return null
               return (
                 <div className="kartu mk__program">
-                  <div className="judul-seksi">Gudang Obat</div>
+                  <h3 className="judul-seksi">Gudang Obat</h3>
                   {menipis.length > 0 && (
-                    <div className="kolom" style={{ gap: 4 }}>
+                    <div className="kolom mk__gudang-daftar">
                       {menipis.slice(0, 6).map(([id, n]) => {
                         const o = PACK.obat[id]
                         if (!o) return null
@@ -698,6 +738,7 @@ export function MejaKerja() {
             })()}
 
             {/* M5.25 — arsip manual: 3 slot di samping autosave. */}
+            <h3 className="mk__sub-judul mono">ARSIP MANUAL</h3>
             <div className="baris mk__program-opsi">
               {(['slot1', 'slot2', 'slot3'] as const).map((slot) => {
                 const info = slots.find((x) => x.slot === slot)
@@ -889,10 +930,10 @@ export function MejaKerja() {
                 kluster aktif yang tak tersentuh fokus program bulan lalu. */}
             {(() => {
               const tercakup = state.program.fokus ? TARGET_KASUS_PROGRAM[state.program.fokus] : []
-              const diabaikan = clusterAktif(state).filter((c) => !tercakup.includes(c.kasusId))
+              const diabaikan = clusterAktif(state, PACK).filter((c) => !tercakup.includes(c.kasusId))
               if (diabaikan.length === 0) return null
               return (
-                <div className="kartu mk__lokmin-rival">
+                <div className="kartu mk__lokmin-rival mk__lokmin-ongkos">
                   <div className="teks-kecil">⚖️ Ongkos oportunitas bulan ini</div>
                   <p className="teks-xs teks-lembut">
                     Fokusmu ({state.program.fokus ? LABEL_PROGRAM[state.program.fokus] : 'belum ditetapkan'}) tak

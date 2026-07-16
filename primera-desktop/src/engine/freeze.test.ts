@@ -103,22 +103,47 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // REVISI 35 (2026-07-15 - M13-1a): pilot Career-only menambah usia
   // bulan, bundel stabilisasi, tindakan berbahaya, dan routing RS berbasis
   // kapabilitas. Ujian tetap terisolasi oleh modePolicy.
-  'reducer.ts': 'cc0a06cdefcc1e99bd0dbab04589aac07734afa64068f10194720c8a5bdb2b94',
-  'clinic.ts': 'd15325f895f1aae97aae02a99ce7ca0d2d9a33b9a0c33b62f06195be54035be7',
-  'scoring.ts': '34f08bd47df35dda58e6043892c80061a9d39515ce385ca1a8d46a74f6bba81c',
-  'director.ts': '2dd1a65bd524210426dba145a0775b88a4502377c015518f128e03b00c8d483a',
+  // Unfreeze 2026-07-16 KETIGA (audit CODEX UKM item desain, REVISI_ENGINE 38):
+  // outcome-window PIS-PK (janji→verifikasi), ekonomi IKS reframe (posyandu
+  // verifikasi KIA + program perisai drift), kader isi bertahap, ambang KLB
+  // ground Permenkes 1/2026 — state/kader/kunjungan/reducer/surveilans.
+  // Unfreeze 2026-07-16 KEDUA (audit CODEX UKM, REVISI_ENGINE 37): arc
+  // kunjungan mode-aware, program per-RW, drift ex-kunjungan, GDP Prolanis,
+  // catatanPedagogis debrief — reducer/kunjungan/state/kegiatan/scoring.
+  // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): gerbang terapiKritis (terapi
+  // penyelamat nyawa) + Dex "kuasai" kini menuntut keselamatan resep + terapi
+  // kritis + konsekuensi hanya untuk obat kontraindikasi (bukan nonPrimer).
+  // Lihat REVISI_ENGINE bump di verifikasi.ts.
+  // Unfreeze 2026-07-16 KELIMA (audit CODEX pasca-Batch4, REVISI_ENGINE 39→40):
+  // kontradiksi ambang Prolanis DM ditutup — kartuProlanis (kegiatan.ts) &
+  // rasioProlanisTerkontrol (scoring.ts) masih memakai ambang GDS lama <200
+  // setelah skala DM pindah ke GDP <130 di rev 37, sehingga kartu/skor bilang
+  // "terkendali" untuk peserta yang justru diperlakukan memburuk oleh drift.
+  // Ketiganya kini memanggil `prolanisTerkendali()` — satu konstanta bersama.
+  // Unfreeze 2026-07-16 KEEMPAT (M13 Batch 4+6, REVISI_ENGINE 38→39): sumber
+  // ambang kluster pindah dari AMBANG_CLUSTER hardcoded ke KasusKlinis.ambangKluster
+  // (surveilans.ts kontrak fungsi berubah; reducer.ts/director.ts call-site).
+  // 14 kasus infeksi lab kini bisa berkluster → komposisi KLB & bobot Director
+  // bergeser pada jejak yang menyentuhnya. Kanal IGD baca activationStatus
+  // (blueprint) — tak menyentuh file beku. Detail di verifikasi.ts REVISI 39.
+  'reducer.ts': '9037bcc3c43a63c064249fd320e3f9e351803cee4188f147151ad98747da5209',
+  'clinic.ts': 'bb247f3383775cdfe423ee9df6fbce7f4ea3ca407215b05af9da38cb7a0bce64',
+  'scoring.ts': 'c1b5de6fc2c194e8b8a70b8d802a29980002ee2059ea487821e9e59fc0540d8d',
+  'director.ts': '2e46d3d85c02fa657d81a57d6477e5bb1b24931151d546f5b3c58cabdd3ffabb',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
-  'kader.ts': 'fff1c7c055d1526f1e9632e64a3f72939840412c0f148e201444d6a7353aa646',
+  'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
   'init.ts': '19b2d372c730406a14ac96afc3497fc8e8f418b0694271a5bff1df41ad778afb',
-  'kegiatan.ts': '61004bed15e5f8095214205aff69da6be55556d329552bc6a691cc0e4bf62d52',
-  'kunjungan.ts': '4ec29cba2af05c8befec99921fe0cf8fc4d93950546c08121ded7f82efa66517',
+  'kegiatan.ts': 'c2f0bddb9d8e1b3a3a4f60cd04c79be9d6d447c6db58c147f873f67e6d6d6b06',
+  'kunjungan.ts': 'b7288526abd342b909b94905c6040907d5c78854a5d2545f0a0c829362321eb2',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
-  'verifikasi.ts': '0ecf9877286bcc513046cca9bdcd02ab6c0291ee9acc332e72200d857384892a',
-  'state.ts': 'ea874e2a503621d7dd28077e2cad21c6921c03ecab0fe5c0632bddf837748a89',
+  // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
+  // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
+  'verifikasi.ts': 'aa390b1ca0139fb49664633baba7e1f2890756e164388c5a990b17c9c9a3931f',
+  'state.ts': 'ae152cedeb3b03d1da405d62a8392d5dfe8d3eccaafedca594b98b5ef7a1f4b8',
   'save.ts': '8c75672d5ff27efa243ce2f87d3ad92ff22c5c851f010566e1c4090b43449c8a',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
-  'surveilans.ts': '34bdfd80c9ebd2ae5a261118e9154cdfeb670b06b029e96013e2b26ef9a86a80',
+  'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',
   'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',
 }
 

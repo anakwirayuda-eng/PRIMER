@@ -49,7 +49,7 @@ describe('M14 #1 — skor terkunci pasca-tamat', () => {
 
   it('TETAPKAN_PROGRAM & PILIH_BINAAN DITOLAK pasca-tamat', () => {
     const s = sampaiTamat()
-    const r1 = advance(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' }, PACK)
+    const r1 = advance(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 }, PACK)
     expect(r1.events.some((e) => e.type === 'ERROR_AKSI' && e.pesan.includes('terkunci'))).toBe(true)
     // Roster binaan tak berubah (guard menolak sebelum mutasi apa pun).
     const binaanSebelum = s.desa.binaan.length

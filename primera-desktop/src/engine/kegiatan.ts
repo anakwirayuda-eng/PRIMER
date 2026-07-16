@@ -359,9 +359,34 @@ export function kartuPosyandu(rng: Rng): KartuKegiatan[] {
  * PROLANIS — satu kartu per peserta kronis: keputusan tata laksana bulanan.
  * ------------------------------------------------------------------------- */
 
+/**
+ * Ambang "terkendali" Prolanis — SATU-SATUNYA sumber kebenaran, dipakai kartu
+ * (kartuProlanis), skor (scoring.ts rasioProlanisTerkontrol), DAN progres
+ * penyakit (driftProlanis). Angka per BPJS RPPT: HT terkendali TD sistolik
+ * <140 mmHg; DM terkendali GDP <130 mg/dL.
+ *
+ * BUG YANG DIPERBAIKI (audit CODEX 2026-07-16, REVISI_ENGINE 39→40): saat skala
+ * DM dipindah GDS→GDP di rev 37 (#12), HANYA `driftProlanis` yang ikut pindah
+ * ke <130; `kartuProlanis` dan `scoring.ts` TERTINGGAL di ambang GDS lama <200.
+ * Akibatnya peserta DM ber-GDP 150 ditampilkan "terkendali" di kartu DAN
+ * dihitung terkendali oleh skor, TAPI diperlakukan tak-terkendali oleh progres
+ * penyakit (takTerkontrolBerturut terus naik) — pemain melihat kartu hijau
+ * sambil penyakitnya memburuk diam-diam. Satu konstanta bersama menutup kelas
+ * bug ini: ambang tak bisa lagi mengambang antar-modul.
+ */
+export const AMBANG_TERKENDALI_PROLANIS: Readonly<Record<'ht' | 'dm', number>> = {
+  ht: 140,
+  dm: 130,
+}
+
+/** Terkendali? Satu predikat, dipakai kartu/skor/drift tanpa duplikasi angka. */
+export function prolanisTerkendali(jenis: 'ht' | 'dm', param: number): boolean {
+  return param < AMBANG_TERKENDALI_PROLANIS[jenis]
+}
+
 export function kartuProlanis(peserta: PesertaProlanis[]): KartuKegiatan[] {
   return peserta.map((p) => {
-    const terkontrol = p.jenis === 'ht' ? p.param < 140 : p.param < 200
+    const terkontrol = prolanisTerkendali(p.jenis, p.param)
     if (p.jenis === 'ht') {
       return {
         id: `prol_${p.id}`,
@@ -419,7 +444,7 @@ export function kartuProlanis(peserta: PesertaProlanis[]): KartuKegiatan[] {
       id: `prol_${p.id}`,
       pesertaId: p.id,
       judul: `Prolanis DM — ${p.nama} (${p.usia} th)`,
-      narasi: `Gula darah sewaktu ${p.param} mg/dL. ${
+      narasi: `Gula darah puasa ${p.param} mg/dL. ${
         terkontrol ? 'Patuh metformin, rajin jalan pagi.' : 'Mengeluh sering haus & kesemutan, jarang olahraga.'
       }`,
       pilihan: terkontrol
@@ -641,9 +666,11 @@ export function nilaiKegiatan(kg: KegiatanState): HasilKegiatan {
 /** Drift parameter Prolanis antar-bulan: intervensi tepat menurunkan, lalai menaikkan. */
 export function driftProlanis(p: PesertaProlanis, intervensiTepat: boolean, rng: Rng): PesertaProlanis {
   const arah = intervensiTepat ? -1 : 1
-  const besar = p.jenis === 'ht' ? rng.int(6, 16) : rng.int(15, 45)
-  const param = Math.max(p.jenis === 'ht' ? 110 : 90, p.param + arah * besar)
-  const terkontrol = p.jenis === 'ht' ? param < 140 : param < 200
+  // #12 (audit CODEX UKM 2026-07-16): skala DM kini GDP — ambang kontrol
+  // RPPT <130 mg/dL (bukan GDS <200); langkah drift disesuaikan ke skala GDP.
+  const besar = p.jenis === 'ht' ? rng.int(6, 16) : rng.int(10, 30)
+  const param = Math.max(p.jenis === 'ht' ? 110 : 85, p.param + arah * besar)
+  const terkontrol = prolanisTerkendali(p.jenis, param)
   const takTerkontrolBerturut = terkontrol ? 0 : p.takTerkontrolBerturut + 1
   return { ...p, param, takTerkontrolBerturut }
 }

@@ -53,7 +53,7 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
       </button>
 
       {buka && (
-        <div className="set-overlay" onClick={() => setBuka(false)}>
+        <div className="overlay set-overlay" onClick={() => setBuka(false)}>
           <div ref={ref} className="set-modal kertas" role="dialog" aria-modal="true" aria-label="Pengaturan" onClick={(e) => e.stopPropagation()}>
             <div className="baris baris--antara">
               <h2 className="judul-seksi">Pengaturan</h2>
@@ -76,7 +76,7 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
 
             <label className="set-baris">
               <span>Ukuran Teks</span>
-              <input type="range" min="0.9" max="1.4" step="0.05" value={p.ukuranTeks}
+              <input type="range" min="0.9" max="2" step="0.05" value={p.ukuranTeks}
                 onChange={(e) => setPengaturan({ ukuranTeks: Number(e.target.value) })} />
               <span className="set-nilai mono">{persen(p.ukuranTeks)}</span>
             </label>

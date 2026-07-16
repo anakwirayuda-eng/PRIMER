@@ -21,8 +21,8 @@
     "dist": "npm run check:bgm-license && electron-vite build && electron-builder --win nsis"
   },
   "build": {
-    "appId": "id.ac.its.medics.primer",
-    "productName": "PRIMERA - Puskesmas Pagi",
+    "appId": "id.ac.its.medics.primer.testbeta",
+    "productName": "PRIMERA test-beta",
     "copyright": "© 2026 Anak Agung Bagus Wirayuda MD PhD. Hak Cipta Terdaftar — No. EC002026019623.",
     "directories": {
       "output": "dist",
@@ -37,7 +37,7 @@
     },
     "nsis": {
       "oneClick": true,
-      "shortcutName": "PRIMERA - Puskesmas Pagi"
+      "shortcutName": "PRIMERA test-beta"
     }
   },
   "dependencies": {

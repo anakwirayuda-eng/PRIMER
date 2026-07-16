@@ -236,7 +236,12 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     ],
     diagnosisBanding: ['O23.4', 'N30.0', 'N10'],
     tatalaksana: {
-      obatBenar: ['cefixime_100', 'paracetamol_500'],
+      // 2026-07-16 (sapuan clue-vs-struktur): clue mengesahkan "beta-laktam
+      // (sefiksim/AMOKSISILIN)" tetapi dulu hanya sefiksim yang diterima —
+      // pemain yg memilih amoksisilin (sama-sama beta-laktam aman bumil yg
+      // disebut clue) kena penalti. Kini antibiotik = pilih-salah-satu.
+      obatBenar: ['paracetamol_500'],
+      obatAlternatif: [['cefixime_100', 'amoxicillin_500']],
       obatSalahUmum: [
         { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon KONTRAINDIKASI pada kehamilan — risiko gangguan tulang rawan janin. Pilih beta-laktam yang aman (sefiksim).', bahaya: 'kontraindikasi' },
         { id: 'doksisiklin_100', alasan: 'Tetrasiklin KONTRAINDIKASI pada kehamilan — menyebabkan diskolorasi gigi & gangguan tulang janin.', bahaya: 'kontraindikasi' },
@@ -356,6 +361,10 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
         { id: 'diazepam_2', alasan: 'Antikonvulsan pilihan pada preeklampsia/eklampsia adalah MgSO4, BUKAN benzodiazepin (kalah efektif & menekan napas ibu/janin).', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['tanda_bahaya_kehamilan'],
+      // Audit CODEX 2026-07-16 #2: MgSO4 adalah pencegah kejang eklampsia — dulu
+      // melewatkannya (beri nifedipin saja) masih bisa dapat A (terapi 50, tanpa
+      // gate). Kini WAJIB: skip → cap D + pasien memburuk (WHO pre-eclampsia).
+      terapiKritis: ['mgso4_inj'],
     },
     clue: 'Preeklampsia BERAT: TD ≥160/110 + proteinuria + gejala berat (nyeri kepala hebat, gangguan visus, nyeri epigastrium, hiperrefleksia/klonus, trombositopenia, SGOT/SGPT naik). WAJIB stabilisasi MgSO4 (loading + maintenance) & kendalikan TD dengan nifedipin/metildopa lalu RUJUK ke SpOG. JANGAN dipulangkan — risiko eklampsia/HELLP mengancam nyawa ibu & janin (PNPK Preeklampsia Kemenkes/POGI).',
     panduanResmi: 'PPK 1186/2022: MgSO4 loading 4 g IV pelan (20 menit) + rumatan 6 g/6 jam, dengan SYARAT wajib refleks patella (+), urin ≥0,5 ml/kgBB/jam, & Ca Glukonas 10% siap sebagai antidot toksisitas Mg — detail keamanan pemberian yang tak dirinci clue. (ACE-inhibitor/ARB kontraindikasi pada bumil.)',
@@ -565,7 +574,22 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     diagnosisBanding: ['Z30.0', 'Z30.4', 'Z39.1'],
     tatalaksana: {
       obatBenar: [],
-      obatSalahUmum: [],
+      // 2026-07-16 (temuan playtest user): clue mengajarkan pemilihan metode
+      // tetapi laci resep tak menyediakan SATU PUN kontrasepsi. Model
+      // informed choice: TIDAK ada resep wajib (obatBenar tetap kosong —
+      // pasienlah yang memilih metode; AKDR/implan dimodelkan lewat
+      // konseling, bukan resep), opsi aman tersedia sebagai obatOpsional
+      // (meresepkan sah, tak meresepkan pun sah), dan pil kombinasi estrogen
+      // menjadi dangerous-path kasus ini.
+      obatOpsional: ['desogestrel_75', 'dmpa_150', 'kondom'],
+      obatSalahUmum: [
+        {
+          id: 'pil_kb_kombinasi',
+          alasan:
+            'Ibu menyusui dini: estrogen kombinasi menekan produksi ASI dan menaikkan risiko trombosis — pilih non-hormonal atau progestin-only (WHO MEC).',
+          bahaya: 'kontraindikasi',
+        },
+      ],
       // CODEX (2026-07-05): gizi_seimbang diganti kb_aman_menyusui — poin ajar
       // utama kasus ini (pemilihan metode KB aman saat menyusui) sebelumnya
       // tak diuji topik edukasi manapun; asi_eksklusif & kontrol_rutin tetap
@@ -573,6 +597,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['asi_eksklusif', 'kontrol_rutin', 'kb_aman_menyusui'],
     },
     clue: 'Konseling KB pascapersalinan pada ibu MENYUSUI: pilihan aman = metode non-hormonal (IUD/AKDR, kondom) atau progestin-only (pil progestin, suntik DMPA 3 bulan, implan). HINDARI kontrasepsi kombinasi estrogen dalam 6 minggu pertama & selama menyusui dini (estrogen menurunkan produksi ASI + risiko trombosis). Konseling harus BERIMBANG (informed choice) — sesuaikan dengan rencana reproduksi & syarat medis (WHO MEC / Kemenkes BKKBN).',
+    catatanRealita:
+      'Layanan KB Puskesmas berjejaring dengan program BKKBN: pil progestin, suntik DMPA, dan kondom umumnya tersedia gratis. AKDR dan implan butuh pemasangan oleh tenaga terlatih — di sini dimodelkan lewat konseling pilihan metode, bukan tindakan pemasangan.',
   },
 
   /* ======================================================================

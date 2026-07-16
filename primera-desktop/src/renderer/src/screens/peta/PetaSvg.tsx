@@ -6,7 +6,7 @@
  */
 
 import type { RwState } from '@engine/state'
-import { jalurOrganik, LABEL_JARAK, mendungPetak, PETAK_RW, warnaPetak } from './petaUtil'
+import { formatIks, jalurOrganik, LABEL_JARAK, mendungPetak, PETAK_RW, warnaPetak } from './petaUtil'
 
 interface Props {
   daftarRw: RwState[]
@@ -85,7 +85,7 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
         const labelPetak =
           `RW ${rw.nomor} — ${rw.nama} (jarak ${LABEL_JARAK[rw.jarak]}). ` +
           (rw.kkTersurvei > 0
-            ? `IKS agregat ${(rw.iks * 100).toFixed(0)}.`
+            ? `IKS agregat ${formatIks(rw.iks)}.`
             : 'Belum tersurvei kader — datanya masih abu-abu.')
         return (
           <g

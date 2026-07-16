@@ -105,6 +105,11 @@ export function RuangTunggu({ state, dispatch }: Props) {
             Panggil Pasien Berikutnya
             {berikutnya !== undefined ? ` — ${berikutnya.nama}` : ''}
           </button>
+          {/* Sapuan 2026-07-16: alasan terkunci dulu hanya di title (hover) —
+              kini caption terlihat, pemain tak menebak kenapa tombol mati. */}
+          {!bolehPanggil && alasanPanggil !== undefined && (
+            <span className="teks-xs teks-lembut klinik-tunggu__alasan">{alasanPanggil}</span>
+          )}
         </div>
       ) : (
         <div className="kartu klinik-tunggu__kosong">

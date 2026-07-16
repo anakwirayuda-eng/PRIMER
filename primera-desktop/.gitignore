@@ -8,3 +8,6 @@ dist/
 # workflow riset M11.5/M13 (bukan dependensi runtime/build game). Disimpan lokal,
 # TIDAK dimasukkan ke histori git (regenerable; menghindari bloat permanen).
 docs/references/
+
+# Office lock files
+~$*

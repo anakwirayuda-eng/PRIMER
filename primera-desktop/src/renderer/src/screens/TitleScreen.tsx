@@ -190,7 +190,9 @@ export function TitleScreen() {
       <div className="title__panel kertas">
         <p className="title__kicker mono">KEMENTERIAN KESEHATAN · SIMULASI STASE IKM</p>
         <h1 className="title__judul">PRIMERA</h1>
-        <p className="title__sub mono">— PUSKESMAS PAGI —</p>
+        {/* Build lab/eksperimen — label test-beta supaya tak tertukar dgn
+            instalasi lain; hapus label ini saat porting ke rilis produksi. */}
+        <p className="title__sub mono">— PUSKESMAS PAGI · TEST-BETA —</p>
         {/* M10 Batch-2 (CODEX A.6): tagline mengikuti mode terpilih — dulu
             hardcoded "Sembilan puluh hari" walau Ujian·30 hari dipilih. */}
         <p className="title__tagline">
@@ -213,7 +215,7 @@ export function TitleScreen() {
             )}
 
             {arsip !== null && !arsipRilisSesuai && (
-              <div className="title__peringatan teks-kecil" role="alert" style={{ color: 'var(--kunyit-800)' }}>
+              <div className="title__peringatan title__peringatan--kunyit teks-kecil" role="alert">
                 <p>
                   Arsip dr. {arsip.namaDokter} berasal dari rilis {arsip.contentRelease} dan tidak dapat
                   dilanjutkan pada rilis {PACK.runtimeManifest.contentRelease}. Arsip tetap tersimpan sampai
@@ -228,7 +230,7 @@ export function TitleScreen() {
             {/* CODEX M14 #6: autosave ADA tapi tak terbaca — dulu tampak seperti
                 "belum pernah main", pemain bisa mulai baru & menimpanya diam2. */}
             {arsip === null && arsipKorup && (
-              <p className="title__peringatan teks-kecil" role="alert" style={{ color: 'var(--kunyit-800)' }}>
+              <p className="title__peringatan title__peringatan--kunyit teks-kecil" role="alert">
                 ⚠ Ada penyimpanan otomatis yang tidak bisa dibaca (mungkin rusak atau dari versi lama). Memulai stase baru akan menimpanya.
               </p>
             )}
@@ -395,6 +397,11 @@ export function TitleScreen() {
               />
             </label>
 
+            {/* Batch-7: alat dosen dilipat — default tertutup, mahasiswa tak
+                perlu melihatnya; jsdom tidak menyembunyikan isi <details>,
+                test getByLabelText tetap jalan. */}
+            <details className="title__alat-dosen">
+            <summary className="judul-seksi">Alat Dosen — verifikasi &amp; telemetri</summary>
             {/* M6.27 — verifikasi dossier mahasiswa (untuk dosen, offline). */}
             <label className="teks-xs teks-lembut title__impor">
               Verifikasi Dossier — untuk dosen:{' '}
@@ -544,6 +551,7 @@ export function TitleScreen() {
                 )}
               </div>
             )}
+            </details>
 
             {DI_ELECTRON && (
               <button

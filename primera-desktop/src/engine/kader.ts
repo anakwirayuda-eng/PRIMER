@@ -25,6 +25,14 @@ import { hitungIksKeluarga, klasifikasiIks, SEMUA_INDIKATOR_PISPK } from './pisp
  * kontinu 0.45-0.62 yang dipakai baseline lama) — mayoritas keluarga riil
  * jatuh di 'pra-sehat' (0.5-0.8), bukan lolos ambang 'sehat' (>0.8).
  */
+/**
+ * #8 (audit CODEX UKM 2026-07-16): maksimal indikator yang diisi kader per
+ * keluarga per hari — memecah "dinding data hari-2" jadi fog-of-war bertahap
+ * (satu keluarga terdata penuh dalam ~1-2 pekan, bukan seketika). Angka kecil
+ * sengaja: memberi dokter jendela memverifikasi lebih dulu sebelum didahului.
+ */
+const KUOTA_INDIKATOR_KADER_HARIAN = 2
+
 const PROPORSI_SEHAT_JARAK: Record<'dekat' | 'sedang' | 'terpencil', number> = {
   dekat: 0.2,
   sedang: 0.12,
@@ -154,7 +162,15 @@ export function prosesHarianKader(
       if (!adaBelum) continue
 
       const indikator: Record<IndikatorPisPk, NilaiIndikator> = { ...st.indikator }
+      // #8 (audit CODEX UKM 2026-07-16): fog-of-war BERTAHAP. Dulu kader
+      // mengisi SEMUA indikator 'belum' satu keluarga sekaligus di hari-2 →
+      // 95/95 nilai (banyak salah) muncul sebelum peta pertama dibuka. Kini
+      // maks KUOTA_INDIKATOR_KADER_HARIAN per keluarga per hari (urutan tetap
+      // SEMUA_INDIKATOR_PISPK, deterministik) → data terisi ~1-2 pekan, memberi
+      // dokter jendela nyata memverifikasi dulu sebelum kader mendahului.
+      let terisiHariIni = 0
       for (const ind of SEMUA_INDIKATOR_PISPK) {
+        if (terisiHariIni >= KUOTA_INDIKATOR_KADER_HARIAN) break
         const nilai = indikator[ind]
         if (nilai.sumber !== 'belum' || nilai.statusSebenarnya === 'na') continue
         // Bias kader SELALU salah pada indikatornya; sisanya salah sesuai
@@ -166,7 +182,9 @@ export function prosesHarianKader(
           sumber: 'kader',
           hariData: hari,
         }
+        terisiHariIni += 1
       }
+      if (terisiHariIni === 0) continue
       keluarga[id] = { ...st, indikator }
       keluargaDiisi.push({ id, nama: profil.namaKeluarga })
     }

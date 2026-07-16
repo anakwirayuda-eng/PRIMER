@@ -206,25 +206,28 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
 
         {/* M11: lapisan pengayaan — mutiara EBM "temuan bisa menyesatkan" +
             catatan realita FKTP. Dibaca langsung dari PACK (murni display, tak
-            lewat engine/skor). Muncul hanya bila kasus menyediakannya. */}
+            lewat engine/skor). Muncul hanya bila kasus menyediakannya.
+            Sapuan UI/UX 2026-07-16: kini <details> — debrief tak lagi tembok
+            teks 4 folder; Panduan Resmi default terbuka (baku penilaian),
+            dua lainnya dilipat. Isi tetap di DOM (jsdom: test getByText aman). */}
         {kasus?.mutiaraEbm && (
-          <div className="folder klinik-hasil__ebm">
-            <div className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</div>
+          <details className="folder klinik-hasil__ebm">
+            <summary className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</summary>
             <p className="teks-kecil">{kasus.mutiaraEbm}</p>
-          </div>
+          </details>
         )}
         {kasus?.catatanRealita && (
-          <div className="folder klinik-hasil__realita">
-            <div className="judul-seksi">🏥 Realita FKTP</div>
+          <details className="folder klinik-hasil__realita">
+            <summary className="judul-seksi">🏥 Realita FKTP</summary>
             <p className="teks-kecil">{kasus.catatanRealita}</p>
-          </div>
+          </details>
         )}
         {/* M11.5: lapisan otoritas ke-3 — panduan RESMI Kemenkes (PPK
             1186/2022), terpisah dari clue (EBM internasional) & realita. Sama
             kelas display-only. Muncul hanya bila kasus menyediakannya. */}
         {kasus?.panduanResmi && (
-          <div className="folder klinik-hasil__panduan">
-            <div className="judul-seksi">📜 Panduan Resmi Kemenkes</div>
+          <details className="folder klinik-hasil__panduan" open>
+            <summary className="judul-seksi">📜 Panduan Resmi Kemenkes</summary>
             <p className="teks-kecil">{kasus.panduanResmi}</p>
             {/* §3b (M10.5, docs/M10_5_FIDELITAS.md): koreksi medikolegal — PPK
                 bukan "hukum mutlak anti-EBM". Diktum VI/VII KMK 1186/2022
@@ -233,7 +236,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
               Baku DEFAULT penilaian — menyimpang darinya tetap sah bila beralasan klinis kuat &
               terdokumentasi (KMK 1186/2022 Diktum VI/VII), bukan sekadar beda pendapat.
             </p>
-          </div>
+          </details>
         )}
 
         <div className="baris klinik-hasil__aksi">

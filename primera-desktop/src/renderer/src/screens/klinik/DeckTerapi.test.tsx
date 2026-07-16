@@ -41,6 +41,9 @@ describe('<DeckTerapi /> — aria-label tombol tambah obat bernama (CODEX audit 
     render(<DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />)
 
     const contohObat = Object.values(PACK.obat)[0]!
+    // Laci golongan default tertutup (playtest 2026-07-16: dinding 130 obat)
+    // — cari nama obat utk auto-buka lacinya, pola sama edukasi/tindakan.
+    fireEvent.change(screen.getByLabelText('Cari obat'), { target: { value: contohObat.nama } })
     expect(screen.getByRole('button', { name: `Tambah ${contohObat.nama} ke resep` })).toBeInTheDocument()
   })
 
@@ -50,7 +53,20 @@ describe('<DeckTerapi /> — aria-label tombol tambah obat bernama (CODEX audit 
     const enc = { ...buatEncounter(pasien), resep: [contohObat.id] }
     render(<DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />)
 
+    fireEvent.change(screen.getByLabelText('Cari obat'), { target: { value: contohObat.nama } })
     expect(screen.getByRole('button', { name: `${contohObat.nama} sudah di resep` })).toBeInTheDocument()
+  })
+
+  it('obat dalam resep tampil sebagai chip strip di atas laci (klik = coret)', () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const contohObat = Object.values(PACK.obat)[0]!
+    const enc = { ...buatEncounter(pasien), resep: [contohObat.id] }
+    const dispatch = vi.fn()
+    render(<DeckTerapi enc={enc} dispatch={dispatch} lastEvents={[]} eventTick={0} />)
+
+    const chip = screen.getByRole('button', { name: `✓ ${contohObat.nama}` })
+    fireEvent.click(chip)
+    expect(dispatch).toHaveBeenCalledWith({ type: 'HAPUS_OBAT', obatId: contohObat.id })
   })
 })
 
@@ -90,6 +106,11 @@ describe('<DeckTerapi /> — aria-pressed chip edukasi & tindakan (CODEX audit U
       <DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />,
     )
     fireEvent.click(screen.getByRole('tab', { name: /^Tindakan/ }))
+    // Laci kelompok default tertutup (pola sama edukasi, 2026-07-16) — cari
+    // nama tindakan utk auto-buka lacinya.
+    fireEvent.change(screen.getByLabelText('Cari tindakan klinis'), {
+      target: { value: tindakan.nama },
+    })
 
     expect(screen.getByRole('button', { name: tindakan.nama })).toHaveAttribute('aria-pressed', 'false')
 
@@ -102,7 +123,11 @@ describe('<DeckTerapi /> — aria-pressed chip edukasi & tindakan (CODEX audit U
       />,
     )
 
-    expect(screen.getByRole('button', { name: `✓ ${tindakan.nama}` })).toHaveAttribute('aria-pressed', 'true')
+    // Chip terpilih tampil DUA kali by design: strip "sudah dipilih" di atas
+    // (selalu terlihat walau laci ditutup) + di dalam laci hasil pencarian.
+    const terpilih = screen.getAllByRole('button', { name: `✓ ${tindakan.nama}` })
+    expect(terpilih.length).toBeGreaterThanOrEqual(1)
+    for (const chip of terpilih) expect(chip).toHaveAttribute('aria-pressed', 'true')
   })
 })
 
@@ -114,6 +139,7 @@ describe('<DeckTerapi /> — fokus kembali ke kotak cari sesudah tambah obat (bu
 
     render(<DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />)
 
+    fireEvent.change(screen.getByLabelText('Cari obat'), { target: { value: contohObat.nama } })
     fireEvent.click(screen.getByRole('button', { name: `Tambah ${contohObat.nama} ke resep` }))
 
     // Tombol ini akan `disabled` begitu enc.resep diperbarui (dispatch nyata di

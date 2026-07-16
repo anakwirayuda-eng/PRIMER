@@ -27,7 +27,7 @@
 }
 
 .dexskdi__judul {
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: 0.01em;
 }
@@ -60,12 +60,43 @@
   gap: var(--sp-1);
 }
 
-.dexskdi__legenda-pin {
-  color: var(--kunyit-600);
-  /* CODEX audit UI/UX 2026-07-10 (#6/P3): px mati tak ikut skala "Ukuran
-     Teks" di Pengaturan (root font-size %) — ganti ke rem senilai sama
-     pada 100% agar ikut membesar saat slider digeser. */
-  font-size: 0.5625rem;
+/* Chip progres di header sekaligus tombol filter (belum/dijumpai/
+   tersertifikasi/dikuasai). Ring aktif memakai --daun-700 (tema capaian). */
+.dexskdi__filter {
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    filter var(--durasi-cepat),
+    outline-color var(--durasi-cepat);
+}
+.dexskdi__filter:hover {
+  filter: brightness(1.06);
+}
+.dexskdi__filter--aktif {
+  outline: 2px solid var(--daun-700);
+  outline-offset: 1px;
+}
+.dexskdi__filter:focus-visible {
+  outline: 2px solid var(--daun-700);
+  outline-offset: 1px;
+}
+
+/* Layar sempit: header progres turun ke bawah judul, rata kiri, meter melebar. */
+@media (max-width: 1080px) {
+  .dexskdi__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-3);
+  }
+  .dexskdi__progres {
+    align-items: flex-start;
+  }
+  .dexskdi__tiga-tingkat {
+    justify-content: flex-start;
+  }
+  .dexskdi__meter {
+    width: 100%;
+  }
 }
 
 /* -- Isi: grid + panel detail -------------------------------------------------- */
@@ -81,6 +112,50 @@
   min-width: 0;
   overflow-y: auto;
   padding-right: var(--sp-1);
+}
+
+/* Pencarian Dex: sebelumnya tanpa CSS sama sekali (input UA telanjang, menyala
+   di mode malam) dan ikut ter-scroll keluar. Kini bergaya token + sticky di
+   puncak panel yang scroll — alat navigasi utama utk 144 entri tetap terlihat. */
+.dexskdi__cari-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-app);
+  padding-bottom: var(--sp-2);
+}
+
+.dexskdi__cari {
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--tinta);
+  background: var(--bg-card);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-kertas);
+}
+.dexskdi__cari::placeholder {
+  color: var(--tinta-pudar);
+}
+.dexskdi__cari:focus-visible {
+  outline: 2px solid var(--daun-700);
+  outline-offset: 1px;
+  border-color: var(--daun-700);
+}
+
+/* Hitung hasil pencarian (aria-live) + kartu pesan kosong. */
+.dexskdi__hasil-hitung {
+  margin-top: var(--sp-1);
+}
+
+.dexskdi__kosong {
+  padding: var(--sp-5);
+  text-align: center;
+  border: 1px dashed var(--border-tegas);
+  border-radius: var(--radius-md);
+  background: var(--bg-sunken);
 }
 
 .dexskdi__grid {
@@ -129,7 +204,9 @@
 
 .dexskdi-kartu--aktif {
   border-color: var(--daun-700);
-  box-shadow: 0 0 0 2px var(--daun-100), var(--shadow-kertas);
+  outline: 2px solid var(--daun-700);
+  outline-offset: 1px;
+  box-shadow: var(--shadow-kertas);
 }
 
 /* Fix CODEX-25 #2/Q7: dijumpai-tapi-belum-tersertifikasi — dibedakan visual
@@ -140,9 +217,9 @@
 }
 
 .dexskdi-kartu__dijumpai-tag {
-  font-size: 0.625rem;
-  letter-spacing: 0.04em;
-  color: var(--kunyit-600);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: var(--kunyit-700);
   text-transform: uppercase;
 }
 
@@ -199,22 +276,6 @@
   margin: auto 0;
 }
 
-/* Ada kasusnya di desa tapi belum ditangani */
-.dexskdi-kartu--desa {
-  border-style: dashed;
-  border-color: var(--kunyit-600);
-}
-
-.dexskdi-kartu__pin {
-  position: absolute;
-  top: var(--sp-2);
-  right: var(--sp-2);
-  color: var(--kunyit-600);
-  /* CODEX audit UI/UX 2026-07-10 (#6/P3): sama seperti .dexskdi__legenda-pin. */
-  font-size: 0.625rem;
-  line-height: 1;
-}
-
 /* -- Bintang penguasaan ------------------------------------------------------------ */
 .dexskdi-bintang {
   color: var(--kunyit-600);
@@ -237,6 +298,8 @@
   width: 320px;
   flex-shrink: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .dexskdi-detail {
@@ -320,6 +383,8 @@
 
 .dexskdi-detail--kosong {
   gap: var(--sp-3);
+  min-height: 100%;
+  flex: 1;
 }
 
 .dexskdi-detail__hint {

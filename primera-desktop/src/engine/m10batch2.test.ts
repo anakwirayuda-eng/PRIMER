@@ -123,7 +123,7 @@ describe('M10 Batch-2 B.1 — kartu Prolanis hanya utk peserta ber-JKN aktif', (
     expect(pA.takTerkontrolBerturut).toBe(0)
   })
 
-  it('Tambahan #3 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): komplikasi Prolanis DM tetap reuse dm_tipe2 (gerbang rujuk TAK diubah), tapi catatan kini tampilkan GDS sungguhan', () => {
+  it('Tambahan #3 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): komplikasi Prolanis DM tetap reuse dm_tipe2 (gerbang rujuk TAK diubah), tapi catatan kini tampilkan GDP sungguhan (skala GDP sejak audit UKM 2026-07-16)', () => {
     let s = stateDenganProlanis()
     // pA (dm, keluarga A) perlu JKN AKTIF di test ini (beda dari premis test
     // B.1 di atas yg sengaja menonaktifkannya) supaya dapat kartu sesi.
@@ -159,7 +159,7 @@ describe('M10 Batch-2 B.1 — kartu Prolanis hanya utk peserta ber-JKN aktif', (
     expect(jadwalPA?.kasusId).toBe('dm_tipe2')
     // Catatan kini menampilkan angka GDS sungguhan (transparansi info),
     // bukan cuma frasa generik "gula darah liar tak terkendali".
-    expect(jadwalPA?.catatan).toMatch(/GDS terakhir \d+ mg\/dL/)
+    expect(jadwalPA?.catatan).toMatch(/GDP terakhir \d+ mg\/dL/)
   })
 })
 

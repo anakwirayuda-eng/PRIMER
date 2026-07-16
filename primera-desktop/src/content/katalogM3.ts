@@ -35,6 +35,17 @@ export const OBAT_M3: Record<string, Obat> = {
   dihidroartemisinin_piperakuin: { id: 'dihidroartemisinin_piperakuin', nama: 'DHP (Dihidroartemisinin-Piperakuin)',
     sinonim: ['DHP','ACT','artemisinin'], kelas: 'antimalaria ACT', sediaan: 'tablet', hargaBeli: 0, hargaJual: 0, fornas: true },
 
+  // -- Kontrasepsi (KB pascapersalinan, 2026-07-16) --
+  // kia_kb_konseling: clue mengajarkan PEMILIHAN metode (non-hormonal/
+  // progestin-only vs HINDARI kombinasi estrogen saat menyusui) tetapi dulu
+  // tidak ada SATU PUN kontrasepsi yang bisa diresepkan (temuan playtest
+  // user). Pasokan program BKKBN → harga 0. Pil kombinasi tetap Fornas dan
+  // sah untuk non-menyusui; pada kasus menyusui ia jebakan kontraindikasi.
+  desogestrel_75: { id: 'desogestrel_75', nama: 'Pil Progestin (Desogestrel) 75 mcg', sinonim: ['minipil', 'pil menyusui', 'progestin only', 'POP'], kelas: 'kontrasepsi oral progestin-only', sediaan: 'tablet', hargaBeli: 0, hargaJual: 0, fornas: true },
+  dmpa_150: { id: 'dmpa_150', nama: 'Suntik KB 3 Bulan (DMPA) 150 mg', sinonim: ['depo', 'suntik kb', 'medroksiprogesteron'], kelas: 'kontrasepsi injeksi progestin-only', sediaan: 'vial injeksi IM', hargaBeli: 0, hargaJual: 0, fornas: true },
+  kondom: { id: 'kondom', nama: 'Kondom (KB Barier)', sinonim: ['kb barier'], kelas: 'kontrasepsi barier — pasokan program BKKBN', sediaan: 'strip', hargaBeli: 0, hargaJual: 0, fornas: false },
+  pil_kb_kombinasi: { id: 'pil_kb_kombinasi', nama: 'Pil KB Kombinasi (Levonorgestrel + Etinilestradiol)', sinonim: ['pil kombinasi', 'coc'], kelas: 'kontrasepsi oral kombinasi (mengandung estrogen)', sediaan: 'tablet', hargaBeli: 0, hargaJual: 0, fornas: true },
+
   // -- Kardiovaskular / metabolik --
   // golonganAlergi ditambahkan (audit CODEX 2026-07-04): mm_dislipidemia
   // alergiTrap.kelas='statin' menghukum resep ini via SKOR saat alergi, tapi

@@ -10,9 +10,10 @@
   right: var(--sp-5);
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: var(--sp-2);
   z-index: var(--z-toast);
-  max-width: 380px;
+  max-width: min(380px, 30vw);
   /* Toast murni informatif (tak pernah py onClick) — pointer-events:none
      menjamin toast TAK PERNAH mencegat klik yg ditujukan utk elemen di
      baliknya, apa pun itu (jaring pengaman kedua di samping relokasi). */
@@ -28,7 +29,15 @@
 }
 
 .toast--sukses { border-left-color: var(--daun-700); }
-.toast--bahaya { border-left-color: var(--tinta-merah); }
+/* .kertas. prefix: kalah cascade dari background .kertas tanpa ini. */
+.kertas.toast--bahaya {
+  border-left-color: var(--tinta-merah);
+  background-color: color-mix(in srgb, var(--tinta-merah) 8%, var(--bg-panel));
+}
+
+/* Glyph nada di depan teks — penanda non-warna (a11y buta warna). */
+.toast--bahaya::before { content: '⚠ '; }
+.toast--sukses::before { content: '✓ '; }
 
 /* M10 §49: fase keluar — mengabur + naik tipis sebelum dihapus (dulu toast
    POP hilang mendadak; user minta "lama-kelamaan kabur/mengabur"). Durasi

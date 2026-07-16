@@ -271,7 +271,9 @@ describe('M2.8 — Prolanis roster & jembatan UKP', () => {
     // Semua peserta HT/DM, mulai tak terkontrol.
     for (const p of s.prolanis.roster) {
       expect(['ht', 'dm']).toContain(p.jenis)
-      expect(p.param).toBeGreaterThan(p.jenis === 'ht' ? 140 : 200)
+      // Audit CODEX UKM 2026-07-16 #12: param DM kini GDP (ambang kontrol
+      // RPPT <130), bukan GDS — roster awal selalu di atas ambang kontrolnya.
+      expect(p.param).toBeGreaterThan(p.jenis === 'ht' ? 140 : 130)
     }
   })
 
@@ -374,25 +376,25 @@ describe('M2.11 — Lokakarya Mini flag', () => {
 describe('M2.10 — Program Wilayah: Triase Anggaran BULANAN (DeepThink Q4)', () => {
   it('fokus terkunci sepanjang bulan yang sama — ganti ke fokus lain ditolak', () => {
     let s = siangHari(HARI_BUKA_POSYANDU.karier) // hari > HARI_BUKA_PETA, blok siang
-    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
     expect(s.program.fokus).toBe('psn')
-    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'phbs' })
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'phbs', rwFokus: 1 })
     expect(r.state.program.fokus).toBe('psn') // tak berubah
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
   })
 
   it('menetapkan fokus yang SAMA lagi tidak dianggap pelanggaran kunci', () => {
     let s = siangHari(HARI_BUKA_POSYANDU.karier)
-    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
-    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
   })
 
   it('bulan berikutnya (+30 hari) → fokus baru bisa ditetapkan', () => {
     let s = siangHari(HARI_BUKA_POSYANDU.karier)
-    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
     s = siangDariState(s, s.hari + 30)
-    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'skrining' })
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'skrining', rwFokus: 1 })
     expect(r.state.program.fokus).toBe('skrining')
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
   })
@@ -417,10 +419,10 @@ describe('M2.10 — Program Wilayah: Triase Anggaran BULANAN (DeepThink Q4)', ()
 
   it('CODEX #8b (pasca-GM 2026-07-13): kunci Triase Anggaran genuinely lepas di hari 15 mode Ujian (formula lama /30 baru lepas hari 31 — tak pernah dlm stase 30-hari)', () => {
     let s = siangHariMode(HARI_BUKA_POSYANDU.ujian, 'ujian') // hari 5
-    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn' })
+    s = run(s, { type: 'TETAPKAN_PROGRAM', fokus: 'psn', rwFokus: 1 })
     expect(s.program.fokus).toBe('psn')
     s = siangDariState(s, 15)
-    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'skrining' })
+    const r = ev(s, { type: 'TETAPKAN_PROGRAM', fokus: 'skrining', rwFokus: 1 })
     expect(r.state.program.fokus).toBe('skrining')
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
   })

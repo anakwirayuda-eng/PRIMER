@@ -55,7 +55,9 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
   // (aria-live) dan Tab berikutnya lanjut dari posisi logis, bukan dari nol.
   const balonRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (jawabanTerakhir !== null) balonRef.current?.focus()
+    // preventScroll (sapuan 2026-07-16): balon kini sticky di atas panel —
+    // focus() default men-scroll panel melompat ke atas tiap klik pertanyaan.
+    if (jawabanTerakhir !== null) balonRef.current?.focus({ preventScroll: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventTick])
 
@@ -67,28 +69,33 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
   return (
     <>
       <div className="klinik-deck__isi">
-        {/* Gauge sabar */}
-        <div className="klinik-sabar">
-          <div className="baris baris--antara">
-            <span className="judul-seksi klinik-sabar__judul">Sabar Pasien</span>
-            <span className="mono teks-xs teks-lembut">{sabar}/100</span>
+        {/* Sticky (sapuan 2026-07-16): gauge Sabar + balon jawaban menempel di
+            atas panel scroll — konteks percakapan tak hilang saat daftar
+            pertanyaan panjang di-scroll. */}
+        <div className="klinik-anamnesis-atas">
+          {/* Gauge sabar */}
+          <div className="klinik-sabar">
+            <div className="baris baris--antara">
+              <span className="judul-seksi klinik-sabar__judul">Sabar Pasien</span>
+              <span className="mono teks-xs teks-lembut">{sabar}/100</span>
+            </div>
+            <div className="meter">
+              <div className={`meter__isi${kelasSabar}`} style={{ width: `${sabar}%` }} />
+            </div>
+            {pasienLelah && (
+              <div className="klinik-lelah">
+                Pasien mulai lelah ditanya-tanya &mdash; tiap pertanyaan tambahan menggerus sabarnya.
+              </div>
+            )}
           </div>
-          <div className="meter">
-            <div className={`meter__isi${kelasSabar}`} style={{ width: `${sabar}%` }} />
-          </div>
-          {pasienLelah && (
-            <div className="klinik-lelah">
-              Pasien mulai lelah ditanya-tanya &mdash; tiap pertanyaan tambahan menggerus sabarnya.
+
+          {/* Balon jawaban terakhir — live region + target fokus pasca-klik (A.1) */}
+          {jawabanTerakhir !== null && (
+            <div key={eventTick} ref={balonRef} className="klinik-balon" role="status" aria-live="polite" tabIndex={-1}>
+              &ldquo;{jawabanTerakhir}&rdquo;
             </div>
           )}
         </div>
-
-        {/* Balon jawaban terakhir — live region + target fokus pasca-klik (A.1) */}
-        {jawabanTerakhir !== null && (
-          <div key={eventTick} ref={balonRef} className="klinik-balon" role="status" aria-live="polite" tabIndex={-1}>
-            &ldquo;{jawabanTerakhir}&rdquo;
-          </div>
-        )}
 
         {/* Kartu pertanyaan per kategori */}
         {URUTAN_KATEGORI.map((kat) => {

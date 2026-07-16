@@ -19,9 +19,18 @@ import { KAPASITAS_EDUKASI } from '@engine/clinic'
 import {
   cocokEdukasi,
   cocokObat,
+  cocokTindakan,
   formatRupiah,
+  kelompokObat,
+  kelompokTindakan,
   LABEL_KATEGORI_EDUKASI,
+  LABEL_KELOMPOK_OBAT,
+  LABEL_KELOMPOK_TINDAKAN,
   URUTAN_KATEGORI_EDUKASI,
+  URUTAN_KELOMPOK_OBAT,
+  URUTAN_KELOMPOK_TINDAKAN,
+  type KelompokObat,
+  type KelompokTindakan,
 } from './util'
 import { OBAT_PERTAMA_TUTORIAL } from './tutorialKlinik'
 
@@ -36,6 +45,10 @@ interface Props {
 
 /** Status buka/tutup laci diingat selama SESI app (bukan state save). */
 const laciSesi = new Set<KategoriEdukasi>()
+/** Laci tindakan — pola sama, ruang nama terpisah dari laci edukasi. */
+const laciTindakanSesi = new Set<KelompokTindakan>()
+/** Laci formularium — pola sama (playtest 2026-07-16: dinding 130 obat). */
+const laciObatSesi = new Set<KelompokObat>()
 
 export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif = false }: Props) {
   const [tab, setTab] = useState<'resep' | 'edukasi' | 'tindakan'>('resep')
@@ -77,19 +90,46 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   // Pencarian toleran-ejaan (playtest): "paracetamol/amoxicillin/cetirizine"
   // (ejaan Inggris) tetap menemukan Parasetamol/Amoksisilin/Setirizin —
   // normalisasi fonetik + cari juga di id & sinonim (lihat util.cocokObat).
-  const daftarObat = useMemo(() => {
-    const q = cari.trim()
-    return Object.values(PACK.obat)
-      .filter((o) => q === '' || cocokObat(o, q))
-      .sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
-  }, [cari])
+  // Playtest 2026-07-16: formularium tumbuh 69→130+ obat dan daftar datar
+  // jadi dinding "+ Resep" — kini laci golongan (pola sama edukasi/tindakan).
+  const obatPerKelompok = useMemo(() => {
+    const peta = new Map<KelompokObat, typeof PACK.obat[string][]>()
+    for (const kel of URUTAN_KELOMPOK_OBAT) peta.set(kel, [])
+    for (const o of Object.values(PACK.obat)) peta.get(kelompokObat(o))?.push(o)
+    for (const daftar of peta.values()) daftar.sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
+    return peta
+  }, [])
+  const kueriObat = cari.trim()
+  const sedangCariObat = kueriObat.length > 0
+  const toggleLaciObat = (kel: KelompokObat) => {
+    if (laciObatSesi.has(kel)) laciObatSesi.delete(kel)
+    else laciObatSesi.add(kel)
+    setLaciTick((n) => n + 1)
+  }
+  // Tutorial: laci berisi obat target dipaksa terbuka (kepala laci ikut
+  // terkunci — invarian "tepat 1 tombol aktif" Klinik.tutorial.test tetap).
+  const obatTutorial = PACK.obat[OBAT_PERTAMA_TUTORIAL]
+  const kelObatTutorial = obatTutorial ? kelompokObat(obatTutorial) : null
 
-  // Prosedur/tindakan klinis (CODEX #4) — daftar datar (item sedikit), pemain
-  // memilih yang terindikasi; tindakan tak relevan mengurangi skor terapi.
-  const daftarTindakan = useMemo(
-    () => Object.values(PACK.tindakan).sort((a, b) => a.nama.localeCompare(b.nama, 'id')),
-    [],
-  )
+  // Prosedur/tindakan klinis (CODEX #4). Dulu daftar datar ("item sedikit")
+  // — katalog tumbuh ~20→36 bersama ekspansi lab M13 dan dindingnya jadi
+  // overload kognitif (temuan playtest user 2026-07-16). Kini pola laci
+  // kelompok + pencarian, SAMA dengan edukasi (Hukum Hick, chunking 4-8 item).
+  const [cariTindakan, setCariTindakan] = useState('')
+  const tindakanPerKelompok = useMemo(() => {
+    const peta = new Map<KelompokTindakan, typeof PACK.tindakan[string][]>()
+    for (const kel of URUTAN_KELOMPOK_TINDAKAN) peta.set(kel, [])
+    for (const t of Object.values(PACK.tindakan)) peta.get(kelompokTindakan(t.id))?.push(t)
+    for (const daftar of peta.values()) daftar.sort((a, b) => a.nama.localeCompare(b.nama, 'id'))
+    return peta
+  }, [])
+  const kueriTindakan = cariTindakan.trim()
+  const sedangCariTindakan = kueriTindakan.length > 0
+  const toggleLaciTindakan = (kel: KelompokTindakan) => {
+    if (laciTindakanSesi.has(kel)) laciTindakanSesi.delete(kel)
+    else laciTindakanSesi.add(kel)
+    setLaciTick((n) => n + 1)
+  }
 
   // Topik edukasi per laci kategori (urutan tetap, nama front-loaded).
   const topikPerKategori = useMemo(() => {
@@ -189,6 +229,30 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
         {tab === 'resep' && (
           <div className="klinik-deck__grup" role="tabpanel" id="terapi-panel-resep" aria-labelledby="terapi-tab-resep">
             <div className="judul-seksi">Formularium Puskesmas</div>
+
+            {/* Obat terpilih tampil di atas — tetap terlihat walau lacinya ditutup
+                (pola sama strip tindakan terpilih). Klik = coret dari resep. */}
+            {enc.resep.length > 0 && (
+              <div className="klinik-eduk" aria-label="Obat dalam resep">
+                {enc.resep.map((id) => {
+                  const o = PACK.obat[id]
+                  if (!o) return null
+                  return (
+                    <button
+                      key={id}
+                      className="chip klinik-eduk__chip klinik-eduk__chip--dipilih"
+                      aria-pressed
+                      onClick={() => dispatch({ type: 'HAPUS_OBAT', obatId: id })}
+                      disabled={tutorialAktif}
+                      title="Klik untuk mencoret dari resep."
+                    >
+                      ✓ {o.nama}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
             <input
               ref={cariRef}
               className="klinik-cari"
@@ -198,75 +262,115 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
               placeholder="Cari obat atau kelas terapi&hellip;"
               aria-label="Cari obat"
             />
-            <div className="klinik-obat">
-              {daftarObat.length === 0 ? (
-                <div className="klinik-lembar__kosong">Tidak ada obat yang cocok.</div>
-              ) : (
-                daftarObat.map((o) => {
-                  const diresepkan = enc.resep.includes(o.id)
-                  const sisa = stok?.[o.id]
-                  const habis = sisa !== undefined && sisa <= 0
-                  const disorot = sorotObat && o.id === OBAT_PERTAMA_TUTORIAL
-                  const dikunci = tutorialAktif && !disorot
-                  return (
-                    <div key={o.id} className="klinik-obat__baris">
-                      <div className="tumbuh">
-                        <div className="baris klinik-obat__judul">
-                          <span className="teks-kecil">{o.nama}</span>
-                          {o.antibiotik === true && (
-                            <span className="chip chip--kunyit">Antibiotik</span>
-                          )}
-                          {habis ? (
-                            <span className="chip chip--merah">HABIS</span>
-                          ) : sisa !== undefined && sisa <= 3 ? (
-                            <span className="chip chip--kunyit">sisa {sisa}</span>
-                          ) : null}
-                        </div>
-                        <div className="teks-xs teks-lembut">
-                          {o.sediaan} &middot; {o.kelas}
-                        </div>
-                      </div>
-                      <span className="mono teks-xs teks-lembut">{formatRupiah(o.hargaJual)}</span>
-                      <button
-                        className={`tombol klinik-obat__tambah${disorot ? ' klinik-sorot-tutorial' : ''}`}
-                        onClick={() => {
-                          dispatch({ type: 'TAMBAH_OBAT', obatId: o.id })
-                          // Bugfix (2026-07-13, "kena frozen lagi eh"): tombol ini
-                          // langsung disabled sesudah TAMBAH_OBAT (diresepkan jadi
-                          // true) — disable memaksa fokus jatuh ke <body> (perilaku
-                          // browser standar utk kontrol yg kehilangan fokusable-nya),
-                          // dan keystroke berikutnya di "Cari obat" pun hilang tanpa
-                          // jejak, terasa spt input beku. Kembalikan fokus ke kotak
-                          // cari supaya pemain bisa langsung lanjut mengetik obat
-                          // berikutnya tanpa klik ulang.
-                          cariRef.current?.focus()
-                        }}
-                        disabled={diresepkan || habis || dikunci}
-                        title={
-                          diresepkan
-                            ? 'Sudah ada di resep.'
-                            : habis
-                              ? 'Stok habis — pesan lewat Gudang Obat (Meja Kerja) atau pilih alternatif.'
-                              : `Tambahkan ${o.nama} ke resep.`
-                        }
-                        // CODEX audit UI/UX 2026-07-10 (#15): sama seperti tombol
-                        // Pesan lab — accessible name tombol ini sama di SETIAP
-                        // baris obat ("+ Resep"/"✓"/"✕"), nama obat cuma di title.
-                        aria-label={
-                          diresepkan
-                            ? `${o.nama} sudah di resep`
-                            : habis
-                              ? `${o.nama} stok habis`
-                              : `Tambah ${o.nama} ke resep`
-                        }
-                      >
-                        {diresepkan ? '✓' : habis ? '✕' : '+ Resep'}
-                      </button>
+
+            {/* Laci golongan — default tertutup; mencari = laci relevan terbuka.
+                Playtest 2026-07-16: dinding 130 "+ Resep" → pola Hukum Hick yang
+                sama dengan edukasi (M7 34b) & tindakan. */}
+            {(() => {
+              const adaHasil = URUTAN_KELOMPOK_OBAT.some((kel) =>
+                (obatPerKelompok.get(kel) ?? []).some((o) => !sedangCariObat || cocokObat(o, kueriObat)),
+              )
+              if (sedangCariObat && !adaHasil)
+                return <div className="klinik-lembar__kosong">Tidak ada obat yang cocok.</div>
+              return null
+            })()}
+            {URUTAN_KELOMPOK_OBAT.map((kel) => {
+              const semua = obatPerKelompok.get(kel) ?? []
+              if (semua.length === 0) return null
+              const daftar = sedangCariObat ? semua.filter((o) => cocokObat(o, kueriObat)) : semua
+              if (sedangCariObat && daftar.length === 0) return null
+              const terbuka =
+                sedangCariObat || laciObatSesi.has(kel) || (tutorialAktif && kel === kelObatTutorial)
+              const terpilihDiLaci = semua.filter((o) => enc.resep.includes(o.id)).length
+              return (
+                <div key={kel} className="klinik-eduk__laci">
+                  <button
+                    className="klinik-eduk__laci-kepala"
+                    aria-expanded={terbuka}
+                    onClick={() => toggleLaciObat(kel)}
+                    disabled={tutorialAktif}
+                  >
+                    <span className="klinik-eduk__laci-panah" aria-hidden="true">
+                      {terbuka ? '▾' : '▸'}
+                    </span>
+                    <span className="teks-kecil tumbuh klinik-eduk__laci-judul">
+                      {LABEL_KELOMPOK_OBAT[kel]}
+                    </span>
+                    <span className="mono teks-xs teks-lembut">
+                      {terpilihDiLaci > 0 ? `${terpilihDiLaci}✓ · ` : ''}
+                      {sedangCariObat ? daftar.length : semua.length}
+                    </span>
+                  </button>
+                  {terbuka && (
+                    <div className="klinik-obat">
+                      {daftar.map((o) => {
+                        const diresepkan = enc.resep.includes(o.id)
+                        const sisa = stok?.[o.id]
+                        const habis = sisa !== undefined && sisa <= 0
+                        const disorot = sorotObat && o.id === OBAT_PERTAMA_TUTORIAL
+                        const dikunci = tutorialAktif && !disorot
+                        return (
+                          <div key={o.id} className="klinik-obat__baris">
+                            <div className="tumbuh">
+                              <div className="baris klinik-obat__judul">
+                                <span className="teks-kecil">{o.nama}</span>
+                                {o.antibiotik === true && (
+                                  <span className="chip chip--kunyit">Antibiotik</span>
+                                )}
+                                {habis ? (
+                                  <span className="chip chip--merah">HABIS</span>
+                                ) : sisa !== undefined && sisa <= 3 ? (
+                                  <span className="chip chip--kunyit">sisa {sisa}</span>
+                                ) : null}
+                              </div>
+                              <div className="teks-xs teks-lembut">
+                                {o.sediaan} &middot; {o.kelas}
+                              </div>
+                            </div>
+                            <span className="mono teks-xs teks-lembut">{formatRupiah(o.hargaJual)}</span>
+                            <button
+                              className={`tombol klinik-obat__tambah${disorot ? ' klinik-sorot-tutorial' : ''}`}
+                              onClick={() => {
+                                dispatch({ type: 'TAMBAH_OBAT', obatId: o.id })
+                                // Bugfix (2026-07-13, "kena frozen lagi eh"): tombol ini
+                                // langsung disabled sesudah TAMBAH_OBAT (diresepkan jadi
+                                // true) — disable memaksa fokus jatuh ke <body> (perilaku
+                                // browser standar utk kontrol yg kehilangan fokusable-nya),
+                                // dan keystroke berikutnya di "Cari obat" pun hilang tanpa
+                                // jejak, terasa spt input beku. Kembalikan fokus ke kotak
+                                // cari supaya pemain bisa langsung lanjut mengetik obat
+                                // berikutnya tanpa klik ulang.
+                                cariRef.current?.focus()
+                              }}
+                              disabled={diresepkan || habis || dikunci}
+                              title={
+                                diresepkan
+                                  ? 'Sudah ada di resep.'
+                                  : habis
+                                    ? 'Stok habis — pesan lewat Gudang Obat (Meja Kerja) atau pilih alternatif.'
+                                    : `Tambahkan ${o.nama} ke resep.`
+                              }
+                              // CODEX audit UI/UX 2026-07-10 (#15): sama seperti tombol
+                              // Pesan lab — accessible name tombol ini sama di SETIAP
+                              // baris obat ("+ Resep"/"✓"/"✕"), nama obat cuma di title.
+                              aria-label={
+                                diresepkan
+                                  ? `${o.nama} sudah di resep`
+                                  : habis
+                                    ? `${o.nama} stok habis`
+                                    : `Tambah ${o.nama} ke resep`
+                              }
+                            >
+                              {diresepkan ? '✓' : habis ? '✕' : '+ Resep'}
+                            </button>
+                          </div>
+                        )
+                      })}
                     </div>
-                  )
-                })
-              )}
-            </div>
+                  )}
+                </div>
+              )
+            })}
             <span className="teks-xs teks-lembut">
               Antibiotik tanpa indikasi tercatat oleh Dinkes (stewardship) &mdash; resepkan bijak.
             </span>
@@ -341,7 +445,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                     </span>
                     <span className="mono teks-xs teks-lembut">
                       {terpilihDiLaci > 0 ? `${terpilihDiLaci}✓ · ` : ''}
-                      {semua.length}
+                      {sedangCari ? daftar.length : semua.length}
                     </span>
                   </button>
                   {terbuka && (
@@ -390,33 +494,100 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
           <div className="klinik-deck__grup" role="tabpanel" id="terapi-panel-tindakan" aria-labelledby="terapi-tab-tindakan">
             <div className="judul-seksi">Prosedur / Tindakan Klinis</div>
             <p className="teks-xs teks-lembut">
-              Sebagian kasus dituntaskan dengan TINDAKAN, bukan (hanya) obat &mdash; mis. nebulisasi
-              serangan asma/PPOK, manuver reposisi vertigo, irigasi serumen, tampon epistaksis.
-              Tindakan yang tak terindikasi ikut mengurangi nilai.
+              Sebagian kasus dituntaskan dengan TINDAKAN, bukan (hanya) obat.
+              Buka kelompok yang relevan dengan pasienmu &mdash; tindakan yang tak
+              terindikasi ikut mengurangi nilai.
             </p>
-            <div className="klinik-eduk">
-              {daftarTindakan.map((t) => {
-                const dipilih = enc.tindakan.includes(t.id)
-                return (
+
+            {/* Tindakan terpilih tampil di atas — tetap terlihat walau lacinya ditutup. */}
+            {enc.tindakan.length > 0 && (
+              <div className="judul-seksi">Tindakan Terpilih</div>
+            )}
+            {enc.tindakan.length > 0 && (
+              <div className="klinik-eduk" aria-label="Tindakan yang sudah dipilih">
+                {enc.tindakan.map((id) => {
+                  const t = PACK.tindakan[id]
+                  if (!t) return null
+                  return (
+                    <button
+                      key={id}
+                      className="chip klinik-eduk__chip klinik-eduk__chip--dipilih"
+                      aria-pressed
+                      onClick={() => dispatch({ type: 'HAPUS_TINDAKAN', tindakanId: id })}
+                      title="Klik untuk membatalkan tindakan."
+                    >
+                      ✓ {t.nama}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            <input
+              className="klinik-cari"
+              type="text"
+              value={cariTindakan}
+              onChange={(e) => setCariTindakan(e.target.value)}
+              placeholder="Cari tindakan&hellip; (cth: nebulisasi, jahit, tampon)"
+              aria-label="Cari tindakan klinis"
+            />
+
+            {/* Laci kelompok — default tertutup; mencari = laci relevan terbuka. */}
+            {URUTAN_KELOMPOK_TINDAKAN.map((kel) => {
+              const semua = tindakanPerKelompok.get(kel) ?? []
+              if (semua.length === 0) return null
+              const daftar = sedangCariTindakan
+                ? semua.filter((t) => cocokTindakan(t, kueriTindakan))
+                : semua
+              if (sedangCariTindakan && daftar.length === 0) return null
+              const terbuka = sedangCariTindakan || laciTindakanSesi.has(kel)
+              const terpilihDiLaci = semua.filter((t) => enc.tindakan.includes(t.id)).length
+              return (
+                <div key={kel} className="klinik-eduk__laci">
                   <button
-                    key={t.id}
-                    className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
-                    aria-pressed={dipilih}
-                    onClick={() =>
-                      dispatch(
-                        dipilih
-                          ? { type: 'HAPUS_TINDAKAN', tindakanId: t.id }
-                          : { type: 'TAMBAH_TINDAKAN', tindakanId: t.id },
-                      )
-                    }
-                    title={dipilih ? 'Klik untuk membatalkan tindakan.' : `Lakukan tindakan: ${t.nama}`}
+                    className="klinik-eduk__laci-kepala"
+                    aria-expanded={terbuka}
+                    onClick={() => toggleLaciTindakan(kel)}
                   >
-                    {dipilih ? '✓ ' : ''}
-                    {t.nama}
+                    <span className="klinik-eduk__laci-panah" aria-hidden="true">
+                      {terbuka ? '▾' : '▸'}
+                    </span>
+                    <span className="teks-kecil tumbuh klinik-eduk__laci-judul">
+                      {LABEL_KELOMPOK_TINDAKAN[kel]}
+                    </span>
+                    <span className="mono teks-xs teks-lembut">
+                      {terpilihDiLaci > 0 ? `${terpilihDiLaci}✓ · ` : ''}
+                      {sedangCariTindakan ? daftar.length : semua.length}
+                    </span>
                   </button>
-                )
-              })}
-            </div>
+                  {terbuka && (
+                    <div className="klinik-eduk">
+                      {daftar.map((t) => {
+                        const dipilih = enc.tindakan.includes(t.id)
+                        return (
+                          <button
+                            key={t.id}
+                            className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
+                            aria-pressed={dipilih}
+                            onClick={() =>
+                              dispatch(
+                                dipilih
+                                  ? { type: 'HAPUS_TINDAKAN', tindakanId: t.id }
+                                  : { type: 'TAMBAH_TINDAKAN', tindakanId: t.id },
+                              )
+                            }
+                            title={dipilih ? 'Klik untuk membatalkan tindakan.' : `Lakukan tindakan: ${t.nama}`}
+                          >
+                            {dipilih ? '✓ ' : ''}
+                            {t.nama}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

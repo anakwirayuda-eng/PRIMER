@@ -58,10 +58,16 @@ describe('invarian lapisan UI (M10.a)', () => {
     expect(baca('../components/Toaster.tsx')).toMatch(/toast--keluar/)
   })
 
-  it('.kunjungan-hotspot terangkat di atas kartu temuan (z-index)', () => {
-    // Kartu .kunjungan-temuan di-render SETELAH lapis hotspot → tanpa z-index
-    // hotspot ber-x tinggi tertimpa & tak bisa diklik (empiris wulan_k1 wk1_h3).
-    expect(blok(baca('../screens/Kunjungan.css'), '.kunjungan-hotspot')).toMatch(/z-index:\s*[1-9]/)
+  it('kartu temuan kunjungan adalah SIBLING panggung, bukan overlay absolute', () => {
+    // Sapuan UI/UX 2026-07-16 (P0): dulu .kunjungan-temuan position:absolute
+    // menutupi 34% scene dan hotspot butuh z-index workaround supaya tembus
+    // (empiris wulan_k1 wk1_h3). Kini temuan = kolom sibling .kunjungan-panggung
+    // — TIDAK boleh ada yang kembali memosisikannya absolute, dan workaround
+    // z-index di hotspot tak boleh dihidupkan lagi diam-diam.
+    const css = baca('../screens/Kunjungan.css')
+    expect(blok(css, '.kunjungan-panggung')).toMatch(/position:\s*relative/)
+    expect(blok(css, '.kunjungan-temuan')).toMatch(/position:\s*static/)
+    expect(blok(css, '.kunjungan-temuan')).not.toMatch(/position:\s*absolute/)
   })
 
   it('mute+gigi in-game didok di HUD, bukan melayang (kelas menelan-klik konten)', () => {

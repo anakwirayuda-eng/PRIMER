@@ -235,19 +235,20 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
             </span>
           </div>
         ) : (
+          <>
+          {/* Sapuan 2026-07-16: form rujuk dipecah 3 grup langkah (TACC / SBAR /
+              RS+kirim) — gap antar-grup dari parent, tembok form jadi bertahap. */}
+          {tawarkanJustifikasi && (
           <div className="klinik-deck__grup">
-            {/* -- §3a TACC: alasan rujukan (opsional, hanya kasus non-wajib) ----- */}
-            {tawarkanJustifikasi && (
-              <>
                 <div className="judul-seksi">Alasan Rujukan (opsional)</div>
-                <span className="teks-xs teks-lembut">
+                <span className="teks-kecil teks-lembut">
                   Kasus ini biasanya tuntas di FKTP. Bila menurutmu ADA alasan klinis sungguhan
                   untuk merujuk, pilih salah satu &mdash; deklarasi asal-asalan tetap dinilai apa
                   adanya, bukan celah bebas dari rasio rujukanmu (RRNS).
                 </span>
-                <div className="klinik-deck__grup" style={{ gap: '0.4rem' }}>
+                <div className="klinik-justifikasi">
                   {(Object.keys(LABEL_JUSTIFIKASI) as JustifikasiRujuk[]).map((opsi) => (
-                    <label key={opsi} className="baris" style={{ gap: '0.5rem', alignItems: 'center' }}>
+                    <label key={opsi} className="baris klinik-justifikasi__opsi">
                       <input
                         type="radio"
                         name="justifikasi-rujuk"
@@ -267,9 +268,10 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
                     </button>
                   )}
                 </div>
-              </>
-            )}
+          </div>
+          )}
 
+          <div className="klinik-deck__grup">
             {/* -- Langkah 1: SBAR (dipertahankan) -------------------------------- */}
             <div className="judul-seksi">Rujukan SISRUTE &mdash; SBAR</div>
             {KOLOM_SBAR.map(({ kunci, label, placeholder }) => (
@@ -294,6 +296,9 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
               diagnosis kerja &middot; R: apa yang kamu minta dari RS.
             </span>
 
+          </div>
+
+          <div className="klinik-deck__grup">
             {/* -- Langkah 2: Pemilih RS SISRUTE ---------------------------------- */}
             <div className="judul-seksi">Pilih RS Tujuan</div>
             <span className="teks-xs teks-lembut">
@@ -404,6 +409,7 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
               &larr; Batal merujuk
             </button>
           </div>
+          </>
         )}
       </div>
 

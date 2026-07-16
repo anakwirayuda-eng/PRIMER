@@ -27,11 +27,22 @@ function KartuDimensi({
   nilai,
   maks,
   rincian,
+  belumDinilai = false,
 }: {
   judul: string
   nilai: number
   maks: number
   rincian: BarisRincian[]
+  /**
+   * Audit CODEX 2026-07-16: header rapor sudah benar berkata "Belum ada data"
+   * saat stase belum berjalan, TAPI keempat kartu dimensi tetap menampilkan
+   * angkanya — Manajemen 15/15 & Resiliensi 15/15 (nilai penuh default, sebab
+   * belum ada yang bisa memburuk) terbaca seolah SUDAH DIRAIH, dan UKP 0/35
+   * terbaca seolah GAGAL padahal cuma belum mulai. Dua-duanya membohongi
+   * pemain ke arah berlawanan. Saat belum ada aktivitas, dimensi ditampilkan
+   * "belum dinilai" (—) agar konsisten dengan headernya.
+   */
+  belumDinilai?: boolean
 }) {
   const persen = maks > 0 ? (nilai / maks) * 100 : 0
   const kelasIsi =
@@ -42,20 +53,34 @@ function KartuDimensi({
       <div className="baris baris--antara">
         <span className="judul-seksi">{judul}</span>
         <span className="rapor-dimensi__nilai mono">
-          {koma(nilai)}
-          <span className="rapor-dimensi__maks">/{maks}</span>
+          {belumDinilai ? (
+            <span className="teks-lembut" title="Belum ada aktivitas yang bisa dinilai">
+              —<span className="rapor-dimensi__maks">/{maks}</span>
+            </span>
+          ) : (
+            <>
+              {koma(nilai)}
+              <span className="rapor-dimensi__maks">/{maks}</span>
+            </>
+          )}
         </span>
       </div>
       <div className="meter">
-        <div className={`meter__isi${kelasIsi}`} style={{ width: `${persen}%` }} />
+        <div className={`meter__isi${kelasIsi}`} style={{ width: belumDinilai ? '0%' : `${persen}%` }} />
       </div>
       <ul className="rapor-dimensi__rincian">
-        {rincian.map((r) => (
-          <li key={r.label} className="rapor-dimensi__baris teks-kecil">
-            <span className="teks-lembut">{r.label}</span>
-            <span className={`mono${r.waspada ? ' rapor-dimensi__waspada' : ''}`}>{r.nilai}</span>
+        {belumDinilai ? (
+          <li className="rapor-dimensi__baris teks-kecil">
+            <span className="teks-lembut">Belum dinilai — mulai menangani pasien atau turun ke desa</span>
           </li>
-        ))}
+        ) : (
+          rincian.map((r) => (
+            <li key={r.label} className="rapor-dimensi__baris teks-kecil">
+              <span className="teks-lembut">{r.label}</span>
+              <span className={`mono${r.waspada ? ' rapor-dimensi__waspada' : ''}`}>{r.nilai}</span>
+            </li>
+          ))
+        )}
       </ul>
     </section>
   )
@@ -101,7 +126,7 @@ export function Rapor() {
     t.igdMeninggal > 0 ||
     t.autoBermasalah > 0
 
-  const barisTally: { label: string; nilai: string }[] = [
+  const barisTally: { label: string; nilai: string; waspada?: boolean }[] = [
     { label: 'Pasien ditangani', nilai: `${t.totalPasien}` },
     { label: 'Diagnosis benar', nilai: `${t.diagnosisBenar}` },
     { label: 'Stempel TEGAK (benar / salah)', nilai: `${t.tegakBenar} / ${t.tegakSalah}` },
@@ -110,12 +135,20 @@ export function Rapor() {
       label: 'Rujukan (non-spesialistik)',
       nilai: `${t.rujukanTotal} (${t.rujukanNonSpesialistik})`,
     },
-    { label: 'Kasus rujukan ditahan (cowboy)', nilai: `${t.cowboy}` },
+    { label: 'Kasus rujukan ditahan (cowboy)', nilai: `${t.cowboy}`, waspada: t.cowboy > 0 },
     // CODEX audit (2026-07-12, temuan #1/#13B): dulu nol jejak di rapor —
     // konsisten dgn pola transparansi debrief pasca-skor-terkunci di sini.
-    { label: 'Obat berbahaya diresepkan', nilai: `${t.obatBerbahaya}` },
+    {
+      label: 'Obat berbahaya diresepkan',
+      nilai: `${t.obatBerbahaya}`,
+      waspada: t.obatBerbahaya > 0,
+    },
     { label: 'Percobaan resep diblokir firewall alergi', nilai: `${t.firewallTerpicu}` },
-    { label: 'Antibiotik tanpa indikasi', nilai: `${t.antibiotikTanpaIndikasi}` },
+    {
+      label: 'Antibiotik tanpa indikasi',
+      nilai: `${t.antibiotikTanpaIndikasi}`,
+      waspada: t.antibiotikTanpaIndikasi > 0,
+    },
     { label: 'Lab tak relevan', nilai: `${t.labTakRelevan}` },
     {
       label: 'Kunjungan rumah (berhasil)',
@@ -164,6 +197,7 @@ export function Rapor() {
         <div className="rapor__dimensi">
           <KartuDimensi
             judul="UKP · Klinik"
+            belumDinilai={!punyaAktivitas}
             nilai={skor.ukp}
             maks={35}
             rincian={[
@@ -181,6 +215,7 @@ export function Rapor() {
           />
           <KartuDimensi
             judul="UKM · Desa"
+            belumDinilai={!punyaAktivitas}
             nilai={skor.ukm}
             maks={35}
             rincian={[
@@ -198,6 +233,7 @@ export function Rapor() {
           />
           <KartuDimensi
             judul="Manajemen"
+            belumDinilai={!punyaAktivitas}
             nilai={skor.manajemen}
             maks={15}
             rincian={[
@@ -220,6 +256,7 @@ export function Rapor() {
           />
           <KartuDimensi
             judul="Resiliensi"
+            belumDinilai={!punyaAktivitas}
             nilai={skor.resiliensi}
             maks={15}
             rincian={[
@@ -246,7 +283,11 @@ export function Rapor() {
                 {barisTally.map((b) => (
                   <tr key={b.label}>
                     <td className="teks-kecil teks-lembut">{b.label}</td>
-                    <td className="mono teks-kecil rapor-tally__angka">{b.nilai}</td>
+                    <td
+                      className={`mono teks-kecil rapor-tally__angka${b.waspada ? ' rapor-dimensi__waspada' : ''}`}
+                    >
+                      {b.nilai}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -273,6 +314,14 @@ export function Rapor() {
                           <span
                             key={hariKe}
                             className={`rapor-kal__hari${kelas}`}
+                            role="img"
+                            aria-label={
+                              hariKe === state.hari
+                                ? `Hari ${hariKe} — hari ini`
+                                : hariKe < state.hari
+                                  ? `Hari ${hariKe} — sudah lewat`
+                                  : `Hari ${hariKe} — mendatang`
+                            }
                             title={hariKe === state.hari ? `Hari ${hariKe} — hari ini` : `Hari ${hariKe}`}
                           />
                         )
@@ -281,6 +330,11 @@ export function Rapor() {
                   </div>
                 ))}
               </div>
+              {/* Audit CODEX UX 2026-07-16: legenda status — makna sel tak lagi
+                  bergantung warna saja (WCAG 1.4.1); tiap sel juga ber-aria-label. */}
+              <p className="teks-xs teks-lembut mono rapor-kal__legenda">
+                Legenda: sel pekat = hari terlewat · sel berbingkai tebal = hari ini · sel pudar = mendatang.
+              </p>
               <p className="teks-xs teks-lembut rapor-kal__disclaimer">
                 Skor dikunci permanen di Hari {HARI_STASE.karier + 1} — sampai saat itu, setiap
                 keputusanmu masih bisa mengubah rapor ini.

@@ -240,14 +240,14 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['umum', 'Neonatus letargis ringan, perfusi memanjang 3 detik.'], ['abdomen', 'Pus dan bau dari umbilikus; eritema meluas sekitar 2 cm ke kulit periumbilikal.'], ['toraks_paru', 'Napas cepat tanpa retraksi berat.', true]],
     diagnosisBanding: ['P38', 'P36.9', 'L03.3'],
-    tatalaksana: { obatBenar: [], prosedur: ['akses_iv_resusitasi', 'antibiotik_parenteral_neonatus_protokol', 'perawatan_tali_pusat'], edukasi: ['perawatan_tali_pusat_kering', 'tanda_bahaya'], edukasiKritis: ['tanda_bahaya'] },
+    tatalaksana: { obatBenar: [], prosedur: ['akses_iv_resusitasi', 'antibiotik_parenteral_neonatus_protokol', 'perawatan_tali_pusat'], edukasi: ['perawatan_tali_pusat_kering', 'tanda_bahaya'], edukasiKritis: ['tanda_bahaya'], terapiKritis: ['antibiotik_parenteral_neonatus_protokol'] },
     stabilisasiWajib: ['akses_iv_resusitasi', 'antibiotik_parenteral_neonatus_protokol'],
     clue: 'Pus umbilikus, eritema meluas, demam, sulit menyusu, dan letargi pada neonatus adalah infeksi serius/omfalitis dengan risiko sepsis. Mulai tata laksana awal sesuai protokol neonatus dan rujuk segera; jangan mengandalkan obat oles atau antibiotik oral.',
     panduanResmi: `${PPK} Kemerahan meluas atau tanda sistemik pada neonatus memerlukan antibiotik parenteral dan rujukan.`,
   }),
 
   buatKasusFktpLab({
-    id: 'lab_gonore_uretritis_pria', nama: 'Gonore Uretra Tanpa Komplikasi', icd10: 'A54.9', kategori: 'infeksi', prevalensi: 'sedang',
+    id: 'lab_gonore_uretritis_pria', ambangKluster: 3, nama: 'Gonore Uretra Tanpa Komplikasi', icd10: 'A54.9', kategori: 'infeksi', prevalensi: 'sedang',
     keluhanUtama: 'Keluar nanah dari penis dan perih saat kencing sejak dua hari.', usia: [18, 55], jenisKelamin: 'L', vital: { td: '122/78', nadi: 82, rr: 18, suhu: 37.2, spo2: 99 },
     pembuka: ['Bagaimana cairan dan nyeri kencingnya?', 'Cairan kuning kental keluar spontan, terutama pagi, dan kencing terasa terbakar.'],
     pertanyaan: [
@@ -314,7 +314,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_sindrom_duh_genital_servisitis', nama: 'Sindrom Duh Genital - Servisitis', icd10: 'N89', kategori: 'infeksi',
+    id: 'lab_sindrom_duh_genital_servisitis', ambangKluster: 3, nama: 'Sindrom Duh Genital - Servisitis', icd10: 'N89', kategori: 'infeksi',
     keluhanUtama: 'Keputihan kekuningan dan keluar darah sedikit setelah berhubungan.', usia: [18, 45], jenisKelamin: 'P', vital: { td: '118/74', nadi: 82, rr: 18, suhu: 37.1, spo2: 99 },
     pembuka: ['Bagaimana cairan, bau, dan keluhan penyertanya?', 'Cairan mukus-kuning dari vagina, tidak terlalu bau, disertai perih kencing ringan.'],
     pertanyaan: [
@@ -496,7 +496,10 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_dm_tipe1_stabil_prb', nama: 'Diabetes Melitus Tipe 1 Stabil', icd10: 'E10', kategori: 'metabolik',
+    // M13 Batch 6: DM tipe 1 termasuk 9 kelompok PRB (Perpres JKN). Bila dokter
+    // merujuk utk titrasi insulin spesialis, kembalinya lewat rujuk balik —
+    // bukan kontrol biasa. Satu-satunya kasus lab yang masuk kelompok PRB.
+    id: 'lab_dm_tipe1_stabil_prb', bisaPrb: true, nama: 'Diabetes Melitus Tipe 1 Stabil', icd10: 'E10', kategori: 'metabolik',
     keluhanUtama: 'Saya diabetes tipe 1 dan datang untuk kontrol insulin; gula belakangan sedikit lebih tinggi.', usia: [15, 45], vital: { td: '116/74', nadi: 80, rr: 18, suhu: 36.6, spo2: 99, gds: 196 },
     pembuka: ['Bagaimana pola insulin, makan, dan gula harian?', 'Saya memakai NPH dan regular sesuai rencana, tetapi beberapa kali melewatkan dosis makan siang.'],
     pertanyaan: [
@@ -596,7 +599,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_leptospirosis_tanpa_komplikasi', nama: 'Leptospirosis Tanpa Komplikasi', icd10: 'A27.9', kategori: 'infeksi',
+    id: 'lab_leptospirosis_tanpa_komplikasi', ambangKluster: 2, nama: 'Leptospirosis Tanpa Komplikasi', icd10: 'A27.9', kategori: 'infeksi',
     keluhanUtama: 'Demam mendadak, sakit kepala, dan betis sangat nyeri setelah membersihkan rumah kebanjiran.', usia: [15, 65], vital: { td: '112/70', nadi: 98, rr: 20, suhu: 38.7, spo2: 98 },
     pembuka: ['Kapan demam mulai dan bagaimana pajanan banjirnya?', 'Tiga hari setelah berjalan di air banjir dengan luka kecil di kaki.'],
     pertanyaan: [
@@ -624,7 +627,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['umum', 'Gelisah, perfusi buruk, urtikaria generalisata dan angioedema bibir.'], ['toraks_paru', 'Wheezing difus dan suara serak.'], ['jantung', 'Takikardia, hipotensi.', true]],
     diagnosisBanding: ['T78.2', 'J45.901', 'F41.0'],
-    tatalaksana: { obatBenar: [], prosedur: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi'], edukasi: ['rencana_anafilaksis', 'tanda_bahaya'], edukasiKritis: ['rencana_anafilaksis'] },
+    tatalaksana: { obatBenar: [], prosedur: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi'], edukasi: ['rencana_anafilaksis', 'tanda_bahaya'], edukasiKritis: ['rencana_anafilaksis'], terapiKritis: ['adrenalin_im_anafilaksis'] },
     stabilisasiWajib: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi'],
     clue: 'Onset menit dengan keterlibatan kulit plus jalan napas/napas dan hipotensi adalah anafilaksis. Epinefrin IM paha adalah terapi pertama dan boleh diulang; oksigen, posisi/cairan sesuai kondisi, monitoring, dan transfer. Antihistamin atau steroid tidak boleh menunda epinefrin.',
     panduanResmi: `${PPK} Semua anafilaksis harus distabilkan segera dan dipantau karena risiko reaksi bifasik.`,

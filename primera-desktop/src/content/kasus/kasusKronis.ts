@@ -816,6 +816,8 @@ export const KASUS_KRONIS: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'pneumonia_balita',
+    // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
+    ambangKluster: 2,
     nama: 'Pneumonia Balita (Berat)',
     icd10: 'J18.9',
     skdi: '3B',
@@ -935,8 +937,22 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         { id: 'cotrimoxazole_480', alasan: 'Bukan pilihan pra-rujukan utama; amoksisilin dosis pertama lebih tepat sebelum merujuk.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['tanda_bahaya', 'etika_batuk', 'kepatuhan_obat'],
+      // Audit CODEX 2026-07-16 #2: IMCI mewajibkan DOSIS PERTAMA antibiotik
+      // sebelum rujuk pneumonia berat — dulu melewatkannya masih bisa A
+      // (terapi 67). oksigen sudah digerbang stabilisasiWajib; antibiotik
+      // dosis-1 kini terapiKritis (skip → cap D + pasien memburuk).
+      terapiKritis: ['amoxicillin_sirup'],
     },
     stabilisasiWajib: ['oksigen'],
+    // Audit CODEX 2026-07-16 #10: kasus ini dulu TANPA konsekuensi sama sekali,
+    // padahal pneumonia berat balita yg salah/tak dirujuk berisiko fatal.
+    konsekuensi: {
+      narasi: 'Pneumonia berat balita tanpa antibiotik dosis pertama + oksigen + rujukan segera dapat berkembang cepat ke gagal napas dan sepsis.',
+      kembaliHariMin: 1,
+      kembaliHariMax: 2,
+      kondisiKembali: 'Anak dibawa kembali dalam kondisi jauh lebih sesak, sianosis jelas, dan sangat lemah — gagal napas mengancam nyawa.',
+      guideline: 'IMCI/WHO Pneumonia Balita; PPK 1186/2022.',
+    },
     clue: 'IMCI/WHO: pneumonia balita ditegakkan klinis dari napas cepat (RR ≥40x/menit usia 1–5 th). Tarikan dinding dada ke dalam (chest indrawing), sianosis, atau tolak minum = pneumonia BERAT → beri DOSIS PERTAMA antibiotik + oksigen, lalu RUJUK segera (SKDI 3B). Jangan tunda menunggu foto toraks.',
     panduanResmi: 'PPK 1186/2022 (adopsi WHO) mempertegas ambang napas cepat per-usia: >50x/mnt (2 bln–1 th) vs >40x/mnt (>1–5 th), dan \'pneumonia berat\' = ada sesak/tarikan dinding dada → wajib dirawat + antibiotik. Dosis amoksisilin oral resmi rawat jalan 25 mg/kgBB.',
   },

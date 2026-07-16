@@ -537,6 +537,14 @@ export function nilaiEncounter(
   const totalSlot = obatBenar.length + grupAlternatif.length + prosedurBenar.length
   const rasioTerapi =
     totalSlot > 0 ? (benarDiresepkan + slotAltTerpenuhi + prosedurTerpenuhi) / totalSlot : 1
+  // Terapi kritis penyelamat nyawa (audit CODEX 2026-07-16, temuan #2): dulu
+  // obat wajib (mis. MgSO4 preeklampsia, dosis-1 antibiotik pneumonia berat)
+  // hanya menyumbang ke 20% bobot terapi tanpa gate — melewatkannya masih bisa
+  // dapat A. `terapiKritis` menjadikannya GERBANG: id boleh obat (enc.resep)
+  // atau prosedur (enc.tindakan). Terlewat satu → hard-cap D + picu konsekuensi.
+  const terapiKritisTerlewat = (kasus.tatalaksana.terapiKritis ?? []).some(
+    (id) => !enc.resep.includes(id) && !tindakanDilakukan.includes(id),
+  )
   // Obat BERBAHAYA untuk kasus ini (obatSalahUmum, mis. NSAID pada dengue)
   // dihukum jauh lebih berat daripada sekadar "obat di luar tatalaksana".
   // Tier-1 #7: obat terlarang interaksi (mis. nitrat pada pasien PDE5) yg
@@ -776,6 +784,11 @@ export function nilaiEncounter(
   // Melewatkan stabilisasi berisiko selama transport meski arah rujukan benar;
   // cap tier C, setara kelalaian konfirmasi klinis penting, bukan cowboy/cedera.
   if (stabilisasiTerlewat) capGrade.push(69)
+  // Melewatkan terapi PENYELAMAT NYAWA (MgSO4 preeklampsia, dosis-1 antibiotik
+  // pneumonia berat, adrenalin, oksigen edema paru) → maks D (54), setara
+  // obatBerbahaya/cowboy: ini bahaya nyawa langsung, bukan sekadar suboptimal
+  // (audit CODEX 2026-07-16, temuan #2 — dulu kasus2 ini bisa dapat A).
+  if (terapiKritisTerlewat) capGrade.push(54)
   // CODEX audit (2026-07-12, temuan #13B): firewall alergi yg tertrigger
   // (resep diblokir sebelum sampai pasien) dulu NOL konsekuensi grade/skor —
   // murni badge UI (LembarPeriksa.tsx). Cap lebih ringan drpd obatBerbahaya
@@ -810,6 +823,7 @@ export function nilaiEncounter(
     firewallTerpicu: enc.firewallTerpicu > 0,
     konfirmasiTakTerpenuhi,
     stabilisasiTerlewat,
+    terapiKritisTerlewat,
     labTakRelevan,
     ...(sbarSkor !== undefined ? { sbarSkor } : {}),
     grade,

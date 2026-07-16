@@ -1,7 +1,7 @@
 .kegiatan {
   height: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: var(--sp-6);
   overflow: auto;
@@ -10,7 +10,15 @@
 .kegiatan__panel {
   width: min(720px, 100%);
   padding: var(--sp-5);
+  margin-block: min(8vh, var(--sp-8)) var(--sp-6);
 }
+
+/* Identitas per jenis kegiatan — garis atas panel (pola .igd__panel). */
+/* .kertas. prefix: main.tsx impor App SEBELUM base.css — tanpa spesifisitas
+   ekstra, border shorthand .kertas menang atas aksen jenis panel ini. */
+.kertas.kegiatan__panel--posyandu { border-top: 4px solid var(--daun-600); }
+.kertas.kegiatan__panel--prolanis { border-top: 4px solid var(--tinta-biru); }
+.kertas.kegiatan__panel--klb { border-top: 4px solid var(--kunyit-600); }
 
 .kegiatan__kepala {
   display: flex;
@@ -22,9 +30,9 @@
 }
 
 .kegiatan__label {
-  font-size: var(--text-lg);
+  font-size: var(--text-sm);
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--lacak-label);
   color: var(--daun-700);
 }
 
@@ -106,10 +114,14 @@
 .kegiatan__respons--salah { border-left-color: var(--tinta-merah); }
 .kegiatan__respons p { line-height: 1.5; font-size: var(--text-sm); }
 
-.stempel--kecil {
-  font-size: var(--text-xs);
-  padding: 2px var(--sp-2);
-  transform: rotate(-2deg);
+/* .stempel--kecil pindah ke base.css (dipakai lintas layar: Kegiatan & Igd). */
+
+/* Slot respons+delegasi ber-min-height: panel tumbuh hanya ke bawah,
+   tak recenter/lompat tiap ganti kartu. */
+.kegiatan__slot-aksi {
+  min-height: 132px;
+  display: flex;
+  flex-direction: column;
 }
 
 .kegiatan__delegasi {

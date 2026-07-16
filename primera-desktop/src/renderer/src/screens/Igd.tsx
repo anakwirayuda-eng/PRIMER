@@ -87,7 +87,7 @@ export function Igd() {
         </div>
 
         {/* Vital awal */}
-        <div className="igd__vital mono teks-xs">
+        <div className="igd__vital mono">
           {kasus.vitalAwal.td && <span>TD {kasus.vitalAwal.td}</span>}
           {kasus.vitalAwal.nadi && <span>N {kasus.vitalAwal.nadi}×</span>}
           {kasus.vitalAwal.rr && <span>RR {kasus.vitalAwal.rr}×</span>}
@@ -95,6 +95,21 @@ export function Igd() {
           {kasus.vitalAwal.suhu && <span>S {kasus.vitalAwal.suhu}°</span>}
           {kasus.vitalAwal.gds && <span>GDS {kasus.vitalAwal.gds}</span>}
         </div>
+
+        {/* CODEX audit UI/UX 2026-07-10 (#7c): dulu hanya dirender di dalam
+            blok fase==='langkah' — begitu jawaban TERAKHIR memicu transisi ke
+            kode_biru/disposisi, feedback benar/keliru pilihan itu lenyap
+            seketika (fase berubah pada render yang sama). Dipindah ke luar
+            ketiga blok fase supaya tetap terlihat sesaat setelah transisi.
+            Batch-6 estetika: posisinya dinaikkan ke atas blok fase — kronologi
+            vital → hasil langkah lalu → pertanyaan baru.
+            CODEX M14 #20 (DEFER): pasca-ROSC (kode_biru→disposisi via RJP)
+            banner ini masih milik langkah SEBELUM Kode Biru — menyesatkan. Fix
+            bersihnya (entri jawaban RJP sintetis) menyentuh nilaiIgd (skor
+            `jawaban.filter(benar)`) → butuh REVISI_ENGINE, tak sepadan utk
+            banner transien; blanket-hide di disposisi merusak jalur NORMAL
+            (langkah→disposisi tanpa kode biru) yang §7c memang mau tampilkan. */}
+        <ResponsTerakhir kasusId={igd.kasusId} jawaban={igd.jawaban} />
 
         {/* Fase: langkah keputusan */}
         {igd.fase === 'langkah' && langkah && (
@@ -202,18 +217,6 @@ export function Igd() {
           </div>
         )}
 
-        {/* CODEX audit UI/UX 2026-07-10 (#7c): dulu hanya dirender di dalam
-            blok fase==='langkah' — begitu jawaban TERAKHIR memicu transisi ke
-            kode_biru/disposisi, feedback benar/keliru pilihan itu lenyap
-            seketika (fase berubah pada render yang sama). Dipindah ke luar
-            ketiga blok fase supaya tetap terlihat sesaat setelah transisi.
-            CODEX M14 #20 (DEFER): pasca-ROSC (kode_biru→disposisi via RJP)
-            banner ini masih milik langkah SEBELUM Kode Biru — menyesatkan. Fix
-            bersihnya (entri jawaban RJP sintetis) menyentuh nilaiIgd (skor
-            `jawaban.filter(benar)`) → butuh REVISI_ENGINE, tak sepadan utk
-            banner transien; blanket-hide di disposisi merusak jalur NORMAL
-            (langkah→disposisi tanpa kode biru) yang §7c memang mau tampilkan. */}
-        <ResponsTerakhir kasusId={igd.kasusId} jawaban={igd.jawaban} />
       </div>
     </div>
   )

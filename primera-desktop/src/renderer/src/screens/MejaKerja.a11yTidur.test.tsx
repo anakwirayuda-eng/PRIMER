@@ -71,6 +71,11 @@ describe('<MejaKerja /> — Program Wilayah role=radio + aria-checked (#16e)', (
     radios.forEach((r) => expect(r).toHaveAttribute('aria-checked', 'false'))
 
     const user = userEvent.setup()
+    // Audit CODEX UKM 2026-07-16 #3: TETAPKAN_PROGRAM kini wajib rwFokus —
+    // tombol fokus disabled sampai RW fokus dipilih; pilih RW 1 dulu.
+    const psnSebelum = screen.getByRole('radio', { name: 'PSN 3M (vektor DBD)' })
+    expect(psnSebelum).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: 'RW 1' }))
     await user.click(screen.getByRole('radio', { name: 'PSN 3M (vektor DBD)' }))
 
     const radiosSetelah = screen.getAllByRole('radio')

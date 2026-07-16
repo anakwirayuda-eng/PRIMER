@@ -5,9 +5,12 @@
  */
 
 import { hitungIksKeluarga, klasifikasiIks, SEMUA_INDIKATOR_PISPK } from '@engine/pispk'
+import { arcKunjunganAktif } from '@engine/kunjungan'
 import type { KeluargaState, NilaiIndikator } from '@engine/state'
 import type { KeluargaBinaan } from '@content/types'
-import { karmaTerlihat, LABEL_EKONOMI, LABEL_INDIKATOR, LABEL_KLASIFIKASI, SIMBOL_SUMBER } from './petaUtil'
+import { PACK } from '@content/index'
+import { useGame } from '../../store'
+import { formatIks, karmaTerlihat, LABEL_EKONOMI, LABEL_INDIKATOR, LABEL_KLASIFIKASI, SIMBOL_SUMBER } from './petaUtil'
 
 interface Props {
   content: KeluargaBinaan
@@ -25,13 +28,16 @@ interface Props {
 
 /** Kelas chip indikator: warna dari status TERCATAT, simbol dari provenance. */
 function kelasChipIndikator(nilai: NilaiIndikator): string {
-  if (nilai.sumber === 'belum') return 'chip'
+  if (nilai.sumber === 'belum') return 'chip chip--kosong'
   if (nilai.status === 'ya') return nilai.sumber === 'dokter' ? 'chip chip--daun' : 'chip chip--kunyit'
   return 'chip chip--merah'
 }
 
 function judulChipIndikator(nilai: NilaiIndikator, penuh: string): string {
   if (nilai.sumber === 'belum') return `${penuh} — belum ada data. Kader atau kunjunganmu yang mengisinya.`
+  // #4 outcome-window: warga BERJANJI berubah, outcome PIS-PK belum terverifikasi.
+  if (nilai.sumber === 'janji')
+    return `${penuh}: Perubahan yang dijanjikan keluarga; hasilnya diverifikasi beberapa hari lagi.`
   const status = nilai.status === 'ya' ? 'terpenuhi' : 'belum terpenuhi'
   const sumber =
     nilai.sumber === 'dokter'
@@ -68,7 +74,22 @@ export function KartuKeluarga({
   const iks = hitungIksKeluarga(kel)
   const klasifikasi = iks === null ? null : LABEL_KLASIFIKASI[klasifikasiIks(iks)]
   const kepala = content.anggota.find((a) => a.peran === 'kepala') ?? content.anggota[0]
-  const totalKunjunganArc = content.arc.kunjungan.length
+  // Audit CODEX UKM 2026-07-16 #1: total arc dihitung atas daftar TERSARING
+  // mode-policy (arcKunjunganAktif) — arc mentah bisa memuat skenario
+  // Career-only, sehingga "n/total" mustahil tuntas di Ujian. Fallback default
+  // hanya untuk render tanpa sesi aktif (state null di test unit).
+  const mode = useGame((s) => s.state?.mode ?? 'karier')
+  const contentRelease = useGame((s) => s.state?.contentRelease ?? PACK.runtimeManifest.contentRelease)
+  const totalKunjunganArc = arcKunjunganAktif(PACK, content, mode, contentRelease).length
+  // Audit CODEX UKM 2026-07-16 #11: kejujuran IKS parsial — bila masih ada
+  // indikator relevan (non-na) tanpa data, angka IKS ditandai sementara
+  // beserta cakupan datanya, bukan tampil seolah sudah final.
+  const indikatorRelevan = SEMUA_INDIKATOR_PISPK.filter(
+    (ind) => kel.indikator[ind].statusSebenarnya !== 'na',
+  )
+  const indikatorTerdata = indikatorRelevan.filter((ind) => kel.indikator[ind].sumber !== 'belum').length
+  /** Seluruh indikator relevan sudah ber-data → klasifikasi boleh tampil pasti. */
+  const dataIksLengkap = indikatorTerdata >= indikatorRelevan.length
   // Gerbang provenance: peringatan karma hanya bila dokter sudah punya data keluarga ini.
   const karmaTampak = karmaTerlihat(kel, hari)
 
@@ -112,8 +133,34 @@ export function KartuKeluarga({
             ? belum ada data
           </span>
         ) : (
-          <span className={`chip ${klasifikasi?.chip ?? ''}`}>
-            {(iks * 100).toFixed(0)} · {klasifikasi?.label}
+          /* Audit CODEX 2026-07-16: chip klasifikasi BERWARNA (hijau "Sehat")
+             tetap tampil penuh percaya diri walau datanya baru 2/9 indikator —
+             warnanya sendiri yang membocorkan kepastian yang belum diperoleh.
+             Chip "IKS sementara" di sebelahnya tak cukup mengimbangi. Saat data
+             belum lengkap: warna klasifikasi ditahan (chip netral), angka diberi
+             awalan ≈, dan labelnya ditandai "sementara". Warna penuh hanya
+             setelah seluruh indikator relevan benar-benar ber-data.
+             Audit CODEX UX 2026-07-16 (lama): format IKS SATU gaya di semua
+             layar — desimal koma 0,00 (skala kanonik Permenkes 0-1). */
+          <span
+            className={`chip ${dataIksLengkap ? (klasifikasi?.chip ?? '') : ''}`}
+            title={
+              dataIksLengkap
+                ? `IKS dari seluruh ${indikatorRelevan.length} indikator relevan yang sudah ber-data.`
+                : `Klasifikasi masih SEMENTARA: dihitung dari ${indikatorTerdata} dari ${indikatorRelevan.length} indikator relevan. Warna & label bisa berubah saat sisanya terverifikasi.`
+            }
+          >
+            {dataIksLengkap ? '' : '≈'}
+            {formatIks(iks)} · {klasifikasi?.label}
+            {dataIksLengkap ? '' : ' (sementara)'}
+          </span>
+        )}
+        {iks !== null && !dataIksLengkap && (
+          <span
+            className="chip"
+            title={`IKS dihitung baru dari ${indikatorTerdata} dari ${indikatorRelevan.length} indikator relevan yang sudah ber-data — angkanya bisa bergeser saat sisanya terverifikasi.`}
+          >
+            data {indikatorTerdata}/{indikatorRelevan.length}
           </span>
         )}
         <HatiTrust trust={kel.trust} />

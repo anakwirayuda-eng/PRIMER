@@ -23,10 +23,22 @@ body,
 body {
   font-family: var(--font-utama);
   font-size: var(--text-md);
+  /* Ritme vertikal default (sapuan 2026-07-16): tanpa ini teks jatuh ke ~1.2
+     default browser — sempit utk teks Indonesia panjang; 12+ nilai tambal
+     per-layar kini bertahap dimigrasi ke token --baris-*. */
+  line-height: var(--baris-normal);
   color: var(--tinta);
   background: var(--bg-app);
   -webkit-font-smoothing: antialiased;
   user-select: none; /* rasa game, bukan dokumen web */
+}
+
+/* Fokus keyboard global (sapuan 2026-07-16) — dulu hanya ada di dalam blok
+   forced-colors; navigasi Tab di mode normal bergantung outline default
+   browser yang kontras rendah di kertas krem. */
+:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 2px;
 }
 
 input,
@@ -81,7 +93,7 @@ button {
 
 .kartu--klik:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-kartu);
+  box-shadow: var(--shadow-angkat);
 }
 
 .kartu--klik:active {
@@ -122,7 +134,7 @@ button {
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--text-sm);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--lacak-label);
   text-transform: uppercase;
   transform: rotate(-3deg);
   opacity: 0.92;
@@ -133,6 +145,14 @@ button {
 .stempel--merah { color: var(--tinta-merah); }
 .stempel--kunyit { color: var(--kunyit-700); }
 .stempel--biru { color: var(--tinta-biru); }
+
+/* Dipindah dari Kegiatan.css (sapuan 2026-07-16) — dipakai lintas layar
+   (Kegiatan & Igd), bukan milik satu layar. */
+.stempel--kecil {
+  font-size: var(--text-xs);
+  padding: var(--sp-05) var(--sp-2);
+  transform: rotate(-2deg);
+}
 
 @keyframes stempel-jatuh {
   0% { transform: rotate(-3deg) scale(2.2); opacity: 0; }
@@ -231,18 +251,14 @@ button {
   color: var(--tinta);
 }
 
-.chip--daun { background: var(--daun-100); color: var(--daun-800); border-color: transparent; }
-.chip--kunyit { background: var(--kunyit-100); color: var(--kunyit-700); border-color: transparent; }
-.chip--merah { background: #f6ddda; color: var(--tinta-merah); border-color: transparent; }
-.chip--biru { background: #dbe7f3; color: var(--tinta-biru); border-color: transparent; }
+/* Latar wash dari token (sapuan 2026-07-16): mode malam otomatis benar via
+   remap --wash-* di tokens.css — override [data-mode='malam'] per-chip yang
+   dulu di sini (dan rawan lupa di file layar) tak dibutuhkan lagi. */
+.chip--daun { background: var(--wash-daun); color: var(--daun-800); border-color: transparent; }
+.chip--kunyit { background: var(--wash-kunyit); color: var(--kunyit-700); border-color: transparent; }
+.chip--merah { background: var(--wash-merah); color: var(--tinta-merah); border-color: transparent; }
+.chip--biru { background: var(--wash-biru); color: var(--tinta-biru); border-color: transparent; }
 .chip--malam { background: var(--malam-800); color: var(--kertas-100); border-color: transparent; }
-
-/* Mode malam (CODEX P2): chip berlatar TERANG jadi tak terbaca krn teks aksen
-   kini terang — beri latar gelap-transparan agar teks aksen terang kontras. */
-[data-mode='malam'] .chip--daun { background: rgba(62, 208, 164, 0.16); }
-[data-mode='malam'] .chip--kunyit { background: rgba(234, 165, 79, 0.16); }
-[data-mode='malam'] .chip--merah { background: rgba(239, 132, 120, 0.16); }
-[data-mode='malam'] .chip--biru { background: rgba(131, 179, 222, 0.16); }
 
 /* Tombol aksi berlatar aksen (utama/bahaya/kunyit): di mode malam latarnya kini
    TERANG (token diremap) — teks putih gagal kontras, jadi pakai teks gelap. */
@@ -258,6 +274,7 @@ button {
   border-radius: var(--radius-pill);
   background: var(--bg-sunken);
   border: 1px solid var(--border-halus);
+  box-shadow: var(--shadow-cekung); /* permukaan cekung — kedalaman kertas */
   overflow: hidden;
 }
 
@@ -279,7 +296,7 @@ button {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--lacak-seksi);
   text-transform: uppercase;
   color: var(--tinta-lembut);
 }
@@ -346,7 +363,10 @@ button {
 /* -- Utilitas tata letak ----------------------------------------------------------- */
 .baris { display: flex; align-items: center; gap: var(--sp-3); }
 .baris--antara { justify-content: space-between; }
+.baris--tengah { justify-content: center; }
+.baris--kanan { justify-content: flex-end; }
 .kolom { display: flex; flex-direction: column; gap: var(--sp-3); }
+.angka { font-variant-numeric: tabular-nums; } /* angka rata kolom (skor, rupiah, vital) */
 .tengah { display: flex; align-items: center; justify-content: center; }
 .tumbuh { flex: 1; min-width: 0; }
 .mono { font-family: var(--font-mono); }

@@ -158,7 +158,7 @@ describe('M1.2 — surveilans balik UKP→UKM', () => {
         ],
       },
     }
-    expect(clusterAktif(s)).toHaveLength(1)
+    expect(clusterAktif(s, PACK)).toHaveLength(1)
     s = lewatiHari(s) // hariBaru mendeteksi & menyurati
     const suratKluster = s.inbox.filter((m) => m.judul.includes('SINYAL KLUSTER'))
     expect(suratKluster).toHaveLength(1)
@@ -176,7 +176,7 @@ describe('M1.2 — surveilans balik UKP→UKM', () => {
     }
     s = sampaiHari(s, 16)
     expect(s.desa.surveilans).toHaveLength(0)
-    expect(clusterAktif(s)).toHaveLength(0)
+    expect(clusterAktif(s, PACK)).toHaveLength(0)
   })
 
   it('diagnosis menular di poli tercatat ke surveilans saat disposisi', () => {

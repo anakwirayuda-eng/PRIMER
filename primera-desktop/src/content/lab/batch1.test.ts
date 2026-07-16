@@ -8,6 +8,7 @@ import {
 } from '../pack'
 import { validasiCurriculumBlueprint } from '../curriculum'
 import { LAB_BATCH_1_ARCHETYPE_SPECS, LAB_BATCH_1_CASES } from './batch1'
+import { LAB_ENRICHMENT, applyLabEnrichment } from './enrichment'
 
 describe('M13 lab full-fledge - batch 1', () => {
   it('mengaktifkan tepat 25 encounter nyata: 18 tuntas FKTP dan 7 rujuk', () => {
@@ -17,7 +18,12 @@ describe('M13 lab full-fledge - batch 1', () => {
     expect(Object.keys(LAB_BATCH_1_ARCHETYPE_SPECS)).toHaveLength(25)
 
     for (const kasus of LAB_BATCH_1_CASES) {
-      expect(PACK.kasus[kasus.id], kasus.id).toEqual(kasus)
+      // PACK memuat versi kasus yang SUDAH dilewatkan lapisan pengayaan
+      // (variasi persona / distraktor / jebakan resep / konsekuensi — lihat
+      // enrichment.ts). Bandingkan ke bentuk terenrich, bukan kasus dasar.
+      expect(PACK.kasus[kasus.id], kasus.id).toEqual(
+        applyLabEnrichment(kasus, LAB_ENRICHMENT[kasus.id]),
+      )
       expect(kasus.activationStatus, kasus.id).toBe('lab_prototype_unadjudicated')
       expect(kasus.diagnosisBanding, kasus.id).toContain(kasus.icd10)
       expect(kasus.anamnesis[0], kasus.id).toMatchObject({

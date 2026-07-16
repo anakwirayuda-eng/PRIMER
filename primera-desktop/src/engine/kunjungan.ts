@@ -18,8 +18,9 @@
 
 import type { Action } from './actions'
 import type { GameEvent } from './events'
-import type { HasilKunjungan, KeluargaState, KunjunganState, NilaiIndikator } from './state'
-import type { IndikatorPisPk, PilihanDialog, SkenarioKunjungan, TahapTtm } from '@content/types'
+import type { HasilKunjungan, KeluargaState, KunjunganState, ModeStase, NilaiIndikator } from './state'
+import type { IndikatorPisPk, KeluargaBinaan, PilihanDialog, SkenarioKunjungan, TahapTtm } from '@content/types'
+import { ukmScenarioAktif, type ContentPack } from '@content/pack'
 
 /**
  * Hasil kunjungan diperkaya daftar indikator yang DIBOHONGKAN warga.
@@ -42,6 +43,27 @@ interface HasilAksiKunjungan {
 
 function tolak(kj: KunjunganState, pesan: string): HasilAksiKunjungan {
   return { kj, events: [{ type: 'ERROR_AKSI', pesan }], selesai: false }
+}
+
+/**
+ * Arc kunjungan yang AKTIF untuk mode+rilis ini (audit CODEX UKM 2026-07-16
+ * #1): skenario ber-modePolicy Career-only (mis. gunawan_k2 pilot M13-1a)
+ * disaring supaya arc tak buntu permanen di Ujian — dulu arcIndex maju
+ * berdasar panjang arc MENTAH lalu skenario berikutnya ditolak mode-policy,
+ * jadi indikator merokok & arc Gunawan mustahil tamat di Ujian. Panjang arc
+ * dan indeks skenario kini dihitung atas daftar TERSARING ini, di engine
+ * (MULAI_KUNJUNGAN + totalSkenario terapkanHasil) maupun UI (KartuKeluarga/
+ * PetaDesa/Kunjungan).
+ */
+export function arcKunjunganAktif(
+  pack: ContentPack,
+  keluarga: KeluargaBinaan,
+  mode: ModeStase,
+  contentRelease: string,
+): SkenarioKunjungan[] {
+  return keluarga.arc.kunjungan.filter((sk: SkenarioKunjungan) =>
+    ukmScenarioAktif(pack, keluarga.id, sk.id, mode, contentRelease),
+  )
 }
 
 function unik<T>(arr: readonly T[]): T[] {
@@ -310,6 +332,17 @@ export function selesaikanKunjungan(
       ? 'partial'
       : 'gagal'
 
+  // Audit CODEX UKM 2026-07-16 #10: debrief sore dulu menjanjikan "rincian
+  // penilaian" tapi catatanPedagogis penulis skenario tak pernah sampai ke
+  // pemain. Kumpulkan catatan dari pilihan dialog yang TIDAK tepat (maks 3,
+  // urutan kejadian) + kartu intervensi yang meleset — bahan debrief nyata.
+  const catatanPedagogis: string[] = []
+  for (const id of kj.pilihanDiambil) {
+    const p = peta.get(id)
+    if (p && !p.tepat && p.catatanPedagogis) catatanPedagogis.push(p.catatanPedagogis)
+  }
+  if (kartu && !intervensiCocok && kartu.catatanPedagogis) catatanPedagogis.push(kartu.catatanPedagogis)
+
   const hasil: HasilKunjunganLengkap = {
     keluargaId: kj.keluargaId,
     skenarioId: kj.skenarioId,
@@ -322,6 +355,7 @@ export function selesaikanKunjungan(
     narasiPenutup: berhasil ? skenario.penutupBerhasil : skenario.penutupGagal,
     tingkat,
     indikatorDibohongi,
+    ...(catatanPedagogis.length > 0 ? { catatanPedagogis: catatanPedagogis.slice(0, 3) } : {}),
   }
   return hasil
 }
@@ -370,9 +404,19 @@ export function terapkanHasil(
     ttm = majuTtm(kel.ttm)
     arcIndex = kel.arcIndex + 1
     if (arcIndex >= totalSkenario) {
-      // Perubahan perilaku terverifikasi: indikator target benar-benar berubah.
+      // #4 outcome-window (audit CODEX UKM 2026-07-16): arc tamat = warga
+      // BERJANJI berubah (rencana persalinan/imunisasi/ASI/sumur/berobat), BUKAN
+      // outcome final seketika. Indikator target → `status:'ya'` (IKS naik
+      // optimis) tapi `statusSebenarnya` TAK dipaksa — sumber 'janji'. Reducer
+      // menjadwalkan verifikasi_pispk: ditepati → permanen, ingkar → balik.
       for (const target of skenario.target) {
-        indikator[target] = { status: 'ya', statusSebenarnya: 'ya', sumber: 'dokter', hariData: hari }
+        const lama = indikator[target]
+        indikator[target] = {
+          status: 'ya',
+          statusSebenarnya: lama.statusSebenarnya,
+          sumber: 'janji',
+          hariData: hari,
+        }
       }
       arcTamatBerhasil = true
     }

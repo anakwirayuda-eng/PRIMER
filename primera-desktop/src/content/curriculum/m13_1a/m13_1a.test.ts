@@ -485,7 +485,8 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
   })
 
   it('item kurikulum baru aktif tanpa kredit palsu atau relasi yatim', () => {
-    expect(CURRICULUM_BLUEPRINT.encounterArchetypes).toHaveLength(182)
+    // M13 Batch 4 (2026-07-16): +34 archetype poli tier-rujuk + 14 IGD (182→230).
+    expect(CURRICULUM_BLUEPRINT.encounterArchetypes).toHaveLength(230)
     expect(CURRICULUM_BLUEPRINT.ukmScenarios).toHaveLength(27)
     for (const item of M13_1A_AUTHORING_MANIFEST.newCurriculumItems) {
       expect(CURRICULUM_BLUEPRINT.curriculumItems).toContainEqual(item)

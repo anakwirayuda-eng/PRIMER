@@ -3,7 +3,9 @@
  * dapat metafora visual cuaca (awan), bukan cuma warna choropleth.
  */
 import { describe, expect, it } from 'vitest'
-import { mendungPetak, warnaPetak } from './petaUtil'
+import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { formatIks, mendungPetak, warnaPetak } from './petaUtil'
 import { klasifikasiIks } from '@engine/pispk'
 import type { RwState } from '@engine/state'
 
@@ -53,5 +55,55 @@ describe('mendungPetak', () => {
 
   it('belum tersurvei (kkTersurvei=0) → tidak mendung meski iks rendah (itu "belum ada data", bukan "buruk")', () => {
     expect(mendungPetak(rw({ iks: 0, kkTersurvei: 0 }))).toBe(false)
+  })
+})
+
+/**
+ * REGRESI — audit CODEX UX 2026-07-16: format IKS sempat tak seragam
+ * (0-100 tanpa satuan di PetaDesa.tsx vs desimal koma 0,00 di layar lain),
+ * ditambal 2× di titik terpisah dan 2 titik lain tetap terlewat. Pagar ganda:
+ * (a) formatIks() sendiri benar di seluruh rentang, (b) sapuan statis atas
+ * seluruh screens/ — tak boleh ada `.toFixed(0)`/`* 100).toFixed` mentah pada
+ * variabel bernama `iks` di luar petaUtil.ts sendiri.
+ */
+describe('formatIks — format kanonik desimal koma (audit CODEX UX 2026-07-16)', () => {
+  it('dua desimal, titik→koma, tanpa satuan tambahan', () => {
+    expect(formatIks(0.6)).toBe('0,60')
+    expect(formatIks(0.3)).toBe('0,30')
+    expect(formatIks(1)).toBe('1,00')
+    expect(formatIks(0)).toBe('0,00')
+  })
+
+  it('konsisten di seluruh rentang 0-1 (pola sama sapuan warnaPetak di atas)', () => {
+    for (let iks = 0; iks <= 1; iks += 0.05) {
+      expect(formatIks(iks), `iks=${iks}`).toMatch(/^\d,\d\d$/)
+    }
+  })
+})
+
+describe('Sapuan statis — tak ada format IKS mentah di luar petaUtil.ts (anti-regresi)', () => {
+  function daftarFileTsx(dir: string): string[] {
+    const hasil: string[] = []
+    for (const nama of readdirSync(dir)) {
+      if (nama === 'node_modules' || nama.startsWith('.')) continue
+      const jalur = resolve(dir, nama)
+      const info = statSync(jalur)
+      if (info.isDirectory()) hasil.push(...daftarFileTsx(jalur))
+      else if (/\.(tsx?|ts)$/.test(nama) && !nama.endsWith('.test.ts') && !nama.endsWith('.test.tsx')) {
+        hasil.push(jalur)
+      }
+    }
+    return hasil
+  }
+
+  it('tak ada `iks * 100).toFixed` mentah — semua pemanggil wajib lewat formatIks()', () => {
+    const akarScreens = resolve(__dirname, '..')
+    const pelanggar: string[] = []
+    for (const berkas of daftarFileTsx(akarScreens)) {
+      if (berkas.endsWith('petaUtil.ts')) continue // definisi formatIks sendiri
+      const isi = readFileSync(berkas, 'utf8')
+      if (/iks\s*\*\s*100\)\.toFixed/.test(isi)) pelanggar.push(berkas)
+    }
+    expect(pelanggar, `format IKS mentah ditemukan di: ${pelanggar.join(', ')}`).toEqual([])
   })
 })

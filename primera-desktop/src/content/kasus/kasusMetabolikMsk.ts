@@ -1158,6 +1158,11 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     diagnosisBanding: ['I50.0', 'I50.9', 'J44.9'],
     tatalaksana: {
       obatBenar: ['furosemid_40', 'isosorbid_dinitrat_5'],
+      // Audit CODEX 2026-07-16 #7a: clue memerintahkan "posisi setengah duduk +
+      // oksigen" sebagai stabilisasi, tetapi keduanya dulu TAK ada di prosedur —
+      // memilih oksigen justru dihukum sbg tindakan di luar rencana (-15). Kini
+      // jadi prosedur yang dinilai (stabilisasi FKTP sebelum rujuk).
+      prosedur: ['posisi_semifowler', 'oksigen'],
       obatSalahUmum: [
         { id: 'natrium_diklofenak_50', alasan: 'NSAID DIKONTRAINDIKASIKAN pada gagal jantung — menahan natrium/air memperberat kongesti dan memperburuk fungsi ginjal. Jangan diberikan untuk keluhan pegal apa pun di sini.', bahaya: 'kontraindikasi' },
         { id: 'bisoprolol_5', alasan: 'Beta-blocker BERMANFAAT jangka panjang, tapi JANGAN dimulai saat dekompensasi akut/kongesti (memperburuk curah jantung sesaat) — inisiasi dilakukan setelah stabil, oleh spesialis. Di FKTP fokus stabilisasi + rujuk.', bahaya: 'kontraindikasi' },
@@ -1170,7 +1175,16 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       // (beda dari 3 topik lain yg generik penyakit kronis) — kegagalan klasik
       // readmisi CHF di dunia nyata adalah pasien tak membatasi cairan di rumah.
       edukasiKritis: ['restriksi_cairan_gagal_jantung'],
+      // Audit CODEX 2026-07-16 #2: dekongesti (furosemid) adalah stabilisasi
+      // penyelamat pada CHF dekompensasi — konsekuensi kasus ini eksplisit
+      // "menuju edema paru akut mengancam jiwa" bila tak didekongesti. Kini
+      // terapiKritis: skip → cap D + pasien memburuk.
+      terapiKritis: ['furosemid_40'],
     },
+    // TANPA stabilisasiWajib oksigen: SpO2 pasien ini 92% (bukan hipoksemia
+    // <90%), jadi oksigen rutin BUKAN gerbang EBM hard — ia tetap prosedur yang
+    // dinilai (fix #7a) & furosemid jadi terapiKritis penyelamat (fix #2), tetapi
+    // melewatkan oksigen tidak meng-cap grade. Lihat m11prosesStabilisasi.test.ts.
     clue: 'GAGAL JANTUNG KONGESTIF (SKDI 3B → RUJUK): sesak progresif + ortopnea + PND + edema tungkai + JVP↑ + S3 gallop + ronki basal (kriteria Framingham). Di FKTP: STABILISASI — posisi setengah duduk, oksigen, furosemid (dekongesti), ISDN bila TD memadai — lalu RUJUK penyakit dalam untuk ekokardiografi & terapi definitif (ACE-I/beta-blocker dititrasi). JANGAN mulai beta-blocker saat dekompensasi; HINDARI NSAID (PPK Gagal Jantung / PERKI / ESC).',
     panduanResmi: 'PPK 1186/2022 memerinci stabilisasi gagal jantung akut di FKTP sebelum rujuk: oksigen 2–4 L/menit + furosemid injeksi 20–40 mg bolus IV, boleh diulang tiap jam hingga maksimal 600 mg/hari, lalu SEGERA RUJUK. Batasi cairan ≤1,5 L/hari (≤1 L bila berat).',
     konsekuensi: {

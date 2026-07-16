@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "primera-lab",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "D:/Dev/PRIMER-CODEX-lab/primera-desktop",
+      "port": 5173
+    },
+    {
+      "name": "primera-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--config", "vite.preview.config.ts"],
+      "cwd": "D:/Dev/PRIMER-CODEX-lab/primera-desktop",
+      "port": 5199
+    }
+  ]
+}

@@ -12,7 +12,7 @@ export interface Pengaturan {
   volumeMusik: number
   /** Volume efek suara 0..1. */
   volumeSfx: number
-  /** Skala ukuran teks global 0.9..1.4 (aksesibilitas). */
+  /** Skala ukuran teks global 0.9..2.0 (aksesibilitas — WCAG 1.4.4 resize 200%). */
   ukuranTeks: number
   /** Mode gelap: ikut blok (auto), paksa terang, atau paksa gelap. */
   modeMalam: ModeMalam
@@ -42,7 +42,11 @@ function baca(): Pengaturan {
     return {
       volumeMusik: klem(p.volumeMusik, 0, 1, PENGATURAN_DEFAULT.volumeMusik),
       volumeSfx: klem(p.volumeSfx, 0, 1, PENGATURAN_DEFAULT.volumeSfx),
-      ukuranTeks: klem(p.ukuranTeks, 0.9, 1.4, PENGATURAN_DEFAULT.ukuranTeks),
+      // Audit CODEX UX 2026-07-16 (P1): slider Pengaturan.tsx dinaikkan ke
+      // max=2 (WCAG 1.4.4) tapi clamp muat-ulang di sini TERTINGGAL di 1.4 —
+      // nilai 140-200% pilihan pemain langsung dipangkas balik tiap restart.
+      // Batas HARUS sama persis dengan slider — jangan diduplikasi berbeda lagi.
+      ukuranTeks: klem(p.ukuranTeks, 0.9, 2, PENGATURAN_DEFAULT.ukuranTeks),
       modeMalam: p.modeMalam === 'siang' || p.modeMalam === 'malam' ? p.modeMalam : 'auto',
       kurangiGerak: p.kurangiGerak === true,
     }

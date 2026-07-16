@@ -1188,8 +1188,19 @@ export const KASUS_KULIT: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B05.9', 'B01.9', 'B06.9'],
     tatalaksana: {
-      obatBenar: ['vitamin_a_kapsul', 'paracetamol_500'],
+      // Audit CODEX 2026-07-16 (#3): dulu `paracetamol_500` DIWAJIBKAN sbg
+      // jawaban benar padahal pasiennya anak 1-8 tahun. Tablet 500 mg adalah
+      // unit DEWASA — dosis anak 10-15 mg/kg/kali (WHO), sehingga anak 10 kg
+      // butuh ~100-150 mg = seperempat tablet. Memilih "tablet 500 mg" lalu
+      // menerimanya sbg BENAR mengajarkan kebiasaan yang tak aman: pemain tak
+      // pernah dipaksa memikirkan sediaan yang dosisnya bisa diukur. Game ini
+      // memang belum memodelkan berat badan/fraksi tablet, jadi pelajaran itu
+      // dipindah ke pilihan SEDIAAN — sirup anak 120 mg/5 mL bisa ditakar,
+      // tablet 500 mg tidak. Tablet dewasa kini jadi jebakan nonPrimer
+      // (kesalahan sediaan, bukan peracunan).
+      obatBenar: ['vitamin_a_kapsul', 'paracetamol_sirup'],
       obatSalahUmum: [
+        { id: 'paracetamol_500', alasan: 'Sediaan 500 mg adalah unit dewasa. Dosis parasetamol anak 10-15 mg/kg/kali, sehingga balita hanya butuh sebagian kecil tablet — pilih sirup anak yang dosisnya dapat ditakar, bukan tablet yang harus dipatah-patah.', bahaya: 'nonPrimer' },
         { id: 'amoxicillin_500', alasan: 'Morbili adalah infeksi virus; antibiotik TIDAK diberikan rutin. Antibiotik hanya bila ada komplikasi bakteri (pneumonia, otitis media akut).', bahaya: 'nonPrimer' },
         { id: 'dexamethasone_05', alasan: 'Kortikosteroid tidak berperan pada campak tanpa komplikasi dan justru menekan imun; tata laksana utama suportif + vitamin A.', bahaya: 'kontraindikasi' },
       ],

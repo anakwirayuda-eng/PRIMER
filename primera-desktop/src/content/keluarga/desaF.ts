@@ -399,7 +399,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
           hambatanSebenarnya: 'motivasi',
           petunjukHambatan:
             'Endah sendiri sebenarnya ingin bersalin di Puskesmas PONED — bidannya sudah mewanti-wanti soal ' +
-            'panggul sempit. Yang menahannya bukan dirinya: ibunya di kampung sudah menyiapkan kamar, ' +
+            'risiko panggul sempit. Yang menahannya bukan dirinya: ibunya di kampung sudah menyiapkan kamar, ' +
             'selamatan, dan "kata Ibu, pamali anak pertama lahir di tempat orang". Andri terjepit antara ' +
             'istri dan mertua. Ini motivasi KELUARGA BESAR — dan pemegang vetonya tak tinggal di rumah ini.',
           hotspot: [
@@ -408,7 +408,9 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
               label: 'Buku KIA dengan stabilo kuning',
               narasi:
                 'Buku KIA terisi penuh, rapi. Di halaman skrining, bidan menstabilo kuning satu baris: ' +
-                '"TB < 145 cm — risiko CPD (panggul sempit), rencanakan persalinan di faskes mampu PONED." ' +
+                '"TB < 145 cm — faktor risiko CPD (panggul sempit), rencanakan persalinan di faskes mampu PONED." ' +
+                'Faktor risiko, bukan vonis: panggulnya belum tentu sempit, tapi kemajuan persalinannya wajib ' +
+                'diawasi di tempat yang siap bertindak bila macet. ' +
                 'Di bawahnya, tulisan tangan Endah sendiri: tanda tanya kecil.',
               indikator: 'persalinan_faskes',
               x: 45,
@@ -447,8 +449,8 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
             {
               id: 'ek1_d1',
               narasi:
-                '"Bu bidan bilang panggul saya sempit, harus di PONED," Endah membuka buku KIA-nya, jarinya ' +
-                'berhenti di baris stabilo. "Tapi Ibu sudah nyiapkan semuanya di kampung, Dok. Kamar sudah ' +
+                '"Bu bidan bilang panggul saya berisiko sempit, jadi harus lahiran di PONED," Endah membuka ' +
+                'buku KIA-nya, jarinya berhenti di baris stabilo. "Tapi Ibu sudah nyiapkan semuanya di kampung, Dok. Kamar sudah ' +
                 'dicat. Masa saya bilang tidak jadi... Ibu pasti sedih sekali."',
               pilihan: [
                 {
@@ -484,7 +486,9 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   tepat: false,
                   catatanPedagogis:
                     'Kamu baru saja memenangkan debat yang sudah dimenangkan bidan minggu lalu. Pasien ini ' +
-                    'butuh sekutu menghadapi ibunya, bukan penjelasan ketiga tentang CPD.',
+                    'butuh sekutu menghadapi ibunya, bukan penjelasan ketiga tentang CPD. Perhatikan juga ' +
+                    'bahasanya: TB < 145 cm adalah FAKTOR RISIKO CPD yang menuntut persalinan di faskes ' +
+                    'dengan pengawasan — bukan diagnosis panggul sempit yang pasti, apalagi vonis sesar.',
                 },
                 {
                   id: 'ek1_d1_c',
@@ -593,8 +597,8 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   tepat: true,
                   catatanPedagogis:
                     'Undangan tanpa agenda tersembunyi ("bukan membahas lokasi hari ini") menurunkan tembok. ' +
-                    'Begitu sang ibu duduk di ruang ANC dan mendengar kata "panggul sempit" dari bidan sambil ' +
-                    'melihat cucunya di layar USG — adat akan bernegosiasi dengan sendirinya.',
+                    'Begitu sang ibu duduk di ruang ANC dan mendengar penjelasan risiko panggul sempit dari ' +
+                    'bidan sambil melihat cucunya di layar USG — adat akan bernegosiasi dengan sendirinya.',
                 },
                 {
                   id: 'ek1_d3_b',

@@ -175,6 +175,12 @@ export interface PenilaianEncounter {
   konfirmasiTakTerpenuhi: boolean
   /** Tindakan stabilisasi wajib belum dilakukan sebelum pasien dirujuk. */
   stabilisasiTerlewat: boolean
+  /**
+   * Terapi penyelamat nyawa (`terapiKritis`) belum diberikan (audit CODEX
+   * 2026-07-16 #2). Digerbang di clinic.ts (cap D) & dibaca reducer untuk
+   * Dex "kuasai" + konsekuensi. Kasus tanpa `terapiKritis` selalu false.
+   */
+  terapiKritisTerlewat: boolean
   labTakRelevan: number
   sbarSkor?: number // 0-100 bila merujuk
   /** Grade huruf ringkas untuk UI. */
@@ -205,7 +211,11 @@ export interface PenilaianEncounter {
  * Desa, keluarga, kader (UKM)
  * ------------------------------------------------------------------------- */
 
-export type SumberData = 'dokter' | 'kader' | 'belum'
+// #4 outcome-window (audit CODEX UKM 2026-07-16): 'janji' = perubahan perilaku
+// yang DIJANJIKAN warga saat arc tamat (IKS naik optimis lewat `status`), tapi
+// `statusSebenarnya` belum berubah — diverifikasi tertunda (verifikasi_pispk):
+// ditepati → jadi 'dokter'/ya permanen; ingkar → status balik ke sebenarnya.
+export type SumberData = 'dokter' | 'kader' | 'belum' | 'janji'
 
 export interface NilaiIndikator {
   status: StatusIndikator
@@ -378,6 +388,9 @@ export interface HasilKunjungan {
   tingkat?: 'berhasil' | 'partial' | 'gagal'
   /** SDOH armor aktif: keluarga miskin/rentan menahan trust bila diagnosis meleset. */
   armorAktif?: boolean
+  /** Catatan penulis skenario utk pilihan yang meleset — bahan debrief sore
+   * (audit CODEX UKM 2026-07-16 #10; maks 3). */
+  catatanPedagogis?: string[]
 }
 
 /* ---------------------------------------------------------------------------
@@ -441,6 +454,7 @@ export type JenisJadwal =
   | 'follow_up_kunjungan'
   | 'pasien_kembali'
   | 'karma_igd'
+  | 'verifikasi_pispk'
 
 export interface JadwalItem {
   id: string
@@ -451,6 +465,8 @@ export interface JadwalItem {
   pasienId?: string
   kasusId?: string
   keluargaId?: string
+  /** #4: indikator yang dijanjikan warga, menunggu verifikasi outcome. */
+  indikatorJanji?: IndikatorPisPk[]
   catatan?: string
   /** Identitas pasien yang kembali — "konsekuensi bernama" butuh nama yang sama. */
   nama?: string

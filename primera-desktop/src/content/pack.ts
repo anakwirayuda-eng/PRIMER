@@ -342,6 +342,21 @@ export function validasiPack(pack: ContentPack): string[] {
     for (const p of k.tatalaksana.prosedur ?? []) {
       if (!pack.tindakan[p]) masalah.push(`Kasus ${k.id}: tindakan '${p}' tidak ada di katalog`)
     }
+    // Audit CODEX 2026-07-16 #2: terapiKritis WAJIB benar-benar bisa dipilih
+    // pemain DAN mandatory — id harus ada di obatBenar/obatAlternatif(flat)
+    // (obat wajib) ATAU prosedur (tindakan wajib). BUKAN obatOpsional: terapi
+    // penyelamat nyawa tak boleh "boleh-tidak-boleh". Kalau tak selektabel,
+    // gerbang jadi MUSTAHIL (auto cap-D permanen).
+    for (const tk of k.tatalaksana.terapiKritis ?? []) {
+      const adaObat = k.tatalaksana.obatBenar.includes(tk)
+        || (k.tatalaksana.obatAlternatif ?? []).flat().includes(tk)
+      const adaProsedur = (k.tatalaksana.prosedur ?? []).includes(tk)
+      if (!adaObat && !adaProsedur) {
+        masalah.push(`Kasus ${k.id}: terapiKritis '${tk}' tidak ada di obatBenar/obatAlternatif maupun prosedur (mustahil dipilih atau tak wajib)`)
+      }
+      if (adaObat && !pack.obat[tk]) masalah.push(`Kasus ${k.id}: terapiKritis obat '${tk}' tidak ada di formularium`)
+      if (adaProsedur && !pack.tindakan[tk]) masalah.push(`Kasus ${k.id}: terapiKritis tindakan '${tk}' tidak ada di katalog`)
+    }
     for (const item of k.tatalaksana.tindakanSalahUmum ?? []) {
       if (!pack.tindakan[item.id]) masalah.push(`Kasus ${k.id}: tindakan salah '${item.id}' tidak ada di katalog`)
       if (k.tatalaksana.prosedur?.includes(item.id)) {

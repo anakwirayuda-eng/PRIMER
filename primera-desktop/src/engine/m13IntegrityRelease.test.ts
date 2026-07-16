@@ -112,10 +112,19 @@ describe('M13-0C - isolasi mode dan determinisme draw', () => {
       lapanganTerpakai: false,
     }
     const hasil = advance(state, { type: 'MULAI_KUNJUNGAN', keluargaId: family.id }, restricted)
-    expect(hasil.events).toContainEqual(
-      expect.objectContaining({ type: 'ERROR_AKSI', pesan: expect.stringMatching(/tidak aktif/i) }),
-    )
-    expect(hasil.state.kunjungan).toBeUndefined()
+    // Audit CODEX UKM 2026-07-16 #1: isolasi mode kini lebih kuat dari sekadar
+    // "ditolak saat diminta" — skenario nonaktif TERSARING dari arc
+    // (arcKunjunganAktif), jadi ia TAK PERNAH ditawarkan. Keluarga ber-arc-1
+    // yang skenario satu2nya dimatikan → arc kosong → "sudah selesai";
+    // keluarga ber-arc-panjang → skenario yang dilayani adalah skenario AKTIF
+    // berikutnya, bukan yang dimatikan.
+    if (hasil.state.kunjungan === undefined) {
+      expect(hasil.events).toContainEqual(
+        expect.objectContaining({ type: 'ERROR_AKSI', pesan: expect.stringMatching(/sudah selesai/i) }),
+      )
+    } else {
+      expect(hasil.state.kunjungan.skenarioId).not.toBe(visit.id)
+    }
   })
 
   it('tie-break karma stabil walau urutan insersi keluarga dibalik', () => {
