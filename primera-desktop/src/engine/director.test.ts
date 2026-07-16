@@ -474,6 +474,49 @@ describe('buatPasienDariKasus', () => {
     }
   })
 
+  /**
+   * M11 #4 Tingkat A (2026-07-16): undian varian presentasi kosmetik.
+   */
+  describe('varianId', () => {
+    it('kasus TANPA varianPresentasi — varianId selalu undefined', () => {
+      const pack = buatPack([buatKasus('polos')])
+      for (let seed = 0; seed < 30; seed++) {
+        expect(buatPasienDariKasus('polos', pack, new Rng(seed, 'v')).varianId).toBeUndefined()
+      }
+    })
+
+    it('kasus BER-varianPresentasi — varianId selalu salah satu id yang sah (termasuk _dasar implisit)', () => {
+      const pack = buatPack([
+        buatKasus('dengue', {
+          varianPresentasi: [{ id: 'bifasik', vital: { suhu: 38.6 } }, { id: 'petekie_awal' }],
+        }),
+      ])
+      const terlihat = new Set<string | undefined>()
+      for (let seed = 0; seed < 100; seed++) {
+        const varianId = buatPasienDariKasus('dengue', pack, new Rng(seed, 'v')).varianId
+        expect(['_dasar', 'bifasik', 'petekie_awal']).toContain(varianId)
+        terlihat.add(varianId)
+      }
+      // Ketiga opsi harus muncul dalam 100 percobaan — bukti pilihan bukan bias total.
+      expect(terlihat).toEqual(new Set(['_dasar', 'bifasik', 'petekie_awal']))
+    })
+
+    it('deterministik: seed sama -> varianId sama, seed lain berpeluang beda', () => {
+      const pack = buatPack([
+        buatKasus('dengue', {
+          varianPresentasi: [{ id: 'bifasik', vital: { suhu: 38.6 } }, { id: 'petekie_awal' }],
+        }),
+      ])
+      const a1 = buatPasienDariKasus('dengue', pack, new Rng(42, 'v')).varianId
+      const a2 = buatPasienDariKasus('dengue', pack, new Rng(42, 'v')).varianId
+      expect(a1).toBe(a2)
+      const varianLintasSeed = new Set(
+        Array.from({ length: 20 }, (_, seed) => buatPasienDariKasus('dengue', pack, new Rng(seed, 'v')).varianId),
+      )
+      expect(varianLintasSeed.size).toBeGreaterThan(1)
+    })
+  })
+
   it('override diterapkan (pasien follow-up/karma)', () => {
     const pack = buatPack([buatKasus('stroke')])
     const p = buatPasienDariKasus('stroke', pack, new Rng(7, 'o'), {

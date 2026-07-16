@@ -90,6 +90,18 @@ export function buatPasienDariKasus(
   // faktor risiko interaksi obat (mis. pemakaian PDE5-inhibitor tersembunyi).
   const faktorRisiko = kasus.interaksiTrap ? [kasus.interaksiTrap.faktor] : []
 
+  // M11 #4 Tingkat A (2026-07-16): undian varian kosmetik pakai RNG yang SAMA
+  // dipakai nama/usia/persona/BPJS di atas — precedent sudah ada: "wajah
+  // pasien" (hal yang tak mengubah jawaban benar) memang boleh berbeda bebas
+  // antar-mahasiswa/antar-hari tanpa melanggar kontrak keadilan Mode Ujian
+  // ("bobot kasus identik per paket") karena yang diatur kontrak itu adalah
+  // KASUS mana yang muncul, bukan wajah kosmetiknya. `varianPresentasi`
+  // secara struktural (lihat types.ts) tak pernah mengubah kunci jawaban,
+  // jadi ia masuk kelas yang sama dengan persona, bukan kelas seleksi kasus.
+  const varianId = kasus.varianPresentasi?.length
+    ? rng.pick(['_dasar', ...kasus.varianPresentasi.map((v) => v.id)])
+    : undefined
+
   const dasar: PasienAktif = {
     id: `p_${kasusId}_${rng.int(1000, 9999)}`,
     nama,
@@ -103,6 +115,7 @@ export function buatPasienDariKasus(
     faktorRisiko,
     rw: rng.int(1, 8),
     bonusTrust: false,
+    ...(varianId !== undefined ? { varianId } : {}),
   }
   return { ...dasar, ...override }
 }

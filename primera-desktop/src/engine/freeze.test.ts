@@ -126,10 +126,10 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // 14 kasus infeksi lab kini bisa berkluster → komposisi KLB & bobot Director
   // bergeser pada jejak yang menyentuhnya. Kanal IGD baca activationStatus
   // (blueprint) — tak menyentuh file beku. Detail di verifikasi.ts REVISI 39.
-  'reducer.ts': '9037bcc3c43a63c064249fd320e3f9e351803cee4188f147151ad98747da5209',
-  'clinic.ts': 'bb247f3383775cdfe423ee9df6fbce7f4ea3ca407215b05af9da38cb7a0bce64',
+  'reducer.ts': 'f03d9a4f43607987207119b0299dd14a2aefb2dbb7ff2881a4b9c97fa8a63b67',
+  'clinic.ts': '9dbdd1492bf4c76bd628f04b0affd8c974cb28dd7352fdce3abdf2952f212592',
   'scoring.ts': 'c1b5de6fc2c194e8b8a70b8d802a29980002ee2059ea487821e9e59fc0540d8d',
-  'director.ts': '2e46d3d85c02fa657d81a57d6477e5bb1b24931151d546f5b3c58cabdd3ffabb',
+  'director.ts': 'fa4c269cd001eb2e019f18507ac5e024ff38784bb6181cfa41cb5f87cd1a340d',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
@@ -139,8 +139,8 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': 'aa390b1ca0139fb49664633baba7e1f2890756e164388c5a990b17c9c9a3931f',
-  'state.ts': 'ae152cedeb3b03d1da405d62a8392d5dfe8d3eccaafedca594b98b5ef7a1f4b8',
+  'verifikasi.ts': '94dac8877b553c73227cdd0d5b8ea2045b052af6e3c43ab2dd09fa29e82ddb74',
+  'state.ts': '3224553d62b71b27924c63749b6253ca5a240d05f7bcaccac9ab195c9b32a4b6',
   'save.ts': '8c75672d5ff27efa243ce2f87d3ad92ff22c5c851f010566e1c4090b43449c8a',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',

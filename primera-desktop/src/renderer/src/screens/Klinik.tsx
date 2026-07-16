@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
 import type { PenilaianEncounter } from '@engine/state'
+import { kasusEfektif } from '@engine/clinic'
 import { RuangTunggu } from './klinik/RuangTunggu'
 import { LembarPeriksa } from './klinik/LembarPeriksa'
 import { DeckAksi } from './klinik/DeckAksi'
@@ -33,7 +34,11 @@ export function Klinik() {
   }, [eventTick])
 
   const enc = state.klinik.aktif
-  const kasus = enc ? PACK.kasus[enc.pasien.kasusId] : undefined
+  // M11 #4 Tingkat A: satu-satunya funnel yang membaca kasus utk seluruh Deck
+  // anak (diteruskan via prop) — kasusEfektif menerapkan varian kosmetik
+  // pasien ini, identitas bila tak ada varianId.
+  const kasusDasar = enc ? PACK.kasus[enc.pasien.kasusId] : undefined
+  const kasus = enc && kasusDasar ? kasusEfektif(kasusDasar, enc.pasien.varianId) : kasusDasar
   // DeepThink "onboarding railroaded" (keputusan user): sorotan tutorial
   // hanya menyala kalau tutorialAktif DAN pasien di layar ini memang kasus
   // terpandunya (KASUS_TUTORIAL) — pasien lain (mis. giliran ke-2 di antrian

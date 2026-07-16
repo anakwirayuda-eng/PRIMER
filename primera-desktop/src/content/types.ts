@@ -337,6 +337,45 @@ export interface KasusKlinis {
    * kasus yang narasinya (clue) sendiri sudah menyebut skenario eskalasi sah.
    */
   justifikasiRujukValid?: JustifikasiRujuk[]
+  /**
+   * M11 #4 Tingkat A (2026-07-16, docs/M11_VARIASI_PRESENTASI_DESAIN.md) —
+   * varian presentasi KOSMETIK: kasus yang sama muncul berulang di 90 hari
+   * karier (atau lintas-mahasiswa di paket Ujian yang sama) tapi dulu SELALU
+   * membawa vital/keluhan/temuan yang identik persis — mahasiswa bisa hafal
+   * angka, bukan bernalar ulang dari data.
+   *
+   * SENGAJA tak punya slot `harusDirujuk`/`tatalaksana`/`konsekuensi`/
+   * `diagnosisBanding` — secara STRUKTURAL mustahil satu varian mengubah
+   * kunci jawaban (bukan sekadar konvensi penulis konten yang bisa
+   * terlanggar). Kasus dasar (field vital/keluhanUtama/anamnesis/
+   * pemeriksaanFisik di level atas interface ini) selalu jadi varian
+   * implisit id `'_dasar'`; array ini HANYA varian TAMBAHAN. Kasus tanpa
+   * array ini (atau array kosong) berperilaku identik seperti sebelum
+   * field ini ada — kompatibel mundur penuh, tak ada migrasi save.
+   *
+   * Dipilih sekali per pasien di `buatPasienDariKasus` (director.ts, RNG
+   * `rngFlavor` yang sama dipakai nama/usia/persona — precedent: variasi
+   * yang TAK mengubah jawaban benar sudah dianggap "wajah pasien", bukan
+   * "kurikulum", jadi TAK perlu adil lintas-mahasiswa paket sama seperti
+   * pemilihan KASUS itu sendiri). Diterapkan via `kasusEfektif()`
+   * (clinic.ts) di setiap titik baca konten klinis kasus aktif.
+   */
+  varianPresentasi?: VarianPresentasiTingkatA[]
+}
+
+/**
+ * Satu varian Tingkat-A. `jawabanBerubah`/`temuanBerubah` HANYA boleh
+ * mengganti id pertanyaan/region yang SUDAH ADA di kasus dasar — validasiPack
+ * menolak id/region baru (itu perluasan lingkup kasus, bukan varian).
+ */
+export interface VarianPresentasiTingkatA {
+  id: string
+  vital?: Partial<TandaVital>
+  keluhanUtama?: string
+  /** id pertanyaan anamnesis dasar -> jawaban pengganti. */
+  jawabanBerubah?: Record<string, string>
+  /** region pemeriksaan fisik dasar -> temuan pengganti. */
+  temuanBerubah?: Partial<Record<RegionFisik, string>>
 }
 
 /** M10.5 §3a: kategori alasan sah untuk rujukan di luar `harusDirujuk`. */

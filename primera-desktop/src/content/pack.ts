@@ -389,6 +389,38 @@ export function validasiPack(pack: ContentPack): string[] {
         masalah.push(`Kasus ${k.id}: tidak ada RS dengan spesialisasi '${k.spesialisRujukan}'`)
       }
     }
+    // M11 #4 Tingkat A (2026-07-16): varian presentasi kosmetik HANYA boleh
+    // mengganti id pertanyaan / region yang SUDAH ADA di kasus dasar — id/
+    // region baru berarti perluasan lingkup kasus (butuh kasus baru, bukan
+    // varian), dan `kasusEfektif()` (clinic.ts) diam-diam mengabaikan entri
+    // yang tak cocok, jadi typo di sini gagal SENYAP tanpa pagar ini.
+    if (k.varianPresentasi?.length) {
+      const idAnamnesisAda = new Set(k.anamnesis.map((q) => q.id))
+      const regionAda = new Set(k.pemeriksaanFisik.map((f) => f.region))
+      const idVarianTerpakai = new Set<string>()
+      for (const v of k.varianPresentasi) {
+        if (v.id === '_dasar') {
+          masalah.push(`Kasus ${k.id}: varianPresentasi id '_dasar' terpakai — id itu milik presentasi dasar implisit`)
+        }
+        if (idVarianTerpakai.has(v.id)) {
+          masalah.push(`Kasus ${k.id}: varianPresentasi id '${v.id}' duplikat`)
+        }
+        idVarianTerpakai.add(v.id)
+        for (const idQ of Object.keys(v.jawabanBerubah ?? {})) {
+          if (!idAnamnesisAda.has(idQ)) {
+            masalah.push(`Kasus ${k.id}: varian '${v.id}' jawabanBerubah mengacu id pertanyaan '${idQ}' yang tak ada di anamnesis dasar`)
+          }
+        }
+        for (const region of Object.keys(v.temuanBerubah ?? {})) {
+          if (!regionAda.has(region as (typeof k.pemeriksaanFisik)[number]['region'])) {
+            masalah.push(`Kasus ${k.id}: varian '${v.id}' temuanBerubah mengacu region '${region}' yang tak ada di pemeriksaanFisik dasar`)
+          }
+        }
+        if (!v.vital && !v.keluhanUtama && !v.jawabanBerubah && !v.temuanBerubah) {
+          masalah.push(`Kasus ${k.id}: varian '${v.id}' tak mengubah apa pun — identik dgn presentasi dasar, hapus atau isi bedanya`)
+        }
+      }
+    }
   }
   // IGD (M3.14) — sama seperti kasus klinik: langkah harus punya pilihan benar,
   // dan disposisi rujuk harus punya spesialisasi + RS yang menyediakannya.

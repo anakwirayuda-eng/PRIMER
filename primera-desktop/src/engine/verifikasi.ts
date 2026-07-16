@@ -528,7 +528,23 @@ function fnv1a(teks: string): string {
 // `kulit_morbili` (usia 1-8) tak lagi mewajibkan tablet dewasa paracetamol_500
 // — sediaan anak `paracetamol_sirup` jadi obatBenar, tablet 500 mg jadi jebakan
 // sediaan (nonPrimer); 89 distraktor anamnesis generik diganti differential-driven.
-export const REVISI_ENGINE = 40
+// 41 (2026-07-16 — M11 #4 Tingkat A, mekanik variasi presentasi kosmetik):
+// `KasusKlinis.varianPresentasi?` (types.ts) mendaftarkan varian kosmetik
+// opsional per kasus — TAK PERNAH menyentuh field jawaban-kunci (tak ada
+// `harusDirujuk`/`tatalaksana`/`konsekuensi`/`diagnosisBanding` di tipe
+// varian, jaminan struktural bukan konvensi). `buatPasienDariKasus`
+// (director.ts) memilih `varianId` sekali via `rng.pick(['_dasar', ...ids])`
+// saat pasien dibuat (stream `rngFlavor`/`kembali` yg sudah ada — bukan
+// stream kurikulum, krn varian tak bisa mengubah jawaban benar shg tak perlu
+// adil lintas paket Ujian), disimpan di `PasienAktif.varianId` seumur hidup
+// pasien itu. `kasusEfektif(kasus, varianId)` (clinic.ts) fungsi merge murni
+// baru — identity-return bila tanpa varian (nol biaya utk ~99% kasus tanpa
+// varian). `reducer.ts` (2 titik) kini memanggil `kasusEfektif` sebelum
+// meneruskan kasus ke `aksiKlinik`/scoring. Replay lama TAK BERUBAH (kasus
+// existing 0 punya `varianPresentasi`, jadi `kasusEfektif` selalu identity-
+// return) — bump krn 4 file beku (reducer/clinic/director/state) tersentuh,
+// bukan krn hasil replay bergeser.
+export const REVISI_ENGINE = 41
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

@@ -24,6 +24,7 @@ import {
 import type { FokusProgram } from '@engine/state'
 import { clusterAktif } from '@engine/surveilans'
 import { PACK } from '@content/index'
+import { kasusEfektif } from '@engine/clinic'
 import { karmaTerlihat } from './peta/petaUtil'
 import { useFocusTrap } from '../useFocusTrap'
 import { useRadioGroup } from '../useRadioGroup'
@@ -420,12 +421,20 @@ export function MejaKerja() {
                         {p.followUpDari !== undefined && <span className="chip chip--merah">Kembali</span>}
                       </span>
                     </div>
-                    <p className="mk__pasien-keluhan">
-                      {PACK.kasus[p.kasusId]?.keluhanUtamaOlehPendamping && (
-                        <span className="teks-xs teks-lembut">Dituturkan pendamping: </span>
-                      )}
-                      “{PACK.kasus[p.kasusId]?.keluhanUtama ?? 'Keluhan akan jelas di ruang periksa.'}”
-                    </p>
+                    {(() => {
+                      // M11 #4 Tingkat A: preview antrian meja kerja harus konsisten
+                      // dgn keluhanUtama yang nanti tampil di ruang periksa.
+                      const kasusDasarP = PACK.kasus[p.kasusId]
+                      const kasusP = kasusDasarP ? kasusEfektif(kasusDasarP, p.varianId) : kasusDasarP
+                      return (
+                        <p className="mk__pasien-keluhan">
+                          {kasusP?.keluhanUtamaOlehPendamping && (
+                            <span className="teks-xs teks-lembut">Dituturkan pendamping: </span>
+                          )}
+                          “{kasusP?.keluhanUtama ?? 'Keluhan akan jelas di ruang periksa.'}”
+                        </p>
+                      )
+                    })()}
                   </div>
                 ))}
               </div>

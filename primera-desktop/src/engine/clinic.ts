@@ -17,7 +17,7 @@ import type {
   PenilaianEncounter,
 } from './state'
 import type { ContentPack } from '@content/pack'
-import type { KasusKlinis, PertanyaanAnamnesis, Persona } from '@content/types'
+import type { KasusKlinis, PertanyaanAnamnesis, Persona, RegionFisik } from '@content/types'
 import type { Rng } from './core/rng'
 
 /* ---------------------------------------------------------------------------
@@ -128,6 +128,46 @@ export function temuanUntukRegion(kasus: KasusKlinis, region: string): string {
   const entri = kasus.pemeriksaanFisik.filter((t) => t.region === region)
   if (entri.length === 0) return 'dalam batas normal'
   return entri.map((t) => t.temuan).join(' ')
+}
+
+/* ---------------------------------------------------------------------------
+ * kasusEfektif — terapkan varian presentasi Tingkat-A (M11 #4, 2026-07-16)
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Satu-satunya titik yang boleh menerapkan `varianPresentasi` — SETIAP tempat
+ * yang membaca konten klinis (vital/keluhanUtama/anamnesis/pemeriksaanFisik)
+ * dari kasus pasien AKTIF wajib memanggil ini alih-alih membaca
+ * `pack.kasus[id]` mentah, supaya ruang tunggu, ruang periksa, dan debrief
+ * selalu menunjukkan presentasi yang SAMA untuk satu pasien.
+ *
+ * Aman dipanggil tanpa `varianId` (undefined/'_dasar') — mengembalikan
+ * `kasus` apa adanya, referensi identik (tak ada alokasi baru), sehingga
+ * kasus tanpa `varianPresentasi` sama sekali nol overhead.
+ */
+export function kasusEfektif(kasus: KasusKlinis, varianId: string | undefined): KasusKlinis {
+  if (!varianId || varianId === '_dasar') return kasus
+  const v = kasus.varianPresentasi?.find((item) => item.id === varianId)
+  if (!v) return kasus
+  return {
+    ...kasus,
+    ...(v.vital ? { vital: { ...kasus.vital, ...v.vital } } : {}),
+    ...(v.keluhanUtama ? { keluhanUtama: v.keluhanUtama } : {}),
+    ...(v.jawabanBerubah
+      ? {
+          anamnesis: kasus.anamnesis.map((q) =>
+            v.jawabanBerubah![q.id] !== undefined ? { ...q, jawab: v.jawabanBerubah![q.id]! } : q,
+          ),
+        }
+      : {}),
+    ...(v.temuanBerubah
+      ? {
+          pemeriksaanFisik: kasus.pemeriksaanFisik.map((f) =>
+            v.temuanBerubah![f.region] !== undefined ? { ...f, temuan: v.temuanBerubah![f.region]! } : f,
+          ),
+        }
+      : {}),
+  }
 }
 
 /* ---------------------------------------------------------------------------

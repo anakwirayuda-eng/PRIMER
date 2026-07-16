@@ -75,6 +75,16 @@ export interface PasienAktif {
    * di LembarPeriksa tanpa perlu memesan ulang.
    */
   labSudahTersedia?: string
+  /**
+   * M11 #4 Tingkat A (2026-07-16): varian presentasi kosmetik yang dipilih
+   * untuk pasien INI (lihat `VarianPresentasiTingkatA` di content/types.ts).
+   * `undefined` atau `'_dasar'` = presentasi dasar kasus tanpa perubahan
+   * (kompatibel mundur; save lama tanpa field ini berperilaku identik).
+   * Diterapkan via `kasusEfektif()` (clinic.ts) di setiap titik baca konten
+   * klinis kasus aktif — TIDAK PERNAH memengaruhi harusDirujuk/tatalaksana/
+   * konsekuensi (dijamin struktural oleh tipe varian itu sendiri).
+   */
+  varianId?: string
 }
 
 export type FaseEncounter =

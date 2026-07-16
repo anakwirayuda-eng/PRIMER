@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { aksiKlinik, buatEncounter, nilaiEncounter, temuanUntukRegion, KAPASITAS_EDUKASI } from './clinic'
+import { aksiKlinik, buatEncounter, nilaiEncounter, temuanUntukRegion, kasusEfektif, KAPASITAS_EDUKASI } from './clinic'
 import { Rng } from './core/rng'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
@@ -1645,5 +1645,102 @@ describe('M7 — kuota & prioritisasi edukasi', () => {
       const nilai = nilaiEncounter({ ...main, disposisi: 'pulang' }, KASUS_FARINGITIS, PACK)
       expect(nilai.skorPemeriksaan).toBe(100)
     })
+  })
+})
+
+/* ---------------------------------------------------------------------------
+ * kasusEfektif — varian presentasi Tingkat-A (M11 #4, 2026-07-16)
+ * ------------------------------------------------------------------------- */
+
+describe('kasusEfektif', () => {
+  const KASUS_BER_VARIAN: KasusKlinis = {
+    ...KASUS_FARINGITIS,
+    varianPresentasi: [
+      {
+        id: 'ringan',
+        vital: { suhu: 37.6, nadi: 84 },
+        keluhanUtama: 'Tenggorokan agak nyeri, masih bisa makan biasa.',
+        jawabanBerubah: { q_alergi: 'Belum pernah alergi obat apa pun, Dok.' },
+        temuanBerubah: { tht_mulut: 'Faring sedikit hiperemis, tonsil T1-T1 tanpa eksudat.' },
+      },
+      { id: 'berat', vital: { suhu: 39.1 } },
+    ],
+  }
+
+  it('tanpa varianId (undefined) — kembalikan kasus dasar APA ADANYA (referensi identik)', () => {
+    expect(kasusEfektif(KASUS_BER_VARIAN, undefined)).toBe(KASUS_BER_VARIAN)
+  })
+
+  it("varianId '_dasar' eksplisit — sama seperti undefined", () => {
+    expect(kasusEfektif(KASUS_BER_VARIAN, '_dasar')).toBe(KASUS_BER_VARIAN)
+  })
+
+  it('varianId tak dikenal — jatuh kembali ke kasus dasar, bukan error', () => {
+    expect(kasusEfektif(KASUS_BER_VARIAN, 'tak_ada_ini')).toBe(KASUS_BER_VARIAN)
+  })
+
+  it('varian mengubah vital HANYA field yang disebut — field lain tetap dari dasar', () => {
+    const efektif = kasusEfektif(KASUS_BER_VARIAN, 'ringan')
+    expect(efektif.vital.suhu).toBe(37.6)
+    expect(efektif.vital.nadi).toBe(84)
+    expect(efektif.vital.td).toBe(KASUS_FARINGITIS.vital.td) // tak disebut varian -> dari dasar
+    expect(efektif.vital.rr).toBe(KASUS_FARINGITIS.vital.rr)
+  })
+
+  it('varian mengganti keluhanUtama', () => {
+    expect(kasusEfektif(KASUS_BER_VARIAN, 'ringan').keluhanUtama).toBe(
+      'Tenggorokan agak nyeri, masih bisa makan biasa.',
+    )
+  })
+
+  it('varian mengganti jawaban SATU pertanyaan anamnesis — pertanyaan lain & urutan tak berubah', () => {
+    const efektif = kasusEfektif(KASUS_BER_VARIAN, 'ringan')
+    expect(efektif.anamnesis.map((q) => q.id)).toEqual(KASUS_FARINGITIS.anamnesis.map((q) => q.id))
+    const alergi = efektif.anamnesis.find((q) => q.id === 'q_alergi')
+    expect(alergi?.jawab).toBe('Belum pernah alergi obat apa pun, Dok.')
+    const makan = efektif.anamnesis.find((q) => q.id === 'q_makan')
+    expect(makan?.jawab).toBe(KASUS_FARINGITIS.anamnesis.find((q) => q.id === 'q_makan')!.jawab)
+  })
+
+  it('varian mengganti temuan SATU region fisik — region lain tak berubah', () => {
+    const efektif = kasusEfektif(KASUS_BER_VARIAN, 'ringan')
+    const thtMulut = efektif.pemeriksaanFisik.find((f) => f.region === 'tht_mulut')
+    expect(thtMulut?.temuan).toBe('Faring sedikit hiperemis, tonsil T1-T1 tanpa eksudat.')
+    const leher = efektif.pemeriksaanFisik.find((f) => f.region === 'kepala_leher')
+    expect(leher?.temuan).toBe(
+      KASUS_FARINGITIS.pemeriksaanFisik.find((f) => f.region === 'kepala_leher')!.temuan,
+    )
+  })
+
+  it('varian minimal (hanya vital) tak menyentuh anamnesis/pemeriksaanFisik sama sekali', () => {
+    const efektif = kasusEfektif(KASUS_BER_VARIAN, 'berat')
+    expect(efektif.anamnesis).toBe(KASUS_BER_VARIAN.anamnesis)
+    expect(efektif.pemeriksaanFisik).toBe(KASUS_BER_VARIAN.pemeriksaanFisik)
+  })
+
+  /**
+   * REGRESI — jaminan STRUKTURAL Tingkat-A: apa pun isi varianPresentasi,
+   * kunci jawaban (harusDirujuk/tatalaksana/konsekuensi/diagnosisBanding/
+   * skdi/icd10) tidak PERNAH berubah. Ini bukan sekadar perilaku
+   * `kasusEfektif` saat ini — `VarianPresentasiTingkatA` (types.ts) secara
+   * tipe TAK PUNYA field-field itu, jadi test ini juga pagar kompilasi:
+   * menambah field kunci-jawaban ke tipe varian akan gagal di sini dulu.
+   */
+  it('kunci jawaban TAK PERNAH berubah oleh varian mana pun', () => {
+    for (const id of ['ringan', 'berat']) {
+      const efektif = kasusEfektif(KASUS_BER_VARIAN, id)
+      expect(efektif.harusDirujuk).toBe(KASUS_BER_VARIAN.harusDirujuk)
+      expect(efektif.tatalaksana).toBe(KASUS_BER_VARIAN.tatalaksana)
+      expect(efektif.konsekuensi).toBe(KASUS_BER_VARIAN.konsekuensi)
+      expect(efektif.diagnosisBanding).toBe(KASUS_BER_VARIAN.diagnosisBanding)
+      expect(efektif.skdi).toBe(KASUS_BER_VARIAN.skdi)
+      expect(efektif.icd10).toBe(KASUS_BER_VARIAN.icd10)
+      expect(efektif.spesialisRujukan).toBe(KASUS_BER_VARIAN.spesialisRujukan)
+    }
+  })
+
+  it('kasus TANPA varianPresentasi sama sekali — kasusEfektif selalu identitas', () => {
+    expect(kasusEfektif(KASUS_FARINGITIS, undefined)).toBe(KASUS_FARINGITIS)
+    expect(kasusEfektif(KASUS_FARINGITIS, 'apa_saja')).toBe(KASUS_FARINGITIS)
   })
 })

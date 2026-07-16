@@ -7,8 +7,10 @@
 import { describe, expect, it } from 'vitest'
 import { PACK } from './index'
 import { validasiPack } from './pack'
+import type { ContentPack } from './pack'
+import type { KasusKlinis } from './types'
 import { NAMA_ICD } from './icd10'
-import { buatEncounter, nilaiEncounter } from '../engine/clinic'
+import { buatEncounter, nilaiEncounter, kasusEfektif } from '../engine/clinic'
 import { buatPasienDariKasus } from '../engine/director'
 import { Rng } from '../engine/core/rng'
 
@@ -695,5 +697,110 @@ describe('Distraktor differential-driven, bukan template massal (CODEX #1)', () 
       sisa,
       'distraktor generik lama muncul lagi (mungkin dgn kata berbeda) — ganti dgn pertanyaan yang mengejar banding kasus ini',
     ).toEqual([])
+  })
+})
+
+/**
+ * REGRESI — M11 #4 Tingkat A (2026-07-16): validasiPack menolak
+ * `varianPresentasi` yang mengacu id pertanyaan / region yang tak ada di
+ * kasus dasar. Tanpa pagar ini, `kasusEfektif()` (clinic.ts) diam-diam
+ * mengabaikan entri yang tak cocok (lihat `Object.keys(...)[q.id] !==
+ * undefined`), jadi typo penulis konten gagal SENYAP — vitalnya berubah tapi
+ * jawaban/temuan yang dimaksud tetap dasar, tanpa peringatan apa pun.
+ */
+describe('validasiPack — varianPresentasi Tingkat A (CODEX-kelas: guard id/region)', () => {
+  function kasusFixture(overrides: Partial<KasusKlinis>): KasusKlinis {
+    return {
+      id: 'kasus_uji_tingkat_a',
+      nama: 'Uji Varian',
+      icd10: 'J02.9',
+      skdi: '4A',
+      kategori: 'infeksi',
+      fktp144: true,
+      harusDirujuk: false,
+      keluhanUtama: 'Keluhan dasar.',
+      demografi: { usiaMin: 10, usiaMax: 50 },
+      vital: { td: '110/70', nadi: 90, rr: 18, suhu: 38.0 },
+      anamnesis: [{ id: 'q_a', kategori: 'rps', tanya: 'Sejak kapan?', jawab: 'Dua hari.' }],
+      pemeriksaanFisik: [{ region: 'tht_mulut', temuan: 'Faring hiperemis.', relevan: true }],
+      lab: [],
+      diagnosisBanding: ['J02.9'],
+      tatalaksana: { obatBenar: [], edukasi: [] },
+      clue: 'Uji.',
+      ...overrides,
+    }
+  }
+
+  function packDenganKasus(k: KasusKlinis): ContentPack {
+    return {
+      kasus: { [k.id]: k },
+      kasusIgd: {},
+      keluarga: {},
+      kader: [],
+      rw: [],
+      rumahSakit: [],
+      obat: {},
+      lab: {},
+      edukasi: {},
+      tindakan: {},
+      skdi144: [],
+      namaWarga: { pria: [], wanita: [], keluarga: [] },
+      // Minimal manifest hanya utk melewati gerbang awal validasiPack —
+      // test ini menyasar guard varianPresentasi, bukan integritas manifest.
+      runtimeManifest: {
+        schemaVersion: 1,
+        contentRelease: 'r1',
+        releaseOrder: ['r1'],
+        encounterArchetypes: [],
+        ukmScenarios: [],
+      },
+    }
+  }
+
+  it('kasus TANPA varianPresentasi — tak ada masalah terkait varian', () => {
+    const pack = packDenganKasus(kasusFixture({}))
+    expect(validasiPack(pack).some((m) => m.includes('varian'))).toBe(false)
+  })
+
+  it('varian valid (id pertanyaan & region SUDAH ADA) — tak ada masalah', () => {
+    const pack = packDenganKasus(
+      kasusFixture({
+        varianPresentasi: [{ id: 'ringan', jawabanBerubah: { q_a: 'Baru semalam.' }, temuanBerubah: { tht_mulut: 'Faring sedikit merah.' } }],
+      }),
+    )
+    expect(validasiPack(pack).some((m) => m.includes('varian'))).toBe(false)
+  })
+
+  it('jawabanBerubah mengacu id pertanyaan yang TAK ADA — ditolak', () => {
+    const pack = packDenganKasus(
+      kasusFixture({ varianPresentasi: [{ id: 'salah', jawabanBerubah: { q_tak_ada: 'X' } }] }),
+    )
+    expect(validasiPack(pack).some((m) => m.includes("id pertanyaan 'q_tak_ada' yang tak ada"))).toBe(true)
+  })
+
+  it('temuanBerubah mengacu region yang TAK ADA di pemeriksaanFisik dasar — ditolak', () => {
+    const pack = packDenganKasus(
+      kasusFixture({ varianPresentasi: [{ id: 'salah', temuanBerubah: { abdomen: 'Nyeri tekan.' } }] }),
+    )
+    expect(validasiPack(pack).some((m) => m.includes("region 'abdomen' yang tak ada"))).toBe(true)
+  })
+
+  it("id varian '_dasar' — ditolak (bentrok dgn presentasi dasar implisit)", () => {
+    const pack = packDenganKasus(kasusFixture({ varianPresentasi: [{ id: '_dasar', vital: { suhu: 38.5 } }] }))
+    expect(validasiPack(pack).some((m) => m.includes("id '_dasar' terpakai"))).toBe(true)
+  })
+
+  it('id varian duplikat — ditolak', () => {
+    const pack = packDenganKasus(
+      kasusFixture({
+        varianPresentasi: [{ id: 'x', vital: { suhu: 38.1 } }, { id: 'x', vital: { suhu: 38.9 } }],
+      }),
+    )
+    expect(validasiPack(pack).some((m) => m.includes("id 'x' duplikat"))).toBe(true)
+  })
+
+  it('varian kosong (tak mengubah apa pun) — ditolak, bukan diam-diam identik dgn dasar', () => {
+    const pack = packDenganKasus(kasusFixture({ varianPresentasi: [{ id: 'kosong' }] }))
+    expect(validasiPack(pack).some((m) => m.includes("varian 'kosong' tak mengubah apa pun"))).toBe(true)
   })
 })

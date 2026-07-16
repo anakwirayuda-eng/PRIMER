@@ -37,7 +37,7 @@ import {
 } from '@content/pack'
 import type { Persona } from '@content/types'
 import { Rng } from './core/rng'
-import { buatEncounter, aksiKlinik, nilaiEncounter } from './clinic'
+import { buatEncounter, aksiKlinik, nilaiEncounter, kasusEfektif } from './clinic'
 import { arcKunjunganAktif, buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm } from './kunjungan'
 import { prosesHarianKader } from './kader'
 import { susunAntrianHarian, buatPasienDariKasus, peluangIgd } from './director'
@@ -295,8 +295,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           )
         }
       }
-      const kasus = pack.kasus[enc.pasien.kasusId]
-      if (!kasus) return err(s, `Kasus ${enc.pasien.kasusId} tidak ditemukan.`)
+      const kasusDasar = pack.kasus[enc.pasien.kasusId]
+      if (!kasusDasar) return err(s, `Kasus ${enc.pasien.kasusId} tidak ditemukan.`)
+      // M11 #4 Tingkat A: terapkan varian kosmetik pasien ini (kasusEfektif
+      // adalah identitas bila pasien tak punya varianId — nol biaya).
+      const kasus = kasusEfektif(kasusDasar, enc.pasien.varianId)
       const rng = new Rng(s.seed, 'klinik', s.hari, s.log.length)
       const hasil = aksiKlinik(enc, action, kasus, pack, rng)
       let next: GameState = { ...s, klinik: { ...s.klinik, aktif: hasil.enc } }
@@ -355,8 +358,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (enc.fase !== 'disposisi') {
         return err(s, `Selesaikan tahap terapi dulu — pasien ini masih di tahap ${enc.fase}.`)
       }
-      const kasus = pack.kasus[enc.pasien.kasusId]
-      if (!kasus) return err(s, `Kasus ${enc.pasien.kasusId} tidak ditemukan.`)
+      const kasusDasar = pack.kasus[enc.pasien.kasusId]
+      if (!kasusDasar) return err(s, `Kasus ${enc.pasien.kasusId} tidak ditemukan.`)
+      // M11 #4 Tingkat A: terapkan varian kosmetik pasien ini (kasusEfektif
+      // adalah identitas bila pasien tak punya varianId — nol biaya).
+      const kasus = kasusEfektif(kasusDasar, enc.pasien.varianId)
 
       const encFinal = {
         ...enc,

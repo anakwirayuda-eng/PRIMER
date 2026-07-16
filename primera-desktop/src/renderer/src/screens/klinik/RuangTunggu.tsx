@@ -6,6 +6,7 @@
 
 import { PACK } from '@content/index'
 import type { GameState } from '@engine/state'
+import { kasusEfektif } from '@engine/clinic'
 import type { Action } from '@engine/actions'
 import { formatUsia } from '@engine/usia'
 import { labelJk } from './util'
@@ -48,7 +49,10 @@ export function RuangTunggu({ state, dispatch }: Props) {
       {antrian.length > 0 ? (
         <div className="klinik-tunggu__antrian">
           {antrian.map((p, i) => {
-            const kasus = PACK.kasus[p.kasusId]
+            // M11 #4 Tingkat A: preview ruang tunggu harus konsisten dgn
+            // keluhanUtama yang nanti tampil di ruang periksa untuk pasien ini.
+            const kasusDasar = PACK.kasus[p.kasusId]
+            const kasus = kasusDasar ? kasusEfektif(kasusDasar, p.varianId) : kasusDasar
             return (
               <article
                 key={p.id}
