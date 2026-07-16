@@ -22,6 +22,32 @@ export function Igd() {
   useEffect(() => {
     panelRef.current?.focus({ preventScroll: true })
   }, [igd?.fase])
+  /**
+   * CODEX M14 #20c: banner <ResponsTerakhir> menampilkan feedback langkah
+   * TERAKHIR yang dijawab. Pada jalur RJP (langkah→kode_biru→disposisi) langkah
+   * terakhir itu adalah pilihan SEBELUM Kode Biru — begitu pemain sampai
+   * disposisi lewat RJP, banner masih membicarakan keputusan lama, seolah itu
+   * respons atas RJP-nya. Menyesatkan.
+   *
+   * Dulu ditunda karena fix yang terbayang (entri jawaban RJP sintetis)
+   * menyentuh `nilaiIgd` (`jawaban.filter(benar)`) → butuh REVISI_ENGINE, tak
+   * sepadan untuk banner transien; sedangkan blanket-hide di disposisi merusak
+   * jalur NORMAL (langkah→disposisi tanpa Kode Biru) yang §7c memang ingin
+   * menampilkannya.
+   *
+   * Jalan keluarnya ternyata tak perlu menyentuh engine sama sekali: cukup
+   * MENGINGAT di renderer apakah sesi ini pernah melewati Kode Biru, lalu
+   * sembunyikan banner HANYA pada jalur itu. Nol perubahan skor/replay, nol
+   * bump REVISI_ENGINE — `IgdState` tak ditambahi field apa pun.
+   *
+   * Catatan jujur: ref ini per-mount, jadi bila pemain memuat save yang sudah
+   * telanjur berada di fase disposisi pasca-RJP, banner lama bisa tampil sekali
+   * lagi. Itu jauh lebih kecil daripada masalah yang diperbaiki, dan menutupnya
+   * butuh field state baru (biaya yang justru dihindari di sini).
+   */
+  const pernahKodeBiru = useRef(false)
+  if (igd?.fase === 'kode_biru') pernahKodeBiru.current = true
+  if (!igd) pernahKodeBiru.current = false
   const kasusMaybe = igd ? PACK.kasusIgd[igd.kasusId] : undefined
   const langkahMaybe = igd && kasusMaybe ? kasusMaybe.langkah[igd.langkahIndex] : undefined
   // DeepThink ronde-2 bonus (keputusan user): urutan pilihan diacak per-
@@ -103,13 +129,15 @@ export function Igd() {
             ketiga blok fase supaya tetap terlihat sesaat setelah transisi.
             Batch-6 estetika: posisinya dinaikkan ke atas blok fase — kronologi
             vital → hasil langkah lalu → pertanyaan baru.
-            CODEX M14 #20 (DEFER): pasca-ROSC (kode_biru→disposisi via RJP)
-            banner ini masih milik langkah SEBELUM Kode Biru — menyesatkan. Fix
-            bersihnya (entri jawaban RJP sintetis) menyentuh nilaiIgd (skor
-            `jawaban.filter(benar)`) → butuh REVISI_ENGINE, tak sepadan utk
-            banner transien; blanket-hide di disposisi merusak jalur NORMAL
-            (langkah→disposisi tanpa kode biru) yang §7c memang mau tampilkan. */}
-        <ResponsTerakhir kasusId={igd.kasusId} jawaban={igd.jawaban} />
+            CODEX M14 #20c (DIPERBAIKI 2026-07-16, tanpa REVISI_ENGINE): pada
+            jalur RJP (kode_biru→disposisi) banner ini masih milik langkah
+            SEBELUM Kode Biru — terbaca seolah respons atas RJP. Kini digerbang
+            `pernahKodeBiru` (latch renderer, lihat komentar di atas): jalur
+            NORMAL (langkah→disposisi) tetap menampilkannya sesuai maksud §7c,
+            jalur RJP tidak. Nol sentuhan nilaiIgd/state beku. */}
+        {!(pernahKodeBiru.current && igd.fase === 'disposisi') && (
+          <ResponsTerakhir kasusId={igd.kasusId} jawaban={igd.jawaban} />
+        )}
 
         {/* Fase: langkah keputusan */}
         {igd.fase === 'langkah' && langkah && (

@@ -55,6 +55,36 @@ describe('<Igd /> — ResponsTerakhir tetap tampil lintas transisi fase', () => 
     expect(screen.getByRole('status')).toBeInTheDocument()
   })
 
+  /**
+   * REGRESI — CODEX M14 #20c: pada jalur RJP (langkah→kode_biru→disposisi),
+   * jawaban TERAKHIR yang tercatat adalah pilihan SEBELUM Kode Biru. Banner
+   * feedback karena itu masih membicarakan keputusan lama begitu pemain sampai
+   * disposisi — terbaca seolah itu respons atas RJP-nya. Digerbang latch
+   * renderer `pernahKodeBiru`; jalur NORMAL (test di atas) tetap menampilkannya.
+   */
+  it('jalur RJP (kode_biru → disposisi): feedback langkah PRA-Kode-Biru TIDAK ikut terbawa', () => {
+    pasangIgd('kode_biru')
+    const { rerender } = render(<Igd />)
+    // Sanity: saat Kode Biru, feedback pilihan yang menghabiskan stabilitas
+    // memang SENGAJA tampil (itu justru info terpenting).
+    expect(screen.getByRole('status')).toBeInTheDocument()
+
+    // RJP berhasil → engine memindahkan fase ke disposisi; `jawaban` TIDAK
+    // bertambah (RJP bukan langkah ber-entri jawaban).
+    const skrg = useGame.getState().state!
+    useGame.setState({ state: { ...skrg, igd: { ...skrg.igd!, fase: 'disposisi', stabilitas: 25 } } })
+    rerender(<Igd />)
+
+    // Pasca-ROSC stabilitas sengaja RENDAH (25 < AMBANG_STABIL_RUJUK 50) —
+    // "kembali" bukan "sembuh" — jadi headernya memang varian jujur ini,
+    // bukan "Pasien Stabil".
+    expect(screen.getByText('Stabilitas Masih Rendah — Disposisi')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('status'),
+      'banner pra-Kode-Biru tak boleh terbawa ke disposisi pasca-RJP',
+    ).not.toBeInTheDocument()
+  })
+
   it('fase langkah, langkahIndex 0 (langkah pertama, belum ada jawaban): tak ada feedback ditampilkan', () => {
     const { kasus } = kasusIgdPertama()
     const state = buildInitialState('Uji Igd', 1, PACK)
