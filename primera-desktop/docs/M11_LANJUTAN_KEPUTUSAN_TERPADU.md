@@ -53,9 +53,15 @@ biaya:nilai buruk, September dekat).
   jadikan pool (mis. 6-8) yang dirotasi per kejadian. Posyandu sudah
   12-kartu-pool sejak migrasi 5-Langkah; Prolanis sudah bervariasi per
   peserta.
-- **B3 — Variasi suara surat kader** (murah): kader sudah punya
-  persona/bias — tambah variasi frasa laporan per kader per bulan
-  (display-only).
+- **B3 — Variasi suara surat kader** — **SUDAH TERPENUHI kode eksisting**
+  (diverifikasi 2026-07-17, bukan diasumsikan): `buatSuratKader` (kader.ts)
+  sudah punya `SALAM_PEMBUKA` (4 varian) + `KALIMAT_PENUTUP` (4 varian),
+  keduanya `rng.pick()`, plus 2 sisipan probabilistik ber-persona (bias-
+  confession 40% & quirk-callback 30%, `rng.chance()`) — kombinasi ini
+  sudah menghasilkan variasi suara per kader per hari yang genuinely kaya,
+  diuji `kunjungan.test.ts` (`prosesHarianKader`). Tak ada pekerjaan baru
+  yang diperlukan; ditutup di sini agar tak dobel-bangun sesuatu yang
+  sudah ada.
 
 **Rekomendasi**: B1 sebagai batch utama (pakai pipeline draf→verifikasi
 adversarial yang sama dgn #4), B2+B3 menumpang batch konten yang sama.
@@ -172,3 +178,23 @@ sekali-duduk per batch. Tinggal bilang.
 | D | Granularitas Prolanis | D3-lite + catatan tensi ILP |
 | E | SAJI/Pinkesga | E-1 segera; E-2 gelombang unfreeze UKM tersendiri |
 | F | M13 adjudikasi 103 | siapkan artifact saat Anda minta |
+
+## STATUS EKSEKUSI (diperbarui 2026-07-17, sesi lanjutan)
+
+Semua diadjudikasi user via AskUserQuestion: **A1+A2, B1+B2+B3, C2, D3-lite.**
+
+| # | Status |
+|---|---|
+| A1 | SELESAI — mekanik B1 (varianKunjungan) mencakup variasi pembuka/penutup teks kunjungan |
+| A2 | SELESAI — storylet Debrief Malam, non-REVISI |
+| B1 | Mekanik SELESAI; konten 27 skenario sedang digenerate workflow `m11-varian-kunjungan-tingkat-a` |
+| B2 | SELESAI — pool 3 narasi klb_verif/klb_5w1h |
+| B3 | SUDAH TERPENUHI kode eksisting (lihat Bagian B di atas) — tak ada pekerjaan baru |
+| C2 | SELESAI PENUH — 3 field (panduanResmi kunjungan, sumber kegiatan, sumber+pinkesga intervensi); konten pengisi belum ditulis |
+| D3-lite | SELESAI — rotasi 4 kanal Prolanis + catatan tensi ILP |
+| E-1 | SELESAI — label SAJI di stepper Kunjungan.tsx |
+| E-2 | BELUM — gelombang unfreeze UKM tersendiri, jangan campur rev 41 bila sudah rilis |
+| F | belum diminta |
+
+Semua commit di lab clone `D:/Dev/PRIMER-CODEX-lab/primera-desktop`, branch
+`codex-gpt56-experiment`, REVISI_ENGINE 41 (satu gelombang unfreeze belum-rilis).
