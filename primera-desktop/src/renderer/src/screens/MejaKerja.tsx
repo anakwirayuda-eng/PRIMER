@@ -12,6 +12,7 @@ import type { JenisSurat, Surat } from '@engine/state'
 import type { Persona } from '@content/types'
 import { formatUsia } from '@engine/usia'
 import { hitungSkor, ringkasanHarian } from '@engine/director'
+import { storyletHariIni } from './mejaKerja/storylet'
 import { hitungIksKeluarga } from '@engine/pispk'
 import {
   HARI_BUKA_PETA,
@@ -686,6 +687,9 @@ export function MejaKerja() {
                 <li key={i}>{c}</li>
               ))}
             </ul>
+
+            {/* M11 #2 A2 — storylet atmosfer satu-tayang, murni display (non-REVISI). */}
+            <p className="teks-xs teks-lembut mk__storylet">{storyletHariIni(state.seed, state.hari)}</p>
 
             {/* M4.18 — Gudang Obat: stok menipis + pengadaan (admin sore hari). */}
             {(() => {
