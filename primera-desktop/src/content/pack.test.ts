@@ -10,8 +10,10 @@ import { validasiPack } from './pack'
 import type { ContentPack } from './pack'
 import type { KasusKlinis } from './types'
 import { NAMA_ICD } from './icd10'
+import { VARIAN_TINGKAT_A } from './varianTingkatAData'
 import { buatEncounter, nilaiEncounter, kasusEfektif } from '../engine/clinic'
 import { buatPasienDariKasus } from '../engine/director'
+import { sidikJariPack } from '../engine/verifikasi'
 import { Rng } from '../engine/core/rng'
 
 describe('PACK — validasi silang id konten', () => {
@@ -802,5 +804,74 @@ describe('validasiPack — varianPresentasi Tingkat A (CODEX-kelas: guard id/reg
   it('varian kosong (tak mengubah apa pun) — ditolak, bukan diam-diam identik dgn dasar', () => {
     const pack = packDenganKasus(kasusFixture({ varianPresentasi: [{ id: 'kosong' }] }))
     expect(validasiPack(pack).some((m) => m.includes("varian 'kosong' tak mengubah apa pun"))).toBe(true)
+  })
+})
+
+/**
+ * Lapisan varian Tingkat-A (varianTingkatA.ts) — peta VARIAN_TINGKAT_A benar-
+ * benar terpasang ke PACK final. (Isi variannya sendiri sudah divalidasi
+ * `validasiPack(PACK)` di atas; ini menjaga WIRING-nya: kalau pemasangan di
+ * index.ts terlepas/berpindah urutan, varian hilang SENYAP dari game — kasus
+ * tetap valid, hanya tak pernah bervariasi.)
+ */
+describe('lapisan varian Tingkat-A terpasang ke PACK', () => {
+  it('setiap entri peta terpasang persis ke kasusnya', () => {
+    for (const [id, varian] of Object.entries(VARIAN_TINGKAT_A)) {
+      expect(PACK.kasus[id], `kasus '${id}' ada di PACK`).toBeDefined()
+      expect(PACK.kasus[id]!.varianPresentasi).toEqual(varian)
+    }
+  })
+
+  it('kasus di luar peta tak ikut ketempelan varian', () => {
+    for (const k of Object.values(PACK.kasus)) {
+      if (!(k.id in VARIAN_TINGKAT_A)) {
+        expect(k.varianPresentasi, `kasus '${k.id}' harusnya tanpa varian`).toBeUndefined()
+      }
+    }
+  })
+
+  /**
+   * sidikJariPack vs varian: keberadaan+urutan id varian menggeser konsumsi
+   * RNG `buatPasienDariKasus` → replay — WAJIB menggeser sidik jari. Isi
+   * teks/angka varian murni kosmetik (tak disekor, tak menyentuh RNG) —
+   * sekelas clue/jawab, TIDAK boleh menggeser sidik jari (freeze-bucket:
+   * koreksi teks post-freeze tetap aman tanpa membatalkan jurnal lama).
+   */
+  describe('sidikJariPack sensitif thd STRUKTUR varian, kebal thd TEKS varian', () => {
+    function packDgnKasusPertamaDiubah(ubah: (k: KasusKlinis) => KasusKlinis): ContentPack {
+      const id = Object.keys(PACK.kasus).sort()[0]!
+      return { ...PACK, kasus: { ...PACK.kasus, [id]: ubah(PACK.kasus[id]!) } }
+    }
+
+    it('menambah varian baru → sidik jari BERUBAH', () => {
+      const asli = sidikJariPack(PACK)
+      const pack2 = packDgnKasusPertamaDiubah((k) => ({
+        ...k,
+        varianPresentasi: [...(k.varianPresentasi ?? []), { id: 'uji_hash', vital: { suhu: 37.9 } }],
+      }))
+      expect(sidikJariPack(pack2)).not.toBe(asli)
+    })
+
+    it('membalik urutan id varian → sidik jari BERUBAH (urutan menyetir rng.pick)', () => {
+      const dua: KasusKlinis['varianPresentasi'] = [
+        { id: 'varian_a', vital: { suhu: 37.9 } },
+        { id: 'varian_b', vital: { suhu: 38.4 } },
+      ]
+      const packMaju = packDgnKasusPertamaDiubah((k) => ({ ...k, varianPresentasi: dua }))
+      const packMundur = packDgnKasusPertamaDiubah((k) => ({ ...k, varianPresentasi: [...dua].reverse() }))
+      expect(sidikJariPack(packMaju)).not.toBe(sidikJariPack(packMundur))
+    })
+
+    it('mengedit HANYA teks/angka varian (id tetap) → sidik jari TAK berubah', () => {
+      const packV1 = packDgnKasusPertamaDiubah((k) => ({
+        ...k,
+        varianPresentasi: [{ id: 'varian_a', vital: { suhu: 37.9 }, keluhanUtama: 'Versi satu.' }],
+      }))
+      const packV2 = packDgnKasusPertamaDiubah((k) => ({
+        ...k,
+        varianPresentasi: [{ id: 'varian_a', vital: { suhu: 38.6 }, keluhanUtama: 'Versi dua yang beda total.' }],
+      }))
+      expect(sidikJariPack(packV1)).toBe(sidikJariPack(packV2))
+    })
   })
 })

@@ -1743,4 +1743,28 @@ describe('kasusEfektif', () => {
     expect(kasusEfektif(KASUS_FARINGITIS, undefined)).toBe(KASUS_FARINGITIS)
     expect(kasusEfektif(KASUS_FARINGITIS, 'apa_saja')).toBe(KASUS_FARINGITIS)
   })
+
+  /**
+   * `jawabanPasien()` memprioritaskan `variasi[persona]` di atas `jawab` —
+   * tanpa menggugurkan `variasi` pada pertanyaan yang di-override, persona
+   * ber-variasi tetap mengucapkan isi DASAR (kontradiktif dgn vital/temuan
+   * varian) dan jawaban varian tak pernah terdengar.
+   */
+  it('jawabanBerubah menggugurkan variasi persona pertanyaan itu — pertanyaan lain tetap ber-variasi', () => {
+    const kasus: KasusKlinis = {
+      ...KASUS_BER_VARIAN,
+      anamnesis: KASUS_BER_VARIAN.anamnesis.map((q) =>
+        q.id === 'q_alergi' || q.id === 'q_makan'
+          ? { ...q, variasi: { polos: `(polos) ${q.jawab}` } }
+          : q,
+      ),
+    }
+    const efektif = kasusEfektif(kasus, 'ringan')
+    const alergi = efektif.anamnesis.find((q) => q.id === 'q_alergi')!
+    expect(alergi.jawab).toBe('Belum pernah alergi obat apa pun, Dok.')
+    expect(alergi.variasi).toBeUndefined()
+    // Pertanyaan yang TIDAK di-override tak kehilangan suaranya.
+    const makan = efektif.anamnesis.find((q) => q.id === 'q_makan')!
+    expect(makan.variasi?.polos).toBe(`(polos) ${KASUS_FARINGITIS.anamnesis.find((q) => q.id === 'q_makan')!.jawab}`)
+  })
 })

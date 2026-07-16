@@ -543,7 +543,12 @@ function fnv1a(teks: string): string {
 // meneruskan kasus ke `aksiKlinik`/scoring. Replay lama TAK BERUBAH (kasus
 // existing 0 punya `varianPresentasi`, jadi `kasusEfektif` selalu identity-
 // return) — bump krn 4 file beku (reducer/clinic/director/state) tersentuh,
-// bukan krn hasil replay bergeser.
+// bukan krn hasil replay bergeser. Gelombang yang sama (pra-rilis rev 41):
+// `kasusEfektif` juga MENGGUGURKAN `variasi` (suara per-persona) pada
+// pertanyaan yang jawabannya di-override varian — `jawabanUntuk()` (clinic.ts)
+// memprioritaskan `variasi[persona]` di atas `jawab`, jadi tanpa gugur ini
+// persona ber-variasi tetap mengucapkan isi dasar yang kontradiktif dgn
+// vital/temuan varian, dan jawaban varian tak pernah terdengar.
 export const REVISI_ENGINE = 41
 
 /**
@@ -622,6 +627,13 @@ export function sidikJariPack(pack: ContentPack): string {
         skdi: k.skdi,
         konsekuensi: k.konsekuensi ?? null,
         spesialis: k.spesialisRujukan ?? null,
+        // M11 #4 (2026-07-16): keberadaan+urutan id varian menentukan konsumsi
+        // RNG `buatPasienDariKasus` (`rng.pick(['_dasar', ...ids])` menggeser
+        // stream flavor → usia/gender → denominator skorAnamnesis hanyaUntuk)
+        // — replay-affecting, wajib hash. SENGAJA hanya id TERURUT, bukan isi:
+        // teks/angka varian murni kosmetik (tak disekor, tak menyentuh RNG),
+        // sekelas clue/jawab/temuan yang juga tak di-hash (post-freeze safe).
+        varianIds: (k.varianPresentasi ?? []).map((v) => v.id),
       }),
     )
   const obat = Object.values(pack.obat)

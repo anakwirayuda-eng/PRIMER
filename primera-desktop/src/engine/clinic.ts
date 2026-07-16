@@ -155,9 +155,16 @@ export function kasusEfektif(kasus: KasusKlinis, varianId: string | undefined): 
     ...(v.keluhanUtama ? { keluhanUtama: v.keluhanUtama } : {}),
     ...(v.jawabanBerubah
       ? {
-          anamnesis: kasus.anamnesis.map((q) =>
-            v.jawabanBerubah![q.id] !== undefined ? { ...q, jawab: v.jawabanBerubah![q.id]! } : q,
-          ),
+          // `variasi` (suara per-persona) ikut DIGUGURKAN pada pertanyaan yang
+          // jawabannya di-override: `jawabanPasien()` memprioritaskan
+          // `variasi[persona]` di atas `jawab`, jadi tanpa ini varian tak
+          // pernah terdengar oleh persona ber-variasi — pasien tetap
+          // mengucapkan isi dasar yang KONTRADIKTIF dgn vital/temuan varian.
+          anamnesis: kasus.anamnesis.map((q) => {
+            if (v.jawabanBerubah![q.id] === undefined) return q
+            const { variasi: _variasi, ...tanpaVariasi } = q
+            return { ...tanpaVariasi, jawab: v.jawabanBerubah![q.id]! }
+          }),
         }
       : {}),
     ...(v.temuanBerubah

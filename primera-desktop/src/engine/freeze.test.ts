@@ -127,7 +127,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // bergeser pada jejak yang menyentuhnya. Kanal IGD baca activationStatus
   // (blueprint) — tak menyentuh file beku. Detail di verifikasi.ts REVISI 39.
   'reducer.ts': 'f03d9a4f43607987207119b0299dd14a2aefb2dbb7ff2881a4b9c97fa8a63b67',
-  'clinic.ts': '9dbdd1492bf4c76bd628f04b0affd8c974cb28dd7352fdce3abdf2952f212592',
+  'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
   'scoring.ts': 'c1b5de6fc2c194e8b8a70b8d802a29980002ee2059ea487821e9e59fc0540d8d',
   'director.ts': 'fa4c269cd001eb2e019f18507ac5e024ff38784bb6181cfa41cb5f87cd1a340d',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
@@ -139,7 +139,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '94dac8877b553c73227cdd0d5b8ea2045b052af6e3c43ab2dd09fa29e82ddb74',
+  'verifikasi.ts': '6805f86c1c7526f585ed34e8c1c78c5a3cd92add51a7911d6ad0f39067262ecd',
   'state.ts': '3224553d62b71b27924c63749b6253ca5a240d05f7bcaccac9ab195c9b32a4b6',
   'save.ts': '8c75672d5ff27efa243ce2f87d3ad92ff22c5c851f010566e1c4090b43449c8a',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
