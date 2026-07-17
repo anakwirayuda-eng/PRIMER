@@ -1,23 +1,20 @@
 /**
  * DATA VARIAN KUNJUNGAN TINGKAT-A (M11 #5 B1) — file GENERATED.
  *
- * Diisi dari pipeline draf->verifikasi-adversarial (workflow
- * `m11-varian-kunjungan-tingkat-a`, run BERSIH `wf_513681d3-92b`, 96/96 agen
- * sukses tanpa error) lalu ditulis deterministik dari JSON hasil verifikasi
- * oleh skrip -- jangan edit manual kecuali koreksi klinis/naratif yang
- * diadjudikasi. Ringkasan per varian + kasus yang GAGAL verifikasi (dan
- * kenapa): docs/M11_VARIAN_KUNJUNGAN_TINGKAT_A_HASIL.md.
+ * Diisi dari DUA pipeline draf->verifikasi-adversarial bersih (0 error agen
+ * di keduanya): run pertama `wf_513681d3-92b` (16 skenario, 9 dapat varian)
+ * lalu retry `wf_33f997e7-596` (13 skenario yang belum lengkap/gagal, 11
+ * dapat varian baru) -- ditulis deterministik dari JSON hasil verifikasi
+ * oleh skrip. Jangan edit manual kecuali koreksi klinis/naratif yang
+ * diadjudikasi. Ringkasan lengkap per skenario + 5 yang TETAP gagal
+ * (dicoba 2x, alasan struktural genuine, bukan nasib buruk):
+ * docs/M11_VARIAN_KUNJUNGAN_TINGKAT_A_HASIL.md.
  *
- * CATATAN INTEGRITAS PENTING: ada run KEDUA (`wf_7033ab45-2e2`) yang sempat
- * dijalankan tak sengaja sbg duplikat sebelum run pertama ditemukan --
- * run kedua kena limit kuota bulanan di tengah jalan (37/96 panggilan agen
- * gagal) dan skrip workflow py silently TREATS agen verifikator yang gagal
- * sbg "tidak ada bantahan" (bug nyata di kumpulkanBantahan(), bukan cuma
- * kekhawatiran teoretis -- terverifikasi: run kedua melaporkan 16/16 lolos
- * penuh PERSIS termasuk semua skenario yg di run bersih gagal_semua). Data
- * di file ini SELALU dari run BERSIH (`wrvjbcexr`/`wf_513681d3-92b`, 0
- * error), bukan run kedua -- 7 dari 16 skenario TIDAK dapat varian (gagal
- * verifikasi asli, bukan cakupan yang sengaja dilewati).
+ * CATATAN INTEGRITAS: ada run duplikat (`wf_7033ab45-2e2`) yang DIBUANG
+ * seluruhnya krn kena limit kuota + bug silent-pass di skrip workflow lama
+ * (`kumpulkanBantahan` memperlakukan verdict gagal sbg "lolos"). Skrip retry
+ * sudah diperbaiki (verdict null = bantahan, bukan lolos diam-diam) sebelum
+ * dipakai di sini -- lihat riwayat commit utk detail.
  *
  * Kunci = id skenario kunjungan (unik lintas 16 keluarga, diverifikasi
  * pack.test.ts). Diterapkan ke katalog oleh
@@ -53,6 +50,50 @@ export const VARIAN_KUNJUNGAN_TINGKAT_A: Record<string, VarianKunjunganTingkatA[
       penutupGagal: 'Anyaman tikar yang belum tuntas kembali dikerjakan Bu Wulan begitu kau berpamitan. Senyumnya sopan tapi rapat, seperti pagar yang dikunci halus. Di atas lemari, kantong obat itu tetap tersegel — dan tekanan darahnya tetap 178.',
     },
   ],
+  santoso_k1: [
+    {
+      id: 'arisan_tetangga_sebelah',
+      pembuka: 'Pagi itu rumah sebelah riuh oleh arisan RT — tawa dan obrolan ibu-ibu terdengar sampai ke gang. Begitu mendengar motor kamu berhenti, Pak Santoso buru-buru menutup pintu bengkel dari dalam, seolah pagi ramai ini justru saat paling berbahaya untuk kelihatan. Bu Rahmi membukakan pintu sambil sesekali melirik was-was ke arah rumah sebelah, sementara dari ruang tengah terdengar Bagas batuk. Terdengar suara Pak Santoso menyahut dari balik pintu bengkel: "Siapa itu, Bu? ...Oh, Dokter rupanya."',
+      hotspotBerubah: {
+        sk1_h3: { label: 'Jendela tertutup rapat meski pagi cerah dan tetangga ramai', narasi: 'Pagi ini cerah dan suara arisan di sebelah terdengar jelas, tapi semua jendela sisi jalan tetap tertutup dan gordennya rapat, membuat ruang tengah temaram. "Biar tidak ada yang lihat-lihat ke dalam, apalagi pas lagi rame begini," gumam Bu Rahmi separuh menjelaskan.' },
+        sk1_h4: { label: 'Bagas rebahan sambil batuk, belum berseragam sekolah', narasi: 'Bagas rebahan di karpet ruang tengah, masih berpiyama, belum berangkat sekolah karena badannya lemas. Sesekali ia batuk. "Sudah dua minggu begitu, Dok," kata Bu Rahmi pelan. "Malamnya kadang sampai keringatan." Kamarnya bersebelahan dengan kamar ayahnya.' },
+      },
+      dialogNarasiBerubah: {
+        sk1_d1: 'Pak Santoso duduk di kursi paling jauh, memunggungi jendela, telinga sesekali menangkap riuh arisan dari sebelah. "Saya sudah sehat, Dok. Batuknya sudah hilang, badan sudah enak, kerja juga masih kuat. Tidak usah repot-repot mengurusi saya — di kampung ini yang sakit banyak."',
+      },
+      penutupBerhasil: 'Di pintu, dengan suara arisan di sebelah mulai bubar, Pak Santoso menjabat tanganmu — genggaman tukang kayu, keras dan jujur. "Kamis saya mulai lagi, Dok. Lewat belakang, sesuai janji." Bu Rahmi mengiringimu ke pagar, matanya basah: "Terima kasih sudah tidak mempermalukan bapaknya Bagas."',
+      penutupGagal: 'Pak Santoso mengantar sampai pintu dengan sopan yang berjarak, sementara suara arisan di sebelah masih riuh. "Terima kasih sudah mampir, Dok. Kami sehat-sehat saja." Jendela-jendela tetap tertutup meski pagi cerah, dan di ruang tengah Bagas batuk lagi — panjang, dan tidak ada yang membicarakannya.',
+    },
+  ],
+  ketut_k1: [
+    {
+      id: 'sore_gerimis_menjemur_popok',
+      pembuka: 'Sore itu gerimis tipis mulai turun saat kamu tiba di ujung jalan setapak RW 7, tanah di bawah kaki mulai licin oleh basahnya kebun kopi. Luh Sari sedang buru-buru menurunkan jemuran kain popok dari tali di teras ketika melihatmu; satu tangannya masih memegang jepitan kayu, tangan yang lain mendekap Ayunda erat-erat dengan selendang, seolah bayi itu bisa lenyap kalau pegangannya kendur sedetik saja. "Wenten napi nggih...?" tanyanya, suaranya sopan tapi matanya awas, berpindah dari wajahmu ke langit yang makin gelap.',
+      hotspotBerubah: {
+        kk1_h2: { label: 'HP berdenting di atas dipan dekat jendela berkabut hujan', narasi: 'Di dekat jendela yang mulai berembun oleh gerimis, HP di atas dipan berdenting-denting; cahaya layarnya terang di ruangan yang meredup karena mendung sore ini — notifikasi grup "Bunda Peduli Alami" menumpuk: "JANGAN biarkan anakmu jadi kelinci percobaan!!" lengkap gambar jarum suntik disilang merah.' },
+        kk1_h6: { label: 'Timbangan dacin berdebu, tersampir dekat jendela yang basah', narasi: 'Kain gendongan untuk timbangan dacin posyandu tersampir dekat jendela yang mulai basah kena tempias gerimis, berdebu walau udara sore ini lembab. Terakhir Ayunda ditimbang... entah kapan. Garis pertumbuhannya di KMS berhenti di bulan ketiga.' },
+      },
+      dialogNarasiBerubah: {
+        kk1_d4: 'Pak Ketut pulang dari kebun tergesa-gesa karena gerimis makin deras, kaus dan rambutnya basah, cangkul disandarkannya buru-buru di dinding sebelum ia duduk di bale sambil menyalakan kretek yang agak lembab. "Gimana, Bu? Dokternya mau nyuntik Ayunda?" tanyanya setengah bercanda, mengibaskan air dari lengan bajunya. Luh Sari menatapmu — menunggu jawaban yang akan menentukan kunjungan ini.',
+      },
+      penutupBerhasil: 'Di teras, sambil menggantung kembali jemuran yang tadi buru-buru diturunkannya, Luh Sari memanggilmu: "Dok! Yang demam tanda tubuh berlatih itu... beneran nggih? Bukan menghibur tiang saja?" Kamu mengangguk. Gerimis sudah mereda; ia mendekap Ayunda, tapi kali ini seperti orang menggenggam keputusan, bukan menyembunyikan ketakutan.',
+      penutupGagal: 'Pintu anyaman itu tertutup sebelum gerimis sempat reda. Malam ini, saat hujan sudah berhenti, grup "Bunda Peduli Alami" akan mendapat cerita baru tentang dokter yang datang menembus hujan untuk menyuntik anak orang — dan kolom-kolom kosong di buku KIA Ayunda akan tetap kosong.',
+    },
+    {
+      id: 'pagi_kabut_ketut_berangkat',
+      pembuka: 'Pagi itu kabut lembah RW 7 belum sepenuhnya turun ketika kamu tiba di ujung jalan setapak berbatu, embun kebun kopi masih menempel basah di daun-daun. Luh Sari berdiri di ambang pintu menggendong Ayunda erat-erat dengan selendang, seolah bayi itu bisa lenyap kalau pegangannya kendur sedetik saja; jejak sandal suaminya yang berangkat ke kebun sejak subuh masih membekas becek di tanah depan rumah. "Wenten napi nggih...?" tanyanya, sopan namun waspada, matanya awas menembus kabut tipis ke arahmu.',
+      hotspotBerubah: {
+        kk1_h1: { label: 'Buku KIA terselip di balik kalender, remang kabut pagi', narasi: 'Dalam cahaya pagi yang masih berkabut, sudut merah muda buku KIA menyembul di balik kalender dinding, seperti sengaja disembunyikan. Halaman imunisasinya berhenti di satu tanda tangan bidan: HB-0 dan... DPT-HB-Hib 1, delapan bulan lalu. Sisanya kosong.' },
+        kk1_h4: { label: 'Bungkus rokok & korek di anak tangga teras', narasi: 'Di anak tangga teras, bungkus rokok dan korek tergeletak di samping cangkir kopi pagi yang sudah dingin, dekat jejak sandal berlumpur Pak Ketut yang membekas sejak ia berangkat ke kebun subuh tadi — jejak bahwa ia sempat merokok di teras itu, dekat jendela kamar bayinya.' },
+      },
+      dialogNarasiBerubah: {
+        kk1_d3: 'Luh Sari mengusap matanya dengan ujung selendang. Ayunda di gendongannya menggeliat, tangan mungilnya menyenggol kalender di dinding hingga bergeser sedikit — dan sudut merah muda buku KIA di baliknya menyembul. Saatnya menanyakan catatan imunisasi Ayunda.',
+        kk1_d4: 'Pak Ketut pulang dari kebun lebih cepat dari biasanya — katanya kabut pagi bikin tanah licin dan susah dicangkul — kaus lusuh dan cangkul di bahu, lalu duduk di bale sambil menyalakan kretek. "Gimana, Bu? Dokternya mau nyuntik Ayunda?" tanyanya setengah bercanda. Luh Sari menatapmu — menunggu jawaban yang akan menentukan kunjungan ini.',
+      },
+      penutupBerhasil: 'Di luar, kabut sudah terangkat separuh ketika Luh Sari memanggilmu dari ambang pintu: "Dok! Yang demam tanda tubuh berlatih itu... beneran nggih? Bukan menghibur tiang saja?" Kamu mengangguk. Ia mendekap Ayunda, tapi kali ini seperti orang menggenggam keputusan, bukan menyembunyikan ketakutan.',
+      penutupGagal: 'Pintu anyaman itu tertutup sebelum kabut pagi sempat terangkat sepenuhnya. Nanti siang, grup "Bunda Peduli Alami" akan mendapat cerita baru tentang dokter yang datang pagi-pagi untuk menyuntik anak orang — dan kolom-kolom kosong di buku KIA Ayunda akan tetap kosong.',
+    },
+  ],
   musa_k1: [
     {
       id: 'pagi_membersihkan_kandang_perkutut',
@@ -74,6 +115,20 @@ export const VARIAN_KUNJUNGAN_TINGKAT_A: Record<string, VarianKunjunganTingkatA[
       penutupBerhasil: 'Pak Musa mengantarmu sampai gang sambil masih membawa kain lap kandang burungnya, menjabat tanganmu dengan dua tangan, lama, seperti kepada guru yang pamit pindah tugas. "Minggu depan mampir lagi, Dok, saya kenalkan perkutut jagoan saya. Tehnya saya bikin pahit." Ia tertawa -- dan kamu tahu ia akan menepatinya.',
       penutupGagal: 'Pintu tertutup dengan sopan di belakangmu, kicau burung di kandang samping terdengar sendu menemani radio yang kembali mengeras dari dalam. Di laci yang setengah terbuka tadi, tiga bulan obat menunggu bulan keempat. Rumah itu kembali rapi, sunyi, dan pelan-pelan berbahaya.',
     },
+    {
+      id: 'sore_pulang_dari_kebun',
+      pembuka: 'Sore itu Pak Musa baru pulang dari kebun singkong di belakang rumah — sarung tergulung sebatas lutut, cangkul bersandar di dinding teras, dan radio kecil di ruang tamu tetap menyala sendirian seperti biasa, menemani rumah yang tadi ditinggal kosong beberapa jam. Melihatmu menunggu di pagar, wajahnya langsung cerah — tamu, akhirnya — dan ia buru-buru membasuh tangan di pancuran sebelum menyalakan kompor untuk air teh, seolah tak sabar menjamu.',
+      hotspotBerubah: {
+        musa_h_teh: { narasi: 'Di meja dapur, sepiring singkong rebus hasil kebun sore itu diletakkan berdampingan dengan toples gula pasir ukuran besar yang hampir kosong — padahal ia tinggal sendiri. Gelas bekas teh tubruk pekat berjajar tiga di sampingnya. "Teh pahit itu buat orang sakit, Dok," katanya nanti, tanpa merasa sedang membicarakan dirinya.' },
+      },
+    },
+    {
+      id: 'pagi_baru_pulang_kontrol_puskesmas',
+      pembuka: 'Pagi itu Pak Musa baru saja turun dari angkot di ujung gang, satu kantong plastik putih berisi obat baru dari Puskesmas — hasil pengambilan Prolanis bulan ini — masih di genggamannya. Radio tua di ruang tamu sudah menyala sejak subuh, menyambutnya pulang sendirian. Melihatmu menunggu di pagar, wajahnya langsung cerah; kantong obat itu buru-buru ia taruh begitu saja di meja, belum sempat dibuka, lalu ia menyalakan kompor untuk air teh — seakan tamu jauh lebih penting daripada apa pun yang baru ia bawa pulang.',
+      hotspotBerubah: {
+        musa_h_obat: { narasi: 'Laci meja setengah terbuka, penuh kantong obat Puskesmas lama — amlodipine, metformin — sebagian besar masih utuh dalam plastik, berdebu tipis. Di atas meja, kantong yang baru saja dibawanya pulang pagi ini tergeletak begitu saja, belum sempat dibuka, siap menyusul tumpukan yang lain. Tanggal di etiket-etiket lama itu berlapis-lapis: tiga bulan pengambilan yang nyaris tak tersentuh.' },
+      },
+    },
   ],
   raharjo_k1: [
     {
@@ -94,6 +149,17 @@ export const VARIAN_KUNJUNGAN_TINGKAT_A: Record<string, VarianKunjunganTingkatA[
       },
       penutupBerhasil: 'Pak Raharjo mengantarmu sampai ujung gang dengan karung kosong masih di tangan, sesuatu yang tadi rasanya mustahil. "Kalau soal lahan carik itu jadi, kabari saya duluan ya, Dok." Di belakangnya, Bu Sumiati melambai dari teras sambil memeluk lipatan kain — kali ini dengan senyum penuh.',
       penutupGagal: 'Kamu pamit ketika matahari nyaris tenggelam, teh yang disuguhkan tak habis diminum. Dari kejauhan, kamu melihat Rini kecil menuruni jalan setapak ke sungai membawa ember, menyusul jemuran yang belum sempat diangkat. Besok pagi jalan itu akan tetap licin, dan catatanmu tetap kosong.',
+    },
+    {
+      id: 'sore_menjemur_pakaian',
+      pembuka: 'Matahari sore mulai condong ke barat ketika kamu tiba di ujung Dusun Kali Gede. Rumah panggung keluarga Raharjo berdiri miring di bibir tebing sungai, dindingnya anyaman bambu yang sudah memutih. Bu Sumiati baru saja naik dari sungai membawa seember pakaian basah, tergopoh-gopoh menggelar tikar pandan begitu melihatmu, setengah kaget setengah malu kedatangan tamu berjas putih di jam segini.',
+      hotspotBerubah: {
+        raharjo_h_setapak: { narasi: 'Di belakang rumah, jalan setapak kecil menuruni tebing ke arah sungai. Tanahnya licin mengkilap, bekas injakan kaki setiap pagi — sore ini kian basah oleh Bu Sumiati yang baru saja bolak-balik mencuci di bawah — dan tidak ada bangunan jamban sama sekali di sepanjang halaman belakang.' },
+      },
+      dialogNarasiBerubah: {
+        raharjo_d1: 'Bu Sumiati menaruh ember cucian di sudut, buru-buru mengelap tangan yang masih basah sebelum menuangkan teh tawar, sambil terus menunduk. "Maaf, Dok, rumahnya begini... Bapak masih di sawah, belum pulang." Matanya sesekali melirik ke arah tebing belakang, seperti berharap kamu tidak melihat ke sana.',
+        raharjo_d3: 'Menjelang maghrib, Pak Raharjo pulang dari sawah, caping masih di tangan dan tubuhnya basah keringat seharian. Mendengar kata "jamban", rahangnya mengeras. "Dokter mau nyuruh bikin jamban? Pakai apa? Tanah nggak ada, duit nggak ada."',
+      },
     },
   ],
   asih_k1: [
@@ -180,6 +246,23 @@ export const VARIAN_KUNJUNGAN_TINGKAT_A: Record<string, VarianKunjunganTingkatA[
       penutupBerhasil: 'Saat kamu pamit, azan Maghrib baru saja berkumandang dari musala ujung gang. Mbah Painem menimang Nayla di teras sambil bersenandung tembang baru: "Enem wulan, Nduk... sabar yo, mengko simbah sing nyuapi dhisik." Bu Yani mengantarmu ke pagar, jemuran popok kain sudah diangkatnya rapi, KMS dipegang erat di tangan satunya: "Bulan depan titiknya harus naik ya, Dok. Saya yang gambar garisnya."',
       penutupGagal: 'Belum lagi kamu keluar pagar, piring kecil itu sudah terisi pisang kerok yang baru sore itu juga. "Terima kasih ilmunya, Dok," kata Bu Yani sopan, sementara dari dapur Mbah Painem menambahkan sambil menjemur sendok terakhir: "Ilmu sekolahan memang begitu — anaknya sopo dulu yang gedhe: teori opo pisang." KMS kembali terselip di rak, bisu sampai kunjungan berikutnya.',
     },
+    {
+      id: 'sore_pulang_kursus_menjahit',
+      pembuka: 'Sore itu matahari sudah condong ke barat ketika kamu tiba. Bu Yani baru turun dari ojek, masih menenteng kain pola dari kursus menjahit yang ia ikuti dua kali seminggu — bekal usaha sampingan sebelum kembali ke konveksi. Dari dalam rumah tercium wangi bedak bayi bercampur pisang. Nayla tidur pulas di gendongan Mbah Painem yang langsung menyambutmu di teras, pamer: "Montok to, Dok? Ini berkat pisang kudapan sorenya. Anak zaman dulu semua begitu, buktinya pada waras-waras."',
+      hotspotBerubah: {
+        yk1_h1: { narasi: 'Di meja dapur, piring kecil berisi pisang dikerok halus dengan sendok — porsi bayi, disiapkan sebagai kudapan sore. Masih hangat; jadwal "ngemil sore" Nayla rupanya sudah rutin sejak dua bulan lalu.' },
+        yk1_h4: { narasi: 'Jemuran sore ini masih setengah penuh popok kain yang baru sempat diangkat sebagian karena kamu keburu datang. Kamu menghitung sekilas — lebih dari enam popok basah sehari, sisa cucian sejak pagi. Tanda paling sederhana bahwa ASI Bu Yani sebenarnya CUKUP, terjemur tanpa ada yang membacanya.' },
+      },
+      dialogNarasiBerubah: {
+        yk1_d1: 'Sambil melipat kain pola kursus jahitnya, "Nayla itu nangisnya kenceng kalau malam, Dok," Bu Yani membuka, setengah berbisik supaya mertuanya yang masih di teras tak dengar. "Kata Mbah, itu tandanya ASI saya encer, kurang. Makanya dikasih pisang biar kenyang. Bener begitu, Dok?"',
+      },
+      pilihanBerubah: {
+        yk1_d1_a: { respons: '"Artinya... pipisnya banyak. Berarti minumnya banyak?" Bu Yani menjawab pelan sambil menyisihkan kain kursus jahitnya, lalu matanya membulat. "Berarti ASI saya... cukup?" Kamu mengangguk. "Terus kenapa nangis malam-malam, Dok?" — Nah, sekarang ia BERTANYA, bukan menelan.' },
+        yk1_d3_a: { respons: 'Hening sebentar, hanya suara kipas angin sore yang berputar pelan. "...Pisangnya mulai rutin," jawab Bu Yani pelan. Mbah Painem protes "lho kok pisang" — tapi matanya ikut menghitung mundur. Pisang mengenyangkan tanpa menumbuhkan; kartu itu bicara lebih tega daripada dokter mana pun.', responsBohong: '"ASI tok kok, Dok, sumpah," kata Bu Yani cepat sambil melipat kain kursusnya — sementara dari dapur samar tercium pisang kudapan sore yang baru dikerok.' },
+      },
+      penutupBerhasil: 'Adzan maghrib baru saja berkumandang samar dari masjid kampung saat kamu pamit. Mbah Painem menimang Nayla dengan tembang baru: "Enem wulan, Nduk... sabar yo, mengko simbah sing nyuapi dhisik." Bu Yani mengantarmu ke pagar sambil memegang KMS dan kain pola kursusnya sekaligus, seperti orang yang baru bisa membaca dua hal sekaligus: "Bulan depan titiknya harus naik ya, Dok. Saya yang gambar garisnya."',
+      penutupGagal: 'Langit sore berubah jingga saat piring pisang itu diisi lagi bahkan sebelum kamu selesai pamit. "Terima kasih ilmunya, Dok," kata Bu Yani sopan sambil melipat kain kursusnya, dan Mbah Painem menambahkan dari dalam: "Ilmu sekolahan memang begitu — anaknya sopo dulu yang gedhe: teori opo pisang." Kartu KMS kembali terselip, bisu.',
+    },
   ],
   gunawan_k1: [
     {
@@ -213,6 +296,10 @@ export const VARIAN_KUNJUNGAN_TINGKAT_A: Record<string, VarianKunjunganTingkatA[
         bk1_d3: 'Tini yang baru pulang jajan pasaran duduk di undakan, mendengarkan. "Kalau aku sih tim jamban, Dok," katanya tiba-tiba, "Di sekolah diajari, dan jijik tahu nggak sih liat bapak-bapak jongkok rame-rame." Pak Bagyo tersedak kopinya, handuk di bahunya melorot sedikit karena kaget.',
       },
     },
+    {
+      id: 'kabut_subuh_bubu_kosong',
+      pembuka: 'Kabut subuh belum sepenuhnya terangkat ketika kamu tiba di rumah panggung Pak Bagyo. Dari jalan setapak yang licin menurun ke kali, siluetnya muncul menjinjing bubu ikan kosong yang sempat ia angkat sekalian — "Nihil, Dok, ikannya kompak mogok pagi ini," serunya sambil menggulung tali bubu, handuk yang tersampir di bahunya masih basah oleh air kali barusan. Ia menggantungkan bubu itu di pagar bambu sebelum naik ke teras. Jamban bantuan di sampingnya berdiri kinclong, tak tersentuh — Pak Bagyo menunjuknya sambil terkekeh, "kantor lama saya itu, di kali belakang — masih buka tiap subuh, cuma dokter aja yang belum pernah diajak." Bu Jum menyusul membawa kopi, sementara Tini tampak menjemur seragam sekolahnya di jemuran bambu dekat tanggul, seperti biasa sebelum berangkat.',
+    },
   ],
   endah_k1: [
     {
@@ -231,6 +318,32 @@ export const VARIAN_KUNJUNGAN_TINGKAT_A: Record<string, VarianKunjunganTingkatA[
       },
       penutupBerhasil: 'Kamu pamit saat lampu kontrakan baru saja dinyalakan, sementara mereka masih menyusun rencana penyambutan "tamu kehormatan" minggu depan — Endah mau memasak gudeg kesukaan ibunya, Andri mengatur kursi paling empuk di ruang ANC. Map rujukan sore itu naik ke atas kulkas, disandingkan dengan tiket travel yang sudah tak menakutkan lagi. Persalinan paling aman ternyata dirancang bukan di ruang bersalin, tapi di ruang tamu, sepulang kontrol sore ini.',
       penutupGagal: 'Tas mudik itu tetap di sudut kamar, terkemas sempurna, tiketnya tak tergoyahkan. Map rujukan sore itu terselip kembali ke dalam buku KIA, terlipat rapi seperti tak pernah dibaca siapa-siapa selain kamu. Endah mengantarmu ke pintu dengan senyum yang meminta maaf: "Doakan lancar ya, Dok. Ibu saya... orangnya baik kok, cuma nanti kalau sudah kepalang di sana, ya sudah."',
+    },
+    {
+      id: 'sore_gerimis_bongkar_kado_arisan',
+      pembuka: 'Sore itu gerimis turun pelan-pelan, dan Mas Andri baru saja sampai rumah dari kerja ketika kamu mengetuk pintu. Ruang tengah penuh kotak kado setengah terbuka — bekal arisan RT kemarin malam — dan Mbak Endah sedang duduk bersila di lantai, menghitung popok kain sambil sesekali tersenyum sendiri. Buku KIA-nya terselip di antara kado-kado itu, sampulnya sudah agak lecek dari terlalu sering dibuka. "Pas Dok datang, lagi seru-serunya lihat hadiah," katanya, menyingkirkan kotak kado ke pinggir supaya kamu bisa duduk. "Eh, tapi ini sekalian saya mau cerita, Dok — bulan depan kami mulih ke rumah Ibu. Adatnya begitu, anak pertama lahiran di rumah orang tua."',
+      hotspotBerubah: {
+        ek1_h2: { label: 'Tas mudik terselip di antara kado arisan', narasi: 'Di antara tumpukan kado yang baru dibongkar, satu tas besar berdiri terpisah — bukan kado, tapi bawaan sendiri. Baju bayi, jarik, perlengkapan empat puluh hari, sudah terkemas rapi lebih dulu daripada hadiah-hadiah itu selesai dibuka. Tiket travel terselip di risletingnya: dua minggu lagi.' },
+        ek1_h4: { label: 'HP Andri berkedip di antara kotak kado', narasi: 'HP Andri tergeletak di atas kotak kado kosong, layarnya menyala berulang — deretan chat dari kontak "Ibu (Mertua)": foto kamar yang sudah dicat ulang, jadwal selamatan, daftar nama sesepuh yang akan datang. Di antara kado dari tetangga, ada satu "kado" yang belum dibuka siapa-siapa: harapan sang mertua.' },
+      },
+      dialogNarasiBerubah: {
+        ek1_d1: '"Bu bidan bilang panggul saya berisiko sempit, jadi harus lahiran di PONED," Endah berhenti menghitung popok, menarik buku KIA dari sela kado, jarinya langsung berhenti di baris stabilo kuning — seperti sudah hafal letaknya. "Tapi Ibu sudah nyiapkan semuanya di kampung, Dok. Kamar sudah dicat. Masa saya bilang tidak jadi... Ibu pasti sedih sekali."',
+        ek1_d2: '"Sebenarnya yang paling repot posisi saya, Dok," Andri menyingkirkan kotak kado dari pangkuannya, duduk lebih tegak. "Istri saya taruhan nyawanya, mertua saya taruhan perasaannya. Saya ini menantu baru — mau ngomong apa saya, salah-salah dikira merebut anak orang."',
+        ek1_d3: 'Di tengah obrolan, HP Andri yang tadi tergeletak di kotak kado bergetar keras — "Ibu (Mertua)" menelepon, seperti tiap sore selepas beliau selesai momong cucu tetangga. Andri menatapmu: "Diangkat, Dok? Atau..." Endah berhenti melipat popok, menunggu.',
+      },
+      pilihanBerubah: {
+        ek1_d1_a: { respons: 'Mata Endah langsung berkaca. Ia menaruh buku KIA di pangkuan. "Iya, Dok... saya takut sama lahirannya, tapi saya lebih takut ngomong ke Ibu." Andri buru-buru menggenggam tangan istrinya, seperti lega akhirnya ada yang berani menyebut nama masalah yang sesungguhnya. "Nah itu, Dok. Itu yang bikin saya nggak bisa tidur dua minggu ini."' },
+        ek1_d1_b: { respons: '"Iya, Dok, bu bidan juga sudah bilang persis begitu." Endah menutup buku KIA-nya pelan, menaruhnya kembali di sela kado. "Saya percaya kok, Dok." Ia memang percaya — dan tas mudik di sudut ruangan tetap berdiri terkemas, sebab bukan keyakinannya yang goyah.' },
+        ek1_d1_c: { respons: 'Endah berhenti melipat popok, menegang. "Ibu saya nggak egois, Dok. Beliau cuma... sayang, caranya begitu." Andri ikut diam, meletakkan kotak kado yang tadi dipegangnya. Kamu baru saja menghina calon nenek di ruang tamu penuh kado dari tetangganya sendiri — dan pasangan ini kini satu barisan membela sang ibu.' },
+        ek1_d2_a: { respons: 'Andri dan Endah bertukar pandang di antara kotak-kotak kado. "Ibu... diundang ikut periksa?" Endah mengulang pelan. "Beliau pasti mau, Dok — paling suka kalau dilibatkan. Selama ini memang nggak pernah diajak, cuma dikabari lewat telepon." Kalimat terakhir itu jatuh seperti kunci yang akhirnya menemukan lubangnya.', responsBohong: '"Rencananya tetap di Puskesmas kok, Dok," kata Endah sambil buru-buru merapikan kado yang berserakan — matanya melirik sekilas ke tas mudik yang berdiri rapi di sudut, tiket travelnya masih terselip rapi di risleting, dua minggu lagi.' },
+        ek1_d2_b: { respons: 'Andri tertawa tanpa suara, menaruh kotak kado di lantai. "Tegas ke mertua, Dok. Sampeyan sudah pernah coba?" Teorinya benar di atas kertas; di rumah begini, menantu setahun yang "tegas" ke mertua sedang menulis surat perang sepuluh tahun ke depan.' },
+        ek1_d2_c: { respons: '"Penginapan..." Andri menghitung sambil menatap tumpukan kado di sekelilingnya — semua tabungan sudah habis untuk perlengkapan bayi ini. "Boleh saya pikir-pikir dulu, Dok." Jalan tengah yang mahal adalah jalan buntu yang sopan.' },
+        ek1_d3_a: { respons: 'Panggilan diangkat, pengeras suara dinyalakan di antara kado-kado yang belum sempat dirapikan. Suara di seberang mula-mula ramai soal cat kamar — lalu hening mendengar undangan itu. "...Aku diajak periksa? Naik apa ya, travel pagi ada nggak—" suara itu mendadak sibuk merencanakan datang. Endah menutup mulutnya, antara tawa dan haru, popok di pangkuannya terlupakan.' },
+        ek1_d3_b: { respons: 'Panggilan berdering sampai habis, tenggelam di antara suara hujan gerimis di luar. Di layar: "Ibu (Mertua) — 2 panggilan tak terjawab." Besok sang ibu akan bertanya kenapa tak diangkat, dan percakapan akan dimulai dari defisit, bukan dari undangan.' },
+        ek1_d3_c: { respons: 'Kamu mendengar suara di seberang berubah formal: "Oh... dokter. Inggih. Inggih, Dok." Lalu setelah telepon ditutup, kabar yang sampai ke kampung: "dokternya Endah melarang-larang, padahal kamar sudah dicat." Vonis lewat telepon dari orang asing — adat kini punya musuh bersama, dan kado-kado di ruang tamu tiba-tiba terasa sia-sia.' },
+      },
+      penutupBerhasil: 'Kamu pamit saat kado-kado itu akhirnya selesai dirapikan ke lemari, digantikan rencana baru: menyambut "tamu kehormatan" minggu depan. Endah sudah merancang mau memasak gudeg kesukaan ibunya, Andri sibuk mencari kursi paling empuk untuk mertuanya di ruang ANC. Persalinan paling aman ternyata dirancang bukan di ruang bersalin, tapi di sela kotak-kotak kado sore itu.',
+      penutupGagal: 'Kado-kado itu sudah rapi masuk lemari, tapi tas mudik di sudut ruangan tetap berdiri sendiri, tiketnya tak tergoyahkan. Endah mengantarmu ke pintu di tengah gerimis yang belum reda, tersenyum minta maaf: "Doakan lancar ya, Dok. Ibu saya orangnya baik kok, cuma nanti kalau sudah kepalang di sana, ya sudah." Baris stabilo kuning itu ikut terlipat rapi di dalam tas.',
     },
   ],
 }
