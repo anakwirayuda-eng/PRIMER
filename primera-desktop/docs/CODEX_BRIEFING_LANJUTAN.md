@@ -155,6 +155,13 @@ untuk Dr. Wirayuda baca, bukan implementasi.
 
 ### 2.2 — PRIORITAS 2: E-2 (SAJI Fase-2) — gelombang unfreeze BARU, REVISI_ENGINE 42
 
+> **STATUS CODEX 2026-07-17: PROPOSAL KEPUTUSAN SELESAI, BELUM IMPLEMENTASI.**
+> Lihat `docs/M11_E2_SAJI_DECISION_PROPOSAL.md`. Audit literal 82/82 pilihan
+> `konfrontasi` dan verifikasi visual Permenkes 39/2016 hlm. 100-105 menemukan
+> koreksi penting: `ditolak_total`/`diterima_terpaksa` harus menjadi penutupan
+> kontak awal sebelum pembahasan masalah, bukan indikator terverifikasi-rapuh
+> setelah MI. Menunggu keputusan D1-D4 sebelum unfreeze.
+
 Ini **menyentuh engine beku** (`state.ts`/`kunjungan.ts`/`reducer.ts`/`scoring.ts`) — ikuti
 disiplin unfreeze-dance PENUH (`CODEX_HANDOFF_DOSSIER.md` §3/§7): test-first (merah→hijau
 dibuktikan, bukan diklaim), lalu setelah lolos jalankan `freeze.test.ts`, salin hash baru ke
