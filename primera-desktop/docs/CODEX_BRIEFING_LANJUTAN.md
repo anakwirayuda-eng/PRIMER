@@ -33,6 +33,14 @@ commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua 
 > dst) BUKAN bagian tugas ini, jangan mulai itu — itu perlu proposal-gate
 > terpisah nanti. Setelah §2.0 selesai, baru lanjut §2.3 kalau ada waktu.
 
+> **UPDATE TERBARU x3, 2026-07-17 (malam):** §2.0 (P0-A/P0-B) SELESAI & terverifikasi Claude —
+> ketiga proposal Anda berikutnya (bridge, M11 #6, M11 #7) juga sudah dibaca PENUH & diputuskan.
+> Lihat **§2.5 (baru)**. Ringkas: Bridge Wave B1 (4 fix) + M11 #6 V1/V2 pilot DISETUJUI, kerjakan
+> sekarang; Wave B2/V4/V5/9-frasa-prototipe-M13-137/playtest DITAHAN eksplisit. §2.3 di bawah
+> SUDAH TERPENUHI oleh ketiga proposal itu — jangan kerjakan ulang.
+>
+> **Prioritas aktif Anda SEKARANG: §2.5** (Bridge Wave B1 → M11 #6 V1 → V2 → M11 #7 tema P1).
+
 > **UPDATE 2026-07-17 (akhir hari)**: gelombang M11 SELESAI & DITUTUP — Anda menyelesaikan C2
 > (commit `1aa5102`, terverifikasi Claude: 88/88 file, 976/976 test, typecheck bersih, freeze
 > 17/17, 0 file `src/engine/*` tersentuh), Claude menutup sisa konten B1 (11/16 skenario akhir,
@@ -379,6 +387,61 @@ membangun, tapi mengusulkan opsi+tradeoff** (pola operasi baku proyek ini, lihat
   arsitektur besar bukan tambahan kecil).
 - Kalau Anda menemukan pekerjaan besar LAIN yang belum tercantum di §2.1-2.3 selama mengerjakan
   antrean ini — jangan mulai sendiri, laporkan balik dulu (§3).
+
+### 2.5 — PRIORITAS BARU (2026-07-17 malam): keputusan atas 3 proposal Anda
+
+Ketiga dokumen Anda (`UKM_UKP_BRIDGE_CLOSED_LOOP_PROPOSAL.md`, `M11_ITEM6_USULAN.md`,
+`M11_ITEM7_REALITA_FKTP_RISET_2026.md`) sudah dibaca PENUH oleh Claude, bukan cuma ringkasannya.
+Kualitasnya bagus (grounding berlapis, batas inferensi eksplisit, tiap opsi diakhiri permintaan
+keputusan, bukan asumsi disetujui). Berikut keputusan Dr. Wirayuda/Claude per item — **eksekusi
+langsung, jangan tunggu konfirmasi ulang per baris**:
+
+**DISETUJUI, kerjakan sekarang:**
+1. **Bridge Wave B1** (proposal bridge §10, "closure minimum") — 4 item:
+   - Hilangkan family link palsu: hanya anggota keluarga nyata boleh dapat `keluargaId` (`director.ts`
+     area yg proposal sebut, baris ~363-404).
+   - Buka jalur kunjungan ulang setelah janji (`verifikasi_pispk`) ingkar — sekarang instruksi
+     "kunjungi lagi" tak bisa dieksekusi krn arc sudah terkunci berhasil (`reducer.ts` ~1991-2028,
+     `kunjungan.ts` ~573-614).
+   - Callback klinik → pemulihan keluarga setelah karma (`reducer.ts` ~850-869, ~918-920) — bukan
+     mekanik baru radikal, cukup buka jalur supaya penanganan klinik grade A benar-benar bisa
+     mengubah `arcSelesai` dari `'gagal'`, sesuai jalan promise di dialog error existing.
+   - Prolanis multimorbid HT+DM: jangan direduksi jadi satu penyakit (`reducer.ts` ~2511-2517); tulis
+     balik hasil encounter ke parameter/kontrol program (~1567-1611 & cabang `DISPOSISI`).
+   - Alasan approve: keempatnya perbaikan BUG pada mekanik yang SUDAH ADA (identity/promise/karma/
+     Prolanis), bukan sistem baru — kelas risiko sama dgn P0-A/P0-B yg baru selesai. Test-first +
+     unfreeze-dance penuh tetap wajib (ini jelas menyentuh file beku, replay-affecting — bump
+     REVISI_ENGINE, commit terpisah per sub-item spt biasa).
+2. **M11 #6, V1 pilot (Duel Diagnosis, 8 pasangan)** lalu **V2 pilot (Teach-back, 6-8 kasus
+   education-critical)** — sesuai urutan §9 proposal Anda sendiri. Kedua-duanya display/debrief-only
+   per analisis biaya Anda sendiri (tak perlu REVISI_ENGINE kecuali nanti masuk skor/save — kalau
+   ternyata BUTUH itu saat implementasi, STOP dan laporkan balik dulu, jangan asumsikan boleh).
+
+**DITAHAN, JANGAN mulai dari keputusan ini:**
+- **Bridge Wave B2** (6 hero-loop + `CareEpisodeLite` + causal receipt) — tunggu B1 selesai &
+  di-review Claude dulu; skema di proposal eksplisit "ilustratif, bukan keputusan implementasi",
+  Claude mau lihat kode B1 nyata dulu sebelum mengunci desain B2.
+- **M11 #6 V4 (dua suara anamnesis) dan V5 (varian resource)** — proposal Anda sendiri menandai
+  ini butuh RFC/gelombang engine terpisah; V5 khususnya masih terkunci batas M13-RP1
+  (`FacilityResourceProfile` runtime tetap TIDAK dibuka).
+- **M11 #7 tema resource/geografi sbg mekanik baru** — tema-nya disetujui sbg PEDOMAN AUTHORING
+  (lihat di bawah), tapi jangan bangun mekanik runtime baru dari situ.
+- **9 frasa overclaim di kasus prototipe M13-137** (`batch4Dalam.ts`/`batch4ObgynAnak.ts`/
+  `batch4Bedah.ts`/`batch4MataThtSaraf.ts` yg Anda sendiri temukan) — proposal Anda sendiri bilang
+  ini masuk jalur review M13-137, BUKAN hotfix gameplay terpisah. Setuju — jangan disentuh di luar
+  jalur itu.
+- **Playtest 2-3 mahasiswa/proxy** (gate wajib sebelum Wave B2/E-2 full/V3 lanjutan) — itu tindakan
+  Dr. Wirayuda sendiri di dunia nyata, bukan sesuatu yang bisa disimulasikan/self-certify.
+
+**M11 #7 (9 tema realita FKTP): DISETUJUI sbg pedoman authoring** (bukan mekanik baru). Tema P1
+(formularium-vs-stok, internet contingency, PRB continuity) boleh diterapkan sbg REVISI TEKS
+`catatanRealita`/`panduanResmi` pada kasus AKTIF yang relevan (bukan kasus prototipe M13-137) —
+draft "siap-pakai" di dokumen Anda sendiri sudah cukup matang dipakai, hanya sesuaikan resource
+konkret per kasus (jangan bulk-paste satu paragraf ke semua kasus, sesuai aturan editorial §7
+dokumen Anda sendiri). Ini field display-only (non-REVISI) — pola sama dgn C2.
+
+Urutan kerja: B1 dulu (4 sub-item, commit terpisah) → M11 #6 V1 → V2 → M11 #7 tema P1 (teks
+sitasi). Laporkan progres per item selesai, bukan menunggu semuanya baru lapor sekali.
 
 ---
 
