@@ -135,7 +135,9 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'reducer.ts': 'a458b6244565acbb0eb43c00eb8518039aa8b616071da5799c968e63ae44a935',
   'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
-  'director.ts': 'fa4c269cd001eb2e019f18507ac5e024ff38784bb6181cfa41cb5f87cd1a340d',
+  // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
+  // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
+  'director.ts': '653ac94effa4f492e1694f867f8eb14210b6ac0df87e5bcf262580d562e888f3',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
@@ -148,7 +150,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '030a61d8361f2acb67956d423b016d4a3f96898eaa46178f63ebf7103f2cefc1',
+  'verifikasi.ts': '52260c40968fec2050f9accd08974556978085eac4da4ab384b0d52618a58fa9',
   'state.ts': '64842309d7a08ef42bf35cf881c24ae6c0fe9e32afda3229d5ec8c63bf655332',
   'save.ts': '3a124f864eb634ff9f94c9d38d63a464d09dfa75ab6f4814ca15875ddbfc0073',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',

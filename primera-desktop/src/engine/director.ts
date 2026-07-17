@@ -367,41 +367,41 @@ export function susunAntrianHarian(
     const kel = state.desa.keluarga[id]
     return kel !== undefined && kel.jumlahKunjungan > 0 && kel.trust >= 5
   })
-  if (binaanAkrab.length > 0 && antrian.length > 0 && rngFlavor.chance(0.35)) {
-    const keluargaId = rngFlavor.pick(binaanAkrab)
-    const idx = rngFlavor.int(0, antrian.length - 1)
-    const pasien = antrian[idx]
+  // Bridge B1.1: siapkan hanya pasangan keluarga-pasien yang benar-benar
+  // punya anggota dengan demografi kompatibel. Versi lama memilih keluarga
+  // dan pasien lebih dulu, lalu tetap menempelkan keluargaId saat tak ada
+  // anggota cocok; itu menciptakan continuity fiktif.
+  const kandidatJembatan = binaanAkrab.flatMap((keluargaId) => {
     const kontenKeluarga = pack.keluarga[keluargaId]
-    // Fix #14 (adjudikasi DeepThink 2026-07-11, ronde CODEX-31, opsi O-B
-    // best-effort): RW selalu ditimpa RW keluarga asli. Nama/usia/jenisKelamin
-    // HANYA ditimpa dari anggota keluarga sungguhan bila ada yg usianya cocok
-    // rentang demografi kasus yg SUDAH terpilih (kurikulum/epidemiologi tetap
-    // penentu pemilihan kasus — hanya identitas pasien yg disesuaikan
-    // sesudahnya). Tak ada yg cocok → tetap fallback ke roll acak lama.
-    const kasus = pasien ? pack.kasus[pasien.kasusId] : undefined
-    // Fix #4 (audit CODEX 2026-07-11): pencocokan usia SAJA tak cukup — kasus
-    // ber-demografi.jenisKelamin tetap (mis. bumil, HANYA 'P') bisa ditimpa
-    // jadi anggota keluarga laki-laki yg kebetulan usianya cocok. Fallback
-    // "tak ada yg cocok → tetap roll lama" sudah ada, jadi menambah syarat
-    // gender di sini tak menimbulkan regresi — cuma lebih sering fallback.
-    const anggotaCocok = kasus
-      ? kontenKeluarga?.anggota.find(
-          (a) =>
-            a.usia >= kasus.demografi.usiaMin &&
-            a.usia <= kasus.demografi.usiaMax &&
-            (!kasus.demografi.jenisKelamin || a.jenisKelamin === kasus.demografi.jenisKelamin),
-        )
-      : undefined
-    if (pasien && kontenKeluarga) {
-      antrian[idx] = {
-        ...pasien,
-        keluargaId,
-        bonusTrust: true,
-        rw: kontenKeluarga.rw,
-        ...(anggotaCocok
-          ? { nama: anggotaCocok.nama, usia: anggotaCocok.usia, jenisKelamin: anggotaCocok.jenisKelamin }
-          : {}),
-      }
+    if (!kontenKeluarga) return []
+    const pasienCocok = antrian.flatMap((pasien, idx) => {
+      const kasus = pack.kasus[pasien.kasusId]
+      const anggota = kasus
+        ? kontenKeluarga.anggota.find(
+            (a) =>
+              a.usia >= kasus.demografi.usiaMin &&
+              a.usia <= kasus.demografi.usiaMax &&
+              (!kasus.demografi.jenisKelamin || a.jenisKelamin === kasus.demografi.jenisKelamin),
+          )
+        : undefined
+      return anggota ? [{ idx, anggota }] : []
+    })
+    return pasienCocok.length > 0 ? [{ keluargaId, kontenKeluarga, pasienCocok }] : []
+  })
+
+  if (kandidatJembatan.length > 0 && rngFlavor.chance(0.35)) {
+    const kandidatKeluarga = rngFlavor.pick(kandidatJembatan)
+    const { idx, anggota } = rngFlavor.pick(kandidatKeluarga.pasienCocok)
+    const pasien = antrian[idx]!
+    antrian[idx] = {
+      ...pasien,
+      keluargaId: kandidatKeluarga.keluargaId,
+      bonusTrust: true,
+      rw: kandidatKeluarga.kontenKeluarga.rw,
+      nama: anggota.nama,
+      usia: anggota.usia,
+      jenisKelamin: anggota.jenisKelamin,
+      persona: pilihPersona(anggota.usia, rngFlavor),
     }
   }
 

@@ -380,7 +380,7 @@ describe('susunAntrianHarian', () => {
     }
   })
 
-  it('Fix #4 (audit CODEX 2026-07-11): karma-bridge TIDAK menimpa identitas pasien bumil (demografi.jenisKelamin=P) jadi anggota keluarga laki-laki meski usianya cocok rentang', () => {
+  it('Bridge B1.1: pasien tanpa anggota keluarga kompatibel tidak mendapat keluargaId atau bonus continuity palsu', () => {
     const pack = buatPack([
       buatKasus('bumil_test', { demografi: { usiaMin: 20, usiaMax: 35, jenisKelamin: 'P' } }),
     ])
@@ -390,9 +390,6 @@ describe('susunAntrianHarian', () => {
       rw: 3,
       jarakMenit: 10,
       ekonomi: 'cukup',
-      // Satu-satunya anggota yg usianya cocok rentang kasus (20-35) berjenis
-      // kelamin LAKI-LAKI — sebelum fix #4, anggotaCocok cuma cek usia, jadi
-      // pasien bumil bisa ketimpa jadi 'Ketut' (L, 24).
       anggota: [{ nama: 'Ketut', usia: 24, jenisKelamin: 'L', peran: 'kepala' }],
       indikatorAwal: {},
       arc: { sinopsis: '', kunjungan: [], epilogBerhasil: '', epilogGagal: '' },
@@ -409,19 +406,54 @@ describe('susunAntrianHarian', () => {
         drift: { minggu: 1, jumlah: 0 },
       },
     })
-    let bridgeTerpicu = 0
     for (let seed = 0; seed < 200; seed++) {
       const antrian = susunAntrianHarian(state, pack, new Rng(seed, 'd'), [], new Rng(seed, 'flavor'))
       const bumil = antrian.find((p) => p.kasusId === 'bumil_test')
-      if (bumil?.keluargaId !== 'keluarga_uji') continue
-      bridgeTerpicu += 1
-      // Karma-bridge terpicu tapi anggotaCocok (L) tak boleh menimpa identitas
-      // pasien bumil (P) — harus fallback ke roll acak lama, bukan jadi Ketut.
-      expect(bumil.jenisKelamin).toBe('P')
-      expect(bumil.nama).not.toBe('Ketut')
+      expect(bumil).toBeDefined()
+      expect(bumil!.keluargaId).toBeUndefined()
+      expect(bumil!.bonusTrust).toBe(false)
+      expect(bumil!.jenisKelamin).toBe('P')
+      expect(bumil!.nama).not.toBe('Ketut')
     }
-    // Pastikan skenario ini benar-benar teruji (bridge memang terpicu di ≥1 seed).
-    expect(bridgeTerpicu).toBeGreaterThan(0)
+  })
+
+  it('Bridge B1.1: continuity hanya memakai identitas anggota nyata dan menjaga persona sesuai usia', () => {
+    const pack = buatPack([
+      buatKasus('lansia_test', { demografi: { usiaMin: 50, usiaMax: 80, jenisKelamin: 'P' } }),
+    ])
+    pack.keluarga['keluarga_uji'] = {
+      id: 'keluarga_uji',
+      namaKeluarga: 'Uji',
+      rw: 6,
+      jarakMenit: 10,
+      ekonomi: 'cukup',
+      anggota: [{ nama: 'Mbah Ayu', usia: 71, jenisKelamin: 'P', peran: 'lansia' }],
+      indikatorAwal: {},
+      arc: { sinopsis: '', kunjungan: [], epilogBerhasil: '', epilogGagal: '' },
+    }
+    const state = buatState({
+      desa: {
+        keluarga: {
+          keluarga_uji: { ...buatKeluargaState('keluarga_uji'), jumlahKunjungan: 3, trust: 8 },
+        },
+        kader: {},
+        rw: [],
+        binaan: ['keluarga_uji'],
+        surveilans: [],
+        drift: { minggu: 1, jumlah: 0 },
+      },
+    })
+    let jumlahTertaut = 0
+    for (let seed = 0; seed < 200; seed++) {
+      const pasien = susunAntrianHarian(state, pack, new Rng(seed, 'd'), [], new Rng(seed, 'flavor'))
+        .find((p) => p.keluargaId === 'keluarga_uji')
+      if (!pasien) continue
+      jumlahTertaut += 1
+      expect(pasien).toMatchObject({
+        nama: 'Mbah Ayu', usia: 71, jenisKelamin: 'P', persona: 'lansia', rw: 6, bonusTrust: true,
+      })
+    }
+    expect(jumlahTertaut).toBeGreaterThan(0)
   })
 })
 

@@ -589,7 +589,10 @@ function fnv1a(teks: string): string {
 // Default droplet dihapus; kasus baru tanpa profil jatuh ke respons aman dan
 // invariant gagal. Answer-key/narasi klb_aksi lama berubah, jadi replay KLB
 // lama dapat memilih opsi dengan makna berbeda dan revisi wajib dinaikkan.
-export const REVISI_ENGINE = 44
+// 45 (2026-07-17 - Bridge B1.1): pasien "keluarga akrab" hanya dapat
+// keluargaId bila ada anggota nyata yang cocok usia dan gender. Pemilihan
+// kandidat bridge serta stream flavor bergeser pada hari ketika bridge aktif.
+export const REVISI_ENGINE = 45
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
