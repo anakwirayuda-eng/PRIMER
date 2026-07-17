@@ -13,6 +13,7 @@ import { useGame } from '../store'
 import type { BabakKunjunganFase } from '@engine/state'
 import type { Hambatan, PilihanDialog } from '@content/types'
 import { PACK } from '@content/index'
+import { sitasiIntervensiUkm } from '@content/ukmCitations'
 import { hashSeed, Rng } from '@engine/core/rng'
 import { arcKunjunganAktif, skenarioEfektif } from '@engine/kunjungan'
 import { acakUrutan } from '../utils/acakUrutan'
@@ -182,6 +183,12 @@ export function Kunjungan() {
   const temuan = skenario.hotspot.filter((h) => kj.hotspotDitemukan.includes(h.id))
   const babakIndex = BABAK.findIndex((b) => b.fase === kj.fase)
   const ucapanWarga = riwayat.filter((u) => u.peran === 'warga')
+  const intervensiAktif = intervensiPilihan
+    ? skenario.intervensi.find((kartu) => kartu.id === intervensiPilihan)
+    : undefined
+  const sitasiIntervensiAktif = intervensiAktif
+    ? sitasiIntervensiUkm(skenario, intervensiAktif)
+    : undefined
 
   function pilihDialog(p: PilihanDialog) {
     setDokterTerakhir(p.teks)
@@ -447,6 +454,17 @@ export function Kunjungan() {
                 </button>
               ))}
             </div>
+            {sitasiIntervensiAktif && (
+              <aside
+                className="kunjungan-resep__sitasi"
+                role="status"
+                aria-live="polite"
+                aria-label="Landasan resep sosial terpilih"
+              >
+                <span className="chip chip--biru">{sitasiIntervensiAktif.pinkesga}</span>
+                <p>{sitasiIntervensiAktif.sumber}</p>
+              </aside>
+            )}
             <div className="baris baris--antara">
               <span className="teks-kecil teks-lembut">
                 Pilih SATU resep sosial yang menjawab hambatan sebenarnya — bukan yang paling terdengar medis.

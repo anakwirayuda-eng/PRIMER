@@ -6,6 +6,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useGame } from '../store'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
@@ -51,5 +52,35 @@ describe('<Kegiatan /> — KartuHasil Posyandu (audit CODEX 2026-07-11, #15)', (
     render(<Kegiatan />)
     expect(screen.queryByText(/Sistem 5 Meja/)).not.toBeInTheDocument()
     expect(screen.getByText(/ILP 5 Langkah/)).toBeInTheDocument()
+  })
+})
+
+describe('<Kegiatan /> - sitasi kartu C2', () => {
+  it('setelah menjawab kartu, debrief menampilkan sumber resmi kartu', async () => {
+    const state: GameState = {
+      ...buildInitialState('Uji Komponen', 1, PACK),
+      kegiatan: {
+        jenis: 'posyandu',
+        rw: 1,
+        kartu: [
+          {
+            id: 'posy_timbang',
+            judul: 'Langkah 2',
+            narasi: 'Narasi uji',
+            pilihan: [{ id: 'p1', label: 'Pilihan uji', benar: true, respons: 'Tepat.' }],
+          },
+        ],
+        index: 0,
+        jawaban: [],
+      },
+    }
+    useGame.setState({ state })
+    render(<Kegiatan />)
+    expect(screen.queryByText(/Panduan Pengelolaan Posyandu Bidang Kesehatan/)).not.toBeInTheDocument()
+
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: 'Pilihan uji' }))
+
+    expect(screen.getByText(/Panduan Pengelolaan Posyandu Bidang Kesehatan/)).toBeInTheDocument()
   })
 })

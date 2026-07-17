@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import type { HasilKegiatan } from '@engine/kegiatan'
 import { acakUrutan } from '../utils/acakUrutan'
+import { sumberKegiatanUkm } from '@content/ukmCitations'
 import './Kegiatan.css'
 
 const JUDUL: Record<string, { label: string; sub: string }> = {
@@ -87,6 +88,7 @@ export function Kegiatan() {
 
   const meta = JUDUL[kg.jenis] ?? { label: 'KEGIATAN', sub: '' }
   const pilihanObj = pilihanTerpilih ? kartu.pilihan.find((p) => p.id === pilihanTerpilih) : null
+  const sumberKartu = sumberKegiatanUkm(kartu, kg.jenis)
 
   return (
     <div className="kegiatan">
@@ -130,6 +132,12 @@ export function Kegiatan() {
               <div className={`kegiatan__respons ${pilihanObj.benar ? 'kegiatan__respons--benar' : 'kegiatan__respons--salah'}`} role="status" aria-live="polite">
                 <span className="stempel stempel--kecil">{pilihanObj.benar ? 'TEPAT' : 'KELIRU'}</span>
                 <p>{pilihanObj.respons}</p>
+                {sumberKartu && (
+                  <div className="kegiatan__sumber">
+                    <b className="mono">LANDASAN RESMI</b>
+                    <p>{sumberKartu}</p>
+                  </div>
+                )}
                 <button
                   className="tombol tombol--utama"
                   onClick={() =>

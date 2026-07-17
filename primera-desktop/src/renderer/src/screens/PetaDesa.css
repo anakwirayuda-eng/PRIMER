@@ -393,6 +393,8 @@
 
 .peta-hasil {
   width: min(560px, 92vw);
+  max-height: min(760px, 90vh);
+  overflow-y: auto;
   padding: var(--sp-6);
   display: flex;
   flex-direction: column;
@@ -410,6 +412,26 @@
 .peta-hasil__narasi {
   line-height: 1.6;
   max-width: 52ch;
+}
+
+.peta-hasil__panduan {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  border-left: 3px solid var(--tinta-biru);
+  background: var(--bg-sunken);
+  color: var(--tinta-lembut);
+  text-align: left;
+}
+
+.peta-hasil__panduan b {
+  color: var(--tinta-biru);
+  font-size: var(--text-xs);
+}
+
+.peta-hasil__panduan p {
+  margin: var(--sp-1) 0 0;
+  font-size: var(--text-xs);
+  line-height: 1.5;
 }
 
 /* M2: tombol kegiatan lapangan di panel RW (jarak dari gap parent .peta-detail) */

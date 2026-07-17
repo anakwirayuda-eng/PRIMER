@@ -21,6 +21,7 @@ import { arcKunjunganAktif } from '@engine/kunjungan'
 import type { HasilKunjungan, KeluargaState } from '@engine/state'
 import type { KeluargaBinaan } from '@content/types'
 import { PACK } from '@content/index'
+import { panduanSkenarioUkm } from '@content/ukmCitations'
 import { PetaSvg } from './peta/PetaSvg'
 import { KartuKeluarga } from './peta/KartuKeluarga'
 import { formatIks, karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta/petaUtil'
@@ -128,6 +129,10 @@ export function PetaDesa() {
   }
 
   const keluargaHasil = hasilKunjungan ? PACK.keluarga[hasilKunjungan.keluargaId] : undefined
+  const skenarioHasil = hasilKunjungan
+    ? keluargaHasil?.arc.kunjungan.find((skenario) => skenario.id === hasilKunjungan.skenarioId)
+    : undefined
+  const panduanHasil = skenarioHasil ? panduanSkenarioUkm(skenarioHasil) : undefined
 
   return (
     <div className="peta-root">
@@ -324,6 +329,12 @@ export function PetaDesa() {
               {keluargaHasil ? keluargaHasil.namaKeluarga : hasilKunjungan.keluargaId}
             </div>
             <p className="peta-hasil__narasi">{hasilKunjungan.narasiPenutup}</p>
+            {panduanHasil && (
+              <aside className="peta-hasil__panduan">
+                <b className="mono">LANDASAN RESMI</b>
+                <p>{panduanHasil}</p>
+              </aside>
+            )}
             <div className="baris baris--tengah">
               <span className="chip chip--biru">
                 {hasilKunjungan.indikatorTerverifikasi.length} indikator terverifikasi ✓

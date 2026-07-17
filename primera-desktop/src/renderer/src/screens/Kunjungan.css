@@ -501,6 +501,32 @@
   background: var(--daun-50);
 }
 
+.kunjungan-resep__sitasi {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border-left: 3px solid var(--tinta-biru);
+  background: var(--bg-sunken);
+  color: var(--tinta-lembut);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.kunjungan-resep__sitasi .chip {
+  flex: 0 0 auto;
+}
+
+.kunjungan-resep__sitasi p {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .kunjungan-resep__sitasi {
+    flex-direction: column;
+  }
+}
+
 /* M10 Batch-2 (CODEX A.4): ilustrasi rumah memakai palet kertas terang yang
    SENGAJA tak diremap mode malam (interior siang hari — kunjungan = blok
    siang). Tapi sbg panel terang BESAR di tengah UI gelap ia menyilaukan.

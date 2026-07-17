@@ -22,6 +22,7 @@ import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
 import { Kunjungan } from './Kunjungan'
 import type { KunjunganState } from '@engine/state'
+import { sitasiIntervensiUkm } from '@content/ukmCitations'
 
 const KELUARGA_ID = 'keluarga_wulan'
 const SKENARIO_ID = 'wulan_k1'
@@ -78,6 +79,25 @@ describe('<Kunjungan /> — disambiguasi aria-label hotspot (#13)', () => {
     pasangKunjungan({ hotspotDitemukan: [pertama.id] })
     render(<Kunjungan />)
     expect(screen.getByRole('button', { name: pertama.label })).toBeInTheDocument()
+  })
+})
+
+describe('<Kunjungan /> - sitasi resep sosial C2', () => {
+  it('menampilkan Pinkesga dan landasan resmi hanya setelah kartu dipilih', async () => {
+    const { skenario } = skenarioUji()
+    pasangKunjungan({ fase: 'resep_sosial' })
+    render(<Kunjungan />)
+    expect(screen.queryByText(/^Pinkesga /)).not.toBeInTheDocument()
+
+    const kartu = Array.from(document.querySelectorAll('.kunjungan-intervensi'))
+    const kartuPertama = kartu[0]!
+    const konten = skenario.intervensi.find((item) => kartuPertama.textContent?.includes(item.nama))!
+    const sitasi = sitasiIntervensiUkm(skenario, konten)
+    const user = userEvent.setup()
+    await user.click(kartuPertama)
+
+    expect(screen.getByText(sitasi.pinkesga)).toBeInTheDocument()
+    expect(screen.getByText(sitasi.sumber)).toBeInTheDocument()
   })
 })
 

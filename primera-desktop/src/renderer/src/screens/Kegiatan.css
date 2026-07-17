@@ -114,6 +114,23 @@
 .kegiatan__respons--salah { border-left-color: var(--tinta-merah); }
 .kegiatan__respons p { line-height: 1.5; font-size: var(--text-sm); }
 
+.kegiatan__sumber {
+  width: 100%;
+  padding-top: var(--sp-3);
+  border-top: 1px dashed var(--border-halus);
+  color: var(--tinta-lembut);
+}
+
+.kegiatan__sumber b {
+  font-size: var(--text-xs);
+  color: var(--tinta-biru);
+}
+
+.kegiatan__sumber p {
+  margin: var(--sp-1) 0 0;
+  font-size: var(--text-xs);
+}
+
 /* .stempel--kecil pindah ke base.css (dipakai lintas layar: Kegiatan & Igd). */
 
 /* Slot respons+delegasi ber-min-height: panel tumbuh hanya ke bawah,
