@@ -14,7 +14,8 @@ import {
   kartuProlanis,
   prolanisTerkendali,
 } from './kegiatan'
-import { peluangJanjiDitepati } from './reducer'
+import { advance, peluangJanjiDitepati } from './reducer'
+import { buildInitialState } from './init'
 import { ambangKlusterPack } from './surveilans'
 import { Rng } from './core/rng'
 import type { PesertaProlanis } from './state'
@@ -186,5 +187,77 @@ describe('#13 — ambang KLB ter-ground Permenkes 1/2026 + kalibrasi', () => {
   it('kasus TAK menular tetap di luar surveilans (tak ada ambang liar)', () => {
     expect(ambang['hipertensi_esensial']).toBeUndefined()
     expect(ambang['mm_osteoartritis_lutut']).toBeUndefined()
+  })
+})
+describe('Bridge B1.2 - janji PIS-PK yang ingkar membuka kunjungan ulang', () => {
+  it('mengoreksi indikator, membuka beat terakhir, dan membuat tombol kunjungan dapat dipakai', () => {
+    const keluargaId = 'keluarga_wulan'
+    const konten = PACK.keluarga[keluargaId]!
+    const arc = arcKunjunganAktif(PACK, konten, 'karier', CONTENT_RELEASE)
+    const skenarioTerakhir = arc.at(-1)!
+    const indikatorJanji = skenarioTerakhir.target[0]!
+    const jadwalId = 'janji_bridge_b1_2'
+    const seed = Array.from({ length: 100 }, (_, i) => i).find(
+      (nilai) => !new Rng(nilai, 'verifikasi-janji', jadwalId).chance(peluangJanjiDitepati(0)),
+    )!
+    expect(seed).toBeDefined()
+
+    let state = buildInitialState('Bridge B1.2', seed, PACK)
+    const kelAwal = state.desa.keluarga[keluargaId]!
+    state = {
+      ...state,
+      hari: 10,
+      blok: 'sore',
+      desa: {
+        ...state.desa,
+        binaan: Array.from(new Set([...state.desa.binaan, keluargaId])),
+        keluarga: {
+          ...state.desa.keluarga,
+          [keluargaId]: {
+            ...kelAwal,
+            trust: 0,
+            arcIndex: arc.length,
+            arcSelesai: 'berhasil',
+            indikator: {
+              ...kelAwal.indikator,
+              [indikatorJanji]: {
+                status: 'ya', statusSebenarnya: 'tidak', sumber: 'janji', hariData: 10,
+              },
+            },
+          },
+        },
+      },
+      jadwal: [{
+        id: jadwalId,
+        hari: 11,
+        jenis: 'verifikasi_pispk',
+        keluargaId,
+        indikatorJanji: [indikatorJanji],
+      }],
+    }
+
+    const hariBerikut = advance(state, { type: 'LANJUTKAN' }, PACK).state
+    const terbuka = hariBerikut.desa.keluarga[keluargaId]!
+    expect(hariBerikut.hari).toBe(11)
+    expect(terbuka.indikator[indikatorJanji]).toMatchObject({
+      status: 'tidak', statusSebenarnya: 'tidak', sumber: 'dokter', hariData: 11,
+    })
+    expect(terbuka.arcSelesai).toBeUndefined()
+    expect(terbuka.arcIndex).toBe(arc.length - 1)
+    expect(terbuka.followUpHari).toBe(11)
+    expect(hariBerikut.inbox.some((surat) => surat.isi.includes('kunjungi lagi'))).toBe(true)
+
+    const siapKunjungan: GameState = {
+      ...hariBerikut,
+      blok: 'siang',
+      layar: 'peta',
+      stamina: 6,
+      lapanganTerpakai: false,
+      hasilKunjunganHariIni: undefined,
+      kegiatan: undefined,
+    }
+    const mulai = advance(siapKunjungan, { type: 'MULAI_KUNJUNGAN', keluargaId }, PACK)
+    expect(mulai.events.some((event) => event.type === 'ERROR_AKSI')).toBe(false)
+    expect(mulai.state.kunjungan?.skenarioId).toBe(skenarioTerakhir.id)
   })
 })

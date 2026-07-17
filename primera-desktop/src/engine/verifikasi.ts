@@ -592,7 +592,10 @@ function fnv1a(teks: string): string {
 // 45 (2026-07-17 - Bridge B1.1): pasien "keluarga akrab" hanya dapat
 // keluargaId bila ada anggota nyata yang cocok usia dan gender. Pemilihan
 // kandidat bridge serta stream flavor bergeser pada hari ketika bridge aktif.
-export const REVISI_ENGINE = 45
+// 46 (2026-07-17 - Bridge B1.2): verifikasi janji PIS-PK yang ingkar
+// membuka kembali beat keluarga terakhir dan membuat follow-up jatuh tempo,
+// sehingga instruksi "kunjungi lagi" kini dapat dimainkan.
+export const REVISI_ENGINE = 46
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

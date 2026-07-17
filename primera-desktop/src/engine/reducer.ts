@@ -2015,7 +2015,23 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
             ingkar.push(ind)
           }
         }
-        keluargaMap = { ...keluargaMap, [j.keluargaId]: { ...kel, indikator } }
+        let kelTerverifikasi: KeluargaState = { ...kel, indikator }
+        // Bridge B1.2: janji akhir yang ingkar harus membuka jalur recovery
+        // yang benar-benar dapat dimainkan. Putar ulang beat terakhir yang
+        // menghasilkan janji itu; jangan biarkan surat menyuruh kunjungi lagi
+        // sementara arcIndex dan arcSelesai tetap mengunci tombol.
+        if (ingkar.length > 0 && kel.arcSelesai === 'berhasil') {
+          const arcAktif = arcKunjunganAktif(pack, kelContent, s.mode, s.contentRelease)
+          if (arcAktif.length > 0) {
+            const { arcSelesai: _selesaiLama, ...kelTerbuka } = kelTerverifikasi
+            kelTerverifikasi = {
+              ...kelTerbuka,
+              arcIndex: arcAktif.length - 1,
+              followUpHari: hari,
+            }
+          }
+        }
+        keluargaMap = { ...keluargaMap, [j.keluargaId]: kelTerverifikasi }
         if (ingkar.length > 0) {
           suratBaru.push(
             buatSuratHarian(hari, suratBaru.length, {

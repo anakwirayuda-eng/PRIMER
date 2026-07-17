@@ -132,7 +132,9 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Mode Ujian tetap tidak mengaktifkan outcome kontak awal.
   // Unfreeze 2026-07-17 (bridge UKM↔UKP P0-A, REVISI_ENGINE 42 -> 43):
   // kluster KLB hanya tuntas bila skor agregat lolos DAN klb_aksi benar.
-  'reducer.ts': 'a458b6244565acbb0eb43c00eb8518039aa8b616071da5799c968e63ae44a935',
+  // Unfreeze 2026-07-17 (Bridge B1.2, REVISI_ENGINE 45 -> 46): janji
+  // PIS-PK ingkar membuka ulang beat terakhir dan follow-up keluarga.
+  'reducer.ts': '75b048403c4554595f856e29b0ac4581b5ca597430341ca8a349f58c74b4dddb',
   'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
@@ -150,7 +152,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '52260c40968fec2050f9accd08974556978085eac4da4ab384b0d52618a58fa9',
+  'verifikasi.ts': '8e8e5ba5676f8c4332b512e383e4a409e89b0116b11b714c5cbad2dc8736f601',
   'state.ts': '64842309d7a08ef42bf35cf881c24ae6c0fe9e32afda3229d5ec8c63bf655332',
   'save.ts': '3a124f864eb634ff9f94c9d38d63a464d09dfa75ab6f4814ca15875ddbfc0073',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
