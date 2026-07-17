@@ -140,12 +140,15 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
   'init.ts': '19b2d372c730406a14ac96afc3497fc8e8f418b0694271a5bff1df41ad778afb',
-  'kegiatan.ts': 'cd63103ca60aa6a736f11447c01b027638a4270332c95a4ca1227eb291c8067e',
+  // Unfreeze 2026-07-17 (bridge UKM↔UKP P0-B, REVISI_ENGINE 43 -> 44):
+  // 22 kasus kluster dipetakan eksplisit ke 15 pola pengendalian; fallback
+  // droplet diganti respons aman belum-dipetakan dan dikunci invariant.
+  'kegiatan.ts': '8e1d7605877b0fbb7344805e337011b0b86fefa11aba767cb9e8d7127d19cb3e',
   'kunjungan.ts': 'b83cbb2874d533a90f70f900d854f50b62b089695b5c9e5e449822f5905c6880',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '7523597336d5acda408f31867f5ddfb6d0e7a89319ef231bd8fd9418e56985a5',
+  'verifikasi.ts': '030a61d8361f2acb67956d423b016d4a3f96898eaa46178f63ebf7103f2cefc1',
   'state.ts': '64842309d7a08ef42bf35cf881c24ae6c0fe9e32afda3229d5ec8c63bf655332',
   'save.ts': '3a124f864eb634ff9f94c9d38d63a464d09dfa75ab6f4814ca15875ddbfc0073',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',

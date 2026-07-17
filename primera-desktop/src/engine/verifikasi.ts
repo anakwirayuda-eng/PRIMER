@@ -584,7 +584,12 @@ function fnv1a(teks: string): string {
 // skor agregat >=0,66 juga mensyaratkan kartu tindakan pengendalian
 // (`klb_aksi`) benar. Replay lama yang memperoleh 2/3 dengan aksi spesifik
 // salah tidak lagi menghapus kluster/menambah klbTuntas/bonus IKS.
-export const REVISI_ENGINE = 43
+// 44 (2026-07-17 — bridge UKM↔UKP P0-B): 22/22 penyakit berambang kluster
+// kini punya pemetaan rute/sumber eksplisit dan aksi pengendalian tergrounding.
+// Default droplet dihapus; kasus baru tanpa profil jatuh ke respons aman dan
+// invariant gagal. Answer-key/narasi klb_aksi lama berubah, jadi replay KLB
+// lama dapat memilih opsi dengan makna berbeda dan revisi wajib dinaikkan.
+export const REVISI_ENGINE = 44
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

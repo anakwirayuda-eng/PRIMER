@@ -505,29 +505,135 @@ export function kartuProlanis(peserta: PesertaProlanis[], rng: Rng): KartuKegiat
 
 /* ---------------------------------------------------------------------------
  * RESPONS KLB — 5W1H penyelidikan + pemilihan aksi pengendalian.
- * Kartu disesuaikan jenis kluster (vektor / air-makanan / droplet).
+ * Kartu disesuaikan rute/sumber penularan, bukan kategori klinis semata.
  * ------------------------------------------------------------------------- */
 
-type PolaKlb = 'vektor' | 'air_makanan' | 'droplet' | 'kontak' | 'airborne'
+export type PolaKlb =
+  | 'vektor'
+  | 'fekal_oral'
+  | 'pangan_toksin'
+  | 'tanah_helminth'
+  | 'air_tawar_keong'
+  | 'zoonosis_lingkungan'
+  | 'seksual'
+  | 'skabies_serumah'
+  | 'kontak_fomit'
+  | 'kusta_kontak_erat'
+  | 'airborne_tb'
+  | 'droplet_rutin'
+  | 'influenza'
+  | 'parotitis'
+  | 'pertusis'
+  | 'belum_dipetakan'
 
-function polaDariKasus(kasusId: string): PolaKlb {
-  if (kasusId === 'dengue_df') return 'vektor'
-  if (kasusId === 'diare_akut_anak' || kasusId === 'demam_tifoid') return 'air_makanan'
-  // M10 §49 (2026-07-10): skabies & konjungtivitis menular lewat KONTAK
-  // (tungau/sekret via tangan-benda), BUKAN droplet — dulu jatuh ke default
-  // droplet sehingga kartu KLB mengajarkan masker/etika batuk sbg jawaban
-  // benar utk wabah tungau. Pengendalian kontak yg benar: obati kasus + SEMUA
-  // kontak erat serentak, dekontaminasi linen/benda, higiene tangan.
-  // Hanya skabies & konjungtivitis_bakterial yang jadi kluster kontak
-  // (AMBANG_CLUSTER, surveilans.ts) — konjungtivitis alergi tak menular.
-  if (kasusId === 'skabies' || kasusId === 'konjungtivitis_bakterial') return 'kontak'
-  // Fix CODEX-25 #17 (2026-07-12): TB = AIRBORNE (droplet nuclei bertahan di
-  // udara), BUKAN droplet — pengendalian beda: investigasi kontak + TPT +
-  // ventilasi/pencahayaan (respirator N95 utk nakes), bukan sekadar masker
-  // bedah/etika batuk. Dulu tb_paru & ispa sama-sama 'droplet' → kartu KLB
-  // mengajar respons droplet generik utk wabah TB. (WHO: TB airborne.)
-  if (kasusId === 'tb_paru') return 'airborne'
-  return 'droplet' // ispa/pneumonia → transmisi droplet
+/**
+ * P0-B (2026-07-17): seluruh 22 kasus ber-ambangKluster dipetakan eksplisit.
+ * Registry ini sengaja tidak punya default droplet. Kasus baru yang belum
+ * ditelaah jatuh ke respons aman `belum_dipetakan` dan invariant test gagal,
+ * sehingga aplikasi tidak mengajarkan masker utk penyakit non-respiratorik.
+ * Grounding per pola: docs/UKM_KLB_TRANSMISSION_MAPPING.md.
+ */
+const POLA_KLB_PER_KASUS: Readonly<Record<string, Exclude<PolaKlb, 'belum_dipetakan'>>> = {
+  demam_tifoid: 'fekal_oral',
+  dengue_df: 'vektor',
+  diare_akut_anak: 'fekal_oral',
+  ispa_common_cold: 'droplet_rutin',
+  konjungtivitis_bakterial: 'kontak_fomit',
+  lab_cacing_tambang: 'tanah_helminth',
+  lab_gonore_uretritis_pria: 'seksual',
+  lab_hepatitis_a_akut: 'fekal_oral',
+  lab_influenza_tanpa_komplikasi: 'influenza',
+  lab_keracunan_makanan_ringan: 'pangan_toksin',
+  lab_kusta_pausibasiler: 'kusta_kontak_erat',
+  lab_leptospirosis_tanpa_komplikasi: 'zoonosis_lingkungan',
+  lab_parotitis_mumps: 'parotitis',
+  lab_pertusis_remaja: 'pertusis',
+  lab_pneumonia_komunitas_dewasa: 'droplet_rutin',
+  lab_sifilis_primer: 'seksual',
+  lab_sindrom_duh_genital_servisitis: 'seksual',
+  lab_skistosomiasis_sulteng: 'air_tawar_keong',
+  lab_tinea_kapitis_anak: 'kontak_fomit',
+  pneumonia_balita: 'droplet_rutin',
+  skabies: 'skabies_serumah',
+  tb_paru: 'airborne_tb',
+}
+
+export function polaKlbDariKasus(kasusId: string): PolaKlb {
+  return POLA_KLB_PER_KASUS[kasusId] ?? 'belum_dipetakan'
+}
+
+interface OpsiAksiKlb {
+  id: string
+  label: string
+  benar: boolean
+  respons: string
+}
+
+const AKSI_KLB: Readonly<Record<PolaKlb, { benar: OpsiAksiKlb; salah: OpsiAksiKlb }>> = {
+  vektor: {
+    benar: { id: 'a', label: 'PSN 3M Plus + larvasidasi; fogging hanya bila ada penularan aktif', benar: true, respons: 'Tepat. Pengendalian dengue bertumpu pada pengurangan tempat perindukan dan kendali vektor terpadu; fogging bukan pengganti PSN.' },
+    salah: { id: 'b', label: 'Cukup obati pasien dan fogging massal tanpa menilai sarang', benar: false, respons: 'Keliru. Tata laksana kasus penting, tetapi fogging tanpa pengurangan sumber tidak memutus siklus Aedes.' },
+  },
+  fekal_oral: {
+    benar: { id: 'a', label: 'Amankan air minum dan sanitasi, telusuri sumber air/pangan, CTPS + higiene pangan', benar: true, respons: 'Tepat. Rute fekal-oral diputus melalui air aman, sanitasi, kebersihan tangan dan pangan serta pengendalian sumber; terapi klinis tetap mengikuti penyakitnya.' },
+    salah: { id: 'b', label: 'Bagikan masker dan semprot insektisida ke seluruh wilayah', benar: false, respons: 'Masker dan insektisida tidak mengatasi kontaminasi tinja pada air, tangan, atau pangan.' },
+  },
+  pangan_toksin: {
+    benar: { id: 'a', label: 'Hentikan dan tarik pangan tersangka, telusuri penjamah/rantai penyimpanan, ambil sampel sesuai protokol', benar: true, respons: 'Tepat. Paparan bersama harus dihentikan dan sumber pangan ditelusuri; terapi pasien saja membiarkan orang lain terus terpapar.' },
+    salah: { id: 'b', label: 'Beri antibiotik massal tanpa mencari pangan yang menjadi sumber', benar: false, respons: 'Keracunan pangan dapat disebabkan toksin atau beragam patogen. Antibiotik massal tanpa identifikasi sumber tidak tepat dan tidak menghentikan paparan.' },
+  },
+  tanah_helminth: {
+    benar: { id: 'a', label: 'Obat cacing kelompok berisiko sesuai program, perbaiki sanitasi/jamban, biasakan alas kaki', benar: true, respons: 'Tepat. Cacing tambang berasal dari tanah tercemar; pengobatan kelompok berisiko perlu disertai sanitasi dan pencegahan kontak kulit dengan tanah.' },
+    salah: { id: 'b', label: 'Isolasi droplet dan bagikan masker kepada teman sekolah', benar: false, respons: 'Cacing tambang tidak menular lewat batuk atau kontak biasa; larva menembus kulit dari tanah tercemar.' },
+  },
+  air_tawar_keong: {
+    benar: { id: 'a', label: 'Petakan paparan air tawar, terapi praziquantel kelompok sasaran, air/sanitasi aman + kendali keong lintas sektor', benar: true, respons: 'Tepat. Skistosomiasis terkait air tawar dan hospes perantara keong; kendali memadukan pengobatan, WASH, perubahan perilaku dan One Health.' },
+    salah: { id: 'b', label: 'Fogging nyamuk dewasa dan terapi hanya pasien yang datang', benar: false, respons: 'Vektornya bukan nyamuk. Tanpa memutus paparan air tawar dan siklus keong, penularan tetap berlanjut.' },
+  },
+  zoonosis_lingkungan: {
+    benar: { id: 'a', label: 'Kurangi paparan air banjir tercemar, tutup luka + sepatu bot/APD, amankan air dan kendalikan rodensia', benar: true, respons: 'Tepat. Leptospira berasal dari urine hewan yang mencemari air/tanah; perlindungan paparan dan kendali rodensia lebih relevan daripada isolasi droplet.' },
+    salah: { id: 'b', label: 'Isolasi pasien sebagai sumber droplet dan bagikan masker', benar: false, respons: 'Penularan antarmanusia bukan rute utama. Fokus pada air/tanah tercemar, luka kulit, APD, air aman dan rodensia.' },
+  },
+  seksual: {
+    benar: { id: 'a', label: 'Layanan rahasia: tes/obati kasus dan pasangan seksual, kondom, skrining HIV/IMS terkait', benar: true, respons: 'Tepat. Pengobatan pasangan mencegah reinfeksi dan transmisi; layanan harus rahasia, nonstigmatis dan disertai pencegahan serta tes IMS terkait.' },
+    salah: { id: 'b', label: 'Umumkan identitas kasus ke warga dan lakukan fogging rumahnya', benar: false, respons: 'Fogging tidak relevan, sedangkan membuka identitas melanggar kerahasiaan dan justru menghambat penelusuran serta pengobatan pasangan.' },
+  },
+  skabies_serumah: {
+    benar: { id: 'a', label: 'Obati kasus + seluruh kontak serumah/erat serentak; cuci dan keringkan pakaian serta linen', benar: true, respons: 'Tepat. Masa tanpa gejala memungkinkan penularan ping-pong, sehingga anggota rumah ditangani serentak dan benda terpapar dibersihkan.' },
+    salah: { id: 'b', label: 'Fogging wilayah dan cukup obati warga yang sudah gatal', benar: false, respons: 'Fogging tidak membunuh tungau pada kulit. Menunggu semua kontak gatal membiarkan reinfeksi berulang.' },
+  },
+  kontak_fomit: {
+    benar: { id: 'a', label: 'Tangani kasus; higiene tangan; jangan berbagi handuk, sisir, topi, atau barang pribadi; periksa kontak bergejala', benar: true, respons: 'Tepat. Penularan kontak/fomit diputus dengan kebersihan, tidak berbagi barang pribadi, tata laksana kasus dan pemeriksaan kontak yang bergejala.' },
+    salah: { id: 'b', label: 'Obati semua kontak tanpa gejala dan cukup bagikan masker', benar: false, respons: 'Masker bukan intervensi utama, dan terapi buta semua kontak tidak dibenarkan untuk konjungtivitis atau tinea kapitis.' },
+  },
+  kusta_kontak_erat: {
+    benar: { id: 'a', label: 'Mulai/lanjutkan MDT kasus, skrining kontak secara rahasia; rifampisin dosis tunggal hanya kontak eligible sesuai program', benar: true, respons: 'Tepat. Kusta membutuhkan deteksi dan MDT dini, skrining kontak dengan persetujuan, serta PEP sesuai kelayakan dan protokol tanpa stigma.' },
+    salah: { id: 'b', label: 'Isolasi paksa keluarga, beri label rumah, lalu fogging lingkungan', benar: false, respons: 'Kusta tidak memerlukan isolasi paksa atau fogging. Stigma membuat kasus tersembunyi dan menghambat deteksi dini.' },
+  },
+  airborne_tb: {
+    benar: { id: 'a', label: 'Investigasi kontak, skrining gejala/tes melalui jejaring, TPT untuk kontak eligible, perbaiki ventilasi', benar: true, respons: 'Tepat. TB airborne membutuhkan penemuan kasus aktif, investigasi kontak, terapi pencegahan bagi yang eligible dan kendali udara.' },
+    salah: { id: 'b', label: 'Cukup bagikan masker bedah dan obati warga yang batuk saja', benar: false, respons: 'Masker bedah saja tidak menggantikan investigasi kontak, TPT, diagnosis cepat dan ventilasi.' },
+  },
+  droplet_rutin: {
+    benar: { id: 'a', label: 'Etika batuk/masker saat bergejala, ventilasi + higiene tangan, penemuan kasus dan cek faktor risiko/imunisasi', benar: true, respons: 'Tepat. Kendali respiratorik memadukan pengurangan paparan, penemuan dan tata laksana kasus serta koreksi faktor risiko; intervensi tambahan mengikuti etiologi.' },
+    salah: { id: 'b', label: 'Antibiotik atau profilaksis massal untuk semua warga tanpa memastikan etiologi', benar: false, respons: 'Kluster respiratorik dapat memiliki banyak etiologi. Obat massal tanpa indikasi tidak aman dan mendorong resistensi.' },
+  },
+  influenza: {
+    benar: { id: 'a', label: 'Kasus influenza kurangi kontak, gunakan masker/etika batuk; ventilasi, higiene tangan, lindungi kelompok risiko + cek vaksinasi', benar: true, respons: 'Tepat. Kendali influenza mengurangi kontak saat sakit, memperbaiki higiene/ventilasi dan melindungi kelompok berisiko; vaksinasi mengikuti kebijakan dan ketersediaan.' },
+    salah: { id: 'b', label: 'Beri antibiotik massal karena semua influenza pasti bakteri', benar: false, respons: 'Influenza adalah infeksi virus. Antibiotik hanya untuk indikasi bakteri yang dinilai secara klinis, bukan respons massal.' },
+  },
+  parotitis: {
+    benar: { id: 'a', label: 'Isolasi kasus 5 hari sejak parotitis, telusuri/pantau kontak, cek status MMR bila tersedia sesuai kebijakan', benar: true, respons: 'Tepat. Parotitis menular melalui saliva/droplet; isolasi lima hari dan pemantauan kontak penting. MMR pascapajanan tidak menjamin mencegah penyakit yang sudah terinkubasi.' },
+    salah: { id: 'b', label: 'Beri antibiotik massal dan anggap vaksin setelah pajanan pasti menggagalkan infeksi', benar: false, respons: 'Mumps disebabkan virus, dan vaksin setelah pajanan bukan profilaksis yang pasti untuk pajanan tersebut.' },
+  },
+  pertusis: {
+    benar: { id: 'a', label: 'Obati/isolasi kasus, telusuri kontak serumah dan kelompok risiko terutama bayi; profilaksis sesuai protokol + cek imunisasi DPT', benar: true, respons: 'Tepat. Kontak serumah dan orang yang berisiko sakit berat perlu dinilai cepat; PEP diprioritaskan sesuai protokol dan jendela pajanan.' },
+    salah: { id: 'b', label: 'Cukup etika batuk; kontak sehat termasuk bayi tidak perlu dinilai', benar: false, respons: 'Pertusis sangat menular dan berbahaya bagi bayi. Kontak serumah/berisiko dapat memerlukan profilaksis walau belum bergejala.' },
+  },
+  belum_dipetakan: {
+    benar: { id: 'a', label: 'Tahan intervensi generik; pastikan etiologi, rute dan sumber, lalu koordinasikan tindakan dengan surveilans/Dinkes', benar: true, respons: 'Benar. Bila profil belum dipetakan, jangan menebak rute penularan. Verifikasi dan eskalasi lebih aman daripada mengajarkan tindakan yang salah.' },
+    salah: { id: 'b', label: 'Anggap otomatis droplet dan bagikan masker', benar: false, respons: 'Tidak semua kluster menular lewat respirasi. Asumsi otomatis dapat mengalihkan sumber daya dari sumber penularan yang sebenarnya.' },
+  },
 }
 
 /**
@@ -550,28 +656,8 @@ const NARASI_KLB_5W1H: readonly string[] = [
 ]
 
 export function kartuKlb(kasusId: string, namaKasus: string, namaRw: string, rng: Rng): KartuKegiatan[] {
-  const pola = polaDariKasus(kasusId)
-  const aksiBenar =
-    pola === 'vektor'
-      ? { id: 'a', label: 'PSN 3M Plus + larvasidasi; fogging hanya bila ada penularan aktif', benar: true, respons: 'Tepat. Fogging membunuh nyamuk dewasa sesaat; PSN memutus siklus di sumbernya.' }
-      : pola === 'air_makanan'
-        ? { id: 'a', label: 'Amankan sumber air & sanitasi, distribusi oralit/klorinasi, edukasi CTPS', benar: true, respons: 'Benar. Putus rute fekal-oral di sumbernya + cegah dehidrasi.' }
-        : pola === 'kontak'
-          ? { id: 'a', label: 'Obati kasus + SEMUA kontak serumah serentak; dekontaminasi linen/handuk/barang pribadi; higiene tangan', benar: true, respons: 'Tepat. Penularan kontak diputus dgn mengobati serentak (cegah ping-pong) + dekontaminasi benda, bukan masker.' }
-          : pola === 'airborne'
-            ? { id: 'a', label: 'Investigasi kontak (skrining gejala + TCM/rontgen), TPT utk kontak eligible, perbaiki ventilasi & pencahayaan rumah, penemuan kasus aktif', benar: true, respons: 'Tepat. TB airborne: droplet nuclei bertahan di udara → kuncinya investigasi kontak + TPT + ventilasi, BUKAN sekadar masker bedah/etika batuk (itu memadai utk droplet, tak cukup utk airborne).' }
-            : { id: 'a', label: 'Etika batuk/masker, ventilasi, temukan & obati kasus bergejala', benar: true, respons: 'Tepat. Transmisi droplet (ISPA/pneumonia) diputus dgn etika batuk + ventilasi + penemuan kasus bergejala — kontak sehat tak perlu diobati (self-limiting).' }
-  // M10 §49: distraktor pola-kontak ditukar agar "masker/etika batuk" (jawaban
-  // benar utk droplet) TIDAK muncul sbg opsi salah generik yang justru mengajar
-  // respons droplet di wabah tungau — untuk kontak, distraktornya fogging/isolasi.
-  // Fix CODEX-25 #17: distraktor airborne = "cukup masker bedah" (jebakan klasik
-  // TB — mengira TB sama dgn droplet biasa).
-  const distraktorAksi =
-    pola === 'kontak'
-      ? { id: 'b', label: 'Fogging wilayah + isolasi ketat rumah terdampak', benar: false, respons: 'Fogging utk nyamuk, bukan tungau/sekret; isolasi berlebihan. Kontak diputus dgn pengobatan serentak + dekontaminasi.' }
-      : pola === 'airborne'
-        ? { id: 'b', label: 'Bagikan masker bedah ke warga & obati yang batuk saja', benar: false, respons: 'Masker bedah tak cukup utk airborne, dan tanpa investigasi kontak + TPT rantai penularan TB tetap jalan. Wabah TB butuh penelusuran kontak, bukan sekadar masker.' }
-        : { id: 'b', label: 'Obati yang sakit saja, tanpa tindakan wilayah', benar: false, respons: 'Kuratif tanpa pengendalian sumber = kasus baru terus bermunculan. Inti KLB ada di wilayah.' }
+  const pola = polaKlbDariKasus(kasusId)
+  const { benar: aksiBenar, salah: distraktorAksi } = AKSI_KLB[pola]
 
   return [
     {
