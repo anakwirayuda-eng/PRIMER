@@ -5,11 +5,29 @@ REVISI_ENGINE 41. **Baseline saat ditulis**: branch `codex-gpt56-experiment`, wo
 commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua hijau**,
 `npm run typecheck` bersih, `REVISI_ENGINE = 41` (`src/engine/verifikasi.ts:578`).
 
-> **UPDATE TERBARU 2026-07-17:** Prioritas 2, **M11 E-2 SAJI Fase-2, sudah
-> disetujui dan selesai diimplementasikan**. Runtime kini berada pada
-> `REVISI_ENGINE=42` dan content release `m11-e2-saji-pilot-2026-07-17`.
-> Prioritas aktif berikutnya adalah §2.3; rincian final E-2 ada di
-> `docs/M11_E2_SAJI_DECISION_PROPOSAL.md`.
+> **UPDATE TERBARU 2026-07-17 (malam):** §2.1 dan §2.2 SELESAI, KEDUANYA
+> diverifikasi independen oleh Claude (bukan cuma terima laporan Anda — suite
+> dijalankan ulang, test baru dibaca manual, angka dicek tangan):
+> - **§2.1 (artefak M13)** commit `943bfc9` — alat adjudikasi 137 kasus +
+>   laporan. Ini murni riset/kompilasi, keputusan dokter masih kosong
+>   menunggu Dr. Wirayuda sendiri — **selesai dari sisi Anda, jangan
+>   sentuh lagi** kecuali diminta ulang.
+> - **§2.2 (E-2)** proposal `280c08b` lalu implementasi `2356e6e` —
+>   `REVISI_ENGINE=42`, `CONTENT_RELEASE='m11-e2-saji-pilot-2026-07-17'`,
+>   994/994 test, freeze 17/17, soak-adversarial invarian utuh. Claude
+>   men-tag `golden-master-m11-e2` setelah verifikasi (Anda belum sempat,
+>   tak apa — itu memang langkah terakhir di proposal §9). **PENTING:**
+>   ini baru PILOT (5 skenario Ingatkan, 2 keluarga penerimaan-awal) —
+>   proposal §9 langkah 10 eksplisit mensyaratkan **playtest dulu sebelum
+>   memperluas ke 27/27 dan 16/16**. Playtest itu keputusan/tindakan Dr.
+>   Wirayuda, BUKAN sesuatu yang bisa Anda self-certify dan lanjut sendiri
+>   — **jangan perluas cakupan E-2 sampai diminta eksplisit**, meski
+>   tergoda karena mekanik & pola kontennya sudah terbukti jalan di pilot.
+>
+> **Prioritas aktif Anda SEKARANG: §2.3** (M11 #3/#6/#7-riset, propose-only)
+> — satu-satunya item tersisa di antrean §2 yang belum disentuh dan tidak
+> butuh keputusan/playtest Dr. Wirayuda dulu untuk MULAI (hasilnya sendiri
+> tetap proposal, bukan kode). Kerjakan itu sekarang.
 
 > **UPDATE 2026-07-17 (akhir hari)**: gelombang M11 SELESAI & DITUTUP — Anda menyelesaikan C2
 > (commit `1aa5102`, terverifikasi Claude: 88/88 file, 976/976 test, typecheck bersih, freeze
