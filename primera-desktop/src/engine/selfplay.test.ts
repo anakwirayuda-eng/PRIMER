@@ -22,6 +22,7 @@ import { PACK } from '@content/index'
 import { buildInitialState } from './init'
 import { KAPASITAS_EDUKASI } from './clinic'
 import { advance, HARI_REKAP_SLICE, STAMINA_MAKS } from './reducer'
+import { skenarioEfektif } from './kunjungan'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
 import type { GameState, PasienAktif, PenilaianEncounter } from './state'
@@ -254,8 +255,8 @@ function mainkanKunjunganTepat(
   const kelContent = PACK.keluarga[keluargaId]
   const kelAwal = state.desa.keluarga[keluargaId]
   if (!kelContent || !kelAwal) throw new Error(`Keluarga '${keluargaId}' tidak dikenal`)
-  const skenario = kelContent.arc.kunjungan[kelAwal.arcIndex]
-  if (!skenario) throw new Error(`Arc ${keluargaId} sudah habis (arcIndex ${kelAwal.arcIndex})`)
+  const skenarioDasar = kelContent.arc.kunjungan[kelAwal.arcIndex]
+  if (!skenarioDasar) throw new Error(`Arc ${keluargaId} sudah habis (arcIndex ${kelAwal.arcIndex})`)
 
   // Fix #10 (audit CODEX 2026-07-11): MULAI_KUNJUNGAN kini wajib roster binaan.
   let s = state.desa.binaan.includes(keluargaId)
@@ -263,6 +264,13 @@ function mainkanKunjunganTepat(
     : run(state, { type: 'PILIH_BINAAN', keluargaId }).state
   s = run(s, { type: 'MULAI_KUNJUNGAN', keluargaId }).state
   expect(s.kunjungan?.fase).toBe('observasi')
+
+  // M11 #5 B1 (2026-07-17): reducer menerapkan varian Tingkat-A yg dipilih
+  // RNG saat MULAI_KUNJUNGAN (kj.varianId) SEBELUM memakai skenario di titik
+  // manapun -- helper ini harus melakukan hal sama, jangan pakai skenario
+  // dasar mentah, supaya narasiPenutup dkk konsisten dgn yg benar2 dipakai
+  // reducer (lihat regresi selfplay.test.ts wulan_k1 yg menemukan celah ini).
+  const skenario = skenarioEfektif(skenarioDasar, s.kunjungan?.varianId)
 
   for (const h of skenario.hotspot) {
     s = run(s, { type: 'KLIK_HOTSPOT', hotspotId: h.id }).state
