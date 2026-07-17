@@ -5,18 +5,20 @@ REVISI_ENGINE 41. **Baseline saat ditulis**: branch `codex-gpt56-experiment`, wo
 commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua hijau**,
 `npm run typecheck` bersih, `REVISI_ENGINE = 41` (`src/engine/verifikasi.ts:578`).
 
-> **UPDATE 2026-07-17 (akhir hari)**: gelombang M11 ini sudah SELESAI & DITUTUP — Anda
-> menyelesaikan C2 (commit `1aa5102`, terverifikasi Claude: 88/88 file, 976/976 test, typecheck
-> bersih, freeze 17/17, 0 file `src/engine/*` tersentuh), Claude menutup sisa konten B1 (11/16
-> skenario akhir, commit `55edaeb`), lalu men-tag `golden-master-m11` di REVISI_ENGINE 41
-> (soak-adversarial 13/13, invarian identik baseline). Status detail final ada di
-> `docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` bagian STATUS EKSEKUSI. **Kalau Anda instance CODEX
-> yang membaca ini SETELAH tag ini ada**: antrean §2 di bawah historis (untuk gelombang yang
-> SUDAH ditutup) — jangan asumsikan itu tugas aktif Anda sekarang. Cek dulu apakah ada briefing
-> LEBIH BARU (`git log -- docs/CODEX_BRIEFING_LANJUTAN.md`) sebelum mulai kerja apa pun; kalau
-> tidak ada, tanyakan ke Dr. Wirayuda/Claude apa tugas Anda berikutnya sebelum berinisiatif
-> membuka gelombang REVISI_ENGINE baru sendiri (E-2 dan sisa M11 #3/#6/#7-riset masih butuh
-> scoping/greenlight eksplisit, belum di-assign ke siapa pun).
+> **UPDATE 2026-07-17 (akhir hari)**: gelombang M11 SELESAI & DITUTUP — Anda menyelesaikan C2
+> (commit `1aa5102`, terverifikasi Claude: 88/88 file, 976/976 test, typecheck bersih, freeze
+> 17/17, 0 file `src/engine/*` tersentuh), Claude menutup sisa konten B1 (11/16 skenario akhir,
+> commit `55edaeb`), lalu men-tag `golden-master-m11` di REVISI_ENGINE 41 (soak-adversarial 13/13,
+> invarian identik baseline). Status detail final: `docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` bagian
+> STATUS EKSEKUSI.
+>
+> **UPDATE LEBIH BARU, 2026-07-17 (setelah tag)**: Dr. Wirayuda memutuskan **SELURUH pekerjaan
+> tersisa berikutnya juga diteruskan ke Anda** ("semua yang tersisa yang belum dan yang
+> berikut-berikutnya biar CODEX yang lanjutkan") — bukan lagi sekadar C2. §2 di bawah SUDAH
+> DITULIS ULANG untuk mencerminkan ini: antrean lama (§2.0-2.3 versi sebelumnya, semua soal C2)
+> sudah historis/selesai. **Baca §2 versi baru di bawah sebagai antrean AKTIF Anda sekarang.**
+> Kalau Anda instance CODEX yang membaca ini nanti dan ada briefing LEBIH BARU lagi
+> (`git log -- docs/CODEX_BRIEFING_LANJUTAN.md`), yang itu yang berlaku, bukan ini.
 
 Ini BUKAN dokumen pengganti `CODEX_HANDOFF_DOSSIER.md` (778 baris, ditulis 2026-07-13) — dokumen
 itu tetap berlaku penuh untuk §0 (isolasi folder eksperimen), §1-2 (identitas proyek & mekanik
@@ -82,111 +84,188 @@ digarap, lihat §2.3.
 | `34b8652` | D3-lite — rotasi naratif 4 kanal Prolanis (BPJS 4-kanal resmi vs realita ILP 2023). |
 | `ff335e8` | B2 — pool narasi kartu KLB verifikasi & 5W1H. |
 | `c65dc78` | Dok: B3 (variasi suara surat kader) ternyata SUDAH terpenuhi kode lama, tak perlu kerja baru; + tabel status eksekusi. |
+| `70d56fd` | Konten B1 run pertama — 9/16 skenario kunjungan dapat varian; fix regresi `selfplay.test.ts`. |
+| `1aa5102` | **(Anda/CODEX)** C2 penuh — registry `ukmCitations.ts`, 27/27 skenario + 89/89 intervensi + Posyandu/Prolanis/KLB, tanpa sentuh engine beku. |
+| `55edaeb` | Konten B1 retry — final 11/16 skenario/21 varian (5 skenario tetap gagal, alasan struktural genuine). |
+| `c32beaf` | Dok penutupan gelombang. |
+| tag `golden-master-m11` | REVISI_ENGINE 41, menunjuk `55edaeb`. Gelombang M11 resmi ditutup di sini. |
 
 **Dokumen kunci yang HARUS Anda baca sebelum mulai kerja** (jangan re-derive dari nol):
 - `docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` — dossier keputusan Bagian A-F (storyline, variasi
   UKM, sitasi, Prolanis, SAJI, M13-103) + tabel "STATUS EKSEKUSI" di akhir. Ini sumber kebenaran
-  untuk "apa sudah diputuskan, apa masih terbuka."
-- `docs/M11_VARIAN_TINGKAT_A_HASIL.md` — ringkasan per-kasus hasil workflow #4 (40 kasus).
-- `src/content/varianKunjunganTingkatAData.ts` — **CEK STATUS FILE INI DULU** sebelum menyentuh
-  apa pun terkait #5-B1 (lihat §2.0 di bawah, penting).
+  untuk "apa sudah diputuskan, apa masih terbuka." **Bagian E (SAJI, termasuk desain E-2) dan
+  Bagian F (M13-103) masih relevan penuh** — itu basis §2 baru di bawah.
+- `docs/M11_VARIAN_TINGKAT_A_HASIL.md` / `docs/M11_VARIAN_KUNJUNGAN_TINGKAT_A_HASIL.md` /
+  `docs/M11_SITASI_UKM_HASIL.md` — ringkasan hasil #4/#5-B1/C2, referensi pola kerja (workflow
+  draf→verifikasi-adversarial, registry konten terpisah) yang relevan utk tugas baru di §2.1/2.2.
 
 ---
 
-## 2. Antrean tugas — urutan prioritas
+## 2. Antrean tugas — urutan prioritas (DITULIS ULANG 2026-07-17 pasca-tag)
 
-### 2.0 — Status #5-B1 (varian-kunjungan Tingkat-A): SELESAI-PARSIAL, JANGAN dilengkapi sendiri
+Gelombang M11 (§1) SUDAH SELESAI, ter-tag `golden-master-m11`. Antrean di bawah adalah pekerjaan
+BARU, mencakup SEMUA sisa item yang tercatat di `docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` Bagian
+E-2 dan F, plus 3 item M11 kreatif yang dari awal belum dispesifikasi. Dr. Wirayuda eksplisit
+menyerahkan seluruh ini ke Anda ("semua yang tersisa yang belum dan yang berikut-berikutnya biar
+CODEX yang lanjutkan") — kerjakan berurutan sesuai prioritas di bawah, JANGAN tunggu instruksi
+per-item lagi kecuali disebutkan eksplisit butuh keputusan Dr. Wirayuda dulu.
 
-Update 2026-07-17 malam: `src/content/varianKunjunganTingkatAData.ts` sudah terisi + ter-commit
-(`70d56fd`), tapi cakupannya **PARSIAL secara sengaja, bukan bug** — dari 16 skenario yang jadi
-target (bukan 27 seperti perkiraan awal), hanya **9/16 lolos verifikasi adversarial** (3 penuh
-2/2 varian, 6 sebagian 1/2 varian); **7/16 gagal verifikasi total** (0 varian, alasan spesifik
-per-skenario ada di `docs/M11_VARIAN_KUNJUNGAN_TINGKAT_A_HASIL.md`). Ini bukan pekerjaan yang
-"belum sempat" — 7 skenario itu SUDAH dicoba dan draf/repair-nya gagal lolos 2 lensa adversarial
-(kontradiksi ground-truth MI, pelanggaran field terkunci, dll). **Jangan menambah varian sendiri
-untuk 7 skenario yang gagal itu** — itu butuh pipeline draf+verifikasi yang sama (tooling
-orkestrasi Claude), bukan sesuatu yang aman ditulis manual tanpa lensa adversarial yang setara.
-Kalau Dr. Wirayuda memutuskan untuk mengejar cakupan penuh nanti, itu akan jadi tugas Claude lagi
-(atau di-assign eksplisit ke Anda dengan instruksi baru) — jangan berinisiatif sendiri di area
-ini. Lanjut ke §2.1, yang independen dari status B1.
+### 2.1 — PRIORITAS 1: Artefak adjudikasi M13 (103 kasus prototipe lab)
 
-### 2.1 — PRIORITAS UTAMA ANDA: tulis konten sitasi resmi (UKM Decision #2, "C2 penuh")
+**Riset + kompilasi, BUKAN adjudikasi** — adjudikasi medis tetap wewenang Dr. Wirayuda sendiri
+(`docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` Bagian F). Tugas Anda: siapkan artefak keputusan gaya
+M11.5 (`panduanResmi` batch — lihat pola di `M11_VARIAN_TINGKAT_A_HASIL.md` dan histori commit
+`baee64a` dst di `CODEX_HANDOFF_DOSSIER.md`) supaya Dr. Wirayuda bisa mengadjudikasi 103 kasus
+ini sekali-duduk per batch, bukan satu-satu.
 
-**Ini tugas inti yang di-assign ke Anda** — sapuan konten besar, cocok pola "berat/boros token."
+**Cara menemukan 103 kasusnya** (jangan asumsikan file/lokasi dari ingatan — query ini
+terverifikasi langsung terhadap `fullCoverage.test.ts:66-68` saat briefing ini ditulis):
+```
+labCases = semua entri PACK.kasus dgn kasus.activationStatus === 'lab_prototype_unadjudicated'
+// fullCoverage.test.ts sendiri assert labCases.length >= 103 — pakai test ini sbg
+// sumber-kebenaran jumlah & untuk menemukan file sumbernya (grep import chain-nya).
+```
 
-**Yang sudah ada (schema, sudah di-commit, TIDAK perlu Anda ubah)**:
-- `SkenarioKunjungan.panduanResmi?: string` (`src/content/types.ts`) — field display-only,
-  paralel dgn `KasusKlinis.panduanResmi` yang sudah lama ada di sisi UKP.
-- `KartuIntervensi.sumber?: string` dan `KartuIntervensi.pinkesga?: string` (`types.ts`).
-- `KartuKegiatan.sumber?: string` (`src/engine/state.ts`).
+**Untuk TIAP kasus, kompilasi**:
+1. Ringkasan kasus (nama, ICD-10, demografi, tatalaksana `obatBenar`/`obatAlternatif`/prosedur
+   saat ini).
+2. Grounding — cross-check terhadap SEMUA sumber berikut, urutan prioritas (aturan baku proyek
+   ini, `feedback_ebm_realistis_priority_rule`): **PPK 1186/2022 dan PNPK terkini = lantai
+   wajib**, lalu Fornas 1199/2025 (obat), ASPAK (alat/sarana yang realistis tersedia di FKTP),
+   KFA (penamaan obat/alkes resmi). Sertakan kutipan sumber presisi per klaim, BUKAN paraphrase
+   tanpa jejak — pola sama seperti M11.5 (`sumberKutipanPpk`).
+3. Untuk tiap klaim: tandai salah satu — **cocok** (tatalaksana kasus sudah sesuai sumber, tak
+   perlu diubah), **perlu-koreksi** (sumber menunjukkan tatalaksana harus berubah — sebutkan
+   ke apa + kutipan), atau **tak-ada-sumber** (JANGAN mengarang; tandai jujur sbg gap).
+4. Keluaran: artefak per-kasus dgn radio Setuju/Perlu-Edit/Tolak/Nanti (pola persis M11.5/M11
+   shortlist 41-item) + ekspor JSON, supaya Dr. Wirayuda review satu layar per batch.
 
-Semua 4 field ini **"Ember Hijau"** (freeze-bucket router, lihat `CODEX_HANDOFF_DOSSIER.md` §3)
-— display-only, TIDAK dibaca `sidikJariPack`/`scoring.ts`/`clinic.ts`/`reducer.ts` untuk skor
-atau replay. **Konsekuensi penting: menulis isi field-field ini TIDAK butuh unfreeze-dance sama
-sekali** — bukan file beku, bukan REVISI_ENGINE bump, cukup isi teksnya dan jalankan test biasa.
+**Verifikasi wajib**: sumber regulasi diverifikasi ulang lewat portal resmi (JDIH Kemenkes,
+peraturan.go.id, peraturan.bpk.go.id — pola persis yang Anda pakai di C2, itu sudah terbukti
+bagus). JANGAN mengadjudikasi/mengubah kode kasus sendiri — ini murni artefak riset+kompilasi
+untuk Dr. Wirayuda baca, bukan implementasi.
 
-**Tugas Anda**: isi keempat field itu dengan teks sitasi/panduan resmi yang ASLI (bukan
-placeholder, bukan karangan) untuk seluruh 27 skenario kunjungan (16 keluarga) dan kartu
-intervensi/kegiatan UKM yang relevan.
+### 2.2 — PRIORITAS 2: E-2 (SAJI Fase-2) — gelombang unfreeze BARU, REVISI_ENGINE 42
 
-**Langkah kerja yang disarankan**:
-1. **Inventarisasi dulu, jangan langsung menulis.** Baca `docs/UKM_SUMBER_RISET_M11.md` (indeks
-   riset UKM) dan `ls docs/references/ukm/` untuk melihat topik apa saja yang SUDAH ada
-   `distillation.json`-nya (riset yang sudah didistilasi dari sumber primer — Posyandu ILP 2023
-   sudah confirmed migrated per catatan lama, mungkin ada topik lain). Buat tabel silang: 16
-   keluarga × topik kunjungan/kartu vs sumber-tersedia/tidak-tersedia, SEBELUM menulis satu
-   kalimat sitasi pun. Ini mencegah Anda mengarang sitasi utk topik yang sumbernya tak ada.
-2. **Urutan prioritas grounding** (aturan baku proyek ini, `feedback_ebm_realistis_priority_rule`
-   dan `CODEX_HANDOFF_DOSSIER.md` §3): PPK 1186/2022 dan PNPK terkini = **lantai wajib**
-   (mandatory floor), bukan plafon. Untuk sitasi UKM spesifik: Permenkes 39/2016 (formula IKS,
-   sudah dipakai `kader.ts`), Pedoman ILP 2023 (Posyandu, sudah termigrasi), Juknis Prolanis
-   BPJS (4 kanal resmi, sudah dipakai `kegiatan.ts` gelombang D3-lite), Fornas 1199/2025 utk
-   obat. Kalau riset EBM lebih baru mau dipakai menggantikan yang lama, WAJIB sertakan kutipan
-   sumbernya di teks sitasi itu sendiri — bukan diam-diam.
-3. **Untuk topik yang TAK ADA sumber ter-distilasi**: JANGAN mengarang dari ingatan pelatihan
-   umum. Opsi: (a) tandai sebagai "perlu sumber" di sebuah dokumen kerja sementara dan lewati
-   dulu, kerjakan topik yang sumbernya ada; (b) kalau topiknya penting & sumbernya jelas ada di
-   dunia nyata tapi belum ada di repo (mis. dokumen resmi Kemenkes/BPJS yang belum diunduh),
-   laporkan balik (§3) daripada menebak isinya.
-4. **Test-first tetap wajib** meski field ini display-only — bukan utk "membuktikan fix," tapi
-   utk mengunci INTEGRITAS SITASI ke depan: tambahkan test (kemungkinan di `pack.test.ts` atau
-   file baru `citations.test.ts`) yang menjamin invarian struktural minimal, misalnya "tiap
-   skenario kunjungan yang py `panduanResmi` terisi, teksnya bukan string kosong/placeholder"
-   dan/atau "tiap kartu dgn `sumber` terisi mencantumkan tahun/nomor dokumen yang bisa
-   ditelusuri." Desain test detailnya terserah Anda (ini bukan mekanik replay, jadi tak ada pola
-   baku yang harus ditiru persis) — tapi JANGAN klaim tugas ini "selesai" tanpa test yang
-   membuktikan sesuatu, bukan cuma test yang selalu hijau apa pun isinya.
-5. **Verifikasi akhir**: `npx vitest run` (harus ≥966 tetap hijau + test baru Anda), `npm run
-   typecheck` bersih. TIDAK perlu `freeze.test.ts`/`REVISI_ENGINE` bump (lihat alasan Ember Hijau
-   di atas) — kalau Anda mendapati diri Anda mengedit `HASH_DIBEKUKAN` utk tugas ini, STOP,
-   itu tanda Anda salah menyentuh file yang seharusnya tak perlu disentuh utk pekerjaan
-   display-only ini.
-6. Commit dengan pesan gaya proyek ini (`feat(m11-ukm): ...`), JANGAN push.
-7. Perbarui tabel "STATUS EKSEKUSI" di `docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` (tandai C2 dari
-   "schema done, konten belum" jadi selesai) dan tulis ringkasan singkat cakupan (berapa
-   skenario/kartu yang dapat sitasi vs yang dilewati krn sumber tak ada) di dokumen yang sama
-   atau dokumen baru `docs/M11_SITASI_UKM_HASIL.md` (pola sama dgn `..._HASIL.md` lain).
+Ini **menyentuh engine beku** (`state.ts`/`kunjungan.ts`/`reducer.ts`/`scoring.ts`) — ikuti
+disiplin unfreeze-dance PENUH (`CODEX_HANDOFF_DOSSIER.md` §3/§7): test-first (merah→hijau
+dibuktikan, bukan diklaim), lalu setelah lolos jalankan `freeze.test.ts`, salin hash baru ke
+`HASH_DIBEKUKAN`, **bump `REVISI_ENGINE` 41→42** dengan komentar bertanggal menjelaskan APA yang
+berubah & APAKAH replay lama bergeser, lalu jalankan `soakAdversarial.test.ts` ulang dan
+bandingkan invarian `teliti ≥ speedrunner ≥ ceroboh` terhadap baseline saat ini (teliti=3.80,
+speedrunner=2.08, ceroboh=1.80 — CATAT kalau distribusi bergeser drastis, itu sinyal kalibrasi
+perlu ditinjau, bukan diabaikan). 3 sub-item, kerjakan berurutan (masing2 punya keputusan yang
+HARUS Anda usulkan dulu ke Dr. Wirayuda/Claude sebelum menulis konten skala besar — lihat catatan
+di tiap sub-item):
 
-### 2.2 — DITAHAN, jangan mulai tanpa greenlight eksplisit baru
+**E-2.1 — Babak "Ingatkan" eksplisit** (fase penutup baru, `state.ts:302`
+`BabakKunjunganFase = 'observasi' | 'wawancara' | 'diagnosis_perilaku' | 'resep_sosial' | 'selesai'`
+→ sisipkan `'ingatkan'` sebelum `'selesai'`):
+- Setelah `PILIH_INTERVENSI` (kunjungan.ts:300-309, saat ini langsung `fase: 'selesai'`), ubah
+  jadi `fase: 'ingatkan'`, lalu babak baru: pemain pilih 1 dari 3 pesan pengingat — 1 BENAR
+  (spesifik-indikator + jadwal follow-up konkret, mis. "kontrol tensi 2 minggu lagi, catat di
+  buku KIA"), 2 SALAH (generik "jaga kesehatan ya" ATAU menggurui "Ibu harus lebih disiplin").
+  Baru setelah babak ini pilihan → `fase: 'selesai'`.
+- Skor: masuk `kualitasMi` yang SUDAH ada (kunjungan.ts:366, saat ini cuma dari rasio pilihan
+  dialog tepat/total) — tambahkan pilihan-ingatkan sbg satu unit tambahan ke rasio yang sama
+  (paling sederhana: treat spt satu "pilihan dialog" tambahan di penghitungan `tepat`/
+  `totalPilihan`), ATAU bikin komponen terpisah kalau Anda menilai itu lebih bersih — **usulkan
+  desain persisnya (opsi + tradeoff) sebelum implementasi**, ini genuinely keputusan skor.
+- Konten: 1 field baru per skenario, mis. `SkenarioKunjungan.pilihanIngatkan?: {benar: string,
+  salahSatu: string, salahDua: string}` — TIDAK wajib ada di semua 16 keluarga sekaligus; bisa
+  digelar bertahap (pilot 3-5 keluarga dulu, verifikasi mekanik+skor masuk akal, baru sapu sisanya)
+  — pola sama seperti #4/#5-B1 yang dulu pilot dulu baru full-scale.
 
-- **E-2 (SAJI Fase-2)**: babak "Ingatkan" baru, 2 outcome kunjungan baru (ditolak-total/
-  diterima-terpaksa), perluasan taksonomi gaya-terlarang. Ini gelombang unfreeze TERPISAH
-  (`docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` Bagian E) — JANGAN dicampur ke gelombang rev-41 yang
-  sekarang kalau gelombang itu sudah ter-tag/dirilis sebagai Golden Master baru saat Anda
-  membaca ini (cek: apakah ada tag `golden-master-*` baru di `git tag` yang menunjuk ke commit
-  ≥`c65dc78`?). Kalau belum ter-tag, tetap tunggu instruksi eksplisit sebelum mulai — ini murni
-  soal urutan kerja, bukan soal sudah/belum disetujui.
-- **M13 103-kasus sisa adjudikasi** (Bagian F): ini PEKERJAAN Dr. Wirayuda sendiri (adjudikasi
-  medis), bukan tugas CODEX atau Claude. Kalau diminta, Anda boleh menyiapkan ARTEFAK bantu
-  (tabel gap, draft opsi) tapi jangan mengadjudikasi sendiri.
-- **M11 #3 (A3)**, **#6**, **#7-riset** — 3 sisa dari daftar 7 item M11 kreatif yang belum
-  digarap sama sekali. Belum ada scope/desain concrete utk ini (beda dgn #2/#4/#5 yang sudah
-  didesain sesi ini). Jangan improvisasi scope-nya sendiri.
+**E-2.2 — 2 hasil kunjungan SAH baru: "ditolak-total" & "diterima-terpaksa"**
+**PENTING — JANGAN disamakan dgn mekanik `diusir` yang SUDAH ADA** (`kunjungan.ts:268`,
+`state.ts:318/397`): `diusir` adalah HUKUMAN atas gaya konfrontatif berulang (2× righting-reflex
+gagal) — kegagalan PEMAIN, karma dipercepat. "ditolak-total" yang dimaksud di sini beda secara
+konseptual: keluarga menolak SEPENUHNYA meski dokter sudah ber-MI dgn benar (per Permenkes ini
+outcome resmi yang bisa terjadi, BUKAN kegagalan pemain). Kalau diimplementasikan naif sbg
+alias `diusir`, itu SALAH — akan menghukum pemain yang sudah bermain benar.
+- Model outcome saat ini: `berhasil: boolean` + `tingkat: 'berhasil'|'partial'|'gagal'`
+  (`kunjungan.ts:382-398`, fungsi `selesaikanKunjungan`). Perlu diperluas jadi union beranggota 4
+  (atau tambahan field terpisah `hasilAkhir` di luar `tingkat` existing — **usulkan mana yang
+  lebih aman thd kode yang sudah baca `tingkat`/`berhasil` di reducer.ts/scoring.ts sebelum
+  memilih**, jangan pecahkan konsumen existing diam-diam).
+- Aturan yang diusulkan (Bagian E dokumen keputusan, boleh disesuaikan tapi USULKAN dulu kalau
+  beda): **ditolak-total** = tanpa penalti MI/kualitasMi, `karma` dijadwalkan ulang otomatis
+  (bukan gagal permanen — keluarga bisa didekati lagi kunjungan berikutnya); **diterima-terpaksa**
+  = indikator TETAP tercatat terverifikasi (target dianggap tersentuh) TAPI beri flag "rapuh" yang
+  mempercepat kemungkinan drift kembali ke status semula — cek mekanik drift yang SUDAH ADA
+  (`reducer.ts`, item "eskalasi follow-up mangkir ke pool drift", dari histori M10.6) sebelum
+  membangun mekanisme drift baru, kemungkinan besar bisa REUSE bukan bikin dari nol.
+- **Konten**: skenario mana yang butuh 2 penutup tambahan (`penutupDitolakTotal`/
+  `penutupDiterimaTerpaksa`)? Menulis bespoke utk semua 16×27 skenario mahal token. **Usulkan
+  opsi ke Dr. Wirayuda/Claude**: (a) generik-tapi-personal (1 template per keluarga, sisipkan
+  nama/detail via interpolasi, bukan per-skenario), (b) bespoke penuh (mahal, kualitas tertinggi),
+  atau (c) bespoke hanya utk skenario yg SUDAH dapat varian Tingkat-A (11/16, karena itu skenario
+  yg paling sering direplay) + generik utk sisanya. Jangan pilih sendiri tanpa mengusulkan opsi
+  ini dulu — ini keputusan cakupan/biaya-token, bukan hal mekanis.
 
-### 2.3 — Kalau §2.1 sudah selesai semua dan tak ada instruksi baru
+**E-2.3 — Taksonomi `gaya` lebih tajam** (`types.ts:608`,
+`gaya: 'empati' | 'refleksi' | 'edukasi' | 'konfrontasi'`):
+- Pecah `'konfrontasi'` jadi subtipe resmi: `'menghakimi' | 'menggurui' | 'menakut-nakuti' |
+  'memaksa'` (atau nama lain yang lebih pas — usulkan kalau ada istilah OARS/MI yang lebih baku).
+  Mekanik righting-reflex (2-beruntun bergaya buruk → `diusir`, `kunjungan.ts:191-201`) TETAP
+  sama strukturnya — cukup treat SEMUA subtipe baru sbg anggota grup "gaya buruk" yang sama utk
+  gerbang itu, jangan ubah logikanya.
+- **Ini REKLASIFIKASI konten existing**, bukan konten baru — semua `PilihanDialog` yang saat ini
+  `gaya: 'konfrontasi'` (di 16 file `src/content/keluarga/desa*.ts`) perlu diklasifikasi ulang ke
+  subtipe yang paling akurat berdasar TEKS respons kader yang sudah ada. Baca tiap satu, jangan
+  asumsikan pola generik cocok semua.
+- Debrief jadi bisa merujuk subtipe spesifik ("gaya menggurui terdeteksi" bukan cuma
+  "konfrontasi") — cek `catatanPedagogis`/render debrief mana yang perlu ikut diperbarui.
 
-Jangan mencari-cari pekerjaan lain sendiri di luar §2.2. Laporkan selesai (§3) dan tunggu
-antrean berikutnya — dossier ini akan diperbarui Claude begitu ada tugas baru yang di-assign.
+**Setelah E-2 selesai penuh** (semua 3 sub-item, suite hijau, freeze-dance selesai): tag Golden
+Master baru mengikuti PERSIS proses yang Claude jalankan utk `golden-master-m11` (lihat §1) —
+soak-adversarial, lalu `git tag -a golden-master-m11.5-e2` (atau nama lain yang masuk akal) dgn
+pesan annotated lengkap. Update `docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` STATUS EKSEKUSI +
+memori sesi Anda sendiri (kalau CODEX punya mekanisme memory) mencatat penutupan ini.
+
+### 2.3 — PRIORITAS 3: M11 #3/#6/#7-riset — PROPOSE-ONLY, JANGAN implementasi
+
+3 item M11 kreatif yang dari awal ("M11 #2 storyline, #4 presentasi, #5 UKM" — pesan asli Dr.
+Wirayuda) TIDAK termasuk yang di-scope eksplisit (#4/#5 sudah; #2/A3 storyline bercabang malah
+eksplisit DITOLAK di Bagian A). Ini masih genuinely "belum dispesifikasi" — **tugas Anda BUKAN
+membangun, tapi mengusulkan opsi+tradeoff** (pola operasi baku proyek ini, lihat §0):
+- **#3 (A3, arc bercabang)** — sudah eksplisit ditolak/ditunda ("rasio biaya:nilai buruk,
+  September dekat") di `M11_LANJUTAN_KEPUTUSAN_TERPADU.md` Bagian A. **Jangan diusulkan ulang**
+  kecuali Dr. Wirayuda membuka topik ini sendiri — anggap closed.
+- **#6** — item paling kosong: dari `CODEX_HANDOFF_DOSSIER.md` §5.3, ini SEJAK AWAL cuma
+  disebut "variasi-variasi lainnya yg belum terpikirkan" (kutipan asli Dr. Wirayuda, M11 poin 6)
+  — literally belum ada satu ide konkret pun. **Tugas Anda**: baca ulang seluruh histori M11 (git
+  log + `docs/M11_*` semua file) dan brainstorm 3-5 ide konkret yang BELUM dibangun sesi mana pun
+  (storyline/UKM/EBM-nuance/pedagogical-honesty — 4 kategori M11 yang sudah ada), masing2 dgn
+  perkiraan biaya (REVISI atau tidak, konten seberapa besar) dan nilai pedagogis. TULIS sbg
+  dokumen usulan (`docs/M11_ITEM6_USULAN.md` atau serupa) — JANGAN implementasi apa pun dari
+  daftar ini sebelum Dr. Wirayuda memilih.
+- **#7-riset** — item 7 (lapisan realita-FKTP) MEKANISMENYA SUDAH ADA & dipakai luas
+  (`catatanRealita` field, 67/67 kasus UKP + M11.5 `panduanResmi`). Yang belum: **riset
+  sistematis celah realita LAIN** di luar yang sudah tercakup — kandidat dari catatan lama
+  (BELUM diverifikasi, purely illustrative): kesenjangan Fornas-vs-stok-riil Puskesmas,
+  friksi birokrasi rujukan/SISRUTE di lapangan, realita administratif BPJS/JKN, kekurangan
+  staf/alat pedesaan, akses geografis. **Instruksi eksplisit dari Dr. Wirayuda yang WAJIB
+  diikuti** (sudah berlaku sejak awal item ini dicatat, `feedback_ebm_realistis_priority_rule`
+  jiwanya sama): **riset web dulu, BUKAN karang dari ingatan pelatihan umum** — klaim "begini
+  realita Puskesmas Indonesia hari ini" harus tertelusur ke sumber (berita kesehatan terkini,
+  laporan Kemenkes/BPJS, riset akademik Indonesia terkini), bukan asumsi generik/textbook
+  usang. **Keluaran: dokumen riset+usulan** (bukan kode) — kandidat celah realita yang
+  tergrounding, masing2 dgn draft `catatanRealita`-style teks SIAP-PAKAI (format sama dgn field
+  yang sudah ada) supaya kalau disetujui, penerapannya tinggal tempel — tapi jangan tempelkan
+  sendiri sebelum disetujui.
+
+### 2.4 — DITAHAN, BUKAN tugas Anda sekarang — butuh keputusan Dr. Wirayuda dulu
+
+- **M12 (pass estetika penuh)** — butuh keputusan RISIKO LISENSI dulu (AI-gen vs aset RPG-Maker/
+  VN berbayar) sebelum siapa pun mulai kerja — ada preseden insiden lisensi BGM/Square Enix di
+  proyek ini yang membuat keputusan ini genuinely sensitif, bukan sekadar preferensi. Jangan
+  mulai riset/draft aset apa pun utk M12 sampai Dr. Wirayuda memutuskan arahnya.
+- **Cross-platform/mobile** — sengaja ditunda tanpa batas waktu, butuh greenlight baru dari Dr.
+  Wirayuda sebelum dipertimbangkan lagi (Electron tak bisa jalan di mobile, ini keputusan
+  arsitektur besar bukan tambahan kecil).
+- Kalau Anda menemukan pekerjaan besar LAIN yang belum tercantum di §2.1-2.3 selama mengerjakan
+  antrean ini — jangan mulai sendiri, laporkan balik dulu (§3).
 
 ---
 
@@ -200,6 +279,15 @@ salah kutip nomor dokumen, field kosong yang seharusnya terisi) — **perbaiki l
 tanya dulu. Tandai hanya kontradiksi yang genuinely butuh keputusan klinis/desain baru sebagai
 item terpisah yang perlu diadjudikasi. Laporan akhir cukup: apa yang selesai, cakupan (berapa
 dari berapa), apa yang dilewati & kenapa, commit hash, hasil test/typecheck.
+
+**Urutan kerja §2**: kerjakan 2.1 → 2.2 → 2.3 berurutan, JANGAN paralel di file yang sama —
+2.1 (M13-103) murni riset/dokumen, aman dikerjakan kapan saja duluan tanpa risiko. 2.2 (E-2)
+punya 3 sub-item dgn beberapa titik keputusan eksplisit yang WAJIB diusulkan dulu (ditandai tebal
+di teksnya) sebelum menulis konten skala besar — jangan skip langkah usul itu meski Anda yakin
+tahu jawabannya, itu justru pola yang berulang kali terbukti salah di proyek ini (lihat
+`CODEX_FIX_RULES.md` §1 utk 3 contoh nyata). 2.3 murni dokumen usulan, tak ada kode yang berubah.
+Kalau ragu antara "ini mekanis, perbaiki langsung" vs "ini butuh usul dulu" — default ke usul;
+biaya bertanya jauh lebih murah daripada biaya membangun sesuatu yang salah arah di file beku.
 
 Selamat bekerja. Dokumen ini akan diperbarui (oleh Claude) setiap kali antrean tugas berubah —
 kalau Anda instance CODEX yang membaca ini di sesi berikutnya, cek dulu commit terbaru pada
