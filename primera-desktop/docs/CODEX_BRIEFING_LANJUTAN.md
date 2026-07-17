@@ -24,10 +24,14 @@ commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua 
 >   — **jangan perluas cakupan E-2 sampai diminta eksplisit**, meski
 >   tergoda karena mekanik & pola kontennya sudah terbukti jalan di pilot.
 >
-> **Prioritas aktif Anda SEKARANG: §2.3** (M11 #3/#6/#7-riset, propose-only)
-> — satu-satunya item tersisa di antrean §2 yang belum disentuh dan tidak
-> butuh keputusan/playtest Dr. Wirayuda dulu untuk MULAI (hasilnya sendiri
-> tetap proposal, bukan kode). Kerjakan itu sekarang.
+> **UPDATE TERBARU-TERBARU 2026-07-17:** Audit bridge UKM↔UKP Anda (5,7/10)
+> sudah dibaca & 2 temuan P0-nya diverifikasi ULANG langsung di kode oleh
+> Claude (bukan cuma dipercaya) — keduanya nyata. Dr. Wirayuda memutuskan
+> **Anda eksekusi perbaikannya sekarang, kuota Anda masih banyak**. Baca
+> **§2.0 (baru, PRIORITAS 0)** di bawah — itu prioritas TERTINGGI sekarang,
+> di atas §2.3. 6 rekomendasi arsitektur besar di audit Anda (Care Ledger
+> dst) BUKAN bagian tugas ini, jangan mulai itu — itu perlu proposal-gate
+> terpisah nanti. Setelah §2.0 selesai, baru lanjut §2.3 kalau ada waktu.
 
 > **UPDATE 2026-07-17 (akhir hari)**: gelombang M11 SELESAI & DITUTUP — Anda menyelesaikan C2
 > (commit `1aa5102`, terverifikasi Claude: 88/88 file, 976/976 test, typecheck bersih, freeze
@@ -133,6 +137,78 @@ E-2 dan F, plus 3 item M11 kreatif yang dari awal belum dispesifikasi. Dr. Wiray
 menyerahkan seluruh ini ke Anda ("semua yang tersisa yang belum dan yang berikut-berikutnya biar
 CODEX yang lanjutkan") — kerjakan berurutan sesuai prioritas di bawah, JANGAN tunggu instruksi
 per-item lagi kecuali disebutkan eksplisit butuh keputusan Dr. Wirayuda dulu.
+
+### 2.0 — PRIORITAS 0 (URGENT, kerjakan SEBELUM 2.1/2.3): 2 bug P0 dari audit bridge UKM↔UKP
+
+Audit bridge UKM↔UKP yang Anda serahkan (skor 5,7/10, riset Brazil FHS/Costa Rica EBAIS/Thailand
+VHV/COPC + kode runtime) sudah diverifikasi ULANG oleh Claude independen — bukan cuma dibaca:
+kedua temuan P0 di bawah dikonfirmasi LANGSUNG di kode nyata (baca file:baris yang disebut,
+cross-check `ambangKluster` di seluruh `src/content/`), bukan diterima mentah. Keduanya nyata,
+severity tinggi (mengajarkan info medis SALAH sbg benar / bisa digameableka tanpa terdeteksi).
+Dr. Wirayuda memutuskan **Anda yang eksekusi perbaikannya sekarang** — kuota token Anda masih
+banyak, punya Claude terbatas. 6 rekomendasi arsitektur besar ("Manifestasi Yang Disarankan" di
+audit Anda — Person/Family Care Ledger, arc 5-tahap, hero loops, dst) **BUKAN bagian tugas ini**
+— itu redesign besar yang butuh proposal-gate sendiri (pola sama dgn E-2) SEBELUM ada kode
+ditulis; jangan mulai itu dari dossier ini. Item di bawah HANYA 2 bug fix yang scope-nya
+kontenu/kondisi jelas, jawabannya objektif (fakta transmisi penyakit dari WHO), bukan pilihan
+desain.
+
+**P0-A — Gerbang penutupan kluster KLB harus mensyaratkan aksi pengendalian BENAR, bukan cuma
+skor agregat.**
+- Bug: `nilaiKegiatan()` (`src/engine/kegiatan.ts`, fungsi dekat baris 694) menghitung
+  `skor: benar/total` sbg rasio DATAR tanpa peduli kartu mana yang salah. `reducer.ts` (dekat
+  baris 1623, cabang `hasil.jenis === 'klb'`) menutup kluster & menghapus flag surveilans hanya
+  berdasar `hasil.skor >= 0.66` — 2 dari 3 kartu benar SELALU lolos, termasuk kalau yang SALAH
+  justru kartu `klb_aksi` (aksi pengendalian penyakit spesifik, `kartuKlb()` di `kegiatan.ts`
+  dekat baris 616 — beda dari `klb_verif`/`klb_5w1h` yang investigasi generik).
+- Fix yang diminta: `HasilKegiatan.jawaban` (state.ts:380) SUDAH menyimpan per-kartu
+  `{kartuId, pilihanId, benar}` — tidak perlu state baru. Ubah gerbang di `reducer.ts` supaya
+  penutupan kluster mensyaratkan `klb_aksi` sendiri BENAR (mis.
+  `hasil.jawaban.find(j => j.kartuId === 'klb_aksi')?.benar === true`), boleh DITAMBAHKAN ke
+  syarat skor agregat yang sudah ada (bukan menggantikannya) — jangan lemahkan gerbang investigasi
+  yang sudah benar, cuma tutup celah "aksi salah tapi tetap lolos". Kalau `klb_aksi` salah,
+  perilaku SEKARANG (kluster tetap menyala) sudah benar — jangan bangun mekanisme baru,
+  cukup jangan biarkan itu diselamatkan skor agregat.
+- Test-first wajib: buktikan dulu test yang menyusun jawaban 2/3 benar TAPI `klb_aksi` salah,
+  konfirmasi SEKARANG (sebelum fix) kluster tetap ditutup (bug reproduksi), baru fix, baru
+  buktikan hijau. Ini `src/engine/reducer.ts` (bukan file frozen `src/engine/*` beku — cek
+  `freeze.test.ts` HASH_DIBEKUKAN, kalau reducer.ts termasuk, unfreeze-dance PENUH berlaku:
+  REVISI_ENGINE bump, dsb. Ini pasti REPLAY-AFFECTING (skor/karma bisa berubah utk save lama yg
+  kebetulan match pola bug), jadi WAJIB bump REVISI_ENGINE + catatan jelas apakah replay lama
+  bergeser).
+
+**P0-B — 6-10 penyakit kluster mendapat kartu KLB "droplet" (masker/etika batuk) yang salah
+transmisi.**
+- Bug: `polaDariKasus()` (`kegiatan.ts` dekat baris 513) cuma menangani eksplisit dengue/diare-
+  anak/tifoid/skabies/konjungtivitis-bakterial/TB; SEMUA kasus lain (termasuk yang punya
+  `ambangKluster` di content — Claude sudah konfirmasi LANGSUNG: `lab_gonore_uretritis_pria`,
+  `lab_sindrom_duh_genital_servisitis`, `lab_leptospirosis_tanpa_komplikasi`,
+  `lab_kusta_pausibasiler`, `lab_sifilis_primer`, `lab_tinea_kapitis_anak` semua genuinely
+  cluster-eligible & jatuh ke fallback `'droplet'`) mengajarkan masker/etika batuk sbg respons
+  KLB yang benar — salah transmisi utk IMS, zoonosis-air, dan kontak-langsung.
+- Fix yang diminta: perluas `PolaKlb`/`polaDariKasus()` dgn kategori baru sesuai rute transmisi
+  NYATA per penyakit (grounding WHO/Kemenkes wajib per kategori, kutip sumber — pola sama persis
+  spt fix TB-airborne & skabies-kontak yang SUDAH ada di file ini sbg preseden, baca komentarnya
+  dulu sbg contoh gaya). **Taksonomi PERSIS terserah Anda rancang** (mis. apakah IMS jadi kategori
+  baru sendiri `kontak_seksual`, apakah leptospirosis masuk kategori zoonosis-air baru atau
+  ditumpangkan ke kategori existing yg paling dekat) — SEBELUM implementasi skala penuh, tulis
+  ringkas tabel penyakit→kategori→sumber (boleh di changelog commit, tak perlu dokumen proposal
+  terpisah sepanjang E-2, ini bug fix bukan fitur baru) supaya jejak keputusannya terlacak.
+  Verifikasi cakupan LENGKAP: grep semua kasus ber-`ambangKluster` di seluruh `src/content/`
+  (bukan cuma 6 yang Claude sebutkan barusan — mungkin ada lagi yang belum diperiksa) sebelum
+  klaim selesai.
+- Test-first: tambahkan test yang menegaskan SETIAP kasus ber-`ambangKluster` menghasilkan
+  `polaDariKasus()` yang BUKAN fallback diam-diam ke `'droplet'` kecuali penyakit itu memang
+  benar-benar droplet — pola serupa test regresi TB-airborne yang sudah ada
+  (`m10sweep49.test.ts`, "ISPA tetap droplet"). Ini konten kartu (bukan mengubah answer-key UKP),
+  tapi TETAP masuk `src/engine/kegiatan.ts` (bukan `src/content/`) — cek apakah file itu frozen,
+  ikuti unfreeze-dance kalau ya.
+
+**Setelah P0-A dan P0-B**: full suite + typecheck + freeze + soak-adversarial (bandingkan invarian
+thd baseline `golden-master-m11-e2` — teliti 3.80/speedrunner 2.08/ceroboh 1.85), commit terpisah
+per fix (jangan digabung P0-A+P0-B jadi satu commit — beda root cause, beda file, memudahkan
+review/revert independen). Baru lanjut ke §2.3 kalau ada sisa waktu — P0 ini prioritas di atas
+riset propose-only §2.3.
 
 ### 2.1 — PRIORITAS 1: Artefak adjudikasi M13 (103 kasus prototipe lab)
 
