@@ -598,7 +598,10 @@ function fnv1a(teks: string): string {
 // 47 (2026-07-17 - Bridge B1.3): pasien akibat ledakan karma membawa
 // provenance eksplisit. Penanganan klinis grade A membuka kembali jalur
 // pemulihan keluarga tanpa membatalkan tally karma atau memajukan arc gratis.
-export const REVISI_ENGINE = 47
+// 48 (2026-07-17 - Bridge B1.4): roster Prolanis menyimpan enrolmen HT/DM
+// terpisah per orang, membatasi komplikasi per sesi, dan membawa provenance
+// sampai hasil klinis grade A ditulis balik ke parameter masalah yang tepat.
+export const REVISI_ENGINE = 48
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

@@ -528,6 +528,13 @@ export function MejaKerja() {
                   {state.hari >= HARI_BUKA_PROLANIS[state.mode] && state.prolanis.roster.length > 0 && (() => {
                     const berikut = state.prolanis.sesiBerikutHari
                     const belumWaktunya = berikut !== undefined && state.hari < berikut
+                    const jumlahMasalah = state.prolanis.roster.length
+                    const jumlahPeserta = new Set(
+                      state.prolanis.roster.map((p) => p.orangId ?? p.id),
+                    ).size
+                    const ringkasan = jumlahMasalah === jumlahPeserta
+                      ? `${jumlahPeserta} peserta`
+                      : `${jumlahPeserta} peserta · ${jumlahMasalah} masalah aktif`
                     return (
                       <button
                         className="tombol tombol--kunyit"
@@ -537,11 +544,11 @@ export function MejaKerja() {
                             ? `Sesi bulan ini sudah digelar — berikutnya hari ke-${berikut}.`
                             : slotTerpakai
                               ? 'Slot lapangan hari ini sudah terpakai.'
-                              : `Gelar sesi Prolanis (${state.prolanis.roster.length} peserta, ${BIAYA_STAMINA_KEGIATAN} stamina).`
+                              : `Gelar sesi Prolanis (${ringkasan}, ${BIAYA_STAMINA_KEGIATAN} stamina).`
                         }
                         onClick={() => dispatch({ type: 'MULAI_PROLANIS' })}
                       >
-                        🩺 Gelar Sesi Prolanis ({state.prolanis.roster.length}){belumWaktunya ? ` — hari ke-${berikut}` : ''}
+                        🩺 Gelar Sesi Prolanis ({ringkasan}){belumWaktunya ? ` — hari ke-${berikut}` : ''}
                       </button>
                     )
                   })()}

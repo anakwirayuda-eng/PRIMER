@@ -575,6 +575,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             bpjs: encFinal.pasien.bpjs,
             persona: encFinal.pasien.persona,
             ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+            ...(encFinal.pasien.prolanisPesertaId ? { prolanisPesertaId: encFinal.pasien.prolanisPesertaId } : {}),
           },
         ]
         penilaianFinal = { ...nilai, konsekuensiDijadwalkan: true }
@@ -603,6 +604,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             bpjs: encFinal.pasien.bpjs,
             persona: encFinal.pasien.persona,
             ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+            ...(encFinal.pasien.prolanisPesertaId ? { prolanisPesertaId: encFinal.pasien.prolanisPesertaId } : {}),
             // Fix #14: titipkan labId yg ditunggu — dibawa ke encounter baru
             // besok lewat pasienKembali/antrianKembali (bawah), bukan lenyap
             // ke surat kotak-masuk yg terputus dari mekanisme encounter.
@@ -661,6 +663,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 bpjs: encFinal.pasien.bpjs,
                 persona: encFinal.pasien.persona,
                 ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+                ...(encFinal.pasien.prolanisPesertaId ? { prolanisPesertaId: encFinal.pasien.prolanisPesertaId } : {}),
               },
             ]
             suratSisrute = {
@@ -690,6 +693,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 bpjs: encFinal.pasien.bpjs,
                 persona: encFinal.pasien.persona,
                 ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+                ...(encFinal.pasien.prolanisPesertaId ? { prolanisPesertaId: encFinal.pasien.prolanisPesertaId } : {}),
               },
             ]
             suratSisrute = {
@@ -738,6 +742,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                   bpjs: encFinal.pasien.bpjs,
                   persona: encFinal.pasien.persona,
                   ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+                  ...(encFinal.pasien.prolanisPesertaId ? { prolanisPesertaId: encFinal.pasien.prolanisPesertaId } : {}),
                   bedRetry: true,
                   rumahSakitId: rs.id,
                   bedRetryKe: 0,
@@ -778,6 +783,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                     bpjs: encFinal.pasien.bpjs,
                     persona: encFinal.pasien.persona,
                     ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+                    ...(encFinal.pasien.prolanisPesertaId ? { prolanisPesertaId: encFinal.pasien.prolanisPesertaId } : {}),
                     prb: true,
                   },
                 ]
@@ -862,6 +868,46 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         }
       }
 
+      // Bridge B1.4: hasil klinik hanya menulis balik bila pasien benar-benar
+      // berasal dari satu enrolmen Prolanis dan tata laksananya mencapai A.
+      // Provenance per-masalah mencegah HT dan DM milik orang yang sama tertukar.
+      let prolanisSetelahKlinik = s.prolanis
+      let suratTindakLanjutProlanis: Surat | undefined
+      const pesertaIdProlanis = encFinal.pasien.prolanisPesertaId
+      if (pesertaIdProlanis && penilaianFinal.grade === 'A') {
+        const peserta = s.prolanis.roster.find((p) => p.id === pesertaIdProlanis)
+        if (peserta) {
+          const pesertaBaru = {
+            ...driftProlanis(
+              peserta,
+              true,
+              new Rng(s.seed, 'prolanis-klinik', s.hari, peserta.id, encFinal.pasien.id),
+            ),
+            takTerkontrolBerturut: 0,
+          }
+          prolanisSetelahKlinik = {
+            ...s.prolanis,
+            roster: s.prolanis.roster.map((p) => (p.id === peserta.id ? pesertaBaru : p)),
+          }
+          const satuan = peserta.jenis === 'ht' ? 'mmHg' : 'mg/dL'
+          const label = peserta.jenis === 'ht' ? 'TD sistolik' : 'GDP'
+          suratTindakLanjutProlanis = {
+            id: `surat_prolanis_klinik_${s.hari}_${peserta.id}`,
+            hari: s.hari,
+            jenis: 'kabar_warga',
+            dari: 'Koordinator Prolanis',
+            judul: `Hasil klinik masuk Prolanis - ${peserta.nama}`,
+            isi:
+              `Penanganan klinis ${encFinal.pasien.nama} tercatat kembali ke masalah ${peserta.jenis.toUpperCase()}. ` +
+              `${label} pemantauan bergerak dari ${peserta.param} menjadi ${pesertaBaru.param} ${satuan}; ` +
+              'evaluasi lagi pada sesi berikutnya.',
+            dibaca: false,
+            ...(peserta.keluargaId ? { kaitKeluargaId: peserta.keluargaId } : {}),
+          }
+          events.push({ type: 'SURAT_MASUK', surat: suratTindakLanjutProlanis })
+        }
+      }
+
       const desaSetelahKlinik = keluargaSetelahKlinik === s.desa.keluarga
         ? s.desa
         : { ...s.desa, keluarga: keluargaSetelahKlinik }
@@ -877,6 +923,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const suratBaruKlinik: Surat[] = [
         ...(suratSisrute ? [suratSisrute] : []),
         ...(suratPemulihanKeluarga ? [suratPemulihanKeluarga] : []),
+        ...(suratTindakLanjutProlanis ? [suratTindakLanjutProlanis] : []),
       ]
 
       // Tutorial (DeepThink "onboarding railroaded", keputusan user): encounter
@@ -895,6 +942,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const belanjaObatFinal = kebalTutorial ? s.keuanganBulan.belanjaObat : belanjaObat
       const jadwalFinal = kebalTutorial ? s.jadwal : jadwal
       const desaFinal = kebalTutorial ? s.desa : desaBaru
+      const prolanisFinal = kebalTutorial ? s.prolanis : prolanisSetelahKlinik
       // CODEX: DEX_BERTAMBAH/SURAT_MASUK dipancarkan tanpa syarat di atas —
       // toaster (Toaster.tsx) akan bilang "Buku Saku diperbarui"/"Surat baru"
       // meski dex/inbox sungguhan dibekukan barusan. Pangkas KEDUA event itu
@@ -925,6 +973,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           dex: dexFinal,
           jadwal: jadwalFinal,
           desa: desaFinal,
+          prolanis: prolanisFinal,
           klinik: {
             ...s.klinik,
             aktif: undefined,
@@ -1639,6 +1688,7 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
     // Drift tiap peserta menurut ketepatan jawaban kartu-nya + jembatan UKP.
     const rng = new Rng(s.seed, 'prolanis', s.hari)
     const jadwalBaru = [...next.jadwal]
+    const orangDijadwalkan = new Set<string>()
     const roster = s.prolanis.roster.map((p) => {
       const jwb = hasil.jawaban.find((j) => j.kartuId === `prol_${p.id}`)
       // M10 Batch-2 (CODEX B.1): peserta TANPA kartu sesi ini (tersaring JKN
@@ -1646,10 +1696,16 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       // dianggap "salah" → param memburuk padahal ia tak pernah diberi kartu.
       if (!jwb) return p
       const pBaru = driftProlanis(p, jwb.benar, rng)
-      // 2x tak terkontrol berturut → komplikasi bernama muncul di poli (bridge).
+      // Dua masalah pada orang yang sama tetap dipantau terpisah, tetapi satu
+      // sesi maksimal membuka satu bottleneck klinik. Masalah lain tetap
+      // tertunda (counter tidak dihapus) dan dapat muncul pada sesi berikutnya.
       if (pBaru.takTerkontrolBerturut >= 2) {
+        const orangId = pBaru.orangId ?? pBaru.id
+        if (orangDijadwalkan.has(orangId)) return pBaru
+
         const kasusId = pBaru.jenis === 'ht' ? 'stroke_iskemik' : 'dm_tipe2'
         if (pack.kasus[kasusId]) {
+          orangDijadwalkan.add(orangId)
           jadwalBaru.push({
             id: `jadwal_prolanis_${s.hari}_${p.id}`,
             hari: s.hari + rng.int(2, 6),
@@ -1673,9 +1729,10 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
             // ber-JKN aktif; dulu 30% komplikasinya datang sbg pasien umum.
             bpjs: true,
             ...(p.keluargaId ? { keluargaId: p.keluargaId } : {}),
+            prolanisPesertaId: p.id,
           })
+          return { ...pBaru, takTerkontrolBerturut: 0 }
         }
-        return { ...pBaru, takTerkontrolBerturut: 0 }
       }
       return pBaru
     })
@@ -1786,6 +1843,7 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
               bpjs: pasienSkip.bpjs,
               persona: pasienSkip.persona,
               ...(pasienSkip.keluargaId ? { keluargaId: pasienSkip.keluargaId } : {}),
+              ...(pasienSkip.prolanisPesertaId ? { prolanisPesertaId: pasienSkip.prolanisPesertaId } : {}),
             },
           ]
         }
@@ -1940,6 +1998,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     bpjs?: boolean
     persona?: Persona
     prb?: boolean
+    /** Enrolmen Prolanis asal pasien jatuh tempo, bila ada. */
+    prolanisPesertaId?: string
     /** Provenance eksplisit agar callback keluarga tidak dipicu follow-up generik. */
     konsekuensiKarma?: boolean
     /** Fix #14: labId hasil yg sudah tersedia, dibawa ke encounter baru. */
@@ -2005,6 +2065,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.usiaBulan !== undefined ? { usiaBulan: j.usiaBulan } : {}),
         ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
         ...(j.keluargaId ? { keluargaId: j.keluargaId } : {}),
+        ...(j.prolanisPesertaId ? { prolanisPesertaId: j.prolanisPesertaId } : {}),
         ...(j.rw !== undefined ? { rw: j.rw } : {}),
         ...(j.bpjs !== undefined ? { bpjs: j.bpjs } : {}),
         ...(j.persona ? { persona: j.persona } : {}),
@@ -2389,19 +2450,41 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     )
   }
 
-  // Prolanis roster (M2.8): dibentuk sekali saat program terbuka (D30) dari
-  // warga binaan/desa ber-kondisi kronis (HT/DM). Deterministik dari konten.
+  // Bridge B1.4: roster memuat enrolmen per masalah, tetapi `orangId` menjaga
+  // hitungan manusia dan bottleneck tetap per orang. Rekonsiliasi setelah hari
+  // buka memperkaya save legacy dengan komorbid yang dulu terpotong, idempotent.
   let prolanis = s.prolanis
-  if (hari === HARI_BUKA_PROLANIS[s.mode] && prolanis.roster.length === 0) {
-    prolanis = { roster: bentukRosterProlanis(pack, new Rng(s.seed, 'prolanis-roster')), sesiBerikutHari: hari }
-    suratBaru.push(
-      buatSuratHarian(hari, suratBaru.length, {
-        jenis: 'sistem',
-        dari: 'Koordinator Prolanis',
-        judul: `Program Prolanis dibuka — ${prolanis.roster.length} peserta kronis terdaftar`,
-        isi: `Peserta hipertensi & diabetes terdaftar untuk pemantauan rutin bulanan. Gelar sesi Prolanis di blok siang. Peserta yang dua bulan berturut tak terkontrol akan berujung di poli dengan komplikasi — pantau ketat.`,
-      }),
-    )
+  if (hari >= HARI_BUKA_PROLANIS[s.mode]) {
+    const rosterKanonik = bentukRosterProlanis(pack, new Rng(s.seed, 'prolanis-roster'))
+    if (prolanis.roster.length === 0) {
+      prolanis = { roster: rosterKanonik, sesiBerikutHari: hari }
+      const jumlahPeserta = new Set(rosterKanonik.map((p) => p.orangId ?? p.id)).size
+      const jumlahKomorbid = rosterKanonik.length - jumlahPeserta
+      suratBaru.push(
+        buatSuratHarian(hari, suratBaru.length, {
+          jenis: 'sistem',
+          dari: 'Koordinator Prolanis',
+          judul: `Program Prolanis dibuka — ${jumlahPeserta} peserta, ${rosterKanonik.length} masalah aktif`,
+          isi:
+            `Peserta hipertensi & diabetes terdaftar untuk pemantauan rutin bulanan. ` +
+            `${jumlahKomorbid} enrolmen adalah komorbid pada orang yang sama, sehingga tiap masalah dipantau terpisah tanpa menggandakan orang. ` +
+            'Gelar sesi Prolanis di blok siang; kontrol buruk berulang akan berujung ke poli dan hasil kliniknya kembali ke roster.',
+        }),
+      )
+    } else {
+      const kanonikById = new Map(rosterKanonik.map((p) => [p.id, p]))
+      const rosterDiperkaya = prolanis.roster.map((p) => {
+        const kanonik = kanonikById.get(p.id)
+        return !p.orangId && kanonik?.orangId ? { ...p, orangId: kanonik.orangId } : p
+      })
+      const idAda = new Set(rosterDiperkaya.map((p) => p.id))
+      const orangAda = new Set(rosterDiperkaya.map((p) => p.orangId ?? p.id))
+      const tambahan = rosterKanonik.filter(
+        (p) => !idAda.has(p.id) && orangAda.has(p.orangId ?? p.id),
+      )
+      const berubah = tambahan.length > 0 || rosterDiperkaya.some((p, index) => p !== prolanis.roster[index])
+      if (berubah) prolanis = { ...prolanis, roster: [...rosterDiperkaya, ...tambahan] }
+    }
   }
 
   // Lokakarya Mini (M2.11): rapat evaluasi bulanan D31/D61 (karier) — rapor
@@ -2444,6 +2527,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       ...(p.usiaBulan !== undefined ? { usiaBulan: p.usiaBulan } : {}),
       ...(p.jenisKelamin ? { jenisKelamin: p.jenisKelamin } : {}),
       ...(p.keluargaId ? { keluargaId: p.keluargaId } : {}),
+      ...(p.prolanisPesertaId ? { prolanisPesertaId: p.prolanisPesertaId } : {}),
       ...(p.rw !== undefined ? { rw: p.rw } : {}),
       ...(p.bpjs !== undefined ? { bpjs: p.bpjs } : {}),
       ...(p.persona ? { persona: p.persona } : {}),
@@ -2603,22 +2687,29 @@ function bentukRosterProlanis(pack: ContentPack, rng: Rng): PesertaProlanis[] {
       const ht = kondisi.some((k) => k.includes('hipertensi'))
       const dm = kondisi.some((k) => k.includes('dm') || k.includes('diabetes'))
       if (!ht && !dm) continue
-      const jenis: 'ht' | 'dm' = ht ? 'ht' : 'dm'
-      roster.push({
-        id: `prol_${kel.id}_${a.nama.replace(/\s+/g, '')}`,
-        nama: a.nama,
-        usia: a.usia,
-        jenisKelamin: a.jenisKelamin,
-        rw: kel.rw,
-        // M10.b §43: komplikasi prolanis harus bisa dirunut ke keluarganya.
-        keluargaId: kel.id,
-        jenis,
-        // Mulai tak terkontrol (butuh intervensi) — itulah gunanya program.
-        // #12 (audit CODEX UKM 2026-07-16): param DM = GULA DARAH PUASA —
-        // indikator kontrol RPPT Prolanis memakai GDP (target <130), bukan GDS.
-        param: jenis === 'ht' ? rng.int(150, 175) : rng.int(150, 240),
-        takTerkontrolBerturut: 0,
-      })
+
+      const orangId = `prol_${kel.id}_${a.nama.replace(/\s+/g, '')}`
+      const masalah: ('ht' | 'dm')[] = []
+      if (ht) masalah.push('ht')
+      if (dm) masalah.push('dm')
+      for (const [index, jenis] of masalah.entries()) {
+        roster.push({
+          // ID legacy dipertahankan untuk masalah pertama; komorbid mendapat
+          // suffix sendiri agar save lama dapat diperkaya tanpa mengganti ID.
+          id: index === 0 ? orangId : `${orangId}_${jenis}`,
+          orangId,
+          nama: a.nama,
+          usia: a.usia,
+          jenisKelamin: a.jenisKelamin,
+          rw: kel.rw,
+          keluargaId: kel.id,
+          jenis,
+          // Mulai tak terkontrol (butuh intervensi) — itulah gunanya program.
+          // Parameter DM = GDP, target kontrol RPPT <130 mg/dL.
+          param: jenis === 'ht' ? rng.int(150, 175) : rng.int(150, 240),
+          takTerkontrolBerturut: 0,
+        })
+      }
     }
   }
   return roster

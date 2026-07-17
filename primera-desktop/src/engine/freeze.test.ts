@@ -137,7 +137,10 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-07-17 (Bridge B1.3, REVISI_ENGINE 46 -> 47): pasien
   // karma membawa provenance eksplisit; penanganan klinis A membuka
   // pemulihan keluarga tanpa menghapus konsekuensi atau memajukan arc.
-  'reducer.ts': 'e9f4bdb925f82fe1a515304521fc3ca0d214ffce7211f19f53133f5df6149663',
+  // Unfreeze 2026-07-17 (Bridge B1.4, REVISI_ENGINE 47 -> 48): enrolmen
+  // Prolanis kini per-masalah namun dikelompokkan per-orang; komplikasi
+  // membawa provenance dan hasil klinis A menulis balik ke roster.
+  'reducer.ts': 'ae25a0477cbfd1a977692cabdb93aafb7d69d63431d40ad12aec8aa532ee55f3',
   'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
@@ -155,8 +158,8 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': 'e672bf5ada404c169788b9e6f5dba797630d8f1f72d23be54743fec9327cc8c1',
-  'state.ts': 'bab7b9ce2a60aee01db7cabc5ddde8b8f049345439eb80fd43e32844be42e13a',
+  'verifikasi.ts': '668efbcee37173db3c59743dadf71c26fdecd2e0ea58c9e7f5dab7e28b7b3ec0',
+  'state.ts': '287c5e6fd0e5f9dfb57875556f6f20ac18dd866c83da5a703e317181890691c7',
   'save.ts': '3a124f864eb634ff9f94c9d38d63a464d09dfa75ab6f4814ca15875ddbfc0073',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',

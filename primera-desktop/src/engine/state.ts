@@ -64,6 +64,8 @@ export interface PasienAktif {
   followUpDari?: string
   /** Pasien ini muncul langsung dari ledakan karma keluarga, bukan follow-up biasa. */
   konsekuensiKarma?: boolean
+  /** Enrolmen masalah Prolanis asal pasien; menjaga callback ke parameter yang tepat. */
+  prolanisPesertaId?: string
   /**
    * Pasien Program Rujuk Balik (M3.13): sudah distabilkan RS, kembali untuk
    * kontrol lanjutan di FKTP — memulangkan dengan obat lanjutan = TEPAT,
@@ -395,8 +397,10 @@ export interface PesertaProlanis {
    * Opsional demi kompatibilitas save lama (roster pra-M10.b tanpa field ini).
    */
   keluargaId?: string
+  /** Identitas orang; beberapa enrolmen masalah HT/DM dapat berbagi orangId ini. */
+  orangId?: string
   jenis: 'ht' | 'dm'
-  /** Parameter kontrol: sistolik (ht) atau GDS (dm). */
+  /** Parameter kontrol: sistolik (ht) atau GDP (dm). */
   param: number
   /** Sesi berturut-turut dengan parameter tak terkontrol → jembatan UKP. */
   takTerkontrolBerturut: number
@@ -517,6 +521,8 @@ export interface JadwalItem {
   pasienId?: string
   kasusId?: string
   keluargaId?: string
+  /** Enrolmen Prolanis yang melahirkan jadwal pasien ini, bila ada. */
+  prolanisPesertaId?: string
   /** #4: indikator yang dijanjikan warga, menunggu verifikasi outcome. */
   indikatorJanji?: IndikatorPisPk[]
   catatan?: string
