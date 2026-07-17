@@ -112,6 +112,14 @@ per-item lagi kecuali disebutkan eksplisit butuh keputusan Dr. Wirayuda dulu.
 
 ### 2.1 — PRIORITAS 1: Artefak adjudikasi M13 (103 kasus prototipe lab)
 
+> **STATUS CODEX 2026-07-17: SELESAI sebagai M13-137, menunggu adjudikasi dokter.** Query
+> runtime aktual menemukan **137**, bukan 103: assertion `>=103` di test lama adalah batas
+> minimum yang menjadi basi setelah Batch 4 menambah 34 kasus. Deliverable:
+> `docs/M13_137_ADJUDICATION.html`, `docs/M13_137_ADJUDICATION_DATA.json`,
+> `docs/M13_137_ADJUDICATION_REPORT.md`, dan snapshot KFA 74-obat. Semua 137 kasus tercakup;
+> keputusan dokter tetap kosong. Generator + 8 invariant test mengunci inventaris, provenance,
+> fingerprint impor, dan interaksi HTML. Tidak ada file gameplay/engine yang diubah.
+
 **Riset + kompilasi, BUKAN adjudikasi** — adjudikasi medis tetap wewenang Dr. Wirayuda sendiri
 (`docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` Bagian F). Tugas Anda: siapkan artefak keputusan gaya
 M11.5 (`panduanResmi` batch — lihat pola di `M11_VARIAN_TINGKAT_A_HASIL.md` dan histori commit

@@ -1,0 +1,1351 @@
+{
+  "schema": "primera.m13-kfa-active-substance-snapshot.v1",
+  "retrievedAt": "2026-07-17T07:12:01.948Z",
+  "endpoint": "https://satusehat.kemkes.go.id/kfa-browser/farmasi/api/search/active-ingredients",
+  "browserUrl": "https://satusehat.kemkes.go.id/kfa-browser/farmasi",
+  "scopeWarning": "Kode adalah KFA active-substance master data, bukan kode product-template/variant dan bukan bukti stok atau status Fornas.",
+  "caseCount": 137,
+  "drugCount": 74,
+  "unresolved": [],
+  "items": [
+    {
+      "drugId": "air_mata_buatan",
+      "catalogName": "Air Mata Buatan (Hipromelosa)",
+      "queryResults": [
+        {
+          "query": "Hypromellose",
+          "results": [
+            {
+              "kfaCode": "91001024",
+              "name": "Hypromellose",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "albendazol_400",
+      "catalogName": "Albendazol 400 mg",
+      "queryResults": [
+        {
+          "query": "Albendazole",
+          "results": [
+            {
+              "kfaCode": "91000146",
+              "name": "ALBENDAZOLE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "amlodipine_5",
+      "catalogName": "Amlodipin 5 mg",
+      "queryResults": [
+        {
+          "query": "Amlodipine",
+          "results": [
+            {
+              "kfaCode": "91000397",
+              "name": "AMLODIPINE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "amoxicillin_500",
+      "catalogName": "Amoksisilin 500 mg",
+      "queryResults": [
+        {
+          "query": "Amoxicillin",
+          "results": [
+            {
+              "kfaCode": "91000237",
+              "name": "Amoxicillin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "amoxiclav_625",
+      "catalogName": "Amoksisilin-Klavulanat 625 mg",
+      "queryResults": [
+        {
+          "query": "Amoxicillin",
+          "results": [
+            {
+              "kfaCode": "91000237",
+              "name": "Amoxicillin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Clavulanate",
+          "results": [
+            {
+              "kfaCode": "91000791",
+              "name": "Clavulanate",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "arv_tld",
+      "catalogName": "ARV TDF 300 mg + 3TC 300 mg + DTG 50 mg",
+      "queryResults": [
+        {
+          "query": "Tenofovir Disoproxil",
+          "results": [
+            {
+              "kfaCode": "91000175",
+              "name": "Tenofovir Disoproxil",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Lamivudine",
+          "results": [
+            {
+              "kfaCode": "91000216",
+              "name": "LAMIVUDINE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Dolutegravir",
+          "results": [
+            {
+              "kfaCode": "91000645",
+              "name": "DOLUTEGRAVIR",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "asam_asetat_tetes_telinga_2",
+      "catalogName": "Asam Asetat Tetes Telinga 2%",
+      "queryResults": [
+        {
+          "query": "Acetic Acid",
+          "results": [
+            {
+              "kfaCode": "91001143",
+              "name": "Acetic Acid",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "asam_folat_5",
+      "catalogName": "Asam Folat 5 mg",
+      "queryResults": [
+        {
+          "query": "Folic Acid",
+          "results": [
+            {
+              "kfaCode": "91000289",
+              "name": "FOLIC ACID",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "asam_traneksamat_500_inj",
+      "catalogName": "Asam Traneksamat 500 mg Injeksi",
+      "queryResults": [
+        {
+          "query": "Tranexamic Acid",
+          "results": [
+            {
+              "kfaCode": "91000233",
+              "name": "TRANEXAMIC ACID",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "asiklovir_400",
+      "catalogName": "Asiklovir 400 mg",
+      "queryResults": [
+        {
+          "query": "Acyclovir",
+          "results": [
+            {
+              "kfaCode": "91000433",
+              "name": "Aciclovir",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "azitromisin_500",
+      "catalogName": "Azitromisin 500 mg",
+      "queryResults": [
+        {
+          "query": "Azithromycin",
+          "results": [
+            {
+              "kfaCode": "91000235",
+              "name": "AZITHROMYCIN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "benzatin_penisilin_24juta",
+      "catalogName": "Benzatin Benzilpenisilin 2,4 Juta IU",
+      "queryResults": [
+        {
+          "query": "Benzathine Benzylpenicillin",
+          "results": [
+            {
+              "kfaCode": "91000206",
+              "name": "Penicillin G Benzathine",
+              "ucumSymbol": "mg"
+            },
+            {
+              "kfaCode": "91001298",
+              "name": "Benzylpenicillin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "benzoyl_peroksida_25",
+      "catalogName": "Benzoil Peroksida 2,5%",
+      "queryResults": [
+        {
+          "query": "Benzoyl Peroxide",
+          "results": [
+            {
+              "kfaCode": "91000754",
+              "name": "Benzoyl Peroxide",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "betametason_krim_005",
+      "catalogName": "Betametason Valerat Krim 0,05%",
+      "queryResults": [
+        {
+          "query": "Betamethasone Valerate",
+          "results": [
+            {
+              "kfaCode": "91000947",
+              "name": "Betamethasone Valerate",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "captopril_25",
+      "catalogName": "Kaptopril 25 mg",
+      "queryResults": [
+        {
+          "query": "Captopril",
+          "results": [
+            {
+              "kfaCode": "91000340",
+              "name": "Captopril",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "cefadroxil_500",
+      "catalogName": "Sefadroksil 500 mg",
+      "queryResults": [
+        {
+          "query": "Cefadroxil",
+          "results": [
+            {
+              "kfaCode": "91000195",
+              "name": "Cefadroxil",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "cefadroxil_sirup_125",
+      "catalogName": "Sefadroksil Sirup Kering 125 mg/5 mL",
+      "queryResults": [
+        {
+          "query": "Cefadroxil",
+          "results": [
+            {
+              "kfaCode": "91000195",
+              "name": "Cefadroxil",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ceftriaxone_1g_inj",
+      "catalogName": "Seftriakson 1 g Injeksi",
+      "queryResults": [
+        {
+          "query": "Ceftriaxone",
+          "results": [
+            {
+              "kfaCode": "91000138",
+              "name": "Ceftriaxone",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "cetirizine_10",
+      "catalogName": "Setirizin 10 mg",
+      "queryResults": [
+        {
+          "query": "Cetirizine",
+          "results": [
+            {
+              "kfaCode": "91000127",
+              "name": "Cetirizine",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ciprofloxacin_500",
+      "catalogName": "Siprofloksasin 500 mg",
+      "queryResults": [
+        {
+          "query": "Ciprofloxacin",
+          "results": [
+            {
+              "kfaCode": "91000526",
+              "name": "CIPROFLOXACIN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ctm_4",
+      "catalogName": "Klorfeniramin Maleat (CTM) 4 mg",
+      "queryResults": [
+        {
+          "query": "Chlorpheniramine",
+          "results": [
+            {
+              "kfaCode": "91000861",
+              "name": "Chlorpheniramine Maleate",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "dietilkarbamazin_100",
+      "catalogName": "Dietilkarbamazin 100 mg",
+      "queryResults": [
+        {
+          "query": "Diethylcarbamazine",
+          "results": [
+            {
+              "kfaCode": "91000167",
+              "name": "Diethylcarbamazine",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "dimenhidrinat_50",
+      "catalogName": "Dimenhidrinat 50 mg",
+      "queryResults": [
+        {
+          "query": "Dimenhydrinate",
+          "results": [
+            {
+              "kfaCode": "91000518",
+              "name": "DIMENHYDRINATE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "doksisiklin_100",
+      "catalogName": "Doksisiklin 100 mg",
+      "queryResults": [
+        {
+          "query": "Doxycycline",
+          "results": [
+            {
+              "kfaCode": "91000535",
+              "name": "Doxycycline",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "emolien_petrolatum",
+      "catalogName": "Emolien Petrolatum",
+      "queryResults": [
+        {
+          "query": "Petrolatum",
+          "results": [
+            {
+              "kfaCode": "91001536",
+              "name": "White Petrolatum",
+              "ucumSymbol": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "flutikason_semprot_hidung",
+      "catalogName": "Flutikason Semprot Hidung 50 mcg/dosis",
+      "queryResults": [
+        {
+          "query": "Fluticasone",
+          "results": [
+            {
+              "kfaCode": "91000187",
+              "name": "Fluticasone",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "furosemid_40",
+      "catalogName": "Furosemid 40 mg",
+      "queryResults": [
+        {
+          "query": "Furosemide",
+          "results": [
+            {
+              "kfaCode": "91000581",
+              "name": "FUROSEMIDE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "furosemid_inj_20",
+      "catalogName": "Furosemid 20 mg Injeksi",
+      "queryResults": [
+        {
+          "query": "Furosemide",
+          "results": [
+            {
+              "kfaCode": "91000581",
+              "name": "FUROSEMIDE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "griseofulvin_125",
+      "catalogName": "Griseofulvin 125 mg",
+      "queryResults": [
+        {
+          "query": "Griseofulvin",
+          "results": [
+            {
+              "kfaCode": "91000333",
+              "name": "Griseofulvin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "griseofulvin_500",
+      "catalogName": "Griseofulvin 500 mg",
+      "queryResults": [
+        {
+          "query": "Griseofulvin",
+          "results": [
+            {
+              "kfaCode": "91000333",
+              "name": "Griseofulvin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "hidrokortison_krim",
+      "catalogName": "Hidrokortison Krim 2,5%",
+      "queryResults": [
+        {
+          "query": "Hydrocortisone",
+          "results": [
+            {
+              "kfaCode": "91000482",
+              "name": "HYDROCORTISONE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "hyoscine_butilbromida_20_inj",
+      "catalogName": "Hiosin Butilbromida 20 mg Injeksi",
+      "queryResults": [
+        {
+          "query": "Butylscopolamine",
+          "results": [
+            {
+              "kfaCode": "91000578",
+              "name": "Butylscopolamine",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ibuprofen_400",
+      "catalogName": "Ibuprofen 400 mg",
+      "queryResults": [
+        {
+          "query": "Ibuprofen",
+          "results": [
+            {
+              "kfaCode": "91000107",
+              "name": "IBUPROFEN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "insulin_nph",
+      "catalogName": "Insulin NPH 100 IU/mL",
+      "queryResults": [
+        {
+          "query": "Insulin Isophane, Human",
+          "results": [
+            {
+              "kfaCode": "91001856",
+              "name": "Insulin Isophane, Human",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "insulin_regular",
+      "catalogName": "Insulin Regular 100 IU/mL",
+      "queryResults": [
+        {
+          "query": "Insulin, Regular, Human",
+          "results": [
+            {
+              "kfaCode": "91000185",
+              "name": "Insulin, Regular, Human",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "isosorbid_dinitrat_5",
+      "catalogName": "ISDN 5 mg (sublingual)",
+      "queryResults": [
+        {
+          "query": "Isosorbide Dinitrate",
+          "results": [
+            {
+              "kfaCode": "91000137",
+              "name": "ISOSORBIDE DINITRATE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ivermektin_3",
+      "catalogName": "Ivermektin 3 mg",
+      "queryResults": [
+        {
+          "query": "Ivermectin",
+          "results": [
+            {
+              "kfaCode": "91001315",
+              "name": "Ivermectin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "kalamin_losion",
+      "catalogName": "Losio Kalamin",
+      "queryResults": [
+        {
+          "query": "Calamine",
+          "results": [
+            {
+              "kfaCode": "91001946",
+              "name": "Calamine",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ketokonazol_krim",
+      "catalogName": "Ketokonazol Krim 2%",
+      "queryResults": [
+        {
+          "query": "Ketoconazole",
+          "results": [
+            {
+              "kfaCode": "91000342",
+              "name": "KETOCONAZOLE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ketorolak_30_inj",
+      "catalogName": "Ketorolak 30 mg Injeksi",
+      "queryResults": [
+        {
+          "query": "Ketorolac",
+          "results": [
+            {
+              "kfaCode": "91000603",
+              "name": "Ketorolac",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "klindamisin_topikal_1",
+      "catalogName": "Klindamisin Topikal 1%",
+      "queryResults": [
+        {
+          "query": "Clindamycin",
+          "results": [
+            {
+              "kfaCode": "91000598",
+              "name": "CLINDAMYCIN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "kloramfenikol_tetes_mata",
+      "catalogName": "Kloramfenikol Tetes Mata 0,5%",
+      "queryResults": [
+        {
+          "query": "Chloramphenicol",
+          "results": [
+            {
+              "kfaCode": "91000154",
+              "name": "CHLORAMPHENICOL",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "klotrimazol_vaginal_100",
+      "catalogName": "Klotrimazol Vaginal 100 mg",
+      "queryResults": [
+        {
+          "query": "Clotrimazole",
+          "results": [
+            {
+              "kfaCode": "91000744",
+              "name": "CLOTRIMAZOLE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "laktulosa_syr",
+      "catalogName": "Laktulosa Sirup",
+      "queryResults": [
+        {
+          "query": "Lactulose",
+          "results": [
+            {
+              "kfaCode": "91000348",
+              "name": "Lactulose",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "mdt_kusta_pb",
+      "catalogName": "MDT Kusta Pausibasiler Dewasa",
+      "queryResults": [
+        {
+          "query": "Rifampicin",
+          "results": [
+            {
+              "kfaCode": "91000330",
+              "name": "RIFAMPICIN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Dapsone",
+          "results": [
+            {
+              "kfaCode": "91001908",
+              "name": "DAPSONE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "metformin_500",
+      "catalogName": "Metformin 500 mg",
+      "queryResults": [
+        {
+          "query": "Metformin",
+          "results": [
+            {
+              "kfaCode": "91000209",
+              "name": "METFORMIN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "metronidazol_500",
+      "catalogName": "Metronidazol 500 mg",
+      "queryResults": [
+        {
+          "query": "Metronidazole",
+          "results": [
+            {
+              "kfaCode": "91000400",
+              "name": "METRONIDAZOLE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "metronidazol_inj_500",
+      "catalogName": "Metronidazol 500 mg Infus",
+      "queryResults": [
+        {
+          "query": "Metronidazole",
+          "results": [
+            {
+              "kfaCode": "91000400",
+              "name": "METRONIDAZOLE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "metronidazol_topikal_075",
+      "catalogName": "Metronidazol Topikal 0,75%",
+      "queryResults": [
+        {
+          "query": "Metronidazole",
+          "results": [
+            {
+              "kfaCode": "91000400",
+              "name": "METRONIDAZOLE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "mikonazol_krim",
+      "catalogName": "Mikonazol Krim 2%",
+      "queryResults": [
+        {
+          "query": "Miconazole",
+          "results": [
+            {
+              "kfaCode": "91000394",
+              "name": "Miconazole",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "mupirosin_krim",
+      "catalogName": "Mupirosin Krim 2%",
+      "queryResults": [
+        {
+          "query": "Mupirocin",
+          "results": [
+            {
+              "kfaCode": "91000859",
+              "name": "MUPIROCIN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "nacl_09_inf",
+      "catalogName": "Natrium Klorida 0,9% Infus",
+      "queryResults": [
+        {
+          "query": "Sodium Chloride",
+          "results": [
+            {
+              "kfaCode": "91000171",
+              "name": "Sodium Chloride",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "natrium_diklofenak_50",
+      "catalogName": "Natrium Diklofenak 50 mg",
+      "queryResults": [
+        {
+          "query": "Diclofenac Sodium",
+          "results": [
+            {
+              "kfaCode": "91000810",
+              "name": "Diclofenac Sodium",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "nistatin_suspensi",
+      "catalogName": "Nistatin Suspensi 100.000 IU/mL",
+      "queryResults": [
+        {
+          "query": "Nystatin",
+          "results": [
+            {
+              "kfaCode": "91000284",
+              "name": "Nystatin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ondansetron_4",
+      "catalogName": "Ondansetron 4 mg",
+      "queryResults": [
+        {
+          "query": "Ondansetron",
+          "results": [
+            {
+              "kfaCode": "91000190",
+              "name": "ONDANSETRON",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "oralit",
+      "catalogName": "Oralit (Larutan Rehidrasi Oral)",
+      "queryResults": [
+        {
+          "query": "Sodium Chloride",
+          "results": [
+            {
+              "kfaCode": "91000171",
+              "name": "Sodium Chloride",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Potassium Chloride",
+          "results": [
+            {
+              "kfaCode": "91000198",
+              "name": "Potassium Chloride",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Glucose",
+          "results": [
+            {
+              "kfaCode": "91000108",
+              "name": "Glucose",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Sodium Citrate",
+          "results": [
+            {
+              "kfaCode": "91000465",
+              "name": "Sodium Citrate",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "paracetamol_500",
+      "catalogName": "Parasetamol 500 mg",
+      "queryResults": [
+        {
+          "query": "Paracetamol",
+          "results": [
+            {
+              "kfaCode": "91000101",
+              "name": "Paracetamol",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "paracetamol_sirup",
+      "catalogName": "Parasetamol Sirup 120 mg/5 mL",
+      "queryResults": [
+        {
+          "query": "Paracetamol",
+          "results": [
+            {
+              "kfaCode": "91000101",
+              "name": "Paracetamol",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "permetrin_losion_1",
+      "catalogName": "Permetrin Losion 1%",
+      "queryResults": [
+        {
+          "query": "Permethrin",
+          "results": [
+            {
+              "kfaCode": "91000325",
+              "name": "Permethrin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "prazikuantel_600",
+      "catalogName": "Prazikuantel 600 mg",
+      "queryResults": [
+        {
+          "query": "Praziquantel",
+          "results": [
+            {
+              "kfaCode": "91002154",
+              "name": "PRAZIQUANTEL",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "prednison_5",
+      "catalogName": "Prednison 5 mg",
+      "queryResults": [
+        {
+          "query": "Prednisone",
+          "results": [
+            {
+              "kfaCode": "91000294",
+              "name": "PREDNISONE",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "propiltiourasil_100",
+      "catalogName": "Propiltiourasil 100 mg",
+      "queryResults": [
+        {
+          "query": "Propylthiouracil",
+          "results": [
+            {
+              "kfaCode": "91000536",
+              "name": "Propylthiouracil",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "propranolol_10",
+      "catalogName": "Propranolol 10 mg",
+      "queryResults": [
+        {
+          "query": "Propranolol",
+          "results": [
+            {
+              "kfaCode": "91000537",
+              "name": "Propranolol",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ramipril_5",
+      "catalogName": "Ramipril 5 mg",
+      "queryResults": [
+        {
+          "query": "Ramipril",
+          "results": [
+            {
+              "kfaCode": "91000303",
+              "name": "Ramipril",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "ringer_laktat_inf",
+      "catalogName": "Ringer Laktat Infus",
+      "queryResults": [
+        {
+          "query": "Sodium Chloride",
+          "results": [
+            {
+              "kfaCode": "91000171",
+              "name": "Sodium Chloride",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Potassium Chloride",
+          "results": [
+            {
+              "kfaCode": "91000198",
+              "name": "Potassium Chloride",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Calcium Chloride",
+          "results": [
+            {
+              "kfaCode": "91000441",
+              "name": "Calcium Chloride",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Sodium Lactate",
+          "results": [
+            {
+              "kfaCode": "91000265",
+              "name": "Sodium Lactate",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "simvastatin_20",
+      "catalogName": "Simvastatin 20 mg",
+      "queryResults": [
+        {
+          "query": "Simvastatin",
+          "results": [
+            {
+              "kfaCode": "91000359",
+              "name": "SIMVASTATIN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "spironolakton_25",
+      "catalogName": "Spironolakton 25 mg",
+      "queryResults": [
+        {
+          "query": "Spironolactone",
+          "results": [
+            {
+              "kfaCode": "91000270",
+              "name": "Spironolactone",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "tablet_fe",
+      "catalogName": "Tablet Tambah Darah (Fe)",
+      "queryResults": [
+        {
+          "query": "Ferrous Sulfate",
+          "results": [
+            {
+              "kfaCode": "91001171",
+              "name": "Ferrous Sulfate",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Folic Acid",
+          "results": [
+            {
+              "kfaCode": "91000289",
+              "name": "FOLIC ACID",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "tamsulosin_04",
+      "catalogName": "Tamsulosin 0,4 mg",
+      "queryResults": [
+        {
+          "query": "Tamsulosin",
+          "results": [
+            {
+              "kfaCode": "91000324",
+              "name": "Tamsulosin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "tramadol_50",
+      "catalogName": "Tramadol 50 mg",
+      "queryResults": [
+        {
+          "query": "Tramadol",
+          "results": [
+            {
+              "kfaCode": "91000656",
+              "name": "Tramadol",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "triamcinolone_orabase",
+      "catalogName": "Triamsinolon Asetonid 0,1% Orabase",
+      "queryResults": [
+        {
+          "query": "Triamcinolone Acetonide",
+          "results": [
+            {
+              "kfaCode": "91000817",
+              "name": "Triamcinolone Acetonide",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "vitamin_a_kapsul",
+      "catalogName": "Vitamin A 200.000 IU",
+      "queryResults": [
+        {
+          "query": "Retinol",
+          "results": [
+            {
+              "kfaCode": "91000355",
+              "name": "RETINOL",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "vitamin_b_kompleks",
+      "catalogName": "Vitamin B Kompleks",
+      "queryResults": [
+        {
+          "query": "Thiamine",
+          "results": [
+            {
+              "kfaCode": "91000445",
+              "name": "Thiamine",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Riboflavin",
+          "results": [
+            {
+              "kfaCode": "91000682",
+              "name": "RIBOFLAVIN",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Pyridoxine",
+          "results": [
+            {
+              "kfaCode": "91000683",
+              "name": "Pyridoxine",
+              "ucumSymbol": "mg"
+            }
+          ]
+        },
+        {
+          "query": "Nicotinamide",
+          "results": [
+            {
+              "kfaCode": "91000687",
+              "name": "Nicotinamide (Niacinamide)",
+              "ucumSymbol": "mg"
+            },
+            {
+              "kfaCode": "91000834",
+              "name": "Nicotinamide Ribotide",
+              "ucumSymbol": "mg"
+            },
+            {
+              "kfaCode": "91002325",
+              "name": "Benzyl Nicotinamide",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "zinc_oxide_krim",
+      "catalogName": "Zinc Oxide Krim 10%",
+      "queryResults": [
+        {
+          "query": "Zinc Oxide",
+          "results": [
+            {
+              "kfaCode": "91000895",
+              "name": "Zinc Oxide",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
