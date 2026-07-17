@@ -187,10 +187,10 @@ Semua diadjudikasi user via AskUserQuestion: **A1+A2, B1+B2+B3, C2, D3-lite.**
 |---|---|
 | A1 | SELESAI — mekanik B1 (varianKunjungan) mencakup variasi pembuka/penutup teks kunjungan |
 | A2 | SELESAI — storylet Debrief Malam, non-REVISI |
-| B1 | Mekanik SELESAI; konten 27 skenario sedang digenerate workflow `m11-varian-kunjungan-tingkat-a` |
+| B1 | SELESAI (mekanik + konten) — TAPI cakupan konten PARSIAL: dari 16 skenario target ('k1' pertama tiap keluarga, bukan 27 seperti perkiraan awal), hanya **9/16 dapat varian** (3 lolos penuh 2/2, 6 sebagian 1/2), **7/16 gagal verifikasi total (0 varian)** — lihat `docs/M11_VARIAN_KUNJUNGAN_TINGKAT_A_HASIL.md` utk daftar & alasan per-skenario yang gagal. Ada insiden run-duplikat yang kena limit kuota + mengungkap bug silent-pass di skrip workflow (`kumpulkanBantahan`) — didokumentasikan penuh di file yang sama, run-kedua-nya DIBUANG seluruhnya. Perlu keputusan user: terima cakupan 9/16 apa adanya, atau retry 7 skenario gagal + 6 sebagian setelah kuota bulanan pulih/dinaikkan. |
 | B2 | SELESAI — pool 3 narasi klb_verif/klb_5w1h |
 | B3 | SUDAH TERPENUHI kode eksisting (lihat Bagian B di atas) — tak ada pekerjaan baru |
-| C2 | SELESAI PENUH — 3 field (panduanResmi kunjungan, sumber kegiatan, sumber+pinkesga intervensi); konten pengisi belum ditulis |
+| C2 | Skema SELESAI PENUH (3 field: panduanResmi kunjungan, sumber kegiatan, sumber+pinkesga intervensi); **konten pengisi di-assign ke CODEX** (`docs/CODEX_BRIEFING_LANJUTAN.md`, lab clone) — belum dikerjakan saat catatan ini ditulis |
 | D3-lite | SELESAI — rotasi 4 kanal Prolanis + catatan tensi ILP |
 | E-1 | SELESAI — label SAJI di stepper Kunjungan.tsx |
 | E-2 | BELUM — gelombang unfreeze UKM tersendiri, jangan campur rev 41 bila sudah rilis |

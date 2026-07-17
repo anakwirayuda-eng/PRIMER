@@ -82,16 +82,20 @@ digarap, lihat §2.3.
 
 ## 2. Antrean tugas — urutan prioritas
 
-### 2.0 — JANGAN kerjakan sendiri: konten varian-kunjungan Tingkat-A (#5-B1)
+### 2.0 — Status #5-B1 (varian-kunjungan Tingkat-A): SELESAI-PARSIAL, JANGAN dilengkapi sendiri
 
-`src/content/varianKunjunganTingkatAData.ts` mungkin masih `{}` (kosong) atau sudah terisi
-tergantung kapan Anda membaca ini — **cek isi file itu dulu**. Pipeline draf+verifikasi-
-adversarial+perbaikan untuk konten ini (27 skenario kunjungan × 16 keluarga) dijalankan lewat
-tooling orkestrasi milik Claude (bukan sesuatu yang bisa/perlu Anda reproduksi) dan diterapkan
-oleh Claude langsung begitu selesai. **Jangan menulis konten `VARIAN_KUNJUNGAN_TINGKAT_A` sendiri
-dan jangan menunggu file itu terisi sebelum mulai §2.1** — dua pekerjaan ini independen (file
-berbeda, tak saling memblokir). Kalau Anda melihat file itu SUDAH terisi + sudah ter-commit,
-abaikan saja bagian ini dan lanjut ke §2.1.
+Update 2026-07-17 malam: `src/content/varianKunjunganTingkatAData.ts` sudah terisi + ter-commit
+(`70d56fd`), tapi cakupannya **PARSIAL secara sengaja, bukan bug** — dari 16 skenario yang jadi
+target (bukan 27 seperti perkiraan awal), hanya **9/16 lolos verifikasi adversarial** (3 penuh
+2/2 varian, 6 sebagian 1/2 varian); **7/16 gagal verifikasi total** (0 varian, alasan spesifik
+per-skenario ada di `docs/M11_VARIAN_KUNJUNGAN_TINGKAT_A_HASIL.md`). Ini bukan pekerjaan yang
+"belum sempat" — 7 skenario itu SUDAH dicoba dan draf/repair-nya gagal lolos 2 lensa adversarial
+(kontradiksi ground-truth MI, pelanggaran field terkunci, dll). **Jangan menambah varian sendiri
+untuk 7 skenario yang gagal itu** — itu butuh pipeline draf+verifikasi yang sama (tooling
+orkestrasi Claude), bukan sesuatu yang aman ditulis manual tanpa lensa adversarial yang setara.
+Kalau Dr. Wirayuda memutuskan untuk mengejar cakupan penuh nanti, itu akan jadi tugas Claude lagi
+(atau di-assign eksplisit ke Anda dengan instruksi baru) — jangan berinisiatif sendiri di area
+ini. Lanjut ke §2.1, yang independen dari status B1.
 
 ### 2.1 — PRIORITAS UTAMA ANDA: tulis konten sitasi resmi (UKM Decision #2, "C2 penuh")
 
