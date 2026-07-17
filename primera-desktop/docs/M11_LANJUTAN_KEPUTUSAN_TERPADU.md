@@ -195,14 +195,18 @@ Semua diadjudikasi user via AskUserQuestion: **A1+A2, B1+B2+B3, C2, D3-lite.**
 |---|---|
 | A1 | SELESAI — mekanik B1 (varianKunjungan) mencakup variasi pembuka/penutup teks kunjungan |
 | A2 | SELESAI — storylet Debrief Malam, non-REVISI |
-| B1 | SELESAI (mekanik + konten) — TAPI cakupan konten PARSIAL: dari 16 skenario target ('k1' pertama tiap keluarga, bukan 27 seperti perkiraan awal), hanya **9/16 dapat varian** (3 lolos penuh 2/2, 6 sebagian 1/2), **7/16 gagal verifikasi total (0 varian)** — lihat `docs/M11_VARIAN_KUNJUNGAN_TINGKAT_A_HASIL.md` utk daftar & alasan per-skenario yang gagal. Ada insiden run-duplikat yang kena limit kuota + mengungkap bug silent-pass di skrip workflow (`kumpulkanBantahan`) — didokumentasikan penuh di file yang sama, run-kedua-nya DIBUANG seluruhnya. Perlu keputusan user: terima cakupan 9/16 apa adanya, atau retry 7 skenario gagal + 6 sebagian setelah kuota bulanan pulih/dinaikkan. |
+| B1 | SELESAI — konten final **11/16 skenario dapat varian (21 total)** setelah run pertama (9/16) + retry (2 lolos baru, 5 tambah varian). **5/16 TETAP tanpa varian** (dewi_k1/prapto_k1/marni_k1/lastri_k1/karsa_k1) setelah 2 percobaan independen — alasan struktural genuine, bukan kurang usaha; rincian di `docs/M11_VARIAN_KUNJUNGAN_TINGKAT_A_HASIL.md`. Insiden run-duplikat (limit kuota + bug silent-pass di `kumpulkanBantahan`) dibuang seluruhnya & didokumentasikan sbg pelajaran di file yang sama. **Ditutup di angka ini** — retry berikutnya butuh pendekatan berbeda, bukan sekadar ulang. |
 | B2 | SELESAI — pool 3 narasi klb_verif/klb_5w1h |
 | B3 | SUDAH TERPENUHI kode eksisting (lihat Bagian B di atas) — tak ada pekerjaan baru |
 | C2 | **SELESAI** — registry player-facing mencakup 27/27 skenario, 89/89 intervensi, serta Posyandu/Prolanis/KLB; tampil pasca-keputusan. Tidak diinjeksi inline karena `k.arc` di-hash wholesale; lihat `docs/M11_SITASI_UKM_HASIL.md` |
 | D3-lite | SELESAI — rotasi 4 kanal Prolanis + catatan tensi ILP |
 | E-1 | SELESAI — label SAJI di stepper Kunjungan.tsx |
-| E-2 | BELUM — gelombang unfreeze UKM tersendiri, jangan campur rev 41 bila sudah rilis |
+| E-2 | BELUM — gelombang unfreeze UKM tersendiri, jangan campur rev 41 (sudah di-tag Golden Master, lihat di bawah) |
 | F | belum diminta |
 
-Semua commit di lab clone `D:/Dev/PRIMER-CODEX-lab/primera-desktop`, branch
-`codex-gpt56-experiment`, REVISI_ENGINE 41 (satu gelombang unfreeze belum-rilis).
+**Gelombang ini DITUTUP 2026-07-17** — tag `golden-master-m11` (REVISI_ENGINE 41),
+88/88 file test, 976/976 test, typecheck bersih, freeze 17/17, soak-adversarial
+13/13 identik baseline pra-wave. Semua commit di lab clone
+`D:/Dev/PRIMER-CODEX-lab/primera-desktop`, branch `codex-gpt56-experiment`,
+belum di-push. Pekerjaan berikutnya (E-2, M11 #3/#6/#7-riset, atau lainnya)
+adalah gelombang REVISI_ENGINE baru — butuh scoping/greenlight eksplisit dulu.

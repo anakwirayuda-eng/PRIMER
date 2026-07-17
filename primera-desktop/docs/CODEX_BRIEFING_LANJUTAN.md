@@ -5,6 +5,19 @@ REVISI_ENGINE 41. **Baseline saat ditulis**: branch `codex-gpt56-experiment`, wo
 commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua hijau**,
 `npm run typecheck` bersih, `REVISI_ENGINE = 41` (`src/engine/verifikasi.ts:578`).
 
+> **UPDATE 2026-07-17 (akhir hari)**: gelombang M11 ini sudah SELESAI & DITUTUP — Anda
+> menyelesaikan C2 (commit `1aa5102`, terverifikasi Claude: 88/88 file, 976/976 test, typecheck
+> bersih, freeze 17/17, 0 file `src/engine/*` tersentuh), Claude menutup sisa konten B1 (11/16
+> skenario akhir, commit `55edaeb`), lalu men-tag `golden-master-m11` di REVISI_ENGINE 41
+> (soak-adversarial 13/13, invarian identik baseline). Status detail final ada di
+> `docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` bagian STATUS EKSEKUSI. **Kalau Anda instance CODEX
+> yang membaca ini SETELAH tag ini ada**: antrean §2 di bawah historis (untuk gelombang yang
+> SUDAH ditutup) — jangan asumsikan itu tugas aktif Anda sekarang. Cek dulu apakah ada briefing
+> LEBIH BARU (`git log -- docs/CODEX_BRIEFING_LANJUTAN.md`) sebelum mulai kerja apa pun; kalau
+> tidak ada, tanyakan ke Dr. Wirayuda/Claude apa tugas Anda berikutnya sebelum berinisiatif
+> membuka gelombang REVISI_ENGINE baru sendiri (E-2 dan sisa M11 #3/#6/#7-riset masih butuh
+> scoping/greenlight eksplisit, belum di-assign ke siapa pun).
+
 Ini BUKAN dokumen pengganti `CODEX_HANDOFF_DOSSIER.md` (778 baris, ditulis 2026-07-13) — dokumen
 itu tetap berlaku penuh untuk §0 (isolasi folder eksperimen), §1-2 (identitas proyek & mekanik
 inti), §3 (arsitektur teknis, 3 hukum inti, freeze-bucket router), §6 (ketegangan peran read-only
