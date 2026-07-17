@@ -362,6 +362,33 @@ describe('M2.9 — Respons KLB memutus kluster', () => {
     expect(s.tally.klbTuntas).toBe(1)
     expect(s.desa.surveilans.filter((e) => e.rw === 4 && e.kasusId === 'dengue_df')).toHaveLength(0)
   })
+
+  it('aksi pengendalian salah tidak bisa diselamatkan skor agregat 2/3', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = siangDariState(s, HARI_BUKA_KLB.karier)
+    s = {
+      ...s,
+      desa: {
+        ...s.desa,
+        surveilans: [
+          { hari: s.hari, rw: 4, kasusId: 'dengue_df' },
+          { hari: s.hari, rw: 4, kasusId: 'dengue_df' },
+        ],
+      },
+    }
+    s = run(s, { type: 'MULAI_KLB', rw: 4, kasusId: 'dengue_df' })
+    while (s.kegiatan) {
+      const kartu = s.kegiatan.kartu[s.kegiatan.index]!
+      const pilihan = kartu.pilihan.find((p) =>
+        kartu.id === 'klb_aksi' ? !p.benar : p.benar,
+      )!
+      s = run(s, { type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: pilihan.id })
+    }
+
+    expect(s.hasilKegiatanTerakhir?.skor).toBeCloseTo(2 / 3)
+    expect(s.tally.klbTuntas).toBe(0)
+    expect(s.desa.surveilans.filter((e) => e.rw === 4 && e.kasusId === 'dengue_df')).toHaveLength(2)
+  })
 })
 
 describe('M2.11 — Lokakarya Mini flag', () => {

@@ -580,7 +580,11 @@ function fnv1a(teks: string): string {
 // tidak masuk tally/indikator/TTM/arc dan menunda karma satu kali; outcome
 // kunjungan menjadi enam-arah; 82 gaya konfrontasi direklasifikasi ke empat
 // righting-reflex primer. Save lama menurunkan hasilAkhir dan kualitasSaji.
-export const REVISI_ENGINE = 42
+// 43 (2026-07-17 — bridge UKM↔UKP P0-A): penutupan kluster KLB kini selain
+// skor agregat >=0,66 juga mensyaratkan kartu tindakan pengendalian
+// (`klb_aksi`) benar. Replay lama yang memperoleh 2/3 dengan aksi spesifik
+// salah tidak lagi menghapus kluster/menambah klbTuntas/bonus IKS.
+export const REVISI_ENGINE = 43
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

@@ -1622,8 +1622,13 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
     }
   } else if (hasil.jenis === 'klb' && hasil.rw !== undefined && hasil.kasusId !== undefined) {
     // Respons KLB tuntas: buang entri surveilans kluster itu (penularan diputus)
-    // + bonus IKS RW; buruk = kluster tetap menyala.
-    if (hasil.skor >= 0.66) {
+    // + bonus IKS RW; buruk = kluster tetap menyala. Skor agregat saja tidak
+    // cukup: dua langkah investigasi generik yang benar tak boleh menutupi
+    // tindakan pengendalian penyakit-spesifik yang salah.
+    const aksiPengendalianBenar = hasil.jawaban.find(
+      (jawaban) => jawaban.kartuId === 'klb_aksi',
+    )?.benar === true
+    if (hasil.skor >= 0.66 && aksiPengendalianBenar) {
       tally.klbTuntas += 1
       const kunciFlag = `cluster_${hasil.kasusId}_rw${hasil.rw}`
       const { [kunciFlag]: _reset, ...flagsSisa } = next.flags
