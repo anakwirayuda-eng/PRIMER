@@ -472,7 +472,11 @@ describe('selfplay: karma keluarga_wulan yang diabaikan (playthrough kedua)', ()
     expect(suratKarma[0]?.kaitKeluargaId).toBe('keluarga_wulan')
 
     // Bu Wulan muncul sebagai pasien stroke di DEPAN antrian hari itu.
-    expect(antrianHariKarma.some((p) => p.kasusId === 'stroke_iskemik' && p.followUpDari)).toBe(true)
+    expect(
+      antrianHariKarma.some(
+        (p) => p.kasusId === 'stroke_iskemik' && p.followUpDari && p.konsekuensiKarma === true,
+      ),
+    ).toBe(true)
 
     // Arc keluarga dinyatakan gagal; jam pasir dikonsumsi (tidak meletus dua kali).
     const kel = s.desa.keluarga['keluarga_wulan']

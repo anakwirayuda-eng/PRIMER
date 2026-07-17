@@ -595,7 +595,10 @@ function fnv1a(teks: string): string {
 // 46 (2026-07-17 - Bridge B1.2): verifikasi janji PIS-PK yang ingkar
 // membuka kembali beat keluarga terakhir dan membuat follow-up jatuh tempo,
 // sehingga instruksi "kunjungi lagi" kini dapat dimainkan.
-export const REVISI_ENGINE = 46
+// 47 (2026-07-17 - Bridge B1.3): pasien akibat ledakan karma membawa
+// provenance eksplisit. Penanganan klinis grade A membuka kembali jalur
+// pemulihan keluarga tanpa membatalkan tally karma atau memajukan arc gratis.
+export const REVISI_ENGINE = 47
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

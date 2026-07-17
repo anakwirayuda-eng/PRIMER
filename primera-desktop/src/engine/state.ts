@@ -62,6 +62,8 @@ export interface PasienAktif {
   bonusTrust: boolean
   /** Pasien follow-up konsekuensi (kembali memburuk). */
   followUpDari?: string
+  /** Pasien ini muncul langsung dari ledakan karma keluarga, bukan follow-up biasa. */
+  konsekuensiKarma?: boolean
   /**
    * Pasien Program Rujuk Balik (M3.13): sudah distabilkan RS, kembali untuk
    * kontrol lanjutan di FKTP — memulangkan dengan obat lanjutan = TEPAT,

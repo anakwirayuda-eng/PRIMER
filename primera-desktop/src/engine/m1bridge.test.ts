@@ -5,8 +5,11 @@
 
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
-import type { GameState } from './state'
+import type { EncounterState, GameState } from './state'
 import type { Action } from './actions'
+import { buatEncounter } from './clinic'
+import { Rng } from './core/rng'
+import { buatPasienDariKasus } from './director'
 import { advance } from './reducer'
 import { buildInitialState } from './init'
 import { clusterAktif } from './surveilans'
@@ -115,6 +118,62 @@ function sampaiSiang(s: GameState, hari: number): GameState {
   return cur
 }
 
+function encounterKarmaPrapto(
+  diagnosisBenar = true,
+  konsekuensiKarma = true,
+): EncounterState {
+  const kasus = PACK.kasus['demam_tifoid']!
+  const keluarga = PACK.keluarga['keluarga_prapto']!
+  const anggota = keluarga.anggota[2]!
+  const pasien = buatPasienDariKasus(kasus.id, PACK, new Rng(SEED, 'b1.3'), {
+    nama: anggota.nama,
+    usia: anggota.usia,
+    jenisKelamin: anggota.jenisKelamin,
+    keluargaId: keluarga.id,
+    rw: keluarga.rw,
+    followUpDari: 'Konsekuensi karma keluarga Prapto',
+    konsekuensiKarma,
+  })
+  return {
+    ...buatEncounter(pasien),
+    fase: 'disposisi',
+    ditanya: kasus.anamnesis.filter((q) => !q.distraktor).map((q) => q.id),
+    vitalDiukur: true,
+    diperiksa: kasus.pemeriksaanFisik.filter((p) => p.relevan).map((p) => p.region),
+    labDipesan: kasus.lab.filter((l) => l.relevan).map((l) => l.id),
+    labTersedia: kasus.lab.filter((l) => l.relevan).map((l) => l.id),
+    diagnosis: { icd10: diagnosisBenar ? kasus.icd10 : 'A90', jenis: 'tegak' },
+    resep: [
+      ...kasus.tatalaksana.obatBenar,
+      ...(kasus.tatalaksana.obatAlternatif ?? []).flatMap((grup) => (grup[0] ? [grup[0]] : [])),
+    ],
+    tindakan: kasus.tatalaksana.prosedur ?? [],
+    edukasi: kasus.tatalaksana.edukasi.slice(0, 3),
+    disposisi: 'pulang',
+  }
+}
+
+function stateKarmaPrapto(encounter: EncounterState): GameState {
+  const awal = buildInitialState('Uji', SEED, PACK)
+  const keluarga = awal.desa.keluarga['keluarga_prapto']!
+  return {
+    ...awal,
+    hari: 3,
+    tutorialAktif: false,
+    jadwal: awal.jadwal.filter((j) => j.keluargaId !== 'keluarga_prapto'),
+    tally: { ...awal.tally, karmaTerjadi: 1 },
+    desa: {
+      ...awal.desa,
+      binaan: [...new Set([...awal.desa.binaan, 'keluarga_prapto'])],
+      keluarga: {
+        ...awal.desa.keluarga,
+        keluarga_prapto: { ...keluarga, arcIndex: 0, arcSelesai: 'gagal' },
+      },
+    },
+    klinik: { ...awal.klinik, aktif: encounter, antrian: [] },
+  }
+}
+
 describe('M1.1 — bridge bertingkat (partial menunda, gagal mempercepat)', () => {
   it('partial (hipotesis benar, intervensi salah) menunda karma +3 hari', () => {
     let s = buildInitialState('Uji', SEED, PACK)
@@ -145,6 +204,47 @@ describe('M1.1 — bridge bertingkat (partial menunda, gagal mempercepat)', () =
     expect(s.hasilKunjunganHariIni?.tingkat).toBe('berhasil')
     expect(s.jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === 'keluarga_wulan')).toBe(false)
     expect(s.tally.karmaDicegah).toBe(1)
+  })
+})
+
+describe('B1.3 — klinik membuka pemulihan keluarga setelah karma', () => {
+  it('penanganan A atas pasien karma membuka ulang beat UKM tanpa menghapus konsekuensi', () => {
+    const awal = stateKarmaPrapto(encounterKarmaPrapto())
+    const akhir = run(awal, { type: 'DISPOSISI', jenis: 'pulang' })
+
+    expect(akhir.klinik.selesaiHariIni.at(-1)?.grade).toBe('A')
+    expect(akhir.tally.karmaTerjadi).toBe(1)
+    expect(akhir.tally.karmaDicegah).toBe(0)
+    expect(akhir.desa.keluarga['keluarga_prapto']?.arcSelesai).toBeUndefined()
+    expect(akhir.desa.keluarga['keluarga_prapto']?.arcIndex).toBe(0)
+    expect(akhir.desa.keluarga['keluarga_prapto']?.followUpHari).toBe(4)
+    expect(
+      akhir.inbox.some(
+        (surat) => surat.kaitKeluargaId === 'keluarga_prapto' && surat.judul.includes('Krisis akut tertangani'),
+      ),
+    ).toBe(true)
+
+    const dibuka = run(
+      { ...akhir, blok: 'siang', lapanganTerpakai: false, hasilKunjunganHariIni: undefined },
+      { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_prapto' },
+    )
+    expect(dibuka.kunjungan?.skenarioId).toBe('prapto_k1')
+  })
+
+  it('follow-up generik atau penanganan di bawah A tidak memulihkan keluarga', () => {
+    const generik = run(
+      stateKarmaPrapto(encounterKarmaPrapto(true, false)),
+      { type: 'DISPOSISI', jenis: 'pulang' },
+    )
+    expect(generik.klinik.selesaiHariIni.at(-1)?.grade).toBe('A')
+    expect(generik.desa.keluarga['keluarga_prapto']?.arcSelesai).toBe('gagal')
+
+    const salah = run(
+      stateKarmaPrapto(encounterKarmaPrapto(false, true)),
+      { type: 'DISPOSISI', jenis: 'pulang' },
+    )
+    expect(salah.klinik.selesaiHariIni.at(-1)?.grade).not.toBe('A')
+    expect(salah.desa.keluarga['keluarga_prapto']?.arcSelesai).toBe('gagal')
   })
 })
 

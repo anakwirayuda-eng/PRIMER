@@ -807,9 +807,77 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // sebelum pemain menegakkannya sendiri. Kini hanya deteksi BENAR yang
       // menyalakan surveilans (realistis: PWS dibangun dari laporan diagnosis
       // yang tepat; wabah tak terdeteksi memang tak muncul di peta).
+      // Bridge B1.3: karma yang SUDAH terjadi tidak dianggap tercegah,
+      // tetapi penanganan klinis A atas pasien karma membuka jalur
+      // pemulihan keluarga. Provenance eksplisit mencegah follow-up biasa,
+      // PRB, atau boomerang SISRUTE memulihkan krisis yang bukan asalnya.
+      let keluargaSetelahKlinik = s.desa.keluarga
+      let suratPemulihanKeluarga: Surat | undefined
+      const keluargaIdKarma = encFinal.pasien.keluargaId
+      if (
+        encFinal.pasien.konsekuensiKarma === true &&
+        keluargaIdKarma &&
+        penilaianFinal.grade === 'A'
+      ) {
+        const kel = s.desa.keluarga[keluargaIdKarma]
+        const kelContent = pack.keluarga[keluargaIdKarma]
+        const arcAktif = kelContent
+          ? arcKunjunganAktif(pack, kelContent, s.mode, s.contentRelease)
+          : []
+        const cocokDenganKarma = arcAktif.some(
+          (skenario) => skenario.karma?.kasusId === kasus.id,
+        )
+        if (
+          kel &&
+          kelContent &&
+          kel.arcSelesai === 'gagal' &&
+          cocokDenganKarma &&
+          arcAktif.length > 0
+        ) {
+          const { arcSelesai: _gagal, ...kelTanpaGagal } = kel
+          keluargaSetelahKlinik = {
+            ...s.desa.keluarga,
+            [keluargaIdKarma]: {
+              ...kelTanpaGagal,
+              // Klinik menangani krisis akut, bukan menyelesaikan akar UKM.
+              // Pertahankan beat yang belum berhasil agar tetap harus dimainkan.
+              arcIndex: Math.min(kel.arcIndex, arcAktif.length - 1),
+              followUpHari: s.hari + 1,
+            },
+          }
+          suratPemulihanKeluarga = {
+            id: `surat_pemulihan_${s.hari}_${keluargaIdKarma}`,
+            hari: s.hari,
+            jenis: 'kabar_warga',
+            dari: 'Perawat poli',
+            judul: `Krisis akut tertangani - ${kelContent.namaKeluarga}`,
+            isi:
+              `${encFinal.pasien.nama} sudah tertangani dengan baik di Puskesmas. ` +
+              'Krisis akutnya mereda, tetapi akar risiko di rumah belum selesai. ' +
+              'Jalur kunjungan keluarga dibuka kembali mulai besok untuk pemulihan dan pencegahan kekambuhan.',
+            dibaca: false,
+            kaitKeluargaId: keluargaIdKarma,
+          }
+          events.push({ type: 'SURAT_MASUK', surat: suratPemulihanKeluarga })
+        }
+      }
+
+      const desaSetelahKlinik = keluargaSetelahKlinik === s.desa.keluarga
+        ? s.desa
+        : { ...s.desa, keluarga: keluargaSetelahKlinik }
       const desaBaru = kasusMenular(kasus) && nilai.diagnosisBenar
-        ? { ...s.desa, surveilans: [...s.desa.surveilans, { hari: s.hari, rw: encFinal.pasien.rw, kasusId: kasus.id }] }
-        : s.desa
+        ? {
+            ...desaSetelahKlinik,
+            surveilans: [
+              ...desaSetelahKlinik.surveilans,
+              { hari: s.hari, rw: encFinal.pasien.rw, kasusId: kasus.id },
+            ],
+          }
+        : desaSetelahKlinik
+      const suratBaruKlinik: Surat[] = [
+        ...(suratSisrute ? [suratSisrute] : []),
+        ...(suratPemulihanKeluarga ? [suratPemulihanKeluarga] : []),
+      ]
 
       // Tutorial (DeepThink "onboarding railroaded", keputusan user): encounter
       // PERTAMA stase baru KEBAL skor sepenuhnya — semua agregat scoring
@@ -862,7 +930,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             aktif: undefined,
             selesaiHariIni: [...s.klinik.selesaiHariIni, penilaianTampil],
           },
-          ...(suratSisrute && !kebalTutorial ? { inbox: [...s.inbox, suratSisrute] } : {}),
+          ...(suratBaruKlinik.length > 0 && !kebalTutorial
+            ? { inbox: [...s.inbox, ...suratBaruKlinik] }
+            : {}),
           tutorialAktif: false,
         },
         events: eventsFinal,
@@ -1870,6 +1940,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     bpjs?: boolean
     persona?: Persona
     prb?: boolean
+    /** Provenance eksplisit agar callback keluarga tidak dipicu follow-up generik. */
+    konsekuensiKarma?: boolean
     /** Fix #14: labId hasil yg sudah tersedia, dibawa ke encounter baru. */
     labId?: string
   }
@@ -1970,6 +2042,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           kasusId: j.kasusId,
           catatan: j.catatan ?? '',
           keluargaId: j.keluargaId,
+          konsekuensiKarma: true,
           rw: kelContent.rw,
           ...(j.nama ? { nama: j.nama } : {}),
           ...(j.usia !== undefined ? { usia: j.usia } : {}),
@@ -2375,6 +2448,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       ...(p.bpjs !== undefined ? { bpjs: p.bpjs } : {}),
       ...(p.persona ? { persona: p.persona } : {}),
       ...(p.prb ? { prb: true } : {}),
+      ...(p.konsekuensiKarma ? { konsekuensiKarma: true } : {}),
       // Fix #14 (audit CODEX 2026-07-11): hasil lab yg sudah tersedia dibawa
       // ke encounter baru — buatEncounter (clinic.ts) pra-isi labDipesan/
       // labTersedia dari field ini, jadi hasilnya langsung terlihat tanpa
