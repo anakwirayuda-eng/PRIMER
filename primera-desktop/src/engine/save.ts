@@ -60,6 +60,26 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // mengarsipkannya secara netral tanpa pernah melanjutkannya di build baru.
   if (st['contentRelease'] === undefined) st['contentRelease'] = LEGACY_CONTENT_RELEASE
   if (typeof st['contentRelease'] !== 'string' || st['contentRelease'].length === 0) return null
+
+  // E-2: hasil kunjungan lama belum memiliki outcome enam-arah dan kualitas
+  // komunikasi gabungan. Keduanya dapat diturunkan tanpa mengubah tally.
+  if (objek(st['hasilKunjunganHariIni'])) {
+    const hasil = st['hasilKunjunganHariIni'] as Record<string, unknown>
+    if (hasil['hasilAkhir'] === undefined) {
+      hasil['hasilAkhir'] = hasil['diusir'] === true
+        ? 'diusir'
+        : hasil['tingkat'] === 'berhasil' || hasil['tingkat'] === 'partial' || hasil['tingkat'] === 'gagal'
+          ? hasil['tingkat']
+          : hasil['berhasil'] === true
+            ? 'berhasil'
+            : 'gagal'
+    }
+    if (hasil['kualitasSaji'] === undefined) {
+      hasil['kualitasSaji'] = typeof hasil['kualitasMi'] === 'number' && Number.isFinite(hasil['kualitasMi'])
+        ? hasil['kualitasMi']
+        : 0
+    }
+  }
   if (!objek(st['klinik'])) return null
   if (!objek(st['desa'])) return null
   if (!objek(st['tally'])) return null

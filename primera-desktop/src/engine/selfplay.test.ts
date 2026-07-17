@@ -26,7 +26,7 @@ import { skenarioEfektif } from './kunjungan'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
 import type { GameState, PasienAktif, PenilaianEncounter } from './state'
-import type { SkenarioKunjungan } from '@content/types'
+import { isGayaTerlarang, type SkenarioKunjungan } from '@content/types'
 
 /* ---------------------------------------------------------------------------
  * Helper dasar
@@ -279,7 +279,7 @@ function mainkanKunjunganTepat(
 
   let deltaTrustHarapan = 0
   for (const node of skenario.dialog) {
-    const tepat = node.pilihan.find((p) => p.tepat && p.gaya !== 'konfrontasi')
+    const tepat = node.pilihan.find((p) => p.tepat && !isGayaTerlarang(p.gaya))
     if (!tepat) throw new Error(`Node ${node.id} tidak punya pilihan tepat non-konfrontasi`)
     deltaTrustHarapan += tepat.efekTrust
     s = run(s, { type: 'PILIH_DIALOG', pilihanId: tepat.id }).state
@@ -288,7 +288,12 @@ function mainkanKunjunganTepat(
   s = run(s, { type: 'KOMIT_HAMBATAN', hipotesis: skenario.hambatanSebenarnya }).state
   const kartu = skenario.intervensi.find((i) => i.cocokUntuk.includes(skenario.hambatanSebenarnya))
   if (!kartu) throw new Error(`Skenario ${skenario.id} tidak punya intervensi yang cocok`)
-  const penutup = run(s, { type: 'PILIH_INTERVENSI', intervensiId: kartu.id })
+  let penutup = run(s, { type: 'PILIH_INTERVENSI', intervensiId: kartu.id })
+  if (penutup.state.kunjungan?.fase === 'ingatkan' && skenario.pilihanIngatkan) {
+    const ingatkan = skenario.pilihanIngatkan.pilihan.find((p) => p.tepat)
+    if (!ingatkan) throw new Error(`Skenario ${skenario.id} tidak punya Ingatkan tepat`)
+    penutup = run(penutup.state, { type: 'PILIH_INGATKAN', pilihanId: ingatkan.id })
+  }
 
   return {
     state: penutup.state,
@@ -500,7 +505,7 @@ describe('selfplay: kunjungan rumah keluarga_wulan (hari 3 siang)', () => {
     expect(hasil?.diusir).toBe(false)
     expect(hasil?.hipotesisBenar).toBe(true)
     expect(hasil?.kualitasMi).toBe(100)
-    expect(hasil?.narasiPenutup).toBe(kunjungan.skenario.penutupBerhasil)
+    expect(hasil?.narasiPenutup).toContain(kunjungan.skenario.penutupBerhasil)
   })
 
   it('trust naik sesuai kualitas pilihan MI (bukan frekuensi)', () => {

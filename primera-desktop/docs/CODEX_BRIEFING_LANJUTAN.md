@@ -5,6 +5,12 @@ REVISI_ENGINE 41. **Baseline saat ditulis**: branch `codex-gpt56-experiment`, wo
 commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua hijau**,
 `npm run typecheck` bersih, `REVISI_ENGINE = 41` (`src/engine/verifikasi.ts:578`).
 
+> **UPDATE TERBARU 2026-07-17:** Prioritas 2, **M11 E-2 SAJI Fase-2, sudah
+> disetujui dan selesai diimplementasikan**. Runtime kini berada pada
+> `REVISI_ENGINE=42` dan content release `m11-e2-saji-pilot-2026-07-17`.
+> Prioritas aktif berikutnya adalah §2.3; rincian final E-2 ada di
+> `docs/M11_E2_SAJI_DECISION_PROPOSAL.md`.
+
 > **UPDATE 2026-07-17 (akhir hari)**: gelombang M11 SELESAI & DITUTUP — Anda menyelesaikan C2
 > (commit `1aa5102`, terverifikasi Claude: 88/88 file, 976/976 test, typecheck bersih, freeze
 > 17/17, 0 file `src/engine/*` tersentuh), Claude menutup sisa konten B1 (11/16 skenario akhir,
@@ -155,12 +161,12 @@ untuk Dr. Wirayuda baca, bukan implementasi.
 
 ### 2.2 — PRIORITAS 2: E-2 (SAJI Fase-2) — gelombang unfreeze BARU, REVISI_ENGINE 42
 
-> **STATUS CODEX 2026-07-17: PROPOSAL KEPUTUSAN SELESAI, BELUM IMPLEMENTASI.**
-> Lihat `docs/M11_E2_SAJI_DECISION_PROPOSAL.md`. Audit literal 82/82 pilihan
-> `konfrontasi` dan verifikasi visual Permenkes 39/2016 hlm. 100-105 menemukan
-> koreksi penting: `ditolak_total`/`diterima_terpaksa` harus menjadi penutupan
-> kontak awal sebelum pembahasan masalah, bukan indikator terverifikasi-rapuh
-> setelah MI. Menunggu keputusan D1-D4 sebelum unfreeze.
+> **STATUS CODEX 2026-07-17: SELESAI DIIMPLEMENTASIKAN.** Dr. Wirayuda
+> menyetujui rekomendasi paket E-2. Implementasi mencakup 5 pilot Ingatkan,
+> kualitas SAJI 80/20 tanpa mengubah gate MI, 2 penutupan kontak awal Career,
+> 82/82 reklasifikasi gaya, migrasi save, UI/debrief, release bump, dan
+> unfreeze sadar ke `REVISI_ENGINE=42`. Instruksi rinci di bawah dipertahankan
+> sebagai audit trail, bukan lagi antrean aktif.
 
 Ini **menyentuh engine beku** (`state.ts`/`kunjungan.ts`/`reducer.ts`/`scoring.ts`) — ikuti
 disiplin unfreeze-dance PENUH (`CODEX_HANDOFF_DOSSIER.md` §3/§7): test-first (merah→hijau
@@ -232,11 +238,9 @@ alias `diusir`, itu SALAH — akan menghukum pemain yang sudah bermain benar.
 - Debrief jadi bisa merujuk subtipe spesifik ("gaya menggurui terdeteksi" bukan cuma
   "konfrontasi") — cek `catatanPedagogis`/render debrief mana yang perlu ikut diperbarui.
 
-**Setelah E-2 selesai penuh** (semua 3 sub-item, suite hijau, freeze-dance selesai): tag Golden
-Master baru mengikuti PERSIS proses yang Claude jalankan utk `golden-master-m11` (lihat §1) —
-soak-adversarial, lalu `git tag -a golden-master-m11.5-e2` (atau nama lain yang masuk akal) dgn
-pesan annotated lengkap. Update `docs/M11_LANJUTAN_KEPUTUSAN_TERPADU.md` STATUS EKSEKUSI +
-memori sesi Anda sendiri (kalau CODEX punya mekanisme memory) mencatat penutupan ini.
+**Penutupan E-2:** ketiga sub-item, soak, freeze, build, dan pembaruan status
+sudah dilakukan. Commit checkpoint dibuat terpisah; tag Golden Master baru
+tidak dibuat tanpa instruksi eksplisit pemilik.
 
 ### 2.3 — PRIORITAS 3: M11 #3/#6/#7-riset — PROPOSE-ONLY, JANGAN implementasi
 

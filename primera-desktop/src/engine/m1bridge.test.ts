@@ -99,6 +99,11 @@ function mainkanKunjungan(
     type: 'PILIH_INTERVENSI',
     intervensiId: opsi.intervensi === 'cocok' ? kartuCocok.id : kartuSalah.id,
   })
+  if (cur.kunjungan?.fase === 'ingatkan') {
+    const pengingatTepat = skenario.pilihanIngatkan?.pilihan.find((pilihan) => pilihan.tepat)
+    if (!pengingatTepat) throw new Error('babak ingatkan tanpa pilihan tepat')
+    cur = run(cur, { type: 'PILIH_INGATKAN', pilihanId: pengingatTepat.id })
+  }
   return cur
 }
 

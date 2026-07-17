@@ -15,7 +15,7 @@ import type { Hambatan, PilihanDialog } from '@content/types'
 import { PACK } from '@content/index'
 import { sitasiIntervensiUkm } from '@content/ukmCitations'
 import { hashSeed, Rng } from '@engine/core/rng'
-import { arcKunjunganAktif, skenarioEfektif } from '@engine/kunjungan'
+import { arcKunjunganAktif, hariTindakLanjutKunjungan, skenarioEfektif } from '@engine/kunjungan'
 import { acakUrutan } from '../utils/acakUrutan'
 import { RumahIlustrasi } from './kunjungan/RumahIlustrasi'
 import { useRadioGroup } from '../useRadioGroup'
@@ -38,13 +38,21 @@ const BABAK: { fase: BabakKunjunganFase; label: string; sajiLabel: string }[] = 
   { fase: 'wawancara', label: 'Wawancara', sajiLabel: 'A — Ajak Bicara' },
   { fase: 'diagnosis_perilaku', label: 'Diagnosis Perilaku', sajiLabel: 'J — Jelaskan & Bantu' },
   { fase: 'resep_sosial', label: 'Resep Sosial', sajiLabel: 'J — Jelaskan & Bantu' },
+  { fase: 'ingatkan', label: 'Ingatkan', sajiLabel: 'I — Ingatkan' },
 ]
 
 const GAYA_INFO: Record<PilihanDialog['gaya'], { label: string; simbol: string }> = {
   empati: { label: 'Empati', simbol: '♡' },
   refleksi: { label: 'Refleksi', simbol: '↺' },
   edukasi: { label: 'Edukasi', simbol: '✎' },
-  konfrontasi: { label: 'Konfrontasi', simbol: '!' },
+  menghakimi: { label: 'Menghakimi', simbol: '!' },
+  menggurui: { label: 'Menggurui', simbol: '!' },
+  menakut_nakuti: { label: 'Menakut-nakuti', simbol: '!' },
+  memaksa: { label: 'Memaksa', simbol: '!' },
+}
+
+function isiPlaceholderJadwal(teks: string, hari: number): string {
+  return teks.replaceAll('{jadwal}', `Hari ${hari}`)
 }
 
 const KARTU_HAMBATAN: { id: Hambatan; judul: string; sub: string; deskripsi: string }[] = [
@@ -161,6 +169,24 @@ export function Kunjungan() {
     return node ? acakUrutan(node.pilihan, state.seed, 'kunjungan-dialog', dialogIndexAktif) : []
   }, [skenario, dialogIndexAktif, state.seed])
 
+  const arcAktif = kelContent
+    ? arcKunjunganAktif(PACK, kelContent, state.mode, state.contentRelease)
+    : []
+  const arcTamat = Boolean(kj && arcAktif.findIndex((item) => item.id === kj.skenarioId) === arcAktif.length - 1)
+  const hariJanji = hariTindakLanjutKunjungan(state.hari, state.mode, arcTamat)
+  const pilihanIngatkanAcak = useMemo(
+    () => skenario?.pilihanIngatkan
+      ? acakUrutan(skenario.pilihanIngatkan.pilihan, state.seed, 'kunjungan-ingatkan', 0)
+      : [],
+    [skenario, state.seed],
+  )
+  const pilihanPenerimaanAcak = useMemo(
+    () => skenario?.penerimaanAwal
+      ? acakUrutan(skenario.penerimaanAwal.pilihan, state.seed, 'kunjungan-penerimaan', 0)
+      : [],
+    [skenario, state.seed],
+  )
+
   // CODEX ronde-13: `kj.hotspotDitemukan` korup (bukan array) crash `.includes`
   // di bawah bila lolos guard tanpa cek ini.
   if (!kj || !kelContent || !skenario || !Array.isArray(kj.hotspotDitemukan)) {
@@ -202,6 +228,14 @@ export function Kunjungan() {
     dispatch({ type: 'PILIH_INTERVENSI', intervensiId: intervensiPilihan })
   }
 
+  function pilihIngatkan(pilihanId: string) {
+    dispatch({ type: 'PILIH_INGATKAN', pilihanId })
+  }
+
+  function responsPenerimaan(pilihanId: string) {
+    dispatch({ type: 'RESPONS_PENERIMAAN', pilihanId })
+  }
+
   /* -- Kunci panel bawah per babak (remount → transisi halus) ---------------- */
   const kunciPanel =
     kj.fase === 'wawancara'
@@ -223,7 +257,7 @@ export function Kunjungan() {
                 mode-policy — konsisten dgn progres KartuKeluarga/PetaDesa. */}
             <span className="chip">
               Kunjungan ke-
-              {nomorKunjunganArc(kj.skenarioId, arcKunjunganAktif(PACK, kelContent, state.mode, state.contentRelease))}
+              {nomorKunjunganArc(kj.skenarioId, arcAktif)}
             </span>
           </div>
         </div>
@@ -278,7 +312,7 @@ export function Kunjungan() {
 
         {/* Catatan temuan observasi — panel samping (sibling panggung, tak lagi
             menutupi scene) — tetap terlihat sampai wawancara usai */}
-        {kj.fase !== 'resep_sosial' && (
+        {(kj.fase === 'observasi' || kj.fase === 'wawancara' || kj.fase === 'diagnosis_perilaku') && (
           <aside className="kunjungan-temuan">
             <div className="kunjungan-temuan__judul mono">CATATAN OBSERVASI</div>
             {temuan.length === 0 ? (
@@ -297,6 +331,32 @@ export function Kunjungan() {
 
       {/* ---------------- Panel bawah per babak ---------------- */}
       <div className="kunjungan-panel" key={kunciPanel}>
+        {kj.fase === 'penerimaan' && skenario.penerimaanAwal && (
+          <div className="kunjungan-pembuka kunjungan-penerimaan kertas">
+            <div className="baris baris--antara">
+              <span className="chip chip--biru">KONTAK PERTAMA</span>
+              <span className="teks-xs teks-lembut">{kelContent.namaKeluarga}</span>
+            </div>
+            <p className="kunjungan-pembuka__teks">{skenario.penerimaanAwal.narasi}</p>
+            <div className="kunjungan-pilihan-baris" role="group" aria-label="Respons terhadap penerimaan keluarga">
+              {pilihanPenerimaanAcak.map((pilihan) => (
+                <button
+                  key={pilihan.id}
+                  className="kunjungan-pilihan kartu kartu--klik"
+                  onClick={() => responsPenerimaan(pilihan.id)}
+                >
+                  <span className="kunjungan-pilihan__teks">
+                    {isiPlaceholderJadwal(
+                      pilihan.teks,
+                      state.hari + skenario.penerimaanAwal!.ulangDalamHari,
+                    )}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {kj.fase === 'observasi' && (
           <div className="kunjungan-pembuka kertas">
             <p className="kunjungan-pembuka__teks">{skenario.pembuka}</p>
@@ -477,6 +537,29 @@ export function Kunjungan() {
               >
                 Tulis Resep Sosial ✎
               </button>
+            </div>
+          </div>
+        )}
+
+        {kj.fase === 'ingatkan' && skenario.pilihanIngatkan && (
+          <div className="kunjungan-ingatkan kertas">
+            <div className="baris baris--antara">
+              <span className="chip chip--biru">I — INGATKAN</span>
+              <span className="teks-xs teks-lembut">Penutup SAJI</span>
+            </div>
+            <p className="kunjungan-pembuka__teks">{skenario.pilihanIngatkan.prompt}</p>
+            <div className="kunjungan-pilihan-baris" role="group" aria-label="Pilihan pengingat penutup">
+              {pilihanIngatkanAcak.map((pilihan) => (
+                <button
+                  key={pilihan.id}
+                  className="kunjungan-pilihan kartu kartu--klik"
+                  onClick={() => pilihIngatkan(pilihan.id)}
+                >
+                  <span className="kunjungan-pilihan__teks">
+                    {isiPlaceholderJadwal(pilihan.teks, hariJanji)}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
         )}

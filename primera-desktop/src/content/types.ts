@@ -601,11 +601,24 @@ export interface HotspotRumah {
 
 /* -- Babak 2: WAWANCARA MI/OARS ---------------------------------------------- */
 
+export type GayaDialogTerlarang =
+  | 'menghakimi'
+  | 'menggurui'
+  | 'menakut_nakuti'
+  | 'memaksa'
+
+export type GayaDialog = 'empati' | 'refleksi' | 'edukasi' | GayaDialogTerlarang
+
+/** Semua gaya righting-reflex memakai satu pagar engine yang sama. */
+export function isGayaTerlarang(gaya: GayaDialog): gaya is GayaDialogTerlarang {
+  return gaya === 'menghakimi' || gaya === 'menggurui' || gaya === 'menakut_nakuti' || gaya === 'memaksa'
+}
+
 export interface PilihanDialog {
   id: string
   /** Teks yang diucapkan dokter. */
   teks: string
-  gaya: 'empati' | 'refleksi' | 'edukasi' | 'konfrontasi'
+  gaya: GayaDialog
   /** Respons warga (jujur / default). */
   respons: string
   /** Efek trust -2..+2. Trust naik dari KUALITAS pilihan, bukan frekuensi. */
@@ -700,6 +713,36 @@ export interface VarianKunjunganTingkatA {
   penutupGagal?: string
 }
 
+export interface BabakIngatkan {
+  prompt: string
+  pilihan: Array<{
+    id: string
+    teks: string
+    tepat: boolean
+    respons: string
+    catatanPedagogis?: string
+  }>
+}
+
+export type JenisPenerimaanAwal = 'ditolak_total' | 'diterima_terpaksa'
+
+export interface PenerimaanAwalKunjungan {
+  jenis: JenisPenerimaanAwal
+  /** Event ini hanya sah pada kontak pertama mode Karier. */
+  mode: 'karier'
+  narasi: string
+  /** Janji ulang authored; cadence gameplay, bukan regimen klinis. */
+  ulangDalamHari: number
+  rasional: string
+  pilihan: Array<{
+    id: string
+    teks: string
+    tindakan: 'hormati' | 'memaksa'
+    respons: string
+    catatanPedagogis?: string
+  }>
+}
+
 export interface SkenarioKunjungan {
   id: string
   judul: string
@@ -711,6 +754,10 @@ export interface SkenarioKunjungan {
   hambatanSebenarnya: Hambatan
   /** Petunjuk hambatan tersebar di observasi+wawancara (untuk debrief). */
   petunjukHambatan: string
+  /** Babak penutup SAJI opsional; tiga pilihan, tepat satu benar. */
+  pilihanIngatkan?: BabakIngatkan
+  /** Penutupan kontak awal bespoke; hanya aktif sekali di mode Karier. */
+  penerimaanAwal?: PenerimaanAwalKunjungan
   /** Babak 1: hotspot observasi rumah (4-7). */
   hotspot: HotspotRumah[]
   /** Babak 2: node dialog berurutan (3-5). */

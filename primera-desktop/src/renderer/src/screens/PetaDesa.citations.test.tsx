@@ -14,11 +14,13 @@ describe('<PetaDesa /> - debrief sitasi kunjungan C2', () => {
     const hasil: HasilKunjungan = {
       keluargaId: keluarga.id,
       skenarioId: skenario.id,
+      hasilAkhir: 'berhasil',
       berhasil: true,
       diusir: false,
       hipotesisBenar: true,
       trustDelta: 2,
       kualitasMi: 100,
+      kualitasSaji: 100,
       indikatorTerverifikasi: ['hipertensi_berobat'],
       narasiPenutup: skenario.penutupBerhasil,
     }

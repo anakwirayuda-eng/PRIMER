@@ -7,6 +7,7 @@
 
 import type { GameState, Skor4Dimensi } from './state'
 import { prolanisTerkendali } from './kegiatan'
+import { penutupanAwalSah } from './kunjungan'
 
 function clamp(nilai: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, nilai))
@@ -123,7 +124,7 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
     rwBerdata.length > 0 ? rwBerdata.reduce((jml, r) => jml + r.iks, 0) / rwBerdata.length : 0
   const ekspektasiKunjungan =
     state.mode === 'ujian' ? EKSPEKTASI_KUNJUNGAN_UJIAN : EKSPEKTASI_KUNJUNGAN_KARIER
-  const kualitasMi = (t.miTepat / Math.max(ekspektasiKunjungan, t.miTotal)) * 100
+  const kualitasKomunikasi = (t.miTepat / Math.max(ekspektasiKunjungan, t.miTotal)) * 100
   const rasioKunjungan = t.kunjunganBerhasil / Math.max(ekspektasiKunjungan, t.kunjunganTotal)
   // CODEX audit pasca-GM (2026-07-13, temuan #7): `prolanisSesi` (tally) tak
   // pernah dibaca skor manapun — repro langsung: skor UKM byte-identik sebelum/
@@ -164,7 +165,7 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const ukm = clamp(
     (0.4 * iksDesa +
       0.2 * rasioKunjungan +
-      0.2 * (kualitasMi / 100) +
+      0.2 * (kualitasKomunikasi / 100) +
       0.2 * rasioProlanisTerkontrol) *
       35 -
       2 * t.apathy +
@@ -209,7 +210,8 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
       rrns,
       guillotine,
       iksDesa,
-      kualitasMi,
+      // Nama field dipertahankan untuk kompatibilitas dossier.
+      kualitasMi: kualitasKomunikasi,
       kalibrasi,
       prosesKlinis,
     },
@@ -268,7 +270,12 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
   // Kunjungan rumah hari ini.
   const kunjungan = state.hasilKunjunganHariIni
   if (kunjungan) {
-    if (kunjungan.diusir) {
+    const kontakAwalSah = penutupanAwalSah(kunjungan.hasilAkhir)
+    if (kunjungan.hasilAkhir === 'ditolak_total') {
+      catatan.push(`Keluarga belum menerima kunjungan. Kamu menghormati penolakan dan membuat janji ulang. ${kunjungan.narasiPenutup}`)
+    } else if (kunjungan.hasilAkhir === 'diterima_terpaksa') {
+      catatan.push(`Keluarga menerima dengan terpaksa. Kamu menutup kontak tanpa memaksakan pembahasan dan membuat janji ulang. ${kunjungan.narasiPenutup}`)
+    } else if (kunjungan.diusir) {
       catatan.push(`Kunjunganmu berakhir buruk — kamu diminta pulang. ${kunjungan.narasiPenutup}`)
     } else if (kunjungan.berhasil) {
       catatan.push(`Kunjungan rumah berjalan baik. ${kunjungan.narasiPenutup}`)
@@ -278,11 +285,16 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
     // Audit CODEX UKM 2026-07-16 #10: "rincian penilaian di debrief sore"
     // kini janji yang DITEPATI — kualitas MI, ketepatan hipotesis COM-B,
     // pergeseran trust, dan catatan penulis skenario utk pilihan yg meleset.
-    catatan.push(
-      `Rincian kunjungan: kualitas dialog MI ${kunjungan.kualitasMi}/100 · hipotesis hambatan ` +
-        `${kunjungan.hipotesisBenar ? 'TEPAT' : 'MELESET'} · trust ${kunjungan.trustDelta >= 0 ? '+' : ''}${kunjungan.trustDelta} · ` +
-        `${kunjungan.indikatorTerverifikasi.length} indikator terverifikasi.`,
-    )
+    if (!kontakAwalSah) {
+      const rincianIngatkan = kunjungan.kualitasIngatkan === undefined
+        ? ''
+        : ` · Ingatkan ${kunjungan.kualitasIngatkan}/100 · komunikasi SAJI ${kunjungan.kualitasSaji}/100`
+      catatan.push(
+        `Rincian kunjungan: kualitas dialog MI ${kunjungan.kualitasMi}/100${rincianIngatkan} · hipotesis hambatan ` +
+          `${kunjungan.hipotesisBenar ? 'TEPAT' : 'MELESET'} · trust ${kunjungan.trustDelta >= 0 ? '+' : ''}${kunjungan.trustDelta} · ` +
+          `${kunjungan.indikatorTerverifikasi.length} indikator terverifikasi.`,
+      )
+    }
     for (const cat of kunjungan.catatanPedagogis ?? []) {
       catatan.push(`Catatan pembimbing: ${cat}`)
     }

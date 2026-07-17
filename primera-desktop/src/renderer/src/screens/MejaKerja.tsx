@@ -30,6 +30,7 @@ import { karmaTerlihat } from './peta/petaUtil'
 import { useFocusTrap } from '../useFocusTrap'
 import { useRadioGroup } from '../useRadioGroup'
 import './MejaKerja.css'
+import { tampilanHasilKunjungan } from './hasilKunjunganView'
 
 const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
 
@@ -125,6 +126,9 @@ export function MejaKerja() {
   const petaTerbuka = state.hari >= HARI_BUKA_PETA
   const kunjunganTerbuka = state.hari >= HARI_BUKA_KUNJUNGAN
   const slotTerpakai = state.hasilKunjunganHariIni !== undefined || state.lapanganTerpakai
+  const tampilanKunjunganHariIni = state.hasilKunjunganHariIni
+    ? tampilanHasilKunjungan(state.hasilKunjunganHariIni)
+    : undefined
   const antrianN = state.klinik.antrian.length
   const suratBaru = state.inbox.filter((m) => !m.dibaca).length
 
@@ -477,13 +481,9 @@ export function MejaKerja() {
             {slotTerpakai && state.hasilKunjunganHariIni ? (
               <div className="kartu mk__lapangan-status">
                 <span
-                  className={`stempel ${state.hasilKunjunganHariIni.berhasil ? 'stempel--hijau' : state.hasilKunjunganHariIni.diusir ? 'stempel--merah' : 'stempel--kunyit'}`}
+                  className={`stempel ${tampilanKunjunganHariIni?.kelasWarna ?? 'stempel--kunyit'}`}
                 >
-                  {state.hasilKunjunganHariIni.berhasil
-                    ? 'Berhasil'
-                    : state.hasilKunjunganHariIni.diusir
-                      ? 'Diusir'
-                      : 'Belum berbuah'}
+                  {tampilanKunjunganHariIni?.labelRingkas}
                 </span>
                 <p className="mk__lapangan-narasi">
                   Kunjungan ke keluarga{' '}
@@ -889,7 +889,7 @@ export function MejaKerja() {
                 <dd>{fmt(skorRekap.rincian.iksDesa, 2)}</dd>
               </div>
               <div className="baris baris--antara">
-                <dt>Kualitas MI</dt>
+                <dt>Kualitas komunikasi (MI + SAJI)</dt>
                 <dd>{fmt(skorRekap.rincian.kualitasMi)}</dd>
               </div>
             </dl>

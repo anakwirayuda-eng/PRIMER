@@ -7,6 +7,7 @@
 import type {
   IndikatorPisPk,
   JenisKelamin,
+  JenisPenerimaanAwal,
   JustifikasiRujuk,
   Persona,
   RegionFisik,
@@ -299,7 +300,14 @@ export interface RwState {
  * Kunjungan rumah — state machine 4 babak
  * ------------------------------------------------------------------------- */
 
-export type BabakKunjunganFase = 'observasi' | 'wawancara' | 'diagnosis_perilaku' | 'resep_sosial' | 'selesai'
+export type BabakKunjunganFase =
+  | 'penerimaan'
+  | 'observasi'
+  | 'wawancara'
+  | 'diagnosis_perilaku'
+  | 'resep_sosial'
+  | 'ingatkan'
+  | 'selesai'
 
 export interface KunjunganState {
   keluargaId: string
@@ -316,8 +324,12 @@ export interface KunjunganState {
   /** Konfrontasi beruntun → 2× = diusir. */
   konfrontasiBeruntun: number
   diusir: boolean
+  /** Hanya terisi bila event penerimaan awal aktif pada kontak pertama. */
+  penerimaanAwal?: JenisPenerimaanAwal
+  responsPenerimaan?: 'hormati' | 'memaksa'
   hipotesis?: 'kapabilitas' | 'kesempatan' | 'motivasi'
   intervensiDipilih?: string
+  ingatkanDipilih?: string
   /**
    * M11 #5 B1 (2026-07-17): varian presentasi Tingkat-A dipilih SEKALI saat
    * kunjungan dibuat (`buatKunjungan`), bertahan seumur kunjungan itu.
@@ -390,15 +402,29 @@ export interface PesertaProlanis {
 
 export type FokusProgram = 'psn' | 'phbs' | 'skrining'
 
+export type HasilAkhirKunjungan =
+  | 'berhasil'
+  | 'partial'
+  | 'gagal'
+  | 'diusir'
+  | 'ditolak_total'
+  | 'diterima_terpaksa'
+
 export interface HasilKunjungan {
   keluargaId: string
   skenarioId: string
+  /** Sumber tampilan kanonik; field legacy di bawah tetap untuk kompatibilitas. */
+  hasilAkhir: HasilAkhirKunjungan
   berhasil: boolean
   diusir: boolean
   hipotesisBenar: boolean
   trustDelta: number
   /** Kualitas MI 0-100 (proporsi pilihan tepat). */
   kualitasMi: number
+  /** Kualitas komunikasi gabungan; sama dengan MI pada skenario legacy. */
+  kualitasSaji: number
+  /** Hanya ada pada skenario yang memiliki babak Ingatkan. */
+  kualitasIngatkan?: number
   /** Indikator yang terverifikasi dokter selama observasi. */
   indikatorTerverifikasi: IndikatorPisPk[]
   narasiPenutup: string
@@ -408,6 +434,8 @@ export interface HasilKunjungan {
    * (karma tertunda); gagal = keduanya salah / diusir (karma dipercepat).
    */
   tingkat?: 'berhasil' | 'partial' | 'gagal'
+  /** Jeda penutupan kontak awal sah; tidak dipakai hasil substantif. */
+  ulangDalamHari?: number
   /** SDOH armor aktif: keluarga miskin/rentan menahan trust bila diagnosis meleset. */
   armorAktif?: boolean
   /** Catatan penulis skenario utk pilihan yang meleset — bahan debrief sore

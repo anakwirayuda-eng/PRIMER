@@ -20,6 +20,7 @@ import type { Action } from './actions'
 import type { GameEvent } from './events'
 import type { HasilKunjungan, KeluargaState, KunjunganState, ModeStase, NilaiIndikator } from './state'
 import type { IndikatorPisPk, KeluargaBinaan, NodeDialog, PilihanDialog, SkenarioKunjungan, TahapTtm } from '@content/types'
+import { isGayaTerlarang } from '@content/types'
 import { ukmScenarioAktif, type ContentPack } from '@content/pack'
 import type { Rng } from './core/rng'
 
@@ -73,6 +74,22 @@ function unik<T>(arr: readonly T[]): T[] {
 
 function clamp(nilai: number, min: number, maks: number): number {
   return Math.max(min, Math.min(maks, nilai))
+}
+
+export const JEDA_FOLLOW_UP_KUNJUNGAN = 4
+export const JENDELA_VERIFIKASI_JANJI: Record<ModeStase, number> = { karier: 14, ujian: 5 }
+
+/** Satu sumber tanggal untuk state, jadwal verifikasi, dan placeholder UI. */
+export function hariTindakLanjutKunjungan(
+  hari: number,
+  mode: ModeStase,
+  arcTamat: boolean,
+): number {
+  return hari + (arcTamat ? JENDELA_VERIFIKASI_JANJI[mode] : JEDA_FOLLOW_UP_KUNJUNGAN)
+}
+
+export function penutupanAwalSah(hasil: HasilKunjungan['hasilAkhir']): boolean {
+  return hasil === 'ditolak_total' || hasil === 'diterima_terpaksa'
 }
 
 /** Tahap kesiapan berubah MUNDUR satu langkah (M1: drift & mangkir follow-up). */
@@ -176,7 +193,12 @@ export function skenarioEfektif(skenario: SkenarioKunjungan, varianId: string | 
  * Kontrak engine
  * ------------------------------------------------------------------------- */
 
-export function buatKunjungan(keluargaId: string, skenario: SkenarioKunjungan, rng: Rng): KunjunganState {
+export function buatKunjungan(
+  keluargaId: string,
+  skenario: SkenarioKunjungan,
+  rng: Rng,
+  aktifkanPenerimaanAwal = false,
+): KunjunganState {
   const varianId = skenario.varianKunjungan?.length
     ? rng.pick(['_dasar', ...skenario.varianKunjungan.map((v) => v.id)])
     : undefined
@@ -184,13 +206,16 @@ export function buatKunjungan(keluargaId: string, skenario: SkenarioKunjungan, r
     keluargaId,
     skenarioId: skenario.id,
     ...(varianId !== undefined ? { varianId } : {}),
-    fase: 'observasi',
+    fase: aktifkanPenerimaanAwal ? 'penerimaan' : 'observasi',
     hotspotDitemukan: [],
     dialogIndex: 0,
     pilihanDiambil: [],
     trustDelta: 0,
     konfrontasiBeruntun: 0,
     diusir: false,
+    ...(aktifkanPenerimaanAwal && skenario.penerimaanAwal
+      ? { penerimaanAwal: skenario.penerimaanAwal.jenis }
+      : {}),
   }
 }
 
@@ -225,6 +250,8 @@ export function aksiKunjungan(
 
     case 'LANJUT_BABAK': {
       switch (kj.fase) {
+        case 'penerimaan':
+          return tolak(kj, 'Tanggapi dulu penerimaan keluarga sebelum melanjutkan kunjungan.')
         case 'observasi':
           // Bebas — pemain boleh langsung berbincang tanpa mengamati (rugi sendiri).
           return { kj: { ...kj, fase: 'wawancara' }, events: [], selesai: false }
@@ -238,6 +265,8 @@ export function aksiKunjungan(
           return { kj: { ...kj, fase: 'resep_sosial' }, events: [], selesai: false }
         case 'resep_sosial':
           return tolak(kj, 'Pilih satu kartu intervensi untuk menutup kunjungan.')
+        case 'ingatkan':
+          return tolak(kj, 'Pilih satu cara mengingatkan sebelum pamit.')
         case 'selesai':
           return tolak(kj, 'Kunjungan sudah selesai.')
       }
@@ -253,7 +282,7 @@ export function aksiKunjungan(
       if (!pilihan) return tolak(kj, 'Pilihan itu tidak tersedia sekarang.')
 
       const trustDelta = kj.trustDelta + pilihan.efekTrust
-      const konfrontasiBeruntun = pilihan.gaya === 'konfrontasi' ? kj.konfrontasiBeruntun + 1 : 0
+      const konfrontasiBeruntun = isGayaTerlarang(pilihan.gaya) ? kj.konfrontasiBeruntun + 1 : 0
       const kjBaru: KunjunganState = {
         ...kj,
         pilihanDiambil: [...kj.pilihanDiambil, pilihan.id],
@@ -302,8 +331,40 @@ export function aksiKunjungan(
       const kartu = skenario.intervensi.find((i) => i.id === action.intervensiId)
       if (!kartu) return tolak(kj, 'Kartu intervensi itu tidak dikenal.')
       return {
-        kj: { ...kj, intervensiDipilih: kartu.id, fase: 'selesai' },
+        kj: {
+          ...kj,
+          intervensiDipilih: kartu.id,
+          fase: skenario.pilihanIngatkan ? 'ingatkan' : 'selesai',
+        },
         events: [],
+        selesai: !skenario.pilihanIngatkan,
+      }
+    }
+
+    case 'PILIH_INGATKAN': {
+      if (kj.fase !== 'ingatkan') return tolak(kj, 'Belum saatnya menutup dengan pengingat.')
+      const pilihan = skenario.pilihanIngatkan?.pilihan.find((p) => p.id === action.pilihanId)
+      if (!pilihan) return tolak(kj, 'Pilihan pengingat itu tidak tersedia.')
+      return {
+        kj: { ...kj, ingatkanDipilih: pilihan.id, fase: 'selesai' },
+        events: [],
+        selesai: true,
+      }
+    }
+
+    case 'RESPONS_PENERIMAAN': {
+      if (kj.fase !== 'penerimaan') return tolak(kj, 'Keluarga sudah menerima kunjungan ini.')
+      const pilihan = skenario.penerimaanAwal?.pilihan.find((p) => p.id === action.pilihanId)
+      if (!pilihan || !kj.penerimaanAwal) return tolak(kj, 'Respons penerimaan itu tidak tersedia.')
+      const memaksa = pilihan.tindakan === 'memaksa'
+      return {
+        kj: {
+          ...kj,
+          responsPenerimaan: pilihan.tindakan,
+          diusir: memaksa,
+          fase: 'selesai',
+        },
+        events: memaksa ? [{ type: 'DIUSIR' }] : [],
         selesai: true,
       }
     }
@@ -333,6 +394,26 @@ export function selesaikanKunjungan(
   skenario: SkenarioKunjungan,
   kel: KeluargaState,
 ): HasilKunjungan {
+  if (kj.responsPenerimaan && skenario.penerimaanAwal) {
+    const pilihan = skenario.penerimaanAwal.pilihan.find((p) => p.tindakan === kj.responsPenerimaan)
+    const diusir = kj.responsPenerimaan === 'memaksa'
+    return {
+      keluargaId: kj.keluargaId,
+      skenarioId: kj.skenarioId,
+      hasilAkhir: diusir ? 'diusir' : skenario.penerimaanAwal.jenis,
+      berhasil: false,
+      diusir,
+      hipotesisBenar: false,
+      trustDelta: 0,
+      kualitasMi: 0,
+      kualitasSaji: 0,
+      indikatorTerverifikasi: [],
+      narasiPenutup: pilihan?.respons ?? skenario.penutupGagal,
+      ...(diusir ? { tingkat: 'gagal' as const } : { ulangDalamHari: skenario.penerimaanAwal.ulangDalamHari }),
+      ...(pilihan?.catatanPedagogis ? { catatanPedagogis: [pilihan.catatanPedagogis] } : {}),
+    }
+  }
+
   const peta = petaPilihan(skenario)
 
   // Replay wawancara: akumulasi trust, hitung MI, pisahkan ungkap jujur/bohong.
@@ -364,6 +445,11 @@ export function selesaikanKunjungan(
 
   const totalPilihan = kj.pilihanDiambil.length
   const kualitasMi = totalPilihan === 0 ? 0 : Math.round((100 * tepat) / totalPilihan)
+  const pilihanIngatkan = skenario.pilihanIngatkan?.pilihan.find((p) => p.id === kj.ingatkanDipilih)
+  const kualitasIngatkan = skenario.pilihanIngatkan ? (pilihanIngatkan?.tepat ? 100 : 0) : undefined
+  const kualitasSaji = kualitasIngatkan === undefined
+    ? kualitasMi
+    : Math.round(0.8 * kualitasMi + 0.2 * kualitasIngatkan)
 
   const kartu = kj.intervensiDipilih
     ? skenario.intervensi.find((i) => i.id === kj.intervensiDipilih)
@@ -407,17 +493,25 @@ export function selesaikanKunjungan(
     if (p && !p.tepat && p.catatanPedagogis) catatanPedagogis.push(p.catatanPedagogis)
   }
   if (kartu && !intervensiCocok && kartu.catatanPedagogis) catatanPedagogis.push(kartu.catatanPedagogis)
+  if (pilihanIngatkan && !pilihanIngatkan.tepat && pilihanIngatkan.catatanPedagogis) {
+    catatanPedagogis.push(pilihanIngatkan.catatanPedagogis)
+  }
 
   const hasil: HasilKunjunganLengkap = {
     keluargaId: kj.keluargaId,
     skenarioId: kj.skenarioId,
+    hasilAkhir: kj.diusir ? 'diusir' : tingkat,
     berhasil,
     diusir: kj.diusir,
     hipotesisBenar,
     trustDelta: kj.trustDelta,
     kualitasMi,
+    kualitasSaji,
+    ...(kualitasIngatkan !== undefined ? { kualitasIngatkan } : {}),
     indikatorTerverifikasi,
-    narasiPenutup: berhasil ? skenario.penutupBerhasil : skenario.penutupGagal,
+    narasiPenutup: [pilihanIngatkan?.respons, berhasil ? skenario.penutupBerhasil : skenario.penutupGagal]
+      .filter(Boolean)
+      .join(' '),
     tingkat,
     indikatorDibohongi,
     ...(catatanPedagogis.length > 0 ? { catatanPedagogis: catatanPedagogis.slice(0, 3) } : {}),
@@ -443,7 +537,18 @@ export function terapkanHasil(
   skenario: SkenarioKunjungan,
   hari: number,
   totalSkenario: number,
+  mode: ModeStase = 'karier',
 ): KeluargaState {
+  if (penutupanAwalSah(hasil.hasilAkhir)) {
+    const { followUpHari: _janjiLama, ...kelBersih } = kel
+    return {
+      ...kelBersih,
+      jumlahKunjungan: kel.jumlahKunjungan + 1,
+      kunjunganTerakhir: hari,
+      followUpHari: hari + (hasil.ulangDalamHari ?? 1),
+    }
+  }
+
   const dibohongi: readonly IndikatorPisPk[] =
     (hasil as Partial<HasilKunjunganLengkap>).indikatorDibohongi ?? []
 
@@ -491,7 +596,9 @@ export function terapkanHasil(
   // kunjungan berhasil yang arc-nya belum tamat membuat janji kontrol baru.
   // Mangkir dari janji dihukum reducer (TTM mundur) saat jatuh tempo lewat.
   const { followUpHari: _janjiLama, ...kelBersih } = kel
-  const followUpBaru = hasil.berhasil && !arcTamatBerhasil ? hari + 4 : undefined
+  const followUpBaru = hasil.berhasil && !arcTamatBerhasil
+    ? hariTindakLanjutKunjungan(hari, mode, false)
+    : undefined
 
   return {
     ...kelBersih,

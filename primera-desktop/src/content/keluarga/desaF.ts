@@ -146,7 +146,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   teks:
                     '"Pak, jamban bantuan itu dibangun pakai uang negara. Kalau tidak dipakai begini, ' +
                     'namanya menyia-nyiakan — bisa-bisa desa ini dicoret dari program bantuan berikutnya."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     '"Lho, kami tidak pernah minta dibangunkan, Dok," Pak Bagyo meletakkan gelasnya. ' +
                     '"Datang-datang tukang ngukur tanah. Sekarang malah kami yang diancam-ancam." Kopi ' +
@@ -206,7 +206,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   teks:
                     '"Mencret bareng sekeluarga kok masih bilang karena musim, Bu. Itu ya dari kali itu. ' +
                     'Masa harus nunggu ada yang opname dulu baru percaya?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     'Bu Jum terdiam, tersudut di rumahnya sendiri. Pak Bagyo mengalihkan: "Wis, Dok, kopinya ' +
                     'diminum. Adem-adem begini enaknya ngobrol yang ringan-ringan." Topik ditutup dengan ' +
@@ -273,7 +273,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   teks:
                     '"Betul kata Tini — jijik, Pak. Orang dewasa harusnya lebih tahu malu daripada ' +
                     'anak SMP."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Tawa di undakan itu mati. Pak Bagyo menatap kopimu yang belum habis: "Wis sore, Dok. ' +
                     'Jalan ke bawah licin kalau gelap." Diusir dengan halus, oleh tuan rumah yang barusan ' +
@@ -495,7 +495,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   teks:
                     '"Adat itu bagus, Mbak, tapi nyawa lebih penting dari perasaan Ibu. Orang tua yang baik ' +
                     'pasti ngerti. Kalau tidak ngerti, ya berarti egois namanya."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Endah menegang. "Ibu saya tidak egois, Dok. Beliau cuma... sayang, caranya begitu." ' +
                     'Andri ikut diam. Kamu barusan menghina calon nenek di rumah anaknya — dan mereka berdua ' +
@@ -562,7 +562,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   teks:
                     '"Ya sudah, jalan tengahnya: mulih saja sesuai adat, tapi pas mendekati HPL pindah ke ' +
                     'penginapan dekat RS kabupaten sana. Adat jalan, medis jalan."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menggurui',
                   respons:
                     '"Penginapan..." Andri menghitung: sebulan penginapan + makan berdua + wara-wiri, ' +
                     'dengan tabungan yang sudah habis untuk perlengkapan bayi. "Boleh saya pikir-pikir, Dok." ' +
@@ -621,7 +621,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   teks:
                     '(Memberi isyarat minta HP) "Biar saya yang bicara langsung, Bu-nya harus dengar dari ' +
                     'ahlinya: kondisi Endah tidak memungkinkan lahiran di kampung."',
-                  gaya: 'konfrontasi',
+                  gaya: 'memaksa',
                   respons:
                     'Kamu mendengar suara di seberang berubah formal: "Oh... dokter. Inggih. Inggih, Dok." ' +
                     'Lalu, setelah telepon ditutup, yang sampai ke kampung adalah kabar: "dokternya Endah ' +
@@ -843,7 +843,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                     '"Pak, istri Bapak anemia dan jaraknya kehamilan terlalu rapat. Kalau hamil lagi, ' +
                     'risikonya perdarahan sampai kematian. KB itu bukan melawan takdir — menolak KB sambil ' +
                     'tahu risikonya, itu yang mendekati menzalimi."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Lintingan itu berhenti di tengah jalan. "Dokter bilang saya menzalimi bojoku?" Suaranya ' +
                     'rendah. Anak-anak di halaman berhenti bermain. Bu Painah buru-buru menyuguhkan teh dengan ' +
@@ -911,7 +911,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   teks:
                     '"Bu, tablet tambah darah dari Posyandu itu kok masih utuh? Diminum dong — percuma ' +
                     'program pemerintah kalau di rumah cuma jadi pajangan."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     '"Inggih, Dok, nanti diminum," Bu Painah menunduk. Yang melarang tablet itu duduk ' +
                     'di amben dua meter darimu, dan barusan kamu menegur orang yang salah — di depan ' +
@@ -972,7 +972,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   teks:
                     '"Nah lho, Pak. Lima anak saja beasiswanya kerepotan. Masih yakin banyak anak ' +
                     'banyak rezeki? Rezekinya mana?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Pak Karsa menutup rapor Wati pelan-pelan. "Rezekinya ini." Ia mengangkat rapor itu. ' +
                     '"Ranking satu, Dok. Dari perut istri saya yang katanya kurang darah itu." Wati mundur ' +

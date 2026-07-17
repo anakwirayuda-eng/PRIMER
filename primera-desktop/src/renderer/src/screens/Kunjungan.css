@@ -291,6 +291,18 @@
   color: var(--tinta);
 }
 
+.kunjungan-ingatkan {
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.kunjungan-penerimaan .kunjungan-pilihan,
+.kunjungan-ingatkan .kunjungan-pilihan {
+  min-height: 5.5rem;
+}
+
 /* Babak 2: dialog box novel visual */
 
 .kunjungan-wawancara {

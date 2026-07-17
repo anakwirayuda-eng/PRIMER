@@ -79,6 +79,35 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
             'Obat dari Puskesmas masih utuh tersegel, tapi jamu rebusan dibuat tiap pagi — Bu Wulan bukan ' +
             'tak sanggup atau tak sempat berobat, ia TAKUT: tetangganya cuci darah, dan grup pengajian ' +
             'menyalahkan "obat kimia". Ini soal keyakinan, bukan akses atau pengetahuan cara minum.',
+          pilihanIngatkan: {
+            prompt: 'Sebelum pamit, rangkum tindakan Bu Wulan dan waktu bertemu lagi tanpa mengambil alih keputusannya.',
+            pilihan: [
+              {
+                id: 'wk1_ingatkan_tepat',
+                teks:
+                  '"Bu Wulan, jalankan kesepakatan obat yang Ibu pilih, catat bengkak atau keluhan, dan kita bertemu lagi {jadwal} untuk cek tekanan darah serta menilai obatnya bersama."',
+                tepat: true,
+                respons:
+                  'Bu Wulan mengulang pelan: obat sesuai kesepakatan, catat keluhan, lalu bertemu lagi pada hari yang sudah disebut.',
+              },
+              {
+                id: 'wk1_ingatkan_umum',
+                teks: '"Pokoknya obatnya diminum teratur ya, Bu. Nanti kalau sempat datang lagi ke Puskesmas."',
+                tepat: false,
+                respons: 'Bu Wulan mengangguk sopan, tetapi tidak dapat menyebut kapan atau apa yang harus ia pantau.',
+                catatanPedagogis:
+                  'Pengingat tanpa tindakan terukur dan waktu ulang mudah berubah menjadi "iya, Dok" yang tidak operasional.',
+              },
+              {
+                id: 'wk1_ingatkan_ancam',
+                teks: '"Kalau masih berhenti obat, risiko stroke Ibu tanggung sendiri. Saya sudah mengingatkan."',
+                tepat: false,
+                respons: 'Bu Wulan menarik kembali tangannya dari kantong obat dan menutup percakapan dengan senyum kaku.',
+                catatanPedagogis:
+                  'Ingatkan bukan ancaman. Penutupan SAJI harus mengulang kesepakatan dan akses tindak lanjut, bukan memindahkan rasa bersalah.',
+              },
+            ],
+          },
           hotspot: [
             {
               id: 'wk1_h1',
@@ -158,7 +187,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Itu keliru, Bu. Justru kebalikannya — darah tinggi yang TIDAK diobati itulah yang ' +
                     'merusak ginjal. Bu Karsih cuci darah ya karena hipertensinya, bukan karena obatnya."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menggurui',
                   respons:
                     'Wajah Bu Wulan mengeras. Ia menuang teh pelan-pelan, lama sekali. "Ya... Dokter kan ' +
                     'belajarnya begitu. Tapi yang saya lihat sendiri ya Bu Karsih itu." Ia mengalihkan ' +
@@ -214,7 +243,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Grup WA itu sumbernya tidak jelas, Bu. Ibu lebih percaya orang tidak dikenal di HP ' +
                     'daripada dokter yang sekolahnya bertahun-tahun?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Hening sejenak. Pak Darto berhenti melinting. Bu Wulan tersenyum kecut. "Ya bukan begitu, ' +
                     'Dok... Ustadzah Umi itu orang baik. Sudah, tehnya diminum, nanti keburu dingin."',
@@ -272,7 +301,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Saya tadi lihat kantong obatnya masih tersegel di atas lemari, Bu. Jadi selama ini ' +
                     'Ibu bohong ke petugas Puskesmas waktu ambil obat?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Bu Wulan tersentak, lalu buru-buru berdiri merapikan gelas. "Dokter ini... ngecek-ngecek ' +
                     'rumah orang." Nada bercandanya tidak menutupi matanya yang tersinggung. Pak Darto berdehem.',
@@ -325,7 +354,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Kalau Ibu tetap tidak mau minum obat, bisa-bisa Ibu stroke duluan sebelum Mas Anto ' +
                     'pulang. Mau dijenguk anak di rumah sakit?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     'Senyum Bu Wulan padam seketika. "Kok Dokter ngomongnya begitu..." Pak Darto meletakkan ' +
                     'lintingannya dan menatapmu. Suasana ruang tamu mendadak dingin.',
@@ -515,7 +544,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Wah, sayang sekali, Bu. Kontrol itu justru yang paling penting. Kalau bolong begini ' +
                     'kan usaha dua minggunya jadi percuma."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Wajah Bu Wulan langsung layu. "Percuma ya, Dok..." Ia memandangi piring kecil berisi tiga ' +
                     'butir obatnya. Semangat yang tadi menyala di teras itu meredup di depan matamu.',
@@ -570,7 +599,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Pak, kesehatan istri itu tanggung jawab suami. Masa mengantar ke Puskesmas sebulan ' +
                     'sekali saja tidak bisa? Gabah kan bisa dititipkan tetangga."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menggurui',
                   respons:
                     'Rahang Pak Darto mengeras. "Dokter tahu apa soal gabah." Ia mengangkat karungnya lagi dan ' +
                     'masuk ke dalam tanpa menoleh. Bu Wulan menunduk, tidak enak hati.',
@@ -631,7 +660,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Pak, istri Bapak hipertensi dan Bapak masih merokok? Asap Bapak itu meracuni Bu Wulan ' +
                     'pelan-pelan. Harus berhenti hari ini juga."',
-                  gaya: 'konfrontasi',
+                  gaya: 'memaksa',
                   respons:
                     'Pak Darto meletakkan gelas tehnya dengan bunyi keras. "Saya sudah tidak ngerokok di dalam ' +
                     'rumah, Dok. Jangan dikira saya tidak sayang bojoku." Sisa percakapan sore itu ia jawab ' +
@@ -788,6 +817,64 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
             'OAT disembunyikan di kardus bawah ranjang, jendela ditutup rapat agar tetangga tak melihat ke dalam, ' +
             'dan pesanan mebel ditolak sejak kabar "penyakit paru" berhembus. Pak Santoso mampu minum obat dan ' +
             'obatnya tersedia — yang menghentikannya adalah malu. Ini luka harga diri, bukan soal akses atau cara minum.',
+          penerimaanAwal: {
+            jenis: 'ditolak_total',
+            mode: 'karier',
+            narasi:
+              'Bu Rahmi tetap berdiri di ambang pintu. Dari dalam, Pak Santoso berkata pelan tetapi tegas, "Maaf, Dok. Hari ini jangan masuk dulu. Tetangga sedang banyak di luar. Saya belum siap orang melihat Dokter datang ke rumah."',
+            ulangDalamHari: 3,
+            rasional:
+              'Tiga hari memberi ruang memilih jam yang lebih privat tanpa membiarkan putus OAT dan gejala kontak serumah terlalu lama.',
+            pilihan: [
+              {
+                id: 'sk1_terima_hormati',
+                teks:
+                  '"Baik, Pak, saya tidak masuk hari ini. Kita pilih waktu yang lebih sepi; saya kembali {jadwal}. Bila Bapak setuju, Bu Rahmi dapat mengabari saya bila waktunya perlu digeser."',
+                tindakan: 'hormati',
+                respons:
+                  'Nada Pak Santoso melunak. Ia menyepakati waktu yang lebih sepi, dan Bu Rahmi mencatat janji ulang tanpa membuka percakapan kesehatan hari ini.',
+              },
+              {
+                id: 'sk1_terima_paksa',
+                teks:
+                  '"Ini TB, Pak, bukan urusan yang bisa ditunda. Saya harus masuk dan memeriksa obat serta keluarga sekarang."',
+                tindakan: 'memaksa',
+                respons:
+                  'Pintu ditutup. "Kalau begitu tidak usah kembali, Dok." Upaya memaksa mengubah penolakan yang sah menjadi putus relasi.',
+                catatanPedagogis:
+                  'Pada penolakan kontak awal, pedoman meminta petugas tidak memaksa, tetap ramah, dan membuat janji ulang.',
+              },
+            ],
+          },
+          pilihanIngatkan: {
+            prompt: 'Tutup kunjungan dengan langkah TB yang aman, menjaga privasi, dan memiliki waktu tindak lanjut jelas.',
+            pilihan: [
+              {
+                id: 'sk1_ingatkan_tepat',
+                teks:
+                  '"Pak Santoso, bawa sisa OAT dan datang lewat jalur privat yang kita sepakati {jadwal}; petugas TB akan menilai kelanjutan obat, dan Bagas juga perlu diperiksa. Jangan mengubah atau memulai ulang obat sendiri."',
+                tepat: true,
+                respons:
+                  'Pak Santoso mengulang jalur masuk yang privat, membawa sisa obat, dan menyebut Bagas sebagai alasan ia akan menepati jadwal.',
+              },
+              {
+                id: 'sk1_ingatkan_obat_saja',
+                teks: '"Mulai lagi saja obat yang tersisa malam ini, Pak. Yang penting jangan putus lagi."',
+                tepat: false,
+                respons: 'Pak Santoso menatap kardus OAT tanpa tahu apakah regimen lama aman dimulai begitu saja.',
+                catatanPedagogis:
+                  'Putus OAT perlu evaluasi program TB; jangan mengarahkan pasien memulai ulang sisa obat tanpa penilaian.',
+              },
+              {
+                id: 'sk1_ingatkan_tanpa_janji',
+                teks: '"Pikirkan lagi demi Bagas, Pak. Kalau sudah siap, kabari Puskesmas."',
+                tepat: false,
+                respons: 'Pak Santoso mengangguk, tetapi tidak ada hari, jalur privat, atau tindakan pemeriksaan kontak yang disepakati.',
+                catatanPedagogis:
+                  'Ajakan yang hangat tetap belum lengkap bila tidak mengunci tindakan dan waktu ulang yang dapat dijalankan.',
+              },
+            ],
+          },
           hotspot: [
             {
               id: 'sk1_h1',
@@ -866,7 +953,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Merasa sehat itu justru fase paling berbahaya, Pak. Kumannya cuma tidur. Bapak sadar tidak, ' +
                     'kalau putus obat begini Bapak bisa menulari Bagas?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     'Mata Pak Santoso menajam. "Jadi maksud Dokter, saya ini bapak yang meracuni anak sendiri?" ' +
                     'Bu Rahmi buru-buru menengahi dengan menawarkan air putih. Suasana kaku.',
@@ -922,7 +1009,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Pak, TB itu penyakit biasa, bukan aib. Yang penting sembuh. Peduli apa dengan omongan ' +
                     'tetangga? Mereka tidak ikut menanggung hidup Bapak."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     '"Peduli apa?" Pak Santoso tertawa pahit. "Yang beli mebel saya ya tetangga-tetangga itu, Dok. ' +
                     'Omongan mereka itu piring nasi anak saya." Ia bersandar, kembali memasang jarak.',
@@ -984,7 +1071,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Saya lihat sendiri kardus obat di bawah ranjang Bapak tadi. Masih utuh semua. ' +
                     'Jadi tidak usah mengarang cerita sudah sembuh ke saya."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Wajah Pak Santoso memerah — bukan malu, tapi marah. "Dokter masuk rumah orang sambil ' +
                     'menggeledah?" Ia berdiri. "Bu, temani Dokter. Saya mau ke bengkel." Pintu samping berdebam.',
@@ -1041,7 +1128,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Kalau Bapak tetap tidak berobat dan Bagas terbukti tertular, itu namanya kelalaian. ' +
                     'Saya bisa saja melaporkan kasus putus obat ke programmer TB dan kader untuk dilacak, lho."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     '"Silakan," suara Pak Santoso dingin seperti pahat. "Sekalian umumkan di masjid biar satu ' +
                     'kampung tahu." Bu Rahmi menutup mulutnya dengan tangan. Kunjungan ini selesai — bukan olehmu.',
@@ -1227,7 +1314,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Bolos tiga hari, Pak? Kita baru saja mulai ulang. Kalau begini terus kumannya bisa kebal, ' +
                     'dan pengobatannya bukan enam bulan lagi — bisa dua tahun dengan suntikan."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     'Pak Santoso mengangkat kedua tangannya. "Ya sudah, salah saya, salah saya." Nadanya letih. ' +
                     '"Dokter kira saya senang bolos? Saya yang tiap pagi muntah, Dok, bukan Dokter." Bu Rahmi ' +
@@ -1283,7 +1370,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Ibu harusnya lebih tegas. Namanya juga istri — kalau bapaknya menolak minum, ya dipaksa. ' +
                     'Ini nyawa yang dipertaruhkan, bukan main-main."',
-                  gaya: 'konfrontasi',
+                  gaya: 'memaksa',
                   respons:
                     'Bu Rahmi mengerut di kursinya, seperti murid dimarahi guru. "I-iya, Dok..." Pak Santoso ' +
                     'merangkul bahu istrinya. "Bojoku ini sudah paling telaten sedunia, Dok. Jangan disalah-salahkan." ' +
@@ -1346,7 +1433,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Saya lihat puntung rokok di pot bunga, Pak. TB kok merokok — itu sama saja menggali ' +
                     'kubur sendiri. Bagaimana parunya mau sembuh?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     '"Itu punya tukang yang kemarin ambil kusen!" jawabnya terlalu cepat. Suasana yang tadi cair ' +
                     'membeku lagi; sisa kunjungan diisi jawaban-jawaban pendek dan lirikan ke arah jam dinding.',
@@ -1596,7 +1683,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Justru karena montok itu jangan sampai kena campak, Bu. Ibu tahu tidak, bayi yang tidak ' +
                     'diimunisasi bisa lumpuh polio seumur hidup? Itu bukan cerita, itu fakta."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     'Luh Sari mendekap Ayunda makin erat dan menggeser duduknya menjauh. "Nggih, Dok, nggih..." ' +
                     'Matanya mencari-cari pintu. Kata "lumpuh" itu akan sampai ke grup WA-nya malam ini — ' +
@@ -1653,7 +1740,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Nah, itu dia masalahnya: Ibu percaya grup WA. Yang menulis itu bukan dokter, bukan bidan. ' +
                     'Masa iya Ibu taruh nyawa Ayunda di tangan orang yang tidak jelas?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     '"Yang di grup itu ibu-ibu juga, Dok. Sama-sama punya anak." Suaranya berubah datar. ' +
                     '"Mereka mau dengar cerita tiang jam dua malam." Ia membetulkan selendang. "Dokter sibuk, nggih? ' +
@@ -1718,7 +1805,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Itu buku KIA-nya di balik kalender kan, Bu? Kenapa disembunyikan? Kalau kolomnya kosong ' +
                     'ya tinggal dilengkapi, bukan ditutup-tutupi begitu."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Wajah Luh Sari memerah. Ia menarik buku itu dan memeluknya bersama Ayunda — dua hal yang ' +
                     'kini sama-sama harus dilindungi darimu. "Rumah tiang memang berantakan, Dok. Maaf." ' +
@@ -1777,7 +1864,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Justru bagus Bapak pulang. Tolong bilang istrinya, Pak — imunisasi itu wajib. Kalau kepala ' +
                     'keluarga tegas, istri pasti nurut."',
-                  gaya: 'konfrontasi',
+                  gaya: 'memaksa',
                   respons:
                     'Pak Ketut terkekeh canggung sambil melirik istrinya — dan tatapan Luh Sari langsung dingin. ' +
                     '"Yang begadang kalau Ayunda panas itu tiang, Dok, bukan bapaknya," katanya pelan tapi tajam. ' +
@@ -1971,7 +2058,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Makanya, Bu, jangan bolong-bolong dari awal. Kalau dulu ikut jadwal, tidak perlu ada ' +
                     'kejar-kejaran begini. Sekarang jadi ruwet kan urusannya."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Tangan Luh Sari yang memegang buku KIA turun pelan-pelan. "Nggih... salah tiang, Dok." ' +
                     'Semangat yang tadi menyala di ambang pintu — "sudah disuntik, tidak panas!" — meredup ' +
@@ -2029,7 +2116,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Dari tiga bulan tidak pernah ditimbang, Bu? Bagaimana Ibu bisa tahu Ayunda kurang gizi ' +
                     'atau tidak? Untung saja anaknya kelihatan sehat."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     '"...Untung nggih, Dok," Luh Sari mengangkat Ayunda menjauh dari timbangan, memeluknya. ' +
                     'Kata "kurang gizi" menggantung di udara seperti tuduhan yang menunggu dibuktikan.',
@@ -2094,7 +2181,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   teks:
                     '"Berat badannya bagus, tapi percuma, Pak, kalau paru-parunya tiap hari dipaksa mengisap ' +
                     'asap kretek Bapak. Bapak ini mau jadi bapak atau jadi cerobong?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Senyum Pak Ketut lenyap. Ia meletakkan kopi yang tadinya untukmu di meja, agak keras. ' +
                     '"Tiang kerja di kebun buat beli susunya Ayunda, Dok." Luh Sari buru-buru menengahi dengan ' +

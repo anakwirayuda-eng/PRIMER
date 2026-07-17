@@ -24,11 +24,13 @@ function hasilSukses(keluargaId: string, skenarioId: string): HasilKunjungan {
   return {
     keluargaId,
     skenarioId,
+    hasilAkhir: 'berhasil',
     berhasil: true,
     diusir: false,
     hipotesisBenar: true,
     trustDelta: 2,
     kualitasMi: 100,
+    kualitasSaji: 100,
     indikatorTerverifikasi: [],
     narasiPenutup: 'ok',
     tingkat: 'berhasil',

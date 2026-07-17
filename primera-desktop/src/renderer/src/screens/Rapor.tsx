@@ -228,7 +228,7 @@ export function Rapor() {
                 label: 'Kunjungan berhasil',
                 nilai: `${t.kunjunganBerhasil}/${t.kunjunganTotal}`,
               },
-              { label: 'Kualitas MI (wawancara)', nilai: `${koma(r.kualitasMi, 0)}%` },
+              { label: 'Kualitas komunikasi (MI + SAJI)', nilai: `${koma(r.kualitasMi, 0)}%` },
             ]}
           />
           <KartuDimensi

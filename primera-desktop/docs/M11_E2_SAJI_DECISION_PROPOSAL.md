@@ -1,9 +1,15 @@
 # M11 E-2 - Proposal Keputusan SAJI Fase 2
 
 **Tanggal:** 2026-07-17  
-**Baseline kode:** commit `943bfc9`, `REVISI_ENGINE=41`  
-**Status:** PROPOSE-ONLY. Belum ada perubahan engine, gameplay, save, atau konten keluarga.  
-**Tujuan:** mengunci desain sebelum gelombang unfreeze tunggal `REVISI_ENGINE 41 -> 42`.
+**Baseline sebelum implementasi:** commit `943bfc9`, `REVISI_ENGINE=41`
+
+**Keputusan dokter/pemilik:** **SETUJU REKOMENDASI E-2**, 2026-07-17
+
+**Status:** **SELESAI DIIMPLEMENTASIKAN** pada `REVISI_ENGINE=42` dan content release
+`m11-e2-saji-pilot-2026-07-17`.
+
+**Tujuan:** mengunci desain dan rekam pelaksanaan gelombang unfreeze tunggal
+`REVISI_ENGINE 41 -> 42`.
 
 ## 1. Rekomendasi singkat
 
@@ -375,7 +381,7 @@ Jika rekomendasi disetujui, urutan aman:
 
 Rekomendasi paket tunggal:
 
-- [ ] **SETUJU REKOMENDASI E-2**: D1 Opsi B, D2 model enam hasil + penutupan
+- [x] **SETUJU REKOMENDASI E-2**: D1 Opsi B, D2 model enam hasil + penutupan
   kontak awal, D3 pilot 5+2, D4 empat subtipe primer.
 - [ ] **PERLU EDIT**: tuliskan bagian/angka/scope yang diubah.
 - [ ] **TOLAK**: E-2 tidak dilanjutkan.
@@ -384,5 +390,21 @@ Rekomendasi paket tunggal:
 Catatan keputusan:
 
 ```text
-
+Disetujui oleh dr. Anak Agung Bagus Wirayuda melalui instruksi
+"Setuju rekomendasi E-2" pada 2026-07-17.
 ```
+
+## 11. Hasil implementasi
+
+- Babak Ingatkan aktif pada 5 skenario pilot; kualitas SAJI memakai bobot
+  80% MI + 20% Ingatkan, sedangkan gerbang keberhasilan tetap memakai MI murni.
+- `ditolak_total` dan `diterima_terpaksa` aktif sebagai penutupan kontak awal
+  yang sah pada 2 skenario Career; keduanya tidak menyamar sebagai `diusir`.
+- 82 pilihan lama telah direklasifikasi: 48 `menghakimi`, 11 `menggurui`,
+  14 `menakut_nakuti`, dan 9 `memaksa`.
+- Save lama dimigrasikan deterministik; release lama tidak diteruskan lintas
+  content release tanpa mekanisme arsip yang sudah berlaku.
+- UI memuat stepper SAJI lima tahap, label enam hasil, debrief, keyboard/fokus,
+  dan nama aksesibel. QA visual Wulan dimainkan E2E pada build produksi.
+- Full suite 91 berkas / 994 test, freeze 17/17, typecheck, dan build produksi
+  seluruhnya bersih.

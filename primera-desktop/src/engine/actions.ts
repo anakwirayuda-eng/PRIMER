@@ -52,6 +52,8 @@ export type Action =
   | { type: 'PILIH_DIALOG'; pilihanId: string }
   | { type: 'KOMIT_HAMBATAN'; hipotesis: 'kapabilitas' | 'kesempatan' | 'motivasi' }
   | { type: 'PILIH_INTERVENSI'; intervensiId: string }
+  | { type: 'PILIH_INGATKAN'; pilihanId: string }
+  | { type: 'RESPONS_PENERIMAAN'; pilihanId: string }
 
   /* -- UKM: kegiatan lapangan terjadwal (M2) ------------------------------------ */
   | { type: 'MULAI_POSYANDU'; rw: number }

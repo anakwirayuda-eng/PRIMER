@@ -56,6 +56,35 @@ const keluargaRaharjo: KeluargaBinaan = {
         hambatanSebenarnya: 'kesempatan',
         petunjukHambatan:
           'Halaman belakang habis dimakan tebing sungai dan tidak ada sisa lahan untuk tangki septik; arisan jamban RW tak pernah sampai ke ujung dusun. Keluarga ini MAU — yang tidak ada adalah lahan, biaya, dan akses program.',
+        pilihanIngatkan: {
+          prompt: 'Tutup dengan langkah sanitasi yang realistis sambil menunggu solusi komunal, bukan sekadar mengulang bahaya diare.',
+          pilihan: [
+            {
+              id: 'raharjo_ingatkan_tepat',
+              teks:
+                '"Pak Raharjo, sementara usulan tangki komunal diproses, keluarga memakai jamban aman terdekat yang sudah disepakati; saya kembali bersama sanitarian atau kabar dari Pak RW {jadwal}. Bila jalurnya buntu, kita cari opsi lahan lain bersama."',
+              tepat: true,
+              respons:
+                'Pak Raharjo menyebut jamban aman sementara, siapa yang akan dihubungi, dan hari kabar program harus sudah kembali kepadanya.',
+            },
+            {
+              id: 'raharjo_ingatkan_poster',
+              teks: '"Ingat ya, Pak: BAB di sungai menyebabkan diare, tifoid, dan cacingan. Tolong hentikan mulai hari ini."',
+              tepat: false,
+              respons: 'Pak Raharjo mengangguk pada bahayanya, tetapi tidak mendapat tempat pengganti atau kepastian tindak lanjut.',
+              catatanPedagogis:
+                'Keluarga sudah tahu dan mau berubah; mengulang risiko tanpa membuka kesempatan tidak menghasilkan tindakan yang mungkin dilakukan.',
+            },
+            {
+              id: 'raharjo_ingatkan_nabung',
+              teks: '"Mulai sisihkan uang rokok untuk jamban. Kalau sudah cukup, kabari Puskesmas."',
+              tepat: false,
+              respons: 'Pak Raharjo kembali merasa dipermalukan, dan masalah lahan tebing serta akses program tetap tidak tersentuh.',
+              catatanPedagogis:
+                'Nasihat menabung mengabaikan hambatan lahan dan program, sekaligus mengembalikan penutupan ke nada menghakimi.',
+            },
+          ],
+        },
         hotspot: [
           {
             id: 'raharjo_h_setapak',
@@ -133,7 +162,7 @@ const keluargaRaharjo: KeluargaBinaan = {
               {
                 id: 'raharjo_d1_konfrontasi',
                 teks: '"Bu, saya lihat jalan ke sungai itu dipakai tiap hari ya? Keluarga ini masih BAB di kali, kan?"',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Wajah Bu Sumiati memerah sampai ke telinga. "...Namanya juga orang kampung, Dok." Suaranya berubah datar, dan teh di gelasmu tidak ditawari lagi.',
                 efekTrust: -2,
@@ -179,7 +208,7 @@ const keluargaRaharjo: KeluargaBinaan = {
               {
                 id: 'raharjo_d2_konfrontasi',
                 teks: '"Sakit perut Rini itu ya karena sungai itu, Bu. Selama masih BAB di kali, anak Ibu akan sakit terus. Titik."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   '"..." Bu Sumiati diam lama, lalu berkata pelan, "Kalau gampang bikin jamban, dari dulu kami bikin, Dok." Ada duri di kalimat itu.',
                 efekTrust: -2,
@@ -219,7 +248,7 @@ const keluargaRaharjo: KeluargaBinaan = {
               {
                 id: 'raharjo_d3_konfrontasi',
                 teks: '"Pak, rokoknya saja sebungkus sehari. Kalau uang rokok ditabung, setahun juga jadi jamban."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Pak Raharjo bangkit berdiri. "Dokter datang ke rumah saya buat ngitung-ngitung rokok saya?" Bu Sumiati buru-buru menengahi, tapi udara di ruangan sudah berubah.',
                 efekTrust: -2,
@@ -357,7 +386,7 @@ const keluargaRaharjo: KeluargaBinaan = {
               {
                 id: 'raharjo_k2_d1_konfrontasi',
                 teks: '"Dua bulan nunggu arisan? Lama sekali, Pak. Harusnya dari dulu-dulu ditabung, jadi tidak keburu musim hujan begini."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Senyum Pak Raharjo padam. "Dari dulu ditabung pakai apa, Dok?" Ia turun kembali ke galian, dan percakapan harus mengejarnya ke bawah.',
                 efekTrust: -2,
@@ -403,7 +432,7 @@ const keluargaRaharjo: KeluargaBinaan = {
               {
                 id: 'raharjo_k2_d2_konfrontasi',
                 teks: '"Pak, itu di caping ada kretek baru. Katanya nabung buat kloset, tapi rokok jalan terus?"',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Hening. Pak Raharjo menatap capingnya, lalu menatapmu. "Dokter ini kalau ke sini senengnya meriksa caping orang." Bu Sumiati menunduk; tawanya tadi lenyap tanpa bekas.',
                 efekTrust: -2,
@@ -443,7 +472,7 @@ const keluargaRaharjo: KeluargaBinaan = {
               {
                 id: 'raharjo_k2_d3_konfrontasi',
                 teks: '"Pelan-pelan terus, Pak. Nanti keburu hujan, galian ambrol, mulai dari nol lagi. Jangan banyak alasan."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Pak Raharjo memandangi galiannya lama sekali. "Iya, Dok," katanya akhirnya — dua kata yang menutup percakapan serapat pintu.',
                 efekTrust: -2,
@@ -619,7 +648,7 @@ const keluargaMusa: KeluargaBinaan = {
               {
                 id: 'musa_d1_konfrontasi',
                 teks: '"Pak Musa, saya buka laci tadi — obatnya numpuk semua. Rajin antre di Puskesmas tapi tidak diminum, itu namanya buang-buang obat negara."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Wajah cerah itu padam pelan-pelan seperti lampu kehabisan minyak. "Maaf, Dok. Maaf." Ia membungkuk kecil, dan sisa kunjunganmu terasa seperti memeriksa murid, bukan menemani orang tua.',
                 efekTrust: -2,
@@ -665,7 +694,7 @@ const keluargaMusa: KeluargaBinaan = {
               {
                 id: 'musa_d2_konfrontasi',
                 teks: '"Bapak kan pensiunan penjaga sekolah, bukan orang bodoh. Masa baca etiket obat saja tidak bisa?"',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   '"Ya sudah tua, Dok, matanya." Suaranya masih sopan, tapi ia mulai merapikan gelas — isyarat halus orang Jawa bahwa tamunya sebaiknya segera pamit.',
                 efekTrust: -2,
@@ -705,7 +734,7 @@ const keluargaMusa: KeluargaBinaan = {
               {
                 id: 'musa_d3_konfrontasi',
                 teks: '"Bohong sama anak sendiri itu tidak baik, Pak. Kalau nanti Bapak jatuh sendirian di rumah baru tahu rasa."',
-                gaya: 'konfrontasi',
+                gaya: 'menakut_nakuti',
                 respons:
                   'Pak Musa menegakkan punggung, sisa-sisa wibawa penjaga sekolah empat puluh tahun. "Saya sudah tua, Dok, tapi belum pikun. Jangan ditakut-takuti di rumah sendiri." Radio terdengar sangat keras dalam hening berikutnya.',
                 efekTrust: -2,
@@ -851,7 +880,7 @@ const keluargaMusa: KeluargaBinaan = {
               {
                 id: 'musa_k2_d1_konfrontasi',
                 teks: '"Lancar bagaimana, Pak. Itu sekat Rabu-Kamis masih penuh, saya lihat dari sini."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Tangan Pak Musa berhenti di udara. "...Dokter matanya masih bagus ya." Ia menutup kotak itu pelan-pelan, dan sisa cerita yang tadinya mau tumpah, surut kembali ke dalam.',
                 efekTrust: -2,
@@ -897,7 +926,7 @@ const keluargaMusa: KeluargaBinaan = {
               {
                 id: 'musa_k2_d2_konfrontasi',
                 teks: '"Pak, aturan pakai itu tinggal baca di etiket. Kalau tiap ganti resep berhenti minum obat, kotak sebagus apa pun percuma."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   '"Iya, Dok. Percuma ya." Ia mengulang kata itu pelan — percuma — dan memandangi kotak obatnya seperti memandangi rapor merah. Kamu baru saja meruntuhkan benda yang paling ia banggakan bulan ini.',
                 efekTrust: -2,
@@ -937,7 +966,7 @@ const keluargaMusa: KeluargaBinaan = {
               {
                 id: 'musa_k2_d3_konfrontasi',
                 teks: '"Itu telepon dari anaknya didiamkan terus, Pak. Nanti kalau Bapak kenapa-kenapa, yang repot dan nyesel ya mereka juga."',
-                gaya: 'konfrontasi',
+                gaya: 'memaksa',
                 respons:
                   'Pak Musa memasukkan ponsel itu ke saku, menjauh dari pandanganmu. "Urusan saya sama anak saya, Dok." Kalimat paling dingin yang pernah keluar dari orang sehangat ini.',
                 efekTrust: -2,
@@ -1127,7 +1156,7 @@ const keluargaDewi: KeluargaBinaan = {
               {
                 id: 'dewi_d1_konfrontasi',
                 teks: '"Hamil keempat dengan jarak serapat ini ya pasti kurang darah, Bu. Ini kehamilannya memang tidak direncanakan, kan?"',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Bu Dewi membetulkan gendongan Laras, membeli waktu. "Namanya rezeki, Dok, masa ditolak." Kalimat itu keluar datar, hafalan — kalimat suaminya, dipinjam untuk membela diri dari dokternya.',
                 efekTrust: -2,
@@ -1173,7 +1202,7 @@ const keluargaDewi: KeluargaBinaan = {
               {
                 id: 'dewi_d2_konfrontasi',
                 teks: '"Bu, empat anak dengan Hb 9,8 itu bukan rezeki lagi, itu bahaya. Ibu harus tegas ke suami soal KB, ini nyawa Ibu taruhannya."',
-                gaya: 'konfrontasi',
+                gaya: 'menggurui',
                 respons:
                   '"Iya, Dok. Nanti saya bilang." Jawaban yang terlalu cepat dan terlalu patuh — jenis "iya" yang artinya percakapan ini selesai. Laras dipindah ke gendongan satunya; punggung Bu Dewi kini sedikit membelakangimu.',
                 efekTrust: -2,
@@ -1213,7 +1242,7 @@ const keluargaDewi: KeluargaBinaan = {
               {
                 id: 'dewi_d3_konfrontasi',
                 teks: '"Pak Hendra, istri Bapak anemia dan hamil keempat. Kalau Bapak masih melarang KB juga, sama saja Bapak membahayakan nyawa istri sendiri."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Ruangan itu hening; bahkan Bayu berhenti berlari. "Dokter datang ke rumah saya..." Pak Hendra berdiri, suaranya rendah, "...buat bilang saya mau mencelakai istri saya?" Bu Dewi memegangi lengan suaminya, memohon tanpa kata. Tidak ada percakapan yang bisa diselamatkan setelah ini.',
                 efekTrust: -2,
@@ -1253,7 +1282,7 @@ const keluargaDewi: KeluargaBinaan = {
               {
                 id: 'dewi_d4_konfrontasi',
                 teks: '"Rezeki yang ngatur Yang Atas, tapi yang sembilan bulan mengandung dan pingsan-pingsan itu istri Bapak, bukan Yang Atas dan bukan Bapak."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Sudut rahang Pak Hendra mengeras. "Dokter ini kalau ngomong berani juga ya." Ia tidak marah meledak — lebih buruk: ia menutup diri dengan senyum dingin dan mulai menjawab semua pertanyaanmu dengan "iya" dan "nggak" saja.',
                 efekTrust: -2,
@@ -1391,7 +1420,7 @@ const keluargaDewi: KeluargaBinaan = {
               {
                 id: 'dewi_k2_d1_konfrontasi',
                 teks: '"Yang macam-macam itu sumbernya obrolan pool truk, Pak. Masa soal nyawa istri, Bapak lebih percaya sopir daripada dokter?"',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   '"Saya juga sopir, Dok." Dua patah kata, datar, dan kamu langsung tahu harganya. Pak Hendra menyandarkan punggung, jarak di antara kalian kembali selebar minggu lalu.',
                 efekTrust: -2,
@@ -1437,7 +1466,7 @@ const keluargaDewi: KeluargaBinaan = {
               {
                 id: 'dewi_k2_d2_konfrontasi',
                 teks: '"Rokoknya masih nangkring di dasbor, Pak. Katanya mau menjaga anak-istri, asapnya kok masih dibawa pulang seminggu sekali."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Pak Hendra menutup pintu truk dengan sedikit lebih keras dari perlunya. "Satu-satu, Dok." Suaranya masih terkendali, tapi kopi di gelasmu tidak ditawari tambah. Kamu menagih dua perubahan sekaligus dari orang yang baru sanggup satu.',
                 efekTrust: -2,
@@ -1477,7 +1506,7 @@ const keluargaDewi: KeluargaBinaan = {
               {
                 id: 'dewi_k2_d3_konfrontasi',
                 teks: '"Jadi nyawa dan kesehatan Bu Dewi kalah sama omongan warung pool? Bapak sendiri yang bilang mau menjaga anak-istri."',
-                gaya: 'konfrontasi',
+                gaya: 'menghakimi',
                 respons:
                   'Wajah Pak Hendra mengeras — bukan marah, tapi malu, dan malu pada laki-laki seperti ini lebih berbahaya dari marah. "Nggak sesederhana itu, Dok." Ia bangkit, menyalakan selang, kembali mencuci truk yang sudah bersih. Percakapan sore ini selesai lebih awal.',
                 efekTrust: -2,

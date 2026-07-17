@@ -140,7 +140,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Pak, saya dengar sendiri ada orang di kamar belakang. Menyembunyikan anggota keluarga ' +
                     'sakit itu termasuk penelantaran — bisa kena undang-undang."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     'Wajah Pak Slamet memutih, lalu mengeras. "Silakan Dokter pulang. Kami tidak sedang ' +
                     'melanggar hukum apa-apa." Bu Tumini mengantar ke pintu dengan tangan gemetar.',
@@ -195,7 +195,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Justru karena berhenti obat itulah dia ngamuk, Pak. Kalau diteruskan obatnya, kejadian ' +
                     'warung itu tidak akan ada. Keputusan Bapak itu keliru besar."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     '"Jadi salah saya." Pak Slamet berdiri, ke dapur, dan tidak kembali. Bu Tumini memandangimu ' +
                     'dengan mata yang minta maaf sekaligus menyalahkan.',
@@ -250,7 +250,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '(Berjalan ke lorong dan membuka gembok) "Eko? Saya dokter Puskesmas. Ayo keluar, ' +
                     'tidak apa-apa."',
-                  gaya: 'konfrontasi',
+                  gaya: 'memaksa',
                   respons:
                     '"JANGAN!" Pak Slamet dan Bu Tumini berseru bersamaan. Dari dalam kamar terdengar sesuatu ' +
                     'jatuh dan langkah mundur ke pojok. Kamu berhenti dengan tangan di gembok orang lain — ' +
@@ -441,7 +441,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Nah itu, Pak — membentak begitu bisa memicu relaps. Kalau sampai kambuh lagi gara-gara ' +
                     'dibentak, yang repot siapa?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Pak Slamet menunduk. "Saya, Dok. Saya yang repot. Saya juga yang salah, dari dulu." ' +
                     'Rasa bersalah yang kemarin baru sembuh setengah itu kambuh lebih cepat dari skizofrenia mana pun.',
@@ -496,7 +496,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Kamis-Jumat obatnya bolong, Bu. Ini yang bahaya. Bagaimanapun caranya, obat tidak ' +
                     'boleh putus — itu tanggung jawab Ibu sebagai yang merawat."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     '"Inggih..." Bu Tumini melirik suaminya — yang bentakannya kemarin adalah alasan dua hari ' +
                     'bolong itu. Tanggung jawab dilempar ke pundak yang salah, dan keduanya sama-sama menunduk.',
@@ -552,7 +552,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '(Menoleh ke Bu Tumini) "Kalau dia mulai dengar suara-suara, Ibu langsung tambah dosisnya ' +
                     'setengah tablet ya, sambil menunggu jadwal kontrol."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menggurui',
                   respons:
                     'Bu Tumini mencatat patuh — dan Eko perlahan mundur dari lingkaran, kembali jadi orang ' +
                     'ketiga dalam kalimat tentang dirinya. Pertanyaannya tadi tidak pernah dijawab.',
@@ -677,6 +677,35 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
             'pengetahuannya: nenek yakin pisang menguatkan usus, ibu mengira tangisan bayi = ASI kurang, ' +
             'dan tak seorang pun bisa membaca grafik KMS yang sebenarnya menunjukkan berat Nayla mulai ' +
             'mendatar. Bukan soal niat atau akses — soal ilmu yang keliru diwariskan.',
+          pilihanIngatkan: {
+            prompt: 'Buat keluarga mampu mengulang tindakan makan bayi dan pemantauan pertumbuhan yang disepakati.',
+            pilihan: [
+              {
+                id: 'yk1_ingatkan_tepat',
+                teks:
+                  '"Sampai Nayla berusia enam bulan, cukup ASI tanpa pisang, biskuit, air, atau formula; pantau popok basah dan bawa Buku KIA saat ditimbang. Kita bertemu lagi {jadwal} untuk melihat menyusu dan arah garis KMS."',
+                tepat: true,
+                respons:
+                  'Bu Yani dan Mbah Painem sama-sama mengulang: ASI saja sampai enam bulan, pantau popok, lalu lihat garis KMS pada jadwal berikutnya.',
+              },
+              {
+                id: 'yk1_ingatkan_pisang_sedikit',
+                teks: '"Pisangnya dikurangi sedikit demi sedikit saja, Mbah, supaya Nayla tidak kaget. ASI tetap diteruskan."',
+                tepat: false,
+                respons: 'Mbah Painem menafsirkan pengurangan sebagai izin meneruskan MPASI dini dalam porsi lebih kecil.',
+                catatanPedagogis:
+                  'Pada bayi tiga bulan, kompromi porsi tidak memperbaiki masalah: makanan pendamping belum diindikasikan.',
+              },
+              {
+                id: 'yk1_ingatkan_berat',
+                teks: '"Yang penting berat Nayla naik. Mau ASI, pisang, atau formula tidak masalah asal timbangannya bertambah."',
+                tepat: false,
+                respons: 'Keluarga menangkap angka berat sebagai satu-satunya tujuan dan kehilangan prinsip ASI eksklusif serta keamanan pemberian makan.',
+                catatanPedagogis:
+                  'Pertumbuhan harus dibaca bersama praktik pemberian makan yang aman; kenaikan angka tidak membenarkan MPASI dini.',
+              },
+            ],
+          },
           hotspot: [
             {
               id: 'yk1_h1',
@@ -762,7 +791,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Aduh, Bu, bayi 3 bulan dikasih pisang? Untung belum kenapa-kenapa. Ini kalau sampai ' +
                     'ususnya tersumbat bisa operasi lho."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     'Bu Yani pucat — dan Mbah Painem maju dari ambang dapur: "Halah! Bapakmu, pakdemu, semua ' +
                     'tak kasih pisang dari bayi. Buktinya jadi orang semua!" Perang generasi resmi dimulai, ' +
@@ -820,7 +849,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Anak Yu Darmi itu kurus karena cacingan, Mbah, bukan karena ASI. Jangan ' +
                     'membanding-bandingkan yang tidak sebanding."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menggurui',
                   respons:
                     '"Oalah, sekarang aku sing salah ngomong." Mbah Painem bangkit membawa Nayla ke dapur — ' +
                     'tempat piring pisang menunggu. Debat kalah-menang selesai; sendok tetap di tangannya.',
@@ -882,7 +911,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Ini akibatnya tidak pernah ke Posyandu dua bulan ini. Kalau rajin nimbang kan ' +
                     'ketahuan dari kemarin-kemarin."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     '"Posyandunya bentrok jadwal lembur, Dok," jawab Bu Yani kecil. Menyalahkan ke belakang ' +
                     'lagi — dan kartu yang harusnya jadi guru berubah jadi barang bukti.',
@@ -1059,7 +1088,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Yang penting jangan formula, Bu. Sekali kenal dot dan formula, bayi biasanya menolak ' +
                     'menyusu langsung. Nanti Ibu menyesal."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     '"Terus solusinya apa, Dok?!" — suara Bu Yani naik untuk pertama kalinya. "Semua orang ' +
                     'bilang jangan-jangan-jangan, tidak ada yang bilang CARANYA." Ia benar, dan kamu barusan ' +
@@ -1115,7 +1144,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Sebenarnya kalau manajemen waktunya bagus, semua ibu bisa, Bu. Ibu-ibu zaman sekarang ' +
                     'saja yang gampang menyerah ke formula."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Bu Yani tersenyum sangat tipis. "Iya ya, Dok. Saya memang kurang pintar bagi waktu." ' +
                     'Kalimat itu keluar datar — dan kamu tahu barusan menambah satu suara lagi ke paduan ' +
@@ -1171,7 +1200,7 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                   teks:
                     '"Kalau tempat kerjanya tidak mendukung begitu, ya pertimbangkan berhenti kerja dulu, ' +
                     'Bu. Enam bulan saja. Anak itu lebih penting dari gaji."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menggurui',
                   respons:
                     'Hening. "Gaji saya yang bayar listrik dan cicilan motor, Dok," kata Bu Yani akhirnya, ' +
                     'pelan. Pak Herman di teras berhenti mengetuk-ngetuk obeng. Kamu baru saja menyuruh ' +

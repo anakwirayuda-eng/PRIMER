@@ -82,6 +82,64 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
             'Perlengkapan persalinan dukun sudah disiapkan di kamar dan nama Mbah Rah disebut dengan hormat ' +
             'yang dalam — sementara kata "rumah sakit" membuat wajahnya menutup: kakaknya meninggal di meja ' +
             'operasi caesar. Ini kepercayaan dan ketakutan, bukan soal jarak atau ongkos (itu urusan nanti).',
+          penerimaanAwal: {
+            jenis: 'diterima_terpaksa',
+            mode: 'karier',
+            narasi:
+              'Bu Asih membiarkanmu duduk di teras, tetapi tubuhnya tetap menghadap pintu. "Silakan minum dulu, Dok, tapi hari ini jangan bicara soal kandungan atau rumah sakit. Saya belum siap. Kader sudah bilang Dokter mungkin datang."',
+            ulangDalamHari: 1,
+            rasional:
+              'Kehamilan tujuh bulan tanpa ANC memerlukan upaya kontak ulang cepat; satu hari menjaga otonomi tanpa menormalkan penundaan panjang.',
+            pilihan: [
+              {
+                id: 'ak1_terima_hormati',
+                teks:
+                  '"Baik, Bu, hari ini saya tidak akan membuka pembahasan itu. Saya pamit setelah minum dan kembali {jadwal}; Ibu boleh memilih Mbah Rah atau Pak Jumadi ikut mendampingi."',
+                tindakan: 'hormati',
+                respons:
+                  'Bahu Bu Asih turun sedikit. Ia menyetujui kunjungan ulang dengan pendamping pilihannya, tanpa dipaksa membahas kehamilan hari ini.',
+              },
+              {
+                id: 'ak1_terima_paksa',
+                teks:
+                  '"Ibu sudah tujuh bulan dan belum pernah ANC. Saya datang sebagai dokter, jadi sekarang saya harus memeriksa Ibu."',
+                tindakan: 'memaksa',
+                respons:
+                  'Bu Asih berdiri dan memanggil Pak Jumadi. "Saya sudah bilang belum siap, Dok." Kamu diminta meninggalkan teras.',
+                catatanPedagogis:
+                  'Diterima dengan terpaksa bukan izin untuk melanjutkan masalah keluarga; tutup ramah dan buat janji ulang.',
+              },
+            ],
+          },
+          pilihanIngatkan: {
+            prompt: 'Pastikan urgensi evaluasi kehamilan dan janji tindak lanjut tidak tercampur menjadi kontrol rutin biasa.',
+            pilihan: [
+              {
+                id: 'ak1_ingatkan_tepat',
+                teks:
+                  '"Bu Asih, tekanan darah dan urin harus dinilai bidan atau Puskesmas hari ini atau besok pagi; bila sakit kepala hebat, pandangan kabur, nyeri ulu hati, kejang, atau perdarahan, berangkat darurat saat itu juga. Saya kembali {jadwal} untuk memastikan jalur pertolongan berjalan."',
+                tepat: true,
+                respons:
+                  'Bu Asih dan Pak Jumadi bergantian mengulang tanda bahaya, tujuan pemeriksaan segera, dan hari kamu kembali memastikan rencana berjalan.',
+              },
+              {
+                id: 'ak1_ingatkan_kelas',
+                teks: '"Jangan lupa ikut kelas ibu hamil minggu depan ya, Bu. Di sana semua tanda bahaya akan dijelaskan."',
+                tepat: false,
+                respons: 'Bu Asih mencatat kelas minggu depan, seolah tensi tinggi dan protein urin boleh menunggu sampai saat itu.',
+                catatanPedagogis:
+                  'Kelas ibu hamil tidak menggantikan evaluasi hipertensi kehamilan yang harus dilakukan segera.',
+              },
+              {
+                id: 'ak1_ingatkan_rs',
+                teks: '"Pokoknya Ibu harus melahirkan di rumah sakit. Soal pemeriksaan sekarang nanti saja setelah rencana persalinannya beres."',
+                tepat: false,
+                respons: 'Bu Asih kembali menutup diri pada kata rumah sakit, sementara temuan risiko hari ini tidak mendapat tindakan.',
+                catatanPedagogis:
+                  'Rencana persalinan penting, tetapi temuan risiko akut tidak boleh ditunda sambil menunggu perubahan keyakinan jangka panjang.',
+              },
+            ],
+          },
           hotspot: [
             {
               id: 'ak1_h1',
@@ -160,7 +218,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Bu, dukun bayi itu ilegal sejak lama. Kalau terjadi apa-apa, tidak ada alat, tidak ada ' +
                     'obat, tidak ada ambulans. Ibu mempertaruhkan dua nyawa."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Wajah Bu Asih mengeras seketika. "Mbah Rah itu sudah nolong separuh kampung ini lahir, Dok. ' +
                     'Termasuk saya sendiri." Pak Jumadi berdehem dari teras. Percakapan membeku.',
@@ -230,7 +288,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Justru karena riwayat keluarga begitu, Ibu makin wajib lahiran di rumah sakit. ' +
                     'Kalau ngeyel di dukun dan kenapa-kenapa, siapa yang mau disalahkan?"',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Pak Jumadi meletakkan gelas kopinya, keras. "Kami ini sedang cerita musibah keluarga, Dok, ' +
                     'bukan minta disalah-salahkan." Bu Asih menunduk memilin dasternya.',
@@ -299,7 +357,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Terus terang, Bu: umur 38, anak keempat, pernah perdarahan. Kalau tetap di dukun, ' +
                     'peluang Ibu meninggal itu nyata. Saya sudah sering lihat yang begini berakhir di mana."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menakut_nakuti',
                   respons:
                     'Hening. Bu Asih memeluk perutnya, seperti melindungi bayinya dari kata-katamu. ' +
                     '"...Kalau begitu doakan saja saya selamat, Dok." Ia berdiri, mengisyaratkan sore sudah larut.',
@@ -491,7 +549,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Skor tinggi itu artinya bahaya, Bu. Sudah tidak usah banyak tanya — pokoknya nurut ' +
                     'bu bidan saja, lahiran di PONED."',
-                  gaya: 'konfrontasi',
+                  gaya: 'memaksa',
                   respons:
                     '"Inggih, Dok. Nurut." Jawaban patuh yang datar — pertanyaan pertamanya yang lahir dari ' +
                     'rasa ingin tahu barusan kamu matikan sendiri.',
@@ -552,7 +610,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Tujuh bulan bukunya tidak dibuka-buka, Bu. Padahal semua ada di sini. Lain kali ' +
                     'jangan cuma disimpan di atas lemari."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Bu Asih tersenyum kecut, menunduk. "Inggih... maaf, Dok." Ia tidak menjelaskan kenapa — ' +
                     'dan kamu baru saja memastikan ia tak akan pernah bilang bahwa ia tak bisa membaca.',
@@ -606,7 +664,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Kalau begitu Bapak saja yang wajib membacakan tiap malam. Namanya juga kepala keluarga, ' +
                     'masa tidak bisa meluangkan lima menit."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menggurui',
                   respons:
                     'Bu Asih tertawa canggung. "Bapaknya... sami mawon, Dok. Lulus SD saja tidak." Kamu baru ' +
                     'saja mempermalukan dua orang sekaligus dengan satu kalimat.',
@@ -769,7 +827,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Makanya, Bu, dari kemarin-kemarin saya suruh nabung. Kalau dari kunjungan pertama ' +
                     'nurut, sekarang sudah terkumpul."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     'Bu Asih menunduk memandangi celengan ayamnya. Delapan puluh ribu itu hasil ia berjualan ' +
                     'rempeyek dua bulan — dan barusan kamu bilang itu kelalaian.',
@@ -831,7 +889,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Kok bisa KTP sama KK beda tanggal lahir, Bu? Dulu waktu bikin tidak diteliti dulu? ' +
                     'Ini jadi panjang kan urusannya."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menghakimi',
                   respons:
                     '"Yang nulis kan petugasnya, Dok," jawab Pak Jumadi datar. "Kami taunya terima kartu." ' +
                     'Benar juga — dan kamu barusan menyalahkan korban salah ketik.',
@@ -886,7 +944,7 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   teks:
                     '"Ya sudah, kalau memang tidak ada kendaraan, lahiran di bidan desa saja. Yang penting ' +
                     'bukan dukun — PONED-nya kalau sempat saja."',
-                  gaya: 'konfrontasi',
+                  gaya: 'menggurui',
                   respons:
                     'Bu Asih mengangguk ragu. Skor empat belas, riwayat perdarahan, dan kamu barusan ' +
                     'menurunkan sendiri standar yang susah payah kalian bangun bertiga.',

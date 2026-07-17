@@ -130,7 +130,7 @@ describe('<Kunjungan /> — aria-current stepper babak (#16c)', () => {
     pasangKunjungan({ fase: 'observasi' })
     render(<Kunjungan />)
     const langkah = Array.from(document.querySelectorAll('.kunjungan-stepper__langkah'))
-    expect(langkah).toHaveLength(4)
+    expect(langkah).toHaveLength(5)
     expect(langkah[0]!.getAttribute('aria-current')).toBe('step')
     langkah.slice(1).forEach((el) => expect(el.getAttribute('aria-current')).toBeNull())
   })
@@ -154,5 +154,42 @@ describe('<Kunjungan /> — role=radio kartu intervensi resep sosial (#16d, diko
     const kartuSesudah = Array.from(document.querySelectorAll('.kunjungan-intervensi'))
     expect(kartuSesudah[0]!.getAttribute('aria-checked')).toBe('true')
     kartuSesudah.slice(1).forEach((el) => expect(el.getAttribute('aria-checked')).toBe('false'))
+  })
+})
+
+describe('<Kunjungan /> — E-2 SAJI', () => {
+  it('babak Ingatkan menampilkan tiga pilihan dengan tanggal dari helper engine', () => {
+    pasangKunjungan({ fase: 'ingatkan', intervensiDipilih: 'wk1_i1' })
+    render(<Kunjungan />)
+
+    const grup = screen.getByRole('group', { name: 'Pilihan pengingat penutup' })
+    expect(grup.querySelectorAll('button')).toHaveLength(3)
+    expect(screen.getByText(/Hari 5/)).toBeInTheDocument()
+    expect(screen.getByText('Ingatkan')).toBeInTheDocument()
+  })
+
+  it('penerimaan awal Santoso tampil sebagai prelude dua respons tanpa langkah SAJI aktif', () => {
+    const keluargaId = 'keluarga_santoso'
+    const skenario = PACK.keluarga[keluargaId]!.arc.kunjungan[0]!
+    const state = buildInitialState('Uji Penerimaan', 2, PACK)
+    const kj: KunjunganState = {
+      keluargaId,
+      skenarioId: skenario.id,
+      fase: 'penerimaan',
+      hotspotDitemukan: [],
+      dialogIndex: 0,
+      pilihanDiambil: [],
+      trustDelta: 0,
+      konfrontasiBeruntun: 0,
+      diusir: false,
+      penerimaanAwal: 'ditolak_total',
+    }
+    useGame.setState({ state: { ...state, hari: 3, layar: 'kunjungan', kunjungan: kj } })
+    render(<Kunjungan />)
+
+    const grup = screen.getByRole('group', { name: 'Respons terhadap penerimaan keluarga' })
+    expect(grup.querySelectorAll('button')).toHaveLength(2)
+    expect(screen.getByText(/Hari 6/)).toBeInTheDocument()
+    expect(document.querySelectorAll('[aria-current="step"]')).toHaveLength(0)
   })
 })

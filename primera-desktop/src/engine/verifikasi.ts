@@ -575,7 +575,12 @@ function fnv1a(teks: string): string {
 // klb_5w1h (2 kartu yang SEBELUMNYA selalu identik apa pun kasusnya) lewat
 // pool 3 varian masing-masing — pilihan/benar/respons tak tersentuh sama
 // sekali (klb_aksi, yang sudah bervariasi via `pola`, juga tak tersentuh).
-export const REVISI_ENGINE = 41
+// 42 (2026-07-17 — E-2 SAJI): babak Ingatkan pilot memakai kualitas komunikasi
+// 80% MI + 20% Ingatkan tanpa mengubah gate MI; dua penutupan kontak awal sah
+// tidak masuk tally/indikator/TTM/arc dan menunda karma satu kali; outcome
+// kunjungan menjadi enam-arah; 82 gaya konfrontasi direklasifikasi ke empat
+// righting-reflex primer. Save lama menurunkan hasilAkhir dan kualitasSaji.
+export const REVISI_ENGINE = 42
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

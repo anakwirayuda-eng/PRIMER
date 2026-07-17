@@ -201,12 +201,18 @@ Semua diadjudikasi user via AskUserQuestion: **A1+A2, B1+B2+B3, C2, D3-lite.**
 | C2 | **SELESAI** — registry player-facing mencakup 27/27 skenario, 89/89 intervensi, serta Posyandu/Prolanis/KLB; tampil pasca-keputusan. Tidak diinjeksi inline karena `k.arc` di-hash wholesale; lihat `docs/M11_SITASI_UKM_HASIL.md` |
 | D3-lite | SELESAI — rotasi 4 kanal Prolanis + catatan tensi ILP |
 | E-1 | SELESAI — label SAJI di stepper Kunjungan.tsx |
-| E-2 | BELUM — gelombang unfreeze UKM tersendiri, jangan campur rev 41 (sudah di-tag Golden Master, lihat di bawah) |
+| E-2 | **SELESAI 2026-07-17** - babak Ingatkan 5 pilot, 2 penutupan kontak awal Career, 82 reklasifikasi gaya dialog, migrasi save, `CONTENT_RELEASE=m11-e2-saji-pilot-2026-07-17`, `REVISI_ENGINE=42` |
 | F | belum diminta |
 
 **Gelombang ini DITUTUP 2026-07-17** — tag `golden-master-m11` (REVISI_ENGINE 41),
 88/88 file test, 976/976 test, typecheck bersih, freeze 17/17, soak-adversarial
 13/13 identik baseline pra-wave. Semua commit di lab clone
 `D:/Dev/PRIMER-CODEX-lab/primera-desktop`, branch `codex-gpt56-experiment`,
-belum di-push. Pekerjaan berikutnya (E-2, M11 #3/#6/#7-riset, atau lainnya)
-adalah gelombang REVISI_ENGINE baru — butuh scoping/greenlight eksplisit dulu.
+belum di-push. Pada checkpoint rev 41 ini, E-2 masih diperlakukan sebagai
+gelombang REVISI_ENGINE baru yang memerlukan greenlight eksplisit.
+
+**Gelombang E-2 DITUTUP 2026-07-17** setelah persetujuan eksplisit
+"Setuju rekomendasi E-2". Desain final dan hasil implementasi tercatat di
+`docs/M11_E2_SAJI_DECISION_PROPOSAL.md`. E-2 berdiri sebagai release baru di
+atas tag `golden-master-m11`; pekerjaan berikutnya kembali ke M11 #6/#7-riset
+atau prioritas baru yang ditetapkan pemilik.

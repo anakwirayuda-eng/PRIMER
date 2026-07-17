@@ -28,6 +28,7 @@ import { formatIks, karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta
 import { clusterAktif } from '@engine/surveilans'
 import { useFocusTrap } from '../useFocusTrap'
 import './PetaDesa.css'
+import { tampilanHasilKunjungan } from './hasilKunjunganView'
 
 export function PetaDesa() {
   const state = useGame((s) => s.state)!
@@ -132,6 +133,7 @@ export function PetaDesa() {
   const skenarioHasil = hasilKunjungan
     ? keluargaHasil?.arc.kunjungan.find((skenario) => skenario.id === hasilKunjungan.skenarioId)
     : undefined
+  const tampilanHasil = hasilKunjungan ? tampilanHasilKunjungan(hasilKunjungan) : undefined
   const panduanHasil = skenarioHasil ? panduanSkenarioUkm(skenarioHasil) : undefined
 
   return (
@@ -315,15 +317,9 @@ export function PetaDesa() {
             onClick={(e) => e.stopPropagation()}
           >
             <span
-              className={`stempel stempel--jatuh ${
-                hasilKunjungan.diusir
-                  ? 'stempel--merah'
-                  : hasilKunjungan.berhasil
-                    ? 'stempel--hijau'
-                    : 'stempel--kunyit'
-              }`}
+              className={`stempel stempel--jatuh ${tampilanHasil?.kelasWarna ?? 'stempel--kunyit'}`}
             >
-              {hasilKunjungan.diusir ? 'DIPERSILAKAN PULANG' : hasilKunjungan.berhasil ? 'KUNJUNGAN BERHASIL' : 'BELUM BERHASIL'}
+              {tampilanHasil?.label}
             </span>
             <div className="peta-hasil__judul">
               {keluargaHasil ? keluargaHasil.namaKeluarga : hasilKunjungan.keluargaId}
@@ -336,11 +332,21 @@ export function PetaDesa() {
               </aside>
             )}
             <div className="baris baris--tengah">
-              <span className="chip chip--biru">
-                {hasilKunjungan.indikatorTerverifikasi.length} indikator terverifikasi ✓
-              </span>
+              {tampilanHasil?.substantif ? (
+                <span className="chip chip--biru">
+                  {hasilKunjungan.indikatorTerverifikasi.length} indikator terverifikasi ✓
+                </span>
+              ) : (
+                <span className="chip chip--biru">
+                  Janji ulang Hari {state.hari + (hasilKunjungan.ulangDalamHari ?? 1)}
+                </span>
+              )}
             </div>
-            <p className="teks-xs teks-lembut">Rincian penilaian menantimu di debrief sore nanti.</p>
+            <p className="teks-xs teks-lembut">
+              {tampilanHasil?.substantif
+                ? 'Rincian penilaian menantimu di debrief sore nanti.'
+                : 'Kontak awal ditutup tanpa menilai MI, indikator, atau perubahan perilaku.'}
+            </p>
             <button className="tombol tombol--utama tombol--besar" onClick={() => setHasilKunjungan(null)}>
               Kembali ke Peta
             </button>

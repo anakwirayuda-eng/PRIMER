@@ -28,6 +28,7 @@ import { hitungSkor } from './scoring'
 import { KAPASITAS_EDUKASI } from './clinic'
 import { HARI_STASE } from './paketUjian'
 import { Rng } from './core/rng'
+import { isGayaTerlarang } from '@content/types'
 import { rumahSakitCocokUntukIgd } from './igd'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
@@ -294,6 +295,14 @@ function cobaKunjunganProfil(state: GameState, profil: Profil, rng: Rng): GameSt
 
   let s = state.desa.binaan.includes(target) ? state : coba(state, { type: 'PILIH_BINAAN', keluargaId: target })
   s = coba(s, { type: 'MULAI_KUNJUNGAN', keluargaId: target })
+  if (s.kunjungan?.fase === 'penerimaan' && skenario.penerimaanAwal) {
+    const pilihan = profil.kunjunganKualitas === 'teladan'
+      ? skenario.penerimaanAwal.pilihan.find((p) => p.tindakan === 'hormati')
+      : profil.kunjunganKualitas === 'cepat'
+        ? skenario.penerimaanAwal.pilihan.find((p) => p.tindakan === 'memaksa')
+        : rng.pick(skenario.penerimaanAwal.pilihan)
+    return pilihan ? coba(s, { type: 'RESPONS_PENERIMAAN', pilihanId: pilihan.id }) : s
+  }
   if (!s.kunjungan || s.kunjungan.fase !== 'observasi') return state // ditolak (stamina/roster) — lewati hari ini
 
   if (profil.kunjunganKualitas === 'teladan') {
@@ -307,7 +316,7 @@ function cobaKunjunganProfil(state: GameState, profil: Profil, rng: Rng): GameSt
   for (const node of skenario.dialog) {
     const pilihan =
       profil.kunjunganKualitas === 'teladan'
-        ? node.pilihan.find((p) => p.tepat && p.gaya !== 'konfrontasi') ?? node.pilihan[0]!
+        ? node.pilihan.find((p) => p.tepat && !isGayaTerlarang(p.gaya)) ?? node.pilihan[0]!
         : profil.kunjunganKualitas === 'cepat'
           ? node.pilihan[0]!
           : rng.pick(node.pilihan)
@@ -332,6 +341,14 @@ function cobaKunjunganProfil(state: GameState, profil: Profil, rng: Rng): GameSt
       : (cocok[0] ?? skenario.intervensi[0])
   if (!kartu) return s
   s = coba(s, { type: 'PILIH_INTERVENSI', intervensiId: kartu.id })
+  if (s.kunjungan?.fase === 'ingatkan' && skenario.pilihanIngatkan) {
+    const pilihan = profil.kunjunganKualitas === 'teladan'
+      ? skenario.pilihanIngatkan.pilihan.find((p) => p.tepat)
+      : profil.kunjunganKualitas === 'cepat'
+        ? skenario.pilihanIngatkan.pilihan[0]
+        : rng.pick(skenario.pilihanIngatkan.pilihan)
+    if (pilihan) s = coba(s, { type: 'PILIH_INGATKAN', pilihanId: pilihan.id })
+  }
   return s
 }
 

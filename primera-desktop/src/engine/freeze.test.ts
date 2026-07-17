@@ -126,22 +126,26 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // 14 kasus infeksi lab kini bisa berkluster → komposisi KLB & bobot Director
   // bergeser pada jejak yang menyentuhnya. Kanal IGD baca activationStatus
   // (blueprint) — tak menyentuh file beku. Detail di verifikasi.ts REVISI 39.
-  'reducer.ts': 'b688132c330ae623a1b0e68c21ff596152cd9e93180b5bb70af093c031f1049c',
+  // Unfreeze 2026-07-17 (M11 E-2 SAJI Fase-2, REVISI_ENGINE 41 -> 42):
+  // babak Ingatkan, kualitas SAJI 80/20, dua outcome kontak awal resmi,
+  // jadwal ulang authored, migrasi hasil lama, dan fingerprint gaya dialog.
+  // Mode Ujian tetap tidak mengaktifkan outcome kontak awal.
+  'reducer.ts': 'f3bc11659b982474c0e97ce71a0e450c139a70db90c5263c48378ff6e1288cae',
   'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
-  'scoring.ts': 'c1b5de6fc2c194e8b8a70b8d802a29980002ee2059ea487821e9e59fc0540d8d',
+  'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   'director.ts': 'fa4c269cd001eb2e019f18507ac5e024ff38784bb6181cfa41cb5f87cd1a340d',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
   'init.ts': '19b2d372c730406a14ac96afc3497fc8e8f418b0694271a5bff1df41ad778afb',
   'kegiatan.ts': 'cd63103ca60aa6a736f11447c01b027638a4270332c95a4ca1227eb291c8067e',
-  'kunjungan.ts': '3ef25d708ac555fd285f92156e251ad2740e89de20cb1ab82934d0543e2016c9',
+  'kunjungan.ts': 'b83cbb2874d533a90f70f900d854f50b62b089695b5c9e5e449822f5905c6880',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '8c50dbd3a177ba79858859141a69cfad3f30eaa361fa57fc798b6a3ae910004f',
-  'state.ts': '6bde61e1fe34e3929289abcb2c72ad9691c5c879e8c7c75627dc462430410a1f',
-  'save.ts': '8c75672d5ff27efa243ce2f87d3ad92ff22c5c851f010566e1c4090b43449c8a',
+  'verifikasi.ts': 'c6f9f4eaf088c4b0f4573a011202d3d57c1a2b470df9033dde7923e54e66f412',
+  'state.ts': '64842309d7a08ef42bf35cf881c24ae6c0fe9e32afda3229d5ec8c63bf655332',
+  'save.ts': '3a124f864eb634ff9f94c9d38d63a464d09dfa75ab6f4814ca15875ddbfc0073',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',
   'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',

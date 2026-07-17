@@ -38,7 +38,17 @@ import {
 import type { Persona } from '@content/types'
 import { Rng } from './core/rng'
 import { buatEncounter, aksiKlinik, nilaiEncounter, kasusEfektif } from './clinic'
-import { arcKunjunganAktif, buatKunjungan, aksiKunjungan, selesaikanKunjungan, terapkanHasil, mundurTtm, skenarioEfektif } from './kunjungan'
+import {
+  arcKunjunganAktif,
+  buatKunjungan,
+  aksiKunjungan,
+  selesaikanKunjungan,
+  terapkanHasil,
+  mundurTtm,
+  skenarioEfektif,
+  hariTindakLanjutKunjungan,
+  penutupanAwalSah,
+} from './kunjungan'
 import { prosesHarianKader } from './kader'
 import { susunAntrianHarian, buatPasienDariKasus, peluangIgd } from './director'
 import { ambangKlusterPack, kasusMenular, pangkasSurveilans, hitungCluster } from './surveilans'
@@ -100,11 +110,6 @@ export const HARI_BUKA_KLB: Record<ModeStase, number> = { karier: 45, ujian: 15 
  */
 export const HARI_BUKA_POSYANDU: Record<ModeStase, number> = { karier: 15, ujian: 5 }
 export const COOLDOWN_POSYANDU: Record<ModeStase, number> = { karier: 30, ujian: 10 }
-/**
- * #4 outcome-window (audit CODEX UKM 2026-07-16): jeda antara JANJI warga (arc
- * tamat) dan verifikasi outcome-nya. Skala mode sama dengan siklus lain (1/3).
- */
-export const JENDELA_VERIFIKASI_JANJI: Record<ModeStase, number> = { karier: 14, ujian: 5 }
 /**
  * Peluang janji perubahan perilaku DITEPATI, fungsi trust keluarga (0-10):
  * trust tinggi (hubungan kuat) → hampir pasti ditepati; trust rendah → koin.
@@ -926,7 +931,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // seedKurikulum) — Tingkat-A tak bisa mengubah ground-truth kunjungan,
       // jadi tak perlu adil lintas paket-mate Mode Ujian (sama alasan #4 UKP).
       const rngVarian = new Rng(s.seed, 'kunjungan-varian', s.hari, action.keluargaId)
-      const kj = buatKunjungan(action.keluargaId, skenario, rngVarian)
+      const aktifkanPenerimaanAwal =
+        s.mode === 'karier' &&
+        kel.jumlahKunjungan === 0 &&
+        skenario.penerimaanAwal?.mode === 'karier'
+      const kj = buatKunjungan(action.keluargaId, skenario, rngVarian, aktifkanPenerimaanAwal)
       return {
         state: { ...s, stamina: s.stamina - biaya, layar: 'kunjungan', kunjungan: kj },
         events: [],
@@ -937,6 +946,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
     case 'PILIH_DIALOG':
     case 'KOMIT_HAMBATAN':
     case 'PILIH_INTERVENSI':
+    case 'PILIH_INGATKAN':
+    case 'RESPONS_PENERIMAAN':
     case 'LANJUT_BABAK': {
       const kj = s.kunjungan
       if (!kj) return err(s, 'Tidak sedang berkunjung.')
@@ -953,12 +964,14 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
 
       if (hasilAksi.selesai) {
         let hasil = selesaikanKunjungan(hasilAksi.kj, skenario, kel)
+        const kontakAwalSah = penutupanAwalSah(hasil.hasilAkhir)
 
         // SDOH armor (M1.6, port BehaviorCaseEngine): keluarga miskin/rentan
         // menahan pendekatan yang salah sasaran — kenaikan trust dipangkas
         // setengah bila hipotesis hambatan meleset. Diagnosis tepat menembus armor.
         const kenaArmor =
           (kelContent.ekonomi === 'miskin' || kelContent.ekonomi === 'rentan') &&
+          !kontakAwalSah &&
           !hasil.hipotesisBenar &&
           hasil.trustDelta > 0
         if (kenaArmor) {
@@ -970,6 +983,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         let kelBaru = terapkanHasil(
           kel, hasil, skenario, s.hari,
           arcKunjunganAktif(pack, kelContent, s.mode, s.contentRelease).length,
+          s.mode,
         )
 
         // #4 outcome-window: bila arc baru saja tamat-berhasil, indikator target
@@ -988,7 +1002,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               ...next.jadwal,
               {
                 id: `janji_${kj.keluargaId}_${s.hari}`,
-                hari: s.hari + JENDELA_VERIFIKASI_JANJI[s.mode],
+                hari: hariTindakLanjutKunjungan(s.hari, s.mode, true),
                 jenis: 'verifikasi_pispk',
                 keluargaId: kj.keluargaId,
                 indikatorJanji: indikatorJanjiBaru,
@@ -999,29 +1013,45 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
 
         // Tally MI & kunjungan
         const t = { ...next.tally }
-        t.kunjunganTotal += 1
-        if (hasil.berhasil) t.kunjunganBerhasil += 1
-        if (hasil.diusir) t.kunjunganDiusir += 1
-        // Apathy: kunjungan tanpa satu pun substansi — nol teknik MI yang tepat
-        // DAN nol temuan terverifikasi. Klik-kosong dihukum, sesuai GDD anti-min-max.
-        if (hasil.kualitasMi === 0 && hasil.indikatorTerverifikasi.length === 0) t.apathy += 1
-        // M10 Batch-2 (CODEX P1.5): satuan MI = KUNJUNGAN, bukan pilihan-dialog.
-        // Dulu miTotal/miTepat berakumulasi per-PILIHAN (4/kunjungan) sementara
-        // floor pembagi skor (EKSPEKTASI_KUNJUNGAN, scoring.ts) berdenominasi
-        // KUNJUNGAN → satu kunjungan sempurna = 4/8 = 50% target Ujian, bukan
-        // 1/8 = 12.5%. Kini: miTotal += 1 per kunjungan, miTepat += kualitas
-        // kunjungan (0..1, pecahan sah — validasi save hanya menuntut finite≥0).
-        // Bebas konstanta ajaib & tak terikat bentuk konten (jumlah pilihan per
-        // skenario boleh berubah tanpa menggeser semantik skor).
-        t.miTotal += 1
-        t.miTepat += hasil.kualitasMi / 100
+        if (!kontakAwalSah) {
+          t.kunjunganTotal += 1
+          if (hasil.berhasil) t.kunjunganBerhasil += 1
+          if (hasil.diusir) t.kunjunganDiusir += 1
+          // Apathy: kunjungan tanpa satu pun substansi — nol teknik MI yang tepat
+          // DAN nol temuan terverifikasi. Klik-kosong dihukum, sesuai GDD anti-min-max.
+          if (hasil.kualitasMi === 0 && hasil.indikatorTerverifikasi.length === 0) t.apathy += 1
+          // M10 Batch-2 (CODEX P1.5): satuan MI = KUNJUNGAN, bukan pilihan-dialog.
+          // Dulu miTotal/miTepat berakumulasi per-PILIHAN (4/kunjungan) sementara
+          // floor pembagi skor (EKSPEKTASI_KUNJUNGAN, scoring.ts) berdenominasi
+          // KUNJUNGAN → satu kunjungan sempurna = 4/8 = 50% target Ujian, bukan
+          // 1/8 = 12.5%. Kini: miTotal += 1 per kunjungan, miTepat += kualitas
+          // kunjungan (0..1, pecahan sah — validasi save hanya menuntut finite≥0).
+          // Bebas konstanta ajaib & tak terikat bentuk konten (jumlah pilihan per
+          // skenario boleh berubah tanpa menggeser semantik skor).
+          t.miTotal += 1
+          t.miTepat += hasil.kualitasSaji / 100
+        }
 
         // Bridge bertingkat (M1.1): nasib jadwal karma keluarga ini mengikuti
         // gradasi hasil — berhasil membatalkan, partial menunda jam pasir,
         // gagal/diusir justru mempercepatnya.
         let jadwal = next.jadwal
         const adaKarma = jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId)
-        if (adaKarma && hasil.berhasil) {
+        if (adaKarma && kontakAwalSah) {
+          const jeda = hasil.ulangDalamHari ?? 1
+          jadwal = jadwal.map((j) =>
+            j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId ? { ...j, hari: j.hari + jeda } : j,
+          )
+          kelBaru = kelBaru.karmaAktif
+            ? {
+                ...kelBaru,
+                karmaAktif: {
+                  ...kelBaru.karmaAktif,
+                  jatuhTempoHari: kelBaru.karmaAktif.jatuhTempoHari + jeda,
+                },
+              }
+            : kelBaru
+        } else if (adaKarma && hasil.berhasil) {
           jadwal = jadwal.filter((j) => !(j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId))
           const { karmaAktif: _lepas, ...kelTanpaKarma } = kelBaru
           kelBaru = kelTanpaKarma

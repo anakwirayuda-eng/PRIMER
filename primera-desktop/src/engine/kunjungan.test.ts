@@ -75,7 +75,7 @@ const SKENARIO: SkenarioKunjungan = {
         {
           id: 'p1_konfrontasi',
           teks: 'Saya langsung saja, Pak. Kebiasaan keluarga ini banyak yang harus diubah.',
-          gaya: 'konfrontasi',
+          gaya: 'menghakimi',
           respons: 'Pak Raharjo meletakkan gelasnya pelan-pelan. "Oh... begitu ya, Dok."',
           efekTrust: -2,
           tepat: false,
@@ -111,7 +111,7 @@ const SKENARIO: SkenarioKunjungan = {
         {
           id: 'p2_konfrontasi',
           teks: 'Bapak masih BAB di sungai, kan? Itu sumber penyakit untuk satu kampung.',
-          gaya: 'konfrontasi',
+          gaya: 'menghakimi',
           respons: 'Wajah Pak Raharjo mengeras. "Dokter ini datang mau menolong atau mau memarahi?"',
           efekTrust: -2,
           tepat: false,
@@ -142,7 +142,7 @@ const SKENARIO: SkenarioKunjungan = {
         {
           id: 'p3_konfrontasi',
           teks: 'Kalau tidak segera berubah, anak-anak Bapak yang kena diare duluan.',
-          gaya: 'konfrontasi',
+          gaya: 'menghakimi',
           respons: 'Bu Raharjo memeluk anaknya lebih erat. Suasana mendadak dingin.',
           efekTrust: -2,
           tepat: false,

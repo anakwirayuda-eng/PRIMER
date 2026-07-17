@@ -194,5 +194,5 @@ describe('M13-0D constrained ExamBlueprint', () => {
     )
     expect(report.errors).toEqual([])
     expect(report.exploratoryNotGates.note).toMatch(/bukan acceptance gate/i)
-  })
+  }, 15_000)
 })

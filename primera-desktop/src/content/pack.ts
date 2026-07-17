@@ -26,7 +26,7 @@ import type {
 export const LEGACY_CONTENT_RELEASE = 'legacy-baseline'
 
 /** Rilis konten aktif. Berubah hanya pada batas kohort, bukan di tengah stase. */
-export const LAB_CONTENT_RELEASE = 'm13-lab-fullfledge-2026-07-16'
+export const LAB_CONTENT_RELEASE = 'm11-e2-saji-pilot-2026-07-17'
 export const CONTENT_RELEASE = LAB_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
@@ -34,6 +34,7 @@ export const CONTENT_RELEASE_ORDER = [
   LEGACY_CONTENT_RELEASE,
   'm13-0c-2026-07-14',
   'm13-1a-pilot-2026-07-15',
+  'm13-lab-fullfledge-2026-07-16',
   LAB_CONTENT_RELEASE,
 ] as const
 
@@ -451,6 +452,45 @@ export function validasiPack(pack: ContentPack): string[] {
   }
   for (const kel of Object.values(pack.keluarga)) {
     kel.arc.kunjungan.forEach((sk, idx) => {
+      if (sk.pilihanIngatkan) {
+        const pilihan = sk.pilihanIngatkan.pilihan
+        const ids = pilihan.map((p) => p.id)
+        if (pilihan.length !== 3) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': Ingatkan wajib tepat 3 pilihan`)
+        }
+        if (new Set(ids).size !== ids.length) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': id pilihan Ingatkan duplikat`)
+        }
+        const benar = pilihan.filter((p) => p.tepat)
+        if (benar.length !== 1) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': Ingatkan wajib tepat 1 jawaban benar`)
+        } else if (!benar[0]!.teks.includes('{jadwal}')) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': jawaban Ingatkan benar wajib memuat {jadwal}`)
+        }
+      }
+      if (sk.penerimaanAwal) {
+        const penerimaan = sk.penerimaanAwal
+        const ids = penerimaan.pilihan.map((p) => p.id)
+        if (penerimaan.mode !== 'karier') {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': penerimaan awal wajib Career-only`)
+        }
+        if (!Number.isInteger(penerimaan.ulangDalamHari) || penerimaan.ulangDalamHari < 1 || penerimaan.ulangDalamHari > 7) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': ulangDalamHari penerimaan wajib integer 1-7`)
+        }
+        if (penerimaan.rasional.trim().length === 0) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': penerimaan awal tanpa rasional`)
+        }
+        if (penerimaan.pilihan.length !== 2 || new Set(ids).size !== ids.length) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': penerimaan awal wajib 2 pilihan ber-id unik`)
+        }
+        const hormati = penerimaan.pilihan.filter((p) => p.tindakan === 'hormati')
+        const memaksa = penerimaan.pilihan.filter((p) => p.tindakan === 'memaksa')
+        if (hormati.length !== 1 || memaksa.length !== 1) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': penerimaan awal wajib 1 hormati + 1 memaksa`)
+        } else if (!hormati[0]!.teks.includes('{jadwal}')) {
+          masalah.push(`Keluarga ${kel.id} kunjungan '${sk.id}': pilihan hormati wajib memuat {jadwal}`)
+        }
+      }
       if (sk.karma) {
         // CODEX M10 ronde-2 (2026-07-06): `karma?` bertipe SkenarioKunjungan
         // tak dibatasi structural ke kunjungan[0], tapi `init.ts` (jadwalKarma)

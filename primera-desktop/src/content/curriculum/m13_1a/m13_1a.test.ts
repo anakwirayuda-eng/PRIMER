@@ -157,6 +157,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
       LEGACY_CONTENT_RELEASE,
       M13_1A_BASE_CONTENT_RELEASE,
       M13_1A_PROPOSED_CONTENT_RELEASE,
+      'm13-lab-fullfledge-2026-07-16',
       LAB_CONTENT_RELEASE,
     ])
     for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) expect(PACK.kasus[kasus.id], kasus.id).toEqual(denganVarian(kasus))
