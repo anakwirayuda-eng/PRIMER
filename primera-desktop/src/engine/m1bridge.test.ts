@@ -374,6 +374,21 @@ describe('M1.3 — drift keluarga rawan (memburuk, bukan membaik)', () => {
   it('keluarga rawan ber-data yang diabaikan ≥7 hari memburuk + surat kader (cap 2/minggu)', () => {
     let s = buildInitialState('Uji', SEED, PACK)
     s = run(s, { type: 'PILIH_BINAAN', keluargaId: 'keluarga_santoso' })
+    // Santoso mulai di prekontemplasi dengan target TB masih "tidak". Setelah
+    // pagar actionability, tak ada indikator "ya" yang sah untuk dijatuhkan.
+    // Geser TTM agar tes ini tetap menguji drift neglect; pemilihan indikator
+    // actionable dikunci terpisah di bridgeActionability.test.ts.
+    const santoso = s.desa.keluarga['keluarga_santoso']!
+    s = {
+      ...s,
+      desa: {
+        ...s.desa,
+        keluarga: {
+          ...s.desa.keluarga,
+          keluarga_santoso: { ...santoso, ttm: 'kontemplasi' },
+        },
+      },
+    }
     // Jangan pernah kunjungi siapa pun; kader mengisi data; jalan sampai hari 14.
     s = sampaiHari(s, 14)
     const suratDrift = s.inbox.filter((m) => m.judul.includes('kabar kurang baik'))

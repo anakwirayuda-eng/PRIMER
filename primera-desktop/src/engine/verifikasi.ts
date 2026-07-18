@@ -605,7 +605,11 @@ function fnv1a(teks: string): string {
 // lagi mereset counter tak-terkontrol bila parameter membaik tetapi masih
 // melewati ambang kanonik HT/DM; drift keluarga hanya boleh menjatuhkan
 // indikator yang tersedia sebagai target pemulihan arc aktif.
-export const REVISI_ENGINE = 49
+// 50 (2026-07-17 - audit integritas identitas B1.1): pasien yang ditautkan
+// sebagai anggota keluarga nyata membawa status BPJS yang konsisten dengan
+// ground-truth indikator JKN keluarganya, bukan undian pembayar pasien acak;
+// umpan balik SISRUTE mempertahankan tautan navigasi keluarga bila tersedia.
+export const REVISI_ENGINE = 50
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

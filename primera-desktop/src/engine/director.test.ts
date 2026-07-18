@@ -455,6 +455,59 @@ describe('susunAntrianHarian', () => {
     }
     expect(jumlahTertaut).toBeGreaterThan(0)
   })
+
+  it('Bridge B1.1: pembayar pasien anggota nyata konsisten dengan status JKN keluarga', () => {
+    const pack = buatPack([
+      buatKasus('lansia_jkn_test', { demografi: { usiaMin: 50, usiaMax: 80, jenisKelamin: 'P' } }),
+    ])
+    pack.keluarga['keluarga_uji'] = {
+      id: 'keluarga_uji',
+      namaKeluarga: 'Uji',
+      rw: 6,
+      jarakMenit: 10,
+      ekonomi: 'cukup',
+      anggota: [{ nama: 'Mbah Ayu', usia: 71, jenisKelamin: 'P', peran: 'lansia' }],
+      indikatorAwal: {},
+      arc: { sinopsis: '', kunjungan: [], epilogBerhasil: '', epilogGagal: '' },
+    }
+
+    for (const jkn of ['ya', 'tidak'] as const) {
+      const keluargaDasar = buatKeluargaState('keluarga_uji')
+      const state = buatState({
+        desa: {
+          keluarga: {
+            keluarga_uji: {
+              ...keluargaDasar,
+              jumlahKunjungan: 3,
+              trust: 8,
+              indikator: {
+                ...keluargaDasar.indikator,
+                jkn: {
+                  ...keluargaDasar.indikator.jkn,
+                  status: jkn,
+                  statusSebenarnya: jkn,
+                },
+              },
+            },
+          },
+          kader: {},
+          rw: [],
+          binaan: ['keluarga_uji'],
+          surveilans: [],
+          drift: { minggu: 1, jumlah: 0 },
+        },
+      })
+      let jumlahTertaut = 0
+      for (let seed = 0; seed < 200; seed++) {
+        const pasien = susunAntrianHarian(state, pack, new Rng(seed, 'd'), [], new Rng(seed, 'flavor'))
+          .find((p) => p.keluargaId === 'keluarga_uji')
+        if (!pasien) continue
+        jumlahTertaut += 1
+        expect(pasien.bpjs).toBe(jkn === 'ya')
+      }
+      expect(jumlahTertaut).toBeGreaterThan(0)
+    }
+  })
 })
 
 /* ---------------------------------------------------------------------------

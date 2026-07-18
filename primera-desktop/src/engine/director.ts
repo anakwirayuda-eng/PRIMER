@@ -395,6 +395,10 @@ export function susunAntrianHarian(
     const pasien = antrian[idx]!
     antrian[idx] = {
       ...pasien,
+      // Model PIS-PK game menyimpan kepesertaan JKN pada tingkat keluarga.
+      // Pasien yang kini beridentitas anggota nyata tak boleh mempertahankan
+      // undian pembayar acak yang berkontradiksi dengan keluarga asalnya.
+      bpjs: state.desa.keluarga[kandidatKeluarga.keluargaId]!.indikator.jkn.statusSebenarnya === 'ya',
       keluargaId: kandidatKeluarga.keluargaId,
       bonusTrust: true,
       rw: kandidatKeluarga.kontenKeluarga.rw,

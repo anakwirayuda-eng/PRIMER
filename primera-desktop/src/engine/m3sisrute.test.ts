@@ -179,13 +179,26 @@ describe('M3.13 — SISRUTE berjenjang', () => {
       bedDasar: 0,
     }
     const p = pack([kasus('stroke')], [rsKecilTapiCocok])
+    p.keluarga['keluarga_uji'] = {
+      id: 'keluarga_uji',
+      namaKeluarga: 'Uji',
+      rw: 1,
+      jarakMenit: 10,
+      ekonomi: 'cukup',
+      anggota: [{ nama: 'Budi', usia: 60, jenisKelamin: 'L', peran: 'kepala' }],
+      indikatorAwal: {},
+      arc: { sinopsis: '', kunjungan: [], epilogBerhasil: '', epilogGagal: '' },
+    }
     let bedTersediaSetidaknyaSekali = false
     let bedPenuhSetidaknyaSekali = false
     for (const seed of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) {
       let s = baseState(p, {
         seed,
         klinik: {
-          antrian: [buatPasienDariKasus('stroke', p, new Rng(1, 'x'))],
+          antrian: [{
+            ...buatPasienDariKasus('stroke', p, new Rng(1, 'x')),
+            keluargaId: 'keluarga_uji',
+          }],
           selesaiHariIni: [],
           autoHariIni: { jumlah: 0, bermasalah: 0 },
         },
@@ -201,6 +214,8 @@ describe('M3.13 — SISRUTE berjenjang', () => {
       const suratBedPenuh = s.inbox.some((m) => m.judul.includes('Bed penuh'))
       const suratDiterima = s.inbox.some((m) => m.judul.includes('DITERIMA'))
       expect(suratBedPenuh || suratDiterima).toBe(true)
+      const suratRujukan = s.inbox.find((m) => m.judul.includes('Bed penuh') || m.judul.includes('DITERIMA'))
+      expect(suratRujukan?.kaitKeluargaId).toBe('keluarga_uji')
       if (suratBedPenuh) bedPenuhSetidaknyaSekali = true
       if (suratDiterima) bedTersediaSetidaknyaSekali = true
     }

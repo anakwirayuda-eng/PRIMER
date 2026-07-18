@@ -635,6 +635,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           const spesialisCocok =
             !kasus.spesialisRujukan || rs.spesialisasi.includes(kasus.spesialisRujukan)
           const bedTersedia = rngRs.chance(Math.min(0.95, 0.5 + rs.bedDasar * 0.06))
+          const kaitKeluargaSurat =
+            encFinal.pasien.keluargaId && pack.keluarga[encFinal.pasien.keluargaId]
+              ? { kaitKeluargaId: encFinal.pasien.keluargaId }
+              : {}
+
 
           // CODEX audit (2026-07-12, temuan #4): dulu `!kasus.harusDirujuk`
           // saja — mengabaikan `nilai.rujukanNonSpesialistik` (yg sudah
@@ -674,6 +679,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               judul: `Rujukan DITOLAK — ${encFinal.pasien.nama}`,
               isi: `Balasan SISRUTE: pasien dengan ${kasus.nama} adalah kompetensi FKTP (SKDI ${kasus.skdi}). Pasien kami pulangkan; mohon dituntaskan di Puskesmas. Rasio rujukan non-spesialistik Anda tercatat oleh BPJS — ia akan datang lagi besok pagi, dan kali ini tetap tanggung jawabmu.`,
               dibaca: false,
+              ...kaitKeluargaSurat,
             }
           } else if (!spesialisCocok) {
             t.rujukanDitolak += 1
@@ -704,6 +710,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               judul: `Rujukan tertahan — spesialisasi tidak tersedia`,
               isi: `Balasan SISRUTE: kami tidak memiliki layanan ${kasus.spesialisRujukan?.replace(/_/g, ' ')} untuk ${kasus.nama}. Pasien kembali besok — pilih RS tujuan yang menyediakan spesialisasi itu (periksa jejaring SISRUTE sebelum mengirim).`,
               dibaca: false,
+              ...kaitKeluargaSurat,
             }
           } else {
             // CODEX audit (2026-07-12, temuan #9): keputusan MERUJUK di titik
@@ -756,6 +763,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 judul: `Bed penuh — rujukan ${encFinal.pasien.nama} tertunda`,
                 isi: `Balasan SISRUTE: seluruh bed ${rs.nama} terisi hari ini. Keputusan merujukmu sudah tepat — ini murni soal kapasitas jejaring, bukan penilaian atas keputusanmu. Jejaring akan mencoba lagi begitu bed kosong; kamu tak perlu menangani pasien ini ulang.`,
                 dibaca: false,
+                ...kaitKeluargaSurat,
               }
             } else {
               // DITERIMA oleh jejaring.
@@ -798,6 +806,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                   ? `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Setelah stabil, ia akan dipulangkan dengan surat rujuk balik (PRB) — kontrol lanjutannya kembali menjadi tanggung jawab FKTP-mu. Rujukan berjenjang bekerja dua arah.`
                   : `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Kasus ini ditangani tuntas di layanan rujukan — terima kasih atas rujukan tepat waktumu.`,
                 dibaca: false,
+                ...kaitKeluargaSurat,
               }
             }
           }

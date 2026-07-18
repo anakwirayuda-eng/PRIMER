@@ -144,12 +144,15 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // callback klinik tak memalsukan kontrol bila parameter masih di atas ambang.
   // Counter tetap mengikuti driftProlanis sebagai satu sumber kebenaran;
   // drift keluarga hanya boleh membuat masalah yang bisa dipulihkan gameplay.
-  'reducer.ts': '0a572911a00c047c2aaf7ed7d94f541cafd90ef63e707b46929e985681676f43',
+  // Audit REVISI_ENGINE 50: surat SISRUTE menjaga tautan keluarga yang valid.
+  'reducer.ts': 'a6ec7806116aaf83ebe027cfbdcf464fced063359d2f950dcc5410f4212c3230',
   'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
-  'director.ts': '653ac94effa4f492e1694f867f8eb14210b6ac0df87e5bcf262580d562e888f3',
+  // Unfreeze 2026-07-17 (audit B1.1, REVISI_ENGINE 49 -> 50): status BPJS
+  // pasien anggota nyata mengikuti ground-truth JKN keluarga, bukan RNG.
+  'director.ts': 'b7804cbdf6145b5b82e9961da986a82e5b355350070bb9a7299a61b71a01ed53',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
@@ -162,7 +165,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '3fab11f33be917325f0e6cb3226287ba7c10133f13f710188a5bfad1b8f19bc3',
+  'verifikasi.ts': 'ca3e8d830ab58127ec189502013140042d92379b7f87148e1db8b091edfce783',
   'state.ts': '287c5e6fd0e5f9dfb57875556f6f20ac18dd866c83da5a703e317181890691c7',
   'save.ts': '3a124f864eb634ff9f94c9d38d63a464d09dfa75ab6f4814ca15875ddbfc0073',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
