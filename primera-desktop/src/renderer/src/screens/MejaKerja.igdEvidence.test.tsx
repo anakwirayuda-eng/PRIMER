@@ -1,0 +1,63 @@
+import { describe, expect, it } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { buildInitialState } from '@engine/init'
+import { PACK } from '@content/index'
+import type { GameState } from '@engine/state'
+import { useGame } from '../store'
+import { MejaKerja } from './MejaKerja'
+
+function pasangPrimerStub() {
+  window.primer = {
+    save: {
+      write: async () => true,
+      read: async () => null,
+      list: async () => [],
+      delete: async () => true,
+    },
+    telemetri: {
+      append: async () => true,
+      read: async () => [],
+    },
+    appVersion: async () => 'test',
+  }
+}
+
+describe('<MejaKerja /> - provenance hasil IGD', () => {
+  it('menampilkan panel ringkas tertutup, lalu sumber resmi dapat dibuka', async () => {
+    pasangPrimerStub()
+    const awal = buildInitialState('Uji Sumber IGD', 818181, PACK)
+    const state: GameState = {
+      ...awal,
+      inbox: [{
+        id: 'surat_igd_grounding',
+        hari: 1,
+        jenis: 'igd',
+        dari: 'Perawat jaga',
+        judul: 'Debrief serangan asma berat',
+        isi: 'Pasien stabil dan diterima jejaring rujukan.',
+        dibaca: false,
+        kaitKasusIgdId: 'igd_asma_berat',
+      }],
+    }
+    useGame.setState({ state, petaTargetKeluargaId: null })
+    render(<MejaKerja />)
+
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: /Debrief serangan asma berat/ }))
+
+    const summary = screen.getByText('Panduan resmi & sumber')
+    const details = summary.closest('details')
+    expect(details).not.toHaveAttribute('open')
+    await user.click(summary)
+    expect(details).toHaveAttribute('open')
+
+    expect(screen.getByText(/Serangan berat memerlukan oksigen terkontrol/)).toBeVisible()
+    const gina = screen.getByRole('link', { name: /GINA Global Strategy for Asthma 2026/ })
+    expect(gina).toHaveAttribute('href', SUMBER_URL_GINA)
+    expect(gina).toHaveAttribute('target', '_blank')
+    expect(screen.getByRole('list', { name: /Sumber klinis Serangan Asma Berat/ })).toBeVisible()
+  })
+})
+
+const SUMBER_URL_GINA = 'https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf'

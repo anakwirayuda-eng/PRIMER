@@ -10,9 +10,9 @@
  * dipakai bila lebih baru dan disebutkan eksplisit di `clue`.
  */
 
-import type { KasusIgd } from './types'
+import { terapkanGroundingIgd } from './igdSources'
 
-export const KASUS_IGD_LAB_1: KasusIgd[] = [
+export const KASUS_IGD_LAB_1 = terapkanGroundingIgd([
   /* ====================================================================== */
   {
     id: 'igd_status_epileptikus',
@@ -992,4 +992,4 @@ export const KASUS_IGD_LAB_1: KasusIgd[] = [
       },
     ],
   },
-]
+])

@@ -414,6 +414,15 @@ export interface LangkahIgd {
   pilihan: PilihanIgd[]
 }
 
+export interface SumberKlinis {
+  /** Id stabil dari registry sumber; dipakai invariant dan fingerprint konten. */
+  id: string
+  label: string
+  url: string
+  tahun: number
+  jenis: 'pedoman_indonesia' | 'evidence_internasional'
+}
+
 export interface KasusIgd {
   id: string
   nama: string
@@ -446,6 +455,10 @@ export interface KasusIgd {
   /** Minimal satu kapabilitas ini wajib tersedia di RS tujuan. */
   kapabilitasRujukanSalahSatu?: KapabilitasRs[]
   clue: string
+  /** Ringkasan keputusan FKTP yang membuka konteks lokal-vs-EBM di debrief. */
+  panduanResmi: string
+  /** Provenance yang dapat dibuka pemain dari surat hasil IGD. */
+  sumber: SumberKlinis[]
 }
 
 /* ---------------------------------------------------------------------------

@@ -10,9 +10,9 @@
  * masing-masing kasus (PNPK Kemenkes / WHO / pedoman profesi).
  */
 
-import type { KasusIgd } from './types'
+import { terapkanGroundingIgd } from './igdSources'
 
-export const KASUS_IGD_LAB_2: KasusIgd[] = [
+export const KASUS_IGD_LAB_2 = terapkanGroundingIgd([
   /* ====================================================================== */
   {
     id: 'igd_tenggelam',
@@ -463,7 +463,7 @@ export const KASUS_IGD_LAB_2: KasusIgd[] = [
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'penyakit_dalam',
     clue:
-      'Sepsis adalah disfungsi organ akibat respons tubuh yang disregulasi terhadap infeksi; ia menjadi syok septik ketika hipotensi menetap meski resusitasi cairan sudah dimulai. Kuncinya: di FKTP diagnosisnya KLINIS — sumber infeksi yang jelas (di sini saluran kemih) ditambah hipotensi, akral dingin dengan pengisian kapiler melambat, kesadaran menurun, takipnea, dan urin berkurang sudah cukup untuk bertindak; jangan menunggu laktat, kultur, atau leukosit yang memang tidak tersedia di sini. Bundel yang realistis dikerjakan FKTP: oksigen, dua akses IV besar, BOLUS KRISTALOID (PNPK Tata Laksana Sepsis Kemenkes 2017: fluid challenge NaCl 0,9% atau Ringer Laktat 1000 mL dalam 30 menit, diulang sesuai respons — nadi, tekanan darah, dan produksi urin — sambil mewaspadai edema paru), DOSIS PERTAMA antibiotik empiris spektrum luas secara INTRAVENA sedini mungkin, lalu RUJUK dengan cairan dan pemantauan tetap berjalan. Tiap jam penundaan antibiotik pada syok septik berbanding lurus dengan kematian; kultur diambil hanya bila tidak menunda antibiotik, dan di FKTP yang memang tidak punya kultur, ketiadaannya tidak boleh sekali pun menjadi alasan menunda. Antibiotik oral tidak dapat diandalkan pada pasien syok karena perfusi ususnya buruk. Vasopresor, kortikosteroid, dan kontrol sumber infeksi secara bedah adalah ranah rumah sakit — munculnya kebutuhan itu justru penanda rujukan segera, bukan pekerjaan FKTP. PNPK Tata Laksana Sepsis (Kemenkes, 2017) ditulis dari perspektif rumah sakit/ICU dan tidak memuat algoritma FKTP tersendiri; PPK Dokter di FKTP (KMK 1186/2022) memuat bab Syok, termasuk syok septik, dengan pesan yang sama: kenali, stabilkan, rujuk.',
+      'Sepsis adalah disfungsi organ akibat respons tubuh yang disregulasi terhadap infeksi. Di FKTP, sumber infeksi yang masuk akal ditambah hipotensi, akral dingin/CRT memanjang, kesadaran menurun, takipnea, dan urin berkurang sudah cukup untuk bertindak; jangan menunggu laktat, kultur, atau leukosit yang tidak tersedia. Bundel realistis Sukamaju: oksigen sesuai kebutuhan, akses IV besar, kristaloid isotonic berbasis berat badan, dosis pertama antibiotik empiris spektrum luas secara IV sedini mungkin, lalu rujuk terpantau. PNPK Sepsis Kemenkes 2017 memakai fluid challenge 1000 mL/30 menit; SSC 2026 memperbarui kerangkanya menjadi sekurangnya 30 mL/kg dalam 3 jam pertama untuk hipoperfusi/syok, dengan pertimbangan karakter pasien dan reassessment berulang agar tidak kurang maupun berlebih. Kultur diambil bila tersedia dan tidak menunda antibiotik; pada syok, antibiotik diberikan segera, idealnya dalam satu jam. Vasopresor mungkin diperlukan bila hipotensi menetap dan secara EBM dapat dimulai lewat vena perifer terpantau, tetapi profil FKTP Sukamaju tidak memiliki kesiapan pompa/monitor/protokol itu — kebutuhan vasopresor mempercepat transfer, bukan membenarkan penantian.',
     langkah: [
       {
         id: 'sep_1',
@@ -474,7 +474,7 @@ export const KASUS_IGD_LAB_2: KasusIgd[] = [
           {
             id: 'a',
             label:
-              'Tegakkan syok secara klinis, beri oksigen, pasang dua akses IV besar, dan mulai bolus kristaloid sambil dinilai ulang berkala',
+              'Tegakkan syok secara klinis, beri oksigen, pasang akses IV besar, dan mulai kristaloid berbasis berat badan dengan reassessment berkala',
             benar: true,
             efekStabilitas: 23,
             respons:
@@ -486,7 +486,7 @@ export const KASUS_IGD_LAB_2: KasusIgd[] = [
             benar: false,
             efekStabilitas: -28,
             respons:
-              'Setiap jam yang tertunda pada syok septik menaikkan angka kematian. Laktat dan kultur memperhalus terapi, bukan yang memulainya — dan FKTP tidak punya keduanya.',
+              'Penundaan resusitasi dan antibiotik pada syok septik memperburuk peluang pasien. Laktat dan kultur memperhalus terapi, bukan yang memulainya; SSC 2026 meminta antibiotik segera, idealnya dalam satu jam pada syok.',
           },
           {
             id: 'c',
@@ -502,14 +502,14 @@ export const KASUS_IGD_LAB_2: KasusIgd[] = [
             benar: false,
             efekStabilitas: -20,
             respons:
-              'Vasopresor adalah langkah setelah cairan dan memerlukan akses vena sentral serta pemantauan yang tidak ada di FKTP. Memeras pembuluh yang masih kosong justru memperburuk perfusi jaringan.',
+              'Vasopresor mungkin diperlukan bila hipotensi menetap, dan tidak selalu harus menunggu akses sentral. Namun ia tidak menggantikan resusitasi awal, antibiotik, dan transfer; profil FKTP ini tidak punya pompa, monitoring, atau protokol vasopresor perifer yang siap.',
           },
         ],
       },
       {
         id: 'sep_2',
         narasi:
-          'Satu liter kristaloid sudah masuk, tekanan darah naik tipis ke 90/58 dan pasien masih bingung. ' +
+          'Kristaloid awal berbasis berat badan sudah berjalan; setelah tiap aliquot dinilai ulang, total sementara sekitar satu liter. Tekanan darah naik tipis ke 90/58 dan pasien masih bingung. ' +
           'Perawat menyiapkan antibiotik. Kabar dari rumah sakit rujukan: tempat tidur baru siap sekitar dua jam lagi.',
         pilihan: [
           {
@@ -549,7 +549,7 @@ export const KASUS_IGD_LAB_2: KasusIgd[] = [
       {
         id: 'sep_3',
         narasi:
-          'Setelah dua liter kristaloid, tekanan darahnya bertahan di 92/60, napas 26, dan kesadarannya sedikit membaik. ' +
+          'Setelah cairan mendekati 30 mL/kg dengan reassessment perfusi dan tanda overload, tekanan darahnya bertahan di 92/60, napas 26, dan kesadarannya sedikit membaik. ' +
           'Ambulans sudah menunggu di depan pintu.',
         pilihan: [
           {
@@ -607,7 +607,7 @@ export const KASUS_IGD_LAB_2: KasusIgd[] = [
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'obgyn',
     clue:
-      'Eklampsia adalah preeklampsia yang SUDAH disertai kejang menyeluruh dan/atau koma — bedakan dari preeklampsia berat yang belum kejang; dasarnya disfungsi endotel plasenta yang memicu vasospasme, hipertensi berat, dan edema serebral. Urutan yang benar: amankan ibu dari cedera, bebaskan jalan napas, MIRINGKAN KE KIRI (mengurangi aspirasi sekaligus melepaskan kompresi uterus pada vena kava sehingga aliran balik dan perfusi plasenta membaik), oksigen 4-6 L/menit → MgSO4 sebagai antikonvulsan PILIHAN, bukan diazepam: dosis awal 4 g intravena perlahan selama 20 menit (10 mL MgSO4 40% diencerkan dalam 10 mL akuades); bila jalur IV sulit, 5 g intramuskular pada masing-masing bokong. Syarat pemberian MgSO4: kalsium glukonas 10% tersedia, refleks patela ada, urin minimal 0,5 mL/kgBB/jam, dan frekuensi napas 12-16x/menit. Sambil menunggu rujukan mulai rumatan 6 g MgSO4 dalam 500 mL Ringer Laktat, 28 tetes/menit. Diazepam HANYA alternatif bila MgSO4 benar-benar tidak tersedia — dosis yang dibutuhkan tinggi, menekan napas ibu, dan menembus plasenta. Pantau tanda toksisitas MgSO4 tiap jam: hilangnya refleks patela, napas <16x/menit, dan oliguria; bila terjadi depresi napas hentikan MgSO4 dan berikan kalsium glukonas 1 g IV (10 mL larutan 10%) bolus dalam 10 menit. Kendalikan tekanan darah secara BERTAHAP — penurunan mendadak ke angka normal memangkas perfusi plasenta dan membuat janin gawat. Terapi DEFINITIF eklampsia adalah MELAHIRKAN, sehingga ini adalah indikasi rujukan wajib ke obgyn dengan MgSO4 rumatan tetap berjalan. Sumber: PPK Dokter di FKTP (KMK 1186/2022) bab Eklampsi, serta Buku Saku Pelayanan Kesehatan Ibu Kemenkes-WHO.',
+      'Eklampsia adalah preeklampsia yang SUDAH disertai kejang menyeluruh dan/atau koma — bedakan dari preeklampsia berat yang belum kejang; dasarnya disfungsi endotel plasenta yang memicu vasospasme, hipertensi berat, dan edema serebral. Urutan yang benar: amankan ibu dari cedera, bebaskan jalan napas, MIRINGKAN KE KIRI (mengurangi aspirasi sekaligus melepaskan kompresi uterus pada vena kava sehingga aliran balik dan perfusi plasenta membaik), oksigen 4-6 L/menit → MgSO4 sebagai antikonvulsan PILIHAN, bukan diazepam: dosis awal 4 g intravena perlahan selama 20 menit (10 mL MgSO4 40% diencerkan dalam 10 mL akuades); bila jalur IV sulit, 5 g intramuskular pada masing-masing bokong. Syarat pemberian/kelanjutan MgSO4: kalsium glukonas 10% tersedia, refleks patela ada, urin minimal 0,5 mL/kgBB/jam, dan frekuensi napas >=16x/menit. Sambil menunggu rujukan mulai rumatan 6 g MgSO4 dalam 500 mL Ringer Laktat, 28 tetes/menit. Diazepam HANYA alternatif bila MgSO4 benar-benar tidak tersedia — dosis yang dibutuhkan tinggi, menekan napas ibu, dan menembus plasenta. Pantau tanda toksisitas MgSO4 tiap jam: hilangnya refleks patela, napas <16x/menit, dan oliguria; bila terjadi depresi napas hentikan MgSO4 dan berikan kalsium glukonas 1 g IV (10 mL larutan 10%) bolus dalam 10 menit. Kendalikan tekanan darah secara BERTAHAP — penurunan mendadak ke angka normal memangkas perfusi plasenta dan membuat janin gawat. Terapi DEFINITIF eklampsia adalah MELAHIRKAN, sehingga ini adalah indikasi rujukan wajib ke obgyn dengan MgSO4 rumatan tetap berjalan. Sumber: PPK Dokter di FKTP (KMK 1186/2022) bab Eklampsi, serta Buku Saku Pelayanan Kesehatan Ibu Kemenkes-WHO.',
     langkah: [
       {
         id: 'ekl_1',
@@ -1017,4 +1017,4 @@ export const KASUS_IGD_LAB_2: KasusIgd[] = [
       },
     ],
   },
-]
+])

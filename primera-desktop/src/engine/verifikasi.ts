@@ -618,7 +618,11 @@ function fnv1a(teks: string): string {
 // denominator wajib pada CHF SpO2 92%, sekaligus mengunci ULT gout sebagai
 // opsi yang tidak menggantikan antiinflamasi akut. Konten klinis ternilai ikut
 // berubah, sehingga replay lintas revisi harus ditolak secara eksplisit.
-export const REVISI_ENGINE = 52
+// 53 (2026-07-18 - provenance IGD): semua hasil IGD membawa tautan kasus ke
+// surat debrief; panduan lokal dan sumber EBM 20/20 kasus menjadi bagian dari
+// fingerprint. Sepsis juga mengikuti SSC 2026 (cairan berbasis BB + reassess),
+// bukan volume tetap universal.
+export const REVISI_ENGINE = 53
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -735,6 +739,10 @@ export function sidikJariPack(pack: ContentPack): string {
         kapabilitas: [...(k.kapabilitasRujukanSalahSatu ?? [])].sort(),
         demografi: k.demografi,
         stab: k.stabilitasAwal,
+        panduanResmi: k.panduanResmi,
+        sumber: k.sumber
+          .map((s) => ({ id: s.id, label: s.label, url: s.url, tahun: s.tahun, jenis: s.jenis }))
+          .sort((a, b) => a.id.localeCompare(b.id)),
         langkah: k.langkah.map((l) => ({
           id: l.id,
           pilihan: l.pilihan.map((p) => ({ id: p.id, benar: p.benar, efek: p.efekStabilitas })),

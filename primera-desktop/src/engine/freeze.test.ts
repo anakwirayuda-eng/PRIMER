@@ -152,7 +152,11 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-07-18 (EBM currency, REVISI_ENGINE 51 -> 52): clinic.ts
   // mengenal prosedur opsional yang tidak masuk denominator skor; verifikasi
   // dibump karena keputusan terapi gout/CHF dan konten ternilai berubah.
-  'reducer.ts': '24fab9c7e056575fe0d8af3aa25fbbf15fd3334e431a0e29d36a1749dae757d4',
+  // Unfreeze 2026-07-18 (provenance IGD, REVISI_ENGINE 52 -> 53): surat hasil
+  // IGD membawa id kasus ke panel panduan/sumber; fingerprint mengunci
+  // provenance klinis 20/20 kasus. Field surat baru bersifat opsional agar save
+  // lama tetap dapat dibaca tanpa migrasi destruktif.
+  'reducer.ts': '76a85310d17e9479d9f5fe24859c20b6efebf4a7246e9e56b430a03851a48f13',
   'clinic.ts': '92789c702936cb71ac2e192ff1912fafe9f45ac8b5e0b4f7bddb561ef65ad2b6',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
@@ -172,8 +176,8 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': 'dda3e6d12007b7c029f9508b7c9e9e33a7ea88fb3179f1def6b4a37a2bafc972',
-  'state.ts': '61e07851c782c56791b687b8a657015b2fd9986812d531db6d5f1ae1b08723cf',
+  'verifikasi.ts': '3840c1f66e6f8551618e60bd945ac429406c8d5eb52180fca8dd1083474f5b80',
+  'state.ts': '22cb32454b5ffd06b8efb2823bb657f2987ebf757a3df532c0a4f28c4e25a1d5',
   'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',

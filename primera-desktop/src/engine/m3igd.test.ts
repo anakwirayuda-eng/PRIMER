@@ -47,6 +47,7 @@ describe('M3.14 — alur IGD', () => {
     expect(s.tally.igdStabil).toBe(1)
     expect(s.igd).toBeUndefined()
     expect(s.inbox.some((m) => m.dari.includes('Harsono') && m.jenis === 'pujian_kapus')).toBe(true)
+    expect(s.inbox.at(-1)?.kaitKasusIgdId).toBe(KASUS)
   })
 
   it('disposisi KELIRU (pulang pada kasus wajib-rujuk) → igdSalahDisposisi, BUKAN igdStabil, dan tak dihargai skor', () => {
@@ -91,6 +92,7 @@ describe('M3.14 — alur IGD', () => {
     expect(sBuruk.tally.igdMeninggal).toBe(1)
     expect(sBuruk.igd).toBeUndefined()
     expect(sBuruk.inbox.some((m) => m.judul.includes('KODE HITAM'))).toBe(true)
+    expect(sBuruk.inbox.at(-1)?.kaitKasusIgdId).toBe(KASUS)
     expect(sBuruk.burnout).toBeGreaterThan(0)
   })
 

@@ -1,6 +1,6 @@
-import type { KasusIgd } from '../../types'
+import { terapkanGroundingIgd } from '../../igdSources'
 
-export const M13_1A_IGD_DRAFTS: KasusIgd[] = [
+export const M13_1A_IGD_DRAFTS = terapkanGroundingIgd([
   {
     id: 'igd_stemi_anterior_hipoksemik',
     nama: 'STEMI Anterior dengan Hipoksemia',
@@ -113,4 +113,4 @@ export const M13_1A_IGD_DRAFTS: KasusIgd[] = [
       },
     ],
   },
-]
+])

@@ -1721,6 +1721,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           judul: `KODE HITAM — ${igd.pasienNama} tidak tertolong`,
           isi: `${igd.pasienNama} (${igd.usia} th) meninggal di IGD pagi ini — ${kasus.nama}. Keluarganya menunggu di lorong; kamu yang harus menyampaikannya. ${kasus.clue}`,
           dibaca: false,
+          kaitKasusIgdId: kasus.id,
         }
         return {
           state: {
@@ -1811,6 +1812,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           judul: `KODE HITAM — ${igd.pasienNama} meninggal dalam perjalanan`,
           isi: `${igd.pasienNama} dirujuk saat stabilitas masih rendah (${igd.stabilitas}/100) — kondisinya memburuk dan tak tertolong sebelum tiba di RS rujukan. Pasien gawat WAJIB distabilkan dulu (stabilitas ≥${AMBANG_STABIL_RUJUK}) sebelum transportasi jarak jauh. ${kasus.clue}`,
           dibaca: false,
+          kaitKasusIgdId: kasus.id,
         }
         return {
           state: {
@@ -1898,6 +1900,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           ? `${igd.pasienNama} stabil dan ${action.jenis === 'rujuk' ? `diterima ${rsNama}` : 'dipulangkan dengan observasi'}. ${kasus.clue}`
           : `${igd.pasienNama} selamat, tapi disposisimu keliru — ${action.jenis === 'rujuk' && !tujuanCocok ? `${rsNama} tidak memenuhi spesialisasi/kapabilitas waktu-kritis yang dibutuhkan ${kasus.nama}. Pilih tujuan jejaring yang sesuai.` : kasus.disposisiBenar === 'rujuk' ? `kasus ${kasus.nama} pasca-stabilisasi wajib DIRUJUK, bukan dipulangkan. Untung keluarganya membawanya ke RS sendiri.` : `kasus ini dapat dituntaskan dengan observasi di Puskesmas — merujuk semuanya membebani jejaring.`} ${kasus.clue}`,
         dibaca: false,
+        kaitKasusIgdId: kasus.id,
       }
       return {
         state: { ...s, igd: undefined, tally: t, layar: 'klinik', inbox: [...s.inbox, surat], jadwal, careEpisodes },

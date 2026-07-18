@@ -434,7 +434,41 @@ export function validasiPack(pack: ContentPack): string[] {
   }
   // IGD (M3.14) — sama seperti kasus klinik: langkah harus punya pilihan benar,
   // dan disposisi rujuk harus punya spesialisasi + RS yang menyediakannya.
+  const sumberIgdKanonik = new Map<string, {
+    label: string
+    url: string
+    tahun: number
+    jenis: 'pedoman_indonesia' | 'evidence_internasional'
+  }>()
   for (const k of Object.values(pack.kasusIgd)) {
+    if (k.panduanResmi.trim().length === 0) masalah.push(`IGD ${k.id}: panduanResmi kosong`)
+    if (!k.sumber.some((s) => s.jenis === 'pedoman_indonesia')) {
+      masalah.push(`IGD ${k.id}: tidak punya sumber pedoman Indonesia`)
+    }
+    if (!k.sumber.some((s) => s.jenis === 'evidence_internasional')) {
+      masalah.push(`IGD ${k.id}: tidak punya sumber evidence internasional`)
+    }
+    const sumberIds = new Set<string>()
+    for (const sumber of k.sumber) {
+      if (sumberIds.has(sumber.id)) masalah.push(`IGD ${k.id}: sumber '${sumber.id}' duplikat`)
+      sumberIds.add(sumber.id)
+      if (!/^https:\/\//.test(sumber.url)) masalah.push(`IGD ${k.id}: sumber '${sumber.id}' bukan URL HTTPS`)
+      if (!Number.isInteger(sumber.tahun) || sumber.tahun < 1900 || sumber.tahun > 2100) {
+        masalah.push(`IGD ${k.id}: tahun sumber '${sumber.id}' tidak valid`)
+      }
+      const sebelumnya = sumberIgdKanonik.get(sumber.id)
+      if (
+        sebelumnya &&
+        (sebelumnya.label !== sumber.label ||
+          sebelumnya.url !== sumber.url ||
+          sebelumnya.tahun !== sumber.tahun ||
+          sebelumnya.jenis !== sumber.jenis)
+      ) {
+        masalah.push(`IGD ${k.id}: metadata sumber '${sumber.id}' drift dari kasus lain`)
+      } else if (!sebelumnya) {
+        sumberIgdKanonik.set(sumber.id, sumber)
+      }
+    }
     if (k.langkah.length === 0) masalah.push(`IGD ${k.id}: tidak punya langkah`)
     for (const l of k.langkah) {
       if (l.pilihan.length === 0) masalah.push(`IGD ${k.id} langkah ${l.id}: tidak punya pilihan`)

@@ -505,6 +505,8 @@ export interface Surat {
   dibaca: boolean
   /** Navigasi kontekstual: buka keluarga/pasien terkait. */
   kaitKeluargaId?: string
+  /** Membuka grounding klinis kasus IGD terkait di debrief surat. */
+  kaitKasusIgdId?: string
   /** Episode yang diperbarui saat surat feedback benar-benar dibaca. */
   episodeId?: string
 }

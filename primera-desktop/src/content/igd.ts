@@ -4,9 +4,9 @@
  * Akurasi mengikuti algoritma kegawatdaruratan (ACLS/PPGD/MTBS/Kemenkes).
  */
 
-import type { KasusIgd } from './types'
+import { terapkanGroundingIgd } from './igdSources'
 
-export const KASUS_IGD: KasusIgd[] = [
+export const KASUS_IGD = terapkanGroundingIgd([
   /* ====================================================================== */
   {
     id: 'igd_syok_anafilaksis',
@@ -259,4 +259,4 @@ export const KASUS_IGD: KasusIgd[] = [
       },
     ],
   },
-]
+])

@@ -138,6 +138,9 @@ export function MejaKerja() {
 
   const suratUrut = useMemo(() => [...state.inbox].reverse(), [state.inbox])
   const suratTerbuka = suratTerbukaId ? (state.inbox.find((m) => m.id === suratTerbukaId) ?? null) : null
+  const kasusIgdSurat = suratTerbuka?.kaitKasusIgdId
+    ? PACK.kasusIgd[suratTerbuka.kaitKasusIgdId]
+    : undefined
 
   const bukaSurat = (m: Surat) => {
     setSuratTerbukaId(m.id)
@@ -353,6 +356,31 @@ export function MejaKerja() {
               <p className="mk__surat-dari teks-kecil teks-lembut">Dari: {suratTerbuka.dari}</p>
               <div className="mk__surat-garis" />
               <p className="mk__surat-isi">{suratTerbuka.isi}</p>
+              {kasusIgdSurat && (
+                <details className="mk__surat-grounding">
+                  <summary>Panduan resmi &amp; sumber</summary>
+                  <div className="mk__surat-grounding-isi">
+                    <p>{kasusIgdSurat.panduanResmi}</p>
+                    <ul aria-label={`Sumber klinis ${kasusIgdSurat.nama}`}>
+                      {kasusIgdSurat.sumber.map((sumber) => (
+                        <li key={sumber.id}>
+                          <span className="mk__surat-sumber-jenis">
+                            {sumber.jenis === 'pedoman_indonesia' ? 'Indonesia' : 'EBM'}
+                          </span>
+                          <a
+                            href={sumber.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`${sumber.label}; buka sumber eksternal`}
+                          >
+                            {sumber.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </details>
+              )}
               {suratTerbuka.kaitKeluargaId && (
                 <button
                   className="tombol mk__surat-kait"

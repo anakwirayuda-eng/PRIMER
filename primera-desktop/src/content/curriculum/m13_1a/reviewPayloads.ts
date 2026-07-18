@@ -10,7 +10,7 @@ import {
   CLINICAL_GROUNDING_POLICY,
   type ClinicalGroundingPolicy,
 } from '../clinicalGroundingPolicy'
-import type { KasusKlinis, Obat, Tindakan, TopikEdukasi } from '../../types'
+import type { KasusIgd, KasusKlinis, Obat, Tindakan, TopikEdukasi } from '../../types'
 import { M13_1A_EDUKASI_DRAFT, M13_1A_OBAT_DRAFT, M13_1A_TINDAKAN_DRAFT } from './catalogDraft'
 import { M13_1A_CLINIC_DRAFTS } from './clinicalDrafts'
 import {
@@ -80,6 +80,17 @@ function semuaReferensiTindakan(kasus: KasusKlinis): string[] {
     ...(kasus.tatalaksana.prosedur ?? []),
     ...(kasus.tatalaksana.tindakanSalahUmum ?? []).map((item) => item.id),
   ]
+}
+
+/**
+ * `panduanResmi` dan `sumber` ditambahkan setelah physician review sebagai
+ * provenance debrief, bukan perubahan answer-key yang ditandatangani. Keduanya
+ * tetap dikunci oleh `sidikJariPack` dan invariant IGD; review envelope lama
+ * sengaja mempertahankan payload keputusan klinis yang benar-benar direview.
+ */
+function kontenIgdUntukReview(kasus: KasusIgd): Omit<KasusIgd, 'panduanResmi' | 'sumber'> {
+  const { panduanResmi: _panduanResmi, sumber: _sumber, ...konten } = kasus
+  return konten
 }
 
 interface ReviewCatalog {
@@ -234,7 +245,7 @@ const igdPayloads = M13_1A_IGD_DRAFTS.map((kasus) => {
     reviewEnvelope({
       reviewId,
       kind: 'igd',
-      content: kasus,
+      content: kontenIgdUntukReview(kasus),
       proposedCatalog: {
         ...EMPTY_CATALOG,
         icd10: pilihEntri(M13_1A_PROPOSED_ICD10_ENTRIES, [kasus.icd10]),
