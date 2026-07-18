@@ -3,7 +3,7 @@
  *
  * Ditulis terhadap kontrak `KasusKlinis` (src/content/types.ts). Semua id obat/lab/
  * edukasi/tindakan memakai palet kanonik M3_CONTENT_SPEC. Akurasi klinis mengikuti
- * guideline nasional (PPK PERDOSSI/PERDAMI/PERHATI-KL, Permenkes 5/2014, WHO) — lihat
+ * PNPK/PPK Kemenkes dan pedoman profesi/WHO yang relevan — lihat
  * tiap `clue` & `obatSalahUmum`.
  *
  * Dua kasus WAJIB-RUJUK:
@@ -345,7 +345,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     lab: [],
     diagnosisBanding: ['H81.1', 'H81.0', 'H81.3'],
     tatalaksana: {
-      obatBenar: ['betahistin_6'],
+      obatBenar: [],
+      obatOpsional: ['betahistin_6'],
       obatSalahUmum: [
         { id: 'flunarizin_5', alasan: 'Flunarizin lebih untuk profilaksis migren/vertigo vestibular sentral; pada BPPV terapi utamanya MANUVER REPOSISI (Epley), bukan mengandalkan obat penekan vestibular jangka panjang.', bahaya: 'nonPrimer' },
         { id: 'amoxicillin_500', alasan: 'BPPV bukan infeksi telinga — antibiotik tidak berperan sama sekali.', bahaya: 'nonPrimer' },
@@ -353,7 +354,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       prosedur: ['manuver_epley'],
       edukasi: ['latihan_bppv', 'tanda_bahaya'],
     },
-    clue: 'BPPV: vertigo rotatorik SINGKAT (<1 menit) dipicu perubahan posisi kepala, TANPA gejala telinga/defisit neurologis. Dix-Hallpike (+) nistagmus fatigable → tegakkan diagnosis. Tata laksana UTAMA: MANUVER EPLEY (reposisi kanalit); betahistin hanya pereda mual/simtomatik. Ajarkan latihan Brandt-Daroff di rumah (PPK PERDOSSI/AAO-HNS).',
+    clue: 'BPPV: vertigo rotatorik SINGKAT (<1 menit) dipicu perubahan posisi kepala, tanpa gejala telinga atau defisit neurologis. Dix-Hallpike dengan nistagmus torsional-upbeating yang berlatensi dan fatigable mendukung kanal posterior. Tata laksana utama adalah manuver reposisi kanalit (Epley); obat vestibular tidak boleh menggantikan manuver dan tidak diberikan rutin jangka panjang.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 bab Vertigo mengakui BPPV sebagai kompetensi 4A dan memuat manuver Epley/Brandt-Daroff. AAO-HNSF BPPV guideline yang masih aktif menekankan reposisi kanalit serta mengurangi penggunaan rutin obat penekan vestibular dan pencitraan pada presentasi tipikal.',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat tanpa manuver reposisi, vertigo berulang mengganggu aktivitas dan meningkatkan risiko jatuh, terutama pada pasien usia lanjut.',
       kembaliHariMin: 5,
@@ -936,11 +938,9 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Hidung saya mimisan dok, sudah keluar darah dari lubang kanan sejak setengah jam lalu belum berhenti.',
-    // M10 §49: usiaMin 12→35. Seluruh kasus dibangun di atas premis HT esensial
-    // kronik "obat sering putus" (q_darahtinggi) + TD 150/90 sbg faktor pemberat
-    // — mustahil/tak koheren pd anak 12-14 th (150/90 = HT berat >persentil-99,
-    // bukan "aggravator"). Epistaksis anterior pd anak biasanya trauma-digital,
-    // bukan hipertensi; band ini spesifik cerita dewasa-hipertensif.
+    // Usia dewasa dipertahankan karena komorbid hipertensi kronik merupakan
+    // kebutuhan tindak lanjut. Hipertensi tidak dipresentasikan sebagai penyebab
+    // tunggal atau sasaran hemostasis akut; pencetus langsungnya trauma digital.
     demografi: { usiaMin: 35, usiaMax: 55 },
     vital: { td: '150/90', nadi: 90, rr: 18, suhu: 36.7, spo2: 99 },
     anamnesis: [
@@ -1006,7 +1006,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     pemeriksaanFisik: [
       { region: 'tht_mulut', temuan: 'Rinoskopi anterior: tampak titik perdarahan aktif di area pleksus Kiesselbach (septum anterior) kavum nasi kanan; tidak tampak massa/tumor. Bagian posterior bersih.', relevan: true },
       { region: 'umum', temuan: 'Kompos mentis, tampak cemas namun hemodinamik stabil, tidak pucat berat, akral hangat.', relevan: true },
-      { region: 'jantung', temuan: 'TD 150/90 (hipertensi), nadi reguler; menjadi faktor yang memperberat perdarahan.', relevan: true },
+      { region: 'jantung', temuan: 'TD 150/90, nadi reguler; hipertensi kronik perlu ditindaklanjuti terpisah dan bukan pengganti kontrol perdarahan lokal.', relevan: true },
       { region: 'tht_mulut', temuan: 'Faring posterior: sedikit rembesan darah, tidak ada aliran deras dari nasofaring (menyingkirkan epistaksis posterior masif).', relevan: true },
       { region: 'kulit', temuan: 'Tidak ada petekie/ekimosis luas yang menunjukkan gangguan pembekuan.', relevan: false },
     ],
@@ -1020,16 +1020,18 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         { id: 'amoxicillin_500', alasan: 'Epistaksis bukan infeksi; antibiotik tidak menghentikan perdarahan. (Antibiotik hanya relevan sebagai profilaksis bila tampon dipasang lama, bukan terapi utama.)', bahaya: 'nonPrimer' },
         { id: 'ibuprofen_400', alasan: 'NSAID mengganggu fungsi trombosit dan dapat memperpanjang perdarahan — hindari pada pasien epistaksis.', bahaya: 'kontraindikasi' },
       ],
-      prosedur: ['tampon_epistaksis'],
+      prosedur: ['kompresi_hidung'],
+      prosedurOpsional: ['tampon_epistaksis'],
       edukasi: ['kepatuhan_obat', 'kontrol_rutin', 'tanda_bahaya'],
     },
-    clue: 'Epistaksis anterior (pleksus Kiesselbach): pertolongan pertama = duduk MENUNDUK ke depan + tekan cuping hidung (pinch) 10-15 menit + kompres dingin. Dekongestan topikal (oksimetazolin) sebagai vasokonstriktor; bila belum berhenti pasang TAMPON ANTERIOR. Kendalikan faktor pencetus: TEKANAN DARAH tinggi WAJIB diobati (kepatuhan obat HT). Rujuk bila epistaksis posterior/masif/berulang tak terkendali (PPK PERHATI-KL).',
+    clue: 'Epistaksis anterior: dudukkan pasien condong ke depan lalu tekan bagian lunak hidung terus-menerus sedikitnya 5 menit, lazimnya 10–15 menit, tanpa sering melepas untuk memeriksa. Vasokonstriktor topikal dapat membantu; tampon anterior dipakai bila sumber tidak dapat dikendalikan dengan langkah awal. Hipertensi kronik dinilai dan diobati sebagai komorbid, tetapi penurunan TD bukan pengganti hemostasis lokal.',
+    panduanResmi: 'PPK 1186/2022 tidak memiliki jalur epistaksis tersendiri. Floor FKTP adalah stabilitas hemodinamik, kompresi hidung yang benar, terapi lokal bertahap, dan rujuk bila masif, posterior, berulang unilateral, atau gagal dikendalikan. AAO-HNSF Nosebleed Guideline 2020 menempatkan kompresi berkelanjutan sebagai tindakan awal dan packing bila lokasi perdarahan tidak dapat diidentifikasi atau dikontrol.',
     konsekuensi: {
-      narasi: 'Bila hipertensi tidak dikontrol dan teknik penekanan salah (menengadah), darah tertelan dan perdarahan berulang; epistaksis masif berisiko aspirasi dan anemia.',
+      narasi: 'Teknik penekanan yang salah atau kepala menengadah membuat darah tertelan dan menunda hemostasis; epistaksis masif berisiko aspirasi dan anemia. Hipertensi kronik tetap perlu kontrol tersendiri.',
       kembaliHariMin: 2,
       kembaliHariMax: 7,
-      kondisiKembali: 'Pasien kembali dengan mimisan berulang karena tekanan darah masih tinggi akibat obat hipertensi tetap tidak diminum teratur.',
-      guideline: 'PPK PERHATI-KL Epistaksis — tekanan langsung + tampon anterior + kontrol hipertensi.',
+      kondisiKembali: 'Pasien kembali dengan mimisan berulang setelah kembali mengorek mukosa yang kering; obat hipertensi juga masih sering putus dan perlu ditata ulang.',
+      guideline: 'AAO-HNSF Nosebleed Guideline 2020 — kompresi langsung, terapi lokal bertahap, evaluasi faktor perdarahan, dan rujuk bila tak terkendali.',
     },
   },
 

@@ -83,6 +83,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   const [cari, setCari] = useState('')
   const cariRef = useRef<HTMLInputElement>(null)
   const [cariEduk, setCariEduk] = useState('')
+  const cariEdukRef = useRef<HTMLInputElement>(null)
   const [, setLaciTick] = useState(0) // re-render saat laciSesi berubah
   // M4.18 — stok gudang tampil di formularium; habis = tombol resep terkunci.
   const stok = useGame((s) => s.state?.gudang.stok)
@@ -116,6 +117,21 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   // overload kognitif (temuan playtest user 2026-07-16). Kini pola laci
   // kelompok + pencarian, SAMA dengan edukasi (Hukum Hick, chunking 4-8 item).
   const [cariTindakan, setCariTindakan] = useState('')
+  const cariTindakanRef = useRef<HTMLInputElement>(null)
+  const bukaTabDenganFokusCari = (next: typeof tab): void => {
+    setTab(next)
+    // Klik tab adalah niat masuk ke alat pencarian. Tunggu panel baru terpasang,
+    // lalu fokuskan inputnya. Navigasi panah tetap mempertahankan fokus di tab.
+    window.setTimeout(() => {
+      const target =
+        next === 'resep'
+          ? cariRef.current
+          : next === 'edukasi'
+            ? cariEdukRef.current
+            : cariTindakanRef.current
+      target?.focus({ preventScroll: true })
+    }, 0)
+  }
   const tindakanPerKelompok = useMemo(() => {
     const peta = new Map<KelompokTindakan, typeof PACK.tindakan[string][]>()
     for (const kel of URUTAN_KELOMPOK_TINDAKAN) peta.set(kel, [])
@@ -182,7 +198,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
             tabIndex={tab === 'resep' ? 0 : -1}
             onKeyDown={onTabKey}
             className={`klinik-deck__tab-tombol${tab === 'resep' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
-            onClick={() => setTab('resep')}
+            onClick={() => bukaTabDenganFokusCari('resep')}
             // M9.1: dulu tak dikunci sama sekali — tab ini memang sudah aktif
             // default & klik ulang tak berefek, tapi tetap terhitung "aktif
             // bisa diklik" & melanggar invarian kunci-penuh. Dikunci spt
@@ -199,7 +215,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
             tabIndex={tab === 'edukasi' ? 0 : -1}
             onKeyDown={onTabKey}
             className={`klinik-deck__tab-tombol${tab === 'edukasi' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
-            onClick={() => setTab('edukasi')}
+            onClick={() => bukaTabDenganFokusCari('edukasi')}
             disabled={tutorialAktif}
             title={tutorialAktif ? 'Kasus latihan ini cukup diselesaikan lewat tab Resep.' : undefined}
           >
@@ -218,7 +234,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
             tabIndex={tab === 'tindakan' ? 0 : -1}
             onKeyDown={onTabKey}
             className={`klinik-deck__tab-tombol${tab === 'tindakan' ? ' klinik-deck__tab-tombol--aktif' : ''}`}
-            onClick={() => setTab('tindakan')}
+            onClick={() => bukaTabDenganFokusCari('tindakan')}
             disabled={tutorialAktif}
             title={tutorialAktif ? 'Kasus latihan ini tak butuh tindakan.' : undefined}
           >
@@ -397,7 +413,10 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                         <span className="teks-kecil tumbuh">{topik.nama}</span>
                         <button
                           className="tombol tombol--senyap klinik-eduk__slot-hapus"
-                          onClick={() => dispatch({ type: 'HAPUS_EDUKASI', edukasiId: topik.id })}
+                          onClick={() => {
+                            dispatch({ type: 'HAPUS_EDUKASI', edukasiId: topik.id })
+                            cariEdukRef.current?.focus({ preventScroll: true })
+                          }}
                           title="Coret dari resep edukasi."
                           aria-label={`Hapus ${topik.nama}`}
                         >
@@ -415,6 +434,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
             </div>
 
             <input
+              ref={cariEdukRef}
               className="klinik-cari"
               type="text"
               value={cariEduk}
@@ -459,13 +479,16 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                             className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
                             disabled={terkunci}
                             aria-pressed={dipilih}
-                            onClick={() =>
+                            onClick={() => {
                               dispatch(
                                 dipilih
                                   ? { type: 'HAPUS_EDUKASI', edukasiId: t.id }
                                   : { type: 'TAMBAH_EDUKASI', edukasiId: t.id },
                               )
-                            }
+                              // Sama seperti formularium: sesudah hasil dipilih,
+                              // ketikan berikutnya harus tetap menuju kotak cari.
+                              cariEdukRef.current?.focus({ preventScroll: true })
+                            }}
                             title={
                               dipilih
                                 ? 'Klik untuk membatalkan.'
@@ -513,7 +536,10 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                       key={id}
                       className="chip klinik-eduk__chip klinik-eduk__chip--dipilih"
                       aria-pressed
-                      onClick={() => dispatch({ type: 'HAPUS_TINDAKAN', tindakanId: id })}
+                      onClick={() => {
+                        dispatch({ type: 'HAPUS_TINDAKAN', tindakanId: id })
+                        cariTindakanRef.current?.focus({ preventScroll: true })
+                      }}
                       title="Klik untuk membatalkan tindakan."
                     >
                       ✓ {t.nama}
@@ -524,6 +550,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
             )}
 
             <input
+              ref={cariTindakanRef}
               className="klinik-cari"
               type="text"
               value={cariTindakan}
@@ -569,13 +596,14 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                             key={t.id}
                             className={`chip klinik-eduk__chip${dipilih ? ' klinik-eduk__chip--dipilih' : ''}`}
                             aria-pressed={dipilih}
-                            onClick={() =>
+                            onClick={() => {
                               dispatch(
                                 dipilih
                                   ? { type: 'HAPUS_TINDAKAN', tindakanId: t.id }
                                   : { type: 'TAMBAH_TINDAKAN', tindakanId: t.id },
                               )
-                            }
+                              cariTindakanRef.current?.focus({ preventScroll: true })
+                            }}
                             title={dipilih ? 'Klik untuk membatalkan tindakan.' : `Lakukan tindakan: ${t.nama}`}
                           >
                             {dipilih ? '✓ ' : ''}
@@ -601,7 +629,10 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
           Selesai Terapi &mdash; ke Disposisi &rarr;
         </button>
         {tutorialAktif ? null : enc.edukasi.length === 0 ? (
-          <button className="teks-xs klinik-deck__footer-ingat" onClick={() => setTab('edukasi')}>
+          <button
+            className="teks-xs klinik-deck__footer-ingat"
+            onClick={() => bukaTabDenganFokusCari('edukasi')}
+          >
             💬 Pasien belum diedukasi &mdash; buka tab <strong>Edukasi (0/{KAPASITAS_EDUKASI})</strong>; konseling ikut dinilai.
           </button>
         ) : (

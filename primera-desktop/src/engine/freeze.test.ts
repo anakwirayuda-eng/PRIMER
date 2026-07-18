@@ -2,11 +2,11 @@
  * FREEZE (M10.5 Q-D, Golden Master, 2026-07-12; diperluas 2026-07-13 per
  * CODEX audit temuan #10, lagi 2026-07-13 per audit CODEX pasca-GM temuan
  * #19, lagi 2026-07-13 per fix pass M10.6 §2/§3/§9/§11, dan M13-0D pada
- * 2026-07-14) — hash-lock 17
+ * 2026-07-14, serta Bridge B2 PHC Lite pada 2026-07-18) — hash-lock 18
  * file yang menentukan replay/skor: reducer.ts, clinic.ts, scoring.ts,
  * director.ts, core/rng.ts, igd.ts, kader.ts, init.ts, kegiatan.ts,
  * kunjungan.ts, paketUjian.ts, verifikasi.ts, state.ts, save.ts, pispk.ts,
- * surveilans.ts, examBlueprint.ts. Ini bukan pagar regresi biasa — ia SENGAJA GAGAL bila salah
+ * surveilans.ts, examBlueprint.ts, bridge.ts. Ini bukan pagar regresi biasa — ia SENGAJA GAGAL bila salah
  * satu file berubah walau cuma satu karakter, termasuk perubahan yang
  * "kelihatannya aman" (refactor, komentar, rename variabel lokal).
  *
@@ -145,8 +145,15 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Counter tetap mengikuti driftProlanis sebagai satu sumber kebenaran;
   // drift keluarga hanya boleh membuat masalah yang bisa dipulihkan gameplay.
   // Audit REVISI_ENGINE 50: surat SISRUTE menjaga tautan keluarga yang valid.
-  'reducer.ts': 'a6ec7806116aaf83ebe027cfbdcf464fced063359d2f950dcc5410f4212c3230',
-  'clinic.ts': '508f6b62a6154da40f274fa51c175a794ab45b91c7a94549d350f429b84959c2',
+  // Unfreeze 2026-07-18 (Bridge B2 PHC Lite, REVISI_ENGINE 50 -> 51):
+  // CareEpisode mengikat UKM, UKP, rujukan, feedback, dan aksi lanjutan dalam
+  // satu receipt kausal yang persisten; bridge.ts ikut dibekukan karena hasil
+  // reducer kini bergantung langsung pada helper transisi episode tersebut.
+  // Unfreeze 2026-07-18 (EBM currency, REVISI_ENGINE 51 -> 52): clinic.ts
+  // mengenal prosedur opsional yang tidak masuk denominator skor; verifikasi
+  // dibump karena keputusan terapi gout/CHF dan konten ternilai berubah.
+  'reducer.ts': '24fab9c7e056575fe0d8af3aa25fbbf15fd3334e431a0e29d36a1749dae757d4',
+  'clinic.ts': '92789c702936cb71ac2e192ff1912fafe9f45ac8b5e0b4f7bddb561ef65ad2b6',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
@@ -156,7 +163,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
-  'init.ts': '19b2d372c730406a14ac96afc3497fc8e8f418b0694271a5bff1df41ad778afb',
+  'init.ts': '4b9bb8b402c98f264d196592e7132aa7d1c6cb15c9e96755b5f06991f3ff71c1',
   // Unfreeze 2026-07-17 (bridge UKM↔UKP P0-B, REVISI_ENGINE 43 -> 44):
   // 22 kasus kluster dipetakan eksplisit ke 15 pola pengendalian; fallback
   // droplet diganti respons aman belum-dipetakan dan dikunci invariant.
@@ -165,15 +172,16 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': 'ca3e8d830ab58127ec189502013140042d92379b7f87148e1db8b091edfce783',
-  'state.ts': '287c5e6fd0e5f9dfb57875556f6f20ac18dd866c83da5a703e317181890691c7',
-  'save.ts': '3a124f864eb634ff9f94c9d38d63a464d09dfa75ab6f4814ca15875ddbfc0073',
+  'verifikasi.ts': 'dda3e6d12007b7c029f9508b7c9e9e33a7ea88fb3179f1def6b4a37a2bafc972',
+  'state.ts': '61e07851c782c56791b687b8a657015b2fd9986812d531db6d5f1ae1b08723cf',
+  'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',
   'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',
+  'bridge.ts': '75a6225307abe70898234f3b7ad77737b02b47f688530826129d2a29752e0641',
 }
 
-describe('GOLDEN MASTER FREEZE (M10.5 Q-D) — 17 file penentu replay/skor terkunci', () => {
+describe('GOLDEN MASTER FREEZE (M10.5 Q-D) — 18 file penentu replay/skor terkunci', () => {
   for (const [file, hashDiharapkan] of Object.entries(HASH_DIBEKUKAN)) {
     it(`${file} tak berubah sejak freeze`, () => {
       const hashSekarang = hashFile(file)

@@ -50,6 +50,27 @@ describe('M11.5 — perintis konjungtivitis alergi menanam panduanResmi (diverge
   })
 })
 
+describe('M11.5 — debrief asma stabil mengikuti GINA aktif', () => {
+  const asma = PACK.kasus.asma_ringan!
+
+  it('menggunakan GINA 2026 dan tidak menghidupkan kembali klasifikasi frekuensi lama', () => {
+    const debrief = [asma.clue, asma.panduanResmi, asma.catatanRealita].join('\n')
+
+    expect(debrief).toMatch(/GINA 2026/)
+    expect(debrief).not.toMatch(/GINA 2019/)
+    expect(asma.clue).toMatch(/kontrol sebagian/i)
+    expect(asma.clue).not.toMatch(/≥2×\/minggu.*asma PERSISTEN/i)
+  })
+
+  it('membedakan Track 1 pilihan dari Track 2 yang tersedia di skenario FKTP', () => {
+    expect(asma.clue).toMatch(/Track 1.*ICS-formoterol/i)
+    expect(asma.clue).toMatch(/Track 2.*budesonid.*salbutamol/i)
+    expect(asma.tatalaksana.obatBenar).toEqual(['salbutamol_inhaler', 'budesonide_inhaler'])
+    expect(asma.panduanResmi).toMatch(/PPK 1186\/2022.*floor regulasi/i)
+    expect(asma.catatanRealita).toMatch(/Fornas 1199\/2025.*FPKTP/i)
+  })
+})
+
 describe('M11 Fase-1 — field pengayaan TAK ikut sidik jari (tak perlu bump REVISI)', () => {
   it('mengubah mutiaraEbm/catatanRealita tak menggeser sidikJariPack', () => {
     const dasar = sidikJariPack(PACK)

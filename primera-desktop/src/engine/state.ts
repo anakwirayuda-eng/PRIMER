@@ -58,6 +58,8 @@ export interface PasienAktif {
   rw: number
   /** Kaitan ke keluarga binaan (karma loop dua arah). */
   keluargaId?: string
+  /** Episode longitudinal yang sama lintas UKM, poli, RS, dan kunjungan balik. */
+  episodeId?: string
   /** Pasien dari keluarga yang pernah dikunjungi → lebih jujur/terbuka. */
   bonusTrust: boolean
   /** Pasien follow-up konsekuensi (kembali memburuk). */
@@ -503,6 +505,8 @@ export interface Surat {
   dibaca: boolean
   /** Navigasi kontekstual: buka keluarga/pasien terkait. */
   kaitKeluargaId?: string
+  /** Episode yang diperbarui saat surat feedback benar-benar dibaca. */
+  episodeId?: string
 }
 
 export type JenisJadwal =
@@ -511,6 +515,7 @@ export type JenisJadwal =
   | 'pasien_kembali'
   | 'karma_igd'
   | 'verifikasi_pispk'
+  | 'rujukan_feedback'
 
 export interface JadwalItem {
   id: string
@@ -521,6 +526,8 @@ export interface JadwalItem {
   pasienId?: string
   kasusId?: string
   keluargaId?: string
+  /** Episode longitudinal asal jadwal ini. */
+  episodeId?: string
   /** Enrolmen Prolanis yang melahirkan jadwal pasien ini, bila ada. */
   prolanisPesertaId?: string
   /** #4: indikator yang dijanjikan warga, menunggu verifikasi outcome. */
@@ -557,6 +564,71 @@ export interface JadwalItem {
   bedRetry?: boolean
   rumahSakitId?: string
   bedRetryKe?: number
+  /** Umpan balik rujukan tertunda setelah pelayanan di RS selesai. */
+  feedbackRujukan?: string
+}
+
+/* ---------------------------------------------------------------------------
+ * Bridge UKM <-> UKP - episode longitudinal ringkas
+ * ------------------------------------------------------------------------- */
+
+export type SumberEpisode =
+  | 'keluarga'
+  | 'posyandu'
+  | 'prolanis'
+  | 'surveilans'
+  | 'klinik'
+  | 'igd'
+  | 'rs'
+
+export type PemilikEpisode = 'dokter' | 'perawat' | 'bidan' | 'kader' | 'program' | 'rs' | 'keluarga'
+
+export type StatusEpisode =
+  | 'terdeteksi'
+  | 'dinilai'
+  | 'ditindaklanjuti'
+  | 'menunggu'
+  | 'dirujuk'
+  | 'kembali'
+  | 'terverifikasi'
+  | 'berakhir'
+
+export type TahapRujukan = 'sent' | 'accepted' | 'completed' | 'feedback' | 'acted'
+
+export interface RiwayatEpisode {
+  hari: number
+  status: StatusEpisode
+  label: string
+  detail: string
+}
+
+export interface CareEpisodeLite {
+  id: string
+  subjectId: string
+  subjectName: string
+  familyId?: string
+  rw?: number
+  source: SumberEpisode
+  problemId: string
+  problemLabel: string
+  owner: PemilikEpisode
+  status: StatusEpisode
+  openedDay: number
+  updatedDay: number
+  dueDay?: number
+  nextAction: string
+  referral?: {
+    stage: TahapRujukan
+    hospitalName?: string
+    note?: string
+  }
+  receipt: {
+    signal: string
+    decision?: string
+    feedback?: string
+    next: string
+  }
+  history: RiwayatEpisode[]
 }
 
 /** Penghitung mentah — SATU-SATUNYA sumber skor. Diisi reducer, tak pernah UI. */
@@ -761,6 +833,8 @@ export interface GameState {
 
   inbox: Surat[]
   jadwal: JadwalItem[]
+  /** Ledger episode kecil: satu rantai sebab-akibat lintas UKM, UKP, dan RS. */
+  careEpisodes: CareEpisodeLite[]
   tally: SkorTally
   /**
    * CODEX audit pasca-GM (2026-07-13, temuan #12): kunci tally yang di-backfill

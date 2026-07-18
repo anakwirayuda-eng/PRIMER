@@ -31,6 +31,7 @@ import { useFocusTrap } from '../useFocusTrap'
 import { useRadioGroup } from '../useRadioGroup'
 import './MejaKerja.css'
 import { tampilanHasilKunjungan } from './hasilKunjunganView'
+import { JejakPerawatan } from './JejakPerawatan'
 
 const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
 
@@ -849,6 +850,16 @@ export function MejaKerja() {
               <dd>{suratBaru}</dd>
             </div>
           </dl>
+
+          <JejakPerawatan
+            episodes={state.careEpisodes}
+            hari={state.hari}
+            petaTerbuka={petaTerbuka}
+            onBukaKeluarga={(keluargaId) => {
+              setPetaTargetKeluargaId(keluargaId)
+              dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })
+            }}
+          />
 
           <p className="mk__cta-sub teks-kecil teks-lembut">{cta.sub}</p>
           <button className="tombol tombol--utama tombol--besar mk__cta" onClick={cta.aksi}>

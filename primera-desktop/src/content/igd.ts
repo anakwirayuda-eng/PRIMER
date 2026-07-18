@@ -225,8 +225,9 @@ export const KASUS_IGD: KasusIgd[] = [
     // (≤20mmHg) MASIH TERUKUR → syok TERKOMPENSATA, bukan dekompensata. Bolus
     // cepat 10-20mL/kg/<30menit direservasi utk syok dekompensata (TD tak
     // terukur) — dipakai pd syok terkompensata berisiko fluid overload/edema
-    // paru (WHO Dengue Guidelines 2009/2011; PAPDI Protokol 5 DSS Dewasa).
-    clue: 'Fase kritis dengue (demam turun H4-6 + tanda syok: akral dingin, nadi cepat-lemah, tekanan nadi ≤20 mmHg, TD MASIH TERUKUR) = DSS TERKOMPENSASI. RESUSITASI: kristaloid (RL/NaCl 0,9%) 5-10 mL/kgBB/JAM infus selama 1 jam (BUKAN bolus cepat — bolus 10-20 mL/kg/15-30 menit hanya utk syok DEKOMPENSATA/TD tak terukur), evaluasi ulang berkala & titrasi turun bertahap sesuai perfusi. JANGAN NSAID/aspirin — parasetamol saja (WHO Dengue Guidelines 2009/2011; PAPDI Protokol 5).',
+    // paru (algoritme laju WHO Dengue 2009/PAPDI Protokol 5; WHO 2025
+    // menegaskan kristaloid, individualisasi, dan reassessment ketat).
+    clue: 'Fase kritis dengue (demam turun H4-6 + akral dingin, nadi cepat-lemah, tekanan nadi ≤20 mmHg, TD MASIH TERUKUR) = DSS TERKOMPENSASI. RESUSITASI: kristaloid RL/NaCl 0,9% 5-10 mL/kgBB/JAM selama 1 jam, bukan bolus cepat; 10-20 mL/kg/15-30 menit dicadangkan untuk syok DEKOMPENSATA/TD tak terukur. Evaluasi ulang perfusi, tekanan nadi, diuresis, hematokrit, dan tanda overload lalu titrasi turun. Angka laju mengikuti algoritme WHO Dengue 2009/PAPDI Protokol 5; WHO Arboviral Clinical Management 2025 memperbarui payung buktinya dengan pilihan kristaloid dan terapi cairan yang diindividualisasi serta dipantau sering. Hindari NSAID/aspirin.',
     langkah: [
       {
         id: 'd1',

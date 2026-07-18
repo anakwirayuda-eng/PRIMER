@@ -165,10 +165,11 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     expect(screen.getByText(/Baku DEFAULT penilaian/i)).toBeInTheDocument()
   })
 
-  it('kasus tanpa panduanResmi (ispa_common_cold): catatan medikolegal §3b TAK tampil', () => {
+  it('semua kasus, termasuk ispa_common_cold, menampilkan floor sumber dan catatan medikolegal §3b', () => {
     render(
       <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
     )
-    expect(screen.queryByText(/Baku DEFAULT penilaian/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/Baku DEFAULT penilaian/i)).toBeInTheDocument()
+    expect(screen.getByText(/PPK Dokter FKTP KMK 1186\/2022 bab Rinitis Akut/i)).toBeInTheDocument()
   })
 })

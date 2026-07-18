@@ -736,7 +736,8 @@ export const KASUS_KULIT: KasusKlinis[] = [
       ],
       edukasi: ['istirahat_cukup', 'kebersihan_kulit', 'cuci_tangan', 'tanda_bahaya'],
     },
-    clue: 'Varisela: lesi POLIMORF (semua stadium bersamaan) distribusi sentripetal + demam. Asiklovir (5×800 mg/hari 7 hari) bermanfaat pada REMAJA/DEWASA/imunokompromais bila <24-72 jam onset ruam. Simtomatik + kalamin untuk gatal, potong kuku, HINDARI ibuprofen. Isolasi hingga semua lesi berkrusta; jauhi ibu hamil & imunokompromais (PPK Perdoski/CDC).',
+    clue: 'Varisela: lesi POLIMORF (semua stadium bersamaan) dengan distribusi sentripetal + demam. Pada usia >12 tahun atau kelompok berisiko, asiklovir oral dapat dipertimbangkan dan manfaat maksimal diperoleh bila dimulai dalam 24 jam pertama ruam; penyakit berat/imunokompromais memerlukan tata laksana rujukan. Beri terapi simtomatik, hindari ibuprofen, dan isolasi sampai seluruh lesi berkrusta.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 bab Varisela memuat asiklovir dewasa 800 mg 5 kali/hari selama 7 hari serta terapi simtomatik. CDC 2024 memperjelas bahwa antivirus oral pada kelompok yang layak paling bermanfaat bila dimulai dalam 24 jam pertama; varisela berat, pneumonia, kehamilan berkomplikasi, atau imunokompromais memerlukan konsultasi/rujukan.',
     catatanRealita: 'VZIG bukan stok rutin Puskesmas. Kontak hamil, neonatus, atau imunokompromais memerlukan koordinasi/rujukan segera untuk penilaian dan profilaksis yang sensitif waktu; catat hari pajanan. Jangan memulai profilaksis asiklovir secara improvisasi tanpa protokol lokal atau arahan spesialis.',
     konsekuensi: {
       narasi: 'Digaruk berlebihan menyebabkan infeksi sekunder & jaringan parut; penularan ke ibu hamil dapat menimbulkan varisela kongenital/neonatal yang berat.',
@@ -855,6 +856,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
       edukasi: ['jaga_area_kering', 'kebersihan_kulit', 'diet_dm'],
     },
     clue: 'Kandidiasis intertriginosa: plak merah LEMBAP di lipatan + LESI SATELIT (papulopustul di luar tepi) → antijamur topikal (mikonazol/ketokonazol) + JAGA AREA KERING (tepuk kering, pakaian menyerap). Selidiki faktor predisposisi: DM, obesitas, kelembapan. Cek gula darah (PPK Perdoski).',
+    panduanResmi: 'PPK 1186/2022 membahas kandidiasis mukokutan dalam kerangka diagnosis klinis, koreksi faktor predisposisi, dan antijamur; untuk intertrigo kutan lokal, azol topikal serta menjaga lipatan tetap kering adalah tata laksana FKTP yang sesuai. Lesi luas, atipikal, berulang, atau gagal terapi perlu evaluasi diabetes/imunosupresi dan jejaring dermatologi.',
     catatanRealita: 'Lampu Wood tidak termasuk alat standar Puskesmas; KOH bergantung kemampuan laboratorium. Terapi empiris masuk akal hanya bila morfologi klasik. Lesi atipikal atau gagal terapi perlu evaluasi ulang/rujuk, bukan antijamur berulang tanpa batas; koreksi kelembapan, obesitas, dan hiperglikemia untuk menekan rekurensi.',
     konsekuensi: {
       narasi: 'Bila kelembapan & gula darah tidak dikendalikan, kandidiasis kambuh berulang dan meluas; hiperglikemia yang tak terkelola memperberat infeksi dan komplikasi lain.',

@@ -155,9 +155,12 @@ describe('Bridge B1.4 - Prolanis multimorbid dan callback klinik', () => {
     const state = selesaikanProlanisSalah(stateSesiMultimorbid())
     const jadwal = state.jadwal.filter((j) => j.id.startsWith('jadwal_prolanis_'))
     const musa = state.prolanis.roster.filter((p) => p.orangId === 'musa')
+    const episodeTerjadwal = state.careEpisodes.find((episode) => episode.id === jadwal[0]?.episodeId)
 
     expect(jadwal).toHaveLength(1)
     expect(jadwal[0]?.prolanisPesertaId).toBeDefined()
+    expect(episodeTerjadwal?.dueDay).toBe(jadwal[0]?.hari)
+    expect(episodeTerjadwal?.status).toBe('menunggu')
     expect(musa.map((p) => p.takTerkontrolBerturut).sort()).toEqual([0, 2])
 
     const besok = run(

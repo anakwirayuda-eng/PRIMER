@@ -446,13 +446,15 @@ export const KASUS_IGD_LAB_1: KasusIgd[] = [
       'Seorang pasien muda dibaringkan di brankar, napasnya cepat dan dalam seperti orang habis berlari, padahal ia hampir tak sadar. ' +
       '"Muntah terus dari kemarin, Dok, sudah dua hari tidak suntik insulin karena obatnya habis." ' +
       'Napasnya berbau manis-asam, bibirnya kering, dan matanya cekung.',
-    demografi: { usiaMin: 15, usiaMax: 35 },
+    // Dibatasi dewasa agar algoritme cairan/insulin di bawah tidak terbaca
+    // sebagai protokol pediatrik, yang memerlukan kalkulasi dan monitoring lain.
+    demografi: { usiaMin: 18, usiaMax: 35 },
     vitalAwal: { td: '95/60', nadi: 124, rr: 32, suhu: 37.0, spo2: 98, gds: 480 },
     stabilitasAwal: 45,
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'penyakit_dalam',
     clue:
-      'Ketoasidosis diabetik = defisiensi insulin absolut → lipolisis → badan keton → asidosis metabolik, sementara glukosa yang sangat tinggi menyeret air keluar lewat ginjal (diuresis osmotik). Karena itu masalah PERTAMA pasien ini bukan gula darahnya, melainkan DEHIDRASI berat: napas Kussmaul dan bau keton hanyalah gejala. Urutan benar: nilai ABC, pasang dua jalur IV, dan mulai resusitasi NaCl 0,9% LEBIH DAHULU. Insulin diberikan setelah rehidrasi berjalan — insulin yang didahulukan menarik cairan kembali ke intrasel dan memperberat syok, sekaligus mendorong kalium masuk ke dalam sel sehingga kalium serum bisa jatuh mendadak dan memicu aritmia fatal; kalium wajib dipikirkan SEBELUM insulin, dan di FKTP yang tidak dapat memeriksa maupun memantau kalium, yang benar adalah rehidrasi + rujuk, bukan memulai insulin secara buta. Kalium tidak pernah diberikan bolus cepat. Bikarbonat TIDAK diberikan rutin — asidosis membaik sendiri begitu cairan dan insulin bekerja. Rujuk ke RS dengan penyakit dalam sambil cairan terus berjalan; jangan menahan pasien sampai gula darahnya "normal" (PPK Dokter di FKTP KMK 1186/2022; konsensus PERKENI tentang pengelolaan diabetes melitus dan krisis hiperglikemia; prinsip panduan krisis hiperglikemia ADA).',
+      'Ketoasidosis diabetik = defisiensi insulin absolut → lipolisis → badan keton → asidosis metabolik, sementara hiperglikemia memicu diuresis osmotik. Karena itu masalah PERTAMA pasien ini bukan angka gula, melainkan DEHIDRASI berat. Urutan benar pada dewasa: nilai ABC, pasang akses IV, dan mulai kristaloid isotonik LEBIH DAHULU. Insulin dimulai setelah resusitasi berjalan dan kalium diketahui aman; insulin mendorong kalium masuk ke dalam sel sehingga kalium serum dapat jatuh mendadak dan memicu aritmia fatal. Di FKTP yang tidak dapat memeriksa serta memantau kalium, yang benar adalah rehidrasi + rujuk, bukan memulai insulin secara buta. Kalium tidak pernah diberikan bolus cepat. Bikarbonat TIDAK diberikan rutin. Rujuk sambil cairan terus berjalan; jangan menahan pasien sampai gula darahnya "normal" (PPK FKTP KMK 1186/2022; Hyperglycemic Crises in Adults With Diabetes: A Consensus Report, ADA/EASD/JBDS/AACE/DTS 2024).',
     langkah: [
       {
         id: 'kad_1',
@@ -591,7 +593,7 @@ export const KASUS_IGD_LAB_1: KasusIgd[] = [
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'saraf',
     clue:
-      'Stroke iskemik akut: sumbatan arteri menciptakan inti infark yang sudah mati dan PENUMBRA di sekelilingnya — jaringan yang masih hidup namun kelaparan, dan hanya bisa diselamatkan bila aliran darah dipulihkan cepat. Waktu adalah otak: jutaan neuron hilang tiap menit, dan jendela reperfusi dihitung dari waktu onset yang dipastikan saksi, bukan dari waktu pasien tiba. Urutan benar: ABC dan oksigen bila hipoksemik, kunci jam onset, periksa GULA DARAH kapiler pada setiap defisit neurologis akut (hipoglikemia adalah peniru stroke yang sembuh total bila dikoreksi), lalu aktifkan rujukan segera ke fasilitas dengan CT dan layanan stroke. JANGAN menurunkan tekanan darah secara agresif di fase akut: hipertensi itu kompensatoris untuk memperfusi penumbra melalui pembuluh kolateral, dan menurunkannya — apalagi dengan nifedipin/kaptopril sublingual yang tak terkendali — memperluas infark. JANGAN memberi aspirin sebelum perdarahan disingkirkan dengan CT; stroke iskemik dan stroke perdarahan tak dapat dibedakan secara klinis. Neuroprotektor bukan terapi penyelamat dan tak boleh menunda keberangkatan. Jebakan terbesar adalah "diobati dulu darah tingginya, baru dirujuk" — itu membuang jendela terapi (PPK Dokter di FKTP KMK 1186/2022; panduan tata laksana stroke Kemenkes/PERDOSSI; rekomendasi AHA/ASA).',
+      'Stroke iskemik akut: sumbatan arteri menciptakan inti infark dan PENUMBRA yang masih dapat diselamatkan bila aliran darah dipulihkan cepat. Waktu adalah otak, dan jendela reperfusi dihitung dari waktu terakhir diketahui sehat/onset yang dipastikan saksi. Urutan FKTP: ABC, oksigen hanya bila hipoksemik, kunci waktu onset, periksa GULA DARAH kapiler pada setiap defisit neurologis akut, lalu pra-notifikasi dan rujuk segera ke fasilitas dengan CT serta layanan stroke. Pada pasien ini TD 182/100 tanpa kegawatan hipertensi lain tidak diturunkan cepat di FKTP; kebutuhan dan target penurunan bergantung pada kandidat reperfusi serta penilaian tim stroke. JANGAN memberi aspirin sebelum perdarahan disingkirkan dengan pencitraan. Neuroprotektor bukan terapi penyelamat dan tak boleh menunda keberangkatan (PPK FKTP KMK 1186/2022; PNPK Tata Laksana Stroke KMK 304/2026; AHA/ASA Acute Ischemic Stroke Guideline 2026).',
     langkah: [
       {
         id: 'st_1',
@@ -730,7 +732,7 @@ export const KASUS_IGD_LAB_1: KasusIgd[] = [
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'obgyn',
     clue:
-      'Perdarahan pascasalin ditelusuri dengan 4T: Tone (atonia uteri — penyebab TERSERING), Tissue (sisa plasenta), Trauma (robekan jalan lahir/ruptur uteri), dan Thrombin (gangguan pembekuan). Uterus yang teraba lembek setinggi pusat menunjuk langsung ke atonia: otot rahim gagal berkontraksi sehingga pembuluh di bekas implantasi plasenta tidak terjepit, dan seluruh curah jantung ibu mengalir keluar lewat lubang itu. Urutan benar dan simultan: panggil bantuan, MASASE fundus uteri sekarang juga, pasang dua jalur IV besar dengan kristaloid, dan berikan uterotonika (oksitosin) — semuanya bersamaan, bukan bergiliran. Bila uterus tetap lembek, lakukan KOMPRESI BIMANUAL dan pertahankan; tampon uterus atau kondom kateter dapat menjadi penyelamat sementara bila tersedia; asam traneksamat adalah tambahan, bukan pengganti kontraksi. Rujuk SAMBIL terus menekan dan cairan terus berjalan, dan kabari RS lebih dulu agar kamar bersalin siap saat tiba. Jebakan mematikan: menunggu plasenta lahir lengkap, menunggu hasil Hb/golongan darah, atau melepaskan kompresi demi memindahkan pasien — pada atonia, tangan yang berhenti menekan berarti darah kembali mengalir (PPK Dokter di FKTP KMK 1186/2022; rekomendasi WHO untuk pencegahan dan tata laksana perdarahan pascasalin; panduan POGI dan Buku Saku Pelayanan Kesehatan Ibu Kemenkes).',
+      'Perdarahan pascasalin ditelusuri dengan 4T: Tone, Tissue, Trauma, dan Thrombin. Uterus lembek setinggi pusat menunjuk ke atonia, penyebab tersering. Begitu PPH dikenali, jangan mengerjakan terapi satu per satu: jalankan bundel respons pertama secara simultan — panggil bantuan dan eskalasi/rujuk, MASASE uterus, berikan oksitosin, berikan asam traneksamat sedini mungkin dan dalam 3 jam kelahiran, pasang akses IV dengan kristaloid, serta periksa sumber perdarahan. Bila uterus tetap lembek, lakukan KOMPRESI BIMANUAL dan pertahankan; tampon uterus atau kondom kateter dapat menjadi jembatan bila tersedia. Rujuk SAMBIL kompresi dan cairan berjalan, dengan pra-notifikasi RS. Jangan menunggu Hb/golongan darah atau melepaskan kompresi demi memindahkan pasien (PPK FKTP KMK 1186/2022; WHO/FIGO/ICM Consolidated PPH Guideline 2025 dan Implementation Guide 2026; panduan Kemenkes/POGI).',
     langkah: [
       {
         id: 'pps_1',
@@ -739,11 +741,11 @@ export const KASUS_IGD_LAB_1: KasusIgd[] = [
         pilihan: [
           {
             id: 'a',
-            label: 'Masase fundus uteri sekarang juga sambil memanggil bantuan, pasang dua jalur IV besar dengan kristaloid, dan berikan oksitosin',
+            label: 'Aktifkan bantuan; masase uterus, beri oksitosin dan asam traneksamat dini, pasang akses IV dengan kristaloid, serta nilai sumber perdarahan secara simultan',
             benar: true,
             efekStabilitas: 24,
             respons:
-              'Tepat. Uterus lembek = atonia, penyebab tersering; masase dan uterotonika mengembalikan kontraksi yang menjepit pembuluh darah, dan cairan mengejar yang sudah hilang.',
+              'Tepat. Ini bundel respons pertama, bukan antrean tindakan: masase dan oksitosin memperbaiki tone, traneksamat membantu mempertahankan bekuan, cairan menopang perfusi, dan pemeriksaan mencari 4T sambil rujukan berjalan.',
           },
           {
             id: 'b',

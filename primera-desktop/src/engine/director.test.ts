@@ -175,6 +175,7 @@ function buatState(override?: Partial<GameState>): GameState {
     program: {},
     tutorialAktif: false,
     ...override,
+    careEpisodes: override?.careEpisodes ?? [],
   }
 }
 

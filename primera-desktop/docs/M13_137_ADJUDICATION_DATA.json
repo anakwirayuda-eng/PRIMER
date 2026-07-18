@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-18T04:45:56.034Z",
-  "sourceCommit": "e72bdaa6c2c7ba4cd823fe71e7d37d8fbcbb9631",
-  "artifactFingerprint": "7ee516380eb49afa72f321bf58c42597a20099cfffaec9c26abf7bc4f1e0054d",
-  "packFingerprint": "4ce15a6b",
+  "generatedAt": "2026-07-18T12:48:31.149Z",
+  "sourceCommit": "21ec56bca962dafc1c2c2cbbd6d6a1600f79e374",
+  "artifactFingerprint": "601ad15677febcfb98a6fe2de678cfe73b927f7042fcf1f98261d2afc981d4bd",
+  "packFingerprint": "01e977a2",
   "contentRelease": "m11-e2-saji-pilot-2026-07-17",
-  "engineRevision": 50,
+  "engineRevision": 52,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -39,9 +39,9 @@
   },
   "summary": {
     "bySuggestion": {
-      "cocok": 46,
-      "perlu-koreksi": 88,
-      "tak-ada-sumber": 3
+      "cocok": 44,
+      "perlu-koreksi": 93,
+      "tak-ada-sumber": 0
     },
     "ppkDirect": 89,
     "ppkRelated": 17,
@@ -4027,6 +4027,7 @@
       },
       "currentEditorial": {
         "clue": "Ortopnea mendadak, sputum berbusa, ronki difus, hipertensi berat, dan hipoksemia mendukung edema paru akut. Dudukkan, beri oksigen, pertimbangkan nitrat bila tekanan darah memadai dan tanpa kontraindikasi, monitor, lalu rujuk segera.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 menempatkan gagal jantung akut pada kompetensi 3B: stabilisasi dan rujuk. Pada edema paru hipertensif, posisikan tegak, titrasi oksigen karena SpO2 84%, pertimbangkan nitrat bila tekanan memadai dan tidak ada kontraindikasi, monitor, dan transfer segera; ESC tidak menganjurkan morfin rutin.",
         "realityNote": "Furosemid injeksi tidak diasumsikan ready di Puskesmas Sukamaju dan tidak dijadikan klik wajib. Stabilkan jalan napas/oksigenasi, gunakan nitrat secara selektif, dan jangan menunda transfer."
       },
       "evidence": {
@@ -4119,10 +4120,11 @@
       "compiler": {
         "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED.",
           "Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario.",
           "Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -4952,7 +4954,7 @@
       },
       "currentEditorial": {
         "clue": "Anak sangat kurus (BB/PB di bawah -3 SD, LiLA 10,2 cm, kulit bokong menggantung seperti celana kedodoran) yang kini disertai diare, demam, tidak mau makan, dan tampak lesu = gizi buruk DENGAN komplikasi — dan itu berarti rawat inap di TFC/RS, bukan rawat jalan dengan RUTF. Pembeda \"dengan komplikasi\" wajib dihafal: tidak mau makan atau uji nafsu makan gagal, letargi, demam tinggi atau hipotermia, dehidrasi berat, napas cepat, kejang, anemia berat, atau infeksi berat. Yang wajib dikerjakan FKTP malam ini, sesuai 10 langkah tata laksana gizi buruk WHO/Kemenkes: (1) atasi HIPOGLIKEMIA lebih dulu — GDS 44 mg/dL, beri glukosa/gula oral segera lalu segera lanjutkan pemberian makan, karena hipoglikemia adalah pembunuh tercepat pada 48 jam pertama; (2) HANGATKAN anak — selimuti, dekap kulit-ke-kulit, jauhkan dari kipas dan jendela, sebab lemak tubuhnya yang habis membuatnya kehilangan panas dengan cepat dan hipotermia sering menyertai hipoglikemia; (3) beri antibiotik untuk SEMUA anak gizi buruk, bahkan tanpa tanda infeksi yang jelas, karena tanda-tanda infeksi ditekan oleh gizi buruknya sendiri; (4) pantau ketat tanda vital dan gula darah; (5) rujuk ke TFC atau rawat inap anak. Yang HARUS DIHINDARI adalah refleks yang paling manusiawi: memberi cairan intravena cepat karena anak tampak dehidrasi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK Dokter FKTP menempatkan gizi buruk sebagai kompetensi 3B: dokter FKTP mengenali, memberi tata laksana awal fase stabilisasi, lalu merujuk. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes menjabarkan 10 langkah yang urutannya sengaja tidak boleh ditukar — hipoglikemia dan hipotermia lebih dulu, baru dehidrasi, elektrolit, infeksi, mikronutrien, pemberian makan hati-hati, tumbuh kejar, stimulasi, dan tindak lanjut. Kriteria rujukan resminya adalah setiap gizi buruk DENGAN komplikasi (nafsu makan buruk atau tanda bahaya umum) dan setiap bayi di bawah 6 bulan dengan gizi buruk.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK FKTP menempatkan gizi buruk sebagai kompetensi 3B: kenali, mulai stabilisasi, lalu rujuk bila berkomplikasi. Pedoman Kemenkes menjabarkan 10 langkah fase stabilisasi. WHO Guideline on Prevention and Management of Wasting and Nutritional Oedema 2023 menggantikan guideline WHO 2013; prinsip yang relevan untuk vignette ini tetap: hipoglikemia/hipotermia dan infeksi ditangani dini, rehidrasi dilakukan hati-hati dengan pemantauan ketat, dan anak dengan komplikasi dirawat inap.",
         "realityNote": "Tiga kejujuran yang harus dinyatakan. Pertama, ReSoMal tidak ada dalam formularium game ini, dan itu memang mencerminkan kenyataan: ReSoMal dan mineral-mix diracik di TFC, bukan tersedia di rak obat Puskesmas — yang justru memperkuat kesimpulannya, anak ini dirujuk, bukan direhidrasi sendiri di sini.",
         "ebmPearl": "Tanda dehidrasi yang paling dipercaya dokter justru yang paling menyesatkan pada gizi buruk. Mata cekung dan turgor kulit yang kembali lambat SELALU ada pada anak marasmik — bukan karena ia kekurangan cairan, melainkan karena lemak di bawah kulitnya sudah habis sehingga kulitnya memang kehilangan elastisitas dan bola matanya memang kehilangan bantalannya. Menilai derajat dehidrasi dari kedua tanda ini adalah cara paling umum untuk memberi cairan berlebihan sampai anak gagal jantung. Yang lebih dapat dipercaya justru riwayat (mencretnya sejak kapan, seberapa cair) dan respons terhadap rehidrasi pelan: nadi yang melambat, kencing yang keluar, anak yang mulai menangis dengan air mata. Jebakan kedua sama besarnya: gizi buruk MENEKAN tanda-tanda infeksi. Anak yang sedang sepsis bisa tidak demam, lekositnya bisa normal, perutnya bisa tidak nyeri, dan tanda peradangan yang biasa kita cari boleh jadi tidak muncul sama sekali — itulah alasan WHO memberi antibiotik kepada SEMUA anak gizi buruk, bahkan yang \"tampak tidak terinfeksi\". Terakhir: berat badan bisa MENIPU ke arah sebaliknya pada kwashiorkor, karena bengkaknya menambah berat sehingga anak yang tampak \"cukup gemuk\" ternyata gizi buruk berat — periksa punggung kaki pada setiap anak, jangan hanya membaca timbangan."
       },
@@ -17832,6 +17834,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri kolik, muntah bilious, obstipasi, distensi, timpani, dan bising metalik mendukung ileus obstruktif. Puasakan, koreksi cairan/elektrolit secara terukur, dekompresi NGT, dan rujuk bedah; jangan beri laksatif atau obat antimotilitas.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 menempatkan abdomen akut/peritonitis pada kompetensi stabilisasi dan rujuk. Pada dugaan obstruksi: puasa, akses IV dan koreksi cairan terukur, dekompresi NGT bila dapat dilakukan aman, analgesia/monitoring, lalu rujuk bedah segera; jangan memberi laksatif atau menunda transfer demi pemeriksaan tambahan.",
         "realityNote": "Skenario menyatakan NGT, cairan, operator, dan transport siap. Bila NGT tidak dapat dipasang aman, jangan menunda transfer atau melakukan probing berulang."
       },
       "evidence": {
@@ -17934,10 +17937,11 @@
       "compiler": {
         "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED.",
           "Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.",
           "Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -18033,6 +18037,7 @@
       },
       "currentEditorial": {
         "clue": "Paparan tanah tanpa alas kaki, anemia mikrositik, dan telur cacing pada feses mendukung cacing tambang. WHO merekomendasikan albendazol 400 mg; evaluasi dan koreksi anemia sesuai derajat.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Program Penanggulangan Cacingan Kemenkes dan Fornas 1199/2025 mendukung albendazol, tetapi kasus individual dengan anemia tetap memerlukan penilaian derajat anemia, gizi, kehamilan, dan sumber perdarahan lain. Anemia berat, gagal jantung, perdarahan aktif, atau ketidakmampuan minum memerlukan jejaring/rujukan.",
         "realityNote": "Albendazol tercantum dalam Fornas dan juga digunakan program deworming; kasus individual tetap memerlukan penilaian kehamilan, anemia, dan diagnosis banding perdarahan."
       },
       "evidence": {
@@ -18081,10 +18086,11 @@
       "compiler": {
         "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait.",
           "Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario.",
           "Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -20458,6 +20464,7 @@
       },
       "currentEditorial": {
         "clue": "Paparan air tawar pada fokus endemis Sulawesi Tengah, eosinofilia, dan telur S. japonicum menegakkan skistosomiasis. WHO merekomendasikan prazikuantel; evaluasi komplikasi hepatosplenis dan tindak lanjut program.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Skistosomiasis Indonesia ditangani melalui program fokus endemis Sulawesi Tengah; Fornas 1199/2025 membatasi prazikuantel antisistosoma pada konteks tersebut. WHO guideline 2022 mendukung prazikuantel dan menekankan pengendalian terintegrasi dengan surveilans, WASH, serta pengendalian keong; temuan portal-hepatosplenis memerlukan evaluasi rujukan.",
         "realityNote": "Fornas 1199/2025 membatasi prazikuantel antisistosoma untuk Sulawesi Tengah; vignette sengaja menyebut fokus endemis. Obat dan tindak lanjut dikoordinasikan dengan program, bukan diasumsikan selalu ada di rak Sukamaju."
       },
       "evidence": {
@@ -20506,10 +20513,11 @@
       "compiler": {
         "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait.",
           "Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario.",
           "Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -20779,6 +20787,7 @@
       },
       "currentEditorial": {
         "clue": "Larva currens, eosinofilia, pajanan tanah, dan larva feses mendukung strongiloidiasis. CDC merekomendasikan ivermektin 200 mcg/kg oral 1-2 hari; skrining sangat penting sebelum imunosupresi karena hiperinfeksi dapat fatal.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak memuat strongiloidiasis tersendiri. Ivermektin tercantum dalam Fornas 1199/2025; dosis terapi individual mengikuti berat badan dan pedoman klinis. WHO 2024 membahas ivermektin untuk pengendalian populasi di daerah endemis, bukan sebagai pengganti evaluasi individual, dan rencana steroid/imunosupresi membuat skrining serta tata laksana sebelum terapi sangat penting.",
         "realityNote": "Fornas 1199/2025 mencantumkan ivermektin, tetapi akses dapat melalui program atau jejaring. Resep item 3 mg di game mewakili obat, bukan jumlah tablet; dosis tetap berbasis berat badan."
       },
       "evidence": {
@@ -20827,10 +20836,11 @@
       "compiler": {
         "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait.",
           "Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario.",
           "Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -20921,6 +20931,7 @@
       },
       "currentEditorial": {
         "clue": "Keluarnya proglotid dan pajanan daging kurang matang mendukung taeniasis. WHO mencantumkan prazikuantel 10 mg/kg dosis tunggal; gejala neurologis harus memicu evaluasi sistiserkosis sebelum terapi sederhana.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak memuat taeniasis tersendiri; prazikuantel tercantum dalam Fornas 1199/2025. WHO 2021/2023 memperingatkan bahwa riwayat kejang, sakit kepala berat baru, gangguan penglihatan, atau defisit neurologis memerlukan evaluasi sistiserkosis dan bukan terapi taeniasis sederhana di FKTP.",
         "realityNote": "Prazikuantel tercantum dalam Fornas. Item 600 mg mewakili sediaan, sedangkan jumlah tablet harus dihitung menurut berat badan dan protokol program."
       },
       "evidence": {
@@ -20962,10 +20973,11 @@
       "compiler": {
         "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait.",
           "Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario.",
           "Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -21013,6 +21025,7 @@
       },
       "currentEditorial": {
         "clue": "Bayi dengan prodrom pilek, wheezing/ronki difus, retraksi, asupan <50%, dan SpO2 89% mengalami bronkiolitis berat. WHO 2026 menekankan diagnosis klinis, terapi suportif, oksigen untuk hipoksemia, dan rujuk; jangan rutin memberi antibiotik, bronkodilator, atau steroid.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak memiliki jalur bronkiolitis terpisah. Floor FKTP adalah mengenali hipoksemia/gangguan minum, memberi oksigen dan dukungan jalan napas yang tersedia, lalu merujuk. NICE NG9 yang masih aktif menegaskan terapi suportif dan melarang antibiotik, salbutamol, ipratropium, serta kortikosteroid rutin pada bronkiolitis.",
         "realityNote": "Skenario menyatakan oksigen dan transport siap. Bila alat atau transport tidak siap, koordinasikan jejaring sambil melakukan stabilisasi yang tersedia; jangan menunda rujukan demi pemeriksaan tambahan."
       },
       "evidence": {
@@ -21075,9 +21088,11 @@
         }
       },
       "compiler": {
-        "suggestion": "cocok",
-        "reasons": [],
-        "sourceAttributionWarning": false
+        "suggestion": "perlu-koreksi",
+        "reasons": [
+          "Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait."
+        ],
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -21125,6 +21140,7 @@
       },
       "currentEditorial": {
         "clue": "Redup pada perkusi, fremitus turun, dan suara napas melemah di satu basal mendukung efusi pleura. Hipoksemia perlu oksigen dan pasien dirujuk untuk pencitraan, torakosentesis diagnostik, serta penentuan etiologi seperti TB, infeksi, gagal jantung, atau keganasan.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak menyediakan algoritme efusi pleura sebagai tata laksana tuntas FKTP. Sindrom unilateral simptomatik dengan hipoksemia memerlukan oksigen dan rujukan untuk pencitraan serta sampling pleura terpandu; BTS Pleural Disease Guideline 2023 dan Quality Standard 2026 menentang prosedur pleura buta tanpa ultrasonografi/kompetensi.",
         "realityNote": "Puskesmas Sukamaju tidak diasumsikan memiliki rontgen atau kemampuan torakosentesis. Jawaban benar adalah mengenali sindrom, memberi oksigen, dan merujuk tanpa prosedur buta."
       },
       "evidence": {
@@ -21164,11 +21180,12 @@
         }
       },
       "compiler": {
-        "suggestion": "tak-ada-sumber",
+        "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait.",
           "Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -21561,6 +21578,7 @@
       },
       "currentEditorial": {
         "clue": "Paroksisme batuk, inspiratory whoop, dan muntah pascabatuk sangat khas pertusis. CDC 2025 merekomendasikan makrolida; terapi dini mengurangi keparahan dan terapi dalam tiga minggu pada usia >=1 tahun membatasi penularan.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak memiliki jalur pertusis tersendiri. Pada kasus ini makrolida dini, etika batuk, pembatasan kontak, dan koordinasi surveilans mengikuti CDC Clinical Care of Pertussis 2025 serta kerangka kewaspadaan KLB Permenkes 1/2026; profilaksis kontak diprioritaskan pada kontak berisiko tinggi melalui program setempat.",
         "realityNote": "Koordinasikan surveilans dan profilaksis kontak berisiko tinggi melalui program setempat; jangan menyamakan resep pasien indeks dengan keputusan profilaksis semua kontak."
       },
       "evidence": {
@@ -21592,11 +21610,12 @@
         }
       },
       "compiler": {
-        "suggestion": "tak-ada-sumber",
+        "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait.",
           "Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -22162,8 +22181,8 @@
         ]
       },
       "currentEditorial": {
-        "clue": "PPOK EKSASERBASI BERAT DENGAN INFEKSI SALURAN NAPAS BAWAH (SKDI 3B - RUJUK): perokok berat puluhan tahun dengan ketiga gejala kardinal Anthonisen LENGKAP (sesak bertambah + volume dahak bertambah + dahak menjadi purulen) DITAMBAH demam dan infiltrat basal kanan pada foto toraks — inilah yang membedakannya dari eksaserbasi tanpa infeksi terdokumentasi. Tanda gagal napas MENGANCAM: bicara terputus per KATA, otot bantu napas aktif, sianosis sentral, kesadaran mulai terganggu, SpO2 88%. Bundel GOLD: OKSIGEN TERKONTROL dengan TARGET SpO2 88-92% — dan ini poin EBM yang menentukan: pada PPOK dengan retensi CO2 kronik, oksigen berlebihan (mengejar SpO2 98-100%) MEMPERBURUK hiperkapnia lewat mekanisme ruang rugi dan efek Haldane, dan terbukti MENAIKKAN MORTALITAS dibanding oksigen yang dititrasi. Naikkan oksigen sampai 88-92%, lalu BERHENTI. Ditambah: bronkodilator NEBULISASI, kortikosteroid sistemik, antibiotik (ketiga gejala kardinal + infiltrat), pemantauan ketat, lalu RUJUK paru SEGERA — pasien ini kandidat ventilasi noninvasif yang tidak tersedia di FKTP.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 membatasi kompetensi FKTP pada eksaserbasi PPOK RINGAN; eksaserbasi sedang sampai berat wajib rujuk. Bila sediaan inhalasi tidak tersedia, PPK membolehkan bronkodilator injeksi (aminofilin bolus 5 mg/kgBB atau adrenalin 0,3 mg subkutan) — penekanan yang berbeda dari GOLD yang mengutamakan rute inhalasi. Kortikosteroid sistemik 30-40 mg/hari selama 5 hari, tanpa tapering. GOLD menetapkan target saturasi 88-92% pada eksaserbasi PPOK dan menempatkan ventilasi noninvasif sebagai terapi lini pertama gagal napas hiperkapnik.",
+        "clue": "PPOK EKSASERBASI BERAT DENGAN INFEKSI SALURAN NAPAS BAWAH (SKDI 3B - RUJUK): perokok berat puluhan tahun dengan ketiga gejala kardinal Anthonisen LENGKAP (sesak bertambah + volume dahak bertambah + dahak menjadi purulen) DITAMBAH demam dan infiltrat basal kanan pada foto toraks — inilah yang membedakannya dari eksaserbasi tanpa infeksi terdokumentasi. Tanda gagal napas MENGANCAM: bicara terputus per KATA, otot bantu napas aktif, sianosis sentral, kesadaran mulai terganggu, SpO2 88%. Bundel GOLD 2026: OKSIGEN TERKONTROL dengan TARGET SpO2 88-92% — dan ini poin EBM yang menentukan: pada PPOK dengan retensi CO2 kronik, oksigen berlebihan (mengejar SpO2 98-100%) MEMPERBURUK hiperkapnia lewat mekanisme ruang rugi dan efek Haldane, dan terbukti MENAIKKAN MORTALITAS dibanding oksigen yang dititrasi. Naikkan oksigen sampai 88-92%, lalu BERHENTI. Ditambah: bronkodilator NEBULISASI, kortikosteroid sistemik, antibiotik (ketiga gejala kardinal + infiltrat), pemantauan ketat, lalu RUJUK paru SEGERA — pasien ini kandidat ventilasi noninvasif yang tidak tersedia di FKTP.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 membatasi kompetensi FKTP pada eksaserbasi PPOK RINGAN; eksaserbasi sedang sampai berat wajib rujuk. Bila sediaan inhalasi tidak tersedia, PPK membolehkan bronkodilator injeksi (aminofilin bolus 5 mg/kgBB atau adrenalin 0,3 mg subkutan) — penekanan yang berbeda dari GOLD yang mengutamakan rute inhalasi. Kortikosteroid sistemik 30-40 mg/hari selama 5 hari, tanpa tapering. GOLD 2026 menetapkan target saturasi 88-92% pada eksaserbasi PPOK dan menempatkan ventilasi noninvasif sebagai terapi lini pertama gagal napas hiperkapnik.",
         "realityNote": "Skenario mengasumsikan oksigen, nebulizer, dan transport siap. Kenyataannya banyak Puskesmas hanya punya satu tabung oksigen tanpa pulse oximeter yang berfungsi — padahal justru target 88-92% mustahil dijalankan tanpa oksimeter, sehingga praktik lapangan cenderung \"buka besar biar aman\", persis yang berbahaya di sini.",
         "ebmPearl": "Dua temuan pada pasien ini justru menyesatkan bila dibaca sepintas. Pertama, WHEEZING YANG MELEMAH atau menghilang bukan tanda pasien membaik — pada eksaserbasi berat itu berarti aliran udara sudah terlalu kecil untuk menghasilkan bunyi (silent chest), tanda perburukan menuju henti napas; pasien yang mengi keras justru masih menggerakkan udara. Kedua, SpO2 yang naik ke 98% setelah oksigen dibuka besar terasa seperti keberhasilan, padahal pada PPOK dengan retensi CO2 itu adalah lampu merah: saturasi tinggi menyembunyikan CO2 yang sedang menumpuk, dan pasien dapat tampak \"tenang dan membaik\" tepat saat ia jatuh ke narkosis CO2. Ketenangan mendadak pada pasien yang tadinya gelisah bukan perbaikan — itu kesadaran yang menurun."
       },
@@ -22767,7 +22786,7 @@
       },
       "currentEditorial": {
         "clue": "Demam tinggi, sakit kepala terhebat seumur hidup, kaku kuduk dengan Kernig-Brudzinski positif, silau, muntah menyembur, dan kesadaran yang mulai menurun: suspek meningitis bakterial. Bercak keunguan yang tidak memucat saat ditekan menaikkan taruhannya lagi — itu perdarahan kecil di kulit yang menandakan meningokokus dengan kuman beredar di darah, dan turunnya trombosit menunjukkan pembekuan darah sudah mulai kacau; keadaan ini dapat membunuh dalam hitungan jam. INILAH INTI PEDAGOGIS KASUS INI: antibiotik suntik dosis pertama diberikan SEKARANG, di Puskesmas, sebelum rujukan — bukan setelah sampai rumah sakit dan bukan setelah pungsi lumbal. Pungsi lumbal memang standar untuk memastikan diagnosis, tetapi ia tidak dapat dikerjakan di FKTP, dan menahan antibiotik demi menunggu pungsi lumbal di rumah sakit adalah kesalahan yang mematikan: pedoman menegaskan antibiotik tidak boleh ditunda oleh prosedur diagnostik apa pun, dan biakan cairan otak yang menjadi kurang tajam setelah antibiotik adalah harga yang jauh lebih murah daripada nyawa. Setiap jam penundaan antibiotik menaikkan kematian secara bermakna. Yang benar di FKTP: pasang jalur infus, berikan ceftriaxone dosis pertama segera, turunkan demam dengan parasetamol, oksigen bila perlu, pantau ketat kesadaran dan tanda vital selama perjalanan, rujuk sebagai kegawatan, dan jangan lupa kewajiban kesehatan masyarakatnya — laporkan serta atur obat pencegahan untuk kontak erat di kos.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Meningitis adalah kompetensi SKDI 3B: dokter FKTP wajib menegakkan dugaan diagnosis, memberi penanganan awal kegawatdaruratan, dan merujuk. PPK menempatkan pemberian antibiotik parenteral dosis awal sebagai bagian dari penanganan FKTP sebelum rujukan, bukan sebagai sesuatu yang diserahkan seluruhnya kepada rumah sakit; pungsi lumbal berada di luar kewenangan FKTP dan ketiadaannya tidak boleh menjadi alasan menunda terapi. Kasus dengan bercak perdarahan kulit termasuk penyakit yang wajib dilaporkan dan menuntut penelusuran kontak erat serta pemberian obat pencegahan bagi mereka sesuai pedoman program.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Meningitis adalah kompetensi SKDI 3B: dokter FKTP menegakkan dugaan, memberi antibiotik parenteral dosis awal tanpa menunggu pungsi lumbal, menstabilkan, lalu merujuk. WHO Guidelines on Meningitis 2025 menegaskan antimikroba empiris harus dimulai sedini mungkin dan pemeriksaan diagnostik tidak boleh menunda terapi. Ruam non-blanching/dugaan meningokokus juga memicu pelaporan, penelusuran kontak erat, dan kemoprofilaksis sesuai program.",
         "realityNote": "Skenario mengandaikan ceftriaxone injeksi ada di lemari, infus terpasang, dan ambulans berangkat. Kenyataannya sebagian Puskesmas tidak menyimpan ceftriaxone injeksi, dan sebagian dokter ragu memberi antibiotik dosis pertama karena khawatir \"merusak hasil pemeriksaan di rumah sakit\" atau disalahkan bila diagnosisnya meleset —",
         "ebmPearl": "Trias klasik demam, kaku kuduk, dan penurunan kesadaran lengkap hanya pada sekitar separuh penderita meningitis bakterial — sehingga menunggu ketiganya muncul berarti melewatkan separuh pasien. Yang lebih menjebak: Kernig dan Brudzinski, dua tanda yang paling percaya diri diajarkan, ternyata sensitivitasnya rendah (sekitar 5% pada beberapa penelitian) sehingga hasil NEGATIF sama sekali tidak menyingkirkan meningitis; keduanya berguna bila positif dan tidak berarti apa-apa bila negatif. Pasien ini kebetulan menunjukkan tanda yang lengkap — pasien berikutnya mungkin hanya datang dengan demam, sakit kepala, dan terasa \"tidak seperti biasanya\", dan justru pasien itulah yang paling sering pulang membawa parasetamol. Perangkap ketiga khas Indonesia: demam tinggi dengan sakit kepala hebat pada dewasa muda hampir selalu dibaca sebagai tifus atau demam berdarah lebih dulu, dan sudut pandang itu bertahan bahkan setelah leher kaku ditemukan."
       },
@@ -22990,7 +23009,7 @@
       },
       "currentEditorial": {
         "clue": "Gejala neurologis mendadak yang khas satu wilayah pembuluh darah otak (bicara pelo dan lengan kanan lemas), berlangsung dua puluh menit, lalu pulih total: ini serangan iskemik sesaat (TIA). Gula darah normal menyingkirkan peniru yang paling sering. EKG menemukan penyebabnya: fibrilasi atrium yang belum pernah terdiagnosis — sumber bekuan yang berulang. Inti kasus ini adalah waktu, bukan obat: risiko stroke setelah TIA paling tinggi justru pada 48 jam pertama dan sebagian besar stroke susulan terjadi dalam minggu pertama, sehingga TIA diperlakukan sebagai kegawatan yang dinilai spesialis pada hari yang sama, bukan dijadwalkan poliklinik minggu depan (bukti dari studi EXPRESS dan SOS-TIA: penilaian serta terapi segera menurunkan stroke dini sampai sekitar 80%). Serangan lima menit tiga hari lalu bukan hiburan melainkan pemberat: TIA berulang menaikkan risiko lebih jauh lagi. Yang benar dan aman di FKTP: kenali dan beri nama masalahnya, kerjakan EKG untuk mencari fibrilasi atrium, periksa gula untuk menyingkirkan peniru, potret faktor risikonya, mulai statin, JANGAN menurunkan tekanan darah secara mendadak, lalu rujuk ke spesialis saraf secepat mungkin hari itu juga. TIA adalah stroke yang beruntung — keberuntungan yang hanya berlaku sekali.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. TIA adalah kompetensi SKDI 3B: dokter FKTP mengenali, memberi penanganan awal, dan merujuk. PPK menegaskan bahwa pulihnya gejala TIDAK meniadakan indikasi rujukan, dan bahwa TIA merupakan penanda risiko stroke yang menuntut penilaian spesialis saraf. Titik yang paling sering dilanggar di lapangan justru ini: pasien dengan pemeriksaan neurologis yang sudah normal dipulangkan dengan obat penambah \"peredaran darah otak\" dan diminta kontrol bila kambuh. Perlu diketahui pula bahwa penemuan fibrilasi atrium pada TIA mengubah arah terapi pencegahan secara mendasar — dari antiplatelet menjadi antikoagulan — dan penentuan jenis serta waktu memulainya adalah kewenangan spesialis, bukan FKTP.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. TIA adalah kompetensi SKDI 3B: dokter FKTP mengenali, memberi penanganan awal, dan merujuk. PNPK Stroke KMK 304/2026 dan AHA 2023 Scientific Statement on TIA menegaskan evaluasi segera berbasis risiko serta pencarian etiologi; pulihnya gejala tidak meniadakan urgensi. Fibrilasi atrium mengubah pencegahan sekunder menuju antikoagulasi setelah penilaian perdarahan/pencitraan dan timing yang tepat, sehingga keputusan regimen tidak diimprovisasi di FKTP.",
         "realityNote": "Dua celah jujur perlu disebut. Pertama, terapi antiplatelet (aspirin, dan pada TIA risiko tinggi kombinasi singkat dengan klopidogrel) adalah tulang punggung pencegahan stroke dini dalam pedoman internasional, tetapi tidak tersedia dalam formularium permainan ini sehingga tidak dapat diklik —",
         "ebmPearl": "Pemulihan sempurna adalah temuan paling menyesatkan dalam neurologi. Pemeriksaan yang seluruhnya normal di hadapan Anda terasa seperti bukti bahwa tidak ada yang perlu dicemaskan — padahal justru pemulihan itulah yang menamai penyakitnya, dan penyakit itu adalah peringatan bahwa stroke sedang bersiap. Perangkap kedua bersifat kelembagaan: bila pasien terlanjur dirujuk dan menjalani CT kepala, hasilnya kemungkinan besar normal — dan CT normal pada TIA adalah temuan yang DIHARAPKAN, bukan tanda aman; ia sama sekali tidak mengubah kegentingannya. Perangkap ketiga ada pada denyut nadi: fibrilasi atrium sering tidak bergejala dan tidak akan ketahuan bila nadi hanya dihitung sepuluh detik lalu dikalikan enam — ia harus diraba cukup lama untuk merasakan ketidakteraturannya, dan dipastikan dengan EKG."
       },
@@ -23206,6 +23225,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri unilateral, trismus, suara hot-potato, pembengkakan peritonsil, dan deviasi uvula mendukung abses peritonsil. Nilai jalan napas, beri analgesia dan antibiotik, lalu rujuk THT untuk drainase terkontrol.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 membahas infeksi tonsil/faring tetapi tidak memberi kewenangan drainase abses peritonsil buta di FKTP. Nilai ancaman jalan napas dan kemampuan menelan, beri analgesia serta antibiotik pra-rujuk bila aman, lalu rujuk THT untuk drainase dengan visualisasi dan kesiapan menangani perdarahan/jalan napas.",
         "realityNote": "Kasus masih dapat menelan dan tidak stridor, sehingga antibiotik oral pra-rujuk dimodelkan. Bila jalan napas terancam atau pasien tidak dapat menelan, jangan memaksa obat oral; prioritaskan stabilisasi dan transfer."
       },
       "evidence": {
@@ -23277,11 +23297,12 @@
         }
       },
       "compiler": {
-        "suggestion": "cocok",
+        "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED.",
           "Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {
@@ -23641,7 +23662,8 @@
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Hubungan ketat dengan gerak kendaraan dan resolusi setelah gerak berhenti mendukung mabuk perjalanan. Dimenhidrinat dapat diberikan sebelum perjalanan, tetapi sedasi membuat pasien tidak boleh mengemudi atau mengoperasikan mesin.",
+        "clue": "Hubungan ketat dengan gerak kendaraan dan resolusi setelah gerak berhenti mendukung mabuk perjalanan. CDC Yellow Book 2026 mengutamakan posisi/pandangan ke horizon dan menghindari aktivitas visual; dimenhidrinat paling efektif bila diminum sebelum paparan, tetapi sedasi membuat pasien tidak boleh mengemudi atau mengoperasikan mesin.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Tidak ada algoritme mabuk perjalanan tersendiri dalam PPK 1186/2022. Dimenhidrinat tercantum dalam Fornas 1199/2025; pemakaiannya mengikuti kontraindikasi antikolinergik dan peringatan sedasi, sementara strategi perilaku dan waktu pemberian mengikuti CDC Yellow Book edisi 2026.",
         "realityNote": "Dimenhidrinat 50 mg tercantum dalam Fornas 1199/2025; pencantuman tidak membuktikan stok lokal pada hari kunjungan."
       },
       "evidence": {
@@ -23673,11 +23695,12 @@
         }
       },
       "compiler": {
-        "suggestion": "tak-ada-sumber",
+        "suggestion": "perlu-koreksi",
         "reasons": [
+          "Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait.",
           "Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan."
         ],
-        "sourceAttributionWarning": false
+        "sourceAttributionWarning": true
       }
     },
     {

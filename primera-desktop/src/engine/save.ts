@@ -110,6 +110,84 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     )
   )
     return null
+  // Bridge PHC Lite: ledger ini tidak ikut skor, sehingga save lama aman
+  // dibackfill kosong. Entri korup dibuang agar panel continuity tidak dapat
+  // menjatuhkan seluruh UI; action-log tetap menjadi sumber replay formal.
+  if (!Array.isArray(st['careEpisodes'])) st['careEpisodes'] = []
+  const STATUS_EPISODE = new Set([
+    'terdeteksi',
+    'dinilai',
+    'ditindaklanjuti',
+    'menunggu',
+    'dirujuk',
+    'kembali',
+    'terverifikasi',
+    'berakhir',
+  ])
+  const SUMBER_EPISODE = new Set(['keluarga', 'posyandu', 'prolanis', 'surveilans', 'klinik', 'igd', 'rs'])
+  const PEMILIK_EPISODE = new Set(['dokter', 'perawat', 'bidan', 'kader', 'program', 'rs', 'keluarga'])
+  const TAHAP_RUJUKAN = new Set(['sent', 'accepted', 'completed', 'feedback', 'acted'])
+  st['careEpisodes'] = (st['careEpisodes'] as unknown[]).flatMap((episode) => {
+    if (!objek(episode) || !objek(episode['receipt']) || !Array.isArray(episode['history'])) return []
+    const receipt = episode['receipt']
+    const valid =
+      typeof episode['id'] === 'string' &&
+      typeof episode['subjectId'] === 'string' &&
+      typeof episode['subjectName'] === 'string' &&
+      typeof episode['problemId'] === 'string' &&
+      typeof episode['problemLabel'] === 'string' &&
+      typeof episode['nextAction'] === 'string' &&
+      Number.isInteger(episode['openedDay']) &&
+      Number.isInteger(episode['updatedDay']) &&
+      STATUS_EPISODE.has(String(episode['status'])) &&
+      SUMBER_EPISODE.has(String(episode['source'])) &&
+      PEMILIK_EPISODE.has(String(episode['owner'])) &&
+      typeof receipt['signal'] === 'string' &&
+      typeof receipt['next'] === 'string'
+    if (!valid) return []
+
+    const history = (episode['history'] as unknown[])
+      .filter(
+        (event) =>
+          objek(event) &&
+          Number.isInteger(event['hari']) &&
+          STATUS_EPISODE.has(String(event['status'])) &&
+          typeof event['label'] === 'string' &&
+          typeof event['detail'] === 'string',
+      )
+      .slice(-12)
+    const referral = objek(episode['referral']) && TAHAP_RUJUKAN.has(String(episode['referral']['stage']))
+      ? {
+          stage: episode['referral']['stage'],
+          ...(typeof episode['referral']['hospitalName'] === 'string' ? { hospitalName: episode['referral']['hospitalName'] } : {}),
+          ...(typeof episode['referral']['note'] === 'string' ? { note: episode['referral']['note'] } : {}),
+        }
+      : undefined
+    return [{
+      id: episode['id'],
+      subjectId: episode['subjectId'],
+      subjectName: episode['subjectName'],
+      ...(typeof episode['familyId'] === 'string' ? { familyId: episode['familyId'] } : {}),
+      ...(Number.isInteger(episode['rw']) ? { rw: episode['rw'] } : {}),
+      source: episode['source'],
+      problemId: episode['problemId'],
+      problemLabel: episode['problemLabel'],
+      owner: episode['owner'],
+      status: episode['status'],
+      openedDay: episode['openedDay'],
+      updatedDay: episode['updatedDay'],
+      ...(Number.isInteger(episode['dueDay']) ? { dueDay: episode['dueDay'] } : {}),
+      nextAction: episode['nextAction'],
+      ...(referral ? { referral } : {}),
+      receipt: {
+        signal: receipt['signal'],
+        ...(typeof receipt['decision'] === 'string' ? { decision: receipt['decision'] } : {}),
+        ...(typeof receipt['feedback'] === 'string' ? { feedback: receipt['feedback'] } : {}),
+        next: receipt['next'],
+      },
+      history,
+    }]
+  }).slice(-120)
   if (!Array.isArray(st['log'])) return null
   // desa.keluarga (CODEX ronde-11 #3): objek-check di atas cuma menjamin `desa`
   // sendiri objek — `desa.keluarga = null` lolos lalu THROW ("Cannot convert
@@ -619,7 +697,7 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     'versi', 'contentRelease', 'seed', 'namaDokter', 'nim', 'hari', 'blok', 'stamina', 'burnout',
     'mode', 'seedKurikulum', 'paketUjian', 'klinik', 'desa', 'kunjungan',
     'hasilKunjunganHariIni', 'kegiatan', 'hasilKegiatanTerakhir', 'igd', 'igdHariIni', 'lapanganTerpakai',
-    'prolanis', 'posyanduRwTerakhir', 'program', 'tutorialAktif', 'inbox', 'jadwal',
+    'prolanis', 'posyanduRwTerakhir', 'program', 'tutorialAktif', 'inbox', 'jadwal', 'careEpisodes',
     'tally', 'tallyTermigrasi', 'dex', 'log', 'jejak', 'kapitasi', 'gudang', 'keuanganBulan',
     'akreditasi', 'pemulihanTerakhirHari', 'refleksi', 'flags', 'layar', 'tamat',
   ])

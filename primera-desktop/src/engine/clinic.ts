@@ -574,9 +574,12 @@ export function nilaiEncounter(
   // tak terindikasi = pemborosan/risiko). Kasus tanpa prosedur (68 lainnya): tak
   // ada slot tambahan → skor tak berubah.
   const prosedurBenar = kasus.tatalaksana.prosedur ?? []
+  const prosedurOpsional = new Set(kasus.tatalaksana.prosedurOpsional ?? [])
   const tindakanDilakukan = enc.tindakan ?? []
   const prosedurTerpenuhi = prosedurBenar.filter((id) => tindakanDilakukan.includes(id)).length
-  const tindakanDiLuar = tindakanDilakukan.filter((id) => !prosedurBenar.includes(id)).length
+  const tindakanDiLuar = tindakanDilakukan.filter(
+    (id) => !prosedurBenar.includes(id) && !prosedurOpsional.has(id),
+  ).length
   const tindakanSalahDilakukan = (kasus.tatalaksana.tindakanSalahUmum ?? []).filter((item) =>
     tindakanDilakukan.includes(item.id),
   )

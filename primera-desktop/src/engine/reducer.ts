@@ -13,6 +13,7 @@ import type {
   ModeStase,
   PenilaianEncounter,
   PesertaProlanis,
+  SumberEpisode,
   Surat,
 } from './state'
 import type { IndikatorPisPk } from '@content/types'
@@ -58,6 +59,7 @@ import {
   delegasiKegiatan,
   nilaiKegiatan,
   driftProlanis,
+  prolanisTerkendali,
   kartuPosyandu,
   kartuProlanis,
   kartuKlb,
@@ -74,6 +76,7 @@ import {
 import { hitungSkor } from './scoring'
 import { HARI_STASE, paketUjianDariId } from './paketUjian'
 import { examIgdCaseIdForDay } from './examBlueprint'
+import { buatEpisodeId, episodeIdPasien, perbaruiEpisode } from './bridge'
 
 export interface HasilAdvance {
   state: GameState
@@ -231,7 +234,39 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
 
     case 'BACA_SURAT': {
       const inbox = s.inbox.map((m) => (m.id === action.suratId ? { ...m, dibaca: true } : m))
-      return { state: { ...s, inbox }, events: [] }
+      const surat = s.inbox.find((m) => m.id === action.suratId)
+      const episode = surat?.episodeId
+        ? s.careEpisodes.find((item) => item.id === surat.episodeId)
+        : undefined
+      const careEpisodes = episode?.referral?.stage === 'feedback'
+        ? perbaruiEpisode(s.careEpisodes, {
+            id: episode.id,
+            day: s.hari,
+            subjectId: episode.subjectId,
+            subjectName: episode.subjectName,
+            ...(episode.familyId ? { familyId: episode.familyId } : {}),
+            ...(episode.rw !== undefined ? { rw: episode.rw } : {}),
+            source: episode.source,
+            problemId: episode.problemId,
+            problemLabel: episode.problemLabel,
+            owner: 'dokter',
+            status: 'terverifikasi',
+            signal: episode.receipt.signal,
+            ...(episode.receipt.decision ? { decision: episode.receipt.decision } : {}),
+            ...(episode.receipt.feedback ? { feedback: episode.receipt.feedback } : {}),
+            nextAction: episode.familyId
+              ? 'Ringkasan rujukan sudah masuk; lanjutkan pemantauan keluarga dan PWS rutin.'
+              : 'Ringkasan rujukan sudah masuk ke care plan FKTP; episode dapat ditutup.',
+            dueDay: null,
+            referral: {
+              ...episode.referral,
+              stage: 'acted',
+            },
+            eventLabel: 'Umpan balik ditindaklanjuti',
+            eventDetail: 'Ringkasan RS dibaca dan dimasukkan kembali ke rencana FKTP.',
+          })
+        : s.careEpisodes
+      return { state: { ...s, inbox, careEpisodes }, events: [] }
     }
 
     case 'TULIS_REFLEKSI': {
@@ -503,6 +538,18 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // (d) kasus wajib-rujuk justru ditahan (cowboy). Observasi sambil menunggu
       // hasil lab besok adalah keputusan interim yang SAH — tidak dihukum.
       let jadwal = s.jadwal
+      let careEpisodes = s.careEpisodes
+      const episodeId = episodeIdPasien(encFinal.pasien)
+      const episodeExisting = careEpisodes.find((episode) => episode.id === episodeId)
+      const sumberEpisode: SumberEpisode = episodeExisting?.source ?? (
+        encFinal.pasien.prolanisPesertaId
+          ? 'prolanis'
+          : encFinal.pasien.prb
+            ? 'rs'
+            : encFinal.pasien.keluargaId
+              ? 'keluarga'
+              : 'klinik'
+      )
       let penilaianFinal: PenilaianEncounter = nilai
       // Audit CODEX 2026-07-16 #4: dulu SEMUA obatSalahUmum (termasuk yang cuma
       // `nonPrimer`, mis. vitamin B kompleks/antibiotik tak perlu) memicu
@@ -563,6 +610,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             hari: jatuhTempo,
             jenis: 'pasien_kembali',
             pasienId: encFinal.pasien.id,
+            episodeId,
             kasusId: kasus.id,
             catatan: `${encFinal.pasien.nama} — ${kasus.konsekuensi.kondisiKembali}`,
             nama: encFinal.pasien.nama,
@@ -594,6 +642,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             hari: s.hari + 1,
             jenis: 'pasien_kembali',
             pasienId: encFinal.pasien.id,
+            episodeId,
             kasusId: kasus.id,
             catatan: `${encFinal.pasien.nama} — kembali untuk evaluasi hasil lab kemarin.`,
             nama: encFinal.pasien.nama,
@@ -612,6 +661,69 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           },
         ]
         penilaianFinal = { ...nilai, konsekuensiDijadwalkan: true }
+      }
+
+      const lacakEpisode =
+        action.jenis === 'rujuk' ||
+        penilaianFinal.konsekuensiDijadwalkan ||
+        kasusMenular(kasus) ||
+        encFinal.pasien.keluargaId !== undefined ||
+        encFinal.pasien.prolanisPesertaId !== undefined ||
+        encFinal.pasien.followUpDari !== undefined ||
+        encFinal.pasien.prb === true ||
+        encFinal.pasien.episodeId !== undefined
+      const episodeCommon = {
+        id: episodeId,
+        day: s.hari,
+        subjectId: encFinal.pasien.id,
+        subjectName: encFinal.pasien.nama,
+        ...(encFinal.pasien.keluargaId ? { familyId: encFinal.pasien.keluargaId } : {}),
+        rw: encFinal.pasien.rw,
+        source: sumberEpisode,
+        problemId: episodeExisting?.problemId ?? kasus.id,
+        problemLabel: episodeExisting?.problemLabel ?? kasus.nama,
+        signal: episodeExisting?.receipt.signal ?? encFinal.pasien.followUpDari ?? kasus.keluhanUtama,
+      } as const
+      if (lacakEpisode) {
+        const jadwalEpisode = jadwal.find((item) => item.episodeId === episodeId)
+        const statusAwal = action.jenis === 'rujuk'
+          ? 'dirujuk' as const
+          : penilaianFinal.konsekuensiDijadwalkan
+            ? 'menunggu' as const
+            : encFinal.pasien.prb && penilaianFinal.grade === 'A'
+              ? 'terverifikasi' as const
+              : kasusMenular(kasus) && penilaianFinal.grade === 'A'
+                ? 'terverifikasi' as const
+                : 'ditindaklanjuti' as const
+        const nextAction = action.jenis === 'rujuk'
+          ? 'Tunggu penerimaan jejaring dan pastikan umpan balik kembali ke FKTP.'
+          : penilaianFinal.konsekuensiDijadwalkan
+            ? `Evaluasi ulang saat pasien kembali${jadwalEpisode ? ` pada hari ${jadwalEpisode.hari}` : ''}.`
+            : encFinal.pasien.prb && penilaianFinal.grade === 'A'
+              ? 'Lanjutkan rencana PRB dan pemantauan penyakit kronis di FKTP.'
+              : kasusMenular(kasus) && penilaianFinal.grade === 'A'
+                ? 'Diagnosis sudah masuk PWS; pantau pola RW dan respons bila terbentuk kluster.'
+                : encFinal.pasien.keluargaId
+                  ? 'Kembalikan hasil klinik ke rencana kunjungan keluarga.'
+                  : 'Lanjutkan pemantauan sesuai rencana klinis.'
+        careEpisodes = perbaruiEpisode(careEpisodes, {
+          ...episodeCommon,
+          owner: action.jenis === 'rujuk' ? 'rs' : kasusMenular(kasus) ? 'program' : 'dokter',
+          status: statusAwal,
+          decision: `${nilai.diagnosisBenar ? 'Diagnosis tepat' : 'Diagnosis belum tepat'}; disposisi ${action.jenis}; grade ${penilaianFinal.grade}.`,
+          feedback: kasusMenular(kasus) && penilaianFinal.grade === 'A'
+            ? `Sinyal ${kasus.nama} dikirim dari poli ke surveilans RW ${encFinal.pasien.rw}.`
+            : encFinal.pasien.prb && penilaianFinal.grade === 'A'
+              ? 'Rencana rujuk balik sudah ditindaklanjuti di FKTP.'
+              : penilaianFinal.konsekuensiDijadwalkan
+                ? 'Masalah belum tertutup; evaluasi ulang sudah dijadwalkan.'
+                : 'Hasil encounter dicatat untuk tindak lanjut lintas layanan.',
+          nextAction,
+          dueDay: statusAwal === 'terverifikasi' ? null : (jadwalEpisode?.hari ?? s.hari + 1),
+          ...(action.jenis === 'rujuk' ? { referral: { stage: 'sent' as const } } : {}),
+          eventLabel: action.jenis === 'rujuk' ? 'Rujukan dikirim' : 'Encounter ditulis ke episode',
+          eventDetail: `${kasus.nama}: grade ${penilaianFinal.grade}, disposisi ${action.jenis}.`,
+        })
       }
 
       // ---------------------------------------------------------------------
@@ -656,6 +768,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 id: `jadwal_boomerang_${s.hari}_${encFinal.pasien.id}`,
                 hari: s.hari + 1,
                 jenis: 'pasien_kembali',
+                pasienId: encFinal.pasien.id,
+                episodeId,
                 kasusId: kasus.id,
                 catatan: `${encFinal.pasien.nama} — dikembalikan ${rs.nama}: kasus kompetensi FKTP, mohon dituntaskan di Puskesmas`,
                 nama: encFinal.pasien.nama,
@@ -681,6 +795,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               dibaca: false,
               ...kaitKeluargaSurat,
             }
+            if (lacakEpisode) {
+              careEpisodes = perbaruiEpisode(careEpisodes, {
+                ...episodeCommon,
+                owner: 'dokter',
+                status: 'kembali',
+                feedback: `${rs.nama} menolak rujukan non-spesialistik; pasien dikembalikan ke FKTP.`,
+                nextAction: `Tuntaskan ${kasus.nama} di poli pada hari ${s.hari + 1}.`,
+                dueDay: s.hari + 1,
+                referral: { stage: 'feedback', hospitalName: rs.nama, note: 'Kompetensi FKTP' },
+                eventLabel: 'Rujukan dikembalikan ke FKTP',
+                eventDetail: `${rs.nama} menilai kasus ini dapat dituntaskan di layanan primer.`,
+              })
+            }
           } else if (!spesialisCocok) {
             t.rujukanDitolak += 1
             jadwal = [
@@ -689,6 +816,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 id: `jadwal_tolakspes_${s.hari}_${encFinal.pasien.id}`,
                 hari: s.hari + 1,
                 jenis: 'pasien_kembali',
+                pasienId: encFinal.pasien.id,
+                episodeId,
                 kasusId: kasus.id,
                 catatan: `${encFinal.pasien.nama} — ${rs.nama} tak punya layanan ${kasus.spesialisRujukan?.replace(/_/g, ' ')}; rujuk ulang ke RS yang tepat`,
                 nama: encFinal.pasien.nama,
@@ -711,6 +840,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               isi: `Balasan SISRUTE: kami tidak memiliki layanan ${kasus.spesialisRujukan?.replace(/_/g, ' ')} untuk ${kasus.nama}. Pasien kembali besok — pilih RS tujuan yang menyediakan spesialisasi itu (periksa jejaring SISRUTE sebelum mengirim).`,
               dibaca: false,
               ...kaitKeluargaSurat,
+            }
+            if (lacakEpisode) {
+              careEpisodes = perbaruiEpisode(careEpisodes, {
+                ...episodeCommon,
+                owner: 'dokter',
+                status: 'kembali',
+                feedback: `${rs.nama} tidak memiliki layanan ${kasus.spesialisRujukan?.replace(/_/g, ' ')} yang dibutuhkan.`,
+                nextAction: `Rujuk ulang ke tujuan yang tepat pada hari ${s.hari + 1}.`,
+                dueDay: s.hari + 1,
+                referral: { stage: 'feedback', hospitalName: rs.nama, note: 'Tujuan tidak sesuai' },
+                eventLabel: 'Tujuan rujukan perlu diperbaiki',
+                eventDetail: `${rs.nama} tidak mempunyai spesialisasi yang diperlukan.`,
+              })
             }
           } else {
             // CODEX audit (2026-07-12, temuan #9): keputusan MERUJUK di titik
@@ -739,6 +881,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                   id: `jadwal_tolakbed_${s.hari}_${encFinal.pasien.id}`,
                   hari: s.hari + 1,
                   jenis: 'pasien_kembali',
+                  pasienId: encFinal.pasien.id,
+                  episodeId,
                   kasusId: kasus.id,
                   catatan: `${encFinal.pasien.nama} — bed ${rs.nama} penuh; menunggu bed kosong`,
                   nama: encFinal.pasien.nama,
@@ -765,6 +909,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 dibaca: false,
                 ...kaitKeluargaSurat,
               }
+              if (lacakEpisode) {
+                careEpisodes = perbaruiEpisode(careEpisodes, {
+                  ...episodeCommon,
+                  owner: 'rs',
+                  status: 'menunggu',
+                  feedback: `Keputusan klinis tepat, tetapi bed ${rs.nama} sedang penuh.`,
+                  nextAction: 'Jejaring mencoba kapasitas kembali besok; jangan mengulang encounter yang sama.',
+                  dueDay: s.hari + 1,
+                  referral: { stage: 'sent', hospitalName: rs.nama, note: 'Menunggu bed' },
+                  eventLabel: 'Rujukan menunggu kapasitas',
+                  eventDetail: `Bed ${rs.nama} penuh; retry pasif dijadwalkan.`,
+                })
+              }
             } else {
               // DITERIMA oleh jejaring.
               // Fix CODEX-25 #4: PRB (rujuk balik) HANYA utk kasus KRONIS-STABIL
@@ -781,6 +938,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                     id: `jadwal_prb_${s.hari}_${encFinal.pasien.id}`,
                     hari: s.hari + rngPrb.int(7, 12),
                     jenis: 'pasien_kembali',
+                    pasienId: encFinal.pasien.id,
+                    episodeId,
                     kasusId: kasus.id,
                     catatan: `${encFinal.pasien.nama} — kontrol PRB: pulang dari ${rs.nama} dengan surat rujuk balik, lanjutkan terapi di FKTP`,
                     nama: encFinal.pasien.nama,
@@ -795,6 +954,23 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                     prb: true,
                   },
                 ]
+              } else {
+                const rngFeedback = new Rng(s.seed, 'rujukan-feedback', s.hari, encFinal.pasien.id)
+                jadwal = [
+                  ...jadwal,
+                  {
+                    id: `jadwal_feedback_${s.hari}_${encFinal.pasien.id}`,
+                    hari: s.hari + rngFeedback.int(2, 4),
+                    jenis: 'rujukan_feedback',
+                    pasienId: encFinal.pasien.id,
+                    episodeId,
+                    kasusId: kasus.id,
+                    nama: encFinal.pasien.nama,
+                    rumahSakitId: rs.id,
+                    ...(encFinal.pasien.keluargaId ? { keluargaId: encFinal.pasien.keluargaId } : {}),
+                    feedbackRujukan: `${rs.nama} menyelesaikan pelayanan ${kasus.nama} dan mengirim ringkasan kembali ke FKTP.`,
+                  },
+                ]
               }
               suratSisrute = {
                 id: `surat_sisrute_${s.hari}_${s.log.length}`,
@@ -804,9 +980,25 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 judul: `Rujukan DITERIMA — ${encFinal.pasien.nama}`,
                 isi: kasus.bisaPrb === true
                   ? `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Setelah stabil, ia akan dipulangkan dengan surat rujuk balik (PRB) — kontrol lanjutannya kembali menjadi tanggung jawab FKTP-mu. Rujukan berjenjang bekerja dua arah.`
-                  : `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Kasus ini ditangani tuntas di layanan rujukan — terima kasih atas rujukan tepat waktumu.`,
+                  : `Balasan SISRUTE: pasien ${kasus.nama} kami terima di ${rs.nama}. Setelah pelayanan selesai, ringkasan hasil akan dikirim kembali ke FKTP; rujukan belum tertutup hanya karena pasien sudah dikirim.`,
                 dibaca: false,
                 ...kaitKeluargaSurat,
+              }
+              if (lacakEpisode) {
+                const jadwalLanjutan = [...jadwal].reverse().find((item) => item.episodeId === episodeId)
+                careEpisodes = perbaruiEpisode(careEpisodes, {
+                  ...episodeCommon,
+                  owner: 'rs',
+                  status: 'dirujuk',
+                  feedback: `${encFinal.pasien.nama} diterima ${rs.nama}; keputusan klinis dipisahkan dari keberuntungan kapasitas.`,
+                  nextAction: kasus.bisaPrb === true
+                    ? `Tunggu resume dan kontrol PRB sekitar hari ${jadwalLanjutan?.hari ?? s.hari + 7}.`
+                    : `Tunggu ringkasan pelayanan sekitar hari ${jadwalLanjutan?.hari ?? s.hari + 2}.`,
+                  dueDay: jadwalLanjutan?.hari ?? s.hari + 2,
+                  referral: { stage: 'accepted', hospitalName: rs.nama },
+                  eventLabel: 'Rujukan diterima jejaring',
+                  eventDetail: `${rs.nama} menerima pasien untuk ${kasus.nama}.`,
+                })
               }
             }
           }
@@ -874,6 +1066,16 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             kaitKeluargaId: keluargaIdKarma,
           }
           events.push({ type: 'SURAT_MASUK', surat: suratPemulihanKeluarga })
+          careEpisodes = perbaruiEpisode(careEpisodes, {
+            ...episodeCommon,
+            owner: 'dokter',
+            status: 'kembali',
+            feedback: `${encFinal.pasien.nama} tertangani baik; krisis akut mereda, tetapi akar risiko rumah belum selesai.`,
+            nextAction: `Kunjungi ${kelContent.namaKeluarga} mulai hari ${s.hari + 1} untuk pemulihan dan pencegahan kekambuhan.`,
+            dueDay: s.hari + 1,
+            eventLabel: 'Klinik membuka pemulihan keluarga',
+            eventDetail: `Grade A mengatasi krisis ${kasus.nama}; beat keluarga dibuka kembali.`,
+          })
         }
       }
 
@@ -913,6 +1115,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             ...(peserta.keluargaId ? { kaitKeluargaId: peserta.keluargaId } : {}),
           }
           events.push({ type: 'SURAT_MASUK', surat: suratTindakLanjutProlanis })
+          const sudahTerkontrol = prolanisTerkendali(pesertaBaru.jenis, pesertaBaru.param)
+          careEpisodes = perbaruiEpisode(careEpisodes, {
+            ...episodeCommon,
+            owner: sudahTerkontrol ? 'program' : 'dokter',
+            status: sudahTerkontrol ? 'terverifikasi' : 'ditindaklanjuti',
+            feedback: `${label} bergerak dari ${peserta.param} menjadi ${pesertaBaru.param} ${satuan}.`,
+            nextAction: sudahTerkontrol
+              ? 'Pertahankan terapi dan pantau pada sesi Prolanis berikutnya.'
+              : `Evaluasi ulang ${label} pada sesi Prolanis berikutnya.`,
+            dueDay: sudahTerkontrol ? null : s.hari + HARI_BUKA_PROLANIS[s.mode],
+            eventLabel: 'Hasil klinik kembali ke Prolanis',
+            eventDetail: `${label} ${pesertaBaru.param} ${satuan}; ${sudahTerkontrol ? 'terkendali' : 'belum terkendali'}.`,
+          })
         }
       }
 
@@ -951,6 +1166,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const jadwalFinal = kebalTutorial ? s.jadwal : jadwal
       const desaFinal = kebalTutorial ? s.desa : desaBaru
       const prolanisFinal = kebalTutorial ? s.prolanis : prolanisSetelahKlinik
+      const careEpisodesFinal = kebalTutorial ? s.careEpisodes : careEpisodes
       // CODEX: DEX_BERTAMBAH/SURAT_MASUK dipancarkan tanpa syarat di atas —
       // toaster (Toaster.tsx) akan bilang "Buku Saku diperbarui"/"Surat baru"
       // meski dex/inbox sungguhan dibekukan barusan. Pangkas KEDUA event itu
@@ -982,6 +1198,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           jadwal: jadwalFinal,
           desa: desaFinal,
           prolanis: prolanisFinal,
+          careEpisodes: careEpisodesFinal,
           klinik: {
             ...s.klinik,
             aktif: undefined,
@@ -1217,7 +1434,81 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 ...kelBaru,
                 karmaAktif: { ...kelBaru.karmaAktif, jatuhTempoHari: Math.max(s.hari + 1, kelBaru.karmaAktif.jatuhTempoHari - 2) },
               }
-            : kelBaru
+              : kelBaru
+        }
+
+        const intervensi = skenario.intervensi.find((item) => item.id === hasilAksi.kj.intervensiDipilih)
+        const episodeKeluargaId = buatEpisodeId('keluarga', kj.keluargaId, 'pendampingan')
+        const janjiJatuhTempo = next.jadwal.find(
+          (item) => item.jenis === 'verifikasi_pispk' && item.keluargaId === kj.keluargaId,
+        )?.hari
+        const episodeTuntas = kelBaru.arcSelesai === 'berhasil' && indikatorJanjiBaru.length === 0
+        const episodeStatus = episodeTuntas
+          ? 'terverifikasi' as const
+          : hasil.berhasil
+            ? 'ditindaklanjuti' as const
+            : 'menunggu' as const
+        const episodeBerikutnya = episodeTuntas
+          ? 'Pertahankan perubahan dan pantau lewat PWS keluarga.'
+          : indikatorJanjiBaru.length > 0
+            ? `Verifikasi perubahan ${indikatorJanjiBaru.map((id) => id.replace(/_/g, ' ')).join(', ')} pada hari ${janjiJatuhTempo ?? 'tindak lanjut'}.`
+            : kelBaru.followUpHari !== undefined
+              ? `Kunjungi kembali pada hari ${kelBaru.followUpHari}; lanjutkan beat keluarga yang belum tuntas.`
+              : 'Susun kunjungan ulang dan perbaiki pendekatan bersama keluarga.'
+        let careEpisodes = perbaruiEpisode(next.careEpisodes, {
+          id: episodeKeluargaId,
+          day: s.hari,
+          subjectId: kj.keluargaId,
+          subjectName: kelContent.namaKeluarga,
+          familyId: kj.keluargaId,
+          rw: kelContent.rw,
+          source: 'keluarga',
+          problemId: `keluarga:${kj.keluargaId}`,
+          problemLabel: skenario.judul,
+          owner: episodeTuntas ? 'kader' : 'dokter',
+          status: episodeStatus,
+          signal: skenario.judul,
+          ...(intervensi ? { decision: intervensi.nama } : {}),
+          feedback: hasil.narasiPenutup,
+          nextAction: episodeBerikutnya,
+          dueDay: episodeTuntas ? null : (janjiJatuhTempo ?? kelBaru.followUpHari ?? s.hari + 1),
+          eventLabel: hasil.berhasil ? 'Kunjungan keluarga menghasilkan rencana' : 'Pendampingan belum menutup masalah',
+          eventDetail: hasil.narasiPenutup,
+        })
+        // Tutup episode klinik->keluarga yang memang sedang menunggu pemulihan
+        // rumah. Episode rujukan, konsekuensi klinis yang masih menunggu, dan
+        // Prolanis tidak ikut tertutup hanya karena satu kunjungan keluarga.
+        if (hasil.berhasil) {
+          const episodeTerkait = careEpisodes.filter(
+            (episode) =>
+              episode.id !== episodeKeluargaId &&
+              episode.familyId === kj.keluargaId &&
+              episode.source === 'keluarga' &&
+              !episode.referral &&
+              (episode.status === 'ditindaklanjuti' || episode.status === 'kembali'),
+          )
+          for (const episode of episodeTerkait) {
+            careEpisodes = perbaruiEpisode(careEpisodes, {
+              id: episode.id,
+              day: s.hari,
+              subjectId: episode.subjectId,
+              subjectName: episode.subjectName,
+              familyId: kj.keluargaId,
+              ...(episode.rw !== undefined ? { rw: episode.rw } : {}),
+              source: episode.source,
+              problemId: episode.problemId,
+              problemLabel: episode.problemLabel,
+              owner: 'kader',
+              status: 'terverifikasi',
+              signal: episode.receipt.signal,
+              ...(episode.receipt.decision ? { decision: episode.receipt.decision } : {}),
+              feedback: `${hasil.narasiPenutup} Hasil klinik dan pemulihan keluarga kini tersambung.`,
+              nextAction: 'Pertahankan perubahan dan pantau melalui kader serta PWS keluarga.',
+              dueDay: null,
+              eventLabel: 'Pemulihan keluarga menutup loop klinik',
+              eventDetail: `${kelContent.namaKeluarga} menyelesaikan kunjungan pemulihan setelah tindak lanjut klinis.`,
+            })
+          }
         }
 
         next = {
@@ -1228,6 +1519,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           layar: 'peta',
           tally: t,
           jadwal,
+          careEpisodes,
           desa: {
             ...next.desa,
             keluarga: { ...next.desa.keluarga, [kj.keluargaId]: kelBaru },
@@ -1480,6 +1772,18 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         ...nilaiDasar,
         disposisiTepat: nilaiDasar.disposisiTepat && tujuanCocok,
       }
+      const episodeId = buatEpisodeId('igd', `hari${s.hari}_${igd.pasienNama}`, kasus.id)
+      const episodeCommon = {
+        id: episodeId,
+        day: s.hari,
+        subjectId: `igd_${s.hari}_${igd.kasusId}_${igd.pasienNama}`,
+        subjectName: igd.pasienNama,
+        rw: igd.rw,
+        source: 'igd' as const,
+        problemId: kasus.id,
+        problemLabel: kasus.nama,
+        signal: kasus.pembuka,
+      }
 
       // M10.5 Q4/Q-E (2026-07-12): rujuk saat stabilitas masih di bawah
       // AMBANG_STABIL_RUJUK adalah rujukan PREMATUR — pasien memburuk/
@@ -1487,6 +1791,18 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // igdMeninggal), bukan sekadar disposisi keliru — risikonya nyata.
       if (nilai.hasil === 'memburuk') {
         const t = { ...s.tally, igdMeninggal: s.tally.igdMeninggal + 1 }
+        const careEpisodes = perbaruiEpisode(s.careEpisodes, {
+          ...episodeCommon,
+          owner: 'dokter',
+          status: 'berakhir',
+          decision: `Rujuk pada stabilitas ${igd.stabilitas}/100 sebelum ambang aman transportasi.`,
+          feedback: `${igd.pasienNama} memburuk dan meninggal dalam perjalanan.`,
+          nextAction: 'Debrief: stabilisasi sebelum transportasi adalah bagian dari rujukan, bukan penundaan rujukan.',
+          dueDay: null,
+          referral: { stage: 'completed', note: 'Outcome fatal sebelum tiba' },
+          eventLabel: 'Episode berakhir dengan Kode Hitam',
+          eventDetail: `Transportasi dimulai di bawah ambang stabil ${AMBANG_STABIL_RUJUK}.`,
+        })
         const surat: Surat = {
           id: `surat_igd_${s.hari}_${s.log.length}`,
           hari: s.hari,
@@ -1504,6 +1820,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             burnout: Math.min(100, s.burnout + 15),
             layar: 'meja',
             inbox: [...s.inbox, surat],
+            careEpisodes,
           },
           events: [
             { type: 'KODE_HITAM', narasi: `Kode Hitam. ${igd.pasienNama} meninggal dalam perjalanan — dirujuk sebelum stabil.` },
@@ -1518,6 +1835,56 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         ? { ...s.tally, igdStabil: s.tally.igdStabil + 1 }
         : { ...s.tally, igdSalahDisposisi: s.tally.igdSalahDisposisi + 1 }
       const rsNama = rs?.nama ?? 'RS rujukan'
+      let jadwal = s.jadwal
+      let careEpisodes = s.careEpisodes
+      if (nilai.disposisiTepat && action.jenis === 'rujuk') {
+        const hariFeedback = s.hari + 2
+        jadwal = [
+          ...jadwal,
+          {
+            id: `jadwal_feedback_igd_${s.hari}_${igd.kasusId}_${igd.pasienNama}`,
+            hari: hariFeedback,
+            jenis: 'rujukan_feedback',
+            pasienId: episodeCommon.subjectId,
+            episodeId,
+            kasusId: kasus.id,
+            nama: igd.pasienNama,
+            ...(rs ? { rumahSakitId: rs.id } : {}),
+            feedbackRujukan: `${rsNama} menyelesaikan pelayanan lanjutan ${kasus.nama} dan mengirim ringkasan ke Puskesmas.`,
+          },
+        ]
+        careEpisodes = perbaruiEpisode(careEpisodes, {
+          ...episodeCommon,
+          owner: 'rs',
+          status: 'dirujuk',
+          decision: `${nilai.benar}/${nilai.total} langkah tepat; pasien stabil lalu dirujuk ke ${rsNama}.`,
+          feedback: `${rsNama} menerima pasien gawat setelah stabilisasi FKTP.`,
+          nextAction: `Tunggu ringkasan pelayanan pada hari ${hariFeedback}.`,
+          dueDay: hariFeedback,
+          referral: { stage: 'accepted', hospitalName: rsNama },
+          eventLabel: 'Stabilisasi tersambung ke rujukan',
+          eventDetail: `Stabilitas ${igd.stabilitas}/100; ${rsNama} menerima pasien.`,
+        })
+      } else {
+        careEpisodes = perbaruiEpisode(careEpisodes, {
+          ...episodeCommon,
+          owner: nilai.disposisiTepat ? 'dokter' : 'keluarga',
+          status: nilai.disposisiTepat ? 'terverifikasi' : 'berakhir',
+          decision: `${nilai.benar}/${nilai.total} langkah tepat; disposisi ${action.jenis}.`,
+          feedback: nilai.disposisiTepat
+            ? `${igd.pasienNama} stabil dan aman dituntaskan sesuai disposisi.`
+            : `${igd.pasienNama} selamat, tetapi tujuan atau disposisi tidak sesuai kebutuhan klinis.`,
+          nextAction: nilai.disposisiTepat
+            ? 'Lanjutkan observasi dan edukasi sesuai rencana.'
+            : 'Debrief pemilihan tujuan dan batas kemampuan FKTP sebelum kasus berikutnya.',
+          dueDay: null,
+          ...(action.jenis === 'rujuk'
+            ? { referral: { stage: 'completed' as const, hospitalName: rsNama, note: 'Tujuan tidak sesuai' } }
+            : {}),
+          eventLabel: nilai.disposisiTepat ? 'Episode IGD ditutup' : 'Episode IGD berakhir dengan near-miss',
+          eventDetail: nilai.disposisiTepat ? 'Outcome dan disposisi tepat.' : 'Pasien selamat, tetapi disposisi keliru.',
+        })
+      }
       // Prinsip SISRUTE: kasus EMERGENSI stabil selalu diterima jejaring.
       const surat: Surat = {
         id: `surat_igd_${s.hari}_${s.log.length}`,
@@ -1533,7 +1900,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         dibaca: false,
       }
       return {
-        state: { ...s, igd: undefined, tally: t, layar: 'klinik', inbox: [...s.inbox, surat] },
+        state: { ...s, igd: undefined, tally: t, layar: 'klinik', inbox: [...s.inbox, surat], jadwal, careEpisodes },
         events: [
           { type: 'STEMPEL', jenis: action.jenis === 'rujuk' ? 'rujuk' : 'pulang' },
           { type: 'SURAT_MASUK', surat },
@@ -1657,6 +2024,7 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
   // CODEX M14 #11: persist hasil agar KartuHasil bertahan reload (layar tetap
   // 'kegiatan' sampai pemain menutup, tapi state.kegiatan sudah undefined).
   let next: GameState = { ...s, kegiatan: undefined, lapanganTerpakai: true, hasilKegiatanTerakhir: hasil }
+  let careEpisodes = next.careEpisodes
 
   if (hasil.jenis === 'posyandu' && hasil.rw !== undefined) {
     tally.posyanduSesi += 1
@@ -1668,6 +2036,7 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
     // (0.04→0.012) jadi sekadar sentuhan, bukan mata uang hadiah utama.
     const rwPosyandu = hasil.rw
     let keluargaPy = next.desa.keluarga
+    let jumlahKeluargaTerkoreksi = 0
     if (hasil.skor >= 0.5) {
       const terkoreksi: Record<string, KeluargaState> = { ...keluargaPy }
       for (const [id, kel] of Object.entries(keluargaPy)) {
@@ -1681,7 +2050,10 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
           indikator[ind] = { status: nilai.statusSebenarnya, statusSebenarnya: nilai.statusSebenarnya, sumber: 'dokter', hariData: s.hari }
           berubah = true
         }
-        if (berubah) terkoreksi[id] = { ...kel, indikator }
+        if (berubah) {
+          terkoreksi[id] = { ...kel, indikator }
+          jumlahKeluargaTerkoreksi += 1
+        }
       }
       keluargaPy = terkoreksi
     }
@@ -1691,6 +2063,33 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       posyanduRwTerakhir: { ...next.posyanduRwTerakhir, [String(hasil.rw)]: s.hari },
       desa: { ...next.desa, keluarga: keluargaPy, rw: tambahBonusIks(next.desa.rw, hasil.rw, bonus) },
     }
+    const namaRw = pack.rw.find((rw) => rw.nomor === hasil.rw)?.nama ?? `RW ${hasil.rw}`
+    const posyanduTuntas = hasil.skor >= 0.66 && jumlahKeluargaTerkoreksi === 0
+    careEpisodes = perbaruiEpisode(careEpisodes, {
+      id: buatEpisodeId('posyandu', `rw${hasil.rw}`, 'kia'),
+      day: s.hari,
+      subjectId: `rw${hasil.rw}`,
+      subjectName: `Ibu dan anak ${namaRw}`,
+      rw: hasil.rw,
+      source: 'posyandu',
+      problemId: 'kia_posyandu',
+      problemLabel: 'Pemantauan KIA dan tumbuh kembang',
+      owner: posyanduTuntas ? 'kader' : 'bidan',
+      status: posyanduTuntas ? 'terverifikasi' : hasil.skor >= 0.5 ? 'ditindaklanjuti' : 'menunggu',
+      signal: `Sesi Posyandu RW ${hasil.rw} memeriksa provenance data KIA.`,
+      decision: `${hasil.benar}/${hasil.total} keputusan layanan tepat.`,
+      feedback: jumlahKeluargaTerkoreksi > 0
+        ? `${jumlahKeluargaTerkoreksi} keluarga mendapat koreksi data langsung dari penimbangan dan pencatatan.`
+        : hasil.skor >= 0.66
+          ? 'Data prioritas konsisten; tidak ada koreksi baru yang diperlukan.'
+          : 'Mutu sesi belum cukup untuk memverifikasi seluruh data prioritas.',
+      nextAction: posyanduTuntas
+        ? 'Lanjutkan pemantauan rutin oleh kader dan bidan.'
+        : `Ukur ulang dan cek tindak lanjut pada siklus Posyandu berikutnya, paling cepat hari ${s.hari + COOLDOWN_POSYANDU[s.mode]}.`,
+      dueDay: posyanduTuntas ? null : s.hari + COOLDOWN_POSYANDU[s.mode],
+      eventLabel: posyanduTuntas ? 'Siklus Posyandu terverifikasi' : 'Hasil Posyandu masuk tindak lanjut',
+      eventDetail: `${hasil.benar}/${hasil.total} keputusan tepat; ${jumlahKeluargaTerkoreksi} keluarga dikoreksi.`,
+    })
   } else if (hasil.jenis === 'prolanis') {
     tally.prolanisSesi += 1
     // Drift tiap peserta menurut ketepatan jawaban kartu-nya + jembatan UKP.
@@ -1704,45 +2103,73 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       // dianggap "salah" → param memburuk padahal ia tak pernah diberi kartu.
       if (!jwb) return p
       const pBaru = driftProlanis(p, jwb.benar, rng)
+      const orangId = pBaru.orangId ?? pBaru.id
+      const episodeId = buatEpisodeId('prolanis', orangId, pBaru.jenis)
+      const terkontrol = prolanisTerkendali(pBaru.jenis, pBaru.param)
+      const satuan = pBaru.jenis === 'ht' ? 'mmHg' : 'mg/dL'
+      let hariEvaluasiKlinik: number | undefined
+      let pesertaHasil = pBaru
+
       // Dua masalah pada orang yang sama tetap dipantau terpisah, tetapi satu
       // sesi maksimal membuka satu bottleneck klinik. Masalah lain tetap
       // tertunda (counter tidak dihapus) dan dapat muncul pada sesi berikutnya.
-      if (pBaru.takTerkontrolBerturut >= 2) {
-        const orangId = pBaru.orangId ?? pBaru.id
-        if (orangDijadwalkan.has(orangId)) return pBaru
-
+      if (pBaru.takTerkontrolBerturut >= 2 && !orangDijadwalkan.has(orangId)) {
         const kasusId = pBaru.jenis === 'ht' ? 'stroke_iskemik' : 'dm_tipe2'
         if (pack.kasus[kasusId]) {
           orangDijadwalkan.add(orangId)
+          hariEvaluasiKlinik = s.hari + rng.int(2, 6)
           jadwalBaru.push({
             id: `jadwal_prolanis_${s.hari}_${p.id}`,
-            hari: s.hari + rng.int(2, 6),
+            hari: hariEvaluasiKlinik,
             jenis: 'pasien_kembali',
+            pasienId: `prolanis_${orangId}`,
+            episodeId,
             kasusId,
             // Tambahan #3 (audit CODEX 2026-07-11, adjudikasi 2026-07-12, opsi
             // netral-klinis): komplikasi Prolanis DM SELALU reuse dm_tipe2
-            // (harusDirujuk:false) — beda dari HT yg reuse stroke_iskemik
-            // (harusDirujuk:true, benar) — jadi pasien DM "gagal kontrol
-            // berturut" tak pernah bisa dirujuk lewat jalur ini apa pun
-            // separahnya. TANPA mengubah gerbang rujuk (itu keputusan klinis
-            // tersendiri, di luar cakupan fix mekanis ini), catatan kini
-            // menampilkan angka parameter SUNGGUHAN — transparansi info bagi
-            // pemain soal separah apa, bukan mengubah benar/salah gerbang.
-            catatan: `${p.nama} — ${pBaru.jenis === 'ht' ? `hipertensi tak terkontrol berbulan-bulan (TD sistolik terakhir ${pBaru.param} mmHg)` : `gula darah liar tak terkendali (GDP terakhir ${pBaru.param} mg/dL)`}`,
+            // (harusDirujuk:false) - beda dari HT yg reuse stroke_iskemik.
+            catatan: `${p.nama} - ${pBaru.jenis === 'ht' ? `hipertensi tak terkontrol berbulan-bulan (TD sistolik terakhir ${pBaru.param} mmHg)` : `gula darah liar tak terkendali (GDP terakhir ${pBaru.param} mg/dL)`}`,
             nama: p.nama,
             usia: p.usia,
             jenisKelamin: p.jenisKelamin,
             rw: p.rw,
-            // M10.b §43: Prolanis adalah program BPJS — pesertanya per definisi
-            // ber-JKN aktif; dulu 30% komplikasinya datang sbg pasien umum.
             bpjs: true,
             ...(p.keluargaId ? { keluargaId: p.keluargaId } : {}),
             prolanisPesertaId: p.id,
           })
-          return { ...pBaru, takTerkontrolBerturut: 0 }
+          pesertaHasil = { ...pBaru, takTerkontrolBerturut: 0 }
         }
       }
-      return pBaru
+      const butuhKlinik = pBaru.takTerkontrolBerturut >= 2
+      careEpisodes = perbaruiEpisode(careEpisodes, {
+        id: episodeId,
+        day: s.hari,
+        subjectId: orangId,
+        subjectName: pBaru.nama,
+        ...(pBaru.keluargaId ? { familyId: pBaru.keluargaId } : {}),
+        rw: pBaru.rw,
+        source: 'prolanis',
+        problemId: pBaru.jenis,
+        problemLabel: pBaru.jenis === 'ht' ? 'Hipertensi dalam Prolanis' : 'Diabetes dalam Prolanis',
+        owner: terkontrol ? 'kader' : hariEvaluasiKlinik !== undefined ? 'dokter' : 'program',
+        status: terkontrol ? 'terverifikasi' : butuhKlinik ? 'menunggu' : 'ditindaklanjuti',
+        signal: `${pBaru.jenis === 'ht' ? 'TD sistolik' : 'GDP'} ${pBaru.param} ${satuan} pada sesi Prolanis.`,
+        decision: jwb.benar ? 'Keputusan kartu Prolanis tepat.' : 'Keputusan sesi perlu dikoreksi.',
+        feedback: terkontrol
+          ? 'Parameter berada di bawah ambang kontrol program.'
+          : `Belum terkontrol selama ${pBaru.takTerkontrolBerturut} sesi berturut-turut.`,
+        nextAction: terkontrol
+          ? 'Pertahankan obat, perilaku, dan pemantauan pada sesi berikutnya.'
+          : hariEvaluasiKlinik !== undefined
+            ? `Evaluasi klinis di poli pada hari ${hariEvaluasiKlinik}; cari komplikasi dan hambatan terapi.`
+            : butuhKlinik
+              ? 'Masalah turut dicatat; satu slot klinik per orang diprioritaskan pada masalah lain. Evaluasi ulang sesi berikutnya.'
+            : `Ulangi pemantauan pada sesi berikutnya, hari ${s.hari + HARI_BUKA_PROLANIS[s.mode]}.`,
+        dueDay: terkontrol ? null : (hariEvaluasiKlinik ?? s.hari + HARI_BUKA_PROLANIS[s.mode]),
+        eventLabel: terkontrol ? 'Parameter Prolanis terkendali' : 'Parameter Prolanis belum terkendali',
+        eventDetail: `${pBaru.param} ${satuan}; ${pBaru.takTerkontrolBerturut} sesi tak terkendali.`,
+      })
+      return pesertaHasil
     })
     next = {
       ...next,
@@ -1782,9 +2209,34 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       }
       events.push({ type: 'KARMA_DICEGAH', narasi: `Kluster ${pack.kasus[hasil.kasusId]?.nama ?? hasil.kasusId} di RW ${hasil.rw} berhasil ditanggulangi.` })
     }
+    const klbTuntas = hasil.skor >= 0.66 && aksiPengendalianBenar
+    const namaKasus = pack.kasus[hasil.kasusId]?.nama ?? hasil.kasusId
+    careEpisodes = perbaruiEpisode(careEpisodes, {
+      id: buatEpisodeId('surveilans', `rw${hasil.rw}`, hasil.kasusId),
+      day: s.hari,
+      subjectId: `rw${hasil.rw}`,
+      subjectName: `Warga RW ${hasil.rw}`,
+      rw: hasil.rw,
+      source: 'surveilans',
+      problemId: hasil.kasusId,
+      problemLabel: `Kluster ${namaKasus}`,
+      owner: klbTuntas ? 'kader' : 'program',
+      status: klbTuntas ? 'terverifikasi' : 'menunggu',
+      signal: `Surveilans poli mendeteksi kluster ${namaKasus} di RW ${hasil.rw}.`,
+      decision: `${hasil.benar}/${hasil.total} keputusan investigasi dan respons tepat.`,
+      feedback: klbTuntas
+        ? 'Aksi spesifik transmisi benar; sinyal kluster dibersihkan dari PWS.'
+        : 'Kluster tetap aktif karena investigasi atau pengendalian belum memadai.',
+      nextAction: klbTuntas
+        ? 'Kader melanjutkan pemantauan pasca-respons.'
+        : 'Ulangi respons KLB dan pilih aksi yang sesuai jalur transmisi.',
+      dueDay: klbTuntas ? null : s.hari + 1,
+      eventLabel: klbTuntas ? 'Loop KLB ditutup' : 'Respons KLB belum menutup kluster',
+      eventDetail: `${hasil.benar}/${hasil.total} keputusan tepat; aksi transmisi ${aksiPengendalianBenar ? 'sesuai' : 'tidak sesuai'}.`,
+    })
   }
 
-  return { state: { ...next, tally }, events }
+  return { state: { ...next, tally, careEpisodes }, events }
 }
 
 function tambahBonusIks(rwList: GameState['desa']['rw'], nomor: number, bonus: number): GameState['desa']['rw'] {
@@ -1992,9 +2444,11 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   }
 
   // Proses jadwal jatuh tempo
-  const jadwalSisa = []
+  const jadwalSisa: typeof s.jadwal = []
   interface PasienJatuhTempo {
     kasusId: string
+    pasienId?: string
+    episodeId?: string
     catatan?: string
     nama?: string
     usia?: number
@@ -2015,6 +2469,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   }
   const pasienKembali: PasienJatuhTempo[] = []
   let keluargaMap = s.desa.keluarga
+  let careEpisodes = s.careEpisodes
   for (const j of s.jadwal) {
     if (j.hari > hari) {
       jadwalSisa.push(j)
@@ -2039,6 +2494,67 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
             : `Hasil pemeriksaan ${lab?.nama ?? j.labId}: dalam batas rujukan${lab?.nilaiNormal ? ` (${lab.nilaiNormal})` : ''} — tidak menunjukkan kelainan bermakna untuk kasus ini. Timbang indikasi sebelum memesan penunjang: pemeriksaan yang tak mengubah tata laksana adalah beban biaya bagi Puskesmas.`,
         }),
       )
+    } else if (j.jenis === 'rujukan_feedback' && j.episodeId && j.kasusId) {
+      const episode = careEpisodes.find((item) => item.id === j.episodeId)
+      const kasus = pack.kasus[j.kasusId] ?? pack.kasusIgd[j.kasusId]
+      const rs = j.rumahSakitId
+        ? pack.rumahSakit.find((item) => item.id === j.rumahSakitId)
+        : undefined
+      if (episode && kasus) {
+        careEpisodes = perbaruiEpisode(careEpisodes, {
+          id: episode.id,
+          day: hari,
+          subjectId: episode.subjectId,
+          subjectName: episode.subjectName,
+          ...(episode.familyId ? { familyId: episode.familyId } : {}),
+          ...(episode.rw !== undefined ? { rw: episode.rw } : {}),
+          source: episode.source,
+          problemId: episode.problemId,
+          problemLabel: episode.problemLabel,
+          owner: 'rs',
+          status: 'dirujuk',
+          signal: episode.receipt.signal,
+          ...(episode.receipt.decision ? { decision: episode.receipt.decision } : {}),
+          feedback: j.feedbackRujukan ?? `${rs?.nama ?? 'RS rujukan'} menyelesaikan pelayanan.`,
+          nextAction: 'Tunggu ringkasan pelayanan masuk ke meja kerja FKTP.',
+          dueDay: hari,
+          referral: { ...(episode.referral ?? { stage: 'completed' }), stage: 'completed', hospitalName: rs?.nama },
+          eventLabel: 'Pelayanan rujukan selesai',
+          eventDetail: `${rs?.nama ?? 'RS rujukan'} menyelesaikan pelayanan ${kasus.nama}.`,
+        })
+        const completed = careEpisodes.find((item) => item.id === episode.id)!
+        careEpisodes = perbaruiEpisode(careEpisodes, {
+          id: completed.id,
+          day: hari,
+          subjectId: completed.subjectId,
+          subjectName: completed.subjectName,
+          ...(completed.familyId ? { familyId: completed.familyId } : {}),
+          ...(completed.rw !== undefined ? { rw: completed.rw } : {}),
+          source: completed.source,
+          problemId: completed.problemId,
+          problemLabel: completed.problemLabel,
+          owner: 'dokter',
+          status: 'kembali',
+          signal: completed.receipt.signal,
+          ...(completed.receipt.decision ? { decision: completed.receipt.decision } : {}),
+          ...(completed.receipt.feedback ? { feedback: completed.receipt.feedback } : {}),
+          nextAction: 'Baca ringkasan RS dan masukkan hasilnya ke care plan FKTP.',
+          dueDay: hari,
+          referral: { ...(completed.referral ?? { stage: 'feedback' }), stage: 'feedback', hospitalName: rs?.nama },
+          eventLabel: 'Umpan balik kembali ke FKTP',
+          eventDetail: 'Ringkasan pelayanan tersedia di Kotak Masuk dan menunggu dibaca.',
+        })
+        suratBaru.push(
+          buatSuratHarian(hari, suratBaru.length, {
+            jenis: 'kabar_warga',
+            dari: rs?.nama ?? 'RS rujukan',
+            judul: `Umpan balik rujukan - ${j.nama ?? episode.subjectName}`,
+            isi: `${j.feedbackRujukan ?? `${rs?.nama ?? 'RS rujukan'} menyelesaikan pelayanan ${kasus.nama}.`} Baca ringkasan ini untuk memasukkannya ke rencana tindak lanjut FKTP dan menutup loop rujukan.`,
+            ...(j.keluargaId ? { kaitKeluargaId: j.keluargaId } : {}),
+            episodeId: episode.id,
+          }),
+        )
+      }
     } else if (j.jenis === 'pasien_kembali' && j.bedRetry && j.kasusId && j.rumahSakitId) {
       // CODEX audit pasca-GM (2026-07-13, temuan #11): resolusi PASIF — tak
       // pernah masuk `pasienKembali` (yang jadi encounter klinik penuh lagi).
@@ -2051,22 +2567,107 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       const rollBerhasil = !rs || rngRetry.chance(Math.min(0.95, 0.5 + rs.bedDasar * 0.06))
       const dipaksaTerima = !rollBerhasil && retryKe >= MAKS_RETRY_BED_PENUH
       if (rollBerhasil || dipaksaTerima) {
+        const kasus = pack.kasus[j.kasusId]
         suratBaru.push(
           buatSuratHarian(hari, suratBaru.length, {
             jenis: 'kabar_warga',
             dari: rs?.nama ?? 'RS rujukan',
             judul: `Bed tersedia — ${j.nama ?? 'pasien'} akhirnya diterima`,
             isi: dipaksaTerima
-              ? `${rs?.nama ?? 'RS rujukan'} memaksa menerima ${j.nama ?? 'pasien'} setelah ${retryKe} hari mengantre bed — jejaring tak boleh menahan rujukan yang sudah tepat selamanya. Tak ada tindakan lain yang perlu kamu ambil.`
-              : `${rs?.nama ?? 'RS rujukan'} kini punya bed kosong — ${j.nama ?? 'pasien'} yang kamu rujuk sudah diterima jejaring. Tak ada tindakan lain yang perlu kamu ambil.`,
+              ? `${rs?.nama ?? 'RS rujukan'} memaksa menerima ${j.nama ?? 'pasien'} setelah ${retryKe} hari mengantre bed. Jejaring akan mengirim hasil pelayanan atau rencana PRB kembali ke FKTP.`
+              : `${rs?.nama ?? 'RS rujukan'} kini punya bed kosong; ${j.nama ?? 'pasien'} sudah diterima. Jejaring akan mengirim hasil pelayanan atau rencana PRB kembali ke FKTP.`,
+            ...(j.keluargaId ? { kaitKeluargaId: j.keluargaId } : {}),
           }),
         )
+        if (kasus) {
+          if (kasus.bisaPrb) {
+            const rngPrb = new Rng(s.seed, 'prb-setelah-bed', j.id, hari)
+            jadwalSisa.push({
+              ...j,
+              id: `jadwal_prb_bed_${j.id}`,
+              hari: hari + rngPrb.int(7, 12),
+              bedRetry: false,
+              prb: true,
+              catatan: `${j.nama ?? 'Pasien'} - kontrol PRB setelah diterima ${rs?.nama ?? 'RS rujukan'}, lanjutkan terapi di FKTP`,
+            })
+          } else {
+            jadwalSisa.push({
+              id: `jadwal_feedback_bed_${j.id}`,
+              hari: hari + new Rng(s.seed, 'feedback-setelah-bed', j.id).int(2, 4),
+              jenis: 'rujukan_feedback',
+              ...(j.pasienId ? { pasienId: j.pasienId } : {}),
+              ...(j.episodeId ? { episodeId: j.episodeId } : {}),
+              kasusId: j.kasusId,
+              ...(j.nama ? { nama: j.nama } : {}),
+              rumahSakitId: j.rumahSakitId,
+              ...(j.keluargaId ? { keluargaId: j.keluargaId } : {}),
+              feedbackRujukan: `${rs?.nama ?? 'RS rujukan'} menyelesaikan pelayanan ${kasus.nama} setelah penundaan kapasitas dan mengirim ringkasan ke FKTP.`,
+            })
+          }
+        }
+        const episode = j.episodeId
+          ? careEpisodes.find((item) => item.id === j.episodeId)
+          : undefined
+        if (episode) {
+          const followUp = [...jadwalSisa].reverse().find((item) => item.episodeId === episode.id)
+          careEpisodes = perbaruiEpisode(careEpisodes, {
+            id: episode.id,
+            day: hari,
+            subjectId: episode.subjectId,
+            subjectName: episode.subjectName,
+            ...(episode.familyId ? { familyId: episode.familyId } : {}),
+            ...(episode.rw !== undefined ? { rw: episode.rw } : {}),
+            source: episode.source,
+            problemId: episode.problemId,
+            problemLabel: episode.problemLabel,
+            owner: 'rs',
+            status: 'dirujuk',
+            signal: episode.receipt.signal,
+            ...(episode.receipt.decision ? { decision: episode.receipt.decision } : {}),
+            feedback: `${rs?.nama ?? 'RS rujukan'} menerima pasien setelah ${retryKe} kali pemeriksaan kapasitas.`,
+            nextAction: kasus?.bisaPrb
+              ? `Tunggu resume dan kontrol PRB sekitar hari ${followUp?.hari ?? hari + 7}.`
+              : `Tunggu ringkasan pelayanan sekitar hari ${followUp?.hari ?? hari + 2}.`,
+            dueDay: followUp?.hari ?? hari + 2,
+            referral: { ...(episode.referral ?? { stage: 'accepted' }), stage: 'accepted', hospitalName: rs?.nama },
+            eventLabel: 'Rujukan akhirnya diterima',
+            eventDetail: dipaksaTerima ? 'Jejaring mengeskalasi penerimaan setelah batas retry.' : 'Bed tersedia pada retry jejaring.',
+          })
+        }
       } else {
         jadwalSisa.push({ ...j, hari: hari + 1, bedRetryKe: retryKe })
+        const episode = j.episodeId
+          ? careEpisodes.find((item) => item.id === j.episodeId)
+          : undefined
+        if (episode) {
+          careEpisodes = perbaruiEpisode(careEpisodes, {
+            id: episode.id,
+            day: hari,
+            subjectId: episode.subjectId,
+            subjectName: episode.subjectName,
+            ...(episode.familyId ? { familyId: episode.familyId } : {}),
+            ...(episode.rw !== undefined ? { rw: episode.rw } : {}),
+            source: episode.source,
+            problemId: episode.problemId,
+            problemLabel: episode.problemLabel,
+            owner: 'rs',
+            status: 'menunggu',
+            signal: episode.receipt.signal,
+            ...(episode.receipt.decision ? { decision: episode.receipt.decision } : {}),
+            feedback: `Bed ${rs?.nama ?? 'RS rujukan'} masih penuh pada retry ke-${retryKe}.`,
+            nextAction: `Jejaring mencoba lagi pada hari ${hari + 1}.`,
+            dueDay: hari + 1,
+            referral: { ...(episode.referral ?? { stage: 'sent' }), stage: 'sent', hospitalName: rs?.nama, note: 'Menunggu bed' },
+            eventLabel: 'Kapasitas masih tertunda',
+            eventDetail: `Retry ke-${retryKe}; keputusan klinis tetap dinilai tepat.`,
+          })
+        }
       }
     } else if (j.jenis === 'pasien_kembali' && j.kasusId) {
       pasienKembali.push({
         kasusId: j.kasusId,
+        ...(j.pasienId ? { pasienId: j.pasienId } : {}),
+        ...(j.episodeId ? { episodeId: j.episodeId } : {}),
         ...(j.catatan ? { catatan: j.catatan } : {}),
         ...(j.nama ? { nama: j.nama } : {}),
         ...(j.usia !== undefined ? { usia: j.usia } : {}),
@@ -2080,6 +2681,38 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         ...(j.prb ? { prb: true } : {}),
         ...(j.labId ? { labId: j.labId } : {}),
       })
+      const episode = j.episodeId
+        ? careEpisodes.find((item) => item.id === j.episodeId)
+        : undefined
+      if (episode) {
+        careEpisodes = perbaruiEpisode(careEpisodes, {
+          id: episode.id,
+          day: hari,
+          subjectId: episode.subjectId,
+          subjectName: episode.subjectName,
+          ...(episode.familyId ? { familyId: episode.familyId } : {}),
+          ...(episode.rw !== undefined ? { rw: episode.rw } : {}),
+          source: episode.source,
+          problemId: episode.problemId,
+          problemLabel: episode.problemLabel,
+          owner: 'dokter',
+          status: 'kembali',
+          signal: episode.receipt.signal,
+          ...(episode.receipt.decision ? { decision: episode.receipt.decision } : {}),
+          feedback: j.prb
+            ? `Resume dan rencana PRB kembali bersama ${j.nama ?? episode.subjectName}.`
+            : j.catatan ?? 'Pasien kembali untuk evaluasi klinis.',
+          nextAction: `Tangani ${j.nama ?? episode.subjectName} di poli hari ini dan perbarui care plan.`,
+          dueDay: hari,
+          ...(j.prb
+            ? { referral: { ...(episode.referral ?? { stage: 'feedback' as const }), stage: 'feedback' as const } }
+            : episode.referral
+              ? { referral: episode.referral }
+              : {}),
+          eventLabel: j.prb ? 'Pasien kembali melalui PRB' : 'Pasien kembali untuk tindak lanjut',
+          eventDetail: j.catatan ?? 'Follow-up jatuh tempo dan masuk antrian pagi.',
+        })
+      }
     } else if (
       j.jenis === 'karma_igd' &&
       j.keluargaId &&
@@ -2109,6 +2742,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         const jknKeluarga = kel.indikator.jkn?.statusSebenarnya
         pasienKembali.push({
           kasusId: j.kasusId,
+          pasienId: j.pasienId ?? `karma_${j.keluargaId}_${j.kasusId}`,
+          episodeId: j.episodeId ?? buatEpisodeId('keluarga', j.keluargaId, j.kasusId),
           catatan: j.catatan ?? '',
           keluargaId: j.keluargaId,
           konsekuensiKarma: true,
@@ -2118,6 +2753,27 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           ...(j.usiaBulan !== undefined ? { usiaBulan: j.usiaBulan } : {}),
           ...(j.jenisKelamin ? { jenisKelamin: j.jenisKelamin } : {}),
           ...(jknKeluarga === 'ya' || jknKeluarga === 'tidak' ? { bpjs: jknKeluarga === 'ya' } : {}),
+        })
+        const episodeKarmaId = j.episodeId ?? buatEpisodeId('keluarga', j.keluargaId, j.kasusId)
+        const namaPasien = j.nama ?? kelContent.anggota[0]?.nama ?? kelContent.namaKeluarga
+        careEpisodes = perbaruiEpisode(careEpisodes, {
+          id: episodeKarmaId,
+          day: hari,
+          subjectId: j.pasienId ?? `karma_${j.keluargaId}_${j.kasusId}`,
+          subjectName: namaPasien,
+          familyId: j.keluargaId,
+          rw: kelContent.rw,
+          source: 'keluarga',
+          problemId: j.kasusId,
+          problemLabel: pack.kasus[j.kasusId]?.nama ?? j.kasusId,
+          owner: 'dokter',
+          status: 'terdeteksi',
+          signal: j.catatan ?? `Risiko keluarga ${kelContent.namaKeluarga} berkembang menjadi kasus klinis.`,
+          feedback: 'Kegagalan pencegahan UKM kini tampil sebagai pasien bernama di poli.',
+          nextAction: `Tangani ${namaPasien} di poli hari ini; hasil klinik harus kembali ke keluarga.`,
+          dueDay: hari,
+          eventLabel: 'Risiko keluarga menjadi kasus klinis',
+          eventDetail: `${pack.kasus[j.kasusId]?.nama ?? j.kasusId} masuk antrian dari ${kelContent.namaKeluarga}.`,
         })
         suratBaru.push(
           buatSuratHarian(hari, suratBaru.length, {
@@ -2174,6 +2830,33 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           }
         }
         keluargaMap = { ...keluargaMap, [j.keluargaId]: kelTerverifikasi }
+        const episodeKeluargaId = buatEpisodeId('keluarga', j.keluargaId, 'pendampingan')
+        const janjiTepat = j.indikatorJanji.filter((indikatorId) => !ingkar.includes(indikatorId))
+        careEpisodes = perbaruiEpisode(careEpisodes, {
+          id: episodeKeluargaId,
+          day: hari,
+          subjectId: j.keluargaId,
+          subjectName: kelContent.namaKeluarga,
+          familyId: j.keluargaId,
+          rw: kelContent.rw,
+          source: 'keluarga',
+          problemId: `keluarga:${j.keluargaId}`,
+          problemLabel: 'Verifikasi perubahan keluarga',
+          owner: ingkar.length > 0 ? 'dokter' : 'kader',
+          status: ingkar.length > 0 ? 'menunggu' : 'terverifikasi',
+          signal: `Janji perubahan ${j.indikatorJanji.map((id) => id.replace(/_/g, ' ')).join(', ')} jatuh tempo.`,
+          feedback: ingkar.length > 0
+            ? `${ingkar.length} indikator belum terwujud; ${janjiTepat.length} indikator terverifikasi.`
+            : `Seluruh ${janjiTepat.length} indikator terverifikasi menjadi perubahan nyata.`,
+          nextAction: ingkar.length > 0
+            ? `Kunjungi kembali ${kelContent.namaKeluarga}; jalur recovery sudah dibuka.`
+            : 'Pertahankan perubahan melalui pemantauan kader dan PWS.',
+          dueDay: ingkar.length > 0 ? hari : null,
+          eventLabel: ingkar.length > 0 ? 'Janji perlu pendampingan ulang' : 'Perubahan keluarga terverifikasi',
+          eventDetail: ingkar.length > 0
+            ? `${ingkar.map((id) => id.replace(/_/g, ' ')).join(', ')} belum berjalan.`
+            : 'Janji keluarga menjadi outcome terverifikasi.',
+        })
         if (ingkar.length > 0) {
           suratBaru.push(
             buatSuratHarian(hari, suratBaru.length, {
@@ -2327,12 +3010,34 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     flags[kunciFlag] = true
     const namaKasus = pack.kasus[c.kasusId]?.nama ?? c.kasusId
     const namaRw = pack.rw.find((r) => r.nomor === c.rw)?.nama ?? `RW ${c.rw}`
+    const episodeKlusterId = buatEpisodeId('surveilans', `rw${c.rw}`, c.kasusId)
+    careEpisodes = perbaruiEpisode(careEpisodes, {
+      id: episodeKlusterId,
+      day: hari,
+      subjectId: `rw${c.rw}`,
+      subjectName: `Warga ${namaRw}`,
+      rw: c.rw,
+      source: 'surveilans',
+      problemId: c.kasusId,
+      problemLabel: `Kluster ${namaKasus}`,
+      owner: 'program',
+      status: 'terdeteksi',
+      signal: `${c.jumlah} kasus ${namaKasus} tercatat dari ${namaRw} dalam 14 hari.`,
+      feedback: 'Diagnosis individual di poli telah membentuk sinyal populasi di PWS.',
+      nextAction: hari >= HARI_BUKA_KLB[s.mode]
+        ? `Gelar Respons KLB di RW ${c.rw} dan pilih pengendalian sesuai transmisi.`
+        : `Pantau pola dan siapkan respons wilayah; modul KLB terbuka hari ${HARI_BUKA_KLB[s.mode]}.`,
+      dueDay: Math.max(hari, HARI_BUKA_KLB[s.mode]),
+      eventLabel: 'Sinyal klinik menjadi alarm wilayah',
+      eventDetail: `${c.jumlah} kasus melewati ambang kluster ${namaKasus}.`,
+    })
     suratBaru.push(
       buatSuratHarian(hari, suratBaru.length, {
         jenis: 'laporan_kader',
         dari: 'Petugas Surveilans',
         judul: `SINYAL KLUSTER — ${namaKasus} di ${namaRw}`,
         isi: `${c.jumlah} kasus ${namaKasus} dari ${namaRw} tercatat di poli dalam 14 hari terakhir. Ini bukan kebetulan, Dok — ada sumbernya di lapangan. Poli mengobati satu-satu; yang menghentikan penularan adalah tindakan di wilayah. Prioritaskan kunjungan/pembinaan ke RW itu.`,
+        episodeId: episodeKlusterId,
       }),
     )
   }
@@ -2537,6 +3242,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   )
   const antrianKembali = pasienKembaliValid.map((p, i) =>
     buatPasienDariKasus(p.kasusId, pack, new Rng(s.seed, 'kembali', hari, i), {
+      ...(p.pasienId ? { id: p.pasienId } : {}),
+      ...(p.episodeId ? { episodeId: p.episodeId } : {}),
       followUpDari: p.catatan ?? 'follow-up',
       ...(p.nama ? { nama: p.nama } : {}),
       ...(p.usia !== undefined ? { usia: p.usia } : {}),
@@ -2645,6 +3352,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       ...(akreditasi !== undefined ? { akreditasi } : {}),
       jadwal: jadwalSisa,
       inbox: [...s.inbox, ...suratBaru],
+      careEpisodes,
       flags,
       klinik: { antrian, aktif: undefined, selesaiHariIni: [], autoHariIni: { jumlah: 0, bermasalah: 0 } },
       hasilKunjunganHariIni: undefined,

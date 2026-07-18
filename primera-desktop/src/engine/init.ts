@@ -234,6 +234,7 @@ export function buildInitialState(
     desa: { keluarga, kader, rw, binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } },
     inbox: suratSambutan(namaDokter, mode, paket?.nama),
     jadwal: jadwalKarma,
+    careEpisodes: [],
     tally: {
       totalPasien: 0,
       diagnosisBenar: 0,

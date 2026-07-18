@@ -282,6 +282,7 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
 
 export const TINDAKAN_M3: Record<string, Tindakan> = {
   ekstraksi_serumen: { id: 'ekstraksi_serumen', nama: 'Ekstraksi serumen', icd9: '96.52', biaya: 30000 },
+  kompresi_hidung: { id: 'kompresi_hidung', nama: 'Kompresi hidung langsung 10–15 menit', biaya: 5000 },
   tampon_epistaksis: { id: 'tampon_epistaksis', nama: 'Tampon anterior epistaksis', icd9: '21.01', biaya: 45000 },
   insisi_abses: { id: 'insisi_abses', nama: 'Insisi & drainase abses', icd9: '86.04', biaya: 60000 },
   hecting_luka: { id: 'hecting_luka', nama: 'Penjahitan luka (hecting)', icd9: '86.59', biaya: 75000 },

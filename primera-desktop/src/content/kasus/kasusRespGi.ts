@@ -119,14 +119,16 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['J20.9', 'J00', 'J18.9'],
     tatalaksana: {
-      obatBenar: ['ambroxol_30', 'paracetamol_500'],
+      obatBenar: ['paracetamol_500'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Bronkitis akut pada dewasa sehat >90% viral & self-limiting; antibiotik tidak mempercepat sembuh dan memicu resistensi (PPK IDI; Kemenkes PPRA).', bahaya: 'nonPrimer' },
         { id: 'azitromisin_500', alasan: 'Makrolida bukan indikasi bronkitis akut viral tanpa tanda pneumonia; peresepan rutin justru mendorong resistensi.', bahaya: 'nonPrimer' },
+        { id: 'ambroxol_30', alasan: 'NICE NG120 tidak menganjurkan mukolitik untuk batuk akut atau bronkitis akut. Edukasi perjalanan penyakit dan terapi gejala seperlunya lebih tepat daripada resep mukolitik rutin.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['etika_batuk', 'istirahat_cukup', 'minum_air_cukup', 'tanda_bahaya'],
     },
     clue: 'Bronkitis akut = batuk (kadang sampai 3 minggu) pasca-ISPA, tanpa sesak/ronki menetap/tanda pneumonia. VIRAL & self-limiting → simtomatik saja, TANPA antibiotik (PPK IDI). Red flag ke pneumonia/TB: demam tinggi menetap, sesak, ronki fokal menetap, batuk >3 minggu, hemoptisis, BB turun.',
+    panduanResmi: 'PPK 1186/2022 tidak memuat jalur bronkitis akut tersendiri; floor FKTP adalah menyingkirkan pneumonia, TB, dan kegawatan lalu menghindari antibiotik tanpa indikasi sesuai stewardship Kemenkes. NICE NG120 menambahkan bahwa mukolitik, bronkodilator, dan kortikosteroid tidak ditawarkan rutin pada bronkitis akut tanpa penyakit jalan napas dasar.',
     konsekuensi: {
       narasi: 'Peresepan antibiotik sia-sia menormalisasi harapan pasien akan antibiotik dan berisiko efek samping (diare, alergi) tanpa manfaat.',
       kembaliHariMin: 7,
@@ -480,7 +482,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // CODEX: clue kasus ini eksplisit bilang "ketiganya ada → antibiotik
       // terindikasi" (Anthonisen) & obatSalahUmum sudah menghukum kloramfenikol
       // sbg antibiotik SALAH — tapi tak ada slot antibiotik BENAR sampai
-      // ditambah di sini. GOLD 2025: aminopenisilin+klavulanat, makrolida, atau
+      // ditambah di sini. GOLD 2026: aminopenisilin+klavulanat, makrolida, atau
       // tetrasiklin (doksisiklin) sama-sama pilihan lini pertama utk eksaserbasi
       // purulen — grup "pilih salah satu" (bukan wajib kombinasi, satu infeksi
       // cukup satu lini, sama spt pola tifoid kloramfenikol/kotrimoksazol/amoksisilin).
@@ -497,8 +499,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['berhenti_merokok', 'teknik_inhaler', 'tanda_bahaya', 'kontrol_rutin'],
     },
     stabilisasiWajib: ['oksigen'],
-    clue: 'Eksaserbasi PPOK (kriteria Anthonisen: sesak↑, volume sputum↑, purulensi sputum↑ — ketiganya ada → antibiotik terindikasi). SpO2 89% + tanda gagal napas (bingung, sianosis, otot bantu) = eksaserbasi BERAT. Bundel GOLD: O2 TERKONTROL (target SpO2 88–92%, hindari over-oksigenasi) + bronkodilator INHALASI/NEBULISASI (SABA ± SAMA) + KORTIKOSTEROID SISTEMIK + antibiotik (sputum purulen) — lalu RUJUK paru segera. SABA oral tak setara; jangan biarkan urusan obat menunda rujukan.',
-    panduanResmi: 'PPK 1186/2022 membatasi FKTP pada eksaserbasi PPOK RINGAN (sedang–berat wajib rujuk). Bila inhalasi tak tersedia, PPK membolehkan bronkodilator injeksi (aminofilin bolus 5 mg/kgBB; adrenalin 0,3 mg SC) — beda dari penekanan GOLD \'inhalasi saja\'. Kortikosteroid 30 mg/hari, maks 2 minggu, tanpa tapering.',
+    clue: 'Eksaserbasi PPOK (sesak↑, volume sputum↑, purulensi sputum↑ — ketiganya ada sehingga antibiotik terindikasi). SpO2 89% + bingung, sianosis, dan otot bantu = eksaserbasi BERAT. Bundel GOLD 2026: O2 TERKONTROL target 88–92% + bronkodilator inhalasi/nebulisasi (SABA ± SAMA) + kortikosteroid sistemik + antibiotik karena sputum purulen, lalu RUJUK segera. SABA oral tak setara; jangan biarkan urusan obat menunda transport.',
+    panduanResmi: 'PPK 1186/2022 membatasi FKTP pada eksaserbasi PPOK ringan; sedang–berat wajib rujuk. GOLD 2026 mempertahankan bronkodilator kerja cepat inhalasi, kortikosteroid sistemik singkat, antibiotik bila sputum purulen/indikasi ventilasi, dan oksigen terkontrol 88–92%. PPK masih membolehkan aminofilin/adrenalin injeksi bila inhalasi tidak tersedia; ini opsi graceful-degradation lokal, bukan alasan menunda rujukan atau mengejar SpO2 100%.',
     konsekuensi: {
       narasi: 'Bila tidak segera dirujuk, eksaserbasi berat berlanjut ke gagal napas hiperkapnik (asidosis respiratorik) dan penurunan kesadaran yang mengancam jiwa.',
       kembaliHariMin: 0,
@@ -638,7 +640,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     fktp144: true,
     harusDirujuk: false,
     prevalensi: 'tinggi',
-    keluhanUtama: 'Ulu hati saya sering perih dan begah dok, cepat kenyang, sudah berminggu-minggu hilang timbul.',
+    keluhanUtama: 'Ulu hati saya sering perih dan begah dok, cepat kenyang, sudah lebih dari enam bulan hilang timbul.',
     demografi: { usiaMin: 20, usiaMax: 44 },
     vital: { td: '116/74', nadi: 78, rr: 18, suhu: 36.6, spo2: 99 },
     anamnesis: [
@@ -649,7 +651,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         jawab: 'Perih dan begah dok, cepat kenyang baru makan sedikit, kadang mual dan sendawa terus.',
         variasi: {
           polos: 'Ulu ati perih karo seneb dok, lagi mangan sithik wis wareg, kerep glegeken.',
-          terpelajar: 'Nyeri ulu hati disertai rasa penuh setelah makan dan cepat kenyang dok, sudah beberapa minggu.',
+          terpelajar: 'Nyeri ulu hati disertai rasa penuh setelah makan dan cepat kenyang dok, sudah lebih dari enam bulan.',
           cemas: 'Perut saya nggak enak terus dok, jangan-jangan ini penyakit lambung berat atau kanker ya?',
         },
         esensial: true,
@@ -659,7 +661,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
         id: 'q_durasi',
         kategori: 'keluhan_utama',
         tanya: 'Sudah berapa lama dan bagaimana polanya?',
-        jawab: 'Sudah sekitar sebulan dok, hilang timbul, memberat kalau telat makan dan lagi banyak pikiran.',
+        jawab: 'Sudah sekitar tujuh bulan dok, dan setidaknya tiga bulan terakhir muncul hampir setiap minggu; memberat kalau telat makan dan lagi banyak pikiran.',
         esensial: true,
         oldcarts: ['onset', 'durasi', 'agravasi'],
       },
@@ -718,7 +720,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       { region: 'toraks_paru', temuan: 'Vesikuler +/+, ronki -/-.', relevan: false },
     ],
     lab: [
-      { id: 'darah_rutin', hasil: 'Hb 13.6, Leukosit normal — tidak ada anemia (mendukung dispepsia fungsional, bukan alarm).', flag: 'normal', relevan: true },
+      { id: 'darah_rutin', hasil: 'Hb 13.6, leukosit normal — tidak ada anemia sebagai tanda alarm.', flag: 'normal', relevan: true },
     ],
     diagnosisBanding: ['K30', 'K21.9', 'K29.7'],
     tatalaksana: {
@@ -734,7 +736,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       ],
       edukasi: ['diet_lambung', 'manajemen_stres', 'tanda_bahaya', 'higiene_tidur'],
     },
-    clue: 'Dispepsia fungsional: nyeri epigastrium/rasa penuh/cepat kenyang TANPA alarm (disfagia, BB turun, anemia, hematemesis/melena, massa, usia onset >45–50). Tata laksana empiris PPI/antasida + hentikan NSAID + kelola stres & pola makan. Endoskopi TIDAK rutin — hanya bila ada alarm atau gagal terapi (PPK IDI / konsensus dispepsia). Test-and-treat H. pylori sesuai indikasi.',
+    clue: 'Dispepsia fungsional membutuhkan pola kronik: gejala sedikitnya 3 bulan dengan onset sedikitnya 6 bulan sebelumnya, berupa nyeri/bakar epigastrium, cepat kenyang, atau penuh pascamakan, TANPA tanda alarm. Tata laksana primer: telaah NSAID, H. pylori test-and-treat bila tersedia/terindikasi, atau PPI empiris 4 minggu, disertai pola makan dan manajemen stres. Endoskopi tidak rutin tanpa alarm atau kegagalan terapi.',
+    panduanResmi: 'PPK 1186/2022 tidak memiliki entri dispepsia fungsional terpisah; kasus ini memakai prinsip tata laksana dispepsia tanpa alarm dan jejaring bila alarm/gagal terapi. NICE CG184 mendukung PPI dosis penuh 4 minggu atau H. pylori test-and-treat, dengan washout PPI 2 minggu sebelum uji napas atau antigen feses.',
     konsekuensi: {
       narasi: 'Bila NSAID diteruskan dan pola makan tidak diperbaiki, dapat berkembang menjadi ulkus peptikum; sebaliknya endoskopi dini tanpa alarm membebani pasien tanpa mengubah terapi awal.',
       kembaliHariMin: 14,
@@ -960,7 +963,8 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       ],
       edukasi: ['cuci_tangan_makanan', 'gizi_seimbang', 'cuci_tangan', 'tanda_bahaya'],
     },
-    clue: 'Askariasis: nyeri perut periumbilikal + gizi kurang + riwayat keluar cacing / telur di feses, faktor risiko higiene (main tanah, jamban tidak sehat). Terapi albendazol 400 mg dosis tunggal (atau pirantel pamoat) + perbaikan higiene & sanitasi + obati keluarga bila perlu. Waspada komplikasi obstruksi/ileus bila cacing sangat banyak → rujuk bedah. Selaras program POPM cacingan Kemenkes.',
+    clue: 'Askariasis: nyeri perut periumbilikal + gizi kurang + riwayat keluar cacing / telur di feses, dengan faktor risiko higiene dan sanitasi. Terapi individual albendazol 400 mg dosis tunggal (atau pirantel pamoat) + perbaikan higiene, sanitasi, dan gizi. Anggota keluarga tidak otomatis mendapat resep individual; nilai gejala dan ikuti program POPM setempat. Waspada obstruksi/ileus pada beban cacing berat → rujuk bedah.',
+    panduanResmi: 'Program Penanggulangan Cacingan Kemenkes menempatkan pemberian obat pencegahan massal sebagai intervensi populasi terjadwal, terpisah dari terapi kasus individual terkonfirmasi. Pada pasien ini beri antelmintik yang sesuai dan intervensi higiene/sanitasi; nyeri kolik berat, muntah bilious, distensi, atau obstipasi mengarah ke obstruksi dan wajib dirujuk.',
     konsekuensi: {
       narasi: 'Bila tidak diobati dan higiene tidak diperbaiki, infeksi berulang menyebabkan malnutrisi kronik; beban cacing berat berisiko obstruksi usus.',
       kembaliHariMin: 30,

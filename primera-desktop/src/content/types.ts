@@ -149,6 +149,14 @@ export interface Tatalaksana {
   /** Prosedur/tindakan yang tepat (id dari katalog tindakan). */
   prosedur?: string[]
   /**
+   * Prosedur yang boleh dilakukan menurut konteks klinis, tetapi bukan slot
+   * wajib. Tidak memilihnya tidak mengurangi skor dan memilihnya tidak dihukum
+   * sebagai tindakan di luar rencana. Contoh: oksigen pada gagal jantung akut
+   * dengan SpO2 92% dapat dipertimbangkan menurut penilaian klinis/protokol
+   * lokal, tetapi EBM tidak menganjurkannya rutin bila SpO2 >=90%.
+   */
+  prosedurOpsional?: string[]
+  /**
    * Tindakan yang tampak masuk akal tetapi salah. Tindakan berbahaya mencapai
    * pasien (berbeda dari firewall resep), sehingga mendapat cap keselamatan.
    */
@@ -294,9 +302,11 @@ export interface KasusKlinis {
    * Pedagogis: sadarkan pemain bahwa pedoman resmi FKTP yang MENGIKAT mereka
    * kadang BERBEDA dari EBM internasional (mis. PPK meresepkan flumetolon
    * (steroid ringan) utk konjungtivitis alergi, sementara AAO lebih hati-hati),
-   * plus kriteria rujukan RESMI yg jadi kompetensi gatekeeper FKTP. Diisi
-   * SELEKTIF — hanya kasus yg panduan resminya menambah nilai (divergensi /
-   * kriteria rujukan penting), bukan semua kasus (cegah wall-of-text debrief).
+   * plus kriteria rujukan RESMI yg jadi kompetensi gatekeeper FKTP. Sejak
+   * audit provenance 2026-07-18, setiap kasus mempunyai catatan ringkas:
+   * sebutkan floor nasional yang ada, atau nyatakan jujur bila PPK 1186/2022
+   * tidak memiliki jalur tersendiri dan pedoman EBM mana yang mengisi gap.
+   * Detail panjang tetap hanya untuk divergensi/kriteria rujukan penting.
    * Sama kelas dgn 2 field di atas: murni display, TAK di-hash/TAK skor.
    */
   panduanResmi?: string

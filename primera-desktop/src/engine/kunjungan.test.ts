@@ -891,6 +891,7 @@ function buatStateKader(): GameState {
     posyanduRwTerakhir: {},
     program: {},
     tutorialAktif: false,
+    careEpisodes: [],
   }
 }
 

@@ -9,7 +9,8 @@
  * scroll/viewport sungguhan — cuma kelihatan saat manusia main langsung.
  */
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DeckTerapi } from './DeckTerapi'
 import { buatEncounter } from '@engine/clinic'
 import { buatPasienDariKasus } from '@engine/director'
@@ -184,5 +185,59 @@ describe('<DeckTerapi /> — reduced-motion menggantikan scrollIntoView smooth k
     expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith(
       expect.objectContaining({ behavior: 'smooth' }),
     )
+  })
+})
+
+describe('<DeckTerapi /> - kotak cari Edukasi/Tindakan tidak kehilangan fokus', () => {
+  it('klik tab Edukasi langsung menyiapkan input untuk ketikan pertama', async () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const enc = buatEncounter(pasien)
+    const user = userEvent.setup()
+
+    render(<DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />)
+
+    await user.click(screen.getByRole('tab', { name: /^Edukasi/ }))
+    const input = screen.getByLabelText('Cari topik edukasi')
+    await waitFor(() => expect(input).toHaveFocus())
+    await user.keyboard('oralit')
+
+    expect(input).toHaveValue('oralit')
+  })
+
+  it('sesudah memilih hasil edukasi, fokus kembali ke kotak cari', async () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const enc = buatEncounter(pasien)
+    const dispatch = vi.fn()
+    const topik = Object.values(PACK.edukasi)[0]!
+    const user = userEvent.setup()
+
+    render(<DeckTerapi enc={enc} dispatch={dispatch} lastEvents={[]} eventTick={0} />)
+
+    await user.click(screen.getByRole('tab', { name: /^Edukasi/ }))
+    const input = screen.getByLabelText('Cari topik edukasi')
+    await user.type(input, topik.nama)
+    await user.click(screen.getByRole('button', { name: topik.nama }))
+
+    expect(dispatch).toHaveBeenCalledWith({ type: 'TAMBAH_EDUKASI', edukasiId: topik.id })
+    expect(input).toHaveFocus()
+  })
+
+  it('tab dan hasil Tindakan memakai perlindungan fokus yang sama', async () => {
+    const pasien = buatPasienDariKasus('ispa_common_cold', PACK, new Rng(1, 'x'))
+    const enc = buatEncounter(pasien)
+    const dispatch = vi.fn()
+    const tindakan = Object.values(PACK.tindakan)[0]!
+    const user = userEvent.setup()
+
+    render(<DeckTerapi enc={enc} dispatch={dispatch} lastEvents={[]} eventTick={0} />)
+
+    await user.click(screen.getByRole('tab', { name: /^Tindakan/ }))
+    const input = screen.getByLabelText('Cari tindakan klinis')
+    await waitFor(() => expect(input).toHaveFocus())
+    await user.type(input, tindakan.nama)
+    await user.click(screen.getByRole('button', { name: tindakan.nama }))
+
+    expect(dispatch).toHaveBeenCalledWith({ type: 'TAMBAH_TINDAKAN', tindakanId: tindakan.id })
+    expect(input).toHaveFocus()
   })
 })

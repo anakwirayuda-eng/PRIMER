@@ -206,6 +206,7 @@ export type KelompokTindakan =
   | 'luka'
   | 'fraktur'
   | 'tht_mata'
+  | 'mata'
   | 'ibu_anak'
   | 'rujuk'
   | 'lainnya'
@@ -216,6 +217,7 @@ export const URUTAN_KELOMPOK_TINDAKAN: readonly KelompokTindakan[] = [
   'luka',
   'fraktur',
   'tht_mata',
+  'mata',
   'ibu_anak',
   'rujuk',
   'lainnya',
@@ -226,7 +228,8 @@ export const LABEL_KELOMPOK_TINDAKAN: Record<KelompokTindakan, string> = {
   napas_cairan: 'Napas & Cairan',
   luka: 'Luka, Luka Bakar & Bedah Minor',
   fraktur: 'Fraktur & Imobilisasi',
-  tht_mata: 'THT & Mata',
+  tht_mata: 'THT & Vestibular',
+  mata: 'Mata',
   ibu_anak: 'Ibu, Bayi & Genital',
   // M13 Batch 4: tindakan persiapan-rujukan + prosedur di luar lingkup FKTP
   // (yang hanya muncul sbg tindakanSalahUmum) — dikelompokkan bersama supaya
@@ -269,13 +272,14 @@ export const KELOMPOK_TINDAKAN_BY_ID: Record<string, KelompokTindakan> = {
   irigasi_luka_fraktur_terbuka: 'fraktur',
 
   ekstraksi_serumen: 'tht_mata',
+  kompresi_hidung: 'tht_mata',
   tampon_epistaksis: 'tht_mata',
   ekstraksi_benda_hidung_tekanan_positif: 'tht_mata',
   ekstraksi_benda_hidung_blind_probing: 'tht_mata',
   manuver_epley: 'tht_mata',
-  ekstraksi_benda_asing_konjungtiva: 'tht_mata',
-  epilasi_trikiasis: 'tht_mata',
-  uji_visus_refraksi: 'tht_mata',
+  ekstraksi_benda_asing_konjungtiva: 'mata',
+  epilasi_trikiasis: 'mata',
+  uji_visus_refraksi: 'mata',
 
   jahit_perineum: 'ibu_anak',
   konseling_laktasi: 'ibu_anak',

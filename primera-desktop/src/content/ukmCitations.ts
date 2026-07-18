@@ -7,19 +7,19 @@
 import type { IndikatorPisPk, KartuIntervensi, SkenarioKunjungan } from './types'
 
 const SUMBER_SAJI =
-  'Permenkes RI No. 39 Tahun 2016, Lampiran I Bab IV: kunjungan rumah memakai SAJI dan Pinkesga sesuai masalah keluarga.'
+  'Permenkes RI No. 39 Tahun 2016, Lampiran I Bab IV: kunjungan rumah memakai SAJI dan Pinkesga sesuai masalah keluarga; implementasi ILP Kemenkes RI 15 April 2025 menegaskan kader tetap memakai SAJI dan KIE pada kunjungan rumah.'
 
 const SUMBER_ILP =
-  'KMK RI No. HK.01.07/MENKES/2015/2023: kunjungan rumah menindaklanjuti sasaran yang kehilangan layanan, tidak patuh, atau memiliki tanda bahaya melalui jejaring Puskesmas-Pustu-Posyandu.'
+  'KMK RI No. HK.01.07/MENKES/2015/2023: kunjungan rumah menindaklanjuti sasaran yang kehilangan layanan, tidak patuh, atau memiliki tanda bahaya melalui jejaring Puskesmas-Pustu-Posyandu; laporan implementasi Kemenkes RI 15 April 2025 mengonfirmasi missing service, non-compliance, dan danger sign sebagai keluaran kunjungan rumah ILP.'
 
 const SUMBER_POSYANDU =
-  'Panduan Pengelolaan Posyandu Bidang Kesehatan, Kementerian Kesehatan RI, Agustus 2023, Bab III: lima langkah pelayanan untuk seluruh siklus hidup; selaras KMK RI No. HK.01.07/MENKES/2015/2023 tentang ILP.'
+  'Panduan Pengelolaan Posyandu Bidang Kesehatan, Kementerian Kesehatan RI, Agustus 2023, Bab III: lima langkah pelayanan untuk seluruh siklus hidup; Kurikulum Pelatihan Keterampilan Dasar Kader Posyandu Kemenkes RI 2024 memuat 25 keterampilan kader; keduanya selaras dengan ILP KMK RI No. HK.01.07/MENKES/2015/2023.'
 
 const SUMBER_PROLANIS =
   'Panduan Praktis PROLANIS BPJS Kesehatan No. 06 (dokumen resmi era 2014-2019): konsultasi, edukasi klub, reminder, dan home visit; dibaca bersama KMK RI No. HK.01.07/MENKES/2015/2023 yang mengintegrasikan layanan dewasa-lansia.'
 
 const SUMBER_KLB =
-  'Permenkes RI No. 19 Tahun 2024 menempatkan surveilans dan respons penyakit menular pada klaster P2PL; KMK RI No. HK.01.07/MENKES/2015/2023 menghubungkannya dengan pencatatan, pelaporan, dan PWS.'
+  'Permenkes RI No. 1 Tahun 2026 tentang Kejadian Luar Biasa, Wabah, dan Krisis Kesehatan menjadi dasar operasional penyelidikan, surveilans, respons, komunikasi risiko, dan pelaporan KLB; Permenkes RI No. 19 Tahun 2024 menempatkan fungsi tersebut pada klaster P2PL Puskesmas, selaras dengan ILP KMK RI No. HK.01.07/MENKES/2015/2023.'
 
 const SUMBER_JKN =
   'Permenkes RI No. 39 Tahun 2016, Lampiran I: kepesertaan JKN adalah indikator keluarga sehat; pada langkah Jelaskan dan Bantu, JKN dicontohkan untuk mengatasi hambatan biaya layanan.'

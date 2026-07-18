@@ -229,6 +229,17 @@ describe('B1.3 — klinik membuka pemulihan keluarga setelah karma', () => {
       { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_prapto' },
     )
     expect(dibuka.kunjungan?.skenarioId).toBe('prapto_k1')
+
+    const pulih = mainkanKunjungan(
+      { ...akhir, blok: 'siang', lapanganTerpakai: false, hasilKunjunganHariIni: undefined },
+      'keluarga_prapto',
+      { hipotesis: 'benar', intervensi: 'cocok' },
+    )
+    const episodeKlinis = pulih.careEpisodes.find(
+      (episode) => episode.familyId === 'keluarga_prapto' && episode.problemId === 'demam_tifoid',
+    )
+    expect(episodeKlinis?.status).toBe('terverifikasi')
+    expect(episodeKlinis?.history.at(-1)?.label).toBe('Pemulihan keluarga menutup loop klinik')
   })
 
   it('follow-up generik atau penanganan di bawah A tidak memulihkan keluarga', () => {

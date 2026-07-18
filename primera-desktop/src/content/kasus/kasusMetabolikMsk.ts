@@ -19,8 +19,9 @@ import type { KasusKlinis } from '../types'
 export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
   /* ======================================================================
    * 1. Gout — Artritis Gout Akut (serangan akut)
-   * Poin ajar: serangan AKUT → NSAID/kolkisin. JANGAN memulai allopurinol saat
-   * serangan akut (memperpanjang & memperberat serangan). MTP-1 klasik (podagra).
+   * Poin ajar: serangan AKUT → antiinflamasi. Allopurinol bukan pereda akut,
+   * tetapi boleh dimulai saat flare bila ULT memang terindikasi dan disertai
+   * antiinflamasi/profilaksis serta tindak lanjut (ACR 2020).
    * ==================================================================== */
   {
     id: 'mm_gout_artritis_akut',
@@ -130,24 +131,24 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       // (firewall alergi memblokirnya); kolkisin jadi satu-satunya slot valid.
       obatBenar: [],
       obatAlternatif: [['natrium_diklofenak_50', 'kolkisin_500']],
+      obatOpsional: ['allopurinol_100'],
       obatSalahUmum: [
-        { id: 'allopurinol_100', alasan: 'Di FKTP, default aman: JANGAN mulai allopurinol saat serangan akut (fluktuasi asam urat memperpanjang serangan); mulai urate-lowering 2–4 minggu setelah reda + titrasi ke target <6 mg/dL. Catatan ACR 2020: memulai ULT saat serangan sebenarnya boleh HANYA bila disertai profilaksis antiinflamasi & follow-up ketat — di luar cakupan penanganan akut FKTP ini. Bila pasien SUDAH rutin allopurinol, jangan dihentikan.', bahaya: 'kontraindikasi' },
         { id: 'amoxicillin_500', alasan: 'Gout bukan infeksi bakteri; antibiotik tidak berperan. Bila curiga artritis septik, itu justru indikasi RUJUK, bukan antibiotik oral coba-coba.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['diet_purin', 'minum_air_cukup', 'kontrol_rutin'],
     },
-    clue: 'Serangan gout AKUT (monoartritis MTP-1, onset malam, pemicu tinggi purin) → redakan radang dulu dengan NSAID (natrium diklofenak) ATAU kolkisin. ATURAN EMAS: JANGAN mulai allopurinol saat serangan; bila pasien sudah rutin allopurinol JANGAN dihentikan. Mulai/titrasi urate-lowering 2–4 minggu setelah reda, target asam urat <6 mg/dL (PPK PAPDI / ACR 2020).',
-    panduanResmi: 'PPK 1186/2022 menambah opsi resmi di luar clue: kortikosteroid sistemik jangka pendek (prednison 2–3×5 mg/hari, 3 hari) bila NSAID dan kolkisin tidak berespon baik. Dosis kolkisin resmi rendah 0,5–0,6 mg/hari (maks 6 mg), paling efektif pada 24 jam pertama serangan.',
+    clue: 'Serangan gout AKUT (monoartritis MTP-1, onset malam, pemicu tinggi purin) → redakan radang dengan kolkisin, NSAID, atau kortikosteroid sesuai kontraindikasi. Allopurinol BUKAN analgesik akut, tetapi ACR 2020 menegaskan bahwa bila urate-lowering therapy (ULT) memang terindikasi, dosis rendah boleh dimulai saat flare dan tidak terbukti memperpanjang flare, asalkan terapi antiinflamasi/profilaksis serta tindak lanjut tersedia. Bila sudah rutin allopurinol, jangan dihentikan. Titrasi ke target asam urat <6 mg/dL.',
+    panduanResmi: 'PPK 1186/2022 memuat antiinflamasi flare dan praktik lama menunda ULT sampai serangan reda. Bukti lebih baru ACR 2020 secara kondisional memilih memulai ULT saat flare bila keputusan ULT sudah dibuat; gunakan allopurinol dosis rendah, sertai profilaksis antiinflamasi 3–6 bulan, lalu titrasi berbasis asam urat. Pada kasus ini flare berulang dan asam urat >9 mg/dL membuat diskusi ULT masuk akal, tetapi bukan pengganti kolkisin untuk nyeri akut.',
     // M11 (perintis lapisan pengayaan — dari ide asal user): mutiara "temuan
     // bisa menyesatkan" + catatan realita FKTP.
     mutiaraEbm: 'Kadar asam urat serum bisa NORMAL bahkan RENDAH saat serangan akut (asam urat berpindah ke sendi/mengendap) — hasil normal TIDAK menyingkirkan gout. Diagnosis serangan akut tetap KLINIS (monoartritis MTP-1 mendadak, merah-nyeri hebat); baku emas = kristal MSU di cairan sendi.',
     catatanRealita: 'Fornas 1199/2025 mencantumkan kolkisin dan NSAID di FPKTP, tetapi panduan RKO Kemenkes mengakui stok obat dapat kosong antardaerah. Bila kolkisin tidak ada, pilih antiinflamasi lain yang didukung pedoman setelah memeriksa kontraindikasi; jangan menganggap diklofenak universal atau memakai allopurinol sebagai pengganti terapi akut.',
     konsekuensi: {
-      narasi: 'Bila allopurinol dimulai saat serangan akut, nyeri justru berkepanjangan dan pasien menganggap obat "tidak cocok" lalu berhenti — kontrol jangka panjang gagal.',
+      narasi: 'Bila allopurinol diberikan sebagai pengganti antiinflamasi, nyeri akut tidak tertangani; bila rencana ULT dan tindak lanjut tidak dibahas, pasien tetap berisiko flare berulang dan kerusakan sendi.',
       kembaliHariMin: 2,
       kembaliHariMax: 5,
-      kondisiKembali: 'Pasien kembali dengan serangan yang malah memberat atau berpindah ke sendi lain, mengeluh obat "bikin tambah sakit".',
-      guideline: 'ACR 2020 Gout Guideline / PPK PAPDI — anti-inflamasi saat akut, urate-lowering ditunda pasca-serangan.',
+      kondisiKembali: 'Pasien kembali karena nyeri flare tidak reda atau beberapa bulan kemudian mengalami serangan ulang tanpa rencana kendali asam urat.',
+      guideline: 'ACR 2020 Gout Guideline / PPK FKTP — antiinflamasi wajib menangani flare; ULT boleh dimulai saat flare bila terindikasi, dengan profilaksis dan treat-to-target.',
     },
     alergiTrap: {
       kelas: 'nsaid',
@@ -408,8 +409,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
 
   /* ======================================================================
    * 4. Osteoartritis Lutut
-   * Poin ajar: nyeri mekanik lansia, kaku pagi <30 menit, krepitasi; parasetamol/NSAID
-   * + latihan penguatan + turun BB. Bukan rujuk rutin.
+   * Poin ajar: nyeri mekanik lansia, kaku pagi <30 menit, krepitasi; latihan
+   * penguatan + turun BB adalah inti. Analgesik dipilih sesuai risiko individual.
    * ==================================================================== */
   {
     id: 'mm_osteoartritis_lutut',
@@ -516,7 +517,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       { region: 'jantung', temuan: 'S1/S2 reguler, murmur (-).', relevan: false },
     ],
     lab: [
-      { id: 'asam_urat_darah', hasil: 'Asam urat 5.4 mg/dL (normal) — menyingkirkan gout sebagai penyebab.', flag: 'normal', relevan: true },
+      { id: 'asam_urat_darah', hasil: 'Asam urat 5.4 mg/dL (normal) — tidak menyingkirkan gout sendiri; pola nyeri mekanik kronik, kaku singkat, dan krepitasi lebih kuat mendukung OA.', flag: 'normal', relevan: true },
       { id: 'darah_rutin', hasil: 'LED normal, leukosit normal — mendukung proses degeneratif, bukan inflamasi sistemik.', flag: 'normal', relevan: true },
     ],
     diagnosisBanding: ['M17.9', 'M10.9', 'M06.9'],
@@ -528,12 +529,12 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       obatBenar: ['paracetamol_500'],
       obatSalahUmum: [
         { id: 'prednison_5', alasan: 'Kortikosteroid oral TIDAK diindikasikan untuk OA — OA bukan penyakit inflamasi sistemik; steroid rutin hanya menimbulkan efek samping (osteoporosis, gula naik) tanpa manfaat.', bahaya: 'nonPrimer' },
-        { id: 'allopurinol_100', alasan: 'Ini bukan gout (asam urat normal, nyeri mekanik) — allopurinol tidak ada indikasinya.', bahaya: 'nonPrimer' },
+        { id: 'allopurinol_100', alasan: 'Pola klinis kasus ini adalah OA mekanik, bukan flare gout; kadar asam urat normal saja tidak menyingkirkan gout, tetapi allopurinol tetap tidak memiliki indikasi pada OA.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['peregangan_sendi', 'aktivitas_fisik', 'gizi_seimbang', 'postur_ergonomi'],
     },
-    clue: 'Osteoartritis lutut: nyeri MEKANIK (memberat aktivitas, mereda istirahat) + kaku pagi SINGKAT (<30 menit) + krepitasi + usia lanjut, TANPA tanda inflamasi sistemik. Tata laksana: edukasi + latihan penguatan kuadrisep + turun BB + analgetik (parasetamol dulu, NSAID bila perlu; hati-hati lambung/ginjal/TD). Rontgen bukan syarat diagnosis (klinis cukup). Rujuk hanya bila kandidat operasi/sendi gagal (PPK / OARSI).',
-    panduanResmi: 'Divergensi: clue/OARSI menaruh parasetamol sbg analgetik lini pertama, tapi medikamentosa resmi PPK 1186/2022 hanya mencantumkan analgesik topikal + NSAID (COX-1/COX-2 meloksikam), TANPA menyebut parasetamol. PPK juga mewajibkan RUJUK bila curiga efusi sendi atau komplikasi terapi COX-1.',
+    clue: 'Osteoartritis lutut: nyeri MEKANIK (memberat saat aktivitas, mereda saat istirahat) + kaku pagi singkat (<30 menit) + krepitasi + usia >45 tahun, tanpa tanda inflamasi sistemik. Inti terapi adalah edukasi, latihan penguatan kuadrisep, aktivitas aerobik, dan penurunan berat badan. NICE NG226 (2022) memprioritaskan NSAID topikal bila aman; parasetamol tidak rutin, tetapi pada pasien ini alergi NSAID membuat pemakaian sesekali untuk nyeri jangka pendek masuk akal. Rontgen tidak rutin diperlukan.',
+    panduanResmi: 'PPK 1186/2022 mencantumkan analgesik topikal dan NSAID serta rujukan bila terapi gagal atau ada komplikasi. NICE NG226 (2022) menempatkan latihan terapeutik dan manajemen berat badan sebagai terapi inti, menawarkan NSAID topikal untuk OA lutut, dan membatasi parasetamol pada pemakaian singkat saat pilihan lain kontraindikasi, tidak ditoleransi, atau gagal. Jadi parasetamol kasus ini adalah keputusan individual karena alergi NSAID, bukan aturan lini pertama universal.',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat tanpa latihan & turunkan berat badan, kekuatan otot paha terus menurun, nyeri berulang, dan sendi makin cepat rusak.',
       kembaliHariMin: 21,
@@ -654,17 +655,18 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['M54.5', 'M51.1', 'M54.4'],
     tatalaksana: {
-      // Audit CODEX 2026-07-04: NSAID+parasetamol DULU wajib sekaligus,
-      // padahal clue bilang "analgetik (parasetamol/NSAID)" — pilih salah
-      // satu, tanpa alergiTrap yg menetralkan (kasus ini bukan trap).
-      obatBenar: [],
-      obatAlternatif: [['natrium_diklofenak_50', 'paracetamol_500']],
+      // NICE NG59/QS155: parasetamol tunggal tidak efektif untuk LBP tanpa
+      // sciatica. NSAID dosis efektif terendah dan sesingkat mungkin menjadi
+      // pilihan farmakologis; edukasi tetap aktif adalah inti tata laksana.
+      obatBenar: ['natrium_diklofenak_50'],
+      obatOpsional: ['paracetamol_500'],
       obatSalahUmum: [
         { id: 'tramadol_50', alasan: 'Opioid tidak diperlukan untuk LBP mekanik akut tanpa red flag — risiko ketergantungan & sedasi melebihi manfaat; analgetik sederhana + tetap aktif sudah cukup.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['postur_ergonomi', 'aktivitas_fisik', 'peregangan_sendi'],
     },
-    clue: 'Low back pain mekanik tanpa RED FLAG (tanpa defisit neurologis, tanpa gangguan BAK/BAB, tanpa demam/BB turun/riwayat kanker/trauma berat) → tata laksana KONSERVATIF: edukasi + analgetik (parasetamol/NSAID) + TETAP AKTIF (hindari tirah baring total) + koreksi ergonomi. JANGAN rontgen/rujuk rutin — pencitraan hanya bila ada red flag (PPK Nyeri Punggung Bawah / NICE LBP).',
+    clue: 'Low back pain mekanik akut tanpa red flag → yakinkan, dorong tetap aktif, beri panduan kembali bekerja/ergonomi, dan hindari tirah baring total. Bila obat diperlukan, gunakan NSAID pada dosis efektif terendah selama sesingkat mungkin setelah menilai risiko gastrointestinal, ginjal, dan kardiovaskular; parasetamol tunggal tidak dianjurkan. Jangan lakukan pencitraan rutin tanpa kecurigaan patologi serius.',
+    panduanResmi: 'PPK 1186/2022 tidak memuat jalur low back pain nonspesifik tersendiri. WHO 2023 dan NICE NG59 yang masih aktif menempatkan edukasi, aktivitas, dan intervensi nonfarmakologis sebagai inti; NICE melarang parasetamol tunggal serta imaging rutin dan membatasi NSAID pada dosis terendah untuk durasi tersingkat setelah skrining risiko.',
     konsekuensi: {
       narasi: 'Rontgen & rujukan rutin tanpa red flag membuang biaya, meningkatkan kecemasan ("takut tulang rusak"), dan mendorong tirah baring berlebih yang justru memperlambat pemulihan.',
       kembaliHariMin: 7,
@@ -780,6 +782,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['istirahat_cukup', 'peregangan_sendi', 'postur_ergonomi'],
     },
     clue: 'Mialgia pasca-aktivitas: nyeri OTOT difus (bukan sendi), pemicu kerja fisik/olahraga berlebih, TANPA demam/bengkak sendi/urin gelap. Simtomatik (parasetamol/NSAID) + istirahat + peregangan; self-limiting beberapa hari. Waspadai bendera merah: urin seperti teh (rabdomiolisis), demam (miositis viral), atau riwayat statin.',
+    panduanResmi: 'PPK 1186/2022 tidak memiliki algoritme mialgia mekanik sebagai penyakit tersendiri. Karena ini sindrom gejala, floor FKTP adalah menilai penyebab dan red flag, memberi perawatan konservatif singkat, serta tidak memberi antibiotik atau kortikosteroid empiris. Kelemahan objektif, urin gelap, demam sistemik, atau nyeri progresif memerlukan pemeriksaan/rujukan sesuai penyebab.',
     konsekuensi: {
       narasi: 'Overtreatment (antibiotik/steroid) pada keluhan swasirna hanya menambah risiko efek samping dan menormalkan harapan pasien akan obat berlebih.',
       kembaliHariMin: 4,
@@ -885,25 +888,25 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     lab: [
       { id: 'darah_rutin', hasil: 'Hb 10.6 (anemia penyakit kronik), LED sangat meningkat (58 mm/jam), trombosit reaktif.', flag: 'abnormal', relevan: true },
-      { id: 'asam_urat_darah', hasil: 'Asam urat 4.8 mg/dL (normal) — menyingkirkan gout poliartikular.', flag: 'normal', relevan: true },
+      { id: 'asam_urat_darah', hasil: 'Asam urat 4.8 mg/dL (normal) — tidak menyingkirkan gout; pola poliartritis simetris sendi kecil, kaku pagi panjang, nodul, dan inflamasi sistemik lebih kuat mendukung artritis reumatoid.', flag: 'normal', relevan: true },
     ],
     diagnosisBanding: ['M06.9', 'M10.9', 'M17.9'],
     tatalaksana: {
       obatBenar: ['meloksikam_15'],
       obatSalahUmum: [
         { id: 'prednison_5', alasan: 'Steroid oral mungkin meredakan sementara, tetapi memulai steroid jangka panjang di FKTP tanpa rujukan menutupi penyakit dan menunda DMARD — pengelolaan RA (metotreksat dll.) adalah ranah spesialis penyakit dalam/reumatologi.', bahaya: 'nonPrimer' },
-        { id: 'allopurinol_100', alasan: 'Ini bukan gout (asam urat normal, poliartritis simetris sendi kecil, kaku pagi panjang) — allopurinol keliru total.', bahaya: 'nonPrimer' },
+        { id: 'allopurinol_100', alasan: 'Pola poliartritis simetris sendi kecil, kaku pagi panjang, nodul, dan inflamasi sistemik mendukung RA, bukan gout. Kadar asam urat normal sendiri bukan alat penyingkir gout, tetapi allopurinol tidak mengobati RA.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['peregangan_sendi', 'kontrol_rutin'],
     },
-    clue: 'Artritis reumatoid (SKDI 3A → RUJUK): poliartritis SIMETRIS sendi kecil (MCP/PIP/pergelangan) + kaku pagi >1 JAM + gejala sistemik + LED/anemia kronik. Berbeda dari OA (mekanik, kaku singkat, sendi besar/DIP). Di FKTP: kenali, beri analgetik/NSAID untuk kenyamanan, lalu RUJUK penyakit dalam untuk DMARD dini (metotreksat) — jendela emas cegah destruksi sendi (ACR/EULAR 2010).',
-    panduanResmi: 'Clue/ACR-EULAR tekankan rujuk DINI untuk DMARD (metotreksat); PPK 1186/2022 tak sebut DMARD di FKTP — cukup NSAID (meloksikam 7,5–15 mg/hari) + steroid dosis rendah sbg bridging, dan rujukan resmi baru terpicu bila TAK membaik dengan NSAID+steroid atau ada komplikasi/deformitas.',
+    clue: 'Artritis reumatoid (SKDI 3A → RUJUK): poliartritis SIMETRIS sendi kecil (MCP/PIP/pergelangan) + kaku pagi >1 JAM + gejala sistemik + LED/anemia kronik. Berbeda dari OA (mekanik, kaku singkat, sendi besar/DIP). Di FKTP: kenali, beri analgesia singkat sesuai risiko, lalu RUJUK dini untuk DMARD agar kerusakan sendi tidak menjadi permanen. Kriteria klasifikasi ACR/EULAR 2010 tetap dipakai; strategi terapinya diperbarui EULAR 2025.',
+    panduanResmi: 'PPK 1186/2022 memberi terapi simptomatik awal di FKTP dan rujukan bila tidak membaik/berkomplikasi. EULAR 2025 menegaskan terapi DMARD sedini mungkin dan strategi treat-to-target oleh layanan yang mampu memantau. Karena vignette sudah menunjukkan deformitas dini dan penyakit aktif tiga bulan, menunggu kegagalan NSAID berulang hanya menunda terapi pemodifikasi penyakit.',
     konsekuensi: {
       narasi: 'Bila hanya diberi NSAID lalu dibiarkan tanpa DMARD, inflamasi sinovial terus mengikis tulang rawan dan tulang — dalam hitungan bulan-tahun terjadi deformitas permanen dan disabilitas.',
       kembaliHariMin: 30,
       kembaliHariMax: 90,
       kondisiKembali: 'Pasien kembali dengan jari-jari makin bengkok (deviasi ulnar, swan-neck), sendi rusak, dan sudah sulit menjahit.',
-      guideline: 'ACR/EULAR RA Classification 2010 — DMARD dini, rujukan reumatologi cegah kerusakan ireversibel.',
+      guideline: 'ACR/EULAR RA Classification 2010; EULAR RA Management 2025 — DMARD dini dan treat-to-target mencegah kerusakan ireversibel.',
     },
   },
 
@@ -921,8 +924,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     // ginjal hipertensif, tak dirinci) — kode WHO real yg menangkap kerusakan
     // organ ganda kronik yg sudah ditulis di PF/lab kasus ini.
     id: 'mm_hipertensi_urgensi',
-    nama: 'Hipertensi Urgensi',
-    icd10: 'I13.9',
+    nama: 'Hipertensi Berat Tanpa Kerusakan Organ Akut (Urgensi)',
+    icd10: 'I16.0',
     skdi: '3B',
     kategori: 'kardiovaskular',
     // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
@@ -1014,7 +1017,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       { id: 'fungsi_ginjal', hasil: 'Ureum/kreatinin sedikit meningkat (kesan nefropati hipertensi kronik).', flag: 'tinggi', relevan: true },
       { id: 'urinalisis', hasil: 'Proteinuria +1 — kerusakan organ target kronik ginjal.', flag: 'abnormal', relevan: true },
     ],
-    diagnosisBanding: ['I13.9', 'I11.9', 'I12.9'],
+    diagnosisBanding: ['I16.0', 'I13.9', 'I11.9'],
     tatalaksana: {
       // Audit CODEX 2026-07-04: amlodipin+kaptopril DULU wajib SEKALIGUS —
       // bertentangan dgn poin ajar kasus sendiri ("JANGAN drop cepat"): dua
@@ -1028,7 +1031,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       ],
       edukasi: ['diet_rendah_garam', 'kepatuhan_obat', 'kontrol_rutin', 'tanda_bahaya'],
     },
-    clue: 'HIPERTENSI URGENSI (SKDI 3B → RUJUK): TD ≥180/120 TANPA kerusakan organ target AKUT (tanpa nyeri dada iskemik, edema paru, defisit neurologis, ensefalopati). Prinsip: TURUNKAN PERLAHAN dengan obat ORAL (amlodipin/kaptopril) dalam 24–48 jam, TANPA target persen-per-jam — jangan drop cepat (nifedipin sublingual dilarang), kontrol ulang ~1 minggu. Rujuk penyakit dalam untuk evaluasi. Bila ADA kerusakan organ akut = EMERGENSI → IGD (obat IV, turunkan ≤25% pada jam pertama). Catatan: "≤25% jam pertama" adalah target EMERGENSI, BUKAN urgensi (ACC/AHA 2017; ESC/ESH 2023; InaSH-PERHI).',
+    clue: 'HIPERTENSI BERAT TANPA KERUSAKAN ORGAN AKUT (SKDI 3B → RUJUK): TD ≥180/120, tetapi tidak ada nyeri dada iskemik, edema paru, defisit neurologis, papiledema, atau ensefalopati. Konfirmasi pengukuran dan kepatuhan, lalu turunkan PERLAHAN selama 24–48 jam dengan obat ORAL serta tindak lanjut dekat; jangan memakai nifedipin sublingual atau mengejar penurunan cepat. Penurunan sekitar 25% pada jam pertama adalah target EMERGENSI, BUKAN urgensi. Bila ada kerusakan organ akut, rujuk IGD segera. Landasan: PNPK Hipertensi Dewasa KMK 303/2026, ESC 2024, dan pernyataan AHA acute-care 2024.',
+    panduanResmi: 'PNPK Hipertensi Dewasa KMK 303/2026 membedakan hipertensi berat tanpa kerusakan organ akut dari emergensi hipertensi. Ulangi pengukuran dengan teknik benar, cari tanda kerusakan organ akut, koreksi faktor pencetus/ketidakpatuhan, dan hindari penurunan cepat atau nifedipin sublingual. Kasus SKDI 3B ini dirujuk terencana setelah terapi oral awal dan koordinasi tindak lanjut; bila muncul kerusakan organ akut, jalurnya berubah menjadi rujuk emergensi.',
     konsekuensi: {
       narasi: 'Penurunan TD terlalu cepat (nifedipin sublingual) dapat memicu hipoperfusi otak/jantung dan justru menyebabkan stroke iskemik atau infark — sebaliknya membiarkan tanpa rujuk berisiko progres ke emergensi.',
       kembaliHariMin: 1,
@@ -1040,8 +1044,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
 
   /* ======================================================================
    * 9. Gagal Jantung Kongestif — WAJIB RUJUK penyakit_dalam (SKDI 3B)
-   * Poin ajar: sesak + edema + ortopnea/PND → stabilisasi (O2, ISDN, furosemid)
-   * lalu rujuk untuk ekokardiografi & terapi definitif.
+   * Poin ajar: sesak + edema + ortopnea/PND → posisi, dekongesti, monitor,
+   * oksigen hanya bila hipoksemik, lalu rujuk untuk terapi definitif.
    * ==================================================================== */
   {
     id: 'mm_gagal_jantung_kongestif',
@@ -1158,11 +1162,12 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     diagnosisBanding: ['I50.0', 'I50.9', 'J44.9'],
     tatalaksana: {
       obatBenar: ['furosemid_40', 'isosorbid_dinitrat_5'],
-      // Audit CODEX 2026-07-16 #7a: clue memerintahkan "posisi setengah duduk +
-      // oksigen" sebagai stabilisasi, tetapi keduanya dulu TAK ada di prosedur —
-      // memilih oksigen justru dihukum sbg tindakan di luar rencana (-15). Kini
-      // jadi prosedur yang dinilai (stabilisasi FKTP sebelum rujuk).
-      prosedur: ['posisi_semifowler', 'oksigen'],
+      prosedur: ['posisi_semifowler'],
+      // ESC 2021: oksigen tidak rutin bila SpO2 >=90%. PPK 1186/2022 masih
+      // memuat O2 2-4 L/menit sebagai bundel pra-rujuk. Pada SpO2 92% tindakan
+      // ini boleh mengikuti penilaian klinis/protokol lokal, tetapi bukan slot
+      // wajib dan tidak boleh dihukum bila dipilih.
+      prosedurOpsional: ['oksigen'],
       obatSalahUmum: [
         { id: 'natrium_diklofenak_50', alasan: 'NSAID DIKONTRAINDIKASIKAN pada gagal jantung — menahan natrium/air memperberat kongesti dan memperburuk fungsi ginjal. Jangan diberikan untuk keluhan pegal apa pun di sini.', bahaya: 'kontraindikasi' },
         { id: 'bisoprolol_5', alasan: 'Beta-blocker BERMANFAAT jangka panjang, tapi JANGAN dimulai saat dekompensasi akut/kongesti (memperburuk curah jantung sesaat) — inisiasi dilakukan setelah stabil, oleh spesialis. Di FKTP fokus stabilisasi + rujuk.', bahaya: 'kontraindikasi' },
@@ -1181,12 +1186,10 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       // terapiKritis: skip → cap D + pasien memburuk.
       terapiKritis: ['furosemid_40'],
     },
-    // TANPA stabilisasiWajib oksigen: SpO2 pasien ini 92% (bukan hipoksemia
-    // <90%), jadi oksigen rutin BUKAN gerbang EBM hard — ia tetap prosedur yang
-    // dinilai (fix #7a) & furosemid jadi terapiKritis penyelamat (fix #2), tetapi
-    // melewatkan oksigen tidak meng-cap grade. Lihat m11prosesStabilisasi.test.ts.
-    clue: 'GAGAL JANTUNG KONGESTIF (SKDI 3B → RUJUK): sesak progresif + ortopnea + PND + edema tungkai + JVP↑ + S3 gallop + ronki basal (kriteria Framingham). Di FKTP: STABILISASI — posisi setengah duduk, oksigen, furosemid (dekongesti), ISDN bila TD memadai — lalu RUJUK penyakit dalam untuk ekokardiografi & terapi definitif (ACE-I/beta-blocker dititrasi). JANGAN mulai beta-blocker saat dekompensasi; HINDARI NSAID (PPK Gagal Jantung / PERKI / ESC).',
-    panduanResmi: 'PPK 1186/2022 memerinci stabilisasi gagal jantung akut di FKTP sebelum rujuk: oksigen 2–4 L/menit + furosemid injeksi 20–40 mg bolus IV, boleh diulang tiap jam hingga maksimal 600 mg/hari, lalu SEGERA RUJUK. Batasi cairan ≤1,5 L/hari (≤1 L bila berat).',
+    // TANPA stabilisasiWajib oksigen: SpO2 92% bukan ambang wajib EBM <90%.
+    // Furosemid tetap terapiKritis penyelamat; lihat m11prosesStabilisasi.test.ts.
+    clue: 'GAGAL JANTUNG KONGESTIF (SKDI 3B → RUJUK): sesak progresif + ortopnea + PND + edema tungkai + JVP↑ + S3 gallop + ronki basal. Di FKTP: dudukkan setengah duduk, monitor, beri furosemid untuk dekongesti, dan rujuk; ISDN hanya bila tekanan darah memadai serta tidak ada penggunaan PDE5-inhibitor. Oksigen WAJIB bila SpO2 <90%; pada SpO2 92% seperti kasus ini jangan diberikan rutin hanya karena pasien sesak. JANGAN mulai beta-blocker saat masih dekompensasi dan hindari NSAID (PPK/PERKI; ESC HF 2021).',
+    panduanResmi: 'PPK 1186/2022 masih memerinci oksigen 2–4 L/menit dan furosemid injeksi 20–40 mg sebelum rujuk. ESC HF 2021 memberi batas lebih presisi: oksigen direkomendasikan bila SpO2 <90% atau PaO2 <60 mmHg dan tidak digunakan rutin pada pasien nonhipoksemik karena dapat menyebabkan vasokonstriksi serta menurunkan curah jantung. Karena SpO2 vignette 92%, oksigen dimodelkan opsional menurut penilaian klinis/protokol lokal, bukan jawaban wajib.',
     konsekuensi: {
       narasi: 'Tanpa dekongesti & rujukan, kongesti paru memberat menuju edema paru akut; pemberian NSAID atau inisiasi beta-blocker saat basah dapat mempercepat dekompensasi fatal.',
       kembaliHariMin: 1,

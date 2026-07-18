@@ -114,17 +114,18 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['J00', 'J06.9', 'J02.9'],
     tatalaksana: {
-      // Fix G3 (triase DeepThink 2026-07-11): pasien ini eksplisit BELUM batuk
-      // ("cuma tenggorokan gatal sedikit", q_batuk) — ambroxol (mukolitik)
-      // hanya berindikasi pada batuk produktif, jadi tak boleh jadi slot wajib.
+      // Pasien eksplisit belum batuk. NICE NG120 juga tidak menganjurkan
+      // mukolitik untuk batuk akut/bronkitis, sehingga ambroksol bukan opsi
+      // netral pada common cold tanpa sekret bronkus.
       obatBenar: ['paracetamol_500', 'ctm_4'],
-      obatOpsional: ['ambroxol_30'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Common cold adalah infeksi virus swasirna; antibiotik tidak mengubah perjalanan penyakit dan memicu resistensi (Kemenkes, PPRA).', bahaya: 'nonPrimer' },
+        { id: 'ambroxol_30', alasan: 'Pasien tidak batuk produktif dan mukolitik tidak dianjurkan untuk batuk akut/common cold tanpa penyakit jalan napas dasar; utamakan perawatan simtomatik yang benar-benar dibutuhkan.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['istirahat_cukup', 'etika_batuk', 'cuci_tangan', 'kompres_demam'],
     },
     clue: 'ISPA viral self-limiting 5–7 hari (Kemenkes). Sekret hidung serosa + demam ringan TANPA sesak/mengi → simtomatik saja, TIDAK perlu antibiotik.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 bab Rinitis Akut menempatkan common cold sebagai diagnosis klinis yang umumnya swasirna: terapi simtomatik, edukasi, dan kembali bila memburuk. Antibiotik tidak diberikan tanpa bukti komplikasi bakterial; NICE NG120 memperkuat bahwa mukolitik tidak ditawarkan rutin pada batuk akut.',
     konsekuensi: {
       narasi: 'Pemberian antibiotik sia-sia bisa memicu diare akibat gangguan flora usus dan menormalisasi harapan pasien akan antibiotik pada kunjungan berikutnya.',
       kembaliHariMin: 5,
@@ -366,7 +367,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       // DSS/perdarahan — tak boleh disubsidi topik suportif (kompres/istirahat).
       edukasiKritis: ['tanda_bahaya'],
     },
-    clue: 'Demam dengue: antipiretik HANYA paracetamol — HINDARI ibuprofen/aspirin/NSAID (risiko perdarahan). Kunci tata laksana adalah hidrasi & pemantauan tanda bahaya (WHO Dengue Guidelines; Kemenkes).',
+    clue: 'Demam dengue tanpa syok: antipiretik hanya parasetamol; hindari ibuprofen, aspirin, dan NSAID karena risiko perdarahan. Kunci tata laksana adalah hidrasi terarah, penilaian fase penyakit, serta pemantauan tanda bahaya dan kemampuan keluarga untuk kembali segera. WHO Arboviral Clinical Management 2025 dan PPK Kemenkes sama-sama menekankan reassessment, bukan rasa aman dari satu hasil trombosit/NS1.',
     panduanResmi: 'PPK 1186/2022 membolehkan dengue/DBD tanpa syok dirawat jalan di FKTP dengan parasetamol 10–15 mg/kgBB/kali (hindari ibuprofen/asetosal). Kriteria rujuk resminya konkret: syok, anak tak dapat minum adekuat, atau keluarga tak mampu merawat di rumah — bukan sekadar \'pantau tanda bahaya\'.',
     catatanRealita: 'Hematology analyzer dan alat diagnostik belum ada di semua Puskesmas; NS1 juga bukan syarat tunggal. Rawat jalan aman hanya bila pemantauan klinis dan, sesuai fase/indikasi, serial hematokrit/trombosit dapat diakses. Bila keluarga atau jejaring tak mampu menjamin kontrol dan tanda bahaya, ambang rujuk harus turun; jangan beri rasa aman palsu dari satu hasil lab.',
     konsekuensi: {
@@ -374,7 +375,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       kembaliHariMin: 2,
       kembaliHariMax: 4,
       kondisiKembali: 'Pasien kembali dengan nyeri perut hebat, muntah terus, gusi berdarah, dan akral dingin — tanda kebocoran plasma.',
-      guideline: 'WHO Dengue Guidelines 2009 / Kemenkes — larangan NSAID & pemantauan warning signs.',
+      guideline: 'WHO Arboviral Clinical Management 2025 / PPK Kemenkes — larangan NSAID, hidrasi, dan pemantauan warning signs.',
     },
   },
 
@@ -612,6 +613,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['cairan_oralit'],
     },
     clue: 'Anak ini dehidrasi RINGAN-SEDANG (rewel, mata cekung, haus/minum lahap, turgor kembali agak lambat = kriteria Rencana Terapi B, BUKAN sekadar tanpa-dehidrasi). Tata laksana (LINTAS DIARE Kemenkes/WHO): ORALIT 75 mL/kgBB diberikan SEDIKIT-SEDIKIT selama 3–4 JAM DI PUSKESMAS (perkiraan tanpa BB: <1th ±300mL, 1–5th ±600mL), lalu NILAI ULANG hidrasi — membaik → pulang lanjut oralit tiap BAB cair + ZINC 20 mg 10–14 hari (Rencana Terapi A) + teruskan ASI/makan; memburuk → Rencana Terapi C (IV/rujuk). TANPA antibiotik pada diare cair tanpa darah.',
+    panduanResmi: 'LINTAS DIARE/MTBS Kemenkes menjadi floor: dehidrasi ringan-sedang memakai Rencana Terapi B dengan oralit 75 mL/kgBB selama 3–4 jam dan penilaian ulang di fasilitas; setelah membaik lanjutkan oralit, zinc 20 mg/hari selama 10–14 hari untuk usia kasus ini, serta ASI/makan. Antibiotik dibatasi pada indikasi seperti disentri atau kolera, bukan diare cair sederhana.',
     // Fix M1/#6a (triase DeepThink 2026-07-11): "oralit tiap BAB cair" adalah
     // instruksi Rencana Terapi A (tanpa-dehidrasi) — sering keliru diterapkan
     // pulang-langsung pada anak yang sebenarnya sudah dehidrasi ringan-sedang.
@@ -744,29 +746,18 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       // putus obat adalah jalur klinis #1 ke MDR-TB, klinis lain tak sebanding.
       edukasiKritis: ['minum_oat_tuntas'],
     },
-    clue: 'Batuk >2 minggu + BB turun + keringat malam + kontak TB = terduga TB. Konfirmasi bakteriologis (baku emas terkini: TCM/Xpert MTB-RIF; BTA sputum sbg alternatif) → mulai OAT KDT program DOTS, TUNTAS 6 bulan. Tawarkan skrining HIV pada semua pasien TB. TB paru adalah kompetensi 4A — DITANGANI di Puskesmas, bukan dirujuk. Skrining kontak serumah.',
-    panduanResmi: 'PPK 1186/2022: paduan resmi Kategori 1 = 2HRZE/4H3R3 (6 bulan), OAT-KDT ditelan sekaligus dgn pengawas menelan obat (DOT). Meski TB paru kompetensi FKTP, PPK mewajibkan RUJUK bila suspek TB-MDR, BTA tetap (+) setelah pengobatan, atau TB dengan komplikasi/komorbid.',
-    // Fix M1/#8 (triase DeepThink 2026-07-11, keputusan Dr. Wirayuda: "teks
-    // dulu, mekanik nanti"): TCM (Xpert MTB-RIF) adalah baku emas lini-pertama
-    // pedoman TB terkini, BTA kini lebih berperan di pemantauan pengobatan —
-    // tapi katalog LAB game belum punya item TCM/HIV terpisah (nambahnya
-    // menyentuh field ternilai, ditahan dulu sampai keputusan scope M13/M14).
-    // Ini fix TEKS-saja: hasil bta_sputum tetap dipakai sbg proksi konfirmasi
-    // bakteriologis (lab/tatalaksana TIDAK berubah), murni menaikkan akurasi
-    // pengetahuan yang diajarkan clue + mutiaraEbm.
-    // Bagian D (adjudikasi 2026-07-12): nuansa TCM-vs-BTA diperjelas — bukan
-    // "BTA ketinggalan zaman", tapi PNPK 2019 sendiri membagi dua jalur resmi
-    // menurut ketersediaan alat (fasyankes dengan/tanpa TCM). TCM adalah alat
-    // JARINGAN (biasanya di Puskesmas rujukan/Labkesda/RS tertentu) — tak
-    // setiap Puskesmas punya mesinnya sendiri, jadi BTA tetap jalur SAH utk
-    // sebagian besar Puskesmas kita, bukan sekadar "terpaksa pakai yang lama".
-    mutiaraEbm: 'PNPK 2019 TB membagi dua jalur diagnosis resmi menurut ketersediaan alat: fasyankes DENGAN TCM (Tes Cepat Molekuler/Xpert MTB-RIF) — gunakan TCM sbg pemeriksaan awal lini pertama; fasyankes TANPA TCM — pakai mikroskopis BTA sputum (2 spesimen: sewaktu + pagi), jalur ini TETAP SAH menurut pedoman, bukan ketinggalan zaman. TCM adalah alat jaringan (biasanya di Puskesmas rujukan/Labkesda/RS tertentu, bukan tiap Puskesmas punya mesinnya sendiri) — kasus ini menggambarkan Puskesmas TANPA akses TCM, jalur realistis bagi banyak FKTP di Indonesia. BTA berperan lagi di pemantauan pengobatan (bulan ke-2/5/6) pada kedua jalur. Semua pasien TB, terduga maupun terkonfirmasi, juga sebaiknya ditawari skrining HIV.',
+    clue: 'Batuk >2 minggu + BB turun + keringat malam + kontak TB = terduga TB. Utamakan pemeriksaan molekuler cepat yang sekaligus menilai resistansi rifampisin. Bila akses molekuler sungguh terkendala, BTA dua spesimen boleh menjadi jalur sementara, tetapi spesimen tetap harus diteruskan untuk deteksi resistansi. Setelah TB sensitif obat ditegakkan, mulai OAT KDT harian 2HRZE/4HR melalui program, dukung kepatuhan sampai tuntas, tawarkan tes HIV, dan lakukan investigasi kontak serumah.',
+    panduanResmi: 'Petunjuk Teknis Penatalaksanaan TB Sensitif Obat Indonesia 2025 (Kepdirjen P2 HK.02.02/C/5401/2025) menetapkan paduan standar dewasa KDT dosis harian 2HRZE/4HR. Regimen intermiten pada PPK 1186/2022 adalah floor lama dan tidak lagi menjadi jawaban operasional utama. Pemeriksaan molekuler cepat diprioritaskan; mikroskopis BTA hanya dipakai sementara bila ada kendala administratif, geografis, transportasi, atau reagen, lalu wajib dilengkapi pemeriksaan yang mampu mendeteksi resistansi OAT.',
+    // Juknis TB-SO 2025 mempertahankan BTA sebagai fallback sementara yang
+    // realistis, tetapi tidak membolehkan hambatan alat memutus akses pasien
+    // ke uji resistansi dalam jejaring. Kasus ini sengaja memakai jalur itu.
+    mutiaraEbm: 'Mikroskopis BTA bukan pemeriksaan usang, tetapi perannya berubah. Juknis TB-SO Indonesia 2025 memprioritaskan tes molekuler cepat karena sekaligus dapat mendeteksi resistansi; BTA untuk diagnosis hanya menjadi graceful degradation sementara saat akses molekuler terkendala. Hasil BTA positif pada skenario ini cukup untuk mengenali TB terkonfirmasi bakteriologis, tetapi dokter tetap harus mengirim spesimen melalui jejaring untuk pemeriksaan resistansi. BTA tetap penting untuk pemantauan respons pengobatan. Jangan menyamakan “mesin tidak ada di gedung Puskesmas” dengan “pasien tidak punya akses TCM”.',
     konsekuensi: {
       narasi: 'Bila OAT tidak dituntaskan atau ditunda dengan antibiotik biasa, terjadi penularan ke balita serumah dan risiko TB resisten obat (TB-RO).',
       kembaliHariMin: 14,
       kembaliHariMax: 30,
       kondisiKembali: 'Pasien putus obat dan kembali dengan keluhan memberat; cucu balita di rumah mulai batuk dan berat badan sulit naik.',
-      guideline: 'Pedoman Nasional Penanggulangan TB (Kemenkes) — OAT KDT tuntas + investigasi kontak.',
+      guideline: 'Kepdirjen P2 HK.02.02/C/5401/2025 tentang Juknis TB Sensitif Obat; WHO Consolidated Guidelines on Tuberculosis Modules 3-4 (2025) — OAT KDT harian tuntas, uji resistansi, dukungan kepatuhan, dan investigasi kontak.',
     },
   },
 

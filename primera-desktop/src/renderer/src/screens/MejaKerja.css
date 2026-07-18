@@ -369,6 +369,308 @@
   font-size: var(--text-xs);
 }
 
+/* ================= JEJAK PERAWATAN UKM <-> UKP ================= */
+
+.mk__jejak-ringkas {
+  width: 100%;
+  min-height: 76px;
+  padding: var(--sp-3);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-1) var(--sp-3);
+  text-align: left;
+  color: var(--tinta);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-tegas);
+  border-left: 4px solid var(--daun-600);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.mk__jejak-ringkas:hover,
+.mk__jejak-ringkas:focus-visible {
+  background: var(--bg-card);
+  border-color: var(--daun-600);
+}
+
+.mk__jejak-ringkas-judul {
+  font-weight: 800;
+  font-size: var(--text-sm);
+}
+
+.mk__jejak-ringkas-angka {
+  white-space: nowrap;
+  font-size: var(--text-xs);
+}
+
+.mk__jejak-ringkas-sub {
+  grid-column: 1 / -1;
+  color: var(--tinta-lembut);
+}
+
+.mk__jejak-bahaya,
+.mk__jejak-metrik--bahaya strong {
+  color: var(--tinta-merah);
+}
+
+.mk__jejak-overlay {
+  padding: var(--sp-4);
+}
+
+.mk__jejak-modal {
+  width: min(960px, 96vw);
+  height: min(780px, 92vh);
+  padding: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+}
+
+.mk__jejak-header {
+  padding: var(--sp-5) var(--sp-5) var(--sp-3);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  border-bottom: 1px solid var(--border-halus);
+}
+
+.mk__jejak-header h2 {
+  margin: var(--sp-1) 0;
+  font-size: var(--text-lg);
+}
+
+.mk__jejak-kicker {
+  color: var(--daun-700);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.mk__jejak-tutup {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: var(--text-lg);
+}
+
+.mk__jejak-metrik {
+  padding: var(--sp-3) var(--sp-5);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-2);
+  background: var(--bg-sunken);
+  border-bottom: 1px solid var(--border-halus);
+}
+
+.mk__jejak-metrik > div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+.mk__jejak-metrik strong {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+}
+
+.mk__jejak-metrik span {
+  color: var(--tinta-lembut);
+  font-size: var(--text-xs);
+}
+
+.mk__jejak-tab {
+  display: flex;
+  gap: var(--sp-1);
+  padding: var(--sp-3) var(--sp-5) 0;
+}
+
+.mk__jejak-tab button {
+  min-width: 92px;
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--tinta-lembut);
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+}
+
+.mk__jejak-tab button:hover,
+.mk__jejak-tab button:focus-visible,
+.mk__jejak-tab .mk__jejak-tab--aktif {
+  color: var(--tinta);
+  border-bottom-color: var(--daun-600);
+}
+
+.mk__jejak-daftar {
+  min-height: 0;
+  padding: var(--sp-3) var(--sp-5) var(--sp-5);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.mk__jejak-kosong {
+  margin: auto;
+  max-width: 480px;
+  padding: var(--sp-6);
+  text-align: center;
+}
+
+.mk__episode {
+  padding: var(--sp-4);
+  border: 1px solid var(--border-halus);
+  border-left: 4px solid var(--daun-600);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+}
+
+.mk__episode--lewat,
+.mk__episode--buruk {
+  border-left-color: var(--tinta-merah);
+}
+
+.mk__episode-atas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 220px);
+  gap: var(--sp-4);
+}
+
+.mk__episode-atas h3 {
+  margin-top: var(--sp-2);
+  font-size: var(--text-md);
+}
+
+.mk__episode-meta {
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+.mk__episode-masalah {
+  margin-top: var(--sp-1);
+  color: var(--tinta-lembut);
+  font-size: var(--text-sm);
+}
+
+.mk__episode-pemilik {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-content: start;
+  gap: var(--sp-1) var(--sp-2);
+  font-size: var(--text-xs);
+}
+
+.mk__episode-pemilik dt { color: var(--tinta-lembut); }
+.mk__episode-pemilik dd { margin: 0; font-weight: 700; text-align: right; }
+
+.mk__episode-progres {
+  margin-top: var(--sp-4);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.mk__episode-progres > span {
+  min-width: 0;
+  color: var(--tinta-pudar);
+  font-size: var(--text-xs);
+}
+
+.mk__episode-progres i {
+  display: block;
+  height: 6px;
+  margin-bottom: var(--sp-1);
+  background: var(--border-halus);
+}
+
+.mk__episode-progres--isi { color: var(--tinta-lembut) !important; }
+.mk__episode-progres--isi i { background: var(--daun-600); }
+
+.mk__episode-rujukan {
+  margin-top: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-sm);
+}
+
+.mk__episode-rujukan ol {
+  list-style: none;
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--sp-1);
+}
+
+.mk__episode-rujukan li {
+  min-width: 0;
+  color: var(--tinta-pudar);
+  font-size: var(--text-xs);
+}
+
+.mk__episode-rujukan li span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin-bottom: var(--sp-1);
+  border: 2px solid var(--border-tegas);
+  border-radius: 50%;
+}
+
+.mk__episode-rujukan--isi { color: var(--tinta-lembut) !important; }
+.mk__episode-rujukan--isi span { border-color: var(--daun-600) !important; background: var(--daun-600); }
+
+.mk__episode-receipt {
+  margin-top: var(--sp-3);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+
+.mk__episode-receipt > div {
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-3);
+  border-left: 2px solid var(--border-tegas);
+}
+
+.mk__episode-receipt dt {
+  color: var(--tinta-lembut);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mk__episode-receipt dd {
+  margin: var(--sp-1) 0 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.mk__episode-riwayat {
+  margin-top: var(--sp-3);
+  border-top: 1px solid var(--border-halus);
+  padding-top: var(--sp-2);
+  font-size: var(--text-sm);
+}
+
+.mk__episode-riwayat summary { cursor: pointer; font-weight: 700; }
+.mk__episode-riwayat ol { margin: var(--sp-2) 0 0; padding: 0; list-style: none; }
+.mk__episode-riwayat li { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: var(--sp-2); padding: var(--sp-2) 0; }
+.mk__episode-riwayat p { margin-top: 2px; color: var(--tinta-lembut); font-size: var(--text-xs); }
+.mk__episode-keluarga { margin-top: var(--sp-3); }
+
+@media (max-width: 760px) {
+  .mk__jejak-metrik { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mk__episode-atas { grid-template-columns: 1fr; }
+  .mk__episode-receipt { grid-template-columns: 1fr; }
+  .mk__episode-progres small { display: none; }
+}
+
 /* ================= MODAL REKAP SLICE ================= */
 
 .mk__rekap {

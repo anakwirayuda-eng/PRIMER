@@ -609,7 +609,16 @@ function fnv1a(teks: string): string {
 // sebagai anggota keluarga nyata membawa status BPJS yang konsisten dengan
 // ground-truth indikator JKN keluarganya, bukan undian pembayar pasien acak;
 // umpan balik SISRUTE mempertahankan tautan navigasi keluarga bila tersedia.
-export const REVISI_ENGINE = 50
+// 51 (2026-07-18 - Bridge B2 PHC Lite): ledger CareEpisode mengikat asal
+// UKM, encounter UKP, rujukan, umpan balik, dan tindak lanjut menjadi satu
+// episode longitudinal. Migrasi save, jadwal callback, serta tampilan jejak
+// perawatan mengubah replay/receipt meski belum mengubah rumus nilai formal.
+// 52 (2026-07-18 - EBM currency): tindakan opsional dipisahkan dari tindakan
+// wajib pada scoring. Koreksi ini mencegah oksigen nonindikatif menjadi
+// denominator wajib pada CHF SpO2 92%, sekaligus mengunci ULT gout sebagai
+// opsi yang tidak menggantikan antiinflamasi akut. Konten klinis ternilai ikut
+// berubah, sehingga replay lintas revisi harus ditolak secara eksplisit.
+export const REVISI_ENGINE = 52
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

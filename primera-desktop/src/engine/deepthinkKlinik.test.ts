@@ -120,6 +120,7 @@ function baseState(p: ContentPack, o?: Partial<GameState>): GameState {
     program: {},
     tutorialAktif: false,
     ...o,
+    careEpisodes: o?.careEpisodes ?? [],
   }
   return s
 }

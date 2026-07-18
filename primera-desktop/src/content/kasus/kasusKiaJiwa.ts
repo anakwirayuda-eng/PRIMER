@@ -136,8 +136,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       ],
       edukasi: ['anc_rutin', 'tanda_bahaya_kehamilan', 'gizi_seimbang', 'kepatuhan_obat'],
     },
-    clue: 'ANC normal: minimal 6x kunjungan (Kemenkes 2020) + tablet tambah darah (Fe 60 mg elemental) minimal 90 tablet + asam folat 400 mcg. Edukasi minum Fe malam hari/setelah makan untuk kurangi mual, jangan bersama teh/kopi. Kenali tanda bahaya P4K, JANGAN medikalisasi kehamilan sehat.',
-    panduanResmi: 'Divergensi: tabel PPK 1186/2022 masih memuat ANC minimal 4x (TM1:1, TM2:1, TM3:2) & folat 250 mcg, sedang kebijakan Kemenkes 2020 (clue) menaikkan jadi 6x — yang mutakhir mengikat. PPK juga mewajibkan skrining/imunisasi TT sesuai status, hal yang tak disebut clue.',
+    clue: 'ANC normal menurut PMK 6/2024: minimal 6 kunjungan (1x trimester I, 2x trimester II, 3x trimester III), sedikitnya 2 kali oleh dokter pada trimester I dan III termasuk USG, serta tablet tambah darah harian 60 mg besi elemental + 0,4 mg asam folat dengan standar penyediaan 180 tablet per kehamilan. Edukasi minum setelah makan/malam bila mual dan jauhkan dari teh/kopi. Kenali tanda bahaya P4K; jangan medikalisasi kehamilan sehat.',
+    panduanResmi: 'PPK 1186/2022 masih memuat ANC 4 kali dan folat 250 mcg, sedangkan PMK 6/2024 sebagai standar Kemenkes yang lebih baru menetapkan K6, pelayanan 10T + USG, dua kunjungan dokter, dan 180 tablet tambah darah 60 mg besi elemental + 0,4 mg asam folat. Puskesmas yang belum mampu menyediakan USG wajib mengatur rujukan horizontal, bukan menghilangkan komponennya.',
     catatanRealita: 'PMK 6/2024 menetapkan K6, sedikitnya dua kunjungan dokter pada TM1/TM3 termasuk USG, serta rujukan horizontal bila Puskesmas belum mampu. Jadi USG tidak harus tersedia setiap hari di gedung yang sama, tetapi komponennya tidak boleh hilang: jadwalkan/jejaringkan dan dokumentasikan hasilnya.',
   },
 
@@ -236,23 +236,24 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     ],
     diagnosisBanding: ['O23.4', 'N30.0', 'N10'],
     tatalaksana: {
-      // 2026-07-16 (sapuan clue-vs-struktur): clue mengesahkan "beta-laktam
-      // (sefiksim/AMOKSISILIN)" tetapi dulu hanya sefiksim yang diterima —
-      // pemain yg memilih amoksisilin (sama-sama beta-laktam aman bumil yg
-      // disebut clue) kena penalti. Kini antibiotik = pilih-salah-satu.
+      // PNPK ISK 762/2025 + ACOG 2023 (reaffirmed 2026): terapi empiris
+      // amoksisilin dihindari karena resistensi E. coli; nitrofurantoin atau
+      // beta-laktam yang sesuai dipilih menurut usia gestasi dan kultur.
       obatBenar: ['paracetamol_500'],
-      obatAlternatif: [['cefixime_100', 'amoxicillin_500']],
+      obatAlternatif: [['nitrofurantoin_100', 'cefixime_100']],
       obatSalahUmum: [
         { id: 'ciprofloxacin_500', alasan: 'Fluorokuinolon KONTRAINDIKASI pada kehamilan — risiko gangguan tulang rawan janin. Pilih beta-laktam yang aman (sefiksim).', bahaya: 'kontraindikasi' },
         { id: 'doksisiklin_100', alasan: 'Tetrasiklin KONTRAINDIKASI pada kehamilan — menyebabkan diskolorasi gigi & gangguan tulang janin.', bahaya: 'kontraindikasi' },
-        { id: 'cotrimoxazole_480', alasan: 'Sulfa dihindari terutama trimester 1 & akhir (risiko kernikterus/defek tabung saraf); bukan pilihan aman rutin pada bumil.', bahaya: 'kontraindikasi' },
+        { id: 'amoxicillin_500', alasan: 'Amoksisilin tidak dipakai empiris sebelum kultur karena resistensi E. coli tinggi; dapat digunakan hanya bila hasil sensitivitas mendukung.', bahaya: 'nonPrimer' },
+        { id: 'cotrimoxazole_480', alasan: 'Kotrimoksazol bukan pilihan empiris rutin kehamilan; penggunaannya bergantung usia gestasi, sensitivitas kuman, dan pertimbangan risiko-manfaat, bukan larangan blanket yang sama pada semua trimester.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['minum_air_cukup', 'tanda_bahaya_kehamilan', 'kepatuhan_obat', 'cuci_tangan'],
       // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — ISK tak
       // tuntas → pielonefritis akut/kontraksi prematur (risiko janin, bukan cuma ibu).
       edukasiKritis: ['kepatuhan_obat'],
     },
-    clue: 'ISK pada kehamilan WAJIB diobati (bahkan bakteriuria asimtomatik) karena berisiko pielonefritis & persalinan prematur (PPK/WHO). Antibiotik aman: beta-laktam (sefiksim/amoksisilin). HINDARI fluorokuinolon, tetrasiklin, dan sulfa. Tuntaskan 7 hari + hidrasi cukup.',
+    clue: 'Sistitis pada kehamilan perlu kultur urin bila dapat diakses dan antibiotik 5–7 hari yang aman serta aktif terhadap kuman. Pada kehamilan 24 minggu ini, nitrofurantoin atau sefalosporin dapat menjadi pilihan empiris sesuai pola resistensi dan kondisi pasien; hindari amoksisilin/ampisilin empiris sebelum sensitivitas diketahui. Demam tinggi, nyeri CVA, muntah, atau toksisitas mengarah ke pielonefritis dan memerlukan rawat/rujuk.',
+    panduanResmi: 'PPK 1186/2022 bab ISK menjadi floor diagnosis dan rujukan, sedangkan PNPK ISK KMK 762/2025 memperkuat stewardship. ACOG Clinical Consensus 2023 yang ditegaskan kembali 2026 menganjurkan kultur pada sistitis kehamilan dan antibiotik terarah 5–7 hari; amoksisilin/ampisilin tidak dipakai empiris karena resistensi E. coli tinggi. Nitrofurantoin hanya untuk infeksi bawah, bukan pielonefritis, dan dihindari pada defisiensi G6PD yang diketahui.',
     konsekuensi: {
       narasi: 'Bila ISK tidak diobati tuntas, dapat naik menjadi pielonefritis akut dan mencetuskan kontraksi prematur; pemberian antibiotik teratogenik membahayakan janin.',
       kembaliHariMin: 3,
@@ -597,6 +598,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['asi_eksklusif', 'kontrol_rutin', 'kb_aman_menyusui'],
     },
     clue: 'Konseling KB pascapersalinan pada ibu MENYUSUI: pilihan aman = metode non-hormonal (IUD/AKDR, kondom) atau progestin-only (pil progestin, suntik DMPA 3 bulan, implan). HINDARI kontrasepsi kombinasi estrogen dalam 6 minggu pertama & selama menyusui dini (estrogen menurunkan produksi ASI + risiko trombosis). Konseling harus BERIMBANG (informed choice) — sesuaikan dengan rencana reproduksi & syarat medis (WHO MEC / Kemenkes BKKBN).',
+    panduanResmi: 'Permenkes 2/2025 mewajibkan konseling pilihan metode, efek samping, penapisan kelayakan medis, persetujuan tindakan, dan pelayanan sesuai pilihan klien. Pada ibu yang terutama menyusui usia 3 bulan, WHO MEC edisi ke-6 (2025) menempatkan metode progestin-only sebagai dapat digunakan, sedangkan kontrasepsi hormonal kombinasi berada pada kategori 3 sampai usia 6 bulan postpartum; karena itu pil kombinasi bukan pilihan rutin kasus ini.',
     catatanRealita:
       'Layanan KB Puskesmas berjejaring dengan program BKKBN: pil progestin, suntik DMPA, dan kondom umumnya tersedia gratis. AKDR dan implan butuh pemasangan oleh tenaga terlatih — di sini dimodelkan lewat konseling pilihan metode, bukan tindakan pemasangan.',
   },
@@ -707,13 +709,11 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
     ],
     diagnosisBanding: ['F41.1', 'F41.0', 'E05.9'],
     tatalaksana: {
-      // Bagian D Tier-1 #6 (audit CODEX 2026-07-11, adjudikasi PPK1186+DOEN
-      // 2026-07-12): SSRI/SNRI (fluoksetin termasuk) TIDAK ADA di DOEN 2021
-      // Puskesmas — hanya amitriptilin (TCA) yg realistis-tersedia sbg
-      // antidepresan FKTP. PPK1186 (entri F41.2 campuran cemas-depresi)
-      // menaruh fluoksetin/sertralin/amitriptilin/imipramin SEJAJAR sbg
-      // pilihan lini pertama — dimodelkan sbg grup alternatif (pilih salah
-      // satu), bukan amitriptilin menggantikan fluoksetin secara eksklusif.
+      // Fornas 1199/2025 mencantumkan amitriptilin dan fluoksetin untuk FPKTP;
+      // DOEN 2021 hanya konteks historis dan sudah dicabut. PPK1186 (entri
+      // F41.2 campuran cemas-depresi) menaruh fluoksetin/sertralin/amitriptilin/
+      // imipramin sebagai pilihan; game memodelkan obat yang ada di katalog
+      // sebagai grup alternatif, bukan menganggap SSRI tidak tersedia.
       // diazepam_2 direklasifikasi jadi opsional (PPK1186: boleh kombinasi
       // awal 2-4 minggu bila cemas dominan/insomnia, lalu tapering) — bukan
       // lagi "salah mutlak".
@@ -854,7 +854,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       ],
       edukasi: ['manajemen_stres', 'aktivitas_fisik', 'higiene_tidur', 'kontrol_rutin'],
     },
-    clue: 'Depresi RINGAN: ≥2 minggu mood depresif + anhedonia + gejala penyerta (tidur, nafsu makan, energi turun) dengan fungsi MASIH cukup terjaga. WAJIB skrining risiko bunuh diri di tiap kunjungan. Lini pertama mhGAP/NICE: PSIKOEDUKASI + konseling suportif/aktivasi perilaku + aktivitas fisik + active monitoring — antidepresan TIDAK rutin untuk depresi ringan, tambahkan SSRI (fluoksetin) HANYA bila gejala menetap/mengganggu fungsi. Singkirkan hipotiroid & riwayat manik (bipolar). Kontrol berkala; rujuk bila memberat/ada risiko bunuh diri (mhGAP WHO / PPK Jiwa FKTP).',
+    clue: 'Depresi ringan: ≥2 minggu mood depresif + anhedonia + gejala penyerta dengan fungsi masih cukup terjaga. Nilai ide bunuh diri, niat, rencana, akses sarana, faktor pelindung, riwayat manik, dan penyebab organik. Lini pertama adalah psikoedukasi, intervensi psikologis terstruktur/aktivasi perilaku, aktivitas fisik, dan follow-up aktif; antidepresan tidak menjadi terapi awal rutin episode ringan. Rujuk/eskalasi bila risiko keselamatan, psikosis/mania, fungsi runtuh, atau memburuk.',
+    panduanResmi: 'PPK 1186/2022 memberi floor pengenalan gangguan depresi/campuran cemas-depresi dan penilaian rujukan. WHO mhGAP Guideline edisi ke-3 (2023) menempatkan intervensi psikososial terstruktur sebagai terapi awal dan tidak menganjurkan antidepresan sebagai terapi awal rutin episode ringan. Ketiadaan psikolog lokal tidak menghapus skrining keselamatan, follow-up aktif, dan akses jejaring.',
     catatanRealita: 'PMK 19/2024 memasukkan psikolog klinis dalam standar Puskesmas, tetapi pemenuhannya boleh bertahap sesuai kemampuan daerah; SDM primer juga belum merata. Jika psikoterapi terstruktur belum tersedia, lakukan intervensi psikososial yang kompeten, follow-up aktif, skrining bunuh diri, dan rujuk/telekonsultasi, bukan otomatis memberi obat.',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat penenang tanpa konseling dan tanpa skrining bunuh diri, gejala dapat memberat menjadi depresi sedang-berat dengan risiko keselamatan.',

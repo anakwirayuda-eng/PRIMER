@@ -343,6 +343,15 @@ export function validasiPack(pack: ContentPack): string[] {
     for (const p of k.tatalaksana.prosedur ?? []) {
       if (!pack.tindakan[p]) masalah.push(`Kasus ${k.id}: tindakan '${p}' tidak ada di katalog`)
     }
+    for (const p of k.tatalaksana.prosedurOpsional ?? []) {
+      if (!pack.tindakan[p]) masalah.push(`Kasus ${k.id}: tindakan opsional '${p}' tidak ada di katalog`)
+      if (k.tatalaksana.prosedur?.includes(p)) {
+        masalah.push(`Kasus ${k.id}: tindakan '${p}' sekaligus wajib dan opsional`)
+      }
+      if ((k.tatalaksana.tindakanSalahUmum ?? []).some((item) => item.id === p)) {
+        masalah.push(`Kasus ${k.id}: tindakan '${p}' sekaligus opsional dan salah`)
+      }
+    }
     // Audit CODEX 2026-07-16 #2: terapiKritis WAJIB benar-benar bisa dipilih
     // pemain DAN mandatory — id harus ada di obatBenar/obatAlternatif(flat)
     // (obat wajib) ATAU prosedur (tindakan wajib). BUKAN obatOpsional: terapi

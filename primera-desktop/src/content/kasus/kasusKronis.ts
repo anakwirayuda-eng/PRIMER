@@ -5,8 +5,8 @@
  * berlebih), otitis & anemia bumil (KIA), lalu dua kasus RUJUK (pneumonia balita &
  * stroke iskemik) yang mengajarkan gatekeeping SKDI 3B dan "Time is Brain".
  *
- * Akurasi medis mengikuti JNC-8, PERKENI 2021, GINA, IMCI/WHO, PERDOSSI, dan
- * Permenkes terkait — dituliskan pada `clue` & `konsekuensi.guideline`.
+ * Akurasi medis memakai PNPK/PPK Kemenkes sebagai floor dan pedoman EBM
+ * mutakhir yang disebut per kasus pada `clue`/`panduanResmi`/`guideline`.
  *
  * Catatan integrasi: sesuai BUILD_SPECS, pertanyaan tak relevan diberi
  * `distraktor: true` (menggerus gauge Sabar & dinilai negatif oleh clinic.ts).
@@ -170,7 +170,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       kembaliHariMin: 5,
       kembaliHariMax: 9,
       kondisiKembali: 'Kembali dengan TD 190/110 mmHg, nyeri kepala hebat dan pandangan kabur — krisis hipertensi karena obat tidak diminum.',
-      guideline: 'JNC-8 & Permenkes No. 5/2014 tentang Panduan Praktik Klinis Dokter di FKTP.',
+      guideline: 'PNPK Tata Laksana Hipertensi Dewasa KMK 303/2026; PPK FKTP KMK 1936/2022.',
     },
   },
 
@@ -551,9 +551,9 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasi: ['teknik_inhaler', 'hindari_pencetus_asma', 'kepatuhan_obat', 'kontrol_rutin'],
       edukasiKritis: ['teknik_inhaler'],
     },
-    clue: 'GINA 2019+: gejala ≥2×/minggu + terbangun malam = asma PERSISTEN, bukan sekadar intermiten. Kunci pembaruan GINA: SABA-tunggal TIDAK lagi dianjurkan pada asma mana pun — setiap pasien butuh terapi mengandung ICS. Beri pengendali ICS (budesonid inhalasi) + reliever (salbutamol inhalasi/ICS-formoterol), kendalikan pencetus (asap rokok rumah!), ajarkan teknik inhaler, nilai kontrol tiap kunjungan. Antibiotik rutin tidak diindikasikan.',
-    panduanResmi: 'Divergensi: clue/GINA 2019+ menolak SABA-tunggal pd asma apa pun (semua butuh ICS). Namun PPK 1186/2022 masih skema lama — asma intermiten \'tidak perlu\' pengontrol (SABA pelega saja), ICS baru mulai pd persisten ringan (200-400µg/hari). Pemain wajib tahu pedoman resmi ini tertinggal dari GINA.',
-    catatanRealita: 'Fornas 1199/2025 mencantumkan budesonid inhalasi dan ICS-formoterol di FPKTP, tetapi stok dan jenis device lokal dapat berbeda. Jangan biarkan kekosongan pengendali (controller) berubah menjadi SABA-tunggal permanen: cek teknik, carikan akses controller melalui formularium/jejaring, dan buat rencana tindak lanjut.',
+    clue: 'GINA 2026 menilai kontrol dan risiko, bukan menentukan kebutuhan ICS dari label intermiten/persisten. Terbangun malam membuat kasus ini tergolong kontrol sebagian. Track 1: ICS-formoterol dosis rendah sesuai kebutuhan. Jika tidak tersedia, Track 2: budesonid dosis rendah harian + salbutamol inhalasi sesuai kebutuhan; jangan SABA-tunggal. Kendalikan pencetus, cek teknik dan kepatuhan inhaler, lalu tinjau ulang. Antibiotik rutin tidak diindikasikan.',
+    panduanResmi: 'Divergensi 2026: PPK 1186/2022 masih memakai klasifikasi intermiten/persisten dan membolehkan SABA saja pada asma intermiten. GINA 2026 menilai kontrol serta risiko dan tidak menganjurkan SABA-tunggal. Track 1 memakai ICS-formoterol dosis rendah sesuai kebutuhan; Track 2 memakai ICS dosis rendah harian + SABA sesuai kebutuhan. PPK menjadi floor regulasi; EBM mutakhir diterapkan dengan adaptasi formularium dan kesiapan FKTP.',
+    catatanRealita: 'Fornas 1199/2025 mencantumkan budesonid tunggal dan budesonid-formoterol di FPKTP, tetapi stok dan jenis device lokal tetap harus diverifikasi. Bila ICS-formoterol tidak tersedia, gunakan Track 2: ICS dosis rendah harian + SABA inhalasi sesuai kebutuhan; jangan biarkan kekosongan pengendali berubah menjadi SABA-tunggal permanen.',
   },
 
   /* ======================================================================
@@ -799,14 +799,14 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       ],
       edukasi: ['gizi_seimbang', 'kepatuhan_obat', 'kontrol_rutin'],
     },
-    clue: 'WHO & Permenkes No. 88/2014: anemia bumil bila Hb <11 g/dL. Anemia defisiensi besi (mikrositik hipokrom) → tablet tambah darah 60 mg besi elemental + 400 µg asam folat/hari, diminum bersama sumber vitamin C, hindari bersamaan teh/kopi. Cari sumber kehilangan (cacing tambang) dan evaluasi Hb ulang setelah 1 bulan.',
-    panduanResmi: 'Divergensi dosis: clue/TTD 1x/hari (60 mg besi + 400 µg folat) adalah dosis PROFILAKSIS. PPK 1186/2022 utk bumil yang SUDAH anemia mewajibkan tablet besi 3x SEHARI (±180 mg besi elemental/hari); rujuk bila tak membaik setelah 3 bulan suplementasi.',
+    clue: 'Anemia defisiensi besi pada kehamilan: Hb rendah dengan gambaran mikrositik-hipokrom dan sumber kehilangan yang masuk akal. Bedakan dosis PENCEGAHAN dari TERAPI. Untuk pasien yang sudah anemia, PPK FKTP 1186/2022 memakai 60 mg besi elemental tiga kali sehari (180 mg/hari); WHO maternal guidance memakai 120 mg/hari sampai Hb normal. Dalam game, satu klik TTD berarti memulai terapi besi, bukan hanya dosis profilaksis. Hindari teh/kopi dekat waktu minum, tangani kecacingan sesuai usia kehamilan/protokol, dan nilai respons Hb.',
+    panduanResmi: 'Floor Indonesia: PPK 1186/2022 menetapkan 180 mg besi elemental/hari pada anemia kehamilan dan rujuk bila tidak membaik setelah 3 bulan atau perlu penentuan jenis anemia. PMK 6/2024 menetapkan TTD harian dan kebutuhan program 180 tablet per kehamilan untuk pencegahan; angka 180 tablet bukan dosis terapi. WHO maternal guidance memakai 120 mg besi elemental + 400 µg folat/hari sampai Hb kembali normal, lalu kembali ke dosis antenatal standar.',
     konsekuensi: {
       narasi: 'Tablet tambah darah tidak diminum karena mual dan lupa; anemia dibiarkan memberat di trimester lanjut.',
       kembaliHariMin: 5,
       kembaliHariMax: 9,
       kondisiKembali: 'Kembali makin lemas dan pucat, hampir pingsan saat menimba air; Hb turun ke 7,8 g/dL dengan takikardia — risiko BBLR dan persalinan prematur meningkat.',
-      guideline: 'Permenkes No. 88/2014 tentang Standar Tablet Tambah Darah bagi WUS & Ibu Hamil.',
+      guideline: 'PPK FKTP KMK 1186/2022; PMK 6/2024 tentang SPM kesehatan ibu hamil; WHO maternal guidance dan haemoglobin cutoffs 2024.',
     },
   },
 

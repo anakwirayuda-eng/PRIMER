@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-18  
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**  
-**Snapshot:** commit `e72bdaa6c2c7ba4cd823fe71e7d37d8fbcbb9631`, artefak `7ee516380eb49afa72f321bf58c42597a20099cfffaec9c26abf7bc4f1e0054d`, pack `4ce15a6b`, content release `m11-e2-saji-pilot-2026-07-17`, `REVISI_ENGINE=50`
+**Snapshot:** commit `21ec56bca962dafc1c2c2cbbd6d6a1600f79e374`, artefak `601ad15677febcfb98a6fe2de678cfe73b927f7042fcf1f98261d2afc981d4bd`, pack `01e977a2`, content release `m11-e2-saji-pilot-2026-07-17`, `REVISI_ENGINE=52`
 
 ## Ringkasan eksekutif
 
@@ -15,9 +15,9 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Crosswalk PPK terkait, bukan identik | 17 |
 | Tanpa crosswalk PPK | 31 |
 | Memiliki PNPK langsung | 30 |
-| Saran kompilator “cocok” | 46 |
-| Saran kompilator “perlu-koreksi” | 88 |
-| Saran kompilator “tak-ada-sumber” | 3 |
+| Saran kompilator “cocok” | 44 |
+| Saran kompilator “perlu-koreksi” | 93 |
+| Saran kompilator “tak-ada-sumber” | 0 |
 | Kasus dengan resource Tier C/D | 64 |
 | Obat unik non-Fornas menurut katalog | 9 |
 | Query KFA aktif-substance tak terpetakan | 0 |
@@ -67,7 +67,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 ## Temuan provenance prioritas
 
-### Atribusi PPK terlalu kuat (37)
+### Atribusi PPK terlalu kuat (48)
 
 Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk hanya related atau tidak ditemukan. Ini perlu dibaca manual sebelum aktivasi; alternatifnya adalah melunakkan atribusi, mengganti sumber, atau memberi locator diagnosis-spesifik.
 
@@ -78,6 +78,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_salpingitis_pid_ringan` - Salpingitis/PID Ringan Rawat Jalan: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
 - `lab_sindrom_duh_genital_servisitis` - Sindrom Duh Genital - Servisitis: related; Bab fluor albus/vaginal discharge, bukan servisitis terkonfirmasi.
 - `lab_vaginosis_bakterialis` - Vaginosis Bakterialis: related; Bab vaginitis terkait, tetapi etiologi bakterial perlu sumber regimen yang lebih spesifik.
+- `lab_edema_paru_akut_hipertensif` - Edema Paru Akut Hipertensif: related; Bab gagal jantung, bukan bab edema paru hipertensif yang identik.
 - `lab_gizi_buruk_komplikasi` - Gizi Buruk dengan Komplikasi pada Balita: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
 - `lab_hiperemesis_gravidarum_berat` - Hiperemesis Gravidarum Berat dengan Ketosis: related; Bab PPK membahas hiperemesis ringan; kasus ini berat dengan ketosis dan wajib dirujuk.
 - `lab_mola_hidatidosa` - Mola Hidatidosa (Hamil Anggur): none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
@@ -102,11 +103,21 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_abses_perianal` - Abses Perianal pada Penyandang Diabetes: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
 - `lab_hemoroid_interna_derajat4` - Hemoroid Interna Derajat IV dengan Anemia: related; PPK membahas grade 1-2; kasus grade IV memakai bab ini hanya untuk batas rujuk.
 - `lab_hernia_inguinalis_inkarserata` - Hernia Inguinalis Inkarserata: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_ileus_obstruktif` - Ileus Obstruktif: related; Bab peritonitis hanya terkait kegawatan abdomen; diagnosis ileus tidak punya bab sendiri.
+- `lab_cacing_tambang` - Infeksi Cacing Tambang: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
 - `lab_kolik_ureter_obstruksi` - Kolik Ureter oleh Batu dengan Obstruksi: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
 - `lab_retensio_urin_akut` - Retensi Urin Akut pada Pembesaran Prostat: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
 - `lab_sirosis_hepatis_dekompensata` - Sirosis Hepatis Dekompensata: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_skistosomiasis_sulteng` - Skistosomiasis dari Fokus Endemis Sulawesi Tengah: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_strongiloidiasis` - Strongiloidiasis Kronik: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_taeniasis_intestinal` - Taeniasis Intestinal Tanpa Gejala Neurologis: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_bronkiolitis_berat` - Bronkiolitis Bayi dengan Hipoksemia: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_efusi_pleura` - Efusi Pleura Simptomatik: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_pertusis_remaja` - Pertusis pada Remaja: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
 - `lab_meningitis_bakterial_suspek` - Suspek Meningitis Bakterial: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_abses_peritonsil` - Abses Peritonsil: related; Bab tonsilitis akut memberi konteks, bukan tata laksana abses peritonsil definitif.
 - `lab_benda_asing_esofagus` - Benda Asing Esofagus pada Anak — Baterai Kancing: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
+- `lab_mabuk_perjalanan` - Mabuk Perjalanan: none; Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022.
 - `lab_mastoiditis_akut` - Mastoiditis Akut pada Anak: related; Komplikasi OMSK terkait, tetapi mastoiditis akut tidak mempunyai bab PPK sendiri.
 
 ### Tidak ada PPK maupun PNPK diagnosis-spesifik (15)
@@ -163,7 +174,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_sindrom_duh_genital_servisitis` - Sindrom Duh Genital - Servisitis: Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
 - `lab_vaginitis_kandida` - Vaginitis Kandidiasis: Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario.
 - `lab_vaginosis_bakterialis` - Vaginosis Bakterialis: Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED. Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
-- `lab_edema_paru_akut_hipertensif` - Edema Paru Akut Hipertensif: Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
+- `lab_edema_paru_akut_hipertensif` - Edema Paru Akut Hipertensif: Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED. Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
 - `lab_gagal_jantung_dekompensasi` - Gagal Jantung Dekompensasi Akut: Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
 - `lab_gizi_buruk_komplikasi` - Gizi Buruk dengan Komplikasi pada Balita: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
 - `lab_hiperemesis_gravidarum_berat` - Hiperemesis Gravidarum Berat dengan Ketosis: Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED. Grounding Fornas perlu ditinjau: ringer_laktat_inf. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
@@ -219,31 +230,34 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_apendisitis_akut_anak` - Apendisitis Akut pada Anak: Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
 - `lab_hemoroid_interna_derajat4` - Hemoroid Interna Derajat IV dengan Anemia: Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
 - `lab_hernia_inguinalis_inkarserata` - Hernia Inguinalis Inkarserata: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Grounding Fornas perlu ditinjau: ringer_laktat_inf. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
-- `lab_ileus_obstruktif` - Ileus Obstruktif: Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
-- `lab_cacing_tambang` - Infeksi Cacing Tambang: Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
+- `lab_ileus_obstruktif` - Ileus Obstruktif: Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
+- `lab_cacing_tambang` - Infeksi Cacing Tambang: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
 - `lab_kolesistitis_akut` - Kolesistitis Akut: Grounding Fornas perlu ditinjau: ringer_laktat_inf. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
 - `lab_kolik_ureter_obstruksi` - Kolik Ureter oleh Batu dengan Obstruksi: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
 - `lab_peritonitis_generalisata` - Peritonitis Generalisata: Grounding Fornas perlu ditinjau: ringer_laktat_inf. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
 - `lab_retensio_urin_akut` - Retensi Urin Akut pada Pembesaran Prostat: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
 - `lab_sirosis_hepatis_dekompensata` - Sirosis Hepatis Dekompensata: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
-- `lab_skistosomiasis_sulteng` - Skistosomiasis dari Fokus Endemis Sulawesi Tengah: Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
+- `lab_skistosomiasis_sulteng` - Skistosomiasis dari Fokus Endemis Sulawesi Tengah: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
 - `lab_stomatitis_aftosa` - Stomatitis Aftosa Rekuren: Grounding Fornas perlu ditinjau: triamcinolone_orabase.
-- `lab_strongiloidiasis` - Strongiloidiasis Kronik: Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
-- `lab_taeniasis_intestinal` - Taeniasis Intestinal Tanpa Gejala Neurologis: Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
+- `lab_strongiloidiasis` - Strongiloidiasis Kronik: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
+- `lab_taeniasis_intestinal` - Taeniasis Intestinal Tanpa Gejala Neurologis: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
+- `lab_bronkiolitis_berat` - Bronkiolitis Bayi dengan Hipoksemia: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait.
+- `lab_efusi_pleura` - Efusi Pleura Simptomatik: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
+- `lab_pertusis_remaja` - Pertusis pada Remaja: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
 - `lab_pneumonia_komunitas_dewasa` - Pneumonia Komunitas Dewasa - Rawat Jalan: Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario.
 - `lab_ppok_eksaserbasi_berat` - PPOK Eksaserbasi Berat dengan Infeksi Saluran Napas Bawah: Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
 - `lab_tb_paru_putus_obat_suspek_mdr` - TB Paru Putus Obat dengan Suspek Resistan Obat: Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk.
 - `lab_meningitis_bakterial_suspek` - Suspek Meningitis Bakterial: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
 - `lab_tia_serangan_iskemik_sesaat` - TIA — Serangan Iskemik Sesaat yang Sudah Pulih: Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario.
+- `lab_abses_peritonsil` - Abses Peritonsil: Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
 - `lab_benda_asing_esofagus` - Benda Asing Esofagus pada Anak — Baterai Kancing: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Ada resource Tier D yang tidak boleh diasumsikan tersedia; gunakan jejaring dan jangan menjadikannya syarat menunda rujuk. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
+- `lab_mabuk_perjalanan` - Mabuk Perjalanan: Teks panduan saat ini menyebut PPK, tetapi tidak ditemukan bab PPK diagnosis langsung/terkait. Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
 - `lab_mastoiditis_akut` - Mastoiditis Akut pada Anak: Teks panduan saat ini mengatribusikan PPK secara kuat, tetapi crosswalk hanya RELATED. Ada resource Tier C: jadwal, operator, consumable, atau readiness harus dinyatakan di skenario. Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
 - `lab_rinitis_vasomotor` - Rinitis Vasomotor: Grounding Fornas perlu ditinjau: flutikason_semprot_hidung.
 
 ### Tak ada sumber
 
-- `lab_efusi_pleura` - Efusi Pleura Simptomatik: Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
-- `lab_pertusis_remaja` - Pertusis pada Remaja: Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
-- `lab_mabuk_perjalanan` - Mabuk Perjalanan: Belum ada PPK/PNPK diagnosis-spesifik yang terpetakan; jangan menyatakan kesesuaian pedoman tanpa sumber tambahan.
+- Tidak ada.
 
 ### Cocok secara provenance awal
 
@@ -285,12 +299,10 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_kandidiasis_mulut` - Kandidiasis Mulut: tidak ada red flag provenance otomatis
 - `lab_keracunan_makanan_ringan` - Keracunan Makanan Ringan: tidak ada red flag provenance otomatis
 - `lab_perdarahan_gi_atas` - Perdarahan Saluran Cerna Atas dengan Syok Terkompensasi: tidak ada red flag provenance otomatis
-- `lab_bronkiolitis_berat` - Bronkiolitis Bayi dengan Hipoksemia: tidak ada red flag provenance otomatis
 - `lab_influenza_tanpa_komplikasi` - Influenza Tanpa Komplikasi: tidak ada red flag provenance otomatis
 - `lab_laringitis_akut` - Laringitis Akut: tidak ada red flag provenance otomatis
 - `lab_pneumotoraks_spontan` - Pneumotoraks Spontan: tidak ada red flag provenance otomatis
 - `lab_kejang_demam_sederhana` - Kejang Demam Sederhana: tidak ada red flag provenance otomatis
-- `lab_abses_peritonsil` - Abses Peritonsil: Sumber klinis yang tersedia hanya RELATED; perlu sumber diagnosis-spesifik atau pembatasan klaim.
 - `lab_furunkel_hidung` - Furunkel pada Hidung: tidak ada red flag provenance otomatis
 - `lab_otitis_media_supuratif_kronik_komplikata` - OMSK Tipe Bahaya — Curiga Kolesteatoma: tidak ada red flag provenance otomatis
 
