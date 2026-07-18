@@ -18,6 +18,8 @@ interface Props {
   hari: number
   binaan: boolean
   rosterPenuh: boolean
+  /** Dibuka dari surat masuk; beri penanda visual agar tautan kausal nyata. */
+  ditautkan?: boolean
   /** Alasan tombol Kunjungi dinonaktifkan; null = boleh berangkat. */
   alasanKunjungan: string | null
   biayaStamina: number
@@ -65,6 +67,7 @@ export function KartuKeluarga({
   hari,
   binaan,
   rosterPenuh,
+  ditautkan = false,
   alasanKunjungan,
   biayaStamina,
   onBinaan,
@@ -94,7 +97,9 @@ export function KartuKeluarga({
   const karmaTampak = karmaTerlihat(kel, hari)
 
   return (
-    <article className={`peta-keluarga kartu ${karmaTampak ? 'peta-keluarga--karma' : ''}`}>
+    <article
+      className={`peta-keluarga kartu ${karmaTampak ? 'peta-keluarga--karma' : ''} ${ditautkan ? 'peta-keluarga--ditautkan' : ''}`}
+    >
       <div className="baris baris--antara">
         {/* M10: content.namaKeluarga SUDAH berisi prefix "Keluarga " (mis. 'Keluarga
             Bu Marni') — jangan ditambah literal lagi (dulu jadi "Keluarga Keluarga X"). */}
@@ -108,6 +113,7 @@ export function KartuKeluarga({
               PERLU PERHATIAN
             </span>
           )}
+          {ditautkan && <span className="chip chip--kunyit">DARI SURAT</span>}
           {binaan && <span className="chip chip--daun">BINAAN</span>}
           <span className="chip">{LABEL_EKONOMI[content.ekonomi]}</span>
         </div>

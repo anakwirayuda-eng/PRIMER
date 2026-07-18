@@ -84,3 +84,40 @@ describe('<Kegiatan /> - sitasi kartu C2', () => {
     expect(screen.getByText(/Panduan Pengelolaan Posyandu Bidang Kesehatan/)).toBeInTheDocument()
   })
 })
+describe('<Kegiatan /> — kontrak hasil KLB mengikuti aksi spesifik', () => {
+  const jawabanDasar = [
+    { kartuId: 'klb_verif', pilihanId: 'a', benar: true },
+    { kartuId: 'klb_5w1h', pilihanId: 'a', benar: true },
+  ]
+
+  it('skor 2/3 dengan klb_aksi salah tidak mengklaim kluster tuntas', () => {
+    pasangHasil({
+      jenis: 'klb',
+      benar: 2,
+      total: 3,
+      skor: 2 / 3,
+      jawaban: [...jawabanDasar, { kartuId: 'klb_aksi', pilihanId: 'b', benar: false }],
+    })
+    render(<Kegiatan />)
+
+    expect(screen.queryByText(/Kluster ditanggulangi/)).not.toBeInTheDocument()
+    expect(screen.getByText(/aksi pengendalian spesifik keliru/)).toBeInTheDocument()
+  })
+
+  it('skor 2/3 dengan klb_aksi benar mengumumkan penutupan kluster', () => {
+    pasangHasil({
+      jenis: 'klb',
+      benar: 2,
+      total: 3,
+      skor: 2 / 3,
+      jawaban: [
+        { kartuId: 'klb_verif', pilihanId: 'b', benar: false },
+        { kartuId: 'klb_5w1h', pilihanId: 'a', benar: true },
+        { kartuId: 'klb_aksi', pilihanId: 'a', benar: true },
+      ],
+    })
+    render(<Kegiatan />)
+
+    expect(screen.getByText(/Kluster ditanggulangi/)).toBeInTheDocument()
+  })
+})

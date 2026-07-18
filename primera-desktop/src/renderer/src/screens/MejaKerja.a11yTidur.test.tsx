@@ -13,7 +13,7 @@ import userEvent from '@testing-library/user-event'
 import { useGame } from '../store'
 import { MejaKerja } from './MejaKerja'
 import { buildInitialState } from '@engine/init'
-import { advance, HARI_BUKA_PETA } from '@engine/reducer'
+import { advance, HARI_BUKA_PETA, HARI_BUKA_PROLANIS } from '@engine/reducer'
 import { PACK } from '@content/index'
 import type { GameState } from '@engine/state'
 
@@ -96,5 +96,54 @@ describe('<MejaKerja /> — satu tombol Tidur/Akhiri Hari (P3-tidur-duplikat)', 
 
     const tombolTidur = screen.getAllByRole('button', { name: /Tidur|Akhiri Hari/ })
     expect(tombolTidur).toHaveLength(1)
+  })
+})
+describe('<MejaKerja /> — hitungan Prolanis mengikuti peserta JKN aktif', () => {
+  it('komorbid dihitung sebagai satu orang dan peserta JKN mati tidak dihitung sebagai kartu aktif', () => {
+    pasangPrimerStub()
+    const awal = buildInitialState('Uji Hitungan Prolanis', 515151, PACK)
+    const [keluargaAktifA, keluargaAktifB, keluargaTidakAktif] = Object.keys(awal.desa.keluarga)
+    const aktifA = awal.desa.keluarga[keluargaAktifA!]!
+    const aktifB = awal.desa.keluarga[keluargaAktifB!]!
+    const tidakAktif = awal.desa.keluarga[keluargaTidakAktif!]!
+    const state: GameState = {
+      ...awal,
+      hari: HARI_BUKA_PROLANIS.karier,
+      blok: 'siang',
+      tutorialAktif: false,
+      desa: {
+        ...awal.desa,
+        keluarga: {
+          ...awal.desa.keluarga,
+          [keluargaAktifA!]: {
+            ...aktifA,
+            indikator: { ...aktifA.indikator, jkn: { ...aktifA.indikator.jkn, statusSebenarnya: 'ya' } },
+          },
+          [keluargaAktifB!]: {
+            ...aktifB,
+            indikator: { ...aktifB.indikator, jkn: { ...aktifB.indikator.jkn, statusSebenarnya: 'ya' } },
+          },
+          [keluargaTidakAktif!]: {
+            ...tidakAktif,
+            indikator: { ...tidakAktif.indikator, jkn: { ...tidakAktif.indikator.jkn, statusSebenarnya: 'tidak' } },
+          },
+        },
+      },
+      prolanis: {
+        sesiBerikutHari: HARI_BUKA_PROLANIS.karier,
+        roster: [
+          { id: 'a_ht', orangId: 'orang_a', nama: 'A', usia: 60, jenisKelamin: 'L', rw: 1, keluargaId: keluargaAktifA, jenis: 'ht', param: 160, takTerkontrolBerturut: 0 },
+          { id: 'a_dm', orangId: 'orang_a', nama: 'A', usia: 60, jenisKelamin: 'L', rw: 1, keluargaId: keluargaAktifA, jenis: 'dm', param: 180, takTerkontrolBerturut: 0 },
+          { id: 'b_ht', orangId: 'orang_b', nama: 'B', usia: 55, jenisKelamin: 'P', rw: 2, keluargaId: keluargaAktifB, jenis: 'ht', param: 150, takTerkontrolBerturut: 0 },
+          { id: 'c_dm', orangId: 'orang_c', nama: 'C', usia: 52, jenisKelamin: 'P', rw: 3, keluargaId: keluargaTidakAktif, jenis: 'dm', param: 190, takTerkontrolBerturut: 0 },
+        ],
+      },
+    }
+    useGame.setState({ state, slots: [], meta: null, arsip: null, sedangMemuat: false })
+    render(<MejaKerja />)
+
+    const tombol = screen.getByRole('button', { name: /Gelar Sesi Prolanis/ })
+    expect(tombol).toHaveTextContent(/2 peserta · 3 masalah aktif · 1 tunggu JKN/)
+    expect(tombol).toBeEnabled()
   })
 })

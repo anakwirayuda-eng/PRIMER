@@ -322,6 +322,11 @@
   gap: var(--sp-2);
 }
 
+.peta-keluarga--ditautkan {
+  border-color: var(--kunyit-600);
+  box-shadow: 0 0 0 2px var(--kunyit-600), var(--shadow-kertas);
+}
+
 .peta-keluarga--karma {
   border-color: var(--tinta-merah);
   box-shadow: 0 0 0 1px var(--tinta-merah), var(--shadow-kertas);

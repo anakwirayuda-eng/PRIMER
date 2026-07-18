@@ -86,6 +86,9 @@ interface GameStore {
    * simpanan berikutnya berhasil.
    */
   statusSimpan: 'idle' | 'menyimpan' | 'gagal'
+  /** Target navigasi UI sesaat dari surat ke kartu keluarga; tidak ikut save/replay. */
+  petaTargetKeluargaId: string | null
+  setPetaTargetKeluargaId: (keluargaId: string | null) => void
 
   mulaiGameBaru: (namaDokter: string, mode?: ModeStase, nim?: string) => void
   lanjutkanArsip: () => void
@@ -141,6 +144,8 @@ export const useGame = create<GameStore>((set, get) => ({
   eventTick: 0,
   sedangMemuat: false,
   statusSimpan: 'idle',
+  petaTargetKeluargaId: null,
+  setPetaTargetKeluargaId: (keluargaId) => set({ petaTargetKeluargaId: keluargaId }),
   muatToken: 0,
   arsipKorup: false,
 

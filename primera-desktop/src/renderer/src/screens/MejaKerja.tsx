@@ -108,6 +108,7 @@ interface Cta {
 export function MejaKerja() {
   const state = useGame((s) => s.state)!
   const dispatch = useGame((s) => s.dispatch)
+  const setPetaTargetKeluargaId = useGame((s) => s.setPetaTargetKeluargaId)
   const slots = useGame((s) => s.slots)
   const simpanKeSlot = useGame((s) => s.simpanKeSlot)
 
@@ -354,7 +355,10 @@ export function MejaKerja() {
               {suratTerbuka.kaitKeluargaId && (
                 <button
                   className="tombol mk__surat-kait"
-                  onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })}
+                  onClick={() => {
+                    setPetaTargetKeluargaId(suratTerbuka.kaitKeluargaId ?? null)
+                    dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })
+                  }}
                   disabled={!petaTerbuka}
                   title={
                     petaTerbuka
@@ -528,23 +532,41 @@ export function MejaKerja() {
                   {state.hari >= HARI_BUKA_PROLANIS[state.mode] && state.prolanis.roster.length > 0 && (() => {
                     const berikut = state.prolanis.sesiBerikutHari
                     const belumWaktunya = berikut !== undefined && state.hari < berikut
-                    const jumlahMasalah = state.prolanis.roster.length
-                    const jumlahPeserta = new Set(
-                      state.prolanis.roster.map((p) => p.orangId ?? p.id),
-                    ).size
-                    const ringkasan = jumlahMasalah === jumlahPeserta
-                      ? `${jumlahPeserta} peserta`
-                      : `${jumlahPeserta} peserta · ${jumlahMasalah} masalah aktif`
+                    // Engine hanya membuat kartu bagi peserta dengan JKN aktif.
+                    // Hitungan tombol mengikuti eligibility yang sama, lalu tetap
+                    // mengingatkan orang yang tertahan agar bridge JKN terlihat.
+                    const rosterAktif = state.prolanis.roster.filter((p) => {
+                      if (!p.keluargaId) return true
+                      return state.desa.keluarga[p.keluargaId]?.indikator.jkn?.statusSebenarnya !== 'tidak'
+                    })
+                    const jumlahMasalah = rosterAktif.length
+                    const pesertaAktif = new Set(rosterAktif.map((p) => p.orangId ?? p.id))
+                    const semuaPeserta = new Set(state.prolanis.roster.map((p) => p.orangId ?? p.id))
+                    const jumlahPeserta = pesertaAktif.size
+                    const jumlahMenungguJkn = [...semuaPeserta].filter((id) => !pesertaAktif.has(id)).length
+                    const ringkasan = [
+                      `${jumlahPeserta} peserta`,
+                      ...(jumlahMasalah !== jumlahPeserta ? [`${jumlahMasalah} masalah aktif`] : []),
+                      ...(jumlahMenungguJkn > 0 ? [`${jumlahMenungguJkn} tunggu JKN`] : []),
+                    ].join(' · ')
+                    const tidakAdaPesertaAktif = jumlahMasalah === 0
                     return (
                       <button
                         className="tombol tombol--kunyit"
-                        disabled={state.stamina < BIAYA_STAMINA_KEGIATAN || slotTerpakai || belumWaktunya}
+                        disabled={
+                          state.stamina < BIAYA_STAMINA_KEGIATAN ||
+                          slotTerpakai ||
+                          belumWaktunya ||
+                          tidakAdaPesertaAktif
+                        }
                         title={
                           belumWaktunya
                             ? `Sesi bulan ini sudah digelar — berikutnya hari ke-${berikut}.`
-                            : slotTerpakai
-                              ? 'Slot lapangan hari ini sudah terpakai.'
-                              : `Gelar sesi Prolanis (${ringkasan}, ${BIAYA_STAMINA_KEGIATAN} stamina).`
+                            : tidakAdaPesertaAktif
+                              ? 'Tidak ada peserta ber-JKN aktif bulan ini — bantu keluarga mengurus kepesertaan dulu.'
+                              : slotTerpakai
+                                ? 'Slot lapangan hari ini sudah terpakai.'
+                                : `Gelar sesi Prolanis (${ringkasan}, ${BIAYA_STAMINA_KEGIATAN} stamina).`
                         }
                         onClick={() => dispatch({ type: 'MULAI_PROLANIS' })}
                       >
@@ -696,7 +718,14 @@ export function MejaKerja() {
             </ul>
 
             {/* M11 #2 A2 — storylet atmosfer satu-tayang, murni display (non-REVISI). */}
-            <p className="teks-xs teks-lembut mk__storylet">{storyletHariIni(state.seed, state.hari)}</p>
+            <p className="teks-xs teks-lembut mk__storylet">
+              {storyletHariIni(state.seed, state.hari, {
+                punyaBinaan: state.desa.binaan.length > 0,
+                pernahRujuk: state.tally.rujukanTepat > 0,
+                pernahPosyandu: state.tally.posyanduSesi > 0,
+                pernahProlanis: state.tally.prolanisSesi > 0,
+              })}
+            </p>
 
             {/* M4.18 — Gudang Obat: stok menipis + pengadaan (admin sore hari). */}
             {(() => {

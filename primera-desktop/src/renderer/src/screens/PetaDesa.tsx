@@ -35,8 +35,11 @@ export function PetaDesa() {
   const dispatch = useGame((s) => s.dispatch)
   const lastEvents = useGame((s) => s.lastEvents)
   const eventTick = useGame((s) => s.eventTick)
+  const petaTargetKeluargaId = useGame((s) => s.petaTargetKeluargaId)
+  const setPetaTargetKeluargaId = useGame((s) => s.setPetaTargetKeluargaId)
 
   const [rwTerpilih, setRwTerpilih] = useState<number | null>(null)
+  const [keluargaDitautkan, setKeluargaDitautkan] = useState<string | null>(null)
   const [hasilKunjungan, setHasilKunjungan] = useState<HasilKunjungan | null>(null)
   const tickTerproses = useRef(-1)
   // CODEX M10.a ronde-4 (dossier §44): backdrop sudah dismissible via klik —
@@ -51,6 +54,18 @@ export function PetaDesa() {
       if (e.type === 'KUNJUNGAN_SELESAI') setHasilKunjungan(e.hasil)
     }
   }, [eventTick, lastEvents])
+
+  // Surat yang menjanjikan "lihat keluarga" harus membuka RW dan menandai
+  // kartu yang tepat, bukan sekadar membuang pemain ke peta umum.
+  useEffect(() => {
+    if (!petaTargetKeluargaId) return
+    const keluarga = PACK.keluarga[petaTargetKeluargaId]
+    if (keluarga) {
+      setRwTerpilih(keluarga.rw)
+      setKeluargaDitautkan(keluarga.id)
+    }
+    setPetaTargetKeluargaId(null)
+  }, [petaTargetKeluargaId, setPetaTargetKeluargaId])
 
   /* -- Turunan tampilan (murni baca) ---------------------------------------- */
 
@@ -291,6 +306,7 @@ export function PetaDesa() {
                       hari={state.hari}
                       binaan={state.desa.binaan.includes(content.id)}
                       rosterPenuh={state.desa.binaan.length >= MAKS_BINAAN}
+                      ditautkan={keluargaDitautkan === content.id}
                       alasanKunjungan={info.alasan}
                       biayaStamina={info.biaya}
                       onBinaan={() => dispatch({ type: 'PILIH_BINAAN', keluargaId: content.id })}

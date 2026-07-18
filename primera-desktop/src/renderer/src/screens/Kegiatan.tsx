@@ -169,6 +169,10 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
   const meta = JUDUL[hasil.jenis] ?? { label: 'KEGIATAN', sub: '' }
   const persen = Math.round(hasil.skor * 100)
   const nada = hasil.skor >= 0.8 ? 'baik' : hasil.skor >= 0.5 ? 'cukup' : 'kurang'
+  // Engine P0-A mensyaratkan skor agregat DAN aksi spesifik benar. UI harus
+  // memakai kontrak yang sama agar tidak mengumumkan kluster tuntas secara palsu.
+  const aksiKlbBenar = hasil.jawaban.find((jawaban) => jawaban.kartuId === 'klb_aksi')?.benar === true
+  const klbTuntas = hasil.jenis === 'klb' && hasil.skor >= 0.66 && aksiKlbBenar
   return (
     <div className="kegiatan">
       <div className="kegiatan__panel kertas kegiatan__hasil">
@@ -188,11 +192,13 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
               ? 'Kualitas posyandu terangkut ke IKS wilayah — gizi & imunisasi RW ini membaik sedikit demi sedikit.'
               : 'Sesi posyandu ini belum menyumbang perbaikan apa pun — tak ada keputusan tepat yang terangkut ke IKS wilayah.')}
           {hasil.jenis === 'prolanis' &&
-            'Parameter tiap peserta bergerak menurut keputusanmu. Yang dua bulan berturut tak terkontrol akan berujung di poli — pantau bulan depan.'}
+            'Parameter tiap masalah peserta yang hadir bergerak menurut keputusanmu. Yang dua bulan berturut tak terkontrol akan berujung di poli — pantau bulan depan.'}
           {hasil.jenis === 'klb' &&
-            (hasil.skor >= 0.66
+            (klbTuntas
               ? 'Kluster ditanggulangi: penularan di wilayah diputus, IKS RW terangkat.'
-              : 'Respons belum tuntas — kluster masih menyala. Coba lagi dengan pendekatan yang benar.')}
+              : hasil.skor >= 0.66
+                ? 'Respons belum tuntas: verifikasi dan 5W1H cukup, tetapi aksi pengendalian spesifik keliru — kluster masih menyala.'
+                : 'Respons belum tuntas — kluster masih menyala. Coba lagi dengan pendekatan yang benar.')}
         </p>
         <button className="tombol tombol--utama tombol--besar" onClick={onTutup}>
           Kembali ke Peta Desa

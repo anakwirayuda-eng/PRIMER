@@ -31,4 +31,22 @@ describe('<PetaDesa /> - debrief sitasi kunjungan C2', () => {
 
     expect(await screen.findByText(panduanSkenarioUkm(skenario))).toBeInTheDocument()
   })
+
+  it('target dari surat membuka RW dan menandai keluarga yang tepat', async () => {
+    const keluarga = PACK.keluarga['keluarga_wulan']!
+    const rw = PACK.rw.find((item) => item.nomor === keluarga.rw)!
+    const state = { ...buildInitialState('Uji Tautan Surat', 2, PACK), layar: 'peta' as const }
+    useGame.setState({
+      state,
+      lastEvents: [],
+      eventTick: 0,
+      petaTargetKeluargaId: keluarga.id,
+    })
+
+    render(<PetaDesa />)
+
+    expect(await screen.findByText(`RW ${rw.nomor} — ${rw.nama}`)).toBeInTheDocument()
+    expect(screen.getByText('DARI SURAT')).toBeInTheDocument()
+    expect(useGame.getState().petaTargetKeluargaId).toBeNull()
+  })
 })
