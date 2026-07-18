@@ -601,7 +601,11 @@ function fnv1a(teks: string): string {
 // 48 (2026-07-17 - Bridge B1.4): roster Prolanis menyimpan enrolmen HT/DM
 // terpisah per orang, membatasi komplikasi per sesi, dan membawa provenance
 // sampai hasil klinis grade A ditulis balik ke parameter masalah yang tepat.
-export const REVISI_ENGINE = 48
+// 49 (2026-07-17 - audit bridge pasca-B1.4): callback klinik Prolanis tidak
+// lagi mereset counter tak-terkontrol bila parameter membaik tetapi masih
+// melewati ambang kanonik HT/DM; drift keluarga hanya boleh menjatuhkan
+// indikator yang tersedia sebagai target pemulihan arc aktif.
+export const REVISI_ENGINE = 49
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

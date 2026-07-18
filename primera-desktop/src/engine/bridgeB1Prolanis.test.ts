@@ -177,14 +177,15 @@ describe('Bridge B1.4 - Prolanis multimorbid dan callback klinik', () => {
     ).toBe(true)
   })
 
-  it('grade A menulis balik perbaikan ke masalah yang tepat dan memberi umpan balik terlihat', () => {
+  it('grade A menulis balik perbaikan tanpa memalsukan kontrol penyakit', () => {
     const awal = stateEncounterProlanis(encounterDmProlanis('musa_dm'))
     const akhir = run(awal, { type: 'DISPOSISI', jenis: 'pulang' })
     const dm = akhir.prolanis.roster.find((p) => p.id === 'musa_dm')!
 
     expect(akhir.klinik.selesaiHariIni.at(-1)?.grade).toBe('A')
     expect(dm.param).toBeLessThan(190)
-    expect(dm.takTerkontrolBerturut).toBe(0)
+    expect(dm.param).toBeGreaterThanOrEqual(130)
+    expect(dm.takTerkontrolBerturut).toBe(1)
     expect(
       akhir.inbox.some((surat) => surat.judul.includes('Hasil klinik masuk Prolanis')),
     ).toBe(true)

@@ -877,14 +877,13 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (pesertaIdProlanis && penilaianFinal.grade === 'A') {
         const peserta = s.prolanis.roster.find((p) => p.id === pesertaIdProlanis)
         if (peserta) {
-          const pesertaBaru = {
-            ...driftProlanis(
-              peserta,
-              true,
-              new Rng(s.seed, 'prolanis-klinik', s.hari, peserta.id, encFinal.pasien.id),
-            ),
-            takTerkontrolBerturut: 0,
-          }
+          // Perawatan tepat memperbaiki parameter, tetapi tidak boleh memalsukan
+          // status "terkontrol" bila hasilnya masih di atas ambang kanonik.
+          const pesertaBaru = driftProlanis(
+            peserta,
+            true,
+            new Rng(s.seed, 'prolanis-klinik', s.hari, peserta.id, encFinal.pasien.id),
+          )
           prolanisSetelahKlinik = {
             ...s.prolanis,
             roster: s.prolanis.roster.map((p) => (p.id === peserta.id ? pesertaBaru : p)),
@@ -2237,9 +2236,17 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       // berubah diam-diam via drift acak, bukan pemeriksaan dokter yang baru.
       // Dibatasi ke sumber 'kader' (data lapangan yang memang bisa berubah/
       // usang tanpa kunjungan dokter) — data ber-label 'dokter' kini stabil
-      // sampai benar-benar diperiksa ulang.
+      // sampai benar-benar diperiksa ulang. Audit bridge pasca-B1 menambah
+      // pagar actionability: indikator yang dijatuhkan harus termasuk target
+      // beat akhir arc aktif, yakni sesuatu yang gameplay benar-benar dapat
+      // pulihkan. Tanpa ini JKN/air bersih acak bisa jatuh permanen pada
+      // keluarga yang arc-nya sama sekali tidak menyediakan aksi tersebut.
+      const arcAktifDrift = arcKunjunganAktif(pack, kelContent, s.mode, s.contentRelease)
+      const targetDapatDipulihkan = new Set<IndikatorPisPk>(arcAktifDrift.at(-1)?.target ?? [])
       const kandidat = Object.entries(kel.indikator).filter(
-        ([, n]) => n.sumber === 'kader' && n.statusSebenarnya === 'ya' && n.status !== 'na',
+        ([id, n]) =>
+          targetDapatDipulihkan.has(id as IndikatorPisPk) &&
+          n.sumber === 'kader' && n.statusSebenarnya === 'ya' && n.status !== 'na',
       )
       if (kandidat.length === 0) continue
       const [indId] = rngDrift.pick(kandidat)
