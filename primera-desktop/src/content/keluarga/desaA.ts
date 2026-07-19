@@ -694,9 +694,9 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               id: 'wk2_i1',
               nama: 'Rombongan Rabu Pahing',
               deskripsi:
-                'Sambungkan Bu Wulan dengan rombongan lansia RW 5 yang menumpang mobil bak Pak Kaji tiap hari ' +
-                'pasar Rabu, dan titipkan namanya ke loket Prolanis supaya obat bulanan disiapkan — sekali jalan: ' +
-                'kontrol, ambil obat, pulang bareng tetangga.',
+                'Sambungkan Bu Wulan dengan rombongan lansia RW 5 yang menumpang mobil Pak Kaji setiap Rabu. ' +
+                'Titipkan namanya ke loket Prolanis agar obat bulanan disiapkan. Ia dapat kontrol, mengambil obat, ' +
+                'dan pulang bersama tetangga dalam satu perjalanan.',
               cocokUntuk: ['kesempatan'],
               hasilNarasi:
                 'Rabu berikutnya Bu Wulan pulang dari Puskesmas menenteng kantong obat dan cerita panjang soal ' +
@@ -811,7 +811,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
           pembuka:
             'Bengkel mebel di samping rumah sunyi; serbuk kayu di mejanya sudah lama tidak diaduk gergaji. ' +
             'Bu Rahmi membukakan pintu dengan senyum tegang. Dari ruang tengah terdengar batuk kecil Bagas, ' +
-            'lalu suara Pak Santoso: "Siapa, Bu? ...Oh. Dokter."',
+            'lalu suara Pak Santoso: "Siapa, Bu?" Sesaat kemudian ia mengenali suaramu. "Oh, Dokter."',
           target: ['tb_berobat_standar'],
           hambatanSebenarnya: 'motivasi',
           petunjukHambatan:
@@ -1162,10 +1162,9 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               id: 'sk1_i1',
               nama: 'Jalan Pulang yang Terhormat',
               deskripsi:
-                'Rancang pengobatan ulang yang menjaga wajah Pak Santoso: obat diserahkan lewat ruang tindakan ' +
-                'belakang (bukan loket TB), dan pertemukan ia empat mata dengan Pak Hasan — juragan ayam yang dulu ' +
-                'TB, kini sehat dan tetap dihormati kampung — plus sepakati tujuan: surat keterangan SEMBUH ' +
-                'untuk ditunjukkan dengan dada tegak.',
+                'Rancang pengobatan ulang yang menjaga martabat Pak Santoso. Serahkan obat lewat ruang tindakan ' +
+                'dan pertemukan ia empat mata dengan Pak Hasan, penyintas TB yang tetap dihormati kampung. ' +
+                'Sepakati tujuan berupa surat keterangan sembuh yang dapat ia tunjukkan dengan bangga.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Pak Hasan datang membawa cerita, bukan ceramah: "Aku dulu juga sembunyi, To. Sekarang? Kandangku ' +
@@ -1467,9 +1466,9 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               id: 'sk2_i1',
               nama: 'Sekolah PMO untuk Bu Rahmi',
               deskripsi:
-                'Latih Bu Rahmi jadi PMO terampil dalam satu sesi praktik: susun waktu minum OAT yang sesuai ' +
-                'regimen dan dapat dijalani Pak Santoso, kenali efek samping, lalu hubungi Puskesmas bila muntah ' +
-                'sebelum mengulang dosis apa pun. Minta ia mengajarkan balik (teach-back) sampai lancar.',
+                'Latih Bu Rahmi menjadi PMO melalui praktik langsung. Susun waktu minum OAT yang sesuai regimen ' +
+                'dan rutinitas Pak Santoso, lalu kenali efek sampingnya. Bila Pak Santoso muntah, hubungi Puskesmas ' +
+                'sebelum mengulang dosis. Minta Bu Rahmi menjelaskan kembali sampai lancar.',
               cocokUntuk: ['kapabilitas'],
               hasilNarasi:
                 'Bu Rahmi mengulang aturannya tanpa melihat catatan, lengkap dengan gaya menunjuk-nunjuk. Sejak ' +
@@ -1901,10 +1900,9 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               id: 'kk1_i1',
               nama: 'Arisan Bunda Lembah',
               deskripsi:
-                'Sambungkan Luh Sari dengan tiga ibu muda RW 7 yang anak-anaknya lengkap imunisasi — ngobrol ' +
-                'santai di bale banjar, bukan penyuluhan — lalu tawarkan kesepakatan kecil: SATU suntikan dulu ' +
-                'bulan ini, ditemani bidan yang memberi rencana KIPI: apa yang dapat dipantau di rumah, kapan ' +
-                'parasetamol boleh dipakai sesuai berat badan, dan tanda bahaya yang perlu segera dinilai.',
+                'Pertemukan Luh Sari dengan tiga ibu muda RW 7 yang anaknya lengkap imunisasi dalam obrolan santai ' +
+                'di balai banjar. Tawarkan satu suntikan bulan ini dengan pendampingan bidan. Bidan menjelaskan KIPI, ' +
+                'penggunaan parasetamol sesuai berat badan, dan tanda bahaya yang perlu segera dinilai.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Mendengar Bu Komang bercerita anaknya juga demam semalam lalu besoknya main lagi, Luh Sari ' +
@@ -1982,7 +1980,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               label: 'Buku KIA penuh coretan pensil',
               narasi:
                 'Buku KIA kini lecek karena sering dibuka. Di halaman jadwal imunisasi ada coretan-coretan pensil: ' +
-                'tanda tanya, panah ke sana kemari, dan tulisan kecil "yg mana???". Satu kolom baru terisi ' +
+                'tanda tanya, panah ke sana kemari, dan tulisan kecil "yang mana?". Satu kolom baru terisi ' +
                 'tanda tangan bidan — sisanya masih menunggu, tapi kali ini menunggu kejelasan, bukan keberanian.',
               indikator: 'imunisasi_dasar',
               x: 45,
@@ -2216,15 +2214,14 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               id: 'kk2_i1',
               nama: 'Kalender Ayunda',
               deskripsi:
-                'Duduk bersama Luh Sari membuat "Kalender Ayunda": jadwal kejar imunisasi digambar tanggal per ' +
-                'tanggal di kalender dinding dengan spidol warna (suntik = merah, timbang = hijau), sinkron dengan ' +
-                'tanggal posyandu banjar — lalu minta ia menjelaskan balik seluruh jadwal itu dengan kata-katanya ' +
-                'sendiri sampai lancar, disaksikan Pak Ketut si tukang antar.',
+                'Buat "Kalender Ayunda" bersama Luh Sari. Tandai jadwal kejar imunisasi dan penimbangan dengan ' +
+                'warna berbeda, lalu sesuaikan dengan tanggal posyandu banjar. Minta Luh Sari menjelaskan kembali ' +
+                'seluruh jadwal dengan kata-katanya sendiri di hadapan Pak Ketut.',
               cocokUntuk: ['kapabilitas'],
               hasilNarasi:
                 'Kalender yang dulu polos kini ramai tanda merah dan hijau, dan Luh Sari menjelaskannya kepada ' +
                 'suaminya seperti guru muda: "Tanggal segini polio tetes, bulan depannya campak pas sembilan bulan..." ' +
-                'Pak Ketut mengangguk-angguk sambil menghitung bensin. Tidak ada lagi "yg mana???" di buku KIA.',
+                'Pak Ketut mengangguk-angguk sambil menghitung bensin. Tidak ada lagi "yang mana?" di buku KIA.',
             },
             {
               id: 'kk2_i2',

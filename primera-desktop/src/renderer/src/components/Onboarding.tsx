@@ -70,7 +70,7 @@ const KARTU: Kartu[] = [
   {
     ikon: '💊',
     judul: 'Tuntas di sini, atau rujuk',
-    isi: 'Beri terapi yang tepat dan edukasi yang relevan (maksimal tiga — pilih yang paling menyelamatkan). Kasus di luar kompetensi FKTP: kenali lalu RUJUK dengan benar. Merujuk tepat waktu adalah keputusan yang matang, bukan kekalahan. Panduan resmi Kemenkes jadi baku DEFAULT penilaian — tapi menyimpang darinya tetap SAH bila beralasan klinis kuat, bukan sekadar beda pendapat.',
+    isi: 'Beri terapi yang tepat dan pilih maksimal tiga topik edukasi yang paling penting. Kenali kasus di luar kompetensi FKTP, stabilkan bila perlu, lalu rujuk dengan benar. Merujuk tepat waktu adalah keputusan yang matang, bukan kekalahan. Panduan resmi Kemenkes menjadi acuan utama penilaian. Penyimpangan tetap dapat dibenarkan bila didukung alasan klinis yang kuat.',
   },
   {
     ikon: '⚖️',

@@ -292,10 +292,9 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
               id: 'bk1_i1',
               nama: 'Deklarasi Pindah Berjamaah + Kopi Pos Ronda',
               deskripsi:
-                'Pecahkan kemacetan "saling tunggu": kumpulkan Pak Bagyo, Kang Wo, Kang Dul, dan para ' +
-                'pemilik jamban-monumen lain untuk DEKLARASI pindah bersama satu tanggal (tak ada yang jadi ' +
-                'yang pertama sendirian), pindahkan ritual kopi subuh ke pos ronda, dan Pak Bagyo — ' +
-                'pemegang piagam STBM — didaulat jadi ketua gerakannya.',
+                'Kumpulkan Pak Bagyo, Kang Wo, Kang Dul, dan keluarga lain untuk menetapkan satu tanggal pindah ' +
+                'bersama, agar tidak ada yang berjalan sendirian. Pindahkan kebiasaan minum kopi subuh ke pos ronda. ' +
+                'Minta Pak Bagyo, pemegang piagam STBM, memimpin gerakan tersebut.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Deklarasinya jadi tontonan setengah kampung: tujuh kepala keluarga tanda tangan di kertas ' +
@@ -641,11 +640,9 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
               id: 'ek1_i1',
               nama: 'ANC Keluarga: Undang Sang Ibu',
               deskripsi:
-                'Gelar ANC istimewa minggu depan dengan calon nenek sebagai tamu kehormatan: dengar denyut ' +
-                'jantung cucu, telaah Buku KIA dan hasil pemeriksaan yang tersedia, serta dengar penilaian risiko ' +
-                'lengkap LANGSUNG dari bidan — USG melalui jejaring hanya bila berindikasi, bukan diasumsikan ada — ' +
-                'lalu tawarkan peran baru: selamatan tetap di kampung SETELAH empat puluh hari, ibu yang ' +
-                'memimpin, dan kamar cat baru itu jadi kamar cucu saat mudik pertama.',
+                'Undang calon nenek ke kunjungan ANC bersama Endah. Dengarkan denyut jantung janin, telaah Buku KIA, ' +
+                'dan minta bidan menjelaskan penilaian risiko; USG melalui jejaring hanya bila berindikasi. ' +
+                'Tawarkan kompromi: selamatan tetap di kampung setelah 40 hari dan kamar baru menunggu kepulangan cucu.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Sang ibu datang membawa dua kardus oleh-oleh dan pulang membawa salinan rencana persalinan. ' +
@@ -874,10 +871,9 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                     'Pak — biar Bapak lihat sendiri?"',
                   gaya: 'empati',
                   respons:
-                    'Pak Karsa mengangguk. Konjungtiva pucat, telapak tangan putih — kamu tunjukkan ' +
-                    'perbandingannya dengan telapak Pak Karsa sendiri: merah sehat vs putih pias. ' +
-                    '"...Kok putih begitu, Dok?" suaranya berubah. "Dari kapan?" — Dari Lestari, Pak. ' +
-                    'Dua tahun. Ia terdiam menghitung sesuatu.',
+                    'Pak Karsa mengangguk. Bagian dalam kelopak mata Bu Painah pucat dan telapak tangannya putih. ' +
+                    'Kamu membandingkannya dengan telapak Pak Karsa yang lebih kemerahan. "Kok putih begitu, Dok?" ' +
+                    'suaranya berubah. "Dari kapan?" Sejak melahirkan Lestari dua tahun lalu. Ia terdiam menghitung sesuatu.',
                   efekTrust: 2,
                   tepat: true,
                   ungkap: {
@@ -995,11 +991,9 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
               id: 'kk1_i1',
               nama: 'Konseling Pasangan: Jeda, Bukan Setop',
               deskripsi:
-                'Sesi konseling KB BERDUA di Puskesmas (bukan istri sendirian): bahasa "pengaturan jarak" ' +
-                'bukan "berhenti", pilihan metode yang di tangan mereka, plus obrolan santai dengan Pak ' +
-                'Modin yang anaknya tiga dan istrinya sehat — "KB-ne wong alim yo ono, Kang." Tablet tambah ' +
-                'darah Bu Painah tetap diresepkan ulang sebagai pengobatan anemianya sendiri — itu haknya, ' +
-                'bukan bahan tawar; yang dirundingkan berdua cukup soal KB-nya.',
+                'Ajak pasangan mengikuti konseling KB bersama dengan bahasa "mengatur jarak", bukan "berhenti". ' +
+                'Mereka memilih metode setelah mendapat informasi yang seimbang dan berbicara dengan Pak Modin. ' +
+                'Tablet tambah darah tetap menjadi hak Bu Painah untuk mengobati anemia, bukan alat tawar-menawar KB.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Mereka datang berdua naik motor butut — Pak Karsa yang memboncengkan, Pak Karsa pula yang ' +

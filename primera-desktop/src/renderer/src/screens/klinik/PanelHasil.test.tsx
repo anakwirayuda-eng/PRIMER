@@ -104,7 +104,7 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     render(
       <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
     )
-    expect(screen.queryByText(/non-negotiable terlewat/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Topik edukasi wajib yang terlewat/)).not.toBeInTheDocument()
   })
 
   it('stabilisasi pra-rujuk terlewat: alasan penurunan grade tampil jelas', () => {
@@ -162,14 +162,14 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
         onSelesai={() => {}}
       />,
     )
-    expect(screen.getByText(/Baku DEFAULT penilaian/i)).toBeInTheDocument()
+    expect(screen.getByText(/Panduan ini menjadi acuan utama penilaian/i)).toBeInTheDocument()
   })
 
   it('semua kasus, termasuk ispa_common_cold, menampilkan floor sumber dan catatan medikolegal §3b', () => {
     render(
       <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
     )
-    expect(screen.getByText(/Baku DEFAULT penilaian/i)).toBeInTheDocument()
+    expect(screen.getByText(/Panduan ini menjadi acuan utama penilaian/i)).toBeInTheDocument()
     expect(screen.getByText(/PPK Dokter FKTP KMK 1186\/2022 bab Rinitis Akut/i)).toBeInTheDocument()
   })
 })

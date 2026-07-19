@@ -238,7 +238,7 @@ describe('EBM currency 2026 - sumber display yang mengubah keputusan', () => {
     const stroke = PACK.kasusIgd.igd_stroke_iskemik_window!
     const pph = PACK.kasusIgd.igd_perdarahan_pascasalin!
 
-    expect(anc.clue).toMatch(/PMK 6\/2024.*6 kunjungan.*180 tablet/is)
+    expect(anc.clue).toMatch(/PMK 6\/2024.*(?:6|enam) kunjungan.*180 tablet/is)
     expect(dengue.clue).toMatch(/WHO Arboviral Clinical Management 2025/)
     expect(dss.clue).toMatch(/WHO Dengue 2009.*WHO Arboviral Clinical Management 2025/is)
     expect(dka.clue).toMatch(/Consensus Report.*2024/i)

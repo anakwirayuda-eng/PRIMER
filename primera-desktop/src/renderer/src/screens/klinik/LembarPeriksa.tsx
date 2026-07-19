@@ -269,7 +269,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
         )}
         {enc.firewallTerpicu > 0 && (
           <div className="klinik-lembar__firewall">
-            &#9888; {enc.firewallTerpicu}&times; percobaan resep diblokir firewall alergi
+            &#9888; {enc.firewallTerpicu}&times; percobaan resep dicegah sistem pengaman alergi
           </div>
         )}
         {enc.edukasi.length > 0 && (

@@ -230,8 +230,8 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
               RUJUK &rarr;
             </button>
             <span className="teks-xs teks-lembut">
-              Ingat gerbang SKDI: merujuk kasus yang tuntas di FKTP menggerus rasio rujukanmu
-              (RRNS); menahan kasus di luar kompetensi membahayakan pasien.
+              Ingat batas kompetensi SKDI: rujukan yang tidak diperlukan menurunkan mutu rujukan,
+              sedangkan menahan kasus di luar kompetensi membahayakan pasien.
             </span>
           </div>
         ) : (
@@ -243,8 +243,8 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
                 <div className="judul-seksi">Alasan Rujukan (opsional)</div>
                 <span className="teks-kecil teks-lembut">
                   Kasus ini biasanya tuntas di FKTP. Bila menurutmu ADA alasan klinis sungguhan
-                  untuk merujuk, pilih salah satu &mdash; deklarasi asal-asalan tetap dinilai apa
-                  adanya, bukan celah bebas dari rasio rujukanmu (RRNS).
+                  untuk merujuk, pilih salah satu. Alasan yang tidak sesuai temuan klinis tetap
+                  dinilai sebagai rujukan yang tidak diperlukan.
                 </span>
                 <div className="klinik-justifikasi">
                   {(Object.keys(LABEL_JUSTIFIKASI) as JustifikasiRujuk[]).map((opsi) => (
@@ -379,8 +379,9 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
 
             <span className="teks-xs teks-lembut sisrute-rs__edu">
               SISRUTE memverifikasi rujukan: RS bisa <strong>menolak</strong> bila spesialisasi tak
-              tersedia, bed penuh, atau kasus sebenarnya masih tuntas di FKTP. Penolakan menambah
-              churn administrasi &mdash; pilih RS yang tepat sejak awal.
+              tersedia, tempat tidur penuh, atau kasus sebenarnya masih dapat ditangani di FKTP.
+              Penolakan menambah pekerjaan administrasi dan menunda layanan. Pilih RS yang tepat
+              sejak awal.
             </span>
 
             <button
@@ -415,7 +416,7 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
 
       <footer className="klinik-deck__footer">
         <span className="teks-xs teks-lembut">
-          Disposisi menutup encounter &mdash; penilaian dihitung dari seluruh isi lembar.
+          Keputusan akhir menutup konsultasi. Penilaian dihitung dari seluruh isi lembar.
         </span>
       </footer>
     </>

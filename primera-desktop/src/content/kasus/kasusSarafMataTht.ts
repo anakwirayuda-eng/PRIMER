@@ -1202,7 +1202,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       {
         id: 'q_nyeri',
         kategori: 'keluhan_utama',
-        tanya: 'Nyerinya seberapa hebat? Menjalar ke kepala? Disertai mual/muntah?',
+        tanya: 'Seberapa hebat nyerinya, apakah menjalar ke kepala, dan adakah mual atau muntah?',
         jawab: 'Nyeri hebat sekali dok sampai ke kepala sisi kanan, dan saya sampai mual dan muntah.',
         esensial: true,
         oldcarts: ['keparahan', 'radiasi', 'penyerta'],

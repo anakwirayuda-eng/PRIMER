@@ -1,6 +1,6 @@
 /**
  * Storylet debrief malam: satu potongan kehidupan sistem kesehatan per hari.
- * Receipt hanya boleh muncul bila state pendukungnya benar-benar ada.
+ * Kabar tindak lanjut hanya boleh muncul bila state pendukungnya benar-benar ada.
  */
 import { Rng } from '@engine/core/rng'
 
@@ -45,15 +45,15 @@ const bersyarat: readonly Storylet[] = [
   { id: 'binaan-pemilik', teks: 'Kabar binaan: daftar tugas kini menyebut nama petugas dan tanggal kembali. Keluarga tidak lagi sekadar menjadi baris tanpa pemilik.', boleh: (k) => k.punyaBinaan === true },
   { id: 'binaan-kontradiksi', teks: 'Kabar binaan: laporan kader dan cerita keluarga tidak sepenuhnya sama. Tim memilih memeriksa dengan hormat, bukan langsung menuduh salah satu pihak.', boleh: (k) => k.punyaBinaan === true },
 
-  { id: 'rujuk-tunggu-berkas', teks: 'Receipt rujukan: berkas sudah terkirim, tetapi umpan balik belum kembali. Episode tetap terbuka dan belum boleh disebut selesai.', boleh: (k) => k.rujukanMenunggu === true },
-  { id: 'rujuk-tunggu-telepon', teks: 'Receipt rujukan: petugas menyiapkan panggilan tindak lanjut karena kabar balik belum diterima. Mengirim pasien bukan akhir pekerjaan.', boleh: (k) => k.rujukanMenunggu === true },
-  { id: 'rujuk-tunggu-pemilik', teks: 'Receipt rujukan: status masih menunggu. Nama pemilik tindak lanjut dan tenggatnya tetap terlihat di ledger.', boleh: (k) => k.rujukanMenunggu === true },
-  { id: 'rujuk-tunggu-loop', teks: 'Receipt rujukan: loop masih terbuka. Tim menahan diri dari mengklaim hasil sebelum keputusan dan rencana balik benar-benar diterima.', boleh: (k) => k.rujukanMenunggu === true },
+  { id: 'rujuk-tunggu-berkas', teks: 'Kabar rujukan: berkas sudah terkirim, tetapi umpan balik belum kembali. Rangkaian perawatan tetap terbuka dan belum boleh disebut selesai.', boleh: (k) => k.rujukanMenunggu === true },
+  { id: 'rujuk-tunggu-telepon', teks: 'Kabar rujukan: petugas menyiapkan panggilan tindak lanjut karena kabar balik belum diterima. Mengirim pasien bukan akhir pekerjaan.', boleh: (k) => k.rujukanMenunggu === true },
+  { id: 'rujuk-tunggu-pemilik', teks: 'Kabar rujukan: status masih menunggu. Penanggung jawab dan tenggat tindak lanjut tetap terlihat dalam jejak perawatan.', boleh: (k) => k.rujukanMenunggu === true },
+  { id: 'rujuk-tunggu-loop', teks: 'Kabar rujukan: rangkaian tindak lanjut masih terbuka. Tim belum menyatakan hasil sebelum keputusan dan rencana balik benar-benar diterima.', boleh: (k) => k.rujukanMenunggu === true },
 
-  { id: 'rujuk-tuntas-balik', teks: 'Receipt rujukan: kabar balik sudah diterima dan langkah berikutnya tercatat. Untuk sekali ini, panah rujukan benar-benar pulang ke Puskesmas.', boleh: (k) => k.rujukanTuntas === true },
-  { id: 'rujuk-tuntas-aksi', teks: 'Receipt rujukan: hasil pelayanan sudah ditindaklanjuti. Episode ditutup karena ada bukti aksi, bukan karena berkas dikirim.', boleh: (k) => k.rujukanTuntas === true },
-  { id: 'rujuk-tuntas-keluarga', teks: 'Receipt rujukan: keluarga menerima penjelasan rencana lanjut setelah kabar balik tiba. Informasi tidak berhenti di meja petugas.', boleh: (k) => k.rujukanTuntas === true },
-  { id: 'rujuk-tuntas-ledger', teks: 'Receipt rujukan: ledger menunjukkan sinyal, keputusan, umpan balik, dan aksi berikutnya dalam satu jejak. Loop itu kini dapat diaudit.', boleh: (k) => k.rujukanTuntas === true },
+  { id: 'rujuk-tuntas-balik', teks: 'Kabar rujukan: umpan balik sudah diterima dan langkah berikutnya tercatat. Alur informasi benar-benar kembali ke Puskesmas.', boleh: (k) => k.rujukanTuntas === true },
+  { id: 'rujuk-tuntas-aksi', teks: 'Kabar rujukan: hasil pelayanan sudah ditindaklanjuti. Rangkaian ditutup karena ada bukti tindakan, bukan hanya karena berkas dikirim.', boleh: (k) => k.rujukanTuntas === true },
+  { id: 'rujuk-tuntas-keluarga', teks: 'Kabar rujukan: keluarga menerima penjelasan rencana lanjut setelah umpan balik tiba. Informasi tidak berhenti di meja petugas.', boleh: (k) => k.rujukanTuntas === true },
+  { id: 'rujuk-tuntas-ledger', teks: 'Kabar rujukan: sinyal, keputusan, umpan balik, dan tindakan berikutnya kini tercatat dalam satu jejak yang dapat diaudit.', boleh: (k) => k.rujukanTuntas === true },
 
   { id: 'posy-sasaran', teks: 'Sesudah Posyandu, tim meninjau siapa yang datang dan siapa yang belum terjangkau. Cakupan bukan hanya jumlah kursi yang terisi.', boleh: (k) => k.pernahPosyandu === true },
   { id: 'posy-rujuk', teks: 'Catatan Posyandu sore ini memisahkan edukasi rutin dari temuan yang perlu dinilai tenaga kesehatan. Kader tidak dipaksa menjadi dokter kecil.', boleh: (k) => k.pernahPosyandu === true },
@@ -66,12 +66,12 @@ const bersyarat: readonly Storylet[] = [
   { id: 'prolanis-target', teks: 'Tim membandingkan tekanan darah, gula, fungsi, dan hambatan hadir. Keberhasilan program tidak direduksi menjadi satu angka ramai peserta.', boleh: (k) => k.pernahProlanis === true },
 
   { id: 'episode-aktif-next', teks: 'Jejak perawatan: satu episode masih aktif, tetapi langkah berikutnya dan pemiliknya jelas. Ketidakpastian dikelola, bukan disembunyikan.', boleh: (k) => k.episodeAktif === true },
-  { id: 'episode-aktif-tenggat', teks: 'Jejak perawatan: sebuah tenggat mendekat. Ledger membuat pekerjaan yang belum selesai tetap terlihat saat hari berganti.', boleh: (k) => k.episodeAktif === true },
+  { id: 'episode-aktif-tenggat', teks: 'Jejak perawatan: sebuah tenggat mendekat. Catatan kesinambungan membuat pekerjaan yang belum selesai tetap terlihat saat hari berganti.', boleh: (k) => k.episodeAktif === true },
   { id: 'episode-aktif-lintas', teks: 'Jejak perawatan: sinyal keluarga dan catatan klinik kini berada pada episode yang sama. Dua sisi layanan mulai berbicara satu sama lain.', boleh: (k) => k.episodeAktif === true },
   { id: 'episode-aktif-bukan-selesai', teks: 'Jejak perawatan: tindakan pertama sudah dilakukan, tetapi hasil belum terverifikasi. Tim menahan stempel selesai.', boleh: (k) => k.episodeAktif === true },
 
-  { id: 'episode-verif-bukti', teks: 'Jejak perawatan: satu episode terverifikasi setelah ada bukti perubahan atau tindak lanjut. Penutupan datang dari receipt, bukan asumsi.', boleh: (k) => k.episodeTerverifikasi === true },
-  { id: 'episode-verif-belajar', teks: 'Jejak perawatan: episode yang tuntas dibaca ulang dalam Lokmin. Tim mencari apa yang membuat loop itu berhasil agar dapat diulang dengan bijak.', boleh: (k) => k.episodeTerverifikasi === true },
+  { id: 'episode-verif-bukti', teks: 'Jejak perawatan: satu rangkaian dinyatakan tuntas setelah ada bukti perubahan atau tindak lanjut, bukan berdasarkan asumsi.', boleh: (k) => k.episodeTerverifikasi === true },
+  { id: 'episode-verif-belajar', teks: 'Jejak perawatan: rangkaian yang tuntas dibaca ulang dalam Lokmin. Tim mencari hal yang membuat tindak lanjut berhasil agar dapat diulang dengan bijak.', boleh: (k) => k.episodeTerverifikasi === true },
   { id: 'episode-verif-ukm-ukp', teks: 'Jejak perawatan: masalah yang ditemukan di rumah berakhir dengan tindak lanjut klinik dan verifikasi keluarga. UKM dan UKP bertemu di hasil.', boleh: (k) => k.episodeTerverifikasi === true },
   { id: 'episode-verif-tidak-magis', teks: 'Jejak perawatan: outcome membaik melalui beberapa langkah kecil lintas hari. Tidak ada satu tombol ajaib, hanya kontinuitas yang bekerja.', boleh: (k) => k.episodeTerverifikasi === true },
 ]

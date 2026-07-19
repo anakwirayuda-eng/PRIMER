@@ -51,7 +51,7 @@ export const KASUS_IGD = terapkanGroundingIgd([
         // & menegaskan antihistamin tak mengatasi ABC — prioritas pascastabilisasi
         // adalah observasi + kesiapan adrenalin ulang + transfer.
         pilihan: [
-          { id: 'a', label: 'Observasi ketat, siapkan adrenalin ulang bila reaksi kambuh, lalu rujuk untuk pemantauan reaksi bifasik', benar: true, efekStabilitas: 15, respons: 'Tepat — pascastabilisasi kuncinya monitoring + kesiapan adrenalin ulang (tiap 5-15 menit bila perlu) + transfer. RCUK 2021: kortikosteroid TIDAK lagi rutin; antihistamin hanya meredakan gejala kulit, bukan ABC.' },
+          { id: 'a', label: 'Observasi ketat, siapkan adrenalin ulang bila reaksi kambuh, lalu rujuk untuk pemantauan reaksi bifasik', benar: true, efekStabilitas: 15, respons: 'Tepat — setelah stabilisasi, lanjutkan pemantauan, siapkan adrenalin ulang tiap 5-15 menit bila perlu, dan rujuk. RCUK 2021 tidak lagi menganjurkan kortikosteroid rutin; antihistamin hanya meredakan gejala kulit, bukan gangguan jalan napas, pernapasan, atau sirkulasi.' },
           { id: 'b', label: 'Andalkan kortikosteroid IV untuk mencegah reaksi bifasik', benar: false, efekStabilitas: -10, respons: 'Bukti steroid mencegah reaksi bifasik LEMAH — RCUK 2021 mencabut rekomendasi rutinnya. Ia bekerja lambat & tak menggantikan observasi + kesiapan adrenalin ulang.' },
           { id: 'c', label: 'Pasien membaik, langsung pulangkan', benar: false, efekStabilitas: -20, respons: 'Bahaya — reaksi bifasik bisa muncul beberapa jam kemudian. Wajib observasi berkepanjangan/rujuk.' },
         ],
@@ -80,7 +80,7 @@ export const KASUS_IGD = terapkanGroundingIgd([
         id: 'k1',
         narasi: 'Anak masih kejang, mulut berbuih. Tindakan pertama?',
         pilihan: [
-          { id: 'a', label: 'Miringkan, bebaskan jalan napas, beri oksigen', benar: true, efekStabilitas: 20, respons: 'Benar — posisi pemulihan mencegah aspirasi. Airway selalu prioritas pertama.' },
+          { id: 'a', label: 'Miringkan, bebaskan jalan napas, beri oksigen', benar: true, efekStabilitas: 20, respons: 'Benar — posisi pemulihan mencegah aspirasi. Jalan napas selalu menjadi prioritas pertama.' },
           { id: 'b', label: 'Tahan gerakan anak & masukkan sendok ke mulut', benar: false, efekStabilitas: -30, respons: 'BERBAHAYA — mitos berbahaya. Bisa patahkan gigi/sumbat napas. Jangan pernah masukkan benda ke mulut.' },
         ],
       },
@@ -227,13 +227,13 @@ export const KASUS_IGD = terapkanGroundingIgd([
     // terukur) — dipakai pd syok terkompensata berisiko fluid overload/edema
     // paru (algoritme laju WHO Dengue 2009/PAPDI Protokol 5; WHO 2025
     // menegaskan kristaloid, individualisasi, dan reassessment ketat).
-    clue: 'Fase kritis dengue (demam turun H4-6 + akral dingin, nadi cepat-lemah, tekanan nadi ≤20 mmHg, TD MASIH TERUKUR) = DSS TERKOMPENSASI. RESUSITASI: kristaloid RL/NaCl 0,9% 5-10 mL/kgBB/JAM selama 1 jam, bukan bolus cepat; 10-20 mL/kg/15-30 menit dicadangkan untuk syok DEKOMPENSATA/TD tak terukur. Evaluasi ulang perfusi, tekanan nadi, diuresis, hematokrit, dan tanda overload lalu titrasi turun. Angka laju mengikuti algoritme WHO Dengue 2009/PAPDI Protokol 5; WHO Arboviral Clinical Management 2025 memperbarui payung buktinya dengan pilihan kristaloid dan terapi cairan yang diindividualisasi serta dipantau sering. Hindari NSAID/aspirin.',
+    clue: 'Fase kritis dengue (demam turun H4-6 + akral dingin, nadi cepat-lemah, tekanan nadi ≤20 mmHg, TD MASIH TERUKUR) = DSS TERKOMPENSASI. RESUSITASI: kristaloid RL/NaCl 0,9% 5-10 mL/kgBB/JAM selama 1 jam, bukan bolus cepat; 10-20 mL/kg/15-30 menit dicadangkan untuk syok DEKOMPENSATA/TD tak terukur. Evaluasi ulang perfusi, tekanan nadi, diuresis, hematokrit, dan tanda kelebihan cairan lalu titrasi turun. Angka laju mengikuti algoritme WHO Dengue 2009/PAPDI Protokol 5; WHO Arboviral Clinical Management 2025 memperbarui payung buktinya dengan pilihan kristaloid dan terapi cairan yang diindividualisasi serta dipantau sering. Hindari NSAID/aspirin.',
     langkah: [
       {
         id: 'd1',
         narasi: 'Akral dingin, tekanan nadi menyempit (90/80), CRT >3 detik. Tindakan pertama?',
         pilihan: [
-          { id: 'a', label: 'Pasang infus, kristaloid 5-10 mL/kgBB/jam (infus 1 jam) — syok terkompensasi', benar: true, efekStabilitas: 25, respons: 'Tepat — DSS TERKOMPENSASI (TD 90/80 masih terukur, nadi teraba meski lemah) ditangani infus kristaloid 5-10 mL/kgBB/jam, BUKAN bolus cepat. Bolus 10-20 mL/kg dalam <30 menit direservasi utk syok DEKOMPENSATA (TD tak terukur) — dipakai berlebihan berisiko fluid overload/edema paru.' },
+          { id: 'a', label: 'Pasang infus, kristaloid 5-10 mL/kgBB/jam (infus 1 jam) — syok terkompensasi', benar: true, efekStabilitas: 25, respons: 'Tepat — DSS TERKOMPENSASI (TD 90/80 masih terukur, nadi teraba meski lemah) ditangani infus kristaloid 5-10 mL/kgBB/jam, BUKAN bolus cepat. Bolus 10-20 mL/kg dalam <30 menit dicadangkan untuk syok DEKOMPENSATA (TD tak terukur); penggunaan berlebihan berisiko kelebihan cairan dan edema paru.' },
           { id: 'b', label: 'Beri antibiotik IV untuk infeksinya', benar: false, efekStabilitas: -22, respons: 'Dengue adalah virus — antibiotik tidak berguna & menunda resusitasi cairan yang vital.' },
           { id: 'c', label: 'Beri transfusi darah segera', benar: false, efekStabilitas: -18, respons: 'Belum tentu perlu darah dulu; masalah utama adalah kebocoran plasma → butuh kristaloid. Transfusi hanya bila perdarahan bermakna.' },
         ],

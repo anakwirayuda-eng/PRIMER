@@ -11,6 +11,7 @@ import { useGame } from '../store'
 import { PACK } from '@content/index'
 import { normalisasiNamaObat } from './klinik/util'
 import { DuelDiagnosis } from './klinik/RefleksiKlinis'
+import { TeksTerbaca } from '../components/TeksTerbaca'
 import './DexSkdi.css'
 
 // CODEX audit 2026-07-04: dulu memakai SKDI144 mentah (bukan PACK.skdi144),
@@ -307,7 +308,7 @@ export function DexSkdi() {
               {kasusTerpilih !== undefined && (
                 <div className="dexskdi-detail__clue">
                   <span className="judul-seksi">Mutiara Klinis</span>
-                  <p className="dexskdi-detail__clue-teks tulis-tangan">{kasusTerpilih.clue}</p>
+                  <TeksTerbaca teks={kasusTerpilih.clue} className="dexskdi-detail__clue-teks tulis-tangan" />
                 </div>
               )}
 
@@ -320,19 +321,19 @@ export function DexSkdi() {
               {kasusTerpilih?.mutiaraEbm && (
                 <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--ebm">
                   <span className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</span>
-                  <p className="teks-kecil">{kasusTerpilih.mutiaraEbm}</p>
+                  <TeksTerbaca teks={kasusTerpilih.mutiaraEbm} className="teks-kecil" />
                 </div>
               )}
               {kasusTerpilih?.catatanRealita && (
                 <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--realita">
                   <span className="judul-seksi">🏥 Realita FKTP</span>
-                  <p className="teks-kecil">{kasusTerpilih.catatanRealita}</p>
+                  <TeksTerbaca teks={kasusTerpilih.catatanRealita} className="teks-kecil" />
                 </div>
               )}
               {kasusTerpilih?.panduanResmi && (
                 <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--panduan">
                   <span className="judul-seksi">📜 Panduan Resmi Kemenkes</span>
-                  <p className="teks-kecil">{kasusTerpilih.panduanResmi}</p>
+                  <TeksTerbaca teks={kasusTerpilih.panduanResmi} className="teks-kecil" />
                 </div>
               )}
 

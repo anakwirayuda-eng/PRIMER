@@ -177,7 +177,7 @@ export function PetaDesa() {
           </span>
           <span className="peta-legenda__pisah" />
           <span className="mono" title="Provenance data indikator: hanya yang kamu verifikasi sendiri yang pasti benar.">
-            ✓ dokter · ~ kader · ? belum ada data · ⧗ dijanjikan warga — menunggu verifikasi outcome
+            ✓ dokter · ~ kader · ? belum ada data · ⧗ dijanjikan warga — menunggu verifikasi hasil
           </span>
         </div>
       </section>

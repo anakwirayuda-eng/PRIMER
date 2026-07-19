@@ -9,6 +9,7 @@ import {
   LAB_CONTENT_RELEASE,
   LEGACY_CONTENT_RELEASE,
   UKM_ASSURANCE_CONTENT_RELEASE,
+  EDITORIAL_UX_CONTENT_RELEASE,
   encounterArchetypeAktif,
   releasePolicyAktif,
   ukmScenarioAktif,
@@ -153,7 +154,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
   })
 
   it('aktif hanya di Career: PACK, release, karma, dan isolasi mode konsisten', () => {
-    expect(CONTENT_RELEASE).toBe(UKM_ASSURANCE_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(EDITORIAL_UX_CONTENT_RELEASE)
     expect(CONTENT_RELEASE_ORDER).toEqual([
       LEGACY_CONTENT_RELEASE,
       M13_1A_BASE_CONTENT_RELEASE,
@@ -161,6 +162,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
       'm13-lab-fullfledge-2026-07-16',
       LAB_CONTENT_RELEASE,
       UKM_ASSURANCE_CONTENT_RELEASE,
+      EDITORIAL_UX_CONTENT_RELEASE,
     ])
     for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) expect(PACK.kasus[kasus.id], kasus.id).toEqual(denganVarian(kasus))
     for (const kasus of M13_1A_AUTHORING_MANIFEST.igdCases) expect(PACK.kasusIgd[kasus.id], kasus.id).toEqual(kasus)

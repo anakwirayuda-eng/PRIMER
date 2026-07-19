@@ -373,6 +373,11 @@ button {
 .teks-lembut { color: var(--tinta-lembut); }
 .teks-kecil { font-size: var(--text-sm); }
 .teks-xs { font-size: var(--text-xs); }
+.teks-terbaca {
+  display: grid;
+  gap: var(--sp-2);
+}
+.teks-terbaca > p { margin: 0; }
 
 /* -- Aksesibilitas: hormati preferensi reduksi gerak (CODEX P2) --------------------
    Banyak animasi infinite (title, CTA meja, hotspot peta/kunjungan, IGD, kalender

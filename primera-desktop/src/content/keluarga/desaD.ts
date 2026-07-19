@@ -284,10 +284,9 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
               id: 'slk1_i1',
               nama: 'Restorasi Nama: Eko Kembali sebagai Manusia',
               deskripsi:
-                'Rancang jalan pulang sosial: fasilitasi evaluasi klinis atas kaku-ngiler dan penyesuaian regimen ' +
-                'oleh dokter bila memang berindikasi, lalu peran kecil yang terlihat kampung — Eko membantu ' +
-                'Pak Slamet menjemur gabah di halaman DEPAN — dan sepakati satu kalimat keluarga untuk ' +
-                'menjawab tetangga: "Eko sakit, sedang berobat, dan membaik."',
+                'Fasilitasi evaluasi klinis atas kaku dan air liur berlebih; dokter menyesuaikan regimen bila ' +
+                'memang diperlukan. Beri Eko peran kecil yang terlihat kampung, seperti membantu menjemur gabah ' +
+                'di halaman depan. Sepakati jawaban keluarga: "Eko sakit, sedang berobat, dan membaik."',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Dua minggu kemudian kader mengirim kabar yang membuatmu membaca dua kali: Eko terlihat ' +
@@ -571,10 +570,9 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
               id: 'slk2_i1',
               nama: 'Latihan Keluarga: Sinyal Dini + Rencana Saku',
               deskripsi:
-                'Formalkan tiga hal yang sudah tumbuh di rumah ini: catatan sinyal dini Bu Tumini jadi ' +
-                'lembar pantau resmi (tidur/mondar-mandir/bicara sendiri), role-play respons tanpa bentakan ' +
-                'untuk Pak Slamet sebulan sekali di Puskesmas, dan rencana saku 3 langkah milik Eko ' +
-                'ditempel di dinding dekat kasurnya.',
+                'Ubah catatan Bu Tumini tentang tidur, mondar-mandir, dan bicara sendiri menjadi lembar pantau. ' +
+                'Latih Pak Slamet merespons tanpa bentakan melalui simulasi percakapan bulanan di Puskesmas. ' +
+                'Tempel rencana tiga langkah milik Eko di dinding dekat kasurnya.',
               cocokUntuk: ['kapabilitas'],
               hasilNarasi:
                 'Sebulan kemudian lembar pantau itu penuh centang rapi — dan satu baris merah di minggu ' +
@@ -930,9 +928,9 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
               id: 'yk1_i1',
               nama: 'Kontrak Enam Bulan Mbah Painem',
               deskripsi:
-                'Resmikan kesepakatan tiga generasi: Mbah Painem jadi "penjaga jadwal MPASI" (pisang ditunda ' +
-                'sampai 6 bulan, beliau penyuap pertama), Bu Yani belajar membaca popok-basah & KMS sebagai ' +
-                'bukti ASI cukup, dan Nayla ditimbang rutin — grafiknya dibacakan keluarga sendiri tiap bulan.',
+                'Buat kesepakatan tiga generasi. Mbah Painem menjaga jadwal MPASI dan menjadi penyuap pertama ' +
+                'setelah usia enam bulan. Bu Yani belajar memakai popok basah dan KMS untuk menilai kecukupan ASI. ' +
+                'Timbang Nayla rutin dan baca grafiknya bersama setiap bulan.',
               cocokUntuk: ['kapabilitas'],
               hasilNarasi:
                 'Di Posyandu bulan berikutnya, Mbah Painem datang PALING depan, menggendong Nayla dan ' +
@@ -1221,10 +1219,9 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
               id: 'yk2_i1',
               nama: 'Gudang ASI Botol Selai + Surat Ruang Laktasi',
               deskripsi:
-                'Jalankan rencana lengkap ibu bekerja: 6 botol kaca disterilkan jadi stok harian ' +
-                '(spidol tanggal, kulkas kecil), jadwal perah 3 sesi (pagi-istirahat-malam), Mbah Painem ' +
-                'dilatih penyajian rendam-hangat, dan surat resmi Puskesmas ke pemilik konveksi untuk ' +
-                'pojok laktasi bersama.',
+                'Siapkan enam botol kaca steril sebagai stok harian dan beri label tanggal. Susun tiga jadwal ' +
+                'memerah ASI: pagi, waktu istirahat, dan malam. Latih Mbah Painem menghangatkan ASI dengan rendaman, ' +
+                'lalu kirim surat Puskesmas untuk meminta ruang laktasi bersama.',
               cocokUntuk: ['kesempatan'],
               hasilNarasi:
                 'Hari pertama kerja, kulkas kecil itu berisi tiga botol berlabel tanggal — tulisan tangan ' +

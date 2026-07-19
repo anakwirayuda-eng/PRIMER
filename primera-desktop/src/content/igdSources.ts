@@ -203,7 +203,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['idai_kejang_demam', 'who_bec'],
   },
   igd_asma_berat: {
-    panduanResmi: 'Serangan berat memerlukan oksigen terkontrol, SABA berulang, kortikosteroid sistemik dini, reassessment, dan rujukan tanpa menunggu gagal napas. Ipratropium adalah tambahan bila tersedia, bukan alasan menunda bundel dasar FKTP.',
+    panduanResmi: 'Serangan berat memerlukan oksigen terkontrol, SABA berulang, kortikosteroid sistemik dini, penilaian ulang, dan rujukan tanpa menunggu gagal napas. Ipratropium adalah tambahan bila tersedia, bukan alasan menunda tata laksana dasar FKTP.',
     sumberIds: ['ppk_fktp_2022', 'gina_2026'],
   },
   igd_hipoglikemia: {
@@ -211,7 +211,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['ppk_fktp_2022', 'ada_hypoglycemia_2026'],
   },
   igd_dengue_syok: {
-    panduanResmi: 'DSS terkompensasi ditangani dengan kristaloid terukur dan reassessment perfusi yang sering; laju harus dititrasi turun saat membaik dan tidak boleh diteruskan membabi buta. Hindari NSAID dan rujuk dengan cairan terpantau.',
+    panduanResmi: 'DSS terkompensasi ditangani dengan kristaloid terukur dan penilaian ulang perfusi yang sering. Turunkan laju cairan saat kondisi membaik; jangan meneruskannya tanpa evaluasi. Hindari NSAID dan rujuk dengan cairan terpantau.',
     sumberIds: ['ppk_fktp_2022', 'who_arboviral_2025'],
   },
   igd_status_epileptikus: {
@@ -219,7 +219,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['pnpk_epilepsi_2026', 'ilae_status_2015'],
   },
   igd_cedera_kepala_sedang: {
-    panduanResmi: 'Prioritas FKTP adalah ABC dengan proteksi servikal, pemeriksaan GCS dan pupil serial, pencegahan hipoksia/hipotensi, lalu transfer ke fasilitas CT dan bedah. Jangan menunda rujukan untuk observasi panjang di fasilitas tanpa pencitraan.',
+    panduanResmi: 'Prioritas FKTP adalah ABC dengan proteksi servikal, pemeriksaan GCS dan pupil berkala, serta pencegahan hipoksia dan hipotensi. Setelah stabilisasi awal, rujuk ke fasilitas dengan CT dan layanan bedah. Jangan menunda rujukan untuk observasi panjang di fasilitas tanpa pencitraan.',
     sumberIds: ['ppk_fktp_2022', 'nice_head_injury_2023'],
   },
   igd_luka_bakar_luas: {
@@ -231,7 +231,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['ppk_fktp_2022', 'hyperglycemic_crises_2024'],
   },
   igd_stroke_iskemik_window: {
-    panduanResmi: 'Catat last-known-well, cek glukosa, lakukan skrining stroke, pertahankan ABC, jangan memberi oral atau antiplatelet empiris sebelum perdarahan disingkirkan, dan transfer segera ke jejaring CT serta reperfusi.',
+    panduanResmi: 'Catat waktu terakhir pasien diketahui sehat, cek glukosa, lakukan skrining stroke, dan pertahankan ABC. Jangan memberi asupan oral atau antiplatelet empiris sebelum perdarahan disingkirkan. Rujuk segera ke jejaring CT dan reperfusi.',
     sumberIds: ['pnpk_stroke_2026', 'aha_asa_stroke_2026'],
   },
   igd_perdarahan_pascasalin: {
@@ -247,15 +247,15 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['ppk_fktp_2022', 'aha_drowning_2024'],
   },
   igd_keracunan_organofosfat: {
-    panduanResmi: 'Lindungi penolong, hentikan paparan dan lakukan dekontaminasi, jaga airway dengan suction/oksigen, lalu titrasi atropin terhadap sekresi dan ventilasi, bukan ukuran pupil. Rujuk dengan monitoring karena toksisitas dapat berulang.',
+    panduanResmi: 'Lindungi penolong, hentikan paparan, dan lakukan dekontaminasi. Jaga jalan napas dengan pengisapan sekret dan oksigen, lalu titrasi atropin terhadap sekresi serta ventilasi, bukan ukuran pupil. Rujuk dengan pemantauan karena toksisitas dapat berulang.',
     sumberIds: ['ppk_fktp_2022', 'who_pesticide_2008'],
   },
   igd_gigitan_ular_berbisa: {
-    panduanResmi: 'Imobilisasi ekstremitas, lepaskan benda ketat, hindari torniket-sayat-isap dan suntikan IM, nilai envenomasi sistemik, lalu transfer ke fasilitas dengan antibisa dan monitoring. Antibisa tidak diberikan tanpa indikasi envenomasi.',
+    panduanResmi: 'Imobilisasi ekstremitas, lepaskan benda ketat, dan hindari torniket, sayatan, isapan, serta suntikan IM. Nilai tanda envenomasi sistemik, lalu rujuk ke fasilitas dengan antibisa dan pemantauan. Antibisa tidak diberikan tanpa indikasi envenomasi.',
     sumberIds: ['ppk_fktp_2022', 'who_snakebite_2016'],
   },
   igd_syok_sepsis: {
-    panduanResmi: 'Sepsis dan syok septik adalah kegawatan: mulai resusitasi, kultur bila tidak menunda, dan antibiotik IV segera (idealnya dalam 1 jam pada syok). Berikan kristaloid berbasis berat badan dengan reassessment sering; jangan menerapkan volume tetap tanpa menilai overload, lalu rujuk terpantau.',
+    panduanResmi: 'Sepsis dan syok septik adalah kegawatan. Mulai resusitasi, ambil kultur bila tidak menunda, dan berikan antibiotik IV segera, idealnya dalam satu jam pada syok. Berikan kristaloid berdasarkan berat badan dengan penilaian ulang yang sering. Jangan memakai volume tetap tanpa menilai risiko kelebihan cairan; rujuk dengan pemantauan.',
     sumberIds: ['pnpk_sepsis_2017', 'ssc_sepsis_2026'],
   },
   igd_eklampsia: {
@@ -267,7 +267,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['ppk_fktp_2022', 'aha_pediatric_bls_2025'],
   },
   igd_pneumotoraks_tension_trauma: {
-    panduanResmi: 'Tension pneumothorax dengan gangguan hemodinamik atau respirasi adalah diagnosis klinis dan tidak menunggu foto. Lakukan dekompresi oleh tenaga terlatih sesuai alat/protokol, pantau patensi serta kekambuhan, kemudian transfer segera.',
+    panduanResmi: 'Pneumotoraks tensi dengan gangguan hemodinamik atau pernapasan adalah diagnosis klinis dan tidak menunggu foto. Tenaga terlatih melakukan dekompresi sesuai alat dan protokol, lalu memantau patensi serta kekambuhan. Setelah itu, rujuk segera.',
     sumberIds: ['ppk_fktp_2022', 'nice_major_trauma'],
   },
   igd_stemi_anterior_hipoksemik: {

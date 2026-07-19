@@ -313,14 +313,11 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                     'kandungan Ibu sekarang, di sini saja? Gratis, dan Ibu tetap yang memutuskan semuanya."',
                   gaya: 'empati',
                   respons:
-                    '"...Di sini saja? Tidak dibawa-bawa?" Bu Asih menimbang, lalu mengangguk. Tensi 150/95. ' +
-                    'Kaki bengkak. Kamu memintanya duduk tenang dulu, lalu mengukur ulang — tetap tinggi. ' +
-                    'Dari tas kamu keluarkan stik protein urin; garisnya berubah samar: positif satu. ' +
-                    'Nyeri kepala hebat, pandangan kabur, nyeri ulu hati — belum ada, katanya, dan kamu mencatat ' +
-                    'kata "belum" itu baik-baik. Usia 38. Anak keempat. Riwayat perdarahan. Kamu menuliskan ' +
-                    'semuanya di buku KIA — halaman pertama yang akhirnya terisi — dengan satu garis bawah tebal: ' +
-                    'HARUS diperiksa bu bidan atau Puskesmas SEGERA, hari ini atau paling lambat besok. ' +
-                    'Bukan kontrol biasa.',
+                    '"Di sini saja? Tidak dibawa-bawa?" Bu Asih menimbang, lalu mengangguk. Setelah duduk ' +
+                    'tenang, tekanan darah tetap 150/95. Kakinya bengkak dan protein urin positif satu, tetapi ' +
+                    'belum ada nyeri kepala hebat, pandangan kabur, atau nyeri ulu hati. Kamu mencatat usia 38, ' +
+                    'kehamilan keempat, dan riwayat perdarahan. Ia harus dinilai bidan atau Puskesmas hari ini, ' +
+                    'paling lambat besok; ini bukan kontrol rutin.',
                   efekTrust: 2,
                   tepat: true,
                   ungkap: {
@@ -375,11 +372,9 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
               id: 'ak1_i1',
               nama: 'Gandeng Mbah Rah, Bukan Lawan',
               deskripsi:
-                'Temui Mbah Rah bersama bidan desa: ajak bermitra resmi (program kemitraan dukun-bidan) — ' +
-                'Mbah Rah tetap mendampingi doa & tradisi, bidan yang menolong persalinan, dan ceritakan ulang ' +
-                'kisah kakak Bu Asih: yang membunuhnya bukan rumah sakit, tapi datang TERLAMBAT ke rumah sakit. ' +
-                'Isi kemitraan yang pertama justru bukan soal hari-H: Bu Asih diantar periksa ke bu bidan atau ' +
-                'Puskesmas SEGERA — hari ini atau besok pagi — untuk evaluasi tekanan darah dan protein urin.',
+                'Temui Mbah Rah bersama bidan desa dan tawarkan kemitraan dukun-bidan. Mbah Rah tetap mendampingi ' +
+                'doa serta tradisi, sedangkan bidan menangani persalinan. Langkah pertama bukan menunggu hari lahir: ' +
+                'antar Bu Asih hari ini atau besok untuk evaluasi tekanan darah dan protein urin.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Mbah Rah, yang ternyata sudah lama lelah menanggung risiko sendirian, menepuk tangan Bu Asih: ' +
@@ -683,9 +678,9 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
               id: 'ak2_i1',
               nama: 'Rohman Sang Pembaca + Kartu Gambar Tanda Bahaya',
               deskripsi:
-                'Resmikan Rohman sebagai pembaca buku KIA keluarga (satu halaman tiap malam) dan tempelkan ' +
-                'kartu BERGAMBAR tanda bahaya buatan Puskesmas di dinding — pusing hebat, kaki bengkak, ' +
-                'perdarahan, gerak bayi kurang — cukup gambar, tanpa satu pun huruf.',
+                'Jadikan Rohman pembaca buku KIA keluarga, satu halaman setiap malam. Tempel kartu bergambar ' +
+                'tentang pusing hebat, kaki bengkak, perdarahan, dan gerak bayi berkurang. Gunakan gambar tanpa ' +
+                'tulisan agar seluruh anggota keluarga dapat mengenalinya.',
               cocokUntuk: ['kapabilitas'],
               hasilNarasi:
                 'Seminggu kemudian kader melapor: Bu Asih menghentikannya di jalan sambil menunjuk kakinya — ' +
@@ -963,9 +958,9 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
               id: 'ak3_i1',
               nama: 'Amanat Persalinan + Ambulans Desa',
               deskripsi:
-                'Tempel amanat persalinan di dinding (siapa mengantar, siapa pegang uang, siapa jaga anak), ' +
-                'aktifkan mobil bak Pak Kaji sebagai ambulans desa on-call lewat dana desa, dan bawa sendiri ' +
-                'berkas JKN Bu Asih ke jalur khusus bumil — tiga lubang ditambal sekali jalan.',
+                'Tempel rencana persalinan di dinding: siapa yang mengantar, memegang uang, dan menjaga anak. ' +
+                'Siapkan kendaraan Pak Kaji sebagai transportasi darurat desa melalui dana desa. Pastikan berkas ' +
+                'JKN Bu Asih masuk ke jalur pelayanan ibu hamil.',
               cocokUntuk: ['kesempatan'],
               hasilNarasi:
                 'Seminggu kemudian di dinding rumah tertempel kertas bertulisan tangan Rohman: "BU LAHIRAN: ' +

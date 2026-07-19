@@ -32,6 +32,7 @@ import { useRadioGroup } from '../useRadioGroup'
 import './MejaKerja.css'
 import { tampilanHasilKunjungan } from './hasilKunjunganView'
 import { JejakPerawatan } from './JejakPerawatan'
+import { TeksTerbaca } from '../components/TeksTerbaca'
 
 const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
 
@@ -168,7 +169,7 @@ export function MejaKerja() {
         prioritas = Math.max(0, kel.karmaAktif.jatuhTempoHari - state.hari)
         darurat = true
       } else if (kel.followUpHari !== undefined && kel.followUpHari <= state.hari) {
-        alasan = 'Janji follow-up sudah jatuh tempo — perubahan perilaku butuh pendampingan'
+        alasan = 'Janji tindak lanjut sudah jatuh tempo — perubahan perilaku butuh pendampingan'
         prioritas = 10
       } else if (iks === null) {
         alasan = 'Belum ada data terverifikasi — kunjungan pertama membuka profil keluarga'
@@ -379,7 +380,7 @@ export function MejaKerja() {
                 <details className="mk__surat-grounding">
                   <summary>Panduan resmi &amp; sumber</summary>
                   <div className="mk__surat-grounding-isi">
-                    <p>{kasusIgdSurat.panduanResmi}</p>
+                    <TeksTerbaca teks={kasusIgdSurat.panduanResmi} />
                     <ul aria-label={`Sumber klinis ${kasusIgdSurat.nama}`}>
                       {kasusIgdSurat.sumber.map((sumber) => (
                         <li key={sumber.id}>

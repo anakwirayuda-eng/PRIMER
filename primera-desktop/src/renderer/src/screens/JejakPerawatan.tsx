@@ -18,7 +18,7 @@ const LABEL_STATUS: Record<StatusEpisode, string> = {
   menunggu: 'Menunggu',
   dirujuk: 'Di jejaring rujukan',
   kembali: 'Kembali ke FKTP',
-  terverifikasi: 'Loop tertutup',
+  terverifikasi: 'Tindak lanjut tuntas',
   berakhir: 'Berakhir tanpa pemulihan',
 }
 
@@ -122,7 +122,7 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
           >
             <header className="mk__jejak-header">
               <div>
-                <p className="mk__jejak-kicker mono">CONTINUITY LEDGER</p>
+                <p className="mk__jejak-kicker mono">JEJAK KESINAMBUNGAN</p>
                 <h2>Jejak Perawatan</h2>
                 <p className="teks-kecil teks-lembut">
                   Dari sinyal komunitas sampai keputusan klinis, umpan balik, dan verifikasi hasil.
@@ -136,7 +136,7 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
             <div className="mk__jejak-metrik" aria-label="Ringkasan episode perawatan">
               <div><strong>{ringkasan.active}</strong><span>Aktif</span></div>
               <div className={ringkasan.overdue > 0 ? 'mk__jejak-metrik--bahaya' : ''}><strong>{ringkasan.overdue}</strong><span>Lewat tempo</span></div>
-              <div><strong>{ringkasan.verified}</strong><span>Loop tertutup</span></div>
+              <div><strong>{ringkasan.verified}</strong><span>Tindak lanjut tuntas</span></div>
               <div className={ringkasan.adverse > 0 ? 'mk__jejak-metrik--bahaya' : ''}><strong>{ringkasan.adverse}</strong><span>Hasil buruk</span></div>
             </div>
 

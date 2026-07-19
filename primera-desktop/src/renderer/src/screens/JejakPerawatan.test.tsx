@@ -81,7 +81,7 @@ describe('<JejakPerawatan />', () => {
     await user.click(screen.getByRole('tab', { name: 'Selesai' }))
     expect(screen.getByText('Pak Tuntas')).toBeInTheDocument()
     expect(screen.getByText('Pak Buruk')).toBeInTheDocument()
-    expect(screen.getAllByText('Loop tertutup')).toHaveLength(2)
+    expect(screen.getAllByText('Tindak lanjut tuntas')).toHaveLength(2)
     expect(screen.getByText('Berakhir tanpa pemulihan')).toBeInTheDocument()
 
     await user.keyboard('{ArrowRight}')

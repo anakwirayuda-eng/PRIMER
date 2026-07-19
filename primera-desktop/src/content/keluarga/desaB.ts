@@ -1298,7 +1298,9 @@ const keluargaDewi: KeluargaBinaan = {
             id: 'dewi_i_obrolan',
             nama: 'Obrolan Timbang Untung-Rugi dengan Pak Hendra',
             deskripsi:
-              'Jadwalkan obrolan santai khusus dengan Pak Hendra saat ia di rumah (Sabtu sore, tanpa jas putih): timbang untung-rugi versi DIA — dari nilai "menjaga anak-istri jangan sampai kenapa-kenapa" — lalu tawarkan konseling KB BERDUA dengan Bu Dewi di Puskesmas, keputusannya tetap di tangan mereka.',
+              'Temui Pak Hendra dalam suasana santai saat ia berada di rumah. Bahas untung-rugi KB dari nilai yang ' +
+              'ia pegang: menjaga keselamatan istri dan anak. Tawarkan konseling pasangan bersama Bu Dewi di ' +
+              'Puskesmas, dengan keputusan akhir tetap di tangan mereka.',
             cocokUntuk: ['motivasi'],
             hasilNarasi:
               'Sabtu sore itu Pak Hendra bercerita dua jam soal jalanan, baru lima belas menit soal KB — dan itu cukup. "Yang penting Dewi nggak kenapa-kenapa, Dok. Soal metode terserah dia, dia yang ngerasain." Selasa depannya, mereka datang berdua ke poli KB. Lembar buku KIA itu akhirnya terisi tinta, bukan pensil.',

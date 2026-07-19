@@ -31,25 +31,25 @@ describe('storyletHariIni', () => {
     }
   })
 
-  it('tanpa state pendukung tidak memalsukan program, binaan, episode, atau receipt', () => {
+  it('tanpa state pendukung tidak memalsukan program, binaan, episode, atau kabar rujukan', () => {
     const kandidat = kandidatStorylet()
-    expect(kandidat.some((teks) => /Receipt rujukan/i.test(teks))).toBe(false)
+    expect(kandidat.some((teks) => /Kabar rujukan/i.test(teks))).toBe(false)
     expect(kandidat.some((teks) => /Sesudah Posyandu/i.test(teks))).toBe(false)
     expect(kandidat.some((teks) => /Prolanis/i.test(teks))).toBe(false)
     expect(kandidat.some((teks) => /Kabar binaan/i.test(teks))).toBe(false)
     expect(kandidat.some((teks) => /Jejak perawatan/i.test(teks))).toBe(false)
   })
 
-  it('receipt rujukan membedakan loop masih terbuka dari loop tuntas', () => {
+  it('kabar rujukan membedakan rangkaian masih terbuka dari rangkaian tuntas', () => {
     const menunggu = kandidatStorylet({ rujukanMenunggu: true })
-    expect(menunggu.filter((teks) => /Receipt rujukan/i.test(teks))).toHaveLength(4)
+    expect(menunggu.filter((teks) => /Kabar rujukan/i.test(teks))).toHaveLength(4)
     expect(menunggu.some((teks) => /belum kembali|masih menunggu|masih terbuka|belum diterima/i.test(teks))).toBe(true)
     expect(menunggu.some((teks) => /sudah diterima dan langkah berikutnya tercatat/i.test(teks))).toBe(false)
 
     const tuntas = kandidatStorylet({ rujukanTuntas: true })
-    expect(tuntas.filter((teks) => /Receipt rujukan/i.test(teks))).toHaveLength(4)
+    expect(tuntas.filter((teks) => /Kabar rujukan/i.test(teks))).toHaveLength(4)
     expect(tuntas.some((teks) => /sudah diterima|sudah ditindaklanjuti|kabar balik tiba|kini dapat diaudit/i.test(teks))).toBe(true)
-    expect(tuntas.some((teks) => /loop masih terbuka/i.test(teks))).toBe(false)
+    expect(tuntas.some((teks) => /rangkaian tindak lanjut masih terbuka/i.test(teks))).toBe(false)
   })
 
   it('membuka setiap keluarga storylet hanya saat state pendukungnya ada', () => {

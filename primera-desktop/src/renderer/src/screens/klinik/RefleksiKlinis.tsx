@@ -129,7 +129,7 @@ export function TeachBack({ kasusId }: { kasusId: string }) {
             setPembukaId(id)
             setPenilaianId(null)
           }}
-          label="Pilihan prompt teach-back"
+          label="Pilihan kalimat pembuka"
         />
         <UmpanBalik pilihan={pilot.pilihanPembuka} terpilih={pembukaId} />
 
@@ -143,7 +143,7 @@ export function TeachBack({ kasusId }: { kasusId: string }) {
               pilihan={pilot.pilihanPenilaian}
               terpilih={penilaianId}
               onPilih={setPenilaianId}
-              label="Pilihan respons re-teach"
+              label="Pilihan cara mengajarkan kembali"
             />
             <UmpanBalik pilihan={pilot.pilihanPenilaian} terpilih={penilaianId} />
           </div>

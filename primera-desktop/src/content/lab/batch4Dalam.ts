@@ -101,7 +101,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
       {
         id: 'q_mual',
         kategori: 'rps',
-        tanya: 'Mualnya kapan muncul? Sampai muntah? Nafsu makan bagaimana?',
+        tanya: 'Kapan mual muncul, apakah sampai muntah, dan bagaimana nafsu makannya?',
         jawab: 'Mual terutama pagi dok, kadang muntah sedikit. Makan jadi tidak enak, daging rasanya aneh seperti logam.',
         oldcarts: ['waktu', 'penyerta'],
       },

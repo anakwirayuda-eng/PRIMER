@@ -1032,7 +1032,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       {
         id: 'q_diet',
         kategori: 'sosial',
-        tanya: 'Pola makannya bagaimana? Cukup serat dan air? Sering duduk lama?',
+        tanya: 'Bagaimana pola makan, asupan serat dan air, serta kebiasaan duduk sehari-hari?',
         jawab: 'Kurang sayur dan buah dok, jarang minum air, dan pekerjaan saya duduk seharian.',
         esensial: true,
         oldcarts: ['agravasi'],

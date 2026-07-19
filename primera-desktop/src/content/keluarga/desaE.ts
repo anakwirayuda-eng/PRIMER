@@ -280,9 +280,9 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
               id: 'prk1_i1',
               nama: 'Usulan Sumur Bor Komunal via Musdes',
               deskripsi:
-                'Bawa data diare berulang RT ini sebagai usulan resmi Puskesmas ke Musyawarah Desa: sumur ' +
-                'bor komunal dari dana desa untuk lima rumah senasib — plus pengamanan sementara di rumah ' +
-                '(gayung pisah, wadah tertutup) sampai sumurnya jadi.',
+                'Bawa data diare berulang di RT ini sebagai usulan resmi Puskesmas ke Musyawarah Desa. Ajukan ' +
+                'sumur bor komunal untuk lima rumah melalui dana desa. Sambil menunggu keputusan teknis dan ' +
+                'pembangunan, gunakan gayung terpisah serta wadah air tertutup di rumah.',
               cocokUntuk: ['kesempatan'],
               hasilNarasi:
                 'Musdes menyetujuinya di anggaran perubahan — data diare dari Puskesmas susah dibantah, dan ' +
@@ -1302,10 +1302,9 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
               id: 'lk1_i1',
               nama: 'Kotak Obat Bergambar + Alarm Yu Parti',
               deskripsi:
-                'Rakit sistem ingat tiga lapis yang ramah mata & memori: kotak obat harian bersekat dengan ' +
-                'GAMBAR (matahari terbit/tinggi/tenggelam) bukan tulisan, isi ulang tiap Jumat oleh kader, ' +
-                'dan Yu Parti — tetangga yang tiap sore mampir — diangkat resmi jadi "alarm berjalan" ' +
-                'plus dua gelas kacang untuk hitung kepatuhan.',
+                'Buat sistem pengingat tiga lapis yang ramah penglihatan dan ingatan. Gunakan kotak obat bergambar ' +
+                'matahari terbit, tinggi, dan tenggelam; kader mengisinya ulang setiap Jumat. Yu Parti mengingatkan ' +
+                'setiap sore, sedangkan dua gelas kacang membantu menghitung kepatuhan.',
               cocokUntuk: ['kapabilitas'],
               hasilNarasi:
                 'Minggu berikutnya gelas ayam itu berisi enam kacang dari tujuh hari — satu-satunya yang ' +

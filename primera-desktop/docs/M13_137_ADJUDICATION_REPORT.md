@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-19
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `c0923f4d63e057fa24914b14a14a22f9b2b52faf`, artefak `4b295fefe2d4e90312ed3bd818638c08e7ad0526b6a435bb5faa5815f5ec2528`, pack `d46076ca`, content release `ukm-assurance-2026-07-19`, `REVISI_ENGINE=54`
+**Snapshot:** commit `bc32e84bdec2b3b6d9f63ffa649617e8d8b1ef29`, artefak `c597e4be48489f321d2a5e458f17909d2776957dcaec861129be86aa1ce69d43`, pack `c2410771`, content release `editorial-ux-2026-07-19`, `REVISI_ENGINE=54`
 
 ## Ringkasan eksekutif
 

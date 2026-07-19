@@ -143,7 +143,7 @@ export function Rapor() {
       nilai: `${t.obatBerbahaya}`,
       waspada: t.obatBerbahaya > 0,
     },
-    { label: 'Percobaan resep diblokir firewall alergi', nilai: `${t.firewallTerpicu}` },
+    { label: 'Percobaan resep dicegah sistem pengaman alergi', nilai: `${t.firewallTerpicu}` },
     {
       label: 'Antibiotik tanpa indikasi',
       nilai: `${t.antibiotikTanpaIndikasi}`,

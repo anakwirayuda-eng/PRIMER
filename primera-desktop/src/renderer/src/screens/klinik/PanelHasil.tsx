@@ -6,6 +6,7 @@
 import type { DexEntry, PenilaianEncounter } from '@engine/state'
 import { PACK } from '@content/index'
 import { useFocusTrap } from '../../useFocusTrap'
+import { TeksTerbaca } from '../../components/TeksTerbaca'
 import { DuelDiagnosis, TeachBack } from './RefleksiKlinis'
 
 interface Props {
@@ -29,7 +30,7 @@ const WARNA_GRADE: Record<PenilaianEncounter['grade'], string> = {
 const LABEL_GRADE: Record<PenilaianEncounter['grade'], string> = {
   A: 'Tatalaksana teladan',
   B: 'Kompeten',
-  C: 'Cukup — buka lagi guideline-nya',
+  C: 'Cukup — tinjau kembali panduannya',
   D: 'Perlu pembinaan',
 }
 
@@ -54,7 +55,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
     bendera.push({ teks: 'Stabilisasi pra-rujuk terlewat', kelas: 'chip--merah' })
   }
   if (hasil.rujukanNonSpesialistik)
-    bendera.push({ teks: 'Rujukan non-spesialistik — menggerus RRNS', kelas: 'chip--merah' })
+    bendera.push({ teks: 'Rujukan tidak sesuai tujuan layanan', kelas: 'chip--merah' })
   if (hasil.cowboy)
     bendera.push({ teks: 'Kasus rujukan ditahan sendiri', kelas: 'chip--merah' })
   if (hasil.obatBerbahaya)
@@ -62,7 +63,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
   if (hasil.tindakanBerbahaya)
     bendera.push({ teks: 'Tindakan berbahaya dilakukan', kelas: 'chip--merah' })
   if (hasil.firewallTerpicu)
-    bendera.push({ teks: 'Percobaan resep kontraindikasi diblokir firewall', kelas: 'chip--kunyit' })
+    bendera.push({ teks: 'Resep kontraindikasi dicegah sistem', kelas: 'chip--kunyit' })
   if (hasil.antibiotikTanpaIndikasi)
     bendera.push({ teks: 'Antibiotik tanpa indikasi', kelas: 'chip--merah' })
   if (hasil.labTakRelevan > 0)
@@ -90,7 +91,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label="Hasil encounter"
+        aria-label="Hasil konsultasi"
       >
         <div className="klinik-hasil__atas">
           {/* CODEX: pasien tutorial dituntun lewat jalur MINIMAL (1 pertanyaan,
@@ -111,7 +112,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
             )}
           </span>
           <div className="tumbuh">
-            <div className="judul-seksi">Encounter Selesai</div>
+            <div className="judul-seksi">Konsultasi Selesai</div>
             <div className="klinik-hasil__nama">{hasil.pasienNama}</div>
             <div className="teks-kecil teks-lembut">
               {tutorial ? 'Latihan pertama tuntas — ini tak memengaruhi skor.' : LABEL_GRADE[hasil.grade]}
@@ -134,8 +135,8 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
         {!tutorial && !hasil.diagnosisBenar && (
           <p className="teks-kecil teks-lembut klinik-hasil__kalibrasi">
             {hasil.jenisDiagnosis === 'tegak'
-              ? 'Stempel TEGAK pada diagnosis keliru menggerus kalibrasimu dalam-dalam. Bila ragu, jujurlah dengan SUSPEK.'
-              : 'Diagnosismu keliru — tetapi stempel SUSPEK menunjukkan kejujuran epistemik. Kalibrasimu terjaga sebagian.'}
+              ? 'Diagnosis keliru yang dinyatakan TEGAK menurunkan kalibrasi secara bermakna. Bila bukti belum cukup, pilih SUSPEK.'
+              : 'Diagnosis masih keliru, tetapi pilihan SUSPEK sesuai dengan tingkat kepastian yang belum memadai. Sebagian nilai kalibrasi tetap terjaga.'}
           </p>
         )}
 
@@ -174,11 +175,12 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
             skorEdukasi yg di-cap, supaya pemain paham APA yg harus diperbaiki. */}
         {!tutorial && hasil.edukasiKritisTerlewat.length > 0 && (
           <p className="klinik-hasil__edukasi-kritis">
-            Topik edukasi non-negotiable terlewat:{' '}
+            Topik edukasi wajib yang terlewat:{' '}
             {hasil.edukasiKritisTerlewat
               .map((id) => PACK.edukasi[id]?.nama ?? id)
               .join(', ')}
-            . Skor Edukasi di-cap krn ini klinis kritis, tak bisa disubsidi topik lain.
+            . Karena topik ini penting bagi keselamatan pasien, skor edukasi dibatasi dan tidak
+            dapat digantikan oleh topik lain.
           </p>
         )}
 
@@ -195,16 +197,16 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
             Muncul hanya utk kasus ber-alergiTrap (di sinilah alerginya nyata). */}
         {!tutorial && kasus?.alergiTrap && (
           <p className="teks-kecil teks-lembut klinik-hasil__alergi-nudge">
-            Kasus ini menyimpan risiko alergi obat. Firewall permainan mencegahmu meresepkan yang
-            terlarang — tapi di Puskesmas sungguhan tak ada firewall. Menanyakan riwayat alergi
-            SEBELUM meresepkan (Permenkes 74/2016, pengkajian resep) adalah kebiasaan wajib, bukan
-            formalitas.
+            Kasus ini memiliki risiko alergi obat. Sistem permainan mencegah resep yang
+            kontraindikasi, tetapi praktik nyata tidak selalu memiliki pengaman seperti ini.
+            Tanyakan riwayat alergi sebelum meresepkan, sesuai pengkajian resep dalam Permenkes
+            74/2016.
           </p>
         )}
 
         <div className="folder klinik-hasil__clue">
           <div className="judul-seksi">Mutiara Klinis (EBM)</div>
-          <p className="teks-kecil">{hasil.clue}</p>
+          <TeksTerbaca teks={hasil.clue} className="teks-kecil" />
         </div>
 
         {/* M11: lapisan pengayaan — mutiara EBM "temuan bisa menyesatkan" +
@@ -216,13 +218,13 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
         {kasus?.mutiaraEbm && (
           <details className="folder klinik-hasil__ebm">
             <summary className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</summary>
-            <p className="teks-kecil">{kasus.mutiaraEbm}</p>
+            <TeksTerbaca teks={kasus.mutiaraEbm} className="teks-kecil" />
           </details>
         )}
         {kasus?.catatanRealita && (
           <details className="folder klinik-hasil__realita">
             <summary className="judul-seksi">🏥 Realita FKTP</summary>
-            <p className="teks-kecil">{kasus.catatanRealita}</p>
+            <TeksTerbaca teks={kasus.catatanRealita} className="teks-kecil" />
           </details>
         )}
         {/* M11.5: lapisan otoritas ke-3 — panduan RESMI Kemenkes (PPK
@@ -231,13 +233,13 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
         {kasus?.panduanResmi && (
           <details className="folder klinik-hasil__panduan" open>
             <summary className="judul-seksi">📜 Panduan Resmi Kemenkes</summary>
-            <p className="teks-kecil">{kasus.panduanResmi}</p>
+            <TeksTerbaca teks={kasus.panduanResmi} className="teks-kecil" />
             {/* §3b (M10.5, docs/M10_5_FIDELITAS.md): koreksi medikolegal — PPK
                 bukan "hukum mutlak anti-EBM". Diktum VI/VII KMK 1186/2022
                 sendiri mengizinkan deviasi ber-EBM yg terdokumentasi. */}
             <p className="teks-kecil teks-lembut klinik-hasil__panduan-catatan">
-              Baku DEFAULT penilaian — menyimpang darinya tetap sah bila beralasan klinis kuat &
-              terdokumentasi (KMK 1186/2022 Diktum VI/VII), bukan sekadar beda pendapat.
+              Panduan ini menjadi acuan utama penilaian. Penyimpangan tetap dapat dibenarkan bila
+              didukung alasan klinis kuat dan didokumentasikan, sesuai KMK 1186/2022 Diktum VI/VII.
             </p>
           </details>
         )}

@@ -60,17 +60,17 @@ describe('<TeachBack />', () => {
   it('menolak prompt ya/tidak dan belum membuka jawaban pasien', async () => {
     const user = userEvent.setup()
     render(<TeachBack kasusId="asma_ringan" />)
-    await user.click(screen.getByText('Show-me teknik inhaler'))
+    await user.click(screen.getByText('Demonstrasi ulang teknik inhaler'))
     await user.click(screen.getByRole('button', { name: 'Sudah paham semuanya, ya?' }))
 
     expect(screen.getByRole('status')).toHaveTextContent(/jawaban sopan/i)
     expect(screen.queryByText(/Saya semprotkan obat/)).not.toBeInTheDocument()
   })
 
-  it('menjalankan satu siklus show-me, re-teach, lalu teach-back akhir', async () => {
+  it('menjalankan satu siklus demonstrasi, ajar ulang, lalu penjelasan kembali', async () => {
     const user = userEvent.setup()
     render(<TeachBack kasusId="asma_ringan" />)
-    await user.click(screen.getByText('Show-me teknik inhaler'))
+    await user.click(screen.getByText('Demonstrasi ulang teknik inhaler'))
     await user.click(
       screen.getByRole('button', {
         name: /Saya ingin memastikan penjelasan saya jelas.*cara memakai inhaler/i,
@@ -83,7 +83,7 @@ describe('<TeachBack />', () => {
         name: 'Anggap cukup karena pasien sudah mengulang sebagian pesan.',
       }),
     )
-    expect(screen.getAllByRole('status').at(-1)).toHaveTextContent(/lakukan re-teach/i)
+    expect(screen.getAllByRole('status').at(-1)).toHaveTextContent(/ajarkan kembali/i)
     expect(screen.queryByText(/Saya buang napas dulu/)).not.toBeInTheDocument()
 
     await user.click(

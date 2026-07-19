@@ -30,7 +30,7 @@ describe('grounding IGD 20/20', () => {
     expect(PACK.kasusIgd.igd_hipoglikemia?.sumber.map((s) => s.id)).toContain('ada_hypoglycemia_2026')
     expect(PACK.kasusIgd.igd_stroke_iskemik_window?.sumber.map((s) => s.id)).toContain('aha_asa_stroke_2026')
     expect(PACK.kasusIgd.igd_syok_sepsis?.sumber.map((s) => s.id)).toContain('ssc_sepsis_2026')
-    expect(PACK.kasusIgd.igd_syok_sepsis?.clue).toMatch(/SSC 2026.*30 mL\/kg.*reassessment/is)
+    expect(PACK.kasusIgd.igd_syok_sepsis?.clue).toMatch(/SSC 2026.*30 mL\/kg.*penilaian ulang/is)
     expect(PACK.kasusIgd.igd_syok_sepsis?.langkah.flatMap((l) => l.pilihan).map((p) => p.respons).join(' ')).not.toMatch(/setiap jam.*menaikkan angka kematian/i)
     expect(PACK.kasusIgd.igd_eklampsia?.clue).toMatch(/frekuensi napas >=16x\/menit.*napas <16x\/menit/is)
     expect(PACK.kasusIgd.igd_eklampsia?.clue).not.toMatch(/frekuensi napas 12-16/i)

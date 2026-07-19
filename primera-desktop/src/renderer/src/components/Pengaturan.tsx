@@ -103,7 +103,7 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
 
             <div className="baris baris--antara set-kaki">
               <button className="tombol tombol--senyap" onClick={() => setPengaturan({ ...PENGATURAN_DEFAULT })}>
-                Kembalikan Default
+                Kembalikan Pengaturan Awal
               </button>
               <div className="baris">
                 {/* CODEX M14 #13: reset localStorage (agar sesi berikutnya juga

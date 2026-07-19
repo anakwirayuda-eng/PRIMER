@@ -28,7 +28,8 @@ export const LEGACY_CONTENT_RELEASE = 'legacy-baseline'
 /** Rilis konten aktif. Berubah hanya pada batas kohort, bukan di tengah stase. */
 export const LAB_CONTENT_RELEASE = 'm11-e2-saji-pilot-2026-07-17'
 export const UKM_ASSURANCE_CONTENT_RELEASE = 'ukm-assurance-2026-07-19'
-export const CONTENT_RELEASE = UKM_ASSURANCE_CONTENT_RELEASE
+export const EDITORIAL_UX_CONTENT_RELEASE = 'editorial-ux-2026-07-19'
+export const CONTENT_RELEASE = EDITORIAL_UX_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
@@ -38,6 +39,7 @@ export const CONTENT_RELEASE_ORDER = [
   'm13-lab-fullfledge-2026-07-16',
   LAB_CONTENT_RELEASE,
   UKM_ASSURANCE_CONTENT_RELEASE,
+  EDITORIAL_UX_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {
