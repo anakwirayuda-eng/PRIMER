@@ -99,7 +99,12 @@ describe('<Kunjungan /> - sitasi resep sosial C2', () => {
     expect(screen.getByText(sitasi.pinkesga)).toBeInTheDocument()
     expect(screen.getByText(/konteks domain, bukan kunci jawaban/i)).toBeInTheDocument()
     expect(screen.getByText(sitasi.sumber)).toBeInTheDocument()
-    expect(screen.getByLabelText(/bukan penanda benar atau salah/i)).toBeInTheDocument()
+    const panel = screen.getByLabelText(/bukan penanda benar atau salah/i)
+    const kepala = panel.querySelector('.kunjungan-resep__sitasi-kepala')
+    const sumber = panel.querySelector('.kunjungan-resep__sitasi-sumber')
+    expect(kepala).toBeInTheDocument()
+    expect(sumber).toBeInTheDocument()
+    expect(kepala?.nextElementSibling).toBe(sumber)
   })
 })
 

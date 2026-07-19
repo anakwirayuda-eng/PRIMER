@@ -83,6 +83,40 @@ describe('deserialize — sanitasi gudang/keuanganBulan (temuan #1)', () => {
   })
 })
 
+describe('serialize/deserialize - state closure longitudinal', () => {
+  it('mempertahankan status pasca-RJP dan episode pemulihan keluarga yang spesifik', () => {
+    const awal = buildInitialState('Uji', SEED, PACK)
+    const kasusId = Object.keys(PACK.kasusIgd)[0]!
+    const wulan = awal.desa.keluarga['keluarga_wulan']!
+    const state: GameState = {
+      ...awal,
+      desa: {
+        ...awal.desa,
+        keluarga: {
+          ...awal.desa.keluarga,
+          keluarga_wulan: { ...wulan, pemulihanEpisodeId: 'episode_uji_wulan' },
+        },
+      },
+      igd: {
+        kasusId,
+        pasienNama: 'Uji',
+        usia: 30,
+        jenisKelamin: 'L',
+        rw: 1,
+        fase: 'langkah',
+        langkahIndex: 0,
+        stabilitas: 80,
+        jawaban: [],
+        melewatiKodeBiru: true,
+      },
+    }
+
+    const pulih = deserialize(serialize(state), PACK)!
+    expect(pulih.igd?.melewatiKodeBiru).toBe(true)
+    expect(pulih.desa.keluarga['keluarga_wulan']?.pemulihanEpisodeId).toBe('episode_uji_wulan')
+  })
+})
+
 describe('deserialize — pemulihan pasien klinik tak dikenal (temuan #2)', () => {
   it('klinik.aktif dengan kasusId yang sudah tak ada di pack dipulihkan, bukan soft-lock', () => {
     let s = buildInitialState('Uji', SEED, PACK)

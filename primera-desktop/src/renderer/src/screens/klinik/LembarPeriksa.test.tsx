@@ -25,3 +25,17 @@ describe('<LembarPeriksa /> — aria-label tombol coret resep bernama (#15)', ()
     expect(tombol).toHaveAttribute('title', `Coret ${contohObat.nama} dari resep`)
   })
 })
+
+describe('<LembarPeriksa /> — status konten lab transparan', () => {
+  it('kasus yang belum teradjudikasi diberi penanda visual tanpa membocorkan diagnosis', () => {
+    const kasus = Object.values(PACK.kasus).find(
+      (item) => item.activationStatus === 'lab_prototype_unadjudicated',
+    )!
+    const pasien = buatPasienDariKasus(kasus.id, PACK, new Rng(2, 'prototype'))
+    const enc = buatEncounter(pasien)
+    render(<LembarPeriksa enc={enc} kasus={kasus} dispatch={() => {}} />)
+
+    expect(screen.getByText('Prototipe lab')).toBeInTheDocument()
+    expect(screen.queryByText(kasus.nama)).not.toBeInTheDocument()
+  })
+})

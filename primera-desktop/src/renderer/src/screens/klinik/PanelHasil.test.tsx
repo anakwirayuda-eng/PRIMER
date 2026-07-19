@@ -9,6 +9,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { PanelHasil } from './PanelHasil'
 import type { PenilaianEncounter } from '@engine/state'
+import { PACK } from '@content/index'
 
 const HASIL_DASAR: PenilaianEncounter = {
   kasusId: 'ispa_common_cold',
@@ -131,6 +132,32 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     expect(screen.getByText('Tindakan berbahaya dilakukan')).toBeInTheDocument()
   })
 
+  it('debrief menyebut item konkret yang dipilih dan terlewat, bukan hanya skor', () => {
+    render(
+      <PanelHasil
+        hasil={{
+          ...HASIL_DASAR,
+          diagnosisBenar: false,
+          diagnosisDipilihIcd10: 'J02.9',
+          anamnesisEsensialTerlewat: ['q_durasi'],
+          pemeriksaanRelevanTerlewat: ['toraks_paru'],
+          obatWajibTerlewat: ['paracetamol_500'],
+          grupObatAlternatifTerlewat: [['ctm_4']],
+          edukasiRelevanTakDipilih: ['etika_batuk'],
+        }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+
+    expect(screen.getByText(/Yang Dipilih & Perlu Diperbaiki/i)).toBeInTheDocument()
+    expect(screen.getByText(/Sudah berapa hari begini/i)).toBeInTheDocument()
+    expect(screen.getByText(/Toraks & Paru/i)).toBeInTheDocument()
+    expect(screen.getByText(/Parasetamol/i)).toBeInTheDocument()
+    expect(screen.getByText(/Etika batuk/i)).toBeInTheDocument()
+  })
+
   // Q5/C.8 (M10.5, keputusan O-A 2026-07-12): sentilan alergi tanpa gerbang baru.
   it('kasus ber-alergiTrap (mm_isk_bawah): sentilan kebiasaan cek alergi tampil', () => {
     render(
@@ -171,5 +198,20 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     )
     expect(screen.getByText(/Panduan ini menjadi acuan utama penilaian/i)).toBeInTheDocument()
     expect(screen.getByText(/PPK Dokter FKTP KMK 1186\/2022 bab Rinitis Akut/i)).toBeInTheDocument()
+  })
+
+  it('kasus prototipe lab ditandai belum teradjudikasi pada debrief', () => {
+    const kasus = Object.values(PACK.kasus).find(
+      (item) => item.activationStatus === 'lab_prototype_unadjudicated',
+    )!
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, kasusId: kasus.id }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+    expect(screen.getByText(/Prototipe lab — belum teradjudikasi/i)).toBeInTheDocument()
   })
 })

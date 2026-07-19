@@ -20,9 +20,9 @@ import {
 } from './util'
 import { REGION_PERTAMA_TUTORIAL } from './tutorialKlinik'
 
-/** Kelompok lab yang DITUTUP pemain — diingat selama sesi (default semua
- * terbuka; beda dari laci obat yang default tertutup krn 128 item). */
-const labTutupSesi = new Set<KelompokLab>()
+/** Kelompok lab yang DIBUKA pemain — default tertutup agar ±40 pilihan tidak
+ * membanjiri layar. Pencarian dan kelompok berisi pesanan tetap terbuka. */
+const labBukaSesi = new Set<KelompokLab>()
 
 interface Props {
   enc: EncounterState
@@ -53,8 +53,8 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
   const kueriLab = cariLab.trim()
   const sedangCariLab = kueriLab.length > 0
   const toggleKelompokLab = (kel: KelompokLab) => {
-    if (labTutupSesi.has(kel)) labTutupSesi.delete(kel)
-    else labTutupSesi.add(kel)
+    if (labBukaSesi.has(kel)) labBukaSesi.delete(kel)
+    else labBukaSesi.add(kel)
     setLabTick((n) => n + 1)
   }
   const adaHasilLab = URUTAN_KELOMPOK_LAB.some((kel) =>
@@ -143,8 +143,8 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
             if (semua.length === 0) return null
             const daftar = sedangCariLab ? semua.filter((item) => cocokLab(item, kueriLab)) : semua
             if (sedangCariLab && daftar.length === 0) return null
-            const terbuka = sedangCariLab || !labTutupSesi.has(kel)
             const terpesanDiKelompok = semua.filter((item) => enc.labDipesan.includes(item.id)).length
+            const terbuka = sedangCariLab || terpesanDiKelompok > 0 || labBukaSesi.has(kel)
             return (
               <div key={kel} className="klinik-eduk__laci">
                 <button

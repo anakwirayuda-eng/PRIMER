@@ -72,7 +72,12 @@ describe('<Igd /> — ResponsTerakhir tetap tampil lintas transisi fase', () => 
     // RJP berhasil → engine memindahkan fase ke disposisi; `jawaban` TIDAK
     // bertambah (RJP bukan langkah ber-entri jawaban).
     const skrg = useGame.getState().state!
-    useGame.setState({ state: { ...skrg, igd: { ...skrg.igd!, fase: 'disposisi', stabilitas: 25 } } })
+    useGame.setState({
+      state: {
+        ...skrg,
+        igd: { ...skrg.igd!, fase: 'disposisi', stabilitas: 25, melewatiKodeBiru: true },
+      },
+    })
     rerender(<Igd />)
 
     // Pasca-ROSC stabilitas sengaja RENDAH (25 < AMBANG_STABIL_RUJUK 50) —
@@ -83,6 +88,16 @@ describe('<Igd /> — ResponsTerakhir tetap tampil lintas transisi fase', () => 
       screen.queryByRole('status'),
       'banner pra-Kode-Biru tak boleh terbawa ke disposisi pasca-RJP',
     ).not.toBeInTheDocument()
+  })
+
+  it('reload langsung di disposisi pasca-RJP tetap menyembunyikan feedback pra-Kode-Biru', () => {
+    pasangIgd('disposisi')
+    const skrg = useGame.getState().state!
+    useGame.setState({
+      state: { ...skrg, igd: { ...skrg.igd!, melewatiKodeBiru: true } },
+    })
+    render(<Igd />)
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
   it('fase langkah, langkahIndex 0 (langkah pertama, belum ada jawaban): tak ada feedback ditampilkan', () => {

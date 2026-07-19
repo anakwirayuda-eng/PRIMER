@@ -8,6 +8,7 @@ import { PACK } from '@content/index'
 import { useFocusTrap } from '../../useFocusTrap'
 import { TeksTerbaca } from '../../components/TeksTerbaca'
 import { DuelDiagnosis, TeachBack } from './RefleksiKlinis'
+import { LABEL_REGION, namaDiagnosis } from './util'
 
 interface Props {
   hasil: PenilaianEncounter
@@ -38,6 +39,22 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
   const tutorial = hasil.tutorialLatihan === true
   // M11: kasus utk lapisan pengayaan (mutiaraEbm/catatanRealita) — murni display.
   const kasus = PACK.kasus[hasil.kasusId]
+  const gapFormatif = kasus
+    ? {
+        anamnesis: (hasil.anamnesisEsensialTerlewat ?? [])
+          .map((id) => kasus.anamnesis.find((q) => q.id === id)?.tanya ?? id),
+        pemeriksaan: (hasil.pemeriksaanRelevanTerlewat ?? []).map((region) => LABEL_REGION[region]),
+        obat: (hasil.obatWajibTerlewat ?? []).map((id) => PACK.obat[id]?.nama ?? id),
+        alternatif: (hasil.grupObatAlternatifTerlewat ?? []).map((grup) =>
+          grup.map((id) => PACK.obat[id]?.nama ?? id).join(' / '),
+        ),
+        tindakan: (hasil.tindakanWajibTerlewat ?? []).map((id) => PACK.tindakan[id]?.nama ?? id),
+        edukasi: (hasil.edukasiRelevanTakDipilih ?? []).map((id) => PACK.edukasi[id]?.nama ?? id),
+      }
+    : undefined
+  const adaGapFormatif =
+    !hasil.diagnosisBenar ||
+    (gapFormatif !== undefined && Object.values(gapFormatif).some((daftar) => daftar.length > 0))
 
   const barisSkor: { label: string; nilai: number }[] = [
     { label: 'Anamnesis', nilai: hasil.skorAnamnesis },
@@ -117,6 +134,14 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
             <div className="teks-kecil teks-lembut">
               {tutorial ? 'Latihan pertama tuntas — ini tak memengaruhi skor.' : LABEL_GRADE[hasil.grade]}
             </div>
+            {kasus?.activationStatus === 'lab_prototype_unadjudicated' && (
+              <span
+                className="chip chip--kunyit"
+                title="Konten pengembangan ini belum melewati adjudikasi klinis final."
+              >
+                Prototipe lab — belum teradjudikasi
+              </span>
+            )}
           </div>
         </div>
 
@@ -167,6 +192,34 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
               </span>
             ))}
           </div>
+        )}
+
+        {!tutorial && kasus && adaGapFormatif && (
+          <details
+            className="folder klinik-hasil__perbaikan"
+            open={hasil.grade === 'C' || hasil.grade === 'D'}
+          >
+            <summary className="judul-seksi">Yang Dipilih &amp; Perlu Diperbaiki</summary>
+            <div className="klinik-hasil__perbaikan-isi teks-kecil">
+              <p>
+                <strong>Diagnosis:</strong>{' '}
+                {hasil.diagnosisDipilihIcd10
+                  ? `${namaDiagnosis(hasil.diagnosisDipilihIcd10, kasus)} (${hasil.diagnosisDipilihIcd10})`
+                  : 'belum dipilih'}
+                {!hasil.diagnosisBenar && `; target kasus: ${kasus.nama} (${kasus.icd10})`}.
+              </p>
+              <DaftarGap label="Anamnesis esensial terlewat" items={gapFormatif?.anamnesis ?? []} />
+              <DaftarGap label="Pemeriksaan relevan terlewat" items={gapFormatif?.pemeriksaan ?? []} />
+              <DaftarGap label="Terapi wajib terlewat" items={gapFormatif?.obat ?? []} />
+              <DaftarGap label="Pilih salah satu terapi berikut" items={gapFormatif?.alternatif ?? []} />
+              <DaftarGap label="Tindakan wajib terlewat" items={gapFormatif?.tindakan ?? []} />
+              <DaftarGap
+                label="Edukasi relevan yang belum dipilih"
+                items={gapFormatif?.edukasi ?? []}
+                catatan="Prioritaskan maksimal tiga topik sesuai risiko pasien."
+              />
+            </div>
+          </details>
         )}
 
         {/* DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md, O6):
@@ -266,5 +319,25 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
         </div>
       </div>
     </div>
+  )
+}
+
+function DaftarGap({
+  label,
+  items,
+  catatan,
+}: {
+  label: string
+  items: string[]
+  catatan?: string
+}) {
+  if (items.length === 0) return null
+  const terlihat = items.slice(0, 5)
+  const sisa = items.length - terlihat.length
+  return (
+    <p>
+      <strong>{label}:</strong> {terlihat.join('; ')}{sisa > 0 ? `; +${sisa} lainnya` : ''}.
+      {catatan ? ` ${catatan}` : ''}
+    </p>
   )
 }

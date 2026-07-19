@@ -1050,6 +1050,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               // Pertahankan beat yang belum berhasil agar tetap harus dimainkan.
               arcIndex: Math.min(kel.arcIndex, arcAktif.length - 1),
               followUpHari: s.hari + 1,
+              pemulihanEpisodeId: episodeCommon.id,
             },
           }
           suratPemulihanKeluarga = {
@@ -1202,7 +1203,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           klinik: {
             ...s.klinik,
             aktif: undefined,
-            selesaiHariIni: [...s.klinik.selesaiHariIni, penilaianTampil],
+            selesaiHariIni: kebalTutorial
+              ? s.klinik.selesaiHariIni
+              : [...s.klinik.selesaiHariIni, penilaianTampil],
           },
           ...(suratBaruKlinik.length > 0 && !kebalTutorial
             ? { inbox: [...s.inbox, ...suratBaruKlinik] }
@@ -1262,6 +1265,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (kel.arcSelesai === 'gagal')
         return err(s, 'Krisis sudah terjadi — dampingi pemulihan keluarga ini lewat klinik.')
       if (kel.arcSelesai === 'berhasil') return err(s, 'Arc keluarga ini sudah tuntas.')
+      if (kel.followUpHari !== undefined && s.hari < kel.followUpHari)
+        return err(s, `Kunjungan berikutnya dijadwalkan hari ke-${kel.followUpHari}.`)
       // Audit CODEX UKM 2026-07-16 #1: indeks arc berjalan atas daftar
       // TERSARING mode-policy (arcKunjunganAktif) — dulu skenario Career-only
       // di tengah arc membuat arc buntu permanen di Ujian.
@@ -1376,9 +1381,15 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           t.miTepat += hasil.kualitasSaji / 100
         }
 
-        // Bridge bertingkat (M1.1): nasib jadwal karma keluarga ini mengikuti
-        // gradasi hasil — berhasil membatalkan, partial menunda jam pasir,
-        // gagal/diusir justru mempercepatnya.
+        const janjiJatuhTempo = next.jadwal.find(
+          (item) => item.jenis === 'verifikasi_pispk' && item.keluargaId === kj.keluargaId,
+        )?.hari
+
+        // Bridge bertingkat (M1.1): satu kontak yang baik belum sama dengan
+        // outcome yang terverifikasi. Beat awal melindungi keluarga sampai
+        // sesudah tanggal follow-up; arc akhir yang melahirkan janji perilaku
+        // melindungi sampai sesudah verifikasi. Karma baru dibatalkan langsung
+        // bila loop memang tuntas tanpa outcome tertunda.
         let jadwal = next.jadwal
         const adaKarma = jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId)
         if (adaKarma && kontakAwalSah) {
@@ -1392,6 +1403,22 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 karmaAktif: {
                   ...kelBaru.karmaAktif,
                   jatuhTempoHari: kelBaru.karmaAktif.jatuhTempoHari + jeda,
+                },
+              }
+            : kelBaru
+        } else if (adaKarma && hasil.berhasil && (janjiJatuhTempo ?? kelBaru.followUpHari) !== undefined) {
+          const terlindungiSampai = (janjiJatuhTempo ?? kelBaru.followUpHari)! + 1
+          jadwal = jadwal.map((j) =>
+            j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId
+              ? { ...j, hari: Math.max(j.hari, terlindungiSampai) }
+              : j,
+          )
+          kelBaru = kelBaru.karmaAktif
+            ? {
+                ...kelBaru,
+                karmaAktif: {
+                  ...kelBaru.karmaAktif,
+                  jatuhTempoHari: Math.max(kelBaru.karmaAktif.jatuhTempoHari, terlindungiSampai),
                 },
               }
             : kelBaru
@@ -1439,9 +1466,6 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
 
         const intervensi = skenario.intervensi.find((item) => item.id === hasilAksi.kj.intervensiDipilih)
         const episodeKeluargaId = buatEpisodeId('keluarga', kj.keluargaId, 'pendampingan')
-        const janjiJatuhTempo = next.jadwal.find(
-          (item) => item.jenis === 'verifikasi_pispk' && item.keluargaId === kj.keluargaId,
-        )?.hari
         const episodeTuntas = kelBaru.arcSelesai === 'berhasil' && indikatorJanjiBaru.length === 0
         const episodeStatus = episodeTuntas
           ? 'terverifikasi' as const
@@ -1478,16 +1502,15 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         // Tutup episode klinik->keluarga yang memang sedang menunggu pemulihan
         // rumah. Episode rujukan, konsekuensi klinis yang masih menunggu, dan
         // Prolanis tidak ikut tertutup hanya karena satu kunjungan keluarga.
-        if (hasil.berhasil) {
-          const episodeTerkait = careEpisodes.filter(
-            (episode) =>
-              episode.id !== episodeKeluargaId &&
-              episode.familyId === kj.keluargaId &&
-              episode.source === 'keluarga' &&
-              !episode.referral &&
-              (episode.status === 'ditindaklanjuti' || episode.status === 'kembali'),
+        if (hasil.berhasil && kelBaru.pemulihanEpisodeId) {
+          const episode = careEpisodes.find(
+            (item) =>
+              item.id === kelBaru.pemulihanEpisodeId &&
+              item.familyId === kj.keluargaId &&
+              !item.referral &&
+              (item.status === 'ditindaklanjuti' || item.status === 'kembali'),
           )
-          for (const episode of episodeTerkait) {
+          if (episode) {
             careEpisodes = perbaruiEpisode(careEpisodes, {
               id: episode.id,
               day: s.hari,
@@ -1509,6 +1532,8 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               eventDetail: `${kelContent.namaKeluarga} menyelesaikan kunjungan pemulihan setelah tindak lanjut klinis.`,
             })
           }
+          const { pemulihanEpisodeId: _selesaiPemulihan, ...kelTanpaEpisodePemulihan } = kelBaru
+          kelBaru = kelTanpaEpisodePemulihan
         }
 
         next = {
@@ -2117,7 +2142,7 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       // sesi maksimal membuka satu bottleneck klinik. Masalah lain tetap
       // tertunda (counter tidak dihapus) dan dapat muncul pada sesi berikutnya.
       if (pBaru.takTerkontrolBerturut >= 2 && !orangDijadwalkan.has(orangId)) {
-        const kasusId = pBaru.jenis === 'ht' ? 'stroke_iskemik' : 'dm_tipe2'
+        const kasusId = pBaru.jenis === 'ht' ? 'hipertensi_esensial' : 'dm_tipe2'
         if (pack.kasus[kasusId]) {
           orangDijadwalkan.add(orangId)
           hariEvaluasiKlinik = s.hari + rng.int(2, 6)
@@ -2128,10 +2153,7 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
             pasienId: `prolanis_${orangId}`,
             episodeId,
             kasusId,
-            // Tambahan #3 (audit CODEX 2026-07-11, adjudikasi 2026-07-12, opsi
-            // netral-klinis): komplikasi Prolanis DM SELALU reuse dm_tipe2
-            // (harusDirujuk:false) - beda dari HT yg reuse stroke_iskemik.
-            catatan: `${p.nama} - ${pBaru.jenis === 'ht' ? `hipertensi tak terkontrol berbulan-bulan (TD sistolik terakhir ${pBaru.param} mmHg)` : `gula darah liar tak terkendali (GDP terakhir ${pBaru.param} mg/dL)`}`,
+            catatan: `${p.nama} - ${pBaru.jenis === 'ht' ? `hipertensi belum terkontrol; perlu evaluasi kepatuhan, tolerabilitas, risiko kardiovaskular, dan titrasi terapi (TD sistolik terakhir ${pBaru.param} mmHg)` : `diabetes belum terkontrol; perlu evaluasi kepatuhan, hipoglikemia, komplikasi, dan penyesuaian terapi (GDP terakhir ${pBaru.param} mg/dL)`}`,
             nama: p.nama,
             usia: p.usia,
             jenisKelamin: p.jenisKelamin,
@@ -2448,6 +2470,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
 
   // Proses jadwal jatuh tempo
   const jadwalSisa: typeof s.jadwal = []
+  const karmaDicegahSetelahVerifikasi = new Set<string>()
   interface PasienJatuhTempo {
     kasusId: string
     pasienId?: string
@@ -2831,6 +2854,21 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
               followUpHari: hari,
             }
           }
+        }
+        const karmaMasihAktif =
+          kelTerverifikasi.karmaAktif !== undefined ||
+          s.jadwal.some(
+            (item) => item.jenis === 'karma_igd' && item.keluargaId === j.keluargaId,
+          )
+        if (ingkar.length === 0 && karmaMasihAktif) {
+          const { karmaAktif: _karmaTuntas, ...kelTanpaKarma } = kelTerverifikasi
+          kelTerverifikasi = kelTanpaKarma
+          karmaDicegahSetelahVerifikasi.add(j.keluargaId)
+          tally.karmaDicegah += 1
+          events.push({
+            type: 'KARMA_DICEGAH',
+            narasi: `Perubahan di keluarga ${kelContent.namaKeluarga} terverifikasi; risiko krisis berhasil ditekan.`,
+          })
         }
         keluargaMap = { ...keluargaMap, [j.keluargaId]: kelTerverifikasi }
         const episodeKeluargaId = buatEpisodeId('keluarga', j.keluargaId, 'pendampingan')
@@ -3353,7 +3391,14 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       gudang,
       keuanganBulan,
       ...(akreditasi !== undefined ? { akreditasi } : {}),
-      jadwal: jadwalSisa,
+      jadwal: jadwalSisa.filter(
+        (item) =>
+          !(
+            item.jenis === 'karma_igd' &&
+            item.keluargaId !== undefined &&
+            karmaDicegahSetelahVerifikasi.has(item.keluargaId)
+          ),
+      ),
       inbox: [...s.inbox, ...suratBaru],
       careEpisodes,
       flags,

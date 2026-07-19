@@ -626,7 +626,14 @@ function fnv1a(teks: string): string {
 // masuk debrief dan setiap pilihan membawa status evidence pasca-penilaian.
 // Output replay kunjungan berubah walau rumus skor tetap, sehingga revisi
 // wajib dibedakan dari build 53.
-export const REVISI_ENGINE = 54
+// 55 (2026-07-19 - closure longitudinal dan audit P0-P3): kunjungan awal
+// keluarga kini hanya menunda karma sampai follow-up terverifikasi; pemulihan
+// UKP menutup episode yang tepat alih-alih seluruh episode keluarga; hasil
+// Prolanis HT kembali sebagai kontrol hipertensi, bukan stroke deterministik;
+// tutorial dikeluarkan dari rerata harian; hasil encounter menyimpan gap
+// formatif; dan status pasca-RJP IGD persisten agar reload tidak mengulang
+// respons pra-resusitasi. Replay/save lintas build harus dibedakan.
+export const REVISI_ENGINE = 55
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

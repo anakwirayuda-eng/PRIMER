@@ -11,8 +11,11 @@ import { promises as fs } from 'fs'
 // build TAK-dipaket (app.isPackaged===false, dev-server vite) — dulu env var
 // polos ini saja bisa membuka DevTools bahkan di installer kelas yang sudah
 // dipaket (siapa saja yang set env var itu sebelum menjalankan .exe). PRIMER_DEV
-// tetap berfungsi apa adanya (escape hatch pengembang yang disengaja).
-const DEV = (!app.isPackaged && !!process.env['ELECTRON_RENDERER_URL']) || process.env['PRIMER_DEV'] === '1'
+// PRIMER_DEV juga hanya sah pada build tak-dipaket; environment variable pada
+// installer kelas tidak boleh menjadi pintu belakang DevTools.
+const DEV = !app.isPackaged && (
+  !!process.env['ELECTRON_RENDERER_URL'] || process.env['PRIMER_DEV'] === '1'
+)
 
 // ---------------------------------------------------------------------------
 // PRIMERA: Puskesmas Pagi — Electron main process

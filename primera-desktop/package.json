@@ -8,20 +8,21 @@
   "private": true,
   "scripts": {
     "dev": "electron-vite dev",
-    "build": "electron-vite build",
+    "build": "electron-vite build && npm run check:bundle",
     "preview": "electron-vite preview",
     "start": "electron-vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "check:bgm-license": "node scripts/check-bgm-license.js",
+    "check:bundle": "node scripts/check-renderer-budget.js",
     "cohort:manifest": "vite-node --config vitest.config.ts scripts/generate-cohort-manifest.ts",
     "exam:simulate": "vite-node --config vitest.config.ts scripts/simulate-exam-blueprint.ts",
     "audit:editorial": "vite-node --config vitest.config.ts scripts/audit-editorial.ts",
     "m13:kfa": "vite-node --config vitest.config.ts scripts/m13-adjudication/harvest-kfa.ts",
     "m13:adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate.ts",
-    "pack": "npm run check:bgm-license && electron-vite build && electron-builder --win --dir",
-    "dist": "npm run check:bgm-license && electron-vite build && electron-builder --win nsis"
+    "pack": "npm run check:bgm-license && npm run build && electron-builder --win --dir",
+    "dist": "npm run check:bgm-license && npm run build && electron-builder --win nsis"
   },
   "build": {
     "appId": "id.ac.its.medics.primer.testbeta",

@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-19
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `bc32e84bdec2b3b6d9f63ffa649617e8d8b1ef29`, artefak `c597e4be48489f321d2a5e458f17909d2776957dcaec861129be86aa1ce69d43`, pack `c2410771`, content release `editorial-ux-2026-07-19`, `REVISI_ENGINE=54`
+**Snapshot:** commit `9f08af2ab95069b367ab56bb1e0debc916360669`, artefak `308af61b77240e3dc5a04158a15cc08bf416f748123747ecd127edbc8084e302`, pack `cf5238bc`, content release `bridge-closure-2026-07-19`, `REVISI_ENGINE=55`
 
 ## Ringkasan eksekutif
 

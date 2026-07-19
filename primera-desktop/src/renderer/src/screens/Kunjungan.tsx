@@ -521,11 +521,11 @@ export function Kunjungan() {
                 aria-live="polite"
                 aria-label="Konteks ilmiah kartu terpilih, bukan penanda benar atau salah"
               >
-                <div className="baris">
+                <div className="kunjungan-resep__sitasi-kepala">
                   <span className="chip chip--biru">{sitasiIntervensiAktif.pinkesga}</span>
                   <span className="chip">{sitasiIntervensiAktif.labelDukungan}</span>
                 </div>
-                <p>{sitasiIntervensiAktif.sumber}</p>
+                <p className="kunjungan-resep__sitasi-sumber">{sitasiIntervensiAktif.sumber}</p>
               </aside>
             )}
             <div className="baris baris--antara">

@@ -204,6 +204,15 @@ export interface PenilaianEncounter {
   grade: 'A' | 'B' | 'C' | 'D'
   /** Clue EBM kasus, ditampilkan di debrief. */
   clue: string
+  /** Diagnosis yang dipilih pemain, untuk feedback formatif konkret. */
+  diagnosisDipilihIcd10?: string
+  /** Item penting yang terlewat; id disimpan agar renderer dapat memakai label katalog. */
+  anamnesisEsensialTerlewat?: string[]
+  pemeriksaanRelevanTerlewat?: RegionFisik[]
+  obatWajibTerlewat?: string[]
+  grupObatAlternatifTerlewat?: string[][]
+  tindakanWajibTerlewat?: string[]
+  edukasiRelevanTakDipilih?: string[]
   /** Konsekuensi terjadwal? (id jadwal bila salah tatalaksana berbuntut) */
   konsekuensiDijadwalkan: boolean
   /**
@@ -257,6 +266,8 @@ export interface KeluargaState {
   jumlahKunjungan: number
   /** Follow-up terjadwal (hari). */
   followUpHari?: number
+  /** Episode klinis spesifik yang menunggu callback pemulihan di rumah. */
+  pemulihanEpisodeId?: string
   /** Keluarga berisiko yang diabaikan bisa memburuk (karma). */
   // Fix #5b (audit CODEX 2026-07-11): partialDitunda menghitung berapa kali
   // hasil 'partial' sudah menunda karma ini — tanpa batas, pemain bisa
@@ -476,6 +487,8 @@ export interface IgdState {
   /** Stabilitas pasien 0-100 — habis = Kode Biru. */
   stabilitas: number
   jawaban: { langkahId: string; pilihanId: string; benar: boolean }[]
+  /** Persisten agar reload pasca-RJP tidak menampilkan feedback pra-Kode-Biru. */
+  melewatiKodeBiru?: boolean
   /** Hasil akhir (diisi saat selesai). */
   hasil?: 'stabil' | 'meninggal'
 }

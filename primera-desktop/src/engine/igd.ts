@@ -96,9 +96,9 @@ export function aksiIgd(igd: IgdState, kasus: KasusIgd, langkahId: string, pilih
 export function rjpIgd(igd: IgdState, berkualitas: boolean): IgdState {
   if (igd.fase !== 'kode_biru') return igd
   if (berkualitas) {
-    return { ...igd, stabilitas: 25, fase: 'pasca_rosc' }
+    return { ...igd, stabilitas: 25, fase: 'pasca_rosc', melewatiKodeBiru: true }
   }
-  return { ...igd, fase: 'selesai', hasil: 'meninggal' }
+  return { ...igd, fase: 'selesai', hasil: 'meninggal', melewatiKodeBiru: true }
 }
 
 /**

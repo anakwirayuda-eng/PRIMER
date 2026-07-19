@@ -792,6 +792,25 @@
   font-weight: 600;
 }
 
+.klinik-hasil__perbaikan {
+  border-left: 4px solid var(--kunyit-700);
+}
+
+.klinik-hasil__perbaikan > summary {
+  cursor: pointer;
+}
+
+.klinik-hasil__perbaikan-isi {
+  display: grid;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+
+.klinik-hasil__perbaikan-isi p {
+  margin: 0;
+  line-height: 1.55;
+}
+
 .klinik-hasil__clue {
   padding: var(--sp-3);
   display: flex;
@@ -868,12 +887,9 @@ details[open].klinik-hasil__panduan > summary::before {
 }
 
 .klinik-hasil__aksi {
-  position: sticky;
-  bottom: calc(-1 * var(--sp-6));
-  z-index: 1;
   background: var(--bg-panel);
   margin: var(--sp-1) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6));
-  padding: var(--sp-3) var(--sp-6);
+  padding: var(--sp-3) var(--sp-6) var(--sp-5);
   border-top: 1px dashed var(--border-tegas);
 }
 

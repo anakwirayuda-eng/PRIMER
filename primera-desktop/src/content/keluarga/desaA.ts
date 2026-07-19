@@ -567,8 +567,8 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   efekTrust: 1,
                   tepat: false,
                   catatanPedagogis:
-                    'Niat menghibur, hasilnya menormalkan putus obat. Amlodipine yang berhenti mendadak membuat ' +
-                    'tekanan darah memantul naik — saran "sementara" ini berbahaya secara klinis.',
+                    'Niat menghibur, hasilnya menormalkan putus obat. Setelah amlodipine dihentikan, tekanan darah ' +
+                    'umumnya kembali menuju nilai sebelum terapi dalam sekitar satu minggu; amlodipine tidak lazim menimbulkan rebound berbahaya. Risiko utamanya tetap hilangnya kendali tekanan darah dan putusnya tindak lanjut.',
                 },
               ],
             },

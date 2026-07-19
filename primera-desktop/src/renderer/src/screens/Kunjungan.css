@@ -514,9 +514,10 @@
 }
 
 .kunjungan-resep__sitasi {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--sp-3);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sp-2);
   padding: var(--sp-3);
   border-left: 3px solid var(--tinta-biru);
   background: var(--bg-sunken);
@@ -525,18 +526,38 @@
   line-height: 1.5;
 }
 
+.kunjungan-resep__sitasi-kepala {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--sp-2);
+}
+
 .kunjungan-resep__sitasi .chip {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
 }
 
-.kunjungan-resep__sitasi p {
+.kunjungan-resep__sitasi-sumber {
+  display: block;
+  position: static;
+  inline-size: 100%;
+  min-width: 0;
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
-@media (max-width: 720px) {
-  .kunjungan-resep__sitasi {
-    flex-direction: column;
-  }
+.kunjungan-resep > .baris--antara {
+  flex-wrap: wrap;
+}
+
+.kunjungan-resep > .baris--antara .tombol {
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 /* M10 Batch-2 (CODEX A.4): ilustrasi rumah memakai palet kertas terang yang

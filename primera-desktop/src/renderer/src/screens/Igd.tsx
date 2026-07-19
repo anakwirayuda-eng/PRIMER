@@ -4,11 +4,11 @@
  * Semua aturan di engine; layar hanya menyetir & memberi juice.
  */
 
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
 import { acakUrutan } from '../utils/acakUrutan'
-import { AMBANG_STABIL_RUJUK, rumahSakitCocokUntukIgd } from '@engine/igd'
+import { AMBANG_STABIL_RUJUK } from '@engine/igd'
 import { formatUsia } from '@engine/usia'
 import './Igd.css'
 
@@ -22,32 +22,8 @@ export function Igd() {
   useEffect(() => {
     panelRef.current?.focus({ preventScroll: true })
   }, [igd?.fase])
-  /**
-   * CODEX M14 #20c: banner <ResponsTerakhir> menampilkan feedback langkah
-   * TERAKHIR yang dijawab. Pada jalur RJP (langkah→kode_biru→disposisi) langkah
-   * terakhir itu adalah pilihan SEBELUM Kode Biru — begitu pemain sampai
-   * disposisi lewat RJP, banner masih membicarakan keputusan lama, seolah itu
-   * respons atas RJP-nya. Menyesatkan.
-   *
-   * Dulu ditunda karena fix yang terbayang (entri jawaban RJP sintetis)
-   * menyentuh `nilaiIgd` (`jawaban.filter(benar)`) → butuh REVISI_ENGINE, tak
-   * sepadan untuk banner transien; sedangkan blanket-hide di disposisi merusak
-   * jalur NORMAL (langkah→disposisi tanpa Kode Biru) yang §7c memang ingin
-   * menampilkannya.
-   *
-   * Jalan keluarnya ternyata tak perlu menyentuh engine sama sekali: cukup
-   * MENGINGAT di renderer apakah sesi ini pernah melewati Kode Biru, lalu
-   * sembunyikan banner HANYA pada jalur itu. Nol perubahan skor/replay, nol
-   * bump REVISI_ENGINE — `IgdState` tak ditambahi field apa pun.
-   *
-   * Catatan jujur: ref ini per-mount, jadi bila pemain memuat save yang sudah
-   * telanjur berada di fase disposisi pasca-RJP, banner lama bisa tampil sekali
-   * lagi. Itu jauh lebih kecil daripada masalah yang diperbaiki, dan menutupnya
-   * butuh field state baru (biaya yang justru dihindari di sini).
-   */
-  const pernahKodeBiru = useRef(false)
-  if (igd?.fase === 'kode_biru') pernahKodeBiru.current = true
-  if (!igd) pernahKodeBiru.current = false
+  const [rumahSakitId, setRumahSakitId] = useState('')
+  useEffect(() => setRumahSakitId(''), [igd?.kasusId])
   const kasusMaybe = igd ? PACK.kasusIgd[igd.kasusId] : undefined
   const langkahMaybe = igd && kasusMaybe ? kasusMaybe.langkah[igd.langkahIndex] : undefined
   // DeepThink ronde-2 bonus (keputusan user): urutan pilihan diacak per-
@@ -73,9 +49,8 @@ export function Igd() {
     )
   }
   const kasus = kasusMaybe
-  const rsRujukan = [...PACK.rumahSakit]
-    .filter((rumahSakit) => rumahSakitCocokUntukIgd(kasus, rumahSakit))
-    .sort((a, b) => a.jarakMenit - b.jarakMenit)[0]
+  const jejaringRujukan = [...PACK.rumahSakit].sort((a, b) => a.jarakMenit - b.jarakMenit)
+  const rsRujukan = jejaringRujukan.find((rumahSakit) => rumahSakit.id === rumahSakitId)
 
   const stab = igd.stabilitas
   const nadaBar = stab > 60 ? '' : stab > 30 ? 'igd-bar--waspada' : 'igd-bar--bahaya'
@@ -101,6 +76,14 @@ export function Igd() {
               <div className="teks-xs teks-lembut">{kasus.nama} · ICD-10 {kasus.icd10}</div>
             ) : (
               <div className="teks-xs teks-lembut">Kasus gawat darurat — kenali dari keluhan &amp; tanda vital</div>
+            )}
+            {kasus.activationStatus === 'lab_prototype_unadjudicated' && (
+              <span
+                className="chip chip--kunyit"
+                title="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
+              >
+                Prototipe lab
+              </span>
             )}
           </div>
           <div className="igd__stab">
@@ -129,13 +112,12 @@ export function Igd() {
             ketiga blok fase supaya tetap terlihat sesaat setelah transisi.
             Batch-6 estetika: posisinya dinaikkan ke atas blok fase — kronologi
             vital → hasil langkah lalu → pertanyaan baru.
-            CODEX M14 #20c (DIPERBAIKI 2026-07-16, tanpa REVISI_ENGINE): pada
-            jalur RJP (kode_biru→disposisi) banner ini masih milik langkah
-            SEBELUM Kode Biru — terbaca seolah respons atas RJP. Kini digerbang
-            `pernahKodeBiru` (latch renderer, lihat komentar di atas): jalur
-            NORMAL (langkah→disposisi) tetap menampilkannya sesuai maksud §7c,
-            jalur RJP tidak. Nol sentuhan nilaiIgd/state beku. */}
-        {!(pernahKodeBiru.current && igd.fase === 'disposisi') && (
+            CODEX M14 #20c (dituntaskan 2026-07-19): pada jalur RJP
+            (kode_biru→disposisi), banner ini masih milik langkah SEBELUM
+            Kode Biru dan terbaca seolah respons atas RJP. Flag persisten
+            `melewatiKodeBiru` kini menyembunyikannya hanya pada jalur itu;
+            jalur normal langkah→disposisi tetap menampilkan feedback. */}
+        {!(igd.melewatiKodeBiru === true && igd.fase === 'disposisi') && (
           <ResponsTerakhir kasusId={igd.kasusId} jawaban={igd.jawaban} />
         )}
 
@@ -222,6 +204,30 @@ export function Igd() {
                 ? `${igd.pasienNama} sudah tertangani dan stabil. Apa langkah berikutnya sesuai prinsip rujukan berjenjang?`
                 : `${igd.pasienNama} belum sepenuhnya stabil (${igd.stabilitas}/100) — transportasi jarak jauh berisiko nyata sebelum stabilisasi lanjutan tuntas.`}
             </p>
+            <fieldset className="igd__tujuan">
+              <legend className="judul-seksi">Pilih Tujuan Jejaring</legend>
+              {jejaringRujukan.map((rumahSakit) => (
+                <label key={rumahSakit.id} className="igd__rs">
+                  <input
+                    type="radio"
+                    name="tujuan-rumah-sakit"
+                    value={rumahSakit.id}
+                    checked={rumahSakitId === rumahSakit.id}
+                    onChange={() => setRumahSakitId(rumahSakit.id)}
+                  />
+                  <span>
+                    <strong>{rumahSakit.nama}</strong>
+                    <small>
+                      Kelas {rumahSakit.kelas} · {rumahSakit.jarakMenit} menit ·{' '}
+                      {rumahSakit.spesialisasi.join(', ')}
+                      {rumahSakit.kapabilitas?.length
+                        ? ` · ${rumahSakit.kapabilitas.join(', ').replaceAll('_', ' ')}`
+                        : ''}
+                    </small>
+                  </span>
+                </label>
+              ))}
+            </fieldset>
             <div className="igd__pilihan">
               <button
                 className="igd__opsi"
@@ -236,7 +242,7 @@ export function Igd() {
               >
                 {rsRujukan
                   ? `Rujuk ke ${rsRujukan.nama} (${rsRujukan.jarakMenit} menit)`
-                  : 'Jejaring rujukan yang sesuai tidak tersedia'}
+                  : 'Pilih rumah sakit tujuan sebelum merujuk'}
               </button>
               <button className="igd__opsi" onClick={() => dispatch({ type: 'DISPOSISI_IGD', jenis: 'pulang' })}>
                 Observasi lalu pulangkan dari Puskesmas

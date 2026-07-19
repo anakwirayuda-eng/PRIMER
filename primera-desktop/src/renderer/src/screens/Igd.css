@@ -110,6 +110,47 @@
   gap: var(--sp-2);
 }
 
+.igd__tujuan {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-4);
+  padding: 0;
+  border: 0;
+}
+
+.igd__rs {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  cursor: pointer;
+}
+
+.igd__rs:has(input:checked) {
+  border-color: var(--daun-700);
+  background: color-mix(in srgb, var(--daun-600) 10%, var(--bg-card));
+}
+
+.igd__rs input {
+  margin-top: 3px;
+}
+
+.igd__rs span,
+.igd__rs small {
+  display: block;
+  min-width: 0;
+}
+
+.igd__rs small {
+  margin-top: var(--sp-05);
+  color: var(--tinta-lembut);
+  line-height: 1.4;
+}
+
 .igd__opsi {
   text-align: left;
   padding: var(--sp-3) var(--sp-4);

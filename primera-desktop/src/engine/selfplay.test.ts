@@ -558,24 +558,31 @@ describe('selfplay: kunjungan rumah keluarga_wulan (hari 3 siang)', () => {
     expect(s.tally.miTepat).toBe(1)
   })
 
-  it('kunjungan berhasil MENCEGAH karma: jadwal D+6 dibatalkan, karmaAktif lepas', () => {
+  it('kunjungan awal yang berhasil menunda karma, tetapi follow-up yang mangkir tetap berkonsekuensi', () => {
     // Sebelum kunjungan, jam pasir masih berjalan.
     expect(
       siangHari3.jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === 'keluarga_wulan'),
     ).toBe(true)
 
-    // Sesudahnya: dibatalkan + tercatat sebagai karma dicegah + event juice.
-    expect(s.jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === 'keluarga_wulan')).toBe(false)
-    expect(kel?.karmaAktif).toBeUndefined()
-    expect(s.tally.karmaDicegah).toBe(1)
+    // Kunjungan pertama belum menutup loop: janji harus diverifikasi pada hari 7.
+    const karmaTertunda = s.jadwal.find(
+      (j) => j.jenis === 'karma_igd' && j.keluargaId === 'keluarga_wulan',
+    )
+    expect(karmaTertunda?.hari).toBe(8)
+    expect(kel?.followUpHari).toBe(7)
+    expect(kel?.karmaAktif).toEqual({
+      jadwalId: karmaTertunda?.id,
+      jatuhTempoHari: 8,
+    })
+    expect(s.tally.karmaDicegah).toBe(0)
     expect(s.tally.karmaTerjadi).toBe(0)
-    expect(kunjungan.eventsPenutup.some((e) => e.type === 'KARMA_DICEGAH')).toBe(true)
+    expect(kunjungan.eventsPenutup.some((e) => e.type === 'KARMA_DICEGAH')).toBe(false)
 
-    // Dunia terus berjalan melewati D+6 TANPA ledakan karma.
+    // Bila follow-up diabaikan, risiko yang belum benar-benar ditutup tetap terjadi.
     let lanjut = s
     while (lanjut.hari < 8) lanjut = run(lanjut, { type: 'LANJUTKAN' }).state
-    expect(lanjut.tally.karmaTerjadi).toBe(0)
-    expect(lanjut.inbox.filter((m) => m.jenis === 'karma')).toHaveLength(0)
+    expect(lanjut.tally.karmaTerjadi).toBe(1)
+    expect(lanjut.inbox.filter((m) => m.jenis === 'karma')).toHaveLength(1)
   })
 })
 

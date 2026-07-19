@@ -850,6 +850,22 @@ export function nilaiEncounter(
   const grade: PenilaianEncounter['grade'] =
     nilaiTotal >= 85 ? 'A' : nilaiTotal >= 70 ? 'B' : nilaiTotal >= 55 ? 'C' : 'D'
 
+  // Feedback formatif konkret. Skor tetap dihitung di atas; daftar ini hanya
+  // menjelaskan item mana yang membentuk gap agar debrief tidak berhenti pada
+  // empat angka abstrak.
+  const anamnesisEsensialTerlewat = anamnesisBerlaku
+    .filter((q) => q.esensial === true && !enc.ditanya.includes(q.id))
+    .map((q) => q.id)
+  const pemeriksaanRelevanTerlewat = [...regionRelevan].filter(
+    (region) => !enc.diperiksa.includes(region),
+  )
+  const obatWajibTerlewat = obatBenar.filter((id) => !enc.resep.includes(id))
+  const grupObatAlternatifTerlewat = grupAlternatif.filter(
+    (grup) => !grup.some((id) => enc.resep.includes(id)),
+  )
+  const tindakanWajibTerlewat = prosedurBenar.filter((id) => !tindakanDilakukan.includes(id))
+  const edukasiRelevanTakDipilih = edukasiWajib.filter((id) => !enc.edukasi.includes(id))
+
   return {
     kasusId: kasus.id,
     pasienNama: enc.pasien.nama,
@@ -878,6 +894,13 @@ export function nilaiEncounter(
     ...(sbarSkor !== undefined ? { sbarSkor } : {}),
     grade,
     clue: kasus.clue,
+    ...(enc.diagnosis ? { diagnosisDipilihIcd10: enc.diagnosis.icd10 } : {}),
+    anamnesisEsensialTerlewat,
+    pemeriksaanRelevanTerlewat,
+    obatWajibTerlewat,
+    grupObatAlternatifTerlewat,
+    tindakanWajibTerlewat,
+    edukasiRelevanTakDipilih,
     // Reducer yang memutuskan & mengisi penjadwalan konsekuensi.
     konsekuensiDijadwalkan: false,
     edukasiKritisTerlewat,

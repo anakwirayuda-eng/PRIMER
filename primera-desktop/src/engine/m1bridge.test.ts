@@ -197,13 +197,106 @@ describe('M1.1 — bridge bertingkat (partial menunda, gagal mempercepat)', () =
     expect(karma?.hari).toBe(Math.max(s.hari + 1, jatuhTempoAwal - 2))
   })
 
-  it('berhasil tetap membatalkan karma (regresi)', () => {
+  it('keberhasilan beat awal menunda karma sampai sesudah follow-up, bukan langsung menghapusnya', () => {
     let s = buildInitialState('Uji', SEED, PACK)
     s = sampaiSiang(s, 3)
     s = mainkanKunjungan(s, 'keluarga_wulan', { hipotesis: 'benar', intervensi: 'cocok' })
     expect(s.hasilKunjunganHariIni?.tingkat).toBe('berhasil')
-    expect(s.jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === 'keluarga_wulan')).toBe(false)
-    expect(s.tally.karmaDicegah).toBe(1)
+    expect(s.desa.keluarga['keluarga_wulan']?.followUpHari).toBe(7)
+    expect(
+      s.jadwal.find((j) => j.jenis === 'karma_igd' && j.keluargaId === 'keluarga_wulan')?.hari,
+    ).toBe(8)
+    expect(s.tally.karmaDicegah).toBe(0)
+  })
+
+  it('follow-up tidak dapat dimainkan sebelum tanggal yang dijanjikan', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = sampaiSiang(s, 3)
+    s = mainkanKunjungan(s, 'keluarga_wulan', { hipotesis: 'benar', intervensi: 'cocok' })
+
+    const terlaluAwal = advance(
+      {
+        ...s,
+        hari: 6,
+        blok: 'siang',
+        stamina: 6,
+        lapanganTerpakai: false,
+        hasilKunjunganHariIni: undefined,
+      },
+      { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_wulan' },
+      PACK,
+    )
+    expect(terlaluAwal.state.kunjungan).toBeUndefined()
+    expect(terlaluAwal.events).toContainEqual(
+      expect.objectContaining({ type: 'ERROR_AKSI', pesan: expect.stringContaining('hari ke-7') }),
+    )
+
+    const tepatWaktu = advance(
+      { ...terlaluAwal.state, hari: 7 },
+      { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_wulan' },
+      PACK,
+    )
+    expect(tepatWaktu.state.kunjungan?.skenarioId).toBe('wulan_k2')
+  })
+
+  it('karma baru tercatat dicegah setelah outcome akhir terverifikasi', () => {
+    const awal = buildInitialState('Uji', SEED, PACK)
+    const keluargaId = 'keluarga_wulan'
+    const kel = awal.desa.keluarga[keluargaId]!
+    const hasil = advance(
+      {
+        ...awal,
+        hari: 10,
+        blok: 'sore',
+        tutorialAktif: false,
+        igd: undefined,
+        klinik: { ...awal.klinik, antrian: [], aktif: undefined },
+        jadwal: [
+          {
+            id: 'karma_wulan_setelah_verifikasi',
+            hari: 12,
+            jenis: 'karma_igd',
+            keluargaId,
+            kasusId: 'stroke_iskemik',
+          },
+          {
+            id: 'verifikasi_wulan',
+            hari: 11,
+            jenis: 'verifikasi_pispk',
+            keluargaId,
+            indikatorJanji: ['hipertensi_berobat'],
+          },
+        ],
+        desa: {
+          ...awal.desa,
+          keluarga: {
+            ...awal.desa.keluarga,
+            [keluargaId]: {
+              ...kel,
+              arcSelesai: 'berhasil',
+              karmaAktif: { jadwalId: 'karma_wulan_setelah_verifikasi', jatuhTempoHari: 12 },
+              indikator: {
+                ...kel.indikator,
+                hipertensi_berobat: {
+                  status: 'ya',
+                  statusSebenarnya: 'ya',
+                  sumber: 'dokter',
+                  hariData: 10,
+                },
+              },
+            },
+          },
+        },
+      },
+      { type: 'LANJUTKAN' },
+      PACK,
+    )
+
+    expect(hasil.state.hari).toBe(11)
+    expect(hasil.state.jadwal.some((item) => item.jenis === 'karma_igd' && item.keluargaId === keluargaId)).toBe(false)
+    expect(hasil.state.desa.keluarga[keluargaId]?.karmaAktif).toBeUndefined()
+    expect(hasil.state.tally.karmaDicegah).toBe(awal.tally.karmaDicegah + 1)
+    expect(hasil.events).toContainEqual(expect.objectContaining({ type: 'KARMA_DICEGAH' }))
   })
 })
 
@@ -224,14 +317,28 @@ describe('B1.3 — klinik membuka pemulihan keluarga setelah karma', () => {
       ),
     ).toBe(true)
 
-    const dibuka = run(
+    const terlaluAwal = advance(
       { ...akhir, blok: 'siang', lapanganTerpakai: false, hasilKunjunganHariIni: undefined },
+      { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_prapto' },
+      PACK,
+    )
+    expect(terlaluAwal.state.kunjungan).toBeUndefined()
+
+    const siapPulih = {
+      ...akhir,
+      hari: 4,
+      blok: 'siang' as const,
+      lapanganTerpakai: false,
+      hasilKunjunganHariIni: undefined,
+    }
+    const dibuka = run(
+      siapPulih,
       { type: 'MULAI_KUNJUNGAN', keluargaId: 'keluarga_prapto' },
     )
     expect(dibuka.kunjungan?.skenarioId).toBe('prapto_k1')
 
     const pulih = mainkanKunjungan(
-      { ...akhir, blok: 'siang', lapanganTerpakai: false, hasilKunjunganHariIni: undefined },
+      siapPulih,
       'keluarga_prapto',
       { hipotesis: 'benar', intervensi: 'cocok' },
     )
@@ -240,6 +347,34 @@ describe('B1.3 — klinik membuka pemulihan keluarga setelah karma', () => {
     )
     expect(episodeKlinis?.status).toBe('terverifikasi')
     expect(episodeKlinis?.history.at(-1)?.label).toBe('Pemulihan keluarga menutup loop klinik')
+  })
+
+  it('kunjungan pemulihan hanya menutup episode klinis yang melahirkannya', () => {
+    const akhir = run(stateKarmaPrapto(encounterKarmaPrapto()), { type: 'DISPOSISI', jenis: 'pulang' })
+    const target = akhir.careEpisodes.find(
+      (episode) => episode.familyId === 'keluarga_prapto' && episode.problemId === 'demam_tifoid',
+    )!
+    const episodeLain = {
+      ...target,
+      id: 'episode_keluarga_prapto_masalah_lain',
+      problemId: 'masalah_lain',
+      problemLabel: 'Masalah keluarga lain yang masih berjalan',
+    }
+    const pulih = mainkanKunjungan(
+      {
+        ...akhir,
+        hari: 4,
+        blok: 'siang',
+        lapanganTerpakai: false,
+        hasilKunjunganHariIni: undefined,
+        careEpisodes: [...akhir.careEpisodes, episodeLain],
+      },
+      'keluarga_prapto',
+      { hipotesis: 'benar', intervensi: 'cocok' },
+    )
+
+    expect(pulih.careEpisodes.find((episode) => episode.id === target.id)?.status).toBe('terverifikasi')
+    expect(pulih.careEpisodes.find((episode) => episode.id === episodeLain.id)?.status).toBe(episodeLain.status)
   })
 
   it('follow-up generik atau penanganan di bawah A tidak memulihkan keluarga', () => {
@@ -412,6 +547,18 @@ describe('M1.3 — drift keluarga rawan (memburuk, bukan membaik)', () => {
 describe('M1.4 — follow-up berkalender', () => {
   it('kunjungan berhasil membuat janji follow-up; mangkir → jadi rawan, PERSIST (bukan sekali-tembak-lupa), akhirnya mundur via drift (Fix #13, audit CODEX 2026-07-11)', () => {
     let s = buildInitialState('Uji', SEED, PACK)
+    // Isolasi mekanik drift dari jalur karma Wulan. Jalur karma ketika
+    // follow-up mangkir diuji tersendiri di blok M1.1 di atas.
+    const wulanAwal = s.desa.keluarga['keluarga_wulan']!
+    const { karmaAktif: _karma, ...wulanTanpaKarma } = wulanAwal
+    s = {
+      ...s,
+      jadwal: s.jadwal.filter((j) => !(j.jenis === 'karma_igd' && j.keluargaId === 'keluarga_wulan')),
+      desa: {
+        ...s.desa,
+        keluarga: { ...s.desa.keluarga, keluarga_wulan: wulanTanpaKarma },
+      },
+    }
     s = sampaiSiang(s, 3)
     s = mainkanKunjungan(s, 'keluarga_wulan', { hipotesis: 'benar', intervensi: 'cocok' })
     const kel = s.desa.keluarga['keluarga_wulan']!

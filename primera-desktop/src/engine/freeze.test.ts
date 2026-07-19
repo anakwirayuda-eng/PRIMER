@@ -156,8 +156,13 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // IGD membawa id kasus ke panel panduan/sumber; fingerprint mengunci
   // provenance klinis 20/20 kasus. Field surat baru bersifat opsional agar save
   // lama tetap dapat dibaca tanpa migrasi destruktif.
-  'reducer.ts': '76a85310d17e9479d9f5fe24859c20b6efebf4a7246e9e56b430a03851a48f13',
-  'clinic.ts': '92789c702936cb71ac2e192ff1912fafe9f45ac8b5e0b4f7bddb561ef65ad2b6',
+  // Unfreeze 2026-07-19 (closure longitudinal dan audit P0-P3,
+  // REVISI_ENGINE 54 -> 55): follow-up keluarga/karma dan pemulihan episode
+  // kini presisi; Prolanis HT tidak lagi memicu stroke deterministik;
+  // tutorial keluar dari rerata; gap formatif encounter dan status pasca-RJP
+  // dipersist. Detail lengkap ada pada komentar revisi di verifikasi.ts.
+  'reducer.ts': '3d48d4f817170974c2381b82c16bccbffb3a2c533d62a261ef7221b0c2e54f39',
+  'clinic.ts': '663e9f819e980f86eea739653edf1e40d71ca817ca1c817a5778f2d3ad5f850f',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
@@ -165,7 +170,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // pasien anggota nyata mengikuti ground-truth JKN keluarga, bukan RNG.
   'director.ts': 'b7804cbdf6145b5b82e9961da986a82e5b355350070bb9a7299a61b71a01ed53',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
-  'igd.ts': 'fe0b4bcbeb07fe7fca564614597cca6a65730d2f844c4a99337201924f2767da',
+  'igd.ts': 'a4118f89ab3a5214370611633e4a1ffeeb20df9b2ff06814acbe60f76ed31118',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
   'init.ts': '4b9bb8b402c98f264d196592e7132aa7d1c6cb15c9e96755b5f06991f3ff71c1',
   // Unfreeze 2026-07-17 (bridge UKM↔UKP P0-B, REVISI_ENGINE 43 -> 44):
@@ -179,8 +184,8 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '9dc62755441c77b2387dfeb4268a52830f645642797c29334f5d6aba8063d73e',
-  'state.ts': '22cb32454b5ffd06b8efb2823bb657f2987ebf757a3df532c0a4f28c4e25a1d5',
+  'verifikasi.ts': '4912ceda089975aefd6b30bb55152bf97944ca170007bacb3e0350054f255eb7',
+  'state.ts': '13f8b24fe8d4aae2ba43d4be888a2b2334cc710d658af962d8892751ed24330e',
   'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',

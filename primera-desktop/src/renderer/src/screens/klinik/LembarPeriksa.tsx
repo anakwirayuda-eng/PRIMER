@@ -89,6 +89,14 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
               </span>
             )}
             {p.followUpDari !== undefined && <span className="chip chip--merah">Kembali</span>}
+            {kasus.activationStatus === 'lab_prototype_unadjudicated' && (
+              <span
+                className="chip chip--kunyit"
+                title="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
+              >
+                Prototipe lab
+              </span>
+            )}
           </div>
         </div>
         <div className="baris teks-kecil">

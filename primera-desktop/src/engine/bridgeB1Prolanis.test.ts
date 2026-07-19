@@ -159,6 +159,9 @@ describe('Bridge B1.4 - Prolanis multimorbid dan callback klinik', () => {
 
     expect(jadwal).toHaveLength(1)
     expect(jadwal[0]?.prolanisPesertaId).toBeDefined()
+    expect(jadwal[0]?.kasusId).toBe('hipertensi_esensial')
+    expect(jadwal[0]?.catatan).toMatch(/belum terkontrol/i)
+    expect(jadwal[0]?.catatan).not.toMatch(/stroke|berbulan-bulan/i)
     expect(episodeTerjadwal?.dueDay).toBe(jadwal[0]?.hari)
     expect(episodeTerjadwal?.status).toBe('menunggu')
     expect(musa.map((p) => p.takTerkontrolBerturut).sort()).toEqual([0, 2])

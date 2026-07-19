@@ -10,6 +10,7 @@ import { PACK } from '@content/index'
 import { buildInitialState } from './init'
 import { advance } from './reducer'
 import { KASUS_TUTORIAL } from './tutorial'
+import { ringkasanHarian } from './scoring'
 import type { GameState } from './state'
 import type { Action } from './actions'
 
@@ -81,7 +82,8 @@ describe('Tutorial "onboarding railroaded" — imunitas skor', () => {
     expect(s.kapitasi).toBe(kapitasiAwal)
     expect(s.gudang.stok).toEqual(stokAwal)
     expect(s.klinik.aktif).toBeUndefined() // encounter tetap tuntas narasi-nya
-    expect(s.klinik.selesaiHariIni).toHaveLength(1) // muncul di debrief spt biasa
+    expect(s.klinik.selesaiHariIni).toHaveLength(0)
+    expect(ringkasanHarian(s).grade).toBe('—')
   })
 
   it('DISPOSISI pasien KEDUA (pasca-tutorial) skor NORMAL — tally bergerak', () => {
@@ -95,6 +97,7 @@ describe('Tutorial "onboarding railroaded" — imunitas skor', () => {
 
     expect(s.tally.totalPasien).toBe(1)
     expect(s.tally.diagnosisBenar).toBe(1)
+    expect(s.klinik.selesaiHariIni).toHaveLength(1)
   })
 
   it('DISPOSISI pasien PERTAMA (tutorial) TAK memancarkan event DEX_BERTAMBAH/SURAT_MASUK palsu (CODEX)', () => {
