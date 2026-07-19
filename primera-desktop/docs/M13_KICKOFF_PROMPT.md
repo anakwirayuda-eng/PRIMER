@@ -1,4 +1,4 @@
-# M13 KICKOFF PROMPT (rev 4.2.3) — Curriculum & Release Program
+# M13 KICKOFF PROMPT (rev 4.2.4) — Curriculum & Release Program
 
 > Dokumen KEPUTUSAN AKTIF: schema, milestone, gate, dan aturan kerja M13.
 > Riwayat revisi lengkap + jejak audit 5 ronde (CODEX×5, DeepThink×1, semua
@@ -7,7 +7,8 @@
 > tetap ringkas. Rev 4.2.2 menambahkan kebijakan klinis universal yang
 > ditetapkan dr. Wirayuda pada 2026-07-15. Rev 4.2.3 menambahkan keputusan
 > scope resource M13-RP1: baseline naratif berlaku sekarang, sedangkan
-> simulasi readiness fasilitas ditunda. Dokumen ini bersama decision log
+> simulasi readiness fasilitas ditunda. Rev 4.2.4 mematrikan UKM dan UKP
+> sebagai dua pilar ko-primer PRIMERA. Dokumen ini bersama decision log
 > menjadi source of truth M13 pada checkpoint ini.
 
 ## 0. M10.5 — CLOSED
@@ -17,6 +18,26 @@ bukti per-item di `M13_DECISION_LOG.md`). Jangan reimplementasi/adjudikasi
 ulang item M10.5 manapun kecuali ada temuan BARU terverifikasi ke kode —
 insiden DeepThink phantom-adjudication (lihat decision log) adalah preseden
 kenapa aturan ini formal.
+
+## 0A. DNA produk — UKM dan UKP adalah pilar ko-primer
+
+**Keputusan dr. Wirayuda, 2026-07-19:** UKM bukan mode sampingan, pelengkap,
+atau jeda dari UKP. Keduanya adalah pilar substantif yang sama penting dalam
+identitas, pedagogi, dan pengalaman bermain PRIMERA.
+
+Konsekuensi operasional:
+
+- setiap rilis mayor menilai mutu encounter klinis **dan** dampak populasi,
+  keluarga, program, jejaring, serta kontinuitas yang relevan;
+- gameplay UKM wajib memuat keputusan bermakna, umpan balik kausal,
+  konsekuensi longitudinal, dan callback timbal balik UKM↔UKP/RS;
+- konten UKP baru mengidentifikasi konsekuensi komunitas/kontinuitas bila
+  memang ada hubungan kausal; konten UKM menghubungkan individu, keluarga,
+  klinik, program, dan RS tanpa membuat relasi palsu;
+- mutu tidak dinilai dari rasio layar atau kuota kasus buatan, melainkan dari
+  kelengkapan loop, kejelasan sebab-akibat, agency pemain, dan nilai belajar;
+- klaim pengalaman pemain “wow” tetap memerlukan playtest manusia. Tes mesin
+  dapat membuktikan konsistensi mekanik, tetapi tidak dapat menggantikannya.
 
 ## 1. M13-0 — Decision Lock
 

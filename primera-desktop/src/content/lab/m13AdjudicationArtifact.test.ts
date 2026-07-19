@@ -5,7 +5,13 @@ import { JSDOM } from 'jsdom'
 import { describe, expect, it } from 'vitest'
 import { PACK } from '..'
 import { buildAdjudicationDataset } from '../../../scripts/m13-adjudication/build-data'
-import { KFA_QUERIES, PNPK_CROSSWALK, PPK_CROSSWALK } from '../../../scripts/m13-adjudication/config'
+import {
+  EBM_GUIDELINE_CROSSWALK,
+  EBM_GUIDELINE_SOURCES,
+  KFA_QUERIES,
+  PNPK_CROSSWALK,
+  PPK_CROSSWALK,
+} from '../../../scripts/m13-adjudication/config'
 
 const ROOT = process.cwd()
 const DATA = buildAdjudicationDataset('2026-07-17T00:00:00.000Z')
@@ -46,7 +52,7 @@ describe('M13-137 adjudication artifact', () => {
       expect(PPK_ENTRIES[link.entryIndex], caseId).toBeDefined()
       expect(['direct', 'related'], caseId).toContain(link.relation)
     }
-    expect(DATA.summary).toMatchObject({ ppkDirect: 89, ppkRelated: 17, ppkAbsent: 31 })
+    expect(DATA.summary).toMatchObject({ ppkDirect: 91, ppkRelated: 15, ppkAbsent: 31 })
   })
 
   it('crosswalk PNPK tidak mempunyai caseId yatim dan relasi eksplisit', () => {
@@ -56,15 +62,31 @@ describe('M13-137 adjudication artifact', () => {
       expect(links.length, caseId).toBeGreaterThan(0)
       expect(links.every((link) => link.relation === 'direct' || link.relation === 'related'), caseId).toBe(true)
     }
-    expect(DATA.summary.pnpkDirect).toBe(30)
+    expect(DATA.summary.pnpkDirect).toBe(27)
   })
 
-  it('snapshot KFA exact mencakup 74 obat dan tidak mengarang query yang gagal', () => {
+  it('registry EBM terpisah dari PNPK, primer, dan tidak mempunyai caseId/sumber yatim', () => {
+    const runtimeIds = new Set(DATA.cases.map((item) => item.id))
+    expect(Object.keys(EBM_GUIDELINE_CROSSWALK).filter((id) => !runtimeIds.has(id))).toEqual([])
+    for (const [caseId, links] of Object.entries(EBM_GUIDELINE_CROSSWALK)) {
+      expect(links.length, caseId).toBeGreaterThan(0)
+      for (const link of links) {
+        const source = EBM_GUIDELINE_SOURCES[link.sourceId]
+        expect(source, `${caseId}:${link.sourceId}`).toBeDefined()
+        if (!source) throw new Error(`Sumber EBM hilang: ${link.sourceId}`)
+        expect(source.officialUrl, link.sourceId).toMatch(/^https:\/\//)
+        expect(link.locator.trim().length, link.sourceId).toBeGreaterThan(20)
+      }
+    }
+    expect(DATA.summary.ebmDirect).toBe(66)
+  })
+
+  it('snapshot KFA exact mencakup 67 obat dan tidak mengarang query yang gagal', () => {
     const ids = usedDrugIds()
-    expect(ids).toHaveLength(74)
+    expect(ids).toHaveLength(67)
     expect(Object.keys(KFA_QUERIES).sort()).toEqual(ids)
     expect(KFA.caseCount).toBe(137)
-    expect(KFA.drugCount).toBe(74)
+    expect(KFA.drugCount).toBe(67)
     expect(KFA.unresolved).toEqual([])
     expect(KFA.items.map((item) => item.drugId).sort()).toEqual(ids)
     for (const item of KFA.items) {
@@ -82,7 +104,7 @@ describe('M13-137 adjudication artifact', () => {
       ...item.currentManagement.optionalDrugs,
     ]).filter((drug) => drug.catalogFornas && drug.fornas.excerpts.length < drug.fornas.queries.length)
       .map((drug) => [drug.id, drug])).keys()].sort()
-    expect(missing).toEqual(['air_mata_buatan', 'ringer_laktat_inf'])
+    expect(missing).toEqual([])
     expect(DATA.summary.nonFornasDrugIds).toEqual([
       'benzoyl_peroksida_25',
       'emolien_petrolatum',
@@ -96,10 +118,11 @@ describe('M13-137 adjudication artifact', () => {
     ])
   })
 
-  it('setiap kasus membawa provenance lima dimensi dan bukan keputusan dokter', () => {
+  it('setiap kasus membawa provenance enam dimensi dan bukan keputusan dokter', () => {
     for (const item of DATA.cases) {
       expect(item.evidence.ppk.status, item.id).toMatch(/^(cocok|perlu-koreksi|tak-ada-sumber)$/)
       expect(item.evidence.pnpk.status, item.id).toMatch(/^(cocok|perlu-koreksi|tak-ada-sumber)$/)
+      expect(item.evidence.ebm.status, item.id).toMatch(/^(cocok|perlu-koreksi|tak-ada-sumber)$/)
       expect(item.evidence.fornas.status, item.id).toMatch(/^(cocok|perlu-koreksi|tak-ada-sumber)$/)
       expect(item.evidence.aspak.status, item.id).toMatch(/^(cocok|perlu-koreksi|tak-ada-sumber)$/)
       expect(item.evidence.kfa.status, item.id).toMatch(/^(cocok|perlu-koreksi|tak-ada-sumber)$/)

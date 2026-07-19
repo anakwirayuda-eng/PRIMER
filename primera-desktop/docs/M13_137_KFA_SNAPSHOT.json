@@ -1,23 +1,23 @@
 {
   "schema": "primera.m13-kfa-active-substance-snapshot.v1",
-  "retrievedAt": "2026-07-17T07:12:01.948Z",
+  "retrievedAt": "2026-07-19T06:15:58.967Z",
   "endpoint": "https://satusehat.kemkes.go.id/kfa-browser/farmasi/api/search/active-ingredients",
   "browserUrl": "https://satusehat.kemkes.go.id/kfa-browser/farmasi",
   "scopeWarning": "Kode adalah KFA active-substance master data, bukan kode product-template/variant dan bukan bukti stok atau status Fornas.",
   "caseCount": 137,
-  "drugCount": 74,
+  "drugCount": 67,
   "unresolved": [],
   "items": [
     {
       "drugId": "air_mata_buatan",
-      "catalogName": "Air Mata Buatan (Hipromelosa)",
+      "catalogName": "Air Mata Buatan (Karboksimetilselulosa)",
       "queryResults": [
         {
-          "query": "Hypromellose",
+          "query": "Carboxymethylcellulose",
           "results": [
             {
-              "kfaCode": "91001024",
-              "name": "Hypromellose",
+              "kfaCode": "91001280",
+              "name": "Polyglucose Sorbitol Carboxymethyl Ether",
               "ucumSymbol": "mg"
             }
           ]
@@ -34,22 +34,6 @@
             {
               "kfaCode": "91000146",
               "name": "ALBENDAZOLE",
-              "ucumSymbol": "mg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "drugId": "amlodipine_5",
-      "catalogName": "Amlodipin 5 mg",
-      "queryResults": [
-        {
-          "query": "Amlodipine",
-          "results": [
-            {
-              "kfaCode": "91000397",
-              "name": "AMLODIPINE",
               "ucumSymbol": "mg"
             }
           ]
@@ -135,22 +119,6 @@
       ]
     },
     {
-      "drugId": "asam_asetat_tetes_telinga_2",
-      "catalogName": "Asam Asetat Tetes Telinga 2%",
-      "queryResults": [
-        {
-          "query": "Acetic Acid",
-          "results": [
-            {
-              "kfaCode": "91001143",
-              "name": "Acetic Acid",
-              "ucumSymbol": "mg"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "drugId": "asam_folat_5",
       "catalogName": "Asam Folat 5 mg",
       "queryResults": [
@@ -176,6 +144,22 @@
             {
               "kfaCode": "91000233",
               "name": "TRANEXAMIC ACID",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "asetosal_loading_320",
+      "catalogName": "Asetosal Loading 320 mg (4 x 80 mg, Kunyah)",
+      "queryResults": [
+        {
+          "query": "Aspirin",
+          "results": [
+            {
+              "kfaCode": "91000299",
+              "name": "Aspirin",
               "ucumSymbol": "mg"
             }
           ]
@@ -261,22 +245,6 @@
             {
               "kfaCode": "91000947",
               "name": "Betamethasone Valerate",
-              "ucumSymbol": "mg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "drugId": "captopril_25",
-      "catalogName": "Kaptopril 25 mg",
-      "queryResults": [
-        {
-          "query": "Captopril",
-          "results": [
-            {
-              "kfaCode": "91000340",
-              "name": "Captopril",
               "ucumSymbol": "mg"
             }
           ]
@@ -453,22 +421,6 @@
             {
               "kfaCode": "91000187",
               "name": "Fluticasone",
-              "ucumSymbol": "mg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "drugId": "furosemid_40",
-      "catalogName": "Furosemid 40 mg",
-      "queryResults": [
-        {
-          "query": "Furosemide",
-          "results": [
-            {
-              "kfaCode": "91000581",
-              "name": "FUROSEMIDE",
               "ucumSymbol": "mg"
             }
           ]
@@ -749,7 +701,7 @@
     },
     {
       "drugId": "mdt_kusta_pb",
-      "catalogName": "MDT Kusta Pausibasiler Dewasa",
+      "catalogName": "MDT Kusta PB Dewasa: Rifampisin + Dapson + Klofazimin (6 Bulan)",
       "queryResults": [
         {
           "query": "Rifampicin",
@@ -770,19 +722,13 @@
               "ucumSymbol": "mg"
             }
           ]
-        }
-      ]
-    },
-    {
-      "drugId": "metformin_500",
-      "catalogName": "Metformin 500 mg",
-      "queryResults": [
+        },
         {
-          "query": "Metformin",
+          "query": "Clofazimine",
           "results": [
             {
-              "kfaCode": "91000209",
-              "name": "METFORMIN",
+              "kfaCode": "91001863",
+              "name": "Clofazimine",
               "ucumSymbol": "mg"
             }
           ]
@@ -1060,22 +1006,6 @@
       ]
     },
     {
-      "drugId": "propiltiourasil_100",
-      "catalogName": "Propiltiourasil 100 mg",
-      "queryResults": [
-        {
-          "query": "Propylthiouracil",
-          "results": [
-            {
-              "kfaCode": "91000536",
-              "name": "Propylthiouracil",
-              "ucumSymbol": "mg"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "drugId": "propranolol_10",
       "catalogName": "Propranolol 10 mg",
       "queryResults": [
@@ -1085,22 +1015,6 @@
             {
               "kfaCode": "91000537",
               "name": "Propranolol",
-              "ucumSymbol": "mg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "drugId": "ramipril_5",
-      "catalogName": "Ramipril 5 mg",
-      "queryResults": [
-        {
-          "query": "Ramipril",
-          "results": [
-            {
-              "kfaCode": "91000303",
-              "name": "Ramipril",
               "ucumSymbol": "mg"
             }
           ]
@@ -1163,22 +1077,6 @@
             {
               "kfaCode": "91000359",
               "name": "SIMVASTATIN",
-              "ucumSymbol": "mg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "drugId": "spironolakton_25",
-      "catalogName": "Spironolakton 25 mg",
-      "queryResults": [
-        {
-          "query": "Spironolactone",
-          "results": [
-            {
-              "kfaCode": "91000270",
-              "name": "Spironolactone",
               "ucumSymbol": "mg"
             }
           ]

@@ -115,6 +115,7 @@ export interface FktpLabSpec {
   clue: string
   panduanResmi?: string
   catatanRealita?: string
+  mutiaraEbm?: string
   prevalensi?: 'tinggi' | 'sedang' | 'rendah'
   harusDirujuk?: boolean
   spesialisRujukan?: SpesialisasiRs
@@ -185,6 +186,7 @@ export function buatKasusFktpLab(spec: FktpLabSpec): KasusKlinis {
     clue: spec.clue,
     panduanResmi: spec.panduanResmi,
     catatanRealita: spec.catatanRealita,
+    mutiaraEbm: spec.mutiaraEbm,
     stabilisasiWajib: spec.stabilisasiWajib,
     konfirmasiWajib: spec.konfirmasiWajib,
   })

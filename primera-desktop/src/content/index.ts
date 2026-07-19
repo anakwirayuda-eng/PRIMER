@@ -48,6 +48,14 @@ import {
   OBAT_LAB_BATCH4,
   TINDAKAN_LAB_BATCH4,
 } from './lab/catalogBatch4'
+import { validasiPedagogyPilots } from './pedagogyPilots'
+
+export {
+  DUEL_DIAGNOSIS_PILOTS,
+  TEACH_BACK_PILOTS,
+  duelUntukKasus,
+  teachBackUntukKasus,
+} from './pedagogyPilots'
 
 function byId<T extends { id: string }>(arr: T[]): Record<string, T> {
   const out: Record<string, T> = {}
@@ -139,6 +147,7 @@ if (import.meta.env?.DEV) {
   const masalah = [
     ...validasiPack(PACK),
     ...validasiCurriculumBlueprint(CURRICULUM_BLUEPRINT, PACK),
+    ...validasiPedagogyPilots(PACK),
   ]
   if (masalah.length > 0) {
     throw new Error(`[PACK] ${masalah.length} masalah konten:\n${masalah.join('\n')}`)

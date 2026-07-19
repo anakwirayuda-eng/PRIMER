@@ -82,6 +82,7 @@ export function Klinik() {
           hasil={hasil}
           bolehPanggil={bolehPanggil}
           alasanTutup={alasanTutup}
+          dex={state.dex}
           onSelesai={(panggilBerikutnya) => {
             setHasil(null)
             if (panggilBerikutnya) dispatch({ type: 'PANGGIL_PASIEN' })

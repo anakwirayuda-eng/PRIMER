@@ -17,7 +17,7 @@ function listCases(data: AdjudicationDataset, status: ReviewStatus): string {
 
 function report(data: AdjudicationDataset): string {
   const sourceWarnings = data.cases.filter((item) => item.compiler.sourceAttributionWarning)
-  const noFloor = data.cases.filter((item) => item.evidence.ppk.status === 'tak-ada-sumber' && item.evidence.pnpk.status === 'tak-ada-sumber')
+  const noFloor = data.cases.filter((item) => item.evidence.ppk.status === 'tak-ada-sumber' && item.evidence.pnpk.status === 'tak-ada-sumber' && item.evidence.ebm.status === 'tak-ada-sumber')
   const fornasTrueUnlocated = [...new Map(data.cases.flatMap((item) => [
     ...item.currentManagement.requiredDrugs,
     ...item.currentManagement.alternativeDrugs.flat(),
@@ -26,8 +26,8 @@ function report(data: AdjudicationDataset): string {
 
   return `# M13-137 - Laporan Kompilasi Adjudikasi Prototipe Klinis
 
-**Tanggal kompilasi:** ${data.generatedAt.slice(0, 10)}  
-**Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**  
+**Tanggal kompilasi:** ${data.generatedAt.slice(0, 10)}
+**Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
 **Snapshot:** commit \`${data.sourceCommit}\`, artefak \`${data.artifactFingerprint}\`, pack \`${data.packFingerprint}\`, content release \`${data.contentRelease}\`, \`REVISI_ENGINE=${data.engineRevision}\`
 
 ## Ringkasan eksekutif
@@ -41,6 +41,7 @@ Briefing menyebut “M13-103”, tetapi query runtime \`activationStatus === 'la
 | Crosswalk PPK terkait, bukan identik | ${data.summary.ppkRelated} |
 | Tanpa crosswalk PPK | ${data.summary.ppkAbsent} |
 | Memiliki PNPK langsung | ${data.summary.pnpkDirect} |
+| Memiliki pedoman EBM langsung tambahan | ${data.summary.ebmDirect} |
 | Saran kompilator “cocok” | ${data.summary.bySuggestion.cocok} |
 | Saran kompilator “perlu-koreksi” | ${data.summary.bySuggestion['perlu-koreksi']} |
 | Saran kompilator “tak-ada-sumber” | ${data.summary.bySuggestion['tak-ada-sumber']} |
@@ -54,7 +55,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 1. [M13_137_ADJUDICATION.html](M13_137_ADJUDICATION.html) - alat review interaktif, filter, autosave lokal, keputusan Setuju/Perlu Edit/Tolak/Nanti, ekspor-impor JSON.
 2. [M13_137_ADJUDICATION_DATA.json](M13_137_ADJUDICATION_DATA.json) - dataset audit machine-readable 137 kasus.
-3. [M13_137_KFA_SNAPSHOT.json](M13_137_KFA_SNAPSHOT.json) - snapshot endpoint publik KFA active-substance untuk 74 obat unik.
+3. [M13_137_KFA_SNAPSHOT.json](M13_137_KFA_SNAPSHOT.json) - snapshot endpoint publik KFA active-substance untuk seluruh obat unik yang dipakai prototipe saat artefak dibangun.
 4. Dokumen ini - metode, keterbatasan, dan daftar temuan provenance.
 
 ## Metode
@@ -72,6 +73,12 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 - Cuplikan penatalaksanaan/kriteria rujuk diambil literal dari ekstrak lokal dan diberi nomor bab serta halaman PDF.
 - PNPK dipetakan hanya bila ada dokumen diagnosis-spesifik atau konteks terkait yang nyata. Cuplikan otomatis diberi baris sumber; dokumen penuh tetap wajib dibaca saat adjudikasi.
 - Amandemen KMK 1936/2022 dan PNPK aktif lebih baru harus mengalahkan bagian lama yang berkonflik.
+
+### Pedoman EBM diagnosis-spesifik
+
+- Registry EBM disimpan terpisah dari PNPK agar WHO, NICE, atau badan pedoman lain tidak pernah salah label sebagai regulasi Indonesia.
+- Sumber harus primer, memiliki URL resmi dan locator keputusan; relasi tetap dibedakan **direct** dan **related**.
+- Pedoman EBM melengkapi atau memperbarui floor lokal, tetapi implementasinya tetap tunduk pada Fornas, ASPAK, KFA, kewenangan FKTP, dan jalur rujukan.
 
 ### Fornas 1199
 
@@ -99,7 +106,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 
 ${sourceWarnings.map((item) => `- \`${item.id}\` - ${item.name}: ${item.evidence.ppk.relation ?? 'none'}${item.evidence.ppk.limitation ? `; ${item.evidence.ppk.limitation}` : ''}`).join('\n') || '- Tidak ada.'}
 
-### Tidak ada PPK maupun PNPK diagnosis-spesifik (${noFloor.length})
+### Tidak ada PPK, PNPK, maupun pedoman EBM diagnosis-spesifik (${noFloor.length})
 
 “Tak ada sumber” di sini berarti tidak ada sumber yang berhasil dipetakan dalam corpus resmi saat kompilasi, **bukan** bahwa penyakit tidak punya pedoman di dunia. Kasus ini memerlukan sumber program/EBM tambahan atau klaim yang dibatasi.
 

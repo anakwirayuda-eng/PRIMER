@@ -199,6 +199,8 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
         <div class="metric"><strong>${data.summary.ppkAbsent}</strong><span>tanpa crosswalk PPK</span></div>
         <div class="metric"><strong>${data.summary.pnpkDirect}</strong><span>PNPK langsung</span></div>
         <div class="metric"><strong>${data.summary.resourceTierCOrD}</strong><span>kasus resource C/D</span></div>
+        <div class="metric"><strong>${data.summary.resourceGrounded}</strong><span>resource C/D terjelaskan</span></div>
+        <div class="metric"><strong>${data.summary.resourceUnresolved}</strong><span>resource belum terjelaskan</span></div>
       </div>
     </div>
   </header>
@@ -289,7 +291,10 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
       return '<table><thead><tr><th>Obat</th><th>Fornas 1199</th><th>KFA active substance</th></tr></thead><tbody>' + drugs.map((drug) => {
         const fornasLocators = drug.fornas.excerpts.map((q) => '<span class="locator">' + esc(q.locator) + '</span>').join('')
         const kfa = drug.kfa.components.map((component) => esc(component.query) + ': ' + (component.matches.length ? component.matches.map((match) => '<code>' + esc(match.code) + '</code> ' + esc(match.name)).join(', ') : 'tidak ditemukan')).join('<br>')
-        return '<tr><td><strong>' + esc(drug.name) + '</strong><span class="locator">' + esc(drug.id) + ' · ' + esc(drug.dosageForm) + '</span></td><td>' + fmtStatus(drug.fornas.status) + '<div class="limitation">' + esc(drug.fornas.note) + '</div>' + fornasLocators + '</td><td>' + fmtStatus(drug.kfa.status) + '<div>' + kfa + '</div></td></tr>'
+        const availability = drug.fornas.caseAvailabilityGrounded
+          ? '<div class="limitation"><strong>Graceful degradation kasus:</strong> jalur non-Fornas dinyatakan eksplisit pada catatan realita.</div>'
+          : ''
+        return '<tr><td><strong>' + esc(drug.name) + '</strong><span class="locator">' + esc(drug.id) + ' · ' + esc(drug.dosageForm) + '</span></td><td>' + fmtStatus(drug.fornas.status) + '<div class="limitation">' + esc(drug.fornas.note) + '</div>' + availability + fornasLocators + '</td><td>' + fmtStatus(drug.kfa.status) + '<div>' + kfa + '</div></td></tr>'
       }).join('') + '</tbody></table>'
     }
     function excerpts(items) {
@@ -310,10 +315,22 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
         (source.officialUrl ? '<a href="' + esc(source.officialUrl) + '" target="_blank" rel="noreferrer">Buka sumber resmi</a>' : '<span class="limitation">Tautan resmi belum tersimpan</span>') +
         excerpts(source.excerpts) + (source.limitation ? '<p class="limitation">' + esc(source.limitation) + '</p>' : '') + '</div>').join('')
     }
+    function ebmBlock(item) {
+      const group = item.evidence.ebm
+      if (!group.sources.length) return '<p>' + fmtStatus(group.status) + '</p><p class="limitation">' + esc(group.limitation) + '</p>'
+      return '<p>' + fmtStatus(group.status) + '</p>' + group.sources.map((source) => '<div class="source"><div class="source-title">' + esc(source.title) + ' Â· ' + esc(source.relation.toUpperCase()) + '</div>' +
+        '<div class="limitation">' + esc(source.authority + ' Â· ' + source.year) + '</div>' +
+        '<a href="' + esc(source.officialUrl) + '" target="_blank" rel="noreferrer">Buka sumber primer</a>' +
+        '<p><strong>Locator:</strong> ' + esc(source.locator) + '</p>' +
+        '<p class="limitation">' + esc(source.population + '. ' + source.facilityScope) + '</p>' +
+        (source.limitation ? '<p class="limitation">' + esc(source.limitation) + '</p>' : '') + '</div>').join('') +
+        (group.limitation ? '<p class="limitation">' + esc(group.limitation) + '</p>' : '')
+    }
     function resourceBlock(item) {
       const r = item.evidence.aspak
+      const groundingLabel = { baseline: 'Baseline A/B', declared: 'Dinyatakan kasus', unresolved: 'Belum terjelaskan' }
       return '<p>' + fmtStatus(r.status) + ' <span class="badge">Tier tertinggi ' + esc(r.highestTier) + '</span></p>' +
-        (r.resources.length ? '<table><thead><tr><th>Resource</th><th>Tier</th><th>Catatan</th></tr></thead><tbody>' + r.resources.map((resource) => '<tr><td>' + esc(resource.name) + '<span class="locator">' + esc(resource.kind + ':' + resource.id) + '</span></td><td><strong>' + esc(resource.tier) + '</strong></td><td>' + esc(resource.note) + '</td></tr>').join('') + '</tbody></table>' : '<p class="limitation">Tidak ada resource khusus yang dideklarasikan.</p>') + '<p class="limitation">' + esc(r.profile + '. ' + r.limitation) + '</p>'
+        (r.resources.length ? '<table><thead><tr><th>Resource</th><th>Tier</th><th>Grounding</th><th>Catatan</th></tr></thead><tbody>' + r.resources.map((resource) => '<tr><td>' + esc(resource.name) + '<span class="locator">' + esc(resource.kind + ':' + resource.id) + '</span></td><td><strong>' + esc(resource.tier) + '</strong></td><td>' + esc(groundingLabel[resource.grounding] || resource.grounding) + '</td><td>' + esc(resource.note) + '</td></tr>').join('') + '</tbody></table>' : '<p class="limitation">Tidak ada resource khusus yang dideklarasikan.</p>') + '<p class="limitation">' + esc(r.profile + '. ' + r.limitation) + '</p>'
     }
     function list(items, render) {
       return items.length ? '<ul>' + items.map((item) => '<li>' + render(item) + '</li>').join('') + '</ul>' : '<p class="limitation">Tidak ada.</p>'
@@ -330,6 +347,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
         '<details><summary>Tatalaksana runtime saat ini</summary><div class="detail-body columns"><section class="section"><h3>Obat</h3>' + drugRows(drugs) + '</section><section class="section"><h3>Tindakan</h3>' + list(item.currentManagement.procedures, (x) => '<strong>' + esc(x.name) + '</strong><span class="locator">' + esc(x.id) + '</span>') + '<h3>Edukasi</h3>' + list(item.currentManagement.education, (x) => esc(x.name) + (x.critical ? ' <strong>(kritis)</strong>' : '') + '<span class="locator">' + esc(x.id) + '</span>') + '<h3>Lab relevan</h3>' + list(item.currentManagement.relevantLabs, (x) => '<strong>' + esc(x.name) + ':</strong> ' + esc(x.result) + '<span class="locator">' + esc(x.id) + '</span>') + '</section></div></details>' +
         '<details><summary>PPK 1186/2022</summary><div class="detail-body">' + ppkBlock(item) + '</div></details>' +
         '<details><summary>PNPK/pedoman program</summary><div class="detail-body">' + pnpkBlock(item) + '</div></details>' +
+        '<details><summary>Pedoman EBM diagnosis-spesifik</summary><div class="detail-body">' + ebmBlock(item) + '</div></details>' +
         '<details><summary>Fornas 1199 dan KFA</summary><div class="detail-body">' + drugRows(drugs) + '<p class="limitation">' + esc(item.evidence.fornas.limitation) + ' ' + esc(item.evidence.kfa.limitation) + '</p></div></details>' +
         '<details><summary>ASPAK dan realitas resource</summary><div class="detail-body">' + resourceBlock(item) + '</div></details>' +
         '<details><summary>Teks pedagogis yang sekarang ada</summary><div class="detail-body"><div class="section"><h3>Clue</h3><p>' + esc(item.currentEditorial.clue) + '</p>' + (item.currentEditorial.officialGuidance ? '<h3>Panduan resmi</h3><p>' + esc(item.currentEditorial.officialGuidance) + '</p>' : '') + (item.currentEditorial.realityNote ? '<h3>Catatan realita</h3><p>' + esc(item.currentEditorial.realityNote) + '</p>' : '') + (item.currentEditorial.ebmPearl ? '<h3>Mutiara EBM</h3><p>' + esc(item.currentEditorial.ebmPearl) + '</p>' : '') + '</div></div></details>' +

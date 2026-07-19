@@ -124,6 +124,16 @@ export const OBAT_LAB_BATCH4: Record<string, Obat> = {
     hargaJual: 6000,
     fornas: true,
   },
+  asetosal_loading_320: {
+    id: 'asetosal_loading_320',
+    nama: 'Asetosal Loading 320 mg (4 x 80 mg, Kunyah)',
+    kelas: 'antiplatelet',
+    sinonim: ['aspirin loading', 'asam asetilsalisilat', 'asetosal 320'],
+    sediaan: '4 tablet tidak bersalut 80 mg, dikunyah',
+    hargaBeli: 800,
+    hargaJual: 1800,
+    fornas: true,
+  },
   spironolakton_25: {
     id: 'spironolakton_25',
     nama: 'Spironolakton 25 mg',
@@ -275,6 +285,14 @@ export const LAB_LAB_BATCH4: Record<string, ItemLab> = {
     biaya: 30000,
     nilaiNormal: 'Non-reaktif',
   },
+  tcm_sputum: {
+    id: 'tcm_sputum',
+    nama: 'TCM MTB/RIF Spesimen Dahak',
+    biaya: 0,
+    nilaiNormal: 'MTB tidak terdeteksi',
+    hasilBesok: true,
+    bolehTundaTerapi: true,
+  },
   hitung_retikulosit: {
     id: 'hitung_retikulosit',
     nama: 'Hitung Retikulosit',
@@ -284,6 +302,12 @@ export const LAB_LAB_BATCH4: Record<string, ItemLab> = {
 }
 
 export const TINDAKAN_LAB_BATCH4: Record<string, Tindakan> = {
+  akses_iv_tanpa_bolus: {
+    id: 'akses_iv_tanpa_bolus',
+    nama: 'Pasang Akses IV untuk Obat/Monitoring tanpa Bolus Cairan Rutin',
+    icd9: '38.93',
+    biaya: 30000,
+  },
   pemasangan_kateter_urin: {
     id: 'pemasangan_kateter_urin',
     nama: 'Pemasangan Kateter Urin',
@@ -301,6 +325,60 @@ export const TINDAKAN_LAB_BATCH4: Record<string, Tindakan> = {
     nama: 'Pemantauan Ketat Tanda Vital Pra-Rujuk',
     icd9: '89.65',
     biaya: 20000,
+  },
+  antiemetik_parenteral_hiperemesis: {
+    id: 'antiemetik_parenteral_hiperemesis',
+    nama: 'Antiemetik Parenteral sesuai Protokol Kehamilan',
+    icd9: '99.29',
+    biaya: 25000,
+  },
+  tiamin_hiperemesis: {
+    id: 'tiamin_hiperemesis',
+    nama: 'Tiamin Oral/Parenteral sesuai Toleransi sebelum Dekstrosa/Nutrisi',
+    icd9: '99.29',
+    biaya: 15000,
+  },
+  koreksi_hipoglikemia_gizi_buruk_anak: {
+    id: 'koreksi_hipoglikemia_gizi_buruk_anak',
+    nama: 'Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu F-75',
+    icd9: '99.29',
+    biaya: 15000,
+  },
+  antibiotik_parenteral_gizi_buruk_protokol: {
+    id: 'antibiotik_parenteral_gizi_buruk_protokol',
+    nama: 'Antibiotik Parenteral Gizi Buruk Berkomplikasi sesuai Protokol Jejaring',
+    icd9: '99.21',
+    biaya: 30000,
+  },
+  antibiotik_parenteral_kaki_diabetik_protokol: {
+    id: 'antibiotik_parenteral_kaki_diabetik_protokol',
+    nama: 'Antibiotik Parenteral Infeksi Kaki Diabetik sesuai Protokol Jejaring',
+    icd9: '99.21',
+    biaya: 35000,
+  },
+  balut_luka_kaki_diabetik_pra_rujuk: {
+    id: 'balut_luka_kaki_diabetik_pra_rujuk',
+    nama: 'Lindungi Luka Kaki Diabetik dengan Balutan Bersih Nonadheren tanpa Debridemen Tajam',
+    icd9: '93.57',
+    biaya: 25000,
+  },
+  pembersihan_telinga_kering_pra_rujuk: {
+    id: 'pembersihan_telinga_kering_pra_rujuk',
+    nama: 'Bersihkan Sekret Telinga secara Kering tanpa Irigasi sebelum Rujuk',
+    icd9: '96.52',
+    biaya: 15000,
+  },
+  kompres_hangat_furunkel_hidung: {
+    id: 'kompres_hangat_furunkel_hidung',
+    nama: 'Kompres Hangat Furunkel Hidung 15-20 Menit',
+    icd9: '93.39',
+    biaya: 0,
+  },
+  antibiotik_parenteral_mastoiditis_anak_protokol: {
+    id: 'antibiotik_parenteral_mastoiditis_anak_protokol',
+    nama: 'Antibiotik Parenteral Mastoiditis Anak sesuai Berat Badan dan Protokol Jejaring',
+    icd9: '99.21',
+    biaya: 30000,
   },
   imobilisasi_servikal: {
     id: 'imobilisasi_servikal',
@@ -355,11 +433,17 @@ export const EDUKASI_LAB_BATCH4: Record<string, TopikEdukasi> = {
     kategori: 'tindakan',
     sinonim: ['persiapan operasi', 'puasa pra-bedah', 'rujuk bedah'],
   },
+  rencana_hiperemesis: {
+    id: 'rencana_hiperemesis',
+    nama: '[Hiperemesis] Rencana antiemetik, minum sedikit-sering, dan tanda kembali segera',
+    kategori: 'tindakan',
+    sinonim: ['hiperemesis', 'muntah hamil', 'minum sedikit sering', 'antiemetik'],
+  },
   diet_rendah_protein_ginjal: {
     id: 'diet_rendah_protein_ginjal',
-    nama: 'Diet ginjal — protein & garam terkendali',
+    nama: '[Ginjal] Protein cukup, hindari asupan tinggi protein, dan batasi garam',
     kategori: 'diet',
-    sinonim: ['diet ginjal', 'rendah protein', 'ckd'],
+    sinonim: ['diet ginjal', 'protein cukup', 'hindari tinggi protein', 'ckd'],
   },
   hindari_obat_nefrotoksik: {
     id: 'hindari_obat_nefrotoksik',
@@ -372,6 +456,42 @@ export const EDUKASI_LAB_BATCH4: Record<string, TopikEdukasi> = {
     nama: 'Kepatuhan antitiroid & kenali demam-sariawan',
     kategori: 'kepatuhan',
     sinonim: ['antitiroid', 'ptu', 'agranulositosis'],
+  },
+  rencana_tirotoksikosis_rujuk: {
+    id: 'rencana_tirotoksikosis_rujuk',
+    nama: '[Tiroid] Rencana rujuk, keamanan beta-blocker, dan tanda bahaya mata/jantung',
+    kategori: 'tindakan',
+    sinonim: ['graves', 'tirotoksikosis', 'propranolol', 'mata tiroid', 'rujuk tiroid'],
+  },
+  rencana_anemia_berat_rujuk: {
+    id: 'rencana_anemia_berat_rujuk',
+    nama: '[Anemia berat] Rujuk hari ini, nilai transfusi, dan cari sumber perdarahan',
+    kategori: 'tindakan',
+    sinonim: ['anemia berat', 'transfusi', 'perdarahan haid', 'rujuk anemia'],
+  },
+  alur_tb_ro_jejaring: {
+    id: 'alur_tb_ro_jejaring',
+    nama: '[TB-RR] Catat-notifikasi, kirim dahak TCM, dan hubungkan ke layanan TB-RO',
+    kategori: 'tindakan',
+    sinonim: ['tb resistan', 'rr tb', 'sitb', 'tcm dahak', 'layanan tb ro'],
+  },
+  investigasi_kontak_tb: {
+    id: 'investigasi_kontak_tb',
+    nama: '[TB] Daftarkan kontak serumah/erat untuk skrining aktif dan penilaian TPT',
+    kategori: 'tindakan',
+    sinonim: ['investigasi kontak', 'kontak serumah', 'kontak erat', 'tpt'],
+  },
+  alur_tb_ekstraparu: {
+    id: 'alur_tb_ekstraparu',
+    nama: '[TB ekstraparu] Nilai TB paru, kirim aspirat/jaringan, dan tutup alur program',
+    kategori: 'tindakan',
+    sinonim: ['skrofuloderma', 'tb kulit', 'aspirat nodus', 'histopatologi', 'program tb'],
+  },
+  rencana_hbv_jejaring: {
+    id: 'rencana_hbv_jejaring',
+    nama: '[HBV kronik] Stadiumkan penyakit, nilai indikasi antivirus, dan jaga retensi kontrol',
+    kategori: 'tindakan',
+    sinonim: ['hepatitis b kronik', 'hbv dna', 'apri', 'fibrosis', 'antivirus'],
   },
   perawatan_kaki_diabetik: {
     id: 'perawatan_kaki_diabetik',
@@ -397,16 +517,34 @@ export const EDUKASI_LAB_BATCH4: Record<string, TopikEdukasi> = {
     kategori: 'gaya_hidup',
     sinonim: ['tirai hitam', 'kilatan cahaya', 'buta mendadak'],
   },
+  skrining_retinopati_diabetik: {
+    id: 'skrining_retinopati_diabetik',
+    nama: '[Diabetes] Jadwal skrining retina dan tindak lanjut hasil',
+    kategori: 'kepatuhan',
+    sinonim: ['retinopati diabetik', 'funduskopi', 'foto fundus', 'skrining mata diabetes'],
+  },
   cegah_penularan_hepatitis_b: {
     id: 'cegah_penularan_hepatitis_b',
-    nama: 'Cegah penularan hepatitis B ke keluarga',
+    nama: '[HBV] Skrining pasangan/serumah, vaksinasi yang rentan, dan cegah pajanan darah',
     kategori: 'higiene',
-    sinonim: ['hepatitis b', 'hbsag', 'vaksin keluarga'],
+    sinonim: ['hepatitis b', 'hbsag', 'vaksin keluarga', 'alat cukur', 'kontak serumah'],
   },
   pantang_alkohol_hati: {
     id: 'pantang_alkohol_hati',
     nama: 'Pantang alkohol & obat pembebani hati',
     kategori: 'gaya_hidup',
     sinonim: ['alkohol', 'sirosis', 'hati'],
+  },
+  profilaksis_kontak_meningokokus: {
+    id: 'profilaksis_kontak_meningokokus',
+    nama: '[Meningokokus] Kontak erat dinilai segera untuk kemoprofilaksis',
+    kategori: 'tindakan',
+    sinonim: ['meningokokus', 'kontak erat', 'kemoprofilaksis meningitis'],
+  },
+  cegah_baterai_kancing: {
+    id: 'cegah_baterai_kancing',
+    nama: '[Anak] Amankan baterai kancing dan benda kecil',
+    kategori: 'higiene',
+    sinonim: ['baterai kancing', 'button battery', 'benda asing tertelan'],
   },
 }

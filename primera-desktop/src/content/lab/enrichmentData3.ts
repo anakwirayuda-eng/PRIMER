@@ -190,9 +190,9 @@ export const LAB_ENRICHMENT_3: Record<string, LabEnrichmentSpec> = {
       { id: 'dexamethasone_05', alasan: 'Steroid mengempiskan benjolan sehingga tampak membaik, padahal menekan imun pada infeksi TB aktif dan mengaburkan diagnosis.', bahaya: 'kontraindikasi' },
     ],
     konsekuensi: {
-      narasi: 'Skrofuloderma (TB kulit) perlu konfirmasi dan terapi TB; menunda evaluasi membuat luka meluas dan penyakit dasar tak tertangani.',
-      kembaliHariMin: 7, kembaliHariMax: 14,
-      kondisiKembali: 'Luka leher makin luas, berair, dan muncul benjolan baru.',
+      narasi: 'Bila rujukan spesimen dan program tidak ditutup, luka dapat meluas, TB paru yang menyertai dapat terlewat, dan kontak serumah tidak pernah masuk skrining.',
+      kembaliHariMin: 14, kembaliHariMax: 30,
+      kondisiKembali: 'Luka leher makin luas dan muncul nodus baru; paman serumah tetap menjadi satu-satunya anggota keluarga yang pernah tercatat di program TB.',
     },
     variasiPembuka: {
       cemas: 'Benjolan leher saya pecah jadi luka berair yang tak sembuh — apa ini kanker atau TB, Dok?',
@@ -209,9 +209,9 @@ export const LAB_ENRICHMENT_3: Record<string, LabEnrichmentSpec> = {
       { id: 'hidrokortison_krim', alasan: 'Mengobatinya sebagai dermatitis hanya menyamarkan bercak sambil menunda registrasi program dan MDT, sementara kerusakan saraf berjalan diam-diam.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Kusta tak diobati merusak saraf dan menular; keterlambatan berisiko cacat menetap.',
-      kembaliHariMin: 10, kembaliHariMax: 14,
-      kondisiKembali: 'Bercak mati rasa bertambah dan mulai ada kelemahan tangan.',
+      narasi: 'Kusta yang tidak diobati dapat perlahan merusak saraf dan tetap menjadi sumber transmisi pada kontak dekat berkepanjangan; proses ini bukan perubahan dramatis dalam hitungan hari.',
+      kembaliHariMin: 60, kembaliHariMax: 120,
+      kondisiKembali: 'Belum masuk program; muncul luka bakar kecil pada area mati rasa karena perlindungan tangan-kaki dan pemeriksaan saraf serial tidak pernah diajarkan.',
     },
     variasiPembuka: {
       cemas: 'Ada dua bercak pucat mati rasa di lengan saya — apa ini kusta yang bikin cacat, Dok?',
@@ -228,9 +228,9 @@ export const LAB_ENRICHMENT_3: Record<string, LabEnrichmentSpec> = {
       { id: 'ciprofloxacin_500', alasan: 'Kuinolon menyasar ulkus genital lain seperti chancroid, bukan Treponema, padahal serologi sudah memastikan sifilis.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Luka tak nyeri (chancre) yang tak diterapi berlanjut ke sifilis sekunder/laten dan menular; pasangan perlu diobati.',
-      kembaliHariMin: 7, kembaliHariMax: 14,
-      kondisiKembali: 'Luka mereda tetapi muncul ruam di telapak tangan-kaki (tahap sekunder).',
+      narasi: 'Chancre dapat sembuh sendiri walau infeksi menetap dan kemudian masuk tahap sekunder atau laten; hilangnya luka bukan bukti sembuh, dan pasangan tetap memerlukan layanan yang aman.',
+      kembaliHariMin: 21, kembaliHariMax: 60,
+      kondisiKembali: 'Luka sudah menghilang sehingga pasien mengira sembuh, tetapi muncul ruam telapak dan pasangan belum pernah ditawari pemeriksaan secara rahasia.',
     },
     variasiPembuka: {
       cemas: 'Ada luka di kelamin yang tidak sakit — kenapa tidak nyeri ya Dok, apa ini bahaya?',
@@ -408,9 +408,9 @@ export const LAB_ENRICHMENT_3: Record<string, LabEnrichmentSpec> = {
       { id: 'prazikuantel_600', alasan: 'Prazikuantel menyasar cacing pipih, sedangkan mikrofilaria yang ditemukan adalah cacing benang dengan regimen program tersendiri.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa terapi program dan perawatan, serangan berulang menuju limfedema/elefantiasis menetap.',
-      kembaliHariMin: 10, kembaliHariMax: 14,
-      kondisiKembali: 'Tungkai kembali bengkak dan demam berulang.',
+      narasi: 'Tanpa terapi program, MMDP, dan penutupan fokus, serangan adenolimfangitis serta kerusakan kulit dapat berulang; progresi limfedema terjadi dalam bulan-tahun, bukan pasti dalam dua minggu.',
+      kembaliHariMin: 30, kembaliHariMax: 90,
+      kondisiKembali: 'Tungkai kembali meradang setelah lecet sela jari dan aktivitas terganggu; program belum menerima data fokus untuk menilai kontak dan transmisi wilayah.',
     },
     variasiPembuka: {
       cemas: 'Tungkai saya beberapa kali bengkak dan demam setelah tinggal di daerah endemis — apa kaki saya akan membesar permanen, Dok?',

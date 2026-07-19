@@ -104,7 +104,9 @@ describe('M13 lab full-fledge - 144/144 katalog FKTP playable', () => {
   })
 
   it('setiap item katalog ekspansi benar-benar dipakai oleh kasus', () => {
-    const isiKasus = JSON.stringify(EXPANSION_CASES)
+    const isiKasus = JSON.stringify(Object.values(PACK.kasus).filter(
+      (item) => item.activationStatus === 'lab_prototype_unadjudicated',
+    ))
     const katalog = {
       obat: OBAT_LAB_EXPANSION,
       lab: LAB_LAB_EXPANSION,

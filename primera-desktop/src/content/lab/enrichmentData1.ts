@@ -231,9 +231,9 @@ export const LAB_ENRICHMENT_1: Record<string, LabEnrichmentSpec> = {
       { id: 'vitamin_b_kompleks', alasan: 'Anemia di sini mikrositik hipokrom akibat kehilangan besi kronis; vitamin B kompleks tidak mengisi cadangan besi maupun membunuh cacingnya.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa obat cacing dan perbaikan sanitasi/alas kaki, anemia defisiensi besi memberat dan reinfeksi terus berulang.',
-      kembaliHariMin: 10, kembaliHariMax: 14,
-      kondisiKembali: 'Makin pucat, lelah, dan berdebar saat aktivitas ringan.',
+      narasi: 'Tanpa obat cacing, koreksi besi, dan perbaikan sanitasi-alas kaki, anemia dapat menetap serta reinfeksi lingkungan berulang; satu kasus juga tak boleh otomatis dianggap klaster rumah.',
+      kembaliHariMin: 30, kembaliHariMax: 60,
+      kondisiKembali: 'Lelah dan pucat belum membaik, Hb tetap rendah, atau pekerja kebun lain muncul dengan paparan serupa bila sumber lingkungan tidak dipetakan.',
     },
     variasiPembuka: {
       cemas: 'Saya cepat lelah dan pucat, perut kadang tak enak berbulan-bulan — apa saya kena penyakit darah, Dok?',
@@ -249,9 +249,9 @@ export const LAB_ENRICHMENT_1: Record<string, LabEnrichmentSpec> = {
       { id: 'dexamethasone_05', alasan: 'Kortikosteroid pada strongiloidiasis berisiko memicu sindrom hiperinfeksi yang mengancam nyawa.', bahaya: 'kontraindikasi' },
     ],
     konsekuensi: {
-      narasi: 'Bila tidak diterapi tuntas — apalagi bila kelak diberi steroid — risiko hiperinfeksi dan penyebaran larva meningkat.',
-      kembaliHariMin: 7, kembaliHariMax: 14,
-      kondisiKembali: 'Mulas menetap dan garis merah gatal berpindah makin sering muncul.',
+      narasi: 'Infeksi kronik dapat menetap bertahun-tahun; bila hasil klinik tidak kembali ke dokter pemberi steroid dan imunosupresi dimulai, hiperinfeksi atau diseminasi dapat muncul cepat dan fatal.',
+      kembaliHariMin: 5, kembaliHariMax: 14,
+      kondisiKembali: 'Jika steroid telanjur dimulai sebelum terapi ditutup, pasien kembali dengan gejala saluran cerna memburuk, sesak, atau sepsis; tanpa steroid, keluhan dapat sekadar menetap.',
     },
     variasiPembuka: {
       cemas: 'Perut sering mulas dan ada garis merah gatal yang berpindah cepat di kulit — ini cacing yang bahaya ya, Dok?',
@@ -268,9 +268,9 @@ export const LAB_ENRICHMENT_1: Record<string, LabEnrichmentSpec> = {
       { id: 'metronidazol_500', alasan: 'BAB berdarah mudah dikira amebiasis, tetapi telur Schistosoma sudah ditemukan dan metronidazol tidak membunuh cacingnya.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa terapi terkoordinasi program dan penghindaran air tawar endemis, infeksi kronis merusak organ dan reinfeksi berlanjut.',
-      kembaliHariMin: 10, kembaliHariMax: 14,
-      kondisiKembali: 'Nyeri perut menetap dan BAB berdarah masih berulang.',
+      narasi: 'Tanpa terapi dan penutupan program, keluhan dapat menetap dan pajanan fokus berulang; kerusakan hepatosplenis berkembang kronik, bukan pasti dalam dua minggu.',
+      kembaliHariMin: 30, kembaliHariMax: 90,
+      kondisiKembali: 'BAB berdarah berulang atau hasil kontrol tetap positif, sementara fokus air-keong-hewan belum masuk respons lintas sektor.',
     },
     variasiPembuka: {
       cemas: 'Sepulang dari kebun di Lembah Napu perut sering sakit dan BAB kadang berdarah — ini kanker usus bukan, Dok?',
@@ -286,9 +286,9 @@ export const LAB_ENRICHMENT_1: Record<string, LabEnrichmentSpec> = {
       { id: 'loperamid_2', alasan: 'Bukan diare; antimotilitas tidak relevan untuk taeniasis dan tak mengeluarkan cacing.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa terapi dan edukasi memasak daging matang, proglotid terus keluar dan risiko sistiserkosis pada Taenia solium ada.',
-      kembaliHariMin: 10, kembaliHariMax: 14,
-      kondisiKembali: 'Masih melihat potongan putih bergerak di tinja.',
+      narasi: 'Carrier yang tidak tertangani terus mengeluarkan telur; bila spesiesnya T. solium, pencemaran fekal dapat menginfeksi manusia atau babi. Sistiserkosis berasal dari menelan telur, bukan semata-mata makan daging kurang matang.',
+      kembaliHariMin: 14, kembaliHariMax: 30,
+      kondisiKembali: 'Proglotid masih terlihat atau spesies belum teridentifikasi, dan jalur sanitasi-peternakan-inspeksi daging belum ditutup bersama jejaring.',
     },
     variasiPembuka: {
       cemas: 'Saya melihat potongan putih pipih bergerak di tinja — cacingnya bisa masuk ke otak ya, Dok?',
@@ -304,9 +304,9 @@ export const LAB_ENRICHMENT_1: Record<string, LabEnrichmentSpec> = {
       { id: 'amoxicillin_500', alasan: 'Hepatitis A adalah infeksi virus swasirna; antibiotik tidak berperan dan menambah beban hati.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Umumnya sembuh sendiri; namun obat hepatotoksik yang tidak perlu dan kurangnya pemantauan tanda gagal hati berbahaya.',
+      narasi: 'Sebagian besar hepatitis A pulih, tetapi safety-net yang gagal dapat melewatkan perburukan langka; tanpa penutupan klaster, pajanan pangan-air bersama juga tetap tak terpetakan.',
       kembaliHariMin: 5, kembaliHariMax: 10,
-      kondisiKembali: 'Kuning makin pekat, mual berat, dan mulai tampak mengantuk.',
+      kondisiKembali: 'Pada sebagian kecil lintasan, kuning dan mual memberat atau kesadaran menurun; rekan kos lain juga dilaporkan sakit bila penyelidikan pajanan belum berjalan.',
     },
     variasiPembuka: {
       cemas: 'Mata saya kuning, urine gelap, mual seminggu ini — apa hati saya sudah rusak, Dok?',

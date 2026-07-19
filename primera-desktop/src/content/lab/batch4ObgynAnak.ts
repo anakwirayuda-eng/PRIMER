@@ -150,7 +150,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       },
       {
         region: 'abdomen',
-        temuan: 'Pemeriksaan ginekologis: nyeri goyang serviks sangat hebat, kavum Douglas menonjol dan nyeri; serviks tertutup dengan bercak darah kehitaman minimal; benang IUD tidak tampak.',
+        temuan: 'Pemeriksaan pelvis internal tidak diulang pada pasien yang sudah syok dan menunjukkan tanda peritoneal. Temuan klinis yang ada sudah cukup untuk memulai stabilisasi dan transfer emergensi tanpa menunda demi pemeriksaan bimanual rinci.',
         relevan: true,
       },
       {
@@ -216,7 +216,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
           bahaya: 'nonPrimer',
         },
       ],
-      prosedur: ['akses_iv_resusitasi', 'pasang_infus', 'resusitasi_cairan_kristaloid', 'oksigen', 'pemantauan_ketat_vital'],
+      prosedur: ['akses_iv_resusitasi', 'pemantauan_ketat_vital'],
       tindakanSalahUmum: [
         {
           id: 'transfusi_darah_fktp',
@@ -226,19 +226,19 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       ],
       edukasi: ['puasa_sambil_rujuk', 'persiapan_rujukan_operatif', 'tanda_bahaya'],
       edukasiKritis: ['puasa_sambil_rujuk', 'persiapan_rujukan_operatif'],
-      terapiKritis: ['resusitasi_cairan_kristaloid'],
+      terapiKritis: ['akses_iv_resusitasi'],
     },
-    stabilisasiWajib: ['akses_iv_resusitasi', 'pasang_infus', 'resusitasi_cairan_kristaloid', 'oksigen'],
-    clue: 'Setiap perempuan usia subur dengan nyeri perut bawah adalah kehamilan ektopik sampai terbukti sebaliknya — dan yang membuktikannya adalah tes kehamilan, bukan kesan klinis. Telat haid 7 minggu, nyeri satu sisi mendadak, bercak gelap, sinkop, nyeri alih bahu, tes kehamilan positif, kavum uteri kosong dengan cairan bebas, dan Hb yang turun cepat sudah cukup untuk bertindak. Tugas FKTP: dua jalur intravena besar, resusitasi kristaloid, oksigen, puasakan, pantau ketat, dan rujuk emergensi ke obgyn sambil menelepon lebih dulu agar kamar operasi siap. Jangan menunggu USG "yang lebih meyakinkan" atau kadar beta-hCG serial pada pasien yang sudah tidak stabil — pada ektopik terganggu, tindakan definitifnya bedah dan setiap penundaan dibayar dengan darah.',
-    panduanResmi: `${PPK_FLOOR} PPK Dokter FKTP menempatkan kehamilan ektopik terganggu sebagai kompetensi 3B: dokter FKTP mengenali, menstabilkan, dan merujuk segera — bukan menegakkan diagnosis pasti atau menuntaskan terapi. Kriteria rujukan resminya tidak menuntut konfirmasi USG lebih dulu; kecurigaan klinis pada pasien tidak stabil sudah menjadi indikasi transfer emergensi ke fasilitas dengan kemampuan bedah dan bank darah.`,
-    catatanRealita: 'Skenario ini mengasumsikan USG, tes kehamilan, kristaloid, oksigen, dan ambulans siap dalam hitungan menit. Di banyak Puskesmas, USG tidak ada dan ambulans sedang dipakai — dan itu justru memperkuat pelajarannya: tes kehamilan seharga puluhan ribu rupiah adalah alat penyelamat nyawa paling penting di ruangan itu. Kalau USG tak ada, jangan mencari-cari alasan untuk menunda;',
-    mutiaraEbm: 'Bercak darah yang SEDIKIT justru menipu: dokter cenderung menilai keparahan dari darah yang terlihat, padahal pada ektopik terganggu perdarahannya tersembunyi di rongga perut dan yang keluar lewat jalan lahir hanya luruhan desidua. Pasien dengan bercak minimal bisa kehilangan dua liter darah. Demikian juga tes kehamilan positif TIDAK berarti kehamilan itu di dalam rahim, dan kavum uteri yang "berisi sesuatu" bisa hanya kantong semu (pseudogestational sac). Sebaliknya, tes kehamilan yang negatif secara meyakinkan pada dasarnya menyingkirkan ektopik — karena itu kelalaian terbesar bukan salah membaca USG, melainkan tidak pernah melakukan tes kehamilan sama sekali.',
+    stabilisasiWajib: ['akses_iv_resusitasi'],
+    clue: 'Perempuan usia reproduktif dengan nyeri perut/panggul harus dinilai kemungkinan hamil meski gejalanya tidak khas. Telat haid 7 minggu, nyeri satu sisi mendadak, bercak gelap, sinkop, nyeri alih bahu, tes kehamilan positif, hipotensi, takikardia, dan tanda peritoneal berarti suspek kehamilan ektopik terganggu dengan syok. Tugas FKTP: panggil jejaring emergensi, lakukan ABCDE, pasang akses intravena dan berikan kristaloid terukur sambil menilai respons, puasakan, pantau ketat, lalu transfer segera ke fasilitas bedah-obstetri. Jangan menunggu USG atau beta-hCG serial pada pasien tidak stabil. Oksigen diberikan terkontrol bila hipoksemia atau gangguan respirasi muncul; SpO2 98% udara ruangan bukan alasan menjadikannya tindakan wajib.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik untuk kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat kondisi ini. NICE NG126 (diperbarui 2026) menjadi sumber langsung: pasien tidak stabil atau dengan kekhawatiran bermakna atas nyeri/perdarahan dirujuk langsung; setiap layanan yang menilai perempuan usia reproduktif perlu akses tes kehamilan. WHO-ICRC Basic Emergency Care memberi kerangka ABCDE, stabilisasi syok, transfer, dan handover untuk fasilitas kontak pertama.',
+    catatanRealita: 'Di Sukamaju, tes kehamilan dan kristaloid adalah sumber daya inti, sedangkan USG obstetri bersifat terjadwal/berbagi dan ambulans dapat sedang bertugas. Keterbatasan itu tidak mengubah keputusan: gambaran syok dengan tes kehamilan positif memicu stabilisasi paralel dan transfer, bukan antrean USG atau pemeriksaan tambahan yang menunda.',
+    mutiaraEbm: 'Bercak darah yang sedikit dapat menipu karena perdarahan utama pada ektopik terganggu dapat tersembunyi di rongga perut. Tes kehamilan positif juga tidak membuktikan lokasi intrauterin, dan struktur intrauterin dapat berupa kantong semu. Tes urine negatif menurunkan kemungkinan kehamilan yang sedang berlangsung, tetapi hasil tunggal tidak boleh mengalahkan penilaian syok atau kecurigaan klinis sangat tinggi; fokus pedagogisnya adalah selalu mempertimbangkan dan menguji kehamilan, lalu bertindak menurut stabilitas pasien.',
     konsekuensi: {
       narasi: 'Bila nyeri ditutup dengan antispasmodik atau antasida dan pasien dipulangkan sebagai "gastritis"/"infeksi saluran kemih", perdarahan intraabdomen berlanjut tanpa jalur intravena, tanpa cairan, dan tanpa jejaring yang bersiap. Pasien jatuh ke syok hipovolemik dekompensata di rumah, sering saat tidak ada yang menemani.',
       kembaliHariMin: 0,
       kembaliHariMax: 1,
       kondisiKembali: 'Dibawa kembali beberapa jam kemudian dalam keadaan tidak sadar, nadi hanya teraba di lipat paha, akral dingin, dan perut membuncit penuh darah — kini kehilangan waktu emas untuk laparotomi.',
-      guideline: 'PPK Dokter FKTP KMK 1186/2022 (kehamilan ektopik terganggu, kompetensi 3B); prinsip resusitasi syok hemoragik dan rujukan emergensi obstetri jejaring.',
+      guideline: 'NICE NG126 (updated 2026), recommendations 1.4.1 dan 1.4.5-1.4.7; WHO-ICRC Basic Emergency Care (ABCDE, shock, transfer, handover).',
     },
   }),
 
@@ -347,7 +347,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     pemeriksaanFisik: [
       {
         region: 'umum',
-        temuan: 'Sadar penuh, tenang, tidak tampak kesakitan, dapat bicara kalimat penuh. Pemeriksaan dibatasi pada inspeksi luar — pemeriksaan dalam TIDAK dilakukan karena plasenta previa belum disingkirkan.',
+        temuan: 'Sadar penuh, tenang, tidak tampak kesakitan, dapat bicara kalimat penuh. Vaginal toucher digital TIDAK dilakukan karena plasenta previa belum disingkirkan. Spekulum bukan larangan kategoris, tetapi tidak diperlukan di sini karena sumber obstetri sudah kuat dan transfer tidak boleh tertunda.',
         relevan: true,
       },
       {
@@ -408,7 +408,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
         },
         {
           id: 'asam_traneksamat_500_inj',
-          alasan: 'Perdarahan previa berasal dari sinus plasenta yang robek secara mekanik di segmen bawah rahim — antifibrinolitik tidak menutup pembuluh yang terbuka secara anatomis. Memberinya menciptakan rasa "sudah bertindak" dan menunda satu-satunya terapi definitif: seksio sesarea di RS.',
+          alasan: 'Asam traneksamat memiliki dasar kuat pada perdarahan pascapersalinan, tetapi bukan terapi rutin lini pertama untuk perdarahan antepartum akibat previa. Pemberian empiris di FKTP tidak boleh menggantikan stabilisasi, komunikasi pra-rujuk, dan transfer ke fasilitas obstetri yang mampu mengendalikan perdarahan.',
           bahaya: 'nonPrimer',
         },
         {
@@ -429,16 +429,16 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       edukasiKritis: ['tanda_bahaya_kehamilan'],
     },
     stabilisasiWajib: ['pasang_infus'],
-    clue: 'Perdarahan jalan lahir pada kehamilan lanjut yang merah segar, mendadak, tanpa pencetus, dan TANPA NYERI, pada perempuan dengan riwayat dua kali seksio, adalah plasenta previa sampai terbukti sebaliknya. Aturan tunggal yang paling penting: JANGAN LAKUKAN PEMERIKSAAN DALAM (vaginal toucher) pada perdarahan antepartum sebelum previa disingkirkan dengan USG — jari pemeriksa dapat merobek plasenta yang menutupi ostium dan mengubah rembesan menjadi perdarahan masif yang tak terkendali di ruangan tanpa kamar operasi. Yang boleh dan wajib dilakukan FKTP: inspeksi luar saja, pasang jalur intravena, istirahat baring, pantau ketat ibu dan denyut jantung janin, catat golongan darah, dan rujuk ke obgyn dengan surat yang menyebut "perdarahan antepartum, curiga previa, VT tidak dilakukan". Terapi definitifnya seksio sesarea; kalimat itu ditulis di RS, bukan di FKTP.',
-    panduanResmi: `${PPK_FLOOR} PPK Dokter FKTP menempatkan plasenta previa sebagai kompetensi 2 — dokter FKTP mengenali dan merujuk, tidak menuntaskan. Larangan pemeriksaan dalam pada perdarahan antepartum sebelum previa disingkirkan adalah salah satu instruksi paling eksplisit dalam pedoman obstetri Kemenkes maupun internasional, dan sama-sama berlaku untuk pemeriksaan inspekulo yang dipaksakan. Kriteria rujukannya sederhana: setiap perdarahan antepartum adalah indikasi rujuk, tanpa memandang jumlah darah yang terlihat.`,
-    catatanRealita: 'Skenario ini memberi Ibu USG di Puskesmas. Program USG antenatal Kemenkes sejak 2022 memang menempatkan USG di banyak Puskesmas, tetapi tidak di semua, dan operator terlatihnya lebih langka lagi. Justru di situlah larangan pemeriksaan dalam paling penting: kalau USG tidak ada, previa TIDAK dapat disingkirkan, sehingga pemeriksaan dalam tetap terlarang —',
+    clue: 'Perdarahan jalan lahir merah segar, mendadak, dan tanpa nyeri pada kehamilan lanjut dengan riwayat seksio berulang sangat mencurigakan plasenta previa. Jangan lakukan vaginal toucher digital sebelum previa disingkirkan dengan pencitraan. Pemeriksaan spekulum berbeda: oleh klinisi terlatih dapat membantu menilai jumlah/sumber perdarahan traktus bawah dan tidak dilarang secara kategoris, tetapi tidak boleh dipaksakan atau menunda transfer. Tugas FKTP pada episode ini ialah menilai ABC, pasang akses intravena, pantau ibu dan denyut jantung janin, hubungi RS, dan rujuk dengan dokumentasi bahwa VT digital tidak dilakukan. USG bermanfaat bila segera tersedia, bukan prasyarat untuk merujuk perdarahan antepartum.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik plasenta previa, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat tata laksana previa. RCOG Green-top 27a edisi kelima 2026 menjadi sumber diagnosis/manajemen langsung; NICE NG201 mendukung pelokalan plasenta dan penilaian sekunder untuk perdarahan tidak terjelaskan setelah 13 minggu. Larangan utamanya ialah vaginal toucher digital sampai previa disingkirkan, bukan larangan universal terhadap spekulum.',
+    catatanRealita: 'Pada profil Sukamaju, USG obstetri adalah layanan terjadwal/berbagi, bukan kemampuan yang diasumsikan selalu siap. Bila perdarahan datang saat alat atau operator tidak tersedia, keputusan aman tetap stabilisasi dan transfer berdasarkan gambaran klinis; pencitraan lokal tidak boleh menjadi antrean wajib.',
     mutiaraEbm: 'Dua temuan klasik di sini justru menyesatkan. Pertama, "tidak nyeri" terasa menenangkan padahal justru itu penanda previa; yang nyeri dengan perut tegang seperti papan dan darah kehitaman adalah solusio plasenta — dan pada solusio, darah yang terlihat bisa sedikit atau tidak ada sama sekali karena tertahan di belakang plasenta, sehingga syok muncul jauh lebih berat daripada perdarahan yang tampak. Jangan pernah menilai keparahan perdarahan antepartum dari isi pembalut. Kedua, hasil USG trimester dua yang menyebut "plasenta letak rendah" sering diabaikan karena sebagian besar memang bermigrasi seiring pembesaran segmen bawah rahim — tetapi pada pasien dengan bekas seksio berulang, plasenta di segmen bawah wajib dicurigai menetap bahkan melekat abnormal (akreta), dan itu mengubah rencana persalinan secara total.',
     konsekuensi: {
       narasi: 'Bila pemeriksaan dalam dilakukan untuk "memastikan pembukaan", jari pemeriksa memisahkan plasenta dari segmen bawah rahim yang tipis. Rembesan berubah menjadi pancaran; ibu jatuh syok dalam hitungan menit di ruang periksa yang tidak punya darah, kamar operasi, maupun ahli bedah. Bila pasien justru ditahan semalam untuk "observasi dulu" atau untuk menyelesaikan obat, perdarahan berikutnya datang tanpa peringatan dan biasanya lebih besar dari yang pertama.',
       kembaliHariMin: 0,
       kembaliHariMax: 1,
       kondisiKembali: 'Perdarahan menjadi masif segera setelah pemeriksaan dalam: ibu pucat, tekanan darah tak terukur, denyut jantung janin melambat menjadi 80x/menit, dan ambulans baru berangkat saat ibu sudah tidak sadar.',
-      guideline: 'PPK Dokter FKTP KMK 1186/2022 (plasenta previa, kompetensi 2); prinsip tata laksana perdarahan antepartum Kemenkes — larangan pemeriksaan dalam sebelum previa disingkirkan.',
+      guideline: 'RCOG Green-top Guideline No. 27a, fifth edition 2026; NICE NG201 antenatal care recommendations on placental localization and unexplained bleeding.',
     },
   }),
 
@@ -582,18 +582,6 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
         relevan: true,
       },
       {
-        id: 'darah_rutin',
-        hasil: 'Leukosit 19.800/µL dengan pergeseran ke kiri; Hb 11,6 g/dL; trombosit 402.000/µL.',
-        flag: 'tinggi',
-        relevan: true,
-      },
-      {
-        id: 'usg_abdomen',
-        hasil: 'Massa kompleks adneksa kanan 7,1 cm berisi cairan dan debris dengan sekat tebal, dinding tebal, tidak terpisahkan dari ovarium — sesuai abses tubo-ovarium. Cairan bebas sedikit di kavum Douglas. Uterus normal, IUD in situ.',
-        flag: 'abnormal',
-        relevan: true,
-      },
-      {
         id: 'tes_hiv_serial',
         hasil: 'Non-reaktif (ditawarkan sebagai bagian skrining IMS, dengan persetujuan dan konseling singkat).',
         flag: 'normal',
@@ -627,7 +615,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
           bahaya: 'nonPrimer',
         },
       ],
-      prosedur: ['pasang_infus'],
+      prosedur: ['pasang_infus', 'pemantauan_ketat_vital'],
       tindakanSalahUmum: [
         {
           id: 'insisi_abses',
@@ -637,17 +625,19 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       ],
       edukasi: ['cegah_ims_pasangan', 'kepatuhan_obat', 'higiene_genital_lembut', 'tanda_bahaya'],
       edukasiKritis: ['cegah_ims_pasangan'],
+      terapiKritis: ['ceftriaxone_1g_inj'],
     },
-    clue: 'Nyeri perut bawah bilateral + demam tinggi + duh tubuh serviks berbau + nyeri goyang serviks pada perempuan usia subur dengan pasangan bergejala infeksi menular seksual adalah penyakit radang panggul, dan massa adneksa 7 cm menaikkannya menjadi curiga abses tubo-ovarium. Dua langkah wajib sebelum apa pun: singkirkan kehamilan (tes kehamilan, agar ektopik tidak terlewat dan agar pilihan antibiotik aman), lalu mulai regimen kombinasi yang mencakup gonokokus, klamidia, DAN anaerob — seftriakson 500 mg intramuskular dosis tunggal + doksisiklin 100 mg dua kali sehari 14 hari + metronidazol 500 mg dua kali sehari 14 hari (CDC STI Treatment Guidelines 2021; Kemenkes Pedoman Nasional Penanganan IMS). Antibiotik dosis pertama diberikan di FKTP, jangan menunggu di RS. Rujuk ke obgyn karena tiga hal sekaligus: abses tubo-ovarium, demam tinggi dengan tanda peritoneal, dan IUD yang perlu keputusan pelepasan oleh spesialis. Indikasi rujuk lain yang wajib dihafal: kehamilan, gagal rawat jalan setelah 72 jam, muntah sehingga obat oral tidak masuk, dan diagnosis bedah yang belum tersingkir.',
-    panduanResmi: `${PPK_FLOOR} PPK Dokter FKTP menempatkan penyakit radang panggul sebagai kompetensi 3B ketika berat atau berkomplikasi: dokter FKTP memberi terapi awal lalu merujuk. Pedoman Nasional Penanganan IMS Kemenkes menekankan dua hal yang paling sering dilewatkan di lapangan: regimen harus mencakup anaerob, dan pengobatan pasangan adalah bagian dari terapi pasien — bukan anjuran tambahan. Kriteria rujukan resminya mencakup abses tubo-ovarium, kehamilan, tanda peritonitis, ketidakmampuan minum obat oral, dan kegagalan perbaikan dalam 72 jam.`,
-    catatanRealita: 'Skenario ini memberi seftriakson, doksisiklin, metronidazol, USG, dan skrining IMS lengkap dalam satu kunjungan. Di Puskesmas nyata, hambatan terbesarnya bukan obat melainkan percakapan: menanyakan gejala pasangan, menawarkan tes HIV dan sifilis, dan meminta suami datang berobat membutuhkan ruang tertutup, waktu, dan keberanian yang jarang tersedia di poli dengan antrean 60 orang.',
+    stabilisasiWajib: ['pasang_infus', 'pemantauan_ketat_vital'],
+    clue: 'Nyeri perut bawah bilateral, demam tinggi, duh serviks purulen, nyeri goyang serviks, massa adneksa nyeri, dan tanda peritoneal pada perempuan usia subur adalah penyakit radang panggul berat dengan curiga abses tubo-ovarium. Singkirkan kehamilan segera, tetapi jangan menjadikan USG FKTP sebagai syarat diagnosis atau rujuk. Kasus berat/abses memerlukan rawat inap: regimen parenteral CDC adalah seftriakson 1 g IV tiap 24 jam PLUS doksisiklin 100 mg oral/IV tiap 12 jam PLUS metronidazol 500 mg oral/IV tiap 12 jam. Berikan dosis awal yang tersedia tanpa menunda transfer dan lanjutkan/ubah regimen di rumah sakit. IUD tidak otomatis dilepas; evaluasi pelepasan dilakukan bila tidak membaik dalam 48-72 jam bersama tim obgyn. Tata pasangan dan skrining IMS tetap penting, tetapi tidak boleh memperlambat stabilisasi.',
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik untuk PID berat/abses tubo-ovarium; PNPK komplikasi kehamilan hanya sumber terkait, bukan padanan. Pedoman IMS Kemenkes menjadi konteks nasional, sedangkan CDC STI Treatment Guidelines 2021 memberi regimen rawat inap dan kriteria hospitalisasi yang eksplisit untuk abses tubo-ovarium, penyakit berat, suhu di atas 38,5 derajat Celsius, ketidakmampuan menjalani terapi oral, atau diagnosis bedah yang belum tersingkir.`,
+    catatanRealita: 'USG pelvis tidak diasumsikan tersedia di Puskesmas Sukamaju. Massa adneksa, demam tinggi, dan tanda peritoneal cukup untuk mencurigai abses serta mengatur transfer; pencitraan definitif dilakukan di rumah sakit. Skrining HIV/sifilis dan konseling pasangan perlu privasi, tetapi boleh dilanjutkan melalui jejaring bila melakukannya saat ini akan menunda antibiotik atau transport.',
     mutiaraEbm: 'Keputihan pada perempuan muda adalah keluhan yang paling sering diremehkan — dianggap "biasa", "kecapekan", atau "jamur" — padahal penyakit radang panggul adalah salah satu penyebab infertilitas dan kehamilan ektopik yang benar-benar dapat dicegah, dan kerusakan tubanya terjadi diam-diam pada episode yang gejalanya justru ringan. Yang menyesatkan berikutnya adalah menunggu gambaran "lengkap": leukosit yang normal, suhu yang normal, dan duh tubuh yang tidak mencolok TIDAK menyingkirkan diagnosis ini. Kriteria minimum CDC sengaja dibuat longgar — cukup nyeri tekan uterus, adneksa, ATAU nyeri goyang serviks pada perempuan berisiko — justru karena harga menunggu kepastian (tuba yang tersumbat seumur hidup) jauh lebih mahal daripada harga mengobati beberapa pasien yang ternyata bukan.',
     konsekuensi: {
       narasi: 'Bila diberi antijamur atau satu antibiotik tanggung lalu dipulangkan, abses tubo-ovarium terus membesar sampai pecah ke rongga perut. Bila pasangan tidak diobati, siklus infeksi ulang berjalan bertahun-tahun sampai kedua tuba tersumbat.',
       kembaliHariMin: 2,
       kembaliHariMax: 5,
       kondisiKembali: 'Kembali dengan perut tegang seperti papan, demam 40 derajat, tekanan darah 80/50 mmHg, dan nadi kecil cepat — abses telah pecah menjadi peritonitis dengan sepsis, dan kini kedua tuba serta ovarium terancam ikut diangkat.',
-      guideline: 'PPK Dokter FKTP KMK 1186/2022 (penyakit radang panggul); Pedoman Nasional Penanganan Infeksi Menular Seksual Kemenkes; CDC STI Treatment Guidelines 2021.',
+      guideline: 'Pedoman Nasional Penanganan Infeksi Menular Seksual Kemenkes; CDC STI Treatment Guidelines 2021 — PID berat/abses tubo-ovarium memerlukan regimen parenteral, observasi rawat inap, dan evaluasi bedah bila tidak membaik atau pecah.',
     },
   }),
 
@@ -656,7 +646,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
   // ---------------------------------------------------------------------------
   buatKasusOA({
     id: 'lab_mola_hidatidosa',
-    nama: 'Mola Hidatidosa (Hamil Anggur)',
+    nama: 'Suspek Mola Hidatidosa (Hamil Anggur)',
     icd10: 'O01.9',
     skdi: '2',
     kategori: 'kia',
@@ -788,13 +778,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     lab: [
       {
         id: 'tes_kehamilan',
-        hasil: 'Positif sangat kuat — garis uji tebal pekat dan tetap positif pada pengenceran urine 1:100.',
-        flag: 'abnormal',
-        relevan: true,
-      },
-      {
-        id: 'usg_obstetri',
-        hasil: 'Kavum uteri terisi massa ekogenik heterogen dengan banyak rongga kistik kecil (gambaran badai salju / sarang lebah). TIDAK tampak janin maupun denyut jantung janin. Kista teka-lutein bilateral, kanan 5,8 cm dan kiri 4,9 cm.',
+        hasil: 'Positif. Test-pack urine adalah pemeriksaan kualitatif dan tidak dipakai untuk mengukur kadar hCG.',
         flag: 'abnormal',
         relevan: true,
       },
@@ -806,9 +790,9 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       },
       {
         id: 'tsh',
-        hasil: 'TSH 0,04 µIU/mL (tertekan) — sesuai stimulasi tiroid oleh hCG yang sangat tinggi.',
+        hasil: 'TSH 0,04 µIU/mL (tertekan). TSH tunggal tidak cukup mendiagnosis atau menilai derajat tirotoksikosis; interpretasi memerlukan gejala, FT4/FT3, dan penilaian spesialis.',
         flag: 'rendah',
-        relevan: true,
+        relevan: false,
       },
     ],
     diagnosisBanding: ['O01.9', 'O03.9', 'O21.0'],
@@ -819,7 +803,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       obatSalahUmum: [
         {
           id: 'propiltiourasil_100',
-          alasan: 'Tanda hipertiroid di sini disebabkan hCG yang sangat tinggi menstimulasi reseptor tiroid, dan pulih sendiri setelah molanya dievakuasi. Memulai antitiroid di FKTP tidak menyentuh sumbernya, membawa risiko agranulositosis dan hepatotoksisitas tanpa pemantauan, dan yang terburuk: memberi ilusi bahwa masalahnya sedang ditangani sehingga rujukan tertunda.',
+          alasan: 'TSH tertekan saja tidak membuktikan tirotoksikosis yang memerlukan antitiroid. Pada keadaan stabil, terapi utama tetap evakuasi mola dan penilaian FT4/FT3 di jejaring; PTU empiris di FKTP berisiko agranulositosis/hepatotoksisitas dan dapat menunda rujuk. Tirotoksikosis berat atau thyroid storm adalah pengecualian yang memerlukan tata laksana spesialis segera sebelum/bersamaan dengan evakuasi.',
           bahaya: 'nonPrimer',
         },
         {
@@ -844,16 +828,16 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       edukasi: ['persiapan_rujukan_operatif', 'kontrol_rutin', 'tanda_bahaya'],
       edukasiKritis: ['persiapan_rujukan_operatif', 'kontrol_rutin'],
     },
-    clue: 'Uterus jauh lebih besar dari usia kehamilan + mual-muntah luar biasa + bercak kecoklatan berisi gelembung seperti anggur + tidak ada janin maupun denyut jantung + tes kehamilan positif sangat kuat + gambaran badai salju pada USG = mola hidatidosa. Tanda hipertiroid dan kista teka-lutein bilateral melengkapi gambarannya, keduanya akibat kadar hCG yang sangat tinggi dan keduanya pulih setelah evakuasi. Tugas FKTP: kenali, pasang jalur intravena, koreksi dehidrasi, siapkan pasien untuk tindakan (puasa, dokumen, golongan darah), dan rujuk ke obgyn untuk evakuasi — biasanya kuretase isap, yang harus dilakukan di fasilitas dengan darah dan kamar operasi siaga karena perdarahan saat evakuasi bisa hebat. Yang paling sering terlupa dan paling menentukan nasib pasien BUKAN evakuasinya, melainkan apa yang terjadi sesudahnya: pemantauan beta-hCG serial sampai negatif dan tetap negatif selama berbulan-bulan, karena sekitar 15-20% mola komplet berkembang menjadi neoplasia trofoblas gestasional yang membutuhkan kemoterapi. Selama masa pemantauan itu pasien harus dicegah hamil, sebab kehamilan baru akan menaikkan hCG dan membuat pemantauannya mustahil dibaca — pilihan KB-nya ditentukan bersama spesialis setelah evakuasi.',
-    panduanResmi: `${PPK_FLOOR} PPK Dokter FKTP menempatkan mola hidatidosa sebagai kompetensi 2 — dokter FKTP mengenali dan merujuk, tidak mengevakuasi. Ini bukan formalitas administratif: evakuasi mola bukan kuretase biasa, melainkan tindakan berisiko perdarahan masif yang menuntut darah siap pakai. Kriteria rujukannya mutlak: setiap kecurigaan mola dirujuk, dan surat rujukan sebaiknya menyebut kebutuhan pemantauan beta-hCG jangka panjang agar pasien tidak "hilang" dari sistem setelah kuretasenya selesai.`,
-    catatanRealita: 'Kesenjangan terbesar kasus ini ada di ekornya, bukan di kepalanya. Rujukan dan evakuasi biasanya berjalan; yang runtuh adalah pemantauan beta-hCG selama 6-12 bulan, karena pemeriksaannya berbiaya, tidak selalu tersedia dekat rumah, dan pasien merasa sudah sembuh setelah perutnya mengempis. FKTP adalah pihak yang paling mungkin menjaga pasien tetap datang —',
+    clue: 'Uterus jauh lebih besar dari usia kehamilan, mual-muntah berat, perdarahan dengan vesikel, tidak terabanya bagian janin, dan tidak terdengarnya denyut janin sangat mencurigakan mola hidatidosa. Test-pack hanya menyatakan hamil; ketebalan garis atau pengenceran urine bukan kuantifikasi hCG. Tugas FKTP adalah membuat diagnosis kerja suspek, menilai stabilitas, dan merujuk tanpa menunggu USG lokal; USG, evakuasi, histopatologi, dan hCG kuantitatif dilakukan di jejaring. Ekor perawatannya wajib jelas: hCG diperiksa tiap 1-2 minggu sampai normal; setelah normal, mola parsial memerlukan satu konfirmasi 1 bulan kemudian, sedangkan mola komplet dipantau bulanan selama 6 bulan. Kehamilan baru mengganggu interpretasi hCG, tetapi kontrasepsi hormonal aman selama masa pemantauan dan dipilih bersama pasien/jejaring.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik mola hidatidosa, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat penyakit trofoblas gestasional. FIGO Cancer Report 2025 menjadi sumber langsung untuk diagnosis, evakuasi, histologi, dan surveilans hCG yang dibedakan menurut mola parsial versus komplet.',
+    catatanRealita: 'USG obstetri, evakuasi, dan hCG kuantitatif berada di RS/jejaring dan tidak dijadikan syarat agar Sukamaju boleh merujuk. Puskesmas memegang peran continuity: memastikan hasil USG/histologi tercatat, jadwal hCG dipahami, kontrasepsi dibahas, dan pasien yang mangkir ditelusuri tanpa memberi stigma.',
     mutiaraEbm: 'Gambaran klasik "gelembung seperti anggur yang keluar" justru datang terlambat — ia menandakan mola yang sudah mulai lahir sendiri, dan menunggunya berarti melewatkan pasien yang datang lebih awal. Yang menyesatkan lainnya: uterus TIDAK selalu lebih besar dari usia kehamilan; pada sekitar sepertiga kasus ukurannya sesuai atau bahkan lebih kecil, sehingga "perut sesuai usia" tidak menyingkirkan mola. Sebaliknya, USG trimester pertama yang tampak seperti abortus tak lengkap sering ternyata mola parsial pada pemeriksaan jaringan — itulah sebabnya setiap jaringan hasil kuretase idealnya diperiksa patologi dan setiap perempuan pasca-kuretase diperiksa ulang hCG-nya, bukan hanya yang gambaran badai saljunya jelas.',
     konsekuensi: {
       narasi: 'Bila muntahnya dianggap "mual kehamilan yang berat" dan pasien dipulangkan dengan obat mual, perdarahan bertambah seiring molanya meluruh sendiri; jaringan dapat keluar sebagian dan menyebabkan perdarahan hebat di rumah. Bila pasien dirujuk tetapi tidak pernah dijelaskan soal pemantauan beta-hCG, ia menghilang setelah dikuret dan kembali berbulan-bulan kemudian dengan penyakit yang sudah menyebar.',
       kembaliHariMin: 3,
       kembaliHariMax: 10,
       kondisiKembali: 'Dibawa kembali dengan perdarahan hebat disertai gelembung-gelembung yang keluar bersama bekuan darah, pucat, dan tekanan darah 90/60 mmHg — kini evakuasi harus dikerjakan darurat pada pasien yang sudah anemis berat.',
-      guideline: 'PPK Dokter FKTP KMK 1186/2022 (mola hidatidosa, kompetensi 2); prinsip tata laksana penyakit trofoblas gestasional — evakuasi di fasilitas rujukan dan pemantauan beta-hCG serial pasca-evakuasi.',
+      guideline: 'FIGO Cancer Report: Diagnosis and management of gestational trophoblastic disease, 2025 update (doi:10.1002/ijgo.70275).',
     },
   }),
 
@@ -862,7 +846,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
   // ---------------------------------------------------------------------------
   buatKasusOA({
     id: 'lab_hiperemesis_gravidarum_berat',
-    nama: 'Hiperemesis Gravidarum Berat dengan Ketosis',
+    nama: 'Hiperemesis Gravidarum Berat dengan Dehidrasi',
     icd10: 'O21.1',
     skdi: '3B',
     kategori: 'kia',
@@ -993,20 +977,8 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     ],
     lab: [
       {
-        id: 'keton_urin',
-        hasil: 'Keton +3 (positif kuat).',
-        flag: 'tinggi',
-        relevan: true,
-      },
-      {
-        id: 'elektrolit_serum',
-        hasil: 'Natrium 131 mmol/L, kalium 3,0 mmol/L, klorida 92 mmol/L.',
-        flag: 'rendah',
-        relevan: true,
-      },
-      {
         id: 'urinalisis',
-        hasil: 'Berat jenis 1,030; keton positif kuat; protein negatif; nitrit negatif; leukosit esterase negatif.',
+        hasil: 'Berat jenis 1,030; keton positif; protein negatif; nitrit negatif; leukosit esterase negatif. Keton mencerminkan kelaparan, bukan derajat dehidrasi atau keparahan hiperemesis.',
         flag: 'abnormal',
         relevan: true,
       },
@@ -1016,21 +988,11 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
         flag: 'abnormal',
         relevan: true,
       },
-      {
-        id: 'usg_obstetri',
-        hasil: 'Kantong kehamilan intrauterin tunggal dengan janin hidup sesuai 10 minggu; tidak ada gambaran mola maupun kehamilan kembar.',
-        flag: 'normal',
-        relevan: true,
-      },
     ],
     diagnosisBanding: ['O21.1', 'O01.9', 'A09'],
     tatalaksana: {
       obatBenar: [],
-      obatAlternatif: [
-        ['nacl_09_inf', 'ringer_laktat_inf'],
-        ['ondansetron_4', 'dimenhidrinat_50'],
-      ],
-      obatOpsional: ['vitamin_b_kompleks'],
+      obatAlternatif: [['nacl_09_inf', 'ringer_laktat_inf']],
       obatSalahUmum: [
         {
           id: 'antasida_doen',
@@ -1048,7 +1010,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
           bahaya: 'nonPrimer',
         },
       ],
-      prosedur: ['pasang_infus', 'pemantauan_ketat_vital'],
+      prosedur: ['pasang_infus', 'antiemetik_parenteral_hiperemesis', 'tiamin_hiperemesis', 'pemantauan_ketat_vital'],
       tindakanSalahUmum: [
         {
           id: 'bilas_lambung',
@@ -1056,20 +1018,20 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
           bahaya: 'berbahaya',
         },
       ],
-      edukasi: ['tanda_bahaya_kehamilan', 'anc_rutin', 'istirahat_cukup'],
-      edukasiKritis: ['tanda_bahaya_kehamilan'],
+      edukasi: ['tanda_bahaya_kehamilan', 'rencana_hiperemesis'],
+      edukasiKritis: ['tanda_bahaya_kehamilan', 'rencana_hiperemesis'],
     },
     stabilisasiWajib: ['pasang_infus'],
-    clue: 'Muntah kehamilan menjadi hiperemesis gravidarum ketika ada trias objektif: penurunan berat badan lebih dari 5% berat sebelum hamil, tanda dehidrasi, dan gangguan metabolik (ketosis, hipokalemia, hiponatremia). Pasien ini memenuhi ketiganya. Yang wajib dikerjakan FKTP: pasang jalur intravena dan rehidrasi dengan kristaloid — NaCl 0,9% atau ringer laktat, bukan larutan hipotonik; berikan antiemetik; koreksi kalium sesuai kemampuan fasilitas; pantau produksi urine dan tanda vital. Satu hal yang sering dilupakan dan konsekuensinya permanen: pada muntah lebih dari tiga minggu, berikan tiamin SEBELUM atau bersamaan dengan cairan yang mengandung glukosa, karena beban glukosa pada cadangan tiamin yang kosong dapat mencetuskan ensefalopati Wernicke yang tidak dapat dipulihkan — di sini vitamin B kompleks dimasukkan sebagai opsional untuk maksud itu. Rujuk ke obgyn bila rehidrasi gagal, ketosis menetap, kalium sangat rendah, muncul gejala neurologis, atau fasilitas tidak mampu merawat inap.',
-    panduanResmi: `${PPK_FLOOR} PPK Dokter FKTP menempatkan hiperemesis gravidarum sebagai kompetensi 3B: dokter FKTP memulai rehidrasi dan terapi awal, lalu merujuk bila tidak membaik atau bila perawatan inap tidak memungkinkan. Kriteria rujukan resminya berpusat pada kegagalan asupan oral setelah rehidrasi, gangguan elektrolit bermakna, penurunan berat badan progresif, dan setiap tanda neurologis.`,
-    catatanRealita: 'Status keamanan ondansetron pada trimester pertama TIDAK bulat, dan skenario ini tidak akan berpura-pura sebaliknya. Data kohort besar tidak menunjukkan peningkatan malformasi mayor yang bermakna secara keseluruhan, tetapi beberapa studi melaporkan kemungkinan peningkatan absolut yang sangat kecil pada celah bibir/langit-langit, dan perdebatannya belum selesai.',
-    mutiaraEbm: 'Keparahan hiperemesis tidak diukur dari "berapa kali muntah" — angka itu subjektif, tergantung ingatan dan kecemasan pasien, dan membuat dokter menunggu sampai pasien terdengar cukup dramatis. Yang membedakan hiperemesis dari mual-muntah kehamilan biasa adalah bukti objektif: penurunan berat badan lebih dari 5%, tanda dehidrasi, dan keton urin. Tetapi keton pun punya jebakannya sendiri: keton urin adalah penanda kelaparan, bukan penanda dehidrasi, sehingga bisa positif pada siapa pun yang tidak makan seharian dan bisa tetap positif setelah rehidrasi berhasil. Jangan memakainya sebagai satu-satunya tolok ukur keberhasilan terapi — yang dinilai adalah tanda vital, produksi urine, dan kemampuan minum. Dan satu perangkap terakhir: pasien yang perutnya jauh lebih besar dari usia kehamilan atau yang hCG-nya sangat tinggi harus di-USG sebelum dilabeli hiperemesis, karena mola dan kehamilan kembar bersembunyi persis di balik keluhan yang sama.',
+    clue: 'Definisi Windsor mengenali hiperemesis sebagai mual/muntah yang salah satunya berat, mulai sebelum 16 minggu, membuat pasien tidak mampu makan-minum normal, dan sangat membatasi aktivitas. Dehidrasi serta kehilangan berat memperberat kasus ini, tetapi ketonuria bukan syarat diagnosis dan bukan ukuran respons. Karena pasien tidak dapat mempertahankan air atau tablet, FKTP memberi kristaloid intravena, antiemetik parenteral sesuai protokol kehamilan, dan tiamin oral/parenteral sesuai toleransi sebelum dekstrosa atau nutrisi parenteral. Elektrolit serta USG dinilai di jejaring dan tidak boleh menjadi syarat memulai rehidrasi atau transfer. Dekstrosa bukan cairan pengganti rutin. Pantau vital/urine dan rujuk karena ketidakmampuan asupan oral melampaui observasi singkat FKTP.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab O21.1; bab O21.0 memberi prinsip terapi awal/rujuk tetapi tidak identik dengan skenario berat ini. PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat hiperemesis. RCOG Green-top 69 edisi 2024 menjadi sumber langsung untuk definisi Windsor, keterbatasan ketonuria, cairan NaCl 0,9% dengan kalium terpandu, antiemetik parenteral ketika oral gagal, dan tiamin sebelum dekstrosa.',
+    catatanRealita: 'Pada encounter ini cairan isotonik, set infus, antiemetik parenteral protokol kehamilan, tiamin, monitoring, dan operator dinyatakan ready; elektrolit serta USG ditempuh lewat jejaring tanpa menunda transfer. Status keamanan ondansetron trimester pertama tidak bulat, sehingga pilihan antiemetik mengikuti protokol lokal, kontraindikasi, dan shared decision, bukan asumsi satu obat universal.',
+    mutiaraEbm: 'Ketonuria adalah penanda puasa/kelaparan dan tidak berkorelasi andal dengan dehidrasi atau derajat hiperemesis; menjadikannya tiket masuk atau syarat pulang dapat menunda terapi pasien berat yang ketonnya rendah. Gunakan dampak pada makan-minum dan aktivitas, tanda vital, berat badan, produksi urine, elektrolit, serta kemampuan mempertahankan cairan. Penilaian tetap harus mencari diagnosis lain: nyeri abdomen, demam, gejala urin, onset setelah 16 minggu, uterus terlalu besar, atau gejala neurologis mengharuskan perluasan diferensial.',
     konsekuensi: {
-      narasi: 'Bila dipulangkan dengan obat maag dan antiemetik oral yang tidak mungkin tertelan, dehidrasi dan hipokalemia berlanjut. Bila muntahnya sudah berminggu-minggu dan pasien akhirnya diinfus dengan cairan berglukosa tanpa tiamin lebih dulu, ensefalopati Wernicke dapat muncul justru setelah "diobati".',
+      narasi: 'Bila dipulangkan dengan obat maag dan antiemetik oral yang tidak mungkin tertelan, dehidrasi dan gangguan elektrolit dapat berlanjut. Bila muntahnya sudah berminggu-minggu dan pasien akhirnya diinfus dengan cairan berglukosa tanpa tiamin lebih dulu, ensefalopati Wernicke dapat muncul justru setelah "diobati".',
       kembaliHariMin: 1,
       kembaliHariMax: 3,
       kondisiKembali: 'Dibawa kembali dalam keadaan sangat lemah, bicara melantur, mata bergerak-gerak sendiri, dan tidak mampu berjalan tanpa dipapah — gambaran ensefalopati Wernicke yang sebagian defisitnya menetap seumur hidup.',
-      guideline: 'PPK Dokter FKTP KMK 1186/2022 (hiperemesis gravidarum, kompetensi 3B); prinsip rehidrasi dan pencegahan ensefalopati Wernicke pada muntah berkepanjangan.',
+      guideline: 'RCOG Green-top Guideline No. 69, second edition 2024 (doi:10.1111/1471-0528.17739); PPK FKTP KMK 1186/2022 bab O21.0 sebagai floor terkait.',
     },
   }),
 
@@ -1208,20 +1170,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
         relevan: false,
       },
     ],
-    lab: [
-      {
-        id: 'foto_ekstremitas',
-        hasil: 'Fraktur transversal radius distal kanan dengan angulasi dorsal sekitar 25 derajat dan pergeseran ringan; ulna intak; lempeng pertumbuhan tampak utuh; tidak ada udara di jaringan lunak dan kontinuitas kulit tidak terputus.',
-        flag: 'abnormal',
-        relevan: true,
-      },
-      {
-        id: 'darah_rutin',
-        hasil: 'Hb 12,6 g/dL; leukosit 9.800/µL; trombosit normal — tidak mengubah tata laksana apa pun pada fraktur tertutup terisolasi dan tidak boleh menjadi alasan menunda rujukan.',
-        flag: 'normal',
-        relevan: false,
-      },
-    ],
+    lab: [],
     diagnosisBanding: ['S52.5', 'S52.6', 'S63.5'],
     tatalaksana: {
       obatBenar: [],
@@ -1263,7 +1212,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     stabilisasiWajib: ['imobilisasi_bidai'],
     clue: 'Deformitas jelas + bengkak + menolak menggerakkan lengan setelah jatuh bertumpu telapak tangan = fraktur lengan bawah sampai terbukti sebaliknya. Dua hal harus dijawab lebih dulu karena mengubah segalanya: apakah TERTUTUP atau terbuka (di sini kulit utuh, sehingga tidak ada indikasi antibiotik profilaksis maupun tetanus), dan bagaimana status NEUROVASKULAR distal (di sini utuh). Urutan kerja FKTP: analgesia berbasis berat badan lebih dulu — parasetamol 15 mg/kg, boleh dikombinasi ibuprofen 10 mg/kg bila nyeri sedang dan tidak ada kontraindikasi; periksa dan CATAT nadi, warna, suhu, sensasi, serta gerak jari SEBELUM bidai; pasang bidai yang melewati dua sendi (siku dan pergelangan) dalam posisi ditemukan tanpa memaksa meluruskan; periksa dan CATAT ULANG status neurovaskular SESUDAH bidai; tinggikan lengan dan rujuk ke bedah untuk reposisi dengan analgesia serta pencitraan yang memadai. Yang TIDAK boleh dilakukan FKTP: mencoba reposisi buta. Meluruskan tulang tanpa analgesia adekuat, tanpa relaksasi, dan tanpa kemampuan mengonfirmasi hasilnya berarti mengubah fraktur tertutup menjadi cedera saraf, cedera pembuluh, atau fraktur terbuka — dan pada anak, fragmen yang dipaksa dapat merusak lempeng pertumbuhan sehingga lengannya tumbuh bengkok permanen.',
     panduanResmi: `${PPK_FLOOR} PPK Dokter FKTP menempatkan fraktur sebagai kompetensi 3B: dokter FKTP memberi analgesia, melakukan imobilisasi, menilai neurovaskular, lalu merujuk — reposisi definitif bukan kewenangan FKTP. Kriteria rujukan resminya mencakup setiap fraktur dengan deformitas atau pergeseran, setiap fraktur pada anak yang melibatkan atau berdekatan dengan lempeng pertumbuhan, dan setiap gangguan neurovaskular. Perbedaan tata laksana antara fraktur tertutup dan terbuka — antibiotik parenteral dini dan profilaksis tetanus HANYA pada yang terbuka — adalah pembeda yang eksplisit di pedoman.`,
-    catatanRealita: 'Dua celah jujur di kasus ini. Pertama, dosis: kosakata game menampilkan sediaan tetap (parasetamol sirup, parasetamol 500 mg, ibuprofen 400 mg), sedangkan analgesia anak selalu dihitung per kilogram berat badan — pada usia 5 tahun sediaan sirup yang dipakai, pada anak yang lebih besar tablet baru masuk akal.',
+    catatanRealita: 'Foto ekstremitas tidak diasumsikan tersedia di Sukamaju: deformitas dan mekanisme cukup untuk suspek fraktur, bidai, dokumentasi neurovaskular, dan rujuk; pencitraan dilakukan di jejaring. Kosakata game menampilkan sediaan tetap, sedangkan dosis analgesia anak selalu dihitung per kilogram: pada usia 5 tahun gunakan sirup, pada anak lebih besar tablet dapat masuk akal.',
     mutiaraEbm: 'Jari yang masih bisa digerakkan dan nadi yang masih teraba TIDAK menyingkirkan sindrom kompartemen — dan itulah kesalahan yang paling mahal pada fraktur lengan bawah anak. Nadi menghilang paling akhir, jauh setelah otot mulai mati; tanda paling dini justru nyeri yang tidak sebanding dengan cederanya, nyeri hebat saat jari diregangkan secara pasif, dan kebutuhan analgesia yang terus meningkat. Karena itu jangan pernah membaca "nadi teraba" sebagai izin untuk tenang; yang dipantau adalah tren nyeri, bukan sekali pemeriksaan. Jebakan kedua khusus anak: rontgen yang tampak normal sama sekali tidak menyingkirkan fraktur, karena tulang anak yang lentur bisa hanya membengkok (buckle/greenstick) atau retak di lempeng pertumbuhan yang tulang rawannya tidak tertangkap sinar-X. Anak yang menolak memakai lengannya setelah trauma jelas diperlakukan sebagai fraktur — dibidai dan dirujuk — berapa pun bagusnya foto rontgennya.',
     konsekuensi: {
       narasi: 'Bila lengan dikirim tanpa bidai atau justru ditarik-tarik untuk "diluruskan", fragmen bergeser di dalam dan mencederai saraf median serta pembuluh; perdarahan ke dalam kompartemen yang tertutup fasia meningkatkan tekanan sampai aliran darah otot berhenti. Bila keluarga dibiarkan membawanya ke tukang urut, tulang menyambung dalam posisi bengkok dan koreksinya kelak menuntut operasi besar.',
@@ -1415,26 +1364,20 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       },
       {
         id: 'darah_rutin',
-        hasil: 'MCV 62 fL dan MCH 19 pg (mikrositik hipokrom berat), tetapi hitung eritrosit 4,9 juta/µL — JUSTRU TINGGI untuk derajat anemia seberat ini. RDW meningkat. Apusan: anisopoikilositosis mencolok, banyak sel target, dan normoblas beredar di darah tepi. Leukosit dan trombosit normal.',
+        hasil: 'Hasil jejaring yang dibawa keluarga: MCV 62 fL dan MCH 19 pg (mikrositik hipokrom berat), tetapi hitung eritrosit 4,9 juta/µL — JUSTRU TINGGI untuk derajat anemia seberat ini. RDW meningkat. Apusan: anisopoikilositosis mencolok, banyak sel target, dan normoblas beredar di darah tepi. Leukosit dan trombosit normal.',
         flag: 'abnormal',
         relevan: true,
       },
       {
         id: 'ferritin_serum',
-        hasil: 'Feritin 720 ng/mL — TINGGI, bukan rendah.',
+        hasil: 'Hasil jejaring yang dibawa keluarga: feritin 720 ng/mL — TINGGI, bukan rendah.',
         flag: 'tinggi',
         relevan: true,
       },
       {
         id: 'hitung_retikulosit',
-        hasil: 'Retikulosit 4,8% (meningkat) — sumsum tulang bekerja keras, produksinya tidak gagal.',
+        hasil: 'Hasil jejaring yang dibawa keluarga: retikulosit 4,8% (meningkat) — sumsum tulang bekerja keras, produksinya tidak gagal.',
         flag: 'tinggi',
-        relevan: true,
-      },
-      {
-        id: 'feses_rutin',
-        hasil: 'Tidak ditemukan telur cacing, darah samar negatif.',
-        flag: 'normal',
         relevan: true,
       },
     ],
@@ -1454,7 +1397,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
         },
         {
           id: 'albendazol_400',
-          alasan: 'Obat cacing diberikan sebagai refleks pada setiap anak pucat di Indonesia, dan sering memang tepat. Di sini tidak: pemeriksaan feses tidak menemukan telur cacing, anak sudah rutin minum obat cacing, dan pucat sejak bayi dengan wajah yang khas, limpa besar, serta feritin tinggi bukan gambaran anemia cacing tambang. Memberikannya menunda rujukan tanpa memberi apa pun.',
+          alasan: 'Obat cacing diberikan sebagai refleks pada setiap anak pucat di Indonesia, dan sering memang tepat. Di sini tidak: pucat sejak bayi, wajah khas, limpa besar, pola indeks eritrosit, feritin tinggi, dan kegagalan terapi besi jauh lebih kuat mengarah ke talasemia daripada anemia cacing tambang. Pemeriksaan parasit dilakukan bila riwayat/epidemiologi mendukung, tetapi obat cacing empiris tidak boleh menunda konfirmasi talasemia.',
           bahaya: 'nonPrimer',
         },
       ],
@@ -1469,9 +1412,9 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       edukasi: ['dukungan_transfusi_rutin', 'kontrol_rutin', 'tanda_bahaya'],
       edukasiKritis: ['dukungan_transfusi_rutin'],
     },
-    clue: 'Pucat menahun sejak bayi + hepatosplenomegali + wajah khas (dahi menonjol, tulang pipi lebar) + perawakan pendek + riwayat keluarga "kurang darah bawaan" + zat besi bertahun-tahun yang tidak mengubah apa pun = talasemia beta mayor sampai dibuktikan sebaliknya. Yang mengunci diagnosisnya di meja FKTP adalah kombinasi dua angka: anemia mikrositik berat DENGAN feritin yang TINGGI, bukan rendah — pola yang mustahil pada defisiensi besi. Penunjang lain memperkuat: hitung eritrosit yang justru tinggi untuk derajat anemianya (indeks Mentzer MCV/eritrosit = 62/4,9 = 12,7; di bawah 13 condong ke talasemia, walau indeks ini hanya penunjuk arah dan tidak boleh menggantikan pemeriksaan konfirmasi), retikulosit yang meningkat, sel target, dan normoblas beredar. Diagnosis pastinya bukan wewenang FKTP: butuh analisis hemoglobin (elektroforesis atau HPLC) yang menunjukkan HbF dominan, dan idealnya pemeriksaan DNA — semuanya di pusat rujukan. Tugas FKTP: kenali polanya, HENTIKAN besi, beri asam folat 1-5 mg per hari untuk menopang eritropoiesis yang bekerja berlebihan, dan rujuk ke dokter spesialis anak untuk program transfusi rutin seumur hidup dengan kelasi besi yang dimulai dan dipantau spesialis. Satu tugas lagi yang khas FKTP dan sering terlewat: talasemia adalah penyakit KELUARGA, bukan penyakit satu anak. Kedua orang tua pasti pembawa sifat, tiap kehamilan berikutnya berpeluang 25% melahirkan anak dengan penyakit yang sama, dan saudara kandung perlu diskrining. Konseling itu adalah pekerjaan FKTP, bukan pekerjaan RS.',
-    panduanResmi: `${PPK_FLOOR} PPK Dokter FKTP menempatkan talasemia sebagai kompetensi 2 — dokter FKTP mengenali dan merujuk, tanpa memulai terapi definitif. Yang sering luput dibaca: kompetensi 2 bukan berarti FKTP tidak berperan. Justru FKTP-lah yang paling mungkin mengenali pola "anemia mikrositik yang tidak membaik dengan besi", menghentikan besi yang merugikan, menjaga kepatuhan transfusi bulanan, dan menjalankan skrining keluarga. Kriteria rujukan resminya: setiap kecurigaan talasemia dirujuk untuk konfirmasi analisis hemoglobin dan pengelolaan jangka panjang oleh spesialis anak.`,
-    catatanRealita: 'Kesenjangan terbesarnya bukan obat melainkan jarak dan uang. Transfusi rutin tiap 2-4 minggu seumur hidup berarti keluarga ini harus menempuh perjalanan ke RS puluhan kali setahun, kehilangan hari kerja, dan menanggung biaya transportasi yang tidak ditanggung jaminan.',
+    clue: 'Pucat menahun sejak bayi, hepatosplenomegali, perubahan tulang wajah, perawakan pendek, riwayat keluarga "kurang darah bawaan", dan zat besi bertahun-tahun yang tidak mengubah apa pun sangat mencurigakan talasemia beta mayor. Hasil jejaring berupa anemia mikrositik berat dengan feritin tinggi, hitung eritrosit relatif terpelihara, retikulosit meningkat, sel target, dan normoblas memperkuat arah tetapi tidak mengunci etiologi sendiri; feritin dipengaruhi inflamasi dan indeks Mentzer hanya alat skrining. Diagnosis pasti memerlukan analisis hemoglobin, dengan pemeriksaan genetik bila diperlukan, di pusat rujukan. Tugas FKTP: hentikan besi empiris yang tidak beralasan, beri asam folat sesuai PNPK, rujuk ke spesialis anak untuk program transfusi/kelasi, dan jaga continuity. Talasemia adalah penyakit keluarga: orang tua sangat mungkin membawa varian hemoglobin terkait, tetapi pola pewarisan dan risiko kehamilan berikutnya harus dikonfirmasi lewat skrining/konseling genetik, bukan dinyatakan pasti tanpa pemeriksaan.',
+    panduanResmi: 'PPK FKTP KMK 1186/2022 tidak mempunyai bab diagnosis-spesifik talasemia pada crosswalk 167 bab; jangan mengatribusikan algoritme ini ke PPK. PNPK Tata Laksana Talasemia HK.01.07/MENKES/1/2018 menjadi sumber langsung untuk konfirmasi analisis hemoglobin, transfusi/kelasi oleh jejaring, pemantauan komplikasi, dan skrining keluarga; peran FKTP adalah mengenali pola, menghentikan besi empiris yang tidak beralasan, merujuk, serta menjaga continuity.',
+    catatanRealita: 'CBC/apusan, feritin, dan retikulosit pada kartu ini adalah hasil jejaring terbaru yang dibawa keluarga, bukan pemeriksaan yang diasumsikan dilakukan onsite; analisis hemoglobin tetap milik pusat rujukan. Kesenjangan terbesarnya adalah jarak dan biaya tak langsung karena transfusi rutin tiap 2-4 minggu, sehingga continuity FKTP dan penelusuran mangkir sangat bermakna.',
     mutiaraEbm: 'Anemia mikrositik hipokrom hampir refleks dibaca sebagai defisiensi besi, dan di negeri dengan prevalensi kecacingan serta defisiensi besi setinggi Indonesia, refleks itu benar pada mayoritas kasus — justru itulah yang membuatnya berbahaya. Yang menyesatkan bukan hasil labnya, melainkan responsnya terhadap terapi: dokter cenderung membaca "besi tidak mempan" sebagai "kepatuhannya buruk" atau "dosisnya kurang", lalu menaikkan dosis dan mengulanginya bertahun-tahun. Padahal anemia mikrositik yang TIDAK membaik setelah besi adekuat adalah tanda bahaya yang menuntut pemikiran ulang diagnosis, bukan pengulangan resep. Jebakan berikutnya: feritin adalah reaktan fase akut, sehingga pada infeksi atau radang ia bisa naik menutupi defisiensi besi yang sebenarnya ada — angka 720 ng/mL pada anak tanpa demam dan tanpa tanda radang tidak bisa dijelaskan begitu, dan di situlah nilainya. Terakhir, jangan menaruh terlalu banyak beban pada indeks Mentzer atau rumus pembeda lainnya: semuanya hanya penunjuk arah dengan tumpang tindih yang nyata, dan tidak satu pun menggantikan analisis hemoglobin.',
     konsekuensi: {
       narasi: 'Bila anak ini terus diberi zat besi dan dipulangkan, dua kerusakan berjalan bersamaan. Anemia kronis yang tidak ditransfusi membuat sumsum tulang meluas tanpa henti sehingga tulang wajah berubah permanen, limpa terus membesar, pertumbuhan terhenti, dan jantung bekerja berlebihan bertahun-tahun. Sementara itu besi yang ditambahkan terus menimbun di jantung, hati, dan kelenjar endokrin — dan gagal jantung akibat kelebihan besi, bukan anemianya, yang biasanya mengakhiri hidup penderita talasemia.',
@@ -1630,33 +1573,15 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
         flag: 'rendah',
         relevan: true,
       },
-      {
-        id: 'darah_rutin',
-        hasil: 'Leukosit 14.200/µL; trombosit normal; MCV 74 fL.',
-        flag: 'tinggi',
-        relevan: true,
-      },
-      {
-        id: 'elektrolit_serum',
-        hasil: 'Kalium 2,9 mmol/L (rendah) dengan natrium 148 mmol/L (tinggi) — pola khas gizi buruk: kalium tubuh terkuras sementara natrium justru menumpuk di dalam sel.',
-        flag: 'abnormal',
-        relevan: true,
-      },
-      {
-        id: 'feses_rutin',
-        hasil: 'Konsistensi cair; tidak ada darah maupun lendir; tidak ditemukan telur cacing maupun amoeba.',
-        flag: 'normal',
-        relevan: true,
-      },
     ],
     diagnosisBanding: ['E43', 'E41', 'A09'],
     tatalaksana: {
-      obatBenar: ['ceftriaxone_1g_inj'],
+      obatBenar: [],
       obatOpsional: ['vitamin_a_kapsul'],
       obatSalahUmum: [
         {
           id: 'oralit',
-          alasan: 'Refleks paling kuat pada setiap anak mencret, dan pada anak gizi baik memang benar. Pada gizi buruk tidak: oralit standar mengandung natrium terlalu tinggi dan kalium terlalu rendah untuk anak yang natriumnya sudah menumpuk di dalam sel (natrium serum di sini 148 mmol/L) sementara kaliumnya terkuras (2,9 mmol/L). WHO dan Kemenkes memakai ReSoMal — oralit yang diencerkan lalu ditambah gula dan larutan mineral-mix — justru untuk menghindari beban natrium yang dapat memicu kelebihan cairan dan gagal jantung.',
+          alasan: 'Refleks paling kuat pada setiap anak mencret, dan pada anak gizi baik memang benar. Pada gizi buruk tidak: oralit standar mengandung natrium terlalu tinggi dan kalium terlalu rendah untuk fisiologi anak gizi buruk yang cenderung kelebihan natrium tubuh dan kekurangan kalium. WHO dan Kemenkes memakai ReSoMal atau formula rehidrasi khusus gizi buruk justru untuk menghindari beban natrium yang dapat memicu kelebihan cairan dan gagal jantung.',
           bahaya: 'kontraindikasi',
         },
         {
@@ -1670,11 +1595,16 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
           bahaya: 'nonPrimer',
         },
       ],
-      prosedur: ['koreksi_hipoglikemia_oral_15g', 'pemantauan_ketat_vital'],
+      prosedur: [
+        'koreksi_hipoglikemia_gizi_buruk_anak',
+        'antibiotik_parenteral_gizi_buruk_protokol',
+        'pemantauan_ketat_vital',
+      ],
+      terapiKritis: ['antibiotik_parenteral_gizi_buruk_protokol'],
       tindakanSalahUmum: [
         {
           id: 'rehidrasi_plan_c_bayi',
-          alasan: 'Ini jebakan paling mematikan dalam kasus ini. Plan C — cairan intravena cepat 100 mL/kg — adalah protokol dehidrasi berat pada anak GIZI BAIK, dan memberikannya pada gizi buruk dapat membunuh. Otot jantung anak ini ikut atrofi dan kalium tubuhnya terkuras, sehingga beban cairan cepat langsung mencetuskan gagal jantung dan edema paru; kematian pada jam-jam pertama perawatan gizi buruk paling sering justru karena over-rehidrasi, bukan karena dehidrasinya. Protokol WHO/Kemenkes: rehidrasi gizi buruk memakai ReSoMal oral atau lewat pipa lambung 5-10 mL/kg/jam dengan penilaian ulang tiap jam; jalur intravena HANYA bila anak benar-benar syok, dan itu pun dengan volume serta laju yang jauh lebih rendah dan dihentikan begitu nadi membaik. Anak ini akralnya hangat dengan nadi teraba jelas — ia tidak syok.',
+          alasan: 'Ini jebakan paling mematikan dalam kasus ini. Plan C — cairan intravena cepat 100 mL/kg — adalah protokol dehidrasi berat pada anak GIZI BAIK, dan memberikannya pada gizi buruk dapat membunuh. Otot jantung anak ini ikut atrofi dan cadangan elektrolit tubuhnya terganggu, sehingga beban cairan cepat dapat mencetuskan gagal jantung dan edema paru. Protokol WHO/Kemenkes memakai rehidrasi khusus gizi buruk secara oral/NG dengan penilaian ulang sangat sering; jalur intravena HANYA bila anak benar-benar syok dan dengan protokol khusus. Anak ini akralnya hangat dengan nadi teraba jelas — ia tidak syok.',
           bahaya: 'berbahaya',
         },
         {
@@ -1686,17 +1616,21 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       edukasi: ['rehabilitasi_gizi', 'gizi_seimbang', 'cuci_tangan_makanan', 'tanda_bahaya'],
       edukasiKritis: ['rehabilitasi_gizi'],
     },
-    stabilisasiWajib: ['koreksi_hipoglikemia_oral_15g', 'pemantauan_ketat_vital'],
-    clue: 'Anak sangat kurus (BB/PB di bawah -3 SD, LiLA 10,2 cm, kulit bokong menggantung seperti celana kedodoran) yang kini disertai diare, demam, tidak mau makan, dan tampak lesu = gizi buruk DENGAN komplikasi — dan itu berarti rawat inap di TFC/RS, bukan rawat jalan dengan RUTF. Pembeda "dengan komplikasi" wajib dihafal: tidak mau makan atau uji nafsu makan gagal, letargi, demam tinggi atau hipotermia, dehidrasi berat, napas cepat, kejang, anemia berat, atau infeksi berat. Yang wajib dikerjakan FKTP malam ini, sesuai 10 langkah tata laksana gizi buruk WHO/Kemenkes: (1) atasi HIPOGLIKEMIA lebih dulu — GDS 44 mg/dL, beri glukosa/gula oral segera lalu segera lanjutkan pemberian makan, karena hipoglikemia adalah pembunuh tercepat pada 48 jam pertama; (2) HANGATKAN anak — selimuti, dekap kulit-ke-kulit, jauhkan dari kipas dan jendela, sebab lemak tubuhnya yang habis membuatnya kehilangan panas dengan cepat dan hipotermia sering menyertai hipoglikemia; (3) beri antibiotik untuk SEMUA anak gizi buruk, bahkan tanpa tanda infeksi yang jelas, karena tanda-tanda infeksi ditekan oleh gizi buruknya sendiri; (4) pantau ketat tanda vital dan gula darah; (5) rujuk ke TFC atau rawat inap anak. Yang HARUS DIHINDARI adalah refleks yang paling manusiawi: memberi cairan intravena cepat karena anak tampak dehidrasi.',
-    panduanResmi: `${PPK_FLOOR} PPK FKTP menempatkan gizi buruk sebagai kompetensi 3B: kenali, mulai stabilisasi, lalu rujuk bila berkomplikasi. Pedoman Kemenkes menjabarkan 10 langkah fase stabilisasi. WHO Guideline on Prevention and Management of Wasting and Nutritional Oedema 2023 menggantikan guideline WHO 2013; prinsip yang relevan untuk vignette ini tetap: hipoglikemia/hipotermia dan infeksi ditangani dini, rehidrasi dilakukan hati-hati dengan pemantauan ketat, dan anak dengan komplikasi dirawat inap.`,
-    catatanRealita: 'Tiga kejujuran yang harus dinyatakan. Pertama, ReSoMal tidak ada dalam formularium game ini, dan itu memang mencerminkan kenyataan: ReSoMal dan mineral-mix diracik di TFC, bukan tersedia di rak obat Puskesmas — yang justru memperkuat kesimpulannya, anak ini dirujuk, bukan direhidrasi sendiri di sini.',
+    stabilisasiWajib: [
+      'koreksi_hipoglikemia_gizi_buruk_anak',
+      'antibiotik_parenteral_gizi_buruk_protokol',
+      'pemantauan_ketat_vital',
+    ],
+    clue: 'BB/PB di bawah -3 SD, LiLA 10,2 cm, gagal uji nafsu makan, diare, demam, lesu, dan GDS 44 mg/dL berarti gizi buruk dengan komplikasi: stabilisasi awal lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Koreksi hipoglikemia memakai jalur anak gizi buruk — glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG, lalu segera mulai pemberian makan terapeutik — bukan tombol rule-of-15 dewasa. Hangatkan, pantau, dan mulai antibiotik parenteral spektrum luas sesuai protokol gizi buruk/jejaring; seftriakson 1 g tunggal tidak boleh diperlakukan sebagai regimen universal. Hindari Plan C cepat pada anak yang tidak syok karena risiko kelebihan cairan.',
+    panduanResmi: 'Tidak ditemukan bab PPK FKTP diagnosis-spesifik pada crosswalk 167 bab. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 dan WHO Wasting/Nutritional Oedema Guideline 2023 menjadi grounding langsung; WHO 2023 menggantikan guideline 2013. Rekomendasi B2 menetapkan rawat inap bila ada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan. Protokol stabilisasi menangani hipoglikemia/hipotermia dan infeksi sejak awal, dengan cairan sangat hati-hati.',
+    catatanRealita: 'GDS dan Hb tersedia cepat; CBC, elektrolit, dan feses bukan syarat stabilisasi atau transfer. ReSoMal, F-75, dan mineral-mix tidak diasumsikan selalu ready. Jejaring telah mengonfirmasi satu dosis awal antibiotik parenteral berbasis protokol; regimen lengkap berlanjut di TFC/RS. Bila akses enteral aman, koreksi gula dan pemberian makan tidak menunggu infus.',
     mutiaraEbm: 'Tanda dehidrasi yang paling dipercaya dokter justru yang paling menyesatkan pada gizi buruk. Mata cekung dan turgor kulit yang kembali lambat SELALU ada pada anak marasmik — bukan karena ia kekurangan cairan, melainkan karena lemak di bawah kulitnya sudah habis sehingga kulitnya memang kehilangan elastisitas dan bola matanya memang kehilangan bantalannya. Menilai derajat dehidrasi dari kedua tanda ini adalah cara paling umum untuk memberi cairan berlebihan sampai anak gagal jantung. Yang lebih dapat dipercaya justru riwayat (mencretnya sejak kapan, seberapa cair) dan respons terhadap rehidrasi pelan: nadi yang melambat, kencing yang keluar, anak yang mulai menangis dengan air mata. Jebakan kedua sama besarnya: gizi buruk MENEKAN tanda-tanda infeksi. Anak yang sedang sepsis bisa tidak demam, lekositnya bisa normal, perutnya bisa tidak nyeri, dan tanda peradangan yang biasa kita cari boleh jadi tidak muncul sama sekali — itulah alasan WHO memberi antibiotik kepada SEMUA anak gizi buruk, bahkan yang "tampak tidak terinfeksi". Terakhir: berat badan bisa MENIPU ke arah sebaliknya pada kwashiorkor, karena bengkaknya menambah berat sehingga anak yang tampak "cukup gemuk" ternyata gizi buruk berat — periksa punggung kaki pada setiap anak, jangan hanya membaca timbangan.',
     konsekuensi: {
       narasi: 'Bila hipoglikemia tidak dikoreksi dan anak dibiarkan menunggu di ruang tunggu yang dingin, kadar gulanya terus turun sampai kejang lalu henti napas — dua penyebab kematian tercepat pada gizi buruk adalah hipoglikemia dan hipotermia, dan keduanya diatasi dengan gula serta selimut. Bila anak justru diinfus cepat dengan Plan C karena tampak dehidrasi, jantungnya yang atrofi tidak sanggup memompa beban itu dan ia meninggal karena edema paru dalam beberapa jam — kematian yang seluruhnya disebabkan oleh pengobatannya, bukan penyakitnya.',
       kembaliHariMin: 0,
       kembaliHariMax: 1,
       kondisiKembali: 'Beberapa jam setelah infus cepat dipasang, anak menjadi sangat sesak, napasnya berbunyi basah, kelopak matanya membengkak, dan nadinya melemah — gagal jantung dan edema paru pada anak yang datang dalam keadaan tidak syok.',
-      guideline: 'PPK FKTP KMK 1186/2022; Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes; WHO Guideline on Prevention and Management of Wasting and Nutritional Oedema 2023.',
+      guideline: 'Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020; WHO Guideline on Prevention and Management of Wasting and Nutritional Oedema 2023.',
     },
   }),
 ]

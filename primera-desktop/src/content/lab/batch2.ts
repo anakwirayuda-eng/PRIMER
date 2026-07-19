@@ -33,11 +33,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['umum', 'Trismus, risus sardonicus ringan, sadar penuh.'], ['neurologis', 'Spasme generalisata terpicu rangsang, tanpa defisit fokal.'], ['ekstremitas', 'Luka tusuk plantar dengan jaringan nekrotik kecil.', true]],
     diagnosisBanding: ['A35', 'G00.9', 'F44.5'],
-    tatalaksana: { obatBenar: [], prosedur: ['minim_stimulus_tetanus', 'perawatan_luka'], edukasi: ['rawat_luka_tetanus', 'tanda_bahaya'] },
-    stabilisasiWajib: ['minim_stimulus_tetanus'],
-    clue: 'Trismus dan spasme terpicu rangsang setelah luka berisiko dengan imunisasi tidak jelas adalah tetanus sampai terbukti lain. Minimalkan rangsang, amankan jalan napas, rawat luka tanpa manuver agresif, dan transfer segera untuk imunoglobulin, antimikroba, kontrol spasme, serta monitoring intensif.',
-    panduanResmi: `${PPK} Tetanus memerlukan tata laksana komprehensif dan pemantauan jalan napas di fasilitas rujukan.`,
-    catatanRealita: 'TIG, ventilasi, dan sedasi kontinu tidak diasumsikan tersedia di Sukamaju; ketiadaan itu memperkuat transfer, bukan alasan menunda.',
+    tatalaksana: { obatBenar: [], prosedur: ['minim_stimulus_tetanus', 'perawatan_luka', 'pemantauan_ketat_vital'], edukasi: ['rawat_luka_tetanus', 'tanda_bahaya'] },
+    stabilisasiWajib: ['minim_stimulus_tetanus', 'pemantauan_ketat_vital'],
+    clue: 'Trismus dan spasme terpicu rangsang setelah luka berisiko dengan imunisasi tidak jelas adalah diagnosis klinis tetanus; jangan menunggu tes laboratorium. Minimalkan rangsang, pantau jalan napas dan tanda vital, rawat luka secara lembut tanpa manuver agresif, dan transfer segera untuk imunoglobulin, antimikroba, kontrol spasme, dukungan napas, serta monitoring intensif.',
+    panduanResmi: `${PPK} PPK menjadi floor pengenalan, minimisasi rangsang, perawatan luka, stabilisasi, dan rujukan. CDC Clinical Care of Tetanus 2025 menegaskan tetanus sebagai kegawatan yang memerlukan rawat inap, TIG, kontrol spasme, pemantauan jalan napas, debridemen jaringan nekrotik, antibiotik, dan imunisasi setelah kondisi stabil. Pilihan produk antitoksin, antimikroba, serta sedasi mengikuti protokol rujukan terkini, bukan regimen improvisasi di FKTP.`,
+    catatanRealita: 'TIG, ventilasi, dan sedasi kontinu tidak diasumsikan tersedia di Sukamaju. Jangan mengimprovisasi serum dosis tinggi atau sedasi tanpa kesiapan resusitasi; perawatan luka juga tidak boleh menunda transfer.',
   }),
 
   buatKasusFktpLab({
@@ -46,18 +46,20 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     pembuka: ['Apa yang membuat Anda melakukan tes dan bagaimana kondisi sekarang?', 'Pasangan saya terdiagnosis HIV; saya merasa sehat dan tidak punya keluhan berat.'],
     pertanyaan: [
       ['q_oi', 'rps', 'Ada batuk lama, demam, penurunan berat badan, diare lama, sakit kepala berat, atau sesak?', 'Tidak ada; berat badan stabil.', true],
-      ['q_obat', 'rpd', 'Pernah memakai ARV atau obat rutin lain?', 'Belum pernah ARV dan tidak ada obat rutin.', true],
+      ['q_obat', 'rpd', 'Pernah memakai ARV, obat TB, antikejang, jamu, atau obat rutin lain?', 'Belum pernah ARV dan tidak ada obat, jamu, atau suplemen rutin.', true],
       ['q_tb', 'rps', 'Ada kontak TB atau gejala TB?', 'Tidak ada batuk lama, keringat malam, atau kontak TB.', true],
-      ['q_kesiapan', 'sosial', 'Siapa yang dapat mendukung minum obat setiap hari?', 'Pasangan saya mendukung dan kami siap kontrol bersama.', false],
+      ['q_ginjal', 'rpd', 'Ada penyakit ginjal, kencing berkurang, atau obat yang pernah mengganggu ginjal?', 'Tidak ada; kencing normal dan tidak pernah disebut punya penyakit ginjal.', true],
+      ['q_hamil', 'rpd', 'Apakah sedang hamil, mungkin hamil, atau merencanakan kehamilan?', 'Tidak sedang atau merencanakan kehamilan.', true, 'P'],
+      ['q_kesiapan', 'sosial', 'Bagaimana pemahaman dan kesiapan Anda memulai obat hari ini; adakah kekhawatiran atau dukungan yang Anda inginkan?', 'Saya ingin mulai hari ini. Pasangan mendukung, tetapi saya ingin informasi saya tetap rahasia dari orang lain.', true],
     ],
     fisik: [['umum', 'Status gizi baik, tidak tampak infeksi oportunistik.'], ['kepala_leher', 'Tidak ada kandidiasis oral atau limfadenopati bermakna.'], ['toraks_paru', 'Suara napas normal.', false]],
-    lab: [['tes_hiv_serial', 'Tiga tes cepat serial reaktif sesuai algoritma nasional.', 'abnormal'], ['darah_rutin', 'Hb 13,6 g/dL; leukosit dan trombosit normal.', 'normal'], ['fungsi_ginjal', 'Kreatinin 0,9 mg/dL.', 'normal']],
+    lab: [['tes_hiv_serial', 'Tiga tes cepat serial reaktif sesuai algoritma nasional.', 'abnormal']],
     diagnosisBanding: ['Z21', 'B20', 'F43.2'],
-    tatalaksana: { obatBenar: ['arv_tld'], edukasi: ['kepatuhan_arv', 'cegah_ims_pasangan', 'kontrol_rutin'], edukasiKritis: ['kepatuhan_arv'] },
+    tatalaksana: { obatBenar: ['arv_tld'], edukasi: ['kepatuhan_arv', 'retensi_hiv_viral_load', 'pencegahan_hiv_berpusat_pasien'], edukasiKritis: ['kepatuhan_arv', 'retensi_hiv_viral_load'] },
     konfirmasiWajib: 'tes_hiv_serial',
-    clue: 'Diagnosis HIV harus mengikuti algoritma tes nasional, kemudian skrining TB/infeksi oportunistik, kesiapan, fungsi ginjal, interaksi obat, dan inisiasi ARV secepatnya melalui layanan yang berwenang. Kondisi tanpa komplikasi tidak berarti terapi boleh ditunda.',
-    panduanResmi: `${PPK} Tes dan terapi berjalan dalam program HIV; kerahasiaan, konseling, dan kesinambungan ARV wajib dijaga.`,
-    catatanRealita: 'Fornas membolehkan ARV di FKTP yang ditunjuk. Skenario ini menyatakan Sukamaju memiliki jejaring dan kewenangan layanan ARV.',
+    clue: 'Setelah diagnosis terkonfirmasi dengan algoritma nasional, nilai TB/infeksi oportunistik, obat-interaksi, risiko ginjal, kehamilan, serta kesiapan tanpa memaksa. Tawarkan ARV cepat, termasuk hari yang sama bila pasien siap dan tidak ada alasan klinis menunda. Pemeriksaan dasar dan viral load tetap dijadwalkan melalui program, tetapi hasil darah rutin atau kreatinin yang belum tersedia tidak otomatis menjadi penghalang pada pasien yang secara klinis sesuai. U=U baru berlaku setelah supresi viral terverifikasi dan dipertahankan.',
+    panduanResmi: `${PPK} Permenkes 23/2022 menjadi floor program HIV/IMS nasional. WHO 2025 mempertahankan regimen berbasis dolutegravir dan WHO service-delivery guidance mendukung rapid/same-day ART, retensi, penelusuran putus layanan yang menjaga kerahasiaan, serta pemantauan viral load.`,
+    catatanRealita: 'Sukamaju dinyatakan sebagai layanan ARV yang ditunjuk: TLD dapat dimulai setelah asesmen klinis dan persetujuan pasien, sedangkan kreatinin serta viral load dijadwalkan lewat jejaring. Kunjungan yang terlewat memicu tawaran re-engagement rahasia, bukan penghentian atau hukuman layanan.',
   }),
 
   buatKasusFktpLab({
@@ -91,6 +93,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     tatalaksana: { obatBenar: [], obatOpsional: ['kloramfenikol_tetes_mata'], prosedur: ['ekstraksi_benda_asing_konjungtiva'], edukasi: ['perlindungan_mata', 'tanda_bahaya'] },
     clue: 'Benda asing superfisial dengan visus normal dan tanpa tanda penetrasi dapat diirigasi lalu diekstraksi secara visual. Eversi kelopak dan periksa abrasi; jangan melakukan probing bila benda tertanam, mekanisme berkecepatan tinggi, pupil tidak normal, atau Seidel positif.',
     panduanResmi: `${PPK} Penurunan visus, benda tertanam, penetrasi, atau kegagalan ekstraksi adalah alasan rujuk mata.`,
+    catatanRealita: 'Pada encounter ini pencahayaan fokus, anestetik topikal, irigasi, cotton bud steril, fluorescein, dan operator terlatih dinyatakan ready. Ekstraksi dibatasi pada benda superfisial yang tampak; resistensi, benda tertanam, penurunan visus, atau kecurigaan penetrasi menghentikan upaya dan memicu rujuk.',
   }),
 
   buatKasusFktpLab({
@@ -155,6 +158,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     tatalaksana: { obatBenar: ['air_mata_buatan'], prosedur: ['epilasi_trikiasis'], edukasi: ['perlindungan_mata', 'tanda_bahaya'] },
     clue: 'Silia yang menggesek permukaan mata dengan posisi kelopak normal adalah trikiasis. Epilasi memberi kelegaan sementara; evaluasi kornea dan rujuk untuk terapi definitif bila berulang atau luas.',
     panduanResmi: `${PPK} Kerusakan kornea atau kelainan palpebra kompleks memerlukan layanan mata.`,
+    catatanRealita: 'Lampu pemeriksaan, fluorescein, pinset epilasi steril, dan operator terlatih dinyatakan ready pada encounter ini. Epilasi hanya tindakan sementara untuk dua silia yang terlihat; abrasi kornea, entropion, penyakit luas, atau kekambuhan memerlukan jejaring mata.',
   }),
 
   buatKasusFktpLab({
@@ -240,10 +244,12 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['umum', 'Neonatus letargis ringan, perfusi memanjang 3 detik.'], ['abdomen', 'Pus dan bau dari umbilikus; eritema meluas sekitar 2 cm ke kulit periumbilikal.'], ['toraks_paru', 'Napas cepat tanpa retraksi berat.', true]],
     diagnosisBanding: ['P38', 'P36.9', 'L03.3'],
-    tatalaksana: { obatBenar: [], prosedur: ['akses_iv_resusitasi', 'antibiotik_parenteral_neonatus_protokol', 'perawatan_tali_pusat'], edukasi: ['perawatan_tali_pusat_kering', 'tanda_bahaya'], edukasiKritis: ['tanda_bahaya'], terapiKritis: ['antibiotik_parenteral_neonatus_protokol'] },
-    stabilisasiWajib: ['akses_iv_resusitasi', 'antibiotik_parenteral_neonatus_protokol'],
-    clue: 'Pus umbilikus, eritema meluas, demam, sulit menyusu, dan letargi pada neonatus adalah infeksi serius/omfalitis dengan risiko sepsis. Mulai tata laksana awal sesuai protokol neonatus dan rujuk segera; jangan mengandalkan obat oles atau antibiotik oral.',
-    panduanResmi: `${PPK} Kemerahan meluas atau tanda sistemik pada neonatus memerlukan antibiotik parenteral dan rujukan.`,
+    tatalaksana: { obatBenar: [], prosedur: ['akses_iv_resusitasi', 'antibiotik_parenteral_neonatus_protokol', 'perawatan_tali_pusat', 'pemantauan_ketat_vital'], edukasi: ['perawatan_tali_pusat_kering', 'tanda_bahaya'], edukasiKritis: ['tanda_bahaya'], terapiKritis: ['antibiotik_parenteral_neonatus_protokol'] },
+    stabilisasiWajib: ['akses_iv_resusitasi', 'antibiotik_parenteral_neonatus_protokol', 'pemantauan_ketat_vital'],
+    clue: 'Pus umbilikus, eritema meluas, demam, sulit menyusu, letargi, dan perfusi memanjang pada neonatus adalah omfalitis dengan tanda infeksi sistemik dan risiko sepsis. Pertahankan kehangatan, pantau napas, perfusi, suhu, dan glukosa bila tersedia; pasang akses IV dengan cairan terukur sesuai kondisi, berikan antibiotik parenteral awal sesuai protokol neonatus/jejaring, lalu rujuk segera. Jangan mengganti jalur ini dengan obat oles, antibiotik oral, atau bolus cairan otomatis.',
+    panduanResmi: `${PPK} PPK 1186/2022 menjadi floor untuk mengenali omfalitis yang meluas dan merujuk neonatus dengan tanda sistemik. WHO Recommendations for Management of Serious Bacterial Infections in Infants 0-59 Days 2024 menempatkan perawatan rumah sakit sebagai jalur utama; regimen rawat jalan tersederhana hanya dipakai ketika rujukan benar-benar tidak dapat dilakukan, bukan sebagai default FKTP.`,
+    catatanRealita: 'Tombol antibiotik mewakili regimen parenteral neonatus yang sudah disepakati jejaring, bukan satu vial universal. Stok obat, dosis berbasis usia/berat, kemampuan mempertahankan suhu, pemantauan glukosa, dan transport harus dikonfirmasi; keterbatasan salah satunya mempercepat koordinasi rujuk, bukan membenarkan improvisasi.',
+    mutiaraEbm: 'Infeksi tali pusat lokal tanpa tanda sistemik tidak boleh disamakan dengan skenario ini. Begitu muncul gangguan minum, letargi, demam atau hipotermia, gangguan perfusi, apnea, atau kejang, persoalannya bukan lagi sekadar membersihkan umbilikus: bayi harus diperlakukan sebagai infeksi bakteri serius sampai terbukti sebaliknya.',
   }),
 
   buatKasusFktpLab({
@@ -252,15 +258,17 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     pembuka: ['Bagaimana cairan dan nyeri kencingnya?', 'Cairan kuning kental keluar spontan, terutama pagi, dan kencing terasa terbakar.'],
     pertanyaan: [
       ['q_pajanan', 'sosial', 'Kapan hubungan seksual terakhir dan apakah memakai kondom?', 'Lima hari lalu dengan pasangan baru tanpa kondom.', true],
+      ['q_lokasi_pajanan', 'sosial', 'Selain penis, adakah pajanan oral atau anal, atau keluhan tenggorok dan rektum?', 'Tidak ada pajanan anal dan tidak ada keluhan tenggorok atau rektum.', true],
       ['q_komplikasi', 'rps', 'Ada nyeri atau bengkak testis, demam, nyeri sendi, atau ruam?', 'Tidak ada.', true],
       ['q_alergi', 'rpd', 'Ada alergi antibiotik?', 'Tidak ada alergi obat yang diketahui.', true],
     ],
     fisik: [['umum', 'Tidak demam dan kondisi umum baik.'], ['tht_mulut', 'Tidak ada lesi mukosa.', false], ['kulit', 'Sekret uretra mukopurulen; testis tidak nyeri atau bengkak.', true]],
-    lab: [['tes_sifilis', 'Nonreaktif; tetap perlu ulang sesuai window period/risk.', 'normal']],
+    lab: [['tes_hiv_serial', 'Nonreaktif; hasil dini tidak menutup window period sehingga jadwal ulang ditentukan dari waktu pajanan dan risiko.', 'normal'], ['tes_sifilis', 'Nonreaktif; tetap perlu ulang sesuai window period dan risiko.', 'normal']],
     diagnosisBanding: ['A54.9', 'N34.2', 'A51'],
-    tatalaksana: { obatBenar: ['ceftriaxone_1g_inj', 'doksisiklin_100'], edukasi: ['cegah_ims_pasangan', 'kepatuhan_obat', 'tanda_bahaya'], edukasiKritis: ['cegah_ims_pasangan'] },
-    clue: 'Duh uretra purulen akut setelah pajanan seksual sangat mendukung gonore. Beri seftriakson dosis tunggal dan terapi klamidia bila belum disingkirkan, tawarkan tes HIV/sifilis, tata pasangan, dan hindari hubungan sampai terapi selesai.',
-    panduanResmi: `${PPK} Pendekatan sindromik tidak menghilangkan kewajiban pelacakan pasangan dan skrining IMS lain.`,
+    tatalaksana: { obatBenar: ['ceftriaxone_1g_inj', 'doksisiklin_100'], edukasi: ['tindak_lanjut_gonore', 'layanan_pasangan_ims', 'pencegahan_ims_terintegrasi'], edukasiKritis: ['tindak_lanjut_gonore', 'layanan_pasangan_ims'] },
+    clue: 'Duh uretra purulen akut setelah pajanan seksual sangat mendukung gonore. WHO 2024 merekomendasikan ceftriaxone 1 g IM dosis tunggal; tambahkan doxycycline 100 mg dua kali sehari selama tujuh hari bila klamidia belum disingkirkan. Tawarkan tes HIV/sifilis dan pemeriksaan lokasi ekstragenital sesuai pajanan. Hindari hubungan selama tujuh hari setelah terapi dosis tunggal dan sampai regimen tujuh hari selesai, gejala hilang, serta pasangan ditangani; jadwalkan retest sekitar tiga bulan karena reinfeksi sering terjadi.',
+    panduanResmi: `${PPK} Permenkes 23/2022 menjadi floor program IMS, termasuk jejaring, surveilans resistensi, penanganan kasus, dan pencegahan stigma. WHO STI 2024 menjadi sumber dosis gonore terkini dan partner services yang sukarela serta rahasia.`,
+    catatanRealita: 'Kode A54.9 dipertahankan agar konkordan dengan katalog SKDI-144, sedangkan fenotipenya uretritis gonokokus tanpa komplikasi. Sukamaju dapat memberi ceftriaxone IM dan doxycycline, tetapi kultur/NAAT serta uji resistensi berjalan melalui jejaring bila gagal terapi. Ambang klaster gameplay hanya memicu telaah agregat dan kewaspadaan program tanpa membuka identitas atau membuktikan wabah secara otomatis.',
   }),
 
   buatKasusFktpLab({
@@ -273,12 +281,12 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_sepsis', 'rps', 'Ada bingung, pingsan, muntah semua, atau urine sangat sedikit?', 'Tidak ada; hanya mual ringan.', true],
     ],
     fisik: [['umum', 'Tampak sakit sedang, sadar penuh, hidrasi cukup.'], ['abdomen', 'Nyeri ketok CVA kanan positif, nyeri suprapubik ringan tanpa defans.']],
-    lab: [['urinalisis', 'Leukosit esterase +++, nitrit positif, piuria dan bakteriuria.', 'abnormal'], ['fungsi_ginjal', 'Kreatinin 0,8 mg/dL.', 'normal'], ['tes_kehamilan', 'Negatif.', 'normal']],
+    lab: [['urinalisis', 'Leukosit esterase +++, nitrit positif, piuria dan bakteriuria.', 'abnormal'], ['tes_kehamilan', 'Negatif.', 'normal']],
     diagnosisBanding: ['N10', 'N30.0', 'N20.0'],
     tatalaksana: { obatBenar: ['ciprofloxacin_500', 'paracetamol_500'], edukasi: ['minum_air_cukup', 'kepatuhan_obat', 'tanda_bahaya'], edukasiKritis: ['tanda_bahaya'] },
     clue: 'Demam, gejala sistitis, dan nyeri CVA dengan piuria mendukung pielonefritis. Pasien tidak hamil, stabil, tanpa obstruksi/komorbid, dan dapat minum sehingga terapi rawat jalan dapat dipertimbangkan dengan evaluasi 48-72 jam; kultur/rujuk bila respons buruk.',
     panduanResmi: `${PPK} Rujuk bila urosepsis, obstruksi, kehamilan, muntah, fungsi ginjal terganggu, atau tidak membaik.`,
-    catatanRealita: 'Pilihan empiris harus mengikuti pola resistensi lokal; vignette lab ini menggunakan opsi PPK pada pasien terseleksi tanpa komplikasi.',
+    catatanRealita: 'Pilihan empiris harus mengikuti pola resistensi lokal; vignette ini memakai opsi PPK pada pasien terseleksi tanpa komplikasi. Kreatinin dan kultur tidak diwajibkan onsite sebelum terapi pada pasien stabil tanpa faktor risiko; keduanya ditempuh lewat jejaring bila ada risiko, respons buruk, atau kekambuhan.',
   }),
 
   buatKasusFktpLab({
@@ -311,23 +319,26 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     tatalaksana: { obatBenar: [], obatOpsional: ['ibuprofen_400'], prosedur: ['reduksi_parafimosis'], edukasi: ['higiene_genital_lembut', 'tanda_bahaya'] },
     clue: 'Parafimosis adalah kegawatan urologi. Beri analgesia, kompresi edema, lalu reduksi manual lembut; jangan menunda bila perfusi menurun. Reduksi gagal, jaringan iskemik, atau komplikasi memerlukan transfer urologi emergensi.',
     panduanResmi: `${PPK} Reduksi manual dilakukan segera; tindakan bedah diperlukan bila gagal.`,
+    catatanRealita: 'Pada encounter ini pencahayaan, sarung tangan, kasa kompresi, pelumas steril, analgesia, serta operator terlatih dinyatakan ready. Lakukan satu upaya reduksi manual lembut; perfusi memburuk, nyeri tak terkendali, atau kegagalan upaya adalah alasan berhenti dan transfer tanpa manipulasi berulang.',
   }),
 
   buatKasusFktpLab({
-    id: 'lab_sindrom_duh_genital_servisitis', ambangKluster: 3, nama: 'Sindrom Duh Genital - Servisitis', icd10: 'N89', kategori: 'infeksi',
+    id: 'lab_sindrom_duh_genital_servisitis', ambangKluster: 3, nama: 'Servisitis Mukopurulen - Tata Laksana Sindromik', icd10: 'N89', kategori: 'infeksi',
     keluhanUtama: 'Keputihan kekuningan dan keluar darah sedikit setelah berhubungan.', usia: [18, 45], jenisKelamin: 'P', vital: { td: '118/74', nadi: 82, rr: 18, suhu: 37.1, spo2: 99 },
     pembuka: ['Bagaimana cairan, bau, dan keluhan penyertanya?', 'Cairan mukus-kuning dari vagina, tidak terlalu bau, disertai perih kencing ringan.'],
     pertanyaan: [
       ['q_pid', 'rps', 'Ada demam, nyeri perut bawah, mual, atau nyeri saat berhubungan?', 'Tidak ada nyeri perut atau demam.', true],
       ['q_pajanan', 'sosial', 'Ada pasangan baru atau hubungan tanpa kondom?', 'Ada pasangan baru dan tidak selalu memakai kondom.', true],
       ['q_hamil', 'rps', 'Apakah mungkin hamil?', 'Tidak, tes kehamilan negatif.', true],
+      ['q_alergi', 'rpd', 'Ada alergi berat terhadap sefalosporin atau tetrasiklin?', 'Tidak ada alergi obat yang diketahui.', true],
     ],
     fisik: [['abdomen', 'Tidak ada nyeri tekan suprapubik atau defans.', true], ['kulit', 'Sekret mukopurulen dari serviks dan serviks mudah berdarah; tidak ada nyeri goyang serviks.', true]],
-    lab: [['tes_kehamilan', 'Negatif.', 'normal'], ['tes_sifilis', 'Nonreaktif.', 'normal']],
+    lab: [['tes_kehamilan', 'Negatif.', 'normal'], ['tes_hiv_serial', 'Nonreaktif; ulang sesuai window period dan risiko.', 'normal'], ['tes_sifilis', 'Nonreaktif; ulang sesuai window period dan risiko.', 'normal']],
     diagnosisBanding: ['N89', 'A54.9', 'N76.0'],
-    tatalaksana: { obatBenar: ['ceftriaxone_1g_inj', 'doksisiklin_100'], edukasi: ['cegah_ims_pasangan', 'kepatuhan_obat', 'tanda_bahaya'], edukasiKritis: ['cegah_ims_pasangan'] },
-    clue: 'Duh mukopurulen serviks dan contact bleeding tanpa nyeri pelvis mendukung servisitis. Tata laksana sindromik mencakup gonore/klamidia menurut pedoman lokal, skrining IMS lain, serta tata pasangan; eskalasi bila muncul PID.',
-    panduanResmi: `${PPK} Fluor albus memerlukan pemisahan servisitis dari vaginitis dan PID sebelum memilih regimen.`,
+    tatalaksana: { obatBenar: ['ceftriaxone_1g_inj', 'doksisiklin_100'], edukasi: ['tindak_lanjut_servisitis', 'layanan_pasangan_ims', 'pencegahan_ims_terintegrasi'], edukasiKritis: ['tindak_lanjut_servisitis', 'layanan_pasangan_ims'] },
+    clue: 'Sekret mukopurulen endoserviks dan contact bleeding tanpa nyeri pelvis mendukung servisitis, bukan vaginitis atau PID. Pada pasien berisiko dengan pasangan baru, NAAT tidak tersedia, dan tindak lanjut belum pasti, terapi presumtif klamidia serta gonore masuk akal: doxycycline 100 mg dua kali sehari tujuh hari dan ceftriaxone IM sesuai pedoman gonore terkini. Tawarkan tes HIV/sifilis, nilai resolusi gejala, retest sekitar tiga bulan bila gonore/klamidia terdiagnosis, dan eskalasi segera bila muncul nyeri pelvis atau demam.',
+    panduanResmi: 'PPK KMK 1186/2022 tidak mempunyai bab servisitis langsung; bab fluor albus hanya sumber terkait. Permenkes 23/2022, WHO STI 2024, dan CDC cervicitis guidance melengkapi keputusan risiko, terapi presumtif, follow-up, dan layanan pasangan.',
+    catatanRealita: 'Kode N89 dipertahankan agar konkordan dengan baris katalog SKDI-144, sedangkan fenotipe kasusnya adalah servisitis mukopurulen. NAAT gonore/klamidia tidak diasumsikan tersedia langsung di Sukamaju; spesimen dapat dirujuk tanpa menunda terapi sindromik pada pasien berisiko. Sinyal klaster memakai hitungan agregat terde-identifikasi dan harus ditelaah program sebelum intervensi wilayah.',
   }),
 
   buatKasusFktpLab({
@@ -361,6 +372,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     tatalaksana: { obatBenar: ['klotrimazol_vaginal_100'], edukasi: ['higiene_genital_lembut', 'kepatuhan_obat', 'tanda_bahaya'] },
     clue: 'Pruritus, eritema, discharge putih menggumpal tanpa bau amis, dan pseudohifa mendukung kandidiasis vulvovaginal. Gunakan azol intravaginal; evaluasi diabetes/kehamilan dan rujuk bila berat, rekuren, atau gagal.',
     panduanResmi: `${PPK} Vaginitis ditatalaksana sesuai etiologi, bukan semua keputihan diberi regimen yang sama.`,
+    catatanRealita: 'Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Bila pemeriksaan tidak ready, gambaran klinis klasik tanpa red flag masih dapat ditangani sebagai kandidiasis tidak rumit dengan safety-net; kasus rekuren, berat, hamil, atau gagal terapi memerlukan konfirmasi/jejaring.',
   }),
 
   buatKasusFktpLab({
@@ -377,24 +389,27 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     diagnosisBanding: ['N76.0', 'B37.3', 'N89'],
     tatalaksana: { obatBenar: ['metronidazol_500'], edukasi: ['higiene_genital_lembut', 'kepatuhan_obat', 'tanda_bahaya'] },
     clue: 'Tiga kriteria Amsel atau lebih mendukung vaginosis bakterialis: discharge homogen, pH >4,5, whiff positif, dan clue cells. Metronidazol adalah pilihan; hindari douching dan evaluasi kehamilan/IMS sesuai risiko.',
-    panduanResmi: `${PPK} Keputihan tanpa inflamasi nyata perlu dibedakan dari kandidiasis, trikomoniasis, dan servisitis.`,
+    panduanResmi: 'Bab vaginitis pada PPK FKTP 1186/2022 hanya menjadi floor terkait, bukan pedoman etiologi bakterial yang identik. CDC STI Treatment Guidelines memberi kriteria Amsel dan regimen metronidazol 500 mg dua kali sehari selama 7 hari untuk vaginosis bakterialis simptomatik.',
+    catatanRealita: 'Pada encounter ini, pH strip, reagen whiff, dan mikroskop beserta operator dinyatakan siap. Bila mikroskop tidak tersedia, jangan mengarang clue cells: gunakan kriteria klinis yang benar-benar dapat dinilai, evaluasi diagnosis banding/IMS, dan manfaatkan jejaring bila diagnosis meragukan atau berulang.',
   }),
 
   buatKasusFktpLab({
-    id: 'lab_salpingitis_pid_ringan', nama: 'Salpingitis/PID Ringan Rawat Jalan', icd10: 'N70', kategori: 'infeksi',
+    id: 'lab_salpingitis_pid_ringan', nama: 'Penyakit Radang Panggul Ringan - Rawat Jalan', icd10: 'N70', kategori: 'infeksi',
     keluhanUtama: 'Perut bawah nyeri, keputihan berubah, dan sakit saat berhubungan.', usia: [18, 45], jenisKelamin: 'P', vital: { td: '112/70', nadi: 94, rr: 20, suhu: 37.9, spo2: 99 },
     pembuka: ['Sejak kapan nyeri dan keputihan berubah?', 'Empat hari nyeri kedua sisi bawah perut dengan keputihan kuning.'],
     pertanyaan: [
       ['q_berat', 'rps', 'Ada muntah, demam tinggi, pingsan, atau nyeri sangat berat?', 'Tidak; saya masih bisa minum dan berjalan.', true],
       ['q_hamil', 'rps', 'Apakah mungkin hamil?', 'Tes kehamilan negatif.', true],
       ['q_pajanan', 'sosial', 'Ada pasangan baru atau hubungan tanpa kondom?', 'Ada pasangan baru tanpa kondom.', true],
+      ['q_alergi', 'rpd', 'Ada alergi berat terhadap sefalosporin, tetrasiklin, atau metronidazol?', 'Tidak ada alergi obat yang diketahui.', true],
     ],
     fisik: [['abdomen', 'Nyeri tekan suprapubik bilateral tanpa defans atau massa.'], ['kulit', 'Sekret serviks mukopurulen dan nyeri goyang serviks/adneksa ringan.', true]],
-    lab: [['tes_kehamilan', 'Negatif.', 'normal'], ['tes_sifilis', 'Nonreaktif.', 'normal']],
+    lab: [['tes_kehamilan', 'Negatif.', 'normal'], ['tes_hiv_serial', 'Nonreaktif; ulang sesuai window period dan risiko.', 'normal'], ['tes_sifilis', 'Nonreaktif; ulang sesuai window period dan risiko.', 'normal']],
     diagnosisBanding: ['N70', 'N73.9', 'O00.9'],
-    tatalaksana: { obatBenar: ['ceftriaxone_1g_inj', 'doksisiklin_100', 'metronidazol_500'], edukasi: ['cegah_ims_pasangan', 'kepatuhan_obat', 'tanda_bahaya'], edukasiKritis: ['tanda_bahaya'] },
-    clue: 'Nyeri pelvis dengan cervical motion/adnexal tenderness dan faktor risiko IMS mendukung PID. Pasien stabil, tidak hamil, tanpa abses/muntah dapat ditangani rawat jalan dengan regimen kombinasi dan evaluasi 48-72 jam; rujuk bila berat atau tidak membaik.',
-    panduanResmi: `${PPK} Salpingitis memerlukan terapi spektrum gonokokus, klamidia, dan anaerob serta tata pasangan.`,
+    tatalaksana: { obatBenar: ['ceftriaxone_1g_inj', 'doksisiklin_100', 'metronidazol_500'], edukasi: ['tindak_lanjut_pid', 'layanan_pasangan_ims', 'tanda_bahaya'], edukasiKritis: ['tindak_lanjut_pid', 'tanda_bahaya'] },
+    clue: 'Nyeri pelvis dengan cervical motion/adnexal tenderness dan risiko IMS memenuhi ambang klinis rendah untuk PID setelah kehamilan ektopik serta penyebab bedah dinilai. Pasien stabil, tidak hamil, dapat minum, dan tanpa abses atau sepsis dapat menerima ceftriaxone IM sekali ditambah doxycycline serta metronidazole selama 14 hari. Perbaikan harus tampak dalam kurang dari 72 jam; bila tidak, rawat inap dan evaluasi diagnosis/regimen diperlukan. Tawarkan tes gonore/klamidia, HIV, dan sifilis, tata pasangan, serta retest sekitar tiga bulan bila gonore/klamidia terdiagnosis.',
+    panduanResmi: `${PPK} PPK tidak mempunyai bab PID langsung. Permenkes 23/2022 menjadi floor jejaring IMS, sedangkan CDC STI guidance memberi kriteria rawat inap, regimen rawat jalan, evaluasi kurang dari 72 jam, retesting, dan partner management.`,
+    catatanRealita: 'Kode N70 dipertahankan agar konkordan dengan katalog SKDI-144; kasus ini memodelkan PID ringan. Katalog menampilkan vial ceftriaxone 1 g, tetapi dosis IM aktual mengikuti protokol PID/IMS dan pemilihan vial tidak berarti seluruh isi selalu diberikan. NAAT dan ultrasonografi tidak diasumsikan tersedia di Sukamaju dan tidak boleh menunda terapi klinis atau rujukan bila memburuk.',
   }),
 
   buatKasusFktpLab({
@@ -429,6 +444,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     tatalaksana: { obatBenar: ['paracetamol_500'], prosedur: ['jahit_perineum'], edukasi: ['perawatan_perineum', 'tanda_bahaya_kehamilan'] },
     clue: 'Derajat 1 hanya melibatkan mukosa vagina dan kulit perineum. Robekan kecil tanpa perdarahan dapat sembuh tanpa jahitan, tetapi rembesan aktif pada skenario ini memerlukan pencahayaan, anestesi, hemostasis, dan penjahitan oleh tenaga kompeten; keterlibatan otot/sfingter atau hematoma besar mengubah derajat dan disposisi.',
     panduanResmi: `${PPK} Ruptur tingkat 1-2 dapat ditangani tenaga terlatih dengan set dan anestesi yang memadai.`,
+    catatanRealita: 'Ruang tindakan, pencahayaan, anestesi lokal, set jahit steril, material jahit, dan operator kompeten dinyatakan ready pada encounter ini. Bila derajat tidak dapat dipastikan, sfingter/otot terlibat, perdarahan tidak terkontrol, atau resource tidak ready, lakukan hemostasis sementara dan rujuk tanpa jahitan buta.',
   }),
 
   buatKasusFktpLab({
@@ -444,7 +460,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     diagnosisBanding: ['L02.9', 'L73.2', 'L03.9'],
     tatalaksana: { obatBenar: [], obatOpsional: ['paracetamol_500'], prosedur: ['insisi_abses'], obatSalahUmum: [{ id: 'amoxicillin_500', alasan: 'Antibiotik rutin tidak menggantikan drainase pada abses kecil terlokalisasi tanpa selulitis atau faktor risiko.', bahaya: 'nonPrimer' }], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
     clue: 'Abses terlokalisasi yang matang/fluktuatif memerlukan insisi dan drainase dengan teknik steril. Pada skenario ini antibiotik sistemik tidak diperlukan; selulitis, gejala sistemik, lokasi/komorbid berisiko, atau kegagalan drainase mengubah keputusan.',
-    panduanResmi: `${PPK} Nilai kebutuhan drainase dan rujuk bila lokasi dalam, luas, atau komplikatif.`,
+    panduanResmi: 'Bab pioderma PPK FKTP 1186/2022 adalah floor terkait, bukan padanan abses identik. IDSA SSTI menempatkan insisi-drainase sebagai terapi primer abses kulit terlokalisasi; antibiotik sistemik ditambahkan menurut gejala sistemik, luas selulitis, gangguan pertahanan tubuh, lokasi berisiko, atau kegagalan terapi.',
   }),
 
   buatKasusFktpLab({
@@ -496,44 +512,47 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    // M13 Batch 6: DM tipe 1 termasuk 9 kelompok PRB (Perpres JKN). Bila dokter
-    // merujuk utk titrasi insulin spesialis, kembalinya lewat rujuk balik —
-    // bukan kontrol biasa. Satu-satunya kasus lab yang masuk kelompok PRB.
-    id: 'lab_dm_tipe1_stabil_prb', bisaPrb: true, nama: 'Diabetes Melitus Tipe 1 Stabil', icd10: 'E10', kategori: 'metabolik',
-    keluhanUtama: 'Saya diabetes tipe 1 dan datang untuk kontrol insulin; gula belakangan sedikit lebih tinggi.', usia: [15, 45], vital: { td: '116/74', nadi: 80, rr: 18, suhu: 36.6, spo2: 99, gds: 196 },
-    pembuka: ['Bagaimana pola insulin, makan, dan gula harian?', 'Saya memakai NPH dan regular sesuai rencana, tetapi beberapa kali melewatkan dosis makan siang.'],
+    // Episode ini sengaja dimulai dengan masalah kendali yang memerlukan review
+    // spesialis. Rujukan yang berhasil kemudian mengaktifkan kunjungan PRB.
+    id: 'lab_dm_tipe1_stabil_prb', bisaPrb: true, harusDirujuk: true, spesialisRujukan: 'anak', nama: 'DM Tipe 1 Remaja: Review Spesialis lalu PRB', icd10: 'E10', kategori: 'metabolik',
+    keluhanUtama: 'Gula saya naik-turun dan dua malam ini ibu harus membangunkan saya karena gula terlalu rendah.', usia: [15, 17], vital: { td: '112/70', nadi: 82, rr: 18, suhu: 36.6, spo2: 99, gds: 212 },
+    pembuka: ['Apa yang terjadi pada gula harian dan dosis insulin belakangan ini?', 'Resume rumah sakit mencatat HbA1c 8,6%. Dua malam lalu gula 52 mg/dL dan saya perlu bantuan ibu untuk minum manis, tetapi gula pagi sering tinggi.'],
     pertanyaan: [
-      ['q_dka', 'rps', 'Ada muntah, nyeri perut, napas dalam, sangat haus, atau penurunan kesadaran?', 'Tidak ada.', true],
-      ['q_hipo', 'rps', 'Ada keringat dingin, gemetar, bingung, atau gula rendah?', 'Pernah ringan sebulan lalu dan membaik setelah minum manis.', true],
-      ['q_teknik', 'rpd', 'Bagaimana penyimpanan insulin dan rotasi tempat suntik?', 'Disimpan sesuai petunjuk, tetapi saya sering menyuntik di tempat yang sama.', true],
+      ['q_dka', 'rps', 'Ada muntah, nyeri perut, napas dalam, sangat haus, keton tinggi, atau penurunan kesadaran?', 'Tidak ada; saya masih makan dan minum.', true],
+      ['q_hipo', 'rps', 'Saat gula 52 mg/dL, apakah Anda masih mampu menolong diri sendiri dan bagaimana pulihnya?', 'Saya bingung dan tidak bangun sendiri; ibu memberi minuman manis. Setelah 15 menit gula naik.', true],
+      ['q_log', 'rpd', 'Adakah catatan gula, waktu makan, aktivitas, dan dosis insulin yang bisa ditinjau?', 'Ada. Gula sangat bervariasi; beberapa dosis makan siang terlewat dan gula malam kadang turun.', true],
+      ['q_teknik', 'rpd', 'Bagaimana penyimpanan insulin, teknik suntik, dan rotasi tempat suntik?', 'Insulin tersimpan baik, tetapi saya sering menyuntik di bagian abdomen yang sama.', true],
+      ['q_akses', 'sosial', 'Apakah insulin, alat cek gula, pendamping keluarga, dan akses rumah sakit tersedia?', 'Masih tersedia melalui jejaring; ibu membantu dan rumah sakit dapat dijangkau.', true],
     ],
-    fisik: [['umum', 'Status hidrasi baik, tidak ada napas Kussmaul.'], ['kulit', 'Lipohipertrofi ringan pada lokasi suntik abdomen.'], ['ekstremitas', 'Nadi kaki baik, tanpa ulkus.', false]],
-    lab: [['gds', '196 mg/dL.', 'tinggi'], ['hba1c', '7,4%.', 'tinggi'], ['urinalisis', 'Keton negatif.', 'normal']],
-    diagnosisBanding: ['E10', 'E11', 'E16.2'],
-    tatalaksana: { obatBenar: ['insulin_nph', 'insulin_regular'], obatSalahUmum: [{ id: 'metformin_500', alasan: 'Metformin tidak menggantikan kebutuhan insulin absolut pada DM tipe 1.', bahaya: 'nonPrimer' }], edukasi: ['keamanan_insulin', 'diet_dm', 'kontrol_rutin'], edukasiKritis: ['keamanan_insulin'] },
-    clue: 'DM tipe 1 memerlukan insulin berkelanjutan; penghentian insulin berisiko ketoasidosis. Pada pasien stabil, telaah pola glukosa, teknik, lokasi suntik, hipoglikemia, dan akses insulin; perubahan dosis harus berbasis data dan rencana individual.',
-    panduanResmi: `${PPK} Kasus ini adalah kontrol jejaring/rujuk balik stabil, bukan inisiasi insulin tanpa supervisi pada diagnosis baru.`,
-    catatanRealita: 'Insulin membutuhkan rantai dingin, edukator, alat monitoring, dan kesinambungan stok; vignette menyatakan semua tersedia melalui jejaring PRB.',
+    fisik: [['umum', 'Status hidrasi baik, sadar penuh, tidak ada napas Kussmaul.'], ['kulit', 'Lipohipertrofi pada lokasi suntik abdomen.'], ['ekstremitas', 'Nadi kaki baik, tanpa ulkus.', false]],
+    lab: [['gds', '212 mg/dL saat kunjungan.', 'tinggi'], ['urinalisis', 'Keton negatif.', 'normal']],
+    diagnosisBanding: ['E10', 'E16.2', 'E11'],
+    tatalaksana: { obatBenar: ['insulin_nph', 'insulin_regular'], obatSalahUmum: [{ id: 'metformin_500', alasan: 'Metformin tidak menggantikan kebutuhan insulin absolut pada DM tipe 1.', bahaya: 'nonPrimer' }], edukasi: ['sick_day_dm1', 'hipoglikemia_dm1', 'rencana_prb_dm1'], edukasiKritis: ['sick_day_dm1', 'hipoglikemia_dm1'], terapiKritis: ['insulin_nph'] },
+    clue: 'DM tipe 1 tidak boleh putus insulin. Episode hipoglikemia level 2 yang memerlukan bantuan, variabilitas besar, HbA1c di atas target, dan lipohipertrofi menuntut review regimen berbasis log oleh tim anak/diabetes; jangan menebak perubahan dosis tunggal dari satu GDS. Stabilkan edukasi hipoglikemia dan sick-day, lanjutkan insulin basal, rujuk terencana, lalu gunakan kunjungan rujuk balik untuk memastikan resume, dosis, target, stok, dan jadwal review benar-benar tersambung.',
+    panduanResmi: 'PNPK DM pada Anak KMK HK.01.07/MENKES/2009/2024 menjadi floor: insulin, pemantauan gula/keton, HbA1c tiap tiga bulan, rotasi lokasi suntik, edukasi hipoglikemia, dan larangan menghentikan insulin saat sakit. ADA Standards of Care 2026 menguatkan review regimen setelah hipoglikemia level 2/3 dan pendidikan terstruktur. Fornas 1199/2025 menyediakan NPH dan regular human insulin pada FPKTP sesuai ketentuan; perencanaan dosis individual tetap melalui jejaring spesialis.',
+    catatanRealita: 'HbA1c berasal dari resume rumah sakit, bukan diasumsikan tersedia sebagai pemeriksaan seketika di Puskesmas. Insulin, strip, rantai dingin, dan edukator perlu dikonfirmasi, bukan dianggap merata. Gameplay menuntut rujukan dulu agar episode kembali sebagai PRB dan pemain harus membaca resume, bukan sekadar menekan kontrol rutin.',
   }),
 
   buatKasusFktpLab({
-    id: 'lab_malnutrisi_energi_protein_sedang', nama: 'Malnutrisi Energi-Protein Sedang Tanpa Komplikasi', icd10: 'E44', kategori: 'metabolik', prevalensi: 'sedang',
-    keluhanUtama: 'Anak saya tampak makin kurus dan beratnya tidak naik tiga bulan.', keluhanUtamaOlehPendamping: true, usia: [2, 5], vital: { nadi: 96, rr: 22, suhu: 36.7, spo2: 99 },
-    pembuka: ['Bagaimana pertumbuhan dan pola makan anak?', 'Berat turun dari garis pertumbuhan, makan hanya dua kali sedikit, terutama nasi dan kerupuk.'],
+    id: 'lab_malnutrisi_energi_protein_sedang', nama: 'Gizi Kurang Balita Tanpa Komplikasi', icd10: 'E44', kategori: 'metabolik', prevalensi: 'sedang',
+    keluhanUtama: 'Kader Posyandu meminta kami ke Puskesmas karena berat anak turun dari kurva tiga bulan berturut-turut.', keluhanUtamaOlehPendamping: true, usia: [2, 5], vital: { nadi: 96, rr: 22, suhu: 36.7, spo2: 99 },
+    pembuka: ['Apa yang tercatat di Buku KIA dan bagaimana pola makan anak?', 'Tiga penimbangan terakhir turun dari garis pertumbuhan. Anak makan dua kali sedikit, kebanyakan nasi dan kerupuk.'],
     pertanyaan: [
-      ['q_bahaya', 'rps', 'Ada edema kedua kaki, sangat lemas, tidak mau makan, muntah semua, atau demam?', 'Tidak ada; anak masih aktif dan mau makan.', true],
-      ['q_penyakit', 'rpd', 'Ada diare lama, batuk lama, TB, kelainan jantung, atau infeksi berulang?', 'Tidak ada.', true],
-      ['q_akses', 'sosial', 'Apakah keluarga kesulitan memperoleh sumber protein?', 'Penghasilan tidak tetap dan lauk hewani jarang tersedia.', true],
+      ['q_bahaya', 'rps', 'Ada edema kedua kaki, sangat lemas, tidak mau makan, muntah semua, demam, atau tanda dehidrasi?', 'Tidak ada; anak masih aktif dan mau makan.', true],
+      ['q_penyakit', 'rpd', 'Ada diare lama, batuk lama, kontak TB, kelainan jantung, atau infeksi berulang?', 'Tidak ada.', true],
+      ['q_akses', 'sosial', 'Apakah keluarga kesulitan memperoleh telur, ikan, ayam, atau sumber protein lain?', 'Penghasilan tidak tetap dan lauk hewani jarang tersedia.', true],
+      ['q_program', 'sosial', 'Apakah anak sudah menerima PMT lokal, makan bergizi gratis, atau pendampingan kader; siapa yang memantau konsumsinya?', 'Belum menerima PMT. Kader bersedia memantau dan Posyandu dekat dari rumah.', true],
     ],
     fisik: [['umum', 'Anak kurus tetapi aktif; BB/TB z-score -2,4 SD dan LILA 12,0 cm, tanpa edema atau tanda dehidrasi.'], ['abdomen', 'Tidak ada hepatomegali atau distensi patologis.', false]],
     diagnosisBanding: ['E44', 'E43', 'R62.7'],
-    tatalaksana: { obatBenar: [], edukasi: ['rehabilitasi_gizi', 'gizi_seimbang', 'kontrol_rutin'], edukasiKritis: ['rehabilitasi_gizi'] },
-    clue: 'Growth faltering dengan wasting sedang, nafsu makan masih baik, tanpa edema/komplikasi dapat direhabilitasi rawat jalan: evaluasi penyebab, susun makanan padat energi-protein yang realistis, dukungan sosial, dan pantau berat terjadwal.',
-    panduanResmi: `${PPK} Tanda bahaya, edema, gizi buruk berat, penyakit penyerta, atau gagal naik berat memerlukan rujukan/layanan gizi intensif.`,
+    tatalaksana: { obatBenar: [], edukasi: ['alur_pmt_lokal_2025', 'makan_balita_padat_gizi', 'pantau_tumbuh_mingguan'], edukasiKritis: ['alur_pmt_lokal_2025', 'pantau_tumbuh_mingguan'] },
+    clue: 'Wasting sedang (BB/TB -2,4 SD; LILA 12,0 cm), nafsu makan baik, dan tanpa edema/komplikasi dapat dikelola rawat jalan setelah penyebab dinilai. Hubungkan hasil konfirmasi Puskesmas kembali ke kader: PMT berbahan pangan lokal kaya protein hewani diberikan setiap hari selama 56 hari, tidak menggantikan makanan utama, dengan pemantauan konsumsi dan pertumbuhan mingguan. Bila dalam sekitar 14 hari konsumsi memadai tetapi berat tidak membaik, atau muncul edema, anoreksia, penyakit penyerta, dan tanda bahaya, evaluasi ulang dan rujuk sesuai temuan.',
+    panduanResmi: 'Kepdirjen Kesprimkom HK.02.02/B/576/2025 adalah petunjuk teknis aktif PMT lokal; kebijakan 2025 menggantikan petunjuk 1622/2023 yang telah dicabut. Untuk balita gizi kurang, durasi program 56 hari, diberikan setiap hari, kaya protein hewani, dengan pemantauan harian oleh kader/keluarga dan berkala oleh tenaga kesehatan. WHO 2023 menekankan penilaian klinis, dukungan keluarga, follow-up pertumbuhan, dan rujukan bila komplikasi atau respons buruk.',
+    catatanRealita: 'Episode ini memulai bridge UKM ke UKP dari Posyandu/Buku KIA, lalu menutupnya kembali melalui rencana PMT dan pemantauan kader. PMT bukan sekadar kupon makanan: pemain harus mengikat diagnosis, akses pangan, siapa yang memantau, indikator respons, dan ambang evaluasi ulang.',
   }),
 
   buatKasusFktpLab({
-    id: 'lab_defisiensi_vitamin_b_kompleks', nama: 'Defisiensi Vitamin B Kompleks Ringan', icd10: 'E50-E56', kategori: 'metabolik',
+    id: 'lab_defisiensi_vitamin_b_kompleks', nama: 'Dugaan Defisiensi Riboflavin dalam Kekurangan Mikronutrien Campuran', icd10: 'E50-E56', kategori: 'metabolik',
     keluhanUtama: 'Sudut bibir sering pecah dan lidah terasa perih sejak pola makan saya sangat terbatas.', usia: [18, 70], vital: { td: '118/74', nadi: 80, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Apa perubahan pola makan dan keluhan lain?', 'Tiga bulan hanya banyak makan nasi instan; bibir pecah, lidah merah, dan mudah lelah.'],
     pertanyaan: [
@@ -544,12 +563,13 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     fisik: [['tht_mulut', 'Angular cheilitis dan glositis ringan tanpa kandidiasis.'], ['neurologis', 'Refleks dan sensibilitas normal.', false]],
     diagnosisBanding: ['E50-E56', 'D50', 'B37.9'],
     tatalaksana: { obatBenar: ['vitamin_b_kompleks'], edukasi: ['gizi_seimbang', 'kontrol_rutin'] },
-    clue: 'Temuan mukokutan dengan diet sangat tidak beragam mendukung defisiensi mikronutrien, tetapi tanda ini tidak spesifik. Koreksi diet adalah inti; suplementasi terarah boleh diberikan sambil mencari anemia, malabsorpsi, alkohol, atau penyakit sistemik bila menetap.',
-    panduanResmi: `${PPK} Defisiensi vitamin adalah diagnosis klinis-kontekstual; hindari menjadikan multivitamin pengganti evaluasi dan pangan beragam.`,
+    clue: 'Angular cheilitis dan glositis pada diet sangat tidak beragam cocok dengan kekurangan riboflavin, tetapi tidak membuktikannya dan defisiensi mikronutrien sering berkelompok. Koreksi diet adalah inti; B kompleks jangka pendek dapat menjadi terapi pragmatis sambil mencari anemia, kandidiasis, malabsorpsi, alkohol, atau penyakit sistemik bila keluhan menetap.',
+    panduanResmi: 'PPK FKTP 1186/2022 tidak mempunyai bab diagnosis langsung untuk defisiensi riboflavin. NIH ODS menyebut angular stomatitis, cheilosis, dan glositis sebagai temuan yang kompatibel, sekaligus menegaskan bahwa ko-defisiensi lazim sehingga tanda tersebut tidak spesifik untuk satu vitamin.',
+    catatanRealita: 'Kode E50-E56 dipertahankan karena ini adalah baris payung katalog SKDI-144; fenotipe klinis yang diajarkan paling dekat dengan E53.0. Puskesmas tidak diasumsikan mempunyai biomarker riboflavin. Skenario menilai risiko diet dan respons klinis, memberi dukungan pangan yang realistis, dan membuka evaluasi jejaring bila tidak membaik; label diagnosis tetap dugaan, bukan kepastian laboratorium.',
   }),
 
   buatKasusFktpLab({
-    id: 'lab_defisiensi_mineral_zinc', nama: 'Defisiensi Mineral - Dugaan Kekurangan Zinc', icd10: 'E58-E61', kategori: 'metabolik',
+    id: 'lab_defisiensi_mineral_zinc', nama: 'Dugaan Defisiensi Zinc', icd10: 'E58-E61', kategori: 'metabolik',
     keluhanUtama: 'Luka kecil lama sembuh, rambut mudah rontok, dan selera makan turun.', usia: [12, 50], vital: { td: '116/72', nadi: 78, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Bagaimana pola makan dan sejak kapan keluhan muncul?', 'Berbulan-bulan jarang makan protein hewani; keluhan perlahan dan tidak ada demam.'],
     pertanyaan: [
@@ -560,26 +580,29 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     fisik: [['kulit', 'Dermatitis periorifisial ringan dan rambut menipis difus; tanpa infeksi luka.'], ['umum', 'Status gizi sedikit kurang.', true]],
     diagnosisBanding: ['E58-E61', 'E50-E56', 'L65.9'],
     tatalaksana: { obatBenar: [], edukasi: ['gizi_seimbang', 'kontrol_rutin'] },
-    clue: 'Defisiensi zinc tidak boleh ditegakkan dari satu gejala; kombinasi diet rendah sumber zinc, dermatitis periorifisial, alopecia, dan penyembuhan lambat meningkatkan kecurigaan. Suplementasi harus terbatas dan disertai perbaikan diet serta evaluasi bila tidak respons.',
-    panduanResmi: `${PPK} Defisiensi mineral adalah payung diagnosis; penyebab dan mineral spesifik perlu ditentukan sejauh fasilitas memungkinkan.`,
-    catatanRealita: 'Zinc dispersibel Fornas dibatasi untuk diare anak dan tidak dijadikan jawaban wajib pada dugaan defisiensi dewasa. Konfirmasi dan suplementasi spesifik dikoordinasikan melalui jejaring bila diperlukan.',
+    clue: 'Defisiensi zinc tidak boleh ditegakkan dari satu gejala. Diet rendah sumber zinc, dermatitis periorifisial, alopecia, dan penyembuhan lambat hanya meningkatkan probabilitas; nilai malabsorpsi, alkohol, penyakit kronik, dan diagnosis kulit lain. Prioritaskan pangan kaya zinc dan evaluasi respons, bukan suplementasi dosis tinggi empiris.',
+    panduanResmi: 'PPK FKTP 1186/2022 tidak mempunyai bab diagnosis langsung untuk defisiensi zinc. NIH ODS 2026 menganjurkan integrasi faktor risiko dan tanda klinis serta mengingatkan bahwa kadar zinc serum dipengaruhi usia, jenis kelamin, waktu pengambilan, infeksi, dan katabolisme sehingga tidak selalu mencerminkan asupan atau status jaringan.',
+    catatanRealita: 'Kode E58-E61 dipertahankan karena ini adalah baris payung katalog SKDI-144; dugaan klinis pada skenario paling dekat dengan E60. Zinc dispersibel Fornas dibatasi untuk diare anak dan tidak dijadikan jawaban wajib pada dugaan defisiensi dewasa. Konfirmasi dan suplementasi spesifik dikoordinasikan melalui jejaring bila diperlukan.',
   }),
 
   buatKasusFktpLab({
-    id: 'lab_anemia_defisiensi_besi_nonhamil', nama: 'Anemia Defisiensi Besi pada Dewasa', icd10: 'D50', kategori: 'metabolik', prevalensi: 'sedang',
-    keluhanUtama: 'Saya cepat lelah, berdebar saat naik tangga, dan tampak pucat.', usia: [18, 60], vital: { td: '108/68', nadi: 92, rr: 18, suhu: 36.6, spo2: 99 },
-    pembuka: ['Sejak kapan lelah dan ada sumber kehilangan darah?', 'Tiga bulan; haid sangat banyak tujuh hari setiap bulan.'],
+    id: 'lab_anemia_defisiensi_besi_nonhamil', nama: 'Anemia Defisiensi Besi akibat Haid Banyak', icd10: 'D50', kategori: 'metabolik', prevalensi: 'sedang', jenisKelamin: 'P',
+    keluhanUtama: 'Saya cepat lelah, berdebar saat naik tangga, dan tampak pucat.', usia: [18, 45], vital: { td: '108/68', nadi: 92, rr: 18, suhu: 36.6, spo2: 99 },
+    pembuka: ['Sejak kapan lelah dan adakah sumber kehilangan darah?', 'Tiga bulan; haid sangat banyak selama tujuh hari setiap bulan.'],
     pertanyaan: [
-      ['q_bahaya', 'rps', 'Ada nyeri dada, pingsan, sesak saat diam, atau perdarahan aktif?', 'Tidak ada.', true],
-      ['q_darah', 'rps', 'Ada BAB hitam, darah di tinja, muntah darah, atau cacingan?', 'Tidak ada.', true],
-      ['q_diet', 'sosial', 'Bagaimana asupan daging, telur, dan sayur?', 'Jarang makan daging.', false],
+      ['q_bahaya', 'rps', 'Ada nyeri dada, pingsan, sesak saat diam, perdarahan aktif, atau kemungkinan hamil?', 'Tidak ada; tes kehamilan bulan ini negatif.', true],
+      ['q_haid', 'rps', 'Seberapa sering pembalut penuh, apakah tembus malam hari, dan sejak kapan pola ini berubah?', 'Hari pertama sampai ketiga harus ganti pembalut penuh tiap dua jam dan sering tembus malam; sudah enam bulan.', true],
+      ['q_darah', 'rps', 'Ada BAB hitam, darah di tinja, muntah darah, mimisan berulang, atau cacingan?', 'Tidak ada.', true],
+      ['q_bekuan', 'rpd', 'Ada bekuan besar, perdarahan setelah hubungan, mudah memar, atau keluarga dengan gangguan perdarahan?', 'Bekuan kadang sebesar koin; tidak ada perdarahan lain atau riwayat keluarga.', true],
+      ['q_diet', 'sosial', 'Bagaimana asupan daging, telur, ikan, kacang, dan sayur?', 'Telur dan tempe cukup, tetapi jarang makan daging.', false],
     ],
-    fisik: [['umum', 'Konjungtiva pucat, tidak ikterik.'], ['jantung', 'Takikardia ringan, tanpa murmur patologis.'], ['abdomen', 'Tidak ada hepatosplenomegali.', false]],
-    lab: [['darah_rutin', 'Hb 9,6 g/dL; MCV 69 fL; MCH rendah; trombosit 470.000/uL.', 'rendah'], ['ferritin_serum', 'Ferritin 7 ng/mL.', 'rendah']],
+    fisik: [['umum', 'Konjungtiva pucat, tidak ikterik.'], ['jantung', 'Takikardia ringan, tanpa murmur patologis.'], ['abdomen', 'Tidak ada hepatosplenomegali atau massa teraba.', false]],
+    lab: [['darah_rutin', 'Hb 9,6 g/dL; MCV 69 fL; MCH rendah; RDW meningkat; trombosit 470.000/uL.', 'rendah']],
     diagnosisBanding: ['D50', 'D56.3', 'D63.8'],
-    tatalaksana: { obatBenar: ['tablet_fe'], edukasi: ['diet_zat_besi', 'kepatuhan_obat', 'kontrol_rutin'] },
-    clue: 'Anemia mikrositik dengan ferritin rendah menegakkan defisiensi besi. Beri besi oral, jelaskan efek samping dan durasi sampai cadangan pulih, tetapi tetap cari dan tangani sumber kehilangan darah; rujuk bila berat, tidak respons, atau sumber mencurigakan.',
-    panduanResmi: `${PPK} Respons Hb harus dipantau dan diagnosis tidak berhenti pada pemberian tablet Fe.`,
+    tatalaksana: { obatBenar: ['tablet_fe'], edukasi: ['terapi_besi_terukur', 'telusuri_sumber_anemia', 'kontrol_hb_anemia'], edukasiKritis: ['telusuri_sumber_anemia', 'kontrol_hb_anemia'] },
+    clue: 'Anemia mikrositik-hipokrom dengan RDW meningkat dan haid banyak sangat mendukung defisiensi besi, tetapi terapi tidak boleh berhenti pada tablet Fe. Beri sekitar 60 mg besi elemental sekali sehari; bila tidak toleran, regimen selang sehari dapat dipertimbangkan. Nilai kenaikan Hb dalam 2-4 minggu dan lanjutkan sekitar tiga bulan setelah Hb normal untuk mengisi cadangan, sambil menilai serta menangani penyebab haid banyak. Rujuk bila tidak respons, anemia berat/gejala tidak stabil, perdarahan mencurigakan, atau perlu evaluasi ginekologi lanjut.',
+    panduanResmi: 'PPK FKTP 1186/2022 membahas langsung anemia defisiensi besi dan menjadi floor, tetapi masih mencantumkan fero sulfat 3 x 200 mg. AGA Clinical Practice Update 2024 dan BSG 2021 mendukung besi oral sekali sehari paling banyak, dengan selang sehari bila toleransi buruk; respons Hb dinilai dini dan terapi dilanjutkan setelah normal. Fornas 1199/2025 menyediakan sediaan sekitar 60 mg besi elemental pada FPKTP. NICE NG88 menguatkan bahwa haid banyak perlu dinilai dan ditangani paralel, bukan ditutupi oleh suplementasi saja.',
+    catatanRealita: 'Ferritin tidak dijadikan tombol wajib karena tidak selalu tersedia di Puskesmas. CBC dan pola klinis memulai tata laksana; ferritin atau pemeriksaan lain diatur melalui jejaring bila diagnosis meragukan atau respons tidak memadai. Episode baru selesai bila sumber perdarahan, toleransi obat, dan kenaikan Hb ikut ditindaklanjuti.',
   }),
 
   buatKasusFktpLab({
@@ -599,7 +622,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_leptospirosis_tanpa_komplikasi', ambangKluster: 2, nama: 'Leptospirosis Tanpa Komplikasi', icd10: 'A27.9', kategori: 'infeksi',
+    id: 'lab_leptospirosis_tanpa_komplikasi', ambangKluster: 2, nama: 'Suspek Leptospirosis Ringan Pascabanjir', icd10: 'A27.9', kategori: 'infeksi',
     keluhanUtama: 'Demam mendadak, sakit kepala, dan betis sangat nyeri setelah membersihkan rumah kebanjiran.', usia: [15, 65], vital: { td: '112/70', nadi: 98, rr: 20, suhu: 38.7, spo2: 98 },
     pembuka: ['Kapan demam mulai dan bagaimana pajanan banjirnya?', 'Tiga hari setelah berjalan di air banjir dengan luka kecil di kaki.'],
     pertanyaan: [
@@ -609,11 +632,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_hamil', 'rpd', 'Apakah sedang hamil atau mungkin hamil?', 'Tidak.', true, 'P'],
     ],
     fisik: [['umum', 'Demam, sadar, hidrasi cukup; tidak ikterik.'], ['mata', 'Conjunctival suffusion bilateral tanpa sekret.'], ['ekstremitas', 'Nyeri tekan otot gastroknemius.', true]],
-    lab: [['darah_rutin', 'Leukosit 12.800/uL; trombosit 165.000/uL.', 'tinggi'], ['fungsi_ginjal', 'Kreatinin 1,0 mg/dL.', 'normal'], ['sgot_sgpt', 'AST 48 U/L, ALT 42 U/L.', 'tinggi']],
     diagnosisBanding: ['A27.9', 'A90', 'B54'],
-    tatalaksana: { obatBenar: ['doksisiklin_100', 'paracetamol_500'], edukasi: ['cegah_leptospirosis', 'kepatuhan_obat', 'tanda_bahaya'], edukasiKritis: ['tanda_bahaya'] },
-    clue: 'Demam akut, nyeri otot betis, kemerahan konjungtiva tanpa sekret, dan pajanan air banjir mendukung leptospirosis. Kasus ringan dapat diberi antibiotik dini dan dipantau ketat; ikterus, gangguan ginjal akut, perdarahan paru, rangsang meningeal, hipotensi, atau sesak memerlukan rujukan.',
-    panduanResmi: `${PPK} Jangan menunggu komplikasi Weil sebelum mengenali pajanan epidemiologis dan memulai terapi yang tepat.`,
+    tatalaksana: { obatBenar: ['doksisiklin_100'], obatOpsional: ['paracetamol_500'], edukasi: ['rencana_leptospirosis_jejaring', 'cegah_leptospirosis', 'tanda_bahaya_leptospirosis'], edukasiKritis: ['rencana_leptospirosis_jejaring', 'tanda_bahaya_leptospirosis'] },
+    clue: 'Demam akut, nyeri betis, conjunctival suffusion tanpa sekret, dan pajanan banjir mendukung suspek leptospirosis ringan. Mulai doksisiklin 100 mg dua kali sehari selama 10 hari menurut floor Permenkes 28/2021 tanpa menunggu hasil laboratorium. CDC 2026 memakai 7 hari; perbedaan itu ditampilkan sebagai divergensi EBM, bukan alasan mengubah floor nasional diam-diam. Atur spesimen dan pemeriksaan fungsi ginjal-hati melalui jejaring bila tersedia. Ikterus, oliguria, perdarahan paru, rangsang meningeal, hipotensi, bingung, atau sesak memerlukan rujukan segera.',
+    panduanResmi: `${PPK} PPK menjadi floor pengenalan klinis dan rujukan. Permenkes 28/2021 menetapkan doksisiklin dewasa 100 mg tiap 12 jam selama 10 hari untuk leptospirosis ringan; CDC 2026 merekomendasikan 7 hari dan sama-sama menekankan terapi dini tanpa menunggu hasil. Dua kasus terkait banjir memicu notifikasi, line list, pemetaan air-rodensia-hewan, pencarian kasus aktif, dan koordinasi kesehatan lingkungan/One Health; bukti profilaksis massal antibiotik terbatas dan risiko resistensi melarang pembagian doksisiklin blanket.`,
+    catatanRealita: 'Kasus ini sengaja tidak menjadikan darah rutin, kreatinin, transaminase, PCR, atau serologi sebagai tombol wajib di Puskesmas generik. Jejaring mengatur spesimen dan pemeriksaan menurut hari sakit sambil terapi berjalan; hasil negatif dini tidak otomatis menyingkirkan penyakit.',
   }),
 
   buatKasusFktpLab({
@@ -627,10 +650,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['umum', 'Gelisah, perfusi buruk, urtikaria generalisata dan angioedema bibir.'], ['toraks_paru', 'Wheezing difus dan suara serak.'], ['jantung', 'Takikardia, hipotensi.', true]],
     diagnosisBanding: ['T78.2', 'J45.901', 'F41.0'],
-    tatalaksana: { obatBenar: [], prosedur: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi'], edukasi: ['rencana_anafilaksis', 'tanda_bahaya'], edukasiKritis: ['rencana_anafilaksis'], terapiKritis: ['adrenalin_im_anafilaksis'] },
-    stabilisasiWajib: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi'],
-    clue: 'Onset menit dengan keterlibatan kulit plus jalan napas/napas dan hipotensi adalah anafilaksis. Epinefrin IM paha adalah terapi pertama dan boleh diulang; oksigen, posisi/cairan sesuai kondisi, monitoring, dan transfer. Antihistamin atau steroid tidak boleh menunda epinefrin.',
-    panduanResmi: `${PPK} Semua anafilaksis harus distabilkan segera dan dipantau karena risiko reaksi bifasik.`,
+    tatalaksana: { obatBenar: [], prosedur: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi', 'pemantauan_ketat_vital'], edukasi: ['rencana_anafilaksis', 'tanda_bahaya'], edukasiKritis: ['rencana_anafilaksis'], terapiKritis: ['adrenalin_im_anafilaksis'] },
+    stabilisasiWajib: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi', 'pemantauan_ketat_vital'],
+    clue: 'Onset menit dengan keterlibatan kulit plus jalan napas/napas dan hipotensi adalah anafilaksis. Berikan epinefrin 0,5 mg IM paha (0,5 mL sediaan 1 mg/mL) segera pada pasien dewasa ini dan ulangi setelah 5 menit bila masalah ABC menetap. Baringkan dengan tungkai dinaikkan; bila bernapas lebih mudah dalam posisi setengah duduk, pertahankan tungkai lurus dan jangan biarkan berdiri atau berjalan. Beri oksigen, cairan kristaloid, pantau serial, dan transfer. Antihistamin atau steroid tidak boleh menunda epinefrin.',
+    panduanResmi: `${PPK} PPK menjadi floor pemberian adrenalin IM, oksigen, cairan, dan rujukan. RCUK Emergency Treatment of Anaphylaxis 2021 menetapkan dosis dewasa 500 mikrogram IM, diulang setelah 5 menit bila masalah ABC menetap; adrenalin intravena hanya untuk spesialis berpengalaman dalam lingkungan terpantau. Antihistamin adalah lini ketiga untuk gejala kulit setelah stabilisasi dan steroid tidak digunakan rutin pada tata laksana awal.`,
+    catatanRealita: 'Epinefrin 1 mg/mL, oksigen, akses IV, cairan, pulse oximeter, dan transport dinyatakan ready. Sukamaju tidak mengasumsikan pompa infus adrenalin atau monitoring kritis untuk anafilaksis refrakter; setelah dua dosis IM tanpa respons, teruskan resusitasi feasible sambil meminta bantuan ahli dan mempercepat transfer, bukan memberi bolus adrenalin IV atau aminofilin rutin.',
   }),
 ]
 

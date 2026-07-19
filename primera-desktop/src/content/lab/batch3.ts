@@ -9,6 +9,8 @@ interface LabDefinition {
 }
 
 const PPK = 'PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.'
+const PNPK_COT_2022 = 'PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi floor khusus untuk penilaian trauma kepala.'
+const PNPK_TRAUMA_2017 = 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas untuk survei primer, penilaian luka, stabilisasi, dan rujukan trauma.'
 const NORMAL = { td: '120/78', nadi: 78, rr: 18, suhu: 36.7, spo2: 99 } as const
 
 const DEFINITIONS: LabDefinition[] = [
@@ -102,7 +104,7 @@ const DEFINITIONS: LabDefinition[] = [
       diagnosisBanding: ['L08.0', 'L01.0', 'L97'],
       tatalaksana: { obatBenar: ['cefadroxil_sirup_125'], obatOpsional: ['mupirosin_krim'], prosedur: ['perawatan_luka'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
       clue: 'Ulkus berkrusta tebal yang lebih dalam daripada impetigo mendukung ektima. Bersihkan krusta secara lembut dan beri antibiotik antistafilokokus/streptokokus; evaluasi selulitis, diabetes, dan respons.',
-      panduanResmi: PPK,
+      panduanResmi: `${PPK} Bab pioderma hanya floor terkait dan tidak identik dengan ektima. IDSA SSTI membedakan ektima sebagai infeksi lebih dalam dan merekomendasikan antibiotik oral sekitar 7 hari yang mencakup S. aureus serta streptokokus, dengan kultur bila pola tidak tipikal atau respons buruk.`,
     },
   },
   {
@@ -120,7 +122,7 @@ const DEFINITIONS: LabDefinition[] = [
       diagnosisBanding: ['L73.9', 'L02', 'L70.0'],
       tatalaksana: { obatBenar: ['mupirosin_krim'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
       clue: 'Pustul kecil folikulosentrik tanpa abses atau gejala sistemik adalah folikulitis superfisial. Hentikan pencukuran sementara, kompres/higiene, terapi topikal terbatas; antibiotik oral tidak rutin.',
-      panduanResmi: PPK,
+      panduanResmi: `${PPK} Bab pioderma hanya floor terkait dan bukan padanan folikulitis identik. IDSA SSTI membantu memisahkan proses folikular superfisial dari furunkel/abses yang memerlukan drainase; perluasan, kekambuhan, hot-tub exposure, atau gejala sistemik mengubah evaluasi.`,
     },
   },
   {
@@ -138,7 +140,7 @@ const DEFINITIONS: LabDefinition[] = [
       diagnosisBanding: ['L02', 'L73.9', 'L03.9'],
       tatalaksana: { obatBenar: [], prosedur: ['insisi_abses'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
       clue: 'Furunkel berfluktuasi memerlukan insisi-drainase aseptik. Antibiotik sistemik bukan pengganti drainase dan tidak rutin pada abses kecil tanpa selulitis luas, gejala sistemik, lokasi berisiko, atau imunokompromais.',
-      panduanResmi: PPK,
+      panduanResmi: `${PPK} Bab pioderma hanya floor terkait dan bukan padanan furunkel identik. IDSA SSTI merekomendasikan insisi-drainase untuk furunkel besar atau fluktuatif; antibiotik sistemik biasanya tidak diperlukan tanpa demam, tanda sistemik, pertahanan host terganggu, atau kegagalan kendali sumber.`,
     },
   },
   {
@@ -158,6 +160,7 @@ const DEFINITIONS: LabDefinition[] = [
       tatalaksana: { obatBenar: ['mupirosin_krim'], edukasi: ['kebersihan_kulit', 'kontrol_rutin'] },
       clue: 'Plak cokelat halus di lipatan tanpa tepi aktif, KOH negatif, dan respons buruk terhadap antijamur mendukung eritrasma. Jaga area kering dan gunakan antibiotik topikal; periksa diabetes bila berulang.',
       panduanResmi: PPK,
+      catatanRealita: 'Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini; lampu Wood tidak diasumsikan tersedia. KOH negatif membantu menurunkan kemungkinan dermatofitosis, tetapi bila lab tidak ready diagnosis tetap klinis dan respons harus dievaluasi ulang.',
     },
   },
   {
@@ -181,26 +184,28 @@ const DEFINITIONS: LabDefinition[] = [
   {
     catalogId: 'scrofuloderma',
     spec: {
-      id: 'lab_skrofuloderma_suspek', nama: 'Suspek Skrofuloderma - Konfirmasi Program', icd10: 'A18.4', kategori: 'kulit', prevalensi: 'rendah', harusDirujuk: true, spesialisRujukan: 'penyakit_dalam',
+      id: 'lab_skrofuloderma_suspek', nama: 'Suspek Skrofuloderma (TB Kulit)', icd10: 'A18.4', kategori: 'kulit', prevalensi: 'rendah', harusDirujuk: true, spesialisRujukan: 'penyakit_dalam',
       keluhanUtama: 'Benjolan leher pecah menjadi luka berair yang tidak sembuh.', usia: [15, 55], vital: { ...NORMAL, suhu: 37.2 },
       pembuka: ['Benjolan dan lukanya berkembang bagaimana?', 'Dua bulan benjolan tidak nyeri, kemudian melunak dan pecah; berat badan turun.'],
       pertanyaan: [
-        ['q_tb', 'rps', 'Ada batuk lama, keringat malam, demam lama, atau kontak TB?', 'Sering berkeringat malam dan paman serumah sedang berobat TB.', true],
+        ['q_gejala_tb_paru', 'rps', 'Ada batuk lebih dari dua minggu, dahak berdarah, sesak, demam lama, atau keringat malam?', 'Tidak batuk lama atau sesak, tetapi malam sering berkeringat.', true],
+        ['q_kontak_tb', 'sosial', 'Ada orang serumah atau kontak erat yang pernah didiagnosis TB?', 'Paman serumah sedang menjalani pengobatan TB paru.', true],
         ['q_hiv', 'rpd', 'Pernah tes HIV atau punya gangguan imun?', 'Belum pernah tes HIV.', true],
         ['q_obat', 'rpd', 'Sudah minum antibiotik atau OAT?', 'Antibiotik biasa tidak memperbaiki, belum pernah OAT.', true],
       ],
       fisik: [['kepala_leher', 'Nodus servikal matted, sebagian fluktuatif, dengan sinus dan tepi undermined.'], ['toraks_paru', 'Suara napas vesikuler; tidak menyingkirkan TB ekstra paru.', true]],
-      lab: [['tcm_spesimen_lesi', 'MTB terdeteksi; resistensi rifampisin tidak terdeteksi.', 'abnormal']],
+      lab: [['tcm_spesimen_lesi', 'Aspirat nodus/jaringan dari layanan jejaring: MTB terdeteksi; resistensi rifampisin tidak terdeteksi. Bukan swab cairan sinus permukaan.', 'abnormal']],
       diagnosisBanding: ['A18.4', 'L04.0', 'C77.0'],
-      tatalaksana: { obatBenar: [], edukasi: ['kepatuhan_obat', 'tanda_bahaya'] },
+      tatalaksana: { obatBenar: [], edukasi: ['alur_tb_ekstraparu', 'investigasi_kontak_tb', 'kepatuhan_obat', 'tanda_bahaya'], edukasiKritis: ['alur_tb_ekstraparu', 'investigasi_kontak_tb'] },
       // Audit CODEX 2026-07-16 #3: dulu konfirmasiWajib='tcm_spesimen_lesi'
       // (hasil BESOK) pada kasus WAJIB-RUJUK → no-win: rujuk hari-ini = cap C
       // (hasil belum ada), observasi = cap D (menahan kasus wajib-rujuk).
       // Skrofuloderma dirujuk atas dasar SUSPEK (kirim spesimen + rujuk
       // terkoordinasi program TB), tak butuh hasil definitif dulu — gate dicabut.
-      clue: 'Nodus dingin matted yang membentuk sinus kronis, gejala konstitusional, dan kontak TB mendukung skrofuloderma. Ambil spesimen lesi untuk pemeriksaan molekuler/histopatologi melalui jejaring dan tata laksana program TB; jangan mengarang regimen OAT atau memberi monoterapi empiris.',
-      panduanResmi: PPK,
-      catatanRealita: 'TCM lesi dan histopatologi tidak diasumsikan onsite; rujukan terkoordinasi adalah bagian jawaban, bukan kegagalan FKTP.',
+      clue: 'Nodus dingin yang saling melekat, melunak, lalu membentuk sinus kronis bersama penurunan berat badan dan kontak TB mendukung suspek skrofuloderma. Rujuk tanpa menunggu konfirmasi final; layanan berkemampuan mengambil aspirat nodus atau jaringan untuk pemeriksaan molekuler, kultur, dan/atau histopatologi. Cairan dari permukaan sinus tidak boleh diperlakukan sebagai pengganti otomatis. Nilai pula TB paru dan HIV, lalu hubungkan pasien serta kontak ke program TB.',
+      panduanResmi: `${PPK} PNPK TB memberi konteks TB ekstraparu, sedangkan WHO Module 3 (2025) merekomendasikan uji molekuler cepat pada aspirat jaringan nodus untuk diagnosis awal TB ekstraparu. Hasil molekuler harus dibaca bersama klinis, anatomi spesimen, histopatologi/kultur bila diperlukan, dan penilaian resistansi.`,
+      catatanRealita: 'Sukamaju tidak diasumsikan mampu mengambil biopsi atau menjalankan TCM lesi onsite. Tugas FKTP adalah mengenali pola, menilai kemungkinan TB paru/komorbid, membuat handoff spesimen dan rujukan yang jelas, mencatat kasus, serta memulai investigasi kontak; jawaban benar bukan menyeka sinus lalu menunggu hasil tanpa tindak lanjut.',
+      mutiaraEbm: 'TB kulit dapat menjadi pintu masuk ke episode TB yang lebih luas. Pemeriksaan paru normal tidak menyingkirkan TB ekstraparu, dan kontak serumah bukan sekadar faktor risiko dalam anamnesis: ia memicu tindakan program terhadap orang lain yang mungkin belum bergejala.',
     },
   },
   {
@@ -214,13 +219,13 @@ const DEFINITIONS: LabDefinition[] = [
         ['q_reaksi', 'rps', 'Bercak mendadak merah-bengkak, demam, atau saraf nyeri?', 'Tidak.', true],
         ['q_kontak', 'rpk', 'Ada kontak serumah dengan kusta?', 'Kakek dulu pernah berobat kusta sampai selesai.', true],
       ],
-      fisik: [['kulit', 'Dua plak hipopigmentasi kering dengan hipoestesia jelas, distribusi asimetris.'], ['neurologis', 'Saraf perifer tidak menebal; kekuatan dan fungsi mata utuh.', true]],
-      lab: [['slit_skin_smear', 'BTA negatif pada sediaan slit-skin smear.', 'normal']],
+      fisik: [['kulit', 'Dua plak hipopigmentasi kering dengan hipoestesia jelas, distribusi asimetris.'], ['neurologis', 'Pemeriksaan saraf tepi, kekuatan, sensibilitas tangan-kaki, dan penutupan mata normal; tidak ada disabilitas derajat 2.', true]],
+      lab: [],
       diagnosisBanding: ['A30', 'B36.0', 'L30.0'],
-      tatalaksana: { obatBenar: ['mdt_kusta_pb'], edukasi: ['kepatuhan_program_kusta', 'tanda_bahaya'], edukasiKritis: ['kepatuhan_program_kusta'] },
-      clue: 'Kehilangan sensasi yang pasti pada lesi kulit adalah tanda kardinal kusta. Dua lesi, BTA negatif, tanpa keterlibatan saraf atau reaksi mendukung PB; registrasi program, MDT sesuai klasifikasi aktif, pemeriksaan fungsi saraf serial, perawatan diri, dan skrining kontak.',
-      panduanResmi: PPK,
-      catatanRealita: 'MDT adalah obat program, bukan stok formularium bebas. Kasus menyatakan diagnosis diregistrasi dan blister tersedia melalui program kusta kabupaten.',
+      tatalaksana: { obatBenar: ['mdt_kusta_pb'], edukasi: ['kepatuhan_program_kusta', 'perawatan_saraf_kusta', 'skrining_kontak_kusta'], edukasiKritis: ['kepatuhan_program_kusta', 'perawatan_saraf_kusta'] },
+      clue: 'Hilangnya sensasi yang pasti pada lesi adalah tanda kardinal kusta, sehingga gambaran klasik ini dapat didiagnosis klinis tanpa mewajibkan slit-skin smear. Satu sampai lima lesi tanpa bacilli yang terbukti diklasifikasikan PB untuk terapi: MDT tiga obat selama enam bulan. Catat fungsi saraf dan derajat disabilitas sebagai baseline lalu pantau serial; reaksi dapat timbul sebelum, selama, atau setelah MDT dan tidak boleh membuat pasien menghentikan MDT sendiri. Skrining kontak dan SDR-PEP hanya berjalan melalui program setelah konseling, persetujuan, serta penilaian kelayakan.',
+      panduanResmi: `${PPK} PNPK kusta menjadi floor nasional. WHO 2018 merekomendasikan rifampisin-dapson-klofazimin selama enam bulan untuk PB; WHO 2020 menempatkan skrining kontak, consent, dan penilaian kelayakan sebelum rifampisin dosis tunggal sebagai intervensi program.`,
+      catatanRealita: 'MDT adalah obat program dan Sukamaju dinyatakan terhubung dengan program kusta kabupaten. Diagnosis klasik tidak dibuat bergantung pada operator slit-skin smear; penelusuran kontak menghormati keputusan pasien tentang pengungkapan diagnosis dan tidak boleh memperkuat stigma.',
     },
   },
   {
@@ -231,17 +236,19 @@ const DEFINITIONS: LabDefinition[] = [
       pembuka: ['Kapan luka muncul dan apakah ada keluhan lain?', 'Sepuluh hari lalu, satu luka bersih tidak nyeri; tiga minggu sebelumnya ada hubungan tanpa kondom.'],
       pertanyaan: [
         ['q_neuro', 'rps', 'Ada sakit kepala berat, gangguan penglihatan/pendengaran, kelemahan, atau kebingungan?', 'Tidak.', true],
-        ['q_hamil', 'rpd', 'Apakah sedang hamil atau mungkin hamil?', 'Tidak.', false, 'P'],
-        ['q_alergi', 'rpd', 'Pernah anafilaksis terhadap penisilin?', 'Tidak pernah.', true],
-        ['q_pasangan', 'sosial', 'Apakah pasangan dapat dihubungi untuk pemeriksaan dan terapi?', 'Bisa.', true],
+        ['q_riwayat_sifilis', 'rpd', 'Pernah didiagnosis atau diobati sifilis sebelumnya, atau pernah ada ruam serupa?', 'Belum pernah dan tidak ada riwayat ruam serupa.', true],
+        ['q_hamil', 'rpd', 'Apakah sedang hamil atau mungkin hamil?', 'Tidak.', true, 'P'],
+        ['q_alergi', 'rpd', 'Pernah sesak, pingsan, bengkak cepat, lepuh luas, atau reaksi berat lain setelah penisilin?', 'Tidak pernah.', true],
+        ['q_pasangan', 'sosial', 'Adakah pasangan seksual baru-baru ini yang dapat ditawari layanan secara rahasia tanpa membahayakan Anda?', 'Ada satu pasangan dan aman untuk dihubungi secara sukarela.', true],
       ],
       fisik: [['kulit', 'Ulkus genital tunggal, dasar bersih, tepi tegas, tidak nyeri; limfadenopati inguinal tidak nyeri.'], ['neurologis', 'Tidak ada defisit atau tanda neurosifilis.', true]],
       lab: [['tes_sifilis', 'Tes treponemal reaktif dan RPR reaktif 1:32.', 'abnormal'], ['tes_hiv_serial', 'Tes HIV serial nonreaktif.', 'normal']],
       diagnosisBanding: ['A51', 'A60.0', 'A57'],
-      tatalaksana: { obatBenar: ['benzatin_penisilin_24juta'], edukasi: ['cegah_ims_pasangan', 'tanda_bahaya'], edukasiKritis: ['cegah_ims_pasangan'] },
+      tatalaksana: { obatBenar: ['benzatin_penisilin_24juta'], edukasi: ['tindak_lanjut_sifilis', 'layanan_pasangan_sifilis', 'reaksi_jarisch_herxheimer'], edukasiKritis: ['tindak_lanjut_sifilis', 'layanan_pasangan_sifilis'] },
       konfirmasiWajib: 'tes_sifilis',
-      clue: 'Chancre tunggal tidak nyeri dan serologi reaktif mendukung sifilis primer. Benzathine penicillin G 2,4 juta unit IM dosis tunggal, skrining HIV/IMS, penelusuran pasangan, dan tindak lanjut titer; gejala neurologis/okular atau kehamilan dengan alergi penisilin memerlukan jalur khusus.',
-      panduanResmi: PPK,
+      clue: 'Chancre tunggal tidak nyeri dan serologi treponemal plus RPR reaktif mendukung sifilis primer. Beri benzathine penicillin G 2,4 juta unit IM dosis tunggal, dokumentasikan titer awal, dan jadwalkan RPR kuantitatif untuk menilai respons. Nilai gejala neurologis, okular, dan otik; status kehamilan wajib diketahui karena penicillin adalah terapi yang terbukti mencegah sifilis kongenital dan alergi pada kehamilan memerlukan jalur desensitisasi spesialis. Jelaskan Jarisch-Herxheimer, ulang tes HIV sesuai window period/risiko, dan hindari hubungan sampai sedikitnya tujuh hari setelah terapi serta pasangan telah ditangani.',
+      panduanResmi: `${PPK} Permenkes 23/2022 menjadi floor layanan IMS nasional. WHO 2024 mempertahankan benzathine penicillin untuk sifilis dini dan menekankan testing serta partner services yang sukarela, rahasia, berpusat pada pasien, dan menilai risiko kekerasan.`,
+      catatanRealita: 'Benzathine penicillin tercantum dalam formularium, tetapi pemberian tetap memerlukan skrining alergi dan kesiapan menangani reaksi segera. Pasangan ditawari evaluasi dan terapi berdasarkan tahap serta waktu pajanan; tidak ada pengungkapan diagnosis atau pelacakan koersif.',
     },
   },
   {
@@ -262,6 +269,7 @@ const DEFINITIONS: LabDefinition[] = [
       konfirmasiWajib: 'mikroskopis_gram_koh',
       clue: 'Alopesia berskuama dengan rambut patah/black dots adalah tinea kapitis. Infeksi folikel memerlukan antijamur sistemik berbasis berat badan; terapi topikal saja tidak cukup. Periksa kontak, hewan, dan respons; rujuk bila kerion berat atau diagnosis meragukan.',
       panduanResmi: PPK,
+      catatanRealita: 'KOH rambut pada encounter ini adalah hasil jadwal laboratorium dengan mikroskop, consumable, dan operator yang dinyatakan ready. Bila jalur konfirmasi tidak ready, jangan memulai antijamur sistemik secara empiris; kirim spesimen/rujuk terkoordinasi sambil menangani transmisi dan red flag.',
     },
   },
   {
@@ -282,6 +290,7 @@ const DEFINITIONS: LabDefinition[] = [
       konfirmasiWajib: 'mikroskopis_gram_koh',
       clue: 'Keterlibatan rambut jenggot dengan hifa memerlukan antijamur sistemik, bukan krim saja. Hentikan berbagi alat cukur dan evaluasi sumber hewan; inflamasi berat, abses, atau respons buruk perlu rujuk.',
       panduanResmi: PPK,
+      catatanRealita: 'KOH rambut pada encounter ini adalah hasil jadwal laboratorium dengan mikroskop, consumable, dan operator yang dinyatakan ready. Bila jalur konfirmasi tidak ready, jangan memulai antijamur sistemik secara empiris; kirim spesimen/rujuk terkoordinasi dan hindari steroid yang menyamarkan lesi.',
     },
   },
   ...([
@@ -307,6 +316,7 @@ const DEFINITIONS: LabDefinition[] = [
       konfirmasiWajib: 'mikroskopis_gram_koh',
       clue: `Tepi aktif berskuama, central clearing, dan KOH berhifa mendukung ${nama.toLowerCase()}. Gunakan antijamur topikal cukup lama dan lanjutkan setelah lesi membaik; hindari steroid tunggal.`,
       panduanResmi: PPK,
+      catatanRealita: 'Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Pada lesi tipikal terbatas, ketiadaan KOH tidak memaksa rujuk atau terapi sistemik; gunakan terapi topikal dengan safety-net dan evaluasi ulang bila atipikal atau gagal.',
     },
   })),
   {
@@ -347,6 +357,7 @@ const DEFINITIONS: LabDefinition[] = [
       tatalaksana: { obatBenar: ['ketokonazol_krim'], edukasi: ['higiene_jamur_kulit', 'kontrol_rutin'] },
       clue: 'Makula ber-skuama halus di trunkus dengan sensasi normal dan KOH khas Malassezia mendukung pitiriasis versikolor. Jelaskan warna kulit pulih lebih lambat daripada eradikasi jamur dan kekambuhan umum.',
       panduanResmi: PPK,
+      catatanRealita: 'Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Bila tidak ready, morfologi dan distribusi tipikal dapat ditangani topikal dengan safety-net; gangguan sensasi atau pola atipikal harus membuka kembali diagnosis banding.',
     },
   },
   {
@@ -370,22 +381,25 @@ const DEFINITIONS: LabDefinition[] = [
   {
     catalogId: 'filariasis',
     spec: {
-      id: 'lab_filariasis_terkonfirmasi', nama: 'Filariasis Limfatik Terkonfirmasi', icd10: 'B74', kategori: 'kulit', prevalensi: 'rendah',
-      keluhanUtama: 'Tungkai saya beberapa kali bengkak dan demam setelah tinggal di daerah endemis.', usia: [18, 65], vital: { ...NORMAL, suhu: 37.3 },
+      id: 'lab_filariasis_terkonfirmasi', nama: 'Filariasis Limfatik Terkonfirmasi Program', icd10: 'B74', kategori: 'kulit', prevalensi: 'rendah',
+      keluhanUtama: 'Tungkai saya beberapa kali bengkak dan demam setelah bekerja di daerah endemis filariasis.', usia: [18, 65], vital: { ...NORMAL, suhu: 37.3 },
       pembuka: ['Bagaimana pola bengkak dan demamnya?', 'Berulang beberapa bulan; selangkangan nyeri saat demam lalu tungkai membengkak.'],
       pertanyaan: [
-        ['q_daerah', 'sosial', 'Pernah tinggal lama di daerah endemis dan sering digigit nyamuk malam?', 'Tiga tahun bekerja di daerah endemis dan sering digigit nyamuk.', true],
+        ['q_daerah', 'sosial', 'Pernah tinggal lama di daerah endemis dan sering digigit nyamuk malam?', 'Tiga tahun bekerja di daerah endemis filariasis di Nusa Tenggara Timur dan sering digigit nyamuk.', true],
         ['q_akut', 'rps', 'Sekarang ada kemerahan cepat, luka, atau demam tinggi?', 'Tidak, saat ini hanya bengkak ringan.', true],
-        ['q_obat', 'rpd', 'Pernah mengikuti pengobatan filariasis atau punya penyakit berat?', 'Belum pernah.', true],
+        ['q_obat', 'rpd', 'Pernah mengikuti pengobatan filariasis, punya penyakit berat, atau memakai obat rutin?', 'Belum pernah dan tidak memakai obat rutin.', true],
+        ['q_koendemis', 'sosial', 'Pernah tinggal atau bepergian lama ke wilayah onchocerciasis atau loiasis di Afrika?', 'Tidak pernah bepergian ke Afrika.', true],
+        ['q_hamil', 'rpd', 'Apakah sedang hamil atau mungkin hamil?', 'Tidak.', true, 'P'],
+        ['q_hidrokel', 'rps', 'Ada pembengkakan atau rasa berat pada skrotum?', 'Tidak ada.', false, 'L'],
       ],
       fisik: [['ekstremitas', 'Edema unilateral ringan dengan penebalan kulit awal, tanpa selulitis akut.'], ['kulit', 'Tidak ada ulkus atau infeksi interdigital aktif.', true]],
       lab: [['apusan_darah_mikrofilaria', 'Mikrofilaria terdeteksi pada apusan darah malam.', 'abnormal']],
       diagnosisBanding: ['B74', 'I89.0', 'I82.4'],
-      tatalaksana: { obatBenar: ['dietilkarbamazin_100', 'albendazol_400'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
+      tatalaksana: { obatBenar: ['dietilkarbamazin_100', 'albendazol_400'], edukasi: ['alur_program_filariasis', 'perawatan_limfedema_filariasis', 'cegah_gigitan_filariasis'], edukasiKritis: ['alur_program_filariasis', 'perawatan_limfedema_filariasis'] },
       konfirmasiWajib: 'apusan_darah_mikrofilaria',
-      clue: 'Paparan endemis, episode adenolimfangitis, edema limfatik, dan mikrofilaria malam mendukung filariasis. Terapi harus mengikuti program/dosis berbasis berat badan dan epidemiologi setempat, disertai perawatan tungkai serta pencegahan gigitan; jangan terapi massal improvisasi pada diagnosis belum pasti.',
-      panduanResmi: PPK,
-      catatanRealita: 'Pemeriksaan malam dan obat program dijadwalkan melalui jejaring kabupaten; keduanya tidak diasumsikan selalu tersedia spontan di meja poli.',
+      clue: 'Paparan endemis, episode adenolimfangitis, limfedema, dan mikrofilaria malam mendukung filariasis limfatik. Kasus individual terkonfirmasi masuk program untuk regimen berbasis berat badan dan ko-endemisitas; satu resep tidak sama dengan POPM/MDA wilayah. Perawatan seumur hidup mencakup cuci-keringkan tungkai dan sela jari, rawat pintu masuk infeksi, latihan, elevasi, tata serangan akut, serta rujuk hidrokel. Temuan kasus memicu pencatatan dan penilaian fokus; keputusan POPM memerlukan pemetaan endemisitas, kelayakan populasi, cakupan, dan program kabupaten.',
+      panduanResmi: `${PPK} Permenkes 3/2026 adalah payung penanggulangan penyakit yang berlaku dan mencabut sebagian besar Permenkes 94/2014 kecuali ketentuan yang dinyatakan tetap. WHO 2024 memisahkan dua pilar: pemutusan transmisi dengan kemoterapi pencegahan programatik dan pengurangan disabilitas melalui paket MMDP. Regimen DEC-albendazol pada pasien ini tetap harus diverifikasi program menurut berat badan, spesies, ko-endemisitas, kehamilan, dan kontraindikasi; jangan menyalin regimen MDA menjadi terapi improvisasi.`,
+      catatanRealita: 'Apusan darah malam dan obat program dijadwalkan melalui jejaring kabupaten; keduanya tidak diasumsikan tersedia spontan di meja poli. Puskesmas mendaftarkan kasus dan menghubungkan tindak lanjut fokus serta MMDP, sedangkan keputusan POPM berada pada program setelah penilaian wilayah.',
     },
   },
   {
@@ -481,7 +495,7 @@ const DEFINITIONS: LabDefinition[] = [
       tatalaksana: { obatBenar: ['hidrokortison_krim', 'emolien_petrolatum'], edukasi: ['jaga_kelembapan_kulit', 'kontrol_rutin'] },
       clue: 'Plak eksematosa berbentuk koin tanpa central clearing dan KOH negatif mendukung dermatitis numularis. Pulihkan sawar kulit dan gunakan steroid topikal singkat; jangan memberi antijamur hanya karena bentuknya bulat.',
       panduanResmi: PPK,
-      catatanRealita: 'Petrolatum adalah emolien pengadaan lokal, bukan item Fornas. Skenario tidak bergantung pada merek tertentu dan menerima emolien sederhana tanpa pewangi yang setara.',
+      catatanRealita: 'Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini; hasil negatif membantu ketika morfologi tumpang tindih dengan tinea, tetapi bukan syarat semua kasus tipikal. Petrolatum adalah emolien pengadaan lokal, bukan item Fornas; emolien sederhana tanpa pewangi yang setara dapat dipakai.',
     },
   },
   {
@@ -674,7 +688,7 @@ const DEFINITIONS: LabDefinition[] = [
     catalogId: 'blunt_trauma',
     spec: {
       id: 'lab_trauma_tumpul_kepala_ringan', nama: 'Trauma Tumpul Kepala Risiko Rendah', icd10: 'S00-S09', kategori: 'gawat', prevalensi: 'sedang',
-      keluhanUtama: 'Kepala terbentur lemari, tetapi saya tidak pingsan.', usia: [15, 65], vital: NORMAL,
+      keluhanUtama: 'Kepala terbentur lemari, tetapi saya tidak pingsan.', usia: [15, 59], vital: NORMAL,
       pembuka: ['Bagaimana benturan terjadi dan apa yang dirasakan sesudahnya?', 'Terbentur dari posisi berdiri dua jam lalu, sakit ringan, tetap ingat semua kejadian.'],
       pertanyaan: [
         ['q_redflag', 'rps', 'Ada pingsan, muntah berulang, kejang, amnesia, sakit kepala memburuk, lemah, atau cairan dari hidung/telinga?', 'Tidak.', true],
@@ -684,8 +698,8 @@ const DEFINITIONS: LabDefinition[] = [
       fisik: [['neurologis', 'GCS 15, pupil isokor-reaktif, tanpa defisit, gait normal.'], ['kepala_leher', 'Hematoma scalp kecil; tidak ada tanda fraktur basis kranii atau nyeri servikal.']],
       diagnosisBanding: ['S00-S09', 'S06.0', 'S06.5'],
       tatalaksana: { obatBenar: ['paracetamol_500'], prosedur: ['observasi_neurologis'], edukasi: ['tanda_bahaya', 'kontrol_rutin'], edukasiKritis: ['tanda_bahaya'] },
-      clue: 'Trauma kepala ringan GCS 15 tanpa red flag dapat diobservasi serial dan dipulangkan dengan pendamping serta instruksi kembali yang jelas. Antikoagulan, penurunan kesadaran, defisit, kejang, muntah berulang, tanda fraktur, atau perburukan mengubah ambang rujuk/imaging.',
-      panduanResmi: PPK,
+      clue: 'Trauma kepala ringan GCS 15 tanpa red flag dapat diobservasi serial dan dipulangkan dengan pendamping serta instruksi kembali yang jelas. GCS <15 yang belum pulih, usia di atas 60 tahun, muntah lebih dari dua kali, defisit, tanda fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, antikoagulan, intoksikasi, atau mekanisme berbahaya mengubah alur menjadi CT/rujuk.',
+      panduanResmi: `${PNPK_COT_2022} Kasus ini sengaja dibatasi pada usia 15-59 tahun, GCS tetap 15, mekanisme energi rendah, pemeriksaan neurologis normal, dan tanpa kriteria CT PNPK. Pulang hanya aman setelah observasi serial stabil, ada pendamping, serta instruksi kembali; bila observasi aman atau akses evaluasi lanjutan tidak dapat dijamin, rujuk.`,
     },
   },
   {
@@ -703,7 +717,7 @@ const DEFINITIONS: LabDefinition[] = [
       diagnosisBanding: ['S00-S09', 'T14.1', 'S06.0'],
       tatalaksana: { obatBenar: [], obatOpsional: ['paracetamol_500'], prosedur: ['perawatan_luka', 'hecting_luka', 'profilaksis_tetanus'], edukasi: ['rawat_luka_tetanus', 'tanda_bahaya'] },
       clue: 'Pada luka tajam kepala, nilai GCS, gejala neurologis, fraktur, kedalaman, kontaminasi, dan benda asing sebelum anestesi/penutupan. Irigasi dan jahit hanya luka kulit kepala sederhana; penurunan kesadaran, defisit, fraktur, penetrasi, perdarahan tak terkendali, atau benda asing perlu rujuk.',
-      panduanResmi: PPK,
+      panduanResmi: `${PNPK_TRAUMA_2017} Pada laserasi kulit kepala, singkirkan lebih dulu gangguan ABC, cedera otak, fraktur, penetrasi, perdarahan tak terkendali, kontaminasi berat, dan benda asing. Irigasi serta penutupan di FKTP hanya untuk luka superfisial sederhana setelah penilaian tersebut; evaluasi status tetanus tetap wajib.`,
     },
   },
 ]

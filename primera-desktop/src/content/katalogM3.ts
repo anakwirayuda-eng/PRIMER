@@ -77,7 +77,7 @@ export const OBAT_M3: Record<string, Obat> = {
   // -- Mata / THT / kulit --
   gentamisin_tetes_mata: { id: 'gentamisin_tetes_mata', nama: 'Gentamisin Tetes Mata 0,3%', kelas: 'antibiotik mata', golonganAlergi: 'aminoglikosida', sediaan: 'tetes mata', hargaBeli: 4000, hargaJual: 8000, fornas: true, antibiotik: true },
   timolol_tetes_mata: { id: 'timolol_tetes_mata', nama: 'Timolol Tetes Mata 0,5%', kelas: 'antiglaukoma', sediaan: 'tetes mata', hargaBeli: 9000, hargaJual: 18000, fornas: true },
-  air_mata_buatan: { id: 'air_mata_buatan', nama: 'Air Mata Buatan (Hipromelosa)', kelas: 'lubrikan mata', sediaan: 'tetes mata', hargaBeli: 6000, hargaJual: 12000, fornas: true },
+  air_mata_buatan: { id: 'air_mata_buatan', nama: 'Air Mata Buatan (Karboksimetilselulosa)', kelas: 'lubrikan mata', sediaan: 'tetes mata', hargaBeli: 6000, hargaJual: 12000, fornas: true },
   oksimetazolin_spray: { id: 'oksimetazolin_spray', nama: 'Oksimetazolin Semprot Hidung', kelas: 'dekongestan topikal', sediaan: 'semprot hidung', hargaBeli: 7000, hargaJual: 14000, fornas: true },
   pseudoefedrin_30: { id: 'pseudoefedrin_30', nama: 'Pseudoefedrin 30 mg', kelas: 'dekongestan oral', sediaan: 'tablet', hargaBeli: 200, hargaJual: 500, fornas: true },
   loratadin_10: { id: 'loratadin_10', nama: 'Loratadin 10 mg', kelas: 'antihistamin non-sedatif', sediaan: 'tablet', hargaBeli: 250, hargaJual: 600, fornas: true },

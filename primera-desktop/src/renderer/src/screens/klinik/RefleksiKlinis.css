@@ -1,0 +1,163 @@
+.refleksi {
+  margin-top: var(--sp-3);
+  border-top: 1px solid var(--border-halus);
+  padding-top: var(--sp-2);
+}
+
+.refleksi > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 2.25rem;
+  color: var(--tinta);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.refleksi > summary::marker {
+  color: var(--daun-700);
+}
+
+.refleksi > summary:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 3px;
+}
+
+.refleksi__durasi {
+  margin-left: auto;
+  color: var(--tinta-lembut);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+.refleksi__isi {
+  padding: 0.55rem 0 0.15rem;
+}
+
+.refleksi__kontras {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0 0 0.75rem;
+}
+
+.refleksi__kontras > div {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 0.28fr) 1fr;
+  gap: 0.7rem;
+}
+
+.refleksi__kontras dt {
+  color: var(--tinta-lembut);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.refleksi__kontras dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--baris-normal);
+}
+
+.refleksi__fokus,
+.refleksi__pertanyaan {
+  margin: 0 0 0.55rem;
+}
+
+.refleksi__pertanyaan {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: var(--baris-normal);
+}
+
+.refleksi__pilihan {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.refleksi__opsi {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--tinta);
+  font: inherit;
+  font-size: var(--text-sm);
+  line-height: var(--baris-normal);
+  text-align: left;
+  cursor: pointer;
+}
+
+.refleksi__opsi:hover {
+  border-color: var(--daun-700);
+}
+
+.refleksi__opsi--aktif {
+  border-color: var(--daun-700);
+  box-shadow: inset 3px 0 0 var(--daun-700);
+}
+
+.refleksi__opsi:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 2px;
+}
+
+.refleksi__respons {
+  margin: 0.45rem 0 0;
+  padding-left: 0.65rem;
+  border-left: 3px solid var(--kunyit-700);
+  font-size: var(--text-xs);
+  line-height: var(--baris-normal);
+}
+
+.refleksi__respons--benar {
+  border-left-color: var(--daun-700);
+}
+
+.refleksi__lanjutan,
+.refleksi__selesai {
+  margin-top: 0.75rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--border-halus);
+}
+
+.refleksi__ucapan {
+  margin: 0 0 0.65rem;
+  padding: 0.55rem 0.7rem;
+  border-left: 3px solid var(--tinta-biru);
+  background: var(--wash-biru);
+  color: var(--tinta);
+  font-size: var(--text-sm);
+  line-height: var(--baris-normal);
+}
+
+.refleksi__ucapan--akhir {
+  margin-top: 0.55rem;
+  border-left-color: var(--daun-700);
+  background: var(--wash-daun);
+}
+
+.refleksi__selesai p {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--baris-normal);
+}
+
+.refleksi__sumber {
+  margin: 0.7rem 0 0;
+  line-height: 1.45;
+}
+
+.refleksi__sumber a {
+  color: var(--tinta-biru);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .refleksi__kontras > div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}

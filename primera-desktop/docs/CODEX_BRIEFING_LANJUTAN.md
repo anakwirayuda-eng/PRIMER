@@ -5,6 +5,28 @@ REVISI_ENGINE 41. **Baseline saat ditulis**: branch `codex-gpt56-experiment`, wo
 commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua hijau**,
 `npm run typecheck` bersih, `REVISI_ENGINE = 41` (`src/engine/verifikasi.ts:578`).
 
+> **PENUTUPAN CODEX 2026-07-19 — WAVE 1-21 SELESAI:**
+> sapuan M13-137 telah menutup seluruh temuan mekanis yang dapat diperbaiki
+> tanpa physician adjudication. Artefak kini menghasilkan `137 cocok / 0
+> perlu-koreksi / 0 tak-ada-sumber`; PPK `91 direct / 15 related / 31 absent`,
+> PNPK `27 direct`, EBM `66 direct`, resource Tier C/D `47/47` ter-grounding,
+> dan KFA `67/67` terpetakan. Kasus tetap berstatus
+> `lab_prototype_unadjudicated`, Career-only, dan tidak masuk pool Ujian:
+> hasil compiler ini adalah kesiapan untuk review dokter, bukan pengganti
+> keputusan dokter. Gerbang mesin final: `123` file / `1191` test lulus,
+> freeze `18/18`, typecheck, lisensi BGM, dan production build lulus pada
+> `REVISI_ENGINE = 53`.
+
+> **STATUS AKTIF 2026-07-19 — MENGGANTIKAN INSTRUKSI BRIDGE LAMA DI BAWAH:**
+> Dr. Wirayuda menetapkan UKM dan UKP sebagai pilar ko-primer PRIMERA
+> (`M13_KICKOFF_PROMPT.md` rev 4.2.4). Bridge B1 dan B2 sudah diimplementasikan;
+> kalimat lama yang menyebut B2 “ditahan” kini hanya jejak historis, bukan
+> instruksi aktif. Gap aktif yang masih harus ditutup sebelum klaim final
+> “well developed/wow” adalah: pemulihan parsial untuk encounter grade B,
+> kedalaman arc keluarga yang belum merata, pemetaan encounter biasa yang
+> masih selektif, dan playtest manusia 2-3 mahasiswa/proxy. Jangan self-certify
+> empat hal ini dari tes mesin.
+
 > **UPDATE TERBARU 2026-07-17 (malam):** §2.1 dan §2.2 SELESAI, KEDUANYA
 > diverifikasi independen oleh Claude (bukan cuma terima laporan Anda — suite
 > dijalankan ulang, test baru dibaca manual, angka dicek tangan):

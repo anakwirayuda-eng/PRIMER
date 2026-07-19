@@ -204,6 +204,7 @@ export type KelompokTindakan =
   | 'gawat'
   | 'napas_cairan'
   | 'luka'
+  | 'infeksi'
   | 'fraktur'
   | 'tht_mata'
   | 'mata'
@@ -215,6 +216,7 @@ export const URUTAN_KELOMPOK_TINDAKAN: readonly KelompokTindakan[] = [
   'gawat',
   'napas_cairan',
   'luka',
+  'infeksi',
   'fraktur',
   'tht_mata',
   'mata',
@@ -225,8 +227,9 @@ export const URUTAN_KELOMPOK_TINDAKAN: readonly KelompokTindakan[] = [
 
 export const LABEL_KELOMPOK_TINDAKAN: Record<KelompokTindakan, string> = {
   gawat: 'Stabilisasi & Gawat Darurat',
-  napas_cairan: 'Napas & Cairan',
+  napas_cairan: 'Napas, Cairan & Suportif',
   luka: 'Luka, Luka Bakar & Bedah Minor',
+  infeksi: 'Infeksi & Kendali Sumber',
   fraktur: 'Fraktur & Imobilisasi',
   tht_mata: 'THT & Vestibular',
   mata: 'Mata',
@@ -255,17 +258,23 @@ export const KELOMPOK_TINDAKAN_BY_ID: Record<string, KelompokTindakan> = {
 
   nebulisasi: 'napas_cairan',
   nebulisasi_burst_asma_anak: 'napas_cairan',
+  akses_iv_tanpa_bolus: 'napas_cairan',
   pasang_infus: 'napas_cairan',
   rehidrasi_plan_c_bayi: 'napas_cairan',
+  tiamin_hiperemesis: 'napas_cairan',
 
   perawatan_luka: 'luka',
   hecting_luka: 'luka',
   balut_luka_steril: 'luka',
-  insisi_abses: 'luka',
+  insisi_abses: 'infeksi',
   ekstraksi_kuku: 'luka',
   pendinginan_luka_bakar: 'luka',
   balut_luka_bakar: 'luka',
   profilaksis_tetanus: 'luka',
+
+  antibiotik_parenteral_kaki_diabetik_protokol: 'infeksi',
+  antibiotik_parenteral_mastoiditis_anak_protokol: 'infeksi',
+  balut_luka_kaki_diabetik_pra_rujuk: 'infeksi',
 
   imobilisasi_bidai: 'fraktur',
   antibiotik_parenteral_fraktur_protokol: 'fraktur',
@@ -276,6 +285,8 @@ export const KELOMPOK_TINDAKAN_BY_ID: Record<string, KelompokTindakan> = {
   tampon_epistaksis: 'tht_mata',
   ekstraksi_benda_hidung_tekanan_positif: 'tht_mata',
   ekstraksi_benda_hidung_blind_probing: 'tht_mata',
+  pembersihan_telinga_kering_pra_rujuk: 'tht_mata',
+  kompres_hangat_furunkel_hidung: 'tht_mata',
   manuver_epley: 'tht_mata',
   ekstraksi_benda_asing_konjungtiva: 'mata',
   epilasi_trikiasis: 'mata',
@@ -285,7 +296,10 @@ export const KELOMPOK_TINDAKAN_BY_ID: Record<string, KelompokTindakan> = {
   konseling_laktasi: 'ibu_anak',
   perawatan_tali_pusat: 'ibu_anak',
   antibiotik_parenteral_neonatus_protokol: 'ibu_anak',
+  koreksi_hipoglikemia_gizi_buruk_anak: 'ibu_anak',
+  antibiotik_parenteral_gizi_buruk_protokol: 'ibu_anak',
   reduksi_parafimosis: 'ibu_anak',
+  antiemetik_parenteral_hiperemesis: 'ibu_anak',
 
   // M13 Batch 4 (kasus tier-rujuk) — laci 'rujuk' tersendiri. Empat entri
   // terakhir SENGAJA di luar lingkup FKTP (hanya muncul sbg tindakanSalahUmum,

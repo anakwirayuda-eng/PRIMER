@@ -17,6 +17,24 @@
 | 4.2.1 | 2026-07-14 | Errata checkpoint: catalog-scoped items, dossier release, UKM evidence, closure gates | **Aktif** — source of truth M13 |
 | 4.2.2 | 2026-07-15 | Formalisasi prinsip floor+graceful-degradation (Keputusan 1) + sumber ASPAK/KFA | **Aktif** — amandemen governance, bukan revisi struktural |
 | 4.2.3 | 2026-07-15 | M13-RP1: baseline resource naratif diterima; simulasi readiness engine ditunda | **Aktif** — batas scope M13-1a |
+| 4.2.4 | 2026-07-19 | UKM dan UKP ditetapkan sebagai pilar ko-primer; mutu bridge dinilai dari loop kausal tertutup | **Aktif** — DNA produk lintas milestone |
+
+## Governance — UKM dan UKP sebagai pilar ko-primer (2026-07-19)
+
+dr. Anak Agung Bagus Wirayuda menetapkan bahwa UKM sejak awal bukan sekadar
+pendamping UKP. PRIMERA harus mengajarkan tindakan klinis individual sekaligus
+konsekuensi keluarga, populasi, program, jejaring, dan kontinuitasnya secara
+substantif. Keputusan ini menjadi kriteria penerimaan lintas milestone:
+
+- bridge harus timbal balik dan kausal, bukan sekadar tautan atau narasi;
+- keputusan UKM harus dapat mengubah keadaan yang kelak terbaca kembali oleh
+  klinik, keluarga, program, atau RS bila hubungan itu memang relevan;
+- keputusan UKP harus dapat menghasilkan tindak lanjut komunitas atau program
+  bila secara klinis dan epidemiologis memang diperlukan;
+- kedalaman dinilai dari agency, feedback, konsekuensi, closure, dan transfer
+  belajar, bukan dari kewajiban menyamakan jumlah kasus atau waktu layar;
+- kualitas pengalaman pemain harus divalidasi lewat playtest manusia sebelum
+  diberi klaim final “well developed” atau “wow”.
 
 ## Governance — prinsip floor + graceful degradation (ditetapkan dr. Wirayuda, 2026-07-15)
 
@@ -529,3 +547,32 @@ Verifikasi final pada working tree yang sama:
 - SHA-256 executable:
   `9775289E8E625A94493B90BDAC0E1B3A9175D29182291EA88980544FF0D8CD7C`;
 - `git diff --check`: lulus.
+
+## M13-137 compiler closure, Wave 1-21 (2026-07-19)
+
+Wave 1-21 menyelesaikan audit mekanis lintas seluruh 137 prototipe klinik:
+provenance PPK/PNPK/EBM, pemetaan Fornas dan KFA, resource realism ASPAK,
+over-testing first-contact, ketepatan disposisi, serta kontrak isi anamnesis,
+diagnosis, terapi, edukasi, dan debrief. Perubahan penting pada wave penutup
+mencakup penghapusan lab/imaging yang tidak mengubah disposisi akut, pelabelan
+diagnosis kerja yang belum terkonfirmasi, larangan regimen diuretik buta pada
+sirosis dekompensata dengan ensefalopati overt, dan koreksi tiga atribusi PPK
+yang tidak didukung crosswalk.
+
+Status artefak final:
+
+- compiler: **137 cocok / 0 perlu-koreksi / 0 tak-ada-sumber**;
+- PPK: **91 direct / 15 related / 31 absent**;
+- PNPK direct: **27 kasus**;
+- EBM direct: **66 kasus**;
+- resource Tier C/D: **47 teridentifikasi / 47 ter-grounding / 0 unresolved**;
+- KFA: **67 obat terpetakan / 0 unresolved**;
+- regresi: **123 file / 1191 test lulus**, freeze **18/18**, typecheck,
+  pemeriksaan lisensi BGM, dan production build lulus;
+- engine baseline: `REVISI_ENGINE = 53`.
+
+**Batas keputusan tetap:** semua 137 kasus masih membawa
+`activationStatus: lab_prototype_unadjudicated`, hanya tersedia pada mode
+Karier lab dan tetap terisolasi dari Ujian. “Cocok” adalah hasil compiler
+berbasis kelengkapan dan konsistensi sumber, bukan physician sign-off. Tidak
+ada status adjudikasi yang dinaikkan secara otomatis pada wave ini.

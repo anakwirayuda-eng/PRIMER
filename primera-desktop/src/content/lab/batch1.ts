@@ -39,9 +39,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { region: 'toraks_paru', temuan: 'Gerak dada simetris; ronki halus dan suara napas bronkial fokal basal kanan.', relevan: true },
       { region: 'jantung', temuan: 'S1/S2 reguler, perfusi perifer baik.', relevan: false },
     ],
-    lab: [
-      { id: 'darah_rutin', hasil: 'Leukosit 13.200/uL, neutrofil dominan.', flag: 'tinggi', relevan: true },
-    ],
+    lab: [],
     diagnosisBanding: ['J18.9', 'J20.9', 'A15.0'],
     tatalaksana: {
       obatBenar: ['amoxicillin_500', 'paracetamol_500'],
@@ -53,7 +51,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     },
     clue: 'Pneumonia komunitas rawat jalan: gejala akut plus temuan paru fokal, tanpa instabilitas atau komorbid. Permenkes 28/2021 memuat amoksisilin oral 500 mg tiap 8 jam selama 5-7 hari; nilai derajat berat dan evaluasi 48-72 jam.',
     panduanResmi: 'PNPK Pneumonia Dewasa KMK 2147/2023 mewajibkan penilaian derajat berat; PPK FKTP membolehkan rawat jalan bila klinis baik dan tidak ada indikasi rawat.',
-    catatanRealita: 'Rontgen memperkuat diagnosis PNPK tetapi tidak diasumsikan tersedia di Puskesmas Sukamaju; vignette rawat jalan ini memakai sindrom klinis jelas dan memberi instruksi kembali bila memburuk.',
+    catatanRealita: 'Rontgen memperkuat diagnosis PNPK tetapi tidak diasumsikan tersedia di Puskesmas Sukamaju; hitung darah juga tidak diperlukan untuk memutuskan terapi pada vignette low-severity yang klinisnya jelas. Nilai CRB65, beri instruksi kembali, dan evaluasi ulang bila memburuk.',
     konsekuensi: {
       narasi: 'Keterlambatan antibiotik yang tepat atau kegagalan mengenali perburukan dapat berakhir pada hipoksemia dan rawat inap.',
       kembaliHariMin: 2,
@@ -146,9 +144,9 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       edukasi: ['cegah_pertusis', 'etika_batuk', 'kepatuhan_obat', 'tanda_bahaya'],
       edukasiKritis: ['cegah_pertusis'],
     },
-    clue: 'Paroksisme batuk, inspiratory whoop, dan muntah pascabatuk sangat khas pertusis. CDC 2025 merekomendasikan makrolida; terapi dini mengurangi keparahan dan terapi dalam tiga minggu pada usia >=1 tahun membatasi penularan.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak memiliki jalur pertusis tersendiri. Pada kasus ini makrolida dini, etika batuk, pembatasan kontak, dan koordinasi surveilans mengikuti CDC Clinical Care of Pertussis 2025 serta kerangka kewaspadaan KLB Permenkes 1/2026; profilaksis kontak diprioritaskan pada kontak berisiko tinggi melalui program setempat.`,
-    catatanRealita: 'Koordinasikan surveilans dan profilaksis kontak berisiko tinggi melalui program setempat; jangan menyamakan resep pasien indeks dengan keputusan profilaksis semua kontak.',
+    clue: 'Batuk paroksismal dengan whoop dan muntah pascabatuk selama 12 hari membuat suspek klinis pertusis kuat, tetapi belum merupakan konfirmasi laboratorium. Karena pasien sering menggendong bayi, CDC 2025 mendukung terapi sebelum hasil; pada usia >=1 tahun terapi diberikan dalam tiga minggu sejak batuk, dengan makrolida seperti azitromisin. Ambil swab nasofaring untuk PCR/kultur melalui jejaring bila tersedia, tanpa menunda terapi.',
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak memiliki jalur pertusis tersendiri. CDC Clinical Care dan Laboratory Testing 2025 serta WHO Pertussis Surveillance Standards menjadi grounding diagnosis, waktu terapi, dan pemeriksaan. Suspek dilaporkan dan ditelusuri melalui kerangka Permenkes 1/2026 dan Permenkes 3/2026. Hindari kontak dengan bayi atau kelompok rentan sampai lima hari antibiotik efektif; PEP dinilai untuk kontak serumah/berisiko tinggi melalui program, bukan disalin massal dari resep pasien indeks.`,
+    catatanRealita: 'PCR/kultur dan media khusus tidak diasumsikan tersedia di Sukamaju; koordinasikan spesimen dan pelaporan lewat jejaring surveilans. Karena riwayat kuat dan ada kontak bayi, terapi tidak menunggu hasil. PEP adalah penilaian kesehatan masyarakat untuk kontak serumah/berisiko tinggi, bukan resep massal pemain.',
   }),
 
   buatKasusLab({
@@ -264,14 +262,17 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     tatalaksana: {
       obatBenar: ['mupirosin_krim'],
       obatOpsional: ['paracetamol_500'],
+      prosedur: ['kompres_hangat_furunkel_hidung'],
       tindakanSalahUmum: [
         { id: 'insisi_abses', alasan: 'Lesi kecil belum fluktuatif di segitiga wajah tidak boleh diinsisi atau dipencet secara serampangan.', bahaya: 'berbahaya' },
       ],
       edukasi: ['jangan_pencet_furunkel_hidung', 'kebersihan_kulit', 'tanda_bahaya'],
       edukasiKritis: ['jangan_pencet_furunkel_hidung'],
     },
-    clue: 'Furunkel vestibulum nasi: nyeri fokal dan pustul di folikel. Kompres hangat dan terapi topikal pada lesi lokal; jangan dipencet karena risiko penyebaran infeksi pada segitiga wajah. Rujuk bila selulitis menyebar atau komplikasi orbita/neurologis.',
-    panduanResmi: `${PPK_FLOOR} PPK melarang pasien memencet atau menginsisi sendiri dan memasukkan terapi antimikroba serta kompres hangat.`,
+    clue: 'Nyeri fokal dan pustul pada folikel vestibulum nasi mendukung furunkel hidung. Pada lesi kecil, lokal, belum fluktuatif, dan tanpa selulitis atau gejala sistemik seperti kasus ini: kompres hangat, antimikroba topikal, analgesia bila perlu, jangan dipencet, dan nilai ulang. Antibiotik sistemik antistafilokokus dipertimbangkan bila infeksi meluas, muncul selulitis atau gejala sistemik, pasien berisiko tinggi, atau respons awal buruk; pilihan mengikuti protokol dan pola resistensi lokal. Edema periorbita, gangguan penglihatan, sakit kepala berat, defisit saraf, atau toksisitas mengubahnya menjadi kasus alih layanan darurat.',
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 memuat kompres hangat, antimikroba, larangan memencet sendiri, serta insisi setelah terbentuk abses. Merck Manual Professional yang ditinjau 2025 menegaskan kompres hangat dan mupirosin topikal, dengan antibiotik sistemik yang disesuaikan derajat penyakit serta kultur bila curiga MRSA. Insisi lesi besar atau gagal terapi adalah tindakan klinis terkontrol, bukan izin memencet lesi kecil di rumah.`,
+    catatanRealita: 'Mupirosin tercantum dalam Fornas 1199/2025 dengan restriksi diagnosis MRSA pada baris formulary; pencantuman itu tidak membuktikan stok atau akses tanpa restriksi di Sukamaju. Kasus ini memakai pilihan topikal sebagai model klinis lesi lokal, sedangkan pengadaan dan substitusi wajib mengikuti formularium serta protokol jejaring.',
+    mutiaraEbm: 'Istilah "segitiga wajah" tidak berarti setiap pustul hidung pasti menyebar ke sinus kavernosus. Nilai pengajarannya adalah mengenali perubahan pola: nyeri dan pustul yang tetap lokal dapat ditangani konservatif, sedangkan perluasan ke ujung hidung, wajah, orbita, gejala sistemik, atau neurologis mengubah urgensi dan jalur layanan.',
   }),
 
   buatKasusLab({
@@ -599,13 +600,14 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B76.0', 'D50.9', 'B77.9'],
     tatalaksana: {
-      obatBenar: ['albendazol_400'],
-      edukasi: ['cegah_cacing_tanah', 'gizi_seimbang', 'tanda_bahaya'],
+      obatBenar: ['albendazol_400', 'tablet_fe'],
+      edukasi: ['rencana_cacing_tambang_anemia', 'cegah_cacing_tanah', 'beda_popm_cacingan'],
+      edukasiKritis: ['rencana_cacing_tambang_anemia', 'cegah_cacing_tanah'],
     },
     konfirmasiWajib: 'feses_rutin',
-    clue: 'Paparan tanah tanpa alas kaki, anemia mikrositik, dan telur cacing pada feses mendukung cacing tambang. WHO merekomendasikan albendazol 400 mg; evaluasi dan koreksi anemia sesuai derajat.',
-    panduanResmi: `${PPK_FLOOR} Program Penanggulangan Cacingan Kemenkes dan Fornas 1199/2025 mendukung albendazol, tetapi kasus individual dengan anemia tetap memerlukan penilaian derajat anemia, gizi, kehamilan, dan sumber perdarahan lain. Anemia berat, gagal jantung, perdarahan aktif, atau ketidakmampuan minum memerlukan jejaring/rujukan.`,
-    catatanRealita: 'Albendazol tercantum dalam Fornas dan juga digunakan program deworming; kasus individual tetap memerlukan penilaian kehamilan, anemia, dan diagnosis banding perdarahan.',
+    clue: 'Paparan tanah tanpa alas kaki, anemia mikrositik, dan telur cacing tambang pada feses mendukung hookworm. Beri albendazol 400 mg dosis tunggal, koreksi kekurangan besi, nilai pola makan/haid/perdarahan lain, dan kontrol gejala serta Hb. Jamban dan alas kaki memutus reinfeksi lingkungan; satu pasien tidak membuktikan penularan langsung antarmanusia karena telur harus matang di tanah.',
+    panduanResmi: 'PPK KMK 1186/2022 tidak memiliki bab cacing tambang tersendiri. Permenkes 3/2026 adalah payung program yang berlaku; Permenkes Cacingan 15/2017 sudah dicabut dan hanya konteks historis. WHO STH 2023 memisahkan tata laksana pasien bergejala dari preventive chemotherapy populasi: POPM ditetapkan menurut kelompok risiko, endemisitas, cakupan, dan evaluasi program, bukan resep otomatis untuk semua anggota rumah. Anemia berat, gagal jantung, perdarahan aktif, atau ketidakmampuan minum memerlukan jejaring/rujukan.',
+    catatanRealita: 'Hb dapat dinilai di layanan dasar, sedangkan mikroskopi feses bergantung jadwal, reagen, dan operator; spesimen dapat diteruskan ke jejaring. Albendazol dan besi tersedia, tetapi respons anemia tetap harus ditutup dengan kontrol dan evaluasi penyebab lain bila tidak membaik.',
   }),
 
   buatKasusLab({
@@ -627,7 +629,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     },
     pertanyaan: [
       { id: 'q_tanah', kategori: 'sosial', tanya: 'Pernah lama bekerja tanpa alas kaki di tanah lembap atau tinggal di daerah tropis pedesaan?', jawab: 'Sejak kecil saya berkebun tanpa alas kaki.', esensial: true },
-      { id: 'q_steroid', kategori: 'rpd', tanya: 'Sedang atau akan mendapat steroid dosis tinggi atau obat penekan daya tahan tubuh?', jawab: 'Dokter lain berencana memberi steroid untuk penyakit sendi minggu depan.', esensial: true },
+      { id: 'q_steroid', kategori: 'rpd', tanya: 'Sedang atau akan mendapat steroid, kemoterapi, transplantasi, atau obat penekan daya tahan tubuh?', jawab: 'Dokter lain berencana memberi steroid untuk penyakit sendi minggu depan.', esensial: true },
       { id: 'q_berat', kategori: 'rps', tanya: 'Ada sesak berat, batuk darah, demam, lemah sekali, atau nyeri perut hebat?', jawab: 'Tidak ada.', esensial: true },
       { id: 'q_hamil', kategori: 'rpd', tanya: 'Apakah sedang hamil atau menyusui?', jawab: 'Tidak.', hanyaUntuk: 'P', esensial: true },
     ],
@@ -637,8 +639,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { region: 'toraks_paru', temuan: 'Vesikuler, tanpa ronki.', relevan: false },
     ],
     lab: [
-      { id: 'darah_rutin', hasil: 'Eosinofil 12%; leukosit lain normal.', flag: 'tinggi', relevan: true },
-      { id: 'feses_rutin', hasil: 'Larva Strongyloides ditemukan pada pemeriksaan serial.', flag: 'abnormal', relevan: true },
+      { id: 'feses_rutin', hasil: 'Larva Strongyloides ditemukan pada pemeriksaan serial jejaring.', flag: 'abnormal', relevan: true },
     ],
     diagnosisBanding: ['B78.9', 'B76.0', 'K58.0'],
     tatalaksana: {
@@ -646,13 +647,13 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       obatSalahUmum: [
         { id: 'dexamethasone_05', alasan: 'Steroid sebelum strongiloidiasis dikenali dapat memicu hiperinfeksi yang fatal.', bahaya: 'kontraindikasi' },
       ],
-      edukasi: ['cegah_cacing_tanah', 'kepatuhan_obat', 'tanda_bahaya'],
-      edukasiKritis: ['tanda_bahaya'],
+      edukasi: ['rencana_strongiloides_steroid', 'kontrol_strongiloides', 'cegah_cacing_tanah'],
+      edukasiKritis: ['rencana_strongiloides_steroid', 'kontrol_strongiloides'],
     },
     konfirmasiWajib: 'feses_rutin',
-    clue: 'Larva currens, eosinofilia, pajanan tanah, dan larva feses mendukung strongiloidiasis. CDC merekomendasikan ivermektin 200 mcg/kg oral 1-2 hari; skrining sangat penting sebelum imunosupresi karena hiperinfeksi dapat fatal.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak memuat strongiloidiasis tersendiri. Ivermektin tercantum dalam Fornas 1199/2025; dosis terapi individual mengikuti berat badan dan pedoman klinis. WHO 2024 membahas ivermektin untuk pengendalian populasi di daerah endemis, bukan sebagai pengganti evaluasi individual, dan rencana steroid/imunosupresi membuat skrining serta tata laksana sebelum terapi sangat penting.`,
-    catatanRealita: 'Fornas 1199/2025 mencantumkan ivermektin, tetapi akses dapat melalui program atau jejaring. Resep item 3 mg di game mewakili obat, bukan jumlah tablet; dosis tetap berbasis berat badan.',
+    clue: 'Larva currens, pajanan tanah, dan larva pada feses serial mendukung strongiloidiasis; eosinofilia dapat membantu tetapi tidak wajib dan dapat hilang pada penyakit berat. CDC 2024 merekomendasikan ivermektin 200 mcg/kg oral selama 1-2 hari. Hubungi pemberi steroid, selesaikan terapi lebih dulu bila memungkinkan, dan pada gejala menetap dengan feses awal positif ulangi pemeriksaan 2-4 minggu untuk memastikan clearance.',
+    panduanResmi: 'PPK KMK 1186/2022 tidak memiliki bab strongiloidiasis tersendiri. WHO 2024 merekomendasikan ivermektin massal tahunan hanya pada setting endemis dengan prevalensi sekurangnya 5% untuk usia 5 tahun ke atas; ambang populasi itu tidak menggantikan diagnosis dan terapi pasien ini. Kortikosteroid/imunosupresi dapat memicu hiperinfeksi fatal, sehingga hasil klinik harus kembali ke dokter pemberi steroid, bukan berhenti sebagai resep terpisah.',
+    catatanRealita: 'Mikroskopi feses serial atau metode yang lebih sensitif berjalan melalui jejaring; satu pemeriksaan negatif tidak cukup menyingkirkan infeksi berisiko tinggi. Item ivermektin 3 mg mewakili sediaan, bukan satu tablet; dosis dihitung menurut berat badan dan kontraindikasi.',
   }),
 
   buatKasusLab({
@@ -677,6 +678,8 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { id: 'q_air', kategori: 'sosial', tanya: 'Apakah sering masuk sawah, sungai, atau air tawar di daerah endemis?', jawab: 'Setiap hari saya melewati parit dan sawah tanpa sepatu bot.', esensial: true },
       { id: 'q_portal', kategori: 'rps', tanya: 'Perut makin besar, muntah darah, BAB hitam, kaki bengkak, atau sangat lemas?', jawab: 'Tidak ada.', esensial: true },
       { id: 'q_infeksi', kategori: 'rps', tanya: 'Ada demam tinggi atau diare akut pada orang serumah?', jawab: 'Tidak.', esensial: true },
+      { id: 'q_program', kategori: 'rpd', tanya: 'Pernah ikut pemeriksaan tinja atau pengobatan program skistosomiasis sebelumnya?', jawab: 'Belum; saya pulang sebelum jadwal pemeriksaan desa.', esensial: true },
+      { id: 'q_hewan', kategori: 'sosial', tanya: 'Di kebun apakah ada ternak atau hewan yang memakai sumber air dan lahan basah yang sama?', jawab: 'Ada kerbau dan sapi yang sering masuk parit dekat sawah.' },
       { id: 'q_hamil', kategori: 'rpd', tanya: 'Apakah sedang hamil?', jawab: 'Tidak.', hanyaUntuk: 'P' },
     ],
     pemeriksaanFisik: [
@@ -685,18 +688,18 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { region: 'kulit', temuan: 'Tidak ada ruam aktif.', relevan: false },
     ],
     lab: [
-      { id: 'darah_rutin', hasil: 'Eosinofil 10%, Hb 11,5 g/dL.', flag: 'tinggi', relevan: true },
-      { id: 'feses_rutin', hasil: 'Telur Schistosoma japonicum ditemukan.', flag: 'abnormal', relevan: true },
+      { id: 'feses_rutin', hasil: 'Telur Schistosoma japonicum ditemukan pada pemeriksaan program.', flag: 'abnormal', relevan: true },
     ],
     diagnosisBanding: ['B65.9', 'A06.0', 'A03'],
     tatalaksana: {
       obatBenar: ['prazikuantel_600'],
-      edukasi: ['hindari_air_tawar_endemis', 'cuci_tangan_makanan', 'tanda_bahaya'],
+      edukasi: ['alur_program_skistosomiasis', 'hindari_air_tawar_endemis', 'one_health_skistosomiasis'],
+      edukasiKritis: ['alur_program_skistosomiasis', 'hindari_air_tawar_endemis'],
     },
     konfirmasiWajib: 'feses_rutin',
-    clue: 'Paparan air tawar pada fokus endemis Sulawesi Tengah, eosinofilia, dan telur S. japonicum menegakkan skistosomiasis. WHO merekomendasikan prazikuantel; evaluasi komplikasi hepatosplenis dan tindak lanjut program.',
-    panduanResmi: `${PPK_FLOOR} Skistosomiasis Indonesia ditangani melalui program fokus endemis Sulawesi Tengah; Fornas 1199/2025 membatasi prazikuantel antisistosoma pada konteks tersebut. WHO guideline 2022 mendukung prazikuantel dan menekankan pengendalian terintegrasi dengan surveilans, WASH, serta pengendalian keong; temuan portal-hepatosplenis memerlukan evaluasi rujukan.`,
-    catatanRealita: 'Fornas 1199/2025 membatasi prazikuantel antisistosoma untuk Sulawesi Tengah; vignette sengaja menyebut fokus endemis. Obat dan tindak lanjut dikoordinasikan dengan program, bukan diasumsikan selalu ada di rak Sukamaju.',
+    clue: 'Paparan air tawar di Lembah Napu dan telur S. japonicum menegakkan skistosomiasis. Beri prazikuantel melalui program dengan dosis berbasis berat badan, nilai penyakit hepatosplenis, dan tutup hasil kontrol. Kasus individual harus tercatat terpisah dari POPM, tetapi tetap mengalir ke surveilans desa, pemetaan fokus air-keong, reservoir hewan, WASH, dan pengelolaan lingkungan.',
+    panduanResmi: 'PPK KMK 1186/2022 tidak memiliki bab skistosomiasis tersendiri. Permenkes 3/2026 menjadi payung penanggulangan penyakit saat ini. WHO guideline 2022 memisahkan perawatan semua individu terinfeksi dari keputusan preventive chemotherapy berbasis prevalensi serta mengharuskan pendekatan lintas sektor: surveilans manusia-hewan-keong, WASH, pengendalian keong, dan lingkungan. RAP Ditjen Penanggulangan Penyakit 2025-2029 menegaskan fokus Indonesia di Poso-Sigi, POPM desa yang masih memiliki kasus, tatalaksana kasus positif, dan pemberantasan fokus keong.',
+    catatanRealita: 'Praziquantel tercantum pada bagian antisistosoma Fornas, tetapi jumlah tablet tetap dihitung menurut berat badan melalui program. Mikroskopi feses, kontrol, dan respons fokus dikoordinasikan jejaring Sulawesi Tengah; Sukamaju tidak menganggap obat atau laboratorium program selalu ada di rak poli.',
   }),
 
   buatKasusLab({
@@ -721,6 +724,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { id: 'q_neuro', kategori: 'rps', tanya: 'Pernah kejang, sakit kepala baru yang berat, penglihatan terganggu, atau lemah satu sisi?', jawab: 'Tidak pernah.', esensial: true },
       { id: 'q_gi', kategori: 'rps', tanya: 'Ada nyeri perut berat, muntah terus, atau berat badan turun banyak?', jawab: 'Hanya perut kadang tidak nyaman, berat badan tetap.', esensial: true },
       { id: 'q_sanitasi', kategori: 'sosial', tanya: 'Apakah rumah memakai jamban dan air bersih?', jawab: 'Ada jamban, tetapi saat bekerja di kebun kadang memakai jamban darurat.' },
+      { id: 'q_ternak', kategori: 'sosial', tanya: 'Apakah babi dibiarkan berkeliaran atau daging diperiksa sebelum dijual dan dimasak?', jawab: 'Di kampung babi sering dilepas dan pemotongan kadang tidak melalui pemeriksaan resmi.', esensial: true },
     ],
     pemeriksaanFisik: [
       { region: 'umum', temuan: 'Kondisi umum baik, status gizi cukup.', relevan: true },
@@ -733,13 +737,13 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     diagnosisBanding: ['B68.9', 'B77.9', 'B76.0'],
     tatalaksana: {
       obatBenar: ['prazikuantel_600'],
-      edukasi: ['masak_daging_matang', 'cuci_tangan_makanan', 'tanda_bahaya'],
-      edukasiKritis: ['tanda_bahaya'],
+      edukasi: ['rencana_taeniasis', 'masak_daging_matang', 'tanda_bahaya_sistiserkosis'],
+      edukasiKritis: ['masak_daging_matang', 'tanda_bahaya_sistiserkosis'],
     },
     konfirmasiWajib: 'feses_rutin',
-    clue: 'Keluarnya proglotid dan pajanan daging kurang matang mendukung taeniasis. WHO mencantumkan prazikuantel 10 mg/kg dosis tunggal; gejala neurologis harus memicu evaluasi sistiserkosis sebelum terapi sederhana.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak memuat taeniasis tersendiri; prazikuantel tercantum dalam Fornas 1199/2025. WHO 2021/2023 memperingatkan bahwa riwayat kejang, sakit kepala berat baru, gangguan penglihatan, atau defisit neurologis memerlukan evaluasi sistiserkosis dan bukan terapi taeniasis sederhana di FKTP.`,
-    catatanRealita: 'Prazikuantel tercantum dalam Fornas. Item 600 mg mewakili sediaan, sedangkan jumlah tablet harus dihitung menurut berat badan dan protokol program.',
+    clue: 'Proglotid, telur Taenia, dan daging babi kurang matang mendukung taeniasis, tetapi pemeriksaan rutin belum memastikan spesies. WHO mencantumkan prazikuantel 10 mg/kg dosis tunggal. Skrining kejang, sakit kepala berat baru, gangguan mata, atau defisit saraf wajib sebelum terapi sederhana karena kecurigaan sistiserkosis memerlukan evaluasi rujukan. Pastikan proglotid berhenti dan upayakan identifikasi spesies melalui jejaring.',
+    panduanResmi: 'PPK KMK 1186/2022 tidak memiliki bab taeniasis tersendiri. WHO 2021/2023 memisahkan taeniasis usus dari sistiserkosis dan menempatkan kontrol T. solium sebagai One Health: obati carrier manusia, gunakan jamban, jaga babi dari tinja, perbaiki pemeliharaan serta inspeksi/pemasakan daging. POPM atau targeted chemotherapy adalah keputusan program menurut pemetaan risiko, bukan resep spontan bagi seluruh desa.',
+    catatanRealita: 'Fornas mencantumkan prazikuantel pada bagian antisistosoma; itu bukan bukti otomatis pembiayaan atau stok untuk taeniasis. Item 600 mg hanya mewakili sediaan dan jumlah tablet dihitung menurut berat badan; spesiasi serta tindak lanjut carrier berjalan melalui jejaring.',
   }),
 
   buatKasusLab({
@@ -780,13 +784,15 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       obatBenar: [],
       obatOpsional: ['ondansetron_4'],
       obatSalahUmum: [
-        { id: 'paracetamol_500', alasan: 'WHO 2026 menganjurkan menghindari obat yang tidak perlu dan dapat membebani hati, termasuk parasetamol, pada hepatitis A.', bahaya: 'nonPrimer' },
+        { id: 'paracetamol_500', alasan: 'Pasien tidak demam atau nyeri yang memerlukan obat. WHO 2026 menganjurkan menghindari parasetamol dan obat lain yang tidak perlu pada hepatitis A, bukan meresepkannya rutin.', bahaya: 'nonPrimer' },
       ],
-      edukasi: ['cegah_hepatitis_a', 'istirahat_cukup', 'minum_air_cukup', 'gizi_seimbang', 'tanda_bahaya'],
-      edukasiKritis: ['tanda_bahaya'],
+      edukasi: ['cegah_hepatitis_a', 'perawatan_hepatitis_a_rumah', 'tanda_bahaya_hepatitis_akut'],
+      edukasiKritis: ['cegah_hepatitis_a', 'tanda_bahaya_hepatitis_akut'],
     },
-    clue: 'Prodromal demam-mual diikuti ikterus, urine gelap, ALT/AST tinggi, dan IgM anti-HAV reaktif menegakkan hepatitis A akut. WHO 2026: tidak ada antivirus spesifik; fokus hidrasi, nutrisi, dan hindari obat tidak perlu yang membebani hati.',
-    panduanResmi: `${PPK_FLOOR} PPK menekankan terapi suportif dan rujuk bila ikterus menetap, muncul keluhan lain, atau ada penurunan kesadaran.`,
+    konfirmasiWajib: 'anti_hav_igm',
+    clue: 'Prodromal demam-mual diikuti ikterus, urine gelap, ALT/AST tinggi, dan IgM anti-HAV reaktif menegakkan hepatitis A akut. WHO 2026: tidak ada antivirus spesifik; fokus cairan-nutrisi, hindari obat tidak perlu, dan pantau gagal hati. Tiga penghuni kos yang sakit sesudah pajanan warung bersama harus memicu notifikasi, line list, penetapan jendela pajanan, dan penyelidikan pangan-air bersama kesehatan lingkungan. Ini sinyal klaster untuk dinilai, bukan izin otomatis menutup warung atau menganggap sumber sudah terbukti.',
+    panduanResmi: `${PPK_FLOOR} PPK menjadi floor terapi suportif dan rujukan tanda gagal hati. WHO Hepatitis A 2026 dan Outbreak Toolbox 2024 menambahkan definisi kasus terkonfirmasi IgM anti-HAV serta alur surveilans, line list, konfirmasi laboratorium, dan respons berbasis konteks. Vaksinasi atau profilaksis pascapajanan dinilai program menurut kebijakan, waktu pajanan, kelayakan, dan stok; bukan resep blanket dari satu kunjungan.`,
+    catatanRealita: 'AST/ALT dan IgM anti-HAV dijadwalkan melalui jejaring laboratorium; hasilnya tidak diasumsikan tersedia seketika di meja poli. Respons wilayah dimulai dari verifikasi hubungan waktu-tempat-orang dan inspeksi kesehatan lingkungan, tanpa membuka identitas pasien atau menghukum usaha sebelum sumber terkonfirmasi.',
   }),
 
   buatKasusLab({
@@ -833,8 +839,8 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       edukasiKritis: ['tanda_bahaya'],
     },
     stabilisasiWajib: ['oksigen'],
-    clue: 'Bayi dengan prodrom pilek, wheezing/ronki difus, retraksi, asupan <50%, dan SpO2 89% mengalami bronkiolitis berat. WHO 2026 menekankan diagnosis klinis, terapi suportif, oksigen untuk hipoksemia, dan rujuk; jangan rutin memberi antibiotik, bronkodilator, atau steroid.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak memiliki jalur bronkiolitis terpisah. Floor FKTP adalah mengenali hipoksemia/gangguan minum, memberi oksigen dan dukungan jalan napas yang tersedia, lalu merujuk. NICE NG9 yang masih aktif menegaskan terapi suportif dan melarang antibiotik, salbutamol, ipratropium, serta kortikosteroid rutin pada bronkiolitis.`,
+    clue: 'Bayi dengan prodrom pilek, wheezing/ronki difus, retraksi, asupan <50%, dan SpO2 89% mengalami bronkiolitis berat. Beri oksigen dan rujuk; jangan rutin memberi antibiotik, salbutamol, ipratropium, atau kortikosteroid. Foto toraks dan pemeriksaan darah juga bukan prasyarat transfer.',
+    panduanResmi: 'PPK 1186/2022 tidak memiliki bab bronkiolitis diagnosis-spesifik. NICE NG9, rekomendasi 1.2 dan 1.4, menjadi grounding langsung: rujuk bila distress berat, asupan tidak adekuat, atau saturasi rendah; pada bayi usia lebih dari 6 minggu beri oksigen bila SpO2 menetap di bawah 90%. Pedoman yang sama melarang antibiotik, salbutamol, ipratropium, dan kortikosteroid rutin. Pada bayi ini SpO2 89%, sehingga oksigen pra-rujuk memang terindikasi.',
     catatanRealita: 'Skenario menyatakan oksigen dan transport siap. Bila alat atau transport tidak siap, koordinasikan jejaring sambil melakukan stabilisasi yang tersedia; jangan menunda rujukan demi pemeriksaan tambahan.',
   }),
 
@@ -877,8 +883,8 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       edukasi: ['tanda_bahaya', 'etika_batuk'],
     },
     stabilisasiWajib: ['oksigen'],
-    clue: 'Redup pada perkusi, fremitus turun, dan suara napas melemah di satu basal mendukung efusi pleura. Hipoksemia perlu oksigen dan pasien dirujuk untuk pencitraan, torakosentesis diagnostik, serta penentuan etiologi seperti TB, infeksi, gagal jantung, atau keganasan.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak menyediakan algoritme efusi pleura sebagai tata laksana tuntas FKTP. Sindrom unilateral simptomatik dengan hipoksemia memerlukan oksigen dan rujukan untuk pencitraan serta sampling pleura terpandu; BTS Pleural Disease Guideline 2023 dan Quality Standard 2026 menentang prosedur pleura buta tanpa ultrasonografi/kompetensi.`,
+    clue: 'Redup pada perkusi, fremitus turun, dan suara napas melemah di satu basal sangat mendukung suspek efusi pleura, tetapi pemeriksaan fisik belum menentukan etiologinya. Hipoksemia perlu oksigen dan pasien dirujuk untuk pencitraan serta sampling pleura terpandu; jangan memberi OAT, antibiotik, atau diuretik hanya berdasarkan sindrom ini tanpa bukti penyebab.',
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak menyediakan algoritme efusi pleura sebagai tata laksana tuntas FKTP. BTS Pleural Disease Guideline dan Clinical Statement 2023 serta Quality Standard 2026 meminta akses cepat ke layanan pleura untuk efusi simptomatik/tidak terdiagnosis; tindakan cairan pleura memerlukan operator kompeten dan ultrasonografi toraks peri-prosedural. Di FKTP tanpa kapabilitas itu: kenali sindrom, koreksi hipoksemia, dan rujuk tanpa pungsi buta.`,
     catatanRealita: 'Puskesmas Sukamaju tidak diasumsikan memiliki rontgen atau kemampuan torakosentesis. Jawaban benar adalah mengenali sindrom, memberi oksigen, dan merujuk tanpa prosedur buta.',
   }),
 
@@ -916,17 +922,19 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     ],
     diagnosisBanding: ['J81', 'I50.9', 'J18.9'],
     tatalaksana: {
-      obatBenar: ['isosorbid_dinitrat_5'],
-      prosedur: ['posisi_semifowler', 'oksigen'],
+      obatBenar: ['furosemid_inj_20'],
+      obatOpsional: ['isosorbid_dinitrat_5'],
+      prosedur: ['posisi_semifowler', 'oksigen', 'akses_iv_tanpa_bolus', 'pemantauan_ketat_vital'],
       tindakanSalahUmum: [
         { id: 'akses_iv_resusitasi', alasan: 'Bolus cairan resusitasi pada edema paru kongestif dapat memperburuk banjir alveolus; akses IV tidak berarti cairan bebas.', bahaya: 'berbahaya' },
       ],
       edukasi: ['tanda_bahaya', 'diet_rendah_garam'],
+      terapiKritis: ['furosemid_inj_20'],
     },
-    stabilisasiWajib: ['posisi_semifowler', 'oksigen'],
-    clue: 'Ortopnea mendadak, sputum berbusa, ronki difus, hipertensi berat, dan hipoksemia mendukung edema paru akut. Dudukkan, beri oksigen, pertimbangkan nitrat bila tekanan darah memadai dan tanpa kontraindikasi, monitor, lalu rujuk segera.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 menempatkan gagal jantung akut pada kompetensi 3B: stabilisasi dan rujuk. Pada edema paru hipertensif, posisikan tegak, titrasi oksigen karena SpO2 84%, pertimbangkan nitrat bila tekanan memadai dan tidak ada kontraindikasi, monitor, dan transfer segera; ESC tidak menganjurkan morfin rutin.`,
-    catatanRealita: 'Furosemid injeksi tidak diasumsikan ready di Puskesmas Sukamaju dan tidak dijadikan klik wajib. Stabilkan jalan napas/oksigenasi, gunakan nitrat secara selektif, dan jangan menunda transfer.',
+    stabilisasiWajib: ['posisi_semifowler', 'oksigen', 'akses_iv_tanpa_bolus'],
+    clue: 'Ortopnea mendadak, sputum berbusa, ronki difus, hipertensi berat, dan SpO2 84% mendukung edema paru akut hipertensif. Dudukkan, titrasi oksigen, pasang akses IV tanpa bolus cairan rutin, berikan furosemid intravena, pantau tekanan darah dan respons, lalu transfer segera. ISDN sublingual hanya opsi jembatan bila protokol lokal mengizinkan, tekanan darah dipantau, dan tidak ada kontraindikasi; satu tablet bukan pengganti nitrat intravena terpantau di layanan akut.',
+    panduanResmi: `${PPK_FLOOR} Bab gagal jantung akut PPK 1186/2022 menjadi floor terkait, bukan pedoman diagnosis-spesifik edema paru hipertensif: oksigen, akses IV, furosemid injeksi 20-40 mg, lalu segera rujuk. NICE CG187 rekomendasi 1.3.2-1.3.8 mendukung diuretik intravena dan melarang opiat rutin; nitrat tidak diberikan rutin dan bila dipakai untuk hipertensi berat memerlukan pemantauan tekanan darah di layanan dengan kapabilitas memadai.`,
+    catatanRealita: 'Vignette ini menyatakan oksigen, pulse oximeter, furosemid injeksi, akses IV, EKG beserta operator, monitoring, dan transport sedang ready. EKG dilakukan paralel dan tidak boleh menunda transfer. CPAP/nitrat intravena tidak diasumsikan tersedia di Sukamaju; ketiadaannya tidak boleh menunda stabilisasi feasible dan transfer.',
   }),
 
   buatKasusLab({
@@ -962,12 +970,13 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     diagnosisBanding: ['J93.9', 'I26.9', 'J18.9'],
     tatalaksana: {
       obatBenar: [],
-      prosedur: ['oksigen'],
+      prosedur: ['oksigen', 'pemantauan_ketat_vital'],
       edukasi: ['tanda_bahaya', 'berhenti_merokok'],
     },
     stabilisasiWajib: ['oksigen'],
-    clue: 'Nyeri pleuritik mendadak, hipersonor, dan suara napas unilateral turun mendukung pneumotoraks. Pasien ini belum menunjukkan tension physiology; beri oksigen, monitor, dan rujuk segera. Dekompresi jarum hanya untuk kecurigaan pneumotoraks tensi yang tidak boleh menunggu pencitraan.',
-    panduanResmi: `${PPK_FLOOR} PPK pneumotoraks memerintahkan oksigen, akses IV bila ada gagal sirkulasi, dan rujuk segera setelah penanggulangan awal.`,
+    clue: 'Nyeri pleuritik mendadak, hipersonor, dan suara napas unilateral turun mendukung pneumotoraks. SpO2 90%, RR 28, dan sesak sedang adalah gangguan fisiologis, sehingga pasien ini bukan kandidat observasi konservatif rawat jalan. Beri oksigen karena hipoksemia, pantau serial, dan transfer segera. Dekompresi jarum hanya untuk kecurigaan pneumotoraks tensi yang tidak boleh menunggu pencitraan.',
+    panduanResmi: `${PPK_FLOOR} PPK pneumotoraks memerintahkan oksigen, akses IV bila ada gagal sirkulasi, dan rujuk segera setelah penanggulangan awal. BTS Pleural Disease Guideline 2023 dan ERS/EACTS/ESTS 2024 membatasi tata laksana konservatif pada pneumotoraks spontan primer yang asimtomatik atau hanya bergejala minimal, stabil, dan tanpa gangguan fisiologis; pasien ini tidak memenuhi batas tersebut. Oksigen diberikan karena hipoksemia, bukan rutin untuk mempercepat absorpsi udara pleura.`,
+    catatanRealita: 'Rontgen dan layanan aspirasi/drainase pleura tidak diasumsikan ready di Sukamaju. Pada pasien yang saat ini stabil, transfer dilakukan untuk konfirmasi dan tata laksana terkontrol; bila muncul hipotensi, hipoksia memburuk, deviasi trakea, atau deteriorasi cepat, perlakukan sebagai dugaan tensi dan jangan menunggu pencitraan.',
   }),
 
   buatKasusLab({
@@ -1003,15 +1012,17 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     diagnosisBanding: ['J36', 'J03.9', 'J39.0'],
     tatalaksana: {
       obatBenar: ['amoxiclav_625', 'paracetamol_500'],
+      prosedur: ['pemantauan_ketat_vital'],
       tindakanSalahUmum: [
         { id: 'insisi_abses', alasan: 'Drainase peritonsil tidak dilakukan buta tanpa kompetensi, visualisasi, perlindungan jalan napas, dan kesiapan menangani perdarahan.', bahaya: 'berbahaya' },
       ],
       edukasi: ['tanda_bahaya', 'kepatuhan_obat'],
       edukasiKritis: ['tanda_bahaya'],
     },
-    clue: 'Nyeri unilateral, trismus, suara hot-potato, pembengkakan peritonsil, dan deviasi uvula mendukung abses peritonsil. Nilai jalan napas, beri analgesia dan antibiotik, lalu rujuk THT untuk drainase terkontrol.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 membahas infeksi tonsil/faring tetapi tidak memberi kewenangan drainase abses peritonsil buta di FKTP. Nilai ancaman jalan napas dan kemampuan menelan, beri analgesia serta antibiotik pra-rujuk bila aman, lalu rujuk THT untuk drainase dengan visualisasi dan kesiapan menangani perdarahan/jalan napas.`,
-    catatanRealita: 'Kasus masih dapat menelan dan tidak stridor, sehingga antibiotik oral pra-rujuk dimodelkan. Bila jalan napas terancam atau pasien tidak dapat menelan, jangan memaksa obat oral; prioritaskan stabilisasi dan transfer.',
+    clue: 'Nyeri unilateral, trismus, suara hot-potato, pembengkakan peritonsil, dan deviasi uvula mendukung abses peritonsil. Nilai jalan napas, sepsis, hidrasi, dan kemampuan menelan; beri analgesia serta antibiotik awal bila rute oral aman, pantau selama menunggu, lalu transfer untuk evaluasi THT dan source control. Drainase biasanya menjadi bagian tata laksana abses terkonfirmasi, tetapi teknik dan tempatnya bergantung pada kompetensi, toleransi pasien, anatomi, serta kesiapan suction dan jalan napas - bukan aspirasi buta di FKTP.',
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi floor terkait, bukan pedoman definitif. NICE NG84 menggolongkan quinsy sebagai komplikasi supuratif berat yang harus dirujuk ke rumah sakit. CHOP Peritonsillar Abscess Pathway, direvisi 2025, menempatkan penilaian komplikasi, toleransi drainase, konsultasi THT, kontrol nyeri, kemampuan minum, dan drainase terkontrol sebagai simpul keputusan utama.`,
+    catatanRealita: 'Pasien ini masih dapat menelan, tidak stridor, dan tidak sepsis, sehingga antibiotik oral pra-rujuk dimodelkan tanpa menunda transfer. Bila ludah sama sekali tidak dapat ditelan, ada stridor, hipoksia, kelelahan napas, toksisitas, atau pembengkakan leher cepat, jangan memaksa obat oral atau pemeriksaan agresif; prioritaskan jalan napas, monitoring, dan transfer emergensi.',
+    mutiaraEbm: 'Deviasi uvula membantu, tetapi bukan satu-satunya penentu dan tidak membedakan abses dari selulitis peritonsil dengan sempurna. Kombinasi nyeri unilateral, trismus, perubahan suara, palatal fullness, kemampuan menelan, serta tanda perluasan leher menentukan urgensi; pencitraan tidak rutin diperlukan pada presentasi klasik dan tidak boleh menunda rujukan bila komplikasi dicurigai.',
   }),
 
   buatKasusLab({
@@ -1050,22 +1061,23 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     diagnosisBanding: ['K92.2', 'K25.4', 'I85.0'],
     tatalaksana: {
       obatBenar: [],
-      prosedur: ['akses_iv_resusitasi', 'oksigen'],
+      prosedur: ['akses_iv_resusitasi', 'oksigen', 'pemantauan_ketat_vital'],
       obatSalahUmum: [
         { id: 'ibuprofen_400', alasan: 'NSAID dapat memperburuk perdarahan saluran cerna dan harus dihentikan.', bahaya: 'kontraindikasi' },
       ],
-      edukasi: ['tanda_bahaya'],
-      edukasiKritis: ['tanda_bahaya'],
+      edukasi: ['puasa_sambil_rujuk', 'tanda_bahaya'],
+      edukasiKritis: ['puasa_sambil_rujuk'],
+      terapiKritis: ['akses_iv_resusitasi'],
     },
     stabilisasiWajib: ['akses_iv_resusitasi', 'oksigen'],
-    clue: 'Hematemesis coffee-ground, melena, hipotensi, dan takikardia adalah perdarahan GI atas dengan gangguan sirkulasi. Stabilkan ABC, dua akses IV/cairan terukur, oksigen karena hipoksemia, hentikan NSAID, dan transfer untuk endoskopi setelah resusitasi.',
-    panduanResmi: 'PPK 1186/2022 memuat stabilisasi hemodinamik dan rujukan; NICE CG141 menempatkan endoskopi segera setelah resusitasi pada pasien tidak stabil.',
-    catatanRealita: 'PPI pra-endoskopi tidak dijadikan jawaban wajib karena pedoman berbeda dan sediaan injeksi tidak diasumsikan ready. Jangan menunda transfer demi terapi oral atau bilas lambung rutin.',
+    clue: 'Hematemesis coffee-ground, melena, hipotensi, dan takikardia adalah perdarahan GI atas dengan gangguan sirkulasi. Stabilkan ABC, pasang akses IV besar dan berikan cairan secara terukur, beri oksigen karena SpO2 92%, pantau respons, puasakan, hentikan NSAID, lalu transfer untuk endoskopi setelah resusitasi awal.',
+    panduanResmi: `${PPK_FLOOR} PPK memuat stabilisasi hemodinamik dan rujukan. NICE CG141 menempatkan endoskopi segera setelah resusitasi pada perdarahan berat yang tidak stabil, sedangkan ACG 2021 mendukung resusitasi, stratifikasi risiko, dan endoskopi dalam 24 jam pada pasien yang dirawat. Pemasangan NGT atau bilas lambung dari teks PPK lama tidak dijadikan jawaban universal yang boleh menunda transfer.`,
+    catatanRealita: 'PPI pra-endoskopi tidak dijadikan jawaban wajib karena pedoman berbeda dan sediaan injeksi tidak diasumsikan ready. Hb dan golongan darah di vignette adalah hasil yang sudah tersedia untuk handover; bila pemeriksaan tidak ready, jangan menunggu hasil, terapi oral, atau bilas lambung rutin sebelum transfer.',
   }),
 
   buatKasusLab({
     id: 'lab_ileus_obstruktif',
-    nama: 'Ileus Obstruktif',
+    nama: 'Obstruksi Usus Mekanik (Suspek Adhesi)',
     icd10: 'K56.6',
     skdi: '3B',
     kategori: 'pencernaan',
@@ -1092,25 +1104,31 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { region: 'umum', temuan: 'Mukosa kering, tampak kesakitan saat kolik, sadar penuh.', relevan: true },
       { region: 'jantung', temuan: 'Takikardia, pengisian kapiler 2-3 detik.', relevan: true },
     ],
-    lab: [
-      { id: 'elektrolit_serum', hasil: 'Natrium 132 mmol/L, kalium 3,2 mmol/L.', flag: 'rendah', relevan: true },
-      { id: 'fungsi_ginjal', hasil: 'Kreatinin 1,4 mg/dL, meningkat ringan karena dehidrasi.', flag: 'tinggi', relevan: true },
-    ],
+    lab: [],
     diagnosisBanding: ['K56.6', 'K56.7', 'K52.9'],
     tatalaksana: {
       obatBenar: [],
-      prosedur: ['akses_iv_resusitasi', 'dekompresi_ngt'],
+      prosedur: ['akses_iv_resusitasi', 'dekompresi_ngt', 'pemantauan_ketat_vital'],
       obatSalahUmum: [
         { id: 'bisakodil_5', alasan: 'Laksatif pada obstruksi mekanik dapat meningkatkan distensi dan risiko perforasi.', bahaya: 'kontraindikasi' },
         { id: 'loperamid_2', alasan: 'Antimotilitas tidak boleh digunakan pada dugaan obstruksi usus.', bahaya: 'kontraindikasi' },
       ],
       edukasi: ['puasa_sambil_rujuk', 'tanda_bahaya'],
       edukasiKritis: ['puasa_sambil_rujuk'],
+      terapiKritis: ['akses_iv_resusitasi'],
     },
-    stabilisasiWajib: ['akses_iv_resusitasi', 'dekompresi_ngt'],
-    clue: 'Nyeri kolik, muntah bilious, obstipasi, distensi, timpani, dan bising metalik mendukung ileus obstruktif. Puasakan, koreksi cairan/elektrolit secara terukur, dekompresi NGT, dan rujuk bedah; jangan beri laksatif atau obat antimotilitas.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 menempatkan abdomen akut/peritonitis pada kompetensi stabilisasi dan rujuk. Pada dugaan obstruksi: puasa, akses IV dan koreksi cairan terukur, dekompresi NGT bila dapat dilakukan aman, analgesia/monitoring, lalu rujuk bedah segera; jangan memberi laksatif atau menunda transfer demi pemeriksaan tambahan.`,
-    catatanRealita: 'Skenario menyatakan NGT, cairan, operator, dan transport siap. Bila NGT tidak dapat dipasang aman, jangan menunda transfer atau melakukan probing berulang.',
+    stabilisasiWajib: ['akses_iv_resusitasi', 'dekompresi_ngt', 'pemantauan_ketat_vital'],
+    clue: 'Nyeri kolik, muntah bilious, obstipasi, distensi, timpani, dan bising metalik mendukung obstruksi usus mekanik; riwayat operasi abdomen membuat adhesi mungkin, tetapi etiologi final ditentukan di RS. Puasakan, pasang akses IV dan koreksi kehilangan cairan secara terukur, lakukan dekompresi NGT bila aman, pantau perfusi, lalu rujuk bedah. Jangan memberi laksatif atau antimotilitas.',
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak mempunyai bab obstruksi usus halus yang diagnosis-spesifik; bab peritonitis hanya menjadi floor terkait untuk mengenali perburukan dan merujuk. WSES Bologna 2017 menjadi rujukan langsung: puasa, dekompresi NGT, cairan IV, serta penilaian berulang; peritonitis, strangulasi, atau iskemia menutup pilihan tata laksana nonoperatif.`,
+    catatanRealita: 'Skenario menyatakan NGT, cairan, operator, monitoring, dan transport siap. Pemeriksaan elektrolit dan pencitraan abdomen tidak diasumsikan tersedia segera di Sukamaju dan tidak boleh menjadi syarat transfer. Bila NGT tidak dapat dipasang aman, jangan menunda transfer atau melakukan probing berulang.',
+    mutiaraEbm: 'Tidak adanya defans atau nyeri menetap saat ini tidak membuat pasien aman dipulangkan. Tata laksana nonoperatif obstruksi adhesif adalah jalur rawat dan observasi serial di fasilitas bedah, bukan resep pulang dari FKTP; strangulasi dapat berkembang dan tanda klinis awalnya tidak selalu lengkap.',
+    konsekuensi: {
+      narasi: 'Obstruksi yang dipulangkan dengan laksatif atau tanpa pemantauan dapat berlanjut menjadi strangulasi, iskemia, nekrosis, dan perforasi usus.',
+      kembaliHariMin: 0,
+      kembaliHariMax: 1,
+      kondisiKembali: 'Pasien kembali dengan nyeri yang kini menetap, demam, defans abdomen, perfusi memburuk, dan tanda peritonitis.',
+      guideline: 'WSES Bologna Guidelines 2017 update: NPO, dekompresi, cairan IV, observasi bedah; peritonitis, strangulasi, dan iskemia adalah kontraindikasi tata laksana nonoperatif.',
+    },
   }),
 ]
 

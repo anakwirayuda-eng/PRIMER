@@ -3,9 +3,10 @@
  * bendera pedagogis, dan mutiara klinis (clue EBM) dari kasus.
  */
 
-import type { PenilaianEncounter } from '@engine/state'
+import type { DexEntry, PenilaianEncounter } from '@engine/state'
 import { PACK } from '@content/index'
 import { useFocusTrap } from '../../useFocusTrap'
+import { DuelDiagnosis, TeachBack } from './RefleksiKlinis'
 
 interface Props {
   hasil: PenilaianEncounter
@@ -13,6 +14,8 @@ interface Props {
   bolehPanggil: boolean
   /** Alasan bila tidak boleh (jadi arahan pemain). */
   alasanTutup: string
+  /** Riwayat paparan kasus untuk membuka duel tanpa membocorkan diagnosis baru. */
+  dex?: Record<string, DexEntry>
   onSelesai: (panggilBerikutnya: boolean) => void
 }
 
@@ -30,7 +33,7 @@ const LABEL_GRADE: Record<PenilaianEncounter['grade'], string> = {
   D: 'Perlu pembinaan',
 }
 
-export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Props) {
+export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSelesai }: Props) {
   const tutorial = hasil.tutorialLatihan === true
   // M11: kasus utk lapisan pengayaan (mutiaraEbm/catatanRealita) — murni display.
   const kasus = PACK.kasus[hasil.kasusId]
@@ -237,6 +240,13 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, onSelesai }: Prop
               terdokumentasi (KMK 1186/2022 Diktum VI/VII), bukan sekadar beda pendapat.
             </p>
           </details>
+        )}
+
+        {!tutorial && (
+          <div className="klinik-hasil__refleksi" aria-label="Latihan refleksi klinis opsional">
+            <DuelDiagnosis key={`duel-${hasil.kasusId}`} kasusId={hasil.kasusId} dex={dex} />
+            <TeachBack key={`teachback-${hasil.kasusId}`} kasusId={hasil.kasusId} />
+          </div>
         )}
 
         <div className="baris klinik-hasil__aksi">

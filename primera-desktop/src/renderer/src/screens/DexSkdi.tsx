@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
 import { normalisasiNamaObat } from './klinik/util'
+import { DuelDiagnosis } from './klinik/RefleksiKlinis'
 import './DexSkdi.css'
 
 // CODEX audit 2026-07-04: dulu memakai SKDI144 mentah (bukan PACK.skdi144),
@@ -333,6 +334,14 @@ export function DexSkdi() {
                   <span className="judul-seksi">📜 Panduan Resmi Kemenkes</span>
                   <p className="teks-kecil">{kasusTerpilih.panduanResmi}</p>
                 </div>
+              )}
+
+              {kasusTerpilih !== undefined && (
+                <DuelDiagnosis
+                  key={`duel-${kasusTerpilih.id}`}
+                  kasusId={kasusTerpilih.id}
+                  dex={state.dex}
+                />
               )}
 
               {dexTerpilih.bintang < 3 && (

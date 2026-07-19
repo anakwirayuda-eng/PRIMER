@@ -57,13 +57,13 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'q_dist_transfusi', kategori: 'rpd', tanya: 'Apakah Anda pernah menerima transfusi darah atau berbagi jarum suntik?', jawab: 'Tidak pernah dua-duanya, Dok.' },
     ],
     obatSalahUmum: [
-      { id: 'cotrimoxazole_480', alasan: 'Profilaksis kotrimoksazol ditujukan untuk stadium klinis lanjut atau CD4 rendah, bukan pasien tanpa gejala yang baru masuk program.', bahaya: 'nonPrimer' },
+      { id: 'cotrimoxazole_480', alasan: 'Kotrimoksazol bukan obat otomatis untuk setiap diagnosis HIV; indikasinya mengikuti stadium klinis, CD4, beban infeksi setempat, dan protokol nasional. Kasus ini tidak menunjukkan penyakit lanjut, sehingga pemberian tanpa menilai kelayakan bukan substitusi ARV.', bahaya: 'nonPrimer' },
       { id: 'vitamin_b_kompleks', alasan: 'Multivitamin sebagai penambah daya tahan tidak menekan replikasi virus dan mengaburkan bahwa ARV adalah terapi yang menentukan.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Menunda inisiasi ARV dan skrining TB/infeksi oportunistik membiarkan virus merusak imun dan menular ke pasangan.',
-      kembaliHariMin: 10, kembaliHariMax: 14,
-      kondisiKembali: 'Datang kembali dengan sariawan luas dan berat badan mulai turun.',
+      narasi: 'Menunda inisiasi dan kehilangan hubungan dengan layanan membuat replikasi virus berlanjut, supresi tidak tercapai, serta kesempatan pencegahan dan monitoring terlewat; perburukan klinis tidak harus muncul seketika.',
+      kembaliHariMin: 30, kembaliHariMax: 60,
+      kondisiKembali: 'Masih tanpa gejala berat tetapi belum memulai ARV, viral load belum pernah diperiksa, dan nomor kontak program tidak pernah dikonfirmasi untuk re-engagement rahasia.',
     },
     variasiPembuka: {
       cemas: 'Pasangan saya HIV dan hasil tes saya keluar — saya takut sekali, apa saya masih bisa hidup normal, Dok?',
@@ -312,9 +312,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'amoxicillin_500', alasan: 'Gonore banyak resisten terhadap penisilin/amoksisilin; terapi tak adekuat memicu kegagalan dan resistensi.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa terapi adekuat dan pengobatan pasangan, infeksi berlanjut, menular, dan berisiko komplikasi (epididimitis, striktur).',
+      narasi: 'Tanpa terapi adekuat dan layanan pasangan, infeksi dapat menetap, berpindah kembali antar pasangan, serta meningkatkan risiko epididimitis; komplikasi bukan kepastian pada setiap pasien.',
       kembaliHariMin: 3, kembaliHariMax: 7,
-      kondisiKembali: 'Keluar nanah masih ada dan mulai nyeri pada buah zakar.',
+      kondisiKembali: 'Duh uretra menetap dan mulai nyeri testis; pasangan belum pernah dihubungkan ke layanan dan kegagalan terapi belum dievaluasi untuk reinfeksi atau resistensi.',
     },
     variasiPembuka: {
       cemas: 'Keluar nanah dari kelamin dan perih saat kencing — apa ini penyakit menular yang bahaya, Dok?',
@@ -385,9 +385,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'metronidazol_500', alasan: 'Metronidazol menyasar vaginosis/trikomonas, bukan servisitis gonokokus-klamidia; salah sasaran membiarkan infeksi serviks berlanjut.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Servisitis tak diobati (dan pasangan tak diterapi) berisiko menjadi penyakit radang panggul dan gangguan kesuburan.',
-      kembaliHariMin: 5, kembaliHariMax: 10,
-      kondisiKembali: 'Keputihan menetap dan mulai nyeri perut bawah.',
+      narasi: 'Servisitis yang menetap dapat naik menjadi PID, terutama bila terapi, follow-up, atau layanan pasangan terputus; infertilitas bukan hasil otomatis dari satu episode.',
+      kembaliHariMin: 7, kembaliHariMax: 21,
+      kondisiKembali: 'Sekret serviks menetap dan muncul nyeri perut bawah; hasil jejaring tidak pernah ditinjau dan pasangan belum terhubung ke layanan.',
     },
     variasiPembuka: {
       cemas: 'Keputihan kekuningan dan keluar darah setelah berhubungan — apa ini kanker, Dok?',
@@ -457,9 +457,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'amoxicillin_500', alasan: 'PID butuh cakupan gonokokus, klamidia, dan anaerob; amoksisilin tunggal tak adekuat dan berisiko abses serta gangguan kesuburan.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Penyakit radang panggul yang tak diobati adekuat berisiko abses tuba, infertilitas, dan kehamilan ektopik.',
+      narasi: 'PID yang tidak diobati adekuat meningkatkan risiko abses, nyeri pelvis kronik, infertilitas, dan kehamilan ektopik, tetapi tiap komplikasi tetap probabilistik.',
       kembaliHariMin: 2, kembaliHariMax: 5,
-      kondisiKembali: 'Nyeri perut bawah memberat disertai demam.',
+      kondisiKembali: 'Setelah lebih dari 72 jam nyeri perut bawah dan demam justru memberat, sehingga rawat jalan dinilai gagal dan rujukan rumah sakit kini wajib.',
     },
     variasiPembuka: {
       cemas: 'Perut bawah nyeri, keputihan berubah, sakit saat berhubungan — apa rahim saya infeksi berat, Dok?',
@@ -581,9 +581,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'q_dist_keluarga_dm', kategori: 'rpk', tanya: 'Apakah ada keluarga dekat Anda yang juga kena kencing manis?', jawab: 'Tidak ada, Dok. Cuma saya sendiri di keluarga.' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa penyesuaian insulin dan edukasi hipoglikemia, kendali gula memburuk dan risiko ketoasidosis atau hipoglikemia berat meningkat.',
-      kembaliHariMin: 7, kembaliHariMax: 14,
-      kondisiKembali: 'Gula makin tinggi/berfluktuasi dengan gejala lemas dan sering haus.',
+      narasi: 'Tanpa review berbasis log, edukasi hipoglikemia, dan kesinambungan insulin, pola gula berbahaya berulang sebelum jalur PRB terbentuk.',
+      kembaliHariMin: 2, kembaliHariMax: 5,
+      kondisiKembali: 'Hipoglikemia malam berulang diselingi gula pagi tinggi; keluarga takut meneruskan insulin basal.',
     },
     variasiPembuka: {
       cemas: 'Saya diabetes tipe 1 dan gula belakangan naik — apa insulin saya sudah tak mempan lagi, Dok?',
@@ -599,9 +599,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'vitamin_b_kompleks', alasan: 'Wasting sedang butuh rehabilitasi makanan padat energi-protein; multivitamin tidak menyediakan kalori maupun protein dan menggeser fokus dari perbaikan asupan.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa rehabilitasi gizi bertahap dan pencarian penyebab, berat badan terus turun dan rentan infeksi.',
+      narasi: 'Tanpa PMT yang benar-benar dikonsumsi, pemantauan kader, dan pencarian penyebab, berat badan terus turun meski program tercatat seolah berjalan.',
       kembaliHariMin: 10, kembaliHariMax: 14,
-      kondisiKembali: 'Anak makin kurus, lemas, dan mudah sakit.',
+      kondisiKembali: 'Dua minggu berlalu tanpa kenaikan berat; konsumsi PMT dan hambatan keluarga belum pernah dicatat.',
     },
     variasiPembuka: {
       cemas: 'Anak saya makin kurus dan beratnya tak naik tiga bulan — apa dia kena penyakit berat, Dok?',
@@ -654,9 +654,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'asam_folat', alasan: 'Asam folat mengoreksi anemia makrositik, bukan defisiensi besi mikrositik; memberikannya tanpa besi membiarkan anemia berlanjut.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa terapi besi dan pencarian sumber kehilangan darah, anemia memberat dan penyebab serius (mis. perdarahan) bisa terlewat.',
-      kembaliHariMin: 10, kembaliHariMax: 14,
-      kondisiKembali: 'Makin pucat, lelah, dan berdebar saat naik tangga.',
+      narasi: 'Tanpa terapi besi terukur dan penanganan sumber haid banyak, anemia berlanjut walau resep sempat ditebus.',
+      kembaliHariMin: 14, kembaliHariMax: 28,
+      kondisiKembali: 'Hb tidak membaik atau turun, lelah menetap, dan haid banyak belum ditindaklanjuti.',
     },
     variasiPembuka: {
       cemas: 'Saya cepat lelah, berdebar naik tangga, dan pucat — apa darah saya kurang parah, Dok?',
@@ -690,9 +690,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'natrium_diklofenak_50', alasan: 'Nyeri betis menggoda pemberian NSAID, tetapi leptospirosis berisiko gangguan ginjal dan perdarahan sehingga NSAID memperberat kedua bahaya itu; pilih parasetamol.', bahaya: 'kontraindikasi' },
     ],
     konsekuensi: {
-      narasi: 'Leptospirosis dapat berkembang ke bentuk berat (Weil) dengan gangguan hati-ginjal bila terapi ditunda.',
+      narasi: 'Sebagian suspek ringan pulih dengan terapi dini, tetapi keterlambatan dapat berkembang ke penyakit berat; kasus kedua pascabanjir juga menandai pajanan wilayah yang belum ditutup.',
       kembaliHariMin: 2, kembaliHariMax: 4,
-      kondisiKembali: 'Demam menetap, mata mulai kuning, dan kencing berkurang.',
+      kondisiKembali: 'Pada lintasan memburuk, demam menetap disertai ikterus atau oliguria; warga lain dari lorong banjir yang sama mulai berobat bila respons One Health belum berjalan.',
     },
     variasiPembuka: {
       cemas: 'Demam mendadak, sakit kepala, betis sangat nyeri setelah banjir — apa ini penyakit dari air kotor yang bahaya, Dok?',
