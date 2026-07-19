@@ -8,9 +8,42 @@
 
 Audit mencakup 9.128 bidang teks runtime dari 210 kasus poli, 20 kasus IGD, 16 keluarga binaan dengan 27 kunjungan UKM, delapan Duel Diagnosis, dan delapan latihan Teach-back. Pemeriksaan otomatis dipadukan dengan pembacaan literal pada semua temuan berisiko tinggi serta permukaan yang paling padat secara kognitif.
 
-Pada baseline, audit menemukan 50 masalah berisiko tinggi dan lebih dari 800 sinyal kepadatan atau gaya. Setelah perbaikan, tidak tersisa masalah berisiko tinggi maupun cacat struktur. Sisa 80 sinyal seluruhnya berupa kapital untuk penekanan, terutama kata seperti `JANGAN` pada peringatan keselamatan. Sinyal tersebut dipertahankan sebagai bahan review editorial, bukan kegagalan build.
+Baseline direkonstruksi langsung dari commit pra-perbaikan `bc32e84` menggunakan mesin audit dan ambang yang sama. Audit menemukan 149 temuan: 50 berisiko tinggi dan 99 sedang. Setelah perbaikan, tidak tersisa masalah berisiko tinggi maupun cacat struktur. Sisa 80 sinyal seluruhnya berupa kapital untuk penekanan, terutama kata seperti `JANGAN` pada peringatan keselamatan. Sinyal tersebut dipertahankan sebagai bahan review editorial, bukan kegagalan build.
 
-**Skor gabungan pascaperbaikan: 8,5/10.** Angka ini menilai mutu naskah dan penyajiannya, bukan membuktikan hasil belajar. Validasi pedagogis akhir tetap memerlukan playtest mahasiswa.
+**Skor gabungan meningkat dari 7,1/10 menjadi 8,5/10.** Angka ini menilai mutu naskah dan penyajiannya, bukan membuktikan hasil belajar. Validasi pedagogis akhir tetap memerlukan playtest mahasiswa.
+
+## Perbandingan Pra dan Pasca
+
+### Temuan mesin audit
+
+| Ukuran | Pra-perbaikan `bc32e84` | Pascaperbaikan `249edd1` | Perubahan |
+|---|---:|---:|---:|
+| Bidang teks runtime | 9.128 | 9.128 | tetap |
+| Temuan berisiko tinggi | 50 | 0 | -100% |
+| Temuan sedang struktural | 7 | 0 | -100% |
+| Advisory kapital | 92 | 80 | -13% |
+| Seluruh temuan | 149 | 80 | -46% |
+| Temuan pada UKP | 83 | 63 | seluruh sisa hanya kapital |
+| Temuan pada IGD | 30 | 11 | seluruh sisa hanya kapital |
+| Temuan pada UKM | 36 | 6 | seluruh sisa hanya kapital |
+
+Lima puluh temuan tinggi terdiri dari 34 kalimat terlalu panjang, 15 bidang terlalu panjang, dan satu jargon klinis di mulut pasien. Tujuh temuan sedang struktural terdiri dari tiga pertanyaan bertumpuk, dua spasi sebelum tanda baca, dan dua tanda baca berulang.
+
+### Skor editorial ahli
+
+Skor berikut adalah penilaian berbasis rubrik empat unsur: kejernihan, alur informasi, kesesuaian register, dan kemudahan dipindai/beban kognitif. Skor pra-perbaikan dinilai retrospektif pada snapshot yang tidak berubah, bukan berdasarkan ingatan. Karena belum ada playtest manusia, selisih skor dibulatkan satu desimal dan tidak boleh diperlakukan sebagai ukuran efek pembelajaran.
+
+| Dimensi | Pra | Pasca | Delta |
+|---|---:|---:|---:|
+| Pembuka vignette dan narasi klinis | 7,4 | 8,4 | +1,0 |
+| Susunan pertanyaan anamnesis | 7,6 | 8,6 | +1,0 |
+| Jawaban pasien dan dialog | 7,5 | 8,7 | +1,2 |
+| Mutiara klinis/EBM | 6,7 | 8,4 | +1,7 |
+| Realita FKTP dan panduan resmi | 7,1 | 8,2 | +1,1 |
+| Skenario dan intervensi UKM | 6,8 | 8,7 | +1,9 |
+| Bahasa mekanik dan umpan balik | 7,3 | 8,8 | +1,5 |
+| Beban kognitif dan aksesibilitas teks | 6,6 | 8,5 | +1,9 |
+| **Rerata** | **7,1** | **8,5** | **+1,4** |
 
 ## Metode
 
@@ -30,7 +63,7 @@ Ambang praktis yang dipakai bukan rumus keterbacaan Bahasa Indonesia yang belum 
 | Debrief klinis | 140 kata | 45 kata |
 | Narasi/data klinis | 120 kata | 48 kata |
 
-## Skor Pascaperbaikan
+## Penilaian Pascaperbaikan
 
 | Dimensi | Skor | Penilaian |
 |---|---:|---|
