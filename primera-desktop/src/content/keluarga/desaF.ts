@@ -538,7 +538,7 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                   },
                   catatanPedagogis:
                     'Sang ibu menolak karena DIKABARI, bukan DILIBATKAN. Mengundangnya masuk ke lingkar ' +
-                    'keputusan (ANC bersama, dengar dari bidan, lihat USG) mengubah lawan adat jadi panitia ' +
+                    'keputusan (ANC bersama, dengar dari bidan, telaah hasil pemeriksaan yang tersedia) mengubah lawan adat jadi panitia ' +
                     'keselamatan. Konflik keluarga jarang soal isi — hampir selalu soal siapa diajak bicara.',
                 },
                 {
@@ -642,14 +642,16 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
               nama: 'ANC Keluarga: Undang Sang Ibu',
               deskripsi:
                 'Gelar ANC istimewa minggu depan dengan calon nenek sebagai tamu kehormatan: dengar denyut ' +
-                'jantung cucu, lihat USG, dan dengar penjelasan risiko panggul sempit LANGSUNG dari bidan — ' +
+                'jantung cucu, telaah Buku KIA dan hasil pemeriksaan yang tersedia, serta dengar penilaian risiko ' +
+                'lengkap LANGSUNG dari bidan — USG melalui jejaring hanya bila berindikasi, bukan diasumsikan ada — ' +
                 'lalu tawarkan peran baru: selamatan tetap di kampung SETELAH empat puluh hari, ibu yang ' +
                 'memimpin, dan kamar cat baru itu jadi kamar cucu saat mudik pertama.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
-                'Sang ibu datang membawa dua kardus oleh-oleh dan pulang membawa foto USG yang dilaminating. ' +
-                'Di ruang ANC, saat bidan menunjuk angka 142 cm, beliau yang lebih dulu memutuskan: "Wis, ' +
-                'lahiran nang PONED wae. Aku sing nunggoni." Tas mudik dibongkar ulang — isinya kini untuk ' +
+                'Sang ibu datang membawa dua kardus oleh-oleh dan pulang membawa salinan rencana persalinan. ' +
+                'Di ruang ANC, bidan menilai tinggi badan bersama riwayat obstetri dan temuan lain — bukan angka ' +
+                '142 cm sendirian — lalu menjelaskan pilihan jejaring yang aman. Beliau mengangguk: "Wis, ' +
+                'ikuti tempat yang dinilai paling siap. Aku sing nunggoni." Tas mudik dibongkar ulang — isinya kini untuk ' +
                 'menginap di dekat Puskesmas. Adatnya bergeser empat puluh hari, tidak dilanggar.',
             },
             {
@@ -1047,7 +1049,8 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
               'Bu Painah datang ke poli diantar Wati — pucat seperti kertas, berkunang-kunang sampai dua ' +
               'kali terduduk di ruang tunggu. Tes kehamilannya positif: anak keenam, di atas anemia yang ' +
               'tak pernah diobati. "Bapaknya bilang rezeki, Dok," kata Wati pelan, memegangi tangan ibunya ' +
-              '— dengan nada anak ranking satu yang sudah bisa menghitung sendiri harga sebuah keyakinan.',
+              '— dengan nada anak ranking satu yang sudah bisa menghitung sendiri harga sebuah keyakinan. ' +
+              'Kehamilan berjarak dekat dan anemia yang tidak tertangani menambah risiko; keputusan KB bukan penyebab tunggal kondisi ini dan tidak boleh dijadikan hukuman moral.',
           },
         },
       ],

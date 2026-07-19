@@ -83,7 +83,7 @@ describe('<Kunjungan /> — disambiguasi aria-label hotspot (#13)', () => {
 })
 
 describe('<Kunjungan /> - sitasi resep sosial C2', () => {
-  it('menampilkan Pinkesga dan landasan resmi hanya setelah kartu dipilih', async () => {
+  it('menampilkan Pinkesga dan konteks netral, bukan pengesahan jawaban, setelah kartu dipilih', async () => {
     const { skenario } = skenarioUji()
     pasangKunjungan({ fase: 'resep_sosial' })
     render(<Kunjungan />)
@@ -97,7 +97,9 @@ describe('<Kunjungan /> - sitasi resep sosial C2', () => {
     await user.click(kartuPertama)
 
     expect(screen.getByText(sitasi.pinkesga)).toBeInTheDocument()
+    expect(screen.getByText(/konteks domain, bukan kunci jawaban/i)).toBeInTheDocument()
     expect(screen.getByText(sitasi.sumber)).toBeInTheDocument()
+    expect(screen.getByLabelText(/bukan penanda benar atau salah/i)).toBeInTheDocument()
   })
 })
 

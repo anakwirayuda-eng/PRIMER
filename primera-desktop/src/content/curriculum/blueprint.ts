@@ -14,6 +14,7 @@ import type {
 } from './types'
 import { buildM13DeltaEvidenceBindings } from './m13DeltaAudit'
 import { LAB_ALL_ARCHETYPE_SPECS } from '../lab'
+import { evidenceIntervensiUkm, kartuIntervensiBenar } from '../ukmEvidence'
 
 export const FKTP144_CATALOG_ID = 'fktp144-1186-2022'
 export const EXISTING_CLINICAL_CATALOG_ID = 'existing-clinical-baseline-2026-07-14'
@@ -457,13 +458,32 @@ export function buildCurriculumBlueprint(pack: ContentCatalog): CurriculumBluepr
   evidenceBindings.push(...m13DeltaBindings)
 
   for (const scenario of ukmScenarios) {
+    const keluarga = pack.keluarga[scenario.contentRef.familyId]
+    const konten = keluarga?.arc.kunjungan.find((item) => item.id === scenario.contentRef.visitId)
+    if (!konten) throw new Error(`UkmScenario '${scenario.id}' kehilangan konten sumber`)
+    const kartuBenar = konten.intervensi.filter((kartu) => kartuIntervensiBenar(konten, kartu))
+    if (kartuBenar.length !== 1) {
+      throw new Error(`UkmScenario '${scenario.id}' wajib punya tepat satu kartu benar; ditemukan ${kartuBenar.length}`)
+    }
+    const evidence = evidenceIntervensiUkm(konten, kartuBenar[0]!)
+    if (!evidence) throw new Error(`UkmScenario '${scenario.id}' belum punya evidence kartu benar`)
     evidenceBindings.push({
       id: `evidence:${scenario.id}:ukm-objective`,
       subject: { kind: 'ukm_scenario', id: scenario.id },
       facet: 'ukm-objective',
-      source: 'source-pending:M13-0B',
-      locator: `family=${scenario.contentRef.familyId}; visit=${scenario.contentRef.visitId}; targets from existing content`,
-      reviewStatus: 'pending',
+      source: 'Permenkes-39-2016 + KMK-HK.01.07-MENKES-2015-2023 + Permenkes-3-2026',
+      locator: `family=${scenario.contentRef.familyId}; visit=${scenario.contentRef.visitId}; target=${konten.target.join(',')}; PIS-PK/SAJI dibaca bersama ILP dan payung penanggulangan penyakit aktif`,
+      population: 'Keluarga binaan di wilayah kerja FKTP; konteks fasilitas dan jejaring lokal bervariasi',
+      reviewStatus: 'accepted_with_limitation',
+    })
+    evidenceBindings.push({
+      id: `evidence:${scenario.id}:follow-up`,
+      subject: { kind: 'ukm_scenario', id: scenario.id },
+      facet: 'follow-up',
+      source: evidence.sumber.id,
+      locator: `correct-card=${evidence.kartuId}; ${evidence.locator}; ${evidence.sumber.url}`,
+      population: 'Keluarga binaan sesuai profil demografi dan hambatan COM-B dalam skenario',
+      reviewStatus: 'accepted_with_limitation',
     })
   }
   evidenceBindings.sort(compareIds)

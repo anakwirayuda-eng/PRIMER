@@ -305,6 +305,25 @@ export function MejaKerja() {
   /* -- Debrief sore & rekap slice ------------------------------------------------ */
 
   const debrief = state.blok === 'sore' ? ringkasanHarian(state) : null
+  const episodeAktif = state.careEpisodes.some(
+    (episode) => episode.status !== 'terverifikasi' && episode.status !== 'berakhir',
+  )
+  const episodeTerverifikasi = state.careEpisodes.some((episode) => episode.status === 'terverifikasi')
+  const rujukanMenunggu = state.careEpisodes.some(
+    (episode) =>
+      Boolean(episode.referral) &&
+      episode.status !== 'terverifikasi' &&
+      episode.status !== 'berakhir' &&
+      episode.referral?.stage !== 'feedback' &&
+      episode.referral?.stage !== 'acted',
+  )
+  const rujukanTuntas = state.careEpisodes.some(
+    (episode) =>
+      Boolean(episode.referral) &&
+      (episode.referral?.stage === 'feedback' ||
+        episode.referral?.stage === 'acted' ||
+        episode.status === 'terverifikasi'),
+  )
   // Modal rekap dikendalikan flag engine — TUTUP_REKAP mem-false-kan permanen.
   const tampilkanRekap = Boolean(state.flags['rekapSlice'])
   const skorRekap = tampilkanRekap ? hitungSkor(state) : null
@@ -750,9 +769,12 @@ export function MejaKerja() {
             <p className="teks-xs teks-lembut mk__storylet">
               {storyletHariIni(state.seed, state.hari, {
                 punyaBinaan: state.desa.binaan.length > 0,
-                pernahRujuk: state.tally.rujukanTepat > 0,
+                rujukanMenunggu,
+                rujukanTuntas,
                 pernahPosyandu: state.tally.posyanduSesi > 0,
                 pernahProlanis: state.tally.prolanisSesi > 0,
+                episodeAktif,
+                episodeTerverifikasi,
               })}
             </p>
 

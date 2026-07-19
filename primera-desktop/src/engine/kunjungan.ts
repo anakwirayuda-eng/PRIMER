@@ -23,6 +23,7 @@ import type { IndikatorPisPk, KeluargaBinaan, NodeDialog, PilihanDialog, Skenari
 import { isGayaTerlarang } from '@content/types'
 import { ukmScenarioAktif, type ContentPack } from '@content/pack'
 import type { Rng } from './core/rng'
+import { sitasiIntervensiUkm } from '@content/ukmCitations'
 
 /**
  * Hasil kunjungan diperkaya daftar indikator yang DIBOHONGKAN warga.
@@ -488,6 +489,10 @@ export function selesaikanKunjungan(
   // pemain. Kumpulkan catatan dari pilihan dialog yang TIDAK tepat (maks 3,
   // urutan kejadian) + kartu intervensi yang meleset — bahan debrief nyata.
   const catatanPedagogis: string[] = []
+  if (kartu) {
+    const evidence = sitasiIntervensiUkm(skenario, kartu, 'pasca_penilaian')
+    catatanPedagogis.push(`${evidence.labelDukungan}: ${evidence.sumber} Batas transfer: ${evidence.batasan}`)
+  }
   for (const id of kj.pilihanDiambil) {
     const p = peta.get(id)
     if (p && !p.tepat && p.catatanPedagogis) catatanPedagogis.push(p.catatanPedagogis)
@@ -509,7 +514,11 @@ export function selesaikanKunjungan(
     kualitasSaji,
     ...(kualitasIngatkan !== undefined ? { kualitasIngatkan } : {}),
     indikatorTerverifikasi,
-    narasiPenutup: [pilihanIngatkan?.respons, berhasil ? skenario.penutupBerhasil : skenario.penutupGagal]
+    narasiPenutup: [
+      pilihanIngatkan?.respons,
+      berhasil || !intervensiCocok ? kartu?.hasilNarasi : undefined,
+      berhasil ? skenario.penutupBerhasil : skenario.penutupGagal,
+    ]
       .filter(Boolean)
       .join(' '),
     tingkat,

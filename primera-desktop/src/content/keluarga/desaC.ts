@@ -447,7 +447,8 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
               'Pagi buta, pintu poli digedor. Bu Asih dipapah Pak Jumadi — wajah sembab, pandangan kabur, ' +
               '"Kepalanya nyeri sekali, Dok, dari semalam. Tadi sempat muntah-muntah." Tensinya 172/112, ' +
               'protein urin +3. Kehamilan 8 bulan yang tak pernah sekali pun diperiksa itu kini datang sendiri — ' +
-              'dengan cara yang paling ditakutkan semua orang.',
+              'dengan cara yang paling ditakutkan semua orang. Kunjungan ANC yang terlewat tidak menciptakan ' +
+              'preeklampsia; yang hilang adalah kesempatan mendeteksi risiko dan menyiapkan pertolongan lebih dini.',
           },
         },
         /* ----------------------------------------------------------------

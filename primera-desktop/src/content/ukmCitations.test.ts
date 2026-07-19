@@ -9,6 +9,7 @@ import { PACK } from './index'
 import type { ContentPack } from './pack'
 import { sidikJariPack } from '@engine/verifikasi'
 import { panduanSkenarioUkm, sitasiIntervensiUkm, sumberKegiatanUkm } from './ukmCitations'
+import { EVIDENCE_INTERVENSI_UKM, evidenceIntervensiUkm, kartuIntervensiBenar } from './ukmEvidence'
 
 const semuaSkenario = Object.values(PACK.keluarga).flatMap((keluarga) => keluarga.arc.kunjungan)
 const semuaIntervensi = semuaSkenario.flatMap((skenario) => skenario.intervensi)
@@ -30,7 +31,7 @@ describe('M11 UKM C2 - cakupan sitasi kunjungan rumah', () => {
     }
   })
 
-  it('setiap kartu intervensi punya landasan sumber dan padanan Pinkesga', () => {
+  it('setiap kartu intervensi punya konteks netral pra-penilaian dan padanan Pinkesga', () => {
     for (const skenario of semuaSkenario) {
       for (const kartu of skenario.intervensi) {
         const sitasi = sitasiIntervensiUkm(skenario, kartu)
@@ -38,18 +39,35 @@ describe('M11 UKM C2 - cakupan sitasi kunjungan rumah', () => {
         expect(sitasi.sumber, kartu.id).not.toMatch(placeholder)
         expect(sitasi.sumber, kartu.id).toMatch(dokumenTerlacak)
         expect(sitasi.pinkesga, kartu.id).toMatch(/^Pinkesga /)
+        expect(sitasi.tingkatDukungan, kartu.id).toBe('konteks_domain')
+        expect(sitasi.labelDukungan, kartu.id).toMatch(/bukan kunci jawaban/i)
       }
     }
   })
 
-  it('kunci komposit mencegah collision id lokal antar-skenario', () => {
+  it('27 skenario masing-masing punya tepat satu kartu benar dan binding evidence spesifik', () => {
+    expect(EVIDENCE_INTERVENSI_UKM).toHaveLength(27)
+    expect(new Set(EVIDENCE_INTERVENSI_UKM.map((item) => `${item.skenarioId}:${item.kartuId}`)).size).toBe(27)
+    for (const skenario of semuaSkenario) {
+      const benar = skenario.intervensi.filter((kartu) => kartuIntervensiBenar(skenario, kartu))
+      expect(benar, skenario.id).toHaveLength(1)
+      const evidence = evidenceIntervensiUkm(skenario, benar[0]!)
+      expect(evidence, skenario.id).toBeDefined()
+      expect(evidence?.batasan, skenario.id).toBeTruthy()
+      const pasca = sitasiIntervensiUkm(skenario, benar[0]!, 'pasca_penilaian')
+      expect(pasca.tingkatDukungan, skenario.id).not.toBe('konteks_domain')
+      expect(pasca.sumber, skenario.id).toMatch(dokumenTerlacak)
+    }
+  })
+
+  it('kunci komposit mencegah collision id lokal antar-skenario tanpa membenarkan distraktor', () => {
     const ketut = semuaSkenario.find((skenario) => skenario.id === 'ketut_k1')!
     const karsa = semuaSkenario.find((skenario) => skenario.id === 'karsa_k1')!
     const kartuKetut = ketut.intervensi.find((kartu) => kartu.id === 'kk1_i2')!
     const kartuKarsa = karsa.intervensi.find((kartu) => kartu.id === 'kk1_i2')!
 
-    expect(sitasiIntervensiUkm(ketut, kartuKetut).sumber).toMatch(/Posyandu/i)
-    expect(sitasiIntervensiUkm(karsa, kartuKarsa).sumber).not.toMatch(/Posyandu/i)
+    expect(sitasiIntervensiUkm(ketut, kartuKetut, 'pasca_penilaian').tingkatDukungan).toBe('konteks_domain')
+    expect(sitasiIntervensiUkm(karsa, kartuKarsa, 'pasca_penilaian').tingkatDukungan).toBe('konteks_domain')
     expect(sitasiIntervensiUkm(karsa, kartuKarsa).pinkesga).toBe('Pinkesga Keluarga Berencana (KB)')
   })
 

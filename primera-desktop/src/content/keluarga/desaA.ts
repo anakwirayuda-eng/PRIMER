@@ -387,14 +387,14 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               id: 'wk1_i1',
               nama: 'Bukti untuk Bu Wulan',
               deskripsi:
-                'Sepakati "uji coba" dua minggu: minum amlodipine tiap malam, lalu cek fungsi ginjal ' +
-                '(ureum-kreatinin) gratis di Puskesmas untuk MEMBUKTIKAN ginjalnya aman — ditambah silaturahmi ' +
-                'ke Bu Hj. Aminah, jamaah pengajian yang 12 tahun minum obat darah tinggi dan masih kuat memimpin yasinan.',
+                'Sepakati uji coba dua minggu: minum amlodipine tiap malam, catat keluhan, lalu kembali untuk ' +
+                'menilai tekanan darah, tolerabilitas, dan pemeriksaan yang memang berindikasi. Jelaskan manfaat-risiko ' +
+                'tanpa menjanjikan satu tes dapat membuktikan keamanan absolut, lalu tawarkan silaturahmi ke Bu Hj. Aminah yang sudah lama berobat teratur.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Bu Wulan terdiam mendengar nama Bu Hj. Aminah. "Lho, Bu Haji itu minum obat, to? Kok segar begitu..." ' +
-                'Ia menimbang-nimbang strip amlodipine di tangannya. "Dua minggu ya, Dok. Terus dicek ginjal saya. ' +
-                'Kalau aman... ya saya lanjutkan. Janji lho ya, dicek beneran."',
+                'Ia menimbang strip amlodipine di tangannya. "Dua minggu ya, Dok. Saya catat kalau ada keluhan, ' +
+                'lalu tensi dan obatnya kita nilai lagi bersama. Tidak cuma disuruh percaya."',
             },
             {
               id: 'wk1_i2',
@@ -445,7 +445,8 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
             narasi:
               'Subuh buta, pintu IGD didorong tergesa: Bu Wulan digotong Pak Darto dan dua tetangga dengan ' +
               'kain sarung sebagai tandu. Bicaranya pelo, lengan kanannya jatuh lunglai tak bisa diangkat. ' +
-              '"Semalam dia bilang kepalanya mau pecah, Dok," suara Pak Darto gemetar. "Saya kira masuk angin biasa."',
+              '"Semalam dia bilang kepalanya mau pecah, Dok," suara Pak Darto gemetar. "Saya kira masuk angin biasa." ' +
+              'Hipertensi yang tidak terkontrol meningkatkan risiko stroke, tetapi waktu kejadian ini tidak dapat dipastikan sebagai akibat tunggal dari satu keputusan atau satu kunjungan yang terlewat.',
           },
         },
         /* ----------------------------------------------------------------
@@ -1466,9 +1467,9 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               id: 'sk2_i1',
               nama: 'Sekolah PMO untuk Bu Rahmi',
               deskripsi:
-                'Latih Bu Rahmi jadi PMO terampil dalam satu sesi praktik: geser waktu minum OAT ke malam sebelum ' +
-                'tidur, perut tidak kosong tapi tanpa kopi, teh jahe hangat untuk mual, aturan "muntah <2 jam = ' +
-                'ulang dosis, muntah terus = lapor Puskesmas" — lalu minta ia mengajarkan balik (teach-back) sampai lancar.',
+                'Latih Bu Rahmi jadi PMO terampil dalam satu sesi praktik: susun waktu minum OAT yang sesuai ' +
+                'regimen dan dapat dijalani Pak Santoso, kenali efek samping, lalu hubungi Puskesmas bila muntah ' +
+                'sebelum mengulang dosis apa pun. Minta ia mengajarkan balik (teach-back) sampai lancar.',
               cocokUntuk: ['kapabilitas'],
               hasilNarasi:
                 'Bu Rahmi mengulang aturannya tanpa melihat catatan, lengkap dengan gaya menunjuk-nunjuk. Sejak ' +
@@ -1756,7 +1757,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   id: 'kk1_d2_c',
                   teks:
                     '"Oh, demam begitu wajar kok, Bu, namanya KIPI ringan. Kejadian Ikutan Pasca Imunisasi. ' +
-                    'Tidak berbahaya, cukup parasetamol saja."',
+                    'Kita tetap nilai keadaan Ayunda, cukup minum, dan tanda bahayanya; parasetamol hanya bila perlu untuk tidak nyaman sesuai dosis berat badan, bukan rutin sebelum suntik."',
                   gaya: 'edukasi',
                   respons:
                     '"Wajar..." Luh Sari mengulang kata itu dengan getir. "Dokternya bilang wajar. Yang begadang ' +
@@ -1902,8 +1903,8 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
               deskripsi:
                 'Sambungkan Luh Sari dengan tiga ibu muda RW 7 yang anak-anaknya lengkap imunisasi — ngobrol ' +
                 'santai di bale banjar, bukan penyuluhan — lalu tawarkan kesepakatan kecil: SATU suntikan dulu ' +
-                'bulan ini, ditemani bidan yang siap dihubungi malam itu juga bila Ayunda demam, plus parasetamol ' +
-                'dan cerita kenapa demam ringan artinya tubuh sedang berlatih.',
+                'bulan ini, ditemani bidan yang memberi rencana KIPI: apa yang dapat dipantau di rumah, kapan ' +
+                'parasetamol boleh dipakai sesuai berat badan, dan tanda bahaya yang perlu segera dinilai.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Mendengar Bu Komang bercerita anaknya juga demam semalam lalu besoknya main lagi, Luh Sari ' +

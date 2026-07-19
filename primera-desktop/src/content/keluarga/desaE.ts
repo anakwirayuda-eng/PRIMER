@@ -330,7 +330,8 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
               'Rina digendong bapaknya masuk poli — lemas, demam naik-turun sembilan hari yang dikira ' +
               '"cuma diare biasa lagi". Lidahnya kotor berselaput, perutnya nyeri. "Minumnya ya air godhogan ' +
               'itu, Dok," kata Pak Prapto dengan suara orang yang sudah tahu jawaban dari pertanyaan yang ' +
-              'tak pernah selesai diurusnya.',
+              'tak pernah selesai diurusnya. Sumber infeksi belum terbukti dari jarak sumur atau cerita air saja; ' +
+              'yang jelas, pajanan air berisiko dan keterlambatan penilaian mempersempit kesempatan pencegahan serta deteksi dini.',
           },
         },
       ],
@@ -667,7 +668,8 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
               'Bu Marni datang ke poli diantar Dodi yang bolos sekolah — lemas, pandangan kabur, luka baru ' +
               'di jempol kaki yang "kena minyak seminggu lalu" dan membusuk diam-diam di balik perban ' +
               'seadanya. "Nggak bisa jualan tiga hari, Dok," bisiknya, lebih cemas soal dagangan daripada ' +
-              'kakinya. GDS: 388. Kartu di dompetnya masih mati.',
+              'kakinya. GDS: 388. Kartu di dompetnya masih mati. Status JKN tidak menyebabkan diabetes atau luka; ' +
+              'putusnya akses membuat skrining, perawatan, dan deteksi komplikasi tertunda.',
           },
         },
       ],
@@ -956,10 +958,9 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
               id: 'gk1_i1',
               nama: 'Kontrak Sopir: Berhenti Bertahap + Rute Aman',
               deskripsi:
-                'Program berhenti merokok yang menghormati profesinya: pangkas dulu semua rokok "otomatis" ' +
-                '(sisakan yang rute malam), ganti ritual tol dengan kopi + permen jahe + power nap terjadwal ' +
-                'di rest area, konseling rutin di Puskesmas — rahasia dari teman sopir sampai ia sendiri ' +
-                'yang mau cerita — dan laci inhaler dipisah rumah dari slop kretek.',
+                'Program berhenti merokok yang menghormati profesinya: petakan rokok otomatis, sepakati target ' +
+                'berhenti dan langkah pengurangan sebagai jembatan, serta susun rute malam aman dengan power nap ' +
+                'di rest area — kopi bukan pengganti tidur. Lanjutkan konseling Puskesmas dan pisahkan laci inhaler anak dari slop kretek.',
               cocokUntuk: ['motivasi'],
               hasilNarasi:
                 'Bulan pertama: dua pak jadi tujuh batang — "cuma yang tol, Dok". Bulan kedua, ia datang ke ' +
@@ -1008,7 +1009,8 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
               'Bu Ratna menggendong Dimas masuk poli subuh-subuh — bibirnya masih kebiruan samar meski sudah ' +
               'dinebul dua kali di rumah. Semalam Pak Gunawan pulang dari rute Solo, memeluk anaknya kangen ' +
               'dengan jaket yang sepuluh jam menemani dua pak kretek. "Serangannya yang paling lama, Dok," ' +
-              'suara Bu Ratna pecah. "Bapaknya di parkiran, nggak berani masuk."',
+              'suara Bu Ratna pecah. "Bapaknya di parkiran, nggak berani masuk." Paparan asap adalah pemicu ' +
+              'yang dapat dimodifikasi, tetapi serangan asma bersifat multifaktor dan jaket itu bukan bukti penyebab tunggal.',
           },
         },
       ],
@@ -1359,7 +1361,8 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
               'Yu Parti yang mengantarnya dengan becak motor tetangga: Mbah Lastri pagi ini ditemukan duduk ' +
               'di lantai dapur, dunia berputar, tengkuk kaku, bicara mulai pelo di ujung-ujung kata. Tensi ' +
               'di poli: 208/118. Di tasnya, toples obat campur itu ikut dibawa — penuh, nyaris tak berkurang. ' +
-              '"Dua minggu ini dia bilang wis waras, Dok," kata Yu Parti, "jadi obatnya diliburkan."',
+              '"Dua minggu ini dia bilang wis waras, Dok," kata Yu Parti, "jadi obatnya diliburkan." Hipertensi ' +
+              'tak terkontrol meningkatkan risiko stroke, tetapi kejadian individual ini tidak dapat ditarik sebagai akibat pasti satu perilaku.',
           },
         },
       ],

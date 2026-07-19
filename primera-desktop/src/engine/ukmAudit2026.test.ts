@@ -261,3 +261,17 @@ describe('Bridge B1.2 - janji PIS-PK yang ingkar membuka kunjungan ulang', () =>
     expect(mulai.state.kunjungan?.skenarioId).toBe(skenarioTerakhir.id)
   })
 })
+
+describe('UKM assurance - karma menyatakan risiko tanpa kausalitas deterministik', () => {
+  it('sembilan event karma memuat pembatas kausal yang eksplisit', () => {
+    const karma = Object.values(PACK.keluarga)
+      .flatMap((keluarga) => keluarga.arc.kunjungan)
+      .flatMap((skenario) => (skenario.karma ? [skenario.karma] : []))
+    expect(karma).toHaveLength(9)
+    for (const event of karma) {
+      expect(event.narasi, event.kasusId).toMatch(
+        /tidak (?:dapat dipastikan|dapat ditarik|menciptakan|menyebabkan)|multifaktor|belum terbukti|bukan penyebab tunggal|bukan bukti penyebab tunggal/i,
+      )
+    }
+  })
+})

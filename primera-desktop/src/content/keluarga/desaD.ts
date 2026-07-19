@@ -284,8 +284,8 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
               id: 'slk1_i1',
               nama: 'Restorasi Nama: Eko Kembali sebagai Manusia',
               deskripsi:
-                'Rancang "jalan pulang sosial": mulai dari obat baru dengan efek samping ringan (ganti ke ' +
-                'regimen yang tidak bikin kaku-ngiler), lalu peran kecil yang terlihat kampung — Eko membantu ' +
+                'Rancang jalan pulang sosial: fasilitasi evaluasi klinis atas kaku-ngiler dan penyesuaian regimen ' +
+                'oleh dokter bila memang berindikasi, lalu peran kecil yang terlihat kampung — Eko membantu ' +
                 'Pak Slamet menjemur gabah di halaman DEPAN — dan sepakati satu kalimat keluarga untuk ' +
                 'menjawab tetangga: "Eko sakit, sedang berobat, dan membaik."',
               cocokUntuk: ['motivasi'],
@@ -335,7 +335,8 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
               'Kabar itu tiba sebelum pasiennya: Eko mengamuk subuh tadi — memecahkan jendela kamarnya sendiri, ' +
               'berteriak pada suara yang hanya ia dengar. Warga sekampung menontonnya diikat di balai desa. ' +
               'Pak Slamet berdiri di depan poli dengan tangan berdarah kaca, suaranya habis: "Tolong anak saya, ' +
-              'Dok. Saya yang salah. Enam bulan... saya yang menghentikan obatnya."',
+              'Dok. Enam bulan... obatnya kami hentikan." Relaps psikotik bersifat multifaktor; penghentian terapi ' +
+              'dan putusnya pemantauan meningkatkan risiko, tetapi keluarga tidak boleh diposisikan sebagai penyebab tunggal atau objek hukuman.',
           },
         },
         /* ----------------------------------------------------------------
@@ -978,7 +979,8 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
               'Bu Yani berlari masuk poli menggendong Nayla yang lemas — mata cekung, menangis tanpa air ' +
               'mata, popoknya kering sejak subuh. "Muntah-mencret dari kemarin, Dok. Pisangnya... kemarin ' +
               'pisangnya agak kehitaman, kata Mbah tidak apa-apa dikerok yang bagusnya saja." Usus tiga ' +
-              'bulan itu akhirnya menyerah dengan cara yang paling klasik.',
+              'bulan itu kini memerlukan rehidrasi segera. Pemberian makanan dini menambah jalur pajanan, tetapi ' +
+              'sumber episode diare ini tidak dapat dipastikan dari cerita pisang saja.',
           },
         },
         /* ----------------------------------------------------------------

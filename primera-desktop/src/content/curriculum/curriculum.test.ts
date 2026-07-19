@@ -192,7 +192,7 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     expect(berhasil.masteredScenarioIds).toEqual([scenarioId])
   })
 
-  it('M13-0B hanya men-terminalkan empat delta; binding baseline lain tetap pending', () => {
+  it('binding UKM aktif terminal dengan limitation; baseline klinis yang belum diaudit tetap pending', () => {
     expect(CURRICULUM_BLUEPRINT.evidenceBindings.length).toBeGreaterThan(0)
     const m13_1a = CURRICULUM_BLUEPRINT.evidenceBindings.filter((binding) =>
       binding.id.startsWith('m13-1a:'),
@@ -203,11 +203,17 @@ describe('M13-0A — canonical curriculum blueprint', () => {
     const baseline = CURRICULUM_BLUEPRINT.evidenceBindings.filter(
       (binding) => !binding.audit && !binding.id.startsWith('m13-1a:'),
     )
+    const baselineUkm = baseline.filter((binding) => binding.subject.kind === 'ukm_scenario')
+    const baselineLain = baseline.filter((binding) => binding.subject.kind !== 'ukm_scenario')
     expect(audited).toHaveLength(32)
     expect(audited.filter((binding) => binding.reviewStatus === 'resolved')).toHaveLength(16)
     expect(audited.filter((binding) => binding.reviewStatus === 'accepted_with_limitation')).toHaveLength(16)
     expect(audited.every((binding) => binding.audit?.physicianSignoff)).toBe(true)
-    expect(baseline.every((binding) => binding.reviewStatus === 'pending')).toBe(true)
+    expect(baselineUkm).toHaveLength(52)
+    expect(baselineUkm.every((binding) => binding.reviewStatus === 'accepted_with_limitation')).toBe(true)
+    expect(baselineUkm.filter((binding) => binding.facet === 'ukm-objective')).toHaveLength(26)
+    expect(baselineUkm.filter((binding) => binding.facet === 'follow-up')).toHaveLength(26)
+    expect(baselineLain.every((binding) => binding.reviewStatus === 'pending')).toBe(true)
     expect(m13_1a.length).toBeGreaterThan(30)
     expect(
       m13_1a.every((binding) =>

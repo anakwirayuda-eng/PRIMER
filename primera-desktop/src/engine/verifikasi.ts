@@ -622,7 +622,11 @@ function fnv1a(teks: string): string {
 // surat debrief; panduan lokal dan sumber EBM 20/20 kasus menjadi bagian dari
 // fingerprint. Sepsis juga mengikuti SSC 2026 (cairan berbasis BB + reassess),
 // bukan volume tetap universal.
-export const REVISI_ENGINE = 53
+// 54 (2026-07-19 - UKM assurance): hasilNarasi kartu intervensi akhirnya
+// masuk debrief dan setiap pilihan membawa status evidence pasca-penilaian.
+// Output replay kunjungan berubah walau rumus skor tetap, sehingga revisi
+// wajib dibedakan dari build 53.
+export const REVISI_ENGINE = 54
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

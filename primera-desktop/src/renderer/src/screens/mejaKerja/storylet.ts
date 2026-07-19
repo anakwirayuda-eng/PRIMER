@@ -1,70 +1,106 @@
 /**
- * STORYLET DEBRIEF MALAM (M11 #2 A2, 2026-07-17) — kejadian naratif kecil
- * satu-tayang di renderer. Storylet kausal hanya masuk pool setelah mekanik
- * terkait sungguh terjadi; atmosfer tidak boleh memalsukan closed-loop.
+ * Storylet debrief malam: satu potongan kehidupan sistem kesehatan per hari.
+ * Receipt hanya boleh muncul bila state pendukungnya benar-benar ada.
  */
 import { Rng } from '@engine/core/rng'
 
 export interface KonteksStorylet {
   punyaBinaan?: boolean
-  pernahRujuk?: boolean
+  rujukanMenunggu?: boolean
+  rujukanTuntas?: boolean
   pernahPosyandu?: boolean
   pernahProlanis?: boolean
+  episodeAktif?: boolean
+  episodeTerverifikasi?: boolean
 }
 
-const STORYLET_UMUM: readonly string[] = [
-  '📻 Bu Aminah kirim pesan lewat kader lain: catatan KB RW 1 bulan ini "insyaAllah lengkap", tapi dia masih sungkan menelepon langsung.',
-  '📻 Pak Slamet mampir sebentar ke meja depan, cerita hansip RW 2 baru saja menegur remaja yang merokok di pos ronda — "biar ketauan usahanya, Dok."',
-  '📻 Bu Komang Sri titip salam lewat kader lain, katanya lansia di Banjar Taman Sari kangen ditanya kabar tensinya.',
-  '📻 Pak Darman melapor santai: warungnya jadi tempat nongkrong ibu-ibu tiap sore, jadi dia sering "dengar-dengar" duluan sebelum sempat dicatat resmi.',
-  '📻 Bu Ketut Ayu mencatat ada keluarga baru pindah ke wilayahnya. Mereka belum masuk roster bernama hari ini; pendataan awal dijadwalkan kader.',
-  '📻 Kabar dari balai desa: jalan menuju RW yang biasa banjir kalau hujan deras sudah mulai diperbaiki, katanya sebelum musim hujan tiba.',
-]
-
-const STORYLET_BERSYARAT: readonly {
+interface Storylet {
+  id: string
   teks: string
-  boleh: (konteks: KonteksStorylet) => boolean
-}[] = [
-  {
-    teks: '📻 Berkas rujukan yang kamu kirim masuk daftar tindak lanjut. Kabar balik hasil pelayanan belum diterima; loop ini belum boleh dianggap selesai.',
-    boleh: (konteks) => konteks.pernahRujuk === true,
-  },
-  {
-    teks: '📻 Pak Gede numpang cerita: jalan ke rumah salah satu keluarga binaan becek parah musim ini, katanya perlu diusulkan ke Lokmin.',
-    boleh: (konteks) => konteks.punyaBinaan === true,
-  },
-  {
-    teks: '📻 Bu Endang minta maaf lewat catatan kecil — laporan posyandu bulan ini telat sehari karena cucunya sakit.',
-    boleh: (konteks) => konteks.pernahPosyandu === true,
-  },
-  {
-    teks: '📻 Selentingan di ruang tunggu: kader sedang menyiapkan sesi Posyandu berikutnya dengan sasaran lintas siklus hidup.',
-    boleh: (konteks) => konteks.pernahPosyandu === true,
-  },
-  {
-    teks: '📻 Ibu-ibu arisan bercanda soal jadwal Prolanis yang katanya "lebih tepat waktu daripada jadwal kondangan" — reputasi kecil yang lumayan menyenangkan didengar.',
-    boleh: (konteks) => konteks.pernahProlanis === true,
-  },
+  boleh?: (konteks: KonteksStorylet) => boolean
+}
+
+const umum: readonly Storylet[] = [
+  { id: 'umum-kader-silang', teks: 'Kabar sore: dua kader membandingkan catatan rumah yang sama. Satu angka berbeda, lalu mereka sepakat kembali memeriksa alih-alih menebak.' },
+  { id: 'umum-obat', teks: 'Di gudang obat, petugas menandai satu stok yang mulai menipis. Catatan kecil itu mencegah masalah besar minggu depan.' },
+  { id: 'umum-sanitarian', teks: 'Sanitarian membentangkan peta RW di meja rapat. Titik air, jamban, dan keluhan diare mulai terlihat sebagai satu pola, bukan tiga daftar terpisah.' },
+  { id: 'umum-bidan', teks: 'Bidan desa menitipkan satu nama ibu hamil yang sulit dihubungi. Belum ada kesimpulan, hanya satu tugas tindak lanjut yang kini punya pemilik.' },
+  { id: 'umum-perawat', teks: 'Perawat menemukan nomor telepon yang salah di kartu lama. Lima menit memperbarui data terasa remeh sampai sebuah panggilan benar-benar perlu dilakukan.' },
+  { id: 'umum-lokmin', teks: 'Papan Lokmin sore ini penuh panah antara keluarga, program, poli, dan desa. Pelayanan primer rupanya lebih mirip jaringan daripada antrean lurus.' },
+  { id: 'umum-privasi', teks: 'Seorang kader menutup buku catatannya saat tetangga mendekat. Kepercayaan warga kadang dijaga oleh gerakan sekecil itu.' },
+  { id: 'umum-cuaca', teks: 'Hujan membuat satu jalan dusun sulit dilalui. Tim mengubah urutan kunjungan, bukan menghapus keluarga dari daftar.' },
+  { id: 'umum-warung', teks: 'Percakapan di warung memberi petunjuk tentang rumor kesehatan yang beredar. Tim mencatatnya sebagai hipotesis, bukan sebagai fakta.' },
+  { id: 'umum-sekolah', teks: 'Guru UKS mengirim pertanyaan tentang beberapa murid yang sering absen. Belum tentu satu penyakit, tetapi cukup untuk membuka percakapan lintas sektor.' },
+  { id: 'umum-antrian', teks: 'Petugas loket mengubah urutan antrean untuk seorang warga yang nyaris pulang. Akses kadang gagal bukan di diagnosis, melainkan di lima meter sebelum pintu poli.' },
+  { id: 'umum-teachback', teks: 'Di lorong, seorang warga mengulang aturan obat dengan kata-katanya sendiri. Petugas menemukan satu salah paham sebelum ia dibawa pulang.' },
+  { id: 'umum-data', teks: 'Grafik bulanan naik sedikit. Kapus meminta tim mencari siapa yang masih tertinggal, bukan sekadar merayakan rerata.' },
+  { id: 'umum-bahasa', teks: 'Kader mengganti satu istilah teknis dengan contoh dari dapur warga. Pesannya sama, tetapi kali ini orang di depannya benar-benar mengangguk paham.' },
+  { id: 'umum-jejaring', teks: 'Nomor Pustu, bidan, sanitarian, dan ambulans desa ditulis ulang di satu lembar. Jejaring yang baik dimulai dari tahu siapa menghubungi siapa.' },
+  { id: 'umum-refleksi', teks: 'Hari ini tidak semua masalah selesai. Namun beberapa masalah kini punya nama, pemilik, dan langkah berikutnya. Itu kemajuan yang dapat diperiksa.' },
 ]
 
-export const STORYLET_POOL: readonly string[] = [
-  ...STORYLET_UMUM,
-  ...STORYLET_BERSYARAT.map((storylet) => storylet.teks),
+const bersyarat: readonly Storylet[] = [
+  { id: 'binaan-jalan', teks: 'Kabar binaan: kader melaporkan jalan menuju salah satu rumah sedang becek. Rute kunjungan disusun ulang agar janji tidak hilang karena cuaca.', boleh: (k) => k.punyaBinaan === true },
+  { id: 'binaan-catatan', teks: 'Kabar binaan: satu keluarga membawa catatan tekanan darah buatan sendiri. Angkanya belum ditafsirkan, tetapi kebiasaan mencatatnya layak dipertahankan.', boleh: (k) => k.punyaBinaan === true },
+  { id: 'binaan-pemilik', teks: 'Kabar binaan: daftar tugas kini menyebut nama petugas dan tanggal kembali. Keluarga tidak lagi sekadar menjadi baris tanpa pemilik.', boleh: (k) => k.punyaBinaan === true },
+  { id: 'binaan-kontradiksi', teks: 'Kabar binaan: laporan kader dan cerita keluarga tidak sepenuhnya sama. Tim memilih memeriksa dengan hormat, bukan langsung menuduh salah satu pihak.', boleh: (k) => k.punyaBinaan === true },
+
+  { id: 'rujuk-tunggu-berkas', teks: 'Receipt rujukan: berkas sudah terkirim, tetapi umpan balik belum kembali. Episode tetap terbuka dan belum boleh disebut selesai.', boleh: (k) => k.rujukanMenunggu === true },
+  { id: 'rujuk-tunggu-telepon', teks: 'Receipt rujukan: petugas menyiapkan panggilan tindak lanjut karena kabar balik belum diterima. Mengirim pasien bukan akhir pekerjaan.', boleh: (k) => k.rujukanMenunggu === true },
+  { id: 'rujuk-tunggu-pemilik', teks: 'Receipt rujukan: status masih menunggu. Nama pemilik tindak lanjut dan tenggatnya tetap terlihat di ledger.', boleh: (k) => k.rujukanMenunggu === true },
+  { id: 'rujuk-tunggu-loop', teks: 'Receipt rujukan: loop masih terbuka. Tim menahan diri dari mengklaim hasil sebelum keputusan dan rencana balik benar-benar diterima.', boleh: (k) => k.rujukanMenunggu === true },
+
+  { id: 'rujuk-tuntas-balik', teks: 'Receipt rujukan: kabar balik sudah diterima dan langkah berikutnya tercatat. Untuk sekali ini, panah rujukan benar-benar pulang ke Puskesmas.', boleh: (k) => k.rujukanTuntas === true },
+  { id: 'rujuk-tuntas-aksi', teks: 'Receipt rujukan: hasil pelayanan sudah ditindaklanjuti. Episode ditutup karena ada bukti aksi, bukan karena berkas dikirim.', boleh: (k) => k.rujukanTuntas === true },
+  { id: 'rujuk-tuntas-keluarga', teks: 'Receipt rujukan: keluarga menerima penjelasan rencana lanjut setelah kabar balik tiba. Informasi tidak berhenti di meja petugas.', boleh: (k) => k.rujukanTuntas === true },
+  { id: 'rujuk-tuntas-ledger', teks: 'Receipt rujukan: ledger menunjukkan sinyal, keputusan, umpan balik, dan aksi berikutnya dalam satu jejak. Loop itu kini dapat diaudit.', boleh: (k) => k.rujukanTuntas === true },
+
+  { id: 'posy-sasaran', teks: 'Sesudah Posyandu, tim meninjau siapa yang datang dan siapa yang belum terjangkau. Cakupan bukan hanya jumlah kursi yang terisi.', boleh: (k) => k.pernahPosyandu === true },
+  { id: 'posy-rujuk', teks: 'Catatan Posyandu sore ini memisahkan edukasi rutin dari temuan yang perlu dinilai tenaga kesehatan. Kader tidak dipaksa menjadi dokter kecil.', boleh: (k) => k.pernahPosyandu === true },
+  { id: 'posy-siklus', teks: 'Daftar Posyandu dibaca lintas siklus hidup. Balita tetap penting, tetapi ibu, remaja, dewasa, dan lansia tidak menghilang dari peta layanan.', boleh: (k) => k.pernahPosyandu === true },
+  { id: 'posy-kualitas', teks: 'Tim membahas satu pengukuran Posyandu yang meragukan dan memilih mengulangnya. Data berkualitas lebih berguna daripada angka yang sekadar lengkap.', boleh: (k) => k.pernahPosyandu === true },
+
+  { id: 'prolanis-multi', teks: 'Sesudah sesi penyakit kronis, tim memisahkan peserta yang stabil dari yang membutuhkan penilaian individual. Satu klub tidak berarti satu kebutuhan.', boleh: (k) => k.pernahProlanis === true },
+  { id: 'prolanis-umpan', teks: 'Hasil sesi Prolanis kembali ke daftar tindak lanjut klinik. Senam dan edukasi bukan pulau yang terpisah dari terapi.', boleh: (k) => k.pernahProlanis === true },
+  { id: 'prolanis-absen', teks: 'Nama peserta yang berulang kali absen ditandai untuk ditelusuri hambatannya. Ketidakhadiran diperlakukan sebagai sinyal, bukan kenakalan.', boleh: (k) => k.pernahProlanis === true },
+  { id: 'prolanis-target', teks: 'Tim membandingkan tekanan darah, gula, fungsi, dan hambatan hadir. Keberhasilan program tidak direduksi menjadi satu angka ramai peserta.', boleh: (k) => k.pernahProlanis === true },
+
+  { id: 'episode-aktif-next', teks: 'Jejak perawatan: satu episode masih aktif, tetapi langkah berikutnya dan pemiliknya jelas. Ketidakpastian dikelola, bukan disembunyikan.', boleh: (k) => k.episodeAktif === true },
+  { id: 'episode-aktif-tenggat', teks: 'Jejak perawatan: sebuah tenggat mendekat. Ledger membuat pekerjaan yang belum selesai tetap terlihat saat hari berganti.', boleh: (k) => k.episodeAktif === true },
+  { id: 'episode-aktif-lintas', teks: 'Jejak perawatan: sinyal keluarga dan catatan klinik kini berada pada episode yang sama. Dua sisi layanan mulai berbicara satu sama lain.', boleh: (k) => k.episodeAktif === true },
+  { id: 'episode-aktif-bukan-selesai', teks: 'Jejak perawatan: tindakan pertama sudah dilakukan, tetapi hasil belum terverifikasi. Tim menahan stempel selesai.', boleh: (k) => k.episodeAktif === true },
+
+  { id: 'episode-verif-bukti', teks: 'Jejak perawatan: satu episode terverifikasi setelah ada bukti perubahan atau tindak lanjut. Penutupan datang dari receipt, bukan asumsi.', boleh: (k) => k.episodeTerverifikasi === true },
+  { id: 'episode-verif-belajar', teks: 'Jejak perawatan: episode yang tuntas dibaca ulang dalam Lokmin. Tim mencari apa yang membuat loop itu berhasil agar dapat diulang dengan bijak.', boleh: (k) => k.episodeTerverifikasi === true },
+  { id: 'episode-verif-ukm-ukp', teks: 'Jejak perawatan: masalah yang ditemukan di rumah berakhir dengan tindak lanjut klinik dan verifikasi keluarga. UKM dan UKP bertemu di hasil.', boleh: (k) => k.episodeTerverifikasi === true },
+  { id: 'episode-verif-tidak-magis', teks: 'Jejak perawatan: outcome membaik melalui beberapa langkah kecil lintas hari. Tidak ada satu tombol ajaib, hanya kontinuitas yang bekerja.', boleh: (k) => k.episodeTerverifikasi === true },
 ]
+
+const semua = [...umum, ...bersyarat]
+
+export const STORYLET_POOL: readonly string[] = semua.map((storylet) => storylet.teks)
 
 /** Kandidat aktual; diekspor agar kontrak anti-kabar-palsu dapat diuji langsung. */
 export function kandidatStorylet(konteks: KonteksStorylet = {}): readonly string[] {
-  return [
-    ...STORYLET_UMUM,
-    ...STORYLET_BERSYARAT.filter((storylet) => storylet.boleh(konteks)).map((storylet) => storylet.teks),
-  ]
+  return semua.filter((storylet) => storylet.boleh?.(konteks) ?? true).map((storylet) => storylet.teks)
 }
 
-/** Satu storylet per hari, deterministik dari seed pemain — non-REVISI. */
-export function storyletHariIni(
-  seed: number,
-  hari: number,
-  konteks: KonteksStorylet = {},
-): string {
-  return new Rng(seed, 'storylet', hari).pick(kandidatStorylet(konteks))
+/**
+ * Rotasi deterministik tanpa pengulangan selama satu putaran pool bila konteks
+ * tetap. Putaran berikutnya diacak ulang; boundary dicegah mengulang kalimat.
+ */
+export function storyletHariIni(seed: number, hari: number, konteks: KonteksStorylet = {}): string {
+  const kandidat = semua.filter((storylet) => storylet.boleh?.(konteks) ?? true)
+  const nomorHari = Math.max(1, Math.floor(hari)) - 1
+  const siklus = Math.floor(nomorHari / kandidat.length)
+  const indeks = nomorHari % kandidat.length
+  const identitasPool = kandidat.map((storylet) => storylet.id).join(',')
+  const urutan = new Rng(seed, 'storylet-order', identitasPool, siklus).shuffle(kandidat)
+  let terpilih = urutan[indeks]!
+
+  if (indeks === 0 && siklus > 0 && kandidat.length > 1) {
+    const sebelumnya = new Rng(seed, 'storylet-order', identitasPool, siklus - 1).shuffle(kandidat).at(-1)
+    if (sebelumnya?.id === terpilih.id) terpilih = urutan[1]!
+  }
+  return terpilih.teks
 }

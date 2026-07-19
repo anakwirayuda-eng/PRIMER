@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-19
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `2b54e2b9e39bcaffca695953b15203e728aec907`, artefak `5ad78cc3366fb8bf862e473324f52d71958db80cd44b1d3f5ba9bdcb02808fac`, pack `8691c663`, content release `m11-e2-saji-pilot-2026-07-17`, `REVISI_ENGINE=53`
+**Snapshot:** commit `c0923f4d63e057fa24914b14a14a22f9b2b52faf`, artefak `4b295fefe2d4e90312ed3bd818638c08e7ad0526b6a435bb5faa5815f5ec2528`, pack `d46076ca`, content release `ukm-assurance-2026-07-19`, `REVISI_ENGINE=54`
 
 ## Ringkasan eksekutif
 

@@ -602,6 +602,9 @@ describe('diagnosis perilaku (COM-B)', () => {
     const hasil = selesaikanKunjungan(r.kj, SKENARIO, kel)
     expect(hasil.hipotesisBenar).toBe(true)
     expect(hasil.berhasil).toBe(false)
+    expect(hasil.narasiPenutup).toContain('Warga datang, mengangguk, lalu pulang seperti biasa.')
+    expect(hasil.narasiPenutup).toContain(SKENARIO.penutupGagal)
+    expect(hasil.catatanPedagogis?.[0]).toMatch(/Konteks domain saja.*distraktor pedagogis/i)
   })
 
   it('kualitas MI = proporsi pilihan tepat', () => {
@@ -646,6 +649,8 @@ describe('diagnosis perilaku (COM-B)', () => {
     )
     const hasil = selesaikanKunjungan(r.kj, SKENARIO, kel)
     expect(hasil.berhasil).toBe(true)
+    expect(hasil.narasiPenutup).toContain('Pak Raharjo mendaftar arisan gelombang pertama.')
+    expect(hasil.narasiPenutup).toContain(SKENARIO.penutupBerhasil)
     const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 8, 2)
     expect(kelBaru.ttm).toBe('aksi')
     // #4 outcome-window (audit CODEX UKM 2026-07-16): arc tamat = warga BERJANJI

@@ -5,12 +5,16 @@
  * dipisah dari engine agar sumber dapat diaudit tanpa mengubah replay/skor.
  */
 import type { IndikatorPisPk, KartuIntervensi, SkenarioKunjungan } from './types'
+import { evidenceIntervensiUkm, kartuIntervensiBenar, type TingkatDukunganUkm } from './ukmEvidence'
 
 const SUMBER_SAJI =
   'Permenkes RI No. 39 Tahun 2016, Lampiran I Bab IV: kunjungan rumah memakai SAJI dan Pinkesga sesuai masalah keluarga; implementasi ILP Kemenkes RI 15 April 2025 menegaskan kader tetap memakai SAJI dan KIE pada kunjungan rumah.'
 
 const SUMBER_ILP =
   'KMK RI No. HK.01.07/MENKES/2015/2023: kunjungan rumah menindaklanjuti sasaran yang kehilangan layanan, tidak patuh, atau memiliki tanda bahaya melalui jejaring Puskesmas-Pustu-Posyandu; laporan implementasi Kemenkes RI 15 April 2025 mengonfirmasi missing service, non-compliance, dan danger sign sebagai keluaran kunjungan rumah ILP.'
+
+const SUMBER_PENANGGULANGAN_PENYAKIT =
+  'Permenkes RI No. 3 Tahun 2026 tentang Penanggulangan Penyakit adalah payung aktif pencegahan, surveilans, respons, komunikasi risiko, serta pelibatan masyarakat; ketentuan program spesifik tetap dibaca bersama bagian yang tidak dicabut dan pedoman teknis terkait.'
 
 const SUMBER_POSYANDU =
   'Panduan Pengelolaan Posyandu Bidang Kesehatan, Kementerian Kesehatan RI, Agustus 2023, Bab III: lima langkah pelayanan untuk seluruh siklus hidup; Kurikulum Pelatihan Keterampilan Dasar Kader Posyandu Kemenkes RI 2024 memuat 25 keterampilan kader; keduanya selaras dengan ILP KMK RI No. HK.01.07/MENKES/2015/2023.'
@@ -23,19 +27,6 @@ const SUMBER_KLB =
 
 const SUMBER_JKN =
   'Permenkes RI No. 39 Tahun 2016, Lampiran I: kepesertaan JKN adalah indikator keluarga sehat; pada langkah Jelaskan dan Bantu, JKN dicontohkan untuk mengatasi hambatan biaya layanan.'
-
-const SUMBER_PROGRAM_BY_INTERVENSI_ID: Readonly<Record<string, string>> = {
-  'wulan_k1:wk1_i4': SUMBER_PROLANIS,
-  'musa_k1:musa_i_senam': SUMBER_PROLANIS,
-  'musa_k2:musa_i2_testimoni': SUMBER_PROLANIS,
-  'ketut_k1:kk1_i2': SUMBER_POSYANDU,
-  'ketut_k1:kk1_i3': SUMBER_POSYANDU,
-  'ketut_k2:kk2_i3': SUMBER_POSYANDU,
-  'asih_k1:ak1_i3': SUMBER_POSYANDU,
-  'ketut_k1:kk1_i4': SUMBER_JKN,
-  'asih_k1:ak1_i2': SUMBER_JKN,
-  'marni_k1:mk1_i1': SUMBER_JKN,
-}
 
 interface LandasanIndikator {
   ringkas: string
@@ -102,34 +93,55 @@ function gabungPinkesga(target: IndikatorPisPk[]): string {
 }
 
 export function panduanSkenarioUkm(skenario: SkenarioKunjungan): string {
-  return `${SUMBER_SAJI} Untuk skenario ini, ${gabungLandasan(skenario.target)}. ${SUMBER_ILP}`
-}
-
-function sumberKhususIntervensi(
-  skenario: SkenarioKunjungan,
-  kartu: KartuIntervensi,
-): string | undefined {
-  return SUMBER_PROGRAM_BY_INTERVENSI_ID[`${skenario.id}:${kartu.id}`]
+  return `${SUMBER_SAJI} Untuk skenario ini, ${gabungLandasan(skenario.target)}. ${SUMBER_ILP} ${SUMBER_PENANGGULANGAN_PENYAKIT}`
 }
 
 export interface SitasiIntervensiUkm {
   sumber: string
   pinkesga: string
+  tingkatDukungan: TingkatDukunganUkm
+  labelDukungan: string
+  batasan: string
 }
 
 export function sitasiIntervensiUkm(
   skenario: SkenarioKunjungan,
   kartu: KartuIntervensi,
+  fase: 'pra_penilaian' | 'pasca_penilaian' = 'pra_penilaian',
 ): SitasiIntervensiUkm {
-  const sumberKhusus = sumberKhususIntervensi(skenario, kartu)
-  const landasan =
-    sumberKhusus ??
-    `${SUMBER_SAJI} Landasan penilaian skenario: ${gabungLandasan(skenario.target)}.`
+  const pinkesga = kartu.pinkesga?.trim() ?? gabungPinkesga(skenario.target)
+  const konteks = `${SUMBER_SAJI} Landasan domain skenario: ${gabungLandasan(skenario.target)}.`
+  if (fase === 'pra_penilaian') {
+    return {
+      sumber: `${konteks} Sumber ini memberi konteks masalah keluarga, bukan mengesahkan kartu yang sedang dipilih atau membocorkan jawaban.`,
+      pinkesga,
+      tingkatDukungan: 'konteks_domain',
+      labelDukungan: 'Konteks domain, bukan kunci jawaban',
+      batasan: 'Kecocokan intervensi dinilai setelah kunjungan selesai.',
+    }
+  }
+
+  const evidence = evidenceIntervensiUkm(skenario, kartu)
+  const benar = kartuIntervensiBenar(skenario, kartu)
+  if (benar && evidence) {
+    return {
+      sumber: `${evidence.sumber.sitasi}. ${evidence.klaimDidukung}`,
+      pinkesga,
+      tingkatDukungan: evidence.tingkat,
+      labelDukungan:
+        evidence.tingkat === 'mekanisme_spesifik' ? 'Mekanisme didukung evidence' : 'Adaptasi beralasan',
+      batasan: evidence.batasan,
+    }
+  }
+
   return {
-    sumber:
-      kartu.sumber?.trim() ??
-      `${landasan} Bentuk operasional kartu adalah adaptasi gameplay berbasis hambatan keluarga, bukan tindakan yang diwajibkan kata-per-kata oleh pedoman.`,
-    pinkesga: kartu.pinkesga?.trim() ?? gabungPinkesga(skenario.target),
+    sumber: kartu.sumber?.trim() ?? konteks,
+    pinkesga,
+    tingkatDukungan: 'konteks_domain',
+    labelDukungan: 'Konteks domain saja',
+    batasan: benar
+      ? 'Kartu benar belum memiliki binding evidence spesifik; aktivasi seharusnya diblokir oleh invariant authoring.'
+      : 'Pedoman mendukung tujuan program, bukan pilihan kartu ini. Kartu ini adalah distraktor pedagogis.',
   }
 }
 

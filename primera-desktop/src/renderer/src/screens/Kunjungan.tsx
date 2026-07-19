@@ -519,9 +519,12 @@ export function Kunjungan() {
                 className="kunjungan-resep__sitasi"
                 role="status"
                 aria-live="polite"
-                aria-label="Landasan resep sosial terpilih"
+                aria-label="Konteks ilmiah kartu terpilih, bukan penanda benar atau salah"
               >
-                <span className="chip chip--biru">{sitasiIntervensiAktif.pinkesga}</span>
+                <div className="baris">
+                  <span className="chip chip--biru">{sitasiIntervensiAktif.pinkesga}</span>
+                  <span className="chip">{sitasiIntervensiAktif.labelDukungan}</span>
+                </div>
                 <p>{sitasiIntervensiAktif.sumber}</p>
               </aside>
             )}
