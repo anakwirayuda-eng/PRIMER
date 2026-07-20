@@ -610,7 +610,7 @@ yang belum punya acceptance criterion; sengaja ditunda ke scope M13/M12
 dan bukan blocker. Butir 4 kemungkinan butuh generator/director baru,
 jadi wajib di-scope sebagai proyek tersendiri sebelum diimplementasikan.
 
-### M12 — Full aesthetic pass (didefinisikan 2026-07-06, TERBARU, BELUM DIMULAI)
+### M12 — Full aesthetic pass (didefinisikan 2026-07-06, SELESAI 2026-07-20)
 
 Dijadwalkan SETELAH M10 & M11 selesai. Mengganti visual generik "ruang
 tamu itu-itu saja" (satu ilustrasi dipakai ulang utk SEMUA 16 keluarga
@@ -621,14 +621,12 @@ karakter + ilustrasi scene). `Kunjungan.tsx` (4-babak: observasi hotspot
 persis begini strukturnya — jadi M12 pada dasarnya asset-swap + polish
 framing, BUKAN rewrite engine.
 
-**Tradeoff terbuka, belum diputuskan:** sumber aset — AI-gen dgn gaya
-visual terkunci/konsisten (risiko: konsistensi gaya lintas puluhan
-generate berbeda) vs asset pack RPG-Maker/VN berlisensi (konsisten
-out-of-the-box, tapi terikat gaya & lisensi komersial paket tsb). Ini
-tradeoff SEJENIS dgn lisensi BGM Square Enix yg sudah kena sebelumnya
-(lihat `CATATAN_LISENSI.txt` — koleksi pribadi, WAJIB ganti sebelum
-distribusi installer ke mahasiswa) — waspada gaya "Telltale/RPG-Maker"
-jangan sampai terlalu meniru gaya/aset game berhakcipta spesifik.
+**Keputusan dan hasil:** memakai aset orisinal AI-generated tanpa meniru
+seniman/studio/game tertentu dan tanpa asset pack pihak ketiga. Implementasi
+akhir melampaui target per-keluarga: 27 adegan spesifik per skenario (termasuk
+11 kunjungan lanjutan yang berubah), 16 keluarga, dan 24 potret pembicara.
+Seluruh provenance, pemetaan, batas runtime, dan pagar regresi dicatat di
+`docs/M12_VISUAL_PASS.md`.
 
 ### M13 — Kembalikan skala penuh 144/225 kasus (diformalkan 2026-07-11, BELUM DIJADWALKAN)
 

@@ -18,6 +18,7 @@ import { hashSeed, Rng } from '@engine/core/rng'
 import { arcKunjunganAktif, hariTindakLanjutKunjungan, skenarioEfektif } from '@engine/kunjungan'
 import { acakUrutan } from '../utils/acakUrutan'
 import { RumahIlustrasi } from './kunjungan/RumahIlustrasi'
+import { profilPembicara, type ProfilPotret } from './kunjungan/visualProfiles'
 import { useRadioGroup } from '../useRadioGroup'
 import './Kunjungan.css'
 
@@ -82,11 +83,16 @@ interface Ucapan {
   teks: string
 }
 
-function Potret({ nama }: { nama: string }) {
+function Potret({ profil }: { profil: ProfilPotret }) {
   return (
-    <span className="kunjungan-potret" aria-hidden>
-      {nama.charAt(0).toUpperCase()}
-    </span>
+    <span
+      className="kunjungan-potret"
+      aria-hidden
+      style={{
+        backgroundImage: `url(${profil.src})`,
+        backgroundPosition: profil.posisi,
+      }}
+    />
   )
 }
 
@@ -202,8 +208,11 @@ export function Kunjungan() {
     )
   }
 
-  const kepala = kelContent.anggota.find((a) => a.peran === 'kepala') ?? kelContent.anggota[0]
-  const namaWarga = kepala ? kepala.nama : kelContent.namaKeluarga
+  // M12: pembicara tidak selalu kepala keluarga. Respons warga muncul setelah
+  // reducer menaikkan dialogIndex, jadi layar respons merujuk node sebelumnya.
+  const dialogIndexPembicara = responsAktif === null ? kj.dialogIndex : Math.max(0, kj.dialogIndex - 1)
+  const profilWarga = profilPembicara(skenario.id, dialogIndexPembicara)
+  const namaWarga = profilWarga.nama
   const nodeAktif = skenario.dialog[kj.dialogIndex]
   const wawancaraTuntas = kj.dialogIndex >= skenario.dialog.length
   const temuan = skenario.hotspot.filter((h) => kj.hotspotDitemukan.includes(h.id))
@@ -281,7 +290,7 @@ export function Kunjungan() {
       {/* ---------------- Panggung: interior rumah + hotspot ---------------- */}
       <div className={`kunjungan-scene ${kj.fase !== 'observasi' ? 'kunjungan-scene--redup' : ''}`}>
         <div className="kunjungan-panggung">
-          <RumahIlustrasi />
+          <RumahIlustrasi keluargaId={kj.keluargaId} skenarioId={skenario.id} />
 
           <div className="kunjungan-hotspot-lapis">
             {skenario.hotspot.map((h, i) => {
@@ -377,7 +386,7 @@ export function Kunjungan() {
           <div className="kunjungan-wawancara">
             {/* M10 Batch-2 (A.1): live region — respons warga diumumkan SR. */}
             <div className="kunjungan-dialog kertas" role="status" aria-live="polite">
-              <Potret nama={namaWarga} />
+              <Potret profil={profilWarga} />
               <div className="kunjungan-dialog__isi">
                 {dokterTerakhir && (
                   // CODEX audit UI/UX 2026-07-10 (#14): PilihanDialog.teks di
@@ -407,8 +416,9 @@ export function Kunjungan() {
         {kj.fase === 'wawancara' && !responsAktif && nodeAktif && (
           <div className="kunjungan-wawancara">
             <div className="kunjungan-dialog kertas">
-              <Potret nama={namaWarga} />
+              <Potret profil={profilWarga} />
               <div className="kunjungan-dialog__isi">
+                <div className="kunjungan-dialog__nama mono">{namaWarga}</div>
                 <p className="kunjungan-dialog__narasi">{nodeAktif.narasi}</p>
               </div>
             </div>

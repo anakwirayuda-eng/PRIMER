@@ -44,7 +44,10 @@ describe('invarian namaKeluarga (2026-07-10)', () => {
     },
     {
       file: '../screens/Kunjungan.tsx',
-      fiks: 'const namaWarga = kepala ? kepala.nama : kelContent.namaKeluarga',
+      // M12 memindahkan identitas pembicara dari fallback kepala keluarga ke
+      // profil NPC per-node. Pagar tetap memastikan nama keluarga tidak diprefix
+      // ulang, tanpa membekukan implementasi kepala-keluarga yang sudah usang.
+      fiks: 'const namaWarga = profilWarga.nama',
       dobel: 'kepala.nama : `Keluarga ${kelContent.namaKeluarga}`',
     },
     {
