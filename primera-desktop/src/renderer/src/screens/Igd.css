@@ -25,6 +25,13 @@
   padding-bottom: var(--sp-3);
 }
 
+.igd__identitas {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: var(--sp-3);
+}
+
 .igd__label {
   font-size: var(--text-sm);
   font-weight: 800;
@@ -41,6 +48,17 @@
 .igd__stab {
   min-width: 160px;
   text-align: right;
+}
+
+@media (max-width: 620px) {
+  .igd__kepala {
+    flex-direction: column;
+  }
+
+  .igd__stab {
+    width: 100%;
+    text-align: left;
+  }
 }
 
 .igd-bar {

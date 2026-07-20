@@ -10,6 +10,7 @@ import { kasusEfektif } from '@engine/clinic'
 import type { Action } from '@engine/actions'
 import { formatUsia } from '@engine/usia'
 import { labelJk } from './util'
+import { PotretPasien } from './PotretPasien'
 
 interface Props {
   state: GameState
@@ -61,6 +62,7 @@ export function RuangTunggu({ state, dispatch }: Props) {
                 <span className="klinik-tunggu__nomor mono">
                   {String(i + 1).padStart(2, '0')}
                 </span>
+                <PotretPasien pasien={p} ukuran="kecil" />
                 <div className="tumbuh">
                   <div className="baris">
                     <span className="klinik-tunggu__nama">{p.nama}</span>

@@ -85,6 +85,17 @@
   gap: var(--sp-2);
 }
 
+.klinik-lembar__identitas {
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.klinik-lembar__identitas-utama {
+  align-items: center;
+  min-width: 0;
+  gap: var(--sp-3);
+}
+
 .klinik-lembar__nama {
   font-size: var(--text-xl);
   font-weight: 700;
@@ -943,6 +954,25 @@ details[open].klinik-hasil__panduan > summary::before {
   display: flex;
   align-items: center;
   gap: var(--sp-4);
+}
+
+@media (max-width: 680px) {
+  .klinik-lembar__identitas,
+  .klinik-tunggu__kartu {
+    align-items: flex-start;
+  }
+
+  .klinik-lembar__identitas {
+    flex-direction: column;
+  }
+
+  .klinik-lembar__chips {
+    justify-content: flex-start;
+  }
+
+  .klinik-tunggu__chips {
+    display: none;
+  }
 }
 
 .klinik-tunggu__nomor {

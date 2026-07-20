@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { STORYLET_POOL, kandidatStorylet, storyletHariIni } from './storylet'
+import { STORYLET_POOL, kandidatStorylet, storyletHariIni, storyletHariIniDetail } from './storylet'
 
 describe('storyletHariIni', () => {
   it('bank formal cukup lebar dan selalu menghasilkan anggota pool', () => {
@@ -13,6 +13,26 @@ describe('storyletHariIni', () => {
   it('deterministik untuk seed, hari, dan konteks yang sama', () => {
     const konteks = { punyaBinaan: true, episodeAktif: true }
     expect(storyletHariIni(42, 10, konteks)).toBe(storyletHariIni(42, 10, konteks))
+  })
+
+  it('detail visual mempertahankan teks lama dan mencakup empat tema atlas', () => {
+    const konteks = {
+      punyaBinaan: true,
+      rujukanMenunggu: true,
+      rujukanTuntas: true,
+      pernahPosyandu: true,
+      pernahProlanis: true,
+      episodeAktif: true,
+      episodeTerverifikasi: true,
+    }
+    const detail = Array.from({ length: 90 }, (_, i) => storyletHariIniDetail(23, i + 1, konteks))
+    for (let i = 0; i < detail.length; i += 1) {
+      expect(detail[i]!.teks).toBe(storyletHariIni(23, i + 1, konteks))
+      expect(detail[i]!.id).toBeTruthy()
+    }
+    expect(new Set(detail.map((item) => item.temaVisual))).toEqual(
+      new Set(['sistem', 'rujukan', 'lapangan', 'komunitas']),
+    )
   })
 
   it('tidak mengulang dalam 14 hari pada fase awal maupun konteks penuh', () => {

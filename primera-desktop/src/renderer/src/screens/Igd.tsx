@@ -10,6 +10,7 @@ import { PACK } from '@content/index'
 import { acakUrutan } from '../utils/acakUrutan'
 import { AMBANG_STABIL_RUJUK } from '@engine/igd'
 import { formatUsia } from '@engine/usia'
+import { PotretPasien } from './klinik/PotretPasien'
 import './Igd.css'
 
 export function Igd() {
@@ -61,30 +62,40 @@ export function Igd() {
       <div className="igd__panel kertas" ref={panelRef} tabIndex={-1}>
         {/* Header pasien + stabilitas */}
         <div className="igd__kepala">
-          <div>
-            <div className="igd__label mono">⛑ INSTALASI GAWAT DARURAT</div>
-            <div className="igd__pasien">
-              {igd.pasienNama} · {formatUsia(igd.usia, igd.usiaBulan)} · {igd.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
+          <div className="igd__identitas">
+            <PotretPasien
+              pasien={{
+                id: igd.pasienNama,
+                usia: igd.usia,
+                usiaBulan: igd.usiaBulan,
+                jenisKelamin: igd.jenisKelamin,
+              }}
+            />
+            <div>
+              <div className="igd__label mono">⛑ INSTALASI GAWAT DARURAT</div>
+              <div className="igd__pasien">
+                {igd.pasienNama} · {formatUsia(igd.usia, igd.usiaBulan)} · {igd.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
+              </div>
+              {/* Nama diagnosis & ICD-10 disembunyikan selama pemain masih bernalar
+                  (fase langkah/kode_biru) — baru terungkap di disposisi/debrief,
+                  supaya keputusan dibangun dari keluhan & vital, bukan kunci jawaban.
+                  CODEX fix #2: pasca_rosc ikut mengungkap — tebak-tebakan sudah
+                  usai begitu Kode Biru selesai, stabilisasi lanjutan bukan lagi
+                  soal diagnosis-tersembunyi. */}
+              {igd.fase === 'disposisi' || igd.fase === 'pasca_rosc' ? (
+                <div className="teks-xs teks-lembut">{kasus.nama} · ICD-10 {kasus.icd10}</div>
+              ) : (
+                <div className="teks-xs teks-lembut">Kasus gawat darurat — kenali dari keluhan &amp; tanda vital</div>
+              )}
+              {kasus.activationStatus === 'lab_prototype_unadjudicated' && (
+                <span
+                  className="chip chip--kunyit"
+                  title="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
+                >
+                  Prototipe lab
+                </span>
+              )}
             </div>
-            {/* Nama diagnosis & ICD-10 disembunyikan selama pemain masih bernalar
-                (fase langkah/kode_biru) — baru terungkap di disposisi/debrief,
-                supaya keputusan dibangun dari keluhan & vital, bukan kunci jawaban.
-                CODEX fix #2: pasca_rosc ikut mengungkap — tebak-tebakan sudah
-                usai begitu Kode Biru selesai, stabilisasi lanjutan bukan lagi
-                soal diagnosis-tersembunyi. */}
-            {igd.fase === 'disposisi' || igd.fase === 'pasca_rosc' ? (
-              <div className="teks-xs teks-lembut">{kasus.nama} · ICD-10 {kasus.icd10}</div>
-            ) : (
-              <div className="teks-xs teks-lembut">Kasus gawat darurat — kenali dari keluhan &amp; tanda vital</div>
-            )}
-            {kasus.activationStatus === 'lab_prototype_unadjudicated' && (
-              <span
-                className="chip chip--kunyit"
-                title="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
-              >
-                Prototipe lab
-              </span>
-            )}
           </div>
           <div className="igd__stab">
             <div className="teks-xs teks-lembut mono">STABILITAS</div>

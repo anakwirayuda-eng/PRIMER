@@ -12,7 +12,8 @@ import type { JenisSurat, Surat } from '@engine/state'
 import type { Persona } from '@content/types'
 import { formatUsia } from '@engine/usia'
 import { hitungSkor, ringkasanHarian } from '@engine/director'
-import { storyletHariIni } from './mejaKerja/storylet'
+import { storyletHariIniDetail } from './mejaKerja/storylet'
+import { profilVisualStorylet } from './mejaKerja/storyletVisualProfiles'
 import { hitungIksKeluarga } from '@engine/pispk'
 import {
   HARI_BUKA_PETA,
@@ -325,6 +326,16 @@ export function MejaKerja() {
         episode.referral?.stage === 'acted' ||
         episode.status === 'terverifikasi'),
   )
+  const storyletDebrief = storyletHariIniDetail(state.seed, state.hari, {
+    punyaBinaan: state.desa.binaan.length > 0,
+    rujukanMenunggu,
+    rujukanTuntas,
+    pernahPosyandu: state.tally.posyanduSesi > 0,
+    pernahProlanis: state.tally.prolanisSesi > 0,
+    episodeAktif,
+    episodeTerverifikasi,
+  })
+  const visualStorylet = profilVisualStorylet(storyletDebrief.temaVisual)
   // Modal rekap dikendalikan flag engine — TUTUP_REKAP mem-false-kan permanen.
   const tampilkanRekap = Boolean(state.flags['rekapSlice'])
   const skorRekap = tampilkanRekap ? hitungSkor(state) : null
@@ -767,17 +778,18 @@ export function MejaKerja() {
             </ul>
 
             {/* M11 #2 A2 — storylet atmosfer satu-tayang, murni display (non-REVISI). */}
-            <p className="teks-xs teks-lembut mk__storylet">
-              {storyletHariIni(state.seed, state.hari, {
-                punyaBinaan: state.desa.binaan.length > 0,
-                rujukanMenunggu,
-                rujukanTuntas,
-                pernahPosyandu: state.tally.posyanduSesi > 0,
-                pernahProlanis: state.tally.prolanisSesi > 0,
-                episodeAktif,
-                episodeTerverifikasi,
-              })}
-            </p>
+            <aside className="mk__storylet">
+              <span
+                className="mk__storylet-visual"
+                role="img"
+                aria-label={visualStorylet.label}
+                style={{
+                  backgroundImage: `url(${visualStorylet.src})`,
+                  backgroundPosition: visualStorylet.posisi,
+                }}
+              />
+              <p className="teks-xs teks-lembut">{storyletDebrief.teks}</p>
+            </aside>
 
             {/* M4.18 — Gudang Obat: stok menipis + pengadaan (admin sore hari). */}
             {(() => {

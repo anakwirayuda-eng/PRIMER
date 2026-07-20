@@ -41,6 +41,22 @@
   color: var(--tinta-lembut);
 }
 
+.kegiatan__visual {
+  width: min(520px, 100%);
+  aspect-ratio: 16 / 9;
+  margin: 0 auto var(--sp-4);
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background-size: 200% 200%;
+  background-repeat: no-repeat;
+  background-color: var(--bg-sunken);
+  box-shadow: var(--shadow-cekung);
+}
+
+[data-mode='malam'] .kegiatan__visual {
+  filter: brightness(0.84) saturate(0.9);
+}
+
 .kegiatan__narasi {
   margin: var(--sp-3) 0 var(--sp-4);
   line-height: 1.55;

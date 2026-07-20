@@ -1,0 +1,23 @@
+.potret-pasien {
+  display: inline-block;
+  flex: none;
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-sunken);
+  background-repeat: no-repeat;
+  box-shadow: var(--shadow-cekung);
+}
+
+.potret-pasien--kecil {
+  width: 48px;
+  height: 48px;
+}
+
+.potret-pasien--sedang {
+  width: 64px;
+  height: 64px;
+}
+
+[data-mode='malam'] .potret-pasien {
+  filter: brightness(0.9) saturate(0.9);
+}

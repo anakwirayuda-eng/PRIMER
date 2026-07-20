@@ -17,6 +17,7 @@ import {
   labelJk,
   namaDiagnosis,
 } from './util'
+import { PotretPasien } from './PotretPasien'
 
 interface Props {
   enc: EncounterState
@@ -70,11 +71,14 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
 
       {/* Identitas */}
       <section className="klinik-lembar__seksi">
-        <div className="baris baris--antara">
-          <div>
-            <div className="klinik-lembar__nama">{p.nama}</div>
-            <div className="teks-kecil teks-lembut">
-              {formatUsia(p.usia, p.usiaBulan)} &middot; {labelJk(p.jenisKelamin)}
+        <div className="baris baris--antara klinik-lembar__identitas">
+          <div className="baris klinik-lembar__identitas-utama">
+            <PotretPasien pasien={p} />
+            <div>
+              <div className="klinik-lembar__nama">{p.nama}</div>
+              <div className="teks-kecil teks-lembut">
+                {formatUsia(p.usia, p.usiaBulan)} &middot; {labelJk(p.jenisKelamin)}
+              </div>
             </div>
           </div>
           <div className="baris klinik-lembar__chips">

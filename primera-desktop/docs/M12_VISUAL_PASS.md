@@ -4,6 +4,10 @@
 **Scope:** 27 visit scenes, 16 families, and 24 speaking residents  
 **Runtime boundary:** renderer-only; no scoring, content-release, save, or engine revision change
 
+The broader M12 inventory, clinic/IGD patient pools, UKM activity scenes,
+nightly storylet art, and optional doctor presets are documented in
+`docs/M12_ASSET_INVENTORY.md`.
+
 ## 1. Purpose
 
 M12 replaces the single repeated house illustration and initial-only avatars in

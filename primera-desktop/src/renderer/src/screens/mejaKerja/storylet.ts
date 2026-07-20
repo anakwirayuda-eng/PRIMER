@@ -20,6 +20,14 @@ interface Storylet {
   boleh?: (konteks: KonteksStorylet) => boolean
 }
 
+export type TemaVisualStorylet = 'sistem' | 'rujukan' | 'lapangan' | 'komunitas'
+
+export interface StoryletHariIni {
+  id: string
+  teks: string
+  temaVisual: TemaVisualStorylet
+}
+
 const umum: readonly Storylet[] = [
   { id: 'umum-kader-silang', teks: 'Kabar sore: dua kader membandingkan catatan rumah yang sama. Satu angka berbeda, lalu mereka sepakat kembali memeriksa alih-alih menebak.' },
   { id: 'umum-obat', teks: 'Di gudang obat, petugas menandai satu stok yang mulai menipis. Catatan kecil itu mencegah masalah besar minggu depan.' },
@@ -85,11 +93,26 @@ export function kandidatStorylet(konteks: KonteksStorylet = {}): readonly string
   return semua.filter((storylet) => storylet.boleh?.(konteks) ?? true).map((storylet) => storylet.teks)
 }
 
+function temaVisualUntuk(id: string): TemaVisualStorylet {
+  if (id.startsWith('rujuk-')) return 'rujukan'
+  if (id.startsWith('binaan-') || id === 'umum-cuaca' || id === 'umum-bidan') return 'lapangan'
+  if (
+    id.startsWith('posy-') ||
+    id.startsWith('prolanis-') ||
+    ['umum-warung', 'umum-sekolah', 'umum-bahasa'].includes(id)
+  ) return 'komunitas'
+  return 'sistem'
+}
+
 /**
  * Rotasi deterministik tanpa pengulangan selama satu putaran pool bila konteks
  * tetap. Putaran berikutnya diacak ulang; boundary dicegah mengulang kalimat.
  */
-export function storyletHariIni(seed: number, hari: number, konteks: KonteksStorylet = {}): string {
+export function storyletHariIniDetail(
+  seed: number,
+  hari: number,
+  konteks: KonteksStorylet = {},
+): StoryletHariIni {
   const kandidat = semua.filter((storylet) => storylet.boleh?.(konteks) ?? true)
   const nomorHari = Math.max(1, Math.floor(hari)) - 1
   const siklus = Math.floor(nomorHari / kandidat.length)
@@ -102,5 +125,10 @@ export function storyletHariIni(seed: number, hari: number, konteks: KonteksStor
     const sebelumnya = new Rng(seed, 'storylet-order', identitasPool, siklus - 1).shuffle(kandidat).at(-1)
     if (sebelumnya?.id === terpilih.id) terpilih = urutan[1]!
   }
-  return terpilih.teks
+  return { id: terpilih.id, teks: terpilih.teks, temaVisual: temaVisualUntuk(terpilih.id) }
+}
+
+/** Kompatibilitas pemanggil lama dan kontrak test: tetap mengembalikan teks. */
+export function storyletHariIni(seed: number, hari: number, konteks: KonteksStorylet = {}): string {
+  return storyletHariIniDetail(seed, hari, konteks).teks
 }

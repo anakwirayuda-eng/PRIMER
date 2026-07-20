@@ -342,7 +342,44 @@
 
 .mk__storylet {
   margin: var(--sp-2) 0 0;
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px dashed var(--border-halus);
+}
+
+.mk__storylet p {
+  margin: 0;
   font-style: italic;
+  line-height: 1.55;
+}
+
+.mk__storylet-visual {
+  display: block;
+  width: 128px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border-halus);
+  border-radius: var(--radius-md);
+  background-size: 200% 200%;
+  background-repeat: no-repeat;
+  background-color: var(--bg-sunken);
+  box-shadow: var(--shadow-cekung);
+}
+
+[data-mode='malam'] .mk__storylet-visual {
+  filter: brightness(0.88) saturate(0.9);
+}
+
+@media (max-width: 560px) {
+  .mk__storylet {
+    grid-template-columns: 1fr;
+  }
+
+  .mk__storylet-visual {
+    width: min(240px, 100%);
+  }
 }
 
 .mk__refleksi {

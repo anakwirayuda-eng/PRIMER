@@ -9,6 +9,7 @@ import { useGame } from '../store'
 import type { HasilKegiatan } from '@engine/kegiatan'
 import { acakUrutan } from '../utils/acakUrutan'
 import { sumberKegiatanUkm } from '@content/ukmCitations'
+import { profilVisualKegiatan } from './kegiatanVisualProfiles'
 import './Kegiatan.css'
 
 const JUDUL: Record<string, { label: string; sub: string }> = {
@@ -87,6 +88,7 @@ export function Kegiatan() {
   }
 
   const meta = JUDUL[kg.jenis] ?? { label: 'KEGIATAN', sub: '' }
+  const visual = profilVisualKegiatan(kg.jenis)
   const pilihanObj = pilihanTerpilih ? kartu.pilihan.find((p) => p.id === pilihanTerpilih) : null
   const sumberKartu = sumberKegiatanUkm(kartu, kg.jenis)
 
@@ -102,6 +104,13 @@ export function Kegiatan() {
             Kartu {kg.index + 1}/{kg.kartu.length}
           </div>
         </div>
+
+        <div
+          className="kegiatan__visual"
+          role="img"
+          aria-label={visual.label}
+          style={{ backgroundImage: `url(${visual.src})`, backgroundPosition: visual.posisi }}
+        />
 
         <div className="kegiatan__kartu">
           <div className="judul-seksi">{kartu.judul}</div>
