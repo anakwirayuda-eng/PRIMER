@@ -6,9 +6,11 @@ import type { KunjunganState } from '@engine/state'
 import { useGame } from '../../store'
 import { Kunjungan } from '../Kunjungan'
 import {
+  ID_HOTSPOT_BERVISUAL,
   ID_KELUARGA_BERVISUAL,
   ID_SKENARIO_BERPOTRET,
   ID_SKENARIO_BERVISUAL,
+  posisiHotspotVisual,
   profilPembicara,
   profilRumah,
 } from './visualProfiles'
@@ -46,6 +48,31 @@ describe('M12 - cakupan visual keluarga dan NPC', () => {
     }
   })
 
+  it('seluruh 123 hotspot ditambatkan ulang ke adegan bitmap M12', () => {
+    const hotspotIds = Object.values(PACK.keluarga).flatMap((keluarga) =>
+      keluarga.arc.kunjungan.flatMap((skenario) =>
+        skenario.hotspot.map((hotspot) => `${skenario.id}:${hotspot.id}`),
+      ),
+    )
+    expect([...ID_HOTSPOT_BERVISUAL].sort()).toEqual(hotspotIds.sort())
+    expect(hotspotIds).toHaveLength(123)
+
+    for (const keluarga of Object.values(PACK.keluarga)) {
+      for (const skenario of keluarga.arc.kunjungan) {
+        for (const hotspot of skenario.hotspot) {
+          const posisi = posisiHotspotVisual(skenario.id, hotspot.id, hotspot)
+          expect(posisi.x, `${skenario.id}:${hotspot.id}:x`).toBeGreaterThanOrEqual(4)
+          expect(posisi.x, `${skenario.id}:${hotspot.id}:x`).toBeLessThanOrEqual(92)
+          expect(posisi.y, `${skenario.id}:${hotspot.id}:y`).toBeGreaterThanOrEqual(8)
+          expect(posisi.y, `${skenario.id}:${hotspot.id}:y`).toBeLessThanOrEqual(92)
+        }
+      }
+    }
+
+    expect(posisiHotspotVisual('prapto_k1', 'prk1_h1', { x: 75, y: 55 })).toEqual({ x: 24, y: 52 })
+    expect(posisiHotspotVisual('prapto_k1', 'prk1_h2', { x: 30, y: 40 })).toEqual({ x: 82, y: 57 })
+  })
+
   it('seluruh skenario memiliki potret dan pergantian pembicara yang disengaja', () => {
     expect([...ID_SKENARIO_BERPOTRET].sort()).toEqual(skenarioIds)
     expect(profilPembicara('wulan_k1', 0).nama).toBe('Bu Wulan')
@@ -80,5 +107,38 @@ describe('M12 - cakupan visual keluarga dan NPC', () => {
     const potret = document.querySelector('.kunjungan-potret')
     expect(potret?.getAttribute('style')).toMatch(/background-image/)
     expect(potret?.textContent).toBe('')
+  })
+
+  it('marker dan kartu observasi memakai nomor yang sama serta urutan penemuan', () => {
+    const state = buildInitialState('Uji hotspot M12', 2, PACK)
+    const kunjungan: KunjunganState = {
+      keluargaId: 'keluarga_prapto',
+      skenarioId: 'prapto_k1',
+      fase: 'observasi',
+      hotspotDitemukan: ['prk1_h2', 'prk1_h1'],
+      dialogIndex: 0,
+      pilihanDiambil: [],
+      trustDelta: 0,
+      konfrontasiBeruntun: 0,
+      diusir: false,
+    }
+    useGame.setState({ state: { ...state, layar: 'kunjungan', kunjungan } })
+
+    render(<Kunjungan />)
+
+    const kandang = screen.getByRole('button', { name: 'Kandang kambing menempel bibir sumur' })
+    const panci = screen.getByRole('button', { name: 'Panci besar bekas merebus air' })
+    expect(kandang).toHaveTextContent('1')
+    expect(kandang.getAttribute('style')).toContain('left: 24%')
+    expect(panci).toHaveTextContent('2')
+    expect(panci.getAttribute('style')).toContain('left: 82%')
+
+    const judulKartu = [...document.querySelectorAll('.kunjungan-temuan__kartu b')].map((item) => item.textContent)
+    expect(judulKartu).toEqual([
+      'Panci besar bekas merebus air',
+      'Kandang kambing menempel bibir sumur',
+    ])
+    const nomorKartu = [...document.querySelectorAll('.kunjungan-temuan__nomor')].map((item) => item.textContent)
+    expect(nomorKartu).toEqual(['2', '1'])
   })
 })

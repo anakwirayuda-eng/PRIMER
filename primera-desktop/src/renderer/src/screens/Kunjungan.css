@@ -192,6 +192,13 @@
   opacity: 0.85;
 }
 
+.kunjungan-hotspot--sorot {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.16);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.72), 0 0 0 7px rgba(21, 116, 91, 0.62);
+  z-index: 2;
+}
+
 .kunjungan-hotspot:hover:not(:disabled) {
   transform: translate(-50%, -50%) scale(1.12);
 }
@@ -254,13 +261,48 @@
 .kunjungan-temuan__kartu {
   padding: var(--sp-2) var(--sp-3);
   font-size: var(--text-sm);
+  border: 1px solid transparent;
   animation: kunjungan-kartu-masuk var(--durasi-normal) var(--ease-pantul) both;
+  transition: border-color var(--durasi-cepat) var(--ease-keluar), box-shadow var(--durasi-cepat) var(--ease-keluar);
+}
+
+.kunjungan-temuan__kartu--sorot,
+.kunjungan-temuan__kartu:focus-visible {
+  border-color: var(--daun-600);
+  box-shadow: 0 0 0 2px rgba(21, 116, 91, 0.2);
+  outline: none;
+}
+
+.kunjungan-temuan__kepala {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+}
+
+.kunjungan-temuan__nomor {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--daun-600);
+  color: var(--kertas-050);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  line-height: 1;
 }
 
 .kunjungan-temuan__kartu b {
   display: block;
+  flex: 1;
   color: var(--daun-800);
   margin-bottom: var(--sp-05);
+}
+
+[data-mode='malam'] .kunjungan-temuan__nomor {
+  color: var(--malam-900);
 }
 
 .kunjungan-temuan__kartu p {

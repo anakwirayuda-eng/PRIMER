@@ -35,6 +35,11 @@ export interface ProfilPotret extends PotonganAtlas {
   nama: string
 }
 
+export interface PosisiHotspotVisual {
+  x: number
+  y: number
+}
+
 function potongan(src: string, sel: SelAtlas): PotonganAtlas {
   return { src, posisi: POSISI_ATLAS[sel] }
 }
@@ -86,6 +91,110 @@ const ADEGAN_SKENARIO: Record<string, ProfilRumah> = {
   bagyo_k1: { ...potongan(homesD, 'kanan_atas'), label: 'Kunjungan di rumah Keluarga Pak Bagyo' },
   endah_k1: { ...potongan(homesD, 'kiri_bawah'), label: 'Kunjungan di rumah Mas Andri dan Mbak Endah' },
   karsa_k1: { ...potongan(homesD, 'kanan_bawah'), label: 'Kunjungan di rumah Keluarga Pak Karsa' },
+}
+
+/*
+ * Koordinat hotspot di konten berasal dari panggung SVG lama. M12 mengganti
+ * panggung dengan foto-ilustrasi, sehingga koordinat renderer harus ditambatkan
+ * ulang ke benda yang benar tanpa mengubah kontrak/fingerprint konten.
+ */
+const POSISI_HOTSPOT_VISUAL: Record<string, Record<string, readonly [number, number]>> = {
+  wulan_k1: {
+    wk1_h1: [69, 42], wk1_h2: [47, 83], wk1_h3: [83, 50], wk1_h4: [48, 39], wk1_h5: [36, 45],
+  },
+  wulan_k2: {
+    wk2_h1: [45, 88], wk2_h2: [34, 25], wk2_h3: [4, 83], wk2_h4: [10, 33], wk2_h5: [72, 84],
+  },
+  santoso_k1: {
+    sk1_h1: [78, 82], sk1_h2: [66, 23], sk1_h3: [90, 25], sk1_h4: [84, 55], sk1_h5: [73, 24],
+  },
+  santoso_k2: {
+    sk2_h1: [10, 22], sk2_h2: [65, 85], sk2_h3: [12, 66], sk2_h4: [88, 26], sk2_h5: [38, 53],
+  },
+  ketut_k1: {
+    kk1_h1: [55, 87], kk1_h2: [36, 87], kk1_h3: [46, 77], kk1_h4: [15, 62], kk1_h5: [38, 78], kk1_h6: [74, 59],
+  },
+  ketut_k2: {
+    kk2_h1: [55, 84], kk2_h2: [53, 20], kk2_h3: [74, 56], kk2_h4: [8, 52], kk2_h5: [86, 87],
+  },
+  dewi_k1: {
+    dewi_h_kia: [49, 88], dewi_h_fe: [77, 87], dewi_h_rokok: [78, 35], dewi_h_jemuran: [25, 15], dewi_h_kis: [87, 88],
+  },
+  dewi_k2: {
+    dewi_h2_kia: [54, 82], dewi_h2_fe: [20, 84], dewi_h2_rokok: [78, 35], dewi_h2_brosur: [82, 90], dewi_h2_uang: [90, 81],
+  },
+  musa_k1: {
+    musa_h_obat: [80, 75], musa_h_foto: [89, 42], musa_h_teh: [22, 82], musa_h_kacamata: [49, 86], musa_h_bpjs: [37, 82],
+  },
+  musa_k2: {
+    musa_h2_kotak: [48, 82], musa_h2_kalender: [39, 18], musa_h2_resep: [18, 67], musa_h2_gula: [12, 20], musa_h2_prolanis: [38, 92], musa_h2_hp: [67, 89],
+  },
+  raharjo_k1: {
+    raharjo_h_setapak: [15, 56], raharjo_h_tebing: [24, 60], raharjo_h_rokok: [76, 68], raharjo_h_gentong: [58, 58], raharjo_h_kis: [77, 14],
+  },
+  raharjo_k2: {
+    raharjo_h2_galian: [16, 70], raharjo_h2_batako: [14, 59], raharjo_h2_kretek: [66, 44], raharjo_h2_celengan: [92, 67], raharjo_h2_jadwal: [47, 18],
+  },
+  asih_k1: {
+    ak1_h1: [57, 71], ak1_h2: [44, 84], ak1_h3: [15, 78], ak1_h4: [68, 20], ak1_h5: [7, 43],
+  },
+  asih_k2: {
+    ak2_h1: [49, 81], ak2_h2: [87, 24], ak2_h3: [10, 70], ak2_h4: [19, 48],
+  },
+  asih_k3: {
+    ak3_h1: [68, 15], ak3_h2: [25, 80], ak3_h3: [12, 20], ak3_h4: [85, 55],
+  },
+  slamet_k1: {
+    slk1_h1: [59, 30], slk1_h2: [87, 25], slk1_h3: [90, 73], slk1_h4: [60, 34],
+  },
+  slamet_k2: {
+    slk2_h1: [49, 74], slk2_h2: [29, 86], slk2_h3: [8, 79], slk2_h4: [76, 15],
+  },
+  yani_k1: {
+    yk1_h1: [58, 78], yk1_h2: [76, 80], yk1_h3: [55, 67], yk1_h4: [72, 18],
+  },
+  yani_k2: {
+    yk2_h1: [83, 88], yk2_h2: [92, 46], yk2_h3: [45, 88], yk2_h4: [48, 10],
+  },
+  prapto_k1: {
+    prk1_h1: [24, 52], prk1_h2: [82, 57], prk1_h3: [69, 23], prk1_h4: [52, 35],
+  },
+  marni_k1: {
+    mk1_h1: [22, 80], mk1_h2: [31, 75], mk1_h3: [75, 83], mk1_h4: [59, 84],
+  },
+  gunawan_k1: {
+    gk1_h1: [60, 42], gk1_h2: [52, 43], gk1_h3: [26, 68], gk1_h4: [13, 17],
+  },
+  gunawan_k2: {
+    gk2_h1: [14, 84], gk2_h2: [54, 85], gk2_h3: [86, 27], gk2_h4: [50, 8],
+  },
+  lastri_k1: {
+    lk1_h1: [48, 75], lk1_h2: [89, 28], lk1_h3: [55, 15], lk1_h4: [7, 50],
+  },
+  bagyo_k1: {
+    bk1_h1: [85, 45], bk1_h2: [15, 58], bk1_h3: [67, 26], bk1_h4: [11, 45],
+  },
+  endah_k1: {
+    ek1_h1: [61, 87], ek1_h2: [63, 70], ek1_h3: [14, 30], ek1_h4: [84, 84],
+  },
+  karsa_k1: {
+    kk1_h1: [30, 60], kk1_h2: [48, 86], kk1_h3: [70, 75], kk1_h4: [11, 35],
+  },
+}
+
+export const ID_HOTSPOT_BERVISUAL = Object.freeze(
+  Object.entries(POSISI_HOTSPOT_VISUAL).flatMap(([skenarioId, hotspot]) =>
+    Object.keys(hotspot).map((hotspotId) => `${skenarioId}:${hotspotId}`),
+  ),
+)
+
+export function posisiHotspotVisual(
+  skenarioId: string,
+  hotspotId: string,
+  fallback: PosisiHotspotVisual,
+): PosisiHotspotVisual {
+  const posisi = POSISI_HOTSPOT_VISUAL[skenarioId]?.[hotspotId]
+  return posisi ? { x: posisi[0], y: posisi[1] } : fallback
 }
 
 export const ID_KELUARGA_BERVISUAL = Object.freeze(Object.keys(RUMAH_KELUARGA))

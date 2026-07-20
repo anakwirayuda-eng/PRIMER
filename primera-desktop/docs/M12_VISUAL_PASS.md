@@ -75,6 +75,10 @@ The runtime copies are high-quality WebP (`quality=88`) in
 
 - The 16:9 scene plate and hotspot layer share the same container-relative
   dimensions, preventing coordinate drift or image stretching.
+- All 123 hotspots have renderer-side coordinates anchored to their M12 scene.
+  Legacy content coordinates remain untouched for engine/fingerprint stability.
+- Discovered markers and observation cards share a stable number. Cards remain
+  in discovery order, and pointer/keyboard focus highlights the paired marker.
 - Letterboxing is preferable to cropping evidence out of view.
 - Dark mode uses a mild brightness/saturation adjustment; clue markers retain
   their independent contrast and keyboard focus state.
@@ -92,8 +96,11 @@ The runtime copies are high-quality WebP (`quality=88`) in
 - any family or visit scenario lacks an explicit scene;
 - a repeat visit reuses the preceding scene plate;
 - any scenario lacks a portrait profile;
+- any authored hotspot lacks an explicit M12 coordinate or leaves the visible
+  scene bounds;
 - a known multi-speaker handoff loses its explicit override; or
-- the renderer falls back to the old initials-only presentation.
+- the renderer falls back to the old initials-only presentation;
+- marker/card numbering or discovery order loses its one-to-one pairing.
 
 These tests protect coverage, not clinical correctness. Clinical and UKM content
 continue to be governed by their existing evidence and adjudication gates.

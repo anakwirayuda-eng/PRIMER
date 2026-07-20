@@ -18,7 +18,11 @@ import { hashSeed, Rng } from '@engine/core/rng'
 import { arcKunjunganAktif, hariTindakLanjutKunjungan, skenarioEfektif } from '@engine/kunjungan'
 import { acakUrutan } from '../utils/acakUrutan'
 import { RumahIlustrasi } from './kunjungan/RumahIlustrasi'
-import { profilPembicara, type ProfilPotret } from './kunjungan/visualProfiles'
+import {
+  posisiHotspotVisual,
+  profilPembicara,
+  type ProfilPotret,
+} from './kunjungan/visualProfiles'
 import { useRadioGroup } from '../useRadioGroup'
 import './Kunjungan.css'
 
@@ -119,6 +123,7 @@ export function Kunjungan() {
   // layar respons), bukan sebagai chip di tombol — simpan gaya terakhir dipilih.
   const [gayaTerakhir, setGayaTerakhir] = useState<PilihanDialog['gaya'] | null>(null)
   const [intervensiPilihan, setIntervensiPilihan] = useState<string | null>(null)
+  const [hotspotSorot, setHotspotSorot] = useState<string | null>(null)
   const tickTerproses = useRef(-1)
   // M10 Batch-2 (CODEX A.1): saat respons warga tampil, tombol-tombol pilihan
   // dialog di-unmount → fokus keyboard jatuh ke <body>. Pindahkan ke tombol
@@ -215,7 +220,11 @@ export function Kunjungan() {
   const namaWarga = profilWarga.nama
   const nodeAktif = skenario.dialog[kj.dialogIndex]
   const wawancaraTuntas = kj.dialogIndex >= skenario.dialog.length
-  const temuan = skenario.hotspot.filter((h) => kj.hotspotDitemukan.includes(h.id))
+  // Pertahankan urutan penemuan. Filter menurut urutan konten membuat kartu
+  // lama melompat posisi ketika titik berindeks lebih kecil ditemukan belakangan.
+  const temuan = kj.hotspotDitemukan
+    .map((id) => skenario.hotspot.find((hotspot) => hotspot.id === id))
+    .filter((hotspot): hotspot is NonNullable<typeof hotspot> => hotspot !== undefined)
   const babakIndex = BABAK.findIndex((b) => b.fase === kj.fase)
   const ucapanWarga = riwayat.filter((u) => u.peran === 'warga')
   const intervensiAktif = intervensiPilihan
@@ -295,13 +304,21 @@ export function Kunjungan() {
           <div className="kunjungan-hotspot-lapis">
             {skenario.hotspot.map((h, i) => {
               const ketemu = kj.hotspotDitemukan.includes(h.id)
+              const posisi = posisiHotspotVisual(skenario.id, h.id, h)
               if (!ketemu && kj.fase !== 'observasi') return null
               return (
                 <button
                   key={h.id}
-                  className={`kunjungan-hotspot ${ketemu ? 'kunjungan-hotspot--ketemu' : ''}`}
-                  style={{ left: `${h.x}%`, top: `${h.y}%` }}
-                  onClick={() => dispatch({ type: 'KLIK_HOTSPOT', hotspotId: h.id })}
+                  className={`kunjungan-hotspot ${ketemu ? 'kunjungan-hotspot--ketemu' : ''} ${hotspotSorot === h.id ? 'kunjungan-hotspot--sorot' : ''}`}
+                  style={{ left: `${posisi.x}%`, top: `${posisi.y}%` }}
+                  onClick={() => {
+                    setHotspotSorot(h.id)
+                    dispatch({ type: 'KLIK_HOTSPOT', hotspotId: h.id })
+                  }}
+                  onMouseEnter={() => ketemu && setHotspotSorot(h.id)}
+                  onMouseLeave={() => ketemu && setHotspotSorot(null)}
+                  onFocus={() => setHotspotSorot(h.id)}
+                  onBlur={() => setHotspotSorot(null)}
                   disabled={ketemu || kj.fase !== 'observasi'}
                   title={ketemu ? h.label : 'Ada yang menarik perhatianmu di sini'}
                   // CODEX audit UI/UX 2026-07-10 (#13): dulu SEMUA hotspot yang
@@ -312,7 +329,7 @@ export function Kunjungan() {
                   // membocorkan identitas objek (h.label/h.narasi tetap disembunyikan).
                   aria-label={ketemu ? h.label : `Amati lebih dekat (titik ${i + 1} dari ${skenario.hotspot.length})`}
                 >
-                  {ketemu ? '✓' : ''}
+                  {ketemu ? i + 1 : ''}
                 </button>
               )
             })}
@@ -327,12 +344,26 @@ export function Kunjungan() {
             {temuan.length === 0 ? (
               <span className="teks-xs teks-lembut">Belum ada temuan — amati ruangan pelan-pelan…</span>
             ) : (
-              temuan.map((h) => (
-                <div key={h.id} className="kunjungan-temuan__kartu kertas">
-                  <b>{h.label}</b>
-                  <p>{h.narasi}</p>
-                </div>
-              ))
+              temuan.map((h) => {
+                const nomor = skenario.hotspot.findIndex((hotspot) => hotspot.id === h.id) + 1
+                return (
+                  <div
+                    key={h.id}
+                    className={`kunjungan-temuan__kartu kertas ${hotspotSorot === h.id ? 'kunjungan-temuan__kartu--sorot' : ''}`}
+                    tabIndex={0}
+                    onMouseEnter={() => setHotspotSorot(h.id)}
+                    onMouseLeave={() => setHotspotSorot(null)}
+                    onFocus={() => setHotspotSorot(h.id)}
+                    onBlur={() => setHotspotSorot(null)}
+                  >
+                    <div className="kunjungan-temuan__kepala">
+                      <span className="kunjungan-temuan__nomor mono" aria-hidden="true">{nomor}</span>
+                      <b>{h.label}</b>
+                    </div>
+                    <p>{h.narasi}</p>
+                  </div>
+                )
+              })
             )}
           </aside>
         )}
