@@ -1142,7 +1142,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         id: 'q_obat_kuat',
         kategori: 'rpd',
         tanya: 'Maaf sebelumnya Pak — apakah belakangan ini mengonsumsi obat kuat atau obat untuk prostat?',
-        jawab: 'Pelan-pelan, sambil menunduk: "...Iya dok, sesekali. Istri saya tidak tahu. Tolong jangan bilang-bilang."',
+        jawab: 'Iya, Dok, sesekali. Istri saya tidak tahu. Tolong jangan bilang-bilang.',
         esensial: true,
         oldcarts: ['penyerta'],
       },

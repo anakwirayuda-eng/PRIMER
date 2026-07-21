@@ -586,9 +586,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       kondisiKembali: 'Hipoglikemia malam berulang diselingi gula pagi tinggi; keluarga takut meneruskan insulin basal.',
     },
     variasiPembuka: {
-      cemas: 'Saya diabetes tipe 1 dan gula belakangan naik — apa insulin saya sudah tak mempan lagi, Dok?',
-      polos: 'Saya DM tipe 1, mau kontrol insulin, gulanya belakangan agak naik, Dok.',
-      lansia: 'Saya penderita diabetes tipe 1, datang kontrol insulin, gula belakangan sedikit lebih tinggi, Dok.',
+      cemas: 'Saya diabetes tipe 1. HbA1c di resume 8,6%, gula pagi sering tinggi, tetapi dua malam lalu gula turun sampai 52 dan ibu harus membantu saya minum manis. Apa insulin saya sudah tidak bekerja, Dok?',
+      polos: 'Saya mau kontrol insulin, Dok. Di resume HbA1c saya 8,6%. Gula pagi sering tinggi, tapi dua malam lalu turun sampai 52 dan ibu harus membantu memberi minuman manis.',
+      lansia: 'Saya datang untuk kontrol insulin. HbA1c di resume rumah sakit 8,6%; gula pagi sering tinggi, tetapi dua malam lalu turun sampai 52 dan saya perlu bantuan keluarga untuk minum manis.',
     },
   },
   lab_malnutrisi_energi_protein_sedang: {

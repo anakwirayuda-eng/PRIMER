@@ -161,14 +161,18 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // kini presisi; Prolanis HT tidak lagi memicu stroke deterministik;
   // tutorial keluar dari rerata; gap formatif encounter dan status pasca-RJP
   // dipersist. Detail lengkap ada pada komentar revisi di verifikasi.ts.
+  // Unfreeze 2026-07-20 (koherensi dialog, REVISI_ENGINE 55 -> 56): director
+  // memisahkan anak dari wali; clinic menandai jawaban pendamping; kunjungan
+  // mengunci respons yang menyebut observasi; kegiatan membuang meta-kebijakan
+  // dari vignette. Save lama dinormalkan saat runtime, tanpa migrasi destruktif.
   'reducer.ts': '3d48d4f817170974c2381b82c16bccbffb3a2c533d62a261ef7221b0c2e54f39',
-  'clinic.ts': '663e9f819e980f86eea739653edf1e40d71ca817ca1c817a5778f2d3ad5f850f',
+  'clinic.ts': '1e0fd38a071801cfd4ed8133e7c1824c0ca7d8260805842fa29752d93907e7c6',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
   // Unfreeze 2026-07-17 (audit B1.1, REVISI_ENGINE 49 -> 50): status BPJS
   // pasien anggota nyata mengikuti ground-truth JKN keluarga, bukan RNG.
-  'director.ts': 'b7804cbdf6145b5b82e9961da986a82e5b355350070bb9a7299a61b71a01ed53',
+  'director.ts': '48d6b737ee362f90f9c62d88930c2b3fb1c0150edc53fe7e346406d1815591dd',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'a4118f89ab3a5214370611633e4a1ffeeb20df9b2ff06814acbe60f76ed31118',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
@@ -176,15 +180,15 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-07-17 (bridge UKM↔UKP P0-B, REVISI_ENGINE 43 -> 44):
   // 22 kasus kluster dipetakan eksplisit ke 15 pola pengendalian; fallback
   // droplet diganti respons aman belum-dipetakan dan dikunci invariant.
-  'kegiatan.ts': '8e1d7605877b0fbb7344805e337011b0b86fefa11aba767cb9e8d7127d19cb3e',
+  'kegiatan.ts': 'c7d4c3442184daa5f287b506b7b3ef40fa0052d141377c16d3a786c1c497b758',
   // Unfreeze 2026-07-19 (UKM assurance, REVISI_ENGINE 53 -> 54): hasil kartu
   // intervensi dan klasifikasi evidence pasca-penilaian masuk debrief; skor
   // tidak berubah tetapi output replay kunjungan berubah secara sengaja.
-  'kunjungan.ts': '7715c1c8eafeaae3e383a4a4cbdab11ed1f1f4a8afe6a28d8948c1a8ca564af5',
+  'kunjungan.ts': 'ec165c68a44d5632600f1f5da2940b9a77bb3363ef3ac479887dd7ad9b8b76bf',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '4912ceda089975aefd6b30bb55152bf97944ca170007bacb3e0350054f255eb7',
+  'verifikasi.ts': '388263867df99812f38c912efdadd15d15ed284d706718c2adaa3c4e2ad09ab4',
   'state.ts': '13f8b24fe8d4aae2ba43d4be888a2b2334cc710d658af962d8892751ed24330e',
   'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',

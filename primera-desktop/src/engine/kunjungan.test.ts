@@ -497,6 +497,63 @@ describe('gerbang kejujuran', () => {
     const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 4, 2)
     expect(kelBaru.indikator.jamban_sehat.status).toBe('tidak')
   })
+
+  it('pilihan yang menyebut petunjuk observasi ditolak sampai hotspot ditemukan', () => {
+    const gated: SkenarioKunjungan = {
+      ...SKENARIO,
+      dialog: SKENARIO.dialog.map((node) => node.id !== 'n2' ? node : {
+        ...node,
+        pilihan: node.pilihan.map((pilihan) => pilihan.id !== 'p2_ungkap' ? pilihan : {
+          ...pilihan,
+          butuhHotspot: ['h_belakang'],
+        }),
+      }),
+    }
+    const kel = buatKel(5)
+
+    let tanpaObservasi = buatKunjungan(kel.id, gated, rngTest)
+    tanpaObservasi = aksiKunjungan(tanpaObservasi, { type: 'LANJUT_BABAK' }, gated, kel).kj
+    tanpaObservasi = aksiKunjungan(
+      tanpaObservasi,
+      { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' },
+      gated,
+      kel,
+    ).kj
+    const ditolak = aksiKunjungan(
+      tanpaObservasi,
+      { type: 'PILIH_DIALOG', pilihanId: 'p2_ungkap' },
+      gated,
+      kel,
+    )
+    expect(ditolak.kj.dialogIndex).toBe(1)
+    expect(ditolak.events).toContainEqual({
+      type: 'ERROR_AKSI',
+      pesan: 'Amati dulu petunjuk yang mendasari tanggapan itu.',
+    })
+
+    let denganObservasi = buatKunjungan(kel.id, gated, rngTest)
+    denganObservasi = aksiKunjungan(
+      denganObservasi,
+      { type: 'KLIK_HOTSPOT', hotspotId: 'h_belakang' },
+      gated,
+      kel,
+    ).kj
+    denganObservasi = aksiKunjungan(denganObservasi, { type: 'LANJUT_BABAK' }, gated, kel).kj
+    denganObservasi = aksiKunjungan(
+      denganObservasi,
+      { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' },
+      gated,
+      kel,
+    ).kj
+    const diterima = aksiKunjungan(
+      denganObservasi,
+      { type: 'PILIH_DIALOG', pilihanId: 'p2_ungkap' },
+      gated,
+      kel,
+    )
+    expect(diterima.kj.dialogIndex).toBe(2)
+    expect(wargaBicara(diterima.events)).toHaveLength(1)
+  })
 })
 
 /* ---------------------------------------------------------------------------

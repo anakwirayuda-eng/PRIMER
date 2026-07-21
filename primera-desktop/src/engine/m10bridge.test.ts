@@ -157,12 +157,15 @@ describe('M10.b — persona mengikuti usia OVERRIDE (identitas suara pasien inje
   // persona — sebelum M10.b, persona dihitung dari usia ROLL yg lalu DIBUANG
   // oleh override (karma/prolanis/PRB): Mbah Lastri 71 th bisa bicara dgn
   // persona 'polos' dewasa. asma_ringan demografi 15-40 → roll tak pernah
-  // ≥60/<15, jadi assertion ini deterministik merah sebelum fix.
-  it.each([[1], [2], [3]])('override usia 71 → lansia; usia 8 → wali_anak (variasi rng %i)', (i) => {
+  // ≥60/<15, jadi assertion ini deterministik merah sebelum fix. Anak yang
+  // dapat menjawab sendiri tidak lagi disamakan dengan wali pendamping.
+  it.each([[1], [2], [3]])('override usia 71 → lansia; usia 8 → anak/wali sesuai kasus (variasi rng %i)', (i) => {
     const lansia = buatPasienDariKasus('asma_ringan', PACK, new Rng(SEED, 'uji-persona', i), { usia: 71 })
     expect(lansia.persona).toBe('lansia')
     const anak = buatPasienDariKasus('asma_ringan', PACK, new Rng(SEED, 'uji-persona-anak', i), { usia: 8 })
-    expect(anak.persona).toBe('wali_anak')
+    expect(anak.persona).toBe('anak')
+    const wali = buatPasienDariKasus('diare_akut_anak', PACK, new Rng(SEED, 'uji-persona-wali', i), { usia: 8 })
+    expect(wali.persona).toBe('wali_anak')
   })
 
   it('tanpa override: perilaku lama utuh (persona dari usia roll)', () => {

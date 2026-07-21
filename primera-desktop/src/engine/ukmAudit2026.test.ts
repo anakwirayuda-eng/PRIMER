@@ -135,11 +135,12 @@ describe('kartuProlanis — rotasi naratif D3-lite (pilihan/skor tak berubah lin
     expect(a.narasi).toBe(b.narasi)
   })
 
-  it('kanal Edukasi Klub menyertakan catatan tensi ILP-vs-BPJS eksplisit', () => {
-    const punyaTensi = Array.from({ length: 12 }, (_, seed) =>
+  it('kanal Edukasi Klub tetap muncul tanpa menyisipkan catatan kebijakan ke vignette', () => {
+    const narasi = Array.from({ length: 12 }, (_, seed) =>
       kartuProlanis([pesertaHt], new Rng(seed, 'uji-kanal'))[0]!.narasi,
-    ).some((n) => n.includes('ILP 2023'))
-    expect(punyaTensi).toBe(true)
+    )
+    expect(narasi.some((item) => item.includes('Sesi edukasi Klub Prolanis'))).toBe(true)
+    expect(narasi.every((item) => !item.includes('Catatan realita:'))).toBe(true)
   })
 })
 

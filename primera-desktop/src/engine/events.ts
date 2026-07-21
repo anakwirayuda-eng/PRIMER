@@ -10,7 +10,7 @@ export type GameEvent =
   | { type: 'BLOK_BERGANTI'; blok: 'pagi' | 'siang' | 'sore' }
   | { type: 'HARI_BARU'; hari: number }
   | { type: 'PASIEN_DIPANGGIL'; nama: string }
-  | { type: 'PASIEN_MENJAWAB'; teks: string }
+  | { type: 'PASIEN_MENJAWAB'; teks: string; olehPendamping?: boolean }
   | { type: 'SABAR_MENIPIS' }
   | { type: 'VITAL_TERUKUR' }
   | { type: 'TEMUAN_FISIK'; region: string; temuan: string }

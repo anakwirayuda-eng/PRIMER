@@ -142,8 +142,11 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                     'sakit itu termasuk penelantaran — bisa kena undang-undang."',
                   gaya: 'menakut_nakuti',
                   respons:
-                    'Wajah Pak Slamet memutih, lalu mengeras. "Silakan Dokter pulang. Kami tidak sedang ' +
-                    'melanggar hukum apa-apa." Bu Tumini mengantar ke pintu dengan tangan gemetar.',
+                    'Wajah Pak Slamet memutih, lalu mengeras. "Kalau datang untuk mengancam, silakan pulang. Kami tidak sedang ' +
+                    'melanggar hukum apa-apa." Bu Tumini menyentuh lengannya dan meminta satu menit lagi; pintu belum ditutup, tetapi jawaban mereka mengeras.',
+                  narasiLanjutan:
+                    'Sesudah hening yang panjang, Bu Tumini tetap bercerita dengan suara bergetar. Pak Slamet berdiri dekat pintu, ' +
+                    'tak lagi ikut duduk. Informasi berikutnya keluar karena Bu Tumini menahan percakapan, bukan karena ancamanmu berhasil.',
                   efekTrust: -2,
                   tepat: false,
                   catatanPedagogis:
@@ -462,10 +465,9 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                 {
                   id: 'slk2_d2_a',
                   teks:
-                    '"Bu, ini bukan coret-coretan — ini justru pekerjaan perawat jiwa sungguhan. Susah tidur, ' +
-                    'mondar-mandir, bicara sendiri makin sering: itu SINYAL DINI relaps. Kalau tiga ini muncul ' +
-                    'bersamaan, itu kode merah — bawa ke Puskesmas SEBELUM badai, jangan sesudahnya."',
-                  gaya: 'empati',
+                    '"Bu, catatan ini penting: sulit tidur, mondar-mandir, dan makin sering bicara sendiri dapat ' +
+                    'menjadi tanda awal kambuh. Jika muncul bersamaan, bawa ke Puskesmas sebelum kondisinya memburuk."',
+                  gaya: 'edukasi',
                   respons:
                     'Bu Tumini memandangi catatannya sendiri seperti baru mengenalinya. "Jadi yang saya tulis ' +
                     'ini... alarm to, Dok?" Ia mengambil pensil dan menulis besar-besar di halaman baru: ' +
@@ -517,10 +519,9 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                 {
                   id: 'slk2_d3_a',
                   teks:
-                    '"Pertanyaan paling penting hari ini, dan kamu sendiri yang menemukannya, Ko. Kita bikin ' +
-                    'rencana saku: suara datang → pegang anyamanmu, hitung sepuluh bilah bambu → panggil Ibu → ' +
-                    'kalau tambah keras, bilang \'saya mau ke Puskesmas\'. Tiga langkah. Hafal?"',
-                  gaya: 'empati',
+                    '"Pertanyaan penting, Ko. Kita buat tiga langkah: saat suara datang, pegang anyaman dan hitung ' +
+                    'sepuluh bilah; panggil Ibu; jika makin keras, minta dibawa ke Puskesmas. Bisa diulang?"',
+                  gaya: 'edukasi',
                   respons:
                     'Eko mengulang tiga langkah itu dua kali, jarinya menghitung bilah keranjang. "Anyaman... ' +
                     'Ibu... Puskesmas." Ia mengangguk sendiri. Rencana saku pertama dalam hidupnya — dan ia ' +
@@ -813,10 +814,8 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                 {
                   id: 'yk1_d2_a',
                   teks:
-                    '"Delapan anak besar semua di tangan Mbah — itu bukti Mbah perawat bayi paling ' +
-                    'berpengalaman di rumah ini. Justru karena itu saya mau titip tugas paling penting: ' +
-                    'usus bayi zaman sekarang kita tahu matangnya umur 6 bulan. Mbah yang paling bisa ' +
-                    'menjaga jadwal itu — pisangnya kita TUNDA, bukan dibuang. Nanti Mbah yang pertama menyuapi."',
+                    '"Mbah paling berpengalaman merawat bayi di rumah ini. Tolong bantu kami menjaga Nayla hanya ' +
+                    'mendapat ASI sampai enam bulan; pisangnya ditunda, lalu nanti Mbah yang pertama menyuapi."',
                   gaya: 'empati',
                   respons:
                     'Mbah Painem mengangkat dagu, ditawari jabatan. "Ditunda to... bukan dilarang." Ia menimang ' +
@@ -1053,9 +1052,8 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                 {
                   id: 'yk2_d1_a',
                   teks:
-                    '"Bisa — dan bukan dengan niat, tapi dengan JADWAL. Kita hitung mundur bareng: Nayla ' +
-                    'minum berapa kali dari jam 7 sampai jam 4? Tiga kali? Berarti butuh 3 botol ASI perah ' +
-                    'sehari. Sekarang kita cari: kapan merahnya, simpannya di mana, siapa yang menyuapkan."',
+                    '"Bisa, Bu. Kita hitung kebutuhan Nayla dari jam tujuh sampai empat, lalu tentukan kapan ' +
+                    'memerah, tempat menyimpan, dan siapa yang memberikannya."',
                   gaya: 'refleksi',
                   respons:
                     'Bu Yani mengambil kertas dan mulai menghitung sendiri: "Merah pagi sebelum berangkat... ' +
@@ -1110,10 +1108,9 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                 {
                   id: 'yk2_d2_a',
                   teks:
-                    '"Enam botol ini + kulkas kecil Ibu = gudang ASI perah gratis. Direbus dulu botolnya, ' +
-                    'ASI tahan 4 jam di suhu ruang, 3-4 hari di kulkas. Ditulis tanggalnya pakai spidol. ' +
-                    'Mbah tinggal merendam botolnya di air hangat — jangan direbus ASI-nya."',
-                  gaya: 'empati',
+                    '"Enam botol dan kulkas kecil ini bisa menyimpan ASI perah. Rebus botolnya, beri tanggal, ' +
+                    'simpan sesuai panduan, lalu hangatkan dalam air; ASI-nya jangan direbus."',
+                  gaya: 'edukasi',
                   respons:
                     '"Botol selai..." Bu Yani tertawa tidak percaya, lalu langsung mengambil spidol dari laci. ' +
                     'Mbah Painem ikut maju: "Direndam banyu anget, ora digodhog. Gampang." Gudang ASI pertama ' +
@@ -1166,10 +1163,9 @@ export const KELUARGA_DESA_D: KeluargaBinaan[] = [
                 {
                   id: 'yk2_d3_a',
                   teks:
-                    '"Tidak boleh di WC — ASI itu makanan, bukan buangan. Konveksi Ibu wajib sediakan ' +
-                    'tempat: itu amanat undang-undang. Biar saya yang bersurat resmi dari Puskesmas ke ' +
-                    'pemilik konveksi — cukup pojok bersih, kursi, dan colokan. Musala pun boleh."',
-                  gaya: 'empati',
+                    '"ASI tidak layak diperah di toilet. Saya akan bersurat ke pemilik konveksi untuk meminta ' +
+                    'ruang bersih sederhana dengan kursi dan colokan; sudut musala pun bisa."',
+                  gaya: 'edukasi',
                   respons:
                     '"Dokter mau bersurat... untuk saya?" Bu Yani terdiam. "Ada tiga ibu menyusui lagi di ' +
                     'konveksi, Dok. Kalau ada tempatnya, kami gantian jaga." Satu surat, empat bayi. ' +

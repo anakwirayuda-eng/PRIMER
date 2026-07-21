@@ -431,6 +431,62 @@ describe('aksiKlinik — TANYA', () => {
     expect(jawab?.teks).toContain('bukan penyakit berbahaya')
   })
 
+  it('save lama wali_anak pada kasus self-report dinormalkan menjadi suara anak', () => {
+    const kasus = {
+      ...KASUS_FARINGITIS,
+      keluhanUtamaOlehPendamping: false,
+      anamnesis: KASUS_FARINGITIS.anamnesis.map((q) => q.id !== 'q_onset' ? q : {
+        ...q,
+        variasi: {
+          ...q.variasi,
+          anak: 'Tenggorokan saya sakit sejak dua hari lalu, Dok.',
+          wali_anak: 'Tenggorokan anak saya sakit sejak dua hari lalu, Dok.',
+        },
+      }),
+    }
+    const enc = buatEncounter(buatPasien({ persona: 'wali_anak', usia: 10 }))
+    const { events } = aksiKlinik(
+      enc,
+      { type: 'TANYA', pertanyaanId: 'q_onset' },
+      kasus,
+      PACK,
+      rngTest(),
+    )
+    const jawab = cariEvent(events, 'PASIEN_MENJAWAB')
+    expect(jawab).toEqual({
+      type: 'PASIEN_MENJAWAB',
+      teks: 'Tenggorokan saya sakit sejak dua hari lalu, Dok.',
+    })
+  })
+
+  it('pertanyaan yang dijawab pendamping memakai suara wali dan menandai pembicara', () => {
+    const kasus = {
+      ...KASUS_FARINGITIS,
+      anamnesis: KASUS_FARINGITIS.anamnesis.map((q) => q.id !== 'q_onset' ? q : {
+        ...q,
+        olehPendamping: true,
+        variasi: {
+          ...q.variasi,
+          anak: 'Saya tidak ingat persis mulainya, Dok.',
+          wali_anak: 'Anak saya mulai mengeluh dua hari lalu, Dok.',
+        },
+      }),
+    }
+    const enc = buatEncounter(buatPasien({ persona: 'anak', usia: 10 }))
+    const { events } = aksiKlinik(
+      enc,
+      { type: 'TANYA', pertanyaanId: 'q_onset' },
+      kasus,
+      PACK,
+      rngTest(),
+    )
+    expect(cariEvent(events, 'PASIEN_MENJAWAB')).toEqual({
+      type: 'PASIEN_MENJAWAB',
+      teks: 'Anak saya mulai mengeluh dua hari lalu, Dok.',
+      olehPendamping: true,
+    })
+  })
+
   it('distraktor menggerus sabar −10', () => {
     const enc = buatEncounter(buatPasien())
     const { enc: baru } = aksiKlinik(

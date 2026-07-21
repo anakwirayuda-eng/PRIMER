@@ -43,10 +43,16 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
   const pembukaTerjawab = (perKategori.get('keluhan_utama') ?? []).some((q) =>
     enc.ditanya.includes(q.id),
   )
+  const rps = perKategori.get('rps') ?? []
+  const rpsTerjawab = rps.length === 0 || rps.some((q) => enc.ditanya.includes(q.id))
+  const rpsPembuka = rps[0]
+  const rpsPembukaTerjawab = !rpsPembuka || enc.ditanya.includes(rpsPembuka.id)
 
-  let jawabanTerakhir: string | null = null
+  let jawabanTerakhir: { teks: string; olehPendamping: boolean } | null = null
   for (const e of lastEvents) {
-    if (e.type === 'PASIEN_MENJAWAB') jawabanTerakhir = e.teks
+    if (e.type === 'PASIEN_MENJAWAB') {
+      jawabanTerakhir = { teks: e.teks, olehPendamping: e.olehPendamping === true }
+    }
   }
 
   // M10 Batch-2 (CODEX A.1): setelah pertanyaan diklik, tombolnya jadi
@@ -92,7 +98,10 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
           {/* Balon jawaban terakhir — live region + target fokus pasca-klik (A.1) */}
           {jawabanTerakhir !== null && (
             <div key={eventTick} ref={balonRef} className="klinik-balon" role="status" aria-live="polite" tabIndex={-1}>
-              &ldquo;{jawabanTerakhir}&rdquo;
+              {jawabanTerakhir.olehPendamping && (
+                <span className="teks-xs teks-lembut">Pendamping: </span>
+              )}
+              &ldquo;{jawabanTerakhir.teks}&rdquo;
             </div>
           )}
         </div>
@@ -103,9 +112,19 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
           // Mulai dari keluhan utama agar pertanyaan fokus tidak memberi tahu
           // diagnosis sebelum pemain mendengar cerita pembuka pasien.
           if (daftar.length === 0 || (kat !== 'keluhan_utama' && !pembukaTerjawab)) return null
-          const daftarTerbuka = daftar.filter(
-            (q) => q.bukaSetelah?.every((id) => enc.ditanya.includes(id)) ?? true,
-          )
+          // Riwayat latar baru dibuka setelah dokter menindaklanjuti cerita kini.
+          // Ini menjaga percakapan mengalir KU → RPS → riwayat/latar tanpa
+          // memaksa satu graf prasyarat besar untuk ratusan kasus.
+          if ((kat === 'rpd' || kat === 'rpk' || kat === 'sosial') && !rpsTerjawab) return null
+          const daftarTerbuka = daftar.filter((q) => {
+            if (!(q.bukaSetelah?.every((id) => enc.ditanya.includes(id)) ?? true)) return false
+            // Light-plus sequencing: satu pertanyaan RPS pertama menjadi
+            // jembatan setelah pembuka. Sesudah dijawab, seluruh RPS relevan
+            // terbuka. Ini mencegah panel langsung terasa seperti checklist
+            // acak tanpa membangun graf prasyarat per kasus.
+            if (kat === 'rps' && !rpsPembukaTerjawab) return q.id === rpsPembuka?.id
+            return true
+          })
           if (daftarTerbuka.length === 0) return null
           return (
             <div key={kat} className="klinik-deck__grup">

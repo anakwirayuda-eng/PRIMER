@@ -34,6 +34,7 @@ import './MejaKerja.css'
 import { tampilanHasilKunjungan } from './hasilKunjunganView'
 import { JejakPerawatan } from './JejakPerawatan'
 import { TeksTerbaca } from '../components/TeksTerbaca'
+import { personaAnamnesis } from './klinik/util'
 
 const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
 
@@ -72,7 +73,14 @@ const LABEL_PERSONA: Record<Persona, string> = {
   skeptis: 'Skeptis',
   cemas: 'Cemas',
   lansia: 'Lansia',
+  anak: 'Anak',
   wali_anak: 'Wali anak',
+}
+
+function labelPersonaAntrian(kasusId: string, persona: Persona): string {
+  const kasus = PACK.kasus[kasusId]
+  const efektif = kasus ? personaAnamnesis(kasus, persona) : persona
+  return LABEL_PERSONA[efektif] ?? 'Pasien'
 }
 
 const STEMPEL_GRADE: Record<string, string> = {
@@ -483,7 +491,9 @@ export function MejaKerja() {
                         </span>
                       </span>
                       <span className="baris mk__pasien-chip">
-                        <span className="chip">{LABEL_PERSONA[p.persona]}</span>
+                        <span className="chip">
+                          {labelPersonaAntrian(p.kasusId, p.persona)}
+                        </span>
                         <span className={`chip ${p.bpjs ? 'chip--daun' : 'chip--kunyit'}`}>
                           {p.bpjs ? 'BPJS' : 'Umum'}
                         </span>

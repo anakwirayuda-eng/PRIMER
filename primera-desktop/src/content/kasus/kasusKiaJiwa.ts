@@ -49,8 +49,8 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       {
         id: 'q_hpht',
         kategori: 'keluhan_utama',
-        tanya: 'Hari pertama haid terakhirnya kapan Bu, dan ini kehamilan ke berapa?',
-        jawab: 'HPHT-nya sekitar 20 minggu lalu dok, ini hamil pertama, belum pernah keguguran.',
+        tanya: 'Apakah tanggal hari pertama haid terakhir tercatat di buku KIA, dan ini kehamilan ke berapa?',
+        jawab: 'Tercatat 20 minggu yang lalu, Dok. Ini kehamilan pertama dan saya belum pernah keguguran.',
         esensial: true,
         oldcarts: ['onset', 'durasi'],
       },

@@ -25,9 +25,9 @@ export { hitungSkor, ringkasanHarian } from './scoring'
  * Generator pasien
  * ------------------------------------------------------------------------- */
 
-function pilihPersona(usia: number, rng: Rng): Persona {
+function pilihPersona(usia: number, rng: Rng, pendampingAnak = false): Persona {
   if (usia >= 60) return 'lansia'
-  if (usia < 15) return 'wali_anak'
+  if (usia < 15) return pendampingAnak ? 'wali_anak' : 'anak'
   return rng.weighted<Persona>([
     { item: 'polos', bobot: 40 },
     { item: 'terpelajar', bobot: 20 },
@@ -82,7 +82,11 @@ export function buatPasienDariKasus(
   // persona dihitung dari roll demografi yang lantas DIBUANG merge override:
   // Mbah Lastri 71 th bisa bicara dgn suara 'polos' dewasa (atau sebaliknya).
   // override.persona (bila ada, mis. pasien kembali) tetap menang saat merge.
-  const persona = pilihPersona(override?.usia ?? usia, rng)
+  const persona = pilihPersona(
+    override?.usia ?? usia,
+    rng,
+    kasus.keluhanUtamaOlehPendamping === true,
+  )
   // Kasus ber-alergiTrap SELALU membawa alerginya: dialog anamnesisnya menceritakan
   // riwayat alergi itu, dan jebakannya justru inti pelajaran kasus tersebut.
   const alergi = kasus.alergiTrap ? [kasus.alergiTrap.kelas] : []
@@ -405,7 +409,11 @@ export function susunAntrianHarian(
       nama: anggota.nama,
       usia: anggota.usia,
       jenisKelamin: anggota.jenisKelamin,
-      persona: pilihPersona(anggota.usia, rngFlavor),
+      persona: pilihPersona(
+        anggota.usia,
+        rngFlavor,
+        pack.kasus[pasien.kasusId]?.keluhanUtamaOlehPendamping === true,
+      ),
     }
   }
 

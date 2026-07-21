@@ -633,7 +633,13 @@ function fnv1a(teks: string): string {
 // tutorial dikeluarkan dari rerata harian; hasil encounter menyimpan gap
 // formatif; dan status pasca-RJP IGD persisten agar reload tidak mengulang
 // respons pra-resusitasi. Replay/save lintas build harus dibedakan.
-export const REVISI_ENGINE = 55
+// 56 (2026-07-20 - koherensi dialog klinik/UKM): persona anak dipisahkan
+// dari pendamping, pertanyaan tertentu dapat dituturkan pendamping, anamnesis
+// dibuka bertahap KU -> RPS -> riwayat latar, dan pilihan UKM yang menyebut
+// hasil observasi baru tersedia sesudah hotspot terkait ditemukan. Cabang
+// yang meretakkan kepercayaan juga membawa narasi lanjutan spesifik. Save lama
+// tetap terbaca; `wali_anak` pada kasus self-report dinormalkan saat runtime.
+export const REVISI_ENGINE = 56
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

@@ -229,9 +229,8 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                 {
                   id: 'bk1_d3_a',
                   teks:
-                    '"Nah — Pak, dengar itu? Generasi Tini sudah pindah sendiri. Pertanyaannya tinggal: ' +
-                    'Bapak mau jadi angkatan TERAKHIR yang ke kali, atau angkatan pertama yang pindah? ' +
-                    'Soal obrolan subuh Kang Wo dan Kang Dul — pos ronda itu kurang apa? Kopi bisa pindah tempat."',
+                    '"Tini sudah memilih jamban, Pak. Bapak mau jadi angkatan terakhir yang ke kali atau yang pertama pindah? ' +
+                    'Obrolan subuh dan kopinya tetap bisa lanjut di pos ronda."',
                   gaya: 'empati',
                   respons:
                     'Pak Bagyo memandang anaknya, lalu jalan setapak ke kali, lalu jamban kinclongnya. ' +
@@ -517,10 +516,8 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                 {
                   id: 'ek1_d2_a',
                   teks:
-                    '"Makanya jangan Mas yang ngomong — dan jangan Mbak Endah juga. Yang paling didengar ' +
-                    'ibu-ibu soal persalinan itu sesama perempuan yang paham: bidan. Bagaimana kalau kita ' +
-                    'bikin \'ANC keluarga\' — Ibu diundang ikut periksa kehamilan, dengar langsung dari bidan, ' +
-                    'lihat sendiri USG-nya?"',
+                    '"Mas tidak perlu menanggung percakapan ini sendiri. Bagaimana kalau Ibu ikut ANC keluarga, ' +
+                    'lalu mendengar langsung dari bidan dan melihat pemeriksaannya bersama Mbak Endah?"',
                   gaya: 'empati',
                   respons:
                     'Andri dan Endah bertukar pandang cepat. "Ibu... diundang ikut periksa?" Endah mengulang. ' +
@@ -805,9 +802,8 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                 {
                   id: 'kk1_d1_a',
                   teks:
-                    '"Saya sepakat rezeki urusan Gusti Allah, Pak — dan saya tidak datang menyuruh setop. ' +
-                    'Saya cuma penasaran satu hal: pasukan lima ini kan butuh panglima yang sehat. Panglimanya ' +
-                    'Pak Karsa... tapi yang masak, nyuci, momong lima-limanya siapa? Sehat tidak beliau?"',
+                    '"Saya tidak datang menyuruh setop, Pak. Saya ingin tahu: siapa yang mengurus lima anak ini ' +
+                    'setiap hari, dan bagaimana kesehatan Bu Painah sekarang?"',
                   gaya: 'refleksi',
                   respons:
                     'Pak Karsa menoleh ke istrinya yang sedang berpegangan tiang jemuran lagi. Lama. ' +
@@ -865,11 +861,9 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                 {
                   id: 'kk1_d2_a',
                   teks:
-                    '(Kepada keduanya) "Bu Painah, Pak Karsa — kunang-kunang, cepat lelah, pucat begini ' +
-                    'namanya anemia: darahnya kurang. Lima kehamilan dalam tiga belas tahun itu seperti ' +
-                    'sumur ditimba terus tanpa diberi waktu terisi. Boleh saya periksa Ibu sebentar, ' +
-                    'Pak — biar Bapak lihat sendiri?"',
-                  gaya: 'empati',
+                    '"Bu Painah, keluhan kunang-kunang, cepat lelah, dan pucat bisa menandakan kurang darah. ' +
+                    'Boleh saya periksa Ibu sebentar agar kita tahu kondisinya?"',
+                  gaya: 'edukasi',
                   respons:
                     'Pak Karsa mengangguk. Bagian dalam kelopak mata Bu Painah pucat dan telapak tangannya putih. ' +
                     'Kamu membandingkannya dengan telapak Pak Karsa yang lebih kemerahan. "Kok putih begitu, Dok?" ' +
@@ -932,10 +926,8 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                 {
                   id: 'kk1_d3_a',
                   teks:
-                    '"Ranking satu terus, Pak. Anak panglima memang unggul. Nah — ini bukan soal setop atau ' +
-                    'tidak setop, cuma soal JEDA: kalau tiga-empat tahun ke depan tenaga dan biaya keluarga ' +
-                    'difokuskan ke Wati dan adik-adiknya yang SUDAH ada... KB itu alatnya jeda, Pak. ' +
-                    'Bukan lawannya takdir — pengatur napasnya."',
+                    '"Wati berprestasi, Pak. Bagaimana jika tiga-empat tahun ke depan tenaga dan biaya difokuskan ' +
+                    'ke anak-anak yang sudah ada? KB bisa menjadi jeda, bukan lawan takdir."',
                   gaya: 'refleksi',
                   respons:
                     'Pak Karsa membolak-balik rapor itu. "Jeda..." Ia memandang Wati, lalu istrinya di ' +

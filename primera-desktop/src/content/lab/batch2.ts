@@ -292,7 +292,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   buatKasusFktpLab({
     id: 'lab_fimosis_patologis_ringan', nama: 'Fimosis Patologis Tanpa Retensi', icd10: 'N47.1', kategori: 'kia',
     keluhanUtama: 'Kulup anak sulit ditarik dan ujungnya menggelembung saat kencing.', keluhanUtamaOlehPendamping: true, usia: [5, 11], jenisKelamin: 'L', vital: { nadi: 84, rr: 20, suhu: 36.7, spo2: 99 },
-    pembuka: ['Bagaimana aliran kencing dan sejak kapan?', 'Pancaran masih keluar tetapi mengecil; tidak pernah sampai tidak bisa kencing.'],
+    pembuka: ['Bagaimana aliran kencing dan sejak kapan?', 'Sekitar enam bulan ini pancarannya mengecil, tetapi masih keluar dan tidak pernah sampai tidak bisa kencing.'],
     pertanyaan: [
       ['q_infeksi', 'rps', 'Ada demam, nanah, nyeri berat, atau infeksi berulang?', 'Tidak ada demam; pernah merah ringan sekali.', true],
       ['q_paksa', 'sosial', 'Apakah kulup pernah ditarik paksa?', 'Kami pernah mencoba menarik kuat dan sejak itu ada cincin putih.', true],
@@ -486,7 +486,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     pertanyaan: [
       ['q_infeksi', 'rps', 'Ada demam, payudara merah berbaji, nanah, atau bayi punya bercak putih mulut?', 'Tidak ada.', true],
       ['q_trauma', 'rps', 'Ada pompa dengan tekanan tinggi atau sabun keras?', 'Saya sering membersihkan puting dengan sabun.', true],
-      ['q_bayi', 'rps', 'Bayi tetap BAK dan berat badannya dipantau?', 'Masih BAK cukup.', false],
+      ['q_bayi', 'rps', 'Bayi tetap BAK dan berat badannya dipantau?', 'Masih BAK cukup. Berat badannya dipantau di Posyandu dan terakhir masih naik.', false],
     ],
     fisik: [['kulit', 'Fisura dangkal pada puting kanan tanpa pus, eritema sektoral, atau massa payudara.']],
     diagnosisBanding: ['O92.13', 'N61', 'B37.89'],
@@ -516,13 +516,13 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     // spesialis. Rujukan yang berhasil kemudian mengaktifkan kunjungan PRB.
     id: 'lab_dm_tipe1_stabil_prb', bisaPrb: true, harusDirujuk: true, spesialisRujukan: 'anak', nama: 'DM Tipe 1 Remaja: Review Spesialis lalu PRB', icd10: 'E10', kategori: 'metabolik',
     keluhanUtama: 'Gula saya naik-turun dan dua malam ini ibu harus membangunkan saya karena gula terlalu rendah.', usia: [15, 17], vital: { td: '112/70', nadi: 82, rr: 18, suhu: 36.6, spo2: 99, gds: 212 },
-    pembuka: ['Apa yang terjadi pada gula harian dan dosis insulin belakangan ini?', 'Resume rumah sakit mencatat HbA1c 8,6%. Dua malam lalu gula 52 mg/dL dan saya perlu bantuan ibu untuk minum manis, tetapi gula pagi sering tinggi.'],
+    pembuka: ['Apa yang terjadi pada gula harian dan dosis insulin belakangan ini?', 'Di resume rumah sakit tertulis HbA1c saya 8,6%. Dua malam lalu gula saya 52 mg/dL sampai ibu harus membantu memberi minuman manis, tetapi gula pagi sering tinggi.'],
     pertanyaan: [
       ['q_dka', 'rps', 'Ada muntah, nyeri perut, napas dalam, sangat haus, keton tinggi, atau penurunan kesadaran?', 'Tidak ada; saya masih makan dan minum.', true],
       ['q_hipo', 'rps', 'Saat gula 52 mg/dL, apakah Anda masih mampu menolong diri sendiri dan bagaimana pulihnya?', 'Saya bingung dan tidak bangun sendiri; ibu memberi minuman manis. Setelah 15 menit gula naik.', true],
       ['q_log', 'rpd', 'Adakah catatan gula, waktu makan, aktivitas, dan dosis insulin yang bisa ditinjau?', 'Ada. Gula sangat bervariasi; beberapa dosis makan siang terlewat dan gula malam kadang turun.', true],
-      ['q_teknik', 'rpd', 'Bagaimana penyimpanan insulin, teknik suntik, dan rotasi tempat suntik?', 'Insulin tersimpan baik, tetapi saya sering menyuntik di bagian abdomen yang sama.', true],
-      ['q_akses', 'sosial', 'Apakah insulin, alat cek gula, pendamping keluarga, dan akses rumah sakit tersedia?', 'Masih tersedia melalui jejaring; ibu membantu dan rumah sakit dapat dijangkau.', true],
+      ['q_teknik', 'rpd', 'Bagaimana penyimpanan insulin, teknik suntik, dan rotasi tempat suntik?', 'Insulin tersimpan baik, tetapi saya sering menyuntik di bagian perut yang sama.', true],
+      ['q_akses', 'sosial', 'Apakah insulin, alat cek gula, pendamping keluarga, dan akses rumah sakit tersedia?', 'Insulin dan alat cek masih saya dapat dari layanan rujukan. Ibu membantu, dan kami masih bisa menjangkau rumah sakit.', true],
     ],
     fisik: [['umum', 'Status hidrasi baik, sadar penuh, tidak ada napas Kussmaul.'], ['kulit', 'Lipohipertrofi pada lokasi suntik abdomen.'], ['ekstremitas', 'Nadi kaki baik, tanpa ulkus.', false]],
     lab: [['gds', '212 mg/dL saat kunjungan.', 'tinggi'], ['urinalisis', 'Keton negatif.', 'normal']],
@@ -607,7 +607,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
 
   buatKasusFktpLab({
     id: 'lab_limfadenitis_servikal_akut', nama: 'Limfadenitis Servikal Akut Bakterial', icd10: 'I88', kategori: 'infeksi',
-    keluhanUtama: 'Ada benjolan nyeri di leher setelah sakit gigi dan demam ringan.', usia: [8, 12], vital: { td: '104/66', nadi: 92, rr: 20, suhu: 38.0, spo2: 99 },
+    keluhanUtama: 'Anak saya mengalami benjolan nyeri di leher setelah sakit gigi dan demam ringan.', keluhanUtamaOlehPendamping: true, usia: [8, 12], vital: { td: '104/66', nadi: 92, rr: 20, suhu: 38.0, spo2: 99 },
     pembuka: ['Benjolan muncul kapan dan adakah sumber infeksi di sekitar kepala-leher?', 'Tiga hari setelah gigi geraham sakit; benjolan satu sisi dan nyeri.'],
     pertanyaan: [
       ['q_tb', 'rps', 'Benjolan sudah lama, tidak nyeri, disertai batuk lama, keringat malam, atau berat turun?', 'Tidak; baru tiga hari dan nyeri.', true],

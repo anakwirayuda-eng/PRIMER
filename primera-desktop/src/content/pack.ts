@@ -30,7 +30,8 @@ export const LAB_CONTENT_RELEASE = 'm11-e2-saji-pilot-2026-07-17'
 export const UKM_ASSURANCE_CONTENT_RELEASE = 'ukm-assurance-2026-07-19'
 export const EDITORIAL_UX_CONTENT_RELEASE = 'editorial-ux-2026-07-19'
 export const BRIDGE_CLOSURE_CONTENT_RELEASE = 'bridge-closure-2026-07-19'
-export const CONTENT_RELEASE = BRIDGE_CLOSURE_CONTENT_RELEASE
+export const DIALOGUE_COHERENCE_CONTENT_RELEASE = 'dialogue-coherence-2026-07-20'
+export const CONTENT_RELEASE = DIALOGUE_COHERENCE_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
@@ -42,6 +43,7 @@ export const CONTENT_RELEASE_ORDER = [
   UKM_ASSURANCE_CONTENT_RELEASE,
   EDITORIAL_UX_CONTENT_RELEASE,
   BRIDGE_CLOSURE_CONTENT_RELEASE,
+  DIALOGUE_COHERENCE_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {

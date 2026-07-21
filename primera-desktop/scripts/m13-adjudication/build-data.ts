@@ -774,7 +774,9 @@ function caseRecord(kasus: KasusKlinis, ordinal: number): AdjudicationCase {
 
 function currentCommit(): string {
   try {
-    return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim()
+    const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim()
+    const dirty = execFileSync('git', ['status', '--porcelain'], { cwd: ROOT, encoding: 'utf8' }).trim()
+    return dirty ? `${commit}+dirty` : commit
   } catch {
     return 'unknown'
   }

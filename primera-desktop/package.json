@@ -19,6 +19,7 @@
     "cohort:manifest": "vite-node --config vitest.config.ts scripts/generate-cohort-manifest.ts",
     "exam:simulate": "vite-node --config vitest.config.ts scripts/simulate-exam-blueprint.ts",
     "audit:editorial": "vite-node --config vitest.config.ts scripts/audit-editorial.ts",
+    "audit:dialogue": "vite-node --config vitest.config.ts scripts/audit-dialogue-quality.ts",
     "m13:kfa": "vite-node --config vitest.config.ts scripts/m13-adjudication/harvest-kfa.ts",
     "m13:adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate.ts",
     "pack": "npm run check:bgm-license && npm run build && electron-builder --win --dir",

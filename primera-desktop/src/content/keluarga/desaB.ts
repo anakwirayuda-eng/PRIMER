@@ -883,6 +883,7 @@ const keluargaMusa: KeluargaBinaan = {
                 gaya: 'menghakimi',
                 respons:
                   'Tangan Pak Musa berhenti di udara. "...Dokter matanya masih bagus ya." Ia menutup kotak itu pelan-pelan, dan sisa cerita yang tadinya mau tumpah, surut kembali ke dalam.',
+                butuhHotspot: ['musa_h2_kotak'],
                 efekTrust: -2,
                 tepat: false,
                 catatanPedagogis:
@@ -918,6 +919,7 @@ const keluargaMusa: KeluargaBinaan = {
                 gaya: 'refleksi',
                 respons:
                   '"Lho, kok tahu." Ia tersipu seperti ketahuan berbuat baik. "Daripada salah minum, Dok. Dulu saya diamkan saja obatnya. Sekarang paling tidak saya tulis pertanyaannya." Sebuah lompatan — dari menghindar menjadi bertanya.',
+                butuhHotspot: ['musa_h2_resep'],
                 efekTrust: 2,
                 tepat: true,
                 catatanPedagogis:
@@ -1244,7 +1246,10 @@ const keluargaDewi: KeluargaBinaan = {
                 teks: '"Pak Hendra, istri Bapak anemia dan hamil keempat. Kalau Bapak masih melarang KB juga, sama saja Bapak membahayakan nyawa istri sendiri."',
                 gaya: 'menghakimi',
                 respons:
-                  'Ruangan itu hening; bahkan Bayu berhenti berlari. "Dokter datang ke rumah saya..." Pak Hendra berdiri, suaranya rendah, "...buat bilang saya mau mencelakai istri saya?" Bu Dewi memegangi lengan suaminya, memohon tanpa kata. Tidak ada percakapan yang bisa diselamatkan setelah ini.',
+                  'Ruangan itu hening; bahkan Bayu berhenti berlari. "Dokter datang ke rumah saya..." Pak Hendra berdiri, suaranya rendah, "...buat bilang saya mau mencelakai istri saya?" Bu Dewi memegangi lengan suaminya, memohon tanpa kata. Percakapan nyaris putus di sana.',
+                narasiLanjutan:
+                  'Setelah hening panjang, Pak Hendra duduk lagi demi Bu Dewi, tetapi tubuhnya tetap menghadap pintu. ' +
+                  'Ia menyebut keluarganya yang dahulu beranak sembilan dengan nada membela diri; percakapan berlanjut, bukan kembali akrab.',
                 efekTrust: -2,
                 tepat: false,
                 catatanPedagogis:
@@ -1460,6 +1465,7 @@ const keluargaDewi: KeluargaBinaan = {
                 gaya: 'empati',
                 respons:
                   '"Mas Hendra itu, Dok!" Bu Dewi menyahut duluan, setengah tertawa. "Pulang narik bawa jeruk sekilo, katanya biar obatnya nggak mual." Pak Hendra pura-pura sibuk dengan kopinya. "Cuma jeruk," gumamnya — tapi telinganya memerah.',
+                butuhHotspot: ['dewi_h2_fe'],
                 efekTrust: 2,
                 tepat: true,
                 catatanPedagogis:

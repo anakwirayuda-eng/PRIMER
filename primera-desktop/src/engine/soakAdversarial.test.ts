@@ -314,12 +314,16 @@ function cobaKunjunganProfil(state: GameState, profil: Profil, rng: Rng): GameSt
   if (!s.kunjungan || s.kunjungan.fase !== 'wawancara') return s
 
   for (const node of skenario.dialog) {
+    const hotspotDitemukan = s.kunjungan?.hotspotDitemukan ?? []
+    const pilihanTersedia = node.pilihan.filter(
+      (item) => item.butuhHotspot?.every((id) => hotspotDitemukan.includes(id)) ?? true,
+    )
     const pilihan =
       profil.kunjunganKualitas === 'teladan'
-        ? node.pilihan.find((p) => p.tepat && !isGayaTerlarang(p.gaya)) ?? node.pilihan[0]!
+        ? pilihanTersedia.find((p) => p.tepat && !isGayaTerlarang(p.gaya)) ?? pilihanTersedia[0]!
         : profil.kunjunganKualitas === 'cepat'
-          ? node.pilihan[0]!
-          : rng.pick(node.pilihan)
+          ? pilihanTersedia[0]!
+          : rng.pick(pilihanTersedia)
     s = coba(s, { type: 'PILIH_DIALOG', pilihanId: pilihan.id })
   }
   s = coba(s, { type: 'LANJUT_BABAK' })

@@ -281,6 +281,9 @@ export function aksiKunjungan(
       if (!node) return tolak(kj, 'Perbincangan sudah selesai — lanjutkan ke kesimpulanmu.')
       const pilihan = node.pilihan.find((p) => p.id === action.pilihanId)
       if (!pilihan) return tolak(kj, 'Pilihan itu tidak tersedia sekarang.')
+      if (pilihan.butuhHotspot?.some((id) => !kj.hotspotDitemukan.includes(id))) {
+        return tolak(kj, 'Amati dulu petunjuk yang mendasari tanggapan itu.')
+      }
 
       const trustDelta = kj.trustDelta + pilihan.efekTrust
       const konfrontasiBeruntun = isGayaTerlarang(pilihan.gaya) ? kj.konfrontasiBeruntun + 1 : 0

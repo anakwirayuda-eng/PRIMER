@@ -71,7 +71,7 @@ const POOL_LANGKAH2: KartuKegiatan[] = [
     id: 'posy_ukur_bumil',
     judul: 'Langkah 2 — Penimbangan & Pengukuran (Ibu Hamil)',
     narasi:
-      'Bu Marni, hamil trimester 2. LILA diukur 22 cm. Berat badan naik lambat sejak ' +
+      'Bu Rukmini, hamil trimester 2. LILA diukur 22 cm. Berat badan naik lambat sejak ' +
       'awal kehamilan.',
     pilihan: [
       {
@@ -96,7 +96,7 @@ const POOL_LANGKAH2: KartuKegiatan[] = [
     id: 'posy_ukur_lansia',
     judul: 'Langkah 2 — Penimbangan & Pengukuran (Usia Produktif-Lansia)',
     narasi:
-      'Pak Slamet, 58 tahun. Lingkar perut 102 cm, tensi 150/95 saat diukur kader. ' +
+      'Pak Harun, 58 tahun. Lingkar perut 102 cm, tensi 150/95 saat diukur kader. ' +
       'Mengaku "sudah biasa begini sejak dulu, Dok".',
     pilihan: [
       {
@@ -126,7 +126,7 @@ const POOL_LANGKAH2: KartuKegiatan[] = [
     id: 'posy_ukur_remaja',
     judul: 'Langkah 2 — Penimbangan & Pengukuran (Remaja)',
     narasi:
-      'Dewi, siswi SMP 14 tahun, terlihat pucat dan mengaku sering lemas & pusing saat ' +
+      'Nisa, siswi SMP 14 tahun, terlihat pucat dan mengaku sering lemas & pusing saat ' +
       'pelajaran olahraga.',
     pilihan: [
       {
@@ -157,7 +157,7 @@ const POOL_LANGKAH3: KartuKegiatan[] = [
     // yg menyebut An. Kadek justru TIDAK di bawah garis merah (weight faltering).
     // Kartu ini anak BERBEDA (benar-benar di bawah garis merah) — ganti nama
     // agar tak kontradiksi bila kedua kartu ditarik dalam sesi yang sama.
-    narasi: 'Ibu An. Komang bertanya, "Dok, garis anak saya di bawah garis merah artinya apa?"',
+    narasi: 'Ibu dari Komang bertanya, "Dok, garis anak saya di bawah garis merah artinya apa?"',
     pilihan: [
       {
         id: 'a',
@@ -397,7 +397,7 @@ export function prolanisTerkendali(jenis: 'ht' | 'dm', param: number): boolean {
 const KANAL_PROLANIS: readonly ((narasi: string) => string)[] = [
   (n) => n,
   (n) =>
-    `Sesi edukasi Klub Prolanis bulan ini, dipandu Duta PROLANIS. ${n} Catatan realita: BPJS masih menjalankan Prolanis lewat 4 kanal resmi (konsultasi/edukasi klub/reminder SMS/home visit); kerangka ILP 2023 meleburnya ke Klaster Dewasa-Lansia — di lapangan keduanya berjalan berdampingan.`,
+    `Sesi edukasi Klub Prolanis bulan ini dipandu Duta PROLANIS. ${n}`,
   (n) => `Reminder SMS jadwal kontrol sudah terkirim minggu lalu. ${n}`,
   (n) => `Kunjungan rumah bulan ini utk pemantauan lebih dekat. ${n}`,
 ]

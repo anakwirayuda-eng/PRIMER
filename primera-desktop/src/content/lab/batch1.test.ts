@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { CURRICULUM_BLUEPRINT, PACK } from '../index'
 import {
-  BRIDGE_CLOSURE_CONTENT_RELEASE,
   CONTENT_RELEASE,
+  DIALOGUE_COHERENCE_CONTENT_RELEASE,
   encounterArchetypeAktif,
   validasiPack,
 } from '../pack'
@@ -42,7 +42,7 @@ describe('M13 lab full-fledge - batch 1', () => {
   })
 
   it('Career-only dan benar-benar tidak masuk pool Ujian', () => {
-    expect(CONTENT_RELEASE).toBe(BRIDGE_CLOSURE_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(DIALOGUE_COHERENCE_CONTENT_RELEASE)
     for (const kasus of LAB_BATCH_1_CASES) {
       expect(
         encounterArchetypeAktif(PACK, 'clinic', kasus.id, 'karier', CONTENT_RELEASE),

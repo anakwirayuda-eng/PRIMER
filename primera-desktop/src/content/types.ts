@@ -33,9 +33,9 @@ export type JenisKelamin = 'L' | 'P'
  *   waktu/pencetus, boleh istilah awam ("darah tinggi", "biduran", "asam urat"),
  *   TAPI BUKAN sejawat: dilarang istilah Latin/klinis (wheal, eritematosa,
  *   dispnea, epigastrium, onset, dermatom, McBurney, NYHA, monoartikular…).
- * - skeptis/cemas/lansia/wali_anak: nada, tetap bahasa awam.
+ * - skeptis/cemas/lansia/anak/wali_anak: nada, tetap bahasa awam.
  */
-export type Persona = 'polos' | 'terpelajar' | 'skeptis' | 'cemas' | 'lansia' | 'wali_anak'
+export type Persona = 'polos' | 'terpelajar' | 'skeptis' | 'cemas' | 'lansia' | 'anak' | 'wali_anak'
 
 export type KategoriAnamnesis = 'keluhan_utama' | 'rps' | 'rpd' | 'rpk' | 'sosial'
 
@@ -48,6 +48,8 @@ export interface PertanyaanAnamnesis {
   jawab: string
   /** Variasi jawaban per persona (opsional; fallback ke `jawab`). */
   variasi?: Partial<Record<Persona, string>>
+  /** Jawaban ini dituturkan pendamping meski pasien sendiri membuka konsultasi. */
+  olehPendamping?: boolean
   /** Pertanyaan esensial: wajib ditanya untuk skor anamnesis penuh. */
   esensial?: boolean
   /** Distraktor: tidak relevan untuk kasus ini — menggerus kesabaran pasien. */
@@ -649,6 +651,10 @@ export interface PilihanDialog {
   /** Tepat secara teknik MI? (dinilai, muncul di debrief) */
   tepat: boolean
   catatanPedagogis?: string
+  /** Pilihan hanya masuk akal setelah semua temuan observasi ini ditemukan. */
+  butuhHotspot?: string[]
+  /** Narasi node berikut yang khusus mengikuti pilihan ini. */
+  narasiLanjutan?: string
   /**
    * GERBANG KEJUJURAN: pilihan ini menyentuh indikator sensitif.
    * Bila trust < ambang → warga menjawab `responsBohong` dan data yang tercatat

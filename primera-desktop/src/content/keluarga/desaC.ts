@@ -907,9 +907,8 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                 {
                   id: 'ak3_d3_a',
                   teks:
-                    '"Dan itu ketakutan yang paling masuk akal dari semua yang pernah Ibu ceritakan. ' +
-                    'Jalan itu tanggung jawab kami juga — desa ini punya dana dan tetangga. Malam ini ' +
-                    'biar saya bicara dengan Pak RW soal ambulans desa."',
+                    '"Ketakutan Ibu masuk akal. Jalan itu tanggung jawab kami juga. Malam ini saya bicara dengan ' +
+                    'Pak RW tentang ambulans desa agar ada rencana sebelum persalinan."',
                   gaya: 'refleksi',
                   respons:
                     'Bu Asih menghela napas panjang — bukan lega yang selesai, tapi lega yang dimulai. ' +

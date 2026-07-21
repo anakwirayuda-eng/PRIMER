@@ -397,14 +397,6 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         oldcarts: ['onset', 'lokasi'],
       },
       {
-        id: 'q_dahi',
-        kategori: 'keluhan_utama',
-        tanya: 'Coba angkat kedua alis dan kerutkan dahi — dahi sisi yang lemah ikut lumpuh atau masih bisa berkerut?',
-        jawab: 'Dahi kiri nggak bisa berkerut dok, alis kiri nggak bisa terangkat sama sekali.',
-        esensial: true,
-        oldcarts: ['lokasi', 'keparahan'],
-      },
-      {
         id: 'q_mata',
         kategori: 'rps',
         tanya: 'Mata sisi itu bisa menutup rapat? Ada rasa kering atau mengganjal?',
@@ -519,7 +511,7 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       {
         id: 'q_demam',
         kategori: 'rps',
-        tanya: 'Saat kejang apakah sedang demam tinggi? (untuk menyingkirkan kejang demam / infeksi SSP)',
+        tanya: 'Saat kejang, apakah tubuh sedang demam tinggi?',
         jawab: 'Nggak demam dok, badannya normal, kejangnya muncul begitu saja.',
         esensial: true,
         oldcarts: ['penyerta'],
@@ -777,9 +769,8 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
       {
         id: 'q_makan_telur',
         kategori: 'sosial',
-        tanya: 'Katanya bintitan karena sering ngintip ya, benar dok?',
-        jawab: 'Hehe kata orang gitu dok, saya jadi penasaran.',
-        distraktor: true,
+        tanya: 'Menurut Anda, apa yang mungkin memicu benjolan di kelopak ini?',
+        jawab: 'Saya sering mengucek mata, Dok. Kata orang bintitan karena mengintip; apa benar begitu?',
       },
     ],
     pemeriksaanFisik: [

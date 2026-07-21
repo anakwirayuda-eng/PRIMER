@@ -60,6 +60,25 @@ function isiPlaceholderJadwal(teks: string, hari: number): string {
   return teks.replaceAll('{jadwal}', `Hari ${hari}`)
 }
 
+/** Ingatkan nada pilihan sebelumnya tanpa menulis ulang seluruh pohon dialog. */
+export function narasiDenganKontinuitas(
+  pilihan: PilihanDialog | undefined,
+  narasiDasar: string,
+): string {
+  if (!pilihan) return narasiDasar
+  if (pilihan.narasiLanjutan) return pilihan.narasiLanjutan
+  const nada = pilihan.efekTrust >= 2
+    ? 'Percakapan terasa lebih terbuka.'
+    : pilihan.efekTrust === 1
+      ? 'Warga mulai sedikit lebih nyaman.'
+      : pilihan.efekTrust <= -2
+        ? 'Suasana menegang; warga menjaga jawabannya.'
+        : pilihan.efekTrust === -1
+          ? 'Warga tampak lebih waspada.'
+          : ''
+  return nada ? `${nada} ${narasiDasar}` : narasiDasar
+}
+
 const KARTU_HAMBATAN: { id: Hambatan; judul: string; sub: string; deskripsi: string }[] = [
   {
     id: 'kapabilitas',
@@ -177,8 +196,12 @@ export function Kunjungan() {
   const dialogIndexAktif = kj?.dialogIndex ?? -1
   const pilihanAcak = useMemo(() => {
     const node = skenario && dialogIndexAktif >= 0 ? skenario.dialog[dialogIndexAktif] : undefined
-    return node ? acakUrutan(node.pilihan, state.seed, 'kunjungan-dialog', dialogIndexAktif) : []
-  }, [skenario, dialogIndexAktif, state.seed])
+    if (!node) return []
+    const ditemukan = kj?.hotspotDitemukan ?? []
+    return acakUrutan(node.pilihan, state.seed, 'kunjungan-dialog', dialogIndexAktif).filter(
+      (pilihan) => pilihan.butuhHotspot?.every((id) => ditemukan.includes(id)) ?? true,
+    )
+  }, [skenario, dialogIndexAktif, state.seed, kj?.hotspotDitemukan])
 
   const arcAktif = kelContent
     ? arcKunjunganAktif(PACK, kelContent, state.mode, state.contentRelease)
@@ -219,6 +242,10 @@ export function Kunjungan() {
   const profilWarga = profilPembicara(skenario.id, dialogIndexPembicara)
   const namaWarga = profilWarga.nama
   const nodeAktif = skenario.dialog[kj.dialogIndex]
+  const pilihanSebelumnyaId = kj.pilihanDiambil.at(-1)
+  const nodeSebelumnya = kj.dialogIndex > 0 ? skenario.dialog[kj.dialogIndex - 1] : undefined
+  const pilihanSebelumnya = nodeSebelumnya?.pilihan.find((pilihan) => pilihan.id === pilihanSebelumnyaId)
+  const narasiNodeAktif = narasiDenganKontinuitas(pilihanSebelumnya, nodeAktif?.narasi ?? '')
   const wawancaraTuntas = kj.dialogIndex >= skenario.dialog.length
   // Pertahankan urutan penemuan. Filter menurut urutan konten membuat kartu
   // lama melompat posisi ketika titik berindeks lebih kecil ditemukan belakangan.
@@ -450,7 +477,7 @@ export function Kunjungan() {
               <Potret profil={profilWarga} />
               <div className="kunjungan-dialog__isi">
                 <div className="kunjungan-dialog__nama mono">{namaWarga}</div>
-                <p className="kunjungan-dialog__narasi">{nodeAktif.narasi}</p>
+                <p className="kunjungan-dialog__narasi">{narasiNodeAktif}</p>
               </div>
             </div>
             <div className="kunjungan-pilihan-baris">

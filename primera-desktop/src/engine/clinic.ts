@@ -83,9 +83,27 @@ function adalahDistraktor(q: PertanyaanAnamnesis): boolean {
   return (q as PertanyaanAnamnesis & { distraktor?: boolean }).distraktor === true
 }
 
+/** Save lama dapat membawa `wali_anak` pada kasus yang sebenarnya self-report. */
+function personaUntukKasus(kasus: KasusKlinis, persona: Persona): Persona {
+  if (persona === 'wali_anak' && kasus.keluhanUtamaOlehPendamping !== true) return 'anak'
+  return persona
+}
+
 /** Jawaban pasien: variasi persona bila ada, fallback ke jawaban baku. */
-function jawabanUntuk(q: PertanyaanAnamnesis, persona: Persona): string {
-  return q.variasi?.[persona] ?? q.jawab
+function jawabanUntuk(q: PertanyaanAnamnesis, persona: Persona, kasus: KasusKlinis): string {
+  const personaJawaban = q.olehPendamping === true || kasus.keluhanUtamaOlehPendamping === true
+    ? 'wali_anak'
+    : personaUntukKasus(kasus, persona)
+  return q.variasi?.[personaJawaban] ?? q.jawab
+}
+
+function eventJawaban(
+  q: PertanyaanAnamnesis,
+  kasus: KasusKlinis,
+  teks: string,
+): GameEvent {
+  const olehPendamping = q.olehPendamping === true || kasus.keluhanUtamaOlehPendamping === true
+  return { type: 'PASIEN_MENJAWAB', teks, ...(olehPendamping ? { olehPendamping: true } : {}) }
 }
 
 function tanpaPerubahan(enc: EncounterState): { enc: EncounterState; events: GameEvent[] } {
@@ -231,8 +249,8 @@ export function aksiKlinik(
       // pernah diklik saat ketus): pasien mengulang, tanpa menggeser state.
       if (enc.ditanya.includes(tanya.id) || enc.ditanyaKetus.includes(tanya.id)) {
         const teks =
-          enc.sabar <= 0 ? rng.pick(JAWABAN_KETUS) : jawabanUntuk(tanya, enc.pasien.persona)
-        return { enc, events: [{ type: 'PASIEN_MENJAWAB', teks }] }
+          enc.sabar <= 0 ? rng.pick(JAWABAN_KETUS) : jawabanUntuk(tanya, enc.pasien.persona, kasus)
+        return { enc, events: [eventJawaban(tanya, kasus, teks)] }
       }
 
       let turun = 0
@@ -252,8 +270,8 @@ export function aksiKlinik(
       // (DeepThink #2 — dulu klik distraktor pasca-ketus lolos tanpa penalti
       // krn tak pernah tercatat di mana pun).
       const jawabKetus = sabar <= 0
-      const teks = jawabKetus ? rng.pick(JAWABAN_KETUS) : jawabanUntuk(tanya, enc.pasien.persona)
-      const events: GameEvent[] = [{ type: 'PASIEN_MENJAWAB', teks }]
+      const teks = jawabKetus ? rng.pick(JAWABAN_KETUS) : jawabanUntuk(tanya, enc.pasien.persona, kasus)
+      const events: GameEvent[] = [eventJawaban(tanya, kasus, teks)]
       if (turun > 0 && sabar < AMBANG_SABAR_MENIPIS) events.push({ type: 'SABAR_MENIPIS' })
 
       return {

@@ -247,6 +247,9 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   respons:
                     'Hening sejenak. Pak Darto berhenti melinting. Bu Wulan tersenyum kecut. "Ya bukan begitu, ' +
                     'Dok... Ustadzah Umi itu orang baik. Sudah, tehnya diminum, nanti keburu dingin."',
+                  narasiLanjutan:
+                    'Teh sudah setengah gelas, tetapi Bu Wulan kini menjawab sambil menghindari tatapanmu. ' +
+                    'Topik grup pengajian tertutup; jika tetap menanyakan obat, kamu harus melakukannya tanpa menjadikan rumah ini ruang interogasi.',
                   efekTrust: -2,
                   tepat: false,
                   catatanPedagogis:
@@ -305,6 +308,10 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   respons:
                     'Bu Wulan tersentak, lalu buru-buru berdiri merapikan gelas. "Dokter ini... ngecek-ngecek ' +
                     'rumah orang." Nada bercandanya tidak menutupi matanya yang tersinggung. Pak Darto berdehem.',
+                  butuhHotspot: ['wk1_h1'],
+                  narasiLanjutan:
+                    'Angin sore menggoyang foto wisuda Anto di dinding. Bu Wulan masih berdiri dengan gelas di tangan, ' +
+                    'menjaga jarak setelah merasa dijebak. Foto itu mungkin membuka jalan pulang, tetapi kepercayaan yang retak tidak hilang begitu saja.',
                   efekTrust: -2,
                   tepat: false,
                   catatanPedagogis:
@@ -1076,6 +1083,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   respons:
                     'Wajah Pak Santoso memerah — bukan malu, tapi marah. "Dokter masuk rumah orang sambil ' +
                     'menggeledah?" Ia berdiri. "Bu, temani Dokter. Saya mau ke bengkel." Pintu samping berdebam.',
+                  butuhHotspot: ['sk1_h1'],
                   efekTrust: -2,
                   tepat: false,
                   catatanPedagogis:
@@ -1437,6 +1445,7 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                   respons:
                     '"Itu punya tukang yang kemarin ambil kusen!" jawabnya terlalu cepat. Suasana yang tadi cair ' +
                     'membeku lagi; sisa kunjungan diisi jawaban-jawaban pendek dan lirikan ke arah jam dinding.',
+                  butuhHotspot: ['sk2_h5'],
                   efekTrust: -2,
                   tepat: false,
                   catatanPedagogis:
@@ -1844,9 +1853,8 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                 {
                   id: 'kk1_d4_a',
                   teks:
-                    '"Hari ini saya tidak bawa jarum, Pak, tenang saja. Saya cuma mau tanya Ibu: sepuluh tahun ' +
-                    'lagi, Ibu kepingin Ayunda jadi anak yang bagaimana? Dan kalau Ibu berkenan, lain kali saya ' +
-                    'ceritakan kenapa demam malam itu justru tanda tubuh Ayunda kuat."',
+                    '"Hari ini saya tidak membawa jarum, Pak. Bu, sepuluh tahun lagi Ibu ingin Ayunda tumbuh ' +
+                    'seperti apa? Lain kali, boleh saya jelaskan mengapa demam dapat muncul setelah imunisasi?"',
                   gaya: 'refleksi',
                   respons:
                     '"Kepingin dia sekolah tinggi, Dok. Jangan kayak tiang, tamat SMP saja." jawab Luh Sari tanpa ' +
@@ -2153,9 +2161,8 @@ export const KELUARGA_DESA_A: KeluargaBinaan[] = [
                 {
                   id: 'kk2_d3_a',
                   teks:
-                    '"Bagus, Pak, di garis hijau — dan saya perhatikan Bapak sekarang duduknya jauh dari Ayunda ' +
-                    'kalau habis merokok. Itu sudah satu langkah. Kalau boleh jujur saja: merokoknya sekarang ' +
-                    'masih di dalam rumah, atau sudah pindah ke luar semua?"',
+                    '"Bagus, Pak. Saya juga melihat Bapak kini menjauh dari Ayunda setelah merokok. Jujur saja: ' +
+                    'sekarang masih merokok di dalam rumah, atau semuanya sudah pindah ke luar?"',
                   gaya: 'empati',
                   respons:
                     'Pak Ketut menggaruk kepala, nyengir. "Masih bocor kadang-kadang, Dok. Kalau hujan, tiang ' +

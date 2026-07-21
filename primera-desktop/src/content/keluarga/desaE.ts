@@ -221,10 +221,9 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
                 {
                   id: 'prk1_d3_a',
                   teks:
-                    '"Jalannya lewat Musyawarah Desa, Pak — dan usulan kesehatan lingkungan itu justru ' +
-                    'makin kuat kalau yang membawa Puskesmas. Data diare Rina ini bukti resminya. Saya ' +
-                    'yang angkat di rapat desa; Bapak siapkan tanda tangan tetangga yang sumurnya senasib."',
-                  gaya: 'empati',
+                    '"Usulan itu dapat dibawa ke Musyawarah Desa bersama data diare Rina. Saya angkat di rapat; ' +
+                    'Bapak kumpulkan tanda tangan tetangga yang sumurnya mengalami masalah serupa."',
+                  gaya: 'edukasi',
                   respons:
                     '"Tetangga senasib itu... ya separuh RT ini, Dok," Pak Prapto menegakkan duduknya. ' +
                     '"Kalau Dokter yang bawa datanya, saya berani keliling minta tanda tangan. Malam ini juga." ' +
@@ -500,11 +499,9 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
                 {
                   id: 'mk1_d2_a',
                   teks:
-                    '"Dua ratus tujuh puluh plus kesemutan plus luka lama sembuh — Ibu sudah merangkai ' +
-                    'sendiri diagnosisnya, dan Ibu benar. Justru karena itu kartu ini naik pangkat: bukan ' +
-                    'lagi urusan administrasi, tapi urusan menyelamatkan kaki dan ginjal Ibu. Boleh saya ' +
-                    'lihat KTP dan KK-nya? Kita urus bersama, bukan Ibu sendirian lagi."',
-                  gaya: 'empati',
+                    '"Ibu sudah menghubungkan gula tinggi, kesemutan, dan luka yang lama sembuh. Ini bukan lagi ' +
+                    'sekadar urusan kartu. Boleh saya lihat KTP dan KK agar kita urus bersama?"',
+                  gaya: 'edukasi',
                   respons:
                     'Bu Marni mematikan kompor — baru kali ini sejak kamu datang. Ia mengambil map plastik ' +
                     'dari lemari, lengkap, rapi, siap sejak lama. "Kalau ada yang nemani ngurusnya, Dok... ' +
@@ -565,9 +562,8 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
                 {
                   id: 'mk1_d3_a',
                   teks:
-                    '"Dodi, sini sebentar. Kamu bisa bikin akun, unduh aplikasi, isi formulir online kan? ' +
-                    'Nah — satu-satunya orang di rumah ini yang bisa menyelamatkan kaki ibumu lewat HP itu ' +
-                    'kamu. Bukan urusan orang tua; ini urusan orang yang paling bisa."',
+                    '"Dodi, kamu bisa membuat akun dan mengisi formulir daring, kan? Tolong bantu Ibu mengurusnya ' +
+                    'lewat ponsel. Ini bukan urusan orang tua, tetapi urusan keluarga."',
                   gaya: 'empati',
                   respons:
                     'Dodi menegakkan badan, antara kaget dan tersanjung. "...Kalau cuma daftar-daftar online ' +
@@ -784,9 +780,8 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
                 {
                   id: 'gk1_d1_a',
                   teks:
-                    '"Betul, Pak — dan saya tidak akan minta Bapak memilih antara melek di tol dan napas ' +
-                    'Dimas. Dua-duanya harus dapat. Boleh saya tanya dulu: dari dua pak itu, batang yang mana ' +
-                    'yang benar-benar bikin melek, dan yang mana cuma kebiasaan tangan?"',
+                    '"Saya tidak akan menyuruh Bapak memilih antara melek di tol dan napas Dimas. Batang mana ' +
+                    'yang benar-benar membuat melek, dan mana yang sekadar kebiasaan tangan?"',
                   gaya: 'refleksi',
                   respons:
                     'Pak Gunawan berhenti mengetuk bungkus. "...Yang di tol paling lima-enam batang, Dok. ' +
@@ -839,10 +834,9 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
                 {
                   id: 'gk1_d2_a',
                   teks:
-                    '"\'Katanya\' — nah. Pak, asap itu tidak butuh pintu: ia nempel di baju, di jok truk, ' +
-                    'di kumis, namanya thirdhand smoke. Dimas menghirup Bapak, bukan cuma asap Bapak. ' +
-                    'Mau bukti kecil? Cium kerah baju Bapak sekarang."',
-                  gaya: 'empati',
+                    '"\'Katanya\' ya, Pak. Asap juga menempel di baju, jok, dan kumis. Dimas dapat menghirup ' +
+                    'residunya meski Bapak merokok di luar. Coba cium kerah baju Bapak."',
+                  gaya: 'edukasi',
                   respons:
                     'Pak Gunawan, setengah bercanda, mencium kerahnya sendiri — dan tidak tertawa. "...Bau ' +
                     'tembakau, Dok. Padahal ini baju bersih dari lemari." Ia memandang laci tempat inhaler ' +
@@ -903,9 +897,8 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
                 {
                   id: 'gk1_d3_a',
                   teks:
-                    '"Pak... anak itu tidak protes, tidak mengadu. Dia cuma sudah terbiasa. Kalau suatu hari ' +
-                    'Bapak ingin berhenti — bukan karena saya, karena kipasan kecil tadi — Puskesmas punya ' +
-                    'layanan berhenti merokok. Saya sendiri yang pegang. Kapan pun Bapak siap."',
+                    '"Dimas tidak protes; ia mungkin sudah terbiasa. Jika Bapak ingin berhenti karena kipasan tadi, ' +
+                    'Puskesmas punya layanan berhenti merokok dan saya akan mendampingi saat Bapak siap."',
                   gaya: 'empati',
                   respons:
                     'Pak Gunawan memandangi punggung Dimas yang masuk kamar. Lama. "...Kalau saya datang," ' +
@@ -1128,9 +1121,8 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
                 {
                   id: 'lk1_d1_a',
                   teks:
-                    '"Simbah ini sebenarnya pasien paling rajin se-RW — buktinya toples ini selalu dibawa ' +
-                    'ke mana-mana. Yang nakal itu bukan simbah, tapi obatnya: tiga rupa, jadwal beda-beda. ' +
-                    'Bagaimana kalau kita bikin obatnya yang tunduk sama simbah — bukan simbah yang mengejar obat?"',
+                    '"Simbah rajin sekali membawa obat. Yang membingungkan justru tiga rupa dan jadwalnya. ' +
+                    'Bagaimana kalau kita atur agar obatnya yang mengikuti rutinitas Simbah?"',
                   gaya: 'refleksi',
                   respons:
                     'Mbah Lastri tertawa sampai terbatuk. "Nah! Cocok. Obatnya yang kurang ajar, to." Ia ' +
@@ -1184,10 +1176,9 @@ export const KELUARGA_DESA_E: KeluargaBinaan[] = [
                 {
                   id: 'lk1_d2_a',
                   teks:
-                    '"Kata kuncinya \'kayaknya\' itu, Mbah. Begini — kita main detektif: seminggu ke depan, ' +
-                    'tiap habis minum obat, simbah pindahkan satu biji kacang dari gelas kiri ke gelas kanan. ' +
-                    'Minggu depan saya hitung kacangnya, ketahuan obatnya bolong berapa. Berani main?"',
-                  gaya: 'empati',
+                    '"Kita coba seminggu: setiap selesai minum obat, pindahkan satu kacang dari gelas kiri ke kanan. ' +
+                    'Minggu depan kita hitung bersama agar terlihat dosis mana yang terlewat."',
+                  gaya: 'edukasi',
                   respons:
                     '"Main kacang-kacangan?" Mbah Lastri terkekeh. "Kayak nyawer manten. Berani, Dok. Gelasnya ' +
                     'simbah pakai yang gambar ayam biar tidak lupa." Sistem pemantauan kepatuhan paling murah ' +

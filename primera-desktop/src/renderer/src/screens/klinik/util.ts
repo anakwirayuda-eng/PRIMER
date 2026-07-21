@@ -27,7 +27,14 @@ export const LABEL_PERSONA: Record<Persona, string> = {
   skeptis: 'Skeptis',
   cemas: 'Cemas',
   lansia: 'Lansia',
+  anak: 'Anak',
   wali_anak: 'Wali Anak',
+}
+
+/** Menjaga save lama tetap koheren setelah persona anak dipisah dari wali. */
+export function personaAnamnesis(kasus: KasusKlinis, persona: Persona): Persona {
+  if (persona === 'wali_anak' && kasus.keluhanUtamaOlehPendamping !== true) return 'anak'
+  return persona
 }
 
 /* -- Kategori anamnesis (urutan tampil di deck) --------------------------------- */
@@ -87,8 +94,15 @@ export function formatRupiah(n: number): string {
 }
 
 /** Jawaban pasien sesuai persona — cermin logika engine (`variasi[persona] ?? jawab`). */
-export function jawabanPasien(q: PertanyaanAnamnesis, persona: Persona): string {
-  return q.variasi?.[persona] ?? q.jawab
+export function jawabanPasien(
+  q: PertanyaanAnamnesis,
+  persona: Persona,
+  kasus: KasusKlinis,
+): string {
+  const personaJawaban = q.olehPendamping === true || kasus.keluhanUtamaOlehPendamping === true
+    ? 'wali_anak'
+    : personaAnamnesis(kasus, persona)
+  return q.variasi?.[personaJawaban] ?? q.jawab
 }
 
 /* -- Nama diagnosis ramah ------------------------------------------------------------ */

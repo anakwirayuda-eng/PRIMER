@@ -93,7 +93,7 @@ const DEFINITIONS: LabDefinition[] = [
     catalogId: 'ektima',
     spec: {
       id: 'lab_ektima_tungkai', nama: 'Impetigo Ulseratif (Ektima)', icd10: 'L08.0', kategori: 'kulit', prevalensi: 'rendah',
-      keluhanUtama: 'Koreng tebal di tungkai menjadi luka cekung dan nyeri.', usia: [8, 12], vital: { ...NORMAL, td: '104/66', suhu: 37.4 },
+      keluhanUtama: 'Anak saya mengalami koreng tebal di tungkai yang menjadi luka cekung dan nyeri.', keluhanUtamaOlehPendamping: true, usia: [8, 12], vital: { ...NORMAL, td: '104/66', suhu: 37.4 },
       pembuka: ['Luka bermula seperti apa dan apakah menyebar?', 'Awalnya lecet gatal, lalu bernanah dan membentuk kerak tebal selama seminggu.'],
       pertanyaan: [
         ['q_sistemik', 'rps', 'Ada demam tinggi, kemerahan cepat meluas, atau sangat lemas?', 'Tidak.', true],
@@ -410,7 +410,7 @@ const DEFINITIONS: LabDefinition[] = [
       pembuka: ['Kapan gatal mulai dan apa yang terlihat?', 'Dua minggu, terutama malam; ada telur menempel pada rambut.'],
       pertanyaan: [
         ['q_mata', 'rps', 'Ada kutu pada bulu mata atau iritasi mata?', 'Tidak.', true],
-        ['q_kontak', 'sosial', 'Ada pasangan dengan gatal serupa dan kapan kontak seksual terakhir?', 'Pasangan juga gatal.', true],
+        ['q_kontak', 'sosial', 'Ada pasangan dengan gatal serupa dan kapan kontak seksual terakhir?', 'Pasangan saya juga gatal. Kontak seksual terakhir sekitar satu minggu lalu.', true],
         ['q_alergi', 'rpd', 'Pernah alergi berat terhadap obat kulit?', 'Tidak.', false],
         ['q_hamil', 'rpd', 'Sedang hamil atau menyusui?', 'Tidak.', false, 'P'],
       ],

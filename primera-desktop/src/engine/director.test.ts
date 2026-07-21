@@ -527,14 +527,19 @@ describe('buatPasienDariKasus', () => {
     }
   })
 
-  it('persona dipaksa: usia ≥60 lansia, usia <15 wali_anak', () => {
+  it('persona dipaksa: usia ≥60 lansia; anak dibedakan dari wali pendamping', () => {
     const pack = buatPack([
       buatKasus('ht', { demografi: { usiaMin: 60, usiaMax: 80 } }),
-      buatKasus('diare_anak', { demografi: { usiaMin: 1, usiaMax: 9 } }),
+      buatKasus('diare_anak', {
+        demografi: { usiaMin: 1, usiaMax: 9 },
+        keluhanUtamaOlehPendamping: true,
+      }),
+      buatKasus('anak_mandiri', { demografi: { usiaMin: 8, usiaMax: 12 } }),
     ])
     for (let seed = 0; seed < 30; seed++) {
       expect(buatPasienDariKasus('ht', pack, new Rng(seed, 'a')).persona).toBe('lansia')
       expect(buatPasienDariKasus('diare_anak', pack, new Rng(seed, 'b')).persona).toBe('wali_anak')
+      expect(buatPasienDariKasus('anak_mandiri', pack, new Rng(seed, 'c')).persona).toBe('anak')
     }
   })
 

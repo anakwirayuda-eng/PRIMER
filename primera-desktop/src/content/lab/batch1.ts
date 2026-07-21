@@ -211,7 +211,8 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     pertanyaan: [
       { id: 'q_neuro', kategori: 'rps', tanya: 'Ada kelemahan satu sisi, bicara pelo, pingsan, atau sakit kepala hebat?', jawab: 'Tidak ada.', esensial: true },
       { id: 'q_telinga', kategori: 'rps', tanya: 'Ada telinga berdenging, pendengaran turun, atau pusing saat berbalik di tempat tidur?', jawab: 'Tidak. Kalau tidak naik kendaraan saya baik-baik saja.', esensial: true },
-      { id: 'q_hamil', kategori: 'rpd', tanya: 'Apakah sedang hamil atau punya glaukoma dan gangguan berkemih?', jawab: 'Tidak ada.', hanyaUntuk: 'P' },
+      { id: 'q_hamil', kategori: 'rpd', tanya: 'Apakah sedang hamil atau menyusui?', jawab: 'Tidak sedang hamil atau menyusui.', hanyaUntuk: 'P' },
+      { id: 'q_antikolinergik', kategori: 'rpd', tanya: 'Pernah didiagnosis glaukoma atau sulit berkemih sampai tertahan?', jawab: 'Tidak pernah.' },
       { id: 'q_sopir', kategori: 'sosial', tanya: 'Apakah Anda akan mengemudi setelah minum obat?', jawab: 'Tidak, saya penumpang.', esensial: true },
     ],
     pemeriksaanFisik: [
@@ -584,7 +585,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       oldcarts: ['durasi', 'karakter', 'penyerta'],
     },
     pertanyaan: [
-      { id: 'q_tanah', kategori: 'sosial', tanya: 'Sering bekerja atau berjalan tanpa alas kaki di tanah lembap?', jawab: 'Saya bekerja di kebun dan sering tanpa alas kaki.', esensial: true },
+      { id: 'q_tanah', kategori: 'sosial', tanya: 'Sering bekerja atau berjalan tanpa alas kaki di tanah lembap?', jawab: 'Saya sering beraktivitas di kebun dan kadang tidak memakai alas kaki.', esensial: true },
       { id: 'q_perdarahan', kategori: 'rps', tanya: 'Ada muntah darah, BAB hitam pekat, atau perdarahan lain?', jawab: 'Tidak ada perdarahan yang terlihat.', esensial: true },
       { id: 'q_gizi', kategori: 'sosial', tanya: 'Bagaimana pola makan dan penggunaan jamban di rumah?', jawab: 'Makan seadanya dan jamban keluarga masih dekat kebun.', esensial: true },
       { id: 'q_reproduksi', kategori: 'rpd', tanya: 'Apakah sedang hamil atau haid sangat banyak?', jawab: 'Tidak.', hanyaUntuk: 'P' },

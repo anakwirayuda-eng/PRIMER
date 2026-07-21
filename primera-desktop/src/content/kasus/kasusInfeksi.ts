@@ -897,7 +897,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         id: 'q_keluhan',
         kategori: 'keluhan_utama',
         tanya: 'Matanya kenapa?',
-        jawab: 'Mata merah dok, keluar kotoran kuning kental.',
+        jawab: 'Mulai dari satu mata sejak dua hari lalu, dok. Sekarang keduanya merah dan kotoran kuning kental paling banyak saat bangun pagi.',
         variasi: {
           polos: 'Mripaté abang dok, metu kotoran kuning kentel terus.',
           terpelajar: 'Mata merah dengan kotoran kental kekuningan dok, terutama menumpuk waktu bangun pagi.',
@@ -909,6 +909,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       {
         id: 'q_lengket',
         kategori: 'keluhan_utama',
+        bukaSetelah: ['q_keluhan'],
         tanya: 'Pagi hari kelopaknya lengket susah dibuka?',
         jawab: 'Iya dok, pagi susah buka mata karena lengket kotorannya.',
         esensial: true,
@@ -941,7 +942,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         id: 'q_kontak',
         kategori: 'rpk',
         tanya: 'Ada anggota keluarga yang matanya merah juga?',
-        jawab: 'Anak saya yang satu juga mulai merah matanya dok.',
+        jawab: 'Ada orang serumah yang juga mulai merah matanya, dok.',
         oldcarts: ['penyerta'],
       },
       {

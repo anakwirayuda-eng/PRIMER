@@ -16,6 +16,7 @@ import {
   jawabanPasien,
   labelJk,
   namaDiagnosis,
+  personaAnamnesis,
 } from './util'
 import { PotretPasien } from './PotretPasien'
 
@@ -82,7 +83,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             </div>
           </div>
           <div className="baris klinik-lembar__chips">
-            <span className="chip">{LABEL_PERSONA[p.persona]}</span>
+            <span className="chip">{LABEL_PERSONA[personaAnamnesis(kasus, p.persona)]}</span>
             {p.bpjs ? <span className="chip chip--biru">BPJS</span> : <span className="chip">Umum</span>}
             {p.bonusTrust && (
               <span
@@ -143,7 +144,12 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             return (
               <div key={id} className="klinik-lembar__qa klinik-tinta">
                 <div className="klinik-lembar__tanya teks-kecil teks-lembut">{q.tanya}</div>
-                <div className="tulis-tangan">&ldquo;{jawabanPasien(q, p.persona)}&rdquo;</div>
+                <div className="tulis-tangan">
+                  {(q.olehPendamping === true || kasus.keluhanUtamaOlehPendamping === true) && (
+                    <span className="teks-xs teks-lembut">Pendamping: </span>
+                  )}
+                  &ldquo;{jawabanPasien(q, p.persona, kasus)}&rdquo;
+                </div>
               </div>
             )
           })

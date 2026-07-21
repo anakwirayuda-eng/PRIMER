@@ -29,6 +29,7 @@ export interface LabQuestionSpec {
    * konsisten menulis variasi inline tanpa akrobat tipe.
    */
   variasi?: PertanyaanAnamnesis['variasi']
+  olehPendamping?: boolean
 }
 export type LabCaseSpec = Omit<KasusKlinis, 'activationStatus' | 'anamnesis'> & {
   pembuka: {

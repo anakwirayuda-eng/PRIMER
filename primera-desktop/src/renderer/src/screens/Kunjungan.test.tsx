@@ -20,7 +20,7 @@ import userEvent from '@testing-library/user-event'
 import { useGame } from '../store'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
-import { Kunjungan } from './Kunjungan'
+import { Kunjungan, narasiDenganKontinuitas } from './Kunjungan'
 import type { KunjunganState } from '@engine/state'
 import { sitasiIntervensiUkm } from '@content/ukmCitations'
 
@@ -47,7 +47,11 @@ function pasangKunjungan(overrides: Partial<KunjunganState> = {}): void {
     diusir: false,
     ...overrides,
   }
-  useGame.setState({ state: { ...state, layar: 'kunjungan', kunjungan: kj } })
+  useGame.setState({
+    state: { ...state, layar: 'kunjungan', kunjungan: kj },
+    lastEvents: [],
+    eventTick: 0,
+  })
 }
 
 describe('<Kunjungan /> — disambiguasi aria-label hotspot (#13)', () => {
@@ -129,6 +133,55 @@ describe('<Kunjungan /> — kutip-bersarang teks dialog dihapus (#14)', () => {
     const user = userEvent.setup()
     await user.click(screen.getByText(pilihanPertama.teks))
     expect(await screen.findByText(`Kamu: ${pilihanPertama.teks}`)).toBeInTheDocument()
+  })
+})
+
+describe('<Kunjungan /> — kontinuitas observasi dan respons', () => {
+  it('pilihan yang menyebut benda rumah baru tampil setelah hotspot terkait ditemukan', () => {
+    const { skenario } = skenarioUji()
+    const pilihan = skenario.dialog[2]!.pilihan.find((item) => item.id === 'wk1_d3_b')!
+
+    pasangKunjungan({ fase: 'wawancara', dialogIndex: 2, hotspotDitemukan: [] })
+    const { rerender } = render(<Kunjungan />)
+    expect(screen.queryByText(pilihan.teks)).not.toBeInTheDocument()
+
+    pasangKunjungan({ fase: 'wawancara', dialogIndex: 2, hotspotDitemukan: ['wk1_h1'] })
+    rerender(<Kunjungan />)
+    expect(screen.getByText(pilihan.teks)).toBeInTheDocument()
+  })
+
+  it('narasi node berikutnya mengingat dampak pilihan sebelumnya', () => {
+    const { skenario } = skenarioUji()
+    const pilihan = skenario.dialog[1]!.pilihan.find((item) => item.id === 'wk1_d2_b')!
+    expect(pilihan.narasiLanjutan).toBeDefined()
+
+    pasangKunjungan({
+      fase: 'wawancara',
+      dialogIndex: 2,
+      pilihanDiambil: ['wk1_d1_a', pilihan.id],
+    })
+    render(<Kunjungan />)
+    expect(screen.getByText(pilihan.narasiLanjutan!)).toBeInTheDocument()
+    expect(screen.queryByText(skenario.dialog[2]!.narasi)).not.toBeInTheDocument()
+  })
+
+  it('pilihan tanpa cabang khusus tetap mewarnai nada node berikutnya', () => {
+    const { skenario } = skenarioUji()
+    const pilihan = skenario.dialog[0]!.pilihan.find(
+      (item) => item.narasiLanjutan === undefined && item.efekTrust > 0,
+    )!
+    const narasiDasar = skenario.dialog[1]!.narasi
+    const narasiBerlanjut = narasiDenganKontinuitas(pilihan, narasiDasar)
+
+    pasangKunjungan({
+      fase: 'wawancara',
+      dialogIndex: 1,
+      pilihanDiambil: [pilihan.id],
+    })
+    render(<Kunjungan />)
+    expect(screen.getByText(narasiBerlanjut)).toBeInTheDocument()
+    expect(narasiBerlanjut).toContain(narasiDasar)
+    expect(narasiBerlanjut).not.toBe(narasiDasar)
   })
 })
 

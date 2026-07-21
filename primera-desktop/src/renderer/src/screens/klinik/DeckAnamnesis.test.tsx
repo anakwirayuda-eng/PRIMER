@@ -39,7 +39,7 @@ describe('<DeckAnamnesis /> - progressive disclosure ringan-plus', () => {
     expect(screen.queryByText('Riwayat Penyakit Sekarang')).not.toBeInTheDocument()
   })
 
-  it('setelah satu pembuka dijawab, kategori anamnesis lanjutan tersedia', () => {
+  it('setelah pembuka, satu pertanyaan RPS menjadi jembatan sebelum riwayat latar', () => {
     renderDeck('mm_isk_bawah', ['q_keluhan'])
 
     expect(screen.getByText('Riwayat Penyakit Sekarang')).toBeInTheDocument()
@@ -47,6 +47,18 @@ describe('<DeckAnamnesis /> - progressive disclosure ringan-plus', () => {
       screen.getByRole('button', {
         name: 'Ada nyeri pinggang belakang, demam tinggi, atau menggigil?',
       }),
+    ).toBeEnabled()
+    expect(
+      screen.queryByRole('button', { name: 'Air kencingnya keruh, berbau, atau ada darah?' }),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Riwayat Sosial & Kebiasaan')).not.toBeInTheDocument()
+  })
+
+  it('setelah jembatan RPS dijawab, RPS lain dan riwayat latar terbuka', () => {
+    renderDeck('mm_isk_bawah', ['q_keluhan', 'q_pinggang'])
+
+    expect(
+      screen.getByRole('button', { name: 'Air kencingnya keruh, berbau, atau ada darah?' }),
     ).toBeEnabled()
     expect(screen.getByText('Riwayat Sosial & Kebiasaan')).toBeInTheDocument()
   })
