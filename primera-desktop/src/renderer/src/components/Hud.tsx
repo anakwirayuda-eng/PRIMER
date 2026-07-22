@@ -79,35 +79,36 @@ export function Hud() {
               : t.layar === 'meja'
                 ? `, ${t.badge} surat baru`
                 : `, ${t.badge} pasien antre`
+          const alasanNonaktif = t.terkunci
+            ? 'Terbuka besok'
+            : terkunciEncounter
+              ? 'Sedang memeriksa pasien — selesaikan dulu konsultasinya.'
+              : sesiBerjalan
+                ? 'Sedang ada sesi berjalan — selesaikan dulu sebelum pindah layar.'
+                : undefined
+          const nonaktif = alasanNonaktif !== undefined
+          const idAlasan = `hud-tab-alasan-${t.layar}`
           return (
             <button
               key={t.layar}
               className={`hud__tab ${state.layar === t.layar ? 'hud__tab--aktif' : ''} ${t.terkunci ? 'hud__tab--kunci' : ''}`}
               aria-current={state.layar === t.layar ? 'page' : undefined}
               aria-label={`${t.label}${keteranganBadge}${t.terkunci ? ' (terkunci, terbuka besok)' : ''}`}
-              onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: t.layar })}
-              disabled={
-                sesiBerjalan ||
-                terkunciEncounter ||
-                // M10 Batch-2 (CODEX A.6): tab terkunci (Peta pra-hari-buka)
-                // dulu hanya BERGAYA terkunci tapi tetap bisa diklik.
-                Boolean(t.terkunci)
-              }
-              title={
-                t.terkunci
-                  ? 'Terbuka besok'
-                  : terkunciEncounter
-                    ? 'Sedang memeriksa pasien — selesaikan dulu konsultasinya.'
-                    : sesiBerjalan
-                      ? 'Sedang ada sesi berjalan — selesaikan dulu sebelum pindah layar.'
-                      : undefined
-              }
+              aria-disabled={nonaktif || undefined}
+              aria-describedby={nonaktif ? idAlasan : undefined}
+              onClick={() => {
+                if (!nonaktif) dispatch({ type: 'PINDAH_LAYAR', layar: t.layar })
+              }}
+              title={alasanNonaktif}
             >
               <span className="hud__tab-label">{t.label}</span>
               {t.badge !== undefined && (
                 <span className="hud__badge" aria-hidden="true">{t.badge}</span>
               )}
               {t.terkunci && <span className="hud__gembok" aria-hidden="true">🔒</span>}
+              {nonaktif && (
+                <span id={idAlasan} className="hud__tab-alasan">{alasanNonaktif}</span>
+              )}
             </button>
           )
         })}

@@ -51,11 +51,15 @@ const CHIP_FLAG: Record<string, { label: string; kelas: string }> = {
  * tampilan).
  */
 export function nomorRmTampilan(id: string): string {
-  const ekor = /(\d{3,})$/.exec(id)?.[1]
-  if (ekor) return `RM-${ekor.padStart(4, '0').slice(-4)}`
-  let h = 0
-  for (let k = 0; k < id.length; k++) h = (h * 31 + id.charCodeAt(k)) >>> 0
-  return `RM-${String(1000 + (h % 9000))}`
+  // FNV-1a atas seluruh id mempertahankan kesinambungan pasien tanpa
+  // menampilkan kasusId. Sepuluh digit memakai seluruh ruang uint32; empat
+  // digit lama terlalu mudah berulang selama stase dengan ratusan pasien.
+  let h = 0x811c9dc5
+  for (let k = 0; k < id.length; k++) {
+    h ^= id.charCodeAt(k)
+    h = Math.imul(h, 0x01000193)
+  }
+  return `RM-${String(h >>> 0).padStart(10, '0')}`
 }
 
 export function LembarPeriksa({ enc, kasus, dispatch }: Props) {

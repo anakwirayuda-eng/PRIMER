@@ -27,7 +27,9 @@ describe('Hud — nama-aksesibel tab & alasan disabled', () => {
     render(<Hud />)
     expect(screen.getByRole('button', { name: /Klinik, \d+ pasien antre/ })).toBeInTheDocument()
     const peta = screen.getByRole('button', { name: /Peta Desa \(terkunci, terbuka besok\)/ })
-    expect(peta).toBeDisabled()
+    expect(peta).toHaveAttribute('aria-disabled', 'true')
+    expect(peta).not.toBeDisabled()
+    expect(peta).toHaveAccessibleDescription('Terbuka besok')
     expect(peta).toHaveAttribute('title', 'Terbuka besok')
   })
 
@@ -36,12 +38,17 @@ describe('Hud — nama-aksesibel tab & alasan disabled', () => {
     useGame.setState({
       state: {
         ...awal,
+        layar: 'klinik',
         klinik: { ...awal.klinik, aktif: buatEncounter(awal.klinik.antrian[0]!) },
       },
     })
     render(<Hud />)
     const meja = screen.getByRole('button', { name: /Meja Kerja/ })
-    expect(meja).toBeDisabled()
+    expect(meja).toHaveAttribute('aria-disabled', 'true')
+    expect(meja).not.toBeDisabled()
+    expect(meja).toHaveAccessibleDescription('Sedang memeriksa pasien — selesaikan dulu konsultasinya.')
+    meja.click()
+    expect(useGame.getState().state?.layar).toBe('klinik')
     expect(meja).toHaveAttribute('title', 'Sedang memeriksa pasien — selesaikan dulu konsultasinya.')
   })
 })

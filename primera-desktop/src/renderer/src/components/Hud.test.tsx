@@ -85,9 +85,9 @@ describe('<Hud />', () => {
       },
     })
     render(<Hud />)
-    expect(screen.getByRole('button', { name: /Klinik/ })).not.toBeDisabled()
-    expect(screen.getByRole('button', { name: /Rapor/ })).toBeDisabled()
-    expect(screen.getByRole('button', { name: /Buku Saku/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Klinik/ })).not.toHaveAttribute('aria-disabled')
+    expect(screen.getByRole('button', { name: /Rapor/ })).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getByRole('button', { name: /Buku Saku/ })).toHaveAttribute('aria-disabled', 'true')
   })
 
   it('indikator "Gagal menyimpan" tampil saat statusSimpan === "gagal" (CODEX audit UI/UX 2026-07-10, #2)', () => {
@@ -115,10 +115,10 @@ describe('<Hud />', () => {
       },
     })
     render(<Hud />)
-    expect(screen.getByRole('button', { name: /Meja Kerja/ })).toBeDisabled()
-    expect(screen.getByRole('button', { name: /Klinik/ })).toBeDisabled()
-    expect(screen.getByRole('button', { name: /Rapor/ })).toBeDisabled()
-    expect(screen.getByRole('button', { name: /Buku Saku/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Meja Kerja/ })).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getByRole('button', { name: /Klinik/ })).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getByRole('button', { name: /Rapor/ })).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getByRole('button', { name: /Buku Saku/ })).toHaveAttribute('aria-disabled', 'true')
   })
 })
 
