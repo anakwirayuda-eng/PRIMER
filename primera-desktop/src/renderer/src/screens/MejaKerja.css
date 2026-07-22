@@ -186,54 +186,6 @@
 
 .mk__surat-grounding {
   margin-top: var(--sp-4);
-  padding-top: var(--sp-3);
-  border-top: 1px dashed var(--border-tegas);
-  font-size: var(--text-sm);
-}
-
-.mk__surat-grounding > summary {
-  width: fit-content;
-  cursor: pointer;
-  color: var(--tinta-biru);
-  font-weight: 700;
-  line-height: 1.5;
-}
-
-.mk__surat-grounding > summary:focus-visible {
-  outline: 2px solid var(--warna-fokus);
-  outline-offset: 3px;
-}
-
-.mk__surat-grounding-isi {
-  margin-top: var(--sp-3);
-  line-height: 1.7;
-}
-
-.mk__surat-grounding-isi ul {
-  display: grid;
-  gap: var(--sp-2);
-  margin-top: var(--sp-3);
-  padding-left: var(--sp-4);
-}
-
-.mk__surat-grounding-isi li {
-  padding-left: var(--sp-1);
-}
-
-.mk__surat-grounding-isi a {
-  color: var(--tinta-biru);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.18em;
-}
-
-.mk__surat-sumber-jenis {
-  display: inline-block;
-  min-width: 5.5rem;
-  margin-right: var(--sp-2);
-  color: var(--tinta-lembut);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
 }
 
 .mk__surat-kait {

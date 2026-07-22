@@ -33,7 +33,7 @@ import { useRadioGroup } from '../useRadioGroup'
 import './MejaKerja.css'
 import { tampilanHasilKunjungan } from './hasilKunjunganView'
 import { JejakPerawatan } from './JejakPerawatan'
-import { TeksTerbaca } from '../components/TeksTerbaca'
+import { BuktiKlinis } from '../components/BuktiKlinis'
 import { personaAnamnesis } from './klinik/util'
 
 const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
@@ -415,29 +415,12 @@ export function MejaKerja() {
               <div className="mk__surat-garis" />
               <p className="mk__surat-isi">{suratTerbuka.isi}</p>
               {kasusIgdSurat && (
-                <details className="mk__surat-grounding">
-                  <summary>Panduan resmi &amp; sumber</summary>
-                  <div className="mk__surat-grounding-isi">
-                    <TeksTerbaca teks={kasusIgdSurat.panduanResmi} />
-                    <ul aria-label={`Sumber klinis ${kasusIgdSurat.nama}`}>
-                      {kasusIgdSurat.sumber.map((sumber) => (
-                        <li key={sumber.id}>
-                          <span className="mk__surat-sumber-jenis">
-                            {sumber.jenis === 'pedoman_indonesia' ? 'Indonesia' : 'EBM'}
-                          </span>
-                          <a
-                            href={sumber.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            aria-label={`${sumber.label}; buka sumber eksternal`}
-                          >
-                            {sumber.label}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </details>
+                <BuktiKlinis
+                  className="mk__surat-grounding"
+                  namaKasus={kasusIgdSurat.nama}
+                  ringkasan={kasusIgdSurat.panduanResmi}
+                  sumber={kasusIgdSurat.sumber}
+                />
               )}
               {feedbackMenunggu && (
                 <section className="mk__surat-tindak" aria-labelledby="judul-tindak-lanjut-rs">

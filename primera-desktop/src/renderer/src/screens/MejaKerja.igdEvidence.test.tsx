@@ -53,9 +53,13 @@ describe('<MejaKerja /> - provenance hasil IGD', () => {
     expect(details).toHaveAttribute('open')
 
     expect(screen.getByText(/Serangan berat memerlukan oksigen terkontrol/)).toBeVisible()
+    expect(screen.getByText('2 rujukan')).toBeVisible()
+    expect(screen.getByText('INTI KEPUTUSAN')).toBeVisible()
+    expect(screen.getByText(/Ringkasan adalah parafrasa pembelajaran/)).toBeVisible()
     const gina = screen.getByRole('link', { name: /GINA Global Strategy for Asthma 2026/ })
     expect(gina).toHaveAttribute('href', SUMBER_URL_GINA)
     expect(gina).toHaveAttribute('target', '_blank')
+    expect(gina).toHaveAttribute('title', 'Buka di browser bawaan')
     expect(screen.getByRole('list', { name: /Sumber klinis Serangan Asma Berat/ })).toBeVisible()
   })
 })

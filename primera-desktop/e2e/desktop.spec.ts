@@ -100,3 +100,67 @@ test('alur boot, mulai stase, mode gelap, dan teks 200% tetap dapat digunakan', 
     .map((tab) => tab.textContent?.trim()))
   expect(badgeOverlap, 'badge jumlah tidak boleh menutup label navigasi').toEqual([])
 })
+
+test('debrief IGD menampilkan sumber ringkas tanpa overflow pada mode gelap dan teks 200%', async () => {
+  const tersimpan = await page.evaluate(async () => {
+    const primer = (window as typeof window & {
+      primer: { save: { read(slot: string): Promise<string | null>; write(slot: string, json: string): Promise<boolean> } }
+    }).primer
+    const json = await primer.save.read('autosave')
+    if (!json) return false
+    const amplop = JSON.parse(json) as { state?: { layar?: string; inbox?: unknown[] } }
+    if (!amplop.state || !Array.isArray(amplop.state.inbox)) return false
+    amplop.state.layar = 'meja'
+    amplop.state.inbox.push({
+      id: 'surat_igd_e2e_bukti',
+      hari: 1,
+      jenis: 'igd',
+      dari: 'Perawat jaga',
+      judul: 'Debrief E2E serangan asma berat',
+      isi: 'Pasien stabil dan diterima jejaring rujukan.',
+      dibaca: false,
+      kaitKasusIgdId: 'igd_asma_berat',
+    })
+    return primer.save.write('autosave', JSON.stringify(amplop))
+  })
+  expect(tersimpan).toBe(true)
+
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'PRIMERA' })).toBeVisible()
+  await page.getByRole('button', { name: /Lanjutkan.*Dokter E2E.*Hari 1/ }).click()
+  await expect(page.getByRole('main', { name: 'Meja Kerja' })).toBeVisible()
+
+  await page.getByRole('button', { name: /Debrief E2E serangan asma berat/ }).click()
+  const summary = page.getByText('Panduan resmi & sumber')
+  await expect(summary).toBeVisible()
+  await expect(summary.locator('..')).not.toHaveAttribute('open', '')
+  await summary.click()
+
+  await expect(page.getByText('INTI KEPUTUSAN')).toBeVisible()
+  const gina = page.getByRole('link', { name: /GINA Global Strategy for Asthma 2026/ })
+  await gina.scrollIntoViewIfNeeded()
+  await expect(gina).toBeVisible()
+  await app.evaluate(({ shell }) => {
+    const root = globalThis as typeof globalThis & { __primerExternalUrls?: string[] }
+    root.__primerExternalUrls = []
+    shell.openExternal = async (url: string) => {
+      root.__primerExternalUrls?.push(url)
+    }
+  })
+  await gina.click()
+  const urlDibuka = await app.evaluate(() => {
+    const root = globalThis as typeof globalThis & { __primerExternalUrls?: string[] }
+    return root.__primerExternalUrls ?? []
+  })
+  expect(urlDibuka).toEqual([
+    'https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf',
+  ])
+  expect(app.windows()).toHaveLength(1)
+  await expect(page.locator('.app-frame')).toHaveAttribute('data-mode', 'malam')
+  await expect(page.locator('html')).toHaveCSS('font-size', '32px')
+  await expectNoSeriousA11yViolations('debrief IGD gelap 200 persen')
+
+  const overflow = await page.locator('.mk__surat-kertas').evaluate((node) => node.scrollWidth - node.clientWidth)
+  expect(overflow, 'panel debrief dan URL panjang tidak boleh membuat surat overflow horizontal').toBeLessThanOrEqual(1)
+  await page.screenshot({ path: test.info().outputPath('04-debrief-igd-gelap-200.png'), fullPage: true })
+})

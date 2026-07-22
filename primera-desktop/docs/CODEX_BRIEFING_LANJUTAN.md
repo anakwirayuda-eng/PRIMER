@@ -5,6 +5,14 @@ REVISI_ENGINE 41. **Baseline saat ditulis**: branch `codex-gpt56-experiment`, wo
 commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua hijau**,
 `npm run typecheck` bersih, `REVISI_ENGINE = 41` (`src/engine/verifikasi.ts:578`).
 
+> **KEPUTUSAN 2026-07-22 - M15 DICATAT, BELUM AKTIF:**
+> Dr. Wirayuda menyetujui konsep **M15 - Arsip Jaga Malam** sebagai batch
+> terfokus tersendiri. Snapshot kisah nyata, sejarah, ironi sistem, atau fakta
+> unik akan sesekali MENGGANTIKAN storylet atmosfer pada Debrief Malam, bukan
+> ditumpuk sebagai panel wajib. Jangan mengimplementasikannya saat adjudikasi
+> IGD berjalan. Source of truth desain, etik, cadence, provenance, pilot, dan
+> gate ada di `docs/M15_ARSIP_JAGA_MALAM_BRIEF.md`.
+
 > **PENUTUPAN CODEX 2026-07-19 — WAVE 1-21 SELESAI:**
 > sapuan M13-137 telah menutup seluruh temuan mekanis yang dapat diperbaiki
 > tanpa physician adjudication. Artefak kini menghasilkan `137 cocok / 0
