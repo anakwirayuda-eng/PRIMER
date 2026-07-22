@@ -5,7 +5,7 @@
   "browserUrl": "https://satusehat.kemkes.go.id/kfa-browser/farmasi",
   "scopeWarning": "Kode adalah KFA active-substance master data, bukan kode product-template/variant dan bukan bukti stok atau status Fornas.",
   "caseCount": 137,
-  "drugCount": 67,
+  "drugCount": 66,
   "unresolved": [],
   "items": [
     {
@@ -1061,22 +1061,6 @@
             {
               "kfaCode": "91000265",
               "name": "Sodium Lactate",
-              "ucumSymbol": "mg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "drugId": "simvastatin_20",
-      "catalogName": "Simvastatin 20 mg",
-      "queryResults": [
-        {
-          "query": "Simvastatin",
-          "results": [
-            {
-              "kfaCode": "91000359",
-              "name": "SIMVASTATIN",
               "ucumSymbol": "mg"
             }
           ]

@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-22
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `d360abc3d7b27df37a5c346a472ec704fc654ee2+dirty`, artefak `00556716b5ea70fe80b63b88c4af9e28d4670a6c55188b2e459c99c8fa37508a`, pack `93738a72`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=57`
+**Snapshot:** commit `47812abec1e81c59781273eb13d5d8dca8152be1+dirty`, artefak `d05c9f3f7c4394e9d256926941badff63216284a901332f26f4dc8a9a68de597`, pack `16e4eea8`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -11,15 +11,15 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Indikator | Hasil |
 |---|---:|
 | Kasus prototipe aktual | **137** |
-| Crosswalk PPK langsung | 91 |
+| Crosswalk PPK langsung | 93 |
 | Crosswalk PPK terkait, bukan identik | 15 |
-| Tanpa crosswalk PPK | 31 |
+| Tanpa crosswalk PPK | 29 |
 | Memiliki PNPK langsung | 27 |
 | Memiliki pedoman EBM langsung tambahan | 66 |
 | Saran kompilator “cocok” | 137 |
 | Saran kompilator “perlu-koreksi” | 0 |
 | Saran kompilator “tak-ada-sumber” | 0 |
-| Kasus dengan resource Tier C/D | 47 |
+| Kasus dengan resource Tier C/D | 46 |
 | Obat unik non-Fornas menurut katalog | 9 |
 | Query KFA aktif-substance tak terpetakan | 0 |
 
@@ -243,7 +243,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_tb_paru_putus_obat_suspek_mdr` - TB Paru Resistan Rifampisin setelah Putus Pengobatan: tidak ada red flag provenance otomatis
 - `lab_kejang_demam_sederhana` - Kejang Demam Sederhana: tidak ada red flag provenance otomatis
 - `lab_meningitis_bakterial_suspek` - Suspek Meningitis Bakterial: tidak ada red flag provenance otomatis
-- `lab_tia_serangan_iskemik_sesaat` - TIA — Serangan Iskemik Sesaat yang Sudah Pulih: tidak ada red flag provenance otomatis
+- `lab_tia_serangan_iskemik_sesaat` - Suspek TIA — Defisit Fokal Sudah Pulih: tidak ada red flag provenance otomatis
 - `lab_abses_peritonsil` - Abses Peritonsil: tidak ada red flag provenance otomatis
 - `lab_benda_asing_esofagus` - Benda Asing Esofagus pada Anak — Baterai Kancing: tidak ada red flag provenance otomatis
 - `lab_furunkel_hidung` - Furunkel pada Hidung: tidak ada red flag provenance otomatis

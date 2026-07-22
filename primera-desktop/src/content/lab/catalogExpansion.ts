@@ -228,6 +228,11 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
   hipoglikemia_dm1: { id: 'hipoglikemia_dm1', nama: '[DM tipe 1] Tangani gula rendah segera, cek ulang 10-15 menit, dan ajarkan penolong keluarga', kategori: 'tindakan', sinonim: ['hipoglikemia', 'rule of 15', 'glukosa', 'DM1'] },
   rencana_prb_dm1: { id: 'rencana_prb_dm1', nama: '[DM tipe 1] Bawa log dan resume; cocokkan dosis, target, stok, dan jadwal spesialis saat rujuk balik', kategori: 'kepatuhan', sinonim: ['PRB', 'rujuk balik', 'log gula', 'resume rumah sakit'] },
   rehabilitasi_gizi: { id: 'rehabilitasi_gizi', nama: '[Gizi] Tingkatkan energi-protein bertahap dan pantau berat badan', kategori: 'diet', sinonim: ['malnutrisi', 'PEM'] },
+  rujuk_gizi_buruk_komplikasi: { id: 'rujuk_gizi_buruk_komplikasi', nama: '[Gizi buruk berkomplikasi] Jelaskan stabilisasi, rujukan rawat inap, dan larangan cairan cepat', kategori: 'tindakan', sinonim: ['gizi buruk', 'hipoglikemia', 'ReSoMal', 'rujuk TFC'] },
+  rujuk_mastoiditis_anak: { id: 'rujuk_mastoiditis_anak', nama: '[Mastoiditis anak] Rujuk sekarang; bawa dokumen dan obat, ikuti arahan puasa jejaring', kategori: 'tindakan', sinonim: ['mastoiditis', 'bengkak belakang telinga', 'rujuk THT', 'puasa'] },
+  rujuk_bronkiolitis_bayi: { id: 'rujuk_bronkiolitis_bayi', nama: '[Bronkiolitis berat] Rujuk sekarang dengan oksigen; jangan paksa minum saat sesak berat', kategori: 'tindakan', sinonim: ['bronkiolitis', 'bayi sesak', 'oksigen', 'rujuk anak'] },
+  minum_aman_bronkiolitis_bayi: { id: 'minum_aman_bronkiolitis_bayi', nama: '[Bronkiolitis] Lanjutkan minum sesuai usia dan toleransi setelah napas aman', kategori: 'kia', sinonim: ['ASI', 'MPASI', 'hidrasi', 'minum bayi'] },
+  bebas_asap_bayi: { id: 'bebas_asap_bayi', nama: '[Bayi] Jauhkan asap rokok dari rumah, kendaraan, dan pengasuh', kategori: 'higiene', sinonim: ['rokok', 'asap', 'bayi', 'secondhand smoke'] },
   alur_pmt_lokal_2025: { id: 'alur_pmt_lokal_2025', nama: '[Gizi kurang] Jalankan PMT lokal 56 hari sebagai tambahan, bukan pengganti makanan utama', kategori: 'diet', sinonim: ['PMT lokal', '56 hari', 'gizi kurang', 'Posyandu'] },
   makan_balita_padat_gizi: { id: 'makan_balita_padat_gizi', nama: '[Gizi kurang] Susun makan padat energi-protein dengan lauk hewani yang terjangkau keluarga', kategori: 'diet', sinonim: ['protein hewani', 'telur', 'ikan', 'wasting'] },
   pantau_tumbuh_mingguan: { id: 'pantau_tumbuh_mingguan', nama: '[Gizi kurang] Catat konsumsi dan pertumbuhan mingguan; evaluasi ulang bila dua minggu tanpa perbaikan', kategori: 'kepatuhan', sinonim: ['berat badan', 'Buku KIA', 'kader', 'follow-up'] },
@@ -268,4 +273,5 @@ export const TINDAKAN_LAB_EXPANSION: Record<string, Tindakan> = {
   observasi_neurologis: { id: 'observasi_neurologis', nama: 'Observasi serial GCS, pupil, dan defisit neurologis', icd9: '89.14', biaya: 15000 },
   minim_stimulus_tetanus: { id: 'minim_stimulus_tetanus', nama: 'Tempatkan pasien tetanus di ruang tenang dengan stimulus minimal', icd9: '93.59', biaya: 0 },
   antibiotik_parenteral_neonatus_protokol: { id: 'antibiotik_parenteral_neonatus_protokol', nama: 'Antibiotik parenteral awal neonatus sesuai protokol jejaring', icd9: '99.21', biaya: 30000 },
+  suction_hidung_bronkiolitis_selektif: { id: 'suction_hidung_bronkiolitis_selektif', nama: 'Suction Hidung Lembut bila Sekret Mengganggu Napas/Minum', icd9: '93.99', biaya: 10000 },
 }

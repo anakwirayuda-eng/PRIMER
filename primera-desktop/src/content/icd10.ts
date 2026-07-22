@@ -43,6 +43,7 @@ export const NAMA_ICD: Record<string, string> = {
   'S63.5': 'Keseleo/Terkilir Pergelangan Tangan',
   /* -- M13 lab full-fledge batches 2-3 ----------------------------------- */
   'G00.9': 'Meningitis Bakterial, Tidak Spesifik',
+  'A87.9': 'Meningitis Viral, Tidak Spesifik',
   'F44.5': 'Kejang Disosiatif',
   B20: 'Penyakit HIV dengan Manifestasi Infeksi',
   'S05.0': 'Cedera Konjungtiva dan Abrasi Kornea',
@@ -163,6 +164,7 @@ export const NAMA_ICD: Record<string, string> = {
   I63: 'Stroke Iskemik (Infark Serebri)',
   'I63.9': 'Stroke Iskemik (Infark Serebri), tidak spesifik',
   'I61.9': 'Perdarahan Intraserebral',
+  'I60.9': 'Perdarahan Subaraknoid, Tidak Spesifik',
   I61: 'Perdarahan Intraserebral',
   I64: 'Stroke, tidak spesifik',
   'G45.9': 'Transient Ischemic Attack (TIA)',

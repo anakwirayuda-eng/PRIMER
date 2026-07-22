@@ -1,7 +1,7 @@
 # Pemetaan Respons KLB Berdasarkan Rute dan Sumber Penularan
 
 **Tanggal telaah:** 17 Juli 2026  
-**Cakupan:** 22/22 kasus `PACK.kasus` yang memiliki `ambangKluster`  
+**Cakupan:** 23/23 kasus `PACK.kasus` yang memiliki `ambangKluster`
 **Tujuan:** mencegah kartu tindakan KLB memakai respons droplet untuk penyakit
 yang ditularkan melalui pangan, tanah, air tawar, kontak seksual, fomit, atau
 lingkungan yang terkontaminasi urine hewan.
@@ -23,7 +23,7 @@ lingkungan yang terkontaminasi urine hewan.
    sumber/rute, tindakan spesifik, komunikasi risiko, dan pemulihan. Sumber WHO
    atau CDC di bawah menjadi grounding tindakan spesifik penyakit.
 
-## Registry 22 kasus
+## Registry 23 kasus
 
 | Pola | Kasus | Esensi tindakan benar | Grounding utama |
 |---|---|---|---|
@@ -42,6 +42,7 @@ lingkungan yang terkontaminasi urine hewan.
 | `influenza` | `lab_influenza_tanpa_komplikasi` | Kurangi kontak saat sakit, masker/etika batuk, ventilasi/higiene, lindungi kelompok risiko, vaksinasi sesuai kebijakan | WHO Influenza |
 | `parotitis` | `lab_parotitis_mumps` | Isolasi lima hari sejak parotitis, pantau kontak, telaah MMR bila tersedia; MMR pascapajanan bukan jaminan | CDC Mumps outbreak strategy |
 | `pertusis` | `lab_pertusis_remaja` | Obati/isolasi kasus, nilai kontak rumah dan kelompok risiko terutama bayi, PEP sesuai protokol, cek DPT | CDC Pertussis PEP |
+| `meningokokus` | `lab_meningitis_bakterial_suspek` | Laporkan segera, verifikasi, kewaspadaan droplet, telusuri/pantau kontak erat 14 hari, koordinasikan kemoprofilaksis | Kemenkes Panduan Deteksi dan Respon Meningitis Meningokokus; WHO Meningitis Toolkit 2026 |
 
 ## Sumber resmi
 
@@ -66,6 +67,8 @@ lingkungan yang terkontaminasi urine hewan.
 - WHO, [Influenza](https://www.who.int/europe/news-room/fact-sheets/item/influenza).
 - CDC, [Mumps outbreak control](https://www.cdc.gov/mumps/php/public-health-strategy/index.html).
 - CDC, [Pertussis post-exposure prophylaxis](https://www.cdc.gov/pertussis/php/postexposure-prophylaxis/index.html).
+- Kemenkes, [Panduan Deteksi dan Respon Meningitis Meningokokus](https://infeksiemerging.kemkes.go.id/document/panduan-deteksi-dan-respon-meningitis-meningokokus/view).
+- WHO, [Bacterial meningitis outbreak toolkit for frontline healthcare workers](https://www.who.int/publications/i/item/B09660/).
 
 ## Batas interpretasi
 

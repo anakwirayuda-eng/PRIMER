@@ -42,7 +42,7 @@ describe('M13-0A — canonical curriculum blueprint', () => {
 
   it('setiap kasus level 3A/3B/2 punya item tersendiri dengan level yang tetap utuh', () => {
     const non4A = Object.values(PACK.kasus).filter((kasus) => kasus.skdi !== '4A')
-    expect(non4A).toHaveLength(60) // M13 Batch 4: +34 kasus tier-rujuk (26→60)
+    expect(non4A).toHaveLength(59) // M13-137-01: gizi buruk komplikasi dikoreksi 3B -> 4A
     for (const kasus of non4A) {
       const archetype = CURRICULUM_BLUEPRINT.encounterArchetypes.find(
         (candidate) => candidate.contentRef.kind === 'clinic' && candidate.contentRef.id === kasus.id,

@@ -183,7 +183,10 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-07-17 (bridge UKM↔UKP P0-B, REVISI_ENGINE 43 -> 44):
   // 22 kasus kluster dipetakan eksplisit ke 15 pola pengendalian; fallback
   // droplet diganti respons aman belum-dipetakan dan dikunci invariant.
-  'kegiatan.ts': 'c7d4c3442184daa5f287b506b7b3ef40fa0052d141377c16d3a786c1c497b758',
+  // Unfreeze 2026-07-23 (M13-137-04, REVISI_ENGINE 57 -> 58): suspek
+  // meningokokus mendapat pola notifikasi, kontak erat, dan profilaksis
+  // terkoordinasi sendiri alih-alih jatuh ke droplet generik.
+  'kegiatan.ts': '8325da25a646bfd4f6ba827b6d5a8cd643d0b971352ce10031332a69cee276b5',
   // Unfreeze 2026-07-19 (UKM assurance, REVISI_ENGINE 53 -> 54): hasil kartu
   // intervensi dan klasifikasi evidence pasca-penilaian masuk debrief; skor
   // tidak berubah tetapi output replay kunjungan berubah secara sengaja.
@@ -191,7 +194,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': 'cc7b06ef6f93330d6c188567c87ee2a9f8c4b1f4a13d6c24b21741a62ae64ba3',
+  'verifikasi.ts': 'ca90af640a1e2d2a77ea4b8e8dd4c92ce660140f18e93b3d99a5907c3c9af280',
   'state.ts': '5a0b990ef872871caeeae361e7dedd3d6000319df0eb764bcca025c1c2f586c1',
   'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',

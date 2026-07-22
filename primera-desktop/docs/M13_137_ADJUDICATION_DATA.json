@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-22T11:52:58.183Z",
-  "sourceCommit": "d360abc3d7b27df37a5c346a472ec704fc654ee2+dirty",
-  "artifactFingerprint": "00556716b5ea70fe80b63b88c4af9e28d4670a6c55188b2e459c99c8fa37508a",
-  "packFingerprint": "93738a72",
+  "generatedAt": "2026-07-22T20:48:45.438Z",
+  "sourceCommit": "47812abec1e81c59781273eb13d5d8dca8152be1+dirty",
+  "artifactFingerprint": "d05c9f3f7c4394e9d256926941badff63216284a901332f26f4dc8a9a68de597",
+  "packFingerprint": "16e4eea8",
   "contentRelease": "igd-adjudication-2026-07-22",
-  "engineRevision": 57,
+  "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -37,7 +37,7 @@
     "ppkEntriesSha256": "8c65b07e23129ed6eb2de6773e097c89590ee9dc7f6dab00f23c2cb6b2211a2a",
     "ppkBoundariesSha256": "9b557a4d79c5ef7cda19885c26ec8d3a141c887d7b48956d7634534adff51fc3",
     "fornas1199Sha256": "93c907dff72aa5e0bb63ec9290f891377661115a99b67632c7b576e4972fa816",
-    "kfaSnapshotSha256": "ea23f6de87e2e34161a87e4ccf8ca619858a266000aab32c6f0b63d8be33e9ed"
+    "kfaSnapshotSha256": "985dadfcdaf93080479708334ee2a3f131b07fa9fd17960b4708d82f9a2f1d86"
   },
   "summary": {
     "bySuggestion": {
@@ -45,9 +45,9 @@
       "perlu-koreksi": 0,
       "tak-ada-sumber": 0
     },
-    "ppkDirect": 91,
+    "ppkDirect": 93,
     "ppkRelated": 15,
-    "ppkAbsent": 31,
+    "ppkAbsent": 29,
     "pnpkDirect": 27,
     "ebmDirect": 66,
     "nonFornasDrugIds": [
@@ -61,8 +61,8 @@
       "triamcinolone_orabase",
       "zinc_oxide_krim"
     ],
-    "resourceTierCOrD": 47,
-    "resourceGrounded": 47,
+    "resourceTierCOrD": 46,
+    "resourceGrounded": 46,
     "resourceUnresolved": 0,
     "kfaUnresolvedQueries": 0
   },
@@ -5285,7 +5285,7 @@
       "id": "lab_gizi_buruk_komplikasi",
       "name": "Gizi Buruk dengan Komplikasi pada Balita",
       "icd10": "E43",
-      "skdi": "3B",
+      "skdi": "4A",
       "category": "kia",
       "mustRefer": true,
       "fktp144": false,
@@ -5332,12 +5332,88 @@
               ],
               "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
             }
+          },
+          {
+            "id": "oralit",
+            "name": "Oralit (Larutan Rehidrasi Oral)",
+            "dosageForm": "Serbuk sachet 200 mL",
+            "role": "optional",
+            "catalogFornas": true,
+            "fornas": {
+              "status": "cocok",
+              "queries": [
+                "garam oralit"
+              ],
+              "excerpts": [
+                {
+                  "label": "garam oralit",
+                  "text": "Catatan: Dilarutkan dalam 200 mL air. 1 garam oralit",
+                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 16420"
+                }
+              ],
+              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
+              "caseAvailabilityGrounded": false
+            },
+            "kfa": {
+              "status": "cocok",
+              "components": [
+                {
+                  "query": "Sodium Chloride",
+                  "matches": [
+                    {
+                      "code": "91000171",
+                      "name": "Sodium Chloride",
+                      "unit": "mg"
+                    }
+                  ]
+                },
+                {
+                  "query": "Potassium Chloride",
+                  "matches": [
+                    {
+                      "code": "91000198",
+                      "name": "Potassium Chloride",
+                      "unit": "mg"
+                    }
+                  ]
+                },
+                {
+                  "query": "Glucose",
+                  "matches": [
+                    {
+                      "code": "91000108",
+                      "name": "Glucose",
+                      "unit": "mg"
+                    }
+                  ]
+                },
+                {
+                  "query": "Sodium Citrate",
+                  "matches": [
+                    {
+                      "code": "91000465",
+                      "name": "Sodium Citrate",
+                      "unit": "mg"
+                    }
+                  ]
+                }
+              ],
+              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+            }
           }
         ],
         "procedures": [
           {
             "id": "koreksi_hipoglikemia_gizi_buruk_anak",
             "name": "Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu F-75"
+          },
+          {
+            "id": "rehidrasi_gizi_buruk_non_syok",
+            "name": "Gizi Buruk Non-Syok: ReSoMal; bila tidak tersedia, ORS Osmolaritas Rendah Perlahan dan Terpantau"
+          },
+          {
+            "id": "jaga_hangat_gizi_buruk_anak",
+            "name": "Cegah Hipotermia: Keringkan, Selimuti, Hangatkan, dan Pantau Suhu"
           },
           {
             "id": "antibiotik_parenteral_gizi_buruk_protokol",
@@ -5350,13 +5426,13 @@
         ],
         "education": [
           {
-            "id": "rehabilitasi_gizi",
-            "name": "[Gizi] Tingkatkan energi-protein bertahap dan pantau berat badan",
+            "id": "rujuk_gizi_buruk_komplikasi",
+            "name": "[Gizi buruk berkomplikasi] Jelaskan stabilisasi, rujukan rawat inap, dan larangan cairan cepat",
             "critical": true
           },
           {
-            "id": "gizi_seimbang",
-            "name": "Gizi seimbang (Isi Piringku)",
+            "id": "rehabilitasi_gizi",
+            "name": "[Gizi] Tingkatkan energi-protein bertahap dan pantau berat badan",
             "critical": false
           },
           {
@@ -5389,22 +5465,45 @@
         ],
         "stabilizationRequired": [
           "koreksi_hipoglikemia_gizi_buruk_anak",
+          "rehidrasi_gizi_buruk_non_syok",
+          "jaga_hangat_gizi_buruk_anak",
           "antibiotik_parenteral_gizi_buruk_protokol",
           "pemantauan_ketat_vital"
         ]
       },
       "currentEditorial": {
-        "clue": "BB/PB di bawah -3 SD, LiLA 10,2 cm, gagal uji nafsu makan, diare, demam, lesu, dan GDS 44 mg/dL berarti gizi buruk dengan komplikasi: stabilisasi awal lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Koreksi hipoglikemia memakai jalur anak gizi buruk — glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG, lalu segera mulai pemberian makan terapeutik — bukan tombol rule-of-15 dewasa. Hangatkan, pantau, dan mulai antibiotik parenteral spektrum luas sesuai protokol gizi buruk/jejaring; seftriakson 1 g tunggal tidak boleh diperlakukan sebagai regimen universal. Hindari Plan C cepat pada anak yang tidak syok karena risiko kelebihan cairan.",
-        "officialGuidance": "Tidak ditemukan bab PPK FKTP diagnosis-spesifik pada crosswalk 167 bab. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 dan WHO Wasting/Nutritional Oedema Guideline 2023 menjadi grounding langsung; WHO 2023 menggantikan guideline 2013. Rekomendasi B2 menetapkan rawat inap bila ada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan. Protokol stabilisasi menangani hipoglikemia/hipotermia dan infeksi sejak awal, dengan cairan sangat hati-hati.",
-        "realityNote": "GDS dan Hb tersedia cepat; CBC, elektrolit, dan feses bukan syarat stabilisasi atau transfer. ReSoMal, F-75, dan mineral-mix tidak diasumsikan selalu ready. Jejaring telah mengonfirmasi satu dosis awal antibiotik parenteral berbasis protokol; regimen lengkap berlanjut di TFC/RS. Bila akses enteral aman, koreksi gula dan pemberian makan tidak menunggu infus.",
+        "clue": "BB/PB di bawah -3 SD, LiLA 10,2 cm, gagal uji nafsu makan, diare, demam, lesu, dan GDS 44 mg/dL berarti gizi buruk dengan komplikasi: stabilisasi awal lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Koreksi hipoglikemia memakai glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG lalu segera mulai pemberian makan terapeutik, bukan rule-of-15 dewasa. Cegah hipotermia, pantau ketat, dan mulai antibiotik parenteral sesuai protokol jejaring. Bila anak dehidrasi tetapi tidak syok, berikan ReSoMal perlahan; WHO 2023 membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia. Hindari Plan C cepat. Vitamin A dosis tinggi bukan rutinitas bila F-75/F-100/RUTF atau suplemen harian standar sudah mencukupi.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 memuat bab Malnutrisi Energi Protein (tingkat kemampuan 4A) dan menetapkan gizi buruk dengan komplikasi medis sebagai kasus rawat inap/rujuk. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 memberi alur 10 langkah. WHO Wasting/Nutritional Oedema Guideline 2023 menggantikan guideline 2013: rekomendasi B2 mendukung rawat inap pada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan; rekomendasi B7 memilih ReSoMal namun membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia.",
+        "realityNote": "GDS dan Hb tersedia cepat; pemeriksaan lain tidak boleh menunda stabilisasi atau transfer. ReSoMal, F-75, dan mineral-mix tidak diasumsikan selalu siap. Jika ReSoMal kosong, gunakan ORS osmolaritas rendah perlahan dengan pemantauan ketat, bukan Plan C. Antibiotik parenteral awal mengikuti protokol jejaring; terapi lengkap berlanjut di TFC/RS. Vitamin A dosis tinggi hanya sesuai indikasi dan riwayat asupan/program.",
         "ebmPearl": "Mata cekung dan turgor lambat dapat menetap pada anak marasmik meski dehidrasi tidak berat. Jangan menilai kebutuhan cairan hanya dari dua tanda tersebut karena kelebihan cairan dapat memicu gagal jantung. Gunakan riwayat kehilangan cairan dan pantau respons terhadap rehidrasi perlahan, seperti nadi, produksi urin, serta kembalinya air mata. Gizi buruk juga dapat menekan tanda infeksi: anak dengan sepsis mungkin tidak demam dan leukositnya dapat normal. Karena itu, protokol memberi antibiotik pada gizi buruk dengan komplikasi meski tanda infeksi tidak menonjol. Pada kwashiorkor, edema dapat menaikkan berat badan secara semu. Periksa edema kedua punggung kaki dan jangan mengandalkan angka timbangan saja."
       },
       "evidence": {
         "ppk": {
-          "status": "tak-ada-sumber",
-          "sourceIcd10": [],
-          "excerpts": [],
-          "limitation": "Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022."
+          "status": "cocok",
+          "relation": "direct",
+          "sourceTitle": "Malnutrisi Energi Protein (MEP)",
+          "sourceEntryNumber": "8",
+          "pdfPage": 684,
+          "sourceIcd10": [
+            "E40",
+            "E41",
+            "E42",
+            "E43",
+            "E44"
+          ],
+          "excerpts": [
+            {
+              "label": "Penatalaksanaan",
+              "text": "Tata laksana pasien di rawat inap dan rawat jalan sesuai dengan Bagan dan Petunjuk Teknis Tata Laksana Anak Gizi Buruk tahun 2013 (buku I dan II) dan Pedoman Pencegahan dan Tata Laksana Gizi Buruk pada Balita tahun 2019. a. Melakukan 10 langkah tata laksana anak gizi buruk yang dibedakan menurut fase yaitu fase stabilisasi, transisi, rehabilitasi, dan tindak lanjut (gambar 1). b.",
+              "locator": "PPK 1186/2022, bab 7, PDF p.684"
+            },
+            {
+              "label": "Kriteria rujukan",
+              "text": ": 1) Semua kasus gizi buruk pada bayi usia < 6 bulan dan balita ≥ 6 bulan dengan Berat Badan < 4 kg dirujuk ke FKRTL ditujukan kepada Dokter Spesialis Anak sesuai Pedoman Pencegahan dan Tata Laksana Gizi Buruk pada Balita (Gambar 2). 2) Kasus gizi buruk dengan komplikasi medis (memerlukan rawat inap). 3) Semua kasus gizi kurang dengan red flags dirujuk. Konseling dan Edukasi a. Konseling dilakukan dengan menyampaikan informasi kepada orang tua/pengasuh tentang kondisi MEP dan/atau alasan rujukan (jika dirujuk). b. Edukasi dilakukan dengan memberi anjuran cara pemberian makan sesuai usia dan kondisi anak, cara menyiapkan formula, petunjuk memilih jenis bahan makanan, dan pelaksanaan aturan makan (feeding rules). -687- Gambar 12.4 Tata laksana 10 langk...",
+              "locator": "PPK 1186/2022, bab 7, PDF p.684"
+            }
+          ],
+          "limitation": "Bab MEP tergabung ke chunk LIPIDEMIA akibat pemisahan OCR; locator memakai subbagian manual yang tervalidasi."
         },
         "pnpk": {
           "status": "perlu-koreksi",
@@ -5499,6 +5598,22 @@
               "kind": "procedure",
               "tier": "B",
               "note": "Glukosa/sukrosa, alat ukur, jalur oral/NG, dan pemberian makan lanjutan harus siap.",
+              "grounding": "baseline"
+            },
+            {
+              "id": "rehidrasi_gizi_buruk_non_syok",
+              "name": "Gizi Buruk Non-Syok: ReSoMal; bila tidak tersedia, ORS Osmolaritas Rendah Perlahan dan Terpantau",
+              "kind": "procedure",
+              "tier": "B",
+              "note": "ReSoMal lebih disukai; ORS osmolaritas rendah adalah fallback terpantau bila ReSoMal tidak tersedia.",
+              "grounding": "baseline"
+            },
+            {
+              "id": "jaga_hangat_gizi_buruk_anak",
+              "name": "Cegah Hipotermia: Keringkan, Selimuti, Hangatkan, dan Pantau Suhu",
+              "kind": "procedure",
+              "tier": "A",
+              "note": "Kain kering, selimut, suhu ruangan, dan pemantauan suhu adalah kesiapan inti.",
               "grounding": "baseline"
             },
             {
@@ -15890,10 +16005,31 @@
       },
       "evidence": {
         "ppk": {
-          "status": "tak-ada-sumber",
-          "sourceIcd10": [],
-          "excerpts": [],
-          "limitation": "Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022."
+          "status": "cocok",
+          "relation": "direct",
+          "sourceTitle": "Malnutrisi Energi Protein (MEP)",
+          "sourceEntryNumber": "8",
+          "pdfPage": 684,
+          "sourceIcd10": [
+            "E40",
+            "E41",
+            "E42",
+            "E43",
+            "E44"
+          ],
+          "excerpts": [
+            {
+              "label": "Penatalaksanaan",
+              "text": "Tata laksana pasien di rawat inap dan rawat jalan sesuai dengan Bagan dan Petunjuk Teknis Tata Laksana Anak Gizi Buruk tahun 2013 (buku I dan II) dan Pedoman Pencegahan dan Tata Laksana Gizi Buruk pada Balita tahun 2019. a. Melakukan 10 langkah tata laksana anak gizi buruk yang dibedakan menurut fase yaitu fase stabilisasi, transisi, rehabilitasi, dan tindak lanjut (gambar 1). b.",
+              "locator": "PPK 1186/2022, bab 7, PDF p.684"
+            },
+            {
+              "label": "Kriteria rujukan",
+              "text": ": 1) Semua kasus gizi buruk pada bayi usia < 6 bulan dan balita ≥ 6 bulan dengan Berat Badan < 4 kg dirujuk ke FKRTL ditujukan kepada Dokter Spesialis Anak sesuai Pedoman Pencegahan dan Tata Laksana Gizi Buruk pada Balita (Gambar 2). 2) Kasus gizi buruk dengan komplikasi medis (memerlukan rawat inap). 3) Semua kasus gizi kurang dengan red flags dirujuk. Konseling dan Edukasi a. Konseling dilakukan dengan menyampaikan informasi kepada orang tua/pengasuh tentang kondisi MEP dan/atau alasan rujukan (jika dirujuk). b. Edukasi dilakukan dengan memberi anjuran cara pemberian makan sesuai usia dan kondisi anak, cara menyiapkan formula, petunjuk memilih jenis bahan makanan, dan pelaksanaan aturan makan (feeding rules). -687- Gambar 12.4 Tata laksana 10 langk...",
+              "locator": "PPK 1186/2022, bab 7, PDF p.684"
+            }
+          ],
+          "limitation": "Bab MEP tergabung ke chunk LIPIDEMIA akibat pemisahan OCR; locator memakai subbagian manual yang tervalidasi."
         },
         "pnpk": {
           "status": "perlu-koreksi",
@@ -21646,7 +21782,7 @@
       "mustRefer": true,
       "fktp144": false,
       "demographics": "3-8 bulan, semua gender",
-      "openingComplaint": "Bayi saya pilek lalu sejak tadi malam napasnya cepat dan susunya jauh berkurang.",
+      "openingComplaint": "Bayi saya pilek dan batuk, lalu sejak tadi malam napasnya cepat dan minumnya jauh berkurang.",
       "currentManagement": {
         "requiredDrugs": [],
         "alternativeDrugs": [],
@@ -21655,17 +21791,26 @@
           {
             "id": "oksigen",
             "name": "Terapi oksigen sesuai target saturasi"
+          },
+          {
+            "id": "pemantauan_ketat_vital",
+            "name": "Pemantauan Ketat Tanda Vital Pra-Rujuk"
           }
         ],
         "education": [
           {
-            "id": "tanda_bahaya",
-            "name": "Tanda bahaya — kapan harus segera kembali",
+            "id": "rujuk_bronkiolitis_bayi",
+            "name": "[Bronkiolitis berat] Rujuk sekarang dengan oksigen; jangan paksa minum saat sesak berat",
             "critical": true
           },
           {
-            "id": "asi_eksklusif",
-            "name": "[Bayi] ASI eksklusif 6 bulan",
+            "id": "minum_aman_bronkiolitis_bayi",
+            "name": "[Bronkiolitis] Lanjutkan minum sesuai usia dan toleransi setelah napas aman",
+            "critical": false
+          },
+          {
+            "id": "bebas_asap_bayi",
+            "name": "[Bayi] Jauhkan asap rokok dari rumah, kendaraan, dan pengasuh",
             "critical": false
           }
         ],
@@ -21676,13 +21821,14 @@
           "J45.9"
         ],
         "stabilizationRequired": [
-          "oksigen"
+          "oksigen",
+          "pemantauan_ketat_vital"
         ]
       },
       "currentEditorial": {
-        "clue": "Bayi dengan prodrom pilek, wheezing/ronki difus, retraksi, asupan <50%, dan SpO2 89% mengalami bronkiolitis berat. Beri oksigen dan rujuk; jangan rutin memberi antibiotik, salbutamol, ipratropium, atau kortikosteroid. Foto toraks dan pemeriksaan darah juga bukan prasyarat transfer.",
-        "officialGuidance": "PPK 1186/2022 tidak memiliki bab bronkiolitis diagnosis-spesifik. NICE NG9, rekomendasi 1.2 dan 1.4, menjadi grounding langsung: rujuk bila distress berat, asupan tidak adekuat, atau saturasi rendah; pada bayi usia lebih dari 6 minggu beri oksigen bila SpO2 menetap di bawah 90%. Pedoman yang sama melarang antibiotik, salbutamol, ipratropium, dan kortikosteroid rutin. Pada bayi ini SpO2 89%, sehingga oksigen pra-rujuk memang terindikasi.",
-        "realityNote": "Skenario menyatakan oksigen dan transport siap. Bila alat atau transport tidak siap, koordinasikan jejaring sambil melakukan stabilisasi yang tersedia; jangan menunda rujukan demi pemeriksaan tambahan."
+        "clue": "Prodrom pilek-batuk diikuti wheezing/ronki difus, retraksi, asupan kurang dari setengah, dan SpO2 menetap 89% mendukung bronkiolitis berat dengan hipoksemia. Mulai oksigen aliran rendah, pantau serial, dan rujuk segera. Jangan rutin memberi antibiotik, salbutamol, ipratropium, atau kortikosteroid; foto toraks dan pemeriksaan darah bukan prasyarat transfer. Suction hidung hanya bila sekret mengganggu napas atau minum.",
+        "officialGuidance": "PPK 1186/2022 tidak memiliki bab bronkiolitis diagnosis-spesifik; PNPK sepsis anak hanya memberi prinsip stabilisasi terkait. WHO 2026 menjadi acuan langsung terbaru untuk diagnosis klinis, kriteria rawat, selektivitas foto toraks, dan oksigen aliran rendah sebagai langkah awal. NICE NG9 melengkapi: pada bayi sehat usia lebih dari 6 minggu beri oksigen bila SpO2 menetap di bawah 90%, hindari antibiotik, salbutamol, ipratropium, dan kortikosteroid rutin, serta gunakan suction dan dukungan cairan secara selektif. WHO 2026 memberi opsi uji salin hipertonik secara kondisional dengan kepastian bukti rendah; di FKTP tindakan itu bukan kewajiban dan tidak dijadikan jebakan penilaian.",
+        "realityNote": "Oksigen, pulse oximeter, petugas pemantau, dan transport dinyatakan siap. Suction hidung lembut hanya bila sekret menghambat napas atau minum. Jangan memaksa minum saat sesak berat. Bila asupan tetap tidak adekuat, jejaring dapat memakai cairan oral/NG-OG; cairan IV isotonik dipertimbangkan bila enteral tidak toleran atau ada ancaman gagal napas. Akses tidak boleh menunda transfer dan bukan izin bolus rutin."
       },
       "evidence": {
         "ppk": {
@@ -21723,6 +21869,17 @@
           "status": "cocok",
           "sources": [
             {
+              "sourceId": "who-bronchiolitis-2026",
+              "relation": "direct",
+              "title": "WHO consolidated guidelines for the management of common childhood illness: asthma and bronchiolitis",
+              "authority": "World Health Organization",
+              "year": 2026,
+              "officialUrl": "https://www.who.int/publications/b/82992",
+              "population": "Infants and children under 2 years with suspected or confirmed bronchiolitis",
+              "facilityScope": "Diagnosis, admission criteria, imaging, oxygen escalation, and supportive care across primary and referral settings.",
+              "locator": "Sections 6.1-6.6: good-practice statements for diagnosis and admission; Recommendation 1 on selective chest X-ray; Recommendation 2 remarks on standard low-flow oxygen first; Recommendation 3 on a conditional hypertonic-saline trial."
+            },
+            {
               "sourceId": "nice-bronchiolitis-ng9",
               "relation": "direct",
               "title": "Bronchiolitis in children: diagnosis and management (NG9)",
@@ -21731,7 +21888,7 @@
               "officialUrl": "https://www.nice.org.uk/guidance/ng9/chapter/Recommendations",
               "population": "Babies and children under 2 years with bronchiolitis",
               "facilityScope": "Primary-care referral and hospital management thresholds are stated separately.",
-              "locator": "Recommendations 1.2.1-1.2.3 and 1.4.3-1.4.4: referral, oxygen thresholds, and treatments not used routinely."
+              "locator": "Recommendations 1.2.1-1.2.3 and 1.4.3-1.4.12: referral, oxygen thresholds, treatments not used routinely, selective suction, and enteral/IV fluid support."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -21751,6 +21908,14 @@
               "kind": "procedure",
               "tier": "B",
               "note": "Sumber oksigen, delivery device, dan pulse oximeter harus ready.",
+              "grounding": "baseline"
+            },
+            {
+              "id": "pemantauan_ketat_vital",
+              "name": "Pemantauan Ketat Tanda Vital Pra-Rujuk",
+              "kind": "procedure",
+              "tier": "B",
+              "note": "Tensimeter, pulse oximeter, jam observasi, dan petugas harus ready selama stabilisasi pra-rujuk.",
               "grounding": "baseline"
             }
           ],
@@ -23569,12 +23734,8 @@
         ],
         "procedures": [
           {
-            "id": "pasang_infus",
-            "name": "Pemasangan infus + rehidrasi"
-          },
-          {
-            "id": "oksigen",
-            "name": "Terapi oksigen sesuai target saturasi"
+            "id": "kewaspadaan_droplet_meningokokus",
+            "name": "Terapkan Kewaspadaan Droplet pada Suspek Meningokokus"
           },
           {
             "id": "pemantauan_ketat_vital",
@@ -23589,7 +23750,7 @@
           },
           {
             "id": "profilaksis_kontak_meningokokus",
-            "name": "[Meningokokus] Kontak erat dinilai segera untuk kemoprofilaksis",
+            "name": "[Meningokokus] Identifikasi kontak erat; koordinasikan kemoprofilaksis",
             "critical": true
           },
           {
@@ -23612,16 +23773,18 @@
         ],
         "differentialIcd10": [
           "G00.9",
-          "I61.9",
-          "A01.0"
+          "A87.9",
+          "I60.9"
         ],
-        "stabilizationRequired": []
+        "stabilizationRequired": [
+          "pemantauan_ketat_vital"
+        ]
       },
       "currentEditorial": {
-        "clue": "Demam tinggi, sakit kepala hebat, kaku kuduk, fotofobia, muntah, penurunan kesadaran, dan ruam tidak memucat sangat mencurigakan meningitis bakterial/meningokokus. Rujuk emergensi lebih dulu. WHO 2025 membuat antibiotik pra-rujuk bersyarat: berikan ceftriaxone parenteral bila kecurigaan kuat DAN keterlambatan transfer bermakna diperkirakan terjadi; jangan memberikannya indiscriminately bila fasilitas tujuan dapat dicapai cepat. Pada skenario ini perjalanan sekitar tiga jam, sehingga dosis awal ceftriaxone dewasa 2 g IV layak diberikan; bila akses IV tidak segera didapat, gunakan IM dan jangan menahan ambulans demi infus sempurna. Pungsi lumbal tidak boleh menunda terapi. Parasetamol hanya suportif, bukan resep wajib. Laporkan dugaan meningokokus dan koordinasikan penilaian kontak erat untuk kemoprofilaksis melalui jejaring kesehatan masyarakat.",
-        "officialGuidance": "Tidak ditemukan bab PPK FKTP diagnosis-spesifik pada crosswalk 167 bab. WHO Guidelines on Meningitis 2025 menjadi grounding langsung: rujuk ke fasilitas yang mampu melakukan pungsi lumbal dan menangani penyakit berat; pertimbangkan antibiotik parenteral pra-rujuk bila meningitis bakterial sangat dicurigai dan transfer diperkirakan terlambat. Rute IV diutamakan, tetapi IM digunakan bila jalur IV belum aman. Pedoman Penggunaan Antibiotik Kemenkes 2021 mencantumkan ceftriaxone dewasa 2 g IV tiap 12 jam untuk meningitis bakterial; permainan hanya menilai pilihan obat dosis awal, bukan menyimulasikan regimen rawat inap lengkap.",
-        "realityNote": "Perjalanan rujukan skenario sekitar tiga jam, sehingga antibiotik pra-rujuk masuk akal. Bila ceftriaxone tidak tersedia, berangkat tanpa menundanya; bila IV sulit, gunakan IM. Hitung darah/GDS bukan syarat transfer. Penilaian dan kemoprofilaksis kontak erat dikoordinasikan lewat RS/dinas kesehatan, bukan memakai topik skabies atau resep massal pemain.",
-        "ebmPearl": "Trias klasik demam, kaku kuduk, dan penurunan kesadaran lengkap hanya pada sekitar separuh penderita meningitis bakterial — sehingga menunggu ketiganya muncul berarti melewatkan separuh pasien. Yang lebih menjebak: Kernig dan Brudzinski, dua tanda yang paling percaya diri diajarkan, ternyata sensitivitasnya rendah (sekitar 5% pada beberapa penelitian) sehingga hasil NEGATIF sama sekali tidak menyingkirkan meningitis; keduanya berguna bila positif dan tidak berarti apa-apa bila negatif. Pasien ini kebetulan menunjukkan tanda yang lengkap — pasien berikutnya mungkin hanya datang dengan demam, sakit kepala, dan terasa \"tidak seperti biasanya\", dan justru pasien itulah yang paling sering pulang membawa parasetamol. Perangkap ketiga khas Indonesia: demam tinggi dengan sakit kepala hebat pada dewasa muda hampir selalu dibaca sebagai tifus atau demam berdarah lebih dulu, dan sudut pandang itu bertahan bahkan setelah leher kaku ditemukan."
+        "clue": "Demam tinggi, sakit kepala hebat, kaku kuduk, fotofobia, muntah, penurunan kesadaran, dan ruam tidak memucat sangat mencurigakan meningitis bakterial dengan penyakit meningokokus invasif. Rujuk emergensi dan terapkan kewaspadaan droplet. WHO 2025 menganjurkan antibiotik parenteral pra-rujuk secara bersyarat bila kecurigaan kuat dan keterlambatan transfer bermakna diperkirakan terjadi. Perjalanan skenario sekitar tiga jam, sehingga beri dosis awal ceftriaxone dewasa 2 g: IV bila akses segera aman, atau IM bila IV belum didapat; jangan menahan ambulans demi infus. Pungsi lumbal dan pemeriksaan darah tidak boleh menunda terapi atau transfer. SpO2 96% tanpa gagal napas tidak memerlukan oksigen rutin. Catat dan laporkan suspek; identifikasi kontak erat untuk koordinasi Dinkes/RS, bukan resep massal otomatis.",
+        "officialGuidance": "PPK FKTP 1186/2022 tidak memiliki bab diagnosis-spesifik untuk meningitis. WHO Guidelines on Meningitis 2025 dan toolkit frontline WHO 2026 menjadi grounding langsung untuk transfer segera, antibiotik pra-rujuk bersyarat, rute IM bila IV belum aman, dan kewaspadaan infeksi. Permenkes 28/2021 mencantumkan ceftriaxone dewasa 2 g IV tiap 12 jam untuk regimen meningitis bakterial; permainan hanya menilai dosis awal pra-rujuk. Panduan Deteksi dan Respon Meningitis Meningokokus Kemenkes mengatur definisi suspek/probable, rujukan, pelaporan, penyelidikan, kontak erat, dan kemoprofilaksis terkoordinasi.",
+        "realityNote": "Vignette menyediakan dua vial seftriakson 1 g, masker, petugas, dan ambulans. Fornas 1199/2025 menempatkan sediaan ini di tingkat rujukan, bukan stok rutin semua FKTP; ini stok emergensi khusus. Bila obat atau IV tidak siap, jangan tunda transfer; gunakan IM bila tersedia. Satu suspek dicatat dan dilaporkan. Dua kasus terkait/14 hari hanya memicu verifikasi, bukan KLB otomatis. Kontak erat dinilai bersama Dinkes/RS.",
+        "ebmPearl": "Jangan menunggu gambaran buku teks sempurna. Trias demam, kaku kuduk, dan perubahan kesadaran tidak selalu lengkap; tanda Kernig atau Brudzinski juga bersensitivitas rendah, sehingga hasil negatif tidak menyingkirkan meningitis. Sebaliknya, demam akut, penurunan kesadaran, dan ruam purpura yang tidak memucat harus mempercepat tindakan terhadap penyakit meningokokus invasif. Ambang keputusan FKTP bukan memastikan organisme dengan pungsi lumbal, melainkan mengenali kegawatan, memulai intervensi pra-rujuk yang tepat tanpa menunda transfer, melindungi orang di sekitar pasien, dan mengaktifkan surveilans."
       },
       "evidence": {
         "ppk": {
@@ -23647,7 +23810,40 @@
               "officialUrl": "https://www.who.int/publications/i/item/9789240108042",
               "population": "Children over 1 month, adolescents, and adults with acute community-acquired meningitis",
               "facilityScope": "First- and second-level facilities, including conditional pre-referral antimicrobial therapy.",
-              "locator": "Pre-referral antibiotic therapy: consider parenteral treatment when bacterial meningitis is strongly suspected and significant transfer delay is likely."
+              "locator": "General management and timing of empiric treatment: transfer urgently; consider parenteral pre-referral therapy when bacterial meningitis is strongly suspected and clinically significant delay is likely; use IM if IV is not secured."
+            },
+            {
+              "sourceId": "who-meningitis-toolkit-2026",
+              "relation": "direct",
+              "title": "Preparedness and response to bacterial meningitis outbreaks: toolkit for frontline healthcare workers",
+              "authority": "World Health Organization",
+              "year": 2026,
+              "officialUrl": "https://www.who.int/publications/i/item/B09660/",
+              "population": "Children over 1 month, adolescents, and adults with acute bacterial meningitis in outbreak-prone or resource-limited settings",
+              "facilityScope": "Frontline recognition, antimicrobial and supportive care, post-exposure prophylaxis, and infection prevention and control.",
+              "locator": "Frontline job aids cover acute bacterial meningitis recognition, antibiotic and supportive care, post-exposure prophylaxis, and infection prevention and control."
+            },
+            {
+              "sourceId": "kemenkes-meningokokus-2023",
+              "relation": "direct",
+              "title": "Panduan Deteksi dan Respon Penyakit Meningitis Meningokokus",
+              "authority": "Kementerian Kesehatan Republik Indonesia",
+              "year": 2023,
+              "officialUrl": "https://infeksiemerging.kemkes.go.id/document/panduan-deteksi-dan-respon-meningitis-meningokokus/view",
+              "population": "Kasus suspek, probable, atau terkonfirmasi meningokokus serta kontak eratnya di Indonesia",
+              "facilityScope": "Definisi kasus, rujukan, pelaporan, penyelidikan epidemiologi, kewaspadaan droplet, pemantauan kontak, dan kemoprofilaksis.",
+              "locator": "Bab III-V and the outbreak-investigation algorithm: purpura can meet probable meningococcal criteria; refer, notify, identify and monitor close contacts, apply risk-based protection, and coordinate chemoprophylaxis."
+            },
+            {
+              "sourceId": "kemenkes-antimicrobial-2021",
+              "relation": "direct",
+              "title": "Peraturan Menteri Kesehatan Nomor 28 Tahun 2021 tentang Pedoman Penggunaan Antibiotik",
+              "authority": "Kementerian Kesehatan Republik Indonesia",
+              "year": 2021,
+              "officialUrl": "https://jdih.kemkes.go.id/common/dokumen/2021permenkes028.pdf",
+              "population": "Patients receiving antimicrobial therapy in Indonesian health facilities",
+              "facilityScope": "National antimicrobial-use floor, including adult oral doxycycline dosing and duration for mild leptospirosis.",
+              "locator": "Regimen meningitis bakterial dewasa lists ceftriaxone 2 g IV every 12 hours; the game assesses only the scenario-specific first pre-referral dose."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -23662,19 +23858,11 @@
           "highestTier": "C",
           "resources": [
             {
-              "id": "pasang_infus",
-              "name": "Pemasangan infus + rehidrasi",
+              "id": "kewaspadaan_droplet_meningokokus",
+              "name": "Terapkan Kewaspadaan Droplet pada Suspek Meningokokus",
               "kind": "procedure",
-              "tier": "B",
-              "note": "Akses IV dan cairan lazim, tetapi readiness consumable tetap perlu.",
-              "grounding": "baseline"
-            },
-            {
-              "id": "oksigen",
-              "name": "Terapi oksigen sesuai target saturasi",
-              "kind": "procedure",
-              "tier": "B",
-              "note": "Sumber oksigen, delivery device, dan pulse oximeter harus ready.",
+              "tier": "A",
+              "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
               "grounding": "baseline"
             },
             {
@@ -23719,7 +23907,7 @@
     {
       "ordinal": 130,
       "id": "lab_tia_serangan_iskemik_sesaat",
-      "name": "TIA — Serangan Iskemik Sesaat yang Sudah Pulih",
+      "name": "Suspek TIA — Defisit Fokal Sudah Pulih",
       "icd10": "G45.9",
       "skdi": "3B",
       "category": "saraf",
@@ -23769,46 +23957,7 @@
           }
         ],
         "alternativeDrugs": [],
-        "optionalDrugs": [
-          {
-            "id": "simvastatin_20",
-            "name": "Simvastatin 20 mg",
-            "dosageForm": "tablet",
-            "role": "optional",
-            "catalogFornas": true,
-            "fornas": {
-              "status": "cocok",
-              "queries": [
-                "simvastatin"
-              ],
-              "excerpts": [
-                {
-                  "label": "simvastatin",
-                  "text": "a) Jika setelah pemberian simvastatin selama 3 bulan M",
-                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 15705"
-                }
-              ],
-              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
-              "caseAvailabilityGrounded": false
-            },
-            "kfa": {
-              "status": "cocok",
-              "components": [
-                {
-                  "query": "Simvastatin",
-                  "matches": [
-                    {
-                      "code": "91000359",
-                      "name": "SIMVASTATIN",
-                      "unit": "mg"
-                    }
-                  ]
-                }
-              ],
-              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
-            }
-          }
-        ],
+        "optionalDrugs": [],
         "procedures": [],
         "education": [
           {
@@ -23817,19 +23966,9 @@
             "critical": true
           },
           {
-            "id": "kepatuhan_obat",
-            "name": "Kepatuhan minum obat",
-            "critical": false
-          },
-          {
-            "id": "kontrol_rutin",
-            "name": "Kontrol rutin sesuai jadwal & cegah komplikasi",
-            "critical": false
-          },
-          {
-            "id": "diet_rendah_garam",
-            "name": "Diet rendah garam",
-            "critical": false
+            "id": "tia_fa_antikoagulasi",
+            "name": "[TIA + FA] Aspirin awal bukan pengganti evaluasi antikoagulasi",
+            "critical": true
           },
           {
             "id": "berhenti_merokok",
@@ -23857,10 +23996,10 @@
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Gejala neurologis fokal mendadak yang pulih total, disertai gula darah normal, adalah suspek TIA dan tetap merupakan kegawatan. Setelah kontraindikasi disaring, berikan asetosal 320 mg dengan mengunyah empat tablet tidak bersalut 80 mg, lalu rujuk segera untuk penilaian spesialis dalam 24 jam; jangan menunggu gejala kambuh dan jangan memakai ABCD2 untuk menurunkan urgensi. EKG pada skenario ini menemukan fibrilasi atrium, tetapi regimen antikoagulasi jangka panjang diputuskan setelah evaluasi spesialis. Simvastatin dapat dipertimbangkan untuk faktor risiko, namun tidak menggantikan aspirin dan transfer. Jangan menurunkan tekanan darah secara mendadak dengan nifedipin kerja cepat.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 menempatkan TIA pada kompetensi 3B dan menuntut penanganan cepat serta rujukan. PNPK Stroke KMK 304/2026 memberi konteks stroke terkait, bukan pengganti algoritme TIA first-contact. AHA 2023 Scientific Statement on Diagnosis, Workup, Risk Reduction of TIA menegaskan bahwa gejala yang sudah pulih tetap memerlukan evaluasi emergensi, workup etiologi cepat, dan jalur stroke regional. NICE NG128 rekomendasi 1.1.2 dan 1.1.4-1.1.6 meminta eksklusi hipoglikemia, aspirin 300 mg segera bila tidak ada kontraindikasi, rujukan langsung untuk penilaian dalam 24 jam, serta larangan memakai ABCD2 untuk menentukan urgensi. Fibrilasi atrium mengarahkan pencegahan sekunder ke antikoagulasi setelah evaluasi perdarahan, pencitraan, dan timing yang tepat; jangan mengimprovisasi regimen di FKTP.",
-        "realityNote": "Fornas 1199/2025 mencantumkan asetosal tablet 80 mg di fasilitas tingkat pertama; empat tablet tidak bersalut memberi loading 320 mg yang dapat dikunyah. Vignette juga menyatakan EKG dan petugasnya ready. Bila EKG tidak tersedia atau gagal berfungsi, kecurigaan TIA klinis, pemeriksaan gula, aspirin bila aman, dan transfer tetap berjalan tanpa menunggu pemeriksaan jejaring.",
-        "ebmPearl": "Pemulihan sempurna adalah temuan paling menyesatkan dalam neurologi. Pemeriksaan yang seluruhnya normal di hadapan Anda terasa seperti bukti bahwa tidak ada yang perlu dicemaskan — padahal justru pemulihan itulah yang menamai penyakitnya, dan penyakit itu adalah peringatan bahwa stroke sedang bersiap. Perangkap kedua bersifat kelembagaan: bila pasien terlanjur dirujuk dan menjalani CT kepala, hasilnya kemungkinan besar normal — dan CT normal pada TIA adalah temuan yang DIHARAPKAN, bukan tanda aman; ia sama sekali tidak mengubah kegentingannya. Perangkap ketiga ada pada denyut nadi: fibrilasi atrium sering tidak bergejala dan tidak akan ketahuan bila nadi hanya dihitung sepuluh detik lalu dikalikan enam — ia harus diraba cukup lama untuk merasakan ketidakteraturannya, dan dipastikan dengan EKG."
+        "clue": "Gejala neurologis fokal mendadak yang pulih total, disertai gula darah normal, adalah suspek TIA atau stroke iskemik kecil dan tetap merupakan kegawatan. Setelah kontraindikasi disaring, berikan asetosal 320 mg dengan mengunyah empat tablet tidak bersalut 80 mg, lalu berangkat sekarang melalui jalur stroke agar penilaian spesialis berlangsung paling lambat 24 jam; jangan menunggu gejala kambuh dan jangan memakai ABCD2 untuk menurunkan urgensi. EKG menemukan fibrilasi atrium. Aspirin adalah terapi awal saat diagnosis sedang dipastikan, bukan pencegahan jangka panjang yang memadai untuk AF; pilihan dan waktu antikoagulasi ditentukan setelah evaluasi pencitraan, perdarahan, fungsi ginjal, dan etiologi. Jangan menurunkan tekanan darah mendadak dengan nifedipin kerja cepat.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 menempatkan TIA pada kompetensi 3B dan menuntut penanganan cepat serta rujukan. PNPK Stroke KMK 304/2026 memberi konteks stroke terkait, bukan pengganti algoritme TIA first-contact. NICE NG128, yang tetap berlaku setelah review 2026, meminta eksklusi hipoglikemia, aspirin 300 mg segera bila tidak ada kontraindikasi, rujukan langsung untuk penilaian dalam 24 jam, dan larangan memakai ABCD2 untuk menentukan urgensi. AHA 2023 menekankan evaluasi emergensi serta workup etiologi cepat. AHA/ASA 2021 dan ESC AF 2024 menempatkan antikoagulasi sebagai pencegahan sekunder utama pada AF bila tidak ada kontraindikasi; aspirin bukan penggantinya dan kombinasi rutin keduanya tidak dibenarkan tanpa indikasi lain.",
+        "realityNote": "Fornas 1199/2025 mencantumkan asetosal 80 mg di tingkat pertama; empat tablet tidak bersalut memberi dosis awal 320 mg. EKG dan operator dinyatakan siap, tetapi kegagalan alat tidak boleh menahan transfer. Setelah RS menetapkan etiologi dan regimen, kendali AF, tekanan darah, lipid, serta rokok kembali dipantau FKTP. Sebut PRB hanya bila spesialis menerbitkan surat rujuk balik.",
+        "ebmPearl": "Pemulihan sempurna bukan bukti aman. Sebelum pencitraan, istilah yang jujur adalah suspek TIA atau stroke kecil: CT tanpa kontras dapat normal dan terutama membantu menilai perdarahan atau diagnosis banding, sedangkan lesi akut pada DWI-MRI menunjukkan infark. Karena itu hasil CT normal tidak membatalkan kegawatan. Perangkap berikutnya ada pada nadi: fibrilasi atrium dapat tanpa gejala dan terlewat bila nadi hanya dihitung sebentar; raba cukup lama, konfirmasi dengan EKG bila tersedia, lalu pastikan temuan itu mengikuti pasien dalam surat rujukan."
       },
       "evidence": {
         "ppk": {
@@ -23911,7 +24050,7 @@
             {
               "sourceId": "nice-tia-ng128",
               "relation": "direct",
-              "title": "Stroke and transient ischaemic attack in over 16s: diagnosis and initial management (NG128)",
+              "title": "Stroke and transient ischaemic attack in over 16s: diagnosis and initial management (NG128; reviewed 2026)",
               "authority": "National Institute for Health and Care Excellence",
               "year": 2022,
               "officialUrl": "https://www.nice.org.uk/guidance/NG128/chapter/recommendations",
@@ -23929,6 +24068,28 @@
               "population": "Adults with suspected transient ischemic attack whose focal neurologic symptoms may have resolved before assessment",
               "facilityScope": "Emergency recognition, rapid etiologic workup, brain and vascular imaging pathways, risk reduction, and regional stroke-system linkage.",
               "locator": "Top Things to Know: resolved symptoms remain clinically urgent because early stroke risk is front-loaded; use rapid diagnostic workup and a regional pathway with brain/vascular imaging and specialist access."
+            },
+            {
+              "sourceId": "aha-stroke-prevention-2021",
+              "relation": "direct",
+              "title": "Guideline for the Prevention of Stroke in Patients With Stroke and Transient Ischemic Attack",
+              "authority": "American Heart Association and American Stroke Association",
+              "year": 2021,
+              "officialUrl": "https://professional.heart.org/en/science-news/2021-guideline-for-the-prevention-of-stroke-in-patients-with-stroke-and-transient-ischemic-attack/top-things-to-know",
+              "population": "Adults after ischaemic stroke or transient ischaemic attack",
+              "facilityScope": "Etiology-specific secondary prevention, atrial-fibrillation anticoagulation, vascular risk-factor control, and follow-up.",
+              "locator": "Top Things to Know 1, 2, 5, and 6: secondary prevention is etiology-specific; AF usually requires anticoagulation; combined antiplatelet and anticoagulant therapy is generally not indicated; risk factors need longitudinal management."
+            },
+            {
+              "sourceId": "esc-af-2024",
+              "relation": "direct",
+              "title": "2024 ESC Guidelines for the management of atrial fibrillation",
+              "authority": "European Society of Cardiology",
+              "year": 2024,
+              "officialUrl": "https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/atrial-fibrillation/",
+              "population": "Adults with atrial fibrillation, including those with prior stroke or transient ischaemic attack",
+              "facilityScope": "AF-CARE pathway, thromboembolic-risk assessment, oral anticoagulation, risk-factor treatment, and reassessment.",
+              "locator": "AF-CARE framework: address comorbidities and risk factors, avoid stroke and thromboembolism with appropriate anticoagulation, and reassess over time."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -24257,13 +24418,7 @@
             "critical": true
           }
         ],
-        "relevantLabs": [
-          {
-            "id": "foto_toraks",
-            "name": "Foto Toraks PA",
-            "result": "Tampak bayangan cakram padat (opak) melintang setinggi pintu masuk rongga dada, sekitar setinggi tulang selangka. Pada gambar dari depan, cakram itu memperlihatkan GAMBARAN CINCIN GANDA (lingkaran di dalam lingkaran / tanda halo); pada gambar dari samping, tepinya TIDAK rata melainkan bertingkat seperti anak tangga. Tidak tampak udara bebas di leher maupun rongga dada. Kedua paru mengembang normal."
-          }
-        ],
+        "relevantLabs": [],
         "differentialIcd10": [
           "T18.1",
           "T17.9",
@@ -24272,10 +24427,10 @@
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Anak yang tersedak lalu menolak makan, ngiler karena ludahnya tidak bisa ditelan, dan menunjuk cekungan di atas tulang dada mengalami benda asing esofagus. Napas yang baik tidak menyingkirkannya. Cincin ganda pada foto depan dan tepi bertingkat pada foto samping menandai baterai kancing, yang dapat menimbulkan luka bakar serius dalam dua jam. Jangan mendorongnya dengan pisang/nasi, menginduksi muntah, atau memasang selang secara membuta; rujuk untuk pengeluaran endoskopik segera. Madu 10 mL tiap 10 menit maksimal enam dosis hanya dipertimbangkan bila usia minimal 12 bulan, tertelan kurang dari 12 jam, dan anak mampu menelan. Anak ini tidak mampu menelan ludah maupun air, sehingga JANGAN paksa madu: pertahankan NPO dan berangkat. Madu tidak pernah menggantikan atau menunda pengeluaran baterai.",
-        "officialGuidance": "Tidak ditemukan bab PPK FKTP diagnosis-spesifik pada crosswalk 167 bab. National Capital Poison Center Button Battery Guideline menjadi grounding langsung: curigai baterai pada setiap benda berbentuk koin, cari double-rim/halo dan step-off, jangan memicu muntah, serta keluarkan baterai esofagus segera karena luka berat dapat terjadi dalam dua jam. Selain madu yang memenuhi seluruh syarat ketat, pasien dipertahankan NPO sampai posisi baterai esofagus disingkirkan. Ketidakmampuan menelan pada vignette ini menutup opsi madu.",
-        "realityNote": "Skenario memberi hasil foto polos agar pemain belajar tanda halo, tetapi Puskesmas Sukamaju tidak diasumsikan memiliki rontgen. Dugaan baterai disertai ngiler dan penolakan minum sudah cukup untuk puasa dan transfer; jangan menunggu foto lokal. Edukasi pencegahan kini khusus baterai kancing, bukan topik benda asing hidung yang sebelumnya salah konteks.",
-        "ebmPearl": "Napas yang baik tidak membuat kasus ini aman. Baterai kancing dapat membakar dinding esofagus tanpa menyumbat jalan napas, sehingga anak masih tampak aktif saat kerusakan sedang berlangsung. Keterangan keluarga bahwa benda itu uang logam juga belum cukup bila tidak ada yang melihat kejadian. Pada foto, baterai kancing memiliki gambaran cincin ganda dari depan dan tepi bertingkat dari samping. Karena keterlambatan dapat menyebabkan cedera berat dalam hitungan jam, setiap benda berbentuk cakram di esofagus anak diperlakukan sebagai baterai sampai pencitraan membuktikan sebaliknya."
+        "clue": "Anak yang tersedak lalu menolak makan, ngiler karena ludahnya tidak bisa ditelan, dan menunjuk cekungan di atas tulang dada harus dianggap mengalami benda asing esofagus; napas yang baik tidak menyingkirkannya. Perlakukan benda berbentuk koin sebagai baterai kancing sampai terbukti bukan. Jangan mendorongnya dengan pisang/nasi, menginduksi muntah, atau memasang selang secara membuta. Pertahankan NPO, pantau, beri tahu jejaring bahwa ini suspek baterai, dan transfer segera ke RS yang mampu melakukan endoskopi anak; jangan menunggu rontgen lokal. Madu 10 mL tiap 10 menit maksimal enam dosis hanya dipertimbangkan bila usia minimal 12 bulan, tertelan kurang dari 12 jam, dan anak mampu menelan. Anak ini tidak mampu menelan ludah maupun air, sehingga JANGAN paksa madu. Madu tidak pernah menggantikan atau menunda pengeluaran baterai.",
+        "officialGuidance": "Tidak ditemukan bab PPK FKTP diagnosis-spesifik pada crosswalk 167 bab. Living guideline National Capital Poison Center yang diakses 2026 dan AAP Pediatric Care Online 2025 menjadi grounding langsung: curigai baterai pada benda berbentuk koin, jangan memicu muntah, dan keluarkan baterai esofagus emergensi karena cedera berat dapat terjadi dalam dua jam. Foto AP dan lateral yang mencakup leher, esofagus, serta abdomen dilakukan segera di fasilitas yang mampu menindaklanjuti, tanpa menahan transfer dari FKTP. Selain madu yang memenuhi seluruh syarat ketat, pasien dipertahankan NPO. Ketidakmampuan menelan pada vignette ini menutup opsi madu.",
+        "realityNote": "Puskesmas Sukamaju tidak diasumsikan memiliki rontgen siap-pakai. Dugaan baterai disertai ngiler dan penolakan minum sudah cukup untuk NPO dan transfer; jangan menunggu foto lokal. Tujuannya RS dengan endoskopi anak/THT-bedah anak yang siap, bukan sekadar RS berlabel rujukan. Tanda halo dan step-off tetap dipelajari dari citra RS penerima pada review kasus.",
+        "ebmPearl": "Napas yang baik tidak membuat kasus ini aman. Baterai kancing dapat membakar dinding esofagus tanpa menyumbat jalan napas, sehingga anak masih tampak aktif saat kerusakan berlangsung. Di RS penerima, baterai biasanya menunjukkan cincin ganda atau halo pada foto depan dan tepi bertingkat pada foto samping; foto harus mencakup leher, esofagus, dan abdomen. Karena keterlambatan dapat menyebabkan cedera berat dalam hitungan jam, setiap benda berbentuk cakram di esofagus anak diperlakukan sebagai baterai sampai pencitraan membuktikan sebaliknya."
       },
       "evidence": {
         "ppk": {
@@ -24295,13 +24450,24 @@
             {
               "sourceId": "poison-control-button-battery",
               "relation": "direct",
-              "title": "Button battery ingestion triage and treatment guideline",
+              "title": "Button battery ingestion triage and treatment guideline (living web guideline; accessed 2026)",
               "authority": "National Capital Poison Center",
               "year": 2026,
               "officialUrl": "https://www.poison.org/battery/guideline",
               "population": "Children and adults with suspected or confirmed button-battery ingestion",
               "facilityScope": "Pre-hospital triage, imaging, mitigation, and emergency removal pathway.",
-              "locator": "Steps 2, 4, 7, and 11-13: conditional honey, NPO otherwise, urgent imaging, and immediate esophageal removal."
+              "locator": "Steps 2, 4, 7, 10, and 11-13: honey only when the child can swallow, NPO otherwise, urgent AP/lateral imaging across the full tract, and immediate esophageal removal without delay."
+            },
+            {
+              "sourceId": "aap-esophageal-caustic-2025",
+              "relation": "direct",
+              "title": "Esophageal Caustic Injury",
+              "authority": "American Academy of Pediatrics, Pediatric Care Online",
+              "year": 2025,
+              "officialUrl": "https://publications.aap.org/pediatriccare/article/doi/10.1542/aap.ppcqr.396255/111/Esophageal-Caustic-Injury",
+              "population": "Children with caustic esophageal injury, including an esophageal button battery",
+              "facilityScope": "Emergency recognition, mitigation, and endoscopic removal; used to set the referral urgency from FKTP.",
+              "locator": "Button batteries lodged in the esophagus are life-threatening and require emergent removal within two hours; honey or sucralfate mitigation cannot replace definitive removal."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -24313,7 +24479,7 @@
         "aspak": {
           "status": "cocok",
           "profile": "sukamaju_middle_v1 (perdesaan, nonrawat-inap; M13-RP1)",
-          "highestTier": "D",
+          "highestTier": "B",
           "resources": [
             {
               "id": "pemantauan_ketat_vital",
@@ -24322,18 +24488,10 @@
               "tier": "B",
               "note": "Tensimeter, pulse oximeter, jam observasi, dan petugas harus ready selama stabilisasi pra-rujuk.",
               "grounding": "baseline"
-            },
-            {
-              "id": "foto_toraks",
-              "name": "Foto Toraks PA",
-              "kind": "laboratory",
-              "tier": "D",
-              "note": "Rontgen tidak diasumsikan di Sukamaju; gunakan jejaring.",
-              "grounding": "declared"
             }
           ],
           "unresolvedResourceIds": [],
-          "limitation": "Resource Tier C/D telah dinyatakan eksplisit pada catatan realita kasus; ini tetap narasi authoring, bukan bukti readiness real-time."
+          "limitation": "Status adalah baseline authoring naratif, bukan simulasi stok/readiness runtime."
         },
         "kfa": {
           "status": "cocok",
@@ -24690,7 +24848,7 @@
       "id": "lab_mastoiditis_akut",
       "name": "Mastoiditis Akut pada Anak",
       "icd10": "H70.0",
-      "skdi": "3B",
+      "skdi": "3A",
       "category": "tht",
       "mustRefer": true,
       "fktp144": false,
@@ -24741,8 +24899,8 @@
         "optionalDrugs": [],
         "procedures": [
           {
-            "id": "pasang_infus",
-            "name": "Pemasangan infus + rehidrasi"
+            "id": "akses_iv_tanpa_bolus",
+            "name": "Pasang Akses IV untuk Obat/Monitoring tanpa Bolus Cairan Rutin"
           },
           {
             "id": "antibiotik_parenteral_mastoiditis_anak_protokol",
@@ -24755,18 +24913,18 @@
         ],
         "education": [
           {
-            "id": "tanda_bahaya",
-            "name": "Tanda bahaya — kapan harus segera kembali",
+            "id": "rujuk_mastoiditis_anak",
+            "name": "[Mastoiditis anak] Rujuk sekarang; bawa dokumen dan obat, ikuti arahan puasa jejaring",
             "critical": true
-          },
-          {
-            "id": "persiapan_rujukan_operatif",
-            "name": "Persiapan rujukan operatif — puasa & dokumen",
-            "critical": false
           },
           {
             "id": "kepatuhan_obat",
             "name": "Kepatuhan minum obat",
+            "critical": false
+          },
+          {
+            "id": "tanda_bahaya",
+            "name": "Tanda bahaya — kapan harus segera kembali",
             "critical": false
           }
         ],
@@ -24788,34 +24946,29 @@
         ]
       },
       "currentEditorial": {
-        "clue": "Demam tinggi, nyeri dan fluktuasi postaurikular, hilangnya lekukan retroaurikular, serta protrusi aurikula setelah OMA sangat mendukung mastoiditis akut dengan dugaan abses subperiosteal. Riwayat obat yang tidak selesai penting untuk stewardship, tetapi tidak membuktikan keluarga menyebabkan komplikasi: mastoiditis juga dapat terjadi meski terapi awal diberikan. Di FKTP, nilai sepsis dan tanda intrakranial, pasang akses bila tidak menunda, berikan antibiotik parenteral berbasis berat badan sesuai protokol jejaring, analgesia, monitoring, dan transfer segera. CT serta pilihan antara antibiotik saja, drainase, grommet, atau operasi mastoid ditentukan tim THT/rumah sakit; tidak semua anak otomatis memerlukan mastoidektomi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 memberi konteks komplikasi otitis tetapi tidak memiliki algoritme mastoiditis anak yang lengkap. Children's Mercy Acute Mastoiditis Clinical Pathway 2026 mendefinisikan tanda utama berupa protrusi aurikula dan/atau fluktuasi, nyeri, edema, atau eritema postaurikular; meminta antibiotik empiris, rawat inap dan konsultasi THT; serta menyerahkan kebutuhan operasi kepada THT. BSAC Paediatric Pathway juga membedakan infeksi sedang/berat, terapi IV, imaging pada red flag, dan source control selektif.",
-        "realityNote": "Tombol antibiotik mewakili regimen parenteral berbasis berat badan dan pola kuman/protokol jejaring, bukan satu vial seftriakson 1 g universal. Akses IV, laboratorium, CT, dan ambulans tidak diasumsikan selalu ready; kegagalan akses berulang atau ketiadaan pemeriksaan tidak boleh menunda koordinasi transfer. Rute alternatif dan dosis pertama diputuskan sesuai protokol lokal serta kondisi anak.",
+        "clue": "Demam tinggi, nyeri dan fluktuasi postaurikular, hilangnya lekukan retroaurikular, serta protrusi aurikula setelah OMA sangat mendukung mastoiditis akut dengan dugaan abses subperiosteal. Riwayat obat yang tidak selesai penting untuk stewardship, tetapi tidak membuktikan keluarga menyebabkan komplikasi: mastoiditis juga dapat terjadi meski terapi awal diberikan. Di FKTP, nilai sepsis dan tanda intrakranial, pasang akses IV tanpa bolus cairan rutin bila tidak menunda, berikan antibiotik parenteral berbasis berat badan sesuai protokol jejaring, analgesia, monitoring, dan transfer segera. CT serta pilihan antara antibiotik saja, drainase, grommet, atau operasi mastoid ditentukan tim THT/rumah sakit; tidak semua anak otomatis memerlukan mastoidektomi.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. SKDI 2012 menempatkan mastoiditis pada tingkat 3A: diagnosis, tata laksana awal, lalu rujuk. PPK 1186/2022 tidak memiliki bab mastoiditis; bab Otitis Media Akut hanya menjadi floor terkait karena mencantumkan komplikasi ekstra-temporal/intrakranial dan mewajibkan rujukan. Children's Mercy Acute Mastoiditis Clinical Pathway 2026 mendefinisikan tanda utama berupa protrusi aurikula dan/atau fluktuasi, nyeri, edema, atau eritema postaurikular; meminta antibiotik empiris, rawat inap dan konsultasi THT; serta menyerahkan kebutuhan operasi kepada THT. BSAC Paediatric Pathway juga membedakan infeksi sedang/berat, terapi IV, imaging pada red flag, dan source control selektif.",
+        "realityNote": "Antibiotik mewakili regimen parenteral berbasis berat badan dan protokol jejaring, bukan seftriakson 1 g universal. Akses IV dipakai untuk obat, bukan bolus cairan rutin. Laboratorium, CT, dan ambulans tidak diasumsikan selalu ready; kegagalan akses atau penunjang tidak boleh menunda koordinasi transfer. Rute alternatif dan dosis pertama mengikuti protokol lokal serta kondisi anak.",
         "ebmPearl": "Perforasi gendang dapat menurunkan tekanan dan nyeri OMA, sehingga berhentinya keluhan telinga tidak selalu berarti proses selesai. Namun mastoiditis tidak boleh diajarkan sebagai hukuman pasti karena orang tua menghentikan antibiotik: tanda postaurikular dan kondisi sistemiklah yang mengubah diagnosis dan urgensi. Riwayat durasi, dosis, kepatuhan, serta respons obat dipakai untuk memilih terapi berikutnya tanpa menyalahkan keluarga."
       },
       "evidence": {
         "ppk": {
           "status": "perlu-koreksi",
           "relation": "related",
-          "sourceTitle": "Otitis Media Supuratif Kronik",
-          "sourceEntryNumber": "3",
-          "pdfPage": 260,
+          "sourceTitle": "Otitis Media Akut",
+          "sourceEntryNumber": "2",
+          "pdfPage": 259,
           "sourceIcd10": [
-            "H66.1. Chronic tubotympanic suppurative otitis media"
+            "H65.0. Acute serous otitis media"
           ],
           "excerpts": [
             {
-              "label": "Penatalaksanaan",
-              "text": "a. Non-Medikamentos -262- Membersihkan dan mengeringkan saluran telinga dengan kapas lidi atau cotton bud. Obat cuci telinga dapat berupa NaCl 0,9%, Asam Asetat 2%, atau Hidrogen Peroksida 3%. b. Medikamentosa 1) Antibiotik topikal golongan Ofloxacin, 2 x 4 tetes per hari di telinga yang sakit 2) Antibiotik oral: a) Dewasa: (1) Lini pertama : Amoxicillin 3 x 500 mg per hariselama 7 hari, atauAmoxicillin-Asam clavulanat 3 x 500 mg per hari selama 7 hari, atauCiprofloxacin 2 x 500 mg selama 7 hari. (2) Lini kedua : Levofloxacin 1 x 500 mg per hari selama 7 hari,atauCefadroxil 2 x 500 – 100 mg per hari selama 7 hari. b) Anak: (1) Amoxicillin – Asam clavulanat 25 – 50 mg/kgBB/hari, dibagi menjadi 3 dosis per hari, atau (2) Cefadroxil 25 – 50 mg/kgBB/hari...",
-              "locator": "PPK 1186/2022, bab 3, PDF p.260"
-            },
-            {
               "label": "Kriteria rujukan",
-              "text": "a. OMSK tipe bahaya b. Tidak ada perbaikan atas terapi yang dilakukan c. Terdapat komplikasi ekstrakranial maupun intrakranial d. Perforasi menetap setelah 2 bulan telinga kering -263-",
-              "locator": "PPK 1186/2022, bab 3, PDF p.260"
+              "text": "a. Jika terdapat indikasi miringotomi. b. Bila terjadi komplikasi dari otitis media akut.",
+              "locator": "PPK 1186/2022, bab 2, PDF p.259"
             }
           ],
-          "limitation": "Komplikasi OMSK terkait, tetapi mastoiditis akut tidak mempunyai bab PPK sendiri."
+          "limitation": "Bab Otitis Media Akut mencantumkan komplikasi mastoid/subperiosteal dan merujuk setiap komplikasi, tetapi tidak menyediakan algoritme mastoiditis anak lengkap."
         },
         "pnpk": {
           "status": "perlu-koreksi",
@@ -24872,11 +25025,11 @@
           "highestTier": "C",
           "resources": [
             {
-              "id": "pasang_infus",
-              "name": "Pemasangan infus + rehidrasi",
+              "id": "akses_iv_tanpa_bolus",
+              "name": "Pasang Akses IV untuk Obat/Monitoring tanpa Bolus Cairan Rutin",
               "kind": "procedure",
               "tier": "B",
-              "note": "Akses IV dan cairan lazim, tetapi readiness consumable tetap perlu.",
+              "note": "Akses IV, consumable, dan monitoring harus ready; tidak mengizinkan bolus cairan otomatis.",
               "grounding": "baseline"
             },
             {

@@ -1432,7 +1432,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     id: 'lab_gizi_buruk_komplikasi',
     nama: 'Gizi Buruk dengan Komplikasi pada Balita',
     icd10: 'E43',
-    skdi: '3B',
+    skdi: '4A',
     kategori: 'kia',
     fktp144: false,
     harusDirujuk: true,
@@ -1577,13 +1577,9 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     diagnosisBanding: ['E43', 'E41', 'A09'],
     tatalaksana: {
       obatBenar: [],
-      obatOpsional: ['vitamin_a_kapsul'],
+      obatOpsional: ['vitamin_a_kapsul', 'oralit'],
       obatSalahUmum: [
-        {
-          id: 'oralit',
-          alasan: 'Refleks paling kuat pada setiap anak mencret, dan pada anak gizi baik memang benar. Pada gizi buruk tidak: oralit standar mengandung natrium terlalu tinggi dan kalium terlalu rendah untuk fisiologi anak gizi buruk yang cenderung kelebihan natrium tubuh dan kekurangan kalium. WHO dan Kemenkes memakai ReSoMal atau formula rehidrasi khusus gizi buruk justru untuk menghindari beban natrium yang dapat memicu kelebihan cairan dan gagal jantung.',
-          bahaya: 'kontraindikasi',
-        },
+
         {
           id: 'tablet_fe',
           alasan: 'Hb 8,6 g/dL memancing pemberian zat besi, tetapi WHO tegas: besi TIDAK diberikan pada fase stabilisasi gizi buruk. Besi bebas yang tidak terikat memperberat stres oksidatif pada tubuh yang pertahanan antioksidannya sudah habis, dan menjadi bahan bakar bagi bakteri — pada anak yang sedang terinfeksi, ini menaikkan risiko sepsis. Besi baru dimulai pada fase rehabilitasi, setelah nafsu makannya pulih dan berat badannya mulai naik.',
@@ -1597,10 +1593,16 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       ],
       prosedur: [
         'koreksi_hipoglikemia_gizi_buruk_anak',
+        'rehidrasi_gizi_buruk_non_syok',
+        'jaga_hangat_gizi_buruk_anak',
         'antibiotik_parenteral_gizi_buruk_protokol',
         'pemantauan_ketat_vital',
       ],
-      terapiKritis: ['antibiotik_parenteral_gizi_buruk_protokol'],
+      terapiKritis: [
+        'koreksi_hipoglikemia_gizi_buruk_anak',
+        'jaga_hangat_gizi_buruk_anak',
+        'antibiotik_parenteral_gizi_buruk_protokol',
+      ],
       tindakanSalahUmum: [
         {
           id: 'rehidrasi_plan_c_bayi',
@@ -1613,20 +1615,22 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
           bahaya: 'berbahaya',
         },
       ],
-      edukasi: ['rehabilitasi_gizi', 'gizi_seimbang', 'cuci_tangan_makanan', 'tanda_bahaya'],
-      edukasiKritis: ['rehabilitasi_gizi'],
+      edukasi: ['rujuk_gizi_buruk_komplikasi', 'rehabilitasi_gizi', 'cuci_tangan_makanan', 'tanda_bahaya'],
+      edukasiKritis: ['rujuk_gizi_buruk_komplikasi'],
     },
     stabilisasiWajib: [
       'koreksi_hipoglikemia_gizi_buruk_anak',
+      'rehidrasi_gizi_buruk_non_syok',
+      'jaga_hangat_gizi_buruk_anak',
       'antibiotik_parenteral_gizi_buruk_protokol',
       'pemantauan_ketat_vital',
     ],
-    clue: 'BB/PB di bawah -3 SD, LiLA 10,2 cm, gagal uji nafsu makan, diare, demam, lesu, dan GDS 44 mg/dL berarti gizi buruk dengan komplikasi: stabilisasi awal lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Koreksi hipoglikemia memakai jalur anak gizi buruk — glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG, lalu segera mulai pemberian makan terapeutik — bukan tombol rule-of-15 dewasa. Hangatkan, pantau, dan mulai antibiotik parenteral spektrum luas sesuai protokol gizi buruk/jejaring; seftriakson 1 g tunggal tidak boleh diperlakukan sebagai regimen universal. Hindari Plan C cepat pada anak yang tidak syok karena risiko kelebihan cairan.',
-    panduanResmi: 'Tidak ditemukan bab PPK FKTP diagnosis-spesifik pada crosswalk 167 bab. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 dan WHO Wasting/Nutritional Oedema Guideline 2023 menjadi grounding langsung; WHO 2023 menggantikan guideline 2013. Rekomendasi B2 menetapkan rawat inap bila ada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan. Protokol stabilisasi menangani hipoglikemia/hipotermia dan infeksi sejak awal, dengan cairan sangat hati-hati.',
-    catatanRealita: 'GDS dan Hb tersedia cepat; CBC, elektrolit, dan feses bukan syarat stabilisasi atau transfer. ReSoMal, F-75, dan mineral-mix tidak diasumsikan selalu ready. Jejaring telah mengonfirmasi satu dosis awal antibiotik parenteral berbasis protokol; regimen lengkap berlanjut di TFC/RS. Bila akses enteral aman, koreksi gula dan pemberian makan tidak menunggu infus.',
+    clue: 'BB/PB di bawah -3 SD, LiLA 10,2 cm, gagal uji nafsu makan, diare, demam, lesu, dan GDS 44 mg/dL berarti gizi buruk dengan komplikasi: stabilisasi awal lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Koreksi hipoglikemia memakai glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG lalu segera mulai pemberian makan terapeutik, bukan rule-of-15 dewasa. Cegah hipotermia, pantau ketat, dan mulai antibiotik parenteral sesuai protokol jejaring. Bila anak dehidrasi tetapi tidak syok, berikan ReSoMal perlahan; WHO 2023 membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia. Hindari Plan C cepat. Vitamin A dosis tinggi bukan rutinitas bila F-75/F-100/RUTF atau suplemen harian standar sudah mencukupi.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 memuat bab Malnutrisi Energi Protein (tingkat kemampuan 4A) dan menetapkan gizi buruk dengan komplikasi medis sebagai kasus rawat inap/rujuk. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 memberi alur 10 langkah. WHO Wasting/Nutritional Oedema Guideline 2023 menggantikan guideline 2013: rekomendasi B2 mendukung rawat inap pada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan; rekomendasi B7 memilih ReSoMal namun membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia.',
+    catatanRealita: 'GDS dan Hb tersedia cepat; pemeriksaan lain tidak boleh menunda stabilisasi atau transfer. ReSoMal, F-75, dan mineral-mix tidak diasumsikan selalu siap. Jika ReSoMal kosong, gunakan ORS osmolaritas rendah perlahan dengan pemantauan ketat, bukan Plan C. Antibiotik parenteral awal mengikuti protokol jejaring; terapi lengkap berlanjut di TFC/RS. Vitamin A dosis tinggi hanya sesuai indikasi dan riwayat asupan/program.',
     mutiaraEbm: 'Mata cekung dan turgor lambat dapat menetap pada anak marasmik meski dehidrasi tidak berat. Jangan menilai kebutuhan cairan hanya dari dua tanda tersebut karena kelebihan cairan dapat memicu gagal jantung. Gunakan riwayat kehilangan cairan dan pantau respons terhadap rehidrasi perlahan, seperti nadi, produksi urin, serta kembalinya air mata. Gizi buruk juga dapat menekan tanda infeksi: anak dengan sepsis mungkin tidak demam dan leukositnya dapat normal. Karena itu, protokol memberi antibiotik pada gizi buruk dengan komplikasi meski tanda infeksi tidak menonjol. Pada kwashiorkor, edema dapat menaikkan berat badan secara semu. Periksa edema kedua punggung kaki dan jangan mengandalkan angka timbangan saja.',
     konsekuensi: {
-      narasi: 'Bila hipoglikemia tidak dikoreksi dan anak dibiarkan menunggu di ruang tunggu yang dingin, kadar gulanya terus turun sampai kejang lalu henti napas — dua penyebab kematian tercepat pada gizi buruk adalah hipoglikemia dan hipotermia, dan keduanya diatasi dengan gula serta selimut. Bila anak justru diinfus cepat dengan Plan C karena tampak dehidrasi, jantungnya yang atrofi tidak sanggup memompa beban itu dan ia meninggal karena edema paru dalam beberapa jam — kematian yang seluruhnya disebabkan oleh pengobatannya, bukan penyakitnya.',
+      narasi: 'Tanpa koreksi hipoglikemia dan pencegahan hipotermia, kondisi anak dapat cepat memburuk hingga kejang, gangguan kesadaran, dan gagal napas. Sebaliknya, bolus Plan C pada anak yang tidak syok dapat memicu kelebihan cairan dan gagal jantung. Pilihan aman adalah gula segera, jaga hangat, rehidrasi perlahan yang dipantau, antibiotik sesuai protokol, dan transfer tanpa menunggu pemeriksaan tambahan.',
       kembaliHariMin: 0,
       kembaliHariMax: 1,
       kondisiKembali: 'Beberapa jam setelah infus cepat dipasang, anak menjadi sangat sesak, napasnya berbunyi basah, kelopak matanya membengkak, dan nadinya melemah — gagal jantung dan edema paru pada anak yang datang dalam keadaan tidak syok.',

@@ -16,6 +16,7 @@ const AKSI_DIHARAPKAN: Record<string, RegExp> = {
   lab_keracunan_makanan_ringan: /hentikan|tarik|pangan/i,
   lab_kusta_pausibasiler: /skrining kontak|mdt|rifampisin/i,
   lab_leptospirosis_tanpa_komplikasi: /air banjir|rodensia|sepatu bot/i,
+  lab_meningitis_bakterial_suspek: /laporkan segera|kontak erat 14 hari|kemoprofilaksis/i,
   lab_parotitis_mumps: /5 hari|mmr|parotitis/i,
   lab_pertusis_remaja: /profilaksis|kontak serumah|bayi/i,
   lab_pneumonia_komunitas_dewasa: /etika batuk|ventilasi|penemuan kasus/i,

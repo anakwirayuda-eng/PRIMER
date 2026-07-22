@@ -31,6 +31,12 @@ describe('M13-137 adjudication wave 9: infeksi THT dan source control', () => {
   it('menjaga status floor PPK tetap jujur', () => {
     expect(record('lab_abses_peritonsil').evidence.ppk.relation).toBe('related')
     expect(record('lab_mastoiditis_akut').evidence.ppk.relation).toBe('related')
+    expect(record('lab_mastoiditis_akut').evidence.ppk.sourceTitle).toBe('Otitis Media Akut')
+    expect(record('lab_mastoiditis_akut').evidence.ppk.sourceEntryNumber).toBe('2')
+    const mastoidPpk = record('lab_mastoiditis_akut').evidence.ppk.excerpts
+    expect(mastoidPpk.map((item) => item.label)).toContain('Kriteria rujukan')
+    expect(mastoidPpk.find((item) => item.label === 'Kriteria rujukan')?.text).toMatch(/komplikasi dari otitis media akut/i)
+    expect(mastoidPpk.map((item) => item.text).join(' ')).not.toMatch(/Tetrakain|benda asing/i)
     expect(record('lab_otitis_media_supuratif_kronik_komplikata').evidence.ppk.relation).toBe('direct')
     expect(record('lab_furunkel_hidung').evidence.ppk.relation).toBe('direct')
   })
@@ -49,12 +55,14 @@ describe('M13-137 adjudication wave 9: infeksi THT dan source control', () => {
   it('mastoiditis anak memakai protokol berbasis berat dan source control selektif', () => {
     const kasus = PACK.kasus.lab_mastoiditis_akut!
     expect(kasus.demografi).toEqual({ usiaMin: 3, usiaMax: 5 })
+    expect(kasus.skdi).toBe('3A')
     expect(kasus.tatalaksana.obatBenar).toEqual(['paracetamol_sirup'])
     expect(kasus.tatalaksana.prosedur).toEqual([
-      'pasang_infus',
+      'akses_iv_tanpa_bolus',
       'antibiotik_parenteral_mastoiditis_anak_protokol',
       'pemantauan_ketat_vital',
     ])
+    expect(kasus.tatalaksana.prosedur).not.toContain('pasang_infus')
     expect(kasus.tatalaksana.terapiKritis).toEqual(['antibiotik_parenteral_mastoiditis_anak_protokol'])
     expect(kasus.stabilisasiWajib).toEqual([
       'antibiotik_parenteral_mastoiditis_anak_protokol',
@@ -62,7 +70,19 @@ describe('M13-137 adjudication wave 9: infeksi THT dan source control', () => {
     ])
     expect(kasus.clue).toMatch(/tidak membuktikan keluarga menyebabkan komplikasi/i)
     expect(kasus.clue).toMatch(/tidak semua anak otomatis memerlukan mastoidektomi/i)
-    expect(kasus.catatanRealita).toMatch(/bukan satu vial seftriakson 1 g universal/i)
+    expect(kasus.clue).toMatch(/akses IV tanpa bolus cairan rutin/i)
+    expect(kasus.catatanRealita).toMatch(/bukan seftriakson 1 g universal/i)
+    expect(kasus.tatalaksana.edukasi).toEqual(['rujuk_mastoiditis_anak', 'kepatuhan_obat', 'tanda_bahaya'])
+    expect(kasus.tatalaksana.edukasiKritis).toEqual(['rujuk_mastoiditis_anak'])
+    expect(kasus.panduanResmi).toMatch(/SKDI 2012.*3A.*Otitis Media Akut/is)
+    expect(kasus.konsekuensi?.guideline).not.toMatch(/SKDI 3B/i)
+
+    const pembuka = kasus.anamnesis.find((item) => item.id === 'q_keluhan')
+    const riwayatObat = kasus.anamnesis.find((item) => item.id === 'q_riwayat_oma')
+    const imunisasi = kasus.anamnesis.find((item) => item.id === 'q_distraktor_imunisasi')
+    expect(pembuka?.jawab).not.toMatch(/empat hari.*henti/i)
+    expect(riwayatObat?.jawab).toMatch(/empat hari.*simpan sisanya/i)
+    expect(imunisasi?.distraktor).not.toBe(true)
   })
 
   it('abses peritonsil mempertahankan rujuk dan drainase terkontrol', () => {

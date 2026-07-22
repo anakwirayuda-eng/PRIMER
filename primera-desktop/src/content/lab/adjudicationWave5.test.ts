@@ -65,14 +65,28 @@ describe('M13-137 adjudication wave 5: kegawatan kardiorespirasi dan TIA', () =>
 
   it('TIA memberi asetosal segera, menahan antihipertensi akut, dan tidak lagi punya catatan terpotong', () => {
     const kasus = PACK.kasus.lab_tia_serangan_iskemik_sesaat!
+    const bukti = record('lab_tia_serangan_iskemik_sesaat').evidence.ebm.sources
+    expect(kasus.nama).toMatch(/^Suspek TIA/)
     expect(kasus.anamnesis.some((item) => item.id === 'q_aman_asetosal' && item.esensial)).toBe(true)
     expect(kasus.tatalaksana.obatBenar).toEqual(['asetosal_loading_320'])
-    expect(kasus.tatalaksana.obatOpsional).toEqual(['simvastatin_20'])
+    expect(kasus.tatalaksana.obatOpsional ?? []).toEqual([])
     expect(kasus.tatalaksana.terapiKritis).toEqual(['asetosal_loading_320'])
-    expect(kasus.clue).toMatch(/empat tablet.*80 mg.*jangan memakai ABCD2/is)
+    expect(kasus.tatalaksana.edukasi).toEqual(['tanda_bahaya', 'tia_fa_antikoagulasi', 'berhenti_merokok'])
+    expect(kasus.tatalaksana.edukasiKritis).toContain('tia_fa_antikoagulasi')
+    expect(kasus.clue).toMatch(/empat tablet.*80 mg.*berangkat sekarang.*jangan memakai ABCD2/is)
+    expect(kasus.clue).toMatch(/Aspirin.*bukan.*jangka panjang.*AF/is)
     expect(kasus.panduanResmi).toMatch(/NICE NG128.*aspirin 300 mg segera/is)
-    expect(kasus.catatanRealita).toMatch(/Fornas 1199\/2025.*EKG.*ready/is)
+    expect(kasus.panduanResmi).toMatch(/AHA\/ASA 2021.*ESC AF 2024/is)
+    expect(kasus.catatanRealita).toMatch(/Fornas 1199\/2025.*surat rujuk balik/is)
     expect(kasus.catatanRealita?.trim()).not.toMatch(/(?:—|-)$/)
+    expect(kasus.mutiaraEbm).toMatch(/CT tanpa kontras.*DWI-MRI.*tidak membatalkan/is)
+    expect(PACK.edukasi.tia_fa_antikoagulasi?.nama).toMatch(/Aspirin awal.*antikoagulasi/i)
+    expect(bukti.map((item) => item.sourceId)).toEqual([
+      'nice-tia-ng128',
+      'aha-tia-2023',
+      'aha-stroke-prevention-2021',
+      'esc-af-2024',
+    ])
     expect(PACK.obat.asetosal_loading_320?.nama).toMatch(/320 mg/i)
   })
 })

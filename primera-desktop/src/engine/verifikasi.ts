@@ -645,7 +645,11 @@ function fnv1a(teks: string): string {
 // encounter; penundaan karma dinormalisasi ke tanggal lapangan yang belum
 // terpakai; dan crash renderer dicatat serta dipulihkan satu kali. Perubahan
 // ini memengaruhi skor, jadwal, dan receipt replay sehingga wajib revisi baru.
-export const REVISI_ENGINE = 57
+// 58 (2026-07-23 - M13-137-04): suspek meningokokus kini masuk loop
+// surveilans UKP->UKM dengan respons khusus: notifikasi, verifikasi, kontak
+// erat 14 hari, serta kemoprofilaksis terkoordinasi. Kartu KLB dan komposisi
+// sinyal dapat berubah pada replay yang menjumpai kasus ini.
+export const REVISI_ENGINE = 58
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

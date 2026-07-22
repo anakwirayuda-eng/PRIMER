@@ -302,6 +302,11 @@ export const LAB_LAB_BATCH4: Record<string, ItemLab> = {
 }
 
 export const TINDAKAN_LAB_BATCH4: Record<string, Tindakan> = {
+  kewaspadaan_droplet_meningokokus: {
+    id: 'kewaspadaan_droplet_meningokokus',
+    nama: 'Terapkan Kewaspadaan Droplet pada Suspek Meningokokus',
+    biaya: 10000,
+  },
   akses_iv_tanpa_bolus: {
     id: 'akses_iv_tanpa_bolus',
     nama: 'Pasang Akses IV untuk Obat/Monitoring tanpa Bolus Cairan Rutin',
@@ -343,6 +348,18 @@ export const TINDAKAN_LAB_BATCH4: Record<string, Tindakan> = {
     nama: 'Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu F-75',
     icd9: '99.29',
     biaya: 15000,
+  },
+  rehidrasi_gizi_buruk_non_syok: {
+    id: 'rehidrasi_gizi_buruk_non_syok',
+    nama: 'Gizi Buruk Non-Syok: ReSoMal; bila tidak tersedia, ORS Osmolaritas Rendah Perlahan dan Terpantau',
+    icd9: '99.18',
+    biaya: 15000,
+  },
+  jaga_hangat_gizi_buruk_anak: {
+    id: 'jaga_hangat_gizi_buruk_anak',
+    nama: 'Cegah Hipotermia: Keringkan, Selimuti, Hangatkan, dan Pantau Suhu',
+    icd9: '93.35',
+    biaya: 0,
   },
   antibiotik_parenteral_gizi_buruk_protokol: {
     id: 'antibiotik_parenteral_gizi_buruk_protokol',
@@ -537,14 +554,20 @@ export const EDUKASI_LAB_BATCH4: Record<string, TopikEdukasi> = {
   },
   profilaksis_kontak_meningokokus: {
     id: 'profilaksis_kontak_meningokokus',
-    nama: '[Meningokokus] Kontak erat dinilai segera untuk kemoprofilaksis',
+    nama: '[Meningokokus] Identifikasi kontak erat; koordinasikan kemoprofilaksis',
     kategori: 'tindakan',
-    sinonim: ['meningokokus', 'kontak erat', 'kemoprofilaksis meningitis'],
+    sinonim: ['meningokokus', 'kontak erat', 'kemoprofilaksis meningitis', 'dinkes'],
   },
   cegah_baterai_kancing: {
     id: 'cegah_baterai_kancing',
     nama: '[Anak] Amankan baterai kancing dan benda kecil',
     kategori: 'higiene',
     sinonim: ['baterai kancing', 'button battery', 'benda asing tertelan'],
+  },
+  tia_fa_antikoagulasi: {
+    id: 'tia_fa_antikoagulasi',
+    nama: '[TIA + FA] Aspirin awal bukan pengganti evaluasi antikoagulasi',
+    kategori: 'tindakan',
+    sinonim: ['tia', 'fibrilasi atrium', 'antikoagulan', 'aspirin', 'stroke'],
   },
 }

@@ -197,7 +197,7 @@ describe('EBM currency 2026 - sumber display yang mengubah keputusan', () => {
     expect(PACK.kasus.mm_hipertensi_urgensi?.panduanResmi).toMatch(/303\/2026/)
     expect(PACK.kasus.kia_kb_konseling?.panduanResmi).toMatch(/Permenkes 2\/2025.*WHO MEC.*2025/is)
     expect(PACK.kasus.jiwa_depresi_ringan?.panduanResmi).toMatch(/mhGAP.*2023/is)
-    expect(PACK.kasus.lab_bronkiolitis_berat?.panduanResmi).toMatch(/NICE NG9/)
+    expect(PACK.kasus.lab_bronkiolitis_berat?.panduanResmi).toMatch(/WHO 2026.*NICE NG9/is)
     expect(PACK.kasus.lab_efusi_pleura?.panduanResmi).toMatch(/BTS.*2023.*2026/is)
     expect(PACK.kasus.lab_taeniasis_intestinal?.panduanResmi).toMatch(/WHO 2021\/2023/)
   })

@@ -524,10 +524,12 @@ export type PolaKlb =
   | 'influenza'
   | 'parotitis'
   | 'pertusis'
+  | 'meningokokus'
   | 'belum_dipetakan'
 
 /**
- * P0-B (2026-07-17): seluruh 22 kasus ber-ambangKluster dipetakan eksplisit.
+ * P0-B (2026-07-17, diperluas 2026-07-23): seluruh kasus ber-ambangKluster
+ * dipetakan eksplisit.
  * Registry ini sengaja tidak punya default droplet. Kasus baru yang belum
  * ditelaah jatuh ke respons aman `belum_dipetakan` dan invariant test gagal,
  * sehingga aplikasi tidak mengajarkan masker utk penyakit non-respiratorik.
@@ -546,6 +548,7 @@ const POLA_KLB_PER_KASUS: Readonly<Record<string, Exclude<PolaKlb, 'belum_dipeta
   lab_keracunan_makanan_ringan: 'pangan_toksin',
   lab_kusta_pausibasiler: 'kusta_kontak_erat',
   lab_leptospirosis_tanpa_komplikasi: 'zoonosis_lingkungan',
+  lab_meningitis_bakterial_suspek: 'meningokokus',
   lab_parotitis_mumps: 'parotitis',
   lab_pertusis_remaja: 'pertusis',
   lab_pneumonia_komunitas_dewasa: 'droplet_rutin',
@@ -629,6 +632,10 @@ const AKSI_KLB: Readonly<Record<PolaKlb, { benar: OpsiAksiKlb; salah: OpsiAksiKl
   pertusis: {
     benar: { id: 'a', label: 'Obati/isolasi kasus, telusuri kontak serumah dan kelompok risiko terutama bayi; profilaksis sesuai protokol + cek imunisasi DPT', benar: true, respons: 'Tepat. Kontak serumah dan orang yang berisiko sakit berat perlu dinilai cepat; PEP diprioritaskan sesuai protokol dan jendela pajanan.' },
     salah: { id: 'b', label: 'Cukup etika batuk; kontak sehat termasuk bayi tidak perlu dinilai', benar: false, respons: 'Pertusis sangat menular dan berbahaya bagi bayi. Kontak serumah/berisiko dapat memerlukan profilaksis walau belum bergejala.' },
+  },
+  meningokokus: {
+    benar: { id: 'a', label: 'Laporkan segera; verifikasi kasus, telusuri dan pantau kontak erat 14 hari; koordinasikan kemoprofilaksis + komunikasi risiko', benar: true, respons: 'Tepat. Respons meningokokus menggabungkan notifikasi, penyelidikan, kewaspadaan droplet, identifikasi kontak erat, pemantauan gejala, dan kemoprofilaksis terkoordinasi tanpa resep massal otomatis.' },
+    salah: { id: 'b', label: 'Tunggu konfirmasi semua kasus lalu beri antibiotik massal kepada seluruh RW', benar: false, respons: 'Keliru. Pelaporan dan penelusuran tidak menunggu klaster besar, tetapi kemoprofilaksis ditujukan pada kontak erat yang memenuhi kriteria, bukan seluruh penduduk.' },
   },
   belum_dipetakan: {
     benar: { id: 'a', label: 'Tahan intervensi generik; pastikan etiologi, rute dan sumber, lalu koordinasikan tindakan dengan surveilans/Dinkes', benar: true, respons: 'Benar. Bila profil belum dipetakan, jangan menebak rute penularan. Verifikasi dan eskalasi lebih aman daripada mengajarkan tindakan yang salah.' },

@@ -216,7 +216,8 @@ export function cocokLab(item: ItemLab, kueri: string): boolean {
 
 export type KelompokTindakan =
   | 'gawat'
-  | 'napas_cairan'
+  | 'napas'
+  | 'cairan_metabolik'
   | 'luka'
   | 'infeksi'
   | 'fraktur'
@@ -228,7 +229,8 @@ export type KelompokTindakan =
 
 export const URUTAN_KELOMPOK_TINDAKAN: readonly KelompokTindakan[] = [
   'gawat',
-  'napas_cairan',
+  'napas',
+  'cairan_metabolik',
   'luka',
   'infeksi',
   'fraktur',
@@ -241,7 +243,8 @@ export const URUTAN_KELOMPOK_TINDAKAN: readonly KelompokTindakan[] = [
 
 export const LABEL_KELOMPOK_TINDAKAN: Record<KelompokTindakan, string> = {
   gawat: 'Stabilisasi & Gawat Darurat',
-  napas_cairan: 'Napas, Cairan & Suportif',
+  napas: 'Napas & Jalan Napas',
+  cairan_metabolik: 'Cairan & Dukungan Metabolik',
   luka: 'Luka, Luka Bakar & Bedah Minor',
   infeksi: 'Infeksi & Kendali Sumber',
   fraktur: 'Fraktur & Imobilisasi',
@@ -270,12 +273,16 @@ export const KELOMPOK_TINDAKAN_BY_ID: Record<string, KelompokTindakan> = {
   dekompresi_ngt: 'gawat',
   minim_stimulus_tetanus: 'gawat',
 
-  nebulisasi: 'napas_cairan',
-  nebulisasi_burst_asma_anak: 'napas_cairan',
-  akses_iv_tanpa_bolus: 'napas_cairan',
-  pasang_infus: 'napas_cairan',
-  rehidrasi_plan_c_bayi: 'napas_cairan',
-  tiamin_hiperemesis: 'napas_cairan',
+  nebulisasi: 'napas',
+  nebulisasi_burst_asma_anak: 'napas',
+  suction_hidung_bronkiolitis_selektif: 'napas',
+  kewaspadaan_droplet_meningokokus: 'napas',
+  akses_iv_tanpa_bolus: 'cairan_metabolik',
+  pasang_infus: 'cairan_metabolik',
+  rehidrasi_plan_c_bayi: 'cairan_metabolik',
+  tiamin_hiperemesis: 'cairan_metabolik',
+  rehidrasi_gizi_buruk_non_syok: 'cairan_metabolik',
+  jaga_hangat_gizi_buruk_anak: 'cairan_metabolik',
 
   perawatan_luka: 'luka',
   hecting_luka: 'luka',

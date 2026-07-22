@@ -4,6 +4,11 @@ export interface PpkCrosswalkEntry {
   entryIndex: number
   relation: EvidenceRelation
   rationale?: string
+  titleOverride?: string
+  entryNumberOverride?: string
+  icd10Override?: string[]
+  chunkStartMarker?: string
+  chunkEndMarker?: string
 }
 
 export interface PnpkCrosswalkEntry {
@@ -174,9 +179,11 @@ export const PPK_CROSSWALK: Record<string, PpkCrosswalkEntry> = {
   lab_retinopati_diabetik_proliferatif: { entryIndex: 54, relation: 'direct' },
   lab_otitis_media_supuratif_kronik_komplikata: { entryIndex: 57, relation: 'direct' },
   lab_mastoiditis_akut: {
-    entryIndex: 57,
+    entryIndex: 56,
     relation: 'related',
-    rationale: 'Komplikasi OMSK terkait, tetapi mastoiditis akut tidak mempunyai bab PPK sendiri.',
+    rationale: 'Bab Otitis Media Akut mencantumkan komplikasi mastoid/subperiosteal dan merujuk setiap komplikasi, tetapi tidak menyediakan algoritme mastoiditis anak lengkap.',
+    chunkStartMarker: 'Kriteria Rujukan',
+    chunkEndMarker: 'Peralatan',
   },
   lab_tia_serangan_iskemik_sesaat: { entryIndex: 80, relation: 'direct' },
   lab_gagal_jantung_dekompensasi: { entryIndex: 63, relation: 'direct' },
@@ -200,6 +207,26 @@ export const PPK_CROSSWALK: Record<string, PpkCrosswalkEntry> = {
     rationale: 'Bab PPK membahas O21.0 dan memberi prinsip terapi awal/rujuk; kasus ini O21.1 dengan dehidrasi dan gangguan elektrolit.',
   },
   lab_fraktur_tertutup_antebrachii_anak: { entryIndex: 67, relation: 'direct' },
+  lab_gizi_buruk_komplikasi: {
+    entryIndex: 145,
+    relation: 'direct',
+    titleOverride: 'Malnutrisi Energi Protein (MEP)',
+    entryNumberOverride: '8',
+    icd10Override: ['E40', 'E41', 'E42', 'E43', 'E44'],
+    chunkStartMarker: 'Malnutrisi Energi Protein (MEP)',
+    chunkEndMarker: 'Failure To Thrive',
+    rationale: 'Bab MEP tergabung ke chunk LIPIDEMIA akibat pemisahan OCR; locator memakai subbagian manual yang tervalidasi.',
+  },
+  lab_malnutrisi_energi_protein_sedang: {
+    entryIndex: 145,
+    relation: 'direct',
+    titleOverride: 'Malnutrisi Energi Protein (MEP)',
+    entryNumberOverride: '8',
+    icd10Override: ['E40', 'E41', 'E42', 'E43', 'E44'],
+    chunkStartMarker: 'Malnutrisi Energi Protein (MEP)',
+    chunkEndMarker: 'Failure To Thrive',
+    rationale: 'Bab MEP tergabung ke chunk LIPIDEMIA akibat pemisahan OCR; locator memakai subbagian manual yang tervalidasi.',
+  },
 }
 
 /** Diagnosis-specific PNPK/program crosswalk. Absence is reported, never inferred. */
@@ -320,6 +347,14 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Women and people who menstruate with heavy menstrual bleeding',
     facilityScope: 'History, full blood count, cause-oriented assessment, treatment choices, and referral pathways.',
   },
+  'who-bronchiolitis-2026': {
+    title: 'WHO consolidated guidelines for the management of common childhood illness: asthma and bronchiolitis',
+    authority: 'World Health Organization',
+    year: 2026,
+    officialUrl: 'https://www.who.int/publications/b/82992',
+    population: 'Infants and children under 2 years with suspected or confirmed bronchiolitis',
+    facilityScope: 'Diagnosis, admission criteria, imaging, oxygen escalation, and supportive care across primary and referral settings.',
+  },
   'nice-bronchiolitis-ng9': {
     title: 'Bronchiolitis in children: diagnosis and management (NG9)',
     authority: 'National Institute for Health and Care Excellence',
@@ -335,6 +370,22 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.who.int/publications/i/item/9789240108042',
     population: 'Children over 1 month, adolescents, and adults with acute community-acquired meningitis',
     facilityScope: 'First- and second-level facilities, including conditional pre-referral antimicrobial therapy.',
+  },
+  'who-meningitis-toolkit-2026': {
+    title: 'Preparedness and response to bacterial meningitis outbreaks: toolkit for frontline healthcare workers',
+    authority: 'World Health Organization',
+    year: 2026,
+    officialUrl: 'https://www.who.int/publications/i/item/B09660/',
+    population: 'Children over 1 month, adolescents, and adults with acute bacterial meningitis in outbreak-prone or resource-limited settings',
+    facilityScope: 'Frontline recognition, antimicrobial and supportive care, post-exposure prophylaxis, and infection prevention and control.',
+  },
+  'kemenkes-meningokokus-2023': {
+    title: 'Panduan Deteksi dan Respon Penyakit Meningitis Meningokokus',
+    authority: 'Kementerian Kesehatan Republik Indonesia',
+    year: 2023,
+    officialUrl: 'https://infeksiemerging.kemkes.go.id/document/panduan-deteksi-dan-respon-meningitis-meningokokus/view',
+    population: 'Kasus suspek, probable, atau terkonfirmasi meningokokus serta kontak eratnya di Indonesia',
+    facilityScope: 'Definisi kasus, rujukan, pelaporan, penyelidikan epidemiologi, kewaspadaan droplet, pemantauan kontak, dan kemoprofilaksis.',
   },
   'rcuk-anaphylaxis-2021': {
     title: 'Emergency treatment of anaphylaxis: guidelines for healthcare providers',
@@ -385,12 +436,20 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     facilityScope: 'Hospital treatment with immune globulin, spasm control, airway support, wound care, antibiotics, and vaccination during recovery.',
   },
   'poison-control-button-battery': {
-    title: 'Button battery ingestion triage and treatment guideline',
+    title: 'Button battery ingestion triage and treatment guideline (living web guideline; accessed 2026)',
     authority: 'National Capital Poison Center',
     year: 2026,
     officialUrl: 'https://www.poison.org/battery/guideline',
     population: 'Children and adults with suspected or confirmed button-battery ingestion',
     facilityScope: 'Pre-hospital triage, imaging, mitigation, and emergency removal pathway.',
+  },
+  'aap-esophageal-caustic-2025': {
+    title: 'Esophageal Caustic Injury',
+    authority: 'American Academy of Pediatrics, Pediatric Care Online',
+    year: 2025,
+    officialUrl: 'https://publications.aap.org/pediatriccare/article/doi/10.1542/aap.ppcqr.396255/111/Esophageal-Caustic-Injury',
+    population: 'Children with caustic esophageal injury, including an esophageal button battery',
+    facilityScope: 'Emergency recognition, mitigation, and endoscopic removal; used to set the referral urgency from FKTP.',
   },
   'bts-pleural-procedures-2023': {
     title: 'BTS Clinical Statement on Pleural Procedures',
@@ -513,7 +572,7 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     facilityScope: 'Initial bronchodilation, controlled oxygen, systemic corticosteroids, antibiotics when indicated, ventilatory support, and referral.',
   },
   'nice-tia-ng128': {
-    title: 'Stroke and transient ischaemic attack in over 16s: diagnosis and initial management (NG128)',
+    title: 'Stroke and transient ischaemic attack in over 16s: diagnosis and initial management (NG128; reviewed 2026)',
     authority: 'National Institute for Health and Care Excellence',
     year: 2022,
     officialUrl: 'https://www.nice.org.uk/guidance/NG128/chapter/recommendations',
@@ -527,6 +586,22 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://professional.heart.org/en/science-news/diagnosis-workup-risk-reduction-of-transient-ischemic-attack-in-the-emergency-department-setting',
     population: 'Adults with suspected transient ischemic attack whose focal neurologic symptoms may have resolved before assessment',
     facilityScope: 'Emergency recognition, rapid etiologic workup, brain and vascular imaging pathways, risk reduction, and regional stroke-system linkage.',
+  },
+  'aha-stroke-prevention-2021': {
+    title: 'Guideline for the Prevention of Stroke in Patients With Stroke and Transient Ischemic Attack',
+    authority: 'American Heart Association and American Stroke Association',
+    year: 2021,
+    officialUrl: 'https://professional.heart.org/en/science-news/2021-guideline-for-the-prevention-of-stroke-in-patients-with-stroke-and-transient-ischemic-attack/top-things-to-know',
+    population: 'Adults after ischaemic stroke or transient ischaemic attack',
+    facilityScope: 'Etiology-specific secondary prevention, atrial-fibrillation anticoagulation, vascular risk-factor control, and follow-up.',
+  },
+  'esc-af-2024': {
+    title: '2024 ESC Guidelines for the management of atrial fibrillation',
+    authority: 'European Society of Cardiology',
+    year: 2024,
+    officialUrl: 'https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/atrial-fibrillation/',
+    population: 'Adults with atrial fibrillation, including those with prior stroke or transient ischaemic attack',
+    facilityScope: 'AF-CARE pathway, thromboembolic-risk assessment, oral anticoagulation, risk-factor treatment, and reassessment.',
   },
   'wses-complicated-hernia-2017': {
     title: '2017 update of the WSES guidelines for emergency repair of complicated abdominal wall hernias',
@@ -1082,14 +1157,30 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Recommendation B2: inpatient referral for danger signs, acute medical problems, severe oedema, or failed appetite test.',
   }],
   lab_bronkiolitis_berat: [{
+    sourceId: 'who-bronchiolitis-2026',
+    relation: 'direct',
+    locator: 'Sections 6.1-6.6: good-practice statements for diagnosis and admission; Recommendation 1 on selective chest X-ray; Recommendation 2 remarks on standard low-flow oxygen first; Recommendation 3 on a conditional hypertonic-saline trial.',
+  }, {
     sourceId: 'nice-bronchiolitis-ng9',
     relation: 'direct',
-    locator: 'Recommendations 1.2.1-1.2.3 and 1.4.3-1.4.4: referral, oxygen thresholds, and treatments not used routinely.',
+    locator: 'Recommendations 1.2.1-1.2.3 and 1.4.3-1.4.12: referral, oxygen thresholds, treatments not used routinely, selective suction, and enteral/IV fluid support.',
   }],
   lab_meningitis_bakterial_suspek: [{
     sourceId: 'who-meningitis-2025',
     relation: 'direct',
-    locator: 'Pre-referral antibiotic therapy: consider parenteral treatment when bacterial meningitis is strongly suspected and significant transfer delay is likely.',
+    locator: 'General management and timing of empiric treatment: transfer urgently; consider parenteral pre-referral therapy when bacterial meningitis is strongly suspected and clinically significant delay is likely; use IM if IV is not secured.',
+  }, {
+    sourceId: 'who-meningitis-toolkit-2026',
+    relation: 'direct',
+    locator: 'Frontline job aids cover acute bacterial meningitis recognition, antibiotic and supportive care, post-exposure prophylaxis, and infection prevention and control.',
+  }, {
+    sourceId: 'kemenkes-meningokokus-2023',
+    relation: 'direct',
+    locator: 'Bab III-V and the outbreak-investigation algorithm: purpura can meet probable meningococcal criteria; refer, notify, identify and monitor close contacts, apply risk-based protection, and coordinate chemoprophylaxis.',
+  }, {
+    sourceId: 'kemenkes-antimicrobial-2021',
+    relation: 'direct',
+    locator: 'Regimen meningitis bakterial dewasa lists ceftriaxone 2 g IV every 12 hours; the game assesses only the scenario-specific first pre-referral dose.',
   }],
   lab_anafilaksis_makanan: [{
     sourceId: 'rcuk-anaphylaxis-2021',
@@ -1400,7 +1491,11 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
   lab_benda_asing_esofagus: [{
     sourceId: 'poison-control-button-battery',
     relation: 'direct',
-    locator: 'Steps 2, 4, 7, and 11-13: conditional honey, NPO otherwise, urgent imaging, and immediate esophageal removal.',
+    locator: 'Steps 2, 4, 7, 10, and 11-13: honey only when the child can swallow, NPO otherwise, urgent AP/lateral imaging across the full tract, and immediate esophageal removal without delay.',
+  }, {
+    sourceId: 'aap-esophageal-caustic-2025',
+    relation: 'direct',
+    locator: 'Button batteries lodged in the esophagus are life-threatening and require emergent removal within two hours; honey or sucralfate mitigation cannot replace definitive removal.',
   }],
   lab_efusi_pleura: [{
     sourceId: 'bts-pleural-procedures-2023',
@@ -1487,6 +1582,16 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
       relation: 'direct',
       locator: 'Top Things to Know: resolved symptoms remain clinically urgent because early stroke risk is front-loaded; use rapid diagnostic workup and a regional pathway with brain/vascular imaging and specialist access.',
     },
+    {
+      sourceId: 'aha-stroke-prevention-2021',
+      relation: 'direct',
+      locator: 'Top Things to Know 1, 2, 5, and 6: secondary prevention is etiology-specific; AF usually requires anticoagulation; combined antiplatelet and anticoagulant therapy is generally not indicated; risk factors need longitudinal management.',
+    },
+    {
+      sourceId: 'esc-af-2024',
+      relation: 'direct',
+      locator: 'AF-CARE framework: address comorbidities and risk factors, avoid stroke and thromboembolism with appropriate anticoagulation, and reassess over time.',
+    },
   ],
 }
 
@@ -1571,7 +1676,6 @@ export const KFA_QUERIES: Record<string, string[]> = {
   prednison_5: ['Prednisone'],
   propranolol_10: ['Propranolol'],
   ringer_laktat_inf: ['Sodium Chloride', 'Potassium Chloride', 'Calcium Chloride', 'Sodium Lactate'],
-  simvastatin_20: ['Simvastatin'],
   tablet_fe: ['Ferrous Sulfate', 'Folic Acid'],
   tamsulosin_04: ['Tamsulosin'],
   tramadol_50: ['Tramadol'],

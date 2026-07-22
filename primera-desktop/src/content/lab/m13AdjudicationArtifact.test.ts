@@ -52,7 +52,7 @@ describe('M13-137 adjudication artifact', () => {
       expect(PPK_ENTRIES[link.entryIndex], caseId).toBeDefined()
       expect(['direct', 'related'], caseId).toContain(link.relation)
     }
-    expect(DATA.summary).toMatchObject({ ppkDirect: 91, ppkRelated: 15, ppkAbsent: 31 })
+    expect(DATA.summary).toMatchObject({ ppkDirect: 93, ppkRelated: 15, ppkAbsent: 29 })
   })
 
   it('crosswalk PNPK tidak mempunyai caseId yatim dan relasi eksplisit', () => {
@@ -81,12 +81,12 @@ describe('M13-137 adjudication artifact', () => {
     expect(DATA.summary.ebmDirect).toBe(66)
   })
 
-  it('snapshot KFA exact mencakup 67 obat dan tidak mengarang query yang gagal', () => {
+  it('snapshot KFA exact mencakup 66 obat dan tidak mengarang query yang gagal', () => {
     const ids = usedDrugIds()
-    expect(ids).toHaveLength(67)
+    expect(ids).toHaveLength(66)
     expect(Object.keys(KFA_QUERIES).sort()).toEqual(ids)
     expect(KFA.caseCount).toBe(137)
-    expect(KFA.drugCount).toBe(67)
+    expect(KFA.drugCount).toBe(66)
     expect(KFA.unresolved).toEqual([])
     expect(KFA.items.map((item) => item.drugId).sort()).toEqual(ids)
     for (const item of KFA.items) {

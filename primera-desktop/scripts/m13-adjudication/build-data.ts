@@ -237,6 +237,8 @@ const RESOURCE_TIERS: Record<string, Pick<ResourceItem, 'tier' | 'note'>> = {
   akses_iv_resusitasi: { tier: 'B', note: 'Akses IV/cairan lazim, tetapi readiness consumable tetap perlu.' },
   antiemetik_parenteral_hiperemesis: { tier: 'C', note: 'Pilihan obat, dosis, rute parenteral, kontraindikasi, dan monitoring harus mengikuti protokol kehamilan lokal.' },
   antibiotik_parenteral_gizi_buruk_protokol: { tier: 'C', note: 'Regimen, dosis anak, stok, dan jejaring TFC/RS harus dinyatakan; bukan satu vial universal.' },
+  rehidrasi_gizi_buruk_non_syok: { tier: 'B', note: 'ReSoMal lebih disukai; ORS osmolaritas rendah adalah fallback terpantau bila ReSoMal tidak tersedia.' },
+  jaga_hangat_gizi_buruk_anak: { tier: 'A', note: 'Kain kering, selimut, suhu ruangan, dan pemantauan suhu adalah kesiapan inti.' },
   antibiotik_parenteral_kaki_diabetik_protokol: { tier: 'C', note: 'Regimen, stok, alergi, fungsi ginjal, pola resistensi lokal, dan jalur bedah-vaskular harus dinyatakan; bukan satu vial universal.' },
   antibiotik_parenteral_neonatus_protokol: { tier: 'C', note: 'Protokol neonatus dan jejaring/PONED tidak diasumsikan otomatis.' },
   balut_luka_kaki_diabetik_pra_rujuk: { tier: 'B', note: 'Balutan bersih nonadheren dan off-loading sederhana harus ready; tidak mencakup probing atau debridemen tajam.' },
@@ -313,7 +315,6 @@ const RESOURCE_GROUNDING_BY_CASE: Record<string, readonly string[]> = {
   lab_taeniasis_intestinal: ['feses_rutin'],
   lab_tb_paru_putus_obat_suspek_mdr: ['tcm_sputum'],
   lab_meningitis_bakterial_suspek: ['darah_rutin'],
-  lab_benda_asing_esofagus: ['foto_toraks'],
   lab_mastoiditis_akut: ['darah_rutin'],
   lab_vaginosis_bakterialis: ['mikroskopis_gram_koh'],
   lab_retensio_urin_akut: ['pemasangan_kateter_urin'],
@@ -393,16 +394,29 @@ function ppkEvidence(kasus: KasusKlinis): AdjudicationCase['evidence']['ppk'] {
   }
   const entry = PPK_ENTRIES[link.entryIndex]
   if (!entry) throw new Error(`PPK index ${link.entryIndex} hilang untuk ${kasus.id}`)
-  const pdfPage = PPK_BOUNDARIES.findIndex((offset) => offset > entry.text_start) + 1
+  let chunk = entry.chunk
+  let chunkOffset = 0
+  if (link.chunkStartMarker) {
+    chunkOffset = entry.chunk.indexOf(link.chunkStartMarker)
+    if (chunkOffset < 0) throw new Error(`PPK marker awal '${link.chunkStartMarker}' hilang untuk ${kasus.id}`)
+    chunk = entry.chunk.slice(chunkOffset)
+  }
+  if (link.chunkEndMarker) {
+    const endIndex = chunk.indexOf(link.chunkEndMarker)
+    if (endIndex < 0) throw new Error(`PPK marker akhir '${link.chunkEndMarker}' hilang untuk ${kasus.id}`)
+    chunk = chunk.slice(0, endIndex)
+  }
+  const sourceOffset = entry.text_start + chunkOffset
+  const pdfPage = PPK_BOUNDARIES.findIndex((offset) => offset > sourceOffset) + 1
   const excerpts = [
     extractSection(
-      entry.chunk,
+      chunk,
       [/Penatalaksanaan Komprehensif\s*\(Plan\)/i, /Penatalaksanaan\s+/i],
       [/Rencana Tindak Lanjut/i, /Konseling dan Edukasi/i, /Kriteria Rujukan/i, /Peralatan/i],
       'Penatalaksanaan',
     ),
     extractSection(
-      entry.chunk,
+      chunk,
       [/Kriteria Rujukan/i],
       [/Peralatan/i, /Prognosis/i, /Referensi/i],
       'Kriteria rujukan',
@@ -413,10 +427,10 @@ function ppkEvidence(kasus: KasusKlinis): AdjudicationCase['evidence']['ppk'] {
   return {
     status: link.relation === 'direct' ? 'cocok' : 'perlu-koreksi',
     relation: link.relation,
-    sourceTitle: entry.title,
-    sourceEntryNumber: entry.num,
+    sourceTitle: link.titleOverride ?? entry.title,
+    sourceEntryNumber: link.entryNumberOverride ?? entry.num,
     pdfPage,
-    sourceIcd10: entry.icd10_list,
+    sourceIcd10: link.icd10Override ?? entry.icd10_list,
     excerpts,
     limitation: link.rationale ?? (link.relation === 'related' ? 'Sumber hanya terkait, bukan diagnosis identik.' : undefined),
   }
