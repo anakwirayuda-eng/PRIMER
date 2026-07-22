@@ -64,6 +64,10 @@
   transition: all var(--durasi-cepat) var(--ease-keluar);
 }
 
+.hud__tab:has(.hud__badge) {
+  padding-right: calc(var(--sp-4) + 1.8em);
+}
+
 .hud__tab:hover:not(:disabled) {
   background: var(--bg-sunken);
   color: var(--tinta);
@@ -153,4 +157,37 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--tinta-lembut);
+}
+
+/* WCAG reflow pada skala teks 150-200%: satu baris tidak cukup untuk tiga
+   kluster HUD. Susun informasi sumber daya di atas dan navigasi pada baris
+   kedua; seluruh kontrol tetap terlihat tanpa saling menimpa atau perlu
+   scroll horizontal global. Ambang kelas berasal dari preferensi pengguna,
+   jadi tidak bergantung pada breakpoint viewport yang buta terhadap zoom. */
+.app-frame--teks-besar .hud {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'kiri kanan'
+    'nav nav';
+  row-gap: var(--sp-2);
+  overflow-x: visible;
+}
+
+.app-frame--teks-besar .hud__kiri {
+  grid-area: kiri;
+  min-width: max-content;
+}
+
+.app-frame--teks-besar .hud__nav {
+  grid-area: nav;
+  width: 100%;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.app-frame--teks-besar .hud__kanan {
+  grid-area: kanan;
+  min-width: max-content;
 }

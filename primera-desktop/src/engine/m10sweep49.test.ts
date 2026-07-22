@@ -30,15 +30,17 @@ describe('M10 §49 — obatOpsional (hordeolum)', () => {
     expect(hordeolum.tatalaksana.obatOpsional).toContain('kloramfenikol_tetes_mata')
   })
 
-  it('terapi konservatif (tanpa obat apa pun) → skorTerapi PENUH, bukan 0', () => {
+  it('terapi konservatif tidak dihukum, tetapi dimensi obat/prosedur ditandai N/A', () => {
     // Dulu obatBenar=[kloramfenikol], totalSlot=1, tak meresepkan → rasioTerapi 0.
     const hasil = nilaiEncounter(encFor('mata_hordeolum', []), hordeolum, PACK)
     expect(hasil.skorTerapi).toBe(100)
+    expect(hasil.terapiDinilai).toBe(false)
   })
 
   it('meresepkan antibiotik opsional → TIDAK dihukum (bukan obat-di-luar, bukan antibiotik-tanpa-indikasi)', () => {
     const hasil = nilaiEncounter(encFor('mata_hordeolum', ['kloramfenikol_tetes_mata']), hordeolum, PACK)
     expect(hasil.skorTerapi).toBe(100)
+    expect(hasil.terapiDinilai).toBe(false)
     expect(hasil.antibiotikTanpaIndikasi).toBe(false)
   })
 

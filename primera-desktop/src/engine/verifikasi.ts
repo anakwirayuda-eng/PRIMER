@@ -639,7 +639,13 @@ function fnv1a(teks: string): string {
 // hasil observasi baru tersedia sesudah hotspot terkait ditemukan. Cabang
 // yang meretakkan kepercayaan juga membawa narasi lanjutan spesifik. Save lama
 // tetap terbaca; `wali_anak` pada kasus self-report dinormalkan saat runtime.
-export const REVISI_ENGINE = 56
+// 57 (2026-07-22 - class readiness): surat rujukan baru ditutup hanya setelah
+// rencana balik dibaca DAN tiga langkah tindak lanjut diadopsi; terapi tanpa
+// obat/tindakan wajib dinilai N/A alih-alih nol; SBAR menyumbang 5% skor
+// encounter; penundaan karma dinormalisasi ke tanggal lapangan yang belum
+// terpakai; dan crash renderer dicatat serta dipulihkan satu kali. Perubahan
+// ini memengaruhi skor, jadwal, dan receipt replay sehingga wajib revisi baru.
+export const REVISI_ENGINE = 57
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

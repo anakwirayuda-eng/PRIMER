@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-19T12:19:53.710Z",
-  "sourceCommit": "9f08af2ab95069b367ab56bb1e0debc916360669",
-  "artifactFingerprint": "308af61b77240e3dc5a04158a15cc08bf416f748123747ecd127edbc8084e302",
-  "packFingerprint": "cf5238bc",
-  "contentRelease": "bridge-closure-2026-07-19",
-  "engineRevision": 55,
+  "generatedAt": "2026-07-22T00:22:11.187Z",
+  "sourceCommit": "4299c48e6b13ac098fbb1a138f071ebeca7bb398+dirty",
+  "artifactFingerprint": "88896f38e8670c8289ce846bbe643ee08045608e1c111bafc6da857a029feff9",
+  "packFingerprint": "c0afdff4",
+  "contentRelease": "class-readiness-2026-07-22",
+  "engineRevision": 57,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -2281,7 +2281,7 @@
       "mustRefer": false,
       "fktp144": true,
       "demographics": "8-12 tahun, semua gender",
-      "openingComplaint": "Ada benjolan nyeri di leher setelah sakit gigi dan demam ringan.",
+      "openingComplaint": "Anak saya mengalami benjolan nyeri di leher setelah sakit gigi dan demam ringan.",
       "currentManagement": {
         "requiredDrugs": [
           {
@@ -10459,7 +10459,7 @@
       "mustRefer": false,
       "fktp144": true,
       "demographics": "8-12 tahun, semua gender",
-      "openingComplaint": "Koreng tebal di tungkai menjadi luka cekung dan nyeri.",
+      "openingComplaint": "Anak saya mengalami koreng tebal di tungkai yang menjadi luka cekung dan nyeri.",
       "currentManagement": {
         "requiredDrugs": [
           {

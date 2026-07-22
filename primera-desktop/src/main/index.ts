@@ -24,6 +24,15 @@ const DEV = !app.isPackaged && (
 // ---------------------------------------------------------------------------
 
 const SAVE_DIR = () => join(app.getPath('userData'), 'saves')
+const RUNTIME_CRASH_LOG = () => join(app.getPath('userData'), 'runtime-crashes.jsonl')
+
+interface RuntimeRecoveryNotice {
+  occurredAt: string
+  reason: string
+  exitCode: number
+}
+
+let pemulihanRendererTertunda: RuntimeRecoveryNotice | null = null
 
 function sanitizeSlot(slot: string): string {
   // Slot menjadi nama file; tolak apa pun selain [a-z0-9_-]
@@ -151,6 +160,20 @@ function registerIpc(): void {
   })
 
   ipcMain.handle('app:version', () => app.getVersion())
+  ipcMain.handle('runtime:consume-recovery', () => {
+    const notice = pemulihanRendererTertunda
+    pemulihanRendererTertunda = null
+    return notice
+  })
+  ipcMain.handle('runtime:crash-log', async () => {
+    try {
+      const isi = await fs.readFile(RUNTIME_CRASH_LOG(), 'utf-8')
+      return isi.split('\n').filter(Boolean).slice(-50)
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []
+      throw error
+    }
+  })
 }
 
 function createWindow(): void {
@@ -188,6 +211,17 @@ function createWindow(): void {
     console.error('[render-process-gone]', details.reason, details.exitCode)
     if (details.reason === 'clean-exit' || win.isDestroyed()) return
     const sekarang = Date.now()
+    const notice: RuntimeRecoveryNotice = {
+      occurredAt: new Date(sekarang).toISOString(),
+      reason: details.reason,
+      exitCode: details.exitCode,
+    }
+    pemulihanRendererTertunda = notice
+    void fs.appendFile(
+      RUNTIME_CRASH_LOG(),
+      JSON.stringify({ ...notice, appVersion: app.getVersion() }) + '\n',
+      'utf-8',
+    ).catch((error) => console.error('[runtime-crash-log]', error))
     if (sekarang - terakhirReload < 4000) {
       console.error('[render-process-gone] crash beruntun — tidak auto-reload lagi (hindari loop)')
       // CODEX M14 #12: jangan tinggalkan jendela putih/mati diam. Tampilkan
@@ -204,7 +238,7 @@ function createWindow(): void {
       return
     }
     terakhirReload = sekarang
-    win.reload()
+    if (!win.isDestroyed()) win.reload()
   })
 
   // Kunci DevTools di produksi (CODEX P1): blokir pintasan F12/Ctrl+Shift+I/J/C

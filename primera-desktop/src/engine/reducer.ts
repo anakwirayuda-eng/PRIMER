@@ -10,6 +10,7 @@ import type {
   FokusProgram,
   GameState,
   KeluargaState,
+  LangkahUmpanBalikRujukan,
   ModeStase,
   PenilaianEncounter,
   PesertaProlanis,
@@ -170,6 +171,27 @@ function err(state: GameState, pesan: string): HasilAdvance {
   return { state, events: [{ type: 'ERROR_AKSI', pesan }] }
 }
 
+/**
+ * Menjaga satu-slot-lapangan-per-hari tetap adil setelah tenggat karma digeser
+ * oleh kontak awal, follow-up, atau hasil partial. Tenggat awal sudah diberi
+ * jarak di init; tanpa pagar yang sama saat reschedule, dua keluarga dapat
+ * menumpuk pada hari identik dan membuat satu krisis mustahil dicegah.
+ */
+function hariKarmaTersedia(
+  jadwal: GameState['jadwal'],
+  keluargaId: string,
+  hariDiinginkan: number,
+): number {
+  const terisi = new Set(
+    jadwal
+      .filter((item) => item.jenis === 'karma_igd' && item.keluargaId !== keluargaId)
+      .map((item) => item.hari),
+  )
+  let hari = hariDiinginkan
+  while (terisi.has(hari)) hari += 1
+  return hari
+}
+
 function catat(state: GameState, action: Action, detail?: string, replay = false): GameState {
   const entry = { hari: state.hari, blok: state.blok, aksi: action.type, ...(detail ? { detail } : {}) }
   // M6: jejak = jurnal aksi PENUH (payload utuh) — aksi yang ditolak pun ikut
@@ -234,39 +256,60 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
 
     case 'BACA_SURAT': {
       const inbox = s.inbox.map((m) => (m.id === action.suratId ? { ...m, dibaca: true } : m))
-      const surat = s.inbox.find((m) => m.id === action.suratId)
-      const episode = surat?.episodeId
+      return { state: { ...s, inbox }, events: [] }
+    }
+
+    case 'ADOPSI_UMPAN_BALIK': {
+      const surat = s.inbox.find((item) => item.id === action.suratId)
+      if (!surat) return err(s, 'Surat umpan balik tidak ditemukan.')
+      if (!surat.dibaca) return err(s, 'Baca ringkasan RS sebelum menyusun tindak lanjut FKTP.')
+      const episode = surat.episodeId
         ? s.careEpisodes.find((item) => item.id === surat.episodeId)
         : undefined
-      const careEpisodes = episode?.referral?.stage === 'feedback'
-        ? perbaruiEpisode(s.careEpisodes, {
-            id: episode.id,
-            day: s.hari,
-            subjectId: episode.subjectId,
-            subjectName: episode.subjectName,
-            ...(episode.familyId ? { familyId: episode.familyId } : {}),
-            ...(episode.rw !== undefined ? { rw: episode.rw } : {}),
-            source: episode.source,
-            problemId: episode.problemId,
-            problemLabel: episode.problemLabel,
-            owner: 'dokter',
-            status: 'terverifikasi',
-            signal: episode.receipt.signal,
-            ...(episode.receipt.decision ? { decision: episode.receipt.decision } : {}),
-            ...(episode.receipt.feedback ? { feedback: episode.receipt.feedback } : {}),
-            nextAction: episode.familyId
-              ? 'Ringkasan rujukan sudah masuk; lanjutkan pemantauan keluarga dan PWS rutin.'
-              : 'Ringkasan rujukan sudah masuk ke care plan FKTP; episode dapat ditutup.',
-            dueDay: null,
-            referral: {
-              ...episode.referral,
-              stage: 'acted',
-            },
-            eventLabel: 'Umpan balik ditindaklanjuti',
-            eventDetail: 'Ringkasan RS dibaca dan dimasukkan kembali ke rencana FKTP.',
-          })
-        : s.careEpisodes
-      return { state: { ...s, inbox, careEpisodes }, events: [] }
+      if (!episode || episode.referral?.stage !== 'feedback') {
+        return err(s, 'Surat ini tidak memiliki umpan balik rujukan yang menunggu tindakan.')
+      }
+
+      const dipilih = new Set<LangkahUmpanBalikRujukan>(action.langkah)
+      const wajib: LangkahUmpanBalikRujukan[] = ['rekonsiliasi', 'kontrol']
+      if (episode.familyId) wajib.push('pemantauan_keluarga')
+      if (wajib.some((item) => !dipilih.has(item))) {
+        return err(s, 'Lengkapi rekonsiliasi, rencana kontrol, dan pemantauan keluarga yang berlaku.')
+      }
+
+      const labelLangkah: Record<LangkahUmpanBalikRujukan, string> = {
+        rekonsiliasi: 'rekonsiliasi terapi/instruksi RS',
+        kontrol: 'jadwal kontrol FKTP',
+        pemantauan_keluarga: 'pemantauan keluarga/kader',
+      }
+      const rencana = wajib.map((item) => labelLangkah[item]).join(', ')
+      const careEpisodes = perbaruiEpisode(s.careEpisodes, {
+        id: episode.id,
+        day: s.hari,
+        subjectId: episode.subjectId,
+        subjectName: episode.subjectName,
+        ...(episode.familyId ? { familyId: episode.familyId } : {}),
+        ...(episode.rw !== undefined ? { rw: episode.rw } : {}),
+        source: episode.source,
+        problemId: episode.problemId,
+        problemLabel: episode.problemLabel,
+        owner: episode.familyId ? 'kader' : 'dokter',
+        status: 'terverifikasi',
+        signal: episode.receipt.signal,
+        decision: `Umpan balik diadopsi: ${rencana}.`,
+        ...(episode.receipt.feedback ? { feedback: episode.receipt.feedback } : {}),
+        nextAction: episode.familyId
+          ? 'Pertahankan kontrol FKTP dan pemantauan keluarga melalui kader/PWS.'
+          : 'Laksanakan kontrol FKTP sesuai ringkasan RS dan safety-net pasien.',
+        dueDay: null,
+        referral: {
+          ...episode.referral,
+          stage: 'acted',
+        },
+        eventLabel: 'Umpan balik diadopsi ke care plan',
+        eventDetail: `Dokter menetapkan ${rencana}.`,
+      })
+      return { state: { ...s, careEpisodes }, events: [] }
     }
 
     case 'TULIS_REFLEKSI': {
@@ -442,8 +485,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (nilai.firewallTerpicu) t.firewallTerpicu += 1
       if (nilai.stabilisasiTerlewat) t.stabilisasiTerlewat += 1
       t.labTakRelevan += nilai.labTakRelevan
-      t.sumSkorProses +=
-        (nilai.skorAnamnesis + nilai.skorPemeriksaan + nilai.skorTerapi + nilai.skorEdukasi) / 4
+      t.sumSkorProses += nilai.terapiDinilai === false
+        ? (nilai.skorAnamnesis + nilai.skorPemeriksaan + nilai.skorEdukasi) / 3
+        : (nilai.skorAnamnesis + nilai.skorPemeriksaan + nilai.skorTerapi + nilai.skorEdukasi) / 4
 
       // Ekonomi obat (M10 Batch-2, CODEX B.4): kas keluar utk obat terjadi di
       // PENGADAAN (PESAN_OBAT memotong kapitasi + belanjaPengadaan). Dulu
@@ -1394,23 +1438,34 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         const adaKarma = jadwal.some((j) => j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId)
         if (adaKarma && kontakAwalSah) {
           const jeda = hasil.ulangDalamHari ?? 1
+          const tenggatLama = kelBaru.karmaAktif?.jatuhTempoHari
+          const tenggatBaru = hariKarmaTersedia(
+            jadwal,
+            kj.keluargaId,
+            (tenggatLama ?? s.hari) + jeda,
+          )
           jadwal = jadwal.map((j) =>
-            j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId ? { ...j, hari: j.hari + jeda } : j,
+            j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId ? { ...j, hari: tenggatBaru } : j,
           )
           kelBaru = kelBaru.karmaAktif
             ? {
                 ...kelBaru,
                 karmaAktif: {
                   ...kelBaru.karmaAktif,
-                  jatuhTempoHari: kelBaru.karmaAktif.jatuhTempoHari + jeda,
+                  jatuhTempoHari: tenggatBaru,
                 },
               }
             : kelBaru
         } else if (adaKarma && hasil.berhasil && (janjiJatuhTempo ?? kelBaru.followUpHari) !== undefined) {
           const terlindungiSampai = (janjiJatuhTempo ?? kelBaru.followUpHari)! + 1
+          const tenggatBaru = hariKarmaTersedia(
+            jadwal,
+            kj.keluargaId,
+            Math.max(kelBaru.karmaAktif?.jatuhTempoHari ?? terlindungiSampai, terlindungiSampai),
+          )
           jadwal = jadwal.map((j) =>
             j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId
-              ? { ...j, hari: Math.max(j.hari, terlindungiSampai) }
+              ? { ...j, hari: tenggatBaru }
               : j,
           )
           kelBaru = kelBaru.karmaAktif
@@ -1418,7 +1473,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
                 ...kelBaru,
                 karmaAktif: {
                   ...kelBaru.karmaAktif,
-                  jatuhTempoHari: Math.max(kelBaru.karmaAktif.jatuhTempoHari, terlindungiSampai),
+                  jatuhTempoHari: tenggatBaru,
                 },
               }
             : kelBaru
@@ -1436,15 +1491,20 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           // digeser — jatuh tempo asli berlaku, memaksa penyelesaian nyata.
           const sudahTertunda = kelBaru.karmaAktif?.partialDitunda ?? 0
           if (sudahTertunda < BATAS_PARTIAL_KARMA) {
+            const tenggatBaru = hariKarmaTersedia(
+              jadwal,
+              kj.keluargaId,
+              (kelBaru.karmaAktif?.jatuhTempoHari ?? s.hari) + 3,
+            )
             jadwal = jadwal.map((j) =>
-              j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId ? { ...j, hari: j.hari + 3 } : j,
+              j.jenis === 'karma_igd' && j.keluargaId === kj.keluargaId ? { ...j, hari: tenggatBaru } : j,
             )
             kelBaru = kelBaru.karmaAktif
               ? {
                   ...kelBaru,
                   karmaAktif: {
                     ...kelBaru.karmaAktif,
-                    jatuhTempoHari: kelBaru.karmaAktif.jatuhTempoHari + 3,
+                    jatuhTempoHari: tenggatBaru,
                     partialDitunda: sudahTertunda + 1,
                   },
                 }

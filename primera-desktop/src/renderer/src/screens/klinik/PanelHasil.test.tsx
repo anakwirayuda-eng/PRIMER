@@ -75,6 +75,19 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     expect(bungkus?.getAttribute('aria-hidden')).not.toBe('true')
   })
 
+  it('kasus tanpa target obat/prosedur menampilkan Terapi N/A, bukan nilai sempurna gratis', () => {
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, skorTerapi: 100, terapiDinilai: false }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+    expect(screen.getByText('N/A')).toBeInTheDocument()
+    expect(screen.getByLabelText('Terapi tidak dinilai pada kasus ini')).toBeInTheDocument()
+  })
+
   it('CODEX ronde-16 P3: ikon 🎓 tutorial ditandai aria-hidden (dekoratif, teks di sebelahnya sudah menjelaskan)', () => {
     render(
       <PanelHasil

@@ -1437,7 +1437,53 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     expect(nilai.sbarSkor).toBe(20)
   })
 
-  it('SBAR copy-paste (keempat kolom identik) TAK dihukum — Fix #19b, murni kosmetik (adjudikasi DeepThink 2026-07-11)', () => {
+  it('SBAR berbobot ringan: handover baik dapat mempertahankan B, handover buruk menurunkan kasus ambang ke C', () => {
+    const kasusAmbang: KasusKlinis = {
+      ...KASUS_RUJUK,
+      id: 'pneumonia_sbar_mini',
+      anamnesis: [{
+        id: 'q_onset_sbar',
+        kategori: 'keluhan_utama',
+        tanya: 'Sejak kapan sesaknya?',
+        jawab: 'Sejak tadi malam.',
+        esensial: true,
+        oldcarts: ['onset'],
+      }],
+    }
+    const dasar: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'pneumonia_sbar_mini', usia: 3 })),
+      ditanya: ['q_onset_sbar'],
+      vitalDiukur: true,
+      diperiksa: ['toraks_paru'],
+      diagnosis: { icd10: 'J18.9', jenis: 'suspek' },
+      disposisi: 'rujuk',
+    }
+    const baik = nilaiEncounter({
+      ...dasar,
+      sbar: {
+        situation: 'Anak 3 tahun sesak berat sejak tadi malam dan perlu dirujuk segera.',
+        background: 'Demam dua hari disertai batuk dan asupan mulai berkurang.',
+        assessment: 'Suspek pneumonia berat J18.9 dengan retraksi dan hipoksemia.',
+        recommendation: 'Mohon terima untuk rawat inap dan terapi lanjutan segera.',
+      },
+    }, kasusAmbang, PACK)
+    const buruk = nilaiEncounter({
+      ...dasar,
+      sbar: {
+        situation: 'anak sesak',
+        background: '-',
+        assessment: 'J18.9',
+        recommendation: 'rujuk',
+      },
+    }, kasusAmbang, PACK)
+
+    expect(baik.sbarSkor).toBe(100)
+    expect(buruk.sbarSkor).toBe(20)
+    expect(baik.grade).toBe('B')
+    expect(buruk.grade).toBe('C')
+  })
+
+  it('SBAR copy-paste tetap dinilai dari kelengkapan sederhana tanpa penalti anti-cheat', () => {
     const teksSama = 'Pasien demam 3 hari 1234567890 kondisi umum stabil terpantau'
     const enc: EncounterState = {
       ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3 })),
@@ -1451,11 +1497,26 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
       },
     }
     const nilai = nilaiEncounter(enc, KASUS_RUJUK, PACK)
-    // sbarSkor terbukti tak pernah masuk nilaiTotal/tally/konsekuensi apa pun —
-    // chip tampilan murni. Penalti anti-cheat (copy-paste −50, wajib-data −20)
-    // dilucuti (stres artifisial tanpa taruhan nyata): 4×20 (semua ≥20 char) =
-    // 80, tak menyebut diagnosis jadi tak dapat +20 bonus.
+    // Penalti anti-cheat lama tetap dilucuti. Empat kolom cukup panjang memberi
+    // 80; tidak menyebut diagnosis berarti bonus assessment tidak didapat.
     expect(nilai.sbarSkor).toBe(80)
+  })
+
+  it('kasus tanpa target obat/prosedur mengalihkan bobot terapi ke edukasi', () => {
+    const dasar: EncounterState = {
+      ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3 })),
+      vitalDiukur: true,
+      diperiksa: ['toraks_paru'],
+      diagnosis: { icd10: 'J18.9', jenis: 'suspek' },
+      disposisi: 'rujuk',
+    }
+    const tanpaEdukasi = nilaiEncounter(dasar, KASUS_RUJUK, PACK)
+    const denganEdukasi = nilaiEncounter({ ...dasar, edukasi: ['tanda_bahaya'] }, KASUS_RUJUK, PACK)
+
+    expect(tanpaEdukasi.terapiDinilai).toBe(false)
+    expect(tanpaEdukasi.skorTerapi).toBe(100)
+    expect(tanpaEdukasi.grade).toBe('C')
+    expect(denganEdukasi.grade).toBe('A')
   })
 
   it('SBAR beda kata sedikit (bukan copy-paste identik) TIDAK kena hukuman copas', () => {

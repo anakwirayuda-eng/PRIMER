@@ -12,24 +12,33 @@
  * kualitas keputusannya di-parameter-kan per-profil, dijalankan penuh sepanjang
  * mode, dan MENCATAT (bukan cuma lulus/gagal) distribusi grade tiap profil.
  *
- * Cakupan: subuh IGD (ditangani optimal utk SEMUA profil — kompetensi gawat
- * darurat bukan fokus perbandingan ini) + poli klinik (parameter penuh per-
- * profil) + maksimal 1 kunjungan rumah/hari bila roster & stamina mengizinkan
- * (parameter kualitas MI per-profil). TIDAK mengunjungi Kegiatan/Posyandu/
- * Prolanis eksplisit — sama batasan cakupannya dgn `soak.test.ts`, dicatat
- * di sini juga supaya tak dikira representasi UKM penuh.
+ * Cakupan baseline adversarial: subuh IGD (ditangani optimal utk SEMUA profil)
+ * + poli klinik + maksimal 1 kunjungan rumah/hari. Di bagian akhir ada satu
+ * driver TELADAN TERPADU tersendiri yang juga menjalankan Posyandu, Prolanis,
+ * respons KLB, Lokmin, penutupan umpan-balik rujukan, dan pemulihan akhir pekan.
+ * Pemisahan ini menjaga perbandingan profil lama tetap stabil sekaligus memberi
+ * bukti attainability untuk keempat dimensi permainan yang sebenarnya.
  */
 
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
 import { buildInitialState } from './init'
-import { advance } from './reducer'
+import {
+  advance,
+  BIAYA_STAMINA_KUNJUNGAN,
+  COOLDOWN_POSYANDU,
+  HARI_BUKA_KLB,
+  HARI_BUKA_POSYANDU,
+  HARI_BUKA_PROLANIS,
+  SIKLUS_LAPORAN_BULANAN,
+} from './reducer'
 import { hitungSkor } from './scoring'
 import { KAPASITAS_EDUKASI } from './clinic'
 import { HARI_STASE } from './paketUjian'
 import { Rng } from './core/rng'
 import { isGayaTerlarang } from '@content/types'
 import { rumahSakitCocokUntukIgd } from './igd'
+import { ambangKlusterPack, clusterAktif } from './surveilans'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
 import type { GameState, ModeStase, PenilaianEncounter } from './state'
@@ -122,6 +131,17 @@ function semuaAngkaFinite(obj: Record<string, unknown>, label: string): string[]
   const cacat: string[] = []
   for (const [k, v] of Object.entries(obj)) {
     if (typeof v === 'number' && !Number.isFinite(v)) cacat.push(`${label}.${k}=${v}`)
+  }
+  return cacat
+}
+
+function cacatTenggatKarma(state: GameState): string[] {
+  const pemilikHari = new Map<number, string>()
+  const cacat: string[] = []
+  for (const item of state.jadwal.filter((jadwal) => jadwal.jenis === 'karma_igd')) {
+    const ada = pemilikHari.get(item.hari)
+    if (ada) cacat.push(`H${state.hari}.karma-bentrok@${item.hari}:${ada}+${item.keluargaId ?? '-'}`)
+    else pemilikHari.set(item.hari, item.keluargaId ?? '-')
   }
   return cacat
 }
@@ -266,11 +286,12 @@ function beresPagiProfil(
   state: GameState,
   profil: Profil,
   rng: Rng,
+  staminaCadangan = 0,
 ): { state: GameState; penilaian: PenilaianEncounter[] } {
   let s = state
   const penilaian: PenilaianEncounter[] = []
   let guard = 0
-  while (s.klinik.antrian.length > 0 && guard++ < 20) {
+  while (s.klinik.antrian.length > 0 && s.stamina > staminaCadangan && guard++ < 20) {
     const hasil = tanganiPasienProfil(s, profil, rng)
     s = hasil.state
     if (hasil.penilaian) penilaian.push(hasil.penilaian)
@@ -283,8 +304,20 @@ function beresPagiProfil(
 function cobaKunjunganProfil(state: GameState, profil: Profil, rng: Rng): GameState {
   if (state.blok !== 'siang' || state.stamina <= 0) return state
   const kandidat = Object.entries(state.desa.keluarga)
-    .filter(([, k]) => k.arcSelesai === undefined)
-    .sort(([a], [b]) => (state.desa.binaan.includes(a) === state.desa.binaan.includes(b) ? 0 : state.desa.binaan.includes(a) ? -1 : 1))
+    .filter(([, k]) =>
+      k.arcSelesai === undefined &&
+      (k.followUpHari === undefined || k.followUpHari <= state.hari),
+    )
+    .sort(([a, keluargaA], [b, keluargaB]) => {
+      const tenggatA = keluargaA.karmaAktif?.jatuhTempoHari ?? Number.POSITIVE_INFINITY
+      const tenggatB = keluargaB.karmaAktif?.jatuhTempoHari ?? Number.POSITIVE_INFINITY
+      if (tenggatA !== tenggatB) return tenggatA - tenggatB
+      return state.desa.binaan.includes(a) === state.desa.binaan.includes(b)
+        ? 0
+        : state.desa.binaan.includes(a)
+          ? -1
+          : 1
+    })
   const target = kandidat[0]?.[0]
   if (!target) return state
   const kelContent = PACK.keluarga[target]
@@ -294,16 +327,17 @@ function cobaKunjunganProfil(state: GameState, profil: Profil, rng: Rng): GameSt
   if (!skenario) return state
 
   let s = state.desa.binaan.includes(target) ? state : coba(state, { type: 'PILIH_BINAAN', keluargaId: target })
-  s = coba(s, { type: 'MULAI_KUNJUNGAN', keluargaId: target })
+  const mulaiKunjungan = cobaEv(s, { type: 'MULAI_KUNJUNGAN', keluargaId: target })
+  s = mulaiKunjungan.state
   if (s.kunjungan?.fase === 'penerimaan' && skenario.penerimaanAwal) {
     const pilihan = profil.kunjunganKualitas === 'teladan'
       ? skenario.penerimaanAwal.pilihan.find((p) => p.tindakan === 'hormati')
       : profil.kunjunganKualitas === 'cepat'
         ? skenario.penerimaanAwal.pilihan.find((p) => p.tindakan === 'memaksa')
         : rng.pick(skenario.penerimaanAwal.pilihan)
-    return pilihan ? coba(s, { type: 'RESPONS_PENERIMAAN', pilihanId: pilihan.id }) : s
+    if (pilihan) s = coba(s, { type: 'RESPONS_PENERIMAAN', pilihanId: pilihan.id })
   }
-  if (!s.kunjungan || s.kunjungan.fase !== 'observasi') return state // ditolak (stamina/roster) — lewati hari ini
+  if (!s.kunjungan || s.kunjungan.fase !== 'observasi') return s
 
   if (profil.kunjunganKualitas === 'teladan') {
     for (const h of skenario.hotspot) s = coba(s, { type: 'KLIK_HOTSPOT', hotspotId: h.id })
@@ -354,6 +388,172 @@ function cobaKunjunganProfil(state: GameState, profil: Profil, rng: Rng): GameSt
     if (pilihan) s = coba(s, { type: 'PILIH_INGATKAN', pilihanId: pilihan.id })
   }
   return s
+}
+
+/** Jawab seluruh kartu kegiatan dengan keputusan benar, tanpa shortcut state. */
+function beresKegiatanTeladan(state: GameState): GameState {
+  let s = state
+  let guard = 0
+  while (s.kegiatan && guard++ < 30) {
+    const kartu = s.kegiatan.kartu[s.kegiatan.index]
+    if (!kartu) break
+    const benar = kartu.pilihan.find((p) => p.benar) ?? kartu.pilihan[0]
+    if (!benar) break
+    s = coba(s, { type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: benar.id })
+  }
+  return s
+}
+
+function biayaKunjunganTeladan(state: GameState): number {
+  const kandidat = Object.entries(state.desa.keluarga)
+    .filter(([, kel]) =>
+      kel.arcSelesai === undefined &&
+      (kel.followUpHari === undefined || kel.followUpHari <= state.hari),
+    )
+    .sort(([a, keluargaA], [b, keluargaB]) => {
+      const tenggatA = keluargaA.karmaAktif?.jatuhTempoHari ?? Number.POSITIVE_INFINITY
+      const tenggatB = keluargaB.karmaAktif?.jatuhTempoHari ?? Number.POSITIVE_INFINITY
+      if (tenggatA !== tenggatB) return tenggatA - tenggatB
+      return state.desa.binaan.includes(a) === state.desa.binaan.includes(b)
+        ? 0
+        : state.desa.binaan.includes(a)
+          ? -1
+          : 1
+    })[0]
+  const rw = kandidat ? PACK.keluarga[kandidat[0]]?.rw : undefined
+  const jarak = PACK.rw.find((profilRw) => profilRw.nomor === rw)?.jarak ?? 'sedang'
+  return BIAYA_STAMINA_KUNJUNGAN[jarak]
+}
+
+/**
+ * Satu keputusan siang untuk pemain teladan. Prioritasnya sengaja klinis:
+ * respons sinyal KLB, sesi Prolanis jatuh tempo, Posyandu jatuh tempo, lalu
+ * kunjungan keluarga. Akhir pekan dipakai pulih agar strategi terbaik tidak
+ * identik dengan bekerja sampai burnout.
+ */
+function beresSiangTeladan(state: GameState, rng: Rng): GameState {
+  let s = state
+  if (s.blok !== 'siang') return s
+
+  const karmaMendesak = Object.values(s.desa.keluarga).some(
+    (keluarga) =>
+      keluarga.arcSelesai === undefined &&
+      keluarga.karmaAktif !== undefined &&
+      keluarga.karmaAktif.jatuhTempoHari <= s.hari + 1,
+  )
+  if (karmaMendesak) {
+    const setelahKunjungan = cobaKunjunganProfil(s, TELITI, rng)
+    if (setelahKunjungan !== s) return setelahKunjungan
+  }
+
+  if (s.hari % 7 === 0) return coba(s, { type: 'PEMULIHAN', jenis: 'istirahat' })
+
+  const cluster = clusterAktif(s, PACK)[0]
+  if (cluster) {
+    const mulai = coba(s, { type: 'MULAI_KLB', rw: cluster.rw, kasusId: cluster.kasusId })
+    if (mulai.kegiatan) return beresKegiatanTeladan(mulai)
+  }
+
+  const prolanisJatuhTempo =
+    s.hari >= HARI_BUKA_PROLANIS[s.mode] &&
+    s.prolanis.roster.length > 0 &&
+    (s.prolanis.sesiBerikutHari === undefined || s.hari >= s.prolanis.sesiBerikutHari)
+  if (prolanisJatuhTempo) {
+    const mulai = coba(s, { type: 'MULAI_PROLANIS' })
+    if (mulai.kegiatan) return beresKegiatanTeladan(mulai)
+  }
+
+  const targetKunjungan = state.mode === 'karier' ? 24 : 8
+  if (s.tally.kunjunganTotal < targetKunjungan) {
+    const setelahKunjungan = cobaKunjunganProfil(s, TELITI, rng)
+    if (setelahKunjungan !== s) return setelahKunjungan
+  }
+
+  if (s.hari >= HARI_BUKA_POSYANDU[s.mode]) {
+    const rwJatuhTempo = PACK.rw
+      .map((rw) => rw.nomor)
+      .find((rw) => {
+        const terakhir = s.posyanduRwTerakhir[String(rw)]
+        return terakhir === undefined || s.hari - terakhir >= COOLDOWN_POSYANDU[s.mode]
+      })
+    if (rwJatuhTempo !== undefined) {
+      const mulai = coba(s, { type: 'MULAI_POSYANDU', rw: rwJatuhTempo })
+      if (mulai.kegiatan) return beresKegiatanTeladan(mulai)
+    }
+  }
+
+  return cobaKunjunganProfil(s, TELITI, rng)
+}
+
+function tutupAdministrasiTeladan(state: GameState): GameState {
+  let s = state
+  if (s.flags.rekapSlice && !s.flags.rekapDitutup) s = coba(s, { type: 'TUTUP_REKAP' })
+  if (s.flags[`lokmin${s.hari}`] && !s.flags.lokminDitutup) {
+    const periode = Math.ceil(s.hari / SIKLUS_LAPORAN_BULANAN[s.mode])
+    if (s.program.periodeDitetapkan !== periode) {
+      s = coba(s, { type: 'TETAPKAN_PROGRAM', fokus: 'skrining', rwFokus: 1 })
+    }
+    s = coba(s, { type: 'TUTUP_LOKMIN' })
+  }
+
+  for (const surat of s.inbox.filter((item) => !item.dibaca)) {
+    s = coba(s, { type: 'BACA_SURAT', suratId: surat.id })
+  }
+  for (const episode of Object.values(s.careEpisodes)) {
+    if (episode.referral?.stage !== 'feedback') continue
+    const surat = s.inbox.find((item) => item.episodeId === episode.id)
+    if (!surat) continue
+    const langkah = episode.familyId
+      ? (['rekonsiliasi', 'kontrol', 'pemantauan_keluarga'] as const)
+      : (['rekonsiliasi', 'kontrol'] as const)
+    s = coba(s, {
+      type: 'ADOPSI_UMPAN_BALIK',
+      suratId: surat.id,
+      langkah: [...langkah],
+    })
+  }
+  return s
+}
+
+function jalankanStaseTeladanTerpadu(mode: ModeStase, seed: number): HasilStase {
+  let s = buildInitialState('Soak-teladan-terpadu', seed, PACK, { mode })
+  for (const keluargaId of Object.keys(PACK.keluarga)) {
+    s = coba(s, { type: 'PILIH_BINAAN', keluargaId })
+  }
+  const rng = new Rng(seed, 'teladan-terpadu')
+  const penilaian: PenilaianEncounter[] = []
+  const cacat: string[] = []
+  let guard = 0
+
+  while (!s.tamat && guard++ < HARI_STASE[mode] + 5) {
+    cacat.push(...cacatTenggatKarma(s))
+    if (s.hari === HARI_BUKA_KLB[mode] && s.tally.klbTuntas === 0) {
+      const [kasusId, ambang] = Object.entries(ambangKlusterPack(PACK)).sort(([a], [b]) => a.localeCompare(b))[0] ?? []
+      if (kasusId && ambang) {
+        const sinyal = Array.from({ length: ambang }, () => ({ hari: s.hari, rw: 1, kasusId }))
+        s = { ...s, desa: { ...s.desa, surveilans: [...s.desa.surveilans, ...sinyal] } }
+      }
+    }
+    s = beresIgd(s)
+    s = tutupAdministrasiTeladan(s)
+
+    // Sisakan satu stamina setelah kegiatan/perjalanan: pemain teladan harus
+    // mampu merawat pasien tanpa menjadikan burnout sebagai syarat optimal.
+    const biayaSiang = s.hari % 7 === 0 ? 0 : Math.max(2, biayaKunjunganTeladan(s))
+    const pagi = beresPagiProfil(s, TELITI, rng, biayaSiang + 1)
+    s = pagi.state
+    penilaian.push(...pagi.penilaian)
+    s = coba(s, { type: 'LANJUTKAN' })
+    s = beresSiangTeladan(s, rng)
+    s = coba(s, { type: 'LANJUTKAN' })
+    s = tutupAdministrasiTeladan(s)
+    s = coba(s, { type: 'LANJUTKAN' })
+
+    cacat.push(...semuaAngkaFinite(s.tally as unknown as Record<string, unknown>, `H${s.hari}.tally`))
+    cacat.push(...semuaAngkaFinite(hitungSkor(s) as unknown as Record<string, unknown>, `H${s.hari}.skor`))
+    cacat.push(...cacatTenggatKarma(s))
+  }
+  return { akhir: s, penilaian, cacat }
 }
 
 interface HasilStase {
@@ -465,4 +665,37 @@ describe('SOAK ADVERSARIAL — 3 profil (speedrunner/teliti/ceroboh), M10.5 §7d
     expect(teliti).toBeGreaterThanOrEqual(speedrunner)
     expect(speedrunner).toBeGreaterThanOrEqual(ceroboh)
   })
+
+  for (const mode of ['karier', 'ujian'] as const) {
+    it(`${mode}: pemain teladan terpadu dapat menuntaskan UKP, UKM, manajemen, dan resiliensi`, () => {
+      const { akhir, cacat } = jalankanStaseTeladanTerpadu(mode, SEED_A)
+      const skor = hitungSkor(akhir)
+
+      console.info(
+        `[soak-teladan-terpadu] ${mode}: UKP=${skor.ukp.toFixed(1)}/35 ` +
+          `UKM=${skor.ukm.toFixed(1)}/35 Manajemen=${skor.manajemen.toFixed(1)}/15 ` +
+          `Resiliensi=${skor.resiliensi.toFixed(1)}/15 Total=${skor.total.toFixed(1)}`,
+      )
+      console.info(
+        `[soak-teladan-terpadu] ${mode}: kunjungan=${akhir.tally.kunjunganTotal}, ` +
+          `Posyandu=${akhir.tally.posyanduSesi}, Prolanis=${akhir.tally.prolanisSesi}, ` +
+          `KLB=${akhir.tally.klbTuntas}, MI=${akhir.tally.miTepat}/${akhir.tally.miTotal}, ` +
+          `karma=${akhir.tally.karmaDicegah}/${akhir.tally.karmaTerjadi}, apathy=${akhir.tally.apathy}, ` +
+          `pemulihan terakhir=H${akhir.pemulihanTerakhirHari ?? 0}`,
+      )
+
+      expect(cacat).toEqual([])
+      expect(akhir.tamat).toBeDefined()
+      expect(akhir.tally.kunjunganTotal).toBeGreaterThanOrEqual(mode === 'karier' ? 24 : 8)
+      expect(akhir.tally.posyanduSesi).toBeGreaterThan(0)
+      expect(akhir.tally.prolanisSesi).toBeGreaterThan(0)
+      expect(akhir.tally.klbTuntas).toBeGreaterThan(0)
+      expect(akhir.pemulihanTerakhirHari).toBeGreaterThan(0)
+      expect(skor.ukp).toBeGreaterThanOrEqual(28)
+      expect(skor.ukm).toBeGreaterThanOrEqual(24)
+      expect(skor.manajemen).toBeGreaterThanOrEqual(12)
+      expect(skor.resiliensi).toBeGreaterThanOrEqual(12)
+      expect(skor.total).toBeGreaterThanOrEqual(85)
+    })
+  }
 })

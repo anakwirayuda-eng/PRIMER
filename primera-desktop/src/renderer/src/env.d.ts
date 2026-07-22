@@ -13,5 +13,9 @@ interface Window {
       read: () => Promise<string[]>
     }
     appVersion: () => Promise<string>
+    runtime?: {
+      consumeRecovery: () => Promise<{ occurredAt: string; reason: string; exitCode: number } | null>
+      readCrashLog: () => Promise<string[]>
+    }
   }
 }

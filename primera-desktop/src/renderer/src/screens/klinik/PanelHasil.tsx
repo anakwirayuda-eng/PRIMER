@@ -56,10 +56,10 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
     !hasil.diagnosisBenar ||
     (gapFormatif !== undefined && Object.values(gapFormatif).some((daftar) => daftar.length > 0))
 
-  const barisSkor: { label: string; nilai: number }[] = [
+  const barisSkor: { label: string; nilai: number; dinilai?: boolean }[] = [
     { label: 'Anamnesis', nilai: hasil.skorAnamnesis },
     { label: 'Pemeriksaan', nilai: hasil.skorPemeriksaan },
-    { label: 'Terapi', nilai: hasil.skorTerapi },
+    { label: 'Terapi', nilai: hasil.skorTerapi, dinilai: hasil.terapiDinilai !== false },
     { label: 'Edukasi', nilai: hasil.skorEdukasi },
   ]
 
@@ -167,18 +167,21 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
 
         {!tutorial && (
           <div className="klinik-hasil__skor">
-            {barisSkor.map(({ label, nilai }) => (
+            {barisSkor.map(({ label, nilai, dinilai = true }) => (
               <div key={label} className="klinik-hasil__skor-baris">
                 <span className="teks-kecil klinik-hasil__skor-label">{label}</span>
-                <div className="meter tumbuh">
+                <div
+                  className={`meter tumbuh${dinilai ? '' : ' klinik-hasil__meter-na'}`}
+                  aria-label={dinilai ? `${label} ${nilai} dari 100` : `${label} tidak dinilai pada kasus ini`}
+                >
                   <div
                     className={`meter__isi${
-                      nilai < 55 ? ' meter__isi--bahaya' : nilai < 70 ? ' meter__isi--waspada' : ''
+                      !dinilai ? '' : nilai < 55 ? ' meter__isi--bahaya' : nilai < 70 ? ' meter__isi--waspada' : ''
                     }`}
-                    style={{ width: `${nilai}%` }}
+                    style={{ width: dinilai ? `${nilai}%` : '0%' }}
                   />
                 </div>
-                <span className="mono teks-xs">{nilai}</span>
+                <span className="mono teks-xs">{dinilai ? nilai : 'N/A'}</span>
               </div>
             ))}
           </div>

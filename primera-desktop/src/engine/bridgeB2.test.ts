@@ -166,10 +166,28 @@ describe('Bridge B2 - continuity ledger lintas UKM, UKP, dan RS', () => {
     expect(menungguAksi.status).toBe('kembali')
 
     state = run(state, { type: 'BACA_SURAT', suratId: surat.id })
+    const baruDibaca = state.careEpisodes.find((episode) => episode.id === episodeId)!
+    expect(baruDibaca.referral?.stage).toBe('feedback')
+    expect(baruDibaca.status).toBe('kembali')
+
+    const ditolak = advance(
+      state,
+      { type: 'ADOPSI_UMPAN_BALIK', suratId: surat.id, langkah: ['rekonsiliasi', 'kontrol'] },
+      PACK,
+    )
+    expect(ditolak.state.careEpisodes).toEqual(state.careEpisodes)
+    expect(ditolak.events.at(-1)).toMatchObject({ type: 'ERROR_AKSI' })
+
+    state = run(state, {
+      type: 'ADOPSI_UMPAN_BALIK',
+      suratId: surat.id,
+      langkah: ['rekonsiliasi', 'kontrol', 'pemantauan_keluarga'],
+    })
     const tertutup = state.careEpisodes.find((episode) => episode.id === episodeId)!
     expect(tertutup.referral?.stage).toBe('acted')
     expect(tertutup.status).toBe('terverifikasi')
     expect(tertutup.receipt.feedback).toContain('menyelesaikan pelayanan')
+    expect(tertutup.receipt.decision).toContain('rekonsiliasi terapi')
     expect(tertutup.history.map((item) => item.status)).toContain('kembali')
     expect(tertutup.history.at(-1)?.status).toBe('terverifikasi')
   })

@@ -603,6 +603,7 @@ export function nilaiEncounter(
   )
   const tindakanBerbahaya = tindakanSalahDilakukan.some((item) => item.bahaya === 'berbahaya')
   const totalSlot = obatBenar.length + grupAlternatif.length + prosedurBenar.length
+  const terapiDinilai = totalSlot > 0
   const rasioTerapi =
     totalSlot > 0 ? (benarDiresepkan + slotAltTerpenuhi + prosedurTerpenuhi) / totalSlot : 1
   // Terapi kritis penyelamat nyawa (audit CODEX 2026-07-16, temuan #2): dulu
@@ -813,12 +814,25 @@ export function nilaiEncounter(
 
   /* -- Grade tertimbang ---------------------------------------------------------- */
   const skorDiagnosis = diagnosisBenar ? 100 : 0
-  let nilaiTotal =
-    BOBOT_DIAGNOSIS * skorDiagnosis +
-    BOBOT_ANAMNESIS * skorAnamnesis +
-    BOBOT_TERAPI * skorTerapi +
-    BOBOT_PEMERIKSAAN * skorPemeriksaan +
-    BOBOT_EDUKASI * skorEdukasi
+  // Kasus tanpa target obat/prosedur adalah manajemen nonfarmakologis, bukan
+  // "terapi sempurna tanpa aksi". Bobot terapi dialihkan ke edukasi, sementara
+  // obat/tindakan tak terindikasi tetap menjadi penalti negatif tersendiri.
+  let nilaiTotal = terapiDinilai
+    ? BOBOT_DIAGNOSIS * skorDiagnosis +
+      BOBOT_ANAMNESIS * skorAnamnesis +
+      BOBOT_TERAPI * skorTerapi +
+      BOBOT_PEMERIKSAAN * skorPemeriksaan +
+      BOBOT_EDUKASI * skorEdukasi
+    : BOBOT_DIAGNOSIS * skorDiagnosis +
+      BOBOT_ANAMNESIS * skorAnamnesis +
+      BOBOT_PEMERIKSAAN * skorPemeriksaan +
+      (BOBOT_EDUKASI + BOBOT_TERAPI) * skorEdukasi -
+      BOBOT_TERAPI * (100 - skorTerapi)
+
+  // SBAR adalah proses komunikasi klinis, bukan tugas mengetik kosmetik.
+  // Bobot 5% cukup terasa untuk umpan balik, tetapi tidak mengalahkan keputusan
+  // diagnosis, terapi, stabilisasi, atau disposisi yang jauh lebih penting.
+  if (sbarSkor !== undefined) nilaiTotal = 0.95 * nilaiTotal + 0.05 * sbarSkor
   // Fix #12 (audit CODEX 2026-07-11, adjudikasi 2026-07-12): grade dulu ABAI
   // disposisi sepenuhnya — diagnosis+terapi sempurna tapi gagal merujuk pasien
   // yg WAJIB dirujuk (cowboy) tetap bisa dapat A, meski disposisi disebut
@@ -892,6 +906,7 @@ export function nilaiEncounter(
     skorAnamnesis,
     skorPemeriksaan,
     skorTerapi,
+    terapiDinilai,
     skorEdukasi,
     disposisiTepat,
     rujukanNonSpesialistik,

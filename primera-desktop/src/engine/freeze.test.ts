@@ -165,8 +165,11 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // memisahkan anak dari wali; clinic menandai jawaban pendamping; kunjungan
   // mengunci respons yang menyebut observasi; kegiatan membuang meta-kebijakan
   // dari vignette. Save lama dinormalkan saat runtime, tanpa migrasi destruktif.
-  'reducer.ts': '3d48d4f817170974c2381b82c16bccbffb3a2c533d62a261ef7221b0c2e54f39',
-  'clinic.ts': '1e0fd38a071801cfd4ed8133e7c1824c0ca7d8260805842fa29752d93907e7c6',
+  // Unfreeze 2026-07-22 (class readiness, REVISI_ENGINE 56 -> 57): adopsi
+  // rencana balik rujukan menjadi aksi eksplisit; terapi N/A dan SBAR masuk
+  // scoring; tanggal karma dinormalisasi agar satu slot lapangan tetap feasible.
+  'reducer.ts': '3c9f3633f63984fa847a2dc379ae964215834f10f54913d0895bcc5a2889bf9f',
+  'clinic.ts': 'fdd3a391374469a4a475af7657f1abbd131acd049a7db9fbe5a71078297b6b5c',
   'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
@@ -188,8 +191,8 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '388263867df99812f38c912efdadd15d15ed284d706718c2adaa3c4e2ad09ab4',
-  'state.ts': '13f8b24fe8d4aae2ba43d4be888a2b2334cc710d658af962d8892751ed24330e',
+  'verifikasi.ts': 'cc7b06ef6f93330d6c188567c87ee2a9f8c4b1f4a13d6c24b21741a62ae64ba3',
+  'state.ts': '5a0b990ef872871caeeae361e7dedd3d6000319df0eb764bcca025c1c2f586c1',
   'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',

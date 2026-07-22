@@ -38,10 +38,11 @@ jobs:
           cache: npm
           cache-dependency-path: primera-desktop/package-lock.json
       - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm test
       - run: npm run exam:simulate
       - run: npm run typecheck
-      - run: npm run build
+      - run: npm run test:e2e
       - run: npm run check:bgm-license
 
   archive-cohort-build:

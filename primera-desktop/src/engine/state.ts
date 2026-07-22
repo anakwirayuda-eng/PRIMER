@@ -156,6 +156,8 @@ export interface PenilaianEncounter {
   skorAnamnesis: number // 0-100: esensial tercakup, penalti shotgun
   skorPemeriksaan: number // 0-100: region relevan diperiksa, penalti berlebih
   skorTerapi: number // 0-100
+  /** False bila kasus memang tidak memiliki target obat/prosedur; UI menampilkan N/A. */
+  terapiDinilai?: boolean
   skorEdukasi: number // 0-100
   disposisiTepat: boolean
   /** Rujukan non-spesialistik (kasus 4A dirujuk) — pakan RRNS. */
@@ -520,7 +522,7 @@ export interface Surat {
   kaitKeluargaId?: string
   /** Membuka grounding klinis kasus IGD terkait di debrief surat. */
   kaitKasusIgdId?: string
-  /** Episode yang diperbarui saat surat feedback benar-benar dibaca. */
+  /** Episode yang terkait dengan surat; membaca tidak otomatis menutup episode. */
   episodeId?: string
 }
 
@@ -610,6 +612,9 @@ export type StatusEpisode =
 
 export type TahapRujukan = 'sent' | 'accepted' | 'completed' | 'feedback' | 'acted'
 
+/** Langkah minimum saat umpan balik RS diadopsi kembali ke care plan FKTP. */
+export type LangkahUmpanBalikRujukan = 'rekonsiliasi' | 'kontrol' | 'pemantauan_keluarga'
+
 export interface RiwayatEpisode {
   hari: number
   status: StatusEpisode
@@ -650,7 +655,7 @@ export interface CareEpisodeLite {
 export interface SkorTally {
   totalPasien: number
   diagnosisBenar: number
-  /** Jumlah rerata skor anamnesis, pemeriksaan, terapi, dan edukasi per encounter. */
+  /** Jumlah rerata proses per encounter; terapi N/A dikeluarkan dari penyebut. */
   sumSkorProses: number
   /** Kalibrasi epistemik stempel dua tinta. */
   tegakBenar: number

@@ -62,6 +62,34 @@ export function Toaster() {
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
 
   useEffect(() => {
+    let aktif = true
+    if (!window.primer?.runtime) return () => {
+      aktif = false
+    }
+    void window.primer.runtime.consumeRecovery().then((notice) => {
+      if (!aktif || !notice) return
+      const id = Math.random()
+      const toast: Toast = {
+        id,
+        teks: 'PRIMERA sempat mengalami gangguan dan memulihkan sesi dari autosave. Progres terakhir tetap tersimpan.',
+        nada: 'bahaya',
+      }
+      setToasts((prev) => [...prev, toast].slice(-4))
+      const tFade = setTimeout(() => {
+        setToasts((prev) => prev.map((item) => item.id === id ? { ...item, keluar: true } : item))
+      }, TOAST_TAHAN)
+      const tHapus = setTimeout(() => {
+        setToasts((prev) => prev.filter((item) => item.id !== id))
+        timers.current = timers.current.filter((item) => item !== tFade && item !== tHapus)
+      }, TOAST_TAHAN + TOAST_MENGABUR)
+      timers.current.push(tFade, tHapus)
+    }).catch((error) => console.error('Gagal membaca status pemulihan runtime:', error))
+    return () => {
+      aktif = false
+    }
+  }, [])
+
+  useEffect(() => {
     const baru = lastEvents.map(eventKeToast).filter((t): t is Toast => t !== null)
     if (baru.length === 0) return
     setToasts((prev) => [...prev, ...baru].slice(-4))

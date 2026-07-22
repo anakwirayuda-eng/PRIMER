@@ -1,6 +1,6 @@
 {
   "name": "primera-desktop",
-  "version": "1.0.0",
+  "version": "1.1.0-beta.1",
   "description": "PRIMERA: Puskesmas Pagi — Primary Care Simulator & Arena, game desktop simulasi dokter Puskesmas untuk pendidikan kedokteran Indonesia",
   "main": "out/main/index.js",
   "author": "Anak Agung Bagus Wirayuda, MD, PhD",
@@ -14,6 +14,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "npm run build && playwright test",
     "check:bgm-license": "node scripts/check-bgm-license.js",
     "check:bundle": "node scripts/check-renderer-budget.js",
     "cohort:manifest": "vite-node --config vitest.config.ts scripts/generate-cohort-manifest.ts",
@@ -22,6 +23,7 @@
     "audit:dialogue": "vite-node --config vitest.config.ts scripts/audit-dialogue-quality.ts",
     "m13:kfa": "vite-node --config vitest.config.ts scripts/m13-adjudication/harvest-kfa.ts",
     "m13:adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate.ts",
+    "m13:igd-adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate-igd.ts",
     "pack": "npm run check:bgm-license && npm run build && electron-builder --win --dir",
     "dist": "npm run check:bgm-license && npm run build && electron-builder --win nsis"
   },
@@ -54,6 +56,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -61,6 +64,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "axe-core": "^4.12.1",
     "electron": "^43.1.0",
     "electron-builder": "^26.15.3",
     "electron-vite": "^4.0.0",

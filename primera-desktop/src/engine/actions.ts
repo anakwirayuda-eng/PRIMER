@@ -3,7 +3,14 @@
  * UI men-dispatch aksi; reducer memvalidasi & menerapkan; event keluar untuk juice.
  */
 
-import type { Disposisi, FokusProgram, JenisDiagnosis, LayarGame, SbarIsi } from './state'
+import type {
+  Disposisi,
+  FokusProgram,
+  JenisDiagnosis,
+  LangkahUmpanBalikRujukan,
+  LayarGame,
+  SbarIsi,
+} from './state'
 import type { JustifikasiRujuk, RegionFisik } from '@content/types'
 
 export type Action =
@@ -14,6 +21,11 @@ export type Action =
 
   /* -- Meja kerja ----------------------------------------------------------- */
   | { type: 'BACA_SURAT'; suratId: string }
+  | {
+      type: 'ADOPSI_UMPAN_BALIK'
+      suratId: string
+      langkah: LangkahUmpanBalikRujukan[]
+    }
   | { type: 'TULIS_REFLEKSI'; teks: string }
   | { type: 'TUTUP_REKAP' } // tutup modal rekap pekan pertama (persist di flags)
 

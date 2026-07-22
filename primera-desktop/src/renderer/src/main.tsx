@@ -42,6 +42,10 @@ if (typeof window.primer === 'undefined') {
       },
       read: async () => (localStorage.getItem(KEY_TELEMETRI) ?? '').split('\n').filter((b) => b.trim().length > 0),
     },
+    runtime: {
+      consumeRecovery: async () => null,
+      readCrashLog: async () => [],
+    },
     appVersion: async () => 'browser-preview',
   }
 }

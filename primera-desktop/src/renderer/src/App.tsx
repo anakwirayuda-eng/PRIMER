@@ -156,6 +156,7 @@ export default function App() {
     return (
       <div data-mode="pagi">
         <TitleScreen />
+        <Toaster />
         <MuteButton />
         <Pengaturan />
       </div>
@@ -163,7 +164,10 @@ export default function App() {
   }
 
   return (
-    <div className={`app-frame${getarKodeHitam ? ' app-frame--kode-hitam' : ''}`} data-mode={mode}>
+    <div
+      className={`app-frame${getarKodeHitam ? ' app-frame--kode-hitam' : ''}${pengaturan.ukuranTeks >= 1.5 ? ' app-frame--teks-besar' : ''}`}
+      data-mode={mode}
+    >
       <Hud />
       <main
         className="app-layar"

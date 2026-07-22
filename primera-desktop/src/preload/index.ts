@@ -14,6 +14,11 @@ const api = {
     read: (): Promise<string[]> => ipcRenderer.invoke('telemetri:read'),
   },
   appVersion: (): Promise<string> => ipcRenderer.invoke('app:version'),
+  runtime: {
+    consumeRecovery: (): Promise<{ occurredAt: string; reason: string; exitCode: number } | null> =>
+      ipcRenderer.invoke('runtime:consume-recovery'),
+    readCrashLog: (): Promise<string[]> => ipcRenderer.invoke('runtime:crash-log'),
+  },
 }
 
 export type PrimerBridge = typeof api

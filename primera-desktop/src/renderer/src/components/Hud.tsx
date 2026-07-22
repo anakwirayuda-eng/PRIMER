@@ -79,7 +79,7 @@ export function Hud() {
             }
             title={t.terkunci ? 'Terbuka besok' : undefined}
           >
-            {t.label}
+            <span className="hud__tab-label">{t.label}</span>
             {t.badge !== undefined && <span className="hud__badge">{t.badge}</span>}
             {t.terkunci && <span className="hud__gembok">🔒</span>}
           </button>

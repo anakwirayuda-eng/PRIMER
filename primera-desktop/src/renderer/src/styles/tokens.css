@@ -37,7 +37,9 @@
      mode malam) supaya mereferensikan token, bukan menyalin hex yang bisa
      basi diam-diam (terbukti basi di PetaDesa.css, sapuan 2026-07-16). */
   --tinta-siang: #26312c; /* teks utama di kertas — tinta pulpen hitam-kehijauan */
-  --tinta-lembut-siang: #5b6a62; /* teks sekunder */
+  /* Tetap terasa sekunder, tetapi lolos AA juga di permukaan kertas-300
+     (#e8dcc4): #536159 = 4.80:1; nilai lama #5b6a62 hanya 4.20:1. */
+  --tinta-lembut-siang: #536159;
   /* M10 Batch-2 (CODEX A.3): #6e7a70 terukur 3.3-4.34:1 pd permukaan kertas —
      GAGAL AA (4.5:1) padahal dipakai sbg teks nyata kecil (hint/legenda).
      Digelapkan ke #5e6b62 (≈5.1:1 di kertas-050), tetap sekeluarga hue tinta. */

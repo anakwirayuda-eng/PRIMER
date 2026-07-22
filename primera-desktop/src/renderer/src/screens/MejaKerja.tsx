@@ -8,7 +8,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useGame } from '../store'
-import type { JenisSurat, Surat } from '@engine/state'
+import type { JenisSurat, LangkahUmpanBalikRujukan, Surat } from '@engine/state'
 import type { Persona } from '@content/types'
 import { formatUsia } from '@engine/usia'
 import { hitungSkor, ringkasanHarian } from '@engine/director'
@@ -124,6 +124,7 @@ export function MejaKerja() {
   const simpanKeSlot = useGame((s) => s.simpanKeSlot)
 
   const [suratTerbukaId, setSuratTerbukaId] = useState<string | null>(null)
+  const [langkahUmpanBalik, setLangkahUmpanBalik] = useState<LangkahUmpanBalikRujukan[]>([])
   const [draftRefleksi, setDraftRefleksi] = useState('')
   // Audit CODEX UKM 2026-07-16 #3: TETAPKAN_PROGRAM kini WAJIB membawa rwFokus
   // (engine menolak tanpa RW). Pemilih RW lokal — default RW fokus tersimpan.
@@ -134,6 +135,10 @@ export function MejaKerja() {
   useEffect(() => {
     setDraftRefleksi(state.refleksi[state.hari] ?? '')
   }, [state.hari]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setLangkahUmpanBalik([])
+  }, [suratTerbukaId])
 
   const petaTerbuka = state.hari >= HARI_BUKA_PETA
   const kunjunganTerbuka = state.hari >= HARI_BUKA_KUNJUNGAN
@@ -148,6 +153,20 @@ export function MejaKerja() {
 
   const suratUrut = useMemo(() => [...state.inbox].reverse(), [state.inbox])
   const suratTerbuka = suratTerbukaId ? (state.inbox.find((m) => m.id === suratTerbukaId) ?? null) : null
+  const episodeSurat = suratTerbuka?.episodeId
+    ? state.careEpisodes.find((item) => item.id === suratTerbuka.episodeId)
+    : undefined
+  const feedbackMenunggu = episodeSurat?.referral?.stage === 'feedback'
+  const langkahWajibUmpanBalik: LangkahUmpanBalikRujukan[] = feedbackMenunggu
+    ? [
+        'rekonsiliasi',
+        'kontrol',
+        ...(episodeSurat?.familyId ? (['pemantauan_keluarga'] as const) : []),
+      ]
+    : []
+  const rencanaUmpanBalikLengkap = langkahWajibUmpanBalik.every((item) =>
+    langkahUmpanBalik.includes(item),
+  )
   const kasusIgdSurat = suratTerbuka?.kaitKasusIgdId
     ? PACK.kasusIgd[suratTerbuka.kaitKasusIgdId]
     : undefined
@@ -419,6 +438,56 @@ export function MejaKerja() {
                     </ul>
                   </div>
                 </details>
+              )}
+              {feedbackMenunggu && (
+                <section className="mk__surat-tindak" aria-labelledby="judul-tindak-lanjut-rs">
+                  <h4 id="judul-tindak-lanjut-rs">Masukkan umpan balik ke care plan</h4>
+                  <p className="teks-kecil teks-lembut">
+                    Membaca surat belum menutup loop. Pastikan tindak lanjut RS benar-benar diteruskan di FKTP.
+                  </p>
+                  <div className="mk__surat-checklist">
+                    {([
+                      ['rekonsiliasi', 'Rekonsiliasi terapi dan instruksi RS'],
+                      ['kontrol', 'Tetapkan kontrol dan safety-net FKTP'],
+                      ...(episodeSurat?.familyId
+                        ? [['pemantauan_keluarga', 'Hubungkan pemantauan keluarga/kader']]
+                        : []),
+                    ] as [LangkahUmpanBalikRujukan, string][]).map(([id, label]) => (
+                      <label key={id}>
+                        <input
+                          type="checkbox"
+                          checked={langkahUmpanBalik.includes(id)}
+                          onChange={(event) =>
+                            setLangkahUmpanBalik((lama) =>
+                              event.target.checked
+                                ? [...new Set([...lama, id])]
+                                : lama.filter((item) => item !== id),
+                            )
+                          }
+                        />
+                        <span>{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <button
+                    className="tombol tombol--utama"
+                    disabled={!rencanaUmpanBalikLengkap}
+                    onClick={() =>
+                      dispatch({
+                        type: 'ADOPSI_UMPAN_BALIK',
+                        suratId: suratTerbuka.id,
+                        langkah: langkahUmpanBalik,
+                      })
+                    }
+                  >
+                    Terapkan ke rencana FKTP
+                  </button>
+                </section>
+              )}
+              {episodeSurat?.referral?.stage === 'acted' && (
+                <p className="mk__surat-tertutup" role="status">
+                  Umpan balik sudah diadopsi ke care plan FKTP.
+                </p>
               )}
               {suratTerbuka.kaitKeluargaId && (
                 <button

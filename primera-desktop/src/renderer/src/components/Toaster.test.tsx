@@ -5,13 +5,14 @@
  * membacakan ULANG seluruh isi wrapper tiap mutasi, bukan cuma toast baru.
  */
 import { describe, expect, it, afterEach } from 'vitest'
-import { act, render, cleanup } from '@testing-library/react'
+import { act, render, cleanup, screen, waitFor } from '@testing-library/react'
 import { useGame } from '../store'
 import { Toaster } from './Toaster'
 
 describe('<Toaster /> — aria-live per-toast (CODEX audit UI/UX 2026-07-10 #25)', () => {
   afterEach(() => {
     cleanup()
+    useGame.setState({ lastEvents: [], eventTick: 0 })
   })
 
   it('wrapper .toaster tidak punya role/aria-live/aria-atomic; tiap .toast punya ketiganya', () => {
@@ -49,5 +50,20 @@ describe('<Toaster /> — aria-live per-toast (CODEX audit UI/UX 2026-07-10 #25)
     const toast = document.querySelector('.toast--bahaya')!
     expect(toast.getAttribute('role')).toBe('alert')
     expect(toast.getAttribute('aria-live')).toBe('assertive')
+  })
+
+  it('memberi tahu pemain setelah renderer pulih otomatis dari crash', async () => {
+    window.primer = {
+      save: { write: async () => true, read: async () => null, list: async () => [], delete: async () => true },
+      telemetri: { append: async () => true, read: async () => [] },
+      runtime: {
+        consumeRecovery: async () => ({ occurredAt: '2026-07-22T00:00:00.000Z', reason: 'crashed', exitCode: 1 }),
+        readCrashLog: async () => [],
+      },
+      appVersion: async () => 'test',
+    }
+    render(<Toaster />)
+    await waitFor(() => expect(screen.getByText(/memulihkan sesi dari autosave/i)).toBeInTheDocument())
+    expect(screen.getByText(/memulihkan sesi dari autosave/i).closest('[role="alert"]')).toBeInTheDocument()
   })
 })

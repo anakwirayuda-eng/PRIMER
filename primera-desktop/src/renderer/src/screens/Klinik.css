@@ -785,6 +785,16 @@
   flex-shrink: 0;
 }
 
+.klinik-hasil__meter-na {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 6px,
+    var(--border-halus) 6px,
+    var(--border-halus) 9px
+  );
+}
+
 .klinik-hasil__flags {
   display: flex;
   flex-wrap: wrap;
