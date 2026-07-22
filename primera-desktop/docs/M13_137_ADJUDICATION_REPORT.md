@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-22
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `4299c48e6b13ac098fbb1a138f071ebeca7bb398+dirty`, artefak `88896f38e8670c8289ce846bbe643ee08045608e1c111bafc6da857a029feff9`, pack `c0afdff4`, content release `class-readiness-2026-07-22`, `REVISI_ENGINE=57`
+**Snapshot:** commit `d360abc3d7b27df37a5c346a472ec704fc654ee2+dirty`, artefak `00556716b5ea70fe80b63b88c4af9e28d4670a6c55188b2e459c99c8fa37508a`, pack `93738a72`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=57`
 
 ## Ringkasan eksekutif
 

@@ -420,6 +420,7 @@ export function MejaKerja() {
                   namaKasus={kasusIgdSurat.nama}
                   ringkasan={kasusIgdSurat.panduanResmi}
                   sumber={kasusIgdSurat.sumber}
+                  debrief={kasusIgdSurat.debrief}
                 />
               )}
               {feedbackMenunggu && (

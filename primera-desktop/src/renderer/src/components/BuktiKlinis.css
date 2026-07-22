@@ -74,6 +74,67 @@
   font-weight: 800;
 }
 
+.bukti-klinis__pengayaan {
+  display: grid;
+  gap: var(--sp-2);
+  max-width: 72ch;
+}
+
+.bukti-klinis__poin {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bukti-klinis__poin li {
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-3);
+  border-left: 3px solid var(--daun-700);
+  background: var(--bg-sunken);
+  overflow-wrap: anywhere;
+}
+
+.bukti-klinis__lapisan {
+  margin: 0;
+  padding: var(--sp-2) 0 0;
+  border-top: 1px solid var(--border-halus);
+}
+
+.bukti-klinis__lapisan > summary {
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--daun-700);
+  font-weight: 700;
+}
+
+.bukti-klinis__lapisan > summary:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 2px;
+}
+
+.bukti-klinis__resource-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+}
+
+.bukti-klinis__resource {
+  min-width: 0;
+}
+
+.bukti-klinis__resource ul {
+  margin: var(--sp-1) 0 0;
+  padding-left: 1.15rem;
+}
+
+.bukti-klinis__resource li {
+  overflow-wrap: anywhere;
+}
+
 .bukti-klinis__daftar {
   display: grid;
   gap: var(--sp-2);
@@ -135,6 +196,11 @@
 @media (max-width: 560px) {
   .bukti-klinis__isi {
     padding-left: 0;
+  }
+
+  .bukti-klinis__poin,
+  .bukti-klinis__resource-grid {
+    grid-template-columns: 1fr;
   }
 
 }

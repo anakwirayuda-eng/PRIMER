@@ -25,6 +25,7 @@ import { KASUS_KIA_JIWA } from './kasus/kasusKiaJiwa'
 import { KASUS_IGD } from './igd'
 import { KASUS_IGD_LAB_1 } from './igdLab1'
 import { KASUS_IGD_LAB_2 } from './igdLab2'
+import { terapkanAdjudikasiIgd } from './igdAdjudication'
 import { SKDI144 } from './skdi144'
 import { NAMA_WARGA } from './nama'
 import { buildCurriculumBlueprint, validasiCurriculumBlueprint } from './curriculum'
@@ -86,6 +87,10 @@ const semuaKeluargaDasar: KeluargaBinaan[] = [
 ]
 
 const kasusDasarById = byId(semuaKasusDasar)
+const kasusIgdLabTeradjudikasi = terapkanAdjudikasiIgd([
+  ...KASUS_IGD_LAB_1,
+  ...KASUS_IGD_LAB_2,
+])
 
 // Tautkan Dex 144 ke kasus playable via kecocokan ICD-10 (agar penulis kasus
 // tidak perlu menyentuh skdi144.ts — anti-konflik antar penulis konten).
@@ -99,8 +104,8 @@ const skdi144Tertaut = SKDI144.map((entri) => {
 
 const BASE_CONTENT_CATALOG: ContentCatalog = {
   kasus: kasusDasarById,
-  // M13 Batch 4: +14 kasus IGD prototipe lab (Career-only via activationStatus).
-  kasusIgd: byId([...KASUS_IGD, ...KASUS_IGD_LAB_1, ...KASUS_IGD_LAB_2]),
+  // M13-14: 14 kasus ekspansi sudah diadjudikasi dokter; tetap Career-only.
+  kasusIgd: byId([...KASUS_IGD, ...kasusIgdLabTeradjudikasi]),
   keluarga: byId(semuaKeluargaDasar),
   kader: KADER_PROFIL,
   rw: RW_PROFIL,

@@ -19,17 +19,20 @@
 
 | No. | Kasus | Keputusan dokter | Status implementasi |
 |---:|---|---|---|
-| 1 | `igd_asfiksia_neonatorum` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 2 | `igd_cedera_kepala_sedang` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 3 | `igd_eklampsia` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 4 | `igd_gigitan_ular_berbisa` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 5 | `igd_keracunan_organofosfat` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 6 | `igd_ketoasidosis_diabetik` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 7 | `igd_stroke_iskemik_window` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 8 | `igd_perdarahan_pascasalin` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 9 | `igd_pneumotoraks_tension_trauma` | **Perlu edit - disetujui** | Patch terkunci; menunggu batch implementasi akhir |
-| 10 | `igd_status_epileptikus` | **Rekomendasi: Perlu edit** | Paket keputusan siap; menunggu adjudikasi dokter |
-| 11-14 | - | Belum diputuskan | - |
+| 1 | `igd_asfiksia_neonatorum` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 2 | `igd_cedera_kepala_sedang` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 3 | `igd_eklampsia` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 4 | `igd_gigitan_ular_berbisa` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 5 | `igd_keracunan_organofosfat` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 6 | `igd_ketoasidosis_diabetik` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 7 | `igd_luka_bakar_luas` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 8 | `igd_perdarahan_pascasalin` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 9 | `igd_pneumotoraks_tension_trauma` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 10 | `igd_status_epileptikus` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 11 | `igd_stroke_iskemik_window` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 12 | `igd_sumbatan_jalan_napas_anak` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 13 | `igd_syok_sepsis` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
+| 14 | `igd_tenggelam` | **Perlu edit - disetujui** | Diterapkan di `igd-adjudication-2026-07-22` |
 
 ## IGD-1 - Asfiksia Neonatorum
 
@@ -249,7 +252,7 @@ Reviewer meminta referensi kasus tampil pada penjelasan atau debrief akhir dan d
 
 **Keputusan reviewer:** **Perlu edit - disetujui.** Seluruh patch specification IGD-6 dikunci untuk batch implementasi akhir setelah adjudikasi 14 kasus selesai.
 
-## IGD-7 - Suspek Stroke Akut dalam Jendela Reperfusi
+## IGD-11 - Suspek Stroke Akut dalam Jendela Reperfusi
 
 **Pernyataan reviewer:** `setuju next` pada 2026-07-22, merujuk rekomendasi `Perlu edit` yang langsung mendahuluinya.
 
@@ -300,7 +303,7 @@ Reviewer meminta referensi kasus tampil pada penjelasan atau debrief akhir dan d
 - Kementerian Kesehatan RI, *Permenkes 16/2024 tentang Sistem Rujukan*: https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024
 - M13-0B internal precedent: `M13_0B_DELTA_AUDIT_2026.md`, bagian Delta Stroke.
 
-**Keputusan reviewer:** **Perlu edit - disetujui.** Seluruh patch specification IGD-7 dikunci untuk batch implementasi akhir setelah adjudikasi 14 kasus selesai.
+**Keputusan reviewer:** **Perlu edit - disetujui.** Seluruh patch specification IGD-11 dikunci untuk batch implementasi akhir setelah adjudikasi 14 kasus selesai.
 
 ## IGD-8 - Perdarahan Pascasalin Primer dengan Syok
 
@@ -424,9 +427,9 @@ Reviewer meminta referensi kasus tampil pada penjelasan atau debrief akhir dan d
 
 ## IGD-10 - Status Epileptikus Konvulsif pada Dewasa
 
-**Status:** paket keputusan siap; belum merupakan sign-off dokter.
+**Pernyataan reviewer:** `setuju kamu bahwa perlu edit` pada 2026-07-22, merujuk rekomendasi `Perlu edit` yang langsung mendahuluinya.
 
-**Rekomendasi CODEX:** `Perlu edit`.
+**Rekomendasi CODEX:** `Perlu edit - disetujui`.
 
 **Penilaian ringkas:** draf sudah benar mengenali kejang lebih dari lima menit sebagai kegawatan, melindungi pasien dari cedera, melarang restrain dan benda di mulut, memberi oksigen pada hipoksemia, memakai benzodiazepin sebagai lini pertama, membatasi pengulangan, serta tetap merujuk. Nilai klinis saat ini sekitar **6,9/10**. Cacat materialnya adalah rentang usia 15-17 tahun digrounding ke PNPK dewasa, pemeriksaan glukosa baru dijadikan jawaban setelah dua dosis benzodiazepin, dan tidak ada tindakan lini kedua ketika kasus sudah masuk established benzodiazepine-resistant status epilepticus. Frasa `jalan napas aman` juga memberi rasa aman palsu, rute bukal muncul tanpa obat/protokol Indonesia yang dinyatakan, dan tujuan rujukan hanya berbasis nama spesialis. Paket di bawah ditargetkan membawa kasus ke **>=9,2/10**.
 
@@ -484,4 +487,264 @@ Reviewer meminta referensi kasus tampil pada penjelasan atau debrief akhir dan d
 - Kementerian Kesehatan RI, *Permenkes 16/2024 tentang Sistem Rujukan*: https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024
 - Baseline internal: `M13_ASPAK_PUSKESMAS_RESOURCE_BASELINE.md`, profil `sukamaju_middle_v1`.
 
-**Keputusan yang diminta:** `Setuju`, `Perlu edit`, `Tolak`, atau `Nanti` terhadap paket IGD-10 di atas. Bila `Setuju`, seluruh patch specification dikunci untuk batch implementasi akhir setelah adjudikasi 14 kasus selesai.
+**Keputusan reviewer:** **Perlu edit - disetujui.** Seluruh patch specification IGD-10 dikunci untuk batch implementasi akhir setelah adjudikasi 14 kasus selesai.
+
+## IGD-7 - Luka Bakar Mayor 25% TBSA dengan Suspek Cedera Inhalasi
+
+**Pernyataan reviewer:** `IGD-7: setuju` pada 2026-07-22, merujuk rekomendasi `Perlu edit` yang langsung mendahuluinya.
+
+**Rekomendasi CODEX:** `Perlu edit - disetujui`.
+
+**Penilaian ringkas:** draf sudah mengenali luka bakar mayor, bahaya ruang tertutup, kebutuhan oksigen, pendinginan dengan air, larangan es dan bahan rumah tangga, kebutuhan akses IV, serta transfer. Nilai klinis saat ini sekitar **6,7/10**. Ada satu kontradiksi berbahaya: pembuka menyebut pakaian melekat pada kulit, tetapi pilihan benar meminta pakaian dilepas tanpa larangan mengelupas kain yang melekat. Formula Parkland `4 mL/kg/%TBSA` juga diajarkan seperti satu-satunya kebenaran dan satu jam yang lewat harus `dikejar`, sementara pedoman mutakhir memakai formula hanya sebagai estimasi awal dan menekankan titrasi untuk mencegah fluid creep. SpO2 95% dapat memberi rasa aman palsu pada keracunan CO, dan kasus belum menyatakan kesiapan advanced airway, analgesia, tetanus, antibiotik, maupun tujuan rujukan berbasis kemampuan. Paket di bawah ditargetkan membawa kasus ke **>=9,2/10**.
+
+**Patch specification yang diajukan:**
+
+1. Pertahankan id teknis dan ICD `T31.2`, tetapi ubah label klinis menjadi **`Luka Bakar Mayor 25% TBSA dengan Suspek Cedera Inhalasi`**. Pertahankan populasi dewasa dan SKDI `3B`; ini bukan luka bakar ringan yang selesai ditangani di FKTP, melainkan luka bakar mayor dengan ancaman jalan napas dan rujukan wajib.
+2. Buat luas dan kedalaman dapat diaudit: nyatakan distribusi luka menurut Rule of Nines, hitung hanya luka partial-thickness dan full-thickness dalam TBSA, serta jangan memasukkan eritema saja. Gunakan istilah modern `superficial/partial/full thickness` pada penjelasan, sambil tetap mengenalkan padanan derajat lama karena masih ditemukan di PPK dan praktik lokal.
+3. Langkah pertama dimulai dari keselamatan lokasi dan penghentian proses bakar. Potong atau lepaskan pakaian panas yang **tidak melekat** dan lepaskan perhiasan; **jangan mengelupas kain yang melekat pada kulit**, tetapi potong mengelilinginya. Koreksi ini harus terlihat pada label pilihan, bukan disembunyikan hanya di debrief.
+4. Dinginkan luka dengan air mengalir sejuk/suhu ruang selama total 20 menit bila masih dalam tiga jam sejak kejadian. Pendinginan berjalan paralel dengan ABC pada luka mayor, tidak boleh menunda airway atau transfer, dan dihentikan bila memicu hipotermia. Jaga bagian tubuh yang tidak terbakar tetap hangat. Pertahankan larangan es, pasta gigi, kecap, minyak, mentega, dan pemecahan bula rutin.
+5. Perlakukan kebakaran ruang tertutup, serak yang progresif, jelaga di mulut, dan sputum hitam sebagai **suspek kuat cedera inhalasi**, bukan diagnosis pasti hanya dari bulu hidung hangus. Pemeriksaan jalan napas awal yang tampak normal tidak menjamin aman karena edema dapat berkembang.
+6. Berikan oksigen konsentrasi tinggi segera. Jelaskan bahwa pulse oximeter standar dapat tetap menunjukkan 95% pada keracunan karbon monoksida karena tidak membedakan oksihemoglobin dan karboksihemoglobin; jangan menunggu angka saturasi turun. Co-oximetry dan evaluasi toksisitas asap dilakukan di fasilitas tujuan tanpa menunda transfer.
+7. Tampilkan resource strip sebelum pilihan airway: oksigen dengan kapasitas cukup, suction, BVM, airway adjunct, monitor, akses IV, kristaloid seimbang hangat, balut/seprai bersih, analgesia, dan ambulans dinyatakan ready. Kemampuan advanced airway **tidak boleh diasumsikan**. Bila operator dan perangkat intubasi benar-benar ready serta serak/obstruksi memburuk, amankan airway lebih dini sebelum edema menyulitkan; bila tidak, panggil bantuan airway/retrieval, siapkan ventilasi penyelamatan, dan transfer segera tanpa percobaan intubasi berulang yang traumatik.
+8. Jangan mengajarkan antidot sianida sebagai tindakan rutin semua kebakaran ruang tertutup. Pertimbangkan hanya bila ada kombinasi paparan relevan dengan kolaps, gangguan kesadaran, hipotensi, asidosis berat/laktat tinggi, serta protokol dan obat tersedia; konsultasi pusat racun atau tim penerima tidak boleh menunda oksigen dan airway.
+9. Untuk dewasa dengan luka bakar `>=20% TBSA`, gunakan formula cairan sebagai **perkiraan awal, bukan target yang harus dihabiskan**. Selaras pembaruan ABA, default authoring kasus ini adalah kristaloid seimbang `2 mL/kg/%TBSA/24 jam`, dengan separuh estimasi delapan jam pertama dihitung sejak waktu terbakar. Pada pasien 60 kg dan 25% TBSA, estimasi awalnya 3.000 mL/24 jam, bukan 6.000 mL. Protocol burn service yang memakai angka lain tetap dapat diikuti bila eksplisit dan terdokumentasi.
+10. Hapus frasa bahwa satu jam yang lewat `harus dikejar`. Hitung sisa estimasi fase pertama dari waktu bakar, lalu sesuaikan laju secara bertahap terhadap perfusi, kesadaran, tanda vital, dan urine output; jangan memberi bolus buta untuk mengejar angka. Nilai juga trauma, perdarahan, atau penyebab lain bila hipotensi muncul sangat dini.
+11. Mulai satu akses IV besar yang andal dengan cepat dan tambahkan akses kedua bila feasible tanpa menahan keberangkatan. Gunakan kristaloid seimbang hangat dan akses kulit tidak terbakar bila memungkinkan, tetapi akses melalui kulit terbakar dapat dipakai bila diperlukan. Hindari klaim bahwa dua akses selalu lebih penting daripada menit transfer.
+12. Target urine output dewasa sekitar `0,5 mL/kg/jam` digunakan sebagai salah satu endpoint di fasilitas yang mampu mengukur dan menitrasi cairan. Kateter urin hanya dipasang bila alat, pencegahan infeksi, monitoring, dan waktu transport memungkinkan; jangan menunda transfer hanya untuk mengejar satu angka dan jangan menyebut urine sebagai penuntun tunggal atau terbaik di lapangan.
+13. Berikan analgesia yang dititrasi dengan monitoring tanpa menunda ABC. Hindari injeksi intramuskular karena absorpsinya tidak andal pada syok; pilihan obat dan dosis harus mengikuti protokol, kontraindikasi, serta stok yang benar-benar ready. Setelah pendinginan, tutup luka longgar dengan bahan bersih, kering, dan tidak melekat, cegah hipotermia, dan jangan melakukan debridement luas di FKTP.
+14. Nilai status imunisasi tetanus dan berikan vaksin/TIG sesuai jenis luka serta riwayat imunisasi. **Jangan memberi antibiotik sistemik profilaksis rutin** hanya karena luas luka. Bila PPK lama menyiratkan antibiotik spektrum luas untuk luka bakar sedang/berat, panel bukti harus menjelaskan bahwa rekomendasi yang lebih baru tidak mendukung profilaksis rutin; antibiotik diberikan bila ada infeksi atau indikasi lain yang nyata.
+15. Ubah tujuan dari sekadar `bedah/pusat luka bakar` menjadi fasilitas yang telah mengonfirmasi penerimaan dan mampu menangani advanced airway/ventilasi, toksisitas asap/CO, resusitasi luka bakar, bedah atau burn service, ICU, serta rehabilitasi. Handoff mencakup waktu dan mekanisme kejadian, ruang tertutup, TBSA/kedalaman, tren airway dan vital, durasi pendinginan, cairan beserta waktu/laju, analgesia, tetanus, intervensi lain, dan respons.
+16. Tutup bridge UKP-UKM melalui dua callback. `Pemulihan individu`: kontrol luka, rentang gerak, kontraktur/parut, nutrisi, nyeri/gatal, kesehatan mental, dukungan keluarga, dan kembali bekerja. `Kejadian tempat kerja`: audit tabung/regulator gas, ventilasi dapur, pintu keluar yang macet, alat pemadam, jalur evakuasi, pertolongan pertama yang keliru, serta waktu respons ambulans bersama pemilik warung, desa, pemadam, Puskesmas, dan Dinkes tanpa menyalahkan korban.
+17. Perbaiki provenance. Jadikan PNPK Luka Bakar KMK 555/2019 dan PPK FKTP KMK 1186/2022 sebagai floor Indonesia. Gunakan ABA 2023/2024 untuk pembaruan cairan, ANZBA EMSB 2024 dan ANZCOR 2023 untuk first-contact care, CDC untuk keterbatasan pulse oximetry pada CO, AAST 2024 untuk antibiotik, serta ABA referral criteria untuk kapabilitas tujuan. Fornas/ASPAK hanya membuktikan listing atau baseline authoring, bukan stok dan readiness saat encounter.
+
+**Realita FKTP yang diajukan, versi layar utama:**
+
+> Luka bakar mayor bukan perlombaan menghabiskan angka Parkland. Sukamaju menghentikan proses bakar, mendinginkan tanpa membuat hipotermia, memberi oksigen 100% pada dugaan paparan asap, menyiapkan airway dan transfer, lalu memulai kristaloid hangat sebagai estimasi yang terus dititrasi. SpO2 95% tidak menyingkirkan karbon monoksida. Karena advanced airway, co-oximetry, ICU, dan burn service tidak otomatis tersedia di Puskesmas, kesiapan operator, alat, oksigen, serta RS penerima harus tampak sebelum pemain memilih. Setelah pasien selamat, pintu warung yang macet dan keselamatan tabung gas kembali sebagai pekerjaan UKM, bukan sekadar latar dramatik.
+
+**Rancangan penyajian tanpa overload:**
+
+- Isi utama debrief: empat pesan - `jangan kelupas kain melekat`, `20 menit dinginkan sambil jaga hangat`, `SpO2 normal tidak menyingkirkan CO`, dan `cairan adalah estimasi yang dititrasi`.
+- Tampilkan timeline ringkas `0-20 menit`, `airway + transfer`, dan `resusitasi terukur`; rincian formula serta target urine berada di panel `Bukti klinis` yang tertutup secara default.
+- Tampilkan resource strip satu baris sebelum keputusan airway. Jangan menyembunyikan ketidaktersediaan advanced airway sampai setelah pemain menjawab.
+- Bridge UKM tampil sebagai kartu singkat `Dari Brankar ke Dapur Aman`: pintu keluar, regulator, APAR, pertolongan pertama, dan satu tindakan korektif yang benar-benar ditindaklanjuti.
+
+**Catatan sumber dan keterbatasan:**
+
+- PNPK Luka Bakar KMK 555/2019 adalah baseline Indonesia khusus luka bakar, tetapi beberapa rincian resusitasi dan antibiotik perlu dibaca bersama EBM yang lebih baru.
+- ABA CPG 2023/2024 mencakup dewasa dengan luka bakar `>=20% TBSA` dan merekomendasikan inisiasi `2 mL/kg/%TBSA` untuk mengurangi volume resusitasi. Formula tetap merupakan titik awal dan membutuhkan titrasi klinis.
+- ANZBA EMSB 2024 memakai pendekatan praktis first-contact, termasuk pendinginan 20 menit, perlindungan dari hipotermia, penilaian inhalation injury, cairan seimbang hangat, dan urine output sekitar `0,5 mL/kg/jam` pada dewasa. Perbedaan angka awal antarpedoman harus terlihat sebagai variasi protokol yang sah, bukan disembunyikan.
+- Pulse oximetry standar tidak dapat diandalkan untuk mengecualikan carboxyhemoglobinemia. Oksigen konsentrasi tinggi didasarkan pada riwayat paparan dan gambaran klinis, bukan menunggu SpO2 rendah.
+- Konsensus AAST 2024 tidak merekomendasikan antibiotik profilaksis rutin pada pasien luka bakar; risiko resistensi dan tidak adanya manfaat konsisten membuat bahasa lama PPK perlu diperbarui secara transparan.
+- Baseline `sukamaju_middle_v1` menyatakan oksigen, suction/BVM, IV, tetanus, dan transport sebagai Tier C yang wajib dinyatakan bila menjadi syarat jawaban. Ia tidak membuktikan advanced airway atau burn-center capability tersedia setiap saat.
+
+**Sumber keputusan:**
+
+- Kementerian Kesehatan RI, *PNPK Tata Laksana Luka Bakar*, KMK 555/2019: https://keslan.kemkes.go.id/unduhan/fileunduhan_1610415947_843237.pdf
+- Kementerian Kesehatan RI, *PPK Dokter di FKTP*, KMK 1186/2022: https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/
+- American Burn Association, *Clinical Practice Guidelines on Burn Shock Resuscitation*, published 2023 in JBCR 2024: https://academic.oup.com/jbcr/article/45/3/565/7458089
+- Australian and New Zealand Burn Association, *Emergency Management of Severe Burns Manual*, 2024: https://anzba.org.au/assets/2024-EMSB-Manual-19e-v14-cover__.pdf
+- Australian and New Zealand Committee on Resuscitation, *First Aid for Burns*, 2023: https://www.anzcor.org/home/first-aid/guideline-9-1-3-first-aid-for-burns
+- American Burn Association, *Guidelines for Burn Patient Referral*: https://ameriburn.org/wp-content/uploads/2024/01/one-page-guidelines-for-burn-patient-referral.pdf
+- CDC, *Clinical Guidance for Carbon Monoxide Poisoning*: https://www.cdc.gov/carbon-monoxide/hcp/clinical-guidance/index.html
+- American Association for the Surgery of Trauma Critical Care Committee, *Antibiotic Prophylaxis in Injury*, 2024: https://pmc.ncbi.nlm.nih.gov/articles/PMC11149135/
+- WHO, *Burns Fact Sheet*, 2023: https://www.who.int/news-room/fact-sheets/detail/burns
+- Kementerian Kesehatan RI, *Permenkes 16/2024 tentang Sistem Rujukan*: https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024
+- Baseline internal: `M13_ASPAK_PUSKESMAS_RESOURCE_BASELINE.md`, profil `sukamaju_middle_v1`.
+
+**Keputusan reviewer:** **Perlu edit - disetujui.** Seluruh patch specification IGD-7 dikunci untuk batch implementasi akhir setelah adjudikasi 14 kasus selesai.
+
+## IGD-12 - Aspirasi Benda Asing dengan Sumbatan Jalan Napas Berat pada Anak
+
+**Pernyataan reviewer:** `IGD-12: setuju` pada 2026-07-22, merujuk rekomendasi `Perlu edit` yang langsung mendahuluinya.
+
+**Rekomendasi CODEX:** `Perlu edit - disetujui`.
+
+**Penilaian ringkas:** inti algoritme sadar-tidak sadar sudah mengikuti AHA/AAP 2025: sumbatan ringan didorong batuk, sumbatan berat pada anak ditangani dengan lima back blows lalu lima abdominal thrusts, anak yang tidak responsif masuk CPR, benda hanya diambil bila terlihat, dan gejala menetap memerlukan evaluasi bronkoskopi. Nilai klinis saat ini sekitar **7,8/10**. Kekurangannya adalah istilah `sumbatan total` dan beberapa umpan balik terlalu absolut, aktivasi bantuan baru muncul setelah anak pingsan, kesiapan BVM/oksigen/AED pediatrik tidak dinyatakan, dan rujukan hanya berbasis `spesialis anak`. Provenance juga keliru menyatakan PPK 1186/2022 tidak memuat FBAO, padahal terdapat bab Manuver Heimlich 4A, meski algoritmenya belum membedakan bayi-anak dan referensinya lama. Paket di bawah ditargetkan membawa kasus ke **>=9,2/10**.
+
+**Patch specification yang diajukan:**
+
+1. Pertahankan ICD `T17.9` karena lokasi benda belum diketahui, tetapi ubah label menjadi **`Aspirasi Benda Asing dengan Sumbatan Jalan Napas Berat pada Anak`**. Nyatakan anak berusia tiga tahun agar pilihan abdominal thrust tidak ambigu dengan algoritme bayi di bawah satu tahun.
+2. Pertahankan SKDI kasus `3B` dengan penjelasan eksplisit: SKDI 2012 menempatkan `aspirasi` pada 3B, sedangkan benda asing trakea definitif berada pada tingkat 2; PPK 1186/2022 menempatkan keterampilan Manuver Heimlich pada 4A. Karena schema hanya memiliki satu field, `3B` mewakili pengenalan serta stabilisasi emergensi aspirasi, bukan klaim bahwa dokter FKTP melakukan bronkoskopi definitif.
+3. Ganti istilah `sumbatan total` pada tombol dan umpan balik menjadi **`FBAO berat`**. Tidak mampu bersuara, batuk lemah/tanpa suara, sianosis, perubahan kesadaran, atau apnea menandai obstruksi berat yang memerlukan tindakan; istilah ini lebih sesuai AHA dan tidak mengajarkan kepastian anatomi yang tak dapat dilihat.
+4. Saat FBAO berat dikenali dan anak masih responsif, satu anggota tim segera mengaktifkan respons emergensi serta ambulans sementara penolong utama memulai siklus **lima back blows diikuti lima abdominal thrusts**. Ulangi sampai benda keluar atau anak tidak responsif. Jangan menunggu beberapa siklus untuk memanggil bantuan.
+5. Bedakan jelas algoritme usia pada debrief: bayi di bawah sekitar satu tahun menerima lima back blows dan lima chest thrusts, tanpa abdominal thrusts; anak sekitar satu tahun sampai pubertas menerima lima back blows lalu lima abdominal thrusts. Jangan menguji dua algoritme sekaligus pada tombol utama kasus anak tiga tahun.
+6. Pada sumbatan ringan dengan batuk kuat dan suara masih ada, biarkan anak batuk dalam posisi nyaman dan observasi terus. Jangan memberi back blows, mengorek mulut, memaksa minum, atau membuat anak menangis; intervensi hanya meningkat bila muncul tanda FBAO berat.
+7. Hapus bahasa bahwa oksigen `sama sekali tidak berguna`. Pada obstruksi berat, manuver pelepasan memang tidak boleh ditunda oleh pemasangan sungkup, tetapi oksigen, suction, BVM, monitor, dan peralatan resusitasi harus disiapkan paralel dan segera digunakan setelah ada aliran udara atau ventilasi dapat diberikan.
+8. Bila anak menjadi tidak responsif, baringkan aman dan mulai CPR dengan kompresi tanpa menunda untuk pulse check dalam algoritme FBAO. Ikuti rasio pediatric BLS sesuai jumlah penolong; setiap kali jalan napas dibuka sebelum ventilasi, lihat mulut dan keluarkan benda hanya bila jelas terlihat serta mudah dijangkau. Jangan melakukan blind finger sweep.
+9. Tambahkan BVM dengan masker pediatrik dan oksigen setelah kompresi membuka atau menggeser sumbatan sehingga ventilasi mungkin dilakukan. Bila dada tidak mengembang, reposisi dan lanjutkan siklus CPR; jangan membuang waktu dengan tiupan berulang yang tidak efektif.
+10. AED dengan attenuator/pad pediatrik dipasang segera bila anak mengalami cardiac arrest dan alat tersedia, tanpa mengganggu kompresi atau pelepasan benda. AED bukan tindakan pertama saat anak masih responsif dengan FBAO berat.
+11. Direct laryngoscopy dan Magill forceps hanya boleh dipakai oleh operator terlatih bila benda terlihat dan perangkat sudah berada di sisi pasien. Jangan meninggalkan CPR untuk mencari alat dan jangan melakukan instrumentasi buta. Perangkat suction anti-choking komersial tidak diberi skor karena AHA/AAP 2025 menyatakan bukti efektivitas serta keamanannya pada anak belum cukup.
+12. Setelah bakso keluar, hentikan manuver pelepasan dan nilai ulang ABC, kesadaran, suara, batuk, stridor/wheeze, gerak dada, suara napas bilateral, saturasi, serta tanda trauma. Anak tetap NPO sambil bronkoskopi dipertimbangkan; nebulisasi atau kortikosteroid tidak boleh dipakai untuk menutupi gejala dan menggantikan evaluasi benda tersisa.
+13. Pertahankan rujukan karena batuk dan suara napas kasar menetap setelah peristiwa asfiksia. Normalnya SpO2 atau foto toraks tidak menyingkirkan benda organik radiolusen. Namun revisi klaim bahwa setiap abdominal thrust pasti menimbulkan cedera organ: lakukan pemeriksaan klinis dan tingkatkan evaluasi bila ada nyeri, muntah, memar, nyeri tekan, distensi, atau manuver berulang/kuat; alasan utama rujukan kasus ini adalah dugaan retained airway foreign body.
+14. Tampilkan resource strip sebelum keputusan: tim terlatih pediatric BLS, oksigen, suction, BVM dan masker ukuran anak, monitor/pulse oximeter, AED dengan pad pediatrik bila tersedia, serta ambulans dinyatakan ready. Laringoskop/Magill dan kompetensinya harus dinyatakan bila akan diberi kredit; bronkoskopi tidak tersedia di Sukamaju.
+15. Ubah tujuan rujukan menjadi fasilitas yang telah mengonfirmasi penerimaan dan mampu menyediakan **airway pediatrik, anestesi, THT/pulmonologi anak, bronkoskopi rigid/fleksibel, kamar operasi, serta PICU**. Handoff memuat usia/berat, waktu dan jenis makanan, status awal, jumlah siklus/manuver, periode tidak responsif/CPR, benda yang keluar, tren vital, temuan napas setelahnya, dan terapi selama transfer.
+16. Tutup bridge UKP-UKM melalui dua callback. `Keluarga`: teach-back first aid, makanan harus sesuai usia dan dipotong aman, anak duduk tenang serta diawasi saat makan, dan benda kecil dijauhkan. `Komunitas`: latihan choking berkala untuk kader/PAUD/penjual makanan, audit kesiapan BVM pediatrik dan ambulans, serta peninjauan makanan bulat-kenyal seperti bakso tanpa menyalahkan keluarga atau pedagang. Jangan menulis hasilnya ke indikator PIS-PK yang tidak cocok.
+17. Perbaiki provenance. Nyatakan PPK 1186/2022 memang memuat Manuver Heimlich sebagai keterampilan 4A, tetapi belum memberi diferensiasi bayi-anak yang memadai dan mengandalkan sumber lama. Gunakan AHA/AAP Pediatric BLS 2025 sebagai algoritme utama yang lebih baru, Queensland Paediatric Clinical Guideline 2025 dan ERS untuk retained foreign body/bronkoskopi, WHO ETAT untuk konteks fasilitas sumber daya terbatas, serta Permenkes 16/2024 untuk rujukan berbasis kemampuan. Hapus rujukan mengambang `MTBS/IDAI` bila tidak ada dokumen, tahun, dan URL spesifik.
+
+**Realita FKTP yang diajukan, versi layar utama:**
+
+> Di Sukamaju, tindakan penyelamat nyawa ini tidak menunggu bronkoskopi: kenali FBAO berat, panggil bantuan, lakukan lima back blows dan lima abdominal thrusts pada anak, lalu mulai CPR bila anak tidak responsif. Tetapi keberhasilan mengeluarkan satu potong bakso belum otomatis membuktikan jalan napas bersih. Batuk dan napas kasar yang menetap memerlukan transfer ke fasilitas dengan airway pediatrik, anestesi, dan bronkoskopi; foto toraks normal pun tidak menyingkirkan benda organik. Setelah episode selesai, keluarga berlatih ulang pertolongan pertama dan desa memperbaiki keselamatan makan anak serta kesiapan respons, bukan mencari siapa yang harus disalahkan.
+
+**Rancangan penyajian tanpa overload:**
+
+- Isi utama debrief berupa tiga kartu urutan: `masih responsif`, `menjadi tidak responsif`, dan `benda keluar tetapi gejala menetap`.
+- Perbandingan bayi versus anak diletakkan pada visual mini dua kolom setelah kasus, bukan dicampur ke pilihan utama.
+- Resource strip tampil satu baris sebelum fase CPR; detail rasio CPR, AED, dan bronkoskopi berada di panel `Bukti klinis` tertutup.
+- Bridge UKM tampil sebagai kartu `Satu Bakso, Dua Keselamatan`: first aid keluarga dan pencegahan makanan/PAUD, masing-masing hanya satu keputusan tindak lanjut.
+
+**Catatan sumber dan keterbatasan:**
+
+- AHA/AAP 2025 adalah pembaruan besar: anak dengan FBAO berat menerima lima back blows lalu lima abdominal thrusts; bila tidak responsif, mulai CPR dengan kompresi tanpa pulse check dan keluarkan hanya benda yang terlihat. Kekuatan rekomendasinya tinggi, tetapi level bukti langsung pediatriknya tetap terbatas (`C-LD`).
+- AHA/AAP meminta sistem emergensi diaktifkan segera karena anak dapat cepat mengalami cardiac arrest. Ia juga belum merekomendasikan perangkat suction anti-choking karena bukti anak tidak memadai.
+- Queensland Paediatric Clinical Guideline 2025 merekomendasikan bronkoskopi bila riwayat aspirasi disertai temuan abnormal atau gejala respirasi yang menetap. Pemeriksaan dan foto toraks normal tidak menyingkirkan aspirasi.
+- PPK 1186/2022 memberi legitimasi tindakan life-saving di layanan primer, tetapi bab Manuver Heimlich memakai algoritme generik dan referensi 2010-2014. Perbedaan tersebut harus disajikan sebagai pembaruan evidence, bukan sebagai klaim bahwa PPK tidak memuat topik.
+- Baseline `sukamaju_middle_v1` menempatkan BVM, suction, airway adjunct, monitor, dan transport pada Tier C; semuanya harus dinyatakan ready bila kegagalan penggunaannya diberi penalti.
+
+**Sumber keputusan:**
+
+- Kementerian Kesehatan RI, *PPK Dokter di FKTP*, KMK 1186/2022, bab Manuver Heimlich: https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/
+- KKI, *Standar Kompetensi Dokter Indonesia 2012*: https://indonesia-orthopaedic.org/storage/app/media/Standar-Kompetensi-Dokter-Indonesia-SKDI-KKI-Tahun-2012.pdf
+- AHA/AAP, *2025 Pediatric Basic Life Support Guidelines*: https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/pediatric-basic-life-support
+- AHA/AAP, *Child Foreign Body Airway Obstruction Algorithm*, 2025: https://cpr.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2025-Algorithms/Algorithm-BLS-Child-FBAO-250130.svg
+- Children's Health Queensland, *Inhaled Foreign Body - Emergency Management in Children*, approved 2025: https://www.childrens.health.qld.gov.au/for-health-professionals/queensland-paediatric-emergency-care-qpec/queensland-paediatric-clinical-guidelines/foreign-body-inhaled
+- European Respiratory Society, *Statement on Interventional Bronchoscopy in Children*: https://publications.ersnet.org/content/erj/50/6/1700901
+- WHO, *Paediatric Emergency Triage, Assessment and Treatment*, 2016: https://www.who.int/publications/i/item/9789241510219
+- WHO, *Complementary Feeding - Choking Prevention*: https://www.who.int/health-topics/complementary-feeding
+- Kementerian Kesehatan RI, *Permenkes 16/2024 tentang Sistem Rujukan*: https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024
+- Baseline internal: `M13_ASPAK_PUSKESMAS_RESOURCE_BASELINE.md`, profil `sukamaju_middle_v1`.
+
+**Keputusan reviewer:** **Perlu edit - disetujui.** Seluruh patch specification IGD-12 dikunci untuk batch implementasi akhir setelah adjudikasi 14 kasus selesai.
+
+## IGD-13 - Suspek Sepsis dengan Syok, Kemungkinan Sumber Urin
+
+**Pernyataan reviewer:** `IGD-13: setuju` pada 2026-07-22, merujuk rekomendasi `Perlu edit` yang langsung mendahuluinya.
+
+**Rekomendasi CODEX:** `Perlu edit - disetujui`.
+
+**Penilaian ringkas:** draf sudah mengenali infeksi dengan disfungsi organ dan hipoperfusi, tidak menunggu laktat atau kultur, memulai kristaloid dengan penilaian ulang, memberi antibiotik IV dini, serta tetap merujuk. Nilai klinis saat ini sekitar **7,1/10**. Namun label `Syok Sepsis` dipakai sebagai diagnosis pasti sebelum kriteria formal dapat dinilai, rentang usia 45-75 tidak konsisten dengan pembuka `lansia`, antibiotik hanya disebut `spektrum luas yang tersedia`, dan rumah sakit yang baru siap dua jam berisiko mengajarkan pasien syok untuk menunggu administrasi. Umpan balik akhir juga menyatakan pasien pasti membutuhkan vasopresor meski tekanan darah 92/60 atau MAP sekitar 71 dan kesadarannya membaik. Paket di bawah ditargetkan membawa kasus ke **>=9,2/10**.
+
+**Patch specification yang diajukan:**
+
+1. Pertahankan id teknis `igd_syok_sepsis`, SKDI `3B`, dan kode utama `A41.9`, tetapi ubah label layar menjadi **`Suspek Sepsis dengan Syok, Kemungkinan Sumber Urin`**. Sepsis-3 mendefinisikan syok septik formal sebagai sepsis dengan kebutuhan vasopresor untuk mempertahankan MAP minimal 65 mmHg dan laktat lebih dari 2 mmol/L setelah resusitasi cairan memadai. FKTP tidak perlu menunggu kedua data itu untuk mengenali kegawatan dan bertindak, tetapi juga tidak boleh mengajarkan bahwa hipotensi awal saja sudah membuktikan label formal tersebut.
+2. Tampilkan `A41.9` sebagai kode utama sepsis organisme tidak spesifik dan `R57.2` sebagai kode terkait syok septik di provenance/debrief bila model data hanya mengizinkan satu kode utama. Jangan memakai `R65.21`, karena itu kode ICD-10-CM dan bukan kode dasar ICD-10 WHO yang dipakai katalog permainan.
+3. Jadikan pasien spesifik: perempuan 68 tahun, berat aktual 55 kg, tanpa gagal jantung atau sirosis yang diketahui, tetapi fungsi ginjal belum diketahui karena oliguria. Tambahkan data yang memengaruhi keputusan antibiotik: tidak ada alergi beta-laktam berat, rawat inap/antibiotik luas baru-baru ini, kolonisasi MDR, atau riwayat ESBL yang diketahui. Riwayat batu, ginjal tunggal, retensi, kateter, dan infeksi berulang tetap harus ditanyakan karena nyeri pinggang plus oliguria dapat menandai obstruksi terinfeksi.
+4. Saat sepsis dengan syok dikenali, aktifkan `huddle sepsis Sukamaju` dan koordinasi rujukan secara paralel, bukan setelah satu liter cairan atau setelah dosis antibiotik selesai. Bagi peran tim: ABC dan monitoring, akses/cairan, glukosa serta sampel yang tidak menunda, antibiotik, komunikasi keluarga, dan pencarian fasilitas penerima. qSOFA boleh tampil sebagai tanda risiko tinggi, bukan sebagai tes diagnosis tunggal.
+5. Tampilkan resource strip sebelum pilihan pertama: kristaloid seimbang, dua jalur IV bila feasible, oksigen, pulse oximeter, manset tekanan darah, termometer, glukometer, alat pantau urine, antibiotik jembatan yang telah disetujui, ambulans, dan komunikasi rujukan dinyatakan ready. Laktat, kultur darah, pompa infus vasopresor, protokol vasopresor perifer, dan monitoring tingkat lanjut dinyatakan tidak ready di Sukamaju.
+6. Karena SpO2 92%, kesadaran turun, akral dingin, dan pembacaan pulse oximeter dapat kurang andal pada perfusi buruk, verifikasi sinyal lalu berikan oksigen yang dititrasi terhadap respons klinis dan saturasi. Jangan menjadikan `oksigen untuk semua sepsis` atau high-flow tanpa penilaian sebagai aturan universal; airway, kerja napas, perfusi, dan kecukupan suplai selama transfer tetap dinilai serial.
+7. Gunakan kristaloid seimbang sebagai pilihan awal. Berikan aliquot 250-500 mL dengan penilaian ulang tekanan darah/MAP, capillary refill, kesadaran, nadi, napas, SpO2, auskultasi paru, dan urine. Angka `sekurang-kurangnya 30 mL/kg dalam tiga jam` dari SSC 2026 menjadi orientasi dengan kepastian bukti rendah, bukan tiga kantong yang wajib dihabiskan. Pada 55 kg, estimasi referensinya sekitar 1.650 mL; volume dan laju harus disesuaikan terhadap respons, penyakit penyerta, serta tanda kelebihan cairan. Passive leg raise atau respons terhadap mini-fluid challenge boleh membantu bila feasible.
+8. Revisi pilihan vasopresor agar tidak menyatakan `mulai vasopresor sekarang` selalu salah secara medis. SSC 2026 membuka kemungkinan vasopresor bersamaan dengan cairan pada syok tidak stabil dan menyarankan tidak menunggu akses sentral bila vasopresor memang dibutuhkan. Pilihan itu salah **dalam encounter Sukamaju ini** karena pompa, protokol, monitor, obat, dan operator belum ready. Bila hipotensi berat menetap atau pasien memburuk, tim wajib mengeskalasi ke RS/PSC atau tim retrieval untuk dukungan vasopresor termonitor, bukan mengimprovisasi dopamin atau bolus vasopresor.
+9. Periksa glukosa bedside dan lakukan evaluasi singkat penyebab lain atau syok campuran tanpa menunda resusitasi. Ambil kultur darah dan urine sebelum antibiotik hanya bila sarana sudah tersedia dan prosesnya tidak menyebabkan penundaan bermakna. Urinalisis, darah lengkap, fungsi ginjal, dan laktat memperkaya keputusan di fasilitas mampu, tetapi hasilnya bukan tiket untuk mulai resusitasi atau transfer.
+10. Ganti tombol generik `antibiotik empiris spektrum luas yang tersedia` dengan keputusan yang dapat diaudit. Untuk encounter ini, protokol jejaring kabupaten/RS menyatakan dua vial seftriakson tersedia sebagai **stok jembatan emergensi** dan memerintahkan `seftriakson 2 g IV dosis pertama` segera setelah alergi berat serta risiko MDR singkat disaring. Catat nama, dosis, rute, dan jam pemberian. Ini bukan resep universal semua urosepsis dan bukan klaim bahwa seftriakson rutin ready di setiap Puskesmas; Fornas 1199/2025 menempatkannya pada FPKTL, sehingga readiness khusus encounter dan otorisasi protokol jejaring harus terlihat. Bila stok/protokol tersebut tidak ada, jangan mengimprovisasi regimen atau menahan transfer.
+11. Jangan memakai aminoglikosida sebagai jawaban default pada pasien oliguria dengan fungsi ginjal belum diketahui. Di RS, regimen harus segera ditinjau terhadap fungsi ginjal, kultur, antibiogram lokal, paparan layanan kesehatan, alergi, dan risiko MDR. Stewardship tetap berjalan setelah keputusan menyelamatkan waktu untuk memberi dosis pertama.
+12. Tambahkan evaluasi source control: nyeri pinggang, oliguria, riwayat batu, retensi, atau hidronefrosis dapat berarti sistem kemih terinfeksi yang tersumbat. Tujuan rujukan harus memiliki laboratorium/laktat/kultur, ultrasonografi atau CT, ICU/HCU, norepinefrin dengan monitoring, serta urologi/intervensi untuk drainase bila diperlukan. Antibiotik dan cairan tidak menggantikan dekompresi sumber yang tersumbat.
+13. Hapus narasi pasif `tempat tidur baru siap sekitar dua jam lagi`. Tim harus menghubungi fasilitas alternatif yang mampu, PSC/jejaring rujukan, atau eskalasi Dinkes sambil resusitasi dan antibiotik berjalan. Ketidaktersediaan bed menjadi hambatan sistem yang dicatat dan ditindaklanjuti, bukan alasan menahan pasien syok di fasilitas tanpa vasopresor dan ICU.
+14. Rekonsiliasi langkah akhir. Bila tekanan darah tetap 92/60 atau MAP sekitar 71, perfusi dan kesadaran membaik, jangan menulis bahwa pasien pasti membutuhkan vasopresor saat itu; ia tetap memerlukan transfer karena respons dapat sementara dan source control belum tercapai. Bila tujuan pedagogisnya adalah mengajarkan vasopresor, vignette harus menunjukkan hipotensi persisten dengan MAP di bawah target setelah cairan terukur serta secara eksplisit menghadirkan tim dan resource yang aman. Versi pilot memilih jalur pertama agar tidak mengarang kesiapan retrieval lanjutan.
+15. Revisi distractor kortikosteroid. Hidrokortison adalah terapi tambahan terpilih pada septic shock yang masih membutuhkan dukungan vasopresor dalam lingkungan termonitor; ia bukan dosis tinggi pra-rujuk, bukan pengganti antibiotik/cairan/source control, dan tidak wajib diberikan oleh Sukamaju sebelum transfer. Hapus aturan lama yang terlalu kaku seolah steroid baru boleh dipikirkan setelah urutan cairan lalu vasopresor selesai sempurna.
+16. Ubah disposisi dari sekadar `penyakit dalam` menjadi fasilitas yang telah mengonfirmasi penerimaan dan mampu menangani shock monitoring, vasopresor, ICU/HCU, kultur/laktat, imaging, serta source control urologis. Handoff memuat waktu pengenalan sepsis, sumber yang dicurigai, alergi/risiko MDR, tren vital dan perfusi, glukosa, total serta waktu cairan berikut responsnya, urine, antibiotik nama-dosis-jam, sampel yang sudah diambil, dan kebutuhan yang belum terpenuhi.
+17. Tutup kontinuitas UKP setelah pulang: callback menilai pemulihan ginjal dan urine, rekonsiliasi antibiotik/obat kronis, kelemahan, nutrisi, fungsi dan kognisi pascasepsis, tanda infeksi berulang, serta kemungkinan obstruksi atau batu. Jangan membuat pasien `sembuh` begitu keluar dari rumah sakit.
+18. Tutup bridge UKP-UKM dengan kartu **`Satu Jam, Dua Sistem`**. Audit agregat mencakup waktu kenal sepsis, waktu antibiotik, volume dan reassessment cairan, decision-to-departure, penolakan atau keterlambatan bed, stok emergency dose, kelengkapan handoff, dan keterlambatan source control. Puskesmas, RS, PSC, farmasi, laboratorium, dan Dinkes kemudian memperbaiki protokol, antibiogram jejaring, simulasi huddle, serta jalur rujukan. Jangan menulisnya ke indikator PIS-PK yang tidak cocok dan jangan membuka identitas pasien.
+19. Perbaiki provenance. PNPK Sepsis KMK 342/2017 dan PPK FKTP KMK 1186/2022 tetap menjadi floor Indonesia, tetapi panel bukti wajib menjelaskan bahwa definisi, EGDT/CVP, akses vasopresor sentral, dan beberapa detail hemodinamiknya berasal dari era lebih lama. SSC 2026 menjadi pembaruan utama untuk cairan individual, vasopresor perifer, antibiotik satu jam, source control, dan quality improvement. Fornas 1199/2025 memeriksa level formulary; baseline ASPAK memeriksa readiness encounter; Permenkes 16/2024 memandu rujukan berbasis kemampuan.
+
+**Realita FKTP yang diajukan, versi layar utama:**
+
+> Sukamaju tidak perlu laktat untuk mengenali bahwa infeksi, bingung akut, oliguria, akral dingin, dan tekanan 82/50 adalah kegawatan. Tim memulai cairan seimbang dalam aliquot, menilai respons setiap kali, memberi dosis antibiotik jembatan yang benar-benar tersedia, dan mencari RS mampu sejak menit pertama. Tetapi `30 mL/kg` bukan tiga kantong otomatis, seftriakson bukan stok universal Puskesmas, dan vasopresor tidak boleh diimprovisasi tanpa pompa, monitor, protokol, serta operator. Bila bed tujuan tertunda, jejaring mencari alternatif; pasien syok tidak menunggu administrasi.
+
+**Rancangan penyajian tanpa overload:**
+
+- Isi utama debrief berupa empat kartu pendek: `kenali tanpa menunggu`, `cairan lalu nilai ulang`, `antibiotik yang dapat diaudit`, dan `rujuk sambil resusitasi`.
+- Tampilkan mini-timeline `menit 0`, `setiap aliquot`, `<=60 menit`, dan `berangkat`; detail definisi Sepsis-3 serta kekuatan bukti berada di panel `Bukti klinis` yang tertutup.
+- Resource strip membedakan `ready sekarang`, `melalui jejaring`, dan `tidak ready`; pemain tidak perlu menebak inventaris tersembunyi.
+- Bridge UKM muncul sesudah debrief sebagai kartu `Satu Jam, Dua Sistem`, bukan sebagai kuliah epidemiologi di tengah resusitasi.
+
+**Catatan sumber dan keterbatasan:**
+
+- SSC 2026 menyatakan sepsis adalah diagnosis klinis, resusitasi dimulai segera, antibiotik untuk possible/probable/definite septic shock diberikan segera dan idealnya dalam satu jam, serta source control dini diprioritaskan. Rekomendasi 30 mL/kg dalam tiga jam berkepastian rendah dan disertai kewajiban individualisasi serta reassessment.
+- SSC 2026 juga memperbolehkan vasopresor bersamaan dengan cairan pada syok tidak stabil dan menyarankan memulai secara perifer daripada menunggu akses sentral. Ini tidak membuktikan semua FKTP aman melakukannya; kesiapan alat, obat, protokol, monitoring, dan operator tetap menentukan.
+- PNPK 2017 secara formal menyasar layanan primer dan rumah sakit, tetapi tata laksananya dominan ICU, memakai definisi serta konsep hemodinamik lama, dan tidak memberi algoritme rujuk FKTP yang operasional. Ia dipertahankan sebagai baseline regulasi, bukan satu-satunya sumber klinis.
+- Seftriakson 2 g IV adalah keputusan authoring khusus encounter dengan dugaan sumber urin komunitas, skrining alergi/MDR negatif, dan protokol jejaring tertulis. Pemain tidak diberi kesan bahwa regimen ini cocok untuk semua sumber, semua pasien, atau semua pola resistensi.
+
+**Sumber keputusan:**
+
+- Kementerian Kesehatan RI, *PNPK Tata Laksana Sepsis*, KMK 342/2017: https://keslan.kemkes.go.id/unduhan/fileunduhan_1610419769_850165.pdf
+- Kementerian Kesehatan RI, *PPK Dokter di FKTP*, KMK 1186/2022: https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/
+- Society of Critical Care Medicine, *Surviving Sepsis Campaign International Guidelines 2026*: https://www.sccm.org/clinical-resources/guidelines/guidelines/surviving-sepsis-campaign-international-guidelines-for-management-of-sepsis-and-septic-shock-2026
+- Singer et al., *The Third International Consensus Definitions for Sepsis and Septic Shock (Sepsis-3)*, JAMA 2016: https://jamanetwork.com/journals/jama/fullarticle/2492881
+- Kementerian Kesehatan RI, *Fornas 1199/2025*: https://farmalkes.kemkes.go.id/unduh/keputusan-menteri-kesehatan-republik-indonesia-nomor-hk-01-07-menkes-1199-2025-tentang-formularium-nasional/
+- Kementerian Kesehatan RI, *Permenkes 16/2024 tentang Sistem Rujukan*: https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024
+- Baseline internal: `M13_ASPAK_PUSKESMAS_RESOURCE_BASELINE.md`, profil `sukamaju_middle_v1`.
+
+**Keputusan reviewer:** **Perlu edit - disetujui.** Seluruh patch specification IGD-13 dikunci untuk batch implementasi akhir setelah adjudikasi 14 kasus selesai.
+
+## IGD-14 - Tenggelam Nonfatal dengan Gagal Napas dan Hipotermia Ringan
+
+**Pernyataan reviewer:** `IGD-14: setuju` pada 2026-07-22, merujuk rekomendasi `Perlu edit` dan patch specification yang langsung mendahuluinya.
+
+**Status:** sign-off dokter tercatat; patch specification disetujui untuk implementasi runtime.
+
+**Rekomendasi CODEX:** `Perlu edit - disetujui`.
+
+**Penilaian ringkas:** draf sudah menempatkan hipoksia sebagai masalah utama, memprioritaskan ventilasi, melarang Heimlich dan posisi kepala di bawah untuk mengeluarkan air, melakukan penghangatan, menghindari antibiotik serta steroid profilaksis, dan merujuk pasien yang membutuhkan bantuan napas. Nilai klinis saat ini sekitar **7,5/10**. Kekurangan utamanya adalah rentang usia 10-30 tahun mencampur algoritme anak dan dewasa, rujukan baru tampak sebagai keputusan setelah 30 menit, alasan penghangatan memakai bahasa terlalu absolut, dan istilah `cedera paru tertunda` disampaikan dengan cara yang dapat menghidupkan mitos `secondary drowning`. Kasus juga belum mencari penyebab pasien jatuh, belum membedakan respiratory arrest dari cardiac arrest, dan tujuan rujuknya hanya `penyakit dalam`. Paket di bawah ditargetkan membawa kasus ke **>=9,3/10**.
+
+**Patch specification yang diajukan:**
+
+1. Pertahankan id teknis `igd_tenggelam`, ICD `T75.1`, dan SKDI `3B`, tetapi gunakan label **`Tenggelam Nonfatal dengan Gagal Napas dan Hipotermia Ringan`**. Gunakan definisi WHO: drowning adalah proses gangguan napas akibat submersion/immersion dalam cairan, dengan luaran kematian, morbiditas, atau tanpa morbiditas. Hapus istilah `near-drowning`, `dry`, `wet`, `freshwater`, `saltwater`, dan `secondary drowning` sebagai kategori klinis.
+2. Tetapkan pasien sebagai laki-laki 22 tahun agar algoritme resusitasi dewasa tidak bercampur dengan pediatrik. Buat suhu 33,8 derajat masuk akal dengan konteks sungai desa setelah hujan pada dini hari, pakaian basah, dan durasi evakuasi. Nyatakan estimasi berat badan serta metode pengukuran suhu; termometer biasa yang tidak dapat membaca suhu rendah tidak boleh dianggap sebagai core temperature presisi.
+3. Perkaya handoff saksi tanpa memperlambat tindakan: perkiraan waktu submersi, waktu ditemukan, apakah kejadian disaksikan, suhu/kondisi arus dan kontaminasi air, jenis rescue, napas bantuan/CPR yang sudah diberikan, waktu napas pertama, muntah, dan respons. Jangan memberi prognosis pasti hanya dari satu perkiraan durasi yang tidak andal.
+4. Sejak pasien tiba, aktifkan tim dan rujukan secara paralel. Satu petugas menangani airway/ventilasi, satu memantau sirkulasi dan menyiapkan AED, satu mengeringkan serta menghangatkan setelah ventilasi berjalan, dan satu menghubungi fasilitas penerima. Langkah ketiga bukan waktu pertama kali memutuskan rujuk, melainkan dialog menghadapi permintaan pulang saat transfer sudah dikoordinasikan.
+5. Tampilkan resource strip: BVM dengan masker dewasa dan reservoir, oksigen dengan kapasitas transfer, suction, airway adjunct, pulse oximeter, monitor/ECG, AED, glukometer, low-reading thermometer bila ada, selimut/active warming, cairan kristaloid hangat, dan ambulans dinyatakan ready. Advanced airway, ventilator, NIV/CPAP, blood gas, dan ICU dinyatakan melalui RS jejaring, bukan ready di Sukamaju.
+6. Pada pasien dengan nadi 54/menit tetapi napas hanya 6/menit dan dangkal, tindakan benar adalah membuka airway, mengeluarkan hanya benda/muntahan yang terlihat atau mengganggu ventilasi, lalu memberi **assisted ventilation segera** dengan BVM dan oksigen. Gunakan two-person mask seal bila tenaga tersedia, airway adjunct sesuai kompetensi, volume secukupnya sampai dada tampak naik, dan hindari ventilasi terlalu cepat atau bertekanan tinggi yang memperbesar distensi lambung serta regurgitasi.
+7. Jangan menghabiskan waktu menyedot busa halus yang terus terbentuk bila ventilasi masih dapat dilakukan. Bila muntahan atau material padat benar-benar menghalangi ventilasi, miringkan singkat dan lakukan directed suction dengan interupsi minimal. Abdominal thrust hanya relevan bila ada benda padat penyebab FBAO, bukan untuk mengeluarkan air dari paru.
+8. Tampilkan cabang algoritme yang hilang pada debrief. Bila nadi ada tetapi napas tidak efektif, teruskan rescue breathing/assisted ventilation dan nilai ulang. Bila tidak ada tanda sirkulasi atau terjadi cardiac arrest, mulai CPR **dengan napas dan kompresi**, bukan compression-only sebagai pilihan ideal. Untuk dewasa gunakan 30:2; trained rescuer boleh memulai dengan napas, dan CPR tidak boleh ditunda untuk mencari atau memasang AED. Keringkan dada seperlunya lalu gunakan AED begitu tersedia tanpa menghentikan CPR lebih lama dari perlu.
+9. Setelah napas spontan kembali, jangan berpindah terlalu cepat ke kanula nasal hanya karena satu angka membaik. Nilai kesadaran, ventilasi, kerja napas, auskultasi, muntah, dan tren SpO2. Titrasi oksigen menuju sekitar 94-98% pada pasien non-arrest sambil mempertahankan bantuan ventilasi bila napas tetap tidak adekuat. NIV dapat dipertimbangkan di fasilitas mampu hanya bila pasien sadar, kooperatif, dan tidak muntah; depressed consciousness atau kegagalan ventilasi memerlukan advanced airway oleh operator terampil.
+10. Hindari imobilisasi spinal rutin. Lakukan spinal motion restriction hanya bila ada mekanisme atau temuan yang mendukung, seperti terjun dari ketinggian, benturan kepala/leher, defisit neurologis, atau riwayat tidak jelas dengan kecurigaan trauma. Pada kejadian terpeleset yang disaksikan tanpa axial loading, airway dan ventilasi tidak boleh ditunda demi papan spinal.
+11. Revisi bahasa hipotermia. Suhu 33,8 derajat adalah hipotermia ringan, tetapi tetap dapat memperburuk bradikardia, koagulasi, dan pemulihan. Ventilasi menjadi prioritas menit pertama, sementara pelepasan pakaian basah, pengeringan, insulasi, active external warming pada batang tubuh, dan penanganan lembut dilakukan paralel segera setelah ada petugas kedua. Cairan IV hangat dan oksigen hangat-lembap hanya digunakan bila ready. Hapus klaim bahwa menggosok tungkai pada suhu ini pasti memicu fibrilasi ventrikel; larang karena tidak efektif, dapat mencederai kulit, meningkatkan vasodilatasi perifer, dan tidak menggantikan rewarming terkontrol.
+12. Pantau ECG/irama, tekanan darah, napas, kesadaran, glukosa, suhu, dan perfusi. Beri kristaloid isotonic hangat hanya bila ada hipovolemia atau hipotensi yang relevan; jangan memberi cairan untuk `menetralkan air tawar` atau `air laut`. Perbedaan jenis air tidak menghasilkan algoritme resusitasi awal yang berbeda.
+13. Pertahankan larangan antibiotik dan kortikosteroid profilaksis, tetapi hilangkan kata absolut. Antibiotik dipertimbangkan bila kemudian ada pneumonia/sepsis atau paparan air yang benar-benar sangat tercemar, idealnya dipandu kultur dan pola mikrobiologi lokal karena patogennya dapat tidak lazim. Demam, leukositosis, atau infiltrat awal dapat berasal dari pneumonitis kimia dan tidak otomatis membuktikan infeksi. Steroid tidak diberikan rutin khusus untuk drowning-associated lung injury.
+14. Pemeriksaan penunjang mengikuti kondisi, bukan paket wajib. GDS dan ECG membantu mencari penyebab; blood gas membantu pada hipoksemia/distres; pemeriksaan lain disesuaikan dengan trauma, toksikologi, atau penyakit penyerta. Foto toraks awal normal tidak menjamin tidak ada cedera paru, tetapi foto abnormal juga tidak menentukan prognosis; jangan menunggu foto untuk memulai transfer.
+15. Cari penyebab kejadian setelah ABC berjalan: terpeleset murni, arus, kelelahan, alkohol/zat, hipoglikemia, kejang, sinkop, aritmia/long-QT, infark, trauma kepala, atau tindakan menyakiti diri. Saksi yang mengatakan `kepeleset` menjadi data awal, bukan akhir penalaran. Penilaian keselamatan dan kesehatan mental dilakukan secara privat serta tidak menghambat resusitasi.
+16. Pertahankan rujukan karena pasien sempat tidak sadar, SpO2 80%, RR 6/menit, membutuhkan BVM, masih batuk, dan mengalami hipotermia. Jangan menjelaskan keputusan dengan mitos bahwa pasien yang sudah sepenuhnya normal dapat meninggal mendadak berhari-hari kemudian karena `air tersisa`. Pasien ringan yang kemudian benar-benar asimtomatik, mental dan pemeriksaan napas normal, tidak membutuhkan airway support, serta stabil setelah observasi 4-6 jam di fasilitas mampu dapat dipertimbangkan pulang. Pasien dalam vignette ini jelas tidak termasuk kelompok tersebut.
+17. Ubah tujuan rujukan dari `penyakit dalam` menjadi fasilitas yang telah mengonfirmasi penerimaan dan mampu melakukan emergency airway, NIV/ventilasi, blood gas, imaging sesuai indikasi, monitoring kontinu, rewarming, serta ICU. Handoff memuat kronologi submersi dan rescue, bantuan napas/CPR, muntah/aspirasi, dugaan trauma atau penyebab medis, tren neurologis/respirasi/suhu, oksigen dan ventilasi yang diberikan, serta respons.
+18. Tambahkan callback pascapulang: fungsi kognitif dan neurologis, batuk/sesak, toleransi aktivitas, gangguan tidur atau kecemasan, evaluasi sinkop/kejang/aritmia bila dicurigai, penggunaan alkohol/zat, serta kesiapan kembali ke aktivitas air. Edukasi diberikan tanpa mempermalukan pasien atau penolong.
+19. Tutup bridge UKP-UKM melalui kartu **`Dari Sungai ke Sistem Aman`**. Audit agregat mencatat lokasi dan jam kejadian, cuaca/arus, penerangan dan akses tebing, penggunaan pelampung, alkohol, waktu ditemukan, rescue yang aman atau berbahaya, waktu napas bantuan, kesiapan oksigen/BVM/AED, serta response-to-departure. Desa, Puskesmas, BPBD/Basarnas, PSC, sekolah, kelompok pemancing, dan pengelola lokasi memilih intervensi nyata: pegangan/pagar pada akses berisiko, pelampung dan throw-bag, lifejacket, penerangan, peringatan arus, buddy system, pengawasan anak, latihan `reach/throw, do not go`, serta CPR dengan napas. Ukur near-miss dan waktu respons, bukan hanya kematian; jangan memaksakannya ke indikator PIS-PK yang tidak cocok.
+20. Perbaiki provenance. PPK FKTP 1186/2022 tetap menjadi floor BHD umum tetapi tidak memiliki bab drowning spesifik. AHA 2025 Special Circumstances menggantikan pembaruan terfokus AHA/AAP 2024 sebagai acuan resusitasi utama. ANZCOR 2026 memberi detail ventilasi, oksigen, dan hipotermia yang dapat diaudit; WMS 2024 memberi terminologi, antibiotik, imaging, observasi, serta pencegahan. WHO Global Status Report 2024 menjadi dasar bridge UKM, Permenkes 16/2024 memandu tujuan rujukan berbasis kemampuan, dan UU 29/2014 memberi konteks koordinasi pencarian-pertolongan Indonesia.
+
+**Realita FKTP yang diajukan, versi layar utama:**
+
+> Pada drowning, menit pertama dipakai untuk mengembalikan napas, bukan `mengeluarkan air`. Sukamaju memberi ventilasi efektif, menyiapkan CPR dengan napas bila nadi hilang, mengeringkan dan menghangatkan secara paralel, lalu meneruskan pasien ke fasilitas yang mampu menangani cedera paru dan hipoksia. Pasien ini tetap dirujuk karena sempat tidak sadar dan membutuhkan BVM, bukan karena mitos `secondary drowning`. Sesudahnya, titik sungai yang licin, keterlambatan rescue, keterampilan napas bantuan, dan kesiapan pelampung menjadi pekerjaan UKM bersama desa serta jejaring SAR.
+
+**Rancangan penyajian tanpa overload:**
+
+- Isi utama debrief hanya empat kartu: `napas dulu`, `bila nadi hilang: CPR dengan napas`, `hangatkan paralel`, dan `rujuk karena pernah gagal napas`.
+- Gunakan mini-timeline `diangkat dari air`, `menit pertama`, `napas kembali`, dan `transfer`; detail observasi pasien ringan serta pemeriksaan penyebab berada di panel `Bukti klinis` tertutup.
+- Resource strip memisahkan `ready di Sukamaju` dan `tersedia di RS`. Jangan menguji advanced airway atau NIV tanpa menyatakan operator dan alat.
+- Bridge UKM muncul setelah debrief sebagai satu kartu `Dari Sungai ke Sistem Aman` dengan satu pilihan intervensi lokasi dan satu pilihan penguatan rescue, bukan daftar kampanye panjang.
+
+**Catatan sumber dan keterbatasan:**
+
+- AHA 2025 menekankan ventilasi sebagai inti resusitasi drowning. Pada cardiac arrest, CPR ideal mencakup napas dan kompresi; CPR tidak ditunda untuk AED, dan trained rescuer dapat memulai dengan napas. Bukti langsung untuk beberapa rincian masih observasional atau expert opinion.
+- ANZCOR 2026 memakai lima ventilasi awal pada korban yang tidak bernapas normal serta sasaran SpO2 94-98% setelah napas/sirkulasi kembali. Kasus ini memiliki nadi dan gagal napas, sehingga layar utama menilai assisted ventilation, bukan meminta pemain menghafal dua algoritme sekaligus.
+- WMS 2024 mendukung transfer segera pada gangguan kesadaran, hipotensi, batuk berat, atau temuan paru abnormal. Rekomendasi observasi 4-6 jam dan discharge terutama berasal dari studi observasional, banyak di antaranya pediatrik; ia tidak berlaku untuk pasien vignette yang memerlukan BVM.
+- WHO 2024 menyebut intervensi pencegahan berbasis komunitas seperti pembatas akses air, keterampilan renang dan water safety, rescue-resuscitation, lifejacket/aturan perahu, pengawasan anak, dan manajemen risiko banjir. Pilihan Sukamaju harus mengikuti hazard lokal, bukan menyalin semua intervensi sekaligus.
+- Hipotermia 33,8 derajat tidak membenarkan penundaan ventilasi, tetapi juga tidak boleh disepelekan. Bahasa final mengajarkan dua pekerjaan berjalan paralel bila tim tersedia.
+
+**Sumber keputusan:**
+
+- Kementerian Kesehatan RI, *PPK Dokter di FKTP*, KMK 1186/2022: https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/
+- American Heart Association, *2025 Adult and Pediatric Special Circumstances of Resuscitation*, bagian Drowning dan Hypothermia: https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation
+- ANZCOR, *Guideline 11.10 Resuscitation in Special Circumstances*, 2026: https://www.anzcor.org/home/adult-advanced-life-support/guideline-11-10-resuscitation-in-special-circumstances
+- Wilderness Medical Society, *Clinical Practice Guidelines for the Treatment and Prevention of Drowning: 2024 Update*: https://doi.org/10.1177/10806032241227460
+- WHO, *Global Status Report on Drowning Prevention 2024*: https://www.who.int/publications/i/item/9789240103962
+- Badan Nasional Pencarian dan Pertolongan, *UU 29/2014 tentang Pencarian dan Pertolongan*: https://jdih.basarnas.go.id/produk-hukum/427
+- Kementerian Kesehatan RI, *Permenkes 16/2024 tentang Sistem Rujukan*: https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024
+- Baseline internal: `M13_ASPAK_PUSKESMAS_RESOURCE_BASELINE.md`, profil `sukamaju_middle_v1`.
+
+**Keputusan reviewer:** **Perlu edit - disetujui.** Seluruh patch specification IGD-14 dikunci untuk batch implementasi runtime. Dengan keputusan ini, adjudikasi klinis 14/14 selesai.
+
+## Penutupan Implementasi
+
+- Seluruh 14 keputusan dokter telah diterapkan pada release konten `igd-adjudication-2026-07-22`.
+- Empat belas kasus IGD hasil adjudikasi aktif di mode Karier dan tetap dikecualikan dari mode Ujian. Kebijakan kasus IGD lama yang sudah aktif tidak berubah.
+- ID langkah, ID pilihan, kunci benar-salah, dan efek stabilitas dipertahankan; perubahan berfokus pada ketepatan klinis, bahasa, debrief, realita sumber daya FKTP, kontinuitas, dan bridge UKP-UKM.
+- Verifikasi akhir: TypeScript bersih; freeze `18/18`; Vitest `1257/1257` pada 133 file; soak 90 hari dan uji adversarial lulus; production build dan bundle budget lulus.
+- Installer: `dist/PRIMERA test-beta Setup 1.1.0-beta.1.exe` (107.936.221 byte).
+- SHA-256 installer: `CF9B2957359BB2D736680FC8C526AC6B96278B1791AADAD2C6F9097A94905BC9`.

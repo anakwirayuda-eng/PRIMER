@@ -1,4 +1,4 @@
-import type { SumberKlinis } from '@content/types'
+import type { DebriefIgd, SumberKlinis } from '@content/types'
 import { TeksTerbaca } from './TeksTerbaca'
 import './BuktiKlinis.css'
 
@@ -7,6 +7,7 @@ interface Props {
   namaKasus: string
   ringkasan: string
   sumber: readonly SumberKlinis[]
+  debrief?: DebriefIgd
   defaultOpen?: boolean
   className?: string
 }
@@ -26,6 +27,7 @@ export function BuktiKlinis({
   namaKasus,
   ringkasan,
   sumber,
+  debrief,
   defaultOpen = false,
   className = '',
 }: Props) {
@@ -41,6 +43,37 @@ export function BuktiKlinis({
           <div className="bukti-klinis__subjudul mono">INTI KEPUTUSAN</div>
           <TeksTerbaca teks={ringkasan} batasKata={42} />
         </section>
+
+        {debrief && (
+          <section className="bukti-klinis__pengayaan" aria-label="Debrief kasus IGD">
+            <div className="bukti-klinis__subjudul mono">YANG PERLU MENETAP</div>
+            <ul className="bukti-klinis__poin">
+              {debrief.poinKunci.map((poin) => <li key={poin}>{poin}</li>)}
+            </ul>
+
+            <details className="bukti-klinis__lapisan">
+              <summary>Realita FKTP &amp; kesiapan sumber daya</summary>
+              <TeksTerbaca teks={debrief.realitaFktp} batasKata={74} />
+              <div className="bukti-klinis__resource-grid">
+                <ResourceGroup judul="READY DI SUKAMAJU" items={debrief.sumberDaya.ready} />
+                <ResourceGroup judul="MELALUI JEJARING" items={debrief.sumberDaya.melaluiJejaring} />
+                {debrief.sumberDaya.tidakReady?.length ? (
+                  <ResourceGroup judul="TIDAK READY" items={debrief.sumberDaya.tidakReady} />
+                ) : null}
+              </div>
+            </details>
+
+            <details className="bukti-klinis__lapisan">
+              <summary>Kelanjutan perawatan</summary>
+              <TeksTerbaca teks={debrief.kontinuitas} batasKata={64} />
+            </details>
+
+            <details className="bukti-klinis__lapisan">
+              <summary>{debrief.bridgeUkm.judul}</summary>
+              <TeksTerbaca teks={debrief.bridgeUkm.ringkasan} batasKata={78} />
+            </details>
+          </section>
+        )}
 
         <div>
           <div className="bukti-klinis__subjudul mono">SUMBER</div>
@@ -80,5 +113,14 @@ export function BuktiKlinis({
         </p>
       </div>
     </details>
+  )
+}
+
+function ResourceGroup({ judul, items }: { judul: string; items: readonly string[] }) {
+  return (
+    <div className="bukti-klinis__resource">
+      <div className="bukti-klinis__subjudul mono">{judul}</div>
+      <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>
+    </div>
   )
 }

@@ -1,11 +1,11 @@
 {
-  "schema": "primera.m13-14-igd-adjudication.v1",
-  "generatedAt": "2026-07-22T00:31:27.186Z",
-  "sourceCommit": "4299c48e6b13+working-tree",
-  "contentRelease": "class-readiness-2026-07-22",
+  "schema": "primera.m13-14-igd-adjudication.v2",
+  "generatedAt": "2026-07-22T11:43:04.886Z",
+  "sourceCommit": "d360abc3d7b2+working-tree",
+  "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 57,
-  "packFingerprint": "c0afdff4",
-  "artifactFingerprint": "92e7300a353df480f12bb2a3a6172d7ec95a011c873dbf83f9658603ee48eb9e",
+  "packFingerprint": "93738a72",
+  "artifactFingerprint": "c5587e95e46ba4989713c8f562dfe1fc42761979ecc54ebb7f15a35939949a66",
   "reviewQuestions": [
     "Apakah diagnosis, ICD-10, SKDI, populasi, dan derajat kegawatan konsisten?",
     "Apakah urutan ABC/stabilisasi awal benar, tidak menunda tindakan penyelamat nyawa, dan masuk akal di FKTP?",
@@ -18,6 +18,7 @@
     {
       "id": "igd_asfiksia_neonatorum",
       "name": "Asfiksia Neonatorum",
+      "reviewStatus": "physician_approved",
       "icd10": "P21.0",
       "skdi": "3B",
       "opening": "Bayi itu lahir ke tangan Anda tanpa suara sama sekali — tidak ada tangis yang biasanya memenuhi ruangan. Tubuhnya biru dan terkulai lemas seperti kain basah, kedua lengannya jatuh begitu saja saat dilepas. Ibunya masih terengah di meja, menunggu suara yang tak kunjung datang.",
@@ -37,14 +38,42 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "anak",
       "referralCapabilities": [],
-      "officialGuidance": "Jaga hangat, posisikan jalan napas, keringkan dan stimulasi. Bila apnea/gasping atau denyut kurang dari 100 per menit, mulai ventilasi tekanan positif efektif dalam menit pertama dan reassess sebelum eskalasi serta rujukan.",
+      "officialGuidance": "Pada bayi cukup bulan, jaga hangat, keringkan dan stimulasi; bila apnea/gasping atau HR <100, mulai ventilasi 30-60/menit dengan udara ruangan dan pastikan dada mengembang. Bila HR tetap <60 setelah ventilasi efektif, lakukan kompresi 3:1 bersama ventilasi dan eskalasi sesuai algoritme sambil transfer ke layanan neonatus.",
       "teachingPearl": "Pada asfiksia neonatorum, tindakan penentu biasanya ventilasi, bukan obat atau kompresi dini. Dalam 30 detik pertama, hangatkan bayi, posisikan kepala setengah tengadah, bersihkan jalan napas hanya bila perlu, keringkan, dan beri rangsang taktil. Bila bayi tetap apnea atau megap-megap, atau laju jantung kurang dari 100 per menit, mulai ventilasi tekanan positif dengan balon-sungkup 40-60 kali per menit. Pastikan sungkup rapat dan dada mengembang. Nilai kembali laju jantung setelah 30 detik ventilasi efektif. Kompresi dada rasio 3:1 baru ditambahkan bila laju jantung masih kurang dari 60 per menit; ventilasi tetap berjalan. Hindari pengisapan dalam secara rutin karena dapat memicu bradikardia dan menunda ventilasi. Acuan: PPK FKTP, Kemenkes, dan algoritma resusitasi neonatus IDAI/Perinasia.",
+      "debrief": {
+        "keyPoints": [
+          "Ventilasi efektif adalah intervensi utama; pastikan dada benar-benar mengembang.",
+          "Bayi cukup bulan mulai dengan udara ruangan dan oksigen dititrasi menurut target menit kehidupan.",
+          "Kompresi 3:1 baru dimulai bila HR <60/menit setelah ventilasi efektif.",
+          "Resusitasi tidak berhenti ketika transfer ke layanan neonatus dimulai."
+        ],
+        "fktpReality": "Sukamaju dinyatakan memiliki penghangat, balon-sungkup neonatus, oksigen, pulse oximeter preduktal, suction terarah, dan tim resusitasi. Akses umbilikal, advanced airway, serta perawatan neonatus lanjutan mengikuti kompetensi dan jejaring; ketidaktersediaannya tidak boleh menunda ventilasi efektif.",
+        "resources": {
+          "ready": [
+            "penghangat dan kain kering",
+            "balon-sungkup neonatus",
+            "oksigen dan pulse oximeter",
+            "ambulans dengan pendamping resusitasi"
+          ],
+          "networked": [
+            "advanced airway neonatus",
+            "epinefrin intravaskular",
+            "NICU/perawatan neonatus"
+          ],
+          "notReady": []
+        },
+        "continuity": "Setelah pulang, nilai minum, berat badan, ikterus, tonus, kejang, pendengaran, penglihatan, dan perkembangan; pastikan rujuk balik neonatus serta dukungan ibu-keluarga berjalan.",
+        "ukmBridge": {
+          "title": "Menit Emas, Sistem yang Siap",
+          "summary": "Audit suhu ruang bersalin, kesiapan balon-sungkup berbagai ukuran, oksigen, pembagian peran, waktu ventilasi pertama, kualitas transfer, dan latihan berkala bersama bidan, Puskesmas, PONED, serta RS."
+        }
+      },
       "sources": [
         {
-          "id": "ppk_fktp_2022",
-          "label": "KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)",
-          "url": "https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/",
-          "year": 2022,
+          "id": "idai_resneo_2024",
+          "label": "IDAI - Panduan Provider Resusitasi Neonatus Resneo ID 2024",
+          "url": "https://www.idai.or.id/publications/buku-idai/buku-panduan-provider-resusitasi-neonatus-resneo-id-edisi-pertama",
+          "year": 2024,
           "kind": "pedoman_indonesia"
         },
         {
@@ -53,6 +82,13 @@
           "url": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/neonatal-resuscitation",
           "year": 2025,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
@@ -65,7 +101,7 @@
               "label": "Langkah awal dalam 30 detik pertama: hangatkan di bawah pemancar panas, atur posisi kepala setengah tengadah, bersihkan jalan napas bila perlu, keringkan, rangsang taktil",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Sebagian besar bayi pulih hanya dengan blok 30 detik ini; menghangatkan bukan basa-basi — bayi basah kehilangan panas sangat cepat dan hipotermia memperberat asfiksia."
+              "feedback": "Tepat. Dalam 30 detik pertama, jaga hangat, posisikan airway, keringkan, dan stimulasi; suction hanya bila ada sumbatan. Presentasi berat ini tetap memerlukan penilaian napas dan denyut yang cepat, bukan janji bahwa langkah awal pasti cukup."
             },
             {
               "id": "b",
@@ -96,10 +132,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Mulai ventilasi tekanan positif dengan balon-sungkup 40-60 kali per menit; pastikan sungkup rapat dan dada mengembang",
+              "label": "Mulai ventilasi tekanan positif 30-60 kali/menit dengan udara ruangan; pastikan sungkup rapat, dada mengembang, dan pasang pulse oximeter preduktal",
               "correct": true,
               "stabilityEffect": 25,
-              "feedback": "Tepat — inilah tindakan penentu. Megap-megap disamakan dengan apnea, dan laju jantung <100 setelah langkah awal adalah indikasi VTP; bila dada tak mengembang, perbaiki sungkup dan posisi."
+              "feedback": "Tepat. Pada bayi cukup bulan, ventilasi dimulai dengan udara ruangan. Nilai gerak dada dan denyut, lakukan koreksi ventilasi bila dada tidak naik, lalu titrasi oksigen menurut target saturasi berbasis menit kehidupan."
             },
             {
               "id": "b",
@@ -130,10 +166,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Lanjutkan VTP dan tambahkan kompresi dada terkoordinasi 3:1 dengan oksigen, nilai ulang tiap 60 detik, dan aktifkan rujukan ke RS dengan perawatan neonatus",
+              "label": "Pastikan ventilasi efektif, lanjutkan VTP dan mulai kompresi 3:1; naikkan oksigen ke 100% bila tersedia, nilai ulang 60 detik, dan siapkan epinefrin serta transfer neonatus",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. Inilah satu-satunya titik kompresi dibenarkan: laju jantung <60 meski ventilasi sudah terbukti efektif — dan VTP tetap berjalan, tidak digantikan."
+              "feedback": "Tepat. HR <60/menit setelah 30 detik ventilasi yang mengembangkan dada adalah indikasi kompresi 3:1 bersama ventilasi. Gunakan airway alternatif bila tersedia dan operator kompeten; bila HR tetap <60 setelah 60 detik, epinefrin intravaskular menjadi langkah berikutnya. Titrasi oksigen turun setelah ROSC."
             },
             {
               "id": "b",
@@ -147,14 +183,14 @@
               "label": "Hentikan VTP sejenak untuk memasang jalur umbilikal dan memberikan epinefrin lebih dulu",
               "correct": false,
               "stabilityEffect": -24,
-              "feedback": "Urutannya melompat lagi. Epinefrin baru dipertimbangkan setelah VTP dan kompresi terkoordinasi berjalan; menjeda ventilasi demi memasang jalur adalah kemunduran nyata."
+              "feedback": "Urutannya belum tepat. Epinefrin dipertimbangkan bila HR tetap <60 setelah 60 detik ventilasi dan kompresi yang efektif; pemasangan akses tidak boleh menghentikan ventilasi."
             },
             {
               "id": "d",
               "label": "Bungkus bayi, serahkan ke ibu, dan berangkatkan rujukan sekarang tanpa melanjutkan resusitasi di perjalanan",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "Rujukannya perlu, tetapi resusitasi tidak berhenti di pintu. VTP dan kompresi harus terus berjalan sepanjang transfer — bayi ini belum punya sirkulasi yang bisa menunggu."
+              "feedback": "Rujukan perlu, tetapi resusitasi harus terus berjalan selama pemindahan dan perjalanan menuju fasilitas yang mampu merawat neonatus."
             }
           ]
         }
@@ -166,7 +202,8 @@
     },
     {
       "id": "igd_cedera_kepala_sedang",
-      "name": "Cedera Kepala Sedang",
+      "name": "Cedera Kepala Sedang dengan Perburukan Neurologis",
+      "reviewStatus": "physician_approved",
       "icd10": "S06.9",
       "skdi": "3B",
       "opening": "Seorang laki-laki dibopong masuk setelah motornya menabrak trotoar; ia tidak mengenakan helm. \"Tadi sempat pingsan sebentar, Dok, terus muntah dua kali di jalan.\" Ia membuka mata saat dipanggil keras, bicaranya kacau, dan sama sekali tidak ingat kejadiannya.",
@@ -186,8 +223,36 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "bedah",
       "referralCapabilities": [],
-      "officialGuidance": "Prioritas FKTP adalah ABC dengan proteksi servikal, pemeriksaan GCS dan pupil berkala, serta pencegahan hipoksia dan hipotensi. Setelah stabilisasi awal, rujuk ke fasilitas dengan CT dan layanan bedah. Jangan menunda rujukan untuk observasi panjang di fasilitas tanpa pencitraan.",
+      "officialGuidance": "Cedera kepala sedang memakai GCS 9-12. Prioritas FKTP adalah ABC dengan pembatasan gerak servikal, target SpO2 >=94%, serta GCS dan pupil serial sebagai pemantauan neurologis dasar, bukan pengukuran ICP. Hindari hiperventilasi atau manitol rutin dan transfer terpantau ke RS dengan CT serta kemampuan trauma-neurosurgical.",
       "teachingPearl": "Cedera kepala sedang (GCS 9-13) dengan kehilangan kesadaran, muntah berulang, dan amnesia = risiko tinggi lesi intrakranial yang membesar diam-diam. Cedera primer sudah terjadi dan tak dapat diubah; tugas FKTP adalah mencegah cedera SEKUNDER — hipoksia dan hipotensi adalah dua pembunuh yang masih bisa Anda cegah. Urutan benar: imobilisasi servikal (semua cedera kepala berenergi tinggi dianggap cedera servikal sampai terbukti tidak), buka jalan napas dengan jaw thrust — BUKAN head tilt, oksigenasi, jaga tekanan darah, lalu nilai pupil dan tanda lateralisasi serta catat GCS berkala. Hiperventilasi TIDAK dilakukan rutin: ia menyempitkan pembuluh otak dan justru menambah iskemia. Hindari sedasi yang menutupi penurunan GCS. Diagnosis definitif memerlukan CT kepala yang tidak tersedia di FKTP, dan foto polos kepala tidak menyingkirkan perdarahan intrakranial — GCS yang turun disertai muntah berulang adalah indikasi rujuk emergensi, bukan indikasi observasi (PPK Dokter di FKTP KMK 1186/2022; prinsip ATLS/PPGD).",
+      "debrief": {
+        "keyPoints": [
+          "GCS 9-12 adalah cedera kepala sedang; tren GCS dan pupil menilai perburukan, bukan mengukur ICP.",
+          "Cegah hipoksia dan hipotensi; targetkan SpO2 >=94% tanpa terapi otomatis yang tidak perlu.",
+          "Muntah dan penurunan kesadaran memerlukan airway plan, suction, serta pemiringan en bloc terkoordinasi.",
+          "Anisokor dan GCS menurun memerlukan transfer ke CT dan layanan trauma/neurosurgical."
+        ],
+        "fktpReality": "Sukamaju mampu melakukan ABC, stabilisasi servikal manual, oksigen, suction, monitor serial, analgesia terukur, dan transport terpantau. CT, pengukuran ICP, advanced airway kompleks, serta bedah saraf berada di jejaring; osmoterapi atau hiperventilasi bukan ritual pra-rujuk.",
+        "resources": {
+          "ready": [
+            "oksigen dan suction",
+            "stabilisasi servikal",
+            "monitor GCS-pupil-vital",
+            "ambulans terpantau"
+          ],
+          "networked": [
+            "CT kepala",
+            "advanced airway/ventilasi",
+            "trauma dan bedah saraf"
+          ],
+          "notReady": []
+        },
+        "continuity": "Rujuk balik menilai sakit kepala, kognisi, tidur, mood, kejang, fungsi, dan kesiapan kembali bekerja atau berkendara; keluarga menerima safety-net perburukan.",
+        "ukmBridge": {
+          "title": "Dari Benturan ke Jalan yang Lebih Aman",
+          "summary": "Episode memicu audit helm, alkohol atau kelelahan, lokasi kecelakaan, waktu respons, dan hambatan biaya tanpa menyalahkan korban; temuan agregat diteruskan ke PSC, desa, dan lintas sektor keselamatan jalan."
+        }
+      },
       "sources": [
         {
           "id": "ppk_fktp_2022",
@@ -197,11 +262,25 @@
           "kind": "pedoman_indonesia"
         },
         {
+          "id": "acs_tbi_2024",
+          "label": "ACS Best Practices Guidelines - Traumatic Brain Injury 2024",
+          "url": "https://www.facs.org/media/vgfgjpfk/best-practices-guidelines-traumatic-brain-injury.pdf",
+          "year": 2024,
+          "kind": "evidence_internasional"
+        },
+        {
           "id": "nice_head_injury_2023",
           "label": "NICE NG232 - Head Injury: Assessment and Early Management",
           "url": "https://www.nice.org.uk/guidance/NG232/chapter/recommendations",
           "year": 2023,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
@@ -211,10 +290,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Imobilisasi servikal manual, buka jalan napas dengan jaw thrust, beri oksigen, pasang collar",
+              "label": "Stabilisasi servikal manual, buka airway dengan jaw thrust, cek oksigenasi dan targetkan SpO2 >=94%, lalu pasang collar bila sesuai",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Setiap cedera kepala berenergi tinggi dianggap cedera servikal sampai terbukti tidak, dan jaw thrust membuka jalan napas tanpa menggerakkan leher."
+              "feedback": "Tepat. Prioritasnya airway dengan pembatasan gerak servikal dan pencegahan hipoksia. Oksigen dititrasi terhadap saturasi dan kondisi klinis, bukan diberikan sebagai ritual tanpa penilaian."
             },
             {
               "id": "b",
@@ -228,7 +307,7 @@
               "label": "Berikan manitol IV segera karena muntah dua kali berarti tekanan intrakranial sudah naik",
               "correct": false,
               "stabilityEffect": -22,
-              "feedback": "Refleks yang salah. Manitol bukan tindakan FKTP dan bukan pengganti ABC; tanpa tanda herniasi dan tanpa jalan napas yang aman, ia hanya menunda yang penting."
+              "feedback": "Muntah tidak membuktikan herniasi. Osmoterapi bukan tindakan wajib kasus ini di FKTP; pertimbangan khusus memerlukan protokol, monitoring, dan tidak boleh menunda airway maupun transfer."
             },
             {
               "id": "d",
@@ -245,24 +324,24 @@
           "choices": [
             {
               "id": "a",
-              "label": "Log roll bersama papan agar tidak aspirasi, nilai pupil dan tanda lateralisasi, jaga oksigenasi dan tekanan darah, catat GCS berkala",
+              "label": "Miringkan en bloc secara terkoordinasi dengan stabilisasi servikal dan suction siap; nilai pupil, defisit, vital, serta GCS serial",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. Log roll melindungi jalan napas tanpa memelintir tulang belakang, dan GCS serial adalah monitor tekanan intrakranial termurah yang Anda punya."
+              "feedback": "Tepat. Pemiringan en bloc melindungi airway tanpa memelintir tulang belakang. GCS dan pupil serial adalah pemantauan neurologis dasar untuk mendeteksi perubahan; keduanya bukan pengukuran tekanan intrakranial."
             },
             {
               "id": "b",
               "label": "Hiperventilasi rutin dengan balon-sungkup untuk menurunkan tekanan intrakranial",
               "correct": false,
               "stabilityEffect": -22,
-              "feedback": "Kebiasaan lama yang sudah ditinggalkan. Hiperventilasi menyempitkan pembuluh darah otak dan menambah iskemia; ia hanya darurat sementara pada herniasi yang nyata."
+              "feedback": "Hiperventilasi rutin dapat menurunkan aliran darah otak. Ventilasi terkontrol hanya menjadi rescue singkat pada ancaman herniasi oleh tim kompeten dengan monitoring yang sesuai."
             },
             {
               "id": "c",
               "label": "Berikan diazepam agar pasien tenang dan tidak gelisah selama diperiksa",
               "correct": false,
               "stabilityEffect": -25,
-              "feedback": "Dua bahaya sekaligus. Sedasi menekan napas dan mengaburkan GCS — satu-satunya tanda yang memberi tahu Anda bahwa hematoma sedang membesar."
+              "feedback": "Diazepam tidak diberikan sekadar untuk menenangkan pasien. Namun analgesia, sedasi prosedural, atau airway management yang memang terindikasi juga tidak boleh ditahan hanya demi mempertahankan angka GCS; dokumentasikan waktu dan respons."
             },
             {
               "id": "d",
@@ -279,10 +358,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Aktifkan rujukan emergensi ke RS dengan CT dan layanan bedah, kirim SBAR + catatan GCS serial, transfer terpantau dengan oksigen dan collar",
+              "label": "Jelaskan kegawatan dengan empatik, aktifkan ambulans/JKN/dukungan sosial, dan transfer terpantau ke RS dengan CT serta kemampuan trauma-neurosurgical",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Pupil anisokor pada GCS yang menurun adalah kegawatan bedah saraf; jelaskan pada keluarga bahwa penundaan di sini harganya jauh lebih mahal daripada perjalanannya."
+              "feedback": "Tepat. Anisokor dan GCS yang menurun memerlukan CT serta kemampuan menangani perburukan airway dan cedera intrakranial. Dukungan pembiayaan dan sosial diaktifkan agar biaya tidak menunda keselamatan."
             },
             {
               "id": "b",
@@ -310,14 +389,13 @@
       ],
       "compiler": {
         "structuralChecksPassed": true,
-        "warnings": [
-          "Belum ada sumber 2024 atau lebih baru pada registry kasus"
-        ]
+        "warnings": []
       }
     },
     {
       "id": "igd_eklampsia",
       "name": "Eklampsia",
+      "reviewStatus": "physician_approved",
       "icd10": "O15.0",
       "skdi": "3B",
       "opening": "Seorang ibu hamil dibopong masuk dalam keadaan kejang kelojotan, perutnya yang besar terguncang di atas brankar. \"Baru saja mengeluh kepalanya sakit sekali dan matanya kabur, Dok, terus tiba-tiba kejang begini!\" Wajah dan kedua tungkainya sembab, dan busa keluar dari sudut bibirnya.",
@@ -337,8 +415,36 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "obgyn",
       "referralCapabilities": [],
-      "officialGuidance": "Amankan ABC dan posisi lateral, berikan magnesium sulfat untuk menghentikan serta mencegah kejang berulang, tangani hipertensi berat, dan rujuk emergensi sambil memantau ibu-janin. Persalinan definitif tidak boleh ditunda oleh observasi FKTP.",
+      "officialGuidance": "Amankan ibu, posisi lateral kiri, jaga airway, dan berikan MgSO4 loading yang diencerkan serta diberikan perlahan. Sebelum dosis lanjut, pastikan refleks patela, RR >=16/menit, dan diuresis memadai; siapkan kalsium glukonas. Tangani hipertensi berat tanpa normalisasi mendadak, stabilkan ibu, lalu rujuk ke obstetri emergensi dan perawatan neonatus.",
       "teachingPearl": "Eklampsia adalah preeklampsia yang disertai kejang atau koma. Amankan ibu dari cedera, bebaskan jalan napas, miringkan ke kiri, dan beri oksigen. Magnesium sulfat adalah antikonvulsan pilihan; gunakan regimen PPK yang tersedia dan lanjutkan rumatan selama rujukan. Sebelum dosis berikutnya, pastikan refleks patela masih ada, frekuensi napas >=16x/menit, dan produksi urin memadai. Bila napas <16x/menit, refleks patela hilang, atau terjadi oliguria berat, hentikan magnesium sulfat dan berikan kalsium glukonas 10% sesuai protokol. Diazepam hanya menjadi alternatif bila magnesium sulfat benar-benar tidak tersedia. Kendalikan hipertensi berat secara bertahap agar perfusi plasenta tidak turun mendadak. Persalinan adalah terapi definitif, sehingga pasien wajib dirujuk ke layanan obstetri dengan stabilisasi tetap berjalan. Acuan: PPK Dokter di FKTP KMK 1186/2022 dan Buku Saku Pelayanan Kesehatan Ibu Kemenkes-WHO.",
+      "debrief": {
+        "keyPoints": [
+          "Lindungi ibu, posisi lateral kiri, jaga airway, dan jangan memasukkan benda ke mulut.",
+          "MgSO4 adalah obat pilihan; loading IV 4 g harus diencerkan dan diberikan perlahan.",
+          "Sebelum dosis lanjutan, pastikan refleks patela, RR >=16/menit, dan diuresis memadai.",
+          "Stabilkan ibu, tangani hipertensi berat, lalu transfer ke obstetri emergensi dan layanan neonatus."
+        ],
+        "fktpReality": "MgSO4, kalsium glukonas, oksigen, monitor, kateter urin, dan transport dinyatakan ready pada encounter ini. Rumatan selama perjalanan hanya dilakukan bila protokol, pemantauan, dan petugas kompeten tersedia; bila tidak, loading dose dan transfer cepat lebih aman daripada improvisasi.",
+        "resources": {
+          "ready": [
+            "MgSO4 dan pengencer",
+            "kalsium glukonas",
+            "oksigen-suction-BVM",
+            "monitor dan ambulans"
+          ],
+          "networked": [
+            "obstetri emergensi",
+            "monitoring ibu-janin",
+            "kamar operasi dan perawatan neonatus"
+          ],
+          "notReady": []
+        },
+        "continuity": "Setelah pulang, pantau tekanan darah, obat, gejala neurologis, fungsi ginjal, laktasi, kesehatan mental, kontrasepsi, dan risiko kehamilan berikutnya.",
+        "ukmBridge": {
+          "title": "Kejang Ibu, Alarm Sistem",
+          "summary": "Audit ANC, pengenalan tanda bahaya, stok MgSO4 dan antidot, simulasi tim, waktu keputusan-keberangkatan, transport, serta kesiapan obstetri-neonatus tanpa mengubah kasus menjadi kesalahan ibu."
+        }
+      },
       "sources": [
         {
           "id": "ppk_fktp_2022",
@@ -353,6 +459,20 @@
           "url": "https://www.who.int/news-room/fact-sheets/detail/pre-eclampsia",
           "year": 2025,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "nice_hypertension_pregnancy",
+          "label": "NICE NG133 - Hypertension in Pregnancy",
+          "url": "https://www.nice.org.uk/guidance/ng133/chapter/recommendations",
+          "year": 2023,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
@@ -362,10 +482,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Amankan ibu dari cedera, bebaskan jalan napas, miringkan ke sisi KIRI, dan berikan oksigen",
+              "label": "Lindungi dari cedera, posisi lateral kiri, siapkan suction dan airway, beri oksigen karena SpO2 93%; jangan tahan ekstremitas atau masukkan benda ke mulut",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Miring kiri mengurangi risiko aspirasi sekaligus melepaskan tekanan rahim pada vena kava sehingga aliran balik dan perfusi plasenta membaik; airway dan oksigen tetap mendahului obat apa pun."
+              "feedback": "Tepat. Proteksi cedera, posisi lateral kiri, airway, suction, dan oksigen dikerjakan segera. Kejang baru pada kehamilan tetap memerlukan evaluasi penyebab lain, tetapi presentasi ini ditangani sebagai eklampsia tanpa menunda."
             },
             {
               "id": "b",
@@ -396,17 +516,17 @@
           "choices": [
             {
               "id": "a",
-              "label": "Berikan MgSO4 dosis awal secara intravena perlahan, dengan kalsium glukonas 10 persen siap di samping pasien",
+              "label": "Encerkan 10 mL MgSO4 40% dengan 10 mL air steril, berikan 4 g IV perlahan selama 20 menit, dan siapkan kalsium glukonas",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat, dan inilah yang membedakan eklampsia dari kejang lain: MgSO4 terbukti lebih unggul daripada diazepam maupun fenitoin dalam mencegah kejang berulang dan menurunkan kematian ibu — ia obat PILIHAN, bukan alternatif."
+              "feedback": "Tepat. MgSO4 adalah obat pilihan. Larutan 40% tidak disuntikkan IV tanpa pengenceran; pantau napas, refleks patela, dan urine serta siapkan kalsium glukonas sebagai antidot toksisitas."
             },
             {
               "id": "b",
               "label": "Berikan diazepam IV karena inilah antikonvulsan yang paling akrab dipakai untuk semua jenis kejang",
               "correct": false,
               "stabilityEffect": -22,
-              "feedback": "Refleks yang salah pada konteks ini. Diazepam hanya cadangan bila MgSO4 benar-benar tidak ada: dosis yang dibutuhkan tinggi, menekan napas ibu, dan menembus plasenta sehingga bayi lahir lemas."
+              "feedback": "Diazepam bukan alternatif setara. Ia hanya menjadi jalan darurat terakhir bila MgSO4 benar-benar tidak tersedia, dengan dukungan airway dan transfer segera."
             },
             {
               "id": "c",
@@ -430,10 +550,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Turunkan tekanan darah secara bertahap dengan antihipertensi, pasang kateter urin, pastikan kalsium glukonas siap, pantau refleks patela/frekuensi napas/produksi urin tiap jam, lalu rujuk ke obgyn dengan MgSO4 rumatan berjalan",
+              "label": "Tangani TD berat dengan obat tertitrasi sesuai protokol, pasang kateter urin, cek refleks/RR/diuresis, lalu transfer; rumatan MgSO4 hanya bila dapat dipantau aman",
               "correct": true,
               "stabilityEffect": 19,
-              "feedback": "Tepat. Terapi DEFINITIF eklampsia adalah MELAHIRKAN, dan itu hanya mungkin di fasilitas obgyn — tugas FKTP adalah menstabilkan lalu mengantar; refleks patela, napas, dan urin adalah cara mendeteksi toksisitas MgSO4 sedini mungkin."
+              "feedback": "Tepat. Bila memakai nifedipin oral, obat ditelan dan bukan sublingual. Target awal adalah keluar dari rentang hipertensi berat, bukan normal mendadak. Stabilkan ibu dahulu; tim obstetri menentukan waktu dan cara kelahiran menurut kondisi ibu-janin."
             },
             {
               "id": "b",
@@ -454,7 +574,7 @@
               "label": "Hentikan MgSO4 sekarang karena kejangnya sudah berhenti dan Anda khawatir dosisnya berlebih",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "MgSO4 justru diteruskan sebagai rumatan untuk mencegah kejang berulang selama perjalanan. Yang menghentikannya bukan rasa khawatir, melainkan tanda toksisitas nyata — refleks patela hilang, napas melambat, atau urin berkurang — dan antidotnya kalsium glukonas."
+              "feedback": "MgSO4 tidak dihentikan hanya karena kejang berhenti, tetapi rumatan juga bukan kewajiban universal bila monitoring tidak aman. Hentikan bila toksisitas muncul; pada depresi napas berikan kalsium glukonas 1 g atau 10 mL larutan 10% IV selama 10 menit sesuai protokol."
             }
           ]
         }
@@ -467,6 +587,7 @@
     {
       "id": "igd_gigitan_ular_berbisa",
       "name": "Gigitan Ular Berbisa",
+      "reviewStatus": "physician_approved",
       "icd10": "T63.0",
       "skdi": "3B",
       "opening": "Seorang laki-laki dipapah masuk sambil memeluk betis kanannya yang membengkak sampai melewati lutut. \"Digigit ular di sawah, Dok, sejam yang lalu — sudah saya ikat pakai karet biar bisanya nggak naik!\" Ia gemetar hebat, dan dari sela giginya tampak gusi yang terus merembeskan darah.",
@@ -485,14 +606,56 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "penyakit_dalam",
       "referralCapabilities": [],
-      "officialGuidance": "Imobilisasi ekstremitas, lepaskan benda ketat, dan hindari torniket, sayatan, isapan, serta suntikan IM. Nilai tanda envenomasi sistemik, lalu rujuk ke fasilitas dengan antibisa dan pemantauan. Antibisa tidak diberikan tanpa indikasi envenomasi.",
+      "officialGuidance": "Gunakan penilaian sindromik dan serial. Imobilisasi, hindari insisi-isap-es-ramuan, dan jangan melepas ikatan ketat mendadak sebelum resusitasi, adrenalin, monitoring, serta antivenom yang sesuai siap. Perdarahan gusi adalah envenomasi sistemik; koordinasikan GHBTB dan tujuan dengan antivenom, koagulasi/transfusi, airway, renal support, serta monitoring.",
       "teachingPearl": "Bisa viperid cenderung menyebabkan bengkak progresif, nekrosis, dan koagulopati; bisa elapid lebih sering bersifat neurotoksik. Tenangkan pasien dan imobilisasi anggota gerak yang tergigit dengan bidai. Lepaskan torniket yang sudah terpasang setelah akses IV dan kesiapan resusitasi tersedia. Jangan memasang torniket baru, menginsisi, mengisap, memberi es, atau menempelkan ramuan. Bersihkan luka, tutup dengan kasa steril, lalu tandai batas bengkak beserta waktunya dan ukur progresinya. Hindari NSAID serta suntikan intramuskular bila ada koagulopati. Antibisa hanya diberikan bila ada envenomasi sistemik atau progresi lokal cepat, di fasilitas yang siap menangani anafilaksis. Rujuk semua kasus envenomasi dengan waktu gigitan tercatat. Acuan: pedoman gigitan ular Kemenkes dan WHO Asia Tenggara.",
+      "debrief": {
+        "keyPoints": [
+          "Imobilisasi, lepaskan benda ketat, dan dokumentasikan progresi; jangan insisi, isap, es, atau ramuan.",
+          "Ikatan ketat dilepas terkontrol ketika resusitasi dan tata laksana definitif benar-benar siap.",
+          "Perdarahan gusi adalah envenomasi sistemik; koordinasi antivenom tidak menunggu tes yang terlambat.",
+          "Antivenom harus cocok dengan sindrom dan diberikan dengan adrenalin IM serta resusitasi siap."
+        ],
+        "fktpReality": "Keahlian dan stok antivenom di Indonesia terkonsentrasi serta tidak merata. Sukamaju menilai sindrom secara serial, menghindari pertolongan berbahaya, mengonfirmasi produk dan stok tujuan, serta merujuk ke kemampuan koagulasi, airway, transfusi, renal support, dan monitoring. Klaim satu-satunya ahli nasional tidak diperlakukan sebagai fakta absolut.",
+        "resources": {
+          "ready": [
+            "imobilisasi dan dokumentasi serial",
+            "akses IV dan resusitasi",
+            "adrenalin IM",
+            "komunikasi GHBTB/rujukan"
+          ],
+          "networked": [
+            "antivenom yang sesuai",
+            "koagulasi dan transfusi",
+            "ventilasi dan renal support"
+          ],
+          "notReady": []
+        },
+        "continuity": "Pantau luka, fungsi ekstremitas, perdarahan, ginjal, serum sickness, rehabilitasi, disabilitas, kesehatan mental, dan kemampuan kembali bekerja.",
+        "ukmBridge": {
+          "title": "Gigitan Ular, Jejaring yang Menyelamatkan",
+          "summary": "Laporkan melalui jalur GHBTB setempat, petakan lokasi dan pekerjaan berisiko, ajarkan imobilisasi tanpa torniket, perkuat keselamatan penolong, stok terpilih, serta rute konsultasi-rujukan. Tiga kisah nyata dibuka melalui sumber, bukan didramatisasi sebagai NPC."
+        }
+      },
       "sources": [
         {
-          "id": "ppk_fktp_2022",
-          "label": "KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)",
-          "url": "https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/",
-          "year": 2022,
+          "id": "bkpk_snakebite_2025",
+          "label": "BKPK Kemenkes - Pedoman Gigitan dan Sengatan Hewan Berbisa 2025",
+          "url": "https://simplek.badankebijakan.kemkes.go.id/repositori/detail/1004",
+          "year": 2025,
+          "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "ghbtb_2026",
+          "label": "Kementerian Kesehatan - Portal Program GHBTB",
+          "url": "https://s.kemkes.go.id/GHBTB",
+          "year": 2026,
+          "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "kemenkes_icha_2026",
+          "label": "Kementerian Kesehatan - Investigasi dan Perlindungan Nakes Kasus dr. Icha",
+          "url": "https://www.kemkes.go.id/id/kemenkes-akan-usut-tuntas-kasus-dugaan-intimidasi-terhadap-dr-icha",
+          "year": 2026,
           "kind": "pedoman_indonesia"
         },
         {
@@ -501,6 +664,13 @@
           "url": "https://www.who.int/southeastasia/publications/i/item/9789290225300",
           "year": 2016,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
@@ -510,17 +680,17 @@
           "choices": [
             {
               "id": "a",
-              "label": "Pasang akses IV dan siapkan penanganan syok, lepaskan karet pengikatnya, lalu imobilisasi tungkai dengan bidai setinggi jantung dan tenangkan pasien",
+              "label": "Imobilisasi tungkai dan siapkan resusitasi; jangan lepas ikatan mendadak. Koordinasikan pelepasan terkontrol saat adrenalin, monitor, antivenom yang sesuai, dan tim definitif siap",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Torniket tidak menahan bisa tetapi mematikan jaringan di bawahnya; lepaskan dengan akses IV siap, lalu imobilisasi dan ketenangan menjadi obat pertama karena kontraksi otot memompa bisa masuk ke sirkulasi."
+              "feedback": "Tepat. Ikatan ketat merusak jaringan, tetapi pelepasan mendadak setelah satu jam dapat melepaskan bolus bisa. Akses IV saja tidak cukup: pelepasan harus terkontrol ketika resusitasi, adrenalin IM, pemantauan, antivenom yang sesuai, dan petugas kompeten benar-benar siap."
             },
             {
               "id": "b",
               "label": "Biarkan karetnya terpasang — justru itu yang menahan bisa naik — dan tambah satu ikatan lagi di atas lutut",
               "correct": false,
               "stabilityEffect": -30,
-              "feedback": "Inilah mitos yang paling banyak berujung amputasi. Torniket tidak menahan bisa yang sudah menyebar lewat limfe dan darah, tetapi ia menghentikan aliran arteri sehingga tungkai mati perlahan."
+              "feedback": "Menambah ikatan memperberat iskemia dan nekrosis. Jangan melepas secara mendadak tanpa kesiapan definitif, tetapi jangan pula memperketat atau menambah torniket."
             },
             {
               "id": "c",
@@ -534,7 +704,7 @@
               "label": "Berikan antibisa ular sekarang juga sebelum tindakan lain, karena gusinya sudah berdarah",
               "correct": false,
               "stabilityEffect": -15,
-              "feedback": "Envenomasi sistemik memang indikasi antibisa, tetapi ia tidak dilepas begitu saja: torniket harus dilepas dan akses dipasang lebih dulu, dan antibisa hanya diberikan di fasilitas yang siap menangani anafilaksis. Urutannya yang keliru, bukan gagasannya."
+              "feedback": "Perdarahan gusi menunjukkan envenomasi sistemik dan koordinasi antivenom harus segera. Namun antivenom harus cocok dengan sindrom, tersedia, serta diberikan dengan adrenalin dan resusitasi siap; bukan disuntikkan tanpa sistem pengaman."
             }
           ]
         },
@@ -544,10 +714,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Tolak dengan sopan, bersihkan luka dan tutup kasa steril, tandai batas bengkak dengan spidol beserta jamnya, lalu ukur lingkar tungkai berkala",
+              "label": "Tolak ramuan dengan empatik, jangan gosok luka; tandai batas bengkak beserta waktu, ukur serial, imobilisasi, dan dokumentasikan sindrom",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. Batas bengkak yang bertanggal-jam dan lingkar tungkai berkala adalah alat pemantau termurah sekaligus terbaik yang Anda punya untuk menilai apakah envenomasi masih berjalan."
+              "feedback": "Tepat. Pemantauan serial progresi, perdarahan, neurologi, dan perfusi lebih berguna daripada memaksa identifikasi jenis ular. Bersihkan ringan bila perlu tanpa memijat atau mengganggu jaringan."
             },
             {
               "id": "b",
@@ -561,7 +731,7 @@
               "label": "Suntikkan kortikosteroid dan antihistamin dosis besar untuk menghentikan pembengkakannya",
               "correct": false,
               "stabilityEffect": -18,
-              "feedback": "Bengkak di sini akibat kerusakan jaringan oleh bisa, bukan reaksi alergi — steroid tidak menghentikannya. Keduanya justru disiapkan untuk mengantisipasi reaksi terhadap antibisa nanti, bukan sebagai terapi bengkaknya."
+              "feedback": "Steroid dan antihistamin tidak menghentikan kerusakan jaringan akibat bisa serta bukan profilaksis rutin reaksi antivenom. Adrenalin IM dan resusitasi harus siap; skin test antivenom rutin juga tidak dianjurkan."
             },
             {
               "id": "d",
@@ -578,10 +748,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Rujuk segera ke rumah sakit yang punya antibisa dan mampu menangani anafilaksis, dengan tungkai tetap terbidai, akses IV terpasang, dan jam gigitan tercatat",
+              "label": "Konfirmasi RS dengan antivenom yang sesuai, koagulasi/transfusi, airway, renal support, dan monitor; transfer terpantau dengan tungkai terimobilisasi",
               "correct": true,
               "stabilityEffect": 19,
-              "feedback": "Tepat. Bengkak yang progresif cepat disertai perdarahan gusi adalah envenomasi bermakna; antibisa harus diberikan di tempat yang siap menangani reaksi anafilaksis terhadap antibisa itu sendiri."
+              "feedback": "Tepat. Perdarahan gusi dan bengkak progresif adalah envenomasi bermakna; koordinasi definitif tidak menunggu 20WBCT. Catat waktu gigitan, progresi, first aid, perdarahan, dan kemampuan yang sudah dikonfirmasi."
             },
             {
               "id": "b",
@@ -609,14 +779,13 @@
       ],
       "compiler": {
         "structuralChecksPassed": true,
-        "warnings": [
-          "Belum ada sumber 2024 atau lebih baru pada registry kasus"
-        ]
+        "warnings": []
       }
     },
     {
       "id": "igd_keracunan_organofosfat",
       "name": "Keracunan Organofosfat",
+      "reviewStatus": "physician_approved",
       "icd10": "T60.0",
       "skdi": "3B",
       "opening": "Seorang petani dipapah masuk langsung dari sawah, bajunya basah kuyup bukan oleh air melainkan oleh pestisida dan keringatnya sendiri. Bau menyengat menyebar cepat memenuhi ruang tindakan. Air liurnya menetes tak terbendung dan napasnya berbunyi berkumur, seolah ia bernapas di dalam air.",
@@ -635,15 +804,57 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "penyakit_dalam",
       "referralCapabilities": [],
-      "officialGuidance": "Lindungi penolong, hentikan paparan, dan lakukan dekontaminasi. Jaga jalan napas dengan pengisapan sekret dan oksigen, lalu titrasi atropin terhadap sekresi serta ventilasi, bukan ukuran pupil. Rujuk dengan pemantauan karena toksisitas dapat berulang.",
+      "officialGuidance": "Gunakan APD; dukungan airway-ventilasi, atropin, dan dekontaminasi berjalan paralel. Pada dewasa mulai atropin 1-2 mg IV/IO lalu gandakan tiap 5 menit menurut bronkorea, bronkospasme, air entry, oksigenasi, bradikardia, dan perfusi. Fornas membuktikan listing, bukan stok besar; transfer terpantau ke kemampuan ventilasi, rumatan, dan toksikologi.",
       "teachingPearl": "Organofosfat menimbulkan sindrom kolinergik: air liur dan air mata berlebih, diare, bronkorea, bronkospasme, bradikardia, pupil kecil, fasikulasi, dan kelemahan otot. Ancaman awal terbesar adalah sekret jalan napas dan kelemahan otot napas. Lindungi penolong, lepaskan pakaian terkontaminasi, lalu cuci kulit serta rambut dengan sabun dan air. Kerjakan dekontaminasi bersamaan dengan pengamanan jalan napas, pengisapan sekret, dan oksigen. Titrasi atropin berulang sampai sekret bronkus mengering; ukuran pupil dan satu ampul bukan titik akhir terapi. Pralidoksim dan penanganan sindrom perantara merupakan ranah rumah sakit. Rujuk dengan atropin rumatan serta oksigen berjalan, dan sertakan nama atau wadah pestisida bila aman. Acuan: prinsip toksikologi klinis dan panduan keracunan pestisida WHO.",
+      "debrief": {
+        "keyPoints": [
+          "Lindungi tim; ABC, atropin, dan dekontaminasi berjalan paralel.",
+          "Atropin dewasa dimulai dalam miligram dan digandakan menurut respons, bukan menurut jumlah ampul.",
+          "Targetnya bronkorea-bronkospasme terkendali, air entry dan oksigenasi membaik, serta perfusi pulih.",
+          "Sindrom perantara dan paralisis nikotinik memerlukan airway, monitoring, dan RS capable."
+        ],
+        "fktpReality": "Atropin tercantum untuk FKTP, tetapi keracunan berat dapat membutuhkan stok jauh lebih besar daripada pemakaian rutin. Pralidoksim, infus rumatan, poison-center support, dan ventilasi tidak diasumsikan ready; Sukamaju memberi atropin serta dukungan airway segera sambil mengonfirmasi fasilitas penerima.",
+        "resources": {
+          "ready": [
+            "APD kimia dasar",
+            "suction-oksigen-BVM",
+            "atropin dan monitor",
+            "dekontaminasi serta ambulans"
+          ],
+          "networked": [
+            "pralidoksim sesuai indikasi",
+            "infus atropin termonitor",
+            "ventilasi dan intensive care"
+          ],
+          "notReady": []
+        },
+        "continuity": "Setelah stabil, tentukan apakah paparan kerja, kecelakaan, atau disengaja; lakukan asesmen psikososial privat, rekonsiliasi terapi, dan pantau kelemahan napas tertunda.",
+        "ukmBridge": {
+          "title": "Dari Sawah ke Sistem Aman",
+          "summary": "Telusuri paparan bersama, APD, arah angin, label, wadah asli, penyimpanan jauh dari pangan-air-anak, limbah dekontaminasi, dan jalur pelaporan lintas sektor tanpa menyalahkan petani."
+        }
+      },
       "sources": [
         {
-          "id": "ppk_fktp_2022",
-          "label": "KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)",
-          "url": "https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/",
-          "year": 2022,
+          "id": "bkpk_poisoning_2024",
+          "label": "BKPK Kemenkes - Buku Pedoman Keracunan Alami dan Non Alami 2024",
+          "url": "https://repository.badankebijakan.kemkes.go.id/id/eprint/5608/",
+          "year": 2024,
           "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "fornas_2025",
+          "label": "KMK 1199/2025 - Formularium Nasional",
+          "url": "https://farmalkes.kemkes.go.id/unduh/keputusan-menteri-kesehatan-republik-indonesia-nomor-hk-01-07-menkes-1199-2025-tentang-formularium-nasional/",
+          "year": 2025,
+          "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "aha_special_circumstances_2025",
+          "label": "AHA Special Circumstances of Resuscitation 2025",
+          "url": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation",
+          "year": 2025,
+          "kind": "evidence_internasional"
         },
         {
           "id": "who_pesticide_2008",
@@ -651,6 +862,13 @@
           "url": "https://www.who.int/publications/i/item/9789241597456",
           "year": 2008,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
@@ -660,17 +878,17 @@
           "choices": [
             {
               "id": "a",
-              "label": "Kenakan sarung tangan dan apron, lepas seluruh pakaian terkontaminasi, cuci kulit dan rambut pasien dengan sabun dan air mengalir, sambil oksigen dan penyedotan sekret berjalan",
+              "label": "Aktifkan tim paralel: APD; suction, oksigen/BVM dan atropin segera; petugas terlindung melepas serta mengemas pakaian lalu mencuci kulit-rambut",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Selama racun masih menempel di kulit ia terus terserap dan dosis atropin berapa pun akan selalu tertinggal; melindungi penolong lebih dulu mencegah tim ikut menjadi korban."
+              "feedback": "Tepat. Ancaman ABC tidak menunggu dekontaminasi selesai, dan dekontaminasi tidak menunggu pasien tenang. Lindungi staf, cegah kontaminasi ruangan/ambulans, dan kerjakan airway, atropin, serta pencucian secara paralel."
             },
             {
               "id": "b",
               "label": "Suntikkan atropin sekarang juga; dekontaminasi menyusul nanti setelah pasien lebih tenang",
               "correct": false,
               "stabilityEffect": -15,
-              "feedback": "Atropin memang wajib dan segera, tetapi menundanya dekontaminasi berarti penyerapan racun terus berjalan dan Anda akan terus mengejar sasaran yang bergerak. Keduanya dikerjakan berbarengan, bukan bergantian."
+              "feedback": "Atropin harus segera, tetapi dekontaminasi juga berjalan paralel oleh petugas terlindung. Menunda salah satunya membuat pasien atau tim terus terpapar."
             },
             {
               "id": "c",
@@ -690,21 +908,21 @@
         },
         {
           "id": "ops_2",
-          "narrative": "Dekontaminasi selesai dan oksigen terpasang, tetapi paru pasien masih penuh ronki basah dan sekretnya terus mengalir. Anda sudah memberikan satu ampul atropin dan nadinya naik sedikit. Perawat bertanya, \"Sudah cukup, Dok?\"",
+          "narrative": "Dekontaminasi dan dukungan airway berjalan, tetapi bronkorea, bronkospasme, hipoksia, serta bradikardia menetap. Dosis atropin awal sudah diberikan. Apa sasaran berikutnya?",
           "choices": [
             {
               "id": "a",
-              "label": "Lanjutkan atropin dengan dosis digandakan berulang tiap beberapa menit sampai sekret paru kering dan napasnya lega",
+              "label": "Berikan atropin dewasa 1-2 mg IV/IO, gandakan tiap 5 menit sampai bronkorea-bronkospasme terkendali, air entry/oksigenasi dan perfusi membaik",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat. Titik akhir atropinisasi adalah PARU YANG KERING — bukan pupil yang melebar, bukan pula angka nadi tertentu; dosis total yang dibutuhkan sering berkali-kali lipat dari kebiasaan sehari-hari."
+              "feedback": "Tepat. Gunakan miligram, bukan jumlah ampul. Sasaran atropinisasi adalah ventilasi, oksigenasi, sekret bronkus, bradikardia, dan perfusi yang membaik; bukan pupil melebar atau seluruh tubuh menjadi kering."
             },
             {
               "id": "b",
               "label": "Cukup satu ampul sesuai dosis lazim; nilai ulang satu jam lagi agar tidak terjadi keracunan atropin",
               "correct": false,
               "stabilityEffect": -25,
-              "feedback": "Inilah jebakan klasik yang mematikan. Pada keracunan organofosfat dosis lazim jauh dari cukup, dan pasien meninggal karena sekret paru yang tidak pernah dikeringkan, bukan karena kelebihan atropin."
+              "feedback": "Satu ampul bukan satuan klinis dan sering tidak cukup. Dosis dititrasi cepat terhadap respons dengan monitoring airway, ventilasi, dan perfusi."
             },
             {
               "id": "c",
@@ -718,7 +936,7 @@
               "label": "Rujuk sekarang juga tanpa menambah atropin; biar dosis besarnya diberikan di rumah sakit saja",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "Perjalanan rujukan justru saat yang paling rawan. Pasien dengan paru penuh sekret dapat henti napas di dalam ambulans; atropinisasi harus dicapai lebih dulu, lalu diteruskan selama transfer."
+              "feedback": "Transfer harus bergerak, tetapi atropin dan dukungan ventilasi tidak dihentikan. Pasien tidak perlu mencapai keadaan tanpa sekret sama sekali; ia perlu cukup stabil dan terus diterapi selama transport."
             }
           ]
         },
@@ -728,10 +946,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Rujuk dengan atropin rumatan dan oksigen tetap berjalan, sertakan wadah/nama pestisidanya, dan jelaskan risiko kelemahan otot napas yang bisa muncul kemudian",
+              "label": "Pertahankan atropin dengan infus tertitrasi bila pompa-monitor ready atau bolus ulang berprotokol; siapkan BVM, kirim foto label/wadah tersegel, dan transfer ke layanan ventilasi-toksikologi",
               "correct": true,
               "stabilityEffect": 19,
-              "feedback": "Tepat. Atropinisasi dipertahankan selama transfer, identitas racun menentukan terapi lanjutan seperti oksim, dan kelemahan otot napas dapat muncul beberapa jam sampai beberapa hari kemudian — itu harus terjadi di rumah sakit, bukan di rumah pasien."
+              "feedback": "Tepat. Atropin mengatasi efek muskarinik tetapi tidak paralisis nikotinik. Pralidoksim dapat dipertimbangkan dini pada kasus berat menurut senyawa dan ketersediaan; jangan menunda airway, atropin, dekontaminasi, atau transfer untuk mencarinya."
             },
             {
               "id": "b",
@@ -752,21 +970,20 @@
               "label": "Lakukan bilas lambung dan beri arang aktif dulu sebelum berangkat",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "Paparannya lewat kulit — tidak ada isi lambung yang perlu dikeluarkan. Tindakan ini hanya menunda rujukan sambil menambah risiko aspirasi pada pasien yang kesadarannya belum penuh."
+              "feedback": "Pada vignette ini paparan utamanya dermal dan kesadaran belum pulih penuh, sehingga bilas lambung/arang menambah risiko tanpa manfaat. Pada paparan tertelan terpilih, keputusan dekontaminasi gastrointestinal berbeda dan mensyaratkan airway aman serta penilaian toksikologi."
             }
           ]
         }
       ],
       "compiler": {
         "structuralChecksPassed": true,
-        "warnings": [
-          "Belum ada sumber 2024 atau lebih baru pada registry kasus"
-        ]
+        "warnings": []
       }
     },
     {
       "id": "igd_ketoasidosis_diabetik",
-      "name": "Ketoasidosis Diabetik",
+      "name": "Suspek Ketoasidosis Diabetik Berat pada Dewasa dengan DM Tipe 1",
+      "reviewStatus": "physician_approved",
       "icd10": "E10.1",
       "skdi": "3B",
       "opening": "Seorang pasien muda dibaringkan di brankar, napasnya cepat dan dalam seperti orang habis berlari, padahal ia hampir tak sadar. \"Muntah terus dari kemarin, Dok, sudah dua hari tidak suntik insulin karena obatnya habis.\" Napasnya berbau manis-asam, bibirnya kering, dan matanya cekung.",
@@ -786,14 +1003,42 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "penyakit_dalam",
       "referralCapabilities": [],
-      "officialGuidance": "DKA memerlukan kristaloid isotonic awal, penilaian kalium sebelum insulin, pemantauan glukosa-elektrolit-keton, dan rujukan. Di FKTP tanpa pemantauan kalium memadai, jangan memulai insulin lalu mengirim pasien tanpa kendali.",
+      "officialGuidance": "PERKENI menjadi konteks Indonesia, sedangkan konsensus 2024 dan ADA 2026 memperbarui diagnosis, cairan, monitoring, serta pencegahan kekambuhan. Suspek KAD berat memerlukan ABC dan kristaloid isotonik; insulin dimulai hanya dengan penilaian serta pemantauan kalium. Sukamaju meneruskan cairan dan transfer tanpa infus insulin improvisasi.",
       "teachingPearl": "Ketoasidosis diabetik = defisiensi insulin absolut → lipolisis → badan keton → asidosis metabolik, sementara hiperglikemia memicu diuresis osmotik. Karena itu masalah PERTAMA pasien ini bukan angka gula, melainkan DEHIDRASI berat. Urutan benar pada dewasa: nilai ABC, pasang akses IV, dan mulai kristaloid isotonik LEBIH DAHULU. Insulin dimulai setelah resusitasi berjalan dan kalium diketahui aman; insulin mendorong kalium masuk ke dalam sel sehingga kalium serum dapat jatuh mendadak dan memicu aritmia fatal. Di FKTP yang tidak dapat memeriksa serta memantau kalium, yang benar adalah rehidrasi + rujuk, bukan memulai insulin secara buta. Kalium tidak pernah diberikan bolus cepat. Bikarbonat TIDAK diberikan rutin. Rujuk sambil cairan terus berjalan; jangan menahan pasien sampai gula darahnya \"normal\" (PPK FKTP KMK 1186/2022; Hyperglycemic Crises in Adults With Diabetes: A Consensus Report, ADA/EASD/JBDS/AACE/DTS 2024).",
+      "debrief": {
+        "keyPoints": [
+          "Curigai KAD dari hiperglikemia/diabetes, ketosis, dan kemungkinan asidosis; jangan menunggu semua hasil untuk bertindak.",
+          "ABC dan kristaloid isotonik lebih dulu; NaCl 0,9% atau kristaloid seimbang dipilih menurut stok dan protokol.",
+          "Insulin memerlukan data serta pemantauan kalium; jangan mengimprovisasi infus di fasilitas yang tidak siap.",
+          "Glukosa turun bukan akhir KAD; resolusi memerlukan perbaikan keton dan asidosis."
+        ],
+        "fktpReality": "Insulin regular dan NPH tercantum untuk layanan tingkat pertama, tetapi listing tidak berarti Sukamaju siap menjalankan infus KAD. Pemeriksaan kalium dan asam-basa, pompa/protokol, ECG, monitoring serial, serta respons terhadap komplikasi berada di RS capable. Di sini cairan, ABC, pencarian pencetus, dan transfer berjalan tanpa insulin improvisasi.",
+        "resources": {
+          "ready": [
+            "GDS dan keton urin",
+            "kristaloid isotonik",
+            "suction-BVM-monitor",
+            "ambulans dan handoff"
+          ],
+          "networked": [
+            "kalium dan asam-basa serial",
+            "keton darah",
+            "infus insulin dan ICU"
+          ],
+          "notReady": []
+        },
+        "continuity": "Tutup penyebab insulin habis: stok, resep PRB/JKN, biaya, jarak, jam layanan, alat suntik, penyimpanan, distress, dan sick-day plan sebelum pasien dinyatakan pulih.",
+        "ukmBridge": {
+          "title": "Insulin Habis Bukan Akhir Anamnesis",
+          "summary": "Kasus memicu audit rantai pasok, cold chain, resep dan akses alat monitoring; pola putus obat agregat kembali ke farmasi, program kronis, BPJS, dan jejaring, bukan ditempelkan sebagai kesalahan pasien."
+        }
+      },
       "sources": [
         {
-          "id": "ppk_fktp_2022",
-          "label": "KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)",
-          "url": "https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/",
-          "year": 2022,
+          "id": "perkeni_insulin_2021",
+          "label": "PERKENI - Petunjuk Praktis Terapi Insulin 2021",
+          "url": "https://pbperkeni.or.id/wp-content/uploads/2021/11/22-10-21-_-Website-Pedoman-Petunjuk-Praktis-Terapi-Insulin-Pada-Pasien-Diabetes-Melitus-Ebook.pdf",
+          "year": 2021,
           "kind": "pedoman_indonesia"
         },
         {
@@ -802,33 +1047,54 @@
           "url": "https://diabetesjournals.org/care/article-pdf/47/8/1257/780938/dci240032.pdf",
           "year": 2024,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "ada_hospital_2026",
+          "label": "ADA Standards of Care - Diabetes Care in the Hospital 2026",
+          "url": "https://diabetesjournals.org/care/article/49/Supplement_1/S339/163925/16-Diabetes-Care-in-the-Hospital-Standards-of-Care",
+          "year": 2026,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "fornas_2025",
+          "label": "KMK 1199/2025 - Formularium Nasional",
+          "url": "https://farmalkes.kemkes.go.id/unduh/keputusan-menteri-kesehatan-republik-indonesia-nomor-hk-01-07-menkes-1199-2025-tentang-formularium-nasional/",
+          "year": 2025,
+          "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
         {
           "id": "kad_1",
-          "narrative": "GDS 480 mg/dL, keton urin positif kuat, napas cepat dan dalam, pasien mengantuk berat. Tindakan pertama?",
+          "narrative": "Pasien diketahui memiliki DM tipe 1. GDS 480 mg/dL, keton urin kuat, napas Kussmaul, dehidrasi, dan kesadaran turun menunjukkan suspek KAD berat; pH/bikarbonat belum tersedia. Tindakan pertama?",
           "choices": [
             {
               "id": "a",
-              "label": "Pasang dua jalur IV besar dan mulai resusitasi cairan NaCl 0,9%, sambil memantau kesadaran dan tanda vital",
+              "label": "Nilai ABC dan risiko aspirasi, pasang sekurangnya satu akses IV andal, lalu mulai NaCl 0,9% atau kristaloid seimbang dengan penilaian ulang",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat. Pasien ini kekurangan berliter-liter cairan akibat diuresis osmotik; rehidrasi sendiri sudah menurunkan gula darah dan memperbaiki perfusi sebelum insulin menyentuhnya."
+              "feedback": "Tepat. Pada dewasa tanpa gagal jantung atau ginjal, kristaloid isotonik umumnya dimulai 500-1.000 mL/jam pada fase awal, lalu dititrasi terhadap perfusi, kesadaran, input-output, dan tanda overload. Akses kedua boleh dipasang bila tidak menunda transfer."
             },
             {
               "id": "b",
               "label": "Berikan insulin kerja cepat bolus IV segera karena gula darahnya 480 mg/dL",
               "correct": false,
               "stabilityEffect": -28,
-              "feedback": "Refleks yang membahayakan. Insulin sebelum rehidrasi menarik air ke dalam sel dan memperdalam syok, sekaligus menggeser kalium ke intrasel hingga berisiko aritmia fatal."
+              "feedback": "Bahaya utamanya bukan insulin menarik air ke sel, melainkan insulin tanpa mengetahui dan mengoreksi kalium serta tanpa monitoring memadai. Di fasilitas mampu, insulin dimulai setelah cairan berjalan dan kalium dinilai."
             },
             {
               "id": "c",
               "label": "Berikan natrium bikarbonat IV karena napas Kussmaul menandakan asidosis yang berat",
               "correct": false,
               "stabilityEffect": -25,
-              "feedback": "Tidak rutin dan bukan tanpa harga. Bikarbonat memperberat hipokalemia dan asidosis susunan saraf pusat; asidosis KAD pulih sendiri setelah cairan dan insulin bekerja."
+              "feedback": "Napas Kussmaul tidak sendiri menjadi indikasi bikarbonat. Bikarbonat tidak rutin dan hanya dipertimbangkan pada asidosis sangat berat, sekitar pH <7,0, dalam fasilitas dengan monitoring."
             },
             {
               "id": "d",
@@ -841,14 +1107,14 @@
         },
         {
           "id": "kad_2",
-          "narrative": "Setelah satu liter NaCl 0,9%, nadi turun ke 110 dan kesadaran sedikit membaik. Perawat sudah menyiapkan spuit insulin dan bertanya, \"Mulai insulinnya sekarang, Dok?\"",
+          "narrative": "Setelah satu liter kristaloid isotonik, nadi turun ke 110 dan kesadaran sedikit membaik. Sukamaju tidak dapat memeriksa atau memantau kalium serial. Perawat bertanya apakah insulin dimulai.",
           "choices": [
             {
               "id": "a",
-              "label": "Pikirkan kalium dulu: tanpa kemampuan memeriksa dan memantau kalium di FKTP, insulin tidak dimulai — lanjutkan rehidrasi dan percepat rujukan",
+              "label": "Lanjutkan cairan dan transfer tanpa insulin improvisasi; insulin dimulai di fasilitas yang dapat menilai kalium, ECG, glukosa, keton, dan asam-basa serial",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Kalium serum pada KAD sering terlihat normal padahal simpanan tubuh sudah terkuras; memulai insulin tanpa pemantauan kalium adalah menembak dalam gelap."
+              "feedback": "Tepat. Kalium total tubuh dapat rendah walau kadar awal tampak normal. Insulin ditunda bila kalium terlalu rendah dan seluruh terapi harus termonitor; Sukamaju menjaga ABC serta meneruskan cairan sambil mempercepat transfer."
             },
             {
               "id": "b",
@@ -862,14 +1128,14 @@
               "label": "Berikan kalium IV bolus cepat untuk berjaga-jaga sebelum insulin dimulai",
               "correct": false,
               "stabilityEffect": -26,
-              "feedback": "Fatal. Kalium tidak pernah diberikan bolus — ia hanya boleh masuk sebagai drip terencana; bolus cepat menghentikan jantung dalam hitungan menit."
+              "feedback": "Jangan memberi kalium sebagai IV push atau penggantian cepat tanpa data. Kalium diberikan sebagai infus terkontrol menurut kadar serum, fungsi ginjal/diuresis, ECG bila tersedia, dan protokol."
             },
             {
               "id": "d",
               "label": "Tunda semua terapi lain dan ulangi pemeriksaan keton urin tiap 30 menit untuk menilai respons",
               "correct": false,
               "stabilityEffect": -18,
-              "feedback": "Pemeriksaan yang tidak mengubah keputusan. Keton urin lambat berubah dan tidak menuntun terapi; yang menuntun adalah perfusi, kesadaran, dan cairan yang masuk."
+              "feedback": "Keton urin tidak cocok sebagai endpoint resolusi dan dapat tampak menetap saat beta-hydroxybutyrate berubah menjadi asetoasetat. Perfusi, keton darah, pH/bikarbonat, elektrolit, dan kesadaran lebih bermakna."
             }
           ]
         },
@@ -879,17 +1145,17 @@
           "choices": [
             {
               "id": "a",
-              "label": "Rujuk emergensi ke RS dengan penyakit dalam, cairan terus berjalan, kirim catatan GDS/keton/jumlah cairan yang sudah masuk, pantau kesadaran selama transfer",
+              "label": "Transfer ke RS yang siap kalium/pH-keton serial, infus insulin, ECG-diuresis, airway dan ICU; cairan serta monitoring berlanjut dengan handoff lengkap",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. KAD butuh insulin drip dan pemantauan elektrolit berkala yang melampaui FKTP; catatan cairan Anda menentukan dosis yang aman di RS."
+              "feedback": "Tepat. GDS dapat turun sebelum ketosis dan asidosis pulih. Handoff memuat cairan, respons, GDS/keton, obat dan dosis insulin terakhir, pencetus, kesadaran, serta risiko aspirasi."
             },
             {
               "id": "b",
               "label": "Tahan pasien di FKTP sampai GDS turun di bawah 200 mg/dL, baru dirujuk",
               "correct": false,
               "stabilityEffect": -28,
-              "feedback": "Salah sasaran. Yang membunuh pada KAD adalah asidosis, dehidrasi, dan kalium — bukan angka gula; menunggu angka itu turun berarti menunda tempat yang bisa mengoreksi semuanya."
+              "feedback": "Glukosa di bawah 200 mg/dL bukan syarat tunggal resolusi. Perbaikan keton darah serta pH atau bikarbonat diperlukan, dan itu harus dipantau di fasilitas mampu."
             },
             {
               "id": "c",
@@ -915,7 +1181,8 @@
     },
     {
       "id": "igd_luka_bakar_luas",
-      "name": "Luka Bakar Luas",
+      "name": "Luka Bakar Mayor 25% TBSA dengan Suspek Cedera Inhalasi",
+      "reviewStatus": "physician_approved",
       "icd10": "T31.2",
       "skdi": "3B",
       "opening": "Seorang pasien dipapah masuk sambil merintih, bajunya melekat pada kulit dada dan lengan yang melepuh lebar. \"Tabung gasnya menyambar di dapur warung, Dok, pintunya sempat macet.\" Bau hangus menyeruak, dan setiap kali ia bicara suaranya terdengar makin serak.",
@@ -934,9 +1201,44 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "bedah",
       "referralCapabilities": [],
-      "officialGuidance": "Hentikan proses terbakar, dinginkan dengan air mengalir sejuk selama 20 menit bila masih dalam jendela waktu, hindari es dan bahan oles, tutup bersih, nilai jalan napas, mulai resusitasi yang sesuai, dan rujuk luka bakar luas.",
+      "officialGuidance": "PNPK Luka Bakar dan PPK FKTP menjadi floor. Hentikan proses bakar tanpa menarik kain yang melekat, dinginkan 20 menit tanpa hipotermia, beri oksigen konsentrasi tinggi pada suspek cedera inhalasi, dan gunakan kristaloid seimbang sekitar 2 mL/kg/%TBSA/24 jam sebagai estimasi awal yang dititrasi. Antibiotik profilaksis rutin tidak dianjurkan; transfer ke burn-airway capable service.",
       "teachingPearl": "Luka bakar derajat II-III seluas sekitar 25% permukaan tubuh dapat menyebabkan kebocoran plasma, syok, dan infeksi. Hentikan proses bakar: lepaskan pakaian panas serta perhiasan, lalu dinginkan dengan air mengalir bersuhu ruang sekitar 20 menit. Jangan gunakan es. Nilai ABC dan curigai cedera inhalasi pada kebakaran ruang tertutup, suara serak, bulu hidung hangus, atau jelaga di mulut. Ancaman jalan napas harus ditangani lebih dahulu. Pasang akses IV besar dan mulai kristaloid terhitung; formula Parkland dihitung sejak waktu terbakar dan dititrasi menurut respons klinis serta produksi urin. Jangan mengoleskan odol, kecap, minyak, atau mentega. Tutup luka secara bersih dan rujuk ke pusat luka bakar. Acuan: PPK Dokter di FKTP KMK 1186/2022 dan prinsip EMSB/ATLS.",
+      "debrief": {
+        "keyPoints": [
+          "Hentikan proses bakar; jangan menarik kain yang melekat, dan dinginkan 20 menit tanpa membuat hipotermia.",
+          "Serak progresif, jelaga, dan ruang tertutup adalah suspek cedera inhalasi; SpO2 normal tidak menyingkirkan CO.",
+          "Formula cairan adalah estimasi awal yang dititrasi, bukan target yang harus dihabiskan.",
+          "Rujuk ke kemampuan airway, toksisitas asap, burn service, ICU, dan rehabilitasi."
+        ],
+        "fktpReality": "Sukamaju menyiapkan oksigen konsentrasi tinggi, suction, BVM, akses IV, kristaloid seimbang hangat, analgesia, balut bersih, dan transport. Advanced airway, co-oximetry, antidot sianida, ICU, serta burn service tidak diasumsikan ready; operator dan alat harus dinyatakan sebelum suatu prosedur diberi skor.",
+        "resources": {
+          "ready": [
+            "oksigen-suction-BVM",
+            "pendinginan dan pencegahan hipotermia",
+            "akses IV dan kristaloid hangat",
+            "analgesia-balut-ambulans"
+          ],
+          "networked": [
+            "advanced airway dan ventilasi",
+            "co-oximetry/toksikologi asap",
+            "burn service dan ICU"
+          ],
+          "notReady": []
+        },
+        "continuity": "Rujuk balik menilai luka, rentang gerak, kontraktur/parut, nutrisi, nyeri-gatal, kesehatan mental, dukungan keluarga, serta kembali bekerja.",
+        "ukmBridge": {
+          "title": "Dapur Warung, Keselamatan Bersama",
+          "summary": "Audit tabung dan regulator gas, ventilasi, pintu keluar macet, alat pemadam, jalur evakuasi, first aid yang keliru, serta respons ambulans bersama pemilik, desa, pemadam, Puskesmas, dan Dinkes tanpa menyalahkan korban."
+        }
+      },
       "sources": [
+        {
+          "id": "pnpk_burn_2019",
+          "label": "KMK 555/2019 - PNPK Tata Laksana Luka Bakar",
+          "url": "https://keslan.kemkes.go.id/unduhan/fileunduhan_1610415947_843237.pdf",
+          "year": 2019,
+          "kind": "pedoman_indonesia"
+        },
         {
           "id": "ppk_fktp_2022",
           "label": "KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)",
@@ -945,11 +1247,25 @@
           "kind": "pedoman_indonesia"
         },
         {
+          "id": "aba_burn_resuscitation_2024",
+          "label": "American Burn Association - Burn Shock Resuscitation 2024",
+          "url": "https://academic.oup.com/jbcr/article/45/3/565/7458089",
+          "year": 2024,
+          "kind": "evidence_internasional"
+        },
+        {
           "id": "who_bec",
           "label": "WHO/ICRC Basic Emergency Care",
           "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/bec",
           "year": 2018,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
@@ -959,10 +1275,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Hentikan proses bakar: lepas pakaian panas dan perhiasan, dinginkan dengan air mengalir suhu ruang, sambil menilai jalan napas dan memberi oksigen",
+              "label": "Pastikan lokasi aman; lepaskan pakaian panas yang tidak melekat dan perhiasan, potong di sekitar kain yang melekat, lalu dinginkan 20 menit sambil ABC berjalan",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Panas yang tersimpan terus memperdalam luka setelah apinya padam, dan cincin harus lepas sebelum bengkak menjadikannya torniket."
+              "feedback": "Tepat. Jangan mengelupas kain yang melekat. Gunakan air mengalir sejuk/suhu ruang bila masih dalam 3 jam, jaga bagian tubuh lain hangat, hentikan bila memicu hipotermia, dan jangan menunda airway atau transfer."
             },
             {
               "id": "b",
@@ -983,7 +1299,7 @@
               "label": "Langsung pasang infus dan hitung formula Parkland sebelum proses bakar dihentikan dan luka didinginkan",
               "correct": false,
               "stabilityEffect": -14,
-              "feedback": "Cairannya benar, urutannya terbalik. Menghitung tetesan sementara kain panas masih membakar kulit berarti luka terus mendalam selama Anda memegang kalkulator."
+              "feedback": "Akses dan cairan penting, tetapi proses bakar dan ABC ditangani paralel. Satu akses andal lebih baik daripada menunda keberangkatan demi ritual dua akses."
             }
           ]
         },
@@ -993,10 +1309,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Anggap ini cedera inhalasi: oksigen aliran tinggi, pantau jalan napas terus-menerus, dan percepat rujukan ke fasilitas yang mampu mengamankan jalan napas sebelum edema menutupnya",
+              "label": "Beri oksigen konsentrasi tinggi, siapkan suction-BVM dan bantuan airway, serta transfer segera ke fasilitas capable; jangan menunggu SpO2 turun",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat. Terbakar di ruang tertutup + suara serak + jelaga = cedera inhalasi sampai terbukti tidak, dan edema laring menutup jalan napas jauh lebih cepat daripada lukanya membunuh."
+              "feedback": "Tepat. Ruang tertutup, serak progresif, jelaga, dan sputum hitam adalah suspek kuat cedera inhalasi. Pulse oximeter standar dapat tampak 95% pada keracunan CO; advanced airway hanya dicoba bila operator dan alat benar-benar ready."
             },
             {
               "id": "b",
@@ -1023,14 +1339,14 @@
         },
         {
           "id": "lb_3",
-          "narrative": "Oksigen terpasang dan rujukan sedang diaktifkan. Luas luka diperkirakan 25% permukaan tubuh, derajat II-III, berat badan sekitar 60 kg. Kejadian terbakar sekitar satu jam lalu.",
+          "narrative": "TBSA partial/full thickness dihitung 25% dengan Rule of Nines; eritema saja tidak dihitung. Berat sekitar 60 kg dan kejadian satu jam lalu. Apa rencana cairan dan transfer?",
           "choices": [
             {
               "id": "a",
-              "label": "Pasang dua jalur IV besar, mulai kristaloid hangat terhitung dengan formula Parkland dihitung sejak jam terbakar, pantau produksi urin, lalu rujuk ke pusat luka bakar",
+              "label": "Mulai kristaloid seimbang hangat sebagai estimasi 2 mL/kg/%TBSA/24 jam, hitung dari waktu bakar, lalu titrasi respons sambil transfer ke burn service",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. Parkland dihitung dari JAM TERBAKAR, bukan jam kedatangan — satu jam yang sudah lewat harus dikejar, dan urin adalah penuntun titrasi terbaik di lapangan."
+              "feedback": "Tepat. Estimasi awalnya sekitar 3.000 mL/24 jam, separuh dalam delapan jam pertama sejak terbakar. Hitung sisa waktu tanpa bolus buta untuk mengejar angka; titrasi terhadap perfusi, vital, kesadaran, dan urine sekitar 0,5 mL/kg/jam bila dapat dipantau."
             },
             {
               "id": "b",
@@ -1044,28 +1360,27 @@
               "label": "Guyur cairan secepat mungkin tanpa perhitungan sampai nadinya kembali normal",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "Berlebihan juga mencederai. Resusitasi tanpa hitungan memicu edema paru dan sindrom kompartemen; Parkland ada justru untuk mencegah dua ekstrem itu."
+              "feedback": "Formula adalah titik awal, bukan target yang harus dihabiskan. Cairan berlebihan memperburuk edema, termasuk airway; nilai respons dan kemungkinan trauma/perdarahan lain."
             },
             {
               "id": "d",
               "label": "Rujuk sekarang juga tanpa memasang jalur infus agar tidak membuang waktu di FKTP",
               "correct": false,
               "stabilityEffect": -16,
-              "feedback": "Rujukannya benar, bekalnya tidak. Memasang dua jalur memakan menit, tetapi tanpa cairan berjalan pasien bisa tiba di pusat luka bakar sudah dalam syok."
+              "feedback": "Transfer tidak menunggu dua jalur, tetapi satu akses IV andal dan cairan hangat dapat dimulai cepat tanpa menahan keberangkatan. Tambahkan akses kedua bila feasible."
             }
           ]
         }
       ],
       "compiler": {
         "structuralChecksPassed": true,
-        "warnings": [
-          "Belum ada sumber 2024 atau lebih baru pada registry kasus"
-        ]
+        "warnings": []
       }
     },
     {
       "id": "igd_perdarahan_pascasalin",
-      "name": "Perdarahan Pascasalin",
+      "name": "Perdarahan Pascasalin Primer dengan Syok, Kemungkinan Atonia Uteri",
+      "reviewStatus": "physician_approved",
       "icd10": "O72.1",
       "skdi": "3B",
       "opening": "Seorang perempuan dilarikan masuk dari polindes, kain sarungnya merah pekat dan darah masih menetes membasahi brankar. \"Baru melahirkan satu jam lalu di bidan desa, Dok, darahnya tidak mau berhenti!\" Wajahnya pucat sekali, bibirnya keputihan, dan perutnya teraba lembek seperti kantong berisi air.",
@@ -1085,9 +1400,46 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "obgyn",
       "referralCapabilities": [],
-      "officialGuidance": "Aktifkan respons PPH segera: pijat uterus, oksitosin, akses IV dan kristaloid terukur, asam traneksamat sedini mungkin dalam 3 jam, cari penyebab 4T, lalu rujuk sambil melanjutkan resusitasi.",
+      "officialGuidance": "PNPK komplikasi kehamilan dan PPK FKTP menjadi floor; WHO/FIGO/ICM 2025-2026 memperbarui bundel MOTIVE. Jalankan masase, oksitosin, TXA 1 g IV, kristaloid hangat, pemeriksaan 4T, serta eskalasi secara paralel. Listing Fornas tidak menjamin readiness; rujuk ke darah, anestesi, operasi, kendali sumber, ICU, dan dukungan neonatus.",
       "teachingPearl": "Perdarahan pascasalin ditelusuri dengan 4T: Tone, Tissue, Trauma, dan Thrombin. Uterus lembek setinggi pusat menunjuk ke atonia, penyebab tersering. Begitu PPH dikenali, jangan mengerjakan terapi satu per satu: jalankan bundel respons pertama secara simultan — panggil bantuan dan eskalasi/rujuk, MASASE uterus, berikan oksitosin, berikan asam traneksamat sedini mungkin dan dalam 3 jam kelahiran, pasang akses IV dengan kristaloid, serta periksa sumber perdarahan. Bila uterus tetap lembek, lakukan KOMPRESI BIMANUAL dan pertahankan; tampon uterus atau kondom kateter dapat menjadi jembatan bila tersedia. Rujuk SAMBIL kompresi dan cairan berjalan, dengan pra-notifikasi RS. Jangan menunggu Hb/golongan darah atau melepaskan kompresi demi memindahkan pasien (PPK FKTP KMK 1186/2022; WHO/FIGO/ICM Consolidated PPH Guideline 2025 dan Implementation Guide 2026; panduan Kemenkes/POGI).",
+      "debrief": {
+        "keyPoints": [
+          "Aktifkan tim dan jalankan MOTIVE secara paralel; jangan menunggu Hb atau satu tindakan selesai.",
+          "Oksitosin dan TXA diberikan dalam dosis-waktu yang jelas; kristaloid hangat adalah jembatan, bukan pengganti darah.",
+          "Cari 4T sambil resusitasi; plasenta sudah lahir tetapi kelengkapannya tetap diperiksa.",
+          "Kompresi atau tampon hanya dijalankan bila operator, alat, pemantauan, dan transfer aman benar-benar ready."
+        ],
+        "fktpReality": "Oksitosin dan TXA tercantum untuk FKTP, tetapi stok, cold chain, jumlah ampul, drape, kompetensi, dan ambulans tidak otomatis siap. Encounter ini menyatakan obat, dua akses IV, tim, transport, serta RS penerima ready; tindakan yang tidak ready tidak menjadi hukuman tersembunyi.",
+        "resources": {
+          "ready": [
+            "oksitosin dan TXA",
+            "dua akses IV dan kristaloid hangat",
+            "tim terlatih serta monitor",
+            "ambulans dan pra-notifikasi"
+          ],
+          "networked": [
+            "darah/transfusi masif",
+            "anestesi dan kamar operasi",
+            "kendali sumber obstetri dan ICU"
+          ],
+          "notReady": [
+            "tampon improvisasi tanpa protokol/operator"
+          ]
+        },
+        "continuity": "Setelah pulang, tindak lanjuti anemia, pemulihan fisik, laktasi, trauma/kesehatan mental, kontrasepsi, dan kebutuhan keluarga; lakukan maternal near-miss review.",
+        "ukmBridge": {
+          "title": "MOTIVE Sampai Sistem",
+          "summary": "Audit cold chain oksitosin, stok TXA, drape, set IV, simulasi PPH, ambulans, komunikasi, dan jejaring darah. Banyak PPH tidak dapat diprediksi, sehingga kesiapan berlaku untuk setiap persalinan."
+        }
+      },
       "sources": [
+        {
+          "id": "pnpk_pregnancy_complications_2017",
+          "label": "KMK 91/2017 - PNPK Tata Laksana Komplikasi Kehamilan",
+          "url": "https://www.kemkes.go.id/app_asset/file_content_download/17012281586566ae7eec8862.58707574.pdf",
+          "year": 2017,
+          "kind": "pedoman_indonesia"
+        },
         {
           "id": "ppk_fktp_2022",
           "label": "KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)",
@@ -1101,19 +1453,40 @@
           "url": "https://www.who.int/publications/i/item/9789240115637",
           "year": 2025,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "who_pph_implementation_2026",
+          "label": "WHO/FIGO/ICM - PPH Implementation Guide 2026",
+          "url": "https://www.who.int/publications/i/item/9789240116115",
+          "year": 2026,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "fornas_2025",
+          "label": "KMK 1199/2025 - Formularium Nasional",
+          "url": "https://farmalkes.kemkes.go.id/unduh/keputusan-menteri-kesehatan-republik-indonesia-nomor-hk-01-07-menkes-1199-2025-tentang-formularium-nasional/",
+          "year": 2025,
+          "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
         {
           "id": "pps_1",
-          "narrative": "Uterus teraba lembek setinggi pusat, darah terus mengalir dari jalan lahir, TD 85/55, nadi 126. Tindakan pertama?",
+          "narrative": "Plasenta sudah lahir dan kelengkapannya sedang diperiksa. Uterus lembek, darah terus mengalir, TD 85/55, nadi 126. Apa respons pertama?",
           "choices": [
             {
               "id": "a",
-              "label": "Aktifkan bantuan; masase uterus, beri oksitosin dan asam traneksamat dini, pasang akses IV dengan kristaloid, serta nilai sumber perdarahan secara simultan",
+              "label": "Aktifkan tim dan rujukan; jalankan MOTIVE paralel: masase, oksitosin, TXA, IV-kristaloid hangat, pemeriksaan 4T, dan eskalasi",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat. Ini bundel respons pertama, bukan antrean tindakan: masase dan oksitosin memperbaiki tone, traneksamat membantu mempertahankan bekuan, cairan menopang perfusi, dan pemeriksaan mencari 4T sambil rujukan berjalan."
+              "feedback": "Tepat. Bundel berjalan secepatnya, idealnya dalam 15 menit, tanpa menunggu satu komponen selesai. Ukur kehilangan darah bila alat ready, tetapi clinical judgement pada perdarahan deras dengan syok sudah cukup untuk bertindak."
             },
             {
               "id": "b",
@@ -1134,7 +1507,7 @@
               "label": "Berikan asam traneksamat IV lebih dulu dan nilai ulang 15 menit kemudian sebelum masase atau uterotonika",
               "correct": false,
               "stabilityEffect": -16,
-              "feedback": "Obatnya memang punya tempat, tetapi bukan di urutan pertama. Traneksamat adalah tambahan; tanpa uterus yang berkontraksi, tidak ada bekuan yang bisa dipertahankannya."
+              "feedback": "TXA 1 g IV selama 10 menit memang diberikan sedini mungkin dan dalam 3 jam kelahiran. Kesalahan pilihan ini adalah menunggu 15 menit sebelum masase, uterotonika, cairan, pemeriksaan, serta eskalasi yang harus berjalan paralel."
             }
           ]
         },
@@ -1144,17 +1517,17 @@
           "choices": [
             {
               "id": "a",
-              "label": "Lakukan kompresi bimanual uterus dan pertahankan, lanjutkan uterotonika sesuai protokol, guyur kristaloid, dan aktifkan rujukan sekarang",
+              "label": "Tenaga terlatih melakukan kompresi bimanual sementara; lanjutkan uterotonika sesuai kontraindikasi, kristaloid hangat terukur, dan transfer yang sudah aktif",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Kompresi bimanual menggantikan kerja otot rahim yang gagal dan membeli waktu; rujukan diaktifkan sekarang, bukan setelah semua cara habis dicoba."
+              "feedback": "Tepat. Kompresi membeli waktu sambil 4T terus dinilai. Kristaloid adalah jembatan, bukan pengganti darah; jaga kehangatan dan nilai ulang perfusi tanpa istilah guyur atau bolus tanpa batas."
             },
             {
               "id": "b",
               "label": "Lakukan pemeriksaan dalam menyeluruh dan jahit dulu robekan kecil di perineum sebelum tindakan lain",
               "correct": false,
               "stabilityEffect": -22,
-              "feedback": "Salah satu T mengalihkan Anda dari T yang benar. Robekan perineum kecil tidak menghasilkan perdarahan sederas ini; uterus yang lembek jelas menunjuk atonia."
+              "feedback": "Robekan tetap dicari dalam 4T, tetapi pemeriksaan tidak boleh berubah menjadi eksplorasi buta atau penjahitan kecil yang mengalihkan resusitasi dari syok dan sumber utama."
             },
             {
               "id": "c",
@@ -1178,17 +1551,17 @@
           "choices": [
             {
               "id": "a",
-              "label": "Berangkat sekarang sambil kompresi (atau tampon/kondom kateter bila tersedia) terus dipertahankan, cairan berjalan, dan RS tujuan dikabari lebih dulu",
+              "label": "Transfer sekarang; pertahankan kontrol perdarahan dengan kompresi oleh kru terlatih atau tampon hanya bila protokol-alat-monitoring ready, sambil cairan dan pra-notifikasi berjalan",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. Pada atonia, rujukan dilakukan SAMBIL menekan — tangan penolong (atau tampon) adalah yang menahan hidup ibu sepanjang 40 menit itu."
+              "feedback": "Tepat. Cara mempertahankan kontrol perdarahan harus aman bagi ibu dan kru selama pemindahan. Tampon bukan improvisasi universal; tujuan telah menyiapkan darah, anestesi, kamar operasi, kendali sumber obstetri, ICU, dan dukungan neonatus."
             },
             {
               "id": "b",
               "label": "Lepaskan kompresi agar pasien bisa dipindahkan ke brankar dengan nyaman, lalu berangkat",
               "correct": false,
               "stabilityEffect": -30,
-              "feedback": "Fatal. Detik tangan Anda lepas, darah mengalir kembali dengan deras yang sama; kompresi dipertahankan melewati pemindahan, sepanjang jalan, sampai serah terima."
+              "feedback": "Melepas semua kontrol saat perdarahan masih aktif berisiko, tetapi kompresi internal juga tidak boleh dipaksakan tanpa kru, posisi, dan transport yang aman. Pilih jembatan yang benar-benar dapat dipertahankan sambil transfer."
             },
             {
               "id": "c",
@@ -1214,7 +1587,8 @@
     },
     {
       "id": "igd_pneumotoraks_tension_trauma",
-      "name": "Pneumotoraks Tension Traumatik",
+      "name": "Pneumotoraks Tensi Traumatik dengan Syok Obstruktif",
+      "reviewStatus": "physician_approved",
       "icd10": "S27.0",
       "skdi": "3B",
       "opening": "Seorang pengendara motor digotong masuk setelah menghantam pembatas jalan, dadanya membentur setang. Dalam sepuluh menit di ruang tindakan sesaknya berubah dari berat menjadi mengerikan. Ia meronta mencari udara, vena-vena lehernya menonjol seperti tali, dan bibirnya kelabu.",
@@ -1233,9 +1607,44 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "bedah",
       "referralCapabilities": [],
-      "officialGuidance": "Pneumotoraks tensi dengan gangguan hemodinamik atau pernapasan adalah diagnosis klinis dan tidak menunggu foto. Tenaga terlatih melakukan dekompresi sesuai alat dan protokol, lalu memantau patensi serta kekambuhan. Setelah itu, rujuk segera.",
+      "officialGuidance": "PNPK Trauma dan PPK FKTP menjadi floor. Pada dugaan pneumotoraks tensi dengan instabilitas, jangan menunda dekompresi untuk foto. Encounter harus menyatakan operator, lokasi protokol, kateter cukup panjang, monitoring, dan transport; keberhasilan dinilai dari respons serial, bukan desis. Needle decompression adalah jembatan menuju chest drain dan trauma care definitif.",
       "teachingPearl": "Pneumotoraks tensi terjadi ketika udara masuk ke rongga pleura tetapi tidak dapat keluar. Tekanan yang meningkat mengempiskan paru dan menghambat aliran balik vena, sehingga timbul syok obstruktif. Diagnosisnya klinis: sesak progresif setelah trauma dada, satu sisi dada tertinggal dan hipersonor, suara napas menghilang, distensi vena leher, hipotensi, atau deviasi trakea. Jangan menunggu foto toraks. Beri oksigen aliran tinggi dan lakukan dekompresi segera oleh tenaga terlatih dengan alat serta lokasi sesuai protokol. Masukkan kateter di atas tepi iga untuk menghindari berkas neurovaskular, fiksasi, lalu pantau patensi dan kekambuhan selama perjalanan. Rujuk segera ke layanan bedah untuk drainase definitif. Acuan: PPK Dokter di FKTP KMK 1186/2022 dan prinsip ATLS.",
+      "debrief": {
+        "keyPoints": [
+          "Instabilitas dengan pola trauma toraks adalah diagnosis klinis; jangan menunda dekompresi untuk foto.",
+          "Operator, lokasi, panjang kateter, dan monitoring harus eksplisit sebelum prosedur dinilai.",
+          "Desis bukan konfirmasi; nilai keberhasilan dari napas, perfusi, kesadaran, dan patensi serial.",
+          "Needle decompression adalah jembatan menuju chest drain dan trauma care definitif."
+        ],
+        "fktpReality": "Encounter ini secara eksplisit menyediakan operator terlatih, kateter 14G sekitar 8 cm, antiseptik, oksigen, monitor, akses IV, dan ambulans. WSD/finger thoracostomy tidak ready pada tim Sukamaju; batasnya adalah kemampuan nyata, bukan label tingkat fasilitas.",
+        "resources": {
+          "ready": [
+            "operator dekompresi terlatih",
+            "kateter panjang dan antiseptik",
+            "oksigen-monitor-akses IV",
+            "ambulans"
+          ],
+          "networked": [
+            "chest drain",
+            "imaging trauma dan transfusi",
+            "ventilasi-bedah-ICU"
+          ],
+          "notReady": []
+        },
+        "continuity": "Rujuk balik menilai pemulihan paru, nyeri, cedera penyerta, fungsi, rehabilitasi, serta kesiapan kembali bekerja dan berkendara.",
+        "ukmBridge": {
+          "title": "Tusukan yang Harus Dapat Diaudit",
+          "summary": "Catat indikasi, sisi, landmark, panjang alat, respons, komplikasi, lokasi kecelakaan, helm, dan waktu respons. Temuan agregat mengarahkan stok, simulasi, jalur chest drain, serta keselamatan jalan."
+        }
+      },
       "sources": [
+        {
+          "id": "pnpk_trauma_2017",
+          "label": "KMK 132/2017 - PNPK Tata Laksana Trauma",
+          "url": "https://keslan.kemkes.go.id/unduhan/fileunduhan_1610422327_714480.pdf",
+          "year": 2017,
+          "kind": "pedoman_indonesia"
+        },
         {
           "id": "ppk_fktp_2022",
           "label": "KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)",
@@ -1244,11 +1653,32 @@
           "kind": "pedoman_indonesia"
         },
         {
+          "id": "who_bec",
+          "label": "WHO/ICRC Basic Emergency Care",
+          "url": "https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/bec",
+          "year": 2018,
+          "kind": "evidence_internasional"
+        },
+        {
           "id": "nice_major_trauma",
           "label": "NICE NG39 - Major Trauma: Assessment and Initial Management",
           "url": "https://www.nice.org.uk/guidance/ng39/chapter/Recommendations",
           "year": 2016,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "wses_thoracic_trauma_2025",
+          "label": "WSES-AAST Thoracic Trauma Guidelines 2025",
+          "url": "https://link.springer.com/article/10.1186/s13017-025-00651-1",
+          "year": 2025,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
@@ -1258,10 +1688,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Tolak foto toraksnya, berikan oksigen aliran tinggi, dan lakukan dekompresi jarum segera pada sisi kanan",
+              "label": "Jangan tunda dekompresi untuk foto; beri oksigen konsentrasi tinggi, lakukan trauma ABCDE, dan dekompresi sisi kanan oleh operator terlatih",
               "correct": true,
               "stabilityEffect": 25,
-              "feedback": "Tepat. Pneumotoraks tension adalah diagnosis KLINIS dan dekompresi jarum tidak boleh menunggu gambar apa pun; menunda demi foto berarti membiarkan tekanan itu mencekik jantung sampai berhenti."
+              "feedback": "Tepat. Instabilitas hemodinamik dan kompromi napas berat membuat diagnosis serta tindakan bersifat klinis. eFAST boleh membantu bila alat-operator sudah di sisi pasien dan tidak menunda; hasil negatif tidak menyingkirkan pneumotoraks."
             },
             {
               "id": "b",
@@ -1275,7 +1705,7 @@
               "label": "Pasang infus dan guyur cairan dulu untuk menaikkan tekanan darahnya, dekompresi menyusul",
               "correct": false,
               "stabilityEffect": -25,
-              "feedback": "Syok di sini OBSTRUKTIF, bukan hipovolemik: darah tidak bisa kembali ke jantung karena tekanan di rongga dadanya. Cairan sebanyak apa pun tidak menolong sebelum tekanan itu dilepaskan."
+              "feedback": "Dekompresi mendahului cairan pada syok obstruktif ini, tetapi trauma dapat menimbulkan syok campuran. Pasang akses, cari perdarahan lain, dan berikan cairan atau darah menurut indikasi setelah penyebab obstruktif ditangani."
             },
             {
               "id": "d",
@@ -1288,14 +1718,14 @@
         },
         {
           "id": "ptx_2",
-          "narrative": "Anda memutuskan mendekompresi. Perawat menyodorkan baki: kateter IV ukuran besar, spuit, three-way, povidon iodin, dan sarung tangan steril.",
+          "narrative": "Operator terlatih, kateter 14G sekitar 8 cm, antiseptik, oksigen, monitor, dan transport tersedia. Lokasi encounter mengikuti protokol sela iga 4-5 garis anterior aksila/safe triangle.",
           "choices": [
             {
               "id": "a",
-              "label": "Tentukan sela iga pada sisi yang sakit, desinfeksi, lalu tusukkan kateter IV besar menyusur tepi ATAS iga yang berada di bawah sela iga tujuan sampai terdengar desis udara, dan tinggalkan kanulnya terbuka",
+              "label": "Tusuk tegak lurus tepat di atas tepi iga bawah pada sela 4-5 garis anterior aksila; majukan kateter, keluarkan jarum, ventilasikan sesuai perangkat, lalu fiksasi",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat. Berkas pembuluh darah dan saraf interkostal berjalan di tepi BAWAH tiap iga, jadi jarum disusurkan menempel tepi ATAS iga di bawahnya; desis udara yang menyembur sekaligus mengonfirmasi diagnosis dan mengubah tension menjadi pneumotoraks sederhana."
+              "feedback": "Tepat. Jangan mengandalkan garis puting atau kateter pendek. Desis mungkin tidak terdengar dan bukan konfirmasi; nilai keberhasilan dari kerja napas, SpO2, tekanan darah, nadi, kesadaran, suara/ekspansi dada, serta perfusi."
             },
             {
               "id": "b",
@@ -1316,7 +1746,7 @@
               "label": "Langsung pasang WSD lengkap di sini juga sekalian, supaya nanti tidak perlu dirujuk",
               "correct": false,
               "stabilityEffect": -25,
-              "feedback": "Melampaui lingkup dan kemampuan FKTP. WSD memerlukan keterampilan, alat, dan perawatan lanjutan yang tidak ada di sini; niat \"sekalian\" itu justru menunda rujukan yang mutlak diperlukan."
+              "feedback": "WSD bukan salah karena nama FKTP, tetapi karena alat, operator, monitoring, dan quality assurance tidak ready pada tim Sukamaju ini. Needle decompression adalah jembatan menuju chest drain definitif."
             }
           ]
         },
@@ -1326,10 +1756,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Fiksasi kanulnya dan jaga tetap terbuka, teruskan oksigen, lalu rujuk segera ke rumah sakit dengan bedah untuk pemasangan WSD dengan pemantauan ketat sepanjang perjalanan",
+              "label": "Fiksasi dan pertahankan ventilasi kateter sesuai perangkat/protokol, pantau kegagalan atau kekambuhan, teruskan oksigen, lalu transfer ke trauma-chest drain capable RS",
               "correct": true,
               "stabilityEffect": 19,
-              "feedback": "Tepat. Dekompresi jarum hanya mengubah kegawatan menjadi pneumotoraks sederhana dan sifatnya sementara — kanul bisa tersumbat atau tertekuk lalu tensionnya kambuh; terapi definitifnya adalah WSD di rumah sakit."
+              "feedback": "Tepat. Dekompresi adalah jembatan. Catat sisi, landmark, alat, waktu, respons dan komplikasi; siapkan penilaian ulang atau dekompresi ulang bila pasien memburuk, terutama bila ventilasi tekanan positif diperlukan."
             },
             {
               "id": "b",
@@ -1350,26 +1780,25 @@
               "label": "Sekarang baru lakukan foto toraks untuk mendokumentasikan hasilnya sebelum merujuk",
               "correct": false,
               "stabilityEffect": -18,
-              "feedback": "Foto boleh diambil bila tidak menunda apa pun, tetapi saat ini ia tidak mengubah satu keputusan pun — pasien tetap dirujuk untuk WSD. Yang menentukan bukan gambarnya, melainkan berangkatnya."
+              "feedback": "Pencitraan setelah stabilisasi tetap diperlukan, tetapi tidak boleh menahan transfer menuju chest drain, trauma care, ventilasi, transfusi, bedah, dan intensive care."
             }
           ]
         }
       ],
       "compiler": {
         "structuralChecksPassed": true,
-        "warnings": [
-          "Belum ada sumber 2024 atau lebih baru pada registry kasus"
-        ]
+        "warnings": []
       }
     },
     {
       "id": "igd_status_epileptikus",
-      "name": "Status Epileptikus",
+      "name": "Status Epileptikus Konvulsif pada Dewasa",
+      "reviewStatus": "physician_approved",
       "icd10": "G41.9",
       "skdi": "3B",
       "opening": "Seorang pasien digotong masuk ke ruang tindakan dalam keadaan kejang seluruh tubuh, mulut berbuih. \"Sudah dari rumah kejangnya, Dok, hampir sepuluh menit tidak berhenti-berhenti!\" Kepalanya terus membentur brankar dan wajahnya membiru.",
       "demography": {
-        "ageMin": 15,
+        "ageMin": 18,
         "ageMax": 45
       },
       "initialVitals": {
@@ -1383,8 +1812,36 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "saraf",
       "referralCapabilities": [],
-      "officialGuidance": "Kejang konvulsif 5 menit atau lebih membutuhkan ABC, glukosa, benzodiazepin lini pertama, satu pengulangan terukur bila perlu, dan eskalasi cepat. Setelah terminasi kejang, cari pencetus dan rujuk untuk terapi lini lanjut serta pemantauan.",
+      "officialGuidance": "PNPK Epilepsi Dewasa 2026 menjadi floor: status konvulsif ditangani sejak menit ke-5 dengan proteksi, dukungan airway-ventilasi, glukosa, dan diazepam dosis terukur yang dapat diulang sekali. Bila dua dosis adekuat gagal, pertahankan monitoring serta transfer ke kemampuan obat lini kedua, EEG, airway, dan ICU; listing Fornas tidak membuktikan kesiapan infus di setiap FKTP.",
       "teachingPearl": "Status epileptikus adalah kejang lebih dari lima menit, atau kejang berulang tanpa pemulihan kesadaran. Setiap menit tambahan membuat kejang makin sulit dihentikan. Miringkan pasien, lindungi kepala, bebaskan jalan napas, dan beri oksigen. Jangan memasukkan benda ke mulut. Pasang akses IV dan monitor, lalu periksa gula darah kapiler untuk mencari hipoglikemia yang dapat segera dikoreksi. Benzodiazepin adalah terapi lini pertama dan dapat diulang satu kali sesuai protokol; antiepileptik lini kedua diberikan sesudahnya. Bila kejang menetap setelah dosis benzodiazepin yang adekuat, pertahankan jalan napas dan oksigenasi selama rujukan emergensi ke layanan saraf. Acuan: PPK Dokter di FKTP KMK 1186/2022 dan konsensus PERDOSSI.",
+      "debrief": {
+        "keyPoints": [
+          "t1 = 5 menit berarti terapi emergensi dimulai; t2 = 30 menit menandai risiko konsekuensi jangka panjang.",
+          "Proteksi, airway-ventilasi, glukosa, benzodiazepin, ambulans, dan pencatatan waktu berjalan paralel.",
+          "Diazepam diberikan dalam dosis-rute terukur dan dapat diulang sekali; jangan undertreat atau menumpuk tanpa catatan.",
+          "Gagal setelah dua dosis adekuat adalah established refractory pathway menuju lini kedua dan airway-capable RS."
+        ],
+        "fktpReality": "Sukamaju memiliki diazepam IV/enema, glukometer, oksigen, suction, BVM, monitor, akses IV, dan ambulans. Infus lini kedua tidak dinyatakan ready karena pompa, ECG, stok penuh, operator, dan airway backup belum terverifikasi; transfer tidak menunggu kejang berhenti.",
+        "resources": {
+          "ready": [
+            "diazepam IV dan rektal",
+            "glukometer-oksigen-suction-BVM",
+            "monitor dan akses IV",
+            "ambulans"
+          ],
+          "networked": [
+            "obat lini kedua termonitor",
+            "CT/EEG dan evaluasi etiologi",
+            "intubasi-ventilasi-ICU"
+          ],
+          "notReady": []
+        },
+        "continuity": "Susun rescue plan tertulis, akses obat rutin, first aid keluarga, safety-net, risiko air-api-ketinggian-mesin-berkendara, kesehatan mental, dan stigma tanpa menyalahkan kepatuhan.",
+        "ukmBridge": {
+          "title": "Lima Menit yang Menguji Sistem",
+          "summary": "Audit onset-ke-benzodiazepin, kecukupan dosis, kesiapan oksigen-suction-BVM, stok rescue medicine, ambulans, dan tujuan capable; temuan kembali ke simulasi tim serta edukasi keluarga, sekolah, dan tempat kerja."
+        }
+      },
       "sources": [
         {
           "id": "pnpk_epilepsi_2026",
@@ -1399,6 +1856,34 @@
           "url": "https://www.ilae.org/guidelines/definition-and-classification/status-epilepticus-2015",
           "year": 2015,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "who_status_epilepticus_2023",
+          "label": "WHO - Antiseizure Medicines for Established Status Epilepticus 2023",
+          "url": "https://www.who.int/teams/mental-health-and-substance-use/mental-health-gap-action-programme/resources-centre/epilepsy-and-seizures/Antiseizure-medicines-for-management-of-established-status-epilepticus",
+          "year": 2023,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "nice_epilepsy_2025",
+          "label": "NICE NG217 - Treating Status Epilepticus, updated 2025",
+          "url": "https://www.nice.org.uk/guidance/ng217/chapter/7-Treating-status-epilepticus-repeated-or-cluster-seizures-and-prolonged-seizures",
+          "year": 2025,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "fornas_2025",
+          "label": "KMK 1199/2025 - Formularium Nasional",
+          "url": "https://farmalkes.kemkes.go.id/unduh/keputusan-menteri-kesehatan-republik-indonesia-nomor-hk-01-07-menkes-1199-2025-tentang-formularium-nasional/",
+          "year": 2025,
+          "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
@@ -1408,10 +1893,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Miringkan pasien ke posisi pemulihan, lindungi kepala, bebaskan jalan napas, beri oksigen",
+              "label": "Catat onset, panggil tim dan ambulans; lindungi kepala, posisi lateral bila aman, suction terarah, oksigen-BVM-monitor, akses IV, dan cek GDS tanpa menunda obat",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Airway selalu didahulukan: posisi miring mencegah aspirasi air liur, dan oksigen mengoreksi hipoksemia yang timbul dari kejang itu sendiri."
+              "feedback": "Tepat. Status pada t1 lima menit memerlukan kerja paralel. Jangan menahan gerakan atau memasukkan benda ke mulut. Posisi lateral membantu, tetapi airway belum otomatis aman; kejang dan benzodiazepin tetap dapat mengganggu ventilasi."
             },
             {
               "id": "b",
@@ -1432,7 +1917,7 @@
               "label": "Pasang jalur IV dan suntikkan diazepam lebih dulu, jalan napas dan oksigen menyusul kemudian",
               "correct": false,
               "stabilityEffect": -14,
-              "feedback": "Obatnya benar, urutannya terbalik. Benzodiazepin memang lini pertama, tetapi ia menekan napas — memberikannya sebelum jalan napas diamankan justru memperdalam hipoksemia."
+              "feedback": "Benzodiazepin tidak menunggu ritual ABC selesai atau akses IV bila rute rescue lain ready. Proteksi dasar dan dukungan ventilasi disiapkan paralel, lalu dosis adekuat diberikan segera."
             }
           ]
         },
@@ -1442,10 +1927,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Berikan benzodiazepin lini pertama (diazepam IV lambat, atau rektal bila jalur IV gagal)",
+              "label": "Berikan diazepam IV 0,1 mg/kgBB (5-10 mg, maks kumulatif 20 mg; maks 5 mg/menit), ulang sekali bila perlu; gunakan rute rektal bila IV gagal",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat. Benzodiazepin adalah lini pertama status epileptikus; bila akses IV sulit, rute rektal atau bukal tidak kalah sah dan jauh lebih baik daripada menunda."
+              "feedback": "Tepat. Catat waktu, rute, dosis, respons, dan obat pra-fasilitas. PNPK dewasa mendukung diazepam IV atau rektal sesuai kesiapan encounter; rute bukal tidak diperkenalkan tanpa obat, sediaan, dan protokol yang jelas."
             },
             {
               "id": "b",
@@ -1459,7 +1944,7 @@
               "label": "Tunda benzodiazepin karena takut depresi napas; cukup pertahankan oksigen dan observasi",
               "correct": false,
               "stabilityEffect": -24,
-              "feedback": "Ketakutan yang salah sasaran. Risiko depresi napas jauh lebih kecil daripada risiko kejang berkepanjangan, dan jalan napas Anda sudah aman serta terpantau."
+              "feedback": "Jangan mengurangi dosis efektif hanya karena takut depresi napas. Risiko napas ditangani dengan monitoring, suction, BVM, dan eskalasi airway, sedangkan undertreatment memperpanjang kejang."
             },
             {
               "id": "d",
@@ -1472,14 +1957,14 @@
         },
         {
           "id": "se_3",
-          "narrative": "Setelah dosis benzodiazepin kedua, kejang mereda sekitar 40 detik lalu kambuh lagi. Pasien sama sekali belum sadar di antara kejang.",
+          "narrative": "GDS awal normal. Setelah dua dosis diazepam adekuat, kejang hanya berhenti 40 detik lalu kambuh tanpa pemulihan kesadaran: established benzodiazepine-resistant status epilepticus.",
           "choices": [
             {
               "id": "a",
-              "label": "Periksa gula darah kapiler sekarang dan koreksi bila rendah, lalu aktifkan rujukan emergensi ke RS dengan layanan saraf",
+              "label": "Pertahankan airway-ventilasi dan monitor, koreksi penyebab reversibel, konsultasikan penerima, lalu transfer segera ke RS yang siap obat lini kedua, EEG, CT, dan ICU",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. Hipoglikemia adalah penyebab reversibel yang sering terlewat, dan kejang refrakter setelah benzodiazepin adekuat melampaui kapasitas FKTP — periksa, koreksi, rujuk."
+              "feedback": "Tepat. Levetirasetam, fenitoin/fosfenitoin, atau valproat adalah opsi lini kedua dengan pemilihan menurut protokol dan pasien. Sukamaju tidak mengimprovisasi infus tanpa pompa, ECG, stok penuh, operator, dan airway backup."
             },
             {
               "id": "b",
@@ -1500,7 +1985,7 @@
               "label": "Rujuk segera tanpa memeriksa gula darah karena kejangnya jelas berasal dari otak",
               "correct": false,
               "stabilityEffect": -15,
-              "feedback": "Rujukannya benar, kelengkapannya tidak. Gula darah kapiler hanya butuh belasan detik dan dapat mengungkap penyebab yang bisa Anda sembuhkan di ruangan ini juga."
+              "feedback": "GDS sudah diperiksa pada fase awal. Transfer benar, tetapi airway, monitoring, dokumentasi obat, pencarian pencetus, dan koreksi penyebab reversibel tetap berjalan selama perjalanan."
             }
           ]
         }
@@ -1512,8 +1997,9 @@
     },
     {
       "id": "igd_stroke_iskemik_window",
-      "name": "Stroke Iskemik dalam Jendela Terapi",
-      "icd10": "I63.9",
+      "name": "Suspek Stroke Akut dalam Jendela Reperfusi",
+      "reviewStatus": "physician_approved",
+      "icd10": "I64",
       "skdi": "3B",
       "opening": "Seorang pasien lansia dituntun masuk, sudut mulutnya turun dan lengan kirinya tergantung lemas. \"Tadi jam tujuh pas sarapan tiba-tiba sendoknya jatuh, Dok, terus bicaranya jadi pelo — saya lihat sendiri jamnya.\" Jam dinding ruang tindakan menunjuk pukul delapan lewat tiga puluh.",
       "demography": {
@@ -1531,8 +2017,35 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "saraf",
       "referralCapabilities": [],
-      "officialGuidance": "Catat waktu terakhir pasien diketahui sehat, cek glukosa, lakukan skrining stroke, dan pertahankan ABC. Jangan memberi asupan oral atau antiplatelet empiris sebelum perdarahan disingkirkan. Rujuk segera ke jejaring CT dan reperfusi.",
+      "officialGuidance": "Pada fase FKTP gunakan label suspek stroke akut sampai CT membedakan iskemik dan perdarahan. Kunci last-known-well/onset, cek glukosa, lakukan pemeriksaan neurologis singkat, pertahankan NPO, dan hindari antiplatelet/antikoagulan pra-pencitraan. TD 182/100 tidak perlu dinormalisasi di FKTP; pra-notifikasi dan target keberangkatan <=30 menit menuju kemampuan CT-reperfusi.",
       "teachingPearl": "Stroke iskemik akut: sumbatan arteri menciptakan inti infark dan PENUMBRA yang masih dapat diselamatkan bila aliran darah dipulihkan cepat. Waktu adalah otak, dan jendela reperfusi dihitung dari waktu terakhir diketahui sehat/onset yang dipastikan saksi. Urutan FKTP: ABC, oksigen hanya bila hipoksemik, kunci waktu onset, periksa GULA DARAH kapiler pada setiap defisit neurologis akut, lalu pra-notifikasi dan rujuk segera ke fasilitas dengan CT serta layanan stroke. Pada pasien ini TD 182/100 tanpa kegawatan hipertensi lain tidak diturunkan cepat di FKTP; kebutuhan dan target penurunan bergantung pada kandidat reperfusi serta penilaian tim stroke. JANGAN memberi aspirin sebelum perdarahan disingkirkan dengan pencitraan. Neuroprotektor bukan terapi penyelamat dan tak boleh menunda keberangkatan (PPK FKTP KMK 1186/2022; PNPK Tata Laksana Stroke KMK 304/2026; AHA/ASA Acute Ischemic Stroke Guideline 2026).",
+      "debrief": {
+        "keyPoints": [
+          "Kenali defisit, kunci last-known-well/onset, cek glukosa, dan pra-notifikasi.",
+          "GDS normal hanya menyingkirkan hipoglikemia sebagai satu mimic; subtipe stroke menunggu pencitraan.",
+          "NPO dan tanpa antiplatelet/antikoagulan sebelum perdarahan disingkirkan.",
+          "Tujuan dipilih dari kemampuan CT-reperfusi dan performa jejaring, dengan target berangkat <=30 menit."
+        ],
+        "fktpReality": "Tugas Sukamaju bukan menebak iskemik versus perdarahan, tetapi menjaga ABC, mengunci waktu, menilai defisit singkat, dan memilih kemampuan yang mengubah terapi. Pada skenario ini RS 25 menit dengan CT dan layanan stroke lebih tepat daripada RS 10 menit tanpa CT; rute tetap mengikuti jejaring lokal.",
+        "resources": {
+          "ready": [
+            "GDS dan pemeriksaan neurologis singkat",
+            "monitor vital dan suction",
+            "pra-notifikasi serta ambulans"
+          ],
+          "networked": [
+            "CT 24 jam",
+            "trombolisis/CTA/EVT pathway",
+            "stroke unit dan rehabilitasi"
+          ],
+          "notReady": []
+        },
+        "continuity": "Rujuk balik mencakup diagnosis final, antitrombotik, disfagia, rehabilitasi, kebutuhan rumah, caregiver, tekanan darah, DM, lipid, merokok, fibrilasi atrium, aktivitas, dan depresi pascastroke.",
+        "ukmBridge": {
+          "title": "Jejak Waktu Stroke",
+          "summary": "Catat onset-to-arrival, decision-to-departure, tujuan, dan kegagalan jejaring. Data agregat mengarahkan edukasi SEGERA KE RS, telemedisin, routing, dan kesiapan rehabilitasi tanpa membuka identitas pasien."
+        }
+      },
       "sources": [
         {
           "id": "pnpk_stroke_2026",
@@ -1547,26 +2060,33 @@
           "url": "https://professional.heart.org/en/science-news/2026-guideline-for-the-early-management-of-patients-with-acute-ischemic-stroke",
           "year": 2026,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
         {
           "id": "st_1",
-          "narrative": "Onset sekitar 90 menit lalu dan dipastikan saksi. Pasien sadar, bicara pelo, hemiparesis kiri, SpO2 97%. Langkah pertama?",
+          "narrative": "Onset disaksikan pukul 07.00, tiba 08.30. Pasien sadar dengan bicara pelo dan hemiparesis kiri; SpO2 97%. Apa prioritas FKTP?",
           "choices": [
             {
               "id": "a",
-              "label": "Bebaskan jalan napas dan beri oksigen bila hipoksemik, kunci jam onset dari saksi, dan segera periksa gula darah kapiler",
+              "label": "Jaga ABC tanpa oksigen rutin, dokumentasikan last-known-well/onset dan nomor saksi, lakukan skrining neurologis singkat, lalu cek GDS",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Jam onset menentukan kelayakan reperfusi di RS, dan gula darah kapiler menyingkirkan peniru stroke yang bisa Anda sembuhkan di sini dalam semenit."
+              "feedback": "Tepat. GDS cepat menyingkirkan hipoglikemia sebagai salah satu mimic yang dapat dibalik, tetapi hasil normal tidak membuktikan stroke iskemik atau menyingkirkan mimic lain. Pemeriksaan panjang tidak boleh menahan pra-notifikasi dan transfer."
             },
             {
               "id": "b",
               "label": "Langsung berikan aspirin 320 mg kunyah karena gejalanya khas stroke iskemik",
               "correct": false,
               "stabilityEffect": -22,
-              "feedback": "Terlalu cepat. Stroke iskemik dan perdarahan tidak bisa dibedakan secara klinis; aspirin baru boleh setelah perdarahan disingkirkan CT, dan itu terjadi di RS."
+              "feedback": "Subtipe iskemik belum diketahui sampai pencitraan. Pasien tetap NPO dan tidak menerima aspirin, antikoagulan, minuman, makanan, atau obat oral sebelum perdarahan serta kemampuan menelan dinilai."
             },
             {
               "id": "c",
@@ -1590,24 +2110,24 @@
           "choices": [
             {
               "id": "a",
-              "label": "Tidak menurunkan tekanan darah di fase akut — hipertensi ini kompensatoris untuk memperfusi penumbra; lanjutkan persiapan rujukan",
+              "label": "Jangan beri kaptopril/nifedipin sublingual atau menunda transfer; monitor TD 182/100 dan laporkan karena masih di bawah ambang pra-trombolisis 185/110",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat, dan ini melawan naluri. Tekanan tinggi itu sedang mendorong darah lewat kolateral ke jaringan yang masih bisa diselamatkan; menurunkannya memadamkan penumbra."
+              "feedback": "Tepat. Jangan menyebut semua hipertensi akut kompensatoris atau setiap penurunan memadamkan penumbra. Bila TD melampaui ambang reperfusi atau ada kegawatan lain, penurunan terkontrol dengan obat IV tertitrasi dilakukan menurut protokol di fasilitas mampu."
             },
             {
               "id": "b",
               "label": "Beri kaptopril 25 mg sublingual sampai tekanan darah di bawah 140/90 sebelum pasien dirujuk",
               "correct": false,
               "stabilityEffect": -28,
-              "feedback": "Inilah jebakan klasik \"obati dulu darah tingginya, baru dirujuk\". Penurunan tekanan di fase akut memperluas infark, dan prosesnya membuang jendela terapi."
+              "feedback": "Normalisasi cepat dengan kaptopril sublingual tidak aman dan membuang waktu. Sasaran tekanan darah bergantung strategi reperfusi dan kondisi penyerta, bukan target rutin <140/90 di FKTP."
             },
             {
               "id": "c",
               "label": "Beri nifedipin sublingual karena kerjanya paling cepat menurunkan tensi",
               "correct": false,
               "stabilityEffect": -30,
-              "feedback": "Paling berbahaya dari semuanya. Penurunan tekanan yang mendadak dan tak terkendali persis merupakan hal yang paling ditakuti pada otak yang sedang iskemik."
+              "feedback": "Nifedipin sublingual memberi penurunan yang cepat dan tidak terkontrol. Monitor, laporkan tren, dan jangan menunda akses ke pencitraan serta reperfusi."
             },
             {
               "id": "d",
@@ -1624,17 +2144,17 @@
           "choices": [
             {
               "id": "a",
-              "label": "Rujuk ke RS dengan CT dan layanan stroke meski lebih jauh; kabari lebih dulu, kirim jam onset dan hasil pemeriksaan, transfer terpantau",
+              "label": "Ikuti jejaring dan transfer ke RS 25 menit dengan CT-layanan stroke; pra-notifikasi, target berangkat <=30 menit, dan kirim waktu, defisit, GDS, TD, NPO, serta obat",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. Yang menentukan bukan jarak melainkan kemampuan: hanya fasilitas dengan CT dan layanan stroke yang bisa mengubah nasib penumbra pasien ini."
+              "feedback": "Tepat untuk jejaring skenario ini. Prinsipnya adalah kemampuan yang mengubah terapi, bukan selalu memilih rumah sakit lebih jauh. Jalur LVO/EVT atau pola transfer lain mengikuti performa sistem lokal yang terdokumentasi."
             },
             {
               "id": "b",
               "label": "Rujuk ke RS terdekat tanpa CT agar cepat sampai, nanti dirujuk lagi dari sana bila perlu",
               "correct": false,
               "stabilityEffect": -28,
-              "feedback": "Cepat sampai ke tempat yang tidak bisa menolong bukanlah kecepatan. Rujukan berantai justru memakan lebih banyak waktu daripada langsung menuju fasilitas yang tepat."
+              "feedback": "RS tanpa CT hanya menambah perpindahan dalam jejaring ini. Keputusan dapat berbeda bila fasilitas terdekat benar-benar thrombolysis-capable dan transfer lanjutnya terbukti cepat."
             },
             {
               "id": "c",
@@ -1660,13 +2180,15 @@
     },
     {
       "id": "igd_sumbatan_jalan_napas_anak",
-      "name": "Sumbatan Jalan Napas Anak",
+      "name": "Aspirasi Benda Asing dengan Sumbatan Jalan Napas Berat pada Anak",
+      "reviewStatus": "physician_approved",
       "icd10": "T17.9",
       "skdi": "3B",
       "opening": "Seorang ayah menerobos masuk sambil mengangkat anaknya yang tergantung lemas di lengannya. \"Lagi makan bakso, Dok, tiba-tiba tercekik!\" Anak itu mencengkeram lehernya sendiri, mulutnya terbuka lebar tanpa suara sedikit pun, dan wajahnya sudah membiru.",
       "demography": {
-        "ageMin": 1,
-        "ageMax": 5
+        "ageMin": 3,
+        "ageMax": 3,
+        "sex": "L"
       },
       "initialVitals": {
         "nadi": 150,
@@ -1678,8 +2200,36 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "anak",
       "referralCapabilities": [],
-      "officialGuidance": "Pada anak sadar dengan obstruksi berat, lakukan siklus 5 back blows dan 5 abdominal thrusts; bila tidak responsif mulai CPR dan lihat benda hanya saat tampak. Jangan melakukan blind finger sweep.",
+      "officialGuidance": "Pada anak tiga tahun dengan FBAO berat, aktifkan bantuan dan lakukan 5 back blows diikuti 5 abdominal thrusts. Bila tidak responsif mulai CPR tanpa menunda pulse check, lihat mulut saat membuka airway, dan ambil hanya benda yang tampak. Batuk atau bunyi napas menetap setelah benda keluar memerlukan transfer ke kemampuan airway pediatrik dan bronkoskopi.",
       "teachingPearl": "Sumbatan jalan napas oleh benda asing pada anak dinilai dari batuknya efektif atau tidak. Bila anak masih bisa bersuara, menangis, atau batuk BERBUNYI, dorong terus batuk dan awasi. Bila tidak ada suara, batuk tak berbunyi, atau sianosis, lakukan tindakan segera: pada anak di atas 1 tahun, 5 hentakan punggung bergantian dengan 5 hentakan perut; pada bayi, gunakan 5 hentakan punggung dan 5 hentakan dada, tanpa hentakan perut. Jangan melakukan sapuan jari buta; keluarkan hanya benda yang terlihat. Bila anak tidak sadar, mulai RJP dan lihat benda saat membuka jalan napas. Kasus ini dirujuk karena batuk/bunyi napas menetap setelah benda keluar menandakan kemungkinan sisa yang memerlukan bronkoskopi; anak yang pulih sempurna dapat diobservasi dan diberi safety-net. PPK FKTP 1186/2022 tidak memuat bab FBAO anak; algoritme mengikuti AHA/AAP Pediatric Basic Life Support 2025 dan pendekatan MTBS/IDAI.",
+      "debrief": {
+        "keyPoints": [
+          "Anak 3 tahun dengan FBAO berat: lima back blows lalu lima abdominal thrusts sambil bantuan diaktifkan.",
+          "Bila tidak responsif, mulai CPR; lihat mulut saat membuka airway dan ambil hanya benda yang tampak.",
+          "Bayi memakai chest thrust, bukan abdominal thrust; algoritme usia tidak dicampur di tombol utama.",
+          "Batuk atau bunyi napas menetap setelah benda keluar membutuhkan evaluasi retained foreign body."
+        ],
+        "fktpReality": "Sukamaju memiliki tim pediatric BLS, oksigen, suction, BVM dan masker anak, monitor, AED/pad pediatrik bila tersedia, serta ambulans. Bronkoskopi tidak tersedia; laringoskop/Magill hanya digunakan oleh operator terlatih bila benda terlihat dan alat sudah berada di sisi pasien.",
+        "resources": {
+          "ready": [
+            "tim pediatric BLS",
+            "oksigen-suction-BVM anak",
+            "monitor dan AED pediatrik",
+            "ambulans"
+          ],
+          "networked": [
+            "airway pediatrik dan anestesi",
+            "bronkoskopi serta kamar operasi",
+            "PICU"
+          ],
+          "notReady": []
+        },
+        "continuity": "Keluarga melakukan teach-back first aid, pemilihan dan pemotongan makanan sesuai usia, posisi duduk tenang, pengawasan makan, serta penyimpanan benda kecil.",
+        "ukmBridge": {
+          "title": "Satu Bakso, Dua Keselamatan",
+          "summary": "Gabungkan first aid keluarga dengan latihan choking untuk kader, PAUD, dan penjual makanan; audit BVM anak serta ambulans dan tinjau makanan bulat-kenyal tanpa menyalahkan keluarga atau pedagang."
+        }
+      },
       "sources": [
         {
           "id": "ppk_fktp_2022",
@@ -1694,19 +2244,33 @@
           "url": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/pediatric-basic-life-support",
           "year": 2025,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "queensland_fbao_2025",
+          "label": "Queensland Paediatric Guideline - Inhaled Foreign Body 2025",
+          "url": "https://www.childrens.health.qld.gov.au/for-health-professionals/queensland-paediatric-emergency-care-qpec/queensland-paediatric-clinical-guidelines/foreign-body-inhaled",
+          "year": 2025,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
         {
           "id": "fbao_1",
-          "narrative": "Anak masih sadar tetapi tidak dapat bersuara sama sekali; batuknya tidak berbunyi dan dadanya bergerak tanpa udara yang masuk. Tindakan pertama?",
+          "narrative": "Anak 3 tahun masih responsif tetapi tidak dapat bersuara; batuk lemah tanpa suara dan wajah membiru. Ini FBAO berat. Apa respons pertama?",
           "choices": [
             {
               "id": "a",
-              "label": "Kenali ini sumbatan TOTAL, lalu lakukan 5 hentakan punggung diselingi 5 hentakan perut berulang sampai bendanya keluar atau anak tak sadar",
+              "label": "Satu petugas aktifkan bantuan dan ambulans; penolong utama lakukan 5 back blows lalu 5 abdominal thrusts sampai benda keluar atau anak tidak responsif",
               "correct": true,
               "stabilityEffect": 25,
-              "feedback": "Tepat. Batuk yang tidak berbunyi berarti tidak ada udara yang lewat sama sekali — ini sumbatan total, dan hanya tekanan mendadak dari luar yang bisa mendorong benda itu keluar."
+              "feedback": "Tepat. Pada anak, siklus lima back blows dan lima abdominal thrusts dimulai segera. Bayi di bawah satu tahun memakai chest thrust, tetapi algoritme bayi tidak diuji pada tombol kasus anak tiga tahun ini."
             },
             {
               "id": "b",
@@ -1727,7 +2291,7 @@
               "label": "Baringkan anak dan pasang oksigen sungkup aliran tinggi lebih dulu, baru pikirkan cara mengeluarkan bendanya",
               "correct": false,
               "stabilityEffect": -18,
-              "feedback": "Oksigen tidak bisa melewati sumbatan. Selama jalan napas tertutup total, sungkup sama sekali tidak berguna — buka dulu jalannya, oksigen menyusul."
+              "feedback": "Manuver pelepasan tidak boleh ditunda oleh pemasangan sungkup, tetapi oksigen, suction, BVM anak, monitor, dan alat resusitasi tetap disiapkan paralel dan digunakan segera ketika aliran udara atau ventilasi memungkinkan."
             }
           ]
         },
@@ -1737,10 +2301,10 @@
           "choices": [
             {
               "id": "a",
-              "label": "Baringkan di alas keras, panggil bantuan, dan mulai RJP — tiap kali jalan napas dibuka untuk memberi napas, lihat sekilas ke dalam mulut dan ambil bendanya hanya bila terlihat",
+              "label": "Baringkan aman dan mulai CPR tanpa menunda untuk pulse check; saat membuka airway lihat mulut, ambil hanya benda yang tampak, lalu ventilasi dengan BVM bila dada dapat naik",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Kompresi dada pada anak tak sadar menghasilkan tekanan jalan napas yang menyerupai hentakan perut sekaligus mengalirkan darah ke otak; melihat sekilas saat memberi napas sama sekali berbeda dari mengorek membabi buta."
+              "feedback": "Tepat. Ikuti rasio pediatric BLS sesuai jumlah penolong. Bila dada tidak naik, reposisi dan lanjutkan siklus; AED/pad pediatrik dipasang bila cardiac arrest dan tersedia tanpa mengganggu kompresi."
             },
             {
               "id": "b",
@@ -1761,7 +2325,7 @@
               "label": "Tinggalkan anak sebentar untuk mencari laringoskop dan forsep Magill di lemari alat sebelum melakukan apa pun",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "Bila alatnya ada dan Anda terlatih, pengambilan langsung memang pilihan yang sah — tetapi meninggalkan anak yang tidak bernapas untuk mencari alat adalah kesalahan. RJP dimulai lebih dulu; biar orang lain yang mengambilkan alatnya."
+              "feedback": "Direct laryngoscopy dan Magill hanya untuk operator terlatih ketika benda terlihat dan alat sudah berada di sisi pasien. Jangan meninggalkan CPR untuk mencari alat atau melakukan instrumentasi buta."
             }
           ]
         },
@@ -1771,17 +2335,17 @@
           "choices": [
             {
               "id": "a",
-              "label": "Rujuk ke rumah sakit dengan spesialis anak untuk menilai kemungkinan sisa benda asing dan cedera akibat hentakan perut",
+              "label": "Nilai ulang ABC dan trauma, pertahankan NPO, lalu transfer ke airway pediatrik-anestesi-bronkoskopi capable RS karena batuk dan napas kasar menetap",
               "correct": true,
               "stabilityEffect": 18,
-              "feedback": "Tepat. Batuk yang menetap dan napas berbunyi setelah benda keluar menandakan jalan napasnya masih terganggu — potongan sisa bisa tertinggal, dan setiap anak yang menerima hentakan perut wajib dinilai kemungkinan cedera organ dalam."
+              "feedback": "Tepat. SpO2 atau foto toraks normal tidak menyingkirkan benda organik radiolusen. Abdominal thrust tidak selalu mencederai organ; nilai nyeri, muntah, memar, distensi, dan kekuatan/jumlah manuver, tetapi alasan utama transfer adalah dugaan retained foreign body."
             },
             {
               "id": "b",
               "label": "Bendanya sudah keluar dan saturasinya 98 persen — pulangkan saja dengan pesan hati-hati saat makan",
               "correct": false,
               "stabilityEffect": -25,
-              "feedback": "Terlalu cepat merasa selesai. Batuk yang tidak reda dan napas kasar adalah tanda masih ada yang salah di jalan napas, dan hentakan perut sendiri dapat melukai hati atau lambung tanpa gejala di jam-jam pertama."
+              "feedback": "Benda yang keluar belum membuktikan airway bersih. Batuk dan bunyi napas menetap setelah episode asfiksia membutuhkan evaluasi bronkoskopi-capable, bukan sekadar pesan hati-hati."
             },
             {
               "id": "c",
@@ -1807,13 +2371,15 @@
     },
     {
       "id": "igd_syok_sepsis",
-      "name": "Syok Sepsis",
+      "name": "Suspek Sepsis dengan Syok, Kemungkinan Sumber Urin",
+      "reviewStatus": "physician_approved",
       "icd10": "A41.9",
       "skdi": "3B",
       "opening": "Seorang perempuan lansia digotong menantunya, lunglai di kursi roda dan tidak lagi mengenali siapa pun. \"Demam empat hari, Dok, katanya anyang-anyangan dan pinggangnya sakit — dari kemarin nggak mau makan dan pipisnya cuma sedikit sekali.\" Tangannya dingin dan lembap, padahal dahinya terasa membakar.",
       "demography": {
-        "ageMin": 45,
-        "ageMax": 75
+        "ageMin": 68,
+        "ageMax": 68,
+        "sex": "P"
       },
       "initialVitals": {
         "td": "82/50",
@@ -1826,8 +2392,39 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "penyakit_dalam",
       "referralCapabilities": [],
-      "officialGuidance": "Sepsis dan syok septik adalah kegawatan. Mulai resusitasi, ambil kultur bila tidak menunda, dan berikan antibiotik IV segera, idealnya dalam satu jam pada syok. Berikan kristaloid berdasarkan berat badan dengan penilaian ulang yang sering. Jangan memakai volume tetap tanpa menilai risiko kelebihan cairan; rujuk dengan pemantauan.",
+      "officialGuidance": "PNPK Sepsis 2017 dan PPK FKTP menjadi floor, dengan SSC 2026 sebagai pembaruan cairan individual, antibiotik satu jam, vasopresor, source control, dan quality improvement. Beri kristaloid seimbang 250-500 mL lalu nilai ulang; gunakan seftriakson 2 g IV hanya sebagai stok jembatan berprotokol pada encounter ini, dan transfer tanpa menunggu administrasi.",
       "teachingPearl": "Sepsis adalah disfungsi organ akibat respons tubuh yang tidak terkendali terhadap infeksi. Di FKTP, sumber infeksi disertai hipotensi, akral dingin, pengisian kapiler memanjang, kesadaran menurun, takipnea, atau urin berkurang sudah cukup untuk bertindak. Jangan menunggu laktat atau kultur yang tidak tersedia. SSC 2026 menganjurkan kristaloid hingga sekitar 30 mL/kg dalam tiga jam pertama pada syok, diberikan bertahap dengan penilaian ulang perfusi dan tanda kelebihan cairan. Ambil kultur hanya bila tersedia dan tidak menunda antibiotik IV empiris. Pada syok, antibiotik diberikan segera, idealnya dalam satu jam. Rujuk dengan pemantauan. Kebutuhan vasopresor mempercepat rujukan karena Sukamaju tidak memiliki pompa, monitor, dan protokol yang diperlukan.",
+      "debrief": {
+        "keyPoints": [
+          "Kenali kegawatan klinis dan mulai resusitasi tanpa menunggu laktat atau kultur.",
+          "Kristaloid seimbang diberikan 250-500 mL lalu dinilai ulang; 30 mL/kg bukan tiga kantong otomatis.",
+          "Seftriakson 2 g IV adalah stok jembatan encounter yang diaudit, bukan stok universal Puskesmas.",
+          "Antibiotik, source-control thinking, dan pencarian RS capable berjalan sejak menit pertama."
+        ],
+        "fktpReality": "Sukamaju tidak perlu laktat untuk mengenali infeksi, bingung, oliguria, akral dingin, dan TD 82/50 sebagai kegawatan. Tim memberi cairan dalam aliquot, oksigen tertitrasi, serta dosis jembatan berprotokol. Vasopresor tidak diimprovisasi tanpa pompa, monitor, obat, protokol, dan operator; keterlambatan bed memicu pencarian alternatif.",
+        "resources": {
+          "ready": [
+            "kristaloid seimbang dan akses IV",
+            "oksigen-monitor-GDS",
+            "seftriakson stok jembatan berprotokol",
+            "ambulans dan komunikasi"
+          ],
+          "networked": [
+            "laktat-kultur-imaging",
+            "vasopresor dan ICU/HCU",
+            "urologi/source control"
+          ],
+          "notReady": [
+            "vasopresor perifer tanpa protokol",
+            "menunggu bed dua jam di Sukamaju"
+          ]
+        },
+        "continuity": "Nilai pemulihan ginjal dan urine, antibiotik/obat kronis, kelemahan, nutrisi, fungsi-kognisi pascasepsis, infeksi berulang, serta kemungkinan batu atau obstruksi.",
+        "ukmBridge": {
+          "title": "Satu Jam, Dua Sistem",
+          "summary": "Audit waktu kenal sepsis, antibiotik, cairan dan reassessment, decision-to-departure, penolakan bed, stok emergency dose, handoff, dan source control untuk memperbaiki protokol, antibiogram, huddle, serta jejaring."
+        }
+      },
       "sources": [
         {
           "id": "pnpk_sepsis_2017",
@@ -1837,24 +2434,52 @@
           "kind": "pedoman_indonesia"
         },
         {
+          "id": "ppk_fktp_2022",
+          "label": "KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)",
+          "url": "https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/",
+          "year": 2022,
+          "kind": "pedoman_indonesia"
+        },
+        {
           "id": "ssc_sepsis_2026",
           "label": "Surviving Sepsis Campaign Adult Guidelines 2026",
           "url": "https://sccm.org/survivingsepsiscampaign/guidelines-and-resources/surviving-sepsis-campaign-adult-guidelines",
           "year": 2026,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "sepsis3_2016",
+          "label": "Sepsis-3 International Consensus Definitions",
+          "url": "https://jamanetwork.com/journals/jama/fullarticle/2492881",
+          "year": 2016,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "fornas_2025",
+          "label": "KMK 1199/2025 - Formularium Nasional",
+          "url": "https://farmalkes.kemkes.go.id/unduh/keputusan-menteri-kesehatan-republik-indonesia-nomor-hk-01-07-menkes-1199-2025-tentang-formularium-nasional/",
+          "year": 2025,
+          "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
         {
           "id": "sep_1",
-          "narrative": "Kesadarannya menurun, akral dingin dengan pengisian kapiler lebih dari empat detik, tekanan darah 82/50. Di FKTP ini tidak ada pemeriksaan laktat maupun kultur darah. Tindakan pertama?",
+          "narrative": "Perempuan 68 tahun, 55 kg, bingung, oliguria, akral dingin, CRT >4 detik, TD 82/50, SpO2 92%. Fungsi ginjal belum diketahui; laktat dan kultur tidak ready. Apa respons awal?",
           "choices": [
             {
               "id": "a",
-              "label": "Tegakkan syok secara klinis, beri oksigen, pasang akses IV besar, dan mulai kristaloid berbasis berat badan dengan penilaian ulang berkala",
+              "label": "Aktifkan huddle dan rujukan paralel; verifikasi SpO2, titrasi oksigen, pasang IV, cek GDS, lalu beri kristaloid seimbang 250-500 mL dengan reassessment",
               "correct": true,
               "stabilityEffect": 23,
-              "feedback": "Tepat. Syok septik adalah diagnosis klinis di sisi tempat tidur — akral dingin, kesadaran turun, dan urin sedikit sudah cukup; resusitasi cairan tidak menunggu angka apa pun."
+              "feedback": "Tepat. Sepsis adalah diagnosis klinis dan resusitasi tidak menunggu laktat. Nilai TD/MAP, CRT, kesadaran, nadi, napas, SpO2, paru, dan urine tiap aliquot; 30 mL/kg adalah orientasi bukti rendah, bukan tiga kantong otomatis."
             },
             {
               "id": "b",
@@ -1875,27 +2500,27 @@
               "label": "Mulai vasopresor sekarang juga karena tekanan darahnya sangat rendah",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "Vasopresor mungkin diperlukan bila hipotensi menetap, dan tidak selalu harus menunggu akses sentral. Namun ia tidak menggantikan resusitasi awal, antibiotik, dan rujukan; profil FKTP ini tidak punya pompa, pemantauan, atau protokol vasopresor perifer yang siap."
+              "feedback": "Vasopresor dapat diperlukan dini pada syok tidak stabil dan tidak selalu harus menunggu akses sentral. Pilihan ini salah pada encounter Sukamaju karena pompa, protokol, monitor, obat, dan operator tidak ready; eskalasi ke tim/RS capable, jangan improvisasi."
             }
           ]
         },
         {
           "id": "sep_2",
-          "narrative": "Kristaloid awal berbasis berat badan sudah berjalan; setelah tiap aliquot dinilai ulang, total sementara sekitar satu liter. Tekanan darah naik tipis ke 90/58 dan pasien masih bingung. Perawat menyiapkan antibiotik. Kabar dari rumah sakit rujukan: tempat tidur baru siap sekitar dua jam lagi.",
+          "narrative": "Tidak ada alergi beta-laktam berat atau risiko MDR/ESBL yang diketahui. Protokol jejaring menyediakan dua vial seftriakson sebagai stok jembatan emergensi; fasilitas tujuan sedang dikonfirmasi tanpa menunggu satu RS yang penuh.",
           "choices": [
             {
               "id": "a",
-              "label": "Berikan dosis pertama antibiotik empiris spektrum luas yang tersedia sekarang juga secara intravena, sambil cairan terus berjalan",
+              "label": "Berikan seftriakson 2 g IV dosis pertama dan catat jamnya; lanjutkan cairan-reassessment sambil mencari fasilitas dengan ICU, kultur-imaging, dan source control urologis",
               "correct": true,
               "stabilityEffect": 22,
-              "feedback": "Tepat. Pada syok septik antibiotik diberikan sedini mungkin, idealnya dalam jam pertama; dosis pertama di FKTP bukan mendahului rumah sakit, melainkan menyelamatkan jam-jam yang tidak bisa dikembalikan."
+              "feedback": "Tepat untuk encounter ini. Regimen berasal dari protokol jejaring untuk dugaan sumber urin komunitas setelah skrining alergi/MDR singkat; bukan resep universal dan bukan klaim bahwa seftriakson rutin tersedia di semua Puskesmas."
             },
             {
               "id": "b",
               "label": "Tunggu sampai pasien tiba di rumah sakit agar pemilihan antibiotiknya sesuai hasil kultur dan pola kuman setempat",
               "correct": false,
               "stabilityEffect": -26,
-              "feedback": "Inilah penundaan yang paling sering fatal. Pemilihan definitif memang urusan rumah sakit, tetapi dosis pertama yang tepat waktu adalah urusan Anda — kultur menyempurnakan terapi, bukan menunda memulainya."
+              "feedback": "Kultur diambil lebih dulu hanya bila tersedia dan tidak menunda antibiotik. Pada syok, dosis IV segera dan idealnya dalam satu jam berjalan bersamaan dengan resusitasi serta pencarian tujuan."
             },
             {
               "id": "c",
@@ -1915,14 +2540,14 @@
         },
         {
           "id": "sep_3",
-          "narrative": "Setelah cairan mendekati 30 mL/kg dengan penilaian ulang perfusi dan tanda kelebihan cairan, tekanan darahnya bertahan di 92/60, napas 26, dan kesadarannya sedikit membaik. Ambulans sudah menunggu di depan pintu.",
+          "narrative": "Setelah cairan terukur, TD 92/60 (MAP sekitar 71), napas 26, dan kesadaran sedikit membaik. Respons dapat sementara dan kemungkinan obstruksi urin belum terselesaikan. Ambulans siap.",
           "choices": [
             {
               "id": "a",
-              "label": "Rujuk sekarang dengan cairan dan oksigen tetap berjalan, catat jam pemberian antibiotik dan total cairan, serta pantau sepanjang perjalanan",
+              "label": "Transfer sekarang sambil terapi dan monitor berjalan; handoff cairan-respons, urine, antibiotik-dosis-jam, alergi/MDR, sumber, serta kebutuhan source control",
               "correct": true,
               "stabilityEffect": 18,
-              "feedback": "Tepat. Pasien ini membutuhkan vasopresor dan perawatan intensif yang tidak ada di sini; catatan jam antibiotik dan total cairan langsung menyambung ke terapi di rumah sakit tanpa memulai dari nol."
+              "feedback": "Tepat. Nilai ini tidak membuktikan pasien pasti membutuhkan vasopresor saat ini, tetapi ia tetap memerlukan layanan shock, kultur/laktat, imaging, ICU/HCU, dan urologi karena respons dapat sementara dan source control belum tercapai."
             },
             {
               "id": "b",
@@ -1943,7 +2568,7 @@
               "label": "Beri kortikosteroid dosis tinggi sebelum berangkat untuk menahan syoknya selama di perjalanan",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "Kortikosteroid hanya dipertimbangkan pada syok septik yang tetap refrakter setelah cairan DAN vasopresor adekuat — itu keputusan tingkat perawatan intensif, bukan bekal rujukan dari FKTP."
+              "feedback": "Hidrokortison adalah tambahan terpilih pada septic shock yang masih membutuhkan vasopresor dalam lingkungan termonitor; bukan dosis tinggi pra-rujuk atau pengganti antibiotik, cairan, dan source control."
             }
           ]
         }
@@ -1955,13 +2580,15 @@
     },
     {
       "id": "igd_tenggelam",
-      "name": "Tenggelam",
+      "name": "Tenggelam Nonfatal dengan Gagal Napas dan Hipotermia Ringan",
+      "reviewStatus": "physician_approved",
       "icd10": "T75.1",
       "skdi": "3B",
       "opening": "Beberapa pemuda menggotong masuk tubuh basah kuyup yang baru saja diangkat dari sungai. \"Kepeleset waktu mancing, Dok, nggak tahu berapa lama dia di dalam air!\" Di brankar, dadanya nyaris tidak naik, bibirnya kelabu, dan kulitnya sedingin lantai.",
       "demography": {
-        "ageMin": 10,
-        "ageMax": 30
+        "ageMin": 22,
+        "ageMax": 22,
+        "sex": "L"
       },
       "initialVitals": {
         "td": "100/65",
@@ -1974,8 +2601,36 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "penyakit_dalam",
       "referralCapabilities": [],
-      "officialGuidance": "Utamakan ventilasi dan oksigenasi; bila henti jantung lakukan CPR dengan napas bantuan, cegah hipotermia, dan jangan memasang imobilisasi spinal rutin tanpa mekanisme trauma. Semua korban simptomatik memerlukan evaluasi lanjutan.",
+      "officialGuidance": "Utamakan ventilasi: pada nadi yang masih ada dengan napas tidak efektif, beri assisted ventilation segera; bila cardiac arrest, lakukan CPR dengan napas dan kompresi. Keringkan serta hangatkan paralel, hindari spinal board rutin tanpa indikasi trauma, dan rujuk kasus yang membutuhkan BVM atau tetap simptomatik berdasarkan derajat penyakit, bukan mitos secondary drowning.",
       "teachingPearl": "Tenggelam membunuh lewat HIPOKSIA. Urutannya: buka jalan napas dan bersihkan hanya sumbatan nyata → berikan napas bantuan/ventilasi dengan oksigen sedini mungkin → nilai sirkulasi dan mulai RJP bila perlu → lepas pakaian basah, keringkan, dan hangatkan bertahap. JANGAN mencoba mengeluarkan air dengan hentakan perut, Heimlich rutin, atau posisi kepala di bawah: manuver itu menunda ventilasi dan memicu regurgitasi. Antibiotik serta kortikosteroid tidak diberikan profilaktik. Korban yang sempat tidak sadar, apnea, atau membutuhkan bantuan napas dirujuk untuk observasi walau tampak pulih. PPK FKTP 1186/2022 tidak memuat bab khusus; algoritme ini mengikuti bantuan hidup dasar/PPGD Kemenkes, AHA/AAP Focused Update on Drowning 2024, dan AHA CPR/ECC 2025.",
+      "debrief": {
+        "keyPoints": [
+          "Dengan nadi tetapi napas tidak efektif, beri assisted ventilation segera; jangan mencoba mengeluarkan air.",
+          "Bila nadi hilang, CPR ideal mencakup napas dan kompresi; AED tidak menunda CPR.",
+          "Keringkan dan hangatkan paralel setelah ventilasi berjalan; hindari spinal board rutin tanpa indikasi trauma.",
+          "Rujuk karena pernah gagal napas dan membutuhkan BVM, bukan karena mitos secondary drowning."
+        ],
+        "fktpReality": "Sukamaju memberi ventilasi efektif, menyiapkan CPR dengan napas bila nadi hilang, mengeringkan dan menghangatkan paralel, lalu meneruskan pasien ke fasilitas yang mampu menangani cedera paru dan hipoksia. Advanced airway, NIV, blood gas, ventilator, dan ICU berada di jejaring.",
+        "resources": {
+          "ready": [
+            "BVM-masker-reservoir dan oksigen",
+            "suction-airway adjunct-monitor-AED",
+            "GDS-termometer-selimut",
+            "ambulans"
+          ],
+          "networked": [
+            "advanced airway dan NIV/ventilator",
+            "blood gas dan imaging",
+            "ICU dan rewarming lanjut"
+          ],
+          "notReady": []
+        },
+        "continuity": "Tinjau fungsi kognitif-neurologis, batuk-sesak, toleransi aktivitas, tidur/kecemasan, sinkop-kejang-aritmia, alkohol/zat, kesehatan mental, dan kesiapan kembali ke aktivitas air.",
+        "ukmBridge": {
+          "title": "Dari Sungai ke Sistem Aman",
+          "summary": "Audit lokasi, cuaca/arus, penerangan, akses tebing, pelampung, alkohol, waktu ditemukan, rescue, napas bantuan, BVM-AED, serta response-to-departure; pilih intervensi hazard lokal bersama desa, BPBD/Basarnas, PSC, sekolah, dan komunitas."
+        }
+      },
       "sources": [
         {
           "id": "ppk_fktp_2022",
@@ -1985,31 +2640,66 @@
           "kind": "pedoman_indonesia"
         },
         {
-          "id": "aha_drowning_2024",
-          "label": "AHA/AAP Focused Update on Drowning 2024",
-          "url": "https://professional.heart.org/en/science-news/2024-aha-and-aap-focused-update-on-special-circumstances-resuscitation-following-drowning",
+          "id": "aha_special_circumstances_2025",
+          "label": "AHA Special Circumstances of Resuscitation 2025",
+          "url": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation",
+          "year": 2025,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "anzcor_drowning_2026",
+          "label": "ANZCOR 11.10 - Resuscitation in Special Circumstances 2026",
+          "url": "https://www.anzcor.org/home/adult-advanced-life-support/guideline-11-10-resuscitation-in-special-circumstances",
+          "year": 2026,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "wms_drowning_2024",
+          "label": "Wilderness Medical Society Drowning Guideline 2024",
+          "url": "https://doi.org/10.1177/10806032241227460",
           "year": 2024,
           "kind": "evidence_internasional"
+        },
+        {
+          "id": "who_drowning_2024",
+          "label": "WHO Global Status Report on Drowning Prevention 2024",
+          "url": "https://www.who.int/publications/i/item/9789240103962",
+          "year": 2024,
+          "kind": "evidence_internasional"
+        },
+        {
+          "id": "basarnas_search_rescue_2014",
+          "label": "UU 29/2014 - Pencarian dan Pertolongan",
+          "url": "https://jdih.basarnas.go.id/produk-hukum/427",
+          "year": 2014,
+          "kind": "pedoman_indonesia"
+        },
+        {
+          "id": "permenkes_rujukan_2024",
+          "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
+          "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
+          "year": 2024,
+          "kind": "pedoman_indonesia"
         }
       ],
       "steps": [
         {
           "id": "tgl_1",
-          "narrative": "Napasnya hanya sesekali dan dangkal, nadi teraba lemah dan lambat, SpO2 80 persen. Perawat sudah menyiapkan bag-valve-mask dan tabung oksigen di sisi kepala. Tindakan pertama?",
+          "narrative": "Laki-laki 22 tahun, diperkirakan 60 kg, dari sungai setelah hujan dini hari. Nadi 54/menit masih teraba, RR 6/menit dangkal, SpO2 80%, suhu low-reading 33,8 C. Apa prioritas?",
           "choices": [
             {
               "id": "a",
-              "label": "Buka jalan napas, bersihkan mulut dari lumpur/muntahan yang terlihat, lalu mulai ventilasi tekanan positif bag-valve-mask dengan oksigen",
+              "label": "Buka airway, keluarkan hanya muntahan/benda yang menghalangi, lalu assisted ventilation BVM-oksigen segera dengan two-person seal dan volume sampai dada naik",
               "correct": true,
               "stabilityEffect": 24,
-              "feedback": "Tepat. Pada tenggelam yang membunuh adalah hipoksia, bukan air di paru — ventilasi dan oksigenasi adalah terapi utamanya dan tidak boleh menunggu apa pun."
+              "feedback": "Tepat. Dengan nadi tetapi napas tidak efektif, masalahnya respiratory failure. Hindari ventilasi terlalu cepat/bertekanan tinggi; jangan menghabiskan waktu menyedot busa halus yang terus terbentuk bila ventilasi masih dapat dilakukan."
             },
             {
               "id": "b",
               "label": "Lakukan manuver Heimlich/hentakan perut untuk mengeluarkan air dari parunya sebelum memberi napas",
               "correct": false,
               "stabilityEffect": -30,
-              "feedback": "Berbahaya. Air di paru tidak bisa didorong keluar; hentakan perut hanya menunda ventilasi dan memicu regurgitasi isi lambung yang justru teraspirasi."
+              "feedback": "Abdominal thrust tidak mengeluarkan air dari paru dan menambah regurgitasi. Ia hanya relevan bila benda padat benar-benar menyebabkan FBAO."
             },
             {
               "id": "c",
@@ -2023,7 +2713,7 @@
               "label": "Lepas semua pakaian basah dan bungkus dengan selimut hangat lebih dulu karena suhunya 33,8 derajat",
               "correct": false,
               "stabilityEffect": -15,
-              "feedback": "Penghangatan memang wajib, tetapi bukan sekarang. Hipotermia tidak membunuh dalam menit ini, henti napas iya — B mendahului penghangatan."
+              "feedback": "Pengeringan dan penghangatan harus dimulai paralel oleh petugas kedua setelah ventilasi berjalan; ventilasi tidak boleh ditunda untuk melepas pakaian."
             }
           ]
         },
@@ -2033,24 +2723,24 @@
           "choices": [
             {
               "id": "a",
-              "label": "Lepas pakaian basah, keringkan tubuh, selimuti dan hangatkan bertahap sambil menangani pasien dengan lembut, dengan oksigen dan pemantauan irama jantung tetap berjalan",
+              "label": "Pertahankan bantuan ventilasi sampai napas adekuat, titrasi O2 ke 94-98%, lepaskan pakaian basah, keringkan, insulasi dan hangatkan batang tubuh secara paralel",
               "correct": true,
               "stabilityEffect": 20,
-              "feedback": "Tepat. Kain basah terus membuang panas; penghangatan bertahap disertai penanganan yang lembut mencegah aritmia pada jantung yang hipotermik dan mudah tersinggung."
+              "feedback": "Tepat. Nilai kesadaran, kerja napas, auskultasi, muntah, ECG, glukosa, suhu, perfusi, dan tren SpO2. Cairan isotonic hangat hanya bila ada hipovolemia/hipotensi; jenis air tidak mengubah algoritme awal."
             },
             {
               "id": "b",
               "label": "Gosok kuat kedua tungkai dan rendam ekstremitasnya dalam air panas supaya suhunya cepat naik",
               "correct": false,
               "stabilityEffect": -22,
-              "feedback": "Justru berbahaya. Menghangatkan ekstremitas lebih dulu mendorong darah dingin dari perifer kembali ke inti tubuh (afterdrop), dan manipulasi kasar dapat mencetuskan fibrilasi ventrikel."
+              "feedback": "Menggosok tungkai tidak efektif, dapat mencederai kulit dan meningkatkan vasodilatasi perifer. Tidak perlu klaim absolut bahwa tindakan itu pasti memicu fibrilasi ventrikel; gunakan rewarming batang tubuh yang terkontrol."
             },
             {
               "id": "c",
               "label": "Beri antibiotik dan kortikosteroid profilaksis sekarang karena air sungai kotor pasti menyebabkan radang paru",
               "correct": false,
               "stabilityEffect": -18,
-              "feedback": "Keduanya tidak direkomendasikan rutin pada tenggelam. Antibiotik diberikan bila ada bukti infeksi, dan steroid tidak memperbaiki cedera paru — waktunya lebih berguna untuk penghangatan dan persiapan rujukan."
+              "feedback": "Antibiotik dan steroid tidak diberikan rutin. Antibiotik dipertimbangkan bila muncul infeksi atau paparan sangat tercemar, idealnya berdasarkan kultur dan pola lokal; pneumonitis awal tidak otomatis infeksi."
             },
             {
               "id": "d",
@@ -2063,35 +2753,35 @@
         },
         {
           "id": "tgl_3",
-          "narrative": "Tiga puluh menit kemudian pasien sadar penuh, bicaranya jelas, SpO2 96 persen dengan oksigen nasal, tetapi ia masih terbatuk-batuk. Keluarganya sudah berkemas: \"Sudah sadar kok, Dok, pulang saja ya.\" Keputusan Anda?",
+          "narrative": "Transfer sudah dikoordinasikan sejak awal. Setelah 30 menit ia sadar dan SpO2 96% dengan oksigen, tetapi masih batuk setelah sempat tidak sadar dan membutuhkan BVM. Keluarga bertanya apakah tetap perlu berangkat.",
           "choices": [
             {
               "id": "a",
-              "label": "Rujuk untuk observasi di rumah sakit meski ia tampak pulih, karena sempat tidak sadar dan gagal napas",
+              "label": "Lanjutkan transfer ke fasilitas airway-ventilasi-blood gas-imaging-ICU capable karena pernah gagal napas, membutuhkan BVM, masih batuk, dan hipotermia",
               "correct": true,
               "stabilityEffect": 18,
-              "feedback": "Tepat. Setiap korban tenggelam yang sempat tidak sadar atau membutuhkan bantuan napas berisiko cedera paru tertunda dalam hitungan jam; tampak baik sekarang bukan jaminan."
+              "feedback": "Tepat. Alasan transfer adalah derajat penyakit nyata, bukan mitos secondary drowning atau air tersisa. Handoff memuat kronologi submersi/rescue, bantuan napas/CPR, muntah, trauma/penyebab medis, serta tren neurologis, respirasi, dan suhu."
             },
             {
               "id": "b",
               "label": "Pulangkan karena sudah sadar penuh dan saturasinya baik, pesan kembali bila sesak",
               "correct": false,
               "stabilityEffect": -30,
-              "feedback": "Inilah kesalahan paling mematikan pada tenggelam. Perburukan paru sering muncul beberapa jam setelah kejadian, saat pasien sudah jauh dari fasilitas kesehatan dan tanpa pengawasan siapa pun."
+              "feedback": "Pasien ringan yang benar-benar asimtomatik dan stabil setelah observasi 4-6 jam di fasilitas mampu dapat dipertimbangkan pulang. Pasien ini tidak termasuk karena sempat gagal napas, membutuhkan BVM, dan masih batuk."
             },
             {
               "id": "c",
               "label": "Observasi 30 menit lagi di ruang tindakan; bila saturasinya tetap 96 persen, pulangkan",
               "correct": false,
               "stabilityEffect": -20,
-              "feedback": "Jendela pengamatannya terlalu pendek. Batuk yang menetap justru menandakan parunya sudah terkena, dan FKTP tidak akan bisa menangani gagal napas yang datang beberapa jam kemudian di rumah."
+              "feedback": "Tiga puluh menit terlalu singkat untuk pasien ini, tetapi jangan mengajarkan kematian mendadak berhari-hari akibat air tersisa. Keputusan berdasar gejala, kebutuhan airway support, pemeriksaan, dan observasi terstruktur."
             },
             {
               "id": "d",
               "label": "Tunggu hasil foto toraks dulu; bila bersih, pasien boleh pulang",
               "correct": false,
               "stabilityEffect": -18,
-              "feedback": "Foto toraks yang bersih pada jam-jam awal tidak menyingkirkan cedera paru tertunda, dan menunggunya hanya menunda transfer. Keputusan rujuk di sini lahir dari perjalanan klinis, bukan dari gambar."
+              "feedback": "Foto awal normal tidak menjamin tidak ada cedera paru dan foto abnormal tidak sendiri menentukan prognosis. Jangan menunggu pencitraan untuk memulai transfer pada pasien berisiko tinggi."
             }
           ]
         }

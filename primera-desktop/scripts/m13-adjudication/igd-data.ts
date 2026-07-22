@@ -7,7 +7,7 @@ import { REVISI_ENGINE, sidikJariPack } from '../../src/engine/verifikasi'
 export type IgdReviewDecision = 'setuju' | 'perlu-edit' | 'tolak' | 'nanti'
 
 export interface IgdAdjudicationDataset {
-  schema: 'primera.m13-14-igd-adjudication.v1'
+  schema: 'primera.m13-14-igd-adjudication.v2'
   generatedAt: string
   sourceCommit: string
   contentRelease: string
@@ -18,6 +18,7 @@ export interface IgdAdjudicationDataset {
   cases: Array<{
     id: string
     name: string
+    reviewStatus: 'physician_approved'
     icd10: string
     skdi: string
     opening: string
@@ -35,6 +36,20 @@ export interface IgdAdjudicationDataset {
     referralCapabilities: string[]
     officialGuidance: string
     teachingPearl: string
+    debrief: {
+      keyPoints: string[]
+      fktpReality: string
+      resources: {
+        ready: string[]
+        networked: string[]
+        notReady: string[]
+      }
+      continuity: string
+      ukmBridge: {
+        title: string
+        summary: string
+      }
+    }
     sources: Array<{
       id: string
       label: string
@@ -83,7 +98,7 @@ function stableJson(value: unknown): string {
 
 export function buildIgdAdjudicationDataset(generatedAt = new Date().toISOString()): IgdAdjudicationDataset {
   const cases = Object.values(PACK.kasusIgd)
-    .filter((item) => item.activationStatus === 'lab_prototype_unadjudicated')
+    .filter((item) => item.reviewStatus === 'physician_approved')
     .sort((a, b) => a.id.localeCompare(b.id))
     .map((item) => {
       const warnings: string[] = []
@@ -107,6 +122,7 @@ export function buildIgdAdjudicationDataset(generatedAt = new Date().toISOString
       return {
         id: item.id,
         name: item.nama,
+        reviewStatus: item.reviewStatus!,
         icd10: item.icd10,
         skdi: item.skdi,
         opening: item.pembuka,
@@ -124,6 +140,20 @@ export function buildIgdAdjudicationDataset(generatedAt = new Date().toISOString
         referralCapabilities: [...(item.kapabilitasRujukanSalahSatu ?? [])],
         officialGuidance: item.panduanResmi,
         teachingPearl: item.clue,
+        debrief: {
+          keyPoints: [...item.debrief!.poinKunci],
+          fktpReality: item.debrief!.realitaFktp,
+          resources: {
+            ready: [...item.debrief!.sumberDaya.ready],
+            networked: [...item.debrief!.sumberDaya.melaluiJejaring],
+            notReady: [...(item.debrief!.sumberDaya.tidakReady ?? [])],
+          },
+          continuity: item.debrief!.kontinuitas,
+          ukmBridge: {
+            title: item.debrief!.bridgeUkm.judul,
+            summary: item.debrief!.bridgeUkm.ringkasan,
+          },
+        },
         sources: item.sumber.map((source) => ({
           id: source.id,
           label: source.label,
@@ -151,7 +181,7 @@ export function buildIgdAdjudicationDataset(generatedAt = new Date().toISOString
 
   const fingerprint = createHash('sha256').update(stableJson(cases)).digest('hex')
   return {
-    schema: 'primera.m13-14-igd-adjudication.v1',
+    schema: 'primera.m13-14-igd-adjudication.v2',
     generatedAt,
     sourceCommit: gitSnapshot(),
     contentRelease: CONTENT_RELEASE,

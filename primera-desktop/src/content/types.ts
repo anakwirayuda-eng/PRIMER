@@ -425,6 +425,30 @@ export interface SumberKlinis {
   jenis: 'pedoman_indonesia' | 'evidence_internasional'
 }
 
+/**
+ * Lapisan debrief IGD yang bersifat naratif. Ini bukan simulator inventaris:
+ * status resource menjelaskan asumsi encounter agar pemain tidak dihukum oleh
+ * alat atau operator yang diam-diam dianggap tersedia.
+ */
+export interface DebriefIgd {
+  /** Tiga sampai empat keputusan yang layak diingat setelah kasus selesai. */
+  poinKunci: string[]
+  /** Batas antara standar ideal dan kemampuan Puskesmas Sukamaju. */
+  realitaFktp: string
+  sumberDaya: {
+    ready: string[]
+    melaluiJejaring: string[]
+    tidakReady?: string[]
+  }
+  /** Loop klinis setelah pasien kembali dari rumah sakit. */
+  kontinuitas: string
+  /** Konsekuensi populasi/sistem dari satu episode klinis. */
+  bridgeUkm: {
+    judul: string
+    ringkasan: string
+  }
+}
+
 export interface KasusIgd {
   id: string
   nama: string
@@ -438,6 +462,12 @@ export interface KasusIgd {
    * apa pun besarnya pool Karier.
    */
   activationStatus?: 'lab_prototype_unadjudicated'
+  /**
+   * Rekam aktivasi akademik terpisah dari modePolicy. Kasus yang sudah
+   * disetujui dokter tetap dapat dibatasi ke Karier agar blueprint Ujian tidak
+   * berubah di tengah pengembangan.
+   */
+  reviewStatus?: 'physician_approved'
   /** Narasi kedatangan dramatis. */
   pembuka: string
   demografi: {
@@ -461,6 +491,8 @@ export interface KasusIgd {
   panduanResmi: string
   /** Provenance yang dapat dibuka pemain dari surat hasil IGD. */
   sumber: SumberKlinis[]
+  /** Pengayaan pascakeputusan; tidak ditampilkan selama algoritme berlangsung. */
+  debrief?: DebriefIgd
 }
 
 /* ---------------------------------------------------------------------------

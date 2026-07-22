@@ -62,6 +62,35 @@ describe('<MejaKerja /> - provenance hasil IGD', () => {
     expect(gina).toHaveAttribute('title', 'Buka di browser bawaan')
     expect(screen.getByRole('list', { name: /Sumber klinis Serangan Asma Berat/ })).toBeVisible()
   })
+
+  it('meneruskan debrief teradjudikasi tanpa membukanya sebelum pemain meminta', async () => {
+    pasangPrimerStub()
+    const awal = buildInitialState('Uji Debrief IGD', 919191, PACK)
+    const state: GameState = {
+      ...awal,
+      inbox: [{
+        id: 'surat_igd_debrief_final',
+        hari: 1,
+        jenis: 'igd',
+        dari: 'Perawat jaga',
+        judul: 'Debrief tenggelam nonfatal',
+        isi: 'Pasien diterima jejaring rujukan.',
+        dibaca: false,
+        kaitKasusIgdId: 'igd_tenggelam',
+      }],
+    }
+    useGame.setState({ state, petaTargetKeluargaId: null })
+    render(<MejaKerja />)
+
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: /Debrief tenggelam nonfatal/ }))
+    expect(screen.queryByText('YANG PERLU MENETAP')).not.toBeVisible()
+
+    await user.click(screen.getByText('Panduan resmi & sumber'))
+    expect(screen.getByText('YANG PERLU MENETAP')).toBeVisible()
+    expect(screen.getByText('Dari Sungai ke Sistem Aman')).toBeVisible()
+    expect(screen.getByText(/Rujuk karena pernah gagal napas/)).toBeVisible()
+  })
 })
 
 const SUMBER_URL_GINA = 'https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf'

@@ -15,11 +15,11 @@ function report(data: ReturnType<typeof buildIgdAdjudicationDataset>): string {
     const warning = item.compiler.warnings.join(' ') || 'Tidak ada flag struktur/provenance otomatis.'
     return `| ${index + 1} | \`${item.id}\` | ${item.name} | ${item.icd10} | ${item.skdi} | ${sources} | ${warning} |`
   }).join('\n')
-  return `# M13-14 IGD - Paket Adjudikasi Dokter
+  return `# M13-14 IGD - Snapshot Implementasi Pasca-Adjudikasi
 
 **Tanggal kompilasi:** ${data.generatedAt.slice(0, 10)}
 
-**Status:** research + compilation only; **bukan persetujuan medis dan tidak mengubah gameplay**
+**Status:** **14/14 keputusan dokter tercatat dan patch telah diterapkan ke gameplay Karier**
 
 **Snapshot:** ${data.sourceCommit}; content release \`${data.contentRelease}\`; \`REVISI_ENGINE=${data.engineRevision}\`
 
@@ -27,15 +27,15 @@ function report(data: ReturnType<typeof buildIgdAdjudicationDataset>): string {
 
 ## Tujuan
 
-Empat belas kasus IGD prototipe sudah tersedia di mode Karier, tetapi sengaja ditandai \`lab_prototype_unadjudicated\` dan dikeluarkan dari mode Ujian. Paket ini memperkecil pekerjaan dokter menjadi 14 keputusan yang dapat dikerjakan satu per satu tanpa membaca source code.
+Dokumen ini adalah snapshot yang dapat diaudit dari 14 kasus IGD setelah adjudikasi dokter dan implementasi patch. Seluruh kasus aktif di mode Karier pada release ini dan tetap dikeluarkan dari mode Ujian sampai ada keputusan kurikulum tersendiri.
 
-## Cara review
+## Cara verifikasi ulang
 
 1. Buka [M13_14_IGD_ADJUDICATION.html](M13_14_IGD_ADJUDICATION.html).
 2. Baca vignette, algoritma tiap langkah, disposisi, mutiara klinis, dan tautan sumber.
-3. Jawab enam pertanyaan checklist yang sama untuk setiap kasus.
-4. Pilih **Setuju**, **Perlu edit**, **Tolak**, atau **Nanti**. Isi catatan bila ada koreksi.
-5. Ekspor \`M13_14_IGD_DECISIONS.json\` sebagai rekam keputusan.
+3. Gunakan enam pertanyaan checklist yang sama untuk audit ulang bila diperlukan.
+4. Kontrol **Setuju**, **Perlu edit**, **Tolak**, atau **Nanti** kini hanya mencatat re-review opsional; keputusan resmi tetap berada di decision log.
+5. Ekspor \`M13_14_IGD_DECISIONS.json\` bila audit ulang menghasilkan koreksi baru.
 
 Pilihan **Setuju** berarti seluruh keputusan material pada kasus diterima untuk target pembelajaran FKTP. Flag kompilator hanya pemeriksaan struktur/provenance; flag kosong bukan bukti klinis benar.
 
@@ -43,7 +43,7 @@ Pilihan **Setuju** berarti seluruh keputusan material pada kasus diterima untuk 
 
 - Kasus: **${data.cases.length}**
 - Kasus dengan flag kompilator: **${warningCount}**
-- Semua kasus masih memerlukan adjudikasi manusia: **${data.cases.length}**
+- Kasus berstatus \`physician_approved\`: **${data.cases.filter((item) => item.reviewStatus === 'physician_approved').length}**
 
 | # | ID | Diagnosis | ICD-10 | SKDI | Sumber terikat | Flag kompilator |
 |---:|---|---|---|---|---|---|
@@ -57,7 +57,8 @@ ${data.reviewQuestions.map((question, index) => `${index + 1}. ${question}`).joi
 
 - Registry sumber membuktikan dokumen mana yang dimaksud, tetapi belum menyediakan locator halaman/paragraf untuk setiap klaim.
 - Kesesuaian alat/obat harus dibaca dengan baseline \`sukamaju_middle_v1\`; ketersediaan nasional bukan jaminan kesiapan setiap hari.
-- Artefak ini tidak mengubah \`activationStatus\`. Aktivasi akademik baru boleh dilakukan dari ekspor keputusan dokter yang fingerprint-nya cocok.
+- Keputusan resmi 14/14 tercatat di \`M13_14_IGD_DECISION_LOG.md\`; kontrol interaktif dalam HTML adalah sarana re-audit, bukan pengganti rekam sign-off.
+- Kasus aktif hanya di Karier melalui \`reviewStatus\`, mode policy, dan \`CONTENT_RELEASE\`; mode Ujian tetap memakai pool terpisah.
 
 ## Regenerasi
 
@@ -69,7 +70,7 @@ npm run m13:igd-adjudication
 
 async function main(): Promise<void> {
   const data = buildIgdAdjudicationDataset()
-  if (data.cases.length !== 14) throw new Error(`Jumlah prototipe IGD berubah: ${data.cases.length}; expected 14`)
+  if (data.cases.length !== 14) throw new Error(`Jumlah IGD teradjudikasi berubah: ${data.cases.length}; expected 14`)
   await Promise.all([
     writeFile(DATA_PATH, `${JSON.stringify(data, null, 2)}\n`, 'utf8'),
     writeFile(HTML_PATH, renderIgdAdjudicationHtml(data), 'utf8'),

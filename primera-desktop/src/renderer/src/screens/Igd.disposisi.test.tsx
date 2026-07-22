@@ -34,12 +34,12 @@ describe('<Igd /> — keputusan tujuan rujukan', () => {
     expect(screen.getByRole('button', { name: /Rujuk ke RSUD Pratama Sukamaju/i })).toBeEnabled()
   })
 
-  it('kasus IGD prototipe lab menampilkan status pengembangannya', () => {
+  it('kasus IGD teradjudikasi tidak lagi menampilkan badge prototipe', () => {
     const kasus = Object.values(PACK.kasusIgd).find(
-      (item) => item.activationStatus === 'lab_prototype_unadjudicated',
+      (item) => item.reviewStatus === 'physician_approved',
     )!
     pasangDisposisi(kasus.id)
     render(<Igd />)
-    expect(screen.getByText('Prototipe lab')).toBeInTheDocument()
+    expect(screen.queryByText('Prototipe lab')).not.toBeInTheDocument()
   })
 })

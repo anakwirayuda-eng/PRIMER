@@ -1,4 +1,9 @@
-import { LAB_CONTENT_RELEASE, LEGACY_CONTENT_RELEASE, type ContentCatalog } from '../pack'
+import {
+  IGD_ADJUDICATION_CONTENT_RELEASE,
+  LAB_CONTENT_RELEASE,
+  LEGACY_CONTENT_RELEASE,
+  type ContentCatalog,
+} from '../pack'
 import type { IndikatorPisPk, KasusIgd, KasusKlinis } from '../types'
 import type {
   ClinicalConcept,
@@ -227,22 +232,28 @@ const IGD_CREDIT_RATIONALE =
  * M13 Batch 4: kedua helper ini semula hanya menerima `KasusKlinis` sehingga
  * kanal IGD selalu memanggilnya TANPA argumen — artinya setiap kasus IGD baru
  * otomatis `ujian: true`. Dilonggarkan ke bentuk struktural supaya `KasusIgd`
- * ikut terbaca: kasus IGD prototipe lab kini Career-only persis seperti
- * saudaranya di kanal klinik, tanpa menyentuh 5 kasus IGD baseline.
+ * ikut terbaca. Status review pasca-adjudikasi tetap mempertahankan 14 kasus
+ * ekspansi di Karier tanpa mengubah modePolicy kasus IGD yang sudah ada.
  */
-type BerstatusAktivasi = { activationStatus?: KasusKlinis['activationStatus'] }
+type BerstatusAktivasi = {
+  activationStatus?: KasusKlinis['activationStatus']
+  reviewStatus?: KasusIgd['reviewStatus']
+}
 
 function currentModePolicy(kasus?: BerstatusAktivasi): ModePolicy {
-  return kasus?.activationStatus === 'lab_prototype_unadjudicated'
+  return kasus?.activationStatus === 'lab_prototype_unadjudicated' || kasus?.reviewStatus === 'physician_approved'
     ? { karier: true, ujian: false }
     : { karier: true, ujian: true }
 }
 
 function releasePolicyFor(kasus?: BerstatusAktivasi): ReleasePolicy {
   return {
-    introducedIn: kasus?.activationStatus === 'lab_prototype_unadjudicated'
-      ? LAB_CONTENT_RELEASE
-      : LEGACY_CONTENT_RELEASE,
+    introducedIn:
+      kasus?.reviewStatus === 'physician_approved'
+        ? IGD_ADJUDICATION_CONTENT_RELEASE
+        : kasus?.activationStatus === 'lab_prototype_unadjudicated'
+          ? LAB_CONTENT_RELEASE
+          : LEGACY_CONTENT_RELEASE,
   }
 }
 
