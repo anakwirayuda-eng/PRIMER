@@ -5,7 +5,7 @@
  * (b) urutan DOM fokus-awal ke CTA "Lanjut", bukan "Lewati" (jalan keluar).
  */
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import { Onboarding, sudahOnboarding, resetOnboarding } from './Onboarding'
 import { Pengaturan } from './Pengaturan'
 
@@ -42,6 +42,64 @@ describe('<Onboarding /> — fokus awal (CODEX audit UI/UX 2026-07-10, #24b)', (
     expect(tombolPertama).toBeDefined()
     expect(tombolPertama).not.toHaveTextContent('Lewati')
     expect(tombolPertama).toHaveTextContent('Lanjut')
+  })
+})
+
+describe('<Onboarding /> — klik cepat "Lanjut" tak boleh crash (audit V-1 2026-07-23)', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+  })
+
+  it('dua klik "Lanjut" dalam SATU batch React → berhenti di kartu terakhir, tanpa throw', () => {
+    // Bug asli: setI((n)=>n+1) tanpa clamp. Mekanisme crash-nya BUKAN klik
+    // biasa (React me-render antar-klik terpisah), melainkan dua event klik
+    // yang terproses dalam satu flush batch (klik terprogram, atau klik
+    // manusia yang mengantre di belakang long task pada mesin lambat):
+    // kedua functional update menumpuk sebelum tombol sempat berganti
+    // "Mulai bertugas" → indeks bablas > KARTU.length-1 → KARTU[i]! undefined
+    // → crash `reading 'ikon'` ke error boundary di menit pertama pemain.
+    render(<Onboarding onSelesai={() => {}} />)
+
+    // Maju normal sampai TEPAT satu "Lanjut" tersisa (kartu kedua-terakhir),
+    // apa pun jumlah kartu — di sinilah ras berbahaya: satu klik lagi = kartu
+    // terakhir, tapi dua klik menumpuk = bablas keluar batas.
+    for (let guard = 0; guard < 20; guard++) {
+      fireEvent.click(screen.getByRole('button', { name: 'Lanjut' }))
+      if (screen.queryByRole('button', { name: /Mulai bertugas/ })) {
+        throw new Error('setup keliru: sudah di kartu terakhir sebelum uji ras')
+      }
+      // berhenti tepat sebelum kartu terakhir: cek apakah satu klik berikutnya
+      // akan jadi yang terakhir — tandanya masih ada "Lanjut" tapi tinggal satu.
+      const dots = document.querySelectorAll('.onb-dot').length
+      const aktifIdx = [...document.querySelectorAll('.onb-dot')].findIndex((d) =>
+        d.className.includes('onb-dot--aktif'),
+      )
+      if (aktifIdx === dots - 2) break
+    }
+
+    // Reproduksi ras: DUA dispatch klik dalam satu act() = satu flush batch.
+    const lanjut = screen.getByRole('button', { name: 'Lanjut' })
+    act(() => {
+      lanjut.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      lanjut.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    })
+
+    // Kartu terakhir tampil utuh (bukan crash/layar error).
+    expect(screen.getByRole('button', { name: /Mulai bertugas/ })).toBeInTheDocument()
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+  })
+
+  it('di kartu terakhir, "Kembali" lalu spam maju lagi tetap stabil', () => {
+    render(<Onboarding onSelesai={() => {}} />)
+    for (let k = 0; k < 6; k++) {
+      const lanjut = screen.queryByRole('button', { name: 'Lanjut' })
+      if (!lanjut) break
+      fireEvent.click(lanjut)
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Kembali' }))
+    expect(screen.getByRole('button', { name: 'Lanjut' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Lanjut' }))
+    expect(screen.getByRole('button', { name: /Mulai bertugas/ })).toBeInTheDocument()
   })
 })
 

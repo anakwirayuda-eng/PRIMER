@@ -81,8 +81,15 @@ const KARTU: Kartu[] = [
 
 export function Onboarding({ onSelesai }: { onSelesai: () => void }) {
   const [i, setI] = useState(0)
-  const kartu = KARTU[i]!
-  const terakhir = i === KARTU.length - 1
+  // Audit UI/UX 2026-07-23 (V-1): dua klik cepat "Lanjut" di kartu yang sama
+  // menumpuk dua functional update SEBELUM tombol sempat berganti "Mulai
+  // bertugas" — indeks bablas melewati KARTU.length-1 dan `KARTU[i]!` crash
+  // ke error boundary tepat di menit pertama pemain baru. Clamp di kedua
+  // arah; assertion `!` kini benar-benar terjamin, bukan janji kosong.
+  const maju = () => setI((n) => Math.min(n + 1, KARTU.length - 1))
+  const mundur = () => setI((n) => Math.max(n - 1, 0))
+  const kartu = KARTU[Math.min(i, KARTU.length - 1)]!
+  const terakhir = i >= KARTU.length - 1
 
   const tutup = () => {
     tandaiSelesai()
@@ -115,12 +122,12 @@ export function Onboarding({ onSelesai }: { onSelesai: () => void }) {
               (Lewati kiri, grup kanan) lewat CSS order di Onboarding.css. */}
           <div className="baris onb-grup-lanjut">
             {i > 0 && (
-              <button className="tombol" onClick={() => setI((n) => n - 1)}>Kembali</button>
+              <button className="tombol" onClick={mundur}>Kembali</button>
             )}
             {terakhir ? (
               <button className="tombol tombol--utama" onClick={tutup}>Mulai bertugas &rarr;</button>
             ) : (
-              <button className="tombol tombol--utama" onClick={() => setI((n) => n + 1)}>Lanjut</button>
+              <button className="tombol tombol--utama" onClick={maju}>Lanjut</button>
             )}
           </div>
           <button className="tombol tombol--senyap onb-lewati" onClick={tutup}>Lewati</button>

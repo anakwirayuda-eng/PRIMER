@@ -42,6 +42,22 @@ const CHIP_FLAG: Record<string, { label: string; kelas: string }> = {
   abnormal: { label: 'abnormal', kelas: 'chip--merah' },
 }
 
+/**
+ * Audit V-3 (2026-07-23): id internal pasien memuat kasusId (`p_<kasusId>_<n>`)
+ * dan dulu di-render mentah sebagai No. RM — kop berkas MEMBOCORKAN diagnosis
+ * (mis. "P_TB_PARU_4821") sebelum satu pun pertanyaan anamnesis, termasuk di
+ * mode Ujian. Nomor tampilan kini kosmetik-deterministik dari id yang sama;
+ * id internal TIDAK diubah (dipakai save/replay/verifier — di luar wewenang
+ * tampilan).
+ */
+export function nomorRmTampilan(id: string): string {
+  const ekor = /(\d{3,})$/.exec(id)?.[1]
+  if (ekor) return `RM-${ekor.padStart(4, '0').slice(-4)}`
+  let h = 0
+  for (let k = 0; k < id.length; k++) h = (h * 31 + id.charCodeAt(k)) >>> 0
+  return `RM-${String(1000 + (h % 9000))}`
+}
+
 export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
   const p = enc.pasien
 
@@ -67,7 +83,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
           PEMERINTAH KABUPATEN SUKAMAJU &middot; PUSKESMAS SUKAMAJU
         </div>
         <div className="klinik-lembar__kop-judul">REKAM MEDIS RAWAT JALAN</div>
-        <div className="mono teks-xs teks-lembut">No. RM: {p.id.toUpperCase()}</div>
+        <div className="mono teks-xs teks-lembut">No. RM: {nomorRmTampilan(p.id)}</div>
       </header>
 
       {/* Identitas */}
