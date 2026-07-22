@@ -62,28 +62,55 @@ export function Hud() {
       </div>
 
       <nav className="hud__nav">
-        {tabs.map((t) => (
-          <button
-            key={t.layar}
-            className={`hud__tab ${state.layar === t.layar ? 'hud__tab--aktif' : ''} ${t.terkunci ? 'hud__tab--kunci' : ''}`}
-            aria-current={state.layar === t.layar ? 'page' : undefined}
-            onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: t.layar })}
-            disabled={
-              state.layar === 'kunjungan' ||
-              Boolean(state.igd) ||
-              Boolean(state.kegiatan) ||
-              Boolean(state.klinik.aktif && t.layar !== 'klinik') ||
-              // M10 Batch-2 (CODEX A.6): tab terkunci (Peta pra-hari-buka)
-              // dulu hanya BERGAYA terkunci tapi tetap bisa diklik.
-              Boolean(t.terkunci)
-            }
-            title={t.terkunci ? 'Terbuka besok' : undefined}
-          >
-            <span className="hud__tab-label">{t.label}</span>
-            {t.badge !== undefined && <span className="hud__badge">{t.badge}</span>}
-            {t.terkunci && <span className="hud__gembok">🔒</span>}
-          </button>
-        ))}
+        {tabs.map((t) => {
+          // Audit UI/UX 2026-07-23: (a) nama-aksesibel tab dulu gabungan mentah
+          // label+badge+gembok ("Meja Kerja2", "Peta Desa🔒") — SR membaca angka
+          // menempel tanpa makna; badge kini aria-hidden & konteksnya masuk
+          // aria-label ("2 surat baru" vs "2 pasien antre" — angka yang sama
+          // berarti beda per tab). (b) Tab yang disabled saat ada sesi berjalan
+          // dulu BISU — tanpa alasan, terasa "tombol mati". Tooltip kini
+          // menjelaskan kenapa, pola sama dgn "+ Resep"/"Pesan" yang sudah ada.
+          const sesiBerjalan =
+            state.layar === 'kunjungan' || Boolean(state.igd) || Boolean(state.kegiatan)
+          const terkunciEncounter = Boolean(state.klinik.aktif && t.layar !== 'klinik')
+          const keteranganBadge =
+            t.badge === undefined
+              ? ''
+              : t.layar === 'meja'
+                ? `, ${t.badge} surat baru`
+                : `, ${t.badge} pasien antre`
+          return (
+            <button
+              key={t.layar}
+              className={`hud__tab ${state.layar === t.layar ? 'hud__tab--aktif' : ''} ${t.terkunci ? 'hud__tab--kunci' : ''}`}
+              aria-current={state.layar === t.layar ? 'page' : undefined}
+              aria-label={`${t.label}${keteranganBadge}${t.terkunci ? ' (terkunci, terbuka besok)' : ''}`}
+              onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: t.layar })}
+              disabled={
+                sesiBerjalan ||
+                terkunciEncounter ||
+                // M10 Batch-2 (CODEX A.6): tab terkunci (Peta pra-hari-buka)
+                // dulu hanya BERGAYA terkunci tapi tetap bisa diklik.
+                Boolean(t.terkunci)
+              }
+              title={
+                t.terkunci
+                  ? 'Terbuka besok'
+                  : terkunciEncounter
+                    ? 'Sedang memeriksa pasien — selesaikan dulu konsultasinya.'
+                    : sesiBerjalan
+                      ? 'Sedang ada sesi berjalan — selesaikan dulu sebelum pindah layar.'
+                      : undefined
+              }
+            >
+              <span className="hud__tab-label">{t.label}</span>
+              {t.badge !== undefined && (
+                <span className="hud__badge" aria-hidden="true">{t.badge}</span>
+              )}
+              {t.terkunci && <span className="hud__gembok" aria-hidden="true">🔒</span>}
+            </button>
+          )
+        })}
       </nav>
 
       <div className="hud__kanan">

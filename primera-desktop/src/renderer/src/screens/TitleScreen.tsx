@@ -140,7 +140,13 @@ export function TitleScreen() {
   const arsipRilisSesuai =
     arsip !== null && arsip.contentRelease === PACK.runtimeManifest.contentRelease
 
-  const namaBersih = nama.trim()
+  // Audit UI/UX 2026-07-23: seluruh UI memanggil pemain "dr. {nama}" — pemain
+  // yang sudah mengetik gelarnya sendiri ("dr. Budi"/"Dr Budi") dulu jadi
+  // "dr. dr. Budi" di tombol Lanjutkan, konfirmasi, dan arsip. Prefiks gelar
+  // dilepas SEKALI di sini (titik masuk nama), bukan di tiap titik render.
+  // Hanya bentuk singkatan "dr."/"dr" — kata penuh "Dokter ..." dibiarkan
+  // verbatim (kontrak lama TitleScreen.overwrite.test: nama apa adanya).
+  const namaBersih = nama.trim().replace(/^dr\.?\s+/i, '')
   const nimBersih = nim.trim()
   // Mode ujian WAJIB NIM (identitas terikat); karier tidak.
   const bolehMulai = namaBersih.length > 0 && (mode !== 'ujian' || nimBersih.length > 0)

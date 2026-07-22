@@ -392,9 +392,14 @@ export function MejaKerja() {
       {/* ================= KIRI — KOTAK MASUK ================= */}
       <section className="mk__kolom mk__inbox kertas">
         <header className="mk__inbox-header">
-          <h2 className="judul-seksi">
+          {/* Audit UI/UX 2026-07-23: tanpa aria-label, nama-aksesibel heading =
+              gabungan mentah "Kotak Masuk2 baru" (chip menempel tanpa spasi). */}
+          <h2
+            className="judul-seksi"
+            aria-label={suratBaru > 0 ? `Kotak Masuk, ${suratBaru} baru` : 'Kotak Masuk'}
+          >
             Kotak Masuk
-            {suratBaru > 0 && <span className="chip chip--kunyit">{suratBaru} baru</span>}
+            {suratBaru > 0 && <span className="chip chip--kunyit" aria-hidden="true">{suratBaru} baru</span>}
           </h2>
         </header>
 

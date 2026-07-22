@@ -66,6 +66,10 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
                 className={`klinik-banding${aktif ? ' klinik-banding--aktif' : ''}${disorot ? ' klinik-sorot-tutorial' : ''}`}
                 onClick={() => setPilihan(kode)}
                 disabled={dikunci}
+                // Audit UI/UX 2026-07-23: nama-aksesibel ketiga radio dulu
+                // seragam "Pilih sebagai diagnosis kerja" (dari title) — SR
+                // tak bisa membedakan opsi diagnosis satu dari lainnya.
+                aria-label={`${namaDiagnosis(kode, kasus)} (${kode})`}
                 title="Pilih sebagai diagnosis kerja"
               >
                 <span className="klinik-banding__radio" aria-hidden="true" />
