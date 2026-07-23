@@ -1,8 +1,8 @@
 # M13-137 - Laporan Kompilasi Adjudikasi Prototipe Klinis
 
-**Tanggal kompilasi:** 2026-07-22
+**Tanggal kompilasi:** 2026-07-23
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `47812abec1e81c59781273eb13d5d8dca8152be1+dirty`, artefak `d05c9f3f7c4394e9d256926941badff63216284a901332f26f4dc8a9a68de597`, pack `16e4eea8`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `511373bfa5da307ea240643fd4da163916ad6483+dirty`, artefak `d38c5260ae0316369faee72ccd67209cf893ad5b87fd6ababd02a501380e2241`, pack `f21d8bca`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -68,7 +68,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 ### KFA
 
-- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-07-22.
+- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-07-23.
 - Snapshot menghasilkan kode active substance untuk semua query (0 unresolved).
 - Kode tersebut **bukan** product template/variant, bukan status Fornas, dan bukan bukti stok. Tidak ada kode yang ditebak.
 
@@ -224,7 +224,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_kolesistitis_akut` - Kolesistitis Akut: tidak ada red flag provenance otomatis
 - `lab_kolik_ureter_obstruksi` - Kolik Ureter — Suspek Batu Obstruktif: tidak ada red flag provenance otomatis
 - `lab_ileus_obstruktif` - Obstruksi Usus Mekanik (Suspek Adhesi): tidak ada red flag provenance otomatis
-- `lab_perdarahan_gi_atas` - Perdarahan Saluran Cerna Atas dengan Syok Terkompensasi: tidak ada red flag provenance otomatis
+- `lab_perdarahan_gi_atas` - Perdarahan Saluran Cerna Atas dengan Instabilitas Hemodinamik: tidak ada red flag provenance otomatis
 - `lab_peritonitis_generalisata` - Peritonitis Generalisata: tidak ada red flag provenance otomatis
 - `lab_retensio_urin_akut` - Retensi Urin Akut pada Pembesaran Prostat: tidak ada red flag provenance otomatis
 - `lab_sirosis_hepatis_dekompensata` - Sirosis Hepatis Dekompensata: tidak ada red flag provenance otomatis
@@ -238,7 +238,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_laringitis_akut` - Laringitis Akut: tidak ada red flag provenance otomatis
 - `lab_pertusis_remaja` - Pertusis pada Remaja: tidak ada red flag provenance otomatis
 - `lab_pneumonia_komunitas_dewasa` - Pneumonia Komunitas Dewasa - Rawat Jalan: tidak ada red flag provenance otomatis
-- `lab_pneumotoraks_spontan` - Pneumotoraks Spontan: tidak ada red flag provenance otomatis
+- `lab_pneumotoraks_spontan` - Pneumotoraks Spontan Primer dengan Gangguan Fisiologis: tidak ada red flag provenance otomatis
 - `lab_ppok_eksaserbasi_berat` - PPOK Eksaserbasi Berat dengan Dugaan Infeksi Saluran Napas Bawah: tidak ada red flag provenance otomatis
 - `lab_tb_paru_putus_obat_suspek_mdr` - TB Paru Resistan Rifampisin setelah Putus Pengobatan: tidak ada red flag provenance otomatis
 - `lab_kejang_demam_sederhana` - Kejang Demam Sederhana: tidak ada red flag provenance otomatis

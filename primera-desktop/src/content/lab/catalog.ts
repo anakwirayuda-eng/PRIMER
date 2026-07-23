@@ -195,9 +195,21 @@ export const EDUKASI_LAB: Record<string, TopikEdukasi> = {
   },
   puasa_sambil_rujuk: {
     id: 'puasa_sambil_rujuk',
-    nama: '[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan',
+    nama: '[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan',
     kategori: 'tindakan',
-    sinonim: ['NPO', 'ileus', 'operasi'],
+    sinonim: ['NPO', 'puasa', 'ileus', 'operasi', 'endoskopi', 'transfer'],
+  },
+  hentikan_nsaid_perdarahan_gi: {
+    id: 'hentikan_nsaid_perdarahan_gi',
+    nama: '[Perdarahan cerna] Hentikan ibuprofen/NSAID non-aspirin; laporkan semua antiplatelet dan antikoagulan',
+    kategori: 'kepatuhan',
+    sinonim: ['muntah darah', 'melena', 'ibuprofen', 'OAINS', 'aspirin', 'pengencer darah'],
+  },
+  aktivitas_setelah_pneumotoraks: {
+    id: 'aktivitas_setelah_pneumotoraks',
+    nama: '[Pneumotoraks] Tidak terbang sampai 7 hari setelah pulih radiologis; scuba hanya setelah pencegahan definitif',
+    kategori: 'tindakan',
+    sinonim: ['pesawat', 'penerbangan', 'menyelam', 'diving', 'kambuh', 'pleura'],
   },
 }
 

@@ -942,7 +942,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_pneumotoraks_spontan',
-    nama: 'Pneumotoraks Spontan',
+    nama: 'Pneumotoraks Spontan Primer dengan Gangguan Fisiologis',
     icd10: 'J93.9',
     skdi: '3A',
     kategori: 'respirasi',
@@ -973,13 +973,15 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     diagnosisBanding: ['J93.9', 'I26.9', 'J18.9'],
     tatalaksana: {
       obatBenar: [],
+      obatOpsional: ['paracetamol_500'],
       prosedur: ['oksigen', 'pemantauan_ketat_vital'],
-      edukasi: ['tanda_bahaya', 'berhenti_merokok'],
+      edukasi: ['tanda_bahaya', 'berhenti_merokok', 'aktivitas_setelah_pneumotoraks'],
     },
-    stabilisasiWajib: ['oksigen'],
-    clue: 'Nyeri pleuritik mendadak, hipersonor, dan suara napas unilateral turun mendukung pneumotoraks. SpO2 90%, RR 28, dan sesak sedang adalah gangguan fisiologis, sehingga pasien ini bukan kandidat observasi konservatif rawat jalan. Beri oksigen karena hipoksemia, pantau serial, dan transfer segera. Dekompresi jarum hanya untuk kecurigaan pneumotoraks tensi yang tidak boleh menunggu pencitraan.',
-    panduanResmi: `${PPK_FLOOR} PPK pneumotoraks memerintahkan oksigen, akses IV bila ada gagal sirkulasi, dan rujuk segera setelah penanggulangan awal. BTS Pleural Disease Guideline 2023 dan ERS/EACTS/ESTS 2024 membatasi tata laksana konservatif pada pneumotoraks spontan primer yang asimtomatik atau hanya bergejala minimal, stabil, dan tanpa gangguan fisiologis; pasien ini tidak memenuhi batas tersebut. Oksigen diberikan karena hipoksemia, bukan rutin untuk mempercepat absorpsi udara pleura.`,
-    catatanRealita: 'Rontgen dan layanan aspirasi/drainase pleura tidak diasumsikan ready di Sukamaju. Pada pasien yang saat ini stabil, transfer dilakukan untuk konfirmasi dan tata laksana terkontrol; bila muncul hipotensi, hipoksia memburuk, deviasi trakea, atau deteriorasi cepat, perlakukan sebagai dugaan tensi dan jangan menunggu pencitraan.',
+    stabilisasiWajib: ['oksigen', 'pemantauan_ketat_vital'],
+    clue: 'Nyeri pleuritik mendadak, hipersonor, dan suara napas unilateral turun mendukung pneumotoraks spontan primer. SpO2 90%, RR 28, dan sesak sedang adalah gangguan fisiologis, sehingga pasien ini bukan kandidat observasi konservatif rawat jalan. Beri oksigen terkontrol dengan target SpO2 94-98%, pantau serial, berikan parasetamol bila perlu, dan transfer segera tanpa menunggu foto toraks. Dekompresi jarum hanya untuk kecurigaan pneumotoraks tensi.',
+    panduanResmi: `${PPK_FLOOR} SKDI 2012 menempatkan pneumotoraks dan pneumotoraks ventil pada level 3A. Bab pneumotoraks PPK 1186/2022 mencantumkan 4A, tetapi alur praktiknya tetap oksigen, akses IV bila ada gagal sirkulasi, dan rujuk segera setelah penanggulangan awal; PRIMERA mempertahankan level 3A dari dokumen kompetensi sambil menyatakan ketidaksesuaian sumber ini. BTS Pleural Disease Guideline 2023 dan ERS/EACTS/ESTS 2024 membatasi tata laksana konservatif pada kasus primer yang hanya bergejala minimal dan tanpa gangguan fisiologis. BTS oxygen guideline menargetkan SpO2 94-98% pada pasien akut tanpa risiko hiperkapnia.`,
+    catatanRealita: 'Rontgen dan aspirasi/drainase pleura tidak diasumsikan ready di Sukamaju. Pasien ditransfer untuk konfirmasi; bila muncul hipotensi, hipoksia memburuk, deviasi trakea, atau deteriorasi cepat, perlakukan sebagai dugaan tensi dan jangan menunggu pencitraan. Setelah resolusi terkonfirmasi, penerbangan ditunda sedikitnya tujuh hari dan scuba dihindari kecuali sudah ada pencegahan kekambuhan definitif.',
+    mutiaraEbm: 'Ukuran pneumotoraks pada pencitraan bukan satu-satunya penentu intervensi. Gejala dan gangguan fisiologis lebih penting: pasien yang masih sadar dan bertekanan darah baik tetap tidak aman untuk observasi rawat jalan bila hipoksemik dan sesak sedang. Sebaliknya, dekompresi darurat tanpa pencitraan ditujukan untuk dugaan tension pneumothorax, bukan otomatis untuk semua pneumotoraks.',
   }),
 
   buatKasusLab({
@@ -1030,7 +1032,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
 
   buatKasusLab({
     id: 'lab_perdarahan_gi_atas',
-    nama: 'Perdarahan Saluran Cerna Atas dengan Syok Terkompensasi',
+    nama: 'Perdarahan Saluran Cerna Atas dengan Instabilitas Hemodinamik',
     icd10: 'K92.2',
     skdi: '3B',
     kategori: 'pencernaan',
@@ -1068,14 +1070,15 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       obatSalahUmum: [
         { id: 'ibuprofen_400', alasan: 'NSAID dapat memperburuk perdarahan saluran cerna dan harus dihentikan.', bahaya: 'kontraindikasi' },
       ],
-      edukasi: ['puasa_sambil_rujuk', 'tanda_bahaya'],
+      edukasi: ['puasa_sambil_rujuk', 'hentikan_nsaid_perdarahan_gi', 'tanda_bahaya'],
       edukasiKritis: ['puasa_sambil_rujuk'],
       terapiKritis: ['akses_iv_resusitasi'],
     },
     stabilisasiWajib: ['akses_iv_resusitasi', 'oksigen'],
-    clue: 'Hematemesis coffee-ground, melena, hipotensi, dan takikardia adalah perdarahan GI atas dengan gangguan sirkulasi. Stabilkan ABC, pasang akses IV besar dan berikan cairan secara terukur, beri oksigen karena SpO2 92%, pantau respons, puasakan, hentikan NSAID, lalu transfer untuk endoskopi setelah resusitasi awal.',
-    panduanResmi: `${PPK_FLOOR} PPK memuat stabilisasi hemodinamik dan rujukan. NICE CG141 menempatkan endoskopi segera setelah resusitasi pada perdarahan berat yang tidak stabil, sedangkan ACG 2021 mendukung resusitasi, stratifikasi risiko, dan endoskopi dalam 24 jam pada pasien yang dirawat. Pemasangan NGT atau bilas lambung dari teks PPK lama tidak dijadikan jawaban universal yang boleh menunda transfer.`,
-    catatanRealita: 'PPI pra-endoskopi tidak dijadikan jawaban wajib karena pedoman berbeda dan sediaan injeksi tidak diasumsikan ready. Hb dan golongan darah di vignette adalah hasil yang sudah tersedia untuk handover; bila pemeriksaan tidak ready, jangan menunggu hasil, terapi oral, atau bilas lambung rutin sebelum transfer.',
+    clue: 'Hematemesis coffee-ground, melena, hipotensi, dan takikardia menunjukkan perdarahan GI atas dengan instabilitas hemodinamik. Stabilkan ABC, pasang akses IV besar dan berikan kristaloid secara terukur dengan penilaian ulang, beri oksigen karena SpO2 92%, pantau respons, puasakan, hentikan ibuprofen, lalu transfer untuk endoskopi setelah resusitasi awal. Jangan menunggu Hb, golongan darah, NGT, atau bilas lambung rutin untuk berangkat.',
+    panduanResmi: `${PPK_FLOOR} PNPK Perdarahan Saluran Cerna KMK 2162/2023 menjadi acuan diagnosis-spesifik: resusitasi ABC, kristaloid terukur, PPI pra-endoskopi, serta endoskopi dalam 24 jam setelah stabilisasi; NGT hanya bila terindikasi. NICE CG141 meminta endoskopi segera setelah resusitasi pada perdarahan berat yang tidak stabil. ACG 2021 dan ESGE 2021 mendukung stratifikasi risiko serta endoskopi dalam 24 jam. Bilas lambung rutin tidak boleh menahan transfer.`,
+    catatanRealita: 'PNPK 2162/2023 menganjurkan PPI pra-endoskopi, sedangkan NICE CG141 tidak. Karena stok IV, dosis, dan protokol tidak diasumsikan ready, PPI tidak dinilai wajib dan tidak boleh menunda transfer; omeprazol oral bukan pengganti akut saat pasien muntah dan NPO. Hb serta O+ adalah data handover, bukan crossmatch atau kesiapan transfusi; bila belum ada, tetap berangkat.',
+    mutiaraEbm: 'Hb awal dapat belum mencerminkan seluruh kehilangan darah akut; keputusan resusitasi dan transfer mengikuti keadaan hemodinamik, bukan satu angka Hb. Glasgow-Blatchford membantu stratifikasi pra-endoskopi, tetapi hipotensi, takikardia, melena, sinkop, dan Hb 8,4 membuat pasien ini jelas bukan kelompok rawat jalan berisiko sangat rendah.',
   }),
 
   buatKasusLab({

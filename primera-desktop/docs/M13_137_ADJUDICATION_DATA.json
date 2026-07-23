@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-22T20:48:45.438Z",
-  "sourceCommit": "47812abec1e81c59781273eb13d5d8dca8152be1+dirty",
-  "artifactFingerprint": "d05c9f3f7c4394e9d256926941badff63216284a901332f26f4dc8a9a68de597",
-  "packFingerprint": "16e4eea8",
+  "generatedAt": "2026-07-23T07:01:07.052Z",
+  "sourceCommit": "511373bfa5da307ea240643fd4da163916ad6483+dirty",
+  "artifactFingerprint": "d38c5260ae0316369faee72ccd67209cf893ad5b87fd6ababd02a501380e2241",
+  "packFingerprint": "f21d8bca",
   "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -460,9 +460,9 @@
         ]
       },
       "currentEditorial": {
-        "clue": "Onset menit dengan keterlibatan kulit plus jalan napas/napas dan hipotensi adalah anafilaksis. Berikan epinefrin 0,5 mg IM paha (0,5 mL sediaan 1 mg/mL) segera pada pasien dewasa ini dan ulangi setelah 5 menit bila masalah ABC menetap. Baringkan dengan tungkai dinaikkan; bila bernapas lebih mudah dalam posisi setengah duduk, pertahankan tungkai lurus dan jangan biarkan berdiri atau berjalan. Beri oksigen, cairan kristaloid, pantau serial, dan transfer. Antihistamin atau steroid tidak boleh menunda epinefrin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK menjadi floor pemberian adrenalin IM, oksigen, cairan, dan rujukan. RCUK Emergency Treatment of Anaphylaxis 2021 menetapkan dosis dewasa 500 mikrogram IM, diulang setelah 5 menit bila masalah ABC menetap; adrenalin intravena hanya untuk spesialis berpengalaman dalam lingkungan terpantau. Antihistamin adalah lini ketiga untuk gejala kulit setelah stabilisasi dan steroid tidak digunakan rutin pada tata laksana awal.",
-        "realityNote": "Epinefrin 1 mg/mL, oksigen, akses IV, cairan, pulse oximeter, dan transport dinyatakan ready. Sukamaju tidak mengasumsikan pompa infus adrenalin atau monitoring kritis untuk anafilaksis refrakter; setelah dua dosis IM tanpa respons, teruskan resusitasi feasible sambil meminta bantuan ahli dan mempercepat transfer, bukan memberi bolus adrenalin IV atau aminofilin rutin."
+        "clue": "Onset menit dengan keterlibatan kulit plus jalan napas/napas dan hipotensi adalah anafilaksis. Berikan epinefrin 0,5 mg IM paha (0,5 mL sediaan 1 mg/mL) segera pada pasien dewasa ini dan ulangi setelah 5 menit bila masalah ABC menetap. Baringkan dengan tungkai dinaikkan; bila bernapas lebih mudah dalam posisi setengah duduk, pertahankan tungkai lurus dan jangan biarkan berdiri atau berjalan. Beri oksigen karena hipoksemia, berikan bolus kristaloid dini secara terukur sambil menilai respons, pantau serial, dan transfer paralel. Antihistamin atau steroid tidak boleh menunda epinefrin.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK menjadi floor pemberian adrenalin IM, oksigen, cairan, dan rujukan. ERC/RCUK 2025 menegaskan epinefrin dewasa 500 mikrogram IM segera, diulang setelah 5 menit bila belum membaik, disertai kristaloid IV dini. RCUK 2021 tetap menjadi pedoman rinci untuk posisi aman, pemantauan, dan anafilaksis refrakter; adrenalin intravena hanya untuk spesialis berpengalaman dalam lingkungan terpantau. Antihistamin adalah lini ketiga untuk gejala kulit setelah stabilisasi dan steroid tidak digunakan rutin pada tata laksana awal.",
+        "realityNote": "Epinefrin 1 mg/mL, oksigen, akses IV, cairan, pulse oximeter, dan transport dinyatakan ready. Sukamaju tidak punya pompa/monitor untuk adrenalin IV; setelah dua dosis IM tanpa respons, lanjutkan resusitasi, minta ahli, percepat transfer, bukan memberi bolus adrenalin IV atau aminofilin rutin. Setelah stabil, jejaring menyiapkan identifikasi pemicu, action plan, asesmen alergi, dan autoinjektor bila tersedia."
       },
       "evidence": {
         "ppk": {
@@ -488,36 +488,24 @@
           ]
         },
         "pnpk": {
-          "status": "perlu-koreksi",
-          "sources": [
-            {
-              "slug": "sepsis-dewasa",
-              "relation": "related",
-              "title": "PNPK sepsis-dewasa",
-              "documentNumber": "HK.01.07/MENKES/342/2017 (dicetak pada halaman sampul Kepmenkes; pada halaman Lampiran tercetak 'HK.01.01/MENKES/342/2017' — kemungkinan salah ketik pada dokumen asli, keduanya merujuk SK yang sama)",
-              "officialUrl": "https://kemkes.go.id/app_asset/file_content_download/17012290376566b1ed150b98.27152791.pdf",
-              "localFulltext": "docs/references/pnpk/sepsis-dewasa/fulltext.txt",
-              "facilityScope": "Lintas tingkat fasilitas; lihat cuplikan dan dokumen penuh.",
-              "excerpts": [
-                {
-                  "label": "Konteks diagnosis",
-                  "text": "Indonesia. Namun demikian, tidak tertutup kemungkinan adanya penyesuaian lebih lanjut berbasis data nasional lebih akurat yang diperoleh setelah buku ini diterbitkan. Panduan ini hanya bersifat pedoman, dalam pelaksanaannya tetap harus disesuaikan dengan kondisi di lapangan dalam bentuk pelatihan yang disesuaikan dengan kondisi setempat. Pembaca juga disarankan menyesuaikan isi buku",
-                  "locator": "docs/references/pnpk/sepsis-dewasa/fulltext.txt:baris 286"
-                },
-                {
-                  "label": "Konteks FKTP/rujukan",
-                  "text": "untuk memulai protokol insulin untuk menurunkan kadar glukosa darah > 180 mg/dL dengan target penurunan glukosa darah < 180 mg/dL merujuk pada hasil penelitian NICE-SUGAR.80 Beberapa organisasi kesehatan menyarankan target 140-180 mg/dL.88-91 Terapi insulin harus diberikan dengan",
-                  "locator": "docs/references/pnpk/sepsis-dewasa/fulltext.txt:baris 2332"
-                }
-              ],
-              "limitation": "Only general emergency stabilization context."
-            }
-          ],
-          "limitation": "Seluruh PNPK yang ditemukan hanya terkait, bukan diagnosis identik."
+          "status": "tak-ada-sumber",
+          "sources": [],
+          "limitation": "Tidak ditemukan PNPK diagnosis-spesifik dalam katalog resmi/corpus lokal yang dipetakan."
         },
         "ebm": {
           "status": "cocok",
           "sources": [
+            {
+              "sourceId": "rcuk-anaphylaxis-2025",
+              "relation": "direct",
+              "title": "Resuscitation Guidelines 2025: Special circumstances - anaphylaxis",
+              "authority": "Resuscitation Council UK and European Resuscitation Council",
+              "year": 2025,
+              "officialUrl": "https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/special-circumstances-guidelines",
+              "population": "Adults with suspected anaphylaxis, including deterioration toward cardiac arrest",
+              "facilityScope": "Immediate recognition, intramuscular adrenaline, early crystalloid, reassessment, and escalation of refractory anaphylaxis.",
+              "locator": "Management and prevention of cardiac arrest due to anaphylaxis: immediately give adrenaline 500 micrograms IM, repeat after 5 minutes if there is no improvement, and give an early IV crystalloid bolus with response monitoring."
+            },
             {
               "sourceId": "rcuk-anaphylaxis-2021",
               "relation": "direct",
@@ -527,7 +515,18 @@
               "officialUrl": "https://www.resus.org.uk/library/additional-guidance/guidance-anaphylaxis/emergency-treatment-anaphylactic-reactions",
               "population": "Adults and children with suspected anaphylaxis in hospital or out-of-hospital settings",
               "facilityScope": "Immediate ABCDE care, intramuscular adrenaline, positioning, fluids, monitoring, refractory-anaphylaxis escalation, and referral.",
-              "locator": "Key recommendations and sections 5.1-5.5: adult IM adrenaline 500 micrograms, repeat after 5 minutes, safe positioning, fluids, serial monitoring, and specialist-only IV adrenaline."
+              "locator": "Key recommendations and sections 5.1-5.5: safe positioning, serial monitoring, refractory-anaphylaxis escalation, and IV adrenaline restricted to experienced specialists in a monitored setting."
+            },
+            {
+              "sourceId": "aaaai-anaphylaxis-2023",
+              "relation": "direct",
+              "title": "Anaphylaxis: A 2023 practice parameter update",
+              "authority": "AAAAI and ACAAI Joint Task Force on Practice Parameters",
+              "year": 2023,
+              "officialUrl": "https://www.aaaai.org/Aaaai/media/Media-Library-PDFs/Allergist%20Resources/Statements%20and%20Practice%20Parameters/Anaphylaxis-Practice-Paramaters-2023.pdf",
+              "population": "Children and adults with anaphylaxis or risk of recurrence",
+              "facilityScope": "Post-event risk assessment, epinephrine autoinjector planning, action plans, education, and specialist follow-up.",
+              "locator": "Recommendations 23-30: risk-based epinephrine autoinjector prescription, anaphylaxis action planning, education on prompt epinephrine use, and allergy follow-up after the event."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -772,7 +771,7 @@
         "education": [
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
           },
           {
@@ -7480,7 +7479,7 @@
         "education": [
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
           },
           {
@@ -17823,7 +17822,7 @@
         "education": [
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
           },
           {
@@ -18362,7 +18361,7 @@
           },
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
           },
           {
@@ -19473,7 +19472,7 @@
         "education": [
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
           },
           {
@@ -19943,7 +19942,7 @@
         "education": [
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
           },
           {
@@ -20090,7 +20089,7 @@
     {
       "ordinal": 111,
       "id": "lab_perdarahan_gi_atas",
-      "name": "Perdarahan Saluran Cerna Atas dengan Syok Terkompensasi",
+      "name": "Perdarahan Saluran Cerna Atas dengan Instabilitas Hemodinamik",
       "icd10": "K92.2",
       "skdi": "3B",
       "category": "pencernaan",
@@ -20119,8 +20118,13 @@
         "education": [
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
+          },
+          {
+            "id": "hentikan_nsaid_perdarahan_gi",
+            "name": "[Perdarahan cerna] Hentikan ibuprofen/NSAID non-aspirin; laporkan semua antiplatelet dan antikoagulan",
+            "critical": false
           },
           {
             "id": "tanda_bahaya",
@@ -20151,9 +20155,10 @@
         ]
       },
       "currentEditorial": {
-        "clue": "Hematemesis coffee-ground, melena, hipotensi, dan takikardia adalah perdarahan GI atas dengan gangguan sirkulasi. Stabilkan ABC, pasang akses IV besar dan berikan cairan secara terukur, beri oksigen karena SpO2 92%, pantau respons, puasakan, hentikan NSAID, lalu transfer untuk endoskopi setelah resusitasi awal.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK memuat stabilisasi hemodinamik dan rujukan. NICE CG141 menempatkan endoskopi segera setelah resusitasi pada perdarahan berat yang tidak stabil, sedangkan ACG 2021 mendukung resusitasi, stratifikasi risiko, dan endoskopi dalam 24 jam pada pasien yang dirawat. Pemasangan NGT atau bilas lambung dari teks PPK lama tidak dijadikan jawaban universal yang boleh menunda transfer.",
-        "realityNote": "PPI pra-endoskopi tidak dijadikan jawaban wajib karena pedoman berbeda dan sediaan injeksi tidak diasumsikan ready. Hb dan golongan darah di vignette adalah hasil yang sudah tersedia untuk handover; bila pemeriksaan tidak ready, jangan menunggu hasil, terapi oral, atau bilas lambung rutin sebelum transfer."
+        "clue": "Hematemesis coffee-ground, melena, hipotensi, dan takikardia menunjukkan perdarahan GI atas dengan instabilitas hemodinamik. Stabilkan ABC, pasang akses IV besar dan berikan kristaloid secara terukur dengan penilaian ulang, beri oksigen karena SpO2 92%, pantau respons, puasakan, hentikan ibuprofen, lalu transfer untuk endoskopi setelah resusitasi awal. Jangan menunggu Hb, golongan darah, NGT, atau bilas lambung rutin untuk berangkat.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PNPK Perdarahan Saluran Cerna KMK 2162/2023 menjadi acuan diagnosis-spesifik: resusitasi ABC, kristaloid terukur, PPI pra-endoskopi, serta endoskopi dalam 24 jam setelah stabilisasi; NGT hanya bila terindikasi. NICE CG141 meminta endoskopi segera setelah resusitasi pada perdarahan berat yang tidak stabil. ACG 2021 dan ESGE 2021 mendukung stratifikasi risiko serta endoskopi dalam 24 jam. Bilas lambung rutin tidak boleh menahan transfer.",
+        "realityNote": "PNPK 2162/2023 menganjurkan PPI pra-endoskopi, sedangkan NICE CG141 tidak. Karena stok IV, dosis, dan protokol tidak diasumsikan ready, PPI tidak dinilai wajib dan tidak boleh menunda transfer; omeprazol oral bukan pengganti akut saat pasien muntah dan NPO. Hb serta O+ adalah data handover, bukan crossmatch atau kesiapan transfusi; bila belum ada, tetap berangkat.",
+        "ebmPearl": "Hb awal dapat belum mencerminkan seluruh kehilangan darah akut; keputusan resusitasi dan transfer mengikuti keadaan hemodinamik, bukan satu angka Hb. Glasgow-Blatchford membantu stratifikasi pra-endoskopi, tetapi hipotensi, takikardia, melena, sinkop, dan Hb 8,4 membuat pasien ini jelas bukan kelompok rawat jalan berisiko sangat rendah."
       },
       "evidence": {
         "ppk": {
@@ -20229,6 +20234,17 @@
               "population": "Adults with overt upper gastrointestinal bleeding",
               "facilityScope": "Hospital risk assessment, resuscitation, transfusion, pre-endoscopic care, endoscopic treatment, and post-endoscopic therapy.",
               "locator": "Risk assessment, resuscitation, restrictive transfusion strategy, pre-endoscopic management, and endoscopy within 24 hours for hospitalized upper-GI bleeding."
+            },
+            {
+              "sourceId": "esge-ugib-2021",
+              "relation": "direct",
+              "title": "Endoscopic diagnosis and management of nonvariceal upper gastrointestinal hemorrhage: ESGE Guideline - Update 2021",
+              "authority": "European Society of Gastrointestinal Endoscopy",
+              "year": 2021,
+              "officialUrl": "https://www.esge.com/endoscopic-diagnosis-and-management-of-nonvariceal-upper-gastrointestinal-hemorrhage-esge-update-2021",
+              "population": "Adults with acute nonvariceal upper gastrointestinal hemorrhage",
+              "facilityScope": "Pre-endoscopy risk stratification, hemodynamic resuscitation, timing of endoscopy, and endoscopic hemostasis.",
+              "locator": "Main recommendations 1 and 3: Glasgow-Blatchford Score for pre-endoscopy risk stratification and early endoscopy within 24 hours after hemodynamic resuscitation."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -20558,7 +20574,7 @@
         "education": [
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
           },
           {
@@ -22729,7 +22745,7 @@
     {
       "ordinal": 125,
       "id": "lab_pneumotoraks_spontan",
-      "name": "Pneumotoraks Spontan",
+      "name": "Pneumotoraks Spontan Primer dengan Gangguan Fisiologis",
       "icd10": "J93.9",
       "skdi": "3A",
       "category": "respirasi",
@@ -22740,7 +22756,46 @@
       "currentManagement": {
         "requiredDrugs": [],
         "alternativeDrugs": [],
-        "optionalDrugs": [],
+        "optionalDrugs": [
+          {
+            "id": "paracetamol_500",
+            "name": "Parasetamol 500 mg",
+            "dosageForm": "Tablet 500 mg",
+            "role": "optional",
+            "catalogFornas": true,
+            "fornas": {
+              "status": "cocok",
+              "queries": [
+                "parasetamol"
+              ],
+              "excerpts": [
+                {
+                  "label": "parasetamol",
+                  "text": "Hanya untuk nyeri akut pascaoperasi. 7 parasetamol 1. tab 500 mg   180 tab/bulan.  2. sir 120 mg/5 mL   2 btl/kasus.  3. drops 100 mg/mL   1 btl/kasus. ",
+                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 1184"
+                }
+              ],
+              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
+              "caseAvailabilityGrounded": false
+            },
+            "kfa": {
+              "status": "cocok",
+              "components": [
+                {
+                  "query": "Paracetamol",
+                  "matches": [
+                    {
+                      "code": "91000101",
+                      "name": "Paracetamol",
+                      "unit": "mg"
+                    }
+                  ]
+                }
+              ],
+              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+            }
+          }
+        ],
         "procedures": [
           {
             "id": "oksigen",
@@ -22761,6 +22816,11 @@
             "id": "berhenti_merokok",
             "name": "Berhenti merokok",
             "critical": false
+          },
+          {
+            "id": "aktivitas_setelah_pneumotoraks",
+            "name": "[Pneumotoraks] Tidak terbang sampai 7 hari setelah pulih radiologis; scuba hanya setelah pencegahan definitif",
+            "critical": false
           }
         ],
         "relevantLabs": [],
@@ -22770,13 +22830,15 @@
           "J18.9"
         ],
         "stabilizationRequired": [
-          "oksigen"
+          "oksigen",
+          "pemantauan_ketat_vital"
         ]
       },
       "currentEditorial": {
-        "clue": "Nyeri pleuritik mendadak, hipersonor, dan suara napas unilateral turun mendukung pneumotoraks. SpO2 90%, RR 28, dan sesak sedang adalah gangguan fisiologis, sehingga pasien ini bukan kandidat observasi konservatif rawat jalan. Beri oksigen karena hipoksemia, pantau serial, dan transfer segera. Dekompresi jarum hanya untuk kecurigaan pneumotoraks tensi yang tidak boleh menunggu pencitraan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK pneumotoraks memerintahkan oksigen, akses IV bila ada gagal sirkulasi, dan rujuk segera setelah penanggulangan awal. BTS Pleural Disease Guideline 2023 dan ERS/EACTS/ESTS 2024 membatasi tata laksana konservatif pada pneumotoraks spontan primer yang asimtomatik atau hanya bergejala minimal, stabil, dan tanpa gangguan fisiologis; pasien ini tidak memenuhi batas tersebut. Oksigen diberikan karena hipoksemia, bukan rutin untuk mempercepat absorpsi udara pleura.",
-        "realityNote": "Rontgen dan layanan aspirasi/drainase pleura tidak diasumsikan ready di Sukamaju. Pada pasien yang saat ini stabil, transfer dilakukan untuk konfirmasi dan tata laksana terkontrol; bila muncul hipotensi, hipoksia memburuk, deviasi trakea, atau deteriorasi cepat, perlakukan sebagai dugaan tensi dan jangan menunggu pencitraan."
+        "clue": "Nyeri pleuritik mendadak, hipersonor, dan suara napas unilateral turun mendukung pneumotoraks spontan primer. SpO2 90%, RR 28, dan sesak sedang adalah gangguan fisiologis, sehingga pasien ini bukan kandidat observasi konservatif rawat jalan. Beri oksigen terkontrol dengan target SpO2 94-98%, pantau serial, berikan parasetamol bila perlu, dan transfer segera tanpa menunggu foto toraks. Dekompresi jarum hanya untuk kecurigaan pneumotoraks tensi.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. SKDI 2012 menempatkan pneumotoraks dan pneumotoraks ventil pada level 3A. Bab pneumotoraks PPK 1186/2022 mencantumkan 4A, tetapi alur praktiknya tetap oksigen, akses IV bila ada gagal sirkulasi, dan rujuk segera setelah penanggulangan awal; PRIMERA mempertahankan level 3A dari dokumen kompetensi sambil menyatakan ketidaksesuaian sumber ini. BTS Pleural Disease Guideline 2023 dan ERS/EACTS/ESTS 2024 membatasi tata laksana konservatif pada kasus primer yang hanya bergejala minimal dan tanpa gangguan fisiologis. BTS oxygen guideline menargetkan SpO2 94-98% pada pasien akut tanpa risiko hiperkapnia.",
+        "realityNote": "Rontgen dan aspirasi/drainase pleura tidak diasumsikan ready di Sukamaju. Pasien ditransfer untuk konfirmasi; bila muncul hipotensi, hipoksia memburuk, deviasi trakea, atau deteriorasi cepat, perlakukan sebagai dugaan tensi dan jangan menunggu pencitraan. Setelah resolusi terkonfirmasi, penerbangan ditunda sedikitnya tujuh hari dan scuba dihindari kecuali sudah ada pencegahan kekambuhan definitif.",
+        "ebmPearl": "Ukuran pneumotoraks pada pencitraan bukan satu-satunya penentu intervensi. Gejala dan gangguan fisiologis lebih penting: pasien yang masih sadar dan bertekanan darah baik tetap tidak aman untuk observasi rawat jalan bila hipoksemik dan sesak sedang. Sebaliknya, dekompresi darurat tanpa pencitraan ditujukan untuk dugaan tension pneumothorax, bukan otomatis untuk semua pneumotoraks."
       },
       "evidence": {
         "ppk": {
@@ -22816,8 +22878,8 @@
               "excerpts": [
                 {
                   "label": "Konteks diagnosis",
-                  "text": "3. Trauma toraks dengan gangguan perdarahan-syok (hematotoraks) atau sesak akibat pneumotoraks atau nyeri akibat patah tulang iga 4. Trauma abdomen dengan gangguan perdarahan-syok 5.",
-                  "locator": "docs/references/pnpk/trauma/fulltext.txt:baris 606"
+                  "text": "2. Penanggulangan Kegawatan akibat trauma perlu dikerjakan segera di dalam rumah sakit berkaitan dengan (a) gangguan jalan napas dan fungsi napas, (b) gangguan fungsi sirkulasi, dan (c) gangguan fungsi otak. Beberapa kejadian trauma yang menyangkut organ-organ khusus",
+                  "locator": "docs/references/pnpk/trauma/fulltext.txt:baris 595"
                 },
                 {
                   "label": "Konteks FKTP/rujukan",
@@ -22854,6 +22916,17 @@
               "population": "Adults with primary or secondary spontaneous pneumothorax",
               "facilityScope": "Initial conservative or interventional management, persistent air leak, recurrence prevention, and specialist pathways.",
               "locator": "PICO 1 recommendations and evidence tables: conservative management is conditional for selected clinically stable, minimally symptomatic primary spontaneous pneumothorax."
+            },
+            {
+              "sourceId": "bts-oxygen-2017",
+              "relation": "direct",
+              "title": "British Thoracic Society Guideline for Oxygen Use in Adults in Healthcare and Emergency Settings",
+              "authority": "British Thoracic Society",
+              "year": 2017,
+              "officialUrl": "https://www.brit-thoracic.org.uk/clinical-resources/guidelines/emergency-oxygen/",
+              "population": "Acutely ill adults receiving emergency oxygen",
+              "facilityScope": "Target oxygen saturation ranges and monitoring, including lower targets for patients at risk of hypercapnic respiratory failure.",
+              "locator": "Target saturation guidance: 94-98% for most acutely ill adults; 88-92% is reserved for people at risk of hypercapnic respiratory failure pending blood-gas assessment."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -24404,7 +24477,7 @@
         "education": [
           {
             "id": "puasa_sambil_rujuk",
-            "name": "[Rujukan bedah] Jangan makan/minum sampai evaluasi lanjutan",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
             "critical": true
           },
           {

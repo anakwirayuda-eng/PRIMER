@@ -250,7 +250,6 @@ export const PNPK_CROSSWALK: Record<string, PnpkCrosswalkEntry[]> = {
   lab_puting_lecet: [{ slug: 'komplikasi-kehamilan', relation: 'related' }],
   lab_puting_tenggelam_laktasi: [{ slug: 'komplikasi-kehamilan', relation: 'related' }],
   lab_malnutrisi_energi_protein_sedang: [{ slug: 'stunting', relation: 'related' }],
-  lab_anafilaksis_makanan: [{ slug: 'sepsis-dewasa', relation: 'related', rationale: 'Only general emergency stabilization context.' }],
   lab_kusta_pausibasiler: [{ slug: 'kusta', relation: 'direct' }],
   lab_dermatitis_seboroik_dewasa: [{ slug: 'dermatitis-seboroik', relation: 'direct' }],
   lab_vulnus_laseratum_lengan: [{ slug: 'trauma', relation: 'direct' }],
@@ -395,6 +394,22 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults and children with suspected anaphylaxis in hospital or out-of-hospital settings',
     facilityScope: 'Immediate ABCDE care, intramuscular adrenaline, positioning, fluids, monitoring, refractory-anaphylaxis escalation, and referral.',
   },
+  'rcuk-anaphylaxis-2025': {
+    title: 'Resuscitation Guidelines 2025: Special circumstances - anaphylaxis',
+    authority: 'Resuscitation Council UK and European Resuscitation Council',
+    year: 2025,
+    officialUrl: 'https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/special-circumstances-guidelines',
+    population: 'Adults with suspected anaphylaxis, including deterioration toward cardiac arrest',
+    facilityScope: 'Immediate recognition, intramuscular adrenaline, early crystalloid, reassessment, and escalation of refractory anaphylaxis.',
+  },
+  'aaaai-anaphylaxis-2023': {
+    title: 'Anaphylaxis: A 2023 practice parameter update',
+    authority: 'AAAAI and ACAAI Joint Task Force on Practice Parameters',
+    year: 2023,
+    officialUrl: 'https://www.aaaai.org/Aaaai/media/Media-Library-PDFs/Allergist%20Resources/Statements%20and%20Practice%20Parameters/Anaphylaxis-Practice-Paramaters-2023.pdf',
+    population: 'Children and adults with anaphylaxis or risk of recurrence',
+    facilityScope: 'Post-event risk assessment, epinephrine autoinjector planning, action plans, education, and specialist follow-up.',
+  },
   'nice-ugib-cg141': {
     title: 'Acute upper gastrointestinal bleeding in over 16s: management (CG141)',
     authority: 'National Institute for Health and Care Excellence',
@@ -411,6 +426,14 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults with overt upper gastrointestinal bleeding',
     facilityScope: 'Hospital risk assessment, resuscitation, transfusion, pre-endoscopic care, endoscopic treatment, and post-endoscopic therapy.',
   },
+  'esge-ugib-2021': {
+    title: 'Endoscopic diagnosis and management of nonvariceal upper gastrointestinal hemorrhage: ESGE Guideline - Update 2021',
+    authority: 'European Society of Gastrointestinal Endoscopy',
+    year: 2021,
+    officialUrl: 'https://www.esge.com/endoscopic-diagnosis-and-management-of-nonvariceal-upper-gastrointestinal-hemorrhage-esge-update-2021',
+    population: 'Adults with acute nonvariceal upper gastrointestinal hemorrhage',
+    facilityScope: 'Pre-endoscopy risk stratification, hemodynamic resuscitation, timing of endoscopy, and endoscopic hemostasis.',
+  },
   'bts-pneumothorax-2023': {
     title: 'British Thoracic Society Guideline for Pleural Disease: Spontaneous Pneumothorax',
     authority: 'British Thoracic Society',
@@ -426,6 +449,14 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://publications.ersnet.org/content/erj/63/5/2300797',
     population: 'Adults with primary or secondary spontaneous pneumothorax',
     facilityScope: 'Initial conservative or interventional management, persistent air leak, recurrence prevention, and specialist pathways.',
+  },
+  'bts-oxygen-2017': {
+    title: 'British Thoracic Society Guideline for Oxygen Use in Adults in Healthcare and Emergency Settings',
+    authority: 'British Thoracic Society',
+    year: 2017,
+    officialUrl: 'https://www.brit-thoracic.org.uk/clinical-resources/guidelines/emergency-oxygen/',
+    population: 'Acutely ill adults receiving emergency oxygen',
+    facilityScope: 'Target oxygen saturation ranges and monitoring, including lower targets for patients at risk of hypercapnic respiratory failure.',
   },
   'cdc-tetanus-care-2025': {
     title: 'Clinical Care of Tetanus',
@@ -1183,9 +1214,17 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Regimen meningitis bakterial dewasa lists ceftriaxone 2 g IV every 12 hours; the game assesses only the scenario-specific first pre-referral dose.',
   }],
   lab_anafilaksis_makanan: [{
+    sourceId: 'rcuk-anaphylaxis-2025',
+    relation: 'direct',
+    locator: 'Management and prevention of cardiac arrest due to anaphylaxis: immediately give adrenaline 500 micrograms IM, repeat after 5 minutes if there is no improvement, and give an early IV crystalloid bolus with response monitoring.',
+  }, {
     sourceId: 'rcuk-anaphylaxis-2021',
     relation: 'direct',
-    locator: 'Key recommendations and sections 5.1-5.5: adult IM adrenaline 500 micrograms, repeat after 5 minutes, safe positioning, fluids, serial monitoring, and specialist-only IV adrenaline.',
+    locator: 'Key recommendations and sections 5.1-5.5: safe positioning, serial monitoring, refractory-anaphylaxis escalation, and IV adrenaline restricted to experienced specialists in a monitored setting.',
+  }, {
+    sourceId: 'aaaai-anaphylaxis-2023',
+    relation: 'direct',
+    locator: 'Recommendations 23-30: risk-based epinephrine autoinjector prescription, anaphylaxis action planning, education on prompt epinephrine use, and allergy follow-up after the event.',
   }],
   lab_perdarahan_gi_atas: [{
     sourceId: 'nice-ugib-cg141',
@@ -1195,6 +1234,10 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     sourceId: 'acg-ugib-2021',
     relation: 'direct',
     locator: 'Risk assessment, resuscitation, restrictive transfusion strategy, pre-endoscopic management, and endoscopy within 24 hours for hospitalized upper-GI bleeding.',
+  }, {
+    sourceId: 'esge-ugib-2021',
+    relation: 'direct',
+    locator: 'Main recommendations 1 and 3: Glasgow-Blatchford Score for pre-endoscopy risk stratification and early endoscopy within 24 hours after hemodynamic resuscitation.',
   }],
   lab_pneumotoraks_spontan: [{
     sourceId: 'bts-pneumothorax-2023',
@@ -1204,6 +1247,10 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     sourceId: 'ers-pneumothorax-2024',
     relation: 'direct',
     locator: 'PICO 1 recommendations and evidence tables: conservative management is conditional for selected clinically stable, minimally symptomatic primary spontaneous pneumothorax.',
+  }, {
+    sourceId: 'bts-oxygen-2017',
+    relation: 'direct',
+    locator: 'Target saturation guidance: 94-98% for most acutely ill adults; 88-92% is reserved for people at risk of hypercapnic respiratory failure pending blood-gas assessment.',
   }],
   lab_tetanus_generalisata_awal: [{
     sourceId: 'cdc-tetanus-care-2025',

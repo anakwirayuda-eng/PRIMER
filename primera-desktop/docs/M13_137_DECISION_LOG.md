@@ -49,3 +49,24 @@ Disetujui dengan koreksi: suspek benda asing esofagus akibat baterai kancing tet
 **Signed:** 2026-07-23
 
 Disetujui dengan koreksi: judul menjadi suspek TIA karena tanpa pencitraan infark kecil belum dapat disingkirkan. Asetosal awal 320 mg dari empat tablet tidak bersalut 80 mg dipertahankan setelah kontraindikasi disaring, disertai keberangkatan segera melalui jalur stroke dan penilaian spesialis paling lambat 24 jam tanpa menurunkan urgensi memakai ABCD2. Simvastatin 20 mg dihapus dari terapi akut yang mendapat skor. Fibrilasi atrium menuntut evaluasi antikoagulasi setelah pencitraan, risiko perdarahan, fungsi ginjal, dan etiologi dinilai; aspirin bukan pengganti antikoagulan jangka panjang dan kombinasi rutin keduanya tidak diajarkan. CT normal tidak menutup TIA/stroke kecil; DWI-MRI lebih sensitif terhadap infark akut. Faktor risiko dipantau kembali di FKTP setelah resume, sedangkan label PRB hanya digunakan bila spesialis menerbitkan surat rujuk balik. Grounding diperluas dengan NICE NG128 yang direview 2026, AHA TIA 2023, AHA/ASA Secondary Prevention 2021, dan ESC AF 2024.
+
+### M13-137-07 - `lab_anafilaksis_makanan`
+
+**Decision:** `approved_with_edits`
+**Signed:** 2026-07-23
+
+Disetujui dengan koreksi: diagnosis T78.2, level SKDI 4A, dan transfer emergensi dipertahankan untuk vignette berat dengan suara serak, wheezing, hipoksemia, serta TD 82/52. Epinefrin 0,5 mg IM paha diberikan segera dan diulang setelah lima menit bila masalah ABC menetap; oksigen, bolus kristaloid dini yang dinilai ulang, pemantauan, dan transfer berjalan paralel. Bolus epinefrin IV, aminofilin rutin, serta antihistamin atau steroid yang menunda epinefrin tetap dilarang. Crosswalk PNPK sepsis yang tidak diagnosis-spesifik dihapus. Grounding diperbarui dengan ERC/RCUK 2025, pedoman rinci RCUK 2021, dan AAAAI/ACAAI 2023 untuk action plan, asesmen alergi, serta akses autoinjektor bila tersedia tanpa mengasumsikannya sebagai stok FKTP.
+
+### M13-137-08 - `lab_perdarahan_gi_atas`
+
+**Decision:** `approved_with_edits`
+**Signed:** 2026-07-23
+
+Disetujui dengan koreksi: judul menjadi perdarahan saluran cerna atas dengan instabilitas hemodinamik karena TD 92/60 tidak konsisten dengan istilah syok terkompensasi. Diagnosis K92.2, level SKDI 3B, akses IV dengan kristaloid terukur dan penilaian ulang, oksigen karena SpO2 92%, pemantauan ketat, NPO, penghentian ibuprofen, serta transfer tanpa menunggu pemeriksaan dipertahankan. NGT dan bilas lambung tidak dijadikan tindakan universal. Label edukasi digeneralisasi menjadi rujukan akut dan ditambah penghentian NSAID non-aspirin tanpa menyuruh pasien menghentikan antiplatelet atau antikoagulan sendiri. PNPK KMK 2162/2023 tetap menjadi floor dan perbedaan rekomendasi PPI pra-endoskopi terhadap NICE CG141 dijelaskan terbuka; PPI tidak dinilai wajib bila stok, dosis, dan protokol IV tidak ready serta tidak boleh menunda transfer. Hb dan O+ hanya data handover, bukan crossmatch atau kesiapan transfusi. Grounding dilengkapi ACG 2021 dan ESGE 2021.
+
+### M13-137-09 - `lab_pneumotoraks_spontan`
+
+**Decision:** `approved_with_edits`
+**Signed:** 2026-07-23
+
+Disetujui dengan koreksi: judul menjadi pneumotoraks spontan primer dengan gangguan fisiologis. Diagnosis J93.9 dan level SKDI 3A dipertahankan; ketidaksesuaian dengan label 4A pada bab PPK 1186/2022 dinyatakan terbuka, sementara alur klinis PPK yang memerintahkan penanganan awal dan rujukan segera tetap diikuti. Karena SpO2 90%, RR 28, dan sesak sedang, oksigen terkontrol target 94-98% serta pemantauan serial menjadi stabilisasi wajib; parasetamol hanya analgesia opsional dan tidak boleh menunda transfer. Dekompresi jarum tetap hanya untuk dugaan pneumotoraks tensi. Edukasi ditambah larangan terbang sampai sedikitnya tujuh hari setelah resolusi radiologis, pembatasan scuba sampai pencegahan kekambuhan definitif, dan penghentian merokok. Grounding memakai BTS Pleural Disease 2023, ERS/EACTS/ESTS 2024, serta BTS emergency oxygen guideline.
