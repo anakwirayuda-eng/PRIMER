@@ -67,15 +67,19 @@ const KARTU: Kartu[] = [
     judul: 'TEGAK atau SUSPEK — jujurlah',
     isi: 'Saat mendiagnosis: cap TEGAK bila kamu yakin, SUSPEK bila itu masih diagnosis kerja. Kejujuran epistemikmu ikut dinilai — menebak TEGAK asal-asalan lebih berisiko daripada mengakui ragu.',
   },
+  // Audit editorial 2026-07-23 (disetujui dr. Wirayuda): dua kalimat dasar
+  // penilaian dipindah dari kartu 💊 ke kartu ⚖️ — prinsip "satu konsep per
+  // kartu" pulih (disposisi vs dasar penilaian adalah dua konsep). Kalimatnya
+  // dipertahankan verbatim (bersanding dgn catatan medikolegal PanelHasil §3b).
   {
     ikon: '💊',
     judul: 'Tuntas di sini, atau rujuk',
-    isi: 'Beri terapi yang tepat dan pilih maksimal tiga topik edukasi yang paling penting. Kenali kasus di luar kompetensi FKTP, stabilkan bila perlu, lalu rujuk dengan benar. Merujuk tepat waktu adalah keputusan yang matang, bukan kekalahan. Panduan resmi Kemenkes menjadi acuan utama penilaian. Penyimpangan tetap dapat dibenarkan bila didukung alasan klinis yang kuat.',
+    isi: 'Beri terapi yang tepat dan pilih maksimal tiga topik edukasi yang paling penting. Kenali kasus di luar kompetensi FKTP, stabilkan bila perlu, lalu rujuk dengan benar. Merujuk tepat waktu adalah keputusan yang matang, bukan kekalahan.',
   },
   {
     ikon: '⚖️',
     judul: 'Yang dinilai adalah caramu berpikir',
-    isi: 'Rapormu punya empat dimensi: klinik, desa, manajemen, ketahanan diri. Satu nasihat dari saya: di sini, angka yang tidak kamu periksa sendiri adalah angka yang belum ada. Pasien pertamamu sudah menunggu — semoga lancar, Dokter.',
+    isi: 'Rapormu punya empat dimensi: klinik, desa, manajemen, ketahanan diri. Panduan resmi Kemenkes menjadi acuan utama penilaian. Penyimpangan tetap dapat dibenarkan bila didukung alasan klinis yang kuat. Satu nasihat dari saya: angka yang tidak kamu periksa sendiri adalah angka yang belum ada. Pasien pertamamu sudah menunggu — semoga lancar, Dokter.',
   },
 ]
 

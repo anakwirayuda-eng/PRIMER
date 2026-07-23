@@ -64,7 +64,9 @@ const bersyarat: readonly Storylet[] = [
   { id: 'rujuk-tuntas-ledger', teks: 'Kabar rujukan: sinyal, keputusan, umpan balik, dan tindakan berikutnya kini tercatat dalam satu jejak yang dapat diaudit.', boleh: (k) => k.rujukanTuntas === true },
 
   { id: 'posy-sasaran', teks: 'Sesudah Posyandu, tim meninjau siapa yang datang dan siapa yang belum terjangkau. Cakupan bukan hanya jumlah kursi yang terisi.', boleh: (k) => k.pernahPosyandu === true },
-  { id: 'posy-rujuk', teks: 'Catatan Posyandu sore ini memisahkan edukasi rutin dari temuan yang perlu dinilai tenaga kesehatan. Kader tidak dipaksa menjadi dokter kecil.', boleh: (k) => k.pernahPosyandu === true },
+  // Audit editorial 2026-07-23 (disetujui dr. Wirayuda): "dokter kecil"
+  // beririsan dgn nama program UKS resmi (Dokter Kecil) — ganti frasa netral.
+  { id: 'posy-rujuk', teks: 'Catatan Posyandu sore ini memisahkan edukasi rutin dari temuan yang perlu dinilai tenaga kesehatan. Kader tidak dipaksa menjadi dokter dadakan.', boleh: (k) => k.pernahPosyandu === true },
   { id: 'posy-siklus', teks: 'Daftar Posyandu dibaca lintas siklus hidup. Balita tetap penting, tetapi ibu, remaja, dewasa, dan lansia tidak menghilang dari peta layanan.', boleh: (k) => k.pernahPosyandu === true },
   { id: 'posy-kualitas', teks: 'Tim membahas satu pengukuran Posyandu yang meragukan dan memilih mengulangnya. Data berkualitas lebih berguna daripada angka yang sekadar lengkap.', boleh: (k) => k.pernahPosyandu === true },
 
