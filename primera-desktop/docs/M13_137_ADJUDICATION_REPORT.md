@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-23
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `511373bfa5da307ea240643fd4da163916ad6483+dirty`, artefak `d38c5260ae0316369faee72ccd67209cf893ad5b87fd6ababd02a501380e2241`, pack `f21d8bca`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `fe375328eead174c85bbb07084cc3a720ddb3723+dirty`, artefak `d3105947ccd792cc1081822f1dc336bdbd62f60f0353b836e1917e7d1109be1e`, pack `f75c9e12`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -131,7 +131,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_pielonefritis_tanpa_komplikasi` - Pielonefritis Akut Tanpa Komplikasi: tidak ada red flag provenance otomatis
 - `lab_sindrom_duh_genital_servisitis` - Servisitis Mukopurulen - Tata Laksana Sindromik: tidak ada red flag provenance otomatis
 - `lab_leptospirosis_tanpa_komplikasi` - Suspek Leptospirosis Ringan Pascabanjir: tidak ada red flag provenance otomatis
-- `lab_tetanus_generalisata_awal` - Tetanus Generalisata - Stabilisasi dan Rujuk: tidak ada red flag provenance otomatis
+- `lab_tetanus_generalisata_awal` - Tetanus Generalisata Derajat Sedang: tidak ada red flag provenance otomatis
 - `lab_vaginitis_kandida` - Vaginitis Kandidiasis: tidak ada red flag provenance otomatis
 - `lab_vaginosis_bakterialis` - Vaginosis Bakterialis: tidak ada red flag provenance otomatis
 - `lab_vulvitis_iritan` - Vulvitis Iritan: tidak ada red flag provenance otomatis

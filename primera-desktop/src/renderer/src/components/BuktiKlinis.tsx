@@ -9,6 +9,7 @@ interface Props {
   sumber: readonly SumberKlinis[]
   debrief?: DebriefIgd
   defaultOpen?: boolean
+  tampilkanRingkasan?: boolean
   className?: string
 }
 
@@ -29,6 +30,7 @@ export function BuktiKlinis({
   sumber,
   debrief,
   defaultOpen = false,
+  tampilkanRingkasan = true,
   className = '',
 }: Props) {
   return (
@@ -39,10 +41,12 @@ export function BuktiKlinis({
       </summary>
 
       <div className="bukti-klinis__isi">
-        <section className="bukti-klinis__inti" aria-label="Inti keputusan klinis">
-          <div className="bukti-klinis__subjudul mono">INTI KEPUTUSAN</div>
-          <TeksTerbaca teks={ringkasan} batasKata={42} />
-        </section>
+        {tampilkanRingkasan && (
+          <section className="bukti-klinis__inti" aria-label="Inti keputusan klinis">
+            <div className="bukti-klinis__subjudul mono">INTI KEPUTUSAN</div>
+            <TeksTerbaca teks={ringkasan} batasKata={42} />
+          </section>
+        )}
 
         {debrief && (
           <section className="bukti-klinis__pengayaan" aria-label="Debrief kasus IGD">

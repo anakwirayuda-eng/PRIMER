@@ -45,6 +45,7 @@ export const NAMA_ICD: Record<string, string> = {
   'G00.9': 'Meningitis Bakterial, Tidak Spesifik',
   'A87.9': 'Meningitis Viral, Tidak Spesifik',
   'F44.5': 'Kejang Disosiatif',
+  'T65.1': 'Efek Toksik Striknin dan Garamnya',
   B20: 'Penyakit HIV dengan Manifestasi Infeksi',
   'S05.0': 'Cedera Konjungtiva dan Abrasi Kornea',
   'H16.0': 'Ulkus Kornea',

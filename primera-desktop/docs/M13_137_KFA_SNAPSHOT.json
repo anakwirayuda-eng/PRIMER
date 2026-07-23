@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-kfa-active-substance-snapshot.v1",
-  "retrievedAt": "2026-07-19T06:15:58.967Z",
+  "retrievedAt": "2026-07-23T10:13:48.453Z",
   "endpoint": "https://satusehat.kemkes.go.id/kfa-browser/farmasi/api/search/active-ingredients",
   "browserUrl": "https://satusehat.kemkes.go.id/kfa-browser/farmasi",
   "scopeWarning": "Kode adalah KFA active-substance master data, bukan kode product-template/variant dan bukan bukti stok atau status Fornas.",
   "caseCount": 137,
-  "drugCount": 66,
+  "drugCount": 68,
   "unresolved": [],
   "items": [
     {
@@ -1110,6 +1110,22 @@
       ]
     },
     {
+      "drugId": "tetanus_imunoglobulin_500",
+      "catalogName": "Human Tetanus Immunoglobulin 500 IU",
+      "queryResults": [
+        {
+          "query": "Tetanus Immune Globulin",
+          "results": [
+            {
+              "kfaCode": "91000271",
+              "name": "Tetanus Immune Globulin",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "drugId": "tramadol_50",
       "catalogName": "Tramadol 50 mg",
       "queryResults": [
@@ -1135,6 +1151,22 @@
             {
               "kfaCode": "91000817",
               "name": "Triamcinolone Acetonide",
+              "ucumSymbol": "mg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "drugId": "vaksin_td",
+      "catalogName": "Vaksin Tetanus-Difteri (Td)",
+      "queryResults": [
+        {
+          "query": "Tetanus Toxoid Vaccine, Inactivated",
+          "results": [
+            {
+              "kfaCode": "91000272",
+              "name": "Tetanus Toxoid Vaccine, Inactivated",
               "ucumSymbol": "mg"
             }
           ]

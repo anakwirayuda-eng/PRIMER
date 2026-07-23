@@ -10,7 +10,7 @@ Dokumen ini mencatat keputusan dokter atas 137 prototipe non-IGD. Perubahan kont
 
 ### M13-137-01 - `lab_gizi_buruk_komplikasi`
 
-**Decision:** `approved_with_edits`  
+**Decision:** `approved_with_edits`
 **Signed:** 2026-07-22
 
 Disetujui dengan koreksi: PPK 1186/2022 bab MEP menjadi floor langsung dan level sumber 4A; ReSoMal tetap pilihan utama tetapi ORS osmolaritas rendah boleh dipakai perlahan dan terpantau bila ReSoMal tidak tersedia; vitamin A dosis tinggi dibuat kondisional; pencegahan hipotermia serta edukasi rujukan menjadi komponen wajib. Diagnosis E43, hipoglikemia, antibiotik berbasis protokol, larangan Plan C cepat pada pasien non-syok, dan rujukan rawat inap dipertahankan.
@@ -70,3 +70,10 @@ Disetujui dengan koreksi: judul menjadi perdarahan saluran cerna atas dengan ins
 **Signed:** 2026-07-23
 
 Disetujui dengan koreksi: judul menjadi pneumotoraks spontan primer dengan gangguan fisiologis. Diagnosis J93.9 dan level SKDI 3A dipertahankan; ketidaksesuaian dengan label 4A pada bab PPK 1186/2022 dinyatakan terbuka, sementara alur klinis PPK yang memerintahkan penanganan awal dan rujukan segera tetap diikuti. Karena SpO2 90%, RR 28, dan sesak sedang, oksigen terkontrol target 94-98% serta pemantauan serial menjadi stabilisasi wajib; parasetamol hanya analgesia opsional dan tidak boleh menunda transfer. Dekompresi jarum tetap hanya untuk dugaan pneumotoraks tensi. Edukasi ditambah larangan terbang sampai sedikitnya tujuh hari setelah resolusi radiologis, pembatasan scuba sampai pencegahan kekambuhan definitif, dan penghentian merokok. Grounding memakai BTS Pleural Disease 2023, ERS/EACTS/ESTS 2024, serta BTS emergency oxygen guideline.
+
+### M13-137-10 - `lab_tetanus_generalisata_awal`
+
+**Decision:** `approved_with_edits`
+**Signed:** 2026-07-23
+
+Disetujui dengan koreksi: nama tampil menjadi tetanus generalisata derajat sedang berdasarkan trismus, disfagia, spasme generalisata singkat terpicu rangsang, dan belum adanya spasme spontan berkepanjangan, apnea, atau disautonomia nyata; id stabil dipertahankan. Diagnosis A35 dan level katalog SKDI 4A dipertahankan, tetapi dijelaskan sebagai kompetensi diagnosis, bukan izin menuntaskan kondisi ini sebagai rawat jalan. Anamnesis diperluas untuk frekuensi/durasi spasme, apnea-sianosis, disautonomia, status seri imunisasi, dan pajanan racun; diferensial kejang disosiatif diganti efek toksik striknin T65.1. Encounter menyatakan human TIG 500 IU IM ready dan menjadikannya terapi kritis; Td hanya opsional setelah stabil. Stabilisasi wajib menjadi ruang tenang/minimal stimulus, pemantauan serial, serta kesiapan suction-BVM-oksigen-pendamping terlatih, tanpa oksigen rutin pada SpO2 96%. Luka hanya ditutup steril di FKTP; debridemen, antimikroba, sedasi, dan dukungan ventilasi ditangani fasilitas rujukan. Tujuan rujukan diubah dari penyakit dalam ke saraf dengan narasi kebutuhan airway/ICU. Ketiadaan TIG tidak boleh menunda transfer. Edukasi menegaskan NPO selama rujukan, penyakit tidak memberi imunitas, vaksinasi tetap diperlukan setelah stabil, tetanus tidak menular antarmanusia, dan pelaporan ke Dinkes tidak sama dengan menetapkan KLB. Grounding memakai PPK 1186/2022, Fornas 1199/2025, WHO 2026, CDC 2025, dan UKHSA 2024; tautan sumber terstruktur ditampilkan secara ringkas dan dapat dibuka dari debrief.

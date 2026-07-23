@@ -39,7 +39,8 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'q_dist_paku_karat', kategori: 'rps', tanya: 'Apakah paku yang menusuk telapak kaki Anda itu berkarat?', jawab: 'Tidak saya perhatikan berkarat atau tidak, Dok. Saya langsung mencabutnya lalu mencuci kakinya.' },
     ],
     obatSalahUmum: [
-      { id: 'diazepam_rektal_10', alasan: 'Kontrol spasme tetanus perlu titrasi di fasilitas rujukan; menunda transfer demi obat rumahan berbahaya.', bahaya: 'nonPrimer' },
+      { id: 'diazepam_rektal_10', alasan: 'Satu tube rektal bukan kontrol baku untuk spasme refleks singkat pada pasien sadar. Bila spasme memanjang atau mengganggu jalan napas, benzodiazepin harus dititrasi sesuai protokol dengan kesiapan ventilasi dan tidak boleh menunda transfer.', bahaya: 'nonPrimer' },
+      { id: 'metronidazol_500', alasan: 'Tablet oral tidak tepat pada pasien disfagia yang dipuasakan dan bukan pengganti antimikroba parenteral serta debridemen terkontrol di fasilitas rujukan.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
       narasi: 'Tetanus dapat menimbulkan spasme laring dan gagal napas; menunda minimalisasi rangsang dan rujukan mengancam nyawa.',

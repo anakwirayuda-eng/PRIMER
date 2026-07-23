@@ -275,6 +275,7 @@ export const KELOMPOK_TINDAKAN_BY_ID: Record<string, KelompokTindakan> = {
 
   nebulisasi: 'napas',
   nebulisasi_burst_asma_anak: 'napas',
+  kesiapan_airway_rujuk: 'napas',
   suction_hidung_bronkiolitis_selektif: 'napas',
   kewaspadaan_droplet_meningokokus: 'napas',
   akses_iv_tanpa_bolus: 'cairan_metabolik',

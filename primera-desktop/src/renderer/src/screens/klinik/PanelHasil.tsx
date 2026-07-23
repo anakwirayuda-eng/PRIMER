@@ -6,6 +6,7 @@
 import type { DexEntry, PenilaianEncounter } from '@engine/state'
 import { PACK } from '@content/index'
 import { useFocusTrap } from '../../useFocusTrap'
+import { BuktiKlinis } from '../../components/BuktiKlinis'
 import { TeksTerbaca } from '../../components/TeksTerbaca'
 import { DuelDiagnosis, TeachBack } from './RefleksiKlinis'
 import { LABEL_REGION, namaDiagnosis } from './util'
@@ -299,6 +300,16 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
             </p>
           </details>
         )}
+        {kasus?.sumber?.length ? (
+          <BuktiKlinis
+            judul="Referensi kasus"
+            namaKasus={kasus.nama}
+            ringkasan={kasus.clue}
+            sumber={kasus.sumber}
+            tampilkanRingkasan={false}
+            className="klinik-hasil__sumber"
+          />
+        ) : null}
 
         {!tutorial && (
           <div className="klinik-hasil__refleksi" aria-label="Latihan refleksi klinis opsional">

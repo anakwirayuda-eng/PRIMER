@@ -1,6 +1,15 @@
 import type { ItemLab, Obat, Tindakan, TopikEdukasi } from '../types'
 
 export const OBAT_LAB_EXPANSION: Record<string, Obat> = {
+  tetanus_imunoglobulin_500: {
+    id: 'tetanus_imunoglobulin_500',
+    nama: 'Human Tetanus Immunoglobulin 500 IU',
+    kelas: 'imunoglobulin antitoksin',
+    sediaan: 'injeksi intramuskular 500 IU',
+    hargaBeli: 225000,
+    hargaJual: 250000,
+    fornas: true,
+  },
   arv_tld: {
     id: 'arv_tld',
     nama: 'ARV TDF 300 mg + 3TC 300 mg + DTG 50 mg',
@@ -252,6 +261,7 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
   perawatan_saraf_kusta: { id: 'perawatan_saraf_kusta', nama: '[Kusta] Periksa saraf-mata-tangan-kaki serial dan lindungi area mati rasa dari cedera', kategori: 'tindakan', sinonim: ['saraf', 'disabilitas', 'self-care', 'mati rasa'] },
   skrining_kontak_kusta: { id: 'skrining_kontak_kusta', nama: '[Kusta] Skrining kontak dan nilai SDR-PEP lewat program setelah consent serta cek kelayakan', kategori: 'higiene', sinonim: ['kontak serumah', 'SDR-PEP', 'rifampisin dosis tunggal', 'consent'] },
   rawat_luka_tetanus: { id: 'rawat_luka_tetanus', nama: '[Luka] Jaga luka bersih dan lengkapi profilaksis tetanus sesuai status imunisasi', kategori: 'tindakan', sinonim: ['vulnus', 'tetanus toxoid'] },
+  imunitas_setelah_tetanus: { id: 'imunitas_setelah_tetanus', nama: '[Tetanus] Sakit tidak membuat kebal; lanjutkan vaksin setelah stabil dan pahami bahwa tetanus tidak menular antarmanusia', kategori: 'kepatuhan', sinonim: ['TIG', 'Td', 'toksoid', 'imunisasi', 'tidak menular'] },
   pertolongan_luka_bakar: { id: 'pertolongan_luka_bakar', nama: '[Luka bakar] Aliri air 20 menit; jangan gunakan es, pasta gigi, atau minyak', kategori: 'tindakan', sinonim: ['burn', 'pendinginan'] },
   perawatan_ulkus_tungkai: { id: 'perawatan_ulkus_tungkai', nama: '[Ulkus tungkai] Rawat luka, elevasi, dan kontrol penyakit vaskular/metabolik', kategori: 'tindakan', sinonim: ['venous ulcer', 'leg ulcer'] },
   hentikan_obat_pencetus: { id: 'hentikan_obat_pencetus', nama: '[Erupsi obat] Hentikan obat tersangka dan jangan mencoba ulang sendiri', kategori: 'kepatuhan', sinonim: ['drug eruption', 'fixed drug eruption'] },
@@ -272,6 +282,7 @@ export const TINDAKAN_LAB_EXPANSION: Record<string, Tindakan> = {
   balut_luka_bakar: { id: 'balut_luka_bakar', nama: 'Tutup luka bakar dengan balutan bersih nonadheren', icd9: '93.57', biaya: 30000 },
   observasi_neurologis: { id: 'observasi_neurologis', nama: 'Observasi serial GCS, pupil, dan defisit neurologis', icd9: '89.14', biaya: 15000 },
   minim_stimulus_tetanus: { id: 'minim_stimulus_tetanus', nama: 'Tempatkan pasien tetanus di ruang tenang dengan stimulus minimal', icd9: '93.59', biaya: 0 },
+  kesiapan_airway_rujuk: { id: 'kesiapan_airway_rujuk', nama: 'Siapkan suction, BVM, oksigen, dan pendamping terlatih selama transfer', icd9: '93.90', biaya: 20000 },
   antibiotik_parenteral_neonatus_protokol: { id: 'antibiotik_parenteral_neonatus_protokol', nama: 'Antibiotik parenteral awal neonatus sesuai protokol jejaring', icd9: '99.21', biaya: 30000 },
   suction_hidung_bronkiolitis_selektif: { id: 'suction_hidung_bronkiolitis_selektif', nama: 'Suction Hidung Lembut bila Sekret Mengganggu Napas/Minum', icd9: '93.99', biaya: 10000 },
 }

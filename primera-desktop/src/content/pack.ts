@@ -245,6 +245,25 @@ export function validasiPack(pack: ContentPack): string[] {
   }
 
   for (const k of Object.values(pack.kasus)) {
+    if (k.sumber?.length) {
+      const sumberIds = new Set<string>()
+      if (!k.sumber.some((s) => s.jenis === 'pedoman_indonesia')) {
+        masalah.push(`Kasus ${k.id}: sumber terstruktur tanpa pedoman Indonesia`)
+      }
+      if (!k.sumber.some((s) => s.jenis === 'evidence_internasional')) {
+        masalah.push(`Kasus ${k.id}: sumber terstruktur tanpa evidence internasional`)
+      }
+      for (const sumber of k.sumber) {
+        if (sumberIds.has(sumber.id)) masalah.push(`Kasus ${k.id}: sumber '${sumber.id}' duplikat`)
+        sumberIds.add(sumber.id)
+        if (!/^https:\/\//.test(sumber.url)) {
+          masalah.push(`Kasus ${k.id}: sumber '${sumber.id}' bukan URL HTTPS`)
+        }
+        if (!Number.isInteger(sumber.tahun) || sumber.tahun < 1900 || sumber.tahun > 2100) {
+          masalah.push(`Kasus ${k.id}: tahun sumber '${sumber.id}' tidak valid`)
+        }
+      }
+    }
     for (const o of k.tatalaksana.obatBenar) {
       if (!pack.obat[o]) masalah.push(`Kasus ${k.id}: obat '${o}' tidak ada di formularium`)
     }

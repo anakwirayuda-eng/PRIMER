@@ -81,12 +81,12 @@ describe('M13-137 adjudication artifact', () => {
     expect(DATA.summary.ebmDirect).toBe(66)
   })
 
-  it('snapshot KFA exact mencakup 66 obat dan tidak mengarang query yang gagal', () => {
+  it('snapshot KFA exact mencakup 68 obat dan tidak mengarang query yang gagal', () => {
     const ids = usedDrugIds()
-    expect(ids).toHaveLength(66)
+    expect(ids).toHaveLength(68)
     expect(Object.keys(KFA_QUERIES).sort()).toEqual(ids)
     expect(KFA.caseCount).toBe(137)
-    expect(KFA.drugCount).toBe(66)
+    expect(KFA.drugCount).toBe(68)
     expect(KFA.unresolved).toEqual([])
     expect(KFA.items.map((item) => item.drugId).sort()).toEqual(ids)
     for (const item of KFA.items) {

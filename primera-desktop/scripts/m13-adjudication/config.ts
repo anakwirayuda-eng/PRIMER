@@ -458,6 +458,14 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Acutely ill adults receiving emergency oxygen',
     facilityScope: 'Target oxygen saturation ranges and monitoring, including lower targets for patients at risk of hypercapnic respiratory failure.',
   },
+  'who-tetanus-2026': {
+    title: 'Tetanus fact sheet',
+    authority: 'World Health Organization',
+    year: 2026,
+    officialUrl: 'https://www.who.int/news-room/fact-sheets/detail/tetanus',
+    population: 'People with suspected or confirmed tetanus',
+    facilityScope: 'Clinical diagnosis, immediate hospital treatment, immune globulin, wound care, spasm control, antibiotics, vaccination, and prevention.',
+  },
   'cdc-tetanus-care-2025': {
     title: 'Clinical Care of Tetanus',
     authority: 'US Centers for Disease Control and Prevention',
@@ -465,6 +473,14 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.cdc.gov/tetanus/hcp/clinical-care/index.html',
     population: 'People with clinically diagnosed tetanus',
     facilityScope: 'Hospital treatment with immune globulin, spasm control, airway support, wound care, antibiotics, and vaccination during recovery.',
+  },
+  'ukhsa-tetanus-2024': {
+    title: 'Guidance on the management of suspected tetanus cases and tetanus-prone wounds',
+    authority: 'UK Health Security Agency',
+    year: 2024,
+    officialUrl: 'https://www.gov.uk/government/publications/tetanus-advice-for-health-professionals/guidance-on-the-management-of-suspected-tetanus-cases-and-the-assessment-and-management-of-tetanus-prone-wounds',
+    population: 'People with suspected tetanus or tetanus-prone wounds',
+    facilityScope: 'Clinical diagnosis, severity grading, early wound care, immunoglobulin, antimicrobial therapy, spasm control, and critical-care escalation.',
   },
   'poison-control-button-battery': {
     title: 'Button battery ingestion triage and treatment guideline (living web guideline; accessed 2026)',
@@ -1253,9 +1269,17 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Target saturation guidance: 94-98% for most acutely ill adults; 88-92% is reserved for people at risk of hypercapnic respiratory failure pending blood-gas assessment.',
   }],
   lab_tetanus_generalisata_awal: [{
+    sourceId: 'who-tetanus-2026',
+    relation: 'direct',
+    locator: 'Symptoms and treatment sections: trismus, dysphagia, and stimulus-triggered spasms support a clinical diagnosis; hospital care includes immediate immune globulin, wound care, spasm control, antibiotics, and vaccination.',
+  }, {
     sourceId: 'cdc-tetanus-care-2025',
     relation: 'direct',
-    locator: 'Treatment recommendations: tetanus is a medical emergency requiring hospitalization, TIG, spasm control, airway monitoring, wound debridement, antibiotics, and later vaccination.',
+    locator: 'Treatment recommendations: tetanus is a medical emergency requiring hospitalization; give a single 500 IU intramuscular TIG dose, monitor the airway, clean the wound, control spasms, treat infection, and vaccinate during recovery.',
+  }, {
+    sourceId: 'ukhsa-tetanus-2024',
+    relation: 'direct',
+    locator: 'Clinical features and severity grading: moderate generalized tetanus includes moderate trismus and spasticity with dysphagia or respiratory embarrassment and brief spasms; management requires early specialist and critical-care coordination.',
   }],
   lab_hernia_inguinalis_inkarserata: [{
     sourceId: 'wses-complicated-hernia-2017',
@@ -1657,6 +1681,8 @@ export const FORNAS_QUERIES: Record<string, string[]> = {
   oralit: ['garam oralit'],
   ringer_laktat_inf: ['Larutan Mengandung Elektrolit'],
   tablet_fe: ['fero sulfat', 'asam folat'],
+  tetanus_imunoglobulin_500: ['human tetanus imunoglobulin'],
+  vaksin_td: ['vaksin jerap tetanus difteri'],
 }
 
 /**
@@ -1725,8 +1751,10 @@ export const KFA_QUERIES: Record<string, string[]> = {
   ringer_laktat_inf: ['Sodium Chloride', 'Potassium Chloride', 'Calcium Chloride', 'Sodium Lactate'],
   tablet_fe: ['Ferrous Sulfate', 'Folic Acid'],
   tamsulosin_04: ['Tamsulosin'],
+  tetanus_imunoglobulin_500: ['Tetanus Immune Globulin'],
   tramadol_50: ['Tramadol'],
   triamcinolone_orabase: ['Triamcinolone Acetonide'],
+  vaksin_td: ['Tetanus Toxoid Vaccine, Inactivated'],
   vitamin_a_kapsul: ['Retinol'],
   vitamin_b_kompleks: ['Thiamine', 'Riboflavin', 'Pyridoxine', 'Nicotinamide'],
   zinc_oxide_krim: ['Zinc Oxide'],

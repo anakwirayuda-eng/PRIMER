@@ -5,6 +5,7 @@ import type {
   PemeriksaanLab,
   PertanyaanAnamnesis,
   RegionFisik,
+  SumberKlinis,
   SpesialisasiRs,
   TandaVital,
   Tatalaksana,
@@ -117,6 +118,7 @@ export interface FktpLabSpec {
   panduanResmi?: string
   catatanRealita?: string
   mutiaraEbm?: string
+  sumber?: SumberKlinis[]
   prevalensi?: 'tinggi' | 'sedang' | 'rendah'
   harusDirujuk?: boolean
   spesialisRujukan?: SpesialisasiRs
@@ -188,6 +190,7 @@ export function buatKasusFktpLab(spec: FktpLabSpec): KasusKlinis {
     panduanResmi: spec.panduanResmi,
     catatanRealita: spec.catatanRealita,
     mutiaraEbm: spec.mutiaraEbm,
+    sumber: spec.sumber,
     stabilisasiWajib: spec.stabilisasiWajib,
     konfirmasiWajib: spec.konfirmasiWajib,
   })

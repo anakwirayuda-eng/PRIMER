@@ -312,6 +312,11 @@ export interface KasusKlinis {
    * Sama kelas dgn 2 field di atas: murni display, TAK di-hash/TAK skor.
    */
   panduanResmi?: string
+  /**
+   * Tautan sumber terstruktur untuk debrief klinik. Murni display-only:
+   * membuka dokumen asli di browser bawaan dan tidak memengaruhi skor/replay.
+   */
+  sumber?: SumberKlinis[]
   konsekuensi?: KonsekuensiKlinis
   /** Sebagian pasien kasus ini membawa alergi yang menjebak terapi standar. */
   alergiTrap?: { kelas: string; obatTerlarang: string[]; alternatifBenar: string[] }

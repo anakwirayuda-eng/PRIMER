@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-23T07:01:07.052Z",
-  "sourceCommit": "511373bfa5da307ea240643fd4da163916ad6483+dirty",
-  "artifactFingerprint": "d38c5260ae0316369faee72ccd67209cf893ad5b87fd6ababd02a501380e2241",
-  "packFingerprint": "f21d8bca",
+  "generatedAt": "2026-07-23T10:20:08.859Z",
+  "sourceCommit": "fe375328eead174c85bbb07084cc3a720ddb3723+dirty",
+  "artifactFingerprint": "d3105947ccd792cc1081822f1dc336bdbd62f60f0353b836e1917e7d1109be1e",
+  "packFingerprint": "f75c9e12",
   "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -37,7 +37,7 @@
     "ppkEntriesSha256": "8c65b07e23129ed6eb2de6773e097c89590ee9dc7f6dab00f23c2cb6b2211a2a",
     "ppkBoundariesSha256": "9b557a4d79c5ef7cda19885c26ec8d3a141c887d7b48956d7634534adff51fc3",
     "fornas1199Sha256": "93c907dff72aa5e0bb63ec9290f891377661115a99b67632c7b576e4972fa816",
-    "kfaSnapshotSha256": "985dadfcdaf93080479708334ee2a3f131b07fa9fd17960b4708d82f9a2f1d86"
+    "kfaSnapshotSha256": "1d8720192830bf1a34f75d08538be771a430ea22acc38bd0b0bb0e8d07f62d52"
   },
   "summary": {
     "bySuggestion": {
@@ -3578,59 +3578,148 @@
     {
       "ordinal": 18,
       "id": "lab_tetanus_generalisata_awal",
-      "name": "Tetanus Generalisata - Stabilisasi dan Rujuk",
+      "name": "Tetanus Generalisata Derajat Sedang",
       "icd10": "A35",
       "skdi": "4A",
       "category": "infeksi",
       "mustRefer": true,
       "fktp144": true,
       "demographics": "20-65 tahun, semua gender",
-      "openingComplaint": "Rahang saya kaku dan badan mulai kejang kalau mendengar suara keras.",
+      "openingComplaint": "Rahang saya kaku dan badan menegang kalau mendengar suara keras.",
       "currentManagement": {
-        "requiredDrugs": [],
+        "requiredDrugs": [
+          {
+            "id": "tetanus_imunoglobulin_500",
+            "name": "Human Tetanus Immunoglobulin 500 IU",
+            "dosageForm": "injeksi intramuskular 500 IU",
+            "role": "required",
+            "catalogFornas": true,
+            "fornas": {
+              "status": "cocok",
+              "queries": [
+                "human tetanus imunoglobulin"
+              ],
+              "excerpts": [
+                {
+                  "label": "human tetanus imunoglobulin",
+                  "text": "4 human tetanus imunoglobulin Untuk: R",
+                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 19950"
+                }
+              ],
+              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
+              "caseAvailabilityGrounded": false
+            },
+            "kfa": {
+              "status": "cocok",
+              "components": [
+                {
+                  "query": "Tetanus Immune Globulin",
+                  "matches": [
+                    {
+                      "code": "91000271",
+                      "name": "Tetanus Immune Globulin",
+                      "unit": "mg"
+                    }
+                  ]
+                }
+              ],
+              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+            }
+          }
+        ],
         "alternativeDrugs": [],
-        "optionalDrugs": [],
+        "optionalDrugs": [
+          {
+            "id": "vaksin_td",
+            "name": "Vaksin Tetanus-Difteri (Td)",
+            "dosageForm": "Injeksi intramuskular 0,5 mL",
+            "role": "optional",
+            "catalogFornas": true,
+            "fornas": {
+              "status": "cocok",
+              "queries": [
+                "vaksin jerap tetanus difteri"
+              ],
+              "excerpts": [
+                {
+                  "label": "vaksin jerap tetanus difteri",
+                  "text": "1. inj 40/15 lf/mL (i.m.) SE    11 vaksin jerap tetanus difteri (Td)[P] KE Untuk anak dan dewasa ( ≥ 7 tahun) 1. inj 15/4 lf/mL (i.m.)   ",
+                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 20415"
+                }
+              ],
+              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
+              "caseAvailabilityGrounded": false
+            },
+            "kfa": {
+              "status": "cocok",
+              "components": [
+                {
+                  "query": "Tetanus Toxoid Vaccine, Inactivated",
+                  "matches": [
+                    {
+                      "code": "91000272",
+                      "name": "Tetanus Toxoid Vaccine, Inactivated",
+                      "unit": "mg"
+                    }
+                  ]
+                }
+              ],
+              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+            }
+          }
+        ],
         "procedures": [
           {
             "id": "minim_stimulus_tetanus",
             "name": "Tempatkan pasien tetanus di ruang tenang dengan stimulus minimal"
           },
           {
-            "id": "perawatan_luka",
-            "name": "Irigasi, debridemen selektif, dan balut luka"
+            "id": "kesiapan_airway_rujuk",
+            "name": "Siapkan suction, BVM, oksigen, dan pendamping terlatih selama transfer"
           },
           {
             "id": "pemantauan_ketat_vital",
             "name": "Pemantauan Ketat Tanda Vital Pra-Rujuk"
+          },
+          {
+            "id": "balut_luka_steril",
+            "name": "Balut luka terbuka secara steril"
           }
         ],
         "education": [
           {
-            "id": "rawat_luka_tetanus",
-            "name": "[Luka] Jaga luka bersih dan lengkapi profilaksis tetanus sesuai status imunisasi",
+            "id": "puasa_sambil_rujuk",
+            "name": "[Rujukan akut] Jangan makan/minum sampai evaluasi lanjutan",
+            "critical": true
+          },
+          {
+            "id": "imunitas_setelah_tetanus",
+            "name": "[Tetanus] Sakit tidak membuat kebal; lanjutkan vaksin setelah stabil dan pahami bahwa tetanus tidak menular antarmanusia",
             "critical": false
           },
           {
-            "id": "tanda_bahaya",
-            "name": "Tanda bahaya — kapan harus segera kembali",
+            "id": "rawat_luka_tetanus",
+            "name": "[Luka] Jaga luka bersih dan lengkapi profilaksis tetanus sesuai status imunisasi",
             "critical": false
           }
         ],
         "relevantLabs": [],
         "differentialIcd10": [
           "A35",
-          "G00.9",
-          "F44.5"
+          "T65.1",
+          "G00.9"
         ],
         "stabilizationRequired": [
           "minim_stimulus_tetanus",
+          "kesiapan_airway_rujuk",
           "pemantauan_ketat_vital"
         ]
       },
       "currentEditorial": {
-        "clue": "Trismus dan spasme terpicu rangsang setelah luka berisiko dengan imunisasi tidak jelas adalah diagnosis klinis tetanus; jangan menunggu tes laboratorium. Minimalkan rangsang, pantau jalan napas dan tanda vital, rawat luka secara lembut tanpa manuver agresif, dan transfer segera untuk imunoglobulin, antimikroba, kontrol spasme, dukungan napas, serta monitoring intensif.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK menjadi floor pengenalan, minimisasi rangsang, perawatan luka, stabilisasi, dan rujukan. CDC Clinical Care of Tetanus 2025 menegaskan tetanus sebagai kegawatan yang memerlukan rawat inap, TIG, kontrol spasme, pemantauan jalan napas, debridemen jaringan nekrotik, antibiotik, dan imunisasi setelah kondisi stabil. Pilihan produk antitoksin, antimikroba, serta sedasi mengikuti protokol rujukan terkini, bukan regimen improvisasi di FKTP.",
-        "realityNote": "TIG, ventilasi, dan sedasi kontinu tidak diasumsikan tersedia di Sukamaju. Jangan mengimprovisasi serum dosis tinggi atau sedasi tanpa kesiapan resusitasi; perawatan luka juga tidak boleh menunda transfer."
+        "clue": "Trismus, disfagia, dan spasme generalisata singkat terpicu rangsang setelah luka berisiko dengan imunisasi tidak jelas mendukung tetanus generalisata derajat sedang secara klinis; jangan menunggu tes laboratorium. Tempatkan di ruang tenang, puasakan, pantau jalan napas dan tanda vital, siapkan suction-BVM-oksigen serta pendamping terlatih, berikan human TIG 500 IU IM yang dinyatakan ready, tutup luka secara steril, dan transfer segera ke layanan saraf dengan kemampuan airway/ventilasi/ICU. SpO2 96% tidak memerlukan oksigen rutin.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Bab tetanus PPK mencantumkan kompetensi 4A, diagnosis klinis, minimisasi rangsang, pengawasan respirasi, perawatan luka, pelaporan, dan rujukan ke neurologi. Label 4A adalah tingkat kompetensi diagnosis, bukan izin menuntaskan tetanus generalisata sedang sebagai rawat jalan. WHO 2026 dan CDC 2025 menempatkannya sebagai kegawatan rawat inap; CDC merekomendasikan human TIG 500 IU IM dosis tunggal. Fornas 1199/2025 mencantumkan human TIG 250 IU dan 500 IU untuk manifestasi tetanus klinis. Regimen ATS dosis tinggi, penisilin, dan sedasi dosis besar dalam teks lama tidak disalin menjadi resep FKTP; antimikroba, kontrol spasme, debridemen, dan ventilasi mengikuti protokol fasilitas rujukan.",
+        "realityNote": "TIG 500 IU, balutan steril, suction, BVM, oksigen, monitor, petugas terlatih, dan ambulans dinyatakan ready; ini bukan klaim stok universal. Jika TIG tidak ada, transfer jangan ditunda. Sukamaju hanya menutup luka; debridemen dilakukan di RS karena spasme terpicu rangsang. Laporkan kasus ke Dinkes, tetapi tetanus tidak menular antarmanusia dan tidak memerlukan profilaksis kontak atau penetapan KLB otomatis.",
+        "ebmPearl": "Tetanus adalah diagnosis klinis dan hasil kultur luka negatif tidak menyingkirkannya. TIG hanya menetralkan toksin yang belum terikat, sehingga diberikan sedini mungkin; pasien yang sembuh tetap tidak memperoleh imunitas alami dan masih memerlukan seri vaksinasi. Keracunan striknin dapat menyerupai spasme terpicu rangsang, tetapi biasanya beronset cepat setelah pajanan tanpa trismus khas atau masa inkubasi luka."
       },
       "evidence": {
         "ppk": {
@@ -3664,6 +3753,17 @@
           "status": "cocok",
           "sources": [
             {
+              "sourceId": "who-tetanus-2026",
+              "relation": "direct",
+              "title": "Tetanus fact sheet",
+              "authority": "World Health Organization",
+              "year": 2026,
+              "officialUrl": "https://www.who.int/news-room/fact-sheets/detail/tetanus",
+              "population": "People with suspected or confirmed tetanus",
+              "facilityScope": "Clinical diagnosis, immediate hospital treatment, immune globulin, wound care, spasm control, antibiotics, vaccination, and prevention.",
+              "locator": "Symptoms and treatment sections: trismus, dysphagia, and stimulus-triggered spasms support a clinical diagnosis; hospital care includes immediate immune globulin, wound care, spasm control, antibiotics, and vaccination."
+            },
+            {
               "sourceId": "cdc-tetanus-care-2025",
               "relation": "direct",
               "title": "Clinical Care of Tetanus",
@@ -3672,7 +3772,18 @@
               "officialUrl": "https://www.cdc.gov/tetanus/hcp/clinical-care/index.html",
               "population": "People with clinically diagnosed tetanus",
               "facilityScope": "Hospital treatment with immune globulin, spasm control, airway support, wound care, antibiotics, and vaccination during recovery.",
-              "locator": "Treatment recommendations: tetanus is a medical emergency requiring hospitalization, TIG, spasm control, airway monitoring, wound debridement, antibiotics, and later vaccination."
+              "locator": "Treatment recommendations: tetanus is a medical emergency requiring hospitalization; give a single 500 IU intramuscular TIG dose, monitor the airway, clean the wound, control spasms, treat infection, and vaccinate during recovery."
+            },
+            {
+              "sourceId": "ukhsa-tetanus-2024",
+              "relation": "direct",
+              "title": "Guidance on the management of suspected tetanus cases and tetanus-prone wounds",
+              "authority": "UK Health Security Agency",
+              "year": 2024,
+              "officialUrl": "https://www.gov.uk/government/publications/tetanus-advice-for-health-professionals/guidance-on-the-management-of-suspected-tetanus-cases-and-the-assessment-and-management-of-tetanus-prone-wounds",
+              "population": "People with suspected tetanus or tetanus-prone wounds",
+              "facilityScope": "Clinical diagnosis, severity grading, early wound care, immunoglobulin, antimicrobial therapy, spasm control, and critical-care escalation.",
+              "locator": "Clinical features and severity grading: moderate generalized tetanus includes moderate trismus and spasticity with dysphagia or respiratory embarrassment and brief spasms; management requires early specialist and critical-care coordination."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -3695,8 +3806,8 @@
               "grounding": "baseline"
             },
             {
-              "id": "perawatan_luka",
-              "name": "Irigasi, debridemen selektif, dan balut luka",
+              "id": "kesiapan_airway_rujuk",
+              "name": "Siapkan suction, BVM, oksigen, dan pendamping terlatih selama transfer",
               "kind": "procedure",
               "tier": "A",
               "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
@@ -3708,6 +3819,14 @@
               "kind": "procedure",
               "tier": "B",
               "note": "Tensimeter, pulse oximeter, jam observasi, dan petugas harus ready selama stabilisasi pra-rujuk.",
+              "grounding": "baseline"
+            },
+            {
+              "id": "balut_luka_steril",
+              "name": "Balut luka terbuka secara steril",
+              "kind": "procedure",
+              "tier": "A",
+              "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
               "grounding": "baseline"
             }
           ],

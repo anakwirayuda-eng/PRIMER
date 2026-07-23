@@ -227,4 +227,22 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     )
     expect(screen.getByText(/Prototipe lab — belum teradjudikasi/i)).toBeInTheDocument()
   })
+
+  it('kasus dengan provenance terstruktur menampilkan referensi ringkas yang dapat dibuka', () => {
+    render(
+      <PanelHasil
+        hasil={{ ...HASIL_DASAR, kasusId: 'lab_tetanus_generalisata_awal' }}
+        bolehPanggil={true}
+        alasanTutup=""
+        onSelesai={() => {}}
+      />,
+    )
+
+    expect(screen.getByText('Referensi kasus')).toBeInTheDocument()
+    expect(screen.getByText('5 rujukan')).toBeInTheDocument()
+    expect(screen.getByRole('link', {
+      name: /CDC Clinical Care of Tetanus 2025; buka di browser bawaan/i,
+    })).toHaveAttribute('href', 'https://www.cdc.gov/tetanus/hcp/clinical-care/index.html')
+    expect(screen.queryByText('INTI KEPUTUSAN')).not.toBeInTheDocument()
+  })
 })

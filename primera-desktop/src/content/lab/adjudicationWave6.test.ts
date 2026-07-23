@@ -97,16 +97,66 @@ describe('M13-137 adjudication wave 6: stabilisasi time-critical', () => {
     ])
   })
 
-  it('tetanus memakai diagnosis klinis, minim stimulus, monitoring, dan transfer', () => {
+  it('tetanus derajat sedang mengunci TIG, airway-ready transfer, dan graceful degradation FKTP', () => {
     const kasus = PACK.kasus.lab_tetanus_generalisata_awal!
+    const audit = record('lab_tetanus_generalisata_awal')
+    expect(kasus.nama).toBe('Tetanus Generalisata Derajat Sedang')
+    expect(kasus.skdi).toBe('4A')
+    expect(kasus.spesialisRujukan).toBe('saraf')
+    expect(kasus.diagnosisBanding).toEqual(['A35', 'T65.1', 'G00.9'])
+    expect(kasus.anamnesis.map((item) => item.id)).toEqual(expect.arrayContaining([
+      'q_spasme',
+      'q_napas',
+      'q_luka',
+      'q_imunisasi',
+      'q_otonom',
+      'q_pajanan_racun',
+    ]))
+    expect(kasus.tatalaksana.obatBenar).toEqual(['tetanus_imunoglobulin_500'])
+    expect(kasus.tatalaksana.obatOpsional).toEqual(['vaksin_td'])
+    expect(kasus.tatalaksana.terapiKritis).toEqual(['tetanus_imunoglobulin_500'])
     expect(kasus.tatalaksana.prosedur).toEqual([
       'minim_stimulus_tetanus',
-      'perawatan_luka',
+      'kesiapan_airway_rujuk',
+      'pemantauan_ketat_vital',
+      'balut_luka_steril',
+    ])
+    expect(kasus.stabilisasiWajib).toEqual([
+      'minim_stimulus_tetanus',
+      'kesiapan_airway_rujuk',
       'pemantauan_ketat_vital',
     ])
-    expect(kasus.stabilisasiWajib).toEqual(['minim_stimulus_tetanus', 'pemantauan_ketat_vital'])
-    expect(kasus.clue).toMatch(/diagnosis klinis.*jangan menunggu tes laboratorium/is)
-    expect(kasus.panduanResmi).toMatch(/CDC Clinical Care of Tetanus 2025.*rawat inap/is)
-    expect(kasus.catatanRealita).toMatch(/tidak boleh menunda transfer/i)
+    expect(kasus.tatalaksana.edukasi).toEqual([
+      'puasa_sambil_rujuk',
+      'imunitas_setelah_tetanus',
+      'rawat_luka_tetanus',
+    ])
+    expect(kasus.tatalaksana.obatSalahUmum).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'diazepam_rektal_10', alasan: expect.stringMatching(/kesiapan ventilasi/i) }),
+      expect.objectContaining({ id: 'metronidazol_500', alasan: expect.stringMatching(/disfagia.*dipuasakan/i) }),
+    ]))
+    expect(kasus.clue).toMatch(/secara klinis.*ruang tenang.*TIG 500 IU IM.*SpO2 96% tidak memerlukan oksigen rutin/is)
+    expect(kasus.panduanResmi).toMatch(/4A.*bukan izin.*rawat jalan.*WHO 2026.*CDC 2025.*Fornas 1199\/2025/is)
+    expect(kasus.catatanRealita).toMatch(/TIG 500 IU.*bukan klaim stok universal.*transfer jangan ditunda.*tidak menular antarmanusia/is)
+    expect(kasus.mutiaraEbm).toMatch(/kultur luka negatif.*toksin yang belum terikat.*tidak memperoleh imunitas alami.*striknin/is)
+    expect(kasus.sumber?.map((item) => item.id)).toEqual([
+      'ppk_fktp_2022',
+      'fornas_2025',
+      'who_tetanus_2026',
+      'cdc_tetanus_care_2025',
+      'ukhsa_tetanus_2024',
+    ])
+    expect(audit.evidence.ebm.sources.map((source) => source.sourceId)).toEqual([
+      'who-tetanus-2026',
+      'cdc-tetanus-care-2025',
+      'ukhsa-tetanus-2024',
+    ])
+    expect(audit.currentManagement.requiredDrugs).toEqual([
+      expect.objectContaining({
+        id: 'tetanus_imunoglobulin_500',
+        fornas: expect.objectContaining({ status: 'cocok' }),
+        kfa: expect.objectContaining({ status: 'cocok' }),
+      }),
+    ])
   })
 })
