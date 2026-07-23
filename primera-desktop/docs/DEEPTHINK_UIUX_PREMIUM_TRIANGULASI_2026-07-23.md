@@ -114,6 +114,30 @@ Pagar yang dihormati: nol file engine/konten disentuh; working tree adjudikasi C
 
 ---
 
+## ADJUDIKASI (diisi setelah jawaban DeepThink diterima & ditriage Claude, 2026-07-23 sore)
+
+Jawaban DeepThink diverifikasi independen ke kode sebelum diadopsi (§15/§16;
+preseden phantom-adjudication). Hasil triage:
+
+| Q | Vonis DT | Hasil verifikasi kode | Status |
+|---|---|---|---|
+| Q1 | Setujui min-size (Opsi B) | **PREMIS KELIRU (DT & dossier ini sama-sama)** — `minWidth: 1200, minHeight: 760` SUDAH ada di `src/main/index.ts:183-184` sejak sebelum audit. Opsi B = no-op; guardrail sudah terpasang. Tidak ada aksi; lane main-process tak perlu dibuka. | **MOOT — terverifikasi** |
+| Q2 | Tunda paket penuh pasca-playtest | Konsisten dgn rekomendasi awal; tanpa klaim kode. | Menunggu jawaban dr. Wirayuda |
+| Q3 | SFX diegetik "kertas/stempel", bukan synth | Arah desain valid, TAPI: implementasi kini synth murni (`synth.ts`); foley = butuh aset audio berlisensi jelas (disiplin `check:bgm-license`) + effort aset. Keputusan arah produk. | Menunggu dr. Wirayuda |
+| Q4 | Default SFX mati/rendah utk kelas | Default kini `volumeSfx: 0.8` (`settings.ts:27`) — usulan DT = perubahan default nyata. Keputusan produk. | Menunggu dr. Wirayuda |
+| Q5 | Status quo, tunggu playtest | Konvergen dgn rekomendasi awal. Nol aksi. (Koreksi kecil: DT menyebut "Debrief Malam (Laporan Akhir)" — dua fitur berbeda; debrief malam = panel sore MejaKerja, Laporan Akhir = layar tamat. Tak mengubah kesimpulan.) | **DIADOPSI (tanpa aksi)** |
+| Q6 | MejaKerja dulu, lalu Kunjungan | Konvergen; penjadwalan tetap hak product owner. | Menunggu dr. Wirayuda (urutan disarankan: MejaKerja) |
+| Q7 | Permanenkan status quo + dokumentasikan | Konvergen. (Koreksi fakta: kontrak `toBeDisabled()` = **7 okurensi di 5 file**, bukan "ratusan" — kesimpulan tetap berdiri.) Konvensi kini tertulis di `PEDOMAN_AUTHORING_UI.md`. | **DIEKSEKUSI** |
+| Q8 | Hanya "Keluar" diberi dialog | Konvergen dgn rekomendasi awal. Diimplementasi di TitleScreen (DialogGame; aksi frekuensi-tinggi tetap bebas dialog). | **DIEKSEKUSI** |
+| Q9 | Setuju a-e + tambah f/g/h | f (atensi debrief), g (kejujuran epistemik TEGAK/SUSPEK — bisa disilangkan data dossier), h (rage-click vs baca alasan) — tambahan bernilai. Ditulis sbg DRAF `M13_1B_LEMBAR_OBSERVASI_UIUX.md`, menunggu sign-off. | **DIEKSEKUSI sbg draf** |
+| Q10 | Tunggu checkpoint CODEX | Konvergen. (Nuansa: build ini lab test-beta, bukan build cohort Ujian — argumen provenance tetap berlaku via manifest Keputusan 3.) Build DITAHAN. | **DIADOPSI (hold)** |
+| Q11 | Timpa instalasi lokal setelah build gabungan | Wajar; validasi IPC/localStorage memang butuh Electron sejati, bukan vite preview. Eksekusi menyusul build. | Menunggu build (pasca-Q10) |
+
+Catatan triage: contoh nama "dr. Harsono" pada jawaban DT bersifat ilustratif
+(tidak ada di konten). Tidak ada temuan DT yang menyentuh konten klinis.
+
+---
+
 ## Lampiran — bukti verifikasi pass hari ini
 
 | Verifikasi | Hasil |

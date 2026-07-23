@@ -617,7 +617,19 @@ export function TitleScreen() {
             {DI_ELECTRON && (
               <button
                 className="tombol tombol--senyap title__keluar"
-                onClick={() => window.close()}
+                // Q8 (adjudikasi DT + Claude, 2026-07-23): satu-satunya aksi
+                // yang DIBERI konfirmasi tambahan — frekuensi rendah, konvensi
+                // desktop. Aksi berfrekuensi tinggi (LANJUTKAN dkk) sengaja
+                // TIDAK dipagari: melatih confirmation fatigue yang justru
+                // menumpulkan dialog timpa-arsip yang sungguh penting.
+                onClick={() =>
+                  setDialog({
+                    judul: 'Keluar dari PRIMERA?',
+                    pesan: 'Tutup aplikasi? Progresmu sudah tersimpan otomatis di Autosave Aktif.',
+                    labelYa: 'Keluar',
+                    aksi: () => window.close(),
+                  })
+                }
               >
                 Keluar
               </button>
