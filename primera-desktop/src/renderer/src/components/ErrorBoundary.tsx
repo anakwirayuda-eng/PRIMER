@@ -88,7 +88,10 @@ export class ErrorBoundary extends Component<Props, State> {
             Maaf, terjadi kendala tak terduga
           </h1>
           <p style={{ margin: '0 0 1.1rem', lineHeight: 1.6, color: 'var(--tinta-lembut)' }}>
-            Permainan menemui kesalahan saat menampilkan layar. Kemajuan terakhir Anda
+            {/* Audit editorial 2026-07-23: "Anda" adalah satu-satunya di seluruh
+                game (register lain konsisten "kamu/-mu") — seragamkan, apalagi
+                ini momen krisis yang butuh nada akrab yang sama. */}
+            Permainan menemui kesalahan saat menampilkan layar. Kemajuan terakhirmu
             biasanya sudah tersimpan otomatis. Pilih salah satu:
           </p>
           <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>

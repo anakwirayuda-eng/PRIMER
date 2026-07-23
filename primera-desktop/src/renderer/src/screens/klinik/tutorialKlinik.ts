@@ -15,7 +15,9 @@ export function tutorialUntukEncounter(tutorialAktif: boolean, kasusId: string):
 }
 
 export const BANNER_TUTORIAL: Record<EncounterState['fase'], string> = {
-  anamnesis: '🎓 Latihan pertama: pasien ini TAK MEMPENGARUHI skor. Klik pertanyaan yang menyala untuk mulai anamnesis.',
+  // Audit editorial 2026-07-23: "MEMPENGARUHI" → bentuk baku "MEMENGARUHI"
+  // (KBBI; konsisten dgn PanelHasil "tak memengaruhi skor").
+  anamnesis: '🎓 Latihan pertama: pasien ini TAK MEMENGARUHI skor. Klik pertanyaan yang menyala untuk mulai anamnesis.',
   pemeriksaan: '🎓 Ukur tanda vital dulu, lalu periksa regio yang menyala.',
   diagnosis: '🎓 Pilih diagnosis yang menyala, lalu stempelkan.',
   terapi: '🎓 Tambahkan obat yang menyala ke resep, lalu lanjutkan.',

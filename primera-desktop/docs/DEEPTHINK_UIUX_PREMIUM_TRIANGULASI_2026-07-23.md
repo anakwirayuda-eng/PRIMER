@@ -133,8 +133,10 @@ preseden phantom-adjudication). Hasil triage:
 | Q10 | Tunggu checkpoint CODEX | Konvergen. (Nuansa: build ini lab test-beta, bukan build cohort Ujian — argumen provenance tetap berlaku via manifest Keputusan 3.) Build DITAHAN. | **DIADOPSI (hold)** |
 | Q11 | Timpa instalasi lokal setelah build gabungan | Wajar; validasi IPC/localStorage memang butuh Electron sejati, bukan vite preview. Eksekusi menyusul build. | Menunggu build (pasca-Q10) |
 
-Catatan triage: contoh nama "dr. Harsono" pada jawaban DT bersifat ilustratif
-(tidak ada di konten). Tidak ada temuan DT yang menyentuh konten klinis.
+Catatan triage: klaim awal saya bahwa "dr. Harsono" pada jawaban DT ilustratif
+TERNYATA KELIRU — dr. Harsono adalah karakter nyata (Kepala Puskesmas,
+Onboarding.tsx; koreksi 2026-07-23 sore, ditemukan saat audit editorial).
+Contoh DT justru akurat. Tidak ada temuan DT yang menyentuh konten klinis.
 
 ---
 
